@@ -78,9 +78,8 @@
 :-  %say
 |=  *
 =<  [%noun (say-hello %world)]
-=>  :>  #
-    :>  #  %arch
-    :>  #
+=>  :>  #  %arch
+    :>
     :>    structures for our imaginary hello, world generator.
     :>
     :>  nothing forces us to put structures in a separate core.
@@ -95,6 +94,7 @@
     :>  in a separate chapter (separated by {+|}).
     |%
     :>  #  %model
+    :>
     :>    models (molds) are functions that normalize nouns.
     :>
     :>  arms producing molds are introduced with {+=}.  for molds,
@@ -103,16 +103,16 @@
     +|
     +=  spot  [p=@ q=@]                                 :<  a coordinate
     +=  tops                                            :>  also a coordinate
-      {p/@ q/@}
+      [p=@ q=@]
     +=  goof                                            :>  a simple tuple
-      $:  foo/@                                         :<  something mysterious
-          bar/@                                         :<  go here for drink
-          moo/(binary-tree juice)                       :<  cows do this
+      $:  foo=@                                         :<  something mysterious
+          bar=@                                         :<  go here for drink
+          moo=(binary-tree juice)                       :<  cows do this
       ==
     +=  juice                                           :>  fruity beverage
-      $%  {$plum p/@}                                   :<  fresh prune
-          {$pear p/@ q/@}                               :<  good for cider
-          {$acai p/@}                                   :<  aztec superfood
+      $%  [%plum p=@]                                   :<  fresh prune
+          [%pear p=@ q=@]                               :<  good for cider
+          [%acai p=@]                                   :<  aztec superfood
       ==
     :>  #
     :>  #  %pattern
@@ -124,8 +124,8 @@
     :>  or "higher-kinded types".
     +|
     ++  binary-tree                                     :<  tree pattern
-      |*  a/$-(* *)
-      $@($~ {n/a l/(binary-tree a) r/(binary-tree a)})
+      |*  a=$-(* *)
+      $@($~ [n=a l=(binary-tree a) r=(binary-tree a)])
     :>  #
     :>  #  %constant
     :>  #
@@ -134,8 +134,9 @@
     ++  answer                                          :<  answer to everything
       42
     --
+:>  #
 :>  #  %work
-:>
+:>  #
 :>    engines for our imaginary hello, world app.
 :>
 :>  note that ++say-goodbye is the correct notation, even though
@@ -147,7 +148,7 @@
   :>
   |=  :>  txt: friend to say hi to
       :>
-      txt/term
+      txt=term
   ^-  tape
   "hello, {(rip 3 txt)}"
 :>    ++say-goodbye: say a really proper goodbye
@@ -164,8 +165,8 @@
   :>
   |=  :>  txt: departing friend
       :>  num: number of friends
-      $:  txt/term
-          num/@
+      $:  txt=term
+          num=@
       ==
   ^-  tape
   :>  foo: four
@@ -176,6 +177,6 @@
   "goodbye and {(scot %ud moo)}, {(rip 3 txt)}"
 :>                                                      :>  ++say-minimum
 ++  say-minimum                                         :>  minimal decoration
-  |=  txt/term
+  |=  txt=term
   "nothing to say to {(rip 3 txt)}"
 --

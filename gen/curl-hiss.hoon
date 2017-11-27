@@ -4,6 +4,8 @@
   ::
 /?    310
 /-  sole
+/+  old-zuse
+=,  old-zuse
 =,  sole
 :-  %get  |=  {^ {a/hiss $~} usr/iden}
 ^-  (sole-request (cask httr))

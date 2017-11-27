@@ -20,8 +20,8 @@
 ++  yu          yu:chrono:userlib                       ::  UTC format constants
 ++  moon        en-mite:mimes:html                      ::  mime type to text
 ++  perk        perk.is                                 ::  parse cube fork 
-++  poja        en-json:html                            ::  parse JSON
-++  pojo        de-json:html                            ::  print json
+++  poja        de-json:html                            ::  parse JSON
+++  pojo        en-json:html                            ::  print json
 ++  poxo        en-xml:html                             ::  node to tape
 ++  poxa        de-xml:html                             ::  xml parser
 ++  jo          dejs-soft:format                        ::  json reparser

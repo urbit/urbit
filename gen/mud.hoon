@@ -1,3 +1,4 @@
+::BROKEN
 ::  Compile arvo as a pill noun, for compiler changes; 
 ::  usage 
 ::
@@ -6,6 +7,8 @@
 ::::  /hoon/mud/gen
   ::
 /?    310
+/+  old-zuse
+=,  old-zuse
 ::
 ::::
   !:

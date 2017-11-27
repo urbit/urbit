@@ -82,7 +82,7 @@
           {$name audience human}                        ::<  set our name
           ::  messaging                                 ::
           {$say (list speech)}                          ::<  send message
-          {$eval cord twig}                             ::<  send #-message
+          {$eval cord hoon}                             ::<  send #-message
           {$target p/audience q/(unit work)}            ::<  set active targets
           {$reply $@(@ud {@u @ud}) (list speech)}       ::<  reply to
           ::  displaying info                           ::
@@ -559,7 +559,7 @@
       ::>  ||  %parsers
       ::>    various parsers for command line input.
       |%
-      ++  expr                                          ::<  [cord twig]
+      ++  expr                                          ::<  [cord hoon]
         |=  tub/nail  %.  tub
         %+  stag  (crip q.tub)
         wide:(vang & [&1:% &2:% (scot %da now.bol) |3:%])
@@ -1013,7 +1013,7 @@
         ?.  =(q nym)  ~
         [~ u=p]
       ::
-      ++  twig-head                                       ::<  eval data
+      ++  hoon-head                                       ::<  eval data
         ::>  makes a vase of environment data to evaluate
         ::>  against (for #-messages).
         ::
@@ -1129,8 +1129,8 @@
         ::>  executes {exe} and sends both its code and
         ::>  result.
         ::
-        |=  {txt/cord exe/twig}
-        =>  |.([(sell (slap (slop twig-head seed) exe))]~)
+        |=  {txt/cord exe/hoon}
+        =>  |.([(sell (slap (slop hoon-head seed) exe))]~)
         =+  tan=p:(mule .)
         (say [%exp txt tan] ~)
       ::

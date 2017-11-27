@@ -21,7 +21,7 @@
       $:  say/sole-share                                ::  command-line state
           dir/beam                                      ::  active path
           poy/(unit dojo-project)                       ::  working
-          {lib/(list hoof:ford) sur/(list hoof:ford)}             ::  lib+sur
+          {lib/(list hoof:ford) sur/(list hoof:ford)}   ::  lib+sur
           var/(map term cage)                           ::  variable state
           old/(set term)                                ::  used TLVs
           buf/tape                                      ::  multiline buffer
@@ -41,7 +41,7 @@
               r/purl:eyre
           ==
           {$poke p/goal}                                ::  poke app
-          {$show p/?($0 $1 $2 $3)}                      ::  print val+span+twig
+          {$show p/?($0 $1 $2 $3)}                      ::  print val+type+hoon
           {$verb p/term}                                ::  store variable
           {$help p/(list term)}                         ::  look up help
       ==                                                ::
@@ -53,10 +53,10 @@
       $%  {$ur p/(unit knot) q/purl:eyre}              ::  http GET request
           {$ge p/dojo-model}                            ::  generator
           {$dv p/path}                                  ::  core from source
-          {$ex p/twig}                                  ::  hoon expression
+          {$ex p/hoon}                                  ::  hoon expression
           {$sa p/mark}                                  ::  example mark value
           {$as p/mark q/dojo-source}                    ::  simple transmute
-          {$do p/twig q/dojo-source}                    ::  gate apply
+          {$do p/hoon q/dojo-source}                    ::  gate apply
           {$tu p/(list dojo-source)}                    ::  tuple
       ==                                                ::
     ++  dojo-model                                      ::  data construction 
@@ -201,22 +201,22 @@
     ++  dp-hooves                                       ::  hoof list
       :(stag 0 %ex %clsg (most ;~(plug com gaw) dp-hoof))
     ::
-    ++  dp-hoof                                         ::  ++ford-hoof twig
+    ++  dp-hoof                                         ::  ++ford-hoof hoon
       ;~  plug
         :(stag %sand %f ;~(pose (cold %| tar) (easy %&)))
         :(stag %sand %tas sym)
-        %-  dp-twig-punt
+        %-  dp-hoon-punt
         ;~  (glue fas) 
-          ;~(pfix fas (sear dp-case-twig nuck:so))
+          ;~(pfix fas (sear dp-case-hoon nuck:so))
           (stag %sand ;~(plug (cold %p sig) fed:ag))
         ==
       ==
     ::
-    ++  dp-twig-punt                                   ::  twig of unit
+    ++  dp-hoon-punt                                   ::  hoon of unit
       |*(a/rule ;~(pose (stag [%bust %null] a) (easy [%bust %null])))
     ::
-    ++  dp-case-twig
-      |=  a/coin  ^-  (unit twig)
+    ++  dp-case-hoon
+      |=  a/coin  ^-  (unit hoon)
       ?.  ?=({$~ case} a)  ~
       %+  some
         [%rock %tas p.p.a]
@@ -229,7 +229,7 @@
         ;~(plug (cold %ur lus) dp-iden-url)
         ;~(plug (cold %ge lus) dp-model)
         ;~(plug (cold %as pam) sym ;~(pfix ace dp-source))
-        ;~(plug (cold %do cab) dp-twig ;~(pfix ace dp-source))
+        ;~(plug (cold %do cab) dp-hoon ;~(pfix ace dp-source))
         dp-value
       ==
     :: 
@@ -256,8 +256,8 @@
     ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
     ++  dp-path    (en-beam he-beam)                       ::  ++path
     ++  dp-server  (stag 0 (most fas sym))              ::  ++dojo-server
-    ++  dp-twig    tall:(vang | dp-path)                ::  ++twig
-    ++  dp-rood                                         ::  'dir' twig
+    ++  dp-hoon    tall:(vang | dp-path)                ::  ++hoon
+    ++  dp-rood                                         ::  'dir' hoon
       =>  (vang | (en-beam dir))
       ;~  pose
         rood
@@ -272,7 +272,7 @@
     ++  dp-value                                        ::  ++dojo-source
       ;~  pose
         (stag %sa ;~(pfix tar pam sym))
-        (stag %ex dp-twig)
+        (stag %ex dp-hoon)
         (stag %tu (ifix [sel ser] (most ace dp-source)))
       ==
     ::
@@ -536,7 +536,7 @@
         ?-  p.p.mad
           $0  ~
           $1  [[%rose [~ "  " ~] (skol p.q.cay) ~] (mar)]
-          $2  [[%rose [~ "  " ~] (dy-show-span-noun p.q.cay) ~] (mar)]
+          $2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] (mar)]
         ==
       ==
     ::
@@ -558,17 +558,17 @@
       ==
     ::
     ++  dy-inspect
-      |=  {topic/(list term) sut/span}
+      |=  {topic/(list term) sut/type}
       %+  dy-rash  %tan
       |^  ^-  tang
-          =+  to-display=(find-item-in-span (flop topic) sut)
+          =+  to-display=(find-item-in-type (flop topic) sut)
           ?~  to-display
             [%leaf "Could not find help"]~
           (flop (print-item u.to-display))
       :>  #  %models
       +|
       ::
-      :>    an overview of all named things in the span.
+      :>    an overview of all named things in the type.
       :>
       :>  each item in the overview list is either a documentation for a sublist
       :>  or an association between a term and documentation for it.
@@ -582,15 +582,15 @@
             {$item name/tape doc/what}
         ==
       ::
-      :>  the part of a {span} being inspected.
+      :>  the part of a {type} being inspected.
       ++  item
-        $%  :>  overview of span
+        $%  :>  overview of type
             {$view items/overview}
             :>  inspecting a full core.
             $:  $core
                 name/tape
                 docs/what
-                sut/span
+                sut/type
                 con/coil
                 children/(unit item)
             ==
@@ -599,13 +599,13 @@
                 name/tape
                 docs/what
                 f/foot
-                sut/span
+                sut/type
             ==
             :>  inspecting a single chapter on a core.
             $:  $chapter
                 name/tape
                 docs/what
-                sut/span
+                sut/type
                 con/coil
                 chapter-id/@
             ==
@@ -623,11 +623,11 @@
       +|
       :>    returns the item to print while searching through {topic}.
       :>
-      :>  this gate is called recursively to find the path {topic} in the span
-      :>  {sut}. once it finds the correct part of the span, it switches to
-      :>  ++build-inspectable-recursively to describe that part of the span.
-      ++  find-item-in-span
-        |=  {topics/(list term) sut/span}
+      :>  this gate is called recursively to find the path {topic} in the type
+      :>  {sut}. once it finds the correct part of the type, it switches to
+      :>  ++build-inspectable-recursively to describe that part of the type.
+      ++  find-item-in-type
+        |=  {topics/(list term) sut/type}
         ^-  (unit item)
         ?~  topics
           ::  we have no more search path. return the rest as an overview
@@ -682,31 +682,31 @@
             ~
           ?~  t.topics
             `[%face (trip q.p.sut) p.p.sut (build-inspectable-recursively q.sut)]
-          (find-item-in-span t.topics q.sut)
+          (find-item-in-type t.topics q.sut)
         ::
             {$fork *}
-          =/  spans/(list span)  ~(tap in p.sut)
+          =/  types/(list type)  ~(tap in p.sut)
           |-
-          ?~  spans
+          ?~  types
             ~
-          =+  res=(find-item-in-span topics i.spans)
+          =+  res=(find-item-in-type topics i.types)
           ?~  res
-            $(spans t.spans)
+            $(types t.types)
           res
         ::
             {$help *}
           ::  while we found a raw help, it's associated on the wrong side of a
           ::  set of topics. Walk through it instead of showing it.
-          (find-item-in-span t.topics q.sut)
+          (find-item-in-type t.topics q.sut)
         ::
             {$hold *}  $(sut (~(play ut p.sut) q.sut))
             $noun      ~
             $void      ~
         ==
       ::
-      :>  changes a {span} into an {item}.
+      :>  changes a {type} into an {item}.
       ++  build-inspectable-recursively
-        |=  sut/span
+        |=  sut/type
         ^-  (unit item)
         ?-  sut
         ::
@@ -730,13 +730,13 @@
           `[%face (trip q.p.sut) p.p.sut compiled-against]
         ::
             {$fork *}
-          =*  spans  ~(tap in p.sut)
-          =*  items  (turn spans build-inspectable-recursively)
+          =*  types  ~(tap in p.sut)
+          =*  items  (turn types build-inspectable-recursively)
           (roll items join-items)
         ::
             {$help *}
-          =*  rest-span  (build-inspectable-recursively q.sut)
-          `[%view [%header p.sut (item-as-overview rest-span)]~]
+          =*  rest-type  (build-inspectable-recursively q.sut)
+          `[%view [%header p.sut (item-as-overview rest-type)]~]
         ::
             {$hold *}  $(sut (~(play ut p.sut) q.sut))
             $noun      ~
@@ -782,7 +782,7 @@
       ::
       :>  translate the internals of a core's {tomb} into an {overview}.
       ++  arms-as-overview
-        |=  {a/(map term (pair what foot)) sut/span}
+        |=  {a/(map term (pair what foot)) sut/type}
         ^-  overview
         %+  turn  ~(tap by a)
           |=  (pair term (pair what foot))
@@ -807,7 +807,7 @@
       :>  returns an overview for arms which are part of unnamed chapters,
       :>  and an overview of the named chapters.
       ++  arm-and-chapter-overviews
-        |=  {sut/span con/coil core-name/tape}
+        |=  {sut/type con/coil core-name/tape}
         ^-  {overview overview}
         =|  arm-docs/overview                           :<  documented arms
         =|  chapter-docs/overview                       :<  documented chapters
@@ -830,7 +830,7 @@
       ::
       :>    returns an overview of the arms in a specific chapter.
       ++  arms-in-chapter
-        |=  {sut/span con/coil chapter-id/@}
+        |=  {sut/type con/coil chapter-id/@}
         ^-  overview
         =*  chapter-tomb  (~(got by q.s.con) chapter-id)
         (sort-overview (arms-as-overview q.chapter-tomb sut))
@@ -850,8 +850,8 @@
           {$item *}    name.ovr
         ==
       ::
-      ++  what-from-span
-        |=  sut/span
+      ++  what-from-type
+        |=  sut/type
         ?+  sut  ~
           {$core *}  q.r.q.sut
           {$help *}  p.sut
@@ -876,7 +876,7 @@
       ::
       :>    renders the documentation for a full core.
       ++  print-core
-        |=  {core-name/tape docs/what sut/span con/coil uit/(unit item)}
+        |=  {core-name/tape docs/what sut/type con/coil uit/(unit item)}
         ^-  tang
         =+  [arms chapters]=(arm-and-chapter-overviews sut con core-name)
         ;:  weld
@@ -902,19 +902,19 @@
       :>    figures out which {what}s to use.
       :>
       :>  there are three places with a relevant {what}: the {arm-doc} on the
-      :>  arm, the {what} in the computed span of the foot, and the {what} on
-      :>  the product of the default arm when the computed span is a core.
+      :>  arm, the {what} in the computed type of the foot, and the {what} on
+      :>  the product of the default arm when the computed type is a core.
       ++  select-arm-docs
-        |=  {arm-doc/what f/foot sut/span}
+        |=  {arm-doc/what f/foot sut/type}
         :>  the computed arm documentation and the product documentation.
         ^-  {what what}
-        =+  foot-span=(~(play ut sut) p.f)
-        =+  raw-product=(what-from-span foot-span)
+        =+  foot-type=(~(play ut sut) p.f)
+        =+  raw-product=(what-from-type foot-type)
         =/  product-product/what
-          ?.  ?=({$core *} foot-span)
+          ?.  ?=({$core *} foot-type)
             ~
-          =*  inner-span  (~(play ut foot-span) [%limb %$])
-          (what-from-span inner-span)
+          =*  inner-type  (~(play ut foot-type) [%limb %$])
+          (what-from-type inner-type)
         :-
           ?~  arm-doc
             raw-product
@@ -925,7 +925,7 @@
       ::
       :>    renders the documentation for a single arm in a core.
       ++  print-arm
-        |=  {arm-name/tape arm-doc/what f/foot sut/span}
+        |=  {arm-name/tape arm-doc/what f/foot sut/type}
         ::  todo: need to get the sample here. also hoist this to the general
         ::  core printing machinery, too.
         =+  [main-doc product-doc]=(select-arm-docs arm-doc f sut)
@@ -939,7 +939,7 @@
       ::
       :>    renders the documentation for a chapter in a core.
       ++  print-chapter
-        |=  {name/tape doc/what sut/span con/coil chapter-id/@}
+        |=  {name/tape doc/what sut/type con/coil chapter-id/@}
         ;:  weld
           (print-header name doc)
         ::
@@ -1114,15 +1114,15 @@
         $(ret l, c t.c)
       $(c t.c)
     ::
-    ++  dy-show-span-noun
-      |=  a/span  ^-  tank
+    ++  dy-show-type-noun
+      |=  a/type  ^-  tank
       =-  >[-]<
       |-  ^-  $?  $%  {$atom @tas (unit @)}
                       {$cell _$ _$}
                       {$cube * _$}
                       {$face {what $@(term tune)} _$}
                       {$fork (set _$)}
-                      {$hold _$ twig}
+                      {$hold _$ hoon}
                   ==
                   wain                :: "<|core|>"
                   $?($noun $void)
@@ -1130,20 +1130,20 @@
       ?+  a  a
         {?($cube $face) ^}  a(q $(a q.a))
         {$cell ^}  a(p $(a p.a), q $(a q.a))
-        {$fork *}  a(p (silt (turn ~(tap in p.a) |=(b/span ^$(a b)))))
+        {$fork *}  a(p (silt (turn ~(tap in p.a) |=(b/type ^$(a b)))))
         {$help *}  !!
         {$core ^}  `wain`/core
         {$hold *}  a(p $(a p.a))
       ==
     ::
     ++  dy-shown
-      $?  twig
+      $?  hoon
           $^  {dy-shown dy-shown}
           $%  {$ur (unit knot) purl:eyre}
               {$dv path}
               {$sa mark}
               {$as mark dy-shown}
-              {$do twig dy-shown}
+              {$do hoon dy-shown}
               {$ge path (list dy-shown) (map term (unit dy-shown))}
           ==
       ==
@@ -1156,7 +1156,7 @@
       ?-  -.bil
         $?($ur $dv $sa)  bil
         $ex  ?.  ?=({$cltr *} p.bil)  p.bil
-                 |-  ^-  twig
+                 |-  ^-  hoon
                  ?~  p.p.bil  !!
                  ?~  t.p.p.bil  i.p.p.bil
                  [i.p.p.bil $(p.p.bil t.p.p.bil)]
@@ -1180,7 +1180,7 @@
         (dy-diff %mor [%det lic] [%bel ~] ~)
       (dy-slam(per `dat) /edit u.pro !>((tufa buf.say)))
     ::
-    ++  dy-span                                         ::  sole action
+    ++  dy-type                                         ::  sole action
       |=  act/sole-action
       ?-  -.act
         $det  (dy-edit +.act)
@@ -1230,7 +1230,7 @@
       %-  dy-silk-vase
       ?~(b !>([~ ~]) (dy-vase p.u.b))
     ::
-    ++  dy-twig-head                                    ::  dynamic state
+    ++  dy-hoon-head                                    ::  dynamic state
       ::  todo: how do i separate the toplevel 'dojo state' comment?
       :>  dojo state
       :>
@@ -1286,7 +1286,7 @@
         (dy-meal (slot 7 vax))
       ::
           $|
-        =>  .(vax (slap vax !,(*twig ?>(?=($| -) .))))  :: XX working spec  #72
+        =>  .(vax (slap vax !,(*hoon ?>(?=($| -) .))))  :: XX working spec  #72
         =+  typ={$| (unit knot) hiss:eyre *}
         =+  [~ usr hiz ~]=((dy-cast typ !>(*typ)) vax)
         =.  ..dy  (he-diff %tan leaf+"< {(en-purl:html p.hiz)}" ~)
@@ -1333,14 +1333,14 @@
              (slop hed $(p.bil t.p.bil))
       ==
     ::
-    ++  dy-twig-mark                                    ::  XX architect
+    ++  dy-hoon-mark                                    ::  XX architect
       =+  ^=  ope
-          |=  gen/twig  ^-  twig
+          |=  gen/hoon  ^-  hoon
           ?:  ?=(?($sggl $sggr) -.gen)
             $(gen q.gen)
           =+  ~(open ap gen)
           ?.(=(gen -) $(gen -) gen)
-      |=  gen/twig  ^-  (unit mark)
+      |=  gen/hoon  ^-  (unit mark)
       =.  gen  (ope gen)
       ?:  ?=({$cnts {@ $~} $~} gen)
         (bind (~(get by var) i.p.gen) head)
@@ -1361,12 +1361,12 @@
       ==
     ::
     ++  dy-mare                                         ::  build expression
-      |=  gen/twig
+      |=  gen/hoon
       ^-  silk:ford
-      =+  too=(dy-twig-mark gen)
+      =+  too=(dy-hoon-mark gen)
       =-  ?~(too - [%cast u.too -])
       :+  %ride  gen
-      :-  [%$ dy-twig-head]
+      :-  [%$ dy-hoon-head]
       [%plan he-beam blob+** [zuse sur lib ~ ~]]
     ::
     ++  dy-step                                         ::  advance project
@@ -1574,11 +1574,11 @@
       ==
     ==
   ::
-  ++  he-span                                           ::  apply input
+  ++  he-type                                           ::  apply input
     |=  act/sole-action
     ^+  +>
     ?^  poy
-      he-pine:(~(dy-span dy u.poy) act)
+      he-pine:(~(dy-type dy u.poy) act)
     ?-  -.act
       $det  (he-stir +.act)
       $ret  (he-done (tufa buf.say))
@@ -1704,7 +1704,7 @@
   |=  {moz/(list move) ses/session}
   =>  ~(. he moz ses)
   =-  [wrap=- +]
-  |*  he-arm/_he-span
+  |*  he-arm/_he-type
   |=  _+<.he-arm  
   ^-  (quip move _..he)
   he-abet:(he-arm +<)
@@ -1721,7 +1721,7 @@
 ::
 ++  poke-sole-action
   |=  act/sole-action  ~|  poke+act  %.  act
-  (wrap he-span):arm
+  (wrap he-type):arm
 ::
 ++  poke-lens-command
   |=  com/command:lens  ~|  poke-lens+com  %.  com

@@ -31,7 +31,7 @@
 ^-  marl
 ;=  ;title: Urbit - A personal server
     ;meta(name "viewport", content "width=device-width, initial-scale=1");
-::     ;link(type "text/css", rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.min.css");
+    ;link(type "text/css", rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.min.css");
     ;*  ?.  nopack.dbg
           :_  ~
           ;link(type "text/css", rel "stylesheet", href "/===/web/pack/css/codemirror-fonts-bootstrap-tree.css");
@@ -49,9 +49,9 @@
     ;script(type "text/javascript", src "{(cdnjs "react/0.14.6/react-dom")}");
     ;script(type "text/javascript", src "{(cdnjs "flux/2.1.1/Flux")}");
     ;*  (turn ~(tap by extras) |=({@ a/@t} ;script(type "text/javascript"):"{(trip a)}"))
-::     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.js");
-::     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/".
-::       "codemirror/4.3.0/mode/markdown/markdown.min.js");
+    ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.js");
+::    ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/".
+::      "codemirror/4.3.0/mode/markdown/markdown.min.js");
     ;*  ?.  nopack.dbg
           :_  ~
           ;script(type "text/javascript", src "{?.(aut "" "/~~/~/at")}".
