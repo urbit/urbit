@@ -212,6 +212,12 @@ _http_req_to_httq(h2o_req_t* rec_u)
 
   u3_noun url = _http_vec_to_atom(rec_u->path_normalized);
   u3_noun hed = _http_heds_to_noun(&rec_u->headers);
+
+  // restore host header
+  hed = u3nc(u3nc(u3i_string("host"),
+                  _http_vec_to_atom(rec_u->authority)),
+             hed);
+
   u3_noun bod = _http_vec_to_octs(rec_u->entity);
 
   return u3nq(med, url, hed, bod);
