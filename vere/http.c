@@ -813,10 +813,9 @@ u3_http_ef_thou(c3_l     sev_l,
 void
 u3_http_io_init()
 {
-#if 0
   //  Lens port
   {
-    u3_http *htp_u = c3_malloc(sizeof(*htp_u));
+    h2htp *htp_u = c3_malloc(sizeof(*htp_u));
 
     htp_u->sev_l = u3A->sev_l + 2;
     htp_u->coq_l = 1;
@@ -824,16 +823,19 @@ u3_http_io_init()
     htp_u->sec = c3n;
     htp_u->lop = c3y;
 
+    htp_u->cep_u = 0;
+    htp_u->hos_u = 0;
     htp_u->hon_u = 0;
     htp_u->nex_u = 0;
 
-    htp_u->nex_u = u3_Host.htp_u;
-    u3_Host.htp_u = htp_u;
+    // XX u3_Host.htp_u
+    htp_u->nex_u = sev_u;
+    sev_u = htp_u;
   }
 
-  //  Logically secure port.
+  //  Secure port.
   {
-    u3_http *htp_u = c3_malloc(sizeof(*htp_u));
+    h2htp *htp_u = c3_malloc(sizeof(*htp_u));
 
     htp_u->sev_l = u3A->sev_l + 1;
     htp_u->coq_l = 1;
@@ -841,13 +843,16 @@ u3_http_io_init()
     htp_u->sec = c3y;
     htp_u->lop = c3n;
 
+    htp_u->cep_u = 0;
+    htp_u->hos_u = 0;
     htp_u->hon_u = 0;
     htp_u->nex_u = 0;
 
-    htp_u->nex_u = u3_Host.htp_u;
-    u3_Host.htp_u = htp_u;
+    // XX u3_Host.htp_u
+    htp_u->nex_u = sev_u;
+    sev_u = htp_u;
   }
-#endif
+
    // Insecure port.
   {
     h2htp* htp_u = c3_malloc(sizeof(*htp_u));
