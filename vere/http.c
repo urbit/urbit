@@ -210,7 +210,7 @@ _http_req_to_httq(h2o_req_t* rec_u)
     return u3_none;
   }
 
-  u3_noun url = _http_vec_to_atom(rec_u->path_normalized);
+  u3_noun url = _http_vec_to_atom(rec_u->path);
   u3_noun hed = _http_heds_to_noun(&rec_u->headers);
 
   // restore host header
