@@ -18,6 +18,10 @@
 
 #include "h2o.h"
 
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/rand.h>
+
 static const c3_i TCP_BACKLOG = 16;
 
 // XX put this on u3_host ?
@@ -59,6 +63,9 @@ typedef struct _h2req {
 
 // XX u3_Host.htp_u
 static h2htp* sev_u = 0;  // global server list
+
+// XX u3_Host.tls_u ?
+static SSL_CTX* tls_u = 0;
 
 static u3_noun _http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l);
 static void _http_request(h2req* req_u, u3_noun recq);
@@ -673,6 +680,10 @@ _http_init_h2o(h2htp* htp_u)
   htp_u->cep_u->ctx = (h2o_context_t*)htp_u->ctx_u;
   htp_u->cep_u->hosts = fig_u.hosts;
 
+  if ( c3y == htp_u->sec ) {
+    htp_u->cep_u->ssl_ctx = tls_u;
+  }
+
   // XX read name from server?
   htp_u->hos_u = h2o_config_register_host(&fig_u,
                                           h2o_iovec_init(H2O_STRLIT("default")),
@@ -706,6 +717,10 @@ _http_start(h2htp* htp_u)
     adr_u.sin_addr.s_addr = INADDR_ANY;
   }
 
+  if ( c3y == htp_u->sec && 0 == tls_u ) {
+    uL(fprintf(uH, "secure server error %u: no tls config\n", htp_u->sev_l));
+  }
+
   uv_tcp_init(u3L, &htp_u->wax_u);
 
   /*  Try ascending ports.
@@ -729,13 +744,59 @@ _http_start(h2htp* htp_u)
     }
 
     uL(fprintf(uH, "http: live (%s, %s) on %d\n",
-                   (c3y == htp_u->sec) ? "\"secure\"" : "insecure",
+                   (c3y == htp_u->sec) ? "secure" : "insecure",
                    (c3y == htp_u->lop) ? "loopback" : "public",
                    htp_u->por_w));
 
     _http_init_h2o(htp_u);
     break;
   }
+}
+
+/* _http_init_tls: initialize OpenSSL context
+*/
+static SSL_CTX*
+_http_init_tls()
+{
+  SSL_CTX* tls_u = c3_malloc(sizeof(*tls_u));
+
+  SSL_library_init();
+  SSL_load_error_strings();
+
+  tls_u = SSL_CTX_new(TLSv1_2_server_method());
+
+  SSL_CTX_set_options(tls_u, SSL_OP_NO_SSLv2);
+  // SSL_CTX_set_verify(tls_u, SSL_VERIFY_NONE, NULL);
+  SSL_CTX_set_default_verify_paths(tls_u);
+  SSL_CTX_set_session_cache_mode(tls_u, SSL_SESS_CACHE_OFF);
+  SSL_CTX_set_cipher_list(tls_u,
+                          "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:"
+                          "ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:"
+                          "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
+
+  c3_c pub_c[2048];
+  c3_c pir_c[2048];
+  c3_i ret_i;
+
+  ret_i = snprintf(pub_c, 2048, "%s/.urb/tls/certificate.pem", u3_Host.dir_c);
+  c3_assert(ret_i < 2048);
+  ret_i = snprintf(pir_c, 2048, "%s/.urb/tls/private.pem", u3_Host.dir_c);
+  c3_assert(ret_i < 2048);
+
+  // TODO: SSL_CTX_use_certificate_chain_file ?
+  if (SSL_CTX_use_certificate_file(tls_u, pub_c, SSL_FILETYPE_PEM) <= 0) {
+    uL(fprintf(uH, "https: failed to load certificate\n"));
+    // c3_assert(0);
+    return 0;
+  }
+
+  if (SSL_CTX_use_PrivateKey_file(tls_u, pir_c, SSL_FILETYPE_PEM) <= 0 ) {
+    uL(fprintf(uH, "https: failed to load private key\n"));
+    // c3_assert(0);
+    return 0;
+  }
+
+  return tls_u;
 }
 
 /* _http_write_ports_file(): update .http.ports
@@ -758,7 +819,7 @@ _http_write_ports_file(c3_c *pax_c)
 
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
     dprintf(por_i, "%u %s %s\n", htp_u->por_w,
-                   (c3y == htp_u->sec) ? "assumed-secure" : "insecure",
+                   (c3y == htp_u->sec) ? "secure" : "insecure",
                    (c3y == htp_u->lop) ? "loopback" : "public");
   }
 
@@ -872,6 +933,8 @@ u3_http_io_init()
     htp_u->nex_u = sev_u;
     sev_u = htp_u;
   }
+
+  tls_u = _http_init_tls();
 
   // XX why is this here?
   u3_Host.ctp_u.coc_u = 0;
