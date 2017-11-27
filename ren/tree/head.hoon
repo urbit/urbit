@@ -41,7 +41,6 @@
           ;link(type "text/css", rel "stylesheet", href "/===/web/lib/css/codemirror.css");
           ;link(type "text/css", rel "stylesheet", href "/===/web/tree/main.css");
         ==
-    ::;link(type "text/css", rel "stylesheet", href "http://localhost:8000/docs/pub/tree/main.css");
     ;script(type "text/javascript", src "{(cdnjs "jquery/2.1.3/jquery")}");
     ;script(type "text/javascript", src "{(maxcdn "bootstrap/3.3.6/js/bootstrap")}");
     ;script(type "text/javascript", src "{(cdnjs "lodash.js/2.4.1/lodash")}");
