@@ -373,6 +373,18 @@
         return ret;
       }
 
+      case c3__docs: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _play_used();
+      {
+        u3_noun boc = _play_x(van, sut, q_gen);
+        u3_noun hep = u3nc(u3_nul, u3k(p_gen));
+        u3_noun ret = u3qf_help(hep, boc);
+
+        u3z(hep);
+        u3z(boc);
+        return ret;
+      }
+
       case c3__ktts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
