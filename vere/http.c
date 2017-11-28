@@ -591,30 +591,24 @@ _http_respond(c3_l sev_l, c3_l coq_l, c3_l seq_l, u3_noun rep)
   u3_http* htp_u;
   u3_hcon* hon_u;
   u3_hreq* req_u;
+  c3_w bug_w = u3C.wag_w & u3o_verbose;
 
   if ( !(htp_u = _http_serv_find(sev_l)) ) {
-    if ( (u3C.wag_w & u3o_verbose) ) {
+    if ( bug_w ) {
       uL(fprintf(uH, "http: server not found: %x\r\n", sev_l));
     }
-    u3z(rep);
-    return;
   }
-  if ( !(hon_u = _http_conn_find(htp_u, coq_l)) ) {
-    if ( (u3C.wag_w & u3o_verbose) ) {
+  else if ( !(hon_u = _http_conn_find(htp_u, coq_l)) ) {
+    if ( bug_w ) {
       uL(fprintf(uH, "http: connection not found: %x/%d\r\n", sev_l, coq_l));
     }
-    u3z(rep);
-    return;
   }
-  if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
-    if ( (u3C.wag_w & u3o_verbose) ) {
+  else if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
+    if ( bug_w ) {
       uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n", sev_l, coq_l, seq_l));
     }
-    u3z(rep);
-    return;
   }
-
-  {
+  else {
     u3_noun p_rep, q_rep, r_rep;
 
     if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) {
