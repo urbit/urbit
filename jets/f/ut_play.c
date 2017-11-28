@@ -377,7 +377,7 @@
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, q_gen);
-        u3_noun hep = u3nc(u3_nul, u3k(p_gen));
+        u3_noun hep = u3nc(c3__docs, u3k(p_gen));
         u3_noun ret = u3qf_help(hep, boc);
 
         u3z(hep);
