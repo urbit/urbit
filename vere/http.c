@@ -108,11 +108,11 @@ _http_vec_from_octs(u3_noun oct)
     vec_u->len = 0;
   }
   else {
-    // XX bails
-    // if ( !_(u3a_is_cat(u3t(oct))) ) {
-    //   //  2GB max
-    //   u3m_bail(c3__fail); return 0;
-    // }
+    // XX c3n == ?
+    if ( !_(u3a_is_cat(u3h(u3t(oct)))) ) {
+      //  2GB max
+      u3m_bail(c3__fail); return 0;
+    }
 
     vec_u->len = u3h(u3t(oct));
     vec_u->base = c3_malloc(vec_u->len);
