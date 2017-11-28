@@ -5903,6 +5903,10 @@
 ++  pock  (pair axis nock)                              ::  changes
 ++  port  (each palo (pair type nock))                  ::  successful match
 ++  root  hoon                                          ::  produce model
+++  tent                                                ::  model builder
+          $%  {$| p/wing q/tent r/(list tile)}          ::  ~(p q r...)
+              {$& p/(list wing)}                        ::  a.b:c.d
+          ==                                            ::
 ++  tiki                                                ::  test case
           $%  {$& p/(unit term) q/wing}                 ::  simple wing
               {$| p/(unit term) q/hoon}                 ::  named wing
@@ -5958,7 +5962,7 @@
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
-    {$help p/what q/hoon}                               ::  annotate image
+    {$docs p/(pair cord (list sect)) q/hoon}            ::  annotate image
     {$halo p/what q/root}                               ::  annotate model
     {$knit p/(list woof)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
@@ -6108,7 +6112,7 @@
               {$core p/type q/coil}                     ::  object
               {$face p/{p/what q/$@(term tune)} q/type} ::  namespace (new)
               {$fork p/(set type)}                      ::  union
-              {$help p/what q/type}                     ::  documentation
+              {$help p/writ q/type}                     ::  description
               {$hold p/type q/hoon}                     ::  lazy evaluation
           ==                                            ::
 ++  tone  $%  {$0 p/*}                                  ::  success
@@ -6143,13 +6147,21 @@
               def/(map term (pair cord (list sect)))    ::  definitions
               use/(set term)                            ::  defs used
           ==                                            ::
-++  what  (unit (pair cord (list sect)))                ::  help slogan/sections
+++  what  (unit (pair cord (list sect)))                ::  help slogan/section
 ++  wing  (list limb)                                   ::  search path
 ++  worm                                                ::  compiler cache
   $:  nes/(set ^)                                       ::  ++nest
       pay/(map (pair type hoon) type)                   ::  ++play
       mit/(map (pair type hoon) (pair type nock))       ::  ++mint
   ==                                                    ::
+++  writ                                                ::  type annotation
+          $%  {$docs p/cord q/(list sect)}              ::  description
+              {$made p/type q/tile}                     ::  construction
+          ::  $mark                                     ::  described as mark?
+          ::  $mime                                     ::  described as mime:
+          ::  $json                                     ::  json schema?
+          ::  
+          ==
 --
 ::                                                      ::
 ::::  5: layer five                                     ::
@@ -6188,7 +6200,7 @@
 ::
 ++  help
   ~/  %help
-  |=  {p/what q/type}
+  |=  {p/writ q/type}
   ^-  type
   ?:  =(%void q)
     %void
@@ -6480,7 +6492,7 @@
   ++  hail
     |=  gen/hoon
     ^-  hoon
-    ?~(wat gen [%help wat gen])
+    ?~(wat gen [%docs u.wat gen])
   ::
   ++  home  |=(gen/hoon ^-(hoon ?:(=(1 gom) gen [%tsgr [%$ gom] gen])))
   ::::
@@ -6904,6 +6916,29 @@
       {@ *}              =+(neg=open ?:(=(gen neg) [%0 ~] $(gen neg)))
       {^ *}              =+  toe=[$(gen p.gen) $(gen q.gen)]
                          ?:(=(toe [[%0 ~] [%0 ~]]) [%0 ~] [%2 toe])
+    ==
+  ++  bent
+    |-  ^-  (list wing)
+    ?+  gen  !!
+      {$$ *}     [[[%& p.gen] ~] ~]
+      {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
+      {$tsgl *}  $(gen open)
+      {$tsgr *}  (weld $(gen p.gen) $(gen q.gen))
+      {$wing *}  [p.gen ~]
+      {$limb *}  [[p.gen ~] ~]
+    ==                 
+  ::
+  ++  bawl
+    ~|  %bawl-failure
+    ~|  [%bawl gen]
+    |-  ^-  tent
+    ?+  gen   [%& bent]
+      {$cnsg *}  [%| p.gen $(gen q.gen) (turn r.gen |=(hoon boil(gen +<)))]
+      {$cnhp *}  $(gen open)
+      {$cnkt *}  $(gen open)
+      {$cnls *}  $(gen open)
+      {$cndt *}  $(gen open)
+      {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
     ==
   ::
   ++  bile
@@ -7345,6 +7380,7 @@
         $base  (lead -.gen %.(+.gen noop))
         $bunt  (lead -.gen %.(+.gen expr))
         $bust  (lead -.gen %.(+.gen noop))
+        $docs  (lead -.gen %.(+.gen nexp))
         $dbug  (lead -.gen %.(+.gen nexp))
         $hand  (lead -.gen %.(+.gen noop))
         $knit  (lead -.gen %.(+.gen (moto bark)))
@@ -7405,7 +7441,6 @@
         $ktts  (lead -.gen %.(+.gen nexp))
         $ktwt  (lead -.gen %.(+.gen expr))
         $halo  (lead -.gen %.(+.gen nexp))
-        $help  (lead -.gen %.(+.gen nexp))
         $sgbr  (lead -.gen %.(+.gen dubs))
         $sgcb  (lead -.gen %.(+.gen dubs))
         $crap  (lead -.gen %.(+.gen (raid expr)))
@@ -8454,9 +8489,9 @@
         {$tune *}  [(face p.gen sut) [%0 %1]]
         {$ktwt *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
     ::
-        {$help *}
+        {$docs *}
       =+  hum=$(gen q.gen)
-      [(help p.gen p.hum) q.hum]
+      [(help [%docs p.gen] p.hum) q.hum]
     ::
         {$sgzp *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
         {$sggr *}
@@ -8623,8 +8658,9 @@
         {$ktwt *}
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) (wrap(sut q.vat) %lead)])
     ::
-        {$help *}
-      =+(vat=$(gen q.gen) [(help p.gen p.vat) (help p.gen q.vat)])
+        {$docs *}
+      =+  vat=$(gen q.gen) 
+      [(help [%docs p.gen] p.vat) (help [%docs p.gen] q.vat)])
     ::
         {$ktsg *}  $(gen p.gen)
         {$sgzp *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
@@ -8987,7 +9023,7 @@
       {$ktsg *}  $(gen p.gen)
       {$ktts *}  (conk(sut $(gen q.gen)) p.gen)
       {$ktwt *}  (wrap(sut $(gen p.gen)) %lead)
-      {$help *}  (help p.gen $(gen q.gen))
+      {$docs *}  (help [%docs p.gen] $(gen q.gen))
       {$sgzp *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       {$sggr *}  $(gen q.gen)
       {$tsgr *}   $(gen q.gen, sut $(gen p.gen))
