@@ -19,24 +19,24 @@
 ::
 =+  compiler-source=.^(@t %cx (welp sys /hoon/hoon))
 ::
-::  compiler-twig: compiler as hoon expression
+::  compiler-hoon: compiler as hoon expression
 ::
 ~&  %ivory-parsing
-=+  compiler-twig=(ream compiler-source)
+=+  compiler-hoon=(ream compiler-source)
 ~&  %ivory-parsed
 ::
 ::  arvo-source: hoon source file producing arvo kernel, `sys/arvo`
 ::
 =+  arvo-source=.^(@t %cx (welp sys /arvo/hoon))
 ::
-::  whole-twig: arvo within compiler
+::  whole-hoon: arvo within compiler
 ::
-=+  whole-twig=`twig`[%tsgr compiler-twig [%tsgr [%$ 7] (ream arvo-source)]]
+=+  whole-hoon=`hoon`[%tsgr compiler-hoon [%tsgr [%$ 7] (ream arvo-source)]]
 ::
 ::  compile the whole schmeer
 ::
 ~&  %ivory-compiling
-=+  whole-formula=q:(~(mint ut %noun) %noun whole-twig)
+=+  whole-formula=q:(~(mint ut %noun) %noun whole-hoon)
 ~&  %ivory-compiled
 ::
 whole-formula
