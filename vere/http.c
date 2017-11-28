@@ -49,9 +49,6 @@ static void _http_conn_unlink(u3_hcon* hon_u);
 
 static const c3_i TCP_BACKLOG = 16;
 
-// XX put this on u3_host ?
-static h2o_globalconf_t fig_u;
-
 // XX u3_Host.tls_u ?
 static SSL_CTX* tls_u = 0;
 
@@ -627,6 +624,10 @@ _http_respond(c3_l sev_l, c3_l coq_l, c3_l seq_l, u3_noun rep)
 static void
 _http_init_h2o(u3_http* htp_u)
 {
+  htp_u->fig_u = c3_malloc(sizeof(*htp_u->fig_u));
+  memset(htp_u->fig_u, 0, sizeof(*htp_u->fig_u));
+  h2o_config_init(htp_u->fig_u);
+
   // wrapped for server backlink (wrapper unnecessary, just an example)
   htp_u->ctx_u = c3_malloc(sizeof(h2o_ctx_wrap));
   memset(htp_u->ctx_u, 0, sizeof(h2o_ctx_wrap));
@@ -641,14 +642,14 @@ _http_init_h2o(u3_http* htp_u)
   memset(htp_u->cep_u, 0, sizeof(*htp_u->cep_u));
 
   htp_u->cep_u->ctx = (h2o_context_t*)htp_u->ctx_u;
-  htp_u->cep_u->hosts = fig_u.hosts;
+  htp_u->cep_u->hosts = htp_u->fig_u->hosts;
 
   if ( c3y == htp_u->sec ) {
     htp_u->cep_u->ssl_ctx = tls_u;
   }
 
   // XX read name from server?
-  htp_u->hos_u = h2o_config_register_host(&fig_u,
+  htp_u->hos_u = h2o_config_register_host(htp_u->fig_u,
                                           h2o_iovec_init(H2O_STRLIT("default")),
                                           htp_u->por_w);
 
@@ -661,7 +662,7 @@ _http_init_h2o(u3_http* htp_u)
   // han_u->on_context_dispose
   // han_u->dispose
 
-  h2o_context_init((h2o_context_t*)htp_u->ctx_u, u3L, &fig_u);
+  h2o_context_init((h2o_context_t*)htp_u->ctx_u, u3L, htp_u->fig_u);
 }
 
 /* _http_start(): start http server.
@@ -906,9 +907,6 @@ void
 u3_http_io_talk()
 {
   u3_http* htp_u;
-
-  // XX "global" per server?
-  h2o_config_init(&fig_u);
 
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
     _http_start(htp_u);

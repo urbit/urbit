@@ -92,6 +92,7 @@
     */
       typedef struct _u3_http {
         uv_tcp_t         wax_u;             //  server stream handler
+        h2o_globalconf_t* fig_u;            //  h2o global config
         h2o_context_t*   ctx_u;             //  h2o ctx
         h2o_accept_ctx_t* cep_u;            //  h2o accept ctx (wat for?)
         h2o_hostconf_t*  hos_u;             //  h2o host config
