@@ -45,6 +45,7 @@ endif
 ifneq (,$(wildcard /usr/local/opt/openssl/.))
   OPENSSLINC?=/usr/local/opt/openssl/include
   OPENSSLLIB?=/usr/local/opt/openssl/lib
+  OPENSSLROOT?=/usr/local/opt/openssl/
 endif
 
 # can't have empty -I or -L options due to whitespace sensitivity
@@ -101,6 +102,8 @@ endif
 
 LIBUV_VER=libuv-v1.7.5
 
+LIBH2O_VER=h2o-2.2.3
+
 LIBUV_CONFIGURE_OPTIONS=CC=$(CC)
 
 # NOTFORCHECKIN - restore -O3
@@ -121,7 +124,7 @@ CFLAGS+= $(COSFLAGS) -ffast-math \
 	-Ioutside/scrypt \
 	-Ioutside/softfloat-3/source/include \
 	-Ioutside/murmur3 \
-	-Ioutside/h2o-2.2.3/include \
+	-Ioutside/$(LIBH2O_VER)/include \
 	$(DEFINES) \
 	$(MDEFINES)
 
@@ -412,7 +415,9 @@ LIBUV_MAKEFILE2=outside/$(LIBUV_VER)/config.log
 
 LIBUV=outside/$(LIBUV_VER)/.libs/libuv.a
 
-LIBH2O=outside/h2o-2.2.3/libh2o.a
+LIBH2O_MAKEFILE=outside/$(LIBH2O_VER)/Makefile
+
+LIBH2O=outside/$(LIBH2O_VER)/libh2o.a
 
 LIBED25519=outside/ed25519/ed25519.a
 
@@ -462,9 +467,12 @@ $(LIBUV_MAKEFILE2): $(LIBUV_MAKEFILE)
 $(LIBUV): $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2)
 	$(MAKE) -C outside/$(LIBUV_VER) all-am -j1
 
-# cmake -DWITH_MRUBY=off -DWITH_BUNDLED_SSL=off -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
-$(LIBH2O):
-	$(MAKE) -C outside/h2o-2.2.3 libh2o
+# TODO: set OPENSSLROOT on all platforms? Or pass conditionally?
+$(LIBH2O_MAKEFILE):
+	cd outside/$(LIBH2O_VER) ; cmake -DWITH_MRUBY=off -DWITH_BUNDLED_SSL=off -DOPENSSL_ROOT_DIR=$(OPENSSLROOT)
+
+$(LIBH2O): $(LIBH2O_MAKEFILE)
+	$(MAKE) -C outside/$(LIBH2O_VER) libh2o
 
 $(LIBED25519):
 	$(MAKE) -C outside/ed25519
