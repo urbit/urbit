@@ -1212,7 +1212,7 @@
       ::
       ++  eval                                          ::  run
         |=  {txt/cord exe/hoon}
-        =>  |.([(sell (slap (slop sh-hoon-head seed) exe))]~)
+        =>  |.([(sell (slap (slop sh-hoon-head seed) exe))]~)  
         =+  tan=p:(mule .)
         (say [%fat tank+tan exp+txt] ~)
       ::

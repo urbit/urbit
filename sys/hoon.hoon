@@ -10,40 +10,46 @@
 |%
 ++  hoon-version  +
 --  =>
-::                                                      ::
-::::    1: layer one                                    ::
-  ::                                                    ::
-  ::      1a: basic arithmetic                          ::
-  ::      1b: tree addressing                           ::
-  ::      1c: molds and mold builders                   ::
-  ::
 ~%  %one  +  ~
+:>  #  %base
+:>
+:>    basic mathematical operations
 |%
-::                                                      ::
-::::    1a: unsigned arithmetic                         ::
-  ::
-++  add                                                 ::  unsigned addition
+:>  #  %math
+:>    unsigned arithmetic
++|
+++  add
   ~/  %add
-  :>  produce the sum of a and b
+  :>  unsigned addition
+  :>
+  :>  a: augend
+  :>  b: addend
   |=  [a=@ b=@]
+  :>  sum
   ^-  @
   ?:  =(0 a)  b
   $(a (dec a), b +(b))
 ::
-++  dec                                                 ::  unsigned decrement
+++  dec
   ~/  %dec
-  |=  a/@
+  :>  unsigned decrement by one.
+  |=  a=@
   ~_  leaf+"decrement-underflow"
   ?<  =(0 a)
   =+  b=0
+  :>  decremented integer
   |-  ^-  @
   ?:  =(a +(b))  b
   $(b +(b))
 ::
-++  div                                                 ::  unsigned divide
+++  div
   ~/  %div
-  =+  [a=`@`1 b=`@`1]
-  |.
+  :>  unsigned divide
+  :>
+  :>  a: dividend
+  :>  b: divisor
+  |:  [a=`@`1 b=`@`1]
+  :>  quotient
   ^-  @
   ~_  leaf+"divide-by-zero"
   ?<  =(0 b)
@@ -52,32 +58,64 @@
   ?:  (lth a b)  c
   $(a (sub a b), c +(c))
 ::
-++  dvr                                                 ::  divide w/remainder
+++  dvr
   ~/  %dvr
-  |=  {a/@ b/@}
-  ^-  {p/@ q/@}
+  :>  unsigned divide with remainder
+  :>
+  :>  a: dividend
+  :>  b: divisor
+  |=  [a=@ b=@]
+  :>  p: quotient
+  :>  q: remainder
+  ^-  [p=@ q=@]
   [(div a b) (mod a b)]
 ::
-++  gte                                                 ::  unsigned greater/eq
+++  gte
   ~/  %gte
-  |=  {a/@ b/@}
+  :>    unsigned greater than or equals
+  :>
+  :>  returns whether {a >= b}.
+  :>
+  :>  a: left hand operand (todo: name)
+  :>  b: right hand operand
+  |=  [a=@ b=@]
+  :>  greater than or equal to?
   ^-  ?
   !(lth a b)
 ::
-++  gth                                                 ::  unsigned greater
+++  gth
   ~/  %gth
-  |=  {a/@ b/@}
+  :>    unsigned greater than
+  :>
+  :>  returns whether {a > b}
+  :>
+  :>  a: left hand operand (todo: name)
+  :>  b: right hand operand
+  |=  [a=@ b=@]
+  :>  greater than?
   ^-  ?
   !(lte a b)
 ::
-++  lte                                                 ::  unsigned less/eq
+++  lte
   ~/  %lte
-  |=  {a/@ b/@}
+  :>    unsigned less than or equals
+  :>
+  :>  returns whether {a >= b}.
+  :>
+  :>  a: left hand operand (todo: name)
+  :>  b: right hand operand
+  |=  [a=@ b=@]
+  :>  less than or equal to?
   |(=(a b) (lth a b))
 ::
-++  lth                                                 ::  unsigned less
+++  lth
   ~/  %lth
-  |=  {a/@ b/@}
+  :>    unsigned less than
+  :>
+  :>  a: left hand operand (todo: name)
+  :>  b: right hand operand
+  |=  [a=@ b=@]
+  :>  less than?
   ^-  ?
   ?&  !=(a b)
       |-
@@ -86,51 +124,74 @@
               $(a (dec a), b (dec b))
   ==  ==  ==
 ::
-++  max                                                 ::  unsigned maximum
+++  max
   ~/  %max
-  |=  {a/@ b/@}
+  :>  unsigned maximum
+  |=  [a=@ b=@]
+  :>  the maximum
   ^-  @
   ?:  (gth a b)  a
   b
 ::
-++  min                                                 ::  unsigned minimum
+++  min
   ~/  %min
-  |=  {a/@ b/@}
+  :>  unsigned minimum
+  |=  [a=@ b=@]
+  :>  the minimum
   ^-  @
   ?:  (lth a b)  a
   b
 ::
-++  mod                                                 ::  unsigned modulus
+++  mod
   ~/  %mod
+  :>  unsigned modulus
+  :>
+  :>  a: dividend
+  :>  b: divisor
   |:  [a=`@`1 b=`@`1]
+  :>  the remainder
   ^-  @
   ?<  =(0 b)
   (sub a (mul b (div a b)))
 ::
-++  mul                                                 ::  unsigned multiply
+++  mul
   ~/  %mul
+  :>  unsigned multiplication
+  :>
+  :>  a: multiplicand
+  :>  b: multiplier
   |:  [a=`@`1 b=`@`1]
+  :>  product
   ^-  @
   =+  c=0
   |-
   ?:  =(0 a)  c
   $(a (dec a), c (add b c))
 ::
-++  sub                                                 ::  subtract
+++  sub
   ~/  %sub
-  |=  {a/@ b/@}
+  :>  unsigned subtraction
+  :>
+  :>  a: minuend
+  :>  b: subtrahend
+  |=  [a=@ b=@]
   ~_  leaf+"subtract-underflow"
+  :>  difference
   ^-  @
   ?:  =(0 b)  a
   $(a (dec a), b (dec b))
-::                                                      ::
-::::  1b: tree addressing                               ::
-  ::                                                    ::
-  ::    cap, mas, peg                                   ::
-  ::
-++  cap                                                 ::  fragment head
+::
+:>  #  %tree
+:>
+:>    tree addressing
++|
+++  cap
   ~/  %cap
-  |=  a/@
+  :>    tree head
+  :>
+  :>  tests whether an `a` is in the head or tail of a noun. produces %2 if it
+  :>  is within the head, or %3 if it is within the tail.
+  |=  a=@
   ^-  ?($2 $3)
   ?-  a
     $2        %2
@@ -139,9 +200,13 @@
     *         $(a (div a 2))
   ==
 ::
-++  mas                                                 ::  fragment body
+++  mas
   ~/  %mas
-  |=  a/@
+  :>    axis within head/tail
+  :>
+  :>  computes the axis of `a` within either the head or tail of a noun
+  :>  (depends whether `a` lies within the the head or tail).
+  |=  a=@
   ^-  @
   ?-  a
     $1   !!
@@ -150,10 +215,14 @@
     *    (add (mod a 2) (mul $(a (div a 2)) 2))
   ==
 ::
-++  peg                                                 ::  fragment compose
+++  peg
   ~/  %peg
-  |=  {a/@ b/@}
+  :>    axis within axis
+  :>
+  :>  computes the axis of {b} within axis {a}.
+  |=  [a=@ b=@]
   ?<  =(0 a)
+  :>  a composed axis
   ^-  @
   ?-  b
     $1  a
@@ -161,26 +230,124 @@
     $3  +((mul a 2))
     *   (add (mod b 2) (mul $(b (div b 2)) 2))
   ==
-::                                                      ::
-::::  1c: ideal containers                              ::
-  ::                                                    ::
-  ::
-++  ache  |*({a/mold b/mold} $%({$| p/b} {$& p/a}))     ::  a or b, b default
-++  bloq  @                                             ::  bitblock, eg 3=byte
-++  each  |*({a/mold b/mold} $%({$& p/a} {$| p/b}))     ::  a or b, a default
-++  gate  $-(* *)                                       ::  generic mold
-++  list  |*(a/mold $@($~ {i/a t/(list a)}))            ::  nullterminated list
-++  lone  |*(a/mold {p/a})                              ::  1-tuple
-++  mold  gate                                          ::  normalizing gate
-++  pair  |*({a/mold b/mold} {p/a q/b})                 ::  2-tuple
-++  pole  |*(a/mold $@($~ {a (pole a)}))                ::  faceless list
-++  qual  |*  {a/mold b/mold c/mold d/mold}             ::  4-tuple
-          {p/a q/b r/c s/d}                             ::
-++  quip  |*({a/mold b/mold} {(list a) b})              ::  list-with for sip
-++  trap  |*(a/mold _|?(*a))                            ::  producer
-++  tree  |*(a/mold $@($~ {n/a l/(tree a) r/(tree a)})) ::  binary tree
-++  trel  |*({a/mold b/mold c/mold} {p/a q/b r/c})      ::  3-tuple
-++  unit  |*(a/mold $@($~ {$~ u/a}))                    ::  maybe
+::
+:>  #  %containers
+:>
+:>    the most basic of data types
++|
+++  bloq
+  :>    blocksize
+  :>
+  :>  a blocksize is the power of 2 size of an atom. ie, 3 is a byte as 2^3 is
+  :>  8 bits.
+  @
+::
+++  each
+  :>    either {a} or {b}, defaulting to {a}.
+  :>
+  :>  mold generator: produces a discriminated fork between two types,
+  :>  defaulting to {a}.
+  |*({a/mold b/mold} $%({$& p/a} {$| p/b}))
+::
+++  gate
+  :>    function
+  :>
+  :>  a core with one arm, `$`--the empty name--which transforms a sample noun
+  :>  into a product noun. If used dryly as a type, the subject must have a
+  :>  sample type of `*`.
+  $-(* *)
+::
+++  list
+  :>    null-terminated list
+  :>
+  :>  mold generator: produces a mold of a null-terminated list of the
+  :>  homogeneous type {a}.
+  |*(a/mold $@($~ {i/a t/(list a)}))
+::
+++  lone
+  :>    single item tuple
+  :>
+  :>  mold generator: puts the face of `p` on the passed in mold.
+  |*(a/mold {p/a})
+::
+++  mold
+  :>    normalizing gate
+  :>
+  :>  actually a type alias for gate.
+  gate
+::
+++  pair
+  :>    dual tuple
+  :>
+  :>  mold generator: produces a tuple of the two types passed in.
+  :>
+  :>  a: first type, labeled {p}
+  :>  b: second type, labeled {q}
+  |*({a/mold b/mold} {p/a q/b})
+::
+++  pole
+  :>    faceless list
+  :>
+  :>  like ++list, but without the faces {i} and {t}.
+  :>
+  :>  a: a mold for the item type.
+  |*(a/mold $@($~ {a (pole a)}))
+::
+++  qual
+  :>    quadruple tuple
+  :>
+  :>  mold generator: produces a tuple of the four types passed in.
+  :>
+  :>  a: first type, labeled {p}
+  :>  b: second type, labeled {q}
+  :>  c: third type, labeled {r}
+  :>  d: fourth type, labeled {s}
+  |*  {a/mold b/mold c/mold d/mold}
+  {p/a q/b r/c s/d}
+::
+++  quip
+  :>    pair of list of first and second
+  :>
+  :>  a common pattern in hoon code is to return a ++list of changes, along with
+  :>  a new state.
+  :>
+  :>  a: type of list item
+  :>  b: type of returned state
+  |*({a/mold b/mold} {(list a) b})
+::
+++  trap
+  :>    a core with one arm `$`
+  :>
+  :>  a: return type of the `$` arm.
+  |*(a/mold _|?(*a))
+::
+++  tree
+  :>    tree mold generator
+  :>
+  :>  a `++tree` can be empty, or contain a node of a type and
+  :>  left/right sub `++tree` of the same type. pretty-printed with `{}`.
+  :>
+  :>  a: type of tree node
+  |*(a/mold $@($~ {n/a l/(tree a) r/(tree a)})) ::  binary tree
+::
+++  trel
+  :>    triple tuple
+  :>
+  :>  mold generator: produces a tuple of the three types passed in.
+  :>
+  :>  a: first type, labeled {p}
+  :>  b: second type, labeled {q}
+  :>  c: third type, labeled {r}
+  |*({a/mold b/mold c/mold} {p/a q/b r/c})
+::
+++  unit
+  :>    maybe
+  :>
+  :>  mold generator: either `~` or `[~ u=a]` where `a` is the
+  :>  type that was passed in.
+  :>
+  :>  a: type when non-null
+  |*(a/mold $@($~ {$~ u/a}))
 --  =>
 ::                                                      ::
 ::::  2: layer two                                      ::
