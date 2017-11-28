@@ -649,7 +649,7 @@
       case c3__docs: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
-        u3_noun hep = u3nc(u3_nul, u3k(p_gen));
+        u3_noun hep = u3nc(c3__docs, u3k(p_gen));
         u3_noun hum = _mint_in(van, sut, gol, q_gen);
 
         u3_noun ret = u3nc(u3qf_help(hep, u3h(hum)),

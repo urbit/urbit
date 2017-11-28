@@ -615,7 +615,7 @@
       _mull_used();
       {
         u3_noun vat = _mull_in(van, sut, gol, dox, q_gen);
-        u3_noun hep = u3nc(u3_nul, u3k(p_gen));
+        u3_noun hep = u3nc(c3__docs, u3k(p_gen));
 
         u3_noun ret = u3nc(u3qf_help(hep, u3h(vat)),
                            u3qf_help(hep, u3t(vat)));
