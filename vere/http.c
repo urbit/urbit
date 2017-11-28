@@ -305,8 +305,10 @@ _http_handle_new_req(h2o_handler_t* han_u, h2o_req_t* rec_u)
   u3_weak recq = _http_req_to_httq(rec_u);
 
   if ( u3_none == recq ) {
-    // XX debug only
-    uL(fprintf(uH, "strange request\n"));
+    if ( (u3C.wag_w & u3o_verbose) ) {
+      uL(fprintf(uH, "strange %.*s request\n", (int)rec_u->method.len,
+                                               rec_u->method.base));
+    }
 
     static h2o_generator_t gen_u = {NULL, NULL};
     rec_u->res.status = 400;
