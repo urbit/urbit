@@ -399,8 +399,7 @@ _http_listen_cb(uv_stream_t* str_u, c3_i sas_i)
   u3_http* htp_u = (u3_http*)str_u;
 
   if ( 0 != sas_i ) {
-    // XX retrieve and print error?
-    uL(fprintf(uH, "http: listen_cb: ERROR %d\n", sas_i));
+    uL(fprintf(uH, "http: listen_cb: %s\n", uv_strerror(sas_i)));
   }
   else {
     _http_conn_new(htp_u);
