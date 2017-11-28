@@ -432,7 +432,7 @@ _http_listen_cb(uv_stream_t* str_u, c3_i sas_i)
 
   if ( 0 != sas_i ) {
     // XX retrieve and print error?
-    uL(fprintf(uH, "http: listen_cb: ERROR\n"));
+    uL(fprintf(uH, "http: listen_cb: ERROR %d\n", sas_i));
   }
   else {
     _http_conn_new(htp_u);
@@ -719,6 +719,7 @@ _http_start(h2htp* htp_u)
 
   if ( c3y == htp_u->sec && 0 == tls_u ) {
     uL(fprintf(uH, "secure server error %u: no tls config\n", htp_u->sev_l));
+    c3_assert(0);
   }
 
   uv_tcp_init(u3L, &htp_u->wax_u);
@@ -865,8 +866,7 @@ u3_http_ef_thou(c3_l     sev_l,
                 c3_l     seq_l,
                 u3_noun  rep)
 {
-  _http_respond(sev_l, coq_l, seq_l, u3k(rep));
-  u3z(rep);
+  _http_respond(sev_l, coq_l, seq_l, rep);
 }
 
 /* u3_http_io_init(): initialize http I/O.
