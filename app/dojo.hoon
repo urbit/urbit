@@ -736,7 +736,8 @@
         ::
             {$help *}
           =*  rest-type  (build-inspectable-recursively q.sut)
-          `[%view [%header p.sut (item-as-overview rest-type)]~]
+          ?>  ?=($docs -.p.sut)
+          `[%view [%header `+.p.sut (item-as-overview rest-type)]~]
         ::
             {$hold *}  $(sut (~(play ut p.sut) q.sut))
             $noun      ~
@@ -854,7 +855,7 @@
         |=  sut/type
         ?+  sut  ~
           {$core *}  q.r.q.sut
-          {$help *}  p.sut
+          {$help *}  ?>(?=($docs -.p.sut) `+.p.sut)
           {$hold *}  $(sut (~(play ut p.sut) q.sut))
         ==
       ::

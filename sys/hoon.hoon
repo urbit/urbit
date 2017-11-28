@@ -8660,7 +8660,7 @@
     ::
         {$docs *}
       =+  vat=$(gen q.gen) 
-      [(help [%docs p.gen] p.vat) (help [%docs p.gen] q.vat)])
+      [(help [%docs p.gen] p.vat) (help [%docs p.gen] q.vat)]
     ::
         {$ktsg *}  $(gen p.gen)
         {$sgzp *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
