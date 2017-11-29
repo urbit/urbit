@@ -358,18 +358,20 @@ logging.debug(['payload', json.dumps(payload)])
 PORT = ""
 
 if args.pier is None:
-  PORT = os.environ.get('LENS_PORT', 12321)
-  logging.warn("No pier specified, looking on port " + str(PORT))
+    PORT = os.environ.get('LENS_PORT', 12321)
+    if not os.environ.has_key('LENS_PORT'):
+        logging.warn("No pier or port specified, looking on port " + str(PORT))
 else:
-  with open(os.path.join(args.pier, ".http.ports")) as ports:
-    for line in ports:
-      if -1 != line.find("loopback"):
-        PORT = line.split()[0]
-        logging.info("Found port %s" % PORT)
-        break
-    if not PORT:
-      logging.error("Error reading port from .http.ports file")
-      sys.exit(1)
+    with open(os.path.join(args.pier, ".http.ports")) as ports:
+        for line in ports:
+            if -1 != line.find("loopback"):
+                PORT = line.split()[0]
+                logging.info("Found port %s" % PORT)
+                break
+
+        if not PORT:
+            logging.error("Error reading port from .http.ports file")
+            sys.exit(1)
                
 url = "http://localhost:%s" % PORT
 r = requests.post(url, data=json.dumps(payload))
