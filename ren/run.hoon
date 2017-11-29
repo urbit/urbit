@@ -3,6 +3,8 @@
 ::::  /hoon/run/ren
   ::
 /?    310
-/%    /!noun/
+/,  /ren/run  /~  ~|(%loop !!)
+    /         /%    /!noun/
+==
 ~&  run+-.-
 ~
