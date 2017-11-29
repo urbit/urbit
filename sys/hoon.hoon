@@ -11191,6 +11191,23 @@
           (stag %bcts ;~(plug sym ;~(pfix ;~(pose fas tis) wyde)))
           scab
         ==
+      :-  '='
+        ;~  pfix  tis
+          %+  sear
+            |=  hon/hoon
+            ^-  (unit hoon)      
+            %+  bind
+              |-  ^-  (unit term)
+              ?+  hon  ~
+                {$wing *}  ?~(p.hon ~ ?^(i.p.hon ~ `i.p.hon))
+                {$limb *}  `p.hon
+                {$dbug *}  $(hon ~(open ap hon))
+                {$tsgl *}  $(hon ~(open ap hon))
+                {$tsgr *}  $(hon q.hon)
+              ==
+            |=(term [%bcts +< hon])
+          wyde
+        ==
     ==
   ::
   ++  scat  !:
