@@ -9,9 +9,9 @@
 =,  space:userlib
 =,  format
 |%                                                      ::  ::
-++  kiln-part  {$kiln $0 kiln-pith}                     ::  kiln state
-++  kiln-pith                                           ::
-    $:  rem/(map desk kiln-desk)                        ::
+++  part  {$kiln $0 pith}                               ::  kiln state
+++  pith                                                ::  ::
+    $:  rem/(map desk per-desk)                         ::
         syn/(map kiln-sync {let/@ud ust/bone})          ::
         autoload-on/?                                   ::
         cur-hoon/@uvI                                   ::
@@ -19,7 +19,7 @@
         cur-zuse/@uvI                                   ::
         cur-vanes/(map @tas @uvI)                       ::
     ==                                                  ::
-++  kiln-desk                                           ::  per-desk state
+++  per-desk                                            ::  per-desk state
     $:  auto/?                                          ::  escalate on failure
         gem/germ                                        ::  strategy
         her/@p                                          ::  from ship
@@ -56,7 +56,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|=  {bowl:gall kiln-part}                              ::  main kiln work
+|=  {bowl:gall part}                                    ::  main kiln work
 ?>  =(src our)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
@@ -82,7 +82,7 @@
     --
 |_  moz/(list move)
 ++  abet                                                ::  resolve
-  [(flop moz) `kiln-part`+>+>->]
+  [(flop moz) `part`+<+.$]
 ::
 ++  emit  |=(card %_(+> moz [[ost +<] moz]))            ::  return card
 ++  emil                                                ::  return cards
@@ -406,9 +406,9 @@
 ::
 ++  work                                              ::  state machine
   |=  syd/desk
-  =+  ^-  kiln-desk
+  =+  ^-  per-desk
       %+  fall  (~(get by rem) syd)
-      =+  *kiln-desk
+      =+  *per-desk
       %_(- cas [%da now])
   |%
   ++  abet                                            ::  resolve

@@ -4,11 +4,7 @@
 /?    310                                               ::  zuse version
 /+  sole, talk,                                         ::  libraries
     hood-helm, hood-kiln, hood-drum, hood-write, hood-womb :: "libraries"
-[. hood-helm hood-kiln hood-drum]
 |%
-++  womb  hood-womb
-++  write  hood-write
-::
 ++  hood-sample
   =>  |%
       +=  part  [%sample %0 pith]
@@ -36,21 +32,21 @@
       |*  hed/hood-head                                 ::
       |=  paw/hood-part                                 ::
       ?-  hed                                           ::
-        $drum  ?>(?=($drum -.paw) `drum-part`paw)       ::
-        $helm  ?>(?=($helm -.paw) `helm-part`paw)       ::
-        $kiln  ?>(?=($kiln -.paw) `kiln-part`paw)       ::
-        $womb  ?>(?=($womb -.paw) `part:womb`paw)       ::
-        $write  ?>(?=($write -.paw) `part:write`paw)    ::
+        $drum  ?>(?=($drum -.paw) `part:hood-drum`paw)  ::
+        $helm  ?>(?=($helm -.paw) `part:hood-helm`paw)  ::
+        $kiln  ?>(?=($kiln -.paw) `part:hood-kiln`paw)  ::
+        $womb  ?>(?=($womb -.paw) `part:hood-womb`paw)  ::
+        $write  ?>(?=($write -.paw) `part:hood-write`paw) ::
       ==                                                ::
     ++  hood-head  _-:*hood-part                        ::
     ++  hood-make                                       ::
       |*  {our/@p hed/hood-head}                        ::
       ?-  hed                                           ::
-        $drum  (drum-make our)                          ::
-        $helm  *helm-part                               ::
-        $kiln  *kiln-part                               ::
-        $womb  *part:womb                               ::
-        $write  *part:write                             ::
+        $drum  (make:hood-drum our)                     ::
+        $helm  *part:hood-helm                          ::
+        $kiln  *part:hood-kiln                          ::
+        $womb  *part:hood-womb                          ::
+        $write  *part:hood-write                        ::
       ==                                                ::
     ++  hood-part-old  hood-part                        ::
     ++  hood-port                                       ::
@@ -58,11 +54,11 @@
       paw                                               ::
     ::                                                  ::
     ++  hood-part                                       ::
-      $%  {$drum $2 drum-pith-2}                        ::
-          {$helm $0 helm-pith}                          ::
-          {$kiln $0 kiln-pith}                          ::
-          {$womb $1 pith:womb}                          ::
-          {$write $0 pith:write}                        ::
+      $%  {$drum $2 pith-2:hood-drum}                   ::
+          {$helm $0 pith:hood-helm}                     ::
+          {$kiln $0 pith:hood-kiln}                     ::
+          {$womb $1 pith:hood-womb}                     ::
+          {$write $0 pith:hood-write}                   ::
       ==                                                ::
     --                                                  ::
 ::                                                      ::  ::
@@ -108,7 +104,7 @@
 ::
 ++  poke-hood-load
   |=  dat/hood-part
-  ?>  =(our src)
+  ?>  =(our.hid src.hid)
   ~&  loaded+-.dat
   [~ %_(+> lac (~(put by lac) -.dat dat))]
 ::
@@ -140,7 +136,7 @@
 ++  note-helm                 (wrap take-note):from-helm
 ++  onto-drum                 (wrap take-onto):from-drum
 ++  peer-drum                 (wrap peer):from-drum
-++  peek-x-womb               peek-x:(womb hid (able %womb))
+++  peek-x-womb               peek-x:(hood-womb hid (able %womb))
 ++  peer-scry-x-womb          (wrap peer-scry-x):from-womb
 ++  poke-atom                 (wrap poke-atom):from-helm
 ++  poke-dill-belt            (wrap poke-dill-belt):from-drum
