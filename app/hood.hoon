@@ -8,6 +8,20 @@
 |%
 ++  womb  hood-womb
 ++  write  hood-write
+::
+++  hood-sample
+  =>  |%
+      +=  part  [%sample %0 pith]
+      +=  pith  ~
+      ::
+      +=  move  [bone card]
+      +=  card  $%  [%fake _!!]
+                ==
+      --
+  |=  [bowl:gall own=part]
+  |_  moz=(list move)
+  ++  abet  [(flop moz) own]
+  --
 --
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -103,7 +117,7 @@
 ++  coup-helm-ask   (wrap coup-ask):from-helm
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  from-lib
-  |*  _[%helm ..$ _abet]:(hood-helm)
+  |*  _[%sample ..$ _abet]:(hood-sample)
   =>  .(+< [identity start finish]=+<)
   =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
   |*  handle/_finish
