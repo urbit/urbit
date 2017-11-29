@@ -6543,10 +6543,16 @@
         {$kelp *}
       %-  hail
       =.  wat  ~
-      |-  ^-  hoon
-      ?~  t.p.sec
-        ^$(sec i.p.sec)
-      [%wtcl [%bust %bean] $(p.sec t.p.sec) ^$(sec i.p.sec)]
+      :+  %ktls
+        |-  ^-  hoon
+        ?~  t.p.sec
+          ^$(sec i.p.sec)
+        [%wtcl [%bust %bean] $(p.sec t.p.sec) ^$(sec i.p.sec)]
+      %=    $
+          sec
+        |-  ^-  tile 
+        ?~(t.p.sec i.p.sec $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec))
+      ==
     ::
         {$leaf *}
       (hail [%rock p.sec q.sec])
@@ -11186,11 +11192,6 @@
           scab
           (cold [%base %cell] ket)
         ==
-      :-  ['a' 'z']
-        ;~  pose
-          (stag %bcts ;~(plug sym ;~(pfix ;~(pose fas tis) wyde)))
-          scab
-        ==
       :-  '='
         ;~  pfix  tis
           %+  sear
@@ -11199,6 +11200,7 @@
             %+  bind
               |-  ^-  (unit term)
               ?+  hon  ~
+                {$bcsm *}  $(hon p.hon)
                 {$wing *}  ?~(p.hon ~ ?^(i.p.hon ~ `i.p.hon))
                 {$limb *}  `p.hon
                 {$dbug *}  $(hon ~(open ap hon))
@@ -11207,6 +11209,11 @@
               ==
             |=(term [%bcts +< hon])
           wyde
+        ==
+      :-  ['a' 'z']
+        ;~  pose
+          (stag %bcts ;~(plug sym ;~(pfix ;~(pose fas tis) wyde)))
+          scab
         ==
     ==
   ::
