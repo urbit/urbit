@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/drum/lib                                    ::  ::
+::::  /hoon/drum/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
 /-    sole

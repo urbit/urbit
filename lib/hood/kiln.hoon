@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/kiln/lib                                    ::  ::
+::::  /hoon/kiln/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?  310                                                 ::  version
 ::                                                      ::  ::

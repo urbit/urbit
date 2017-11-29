@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/helm/lib                                    ::  ::
+::::  /hoon/helm/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
 /-    sole

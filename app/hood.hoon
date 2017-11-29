@@ -2,8 +2,13 @@
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  zuse version
-/+  sole, talk, helm, kiln, drum, write, womb           ::  libraries
-[. helm kiln drum]                                      
+/+  sole, talk,                                         ::  libraries
+    hood-helm, hood-kiln, hood-drum, hood-write, hood-womb :: "libraries"
+[. hood-helm hood-kiln hood-drum]
+|%
+++  womb  hood-womb
+++  write  hood-write
+--
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -98,7 +103,7 @@
 ++  coup-helm-ask   (wrap coup-ask):from-helm
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  from-lib
-  |*  _[%helm ..$ _abet]:(helm)
+  |*  _[%helm ..$ _abet]:(hood-helm)
   =>  .(+< [identity start finish]=+<)
   =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
   |*  handle/_finish
@@ -106,11 +111,11 @@
   =.  +>.handle  (start hid (able identity))
   (ably (handle +<))
 ::
-++  from-drum  (from-lib %drum [..$ _se-abet]:(drum))
-++  from-helm  (from-lib %helm [..$ _abet]:(helm))
-++  from-kiln  (from-lib %kiln [..$ _abet]:(kiln))
-++  from-womb  (from-lib %womb [..$ _abet]:(womb))
-++  from-write  (from-lib %write [..$ _abet]:(write))
+++  from-drum  (from-lib %drum [..$ _se-abet]:(hood-drum))
+++  from-helm  (from-lib %helm [..$ _abet]:(hood-helm))
+++  from-kiln  (from-lib %kiln [..$ _abet]:(hood-kiln))
+++  from-womb  (from-lib %womb [..$ _abet]:(hood-womb))
+++  from-write  (from-lib %write [..$ _abet]:(hood-write))
 ::
 ++  init-helm                 |=({way/wire *} [~ +>])
 ++  made-write                (wrap made):from-write
