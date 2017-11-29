@@ -96,15 +96,17 @@
 ++  list-cores
   |=  a/path  ^-  (list spur)
   =/  sup  (flop a)
-  %-  sort  :_  |=({a/spur b/spur} (aor (flop a) (flop b)))
   |-  ^-  (list spur)
-  %-  ~(rep by dir:.^(arch %cy (en-beam now-beak sup)))
-  |=  [[a=knot ~] b=(list spur)]  ^+  b
+  %-  zing
+  %+  turn
+    =-  (sort ~(tap by -) aor)
+    dir:.^(arch %cy (en-beam now-beak sup))
+  |=  [a=knot ~]  ^-  (list spur)
   =.  sup  [a sup]
-  ?^  [fil:.^(arch %cy (en-beam now-beak [%hoon sup]))]
-    ~&  (flop sup)
-    [sup (weld ^$ b)]
-  (weld ^$ b)
+  ?~  [fil:.^(arch %cy (en-beam now-beak [%hoon sup]))]
+    ^$
+  ~&  (flop sup)
+  [sup ^$]
 ::
 ++  now-beak  %_(byk r [%da now])
 ++  list-marks
