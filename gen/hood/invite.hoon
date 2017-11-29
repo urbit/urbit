@@ -6,12 +6,12 @@
 ::
 ::::
   ::
-/+  womb
-=*  invite     invite:womb
-=*  reference  reference:womb
+/+  hood-womb
+=*  invite     invite:hood-womb
+=*  reference  reference:hood-womb
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{who/@t $~} ref/(unit (each ship mail:womb)) sta/@}
+        {{who/@t $~} ref/(unit (each ship mail:hood-womb)) sta/@}
     ==
 :-  %womb-invite
 ^-  {cord reference invite}

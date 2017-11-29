@@ -2,12 +2,12 @@
 ::::  /hoon/stat-all/womb/mar
   ::
 /?    310
-/+    womb, old-zuse
+/+    hood-womb, old-zuse
 ::
 ::::  ~fyr
   ::
-=*  invite     invite:womb
-=*  reference  reference:womb
+=*  invite     invite:hood-womb
+=*  reference  reference:hood-womb
 =,  old-zuse
 |_  {cord reference invite}
 ::

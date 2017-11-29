@@ -3,7 +3,7 @@
 ::::  /hoon/transfer/hood/gen
   ::
 /?    310
-/+    womb
+/+    hood-womb
 ::
 ::::
   ::
@@ -13,5 +13,5 @@
     ==
 :-  %womb-reinvite
 =+  [him=(scot %p p.bec) cas=(scot %da now) key=(scot %p pas)]
-=+  [pla=planets sta=stars]:.^(balance:womb %gx /[him]/hood/[cas]/womb/balance/[key])
+=+  [pla=planets sta=stars]:.^(balance:hood-womb %gx /[him]/hood/[cas]/womb/balance/[key])
 [pas who pla sta "Email updated, new passcode" "Email correction"]
