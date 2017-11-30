@@ -457,9 +457,18 @@
       document.location = url
     }
     urb.redir = function(ship){ 
-      var location = new URL(document.location)
-      location.pathname = location.pathname.replace(/^\/~~|\/~\/as\/any/,'/~/as/~'+ship)
-      urb.redirTo(location)
+      if(ship){
+        var location = new URL(document.location)
+        location.pathname = location.pathname.replace(/^\/~~|\/~\/as\/any/,'/~/as/~'+ship)
+        urb.redirTo(location)
+      }
+      else urb.redirTo(
+        document.location.hash.match(/#[^?]+/)[0].slice(1) +
+        document.location.pathname.replace(
+          /^\/~\/am\/[^/]+/,
+          '/~/as/~' + urb.ship) +
+        document.location.search
+      )
     }
     if(urb.foreign && urb.auth.indexOf(urb.ship) !== -1){
       req("/~/auth.json?PUT",
@@ -934,8 +943,11 @@
     (~(has in aut.u.cyz) our)
   ::
   ++  ses-ya  |=(ses/hole ~(. ya ses (~(got by wup) ses)))
-  ++  our-host  `hart`[& ~ %& /org/urbit/(rsh 3 1 (scot %p our))]
-  ::                  [| [~ 8.443] `/localhost]       :: XX testing
+  ++  our-host
+    ^-  hart
+    :: XX get actual -F flag value
+    ?:  [fake=|]  [| [~ 8.443] &+/localhost]
+    `hart`[& ~ %& /org/urbit/(rsh 3 1 (scot %p our))]
   ::
   ++  eyre-them
     |=  {tea/whir vax/vase}
