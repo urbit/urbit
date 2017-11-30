@@ -92,13 +92,7 @@
   ~&  loaded+-.dat
   [~ %_(+> lac (~(put by lac) -.dat dat))]
 ::
-++  coup-drum-phat    (wrap take-coup-phat):from-drum
-++  coup-helm-hi      (wrap coup-hi):from-helm
-++  coup-helm-ask     (wrap coup-ask):from-helm
-++  coup-kiln-fancy   (wrap take-coup-fancy):from-kiln
-++  coup-kiln-reload  (wrap take-coup-reload):from-kiln
-++  coup-kiln-spam    (wrap take-coup-spam):from-kiln
-++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
+::
 ++  from-lib
   |*  _[%sample ..$ _abet]:(hood-sample)
   =>  .(+< [identity start finish]=+<)
@@ -113,7 +107,16 @@
 ++  from-kiln  (from-lib %kiln [..$ _abet]:(hood-kiln))
 ++  from-womb  (from-lib %womb [..$ _abet]:(hood-womb))
 ++  from-write  (from-lib %write [..$ _abet]:(hood-write))
-::
+::                                                      ::  ::
+::::                                                    ::  ::
+  ::                                                    ::  ::
+++  coup-drum-phat            (wrap take-coup-phat):from-drum
+++  coup-helm-hi              (wrap coup-hi):from-helm
+++  coup-helm-ask             (wrap coup-ask):from-helm
+++  coup-kiln-fancy           (wrap take-coup-fancy):from-kiln
+++  coup-kiln-reload          (wrap take-coup-reload):from-kiln
+++  coup-kiln-spam            (wrap take-coup-spam):from-kiln
+++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  init-helm                 |=({way/wire *} [~ +>])
 ++  made-write                (wrap made):from-write
 ++  made-kiln                 (wrap take-made):from-kiln
