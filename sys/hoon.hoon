@@ -6498,6 +6498,7 @@
   ::::
   ++  bunt
     |-  ^-  hoon
+    ~+
     ?-    sec
         {^ *}
       %-  hail
@@ -6595,6 +6596,7 @@
             [%tsgr [%wtpt [[%& axe] ~] luz [%$ 1]] (noy [& &])]
           [%tsgr luz (noy [& &])]
         (noy nag)
+    ~+
     ^-  hoon
     ?-    sec
         {^ *}
