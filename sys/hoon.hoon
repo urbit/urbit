@@ -6498,7 +6498,7 @@
   ::::
   ++  bunt
     |-  ^-  hoon
-    ~+  ~$  bunt
+    ~+
     ?-    sec
         {^ *}
       %-  hail
@@ -6591,7 +6591,6 @@
         |=  $:  def/tile 
                 noy/$-(* hoon)
             == 
-        ~$  tune
         ^-  hoon
         ?@  nag
           =+  luz=[%cnts [[%& 1] ~] [[[%& axe] ~] bunt(sec def)] ~]
@@ -6600,7 +6599,7 @@
           [%tsgr luz (noy [& &])]
         (noy nag)
     ^-  hoon
-    ~+  ~$  whip
+    ~+
     ?-    sec
         {^ *}
       %-  hail
@@ -11143,7 +11142,7 @@
       ?~(a !! ?~(t.a [%wing i.a] [%tsgl [%wing i.a] $(a t.a)]))
     (most col rope)
   ::
-  ++  scad  !:
+  ++  scad
     %+  knee  *root  |.  ~+
     %-  stew
     ^.  stet  ^.  limo
