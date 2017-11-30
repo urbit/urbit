@@ -6498,7 +6498,6 @@
   ::::
   ++  bunt
     |-  ^-  hoon
-    ~$  bunt
     ?-    sec
         {^ *}
       %-  hail
@@ -6587,15 +6586,11 @@
   ::
   ++  whip
     |=  axe/axis
-    ~$  whip
     =+  ^=  tun
-        |=  $:  def/tile 
-                noy/$-(* hoon)
-            == 
-        ~$  tune
+        |=  noy/$-(* hoon)
         ^-  hoon
         ?@  nag
-          =+  luz=[%cnts [[%& 1] ~] [[[%& axe] ~] bunt(sec def)] ~]
+          =+  luz=[%cnts [[%& 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
           ?:  =(& nag)
             [%tsgr [%wtpt [[%& axe] ~] luz [%$ 1]] (noy [& &])]
           [%tsgr luz (noy [& &])]
@@ -6605,7 +6600,7 @@
         {^ *}
       %-  hail
       =.  wat  ~
-      %+  tun  [%axil %cell]  |=  gon/*  =>  .(nag gon)  ^-  hoon
+      %-  tun  |=  gon/*  =>  .(nag gon)  ^-  hoon
       :-  ^$(sec -.sec, nag -.nag, axe (peg axe 2))
       ^$(sec +.sec, nag +.nag, axe (peg axe 3))
     ::
@@ -6649,7 +6644,7 @@
         {$vine *}
       %-  hail
       =.  wat  ~
-      %+  tun  [%axil %cell]  |=  gon/*  =>  .(nag gon)  ^-  hoon
+      %-  tun  |=  gon/*  =>  .(nag gon)  ^-  hoon
       ?@  -.nag
         ?:  =(& -.nag)
           [%wtpt [[%& (peg axe 2)] ~] ^$(sec q.sec) ^$(sec p.sec)]
@@ -6684,12 +6679,7 @@
         {$kelp *}
       %-  hail
       =.  wat  ~
-      =/  def/tile
-        :_  [%axil %noun]
-        =<  p
-        |-  ^-  line
-        ?~(t.p.sec i.p.sec $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec))
-      %+  tun  def  |=  gon/*  =>  .(nag gon)
+      %-  tun  |=  gon/*  =>  .(nag gon)
       |-  ^-  hoon
       ?~  t.p.sec
         :-  [%rock +.p.i.p.sec]
