@@ -247,7 +247,7 @@
   :>
   :>  mold generator: produces a discriminated fork between two types,
   :>  defaulting to {a}.
-  |*({a/mold b/mold} $%({$& p/a} {$| p/b}))
+  |*({a/mold b/mold} $%({$| p/b} {$& p/a}))
 ::
 ++  gate
   :>    function
@@ -6498,7 +6498,7 @@
   ::::
   ++  bunt
     |-  ^-  hoon
-    ~+
+    ~+  ~$  bunt
     ?-    sec
         {^ *}
       %-  hail
@@ -6588,21 +6588,24 @@
   ++  whip
     |=  axe/axis
     =+  ^=  tun
-        |=  noy/$-(* hoon)
+        |=  $:  def/tile 
+                noy/$-(* hoon)
+            == 
+        ~$  tune
         ^-  hoon
         ?@  nag
-          =+  luz=[%cnts [[%& 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
+          =+  luz=[%cnts [[%& 1] ~] [[[%& axe] ~] bunt(sec def)] ~]
           ?:  =(& nag)
             [%tsgr [%wtpt [[%& axe] ~] luz [%$ 1]] (noy [& &])]
           [%tsgr luz (noy [& &])]
         (noy nag)
-    ~+
     ^-  hoon
+    ~+  ~$  whip
     ?-    sec
         {^ *}
       %-  hail
       =.  wat  ~
-      %-  tun  |=  gon/*  =>  .(nag gon)  ^-  hoon
+      %+  tun  [%axil %cell]  |=  gon/*  =>  .(nag gon)  ^-  hoon
       :-  ^$(sec -.sec, nag -.nag, axe (peg axe 2))
       ^$(sec +.sec, nag +.nag, axe (peg axe 3))
     ::
@@ -6646,7 +6649,7 @@
         {$vine *}
       %-  hail
       =.  wat  ~
-      %-  tun  |=  gon/*  =>  .(nag gon)  ^-  hoon
+      %+  tun  [%axil %cell]  |=  gon/*  =>  .(nag gon)  ^-  hoon
       ?@  -.nag
         ?:  =(& -.nag)
           [%wtpt [[%& (peg axe 2)] ~] ^$(sec q.sec) ^$(sec p.sec)]
@@ -6681,7 +6684,12 @@
         {$kelp *}
       %-  hail
       =.  wat  ~
-      %-  tun  |=  gon/*  =>  .(nag gon)
+      =/  def/tile
+        :_  [%axil %noun]
+        =<  p
+        |-  ^-  line
+        ?~(t.p.sec i.p.sec $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec))
+      %+  tun  def  |=  gon/*  =>  .(nag gon)
       |-  ^-  hoon
       ?~  t.p.sec
         :-  [%rock +.p.i.p.sec]
