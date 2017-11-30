@@ -86,31 +86,18 @@
   ?~  old  +>
   +>(lac (~(run by lac.u.old) hood-port))
 ::
-++  coup-kiln-fancy  (wrap take-coup-fancy):from-kiln
-++  coup-kiln-spam                                      ::
-  |=  {way/wire saw/(unit tang)}
-  ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
-  [~ +>]
-::
-++  coup-kiln-reload                                    ::
-  |=  {way/wire saw/(unit tang)}
-  ~?  ?=(^ saw)  [%kiln-reload-lame u.saw]
-  [~ +>]
-::
-++  coup-kiln-overload                                  ::
-  |=  {way/wire saw/(unit tang)}
-  ~?  ?=(^ saw)  [%kiln-overload-lame u.saw]
-  [~ +>]
-::
 ++  poke-hood-load
   |=  dat/hood-part
   ?>  =(our.hid src.hid)
   ~&  loaded+-.dat
   [~ %_(+> lac (~(put by lac) -.dat dat))]
 ::
-++  coup-drum-phat  (wrap take-coup-phat):from-drum
-++  coup-helm-hi    (wrap coup-hi):from-helm
-++  coup-helm-ask   (wrap coup-ask):from-helm
+++  coup-drum-phat    (wrap take-coup-phat):from-drum
+++  coup-helm-hi      (wrap coup-hi):from-helm
+++  coup-helm-ask     (wrap coup-ask):from-helm
+++  coup-kiln-fancy   (wrap take-coup-fancy):from-kiln
+++  coup-kiln-reload  (wrap take-coup-reload):from-kiln
+++  coup-kiln-spam    (wrap take-coup-spam):from-kiln
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  from-lib
   |*  _[%sample ..$ _abet]:(hood-sample)

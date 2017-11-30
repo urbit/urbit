@@ -254,6 +254,11 @@
       +>.$
     =.  cur-vanes  (~(put by cur-vanes) syd new-vane)
     (emit [%poke /kiln/reload/[syd] [our %hood] %helm-reload ~[syd]])
+  ::
+  ++  coup-reload
+    |=  {way/wire saw/(unit tang)}
+    ~?  ?=(^ saw)  [%kiln-reload-lame u.saw]
+    +>.$
   --
 ::
 ++  poke-overload
@@ -274,6 +279,15 @@
 ++  take-coup-fancy                                   ::
   |=  {way/wire saw/(unit tang)}
   abet:abet:(coup-fancy:(take way) saw)
+::
+++  take-coup-reload                                  ::
+  |=  {way/wire saw/(unit tang)}
+  abet:(coup-reload:autoload way saw)
+::
+++  take-coup-spam                                    ::
+  |=  {way/wire saw/(unit tang)}
+  ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
+  abet
 ::
 ++  take-mere-sync                                    ::
   |=  {way/wire mes/(each (set path) (pair term tang))}
