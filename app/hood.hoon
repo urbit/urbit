@@ -3,11 +3,24 @@
   ::                                                    ::  ::
 /?    310                                               ::  zuse version
 /+  sole, talk,                                         ::  libraries
-    hood-helm, hood-kiln, hood-drum, hood-write, hood-womb :: "libraries"
+    ::  XX these should really be separate apps, as
+    ::     none of them interact with each other in 
+    ::     any fashion; however, to reduce boot-time
+    ::     complexity and work around the current
+    ::     non-functionality of end-to-end acknowledgments,
+    ::     they have been bundled into :hood
+    ::
+    ::  |command handlers
+    hood-helm, hood-kiln, hood-drum, hood-write,
+    hood-womb
+::                                                      ::  ::
+::::                                                    ::  ::
+  ::                                                    ::  ::
 |%
-++  hood-sample
+++  hood-module
+  ::  each hood module follows this general shape
   =>  |%
-      +=  part  [%sample %0 pith]
+      +=  part  [%module %0 pith]
       +=  pith  ~
       ::
       +=  move  [bone card]
@@ -20,15 +33,15 @@
   --
 --
 ::                                                      ::  ::
-::::                                                    ::  ::
+::::                                                    ::  ::  state handling
   ::                                                    ::  ::
 !:
-=>  |%                                                  ::  module boilerplate
-    ++  hood-old                                        :: 
+=>  |%                                                  ::
+    ++  hood-old                                        ::  unified old-state
       {?($0 $1) lac/(map @tas hood-part-old)}           :: 
-    ++  hood-1                                          ::
+    ++  hood-1                                          ::  unified state
       {$1 lac/(map @tas hood-part)}                     ::
-    ++  hood-good                                       ::
+    ++  hood-good                                       ::  extract specific
       |*  hed/hood-head                                 ::
       |=  paw/hood-part                                 ::
       ?-  hed                                           ::
@@ -37,8 +50,8 @@
         $kiln  ?>(?=($kiln -.paw) `part:hood-kiln`paw)  ::
         $womb  ?>(?=($womb -.paw) `part:hood-womb`paw)  ::
         $write  ?>(?=($write -.paw) `part:hood-write`paw) ::
-      ==                                                ::
-    ++  hood-head  _-:*hood-part                        ::
+      ==                                                ::  module name
+    ++  hood-head  _-:*hood-part                        ::  initialize state
     ++  hood-make                                       ::
       |*  {our/@p hed/hood-head}                        ::
       ?-  hed                                           ::
@@ -48,12 +61,12 @@
         $womb  *part:hood-womb                          ::
         $write  *part:hood-write                        ::
       ==                                                ::
-    ++  hood-part-old  hood-part                        ::
-    ++  hood-port                                       ::
+    ++  hood-part-old  hood-part                        ::  old state for ++prep
+    ++  hood-port                                       ::  state transition
       |=  paw/hood-part-old  ^-  hood-part              ::
       paw                                               ::
     ::                                                  ::
-    ++  hood-part                                       ::
+    ++  hood-part                                       ::  current module state
       $%  {$drum $2 pith-2:hood-drum}                   ::
           {$helm $0 pith:hood-helm}                     ::
           {$kiln $0 pith:hood-kiln}                     ::
@@ -62,11 +75,11 @@
       ==                                                ::
     --                                                  ::
 ::                                                      ::  ::
-::::                                                    ::  ::
+::::                                                    ::  ::  app proper
   ::                                                    ::  ::
 =,  gall
-|_  $:  hid/bowl                                       ::  system state
-        hood-1                                          ::  server state
+|_  $:  hid/bowl                                        ::  gall environment
+        hood-1                                          ::  module states
     ==                                                  ::
 ++  able                                                ::  find+make part
   |*  hed/hood-head
@@ -78,23 +91,23 @@
   |*  {(list) hood-part}
   [(flop +<-) %_(+> lac (~(put by lac) +<+< +<+))]
 ::                                                      ::  ::
-::::                                                    ::  ::
+::::                                                    ::  ::  generic handling
   ::                                                    ::  ::
 ++  prep
-  |=  old/(unit hood-old)  ^-  (quip _!! _+>)            ::
+  |=  old/(unit hood-old)  ^-  (quip _!! _+>)
   :-  ~
   ?~  old  +>
   +>(lac (~(run by lac.u.old) hood-port))
 ::
-++  poke-hood-load
+++  poke-hood-load                                      ::  recover lost brain
   |=  dat/hood-part
   ?>  =(our.hid src.hid)
   ~&  loaded+-.dat
   [~ %_(+> lac (~(put by lac) -.dat dat))]
 ::
 ::
-++  from-lib
-  |*  _[%sample ..$ _abet]:(hood-sample)
+++  from-module                                         ::  create wrapper
+  |*  _[%module ..$ _abet]:(hood-module)
   =>  .(+< [identity start finish]=+<)
   =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
   |*  handle/_finish
@@ -102,13 +115,15 @@
   =.  +>.handle  (start hid (able identity))
   (ably (handle +<))
 ::
-++  from-drum  (from-lib %drum [..$ _se-abet]:(hood-drum))
-++  from-helm  (from-lib %helm [..$ _abet]:(hood-helm))
-++  from-kiln  (from-lib %kiln [..$ _abet]:(hood-kiln))
-++  from-womb  (from-lib %womb [..$ _abet]:(hood-womb))
-++  from-write  (from-lib %write [..$ _abet]:(hood-write))
+::  per-module interface wrappers
+++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum))
+++  from-helm  (from-module %helm [..$ _abet]:(hood-helm))
+++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln))
+++  from-womb  (from-module %womb [..$ _abet]:(hood-womb))
+++  from-write  (from-module %write [..$ _abet]:(hood-write))
+::
 ::                                                      ::  ::
-::::                                                    ::  ::
+::::                                                    ::  ::  switchboard
   ::                                                    ::  ::
 ++  coup-drum-phat            (wrap take-coup-phat):from-drum
 ++  coup-helm-hi              (wrap coup-hi):from-helm
