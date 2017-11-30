@@ -330,7 +330,7 @@ u3_ames_io_init()
       uL(fprintf(uH, "ames: czar: %s on %d\n", u3_Host.ops_u.imp_c, por_s));
     }
     else {
-      uL(fprintf(uH, "ames: czar: %s on %d\n (localhost only)",
+      uL(fprintf(uH, "ames: czar: %s on %d (localhost only)\n",
                      u3_Host.ops_u.imp_c, por_s));
     }
     u3z(num);
