@@ -3,13 +3,13 @@ before_install:
   - cd .travis # keep main directory clear
   
   - >
-      echo "FIXME downloading raw urbit binary releaseinstead of .deb";
-      echo "FIXME reading full pinned url instead of tag name";
       wget $(cat ./pin-urbit-release.url)/urbit -O ./urbit &&
-      chmod +x ./urbit
+      chmod +x ./urbit;
+      echo "FIXME downloaded raw urbit binary releaseinstead of .deb";
+      echo "FIXME read full pinned url instead of tag name"
   
   - >
-      echo "FIXME blindly assuming master pill";
       HASH=$(git -C .. log -1 HEAD --format="%H" -- sys/) &&
-      wget https://bootstrap.urbit.org/$HASH-master.pill -O urbit.pill
+      wget https://bootstrap.urbit.org/$HASH-master.pill -O urbit.pill;
+      echo "FIXME blindly assumed master pill"
       
