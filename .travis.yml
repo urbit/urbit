@@ -1,0 +1,2 @@
+language: node_js # ish, mainly used as an entry point
+before_install: cd .travis # keep main directory clear

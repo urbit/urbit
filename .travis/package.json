@@ -1,0 +1,14 @@
+{
+  "name": "arvo-tests",
+  "version": "1.0.0",
+  "description": "Test harness for Urbit arvo distribution",
+  "main": "test.ls",
+  "scripts": {
+    "test": "lsc test.ls"
+  },
+  "author": "~fyr",
+  "license": "MIT",
+  "dependencies": {
+    "livescript": "^1.5.0"
+  }
+}
