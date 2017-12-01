@@ -29,7 +29,7 @@ addons:
 deploy:
   provider: releases
   api_key:
-    secure: adz7cDMVUEgxaX8eFwy0ms77UvG69+gSwBaAn2+Op1PRe1bSG0rl6BWo8R5ZBaSFKBiZu5+92z74b5+N071AQMZJ+IWEMSiI2lrMm+VJF/E/Z5cDndVr1XA/lVzfAblKlS57z/5azeC8c+s0TFIcNRb1SsDGfWjx65wD5yLC5lk=
+    secure: G0DvLxngByYkIPs7lkP/lPDbKVX2QnEGdA9FA7CRGcup8lPZmITEPW+H9AKsWDjmjkt0TLlqjc/V1KeDT7QRWZpem4KV2yBsfkpz+svlRRvdzq9XNSmL3tJnUlkaNfOS6Kx76O0AV0WztDs0BmQBP9QegscmI0BWf68QeHQoQymhNS6jSNAvdjeWNl3qw9JTEf8x5XPV3rIbcUNQO5S/VcWeOB4h4prUFS+Us+y462cv+L+JeA9pK4W02z8It46U9jNNOx4Gp4dQWuvDj1kCDWwZSceaTl4awj2HK+apyywh589qNmhcGNpKICKTJGexSMhCraU/otaZ+W/V80wek7BbCF4gOJpxxk9oOqurZonFeA/v/xVjdjzjKyG5u35MLrb3kvptSjh7+rOcjdAJVQ1MGxsttwMhg8mW4uyIK3sILNHqCS02eTIE6o9wUzZCzicqIyWOwC8NKNu6usilqnhAxHxfTBkf4Le1H6EsQ/mkHhQpNQKIfIsOHBZzp/KEk3oZ1rZIJM1eiRRvhaSInzitKfObJOmBR728X+0zqUEZBlIq5FH0b7nrAVwyQO1ng+qRPBz1wjh9YuQUifM6hTXnC9f2AAYRmzJeaI7hnkKK0NFuwUBtCRNXOYVYo4dPzKjWAhmrIlgZ8oPI/R4Xtv9RigDtYxRqJYnMKmJCeSk=
   file: bin/urbit # TODO upload package from before_deploy
   on:
     repo: ohAitch/urbit
