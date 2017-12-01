@@ -80,16 +80,12 @@
   =+  myr=(clan:title our)
   ?:  ?=($pawn myr)
     [[%base %talk] [%base %dojo] ~]
-  ?:  ?=($earl myr)
-    [[%home %dojo] ~]
   [[%home %talk] [%home %dojo] ~]
 ::
 ++  deft-fish                                           ::  default connects
   |=  our/ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
-  ?:  ?=($earl (clan:title our))
-    [[(sein:title our) %talk] [our %dojo] ~]
   [[our %talk] [our %dojo] ~]
 ::
 ++  drum-make                                           ::  initial part
