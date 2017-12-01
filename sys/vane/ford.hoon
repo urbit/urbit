@@ -3,8 +3,11 @@
 !?  164
 ::::
 |=  pit/vase
+<<<<<<< HEAD:sys/vane/ford.hoon
 =,  ford
 =,  format
+=======
+>>>>>>> e3e0a7f:arvo/ford.hoon
 =>  =~
 ::  structures
 |%
@@ -234,7 +237,42 @@
     ?~  tus
       ~&  [%ford-lost van num]
       +>.$
+<<<<<<< HEAD:sys/vane/ford.hoon
     (~(take zo [num u.tus]) [van ren bem] sih)
+=======
+    ?-    -.+.sih
+        $writ  (~(resp zo [num u.tus]) [van ren bem] p.+.sih)
+        $made  (~(resm zo [num u.tus]) [van ren bem] [p q]:+.sih)
+        $unto
+      ?+  -.p.+.sih  ~|(ford-strange-unto+-.p.+.sih !!)
+        $diff  (~(resd zo [num u.tus]) [van ren bem] p.p.+.sih)
+        $reap  ?~  p.p.+.sih  +>.$
+               ((slog leaf+"ford-reap-fail" u.p.p.+.sih) +>.$)
+      ==
+    ==
+  ::
+  ++  axun                                              ::  take rev update
+    |=  {tea/wire dep/@uvH bem/beam sih/sign}
+    ^+  +>
+    ?+    -.+.sih  ~|(%bad-axun !!)
+        $writ
+      ?~  p.sih  +>.$
+      :: ~&  writ+tea
+      =+  dap=(~(got by deh.bay) dep)
+      =-  +>.$(mow mow, deh.bay ?~(dop deh.bay (~(put by deh.bay) dep dop)))
+      ^-  {dop/$@($~ _dap) mow/_mow}
+      ?-    -.dap
+          $done  `mow                ::  writ redundant
+          $init  ~|(never-subscribed+dep !!)
+          $sent
+        :-  [%done ~]
+        ;:  weld
+          (axap dep (~(del in q.dap) bem))              ::  cancel outstanding
+          (turn (~(tap in p.dap)) |=(hen/duct [hen %give %news dep]))
+          mow
+    ==  ==
+      ==
+>>>>>>> e3e0a7f:arvo/ford.hoon
   ::
   ::+|
   ::
@@ -248,6 +286,7 @@
       ~&(dep-empty+hen +>.$)
     ?:  =(dep 0vtest)                 ::  upstream testing
       +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
+<<<<<<< HEAD:sys/vane/ford.hoon
     ::
     ?.  (~(has by def.deh.bay) dep)
       ~&([%wasp-unknown dep] this)
@@ -296,15 +335,47 @@
     :+  %pass  [(scot %p our) ren (en-beam bem)]
     [%c [%warp [our p.bem] q.bem ?.(ask ~ `[%next ren r.bem (flop s.bem)])]]
   ::
+=======
+    =+  dap=(~(get by deh.bay) dep)
+    ?~  dap  ~&(dep-missed+dep +>.$)  ::  XX  ~|  !!
+    ?-  -.u.dap
+      $done  +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
+      $sent
+        =.  p.u.dap
+          ?:  ask  (~(put in p.u.dap) hen)
+          (~(del in p.u.dap) hen)
+        ?^  p.u.dap
+          +>.$(deh.bay (~(put by deh.bay) dep u.dap))
+        =.  mow  (weld (axap dep q.u.dap) mow)
+        +>.$(deh.bay (~(put by deh.bay) dep [%init q.u.dap]))
+    ::
+      $init
+        ?.  ask  ~&(awap-kill-empty+dep +>.$)  :: crash?
+        %_    +>.$
+            deh.bay
+          (~(put by deh.bay) dep [%sent [hen ~ ~] p.u.dap])
+        ::
+            mow
+          =<  (welp :_(mow (turn (~(tap in p.u.dap)) .)))
+          |=  bem/beam
+          :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
+          [%c [%warp [our p.bem] q.bem ~ [%next %z r.bem (flop s.bem)]]]
+    ==  ==
+>>>>>>> e3e0a7f:arvo/ford.hoon
   ::
   ++  zo
     ~%  %ford-z  ..is  ~
     =|  dyv/@                                           ::  recursion level
     |_  {num/@ud task}
+<<<<<<< HEAD:sys/vane/ford.hoon
     ++  abet                                            ::  store a blocked task
       %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
     ::
     ++  abut                                            ::  remove a task
+=======
+    ++  abet  %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
+    ++  amok
+>>>>>>> e3e0a7f:arvo/ford.hoon
       %_  ..zo
         q.tad.bay  (~(del by q.tad.bay) num)
         dym.bay    (~(del by dym.bay) nah)
@@ -557,7 +628,11 @@
       |=  {cof/cafe gag/gage}
       ^-  (bolt gage)
       ?.  ?=($tabl -.gag)
+<<<<<<< HEAD:sys/vane/ford.hoon
         (cope (flay cof gag) fun)
+=======
+        (cope (furl cof gag) fun)
+>>>>>>> e3e0a7f:arvo/ford.hoon
       %+  cope
         |-  ^-  (bolt (list (pair gage gage)))
         ?~  p.gag  (fine cof ~)
@@ -750,11 +825,11 @@
       =+  vez=(vang & (en-beam bem))
       =<  hood
       |%
-      ++  case
+      ++  case                                          ::  %clay revision
         %+  sear
-          |=  a/coin
-          ?.  ?=({$$ ?($da $ud $tas) *} a)  ~
-          [~ u=(^case a)]
+          |=  a/coin  ^-  (unit ^case)
+          ?.  ?=({$$ ^case} a)  ~
+          [~ u=p.a]
         nuck:so
       ::
       ++  mota  ;~(pfix pat mota:vez)                   ::  atom odor
@@ -861,11 +936,16 @@
                   (ifix [pel per] (most ace horn))
                 ;~(sfix (star horn) gap duz)
           ::
+<<<<<<< HEAD:sys/vane/ford.hoon
               ++  horn
+=======
+              ++  day
+>>>>>>> e3e0a7f:arvo/ford.hoon
                 %+  rail
                   apex(tol |)
                 ;~(pfix gap apex)
           ::
+<<<<<<< HEAD:sys/vane/ford.hoon
               ++  name
                 %+  rail
                   ;~(plug sym ;~(pfix tis horn))
@@ -874,6 +954,16 @@
               ++  list
                 %+  rail  fail
                 ;~(sfix (star horn) gap duz)
+=======
+              ++  dub
+                %+  rail
+                  ;~(plug sym ;~(pfix tis day))
+                ;~(pfix gap ;~(plug sym day))
+          ::
+              ++  fan
+                %+  rail  fail
+                ;~(sfix (star day) gap duz)
+>>>>>>> e3e0a7f:arvo/ford.hoon
           ::
               ++  case
                 %+  rail  fail
@@ -888,6 +978,7 @@
           ::
               ++  gate
                 %+  rail
+<<<<<<< HEAD:sys/vane/ford.hoon
                   ;~(plug ;~(sfix wide:vez sem) horn)
                 ;~(pfix gap ;~(plug tall:vez horn))
           ::
@@ -895,6 +986,20 @@
                 %+  rail
                   ;~(plug ;~(sfix hive col) horn)
                 ;~(pfix gap ;~(plug hive horn))
+=======
+                  ;~(plug ;~(sfix wide:vez sem) day)
+                ;~(pfix gap ;~(plug tall:vez day))
+          ::
+              ++  see
+                %+  rail
+                  ;~(plug ;~(sfix hive col) day)
+                ;~(pfix gap ;~(plug hive day))
+          ::
+              ++  sic
+                %+  rail
+                  ;~(plug ;~(sfix wide:vez ket) day)
+                ;~(pfix gap ;~(plug tall:vez day))
+>>>>>>> e3e0a7f:arvo/ford.hoon
           ::
               ++  cast
                 %+  rail
@@ -1021,7 +1126,11 @@
         ?:  (~(nest ut p.typ) | b)  ~
         %^  some  %palm  ["." ~ ~ ~]
         ~[(show [%c %mute] %l a) >[p.typ b]<]
+<<<<<<< HEAD:sys/vane/ford.hoon
       %^  wrapped-slap  cof
+=======
+      %^  maim  cof
+>>>>>>> e3e0a7f:arvo/ford.hoon
         %+  slop  suh
         |-  ^-  vase
         ?~  yom  [[%atom %n ~] ~]
@@ -1157,8 +1266,13 @@
       |=  {cof/cafe mal/(map mark $~)}
       ?:  (~(has by mal) for)
         (cope (lace cof for bem) (flux some))
+<<<<<<< HEAD:sys/vane/ford.hoon
       =+  opt=(silt (turn ~(tap by mal) head))        ::  XX asymptotics
       %+  cope  (find-translation-path cof for opt)
+=======
+      =+  opt=(silt (turn (~(tap by mal)) head))        ::  XX asymptotics
+      %+  cope  (lion cof for opt)
+>>>>>>> e3e0a7f:arvo/ford.hoon
       |=  {cof/cafe wuy/(list @tas)}
       ?~  wuy  (flue cof)
       %+  cope
@@ -1209,10 +1323,17 @@
           ?.  (slob for p.gab)  ~
           `(slap gab [%limb for])
       ?~  zat
+<<<<<<< HEAD:sys/vane/ford.hoon
         :: ~$  translate-mark-miss
         (flaw cof [%leaf "ford: no translate-mark: {<[for too]>}"]~)
       :: ~$  translate-mark-grab
       ~|  [%translate-mark-maul for too]
+=======
+        :: ~$  link-miss
+        (flaw cof [%leaf "ford: no link: {<[for too]>}"]~)
+      :: ~$  link-grab
+      ~|  [%link-maul for too]
+>>>>>>> e3e0a7f:arvo/ford.hoon
       (maul cof u.zat vax)
     ::
     ++  translation-targets
@@ -1324,8 +1445,13 @@
         %.  [cof p.kas q.kas]
         ;~  cope
           ;~  coax
+<<<<<<< HEAD:sys/vane/ford.hoon
             |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas p.kas) flay))
             |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas q.kas) flay))
+=======
+            |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas p.kas) furl))
+            |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas q.kas) furl))
+>>>>>>> e3e0a7f:arvo/ford.hoon
           ==                          ::  XX merge %tabl
         ::
           |=  {cof/cafe bor/cage heg/cage}  ^-  (bolt gage)
@@ -1343,8 +1469,13 @@
           $bake
         ^-  (bolt gage)
         %+  cool
+<<<<<<< HEAD:sys/vane/ford.hoon
           |.(leaf+"ford: bake {<p.kas>} {<(en-beam r.kas)>} {~(rend co q.kas)}")
         %+  cope  (normalize-beak cof r.kas)
+=======
+          |.(leaf+"ford: bake {<p.kas>} {<(tope r.kas)>} {~(rend co q.kas)}")
+        %+  cope  (lamp cof r.kas)
+>>>>>>> e3e0a7f:arvo/ford.hoon
         |=  {cof/cafe bem/beam}
         %+  cope  (render-or-load cof p.kas q.kas bem)
         |=  {cof/cafe vax/vase}
@@ -1592,11 +1723,17 @@
         |=  {cof/cafe bax/vase hon/horn}
         ^-  (bolt cage)
         ?-    -.hon
+<<<<<<< HEAD:sys/vane/ford.hoon
             $fssg
           (cope (wrapped-slap cof bax p.hon) (flux |=(a/vase [%noun a])))
         ::
             $fsbc
           %+  cope  (wrapped-slap cof bax p.hon)
+=======
+            $ape  (cope (maim cof bax p.hon) (flux |=(a/vase [%noun a])))
+            $arg
+          %+  cope  (maim cof bax p.hon)
+>>>>>>> e3e0a7f:arvo/ford.hoon
           |=  {cof/cafe gat/vase}
           %+  cope  (wrapped-slap cof !>(~) ((jock |) arg))
           |=  {cof/cafe val/vase}
@@ -1617,13 +1754,21 @@
           |=  {mark vax/vase}
           [%noun (slop [atom+['uvH' ~] dep] vax)]
         ::
+<<<<<<< HEAD:sys/vane/ford.hoon
             $fsts
+=======
+            $dub
+>>>>>>> e3e0a7f:arvo/ford.hoon
           %+  cope  $(hon q.hon)
           %-  flux
           |=  {mar/mark vax/vase}
           [mar [%face [~ p.hon] p.vax] q.vax]
         ::
+<<<<<<< HEAD:sys/vane/ford.hoon
             $fsdt
+=======
+            $fan
+>>>>>>> e3e0a7f:arvo/ford.hoon
           %+  cope
             %+  cope
               |-  ^-  (bolt (list vase))
@@ -1639,7 +1784,11 @@
             (slop i.tev $(tev t.tev))
           (flux |=(a/vase noun+a))
         ::
+<<<<<<< HEAD:sys/vane/ford.hoon
             $fscm
+=======
+            $for
+>>>>>>> e3e0a7f:arvo/ford.hoon
           =+  opt=|.(>(turn p.hon |=({a/path ^} a))<)
           |-  ^-  (bolt cage)
           ?~  p.hon  (flaw cof leaf+"ford: no match" >(en-beam how)< $:opt ~)
@@ -1656,11 +1805,43 @@
           |=  {cof/cafe cay/cage}
           (cope (make cof %cast i.p.hon $+cay) flay)
         ::
+<<<<<<< HEAD:sys/vane/ford.hoon
             $fscb
           %+  cope  (chai cof bax p.hon)
           (flux |=(a/vase noun+a))
         ::
             $fssm
+=======
+            $man
+          %+  cope
+            |-  ^-  (bolt vase)
+            ?~  p.hon  (fine cof [[%atom %n `~] 0])
+            %+  cope  $(p.hon l.p.hon)
+            |=  {cof/cafe lef/vase}
+            %+  cope  ^$(cof cof, p.hon r.p.hon)
+            |=  {cof/cafe rig/vase}
+            %+  cope  ^^^$(cof cof, hon q.n.p.hon)
+            |=  {cof/cafe mar/mark vax/vase}
+            %+  fine  cof
+            %+  slop
+              (slop [[%atom %tas ~] p.n.p.hon] vax)
+            (slop lef rig)
+          (flux |=(a/vase noun+a))
+        ::
+            $now
+          %+  cope  (chad cof bax %da p.hon)
+          (flux |=(a/vase noun+a))
+        ::
+            $nod
+          %+  cope  (chad cof bax p.hon q.hon)
+          (flux |=(a/vase noun+a))
+        ::
+            $nap
+          %+  cope  (chai cof bax p.hon)
+          (flux |=(a/vase noun+a))
+        ::
+            $saw
+>>>>>>> e3e0a7f:arvo/ford.hoon
           %+  cope  $(hon q.hon)
           |=  {cof/cafe mar/mark sam/vase}
           %+  cope  (wrapped-slap cof bax p.hon)
@@ -1687,6 +1868,7 @@
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
           (fine cof [mar p.tug q.vax])
         ::
+<<<<<<< HEAD:sys/vane/ford.hoon
             $fszp
           %+  cool  |.(leaf+"ford: hook {<q.hon>} {<(en-beam how)>}")
           %.  [cof how]
@@ -1700,6 +1882,17 @@
             $fszy
           =?  arg  lit  many+~
           (cope (make cof %bake q.hon arg how) flay)
+=======
+            $toy
+          ?:  p.hon
+            =.  arg  ?.(lit arg many+~)
+            (cope (make cof %bake q.hon arg how) furl)
+          %+  cool  |.(leaf+"ford: hook {<q.hon>} {<(tope how)>}")
+          %+  cope  (fade cof how)
+          |=  {cof/cafe hyd/hood}
+          %+  cope  (abut:(meow how arg) cof hyd)
+          ;~(cope (lake | q.hon) (flux |=(a/vase [q.hon a])))
+>>>>>>> e3e0a7f:arvo/ford.hoon
         ==
       ::
       ++  head                                          ::  consume structures
@@ -1726,8 +1919,13 @@
               boy  boy
               how  how
               rop  %+  ~(put by (~(uni by rop) rop.sel))
+<<<<<<< HEAD:sys/vane/ford.hoon
                       q.i.bir
                    [i.bir [%tssg (flop boy.sel)]]
+=======
+                      p.i.bir
+                   [i.bir [%tow (flop boy.sel)]]
+>>>>>>> e3e0a7f:arvo/ford.hoon
             ==
         ^^^$(cof cof, bir t.bir)
       ::
@@ -1788,7 +1986,11 @@
             %+  cope  $(all l.all)
             |=  {cof/cafe lef/(map term (pair what foot)) sel/_..wilt}
             %+  cope  ^$(all r.all, cof cof, sel sel)
+<<<<<<< HEAD:sys/vane/ford.hoon
             |=  {cof/cafe rig/(map term (pair what foot)) sel/_..wilt}
+=======
+            |=  {cof/cafe rig/(map term foot) sel/_..wilt}
+>>>>>>> e3e0a7f:arvo/ford.hoon
             %+  cope
               %=    ^^^^$
                   cof      cof
@@ -1860,9 +2062,15 @@
       %-  %-  lift  |=  (unit cage)                     :: ignore block
           %+  biff  +<
           |=  cay/cage  ^-  (unit cage)
+<<<<<<< HEAD:sys/vane/ford.hoon
           ?.  -:(nets:wa +.ref `type`p.q.cay)           :: error if bad type
             ~&  :^  %ford-syve-lost  `path`[tem (en-beam bem)]
                   want=;;(type +.ref)
+=======
+          ?.  -:(nets:wa +.ref `span`p.q.cay)           :: error if bad type
+            ~&  :^  %ford-syve-lost  `path`[tem (tope bem)]
+                  want=;;(span +.ref)
+>>>>>>> e3e0a7f:arvo/ford.hoon
                 have=p.q.cay
             ~
           `cay
