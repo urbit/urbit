@@ -5860,6 +5860,7 @@
 ::::  4o: molds and mold builders
   ::
 ++  abel  typo                                          ::  original sin: type
+++  alas  (list (pair term hoon))                       ::  alias list
 ++  atom  @                                             ::  just an atom
 ++  aura  @ta                                           ::  atom format
 ++  axis  @                                             ::  tree address
@@ -5996,7 +5997,7 @@
     {$bcts p/toga q/root}                               ::  $= name
     {$bcsm p/hoon}                                      ::  $; assembly
   ::                                            ::::::  cores
-    {$brcb p/chap q/root r/(map @ tomb)}                ::  |_
+    {$brcb p/chap q/root r/alas s/(map @ tomb)}         ::  |_
     {$brcl p/chap q/hoon r/hoon}                        ::  |:
     {$brcn p/chap q/(map @ tomb)}                       ::  |%
     {$brdt p/chap q/hoon}                               ::  |.
@@ -7089,8 +7090,20 @@
         {$halo *}  ~(clam al boil)
         {$bcsm *}  p.gen
     ::
+<<<<<<< HEAD
         {$brcb *}  [%tsls [%bunt q.gen] [%brcn p.gen r.gen]]
         {$brcl *}  [%tsls [%ktcn q.gen] [%brdt p.gen r.gen]]
+=======
+        {$brcb *}  :+  %tsls  [%bunt q.gen]
+                   :+  %brcn  p.gen
+                   %-  ~(run by s.gen)
+                   |=  a/foot  ^+  a
+                   =-  ?:(?=({$ash *} a) [-.a -] [-.a -])
+                   |-  ^-  twig
+                   ?~  r.gen  p.a
+                   [%aka p.i.r.gen q.i.r.gen $(r.gen t.r.gen)]
+        {$brcl *}  [%tsls [%ktsg q.gen] [%brdt p.gen r.gen]]
+>>>>>>> c46740d
         {$brdt *}  :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
@@ -7106,8 +7119,8 @@
                    :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
-        {$brts *}  :^  %brcb  p.gen  q.gen 
-                   =-  [[0 [~ ~] -] ~ ~]
+        {$brts *}  :^  %brcb  p.gen  q.gen
+                   =-  [~ [[0 [~ ~] -] ~ ~]]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
         {$brwt *}  [%ktwt %brdt p.gen q.gen]
     ::
@@ -11679,6 +11692,12 @@
     ::
     ++  whap                                            ::  chapter
       (most muck boog)
+    ++  wasp                                            ::  $brcb aliases
+      ;~  pose  %+  ifix
+                  [;~(plug lus tar muck) muck]
+                (most muck ;~(gunk sym loaf))  :: XX loan?
+                (easy ~)
+      ==
     ::
     ++  wisp                                            ::  core tail
       ?.  tol  fail
@@ -11816,6 +11835,7 @@
     ++  exqc  |.(;~(gunk loan loaf))                    ::  root then hoon
     ++  exqs  |.((butt hunk))                           ::  closed gapped roots
     ++  exqg  |.(;~(gunk sym loan))                     ::  term and root
+<<<<<<< HEAD
     ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one root
     ++  exqr  |.(;~(gunk loan wisp))                    ::  root and core tail
     ++  exqn  |.(;~(gunk loan (stag %cltr (butt hank))))::  autoconsed hoons
@@ -11823,6 +11843,15 @@
     ++  exqx  |.(;~(gunk loaf loan loan))               ::  hoon, two roots
     ++  exqy  |.(;~(gunk loaf loan loan loan))          ::  hoon, three roots
     ++  exqz  |.(;~(gunk loaf (butt hunk)))             ::  hoon, n roots
+=======
+    ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  twig with one root
+    ++  exqr  |.(;~(gunk loan ;~(plug wasp wisp)))      ::  root/aliases?/tail
+    ++  exqn  |.(;~(gunk loan (stag %cltr (butt hank))))::  autoconsed twigs
+    ++  exqw  |.(;~(gunk loaf loan))                    ::  twig and root
+    ++  exqx  |.(;~(gunk loaf loan loan))               ::  twig, two roots
+    ++  exqy  |.(;~(gunk loaf loan loan loan))          ::  twig, three roots
+    ++  exqz  |.(;~(gunk loaf (butt hunk)))             ::  twig, n roots
+>>>>>>> c46740d
     ::
     ::    tiki expansion for %wt runes
     ::
