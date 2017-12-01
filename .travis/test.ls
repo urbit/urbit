@@ -3,7 +3,6 @@ pty = require \pty.js
 
 term =
   # TODO abort on failure
-  # XX use -s instead of travis wget'd pill
   pty.spawn './urbit' <[-B urbit.pill -A .. -cFI zod zod]> 
      .on \data -> process.stdout.write it
      

@@ -7,9 +7,6 @@ before_install:
       chmod +x ./urbit;
       echo "FIXME downloaded raw urbit binary releaseinstead of .deb";
       echo "FIXME read full pinned url instead of tag name"
-  
-  - >
-      HASH=$(git -C .. log -1 HEAD --format="%H" -- sys/) &&
-      wget https://bootstrap.urbit.org/$HASH-master.pill -O urbit.pill;
-      echo "FIXME blindly assumed master pill"
+      
+before_script: bash make-pill.sh
       
