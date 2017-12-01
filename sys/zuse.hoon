@@ -1165,9 +1165,10 @@
       $%  {$west p/ship q/path r/*}                     ::  network request
       ==                                                ::
     ++  sign                                            ::  in response $-<
-      $%  {$g $rend p/path q/*}                         ::  network request
-          {$g $mack p/(unit tang)}                      ::  message ack
-      ==                                                ::
+      $:  $g                                            ::
+          $%  {$rend p/path q/*}                        ::  network request
+              {$mack p/(unit tang)}                     ::  message ack
+      ==  ==                                            ::
     ++  note                                            ::  out request $->
       $%  {$c $west p/ship q/path r/*}                  ::  to %clay
           {$e $west p/ship q/path r/*}                  ::  to %eyre
