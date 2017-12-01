@@ -2,11 +2,14 @@ language: node_js # ish, mainly used as an entry point
 before_install:
   - cd .travis # keep main directory clear
   
-  # XX use an actual debian release, based on version pin somewhere
-  - wget https://github.com/ohAitch/urbit/releases/download/untagged-4dd5d7e977e58b5f1e21/urbit
-  - chmod +x ./urbit
-  
-  # XX don't just blindly assume master
   - >
+      echo "FIXME downloading raw urbit binary releaseinstead of .deb";
+      echo "FIXME reading full pinned url instead of tag name";
+      wget $(cat ./pin-urbit-release.url)/urbit -O ./urbit &&
+      chmod +x ./urbit
+  
+  - >
+      echo "FIXME blindly assuming master pill";
       HASH=$(git -C .. log -1 HEAD --format="%H" -- sys/) &&
       wget https://bootstrap.urbit.org/$HASH-master.pill -O urbit.pill
+      
