@@ -4,6 +4,7 @@ before_install:
   
   # XX use an actual debian release, based on version pin somewhere
   - wget https://github.com/ohAitch/urbit/releases/download/untagged-4dd5d7e977e58b5f1e21/urbit
+  - chmod +x ./urbit
   
   # XX don't just blindly assume master
   - >
