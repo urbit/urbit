@@ -7,5 +7,5 @@ before_install:
   
   # XX don't just blindly assume master
   - >
-      HASH=$(git log -1 HEAD --format="%H" --relative=sys/) &&
+      HASH=$(git -C .. log -1 HEAD --format="%H" -- sys/) &&
       wget https://bootstrap.urbit.org/$HASH-master.pill -O urbit.pill
