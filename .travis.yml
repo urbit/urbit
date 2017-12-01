@@ -25,4 +25,11 @@ addons:
     - re2c
     - libcurl4-gnutls-dev
     - python
-
+deploy:
+  provider: releases
+  api_key:
+    secure: adz7cDMVUEgxaX8eFwy0ms77UvG69+gSwBaAn2+Op1PRe1bSG0rl6BWo8R5ZBaSFKBiZu5+92z74b5+N071AQMZJ+IWEMSiI2lrMm+VJF/E/Z5cDndVr1XA/lVzfAblKlS57z/5azeC8c+s0TFIcNRb1SsDGfWjx65wD5yLC5lk=
+  file: bin/urbit
+  on:
+    repo: ohAitch/urbit
+    all_branches: true
