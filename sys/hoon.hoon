@@ -7097,11 +7097,17 @@
         {$brcb *}  :+  %tsls  [%bunt q.gen]
                    :+  %brcn  p.gen
                    %-  ~(run by s.gen)
-                   |=  a/foot  ^+  a
-                   =-  ?:(?=({$ash *} a) [-.a -] [-.a -])
+                   |=  tom/tomb
+                   ^+  tom
+                   :-  p.tom
+                   %-  ~(run by q.tom)
+                   |=  a/(pair what foot)
+                   ^+  a
+                   :-  p.a
+                   =-  ?:(?=({$ash *} q.a) [-.q.a -] [-.q.a -])
                    |-  ^-  twig
-                   ?~  r.gen  p.a
-                   [%aka p.i.r.gen q.i.r.gen $(r.gen t.r.gen)]
+                   ?~  r.gen  p.q.a
+                   [%tstr [~ p.i.r.gen] q.i.r.gen $(r.gen t.r.gen)]
         {$brcl *}  [%tsls [%ktsg q.gen] [%brdt p.gen r.gen]]
 >>>>>>> c46740d
         {$brdt *}  :+  %brcn  p.gen
