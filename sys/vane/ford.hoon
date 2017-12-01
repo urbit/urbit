@@ -3,8 +3,11 @@
 !?  164
 ::::
 |=  pit/vase
+<<<<<<< HEAD:sys/vane/ford.hoon
 =,  ford
 =,  format
+=======
+>>>>>>> e3e0a7f:arvo/ford.hoon
 =>  =~
 ::  structures
 |%
