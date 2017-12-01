@@ -1,2 +1,11 @@
 language: node_js # ish, mainly used as an entry point
-before_install: cd .travis # keep main directory clear
+before_install:
+  - cd .travis # keep main directory clear
+  
+  # XX use an actual debian release, based on version pin somewhere
+  - wget https://github.com/ohAitch/urbit/releases/download/untagged-4dd5d7e977e58b5f1e21/urbit
+  
+  # XX don't just blindly assume master
+  - >
+      HASH=$(git log -1 master --format="%H" --relative=sys/) &&
+      wget https://bootstrap.urbit.org/$HASH-master.pill -O urbit.pill

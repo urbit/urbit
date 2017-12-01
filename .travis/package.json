@@ -9,6 +9,8 @@
   "author": "~fyr",
   "license": "MIT",
   "dependencies": {
-    "livescript": "^1.5.0"
+    "livescript": "^1.5.0",
+    "pty.js": "^0.3.1",
+    "stream-snitch": "0.0.3"
   }
 }
