@@ -5343,8 +5343,8 @@
     ;~  pose
       (stag %is bip:ag)
       (stag %if lip:ag)
-      (stag %f ;~(pose (cold & (just 'y')) (cold | (just 'n'))))
       royl
+      (stag %f ;~(pose (cold & (just 'y')) (cold | (just 'n'))))
     ==
   --
 ::
