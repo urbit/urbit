@@ -30,10 +30,11 @@ mkdir prev
   HASH2=$(git -C .. log -2 $HASH --format=%H -- sys/ | tail -1)
   PILL_NAME2="git-${HASH2:0:10}"
   wget https://bootstrap.urbit.org/$PILL_NAME2.pill -O urbit.pill &&
-  echo FIXME running test script to create fakezod, this might be overkill **
+  echo FIXME running test script to create fakezod, this might be overkill &&
   lsc test.ls &&
   mv urbit.pill prev/urbit.pill &&
-  mv zod prev/zod
+  mv zod prev/zod &&
+  export PIER_FRESH="y"
 } || {
   echo Pilling: Out of ideas
   exit 1
@@ -56,16 +57,19 @@ do
   
   <- on-next /dojo> /
   {PILL_NAME} = process.env
+  do-pill = ->
+    urbit.write "|label %home %#PILL_NAME\r"
+    urbit.write ".urbit/pill +solid /==/#PILL_NAME/sys, =dub &\r"
+    <- wait-on resources: <[ prev/zod/.urb/put/urbit.pill ]>
+    urbit.write "\04"
+    process.exit 0
+  #
+  if process.env.PIER_FRESH then do-pill!
   urbit.write "|autoload |\r"
   urbit.write "|mount %\r"
   <- wait-on resources: <[ prev/zod/home ]>
   <- recursive-copy '../sys/' 'prev/zod/home/sys/' {+overwrite} .then
-  <- on-next /sync/
-  urbit.write "|label %home %#PILL_NAME\r"
-  urbit.write ".urbit/pill +solid /==/#PILL_NAME/sys, =dub &\r"
-  <- wait-on resources: <[ prev/zod/.urb/put/urbit.pill ]>
-  urbit.write "\04"
-  process.exit 0
+  on-next /sync/ do-pill
 done
 cp prev/zod/.urb/put/urbit.pill urbit.pill
 mkdir built-pill; cp urbit.pill built-pill/$PILL_NAME.pill
