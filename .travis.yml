@@ -1,4 +1,6 @@
 language: node_js # ish, mainly used as an entry point
+node_js:
+  - 4
 before_install:
   - cd .travis # keep main directory clear
   
@@ -10,7 +12,8 @@ before_install:
       
 before_script: bash get-or-build-pill.sh
 
-before_deploy: mkdir piers && tar cvzSf piers/zod-$TRAVIS_COMMIT.tgz zod/
+# https://github.com/travis-ci/travis-ci/issues/2570
+before_deploy: "[ -d piers ] || { mkdir piers && tar cvzSf piers/zod-$TRAVIS_COMMIT.tgz zod/; }"
 deploy:
   - skip_cleanup: true
     provider: gcs
