@@ -1,17 +1,18 @@
 #!/bin/bash
-set -e
+set -euo pipefail
+# set -x
 
 # XX use -s instead of hash pill
 HASH=$(git -C .. log -1 HEAD --format=%H -- sys/)
 export PILL_NAME="git-${HASH:0:10}"
 
-if [ ! $PILL_FORCE ]; then
+if [ ! ${PILL_FORCE:-} ]; then
   wget https://bootstrap.urbit.org/$PILL_NAME.pill -O urbit.pill && exit 0
 fi
 
 # if wget failed
 
-if [ $TRAVIS_COMMIT ] && [ $TRAVIS_COMMIT != $HASH ]; then
+if [ ${TRAVIS_COMMIT:-} ] && [ $TRAVIS_COMMIT != $HASH ]; then
   echo Directory sys/ not modified in commit $TRAVIS_COMMIT
   echo FIXME ignoring, as current sys/ commits are unlikely to contain the pill-build code
   echo
@@ -21,19 +22,20 @@ fi
 
 mkdir prev
 {
-  wget -i pin-parent-pill-pier.url -O - | tar xvz -C prev/
-  echo Downloaded pinned prev/zod
+  echo Pilling: trying pinned fakezod
+  wget -i pin-parent-pill-pier.url -O - | tar xvz -C prev/ &&
+  echo Downloaded prev/zod
 } || {
-  echo Parent-pill pier not available, trying preceding pill commit
+  echo Pilling: Parent-pill pier not available, trying preceding pill commit
   HASH2=$(git -C .. log -2 $HASH --format=%H -- sys/ | tail -1)
   PILL_NAME2="git-${HASH2:0:10}"
-  wget https://bootstrap.urbit.org/$PILL_NAME2.pill -O urbit.pill
-  echo FIXME running test script to create fakezod, this might be overkill
-  lsc test.ls
-  mv urbit.pill prev/urbit.pill
+  wget https://bootstrap.urbit.org/$PILL_NAME2.pill -O urbit.pill &&
+  echo FIXME running test script to create fakezod, this might be overkill **
+  lsc test.ls &&
+  mv urbit.pill prev/urbit.pill &&
   mv zod prev/zod
 } || {
-  echo Out of ideas
+  echo Pilling: Out of ideas
   exit 1
 }
 
