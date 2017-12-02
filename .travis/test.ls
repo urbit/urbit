@@ -6,6 +6,10 @@ urbit =
   pty.spawn './urbit' <[-B urbit.pill -A .. -cFI zod zod]> 
      .on \data -> process.stdout.write it
      
+urbit.on \exit (code)->
+  console.log "\nnode: urbit exited with code #code\n"
+  process.exit code
+
 fin = no
 urbit.pipe (new stream-snitch /dojo> /g).on \match ->
     return if fin
