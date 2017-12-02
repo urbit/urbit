@@ -7090,10 +7090,6 @@
         {$halo *}  ~(clam al boil)
         {$bcsm *}  p.gen
     ::
-<<<<<<< HEAD
-        {$brcb *}  [%tsls [%bunt q.gen] [%brcn p.gen r.gen]]
-        {$brcl *}  [%tsls [%ktcn q.gen] [%brdt p.gen r.gen]]
-=======
         {$brcb *}  :+  %tsls  [%bunt q.gen]
                    :+  %brcn  p.gen
                    %-  ~(run by s.gen)
@@ -7105,11 +7101,10 @@
                    ^+  a
                    :-  p.a
                    =-  ?:(?=({$ash *} q.a) [-.q.a -] [-.q.a -])
-                   |-  ^-  twig
+                   |-  ^-  hoon
                    ?~  r.gen  p.q.a
                    [%tstr [~ p.i.r.gen] q.i.r.gen $(r.gen t.r.gen)]
-        {$brcl *}  [%tsls [%ktsg q.gen] [%brdt p.gen r.gen]]
->>>>>>> c46740d
+        {$brcl *}  [%tsls [%ktcn q.gen] [%brdt p.gen r.gen]]
         {$brdt *}  :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
@@ -7559,8 +7554,8 @@
       ^$(gen p)
     ::
     ++  exps
-      |=  p/(list (pair term twig))
-      =|  out/(list (pair term twig))
+      |=  p/(list (pair term hoon))
+      =|  out/(list (pair term hoon))
       |-  ^+  [out vit]
       ?~  p
         [out vit]
@@ -10138,7 +10133,7 @@
     |=  gen/hoon  ^-  (unit path)
     ?:  ?=({$dbug *} gen)                               ::  unwrap $dbug
       $(gen q.gen)
-    ?.  ?=({$clsg *} gen)  ~                            ::  require :~ twig
+    ?.  ?=({$clsg *} gen)  ~                            ::  require :~ hoon
     %+  reel  p.gen                                     ::  build using elements
     |=  {a/hoon b/_`(unit path)`[~ u=/]}                ::  starting from just /
     ?~  b  ~
@@ -10187,7 +10182,7 @@
     =+  zom=(poon (flop moz) q.u.pof)
     ?~(zom ~ `(weld (flop gul) u.zom))
   ::
-  ++  poof                                              ::  path -> (list twig)
+  ++  poof                                              ::  path -> (list hoon)
     |=(pax/path ^-((list hoon) (turn pax |=(a/@ta [%sand %ta a]))))
   ::
   ::  tyke is =foo== as ~[~ `foo ~ ~]
@@ -11706,11 +11701,14 @@
     ::
     ++  whap                                            ::  chapter
       (most muck boog)
+    ::
     ++  wasp                                            ::  $brcb aliases
-      ;~  pose  %+  ifix
-                  [;~(plug lus tar muck) muck]
-                (most muck ;~(gunk sym loaf))  :: XX loan?
-                (easy ~)
+      ;~  pose  
+        %+  ifix
+          [;~(plug lus tar muck) muck]
+        (most muck ;~(gunk sym loaf))
+      ::
+        (easy ~)
       ==
     ::
     ++  wisp                                            ::  core tail
@@ -11849,23 +11847,13 @@
     ++  exqc  |.(;~(gunk loan loaf))                    ::  root then hoon
     ++  exqs  |.((butt hunk))                           ::  closed gapped roots
     ++  exqg  |.(;~(gunk sym loan))                     ::  term and root
-<<<<<<< HEAD
     ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one root
-    ++  exqr  |.(;~(gunk loan wisp))                    ::  root and core tail
+    ++  exqr  |.(;~(gunk loan ;~(plug wasp wisp)))      ::  root/aliases?/tail
     ++  exqn  |.(;~(gunk loan (stag %cltr (butt hank))))::  autoconsed hoons
     ++  exqw  |.(;~(gunk loaf loan))                    ::  hoon and root
     ++  exqx  |.(;~(gunk loaf loan loan))               ::  hoon, two roots
     ++  exqy  |.(;~(gunk loaf loan loan loan))          ::  hoon, three roots
     ++  exqz  |.(;~(gunk loaf (butt hunk)))             ::  hoon, n roots
-=======
-    ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  twig with one root
-    ++  exqr  |.(;~(gunk loan ;~(plug wasp wisp)))      ::  root/aliases?/tail
-    ++  exqn  |.(;~(gunk loan (stag %cltr (butt hank))))::  autoconsed twigs
-    ++  exqw  |.(;~(gunk loaf loan))                    ::  twig and root
-    ++  exqx  |.(;~(gunk loaf loan loan))               ::  twig, two roots
-    ++  exqy  |.(;~(gunk loaf loan loan loan))          ::  twig, three roots
-    ++  exqz  |.(;~(gunk loaf (butt hunk)))             ::  twig, n roots
->>>>>>> c46740d
     ::
     ::    tiki expansion for %wt runes
     ::
