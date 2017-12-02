@@ -2,7 +2,7 @@
 set -e
 
 # XX use -s instead of hash pill
-HASH=$(git -C .. log -1 HEAD --format="%H" -- sys/)
+HASH=$(git -C .. log -1 HEAD --format=%H -- sys/)
 export PILL_NAME="git-${HASH:0:10}"
 
 if [ ! $PILL_FORCE ]; then
@@ -11,18 +11,18 @@ fi
 
 # if wget failed
 
-echo FIXME ignoring CI commit, as current sys/ commits are unlikely to contain the pill-build code
-# if [ $TRAVIS_COMMIT ] && [ $TRAVIS_COMMIT != $HASH ]; then
-#   echo Directory sys/ not modified in commit $TRAVIS_COMMIT
+if [ $TRAVIS_COMMIT ] && [ $TRAVIS_COMMIT != $HASH ]; then
+  echo Directory sys/ not modified in commit $TRAVIS_COMMIT
+  echo FIXME ignoring, as current sys/ commits are unlikely to contain the pill-build code
 #   echo For auto-build please tag and push $HASH
 #   exit 1
-# fi
+fi
 
 mkdir prev
-curl $(cat pin-parent-pill-pier.url) | tar xvz -C prev/ ||
+wget -i pin-parent-pill-pier.url -O - | tar xvz -C prev/ ||
 { echo "FIXME not building directly from pill"; exit 1; }
 
-lsc -e <<done
+lsc <<done
 do
   require! <[ stream-snitch once recursive-copy wait-on ]>
   pty = require \pty.js
