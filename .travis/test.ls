@@ -13,7 +13,7 @@ urbit.pipe (new stream-snitch /dojo> /g).on \match ->
     console.log "\n\n---\nnode: got dojo!\n---\n\n"
     set-timeout (-> process.exit 0), 1000 # should probably test further
     
-urbit.pipe (new stream-snitch /ford: /g).on \match ->
+urbit.pipe (new stream-snitch /\n(\/~|ford: )/g).on \match ->
     return if fin
     fin := yes
     console.log "\n\n---\nnode: detected error\n---\n\n"
@@ -23,4 +23,4 @@ set-timeout ...
   -> console.log "\n\n---\nnode: timed out after 5 min\n---"
   5*60000
   
-process.on \exit -> urbit.write '\x04' # send EOF to gracefully checkpoint
+process.on \exit -> urbit.write '\04' # send EOF to gracefully checkpoint
