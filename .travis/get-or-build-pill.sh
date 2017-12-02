@@ -19,8 +19,22 @@ if [ $TRAVIS_COMMIT ] && [ $TRAVIS_COMMIT != $HASH ]; then
 fi
 
 mkdir prev
-wget -i pin-parent-pill-pier.url -O - | tar xvz -C prev/ ||
-{ echo "FIXME not building directly from pill"; exit 1; }
+{
+  wget -i pin-parent-pill-pier.url -O - | tar xvz -C prev/
+  echo Downloaded pinned prev/zod
+} || {
+  echo Parent-pill pier not available, trying preceding pill commit
+  HASH2=$(git -C .. log -2 $HASH --format=%H -- sys/ | tail -1)
+  PILL_NAME2="git-${HASH2:0:10}"
+  wget https://bootstrap.urbit.org/$PILL_NAME2.pill -O urbit.pill
+  echo FIXME running test script to create fakezod, this might be overkill
+  lsc test.ls
+  mv urbit.pill prev/urbit.pill
+  mv zod prev/zod
+} || {
+  echo Out of ideas
+  exit 1
+}
 
 lsc <<done
 do
