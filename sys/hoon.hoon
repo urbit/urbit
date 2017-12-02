@@ -12284,7 +12284,7 @@
     =+  lam=(~(get by hit.day) nam)
     day(hit (~(put by hit.day) nam ?~(lam 1 +(u.lam))))
 ::
-++  pi-noon  !.                                           ::  sample trace
+++  pi-noon                                             ::  sample trace
   |=  {mot/term paz/(list path) day/doss}
   =|  lax/(unit path)
   |-  ^-  doss

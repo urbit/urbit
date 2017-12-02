@@ -14,6 +14,7 @@ fi
 if [ $TRAVIS_COMMIT ] && [ $TRAVIS_COMMIT != $HASH ]; then
   echo Directory sys/ not modified in commit $TRAVIS_COMMIT
   echo FIXME ignoring, as current sys/ commits are unlikely to contain the pill-build code
+  echo
 #   echo For auto-build please tag and push $HASH
 #   exit 1
 fi
@@ -66,3 +67,7 @@ do
 done
 cp prev/zod/.urb/put/urbit.pill urbit.pill
 mkdir built-pill; cp urbit.pill built-pill/$PILL_NAME.pill
+
+echo
+echo Created $PILL_NAME.pill, to be uploaded if tests pass
+echo
