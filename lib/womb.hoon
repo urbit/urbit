@@ -254,7 +254,7 @@
 ::                                                    ::  ::
 ::::                                                  ::  ::
   ::                                                  ::  ::
-=+  cfg=[can-claim=& can-recycle=&]                   ::  temporarily disabled
+=+  cfg=[can-claim=| can-recycle=|]                   ::  temporarily disabled
 =+  [replay=| stat-no-email=|]                        ::  XX globals
 |=  {bowl:gall part}                                 ::  main womb work
 |_  moz/(list move)
