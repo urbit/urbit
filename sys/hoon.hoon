@@ -5878,7 +5878,7 @@
     {$smsm p/hoon q/hoon}                                ::  ;;  normalize
   ::                                            ::::::  compositions
     {$tsbr p/root q/hoon}                                ::  =|  push bunt
-    {$tscl p/(list (pair wing hoon)) q/hoon}             ::  =:  q with p changes
+    {$tscl p/(list (pair wing hoon)) q/hoon}             ::  =:  q w/ p changes
     {$tsfs p/toro q/hoon r/hoon}                         ::  =/  typed variable
     {$tssm p/toro q/hoon r/hoon}                         ::  =;  =/(q p r)
     {$tsdt p/wing q/hoon r/hoon}                         ::  =.  r with p as q
@@ -9712,7 +9712,7 @@
   ++  gash  %+  cook                                    ::  parse path
               |=  a/(list tyke)  ^-  tyke
               ?~(a ~ (weld i.a $(a t.a)))
-            (more fas gasp)
+            (more fas limp)
   ++  gasp  ;~  pose                                    ::  parse =path= etc.
               %+  cook
                 |=({a/tyke b/tyke c/tyke} :(weld a b c))
@@ -9733,6 +9733,11 @@
                 |=(a/coin [%sand ?:(?=({$~ $tas *} a) %tas %ta) ~(rent co a)])
               nuck:so
             ==
+  ++  limp  %+  cook
+              |=  {a/(list) b/tyke}
+              ?~  a  b
+              $(a t.a, b [`[%sand %tas %$] b])
+            ;~(plug (star fas) gasp)
   ++  mota  %+  cook
               |=({a/tape b/tape} (rap 3 (weld a b)))
             ;~(plug (star low) (star hig))
@@ -9873,7 +9878,7 @@
     %+  reel  p.gen                                     ::  build using elements
     |=  {a/hoon b/_`(unit path)`[~ u=/]}                ::  starting from just /
     ?~  b  ~
-    ?.  ?=({$sand ?($ta $tas) @} a)  ~                  ::  require /foo constants
+    ?.  ?=({$sand ?($ta $tas) @} a)  ~                  ::  /foo constants
     `[q.a u.b]
   ::
   ++  pray
@@ -9948,7 +9953,7 @@
     %+  sear
       |=  {a/wing b/(unit hoon)}  ^-  (unit hoon)
       ?~(b [~ %wing a] ?.(?=({@ $~} a) ~ [~ [%rock %tas i.a] u.b]))
-    ;~(plug rope ;~(pose (stag ~ ;~(pfix lus wide)) (easy ~)))
+    ;~(plug rope ;~(pose (stag ~ wede) (easy ~)))
   ::
   ++  rood
     ;~  pfix  fas
@@ -11031,7 +11036,7 @@
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
           (stag %wtpm ;~(pfix pam (ifix [pel per] (most ace wide))))
-          ;~(plug (stag %rock (stag %f (cold & pam))) ;~(pfix lus wide))
+          ;~(plug (stag %rock (stag %f (cold & pam))) wede)
           (stag %sand (stag %f (cold & pam)))
         ==
       :-  '\''
@@ -11079,7 +11084,7 @@
         %+  cook
           |=  {a/dime b/(unit hoon)}
           ?~(b [%sand a] [[%rock a] u.b])
-        ;~(plug bisk:so (punt ;~(pfix lus wide)))
+        ;~(plug bisk:so (punt wede))
       :-  ':'
         ;~  pfix  col
           ;~  pose
@@ -11126,7 +11131,7 @@
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
           (stag %wtbr ;~(pfix bar (ifix [pel per] (most ace wide))))
-          ;~(plug (stag %rock (stag %f (cold | bar))) ;~(pfix lus wide))
+          ;~(plug (stag %rock (stag %f (cold | bar))) wede)
           (stag %sand (stag %f (cold | bar)))
         ==
       :-  '~'
@@ -11143,7 +11148,7 @@
               ;~(glam rope wide (most ace wide))
             ::
               (cook (jock |) twid:so)
-              (stag [%bust %null] ;~(pfix lus wide))
+              (stag [%bust %null] wede)
               (easy [%bust %null])
             ==
           ==
@@ -11736,6 +11741,8 @@
   ++  till                                              ::  mold tall form
     %+  knee  *root
     |.(~+((wart (wrap ;~(pose (norm & &) scad)))))
+  ++  wede                                              ::  wide bulb
+    ;~(pfix ;~(pose lus fas) wide)
   ++  wide                                              ::  full wide form
     %+  knee  *hoon
     |.(~+((wart ;~(pose (norm | |) long apex:(sail |)))))
