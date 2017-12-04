@@ -290,7 +290,6 @@ J_E_OFILES_ED=\
        jets/e/ed_shar.o
 
 J_F_OFILES=\
-       jets/f/al.o \
        jets/f/ap.o \
        jets/f/cell.o \
        jets/f/comb.o \
