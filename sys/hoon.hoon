@@ -5969,6 +5969,7 @@
     {$base p/base}                                      ::  base
     {$bunt p/root}                                      ::  mold default value
     {$bust p/base}                                      ::  bunt base
+    {$cold p/hoon}                                      ::  fold constant
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
@@ -7026,6 +7027,7 @@
     ::
         {$base *}  ~(clam al boil)
         {$bust *}  ~(bunt al %axil p.gen)
+        {$cold *}  p.gen
         {$dbug *}   q.gen
         {$eror *}  ~|(p.gen !!)
     ::
@@ -7094,7 +7096,7 @@
                    |-  ^-  hoon
                    ?~  r.gen  p.q.a
                    [%tstr [~ p.i.r.gen] q.i.r.gen $(r.gen t.r.gen)]
-        {$brcl *}  [%tsls [%ktcn q.gen] [%brdt p.gen r.gen]]
+        {$brcl *}  [%tsls [%cold q.gen] [%brdt p.gen r.gen]]
         {$brdt *}  :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
@@ -7133,7 +7135,7 @@
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$bunt *}  [%ktcn ~(bunt al %herb p.gen)]
+        {$bunt *}  [%cold ~(bunt al %herb p.gen)]
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
         {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
@@ -8495,8 +8497,8 @@
       =+  tal=$(gen q.gen, gol %noun)
       [(nice (cell p.hed p.tal)) (cons q.hed q.tal)]
     ::
-        {$ktcn *}  (blow gol p.gen)
-        ::  {$ktcn *}  $(fab |, gen p.gen)
+        {$cold *}  (blow gol p.gen)
+        {$ktcn *}  $(fab |, gen p.gen)
         {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
     ::
         {$cnts *}  (~(mint et p.gen q.gen) gol)
