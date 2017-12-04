@@ -434,15 +434,13 @@
         return ret;
       }
 
-      case c3__wtts: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__fits: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
-        u3_noun heb = u3nc(c3__herb, u3k(p_gen));
-        u3_noun nob = u3qfl_bunt(van, heb);
+        u3_noun wam = u3qfu_play(van, sut, p_gen);
         u3_noun dok = u3nc(c3__wing, u3k(q_gen));
         u3_noun vol = _mint_corn(van, sut, dok);
         u3_noun axe = _mint_coke(vol);
-        u3_noun wam = u3qfu_play(van, sut, nob);
 
         ret = u3nc(_mint_nice(van, gol, _mint_bean()),
                    u3qfu_fish(van, wam, axe));
@@ -450,9 +448,7 @@
         u3z(axe);
         u3z(vol);
         u3z(wam);
-        u3z(nob);
         u3z(dok);
-        u3z(heb);
 
         return ret;
       }
