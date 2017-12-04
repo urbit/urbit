@@ -85,7 +85,17 @@
 ++  poke-collections-action
   |=  act/action
   ^-  (quip move _+>)
-  ?.  (team:title our.bol src.bol)  [~ +>]
+  ?.  ?-  -.act
+          ?($create $delete)
+        (team:title src.bol our.bol)
+      ::
+          ?($submit $comment)
+        =+  col=(~(get by cols) nom.act)
+        ?~  col  |
+        ?!  .=  publ.conf.u.col
+        (~(has in mems.conf.u.col) src.bol)
+      ==
+    [~ +>]
   =<  ta-done
   ?-  -.act
     $create   (ta-create:ta +.act)
