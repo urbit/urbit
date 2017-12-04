@@ -160,16 +160,8 @@
     |=  {wat/kind des/cord pub/? vis/? ses/(set ship)}
     ^+  +>
     =+  nom=(sane-cord des)
-    =.  +>.$
-      =-  (ta-change-config nom - %coll)
-      [des pub vis ses]
-    %-  ta-emit
-    :*  0
-        %peer
-        /hall/[nom]
-        [our.bol %hall]
-        /circle/(make-circle nom ~)/config-l
-    ==
+    =-  (ta-change-config nom - %coll)
+    [des pub vis ses]
   ::
   ++  ta-submit
     |=  {nom/term tit/cord wat/wain}
@@ -366,7 +358,14 @@
     =.  +>.$
       %-  ta-hall-action
       [%create nam desc.cof ?:(publ.cof %journal %village)]
-    ::TODO  if ?~ top, sub to config changes
+    =?  +>.$  ?=($~ top)
+      %-  ta-emit
+      :*  0
+          %peer
+          /hall/[nom]
+          [our.bol %hall]
+          /circle/[nam]/config-l
+      ==
     =?  +>.$  visi.cof
       (ta-hall-set-visible nam &)
     =?  +>.$  ?=(^ top)
