@@ -50,10 +50,6 @@
           {$delete nom/term}                            ::  delete a collection
       ==
     ++  kind  ?($blog $fora $note)
-    ++  command
-      $%  {$write wer/term wat/wain}  ::TODO  parent? title? etc.
-      ==
-    ::
     ++  move  (pair bone card)                          ::<  all actions
     ++  lime                                            ::>  diff fruit
       $%  {$hall-prize prize:hall}                      ::
