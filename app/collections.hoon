@@ -206,20 +206,27 @@
   ++  ta-apply-config-diff
     |=  {nom/term dif/diff-config:hall}
     ^+  +>
-    +>
-    ::TODO  find error?
-    ::=-  (ta-change-config nom - %hall)
-    ::=+  cof=conf:(~(got by cols) nom)
-    ::?+  -.dif  ta
-    ::    $caption
-    ::  cof(desc cap.dif)
-    ::::
-    ::    $permit
-    ::  cof  ::TODO
-    ::::
-    ::    $remove
-    ::  cof  ::TODO/REVIEW  ignore/recreate? *don't* remove files.
-    ::==
+    =+  cof=conf:(~(got by cols) nom)
+    =;  new/(unit config)
+      ?~  new  +>.$
+      (ta-change-config nom u.new %hall)
+    ?+  -.dif  ~
+        $caption
+      `cof(desc cap.dif)
+    ::
+        $permit
+      %-  some
+      %_  cof
+          mems
+        %.  mems.cof
+        ?:  add.dif
+          ~(dif in sis.dif)
+        ~(int in sis.dif)
+      ==
+    ::
+        $remove
+      `cof  ::TODO/REVIEW  ignore/recreate? *don't* remove files.
+    ==
   ::
   ++  ta-change-config
     |=  {nom/term new/config src/?($file $hall $coll)}
