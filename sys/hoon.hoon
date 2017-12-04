@@ -5974,6 +5974,7 @@
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
     {$docs p/(pair cord (list sect)) q/hoon}            ::  annotate image
+    {$fits p/hoon q/wing}                               ::  underlying ?=
     {$halo p/what q/root}                               ::  annotate model
     {$knit p/(list woof)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
@@ -7205,17 +7206,6 @@
         [%tsgr [%$ 3] s.gen]
       [%sgpm p.gen [%$ 5] [%tsgr [%$ 3] s.gen]]
     ::
-        {$xray *}
-      ::
-      ::REVIEW separate ap arms?
-      =/  open-mane
-        |=  a/mane:hoon
-        ?@(a [%rock %tas a] [[%rock %tas -.a] [%rock %tas +.a]])
-      =/  open-mart  
-        |=  {n/mane:hoon v/(list beer:hoon)} 
-        [(open-mane n) %knit v]
-      [[(open-mane n.g.p.gen) %clsg (turn a.g.p.gen open-mart)] %smts c.p.gen]
-    ::
         {$smts *}
       |-
       ?~  p.gen  [%bust %null]
@@ -7360,8 +7350,22 @@
       |-
       ?~(p.gen [%rock %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
     ::
+        {$xray *}
+      |^  :-  [(open-mane n.g.p.gen) %clsg (turn a.g.p.gen open-mart)] 
+          [%smts c.p.gen]
+      ::
+      ++  open-mane
+        |=  a/mane:hoon
+        ?@(a [%rock %tas a] [[%rock %tas -.a] [%rock %tas +.a]])
+      ::
+      ++  open-mart
+        |=  {n/mane:hoon v/(list beer:hoon)} 
+        [(open-mane n) %knit v]
+      --
+    ::
         {$wtpt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
+        {$wtts *}   [%fits ~(bunt al %herb p.gen) q.gen]
         {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {$zpgr *}
       [%cnhp [%limb %onan] [%zpsm [%bunt [%limb %abel]] p.gen] ~]
@@ -8577,9 +8581,9 @@
       =+  ran=$(sut wux, gen r.gen)
       [(fork p.hiq p.ran ~) (cond duy q.hiq q.ran)]
     ::
-        {$wtts *}
+        {$fits *}
       :-  (nice bool)
-      =+  ref=(play ~(bunt al %herb p.gen))
+      =+  ref=(play p.gen)
       =+  fid=(find %read q.gen)
       ~|  [%test q.gen]
       |-  ^-  nock
