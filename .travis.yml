@@ -29,9 +29,10 @@ addons:
 deploy:
   skip_cleanup: true
   provider: releases
+  prerelease: true # turn this off for official releases
   api_key:
-    secure: G0DvLxngByYkIPs7lkP/lPDbKVX2QnEGdA9FA7CRGcup8lPZmITEPW+H9AKsWDjmjkt0TLlqjc/V1KeDT7QRWZpem4KV2yBsfkpz+svlRRvdzq9XNSmL3tJnUlkaNfOS6Kx76O0AV0WztDs0BmQBP9QegscmI0BWf68QeHQoQymhNS6jSNAvdjeWNl3qw9JTEf8x5XPV3rIbcUNQO5S/VcWeOB4h4prUFS+Us+y462cv+L+JeA9pK4W02z8It46U9jNNOx4Gp4dQWuvDj1kCDWwZSceaTl4awj2HK+apyywh589qNmhcGNpKICKTJGexSMhCraU/otaZ+W/V80wek7BbCF4gOJpxxk9oOqurZonFeA/v/xVjdjzjKyG5u35MLrb3kvptSjh7+rOcjdAJVQ1MGxsttwMhg8mW4uyIK3sILNHqCS02eTIE6o9wUzZCzicqIyWOwC8NKNu6usilqnhAxHxfTBkf4Le1H6EsQ/mkHhQpNQKIfIsOHBZzp/KEk3oZ1rZIJM1eiRRvhaSInzitKfObJOmBR728X+0zqUEZBlIq5FH0b7nrAVwyQO1ng+qRPBz1wjh9YuQUifM6hTXnC9f2AAYRmzJeaI7hnkKK0NFuwUBtCRNXOYVYo4dPzKjWAhmrIlgZ8oPI/R4Xtv9RigDtYxRqJYnMKmJCeSk=
+    secure: V4E7784ECSS3MO6ZIRtang9XwibDyvDYGb0MoSaP2CTlmzIAhdokr4KJFM0qM4KRaaajCdQuqi0lojgOjwdxs7e0GkAwScb33LFxQ7Chj/QkFOY7V1AnSRLR5OsXnazB0nur5aSwvcvnggQ2XW3OeF7zIvGfs9aR97SEz/xCrVE=
   file: bin/urbit # TODO upload package from before_deploy
   on:
-    repo: ohAitch/urbit
-    all_branches: true
+    repo: urbit/urbit
+    tags: true
