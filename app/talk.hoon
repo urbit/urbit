@@ -13,7 +13,6 @@
 ::>  since that's the only thing the client ever
 ::>  subscribes to.
 ::
-/?    151                                               ::<  hoon version
 /-    hall, sole                                        ::<  structures
 /+    hall, sole                                        ::<  libraries
 /=    seed  /~  !>(.)
@@ -501,7 +500,7 @@
       +>(moves [[id.she %diff %sole-effect fec] moves])
     ::
     ++  sh-act                                          ::<  send action
-      ::>  adds an aaction to ++ta's moves.
+      ::>  adds an action to ++ta's moves.
       ::
       |=  act/action
       ^+  +>

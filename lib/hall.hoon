@@ -3,7 +3,6 @@
   ::
   ::  This file is in the public domain.
   ::
-/?    310
 /-    hall
 ::
 ::::

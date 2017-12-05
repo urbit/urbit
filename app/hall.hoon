@@ -12,7 +12,6 @@
 ::      presence when we sub to someplace, and remove that when we unsub, but
 ::      don't make the target source do that.
 ::
-/?    151                                               ::<  hoon version
 /-    hall                                              ::<  structures
 /+    hall, hall-legacy                                 ::<  libraries
 /=    seed  /~  !>(.)
