@@ -8,7 +8,7 @@ before_install:
       wget $(cat ./pin-urbit-release.url)/urbit -O ./urbit &&
       chmod +x ./urbit;
       echo "FIXME downloaded raw urbit binary releaseinstead of .deb";
-      echo "FIXME read full pinned url instead of tag name"
+      echo "FIXME used full pinned url instead of tag name"
       
 before_script: bash get-or-build-pill.sh
 
