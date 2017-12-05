@@ -1,8 +1,9 @@
+=-  ;pre:"{<[-]>}"
 :-  ;>
     indented
     indented
 
-:-  ;=  ;>
+:-  ;=  *{~}
     ==
-;=  ;>  some *markdown*
+;=  some *markdown*
 ==

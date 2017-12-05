@@ -1,4 +1,4 @@
-::                                                      ::  ::
+::                                                      ::  ::  
 ::::  /hoon/talk/app                                    ::  ::
   ::                                                    ::  ::
 /?    310
@@ -110,7 +110,7 @@
           {$join p/where}                               ::
           {$leave p/where}                              ::
           {$say p/(list speech)}                        ::
-          {$eval p/cord q/twig}                         ::
+          {$eval p/cord q/hoon}                         ::
           {$invite p/knot q/(list partner)}             ::  whitelist add
           {$banish p/knot q/(list partner)}             ::  blacklist add
           {$block p/knot q/(list partner)}              ::  blacklist add
@@ -203,7 +203,7 @@
     ++  sh-scad                                         ::  command parser
       =<  work
       |%
-      ++  expr                                          ::  [cord twig]
+      ++  expr                                          ::  [cord hoon]
         |=  tub/nail  %.  tub
         %+  stag  (crip q.tub)
         wide:(vang & [&1:% &2:% (scot %da now.hid) |3:%])
@@ -968,7 +968,7 @@
       |=  cod/command
       %_(+> coz [cod coz])
     ::
-    ++  sh-twig-head  ^-  vase                          ::  eval data
+    ++  sh-hoon-head  ^-  vase                          ::  eval data
       !>(`{our/@p now/@da eny/@uvI}`[our.hid now.hid (shas %eny eny.hid)])
     ::
     ++  sh-work                                         ::  do work
@@ -1211,8 +1211,8 @@
         ..sh-work
       ::
       ++  eval                                          ::  run
-        |=  {txt/cord exe/twig}
-        =>  |.([(sell (slap (slop sh-twig-head seed) exe))]~)
+        |=  {txt/cord exe/hoon}
+        =>  |.([(sell (slap (slop sh-hoon-head seed) exe))]~)  
         =+  tan=p:(mule .)
         (say [%fat tank+tan exp+txt] ~)
       ::

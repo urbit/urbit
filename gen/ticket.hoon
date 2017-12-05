@@ -5,7 +5,7 @@
 /?    310
 ::
 ::::
-  ::
+  !.
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {{her/@p $~} $~}

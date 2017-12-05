@@ -2,6 +2,8 @@
 ::::  /hoon/report/hood/gen
   ::
 /?    310
+/+  old-zuse
+=,  old-zuse
 ::
 ::::
   ::

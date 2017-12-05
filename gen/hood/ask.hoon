@@ -3,6 +3,8 @@
 ::::  /hoon/ask/hood/gen
   ::
 /?    310
+/+  old-zuse
+=,  old-zuse
 :-  %say
 |=  {^ {mel/cord $~} $~}
 =+  adr=(star ;~(less (mask "\"\\()[],:;<>@") prn))

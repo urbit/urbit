@@ -3,6 +3,8 @@
 ::::  /hoon/save/hood/gen
   ::
 /?    310
+/+  old-zuse
+=,  old-zuse
 ::
 ::::
   ::

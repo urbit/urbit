@@ -282,7 +282,7 @@
 ::
 ::  Foreign desk data.
 ::
-++  rung  rus/(map desk rede)                           ::  neighbor desks
++=  rung  rus/(map desk rede)                           ::  neighbor desks
 ::
 ::  Hash of a commit, for lookup in the object store (hut.ran)
 ::

@@ -1,6 +1,7 @@
 ::  ::  %eyre, http servant
 !?  164
 ::::
+!:
 |=  pit/vase
 =,  eyre
 =,  wired
@@ -982,7 +983,7 @@
     |=  {tea/whir bek/beak sil/silk:ford}
     %+  pass-note  tea
     :^  %f  %exec  our
-    `[bek [%dude |.(leaf+"eyre: execute {<tea>}") sil]]
+    `[bek [%dude [|.(+)]:[%leaf "eyre: execute {<tea>}"] sil]]
   ::
   ++  fail
     |=  {sas/@ud dep/@uvH mez/tang}

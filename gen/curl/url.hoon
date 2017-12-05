@@ -2,7 +2,9 @@
 ::
 ::::  /hoon/url/curl/gen
   ::
-/?  310
+/?    310
+/+  old-zuse
+=,  old-zuse
 ::
 :::::
   ::

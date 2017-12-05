@@ -146,7 +146,7 @@
       {$recycle who/mail him/knot tik/knot}
       {$bonus tid/cord pla/@ud sta/@ud}
       {$invite tid/cord ref/reference inv/invite}
-      {$reinvite aut/passcode inv/invite}
+      {$reinvite aut/passcode new/passcode inv/invite}
   ==
 --
 |%
@@ -254,7 +254,7 @@
 ::                                                    ::  ::
 ::::                                                  ::  ::
   ::                                                  ::  ::
-=+  cfg=[can-claim=& can-recycle=&]                   ::  temporarily disabled
+=+  cfg=[can-claim=| can-recycle=|]                   ::  temporarily disabled
 =+  [replay=| stat-no-email=|]                        ::  XX globals
 |=  {bowl:gall part}                                 ::  main womb work
 |_  moz/(list move)
@@ -654,7 +654,7 @@
 :: ++  coup-invite                                      ::  invite sent
 ::
 ++  poke-reinvite                                     ::  split invitation
-  |=  {aut/passcode inv/invite}                       ::  further invite
+  |=  {aut/passcode new/passcode inv/invite}                       ::  further invite
   =<  abet
   =.  log-transaction  (log-transaction %reinvite +<)
   ?>  =(src src)                                      ::  self-authenticated
@@ -662,8 +662,8 @@
   =.  stars.bal  (sub stars.bal sta.inv)
   =.  planets.bal  (sub planets.bal pla.inv)
   =.  bureau  (~(put by bureau) (shaf %pass aut) bal)
-  =+  tid=(scot %uv (end 7 1 (shaf %pass eny)))
-  (invite-from [owner.bal history.bal] tid inv)
+  =+  tid=(scot %uv new)
+  (invite-from [owner.bal history.bal] (scot %uv new) inv)
 ::
 ++  poke-obey                                         ::  set/reset boss
   |=  who/(unit @p)
