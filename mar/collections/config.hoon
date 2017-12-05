@@ -34,8 +34,8 @@
         =((snag 1 txs) 'public')
       =((snag 2 txs) 'visible')
     %-  ~(gas in *(set ship))
-    %+  turn  (slag 3 txs)
-    (cury slav %p)
+    %+  murn  (slag 3 txs)
+    (cury slaw %p)
   --
 ++  grad  %txt
 --
