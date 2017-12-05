@@ -2,7 +2,7 @@
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  zuse version
-/+  sole                                                ::  libraries
+/+  sole,                                               ::  libraries
     ::  XX these should really be separate apps, as
     ::     none of them interact with each other in
     ::     any fashion; however, to reduce boot-time
