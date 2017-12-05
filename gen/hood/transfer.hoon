@@ -12,6 +12,6 @@
         {{pas/@uvH who/@t $~} $~}
     ==
 :-  %womb-reinvite
-=+  [him=(scot %p p.bec) cas=(scot %da now) key=(scot %p pas)]
-=+  [pla=planets sta=stars]:.^(balance:womb %gx /[him]/hood/[cas]/womb/balance/[key])
+=+  [him=(scot %p p.bec) cas=(scot %da now) key=(scot %uv pas)]
+=+  [pla=planets sta=stars]:.^(balance:womb %gx /[him]/hood/[cas]/womb/balance/[key]/womb-balance)
 [pas who pla sta "Email updated, new passcode" "Email correction"]
