@@ -5941,6 +5941,11 @@
               {$2 p/toga q/toga}                        ::  cell toga
           ==                                            ::
 ++  tomb  (pair chap (map term (pair what foot)))       ::  core chapter
+++  tope                                                ::  topographic type
+  $@  $?  %&                                            ::  cell or atom
+          %|                                            ::  atom
+      ==                                                ::
+  (pair tope tope)                                      ::  cell
 ++  tuna                                                ::  tagflow
           $%  {$a p/hoon}                               ::  plain text
               {$b p/hoon}                               ::  single tag
@@ -6191,6 +6196,7 @@
   ==
     %al    al
     %ap    ap
+    %aq    aq
     %ut    ut
   ==
 |%
@@ -6488,6 +6494,445 @@
   ++  wtts  |=(gen/hoon (gray [%wtts (blue gen) puce]))
   --
 ::
+++  ax
+  =+  :*  dom=`axis`1
+          doc=*(list what)
+      ==
+  |_  mod/tile
+  ++  bunt  
+    ::  ~&  [%bunt-model mod]
+    ::  =-  ~&  [%bunt-product -]
+    ::    -  
+    ersatz
+  ++  clam  
+    ::  ~&  [%clam-model mod]
+    ::  =-  ~&  [%clam-product -]
+    ::    -
+    factory
+  ++  home  
+    ::  express a hoon against the original subject
+    ::
+    |=(gen/hoon ^-(hoon ?:(=(1 dom) gen [%tsgr [%$ dom] gen])))
+  ::
+  ++  default
+    ::  produce a hoon that makes the model's default value, untyped
+    ::
+    |-  ^-  hoon
+    ?-    mod
+        {^ *}
+      [$(mod -.mod) $(mod +.mod)]
+    ::
+        {$axil *}
+      ?+  p.mod  [%rock %$ 0]
+        $cell  [[%rock %$ 0] [%rock %$ 0]]
+        $void  [%zpzp ~]
+      ==
+    ::
+        {$bark *}
+      $(mod q.mod)
+    ::
+        {$herb *}
+      =+  cys=~(boil ap p.mod)
+      ?:  ?=($herb -.cys)
+        (home [%tsgl [%limb %$] p.mod])
+      $(mod cys)
+    ::  
+        {$deet *}
+      $(mod q.mod)
+    ::
+        {$fern *}
+      ::  last entry is the default value
+      ::
+      |-  ^-  hoon
+      ?~(t.p.mod ^$(mod i.p.mod) $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod))
+    ::
+        {$kelp *}
+      ::  last entry is the default value
+      ::
+      |-  ^-  hoon
+      ?~(t.p.mod ^$(mod i.p.mod) $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod))
+    ::
+        {$leaf *}
+      [%rock p.mod q.mod]
+    ::
+        {$plow *}
+      $(mod q.mod)
+    ::
+        {$reed *}
+      $(mod p.mod)
+    ::
+        {$vine *}
+      $(mod q.mod)
+    ::
+        {$weed *}
+      (home p.mod)
+    ==
+  ::
+  ++  trivial
+    ::  ersatz by trivial construction
+    ::
+    ^-  hoon
+    :+  %tsls
+      [%bust %noun]
+    ~(construct sample [2 %|])
+  ::
+  ++  basic
+    |=  bas/base
+    ?-    bas
+    ::
+        {$atom *}
+      ::  trivial zero
+      ::
+      [%sand p.bas 0]
+    ::
+        $noun
+      ::  raw nock produces noun type
+      ::
+      =+([%rock %$ 0] [%ktls [%dttr - - [%rock %$ 1]] -])
+    ::
+        $cell
+      ::  reduce to pair of nouns
+      ::
+      =+($(mod [%axil %noun]) [- -])
+    ::
+        $bean
+      ::  comparison produces boolean type
+      ::
+      =+([%rock %$ 0] [%ktls [%dtts - -] -])
+    ::
+        $null
+      [%rock %n 0]
+    ::
+        $void
+      ::  should not actually be a thing
+      ::
+      [%zpzp ~] 
+    ==
+  ::
+  ++  decorate
+    ::  document 
+    ::
+    |=  gen/hoon
+    ^-  hoon
+    ?~  doc  gen
+    =/  fin  $(doc t.doc)
+    ?~(i.doc gen [%docs u.i.doc gen])
+  ::
+  ++  ersatz
+    ::  produce a correctly typed instance without subject
+    ::
+    ^-  hoon
+    ?-    mod
+        {^ *}
+      %-  decorate
+      =.  doc  ~
+      [ersatz(mod -.mod) ersatz(mod +.mod)]
+    ::
+        {$axil *}  (decorate (basic p.mod))
+        {$bark *}  [%ktts p.mod ersatz(mod q.mod)]
+        {$herb *}
+      %-  decorate
+      =.  doc  ~
+      =+  cys=~(boil ap p.mod)
+      ?:  ?=($herb -.cys)
+        (home [%tsgl [%limb %$] p.mod])
+      ersatz(mod cys)
+    ::  
+        {$deet *}  [%dbug p.mod ersatz(mod q.mod)]
+        {$fern *}  trivial
+        {$kelp *}  trivial
+        {$leaf *}  (decorate [%rock p.mod q.mod])
+        {$plow *}  ersatz(mod q.mod, doc [p.mod doc])
+        {$reed *}  trivial
+        {$vine *}  trivial
+        {$weed *}  (home p.mod)
+    ==
+  ::
+  ++  factory
+    ::  produce a normalizing gate (mold)
+    ::
+    ^-  hoon
+    :^  %brts  ~^~
+      [%base %noun]
+    ~(construct sample [6 %&])
+  ::
+  ++  sample
+    ::  normalize a sample of the subject
+    ::
+    |_  $:  ::  axe: axis to sample
+            ::  top: topographic type of sample
+            ::
+            axe/axis
+            top/tope 
+        ==
+    ++  basic
+      |=  bas/base
+      ::  apply documentation
+      ::
+      ?^  doc  document
+      ?-    bas
+          {%atom *}
+        ::  rez: fake instance
+        ::
+        =/  rez  ersatz
+        ?^  top  rez
+        ?:  =(%| top)
+          ::  xx sanitize
+          ::
+          fetch
+        [%wtpt fetch-wing fetch rez]
+      ::
+          $noun
+        fetch
+      ::
+          $cell
+        ?^  top  fetch
+        ::  rez: fake instance
+        ::
+        =/  rez  ersatz
+        ?:  =(%| top)
+          rez
+        [%wtpt fetch-wing rez fetch]
+      ::
+          $bean
+        ?^  top  ersatz
+        :^    %wtcl
+            [%dtts [%rock %$ |] [%$ axe]]
+          [%rock %f |]
+        [%rock %f &]
+      ::
+          $null
+        ersatz
+      ::
+          $void
+        ersatz
+      ==
+    ++  fetch
+      ::  load the sample
+      ::
+      ^-  hoon
+      [%$ axe]
+    ::
+    ++  fetch-wing
+      ::  load, as a wing
+      ::
+      ^-  wing
+      [[%& axe] ~]
+    ::
+    ++  choice
+      ::  match full models, by trying them
+      ::
+      |=  $:  ::  one: first option
+              ::  rep: other options
+              ::
+              one/tile
+              rep/(list tile)
+          ==
+      ^-  hoon
+      ::  if no other choices, construct head
+      ::
+      ?~  rep  construct(mod one)
+      ::  fin: loop completion
+      ::
+      =/  fin/hoon  $(one i.rep, rep t.rep)
+      ::  new: trial product
+      ::  old: original subject
+      ::
+      =/  new  [%$ 2]
+      =*  old  [%$ 3]
+      ::  build trial noun
+      ::
+      :+  %tsls
+        ::  build the sample with the first option
+        ::
+        construct(mod one)
+      ::  build test
+      ::
+      :^    %wtcl
+          ::  if the trial noun equals the sample
+          ::
+          [%dtts new fetch(axe (peg 3 axe))]
+        ::  produce the trial noun
+        ::
+        new
+      ::  continue with the original subject
+      ::
+      [%tsgr old fin]
+    ::
+    ++  switch
+      |=  $:  ::  one: first format
+              ::  two: more formats
+              ::
+              one/line
+              rep/(list line)
+          ==
+      ^-  hoon
+      ::  if no other choices, construct head
+      ::
+      ?~  rep  construct(mod `tile`one) 
+      ::  fin: loop completion
+      ::
+      =/  fin/hoon  $(one i.rep, rep t.rep)
+      ::  interrogate this instance
+      ::
+      :^    %wtcl
+          ::  test if we match this wing
+          ::
+          [%wtts p.i.rep fetch-wing]
+        ::  use this format
+        ::
+        :-  `hoon`p.i.rep
+        construct(mod q.i.rep, top &, axe (peg axe 3))
+      ::  continue in the loop
+      ::
+      fin
+    ::
+    ++  probe
+      ::  probe for cell or default
+      ::
+      ^-  hoon
+      ::  ~&  [%probe axe mod]
+      ::
+      ::  old subject is wrapped by trap
+      ::
+      =:  axe  (peg 3 axe)
+          dom  (peg 3 dom)
+        ==
+      ::  guarded trap
+      ::
+      :+  %tsgr
+        ::  constructor trap
+        ::
+        :+  %brdt  ~^~
+        ::  construct within trap
+        ::
+        %=  construct
+        ::  old context within trap context
+        ::
+          dom  (peg 3 dom)
+        ::  only kick trap if sample is known cell
+        ::
+          top  [& &]
+        ==
+      ::  boc: call constructor
+      ::  but: default, but coerce type to call
+      ::
+      =/  boc/hoon  [%limb %$]
+      =/  but/hoon  [%ktls boc default]
+      ?:  =(& top)
+        ::  may be atom or cell; default or construct
+        ::
+        [%wtcl [%dtwt fetch] boc but]
+      ::  must be atom; construct
+      ::
+      but
+    ::
+    ++  document
+      ::  document and construct
+      ::
+      |-  ^-  hoon
+      ?~  doc  construct
+      =/  fin  $(doc t.doc)
+      ?~(i.doc fin [%docs u.i.doc fin])
+    ::
+    ++  construct
+      ::  constructor at arbitrary sample
+      ::
+      ::  ~&  [%construct axe mod]
+      ^-  hoon
+      ?-    mod
+      ::
+      ::  cell
+      ::
+          {^ *}
+        ::  apply help
+        ::
+        ?^  doc  document
+        ::  probe unless we know the sample is a cell
+        ::
+        ?@  top  probe
+        ::  if known cell, descend directly
+        ::
+        :-  construct(mod -.mod, top p.top, axe (peg axe 2))
+        construct(mod +.mod, top q.top, axe (peg axe 3))
+      ::
+      ::  base
+      ::
+          {$axil *}
+        (basic p.mod)
+      ::
+      ::  name, $=
+      ::
+          {$bark *}
+        [%ktts p.mod construct(mod q.mod)]
+      ::
+      ::  debug
+      ::
+          {$deet *}
+        [%dbug p.mod construct(mod q.mod)]
+      ::
+      ::  choice, $?
+      ::
+          {$fern *}
+        (choice i.p.mod t.p.mod)
+      ::
+      ::  synthesis, $;
+      ::
+          {$herb *}
+        ?^  doc  document
+        =+  cys=~(boil ap p.mod)
+        ?:  ?=($herb -.cys)
+          [%cnhp (home p.mod) fetch ~]
+        construct(mod cys)
+      ::
+      ::  switch, $%
+      :: 
+          {$kelp *}
+        ::  if atom or unknown, probe
+        ::
+        ?@  top  probe
+        ::  if cell, enter switch directly
+        ::
+        (switch i.p.mod t.p.mod)
+      ::
+      ::  constant
+      ::
+          {$leaf *}
+        (decorate [%rock p.mod q.mod])
+      ::
+      ::  documentation
+      ::
+          {$plow *}
+        construct(doc [p.mod doc], mod q.mod)
+      ::
+      ::  branch, $@
+      ::
+          {$reed *}
+        ?^  doc  document
+        ?@  top
+          ?:  =(%| top)
+            construct(mod p.mod)
+          [%wtpt fetch-wing construct(mod p.mod) construct(mod q.mod)]
+        construct(mod q.mod)
+      ::
+      ::  bridge, $^
+      ::
+          {$vine *}
+        ?^  doc  document
+        ?@  top  probe
+        :^    %wtpt
+            fetch-wing(axe (peg axe 2))
+          construct(mod q.mod) 
+        construct(mod p.mod)
+      ::
+      ::  weed, $_
+      ::
+          {$weed *}
+        (decorate (home p.mod))
+      ==
+    --
+  --
+::
 ++  al                                                  ::  tile engine
   ~%    %al
       +>+
@@ -6730,6 +7175,932 @@
         {$weed *}
       (hail (home p.sec))
     ==
+  --
+::
+++  aq                                                  ::  hoon engine
+  ~%    %aq
+      +>
+    ==
+      %etch  etch
+      %open  open
+      %rake  rake
+    ==
+  |_  gen/hoon
+  ++  etch
+    ~_  leaf+"etch"
+    |-  ^-  term
+    ?:  ?=({$ktts *} gen)
+      ?>(?=(@ p.gen) p.gen)
+    =+  voq=~(open ap gen)
+    ?<(=(gen voq) $(gen voq))
+  ::
+  ++  feck
+    |-  ^-  (unit term)
+    ?-  gen
+      {$sand $tas @}  [~ q.gen]
+      {$dbug *}       $(gen q.gen)
+      *               ~
+    ==
+  ::
+  ++  gi
+    =|  whit
+    =*  wit  -
+    |%
+    ++  gray
+      ^-  ?
+      |
+      ::  on reflection, perhaps just obsessive linting
+      ::
+      ::  ?|  ?=(^ lab)
+      ::      ?=(^ boy)
+      ::      |-  ^-  ?
+      ::      ?~  def  | 
+      ::      |($(def l.def) $(def r.def) !(~(has in use) p.n.def))
+      ::  ==
+    ::
+    ++  grad
+      |=  $:  gen/hoon 
+              wit/whit 
+              aid/$-({? hoon whit} {hoon whit})
+          ==
+      ^-  (unit (pair hoon whit))
+      =:  ^gen  gen
+          ^wit  wit
+        ==
+      ?:  =([~ ~ ~ ~] wit)  `[gen wit]
+      =<  apex
+      |%
+      ++  apex
+        ^-  (unit (pair hoon whit))
+        =^  one  wit  prim
+        =^  two  wit  senc(gen one)
+        ?:  =(gen two) 
+          ~
+        `(aid & two wit)
+      ::
+      ::  resolve body and label issues
+      ::
+      ++  prim
+        ^-  (pair hoon whit)
+        ?:  ?=(^ -.gen)  flam
+        ?+  -.gen  flam
+          $halo   flam
+          $base   runk
+          $leaf   runk
+          $bcpt   runk
+          $bccb   runk
+          $bccl   runk
+          $bccn   runk
+          $bchp   runk
+          $bckt   runk
+          $bcwt   runk
+          $bcts   flam 
+          $bcsm   runk
+          $brcb   ((doof -.gen +>.gen) p.gen)
+          $brcl   ((doof -.gen +>.gen) p.gen)
+          $brcn   ((doof -.gen +>.gen) p.gen)
+          $brdt   ((doof -.gen +>.gen) p.gen)
+          $brkt   ((doof -.gen +>.gen) p.gen)
+          $brhp   ((doof -.gen +>.gen) p.gen)
+          $brsg   ((doof -.gen +>.gen) p.gen)
+          $brtr   ((doof -.gen +>.gen) p.gen)
+          $brts   ((doof -.gen +>.gen) p.gen)
+          $brwt   ((doof -.gen +>.gen) p.gen)
+        ==
+      ::
+      ::  resolve variable issues
+      ::
+      ++  senc
+        ^-  (pair hoon whit)
+        ?:  ?=(^ -.gen)  flam
+        ?+  -.gen  flam
+          $ktts  ((helk -.gen +>.gen) p.gen)
+          $bcts  ((helk -.gen +>.gen) p.gen)
+          $tsfs   ((hulp -.gen +>.gen) p.gen)
+          $tssm   ((hulp -.gen +>.gen) p.gen)
+          $tskt   ((hulp -.gen +>.gen) p.gen)
+          $tstr   ((humm -.gen +>.gen) p.gen)
+        ==
+      ::
+      ++  flam  [gen wit]
+      ++  grif
+        |=  {cog/term wat/what}
+        ^-  {what whit}
+        ?:  =(~ def)
+          ?~  boy  [wat wit]
+          [boy wit(boy ~)]
+        =+  yeb=(~(get by def) cog)
+        ?~  yeb  [wat wit]
+        [`u.yeb wit(use (~(put in use) cog))]
+      ::
+      ++  doof
+        |*  {pif/@tas suf/*}
+        |=  pac/chap
+        ^-  (pair hoon whit)
+        :_  wit(lab ~, boy ~)
+        =-  [pif - suf]
+        ^-  chap
+        :-  ?~(lab p.pac [~ u.lab])
+            ?~(boy q.pac boy)
+      ::
+      ++  helk
+        |*  {pif/@tas suf/*}
+        |=  got/toga
+        ^-  (pair hoon whit)
+        =^  gef  wit  (tong got)
+        [[pif gef suf] wit]
+      ::
+      ++  hulp
+        |*  {pif/@tas suf/*}
+        |=  hot/toro
+        ^-  (pair hoon whit)
+        =^  tog  wit  (tong p.hot)
+        [[pif [tog q.hot] suf] wit] 
+      ::
+      ++  humm
+        |*  {pif/@tas suf/*}
+        |=  {wat/what cog/term}
+        ^-  (pair hoon whit)
+        =^  taw  wit  (grif cog wat)
+        [[pif [taw cog] suf] wit] 
+      ::
+      ++  runk
+        ^-  (pair hoon whit)
+        ?~  boy  flam
+        [[%halo boy gen] wit(boy ~)]
+      ::
+      ++  tong
+        |=  got/toga
+        ^-  {toga whit}
+        ?@  got
+          =^  wat  wit  (grif got ~)
+          ?~  wat  [got wit]
+          [[%1 [wat got] [%0 ~]] wit]
+        ?-  -.got
+          $0  [got wit]
+          $1  =^  wat  wit  (grif q.p.got p.p.got)
+              =^  sub  wit  $(got q.got)
+              [[%1 [wat q.p.got] sub] wit]
+          $2  =^  one  wit  $(got p.got)
+              =^  two  wit  $(got q.got)
+              [[%2 one two] wit]
+        ==
+      --
+    ::
+    ++  graf
+      ::  ^-  (unit hoon)
+      ::  =^  nex  wit  ((walk whit) wit grad)
+      ::  ?:(gray ~ `nex)
+      =^  nex  wit  ((walk whit) wit grad)
+      nex
+    --
+  ::
+  ::  not used at present; see comment at $csng in ++open
+::::
+::++  hail
+::  |=  axe/axis
+::  =|  air/(list (pair wing hoon))
+::  |-  ^+  air
+::  =+  hav=half
+::  ?~  hav  [[[[%| 0 ~] [%& axe] ~] gen] air]
+::  $(gen p.u.hav, axe (peg axe 2), air $(gen q.u.hav, axe (peg axe 3)))
+::::
+::++  half
+::  |-  ^-  (unit (pair hoon hoon))
+::  ?+  gen  ~
+::    {^ *}       `[p.gen q.gen]
+::    {$dbug *}   $(gen q.gen)
+::    {$clcb *}   `[q.gen p.gen]
+::    {$clhp *}   `[p.gen q.gen]
+::    {$clkt *}   `[p.gen %clls q.gen r.gen s.gen]
+::    {$clsg *}   ?~(p.gen ~ `[i.p.gen %clsg t.p.gen])
+::    {$cltr *}   ?~  p.gen  ~
+::                ?~(t.p.gen $(gen i.p.gen) `[i.p.gen %cltr t.p.gen])
+::  ==
+::::
+  ++  hock
+    |-  ^-  toga
+    ?-  gen
+      {$cnts {@ $~} $~}  i.p.gen
+      {$limb @}          p.gen
+      {$wing {@ $~}}     i.p.gen
+      {$dbug *}          $(gen q.gen)
+      {@ *}              =+(neg=open ?:(=(gen neg) [%0 ~] $(gen neg)))
+      {^ *}              =+  toe=[$(gen p.gen) $(gen q.gen)]
+                         ?:(=(toe [[%0 ~] [%0 ~]]) [%0 ~] [%2 toe])
+    ==
+  ++  bent
+    |-  ^-  (list wing)
+    ?+  gen  !!
+      {$$ *}     [[[%& p.gen] ~] ~]
+      {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
+      {$tsgl *}  $(gen open)
+      {$tsgr *}  (weld $(gen p.gen) $(gen q.gen))
+      {$wing *}  [p.gen ~]
+      {$limb *}  [[p.gen ~] ~]
+    ==                 
+  ::
+  ++  bawl
+    ~|  %bawl-failure
+    ~|  [%bawl gen]
+    |-  ^-  tent
+    ?+  gen   [%& bent]
+      {$cnsg *}  [%| p.gen $(gen q.gen) (turn r.gen |=(hoon boil(gen +<)))]
+      {$cnhp *}  $(gen open)
+      {$cnkt *}  $(gen open)
+      {$cnls *}  $(gen open)
+      {$cndt *}  $(gen open)
+      {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
+    ==
+  ::
+  ++  bile
+    =+  sec=boil
+    |-  ^-  (each line tile)
+    ?:  ?=({$plow *} sec)
+      $(sec q.sec)
+    ?:  ?=({$deet *} sec)
+      $(sec q.sec)
+    ?:  ?=({{$deet *} *} sec)
+      $(p.sec q.p.sec)
+    ?:  ?=({{$leaf *} *} sec)
+      [%& [%leaf p.p.sec q.p.sec] q.sec]
+    [%| sec]
+  ::
+  ++  boil
+    ^-  tile
+    ?+  gen        [%herb gen]
+        {$base *}  [%axil p.gen]
+        {$dbug *}  [%deet p.gen boil(gen q.gen)]
+        {$leaf *}  [%leaf p.gen]
+    ::
+        {$bcpt *}  [%reed boil(gen p.gen) boil(gen q.gen)]
+        {$bccb *}  [%weed p.gen]
+        {$bccl *}
+      |-  ^-  tile
+      ?~  p.gen  [%axil %null]
+      ?~  t.p.gen  boil(gen i.p.gen)
+      [boil(gen i.p.gen) $(p.gen t.p.gen)]
+    ::
+        {$bccn *}
+      ?~  p.gen
+        [%axil %void]
+      ?~  t.p.gen
+        boil(gen i.p.gen)
+      =+  :*  def=bile(gen i.p.gen)
+              ^=  end  ^-  (list line)
+              ~_  leaf+"book-foul"
+              %+  turn  `(list hoon)`t.p.gen
+              |=(a/hoon =+(bile(gen a) ?>(?=($& -<) ->)))
+          ==
+      ?-  -.def
+        $&  [%kelp p.def end]
+        $|  ?~(end p.def [%fern p.def [%kelp end] ~])
+      ==
+    ::
+        {$bckt *}  [%vine boil(gen p.gen) boil(gen q.gen)]
+        {$bchp *}  [%weed [%brsg [~ ~] p.gen [%bunt [%tsgr [%$ 7] q.gen]]]]
+        {$halo *}  [%plow p.gen boil(gen q.gen)]
+        {$bcts *}  [%bark p.gen boil(gen q.gen)]
+        {$bcwt *}  =+  (turn p.gen |=(a/hoon boil(gen a)))
+                   ?~(- [%axil %void] [%fern -])
+        {$bcsm *}  [%herb p.gen]
+    ==
+  ::
+  ++  open
+    ^-  hoon
+    ?-    gen
+        {$~ *}     [%cnts [[%& p.gen] ~] ~]
+    ::
+        {$base *}  ~(clam ax boil)
+        {$bust *}  ~(bunt ax %axil p.gen)
+        {$cold *}  p.gen
+        {$dbug *}   q.gen
+        {$eror *}  ~|(p.gen !!)
+    ::
+        {$knit *}                                       ::
+      :+  %tsgr  [%ktts %v %$ 1]                         ::  =>  v=.
+      :+  %brhp  [~ ~]                                  ::  |-
+      :+  %ktls                                         ::  ^+
+        :+  %brhp  [~ ~]                                ::  |-
+        :^    %wtcl                                       ::  ?:
+            [%bust %bean]                               ::  ?
+          [%bust %null]                                 ::  ~
+        :-  [%ktts %i [%sand 'tD' *@]]                  ::  :-  i=~~
+        [%ktts %t [%limb %$]]                           ::  t=$
+      |-  ^-  hoon                                      ::
+      ?~  p.gen                                         ::
+        [%bust %null]                                   ::  ~
+      =+  res=$(p.gen t.p.gen)                          ::
+      ^-  hoon                                          ::
+      ?@  i.p.gen                                       ::
+        [[%sand 'tD' i.p.gen] res]                      ::  [~~{i.p.gen} {res}]
+      :+  %tsls                                          ::
+        :-  :+  %ktts                                   ::  ^=
+              %a                                        ::  a
+            :+  %ktls                                   ::  ^+
+              [%limb %$]                                ::  $
+            [%tsgr [%limb %v] p.i.p.gen]                 ::  =>(v {p.i.p.gen})
+        [%ktts %b res]                                  ::  b={res}
+      ^-  hoon                                          ::
+      :+  %brhp  [~ ~]                                  ::  |-
+      :^    %wtpt                                       ::  ?@
+          [%a ~]                                        ::  a
+        [%limb %b]                                      ::  b
+      :-  [%tsgl [%$ 2] [%limb %a]]                      ::  :-  -.a
+      :+  %cnts                                         ::  %=
+        [%$ ~]                                          ::  $
+      [[[%a ~] [%tsgl [%$ 3] [%limb %a]]] ~]             ::  a  +.a
+    ::
+        {$leaf *}  ~(clam ax boil)
+        {$limb *}  [%cnts [p.gen ~] ~]
+        {$tell *}  [%cnhp [%limb %noah] [%zpgr [%cltr p.gen]] ~]
+        {$wing *}  [%cnts p.gen ~]
+        {$yell *}  [%cnhp [%limb %cain] [%zpgr [%cltr p.gen]] ~]
+    ::
+        {$bcpt *}  ~(clam ax boil)
+        {$bccb *}  ~(clam ax boil)
+        {$bccl *}  ~(clam ax boil)
+        {$bccn *}  ~(clam ax boil)
+        {$bchp *}  ~(clam ax boil)
+        {$bckt *}  ~(clam ax boil)
+        {$bcwt *}  ~(clam ax boil)
+        {$bcts *}  ~(clam ax boil)
+        {$halo *}  ~(clam ax boil)
+        {$bcsm *}  p.gen
+    ::
+        {$brcb *}  :+  %tsls  [%bunt q.gen]
+                   :+  %brcn  p.gen
+                   %-  ~(run by s.gen)
+                   |=  tom/tomb
+                   ^+  tom
+                   :-  p.tom
+                   %-  ~(run by q.tom)
+                   |=  a/(pair what foot)
+                   ^+  a
+                   :-  p.a
+                   =-  ?:(?=({$ash *} q.a) [-.q.a -] [-.q.a -])
+                   |-  ^-  hoon
+                   ?~  r.gen  p.q.a
+                   [%tstr [~ p.i.r.gen] q.i.r.gen $(r.gen t.r.gen)]
+        {$brcl *}  [%tsls [%cold q.gen] [%brdt p.gen r.gen]]
+        {$brdt *}  :+  %brcn  p.gen
+                   =-  [[0 [~ ~] -] ~ ~]
+                   (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
+        {$brkt *}  :+  %tsgr 
+                      :+  %brcn  p.gen
+                      =+  one=(~(got by r.gen) 0)
+                      %+  ~(put by r.gen)  0
+                      one(q (~(put by q.one) %$ [~ [%ash q.gen]]))
+                   [%limb %$]
+        {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen q.gen]]
+        {$brsg *}  [%ktbr [%brts p.gen q.gen r.gen]]
+        {$brtr *}  :+  %tsls  [%bunt q.gen]
+                   :+  %brcn  p.gen
+                   =-  [[0 [~ ~] -] ~ ~]
+                   (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
+        {$brts *}  :^  %brcb  p.gen  q.gen
+                   =-  [~ [[0 [~ ~] -] ~ ~]]
+                   (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
+        {$brwt *}  [%ktwt %brdt p.gen q.gen]
+    ::
+        {$clkt *}  [p.gen q.gen r.gen s.gen]
+        {$clls *}  [p.gen q.gen r.gen]
+        {$clcb *}  [q.gen p.gen]
+        {$clhp *}  [p.gen q.gen]
+        {$clsg *}
+      |-  ^-  hoon
+      ?~  p.gen
+        [%rock %n ~]
+      [i.p.gen $(p.gen t.p.gen)]
+    ::
+        {$cltr *}
+      |-  ^-  hoon
+      ?~  p.gen
+        [%zpzp ~]
+      ?~  t.p.gen
+        i.p.gen
+      [i.p.gen $(p.gen t.p.gen)]
+    ::
+        {$bunt *}  [%cold ~(bunt ax %herb p.gen)]
+        {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
+        {$cndt *}  [%cnhp q.gen [p.gen ~]]
+        {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
+        {$cnls *}  [%cnhp p.gen q.gen r.gen ~]
+        {$cnhp *}  [%cnsg [%$ ~] p.gen q.gen]
+        {$cnsg *}  :: [%cntr p.gen q.gen (hail(gen [%cltr r.gen]) 6)]
+      :^  %cntr  p.gen  q.gen
+      ::
+      ::  the use of ++hail is probably the right language design, but
+      ::  it's impractically slow without validating %=.
+      ::
+::    ?:(=(~ r.gen) ~ (hail(gen [%cltr r.gen]) 6))
+      =+  axe=6
+      |-  ^-  (list {wing hoon})
+      ?~  r.gen  ~
+      ?~  t.r.gen  [[[[%| 0 ~] [%& axe] ~] i.r.gen] ~]
+      :-  [[[%| 0 ~] [%& (peg axe 2)] ~] i.r.gen]
+      $(axe (peg axe 3), r.gen t.r.gen)
+    ::
+        {$cntr *}
+      ?:  =(~ r.gen)
+        [%tsgr q.gen [%wing p.gen]]
+      :+  %tsls
+        q.gen
+      :+  %cnts
+        (weld p.gen `wing`[[%& 2] ~])
+      (turn r.gen |=({p/wing q/hoon} [p [%tsgr [%$ 3] q]]))
+    ::
+        {$ktdt *}  [%ktls [%cnhp p.gen q.gen ~] q.gen]
+        {$kthp *}  [%ktls ~(bunt ax [%herb p.gen]) q.gen]
+        {$sgbr *}
+      :+  %sggr
+        :-  %mean
+        =+  fek=~(feck ap p.gen)
+        ?^  fek  [%rock %tas u.fek]
+        [%brdt [~ ~] [%cnhp [%limb %cain] [%zpgr [%tsgr [%$ 3] p.gen]] ~]]
+      q.gen
+    ::
+        {$sgcb *}  [%sggr [%mean [%brdt [~ ~] p.gen]] q.gen]
+        {$sgcn *}
+      :+  %sggl
+        :-  %fast
+        :-  %clls
+        :+  [%rock %$ p.gen]
+          [%zpts q.gen]
+        :-  %clsg
+        =+  nob=`(list hoon)`~
+        |-  ^-  (list hoon)
+        ?~  r.gen
+          nob
+        [[[%rock %$ p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
+      s.gen
+    ::
+        {$sgfs *}  [%sgcn p.gen [%$ 7] ~ q.gen]
+        {$sggl *}  [%tsgl [%sggr p.gen [%$ 1]] q.gen]
+        {$sgbc *}  [%sggr [%live [%rock %$ p.gen]] q.gen]
+        {$sgls *}  [%sggr [%memo %rock %$ p.gen] q.gen]
+        {$sgpm *}
+      :+  %sggr
+        [%slog [%sand %$ p.gen] [%cnhp [%limb %cain] [%zpgr q.gen] ~]]
+      r.gen
+    ::
+        {$sgts *}  [%sggr [%germ p.gen] q.gen]
+        {$sgwt *}
+      :+  %tsls  [%wtdt q.gen [%bust %null] [[%bust %null] r.gen]]
+      :^  %wtsg  [%& 2]~
+        [%tsgr [%$ 3] s.gen]
+      [%sgpm p.gen [%$ 5] [%tsgr [%$ 3] s.gen]]
+    ::
+        {$smts *}
+      |-
+      ?~  p.gen  [%bust %null]
+      ?-  -.i.p.gen
+        ^      [[%xray i.p.gen] $(p.gen t.p.gen)]
+        $manx  [p.i.p.gen $(p.gen t.p.gen)]
+        $tape  [[%smfs p.i.p.gen] $(p.gen t.p.gen)]
+        $call  [%cnhp p.i.p.gen [$(p.gen t.p.gen)]~]
+        $marl  =-  [%cndt [p.i.p.gen $(p.gen t.p.gen)] -]
+               ^-  hoon
+               :+  %tsbr  [%base %cell]
+               :+  %brcn  *chap
+               ^-  (map @ tomb)
+               =-  [[0 [~ ~] -] ~ ~]
+               ^-  (map term (pair what foot))
+               :_  [~ ~]
+               =+  sug=[[%& 12] ~]
+               :^  %$  ~  %elm
+               :^  %wtsg  sug
+                 [%cnts sug [[[[%& 1] ~] [%$ 13]] ~]]
+               [%cnts sug [[[[%& 3] ~] [%cnts [%$ ~] [[sug [%$ 25]] ~]]] ~]]
+      ==
+    ::
+        {$smcl *}
+      ?-    q.gen
+          $~      [%zpzp ~]
+          {* $~}  i.q.gen
+          ^
+        :+  %tsls
+          p.gen
+        =+  yex=`(list hoon)`q.gen
+        |-  ^-  hoon
+        ?-  yex
+          {* $~}  [%tsgr [%$ 3] i.yex]
+          {* ^}   [%cnhp [%$ 2] [%tsgr [%$ 3] i.yex] $(yex t.yex) ~]
+          $~      !!
+        ==
+      ==
+    ::
+        {$smfs *}  =+(zoy=[%rock %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
+        {$smsg *}                                       ::                  ;~
+      |-  ^-  hoon
+      ?-  q.gen
+          $~      ~_(leaf+"open-smsg" !!)
+          ^
+        :+  %tsgr  [%ktts %v %$ 1]                      ::  =>  v=.
+        |-  ^-  hoon                                    ::
+        ?:  ?=($~ t.q.gen)                              ::
+          [%tsgr [%limb %v] i.q.gen]                    ::  =>(v {i.q.gen})
+        :+  %tsls  [%ktts %a $(q.gen t.q.gen)]          ::  =+  ^=  a
+        :+  %tsls                                       ::    {$(q.gen t.q.gen)}
+          [%ktts %b [%tsgr [%limb %v] i.q.gen]]         ::  =+  ^=  b
+        :+  %tsls                                       ::    =>(v {i.q.gen})
+          :+  %ktts  %c                                 ::  =+  c=,.+6.b
+          :+  %tsgl                                     ::
+            [%wing [%| 0 ~] [%& 6] ~]                   ::
+          [%limb %b]                                    ::
+        :+  %brdt  [~ ~]                                ::  |.
+        :^    %cnls                                     ::  %+
+            [%tsgr [%limb %v] p.gen]                    ::      =>(v {p.gen})
+          [%cnhp [%limb %b] [%limb %c] ~]               ::    (b c)
+        :+  %cnts  [%a ~]                               ::  a(,.+6 c)
+        [[[[%| 0 ~] [%& 6] ~] [%limb %c]] ~]            ::
+      ==                                                ::
+    ::
+        {$smsm *}                                       ::                  ;;
+      :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
+      :+  %tsls  :+  %ktts  %a                          ::  =+  ^=  a
+                 [%tsgr [%limb %v] p.gen]               ::  =>(v {p.gen})
+      :+  %tsls  [%ktts %b [%tsgr [%limb %v] q.gen]]    ::  =+  b==>(v {q.gen})
+      :+  %tsls                                         ::  =+  c=(a b)
+        [%ktts %c [%cnhp [%limb %a] [%limb %b] ~]]      ::
+      :+  %wtgr                                         ::  ?>(=(`*`c `*`b) c)
+        :+  %dtts                                       ::
+        [%kthp [%base %noun] [%limb %c]]                ::
+        [%kthp [%base %noun] [%limb %b]]                ::
+      [%limb %c]                                        ::
+    ::
+        {$tsbr *}
+      [%tsls ~(bunt ax %herb p.gen) q.gen]
+    ::
+        {$tscl *}
+      [%tsgr [%cncb [[%& 1] ~] p.gen] q.gen]
+    ::
+        {$tsfs *}
+      ?~  q.p.gen
+        [%tsls [%ktts p.p.gen q.gen] r.gen]
+      [%tsls [%kthp [%bcts p.p.gen u.q.p.gen] q.gen] r.gen]
+    ::
+        {$tssm *}  [%tsfs p.gen r.gen q.gen]
+        {$tsdt *}
+      [%tsgr [%cncb [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
+        {$tswt *}                                        ::                  =?
+      [%tsdt p.gen [%wtcl q.gen r.gen [%wing p.gen]] s.gen]
+    ::
+        {$tskt *}                                        ::                  =^
+      =+  wuy=(weld q.gen `wing`[%v ~])                 ::
+      :+  %tsgr  [%ktts %v %$ 1]                         ::  =>  v=.
+      :+  %tsls  [%ktts %a %tsgr [%limb %v] r.gen]        ::  =+  a==>(v \r.gen)
+      :^  %tsdt  wuy  [%tsgl [%$ 3] [%limb %a]]
+      :+  %tsgr  :-  ?~  q.p.gen
+                       :+  %ktts  p.p.gen
+                       [%tsgl [%$ 2] [%limb %a]]
+                     :+  %kthp
+                        :+  %bcts  p.p.gen
+                        [%tsgr [%limb %v] u.q.p.gen]
+                     [%tsgl [%$ 2] [%limb %a]] 
+                [%limb %v]
+      s.gen
+    ::
+        {$tsgl *}  [%tsgr q.gen p.gen]
+        {$tsls *}  [%tsgr [p.gen [%$ 1]] q.gen]
+        {$tshp *}  [%tsls q.gen p.gen]
+        {$tssg *}
+      |-  ^-  hoon
+      ?~  p.gen    [%$ 1]
+      ?~  t.p.gen  i.p.gen
+      [%tsgr i.p.gen $(p.gen t.p.gen)]
+    ::
+        {$wtbr *}
+      |-
+      ?~(p.gen [%rock %f 1] [%wtcl i.p.gen [%rock %f 0] $(p.gen t.p.gen)])
+    ::
+        {$wtdt *}   [%wtcl p.gen r.gen q.gen]
+        {$wtgl *}   [%wtcl p.gen [%zpzp ~] q.gen]
+        {$wtgr *}   [%wtcl p.gen q.gen [%zpzp ~]]
+        {$wtkt *}   [%wtcl [%wtts [%base %atom %$] p.gen] r.gen q.gen]
+    ::
+        {$wthp *}
+      |-
+      ?~  q.gen
+        [%lost [%wing p.gen]]
+      :^    %wtcl
+          [%wtts p.i.q.gen p.gen]
+        q.i.q.gen
+      $(q.gen t.q.gen)
+    ::
+        {$wtls *}
+      [%wthp p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
+    ::
+        {$wtpm *}
+      |-
+      ?~(p.gen [%rock %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
+    ::
+        {$xray *}
+      |^  :-  [(open-mane n.g.p.gen) %clsg (turn a.g.p.gen open-mart)] 
+          [%smts c.p.gen]
+      ::
+      ++  open-mane
+        |=  a/mane:hoon
+        ?@(a [%rock %tas a] [[%rock %tas -.a] [%rock %tas +.a]])
+      ::
+      ++  open-mart
+        |=  {n/mane:hoon v/(list beer:hoon)} 
+        [(open-mane n) %knit v]
+      --
+    ::
+        {$wtpt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
+        {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
+        {$wtts *}   [%fits ~(bunt ax %herb p.gen) q.gen]
+        {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
+        {$zpgr *}
+      [%cnhp [%limb %onan] [%zpsm [%bunt [%limb %abel]] p.gen] ~]
+    ::
+        {$zpwt *}
+      ?:  ?:  ?=(@ p.gen)
+            (lte hoon-version p.gen)
+          &((lte hoon-version p.p.gen) (gte hoon-version q.p.gen))
+        q.gen
+      ~_(leaf+"hoon-version" !!)
+    ::
+        *           gen
+    ==
+  ::
+  ++  rake  ~>(%mean.[%leaf "rake-hoon"] (need reek))
+  ++  reek
+    ^-  (unit wing)
+    ?+  gen  ~
+      {$~ *}        `[[%& p.gen] ~]
+      {$limb *}     `[p.gen ~]
+      {$wing *}     `p.gen
+      {$cnts * $~}  `p.gen
+      {$dbug *}     reek(gen q.gen)
+    ==
+  ++  rusk
+    ^-  term
+    =+  wig=rake
+    ?.  ?=({@ $~} wig)
+      ~>(%mean.[%leaf "rusk-hoon"] !!)
+    i.wig
+  ::
+  ++  walk                                              ::  forward traverse
+    |*  life/mold
+    |=  $:  vit/life
+            $=  mac
+            $-  $:  hoon
+                    life
+                    $-({? hoon life} {hoon life})
+                ==
+            (unit (pair hoon life))
+        ==
+    ^-  {hoon life}
+    =/  use  &
+    =<  apex 
+    |%  
+    ++  apex
+      |-  ^-  {hoon life}
+      =*  aid  |=  {use/? gen/hoon vit/life} 
+               ^$(use use, gen gen, vit vit)
+      =/  gun  ?:(use (mac gen vit aid) ~)
+      ?^  gun  u.gun
+      ?:  ?=(^ -.gen)
+        %.(gen dubs)
+      ?-  -.gen
+        $$     (lead -.gen %.(+.gen noop))
+        $base  (lead -.gen %.(+.gen noop))
+        $bunt  (lead -.gen %.(+.gen expr))
+        $bust  (lead -.gen %.(+.gen noop))
+        $docs  (lead -.gen %.(+.gen nexp))
+        $dbug  (lead -.gen %.(+.gen nexp))
+        $hand  (lead -.gen %.(+.gen noop))
+        $knit  (lead -.gen %.(+.gen (moto bark)))
+        $leaf  (lead -.gen %.(+.gen noop))
+        $limb  (lead -.gen %.(+.gen noop))
+        $lost  (lead -.gen %.(+.gen expr))
+        $rock  (lead -.gen %.(+.gen noop))
+        $sand  (lead -.gen %.(+.gen noop))
+        $tell  (lead -.gen %.(+.gen moar))
+        $tune  (lead -.gen %.(+.gen tung))
+        $wing  (lead -.gen %.(+.gen noop))
+        $yell  (lead -.gen %.(+.gen moar))
+        $bcpt  (lead -.gen %.(+.gen dubs))
+        $bccb  (lead -.gen %.(+.gen expr))
+        $bccl  (lead -.gen %.(+.gen moar))
+        $bccn  (lead -.gen %.(+.gen moar))
+        $bchp  (lead -.gen %.(+.gen dubs))
+        $bckt  (lead -.gen %.(+.gen dubs))
+        $bcwt  (lead -.gen %.(+.gen moar))
+        $bcts  (lead -.gen %.(+.gen nexp))
+        $bcsm  (lead -.gen %.(+.gen expr))
+        $brcb  (lead -.gen %.(+.gen (quad noop expr exps arms)))
+        $brcl  (lead -.gen %.(+.gen (twin noop dubs)))
+        $brcn  (lead -.gen %.(+.gen (twin noop arms)))
+        $brdt  (lead -.gen %.(+.gen (twin noop expr)))
+        $brkt  (lead -.gen %.(+.gen (trio noop expr arms)))
+        $brhp  (lead -.gen %.(+.gen (twin noop expr)))
+        $brsg  (lead -.gen %.(+.gen (twin noop dubs)))
+        $brtr  (lead -.gen %.(+.gen (twin noop dubs)))
+        $brts  (lead -.gen %.(+.gen (twin noop dubs)))
+        $brwt  (lead -.gen %.(+.gen (twin noop expr)))
+        $clcb  (lead -.gen %.(+.gen dubs))
+        $clkt  (lead -.gen %.(+.gen (quad expr expr expr expr)))
+        $clhp  (lead -.gen %.(+.gen dubs))
+        $clls  (lead -.gen %.(+.gen trey))
+        $clsg  (lead -.gen %.(+.gen moar))
+        $cltr  (lead -.gen %.(+.gen moar))
+        $cncb  (lead -.gen %.(+.gen (twin noop moan)))
+        $cndt  (lead -.gen %.(+.gen dubs))
+        $cnhp  (lead -.gen %.(+.gen (twin expr moar)))
+        $cntr  (lead -.gen %.(+.gen (trio noop expr moan)))
+        $cnkt  (lead -.gen %.(+.gen (quad expr expr expr expr)))
+        $cnls  (lead -.gen %.(+.gen trey))
+        $cnsg  (lead -.gen %.(+.gen (trio noop expr moar)))
+        $cnts  (lead -.gen %.(+.gen (twin noop moan)))
+        $dtkt  (lead -.gen %.(+.gen dubs))
+        $dtls  (lead -.gen %.(+.gen expr))
+        $dttr  (lead -.gen %.(+.gen dubs))
+        $dtts  (lead -.gen %.(+.gen dubs))
+        $dtwt  (lead -.gen %.(+.gen expr))
+        $ktbr  (lead -.gen %.(+.gen expr))
+        $ktdt  (lead -.gen %.(+.gen dubs))
+        $ktls  (lead -.gen %.(+.gen dubs))
+        $kthp  (lead -.gen %.(+.gen dubs))
+        $ktpm  (lead -.gen %.(+.gen expr))
+        $ktsg  (lead -.gen %.(+.gen expr))
+        $ktts  (lead -.gen %.(+.gen nexp))
+        $ktwt  (lead -.gen %.(+.gen expr))
+        $halo  (lead -.gen %.(+.gen nexp))
+        $sgbr  (lead -.gen %.(+.gen dubs))
+        $sgcb  (lead -.gen %.(+.gen dubs))
+        $crap  (lead -.gen %.(+.gen (raid expr)))
+        $sgcn  (lead -.gen %.(+.gen (quad noop expr moan expr)))
+        $sgfs  (lead -.gen %.(+.gen nexp))
+        $sggl  (lead -.gen %.(+.gen (twin toad expr)))
+        $sggr  (lead -.gen %.(+.gen (twin toad expr)))
+        $sgbc  (lead -.gen %.(+.gen nexp))
+        $sgls  (lead -.gen %.(+.gen nexp))
+        $sgpm  (lead -.gen %.(+.gen trip))
+        $sgts  (lead -.gen %.(+.gen dubs))
+        $sgwt  (lead -.gen %.(+.gen (quad noop expr expr expr)))
+        $sgzp  (lead -.gen %.(+.gen dubs))
+        $smcl   (lead -.gen %.(+.gen (twin expr moar)))
+        $smfs   (lead -.gen %.(+.gen expr))
+        $smsg   (lead -.gen %.(+.gen (twin expr moar)))
+        $smsm   (lead -.gen %.(+.gen dubs))
+        $tsbr   (lead -.gen %.(+.gen dubs))
+        $tscl   (lead -.gen %.(+.gen (twin moan expr)))
+        $tsfs   (lead -.gen %.(+.gen (trio tora expr expr)))
+        $tssm   (lead -.gen %.(+.gen (trio tora expr expr)))
+        $tsdt   (lead -.gen %.(+.gen trip))
+        $tswt   (lead -.gen %.(+.gen (quad noop expr expr expr)))
+        $tsgl   (lead -.gen %.(+.gen dubs))
+        $tshp   (lead -.gen %.(+.gen dubs))
+        $tsgr   (lead -.gen %.(+.gen dubs))
+        $tskt   (lead -.gen %.(+.gen (quad tora noop expr expr)))
+        $tsls   (lead -.gen %.(+.gen dubs))
+        $tssg   (lead -.gen %.(+.gen moar))
+        $tstr   (lead -.gen %.(+.gen trip))
+        $tscm   (lead -.gen %.(+.gen dubs))
+        $wtbr    (lead -.gen %.(+.gen moar))
+        $wthp  (lead -.gen %.(+.gen (twin noop (moto dubs))))
+        $wtcl    (lead -.gen %.(+.gen trey))
+        $wtdt  (lead -.gen %.(+.gen trey))
+        $wtkt  (lead -.gen %.(+.gen trip))
+        $wtgl  (lead -.gen %.(+.gen dubs))
+        $wtgr  (lead -.gen %.(+.gen dubs))
+        $wtls  (lead -.gen %.(+.gen (trio noop expr (moto dubs))))
+        $wtpm   (lead -.gen %.(+.gen moar))
+        $wtpt  (lead -.gen %.(+.gen trip))
+        $wtsg  (lead -.gen %.(+.gen trip))
+        $wtts  (lead -.gen %.(+.gen (twin expr noop)))
+        $wtzp   (lead -.gen %.(+.gen expr))
+        $zpcm  (lead -.gen %.(+.gen dubs))
+        $zpgr  (lead -.gen %.(+.gen expr))
+        $zpsm  (lead -.gen %.(+.gen dubs))
+        $zpts  (lead -.gen %.(+.gen expr))
+        $zpwt  (lead -.gen %.(+.gen nexp))
+        $zpzp  (lead -.gen %.(+.gen noop))
+      ==
+    ++  arms
+      (raid (twin noop (raid (twin noop heel))))
+    ::
+    ++  bark 
+      |=  wof/woof
+      ?-(wof @ [wof vit], ^ (lead ~ (expr p.wof)))
+    ::
+    ++  dubs
+      (twin expr expr)
+    ::
+    ++  expr
+      |=  p/hoon
+      ^$(gen p)
+    ::
+    ++  exps
+      |=  p/(list (pair term hoon))
+      =|  out/(list (pair term hoon))
+      |-  ^+  [out vit]
+      ?~  p
+        [out vit]
+      =^  nex  vit  ^^$(gen q.i.p)
+      $(p t.p, out [[p.i.p nex] out])
+    ::
+    ++  heel
+      |=  bud/foot
+      ?-  -.bud
+        $ash  =^(nex vit ^$(gen p.bud) [[%ash nex] vit])
+        $elm  =^(nex vit ^$(gen p.bud) [[%elm nex] vit])
+      ==
+    ::
+    ++  lead
+      |*  {sem/@tas out/{* life}}
+      [[sem -.out] +.out]
+    ::
+    ++  moan
+      (moto nexp)
+    ::
+    ++  moar
+      (moto expr)
+    ::
+    ++  moto
+      |*  etc/$-(* {* life})
+      |*  bud/*
+      ^+  [bud vit]
+      ?:  =(~ bud)  [bud vit]
+      =^  heb  vit  (etc -.bud)
+      =^  mor  vit  $(bud +.bud)
+      [[heb mor] vit]
+    ::
+    ++  nexp
+      (twin noop expr)
+    ::
+    ++  noop
+      |*  bud/*
+      [bud vit]
+    ::
+    ++  quad
+      |*  $:  one/$-(* {* life})
+              two/$-(* {* life})
+              tri/$-(* {* life})
+              qua/$-(* {* life})
+          ==
+      |*  bud/*
+      =^  yal  vit  (one -.bud)
+      =^  ves  vit  (two +<.bud)
+      =^  jot  vit  (tri +>-.bud)
+      =^  wip  vit  (qua +>+.bud)
+      [[yal ves jot wip] vit]
+    ::
+    ++  raid
+      |*  etc/$-(* {* life})
+      |*  bud/*
+      ^+  [bud vit]
+      ?:  =(~ bud)  [bud vit]
+      =^  lef  vit  $(bud +<.bud)
+      =^  ryt  vit  $(bud +>.bud)
+      =^  top  vit  (etc ->.bud)
+      [[[-<.bud top] lef ryt] vit]
+    ::
+    ++  trey
+      (trio expr expr expr)
+    ::
+    ++  trio
+      |*  $:  one/$-(* {* life})
+              two/$-(* {* life})
+              tri/$-(* {* life})
+          ==
+      |*  bud/*
+      =^  yal  vit  (one -.bud)
+      =^  ves  vit  (two +<.bud)
+      =^  jot  vit  (tri +>.bud)
+      [[yal ves jot] vit]
+    ::
+    ++  trip
+      (trio noop expr expr)
+    ::
+    ++  toad
+      |=  bud/$@(term {p/term q/hoon})
+      ?@  bud  [bud vit]
+      (lead p.bud (expr q.bud))
+    ::
+    ++  tora
+      (twin noop twee)
+    ::
+    ++  tung
+      |=  bud/{p/what q/$@(term tune)}
+      ?@  q.bud  [bud vit]
+      (lead p.bud %.(q.bud (twin (raid (twin noop twee)) (moto expr))))
+    ::
+    ++  twee
+      |=  bud/(unit hoon)
+      ?~  bud  [~ vit]
+      (lead ~ (expr u.bud))
+    ::
+    ++  twin
+      |*  {one/$-(* {* life}) two/$-(* {* life})}
+      |*  bud/*
+      =^  yal  vit  (one -.bud)
+      =^  ves  vit  (two +.bud)
+      [[yal ves] vit]
+    --
   --
 ::
 ++  ap                                                  ::  hoon engine

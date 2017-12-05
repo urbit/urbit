@@ -11,14 +11,11 @@
       (pair tope tope)                                  ::  cell
     --
 |%
-++  al
-  ~%    %al
-      +>+
-    ~
-  |_  $:  mod/tile   
-          dom/axis
-          doc/(list what)
+++  ax
+  =+  :*  dom=`axis`1
+          doc=*(list what)
       ==
+  |_  mod/tile   
   ++  home  
     ::  express a hoon against the original subject
     ::
