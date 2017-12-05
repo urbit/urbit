@@ -52,7 +52,6 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
 
   if ( c3n == u3_Host.ops_u.net ) {
     *por_s = 31337 + imp_y;
-    uL(fprintf(uH, "ames: czar: localhost-only mode\n"));
     return 0x7f000001;
   }
   else {
@@ -327,7 +326,13 @@ u3_ames_io_init()
     num_y = u3r_byte(0, u3t(num));
 
     _ames_czar(num_y, &por_s);
-    uL(fprintf(uH, "ames: czar: %s on %d\n", u3_Host.ops_u.imp_c, por_s));
+    if ( c3y == u3_Host.ops_u.net ) {
+      uL(fprintf(uH, "ames: czar: %s on %d\n", u3_Host.ops_u.imp_c, por_s));
+    }
+    else {
+      uL(fprintf(uH, "ames: czar: %s on %d (localhost only)\n",
+                     u3_Host.ops_u.imp_c, por_s));
+    }
     u3z(num);
   }
 
