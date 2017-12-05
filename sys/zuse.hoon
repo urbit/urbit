@@ -664,7 +664,6 @@
     $:  qix/(map @t @t)                                 ::  query
         ced/cred                                        ::  client credentials
         bem/beam                                        ::  original path
-        but/path                                        ::  ending
     ==                                                  ::
   +=  gram                                              ::  inter-ship message
     $?  [[%lon ~] p=hole]                               ::  login request
@@ -4176,7 +4175,7 @@
       |=  {bem/beam ced/noun:cred quy/quer}
       ^-  epic
       =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
-      [(malt qix) ((hard cred) ced) bem /]
+      [(malt qix) ((hard cred) ced) bem]
   --  ::eyre
 ::                                                      ::
 ::::                      ++wired                       ::  wire formatting
