@@ -1,6 +1,6 @@
 ::  File writer module
 ::
-::::  /hoon/write/lib
+::::  /hoon/write/hood/lib
   ::
 /?    310
 /-    plan-diff, plan-acct

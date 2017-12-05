@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/womb/lib                                    ::  ::
+::::  /hoon/womb/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
 /+    talk, old-phon
