@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/helm/lib                                    ::  ::
+::::  /hoon/helm/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
 /-    sole
@@ -8,12 +8,12 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-++  helm-part  {$helm $0 helm-pith}                     ::  helm state
-++  helm-pith                                           ::  helm content
-  $:  bur/(unit (pair ship mace:ames))                 ::  requesting ticket
-      hoc/(map bone helm-session)                       ::  consoles
+++  part  {$helm $0 pith}                               ::  helm state
+++  pith                                                ::  helm content
+  $:  bur/(unit (pair ship mace:ames))                  ::  requesting ticket
+      hoc/(map bone session)                            ::  consoles
   ==                                                    ::
-++  helm-session                                        ::
+++  session                                             ::
   $:  say/sole-share                                    ::  console state
       mud/(unit (sole-dialog @ud))                      ::  console dialog
   ==                                                    ::
@@ -42,8 +42,8 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|=  {bowl:gall helm-part}                               ::  main helm work
-=+  sez=(fall (~(get by hoc) ost) *helm-session)
+|=  {bowl:gall part}                                   ::  main helm work
+=+  sez=(fall (~(get by hoc) ost) *session)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
       $%  {$cash wire p/@p q/buck:ames}                 ::
@@ -64,7 +64,7 @@
     --
 |_  moz/(list move)
 ++  abet                                              ::  resolve
-  [(flop moz) %_(+>+>+<+ hoc (~(put by hoc) ost sez))]
+  [(flop moz) %_(+<+.$ hoc (~(put by hoc) ost sez))]
 ::
 ++  emit  |=(card %_(+> moz [[ost +<] moz]))          ::  return card
 ++  emil                                              ::  return cards
@@ -186,7 +186,7 @@
 ++  poke-meset                                        ::  reset system (new)
   |=  hood-reset  =<  abet
   %-  emil
-  %-  flop  ^-  (list card) 
+  %-  flop  ^-  (list card)
   =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
   =+  hun=.^(@ %cx (welp top /hoon/hoon))
   =+  arv=.^(@ %cx (welp top /arvo/hoon))

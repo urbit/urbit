@@ -3,8 +3,7 @@
 ::::  /hoon/cat/gen
   ::
 /?    310
-//  /%%/ls/subdir
-//  /%/pretty
+/+    pretty-file, show-dir
 ::
 ::::
   ::
@@ -29,6 +28,6 @@
     *
   =-  [palm+[": " ``~]^-]~
   :~  rose+[" " `~]^~[leaf+"*" (smyt pax)]
-      `tank`(subdir vane pax dir.ark)
+      `tank`(show-dir vane pax dir.ark)
   ==
 ==

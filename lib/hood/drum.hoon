@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/drum/lib                                    ::  ::
+::::  /hoon/drum/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
 /-    sole, hall
@@ -9,18 +9,18 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-++  drum-part      {$drum $2 drum-pith-2}               ::
-++  drum-part-old  {$drum $1 drum-pith-1}               ::
+++  part      {$drum $2 pith-2}                         ::
+++  part-old  {$drum $1 pith-1}                         ::
 ::                                                      ::
-++  drum-pith-1                                         ::  pre-style
-  %+  cork  drum-pith-2                                 ::
-  |=(drum-pith-2 +<(bin *(map bone source-1)))          ::
+++  pith-1                                              ::       pre-style
+  %+  cork  pith-2                                      ::
+  |=(pith-2 +<(bin *(map bone source-1)))               ::
 ::                                                      ::
 ++  source-1                                            ::
   %+  cork  source                                      ::
   |=(source +<(mir *(pair @ud (list @c))))              ::  style-less mir
 ::                                                      ::
-++  drum-pith-2                                         ::
+++  pith-2                                              ::
   $:  sys/(unit bone)                                   ::  local console
       eel/(set gill:gall)                              ::  connect to
       ray/(set well:gall)                              ::
@@ -88,9 +88,9 @@
   ^-  (list gill:gall)
   [[our %talk] [our %dojo] ~]
 ::
-++  drum-make                                           ::  initial part
+++  make                                           ::  initial part
   |=  our/ship
-  ^-  drum-part
+  ^-  part
   :*  %drum
       %2
       ~                                                 ::  sys
@@ -100,19 +100,20 @@
       ~                                                 ::  bin
   ==                                                    ::
 ::
-++  drum-path                                           ::  encode path
+::
+++  en-gill                                           ::  gill to wire
   |=  gyl/gill:gall
   ^-  wire
   [%drum %phat (scot %p p.gyl) q.gyl ~]
 ::
-++  drum-phat                                           ::  decode path
+++  de-gill                                           ::  gill from wire
   |=  way/wire  ^-  gill:gall
   ?>(?=({@ @ $~} way) [(slav %p i.way) i.t.way])
 --
 ::
 ::::
   ::
-|=  {hid/bowl:gall drum-part}                          ::  main drum work
+|=  {hid/bowl:gall part}                          ::  main drum work
 =+  (fall (~(get by bin) ost.hid) *source)
 =*  dev  -
 =>  |%                                                ::  arvo structures
@@ -136,7 +137,7 @@
 ++  diff-sole-effect-phat                             ::  app event
   |=  {way/wire fec/sole-effect}
   =<  se-abet  =<  se-view
-  =+  gyl=(drum-phat way)
+  =+  gyl=(de-gill way)
   ?:  (se-aint gyl)  +>.$
   (se-diff gyl fec)
 ::
@@ -178,7 +179,7 @@
 ++  reap-phat                                         ::  ack connect
   |=  {way/wire saw/(unit tang)}
   =<  se-abet  =<  se-view
-  =+  gyl=(drum-phat way)
+  =+  gyl=(de-gill way)
   ?~  saw
     (se-join gyl)
   (se-dump:(se-drop & gyl) u.saw)
@@ -187,7 +188,7 @@
   |=  {way/wire saw/(unit tang)}
   =<  se-abet  =<  se-view
   ?~  saw  +>
-  =+  gyl=(drum-phat way)
+  =+  gyl=(de-gill way)
   ?:  (se-aint gyl)  +>.$
   %-  se-dump:(se-drop & gyl)
   :_  u.saw
@@ -209,15 +210,15 @@
 ++  quit-phat                                         ::
   |=  way/wire
   =<  se-abet  =<  se-view
-  =+  gyl=(drum-phat way)
+  =+  gyl=(de-gill way)
   ~&  [%drum-quit src.hid ost.hid gyl]
   (se-drop %| gyl)
 ::                                                    ::  ::
 ::::                                                  ::  ::
   ::                                                  ::  ::
 ++  se-abet                                           ::  resolve
-  ^-  (quip move drum-part)
-  =*  pith  +>+>+<+
+  ^-  (quip move part)
+  =*  pith  +<+.$
   ?.  se-ably
     =.  .  se-adit
     [(flop moz) pith]
@@ -445,16 +446,16 @@
 ::
 ++  se-poke                                           ::  send a poke
   |=  {gyl/gill:gall par/pear}
-  (se-emit [ost.hid %poke (drum-path gyl) gyl par])
+  (se-emit [ost.hid %poke (en-gill gyl) gyl par])
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl/gill:gall
   %-  se-emit(fug (~(put by fug) gyl ~))
-  [ost.hid %peer (drum-path gyl) gyl /sole]
+  [ost.hid %peer (en-gill gyl) gyl /sole]
 ::
 ++  se-pull                                           ::  cancel subscription
   |=  gyl/gill:gall
-  (se-emit [ost.hid %pull (drum-path gyl) gyl ~])
+  (se-emit [ost.hid %pull (en-gill gyl) gyl ~])
 ::
 ++  se-tame                                           ::  switch connection
   |=  gyl/gill:gall

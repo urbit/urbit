@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/kiln/lib                                    ::  ::
+::::  /hoon/kiln/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?  310                                                 ::  version
 ::                                                      ::  ::
@@ -9,9 +9,9 @@
 =,  space:userlib
 =,  format
 |%                                                      ::  ::
-++  kiln-part  {$kiln $0 kiln-pith}                     ::  kiln state
-++  kiln-pith                                           ::
-    $:  rem/(map desk kiln-desk)                        ::
+++  part  {$kiln $0 pith}                               ::  kiln state
+++  pith                                                ::  ::
+    $:  rem/(map desk per-desk)                         ::
         syn/(map kiln-sync {let/@ud ust/bone})          ::
         autoload-on/?                                   ::
         cur-hoon/@uvI                                   ::
@@ -19,7 +19,7 @@
         cur-zuse/@uvI                                   ::
         cur-vanes/(map @tas @uvI)                       ::
     ==                                                  ::
-++  kiln-desk                                           ::  per-desk state
+++  per-desk                                            ::  per-desk state
     $:  auto/?                                          ::  escalate on failure
         gem/germ                                        ::  strategy
         her/@p                                          ::  from ship
@@ -56,7 +56,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|=  {bowl:gall kiln-part}                              ::  main kiln work
+|=  {bowl:gall part}                                    ::  main kiln work
 ?>  =(src our)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
@@ -82,7 +82,7 @@
     --
 |_  moz/(list move)
 ++  abet                                                ::  resolve
-  [(flop moz) `kiln-part`+>+>->]
+  [(flop moz) `part`+<+.$]
 ::
 ++  emit  |=(card %_(+> moz [[ost +<] moz]))            ::  return card
 ++  emil                                                ::  return cards
@@ -254,6 +254,11 @@
       +>.$
     =.  cur-vanes  (~(put by cur-vanes) syd new-vane)
     (emit [%poke /kiln/reload/[syd] [our %hood] %helm-reload ~[syd]])
+  ::
+  ++  coup-reload
+    |=  {way/wire saw/(unit tang)}
+    ~?  ?=(^ saw)  [%kiln-reload-lame u.saw]
+    +>.$
   --
 ::
 ++  poke-overload
@@ -274,6 +279,15 @@
 ++  take-coup-fancy                                   ::
   |=  {way/wire saw/(unit tang)}
   abet:abet:(coup-fancy:(take way) saw)
+::
+++  take-coup-reload                                  ::
+  |=  {way/wire saw/(unit tang)}
+  abet:(coup-reload:autoload way saw)
+::
+++  take-coup-spam                                    ::
+  |=  {way/wire saw/(unit tang)}
+  ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
+  abet
 ::
 ++  take-mere-sync                                    ::
   |=  {way/wire mes/(each (set path) (pair term tang))}
@@ -406,9 +420,9 @@
 ::
 ++  work                                              ::  state machine
   |=  syd/desk
-  =+  ^-  kiln-desk
+  =+  ^-  per-desk
       %+  fall  (~(get by rem) syd)
-      =+  *kiln-desk
+      =+  *per-desk
       %_(- cas [%da now])
   |%
   ++  abet                                            ::  resolve

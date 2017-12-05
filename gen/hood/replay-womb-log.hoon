@@ -3,12 +3,12 @@
 ::::  /hoon/replay-womb-log/hood/gen
   ::
 /?    310
-/+    womb
+/+    hood-womb
 ::
 ::::
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {log/(list {@uvJ transaction:womb}) $~}
+        {log/(list {@uvJ transaction:hood-womb}) $~}
     ==
 [%womb-replay-log log]

@@ -2,16 +2,16 @@
 ::::  /hoon/stat-all/womb/mar
   ::
 /?    310
-/+    womb, old-zuse
+/+    hood-womb, old-zuse
 ::
 ::::  ~fyr
   ::
 =,  old-zuse
-|_  balance:womb
+|_  balance:hood-womb
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun  balance:womb                                ::  clam from %noun
+  ++  noun  balance:hood-womb                                ::  clam from %noun
   --
 ++  grow
   |%

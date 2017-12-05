@@ -4,8 +4,16 @@
   ::
 /+    cram
 ::
-/=    cor    /^  (list {@ud wain})
-             /:  /%%/    /_  @ud    /txt/
+/=    cor
+  /^  (list {@ud wain})
+  /:  /%%/
+  /;  |=  a/(map knot wain)
+      =;  kid/(list {@ud wain})  (sort kid dor)
+      %+  murn  ~(tap by a)
+      |=  {b/knot c/wain}
+      %+  bind  (slaw %ud b)
+      |=(d/@ud [d c])
+  /_  /txt/
 ::
 |%
 ++  rolt  |=(a/wall `tape`?~(a ~ ?~(t.a i.a :(weld i.a "\0a" $(a t.a)))))
