@@ -6,9 +6,9 @@
 ::
 ::::
   ::
-/+  womb
-=*  invite     invite:womb
-=*  reference  reference:womb
+/+  hood-womb
+=*  invite     invite:hood-womb
+=*  reference  reference:hood-womb
 |%
 ++  plural
   |=  {a/@u b/tape}  ^+  b
@@ -25,7 +25,7 @@
 --
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{who/@t etc/$@($~ {typ/type $~})} ref/(unit (each ship mail:womb))}
+        {{who/@t etc/$@($~ {typ/type $~})} ref/(unit (each ship mail:hood-womb))}
     ==
 ?~  etc  $(etc ~[planets+2])
 :-  %womb-invite
