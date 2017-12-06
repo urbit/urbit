@@ -1,8 +1,6 @@
 ::
 ::::  /lib/hall/hoon
   ::
-  ::  This file is in the public domain.
-  ::
 /-    hall
 ::
 ::::
