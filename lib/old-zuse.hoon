@@ -78,7 +78,6 @@
 ++  agon        !!                                      ::  XX deprecated
 ++  ankh        ankh:clay                               ::  fs node (new)
 ++  apex        !!                                      ::  XX deprecated
-++  ares        ares.is                                 ::  possible error
 ++  bale        bale:eyre                               ::  driver state
 ++  iden        user:eyre                               ::  username
 ++  sec-move    sec-move:eyre                           ::  driver effect
@@ -107,7 +106,6 @@
 ++  coal        !!                                      ::  XX depreacted
 ++  code        code:xmas                               ::  symmetric key
 ++  cone        !!                                      ::  XX depreacted
-++  coop        coop.is                                 ::  e2e ack
 ++  corn        !!                                      ::  XX depreacted
 ++  cred        cred:eyre                               ::  credential
 ++  deco        deco:dill                               ::  text decoration
@@ -139,7 +137,6 @@
 ++  httr        httr:eyre                               ::  raw http response
 ++  httx        httx:eyre                               ::  encapsulated http
 ++  kite        !!                                      ::  XX deprecated
-++  json        json.is                                 ::  normal json value
 ++  lamb        !!                                      ::  XX deprecated
 ++  lane        lane:xmas                               ::  packet route
 ++  lang        lang:ames                               ::  IETF lang as code
@@ -159,7 +156,6 @@
 ++  mess        mess:eyre                               ::  raw http headers
 ++  meta        !!                                      ::  path metadata
 ++  meth        meth:eyre                               ::  http methods
-++  mime        mime.is                                 ::  mimetyped data
 ++  mite        mite:eyre                               ::  mime type
 ++  miso        miso:clay                               ::  ankh delta
 ++  misu        misu:clay                               ::  computed delta
@@ -214,7 +210,6 @@
 ++  soup        soup:ames                               ::  new statement id
 ++  soul        soul:ames                               ::  packet in travel
 ++  soba        soba:clay                               ::  delta
-++  sock        sock.is                                 ::  outgoing [from to]
 ++  spur        spur.is                                 ::  ship desk case spur
 ++  step        step:ames                               ::  identity stage
 ++  stub        stub:dill                               ::  styled tuba
@@ -225,7 +220,7 @@
 ++  tako        tako:clay                               ::  yaki ref
 ++  tick        tick:ames                               ::  process id
 ++  tint        tint:dill                               ::  text color
-++  toro        toro:clay                               ::  general change
+++  toro        toro:clay                               ::  general change 
 ++  town        town:ames                               ::  all security state
 ++  tube        !!                                      ::  canonical path
 ++  tutu        !!                                      ::  XX deprecated
