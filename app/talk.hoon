@@ -126,10 +126,12 @@
 ::>    small utility functions.
 ::+|
 ::
+++  our
+  (true-self our.bol)
+::
 ++  server                                              ::<  our hall instance
   ^-  dock
-  :_  %hall
-  (true-self our.bol)
+  [our %hall]
 ::
 ++  inbox                                               ::<  client's circle name
   ::>  produces the name of the circle used by this
@@ -140,8 +142,7 @@
 ++  incir                                               ::<  client's circle
   ::>  ++inbox, except a full circle.
   ^-  circle
-  :_  inbox
-  (true-self our.bol)
+  [our inbox]
 ::
 ++  renum                                               ::<  gram i# by serial
   ::>  find the grams list index for gram with serial.
@@ -582,8 +583,8 @@
       ++  circ                                          ::<  circle
         ;~  pose
           (cold incir col)
-          ;~(pfix cen (stag our.bol sym))
-          ;~(pfix fas (stag (sein:title our.bol) sym))
+          ;~(pfix cen (stag our sym))
+          ;~(pfix fas (stag (sein:title our) sym))
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
@@ -1018,7 +1019,7 @@
         ::
         ^-  vase
         !>  ^-  {our/@p now/@da eny/@uvI}
-        [our.bol now.bol (shas %eny eny.bol)]
+        [our now.bol (shas %eny eny.bol)]
       ::
       ::>  ||
       ::>  ||  %circle-management
@@ -1056,7 +1057,7 @@
         ^+  ..sh-work
         =.  ..sh-work
           (sh-act %create nom txt sec)
-        (join [[[our.bol nom] ~] ~ ~])
+        (join [[[our nom] ~] ~ ~])
       ::
       ++  delete                                        ::<  %delete
         ::>  deletes our circle {nom}, after optionally
@@ -1556,7 +1557,7 @@
       ?~  lis  +>.$
       %+  sh-fact  %mor
       %+  turn  `(list tape)`lis
-      =+  nom=(scag 7 (cite:title our.bol))
+      =+  nom=(scag 7 (cite:title our))
       |=  t/tape
       ?.  ?&  (~(has in settings.she) %notify)
               ?=(^ (find nom (slag 15 t)))
@@ -1710,8 +1711,8 @@
     |=  two/circle
     ^-  ?
     ::  the circle that's ours is better.
-    ?:  =(our.bol hos.one)
-      ?.  =(our.bol hos.two)  &
+    ?:  =(our hos.one)
+      ?.  =(our hos.two)  &
       ?<  =(nom.one nom.two)
       ::  if both circles are ours, the main story is better.
       ?:  =(%inbox nom.one)  &
@@ -1719,7 +1720,7 @@
       ::  if neither are, pick the "larger" one.
       (lth nom.one nom.two)
     ::  if one isn't ours but two is, two is better.
-    ?:  =(our.bol hos.two)  |
+    ?:  =(our hos.two)  |
     ?:  =(hos.one hos.two)
       ::  if they're from the same ship, pick the "larger" one.
       (lth nom.one nom.two)
@@ -1770,14 +1771,14 @@
     ::>  "/channel" for parent circle.
     ::
     ^-  tape
-    ?:  =(hos.one our.bol)
+    ?:  =(hos.one our)
       ?:  =(nom.one inbox)
         ":"
       ['%' (trip nom.one)]
     =+  wun=(cite:title hos.one)
     ?:  =(nom.one %inbox)
       wun
-    ?:  =(hos.one (sein:title our.bol))
+    ?:  =(hos.one (sein:title our))
       ['/' (trip nom.one)]
     :(welp wun "/" (trip nom.one))
   ::
@@ -1869,7 +1870,7 @@
     ::>  returns true if circle is a mailbox of ours.
     ::
     |=  cir/circle  ^-  ?
-    ?&  =(hos.cir our.bol)
+    ?&  =(hos.cir our)
         =+  sot=(~(get by mirrors) cir)
         &(?=(^ sot) ?=($mailbox sec.con.u.sot))
     ==
@@ -2109,7 +2110,7 @@
         ?:  pat.sep  " "
         =-  (weld - q:(fall pre [p=| q=" "]))
         %~  ar-glyf  ar
-          ?:  =(who our.bol)  aud
+          ?:  =(who our)  aud
           (~(del in aud) [who %inbox])
         ==
       =.  wyd  (sub wyd (min (div wyd 2) (lent pef)))
