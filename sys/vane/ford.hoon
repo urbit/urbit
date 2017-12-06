@@ -58,7 +58,7 @@
       ==                                                ::
   ==                                                    ::
 ++  burg                                                ::  gonadic rule
-  |*  {a/mold b/mold}                                   ::  from and to
+  |*  {a/mold b/mold}                             ::  from and to
   $-({c/cafe d/a} (bolt b))                             ::
 ::                                                      ::
 ++  cafe                                                ::  live cache
@@ -248,7 +248,7 @@
       ~&(dep-empty+hen +>.$)
     ?:  =(dep 0vtest)                 ::  upstream testing
       +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
-    ::
+        ::
     ?.  (~(has by def.deh.bay) dep)
       ~&([%wasp-unknown dep] this)
     =/  bes  (~(got by def.deh.bay) dep)
@@ -341,10 +341,10 @@
         ?+    van  ~&(%camp-stub !!)
             $g
           =/  tyl/path
-            ?.  ?=($x ren)
-              s.bem
-            ?>  ?=(^ s.bem)
-            t.s.bem
+              ?.  ?=($x ren)
+                s.bem
+              ?>  ?=(^ s.bem)
+              t.s.bem
           ::
           :+  %pass  (camp-wire +<.$)
           [%g [%deal [our p.bem] q.bem [%peer %scry ren (flop tyl)]]]
@@ -590,7 +590,7 @@
         |=  {lam/marv ram/marv nod/(unit {knot res})}
         ?^(nod [u.nod lam ram] (~(uni by lam) ram))
       ==
-    ++  dash                                            ::  process cache
+    ++  dash                                          ::  process cache
       |=  cof/cafe
       ^+  +>
       %_(+> jav.bay q.cof, deh.bay r.cof)
@@ -799,13 +799,11 @@
       ++  hoot
         ;~  plug
           sym
-          ;~  pose
-            %+  stag  ~
-            ;~(plug ;~(pfix fas case) ;~(pfix ;~(plug fas sig) fed:ag))
-            (easy ~)
-          ==
+          %-  punt
+          ;~(pfix fas ;~((glue fas) case ship))
         ==
       ::
+      ++  ship  ;~(pfix sig fed:ag)
       ++  hoof
         %+  cook  |=(a/^hoof a)
         ;~  pose
@@ -815,7 +813,7 @@
       ::
       ++  hoop
         ;~  pose
-          (stag %| ;~(pfix ;~(plug fas fas gap) have))
+          (stag %| ;~(pfix fas fas gap have))
           (stag %& tall:vez)
         ==
       ::
@@ -1157,7 +1155,7 @@
       |=  {cof/cafe mal/(map mark $~)}
       ?:  (~(has by mal) for)
         (cope (lace cof for bem) (flux some))
-      =+  opt=(silt (turn ~(tap by mal) head))        ::  XX asymptotics
+      =+  opt=(silt (turn ~(tap by mal) head))          ::  XX asymptotics
       %+  cope  (find-translation-path cof for opt)
       |=  {cof/cafe wuy/(list @tas)}
       ?~  wuy  (flue cof)
@@ -1239,14 +1237,14 @@
       =;  gro/(burg (set mark) (list mark))
         %+  coop  (gro cof too ~ ~)                    :: XX better grab layer
         ~%  %grab  find-translation-path-jet  ~
-        |=  cof/cafe
+          |=  cof/cafe
         %+  cool  |.(leaf+"cast: finding grabbable grow destinations")
-        %+  cope  (fang cof too)
-        |=  {cof/cafe vax/vase}  ^-  (bolt (list mark))
-        ?.  (slob %grab p.vax)  (flue cof)
-        %+  cope
-          (gro cof (silt (sloe p:(slap vax [%limb %grab]))))
-        (flux |=(a/path (welp a /[too])))
+          %+  cope  (fang cof too)
+          |=  {cof/cafe vax/vase}  ^-  (bolt (list mark))
+          ?.  (slob %grab p.vax)  (flue cof)
+          %+  cope
+            (gro cof (silt (sloe p:(slap vax [%limb %grab]))))
+          (flux |=(a/path (welp a /[too])))
       |=  {cof/cafe tag/(set mark)}
       =|  $:  war/(map mark (list mark))
               pax/(list mark)
@@ -1325,7 +1323,7 @@
         ;~  cope
           ;~  coax
             |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas p.kas) flay))
-            |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas q.kas) flay))
+            |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas q.kas) flay)) 
           ==                          ::  XX merge %tabl
         ::
           |=  {cof/cafe bor/cage heg/cage}  ^-  (bolt gage)
@@ -1645,7 +1643,7 @@
           ?~  p.hon  (flaw cof leaf+"ford: no match" >(en-beam how)< $:opt ~)
           ?:  =(p.i.p.hon (scag (lent p.i.p.hon) (flop s.how)))
             ^$(hon q.i.p.hon)
-         $(p.hon t.p.hon)
+          $(p.hon t.p.hon)
         ::
             $fscn  $(hon p.hon, lit |)
             $fspm
@@ -1698,8 +1696,8 @@
           ==
         ::
             $fszy
-          =?  arg  lit  many+~
-          (cope (make cof %bake q.hon arg how) flay)
+            =?  arg  lit  many+~
+            (cope (make cof %bake q.hon arg how) flay)
         ==
       ::
       ++  head                                          ::  consume structures
@@ -1904,7 +1902,7 @@
     |=  {@ baby}
     :~  =/  caches/(jar term *)
           %-  ~(rep by jav)
-          |=({{* a/{term *}} b/(jar term *)} (~(add ja b) -.a +.a))
+        |=({{* a/{term *}} b/(jar term *)} (~(add ja b) -.a +.a))
         =/  cache-for  |=(a/term [a %& (~(get ja caches) a)])
         cache+[%| (turn `(list term)`/hood/bake/slit/slim/slap/slam cache-for)]
     ::

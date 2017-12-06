@@ -97,19 +97,18 @@
     :>
     :>    models (molds) are functions that normalize nouns.
     :>
-    :>  arms producing molds are introduced with {+=}.  for molds,
-    :>  we decorate the mold rather than the arm.  the compiler
-    :>  will copy the mold decoration onto the arm.
+    :>  arms producing molds are introduced with {+=}.  the
+    :>  compiler will copy the arm decoration onto its product
     +|
     +=  spot  [p=@ q=@]                                 :<  a coordinate
-    +=  tops                                            :>  also a coordinate
+    +=  tops                                            :<  also a coordinate
       [p=@ q=@]
-    +=  goof                                            :>  a simple tuple
+    +=  goof                                            :<  a simple tuple
       $:  foo=@                                         :<  something mysterious
           bar=@                                         :<  go here for drink
           moo=(binary-tree juice)                       :<  cows do this
       ==
-    +=  juice                                           :>  fruity beverage
+    +=  juice                                           :<  fruity beverage
       $%  [%plum p=@]                                   :<  fresh prune
           [%pear p=@ q=@]                               :<  good for cider
           [%acai p=@]                                   :<  aztec superfood
@@ -142,7 +141,6 @@
 :>  note that ++say-goodbye is the correct notation, even though
 :>  it's a {+-} arm.
 |%
-:>                                                      :>  ++say-hello
 ++  say-hello                                           :<  say hi to someone
   :>  friendly welcome message
   :>
@@ -159,7 +157,7 @@
 :>      ?:  =(%hello %world)
 :>        %hello
 :>      %world
-:>                                                      ::  ++say-goodbye
+::
 +-  say-goodbye                                         ::
   :>  describe product of function
   :>
@@ -175,8 +173,8 @@
   =/  bar  (add (mul num foo) 2)
   =/  moo  (mul num bar)                                :<  for all the cows
   "goodbye and {(scot %ud moo)}, {(rip 3 txt)}"
-:>                                                      :>  ++say-minimum
-++  say-minimum                                         :>  minimal decoration
+::
+++  say-minimum                                         :<  minimal decoration
   |=  txt=term
   "nothing to say to {(rip 3 txt)}"
 --
