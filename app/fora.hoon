@@ -4,7 +4,7 @@
 ::TODO  maybe stop relying on %hood one day.
 ::
 /-  hall
-/+  hall, write, time-to-id
+/+  hall, time-to-id
 =,  format
 =,  title
 ::
