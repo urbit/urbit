@@ -11624,12 +11624,12 @@
         |=  {a/whit b/term c/whit d/foot}
         =+  e=(glom a c)
         =?  boy.e  =(~ boy.e)
-          |-(?+(-.p.d ~ $dbug $(p.d q.p.d), ?(%halo %help) p.p.d))
+          |-(?+(-.p.d ~ $dbug $(p.d q.p.d), %halo p.p.d, %docs `p.p.d))
         =.  p.d
           |-
-          ?+  p.d  p.d
-            [$dbug ^]  p.d(q $(p.d q.p.d))
-            [%help p=~ *]  p.d(p boy.e)
+          ?+  p.d  ?~(boy.e p.d [%docs u.boy.e p.d])
+            [%dbug ^]  p.d(q $(p.d q.p.d))
+            [%docs ^]  p.d
             [%halo p=~ *]  p.d(p boy.e)
           ==
         [b boy.e d]
