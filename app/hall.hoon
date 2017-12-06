@@ -2243,7 +2243,7 @@
   ::
   |=  act/action
   ^-  (quip move _+>)
-  ?.  (team:title src.bol our.bol)
+  ?.  (team:title our.bol src.bol)
     %-  pre-bake
     =<  ta-done
     %-  ta-note:ta
