@@ -2061,8 +2061,8 @@
     `det
   ::
       $burden
-    ?:  &(=(who.qer src.bol) =(rir /(scot %p src.bol)/report))  ~
     ?.  ?=($story -.det)  ~
+    ?:  &(=(who.qer src.bol) =(rir /report/(scot %p src.bol)))  ~
     ?:  ?=(?($follow $inherited $sequent) -.det.det)  ~
     ::  only burden channels for now.
     ?.  (~(has by stories) nom.det)  ~
