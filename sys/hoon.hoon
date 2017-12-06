@@ -12172,17 +12172,15 @@
 ::::  5f: molds and mold builders
   ::
 ++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
-++  ares  (unit {p/term q/(list tank)})                 ::  possible error
 ++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
-++  beam  {{p/ship q/desk r/case} s/spur}               ::  global name
 ++  beak  {p/ship q/desk r/case}                        ::  path prefix
+++  beam  {{p/ship q/desk r/case} s/spur}               ::  global name
 ++  bone  @ud                                           ::  opaque duct
 ++  case                                                ::  version
-          $%  {$da p/@da}                               ::  date
-              {$tas p/@tas}                             ::  label
-              {$ud p/@ud}                               ::  sequence
-          ==                                            ::
-++  coop  (unit ares)                                   ::  possible error
+         $%  {$da p/@da}                               ::  date
+             {$tas p/@tas}                             ::  label
+             {$ud p/@ud}                               ::  sequence
+         ==                                            ::
 ++  desk  @tas                                          ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
 ++  cask  |*(a/$-(* *) (pair mark a))                   ::  global data
@@ -12199,14 +12197,6 @@
               ==                                        ::
               a                                         ::
           ==                                            ::
-++  json                                                ::  normal json value
-  $@  $~                                                ::  null
-  $%  {$a p/(list json)}                                ::  array
-      {$b p/?}                                          ::  boolean
-      {$o p/(map @t json)}                              ::  object
-      {$n p/@ta}                                        ::  number
-      {$s p/@t}                                         ::  string
-  ==                                                    ::
 ++  kirk  (unit (set monk))                             ::  audience
 ++  lens                                                ::  observation core
   $_  ^?                                                ::
@@ -12232,12 +12222,10 @@
 ++  mass  (pair cord (each noun (list mash)))           ::  memory usage
 ++  mill  (each vase milt)                              ::  vase+metavase
 ++  milt  {p/* q/*}                                     ::  metavase
-++  mime  {p/mite q/octs}                               ::  mimetyped data
 ++  mite  (list @ta)                                    ::  mime type
 ++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
 ++  muse  {p/@tas q/duct r/arvo}                        ::  sourced move
 ++  move  {p/duct q/arvo}                               ::  arvo move
-++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  ovum  {p/wire q/curd}                               ::  typeless ovum
 ++  pane  (list {p/@tas q/vase})                        ::  kernel modules
 ++  pass  @                                             ::  public key
@@ -12251,13 +12239,6 @@
 ++  slyd  $-  {* (unit (set monk)) term beam}           ::  super advanced
           (unit (unit (cask)))                          ::
 ++  slyt  $-({* *} (unit (unit)))                       ::  old namespace
-++  sack  {p/ship q/ship}                               ::  incoming [our his]
-++  scar                                                ::  opaque duct
-  $:  p/@ud                                             ::  bone sequence
-      q/(map duct bone)                                 ::  by duct
-      r/(map bone duct)                                 ::  by bone
-  ==                                                    ::
-++  sock  {p/ship q/ship}                               ::  outgoing [our his]
 ++  spur  path                                          ::  ship desk case spur
 ++  time  @da                                           ::  galactic time
 ++  vile                                                ::  reflexive constants
