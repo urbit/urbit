@@ -6502,12 +6502,12 @@
   ++  bunt  
     ::  ~&  [%bunt-model mod]
     ::  =-  ~&  [%bunt-product -]
-    ::    -  
+    ::      -  
     ersatz
   ++  clam  
     ::  ~&  [%clam-model mod]
     ::  =-  ~&  [%clam-product -]
-    ::    -
+    ::      -
     factory
   ++  home  
     ::  express a hoon against the original subject
@@ -6547,7 +6547,7 @@
       ?~(t.p.mod ^$(mod i.p.mod) $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod))
     ::
         {$kelp *}
-      ::  last entry is the default value
+      ::  last entry is the default value  
       ::
       |-  ^-  hoon
       ?~(t.p.mod ^$(mod i.p.mod) $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod))
@@ -6574,7 +6574,7 @@
     ^-  hoon
     :+  %tsls
       [%bust %noun]
-    ~(construct sample [2 %|])
+    ~(construct sample(dom (peg 3 dom)) [2 %&])
   ::
   ++  basic
     |=  bas/base
@@ -6593,7 +6593,7 @@
         $cell
       ::  reduce to pair of nouns
       ::
-      =+($(mod [%axil %noun]) [- -])
+      =+($(bas %noun) [- -])
     ::
         $bean
       ::  comparison produces boolean type
@@ -6610,7 +6610,7 @@
     ==
   ::
   ++  decorate
-    ::  document 
+    ::  apply documentation to expression
     ::
     |=  gen/hoon
     ^-  hoon
@@ -6776,13 +6776,13 @@
       ::  interrogate this instance
       ::
       :^    %wtcl
-          ::  test if we match this wing
+          ::  test if the head matches this wing
           ::
-          [%wtts p.i.rep fetch-wing]
-        ::  use this format
+          [%wtts p.one fetch-wing(axe (peg axe 2))]
+        ::  if so, use this form
         ::
-        :-  `hoon`p.i.rep
-        construct(mod q.i.rep, top &, axe (peg axe 3))
+        :-  [%rock p.p.one q.p.one]
+        construct(mod q.one, top &, axe (peg axe 3))
       ::  continue in the loop
       ::
       fin
@@ -6801,19 +6801,12 @@
       ::  guarded trap
       ::
       :+  %tsgr
-        ::  constructor trap
-        ::
-        :+  %brdt  ~^~
         ::  construct within trap
         ::
-        %=  construct
-        ::  old context within trap context
+        :+  %brdt  ~^~ 
+        ::  trap is only kicked if sample is cell
         ::
-          dom  (peg 3 dom)
-        ::  only kick trap if sample is known cell
-        ::
-          top  [& &]
-        ==
+        construct(top [& &])
       ::  boc: call constructor
       ::  but: default, but coerce type to call
       ::
