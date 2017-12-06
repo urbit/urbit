@@ -1500,10 +1500,10 @@ u3m_init(c3_o chk_o)
 /* _get_cmd_output(): Run a shell command and capture its output.
    Exits with an error if the command fails or produces no output.
    The 'out_c' parameter should be an array of sufficient length to hold
-   the command's output, up to a max of 2048 characters.
+   the command's output, up to a max of len_c characters.
 */
 static void
-_get_cmd_output(c3_c *cmd_c, c3_c *out_c)
+_get_cmd_output(c3_c *cmd_c, c3_c *out_c, c3_w len_c)
 {
   FILE *fp = popen(cmd_c, "r");
   if ( NULL == fp ) {
@@ -1511,7 +1511,7 @@ _get_cmd_output(c3_c *cmd_c, c3_c *out_c)
     exit(1);
   }
 
-  if ( NULL == fgets(out_c, 2048, fp) ) {
+  if ( NULL == fgets(out_c, len_c, fp) ) {
     fprintf(stderr, "'%s' produced no output\n", cmd_c);
     exit(1);
   }
@@ -1519,30 +1519,19 @@ _get_cmd_output(c3_c *cmd_c, c3_c *out_c)
   pclose(fp);
 }
 
-/* _arvo_hash(): retrieve git hash of arvo directory.
-   hax_c must be an array with length >= 41.
+/* _arvo_hash(): get a shortened hash of the last git commit
+   that modified the sys/ directory in arvo.
+   hax_c must be an array with length >= 11.
 */
 static void
 _arvo_hash(c3_c *out_c, c3_c *arv_c)
 {
   c3_c cmd_c[2048];
 
-  sprintf(cmd_c, "git -C %s rev-parse HEAD", arv_c);
-  _get_cmd_output(cmd_c, out_c);
+  sprintf(cmd_c, "git -C %s log -1 HEAD --format=%H -- sys/", arv_c);
+  _get_cmd_output(cmd_c, out_c, 11);
 
-  out_c[strcspn(out_c, "\r\n")] = 0;  /* strip newline */
-}
-
-/* _git_branch(): retrieve the current git branch */
-static void
-_git_branch(c3_c *out_c, c3_c *arv_c)
-{
-  c3_c cmd_c[2048];
-
-  sprintf(cmd_c, "git -C %s rev-parse --abbrev-ref HEAD", arv_c);
-  _get_cmd_output(cmd_c, out_c);
-
- out_c[strcspn(out_c, "\r\n")] = 0;  /* strip newline */
+  out_c[10] = 0;  //  end with null-byte
 }
 
 /* _git_pill_url(): produce a URL from which to download a pill
@@ -1551,6 +1540,8 @@ _git_branch(c3_c *out_c, c3_c *arv_c)
 static void
 _git_pill_url(c3_c *out_c, c3_c *arv_c)
 {
+  c3_c hax_c[11];
+
   assert(NULL != arv_c);
 
   if ( 0 != system("which git >> /dev/null") ) {
@@ -1558,15 +1549,8 @@ _git_pill_url(c3_c *out_c, c3_c *arv_c)
     exit(1);
   }
 
-  {
-    c3_c hax_c[2048];
-    c3_c bra_c[2048];
-
-    _git_branch(bra_c, arv_c);
-    _arvo_hash(hax_c, arv_c);
-
-    sprintf(out_c, "https://bootstrap.urbit.org/%s-%s.pill", hax_c, bra_c);
-  }
+  _arvo_hash(hax_c, arv_c);
+  sprintf(out_c, "https://bootstrap.urbit.org/git-%s.pill", hax_c);
 }
 
 /* _boot_home(): create ship directory. */
