@@ -6,6 +6,7 @@
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
+^%
 ~%  %k.143  ~  ~                                        ::
 |%
 ++  hoon-version  +
@@ -6503,11 +6504,13 @@
     ::  ~&  [%bunt-model mod]
     ::  =-  ~&  [%bunt-product -]
     ::      -  
+    ~+
     ersatz
   ++  clam  
     ::  ~&  [%clam-model mod]
     ::  =-  ~&  [%clam-product -]
     ::      -
+    ~+
     factory
   ++  home  
     ::  express a hoon against the original subject
@@ -6552,20 +6555,11 @@
       |-  ^-  hoon
       ?~(t.p.mod ^$(mod i.p.mod) $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod))
     ::
-        {$leaf *}
-      [%rock p.mod q.mod]
-    ::
-        {$plow *}
-      $(mod q.mod)
-    ::
-        {$reed *}
-      $(mod p.mod)
-    ::
-        {$vine *}
-      $(mod q.mod)
-    ::
-        {$weed *}
-      (home p.mod)
+        {$leaf *}  [%rock p.mod q.mod]
+        {$plow *}  $(mod q.mod)
+        {$reed *}  $(mod p.mod)
+        {$vine *}  $(mod q.mod)
+        {$weed *}  (home p.mod)
     ==
   ::
   ++  trivial
@@ -6621,6 +6615,7 @@
   ++  ersatz
     ::  produce a correctly typed instance without subject
     ::
+    ~+
     ^-  hoon
     ?-    mod
         {^ *}
@@ -6654,7 +6649,7 @@
     ^-  hoon
     :^  %brts  ~^~
       [%base %noun]
-    ~(construct sample [6 %&])
+    ~(construct sample(dom (peg 7 dom)) [6 %&])
   ::
   ++  sample
     ::  normalize a sample of the subject
@@ -6808,10 +6803,12 @@
         ::
         construct(top [& &])
       ::  boc: call constructor
-      ::  but: default, but coerce type to call
+      ::  but: default
       ::
       =/  boc/hoon  [%limb %$]
-      =/  but/hoon  [%ktls boc default]
+      =/  but/hoon  default
+      :+  %ktls
+        boc
       ?:  =(& top)
         ::  may be atom or cell; default or construct
         ::
@@ -6832,6 +6829,7 @@
       ::  constructor at arbitrary sample
       ::
       ::  ~&  [%construct axe mod]
+      ~+
       ^-  hoon
       ?-    mod
       ::
@@ -6905,7 +6903,10 @@
         ?@  top
           ?:  =(%| top)
             construct(mod p.mod)
-          [%wtpt fetch-wing construct(mod p.mod) construct(mod q.mod)]
+          :^    %wtpt
+              fetch-wing
+            construct(top %|, mod p.mod)
+          construct(top [%& %&], mod q.mod)
         construct(mod q.mod)
       ::
       ::  bridge, $^
@@ -6915,8 +6916,8 @@
         ?@  top  probe
         :^    %wtpt
             fetch-wing(axe (peg axe 2))
-          construct(mod q.mod) 
-        construct(mod p.mod)
+          construct(top [%| %&], mod q.mod) 
+        construct(top [[%& %&] %&], mod p.mod)
       ::
       ::  weed, $_
       ::
