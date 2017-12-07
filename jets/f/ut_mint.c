@@ -376,6 +376,7 @@
       if ( (c3n == _mint_vet(van))
            || ((c3y == u3du(gen)) &&
                ((c3__zpfs == u3h(gen)) ||
+                (c3__zpsk == u3h(gen)) ||
                 (c3__lost == u3h(gen)) ||
                 (c3__fail == u3h(gen)) ||
                 (c3__zpzp == u3h(gen)))) )
@@ -875,7 +876,8 @@
         return ret;
       }
 
-      case c3__zpsm: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__zpsm:
+      case c3__zpmc: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun vos   = _mint_in(van, sut, c3__noun, q_gen);
