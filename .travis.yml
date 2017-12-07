@@ -25,4 +25,14 @@ addons:
     - re2c
     - libcurl4-gnutls-dev
     - python
-
+# before_deploy: "make deb" # TODO
+deploy:
+  skip_cleanup: true
+  provider: releases
+  prerelease: true # turn this off for official releases
+  api_key:
+    secure: V4E7784ECSS3MO6ZIRtang9XwibDyvDYGb0MoSaP2CTlmzIAhdokr4KJFM0qM4KRaaajCdQuqi0lojgOjwdxs7e0GkAwScb33LFxQ7Chj/QkFOY7V1AnSRLR5OsXnazB0nur5aSwvcvnggQ2XW3OeF7zIvGfs9aR97SEz/xCrVE=
+  file: bin/urbit # TODO upload package from before_deploy
+  on:
+    repo: urbit/urbit
+    tags: true
