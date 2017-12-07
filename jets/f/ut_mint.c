@@ -388,8 +388,10 @@
     }
 
     if ( c3n == u3du(gen) ) {
+      u3_noun fab = u3r_at(u3qfu_van_fab, van);
       u3_noun ter = u3r_at(u3x_con_3, van);
-      u3_noun rex = u3qfp_open(ter, gen);
+      u3_noun rex = (c3n == fab) ? u3qfp_nepo(ter, gen)
+                                 : u3qfp_open(ter, gen);
 
       ret = _mint_in(van, sut, gol, rex);
       u3z(rex);
@@ -414,8 +416,10 @@
       }
     } else switch ( u3h(gen) ) {
       default: {
+        u3_noun fab = u3r_at(u3qfu_van_fab, van);
         u3_noun ter = u3r_at(u3x_con_3, van);
-        u3_noun rex = u3qfp_open(ter, gen);
+        u3_noun rex = (c3n == fab) ? u3qfp_nepo(ter, gen)
+                                   : u3qfp_open(ter, gen);
 
         if ( c3y == u3r_sing(rex, gen) ) {
 #if 1
@@ -813,7 +817,6 @@
 
       case c3__ktcn: p_gen = u3t(gen);
       _mint_used();
-#if 0
       {
         u3_noun von = u3i_molt(u3k(van), u3qfu_van_fab, c3n, 0);
         u3_noun ret = _mint_in(von, sut, gol, p_gen);
@@ -821,33 +824,9 @@
         u3z(von);
         return ret;
       }
-#else
-      {
-        u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-        u3_noun gat = u3j_hook(von, "blow");
-        u3_noun pro;
-
-        pro = u3n_kick_on(u3i_molt(gat, 
-                          u3x_sam_2, 
-                          u3k(gol), 
-                          u3x_sam_3, 
-                          u3k(p_gen),
-                          0));
-        return pro;
-      } 
-#endif
 
       case c3__cold: p_gen = u3t(gen);
       _mint_used();
-#if 0
-      {
-        u3_noun von = u3i_molt(u3k(van), u3qfu_van_fab, c3n, 0);
-        u3_noun ret = _mint_in(von, sut, gol, p_gen);
-
-        u3z(von);
-        return ret;
-      }
-#else
       {
         u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
         u3_noun gat = u3j_hook(von, "blow");
@@ -861,7 +840,6 @@
                           0));
         return pro;
       } 
-#endif
 
       case c3__zpcm: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
