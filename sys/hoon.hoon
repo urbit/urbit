@@ -6197,7 +6197,6 @@
   ==
     %al    al
     %ap    ap
-    %aq    aq
     %ut    ut
   ==
 |%
