@@ -85,6 +85,7 @@
 #   define c3__blog   c3_s4('b','l','o','g')
 #   define c3__bloq   c3_s4('b','l','o','q')
 #   define c3__blot   c3_s4('b','l','o','t')
+#   define c3__blow   c3_s4('b','l','o','w')
 #   define c3__blue   c3_s4('b','l','u','e')
 #   define c3__blur   c3_s4('b','l','u','r')
 #   define c3__bndl   c3_s4('b','n','d','l')
