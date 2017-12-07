@@ -6,7 +6,6 @@
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-^%
 ~%  %k.143  ~  ~                                        ::
 |%
 ++  hoon-version  +
@@ -6133,6 +6132,7 @@
               {$help p/writ q/type}                     ::  description
               {$hold p/type q/hoon}                     ::  lazy evaluation
           ==                                            ::
+++  tyro  $-(type type)                                 ::  type converter
 ++  tone  $%  {$0 p/*}                                  ::  success
               {$1 p/(list)}                             ::  blocks
               {$2 p/(list {@ta *})}                     ::  error ~_s
@@ -6504,13 +6504,17 @@
     ::  ~&  [%bunt-model mod]
     ::  =-  ~&  [%bunt-product -]
     ::      -  
+    ~$  %ut-ersatz-call
     ~+
+    ~$  %ut-ersatz-make
     ersatz
   ++  clam  
     ::  ~&  [%clam-model mod]
     ::  =-  ~&  [%clam-product -]
     ::      -
+    ~$  %ut-factory-call
     ~+
+    ~$  %ut-factory-make
     factory
   ++  home  
     ::  express a hoon against the original subject
@@ -6647,8 +6651,12 @@
     ::  produce a normalizing gate (mold)
     ::
     ^-  hoon
+    :+  %sgbc
+      %run-mold
     :^  %brts  ~^~
       [%base %noun]
+    :+  %sgbc
+      %run-make
     ~(construct sample(dom (peg 7 dom)) [6 %&])
   ::
   ++  sample
@@ -6761,7 +6769,9 @@
               one/line
               rep/(list line)
           ==
-      ^-  hoon
+      :+  %sgbc
+        %run-switch
+      |-  ^-  hoon
       ::  if no other choices, construct head
       ::
       ?~  rep  construct(mod `tile`one) 
@@ -6801,12 +6811,16 @@
         :+  %brdt  ~^~ 
         ::  trap is only kicked if sample is cell
         ::
+        :+  %sgbc
+          %run-deep
         construct(top [& &])
       ::  boc: call constructor
       ::  but: default
       ::
       =/  boc/hoon  [%limb %$]
       =/  but/hoon  default
+      :+  %sgbc
+        %run-probing
       :+  %ktls
         boc
       ?:  =(& top)
@@ -7172,6 +7186,7 @@
   --
 ::
 ++  aq                                                  ::  hoon engine
+  =-  ap
   ~%    %aq
       +>
     ==
@@ -9083,9 +9098,15 @@
     ::  ~|  mask.bus
     =+  jon=(apex:musk bus q.pro)
     ?~  jon
-      pro
+      ?:  fab
+        pro
+      ~|  %musk-stopped
+      !!
     ?:  ?=($| -.u.jon)
-      pro
+      ?:  fab
+        pro
+      ~|  %musk-blocked
+      !!
     [p.pro [%1 p.u.jon]]
   ::
   ++  burn
@@ -10709,7 +10730,7 @@
     ==
   ::
   ++  take
-    |=  {vit/vein duz/$-(type type)}
+    |=  {vit/vein duz/tyro}
     ^-  (pair axis type)
     :-  (tend vit)
     =.  vit  (flop vit)
@@ -12912,7 +12933,7 @@
                 %-  stew
                 ^.  stet  ^.  limo
                 :~  ['|' (rune bar %sgbr expb)]
-                    ['$' (rune buc %sgbc expg)]
+                    ['$' (rune buc %sgbc expf)]
                     ['_' (rune cab %sgcb expb)]
                     ['%' (rune cen %sgcn hind)]
                     ['/' (rune fas %sgfs hine)]
