@@ -13,8 +13,9 @@
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/$@($~ {top/path $~}) dub/_|}
     ==
-:-  %noun
 ?~  arg  $(arg ~[top=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/sys])
+::
+:-  %noun
 =+  pax=`path`(weld top.arg `path`[%hoon ~])
 =+  arp=`path`(weld top.arg `path`[%ovra ~])
 ~&  %solid-start
