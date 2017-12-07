@@ -17,7 +17,7 @@
 ::
 :-  %noun
 =+  pax=`path`(weld top.arg `path`[%hoon ~])
-=+  arp=`path`(weld top.arg `path`[%ovra ~])
+=+  arp=`path`(weld top.arg `path`[%arvo ~])
 ~&  %solid-start
 =+  txt=.^(@t %cx (weld pax `path`[%hoon ~]))
 =+  rax=.^(@t %cx (weld arp `path`[%hoon ~]))
