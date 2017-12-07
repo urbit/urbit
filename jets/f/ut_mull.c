@@ -777,6 +777,7 @@
         return ret;
       }
 
+      case c3__zpmc:
       case c3__zpsm: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
