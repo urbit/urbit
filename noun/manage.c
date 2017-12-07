@@ -764,10 +764,8 @@ u3m_fall()
           u3R->rut_w);
 #endif
 
-#ifdef U3_CPU_DEBUG
   u3to(u3_road, u3R->par_p)->pro.nox_d += u3R->pro.nox_d;
   u3to(u3_road, u3R->par_p)->pro.cel_d += u3R->pro.cel_d;
-#endif
 
   /* The new cap is the old hat - it's as simple as that.
   */
@@ -1528,7 +1526,7 @@ _arvo_hash(c3_c *out_c, c3_c *arv_c)
 {
   c3_c cmd_c[2048];
 
-  sprintf(cmd_c, "git -C %s log -1 HEAD --format=%H -- sys/", arv_c);
+  sprintf(cmd_c, "git -C %s log -1 HEAD --format=%%H -- sys/", arv_c);
   _get_cmd_output(cmd_c, out_c, 11);
 
   out_c[10] = 0;  //  end with null-byte
