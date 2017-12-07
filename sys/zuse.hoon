@@ -35,10 +35,12 @@
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
 |%
-::REVIEW where do these actually go
+:>  #  %misc
+:>
+:>  miscellaneous systems types
++|
 ++  ares  (unit {p/term q/(list tank)})                 ::  possible error
 ++  coop  (unit ares)                                   ::  possible error
-::
 ++  json                                                ::  normal json value
   $@  $~                                                ::  null
   $%  {$a p/(list json)}                                ::  array
@@ -49,10 +51,8 @@
   ==                                                    ::
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
-::
 ++  sack  {p/ship q/ship}                               ::  incoming [our his]
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
-::
 ::+|
 ::
 ++  roof  (room vase)                                   ::  namespace
