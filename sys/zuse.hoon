@@ -4259,7 +4259,7 @@
     ^=  odo
     |*  a/@tas
     |=  b/*
-    =<  a(, (. b))                  ::  preserve face
+    =-  a(, (- b))                  ::  preserve face
     ?+  a   @
       $c  @c  $da  @da  $dr  @dr  $f   @f   $if  @if  $is  @is  $p   @p
       $u  @u  $uc  @uc  $ub  @ub  $ui  @ui  $ux  @ux  $uv  @uv  $uw  @uw
