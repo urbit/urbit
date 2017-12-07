@@ -828,17 +828,28 @@
       case c3__cold: p_gen = u3t(gen);
       _mint_used();
       {
-        u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-        u3_noun gat = u3j_hook(von, "blow");
-        u3_noun pro;
 
-        pro = u3n_kick_on(u3i_molt(gat, 
-                          u3x_sam_2, 
-                          u3k(gol), 
-                          u3x_sam_3, 
-                          u3k(p_gen),
-                          0));
-        return pro;
+        c3_m    fun_m = 144 + c3__blow;
+        u3_noun vrf   = u3r_at(u3qfu_van_vrf, van);
+        u3_noun pro   = u3z_find_4(fun_m, vrf, sut, gol, p_gen);
+
+        if ( u3_none != pro ) {
+          return pro;
+        }
+        else {
+          u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+          u3_noun gat = u3j_hook(von, "blow");
+          u3_noun pro;
+
+          pro = u3n_kick_on(u3i_molt(gat, 
+                            u3x_sam_2, 
+                            u3k(gol), 
+                            u3x_sam_3, 
+                            u3k(p_gen),
+                            0));
+        
+          return u3z_save_4(fun_m, vrf, sut, gol, p_gen, pro);
+        }
       } 
 
       case c3__zpcm: u3x_cell(u3t(gen), &p_gen, &q_gen);
