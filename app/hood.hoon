@@ -2,9 +2,9 @@
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  zuse version
-/+  sole, talk,                                         ::  libraries
+/+  sole,                                               ::  libraries
     ::  XX these should really be separate apps, as
-    ::     none of them interact with each other in 
+    ::     none of them interact with each other in
     ::     any fashion; however, to reduce boot-time
     ::     complexity and work around the current
     ::     non-functionality of end-to-end acknowledgments,
@@ -38,7 +38,7 @@
 !:
 =>  |%                                                  ::
     ++  hood-old                                        ::  unified old-state
-      {?($0 $1) lac/(map @tas hood-part-old)}           :: 
+      {?($0 $1) lac/(map @tas hood-part-old)}           ::
     ++  hood-1                                          ::  unified state
       {$1 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::  extract specific

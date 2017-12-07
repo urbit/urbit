@@ -1,5 +1,5 @@
 ::
-::::  /hoon/comment/talk/mar
+::::  /mar/fora/comment/hoon
   ::
 /?    310
 /+    old-zuse
@@ -9,7 +9,7 @@
 ++  grab
   |%
   ++  noun  {path spur @t}
-  ++  json  
+  ++  json
     (corl need =>(jo (ot pax+(su fel:stab) sup+(su fel:stab) txt+so ~)))
   --
 --

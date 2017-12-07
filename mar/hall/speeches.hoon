@@ -1,11 +1,11 @@
 ::
-::::  /hoon/speeches/talk/mar
+::::  /mar/hall/speeches/hoon
   ::
 /?    310
-/-  talk
-/+  talk,map-to-json
+/-  hall
+/+  hall,map-to-json
 ::
-=+  talk
+=+  hall
 |_  gam/(list speech)
 ::
 ++  grab
@@ -15,7 +15,7 @@
 ::
 ++  grad
   |%
-  ++  form  %talk-speeches
+  ++  form  %hall-speeches
   ++  diff  |=((list speech) +<)
   ++  pact  |=((list speech) +<)
   ++  join  |=({(list speech) (list speech)} `(unit mime)`~)

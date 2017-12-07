@@ -57,73 +57,43 @@ Persistence = _persistence({
       return Persistence.get(station, start, end);
     },
     sendMessage: function(txt, audience, global) {
-      var _audi, j, k, len, message, messageType, ref, ref1, results, say, serial, speech, speeches, v;
+      var message, speech;
       if (global == null) {
         global = urb.user === urb.ship;
       }
-      serial = util.uuid32();
       audience = _.uniq(audience);
-      _audi = {};
-      for (k in audience) {
-        v = audience[k];
-        _audi[v] = {
-          envelope: {
-            visible: true,
-            sender: null
-          },
-          delivery: "pending"
-        };
-      }
       speech = {
         lin: {
-          txt: txt,
-          say: true
+          msg: txt,
+          pat: false
         }
       };
       if (txt[0] === "@") {
-        speech.lin.txt = speech.lin.txt.slice(1).trim();
-        speech.lin.say = false;
+        speech.lin.msg = speech.lin.msg.slice(1).trim();
+        speech.lin.pat = true;
       } else if (txt[0] === "#") {
         speech = {
-          "eval": speech.lin.txt.slice(1).trim()
+          exp: {
+            exp: speech.lin.msg.slice(1).trim()
+          }
         };
       } else if (window.urb.util.isURL(txt)) {
         speech = {
           url: txt
         };
       }
-      speeches = !(((ref = speech.lin) != null ? ref.txt.length : void 0) > 64) ? [speech] : ((ref1 = speech.lin, say = ref1.say, txt = ref1.txt, ref1), txt.match(/(.{1,64}$|.{0,64} |.{64}|.+$)/g).map(function(s, i) {
-        say || (say = i !== 0);
-        return {
-          lin: {
-            say: say,
-            txt: s.slice(-1 !== " ") ? s : s.slice(0, -1)
-          }
-        };
-      }));
-      results = [];
-      for (j = 0, len = speeches.length; j < len; j++) {
-        speech = speeches[j];
-        message = {
-          ship: window.urb.user,
-          thought: {
-            serial: util.uuid32(),
-            audience: _audi,
-            statement: {
-              bouquet: [],
-              speech: speech,
-              date: Date.now()
-            }
-          }
-        };
-        Dispatcher.handleViewAction({
-          message: message,
-          type: "message-send"
-        });
-        messageType = (global ? "publish" : "review");
-        results.push(Persistence.sendMessage(messageType, message.thought));
-      }
-      return results;
+      message = {
+        aut: window.urb.user,
+        uid: util.uuid32(),
+        aud: audience,
+        wen: Date.now(),
+        sep: speech
+      };
+      Dispatcher.handleViewAction({
+        message: message,
+        type: "message-send"
+      });
+      return Persistence.sendMessage(message);
     }
   }
 });
@@ -213,11 +183,20 @@ Persistence = _persistence({
       };
     }),
     createStation: function(station) {
-      Dispatcher.handleViewAction({
+      addStation(station);
+      return Persistence.createStation(station);
+    },
+    addStation: function(station) {
+      return Dispatcher.handleViewAction({
         station: station,
         type: "station-create"
       });
-      return Persistence.createStation(station);
+    },
+    remStation: function(station) {
+      return Dispatcher.handleViewAction({
+        station: station,
+        type: "station-remove"
+      });
     },
     listen: function() {
       return Persistence.listen();
@@ -235,15 +214,14 @@ Persistence = _persistence({
         'cabal': 'cabal'
       });
     },
-    createStation: function(station) {
-      Dispatcher.handleViewAction({
-        station: station,
-        type: "station-create"
-      });
-      return Persistence.createStation(station);
+    createStation: function(name) {
+      return Persistence.createStation(name);
     },
-    setSources: function(station, sources) {
-      return Persistence.setSources(station, window.urb.ship, sources);
+    addSources: function(station, sources) {
+      return Persistence.addSources(station, sources);
+    },
+    remSources: function(station, sources) {
+      return Persistence.remSources(station, sources);
     }
   }
 });
@@ -320,7 +298,7 @@ module.exports = recl({
 
 
 },{}],5:[function(require,module,exports){
-var Member, a, clas, div, h2, h3, label, pre, recl, ref, rele, util,
+var Member, a, clas, div, h2, h3, label, pre, recl, ref, util,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 util = require('../util.coffee');
@@ -328,8 +306,6 @@ util = require('../util.coffee');
 clas = require('classnames');
 
 recl = React.createClass;
-
-rele = React.createElement;
 
 ref = React.DOM, div = ref.div, pre = ref.pre, a = ref.a, label = ref.label, h2 = ref.h2, h3 = ref.h3;
 
@@ -355,7 +331,7 @@ module.exports = recl({
   _handleAudi: function(e) {
     var audi;
     audi = _.map($(e.target).closest('.path').find('div'), function(div) {
-      return "~" + $(div).text();
+      return $(div).text();
     });
     return this.props._handleAudi(audi);
   },
@@ -373,39 +349,36 @@ module.exports = recl({
     }
     return this.props._handlePm(user);
   },
-  abbreviate: function(s) {
-    if (s.length <= 80) {
-      return s;
-    } else {
-      return (s.slice(0, 77)) + "...";
-    }
-  },
   renderSpeech: function(arg) {
-    var app, comment, exp, fat, lin, mor, post, tax, url, x;
-    lin = arg.lin, app = arg.app, exp = arg.exp, tax = arg.tax, url = arg.url, mor = arg.mor, fat = arg.fat, comment = arg.comment, post = arg.post;
+    var app, exp, fat, inv, ire, lin, prex, ref1, url, x;
+    lin = arg.lin, url = arg.url, exp = arg.exp, ire = arg.ire, fat = arg.fat, inv = arg.inv, app = arg.app;
     switch (false) {
-      case !(lin || app || exp || tax):
-        return (lin || app || exp || tax).txt;
+      case !lin:
+        return lin.msg;
       case !url:
         return a({
-          href: url.txt,
+          href: url,
           target: "_blank",
+          rel: "noopener",
           key: "speech"
-        }, url.txt);
-      case !comment:
-        return div({}, a({
-          href: comment.url
-        }, this.abbreviate(comment.txt)));
-      case !post:
-        return div({}, a({
-          href: post.url
-        }, post.title));
-      case !mor:
-        return mor.map(this.renderSpeech);
-      case !fat:
-        return div({}, this.renderSpeech(fat.taf), div({
+        }, url);
+      case !exp:
+        return div({}, exp.exp, div({
           className: "fat"
-        }, this.renderTorso(fat.tor)));
+        }, pre({}, exp.res.join("\n"))));
+      case !ire:
+        return this.renderSpeech(ire.sep);
+      case !fat:
+        return div({}, this.renderSpeech(fat.sep), div({
+          className: "fat"
+        }, this.renderAttache(fat.tac)));
+      case !inv:
+        prex = (ref1 = inv.inv) != null ? ref1 : {
+          "invited you to ": "banished you from "
+        };
+        return prex + inv.cir;
+      case !app:
+        return this.renderSpeech(app.sep);
       default:
         return "Unknown speech type:" + ((function() {
           var results;
@@ -417,123 +390,79 @@ module.exports = recl({
         }).apply(this, arguments)).join('');
     }
   },
-  renderTorso: function(arg) {
-    var name, tank, text, x;
+  renderAttache: function(arg) {
+    var name, tank, text;
     text = arg.text, tank = arg.tank, name = arg.name;
     switch (false) {
       case text == null:
-        return text;
+        return pre({}, text);
       case tank == null:
         return pre({}, tank.join("\n"));
       case name == null:
-        return div({}, name.nom, ": ", this.renderTorso(name.mon));
-      default:
-        return "Unknown torso:" + ((function() {
-          var results;
-          results = [];
-          for (x in arguments[0]) {
-            results.push(" %" + x);
-          }
-          return results;
-        }).apply(this, arguments)).join('');
+        return pre({}, name.nom, ":\n", this.renderAttache(name.tac));
     }
   },
   classesInSpeech: function(arg) {
-    var app, exp, fat, lin, mor, url;
-    url = arg.url, exp = arg.exp, app = arg.app, lin = arg.lin, mor = arg.mor, fat = arg.fat;
+    var app, exp, fat, inv, ire, lin, url;
+    lin = arg.lin, url = arg.url, exp = arg.exp, ire = arg.ire, fat = arg.fat, inv = arg.inv, app = arg.app;
     switch (false) {
+      case !lin:
+        return {
+          say: lin.pat
+        };
       case !url:
         return "url";
       case !exp:
         return "exp";
-      case !app:
-        return "say";
-      case !lin:
-        return {
-          say: lin.say === false
-        };
-      case !mor:
-        return mor != null ? mor.map(this.classesInSpeech) : void 0;
+      case !ire:
+        return this.classesInSpeech(ire.sep);
       case !fat:
-        return this.classesInSpeech(fat.taf);
+        return this.classesInSpeech(fat.sep);
+      case !inv:
+        return {
+          say: true
+        };
+      case !app:
+        return "exp";
     }
   },
   render: function() {
-    var aude, audi, bouquet, className, comment, delivery, glyph, k, mainStation, name, path, post, ref1, ref2, speech, style, thought, title, txt, type, url, v;
-    thought = this.props.thought;
-    delivery = _.uniq(_.pluck(thought.audience, "delivery"));
-    speech = thought.statement.speech;
-    bouquet = thought.statement.bouquet;
+    var audi, className, gam, heard, mainStation, name, speech, style, type;
+    gam = this.props;
+    heard = gam.heard;
+    speech = gam.sep;
     if (speech == null) {
-      return null;
+      return;
     }
     name = this.props.name ? this.props.name : "";
-    aude = _.keys(thought.audience);
-    audi = util.clipAudi(aude).map(function(_audi) {
+    audi = util.clipAudi(gam.aud).map(function(_audi) {
       return div({
         key: _audi
       }, _audi);
     });
     mainStation = util.mainStationPath(window.urb.user);
-    type = indexOf.call(aude, mainStation) >= 0 ? 'private' : 'public';
-    if (_.filter(bouquet, ["comment"]).length > 0) {
-      comment = true;
-      ref1 = speech.mor;
-      for (k in ref1) {
-        v = ref1[k];
-        if (v.fat) {
-          url = v.fat.taf.url.txt;
-          txt = v.fat.tor.text;
-        }
-        if (v.app) {
-          path = v.app.txt.replace("comment on ", "");
-        }
-      }
-      audi = a({
-        href: url
-      }, path);
-      speech = {
-        comment: {
-          txt: txt,
-          url: url
-        }
-      };
-    }
-    if (_.filter(bouquet, ["fora-post"]).length > 0) {
-      post = true;
-      ref2 = speech.mor;
-      for (k in ref2) {
-        v = ref2[k];
-        if (v.fat) {
-          url = v.fat.taf.url.txt;
-          txt = v.fat.tor.text;
-        }
-        if (v.app) {
-          title = v.app.txt.replace("forum post: ", "");
-        }
-      }
-      audi = a({
-        href: url
-      }, title);
-      speech = {
-        post: {
-          txt: txt,
-          url: url,
-          title: title
-        }
-      };
-    }
-    className = clas('gram', (this.props.sameAs ? "same" : "first"), ((indexOf.call(delivery, "received") >= 0) ? "received" : "pending"), {
+    type = indexOf.call(gam.aud, mainStation) >= 0 ? 'private' : 'public';
+
+    /*
+    if(_.filter(bouquet, ["comment"]).length > 0)
+      comment = true
+      for k,v of speech.mor
+        if v.fat
+          url = v.fat.taf.url.txt
+          txt = v.fat.tor.text
+        if v.app then path = v.app.txt.replace "comment on ", ""
+      audi = (a {href:url}, path)
+      speech = {com:{txt,url}}
+     */
+    className = clas('gram', (this.props.sameAs ? "same" : "first"), (heard ? "received" : "pending"), {
       'new': this.props.unseen
     }, {
-      comment: comment,
-      post: post
+      comment: false
     }, this.classesInSpeech(speech));
     style = {
       height: this.props.height,
       marginTop: this.props.marginTop
     };
-    glyph = this.props.glyph || "*";
     return div({
       className: className,
       'data-index': this.props.index,
@@ -544,12 +473,12 @@ module.exports = recl({
       key: "meta"
     }, label({
       className: "type " + type,
-      "data-glyph": glyph
+      "data-glyph": this.props.glyph || "*"
     }), h2({
       className: 'author planet',
       onClick: this._handlePm,
       key: "member"
-    }, rele(Member, {
+    }, React.createElement(Member, {
       ship: this.props.ship,
       glyph: this.props.glyph,
       key: "member"
@@ -560,10 +489,10 @@ module.exports = recl({
     }, audi), h3({
       className: "time",
       key: "time"
-    }, this.convTime(thought.statement.date))), div({
+    }, this.convTime(gam.wen))), div({
       className: "speech",
       key: "speech"
-    }, this.renderSpeech(speech, bouquet)));
+    }, this.renderSpeech(speech)));
   }
 });
 
@@ -646,11 +575,10 @@ module.exports = recl({
     var end;
     if (this.atScrollEdge() && this.state.fetching === false && this.state.last && this.state.last > 0) {
       end = this.state.last - this.pageSize;
-      if (end < 0) {
-        end = 0;
-      }
       this.lastLength = this.length;
-      return MessageActions.getMore(this.state.station, this.state.last + 1, end);
+      if (end >= 0) {
+        return MessageActions.getMore(this.state.station, this.state.last + 1, end);
+      }
     }
   },
   setAudience: function() {
@@ -658,18 +586,19 @@ module.exports = recl({
     if (this.state.typing || !this.last) {
       return;
     }
-    laudi = _.keys(this.last.thought.audience);
+    laudi = this.last.aud;
     if ((_.isEmpty(laudi)) || !_(laudi).difference(this.state.audi).isEmpty()) {
-      return StationActions.setAudience(_.keys(this.last.thought.audience));
+      return StationActions.setAudience(this.last.aud);
     }
   },
   sortedMessages: function(messages) {
     var station;
     station = this.state.station;
-    return _.sortBy(messages, function(message) {
-      message.pending = message.thought.audience[station];
-      return message.key;
-    });
+    return _.sortBy(messages, (function(_this) {
+      return function(message) {
+        return message.key;
+      };
+    })(this));
   },
   componentWillMount: function() {
     return Infinite = window.Infinite;
@@ -740,12 +669,27 @@ module.exports = recl({
   _handleAudi: function(audi) {
     return StationActions.setAudience(audi);
   },
+  _getSpeechArr: function(spec) {
+    if (spec.lin != null) {
+      return spec.lin.msg.split(/(\s|-)/);
+    } else if (spec.url != null) {
+      return spec.url.split(/(\s|-)/);
+    } else if (spec.exp != null) {
+      return [spec.exp.exp];
+    } else if (spec.app != null) {
+      return this._getSpeechArr(spec.app.sep);
+    } else if (spec.fat != null) {
+      return this._getSpeechArr(spec.fat.sep);
+    } else {
+      return [];
+    }
+  },
   render: function() {
-    var _messageGroups, _messages, audience, body, canvas, context, fetching, height, i, index, lastIndex, lastSaid, len, lineNums, marginTop, message, messageHeights, messages, mez, nowSaid, ref, sameAs, speech, speechArr, speechLength, station;
+    var _messageGroups, _messages, aud, body, canvas, context, fetching, height, i, index, lastIndex, lastSaid, len, lineNums, marginTop, message, messageHeights, messages, mez, nowSaid, ref, sameAs, speechArr, speechLength, station;
     station = this.state.station;
     messages = this.sortedMessages(this.state.messages);
     this.last = messages[messages.length - 1];
-    if (((ref = this.last) != null ? ref.ship : void 0) && this.last.ship === window.urb.user) {
+    if (((ref = this.last) != null ? ref.aut : void 0) && this.last.aut === window.urb.user) {
       this.lastSeen = this.last;
     }
     this.length = messages.length;
@@ -765,27 +709,15 @@ module.exports = recl({
     _messageGroups = [[]];
     for (index = i = 0, len = messages.length; i < len; index = ++i) {
       message = messages[index];
-      nowSaid = [message.ship, _.keys(message.thought.audience)];
+      if (message.sep.app) {
+        message.aut = message.sep.app.app;
+      }
+      nowSaid = [message.aut, message.aud];
       sameAs = _.isEqual(lastSaid, nowSaid);
       lastSaid = nowSaid;
       lineNums = 1;
-      speech = message.thought.statement.speech;
-      context.font = speech.fat == null ? (FONT_SIZE * 0.9) + 'px scp' : FONT_SIZE + 'px bau';
-      speechArr = (function() {
-        switch (false) {
-          case speech.lin == null:
-            return speechArr = speech.lin.txt.split(/(\s|-)/);
-          case speech.url == null:
-            return speechArr = speech.url.txt.split(/(\s|-)/);
-          case speech.fat == null:
-            if (typeof speech.fat.taf.exp !== 'undefined') { return speech.fat.taf.exp.txt.split(/(\s|-)/); }
-            if (typeof speech.fat.taf.app !== 'undefined') { return speech.fat.taf.app.txt; }
-            if (typeof speech.fat.taf.lin !== 'undefined') { return speech.fat.taf.lin.txt; }
-            return "unsupported fat speech";
-          default:
-            return [];
-        }
-      })();
+      speechArr = this._getSpeechArr(message.sep);
+      context.font = FONT_SIZE + 'px bau';
       _.reduce(_.tail(speechArr), function(base, word) {
         if (context.measureText(base + word).width > speechLength) {
           lineNums += 1;
@@ -812,7 +744,7 @@ module.exports = recl({
         height = null;
         marginTop = null;
       }
-      audience = (_.keys(message.thought.audience)).join(" ");
+      aud = message.aud.join(" ");
       mez = rele(Message, _.extend({}, message, {
         station: station,
         sameAs: sameAs,
@@ -822,8 +754,8 @@ module.exports = recl({
         marginTop: marginTop,
         index: message.key,
         key: "message-" + message.key,
-        ship: (speech != null ? speech.app : void 0) ? "system" : message.ship,
-        glyph: this.state.glyph[audience] || this.props['default-glyph'],
+        ship: message.aut,
+        glyph: this.state.glyph[aud] || this.props['default-glyph'],
         unseen: lastIndex && lastIndex === index
       }));
       mez.computedHeight = height + marginTop;
@@ -917,19 +849,19 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   componentWillReceiveProps: function(nextProps) {
-    if (this.props.open && nextProps.open === false) {
+    if (this.props.open === true && nextProps.open === false) {
       return this.setState({
         open: null
       });
     }
   },
   validateSource: function(s) {
-    var sources;
-    sources = this.state.configs[this.state.station].sources;
-    return indexOf.call(sources, s) < 0 && indexOf.call(s, "/") >= 0 && s[0] === "~" && s.length >= 5;
+    var src;
+    src = this.state.configs[this.state.station].src;
+    return indexOf.call(src, s) < 0 && indexOf.call(s, "/") >= 0 && s[0] === "~" && s.length >= 5;
   },
   onKeyUp: function(e) {
-    var $input, _sources, v;
+    var $input, v;
     $('.menu.depth-1 .add').removeClass('valid-false');
     if (e.keyCode === 13) {
       $input = $(e.target);
@@ -938,9 +870,7 @@ module.exports = recl({
         v = "~" + v;
       }
       if (this.validateSource(v)) {
-        _sources = _.clone(this.state.configs[this.state.station].sources);
-        _sources.push(v);
-        StationActions.setSources(this.state.station, _sources);
+        StationActions.addSources(this.state.station, [v]);
         $input.val('');
         return $input.blur();
       } else {
@@ -968,13 +898,11 @@ module.exports = recl({
     }
   },
   _remove: function(e) {
-    var _sources, _station;
+    var _station;
     e.stopPropagation();
     e.preventDefault();
     _station = $(e.target).attr("data-station");
-    _sources = _.clone(this.state.configs[this.state.station].sources);
-    _sources.splice(_sources.indexOf(_station), 1);
-    return StationActions.setSources(this.state.station, _sources);
+    return StationActions.remSources(this.state.station, [_station]);
   },
   render: function() {
     var _clas, member, members, parts, source, sources, sourcesSum, station;
@@ -1025,7 +953,7 @@ module.exports = recl({
     if (this.state.station && this.state.configs[this.state.station]) {
       sources = (function() {
         var i, len, ref1, results;
-        ref1 = this.state.configs[this.state.station].sources;
+        ref1 = this.state.configs[this.state.station].src;
         results = [];
         for (i = 0, len = ref1.length; i < len; i++) {
           source = ref1[i];
@@ -1054,7 +982,7 @@ module.exports = recl({
         placeholder: "+ Listen",
         onKeyUp: this.onKeyUp
       }));
-      sourcesSum = this.state.configs[this.state.station].sources.length;
+      sourcesSum = this.state.configs[this.state.station].src.length;
     } else {
       sources = "";
       sourcesSum = 0;
@@ -1136,7 +1064,7 @@ Audience = recl({
     }
   },
   _autoCompleteAudience: function() {
-    var aud, g, i, j, len, len1, modulo, ref1, ref2, s, stations, txt;
+    var aud, g, i, j, len, len1, ref1, ref2, s, stations, txt;
     txt = $('#audience .input').text().trim();
     if (this.tabAudList == null) {
       this.tabAudList = [];
@@ -1169,10 +1097,7 @@ Audience = recl({
         } else {
           this.tabAudIndex++;
         }
-        modulo = function(a, b) {
-          return ((a % b) + a) % b;
-        };
-        this.tabAudIndex = modulo(this.tabAudIndex, this.tabAudList.length);
+        this.tabAudIndex = (this.tabAudIndex % this.tabAudList.length + this.tabAudList.length) % this.tabAudList.length;
       } else {
         this.tabAudIndex = 0;
       }
@@ -1225,8 +1150,12 @@ module.exports = recl({
       station: StationStore.getStation(),
       valid: StationStore.getValidAudience()
     };
-    s.audi = _.without(s.audi, util.mainStationPath(window.urb.user));
-    s.ludi = _.without(s.ludi, util.mainStationPath(window.urb.user));
+    if (s.audi.length > 1) {
+      s.audi = _.without(s.audi, util.mainStationPath(window.urb.user));
+    }
+    if (s.ludi.length > 1) {
+      s.ludi = _.without(s.ludi, util.mainStationPath(window.urb.user));
+    }
     return s;
   },
   getInitialState: function() {
@@ -1255,7 +1184,7 @@ module.exports = recl({
     if (urb.user !== urb.ship) {
       return audi;
     }
-    listening = (ref1 = (ref2 = this.state.config[this.props.station]) != null ? ref2.sources : void 0) != null ? ref1 : [];
+    listening = (ref1 = (ref2 = this.state.config[this.props.station]) != null ? ref2.src : void 0) != null ? ref1 : [];
     if (_.isEmpty(_.intersection(audi, listening))) {
       audi.push("~" + window.urb.user + "/" + this.props.station);
     }
@@ -1326,7 +1255,7 @@ module.exports = recl({
     return this.set();
   },
   _autoComplete: function() {
-    var i, modulo, msg, name, obj, ptxt, ref1, ref2, tindex, txt;
+    var i, msg, name, obj, ptxt, ref1, ref2, tindex, txt;
     txt = this.$message.text();
     tindex = txt.lastIndexOf('~');
     if (tindex === -1) {
@@ -1339,7 +1268,7 @@ module.exports = recl({
         ref1 = MessageStore.getAll();
         for (i = ref1.length - 1; i >= 0; i += -1) {
           msg = ref1[i];
-          this._processAutoCompleteName(ptxt, msg.ship);
+          this._processAutoCompleteName(ptxt, msg.aut);
         }
         ref2 = this.state.members[this.state.ludi[0]];
         for (name in ref2) {
@@ -1356,10 +1285,7 @@ module.exports = recl({
         } else {
           this.tabIndex++;
         }
-        modulo = function(a, b) {
-          return ((a % b) + a) % b;
-        };
-        this.tabIndex = modulo(this.tabIndex, this.tabList.length);
+        this.tabIndex = (this.tabIndex % this.tabList.length + this.tabList.length) % this.tabList.length;
       } else {
         this.tabIndex = 0;
       }
@@ -1514,15 +1440,12 @@ module.exports = recl({
       dangerouslySetInnerHTML: {
         __html: ""
       }
-    })), div({
-      className: 'length',
-      key: 'length'
-    }, this.state.length + "/64 (" + (Math.ceil(this.state.length / 64)) + ")"));
+    })));
   }
 });
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./MemberComponent.coffee":4,"husl":17}],9:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./MemberComponent.coffee":4,"husl":18}],9:[function(require,module,exports){
 module.exports = _.extend(new Flux.Dispatcher(), {
   handleServerAction: function(action) {
     return this.dispatch({
@@ -1619,11 +1542,11 @@ var send, util;
 
 util = require('../util.coffee');
 
-window.urb.appl = "talk";
+window.urb.appl = "hall";
 
 send = function(data, cb) {
   return window.urb.send(data, {
-    mark: "talk-command"
+    mark: "hall-action"
   }, cb);
 };
 
@@ -1633,14 +1556,10 @@ module.exports = function(arg) {
   return {
     listenStation: function(station, since) {
       var $this, path;
-      console.log('listen station');
-      console.log(arguments);
       $this = this;
-      path = util.talkPath({
-        'f_grams': 'f_grams'
-      }, station, since);
+      path = util.talkPath('circle', station, 'grams', since);
       return window.urb.bind(path, function(err, res) {
-        var num, ref, ref1, ref2, ref3, tele;
+        var ref, ref1, ref2, ref3;
         if (err || !res.data) {
           console.log(path, 'err!');
           console.log(err);
@@ -1648,14 +1567,19 @@ module.exports = function(arg) {
           $this.listenStation(station, since);
           return;
         }
-        console.log(path);
-        console.log(res.data);
         if (res.data.ok === true) {
           MessageActions.listeningStation(station);
         }
-        if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
-          ref3 = (ref2 = res.data) != null ? ref2.grams : void 0, tele = ref3.tele, num = ref3.num;
-          return MessageActions.loadMessages(tele, num);
+        if ((ref = res.data) != null ? (ref1 = ref.circle) != null ? ref1.nes : void 0 : void 0) {
+          res.data.circle.nes.map(function(env) {
+            env.gam.heard = true;
+            return env;
+          });
+          MessageActions.loadMessages(res.data.circle.nes);
+        }
+        if ((ref2 = res.data) != null ? (ref3 = ref2.circle) != null ? ref3.gram : void 0 : void 0) {
+          res.data.circle.gram.gam.heard = true;
+          return MessageActions.loadMessages([res.data.circle.gram]);
         }
       });
     },
@@ -1663,21 +1587,16 @@ module.exports = function(arg) {
       var path;
       end = window.urb.util.numDot(end);
       start = window.urb.util.numDot(start);
-      path = util.talkPath({
-        'f_grams': 'f_grams'
-      }, station, end, start);
+      path = util.talkPath('circle', station, 'grams', end, start);
       return window.urb.bind(path, function(err, res) {
-        var num, ref, ref1, ref2, ref3, tele;
+        var ref, ref1;
         if (err || !res.data) {
-          console.log(path, '/e/s err');
+          console.log(path, '/circle err');
           console.log(err);
           return;
         }
-        console.log(path, '/e/s');
-        console.log(res);
-        if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
-          ref3 = (ref2 = res.data) != null ? ref2.grams : void 0, tele = ref3.tele, num = ref3.num;
-          MessageActions.loadMessages(tele, num, true);
+        if ((ref = res.data) != null ? (ref1 = ref.circle) != null ? ref1.nes : void 0 : void 0) {
+          MessageActions.loadMessages(res.data.circle.nes);
           return window.urb.drop(path, function(err, res) {
             console.log('done');
             return console.log(res);
@@ -1685,13 +1604,10 @@ module.exports = function(arg) {
         }
       });
     },
-    sendMessage: function(messageType, message, cb) {
-      var obj;
-      return send((
-        obj = {},
-        obj["" + messageType] = [message],
-        obj
-      ), function(err, res) {
+    sendMessage: function(message, cb) {
+      return send({
+        convey: [message]
+      }, function(err, res) {
         console.log('sent');
         console.log(arguments);
         if (cb) {
@@ -1704,23 +1620,43 @@ module.exports = function(arg) {
 
 
 },{"../util.coffee":15}],12:[function(require,module,exports){
-var design, send, subscribed, util;
+var create, remove, send, source, subscribed, util;
 
 util = require('../util.coffee');
 
-window.urb.appl = "talk";
+window.urb.appl = "hall";
 
 send = function(data, cb) {
   return window.urb.send(data, {
-    mark: "talk-command"
+    mark: "hall-action"
   }, cb);
 };
 
-design = function(party, config, cb) {
+create = function(nom, des, sec, cb) {
   return send({
-    design: {
-      party: party,
-      config: config
+    create: {
+      nom: nom,
+      des: des,
+      sec: sec
+    }
+  }, cb);
+};
+
+remove = function(nom, why, cb) {
+  return send({
+    "delete": {
+      nom: nom,
+      why: why
+    }
+  }, cb);
+};
+
+source = function(nom, sub, srs, cb) {
+  return send({
+    source: {
+      nom: nom,
+      sub: sub,
+      srs: srs
     }
   }, cb);
 };
@@ -1732,91 +1668,70 @@ module.exports = function(arg) {
   StationActions = arg.StationActions;
   return {
     createStation: function(name, cb) {
-      return design(name, {
-        sources: [],
-        caption: "",
-        cordon: {
-          posture: "white",
-          list: []
-        }
-      }, cb);
+      return create(name, "", "black", cb);
     },
     removeStation: function(name, cb) {
-      return design(name, null, cb);
+      return remove(name, 'deleted through webtalk', cb);
     },
-    setSources: function(station, ship, sources) {
-      var cordon;
-      cordon = {
-        posture: "black",
-        list: []
-      };
-      return design(station, {
-        sources: sources,
-        cordon: cordon,
-        caption: ""
-      }, function(err, res) {
-        console.log('talk-command');
+    modSources: function(station, sub, sources) {
+      return source(station, sub, sources, function(err, res) {
+        console.log('hall-action source');
         return console.log(arguments);
       });
     },
+    addSources: function(station, sources) {
+      return this.modSources(station, true, sources);
+    },
+    remSources: function(station, sources) {
+      return this.modSources(station, false, sources);
+    },
     listen: function() {
-      return window.urb.bind("/", function(err, res) {
-        var house;
+      var date;
+      date = window.urb.util.toDate(new Date());
+      return window.urb.bind('/client', function(err, res) {
+        var gys, nis, ref;
         if (err || !res.data) {
-          console.log('/ err');
+          console.log('sp err');
           console.log(err);
           return;
         }
-        console.log('/');
-        console.log(res.data);
-        house = res.data.house;
-        if (house) {
-          return StationActions.loadStations(res.data.house);
-        }
+        ref = res.data.client, gys = ref.gys, nis = ref.nis;
+        return StationActions.loadGlyphs(gys);
       });
     },
-    listenStation: function(station, arg1) {
-      var cabal, glyph, group, k, path, types;
-      group = arg1.group, glyph = arg1.glyph, cabal = arg1.cabal;
+    listenStation: function(station) {
+      var path;
       if (subscribed[station] == null) {
         subscribed[station] = {};
       }
-      types = {
-        a_group: group,
-        v_glyph: glyph,
-        x_cabal: cabal
-      };
-      for (k in types) {
-        if (subscribed[station][k]) {
-          delete types[k];
-        } else {
-          subscribed[station][k] = types[k];
-        }
-      }
-      if (_.isEmpty(types)) {
-        return;
-      }
-      path = util.talkPath(types, station);
+      path = util.talkPath('circle', station, 'config-l', 'group-r', '0');
       return window.urb.bind(path, function(err, res) {
-        var ok, ref;
+        var config, cos, pes, ref, status;
         if (err || !res) {
           console.log(path, 'err');
           console.log(err);
           return;
         }
-        console.log(path);
-        console.log(res.data);
-        ref = res.data, ok = ref.ok, group = ref.group, cabal = ref.cabal, glyph = ref.glyph;
+        ref = res.data.circle, cos = ref.cos, pes = ref.pes, config = ref.config, status = ref.status;
+        if (res.data.ok) {
+          StationActions.listeningStation(station);
+        }
         switch (false) {
-          case !ok:
-            return StationActions.listeningStation(station);
-          case !group:
-            group.global[util.mainStationPath(window.urb.user)] = group.local;
-            return StationActions.loadMembers(group.global);
-          case !(cabal != null ? cabal.loc : void 0):
-            return StationActions.loadConfig(station, cabal.loc);
-          case !glyph:
-            return StationActions.loadGlyphs(glyph);
+          case !cos:
+            return StationActions.loadConfig(station, cos.loc);
+          case !pes:
+            return StationActions.loadMembers(station, pes.loc);
+          case !config:
+            if (config.dif.source != null) {
+              if (config.dif.source.add) {
+                return StationActions.addStation(config.dif.source.src);
+              } else {
+                return StationActions.remStation(config.dif.source.src);
+              }
+            }
+            break;
+          case !status:
+            break;
         }
       });
     }
@@ -1865,14 +1780,13 @@ MessageStore = _.merge(new EventEmitter, {
     }
   },
   convertDate: function(time) {
-    var date, t;
+    var d;
     time = time.substr(1).split(".");
     time[1] = this.leadingZero(time[1]);
     time[2] = this.leadingZero(time[2]);
-    t = time;
-    date = new moment(t[0] + "-" + t[1] + "-" + t[2] + "T" + t[4] + ":" + t[5] + ":" + t[6] + "Z");
-    date.tz("Europe/London");
-    return date;
+    d = new moment(time[0] + "-" + time[1] + "-" + time[2] + "T" + time[4] + ":" + time[5] + ":" + time[6] + "Z");
+    d.tz("Europe/London");
+    return d;
   },
   getListening: function() {
     return _listening;
@@ -1885,12 +1799,10 @@ MessageStore = _.merge(new EventEmitter, {
     if (_.keys(_messages).length === 0) {
       return [];
     }
-    messages = _.sortBy(_messages, function(arg) {
-      var time;
-      time = arg.thought.statement.time;
-      return time;
+    messages = _.sortBy(_messages, function(_message) {
+      return _message.wen;
     });
-    return _.keys(messages[messages.length - 1].thought.audience);
+    return messages[messages.length - 1].aud;
   },
   setTyping: function(state) {
     return _typing = state;
@@ -1915,19 +1827,23 @@ MessageStore = _.merge(new EventEmitter, {
     return _filter = null;
   },
   sendMessage: function(message) {
-    return _messages[message.thought.serial] = message;
+    return _messages[message.uid] = message;
   },
-  loadMessages: function(messages, last, get) {
-    var i, key, len, serial, v;
-    key = last;
+  loadMessages: function(messages, get) {
+    var i, len, max, serial, v;
+    max = 0;
     for (i = 0, len = messages.length; i < len; i++) {
       v = messages[i];
-      serial = v.thought.serial;
-      v.key = key++;
+      v.gam.key = v.num;
+      if (v.num > max) {
+        max = v.num;
+      }
+      v = v.gam || v;
+      serial = v.uid;
       _messages[serial] = v;
     }
-    if (last < _last || _last === null || get === true) {
-      _last = last;
+    if (max < _last || _last === null || get === true) {
+      _last = max;
     }
     return _fetching = false;
   },
@@ -1938,13 +1854,7 @@ MessageStore = _.merge(new EventEmitter, {
       return mess;
     } else {
       return _.filter(mess, function(mess) {
-        var audi;
-        audi = _.keys(mess.thought.audience);
-        if (audi.indexOf(_filter) !== -1) {
-          return true;
-        } else {
-          return false;
-        }
+        return mess.aud.indexOf(_filter) !== -1;
       });
     }
   },
@@ -2006,7 +1916,7 @@ MessageStore.dispatchToken = MessageDispatcher.register(function(payload) {
 module.exports = MessageStore;
 
 
-},{"../dispatcher/Dispatcher.coffee":9,"events":18}],14:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":9,"events":17}],14:[function(require,module,exports){
 var EventEmitter, StationDispatcher, StationStore, _audience, _config, _glyphs, _listening, _members, _shpylg, _station, _stations, _typing, _validAudience;
 
 EventEmitter = require('events').EventEmitter;
@@ -2089,11 +1999,11 @@ StationStore = _.merge(new EventEmitter, {
       ship: ship
     };
   },
-  loadMembers: function(members) {
-    return _members = members;
+  loadMembers: function(station, members) {
+    return _members[station] = members;
   },
-  getMembers: function() {
-    return _members;
+  getMembers: function(station) {
+    return _members[station];
   },
   getListening: function() {
     return _listening;
@@ -2110,6 +2020,13 @@ StationStore = _.merge(new EventEmitter, {
       return _stations.push(station);
     }
   },
+  removeStation: function(station) {
+    var i;
+    i = _stations.indexOf(station);
+    if (i > -1) {
+      return _stations.splice(i, 1);
+    }
+  },
   loadStations: function(stations) {
     return _stations = stations;
   },
@@ -2121,10 +2038,10 @@ StationStore = _.merge(new EventEmitter, {
     for (char in glyphs) {
       auds = glyphs[char];
       results.push((function() {
-        var i, len, results1;
+        var j, len, results1;
         results1 = [];
-        for (i = 0, len = auds.length; i < len; i++) {
-          aud = auds[i];
+        for (j = 0, len = auds.length; j < len; j++) {
+          aud = auds[j];
           results1.push(_shpylg[aud.join(" ")] = char);
         }
         return results1;
@@ -2216,6 +2133,10 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
       StationStore.createStation(action.station);
       StationStore.emitChange();
       break;
+    case "station-remove":
+      StationStore.removeStation(action.station);
+      StationStore.emitChange();
+      break;
     case "members-load":
       StationStore.loadMembers(action.members);
       StationStore.emitChange();
@@ -2230,7 +2151,7 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
 module.exports = StationStore;
 
 
-},{"../dispatcher/Dispatcher.coffee":9,"events":18}],15:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":9,"events":17}],15:[function(require,module,exports){
 var util,
   slice = [].slice;
 
@@ -2239,34 +2160,20 @@ module.exports = util = {
     var station;
     if (document.location.search) {
       station = document.location.search.replace(/^\?/, '');
-      if (station.indexOf('dbg.') !== -1) {
+      if (station.indexOf('dbg.nopack') !== -1) {
         return station = util.mainStation();
       }
     } else {
       return util.mainStation();
     }
   },
-  mainStations: ["court", "floor", "porch"],
   mainStationPath: function(user) {
     if (user) {
-      return "~" + user + "/" + (util.mainStation(user));
+      return "~" + user + "/inbox";
     }
   },
   mainStation: function(user) {
-    if (!user) {
-      user = window.urb.user;
-    }
-    if (!user) {
-      return;
-    }
-    switch (user.length) {
-      case 3:
-        return "court";
-      case 6:
-        return "floor";
-      default:
-        return "porch";
-    }
+    return "inbox";
   },
   clipAudi: function(audi) {
     var ms, regx;
@@ -2350,25 +2257,9 @@ module.exports = util = {
     return $(window).scrollTop() + $('.writing').outerHeight() < util.writingPosition;
   },
   talkPath: function() {
-    var components, encodedTypes, key, types, val;
-    types = arguments[0], components = 2 <= arguments.length ? slice.call(arguments, 1) : [];
-    encodedTypes = ((function() {
-      var results;
-      results = [];
-      for (key in types) {
-        val = types[key];
-        if (key !== 'a_group' && key !== 'f_grams' && key !== 'v_glyph' && key !== 'x_cabal') {
-          throw new Error("Weird type: '" + key + "'");
-        }
-        if (val) {
-          results.push(key[0]);
-        } else {
-          results.push(void 0);
-        }
-      }
-      return results;
-    })()).join('');
-    return ['', encodedTypes].concat(slice.call(components)).join('/');
+    var components;
+    components = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+    return [''].concat(slice.call(components)).join('/');
   }
 };
 
@@ -2424,390 +2315,6 @@ module.exports = util = {
 }());
 
 },{}],17:[function(require,module,exports){
-// Generated by CoffeeScript 1.9.3
-(function() {
-  var L_to_Y, Y_to_L, conv, distanceFromPole, dotProduct, epsilon, fromLinear, getBounds, intersectLineLine, kappa, lengthOfRayUntilIntersect, m, m_inv, maxChromaForLH, maxSafeChromaForL, refU, refV, root, toLinear;
-
-  m = {
-    R: [3.2409699419045214, -1.5373831775700935, -0.49861076029300328],
-    G: [-0.96924363628087983, 1.8759675015077207, 0.041555057407175613],
-    B: [0.055630079696993609, -0.20397695888897657, 1.0569715142428786]
-  };
-
-  m_inv = {
-    X: [0.41239079926595948, 0.35758433938387796, 0.18048078840183429],
-    Y: [0.21263900587151036, 0.71516867876775593, 0.072192315360733715],
-    Z: [0.019330818715591851, 0.11919477979462599, 0.95053215224966058]
-  };
-
-  refU = 0.19783000664283681;
-
-  refV = 0.468319994938791;
-
-  kappa = 903.2962962962963;
-
-  epsilon = 0.0088564516790356308;
-
-  getBounds = function(L) {
-    var bottom, channel, j, k, len1, len2, m1, m2, m3, ref, ref1, ref2, ret, sub1, sub2, t, top1, top2;
-    sub1 = Math.pow(L + 16, 3) / 1560896;
-    sub2 = sub1 > epsilon ? sub1 : L / kappa;
-    ret = [];
-    ref = ['R', 'G', 'B'];
-    for (j = 0, len1 = ref.length; j < len1; j++) {
-      channel = ref[j];
-      ref1 = m[channel], m1 = ref1[0], m2 = ref1[1], m3 = ref1[2];
-      ref2 = [0, 1];
-      for (k = 0, len2 = ref2.length; k < len2; k++) {
-        t = ref2[k];
-        top1 = (284517 * m1 - 94839 * m3) * sub2;
-        top2 = (838422 * m3 + 769860 * m2 + 731718 * m1) * L * sub2 - 769860 * t * L;
-        bottom = (632260 * m3 - 126452 * m2) * sub2 + 126452 * t;
-        ret.push([top1 / bottom, top2 / bottom]);
-      }
-    }
-    return ret;
-  };
-
-  intersectLineLine = function(line1, line2) {
-    return (line1[1] - line2[1]) / (line2[0] - line1[0]);
-  };
-
-  distanceFromPole = function(point) {
-    return Math.sqrt(Math.pow(point[0], 2) + Math.pow(point[1], 2));
-  };
-
-  lengthOfRayUntilIntersect = function(theta, line) {
-    var b1, len, m1;
-    m1 = line[0], b1 = line[1];
-    len = b1 / (Math.sin(theta) - m1 * Math.cos(theta));
-    if (len < 0) {
-      return null;
-    }
-    return len;
-  };
-
-  maxSafeChromaForL = function(L) {
-    var b1, j, len1, lengths, m1, ref, ref1, x;
-    lengths = [];
-    ref = getBounds(L);
-    for (j = 0, len1 = ref.length; j < len1; j++) {
-      ref1 = ref[j], m1 = ref1[0], b1 = ref1[1];
-      x = intersectLineLine([m1, b1], [-1 / m1, 0]);
-      lengths.push(distanceFromPole([x, b1 + x * m1]));
-    }
-    return Math.min.apply(Math, lengths);
-  };
-
-  maxChromaForLH = function(L, H) {
-    var hrad, j, l, len1, lengths, line, ref;
-    hrad = H / 360 * Math.PI * 2;
-    lengths = [];
-    ref = getBounds(L);
-    for (j = 0, len1 = ref.length; j < len1; j++) {
-      line = ref[j];
-      l = lengthOfRayUntilIntersect(hrad, line);
-      if (l !== null) {
-        lengths.push(l);
-      }
-    }
-    return Math.min.apply(Math, lengths);
-  };
-
-  dotProduct = function(a, b) {
-    var i, j, ref, ret;
-    ret = 0;
-    for (i = j = 0, ref = a.length - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
-      ret += a[i] * b[i];
-    }
-    return ret;
-  };
-
-  fromLinear = function(c) {
-    if (c <= 0.0031308) {
-      return 12.92 * c;
-    } else {
-      return 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
-    }
-  };
-
-  toLinear = function(c) {
-    var a;
-    a = 0.055;
-    if (c > 0.04045) {
-      return Math.pow((c + a) / (1 + a), 2.4);
-    } else {
-      return c / 12.92;
-    }
-  };
-
-  conv = {
-    'xyz': {},
-    'luv': {},
-    'lch': {},
-    'husl': {},
-    'huslp': {},
-    'rgb': {},
-    'hex': {}
-  };
-
-  conv.xyz.rgb = function(tuple) {
-    var B, G, R;
-    R = fromLinear(dotProduct(m.R, tuple));
-    G = fromLinear(dotProduct(m.G, tuple));
-    B = fromLinear(dotProduct(m.B, tuple));
-    return [R, G, B];
-  };
-
-  conv.rgb.xyz = function(tuple) {
-    var B, G, R, X, Y, Z, rgbl;
-    R = tuple[0], G = tuple[1], B = tuple[2];
-    rgbl = [toLinear(R), toLinear(G), toLinear(B)];
-    X = dotProduct(m_inv.X, rgbl);
-    Y = dotProduct(m_inv.Y, rgbl);
-    Z = dotProduct(m_inv.Z, rgbl);
-    return [X, Y, Z];
-  };
-
-  Y_to_L = function(Y) {
-    if (Y <= epsilon) {
-      return Y * kappa;
-    } else {
-      return 116 * Math.pow(Y, 1 / 3) - 16;
-    }
-  };
-
-  L_to_Y = function(L) {
-    if (L <= 8) {
-      return L / kappa;
-    } else {
-      return Math.pow((L + 16) / 116, 3);
-    }
-  };
-
-  conv.xyz.luv = function(tuple) {
-    var L, U, V, X, Y, Z, varU, varV;
-    X = tuple[0], Y = tuple[1], Z = tuple[2];
-    if (Y === 0) {
-      return [0, 0, 0];
-    }
-    L = Y_to_L(Y);
-    varU = (4 * X) / (X + (15 * Y) + (3 * Z));
-    varV = (9 * Y) / (X + (15 * Y) + (3 * Z));
-    U = 13 * L * (varU - refU);
-    V = 13 * L * (varV - refV);
-    return [L, U, V];
-  };
-
-  conv.luv.xyz = function(tuple) {
-    var L, U, V, X, Y, Z, varU, varV;
-    L = tuple[0], U = tuple[1], V = tuple[2];
-    if (L === 0) {
-      return [0, 0, 0];
-    }
-    varU = U / (13 * L) + refU;
-    varV = V / (13 * L) + refV;
-    Y = L_to_Y(L);
-    X = 0 - (9 * Y * varU) / ((varU - 4) * varV - varU * varV);
-    Z = (9 * Y - (15 * varV * Y) - (varV * X)) / (3 * varV);
-    return [X, Y, Z];
-  };
-
-  conv.luv.lch = function(tuple) {
-    var C, H, Hrad, L, U, V;
-    L = tuple[0], U = tuple[1], V = tuple[2];
-    C = Math.sqrt(Math.pow(U, 2) + Math.pow(V, 2));
-    if (C < 0.00000001) {
-      H = 0;
-    } else {
-      Hrad = Math.atan2(V, U);
-      H = Hrad * 360 / 2 / Math.PI;
-      if (H < 0) {
-        H = 360 + H;
-      }
-    }
-    return [L, C, H];
-  };
-
-  conv.lch.luv = function(tuple) {
-    var C, H, Hrad, L, U, V;
-    L = tuple[0], C = tuple[1], H = tuple[2];
-    Hrad = H / 360 * 2 * Math.PI;
-    U = Math.cos(Hrad) * C;
-    V = Math.sin(Hrad) * C;
-    return [L, U, V];
-  };
-
-  conv.husl.lch = function(tuple) {
-    var C, H, L, S, max;
-    H = tuple[0], S = tuple[1], L = tuple[2];
-    if (L > 99.9999999 || L < 0.00000001) {
-      C = 0;
-    } else {
-      max = maxChromaForLH(L, H);
-      C = max / 100 * S;
-    }
-    return [L, C, H];
-  };
-
-  conv.lch.husl = function(tuple) {
-    var C, H, L, S, max;
-    L = tuple[0], C = tuple[1], H = tuple[2];
-    if (L > 99.9999999 || L < 0.00000001) {
-      S = 0;
-    } else {
-      max = maxChromaForLH(L, H);
-      S = C / max * 100;
-    }
-    return [H, S, L];
-  };
-
-  conv.huslp.lch = function(tuple) {
-    var C, H, L, S, max;
-    H = tuple[0], S = tuple[1], L = tuple[2];
-    if (L > 99.9999999 || L < 0.00000001) {
-      C = 0;
-    } else {
-      max = maxSafeChromaForL(L);
-      C = max / 100 * S;
-    }
-    return [L, C, H];
-  };
-
-  conv.lch.huslp = function(tuple) {
-    var C, H, L, S, max;
-    L = tuple[0], C = tuple[1], H = tuple[2];
-    if (L > 99.9999999 || L < 0.00000001) {
-      S = 0;
-    } else {
-      max = maxSafeChromaForL(L);
-      S = C / max * 100;
-    }
-    return [H, S, L];
-  };
-
-  conv.rgb.hex = function(tuple) {
-    var ch, hex, j, len1;
-    hex = "#";
-    for (j = 0, len1 = tuple.length; j < len1; j++) {
-      ch = tuple[j];
-      ch = Math.round(ch * 1e6) / 1e6;
-      if (ch < 0 || ch > 1) {
-        throw new Error("Illegal rgb value: " + ch);
-      }
-      ch = Math.round(ch * 255).toString(16);
-      if (ch.length === 1) {
-        ch = "0" + ch;
-      }
-      hex += ch;
-    }
-    return hex;
-  };
-
-  conv.hex.rgb = function(hex) {
-    var b, g, j, len1, n, r, ref, results;
-    if (hex.charAt(0) === "#") {
-      hex = hex.substring(1, 7);
-    }
-    r = hex.substring(0, 2);
-    g = hex.substring(2, 4);
-    b = hex.substring(4, 6);
-    ref = [r, g, b];
-    results = [];
-    for (j = 0, len1 = ref.length; j < len1; j++) {
-      n = ref[j];
-      results.push(parseInt(n, 16) / 255);
-    }
-    return results;
-  };
-
-  conv.lch.rgb = function(tuple) {
-    return conv.xyz.rgb(conv.luv.xyz(conv.lch.luv(tuple)));
-  };
-
-  conv.rgb.lch = function(tuple) {
-    return conv.luv.lch(conv.xyz.luv(conv.rgb.xyz(tuple)));
-  };
-
-  conv.husl.rgb = function(tuple) {
-    return conv.lch.rgb(conv.husl.lch(tuple));
-  };
-
-  conv.rgb.husl = function(tuple) {
-    return conv.lch.husl(conv.rgb.lch(tuple));
-  };
-
-  conv.huslp.rgb = function(tuple) {
-    return conv.lch.rgb(conv.huslp.lch(tuple));
-  };
-
-  conv.rgb.huslp = function(tuple) {
-    return conv.lch.huslp(conv.rgb.lch(tuple));
-  };
-
-  root = {};
-
-  root.fromRGB = function(R, G, B) {
-    return conv.rgb.husl([R, G, B]);
-  };
-
-  root.fromHex = function(hex) {
-    return conv.rgb.husl(conv.hex.rgb(hex));
-  };
-
-  root.toRGB = function(H, S, L) {
-    return conv.husl.rgb([H, S, L]);
-  };
-
-  root.toHex = function(H, S, L) {
-    return conv.rgb.hex(conv.husl.rgb([H, S, L]));
-  };
-
-  root.p = {};
-
-  root.p.toRGB = function(H, S, L) {
-    return conv.xyz.rgb(conv.luv.xyz(conv.lch.luv(conv.huslp.lch([H, S, L]))));
-  };
-
-  root.p.toHex = function(H, S, L) {
-    return conv.rgb.hex(conv.xyz.rgb(conv.luv.xyz(conv.lch.luv(conv.huslp.lch([H, S, L])))));
-  };
-
-  root.p.fromRGB = function(R, G, B) {
-    return conv.lch.huslp(conv.luv.lch(conv.xyz.luv(conv.rgb.xyz([R, G, B]))));
-  };
-
-  root.p.fromHex = function(hex) {
-    return conv.lch.huslp(conv.luv.lch(conv.xyz.luv(conv.rgb.xyz(conv.hex.rgb(hex)))));
-  };
-
-  root._conv = conv;
-
-  root._getBounds = getBounds;
-
-  root._maxChromaForLH = maxChromaForLH;
-
-  root._maxSafeChromaForL = maxSafeChromaForL;
-
-  if (!((typeof module !== "undefined" && module !== null) || (typeof jQuery !== "undefined" && jQuery !== null) || (typeof requirejs !== "undefined" && requirejs !== null))) {
-    this.HUSL = root;
-  }
-
-  if (typeof module !== "undefined" && module !== null) {
-    module.exports = root;
-  }
-
-  if (typeof jQuery !== "undefined" && jQuery !== null) {
-    jQuery.husl = root;
-  }
-
-  if ((typeof requirejs !== "undefined" && requirejs !== null) && (typeof define !== "undefined" && define !== null)) {
-    define(root);
-  }
-
-}).call(this);
-
-},{}],18:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2867,8 +2374,12 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 
@@ -3106,5 +2617,16 @@ function isObject(arg) {
 function isUndefined(arg) {
   return arg === void 0;
 }
+
+},{}],18:[function(require,module,exports){
+(function(){function b(){}function h(){}function n(){}function k(){}function f(){}function e(a){return function(b,c,l){return a([b,c,l])}}f.j=function(a){a=a.charCodeAt(1);if(a==a)return a};f.substr=function(a,b,c){if(null==c)c=a.length;else if(0>c)if(0==b)c=a.length+c;else return"";return a.substr(b,c)};k.parseInt=function(a){var b=parseInt(a,10);0!=b||120!=f.j(a)&&88!=f.j(a)||(b=parseInt(a));return isNaN(b)?null:b};n.L=function(a){for(var b="";b="0123456789ABCDEF".charAt(a&15)+b,a>>>=4,0<a;);for(;2>
+b.length;)b="0"+b;return b};h.K=function(a){return Math.abs(a.v)/Math.sqrt(Math.pow(a.J,2)+1)};h.X=function(a,b){return b.v/(Math.sin(a)-b.J*Math.cos(a))};b.m=function(a){for(var d=[],c=Math.pow(a+16,3)/1560896,c=c>b.l?c:a/b.g,l=0;3>l;)for(var g=l++,p=b.b[g][0],f=b.b[g][1],g=b.b[g][2],e=0;2>e;){var h=e++,k=(632260*g-126452*f)*c+126452*h;d.push({J:(284517*p-94839*g)*c/k,v:((838422*g+769860*f+731718*p)*a*c-769860*h*a)/k})}return d};b.B=function(a){a=b.m(a);for(var d=1.7976931348623157E308,c=0;2>c;)d=
+Math.min(d,h.K(a[c++]));return d};b.A=function(a,d){for(var c=d/360*Math.PI*2,l=b.m(a),g=1.7976931348623157E308,f=0;f<l.length;){var e=l[f];++f;e=h.X(c,e);0<=e&&(g=Math.min(g,e))}return g};b.a=function(a,b){for(var c=0,d=0,f=a.length;d<f;)var e=d++,c=c+a[e]*b[e];return c};b.f=function(a){return.0031308>=a?12.92*a:1.055*Math.pow(a,.4166666666666667)-.055};b.i=function(a){return.04045<a?Math.pow((a+.055)/1.055,2.4):a/12.92};b.ba=function(a){return[b.f(b.a(b.b[0],a)),b.f(b.a(b.b[1],a)),b.f(b.a(b.b[2],
+a))]};b.$=function(a){a=[b.i(a[0]),b.i(a[1]),b.i(a[2])];return[b.a(b.h[0],a),b.a(b.h[1],a),b.a(b.h[2],a)]};b.ca=function(a){return a<=b.l?a/b.c*b.g:116*Math.pow(a/b.c,.3333333333333333)-16};b.T=function(a){return 8>=a?b.c*a/b.g:b.c*Math.pow((a+16)/116,3)};b.aa=function(a){var d=a[0],c=a[1];a=d+15*c+3*a[2];0!=a?(d=4*d/a,a=9*c/a):a=d=NaN;c=b.ca(c);return 0==c?[0,0,0]:[c,13*c*(d-b.C),13*c*(a-b.D)]};b.Z=function(a){var d=a[0];if(0==d)return[0,0,0];var c=a[1]/(13*d)+b.C;a=a[2]/(13*d)+b.D;d=b.T(d);c=0-
+9*d*c/((c-4)*a-c*a);return[c,d,(9*d-15*a*d-a*c)/(3*a)]};b.Y=function(a){var b=a[0],c=a[1],e=a[2];a=Math.sqrt(c*c+e*e);1E-8>a?c=0:(c=180*Math.atan2(e,c)/3.141592653589793,0>c&&(c=360+c));return[b,a,c]};b.W=function(a){var b=a[1],c=a[2]/360*2*Math.PI;return[a[0],Math.cos(c)*b,Math.sin(c)*b]};b.P=function(a){var d=a[0],c=a[1];a=a[2];return 99.9999999<a?[100,0,d]:1E-8>a?[0,0,d]:[a,b.A(a,d)/100*c,d]};b.U=function(a){var d=a[0],c=a[2];return 99.9999999<d?[c,0,100]:1E-8>d?[c,0,0]:[c,a[1]/b.A(d,c)*100,d]};
+b.S=function(a){var d=a[0],c=a[1];a=a[2];return 99.9999999<a?[100,0,d]:1E-8>a?[0,0,d]:[a,b.B(a)/100*c,d]};b.V=function(a){var d=a[0],c=a[2];return 99.9999999<d?[c,0,100]:1E-8>d?[c,0,0]:[c,a[1]/b.B(d)*100,d]};b.F=function(a){for(var b="#",c=0,e=a.length;c<e;)b+=n.L(Math.round(255*a[c++])).toLowerCase();return b};b.o=function(a){a=a.toUpperCase();return[k.parseInt("0x"+f.substr(a,1,2))/255,k.parseInt("0x"+f.substr(a,3,2))/255,k.parseInt("0x"+f.substr(a,5,2))/255]};b.w=function(a){return b.ba(b.Z(b.W(a)))};
+b.I=function(a){return b.Y(b.aa(b.$(a)))};b.s=function(a){return b.w(b.P(a))};b.G=function(a){return b.U(b.I(a))};b.u=function(a){return b.w(b.S(a))};b.H=function(a){return b.V(b.I(a))};b.O=function(a){return b.F(b.s(a))};b.R=function(a){return b.F(b.u(a))};b.M=function(a){return b.G(b.o(a))};b.N=function(a){return b.H(b.o(a))};b.b=[[3.240969941904521,-1.537383177570093,-.498610760293],[-.96924363628087,1.87596750150772,.041555057407175],[.055630079696993,-.20397695888897,1.056971514242878]];b.h=
+[[.41239079926595,.35758433938387,.18048078840183],[.21263900587151,.71516867876775,.072192315360733],[.019330818715591,.11919477979462,.95053215224966]];b.c=1;b.C=.19783000664283;b.D=.46831999493879;b.g=903.2962962;b.l=.0088564516;var m={fromRGB:e(b.G),fromHex:b.M,toRGB:e(b.s),toHex:e(b.O),p:{fromRGB:e(b.H),fromHex:b.N,toRGB:e(b.u),toHex:e(b.R)}};"undefined"!==typeof jQuery&&(jQuery.husl=m);"undefined"!==typeof module&&(module.exports=m);"undefined"!==typeof define&&define(m);"undefined"!==typeof window&&
+(window.HUSL=m)})();
 
 },{}]},{},[10]);

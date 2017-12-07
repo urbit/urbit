@@ -3,7 +3,7 @@
 ::::  /hoon/twit/app
   ::
 /-    plan-acct
-/+    twitter, talk
+/+    twitter, hall
 ::
 ::::  ~fyr
   ::
@@ -29,7 +29,7 @@
   $%  {$quit $~}                                         ::  terminate
       {$diff gilt}                                      ::  send data
   ==
-++  gilt  
+++  gilt
   $%  {$twit-feed p/(list stat)}                        ::  posts in feed
       {$twit-post p/stat}                               ::  tweet accepted
       {$ares term (list tank)}                          ::  error
@@ -47,7 +47,7 @@
 ++  api-call  {response-mark $twit-req {endpoint quay}} :: full hiss payload
 ++  response-mark  ?($twit-post $twit-feed $twit-cred)  :: sigh options
 ++  app-message
-  $?  {{ship $talk} $talk-command command:talk}         ::  chat message
+  $?  {{ship $hall} $hall-action action:hall}           ::  chat message
       {{ship $hood} $write-plan-account user:eyre plan-acct} :: registration
   ==                                                    ::
 ++  sign                                                ::  arvo response
@@ -97,7 +97,7 @@
   |=  {pax/path mof/(list move)}  ^+  done
   =^  tym  ran  (dely pax)
   :_  +>.$
-  ?~  tym  
+  ?~  tym
     :: ~&  no-wait/ran
     mof
   :: ~&  will-wait/u.tym
@@ -124,7 +124,7 @@
       pus=(~(gas ju *(jug path bone)) (turn ~(tap by sup) .))
   ?~  (~(get ju pus) pax)
     ~
-  ~&  peer-again+[pax ran]  
+  ~&  peer-again+[pax ran]
   (pear | `~. pax) ::(user-from-path pax))
 ::
 ++  sigh-recoverable-error                              ::  Rate-limit
@@ -223,7 +223,7 @@
   =+  hiz=(pear-hiss pax)
   ?~  hiz  ~                          :: already in flight
   ::?>  (compat usr -.u.hiz)                  ::  XX better auth
-  [ost %hiss scry+pax usr +.u.hiz]~  
+  [ost %hiss scry+pax usr +.u.hiz]~
 ::
 ++  peer  |=(pax/path :_(+> (pear & `~. pax)))       ::  accept subscription
 ++  pear                              ::  poll, possibly returning current data
@@ -315,5 +315,5 @@
   ?.  =(pax a)  ~
   (turn b |=(c/gift [ost c]))
 ::
-++  show-url  ~(said-url talk `bowl:gall`+<-)
+++  show-url  ~(said-url hall `bowl:gall`+<-)
 --

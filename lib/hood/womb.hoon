@@ -2,7 +2,7 @@
 ::::  /hoon/womb/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
-/+    talk, old-phon
+/+    hall, old-phon
 =,  wired
 =,  title
 ::                                                      ::  ::
@@ -75,7 +75,7 @@
   ==                                                    ::
 ++  welcome                                             ::  welcome message
   $:  intro/tape                                        ::  in invite email
-      hello/tape                                        ::  as talk message
+      hello/tape                                        ::  as hall message
   ==                                                    ::
 ++  reference                                           ::  affiliate credit
   (unit (each @p mail))                                 ::  ship or email
@@ -845,7 +845,7 @@
 ++  release-star                                      ::  subdivide %king
   =+  [who=*@p res=.]
   |.  ^+  res
-  =.  res  
+  =.  res
       %-  emit.res
       [%poke /womb/tick [(sein who) %hood] [%womb-do-ticket who]]
   %+  mod-managed-star:res  who

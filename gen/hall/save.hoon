@@ -1,6 +1,6 @@
 ::  Save channel messages to backup
 ::
-::::  /hoon/save/talk/gen
+::::  /hoon/save/hall/gen
   ::
 /?    310
 ::
@@ -10,4 +10,4 @@
 |=  $:  {now/@da eny/@uvJ byk/beak}
         {{man/knot $~} $~}
     ==
-[%talk-save man]
+[%hall-save man]
