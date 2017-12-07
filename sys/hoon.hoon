@@ -5647,34 +5647,74 @@
       ::  stop for atoms, compare cells
       ::
       ?@(fig ~ [&+~ =(-.fig +.fig)])
+
+
     ::
     ::  6; if-then-else
     ::
         {$6 b/* c/* d/*}
-      ::  use standard macro expansion (slow)
+      ::  semantic expansion
       ::
-      $(fol =>(fol [2 [0 1] 2 [1 c d] [1 0] 2 [1 2 3] [1 0] 4 4 b]))
+      %+  require
+        $(fol b.fol)
+      |=  ::  fig: boolean
+          ::
+          fig/noun
+      ::  apply proper booleans
+      ::
+      ?:  =(& fig)  ^$(fol c.fol)
+      ?:  =(| fig)  ^$(fol d.fol)
+      ::  stop on bad test
+      ::
+      ~
     ::
     ::  7; composition
     ::
         {$7 b/* c/*}       
-      ::  use standard macro expansion (slow)
+      ::  one: input
       ::
-      $(fol =>(fol [2 b 1 c]))
+      =+  one=$(fol b.fol)
+      ::  propagate stop
+      ::
+      ?~  one  ~
+      ::  complete composition
+      ::
+      $(fol c.fol, bus one)
     ::
-    ::  8; declaration
+    ::  8; introduction
     ::
         {$8 b/* c/*}       
-      ::  use standard macro expansion (slow)
+      ::  one: input
       ::
-      $(fol =>(fol [7 [[7 [0 1] b] 0 1] c]))
+      =+  one=$(fol b.fol)
+      ::  propagate stop
+      ::
+      ?~  one  ~
+      ::  complete introduction
+      ::
+      $(fol c.fol, bus (combine one bus))
     ::
     ::  9; invocation
     ::
         {$9 b/* c/*}       
-      ::  use standard macro expansion (slow)
+      ::  semantic expansion
       ::
-      $(fol =>(fol [7 c 2 [0 1] 0 b]))
+      ?^  b.fol  ~
+      ::  one: core
+      ::
+      =+  one=$(fol c.fol)
+      ::  propagate stop
+      ::
+      ?~  one  ~
+      ::  complete call
+      ::
+      %+  require
+        ::  retrieve formula
+        ::
+        (fragment b.fol bus)
+      ::  continue
+      ::
+      |=(noun ^$(bus one, fol +<))
     ::
     ::  10; static hint
     ::
@@ -6512,9 +6552,9 @@
     ~$  %ut-ersatz-make
     ersatz
   ++  clam  
-    ::  ~&  [%clam-model mod]
-    ::  =-  ~&  [%clam-product -]
-    ::      -
+    ~&  [%clam-model mod]
+    =-  ~&  [%clam-product -]
+        -
     ~$  %ut-factory-call
     ~+
     ~$  %ut-factory-make
@@ -8181,7 +8221,8 @@
     ?:  ?=($| -.u.jon)
       ?:  fab
         pro
-      ~|  %musk-blocked
+      ~|  [%musk-blocked-mask mask.bus]
+      ~|  [%musk-blocked-formula q.pro]
       !!
     [p.pro [%1 p.u.jon]]
   ::
