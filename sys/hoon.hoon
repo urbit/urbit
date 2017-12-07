@@ -9118,7 +9118,7 @@
                   |=(a/* (biff ^$(sut q.sut) |=(b/* `[a b])))
         {$core *}   (biff $(sut p.sut) |=(* `[p.s.q.sut +<]))
         {$face *}   $(sut repo)
-      {$fork *}   ~
+        {$fork *}   ~
         {$help *}   $(sut repo)
         {$hold *}   ?:  (~(has in gil) sut)
                       ~
