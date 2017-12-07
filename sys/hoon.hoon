@@ -5941,6 +5941,11 @@
               {$2 p/toga q/toga}                        ::  cell toga
           ==                                            ::
 ++  tomb  (pair chap (map term (pair what foot)))       ::  core chapter
+++  tope                                                ::  topographic type
+  $@  $?  %&                                            ::  cell or atom
+          %|                                            ::  atom
+      ==                                                ::
+  (pair tope tope)                                      ::  cell
 ++  tuna                                                ::  tagflow
           $%  {$a p/hoon}                               ::  plain text
               {$b p/hoon}                               ::  single tag
@@ -5969,10 +5974,12 @@
     {$base p/base}                                      ::  base
     {$bunt p/root}                                      ::  mold default value
     {$bust p/base}                                      ::  bunt base
+    {$cold p/hoon}                                      ::  fold constant
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
     {$docs p/(pair cord (list sect)) q/hoon}            ::  annotate image
+    {$fits p/hoon q/wing}                               ::  underlying ?=
     {$halo p/what q/root}                               ::  annotate model
     {$knit p/(list woof)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
@@ -6125,6 +6132,7 @@
               {$help p/writ q/type}                     ::  description
               {$hold p/type q/hoon}                     ::  lazy evaluation
           ==                                            ::
+++  tyro  $-(type type)                                 ::  type converter
 ++  tone  $%  {$0 p/*}                                  ::  success
               {$1 p/(list)}                             ::  blocks
               {$2 p/(list {@ta *})}                     ::  error ~_s
@@ -6484,6 +6492,452 @@
   ++  wtpt  |=({sic/hoon non/hoon} (gray [%wtpt puce (blue sic) (blue non)]))
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
   ++  wtts  |=(gen/hoon (gray [%wtts (blue gen) puce]))
+  --
+::
+++  ax
+  =+  :*  dom=`axis`1
+          doc=*(list what)
+      ==
+  |_  mod/tile
+  ++  bunt  
+    ::  ~&  [%bunt-model mod]
+    ::  =-  ~&  [%bunt-product -]
+    ::      -  
+    ~$  %ut-ersatz-call
+    ~+
+    ~$  %ut-ersatz-make
+    ersatz
+  ++  clam  
+    ::  ~&  [%clam-model mod]
+    ::  =-  ~&  [%clam-product -]
+    ::      -
+    ~$  %ut-factory-call
+    ~+
+    ~$  %ut-factory-make
+    factory
+  ++  home  
+    ::  express a hoon against the original subject
+    ::
+    |=(gen/hoon ^-(hoon ?:(=(1 dom) gen [%tsgr [%$ dom] gen])))
+  ::
+  ++  default
+    ::  produce a hoon that makes the model's default value, untyped
+    ::
+    |-  ^-  hoon
+    ?-    mod
+        {^ *}
+      [$(mod -.mod) $(mod +.mod)]
+    ::
+        {$axil *}
+      ?+  p.mod  [%rock %$ 0]
+        $cell  [[%rock %$ 0] [%rock %$ 0]]
+        $void  [%zpzp ~]
+      ==
+    ::
+        {$bark *}
+      $(mod q.mod)
+    ::
+        {$herb *}
+      =+  cys=~(boil ap p.mod)
+      ?:  ?=($herb -.cys)
+        (home [%tsgl [%limb %$] p.mod])
+      $(mod cys)
+    ::  
+        {$deet *}
+      $(mod q.mod)
+    ::
+        {$fern *}
+      ::  last entry is the default value
+      ::
+      |-  ^-  hoon
+      ?~(t.p.mod ^$(mod i.p.mod) $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod))
+    ::
+        {$kelp *}
+      ::  last entry is the default value  
+      ::
+      |-  ^-  hoon
+      ?~(t.p.mod ^$(mod i.p.mod) $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod))
+    ::
+        {$leaf *}  [%rock p.mod q.mod]
+        {$plow *}  $(mod q.mod)
+        {$reed *}  $(mod p.mod)
+        {$vine *}  $(mod q.mod)
+        {$weed *}  (home p.mod)
+    ==
+  ::
+  ++  trivial
+    ::  ersatz by trivial construction
+    ::
+    ^-  hoon
+    :+  %tsls
+      [%bust %noun]
+    ~(construct sample(dom (peg 3 dom)) [2 %&])
+  ::
+  ++  basic
+    |=  bas/base
+    ?-    bas
+    ::
+        {$atom *}
+      ::  trivial zero
+      ::
+      [%sand p.bas 0]
+    ::
+        $noun
+      ::  raw nock produces noun type
+      ::
+      =+([%rock %$ 0] [%ktls [%dttr - - [%rock %$ 1]] -])
+    ::
+        $cell
+      ::  reduce to pair of nouns
+      ::
+      =+($(bas %noun) [- -])
+    ::
+        $bean
+      ::  comparison produces boolean type
+      ::
+      =+([%rock %$ 0] [%ktls [%dtts - -] -])
+    ::
+        $null
+      [%rock %n 0]
+    ::
+        $void
+      ::  should not actually be a thing
+      ::
+      [%zpzp ~] 
+    ==
+  ::
+  ++  decorate
+    ::  apply documentation to expression
+    ::
+    |=  gen/hoon
+    ^-  hoon
+    ?~  doc  gen
+    =/  fin  $(doc t.doc)
+    ?~(i.doc gen [%docs u.i.doc gen])
+  ::
+  ++  ersatz
+    ::  produce a correctly typed instance without subject
+    ::
+    ~+
+    ^-  hoon
+    ?-    mod
+        {^ *}
+      %-  decorate
+      =.  doc  ~
+      [ersatz(mod -.mod) ersatz(mod +.mod)]
+    ::
+        {$axil *}  (decorate (basic p.mod))
+        {$bark *}  [%ktts p.mod ersatz(mod q.mod)]
+        {$herb *}
+      %-  decorate
+      =.  doc  ~
+      =+  cys=~(boil ap p.mod)
+      ?:  ?=($herb -.cys)
+        (home [%tsgl [%limb %$] p.mod])
+      ersatz(mod cys)
+    ::  
+        {$deet *}  [%dbug p.mod ersatz(mod q.mod)]
+        {$fern *}  trivial
+        {$kelp *}  trivial
+        {$leaf *}  (decorate [%rock p.mod q.mod])
+        {$plow *}  ersatz(mod q.mod, doc [p.mod doc])
+        {$reed *}  trivial
+        {$vine *}  trivial
+        {$weed *}  (home p.mod)
+    ==
+  ::
+  ++  factory
+    ::  produce a normalizing gate (mold)
+    ::
+    ^-  hoon
+    :+  %sgbc
+      %run-mold
+    :^  %brts  ~^~
+      [%base %noun]
+    :+  %sgbc
+      %run-make
+    ~(construct sample(dom (peg 7 dom)) [6 %&])
+  ::
+  ++  sample
+    ::  normalize a sample of the subject
+    ::
+    |_  $:  ::  axe: axis to sample
+            ::  top: topographic type of sample
+            ::
+            axe/axis
+            top/tope 
+        ==
+    ++  basic
+      |=  bas/base
+      ::  apply documentation
+      ::
+      ?^  doc  document
+      ?-    bas
+          {%atom *}
+        ::  rez: fake instance
+        ::
+        =/  rez  ersatz
+        ?^  top  rez
+        ?:  =(%| top)
+          ::  xx sanitize
+          ::
+          fetch
+        [%wtpt fetch-wing fetch rez]
+      ::
+          $noun
+        fetch
+      ::
+          $cell
+        ?^  top  fetch
+        ::  rez: fake instance
+        ::
+        =/  rez  ersatz
+        ?:  =(%| top)
+          rez
+        [%wtpt fetch-wing rez fetch]
+      ::
+          $bean
+        ?^  top  ersatz
+        :^    %wtcl
+            [%dtts [%rock %$ |] [%$ axe]]
+          [%rock %f |]
+        [%rock %f &]
+      ::
+          $null
+        ersatz
+      ::
+          $void
+        ersatz
+      ==
+    ++  fetch
+      ::  load the sample
+      ::
+      ^-  hoon
+      [%$ axe]
+    ::
+    ++  fetch-wing
+      ::  load, as a wing
+      ::
+      ^-  wing
+      [[%& axe] ~]
+    ::
+    ++  choice
+      ::  match full models, by trying them
+      ::
+      |=  $:  ::  one: first option
+              ::  rep: other options
+              ::
+              one/tile
+              rep/(list tile)
+          ==
+      ^-  hoon
+      ::  if no other choices, construct head
+      ::
+      ?~  rep  construct(mod one)
+      ::  fin: loop completion
+      ::
+      =/  fin/hoon  $(one i.rep, rep t.rep)
+      ::  new: trial product
+      ::  old: original subject
+      ::
+      =/  new  [%$ 2]
+      =*  old  [%$ 3]
+      ::  build trial noun
+      ::
+      :+  %tsls
+        ::  build the sample with the first option
+        ::
+        construct(mod one)
+      ::  build test
+      ::
+      :^    %wtcl
+          ::  if the trial noun equals the sample
+          ::
+          [%dtts new fetch(axe (peg 3 axe))]
+        ::  produce the trial noun
+        ::
+        new
+      ::  continue with the original subject
+      ::
+      [%tsgr old fin]
+    ::
+    ++  switch
+      |=  $:  ::  one: first format
+              ::  two: more formats
+              ::
+              one/line
+              rep/(list line)
+          ==
+      :+  %sgbc
+        %run-switch
+      |-  ^-  hoon
+      ::  if no other choices, construct head
+      ::
+      ?~  rep  construct(mod `tile`one) 
+      ::  fin: loop completion
+      ::
+      =/  fin/hoon  $(one i.rep, rep t.rep)
+      ::  interrogate this instance
+      ::
+      :^    %wtcl
+          ::  test if the head matches this wing
+          ::
+          [%wtts p.one fetch-wing(axe (peg axe 2))]
+        ::  if so, use this form
+        ::
+        :-  [%rock p.p.one q.p.one]
+        construct(mod q.one, top &, axe (peg axe 3))
+      ::  continue in the loop
+      ::
+      fin
+    ::
+    ++  probe
+      ::  probe for cell or default
+      ::
+      ^-  hoon
+      ::  ~&  [%probe axe mod]
+      ::
+      ::  old subject is wrapped by trap
+      ::
+      =:  axe  (peg 3 axe)
+          dom  (peg 3 dom)
+        ==
+      ::  guarded trap
+      ::
+      :+  %tsgr
+        ::  construct within trap
+        ::
+        :+  %brdt  ~^~ 
+        ::  trap is only kicked if sample is cell
+        ::
+        :+  %sgbc
+          %run-deep
+        construct(top [& &])
+      ::  boc: call constructor
+      ::  but: default
+      ::
+      =/  boc/hoon  [%limb %$]
+      =/  but/hoon  default
+      :+  %sgbc
+        %run-probing
+      :+  %ktls
+        boc
+      ?:  =(& top)
+        ::  may be atom or cell; default or construct
+        ::
+        [%wtcl [%dtwt fetch] boc but]
+      ::  must be atom; construct
+      ::
+      but
+    ::
+    ++  document
+      ::  document and construct
+      ::
+      |-  ^-  hoon
+      ?~  doc  construct
+      =/  fin  $(doc t.doc)
+      ?~(i.doc fin [%docs u.i.doc fin])
+    ::
+    ++  construct
+      ::  constructor at arbitrary sample
+      ::
+      ::  ~&  [%construct axe mod]
+      ~+
+      ^-  hoon
+      ?-    mod
+      ::
+      ::  cell
+      ::
+          {^ *}
+        ::  apply help
+        ::
+        ?^  doc  document
+        ::  probe unless we know the sample is a cell
+        ::
+        ?@  top  probe
+        ::  if known cell, descend directly
+        ::
+        :-  construct(mod -.mod, top p.top, axe (peg axe 2))
+        construct(mod +.mod, top q.top, axe (peg axe 3))
+      ::
+      ::  base
+      ::
+          {$axil *}
+        (basic p.mod)
+      ::
+      ::  name, $=
+      ::
+          {$bark *}
+        [%ktts p.mod construct(mod q.mod)]
+      ::
+      ::  debug
+      ::
+          {$deet *}
+        [%dbug p.mod construct(mod q.mod)]
+      ::
+      ::  choice, $?
+      ::
+          {$fern *}
+        (choice i.p.mod t.p.mod)
+      ::
+      ::  synthesis, $;
+      ::
+          {$herb *}
+        ?^  doc  document
+        =+  cys=~(boil ap p.mod)
+        ?:  ?=($herb -.cys)
+          [%cnhp (home p.mod) fetch ~]
+        construct(mod cys)
+      ::
+      ::  switch, $%
+      :: 
+          {$kelp *}
+        ::  if atom or unknown, probe
+        ::
+        ?@  top  probe
+        ::  if cell, enter switch directly
+        ::
+        (switch i.p.mod t.p.mod)
+      ::
+      ::  constant
+      ::
+          {$leaf *}
+        (decorate [%rock p.mod q.mod])
+      ::
+      ::  documentation
+      ::
+          {$plow *}
+        construct(doc [p.mod doc], mod q.mod)
+      ::
+      ::  branch, $@
+      ::
+          {$reed *}
+        ?^  doc  document
+        ?@  top
+          ?:  =(%| top)
+            construct(mod p.mod)
+          :^    %wtpt
+              fetch-wing
+            construct(top %|, mod p.mod)
+          construct(top [%& %&], mod q.mod)
+        construct(mod q.mod)
+      ::
+      ::  bridge, $^
+      ::
+          {$vine *}
+        ?^  doc  document
+        ?@  top  probe
+        :^    %wtpt
+            fetch-wing(axe (peg axe 2))
+          construct(top [%| %&], mod q.mod) 
+        construct(top [[%& %&] %&], mod p.mod)
+      ::
+      ::  weed, $_
+      ::
+          {$weed *}
+        (decorate (home p.mod))
+      ==
+    --
   --
 ::
 ++  al                                                  ::  tile engine
@@ -7026,6 +7480,7 @@
     ::
         {$base *}  ~(clam al boil)
         {$bust *}  ~(bunt al %axil p.gen)
+        {$cold *}  p.gen
         {$dbug *}   q.gen
         {$eror *}  ~|(p.gen !!)
     ::
@@ -7094,7 +7549,7 @@
                    |-  ^-  hoon
                    ?~  r.gen  p.q.a
                    [%tstr [~ p.i.r.gen] q.i.r.gen $(r.gen t.r.gen)]
-        {$brcl *}  [%tsls [%ktcn q.gen] [%brdt p.gen r.gen]]
+        {$brcl *}  [%tsls [%cold q.gen] [%brdt p.gen r.gen]]
         {$brdt *}  :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
@@ -7133,7 +7588,7 @@
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$bunt *}  [%ktcn ~(bunt al %herb p.gen)]
+        {$bunt *}  [%cold ~(bunt al %herb p.gen)]
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
         {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
@@ -7202,17 +7657,6 @@
       :^  %wtsg  [%& 2]~
         [%tsgr [%$ 3] s.gen]
       [%sgpm p.gen [%$ 5] [%tsgr [%$ 3] s.gen]]
-    ::
-        {$xray *}
-      ::
-      ::REVIEW separate ap arms?
-      =/  open-mane
-        |=  a/mane:hoon
-        ?@(a [%rock %tas a] [[%rock %tas -.a] [%rock %tas +.a]])
-      =/  open-mart  
-        |=  {n/mane:hoon v/(list beer:hoon)} 
-        [(open-mane n) %knit v]
-      [[(open-mane n.g.p.gen) %clsg (turn a.g.p.gen open-mart)] %smts c.p.gen]
     ::
         {$smts *}
       |-
@@ -7358,8 +7802,22 @@
       |-
       ?~(p.gen [%rock %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
     ::
+        {$xray *}
+      |^  :-  [(open-mane n.g.p.gen) %clsg (turn a.g.p.gen open-mart)] 
+          [%smts c.p.gen]
+      ::
+      ++  open-mane
+        |=  a/mane:hoon
+        ?@(a [%rock %tas a] [[%rock %tas -.a] [%rock %tas +.a]])
+      ::
+      ++  open-mart
+        |=  {n/mane:hoon v/(list beer:hoon)} 
+        [(open-mane n) %knit v]
+      --
+    ::
         {$wtpt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
+        {$wtts *}   [%fits ~(bunt al %herb p.gen) q.gen]
         {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {$zpgr *}
       [%cnhp [%limb %onan] [%zpsm [%bunt [%limb %abel]] p.gen] ~]
@@ -7712,9 +8170,15 @@
     ::  ~|  mask.bus
     =+  jon=(apex:musk bus q.pro)
     ?~  jon
-      pro
+      ?:  fab
+        pro
+      ~|  %musk-stopped
+      !!
     ?:  ?=($| -.u.jon)
-      pro
+      ?:  fab
+        pro
+      ~|  %musk-blocked
+      !!
     [p.pro [%1 p.u.jon]]
   ::
   ++  burn
@@ -7726,7 +8190,7 @@
                   |=(a/* (biff ^$(sut q.sut) |=(b/* `[a b])))
         {$core *}   (biff $(sut p.sut) |=(* `[p.s.q.sut +<]))
         {$face *}   $(sut repo)
-      {$fork *}   ~
+        {$fork *}   ~
         {$help *}   $(sut repo)
         {$hold *}   ?:  (~(has in gil) sut)
                       ~
@@ -8495,8 +8959,8 @@
       =+  tal=$(gen q.gen, gol %noun)
       [(nice (cell p.hed p.tal)) (cons q.hed q.tal)]
     ::
-        {$ktcn *}  (blow gol p.gen)
-        ::  {$ktcn *}  $(fab |, gen p.gen)
+        {$cold *}  (blow gol p.gen)
+        {$ktcn *}  $(fab |, gen p.gen)
         {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
     ::
         {$cnts *}  (~(mint et p.gen q.gen) gol)
@@ -8575,9 +9039,9 @@
       =+  ran=$(sut wux, gen r.gen)
       [(fork p.hiq p.ran ~) (cond duy q.hiq q.ran)]
     ::
-        {$wtts *}
+        {$fits *}
       :-  (nice bool)
-      =+  ref=(play ~(bunt al %herb p.gen))
+      =+  ref=(play p.gen)
       =+  fid=(find %read q.gen)
       ~|  [%test q.gen]
       |-  ^-  nock
@@ -9338,7 +9802,7 @@
     ==
   ::
   ++  take
-    |=  {vit/vein duz/$-(type type)}
+    |=  {vit/vein duz/tyro}
     ^-  (pair axis type)
     :-  (tend vit)
     =.  vit  (flop vit)
@@ -11541,7 +12005,7 @@
                 %-  stew
                 ^.  stet  ^.  limo
                 :~  ['|' (rune bar %sgbr expb)]
-                    ['$' (rune buc %sgbc expg)]
+                    ['$' (rune buc %sgbc expf)]
                     ['_' (rune cab %sgcb expb)]
                     ['%' (rune cen %sgcn hind)]
                     ['/' (rune fas %sgfs hine)]
