@@ -82,6 +82,12 @@ u3t_slog(u3_noun hod)
 void
 u3t_heck(u3_atom cog)
 {
+  c3_w len_w = u3r_met(3, cog);
+  c3_c* str_c = alloca(1 + len_w);
+
+  u3r_bytes(0, len_w, (c3_y *)str_c, cog);
+  str_c[len_w] = 0;
+
   //  Profile sampling, because it allocates on the home road,
   //  only works on when we're not at home.
   //
@@ -94,7 +100,7 @@ u3t_heck(u3_atom cog)
       if ( 0 == u3R->pro.day ) { 
         u3R->pro.day = u3v_do("doss", 0);
       }
-      u3R->pro.day = u3dc("pi-heck", u3a_take(cog), u3R->pro.day);
+      u3R->pro.day = u3dc("pi-heck", u3i_string(str_c), u3R->pro.day);
     }
     u3R = rod_u;
   }
