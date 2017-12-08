@@ -122,6 +122,10 @@
   ?~  old
     %-  pre-bake
     ta-done:ta-init:ta
+  =.  stories.u.old
+    %-  ~(run by stories.u.old)
+    |=  s/story
+    s(count (lent grams.s))
   [~ ..prep(+<+ u.old)]
 ::
 ::>  ||
