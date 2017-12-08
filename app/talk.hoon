@@ -118,7 +118,7 @@
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  [-:ta-done:ta-init:ta ..prep(+<+ u.old)]
+  [~ ..prep(+<+ u.old)]
 ::
 ::>  ||
 ::>  ||  %utility
@@ -2149,11 +2149,6 @@
 ::>  ||  %events
 ::>  ||
 ::+|
-::
-++  quit
-  |=  wir/wire
-  ^-  (quip move _+>)
-  [-:ta-done:ta-init:ta +>]
 ::
 ++  quit-server-client
   |=  wir/wire
