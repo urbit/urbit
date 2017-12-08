@@ -3,7 +3,7 @@ pty = require \pty.js
 
 urbit =
   # TODO abort on failure
-  pty.spawn './urbit' <[-B urbit.pill -A .. -cFI zod zod]> 
+  pty.spawn 'urbit' <[-B urbit.pill -A .. -cFI zod zod]> 
      .on \data -> process.stdout.write it
      
 urbit.on \exit (code)->
