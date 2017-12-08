@@ -118,7 +118,7 @@
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  [~ ..prep(+<+ u.old)]
+  [-:ta-done:ta-init:ta ..prep(+<+ u.old)]
 ::
 ::>  ||
 ::>  ||  %utility
@@ -185,6 +185,24 @@
   ?:  (lth num.ole num)
     ole
   [new num]
+::
+++  peer-client                                         ::<  ui state peer move
+  ^-  move
+  :*  ost.bol
+      %peer
+      /server/client
+      server
+      /client
+  ==
+::
+++  peer-inbox
+  ^-  move
+  :*  ost.bol
+      %peer
+      /server/inbox
+      server
+      /circle/[inbox]/grams/config/group/(scot %ud count)
+  ==
 ::
 ::>  ||
 ::>  ||  %engines
@@ -263,19 +281,7 @@
     ::
     %-  ta-emil
     ^-  (list move)
-    :~  :*  ost.bol
-            %peer
-            /
-            server
-            /client
-        ==
-        :*  ost.bol
-            %peer
-            /
-            server
-            /circle/[inbox]/grams/config/group
-        ==
-    ==
+    ~[peer-client peer-inbox]
   ::
   ++  ta-take                                           ::<  accept prize
     ::>
@@ -2143,6 +2149,21 @@
 ::>  ||  %events
 ::>  ||
 ::+|
+::
+++  quit
+  |=  wir/wire
+  ^-  (quip move _+>)
+  [-:ta-done:ta-init:ta +>]
+::
+++  quit-server-client
+  |=  wir/wire
+  ^-  (quip move _+>)
+  [[peer-client]~ +>]
+::
+++  quit-server-inbox
+  |=  wir/wire
+  ^-  (quip move _+>)
+  [[peer-inbox]~ +>]
 ::
 ++  peer                                                ::<  accept subscription
   ::>  incoming subscription on pax.
