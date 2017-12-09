@@ -2,10 +2,11 @@ language: node_js # ish, mainly used as an entry point
 node_js:
   - 4
 before_install:
+  - cd .travis # keep main directory clear
+  
   - wget https://github.com/urbit/urbit/releases/download/v0.5.1/urbit_0.5-1_amd64.deb
   - sudo apt install ./urbit_0.5-1_amd64.deb
   
-  - cd .travis # keep main directory clear
       
 before_script: bash get-or-build-pill.sh
 
