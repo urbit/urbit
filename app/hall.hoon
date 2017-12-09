@@ -260,15 +260,14 @@
     ::
     |=  {who/ship nos/(set naem) dif/diff-status}
     ^+  +>
-    %-  ta-deltas
-    %+  murn  ~(tap in nos)
-    |=  n/naem
-    ^-  (unit delta)
-    ?.  (~(has by stories) n)  ~
-    ::  only have presence if you have write permission.
-    ?.  (~(so-admire so n ~ (~(got by stories) n)) who)
-      ~
-    `[%story n %status [our.bol n] who dif]
+    =+  nol=~(tap in nos)
+    |-
+    ?~  nol  +>.^$
+    =.  +>.^$
+      ?.  (~(has by stories) i.nol)  +>.^$
+      =+  soy=(~(got by stories) i.nol)
+      so-done:(~(so-present so i.nol ~ soy) who dif)
+    $(nol t.nol)
   ::
   ++  ta-action                                         ::<  apply client action
     ::>  performs action sent by a client.
@@ -915,6 +914,21 @@
     ::>  ||
     ::>    arms that make miscellaneous changes to this story.
     ::+|
+    ::
+    ++  so-present                                      ::<  accept status diff
+      |=  {who/ship dif/diff-status}
+      ^+  +>
+      ::  only have presence if you have write permission.
+      ?.  |((so-admire who) ?=($remove -.dif))  +>
+      ::  ignore if it won't result in change.
+      ?.  ?:  ?=($remove -.dif)  (~(has by locals) who)
+          ?|  !(~(has by locals) who)
+            ::
+              =+  (~(got by locals) who)
+              !=(- (change-status - dif))
+          ==
+        +>
+      (so-delta-our %status so-cir who dif)
     ::
     ++  so-config-full                                  ::<  split full config
       ::>  split a %full config delta up into multiple
