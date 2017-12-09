@@ -1562,6 +1562,8 @@
           $status
         %_  +>
             locals
+          ?:  ?=($remove -.dif.det)
+            (~(del by locals) who.det)
           %+  ~(put by locals)  who.det
           %+  change-status
             (fall (~(get by locals) who.det) *status)
