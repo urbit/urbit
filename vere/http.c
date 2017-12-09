@@ -549,7 +549,7 @@ _http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l)
 static void
 _http_request(u3_hreq* req_u, u3_noun recq)
 {
-#if 1
+#if 0
   uL(fprintf(uH, "new request:\n"));
   u3_noun span = u3v_wish("-:!>(*{@t @t (list {p/@t q/@t}) (unit {p/@ q/@})})");
   u3m_tape(u3dc("text", span, u3k(recq)));
@@ -683,7 +683,8 @@ _http_start(u3_http* htp_u)
 
   if ( c3y == htp_u->sec && 0 == tls_u ) {
     uL(fprintf(uH, "secure server error %u: no tls config\n", htp_u->sev_l));
-    c3_assert(0);
+    // c3_assert(0);
+    return;
   }
 
   uv_tcp_init(u3L, &htp_u->wax_u);
