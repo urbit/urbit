@@ -31,7 +31,7 @@ Persistence = _persistence({
     listenStation: function(station, date) {
       var now;
       if (!date) {
-        date = (now = new Date(), now.setSeconds(0), now.setMilliseconds(0), new Date(now - 24 * 3600 * 1000));
+        date = (now = new Date(), now.setSeconds(0), now.setMilliseconds(0), new Date(now - 6 * 3600 * 1000));
       }
       Dispatcher.handleViewAction({
         type: "messages-fetch"
@@ -1561,10 +1561,7 @@ module.exports = function(arg) {
     listenStation: function(station, since) {
       var $this, begin, path;
       $this = this;
-      begin = since;
-      if (typeof since === "object") {
-        begin = window.urb.util.toDate(since);
-      }
+      begin = window.urb.util.toDate(since);
       path = util.talkPath('circle', station, 'grams', begin);
       return window.urb.bind(path, function(err, res) {
         var ref, ref1, ref2, ref3;
@@ -1579,7 +1576,7 @@ module.exports = function(arg) {
           MessageActions.listeningStation(station);
         }
         if ((ref = res.data) != null ? (ref1 = ref.circle) != null ? ref1.nes : void 0 : void 0) {
-          if ((res.data.circle.nes.length === 0) && (typeof since === "object")) {
+          if (res.data.circle.nes.length === 0) {
             console.log('trying for older than ' + begin);
             $this.listenStation(station, new Date(since - 6 * 3600 * 1000));
           } else {
