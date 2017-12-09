@@ -1577,6 +1577,11 @@ module.exports = function(arg) {
         }
         if ((ref = res.data) != null ? (ref1 = ref.circle) != null ? ref1.nes : void 0 : void 0) {
           if (res.data.circle.nes.length === 0) {
+            window.urb.drop(path, function(err, res) {
+              if (err) {
+                return console.log(err);
+              }
+            });
             console.log('trying for older than ' + begin);
             $this.listenStation(station, new Date(since - 6 * 3600 * 1000));
           } else {
