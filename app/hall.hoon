@@ -797,26 +797,51 @@
       ::    ==
       ^+  +>
       ?-  -.rum
-        $new      ?:  =(src so-cir)
-                    (so-config-full ~ cof.rum)
-                  $(rum [%config src %full cof.rum])
         $bear     (so-bear bur.rum)
         $peer     (so-delta-our rum)
         $gram     (so-open src nev.rum)
-        $config   ::  full changes to us need to get split up.
-                  ?:  &(=(cir.rum so-cir) ?=($full -.dif.rum))
-                    (so-config-full `shape cof.dif.rum)
-                  ::  we only subscribe to remotes' configs.
-                  ?:  =(src cir.rum)
-                    (so-delta-our rum)
-                  ~!  %unexpected-remote-config-from-remote
-                  !!
-        $status   ::  we only subscribe to remotes' locals.
-                  ?:  |(=(src cir.rum) =(src so-cir))
-                    (so-delta-our rum)
-                  ~!  %unexpected-remote-status-from-remote
-                  !!
         $remove   (so-delta-our %config src %remove ~)
+      ::
+          $new
+        ?:  =(src so-cir)
+          (so-config-full ~ cof.rum)
+        $(rum [%config src %full cof.rum])
+      ::
+          $config
+        ::  we only subscribe to remotes' configs.
+        ?.  =(src cir.rum)
+          ~!  %unexpected-remote-config-from-remote
+          !!
+        =/  old/(unit config)
+          ?:  =(cir.rum so-cir)  `shape
+          (~(get by mirrors) cir.rum)
+        ::  ignore if it won't result in change.
+        ?.  ?|  &(?=($remove -.dif.rum) ?=(^ old))
+                ?=($~ old)
+                !=(u.old (change-config u.old dif.rum))
+            ==
+          +>.$
+        ::  full changes to us need to get split up.
+        ?:  &(=(cir.rum so-cir) ?=($full -.dif.rum))
+          (so-config-full `shape cof.dif.rum)
+        (so-delta-our rum)
+      ::
+          $status
+        ::  we only subscribe to remotes' locals.
+        ?.  |(=(src cir.rum) =(src so-cir))
+          ~!  %unexpected-remote-status-from-remote
+          !!
+        =/  old/(unit status)
+          ?:  =(cir.rum so-cir)  (~(get by locals) who.rum)
+          =-  (~(get by -) who.rum)
+          (fall (~(get by remotes) cir.rum) *group)
+        ::  ignore if it won't result in change.
+        ?.  ?|  &(?=($remove -.dif.rum) ?=(^ old))
+                ?=($~ old)
+                !=(u.old (change-status u.old dif.rum))
+            ==
+          +>.$
+        (so-delta-our rum)
       ==
     ::
     ++  so-bear                                         ::<  accept burden
