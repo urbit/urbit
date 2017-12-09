@@ -33,28 +33,6 @@
       return u3i_molt(gat, u3x_sam, u3nc(c3__herb, u3k(gen)), 0);
     }
 #endif
-    /* ~(. al gen)
-    */
-    static u3_noun
-    _al_core(u3_noun ter,
-             u3_noun gen)
-    {
-      u3_noun gat = u3j_hook(u3k(ter), "al");
-
-      return u3i_molt(gat, u3x_sam, u3k(gen), 0);
-    }
-
-    /* van is transferred, gen is retained
-    */
-    static u3_noun
-    _ap_bunt(u3_noun van,
-             u3_noun gen)
-    {
-      u3_noun pro = u3qfl_bunt(van, gen);
-
-      u3z(van);
-      return pro;
-    }
 
 /** open cases
 **/
@@ -79,12 +57,6 @@
 /***
 ****
 ***/
-  _open_do_pq(tsbr)   //  =:
-  {
-    return u3nt(c3__tsls,
-	            _ap_bunt(_al_core(ter, p_gen), p_gen),
-	            u3k(q_gen));
-  }
   _open_do_pq(tscl)   //  =:
   {
     return u3nt(c3__tsgr,
@@ -148,17 +120,6 @@
 /***
 ****
 ***/
-  _open_do_p(bccb)    //  $_
-  {
-    return _ap_bunt(_al_core(ter, p_gen), p_gen);
-  }
-  _open_do_p(bctr)    //  $*
-  {
-    return
-      u3nc(c3__ktsg,
-	       _ap_bunt(_al_core(ter, p_gen),
-					p_gen));
-  }
   _open_do_p(bczp)    //  $!
   {
     return u3nt(c3__bccb,
@@ -759,8 +720,6 @@
               return u3m_bail(c3__fail); \
             } else return _open_in_##stem(ter, p_gen, q_gen, r_gen, s_gen);
 
-	_open_p   (bccb);
-	_open_p   (bctr);
 	_open_p   (bczp);
 
         _open_p   (brdt);
@@ -807,7 +766,6 @@
         _open_pq  (smcl);
 	//	_open_pq  (smsm);
 
-	_open_pq  (tsbr);
 	_open_pq  (tscl);
 	_open_pqr (tsdt);
         _open_pq  (tsgl);
@@ -1026,20 +984,6 @@
     return _ap_open_l(ter, gen);
   }
 
-  u3_noun
-  u3wfp_open(u3_noun cor)
-  {
-    u3_noun gen;
-
-    if ( u3_none == (gen = u3r_at(u3x_sam, cor)) ) {
-      return u3m_bail(c3__fail);
-    } else {
-      u3_noun ter = u3r_at(u3x_con, cor);
-
-      return u3qfp_open(ter, gen);
-    }
-  }
-
 /* boilerplate
  *
 */
@@ -1047,7 +991,7 @@
   _aq_core(u3_noun ter,
            u3_noun gen)
   {
-    u3_noun gat = u3j_hook(u3k(ter), "aq");
+    u3_noun gat = u3j_hook(u3k(ter), "ap");
 
     return u3i_molt(gat, u3x_sam, u3k(gen), 0);
   }
@@ -1082,16 +1026,3 @@
     return _aq_open_l(ter, gen);
   }
 
-  u3_noun
-  u3wfp_nepo(u3_noun cor)
-  {
-    u3_noun gen;
-
-    if ( u3_none == (gen = u3r_at(u3x_sam, cor)) ) {
-      return u3m_bail(c3__fail);
-    } else {
-      u3_noun ter = u3r_at(u3x_con, cor);
-
-      return u3qfp_nepo(ter, gen);
-    }
-  }
