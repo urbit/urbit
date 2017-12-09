@@ -1926,7 +1926,8 @@
     ?~  soy  ~
     :+  ~  ~
     :-  %circle
-    :+  %+  turn
+    :+  ?.  (~(has in wat.qer) %grams)  ~
+        %+  turn
           =-  (~(so-first-grams so:ta nom.qer ~ -) ran.qer)
           ::TODO  this can be done more efficiently.
           ?~  wer.qer  u.soy
