@@ -7514,7 +7514,16 @@
       ==
     ::
         {$bckt *}  [%vine boil(gen p.gen) boil(gen q.gen)]
-        {$bchp *}  [%weed [%brsg [~ ~] p.gen [%bunt [%tsgr [%$ 7] q.gen]]]]
+        {$bchp *}  
+      :-  %weed
+      :+  %tsgr
+        [p.gen q.gen]
+      :-  %cold
+      :-  %ktbr
+      :^  %brcl  [~ ~]
+        [%tsgr [%$ 2] [%limb %$]]
+      [%tsgr [%$ 15] [%limb %$]]
+    ::
         {$halo *}  [%plow p.gen boil(gen q.gen)]
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
         {$bcwt *}  =+  (turn p.gen |=(a/hoon boil(gen a)))
@@ -7598,7 +7607,7 @@
                    |-  ^-  hoon
                    ?~  r.gen  p.q.a
                    [%tstr [~ p.i.r.gen] q.i.r.gen $(r.gen t.r.gen)]
-        {$brcl *}  [%tsls [%cold q.gen] [%brdt p.gen r.gen]]
+        {$brcl *}  [%tsls q.gen [%brdt p.gen r.gen]]
         {$brdt *}  :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
