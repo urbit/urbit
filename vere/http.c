@@ -244,12 +244,12 @@ _http_send_response(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
     hed_u = hed_u->nex_u;
   }
 
-  // XX free req_u on disponse (rec_u should be free'd by h2o)
+  // XX free req_u on disponse (rec_u should be freed by h2o)
   static h2o_generator_t gen_u = {NULL, NULL};
   h2o_start_response(rec_u, &gen_u);
 
-  // TODO: put this in the generator so it runs on next turn?
   h2o_iovec_t* bod_u = _http_vec_from_octs(u3k(bod));
+  rec_u->res.content_length = bod_u->len;
   h2o_send(rec_u, bod_u, 1, 1);
 
   _http_req_free(req_u);
