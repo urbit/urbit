@@ -31,7 +31,7 @@ Persistence = _persistence({
     listenStation: function(station, date) {
       var now;
       if (!date) {
-        date = window.urb.util.toDate((now = new Date(), now.setSeconds(0), now.setMilliseconds(0), new Date(now - 24 * 3600 * 1000)));
+        date = (now = new Date(), now.setSeconds(0), now.setMilliseconds(0), new Date(now - 24 * 3600 * 1000));
       }
       Dispatcher.handleViewAction({
         type: "messages-fetch"
@@ -540,7 +540,7 @@ module.exports = recl({
   stateFromStore: function() {
     return {
       messages: MessageStore.getAll(),
-      last: MessageStore.getLast(),
+      oldest: MessageStore.getOldest(),
       fetching: MessageStore.getFetching(),
       listening: MessageStore.getListening(),
       station: StationStore.getStation(),
@@ -573,11 +573,15 @@ module.exports = recl({
   },
   checkMore: function() {
     var end;
-    if (this.atScrollEdge() && this.state.fetching === false && this.state.last && this.state.last > 0) {
-      end = this.state.last - this.pageSize;
+    this.state.oldest = MessageStore.getOldest();
+    if (this.atScrollEdge() && this.state.fetching === false && this.state.oldest && this.state.oldest > 0) {
+      end = this.state.oldest - this.pageSize;
+      if (end < 0) {
+        end = 0;
+      }
       this.lastLength = this.length;
       if (end >= 0) {
-        return MessageActions.getMore(this.state.station, this.state.last + 1, end);
+        return MessageActions.getMore(this.state.station, this.state.oldest + 1, end);
       }
     }
   },
@@ -1555,9 +1559,13 @@ module.exports = function(arg) {
   MessageActions = arg.MessageActions;
   return {
     listenStation: function(station, since) {
-      var $this, path;
+      var $this, begin, path;
       $this = this;
-      path = util.talkPath('circle', station, 'grams', since);
+      begin = since;
+      if (typeof since === "object") {
+        begin = window.urb.util.toDate(since);
+      }
+      path = util.talkPath('circle', station, 'grams', begin);
       return window.urb.bind(path, function(err, res) {
         var ref, ref1, ref2, ref3;
         if (err || !res.data) {
@@ -1571,11 +1579,16 @@ module.exports = function(arg) {
           MessageActions.listeningStation(station);
         }
         if ((ref = res.data) != null ? (ref1 = ref.circle) != null ? ref1.nes : void 0 : void 0) {
-          res.data.circle.nes.map(function(env) {
-            env.gam.heard = true;
-            return env;
-          });
-          MessageActions.loadMessages(res.data.circle.nes);
+          if ((res.data.circle.nes.length === 0) && (typeof since === "object")) {
+            console.log('trying for older than ' + begin);
+            $this.listenStation(station, new Date(since - 6 * 3600 * 1000));
+          } else {
+            res.data.circle.nes.map(function(env) {
+              env.gam.heard = true;
+              return env;
+            });
+            MessageActions.loadMessages(res.data.circle.nes);
+          }
         }
         if ((ref2 = res.data) != null ? (ref3 = ref2.circle) != null ? ref3.gram : void 0 : void 0) {
           res.data.circle.gram.gam.heard = true;
@@ -1596,6 +1609,10 @@ module.exports = function(arg) {
           return;
         }
         if ((ref = res.data) != null ? (ref1 = ref.circle) != null ? ref1.nes : void 0 : void 0) {
+          res.data.circle.nes.map(function(env) {
+            env.gam.heard = true;
+            return env;
+          });
           MessageActions.loadMessages(res.data.circle.nes);
           return window.urb.drop(path, function(err, res) {
             console.log('done');
@@ -1740,7 +1757,7 @@ module.exports = function(arg) {
 
 
 },{"../util.coffee":15}],13:[function(require,module,exports){
-var EventEmitter, MessageDispatcher, MessageStore, _fetching, _filter, _last, _listening, _messages, _station, _typing, moment;
+var EventEmitter, MessageDispatcher, MessageStore, _fetching, _filter, _listening, _messages, _oldest, _station, _typing, moment;
 
 moment = window.moment.tz;
 
@@ -1752,7 +1769,7 @@ _messages = {};
 
 _fetching = false;
 
-_last = null;
+_oldest = null;
 
 _station = null;
 
@@ -1830,20 +1847,20 @@ MessageStore = _.merge(new EventEmitter, {
     return _messages[message.uid] = message;
   },
   loadMessages: function(messages, get) {
-    var i, len, max, serial, v;
-    max = 0;
+    var i, len, min, serial, v;
+    min = _oldest;
     for (i = 0, len = messages.length; i < len; i++) {
       v = messages[i];
       v.gam.key = v.num;
-      if (v.num > max) {
-        max = v.num;
+      if (v.num < min || min === null) {
+        min = v.num;
       }
       v = v.gam || v;
       serial = v.uid;
       _messages[serial] = v;
     }
-    if (max < _last || _last === null || get === true) {
-      _last = max;
+    if (min < _oldest || _oldest === null || get === true) {
+      _oldest = min;
     }
     return _fetching = false;
   },
@@ -1864,8 +1881,8 @@ MessageStore = _.merge(new EventEmitter, {
   setFetching: function(state) {
     return _fetching = state;
   },
-  getLast: function() {
-    return _last;
+  getOldest: function() {
+    return _oldest;
   }
 });
 
