@@ -123,9 +123,18 @@
     %-  pre-bake
     ta-done:ta-init:ta
   =.  stories.u.old
-    %-  ~(run by stories.u.old)
-    |=  s/story
-    s(count (lent grams.s))
+    %-  ~(urn by stories.u.old)
+    |=  {nom/naem soy/story}
+    =+  %+  roll  grams.soy
+      |=  {t/telegram c/@ud k/(map serial @ud) s/(map circle (list @ud))}
+      :+  +(c)  (~(put by k) uid.t c)
+      =/  src/circle
+        ?:  (~(has by aud.t) [our.bol nom])  [our.bol nom]
+        ?~  aud.t  ~&(%strange-aud [our.bol %inbox])
+        n.aud.t
+      %+  ~(put by s)  src
+      [c (fall (~(get by s) src) ~)]
+    soy(count c, known k, sourced s)
   [~ ..prep(+<+ u.old)]
 ::
 ::>  ||
