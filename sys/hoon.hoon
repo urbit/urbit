@@ -1,7 +1,6 @@
 ::                                                      ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::
-!:
 =<  ride
 =>  %143  =>
 ::                                                      ::
@@ -236,12 +235,13 @@
   ::                                                    ::
   ::
 ++  aftr  |*(a/$-(* *) |*(b/$-(* *) (pair b a)))        ::  pair after
-++  cork  |*({a/_|=(* **) b/gate} (corl b a))           ::  compose forward
+++  cork  |*({a/$-(* *) b/$-(* *)} (corl b a))          ::  compose forward
 ++  corl                                                ::  compose backwards
-  |*  {a/gate b/_|=(* **)}
+  |*  {a/$-(* *) b/$-(* *)}
   =<  +:|.((a (b)))      ::  type check
-  |*  c/_+<.b
-  (a (b c))
+  =+  c=+<.b
+  |%  +-  $  (a (b c))
+  --
 ::
 ++  cury                                                ::  curry left
   |*  {a/$-(^ *) b/*}
@@ -397,22 +397,14 @@
   |*(a/$-(* *) $@($~ {$~ u/a}))
 ::
 ::                                                      ::
-::::  2o: normalizing containers                        ::
+::::  2o: containers                        ::
   ::                                                    ::
   ::
-++  jar  |*({a/mold b/mold} (map a (list b)))           ::  map of lists
-++  jug  |*({a/mold b/mold} (map a (set b)))            ::  map of sets
-++  map  |*  {a/mold b/mold}                            ::  table
-         %+  cork  (tree (pair a b))                    ::
-         |=  c/(tree (pair a b))  ^+  c                 ::
-         ::  ?.(~(apt by c) ~ c)                        ::  XX verify
-         c
-++  qeu  |*(a/mold (tree a))                            ::  queue
-++  set  |*  a/mold                                     ::  set
-         %+  cork  (tree a)                             ::
-         |=  b/(tree a)  ^+  b                          ::
-         ::  ?.(~(apt in b) ~ b)                        ::  XX verify
-         b
+++  jar  |*({a/$-(* *) b/$-(* *)} (map a (list b)))     ::  map of lists
+++  jug  |*({a/$-(* *) b/$-(* *)} (map a (set b)))      ::  map of sets
+++  map  |*({a/$-(* *) b/$-(* *)} (tree (pair a b)))    ::  table
+++  qeu  |*(a/$-(* *) (tree a))                         ::  queue
+++  set  |*(a/$-(* *) (tree a))                         ::  set
 ::
 ::::  2q: molds and mold builders                       ::
   ::                                                    ::
@@ -654,7 +646,7 @@
 ::
 ++  reel                                                ::  right fold
   ~/  %reel
-  |*  {a/(list) b/_|=({* *} +<+)}
+  |*  {a/(list) b/_=>(~ |=({* *} +<+))}
   |-  ^+  ,.+<+.b
   ?~  a
     +<+.b
@@ -662,7 +654,7 @@
 ::
 ++  roll                                                ::  left fold
   ~/  %roll
-  |*  {a/(list) b/_|=({* *} +<+)}
+  |*  {a/(list) b/_=>(~ |=({* *} +<+))}
   |-  ^+  ,.+<+.b
   ?~  a
     +<+.b
@@ -729,7 +721,7 @@
   [i.a $(a (skim t.a |:(c=i.a !(b c i.a))))]
 ::
 ++  spin
-  |*  {a/(list) b/_|=({* *} [** +<+]) c/*}
+  |*  {a/(list) b/_=>(~ |=({* *} [** +<+])) c/*}
   ::  ?<  ?=($-([_?<(?=($~ a) i.a) _c] [* _c]) b)
   |-
   ?~  a
@@ -738,7 +730,7 @@
   [i=-.v t=$(a t.a, c +.v)]
 ::
 ++  spun
-  |*  {a/(list) b/_|=({* *} [** +<+])}
+  |*  {a/(list) b/_=>(~ |=({* *} [** +<+]))}
   =|  c/_+<+.b
   |-
   ?~  a
