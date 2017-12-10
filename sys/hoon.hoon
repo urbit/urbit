@@ -487,7 +487,7 @@
   [~ u=[u.a u.b]]
 ::
 ++  clap                                                ::  combine
-  |*  {a/(unit) b/(unit) c/_|=(^ +<-)}
+  |*  {a/(unit) b/(unit) c/_=>(~ |=(^ +<-))}
   ?~  a  b
   ?~  b  a
   [~ u=(c u.a u.b)]
@@ -1220,20 +1220,22 @@
   ::
   +-  dif                                               ::  difference
     ~/  %dif
-    |*  b/_a
-    |-  ^+  a
-    ?~  b
-      a
-    =+  c=(bif n.b)
-    ?>  ?=(^ c)
-    =+  d=$(a l.c, b l.b)
-    =+  e=$(a r.c, b r.b)
-    |-  ^-  {$?($~ _a)}
-    ?~  d  e
-    ?~  e  d
-    ?:  (vor n.d n.e)
-      [n.d l.d $(d r.d)]
-    [n.e $(e l.e) r.e]
+    =+  b=a
+    |%  
+    +-  $
+      ?~  b
+        a
+      =+  c=(bif n.b)
+      ?>  ?=(^ c)
+      =+  d=$(a l.c, b l.b)
+      =+  e=$(a r.c, b r.b)
+      |-  ^-  {$?($~ _a)}
+      ?~  d  e
+      ?~  e  d
+      ?:  (vor n.d n.e)
+        [n.d l.d $(d r.d)]
+      [n.e $(e l.e) r.e]
+    --
   ::
   +-  dig                                               ::  axis of a in b
     |=  b/*
@@ -1267,19 +1269,22 @@
   ::
   +-  int                                               ::  intersection
     ~/  %int
-    |*  b/_a
-    |-  ^+  a
-    ?~  b
-      ~
-    ?~  a
-      ~
-    ?.  (vor n.a n.b)
-      $(a b, b a)
-    ?:  =(n.b n.a)
-      [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
-    ?:  (hor n.b n.a)
-      %-  uni(a $(a l.a, b [n.b l.b ~]))  $(b r.b)
-    %-  uni(a $(a r.a, b [n.b ~ r.b]))  $(b l.b)
+    =+  b=a
+    |%  
+    +-  $
+      |-  ^+  a
+      ?~  b
+        ~
+      ?~  a
+        ~
+      ?.  (vor n.a n.b)
+        $(a b, b a)
+      ?:  =(n.b n.a)
+        [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
+      ?:  (hor n.b n.a)
+        %-  uni(a $(a l.a, b [n.b l.b ~]))  $(b r.b)
+      %-  uni(a $(a r.a, b [n.b ~ r.b]))  $(b l.b)
+    --
   ::
   +-  put                                               ::  puts b in a, sorted
     ~/  %put
@@ -1302,7 +1307,7 @@
     [n.c [n.a l.a l.c] r.c]
   ::
   +-  rep                                               ::  replace by product
-    |*  b/_|=({* *} +<+)
+    |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
@@ -1327,24 +1332,27 @@
   ::
   +-  uni                                               ::  union
     ~/  %uni
-    |*  b/_a
-    ?:  =(a b)  a
-    |-  ^+  a
-    ?~  b
-      a
-    ?~  a
-      b
-    ?:  (vor n.a n.b)
-      ?:  =(n.b n.a)
-        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
-      ?:  (hor n.b n.a)
-        $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
-      $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
-    ?:  =(n.a n.b)
-      [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
-    ?:  (hor n.a n.b)
-      $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
-    $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
+    =+  b=a
+    |%  
+    +-  $
+      ?:  =(a b)  a
+      |-  ^+  a
+      ?~  b
+        a
+      ?~  a
+        b
+      ?:  (vor n.a n.b)
+        ?:  =(n.b n.a)
+          [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+        ?:  (hor n.b n.a)
+          $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
+        $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+      ?:  =(n.a n.b)
+        [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
+      ?:  (hor n.a n.b)
+        $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
+      $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
+    --
   ::
   +-  wyt                                               ::  size of set
     =<  $
@@ -1397,24 +1405,6 @@
     ?>  ?=(^ d)
     [n.d [n.a l.a l.d] r.d]
   ::
-  +-  def                                               ::  difference
-    |*  b/_a
-    ^-  (map _p:node (pair (unit _q:node) (unit _q:node)))
-    !!
-  ::
-  +-  dep                                               ::  difference as patch
-    |*  b/_a
-    ^+  [p=a q=a]
-    =+  c=~(tap by (def b))
-    =+  [d e]=[`_a`~ `_a`~]
-    |-  ^+  [d e]
-    ?~  c  [d e]
-    %=  $
-      c  t.c
-      d  ?~(q.q.i.c d (~(put by d) p.i.c u.q.q.i.c))
-      e  ?~(p.q.i.c e (~(put by e) p.i.c u.p.q.i.c))
-    ==
-  ::
   +-  del                                               ::  delete at key b
     ~/  %del
     |*  b/*
@@ -1434,20 +1424,23 @@
   ::
   +-  dif                                               ::  difference
     ~/  %dif
-    |*  b/_a
-    |-  ^+  a
-    ?~  b
-      a
-    =+  c=(bif p.n.b q.n.b)
-    ?>  ?=(^ c)
-    =+  d=$(a l.c, b l.b)
-    =+  e=$(a r.c, b r.b)
-    |-  ^-  {$?($~ _a)}
-    ?~  d  e
-    ?~  e  d
-    ?:  (vor p.n.d p.n.e)
-      [n.d l.d $(d r.d)]
-    [n.e $(e l.e) r.e]
+    =+  b=a
+    |%
+    +-  $
+      |-  ^+  a
+      ?~  b
+        a
+      =+  c=(bif p.n.b q.n.b)
+      ?>  ?=(^ c)
+      =+  d=$(a l.c, b l.b)
+      =+  e=$(a r.c, b r.b)
+      |-  ^-  {$?($~ _a)}
+      ?~  d  e
+      ?~  e  d
+      ?:  (vor p.n.d p.n.e)
+        [n.d l.d $(d r.d)]
+      [n.e $(e l.e) r.e]
+    --
   ::
   +-  dig                                               ::  axis of b key
     |=  b/*
@@ -1502,26 +1495,29 @@
   ::
   +-  int                                               ::  intersection
     ~/  %int
-    |*  b/_a
-    |-  ^+  a
-    ?~  b
-      ~
-    ?~  a
-      ~
-    ?:  (vor p.n.a p.n.b)
-      ?:  =(p.n.b p.n.a)
-        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
-      ?:  (gor p.n.b p.n.a)
-        %-  uni(a $(a l.a, b [n.b l.b ~]))  $(b r.b)
-      %-  uni(a $(a r.a, b [n.b ~ r.b]))  $(b l.b)
-    ?:  =(p.n.a p.n.b)
-      [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
-    ?:  (gor p.n.a p.n.b)
-      %-  uni(a $(b l.b, a [n.a l.a ~]))  $(a r.a)
-    %-  uni(a $(b r.b, a [n.a ~ r.a]))  $(a l.a)
+    =+  b=a
+    |%
+    +-  $
+      |-  ^+  a
+      ?~  b
+        ~
+      ?~  a
+        ~
+      ?:  (vor p.n.a p.n.b)
+        ?:  =(p.n.b p.n.a)
+          [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+        ?:  (gor p.n.b p.n.a)
+          %-  uni(a $(a l.a, b [n.b l.b ~]))  $(b r.b)
+        %-  uni(a $(a r.a, b [n.b ~ r.b]))  $(b l.b)
+      ?:  =(p.n.a p.n.b)
+        [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
+      ?:  (gor p.n.a p.n.b)
+        %-  uni(a $(b l.b, a [n.a l.a ~]))  $(a r.a)
+      %-  uni(a $(b r.b, a [n.a ~ r.a]))  $(a l.a)
+    --
   ::
   +-  mar                                               ::  add with validation
-    |*  {b/_?>(?=(^ a) p.n.a) c/(unit _?>(?=(^ a) q.n.a))}
+    |*  {b/* c/(unit *)}
     ?~  c
       (del b)
     (put b u.c)
@@ -1549,7 +1545,7 @@
     [n.d [n.a l.a l.d] r.d]
   ::
   +-  rep                                               ::  replace by product
-    |*  b/_|=({* *} +<+)
+    |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
@@ -1587,45 +1583,51 @@
   ::
   +-  uni                                               ::  union, merge
     ~/  %uni
-    |*  b/_a
-    |-  ^+  a
-    ?~  b
-      a
-    ?~  a
-      b
-    ?:  (vor p.n.a p.n.b)
-      ?:  =(p.n.b p.n.a)
-        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
-      ?:  (gor p.n.b p.n.a)
-        $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
-      $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
-    ?:  =(p.n.a p.n.b)
-      [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
-    ?:  (gor p.n.a p.n.b)
-      $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
-    $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
+    =+  b=a
+    |%
+    +-  $
+      |-  ^+  a
+      ?~  b
+        a
+      ?~  a
+        b
+      ?:  (vor p.n.a p.n.b)
+        ?:  =(p.n.b p.n.a)
+          [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+        ?:  (gor p.n.b p.n.a)
+          $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
+        $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+      ?:  =(p.n.a p.n.b)
+        [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
+      ?:  (gor p.n.a p.n.b)
+        $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
+      $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
+    --
   ::
   +-  uno                                               ::  general union
-    |=  b/_a
-    |=  meg/$-({_p:node _q:node _q:node} _q:node)
-    |-  ^+  a
-    ?~  b
-      a
-    ?~  a
-      b
-    ?:  (vor p.n.a p.n.b)
-      ?:  =(p.n.b p.n.a)
-        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
-      ?:  (gor p.n.b p.n.a)
-        $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
-      $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
-    ?:  =(p.n.a p.n.b)
-      :+  [p.n.a (meg p.n.a q.n.a q.n.b)]
-        $(b l.b, a l.a)
-      $(b r.b, a r.a)
-    ?:  (gor p.n.a p.n.b)
-      $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
-    $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
+    =+  b=a
+    |%
+    +-  $
+      |*  meg/$-({* * *} *)
+      |-  ^+  a
+      ?~  b
+        a
+      ?~  a
+        b
+      ?:  (vor p.n.a p.n.b)
+        ?:  =(p.n.b p.n.a)
+          [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+        ?:  (gor p.n.b p.n.a)
+          $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
+        $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+      ?:  =(p.n.a p.n.b)
+        :+  [p.n.a (meg p.n.a q.n.a q.n.b)]
+          $(b l.b, a l.a)
+        $(b r.b, a r.a)
+      ?:  (gor p.n.a p.n.b)
+        $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
+      $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
+    --
   ::
   ::
   +-  urn                                               ::  apply gate to nodes
@@ -8243,12 +8245,12 @@
     ?~  jon
       ?:  fab
         pro
-      ~|  %musk-stopped
+      ~|  %constant-folding-stopped
       !!
     ?:  ?=($| -.u.jon)
       ?:  fab
         pro
-      ~|  %musk-blocked
+      ~|  %constant-folding-blocked
       ::  ~_  (dunk '%musk-blocked-type')
       ::  ~|  [%musk-blocked-gene gen]
       ::  ~|  [%musk-blocked-mask mask.bus]
