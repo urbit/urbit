@@ -1977,7 +1977,7 @@
             ?.  (~(has by sourced.u.soy) u.wer.qer)  ~
             %+  turn  (~(got by sourced.u.soy) u.wer.qer)
             |=  n/@ud
-            (snag (sub count.u.soy +(n)) grams.u.soy)
+            (snag n grams.u.soy)
           ==
         (cury gram-to-envelope nom.qer)
       :-  shape.u.soy
