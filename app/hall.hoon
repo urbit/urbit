@@ -2554,4 +2554,43 @@
       our.bol
       (foal:space:userlib paf [%hall-telegrams !>(-)])
   ==
+::
+::TODO  for debug purposes. remove eventually.
+++  poke-noun
+  |=  a/@t
+  ^-  (quip move _+>)
+  ?:  =(a 'debug')
+    =-  ~&(- [~ +>.$])
+    %-  ~(urn by stories)
+    |=  {n/naem s/story}
+    =+  %-  ~(rep by known.s)
+      |=  {{u/serial a/@ud} k/@ud m/@ud}
+      :-  ?:((gth a k) a k)
+      ?:  =(u uid:(snag a grams.s))  m
+      ~?  (lth m 3)
+        :*  [%fake a u]
+            [%prev uid:(snag (dec a) grams.s)]
+            [%real uid:(snag a grams.s)]
+            [%next uid:(snag +(a) grams.s)]
+        ==
+      +(m)
+    :^  count=count.s
+        lent=(lent grams.s)
+      known=k
+    mismatch=m
+  ?:  =(a 'rebuild')
+    =-  [~ +>.$(stories -)]
+    %-  ~(urn by stories)
+    |=  {nom/naem soy/story}
+    =+  %+  roll  grams.soy
+      |=  {t/telegram c/@ud k/(map serial @ud) s/(map circle (list @ud))}
+      :+  +(c)  (~(put by k) uid.t c)
+      =/  src/circle
+        ?:  (~(has by aud.t) [our.bol nom])  [our.bol nom]
+        ?~  aud.t  ~&(%strange-aud [our.bol %inbox])
+        n.aud.t
+      %+  ~(put by s)  src
+      [c (fall (~(get by s) src) ~)]
+    soy(count c, known k, sourced s)
+  [~ +>]
 --
