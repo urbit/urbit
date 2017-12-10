@@ -1636,8 +1636,8 @@
       ::  changed message
       %_  +>.$
         grams    %+  welp
-                 (scag (dec (max u.old 1)) grams)
-                 [gam (slag u.old grams)]
+                 (scag u.old grams)
+                 [gam (slag +(u.old) grams)]
       ==
     ::
     ++  sa-change-remote                                ::<  apply remote's delta
