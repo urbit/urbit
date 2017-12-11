@@ -118,6 +118,12 @@
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
+  =*  o  u.old
+  =.  count.o  (lent grams.o)
+  =+  %+  reel  grams.o
+    |=  {t/telegram c/@ud k/(map serial @ud)}
+    [+(c) (~(put by k) uid.t c)]
+  =.  known.o  k
   [~ ..prep(+<+ u.old)]
 ::
 ::>  ||
@@ -2192,6 +2198,27 @@
   ::
   |=  act/sole-action
   ta-done:(ta-sole:ta act)
+::
+::TODO  for debug purposes. remove eventually.
+++  poke-noun
+  |=  a/@t
+  ^-  (quip move _+>)
+  ?:  =(a 'debug')
+    =-  ~&(- [~ +>.$])
+    =+  %-  ~(rep by known)
+      |=  {{u/serial a/@ud} k/@ud m/@ud}
+      :-  ?:((gth a k) a k)
+      ?:  =(u uid:(snag (sub count +(a)) grams))  m  +(m)
+    :^  %check-talk
+        count=count
+      lent=(lent grams)
+    [known=k mismatch=m]
+  ?:  =(a 'rebuild')
+    =+  %+  reel  grams
+      |=  {t/telegram c/@ud k/(map serial @ud)}
+      [+(c) (~(put by k) uid.t c)]
+    [~ +>.$(count c, known k)]
+  [~ +>]
 ::
 ++  coup-client-action                                                ::<  accept n/ack
   ::>
