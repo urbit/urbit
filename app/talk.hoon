@@ -118,12 +118,6 @@
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  =*  o  u.old
-  =.  count.o  (lent grams.o)
-  =+  %+  reel  grams.o
-    |=  {t/telegram c/@ud k/(map serial @ud)}
-    [+(c) (~(put by k) uid.t c)]
-  =.  known.o  k
   [~ ..prep(+<+ u.old)]
 ::
 ::>  ||
