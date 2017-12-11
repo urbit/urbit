@@ -347,7 +347,12 @@
         =<  sh-done
         %-  ~(sh-show-config sh cli)
         [cir.rum cur dif.rum]
-      =?  +>.$  &(?=($source -.dif.rum) add.dif.rum)
+      =?  +>.$
+          ?&  ?=($source -.dif.rum)
+              add.dif.rum
+              =(cir.rum incir)
+              ?=($~ ran.src.dif.rum)
+          ==
         =*  cir  cir.src.dif.rum
         =+  ren=~(cr-phat cr cir)
         =+  gyf=(~(get by bound) [cir ~ ~])
@@ -1543,7 +1548,9 @@
       ::
       |=  txt/tape
       ^+  +>
-      (sh-fact %txt (runt [14 '-'] `tape`['|' ' ' (scag 64 txt)]))
+      %+  sh-fact  %txt
+      %+  runt  [14 '-']
+      `tape`['|' ' ' (scag (sub width.she 16) txt)]
     ::
     ++  sh-prod                                         ::<  show prompt
       ::>  makes and stores a move to modify the cli
@@ -1638,7 +1645,10 @@
       ^+  +>
       ?:  (~(has in settings.she) %quiet)  +>
       ?:  ?=($full -.dif)
-        (sh-note (weld "new " (~(cr-show cr cir) ~)))
+        =.  +>
+          (sh-note (weld "new " (~(cr-show cr cir) ~)))
+        =.  +>  $(dif [%caption cap.cof.dif])
+        $(dif [%filter fit.cof.dif])
       ?:  ?=($remove -.dif)
         (sh-note (weld "rip " (~(cr-show cr cir) ~)))
       %-  sh-note
@@ -1650,7 +1660,7 @@
         ~(cr-full cr cir.src.dif)
       ::
           $caption
-        "cap {(trip cap.dif)}"
+        "cap: {(trip cap.dif)}"
       ::
           $filter
         ;:  weld
