@@ -6141,8 +6141,7 @@
 ++  tyke  (list (unit hoon))                            ::
 ::                                                      ::::::  virtual nock
 ++  nock  $^  {p/nock q/nock}                           ::  autocons
-          $%  {$0 p/@}                                  ::  axis select
-              {$1 p/*}                                  ::  constant
+          $%  {$1 p/*}                                  ::  constant
               {$2 p/nock q/nock}                        ::  compose
               {$3 p/nock}                               ::  cell test
               {$4 p/nock}                               ::  increment
@@ -6153,6 +6152,7 @@
               {$9 p/@ q/nock}                           ::  select arm and fire
               {$10 p/$@(@ {p/@ q/nock}) q/nock}         ::  hint
               {$11 p/nock q/nock}                       ::  grab data from sky
+              {$0 p/@}                                  ::  axis select
           ==                                            ::
 ++  type  $@  $?  $noun                                 ::  any nouns
                   $void                                 ::  no noun
@@ -6228,7 +6228,6 @@
 ~%    %pen
     +
   ==
-    %al    al
     %ap    ap
     %ut    ut
   ==
@@ -6571,7 +6570,7 @@
       $(mod q.mod)
     ::
         {$herb *}
-      =+  cys=~(boil aq p.mod)
+      =+  cys=~(boil ap p.mod)
       ?:  ?=($herb -.cys)
         (home [%tsgl [%limb %$] p.mod])
       $(mod cys)
@@ -6691,7 +6690,7 @@
         {$herb *}
       %-  decorate
       =.  doc  ~
-      =+  cys=~(boil aq p.mod)
+      =+  cys=~(boil ap p.mod)
       ?:  ?=($herb -.cys)
         (home [%tsgl [%limb %$] p.mod])
       ersatz(mod cys)
@@ -7530,11 +7529,11 @@
       ==
     ::
         {$bckt *}  [%vine boil(gen p.gen) boil(gen q.gen)]
-        {$bchp *}  
+        {$bchp *}
       :-  %weed
+      :-  %cold
       :+  %tsgr
         [p.gen q.gen]
-      :-  %cold
       :-  %ktbr
       :^  %brcl  [~ ~]
         [%tsgr [%$ 2] [%limb %$]]
@@ -7552,8 +7551,8 @@
     ?-    gen
         {$~ *}     [%cnts [[%& p.gen] ~] ~]
     ::
-        {$base *}  ~(clam al boil)
-        {$bust *}  ~(bunt al %axil p.gen)
+        {$base *}  ~(clam ax boil)
+        {$bust *}  ~(bunt ax %axil p.gen)
         {$cold *}  p.gen
         {$dbug *}   q.gen
         {$eror *}  ~|(p.gen !!)
@@ -7592,21 +7591,21 @@
         [%$ ~]                                          ::  $
       [[[%a ~] [%tsgl [%$ 3] [%limb %a]]] ~]             ::  a  +.a
     ::
-        {$leaf *}  ~(clam al boil)
+        {$leaf *}  ~(clam ax boil)
         {$limb *}  [%cnts [p.gen ~] ~]
         {$tell *}  [%cnhp [%limb %noah] [%zpgr [%cltr p.gen]] ~]
         {$wing *}  [%cnts p.gen ~]
         {$yell *}  [%cnhp [%limb %cain] [%zpgr [%cltr p.gen]] ~]
     ::
-        {$bcpt *}  ~(clam al boil)
-        {$bccb *}  ~(clam al boil)
-        {$bccl *}  ~(clam al boil)
-        {$bccn *}  ~(clam al boil)
-        {$bchp *}  ~(clam al boil)
-        {$bckt *}  ~(clam al boil)
-        {$bcwt *}  ~(clam al boil)
-        {$bcts *}  ~(clam al boil)
-        {$halo *}  ~(clam al boil)
+        {$bcpt *}  ~(clam ax boil)
+        {$bccb *}  ~(clam ax boil)
+        {$bccl *}  ~(clam ax boil)
+        {$bccn *}  ~(clam ax boil)
+        {$bchp *}  ~(clam ax boil)
+        {$bckt *}  ~(clam ax boil)
+        {$bcwt *}  ~(clam ax boil)
+        {$bcts *}  ~(clam ax boil)
+        {$halo *}  ~(clam ax boil)
         {$bcsm *}  p.gen
     ::
         {$brcb *}  :+  %tsls  [%bunt q.gen]
@@ -7639,7 +7638,7 @@
                    :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
-        {$brts *}  :^  %brcb  p.gen  q.gen 
+        {$brts *}  :^  %brcb  p.gen  q.gen
                    =-  [~ [[0 [~ ~] -] ~ ~]]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
         {$brwt *}  [%ktwt %brdt p.gen q.gen]
@@ -7662,7 +7661,7 @@
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$bunt *}  [%cold ~(bunt al %herb p.gen)]
+        {$bunt *}  [%cold ~(bunt ax %herb p.gen)]
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
         {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
@@ -7692,7 +7691,7 @@
       (turn r.gen |=({p/wing q/hoon} [p [%tsgr [%$ 3] q]]))
     ::
         {$ktdt *}  [%ktls [%cnhp p.gen q.gen ~] q.gen]
-        {$kthp *}  [%ktls ~(bunt al [%herb p.gen]) q.gen]
+        {$kthp *}  [%ktls ~(bunt ax [%herb p.gen]) q.gen]
         {$sgbr *}
       :+  %sggr
         :-  %mean
@@ -7811,7 +7810,7 @@
       [%limb %c]                                        ::
     ::
         {$tsbr *}
-      [%tsls ~(bunt al %herb p.gen) q.gen]
+      [%tsls ~(bunt ax %herb p.gen) q.gen]
     ::
         {$tscl *}
       [%tsgr [%cncb [[%& 1] ~] p.gen] q.gen]
@@ -7891,7 +7890,7 @@
     ::
         {$wtpt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
-        {$wtts *}   [%fits ~(bunt al %herb p.gen) q.gen]
+        {$wtts *}   [%fits ~(bunt ax %herb p.gen) q.gen]
         {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {$zpgr *}
       [%cnhp [%limb %onan] [%zpsm [%bunt [%limb %abel]] p.gen] ~]
@@ -8246,19 +8245,20 @@
     =+  jon=(apex:musk bus q.pro)
     ?~  jon
       ?:  fab
-        [p.pro [%10 [%live %1 %blow-stop] q.pro]]
-      [p.pro [%10 [%live %1 %blow-stop] q.pro]]
+        [p.pro [%10 [%live %1 %constant-stop] q.pro]]
+      ::  [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
       ~|  %constant-folding-stopped
-      ::  !!
+      !!
     ?:  ?=($| -.u.jon)
       ?:  fab
-        [p.pro [%10 [%live %1 %blow-block] q.pro]]
-      [p.pro [%10 [%live %1 %blow-block-fab] q.pro]]
-      ::  ~_  (dunk '%musk-blocked-type')
-      ::  ~|  [%musk-blocked-gene gen]
-      ::  ~|  [%musk-blocked-mask mask.bus]
-      ::  ~|  [%musk-blocked-formula q.pro]
-      ::  !!
+        [p.pro [%10 [%live %1 %constant-block] q.pro]]
+      ::  [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
+      ::  ~_  (dunk '%constant-blocked-type')
+      ::  ~|  [%constant-blocked-gene gen]
+      ::  ~|  [%constant-blocked-mask mask.bus]
+      ::  ~|  [%constant-blocked-formula q.pro]
+      ~|  %constant-folding-blocked
+      !!
     [p.pro [%1 p.u.jon]]
   ::
   ++  burn
@@ -9014,12 +9014,12 @@
     ~/  %chip
     |=  {how/? gen/hoon}  ^-  type
     ?:  ?=({$wtts *} gen)
-      (cool how q.gen (play ~(bunt al [%herb p.gen])))
+      (cool how q.gen (play ~(bunt ax [%herb p.gen])))
     ?:  ?&(how ?=({$wtpm *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=({$wtbr *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
-    =+  neg=?:(fab ~(open ap gen) ~(open aq gen))
+    =+  neg=~(open ap gen)
     ?:(=(neg gen) sut $(gen neg))
   ::
   ++  mint
@@ -9291,7 +9291,7 @@
       [(nice (fork p.hiq p.ran ~)) (fork q.hiq q.ran ~)]
     ::
         {$wtts *}
-      =+  nob=~(bunt al %herb p.gen)
+      =+  nob=~(bunt ax %herb p.gen)  
       =+  waz=[p=(play nob) q=(play(sut dox) nob)]
       =+  ^=  syx  :-  p=(cove q:(mint %noun [%wing q.gen]))
                    q=(cove q:(mint(sut dox) %noun [%wing q.gen]))
