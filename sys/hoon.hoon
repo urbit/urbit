@@ -8002,6 +8002,7 @@
         $dtts  (lead -.gen %.(+.gen dubs))
         $dtwt  (lead -.gen %.(+.gen expr))
         $ktbr  (lead -.gen %.(+.gen expr))
+        $ktcn  (lead -.gen %.(+.gen expr))
         $ktdt  (lead -.gen %.(+.gen dubs))
         $ktls  (lead -.gen %.(+.gen dubs))
         $kthp  (lead -.gen %.(+.gen dubs))
