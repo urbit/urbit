@@ -1632,7 +1632,10 @@
       ^+  +>
       ?:  (~(has in settings.she) %quiet)  +>
       ?:  ?=($full -.dif)
-        (sh-note (weld "new " (~(cr-show cr cir) ~)))
+        =.  +>
+          (sh-note (weld "new " (~(cr-show cr cir) ~)))
+        =.  +>  $(dif [%caption cap.cof.dif])
+        $(dif [%filter fit.cof.dif])
       ?:  ?=($remove -.dif)
         (sh-note (weld "rip " (~(cr-show cr cir) ~)))
       %-  sh-note
@@ -1644,7 +1647,7 @@
         ~(cr-full cr cir.src.dif)
       ::
           $caption
-        "cap {(trip cap.dif)}"
+        "cap: {(trip cap.dif)}"
       ::
           $filter
         ;:  weld
