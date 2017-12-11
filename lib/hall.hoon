@@ -44,9 +44,11 @@
   ^-  {serial _eny.bol}
   [(shaf %serial eny.bol) (shax eny.bol)]
 ::
-++  range-to-path                                       ::<  msg range to path
-  ::>  turns a range structure into a path used for
-  ::>  subscriptions.
+++  range-to-path
+  :>    msg range to path
+  :>
+  :>  turns a range structure into a path used for
+  :>  subscriptions.
   ::
   |=  ran/range
   ^-  path
@@ -56,9 +58,11 @@
   ?~  tal.u.ran  ~
   /(scot -.u.tal.u.ran +.u.tal.u.ran)
 ::
-++  path-to-range                                       ::<  path to msg range
-  ::>  turns the tail of a subscription path into a
-  ::>  range structure, skipping over non-range terms.
+++  path-to-range
+  :>    path to msg range
+  :>
+  :>  turns the tail of a subscription path into a
+  :>  range structure, skipping over non-range terms.
   ::
   |=  pax/path
   ^-  range
@@ -76,8 +80,7 @@
   ?^  tal  [%da u.tal]
   [%ud (slav %ud i.t.pax)]
 ::
-++  change-glyphs                                       ::<  ...
-  ::>
+++  change-glyphs                                       :<  ...
   ::
   |=  {gys/(jug char audience) bin/? gyf/char aud/audience}
   ^+  gys
@@ -88,9 +91,11 @@
   ::  unbind single.
   (~(del ju gys) gyf aud)
 ::
-++  change-nicks                                        ::<  change nick map
-  ::>  changes a nickname in a map, adding if it doesn't
-  ::>  yet exist, removing if the nickname is empty.
+++  change-nicks
+  :>    change nick map
+  :>
+  :>  changes a nickname in a map, adding if it doesn't
+  :>  yet exist, removing if the nickname is empty.
   ::
   |=  {nis/(map ship cord) who/ship nic/cord}
   ^+  nis
@@ -98,8 +103,8 @@
     (~(del by nis) who)
   (~(put by nis) who nic)
 ::
-++  change-config                                       ::<  apply config diff
-  ::>  applies a config diff to the given config.
+++  change-config
+  :>  applies a config diff to the given config.
   ::
   |=  {cof/config dif/diff-config}
   ^+  cof
@@ -140,8 +145,8 @@
     ==
   ==
 ::
-++  change-status                                       ::<  apply status diff
-  ::>  applies a status diff to the given status.
+++  change-status
+  :>  applies a status diff to the given status.
   ::
   |=  {sat/status dif/diff-status}
   ^+  sat
@@ -179,7 +184,7 @@
     |*  typ/{@tas (pole @tas)}
     =+  [i-typ t-typ]=typ
     |=  wer/weir
-    ^-  (tup:dray:wired i-typ t-typ)  ::< ie, (tup %p %tas ~) is {@p @tas}
+    ^-  (tup:dray:wired i-typ t-typ)  ::  ie, (tup %p %tas ~) is {@p @tas}
     ?~  wer  !!
     ?~  t-typ
       ?^  t.wer  !!
