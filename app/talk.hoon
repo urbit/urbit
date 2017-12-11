@@ -1542,7 +1542,9 @@
       ::
       |=  txt/tape
       ^+  +>
-      (sh-fact %txt (runt [14 '-'] `tape`['|' ' ' (scag 64 txt)]))
+      %+  sh-fact  %txt
+      %+  runt  [14 '-']
+      `tape`['|' ' ' (scag (sub width.she 16) txt)]
     ::
     ++  sh-prod                                         ::<  show prompt
       ::>  makes and stores a move to modify the cli
