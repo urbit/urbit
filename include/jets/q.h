@@ -295,7 +295,6 @@
     u3_noun u3qzp_hack(u3_noun, u3_noun);
     u3_noun u3qzp_late(u3_noun);
     u3_noun u3qzp_open(u3_noun, u3_noun);
-    u3_noun u3qzp_nepo(u3_noun, u3_noun);
     u3_noun u3qzp_rake(u3_noun);
 
 #   define u3qzu_van_fan  28
