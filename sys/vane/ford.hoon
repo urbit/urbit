@@ -1066,6 +1066,7 @@
       |=  {fit/? for/mark}
       |=  {cof/cafe sam/vase}
       ^-  (bolt vase)
+      ?:  =(for %noun)  (fine cof sam)
       %+  cool  |.(leaf+"ford: check {<[for bek `@p`(mug q.sam)]>}")
       %+  cope  (fang cof for)
       |=  {cof/cafe tux/vase}
