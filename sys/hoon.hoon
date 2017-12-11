@@ -748,6 +748,7 @@
   ~/  %rap
   |=  {a/bloq b/(list @)}
   ^-  @
+  =+  ~  ::REMOVEME jet dashboard bump
   ?~  b  0
   (cat a i.b $(b t.b))
 ::
