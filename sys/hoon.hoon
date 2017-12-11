@@ -745,7 +745,7 @@
   $(b (rsh a 1 b), c +(c))
 ::
 ++  rap                                                 ::  assemble nonzero
-  ~/  %tsgl
+  ~/  %rap
   |=  {a/bloq b/(list @)}
   ^-  @
   ?~  b  0
