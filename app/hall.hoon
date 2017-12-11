@@ -41,7 +41,7 @@
       $:  count/@ud                                     :<  (lent grams)
           grams/(list telegram)                         :<  all messages
           known/(map serial @ud)                        :<  messages heard
-          sourced/(map circle (list @ud))               :<  messages by circle
+          sourced/(map circle (list @ud))               :<  heard from
           sequence/(map circle @ud)                     :<  last-heard p circle
           locals/group                                  :<  local status
           remotes/(map circle group)                    :<  remote status
@@ -83,6 +83,7 @@
           {$follow sub/? srs/(set source)}              :<  un/subscribe
           {$sequent cir/circle num/@ud}                 :<  update last-heard
           {$gram src/circle gam/telegram}               :<  new/changed msgs
+          {$sourced src/circle num/@ud}                 :<  new heard-from
       ==  ==                                            ::
     :>  #  %out
     :>    outgoing data
@@ -1296,7 +1297,14 @@
       ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
       =.  sep.gam  (so-sane sep.gam)
-      (so-delta-our %gram src gam)
+      ::  if we already have it, ignore.
+      =+  old=(~(get by known) uid.gam)
+      ?.  &(?=(^ old) =(gam (snag u.old grams)))
+        (so-delta-our %gram src gam)
+      =+  sed=(~(get by sourced) src)
+      ?:  |(?=($~ sed) ?=($~ (find [u.old]~ u.sed)))
+        (so-delta-our %sourced src u.old)
+      +>.$
     ::
     :>  #
     :>  #  %permissions
@@ -1728,6 +1736,9 @@
           $gram
         (sa-change-gram +.det)
       ::
+          $sourced
+        (sa-add-gram-source +.det)
+      ::
           $config
         =.  +>
           %-  sa-emil
@@ -1746,6 +1757,19 @@
         ==
       ==
     ::
+    ++  sa-add-gram-source
+      :>    remember message source
+      :>
+      :>  if it's not already known, make note of the
+      :>  fact that message {num} was heard from {src}.
+      ::
+      |=  {src/circle num/@ud}
+      ^+  +>
+      =-  +>.$(sourced -)
+      =+  sed=(fall (~(get by sourced) src) ~)
+      ?^  (find ~[num] sed)  sourced
+      (~(put by sourced) src [num sed])
+    ::
     ++  sa-change-gram
       :>    save/update message
       :>
@@ -1757,22 +1781,17 @@
       ::TODO  move "known" logic up into ++so? that way,
       ::      we can attach message numbers to changes.
       =+  old=(~(get by known) uid.gam)
-      =.  sourced
-        =+  sed=(fall (~(get by sourced) src) ~)
-        ?~  old  (~(put by sourced) src [count sed])
-        ?^  (find ~[u.old] sed)  sourced
-        %+  ~(put by sourced)  src
-        :-  count
-        (fall (~(get by sourced) src) ~)
       ?~  old
         ::  new message
-        %_  +>.$
+        %.  [src count]
+        %_  sa-add-gram-source
           grams    (welp grams [gam ~])
           count    +(count)
           known    (~(put by known) uid.gam count)
         ==
       ::  changed message
-      %_  +>.$
+      %.  [src u.old]
+      %_  sa-add-gram-source
         grams    %+  welp
                  (scag (dec (max u.old 1)) grams)
                  [gam (slag u.old grams)]
@@ -2164,6 +2183,7 @@
     $follow     !!
     $inherited  !!
     $sequent    !!
+    $sourced    !!
   ::
       $gram
     :+  %gram
@@ -2276,7 +2296,7 @@
       $burden
     ?.  ?=($story -.det)  ~
     ?:  &(=(who.qer src.bol) =(rir /report/(scot %p src.bol)))  ~
-    ?:  ?=(?($follow $inherited $sequent) -.det.det)  ~
+    ?:  ?=(?($follow $inherited $sequent $sourced) -.det.det)  ~
     ::  only burden channels for now.
     ?.  (~(has by stories) nom.det)  ~
     ?.  =(%channel sec.con.shape:(~(got by stories) nom.det))  ~
