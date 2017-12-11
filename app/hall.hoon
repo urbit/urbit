@@ -1218,9 +1218,12 @@
       ::
       |=  sep/speech
       ^-  speech
-      ?.  ?=($lin -.sep)  sep
-      %_  sep
-          msg
+      ?+  -.sep  sep
+          ?($ire $fat $app)
+        sep(sep $(sep sep.sep))
+      ::
+          $lin
+        =-  sep(msg -)
         %-  crip
         %-  tufa
         %+  turn  (tuba (trip msg.sep))
