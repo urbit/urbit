@@ -10,6 +10,8 @@ urbit.on \exit (code)->
   console.log "\nnode: urbit exited with code #code\n"
   process.exit code
 
+console.log "FIXME Running Ubuntu 14.04, which causes a libtinfo version info warning. Should update to 16.04.\n"
+  
 fin = no
 urbit.pipe (new stream-snitch /dojo> /g).on \match ->
     return if fin
