@@ -8245,18 +8245,19 @@
     =+  jon=(apex:musk bus q.pro)
     ?~  jon
       ?:  fab
-        pro
+        [p.pro [%10 [%live %1 %blow-stop] q.pro]]
+      [p.pro [%10 [%live %1 %blow-stop] q.pro]]
       ~|  %constant-folding-stopped
-      !!
+      ::  !!
     ?:  ?=($| -.u.jon)
       ?:  fab
-        pro
-      ~|  %constant-folding-blocked
+        [p.pro [%10 [%live %1 %blow-block] q.pro]]
+      [p.pro [%10 [%live %1 %blow-block-fab] q.pro]]
       ::  ~_  (dunk '%musk-blocked-type')
       ::  ~|  [%musk-blocked-gene gen]
       ::  ~|  [%musk-blocked-mask mask.bus]
       ::  ~|  [%musk-blocked-formula q.pro]
-      !!
+      ::  !!
     [p.pro [%1 p.u.jon]]
   ::
   ++  burn
