@@ -11,6 +11,11 @@
 /-    hall                                              ::  structures
 /+    hall, hall-legacy                                 ::  libraries
 /=    seed  /~  !>(.)
+/=    filter-gram
+      /^  $-(telegram:hall telegram:hall)
+      /|  /:  /%/filter  /!noun/
+          /~  |=(t/telegram:hall t)
+      ==
 ::
 ::::
   ::
@@ -1292,6 +1297,7 @@
       ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
       =.  sep.gam  (so-sane sep.gam)
+      =.  gam  (filter-gram gam)
       ::  if we already have it, ignore.
       =+  old=(~(get by known) uid.gam)
       ?.  &(?=(^ old) =(gam (snag u.old grams)))
