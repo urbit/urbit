@@ -6284,7 +6284,7 @@
   ==
 ::
 ++  cons                                                ::  make formula cell
-  ~/  %clhp
+  ~/  %cons
   |=  {vur/nock sed/nock}
   ^-  nock
   ?:  ?=({{$0 *} {$0 *}} +<)
@@ -8153,7 +8153,7 @@
       %rest   rest
       %tack   tack
       %toss   toss
-      %zpgr   wrap
+      %wrap   wrap
     ==
   =+  :*  fan=*(set {type hoon})
           rib=*(set {type type hoon})
@@ -9865,7 +9865,7 @@
     [(mate p.mox `_p.mox`[~ p.geq]) [[q.geq q.i.men] q.mox]]
   ::
   ++  wrap
-    ~/  %zpgr
+    ~/  %wrap
     |=  yoz/?($lead $iron $zinc)
     ~_  leaf+"wrap"
     ^-  type
