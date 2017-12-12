@@ -63,6 +63,7 @@
       $%  {$diff lime}                                  ::
           {$poke wire dock pear}                        ::
           {$peer wire dock path}                        ::
+          {$pull wire dock $~}                          ::
       ==                                                ::
     ++  work                                            ::>  interface action
       $%  ::  circle management                         ::
@@ -118,7 +119,8 @@
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  [~ ..prep(+<+ u.old)]
+  :_  ..prep(+<+ u.old)
+  [[ost.bol %pull / server ~] ~]
 ::
 ::>  ||
 ::>  ||  %utility
