@@ -345,9 +345,16 @@
         |=  {c/circle m/(jug ship naem)}
         (~(put ju m) hos.c nom.c)
       =?  ..ta-action  (~(has by cic) our.bol)
-        %-  ~(rep in (~(get ju cic) our.bol))
-        |=  {n/naem _ta}  ::  beware, urbit/arvo#447
-        (affect n %status [our.bol n] our.bol dif)
+        =+  nos=~(tap in (~(get ju cic) our.bol))
+        |-  ^+  ..ta-action
+        ?~  nos  ..ta-action
+        =.  ..ta-action
+          (affect i.nos %status [our.bol i.nos] our.bol dif)
+        $(nos t.nos)
+        ::TODO  runtime error
+        ::%-  ~(rep in (~(get ju cic) our.bol))
+        ::|=  {n/naem _ta}  ::  beware, urbit/arvo#447
+        ::(affect n %status [our.bol n] our.bol dif)
       =.  cic  (~(del by cic) our.bol)
       %-  ta-deltas
       %-  ~(rep by cic)
