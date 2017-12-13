@@ -2620,7 +2620,10 @@
   |=  wir/wire
   ^-  (quip move _+>)
   :_  +>
-  ?.  =(src.bol our.bol)  ~
+  ?.  =(src.bol our.bol)
+    ~&  [%kicked-by src.bol wir]
+    ~
+  ~&  [%self-quit--resubbing wir]
   [(wire-to-peer wir) ~]
 ::
 ++  quit-circle
