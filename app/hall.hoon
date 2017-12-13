@@ -2619,12 +2619,7 @@
   ::
   |=  wir/wire
   ^-  (quip move _+>)
-  :_  +>
-  ?.  =(src.bol our.bol)
-    ~&  [%kicked-by src.bol wir]
-    ~
-  ~&  [%self-quit--resubbing wir]
-  [(wire-to-peer wir) ~]
+  [[(wire-to-peer wir) ~] +>]
 ::
 ++  quit-circle
   :>    dropped circle sub
@@ -2636,9 +2631,6 @@
   %+  etch-circle  [%circle wir]
   |=  {nom/naem src/source}
   %-  pre-bake
-  ::  when we got kicked, don't resub, remove source.
-  ?.  =(src.bol our.bol)
-    ta-done:(ta-action:ta %source nom | [src ~ ~])
   ta-done:(ta-resub:ta nom src)
 ::
 ++  coup-repeat
