@@ -2624,18 +2624,18 @@
   ::
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move _+>)
-  ?.  ?=($circle -.wir)
-    ?~  fal  [~ +>]
-    ~|  reap-fail+wir
-    (mean u.fal)
-  %+  etch-circle  wir
-  |=  {nom/naem src/source}
-  ?~  fal
-    %-  pre-bake
-    ta-done:(ta-greet:ta nom src)
   %-  pre-bake
+  %+  welp
+    ?.  ?=({$circle *} wir)  ~
+    =+  wer=(etch wir)
+    ?>  ?=($circle -.wer)
+    =<  ta-done
+    %.  [nom.wer src.wer]
+    ?~  fal  ta-greet:ta
+    ta-leave:ta
+  ?~  fal  ~
   =<  ta-done
-  =-  (ta-grieve:(ta-leave:ta nom src) - u.fal)
+  =-  (ta-grieve:ta - u.fal)
   =+  (wire-to-target wir)
   %+  weld  "failed (re)subscribe to {(scow %p p)} on "
   %+  roll  q
