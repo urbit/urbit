@@ -1150,6 +1150,15 @@
       |=  src/source
       ^+  +>
       =+  seq=(~(get by sequence) cir.src)
+      =/  ner/range
+        ?~  seq  ran.src
+        =-  `[[%ud u.seq] -]
+        ?~  ran.src  ~
+        tal.u.ran.src
+      ::  if our subscription changes or ends, remove
+      ::  the original source.
+      =?  +>.$  !=(ner ran.src)
+        (so-delta-our %config so-cir %source | src)
       ::  if we're past the range, don't resubscribe.
       ?:  ?&  ?=(^ ran.src)
               ?=(^ tal.u.ran.src)
@@ -1161,13 +1170,8 @@
                       ==
               ==
           ==
-        (so-delta-our %follow | [src ~ ~])
-      =-  (so-delta-our %follow & [[cir.src -] ~ ~])
-      ^-  range
-      ?~  seq  ran.src
-      =-  `[[%ud u.seq] -]
-      ?~  ran.src  ~
-      tal.u.ran.src
+        +>.$
+      (so-delta-our %follow & [[cir.src -] ~ ~])
     ::
     ++  so-first-grams
       :>    beginning of stream
