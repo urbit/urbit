@@ -174,13 +174,27 @@
     |=  des/(list delta)
     %_(+> deltas (welp (flop des) deltas))
   ::
-  ++  ta-note
-    :>  sends {msg} as an %app message to the user's inbox.
+  ++  ta-speak
+    :>  sends {sep} as an %app message to the user's inbox.
     ::
-    |=  msg/tape
+    |=  sep/speech
     %+  ta-action  %phrase
     :-  [[our.bol %inbox] ~ ~]
-    [%app dap.bol %lin | (crip msg)]~
+    [%app dap.bol sep]~
+  ::
+  ++  ta-grieve
+    :>  sends a stack trace to the user's inbox.
+    ::
+    |=  {msg/tape fal/tang}
+    %^  ta-speak  %fat
+      [%name 'stack trace' %tank fal]
+    [%lin | (crip msg)]
+  ::
+  ++  ta-note
+    :>  sends {msg} to the user's inbox.
+    ::
+    |=  msg/tape
+    (ta-speak %lin | (crip msg))
   ::
   ++  ta-evil
     :>  tracing printf and crash.
@@ -641,10 +655,12 @@
     ::
     |=  {who/circle ses/(list serial) fal/(unit tang)}
     ^+  +>
-    ~?  ?=(^ fal)  u.fal
-    =-  (ta-delta %done who ses -)
-    ?~  fal  %accepted
-    ~>(%slog.[0 u.fal] %rejected)
+    ?~  fal
+      (ta-delta %done who ses %accepted)
+    =.  +>  (ta-delta %done who ses %rejected)
+    =-  (ta-grieve - u.fal)
+    %+  weld  "{(scow %ud (lent ses))} message(s) "
+    "rejected by {(scow %p hos.who)}/{(trip nom.who)}"
   ::
   ++  ta-resub
     :>    subscription dropped
@@ -1296,6 +1312,12 @@
       |=  {src/circle gam/telegram}
       ^+  +>
       ::  check for write permissions.
+      ::TODO  we want to !! instead of silently failing,
+      ::      so that ++coup-repeat of the caller gets
+      ::      an error. but the caller may not be the
+      ::      author. if we check for that to be true,
+      ::      can we guarantee it's not an older message
+      ::      getting resent? does that matter? think.
       ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
       =.  sep.gam  (so-sane sep.gam)
@@ -2607,10 +2629,14 @@
   ?~  fal
     %-  pre-bake
     ta-done:(ta-greet:ta nom src)
-  =.  u.fal  [>%failed-subscribe nom src< u.fal]
-  %-  (slog (flop u.fal))
   %-  pre-bake
-  ta-done:(ta-leave:ta nom src)
+  =<  ta-done
+  =-  (ta-grieve:(ta-leave:ta nom src) - u.fal)
+  =+  (wire-to-target wir)
+  %+  weld  "failed (re)subscribe to {(scow %p p)} on "
+  %+  roll  q
+  |=  {a/@ta b/tape}
+  :(weld b "/" (trip a))
 ::
 ++  quit
   :>    dropped subscription
