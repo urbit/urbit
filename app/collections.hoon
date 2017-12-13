@@ -2,11 +2,21 @@
 ::
 /-  hall
 /+  hall
+:: =/  cols
+::   /:  /===/web/collections
+::   /_  /.  /=  conf  /coll-config/
+::           /=  tops
+::         /;  (rekey %da)  :: XX add /_ @foo back maybe
+::         /_  /.  /coll-topic/
+::                 /=  comt
+::               /;  (rekey %da)  :: XX add /_ @foo back maybe
+::               /_  /coll-comment/
+::       ==
 ::
 ::    things to keep in sync:
-::  collections: state, files, hall          unique by name
-::  topics:      state, files, hall, notify  unique by date
-::  comments:    s a e, files,       notify  unique by date/number?
+::  collections: files, hall          unique by name
+::  topics:      files, hall, notify  unique by date
+::  comments:    files,       notify  unique by date
 ::
 ::    filepaths:
 ::  /web/collections/my-coll.config
@@ -89,7 +99,7 @@
   |=  a/@
   ^-  (quip move _+>)
   ~&  %poked
-  ta-done:(ta-write-config:ta %test ['a description' & & [~palzod ~ ~]])
+  ta-done:(ta-write-config:ta %test ['a description' pub=& vis=& [~palzod ~ ~]])
 ::
 ++  writ
   |=  {wir/wire rit/riot:clay}
@@ -100,19 +110,25 @@
   ::      or /web/collections/[col] for each collection and then
   ::      /web/collections/[col]/[top] for each topic as they get created.
 ::
+++  ignore-action
+  |=  act/action  ^-  ?
+  ?-    -.act
+      ?($create $delete)
+    ?:  (team:title our.bol src.bol)  |
+    ~|([%unauthorized -.act src.bol] !!)
+  ::
+      ?($submit $comment)
+    =/  col  (~(get by cols) col.act)
+    ?~  col  &
+    ?:  publ.conf.u.col
+      (~(has in mems.conf.u.col) src.bol)  :: not on blacklist
+    !(~(has in mems.conf.u.col) src.bol)   :: is on whitelist
+  ==
+::
 ++  poke-collections-action
   |=  act/action
-  ^-  (quip move _+>)
-  ?.  ?-  -.act
-          ?($create $delete)
-        (team:title our.bol src.bol)
-      ::
-          ?($submit $comment)
-        =+  col=(~(get by cols) nom.act)
-        ?~  col  |
-        ?!  .=  publ.conf.u.col
-        (~(has in mems.conf.u.col) src.bol)
-      ==
+  ^-  (quip move _+>)      
+  ?:  (ignore-action act)
     [~ +>]
   =<  ta-done
   ?-  -.act
@@ -137,53 +153,49 @@
 ::
 ++  ta
   |_  moves/(list move)
-  ::
-  ++  ta-done
-    [(flop moves) +>]
-  ::
-  ++  ta-emit
-    |=  mov/move
-    %_(+> moves [mov moves])
-  ::
-  ++  ta-emil
-    |=  mos/(list move)
-    %_(+> moves (welp (flop mos) moves))
-  ::
+  ++  ta-done  [(flop moves) +>]
+  ++  ta-emit  |=(mov/move %_(+> moves [mov moves]))
+  ++  ta-emil  |=(mos/(list move) %_(+> moves (welp (flop mos) moves)))
   ++  ta-hall-action
-    |=  act/action:hall
+    |=  act=action:hall
     %-  ta-emit
     :^  ost.bol  %poke  /  ::TODO  wire, handle ++coup.
     :+  [our.bol %hall]  %hall-action
     act
   ::
+  ++  ta-hall-actions
+    |=  act=(list ?(~ action:hall))  ^+  +>
+    ?~  act  +>
+    ?~  i.act  $(act t.act)
+    $(act t.act, +> (ta-hall-action i.act))  ::TODO group at all?
+  ::
   ::  %performing-actions
   ::
   ++  ta-create
-    |=  {wat/kind des/cord pub/? vis/? ses/(set ship)}
+    |=  {wat/kind cof/config}
     ^+  +>
-    =+  nom=(sane-cord des)
-    =-  (ta-change-config nom - %coll)
-    [des pub vis ses]
+    ::XX unhandled kind
+    =/  col  desc.cof
+    =?  col  !((sane %ta) col)  (scot %t col)
+    (ta-change-config col cof %poke)
   ::
   ++  ta-submit
     |=  {col/term tit/cord wat/wain}
-    %+  ta-change-topic  col
-    [[tit src.bol now.bol now.bol wat] %coll]
+    =/  top/topic  [tit src.bol now.bol now.bol wat]
+    (ta-change-topic col top %poke)
   ::
   ++  ta-comment
     |=  {col/term top/@da com/@da wat/wain}
     ^+  +>
-    =+  col=(~(get by cols) col)
-    ?~  col  +>.$
-    =+  tob=(~(get by tops.u.col) top)
-    ?~  tob  +>.$
-    =+  old=(get-comment col top com)
-    ?~  old
-      %^  ta-write-comment  col  top
+    ?.  (~(has by cols) col)  +>.$
+    =/  cos=collection  (~(got by cols) col)
+    ?.  (~(has by tops.cos) top)  +>.$
+    =/  old/comment
+      %+  fall  (get-comment col top com)
       [src.bol now.bol now.bol wat]
-    ?.  =(who.u.old src.bol)  +>.$
+    ?.  =(who.old src.bol)  +>.$  :: error?
     %^  ta-write-comment  col  top
-    u.old(wat wat, wed now.bol)
+    [who.old wen.old now.bol wat]
   ::
   ++  ta-delete
     |=  col/term
@@ -223,179 +235,140 @@
     ==
   ::
   ++  ta-change-config
-    |=  {col/term new/config src/?($file $hall $coll)}
+    |=  {col/term new/config src/?($file $hall $poke)}
     ^+  +>
+    ::
+    ::REVIEW I think clay writes are idempotent?
     ::  if not changed on disk, update the file.
-    =?  +>  !?=($file src)
+    =?  +>  !?=($file src)  
       (ta-write-config col new)
     =+  ole=(~(get by cols) col)
     ::  if we don't have it yet, add to state and hall.
     ?~  ole
       =.  cols  (~(put by cols) col new ~)
-      (ta-hall-create col ~ new)
+      (ta-hall-create col new)
+    =/  old  conf.u.ole
     ::  make sure publ stays unchanged.
     =.  +>.$
-      ?:  =(publ.conf.u.ole publ.new)  +>.$
-      =.  new  new(publ publ.conf.u.ole)
+      ?:  =(publ.new publ.old)  +>.$
+      =.  publ.new  publ.old
       (ta-write-config col new)
     ::  update config in state.
     =.  cols  (~(put by cols) col u.ole(conf new))
     ::  update config in hall.
-    =+  dif=(ta-config-diff conf.u.ole new)
-    =?  +>.$  ?=(^ des.dif)
-      (ta-hall-set-description col u.des.dif)
-    =?  +>.$  ?=(^ vis.dif)
-      (ta-hall-set-visible col u.vis.dif)
-    ::TODO  do below for all topic circles as well.
-    =?  +>.$  ?=(^ rem.dif)
-      (ta-hall-set-permissions col | rem.dif)
-    =?  +>.$  ?=(^ add.dif)
-      (ta-hall-set-permissions col & add.dif)
-    +>.$
-  ::
-  ++  ta-config-diff
-    |=  {old/config new/config}
-    ^-  $:  des/(unit cord)
-            vis/(unit ?)
-            rem/(set ship)
-            add/(set ship)
-        ==
-    :+  ?:  =(desc.old desc.new)  ~
-        `desc.new
+    =/  nam  (circle-for col)
+    %-  ta-hall-actions  :~
+      ?:  =(desc.old desc.new)  ~
+      [%depict nam desc.new]
+    ::
       ?:  =(visi.old visi.new)  ~
-      `visi.new
-    :-  (~(dif in mems.old) mems.new)
-        (~(dif in mems.new) mems.old)
+      [%public visi.new our.bol nam]
+    ::
+      (hall-permit nam | (~(dif in mems.old) mems.new))
+      (hall-permit nam & (~(dif in mems.new) mems.old))
+    ==
   ::
   ++  ta-change-topic
-    |=  {col/term top/topic src/?($file $coll)}
+    |=  {col/term top/topic src/?($file $poke)}
     ^+  +>
-    =+  old=(get-topic col wen.top)
+    =/  old  (get-topic col wen.top)
     ::  only original poster and host can edit.
-    ?.  |(?=($~ old) =(who.u.old src.bol) ?=($file src))  +>.$
-    ::  ensure legit author.
-    =?  top  ?=($coll src)
-      top(who src.bol)
-    ::  change last edit date.
-    =.  top  top(wed now.bol)
-    ::  store in state.
-    =.  cols
-      %+  ~(put by cols)  col
-      =+  col=(~(got by cols) col)
-      col(tops (~(put by tops.col) wen.top top))
-    =+  new=?=($~ old)
+    ?.  |(?=(~ old) =(who.u.old src.bol) ?=($file src))  +>.$
+    :: 
+    ::REVIEW this was just set in ta-submit?
+    =?  who.top  ?=($poke src)  src.bol   ::  ensure legit author
+    =.  wed.top  now.bol                  ::  change last edit date
+    ::  store in state
+    =/  cos  (~(got by cols) col)
+    =.  tops.cos  (~(put by tops.cos) wen.top top)
+    =.  cols  (~(put by cols) col cos)
+    ::
+    =/  new  =(~ old)
     =?  +>.$  new
-      (ta-hall-create col `wen.top conf:(~(got by cols) col))
-    =.  +>.$
-      (ta-write-topic col top)
+      (ta-hall-create-topic col wen.top conf.cos)
+    =.  +>.$  (ta-write-topic col top)
     (ta-hall-notify col wen.top ~ new wat.top)
   ::
-  ++  ta-change-comment
-    |=  {col/term top/@da com/comment src/?($file $coll)}
-    ^+  +>
-    =+  old=(get-comment col top wen.com)
-    ::  only original poster and host can edit.
-    ?.  |(?=($~ old) =(who.u.old src.bol) ?=($file src))
-      +>.$
-    ::  ensure legit author.
-    =?  com  ?=($coll src)
-      com(who src.bol)
-    ::  change last edit date.
-    =.  com  com(wed now.bol)
-    =.  +>.$
-      (ta-write-comment col top com)
-    (ta-hall-notify col top `wen.com ?=($~ old) wat.com)
+  ::REVIEW never called
+  ::++  ta-change-comment
+  ::  |=  {col/term top/@da com/comment src/?($file $poke)}
+  ::  ^+  +>
+  ::  =/  old  (get-comment col top wen.com)
+  ::  ::  only original poster and host can edit.
+  ::  ?.  |(?=(~ old) =(who.u.old src.bol) ?=($file src))
+  ::    +>.$
+  ::  =?  who.com  ?=($poke src)  src.bol  ::  ensure legit author
+  ::  =.  wed.com  now.bol                 ::  change last edit date.
+  ::  ::
+  ::  =.  +>.$  (ta-write-comment col top com)
+  ::  (ta-hall-notify col top `wen.com =(~ old) wat.com)
   ::
   ::  %writing-files
+  ::
+  ++  ta-write
+    |=  [wir=[term ~] pax=path cay=cage]  ^+  +>
+    =,  space:userlib
+    =/  pax=path
+      (make-path (weld pax /[p.cay]))
+    %+  ta-emit  ost.bol
+    [%info (weld wir pax) our.bol (foal pax cay)]
   ::
   ++  ta-write-config
     |=  {col/term cof/config}
     ^+  +>
-    %-  ta-emit
-    =/  paf/path
-      %-  make-path
-      /[col]/collections-config
-    :*  ost.bol
-        %info
-        /config/[col]
-        our.bol
-        (foal:space:userlib paf [%collections-config !>(cof)])
-    ==
+    %^  ta-write  /config
+      /[col]
+    [%collections-config !>(cof)]
   ::
   ++  ta-write-topic
     |=  {col/term top/topic}
     ^+  +>
-    =+  wan=(scot %da wen.top)
-    =+  pax=(make-path /[col]/[wan]/collections-topic)
-    %-  ta-emit
-    :*  ost.bol
-        %info
-        /topic/[col]/[wan]
-        our.bol
-        (foal:space:userlib pax [%collections-topic !>(top)])
-    ==
+    %^  ta-write  /topic
+      /[col]/(scot %da wen.top)
+    [%collections-topic !>(top)]
   ::
   ++  ta-write-comment
     |=  {col/term top/@da com/comment}
     ^+  +>
-    =+  tap=(scot %da top)
-    =+  wan=(scot %da wen.com)
-    =/  pax/path
-      %-  make-path
-      /[col]/[tap]/[wan]/collections-comment
-    %-  ta-emit
-    :*  ost.bol
-        %info
-        /comment/[col]/[tap]/[wan]
-        our.bol
-        (foal:space:userlib pax [%collections-comment !>(com)])
-    ==
+    %^  ta-write  /comment
+      /[col]/(scot %da top)/(scot %da wen.com)
+    [%collections-comment !>(com)]
   ::
   ::  %hall-changes
   ::
   ++  ta-hall-create
-    |=  {col/term top/(unit @da) cof/config}
+    |=  {col/term cof/config}
     ^+  +>
-    =+  nam=(make-circle col top)
-    =.  +>.$
-      %-  ta-hall-action
+    =+  nam=(circle-for col)
+    =.  +>.$  (ta-hall-configure nam cof)
+    %-  ta-emit
+    :*  0 ::REVIEW bone 0?
+        %peer
+        /hall/[col]
+        [our.bol %hall]
+        /circle/[nam]/config-l
+    ==
+  ::
+  ++  ta-hall-create-topic
+    |=  {col/term top/@da cof/config}
+    ^+  +>
+    =+  nam=(circle-for-topic col top)
+    =.  +>.$  (ta-hall-configure nam cof)
+    %-  ta-hall-action
+    ::NOTE  %source also subs to local config & presence, but
+    ::      that generally won't result in visible notifications.
+    :^  %source  (circle-for col)  &
+    (sy `source:hall`[our.bol nam]~ ~)
+  ::
+  ++  ta-hall-configure
+    |=  [nam=term cof=config]  ^+  +>
+    ^+  +>
+    %-  ta-hall-actions  :~
       [%create nam desc.cof ?:(publ.cof %journal %village)]
-    =?  +>.$  ?=($~ top)
-      %-  ta-emit
-      :*  0
-          %peer
-          /hall/[col]
-          [our.bol %hall]
-          /circle/[nam]/config-l
-      ==
-    =?  +>.$  visi.cof
-      (ta-hall-set-visible nam &)
-    =?  +>.$  ?=(^ top)
-      %-  ta-hall-action
-      ::NOTE  %source also subs to local config & presence, but
-      ::      that generally won't result in visible notifications.
-      :^  %source  (make-circle col ~)  &
-      [`source:hall`[[our.bol nam] ~] ~ ~]
-    ?~  mems.cof  +>.$
-    (ta-hall-set-permissions nam & mems.cof)
+      ?.(visi.cof ~ [%public & our.bol nam])
+      (hall-permit nam & mems.cof)
+    ==
   ::
-  ++  ta-hall-set-description
-    |=  {col/term des/cord}
-    ^+  +>
-    %-  ta-hall-action
-    [%depict (make-circle col ~) des]
-  ::
-  ++  ta-hall-set-visible
-    |=  {col/term vis/?}
-    ^+  +>
-    %-  ta-hall-action
-    [%public vis our.bol (make-circle col ~)]
-  ::
-  ++  ta-hall-set-permissions
-    |=  {col/term inv/? sis/(set ship)}
-    ^+  +>
-    %-  ta-hall-action
-    [%permit (make-circle col ~) inv sis]
   ::
   ++  ta-hall-notify
     |=  {col/term top/@da com/(unit @da) new/? wat/wain}
@@ -405,32 +378,24 @@
         [%fat [%text wat] [%lin | msg]]~
     ^-  {tar/naem:hall msg/cord}
     ::TODO
-    [(make-circle col ~) 'TODO']
+    [(circle-for col) 'TODO']
   --
 ::
-++  sane-cord
-  |=  c/cord
-  ^-  term
-  %-  crip
-  %-  zing
-  %+  scan  (cass (trip c))
-  =+  val=;~(pose low nud)
-  =+  inv=(plus ;~(less ;~(pose low nud) next))
-  %+  ifix  [(star inv) (star inv)]
-  %-  star  ;~  pose
-    ;~(plug val (easy ~))
-    ;~(plug (cold '-' inv) val (easy ~))
-  ==
+++  hall-permit
+  |=  [nam=term inv=? sis=(set ship)]
+  ?~  sis  ~
+  [%permit nam inv sis]
 ::
-++  make-circle
-  |=  {n/term t/(unit @da)}
-  ^-  term
-  ;:  (cury cat 3)
-    %collection--
-    n
-    ?~(t %$ '--')
-    ?~(t %$ (sane-cord (scot %da u.t)))
-  ==
+::
+++  circle-for
+  |=  n/term  ^-  term
+  (cat 3 'collection--' n)
+::
+++  circle-for-topic
+  |=  {n/term t/@da}  ^-  term
+  %-  circle-for 
+  %+  rap  3
+  [n (turn (scow %da t) |=(a=char ?:(((sane %tas) a) a '-')))]
 ::
 ++  beak-now
   byk.bol(r [%da now.bol])
@@ -448,27 +413,24 @@
 ++  get-config
   |=  col/term
   ^-  (unit config)
-  =/  pax
-    %-  make-path
-    /[col]/collections-config
+  =+  pax=(make-path /[col]/collections-config)
+  ::
   ?.  (has-file pax)  ~
   `.^(config %cx pax)
 ::
 ++  get-topic
   |=  {col/term top/@da}
   ^-  (unit topic)
-  =/  pax
-    %-  make-path
-    /[col]/(scot %da top)/collections-topic
+  =+  pax=(make-path /[col]/(scot %da top)/collections-topic)
+  ::
   ?.  (has-file pax)  ~
   `.^(topic %cx pax)
 ::
 ++  get-comment
   |=  {col/term top/@da wen/@da}
   ^-  (unit comment)
-  =/  pax
-    %-  make-path
-    /[col]/(scot %da top)/(scot %da wen)/collections-comment
+  =+  pax=(make-path /[col]/(scot %da top)/(scot %da wen)/collections-comment)
+  ::
   ?.  (has-file pax)  ~
   `.^(comment %cx pax)
 --
