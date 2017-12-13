@@ -119,8 +119,7 @@
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  :_  ..prep(+<+ u.old)
-  [[ost.bol %pull / server ~] ~]
+  [~ ..prep(+<+ u.old)]
 ::
 ::>  ||
 ::>  ||  %utility
