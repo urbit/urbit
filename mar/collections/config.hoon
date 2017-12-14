@@ -22,6 +22,11 @@
     %+  turn  (sort ~(tap in mems.con) aor)
     |=  a=@p
     (cat 3 '  ' (scot %p a))
+  ++  elem  :: web display
+    ;div
+      ;pre: {(trip (of-wain:format txt))}
+      ;list;  :: show topics
+    ==
   --
 ::
 ++  grab
@@ -37,7 +42,7 @@
         (rash vis.txs ;~(pfix (jest 'visible: ') (flag %y %n)))
     %-  sy
     %+  turn  (skip mem.txs |=(a=@t =(a '')))  :: skip trailing blank
-    (curr rash ;~(pfix (jest '  ~') fed:ag))      
+    (curr rash ;~(pfix (jest '  ~') fed:ag))
   --
 ++  grad  %txt
 --
