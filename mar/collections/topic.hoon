@@ -3,7 +3,6 @@
 |_  $=  top
     $:  tit/cord                                        ::  title
         who/ship                                        ::  author
-        wen/@da                                         ::  created
         wed/@da                                         ::  editted
         wat/wain                                        ::  content
     ==                                                  ::
@@ -17,7 +16,7 @@
   ++  txt
     ^-  (list @t)
     :+  (cat 3 '> ' tit.top)
-      (crip <[by=who.top on=wen.top ed=wed.top]>)
+      (crip <[by=who.top ed=wed.top]>)
     wat.top
   --
 ::
@@ -35,12 +34,11 @@
       %-  %-  hard
           $:  %cltr
               [%ktts %by [%sand %p who=@p]]
-              [%ktts %on [%sand %da wen=@da]]
               [%ktts %ed [%sand %da wed=@da]]
               ~
           ==
       (ream inf.txs)
-    [tit who.inf wen.inf wed.inf wat.txs]
+    [tit who.inf wed.inf wat.txs]
   --
 ++  grad  %txt
 --

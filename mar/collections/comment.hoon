@@ -2,7 +2,6 @@
 ::
 |_  $=  com
     $:  who/ship                                        ::  author
-        wen/@da                                         ::  created
         wed/@da                                         ::  editted
         wat/wain                                        ::  content
     ==                                                  ::
@@ -15,7 +14,7 @@
     (of-wain:format txt)
   ++  txt
     ^-  (list @t)
-    :-  (crip <[by=who.com on=wen.com ed=wed.com]>)
+    :-  (crip <[by=who.com ed=wed.com]>)
     wat.com
   --
 ::
@@ -31,12 +30,11 @@
       %-  %-  hard
           $:  %cltr
               [%ktts %by [%sand %p who=@p]]
-              [%ktts %on [%sand %da wen=@da]]
               [%ktts %ed [%sand %da wed=@da]]
               ~
           ==
       (ream inf.txs)
-    [who.inf wen.inf wed.inf wat.txs]
+    [who.inf wed.inf wat.txs]
   --
 ++  grad  %txt
 --

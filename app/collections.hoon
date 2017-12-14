@@ -57,7 +57,6 @@
       ==                                                ::
     ++  comment                                         ::
       $:  who/ship                                      ::  author
-          wen/@da                                       ::  created
           wed/@da                                       ::  editted
           wat/wain                                      ::  content
       ==                                                ::
@@ -116,12 +115,15 @@
   ::[~ ..prep(+<+ u.old)]
 ::
 ++  poke-noun
-  |=  a=?(~ @da)
+  |=  a=$@(?(~ @da) [p=@da q=@da])
   ^-  (quip move _+>)
   ~&  %poked
+  =<  ta-done
   ?~  a  
-    ta-done:(ta-create:ta %fora ['a description' pub=& vis=& [~palzod ~ ~]])
-  ta-done:(ta-submit:ta a 'a topic' ~['with contents'])
+    (ta-create:ta %fora ['a description' pub=& vis=& [~palzod ~ ~]])
+  ?@  a
+    (ta-submit:ta a 'a topic' ~['with contents'])
+  (ta-comment:ta p.a q.a now.bol ~['a comment' 'yo'])
 ::
 ++  writ
   |=  {wir/wire rit/riot:clay}
@@ -200,8 +202,8 @@
   ::
   ++  ta-submit
     |=  {col/time tit/cord wat/wain}
-    =/  top/topic  [tit src.bol now.bol now.bol wat]
-    (ta-change-topic col top %poke)
+    =/  top/topic  [tit src.bol now.bol wat]
+    (ta-change-topic col now.bol top %poke)
   ::
   ++  ta-comment
     |=  {col/time top/@da com/@da wat/wain}
@@ -211,10 +213,11 @@
     ?.  (~(has by tops.cos) top)  +>.$
     =/  old/comment
       %+  fall  (get-comment col top com)
-      [src.bol now.bol now.bol wat]
+      [src.bol now.bol wat]
     ?.  =(who.old src.bol)  +>.$  :: error?
     %^  ta-write-comment  col  top
-    [who.old wen.old now.bol wat]
+    :-  com
+    [who.old now.bol wat]
   ::
   ++  ta-delete
     |=  col/time
@@ -288,9 +291,9 @@
     ==
   ::
   ++  ta-change-topic
-    |=  {col/time top/topic src/?($file $poke)}
+    |=  {col/time wen/@da top/topic src/?($file $poke)}
     ^+  +>
-    =/  old  (get-topic col wen.top)
+    =/  old  (get-topic col wen)
     ::  only original poster and host can edit.
     ?.  |(?=(~ old) =(who.u.old src.bol) ?=($file src))  +>.$
     :: 
@@ -298,15 +301,16 @@
     =?  who.top  ?=($poke src)  src.bol   ::  ensure legit author
     =.  wed.top  now.bol                  ::  change last edit date
     ::  store in state
+    ~|  ~(key by cols)
     =/  cos  (~(got by cols) col)
-    =.  tops.cos  (~(put by tops.cos) wen.top top)
+    =.  tops.cos  (~(put by tops.cos) wen top)
     =.  cols  (~(put by cols) col cos)
     ::
     =/  new  =(~ old)
     =?  +>.$  new
-      (ta-hall-create-topic col wen.top conf.cos)
-    =.  +>.$  (ta-write-topic col top)
-    (ta-hall-notify col wen.top ~ new wat.top)
+      (ta-hall-create-topic col wen conf.cos)
+    =.  +>.$  (ta-write-topic col wen top)
+    (ta-hall-notify col wen ~ new wat.top)
   ::
   ::REVIEW never called
   ::++  ta-change-comment
@@ -339,17 +343,17 @@
     [%collections-config !>(cof)]
   ::
   ++  ta-write-topic
-    |=  {col/time top/topic}
+    |=  {col/time wen/@da top/topic}
     ^+  +>
     %^  ta-write  /topic
-      (dray /[%da]/[%da] col wen.top)
+      (dray /[%da]/[%da] col wen)
     [%collections-topic !>(top)]
   ::
   ++  ta-write-comment
-    |=  {col/time top/@da com/comment}
+    |=  {col/time top/@da wen/@da com/comment}
     ^+  +>
     %^  ta-write  /comment
-      (dray /[%da]/[%da]/[%da] col top wen.com)
+      (dray /[%da]/[%da]/[%da] col top wen)
     [%collections-comment !>(com)]
   ::
   ::  %hall-changes
