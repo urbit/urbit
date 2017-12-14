@@ -15,10 +15,8 @@
     (of-wain:format txt)
   ++  txt
     ^-  (list @t)
-    :^    (scot %p who.com)
-        (scot %da wen.com)
-      (scot %da wed.com)
-    wat
+    :-  (crip <[by=who.com on=wen.com ed=wed.com]>)
+    wat.com
   --
 ::
 ++  grab
@@ -27,12 +25,18 @@
     |=  {p/mite:eyre q/octs:eyre}
     (txt (to-wain:format q.q))
   ++  txt
-    |=  txs/(list @t)
-    ?>  (gte (lent txs) 3)
-    :^    (slav %p (snag 0 txs))
-        (slav %da (snag 1 txs))
-      (slav %da (snag 2 txs))
-    (slag 3 txs)
+    |=  txs/(pole @t)  ^+  com
+    ?>  ?=([inf=@t wat=*] txs)
+    =/  inf  :: REVIEW this seems not v stable
+      %-  %-  hard
+          $:  %cltr
+              [%ktts %by [%sand %p who=@p]]
+              [%ktts %on [%sand %da wen=@da]]
+              [%ktts %ed [%sand %da wed=@da]]
+              ~
+          ==
+      (ream inf.txs)
+    [who.inf wen.inf wed.inf wat.txs]
   --
 ++  grad  %txt
 --

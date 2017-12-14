@@ -15,11 +15,13 @@
     (of-wain:format txt)
   ++  txt
     ^-  (list @t)
-    :^    desc.con
-        ?:(publ.con 'public' 'private')
-      ?:(visi.con 'visible' 'hidden')
-    %+  turn  ~(tap in mems.con)
-    (cury scot %p)
+    :^    (cat 3 '> ' desc.con)
+        (cat 3 'public: ' ?:(publ.con 'y' 'n'))
+      (cat 3 'visible: ' ?:(visi.con 'y' 'n'))
+    :-  'except:'
+    %+  turn  (sort ~(tap in mems.con) aor)
+    |=  a=@p
+    (cat 3 '  ' (scot %p a))
   --
 ::
 ++  grab
@@ -28,14 +30,14 @@
     |=  {p/mite:eyre q/octs:eyre}
     (txt (to-wain:format q.q))
   ++  txt
-    |=  txs/(list @t)
-    ?>  (gte (lent txs) 3)
-    :^    (snag 0 txs)
-        =((snag 1 txs) 'public')
-      =((snag 2 txs) 'visible')
-    %-  ~(gas in *(set ship))
-    %+  murn  (slag 3 txs)
-    (cury slaw %p)
+    |=  txs/(pole @t)
+    ?>  ?=([des=@t pub=@t vis=@t %'except:' mem=*] txs)
+    :^  (rash des.txs ;~(pfix (jest '> ') (cook crip (star next))))
+        (rash pub.txs ;~(pfix (jest 'public: ') (flag %y %n)))
+        (rash vis.txs ;~(pfix (jest 'visible: ') (flag %y %n)))
+    %-  sy
+    %+  turn  mem.txs
+    (curr rash ;~(pfix (jest '  ~') fed:ag))      
   --
 ++  grad  %txt
 --

@@ -116,7 +116,7 @@
   ::[~ ..prep(+<+ u.old)]
 ::
 ++  poke-noun
-  |=  a/@
+  |=  @
   ^-  (quip move _+>)
   ~&  %poked
   ta-done:(ta-write-config:ta now.bol ['a description' pub=& vis=& [~palzod ~ ~]])
