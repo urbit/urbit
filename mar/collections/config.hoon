@@ -36,7 +36,7 @@
         (rash pub.txs ;~(pfix (jest 'public: ') (flag %y %n)))
         (rash vis.txs ;~(pfix (jest 'visible: ') (flag %y %n)))
     %-  sy
-    %+  turn  mem.txs
+    %+  turn  (skip mem.txs |=(a=@t =(a '')))  :: skip trailing blank
     (curr rash ;~(pfix (jest '  ~') fed:ag))      
   --
 ++  grad  %txt
