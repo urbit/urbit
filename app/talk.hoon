@@ -89,6 +89,7 @@
           {$number $@(@ud {@u @ud})}                    ::<  relative/absolute
           {$who audience}                               ::<  presence
           {$what (unit $@(char audience))}              ::<  show bound glyph
+          {$sources circle}                               ::<  show active sources
           ::  ui settings                               ::
           {$bind char (unit audience)}                  ::<  bind glyph
           {$unbind char (unit audience)}                ::<  unbind glyph
@@ -784,6 +785,8 @@
             ==
           ==
         ::
+          ;~((glue ace) (perk %sources ~) circ)
+        ::
           ;~((glue ace) (perk %show ~) circ)
         ::
           ;~((glue ace) (perk %hide ~) circ)
@@ -954,6 +957,7 @@
           $number  (number +.job)
           $who     (who +.job)
           $what    (what +.job)
+          $sources  (list-sources +.job)
           ::  ui settings
           $bind    (bind +.job)
           $unbind  (unbind +.job)
@@ -1253,6 +1257,24 @@
           =.  ..sh-fact  (sh-fact %txt "? {(scow %ud msg)}")
           (activate (snag (sub count +(msg)) grams))
         (sh-lame "…{(reap p.num '0')}{(scow %ud q.num)}: no such telegram")
+      ::
+      ++  list-sources                                  ::<  %sources
+        ::>  display the active sources for our circle.
+        ::
+        |=  cir/circle
+        ^+  ..sh-work
+        %+  sh-fact  %mor
+        %+  turn
+          ::  make sure to exclude {nom} itself.
+          =-  ~(tap in (~(del in src:-) [cir ~]))
+          (fall (~(get by mirrors) cir) *config)
+        |=  s/^source
+        ^-  sole-effect
+        :-  %txt
+        %+  weld  ~(cr-phat cr cir.s)
+        %+  roll  (range-to-path ran.s)
+        |=  {a/@ta b/tape}
+        :(weld b "/" (trip a))
       ::
       ::>  ||
       ::>  ||  %ui-settings
