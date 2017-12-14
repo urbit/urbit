@@ -460,7 +460,10 @@
     |=  {num/@ud gam/telegram}
     =+  old=(snag num grams)
     ?:  =(gam old)  +>.$                                ::  no change
-    =.  grams  (oust [num 1] grams)
+    =.  grams
+      %+  welp
+      (scag num grams)
+      [gam (slag +(num) grams)]
     ?:  =(sep.gam sep.old)  +>.$                        ::  no worthy change
     =<  sh-done
     (~(sh-gram sh cli) gam)
