@@ -1,6 +1,8 @@
 ::                                                      ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::
+!:
+^%
 =<  ride
 =>  %143  =>
 ::                                                      ::
@@ -6015,19 +6017,21 @@
               {$e p/hoon q/(list tuna)}                 ::  element
               {$f p/(list tuna)}                        ::  subflow
           ==                                            ::
+++  hoon-models
+  |%                                                ::REVIEW
+  ++  beer  $@(char {$~ p/hoon})                    ::  simple embed
+  ++  mane  $@(@tas {@tas @tas})                    ::  XML name+space
+  ++  manx  {g/marx c/marl}                         ::  dynamic XML node
+  ++  marl  (list tuna)                             ::  dynamic XML nodes
+  ++  mart  (list {n/mane v/(list beer)})           ::  dynamic XML attrs
+  ++  marx  {n/mane a/mart}                         ::  dynamic XML tag
+  ++  mare  (each manx marl)                        ::  node or nodes
+  ++  maru  (each tuna marl)                        ::  interp or nodes
+  ++  tuna                                          ::  maybe interpolation
+      $^(manx {?($tape $manx $marl $call) p/hoon})  ::
+  --                                                ::
 ++  hoon                                                ::
-  =>  |%                                                ::REVIEW
-      ++  beer  $@(char {$~ p/hoon})                    ::  simple embed
-      ++  mane  $@(@tas {@tas @tas})                    ::  XML name+space
-      ++  manx  {g/marx c/marl}                         ::  dynamic XML node
-      ++  marl  (list tuna)                             ::  dynamic XML nodes
-      ++  mart  (list {n/mane v/(list beer)})           ::  dynamic XML attrs
-      ++  marx  {n/mane a/mart}                         ::  dynamic XML tag
-      ++  mare  (each manx marl)                        ::  node or nodes
-      ++  maru  (each tuna marl)                        ::  interp or nodes
-      ++  tuna                                          ::  maybe interpolation
-          $^(manx {?($tape $manx $marl $call) p/hoon})  ::
-      --                                                ::
+  =,  hoon-models
   $^  {p/hoon q/hoon}                                   ::
   $%                                                    ::
     {$$ p/axis}                                         ::  simple leg
@@ -6193,10 +6197,6 @@
               {$help p/writ q/type}                     ::  description
               {$hold p/type q/hoon}                     ::  lazy evaluation
           ==                                            ::
-++  tone  $%  {$0 p/*}                                  ::  success
-              {$1 p/(list)}                             ::  blocks
-              {$2 p/(list {@ta *})}                     ::  error ~_s
-          ==                                            ::
 ++  tony                                                ::  ++tone done right
           $%  {$0 p/tine q/*}                           ::  success
               {$1 p/(set)}                              ::  blocks
@@ -6240,6 +6240,27 @@
           ::  $json                                     ::  json schema?
           ::  
           ==
+:: profiling
+++  doss
+  $:  mon/moan                                          ::  sample count
+      hit/(map term @ud)                                ::  hit points
+      cut/(map path hump)                               ::  cut points
+  ==
+++  moan                                                ::  sample metric
+  $:  fun/@ud                                           ::  samples in C
+      noc/@ud                                           ::  samples in nock
+      glu/@ud                                           ::  samples in glue
+      mal/@ud                                           ::  samples in alloc
+      far/@ud                                           ::  samples in frag
+      coy/@ud                                           ::  samples in copy
+      euq/@ud                                           ::  samples in equal
+  ==                                                    ::
+::
+++  hump
+  $:  mon/moan                                          ::  sample count
+      out/(map path @ud)                                ::  calls out of
+      inn/(map path @ud)                                ::  calls into
+  ==
 --
 ::                                                      ::
 ::::  5: layer five                                     ::
@@ -8260,10 +8281,10 @@
       ?:  fab
         [p.pro [%10 [%live %1 %constant-block] q.pro]]
       ::  [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
-      ~_  (dunk '%constant-blocked-type')
-      ~|  [%constant-blocked-gene gen]
-      ~|  [%constant-blocked-mask mask.bus]
-      ~|  [%constant-blocked-formula `@p`(mug q.pro) q.pro]
+      ::  ~_  (dunk '%constant-blocked-type')
+      ::  ~|  [%constant-blocked-gene gen]
+      ::  ~|  [%constant-blocked-mask mask.bus]
+      ::  ~|  [%constant-blocked-formula `@p`(mug q.pro) q.pro]
       ~|  %constant-folding-blocked
       !!
     ::  [p.pro [%10 [%live %1 %constant-nonblocked] %1 p.u.jon]]
@@ -8526,10 +8547,10 @@
       |%
       ++  pord  |*(* (form +< *nock))                   ::  wrap mint formula
       ++  rosh  |*(* (form +< *(list pock)))            ::  wrap mint changes
-      ++  fleg  _(pord *bath)                           ::  legmatch + code
-      ++  fram  _(pord *claw)                           ::  armmatch +
-      ++  foat  _(rosh *bath)                           ::  leg with changes
-      ++  fult  _(rosh *claw)                           ::  arm with changes
+      ++  fleg  _(pord $:bath)                          ::  legmatch + code
+      ++  fram  _(pord $:claw)                          ::  armmatch +
+      ++  foat  _(rosh $:bath)                          ::  leg with changes
+      ++  fult  _(rosh $:claw)                          ::  arm with changes
       --  --
     ::
     ++  lib
@@ -8537,16 +8558,16 @@
       ++  deft
         =>  (def deft:arc)
         |%
-        ++  halp  $-(hoon fleg)
+        ++  halp  ^|(|:($:hoon $:fleg))
         ++  vant
-          |%  ++  trep  $-({bath wing bath} {axis bath})
-              ++  tasp  $-({{axis bath} fleg foat} foat)
-              ++  tyle  $-(foat foat)
+          |%  ++  trep  ^|(|:($:{bath wing bath} $:{axis bath}))
+              ++  tasp  ^|(|:($:{{axis bath} fleg foat} $:foat))
+              ++  tyle  ^|(|:($:foat $:foat))
           --
         ++  vunt
-          |%  ++  trep  $-({claw wing bath} {axis claw})
-              ++  tasp  $-({{axis claw} fleg fult} fult)
-              ++  tyle  $-(fult foat)
+          |%  ++  trep  ^|(|:($:{claw wing bath} $:{axis claw}))
+              ++  tasp  ^|(|:($:{{axis claw} fleg fult} $:fult))
+              ++  tyle  ^|(|:($:fult $:foat))
         --  --
       ::
       ++  make
@@ -8556,22 +8577,22 @@
                   ^-  fleg
                   (mint %noun a)
         ++  vant
-          |%  ++  trep  |=  {a/type b/wing c/type}
+          |%  ++  trep  |:  $:{a/type b/wing c/type}
                         ^-  {axis type}
                         (tack(sut a) b c)
-              ++  tasp  |=  {a/(pair axis type) b/fleg c/foat}
+              ++  tasp  |:  $:{a/(pair axis type) b/fleg c/foat}
                         ^-  foat
                         [q.a [[p.a (skin b)] (skin c)]]
-              ++  tyle  |=(foat +<)
+              ++  tyle  |:($:foat +<)
           --
         ++  vunt
-          |%  ++  trep  |=  {a/claw b/wing c/bath}
+          |%  ++  trep  |:  $:{a/claw b/wing c/bath}
                         ^-  (pair axis claw)
                         (toss b c a)
-              ++  tasp  |~  {a/(pair axis claw) b/fleg c/fult}
+              ++  tasp  |:  $:{a/(pair axis claw) b/fleg c/fult}
                         ^-  fult
                         [q.a [[p.a (skin b)] (skin c)]]
-              ++  tyle  |~  fult
+              ++  tyle  |:  $:fult
                         ^-  foat
                         [(fire +<-) +<+]
       --  --  --
@@ -8599,7 +8620,7 @@
         =+  rame
         |%  +-  $
         =>  +<
-        |=  {rum/clom rig/(list (pair wing hoon))}
+        |:  $:{rum/clom rig/(list (pair wing hoon))}
         ^-  foat
         %-  tyle
         |-  ^-  ceut
@@ -8616,11 +8637,11 @@
     =>  inc
     |%
     ++  echo
-      |=  {rum/bath rig/(list (pair wing hoon))}
+      |:  $:{rum/bath rig/(list (pair wing hoon))}
       (ecbo rum rig)
     ::
     ++  ecmo
-      |=  {hag/claw rig/(list (pair wing hoon))}
+      |:  $:{hag/claw rig/(list (pair wing hoon))}
       (eclo hag rig)
     --  --
   ::
@@ -12283,17 +12304,23 @@
       ==
     ::
     ++  toad                                            ::  untrap parser exp
-      |*  har/_expa
-      =+  dur=(ifix [pel per] $:har(tol |))
-      ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
+      =+  har=expa
+      |%  +-  $
+            =+  dur=(ifix [pel per] $:har(tol |))
+            ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
+      --
     ::
     ++  rune                                            ::  build rune
-      |*  {dif/rule tuq/* har/_expa}
-      ;~(pfix dif (stag tuq (toad har)))
+      =+  [dif=*rule tuq=** har=expa]
+      |%  +-  $
+            ;~(pfix dif (stag tuq (toad har)))
+      --
     ::
     ++  runo                                            ::  rune plus
-      |*  {dif/rule hil/* tuq/* har/_expa}
-      ;~(pfix dif (stag hil (stag tuq (toad har))))
+      =+  [dif=*rule hil=** tuq=** har=expa]
+      |%  +-  $
+            ;~(pfix dif (stag hil (stag tuq (toad har))))
+      --
     ::
     ++  glop  ~+((glue mash))                           ::  separated by space
     ++  gunk  ~+((glue muck))                           ::  separated list
@@ -12474,7 +12501,7 @@
   ++  lung
     ~+
     %-  bend
-    |=  lang
+    |:  $:lang
     ^-  (unit hoon)
     ?-    -.vil
       $col  ?:(=([%base %bean] ros) ~ [~ %tsgl ros p.vil])
@@ -12824,26 +12851,6 @@
 ::
 ::::  5g: profiling support (XX move)
   ::
-++  doss
-  $:  mon/moan                                          ::  sample count
-      hit/(map term @ud)                                ::  hit points
-      cut/(map path hump)                               ::  cut points
-  ==
-++  moan                                                ::  sample metric
-  $:  fun/@ud                                           ::  samples in C
-      noc/@ud                                           ::  samples in nock
-      glu/@ud                                           ::  samples in glue
-      mal/@ud                                           ::  samples in alloc
-      far/@ud                                           ::  samples in frag
-      coy/@ud                                           ::  samples in copy
-      euq/@ud                                           ::  samples in equal
-  ==                                                    ::
-::
-++  hump
-  $:  mon/moan                                          ::  sample count
-      out/(map path @ud)                                ::  calls out of
-      inn/(map path @ud)                                ::  calls into
-  ==
 ::
 ++  pi-heck
     |=  {nam/@tas day/doss}
