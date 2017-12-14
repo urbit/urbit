@@ -116,10 +116,12 @@
   ::[~ ..prep(+<+ u.old)]
 ::
 ++  poke-noun
-  |=  @
+  |=  a=?(~ @da)
   ^-  (quip move _+>)
   ~&  %poked
-  ta-done:(ta-write-config:ta now.bol ['a description' pub=& vis=& [~palzod ~ ~]])
+  ?~  a  
+    ta-done:(ta-create:ta %fora ['a description' pub=& vis=& [~palzod ~ ~]])
+  ta-done:(ta-submit:ta a 'a topic' ~['with contents'])
 ::
 ++  writ
   |=  {wir/wire rit/riot:clay}
