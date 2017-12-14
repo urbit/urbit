@@ -120,7 +120,7 @@
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  :_  ..prep(+<+ u.old)
+  :_  ..prep(+<+ u.old(grams ~, known ~, count 0))
   :~  [ost.bol %pull /server/client server ~]
       [ost.bol %pull /server/inbox server ~]
       peer-client
@@ -460,7 +460,10 @@
     |=  {num/@ud gam/telegram}
     =+  old=(snag num grams)
     ?:  =(gam old)  +>.$                                ::  no change
-    =.  grams  (oust [num 1] grams)
+    =.  grams
+      %+  welp
+      (scag num grams)
+      [gam (slag +(num) grams)]
     ?:  =(sep.gam sep.old)  +>.$                        ::  no worthy change
     =<  sh-done
     (~(sh-gram sh cli) gam)
@@ -2252,13 +2255,12 @@
   ?:  =(a 'check')
     ~&  'verifying message reference integrity...'
     =-  ~&(- [~ +>.$])
+    ~&  [%count--lent count (lent grams)]
     =+  %-  ~(rep by known)
       |=  {{u/serial a/@ud} k/@ud m/@ud}
       :-  ?:((gth a k) a k)
       ?:  =(u uid:(snag (sub count +(a)) grams))  m  +(m)
-    :^  %check-talk
-        count=count
-      lent=(lent grams)
+    :-  %check-talk
     [known=k mismatch=m]
   ?:  =(a 'rebuild')
     ~&  'rebuilding message references...'
