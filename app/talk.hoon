@@ -120,7 +120,12 @@
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  [~ ..prep(+<+ u.old)]
+  :_  ..prep(+<+ u.old)
+  :~  [ost.bol %pull /server/client server ~]
+      [ost.bol %pull /server/inbox server ~]
+      peer-client
+      peer-inbox
+  ==
 ::
 ::>  ||
 ::>  ||  %utility
@@ -190,7 +195,7 @@
 ::
 ++  peer-client                                         ::<  ui state peer move
   ^-  move
-  :*  ost.bol
+  :*  0
       %peer
       /server/client
       server
@@ -199,7 +204,7 @@
 ::
 ++  peer-inbox
   ^-  move
-  :*  ost.bol
+  :*  0
       %peer
       /server/inbox
       server
