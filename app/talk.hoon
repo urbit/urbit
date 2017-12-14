@@ -1060,9 +1060,17 @@
         ::
         |=  pas/(set circle)
         ^+  ..sh-work
+        ::  remove *all* sources relating to {pas}.
         =/  pos
-          %-  ~(run in pas)
-          |=(p/circle [p ~])
+          %-  ~(gas in *(set ^source))
+          %-  zing
+          =/  sos
+            =-  ~(tap in src:-)
+            (fall (~(get by mirrors) incir) *config)
+          %+  turn  ~(tap in pas)
+          |=  c/circle
+          %+  skim  sos
+          |=(s/^source =(cir.s c))
         =.  ..sh-work
           (sh-act %source inbox | pos)
         (sh-act %notify pas ~)
