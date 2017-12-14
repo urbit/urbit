@@ -83,7 +83,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:A:I:w:u:t:f:k:l:n:p:r:NabcdgqsvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:A:H:I:w:u:t:f:k:l:n:p:r:NabcdgqsvxFMPDXR")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -99,6 +99,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'A': {
         u3_Host.ops_u.arv_c = strdup(optarg);
+        break;
+      }
+      case 'H': {
+        u3_Host.ops_u.dns_c = strdup(optarg);
         break;
       }
       case 'I': {
@@ -253,6 +257,10 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
+  if ( u3_Host.ops_u.dns_c == 0 ) {
+    u3_Host.ops_u.dns_c = "urbit.org";
+  }
+
   if ( u3_Host.ops_u.pil_c != 0 ) {
     struct stat s;
     if ( stat(u3_Host.ops_u.pil_c, &s) != 0 ) {
@@ -317,6 +325,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-F            Fake keys\n",
     "-f            Fuzz testing\n",
     "-g            Set GC flag\n",
+    "-H domain     Set ames bootstrap domain (default urbit.org)\n",
     "-I galaxy     Start as ~galaxy\n",
     "-k stage      Start at Hoon kernel version stage\n",
     "-L            Local-only network\n",
