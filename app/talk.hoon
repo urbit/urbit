@@ -120,7 +120,7 @@
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  :_  ..prep(+<+ u.old)
+  :_  ..prep(+<+ u.old(grams ~, known ~, count 0))
   :~  [ost.bol %pull /server/client server ~]
       [ost.bol %pull /server/inbox server ~]
       peer-client
