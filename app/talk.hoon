@@ -2245,10 +2245,12 @@
   ta-done:(ta-sole:ta act)
 ::
 ::TODO  for debug purposes. remove eventually.
+::  users beware, here be dragons.
 ++  poke-noun
   |=  a/@t
   ^-  (quip move _+>)
-  ?:  =(a 'debug')
+  ?:  =(a 'check')
+    ~&  'verifying message reference integrity...'
     =-  ~&(- [~ +>.$])
     =+  %-  ~(rep by known)
       |=  {{u/serial a/@ud} k/@ud m/@ud}
@@ -2259,10 +2261,19 @@
       lent=(lent grams)
     [known=k mismatch=m]
   ?:  =(a 'rebuild')
+    ~&  'rebuilding message references...'
     =+  %+  reel  grams
       |=  {t/telegram c/@ud k/(map serial @ud)}
       [+(c) (~(put by k) uid.t c)]
     [~ +>.$(count c, known k)]
+  ?:  =(a 'reconnect')
+    ~&  'disconnecting and reconnecting to hall...'
+    :_  +>
+    :~  [0 %pull /server/client server ~]
+        [0 %pull /server/inbox server ~]
+        peer-client
+        peer-inbox
+    ==
   [~ +>]
 ::
 ++  coup-client-action                                                ::<  accept n/ack

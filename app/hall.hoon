@@ -2795,10 +2795,12 @@
   ==
 ::
 ::TODO  for debug purposes. remove eventually.
+::  users beware, here be dragons.
 ++  poke-noun
   |=  a/@t
   ^-  (quip move _+>)
-  ?:  =(a 'debug')
+  ?:  =(a 'check')
+    ~&  'verifying message reference integrity...'
     =-  ~&(- [~ +>.$])
     %-  ~(urn by stories)
     |=  {n/naem s/story}
@@ -2818,6 +2820,7 @@
       known=k
     mismatch=m
   ?:  =(a 'rebuild')
+    ~&  'rebuilding message references...'
     =-  [~ +>.$(stories -)]
     %-  ~(urn by stories)
     |=  {nom/naem soy/story}
@@ -2831,5 +2834,25 @@
       %+  ~(put by s)  src
       [c (fall (~(get by s) src) ~)]
     soy(count c, known k, sourced s)
+  ?:  =(a 'refederate')
+    ~&  'refederating. may take a while...'
+    :_  +>
+    =+  bov=(above our.bol)
+    ?:  =(bov our.bol)  ~
+    :~  [0 %pull /burden [bov dap.bol] ~]
+        (wire-to-peer /burden)
+    ==
+  ?:  =(a 'incoming')
+    ~&  'incoming subscriptions (ignoring circle subs):'
+    ~&  %+  skip  ~(tap by sup.bol)
+        |=  {bone (pair ship path)}
+        &(?=({$circle *} q) !?=({$circle $inbox *} q))
+    [~ +>]
+  ?:  =(a 'sources')
+    ~&  'sources per story:'
+    ~&  %-  ~(urn by stories)
+        |=  {n/naem s/story}
+        [n src.shape.s]
+    [~ +>]
   [~ +>]
 --
