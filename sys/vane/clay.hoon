@@ -2261,37 +2261,25 @@
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  {yon/aeon mun/mood}                           ::  seek and read
       ^-  (unit (unit (each cage lobe)))
-      ?:  ?=($w p.mun)
-        ?^  r.mun  [~ ~]
-        ?.  ?=($ud -.q.mun)  [~ ~ %& %aeon !>(yon)]
+      ?-    p.mun
+          $w
+        ?.  ?=($ud -.q.mun)  ?^(r.mun ~ [~ ~ %& %aeon !>(yon)])
         (bind (read-w yon r.mun) (lift |=(a/cage [%& a])))
-      ?:  ?=($d p.mun)
+      ::
+          $d
         =+  rom=(~(get by fat.ruf) her)
         ?~  rom
           ~&(%null-rom-cd [~ ~])
         ?^  r.mun
           ~&(%no-cd-path [~ ~])
         [~ ~ %& %noun !>(~(key by dos.u.rom))]
-      ?:  ?=($u p.mun)
-        (read-u yon r.mun)
-      ?:  ?=($v p.mun)
-        (bind (read-v yon r.mun) (lift |=(a/cage [%& a])))
-      ?:  ?=($x p.mun)
-        (read-x yon r.mun)
-      ?:  ?=($y p.mun)
-        ::  =-  ~&  :*  %dude-someones-getting-curious
-        ::              mun=mun
-        ::              yon=yon
-        ::              our=our
-        ::              her=her
-        ::              syd=syd
-        ::              hep=-
-        ::          ==
-        ::      -
-        (bind (read-y yon r.mun) (lift |=(a/cage [%& a])))
-      ?:  ?=($z p.mun)
-        (bind (read-z yon r.mun) (lift |=(a/cage [%& a])))
-      !!
+      ::
+          $u  (read-u yon r.mun)
+          $v  (bind (read-v yon r.mun) (lift |=(a/cage [%& a])))
+          $x  (read-x yon r.mun)
+          $y  (bind (read-y yon r.mun) (lift |=(a/cage [%& a])))
+          $z  (bind (read-z yon r.mun) (lift |=(a/cage [%& a])))
+      ==
     ::
     ::  Stubbed out, should be removed in the refactoring mentioned in ++query.
     ::
