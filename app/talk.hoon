@@ -2255,13 +2255,12 @@
   ?:  =(a 'check')
     ~&  'verifying message reference integrity...'
     =-  ~&(- [~ +>.$])
+    ~&  [%count--lent count (lent grams)]
     =+  %-  ~(rep by known)
       |=  {{u/serial a/@ud} k/@ud m/@ud}
       :-  ?:((gth a k) a k)
       ?:  =(u uid:(snag (sub count +(a)) grams))  m  +(m)
-    :^  %check-talk
-        count=count
-      lent=(lent grams)
+    :-  %check-talk
     [known=k mismatch=m]
   ?:  =(a 'rebuild')
     ~&  'rebuilding message references...'
