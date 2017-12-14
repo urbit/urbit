@@ -1047,6 +1047,11 @@
         =+  pas=~(key by pos)
         =.  ..sh-work
           sh-prod(active.she pas)
+        ::  default to a day of backlog
+        =.  pos
+          %-  ~(run by pos)
+          |=  r/range
+          ?~(r `[da+(sub now.bol ~d1) ~] r)
         (sh-act %source inbox & pos)
       ::
       ++  leave                                         ::<  %leave
