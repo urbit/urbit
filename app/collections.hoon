@@ -9,14 +9,15 @@
 ::         /;  (rekey %da)  :: XX add /_ @foo back maybe
 ::         /_  /.  /coll-topic/
 ::                 /=  comt
+::               /:  %/coments
 ::               /;  (rekey %da)  :: XX add /_ @foo back maybe
 ::               /_  /coll-comment/
 ::       ==
 ::
 ::    things to keep in sync:
-::  collections: files, hall          unique by name
-::  topics:      files, hall, notify  unique by date
-::  comments:    files,       notify  unique by date
+::  collections: state, files, hall          unique by name
+::  topics:      state, files, hall, notify  unique by date
+::  comments:    state, files,       notify  unique by date
 ::
 ::    filepaths:
 ::  /web/collections/my-coll.config
@@ -24,12 +25,27 @@
 ::  /web/collections/my-coll/some/1.comment
 ::
 ::    notification circles:
-::  %collections--my-blog               new/changed post notifications
-::  %collections--my-blog--post-title   new/changed comments notifications
+::  ~.collections_blog-date               new/changed post notifications
+::  ~.collections_blog-date__post-date    new/changed comments notifications
 ::
+::
+::::
+  ::
+:: XX belongs back in zuse
+|%
+++  pack                                                ::  light path encoding
+  |=  {a/term b/path}  ^-  knot
+  %+  rap  3  :-  (wack a)
+  (turn b |=(c/knot (cat 3 '_' (wack c))))
+::
+++  pick                                                ::  light path decoding
+  =+  fel=(most cab (sear wick urt:ab))
+  |=(a/knot `(unit {p/term q/path})`(rush a fel))
+::
+--
 =>  |%
     ++  state                                           ::
-      $:  cols/(map term collection)                    ::  collections by name
+      $:  cols/(map time collection)                    ::  collections by name
       ==                                                ::
     ++  collection                                      ::
       $:  conf/config                                   ::  configuration
@@ -60,9 +76,9 @@
               ses/(set ship)                            ::  black/whitelist
           ==                                            ::
           ::TODO  probably want to specify @da here too.
-          {$submit col/term tit/cord wat/wain}          ::  submit a post/note
-          {$comment col/term top/@da com/@da wat/wain}  ::  submit a comment
-          {$delete col/term}                            ::  delete a collection
+          {$submit col/time tit/cord wat/wain}          ::  submit a post/note
+          {$comment col/time top/@da com/@da wat/wain}  ::  submit a comment
+          {$delete col/time}                            ::  delete a collection
       ==                                                ::
     ++  kind  ?($blog $fora $note)                      ::
     ++  move  (pair bone card)                          ::  all actions
@@ -84,6 +100,10 @@
       ==                                                ::
     --
 ::
+::::
+  ::
+=,  wired
+=,  space:userlib
 |_  {bol/bowl:gall state}
 ::
 ++  prep                                                ::<  prepare state
@@ -99,7 +119,7 @@
   |=  a/@
   ^-  (quip move _+>)
   ~&  %poked
-  ta-done:(ta-write-config:ta %test ['a description' pub=& vis=& [~palzod ~ ~]])
+  ta-done:(ta-write-config:ta now.bol ['a description' pub=& vis=& [~palzod ~ ~]])
 ::
 ++  writ
   |=  {wir/wire rit/riot:clay}
@@ -143,11 +163,10 @@
   ^-  (quip move _+>)
   [~ +>]
 ::
-++  diff-hall-rumor
+++  diff-hall-rumor-hall
   |=  {wir/wire rum/rumor:hall}
   ^-  (quip move _+>)
-  ?>  ?=({$hall @tas $~} wir)
-  =+  nom=i.t.wir
+  =/  nom  (raid wir /[%da])
   ?>  ?=({$circle $config *} rum)
   ta-done:(ta-apply-config-diff:ta nom dif.rum.rum)
 ::
@@ -175,17 +194,15 @@
     |=  {wat/kind cof/config}
     ^+  +>
     ::XX unhandled kind
-    =/  col  desc.cof
-    =?  col  !((sane %ta) col)  (scot %t col)
-    (ta-change-config col cof %poke)
+    (ta-change-config now.bol cof %poke)
   ::
   ++  ta-submit
-    |=  {col/term tit/cord wat/wain}
+    |=  {col/time tit/cord wat/wain}
     =/  top/topic  [tit src.bol now.bol now.bol wat]
     (ta-change-topic col top %poke)
   ::
   ++  ta-comment
-    |=  {col/term top/@da com/@da wat/wain}
+    |=  {col/time top/@da com/@da wat/wain}
     ^+  +>
     ?.  (~(has by cols) col)  +>.$
     =/  cos=collection  (~(got by cols) col)
@@ -198,7 +215,7 @@
     [who.old wen.old now.bol wat]
   ::
   ++  ta-delete
-    |=  col/term
+    |=  col/time
     ^+  +>
     +>
     ::TODO  - delete files
@@ -210,7 +227,7 @@
   ::  %applying-changes
   ::
   ++  ta-apply-config-diff
-    |=  {col/term dif/diff-config:hall}
+    |=  {col/time dif/diff-config:hall}
     ^+  +>
     =+  cof=conf:(~(got by cols) col)
     =;  new/(unit config)
@@ -235,7 +252,7 @@
     ==
   ::
   ++  ta-change-config
-    |=  {col/term new/config src/?($file $hall $poke)}
+    |=  {col/time new/config src/?($file $hall $poke)}
     ^+  +>
     ::
     ::REVIEW I think clay writes are idempotent?
@@ -269,7 +286,7 @@
     ==
   ::
   ++  ta-change-topic
-    |=  {col/term top/topic src/?($file $poke)}
+    |=  {col/time top/topic src/?($file $poke)}
     ^+  +>
     =/  old  (get-topic col wen.top)
     ::  only original poster and host can edit.
@@ -291,7 +308,7 @@
   ::
   ::REVIEW never called
   ::++  ta-change-comment
-  ::  |=  {col/term top/@da com/comment src/?($file $poke)}
+  ::  |=  {col/time top/@da com/comment src/?($file $poke)}
   ::  ^+  +>
   ::  =/  old  (get-comment col top wen.com)
   ::  ::  only original poster and host can edit.
@@ -307,50 +324,49 @@
   ::
   ++  ta-write
     |=  [wir=[term ~] pax=path cay=cage]  ^+  +>
-    =,  space:userlib
     =/  pax=path
-      (make-path (weld pax /[p.cay]))
+      :(weld base-path pax /[p.cay])
     %+  ta-emit  ost.bol
     [%info (weld wir pax) our.bol (foal pax cay)]
   ::
   ++  ta-write-config
-    |=  {col/term cof/config}
+    |=  {col/time cof/config}
     ^+  +>
     %^  ta-write  /config
-      /[col]
+      (dray /[%da] col)
     [%collections-config !>(cof)]
   ::
   ++  ta-write-topic
-    |=  {col/term top/topic}
+    |=  {col/time top/topic}
     ^+  +>
     %^  ta-write  /topic
-      /[col]/(scot %da wen.top)
+      (dray /[%da]/[%da] col wen.top)
     [%collections-topic !>(top)]
   ::
   ++  ta-write-comment
-    |=  {col/term top/@da com/comment}
+    |=  {col/time top/@da com/comment}
     ^+  +>
     %^  ta-write  /comment
-      /[col]/(scot %da top)/(scot %da wen.com)
+      (dray /[%da]/[%da]/[%da] col top wen.com)
     [%collections-comment !>(com)]
   ::
   ::  %hall-changes
   ::
   ++  ta-hall-create
-    |=  {col/term cof/config}
+    |=  {col/time cof/config}
     ^+  +>
     =+  nam=(circle-for col)
     =.  +>.$  (ta-hall-configure nam cof)
     %-  ta-emit
     :*  0 ::REVIEW bone 0?
         %peer
-        /hall/[col]
+        hall+(dray /[%da] col)
         [our.bol %hall]
         /circle/[nam]/config-l
     ==
   ::
   ++  ta-hall-create-topic
-    |=  {col/term top/@da cof/config}
+    |=  {col/time top/@da cof/config}
     ^+  +>
     =+  nam=(circle-for-topic col top)
     =.  +>.$  (ta-hall-configure nam cof)
@@ -371,7 +387,7 @@
   ::
   ::
   ++  ta-hall-notify
-    |=  {col/term top/@da com/(unit @da) new/? wat/wain}
+    |=  {col/time top/@da com/(unit @da) new/? wat/wain}
     ^+  +>
     %-  ta-hall-action
     =-  :+  %phrase  [[our.bol tar] ~ ~]
@@ -388,49 +404,35 @@
 ::
 ::
 ++  circle-for
-  |=  n/term  ^-  term
-  (cat 3 'collection--' n)
+  |=(col/time (pack %collection (dray /[%da] col)))
 ::
 ++  circle-for-topic
-  |=  {n/term t/@da}  ^-  term
-  %-  circle-for 
-  %+  rap  3
-  [n (turn (scow %da t) |=(a=char ?:(((sane %tas) a) a '-')))]
+  |=({col/time top/time} (pack %collection (dray /[%da]/[%da] col top)))
 ::
-++  beak-now
-  byk.bol(r [%da now.bol])
-::
-++  make-path
-  |=  pax/path
-  :(welp (en-beam:format beak-now ~) /web/collections pax)
-::
-++  has-file
-  |=  pax/path
-  ::NOTE  %cu not implemented, so we use %cy instead.
-  =-  ?=(^ fil.-)
-  .^(arch %cy pax)
+++  base-path  (en-beam:format byk.bol(r da+now.bol) /collections/web)
 ::
 ++  get-config
-  |=  col/term
+  |=  col/time
   ^-  (unit config)
-  =+  pax=(make-path /[col]/collections-config)
+  =/  pax  :(weld base-path (dray /[%da] col) /collections-config)
   ::
-  ?.  (has-file pax)  ~
+  ?~  (file pax)  ~
   `.^(config %cx pax)
 ::
 ++  get-topic
-  |=  {col/term top/@da}
+  |=  {col/time top/@da}
   ^-  (unit topic)
-  =+  pax=(make-path /[col]/(scot %da top)/collections-topic)
+  =/  pax  :(weld base-path (dray /[%da]/[%da] col top) /collections-topic)
   ::
-  ?.  (has-file pax)  ~
+  ?~  (file pax)  ~
   `.^(topic %cx pax)
 ::
 ++  get-comment
-  |=  {col/term top/@da wen/@da}
+  |=  {col/time top/@da com/@da}
   ^-  (unit comment)
-  =+  pax=(make-path /[col]/(scot %da top)/(scot %da wen)/collections-comment)
+  =/  pax
+    :(weld base-path (dray /[%da]/[%da]/[%da] col top com) /collections-comment)
   ::
-  ?.  (has-file pax)  ~
+  ?~  (file pax)  ~
   `.^(comment %cx pax)
 --
