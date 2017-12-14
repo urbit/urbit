@@ -804,6 +804,7 @@
         {$fsbc p/hoon}                                  ::  /$  argument
         {$fsbr p/(list horn)}                           ::  /|  options
         {$fshx p/horn}                                  ::  /#  insert dephash
+        {$fspt p/horn}                                  ::  /@  insert mod-time
         {$fsts p/term q/horn}                           ::  /=  apply face
         {$fsdt p/(list horn)}                           ::  /.  list
         {$fscm p/(list (pair spur horn))}               ::  /,  switch by path
