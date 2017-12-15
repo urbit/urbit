@@ -829,6 +829,7 @@
               (stag %fsbc ;~(pfix buc hoon:read))       ::  /$  extra arguments
               (stag %fsbr ;~(pfix bar alts:read))       ::  /|  or (options)
               (stag %fshx ;~(pfix hax horn:read))       ::  /#  insert dephash
+              (stag %fspt ;~(pfix pat horn:read))       ::  /@  insert dephash
               (stag %fsts ;~(pfix tis name:read))       ::  /=  apply face
               (stag %fsdt ;~(pfix dot list:read))       ::  /.  list
               (stag %fscm ;~(pfix com case:read))       ::  /,  switch by path
@@ -1150,6 +1151,21 @@
       ?~  u.von
         (flaw cof leaf+"file not found" (smyt (en-beam bem)) ~)
       (fine cof u.u.von)
+    ::
+    ++  load-time
+      ~/  %load-time
+      |=  {cof/cafe bem/beam}
+      ^-  (bolt time)
+      ?:  =([%ud 0] r.bem)
+        (flaw cof [leaf+"ford: no data: {<(en-beam bem(s ~))>}"]~)
+      ?.  =(%ud -.r.bem)
+        ~|(%beam-not-normalized !!)  ::XX flaw?
+      =+  von=(syve [151 %noun] ~ %cw bem)
+      ?~  von
+        [p=cof q=[%1 [[%c %w bem ~] ~ ~]]]
+      ?.  ?=([~ %time * @da] u.von)
+        (flaw cof leaf+"ford: bad-revision: {<(bind u.von head)>}" ~)
+      (fine cof q.q.u.u.von)
     ::
     ++  load-to-mark
       ~/  %load-to-mark
@@ -1620,6 +1636,25 @@
           %-  flux
           |=  {mark vax/vase}
           [%noun (slop [atom+['uvH' ~] dep] vax)]
+        ::
+            $fspt
+          ?.  ?=([$fszy @] p.hon)
+            (flaw cof leaf+"ford: STUB /@ only implemented for /mark/" ~)
+          %+  cope  $(cof cof, hon p.hon)
+          |=  {cof/cafe mark vax/vase}
+          %+  cope  (normalize-beak cof how(s [q.p.hon s.how]))
+          |=  {cof/cafe bem/beam}
+          ?>  ?=(%ud -.r.bem)
+          %+  cope  (load-arch cof bem)
+          |=  {cof/cafe ark/arch}
+          ?~  fil.ark  (flaw cof leaf+"ford: no file {<(tope bem)>}" ~)
+          |-  ^-  (bolt cage)  ::TODO do this in clay
+          =/  bom  bem(p.r (dec p.r.bem))
+          %+  cope  (load-arch cof bom)
+          |=  {cof/cafe ork/arch}
+          ?:  =(fil.ork fil.ark)  ^$(cof cof, bem bom)
+          %+  cope  (load-time cof bem(s ~))
+          (flux |=(wen/time [%noun (slop !>(wen) vax)]))
         ::
             $fsts
           %+  cope  $(hon q.hon)
