@@ -14,10 +14,10 @@
 ::               /_  /coll-comment/
 ::       ==
 ::
-::    things to keep in sync:
-::  collections: state, files, hall          unique by name
-::  topics:      state, files, hall, notify  unique by date
-::  comments:    state, files,       notify  unique by date
+::    things to keep in sync, unique by date:
+::  collections: state, files,       
+::  topics:      state, files, notify
+::  comments:    state, files, notify
 ::
 ::    filepaths:
 ::  /web/collections/my-coll.config
@@ -81,17 +81,11 @@
       ==                                                ::
     ++  kind  ?($blog $fora $note)                      ::
     ++  move  (pair bone card)                          ::  all actions
-    ++  lime                                            ::  diff fruit
-      $%  {$hall-prize prize:hall}                      ::
-          {$hall-rumor rumor:hall}                      ::
-      ==                                                ::
     ++  poke                                            ::
       $%  {$hall-action action:hall}                    ::
       ==                                                ::
     ++  card                                            ::
-      $%  {$diff lime}                                  ::
-          {$info wire ship term nori:clay}              ::
-          {$peer wire dock path}                        ::
+      $%  {$info wire ship term nori:clay}              ::
           {$poke wire dock poke}                        ::
           {$pull wire dock $~}                          ::
           {$warp wire sock riff:clay}                   ::
@@ -162,18 +156,6 @@
     $delete   (ta-delete:ta +.act)
   ==
 ::
-++  diff-hall-prize
-  |=  {wir/wire piz/prize:hall}
-  ^-  (quip move _+>)
-  [~ +>]
-::
-++  diff-hall-rumor-hall
-  |=  {wir/wire rum/rumor:hall}
-  ^-  (quip move _+>)
-  =/  nom  (raid wir /[%da])
-  ?>  ?=({$circle $config *} rum)
-  ta-done:(ta-apply-config-diff:ta nom dif.rum.rum)
-::
 ++  ta
   |_  moves/(list move)
   ++  ta-done  [(flop moves) +>]
@@ -225,39 +207,13 @@
     +>
     ::TODO  - delete files
     ::      - unsubscribe from clay
-    ::      - unsubscribe from hall
     ::      - send delete action to hall
     ::      - remove from state
   ::
   ::  %applying-changes
   ::
-  ++  ta-apply-config-diff
-    |=  {col/time dif/diff-config:hall}
-    ^+  +>
-    =+  cof=conf:(~(got by cols) col)
-    =;  new/(unit config)
-      ?~  new  +>.$
-      (ta-change-config col u.new %hall)
-    ?+  -.dif  ~
-        $caption
-      `cof(desc cap.dif)
-    ::
-        $permit
-      %-  some
-      %_  cof
-          mems
-        %.  mems.cof
-        ?:  add.dif
-          ~(dif in sis.dif)
-        ~(int in sis.dif)
-      ==
-    ::
-        $remove
-      `cof  ::TODO/REVIEW  ignore/recreate? *don't* remove files.
-    ==
-  ::
   ++  ta-change-config
-    |=  {col/time new/config src/?($file $hall $poke)}
+    |=  {col/time new/config src/?($file $poke)}
     ^+  +>
     ::
     ::REVIEW I think clay writes are idempotent?
@@ -362,14 +318,7 @@
     |=  {col/time cof/config}
     ^+  +>
     =+  nam=(circle-for col)
-    =.  +>.$  (ta-hall-configure nam cof)
-    %-  ta-emit
-    :*  0 ::REVIEW bone 0?
-        %peer
-        hall+(dray /[%da] col)
-        [our.bol %hall]
-        /circle/[nam]/config-l
-    ==
+    (ta-hall-configure nam cof)
   ::
   ++  ta-hall-create-topic
     |=  {col/time top/@da cof/config}
