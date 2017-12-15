@@ -2279,10 +2279,13 @@
         peer-client
         peer-inbox
     ==
+  ::  this deletes a message from your backlog, and may
+  ::  make talk throw stack traces.
+  ::  **aka don't run this!**
   ?:  =(a 'screw')
     ~&  'screwing things up...'
     :-  ~
-    +>(grams (oust [(div (lent grams) 2) 1] grams))
+    +>(grams (oust [0 1] grams))
   [~ +>]
 ::
 ++  coup-client-action                                                ::<  accept n/ack
