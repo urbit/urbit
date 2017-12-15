@@ -2271,6 +2271,18 @@
         peer-client
         peer-inbox
     ==
+  ?:  =(a 'reset')
+    ~&  'full reset incoming, hold on to your cli...'
+    :_  +>(grams ~, known ~, count 0)
+    :~  [0 %pull /server/client server ~]
+        [0 %pull /server/inbox server ~]
+        peer-client
+        peer-inbox
+    ==
+  ?:  =(a 'screw')
+    ~&  'screwing things up...'
+    :-  ~
+    +>(grams (oust [(div (lent grams) 2) 1] grams))
   [~ +>]
 ::
 ++  coup-client-action                                                ::<  accept n/ack
