@@ -1640,19 +1640,21 @@
             $fspt
           ?.  ?=([$fszy @] p.hon)
             (flaw cof leaf+"ford: STUB /@ only implemented for /mark/" ~)
+          %+  cope  $(cof cof, hon p.hon)
+          |=  {cof/cafe mark vax/vase}
           %+  cope  (normalize-beak cof how(s [q.p.hon s.how]))
           |=  {cof/cafe bem/beam}
           ?>  ?=(%ud -.r.bem)
           %+  cope  (load-arch cof bem)
           |=  {cof/cafe ark/arch}
+          ?~  fil.ark  (flaw cof leaf+"ford: no file {<(tope bem)>}" ~)
           |-  ^-  (bolt cage)  ::TODO do this in clay
-          ?:  =(0 p.r.bem)  (fine cof %time !>(*@da))
           =/  bom  bem(p.r (dec p.r.bem))
           %+  cope  (load-arch cof bom)
           |=  {cof/cafe ork/arch}
           ?:  =(fil.ork fil.ark)  ^$(cof cof, bem bom)
           %+  cope  (load-time cof bem(s ~))
-          (flux |=(wen/time [%time !>(wen)]))
+          (flux |=(wen/time [%noun (slop !>(wen) vax)]))
         ::
             $fsts
           %+  cope  $(hon q.hon)
