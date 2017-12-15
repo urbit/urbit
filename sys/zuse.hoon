@@ -29,6 +29,7 @@
 ::  it's important to keep %zuse minimal.  models and
 ::  engines not used outside a vane should stay inside
 ::  that vane.
+!:
 ~%  %zuse  +>  ~
 =>
 ::                                                      ::  ::
@@ -51,10 +52,6 @@
   ==                                                    ::
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
-++  sack  {p/ship q/ship}                               ::  incoming [our his]
-++  sock  {p/ship q/ship}                               ::  outgoing [our his]
-::+|
-::
 ++  roof  (room vase)                                   ::  namespace
 ++  room                                                ::  either namespace
   |*  vase/mold                                         ::  vase or maze
@@ -66,46 +63,8 @@
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
   (cask vase)                                           ::  marked cargo
-++  vane                                                ::  kernel module
-  |*  $:  task/mold                                     ::  ->$ in request
-          gift/mold                                     ::  <-$ out result
-          sign/mold                                     ::  $<- in result
-          note/mold                                     ::  $-> out request
-          mind/mold                                     ::  current state
-          seed/mold                                     ::  prior state
-      ==                                                ::
-  =*  self  (vane task gift sign note mind seed)        ::
-  $_  =|  mind
-  ^|  |%
-  ++  load  |~(seed ^|(+>))
-  ++  stay  $:mind                                      ::  preserve
-  ++  plow                                              ::  work in time
-    =|  $:  now/@da                                     ::  date
-            eny/@e                                      ::  entropy
-            sky/roof                                    ::  namespace
-        ==                                              ::
-    ^|  |%
-    ++  doze  *(unit @da)                               ::  awake when
-    ++  peek
-      |~  $:  lyc/(unit (set ship))                     ::  leakset
-              car/term                                  ::  perspective
-              bem/beam                                  ::  global path
-          ==
-      *(unit (unit (cask vase)))
-    ::
-    ++  spin                                            ::  work on state
-      =|  $:  hen/duct                                  ::  cause stack
-              moz/(list (pair duct (wind note gift)))   ::  actions, reversed
-          ==
-      ^|  |%
-      ++  call                                          ::  advancing effect
-        |~(task ^|(+>))
-      ::
-      ++  take                                          ::  returning effect
-        |~({wire sign} ^|(+>))
-      --                                                ::
-    --
-  --                                                    ::
+++  sack  {p/ship q/ship}                               ::  incoming [our his]
+++  sock  {p/ship q/ship}                               ::  outgoing [our his]
 ::                                                      ::::
 ::::                      ++ames                          ::  (1a) network
   ::                                                    ::::
@@ -1482,7 +1441,7 @@
   ::                                                    ::
   ::::                    ++aes:crypto                  ::  (2b1) aes, all sizes
     ::                                                  ::::
-  ++  aes    !.                                         
+  ++  aes
     ~%  %aes  ..is  ~
     |%
     ::                                                  ::  ++ahem:aes:crypto
@@ -1612,7 +1571,7 @@
               |%
               ::                                        ::  ++ankh:be:ahem:aes:
               ++  ankh                                  ::
-                |=  {a/cipa b/@ c/@}
+                |:  $:{a/cipa b/@ c/@}
                 (pode 5 nnb (cut 5 [(mul (ix.a b) nnb) nnb] c))
               ::                                        ::  ++sark:be:ahem:aes:
               ++  sark                                  ::
@@ -1623,7 +1582,7 @@
                 [(mix i.c i.d) $(c t.c, d t.d)]
               ::                                        ::  ++srow:be:ahem:aes:
               ++  srow                                  ::
-                |=  {a/cipa b/(list @)}  ^-  (list @)
+                |:  $:{a/cipa b/(list @)}  ^-  (list @)
                 =+  [c=0 d=~ e=ro.a]
                 |-
                 ?:  =(c nnb)
@@ -1636,7 +1595,7 @@
                 (cut 3 [f 1] (snag (mod (add g c) nnb) b))
               ::                                        ::  ++subs:be:ahem:aes:
               ++  subs                                  ::
-                |=  {a/cipa b/(list @)}  ^-  (list @)
+                |:  $:{a/cipa b/(list @)}  ^-  (list @)
                 ?~  b  ~
                 [(sube i.b su.a) $(b t.b)]
               --
@@ -2729,7 +2688,7 @@
     ::                                                  ::::
   ++  crua  !:
     ^-  acru
-    =|  {mos/@ pon/(unit {p/@ q/@ r/{p/@ q/@} s/_*fu})}
+    =+  $:{mos/@ pon/(unit {p/@ q/@ r/{p/@ q/@} s/_$:fu})}
     =>  |%
         ::                                              ::  ++mx:crua:crypto
         ++  mx                                          ::  bit length
@@ -3079,7 +3038,7 @@
   ::                                                    ::  ++dejs:format
   ++  dejs                                              ::  json reparser
     =>  |%  ++  grub  *                                 ::  result
-            ++  fist  $-(json grub)                     ::  reparser instance
+            ++  fist  $-(json *)                        ::  reparser instance
         --  ::
     |%
     ::                                                  ::  ++ar:dejs:format
@@ -3248,7 +3207,7 @@
   ++  dejs-soft                                         ::  json reparse to unit
     =,  unity
     =>  |%  ++  grub  (unit *)                          ::  result
-            ++  fist  $-(json grub)                     ::  reparser instance
+            ++  fist  $-(json (unit *))                 ::  reparser instance
         --  ::
     ::
     ::  XX: this is old code that replaced a rewritten dejs.
@@ -3359,11 +3318,11 @@
     ++  op                                              ::  parse keys of map
       |*  {fel/rule wit/fist}
       %+  cu  
-        |=  a/(list (pair _(wonk *fel) _(need *wit)))
+        |:  a=$:(list (pair _(wonk $:fel) _(need $:wit)))
         (my:nl a)
       %-  ci  :_  (om wit)
-      |=  a/(map cord _(need *wit))
-      ^-  (unit (list _[(wonk *fel) (need *wit)]))
+      |:  a=`(map cord _(need $:wit))`~
+      ^-  (unit (list _[(wonk $:fel) (need $:wit)]))
       %-  zl
       %+  turn  ~(tap by a)
       |=  {a/cord b/_(need *wit)}
@@ -3546,7 +3505,7 @@
       (flop q.rag)
     ::                                                  ::  ++done:lusk:differ
     ++  done                                            ::
-      |=  new/_p.rag
+      |:  new=p.rag
       ^+  rag
       ?-  -.p.rag
         $|   ?-  -.new
