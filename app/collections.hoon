@@ -1,18 +1,17 @@
 ::  /app/collection/hoon
 ::
 /-  hall
-/+  hall
-:: =/  cols
+/+  hall ::, rekey
+:: /=  cols
 ::   /:  /===/web/collections
 ::   /_  /.  /=  conf  /coll-config/
 ::           /=  tops
-::         /;  (rekey %da)  :: XX add /_ @foo back maybe
+::         /;  (rekey %da)
 ::         /_  /.  /coll-topic/
 ::                 /=  comt
-::               /:  %/coments
-::               /;  (rekey %da)  :: XX add /_ @foo back maybe
+::               /;  (rekey %da)
 ::               /_  /coll-comment/
-::       ==
+::       ==    ==
 ::
 ::    things to keep in sync, unique by date:
 ::  collections: state, files,       
