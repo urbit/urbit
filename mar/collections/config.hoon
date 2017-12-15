@@ -27,6 +27,7 @@
       ;pre: {(trip (of-wain:format txt))}
       ;list;  :: show topics
     ==
+  ++  front  (my title+desc.con ~)  :: title in lists
   --
 ::
 ++  grab

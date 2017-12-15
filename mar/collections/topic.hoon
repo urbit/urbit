@@ -18,6 +18,14 @@
     :+  (cat 3 '> ' tit.top)
       (crip <[by=who.top ed=wed.top]>)
     wat.top
+  ::
+  ++  elem  :: web display
+    ;div
+      ;pre: {(trip (of-wain:format txt))}
+      ;hr;
+      ;kids;  :: show comments
+    ==
+  ++  front  (my title+tit.top ~)  :: title in lists
   --
 ::
 ++  grab
