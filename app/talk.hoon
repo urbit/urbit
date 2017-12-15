@@ -120,12 +120,7 @@
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  :_  ..prep(+<+ u.old(grams ~, known ~, count 0))
-  :~  [ost.bol %pull /server/client server ~]
-      [ost.bol %pull /server/inbox server ~]
-      peer-client
-      peer-inbox
-  ==
+  [~ ..prep(+<+ u.old)]
 ::
 ::>  ||
 ::>  ||  %utility
@@ -2276,6 +2271,21 @@
         peer-client
         peer-inbox
     ==
+  ?:  =(a 'reset')
+    ~&  'full reset incoming, hold on to your cli...'
+    :_  +>(grams ~, known ~, count 0)
+    :~  [0 %pull /server/client server ~]
+        [0 %pull /server/inbox server ~]
+        peer-client
+        peer-inbox
+    ==
+  ::  this deletes a message from your backlog, and may
+  ::  make talk throw stack traces.
+  ::  **aka don't run this!**
+  ?:  =(a 'screw')
+    ~&  'screwing things up...'
+    :-  ~
+    +>(grams (oust [0 1] grams))
   [~ +>]
 ::
 ++  coup-client-action                                                ::<  accept n/ack
