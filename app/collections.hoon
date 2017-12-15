@@ -1,22 +1,24 @@
 ::  /app/collection/hoon
 ::
 /-  hall, *collections
-/+  hall ::, rekey
-:: /=  cols
-::   /:  /===/web/collections
-::   /_  /.  /=  conf  /coll-config/
-::           /=  tops
-::         /;  (rekey %da)
-::         /_  /.  /coll-topic/
-::                 /=  comt
-::               /;  (rekey %da)
-::               /_  /coll-comment/
-::       ==    ==
+/+  hall, rekey
+/=  cols
+  /:  /===/web/collections
+  /^  collections
+  /;  (rekey %da)
+  /_  /.  /=  conf  /collections-config/
+          /=  tops
+        /;  (rekey %da)
+        /_  /.  /collections-topic/
+                /=  comt
+              /;  (rekey %da)
+              /_  /collections-comment/
+      ==    ==
 ::
 ::    things to keep in sync, unique by date:
-::  collections: state, files,       
-::  topics:      state, files, notify
-::  comments:    state, files, notify
+::  collections: files, circles,       
+::  topics:      files, circles, notify
+::  comments:    files,          notify
 ::
 ::    filepaths:
 ::  /web/collections/my-coll.config
@@ -60,16 +62,17 @@
   ::
 =,  wired
 =,  space:userlib
-|_  {bol/bowl:gall cols/collections}
+|_  {bol/bowl:gall upd/@da}
 ::
 ++  prep                                                ::<  prepare state
   ::>  adapts state.
   ::
-  |=  old/(unit *)
+  ::REVIEW this seems like not the ideal place to get the ford update
+  |=  old/(unit @da)
   ^-  (quip move _..prep)
-  ::?~  old
-    [~ ..prep]  ::TODO  init, start clay subs
-  ::[~ ..prep(+<+ u.old)]
+  =^  mow  ..prep
+    ta-done:(ta-update:ta (fall old *@da))
+  [mow ..prep(upd now.bol)]
 ::
 ++  poke-noun
   |=  a=$@(?(~ @da) [p=@da q=@da])
@@ -143,23 +146,26 @@
     |=  {wat/kind:api cof/config}
     ^+  +>
     ::XX unhandled kind
-    (ta-change-config now.bol cof %poke)
+    (ta-write-config now.bol cof)
   ::
   ++  ta-submit
     |=  {col/time tit/cord wat/wain}
+    ::TODO %resubmit topic edit command?
     =/  top/topic  [tit src.bol now.bol wat]
-    (ta-change-topic col now.bol top %poke)
+    (ta-write-topic col now.bol top)
   ::
   ++  ta-comment
     |=  {col/time top/@da com/@da wat/wain}
     ^+  +>
-    ?.  (~(has by cols) col)  +>.$
-    =/  cos=collection  (~(got by cols) col)
-    ?.  (~(has by tops.cos) top)  +>.$
+    =;  res/$@(~ _+>.$)  ?^(res res +>.$)
+    %+  biff  (~(get by cols) col)
+    |=  cos=collection
+    %+  biff   (~(get by tops.cos) top)
+    |=  [topic cos=(map @da comment) ~]
     =/  old/comment
-      %+  fall  (get-comment col top com)
+      %+  fall  (~(get by cos) com)
       [src.bol now.bol wat]
-    ?.  =(who.old src.bol)  +>.$  :: error?
+    ?.  =(who.old src.bol)  ..ta-comment  :: error?
     %^  ta-write-comment  col  top
     :-  com
     [who.old now.bol wat]
@@ -172,78 +178,6 @@
     ::      - unsubscribe from clay
     ::      - send delete action to hall
     ::      - remove from state
-  ::
-  ::  %applying-changes
-  ::
-  ++  ta-change-config
-    |=  {col/time new/config src/?($file $poke)}
-    ^+  +>
-    ::
-    ::REVIEW I think clay writes are idempotent?
-    ::  if not changed on disk, update the file.
-    =?  +>  !?=($file src)  
-      (ta-write-config col new)
-    =+  ole=(~(get by cols) col)
-    ::  if we don't have it yet, add to state and hall.
-    ?~  ole
-      =.  cols  (~(put by cols) col new ~ ~)
-      (ta-hall-create col new)
-    =/  old  conf.u.ole
-    ::  make sure publ stays unchanged.
-    =.  +>.$
-      ?:  =(publ.new publ.old)  +>.$
-      =.  publ.new  publ.old
-      (ta-write-config col new)
-    ::  update config in state.
-    =.  cols  (~(put by cols) col u.ole(conf new))
-    ::  update config in hall.
-    =/  nam  (circle-for col)
-    %-  ta-hall-actions  :~
-      ?:  =(desc.old desc.new)  ~
-      [%depict nam desc.new]
-    ::
-      ?:  =(visi.old visi.new)  ~
-      [%public visi.new our.bol nam]
-    ::
-      (hall-permit nam | (~(dif in mems.old) mems.new))
-      (hall-permit nam & (~(dif in mems.new) mems.old))
-    ==
-  ::
-  ++  ta-change-topic
-    |=  {col/time wen/@da top/topic src/?($file $poke)}
-    ^+  +>
-    =/  old  (get-topic col wen)
-    ::  only original poster and host can edit.
-    ?.  |(?=(~ old) =(who.u.old src.bol) ?=($file src))  +>.$
-    :: 
-    ::REVIEW this was just set in ta-submit?
-    =?  who.top  ?=($poke src)  src.bol   ::  ensure legit author
-    =.  wed.top  now.bol                  ::  change last edit date
-    ::  store in state
-    ~|  ~(key by cols)
-    =/  cos  (~(got by cols) col)
-    =.  tops.cos  (~(put by tops.cos) wen top ~ ~)
-    =.  cols  (~(put by cols) col cos)
-    ::
-    =/  new  =(~ old)
-    =?  +>.$  new
-      (ta-hall-create-topic col wen conf.cos)
-    =.  +>.$  (ta-write-topic col wen top)
-    (ta-hall-notify col wen ~ new wat.top)
-  ::
-  ::REVIEW never called
-  ::++  ta-change-comment
-  ::  |=  {col/time top/@da com/comment src/?($file $poke)}
-  ::  ^+  +>
-  ::  =/  old  (get-comment col top wen.com)
-  ::  ::  only original poster and host can edit.
-  ::  ?.  |(?=(~ old) =(who.u.old src.bol) ?=($file src))
-  ::    +>.$
-  ::  =?  who.com  ?=($poke src)  src.bol  ::  ensure legit author
-  ::  =.  wed.com  now.bol                 ::  change last edit date.
-  ::  ::
-  ::  =.  +>.$  (ta-write-comment col top com)
-  ::  (ta-hall-notify col top `wen.com =(~ old) wat.com)
   ::
   ::  %writing-files
   ::
@@ -274,6 +208,82 @@
     %^  ta-write  /comment
       (dray /[%da]/[%da]/[%da] col top wen)
     [%collections-comment !>(com)]
+  ::
+  ::  %applying-changes
+  ::
+  ++  ta-this  .
+  ++  ta-update
+    |=  wen=@da
+    =.  upd  wen
+    =/  cos  ~(tap by cols)
+    |-  ^+  ta-this
+    ?~  cos  ta-this
+    =.  ta-done  $(cos t.cos)
+    =+  `[col=@da collection]`i.cos
+    =?  ta-this  (gth col upd)      ::TODO mtime
+      (ta-change-config col conf)
+    =/  tos  ~(tap by tops)
+    |-  ^+  ta-this
+    ?~  tos  ta-this
+    =.  ta-done  $(tos t.tos)
+    =+  `[top=@da topicful]`i.tos
+    =?  ta-this  (gth top upd)      ::TODO mtime
+      (ta-change-topic col top info)
+    =/  mos  ~(tap by comt)
+    |-  ^+  ta-this
+    ?~  mos  ta-this
+    =.  ta-done  $(mos t.mos)
+    =+  `[com=@da cot=comment]`i.mos
+    =?  ta-this  (gth com upd)      ::TODO mtime
+      (ta-change-comment col top com cot)
+    ta-this
+  ::
+  ++  ta-change-config
+    |=  {col/time new/config}
+    ^+  +>
+    ::
+    ::  if we don't have it yet, add to hall.
+    =/  old  (old-config col)  ::TODO convert other two
+    ?~  old
+      (ta-hall-create col new)
+    ::  update config in hall.
+    =/  nam  (circle-for col)
+    %-  ta-hall-actions  :~
+      ?:  =(desc.new desc.u.old)  ~
+      [%depict nam desc.new]
+    ::
+      ?:  =(visi.new visi.u.old)  ~
+      [%public visi.new our.bol nam]
+    ::
+      (hall-permit nam & (~(dif in mems.new) mems.u.old))
+      (hall-permit nam | (~(dif in mems.u.old) mems.new))
+    ==
+  ::
+  ++  ta-change-topic
+    |=  {col/time wen/@da top/topic}
+    ^+  +>
+    =^  top  +>.$
+      ?:  =(wed.top now.bol)  [top +>.$]
+      =.  wed.top  now.bol                ::  change last edit date
+      [top (ta-write-topic col wen top)]
+    ::
+    =/  new  ?=(~ (old-topic col wen))
+    =?  +>.$  new
+      =/  cos  (~(got by cols) col)
+      ~|  cos
+      (ta-hall-create-topic col wen conf.cos)
+    (ta-hall-notify col wen ~ new wat.top)
+  ::
+  ++  ta-change-comment
+    |=  {col/time top/@da wen/@da com/comment}
+    ^+  +>
+    =^  com  +>.$
+      ?:  =(wed.com now.bol)  [com +>.$]
+      =.  wed.com  now.bol                ::  change last edit date
+      [com (ta-write-comment col top wen com)]
+    ::
+    =/  new  =(~ (old-comment col top wen))
+    (ta-hall-notify col top `wen new wat.com)
   ::
   ::  %hall-changes
   ::
@@ -327,9 +337,9 @@
 ++  circle-for-topic
   |=({col/time top/time} (pack %collection (dray /[%da]/[%da] col top)))
 ::
-++  base-path  (en-beam:format byk.bol(r da+now.bol) /collections/web)
+++  base-path  (en-beam:format byk.bol(r da+upd) /collections/web)
 ::
-++  get-config
+++  old-config
   |=  col/time
   ^-  (unit config)
   =/  pax  :(weld base-path (dray /[%da] col) /collections-config)
@@ -337,7 +347,7 @@
   ?~  (file pax)  ~
   `.^(config %cx pax)
 ::
-++  get-topic
+++  old-topic
   |=  {col/time top/@da}
   ^-  (unit topic)
   =/  pax  :(weld base-path (dray /[%da]/[%da] col top) /collections-topic)
@@ -345,7 +355,7 @@
   ?~  (file pax)  ~
   `.^(topic %cx pax)
 ::
-++  get-comment
+++  old-comment
   |=  {col/time top/@da com/@da}
   ^-  (unit comment)
   =/  pax

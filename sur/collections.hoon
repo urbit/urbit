@@ -6,7 +6,7 @@
       $~                                            ::  /.  compatibility
   ==                                                ::
 :: ++  topicful  {topic comt/(map @da comment)}     ::
-++  topicful  {topic comt/(map @da comment) $~}     ::
+++  topicful  {info/topic comt/(map @da comment) $~}     ::
 ::                                                  ::
 ++  config                                          ::
   $:  desc/cord                                     ::  description
