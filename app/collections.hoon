@@ -1,6 +1,6 @@
 ::  /app/collection/hoon
 ::
-/-  hall
+/-  hall, *collections
 /+  hall ::, rekey
 :: /=  cols
 ::   /:  /===/web/collections
@@ -43,42 +43,6 @@
 ::
 --
 =>  |%
-    ++  state                                           ::
-      $:  cols/(map time collection)                    ::  collections by name
-      ==                                                ::
-    ++  collection                                      ::
-      $:  conf/config                                   ::  configuration
-          tops/(map @da topic)                          ::  parent-level content
-      ==                                                ::
-    ++  topic                                           ::
-      $:  tit/cord                                      ::  title
-          comment                                       ::
-      ==                                                ::
-    ++  comment                                         ::
-      $:  who/ship                                      ::  author
-          wed/@da                                       ::  editted
-          wat/wain                                      ::  content
-      ==                                                ::
-    ++  config                                          ::
-      $:  desc/cord                                     ::  description
-          publ/?                                        ::  public or private
-          visi/?                                        ::  visible or hidden
-          mems/(set ship)                               ::  ships on list
-      ==                                                ::
-    ++  action                                          ::
-      $%  $:  $create                                   ::  create a collection
-              wat/kind                                  ::  collection kind
-              des/cord                                  ::  name
-              pub/?                                     ::  public or private
-              vis/?                                     ::  visible or hidden
-              ses/(set ship)                            ::  black/whitelist
-          ==                                            ::
-          ::TODO  probably want to specify @da here too.
-          {$submit col/time tit/cord wat/wain}          ::  submit a post/note
-          {$comment col/time top/@da com/@da wat/wain}  ::  submit a comment
-          {$delete col/time}                            ::  delete a collection
-      ==                                                ::
-    ++  kind  ?($blog $fora $note)                      ::
     ++  move  (pair bone card)                          ::  all actions
     ++  poke                                            ::
       $%  {$hall-action action:hall}                    ::
@@ -96,7 +60,7 @@
   ::
 =,  wired
 =,  space:userlib
-|_  {bol/bowl:gall state}
+|_  {bol/bowl:gall cols/collections}
 ::
 ++  prep                                                ::<  prepare state
   ::>  adapts state.
@@ -128,7 +92,7 @@
   ::      /web/collections/[col]/[top] for each topic as they get created.
 ::
 ++  ignore-action
-  |=  act/action  ^-  ?
+  |=  act=action:api  ^-  ?
   ?-    -.act
       ?($create $delete)
     ?:  (team:title our.bol src.bol)  |
@@ -143,7 +107,7 @@
   ==
 ::
 ++  poke-collections-action
-  |=  act/action
+  |=  act=action:api
   ^-  (quip move _+>)      
   ?:  (ignore-action act)
     [~ +>]
@@ -176,7 +140,7 @@
   ::  %performing-actions
   ::
   ++  ta-create
-    |=  {wat/kind cof/config}
+    |=  {wat/kind:api cof/config}
     ^+  +>
     ::XX unhandled kind
     (ta-change-config now.bol cof %poke)
@@ -222,7 +186,7 @@
     =+  ole=(~(get by cols) col)
     ::  if we don't have it yet, add to state and hall.
     ?~  ole
-      =.  cols  (~(put by cols) col new ~)
+      =.  cols  (~(put by cols) col new ~ ~)
       (ta-hall-create col new)
     =/  old  conf.u.ole
     ::  make sure publ stays unchanged.
@@ -258,7 +222,7 @@
     ::  store in state
     ~|  ~(key by cols)
     =/  cos  (~(got by cols) col)
-    =.  tops.cos  (~(put by tops.cos) wen top)
+    =.  tops.cos  (~(put by tops.cos) wen top ~ ~)
     =.  cols  (~(put by cols) col cos)
     ::
     =/  new  =(~ old)

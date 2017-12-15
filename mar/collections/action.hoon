@@ -1,22 +1,7 @@
 ::  /action/collections/mar
 ::
-|%
-:: XX sur/collections
-++  kind  ?($blog $fora $note)                      ::
-++  action
-  $%  $:  $create                                   ::  create a collection
-          wat/kind                                  ::  collection kind
-          des/cord                                  ::  name
-          pub/?                                     ::  public or private
-          vis/?                                     ::  visible or hidden
-          ses/(set ship)                            ::  black/whitelist
-      ==                                            ::
-      {$submit col/time tit/cord wat/wain}          ::  submit a post/note
-      {$comment col/time top/@da com/@da wat/wain}  ::  submit a comment
-      {$delete col/time}                            ::  delete a collection
-  ==                                                ::
---
-::
+/-  collections
+=,  api:collections
 |_  act=action
 ::
 ++  grow

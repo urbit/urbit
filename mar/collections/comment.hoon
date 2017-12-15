@@ -1,11 +1,7 @@
 ::  /mar/collections/comment/hoon
 ::
-|_  $=  com
-    $:  who/ship                                        ::  author
-        wed/@da                                         ::  editted
-        wat/wain                                        ::  content
-    ==                                                  ::
-::
+/-  *collections
+|_  com=comment
 ++  grow
   |%
   ++  mime

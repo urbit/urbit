@@ -1,11 +1,8 @@
 ::  /mar/collections/config/hoon
 ::
-|_  $=  con
-    $:  desc/cord                                       ::  description
-        publ/?                                          ::  public or private
-        visi/?                                          ::  visioverable
-        mems/(set ship)                                 ::  ships on list
-    ==                                                  ::
+/-  *collections
+|_  con=config
+::
 ::
 ++  grow
   |%

@@ -1,11 +1,7 @@
 ::  /mar/collections/topic/hoon
 ::
-|_  $=  top
-    $:  tit/cord                                        ::  title
-        who/ship                                        ::  author
-        wed/@da                                         ::  editted
-        wat/wain                                        ::  content
-    ==                                                  ::
+/-  *collections
+|_  top=topic
 ::
 ++  grow
   |%
