@@ -1,4 +1,4 @@
-!:::::
+::::::
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -144,8 +144,10 @@
 ::                                                      ::
 ++  flue  |=(a/cafe (fine a ~))                         ::  cafe to empty
 ++  flux  |*  a/_*                                      ::  bolt lift (fmap)
-          |*  {cafe _,.+<.a}
-          (fine +<- (a +<+))
+          =+  $:{cafe _,.+<.a}
+          |%  +-  $
+                (fine +<- (a +<+))
+          --
 ::
 ++  lark                                                ::  filter arch names
   |=  {wox/$-(knot (unit @)) arc/arch}
@@ -468,7 +470,7 @@
     ++  cool                                            ::  error caption
       |*  {cyt/$@(term (trap tank)) hoc/(bolt)}
       ?.  ?=($2 -.q.hoc)  hoc
-      [p=p.hoc q=[%2 p=p.q.hoc q=[?^(cyt *cyt >`@tas`cyt<) q.q.hoc]]]
+      [p=p.hoc q=[%2 p=p.q.hoc q=[?^(cyt $:cyt >`@tas`cyt<) q.q.hoc]]]
     ::
     ++  cope                                            ::  bolt along
       |*  {hoc/(bolt) fun/(burg)}
@@ -573,21 +575,21 @@
     ::
     ++  some-in-map
       |*  fun/(burg knot (unit))
-      =+  res=_(need [?+(-.q !! $0 q.q)]:*fun)
+      =+  res=_(need [?+(-.q !! $0 q.q)]:$:fun)
       =+  marv=(map knot res)
       |=  {cof/cafe sud/(map knot $~)}  ^-  (bolt marv)
       ?~  sud  (flue cof)
       %.  [cof sud]
       ;~  cope
         ;~  coax
-          |=({cof/cafe _sud} ^$(cof cof, sud l))
-          |=({cof/cafe _sud} ^$(cof cof, sud r))
+          |:($:{cof/cafe _sud} ^$(cof cof, sud l))
+          |:($:{cof/cafe _sud} ^$(cof cof, sud r))
           |=  {cof/cafe {dir/@ta $~} ^}
           %+  cope  (fun cof dir)
           (flux (lift |*(* [dir +<])))
         ==
         %-  flux
-        |=  {lam/marv ram/marv nod/(unit {knot res})}
+        |:  $:{lam/marv ram/marv nod/(unit {knot res})}
         ?^(nod [u.nod lam ram] (~(uni by lam) ram))
       ==
     ++  dash                                          ::  process cache
@@ -1465,9 +1467,9 @@
           %.  [cof p.kas]
           ;~  cope
             ;~  coax
-              |=({cof/cafe _p.kas} (fret ^^$(cof cof, kas p.i)))
-              |=({cof/cafe _p.kas} (fret ^^$(cof cof, kas q.i)))
-              |=({cof/cafe _p.kas} ^$(cof cof, p.kas t))
+              |:($:{cof/cafe _p.kas} (fret ^^$(cof cof, kas p.i)))
+              |:($:{cof/cafe _p.kas} (fret ^^$(cof cof, kas q.i)))
+              |:($:{cof/cafe _p.kas} ^$(cof cof, p.kas t))
             ==
             (flux |=({k/gage v/gage t/(list {gage gage})} [[k v] t]))
           ==
@@ -1538,7 +1540,7 @@
         |=  {cof/cafe hyd/hood}
         ^-  (bolt vase)
         %+  cope  (apex cof hyd)
-        |=  {cof/cafe sel/_..abut}
+        |:  $:{cof/cafe sel/_..abut}
         =.  ..abut  sel
         %+  cope  (wrapped-slap cof pit able)
         |=  {cof/cafe bax/vase}
@@ -1557,13 +1559,13 @@
         ::=.  dyv  +(dyv)
         ::~&  [`term`(cat 3 %apex (fil 4 dyv '  ')) `path`(flop s.how) libs]
         ::=-  ~&  [`term`(cat 3 %xepa (fil 4 dyv '  ')) `path`(flop s.how)]  -
-        |=  {cof/cafe sel/_..apex}
+        |:  $:{cof/cafe sel/_..apex}
         =.  ..apex  sel
         %+  cope  (neck cof lib.hyd)
-        |=  {cof/cafe sel/_..apex}
+        |:  $:{cof/cafe sel/_..apex}
         =.  ..apex  sel(boy boy)
         %+  cope  (head cof sur.hyd)
-        |=  {cof/cafe sel/_..apex}
+        |:  $:{cof/cafe sel/_..apex}
         (fine cof sel)
       ::
       ++  body                                          ::  produce functions
@@ -1571,7 +1573,7 @@
         ^-  (bolt _..body)
         ?~  src  (fine cof ..body)
         %+  cope  (wilt cof i.src)
-        |=  {cof/cafe sel/_..body}
+        |:  $:{cof/cafe sel/_..body}
         ^$(src t.src, ..body sel, cof cof)
       ::
       ++  chai                                          ::  atomic map
@@ -1724,7 +1726,7 @@
         %+  cope  (compile-to-hood cof bem)
         |=  {cof/cafe hyd/hood}
         %+  cope  (apex(how bem, boy ~) cof hyd)
-        |=  {cof/cafe sel/_..head}
+        |:  $:{cof/cafe sel/_..head}
         =.  ..head
             %=  sel
               boy  boy
@@ -1760,7 +1762,7 @@
         %+  cope  (compile-to-hood cof bem)
         |=  {cof/cafe hyd/hood}
         %+  cope  (apex(how bem, boy ~) cof hyd)
-        |=  {cof/cafe sel/_..neck}
+        |:  $:{cof/cafe sel/_..neck}
         =.  ..neck
             %=  sel
               how  how
@@ -1784,27 +1786,27 @@
             %+  cope  (compile-to-hood cof p.hop)
             |=  {cof/cafe hyd/hood}
             %+  cope  (apex(boy ~) cof hyd)
-            (flux |=(sel/_..wilt sel(boy [[%tssg boy.sel] boy])))
+            (flux |:(sel=..wilt sel(boy [[%tssg boy.sel] boy])))
           =+  [all=(lark (slat %tas) arc) sel=..wilt]
           %+  cope
             |-  ^-  (bolt (pair (map term (pair what foot)) _..wilt))
             ?~  all  (fine cof ~ ..wilt)
             %+  cope  $(all l.all)
-            |=  {cof/cafe lef/(map term (pair what foot)) sel/_..wilt}
+            |:  $:{cof/cafe lef/(map term (pair what foot)) sel/_..wilt}
             %+  cope  ^$(all r.all, cof cof, sel sel)
-            |=  {cof/cafe rig/(map term (pair what foot)) sel/_..wilt}
+            |:  $:{cof/cafe rig/(map term (pair what foot)) sel/_..wilt}
             %+  cope
               %=    ^^^^$
                   cof      cof
                   ..wilt   sel(boy ~)
                   s.p.hop  [p.n.all s.p.hop]
               ==
-            |=  {cof/cafe sel/_..wilt}
+            |:  $:{cof/cafe sel/_..wilt}
             %+  fine  cof
             :_  sel
             ^-  (map term (pair what foot))
             [[p.n.all [~ %ash [%tssg boy.sel]]] lef rig]
-          |=  {cof/cafe mav/(map term (pair what foot)) sel/_..wilt}
+          |:  $:{cof/cafe mav/(map term (pair what foot)) sel/_..wilt}
           ?~  mav
             (flaw cof [%leaf "source missing: {<(en-beam p.hop)>}"]~)
           (fine cof sel(boy [[%brcn [~ ~] [[0 [~ ~] mav] ~ ~]] boy]))

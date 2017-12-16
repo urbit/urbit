@@ -4,10 +4,9 @@
 /?  309                                                 ::  arvo kelvin
 /-  sole, lens                                          ::  console structures
 /+  sole                                                ::  console library
-[. sole]
+=,  sole
 =,  space:userlib
 =,  format
-!:  
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   ::                                                    ::    ::
@@ -22,6 +21,14 @@
           dir/beam                                      ::  active path
           poy/(unit dojo-project)                       ::  working
           {lib/(list hoof:ford) sur/(list hoof:ford)}   ::  lib+sur
+          var/(map term cage)                           ::  variable state
+          old/(set term)                                ::  used TLVs
+          buf/tape                                      ::  multiline buffer
+      ==                                                ::
+    ++  monkey                                         ::  per conversation
+      $:  say/sole-share                                ::  command-line state
+          dir/beam                                      ::  active path
+          poy/(unit dojo-project)                       ::  working
           var/(map term cage)                           ::  variable state
           old/(set term)                                ::  used TLVs
           buf/tape                                      ::  multiline buffer
@@ -116,6 +123,7 @@
 ::::                                                    ::
   ::                                                    ::
 =,  gall
+=+  foo=*monkey
 |_  $:  hid/bowl                                       ::  system state
         house                                           ::  program state
     ==                                                  ::
@@ -838,14 +846,14 @@
       ::
       :>  sort the items.
       ++  sort-overview
-        |=  ovr/overview
+        |:  ovr=$:overview
         ^-  overview
         %+  sort  ovr
-          |=  {lhs/overview-item rhs/overview-item}
+          |:  $:{lhs/overview-item rhs/overview-item}
           (aor (get-overview-name lhs) (get-overview-name rhs))
       ::
       ++  get-overview-name
-        |=  ovr/overview-item
+        |:  ovr=$:overview-item
         ?-  ovr
           {$header *}  ""
           {$item *}    name.ovr
@@ -865,7 +873,7 @@
       :>    functions which display output of various types.
       +|
       ++  print-item
-        |=  itm/item
+        |:  itm=$:item
         ^-  tang
         ?-  itm
           {$view *}     (print-overview items.itm)
@@ -877,7 +885,7 @@
       ::
       :>    renders the documentation for a full core.
       ++  print-core
-        |=  {core-name/tape docs/what sut/type con/coil uit/(unit item)}
+        |:  $:{core-name/tape docs/what sut/type con/coil uit/(unit item)}
         ^-  tang
         =+  [arms chapters]=(arm-and-chapter-overviews sut con core-name)
         ;:  weld
@@ -983,12 +991,12 @@
       ::
       :>  renders an overview as {tang}
       ++  print-overview
-        |=  ovr/overview
+        |:  ovr=$:overview
         ^-  tang
         |^  (print-level ovr 0)
         ++  print-level
           :>  indentation: multiply by 2 to get number of spaces.
-          |=  {ovr/overview indentation/@u}
+          |:  $:{ovr/overview indentation/@u}
           ^-  tang
           :>  max-key-length: length of the longest {item} term.
           =/  max-key-length  (calculate-max-key-length ovr)
@@ -1024,7 +1032,7 @@
         ::
         :>
         ++  calculate-max-key-length
-          |=  ovr/overview
+          |:  ovr=$:overview
           ^-  @u
           %-  dy-longest-tape
           (turn ovr get-overview-name)
@@ -1291,7 +1299,7 @@
           $|
         =>  .(vax (slap vax !,(*hoon ?>(?=($| -) .))))  :: XX working spec  #72
         =+  typ={$| (unit knot) hiss:eyre *}
-        =+  [~ usr hiz ~]=((dy-cast typ !>(*typ)) vax)
+        =+  [~ usr hiz ~]=((dy-cast typ !>($:typ)) vax)
         =.  ..dy  (he-diff %tan leaf+"< {(en-purl:html p.hiz)}" ~)
         (dy-eyre(pro `(slap (slot 15 vax) limb+%r)) /scar usr hiz)
       ==
@@ -1683,9 +1691,9 @@
   --
 ::
 ++  prep
-  =+  session-4==+(*session _-(lib *(list), sur *(list)))
-  =+  session-1==+(*session-4 _-(poy *(unit)))
-  =+  session-0==+(*session-1 _[_say syd=desk * _|2.-])
+  =+  session-4==+($:session _-(lib *(list), sur *(list)))
+  =+  session-1==+($:session-4 _-(poy *(unit)))
+  =+  session-0==+($:session-1 _[_say syd=desk * _|2.-])
   :: ,_`..prep
   =+  ^=  hoze
       $%  {$0 p/(map bone session-0)}
@@ -1697,7 +1705,10 @@
   |=  old/(unit ?(house hoze))  ^+  [~ ..prep]
   ?~  old  `..prep
   ?+  -.u.old  !!
-    $4  $(-.u.old %5, q.u.old (~(run by q.u.old) |=(session-4 +<(sur ~, lib ~))))
+    $4  %=  $
+          -.u.old  %5 
+          q.u.old  (~(run by q.u.old) |:($:session-4 +<(sur ~, lib ~)))
+        ==
     $5  `..prep(+<+ u.old)
   ==
 ::
@@ -1707,10 +1718,12 @@
   |=  {moz/(list move) ses/session}
   =>  ~(. he moz ses)
   =-  [wrap=- +]
-  |*  he-arm/_he-type
-  |=  _+<.he-arm  
-  ^-  (quip move _..he)
-  he-abet:(he-arm +<)
+  =+  he-arm=he-type
+  |%  +-  $
+        |:  +<.he-arm  
+        ^-  (quip move _..he)
+        he-abet:(he-arm +<)
+  --
 ::
 ++  peer-sole
   ~?  !=(our.hid src.hid)  [%dojo-peer-stranger ost.hid src.hid]

@@ -830,7 +830,7 @@
         ~&(e+lost+[tee hen] +>.$)
       %+  roll  ~(tap in (~(get ju liz) p.sih))
       =<  .(con ..axon(liz (~(del by liz) p.sih)))
-      |=  {sus/(each duct ixor) con/_..axon}
+      |:  $:{sus/(each duct ixor) con/_..axon}
       =.  ..axon  con
       ?-  -.sus
         $&  (give-json(hen p.sus) 200 ~ %s (scot %uv p.sih))
@@ -1056,7 +1056,10 @@
         ==
     ++  abet  ..handle
     ++  done  .
-    ++  teba  |*(a/$-(* _..handle) |*(b/* %_(done ..handle (a b))))
+    ++  teba  =+  a=$-(* _..handle) 
+              |%  +-  $
+                    |*(b/* %_(done ..handle (a b)))
+              --
     ++  del-deps  (teba ^del-deps)
     ++  new-deps  (teba ^new-deps)
     ++  exec-live  (teba ^exec-live)
@@ -1613,7 +1616,10 @@
       =.  +>  poll-rest
       ..ix(wix (~(del by wix) ire))
     ::
-    ++  teba  |*(a/$-(* _..ix) |*(b/* %_(done ..ix (a b))))
+    ++  teba  =+  a=$-(* _..ix) 
+              |%  +-  $
+                    |*(b/* %_(done ..ix (a b)))
+              --
     ++  give-json  (teba ^give-json)
     ++  pass-note  (teba ^pass-note)
     ++  hurl-note
@@ -1790,7 +1796,8 @@
     ++  pass-note  |=({a/whir-se b/note} (pass-note:abet se+[a usr dom] b))
     ::  XX block reqs until correct core checked in?
     ++  warn  |=(a/tang ((slog (flop a)) abet))
-    ++  with  |*({a/vase b/$-(vase abet)} |=(c/vase (b (slam a c))))
+    ++  with  =+  $:{a/vase b/$-(vase abet)} 
+              |%  +-  $  |=(c/vase (b (slam a c)))  --
     ++  root-beak  `beak`[our %home da+now]
     ::
     ::  Main
@@ -1950,20 +1957,20 @@
       $(a t.a)
     ::
     ++  on-ford-fail
-      |=  {err/$-(tang _abet) try/$-((each cage tang) _abet)}
+      |:  $:{err/$-(tang _abet) try/$-((each cage tang) _abet)}
       |=  a/(each cage tang)  ^+  abet
       ?-(-.a $| (err p.a), $& (try a))
     ::
     ++  on-error
-      |=  {err/$-(tang _abet) handle-move/_|.(|~(vase abet))}
+      |:  $:{err/$-(tang _abet) handle-move/_|.(|~(vase abet))}
       |=  a/(each cage tang)  ^+  abet
-      =+  try=(possibly-stateful |=(b/_self (handle-move(+ b))))  :: XX types
+      =+  try=(possibly-stateful |:(b=self (handle-move(+ b))))  :: XX types
       ?:  ?=($| -.a)  (err p.a)
       =-  ?-(-.- $& p.-, $| (err p.-))
       (mule |.(~|(driver+dom ~|(bad-res+p.q.p.a (try q.p.a)))))
     ::
     ++  possibly-stateful
-      |=  han/$-(_self $-(vase _abet))  :: XX |.(|+(vase abet))
+      |:  $:{han/$-(_self $-(vase _abet))}  :: XX |.(|+(vase abet))
       |=  res/vase  ^+  abet
       ?:  ?=({@ *} q.res)
         =.  p.res  (~(fuse ut p.res) p:!>(*{@ *}))
@@ -2025,10 +2032,10 @@
 ::
 ++  load                                                ::  take previous state
   =+  driv-5=_=>(*driv [cor=p req=req.q])
-  =+  bolo-5={$5 _=+(*bolo +.-(sec (~(run by sec.-) driv-5)))}
-  =+  bolo-4={$4 _%*(+ *bolo-5 lyv *(map duct ^))}
+  =+  bolo-5={$5 _=+($:bolo +.-(sec (~(run by sec.-) driv-5)))}
+  =+  bolo-4={$4 _%*(+ $:bolo-5 lyv *(map duct ^))}
   ::|=  *  %.  (bolo +<)
-  |=  old/?(bolo bolo-5 bolo-4)  ^+  ..^$
+  |:  $:{old/?(bolo bolo-5 bolo-4)}  ^+  ..^$
   ?-  -.old
     $6  ..^$(+>- old)
     $5  $(old [%6 +.old(sec (~(run by sec.old) |=(driv-5 [cor & req])))])
