@@ -1212,7 +1212,7 @@ module.exports = recl({
       return;
     }
     if (this.props['audience-lock'] != null) {
-      audi = _.union(audi, ["~" + window.urb.ship + "/" + this.props.station]);
+      audi = ["~" + window.urb.ship + "/" + this.props.station];
     }
     audi = this.addCC(audi);
     txt = this.$message.text().trim().replace(/\xa0/g, ' ');
@@ -1542,17 +1542,11 @@ TreeActions.registerComponent("talk-station", StationComponent);
 
 
 },{"./actions/StationActions.coffee":2,"./components/MessageListComponent.coffee":6,"./components/StationComponent.coffee":7,"./components/WritingComponent.coffee":8,"./util.coffee":15}],11:[function(require,module,exports){
-var send, util;
+var util;
 
 util = require('../util.coffee');
 
 window.urb.appl = "hall";
-
-send = function(data, cb) {
-  return window.urb.send(data, {
-    mark: "hall-action"
-  }, cb);
-};
 
 module.exports = function(arg) {
   var MessageActions;
@@ -1624,15 +1618,31 @@ module.exports = function(arg) {
       });
     },
     sendMessage: function(message, cb) {
-      return send({
-        convey: [message]
-      }, function(err, res) {
-        console.log('sent');
-        console.log(arguments);
-        if (cb) {
-          return cb(err, res);
-        }
-      });
+      if (window.urb.user === window.urb.ship) {
+        return window.urb.send({
+          convey: [message]
+        }, {
+          mark: "hall-action"
+        }, function(err, res) {
+          console.log('sent local');
+          console.log(arguments);
+          if (cb) {
+            return cb(err, res);
+          }
+        });
+      } else {
+        return window.urb.send({
+          publish: [message]
+        }, {
+          mark: "hall-command"
+        }, function(err, res) {
+          console.log('sent remote');
+          console.log(arguments);
+          if (cb) {
+            return cb(err, res);
+          }
+        });
+      }
     }
   };
 };
