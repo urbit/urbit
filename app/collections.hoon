@@ -124,6 +124,7 @@
 ::
 ++  ta
   |_  moves/(list move)
+  ++  ta-this  .
   ++  ta-done  [(flop moves) +>]
   ++  ta-emit  |=(mov/move %_(+> moves [mov moves]))
   ++  ta-emil  |=(mos/(list move) %_(+> moves (welp (flop mos) moves)))
@@ -172,16 +173,29 @@
   ++  ta-delete
     |=  col/time
     ^+  +>
-    +>
-    ::TODO  - delete files
-    ::      - unsubscribe from clay
-    ::      - send delete action to hall
-    ::      - remove from state
+    =+  (~(get by cols) col)
+    ?~  -  ta-this  ::REVIEW error?
+    =.  ta-this  (ta-remove /config col %collections-config)
+    =/  cyc  (circle-for col)
+    =.  ta-this  (ta-hall-action %delete cyc `'Collection deleted')
+    =/  tops=(list [top=@da topicful])  ~(tap by tops.u)
+    |-  ^+  ta-this
+    ?~  tops  ta-this
+    =.  ta-this  $(tops t.tops)
+    =.  ta-this  (ta-remove /topic [col top.i.tops] %collections-topic)
+    =/  cyt  (circle-for-topic col top.i.tops)
+    =.  ta-this  (ta-hall-action %delete cyt `'Collection deleted')
+    =/  coms=(list [com=@da @ comment])  ~(tap by coms.i.tops)
+    |-  ^+  ta-this
+    ?~  coms  ta-this
+    =.  ta-this  $(coms t.coms)
+    (ta-remove /comment [col top.i.tops com.i.coms] %collections-comment)
   ::
   ::  %writing-files
   ::
-  ++  ta-rel-path
+  ++  ta-full-path
     |=  $@(col=time [col=time $@(top=@da [top=@da com=@da])])
+    %+  weld  base-path
     ?-  +<
       @        (weld (dray /[%da] col) /collections-config)
       {@ @}    (weld (dray /[%da]/[%da] col top) /collections-topic)
@@ -190,13 +204,19 @@
   ::
   ++  ta-write
     |=  [wir=[term ~] loc=?(@ {@ @} {@ @ @}) cay=cage]  ^+  +>
-    =/  pax  (weld base-path (ta-rel-path loc))
+    =/  pax  (ta-full-path loc)
     %+  ta-emit  ost.bol
     [%info (weld wir pax) our.bol (foal pax cay)]
   ::
+  ++  ta-remove
+    |=  [wir=[term ~] loc=?(@ {@ @} {@ @ @}) mar=mark]  ^+  +>
+    =/  pax  (ta-full-path loc)
+    ?>  =(mar -:(flop pax))
+    %+  ta-emit  ost.bol
+    [%info (weld wir pax) our.bol (fray pax)]
+  ::
   ::  %applying-changes
   ::
-  ++  ta-this  .
   ++  ta-update
     |=  wen=@da
     =.  upd  wen
