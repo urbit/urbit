@@ -10,7 +10,7 @@
     (of-wain:format txt)
   ++  txt
     ^-  (list @t)
-    :-  (crip <[by=who.com ed=wed.com]>)
+    :-  (scot %p who.com)
     wat.com
   --
 ::
@@ -21,16 +21,8 @@
     (txt (to-wain:format q.q))
   ++  txt
     |=  txs/(pole @t)  ^+  com
-    ?>  ?=([inf=@t wat=*] txs)
-    =/  inf  :: REVIEW this seems not v stable
-      %-  %-  hard
-          $:  %cltr
-              [%ktts %by [%sand %p who=@p]]
-              [%ktts %ed [%sand %da wed=@da]]
-              ~
-          ==
-      (ream inf.txs)
-    [who.inf wed.inf wat.txs]
+    ?>  ?=([who=@t wat=*] txs)
+    [(slav %p who.txs) wat.txs]
   --
 ++  grad  %txt
 --

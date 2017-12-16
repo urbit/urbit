@@ -12,7 +12,7 @@
   ++  txt
     ^-  (list @t)
     :+  (cat 3 '> ' tit.top)
-      (crip <[by=who.top ed=wed.top]>)
+      (scot %p who.top)
     wat.top
   ::
   ++  elem  :: web display
@@ -31,18 +31,9 @@
     (txt (to-wain:format q.q))
   ++  txt
     |=  txs/(pole @t)  ^+  top
-    ?>  ?=([des=@t inf=@t wat=*] txs)
+    ?>  ?=([des=@t who=@t wat=*] txs)
     =/  tit  (rash des.txs ;~(pfix (jest '> ') (cook crip (star next))))
-    ::
-    =/  inf  :: REVIEW this seems not v stable
-      %-  %-  hard
-          $:  %cltr
-              [%ktts %by [%sand %p who=@p]]
-              [%ktts %ed [%sand %da wed=@da]]
-              ~
-          ==
-      (ream inf.txs)
-    [tit who.inf wed.inf wat.txs]
+    [tit (slav %p who.txs) wat.txs]
   --
 ++  grad  %txt
 --

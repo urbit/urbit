@@ -1,12 +1,15 @@
 =<  |=(a=* %.(a (map time collection)))             ::  collections by name
 |%                                                  ::
 ++  collection                                      ::
-  $:  conf/config                                   ::  configuration
+  $:  conf/{mod/@da config}                         ::  configuration
       tops/(map @da topicful)                       ::
       $~                                            ::  /.  compatibility
   ==                                                ::
-:: ++  topicful  {topic comt/(map @da comment)}     ::
-++  topicful  {info/topic comt/(map @da comment) $~}     ::
+++  topicful                                        ::
+  $:  info/{mod/@da topic}                          ::
+      comt/(map @da {mod/@da comment})              ::
+      $~                                            ::  /.  compatibility
+  ==                                                ::
 ::                                                  ::
 ++  config                                          ::
   $:  desc/cord                                     ::  description
@@ -16,11 +19,11 @@
   ==                                                ::
 ++  topic                                           ::
   $:  tit/cord                                      ::  title
-      comment                                       ::
+      who/ship                                      ::  author
+      wat/wain                                      ::  content
   ==                                                ::
 ++  comment                                         ::
   $:  who/ship                                      ::  author
-      wed/@da                                       ::  editted
       wat/wain                                      ::  content
   ==                                                ::
 ::

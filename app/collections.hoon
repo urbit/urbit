@@ -6,13 +6,13 @@
   /:  /===/web/collections
   /^  collections
   /;  (rekey %da)  /^  (map knot collection:collections)
-  /_  /.  /=  conf  /collections-config/
+  /_  /.  /@  /collections-config/
           /=  tops
         /;  (rekey %da)  /^  (map knot topicful:collections)
-        /_  /.  /collections-topic/
+        /_  /.  /@  /collections-topic/
                 /=  comt
               /;  (rekey %da)
-              /_  /collections-comment/
+              /_  /@  /collections-comment/
       ==    ==
 ::
 ::    things to keep in sync, unique by date:
@@ -151,7 +151,7 @@
   ++  ta-submit
     |=  {col/time tit/cord wat/wain}
     ::TODO %resubmit topic edit command?
-    =/  top/topic  [tit src.bol now.bol wat]
+    =/  top/topic  [tit src.bol wat]
     (ta-write-topic col now.bol top)
   ::
   ++  ta-comment
@@ -159,16 +159,14 @@
     ^+  +>
     =;  res/$@(~ _+>.$)  ?^(res res +>.$)
     %+  biff  (~(get by cols) col)
-    |=  cos=collection
-    %+  biff   (~(get by tops.cos) top)
-    |=  [topic cos=(map @da comment) ~]
-    =/  old/comment
-      %+  fall  (~(get by cos) com)
-      [src.bol now.bol wat]
+    |=  [^ tops=(map @da topicful) ~]
+    %+  biff   (~(get by tops) top)
+    |=  [^ cos=(map @da {@da comment}) ~]
+    =/  old/{@da comment}
+      (fall (~(get by cos) com) [now.bol src.bol wat])
     ?.  =(who.old src.bol)  ..ta-comment  :: error?
     %^  ta-write-comment  col  top
-    :-  com
-    [who.old now.bol wat]
+    [com +.old(wat wat)]
   ::
   ++  ta-delete
     |=  col/time
@@ -220,26 +218,26 @@
     ?~  cos  ta-this
     =.  ta-done  $(cos t.cos)
     =+  `[col=@da collection]`i.cos
-    =?  ta-this  (gth col upd)      ::TODO mtime
+    =?  ta-this  (gth mod.conf upd)
       (ta-change-config col conf)
     =/  tos  ~(tap by tops)
     |-  ^+  ta-this
     ?~  tos  ta-this
     =.  ta-done  $(tos t.tos)
     =+  `[top=@da topicful]`i.tos
-    =?  ta-this  (gth top upd)      ::TODO mtime
+    =?  ta-this  (gth mod.info upd)
       (ta-change-topic col top info)
     =/  mos  ~(tap by comt)
     |-  ^+  ta-this
     ?~  mos  ta-this
     =.  ta-done  $(mos t.mos)
-    =+  `[com=@da cot=comment]`i.mos
-    =?  ta-this  (gth com upd)      ::TODO mtime
+    =+  `[com=@da cot=[mod=@da comment]]`i.mos
+    =?  ta-this  (gth mod.cot upd)
       (ta-change-comment col top com cot)
     ta-this
   ::
   ++  ta-change-config
-    |=  {col/time new/config}
+    |=  {col/time @da new/config}
     ^+  +>
     ::
     ::  if we don't have it yet, add to hall.
@@ -260,28 +258,17 @@
     ==
   ::
   ++  ta-change-topic
-    |=  {col/time wen/@da top/topic}
+    |=  {col/time wen/@da @da top/topic}
     ^+  +>
-    =^  top  +>.$
-      ?:  =(wed.top now.bol)  [top +>.$]
-      =.  wed.top  now.bol                ::  change last edit date
-      [top (ta-write-topic col wen top)]
-    ::
     =/  new  ?=(~ (old-topic col wen))
     =?  +>.$  new
       =/  cos  (~(got by cols) col)
-      ~|  cos
-      (ta-hall-create-topic col wen conf.cos)
+      (ta-hall-create-topic col wen +.conf.cos)
     (ta-hall-notify col wen ~ new wat.top)
   ::
   ++  ta-change-comment
-    |=  {col/time top/@da wen/@da com/comment}
+    |=  {col/time top/@da wen/@da @da com/comment}
     ^+  +>
-    =^  com  +>.$
-      ?:  =(wed.com now.bol)  [com +>.$]
-      =.  wed.com  now.bol                ::  change last edit date
-      [com (ta-write-comment col top wen com)]
-    ::
     =/  new  =(~ (old-comment col top wen))
     (ta-hall-notify col top `wen new wat.com)
   ::
