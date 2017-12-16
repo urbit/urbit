@@ -1648,6 +1648,11 @@
           %+  cope  (load-arch cof bem)
           |=  {cof/cafe ark/arch}
           ?~  fil.ark  (flaw cof leaf+"ford: no file {<(tope bem)>}" ~)
+          =;  res
+            =.  q.res   ::XX prevent infinite dependency loop
+              ?-(-.q.res $1 [!!], ?($0 $2) q.res(p ~))
+            res
+          ::
           |-  ^-  (bolt cage)  ::TODO do this in clay
           =/  bom  bem(p.r (dec p.r.bem))
           %+  cope  (load-arch cof bom)
