@@ -1,7 +1,6 @@
 ::  ::  %eyre, http servant
 !?  164
 ::::
-!:
 |=  pit/vase
 =,  eyre
 =,  wired
@@ -37,8 +36,8 @@
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  $a                                    ::  by %ames
-          $%  {$woot p/ship q/coop}              ::  acknowledgment
-              {$went ship cape:ames}                   ::  XX ignore
+          $%  {$woot p/ship q/coop}                     ::  acknowledgment
+              {$went ship cape:ames}                    ::  XX ignore
           ==  ==                                        ::
               $:  $b                                    ::  by %behn
           $%  {$wake $~}                                ::  timer activate
@@ -922,7 +921,7 @@
   ::
   ++  norm-beak  |=(bek/beak ?+(r.bek bek {$ud $0} bek(r da+now)))
   ++  emule
-    |=  a/_|?(..emule)  ^+  ..emule
+    |:  a=|?(..emule)  ^+  ..emule
     ?:  [unsafe=|]
       (a)
     =+  mul=(mule a)

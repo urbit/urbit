@@ -35,7 +35,8 @@
     |=  [new=deyd old=deyd]
     ^-  $&
     ?>  (melt new old)
-    ?>  =((shaf %meld (sham q.new)) (need (sure:as:(com:nu:crub:crypto r.q.old) *code p.new)))
+    ?>  .=  (shaf %meld (sham q.new)) 
+            (need (sure:as:(com:nu:crub:crypto r.q.old) *code p.new))
     %&
   ::
   ++  melt                                              ::  proper connect
@@ -643,7 +644,7 @@
         ~(. lax [her ?~(fod (gur her) u.fod)])
       ::
       ++  nux                                           ::  install dore
-        |=  new=_lax
+        |:  new=lax
         ^+  +>
         +>(hoc.saf (~(put by hoc.saf) her.new dur.new))
       ::
@@ -709,7 +710,7 @@
       ==
     ::
     ++  su                                              ::  install safe
-      |=  new=_as
+      |:  new=as
       ^-  town
       ton(urb (~(put by urb.ton) our.new saf.new))
     ::

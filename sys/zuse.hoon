@@ -29,7 +29,6 @@
 ::  it's important to keep %zuse minimal.  models and
 ::  engines not used outside a vane should stay inside
 ::  that vane.
-!:
 ~%  %zuse  +>  ~
 =>
 ::                                                      ::  ::
@@ -3325,7 +3324,7 @@
       ^-  (unit (list _[(wonk $:fel) (need $:wit)]))
       %-  zl
       %+  turn  ~(tap by a)
-      |=  {a/cord b/_(need *wit)}
+      |:  $:{a/cord b/_(need $:wit)}
       =+  nit=(rush a fel) 
       ?~  nit  ~
       (some [u.nit b])
