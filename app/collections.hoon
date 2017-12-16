@@ -5,10 +5,10 @@
 /=  cols
   /:  /===/web/collections
   /^  collections
-  /;  (rekey %da)
+  /;  (rekey %da)  /^  (map knot collection:collections)
   /_  /.  /=  conf  /collections-config/
           /=  tops
-        /;  (rekey %da)
+        /;  (rekey %da)  /^  (map knot topicful:collections)
         /_  /.  /collections-topic/
                 /=  comt
               /;  (rekey %da)
