@@ -146,13 +146,13 @@
     |=  {wat/kind:api cof/config}
     ^+  +>
     ::XX unhandled kind
-    (ta-write-config now.bol cof)
+    (ta-write /config now.bol %collections-config !>(cof))
   ::
   ++  ta-submit
     |=  {col/time tit/cord wat/wain}
     ::TODO %resubmit topic edit command?
     =/  top/topic  [tit src.bol wat]
-    (ta-write-topic col now.bol top)
+    (ta-write /topic [col now.bol] %collections-topic !>(top))
   ::
   ++  ta-comment
     |=  {col/time top/@da com/@da wat/wain}
@@ -164,9 +164,10 @@
     |=  [^ cos=(map @da {@da comment}) ~]
     =/  old/{@da comment}
       (fall (~(get by cos) com) [now.bol src.bol wat])
-    ?.  =(who.old src.bol)  ..ta-comment  :: error?
-    %^  ta-write-comment  col  top
-    [com +.old(wat wat)]
+    ?.  =(who.old src.bol)  ..ta-comment  ::REVIEW error?
+    %^  ta-write  /comment
+      [col top com]
+    [%collections-comment !>(`comment`+.old(wat wat))]
   ::
   ++  ta-delete
     |=  col/time
@@ -179,33 +180,19 @@
   ::
   ::  %writing-files
   ::
+  ++  ta-rel-path
+    |=  $@(col=time [col=time $@(top=@da [top=@da com=@da])])
+    ?-  +<
+      @        (weld (dray /[%da] col) /collections-config)
+      {@ @}    (weld (dray /[%da]/[%da] col top) /collections-topic)
+      {@ @ @}  (weld (dray /[%da]/[%da]/[%da] col top com) /collections-comment)
+    ==
+  ::
   ++  ta-write
-    |=  [wir=[term ~] pax=path cay=cage]  ^+  +>
-    =/  pax=path
-      :(weld base-path pax /[p.cay])
+    |=  [wir=[term ~] loc=?(@ {@ @} {@ @ @}) cay=cage]  ^+  +>
+    =/  pax  (weld base-path (ta-rel-path loc))
     %+  ta-emit  ost.bol
     [%info (weld wir pax) our.bol (foal pax cay)]
-  ::
-  ++  ta-write-config
-    |=  {col/time cof/config}
-    ^+  +>
-    %^  ta-write  /config
-      (dray /[%da] col)
-    [%collections-config !>(cof)]
-  ::
-  ++  ta-write-topic
-    |=  {col/time wen/@da top/topic}
-    ^+  +>
-    %^  ta-write  /topic
-      (dray /[%da]/[%da] col wen)
-    [%collections-topic !>(top)]
-  ::
-  ++  ta-write-comment
-    |=  {col/time top/@da wen/@da com/comment}
-    ^+  +>
-    %^  ta-write  /comment
-      (dray /[%da]/[%da]/[%da] col top wen)
-    [%collections-comment !>(com)]
   ::
   ::  %applying-changes
   ::
