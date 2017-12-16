@@ -7,7 +7,7 @@
   ==                                                ::
 ++  topicful                                        ::
   $:  info/{mod/@da topic}                          ::
-      comt/(map @da {mod/@da comment})              ::
+      coms/(map @da {mod/@da comment})              ::
       $~                                            ::  /.  compatibility
   ==                                                ::
 ::                                                  ::

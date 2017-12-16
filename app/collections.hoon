@@ -10,7 +10,7 @@
           /=  tops
         /;  (rekey %da)  /^  (map knot topicful:collections)
         /_  /.  /@  /collections-topic/
-                /=  comt
+                /=  coms
               /;  (rekey %da)
               /_  /@  /collections-comment/
       ==    ==
@@ -214,7 +214,7 @@
     =+  `[top=@da topicful]`i.tos
     =?  ta-this  (gth mod.info upd)
       (ta-change-topic col top info)
-    =/  mos  ~(tap by comt)
+    =/  mos  ~(tap by coms)
     |-  ^+  ta-this
     ?~  mos  ta-this
     =.  ta-done  $(mos t.mos)
