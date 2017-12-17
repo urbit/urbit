@@ -63,6 +63,7 @@
       $%  {$diff lime}                                  ::
           {$poke wire dock pear}                        ::
           {$peer wire dock path}                        ::
+          {$pull wire dock $~}                          ::
       ==                                                ::
     ++  work                                            ::>  interface action
       $%  ::  circle management                         ::
@@ -88,6 +89,7 @@
           {$number $@(@ud {@u @ud})}                    ::<  relative/absolute
           {$who audience}                               ::<  presence
           {$what (unit $@(char audience))}              ::<  show bound glyph
+          {$sources circle}                               ::<  show active sources
           ::  ui settings                               ::
           {$bind char (unit audience)}                  ::<  bind glyph
           {$unbind char (unit audience)}                ::<  unbind glyph
@@ -118,12 +120,6 @@
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  =*  o  u.old
-  =.  count.o  (lent grams.o)
-  =+  %+  reel  grams.o
-    |=  {t/telegram c/@ud k/(map serial @ud)}
-    [+(c) (~(put by k) uid.t c)]
-  =.  known.o  k
   [~ ..prep(+<+ u.old)]
 ::
 ::>  ||
@@ -194,7 +190,7 @@
 ::
 ++  peer-client                                         ::<  ui state peer move
   ^-  move
-  :*  ost.bol
+  :*  0
       %peer
       /server/client
       server
@@ -203,7 +199,7 @@
 ::
 ++  peer-inbox
   ^-  move
-  :*  ost.bol
+  :*  0
       %peer
       /server/inbox
       server
@@ -459,7 +455,10 @@
     |=  {num/@ud gam/telegram}
     =+  old=(snag num grams)
     ?:  =(gam old)  +>.$                                ::  no change
-    =.  grams  (oust [num 1] grams)
+    =.  grams
+      %+  welp
+      (scag num grams)
+      [gam (slag +(num) grams)]
     ?:  =(sep.gam sep.old)  +>.$                        ::  no worthy change
     =<  sh-done
     (~(sh-gram sh cli) gam)
@@ -789,6 +788,8 @@
             ==
           ==
         ::
+          ;~((glue ace) (perk %sources ~) circ)
+        ::
           ;~((glue ace) (perk %show ~) circ)
         ::
           ;~((glue ace) (perk %hide ~) circ)
@@ -959,6 +960,7 @@
           $number  (number +.job)
           $who     (who +.job)
           $what    (what +.job)
+          $sources  (list-sources +.job)
           ::  ui settings
           $bind    (bind +.job)
           $unbind  (unbind +.job)
@@ -1052,6 +1054,11 @@
         =+  pas=~(key by pos)
         =.  ..sh-work
           sh-prod(active.she pas)
+        ::  default to a day of backlog
+        =.  pos
+          %-  ~(run by pos)
+          |=  r/range
+          ?~(r `[da+(sub now.bol ~d1) ~] r)
         (sh-act %source inbox & pos)
       ::
       ++  leave                                         ::<  %leave
@@ -1060,9 +1067,17 @@
         ::
         |=  pas/(set circle)
         ^+  ..sh-work
+        ::  remove *all* sources relating to {pas}.
         =/  pos
-          %-  ~(run in pas)
-          |=(p/circle [p ~])
+          %-  ~(gas in *(set ^source))
+          %-  zing
+          =/  sos
+            =-  ~(tap in src:-)
+            (fall (~(get by mirrors) incir) *config)
+          %+  turn  ~(tap in pas)
+          |=  c/circle
+          %+  skim  sos
+          |=(s/^source =(cir.s c))
         =.  ..sh-work
           (sh-act %source inbox | pos)
         (sh-act %notify pas ~)
@@ -1245,6 +1260,24 @@
           =.  ..sh-fact  (sh-fact %txt "? {(scow %ud msg)}")
           (activate (snag (sub count +(msg)) grams))
         (sh-lame "…{(reap p.num '0')}{(scow %ud q.num)}: no such telegram")
+      ::
+      ++  list-sources                                  ::<  %sources
+        ::>  display the active sources for our circle.
+        ::
+        |=  cir/circle
+        ^+  ..sh-work
+        %+  sh-fact  %mor
+        %+  turn
+          ::  make sure to exclude {nom} itself.
+          =-  ~(tap in (~(del in src:-) [cir ~]))
+          (fall (~(get by mirrors) cir) *config)
+        |=  s/^source
+        ^-  sole-effect
+        :-  %txt
+        %+  weld  ~(cr-phat cr cir.s)
+        %+  roll  (range-to-path ran.s)
+        |=  {a/@ta b/tape}
+        :(weld b "/" (trip a))
       ::
       ::>  ||
       ::>  ||  %ui-settings
@@ -2210,24 +2243,49 @@
   ta-done:(ta-sole:ta act)
 ::
 ::TODO  for debug purposes. remove eventually.
+::  users beware, here be dragons.
 ++  poke-noun
   |=  a/@t
   ^-  (quip move _+>)
-  ?:  =(a 'debug')
+  ?:  =(a 'check')
+    ~&  'verifying message reference integrity...'
     =-  ~&(- [~ +>.$])
+    ~&  [%count--lent count (lent grams)]
     =+  %-  ~(rep by known)
       |=  {{u/serial a/@ud} k/@ud m/@ud}
       :-  ?:((gth a k) a k)
       ?:  =(u uid:(snag (sub count +(a)) grams))  m  +(m)
-    :^  %check-talk
-        count=count
-      lent=(lent grams)
+    :-  %check-talk
     [known=k mismatch=m]
   ?:  =(a 'rebuild')
+    ~&  'rebuilding message references...'
     =+  %+  reel  grams
       |=  {t/telegram c/@ud k/(map serial @ud)}
       [+(c) (~(put by k) uid.t c)]
     [~ +>.$(count c, known k)]
+  ?:  =(a 'reconnect')
+    ~&  'disconnecting and reconnecting to hall...'
+    :_  +>
+    :~  [0 %pull /server/client server ~]
+        [0 %pull /server/inbox server ~]
+        peer-client
+        peer-inbox
+    ==
+  ?:  =(a 'reset')
+    ~&  'full reset incoming, hold on to your cli...'
+    :_  +>(grams ~, known ~, count 0)
+    :~  [0 %pull /server/client server ~]
+        [0 %pull /server/inbox server ~]
+        peer-client
+        peer-inbox
+    ==
+  ::  this deletes a message from your backlog, and may
+  ::  make talk throw stack traces.
+  ::  **aka don't run this!**
+  ?:  =(a 'screw')
+    ~&  'screwing things up...'
+    :-  ~
+    +>(grams (oust [0 1] grams))
   [~ +>]
 ::
 ++  coup-client-action                                                ::<  accept n/ack

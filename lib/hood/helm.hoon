@@ -2,7 +2,7 @@
 ::::  /hoon/helm/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
-/-    sole
+/-    sole, hall
 [. sole]
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -60,6 +60,8 @@
       $%  {$hood-unsync desk ship desk}                 ::
           {$ask-mail cord}                              ::
           {$helm-hi cord}                               ::
+          {$drum-start well:gall}                       ::
+          {$hall-action action:hall}                    ::
       ==                                                ::
     --
 |_  moz/(list move)
@@ -238,4 +240,35 @@
 ++  take-woot                                         ::  result of %want
   |=  {way/wire her/ship cop/coop}  =<  abet
   (emit %flog ~ %text "woot: {<[way cop]>}")
+::
+++  poke-tlon-init-web
+  |=  met/ship  =<  abet
+  %-  emil
+  %-  flop
+  :~  ^-  card
+      :^  %poke  /helm/web/fora  [our %hood]
+      [%drum-start q.byk %fora]
+    ::
+      :^  %poke  /helm/web/stream/create  [our %hall]
+      :-  %hall-action
+      :-  %create
+      [%stream 'stream relay channel' %channel]
+    ::
+      :^  %poke  /helm/web/stream/filter  [our %hall]
+      :-  %hall-action
+      :-  %filter
+      [%stream | |]
+    ::
+      :^  %poke  /helm/web/stream/source  [our %hall]
+      :-  %hall-action
+      :-  %source
+      [%stream & [[[met %urbit-meta] `[da+(sub now ~d1) ~]] ~ ~]]
+  ==
+::
+++  poke-tlon-add-stream
+  |=  web/ship  =<  abet
+  %-  emit
+  :^  %poke  /helm/web/stream/source  [our %hall]
+  :+  %hall-action  %source
+  [%urbit-meta & [[[web %stream] `[da+now ~]] ~ ~]]
 --

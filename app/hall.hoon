@@ -11,6 +11,11 @@
 /-    hall                                              ::  structures
 /+    hall, hall-legacy                                 ::  libraries
 /=    seed  /~  !>(.)
+/=    filter-gram
+      /^  $-({telegram:hall bowl:gall} telegram:hall)
+      /|  /:  /%/filter  /!noun/
+          /~  |=({t/telegram:hall bowl:gall} t)
+      ==
 ::
 ::::
   ::
@@ -174,13 +179,27 @@
     |=  des/(list delta)
     %_(+> deltas (welp (flop des) deltas))
   ::
-  ++  ta-note
-    :>  sends {msg} as an %app message to the user's inbox.
+  ++  ta-speak
+    :>  sends {sep} as an %app message to the user's inbox.
     ::
-    |=  msg/tape
+    |=  sep/speech
     %+  ta-action  %phrase
     :-  [[our.bol %inbox] ~ ~]
-    [%app dap.bol %lin | (crip msg)]~
+    [%app dap.bol sep]~
+  ::
+  ++  ta-grieve
+    :>  sends a stack trace to the user's inbox.
+    ::
+    |=  {msg/tape fal/tang}
+    %^  ta-speak  %fat
+      [%name 'stack trace' %tank fal]
+    [%lin | (crip msg)]
+  ::
+  ++  ta-note
+    :>  sends {msg} to the user's inbox.
+    ::
+    |=  msg/tape
+    (ta-speak %lin | (crip msg))
   ::
   ++  ta-evil
     :>  tracing printf and crash.
@@ -345,9 +364,16 @@
         |=  {c/circle m/(jug ship naem)}
         (~(put ju m) hos.c nom.c)
       =?  ..ta-action  (~(has by cic) our.bol)
-        %-  ~(rep in (~(get ju cic) our.bol))
-        |=  {n/naem _ta}  ::  beware, urbit/arvo#447
-        (affect n %status [our.bol n] our.bol dif)
+        =+  nos=~(tap in (~(get ju cic) our.bol))
+        |-  ^+  ..ta-action
+        ?~  nos  ..ta-action
+        =.  ..ta-action
+          (affect i.nos %status [our.bol i.nos] our.bol dif)
+        $(nos t.nos)
+        ::TODO  runtime error
+        ::%-  ~(rep in (~(get ju cic) our.bol))
+        ::|=  {n/naem _ta}  ::  beware, urbit/arvo#447
+        ::(affect n %status [our.bol n] our.bol dif)
       =.  cic  (~(del by cic) our.bol)
       %-  ta-deltas
       %-  ~(rep by cic)
@@ -634,10 +660,12 @@
     ::
     |=  {who/circle ses/(list serial) fal/(unit tang)}
     ^+  +>
-    ~?  ?=(^ fal)  u.fal
-    =-  (ta-delta %done who ses -)
-    ?~  fal  %accepted
-    ~>(%slog.[0 u.fal] %rejected)
+    ?~  fal
+      (ta-delta %done who ses %accepted)
+    =.  +>  (ta-delta %done who ses %rejected)
+    =-  (ta-grieve - u.fal)
+    %+  weld  "{(scow %ud (lent ses))} message(s) "
+    "rejected by {(scow %p hos.who)}/{(trip nom.who)}"
   ::
   ++  ta-resub
     :>    subscription dropped
@@ -1127,6 +1155,15 @@
       |=  src/source
       ^+  +>
       =+  seq=(~(get by sequence) cir.src)
+      =/  ner/range
+        ?~  seq  ran.src
+        =-  `[[%ud u.seq] -]
+        ?~  ran.src  ~
+        tal.u.ran.src
+      ::  if our subscription changes or ends, remove
+      ::  the original source.
+      =?  +>.$  !=(ner ran.src)
+        (so-delta-our %config so-cir %source | src)
       ::  if we're past the range, don't resubscribe.
       ?:  ?&  ?=(^ ran.src)
               ?=(^ tal.u.ran.src)
@@ -1138,13 +1175,8 @@
                       ==
               ==
           ==
-        (so-delta-our %follow | [src ~ ~])
-      =-  (so-delta-our %follow & [[cir.src -] ~ ~])
-      ^-  range
-      ?~  seq  ran.src
-      =-  `[[%ud u.seq] -]
-      ?~  ran.src  ~
-      tal.u.ran.src
+        +>.$
+      (so-delta-our %follow & [[cir.src -] ~ ~])
     ::
     ++  so-first-grams
       :>    beginning of stream
@@ -1289,9 +1321,16 @@
       |=  {src/circle gam/telegram}
       ^+  +>
       ::  check for write permissions.
+      ::TODO  we want to !! instead of silently failing,
+      ::      so that ++coup-repeat of the caller gets
+      ::      an error. but the caller may not be the
+      ::      author. if we check for that to be true,
+      ::      can we guarantee it's not an older message
+      ::      getting resent? does that matter? think.
       ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
       =.  sep.gam  (so-sane sep.gam)
+      =.  gam  (filter-gram gam bol)
       ::  if we already have it, ignore.
       =+  old=(~(get by known) uid.gam)
       ?.  &(?=(^ old) =(gam (snag u.old grams)))
@@ -2591,19 +2630,23 @@
   ::
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move _+>)
-  ?.  ?=($circle -.wir)
-    ?~  fal  [~ +>]
-    ~|  reap-fail+wir
-    (mean u.fal)
-  %+  etch-circle  wir
-  |=  {nom/naem src/source}
-  ?~  fal
-    %-  pre-bake
-    ta-done:(ta-greet:ta nom src)
-  =.  u.fal  [>%failed-subscribe nom src< u.fal]
-  %-  (slog (flop u.fal))
   %-  pre-bake
-  ta-done:(ta-leave:ta nom src)
+  %+  welp
+    ?.  ?=({$circle *} wir)  ~
+    =+  wer=(etch wir)
+    ?>  ?=($circle -.wer)
+    =<  ta-done
+    %.  [nom.wer src.wer]
+    ?~  fal  ta-greet:ta
+    ta-leave:ta
+  ?~  fal  ~
+  =<  ta-done
+  =-  (ta-grieve:ta - u.fal)
+  =+  (wire-to-target wir)
+  %+  weld  "failed (re)subscribe to {(scow %p p)} on "
+  %+  roll  q
+  |=  {a/@ta b/tape}
+  :(weld b "/" (trip a))
 ::
 ++  quit
   :>    dropped subscription
@@ -2612,9 +2655,7 @@
   ::
   |=  wir/wire
   ^-  (quip move _+>)
-  :_  +>
-  ?.  =(src.bol our.bol)  ~
-  [(wire-to-peer wir) ~]
+  [[(wire-to-peer wir) ~] +>]
 ::
 ++  quit-circle
   :>    dropped circle sub
@@ -2626,9 +2667,6 @@
   %+  etch-circle  [%circle wir]
   |=  {nom/naem src/source}
   %-  pre-bake
-  ::  when we got kicked, don't resub, remove source.
-  ?.  =(src.bol our.bol)
-    ta-done:(ta-action:ta %source nom | [src ~ ~])
   ta-done:(ta-resub:ta nom src)
 ::
 ++  coup-repeat
@@ -2763,10 +2801,12 @@
   ==
 ::
 ::TODO  for debug purposes. remove eventually.
+::  users beware, here be dragons.
 ++  poke-noun
   |=  a/@t
   ^-  (quip move _+>)
-  ?:  =(a 'debug')
+  ?:  =(a 'check')
+    ~&  'verifying message reference integrity...'
     =-  ~&(- [~ +>.$])
     %-  ~(urn by stories)
     |=  {n/naem s/story}
@@ -2786,6 +2826,7 @@
       known=k
     mismatch=m
   ?:  =(a 'rebuild')
+    ~&  'rebuilding message references...'
     =-  [~ +>.$(stories -)]
     %-  ~(urn by stories)
     |=  {nom/naem soy/story}
@@ -2799,5 +2840,25 @@
       %+  ~(put by s)  src
       [c (fall (~(get by s) src) ~)]
     soy(count c, known k, sourced s)
+  ?:  =(a 'refederate')
+    ~&  'refederating. may take a while...'
+    :_  +>
+    =+  bov=(above our.bol)
+    ?:  =(bov our.bol)  ~
+    :~  [0 %pull /burden [bov dap.bol] ~]
+        (wire-to-peer /burden)
+    ==
+  ?:  =(a 'incoming')
+    ~&  'incoming subscriptions (ignoring circle subs):'
+    ~&  %+  skip  ~(tap by sup.bol)
+        |=  {bone (pair ship path)}
+        &(?=({$circle *} q) !?=({$circle $inbox *} q))
+    [~ +>]
+  ?:  =(a 'sources')
+    ~&  'sources per story:'
+    ~&  %-  ~(urn by stories)
+        |=  {n/naem s/story}
+        [n src.shape.s]
+    [~ +>]
   [~ +>]
 --
