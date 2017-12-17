@@ -347,7 +347,6 @@
           ?&  ?=($source -.dif.rum)
               add.dif.rum
               =(cir.rum incir)
-              ?=($~ ran.src.dif.rum)
           ==
         =*  cir  cir.src.dif.rum
         =+  ren=~(cr-phat cr cir)
