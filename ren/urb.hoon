@@ -7,7 +7,7 @@
       /,      /web/pages
           /;  urb-split  /#  /!hymn/
               /web/collections
-          /;  urb-split  /#  /&hymn&/collections/  ::XX only bod hash?
+          /urb-collections/
               /
           /urb-tree/
       ==
