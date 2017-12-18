@@ -29,7 +29,7 @@
 ++  de-tape                                             ::>  tape to sur (parse)
   |%
   ++  circ                                              ::>  circle
-    ;~((glue fas) ;~(pfix sig fed:ag) urt:ab)
+    ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
   ::
   ++  pont
     ;~  pfix  fas

@@ -13,7 +13,7 @@
 ::>    wrapper molds, for semantic clarity.
 ::+|
 ::
-++  name  term                                          ::<  circle name
+++  name  knot                                          ::<  circle name
 ++  nick  cord                                          ::<  local nickname
 ::
 ::>  ||

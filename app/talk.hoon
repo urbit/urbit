@@ -593,13 +593,13 @@
         (most ;~(plug com (star ace)) ship)
       ::
       ++  cire                                          ::<  local circle
-        ;~(pfix cen sym)
+        ;~(pfix cen urs:ab)
       ::
       ++  circ                                          ::<  circle
         ;~  pose
           (cold incir col)
-          ;~(pfix cen (stag self sym))
-          ;~(pfix fas (stag (sein:title self) sym))
+          ;~(pfix cen (stag self urs:ab))
+          ;~(pfix fas (stag (sein:title self) urs:ab))
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
