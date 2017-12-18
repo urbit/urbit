@@ -13,6 +13,8 @@
     ::  |command handlers
     hood-helm, hood-kiln, hood-drum, hood-write,
     hood-womb
+^%
+!:
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::

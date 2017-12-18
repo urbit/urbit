@@ -63,15 +63,19 @@
   ++  endpoint  (normalize (fork-clams (heads doc-data)))
   ++  heads  |*(a/(pole) ?~(a a [-<.a (heads +.a)]))
   ++  fork-clams
-    |*  a/(pair _{term *} (pole _{term *}))  ::  ^-  _{term *}
-    ?~  q.a  p.a
-    ?(p.a (fork-clams q.a))
+    =+  $:{a/(pair _{term *} (pole _{term *}))}
+    |%  +-  $
+          ?~  q.a  p.a
+          ?(p.a (fork-clams q.a))
+    --
   ::
-  ++  normalize  ::  XX smarter pretty-printing
-    |*  a/_{@ *}  :: ^+  a
-    |=  b/*
-    ^+  [?@(- . .)]:(a b)
-    (a b)
+  ++  normalize
+    =+  $:{a/_{@ *}}
+    |%  +-  $
+          |=  b/*
+          ^+  [?@(- . .)]:(a b)
+          (a b)
+    --
   ::
   ++  doc-data-dry    ::  staticly typed for endpoint lookup
     =,  param

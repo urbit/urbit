@@ -34,7 +34,7 @@
 ++  axle-n  ?(axle-1 axle-2 axle-3 axle-4)              ::  upgrade path
 ++  axle-1  {$1 pol/(map ship mast-1)}                  ::
 ++  mast-1                                              ::
-  (cork mast-2 |-($:mast-2 +<(bum (~(run by bum) seat-1)))) ::
+  (cork mast-2 |:($:mast-2 +<(bum (~(run by bum) seat-1)))) ::
 ++  seat-1                                              ::
   (cork seat-2 |:($:seat-2 +<+))                          ::
 ++  axle-2  {$2 pol/(map ship mast-2)}                  ::

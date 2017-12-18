@@ -8288,10 +8288,10 @@
     ::  ~>  %slog.[%0 (dunk 'blow-subject')]
     =+  bus=bran
     ::  ~|  mask.bus
-    =+  jon=?:(fab (apex:musk bus q.pro) (apex:musk bus q.pro))
+    =+  jon=(apex:musk bus q.pro)
     ?~  jon
-      ?:  fab
-        [p.pro [%10 [%live %1 %constant-stop] q.pro]]
+      ::  ?:  fab
+      ::    [p.pro [%10 [%live %1 %constant-stop] q.pro]]
       ::  [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
       ::  ~_  (dunk '%constant-blocked-type')
       ::  ~|  [%constant-stopped-gene gen]
@@ -8300,8 +8300,8 @@
       ~|  %constant-folding-stopped
       !!
     ?:  ?=($| -.u.jon)
-      ?:  fab
-        [p.pro [%10 [%live %1 %constant-block] q.pro]]
+      ::  ?:  fab
+      ::    [p.pro [%10 [%live %1 %constant-block] q.pro]]
       ::  [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
       ::  ~_  (dunk '%constant-blocked-type')
       ::  ~|  [%constant-blocked-gene gen]
