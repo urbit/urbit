@@ -2,18 +2,7 @@
 ::
 /-  hall, *collections
 /+  hall, rekey
-/=  cols
-  /:  /===/web/collections
-  /^  collections
-  /;  (rekey %da)  /^  (map knot collection:collections)
-  /_  /.  /@  /collections-config/
-          /=  tops
-        /;  (rekey %da)  /^  (map knot topicful:collections)
-        /_  /.  /@  /collections-topic/
-                /=  coms
-              /;  (rekey %da)
-              /_  /@  /collections-comment/
-      ==    ==
+/=  cols   /:  /===/web/collections  /collections/
 ::
 ::    things to keep in sync, unique by date:
 ::  collections: files, circles,       
