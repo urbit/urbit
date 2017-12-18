@@ -28,7 +28,7 @@
         ;input(type "hidden", name "easy_form:mark", value "collections-action");
         ;input(type "hidden", name "easy_form:tag", value "submit");
         ::
-        :: hmm we really want the filename here
+        ::FIXME we really want the filename here
         ;input(type "hidden", name "col", value "{<mod.conf.col>}");
         ::
         ;input(name "tit", placeholder "Title");
@@ -36,6 +36,19 @@
         ;textarea(name "wat", placeholder "Enter topic text");
         ;br;
         ;input(type "submit");
+      ==
+      ::
+      ;hr;
+      ::
+      ;form(onsubmit "return easy_form.submit(this)")
+        ;input(type "hidden", name "easy_form:mark", value "collections-action");
+        ;input(type "hidden", name "easy_form:tag", value "delete");
+        ;input(type "hidden", name "easy_form:confirm");
+        ::
+        ::FIXME we really want the filename here
+        ;input(type "hidden", name "col", value "{<mod.conf.col>}");
+        ::
+        ;input.red(type "submit", value "Archive this collection");
       ==
     ==
   --

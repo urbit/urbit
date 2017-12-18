@@ -9,6 +9,9 @@ window.easy_form = {
     var appl = param("appl") || mark.match(/^[^-]*/)[0]
     var tag = param("tag")
     //
+    if(param("confirm") != null && !confirm("Are you sure?"))
+      return false
+    //
     var req = {}
     for (var [k,v] of new FormData(form)){
       if(!/^easy_form:/.test(k)) {

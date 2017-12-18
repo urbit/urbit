@@ -6,8 +6,9 @@
 /=   bod    /#  /&  elem
               /|(/collections-topic-full/ /collections-collection/ /collections/)
 ^-  {hed/{@uvH marl} bod/{@uvH marl}}
-    ::
-    ::REVIEW is head static?
-    ::TODO css/js includes?
-:-  [-.bod ;(title:"Collections")]
+::
+:-  :-  -.bod  ::REVIEW is head static?
+    ;=  ;title:"Collections"
+        ;link/"/===/web/lib/css/collections.css"(rel "stylesheet");
+    ==
 [-.bod +.bod ~]

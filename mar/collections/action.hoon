@@ -20,7 +20,7 @@
     ++  action
       %-  of  :~
         create+create
-        delete+(se %da)
+        delete+(ot col+(se %da) ~)
         submit+(ot col+(se %da) tit+so wat+wain ~)
         comment+(ot col+(se %da) top+(se %da) com+(se %da) wat+wain ~)
       ==
