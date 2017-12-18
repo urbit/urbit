@@ -2051,12 +2051,15 @@
       mor+~[txt+"# {(trip exp.sep)}" tan+res.sep]
     ::
         $ire
-      =+  gam=(recall top.sep)
-      ?~  gam  $(sep sep.sep)
+      =+  num=(~(get by known) top.sep)
+      ?~  num  $(sep sep.sep)
+      =+  gam=(snag (sub count +(u.num)) grams)
       =-  mor+[tan+- $(sep sep.sep) ~]
       %-  flop  %+  weld
-        [%leaf "in reply to: {(cite:title aut.u.gam)}: "]~
-      %+  turn  (~(tr-text tr sef u.gam) width.cli)
+        :_  ~  :-  %leaf
+        %+  weld  "in reply to: {(cite:title aut.gam)}: "
+        "[{(scow %ud u.num)}]"
+      %+  turn  (~(tr-text tr sef gam) width.cli)
       |=(t/tape [%leaf t])
     ::
         $fat
