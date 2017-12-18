@@ -82,6 +82,9 @@ u3t_slog(u3_noun hod)
 void
 u3t_heck(u3_atom cog)
 {
+#if 0
+  u3R->pro.cel_d++;
+#else
   c3_w len_w = u3r_met(3, cog);
   c3_c* str_c = alloca(1 + len_w);
 
@@ -104,6 +107,7 @@ u3t_heck(u3_atom cog)
     }
     u3R = rod_u;
   }
+#endif
 }
 
 /* _t_jet_label():

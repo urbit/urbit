@@ -13,6 +13,33 @@
              u3_noun lon,
              u3_noun gil);
 
+  static u3_noun 
+  _opal_sane(u3_noun ope)
+  {
+    if ( (0 == u3h(ope)) && (0 == u3t(ope)) ) {
+      fprintf(stderr, "insane opal\r\n");
+      c3_assert(0);
+    }
+    else return ope;
+  }
+
+  static u3_noun
+  _pony_sane(u3_noun poy)
+  {
+    if ( 0 == poy ) {
+      return poy;
+    }
+    else if ( c3y != u3h(poy) ) {
+      return poy;
+    }
+    else {
+      u3_noun ttt_poy = u3t(u3t(u3t(poy))); // opal
+
+      _opal_sane(ttt_poy);
+      return poy;
+    }
+  }
+
   static u3_noun
   u3qfu_felt(u3_noun van,
              u3_noun sut,
@@ -600,7 +627,7 @@
   }
 
   static u3_noun
-  _find_buck(u3_noun van,
+  _find_bucx(u3_noun van,
              u3_noun sut,
              u3_noun way,
              u3_noun p_heg,
@@ -677,6 +704,20 @@
     }
   }
 
+  static u3_noun
+  _find_buck(u3_noun van,
+             u3_noun sut,
+             u3_noun way,
+             u3_noun p_heg,
+             u3_noun q_heg,
+             u3_noun axe,
+             u3_noun lon,
+             u3_noun gil)
+  {
+    u3_noun ret = _find_bucx(van, sut, way, p_heg, q_heg, axe, lon, gil);
+
+    return _pony_sane(ret);
+  }
 
   static u3_noun
   _find_limb(u3_noun van,
@@ -688,6 +729,8 @@
     u3_noun qp_mor = u3t(p_mor);          //  palo
     u3_noun pqp_mor = u3h(qp_mor);        //  vein
     u3_noun qqp_mor = u3t(qp_mor);        //  opal
+
+    qqp_mor = _opal_sane(qqp_mor);
     {
       u3_noun ref    = u3qfu_felt(van, sut, qqp_mor);
       u3_noun lon    = u3k(pqp_mor);
@@ -704,6 +747,8 @@
            u3_nul,
            u3nc(u3nc(u3_nul, u3k(p_heg)), u3k(lon)),
            u3nc(c3y, u3qfu_peek(van, ref, way, p_heg)));
+
+        ret = _pony_sane(ret);
       }
       else {
         u3_noun p_heg = u3h(u3t(heg));    //  @ud
@@ -716,7 +761,7 @@
       u3z(lon);
       u3z(ref);
 
-      return ret;
+      return _pony_sane(ret);
     }
   }
 
@@ -727,12 +772,14 @@
              u3_noun hyp)
   {
     if ( u3_nul == hyp ) {
-      return u3nq(c3y, u3_nul, u3_nul, u3nc(c3y, u3k(sut)));
+      return _pony_sane(u3nq(c3y, u3_nul, u3_nul, u3nc(c3y, u3k(sut))));
     }
     else {
       u3_noun i_hyp = u3h(hyp);
       u3_noun t_hyp = u3t(hyp);
       u3_noun mor = _find_pony(van, sut, way, t_hyp);
+
+      mor = _pony_sane(mor);
 
       if ( c3n == u3h(mor) ) {
         u3_noun p_mor = u3t(mor);
@@ -757,7 +804,7 @@
           u3z(gen);
           u3z(mor);
 
-          return ret;
+          return _pony_sane(ret);
         }
       }
       else {
@@ -765,7 +812,7 @@
         u3_noun ret = _find_limb(van, sut, way, i_hyp, p_mor);
 
         u3z(mor);
-        return ret;
+        return _pony_sane(ret);
       }
     }
   }

@@ -718,6 +718,11 @@
         u3_noun fid = _mint_in(van, sut, c3__noun, p_gen);
         u3_noun p_fid = u3h(fid);
         u3_noun q_fid = u3t(fid);
+
+        if ( 0 == p_fid ) {
+          u3m_p("bad subject: p_gen", p_gen);
+          c3_assert(0);
+        }
         u3_noun dov = _mint_in(van, p_fid, gol, q_gen);
         u3_noun p_dov = u3h(dov);
         u3_noun q_dov = u3t(dov);

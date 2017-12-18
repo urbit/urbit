@@ -120,7 +120,7 @@ static u3j_core _143_hex_d[] =
     static u3j_harm _143_pen__ut_conk_a[] = {{".2", u3wfu_conk}, {}};
     static u3j_harm _143_pen__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
     // static u3j_harm _143_pen__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
-    static u3j_harm _143_pen__ut_fond_a[] = {{".2", u3wfu_fond}, {}};
+    // static u3j_harm _143_pen__ut_fond_a[] = {{".2", u3wfu_fond}, {}};
     static u3j_harm _143_pen__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
     static u3j_harm _143_pen__ut_fuse_a[] = {{".2", u3wfu_fuse}, {}};
     static u3j_harm _143_pen__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
@@ -136,7 +136,7 @@ static u3j_core _143_hex_d[] =
       { "burn", _143_pen__ut_burn_a },
       { "conk", _143_pen__ut_conk_a },
       { "crop", _143_pen__ut_crop_a },
-      { "fond", _143_pen__ut_fond_a },
+    //  { "fond", _143_pen__ut_fond_a },
     //  { "fire", _143_pen__ut_fire_a },
       { "fish", _143_pen__ut_fish_a },
       { "fuse", _143_pen__ut_fuse_a },
