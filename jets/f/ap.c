@@ -19,9 +19,9 @@
 #   define _ap_jet_rake  1
 #   define _ap_jet_hack  2
 
+#if 0
     static u3_noun
     _open_in(u3_noun ter, u3_noun gen);
-#if 0
     /* ~(. al gen)
     */
     static u3_noun
@@ -32,7 +32,6 @@
 
       return u3i_molt(gat, u3x_sam, u3nc(c3__herb, u3k(gen)), 0);
     }
-#endif
     /* ~(. al gen)
     */
     static u3_noun
@@ -984,6 +983,7 @@
         return u3qfp_hack(ter, gen);
       }
     }
+#endif
 
 /* boilerplate
 */
@@ -1010,6 +1010,7 @@
   _ap_open_l(u3_noun ter,
              u3_noun gen)
   {
+#if 0
     u3_noun pro = _open_in(ter, gen);
 
     if ( u3_none != pro ) {
@@ -1017,6 +1018,9 @@
     } else {
       return _ap_open_n(ter, gen);
     }
+#else
+    return _ap_open_n(ter, gen);
+#endif
   }
 
   u3_noun
