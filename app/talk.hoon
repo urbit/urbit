@@ -2213,12 +2213,12 @@
   ::
   |=  pax/path
   ^-  (quip move _+>)
-  ?.  (team:title src.bol our.bol)
-    ~&  [%peer-talk-stranger src.bol]
-    [~ +>]
+  ?.  =(src.bol our.bol)
+    ~!  [%peer-talk-stranger src.bol]
+    !!
   ?.  ?=({$sole *} pax)
-    ~&  [%peer-talk-strange pax]
-    [~ +>]
+    ~!  [%peer-talk-strange pax]
+    !!
   ta-done:ta-console:ta
 ::
 ++  diff-hall-prize                                     ::<  accept query answer
