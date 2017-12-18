@@ -104,6 +104,7 @@
       ?($submit $comment)
     =/  col  (~(get by cols) col.act)
     ?~  col  &
+    ?:  (team:title our.bol src.bol)  |  ::REVIEW this is implicit yes?
     ?:  publ.conf.u.col
       (~(has in mems.conf.u.col) src.bol)  :: not on blacklist
     !(~(has in mems.conf.u.col) src.bol)   :: is on whitelist
