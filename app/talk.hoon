@@ -69,14 +69,14 @@
       $%  ::  circle management                         ::
           {$join (map circle range)}                    ::<  subscribe to
           {$leave audience}                             ::<  unsubscribe from
-          {$create security naem cord}                  ::<  create circle
-          {$delete naem (unit cord)}                    ::<  delete circle
-          {$depict naem cord}                           ::<  change description
-          {$filter naem ? ?}                            ::<  change message rules
-          {$invite naem (set ship)}                     ::<  give permission
-          {$banish naem (set ship)}                     ::<  deny permission
-          {$source naem (map circle range)}             ::<  add source
-          {$unsource naem (map circle range)}           ::<  remove source
+          {$create security name cord}                  ::<  create circle
+          {$delete name (unit cord)}                    ::<  delete circle
+          {$depict name cord}                           ::<  change description
+          {$filter name ? ?}                            ::<  change message rules
+          {$invite name (set ship)}                     ::<  give permission
+          {$banish name (set ship)}                     ::<  deny permission
+          {$source name (map circle range)}             ::<  add source
+          {$unsource name (map circle range)}           ::<  remove source
           ::  personal metadata                         ::
           {$attend audience (unit presence)}            ::<  set our presence
           {$name audience human}                        ::<  set our name
@@ -138,7 +138,7 @@
 ++  inbox                                               ::<  client's circle name
   ::>  produces the name of the circle used by this
   ::>  client for all its operations
-  ^-  naem
+  ^-  name
   %inbox
 ::
 ++  incir                                               ::<  client's circle
@@ -727,7 +727,7 @@
           ==
         ::
           ;~  plug  (perk %delete ~)
-            ;~(pfix ;~(plug ace cen) sym)
+            ;~(pfix ace cire)
             ;~  pose
               (cook some ;~(pfix ace qut))
               (easy ~)
@@ -949,7 +949,7 @@
           $unsource  (source | +.job)
           ::  personal metadata
           $attend  (attend +.job)
-          $name    (name +.job)
+          $name    (set-name +.job)
           ::  messaging
           $say     (say +.job)
           $eval    (eval +.job)
@@ -1084,7 +1084,7 @@
       ++  create                                        ::<  %create
         ::>  creates circle {nom} with specified config.
         ::
-        |=  {sec/security nom/naem txt/cord}
+        |=  {sec/security nom/name txt/cord}
         ^+  ..sh-work
         =.  ..sh-work
           (sh-act %create nom txt sec)
@@ -1094,14 +1094,14 @@
         ::>  deletes our circle {nom}, after optionally
         ::>  sending a last announce message {say}.
         ::
-        |=  {nom/naem say/(unit cord)}
+        |=  {nom/name say/(unit cord)}
         ^+  ..sh-work
         (sh-act %delete nom say)
       ::
       ++  depict                                        ::<  %depict
         ::>  changes the description of {nom} to {txt}.
         ::
-        |=  {nom/naem txt/cord}
+        |=  {nom/name txt/cord}
         ^+  ..sh-work
         (sh-act %depict nom txt)
       ::
@@ -1109,19 +1109,19 @@
         ::>  invites or banishes {sis} to/from our
         ::>  circle {nom}.
         ::
-        |=  {inv/? nom/naem sis/(set ship)}
+        |=  {inv/? nom/name sis/(set ship)}
         ^+  ..sh-work
         (sh-act %permit nom inv sis)
       ::
       ++  filter
-        |=  {nom/naem cus/? utf/?}
+        |=  {nom/name cus/? utf/?}
         ^+  ..sh-work
         (sh-act %filter nom cus utf)
       ::
       ++  source                                        ::<  %source
         ::>  adds {pas} to {nom}'s src.
         ::
-        |=  {sub/? nom/naem pos/(map circle range)}
+        |=  {sub/? nom/name pos/(map circle range)}
         ^+  ..sh-work
         (sh-act %source nom sub pos)
       ::
@@ -1137,7 +1137,7 @@
         ^+  ..sh-work
         (sh-act %notify aud pec)
       ::
-      ++  name                                          ::<  set our name
+      ++  set-name                                      ::<  set our name
         ::>  sets our name to {man} for {aud}.
         ::
         |=  {aud/audience man/human}
