@@ -1,22 +1,22 @@
 window.easy_form = {
-  submit: (form,req={})=> {
-    var mark, appl, tag;
+  submit: (form)=> {
+    const param = (key)=> {
+      var x = form.elements[`easy_form:${key}`]
+      return x && x.value
+    }
+    var mark = param("mark")
+    if(!mark) throw new TypeError("Need a mark")
+    var appl = param("appl") || mark.match(/^[^-]*/)[0]
+    var tag = param("tag")
+    //
     var req = {}
     for (var [k,v] of new FormData(form)){
-      switch(k){
-               case "easy_form:tag":
-          tag = v
-        break; case "easy_form:appl":
-          appl = v
-        break; case "easy_form:mark":
-          mark = v
-          appl = appl || v.match(/^[^-]*/)[0]
-        break; default:
+      if(!/^easy_form:/.test(k)) {
           req[k] = v
       }
     }
-    if(!mark) throw new TypeError("Need a mark")
     if(tag) req = {[tag]:req}
+    
     fetch("/~/auth.json", {credentials: "same-origin"})
     .then((res)=>res.json())
     .then(({oryx})=> fetch(`/~/to/${appl}/${mark}`,{
