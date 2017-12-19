@@ -215,7 +215,9 @@
       %peer
       /server/inbox
       server
-      /circle/[inbox]/grams/config/group/(scot %ud count)
+    ::
+      %+  welp  /circle/[inbox]/grams/config/group
+      ?:(=(0 count) ~ [(scot %ud count) ~])
   ==
 ::
 :>  #
