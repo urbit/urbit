@@ -146,8 +146,9 @@
     (ta-write /topic [col now.bol] %collections-topic !>(top))
   ::
   ++  ta-comment
-    |=  {col/time top/@da com/@da wat/wain}
+    |=  {col/time top/@da com/?(~ @da) wat/wain}
     ^+  +>
+    ?~  com  $(com now.bol)  :: new comment
     =;  res/$@(~ _+>.$)  ?^(res res +>.$)
     %+  biff  (~(get by cols) col)
     |=  [^ tops=(map @da topicful) ~]

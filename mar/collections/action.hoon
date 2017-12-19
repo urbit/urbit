@@ -22,8 +22,13 @@
         create+create
         delete+(ot col+(se %da) ~)
         submit+(ot col+(se %da) tit+so wat+wain ~)
-        comment+(ot col+(se %da) top+(se %da) com+(se %da) wat+wain ~)
+        comment+(ot col+(se %da) top+(se %da) com+null-or-da wat+wain ~)
       ==
+    ::
+    ++  null-or-da
+      %+  cu  |=(a=dime ?+(a !! [%n ~] ~, [%da @da] q.a))
+      %+  cu  |=(a=coin ?+(a !! [%$ ^] p.a))
+      (su nuck:so.hoon)
     ::
     ++  create
 ::       (ot wat+(cu (hard kind) so) des+so pub+bo vis+bo ses+(as (se %p)) ~)

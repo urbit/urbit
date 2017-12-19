@@ -39,7 +39,7 @@
             ses/(set ship)                            ::  black/whitelist
         ==                                            ::
         {$submit col/time tit/cord wat/wain}          ::  submit a post/note
-        {$comment col/time top/@da com/@da wat/wain}  ::  submit a comment
+        {$comment col/time top/@da com/?(~ @da) wat/wain} ::  submit a comment
         {$delete col/time}                            ::  delete a collection
     ==                                                ::
   --
