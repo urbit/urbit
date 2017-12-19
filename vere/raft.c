@@ -1445,17 +1445,19 @@ u3_raft_init()
 
 /* _raft_sure(): apply and save an input ovum and its result.
 */
-static void
+static u3_noun
 _raft_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 {
   //  Whatever worked, save it.  (XX - should be concurrent with execute.)
   //  We'd like more events that don't change the state but need work here.
   {
+    u3_noun ret;
+
     u3r_mug(cor);
     u3r_mug(u3A->roc);
 
     if ( c3n == u3r_sing(cor, u3A->roc) ) {
-      u3A->roe = u3nc(u3nc(vir, ovo), u3A->roe);
+      ret = u3nc(vir, ovo);
 
       u3z(u3A->roc);
       u3A->roc = cor;
@@ -1464,19 +1466,21 @@ _raft_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
       u3z(ovo);
 
       // push a new event into queue
-      u3A->roe = u3nc(u3nc(vir, u3_nul), u3A->roe);
+      ret = u3nc(vir, u3_nul);
 
       u3z(cor);
     }
+    return ret;
   }
 }
 
 /* _raft_lame(): handle an application failure.
 */
-static void
+static u3_weak
 _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 {
   u3_noun bov, gon;
+  u3_noun ret;
 
 #if 0
   {
@@ -1509,10 +1513,12 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
   gon = u3m_soft(0, u3v_poke, u3k(bov));
 
   if ( u3_blip == u3h(gon) ) {
-    _raft_sure(bov, u3k(u3h(u3t(gon))), u3k(u3t(u3t(gon))));
+    ret = _raft_sure(bov, u3k(u3h(u3t(gon))), u3k(u3t(u3t(gon))));
 
     u3z(tan);
     u3z(gon);
+
+    return ret;
   }
   else {
     u3z(gon);
@@ -1522,9 +1528,11 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
       u3_noun nog = u3m_soft(0, u3v_poke, u3k(vab));
 
       if ( u3_blip == u3h(nog) ) {
-        _raft_sure(vab, u3k(u3h(u3t(nog))), u3k(u3t(u3t(nog))));
+        ret = _raft_sure(vab, u3k(u3h(u3t(nog))), u3k(u3t(u3t(nog))));
         u3z(tan);
         u3z(nog);
+
+        return ret;
       }
       else {
         u3z(nog);
@@ -1534,6 +1542,8 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
         u3_lo_punt(2, u3kb_flop(u3k(tan)));
         uL(fprintf(uH, "crude: punted\n"));
         // c3_assert(!"crud");
+
+        return u3_nul;
       }
     }
   }
@@ -1541,7 +1551,7 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 
 /* _raft_punk(): insert and apply an input ovum (unprotected).
 */
-static void
+static u3_weak
 _raft_punk(u3_noun ovo)
 {
 #ifdef GHETTO
@@ -1592,7 +1602,7 @@ _raft_punk(u3_noun ovo)
     u3_noun tan = u3k(u3t(gon));
 
     u3z(gon);
-    _raft_lame(ovo, why, tan);
+    return _raft_lame(ovo, why, tan);
   }
   else {
     u3_noun vir = u3k(u3h(u3t(gon)));
@@ -1607,14 +1617,14 @@ _raft_punk(u3_noun ovo)
       u3_noun tan = u3k(u3t(nug));
 
       u3z(nug);
-      _raft_lame(ovo, why, tan);
+      return _raft_lame(ovo, why, tan);
     }
     else {
       vir = u3k(u3h(u3t(nug)));
       cor = u3k(u3t(u3t(nug)));
 
       u3z(nug);
-      _raft_sure(ovo, vir, cor);
+      return _raft_sure(ovo, vir, cor);
     }
   }
   //  uL(fprintf(uH, "punk oot %s\n", txt_c));
@@ -1969,7 +1979,10 @@ u3_raft_work(void)
       }
 
       while ( u3_nul != ova ) {
-        _raft_punk(u3k(u3t(u3h(ova))));
+        u3_noun sur = _raft_punk(u3k(u3t(u3h(ova))));
+        if ( u3_nul != sur) {
+          u3A->roe = u3nc(sur, u3A->roe);
+        }
         c3_assert(u3_nul == u3h(u3h(ova)));
 
         nex = u3k(u3t(ova));
