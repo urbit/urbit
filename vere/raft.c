@@ -1985,6 +1985,51 @@ _raft_poke(void)
 }
 
 
+/* _raft_pump(): Cartify, jam, and save an ovum, then perform its effects.
+*/
+static void
+_raft_pump(ovo, vir)
+{
+  u3v_cart*     egg_u = u3a_malloc(sizeof(*egg_u));
+  u3p(u3v_cart) egg_p = u3of(u3v_cart, egg_u);
+  u3_noun       ron;
+  c3_d          bid_d;
+  c3_w          len_w;
+  c3_w*         bob_w;
+
+  egg_u->nex_p = 0;
+  egg_u->cit = c3n;
+  egg_u->did = c3n;
+  egg_u->vir = vir;
+
+  ron = u3ke_jam(u3nc(u3k(u3A->now), ovo));
+  c3_assert(u3A->key);
+  // don't encrypt for the moment, bootstrapping
+  // ron = u3dc("en:crua", u3k(u3A->key), ron);
+
+  len_w = u3r_met(5, ron);
+  bob_w = c3_malloc(len_w * 4L);
+  u3r_words(0, len_w, bob_w, ron);
+  u3z(ron);
+
+  bid_d = _raft_push(u3Z, bob_w, len_w);
+  egg_u->ent_d = bid_d;
+
+  if ( 0 == u3A->ova.geg_p ) {
+    c3_assert(0 == u3A->ova.egg_p);
+    u3A->ova.geg_p = u3A->ova.egg_p = egg_p;
+  }
+  else {
+    c3_assert(0 == u3to(u3v_cart, u3A->ova.geg_p)->nex_p);
+    u3to(u3v_cart, u3A->ova.geg_p)->nex_p = egg_p;
+    u3A->ova.geg_p = egg_p;
+  }
+  _raft_kick_all(vir);
+  egg_u->did = c3y;
+  egg_u->vir = 0;
+}
+
+
 /* u3_raft_work(): work.
 */
 void
@@ -2010,14 +2055,10 @@ u3_raft_work(void)
     //  Cartify, jam, and encrypt this batch of events. Take a number, Raft will
     //  be with you shortly.
     {
-      c3_d    bid_d;
-      c3_w    len_w;
-      c3_w*   bob_w;
       u3_noun ova;
       u3_noun ovo;
       u3_noun vir;
       u3_noun nex;
-      u3_noun ron;
 
       ova = u3kb_flop(u3A->roe);
       u3A->roe = u3_nul;
@@ -2029,39 +2070,7 @@ u3_raft_work(void)
         u3z(ova); ova = nex;
 
         if ( u3_nul != ovo ) {
-          u3v_cart*     egg_u = u3a_malloc(sizeof(*egg_u));
-          u3p(u3v_cart) egg_p = u3of(u3v_cart, egg_u);
-
-          egg_u->nex_p = 0;
-          egg_u->cit = c3n;
-          egg_u->did = c3n;
-          egg_u->vir = vir;
-
-          ron = u3ke_jam(u3nc(u3k(u3A->now), ovo));
-          c3_assert(u3A->key);
-          // don't encrypt for the moment, bootstrapping
-          // ron = u3dc("en:crua", u3k(u3A->key), ron);
-
-          len_w = u3r_met(5, ron);
-          bob_w = c3_malloc(len_w * 4L);
-          u3r_words(0, len_w, bob_w, ron);
-          u3z(ron);
-
-          bid_d = _raft_push(u3Z, bob_w, len_w);
-          egg_u->ent_d = bid_d;
-
-          if ( 0 == u3A->ova.geg_p ) {
-            c3_assert(0 == u3A->ova.egg_p);
-            u3A->ova.geg_p = u3A->ova.egg_p = egg_p;
-          }
-          else {
-            c3_assert(0 == u3to(u3v_cart, u3A->ova.geg_p)->nex_p);
-            u3to(u3v_cart, u3A->ova.geg_p)->nex_p = egg_p;
-            u3A->ova.geg_p = egg_p;
-          }
-          _raft_kick_all(vir);
-          egg_u->did = c3y;
-          egg_u->vir = 0;
+          _raft_pump(ovo, vir);
 
           _raft_grab(ova);
         }
