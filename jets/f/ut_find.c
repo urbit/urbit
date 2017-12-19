@@ -29,7 +29,15 @@
     if ( 0 == poy ) {
       return poy;
     }
-    else if ( c3y != u3h(poy) ) {
+    else if ( c3n == u3h(poy) ) {
+      if ( c3n == u3h(u3t(poy)) ) {
+        // abnormal
+        u3_noun type = u3h(u3t(u3t(u3t(poy))));
+        if ( 0 == type ) {
+          u3m_p("insane type", 0);
+          c3_assert(0);
+        }
+      }
       return poy;
     }
     else {
@@ -507,7 +515,7 @@
           tor = u3nc(c3y, u3k(u3t(u3t(fid))));
         } else {
           wan = u3k(u3h(u3t(u3t(fid))));
-          tor = u3nc(c3n, u3k(u3t(u3t(fid))));
+          tor = u3nc(c3n, u3k(u3t(u3t(u3t(fid)))));
         }
         u3z(fid);
 
