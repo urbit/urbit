@@ -8798,19 +8798,18 @@
                       [(fork p.q.p.p.hax p.q.p.p.yor ~) q.q.p.p.hax]
                     ?>  ?=($& -.yor)
                     ?>  =(p.q.p.hax p.q.p.yor)
-                    :^    %&  
-                        (join p.p.hax p.p.yor)
-                      p.q.p.hax
                     ?:  &(?=($& -.q.q.p.hax) ?=($& -.q.q.p.yor))
+                      :^  %&  (join p.p.hax p.p.yor)  p.q.p.hax
                       [%& (fork p.q.q.p.hax p.q.q.p.yor ~)]
                     ?>  &(?=($| -.q.q.p.hax) ?=($| -.q.q.p.yor))
                     ?>  =(p.q.q.p.hax p.q.q.p.yor)
                     =+  wal=(~(uni in q.q.q.p.hax) q.q.q.p.yor)
+                    :^  %&  ~  p.q.p.hax
                     [%| p.q.q.p.hax wal]
           ++  $
             ^-  pony
             ?-    sut
-                $void       stop
+                $void       ~
                 $noun       stop
                 {$atom *}   stop
                 {$cell *}
@@ -8854,8 +8853,6 @@
                   next
                 ?~  q.u.tyr
                   $(sut q.sut, lon [~ lon], p.heg +(p.heg))
-                ?.  =(0 p.heg)
-                  next(p.heg (dec p.heg))
                 =+  tor=(fund way u.q.u.tyr)
                 ?-  -.tor
                   $&  [%& ~ (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
