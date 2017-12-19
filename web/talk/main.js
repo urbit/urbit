@@ -363,6 +363,7 @@ module.exports = recl({
           key: "speech"
         }, url);
       case !exp:
+        exp.res = exp.res || ["evaluating..."];
         return div({}, exp.exp, div({
           className: "fat"
         }, pre({}, exp.res.join("\n"))));
@@ -1351,6 +1352,9 @@ module.exports = recl({
     if (valid === true) {
       stan = $('#audience .input').text() || util.mainStationPath(window.urb.user);
       stan = (stan.split(/\ +/)).map(function(v) {
+        if (v.indexOf("/") === -1) {
+          v = v + "/inbox";
+        }
         if (v[0] === "~") {
           return v;
         } else {
@@ -1596,6 +1600,7 @@ module.exports = function(arg) {
       var path;
       end = window.urb.util.numDot(end);
       start = window.urb.util.numDot(start);
+      console.log('getting grams from ' + end + ' to ' + start);
       path = util.talkPath('circle', station, 'grams', end, start);
       return window.urb.bind(path, function(err, res) {
         var ref, ref1;
