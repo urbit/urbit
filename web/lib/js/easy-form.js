@@ -1,19 +1,34 @@
+//REVIEW this feels too complicated
+let match_url_end = (pattern,out={})=> {
+  if(!pattern) return out
+  let here = document.location.pathname.split("/").reverse()
+  while(!here[0]) here.shift()
+  for(let segment of pattern.split("/").reverse()){
+    let val = here.shift()
+    if(segment[0] != ":") continue //REVIEW check for match?
+    out[segment.slice(1)] = val
+  }
+  return out
+}
+//
 window.easy_form = {
   submit: (form)=> {
     const param = (key)=> {
       var x = form.elements[`easy_form:${key}`]
       return x && x.value
     }
-    var mark = param("mark")
+    let mark = param("mark")
     if(!mark) throw new TypeError("Need a mark")
-    var appl = param("appl") || mark.match(/^[^-]*/)[0]
-    var tag = param("tag")
+    let appl = param("appl") || mark.match(/^[^-]*/)[0]
+    let tag = param("tag")
     //
     if(param("confirm") != null && !confirm("Are you sure?"))
       return false
     //
-    var req = {}
-    for (var [k,v] of new FormData(form)){
+    let req = {}
+    req = match_url_end(param("url_end"),req)
+    //
+    for (let [k,v] of new FormData(form)){
       if(!/^easy_form:/.test(k)) {
           req[k] = v
       }

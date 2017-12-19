@@ -11,7 +11,9 @@
       ;p: updated {<mod.conf.col>}
       ::TODO public, visible
       ::
-      ;h2: Topics:
+      ;*  ?~  tops.col  ~
+          ;=  ;h2: Topics:
+          ==
       ;ul
         ;*  %+  turn  (sort ~(tap by tops.col) dor)
             |=  [top=@da topicful]
@@ -27,9 +29,7 @@
       ;form(onsubmit "return easy_form.submit(this)")
         ;input(type "hidden", name "easy_form:mark", value "collections-action");
         ;input(type "hidden", name "easy_form:tag", value "submit");
-        ::
-        ::FIXME we really want the filename here
-        ;input(type "hidden", name "col", value "{<mod.conf.col>}");
+        ;input(type "hidden", name "easy_form:url_end", value "collections/:col");
         ::
         ;input(name "tit", placeholder "Title");
         ;br;
@@ -43,10 +43,8 @@
       ;form(onsubmit "return easy_form.submit(this)")
         ;input(type "hidden", name "easy_form:mark", value "collections-action");
         ;input(type "hidden", name "easy_form:tag", value "delete");
+        ;input(type "hidden", name "easy_form:url_end", value "collections/:col");
         ;input(type "hidden", name "easy_form:confirm");
-        ::
-        ::FIXME we really want the filename here
-        ;input(type "hidden", name "col", value "{<mod.conf.col>}");
         ::
         ;input.red(type "submit", value "Archive this collection");
       ==
