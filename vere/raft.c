@@ -1969,44 +1969,36 @@ _raft_pop_roe(void)
   return ovo;
 }
 
-/* _raft_poke(): Poke pending events, leaving the poked events
- * and errors on u3A->roe.
+/* _raft_poke(): Peel one ovum off u3A->roe and poke Arvo with it.
 */
-static void
+static u3_weak
 _raft_poke(void)
 {
-  if ( 0 == u3Z->lug_u.len_d ) {
-    return;
-  }
-
-  c3_o bee_o  = c3n;
-  u3_noun oer = u3_nul;
   u3_weak rus;
 
-  while ( u3_none != (rus = _raft_pop_roe()) ) {
-    u3_noun ovo, vir, sur;
+  //  XX what is this condition?
+  //
+  if ( 0 == u3Z->lug_u.len_d ) {
+    fprintf(stderr, "_raft_poke ret early\r\n");
+    return u3_none;
+  }
 
-    if ( c3n == bee_o ) {
-      u3_term_ef_blit(0, u3nc(u3nc(c3__bee, u3k(rus)), u3_nul));
-      bee_o = c3y;
-    }
+  if ( u3_none != (rus = _raft_pop_roe()) ) {
+    u3_noun ovo, vir;
+
+    u3_term_ef_blit(0, u3nc(u3nc(c3__bee, u3k(rus)), u3_nul));
 
     u3x_cell(rus, &vir, &ovo);
     c3_assert( u3_nul == vir );
-
-    sur = _raft_punk(u3k(ovo));
+    u3k(ovo);
     u3z(rus);
 
-    if ( u3_nul != sur) {
-      oer = u3nc(sur, oer);
-    }
-  }
+    rus = _raft_punk(ovo);
 
-  u3A->roe = oer;
-
-  if ( c3y == bee_o ) {
     u3_term_ef_blit(0, u3nc(u3nc(c3__bee, u3_nul), u3_nul));
   }
+
+  return rus;
 }
 
 /* _raft_pump(): Cartify, jam, and save an ovum, then perform its effects.
@@ -2053,7 +2045,32 @@ _raft_pump(u3_noun ovo, u3_noun vir)
   egg_u->vir = 0;
 }
 
-/* u3_raft_work(): work.
+/* u3_raft_chip(): chip one event off for processing.
+*/
+void
+u3_raft_chip(void)
+{
+  u3_weak rus = _raft_poke();
+
+  _raft_crop();
+
+  if ( u3_none != rus ) {
+    u3_noun ovo, vir;
+    u3x_cell(rus, &vir, &ovo);
+
+    if ( u3_nul != ovo ) {
+      _raft_pump(u3k(ovo), u3k(vir));
+
+      //  XX should be vir
+      //
+      _raft_grab(u3A->roe);
+    }
+
+    u3z(rus);
+  }
+}
+
+/* u3_raft_work(): work, either synchronously or asynchronously.
 */
 void
 u3_raft_work(void)
@@ -2067,30 +2084,12 @@ u3_raft_work(void)
     }
   }
   else {
-    //  Delete finished events.
+
+    //  Cartify, jam, and encrypt this batch of events.
+    //  Take a number, Raft will be with you shortly.
     //
-    _raft_crop();
-
-    //  Poke pending events, leaving the poked events and errors on u3A->roe.
-    //
-    _raft_poke();
-
-    //  Cartify, jam, and encrypt this batch of events. Take a number, Raft will
-    //  be with you shortly.
-    {
-      u3_weak rus;
-
-      while ( u3_none != (rus = _raft_pop_roe()) ) {
-        u3_noun ovo, vir;
-        u3x_cell(rus, &vir, &ovo);
-
-        if ( u3_nul != ovo ) {
-          _raft_pump(u3k(ovo), u3k(vir));
-          _raft_grab(u3A->roe);
-        }
-
-        u3z(rus);
-      }
+    while ( u3_nul != u3A->roe ) {
+      u3_raft_chip();
     }
   }
 }
