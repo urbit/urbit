@@ -365,15 +365,7 @@
         (~(put ju m) hos.c nom.c)
       =?  ..ta-action  (~(has by cic) our.bol)
         =+  nos=~(tap in (~(get ju cic) our.bol))
-        |-  ^+  ..ta-action
-        ?~  nos  ..ta-action
-        =.  ..ta-action
-          (affect i.nos %status [our.bol i.nos] our.bol dif)
-        $(nos t.nos)
-        ::TODO  runtime error
-        ::%-  ~(rep in (~(get ju cic) our.bol))
-        ::|=  {n/name _ta}  ::  beware, urbit/arvo#447
-        ::(affect n %status [our.bol n] our.bol dif)
+        (ta-present our.bol (~(get ju cic) our.bol) dif)
       =.  cic  (~(del by cic) our.bol)
       %-  ta-deltas
       %-  ~(rep by cic)
@@ -1024,12 +1016,19 @@
       ^+  +>
       ::  only have presence if you have write permission.
       ?.  |((so-admire who) ?=($remove -.dif))  +>
-      ::  ignore if it won't result in change.
+      ::  ignore if it won't result in change,
+      ::  or if it sets an impersonating handle.
       ?.  ?:  ?=($remove -.dif)  (~(has by locals) who)
           ?|  !(~(has by locals) who)
             ::
-              =+  (~(got by locals) who)
-              !=(- (change-status - dif))
+              =+  old=(~(got by locals) who)
+              =+  new=(change-status - dif)
+              ?&  !=(old new)
+                ::
+                  ?=  $~
+                  (rush (fall han.man.new '') ;~(pfix sig fed:ag))
+                  ::TODO  %+ syntax errors?
+              ==
           ==
         +>
       (so-delta-our %status so-cir who dif)
