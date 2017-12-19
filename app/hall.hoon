@@ -265,15 +265,15 @@
     |=  {src/ship cod/command}
     ^+  +>
     ?-  -.cod
-      ::>  %publish commands prompt us (as a circle host)
-      ::>  to verify and distribute messages.
+      ::  %publish commands prompt us (as a circle host)
+      ::  to verify and distribute messages.
       $publish  (ta-think | src +.cod)
-      ::>  %present commands are used to ask us to set
-      ::>  someone's status in the indicated stories.
+      ::  %present commands are used to ask us to set
+      ::  someone's status in the indicated stories.
       $present  (ta-present src +.cod)
-      ::>  %bearing commands are used by our children to
-      ::>  let us know they're bearing our /burden. we
-      ::>  need to watch them to allow changes to go up.
+      ::  %bearing commands are used by our children to
+      ::  let us know they're bearing our /burden. we
+      ::  need to watch them to allow changes to go up.
       $bearing  (ta-observe src)  ::TODO  isn't this redundant with ta-subscribe?
     ==
   ::
