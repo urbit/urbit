@@ -2070,26 +2070,38 @@ u3_raft_chip(void)
   }
 }
 
-/* u3_raft_work(): work, either synchronously or asynchronously.
+/* u3_raft_play(): synchronously process events.
+*/
+void
+u3_raft_play(void)
+{
+  c3_assert( u3Z->typ_e == u3_raty_lead );
+
+  u3_raft_chip();
+
+  if ( u3_nul != u3A->roe ) {
+    u3_raft_play();
+  }
+}
+
+/* _raft_work_cb(): callback to recurse into u3_raft_work().
+*/
+static void
+_raft_work_cb(uv_timer_t* tim_u)
+{
+  u3_raft_work();
+}
+
+/* u3_raft_work(): asynchronously process events.
 */
 void
 u3_raft_work(void)
 {
-  if ( u3Z->typ_e != u3_raty_lead ) {
-    c3_assert(u3A->ova.egg_p == 0);
-    if ( u3_nul != u3A->roe ) {
-      uL(fprintf(uH, "raft: dropping roe!!\n"));
-      u3z(u3A->roe);
-      u3A->roe = u3_nul;
-    }
-  }
-  else {
+  c3_assert( u3Z->typ_e == u3_raty_lead );
 
-    //  Cartify, jam, and encrypt this batch of events.
-    //  Take a number, Raft will be with you shortly.
-    //
-    while ( u3_nul != u3A->roe ) {
-      u3_raft_chip();
-    }
+  u3_raft_chip();
+
+  if ( u3_nul != u3A->roe ) {
+    uv_timer_start(&u3Z->tim_u, _raft_work_cb, 0, 0);
   }
 }
