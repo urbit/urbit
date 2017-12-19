@@ -1622,35 +1622,6 @@ _raft_punk(u3_noun ovo)
 }
 
 
-static void
-_raft_comm(c3_d bid_d)
-{
-  u3p(u3v_cart) egg_p;
-
-  u3_lo_open();
-
-  egg_p = u3A->ova.egg_p;
-  while ( egg_p ) {
-    u3v_cart* egg_u = u3to(u3v_cart, egg_p);
-
-    if ( egg_u->ent_d <= bid_d ) {
-      egg_u->cit = c3y;
-    } else break;
-
-    egg_p = egg_u->nex_p;
-  }
-  u3_lo_shut(c3y);
-}
-
-static void
-_raft_comm_cb(uv_timer_t* tim_u)
-{
-  u3_raft* raf_u = tim_u->data;
-
-  _raft_comm(raf_u->ent_d);
-}
-
-
 static c3_d
 _raft_push(u3_raft* raf_u, c3_w* bob_w, c3_w len_w)
 {
@@ -1664,8 +1635,17 @@ _raft_push(u3_raft* raf_u, c3_w* bob_w, c3_w len_w)
     u3t_event_trace("Recording", 'e');
     raf_u->lat_w = raf_u->tem_w;  //  XX
 
-    if ( !uv_is_active((uv_handle_t*)&raf_u->tim_u) ) {
-      uv_timer_start(&raf_u->tim_u, _raft_comm_cb, 0, 0);
+    u3p(u3v_cart) egg_p;
+
+    egg_p = u3A->ova.egg_p;
+    while ( egg_p ) {
+      u3v_cart* egg_u = u3to(u3v_cart, egg_p);
+
+      if ( egg_u->ent_d <= raf_u->ent_d ) {
+        egg_u->cit = c3y;
+      } else break;
+
+      egg_p = egg_u->nex_p;
     }
 
     return raf_u->ent_d;
