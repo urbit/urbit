@@ -945,15 +945,12 @@
       %.  u.jub
       =<  sh-work
       =+  buf=buf.say.she
+      =?  ..sh-obey  &(?=({$';' *} buf) !?=($reply -.u.jub))
+        (sh-note (tufa `(list @)`buf))
       =^  cal  say.she  (~(transmit sole say.she) [%set ~])
-      %-  sh-fact
-      :*  %mor
-          [%nex ~]
+      %+  sh-fact  %mor
+      :~  [%nex ~]
           [%det cal]
-          ?.  ?=({$';' *} buf)  ~
-          ?:  ?=($reply -.u.jub)  ~
-          :_  ~
-          [%txt (runt [14 '-'] `tape`['|' ' ' (tufa `(list @)`buf)])]
       ==
     ::
     :>  #
@@ -1698,9 +1695,12 @@
       ::
       |=  txt/tape
       ^+  +>
-      %+  sh-fact  %txt
-      %+  runt  [14 '-']
-      `tape`['|' ' ' (scag (sub width.she 16) txt)]
+      =+  lis=(simple-wrap txt (sub width.she 16))
+      %+  sh-fact  %mor
+      =+  ?:((gth (lent lis) 0) (snag 0 lis) "")
+      :-  txt+(runt [14 '-'] '|' ' ' -)
+      %+  turn  (slag 1 lis)
+      |=(a/tape txt+(runt [14 ' '] '|' ' ' a))
     ::
     ++  sh-prod
       :>    show prompt
@@ -2320,17 +2320,15 @@
           ?:  =(who self)  aud
           (~(del in aud) [who %inbox])
         ==
-      =.  wyd  (sub wyd (min (div wyd 2) (lent pef)))
-      =/  txt  (tuba (trip msg.sep))
-      |-  ^-  (list tape)
-      ?~  txt  ~
-      =+  ^-  {end/@ud nex/?}
-        ?:  (lte (lent txt) wyd)  [(lent txt) &]
-        =+  ace=(find " " (flop (scag +(wyd) `(list @c)`txt)))
-        ?~  ace  [wyd |]
-        [(sub wyd u.ace) &]
-      :-  (weld pef (tufa (scag end `(list @c)`txt)))
-      $(txt (slag ?:(nex +(end) end) `(list @c)`txt), pef (reap (lent pef) ' '))
+      =/  lis/(list tape)
+        %+  simple-wrap
+          `tape``(list @)`(tuba (trip msg.sep))
+        (sub wyd (min (div wyd 2) (lent pef)))
+      =+  lef=(lent pef)
+      =+  ?:((gth (lent lis) 0) (snag 0 lis) "")
+      :-  (weld pef -)
+      %+  turn  (slag 1 lis)
+      |=(a/tape (runt [lef ' '] a))
     ::
         $inv
       :_  ~
