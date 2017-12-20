@@ -429,6 +429,8 @@ def create_cmake_core_files
 end
 
 def create_cmake_qt5widgets
+  mkdir CMakeDir + 'Qt5Widgets'
+
   widgets_a = find_qt_library('libQt5Widgets.a') || raise
 
   deps = flatten_deps_for_cmake_file('Qt5Widgets.x')
@@ -490,7 +492,6 @@ def main
   create_pc_files
 
   mkdir CMakeDir
-  mkdir CMakeDir + 'Qt5Widgets'
   create_cmake_core_files
   create_cmake_qt5widgets
 end
