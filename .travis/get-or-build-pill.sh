@@ -45,7 +45,7 @@ do
   require! <[ stream-snitch once recursive-copy wait-on ]>
   pty = require \pty.js
   
-  urbit = pty.spawn './urbit' <[-FI zod prev/zod]>
+  urbit = pty.spawn 'urbit' <[-FI zod prev/zod]>
              .on \data -> process.stdout.write it
 
   on-next = (re,cb)->
