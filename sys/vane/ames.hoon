@@ -163,8 +163,8 @@
         0w0                           ::   46, ~hex, James Torre
         0w0                           ::   47, ~feb, urbit.org
         0wK.GoKEY.rMjfn.ZcvFQ.n4BmX   ::   48, ~pyl, Michael Hartl (oldkey)
-        0w0                           ::   49, ~dul, Curtis Yarvin
-        0w0                           ::   50, ~het, Curtis Yarvin
+        0w0                           ::   49, ~dul, Galen Wolfe-Pauly
+        0w0                           ::   50, ~het, Galen Wolfe-Pauly
         0w0                           ::   51, ~mev, Curtis Yarvin
         0w0                           ::   52, ~rut, Curtis Yarvin
         0w2L.M6-o5.DDTFL.R4sFL.7Zuay  ::   53, ~tyl, Tlon Investor 11 (oldkey)
@@ -177,7 +177,7 @@
         0w0                           ::   60, ~bur, Galen Wolfe-Pauly
         0w0                           ::   61, ~der, Galen Wolfe-Pauly
         0w0                           ::   62, ~nep, Galen Wolfe-Pauly
-        0w0                           ::   63, ~pur, Curtis Yarvin
+        0w0                           ::   63, ~pur, Paul Driver
         0w30.VtXvV.S~xIV.iMCL~.j9zTC  ::   64, ~rys, Charlie Cummings (oldkey)
         0w0                           ::   65, ~reb, Curtis Yarvin
         0wp.LslIa.IFSM9.mIp-z.KBIBh   ::   66, ~den, Michael Hartl (oldkey)
