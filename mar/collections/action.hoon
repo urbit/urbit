@@ -45,7 +45,10 @@
       =/  vis  (~(has by p.a) %visi)
       [wat des pub vis ses]
     ::
-    ++  wain  (su (more (just '\0a') (cook crip (star prn))))
+    ++  wain  (su (more newline (cook crip (star prn))))
+    :: ++  newline  (just '\0a')
+    ::XX getting sent \r by frontend
+    ++  newline  ;~(pfix (punt (just '\0d')) (just '\0a'))
     ::
     ::
     ++  as  |*(a=fist (cu sy (ar a)))                     ::  array as set
