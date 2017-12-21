@@ -23,6 +23,7 @@
         delete+(ot col+(se %da) ~)
         submit+(ot col+(se %da) tit+so wat+wain ~)
         comment+(ot col+(se %da) top+(se %da) com+null-or-da wat+wain ~)
+        resubmit+(ot col+(se %da) top+(se %da) tit+so wat+wain ~)
         delete-topic+(ot col+(se %da) top+(se %da) ~)
         delete-comment+(ot col+(se %da) top+(se %da) com+(se %da) ~)
       ==

@@ -86,7 +86,7 @@
 ++  ignore-action
   |=  act=action:api  ^-  ?
   ?-    -.act
-      ?($create $delete $delete-topic $delete-comment)
+      ?($create $delete $delete-topic $delete-comment $resubmit)
     ?:  (team:title our.bol src.bol)  |
     ~|([%unauthorized -.act src.bol] !!)  :: what about the authors?
   ::
@@ -108,6 +108,7 @@
   ?-  -.act
     $create   (ta-create:ta +.act)
     $submit   (ta-submit:ta +.act)
+    $resubmit  (ta-resubmit:ta +.act)
     $comment  (ta-comment:ta +.act)
     $delete   (ta-delete:ta +.act)
     $delete-topic   (ta-delete-topic:ta +.act)
@@ -143,9 +144,14 @@
   ::
   ++  ta-submit
     |=  {col/time tit/cord wat/wain}
-    ::TODO %resubmit topic edit command?
     =/  top/topic  [tit src.bol wat]
     (ta-write /topic [col now.bol] %collections-topic !>(top))
+  ::
+  ++  ta-resubmit
+    |=  {col/time wen/@da tit/cord wat/wain}
+    ?:  (new-topic col wen)  ta-this  ::REVIEW error?
+    =/  top/topic  [tit src.bol wat]
+    (ta-write /topic [col wen] %collections-topic !>(top))
   ::
   ++  ta-comment
     |=  {col/time top/@da com/?(~ @da) wat/wain}

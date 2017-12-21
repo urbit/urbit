@@ -2,7 +2,20 @@
 ::
 /-  *collections
 /+  time-to-id
+::TODO factor out as lib/easy-form?
 |%
+++  form-edit
+  |=  [tit=cord who=@p wat=tape]
+  ;form(onsubmit "return easy_form.submit(this)")
+    ;input(type "hidden", name "easy_form:mark", value "collections-action");
+    ;input(type "hidden", name "easy_form:tag", value "resubmit");
+    ;input(type "hidden", name "easy_form:url_end", value "collections/:col/:top");
+    ::
+    ;input(name "tit", value (trip tit));
+    ;br;  ;b: {<who>}
+    ;br;  ;textarea(name "wat"): {wat}
+    ;br;  ;input(type "submit");
+  ==
 ++  form-archive
   ;form(onsubmit "return easy_form.submit(this)")
     ;input(type "hidden", name "easy_form:mark", value "collections-action");
@@ -56,10 +69,16 @@
 ++  grow
   |%
   ++  elem  :: web display
+    =*  info  info.top
+    =/  wat-info  (of-wall:format (turn wat.info trip))
+    ::      
     ;div
-      ;h1: {(trip tit.info.top)}
-      ;b: {<who.info.top>}
-      ;pre: {(of-wall:format (turn wat.info.top trip))}
+      ;input.edit-toggle(type "checkbox", id "edit-post");
+      ;label(for "edit-post"): ✎
+      ;div.edit-on: +{(form-edit tit.info who.info wat-info)}
+      ;h1.edit-off: {(trip tit.info)}
+      ;b.edit-off: {<who.info>}
+      ;pre.edit-off: {wat-info}
       ::
       ;hr;
       ::
