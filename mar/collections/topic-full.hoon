@@ -26,6 +26,27 @@
       ::
       ;hr;
       ::
+      ;*  ?:  =(~ coms.top)  ~
+          :-  ;h2: Comments
+          %+  turn  (sort ~(tap by coms.top) dor)
+          |=  [wen=@da mod=@da com=comment]
+          =/  id  (time-to-id wen)
+          =/  txt  (of-wall:format (turn wat.com trip))
+          ;div(id id)
+            ;pre.edit-off: {txt}
+            ; ;{b -<who.com>}, at ;{a/"#{id}" -<wen>}
+            ::
+            ;form.inline(onsubmit "return easy_form.submit(this)")
+              ;input(type "hidden", name "easy_form:mark", value "collections-action");
+              ;input(type "hidden", name "easy_form:tag", value "delete-comment");
+              ;input(type "hidden", name "easy_form:url_end", value "collections/:col/:top");
+              ;input(type "hidden", name "easy_form:confirm");
+              ::
+              ;input(type "hidden", name "com", value <wen>);
+              ;input.red(type "submit", value "X");
+            ==
+            ;hr;
+          ==
       ;h2: Post comment:
       ;script@"/lib/js/easy-form.js";
       ;form(onsubmit "return easy_form.submit(this)")
@@ -40,26 +61,7 @@
         ;br;
         ;input(type "submit");
       ==
-      ;*  ?:  =(~ coms.top)  ~
-          :-  ;h2: Comments
-          %+  turn  (sort ~(tap by coms.top) dor)
-          |=  [wen=@da mod=@da com=comment]
-          =/  id  (time-to-id wen) 
-          ;div(id id)
-            ;hr;
-            ;pre: {(of-wall:format (turn wat.com trip))}
-            ; ;{b -<who.com>}, at ;{a/"#{id}" -<wen>}
-            ::
-            ;form.inline(onsubmit "return easy_form.submit(this)")
-              ;input(type "hidden", name "easy_form:mark", value "collections-action");
-              ;input(type "hidden", name "easy_form:tag", value "delete-comment");
-              ;input(type "hidden", name "easy_form:url_end", value "collections/:col/:top");
-              ;input(type "hidden", name "easy_form:confirm");
-              ::
-              ;input(type "hidden", name "com", value <wen>);
-              ;input.red(type "submit", value "X");
-            ==
-    ==    ==
+    ==
   --
 ::
 ++  grab
