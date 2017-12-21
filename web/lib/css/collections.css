@@ -1,3 +1,7 @@
 input.red {
     background: hsl(0, 100%, 60%);
 }
+
+form.inline {
+    display: inline;
+}

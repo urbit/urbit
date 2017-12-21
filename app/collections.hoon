@@ -86,9 +86,9 @@
 ++  ignore-action
   |=  act=action:api  ^-  ?
   ?-    -.act
-      ?($create $delete)
+      ?($create $delete $delete-topic $delete-comment)
     ?:  (team:title our.bol src.bol)  |
-    ~|([%unauthorized -.act src.bol] !!)
+    ~|([%unauthorized -.act src.bol] !!)  :: what about the authors?
   ::
       ?($submit $comment)
     =/  col  (~(get by cols) col.act)
@@ -110,6 +110,8 @@
     $submit   (ta-submit:ta +.act)
     $comment  (ta-comment:ta +.act)
     $delete   (ta-delete:ta +.act)
+    $delete-topic   (ta-delete-topic:ta +.act)
+    $delete-comment   (ta-delete-comment:ta +.act)
   ==
 ::
 ++  ta
@@ -150,9 +152,7 @@
     ^+  +>
     ?~  com  $(com now.bol)  :: new comment
     =;  res/$@(~ _+>.$)  ?^(res res +>.$)
-    %+  biff  (~(get by cols) col)
-    |=  [^ tops=(map @da topicful) ~]
-    %+  biff   (~(get by tops) top)
+    %+  biff  (ta-get-topic col top)
     |=  [^ cos=(map @da {@da comment}) ~]
     =/  old/{@da comment}
       (fall (~(get by cos) com) [now.bol src.bol wat])
@@ -160,6 +160,18 @@
     %^  ta-write  /comment
       [col top com]
     [%collections-comment !>(`comment`+.old(wat wat))]
+  ::
+  ++  ta-get-topic
+    |=  {col/time top/@da}  ^-  (unit topicful)
+    %+  biff  (~(get by cols) col)
+    |=  [^ tos=(map @da topicful) ~]
+    (~(get by tos) top)
+  ::
+  ++  ta-get-comment
+    |=  {col/time top/@da com/@da}  ^-  (unit [@da comment])
+    %+  biff  (ta-get-topic col top)
+    |=  [^ cos=(map @da {@da comment}) ~]
+    (~(get by cos) com)
   ::
   ++  ta-delete
     |=  col/time
@@ -173,14 +185,30 @@
     |-  ^+  ta-this
     ?~  tops  ta-this
     =.  ta-this  $(tops t.tops)
-    =.  ta-this  (ta-remove /topic [col top.i.tops] %collections-topic)
-    =/  cyt  (circle-for-topic col top.i.tops)
-    =.  ta-this  (ta-hall-action %delete cyt `'Collection deleted')
-    =/  coms=(list [com=@da @ comment])  ~(tap by coms.i.tops)
+    (ta-delete-topic-inf 'Collection deleted' col i.tops)
+  ::
+  ++  ta-delete-topic
+    |=  {col/time top/@da}  ^+  ta-this
+    =+  (ta-get-topic col top)
+    ?~  -  ta-this  ::REVIEW error?
+    (ta-delete-topic-inf 'Topic deleted' col top u)
+  ::
+  ++  ta-delete-topic-inf  ::REVIEW name
+    |=  {inf/@t col/time top/@da tof/topicful}
+    =.  ta-this  (ta-remove /topic [col top] %collections-topic)
+    =/  cyt  (circle-for-topic col top)
+    =.  ta-this  (ta-hall-action %delete cyt `inf)
+    =/  coms=(list [com=@da @ comment])  ~(tap by coms.tof)
     |-  ^+  ta-this
     ?~  coms  ta-this
     =.  ta-this  $(coms t.coms)
-    (ta-remove /comment [col top.i.tops com.i.coms] %collections-comment)
+    (ta-remove /comment [col top com.i.coms] %collections-comment)
+  ::
+  ++  ta-delete-comment
+    |=  {col/time top/@da com/@da}  ^+  +>
+    =+  (ta-get-comment col top com)
+    ?~  -  ta-this  ::REVIEW error?
+    (ta-remove /comment [col top com] %collections-comment)
   ::
   ::  %writing-files
   ::

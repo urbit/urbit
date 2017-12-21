@@ -41,6 +41,10 @@
         {$submit col/time tit/cord wat/wain}          ::  submit a post/note
         {$comment col/time top/@da com/?(~ @da) wat/wain} ::  submit a comment
         {$delete col/time}                            ::  delete a collection
+        ::
+        ::REVIEW names? nest collection/topic/comment actions?
+        {$delete-topic col/time top/@da}              ::  delete a collection
+        {$delete-comment col/time top/@da com/@da}    ::  delete a collection
     ==                                                ::
   --
 --
