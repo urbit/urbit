@@ -33,7 +33,21 @@
           =/  id  (time-to-id wen)
           =/  txt  (of-wall:format (turn wat.com trip))
           ;div(id id)
+            ;input.edit-toggle(type "checkbox", id "edit-{id}");
+            ;label(for "edit-{id}"): ✎
             ;pre.edit-off: {txt}
+            ;form.edit-on(onsubmit "return easy_form.submit(this)")
+              ;input(type "hidden", name "easy_form:mark", value "collections-action");
+              ;input(type "hidden", name "easy_form:tag", value "comment");
+              ;input(type "hidden", name "easy_form:url_end", value "collections/:col/:top");
+              ::
+              ;input(type "hidden", name "com", value <wen>);
+              ::
+              ;br;
+              ;textarea(name "wat"): {txt}
+              ;br;
+              ;input(type "submit");
+            ==
             ; ;{b -<who.com>}, at ;{a/"#{id}" -<wen>}
             ::
             ;form.inline(onsubmit "return easy_form.submit(this)")

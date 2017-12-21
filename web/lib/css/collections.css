@@ -5,3 +5,10 @@ input.red {
 form.inline {
     display: inline;
 }
+
+.edit-toggle:checked ~ .edit-off {
+    display:  none;
+}
+.edit-toggle:not(:checked) ~ .edit-on {
+    display: none;
+}
