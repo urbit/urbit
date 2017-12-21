@@ -267,26 +267,26 @@
     ^+  +>
     ::
     ::  if we don't have it yet, add to hall.
-    =/  old  (old-config col)  ::TODO convert other two
-    ?~  old
+    =/  old  !(new-config col)  ::TODO keep old configs in state
+    ?.  old
       (ta-hall-create col new)
     ::  update config in hall.
     =/  nam  (circle-for col)
     %-  ta-hall-actions  :~
-      ?:  =(desc.new desc.u.old)  ~
+::       ?:  =(desc.new desc.u.old)  ~
       [%depict nam desc.new]
     ::
-      ?:  =(visi.new visi.u.old)  ~
+::       ?:  =(visi.new visi.u.old)  ~
       [%public visi.new our.bol nam]
     ::
-      (hall-permit nam & (~(dif in mems.new) mems.u.old))
-      (hall-permit nam | (~(dif in mems.u.old) mems.new))
+::       (hall-permit nam & (~(dif in mems.new) mems.u.old))
+::       (hall-permit nam | (~(dif in mems.u.old) mems.new))
     ==
   ::
   ++  ta-change-topic
     |=  {col/time wen/@da @da top/topic}
     ^+  +>
-    =/  new  ?=(~ (old-topic col wen))
+    =/  new  (new-topic col wen)
     =?  +>.$  new
       =/  cos  (~(got by cols) col)
       (ta-hall-create-topic col wen +.conf.cos)
@@ -295,7 +295,7 @@
   ++  ta-change-comment
     |=  {col/time top/@da wen/@da @da com/comment}
     ^+  +>
-    =/  new  =(~ (old-comment col top wen))
+    =/  new  (new-comment col top wen)
     (ta-hall-notify col top `wen new wat.com)
   ::
   ::  %hall-changes
@@ -352,28 +352,25 @@
 ::
 ++  base-path  (en-beam:format byk.bol(r da+upd) /collections/web)
 ::
-++  old-config
+++  new-config
   |=  col/time
-  ^-  (unit config)
+  ^-  ?
   =/  pax  :(weld base-path (dray /[%da] col) /collections-config)
   ::
-  ?~  (file pax)  ~
-  `.^(config %cx pax)
+  ?=(~ [fil]:.^(arch %cy pax))
 ::
-++  old-topic
+++  new-topic
   |=  {col/time top/@da}
-  ^-  (unit topic)
+  ^-  ?
   =/  pax  :(weld base-path (dray /[%da]/[%da] col top) /collections-topic)
   ::
-  ?~  (file pax)  ~
-  `.^(topic %cx pax)
+  ?=(~ [fil]:.^(arch %cy pax))
 ::
-++  old-comment
+++  new-comment
   |=  {col/time top/@da com/@da}
-  ^-  (unit comment)
+  ^-  ?
   =/  pax
     :(weld base-path (dray /[%da]/[%da]/[%da] col top com) /collections-comment)
   ::
-  ?~  (file pax)  ~
-  `.^(comment %cx pax)
+  ?=(~ [fil]:.^(arch %cy pax))
 --
