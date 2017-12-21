@@ -21,10 +21,8 @@
     ::
     ;input(type "hidden", name "com", value <com>);
     ::
-    ;br;
-    ;textarea(name "wat"): {txt}
-    ;br;
-    ;input(type "submit");
+    ;br;  ;textarea(name "wat"): {txt}
+    ;br;  ;input(type "submit");
   ==
 ++  form-comment-x
   |=  com=@da
@@ -45,10 +43,8 @@
     ::
     ;input(type "hidden", name "com", value "~");
     ::
-    ;br;
-    ;textarea(name "wat", placeholder "Enter comment");
-    ;br;
-    ;input(type "submit");
+    ;br;  ;textarea(name "wat", placeholder "Enter comment");
+    ;br;  ;input(type "submit");
   ==
 --
 ::
@@ -81,8 +77,9 @@
           ;div(id id)
             ;input.edit-toggle(type "checkbox", id "edit-{id}");
             ;label(for "edit-{id}"): ✎
-            ;pre.edit-off: {txt}
             ;div.edit-on: +{(form-comment-edit wen txt)}
+            ;pre.edit-off: {txt}
+            ::
             ; ;{b -<who.com>}, at ;{a/"#{id}" -<wen>}
             ::
             ;+  (form-comment-x wen)

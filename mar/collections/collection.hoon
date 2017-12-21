@@ -32,10 +32,8 @@
         ;input(type "hidden", name "easy_form:url_end", value "collections/:col");
         ::
         ;input(name "tit", placeholder "Title");
-        ;br;
-        ;textarea(name "wat", placeholder "Enter topic text");
-        ;br;
-        ;input(type "submit");
+        ;br;  ;textarea(name "wat", placeholder "Enter topic text");
+        ;br;  ;input(type "submit");
       ==
       ::
       ;hr;
