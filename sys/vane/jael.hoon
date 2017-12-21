@@ -913,9 +913,9 @@
     ?-    -.tac
     ::
     ::  destroy promises
-    ::    {$ktsg p/ship q/safe}
+    ::    {$burn p/ship q/safe}
     ::
-        $ktsg
+        $burn
       (cure abet:abet:(deal:(burb our) p.tac [~ q.tac]))
     ::
     ::  remote update
