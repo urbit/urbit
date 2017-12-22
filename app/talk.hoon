@@ -375,16 +375,20 @@
         =+  ren=~(cr-phat cr cir)
         =+  gyf=(~(get by bound) [cir ~ ~])
         =<  sh-done
-        =>  :_  .
-            %-  ~(sh-act sh cli)
-            [%notify [cir ~ ~] `%hear]
+        =/  sho
+          ::  only present if we're here indefinitely.
+          =*  ran  ran.src.dif.rum
+          ?.  |(?=($~ ran) ?=($~ tal.u.ran))
+            ~(. sh cli)
+          %-  ~(sh-act sh cli)
+          [%notify [cir ~ ~] `%hear]
         ?^  gyf
-          (sh-note "has glyph {[u.gyf ~]} for {ren}")
+          (sh-note:sho "has glyph {[u.gyf ~]} for {ren}")
         ::  we use the rendered circle name to determine
         ::  the glyph for higher glyph consistency when
         ::  federating.
         =+  cha=(glyph (mug ren))
-        (sh-work %bind cha `[cir ~ ~])
+        (sh-work:sho %bind cha `[cir ~ ~])
       %=  +>.$
           sources
         ?.  &(?=($source -.dif.rum) =(cir.rum incir))
