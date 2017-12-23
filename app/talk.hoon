@@ -1331,7 +1331,7 @@
             (sh-lame "{(scow %s (new:si | +(num)))}: no such telegram")
           =.  ..sh-fact  (sh-fact %txt "? {(scow %s (new:si | +(num)))}")
           (activate (snag num grams))
-        ?.  (gth q.num count)
+        ?.  (gte q.num count)
           ?:  =(count 0)
             (sh-lame "0: no messages")
           =+  msg=(deli (dec count) num)
