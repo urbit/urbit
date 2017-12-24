@@ -6805,7 +6805,7 @@
           ::  xx sanitize
           ::
           fetch
-        [%wtpt fetch-wing fetch rez]
+        [%ktls rez [%wtpt fetch-wing fetch rez]]
       ::
           $noun
         fetch
@@ -6914,49 +6914,29 @@
       ::
       fin
     ::
-::  ++  probe
-::    ::  probe for cell or default
-::    ::
-::    ^-  hoon
-::    ::  boc: construct against cell
-::    ::
-::    =/  boc/hoon  construct(top [& &])
-::    ?^  top
-::      ::  no probe is needed if already a cell 
-::      ::
-::      boc
-::    :+  %ktls
-::      boc
-::    ::  luz: subject edited to inject default
-::    ::
-::    =/  luz/hoon  
-::      :+  %cnts 
-::        [[%& 1] ~] 
-::      :_  ~
-::      [fetch-wing bunt(mod [%axil %cell])]
-::    ?:  =(& top)
-::      [%tsgr [%wtpt fetch-wing luz [%$ 1]] boc]
-::    [%tsgr luz boc]
-    ::
     ++  probe
       ::  probe for cell or default
       ::
       ^-  hoon
+      ::  boc: construct against cell
+      ::
       =/  boc/hoon  construct(top [& &])
-      =/  but/hoon  default
-      ::  :+  %sgbc
-      ::    %run-probing
       ?^  top
+        ::  no probe is needed if already a cell 
+        ::
         boc
       :+  %ktls
         boc
-      ?:  =(& top)
-        ::  may be atom or cell; default or construct
-        ::
-        [%wtcl [%dtwt fetch] boc but]
-      ::  must be atom; construct
+      ::  luz: subject edited to inject default
       ::
-      but
+      =/  luz/hoon  
+        :+  %cnts 
+          [[%& 1] ~] 
+        :_  ~
+        [fetch-wing bunt(mod [%axil %cell])]
+      ?:  =(& top)
+        [%tsgr [%wtpt fetch-wing luz [%$ 1]] boc]
+      [%tsgr luz boc]
     ::
     ++  document
       ::  document and construct
