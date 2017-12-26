@@ -4,6 +4,8 @@
   ::
 /?    310
 /-  sole
+/+  old-zuse
+=,  old-zuse
 =,  sole
 :-  %get  |=  {^ {a/tape $~} $~}
 ^-  (sole-request (cask httr))

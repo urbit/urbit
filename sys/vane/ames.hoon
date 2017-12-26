@@ -163,8 +163,8 @@
         0w0                           ::   46, ~hex, James Torre
         0w0                           ::   47, ~feb, urbit.org
         0wK.GoKEY.rMjfn.ZcvFQ.n4BmX   ::   48, ~pyl, Michael Hartl (oldkey)
-        0w0                           ::   49, ~dul, Curtis Yarvin
-        0w0                           ::   50, ~het, Curtis Yarvin
+        0w0                           ::   49, ~dul, Galen Wolfe-Pauly
+        0w0                           ::   50, ~het, Galen Wolfe-Pauly
         0w0                           ::   51, ~mev, Curtis Yarvin
         0w0                           ::   52, ~rut, Curtis Yarvin
         0w2L.M6-o5.DDTFL.R4sFL.7Zuay  ::   53, ~tyl, Tlon Investor 11 (oldkey)
@@ -177,7 +177,7 @@
         0w0                           ::   60, ~bur, Galen Wolfe-Pauly
         0w0                           ::   61, ~der, Galen Wolfe-Pauly
         0w0                           ::   62, ~nep, Galen Wolfe-Pauly
-        0w0                           ::   63, ~pur, Curtis Yarvin
+        0w0                           ::   63, ~pur, Paul Driver
         0w30.VtXvV.S~xIV.iMCL~.j9zTC  ::   64, ~rys, Charlie Cummings (oldkey)
         0w0                           ::   65, ~reb, Curtis Yarvin
         0wp.LslIa.IFSM9.mIp-z.KBIBh   ::   66, ~den, Michael Hartl (oldkey)
@@ -385,7 +385,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(6 vez)
+    ?>  =(7 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -405,7 +405,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 6]
+      :~  [3 7]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -995,7 +995,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(6 (end 0 3 pac))  [~ fox]
+      ?.  =(7 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1599,7 +1599,7 @@
       ==
     ::
         %cake
-      ~?  ?=(^ r.bon)  [%cake-woot-bad hen r.bon]
+      ::  ~?  ?=(^ r.bon)  [%cake-woot-bad hen r.bon]
       :_  fox
       :~  [s.bon %give %woot q.p.bon r.bon]
       ==

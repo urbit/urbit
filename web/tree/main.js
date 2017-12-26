@@ -78,7 +78,7 @@ module.exports = {
       pax: pax,
       sup: sup,
       txt: txt
-    }, "talk-comment", "talk", (function(_this) {
+    }, "fora-comment", "fora", (function(_this) {
       return function(err, res) {
         if (err == null) {
           return _this.clearData();
@@ -92,7 +92,7 @@ module.exports = {
       sup: sup,
       hed: hed,
       txt: txt
-    }, "talk-fora-post", "talk", (function(_this) {
+    }, "fora-post", "fora", (function(_this) {
       return function(err, res) {
         if (err == null) {
           _this.clearData();

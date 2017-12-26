@@ -29,17 +29,36 @@
 ::  it's important to keep %zuse minimal.  models and
 ::  engines not used outside a vane should stay inside
 ::  that vane.
-::
 ~%  %zuse  +>  ~
 =>
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
 |%
+:>  #  %misc
+:>
+:>  miscellaneous systems types
++|
+++  ares  (unit {p/term q/(list tank)})                 ::  possible error
+++  coop  (unit ares)                                   ::  possible error
+++  json                                                ::  normal json value
+  $@  $~                                                ::  null
+  $%  {$a p/(list json)}                                ::  array
+      {$b p/?}                                          ::  boolean
+      {$o p/(map @t json)}                              ::  object
+      {$n p/@ta}                                        ::  number
+      {$s p/@t}                                         ::  string
+  ==                                                    ::
+++  mime  {p/mite q/octs}                               ::  mimetyped data
+++  octs  {p/@ud q/@t}                                  ::  octet-stream
+++  sack  {p/ship q/ship}                               ::  incoming [our his]
+++  sock  {p/ship q/ship}                               ::  outgoing [our his]
+::+|
+::
 ++  roof  (room vase)                                   ::  namespace
 ++  room                                                ::  either namespace
   |*  vase/mold                                         ::  vase or maze
-  $-  $:  ref/*                                         ::  reference span
+  $-  $:  ref/*                                         ::  reference type
           lyc/(unit (set ship))                         ::  leakset
           car/term                                      ::  perspective
           bem/beam                                      ::  path
@@ -59,7 +78,7 @@
   $_  =|  mind
   ^|  |%
   ++  load  |~(seed ^|(+>))
-  ++  stay  *mind                                       ::  preserve
+  ++  stay  $:mind                                      ::  preserve
   ++  plow                                              ::  work in time
     =|  $:  now/@da                                     ::  date
             eny/@e                                      ::  entropy
@@ -665,7 +684,6 @@
     $:  qix/(map @t @t)                                 ::  query
         ced/cred                                        ::  client credentials
         bem/beam                                        ::  original path
-        but/path                                        ::  ending
     ==                                                  ::
   +=  gram                                              ::  inter-ship message
     $?  [[%lon ~] p=hole]                               ::  login request
@@ -774,7 +792,7 @@
     ==                                                  ::
   ++  hoof  (trel ? term (unit (pair case ship)))       ::  resource reference
   ++  hoop                                              ::  source in hood
-    $%  {$& p/twig}                                     ::  direct twig
+    $%  {$& p/hoon}                                     ::  direct hoon
         {$| p/beam}                                     ::  resource location
     ==                                                  ::
   ++  hops                                              ::  XX late-bound path
@@ -782,23 +800,21 @@
         pof/(unit {p/@ud q/tyke})                       ::
     ==                                                  ::
   ++  horn                                              ::  resource tree
-    $%  {$ape p/twig}                                   ::  /~  twig by hand
-        {$arg p/twig}                                   ::  /$  argument
-        {$alt p/(list horn)}                            ::  /|  options
-        {$dep p/horn}                                   ::  /#  insert dephash
-        {$dub p/term q/horn}                            ::  /=  apply face
-        {$fan p/(list horn)}                            ::  /.  list
-        {$for p/(list (pair spur horn))}                ::  /,  switch by path
-        {$hel p/horn}                                   ::  /%  propagate args
-        {$lin p/(list mark) q/horn}                     ::  /&  translates
-        {$man p/(map knot horn)}                        ::  /*  hetero map
-        {$nap p/horn}                                   ::  /_  homo map
-        {$now p/horn}                                   ::  deprecated
-        {$nod p/term q/horn}                            ::  /_  @  list by odor
-        {$saw p/twig q/horn}                            ::  /;  operate on
-        {$see p/hops q/horn}                            ::  /:  relative to
-        {$sic p/twig q/horn}                            ::  /^  cast
-        {$toy p/? q/mark}                               ::  /mark/  static/hook
+    $%  {$fssg p/hoon}                                  ::  /~  twig by hand
+        {$fsbc p/hoon}                                  ::  /$  argument
+        {$fsbr p/(list horn)}                           ::  /|  options
+        {$fshx p/horn}                                  ::  /#  insert dephash
+        {$fsts p/term q/horn}                           ::  /=  apply face
+        {$fsdt p/(list horn)}                           ::  /.  list
+        {$fscm p/(list (pair spur horn))}               ::  /,  switch by path
+        {$fscn p/horn}                                  ::  /%  propagate args
+        {$fspm p/(list mark) q/horn}                    ::  /&  translates
+        {$fscb p/horn}                                  ::  /_  homo map
+        {$fssm p/hoon q/horn}                           ::  /;  operate on
+        {$fscl p/hops q/horn}                           ::  /:  relative to
+        {$fskt p/hoon q/horn}                           ::  /^  cast
+        {$fszp q/mark}                                  ::  /!mark/ eval value
+        {$fszy q/mark}                                  ::  /mark/ static/grow
     ==                                                  ::
   ++  milk  (trel ship desk silk)                       ::  sourced silk
   ++  silk                                              ::  construction layer
@@ -820,7 +836,7 @@
         {$pact p/silk q/silk}                           ::  patch
         {$plan p/beam q/coin r/hood}                    ::  structured assembly
         {$reef $~}                                      ::  kernel reef
-        {$ride p/twig q/silk}                           ::  silk thru twig
+        {$ride p/hoon q/silk}                           ::  silk thru hoon
         {$tabl p/(list (pair silk silk))}               ::  list
         {$vale p/mark q/*}                              ::  validate
         {$volt p/(cask *)}                              ::  unsafe add type
@@ -895,6 +911,11 @@
   ++  cush  (pair term club)                            ::  internal task
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
+  ++  scar                                              ::  opaque duct
+    $:  p/@ud                                           ::  bone sequence
+        q/(map duct bone)                               ::  by duct
+        r/(map bone duct)                               ::  by bone
+    ==                                                  ::
   ++  scup  (pair ship desk)                            ::  autoupdate
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::
@@ -1168,9 +1189,10 @@
       $%  {$west p/ship q/path r/*}                     ::  network request
       ==                                                ::
     ++  sign                                            ::  in response $-<
-      $%  {$g $rend p/path q/*}                         ::  network request
-          {$g $mack p/(unit tang)}                      ::  message ack
-      ==                                                ::
+      $:  $g                                            ::
+          $%  {$rend p/path q/*}                        ::  network request
+              {$mack p/(unit tang)}                     ::  message ack
+      ==  ==                                            ::
     ++  note                                            ::  out request $->
       $%  {$c $west p/ship q/path r/*}                  ::  to %clay
           {$e $west p/ship q/path r/*}                  ::  to %eyre
@@ -3334,7 +3356,7 @@
     ++  op                                              ::  parse keys of map
       |*  {fel/rule wit/fist}
       %+  cu  
-        |=  a/(list _[(wonk *fel) (need *wit)])
+        |=  a/(list (pair _(wonk *fel) _(need *wit)))
         (my:nl a)
       %-  ci  :_  (om wit)
       |=  a/(map cord _(need *wit))
@@ -4178,7 +4200,7 @@
       |=  {bem/beam ced/noun:cred quy/quer}
       ^-  epic
       =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
-      [(malt qix) ((hard cred) ced) bem /]
+      [(malt qix) ((hard cred) ced) bem]
   --  ::eyre
 ::                                                      ::
 ::::                      ++wired                       ::  wire formatting
@@ -4237,7 +4259,7 @@
     ^=  odo
     |*  a/@tas
     |=  b/*
-    =<  a(, (. b))                  ::  preserve face
+    =-  a(, (- b))                  ::  preserve face
     ?+  a   @
       $c  @c  $da  @da  $dr  @dr  $f   @f   $if  @if  $is  @is  $p   @p
       $u  @u  $uc  @uc  $ub  @ub  $ui  @ui  $ux  @ux  $uv  @uv  $uw  @uw

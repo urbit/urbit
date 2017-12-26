@@ -4,6 +4,8 @@
   ::
 /?    310
 /-  sole
+/+  old-zuse
+=,  old-zuse
 ::
 ::::
   ::
@@ -15,7 +17,7 @@
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/_(scug *@ *{his/@p tic/@p $~})}
-        safety/?($on $off)
+        safety/?($off $on)
     ==
 ^-  (sole-result (cask begs))
 ?.  =(safety %off)

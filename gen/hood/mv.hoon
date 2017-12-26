@@ -3,6 +3,8 @@
 ::::  /hoon/mv/hood/gen
   ::
 /?    310
+/+  old-zuse
+=,  old-zuse
 :-  %say
 |=  {^ {input/path output/path $~} $~}
 :-  %kiln-info

@@ -8,7 +8,8 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{pas/@uvG who/@t $~} $~}
+        {{pas/@uvG who/@t pla/@u sta/@u $~} $~}
     ==
 :-  %womb-reinvite
-[pas who 3 0 "You have been inivted to Urbit" "This is a re-invite of 3 planets"]
+=/  new  `@uv`(end 7 1 eny)
+[pas new who pla sta "Your urbit balance has been transferred: {<new>}" ""]

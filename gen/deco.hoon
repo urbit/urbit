@@ -78,9 +78,8 @@
 :-  %say
 |=  *
 =<  [%noun (say-hello %world)]
-=>  :>  #
-    :>  #  %arch
-    :>  #
+=>  :>  #  %arch
+    :>
     :>    structures for our imaginary hello, world generator.
     :>
     :>  nothing forces us to put structures in a separate core.
@@ -95,24 +94,24 @@
     :>  in a separate chapter (separated by {+|}).
     |%
     :>  #  %model
+    :>
     :>    models (molds) are functions that normalize nouns.
     :>
-    :>  arms producing molds are introduced with {+=}.  for molds,
-    :>  we decorate the mold rather than the arm.  the compiler
-    :>  will copy the mold decoration onto the arm.
+    :>  arms producing molds are introduced with {+=}.  the
+    :>  compiler will copy the arm decoration onto its product
     +|
-    +=  spot  {p/@ q/@}                                 :<  a coordinate
-    +=  tops                                            :>  also a coordinate
-      {p/@ q/@}
-    +=  goof                                            :>  a simple tuple
-      $:  foo/@                                         :<  something mysterious
-          bar/@                                         :<  go here for drink
-          moo/(binary-tree juice)                       :<  cows do this
+    +=  spot  [p=@ q=@]                                 :<  a coordinate
+    +=  tops                                            :<  also a coordinate
+      [p=@ q=@]
+    +=  goof                                            :<  a simple tuple
+      $:  foo=@                                         :<  something mysterious
+          bar=@                                         :<  go here for drink
+          moo=(binary-tree juice)                       :<  cows do this
       ==
-    +=  juice                                           :>  fruity beverage
-      $%  {$plum p/@}                                   :<  fresh prune
-          {$pear p/@ q/@}                               :<  good for cider
-          {$acai p/@}                                   :<  aztec superfood
+    +=  juice                                           :<  fruity beverage
+      $%  [%plum p=@]                                   :<  fresh prune
+          [%pear p=@ q=@]                               :<  good for cider
+          [%acai p=@]                                   :<  aztec superfood
       ==
     :>  #
     :>  #  %pattern
@@ -124,8 +123,8 @@
     :>  or "higher-kinded types".
     +|
     ++  binary-tree                                     :<  tree pattern
-      |*  a/$-(* *)
-      $@($~ {n/a l/(binary-tree a) r/(binary-tree a)})
+      |*  a=$-(* *)
+      $@($~ [n=a l=(binary-tree a) r=(binary-tree a)])
     :>  #
     :>  #  %constant
     :>  #
@@ -134,20 +133,20 @@
     ++  answer                                          :<  answer to everything
       42
     --
+:>  #
 :>  #  %work
-:>
+:>  #
 :>    engines for our imaginary hello, world app.
 :>
 :>  note that ++say-goodbye is the correct notation, even though
 :>  it's a {+-} arm.
 |%
-:>                                                      :>  ++say-hello
 ++  say-hello                                           :<  say hi to someone
   :>  friendly welcome message
   :>
   |=  :>  txt: friend to say hi to
       :>
-      txt/term
+      txt=term
   ^-  tape
   "hello, {(rip 3 txt)}"
 :>    ++say-goodbye: say a really proper goodbye
@@ -158,14 +157,14 @@
 :>      ?:  =(%hello %world)
 :>        %hello
 :>      %world
-:>                                                      ::  ++say-goodbye
+::
 +-  say-goodbye                                         ::
   :>  describe product of function
   :>
   |=  :>  txt: departing friend
       :>  num: number of friends
-      $:  txt/term
-          num/@
+      $:  txt=term
+          num=@
       ==
   ^-  tape
   :>  foo: four
@@ -174,8 +173,8 @@
   =/  bar  (add (mul num foo) 2)
   =/  moo  (mul num bar)                                :<  for all the cows
   "goodbye and {(scot %ud moo)}, {(rip 3 txt)}"
-:>                                                      :>  ++say-minimum
-++  say-minimum                                         :>  minimal decoration
-  |=  txt/term
+::
+++  say-minimum                                         :<  minimal decoration
+  |=  txt=term
   "nothing to say to {(rip 3 txt)}"
 --

@@ -1,41 +1,86 @@
-::                                                      ::
-::::  6: layer six
-  ::
-~>  %slog.[0 leaf+"arvo-boot"]
-=<  |=  {now/@da ovo/*}
-    ^-  *
-    ~>  %slog.[0 leaf+"arvo-event"]
-    .(+> +:(poke now ovo))
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::  ::::::    Postface                              ::::::
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+=>  +7
+~>  %slog.[0 leaf+"%arvo-assembly"]
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =>
 ~%  %hex  +  ~
 |%
-::
-::::  6a: arvo core
-  ::
-::                                                  ::  ++mean:error:
-++  mean                                            ::  deify stack trace
-  |=(a/tang (fear (flop a) |.(!!)))
-::                                                  ::  ++fear:error:
-++  fear                                            ::  insert user mean
-  |*  {a/tang _|?(**)}
-  ^+  (+<+)
-  =>  .(a `tang`a)
-  ?~  a  (+<+)
-  ~_(i.a $(a t.a))
-::                                                  ::  ++slog:error:
-++  slog                                            ::  deify printf
-  ::  pri: priority level
-  =|  pri/@
-  ::
-  ::  .=  ~&(%a 1)
-  ::
-  |=  a/tang  ^+  same
-  ::
-  ::  ((slog ~[>%a<]) 1)
-  ::
-  ?~(a same ~>(%slog.[pri i.a] $(a t.a)))
-::
+++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
+++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
+++  beam  {{p/ship q/desk r/case} s/path}               ::  global name
+++  beak  {p/ship q/desk r/case}                        ::  garnish with beak
+++  bone  @ud                                           ::  opaque duct
+++  case                                                ::  version
+          $%  {$da p/@da}                               ::  date
+              {$tas p/@tas}                             ::  label
+              {$ud p/@ud}                               ::  sequence
+          ==                                            ::
+++  desk  @tas                                          ::  ship desk case spur
+++  cage  (cask vase)                                   ::  global metadata
+++  cask  |*(a/mold (pair mark a))                      ::  global data
+++  cuff                                                ::  permissions
+          $:  p/(unit (set monk))                       ::  can be read by
+              q/(set monk)                              ::  caused or created by
+          ==                                            ::
+++  curd  {p/@tas q/*}                                  ::  typeless card
+++  duct  (list wire)                                   ::  causal history
+++  hypo  |*(a/mold (pair type a))                      ::  type associated
+++  hobo  |*  a/mold                                    ::  kiss wrapper
+          $?  $%  {$soft p/*}                           ::
+              ==                                        ::
+              a                                         ::
+          ==                                            ::
+++  kirk  (unit (set monk))                             ::  audience
+++  lens                                                ::  observation core
+  $_  ^?                                                ::
+  |%  ++  u  *(unit (unit $~))                          ::  existence
+      ++  v  *(unit (unit cage))                        ::  full history
+      ++  w  *(unit (unit (unit cage)))                 ::  latest diff
+      ++  x  *(unit (unit cage))                        ::  data at path
+      ++  y  *(unit (unit arch))                        ::  directory
+      ++  z  *(unit (unit cage))                        ::  current subtree
+  --                                                    ::
+++  marc                                                ::  structured mark
+  $@  mark                                              ::  plain mark
+  $%  {$tabl p/(list (pair marc marc))}                 ::  map
+  ==                                                    ::
+++  mark  @tas                                          ::  content type
+++  mash  |=(* (mass +<))                               ::  producing mass
+++  mass  (pair cord (each noun (list mash)))           ::  memory usage  
+++  mill  (each vase milt)                              ::  vase+metavase
+++  milt  {p/* q/*}                                     ::  metavase
+++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
+++  muse  {p/@tas q/duct r/arvo}                        ::  sourced move
+++  move  {p/duct q/arvo}                               ::  arvo move
+++  ovum  {p/wire q/curd}                               ::  typeless ovum
+++  pane  (list {p/@tas q/vase})                        ::  kernel modules
+++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
+++  ship  @p                                            ::  network identity
+++  sink  (trel bone ship path)                         ::  subscription
+++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
+          (unit (unit cage))                            ::
+++  slyd  $-  {* (unit (set monk)) term beam}           ::  super advanced
+          (unit (unit (cask)))                          ::
+++  slyt  $-({* *} (unit (unit)))                       ::  old namespace
+++  vile                                                ::  reflexive constants
+          $:  typ/type                                  ::  -:!>(*type)
+              duc/type                                  ::  -:!>(*duct)
+              pah/type                                  ::  -:!>(*path)
+              mev/type                                  ::  -:!>([%meta *vase])
+          ==                                            ::
+++  wind                                                ::  new kernel action
+          |*  {a/mold b/mold}                           ::  forward+reverse
+          $%  {$pass p/path q/a}                        ::  advance
+              {$slip p/a}                               ::  lateral
+              {$give p/b}                               ::  retreat
+          ==                                            ::
+++  wire  path                                          ::  event pretext
 ++  sloy
+  !:
   |=  sod/slyd
   ^-  slyt
   |=  {ref/* raw/*}
@@ -58,6 +103,8 @@
   ?~  bop  ~
   ?~  u.bop  [~ ~]
   [~ ~ +.q.u.u.bop]
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::                section 3bE, Arvo core                ::
 ::
 ++  vent                                                ::  vane core
   |=  {lal/@tas vil/vile bud/vase sew/(pair worm vase)}
@@ -145,9 +192,9 @@
       ?.  hip  ~                                        ::  a vase is a cell
       =^  vax  p.sew  (~(slot wa p.sew) 2 tiv)          ::
       =^  hip  p.sew  (~(nest wa p.sew) typ.vil p.vax)  ::
-      ?.  hip  ~                                        ::  vase head is span
+      ?.  hip  ~                                        ::  vase head is type
       %+  biff                                          ::
-        =+  mut=(milt q.tiv)                            ::  card span, value
+        =+  mut=(milt q.tiv)                            ::  card type, value
         |-  ^-  (unit (pair milt worm))                 ::
         ?.  ?=({$meta p/* q/milt} q.mut)  `[mut p.sew]  ::  ordinary metacard
         =^  hip  p.sew  (~(nets wa p.sew) mev.vil p.mut)::
@@ -161,7 +208,7 @@
       ^-  (unit (pair move worm))
       %+  biff  ((soft duct) -.q.wec)
       |=  a/duct
-      %+  bind
+      %+  bind  
         =-  ?-  -.har
               $|  ~&  [%dead-card p.har]  ~             ::  XX properly log?
               $&  (some p.har)
@@ -281,10 +328,10 @@
   (vent lal vil bud *worm (slym (slap bud (rain pax txt)) bud))
 ::
 ++  viol                                                ::  vane tools
-  |=  but/span
+  |=  but/type
   ^-  vile
-  =+  pal=|=(a/@t ^-(span (~(play ut but) (vice a))))
-  :*  typ=(pal '*span')
+  =+  pal=|=(a/@t ^-(type (~(play ut but) (vice a))))
+  :*  typ=(pal '*type')
       duc=(pal '*duct')
       pah=(pal '*path')
       mev=(pal '*{$meta $vase}')
@@ -299,7 +346,7 @@
     ^-  (unit (unit (cask)))
     =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))            ::  XX heinous
     =+  lal=(end 3 1 ron)
-    =+  ren=(rsh 3 1 ron)
+    =+  ren=(@t (rsh 3 1 ron))
     |-  ^-  (unit (unit (cask)))
     ?~  q.niz  ~
     ?.  =(lal p.i.q.niz)  $(q.niz t.q.niz)
@@ -402,14 +449,10 @@
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
   --
 --
-::
-::::  arvo interface
-  ::
 =+  pit=`vase`!>(.)                                     ::
-=+  vil=(viol p.pit)                                    ::  cached reflexives
-=|  $:  lac/?                                           ::  not verbose
-        bod/(unit vase)                                 ::  standard library
-        urb/(unit ship)                                 ::  identity
+=+  bud=pit                                             ::  becomes tang
+=+  vil=(viol p.bud)                                    ::  cached reflexives
+=|  $:  lac/?                                           ::  laconic bit
         eny/@                                           ::  entropy
         niz/(pair worm (list {p/@tas q/vase}))          ::  modules
     ==                                                  ::
@@ -419,16 +462,20 @@
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
-    ++  keep  |=(* (^keep ((hard {@da path}) +<)))      ::  4
+    ++  keep  |=(* (^keep ((hard {@da path}) +<)))     ::  4
     ++  load  |=  {@ (list ovum) pane}                  ::  86
               ^-  {(list ovum) _+>}
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
               [rey +>.$]
-    ++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  87
+    ++  peek  |=(* (^peek ((hard {@da path}) +<)))     ::  87
     ++  poke  |=  *                                     ::  42
               ^-  {(list ovum) *}
               =>  .(+< ((hard {now/@da ovo/ovum}) +<))
+              ?:  =(%verb -.q.ovo)
+                [~ +>.$(lac !lac)]
+              ?:  ?=($veer -.q.ovo)
+                [~ +>.$(+ (veer now q.ovo))]
               =^  ova  +>+  (^poke now ovo)
               |-  ^-  {(list ovum) *}
               ?~  ova
@@ -438,12 +485,9 @@
               ?:  ?=($veer -.q.i.ova)
                 $(ova t.ova, +>+.^$ (veer now q.i.ova))
               ?:  ?=($vega -.q.i.ova)
-                (fall (vega now t.ova (path +.q.i.ova)) [~ +>.^$])
-              ?:  ?=($velo -.q.i.ova)
-                (fall (velo now t.ova ({@ @} +.q.i.ova)) [~ +>.^$])
-              ?:  ?=(?($init $veal) -.q.i.ova)
-                =+  avo=$(ova t.ova, +>+.^$ (boot (@ +.q.i.ova)))
-                [[i.ova -.avo] +.avo]
+                %+  fall
+                  (vega now t.ova (path +<.q.i.ova) (path +>.q.i.ova))
+                [~ +>.^$]
               ?:  ?=($mass -.q.i.ova)
                 =+  avo=$(ova t.ova)
                 :_  +.avo
@@ -453,22 +497,16 @@
                   :-  %userspace
                   :-  %|
                   :~  hoon+`pit
-                      zuse+`mast
+                      zuse+`bud
                       hoon-cache+`p.niz
                       q.q.i.ova
                       dot+`.
                   ==
                 ==
               =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
-    ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  20
+    ++  wish  |=(* (^wish ((hard @ta) +<)))            ::  20
     --
 |%
-++  boot                                                ::  set singlehome
-  |=  {who/@p}
-  ^+  +>
-  ?:  &(?=(^ urb) (lth u.urb who))  +>
-  +>(urb `who, bod ?~(bod ~ bod(-.q.u who)))
-::
 ++  come                                                ::  load incompatible
   |=  {yen/@ ova/(list ovum) nyf/pone}
   ^+  [ova +>]
@@ -477,7 +515,7 @@
 ++  keep                                                ::  wakeup delay
   |=  {now/@da hap/path}
   =>  .(+< ((hard {now/@da hap/path}) +<))
-  (~(doos (is vil eny mast niz) now) hap)
+  (~(doos (is vil eny bud niz) now) hap)
 ::
 ++  load                                                ::  load compatible
   |=  {yen/@ ova/(list ovum) nyf/pane}
@@ -494,136 +532,60 @@
     $(ova t.ova, +>.^$ (veer *@da q.i.ova))
   =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
 ::
-++  mast  ?~(bod pit u.bod)                             ::  stdlib if installed
 ++  peek                                                ::  external inspect
   |=  {now/@da hap/path}
   ^-  (unit)
   ?~  hap  [~ hoon-version]
-  =+  rob=((sloy ~(beck (is vil eny mast niz) now)) [151 %noun] hap)
+  =+  rob=((sloy ~(beck (is vil eny bud niz) now)) [151 %noun] hap)
   ?~  rob  ~
   ?~  u.rob  ~
   [~ u.u.rob]
 ::
 ++  poke                                                ::  external apply
   |=  {now/@da ovo/ovum}
-  ^-  {(list ovum) _+>}
   =.  eny  (mix eny (shaz now))
   ::  ~&  [%poke -.q.ovo]
-  ?:  ?=(?($veer $vega $verb $veal) -.q.ovo)
-    ::
-    ::  these effects on arvo proper fall through and
-    ::  are handled in post.
-    ::
-    [[ovo ~] +>.$]
+  ^-  {(list ovum) _+>}
   =^  zef  niz
-    (~(hurl (is vil eny mast niz) now) lac ovo)
+    (~(hurl (is vil eny bud niz) now) lac ovo)
   [zef +>.$]
+::                                                
+++  veke                                                ::  build new kernel
+  |=  {now/@da hap/path zup/path}
+  ^-  *
+  =-  ?:(?=($& -.res) p.res ((slog p.res) ~))
+  ^=  res  %-  mule  |.
+  =+  pax=(weld hap `path`[%hoon ~])
+  =+  wax=(weld zup `path`[%hoon ~])
+  ~&  [%vega-start-hoon hap]
+  =+  src=((hard @t) (need (peek now cx+pax)))
+  =+  arv=((hard @t) (need (peek now cx+wax)))
+  =+  gen=(rain hap src)
+  ~&  %vega-parsed
+  =+  one=(~(mint ut %noun) %noun gen)
+  ~&  %vega-compiled
+  ~&  [%vega-arvo zup]
+  =+  two=(~(mint ut p.one) %noun (rain zup arv))
+  ~&  %vega-minted
+  .*(0 [7 q.one q.two])
 ::
 ++  vega                                                ::  reboot kernel
-  |=  {now/@da ova/(list ovum) hap/path}
+  |=  {now/@da ova/(list ovum) hap/path zup/path}
   ^-  (unit {p/(list ovum) q/*})
   =-  ?:(?=($| -.res) ((slog p.res) ~) `p.res)
   ^=  res  %-  mule  |.
-  =+  pax=(weld hap `path`[%hoon ~])
-  ~&  [%vega-start hap]
-  =+  src=((hard @t) (need (peek now cx+pax)))
-  =+  gen=(rain hap src)
-  ~&  %vega-parsed
-  =+  ken=.*(0 q:(~(mint ut %noun) %noun gen))
+  =+  ken=(veke now hap zup)
+  ~&  [%vega-kernel `@ux`(mug ken)] 
   =+  ^=  nex
       =+  gat=.*(ken .*(ken [0 87]))
       (need ((hard (unit @)) .*([-.gat [[now ~] +>.gat]] -.gat)))
-  ~&  [%vega-compiled hoon nex]
-  ?>  (lte nex hoon)
-  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon) 86 11)]))
+  ~&  [%vega-compiled hoon-version nex]
+  ?>  (lte nex hoon-version)
+  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon-version) 86 11)]))
   =+  sam=[eny ova q.niz]
   =+  raw=.*([-.gat [sam +>.gat]] -.gat)
-  [[[~ %vega hap] ((list ovum) -.raw)] +.raw]
-::
-++  velo                                                ::  new full reboot
-  |=  $:  ::  now: current date
-          ::  ova: actions to process after reboot
-          ::  hun: hoon.hoon source
-          ::  arv: arvo.hoon source
-          ::
-          now/@da
-          ova/(list ovum)
-          hun/@t
-          van/@t
-      ==
-  ^-  (unit {p/(list ovum) q/*})
-  ::
-  ::  virtualize; dump error if we fail
-  ::
-  =-  ?:(?=($| -.-) ((slog p.-) ~) `p.-)
-  %-  mule  |.
-  ::
-  ::  produce a new kernel and an output list
-  ::
-  ^-  (pair (list ovum) *)
-  ::
-  ::  compile the hoon.hoon source with the current compiler
-  ::
-  ~&  [%hoon-compile `@p`(mug hun)]
-  =+  raw=(ride %noun hun)
-  ::
-  ::  activate the new compiler gate
-  ::
-  =+  cop=.*(0 +.raw)
-  ::
-  ::  find the hoon version number of the new kernel
-  ::
-  =+  nex=(@ .*(cop q:(~(mint ut p.raw) %noun [%limb %hoon-version])))
-  ?>  |(=(nex hoon) =(+(nex) hoon))
-  ::
-  ::  if we're upgrading language versions, recompile the compiler
-  ::
-  =>  ?:  =(nex hoon)
-        [hot=`*`raw .]
-      ~&  [%hoon-compile-upgrade nex]
-      =+  hot=.*(cop(+< [%noun hun]) -.cop)
-      .(cop .*(0 +.hot))
-  ::
-  ::  extract the hoon core from the outer gate
-  ::
-  =+  hoc=.*(cop [0 7])
-  ::
-  ::  compute the span of the hoon.hoon core
-  ::
-  =+  hyp=-:.*(cop(+< [-.hot '+>']) -.cop)
-  ::
-  ::  compile arvo
-  ::
-  ~&  [%compile-arvo `@p`(mug hyp) `@p`(mug van)]
-  =+  rav=.*(cop(+< [hyp van]) -.cop)
-  ::
-  ::  create the arvo kernel
-  ::
-  =+  arv=.*(hoc +.rav)
-  ::
-  ::  extract the arvo core from the outer gate
-  ::
-  =+  voc=.*(arv [0 7])
-  ::
-  ::  compute the span of the arvo.hoon core
-  ::
-  =+  vip=-:.*(cop(+< [-.rav '+>']) -.cop)
-  ::
-  ::  entry gate: ++load for the normal case, ++come for upgrade
-  ::
-  =+  gat=.*(voc +:.*(cop(+< [vip ?:(=(nex hoon) 'load' 'come')]) -.cop))
-  ::
-  ::  sample: [entropy actions vases]
-  ::
-  =+  sam=[eny ova q.niz]
-  ::
-  ::  call into the new kernel
-  ::
-  =+  out=.*(gat(+< sam) -.gat)
-  ::
-  ::  tack a reset notification onto the product
-  ::
-  [[[~ %vega ~] ((list ovum) -.out)] +.out]
+  =+  yep=((list ovum) -.raw)
+  [[[~ %vega hap] yep] +.raw]
 ::
 ++  veer                                                ::  install vane/tang
   |=  {now/@da fav/curd}
@@ -634,14 +596,13 @@
     ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
-    =+  orb=`@p`?~(urb 0xffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff u.urb)
-    +>.^$(bod `[[%cell [%face [~ %our] [%atom %p ~]] p.vax] [orb q.vax]])
+    +>.^$(bud vax)
   %_    +>.^$
       q.niz
     |-  ^+  q.niz
     ?~  q.niz
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-      =+  vin=(vint lal.fav vil mast pax.fav txt.fav)
+      =+  vin=(vint lal.fav vil bud pax.fav txt.fav)
       ?~  vin
         q.niz
       [[lal.fav q.sew:u.vin] q.niz]
@@ -650,10 +611,11 @@
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
     :_  t.q.niz
     :-  p.i.q.niz
-    q.sew:(ruck:(vent lal.fav vil mast [p.niz q.i.q.niz]) pax.fav txt.fav)
+    q.sew:(ruck:(vent lal.fav vil bud [p.niz q.i.q.niz]) pax.fav txt.fav)
   ==
 ::
 ++  wish                                                ::  external compute
  |=  txt/@
-  q:(slap mast (ream txt))
+  q:(slap bud (ream txt))
 --
+

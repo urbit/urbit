@@ -2,9 +2,9 @@
 ::::  /hoon/replay-log/womb/mar
   ::
 /?    310
-/+    womb
-|_  log/(list {@uvJ transaction:womb})
+/+    hood-womb
+|_  log/(list {@uvJ transaction:hood-womb})
 ++  grab  |%
-          ++  noun  (list {@uvJ transaction:womb})
+          ++  noun  (list {@uvJ transaction:hood-womb})
           --
 --
