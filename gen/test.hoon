@@ -10,65 +10,76 @@
 /=  test-ls  /:  /===/tests/ls  /!noun/
 /=  test-mp  /:  /===/tests/mp  /!noun/
 
+=,  new-hoon
 |%
-++  perform-test-suite
-  ::  takes a testing core and executes all tests in it.
-  |=  {name/tape v/vase eny/@uvJ}
+:>  #  %models
++|
++=  tests
+  :>    a hierarchical structure of tests
+  :>
+  :>  an alphabetically sorted recursive association list
+  :>  mapping a part of a path to either a test trap or a
+  :>  sublist of the same type.
+  (list (pair term (either (trap (list tape)) tests)))
+::
+:>  #  %traps
++|
+++  gen-tests
+  :>  creates a {tests} list out of a vase of a test suite
+  |=  [v=vase eny=@uvJ]
+  ^-  tests
+  =+  arms=(sort (sloe p.v) aor)
+  =+  context=(slop (init-test-vase:tester eny) v)
+  %+  map:ls  arms
+  |=  arm/term
+  :-  arm
+  :-  %&
+  |.
+  ::  todo: pull out the entropy from the result interface.
+  =/  r  (slap context [%cnsg [arm ~] [%$ 3] [[%$ 2] ~]])
+  +:((hard {@uvJ (list tape)}) q:(slap r [%limb %results]))
+::
+++  test-runner
+  :>  run all tests in {a}.
+  ::
+  ::  todo: pass in a path to filter on.
+  =|  pax/path
+  |=  a/tests  ^-  tang
+  %-  concat:ls
+  %+  map:ls  a
+  |=  b/(pair term (either (trap (list tape)) tests))
   ^-  tang
-  =+  core-arms=(sort (sloe p.v) aor)
-  ?:  =(~ core-arms)
-    ~&  p.v
-    [[%leaf :(weld "error: " name " is not a valid testing core.")] ~]
-  =|  out/tang
-  |-
-  ?~  core-arms
-    out
-  %=  $
-    out  (weld (perform-test-arm name i.core-arms v eny) out)
-    core-arms  t.core-arms
+  ?-  -.q.b
+    %&  (run-test [p.b pax] p.q.b)
+    %|  ^$(pax [p.b pax], a p.q.b)
   ==
 ::
-++  perform-test-arm
-  ::  performs a single test.
-  |=  {suite-name/tape arm-name/term v/vase eny/@uvJ}
-  ::  todo: terminal color on the output
+++  run-test
+  :>  executes an individual test.
+  |=  {pax/path test/(trap (list tape))}
   ^-  tang
-  =+  run=(run-arm-in-test-core arm-name v eny)
-  =+  full-name=:(weld suite-name "/" (trip arm-name))
+  =+  name=(spud (reverse:ls pax))
+  =+  run=(mule test)
+  ~!  run
   ?-  -.run
     $|  ::  the stack is already flopped for output?
         ;:  weld
           p:run
-          `tang`[[%leaf (weld full-name " CRASHED")] ~]
+          `tang`[[%leaf (weld name " CRASHED")] ~]
         ==
-    $&  ::  todo: test the cookie to make sure it returned the same core.
-        ?:  =(~ +.p:run)
-          [[%leaf (weld full-name " OK")] ~]
+    $&  ?:  =(~ p:run)
+          [[%leaf (weld name " OK")] ~]
         ::  Create a welded list of all failures indented.
         %-  flop
         ;:  weld
-          `tang`[[%leaf (weld full-name " FAILED")] ~]
-          %+  turn  +.p:run
+          `tang`[[%leaf (weld name " FAILED")] ~]
+          ~!  p:run
+          %+  turn  p:run
             |=  {i/tape}
             ^-  tank
             [%leaf (weld "  " i)]
         ==
   ==
-::
-++  run-arm-in-test-core
-  ::  runs a single arm.
-  ::
-  ::  returns the output of `++mule` so that we can react to crashes
-  ::  appropriately.
-  |=  {arm-name/term v/vase eny/@uvJ}
-  ^-  (each {@uvJ (list tape)} (list tank))
-  =/  t  (init-test-vase:tester eny)
-  ::  run the tests in the interpreter so we catch crashes.
-  %-  mule  |.
-  =/  r  (slap (slop t v) [%cnsg [arm-name ~] [%$ 3] [[%$ 2] ~]])
-  ::  return just the results or we will be here forever while we try to copy
-  ::  the entire kernel.
-  ((hard {@uvJ (list tape)}) q:(slap r [%limb %results]))
 --
 ::
 :-  %say
@@ -77,9 +88,15 @@
         $~
     ==
 :-  %tang
-::  todo: right now, we hard code ++test-core. but eventually, we must instead
-::  scry ford for the core from the hoon file. that doesn't exist yet.
-::(perform-test-suite "test-thr" !>(test-thr) eny)
-::(perform-test-suite "test-myb" !>(test-myb) eny)
-::(perform-test-suite "test-ls" !>(test-ls) eny)
-(perform-test-suite "test-mp" !>(test-mp) eny)
+%-  test-runner
+^-  tests
+:~
+  ::  todo: for now, this is manually constructed. later, this should
+  ::  be generated from the contents of %/tests, without addressing the
+  ::  files individually. if possible, lift the call to ++gen-tests into
+  ::  the build steps for caching.
+  ['ls' [%| (gen-tests !>(test-ls) eny)]]
+  ['mp' [%| (gen-tests !>(test-mp) eny)]]
+  ['myb' [%| (gen-tests !>(test-myb) eny)]]
+  ['thr' [%| (gen-tests !>(test-thr) eny)]]
+==
