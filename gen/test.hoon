@@ -40,12 +40,12 @@
 ::
 ++  test-runner
   :>  run all tests in {a} with a filter.
-  =|  pax/path
-  |=  {filter/path a/tests}
+  =|  pax=path
+  |=  [filter=path a=tests]
   ^-  tang
   %-  concat:ls
   %+  map:ls  a
-  |=  b/(pair term (either (trap (list tape)) tests))
+  |=  b=(pair term (either (trap (list tape)) tests))
   ^-  tang
   =^  matches  filter  (match-filter filter p.b)
   ?.  matches
@@ -57,7 +57,7 @@
 ::
 ++  run-test
   :>  executes an individual test.
-  |=  {pax/path test/(trap (list tape))}
+  |=  [pax=path test=(trap (list tape))]
   ^-  tang
   =+  name=(spud (reverse:ls pax))
   =+  run=(mule test)
@@ -84,8 +84,8 @@
 ::
 ++  match-filter
   :>  checks to see if {name} matches the head of {filter}.
-  |=  {filter/path name/term}
-  ^-  {? path}
+  |=  [filter=path name=term]
+  ^-  [? path]
   ?~  filter
     ::  when there's no filter, we always match.
     [%.y ~]
@@ -93,8 +93,8 @@
 --
 ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {filter/$?($~ {pax/path $~})}
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [filter=$?($~ [pax=path $~])]
         $~
     ==
 :-  %tang
