@@ -90,9 +90,7 @@
   ::
   ++  results
     ::  returns results.
-    ::
-    ::  returns the test run's identity cookie and the list of failures.
-    ^-  {@uvJ (list tape)}
-    [eny error-lines]
+    ^-  (list tape)
+    error-lines
   --
 --

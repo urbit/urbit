@@ -35,9 +35,8 @@
   :-  arm
   :-  %&
   |.
-  ::  todo: pull out the entropy from the result interface.
   =/  r  (slap context [%cnsg [arm ~] [%$ 3] [[%$ 2] ~]])
-  +:((hard {@uvJ (list tape)}) q:(slap r [%limb %results]))
+  ((hard (list tape)) q:(slap r [%limb %results]))
 ::
 ++  test-runner
   :>  run all tests in {a}.
