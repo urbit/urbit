@@ -22,7 +22,7 @@
   :>  sublist of the same type.
   (list (pair term (either (trap (list tape)) tests)))
 ::
-:>  #  %traps
+:>  #  %test
 +|
 ++  gen-tests
   :>  creates a {tests} list out of a vase of a test suite
@@ -39,15 +39,17 @@
   ((hard (list tape)) q:(slap r [%limb %results]))
 ::
 ++  test-runner
-  :>  run all tests in {a}.
-  ::
-  ::  todo: pass in a path to filter on.
+  :>  run all tests in {a} with a filter.
   =|  pax/path
-  |=  a/tests  ^-  tang
+  |=  {filter/path a/tests}
+  ^-  tang
   %-  concat:ls
   %+  map:ls  a
   |=  b/(pair term (either (trap (list tape)) tests))
   ^-  tang
+  =^  matches  filter  (match-filter filter p.b)
+  ?.  matches
+    ~
   ?-  -.q.b
     %&  (run-test [p.b pax] p.q.b)
     %|  ^$(pax [p.b pax], a p.q.b)
@@ -79,15 +81,25 @@
             [%leaf (weld "  " i)]
         ==
   ==
+::
+++  match-filter
+  :>  checks to see if {name} matches the head of {filter}.
+  |=  {filter/path name/term}
+  ^-  {? path}
+  ?~  filter
+    ::  when there's no filter, we always match.
+    [%.y ~]
+  [=(i.filter name) t.filter]
 --
 ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        $~
+        {filter/$?($~ {pax/path $~})}
         $~
     ==
 :-  %tang
-%-  test-runner
+%+  test-runner
+?~  filter  ~  pax.filter
 ^-  tests
 :~
   ::  todo: for now, this is manually constructed. later, this should
