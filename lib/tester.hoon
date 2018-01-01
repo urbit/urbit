@@ -12,17 +12,19 @@
 ++  tester-type  _(init-test `@uvJ`0)
 ::
 ++  tester
-  |_  $:  error-lines/(list tape)                     ::  output messages
-          eny/@uvJ                                    ::  entropy
-          check-iterations/@u                         ::  # of check trials
-          current-iteration/@u                        ::  current iteration
+  |_  $:  error-lines=(list tape)                     :<  output messages
+          eny=@uvJ                                    :<  entropy
+          check-iterations=@u                         :<  # of check trials
+          current-iteration=@u                        :<  current iteration
       ==
-  ::  ||  %check
-  ::
-  ::  +|
+  :>  #
+  :>  #  %check
+  :>  #
+  :>    gates for quick check style tests.
+  +|
   +-  check
-    |*  {generator/$-(@uvJ *) test/$-(* ?)}
-    |-                                                ::  why do i have to |-?
+    |*  [generator=$-(@uvJ *) test=$-(* ?)]
+    |-
     ^+  +>.$
     ?:  (gth current-iteration check-iterations)
       +>.$
@@ -47,8 +49,8 @@
   ::  todo: a generate function that takes an arbitrary span.
   ::
   ++  generate-range
-    |=  {min/@ max/@}
-    |=  c/@uvJ
+    |=  [min=@ max=@]
+    |=  c=@uvJ
     ^-  @
     =+  gen=(random:new-hoon c)
     =^  num  gen  (range:gen min max)
@@ -56,26 +58,32 @@
   ::
   ++  generate-dict
     :>  generator which will produce a dict with {count} random pairs.
-    |=  count/@u
+    |=  count=@u
     :>  generate a dict with entropy {c}.
-    |=  c/@uvJ
+    |=  c=@uvJ
+    :>
+    :>  gen: stateful random number generator
+    :>  out: resulting map
+    :>  i: loop counter
+    :>
     =/  gen  (random:new-hoon c)
-    =|  i/@u
-    =|  m/(dict:new-hoon @ud @ud)
+    =|  out=(dict:new-hoon @ud @ud)
+    =|  i=@u
     |-
     ^-  (dict:new-hoon @ud @ud)
     ?:  =(i count)
-      m
+      out
     =^  first  gen  (range:gen 0 100)
     =^  second  gen  (range:gen 0 100)
-    $(m (put:dct:new-hoon m first second), i +(i))
-  ::
-  ::  ||  %test
-  ::
-  ::  +|
+    $(out (put:dct:new-hoon out first second), i +(i))
+  :>  #
+  :>  #  %test
+  :>  #
+  :>    assertions on state
+  +|
   ::  todo: unit testing libraries have a lot more to them than just eq.
   ++  expect-eq
-    |*  {a/* b/* c/tape}
+    |*  [a=* b=* c=tape]
     ^+  +>
     ?:  =(a b)
       +>.$
@@ -88,8 +96,13 @@
       ==
     ==
   ::
+  :>  #
+  :>  #  %output
+  :>  #
+  :>    called by the test harness after test completion
+  ::
   ++  results
-    ::  returns results.
+    :>  returns results.
     ^-  (list tape)
     error-lines
   --
