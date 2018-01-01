@@ -5987,6 +5987,7 @@
               {$bark p/toga q/tile}                     ::  name
               {$funk p/tile q/tile}                     ::  function type
               {$deet p/spot q/tile}                     ::  set debug
+              {$deft p/tile q/tile}                     ::  default
               {$fern p/{i/tile t/(list tile)}}          ::  plain selection
               {$herb p/hoon}                            ::  assembly
               {$kelp p/{i/line t/(list line)}}          ::  tag selection
@@ -6575,8 +6576,15 @@
   --
 ::
 ++  ax
-  =+  :*  dom=`axis`1
+  =+  :*  ::  dom: axis to home
+          ::  doc: documentation
+          ::  bug: debug annotations
+          ::  def: default 
+          ::
+          dom=`axis`1
           doc=*(list what)
+          bug=*(list spot)
+          def=*(unit tile)
       ==
   |_  mod/tile
   ++  bunt  ~+
@@ -6595,7 +6603,7 @@
     :+  %tsgr
       ::  context is example of both tiles
       ::
-      [ersatz(mod fun) ersatz(mod arg)]
+      [ersatz:clear(mod fun) ersatz:clear(mod arg)]
     ::  produce an %iron (contravariant) core
     ::
     :-  %ktbr
@@ -6610,63 +6618,22 @@
     ::
     |=(gen/hoon ^-(hoon ?:(=(1 dom) gen [%tsgr [%$ dom] gen])))
   ::
-  ++  default
-    ::  produce a hoon that makes the model's default value, untyped
-    ::
-    |-  ^-  hoon
-    ?-    mod
-        {^ *}
-      [$(mod -.mod) $(mod +.mod)]
-    ::
-        {$axil *}
-      ?+  p.mod  [%rock %$ 0]
-        $cell  [[%rock %$ 0] [%rock %$ 0]]
-        $void  [%zpzp ~]
-      ==
-    ::
-        {$bark *}
-      $(mod q.mod)
-    ::
-        {$herb *}
-      =+  cys=~(boil ap p.mod)
-      ?:  ?=($herb -.cys)
-        (home [%tsgl [%limb %$] p.mod])
-      $(mod cys)
-    ::  
-        {$deet *}
-      $(mod q.mod)
-    ::
-        {$fern *}
-      ::  last entry is the default value
-      ::
-      |-  ^-  hoon
-      ?~(t.p.mod ^$(mod i.p.mod) $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod))
-    ::
-        {$funk *}
-      (function p.mod q.mod)
-    ::
-        {$kelp *}
-      ::  last entry is the default value  
-      ::
-      |-  ^-  hoon
-      ?~(t.p.mod ^$(mod i.p.mod) $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod))
-    ::
-        {$leaf *}  [%rock p.mod q.mod]
-        {$plow *}  $(mod q.mod)
-        {$reed *}  $(mod p.mod)
-        {$vine *}  $(mod q.mod)
-        {$weed *}  (home p.mod)
-    ==
+  ++  clear
+    ::  clear annotations
+    ^+  .
+    .(doc ~, bug ~, def ~)
   ::
   ++  trivial
     ::  ersatz by trivial construction
     ::
     ^-  hoon
     :+  %tsls
-      [%bust %noun]
+      ?~(def [%bust %noun] ersatz:clear(mod u.def))
     ~(construct sample(dom (peg 3 dom)) [2 %&])
   ::
-  ++  basic
+  ++  basal
+    ::  ersatz base case
+    ::  
     |=  bas/base
     ?-    bas
     ::
@@ -6704,9 +6671,11 @@
     ::
     |=  gen/hoon
     ^-  hoon
-    ?~  doc  gen
+    ?~  doc  
+      |-  ^-  hoon
+      ?~(bug gen [%dbug i.bug $(bug t.bug)])
     =/  fin  $(doc t.doc)
-    ?~(i.doc gen [%docs u.i.doc gen])
+    ?~(i.doc fin [%docs u.i.doc fin])
   ::
   ++  clean
     ::  yes if subject is not used and can be cleared
@@ -6718,6 +6687,7 @@
       {$bark *}  clean(mod q.mod)
       {$herb *}  |
       {$deet *}  clean(mod q.mod)
+      {$deft *}  &(clean(mod p.mod) clean(mod q.mod))
       {$funk *}  &(clean(mod p.mod) clean(mod q.mod))
       {$fern *}  |-  ^-  ?
                  ?&  clean(mod i.p.mod)
@@ -6737,29 +6707,28 @@
     ==
   ::
   ++  ersatz
-    ::  produce a correctly typed instance without subject
+    ::  produce a correctly typed instance without data
     ::
     ~+
     ^-  hoon
     ?-    mod
         {^ *}
       %-  decorate
-      =.  doc  ~
-      [ersatz(mod -.mod) ersatz(mod +.mod)]
+      [ersatz:clear(mod -.mod) ersatz:clear(mod +.mod)]
     ::
-        {$axil *}  (decorate (basic p.mod))
+        {$axil *}  (decorate (basal p.mod))
         {$bark *}  [%ktts p.mod ersatz(mod q.mod)]
         {$herb *}
       %-  decorate
-      =.  doc  ~
       =+  cys=~(boil ap p.mod)
       ?:  ?=($herb -.cys)
         (home [%tsgl [%limb %$] p.mod])
-      ersatz(mod cys)
+      ersatz:clear(doc ~, mod cys)
     ::  
-        {$deet *}  [%dbug p.mod ersatz(mod q.mod)]
+        {$deft *}  ersatz(mod q.mod, def `p.mod)
+        {$deet *}  ersatz(mod q.mod, bug [p.mod bug])
         {$fern *}  trivial
-        {$funk *}  (decorate (function p.mod q.mod))
+        {$funk *}  (decorate (function:clear p.mod q.mod))
         {$kelp *}  trivial
         {$leaf *}  (decorate [%rock p.mod q.mod])
         {$plow *}  ersatz(mod q.mod, doc [p.mod doc])
@@ -6772,13 +6741,18 @@
     ::  produce a normalizing gate (mold)
     ::
     ^-  hoon
+    ::  process annotations outside construct, to catch default
+    ::
+    ?:  ?=($plow -.mod)  factory(mod q.mod, doc [p.mod doc])
+    ?:  ?=($deet -.mod)  factory(mod q.mod, bug [p.mod bug])
+    ?:  ?=($deft -.mod)  factory(mod q.mod, def `p.mod)
     =-  ::  for basic molds that don't need the subject,
         ::  clear it so constants fold better
         ::
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
     :^  %brts  ~^~
-      [%base %noun]
+      ?~(def [%base %noun] ersatz:clear(mod u.def))
     ~(construct sample(dom (peg 7 dom)) [6 %&])
   ::
   ++  sample
@@ -6792,9 +6766,7 @@
         ==
     ++  basic
       |=  bas/base
-      ::  apply documentation
-      ::
-      ?^  doc  document
+      ^-  hoon
       ?-    bas
           {%atom *}
         ::  rez: fake instance
@@ -6832,6 +6804,8 @@
           $void
         ersatz
       ==
+    ++  clear
+      .(..sample ^clear)
     ++  fetch
       ::  load the sample
       ::
@@ -6856,7 +6830,7 @@
       ^-  hoon
       ::  if no other choices, construct head
       ::
-      ?~  rep  construct(mod one)
+      ?~  rep  construct:clear(mod one)
       ::  fin: loop completion
       ::
       =/  fin/hoon  $(one i.rep, rep t.rep)
@@ -6870,7 +6844,7 @@
       :+  %tsls
         ::  build the sample with the first option
         ::
-        construct(mod one)
+        construct:clear(mod one)
       ::  build test
       ::
       :^    %wtcl
@@ -6933,18 +6907,10 @@
         :+  %cnts 
           [[%& 1] ~] 
         :_  ~
-        [fetch-wing bunt(mod [%axil %cell])]
+        [fetch-wing ersatz:clear(mod ?~(def [%axil %cell] u.def))]
       ?:  =(& top)
         [%tsgr [%wtpt fetch-wing luz [%$ 1]] boc]
       [%tsgr luz boc]
-    ::
-    ++  document
-      ::  document and construct
-      ::
-      |-  ^-  hoon
-      ?~  doc  construct
-      =/  fin  $(doc t.doc)
-      ?~(i.doc fin [%docs u.i.doc fin])
     ::
     ++  construct
       ::  constructor at arbitrary sample
@@ -6959,19 +6925,19 @@
           {^ *}
         ::  apply help
         ::
-        ?^  doc  document
+        %-  decorate
         ::  probe unless we know the sample is a cell
         ::
         ?@  top  probe
         ::  if known cell, descend directly
         ::
-        :-  construct(mod -.mod, top p.top, axe (peg axe 2))
-        construct(mod +.mod, top q.top, axe (peg axe 3))
+        :-  construct:clear(mod -.mod, top p.top, axe (peg axe 2))
+        construct:clear(mod +.mod, top q.top, axe (peg axe 3))
       ::
       ::  base
       ::
           {$axil *}
-        (basic p.mod)
+        (decorate (basic:clear p.mod))
       ::
       ::  name, $=
       ::
@@ -6981,17 +6947,22 @@
       ::  debug
       ::
           {$deet *}
-        [%dbug p.mod construct(mod q.mod)]
+        construct(mod q.mod, bug [p.mod bug])
+      ::
+      ::  default
+      ::
+          {$deft *}
+        construct(mod q.mod, def `p.mod)
       ::
       ::  choice, $?
       ::
           {$fern *}
-        (choice i.p.mod t.p.mod)
+        (decorate (choice i.p.mod t.p.mod))
       ::
       ::  synthesis, $;
       ::
           {$herb *}
-        ?^  doc  document
+        %-  decorate
         =+  cys=~(boil ap p.mod)
         ?:  ?=($herb -.cys)
           [%cnhp (home p.mod) fetch ~]
@@ -7020,30 +6991,30 @@
       ::  function
       ::
           {$funk *}  
-        (decorate (function p.mod q.mod))
+        (decorate (function:clear p.mod q.mod))
       ::
       ::  branch, $@
       ::
           {$reed *}
-        ?^  doc  document
+        %-  decorate
         ?@  top
           ?:  =(%| top)
-            construct(mod p.mod)
+            construct:clear(mod p.mod)
           :^    %wtpt
               fetch-wing
-            construct(top %|, mod p.mod)
-          construct(top [%& %&], mod q.mod)
-        construct(mod q.mod)
+            construct:clear(top %|, mod p.mod)
+          construct:clear(top [%& %&], mod q.mod)
+        construct:clear(mod q.mod)
       ::
       ::  bridge, $^
       ::
           {$vine *}
-        ?^  doc  document
+        %-  decorate
         ?@  top  probe
         :^    %wtpt
             fetch-wing(axe (peg axe 2))
-          construct(top [%| %&], mod q.mod) 
-        construct(top [[%& %&] %&], mod p.mod)
+          construct:clear(top [%| %&], mod q.mod) 
+        construct:clear(top [[%& %&] %&], mod p.mod)
       ::
       ::  weed, $_
       ::
