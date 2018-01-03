@@ -1027,7 +1027,7 @@
                 ::
                   ?=  $~
                   (rush (fall han.man.new '') ;~(pfix sig fed:ag))
-                  ::TODO  %+ syntax errors?
+                  ::TODO  calling with %+ gives syntax error
               ==
           ==
         +>
