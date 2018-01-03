@@ -1333,24 +1333,26 @@
   ==
 ::
 ++  scry
-  |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
+  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
+  ?.  ?=($& -.why)  ~
+  =*  his  p.why
   ?:  ?&  =(%u ren)
           =(~ tyl)
           =([%$ %da now] lot)
-          (~(has by pol.all) who)
-          (~(has by bum:(~(got by pol.all) who)) syd)
+          (~(has by pol.all) his)
+          (~(has by bum:(~(got by pol.all) his)) syd)
       ==
     ``[%null !>(~)]
-  ?.  (~(has by pol.all) who)
+  ?.  (~(has by pol.all) his)
     ~
   ?.  =([%$ %da now] lot)
     ~
-  ?.  (~(has by bum:(~(got by pol.all) who)) syd)
+  ?.  (~(has by bum:(~(got by pol.all) his)) syd)
     [~ ~]
   ?.  ?=(^ tyl)
     ~
-  (mo-peek:(mo-abed:mo who *duct) syd high+`who ren tyl)
+  (mo-peek:(mo-abed:mo his *duct) syd high+`his ren tyl)
 ::
 ++  stay                                                ::  save w+o cache
   `axle`all
