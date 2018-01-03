@@ -89,7 +89,8 @@
           {$number $@(@ud {@u @ud})}                    :<  relative/absolute
           {$who audience}                               :<  presence
           {$what (unit $@(char audience))}              :<  show bound glyph
-          {$sources circle}                               :<  show active sources
+          {$circles $~}                                 :<  show our circles
+          {$sources circle}                             :<  show active sources
           ::  ui settings                               ::
           {$bind char (unit audience)}                  :<  bind glyph
           {$unbind char (unit audience)}                :<  unbind glyph
@@ -830,6 +831,8 @@
             ==
           ==
         ::
+          ;~(plug (perk %circles ~) (easy ~))
+        ::
           ;~((glue ace) (perk %sources ~) circ)
         ::
           ;~((glue ace) (perk %show ~) circ)
@@ -1006,6 +1009,7 @@
           $number  (number +.job)
           $who     (who +.job)
           $what    (what +.job)
+          $circles  circles
           $sources  (list-sources +.job)
           ::  ui settings
           $bind    (bind +.job)
@@ -1338,6 +1342,21 @@
           =.  ..sh-fact  (sh-fact %txt "? {(scow %ud msg)}")
           (activate (snag (sub count +(msg)) grams))
         (sh-lame "…{(reap p.num '0')}{(scow %ud q.num)}: no such telegram")
+      ::
+      ++  circles
+        :>    %circles
+        :>
+        :>  list all local circles.
+        ::
+        ^+  ..sh-work
+        =/  piz
+          =-  .^(prize %gx -)
+          %+  weld  /(scot %p our.bol)/hall/(scot %da now.bol)
+          /circles/(scot %p our.bol)/hall-prize
+        ?>  ?=($circles -.piz)
+        %+  sh-fact  %mor
+        %+  turn  (sort ~(tap in cis.piz) lth)
+        |=  a/name  [%txt "%{(trip a)}"]
       ::
       ++  list-sources
         :>    %sources
@@ -1869,7 +1888,6 @@
       ^+  +>
       ?~  gaz  +>
       $(gaz t.gaz, +> (sh-gram i.gaz))
-    ::
     --
   --
 ::

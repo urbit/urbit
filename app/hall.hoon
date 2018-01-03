@@ -2131,6 +2131,15 @@
   ::[:(welp m mos (affection d)) +>.^$]
 ::
 ++  peek
+  |=  pax/path
+  ?>  ?=({$x *} pax)  ::  others unsupported.
+  ^-  (unit (unit (pair mark prize)))
+  =+  piz=(look (path-to-query t.pax))
+  ?~  piz  ~
+  ?~  u.piz  [~ ~]
+  ``[%hall-prize u.u.piz]
+::
+++  look
   :>    query on state
   :>
   :>  find the result (if any) for a given query.
@@ -2597,7 +2606,7 @@
     %-  pre-bake
     ta-done:(ta-subscribe:ta src.bol qer)
   :_  +>.$
-  =+  piz=(peek qer)
+  =+  piz=(look qer)
   ?~  piz  ~&([%query-unavailable pax] mos)
   ?~  u.piz  ~&([%query-invalid pax] mos)
   :_  mos
