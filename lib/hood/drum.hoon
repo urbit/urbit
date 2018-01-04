@@ -4,7 +4,7 @@
 /?    310                                               ::  version
 /-    sole, hall
 /+    sole
-[. ^sole]
+=,    ^sole
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -593,7 +593,7 @@
   ::
   ++  ta-err                                          ::  hear remote error
     |=  pos/@ud
-    (ta-erl (~(transpose sole say.inp) pos))
+    (ta-erl (~(transpose ^sole say.inp) pos))
   ::
   ++  ta-fec                                          ::  apply effect
     |=  fec/sole-effect
@@ -642,14 +642,14 @@
   ::
   ++  ta-got                                          ::  apply change
     |=  cal/sole-change
-    =^  ted  say.inp  (~(receive sole say.inp) cal)
+    =^  ted  say.inp  (~(receive ^sole say.inp) cal)
     (ta-dog:(ta-off ted.cal) ted)
   ::
   ++  ta-hom                                          ::  local edit
     |=  ted/sole-edit
     ^+  +>
     =.  +>  (ta-det:(ta-off ted) ted)
-    (ta-dog(say.inp (~(commit sole say.inp) ted)) ted)
+    (ta-dog(say.inp (~(commit ^sole say.inp) ted)) ted)
   ::
   ++  ta-jump                                         ::  buffer pos
     |=  {dir/?($l $r) til/?($ace $edg $wrd) pos/@ud}

@@ -6,7 +6,7 @@
 /-  sole
 /+  old-zuse
 =,  old-zuse
-[. sole]
+=,  sole
 ::
 ::::
   ::
