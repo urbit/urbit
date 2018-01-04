@@ -1683,15 +1683,16 @@
         ?~  u.ver
           $(xiq t.xiq, ..wake (blub-all q.i.xiq ~))
         $(xiq t.xiq, xaq [i.xiq(q.p u.ver) xaq])
-      =+  var=(aver mun(q [%ud let.dom]))
+      =/  muc  mun(q [%ud let.dom])  ::  current mood
+      =+  var=(aver muc)
       ?~  var
-        ~&  [%oh-noes mood=mun letdom=let.dom]
+        ~&  [%oh-noes old=mun mood=muc letdom=let.dom]
         $(xiq t.xiq)
       ?~  u.var
-        $(xiq t.xiq, ..wake (blab-all q.i.xiq mun %& %null [%atom %n ~] ~))
+        $(xiq t.xiq, ..wake (blab-all q.i.xiq muc %& %null [%atom %n ~] ~))
       ?:  (equivalent-data:ze u.q.p.i.xiq u.u.var)
         $(xiq t.xiq, xaq [i.xiq xaq])
-      $(xiq t.xiq, ..wake (blab-all q.i.xiq mun u.u.var))
+      $(xiq t.xiq, ..wake (blab-all q.i.xiq muc u.u.var))
     ::
         $many
       =+  mot=`moat`q.p.i.xiq
