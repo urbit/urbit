@@ -69,14 +69,14 @@
       $%  ::  circle management                         ::
           {$join (map circle range)}                    :<  subscribe to
           {$leave audience}                             :<  unsubscribe from
-          {$create security naem cord}                  :<  create circle
-          {$delete naem (unit cord)}                    :<  delete circle
-          {$depict naem cord}                           :<  change description
-          {$filter naem ? ?}                            :<  change message rules
-          {$invite naem (set ship)}                     :<  give permission
-          {$banish naem (set ship)}                     :<  deny permission
-          {$source naem (map circle range)}             :<  add source
-          {$unsource naem (map circle range)}           :<  remove source
+          {$create security name cord}                  :<  create circle
+          {$delete name (unit cord)}                    :<  delete circle
+          {$depict name cord}                           :<  change description
+          {$filter name ? ?}                            :<  change message rules
+          {$invite name (set ship)}                     :<  give permission
+          {$banish name (set ship)}                     :<  deny permission
+          {$source name (map circle range)}             :<  add source
+          {$unsource name (map circle range)}           :<  remove source
           ::  personal metadata                         ::
           {$attend audience (unit presence)}            :<  set our presence
           {$name audience human}                        :<  set our name
@@ -89,7 +89,8 @@
           {$number $@(@ud {@u @ud})}                    :<  relative/absolute
           {$who audience}                               :<  presence
           {$what (unit $@(char audience))}              :<  show bound glyph
-          {$sources circle}                               :<  show active sources
+          {$circles $~}                                 :<  show our circles
+          {$sources circle}                             :<  show active sources
           ::  ui settings                               ::
           {$bind char (unit audience)}                  :<  bind glyph
           {$unbind char (unit audience)}                :<  unbind glyph
@@ -132,20 +133,20 @@
 :>    small utility functions.
 +|
 ::
-++  our
+++  self
   (true-self our.bol)
 ::
 ++  server
   :>  our hall instance
   ^-  dock
-  [our %hall]
+  [self %hall]
 ::
 ++  inbox
   :>    client's circle name
   :>
   :>  produces the name of the circle used by this
   :>  client for all its operations
-  ^-  naem
+  ^-  name
   %inbox
 ::
 ++  incir
@@ -153,7 +154,7 @@
   :>
   :>  ++inbox, except a full circle.
   ^-  circle
-  [our inbox]
+  [self inbox]
 ::
 ++  renum
   :>  find the grams list index for gram with serial.
@@ -215,7 +216,9 @@
       %peer
       /server/inbox
       server
-      /circle/[inbox]/grams/config/group/(scot %ud count)
+    ::
+      %+  welp  /circle/[inbox]/grams/config/group
+      ?:(=(0 count) ~ [(scot %ud count) ~])
   ==
 ::
 :>  #
@@ -368,22 +371,25 @@
           ?&  ?=($source -.dif.rum)
               add.dif.rum
               =(cir.rum incir)
-              ?=($~ ran.src.dif.rum)
           ==
         =*  cir  cir.src.dif.rum
         =+  ren=~(cr-phat cr cir)
         =+  gyf=(~(get by bound) [cir ~ ~])
         =<  sh-done
-        =>  :_  .
-            %-  ~(sh-act sh cli)
-            [%notify [cir ~ ~] `%hear]
+        =/  sho
+          ::  only present if we're here indefinitely.
+          =*  ran  ran.src.dif.rum
+          ?.  |(?=($~ ran) ?=($~ tal.u.ran))
+            ~(. sh cli)
+          %-  ~(sh-act sh cli)
+          [%notify [cir ~ ~] `%hear]
         ?^  gyf
-          (sh-note "has glyph {[u.gyf ~]} for {ren}")
+          (sh-note:sho "has glyph {[u.gyf ~]} for {ren}")
         ::  we use the rendered circle name to determine
         ::  the glyph for higher glyph consistency when
         ::  federating.
         =+  cha=(glyph (mug ren))
-        (sh-work %bind cha `[cir ~ ~])
+        (sh-work:sho %bind cha `[cir ~ ~])
       %=  +>.$
           sources
         ?.  &(?=($source -.dif.rum) =(cir.rum incir))
@@ -629,13 +635,13 @@
         (most ;~(plug com (star ace)) ship)
       ::
       ++  cire                                          :<  local circle
-        ;~(pfix cen sym)
+        ;~(pfix cen urs:ab)
       ::
       ++  circ                                          :<  circle
         ;~  pose
           (cold incir col)
-          ;~(pfix cen (stag our sym))
-          ;~(pfix fas (stag (sein:title our) sym))
+          ;~(pfix cen (stag self urs:ab))
+          ;~(pfix fas (stag (sein:title self) urs:ab))
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
@@ -765,7 +771,7 @@
           ==
         ::
           ;~  plug  (perk %delete ~)
-            ;~(pfix ;~(plug ace cen) sym)
+            ;~(pfix ace cire)
             ;~  pose
               (cook some ;~(pfix ace qut))
               (easy ~)
@@ -824,6 +830,8 @@
               (easy ~)
             ==
           ==
+        ::
+          ;~(plug (perk %circles ~) (easy ~))
         ::
           ;~((glue ace) (perk %sources ~) circ)
         ::
@@ -944,15 +952,12 @@
       %.  u.jub
       =<  sh-work
       =+  buf=buf.say.she
+      =?  ..sh-obey  &(?=({$';' *} buf) !?=($reply -.u.jub))
+        (sh-note (tufa `(list @)`buf))
       =^  cal  say.she  (~(transmit sole say.she) [%set ~])
-      %-  sh-fact
-      :*  %mor
-          [%nex ~]
+      %+  sh-fact  %mor
+      :~  [%nex ~]
           [%det cal]
-          ?.  ?=({$';' *} buf)  ~
-          ?:  ?=($reply -.u.jub)  ~
-          :_  ~
-          [%txt (runt [14 '-'] `tape`['|' ' ' (tufa `(list @)`buf)])]
       ==
     ::
     :>  #
@@ -994,7 +999,7 @@
           $unsource  (source | +.job)
           ::  personal metadata
           $attend  (attend +.job)
-          $name    (name +.job)
+          $name    (set-name +.job)
           ::  messaging
           $say     (say +.job)
           $eval    (eval +.job)
@@ -1004,6 +1009,7 @@
           $number  (number +.job)
           $who     (who +.job)
           $what    (what +.job)
+          $circles  circles
           $sources  (list-sources +.job)
           ::  ui settings
           $bind    (bind +.job)
@@ -1088,7 +1094,7 @@
         ::
         ^-  vase
         !>  ^-  {our/@p now/@da eny/@uvI}
-        [our now.bol (shas %eny eny.bol)]
+        [self now.bol (shas %eny eny.bol)]
       ::
       :>  #
       :>  #  %circle-management
@@ -1141,11 +1147,11 @@
         :>
         :>  creates circle {nom} with specified config.
         ::
-        |=  {sec/security nom/naem txt/cord}
+        |=  {sec/security nom/name txt/cord}
         ^+  ..sh-work
         =.  ..sh-work
           (sh-act %create nom txt sec)
-        (join [[[our nom] ~] ~ ~])
+        (join [[[self nom] ~] ~ ~])
       ::
       ++  delete
         :>    %delete
@@ -1153,7 +1159,7 @@
         :>  deletes our circle {nom}, after optionally
         :>  sending a last announce message {say}.
         ::
-        |=  {nom/naem say/(unit cord)}
+        |=  {nom/name say/(unit cord)}
         ^+  ..sh-work
         (sh-act %delete nom say)
       ::
@@ -1162,7 +1168,7 @@
         :>
         :>  changes the description of {nom} to {txt}.
         ::
-        |=  {nom/naem txt/cord}
+        |=  {nom/name txt/cord}
         ^+  ..sh-work
         (sh-act %depict nom txt)
       ::
@@ -1172,12 +1178,12 @@
         :>  invites or banishes {sis} to/from our
         :>  circle {nom}.
         ::
-        |=  {inv/? nom/naem sis/(set ship)}
+        |=  {inv/? nom/name sis/(set ship)}
         ^+  ..sh-work
         (sh-act %permit nom inv sis)
       ::
       ++  filter
-        |=  {nom/naem cus/? utf/?}
+        |=  {nom/name cus/? utf/?}
         ^+  ..sh-work
         (sh-act %filter nom cus utf)
       ::
@@ -1186,7 +1192,7 @@
         :>
         :>  adds {pas} to {nom}'s src.
         ::
-        |=  {sub/? nom/naem pos/(map circle range)}
+        |=  {sub/? nom/name pos/(map circle range)}
         ^+  ..sh-work
         (sh-act %source nom sub pos)
       ::
@@ -1202,7 +1208,7 @@
         ^+  ..sh-work
         (sh-act %notify aud pec)
       ::
-      ++  name
+      ++  set-name
         :>  sets our name to {man} for {aud}.
         ::
         |=  {aud/audience man/human}
@@ -1329,13 +1335,28 @@
             (sh-lame "{(scow %s (new:si | +(num)))}: no such telegram")
           =.  ..sh-fact  (sh-fact %txt "? {(scow %s (new:si | +(num)))}")
           (activate (snag num grams))
-        ?.  (gth q.num count)
+        ?.  (gte q.num count)
           ?:  =(count 0)
             (sh-lame "0: no messages")
           =+  msg=(deli (dec count) num)
           =.  ..sh-fact  (sh-fact %txt "? {(scow %ud msg)}")
           (activate (snag (sub count +(msg)) grams))
         (sh-lame "…{(reap p.num '0')}{(scow %ud q.num)}: no such telegram")
+      ::
+      ++  circles
+        :>    %circles
+        :>
+        :>  list all local circles.
+        ::
+        ^+  ..sh-work
+        =/  piz
+          =-  .^(prize %gx -)
+          %+  weld  /(scot %p our.bol)/hall/(scot %da now.bol)
+          /circles/(scot %p our.bol)/hall-prize
+        ?>  ?=($circles -.piz)
+        %+  sh-fact  %mor
+        %+  turn  (sort ~(tap in cis.piz) lth)
+        |=  a/name  [%txt "%{(trip a)}"]
       ::
       ++  list-sources
         :>    %sources
@@ -1697,9 +1718,12 @@
       ::
       |=  txt/tape
       ^+  +>
-      %+  sh-fact  %txt
-      %+  runt  [14 '-']
-      `tape`['|' ' ' (scag (sub width.she 16) txt)]
+      =+  lis=(simple-wrap txt (sub width.she 16))
+      %+  sh-fact  %mor
+      =+  ?:((gth (lent lis) 0) (snag 0 lis) "")
+      :-  txt+(runt [14 '-'] '|' ' ' -)
+      %+  turn  (slag 1 lis)
+      |=(a/tape txt+(runt [14 ' '] '|' ' ' a))
     ::
     ++  sh-prod
       :>    show prompt
@@ -1727,7 +1751,7 @@
       ?~  lis  +>.$
       %+  sh-fact  %mor
       %+  turn  `(list tape)`lis
-      =+  nom=(scag 7 (cite:title our))
+      =+  nom=(scag 7 (cite:title self))
       |=  t/tape
       ?.  ?&  (~(has in settings.she) %notify)
               ?=(^ (find nom (slag 15 t)))
@@ -1864,7 +1888,6 @@
       ^+  +>
       ?~  gaz  +>
       $(gaz t.gaz, +> (sh-gram i.gaz))
-    ::
     --
   --
 ::
@@ -1892,8 +1915,8 @@
     |=  two/circle
     ^-  ?
     ::  the circle that's ours is better.
-    ?:  =(our hos.one)
-      ?.  =(our hos.two)  &
+    ?:  =(self hos.one)
+      ?.  =(self hos.two)  &
       ?<  =(nom.one nom.two)
       ::  if both circles are ours, the main story is better.
       ?:  =(%inbox nom.one)  &
@@ -1901,7 +1924,7 @@
       ::  if neither are, pick the "larger" one.
       (lth nom.one nom.two)
     ::  if one isn't ours but two is, two is better.
-    ?:  =(our hos.two)  |
+    ?:  =(self hos.two)  |
     ?:  =(hos.one hos.two)
       ::  if they're from the same ship, pick the "larger" one.
       (lth nom.one nom.two)
@@ -1957,14 +1980,14 @@
     ::>  "/channel" for parent circle.
     ::
     ^-  tape
-    ?:  =(hos.one our)
+    ?:  =(hos.one self)
       ?:  =(nom.one inbox)
         ":"
       ['%' (trip nom.one)]
     =+  wun=(cite:title hos.one)
     ?:  =(nom.one %inbox)
       wun
-    ?:  =(hos.one (sein:title our))
+    ?:  =(hos.one (sein:title self))
       ['/' (trip nom.one)]
     :(welp wun "/" (trip nom.one))
   ::
@@ -2060,7 +2083,7 @@
     :>  returns true if circle is a mailbox of ours.
     ::
     |=  cir/circle  ^-  ?
-    ?&  =(hos.cir our)
+    ?&  =(hos.cir self)
         =+  sot=(~(get by mirrors) cir)
         &(?=(^ sot) ?=($mailbox sec.con.u.sot))
     ==
@@ -2196,12 +2219,15 @@
       mor+~[txt+"# {(trip exp.sep)}" tan+res.sep]
     ::
         $ire
-      =+  gam=(recall top.sep)
-      ?~  gam  $(sep sep.sep)
+      =+  num=(~(get by known) top.sep)
+      ?~  num  $(sep sep.sep)
+      =+  gam=(snag (sub count +(u.num)) grams)
       =-  mor+[tan+- $(sep sep.sep) ~]
       %-  flop  %+  weld
-        [%leaf "in reply to: {(cite:title aut.u.gam)}: "]~
-      %+  turn  (~(tr-text tr sef u.gam) width.cli)
+        :_  ~  :-  %leaf
+        %+  weld  "in reply to: {(cite:title aut.gam)}: "
+        "[{(scow %ud u.num)}]"
+      %+  turn  (~(tr-text tr sef gam) width.cli)
       |=(t/tape [%leaf t])
     ::
         $fat
@@ -2313,20 +2339,18 @@
         ?:  pat.sep  " "
         =-  (weld - q:(fall pre [p=| q=" "]))
         %~  ar-glyf  ar
-          ?:  =(who our)  aud
+          ?:  =(who self)  aud
           (~(del in aud) [who %inbox])
         ==
-      =.  wyd  (sub wyd (min (div wyd 2) (lent pef)))
-      =/  txt  (tuba (trip msg.sep))
-      |-  ^-  (list tape)
-      ?~  txt  ~
-      =+  ^-  {end/@ud nex/?}
-        ?:  (lte (lent txt) wyd)  [(lent txt) &]
-        =+  ace=(find " " (flop (scag +(wyd) `(list @c)`txt)))
-        ?~  ace  [wyd |]
-        [(sub wyd u.ace) &]
-      :-  (weld pef (tufa (scag end `(list @c)`txt)))
-      $(txt (slag ?:(nex +(end) end) `(list @c)`txt), pef (reap (lent pef) ' '))
+      =/  lis/(list tape)
+        %+  simple-wrap
+          `tape``(list @)`(tuba (trip msg.sep))
+        (sub wyd (min (div wyd 2) (lent pef)))
+      =+  lef=(lent pef)
+      =+  ?:((gth (lent lis) 0) (snag 0 lis) "")
+      :-  (weld pef -)
+      %+  turn  (slag 1 lis)
+      |=(a/tape (runt [lef ' '] a))
     ::
         $inv
       :_  ~
@@ -2362,12 +2386,12 @@
   ::
   |=  pax/path
   ^-  (quip move _+>)
-  ?.  (team:title src.bol our.bol)
-    ~&  [%peer-talk-stranger src.bol]
-    [~ +>]
+  ?.  =(src.bol our.bol)
+    ~!  [%peer-talk-stranger src.bol]
+    !!
   ?.  ?=({$sole *} pax)
-    ~&  [%peer-talk-strange pax]
-    [~ +>]
+    ~!  [%peer-talk-strange pax]
+    !!
   ta-done:ta-console:ta
 ::
 ++  diff-hall-prize

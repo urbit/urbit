@@ -14,7 +14,7 @@
 +|
 ::
 ::TODO  rename
-++  naem  term                                          :<  circle name
+++  name  term                                          :<  circle name
 ++  nick  cord                                          :<  local nickname
 ::
 :>  #
@@ -27,11 +27,11 @@
   $%  {$client $~}                                      :<  shared ui state
       {$circles who/ship}                               :<  readable circles
       {$public $~}                                      :<  public memberships
-      {$burden who/ship}  ::TODO  eventually, nom/naem. :<  duties to share
+      {$burden who/ship}  ::TODO  eventually, nom/name. :<  duties to share
       {$report $~}                                      :<  duty reports
-      {$peers nom/naem}                                 :<  readers of story
+      {$peers nom/name}                                 :<  readers of story
       $:  $circle                                       :>  story query
-          nom/naem                                      :<  circle name
+          nom/name                                      :<  circle name
           wer/(unit circle)                             :<  from source
           wat/(set circle-data)                         :<  data to get
           ran/range                                     :<  query duration
@@ -57,9 +57,9 @@
   ==                                                    ::
 ++  prize                                               :>  query result
   $%  {$client prize-client}                            :<  /client
-      {$circles cis/(set naem)}                         :<  /circles
+      {$circles cis/(set name)}                         :<  /circles
       {$public cis/(set circle)}                        :<  /public
-      {$burden sos/(map naem burden)}                   :<  /burden
+      {$burden sos/(map name burden)}                   :<  /burden
       {$report $~}                                      :<  /report
       {$peers pes/(jar ship query)}                     :<  /peers
       {$circle package}                                 :<  /circle
@@ -70,9 +70,9 @@
   ==                                                    ::
 ++  rumor                                               :>  query result change
   $%  {$client rum/rumor-client}                        :<  /client
-      {$circles add/? cir/naem}                         :<  /circles
+      {$circles add/? cir/name}                         :<  /circles
       {$public add/? cir/circle}                        :<  /public
-      {$burden nom/naem rum/rumor-story}                :<  /burden
+      {$burden nom/name rum/rumor-story}                :<  /burden
       {$peers add/? who/ship qer/query}                 :<  /peers
       {$circle rum/rumor-story}                         :<  /circle
   ==                                                    ::
@@ -135,12 +135,12 @@
 ::
 ++  action                                              :>  user action
   $%  ::  circle configuration                          ::
-      {$create nom/naem des/cord sec/security}          :<  create circle
-      {$delete nom/naem why/(unit cord)}                :<  delete + announce
-      {$depict nom/naem des/cord}                       :<  change description
-      {$filter nom/naem fit/filter}                     :<  change message rules
-      {$permit nom/naem inv/? sis/(set ship)}           :<  invite/banish
-      {$source nom/naem sub/? srs/(set source)}         :<  un/sub to/from src
+      {$create nom/name des/cord sec/security}          :<  create circle
+      {$delete nom/name why/(unit cord)}                :<  delete + announce
+      {$depict nom/name des/cord}                       :<  change description
+      {$filter nom/name fit/filter}                     :<  change message rules
+      {$permit nom/name inv/? sis/(set ship)}           :<  invite/banish
+      {$source nom/name sub/? srs/(set source)}         :<  un/sub to/from src
       ::  messaging                                     ::
       {$convey tos/(list thought)}                      :<  post exact
       {$phrase aud/audience ses/(list speech)}          :<  post easy
@@ -162,7 +162,7 @@
 ::
 ++  command                                             :>  effect on story
   $%  {$publish tos/(list thought)}                     :<  deliver
-      {$present nos/(set naem) dif/diff-status}         :<  status update
+      {$present nos/(set name) dif/diff-status}         :<  status update
       {$bearing $~}                                     :<  prompt to listen
   ==                                                    ::
 ::
@@ -172,7 +172,7 @@
 :>    messaging targets and their metadata.
 +|
 ::
-++  circle     {hos/ship nom/naem}                      :<  native target
+++  circle     {hos/ship nom/name}                      :<  native target
 ::  circle configurations.                              ::
 ++  lobby      {loc/config rem/(map circle config)}     :<  our & srcs configs
 ++  config                                              :>  circle config

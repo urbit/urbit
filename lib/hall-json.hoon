@@ -29,31 +29,22 @@
 ++  de-tape                                             ::>  tape to sur (parse)
   |%
   ++  circ                                              ::>  circle
-    ;~((glue fas) ;~(pfix sig fed:ag) urt:ab)
+    ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
   ::
-  ++  rang                                              ::>  range
-    =/  pont
-      ;~  pose
-        (stag %ud dim:ag)
-        %+  stag  %da
-        %+  sear
-          |=  a/coin
-          ^-  (unit @da)
-          ?.  ?=({$$ $da @da} a)  ~
-          `q.p.a
-        nuck:so
-      ==
-    =+  ;~  pose
-          (cook some ;~(pfix fas pont))
-          (easy ~)
+  ++  pont
+    ;~  pfix  fas
+      %+  sear
+        |=  a/coin
+        ^-  (unit place)
+        ?+  a  ~
+          {$$ $da @da}  `p.a
+          {$$ $ud @ud}  `p.a
         ==
-    ;~  pose
-      (cook some ;~(plug ;~(pfix fas pont) -))
-      (easy ~)
+      nuck:so
     ==
   ::
-  ++  sorc                                              ::>  source
-    ;~(plug circ rang)
+  ++  sorc
+    ;~(plug circ (punt ;~(plug pont (punt pont))))
   --
 ::
 ++  enjs                                                ::>  sur to json
