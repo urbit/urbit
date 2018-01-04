@@ -14,11 +14,11 @@
 ::                                                      ::
 ++  pith-1                                              ::       pre-style
   %+  cork  pith-2                                      ::
-  |=(pith-2 +<(bin *(map bone source-1)))               ::
+  |:($:pith-2 +<(bin ((map bone source-1))))            ::
 ::                                                      ::
 ++  source-1                                            ::
   %+  cork  source                                      ::
-  |=(source +<(mir *(pair @ud (list @c))))              ::  style-less mir
+  |:($:source +<(mir ((pair @ud (list @c)))))           ::  style-less mir
 ::                                                      ::
 ++  pith-2                                              ::
   $:  sys/(unit bone)                                   ::  local console
@@ -237,7 +237,7 @@
   ^+  .
   %+  roll  ~(tap in ray)
   =<  .(con +>)
-  |=  {wel/well:gall con/_..se-adit}  ^+  con
+  |:  $:{wel/well:gall con/_..se-adit}  ^+  con
   =.  +>.$  con
   =+  hig=(~(get by fur) q.wel)
   ?:  &(?=(^ hig) |(?=($~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
@@ -249,7 +249,7 @@
   ^+  .
   %+  roll  ~(tap in eel)
   =<  .(con +>)
-  |=  {gil/gill:gall con/_.}  ^+  con
+  |:  $:{gil/gill:gall con/_.}  ^+  con
   =.  +>.$  con
   ?:  (~(has by fug) gil)
     +>.$
@@ -261,7 +261,7 @@
   ^+  .
   %-  ~(rep by bin)
   =<  .(con +>)
-  |=  {{ost/bone dev/source} con/_.}  ^+  con
+  |:  $:{{ost/bone dev/source} con/_.}  ^+  con
   =+  xeno=se-subze-local:%_(con ost.hid ost, dev dev)
   xeno(ost.hid ost.hid.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
 ::
@@ -269,7 +269,7 @@
   ^+  .
   %-  ~(rep by fug)
   =<  .(con +>)
-  |=  {{gil/gill:gall *} con/_.}  ^+  con
+  |:  $:{{gil/gill:gall *} con/_.}  ^+  con
   =.  +>.$  con
   ?:  (~(has in eel) gil)
     +>.$

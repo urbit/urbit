@@ -18,16 +18,17 @@
       max/@u                                            ::  maximum entry
       box/(map @u a)                                    ::  entries
   ==                                                    ::
---                                                      ::
-::                                                      ::
-::::                                                    ::
-  ::                                                    ::
-|%                                                      ::
 ++  managed                                             ::  managed plot
   |*  mold                                              ::
   %-  unit                                              ::  unsplit
   %+  each  +<                                          ::  subdivided
   mail                                                  ::  delivered
+++  mail  @t                                            ::  email address
+--                                                      ::
+::                                                      ::
+::::                                                    ::
+  ::                                                    ::
+|%                                                      ::
 ::                                                      ::
 ++  divided                                             ::  get division state
   |*  (managed)                                         ::
@@ -51,7 +52,6 @@
 ++  ticket  @G                                          ::  old 64-bit ticket
 ++  passcode  @uvH                                      ::  128-bit passcode
 ++  passhash  @uwH                                      ::  passocde hash
-++  mail  @t                                            ::  email address
 ++  balance                                             ::  invitation balance
   $:  planets/@ud                                       ::  planet count
       stars/@ud                                         ::  star count
@@ -166,7 +166,7 @@
   %-  malt
   %+  murn  ~(tap by a)
   ?~  a  $~
-  |=  _c=n.a  ^-  (unit _[p.n.a (need (b q.n.a))])
+  |:  c=n.a  ^-  (unit _[p.n.a (need (b q.n.a))])
   =+  d=(b q.c)
   ?~(d ~ (some [p.c u.d]))
 ::

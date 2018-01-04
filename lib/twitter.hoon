@@ -38,9 +38,9 @@
 ::
 ++  find-req
   =+  all=doc-data-dry:reqs
-  |=  a/_-:*endpoint:reqs  ^-  {?($get $post) path}
+  |:  a=-:$:endpoint:reqs  ^-  {?($get $post) path}
   ?~  all  ~|(endpoint-lost+a !!)     :: type error, should never happen
-  ?:  =(a -:*typ.i.all)
+  ?:  =(a -:$:typ.i.all)
     +.i.all
   $(all t.all)
 --
@@ -56,14 +56,14 @@
     rose+[": " `~]^~[leaf+"Error {<num>}" leaf+(trip msg)]
   ::
   ++  user-url
-    |=  a/scr  ^-  purf
+    |:  a=$:scr  ^-  purf
     :_  ~
     %^  into-url:interpolate  'https://twitter.com/:scr'
       ~
     ~[scr+a]
   ::
   ++  post-url
-    |=  {a/scr b/tid}  ^-  purf
+    |:  $:{a/scr b/tid}  ^-  purf
     :_  ~
     %^  into-url:interpolate  'https://twitter.com/:scr/status/:tid'
       ~
@@ -77,7 +77,7 @@
 ++  reparse                                              ::  json reparsers
   =,  parse
   |%
-  ++  ce  =>(dejs |*({a/_* b/fist} (cu |=(c/a c) b))) ::  output type
+  ++  ce  |*({a/$-(* *) b/fist:dejs} (cu:dejs |:(c=$:a c) b)) ::  output type
   ++  fasp  |*(a/{@tas *} [(hep-to-cab -.a) +.a])
   ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):dejs
   ++  post
@@ -101,11 +101,11 @@
   ++  tid  |=(@u `@t`(rsh 3 2 (scot %ui +<)))
   ++  scr  |=(@t +<)
   ++  lsc
-    |=  a/$@(^scr ^lsc)  ^-  @t
+    |:  a=$:$@(^scr ^lsc)  ^-  @t
     ?@(a `@t`a (join ',' a))
   ::
   ++  lid
-    |=  a/$@(^tid (list ^tid))  ^-  @t
+    |:  a=$:$@(^tid (list ^tid))  ^-  @t
     ?~  a  ~|(%nil-id !!)
     ?@(a (tid a) (join ',' (turn `(list ^tid)`a tid)))
   --
@@ -114,14 +114,14 @@
   =+  args:reqs
   |%
   ++  apex
-    |=  {a/endpoint b/quay}  ^-  hiss
+    |:  $:{a/endpoint b/quay}  ^-  hiss
     =+  [med pax]=(find-req -.a)
     (valve med (cowl pax +.a b))
   ::
   ++  lutt  |=(@u `@t`(rsh 3 2 (scot %ui +<)))
   ++  llsc 
     :: =>  args:reqs
-    |=  a/$@(scr (list scr))  ^-  @t
+    |:  a=$:$@(scr (list scr))  ^-  @t
     ?@(a `@t`a (join ',' a))
   ::
   ++  llst  
@@ -130,21 +130,21 @@
   ::
   ++  llid
     :: =+  args:reqs
-    |=  a/$@(tid (list tid))  ^-  @t
+    |:  a=$:$@(tid (list tid))  ^-  @t
     ?~  a  ~|(%nil-id !!)
     ?@(a (lutt a) (join ',' (turn `(list tid)`a lutt)))
   ::
   ++  cowl                                        ::  handle parameters
-    |=  $:  pax/path 
-            ban/(list param)
-            quy/quay
+    |:  :*  pax=*path 
+            ban=((list param))
+            quy=*quay
         ==
     ^-  {path quay}
     %+  into-path-partial:interpolate
       (path:hep-to-cab pax)
     =-  (weld - quy)
     %+  turn  ban
-    |=  p/param
+    |:  p=$:param
     ^-  {@t @t}
     :-  (hep-to-cab -.p)
     ?+  -.p  p.p  :: usually plain text
