@@ -1,5 +1,7 @@
 ::  tlon: add stream to local urbit-meta
 ::
+::  make the local urbit-meta pull from {web}'s stream.
+::
 ::::  /gen/hood/tlon/add-stream/hoon
   ::
 :-  %say

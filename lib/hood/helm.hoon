@@ -241,14 +241,13 @@
   |=  {way/wire her/ship cop/coop}  =<  abet
   (emit %flog ~ %text "woot: {<[way cop]>}")
 ::
-++  poke-tlon-init-web
+++  poke-tlon-init-stream
+  ::  creates stream channel and makes it pull from
+  ::  urbit-meta on {met}.
   |=  met/ship  =<  abet
   %-  emil
   %-  flop
   :~  ^-  card
-      :^  %poke  /helm/web/fora  [our %hood]
-      [%drum-start q.byk %fora]
-    ::
       :^  %poke  /helm/web/stream/create  [our %hall]
       :-  %hall-action
       :-  %create
@@ -265,7 +264,24 @@
       [%stream & [[[met %urbit-meta] `[da+(sub now ~d1) ~]] ~ ~]]
   ==
 ::
+++  poke-tlon-add-fora
+  ::  makes the local urbit-meta pull from {for}'s fora
+  ::  notification channels.
+  |=  for/ship  =<  abet
+  %-  emil
+  :~  :^  %poke  /helm/web/fora/source  [our %hall]
+      :-  %hall-action
+      :-  %source
+      [%urbit-meta & [[[for %fora-posts] `[da+now ~]] ~ ~]]
+    ::
+      :^  %poke  /helm/web/fora/source  [our %hall]
+      :-  %hall-action
+      :-  %source
+      [%urbit-meta & [[[for %fora-comments] `[da+now ~]] ~ ~]]
+  ==
+::
 ++  poke-tlon-add-stream
+  ::  makes the local urbit-meta pull from {web}'s stream.
   |=  web/ship  =<  abet
   %-  emit
   :^  %poke  /helm/web/stream/source  [our %hall]
