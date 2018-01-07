@@ -921,6 +921,8 @@
       ::
       |=  {gaz/(list telegram) cos/lobby pes/crowd}
       ^+  +>
+      ~?  (gth (lent gaz) 2.000)
+        [%unexpected-scrollback-length nom (lent gaz)]
       =*  self  +>
       ::  local config
       =.  self
@@ -2171,7 +2173,9 @@
     ::  only auto-federate channels for now.
     ?.  ?=($channel sec.con.shape.s)  ~
     :+  ~  n
-    :+  grams.s
+    ::  share no more than 2k messages at once, for performance reasons.
+    :+  ?:  (lte count.s 2.000)  grams.s
+        (slag (sub count.s 2.000) grams.s)
       [shape.s mirrors.s]
     [locals.s remotes.s]
   ::
