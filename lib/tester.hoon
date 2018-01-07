@@ -1,5 +1,65 @@
+/+  new-hoon
 ::  common testing library.
 |%
+:>  #  %models
++|
++=  tests
+  :>    a hierarchical structure of tests
+  :>
+  :>  an alphabetically sorted recursive association list
+  :>  mapping a part of a path to either a test trap or a
+  :>  sublist of the same type.
+  (list instance)
+::
++=  instance
+  :>    a mapping between a term and part of a test tree.
+  :>
+  (pair term (each $-(@uvJ (list tape)) tests))
+::
+:>  #  %generate
+:>    utilities for generating models.
++|
+++  merge-base-and-recur
+  :>    combine the current file and subdirectory.
+  :>
+  :>  this merges the file {base} with its child files {recur}.
+  |=  [base=vase recur=(map @ta tests:tester)]
+  ^-  tests
+  =+  a=(gen-tests base)
+  =+  b=(test-map-to-test-list recur)
+  ::  todo: why does ++weld not work here? {a} and {b} are cast and have the
+  ::  correct faces.
+  (welp a b)
+::
+++  test-map-to-test-list
+  :>    translates ford output to something we can work with.
+  :>
+  :>  ford gives us a `(map @ta tests:tester)`, but we actually
+  :>  want something like ++tests.
+  |=  a=(map @ta tests:tester)
+  ::  todo: i'd like to sort this, but ++sort has -find.a problems much like
+  ::  ++weld does above!?
+  ^-  tests
+  %+  turn
+    (to-list:dct:new-hoon a)
+  |=  {key/@ta value/tests:tester}
+  [key [%| value]]
+
+::
+++  gen-tests
+  :>  creates a {tests} list out of a vase of a test suite
+  |=  v=vase ::  eny=@uvJ]
+  ^-  tests
+  =+  arms=(sort (sloe p.v) aor)
+  %+  turn  arms
+  |=  arm/term
+  :-  arm
+  :-  %&
+  |=  eny=@uvJ
+  =+  context=(slop (init-test-vase:tester eny) v)
+  =/  r  (slap context [%cnsg [arm ~] [%$ 3] [[%$ 2] ~]])
+  ((hard (list tape)) q:(slap r [%limb %results]))
+::
 ++  init-test-vase
   |=  {cookie/@uvJ}
   ^-  vase
@@ -79,7 +139,7 @@
   :>  #
   :>  #  %test
   :>  #
-  :>    assertions on state
+  :>    test expectation functions
   +|
   ::  todo: unit testing libraries have a lot more to them than just eq.
   ++  expect-eq
@@ -99,7 +159,7 @@
   :>  #
   :>  #  %output
   :>  #
-  :>    called by the test harness after test completion
+  :>    called by the test harness
   ::
   ++  results
     :>  returns results.
