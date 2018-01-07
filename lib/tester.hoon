@@ -1,23 +1,22 @@
 /+  new-hoon
-::  common testing library.
+::
+:>  testing utilities
 |%
 :>  #  %models
 +|
 +=  tests
   :>    a hierarchical structure of tests
   :>
-  :>  an alphabetically sorted recursive association list
-  :>  mapping a part of a path to either a test trap or a
-  :>  sublist of the same type.
+  :>  a recursive association list mapping a part of a path
+  :>  to either a test trap or a sublist of the same type.
   (list instance)
 ::
 +=  instance
-  :>    a mapping between a term and part of a test tree.
-  :>
+  :>  a mapping between a term and part of a test tree.
   (pair term (each $-(@uvJ (list tape)) tests))
 ::
 :>  #  %generate
-:>    utilities for generating models.
+:>    utilities for generating ++tests from files and directories.
 +|
 ++  merge-base-and-recur
   :>    combine the current file and subdirectory.
@@ -44,11 +43,10 @@
     (to-list:dct:new-hoon a)
   |=  {key/@ta value/tests:tester}
   [key [%| value]]
-
 ::
 ++  gen-tests
   :>  creates a {tests} list out of a vase of a test suite
-  |=  v=vase ::  eny=@uvJ]
+  |=  v=vase
   ^-  tests
   =+  arms=(sort (sloe p.v) aor)
   %+  turn  arms
@@ -56,14 +54,12 @@
   :-  arm
   :-  %&
   |=  eny=@uvJ
-  =+  context=(slop (init-test-vase:tester eny) v)
+  =+  context=(slop !>((init-test eny)) v)
   =/  r  (slap context [%cnsg [arm ~] [%$ 3] [[%$ 2] ~]])
   ((hard (list tape)) q:(slap r [%limb %results]))
 ::
-++  init-test-vase
-  |=  {cookie/@uvJ}
-  ^-  vase
-  !>((init-test cookie))
+:>  #  %per-test
+:>    data initialized on a per-test basis.
 ::
 ++  init-test
   |=  {cookie/@uvJ}
