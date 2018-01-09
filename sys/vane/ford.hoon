@@ -147,9 +147,10 @@
   --
 ::
 ++  pin-dephash
+  ::  compute the hash of a set of dents and store it in a deps
+  ::  produces a pair of the hash and mutated deps
   |=  {sep/(set dent) deh/deps}
   ^+  [*@uvH deh]
-  =.  sep  (de-dup-subdirs sep)
   ?:  =(~ sep)  [0v0 deh]
   =+  hap=(sham sep)
   :+    hap
@@ -158,14 +159,16 @@
   (turn ~(tap in sep) |=(a/dent [a hap]))
 ::
 ++  de-dup-subdirs
-  |=  sep/(set dent)  ^+  sep
+  ::  filter out %beam dents whose paths are contained within
+  ::  other paths in the set, to reduce the number of
+  ::  %z requests and responses.
+  |=  sep/(set [beam care:clay])  ^+  sep
   %-  silt
   %+  skim  ~(tap in sep)
-  |=  den/dent  ^-  ?
-  ?.  ?=($beam -.den)  &
-  ?~  s.bem.den  &
-  =/  above  den(s.bem t.s.bem.den)
-  &(!(~(has in sep) above) $(den above))
+  |=  a=[bem=beam ren=care:clay]  ^-  ?
+  ?~  s.bem.a  &
+  =/  above  a(s.bem t.s.bem.a, ren %z)
+  &(!(~(has in sep) above) $(a above))
 ::
 ++  bo                                                  ::  bolt operations
   |%
@@ -669,6 +672,7 @@
   ::
   ++  dep-beams  ::DEPRECATED only needed for @uvH handling
     |=  des/(set dent)  ^-  (set {beam care:clay})
+    %-  de-dup-subdirs
     %+  roll  ~(tap in des)
     |=  {den/dent bes/(set {beam care:clay})}  ^+  bes
     ?:  ?=($beam -.den)
@@ -702,7 +706,15 @@
     ::  send %news moves to listeners and cancel listeners
     ::  TODO: don't send %news for unchanged builds
     =/  den=dent  [%beam bem ren]
-    =/  hashes  ~(tap in (~(get ju bak.deh.bay) den))
+    =/  dos=(set dent)  (downstream-dents (sy den ~))
+    =.  dos  (~(put in dos) den)
+    =/  hashes=(list @uvH)
+      =-  ~(tap in out)
+      %-  ~(rep in dos)
+      |=  [den=dent out=(set @uvH)]
+      (~(uni in out) (~(get ju bak.deh.bay) den))
+    ::
+    ::  ~&  [den=den dos=dos hashes=hashes]
     ::
     |-  ^+  this
     ?~  hashes  this
@@ -718,9 +730,9 @@
   ::
   ++  downstream-dents
     |=  des/(set dent)  ^-  (set dent)
-    %+  roll  ~(tap in des)
+    %-  ~(rep in des)
     |=  {den/dent dos/(set dent)}  ^+  des
-    =?  dos  ?=($beam -.den)
+    =?  dos  !?=($beam -.den)
       (~(put in dos) den)
     (~(uni in dos) ^$(des (~(get ju sup.gaf.bay) den)))
   ::
