@@ -728,6 +728,7 @@
         mow                                             ::  send %news moves
       %-  weld  :_  mow
       =/  listeners=(set duct)  (~(get ju sup.bay) i.hashes)
+      ::  ~&  [hax=i.hashes liz=listeners]
       %+  turn  ~(tap in listeners)
       |=(a=duct `move`[a %give %news i.hashes])
     ==
@@ -748,48 +749,90 @@
   +|
   ::
   ++  on-update
-    |=  {bem/beam ren/care:clay new/beak}  ^+  this
-    =/  den  (sy [%beam bem ren] ~)
-    =/  dos  (downstream-dents den)
+    :>  {bem} is at the old revision, {bek} is at the new revision.
+    |=  {bem/beam ren/care:clay bek/beak}  ^+  this
+    =/  new  (sy [%beam bem ren] ~)
+    =/  dos  (downstream-dents new)
     ::  ~&  [%on-update ren (en-beam bem) (en-beam new ~) dos]
     =/  todo  ~(tap in dos)
-    =^  old  this  (rebuild new den todo)
-    ~|  old=old
-    (promote-unchanged old new)
+    =^  unchanged  this  (rebuild bek new todo)
+    ~|  unchanged=unchanged
+    (promote-unchanged unchanged bek)
   ::
-  ++  rebuild  !.
-    =|  old/(set dent)
-    |=  {bek/beak new/(set dent) todo/(list dent)}  ^+  [old this]
-    ?~  todo  [old this]
-    ?:  (~(has in new) i.todo)  $(todo t.todo)
-    ?:  (~(has in old) i.todo)  $(todo t.todo)
+  ++  rebuild  ::  !.  ::  TODO reinstate
+    :>    rebuild all builds whose dependencies have a new %clay revision.
+    :>
+    :>  {todo} is the set of dents that need to be built at the new beak {bek}.
+    :>  produces a pair of the unchanged builds (which should be promoted)
+    :>  and the mutated ++za core.
+    :>
+    :>  tries to avoid rebuilding by using results of builds performed at
+    :>  the previous %clay revision, if they exist and their dependencies
+    :>  haven't changed.
+    =|  unchanged/(set dent)
+    |=  {bek/beak new/(set dent) todo/(list dent)}  ^+  [unchanged this]
+    ?~  todo  [unchanged this]
+    ::
+    ::  don't try to rebuild the changed files themselves.
+    ?:  (~(has in new) i.todo)
+      ::  ~&  new+i.todo
+      $(todo t.todo)
+    ::
+    ::  if we've already built a dent at this revision, don't build it again.
+    ?:  (~(has in unchanged) i.todo)
+      ::  ~&  unchanged+i.todo
+      $(todo t.todo)
+    ::
+    ::  if none of our dependencies are in new, then check whether all of them
+    ::  are unchanged. if all of them are unchanged, we can avoid rebuilding.
+    ::  otherwise, rebuild.
     =/  dez  (~(get ju sub.gaf.bay) i.todo)
-    ::  TODO add ++skip and ++skim for sets
-    =.  dez  (silt (skip ~(tap in dez) |=(a/dent ?=($beam -.a))))
-    =.  dez  (~(dif in dez) old)
-    ?:  =(~ dez)
-      $(old (~(put in old) i.todo), todo t.todo)
-    =.  dez  (~(dif in dez) new)
-    ?.  =(~ dez)
+    ?.  (~(any in dez) ~(has in new))
+      ::
+      ::  filter out any unchanged sub-dependencies, including
+      ::  any sub-dependency beam that isn't in new, since any changed
+      ::  beams would be in new.
+      =.  dez  (~(dif in dez) unchanged)
+      =.  dez  (silt (skip ~(tap in dez) |=(a=dent ?=(%beam -.a))))
+      ::
+      ::  if we know all sub-dependencies are unchanged,
+      ::  then mark this todo as unchanged and continue.
+      ?:  =(~ dez)
+        ::  ~&  put-in-unchanged+i.todo
+        $(unchanged (~(put in unchanged) i.todo), todo t.todo)
+      ::
+      ::  otherwise, build all unknown sub-dependencies first and try again.
+      ::  ~&  adding-dez+~(tap in dez)
       $(todo (weld ~(tap in dez) todo))
     ::
-    =/  taz/task  [hen [bek *silk] ~ ~] ::XX real silk?
-    =^  bil  ..zo  (~(exec-dent zo *@u taz) i.todo(-.bem bek))
+    ::  some of our sub-dependencies have been invalidated,
+    ::  so perform the rebuild at the new beak.
+    =/  taz=task  [hen [bek *silk] ~ ~] ::XX real silk?
+    =^  bil  this  (~(exec-dent zo *@u taz) bek i.todo)
+    ::
+    ::  determine what to do with the rebuilt result.
     ?-  -.q.bil
-      $1  ~|([%stub-block p.q.bil] !!)  ::TODO store state in task
-      $2  $(todo t.todo)              :: errors are probably okay?
-      $0  =/  pre  (~(get by jav.bay) (to-cache-key i.todo))
-          ~!  [r:(need pre) p.q.bil]
-          ?.  ?~(pre | =(r.u.pre q.q.bil))
-            $(todo t.todo)
-          $(old (~(put in old) i.todo), t.todo t.todo)
+        $1  ~|([%stub-block p.q.bil] !!)  ::TODO store state in task
+        $2
+      ::  errors cannot be promoted, so consider this a new build.
+      $(new (~(put in new) i.todo), todo t.todo)
+    ::
+        $0
+      =/  pre  (~(get by jav.bay) (to-cache-key i.todo))
+      ::
+      ::  if there was no previous result, or the new result is different
+      ::  from the previous result, then consider this build new.
+      ::  otherwise, consider it unchanged.
+      ?:  |(?=(~ pre) !=(r.u.pre q.q.bil))
+        $(new (~(put in new) i.todo), todo t.todo)
+      $(unchanged (~(put in unchanged) i.todo), todo t.todo)
     ==
   ::
   ++  promote-unchanged
-    |=  {old/(set dent) bek/beak}  ^+  this
+    |=  {unchanged/(set dent) bek/beak}  ^+  this
     %_    this
         bay
-      %-  ~(rep by old)  :: XX iterate per beak at least
+      %-  ~(rep by unchanged)  :: XX iterate per beak at least
       =+  [a=*dent b=bay]
       |.  ^+  b
       =/  cax  (~(get by jav.b) (to-cache-key a))
@@ -1003,18 +1046,18 @@
           (err:bo cof leaf+"bad ++form:grad" ~)
         (new:bo cof [%& u.for dif])
       ==
-    :: 
+    ::
     ::REVIEW control flow duplication
     ++  exec-dent                                       ::  execute depend
-      |=  a/dent
+      |=  [bek=beak den=dent]
       ^+  [*(bolt _[r:*calx]) ..zo]
       =;  bot/(bolt _[r:*calx])
         [bot ..zo:(dash p.bot)] ::TODO abet, ie block logic
       =/  cof/cafe  [~ jav.bay deh.bay gaf.bay]
-      ?-  -.a
+      ?-  -.den
         $beam  !!  ::XX syve?
-        $boil  (boil cof [arg bem bom]:a)
-        $load  (load-to-mark cof [mar bem]:a)
+        $boil  (boil cof arg.den bem.den(- bek) bom.den(- bek))
+        $load  (load-to-mark cof mar.den bem.den(- bek))
       ==
     ::
     ++  exec                                            ::  execute task
