@@ -105,16 +105,16 @@
 ++  ca                                                  ::
   |%
   ++  val                                               ::  reduce calx
-    |*  {sem/@tas cax/calx}
+    |*  [sem=@tas cax=calx]
     ?+  sem  !!                                         ::  a typesystem hack
-      $hood  ?>(?=($hood -.cax) r.cax)
-      $boil  ?>(?=($boil -.cax) r.cax)
-      $load  ?>(?=($load -.cax) r.cax)
-      $path  ?>(?=($path -.cax) r.cax)
-      $slap  ?>(?=($slap -.cax) r.cax)
-      $slam  ?>(?=($slam -.cax) r.cax)
-      $slim  ?>(?=($slim -.cax) r.cax)
-      $slit  ?>(?=($slit -.cax) r.cax)
+      %hood  ?>(?=(%hood -.cax) r.cax)
+      %boil  ?>(?=(%boil -.cax) r.cax)
+      %load  ?>(?=(%load -.cax) r.cax)
+      %path  ?>(?=(%path -.cax) r.cax)
+      %slap  ?>(?=(%slap -.cax) r.cax)
+      %slam  ?>(?=(%slam -.cax) r.cax)
+      %slim  ?>(?=(%slim -.cax) r.cax)
+      %slit  ?>(?=(%slit -.cax) r.cax)
     ==
   ::
   ++  get                                               ::  cache lookup
@@ -125,24 +125,24 @@
     [d a(p (~(put in p.a) u.d))]                        ::
   ::                                                    ::
   ++  put                                               ::  cache install
-    |=  {a/cafe b/calx}                                 ::
+    |=  [a=cafe b=calx]                                 ::
     ^-  cafe                                            ::
     a(q (~(put by q.a) [- q]:b b))                      ::  calx key is [- q]
   --
 ::
 ++  na                                                  ::  nozzle operations
-  |_  a/nozzle
+  |_  a=nozzle
   ::
   ++  put
-    |=  {k/dent v/dent}  ^+  a
+    |=  [k=dent v=dent]  ^+  a
     [(~(put ju sub.a) k v) (~(put ju sup.a) v k)]
   ::
   ++  del
-    |=  {k/dent v/dent}  ^+  a
+    |=  [k=dent v=dent]  ^+  a
     [(~(del ju sub.a) k v) (~(del ju sup.a) v k)]
   ::
   ++  add-sub
-    |=  {k/dent dez/(set dent)}  ^+  a
+    |=  [k=dent dez=(set dent)]  ^+  a
     =/  liz  ~(tap in dez)
     |-  ^+  a
     ?~  liz  a
@@ -164,16 +164,17 @@
   --
 ::
 ++  pin-dephash
-  ::  compute the hash of a set of dents and store it in a deps
-  ::  produces a pair of the hash and mutated deps
-  |=  {sep/(set dent) deh/deps}
+  :>    compute the hash of a set of dents and store it in a deps.
+  :>
+  :>  produces a pair of the hash and mutated deps.
+  |=  [sep=(set dent) deh=deps]
   ^+  [*@uvH deh]
   ?:  =(~ sep)  [0v0 deh]
   =+  hap=(sham sep)
   :+    hap
     (~(put by def.deh) hap sep)
   %-  ~(gas ju bak.deh)
-  (turn ~(tap in sep) |=(a/dent [a hap]))
+  (turn ~(tap in sep) |=(a=dent [a hap]))
 ::
 ++  de-dup-subdirs
   ::  filter out %beam dents whose paths are contained within
