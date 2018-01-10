@@ -147,6 +147,20 @@
     |-  ^+  a
     ?~  liz  a
     $(liz t.liz, a (put k i.liz))
+  ::
+  ++  beam-dents-in-dir
+    :>  find all %beam dents inside the folder {bem} with care {ren}.
+    |=  [bem=beam ren=care:clay]
+    ^-  (set dent)
+    ?>  =(%z ren)                                       ::  only %z supported
+    ::
+    %-  silt
+    %+  skim  ~(tap in ~(key by sup.a))
+    |=  den=dent
+    ::
+    ::  match the dent tag and beak exactly, and match the tops of the spurs
+    .=  [%beam bem ren]  ::  a dent representing the folder
+    den(s.bem (flop (scag (lent s.bem) (flop s.bem.den))))
   --
 ::
 ++  pin-dephash
@@ -751,9 +765,9 @@
   ++  on-update
     :>  {bem} is at the old revision, {bek} is at the new revision.
     |=  {bem/beam ren/care:clay bek/beak}  ^+  this
-    =/  new  (sy [%beam bem ren] ~)
+    =/  new  (~(beam-dents-in-dir na gaf.bay) bem ren)
+    ::  ~&  new-dents/new
     =/  dos  (downstream-dents new)
-    ::  ~&  [%on-update ren (en-beam bem) (en-beam new ~) dos]
     =/  todo  ~(tap in dos)
     =^  unchanged  this  (rebuild bek new todo)
     ~|  unchanged=unchanged
