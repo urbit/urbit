@@ -3243,7 +3243,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  $1                                            ::  vane version
+    $:  $2                                            ::  vane version
         ruf/raft                                      ::  revision tree
     ==                                                ::
 |=  {now/@da eny/@ ski/sley}                          ::  activate
@@ -3449,32 +3449,38 @@
 ::
 ++  load
   =>  |%
-      ++  cult-0  (map duct rove)
-      ++  dojo-0  (cork dojo |=(a/dojo a(qyx *cult-0)))
-      ++  rede-0  (cork rede |=(a/rede a(qyx *cult-0)))
-      ++  room-0  (cork room |=(a/room a(dos (~(run by dos.a) dojo-0))))
-      ++  rung-0  (cork rung |=(a/rung a(rus (~(run by rus.a) rede-0))))
-      ++  raft-0
+      +=  rove-1  ?(rove [%many p=? q=case r=case s=path t=(map path lobe)])
+      ++  cult-1  (jug rove-1 duct)
+      ++  dojo-1  (cork dojo |=(a/dojo a(qyx *cult-1)))
+      ++  rede-1  (cork rede |=(a/rede a(qyx *cult-1)))
+      ++  room-1  (cork room |=(a/room a(dos (~(run by dos.a) dojo-1))))
+      ++  rung-1  (cork rung |=(a/rung a(rus (~(run by rus.a) rede-1))))
+      ++  raft-1
         %+  cork  raft
-        |=(a/raft a(fat (~(run by fat.a) room-0), hoy (~(run by hoy.a) rung-0)))
-      ++  axle    $%({$0 ruf/raft-0} {$1 ruf/raft})
+        |=(a/raft a(fat (~(run by fat.a) room-1), hoy (~(run by hoy.a) rung-1)))
+      ++  axle    $%({$1 ruf/raft-1} {$2 ruf/raft})
       --
   |=  old/axle
   ^+  ..^$
   ?-  -.old
-    $1  ..^$(ruf ruf.old)
-    $0  =/  cul
-          |=  a/cult-0  ^-  cult
-          %-  ~(gas ju *cult)
-          (turn ~(tap by a) |=({p/duct q/rove} [q p]))
+    $2  ..^$(ruf ruf.old)
+    $1  =/  rov
+          |=  a/rove-1  ^-  rove
+          ?+  a  a
+            [%many @ [@ @] *]  [%many p.a [q.a r.a s.a] t.a]
+          ==
+        =/  cul
+          |=  a/cult-1  ^-  cult
+          %-  ~(gas by *cult)
+          (turn ~(tap by a) |=({p/rove-1 q/(set duct)} [(rov p) q]))
         =/  rom
-          =+  doj=|=(a/dojo-0 a(qyx (cul qyx.a)))
-          |=(a/room-0 a(dos (~(run by dos.a) doj)))
+          =+  doj=|=(a/dojo-1 a(qyx (cul qyx.a)))
+          |=(a/room-1 a(dos (~(run by dos.a) doj)))
         =/  run
-          =+  red=|=(a/rede-0 a(qyx (cul qyx.a)))
-          |=(a/rung-0 a(rus (~(run by rus.a) red)))
+          =+  red=|=(a/rede-1 a(qyx (cul qyx.a)))
+          |=(a/rung-1 a(rus (~(run by rus.a) red)))
         =+  r=ruf.old
-        $(old [%1 r(fat (~(run by fat.r) rom), hoy (~(run by hoy.r) run))])
+        $(old [%2 r(fat (~(run by fat.r) rom), hoy (~(run by hoy.r) run))])
   ==
 ::
 ++  scry                                              ::  inspect
@@ -3498,7 +3504,7 @@
   ?:  ?=($& -.u.u.-)  ``p.u.u.-
   ~
 ::
-++  stay  [%1 ruf]
+++  stay  [%2 ruf]
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
