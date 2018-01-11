@@ -628,6 +628,12 @@ _http_init_h2o(u3_http* htp_u)
   memset(htp_u->fig_u, 0, sizeof(*htp_u->fig_u));
   h2o_config_init(htp_u->fig_u);
 
+  // XX use u3_Host.ops_u.nam_c? Or ship.urbit.org? Multiple hosts?
+  // see https://github.com/urbit/urbit/issues/914
+  htp_u->hos_u = h2o_config_register_host(htp_u->fig_u,
+                                          h2o_iovec_init(H2O_STRLIT("default")),
+                                          htp_u->por_w);
+
   // wrapped for server backlink (wrapper unnecessary, just an example)
   htp_u->ctx_u = c3_malloc(sizeof(h2o_ctx_wrap));
   memset(htp_u->ctx_u, 0, sizeof(h2o_ctx_wrap));
@@ -647,11 +653,6 @@ _http_init_h2o(u3_http* htp_u)
   if ( c3y == htp_u->sec ) {
     htp_u->cep_u->ssl_ctx = tls_u;
   }
-
-  // XX read name from server?
-  htp_u->hos_u = h2o_config_register_host(htp_u->fig_u,
-                                          h2o_iovec_init(H2O_STRLIT("default")),
-                                          htp_u->por_w);
 
   // XX attach to server?
   h2o_handler_t* han_u = h2o_create_handler(&htp_u->hos_u->fallback_path, sizeof(*han_u));
