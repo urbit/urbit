@@ -1,5 +1,5 @@
 language: c
-script: make SANITIZE=yes && make test # no ./configure
+script: make SANITIZE=yes DEBUG=yes && make test # no ./configure
 
 # Uncomment me if this gets annoying
 #
