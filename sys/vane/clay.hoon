@@ -161,10 +161,6 @@
       gon/(each (set path) (pair term (list tank)))     ::  return value
   ==                                                    ::
 ::
-::  Like a ++mood, except with a cache of the state at the starting version.
-::
-++  moot  {p/case q/case r/path s/(map path lobe)}      ::  stored change range
-::
 ::  New desk data.
 ::
 ::  Sent to other ships to update them about a particular desk.  Includes a map
@@ -277,7 +273,7 @@
 ++  rove                                                ::  stored request
           $%  {$sing p/mood}                            ::  single request
               {$next p/mood q/(unit (each cage lobe))}  ::  next version
-              {$many p/? q/moot}                        ::  change range
+              {$many p/? q/moat r/(map path lobe)}      ::  change range
           ==                                            ::
 ::
 ::  Foreign desk data.
@@ -686,9 +682,8 @@
         $sing  ~
         $next
       ?~  (case-to-aeon:ze q.p.rov)  ~
-      %-  ~(rep by qyx)
-      |=  {{a/rove *} b/(list rove)}  ^+  b
-      =-  ?.(- b [a b])
+      %+  skim  ~(tap in ~(key by qyx))
+      |=  a=rove  ^-  ?
       ?&  ?=($next -.a)
           =(p.a p.rov(q q.p.a))
           ?=(^ (case-to-aeon:ze q.p.a))
@@ -696,9 +691,8 @@
     ::
         $many
       ?~  (case-to-aeon:ze p.q.rov)  ~
-      %-  ~(rep by qyx)
-      |=  {{a/rove *} b/(list rove)}  ^+  b
-      =-  ?.(- b [a b])
+      %+  skim  ~(tap in ~(key by qyx))
+      |=  a=rove  ^-  ?
       ?&  ?=($many -.a)
           =(a rov(p.q p.q.a))
           ?=(^ (case-to-aeon:ze p.q.a))
@@ -818,7 +812,7 @@
       =+  nab=(case-to-aeon:ze p.q.rav)
       ?~  nab
         ?>  =(~ (case-to-aeon:ze q.q.rav))
-        (duce (rive rav))
+        (duce [- p q ~]:rav)
       =+  huy=(case-to-aeon:ze q.q.rav)
       ?:  &(?=(^ huy) |((lth u.huy u.nab) &(=(0 u.huy) =(0 u.nab))))
         (blub hen)
@@ -830,7 +824,7 @@
         (blub hen)
       =+  ^=  ptr  ^-  case
           [%ud +(let.dom)]
-      (duce `rove`[%many p.rav ptr q.q.rav r.q.rav ear])
+      (duce `rove`[%many p.rav [ptr q.q.rav r.q.rav] ear])
     ==
   ::
   ::  Print a summary of changes to dill.
@@ -1644,13 +1638,8 @@
     ?-  -.rov
       $sing  rov
       $next  [- p]:rov
-      $many  [%many p.rov p.q.rov q.q.rov r.q.rov]
+      $many  [- p q]:rov
     ==
-  ::
-  ++  rive
-    |=  rav/{$many p/? q/moat}
-    ^-  rove
-    [%many p.rav p.q.rav q.q.rav r.q.rav ~]
   ::
   ::  Loop through open subscriptions and check if we can fill any of them.
   ::
@@ -1694,18 +1683,20 @@
         ?~  u.ver
           $(xiq t.xiq, ..wake (blub-all q.i.xiq ~))
         $(xiq t.xiq, xaq [i.xiq(q.p u.ver) xaq])
-      =+  var=(aver mun(q [%ud let.dom]))
+      =/  muc  mun(q [%ud let.dom])  ::  current mood
+      =+  var=(aver muc)
       ?~  var
-        ~&  [%oh-noes mood=mun letdom=let.dom]
+        ~&  [%oh-noes old=mun mood=muc letdom=let.dom]
         $(xiq t.xiq)
       ?~  u.var
-        $(xiq t.xiq, ..wake (blab-all q.i.xiq mun %& %null [%atom %n ~] ~))
+        $(xiq t.xiq, ..wake (blab-all q.i.xiq muc %& %null [%atom %n ~] ~))
       ?:  (equivalent-data:ze u.q.p.i.xiq u.u.var)
         $(xiq t.xiq, xaq [i.xiq xaq])
-      $(xiq t.xiq, ..wake (blab-all q.i.xiq mun u.u.var))
+      $(xiq t.xiq, ..wake (blab-all q.i.xiq muc u.u.var))
     ::
         $many
-      =+  mot=`moot`q.p.i.xiq
+      =+  mot=`moat`q.p.i.xiq
+      =*  sav  r.p.i.xiq
       =+  nab=(case-to-aeon:ze p.mot)
       ?~  nab
         $(xiq t.xiq, xaq [i.xiq xaq])
@@ -1717,7 +1708,7 @@
           xaq     [i.xiq(q.p mot) xaq]
           ..wake  =+  ^=  ear
                       (lobes-at-path:ze let.dom r.mot)
-                  ?:  =(s.mot ear)  ..wake
+                  ?:  =(sav ear)  ..wake
                   (bleb-all q.i.xiq let.dom ?:(p.p.i.xiq ~ `[u.nab let.dom]))
         ==
       %=  $
@@ -1725,7 +1716,7 @@
         ..wake  =-  (blub-all:- q.i.xiq ~)
                 =+  ^=  ear
                     (lobes-at-path:ze u.huy r.mot)
-                ?:  =(s.mot ear)  (blub-all q.i.xiq ~)
+                ?:  =(sav ear)  (blub-all q.i.xiq ~)
                 (bleb-all q.i.xiq +(u.nab) ?:(p.p.i.xiq ~ `[u.nab u.huy]))
       ==
     ==
@@ -3252,7 +3243,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  $1                                            ::  vane version
+    $:  $2                                            ::  vane version
         ruf/raft                                      ::  revision tree
     ==                                                ::
 |=  {now/@da eny/@ ski/sley}                          ::  activate
@@ -3458,32 +3449,38 @@
 ::
 ++  load
   =>  |%
-      ++  cult-0  (map duct rove)
-      ++  dojo-0  (cork dojo |=(a/dojo a(qyx *cult-0)))
-      ++  rede-0  (cork rede |=(a/rede a(qyx *cult-0)))
-      ++  room-0  (cork room |=(a/room a(dos (~(run by dos.a) dojo-0))))
-      ++  rung-0  (cork rung |=(a/rung a(rus (~(run by rus.a) rede-0))))
-      ++  raft-0
+      +=  rove-1  ?(rove [%many p=? q=case r=case s=path t=(map path lobe)])
+      ++  cult-1  (jug rove-1 duct)
+      ++  dojo-1  (cork dojo |=(a/dojo a(qyx *cult-1)))
+      ++  rede-1  (cork rede |=(a/rede a(qyx *cult-1)))
+      ++  room-1  (cork room |=(a/room a(dos (~(run by dos.a) dojo-1))))
+      ++  rung-1  (cork rung |=(a/rung a(rus (~(run by rus.a) rede-1))))
+      ++  raft-1
         %+  cork  raft
-        |=(a/raft a(fat (~(run by fat.a) room-0), hoy (~(run by hoy.a) rung-0)))
-      ++  axle    $%({$0 ruf/raft-0} {$1 ruf/raft})
+        |=(a/raft a(fat (~(run by fat.a) room-1), hoy (~(run by hoy.a) rung-1)))
+      ++  axle    $%({$1 ruf/raft-1} {$2 ruf/raft})
       --
   |=  old/axle
   ^+  ..^$
   ?-  -.old
-    $1  ..^$(ruf ruf.old)
-    $0  =/  cul
-          |=  a/cult-0  ^-  cult
-          %-  ~(gas ju *cult)
-          (turn ~(tap by a) |=({p/duct q/rove} [q p]))
+    $2  ..^$(ruf ruf.old)
+    $1  =/  rov
+          |=  a/rove-1  ^-  rove
+          ?+  a  a
+            [%many @ [@ @] *]  [%many p.a [q.a r.a s.a] t.a]
+          ==
+        =/  cul
+          |=  a/cult-1  ^-  cult
+          %-  ~(gas by *cult)
+          (turn ~(tap by a) |=({p/rove-1 q/(set duct)} [(rov p) q]))
         =/  rom
-          =+  doj=|=(a/dojo-0 a(qyx (cul qyx.a)))
-          |=(a/room-0 a(dos (~(run by dos.a) doj)))
+          =+  doj=|=(a/dojo-1 a(qyx (cul qyx.a)))
+          |=(a/room-1 a(dos (~(run by dos.a) doj)))
         =/  run
-          =+  red=|=(a/rede-0 a(qyx (cul qyx.a)))
-          |=(a/rung-0 a(rus (~(run by rus.a) red)))
+          =+  red=|=(a/rede-1 a(qyx (cul qyx.a)))
+          |=(a/rung-1 a(rus (~(run by rus.a) red)))
         =+  r=ruf.old
-        $(old [%1 r(fat (~(run by fat.r) rom), hoy (~(run by hoy.r) run))])
+        $(old [%2 r(fat (~(run by fat.r) rom), hoy (~(run by hoy.r) run))])
   ==
 ::
 ++  scry                                              ::  inspect
@@ -3507,7 +3504,7 @@
   ?:  ?=($& -.u.u.-)  ``p.u.u.-
   ~
 ::
-++  stay  [%1 ruf]
+++  stay  [%2 ruf]
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
