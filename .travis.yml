@@ -1,10 +1,12 @@
 language: c
 script: make SANITIZE=yes && make test # no ./configure
+env:
+  - ASAN_OPTIONS=protect_shadow_gap=false
 
 # Uncomment me if this gets annoying
 #
-# notifications: 
-#   email: false 
+# notifications:
+#   email: false
 
 addons:
   apt:
