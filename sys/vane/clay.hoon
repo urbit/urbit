@@ -273,7 +273,7 @@
 ++  cach  (unit (each cage lobe))                       ::  cached result
 ++  rove                                                ::  stored request
           $%  {$sing p/mood}                            ::  single request
-              {$next p/mood q/(unit (each cage lobe))}  ::  next version
+              {$next p/mood q/(unit cach)}              ::  next version
               $:  $mult                                 ::  next version of any
                   p/care                                ::
                   q/(jug case spur)                     ::
@@ -827,14 +827,11 @@
     ::
         $next
       =+  ver=(aver p.rav)
-      ?~  ver
-        (duce [- p ~]:rav)
-      ?~  u.ver
-        (blub hen)
+      ?.  ?=({$~ $~ *} ver)  (duce -.rav p.rav ver)
       =+  yon=+((need (case-to-aeon:ze q.p.rav)))
       |-  ^+  +>.^$
       ?:  (gth yon let.dom)
-        (duce -.rav p.rav u.ver)
+        (duce -.rav p.rav ver)
       =+  var=(aver p.rav(q [%ud yon]))
       ?~  var
         ~&  [%oh-no rave=rav aeon=yon letdom=let.dom]
@@ -1740,24 +1737,29 @@
     ::
         $next
       =*  mun  p.p.i.xiq
-      ::  =*  dat  q.p.i.xiq    XX can't fuse right now
-      ?~  q.p.i.xiq
+      =*  dat  q.p.i.xiq
+      =;  nex/(each _..wake _xaq)
+        ?:  ?=($& -.nex)
+          $(xiq t.xiq, ..wake p.nex)
+        $(xiq t.xiq, xaq p.nex)
+      ?~  dat
+        :-  %|
         =+  ver=(aver mun)
-        ?~  ver
-          $(xiq t.xiq, xaq [i.xiq xaq])
-        ?~  u.ver
-          $(xiq t.xiq, ..wake (blub-all q.i.xiq ~))
-        $(xiq t.xiq, xaq [i.xiq(q.p u.ver) xaq])
-      =/  muc  mun(q [%ud let.dom])  ::  current mood
+        ?~  ver  [i.xiq xaq]
+        [i.xiq(q.p ver) xaq]
+      =/  muc  mun(q [%ud let.dom])
       =+  var=(aver muc)
       ?~  var
         ~&  [%oh-noes old=mun mood=muc letdom=let.dom]
-        $(xiq t.xiq)
+        |+xaq
+      ?~  u.dat
+        ?~  u.var  |+[i.xiq xaq]                        ::  not added
+        &+(blab-all q.i.xiq muc u.u.var)                ::  added
       ?~  u.var
-        $(xiq t.xiq, ..wake (blab-all q.i.xiq muc %& %null [%atom %n ~] ~))
-      ?:  (equivalent-data:ze u.q.p.i.xiq u.u.var)
-        $(xiq t.xiq, xaq [i.xiq xaq])
-      $(xiq t.xiq, ..wake (blab-all q.i.xiq muc u.u.var))
+        &+(blab-all q.i.xiq muc %& %null [%atom %n ~] ~)::  deleted
+      ?:  (equivalent-data:ze u.u.dat u.u.var)
+        |+[i.xiq xaq]                                   ::  unchanged
+      &+(blab-all q.i.xiq muc u.u.var)                  ::  changed
     ::
         $mult
       =*  rov  p.i.xiq
@@ -3579,7 +3581,11 @@
     $3  ..^$(ruf ruf.old)
     $2  =/  rov
           |=  a/rove-2  ^-  rove
-          a
+          ?+  -.a  a
+              $next
+            ?~  q.a  a
+            a(q `q.a)
+          ==
         =/  cul
           |=  a/cult-2  ^-  cult
           %-  ~(gas by *cult)
