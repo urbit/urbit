@@ -391,6 +391,7 @@
           {$ogre p/@tas}                                ::  delete mount point
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
+          {$wris p/(set rant)}                          ::  responses
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$boat $~}                                    ::  pier rebooted
@@ -488,6 +489,7 @@
   ++  rave                                              ::  general request
     $%  {$sing p/mood}                                  ::  single request
         {$next p/mood}                                  ::  await next version
+        {$mult p/care q/(jug case spur)}                ::  next version of any
         {$many p/? q/moat}                              ::  track range
     ==                                                  ::
   ++  riff  {p/desk q/(unit rave)}                      ::  request+desist

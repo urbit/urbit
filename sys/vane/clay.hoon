@@ -270,9 +270,15 @@
 ::  Like a ++rave but with caches of current versions for %next and %many.
 ::  Generally used when we store a request in our state somewhere.
 ::
+++  cach  (unit (each cage lobe))                       ::  cached result
 ++  rove                                                ::  stored request
           $%  {$sing p/mood}                            ::  single request
               {$next p/mood q/(unit (each cage lobe))}  ::  next version
+              $:  $mult                                 ::  next version of any
+                  p/care                                ::
+                  q/(jug case spur)                     ::
+                  r/(map case (map spur cach))          ::
+              ==                                        ::
               {$many p/? q/moat r/(map path lobe)}      ::  change range
           ==                                            ::
 ::
@@ -318,6 +324,7 @@
           {$note p/@tD q/tank}                          ::  debug message
           {$ogre p/@tas}                                ::  delete mount point
           {$writ p/riot}                                ::  response
+          {$wris p/(set rant)}                          ::  responses
       ==                                                ::
 ++  note                                                ::  out request $->
   $%  $:  $a                                            ::  to %ames
@@ -587,6 +594,16 @@
         %f  %exec  our  ~  [her syd q.mun]  (lobe-to-silk:ze r.mun p.dat)
     ==
   ::
+  ++  blas
+    |=  {hen/duct das/(map mood (each cage lobe))}
+    ^+  +>
+    =-  (emit hen %give %wris -)
+    %-  ~(run in das)
+    |=  {mun/mood dat/(each cage lobe)}
+    ~|  %lobe-unsupported-tmp
+    ?>  ?=($& -.dat)
+    [[p.mun q.mun syd] r.mun p.dat]
+  ::
   ::  Give next step in a subscription.
   ::
   ++  bleb
@@ -621,6 +638,7 @@
   ::
   ++  blub-all  (duct-lift |=({a/duct $~} (blub a)))    ::  lifted ++blub
   ++  blab-all  (duct-lift blab)                        ::  lifted ++blab
+  ++  blas-all  (duct-lift blas)                        ::  lifted ++blas
   ++  balk-all  (duct-lift balk)                        ::  lifted ++balk
   ++  bleb-all  (duct-lift bleb)                        ::  lifted ++bleb
   ::
@@ -688,6 +706,25 @@
           =(p.a p.rov(q q.p.a))
           ?=(^ (case-to-aeon:ze q.p.a))
       ==
+    ::
+        $mult
+      =+  %+  roll  ~(tap in q.rov)
+          |=  {{c/case s/(set spur)} sus/(jug aeon spur) val/?}
+          ?.  val  [~ |]
+          =+  a=(case-to-aeon:ze c)
+          ?~  a  [~ |]
+          [(~(put by sus) u.a s) &]
+      ?.  val  ~
+      %+  skim  ~(tap in ~(key by qyx))
+      |=  a=rove  ^-  ?
+      ?.  ?=($mult -.a)  |
+      ?.  =(~(wyt by q.a) ~(wyt by q.rov))  |
+      =-  val  %-  ~(rep in q.a)
+      |=  {{c/case s/(set spur)} val/?}
+      ?.  val  |
+      =+  a=(case-to-aeon:ze c)
+      ?~  a  |
+      =((~(get by sus) u.a) `s)
     ::
         $many
       ?~  (case-to-aeon:ze p.q.rov)  ~
@@ -807,6 +844,30 @@
       ?:  (equivalent-data:ze u.u.ver u.u.var)
         $(yon +(yon))
       (blab hen p.rav u.u.var)
+    ::
+        $mult
+      ::  check to make sure that the request doesn't contain any historic or
+      ::  foreign targets.
+      ?:  %+  lien  ~(tap by q.rav)
+          |=  {c/case s/(set spur)}
+          =+  (case-to-aeon:ze c)
+          &(?=(^ -) (lth u.- let.dom))
+        (blub hen)
+      ::  considering targets in the past are invalid, always store request.
+      =-  (duce -.rav p.rav q.rav -)
+      %-  ~(gas by *(map case (map spur cach)))
+      %+  turn  ~(tap by q.rav)
+      |=  {c/case s/(set spur)}
+      ^-  (pair case (map spur cach))
+      :-  c
+      =+  aey=(case-to-aeon:ze c)
+      ?~  aey  ~  ::  case in the future.
+      %-  ~(gas by *(map spur cach))
+      %+  turn  ~(tap in s)
+      |=  p/spur
+      =+  (aver p.rav c p)
+      ~|  [%unexpected-async p.rav c p]
+      ?>(?=(^ -) [p u.-])
     ::
         $many
       =+  nab=(case-to-aeon:ze p.q.rav)
@@ -1622,6 +1683,9 @@
           `p.q.p.rov
         ::
             $next  ~
+        ::
+            $mult  ~
+        ::
             $many
           %^  hunt  lth
             ?.  ?=($da -.p.q.rov)  ~
@@ -1638,6 +1702,7 @@
     ?-  -.rov
       $sing  rov
       $next  [- p]:rov
+      $mult  [- p q]:rov
       $many  [- p q]:rov
     ==
   ::
@@ -1645,7 +1710,7 @@
   ::
   ++  wake                                            ::  update subscribers
     ^+  .
-    =+  xiq=~(tap by qyx)
+    =+  xiq=~(tap by qyx)  ::  (list (pair rove (set duct)))
     =|  xaq/(list {p/rove q/(set duct)})
     |-  ^+  ..wake
     ?~  xiq
@@ -1693,6 +1758,50 @@
       ?:  (equivalent-data:ze u.q.p.i.xiq u.u.var)
         $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (blab-all q.i.xiq muc u.u.var))
+    ::
+        $mult
+      =*  rov  p.i.xiq
+      =-  ?^  res
+            $(xiq t.xiq, ..wake (blas-all q.i.xiq res))
+          $(xiq t.xiq, xaq [i.xiq(r.p (~(uni by r.rov) cac)) xaq])
+      %+  roll  ~(tap by q.rov)
+      |=  $:  {cas/case sus/(set spur)}
+              cac/(map case (map spur cach))
+              res/(map mood (each cage lobe))
+          ==
+      ^+  [cac res]
+      =+  hav=(~(got by r.rov) cas)
+      ::  if we don't have an existing cache, try to build it.
+      ?~  hav
+        =-  ?~  -  [cac res]
+            [(~(put by cac) cas -) res]
+        =+  aey=(case-to-aeon:ze cas)
+        ?~  aey  ~  ::  case in the future.
+        %-  ~(gas by *(map spur cach))
+        %+  turn  ~(tap in sus)
+        |=  s/spur
+        ^-  (pair spur cach)
+        =+  (aver p.rov [%ud let.dom] s)
+        ~|  [%unexpected-async p.rov cas s]
+        ?>(?=(^ -) [s u.-])
+      ::  if we have an existing cache, compare it to current data.
+      :-  cac
+      %-  ~(gas by res)
+      %+  murn  ~(tap in sus)
+      |=  s/spur
+      ^-  (unit (pair mood (each cage lobe)))
+      =+  o=(~(got by `(map spur cach)`hav) s)
+      =+  n=(aver p.rov [%ud let.dom] s)
+      ~|  [%unexpected-async p.rov let.dom s]
+      ?>  ?=(^ n)
+      =+  m=[p.rov [%ud let.dom] s]
+      ?~  o
+       ?~  u.n  ~                                   ::  not added
+       `[m u.u.n]                                   ::  added
+      ?~  u.n
+        `[m [%& %null [%atom %n ~] ~]]              ::  deleted
+      ?:  (equivalent-data:ze u.u.n u.o)  ~         ::  unchanged
+      `[m u.u.n]                                    ::  changed
     ::
         $many
       =+  mot=`moat`q.p.i.xiq
