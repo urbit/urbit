@@ -19,9 +19,9 @@
 #   define _ap_jet_rake  1
 #   define _ap_jet_hack  2
 
+#if 0
     static u3_noun
     _open_in(u3_noun ter, u3_noun gen);
-#if 0
     /* ~(. al gen)
     */
     static u3_noun
@@ -32,7 +32,6 @@
 
       return u3i_molt(gat, u3x_sam, u3nc(c3__herb, u3k(gen)), 0);
     }
-#endif
     /* ~(. al gen)
     */
     static u3_noun
@@ -984,6 +983,7 @@
         return u3qfp_hack(ter, gen);
       }
     }
+#endif
 
 /* boilerplate
 */
@@ -1010,6 +1010,7 @@
   _ap_open_l(u3_noun ter,
              u3_noun gen)
   {
+#if 0
     u3_noun pro = _open_in(ter, gen);
 
     if ( u3_none != pro ) {
@@ -1017,10 +1018,20 @@
     } else {
       return _ap_open_n(ter, gen);
     }
+#else
+    return _ap_open_n(ter, gen);
+#endif
   }
 
   u3_noun
   u3qfp_open(u3_noun ter,
+             u3_noun gen)
+  {
+    return _ap_open_l(ter, gen);
+  }
+
+  u3_noun
+  u3qfp_nepo(u3_noun ter,
              u3_noun gen)
   {
     return _ap_open_l(ter, gen);
@@ -1040,58 +1051,3 @@
     }
   }
 
-/* boilerplate
- *
-*/
-  static u3_noun
-  _aq_core(u3_noun ter,
-           u3_noun gen)
-  {
-    u3_noun gat = u3j_hook(u3k(ter), "ap");
-
-    return u3i_molt(gat, u3x_sam, u3k(gen), 0);
-  }
-
-/* open
-*/
-  static u3_noun
-  _aq_open_n(u3_noun ter,
-             u3_noun gen)
-  {
-    u3_noun cor = _aq_core(ter, gen);
-
-    return u3j_soft(cor, "open");
-  }
-  static u3_noun
-  _aq_open_l(u3_noun ter,
-             u3_noun gen)
-  {
-    u3_noun pro = _open_in(ter, gen);
-
-    if ( u3_none != pro ) {
-      return pro;
-    } else {
-      return _aq_open_n(ter, gen);
-    }
-  }
-
-  u3_noun
-  u3qfp_nepo(u3_noun ter,
-             u3_noun gen)
-  {
-    return _aq_open_l(ter, gen);
-  }
-
-  u3_noun
-  u3wfp_nepo(u3_noun cor)
-  {
-    u3_noun gen;
-
-    if ( u3_none == (gen = u3r_at(u3x_sam, cor)) ) {
-      return u3m_bail(c3__fail);
-    } else {
-      u3_noun ter = u3r_at(u3x_con, cor);
-
-      return u3qfp_nepo(ter, gen);
-    }
-  }
