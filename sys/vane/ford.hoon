@@ -154,12 +154,21 @@
     ^-  (set dent)
     ?>  =(%z ren)                                       ::  only %z supported
     ::
+    =/  folder=dent  [%beam bem ren]
+    ::
+    ?.  (~(has by sup.a) folder)                        ::  state must have bem
+      ~&(missing-folder+folder !!)
+    ::
+    =-  ?.  (~(has in -) folder)                        ::  result must keep bem
+      ~&([folder+folder missing-from+-] !!)
+      -
+    ::
     %-  silt
     %+  skim  ~(tap in ~(key by sup.a))
     |=  den=dent
     ::
     ::  match the dent tag and beak exactly, and match the tops of the spurs
-    .=  [%beam bem ren]  ::  a dent representing the folder
+    .=  folder  ::  a dent representing the folder
     den(s.bem (flop (scag (lent s.bem) (flop s.bem.den))))
   --
 ::
