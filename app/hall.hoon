@@ -2323,17 +2323,25 @@
     ::REVIEW  this could be considered leaky, since it
     ::        doesn't check if {who} ever knew of {nom},
     ::        but does that matter? can't really check..
+    ::  if the story got deleted, remove it from the circles listing.
     ?:  ?=($remove -.det.det)  `|
-    =+  soy=(~(got by stories) who.qer)
-    ?.  ?|  ?=($new -.det.det)
-            ?&  ?=($config -.det.det)
-                ?=($permit -.dif.det.det)
-                ?=(?($channel $village) sec.con.shape.soy)
-                (~(has in sis.dif.det.det) who.qer)
-            ==
+    =+  soy=(~(got by stories) nom.det)
+    ::  if the story got created, or something about the read permissions set
+    ::  for the subscriber changed, update the circles listing.
+    =;  dif/?
+      ?.  dif  ~
+      =+  (~(so-visible so:ta nom.det ~ soy) who.qer)
+      ::  if the story just got created, don't send a remove rumor, because it
+      ::  never showed up in the first place.
+      ?:(?=($new -.det.det) ?:(- `- ~) `-)
+    ?|  ?=($new -.det.det)
+      ::
+        ?&  ?=($config -.det.det)
+            ?=($permit -.dif.det.det)
+            ?=(?($channel $village) sec.con.shape.soy)
+            (~(has in sis.dif.det.det) who.qer)
         ==
-      ~
-    `(~(so-visible so:ta nom.det ~ soy) who.qer)
+    ==
   ::
       $public
     ?.  ?=($public -.det)  ~
