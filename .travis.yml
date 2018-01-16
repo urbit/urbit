@@ -1,5 +1,6 @@
 language: c
-script: make SANITIZE=yes && make test # no ./configure
+script: make DEBUG=yes SANITIZE=yes && make test # no ./configure
+compiler: clang
 env:
   - ASAN_OPTIONS=protect_shadow_gap=false
 
