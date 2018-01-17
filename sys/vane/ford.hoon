@@ -588,6 +588,7 @@
   sym=(cook crip ;~(plug low (star ;~(pose low nud))))
 ::
 ++  za                                                  ::  per event
+  =/  dbg  &
   =|  $:  $:  our/ship                                  ::  computation owner
               hen/duct                                  ::  event floor
               $:  now/@da                               ::  event date
@@ -727,7 +728,7 @@
     ::  rebuild and promote all affected builds
     =.  this  (on-update bem ren -.bem(r wen))
     ::
-    ::  cancel %clay subscription for this beam
+    ::  %clay subscription no longer exists for this beam
     =.  out.bay  (~(del in out.bay) bem)
     ::
     ::  for each affected build (keyed by hash),
@@ -776,7 +777,7 @@
     :>  {bem} is at the old revision, {bek} is at the new revision.
     |=  {bem/beam ren/care:clay bek/beak}  ^+  this
     =/  new  (~(beam-dents-in-dir na gaf.bay) bem ren)
-    ::  ~&  new-dents/new
+    ~?  dbg  new-dents+[(en-beam bem) new]
     =/  dos  (downstream-dents new)
     =/  todo  ~(tap in dos)
     =^  unchanged  this  (rebuild bek new todo)
@@ -799,12 +800,12 @@
     ::
     ::  don't try to rebuild the changed files themselves.
     ?:  (~(has in new) i.todo)
-      ::  ~&  new+i.todo
+      ~?  dbg  new+i.todo
       $(todo t.todo)
     ::
     ::  if we've already built a dent at this revision, don't build it again.
     ?:  (~(has in unchanged) i.todo)
-      ::  ~&  unchanged+i.todo
+      ~?  dbg  unchanged+i.todo
       $(todo t.todo)
     ::
     ::  if none of our dependencies are in new, then check whether all of them
@@ -822,11 +823,11 @@
       ::  if we know all sub-dependencies are unchanged,
       ::  then mark this todo as unchanged and continue.
       ?:  =(~ dez)
-        ::  ~&  put-in-unchanged+i.todo
+        ~?  dbg  put-in-unchanged+i.todo
         $(unchanged (~(put in unchanged) i.todo), todo t.todo)
       ::
       ::  otherwise, build all unknown sub-dependencies first and try again.
-      ::  ~&  adding-dez+~(tap in dez)
+      ~?  dbg  adding-dez+~(tap in dez)
       $(todo (weld ~(tap in dez) todo))
     ::
     ::  some of our sub-dependencies have been invalidated,
@@ -839,6 +840,7 @@
         $1  ~|([%stub-block p.q.bil] !!)  ::TODO store state in task
         $2
       ::  errors cannot be promoted, so consider this a new build.
+      ~?  dbg  rebuilt+error+i.todo
       $(new (~(put in new) i.todo), todo t.todo)
     ::
         $0
@@ -848,7 +850,9 @@
       ::  from the previous result, then consider this build new.
       ::  otherwise, consider it unchanged.
       ?:  |(?=(~ pre) !=(r.u.pre q.q.bil))
+        ~?  dbg  rebuilt+new+i.todo
         $(new (~(put in new) i.todo), todo t.todo)
+      ~?  dbg  rebuilt+same+i.todo
       $(unchanged (~(put in unchanged) i.todo), todo t.todo)
     ==
   ::
