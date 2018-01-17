@@ -864,10 +864,13 @@
       |.  ^+  b
       =/  cax  (~(get by jav.b) (to-cache-key a))
       ?~  cax  b
-      ?<  ?=($beam -.a)
       ::
       ::XX only for original beak in q.q.u.cax?
-      =.  dep.p.u.cax  (move-to bek dep.p.u.cax)
+      =.  a  ((move-to bek) a)
+      =.  dep.p.u.cax
+        (sy (turn ~(tap in dep.p.u.cax) (move-to bek)))
+      ::
+      ?<  ?=($beam -.a)
       ::  ~&  promo+a
       =.  u.cax
         ?-  -.a
@@ -892,9 +895,7 @@
     ==
   ::
   ++  move-to
-    |=  [bek=beak des=(set dent)]  ^-  (set dent)
-    %-  sy
-    %+  turn  ~(tap in des)
+    |=  bek=beak
     |=  den=dent  ^+  den
     =?  den  ?=(%boil -.den)  den(-.bom bek)
     den(-.bem bek)
