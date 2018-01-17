@@ -2330,10 +2330,12 @@
     ::  for the subscriber changed, update the circles listing.
     =;  dif/?
       ?.  dif  ~
-      =+  (~(so-visible so:ta nom.det ~ soy) who.qer)
       ::  if the story just got created, don't send a remove rumor, because it
       ::  never showed up in the first place.
-      ?:(?=($new -.det.det) ?:(- `- ~) `-)
+      =-  ?:(&(?=($new -.det.det) !-) ~ `-)
+      ?|  (team:title our.bol who.qer)
+          (~(so-visible so:ta nom.det ~ soy) who.qer)
+      ==
     ?|  ?=($new -.det.det)
       ::
         ?&  ?=($config -.det.det)
