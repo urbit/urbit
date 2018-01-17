@@ -467,6 +467,7 @@
   ++  moat  {p/case q/case r/path}                      ::  change range
   ++  mode  (list {path (unit mime)})                   ::  external files
   ++  mood  {p/care q/case r/path}                      ::  request in desk
+  ++  mool  {p/care q/case r/(set spur)}                ::  requests in desk
   ++  nori                                              ::  repository action
     $%  {$& p/soba}                                     ::  delta
         {$| p/@tas}                                     ::  label
@@ -489,7 +490,7 @@
   ++  rave                                              ::  general request
     $%  {$sing p/mood}                                  ::  single request
         {$next p/mood}                                  ::  await next version
-        {$mult p/care q/(jug case spur)}                ::  next version of any
+        {$mult p/mool}                                  ::  next version of any
         {$many p/? q/moat}                              ::  track range
     ==                                                  ::
   ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
