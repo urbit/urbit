@@ -828,23 +828,25 @@
     ::  for %next, get the data at the specified case, then go forward in time
     ::  until we find a change. if we find no change, store request for later.
         $next
-      =+  ver=(aver p.rav)
-      ::  if we know nothing, or we know the file doesn't exist right now,
-      ::  store the request for later answering.
-      ?.  ?=({$~ $~ *} ver)  (duce -.rav p.rav ver)
+      =+  old=(aver p.rav)
+      ::  if we know nothing now, store the request for later answering.
+      ?:  ?=($~ old)  (duce -.rav p.rav old)
       =+  yon=+((need (case-to-aeon:ze q.p.rav)))
       |-  ^+  +>.^$
       ?:  (gth yon let.dom)
-        (duce -.rav p.rav ver)
-      =+  var=(aver p.rav(q [%ud yon]))
-      ?~  var
+        (duce -.rav p.rav old)
+      =+  new=(aver p.rav(q [%ud yon]))
+      ?~  new
         ~&  [%oh-no rave=rav aeon=yon letdom=let.dom]
         +>.^$
-      ?~  u.var
-        (blab hen p.rav %& %null [%atom %n ~] ~)          ::  only her %x
-      ?:  (equivalent-data:ze u.u.ver u.u.var)
-        $(yon +(yon))
-      (blab hen p.rav u.u.var)
+      ?~  u.old
+        ?~  u.new  $(yon +(yon))                        ::  not added
+        (blab hen p.rav u.u.new)                        ::  added
+      ?~  u.new
+        (blab hen p.rav %& %null [%atom %n ~] ~)        ::  removed, only her %x
+      ?:  (equivalent-data:ze u.u.old u.u.new)
+        $(yon +(yon))                                   ::  unchanged
+      (blab hen p.rav u.u.new)                          ::  changed
     ::
         $mult
       ::  check to make sure that the request doesn't contain any historic or
