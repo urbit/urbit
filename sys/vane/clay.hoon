@@ -825,8 +825,12 @@
         (blub hen)
       (blab hen p.rav u.u.ver)
     ::
+    ::  for %next, get the data at the specified case, then go forward in time
+    ::  until we find a change. if we find no change, store request for later.
         $next
       =+  ver=(aver p.rav)
+      ::  if we know nothing, or we know the file doesn't exist right now,
+      ::  store the request for later answering.
       ?.  ?=({$~ $~ *} ver)  (duce -.rav p.rav ver)
       =+  yon=+((need (case-to-aeon:ze q.p.rav)))
       |-  ^+  +>.^$
@@ -1707,7 +1711,7 @@
   ::
   ++  wake                                            ::  update subscribers
     ^+  .
-    =+  xiq=~(tap by qyx)  ::  (list (pair rove (set duct)))
+    =+  xiq=~(tap by qyx)
     =|  xaq/(list {p/rove q/(set duct)})
     |-  ^+  ..wake
     ?~  xiq
@@ -1737,29 +1741,30 @@
     ::
         $next
       =*  mun  p.p.i.xiq
-      =*  dat  q.p.i.xiq
+      =*  old  q.p.i.xiq
+      ::  we either update the state (to include a response to send),
+      ::  or add the request back into the waiting list.
       =;  nex/(each _..wake _xaq)
         ?:  ?=($& -.nex)
           $(xiq t.xiq, ..wake p.nex)
         $(xiq t.xiq, xaq p.nex)
-      ?~  dat
-        :-  %|
-        =+  ver=(aver mun)
-        ?~  ver  [i.xiq xaq]
-        [i.xiq(q.p ver) xaq]
-      =/  muc  mun(q [%ud let.dom])
-      =+  var=(aver muc)
-      ?~  var
-        ~&  [%oh-noes old=mun mood=muc letdom=let.dom]
+      ::  if we don't have an existing cache of the old version,
+      ::  try to get it now.
+      ?~  old
+        |+[i.xiq(q.p (aver mun)) xaq]
+      =/  mod  mun(q [%ud let.dom])
+      =+  new=(aver mod)
+      ?~  new
+        ~&  [%oh-noes old=mun mood=mod letdom=let.dom]
         |+xaq
-      ?~  u.dat
-        ?~  u.var  |+[i.xiq xaq]                        ::  not added
-        &+(blab-all q.i.xiq muc u.u.var)                ::  added
-      ?~  u.var
-        &+(blab-all q.i.xiq muc %& %null [%atom %n ~] ~)::  deleted
-      ?:  (equivalent-data:ze u.u.dat u.u.var)
+      ?~  u.old
+        ?~  u.new  |+[i.xiq xaq]                        ::  not added
+        &+(blab-all q.i.xiq mod u.u.new)                ::  added
+      ?~  u.new
+        &+(blab-all q.i.xiq mod %& %null [%atom %n ~] ~)::  deleted
+      ?:  (equivalent-data:ze u.u.old u.u.new)
         |+[i.xiq xaq]                                   ::  unchanged
-      &+(blab-all q.i.xiq muc u.u.var)                  ::  changed
+      &+(blab-all q.i.xiq mod u.u.new)                  ::  changed
     ::
         $mult
       =*  rov  p.i.xiq
@@ -1772,9 +1777,9 @@
               res/(map mood (each cage lobe))
           ==
       ^+  [cac res]
-      =+  hav=(~(got by r.rov) cas)
+      =+  ole=(~(got by r.rov) cas)
       ::  if we don't have an existing cache, try to build it.
-      ?~  hav
+      ?~  ole
         =-  ?~  -  [cac res]
             [(~(put by cac) cas -) res]
         =+  aey=(case-to-aeon:ze cas)
@@ -1790,20 +1795,20 @@
       :-  cac
       %-  ~(gas by res)
       %+  murn  ~(tap in sus)
-      |=  s/spur
+      |=  sup/spur
       ^-  (unit (pair mood (each cage lobe)))
-      =+  o=(~(got by `(map spur cach)`hav) s)
-      =+  n=(aver p.rov [%ud let.dom] s)
-      ~|  [%unexpected-async p.rov let.dom s]
-      ?>  ?=(^ n)
-      =+  m=[p.rov [%ud let.dom] s]
-      ?~  o
-       ?~  u.n  ~                                   ::  not added
-       `[m u.u.n]                                   ::  added
-      ?~  u.n
-        `[m [%& %null [%atom %n ~] ~]]              ::  deleted
-      ?:  (equivalent-data:ze u.u.n u.o)  ~         ::  unchanged
-      `[m u.u.n]                                    ::  changed
+      =+  old=(~(got by `(map spur cach)`ole) sup)
+      =+  new=(aver p.rov [%ud let.dom] sup)
+      ~|  [%unexpected-async p.rov let.dom sup]
+      ?>  ?=(^ new)
+      =+  mod=[p.rov [%ud let.dom] sup]
+      ?~  old
+       ?~  u.new  ~                                     ::  not added
+       `[mod u.u.new]                                   ::  added
+      ?~  u.new
+        `[mod [%& %null [%atom %n ~] ~]]                ::  deleted
+      ?:  (equivalent-data:ze u.u.new u.old)  ~         ::  unchanged
+      `[mod u.u.new]                                    ::  changed
     ::
         $many
       =+  mot=`moat`q.p.i.xiq
