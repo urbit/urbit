@@ -652,45 +652,46 @@
     ?.  (~(has by def.deh.bay) dep)
       ~&([%wasp-unknown dep] this)
     ::
-    |^  ?:(ask start cancel)
-    ++  start
-      ^+  this
-      ?:  (~(has by sup.bay) dep)                       ::  already requested
-        this(sup.bay (~(put ju sup.bay) dep hen))
-      =.  sup.bay  (~(put ju sup.bay) dep hen)
-      ::
-      =/  des  (~(got by def.deh.bay) dep)
-      =/  bes=(list [beam care:clay])  ~(tap in (dep-beams des))
-      |-  ^+  this
-      ?~  bes  this
-      :: already sent
-      ?:  (~(has in out.bay) i.bes)  $(bes t.bes)
-      %_  $
-        out.bay  (~(put in out.bay) i.bes)
-        bes  t.bes
-        mow  :_(mow [hen (pass-warp & i.bes)])
-      ==
+    ?:(ask (wasp-start dep) (wasp-cancel dep))
+  ::
+  ++  wasp-start
+    |=  dep=@uvH  ^+  this
+    ?:  (~(has by sup.bay) dep)                       ::  already requested
+      this(sup.bay (~(put ju sup.bay) dep hen))
+    =.  sup.bay  (~(put ju sup.bay) dep hen)
     ::
-    ++  cancel
-      ^+  this
-      =.  sup.bay  (~(del ju sup.bay) dep hen)
-      ?:  (~(has by sup.bay) dep)  :: other listeners exist
-        this
-      ::
-      =/  des  (~(got by def.deh.bay) dep)
-      =/  bes=(list [beam care:clay])  ~(tap in (dep-beams des))
-      |-  ^+  this
-      ?~  bes  this
-      ?>  (~(has in out.bay) i.bes)
-      ?:  (dent-has-subscribers [%beam i.bes])
-        ::  if any other dep cares about this beam, stay subscribed
-        $(bes t.bes)
-      %_  $
-        out.bay  (~(del in out.bay) i.bes)
-        bes  t.bes
-        mow  :_(mow [hen (pass-warp | i.bes)])
-      ==
-    --
+    =/  des  (~(got by def.deh.bay) dep)
+    =/  bes=(list [beam care:clay])  ~(tap in (dep-beams des))
+    |-  ^+  this
+    ?~  bes  this
+    :: already sent
+    ?:  (~(has in out.bay) i.bes)  $(bes t.bes)
+    %_  $
+      out.bay  (~(put in out.bay) i.bes)
+      bes  t.bes
+      mow  :_(mow [hen (pass-warp & i.bes)])
+    ==
+  ::
+  ++  wasp-cancel
+    |=  dep=@uvH  ^+  this
+    =.  sup.bay  (~(del ju sup.bay) dep hen)
+    ?:  (~(has by sup.bay) dep)  :: other listeners exist
+      this
+    ::
+    =/  des  (~(got by def.deh.bay) dep)
+    =/  bes=(list [beam care:clay])  ~(tap in (dep-beams des))
+    |-  ^+  this
+    ?~  bes  this
+    ?.  (~(has in out.bay) i.bes)  $(bes t.bes)  ::  already cancelled
+    ?:  (dent-has-subscribers [%beam i.bes])
+      ::  if any other dep cares about this beam, stay subscribed
+      $(bes t.bes)
+    %_  $
+      out.bay  (~(del in out.bay) i.bes)
+      bes  t.bes
+      mow  :_(mow [hen (pass-warp | i.bes)])
+    ==
+  ::
   ++  dent-has-subscribers
     :>  does the dent or any dent that depends on it have subscribers?
     |=  den/dent
@@ -738,25 +739,23 @@
     =/  dos=(set dent)  (downstream-dents (sy den ~))
     =.  dos  (~(put in dos) den)
     =/  hashes=(list @uvH)
-      =-  ~(tap in out)
+      =-  ~(tap in hashes)
       %-  ~(rep in dos)
-      |=  [den=dent out=(set @uvH)]
-      (~(uni in out) (~(get ju bak.deh.bay) den))
+      |=  [den=dent hashes=(set @uvH)]
+      (~(uni in hashes) (~(get ju bak.deh.bay) den))
     ::
     ::  ~&  [den=den dos=dos hashes=hashes]
     ::
     |-  ^+  this
     ?~  hashes  this
-    %_    $
-        hashes  t.hashes                                ::  iterate 
-        sup.bay  (~(del by sup.bay) i.hashes)           ::  remove listeners
-        mow                                             ::  send %news moves
+    =.  this  $(hashes t.hashes)                        ::  iterate 
+    =/  listeners=(set duct)  (~(get ju sup.bay) i.hashes)
+    =.  mow                                             ::  send %news moves
       %-  weld  :_  mow
-      =/  listeners=(set duct)  (~(get ju sup.bay) i.hashes)
-      ::  ~&  [hax=i.hashes liz=listeners]
       %+  turn  ~(tap in listeners)
       |=(a=duct `move`[a %give %news i.hashes])
-    ==
+    ::
+    (wasp-cancel i.hashes)
   ::
   ++  downstream-dents
     :>    obtain all dents that depend on any of the dents in the sample.
@@ -867,6 +866,8 @@
       ?~  cax  b
       ?<  ?=($beam -.a)
       ::
+      ::XX only for original beak in q.q.u.cax?
+      =.  dep.p.u.cax  (move-to bek dep.p.u.cax)
       ::  ~&  promo+a
       =.  u.cax
         ?-  -.a
@@ -889,6 +890,14 @@
       $boil  [%boil arg bem bom]:den
       $load  [%load mar bem]:den
     ==
+  ::
+  ++  move-to
+    |=  [bek=beak des=(set dent)]  ^-  (set dent)
+    %-  sy
+    %+  turn  ~(tap in des)
+    |=  den=dent  ^+  den
+    =?  den  ?=(%boil -.den)  den(-.bom bek)
+    den(-.bem bek)
   ::
   ::+|
   ::
