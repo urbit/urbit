@@ -335,9 +335,9 @@
   $%  {$exec p/@p q/(unit {beak silk:ford})}            ::  make / kill
       {$wasp p/@p q/{@uvH ?}}                           ::  depends ask / kill
   ==  ==                                                ::
-      $:  $t                                            ::
-  $%  {$wait p/@da}                                     ::
-      {$rest p/@da}                                     ::
+      $:  $t                                            ::  to %behn
+  $%  {$wait p/@da}                                     ::  set alarm
+      {$rest p/@da}                                     ::  cancel alarm
   ==  ==  ==                                            ::
 ++  riot  (unit rant)                                   ::  response+complete
 ++  sign                                                ::  in result $<-
@@ -354,11 +354,11 @@
           $%  {$made p/@uvH q/gage:ford}                ::  computed result
               {$news p/@uvH}                            ::  fresh depends
           ==  ==                                        ::
-              $:  $t                                    ::
+              $:  $t                                    ::  by %behn
           $%  {$wake $~}                                ::  timer activate
           ==  ==                                        ::
               $:  @tas                                  ::  by any
-          $%  {$crud p/@tas q/(list tank)}              ::
+          $%  {$crud p/@tas q/(list tank)}              ::  error
           ==  ==  ==                                    ::
 --  =>
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -490,7 +490,7 @@
     ?.  ?=($tabl -.gag)
       (ford-fail ?-(-.gag $| p.gag, $& [>%strange-gage p.p.gag<]~))
     %+  murn  p.gag
-    |=  {key/gage:ford val/gage:ford}  
+    |=  {key/gage:ford val/gage:ford}
     ^-  (unit {cage cage})
     ?.  ?=($& -.key)
       (ford-fail ?-(-.key $| p.key, $tabl [>%strange-gage<]~))
