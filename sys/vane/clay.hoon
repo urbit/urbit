@@ -1787,7 +1787,7 @@
       =/  mod  mun(q [%ud let.dom])
       ::  we either update the state (to include a response to send),
       ::  or add the request back into the waiting list.
-      =;  nex/(each (each lobe cage) _xaq)
+      =;  nex/(each (each cage lobe) _xaq)
         ?:  ?=($& -.nex)
           $(xiq t.xiq, ..wake (blab-all q.i.xiq mod p.nex))
         $(xiq t.xiq, xaq p.nex)
