@@ -737,20 +737,20 @@
       ==
     ::
         $many
-        =+  aey=(case-to-aeon:ze p.q.rov)
-        ?~  aey  ~
-        %+  roll  ~(tap in ~(key by qyx))
-        |=  {hav/rove res/(unit rove)}
-        ?^  res  res
-        =-  ?:(- `hav ~)
-        ?&  ?=($many -.hav)
-            =(hav rov(p.q p.q.hav))
-          ::
-            ::  only a match if this request is before
-            ::  or at our starting case.
-            =+  hay=(case-to-aeon:ze p.q.hav)
-            ?~(hay | (lte u.hay u.aey))
-        ==
+      =+  aey=(case-to-aeon:ze p.q.rov)
+      ?~  aey  ~
+      %+  roll  ~(tap in ~(key by qyx))
+      |=  {hav/rove res/(unit rove)}
+      ?^  res  res
+      =-  ?:(- `hav ~)
+      ?&  ?=($many -.hav)
+          =(hav rov(p.q p.q.hav))
+        ::
+          ::  only a match if this request is before
+          ::  or at our starting case.
+          =+  hay=(case-to-aeon:ze p.q.hav)
+          ?~(hay | (lte u.hay u.aey))
+      ==
     ==
   ::
   ::  Takes a list of changed paths and finds those paths that are inside a
