@@ -696,35 +696,61 @@
   ::
   ++  dedupe                                            ::  find existing alias
     |=  rov/rove  ^-  rove
-    =;  ros/(list rove)  ?+(ros rov {^ $~} i.ros)
+    =;  ron/(unit rove)  (fall ron rov)
     ?-    -.rov
         $sing  ~
         $next
-      ?~  (case-to-aeon:ze q.p.rov)  ~
-      %+  skim  ~(tap in ~(key by qyx))
-      |=  a=rove  ^-  ?
-      ?&  ?=($next -.a)
-          =(p.a p.rov(q q.p.a))
-          ?=(^ (case-to-aeon:ze q.p.a))
+      =+  aey=(case-to-aeon:ze q.p.rov)
+      ?~  aey  ~
+      %+  roll  ~(tap in ~(key by qyx))
+      |=  {hav/rove res/(unit rove)}
+      ?^  res  res
+      =-  ?:(- `hav ~)
+      ?&  ?=($next -.hav)
+          =(p.hav p.rov(q q.p.hav))
+        ::
+          ::  only a match if this request is before
+          ::  or at our starting case.
+          =+  hay=(case-to-aeon:ze q.p.hav)
+          ?~(hay | (lte u.hay u.aey))
       ==
     ::
         $mult
-      ?~  (case-to-aeon:ze q.p.rov)  ~
-      %+  skim  ~(tap in ~(key by qyx))
-      |=  a=rove  ^-  ?
-      ?&  ?=($mult -.a)
-          =(p.a p.rov(q q.p.a))
-          ?=(^ (case-to-aeon:ze q.p.a))
+      =+  aey=(case-to-aeon:ze q.p.rov)
+      ?~  aey  ~
+      %+  roll  ~(tap in ~(key by qyx))
+      |=  {hav/rove res/(unit rove)}
+      ?^  res  res
+      =-  ?:(- `hav ~)
+      ?&  ?=($mult -.hav)
+          =(p.hav p.rov(q q.p.hav))
+        ::
+          ::  only a match if this request is before
+          ::  or at our starting case, and it has been
+          ::  tested at least that far.
+          =+  hay=(case-to-aeon:ze q.p.hav)
+          ?&  ?=(^ hay)
+              (lte u.hay u.aey)
+              ?=(^ q.hav)
+              (gte u.q.hav u.aey)
+          ==
       ==
     ::
         $many
-      ?~  (case-to-aeon:ze p.q.rov)  ~
-      %+  skim  ~(tap in ~(key by qyx))
-      |=  a=rove  ^-  ?
-      ?&  ?=($many -.a)
-          =(a rov(p.q p.q.a))
-          ?=(^ (case-to-aeon:ze p.q.a))
-      ==
+        =+  aey=(case-to-aeon:ze p.q.rov)
+        ?~  aey  ~
+        %+  roll  ~(tap in ~(key by qyx))
+        |=  {hav/rove res/(unit rove)}
+        ?^  res  res
+        =-  ?:(- `hav ~)
+        ?&  ?=($many -.hav)
+            =(hav rov(p.q p.q.hav))
+          ::
+            ::  only a match if this request is before
+            ::  or at our starting case.
+            =+  hay=(case-to-aeon:ze p.q.hav)
+            ?~(hay | (lte u.hay u.aey))
+        ==
     ==
   ::
   ::  Takes a list of changed paths and finds those paths that are inside a
