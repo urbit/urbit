@@ -150,17 +150,15 @@
   ::
   ++  beam-dents-in-dir
     :>  find all %beam dents inside the folder {bem} with care {ren}.
-    |=  [bem=beam ren=care:clay]
+    |=  folder=[%beam bem=beam ren=care:clay]
     ^-  (set dent)
-    ?>  =(%z ren)                                       ::  only %z supported
+    ?>  =(%z ren.folder)                                ::  only %z supported
     ::
-    =/  folder=dent  [%beam bem ren]
+    ~?  !(~(has by sup.a) folder)                        ::  state should have bem
+      missing-folder+[folder ~(key by sup.a)]
     ::
-    ?.  (~(has by sup.a) folder)                        ::  state must have bem
-      ~&(missing-folder+folder !!)
-    ::
-    =-  ?.  (~(has in -) folder)                        ::  result must keep bem
-      ~&([folder+folder missing-from+-] !!)
+    =-  ~?  !(~(has in -) folder)                        ::  result must keep bem
+      result-missing-folder+[folder from=-]
       -
     ::
     %-  silt
@@ -168,8 +166,8 @@
     |=  den=dent
     ::
     ::  match the dent tag and beak exactly, and match the tops of the spurs
-    .=  folder  ::  a dent representing the folder
-    den(s.bem (flop (scag (lent s.bem) (flop s.bem.den))))
+    .=  folder
+    den(s.bem (flop (scag (lent s.bem.folder) (flop s.bem.den))))
   --
 ::
 ++  pin-dephash
@@ -775,7 +773,7 @@
   ++  on-update
     :>  {bem} is at the old revision, {bek} is at the new revision.
     |=  {bem/beam ren/care:clay bek/beak}  ^+  this
-    =/  new  (~(beam-dents-in-dir na gaf.bay) bem ren)
+    =/  new  (~(beam-dents-in-dir na gaf.bay) %beam bem ren)
     ~?  dbg  new-dents+[(en-beam bem) new]
     =/  dos  (downstream-dents new)
     =/  todo  ~(tap in dos)
