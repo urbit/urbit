@@ -79,6 +79,17 @@ div.gram.same:hover div.meta {
   position: absolute;
   z-index: 1;
   margin-left: 1.875rem; }
+  .speech .fat {
+    max-height: 0;
+    transition: max-height .1s ease-in-out;
+    overflow: hidden; }
+  .speech .fat pre {
+    color: #fff; }
+  .speech:hover .fat {
+    max-height: 16rem;
+    overflow: scroll;
+    background-color: #000;
+    color: #fff; }
 
 .exp {
   font-family: 'scp';
@@ -90,17 +101,6 @@ div.gram.same:hover div.meta {
     color: #fff;
     background-color: #000;
     padding: .3rem; }
-  .exp .fat {
-    max-height: 0;
-    transition: max-height .1s ease-in-out;
-    overflow: hidden; }
-  .exp .fat pre {
-    color: #fff; }
-  .exp:hover .fat {
-    max-height: 16rem;
-    overflow: scroll;
-    background-color: #000;
-    color: #fff; }
 
 .comment .speech a.btn {
   background-color: transparent;
