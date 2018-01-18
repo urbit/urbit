@@ -467,7 +467,7 @@
   ++  moat  {p/case q/case r/path}                      ::  change range
   ++  mode  (list {path (unit mime)})                   ::  external files
   ++  mood  {p/care q/case r/path}                      ::  request in desk
-  ++  mool  {p/care q/case r/(set spur)}                ::  requests in desk
+  ++  mool  {p/care q/case r/(set path)}                ::  requests in desk
   ++  nori                                              ::  repository action
     $%  {$& p/soba}                                     ::  delta
         {$| p/@tas}                                     ::  label
@@ -483,7 +483,7 @@
         lat/(map lobe blob)                             ::  data
     ==                                                  ::
   ++  rant                                              ::  response to request
-    $:  p/{p/care q/case r/@tas}                        ::  clade release book
+    $:  p/{p/care q/case r/desk}                        ::  clade release book
         q/path                                          ::  spur
         r/cage                                          ::  data
     ==                                                  ::
