@@ -936,7 +936,7 @@
     ::  and change subscriptions.
     ::
     ::  change tasks are designed to match high-level
-    ::  operations - for instance, we have %ktsg, %mint,
+    ::  operations - for instance, we have %burn, %mint,
     ::  and %move, not just a single delta operation.
     ::  more of these operations will probably be added,
     ::  and invariants enforced at transaction end.
@@ -1008,7 +1008,7 @@
       action                                            ::  change
     ::
     +=  task                                            ::  in request ->$
-      $%  [%ktsg p=ship q=safe]                         ::  destroy rights
+      $%  [%burn p=ship q=safe]                         ::  destroy rights
           [%hail p=ship q=remote]                       ::  remote update
           [%init p=@pG q=arms]                          ::  initialize urbit
           [%meet p=(unit (unit ship)) q=farm]           ::  integrate pki from
