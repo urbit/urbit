@@ -8,7 +8,7 @@
 ::  Here are the structures.  `++raft` is the formal arvo state.  It's also
 ::  worth noting that many of the clay-related structures are defined in zuse.
 ::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |=  pit/vase
 =,  clay
 =>  |%
@@ -331,8 +331,9 @@
       $:  $d                                            ::
   $%  {$flog p/{$crud p/@tas q/(list tank)}}            ::  to %dill
   ==  ==                                                ::
-      $:  $f                                            ::
-  $%  {$exec p/@p q/(unit {beak silk:ford})}                 ::
+      $:  $f                                            ::  to %ford
+  $%  {$exec p/@p q/(unit {beak silk:ford})}            ::  make / kill
+      {$wasp p/@p q/{@uvH ?}}                           ::  depends ask / kill
   ==  ==                                                ::
       $:  $t                                            ::
   $%  {$wait p/@da}                                     ::
@@ -349,8 +350,9 @@
               {$mere p/(each (set path) (pair term tang))}
               {$writ p/riot}                            ::
           ==  ==                                        ::
-              $:  $f                                    ::
-          $%  {$made p/@uvH q/gage:ford}                     ::
+              $:  $f                                    ::  by %ford
+          $%  {$made p/@uvH q/gage:ford}                ::  computed result
+              {$news p/@uvH}                            ::  fresh depends
           ==  ==                                        ::
               $:  $t                                    ::
           $%  {$wake $~}                                ::  timer activate
@@ -2405,6 +2407,7 @@
       =+  dat=p.dat
       =|  don/?                                         ::  keep going
       |%
+      ++  this  .
       ::
       ::  Resolve.  If we're done, produce a result.
       ::
@@ -2434,7 +2437,7 @@
       ::  we're in, and call the appropriate function for that stage.
       ::
       ++  route
-        |=  {sat/term res/(each riot gage:ford)}
+        |=  {sat/term res/(each riot (pair @uvH gage:ford))}
         ^+  +>.$
         ?.  =(sat wat.dat)
           ~|  :*  %hold-your-horses-merge-out-of-order
@@ -2447,12 +2450,12 @@
            !!
         ?+  +<  ~|((crip <[%bad-stage sat ?~(-.res %riot %gage)]>) !!)
           {$ali $& *}       %.(p.res fetched-ali)
-          {$diff-ali $| *}  %.(p.res diffed-ali)
-          {$diff-bob $| *}  %.(p.res diffed-bob)
-          {$merge $| *}     %.(p.res merged)
-          {$build $| *}     %.(p.res built)
+          {$diff-ali $| *}  %.(q.p.res diffed-ali)
+          {$diff-bob $| *}  %.(q.p.res diffed-bob)
+          {$merge $| *}     %.(q.p.res merged)
+          {$build $| *}     %.(q.p.res built)
           {$checkout $| *}  %.(p.res checked-out)
-          {$ergo $| *}      %.(p.res ergoed)
+          {$ergo $| *}      %.(q.p.res ergoed)
         ==
       ::
       ::  Start a merge.
@@ -3047,11 +3050,12 @@
         ==
       ::
       ::  Apply the new commit to our state and, if we need to tell unix about
-      ::  some of the changes, call ++ergo.
+      ::  some of the changes, call ++ergo. Also emit %wasp moves to %ford to
+      ::  make sure the marks stay live.
       ::
       ++  checked-out
-        |=  res/gage:ford
-        ^+  +>
+        |=  {dep/@uvH res/gage:ford}
+        ^+  this
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
           (error:he %checkout-bad-made leaf+"merge checkout failed" p.tay)
@@ -3059,7 +3063,7 @@
         ?:  ?=($| -.can)
           (error:he %checkout p.can)
         ?:  ?=($| -.gon.dat)
-          +>.$
+          this
         =.  let.dom  +(let.dom)
         =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
         =.  ank.dat
@@ -3067,7 +3071,16 @@
           %-  ~(run by (~(uni by bop.dat) p.can))
           |=(cage [(page-to-lobe p q.q) +<])
         =.  ank.dom  ank.dat
-        =>  .(..wake wake)
+        =>  .(..this ^+(this ..this))                   ::  rollback ..this TMI
+        =.  ..wake  wake
+        =.  +>.$
+          %-  emit
+          ^-  move
+          :*  hen  %pass
+              ~[%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout]
+              %f  %wasp  p.bob  dep  &
+          ==
+        ^+  this
         ?~  hez  done:he
         =+  mus=(must-ergo (turn ~(tap by erg.dat) head))
         ?:  =(~ mus)  done:he
@@ -3509,7 +3522,7 @@
     =+  her=(slav %p i.t.t.t.tea)
     =*  sud  i.t.t.t.t.tea
     =*  sat  i.t.t.t.t.t.tea
-    =+  dat=?-(+<.q.hin $writ [%& p.q.hin], $made [%| q.q.hin])
+    =+  dat=?-(+<.q.hin $writ [%& p.q.hin], $made [%| p.q.hin q.q.hin])
     =+  ^-  kan/(unit dome)
         %+  biff  (~(get by fat.ruf) her)
         |=  room
@@ -3538,6 +3551,9 @@
   ::
       $crud
     [[[hen %slip %d %flog +.q.hin] ~] ..^$]
+  ::
+      $news
+    [~ ..^$]
   ::
       $made
     ?~  tea  !!
