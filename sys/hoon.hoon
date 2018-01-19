@@ -273,8 +273,11 @@
 ++  mold
   :>    normalizing gate
   :>
-  :>  actually a type alias for gate.
-  gate
+  :>  a gate that accepts any noun, and validates its shape, producing the
+  :>  input if it fits or a default value if it doesn't.
+  :>
+  :>  examples: * @ud ,[p=time q=?(%a %b)]
+  _|=(* +<)
 ::
 ++  pair
   :>    dual tuple
