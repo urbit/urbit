@@ -4,7 +4,7 @@
 /-  unicode-data
 /+  new-hoon
 /=  case-table
-  /;  |=  a/(list line:unicode-data)
+  /;  |=  a=(list line:unicode-data)
       =,  new-hoon
       |^  %-  build-tree
           %-  flop
@@ -17,7 +17,7 @@
       +|
       ++  build-case-nodes
         :>  raw list of unicode data lines to a compact list of chardata
-        |=  a/(list line:unicode-data)
+        |=  a=(list line:unicode-data)
         ^-  (list case-node:unicode-data)
         =<  out
         ::
@@ -27,7 +27,7 @@
         ::  only the excerpts i was using for testing.
         ::
         %^  foldl:ls  a  *case-fold
-        |=  {c/case-fold l/line:unicode-data}
+        |=  [c=case-fold l=line:unicode-data]
         ^+  c
         =+  state=(line-to-case-state l)
         ?:  (is-adjacent state prev.c)
@@ -45,7 +45,7 @@
         :>  creates an easy to merge form.
         |=  line:unicode-data
         ^-  case-state
-        =/  out/case-state
+        =/  out=case-state
           [code %none [%none ~] [%none ~] [%none ~]]
         ?:  =(code `@c`0)
           =.  case.out  %missing
@@ -72,7 +72,7 @@
         out
       ::
       ++  calculate-offset
-        |=  {src/@c dst/@c}
+        |=  [src=@c dst=@c]
         ^-  case-offset:unicode-data
         ?:  =(src dst)
           [%none ~]
@@ -82,7 +82,7 @@
       ::
       ++  is-adjacent
         :>  is {rhs} a continuation of {lhs}?
-        |=  {lhs/case-state rhs/case-state}
+        |=  [lhs=case-state rhs=case-state]
         ^-  ?
         ?:  (lth point.rhs point.lhs)
           $(lhs rhs, rhs lhs)
@@ -106,7 +106,7 @@
         :>    detects %upper-lower spans.
         :>
         :>  is {lhs} the same as {rhs}, but with opposite case?
-        |=  {lhs/case-state rhs/case-state}
+        |=  [lhs=case-state rhs=case-state]
         ?:  &(=(case.lhs %upper) !=(case.rhs %lower))
           %.n
         ?:  &(=(case.lhs %lower) !=(case.rhs %upper))
@@ -122,19 +122,19 @@
         ==
       ::
       ++  is-upper-lower
-        |=  i/case-state
+        |=  i=case-state
         =(+.+.i [[%none ~] [%add 1] [%none ~]])
       ::
       ++  is-lower-upper
-        |=  i/case-state
+        |=  i=case-state
         =(+.+.i [[%sub 1] [%none ~] [%sub 1]])
       ::
       ++  is-none
-        |=  i/case-state
+        |=  i=case-state
         =(+.+.i [[%none ~] [%none ~] [%none ~]])
       ::
       ++  add-range
-        |=  c/case-fold
+        |=  c=case-fold
         ^+  c
         ?~  start.c
           c
@@ -143,30 +143,30 @@
         ?:  ?&  (gth point.prev.c point.u.start.c)
                 (is-upper-lower u.start.c)
             ==
-          =/  node/case-node:unicode-data
+          =/  node=case-node:unicode-data
             [`@ux`point.u.start.c `@ux`point.prev.c [%uplo ~] [%uplo ~] [%uplo ~]]
           c(out [node out.c])
-        =/  node/case-node:unicode-data
+        =/  node=case-node:unicode-data
           [`@ux`point.u.start.c `@ux`point.prev.c +.+.u.start.c]
         c(out [node out.c])
       ::
       ++  case-fold
         :>  state that's part of the fold which generates the list of case-nodes
         $:  :>  resulting data to pass to treeify.
-            out/(list case-node:unicode-data)
+            out=(list case-node:unicode-data)
             :>  the start of a run of characters; ~ for not active.
-            start/(unit case-state)
+            start=(unit case-state)
             :>  previous character state
-            prev/case-state
+            prev=case-state
         ==
       ::
       ++  case-state
         :>  a temporary model which we compress later in a second pass.
-        $:  point/@c
-            case/case-class
-            upper/case-offset:unicode-data
-            lower/case-offset:unicode-data
-            title/case-offset:unicode-data
+        $:  point=@c
+            case=case-class
+            upper=case-offset:unicode-data
+            lower=case-offset:unicode-data
+            title=case-offset:unicode-data
         ==
       ::
       ++  case-class
@@ -184,7 +184,7 @@
       :>    builds a binary search tree out of the list
       +|
       ++  build-tree
-        |=  a/(list case-node:unicode-data)
+        |=  a=(list case-node:unicode-data)
         ^-  case-tree:unicode-data
         ::  there's probably a bottom up approach that doesn't require walking
         ::  a list over and over again.
@@ -205,13 +205,13 @@
 ::
 |%
 ++  transform
-  |=  {a/tape fun/$-(@c @c)}
+  |=  [a=tape fun=$-(@c @c)]
   %-  tufa
   (turn (tuba a) fun)
 ::
 ++  to-upper
   :>  returns the uppercase of unicode codepoint {a}
-  |=  a/@c
+  |=  a=@c
   ^-  @c
   ::  special case ascii to not perform map lookup.
   ?:  (lte a max-ascii)
@@ -222,10 +222,10 @@
 ::
 ++  to-lower
   :>  returns the lowercase of unicode codepoint {a}
-  |=  a/@c
+  |=  a=@c
   ^-  @c
   ?:  (lte a max-ascii)
-    ?:  &((get a 'A') (lte a 'Z'))
+    ?:  &((gte a 'A') (lte a 'Z'))
       (add 32 a)
     a
   (apply-table a case-table %lower)
@@ -235,7 +235,7 @@
   :>
   :>  this recursively walks the case tree {table}. if it finds an entry which
   :>  matches on {a}, it will apply the offset. otherwise, returns {a}.
-  |=  {a/@c table/case-tree:unicode-data type/?($upper $lower $title)}
+  |=  [a=@c table=case-tree:unicode-data type=?($upper $lower $title)]
   ^-  @c
   ?~  table
     a
@@ -254,7 +254,7 @@
 ::
 ++  apply-offset
   :>  applies an character offset to {a}.
-  |=  {a/@c type/?($upper $lower $title) offset/case-offset:unicode-data}
+  |=  [a=@c type=?($upper $lower $title) offset=case-offset:unicode-data]
   ^-  @c
   ?-  offset
     {$add *}   (add a a.offset)
@@ -275,8 +275,8 @@
 ::  part 3: generator
 ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {n/tape $~}
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [n=tape $~]
         $~
     ==
 :-  %tape  (transform n to-upper)

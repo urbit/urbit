@@ -6,14 +6,15 @@
 ++  grab
   :>  converts from mark to unicode-data.
   |%
-  ++  mime  |=({* a/octs} (txt (to-wain q.a)))     ::  XX mark translation
+  ++  mime  |=([* a=octs] (txt (to-wain q.a)))     ::  XX mark translation
   ++  txt
-    |^  |=  a/wain
+    |^  |=  a=wain
         ^+  all
-        %+  turn  a
-        |=  b/cord
-        ^-  line:unicode-data
-        (rash b line)
+        %+  murn  a
+        |=  b=cord
+        ^-  (unit line:unicode-data)
+        ?~  b  ~
+        `(rash b line)
     ::
     :>  parses a single line of the unicode data file.
     ++  line
@@ -38,7 +39,7 @@
     :>  parses a single name or comment string.
     ++  name-string
       %+  cook
-        |=(a/tape a)
+        |=(a=tape a)
       (star ;~(less sem prn))
     ::
     :>  parses a unicode general category abbreviation to symbol
@@ -114,7 +115,7 @@
               (stag ~ (ifix [gal ;~(plug gar ace)] decomp-tag))
               (easy ~)
             ==
-            (cook |=(a/(list @c) a) (most ace hex))
+            (cook |=(a=(list @c) a) (most ace hex))
           ==
         ::  no decomposition information
         (easy ~)
@@ -142,7 +143,7 @@
     ::
     ++  string-number
       %+  cook
-        |=(a/tape a)
+        |=(a=tape a)
       (star ;~(pose nud fas hep))
     ::
     ++  yes-or-no
