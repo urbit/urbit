@@ -22,7 +22,7 @@
         hex                       :: code/@c        codepoint in hex format
         name-string               :: name/tape      character name
         general-category          :: gen/general    type of character
-        (bass 10 (plus dit))      :: can/@ud        canonical combining class 
+        (bass 10 (plus dit))      :: can/@ud        canonical combining class
         bidi-category             :: bi/bidi        bidirectional category
         decomposition-mapping     :: de/decomp      decomposition mapping
       ::
@@ -45,7 +45,6 @@
       %+  cook
         |=(a=tape a)
       (star ;~(less sem prn))
-      :: (star ;~(pose alp (mask " <>()")))
     ::
     :>  parses a unicode general category abbreviation to symbol
     ++  general-category
@@ -57,7 +56,6 @@
       %+  sear  (soft bidi:unicode-data)
       :(cook crip cass (star hig))
     ::
-    ::  TODO: This seems to be where the nest-fail is. There's an extra @ here?
     ++  decomposition-mapping
       %-  punt  :: optional
       :: a tag and a list of characters to decompose to
@@ -68,7 +66,6 @@
     ::
     ++  decomp-tag
       %+  sear  (soft decomp-tag:unicode-data)
-      %+  cook  |=(a=term ?+(a a $nobreak %no-break))  ::REVIEW or just change the type
       :(cook crip cass (star alf))
     ::
     ++  string-number

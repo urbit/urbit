@@ -1,3 +1,6 @@
+::  to use, download UnicdoeData.txt and place it in `%/lib/unicode-data/txt`.
+::
+::::
 ::
 ::  part 1: parse the file into {uppers}
 ::

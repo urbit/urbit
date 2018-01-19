@@ -5,23 +5,23 @@
 ++  line
   :>    an individual codepoint definition
   :>
-  $:  code/@c               :< codepoint in hexadecimal format
-      name/tape             :< character name
-      gen/general           :< type of character this is
+  $:  code=@c               :<  codepoint in hexadecimal format
+      name=tape             :<  character name
+      gen=general           :<  type of character this is
       :>  canonical combining class for ordering algorithms
-      can/@ud          
-      bi/bidi               :< bidirectional category of this character
-      de/decomp             :< character decomposition mapping
-      ::  todo: decimal/digit/numeric need to be parsed.                    
-      decimal/tape          :< decimal digit value (or ~)
-      digit/tape            :< digit value, covering non decimal radix forms
-      numeric/tape          :< numeric value, including fractions
-      mirrored/?            :< whether char is mirrored in bidirectional text
-      old-name/tape         :< unicode 1.0 compatibility name
-      iso/tape              :< iso 10646 comment field
-      up/(unit @c)          :< uppercase mapping codepoint
-      low/(unit @c)         :< lowercase mapping codepoint
-      title/(unit @c)       :< titlecase mapping codepoint
+      can=@ud
+      bi=bidi               :<  bidirectional category of this character
+      de=decomp             :<  character decomposition mapping
+      ::  todo: decimal/digit/numeric need to be parsed.
+      decimal=tape          :<  decimal digit value (or ~)
+      digit=tape            :<  digit value, covering non decimal radix forms
+      numeric=tape          :<  numeric value, including fractions
+      mirrored=?            :<  whether char is mirrored in bidirectional text
+      old-name=tape         :<  unicode 1.0 compatibility name
+      iso=tape              :<  iso 10646 comment field
+      up=(unit @c)          :<  uppercase mapping codepoint
+      low=(unit @c)         :<  lowercase mapping codepoint
+      title=(unit @c)       :<  titlecase mapping codepoint
   ==
 ::
 ++  general
@@ -99,7 +99,7 @@
 ++  decomp-tag
   :>  tag that describes the type of a character decomposition.
   $?  $font      :<  a font variant
-      $no-break  :<  a no-break version of a space or hyphen
+      $nobreak   :<  a no-break version of a space or hyphen
       $initial   :<  an initial presentation form (arabic)
       $medial    :<  a medial presentation form (arabic)
       $final     :<  a final presentation form (arabic)
@@ -124,24 +124,24 @@
 ++  case-offset
   :>  case offsets can be in either direction
   $%  :>  add {a} to get the new character
-      {$add a/@u}
+      [%add a=@u]
       :>  subtract {a} to get the new character
-      {$sub s/@u}
+      [%sub s=@u]
       :>  take no action; return self
-      {$none $~}
+      [%none $~]
       :>  represents series of alternating uppercase/lowercase characters
-      {$uplo $~}
+      [%uplo $~]
   ==
 ::
 ++  case-node
   :>    a node in a case-tree.
   :>
   :>  represents a range of
-  $:  start/@ux
-      end/@ux
-      upper/case-offset
-      lower/case-offset
-      title/case-offset
+  $:  start=@ux
+      end=@ux
+      upper=case-offset
+      lower=case-offset
+      title=case-offset
   ==
 ::
 ++  case-tree
