@@ -1,11 +1,13 @@
 /-  gh
-/+  gh-parse, old-zuse
+/+  gh-parse, httr-to-json, old-zuse
 =,  mimes:html
 =,  old-zuse
 |_  issue/issue:gh
 ++  grab
   |%
   ++  noun  issue:gh
+  ++  httr  (cork httr-to-json json)
+  ++  json  issue:gh-parse
   --
 ++  grow
   |%

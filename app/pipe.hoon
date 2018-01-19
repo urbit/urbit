@@ -1,10 +1,10 @@
-/+  talk
+/+  hall
 ::
 =>  |%
     ++  move  (pair bone card)
     ++  card
       $%  {$peel wire dock mark path}
-          {$poke wire dock $talk-command command:talk}
+          {$poke wire dock $hall-command command:hall}
       ==
     --
 ::
@@ -52,11 +52,11 @@
   :_  ~
   ~&  [%peeling app source station]
   :*  ost.hid  %peel  [%subscribe app station source]
-      [our.hid app]  %talk-speeches  source
+      [our.hid app]  %hall-speeches  source
   ==
 ::
-++  diff-talk-speeches
-  |=  {way/wire speeches/(list speech:talk)}
+++  diff-hall-speeches
+  |=  {way/wire speeches/(list speech:hall)}
   ^-  {(list move) _+>.$}
   ?>  ?=({$subscribe @ @ *} way)
   =+  app=(slav %tas i.t.way)
@@ -70,15 +70,15 @@
     [~ +>.$]
   :_  +>.$  :_  ~
   :*  ost.hid  %poke  [%relay app station source]
-      [our.hid %talk]  %talk-command
+      [our.hid %hall]  %hall-command
       %publish
-      |-  ^-  (list thought:talk)
+      |-  ^-  (list thought:hall)
       ?~  speeches
         ~
       :_  $(speeches t.speeches, eny.hid (shax (cat 3 %pipe eny.hid)))
       :*  `@uvH`(end (sub 'H' 'A') 1 eny.hid)
-          [[[%& our.hid station] *envelope:talk %pending] ~ ~]
-          now.hid  *(set flavor:talk)  i.speeches
+          [[[%& our.hid station] *envelope:hall %pending] ~ ~]
+          now.hid  *(set flavor:hall)  i.speeches
       ==
   ==
 ::

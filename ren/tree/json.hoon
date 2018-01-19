@@ -19,11 +19,11 @@
 ++  plist   (list {term $@(mark plist)})
 ++  query
   $%  {$kids p/(list query)}
-      {$ktts $t}
+      {$name $t}
       {$path $t}
       {$spur $t}
   ::
-      {$dtls $t}
+      {$bump $t}
       {$beak $t}
       {$comt $j}
       {$plan $j}
@@ -56,11 +56,11 @@
   |=  a/query
   :-  -.a
   ?-  -.a
-    $ktts  (from-type +.a ?^(s.bem i.s.bem q.bem))
+    $name  (from-type +.a ?^(s.bem i.s.bem q.bem))
     $beak  (from-type +.a (crip (spud (en-beam bem(s /)))))
     $path  (from-type +.a (crip (spud (flop s.bem))))
     $spur  (from-type +.a (crip (spud s.bem)))
-    $dtls  (from-type +.a bump.dat)
+    $bump  (from-type +.a bump.dat)
     $plan  (from-type +.a plan.dat)
     $comt  (from-type +.a comt.dat)
     $head  (from-type +.a head.dat)
