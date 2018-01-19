@@ -842,59 +842,30 @@
         (blub hen)
       (blab hen p.rav u.u.ver)
     ::
-    ::  for %next, get the data at the specified case, then go forward in time
-    ::  until we find a change. if we find no change, store request for later.
-        $next
-      =+  old=(aver p.rav)
-      ::  if we know nothing now, store the request for later answering.
-      ?:  ?=($~ old)  (duce -.rav p.rav old)
-      =+  yon=+((need (case-to-aeon:ze q.p.rav)))
-      |-  ^+  +>.^$
-      ?:  (gth yon let.dom)
-        (duce -.rav p.rav old)
-      =+  new=(aver p.rav(q [%ud yon]))
-      ?~  new
-        ~&  [%oh-no rave=rav aeon=yon letdom=let.dom]
-        +>.^$
-      ?~  u.old
-        ?~  u.new  $(yon +(yon))                        ::  not added
-        (blab hen p.rav u.u.new)                        ::  added
-      ?~  u.new
-        (blab hen p.rav %& %null [%atom %n ~] ~)        ::  removed, only her %x
-      ?:  (equivalent-data:ze u.u.old u.u.new)
-        $(yon +(yon))                                   ::  unchanged
-      (blab hen p.rav u.u.new)                          ::  changed
-    ::
-        $mult
+    ::  for %mult and %next, get the data at the specified case, then go forward
+    ::  in time until we find a change (as long as we have no unknowns).
+    ::  if we find no change, store request for later.
+    ::  %next is just %mult with one path, so we pretend %next = %mult here.
+        ?($next $mult)
+      |^
       =+  aey=(case-to-aeon:ze q.p.rav)
       ::  if the requested case is in the future, we can't know anything yet.
-      ?~  aey  (duce -.rav p.rav ~ ~ ~)
-      =/  old
-        %-  ~(gas by *(map path (unit cach)))
-        %+  turn  ~(tap by r.p.rav)
-        |=  p/path
-        ^-  (pair path (unit cach))
-        [p (aver p.p.rav q.p.rav p)]
-      =+  hav=|=({p/path c/(unit cach)} ?=(^ c))
+      ?~  aey  (store ~ ~ ~)
+      =+  old=(read-all-at q.p.rav)
       =+  yon=+((need (case-to-aeon:ze q.p.rav)))
-      |-  ^+  +>.^$
-      ::  if we're need future revisions to look for change, wait.
+      |-  ^+  ..start-request
+      ::  if we need future revisions to look for change, wait.
       ?:  (gth yon let.dom)
-        (duce -.rav p.rav `yon old ~)
-      =/  new
-        %-  ~(gas by *(map path (unit cach)))
-        %+  turn  ~(tap by r.p.rav)
-        |=  p/path
-        ^-  (pair path (unit cach))
-        [p (aver p.p.rav q.p.rav p)]
+        (store `yon old ~)
+      =+  new=(read-all-at [%ud yon])
       ::  if we don't know everything now, store the request for later.
-      ?.  &((levy ~(tap by old) hav) (levy ~(tap by new) hav))
-        (duce -.rav p.rav `yon old new)
+      ?.  &((levy ~(tap by old) know) (levy ~(tap by new) know))
+        (store `yon old new)
       ::  if we do know everything now, compare old and new.
       ::  if there are differences, send response. if not, try next aeon.
       =;  res
-        ?~  res  $(old new, yon +(yon))
-        (blas hen res)
+        ?~  res  $(yon +(yon))
+        (respond res)
       %+  roll  ~(tap by old)
       |=  $:  {pax/path ole/(unit cach)}
               res/(map mood (each cage lobe))
@@ -911,6 +882,41 @@
         `[mod [%& %null [%atom %n ~] ~]]                ::  deleted
       ?:  (equivalent-data:ze u.u.neu u.u.ole)  ~       ::  unchanged
       `[mod u.u.neu]                                    ::  changed
+      ::
+      ++  store                                         ::  check again later
+        |=  $:  nex/(unit aeon)
+                old/(map path (unit cach))
+                new/(map path (unit cach))
+            ==
+        ^+  ..start-request
+        ?:  ?=($mult -.rav)
+          (duce -.rav p.rav nex old new)
+        %^  duce  -.rav  p.rav
+        =+  ole=~(tap by old)
+        ?>  (lte (lent ole) 1)
+        ?~  ole  ~
+        q:(snag 0 `(list (pair path (unit cach)))`ole)
+      ::
+      ++  respond                                       ::  send changes
+        |=  res/(map mood (each cage lobe))
+        ^+  ..start-request
+        ?:  ?=($mult -.rav)  (blas hen res)
+        ?>  ?=({* $~ $~} res)
+        (blab hen n.res)
+      ::
+      ++  know  |=({p/path c/(unit cach)} ?=(^ c))      ::  know awout file
+      ::
+      ++  read-all-at                                   ::  initialize cache
+        |=  cas/case
+        %-  ~(gas by *(map path (unit cach)))
+        =/  pax/(set path)
+          ?:  ?=($mult -.rav)  r.p.rav
+          [r.p.rav ~ ~]
+        %+  turn  ~(tap by pax)
+        |=  p/path
+        ^-  (pair path (unit cach))
+        [p (aver p.p.rav cas p)]
+      --
     ::
         $many
       =+  nab=(case-to-aeon:ze p.q.rav)
@@ -1781,40 +1787,24 @@
         $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (balk-all q.i.xiq u.vid p.p.i.xiq))
     ::
-        $next
-      =*  mun  p.p.i.xiq
-      =*  old  q.p.i.xiq
-      =/  mod  mun(q [%ud let.dom])
-      ::  we either update the state (to include a response to send),
-      ::  or add the request back into the waiting list.
-      =;  nex/(each (each cage lobe) _xaq)
-        ?:  ?=($& -.nex)
-          $(xiq t.xiq, ..wake (blab-all q.i.xiq mod p.nex))
-        $(xiq t.xiq, xaq p.nex)
-      ::  if we don't have an existing cache of the old version,
-      ::  try to get it now.
-      ?~  old
-        |+[i.xiq(q.p (aver mun)) xaq]
-      =+  new=(aver mod)
-      ?~  new
-        ~&  [%oh-noes old=mun mood=mod letdom=let.dom]
-        |+xaq
-      ?~  u.old
-        ?~  u.new  |+[i.xiq xaq]                        ::  not added
-        &+u.u.new                                       ::  added
-      ?~  u.new
-        &+[%& %null [%atom %n ~] ~]                     ::  deleted
-      ?:  (equivalent-data:ze u.u.old u.u.new)
-        |+[i.xiq xaq]                                   ::  unchanged
-      &+u.u.new                                         ::  changed
-    ::
-        $mult
+    ::  %next is just %mult with one path, so we pretend %next = %mult here.
+        ?($next $mult)
       ::  because %mult requests need to wait on multiple files for each
       ::  revision that needs to be checked for changes, we keep two cache maps.
       ::  {old} is the revision at {(dec yon)}, {new} is the revision at {yon}.
       ::  if we have no {yon} yet, that means it was still unknown last time
       ::  we checked.
-      =*  rov  p.i.xiq
+      =*  vor  p.i.xiq
+      |^
+      =/  rov/rove
+        ?:  ?=($mult -.vor)  vor
+        :*  %mult
+            p.vor(r [r.p.vor ~ ~])
+            `let.dom
+            [[r.p.vor q.vor] ~ ~]
+            ~
+        ==
+      ?>  ?=($mult -.rov)
       =*  mol  p.rov
       =*  yon  q.rov
       =*  old  r.rov
@@ -1822,8 +1812,8 @@
       ::  we will either respond, or store the maybe updated request.
       =;  res/(each (map mood (each cage lobe)) rove)
           ?:  ?=($& -.res)
-            $(xiq t.xiq, ..wake (blas-all q.i.xiq p.res))
-          $(xiq t.xiq, xaq [i.xiq(p p.res) xaq])
+            (respond p.res)
+          (store p.res)
       |-  ::  so that we can retry for the next aeon if possible/needed.
       ::  if we don't have an aeon yet, see if we have one now.
       ?~  yon
@@ -1832,34 +1822,24 @@
         ?~  aey  |+rov
         ::  if we do, update the request and retry.
         $(rov [-.rov mol `+(u.aey) ~ ~])
-      =+  hav=|=({p/path c/(unit cach)} ?=(^ c))
-      ::  create a gate that tries to fill the unknown data into a cache map.
-      =/  fill
-        =/  d  ::  for easier iteraton.
-          %-  ~(gas by *(map path (unit cach)))
-          (turn ~(tap in r.mol) |=(p/path [p ~]))
-        |=  {m/(map path (unit cach)) c/case}
-        %-  ~(urn by ?~(m d m))
-        |=  {p/path o/(unit cach)}
-        ?^(o o (aver p.mol c p))
       ::  if old isn't complete, try fillin in the gaps.
-      =?  old  |(?=($~ old) !(levy ~(tap by `(map path (unit cach))`old) hav))
-        (fill old [%ud (dec u.yon)])
+      =?  old  |(?=($~ old) !(levy ~(tap by `(map path (unit cach))`old) know))
+        (read-unknown mol(q [%ud (dec u.yon)]) old)
       ::  if the next aeon we want to compare is in the future, wait again.
       =+  aey=(case-to-aeon:ze [%ud u.yon])
       ?~  aey  |+rov
       ::  if new isn't complete, try filling in the gaps.
-      =?  new  |(?=($~ new) !(levy ~(tap by `(map path (unit cach))`new) hav))
-        (fill new [%ud u.yon])
+      =?  new  |(?=($~ new) !(levy ~(tap by `(map path (unit cach))`new) know))
+        (read-unknown mol(q [%ud u.yon]) new)
       ::  if they're still not both complete, wait again.
-      ?.  ?&  (levy ~(tap by old) hav)
-              (levy ~(tap by new) hav)
+      ?.  ?&  (levy ~(tap by old) know)
+              (levy ~(tap by new) know)
           ==
         |+rov
       ::  if there are any changes, send response. if none, move onto next aeon.
       =;  res
         ?^  res  &+res
-        $(rov [-.rov mol `+(u.yon) new ~])
+        $(rov [-.rov mol `+(u.yon) old ~])
       %+  roll  ~(tap by old)
       |=  $:  {pax/path ole/(unit cach)}
               res/(map mood (each cage lobe))
@@ -1876,6 +1856,36 @@
         `[mod [%& %null [%atom %n ~] ~]]                ::  deleted
       ?:  (equivalent-data:ze u.u.neu u.u.ole)  ~       ::  unchanged
       `[mod u.u.neu]                                    ::  changed
+      ::
+      ++  store                                         ::  check again later
+        |=  rov/rove
+        ^+  ..wake
+        =-  ^^$(xiq t.xiq, xaq [i.xiq(p -) xaq])
+        ?>  ?=($mult -.rov)
+        ?:  ?=($mult -.vor)  rov
+        ?>  ?=({* $~ $~} r.rov)
+        [%next p.rov(r p.n.r.rov) q.n.r.rov]
+      ::
+      ++  respond                                       ::  send changes
+        |=  res/(map mood (each cage lobe))
+        ^+  ..wake
+        ::NOTE  want to use =-, but compiler bug?
+        ?:  ?=($mult -.vor)
+          ^^$(xiq t.xiq, ..wake (blas-all q.i.xiq res))
+        ?>  ?=({* $~ $~} res)
+        ^^$(xiq t.xiq, ..wake (blab-all q.i.xiq n.res))
+      ::
+      ++  know  |=({p/path c/(unit cach)} ?=(^ c))      ::  know awout file
+      ::
+      ++  read-unknown                                  ::  fill in the blanks
+        |=  {mol/mool hav/(map path (unit cach))}
+        %.  |=  {p/path o/(unit cach)}
+            ?^(o o (aver p.mol q.mol p))
+        =-  ~(urn by -)
+        ?^  hav  hav
+        %-  ~(gas by *(map path (unit cach)))
+        (turn ~(tap in r.mol) |=(p/path [p ~]))
+      --
     ::
         $many
       =+  mot=`moat`q.p.i.xiq
