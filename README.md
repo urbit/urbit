@@ -125,6 +125,18 @@ instructions that explain what `nix-build` commands to run.
 [nix]: http://nixos.org/nix/
 [nixpkgs]: http://nixos.org/nixpkgs/
 
+## Updating package versions
+
+Each build recipe in nixcrpkgs specifies a version number for the software that it builds.  It is relatively easy to update the recipes even if you have not worked with Nix before.  The general procedure is:
+
+1) Find the build recipe you want to update.  For example, if you wanted to update the version of GCC used to build Linux programs, you would update the build recipe in `linux/gcc/default.nix`.
+2) Find the part of the build recipe where the software sources are downloaded from the internet.  It is usually a `fetchurl` command with two parameters: `url` and `sha256`.  The `url` parameter usually refers to a version string defined nearby, so update that version string and/or the `url` parameter as desired.
+3) In a shell, run `nix-prefetch-url URL`, where URL is the new URL specified in your modified build recipe with all version variables fully expanded).  This command will download the URL you specified, store it in the Nix store, and output the hash of it in the proper format for Nix build recipes.
+3) Update the `sha256` hash string in the build recipe by replacing it with the hash that was printed in the output of `nix-prefetch-url`.  Updating the hash in the build recipe is important: Nix uses it to determine whether you already downloaded the right file, so if you don't update the hash then Nix might use the wrong file (e.g. an older version of the software that you downloaded earlier).
+4) Run the usual `nix-build` command that you use to build your software.  For example, you could go to the top-level directory of nixcrpkgs and run `nix-build -A rpi.hello` to build a "Hello world" program for the Raspberry Pi, or you could run `nix-build -A rpi.gcc` to just build the cross-compiler.
+5) Fix any error messages that happen, one at a time.  (Tip: to make a `.patch` file, run `diff -ur old new` where `old` and `new` are directories that contain the unpatched and patched versions of the source code, respectively.)
+6) Once things are working, consider publishing your work on Github so others can benefit from what you figured out.
+
 
 ## Maintaining the nixcrpkgs system
 
