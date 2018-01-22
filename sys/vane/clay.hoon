@@ -270,15 +270,15 @@
 ::  Like a ++rave but with caches of current versions for %next and %many.
 ::  Generally used when we store a request in our state somewhere.
 ::
-++  cach  (unit (each cage lobe))                       ::  cached result
+++  cach  (unit (unit (each cage lobe)))                ::  cached result
 ++  rove                                                ::  stored request
           $%  {$sing p/mood}                            ::  single request
-              {$next p/mood q/(unit cach)}              ::  next version
+              {$next p/mood q/cach}                     ::  next version
               $:  $mult                                 ::  next version of any
                   p/mool                                ::  original request
                   q/(unit aeon)                         ::  checking for change
-                  r/(map path (unit cach))              ::  old version
-                  s/(map path (unit cach))              ::  new version
+                  r/(map path cach)                     ::  old version
+                  s/(map path cach)                     ::  new version
               ==
               {$many p/? q/moat r/(map path lobe)}      ::  change range
           ==                                            ::
@@ -864,7 +864,7 @@
         ?~  res  $(yon +(yon))
         (respond res)
       %+  roll  ~(tap by old)
-      |=  $:  {pax/path ole/(unit cach)}
+      |=  $:  {pax/path ole/cach}
               res/(map mood (each cage lobe))
           ==
       =+  neu=(~(got by new) pax)
@@ -882,8 +882,8 @@
       ::
       ++  store                                         ::  check again later
         |=  $:  nex/(unit aeon)
-                old/(map path (unit cach))
-                new/(map path (unit cach))
+                old/(map path cach)
+                new/(map path cach)
             ==
         ^+  ..start-request
         ?:  ?=($mult -.rav)
@@ -892,7 +892,7 @@
         =+  ole=~(tap by old)
         ?>  (lte (lent ole) 1)
         ?~  ole  ~
-        q:(snag 0 `(list (pair path (unit cach)))`ole)
+        q:(snag 0 `(list (pair path cach))`ole)
       ::
       ++  respond                                       ::  send changes
         |=  res/(map mood (each cage lobe))
@@ -901,17 +901,17 @@
         ?>  ?=({* $~ $~} res)
         (blab hen n.res)
       ::
-      ++  know  |=({p/path c/(unit cach)} ?=(^ c))      ::  know awout file
+      ++  know  |=({p/path c/cach} ?=(^ c))             ::  know about file
       ::
-      ++  read-all-at                                   ::  initialize cache
+      ++  read-all-at                                   ::  files at case, maybe
         |=  cas/case
-        %-  ~(gas by *(map path (unit cach)))
+        %-  ~(gas by *(map path cach))
         =/  pax/(set path)
           ?:  ?=($mult -.rav)  r.p.rav
           [r.p.rav ~ ~]
         %+  turn  ~(tap by pax)
         |=  p/path
-        ^-  (pair path (unit cach))
+        ^-  (pair path cach)
         [p (aver p.p.rav cas p)]
       --
     ::
@@ -1819,14 +1819,14 @@
         ?~  aey  |+rov
         ::  if we do, update the request and retry.
         $(rov [-.rov mol `+(u.aey) ~ ~])
-      ::  if old isn't complete, try fillin in the gaps.
-      =?  old  |(?=($~ old) !(levy ~(tap by `(map path (unit cach))`old) know))
+      ::  if old isn't complete, try filling in the gaps.
+      =?  old  |(?=($~ old) !(levy ~(tap by `(map path cach)`old) know))
         (read-unknown mol(q [%ud (dec u.yon)]) old)
       ::  if the next aeon we want to compare is in the future, wait again.
       =+  aey=(case-to-aeon:ze [%ud u.yon])
       ?~  aey  |+rov
       ::  if new isn't complete, try filling in the gaps.
-      =?  new  |(?=($~ new) !(levy ~(tap by `(map path (unit cach))`new) know))
+      =?  new  |(?=($~ new) !(levy ~(tap by `(map path cach)`new) know))
         (read-unknown mol(q [%ud u.yon]) new)
       ::  if they're still not both complete, wait again.
       ?.  ?&  (levy ~(tap by old) know)
@@ -1838,7 +1838,7 @@
         ?^  res  &+res
         $(rov [-.rov mol `+(u.yon) old ~])
       %+  roll  ~(tap by old)
-      |=  $:  {pax/path ole/(unit cach)}
+      |=  $:  {pax/path ole/cach}
               res/(map mood (each cage lobe))
           ==
       =+  neu=(~(got by new) pax)
@@ -1872,15 +1872,15 @@
         ?>  ?=({* $~ $~} res)
         ^^$(xiq t.xiq, ..wake (blab-all q.i.xiq n.res))
       ::
-      ++  know  |=({p/path c/(unit cach)} ?=(^ c))      ::  know awout file
+      ++  know  |=({p/path c/cach} ?=(^ c))             ::  know about file
       ::
       ++  read-unknown                                  ::  fill in the blanks
-        |=  {mol/mool hav/(map path (unit cach))}
-        %.  |=  {p/path o/(unit cach)}
+        |=  {mol/mool hav/(map path cach)}
+        %.  |=  {p/path o/cach}
             ?^(o o (aver p.mol q.mol p))
         =-  ~(urn by -)
         ?^  hav  hav
-        %-  ~(gas by *(map path (unit cach)))
+        %-  ~(gas by *(map path cach))
         (turn ~(tap in r.mol) |=(p/path [p ~]))
       --
     ::
