@@ -391,7 +391,7 @@
           {$ogre p/@tas}                                ::  delete mount point
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
-          {$wris p/(set rant)}                          ::  responses
+          {$wris p/case p/(set path)}                   ::  responses
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$boat $~}                                    ::  pier rebooted

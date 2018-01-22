@@ -596,14 +596,11 @@
     ==
   ::
   ++  blas
-    |=  {hen/duct das/(map mood (each cage lobe))}
+    |=  {hen/duct das/(set mood)}
     ^+  +>
-    =-  (emit hen %give %wris -)
-    %-  ~(run in das)
-    |=  {mun/mood dat/(each cage lobe)}
-    ~|  %lobe-unsupported-tmp
-    ?>  ?=($& -.dat)
-    [[p.mun q.mun syd] r.mun p.dat]
+    ?>  ?=(^ das)
+    =-  (emit hen %give %wris q.n.das -)
+    (~(run in `(set mood)`das) |=(m/mood r.m))
   ::
   ::  Give next step in a subscription.
   ::
@@ -900,7 +897,7 @@
       ++  respond                                       ::  send changes
         |=  res/(map mood (each cage lobe))
         ^+  ..start-request
-        ?:  ?=($mult -.rav)  (blas hen res)
+        ?:  ?=($mult -.rav)  (blas hen ~(key by res))
         ?>  ?=({* $~ $~} res)
         (blab hen n.res)
       ::
@@ -1871,7 +1868,7 @@
         ^+  ..wake
         ::NOTE  want to use =-, but compiler bug?
         ?:  ?=($mult -.vor)
-          ^^$(xiq t.xiq, ..wake (blas-all q.i.xiq res))
+          ^^$(xiq t.xiq, ..wake (blas-all q.i.xiq ~(key by res)))
         ?>  ?=({* $~ $~} res)
         ^^$(xiq t.xiq, ..wake (blab-all q.i.xiq n.res))
       ::
