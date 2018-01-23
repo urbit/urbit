@@ -381,7 +381,8 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$dirk p/@tas}                                ::  mark mount dirty
+      $%  {$cruz cez/(map @tas crew)}                   ::  permission groups
+          {$dirk p/@tas}                                ::  mark mount dirty
           {$ergo p/@tas q/mode}                         ::  version update
           {$hill p/(list @tas)}                         ::  mount points
           {$mack p/(unit tang)}                         ::  ack
@@ -389,12 +390,15 @@
           {$mere p/(each (set path) (pair term tang))}  ::  merge result
           {$note p/@tD q/tank}                          ::  debug message
           {$ogre p/@tas}                                ::  delete mount point
+          {$rule own/? rul/rule}                        ::  node permission
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
           {$wris p/case p/(set path)}                   ::  responses
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$boat $~}                                    ::  pier rebooted
+          {$crew $~}                                    ::  permission groups
+          {$cred nom/@ta cew/crew}                      ::  set permission group
           {$drop p/@p q/desk}                           ::  cancel pending merge
           {$info p/@p q/desk r/nori}                    ::  internal edit
           {$init p/@p}                                  ::  report install
@@ -403,6 +407,7 @@
           {$mont p/desk q/beam}                         ::  mount to unix
           {$dirk p/desk}                                ::  mark mount dirty
           {$ogre p/$@(desk beam)}                       ::  delete mount point
+          {$perm des/desk pax/path rul/(unit rule)}     ::  change permissions
           {$warp p/sock q/riff}                         ::  file request
           {$wegh $~}                                    ::  report memory
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
@@ -423,13 +428,14 @@
     $%  {$delta p/lobe q/{p/mark q/lobe} r/page}        ::  delta on q
         {$direct p/lobe q/page}                         ::  immediate
     ==                                                  ::
-  ++  care  ?($d $u $v $w $x $y $z)                     ::  clay submode
+  ++  care  ?($d $p $u $v $w $x $y $z)                  ::  clay submode
   ++  case                                              ::  ship desk case spur
     $%  {$da p/@da}                                     ::  date
         {$tas p/@tas}                                   ::  label
         {$ud p/@ud}                                     ::  number
     ==                                                  ::
   ++  coop  (unit ares)                                 ::  e2e ack
+  ++  crew  (set ship)                                  ::  permissions group
   ++  dome                                              ::  project state
     $:  ank/ankh                                        ::  state
         let/@ud                                         ::  top id
@@ -495,6 +501,7 @@
     ==                                                  ::
   ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
   ++  riot  (unit rant)                                 ::  response+complete
+  ++  rule  {mod/?($black $white) who/(set whom)}       ::  node permission
   ++  rump  {p/care q/case r/@tas s/path}               ::  relative path
   ++  saba  {p/ship q/@tas r/moar s/dome}               ::  patch+merge
   ++  soba  (list {p/path q/miso})                      ::  delta
@@ -507,6 +514,7 @@
         {$| p/(list a) q/(list a)}                      ::  p -> q[chunk]
     ==                                                  ::
   ++  urge  |*(a/mold (list (unce a)))                  ::  list change
+  ++  whom  (each ship @ta)                             ::  ship or named crew
   ++  yaki                                              ::  commit
     $:  p/(list tako)                                   ::  parents
         q/(map path lobe)                               ::  namespace

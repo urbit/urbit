@@ -43,13 +43,13 @@
 ::
 ::  Type of request.
 ::
-::  %d produces a set of desks, %u checks for existence, %v produces a ++dome of
-::  all desk data, %w with a time or label case gets the aeon at that case, %w
-::  with a number case is not recommended, %x gets file contents, %y gets a
-::  directory listing, and %z gets a recursive hash of the file contents and
-::  children.
+::  %d produces a set of desks, %p gets file permissions, %u checks for
+::  existence, %v produces a ++dome of all desk data, %w with a time or label
+::  case gets the aeon at that case, %w with a number case is not recommended,
+::  %x gets file contents, %y gets a directory listing, and %z gets a recursive
+::  hash of the file contents and children.
 ::
-:: ++  care  ?($d $u $v $w $x $y $z)
+:: ++  care  ?($d $p $u $v $w $x $y $z)
 ::
 ::  Keeps track of subscribers.
 ::
@@ -78,6 +78,7 @@
 ::
 ++  dome
   $:  ank/ankh                                          ::  state
+      per/(map path rule)                               ::  permissions by path
       let/aeon                                          ::  top id
       hit/(map aeon tako)                               ::  versions by id
       lab/(map @tas aeon)                               ::  labels
@@ -183,6 +184,7 @@
 ::  --  `mon` is a collection of mount points (mount point name to urbit
 ::      location).
 ::  --  `hez` is the unix duct that %ergo's should be sent to.
+::  --  `cez` is a collection of named permission groups.
 ::
 ++  raft                                                ::  filesystem
   $:  fat/(map ship room)                               ::  domestic
@@ -190,6 +192,7 @@
       ran/rang                                          ::  hashes
       mon/(map term beam)                               ::  mount points
       hez/(unit duct)                                   ::  sync duct
+      cez/(map @ta crew)                                ::  permission groups
   ==                                                    ::
 ::
 ::  Object store.
