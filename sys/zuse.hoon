@@ -391,7 +391,7 @@
           {$ogre p/@tas}                                ::  delete mount point
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
-          {$wris p/case p/(set path)}                   ::  responses
+          {$wris p/case p/(set (pair care path))}       ::  many changes
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$boat $~}                                    ::  pier rebooted
@@ -467,7 +467,7 @@
   ++  moat  {p/case q/case r/path}                      ::  change range
   ++  mode  (list {path (unit mime)})                   ::  external files
   ++  mood  {p/care q/case r/path}                      ::  request in desk
-  ++  mool  {p/care q/case r/(set path)}                ::  requests in desk
+  ++  mool  {p/case q/(set (pair care path))}           ::  requests in desk
   ++  nori                                              ::  repository action
     $%  {$& p/soba}                                     ::  delta
         {$| p/@tas}                                     ::  label
