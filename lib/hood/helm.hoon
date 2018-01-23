@@ -1,4 +1,4 @@
-::                                                      ::  ::  
+::                                                      ::  ::
 ::::  /hoon/helm/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
@@ -149,8 +149,7 @@
   =+  top=`path`/(scot %p our)/[syd]/(scot %da now)
   =/  van/(list {term $~})
     :-  zus=[%zuse ~]
-    =+  arc=.^(arch %cy (welp top /sys/vane))
-    ~(tap by dir:arc)
+    ~(tap by dir:.^(arch %cy (welp top /sys/vane)))
   |=  nam/@tas
     =.  nam
     ?.  =(1 (met 3 nam))

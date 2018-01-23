@@ -1,4 +1,4 @@
-::                                                      ::  ::
+::                                                      ::  ::  
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  zuse version
@@ -44,28 +44,32 @@
     ++  hood-1                                          ::  unified state
       {$1 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::  extract specific
-      |*  hed/hood-head                                 ::
-      |=  paw/hood-part                                 ::
-      ?-  hed                                           ::
-        $drum  ?>(?=($drum -.paw) `part:hood-drum`paw)  ::
-        $helm  ?>(?=($helm -.paw) `part:hood-helm`paw)  ::
-        $kiln  ?>(?=($kiln -.paw) `part:hood-kiln`paw)  ::
-        $womb  ?>(?=($womb -.paw) `part:hood-womb`paw)  ::
-        $write  ?>(?=($write -.paw) `part:hood-write`paw) ::
-      ==                                                ::  module name
-    ++  hood-head  _-:*hood-part                        ::  initialize state
+      =+  hed=$:hood-head
+      |%  +-  $
+            |:  paw=$:hood-part
+            ?-  hed
+              $drum  ?>(?=($drum -.paw) `part:hood-drum`paw)
+              $helm  ?>(?=($helm -.paw) `part:hood-helm`paw)
+              $kiln  ?>(?=($kiln -.paw) `part:hood-kiln`paw)
+              $womb  ?>(?=($womb -.paw) `part:hood-womb`paw)
+              $write  ?>(?=($write -.paw) `part:hood-write`paw)
+            ==
+      --
+    ++  hood-head  _-:$:hood-part                       ::  initialize state
     ++  hood-make                                       ::
-      |*  {our/@p hed/hood-head}                        ::
-      ?-  hed                                           ::
-        $drum  (make:hood-drum our)                     ::
-        $helm  *part:hood-helm                          ::
-        $kiln  *part:hood-kiln                          ::
-        $womb  *part:hood-womb                          ::
-        $write  *part:hood-write                        ::
-      ==                                                ::
+      =+  $:{our/@p hed/hood-head}                      ::
+      |%  +-  $
+            ?-  hed 
+              $drum  (make:hood-drum our)
+              $helm  *part:hood-helm
+              $kiln  *part:hood-kiln
+              $womb  *part:hood-womb
+              $write  *part:hood-write
+            ==
+      --
     ++  hood-part-old  hood-part                        ::  old state for ++prep
     ++  hood-port                                       ::  state transition
-      |=  paw/hood-part-old  ^-  hood-part              ::
+      |:  paw=$:hood-part-old  ^-  hood-part            ::
       paw                                               ::
     ::                                                  ::
     ++  hood-part                                       ::  current module state
@@ -84,14 +88,18 @@
         hood-1                                          ::  module states
     ==                                                  ::
 ++  able                                                ::  find+make part
-  |*  hed/hood-head
-  =+  rep=(~(get by lac) hed)
-  =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
-  ((hood-good hed) par)
+  =+  hed=$:hood-head
+  |%  +-  $
+        =+  rep=(~(get by lac) hed)
+        =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
+        ((hood-good hed) par)
+  --
 ::
 ++  ably                                                ::  save part
-  |*  {(list) hood-part}
-  [(flop +<-) %_(+> lac (~(put by lac) +<+< +<+))]
+  =+  $:{(list) hood-part}
+  |%  +-  $
+        [(flop +<-) %_(+> lac (~(put by lac) +<+< +<+))]
+  --
 ::                                                      ::  ::
 ::::                                                    ::  ::  generic handling
   ::                                                    ::  ::
@@ -109,13 +117,16 @@
 ::
 ::
 ++  from-module                                         ::  create wrapper
-  |*  _[%module ..$ _abet]:(hood-module)
-  =>  .(+< [identity start finish]=+<)
-  =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
-  |*  handle/_finish
-  |=  _+<.handle
-  =.  +>.handle  (start hid (able identity))
-  (ably (handle +<))
+  =+  [%module ..$ _abet]:(hood-module)
+  |%  +-  $
+        =>  .(+< [identity start finish]=+<)
+        =-  [wrap=- $:start]             ::  usage (wrap handle-arm):from-foo
+        =+  handle=finish
+        |%  +-  $
+              |:  +<.handle
+              =.  +>.handle  (start hid (able identity))
+              (ably (handle +<))
+  --    --
 ::
 ::  per-module interface wrappers
 ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum))

@@ -247,7 +247,7 @@
   ::
   ++  load-vane
     =<  %_(. con ..load-vane)
-    |=  {syd/@tas con/_.}
+    |:  $:{syd/@tas con/_.}
     =.  +>.$  con
     =/  new-vane  q:(hash-vane syd)
     ?:  =(`new-vane (~(get by cur-vanes) syd))
