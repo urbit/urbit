@@ -315,18 +315,6 @@
 --  =>
 |%
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
-++  gift                                                ::  out result <-$
-      $%  {$dirk p/@tas}                                ::  mark mount dirty
-          {$ergo p/@tas q/mode}                         ::  version update
-          {$hill p/(list @tas)}                         ::  mount points
-          {$mack p/(unit tang)}                         ::  ack
-          {$mass p/mass}                                ::  memory usage
-          {$mere p/(each (set path) (pair term tang))}  ::  merge result
-          {$note p/@tD q/tank}                          ::  debug message
-          {$ogre p/@tas}                                ::  delete mount point
-          {$writ p/riot}                                ::  response
-          {$wris p/(set rant)}                          ::  responses
-      ==                                                ::
 ++  note                                                ::  out request $->
   $%  $:  $a                                            ::  to %ames
   $%  {$want p/sock q/path r/*}                         ::
