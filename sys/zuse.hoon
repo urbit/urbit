@@ -397,8 +397,8 @@
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$boat $~}                                    ::  pier rebooted
-          {$crew $~}                                    ::  permission groups
           {$cred nom/@ta cew/crew}                      ::  set permission group
+          {$crew $~}                                    ::  permission groups
           {$drop p/@p q/desk}                           ::  cancel pending merge
           {$info p/@p q/desk r/nori}                    ::  internal edit
           {$init p/@p}                                  ::  report install
@@ -407,12 +407,7 @@
           {$mont p/desk q/beam}                         ::  mount to unix
           {$dirk p/desk}                                ::  mark mount dirty
           {$ogre p/$@(desk beam)}                       ::  delete mount point
-          $:  $perm                                     ::  change permissions
-              des/desk                                  ::  target desk
-              pax/path                                  ::  target node
-              rit/rite                                  ::  read, write or both
-              rul/(unit rule)                           ::  new rule
-          ==                                            ::
+          {$perm des/desk pax/path rit/rite}            ::  change permissions
           {$warp p/sock q/riff}                         ::  file request
           {$wegh $~}                                    ::  report memory
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
@@ -506,7 +501,11 @@
         {$many p/? q/moat}                              ::  track range
     ==                                                  ::
   ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
-  ++  rite  ?($r $w $rw)                                ::  permission for
+  ++  rite                                              ::  new permissions
+    $%  {$r red/(unit rule)}                            ::  for read
+        {$w wit/(unit rule)}                            ::  for write
+        {$rw red/(unit rule) wit/(unit rule)}           ::  for read and write
+    ==                                                  ::
   ++  riot  (unit rant)                                 ::  response+complete
   ++  rule  {mod/?($black $white) who/(set whom)}       ::  node permission
   ++  rump  {p/care q/case r/@tas s/path}               ::  relative path
