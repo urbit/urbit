@@ -606,8 +606,8 @@ _sang_x(u3_noun a, u3_noun b)
             _eq_no;
           }
           else {
-            _eq_push(a_u->hed, b_u->hed);
             _eq_push(a_u->tel, b_u->tel);
+            _eq_push(a_u->hed, b_u->hed);
             fam->returning = 1;
           }
         }
@@ -775,8 +775,8 @@ _sung_x(u3_noun a, u3_noun b)
             _eq_no;
           }
           else {
-            _eq_push(a_u->hed, b_u->hed);
             _eq_push(a_u->tel, b_u->tel);
+            _eq_push(a_u->hed, b_u->hed);
             fam->returning = 1;
           }
         }
@@ -864,8 +864,8 @@ _sing_x(u3_noun a,
             _eq_no;
           }
           else {
-            _eq_push(a_u->hed, b_u->hed);
             _eq_push(a_u->tel, b_u->tel);
+            _eq_push(a_u->hed, b_u->hed);
             fam->returning = 1;
           }
         }
