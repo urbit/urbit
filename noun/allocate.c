@@ -576,6 +576,65 @@ u3a_wealloc(void* lag_v, c3_w len_w)
     }
   }
 }
+/* u3a_push(): allocate space on the road stack
+*/
+void*
+u3a_push(c3_w len_w)
+{
+  void *cur, *top = u3to(void, u3R->cap_p);
+  if ( c3y == u3a_is_north(u3R) ) {
+    top -= len_w;
+    cur = top;
+    u3R->cap_p = u3of(void, top);
+    if ( (u3R->cap_p <= u3R->hat_p) ) {
+      u3m_bail(c3__fail);
+    }
+    else {
+      return cur;
+    }
+  }
+  else {
+    cur = top;
+    top += len_w;
+    u3R->cap_p = u3of(void, top);
+    if (u3R->cap_p >= u3R->hat_p) {
+      u3m_bail(c3__fail);
+    }
+    else {
+      return cur;
+    }
+  }
+}
+
+/* u3a_pop(): deallocate space on the road stack
+*/
+void
+u3a_pop(c3_w len_w)
+{
+  void* top = u3to(void, u3R->cap_p);
+  if ( c3y == u3a_is_north(u3R) ) {
+    top += len_w;
+    u3R->cap_p = u3of(void, top);
+    if ( u3R->cap_p > u3R->mat_p ) {
+      u3m_bail(c3__fail);
+    }
+  }
+  else {
+    top -= len_w;
+    u3R->cap_p = u3of(void, top);
+    if ( u3R->cap_p < u3R->mat_p ) {
+      u3m_bail(c3__fail);
+    }
+  }
+}
+
+/* u3a_peek(): examine the top of the road stack
+*/
+void*
+u3a_peek(c3_w len_w)
+{
+  return u3to(void, u3R->cap_p) - (c3y == u3a_is_north(u3R) ? 0 : len_w);
+}
 
 /* u3a_wfree(): free storage.
 */

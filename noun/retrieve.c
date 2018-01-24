@@ -502,87 +502,119 @@ _sang_one(u3_noun* a, u3_noun* b)
   }
 }
 
+typedef struct {
+  u3_noun a;
+  u3_noun b;
+  c3_t returning;
+} eqframe;
+
+static inline eqframe*
+_eq_peek()
+{
+  return (eqframe*) u3a_peek(sizeof(eqframe));
+}
+
+static inline void
+_eq_push(u3_noun a, u3_noun b)
+{
+  eqframe* cur = (eqframe*) u3a_push(sizeof(eqframe));
+  cur->a = a;
+  cur->b = b;
+  cur->returning = 0;
+}
+
+static inline void
+_eq_pop()
+{
+  u3a_pop(sizeof(eqframe));
+}
+
+#define _eq_yes  _eq_pop(); continue
+#define _eq_no   u3R->cap_p = empty; return c3n
+
 /* _sang_x(): yes if a and b are the same noun, unifying but leaking.
 */
 static c3_o
 _sang_x(u3_noun a, u3_noun b)
 {
-  if ( a == b ) {
-    return c3y;
-  }
-  else {
-    if ( _(u3a_is_atom(a)) ) {
-      u3a_atom* a_u = u3a_to_ptr(a);
+  u3p(eqframe) empty = u3R->cap_p;
+  eqframe *fam;
 
-      if ( !_(u3a_is_atom(b)) ||
-           _(u3a_is_cat(a)) ||
-           _(u3a_is_cat(b)) )
-      {
-        return c3n;
-      }
-      else {
-        u3a_atom* b_u = u3a_to_ptr(b);
-
-        if ( a_u->mug_w &&
-             b_u->mug_w &&
-             (a_u->mug_w != b_u->mug_w) )
-        {
-          return c3n;
-        }
-        else {
-          c3_w w_rez = a_u->len_w;
-          c3_w w_mox = b_u->len_w;
-
-          if ( w_rez != w_mox ) {
-            return c3n;
-          }
-          else {
-            c3_w i_w;
-
-            for ( i_w = 0; i_w < w_rez; i_w++ ) {
-              if ( a_u->buf_w[i_w] != b_u->buf_w[i_w] ) {
-                return c3n;
-              }
-            }
-            return c3y;
-          }
-        }
-      }
+  _eq_push(a, b);
+  while ( empty != u3R->cap_p ) {
+    fam = _eq_peek();
+    a = fam->a;
+    b = fam->b;
+    if ( fam->returning ) {
+      _sang_one(&a, &b);
+      _eq_yes;
+    }
+    else if ( a == b ) {
+      _eq_yes;
     }
     else {
-      if ( _(u3a_is_atom(b)) ) {
-        return c3n;
-      }
-      else {
-        u3a_cell* a_u = u3a_to_ptr(a);
-        u3a_cell* b_u = u3a_to_ptr(b);
+      if ( _(u3a_is_atom(a)) ) {
+        u3a_atom* a_u = u3a_to_ptr(a);
 
-        if ( a_u->mug_w &&
-             b_u->mug_w &&
-             (a_u->mug_w != b_u->mug_w) )
+        if ( !_(u3a_is_atom(b)) ||
+             _(u3a_is_cat(a)) ||
+             _(u3a_is_cat(b)) )
         {
-          return c3n;
+          _eq_no;
         }
         else {
-          if ( c3n == _sang_x(a_u->hed, b_u->hed) ) {
-            return c3n;
+          u3a_atom* b_u = u3a_to_ptr(b);
+
+          if ( a_u->mug_w &&
+               b_u->mug_w &&
+               (a_u->mug_w != b_u->mug_w) )
+          {
+            _eq_no;
           }
           else {
-            _sang_one(&a_u->hed, &b_u->hed);
+            c3_w w_rez = a_u->len_w;
+            c3_w w_mox = b_u->len_w;
 
-            if ( c3n == _sang_x(a_u->tel, b_u->tel) ) {
-              return c3n;
+            if ( w_rez != w_mox ) {
+              _eq_no;
             }
             else {
-              _sang_one(&a_u->tel, &b_u->tel);
+              c3_w i_w;
 
-              return c3y;
+              for ( i_w = 0; i_w < w_rez; i_w++ ) {
+                if ( a_u->buf_w[i_w] != b_u->buf_w[i_w] ) {
+                  _eq_no;
+                }
+              }
+              _eq_yes;
             }
+          }
+        }
+      }
+      else {
+        if ( _(u3a_is_atom(b)) ) {
+          _eq_no;
+        }
+        else {
+          u3a_cell* a_u = u3a_to_ptr(a);
+          u3a_cell* b_u = u3a_to_ptr(b);
+
+          if ( a_u->mug_w &&
+               b_u->mug_w &&
+               (a_u->mug_w != b_u->mug_w) )
+          {
+            _eq_no;
+          }
+          else {
+            _eq_push(a_u->hed, b_u->hed);
+            _eq_push(a_u->tel, b_u->tel);
+            fam->returning = 1;
           }
         }
       }
     }
   }
+  return c3y;
 }
 
 /* _sung_one(): pick a unified pointer for identical (a) and (b).
@@ -674,82 +706,84 @@ _sung_one(u3_noun* a, u3_noun* b)
 static c3_o
 _sung_x(u3_noun a, u3_noun b)
 {
-  if ( a == b ) {
-    return c3y;
-  }
-  else {
-    if ( _(u3a_is_atom(a)) ) {
-      u3a_atom* a_u = u3a_to_ptr(a);
+  u3p(eqframe) empty = u3R->cap_p;
+  eqframe *fam;
 
-      if ( !_(u3a_is_atom(b)) ||
-           _(u3a_is_cat(a)) ||
-           _(u3a_is_cat(b)) )
-      {
-        return c3n;
-      }
-      else {
-        u3a_atom* b_u = u3a_to_ptr(b);
-
-        if ( a_u->mug_w &&
-             b_u->mug_w &&
-             (a_u->mug_w != b_u->mug_w) )
-        {
-          return c3n;
-        }
-        else {
-          c3_w w_rez = a_u->len_w;
-          c3_w w_mox = b_u->len_w;
-
-          if ( w_rez != w_mox ) {
-            return c3n;
-          }
-          else {
-            c3_w i_w;
-
-            for ( i_w = 0; i_w < w_rez; i_w++ ) {
-              if ( a_u->buf_w[i_w] != b_u->buf_w[i_w] ) {
-                return c3n;
-              }
-            }
-            return c3y;
-          }
-        }
-      }
+  _eq_push(a, b);
+  while ( empty != u3R->cap_p ) {
+    fam = _eq_peek();
+    a = fam->a;
+    b = fam->b;
+    if ( fam->returning ) {
+      _sung_one(&a, &b);
+      _eq_yes;
+    }
+    else if ( a == b ) {
+      _eq_yes;
     }
     else {
-      if ( _(u3a_is_atom(b)) ) {
-        return c3n;
-      }
-      else {
-        u3a_cell* a_u = u3a_to_ptr(a);
-        u3a_cell* b_u = u3a_to_ptr(b);
+      if ( _(u3a_is_atom(a)) ) {
+        u3a_atom* a_u = u3a_to_ptr(a);
 
-        if ( a_u->mug_w &&
-             b_u->mug_w &&
-             (a_u->mug_w != b_u->mug_w) )
+        if ( !_(u3a_is_atom(b)) ||
+             _(u3a_is_cat(a)) ||
+             _(u3a_is_cat(b)) )
         {
-          return c3n;
+          _eq_no;
         }
         else {
-          if ( c3n == _sung_x(a_u->hed, b_u->hed) ) {
-            return c3n;
+          u3a_atom* b_u = u3a_to_ptr(b);
+
+          if ( a_u->mug_w &&
+               b_u->mug_w &&
+               (a_u->mug_w != b_u->mug_w) )
+          {
+            _eq_no;
           }
           else {
-            _sung_one(&a_u->hed, &b_u->hed);
+            c3_w w_rez = a_u->len_w;
+            c3_w w_mox = b_u->len_w;
 
-            if ( c3n == _sung_x(a_u->tel, b_u->tel) ) {
-              return c3n;
+            if ( w_rez != w_mox ) {
+              _eq_no;
             }
             else {
-              _sung_one(&a_u->tel, &b_u->tel);
+              c3_w i_w;
 
-              return c3y;
+              for ( i_w = 0; i_w < w_rez; i_w++ ) {
+                if ( a_u->buf_w[i_w] != b_u->buf_w[i_w] ) {
+                  _eq_no;
+                }
+              }
+              _eq_yes;
             }
+          }
+        }
+      }
+      else {
+        if ( _(u3a_is_atom(b)) ) {
+          _eq_no;
+        }
+        else {
+          u3a_cell* a_u = u3a_to_ptr(a);
+          u3a_cell* b_u = u3a_to_ptr(b);
+
+          if ( a_u->mug_w &&
+               b_u->mug_w &&
+               (a_u->mug_w != b_u->mug_w) )
+          {
+            _eq_no;
+          }
+          else {
+            _eq_push(a_u->hed, b_u->hed);
+            _eq_push(a_u->tel, b_u->tel);
+            fam->returning = 1;
           }
         }
       }
     }
   }
+  return c3y;
 }
 
 /* _sing_x():
@@ -763,74 +797,82 @@ _sing_x(u3_noun a,
   c3_assert(u3_none != a);
   c3_assert(u3_none != b);
 
-  if ( a == b ) {
-    return c3y;
-  }
-  else {
-    if ( _(u3a_is_atom(a)) ) {
-      u3a_atom* a_u = u3a_to_ptr(a);
+  u3p(eqframe) empty = u3R->cap_p;
+  eqframe *fam;
 
-      if ( !_(u3a_is_atom(b)) ||
-           _(u3a_is_cat(a)) ||
-           _(u3a_is_cat(b)) )
-      {
-        return c3n;
-      }
-      else {
-        u3a_atom* b_u = u3a_to_ptr(b);
+  _eq_push(a, b);
 
-        if ( a_u->mug_w &&
-             b_u->mug_w &&
-             (a_u->mug_w != b_u->mug_w) )
-        {
-          return c3n;
-        }
-        else {
-          c3_w w_rez = a_u->len_w;
-          c3_w w_mox = b_u->len_w;
-
-          if ( w_rez != w_mox ) {
-            return c3n;
-          }
-          else {
-            c3_w i_w;
-
-            for ( i_w = 0; i_w < w_rez; i_w++ ) {
-              if ( a_u->buf_w[i_w] != b_u->buf_w[i_w] ) {
-                return c3n;
-              }
-            }
-            return c3y;
-          }
-        }
-      }
+  while ( empty != u3R->cap_p ) {
+    fam = _eq_peek();
+    if ( fam->returning ) {
+      _eq_yes;
+    }
+    else if ( (a = fam->a) == (b = fam->b) ) {
+      _eq_yes;
     }
     else {
-      if ( _(u3a_is_atom(b)) ) {
-        return c3n;
-      }
-      else {
-        u3a_cell* a_u = u3a_to_ptr(a);
-        u3a_cell* b_u = u3a_to_ptr(b);
+      if ( _(u3a_is_atom(a)) ) {
+        u3a_atom* a_u = u3a_to_ptr(a);
 
-        if ( a_u->mug_w &&
-             b_u->mug_w &&
-             (a_u->mug_w != b_u->mug_w) )
+        if ( !_(u3a_is_atom(b)) ||
+             _(u3a_is_cat(a)) ||
+             _(u3a_is_cat(b)) )
         {
-          return c3n;
+          _eq_no;
         }
         else {
-          if ( c3n == _sing_x(u3a_h(a), u3a_h(b)) ) {
-            return c3n;
+          u3a_atom* b_u = u3a_to_ptr(b);
+
+          if ( a_u->mug_w &&
+               b_u->mug_w &&
+               (a_u->mug_w != b_u->mug_w) )
+          {
+            _eq_no;
           }
-          else if ( c3n == _sing_x(u3a_t(a), u3a_t(b)) ) {
-            return c3n;
+          else {
+            c3_w w_rez = a_u->len_w;
+            c3_w w_mox = b_u->len_w;
+
+            if ( w_rez != w_mox ) {
+              _eq_no;
+            }
+            else {
+              c3_w i_w;
+
+              for ( i_w = 0; i_w < w_rez; i_w++ ) {
+                if ( a_u->buf_w[i_w] != b_u->buf_w[i_w] ) {
+                  _eq_no;
+                }
+              }
+              _eq_yes;
+            }
           }
-          return c3y;
+        }
+      }
+      else {
+        if ( _(u3a_is_atom(b)) ) {
+          _eq_no;
+        }
+        else {
+          u3a_cell* a_u = u3a_to_ptr(a);
+          u3a_cell* b_u = u3a_to_ptr(b);
+
+          if ( a_u->mug_w &&
+               b_u->mug_w &&
+               (a_u->mug_w != b_u->mug_w) )
+          {
+            _eq_no;
+          }
+          else {
+            _eq_push(a_u->hed, b_u->hed);
+            _eq_push(a_u->tel, b_u->tel);
+            fam->returning = 1;
+          }
         }
       }
     }
   }
+  return c3y;
 }
 
 /* u3r_sang(): yes iff (a) and (b) are the same noun, unifying equals.
