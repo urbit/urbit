@@ -390,7 +390,7 @@
           {$mere p/(each (set path) (pair term tang))}  ::  merge result
           {$note p/@tD q/tank}                          ::  debug message
           {$ogre p/@tas}                                ::  delete mount point
-          {$rule src/path rul/rule}                     ::  node permission
+          {$rule red/dict wit/dict}                     ::  node r+w permissions
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
           {$wris p/case p/(set (pair care path))}       ::  many changes
@@ -407,7 +407,12 @@
           {$mont p/desk q/beam}                         ::  mount to unix
           {$dirk p/desk}                                ::  mark mount dirty
           {$ogre p/$@(desk beam)}                       ::  delete mount point
-          {$perm des/desk pax/path rul/(unit rule)}     ::  change permissions
+          $:  $perm                                     ::  change permissions
+              des/desk                                  ::  target desk
+              pax/path                                  ::  target node
+              rit/rite                                  ::  read, write or both
+              rul/(unit rule)                           ::  new rule
+          ==                                            ::
           {$warp p/sock q/riff}                         ::  file request
           {$wegh $~}                                    ::  report memory
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
@@ -436,6 +441,7 @@
     ==                                                  ::
   ++  coop  (unit ares)                                 ::  e2e ack
   ++  crew  (set ship)                                  ::  permissions group
+  ++  dict  {src/path rul/rule}                         ::  effective permission
   ++  dome                                              ::  project state
     $:  ank/ankh                                        ::  state
         let/@ud                                         ::  top id
@@ -500,6 +506,7 @@
         {$many p/? q/moat}                              ::  track range
     ==                                                  ::
   ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
+  ++  rite  ?($r $w $rw)                                ::  permission for
   ++  riot  (unit rant)                                 ::  response+complete
   ++  rule  {mod/?($black $white) who/(set whom)}       ::  node permission
   ++  rump  {p/care q/case r/@tas s/path}               ::  relative path

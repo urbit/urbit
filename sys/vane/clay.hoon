@@ -78,7 +78,8 @@
 ::
 ++  dome
   $:  ank/ankh                                          ::  state
-      per/(map path rule)                               ::  permissions by path
+      per/(map path rule)                               ::  read perms per path
+      pew/(map path rule)                               ::  write perms per path
       let/aeon                                          ::  top id
       hit/(map aeon tako)                               ::  versions by id
       lab/(map @tas aeon)                               ::  labels
