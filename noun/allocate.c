@@ -585,24 +585,19 @@ u3a_push(c3_w len_w)
   if ( c3y == u3a_is_north(u3R) ) {
     top -= len_w;
     cur = top;
-    u3R->cap_p = u3of(void, top);
-    if ( (u3R->cap_p <= u3R->hat_p) ) {
-      u3m_bail(c3__fail);
-    }
-    else {
-      return cur;
-    }
+    u3p(void) cap_p = u3R->cap_p = u3of(void, top);
+    c3_assert(cap_p < u3R->mat_p);
+    c3_assert(cap_p > u3R->hat_p);
+    return cur;
   }
   else {
     cur = top;
     top += len_w;
     u3R->cap_p = u3of(void, top);
-    if (u3R->cap_p >= u3R->hat_p) {
-      u3m_bail(c3__fail);
-    }
-    else {
-      return cur;
-    }
+    u3p(void) cap_p = u3R->cap_p = u3of(void, top);
+    c3_assert(cap_p > u3R->mat_p);
+    c3_assert(cap_p < u3R->hat_p);
+    return cur;
   }
 }
 
@@ -614,17 +609,15 @@ u3a_pop(c3_w len_w)
   void* top = u3to(void, u3R->cap_p);
   if ( c3y == u3a_is_north(u3R) ) {
     top += len_w;
-    u3R->cap_p = u3of(void, top);
-    if ( u3R->cap_p > u3R->mat_p ) {
-      u3m_bail(c3__fail);
-    }
+    u3p(void) cap_p = u3R->cap_p = u3of(void, top);
+    c3_assert(cap_p <= u3R->mat_p);
+    c3_assert(cap_p > u3R->hat_p);
   }
   else {
     top -= len_w;
-    u3R->cap_p = u3of(void, top);
-    if ( u3R->cap_p < u3R->mat_p ) {
-      u3m_bail(c3__fail);
-    }
+    u3p(void) cap_p = u3R->cap_p = u3of(void, top);
+    c3_assert(cap_p >= u3R->mat_p);
+    c3_assert(cap_p < u3R->hat_p);
   }
 }
 
