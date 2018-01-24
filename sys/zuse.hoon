@@ -390,7 +390,7 @@
           {$mere p/(each (set path) (pair term tang))}  ::  merge result
           {$note p/@tD q/tank}                          ::  debug message
           {$ogre p/@tas}                                ::  delete mount point
-          {$rule own/? rul/rule}                        ::  node permission
+          {$rule src/path rul/rule}                     ::  node permission
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
           {$wris p/case p/(set (pair care path))}       ::  many changes
