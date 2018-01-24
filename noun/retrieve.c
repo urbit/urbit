@@ -533,9 +533,6 @@ _eq_pop()
   u3a_pop(sizeof(eqframe));
 }
 
-#define _eq_yes  _eq_pop(); continue
-#define _eq_no   u3R->cap_p = empty; return c3n
-
 /* _sung_one(): pick a unified pointer for identical (a) and (b).
 **
 **  Assumes exclusive access to noun memory.
