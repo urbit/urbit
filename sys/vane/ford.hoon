@@ -148,16 +148,41 @@
     ?~  liz  a
     $(liz t.liz, a (put k i.liz))
   ::
+  ++  downstream-dents
+    :>    obtain all dents that depend on any of the dents in the sample.
+    :>
+    :>  traverses the nozzle. product does not include the supplied dents
+    :>  themselves.
+    |=  des=(set dent)  ^-  (set dent)
+    %-  ~(rep in des)
+    |=  [den=dent dos=(set dent)]  ^+  des
+    =?  dos  !?=(%beam -.den)
+      (~(put in dos) den)
+    (~(uni in dos) ^$(des (~(get ju sup.a) den)))
+  ::
+  ++  upstream-dents
+    :>    obtain all dents upon which any of the dents in the sample depend.
+    :>
+    :>  traverses the nozzle, gathering all direct and indirect dependencies.
+    :>  dents in the sample may also appear in the product.
+    |=  arg=(set dent)  ^-  (set dent)
+    =/  des  arg
+    |-  ^-  (set dent)
+    %-  ~(rep in des)
+    |=  [den=dent dos=(set dent)]  ^+  des
+    =?  dos  !(~(has in arg) den)  (~(put in dos) den)
+    (~(uni in dos) ^$(des (~(get ju sub.a) den)))
+  ::
   ++  beam-dents-in-dir
     :>  find all %beam dents inside the folder {bem} with care {ren}.
     |=  folder=[%beam bem=beam ren=care:clay]
     ^-  (set dent)
     ?>  =(%z ren.folder)                                ::  only %z supported
     ::
-    ~?  !(~(has by sup.a) folder)                        ::  state should have bem
+    ~?  !(~(has by sup.a) folder)                       ::  state should have bem
       missing-folder+[folder ~(key by sup.a)]
     ::
-    =-  ~?  !(~(has in -) folder)                        ::  result must keep bem
+    =-  ~?  !(~(has in -) folder)                       ::  result must keep bem
       result-missing-folder+[folder from=-]
       -
     ::
@@ -659,16 +684,9 @@
     =.  sup.bay  (~(put ju sup.bay) dep hen)
     ::
     =/  des  (~(got by def.deh.bay) dep)
-    =/  bes=(list [beam care:clay])  ~(tap in (dep-beams des))
-    |-  ^+  this
-    ?~  bes  this
-    :: already sent
-    ?:  (~(has in out.bay) i.bes)  $(bes t.bes)
-    %_  $
-      out.bay  (~(put in out.bay) i.bes)
-      bes  t.bes
-      mow  :_(mow [hen (pass-warp & i.bes)])
-    ==
+    %-  ~(rep in (dep-beams des))
+    |=  [dep=[beam care:clay] dis=_this]
+    (maybe-warp:dis dep)
   ::
   ++  wasp-cancel
     |=  dep=@uvH  ^+  this
@@ -677,17 +695,26 @@
       this
     ::
     =/  des  (~(got by def.deh.bay) dep)
-    =/  bes=(list [beam care:clay])  ~(tap in (dep-beams des))
-    |-  ^+  this
-    ?~  bes  this
-    ?.  (~(has in out.bay) i.bes)  $(bes t.bes)  ::  already cancelled
-    ?:  (dent-has-subscribers [%beam i.bes])
-      ::  if any other dep cares about this beam, stay subscribed
-      $(bes t.bes)
+    %-  ~(rep in (dep-beams des))
+    |=  [dep=[beam care:clay] dis=_this]
+    (maybe-cancel:dis dep)
+  ::
+  ++  maybe-warp
+    |=  dep=[beam care:clay]  ^+  this
+    ?:  (~(has in out.bay) dep)  this
+    %_  this
+      out.bay  (~(put in out.bay) dep)
+      mow  :_(mow [hen (pass-warp & dep)])
+    ==
+  ::
+  ++  maybe-cancel
+    |=  dep=[beam care:clay]  ^+  this
+    ?.  (~(has in out.bay) dep)  this  ::  already cancelled
+    ?:  (dent-has-subscribers [%beam dep])
+      this  ::  if any other dep cares about this beam, stay subscribed
     %_  $
-      out.bay  (~(del in out.bay) i.bes)
-      bes  t.bes
-      mow  :_(mow [hen (pass-warp | i.bes)])
+      out.bay  (~(del in out.bay) dep)
+      mow  :_(mow [hen (pass-warp | dep)])
     ==
   ::
   ++  dent-has-subscribers
@@ -724,62 +751,105 @@
     =+  `[ren=care:clay wen=case *]`p.u.p.sih           ::  destructure sih
     ?.  =(ren ^ren)  ~|([%bad-care ren ^ren] !!)        ::  cares should match
     ::
-    ::  rebuild and promote all affected builds
-    =.  this  (on-update bem ren -.bem(r wen))
-    ::
     ::  %clay subscription no longer exists for this beam
     =.  out.bay  (~(del in out.bay) bem)
     ::
+    ::  rebuild and promote all affected builds,
+    ::  calculating which beams resulted in new builds
+    ::  for which we should send %news updates.
+    =/  bek  -.bem(r wen)
+    =+  [new downstreams]=(dents-to-rebuild bem ren)
+    =^  changed  this  (on-update new downstreams bek)
+    ::
+    |^
+    ::
+    =/  changed-hashes  (hashes-for-dents changed)
+    =/  downstream-hashes  (hashes-for-dents downstreams)
+    =/  sames-hashes  ~(tap in (~(dif in downstream-hashes) changed-hashes))
+    :: 
+    ::  loop over the hashes of builds whose results haven't changed and
+    ::  update our dependencies and subscriptions accordingly.
+    =.  this
+      |-  ^+  this
+      ?~  sames-hashes  this
+      =.  this  $(sames-hashes t.sames-hashes)
+      =*  hax  i.sames-hashes
+      ::
+      ::  find the deps for this hash that could have changed
+      ::  as a result of this clay change.
+      =/  dep  (~(get ju def.deh.bay) hax)
+      =/  upd  (~(int in dep) downstreams)
+      ::
+      ::  resubscribe to clay at the new revision, since
+      ::  the subscription for the old revision closed when
+      ::  clay told us something had changed.
+      =.  this
+        %-  ~(rep in (dep-beams upd))
+        |=  [dep=[bem=beam care:clay] dis=_this]
+        (maybe-warp:dis dep(r.bem wen))
+      ::
+      ::  make hash depend on dents at new beak
+      %_    this
+          deh.bay
+        %-  ~(rep in upd)
+        |=  [den=dent deh=_deh.bay]
+        =/  new-den  ((move-to bek) den)
+        ::
+        =.  def.deh  (~(del ju def.deh) hax den)
+        =.  def.deh  (~(put ju def.deh) hax new-den)
+        ::
+        =.  bak.deh  (~(del ju bak.deh) den hax)
+        =.  bak.deh  (~(put ju bak.deh) new-den hax)
+        deh
+      ==
+    ::
     ::  for each affected build (keyed by hash),
     ::  send %news moves to listeners and cancel listeners
-    ::  TODO: don't send %news for unchanged builds
-    =/  den=dent  [%beam bem ren]
-    =/  dos=(set dent)  (downstream-dents (sy den ~))
-    =.  dos  (~(put in dos) den)
-    =/  hashes=(list @uvH)
-      =-  ~(tap in hashes)
-      %-  ~(rep in dos)
-      |=  [den=dent hashes=(set @uvH)]
-      (~(uni in hashes) (~(get ju bak.deh.bay) den))
+    =/  hashes=(list @uvH)  ~(tap in changed-hashes)
     ::
     ::  ~&  [den=den dos=dos hashes=hashes]
     ::
     |-  ^+  this
     ?~  hashes  this
     =.  this  $(hashes t.hashes)                        ::  iterate 
+    ::
     =/  listeners=(set duct)  (~(get ju sup.bay) i.hashes)
+    =.  sup.bay  (~(del by sup.bay) i.hashes)           ::  close subscriptions
+    ::
     =.  mow                                             ::  send %news moves
       %-  weld  :_  mow
       %+  turn  ~(tap in listeners)
       |=(a=duct `move`[a %give %news i.hashes])
     ::
     (wasp-cancel i.hashes)
-  ::
-  ++  downstream-dents
-    :>    obtain all dents that depend on any of the dents in the sample.
-    :>
-    :>  traverses the nozzle. product does not include the supplied dents
-    :>  themselves.
-    |=  des=(set dent)  ^-  (set dent)
-    %-  ~(rep in des)
-    |=  [den=dent dos=(set dent)]  ^+  des
-    =?  dos  !?=(%beam -.den)
-      (~(put in dos) den)
-    (~(uni in dos) ^$(des (~(get ju sup.gaf.bay) den)))
+    ::
+    ++  hashes-for-dents
+      |=  des=(set dent)  ^-  (set @uvH)
+      %-  ~(rep in des)
+      |=  [den=dent hashes=(set @uvH)]
+      =/  bak  (~(get ju bak.deh.bay) den)
+      (~(uni in hashes) (~(get ju bak.deh.bay) den))
+    --
   ::
   :>  #  TODO name this chapter
   +|
   ::
+  ++  dents-to-rebuild
+    |=  [bem=beam ren=care:clay]
+    ^-  [(set dent) (set dent)]
+    =/  new  (~(beam-dents-in-dir na gaf.bay) %beam bem ren)
+    =/  downstreams  (~(downstream-dents na gaf.bay) new)
+    [new downstreams]
+  ::
   ++  on-update
     :>  {bem} is at the old revision, {bek} is at the new revision.
-    |=  {bem/beam ren/care:clay bek/beak}  ^+  this
-    =/  new  (~(beam-dents-in-dir na gaf.bay) %beam bem ren)
-    ~?  dbg  new-dents+[(en-beam bem) new]
-    =/  dos  (downstream-dents new)
-    =/  todo  ~(tap in dos)
-    =^  unchanged  this  (rebuild bek new todo)
+    |=  [new=(set dent) downstreams=(set dent) bek=beak]
+    ^+  [*(set dent) this]
+    =/  todo  ~(tap in downstreams)
+    =^  results  this  (rebuild bek new todo)
+    =+  [changed unchanged]=results
     ~|  unchanged=unchanged
-    (promote-unchanged unchanged bek)
+    [changed (promote-unchanged unchanged bek)]
   ::
   ++  rebuild  ::  !.  ::  TODO reinstate
     :>    rebuild all builds whose dependencies have a new %clay revision.
@@ -792,8 +862,9 @@
     :>  the previous %clay revision, if they exist and their dependencies
     :>  haven't changed.
     =|  unchanged/(set dent)
-    |=  {bek/beak new/(set dent) todo/(list dent)}  ^+  [unchanged this]
-    ?~  todo  [unchanged this]
+    |=  {bek/beak new/(set dent) todo/(list dent)}
+    ^+  [[new unchanged] this]
+    ?~  todo  [[new unchanged] this]
     ::
     ::  don't try to rebuild the changed files themselves.
     ?:  (~(has in new) i.todo)
@@ -893,6 +964,7 @@
     ==
   ::
   ++  move-to
+    :>  replace any beaks in dent with {bek}, curried.
     |=  bek=beak
     |=  den=dent  ^+  den
     =?  den  ?=(%boil -.den)  den(-.bom bek)
@@ -1425,7 +1497,8 @@
       ~/  %load-file
       |=  {cof/cafe bem/beam}
       ^-  (bolt cage)
-      ::  TODO  add-dep:bo
+      %+  tug:bo  (add-dep:bo [%beam bem %z] (new:bo cof bem))
+      |=  [cof=cafe bem=beam]
       ?:  =([%ud 0] r.bem)
         (err:bo cof [leaf+"ford: no data: {<(en-beam bem(s ~))>}"]~)
       =+  von=(syve [151 %noun] ~ %cx bem)
@@ -1439,9 +1512,7 @@
       ~/  %load-to-mark
       |=  {cof/cafe for/mark bem/beam}
       %+  under-dep:bo  `dent`[%load bem for]
-      %+  (with-cache:bo %load)
-        ::  TODO  remove add-dep:bo (should be moved to load-file)
-        (add-dep:bo [%beam bem %z] (new:bo cof for bem))
+      %+  (with-cache:bo %load)  (new:bo cof for bem)
       |=  {cof/cafe for/mark bem/beam}
       ^-  (bolt (unit vase))
       %+  tug:bo  (laze cof bem)
