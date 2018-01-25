@@ -203,7 +203,7 @@
 ++  peer-client
   :>  ui state peer move
   ^-  move
-  :*  0
+  :*  ost.bol
       %peer
       /server/client
       server
@@ -212,7 +212,7 @@
 ::
 ++  peer-inbox
   ^-  move
-  :*  0
+  :*  ost.bol
       %peer
       /server/inbox
       server
@@ -2438,16 +2438,16 @@
   ?:  =(a 'reconnect')
     ~&  'disconnecting and reconnecting to hall...'
     :_  +>
-    :~  [0 %pull /server/client server ~]
-        [0 %pull /server/inbox server ~]
+    :~  [ost.bol %pull /server/client server ~]
+        [ost.bol %pull /server/inbox server ~]
         peer-client
         peer-inbox
     ==
   ?:  =(a 'reset')
     ~&  'full reset incoming, hold on to your cli...'
     :_  +>(grams ~, known ~, count 0)
-    :~  [0 %pull /server/client server ~]
-        [0 %pull /server/inbox server ~]
+    :~  [ost.bol %pull /server/client server ~]
+        [ost.bol %pull /server/inbox server ~]
         peer-client
         peer-inbox
     ==
