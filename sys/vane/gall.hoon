@@ -1225,6 +1225,8 @@
                ~
         $cash  `%a
         $conf  `%g
+        $cred  `%c
+        $crew  `%c
         $deal  `%g
         $exec  `%f
         $flog  `%d
@@ -1234,6 +1236,7 @@
         $mont  `%c
         $nuke  `%a
         $ogre  `%c
+        $perm  `%c
         $serv  `%e
         $them  `%e
         $wait  `%b
