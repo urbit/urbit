@@ -61,13 +61,15 @@
 ::  Domestic desk state.
 ::
 ::  Includes subscriber list, dome (desk content), possible commit state (for
-::  local changes), and possible merge state (for incoming merges).
+::  local changes), possible merge state (for incoming merges), and permissions.
 ::
 ++  dojo
   $:  qyx/cult                                          ::  subscribers
       dom/dome                                          ::  desk state
       dok/(unit dork)                                   ::  commit state
       mer/(unit mery)                                   ::  merge state
+      per/(map path rule)                               ::  read perms per path
+      pew/(map path rule)                               ::  write perms per path
   ==
 ::
 ::  Desk state.
@@ -78,8 +80,6 @@
 ::
 ++  dome
   $:  ank/ankh                                          ::  state
-      per/(map path rule)                               ::  read perms per path
-      pew/(map path rule)                               ::  write perms per path
       let/aeon                                          ::  top id
       hit/(map aeon tako)                               ::  versions by id
       lab/(map @tas aeon)                               ::  labels
@@ -242,6 +242,8 @@
               dom/dome                                  ::  revision state
               dok/(unit dork)                           ::  outstanding diffs
               mer/(unit mery)                           ::  outstanding merges
+              per/(map path rule)                       ::  read perms per path
+              pew/(map path rule)                       ::  write perms per path
           ==                                            ::
 ::
 ::  Foreign request manager.
@@ -425,6 +427,8 @@
             dom=*dome
             dok=~
             mer=~
+            per=~
+            pew=~
         ==
       :-  `hun.u.rom
       =+  jod=(fall (~(get by dos.u.rom) syd) *dojo)
@@ -434,6 +438,8 @@
           dom=dom.jod
           dok=dok.jod
           mer=mer.jod
+          per=per.jod
+          pew=pew.jod
       ==
   =*  red  ->
   =|  mow/(list move)
@@ -444,7 +450,7 @@
         ?~  rom
           =+  rug=(~(put by rus:(fall (~(get by hoy.ruf) her) *rung)) syd red)
           ruf(hoy (~(put by hoy.ruf) her rug))
-        =+  dos=(~(put by dos.u.rom) syd [qyx dom dok mer])
+        =+  dos=(~(put by dos.u.rom) syd [qyx dom dok mer per pew])
         ruf(fat (~(put by fat.ruf) her [(need hun) dos]))
     (flop mow)
   ::
