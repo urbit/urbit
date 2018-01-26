@@ -9,6 +9,7 @@ let
     default_native_inputs = [
       nixpkgs.bashInteractive
       nixpkgs.binutils
+      (nixpkgs.binutils-unwrapped or nixpkgs.binutils)
       nixpkgs.bzip2
       nixpkgs.cmake
       nixpkgs.coreutils
