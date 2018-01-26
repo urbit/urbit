@@ -2847,6 +2847,15 @@
         lent=(lent grams.s)
       known=k
     mismatch=m
+  ?:  =(a 'check subs')
+    ~&  'here are all incoming non-circle subs'
+    ~&  ^-  (list (pair ship path))
+        %+  murn  ~(tap by sup.bol)
+        |=  {b/bone s/ship p/path}
+        ^-  (unit (pair ship path))
+        ?:  ?=({$circle *} p)  ~
+        `[s p]
+    [~ +>]
   ?:  =(a 'rebuild')
     ~&  'rebuilding message references...'
     =-  [~ +>.$(stories -)]
@@ -2882,5 +2891,10 @@
         |=  {n/name s/story}
         [n src.shape.s]
     [~ +>]
+  ?:  =(`0 (find "re-listen " (trip a)))
+    ~&  're-listening'
+    :_  +>
+    :_  ~
+    (wire-to-peer /report/(crip (slag 10 (trip a))))
   [~ +>]
 --
