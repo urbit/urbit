@@ -412,9 +412,9 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |%
 ++  de                                                  ::  per desk
-  |=  {now/@da hen/duct raft}
+  |=  {now/@da hen/duct src/(unit ship) raft}
   |=  {{our/@p her/@p} syd/desk}
-  =*  ruf  +>+<+>
+  =*  ruf  +>+<+>+
   =+  ^-  {hun/(unit duct) rede}
       =+  rom=(~(get by fat.ruf) her)
       ?~  rom
@@ -3463,6 +3463,12 @@
         ((hard task:able) q.hic)
       ==
   ^+  [p=*(list move) q=..^$]
+  =/  src/(unit ship)
+    %+  roll  hen
+    |=  {wir/wire src/(unit ship)}
+    ?^  src  src
+    ?.  ?=({$a @ @ *} wir)  ~
+    `(slav %p i.t.t.wir)
   ?-    -.q.hic
       $boat
     :_  ..^$
@@ -3470,7 +3476,7 @@
   ::
       $drop
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
+      =+  den=((de now hen src ruf) [. .]:p.q.hic q.q.hic)
       abet:drop-me:den
     [mos ..^$]
   ::
@@ -3478,7 +3484,7 @@
     ?:  =(%$ q.q.hic)
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
+      =+  den=((de now hen src ruf) [. .]:p.q.hic q.q.hic)
       abet:(edit:den now r.q.hic)
     [mos ..^$]
   ::
@@ -3532,7 +3538,7 @@
     ?:  =(%$ q.q.hic)
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
+      =+  den=((de now hen src ruf) [. .]:p.q.hic q.q.hic)
       abet:abet:(start:(me:ze:den [r.q.hic s.q.hic] ~ &) t.q.hic u.q.hic)
     [mos ..^$]
   ::
@@ -3551,7 +3557,7 @@
     ?~  dos
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:p.q.q.hic q.q.q.hic)
+      =+  den=((de now hen src ruf) [. .]:p.q.q.hic q.q.q.hic)
       abet:(mont:den p.q.hic q.q.hic)
     [mos ..^$]
   ::
@@ -3588,7 +3594,7 @@
   ::
       $warp
     =^  mos  ruf
-      =+  den=((de now hen ruf) p.q.hic p.q.q.hic)
+      =+  den=((de now hen src ruf) p.q.hic p.q.q.hic)
       ::  =-  ~?  ?=([~ %sing %w *] q.q.q.hic)
       ::        :*  %someones-warping
       ::            rav=u.q.q.q.hic
@@ -3619,7 +3625,7 @@
     =+  syd=(slav %tas i.t.q.q.hic)
     =+  inx=(slav %ud i.t.t.q.q.hic)
     =^  mos  ruf
-      =+  den=((de now hen ruf) p.q.hic syd)
+      =+  den=((de now hen src ruf) p.q.hic syd)
       abet:(take-foreign-update:den inx ((hard (unit rand)) r.q.hic))
     [[[hen %give %mack ~] mos] ..^$]
   ::
@@ -3699,7 +3705,7 @@
     [~ ~]
   =+  run=((soft care) ren)
   ?~  run  [~ ~]
-  =+  den=((de now [/scryduct ~] ruf) [. .]:his syd)
+  =+  den=((de now [/scryduct ~] `his ruf) [. .]:his syd)
   =+  (aver:den u.run u.luk tyl)
   ?~  -               -
   ?~  u.-             -
@@ -3725,7 +3731,7 @@
         |=  dojo
         dom
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:our syd)
+      =+  den=((de now hen ~ ruf) [. .]:our syd)
       abet:abet:(route:(me:ze:den [her sud] kan |) sat dat)
     [mos ..^$]
   ?:  ?=({$blab care @ @ *} tea)
@@ -3756,7 +3762,7 @@
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
+        =+  den=((de now hen ~ ruf) [. .]:our syd)
         abet:(take-inserting:den wen q.q.hin)
       [mos ..^$]
     ::
@@ -3766,7 +3772,7 @@
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
+        =+  den=((de now hen ~ ruf) [. .]:our syd)
         abet:(take-diffing:den wen q.q.hin)
       [mos ..^$]
     ::
@@ -3776,7 +3782,7 @@
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
+        =+  den=((de now hen ~ ruf) [. .]:our syd)
         abet:(take-castify:den wen q.q.hin)
       [mos ..^$]
     ::
@@ -3786,7 +3792,7 @@
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
+        =+  den=((de now hen ~ ruf) [. .]:our syd)
         abet:(take-mutating:den wen q.q.hin)
       [mos ..^$]
     ::
@@ -3795,7 +3801,7 @@
       =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
+        =+  den=((de now hen ~ ruf) [. .]:our syd)
         abet:(take-patch:den q.q.hin)
       [mos ..^$]
     ::
@@ -3804,7 +3810,7 @@
       =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
+        =+  den=((de now hen ~ ruf) [. .]:our syd)
         abet:(take-ergo:den q.q.hin)
       [mos ..^$]
     ::
@@ -3815,7 +3821,7 @@
       =*  syd  i.t.t.t.tea
       =+  lem=(slav %da i.t.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [our her] syd)
+        =+  den=((de now hen ~ ruf) [our her] syd)
         abet:(take-foreign-plops:den ?~(lem ~ `lem) q.q.hin)
       [mos ..^$]
     ::
@@ -3831,7 +3837,7 @@
           ->+
       =*  pax  t.t.t.t.t.t.tea
       =^  mos  ruf
-        =+  den=((de now hen ruf) [our her] syd)
+        =+  den=((de now hen ~ ruf) [our her] syd)
         abet:(take-foreign-x:den car cas pax q.q.hin)
       [mos ..^$]
     ==
