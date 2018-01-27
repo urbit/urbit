@@ -162,3 +162,14 @@ of Nix when compared to other package management systems: you will never be
 forced to upgrade your build tools, and using old tools is just as easy as using
 new ones.  You can use the `NIX_PATH` environment variable to tell `nix-build`
 to use your forked versions.
+
+
+## Related projects
+
+* [osxcross]: Cross-compiling toolchain targeting macOS.
+* [musl-cross-make]: Makefile-based build tool for creating cross-compilers targeting musl.
+* [musl_nix_arm]: A fork of nixcrpkgs with a focus on building Docker images for ARM Linux.
+
+[osxcross]: https://github.com/tpoechtrager/osxcross
+[musl-cross-make]: https://github.com/richfelker/musl-cross-make
+[musl_nix_arm]: https://github.com/filleduchaos/musl_nix_arm
