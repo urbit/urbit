@@ -1,6 +1,7 @@
 ::
 ::  dill (4d), terminal handling
 ::
+!:
 |=  pit/vase
 =,  dill
 =>  |%                                                  ::  interface tiles
@@ -223,7 +224,7 @@
           =>((tint a) [+(p) q])                         ::  (add 10 fg)
         ::
         ++  scap                                        ::  ANSI escape seq
-          |=  a/$^((pair @ @) @)
+          |=  a/$@(@ (pair @ @))
           %-  (list @c)
           :+  27  '['                                   ::  "\033[{a}m"
           ?@(a :~(a 'm') :~(p.a q.a 'm'))

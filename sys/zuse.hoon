@@ -4616,49 +4616,6 @@
       [+((met 3 t)) (cat 3 t 10)]
     --
   ::                                                    ::
-  ::::                    ++scanf:userlib               ::  (2uF) exterpolation
-    ::                                                  ::::
-  ++  scanf
-    =<  |*  {tape (pole _;/(*{$^(rule tape)}))}         ::  formatted scan
-        =>  .(+< [a b]=+<)
-        (scan a (parsf b))
-    |%
-    ::                                                  ::  ++parsf:scanf:
-    ++  parsf                                           ::  make parser from:
-      |*  a/(pole _;/(*{$^(rule tape)}))                ::  ;"chars{rule}chars"
-      =-  (cook - (boil (norm a)))
-      |*  (list)
-      ?~  +<  ~
-      ?~  t  i
-      [i $(+< t)]
-    ::
-    ::  .=  (boil ~[[& dim] [| ", "] [& dim]]:ag)
-    ::  ;~(plug dim ;~(pfix com ace ;~(plug dim (easy)))):ag
-    ::
-    ::                                                  ::  ++boil:scanf:userlib
-    ++  boil                                            ::
-      |*  (list (each rule tape))
-      ?~  +<  (easy ~)
-      ?:  ?=($| -.i)  ;~(pfix (jest (crip p.i)) $(+< t))
-      %+  cook  |*({* *} [i t]=+<)
-      ;~(plug p.i $(+< t))
-    ::
-    ::  .=  (norm [;"{n}, {n}"]:n=dim:ag)  ~[[& dim] [| ", "] [& dim]]:ag
-    ::
-    ::                                                  ::  ++norm:scanf:userlib
-    ++  norm                                            ::
-      |*  (pole _;/(*{$^(rule tape)}))
-      ?~  +<  ~
-      =>  .(+< [i=+<- t=+<+])
-      :_  t=$(+< t)
-      =+  rul=->->.i
-      ^=  i
-      ?~  rul     [%| p=rul]
-      ?~  +.rul   [%| p=rul]
-      ?@  &2.rul  [%| p=;;(tape rul)]
-      [%& p=rul]
-    --  ::scanf
-  ::                                                    ::
   ::::                    ++pubsub:userlib              ::  (2uG) application
     ::                                                  ::::
   ++  pubsub  ^?
