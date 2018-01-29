@@ -622,7 +622,7 @@ _sung_one(u3_noun* a, u3_noun* b)
 }
 
 static inline c3_o
-_song_atom(u3_atom(a), u3_atom(b))
+_song_atom(u3_atom a, u3_atom b)
 {
   u3a_atom* a_u = u3a_to_ptr(a);
 
