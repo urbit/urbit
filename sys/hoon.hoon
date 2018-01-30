@@ -1,7 +1,6 @@
 ::                                                      ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::
-!:
 =<  ride
 =>  %143  =>
 ::                                                      ::
@@ -6578,6 +6577,7 @@
 ::
 ++  ax
   =+  :*  ::  dom: axis to home
+          ::  fab: advanced fabrication
           ::  doc: documentation
           ::  bug: debug annotations
           ::  def: default 
@@ -6587,7 +6587,7 @@
           bug=*(list spot)
           def=*(unit tile)
       ==
-  |_  mod/tile
+  |_  {fab/? mod/tile}
   ++  bunt  ~+
     ersatz
   ::
@@ -6774,8 +6774,9 @@
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
     :^  %brts  ~^~
+      ?:  fab
+        ?~(def [%base %noun] ersatz:clear(mod u.def))
       [%ktls [%base %noun] ersatz:clear(mod dummy)]
-      ::  ?~(def [%base %noun] ersatz:clear(mod u.def))
     ~(construct sample(dom (peg 7 dom)) [6 %&])
   ::
   ++  sample
@@ -7305,12 +7306,13 @@
 ::
 ++  ap                                                  ::  hoon engine
   ~%    %ap
-      +>
+      +>+
     ==
       %etch  etch
       %open  open
       %rake  rake
     ==
+  =+  fab=`?`&
   |_  gen/hoon
   ++  etch
     ~_  leaf+"etch"
@@ -7598,8 +7600,8 @@
     ?-    gen
         {$~ *}     [%cnts [[%& p.gen] ~] ~]
     ::
-        {$base *}  ~(clam ax boil)
-        {$bust *}  ~(bunt ax %axil p.gen)
+        {$base *}  ~(clam ax fab boil)
+        {$bust *}  ~(bunt ax fab %axil p.gen)
         {$cold *}  p.gen
         {$dbug *}   q.gen
         {$eror *}  ~|(p.gen !!)
@@ -7638,21 +7640,21 @@
         [%$ ~]                                          ::  $
       [[[%a ~] [%tsgl [%$ 3] [%limb %a]]] ~]             ::  a  +.a
     ::
-        {$leaf *}  ~(clam ax boil)
+        {$leaf *}  ~(clam ax fab boil)
         {$limb *}  [%cnts [p.gen ~] ~]
         {$tell *}  [%cnhp [%limb %noah] [%zpgr [%cltr p.gen]] ~]
         {$wing *}  [%cnts p.gen ~]
         {$yell *}  [%cnhp [%limb %cain] [%zpgr [%cltr p.gen]] ~]
     ::
-        {$bcpt *}  ~(clam ax boil)
-        {$bccb *}  ~(clam ax boil)
-        {$bccl *}  ~(clam ax boil)
-        {$bccn *}  ~(clam ax boil)
-        {$bchp *}  ~(clam ax boil)
-        {$bckt *}  ~(clam ax boil)
-        {$bcwt *}  ~(clam ax boil)
-        {$bcts *}  ~(clam ax boil)
-        {$halo *}  ~(clam ax boil)
+        {$bcpt *}  ~(clam ax fab boil)
+        {$bccb *}  ~(clam ax fab boil)
+        {$bccl *}  ~(clam ax fab boil)
+        {$bccn *}  ~(clam ax fab boil)
+        {$bchp *}  ~(clam ax fab boil)
+        {$bckt *}  ~(clam ax fab boil)
+        {$bcwt *}  ~(clam ax fab boil)
+        {$bcts *}  ~(clam ax fab boil)
+        {$halo *}  ~(clam ax fab boil)
         {$bcsm *}  p.gen
     ::
         {$brcb *}  :+  %tsls  [%bunt q.gen]
@@ -7708,7 +7710,7 @@
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$bunt *}  [%cold ~(bunt ax %herb p.gen)]
+        {$bunt *}  [%cold ~(bunt ax fab %herb p.gen)]
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
         {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
@@ -7738,7 +7740,7 @@
       (turn r.gen |=({p/wing q/hoon} [p [%tsgr [%$ 3] q]]))
     ::
         {$ktdt *}  [%ktls [%cnhp p.gen q.gen ~] q.gen]
-        {$kthp *}  [%ktls ~(bunt ax [%herb p.gen]) q.gen]
+        {$kthp *}  [%ktls ~(bunt ax fab [%herb p.gen]) q.gen]
         {$sgbr *}
       :+  %sggr
         :-  %mean
@@ -7857,7 +7859,7 @@
       [%limb %c]                                        ::
     ::
         {$tsbr *}
-      [%tsls ~(bunt ax %herb p.gen) q.gen]
+      [%tsls ~(bunt ax fab %herb p.gen) q.gen]
     ::
         {$tscl *}
       [%tsgr [%cncb [[%& 1] ~] p.gen] q.gen]
@@ -7937,7 +7939,7 @@
     ::
         {$wtpt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
-        {$wtts *}   [%fits ~(bunt ax %herb p.gen) q.gen]
+        {$wtts *}   [%fits ~(bunt ax fab %herb p.gen) q.gen]
         {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {$zpgr *}
       [%cnhp [%limb %onan] [%zpsm [%bunt [%limb %abel]] p.gen] ~]
@@ -9092,7 +9094,7 @@
     ~/  %chip
     |=  {how/? gen/hoon}  ^-  type
     ?:  ?=({$wtts *} gen)
-      (cool how q.gen (play ~(bunt ax [%herb p.gen])))
+      (cool how q.gen (play ~(bunt ax fab [%herb p.gen])))
     ?:  ?&(how ?=({$wtpm *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=({$wtbr *} gen))
@@ -9369,7 +9371,7 @@
       [(nice (fork p.hiq p.ran ~)) (fork q.hiq q.ran ~)]
     ::
         {$wtts *}
-      =+  nob=~(bunt ax %herb p.gen)  
+      =+  nob=~(bunt ax fab %herb p.gen)  
       =+  waz=[p=(play nob) q=(play(sut dox) nob)]
       =+  ^=  syx  :-  p=(cove q:(mint %noun [%wing q.gen]))
                    q=(cove q:(mint(sut dox) %noun [%wing q.gen]))
