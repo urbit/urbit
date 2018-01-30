@@ -216,7 +216,7 @@
 
     u3_noun u3qfp_hack(u3_noun, u3_noun);
     u3_noun u3qfp_late(u3_noun);
-    u3_noun u3qfp_open(u3_noun, u3_noun);
+    u3_noun u3qfp_open(u3_noun, u3_noun, u3_noun);
     u3_noun u3qfp_nepo(u3_noun, u3_noun);
     u3_noun u3qfp_rake(u3_noun);
 

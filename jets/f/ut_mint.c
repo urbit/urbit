@@ -390,7 +390,8 @@
 
     if ( c3n == u3du(gen) ) {
       u3_noun ter = u3r_at(u3x_con_3, van);
-      u3_noun rex = u3qfp_open(ter, gen);
+      u3_noun fab = u3r_at(u3qfu_van_fab, van);
+      u3_noun rex = u3qfp_open(ter, fab, gen);
 
       ret = _mint_in(van, sut, gol, rex);
       u3z(rex);
@@ -416,7 +417,8 @@
     } else switch ( u3h(gen) ) {
       default: {
         u3_noun ter = u3r_at(u3x_con_3, van);
-        u3_noun rex = u3qfp_open(ter, gen);
+        u3_noun fab = u3r_at(u3qfu_van_fab, van);
+        u3_noun rex = u3qfp_open(ter, fab, gen);
 
         if ( c3y == u3r_sing(rex, gen) ) {
 #if 1

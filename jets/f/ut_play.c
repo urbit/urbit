@@ -217,7 +217,8 @@
     if ( c3n == u3du(gen) ) {
       open: {
         u3_noun ter = u3r_at(u3x_con_3, van);
-        u3_noun rex = u3qfp_open(ter, gen);
+        u3_noun fab = u3r_at(u3qfu_van_fab, van);
+        u3_noun rex = u3qfp_open(ter, fab, gen);
         u3_noun ret;
 
         if ( c3y == u3r_sing(rex, gen) ) {
