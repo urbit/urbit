@@ -39,10 +39,12 @@
       ~|  a
       =+  ^-  [wat=kind des=cord ses=(set @p)]
           %.  a
-          (ot kind+(cu (hard kind) so) desc+so mems+(su (cook sy (more ace fed:ag))) ~)
+          :: ses expects an ace-delimited string of ship names
+          :: TODO change to an array of strings AA
+          (ot wat+(cu (hard kind) so) des+so ses+(su (cook sy (more ace fed:ag))) ~)
       ?>  ?=([%o *] a)
-      =/  pub  (~(has by p.a) %publ)
-      =/  vis  (~(has by p.a) %visi)
+      =/  pub  (~(has by p.a) %pub)
+      =/  vis  (~(has by p.a) %vis)
       [wat des pub vis ses]
     ::
     ++  wain  (su (more newline (cook crip (star prn))))
