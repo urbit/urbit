@@ -7065,250 +7065,6 @@
     --
   --
 ::
-++  al                                                  ::  tile engine
-  ~%    %al
-      +>+
-    ==
-      %bunt  bunt
-      %whip  whip
-    ==
-  =+  :*  nag=`*`& 
-          gom=`axis`1
-          wat=*what
-      ==
-  |_  sec/tile
-  ::::
-  ++  hail
-    |=  gen/hoon
-    ^-  hoon
-    ?~(wat gen [%docs u.wat gen])
-  ::
-  ++  home  |=(gen/hoon ^-(hoon ?:(=(1 gom) gen [%tsgr [%$ gom] gen])))
-  ::::
-  ++  bunt
-    |-  ^-  hoon
-    ~+
-    ?-    sec
-        {^ *}
-      %-  hail
-      =.  wat  ~
-      (hail [$(sec p.sec) $(sec q.sec)])
-    ::
-        {$axil *}
-      %-  hail
-      =.  wat  ~
-      ?-  p.sec
-        {$atom *}  [%sand p.p.sec 0]
-        $noun      [%dttr [%rock %$ 0] [[%rock %$ 0] [%rock %$ 1]]]
-        $cell      =+(nec=$(sec [%axil %noun]) [nec nec])
-        $bean      [%dtts [%rock %$ 0] [%rock %$ 0]]
-        $void      [%zpzp ~]
-        $null      [%rock %n %$]
-      ==
-    ::
-        {$bark *}
-      [%ktts p.sec $(sec q.sec)]
-    ::
-        {$deet *}
-      [%dbug p.sec $(sec q.sec)]
-    ::
-        {$fern *}
-      %-  hail
-      =.  wat  ~
-      |-  ^-  hoon
-      ?~  t.p.sec
-        ^$(sec i.p.sec)
-      [%wtcl [%bust %bean] $(p.sec t.p.sec) ^$(sec i.p.sec)]
-    ::
-        {$herb *}
-      %-  hail
-      =.  wat  ~
-      ::  reduce excess model/value transitions
-      ::
-      =+  cys=~(boil ap p.sec)
-      ?:  ?=($herb -.cys)
-        (home [%tsgl [%limb %$] p.sec])
-      $(sec cys)
-    ::
-        {$kelp *}
-      %-  hail
-      =.  wat  ~
-      :+  %ktls
-        |-  ^-  hoon
-      ?~  t.p.sec
-        ^$(sec i.p.sec)
-        [%wtcl [%bust %bean] $(p.sec t.p.sec) ^$(sec i.p.sec)]
-      %=    $
-          sec
-        |-  ^-  tile 
-        ?~(t.p.sec i.p.sec $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec))
-      ==
-    ::
-        {$leaf *}
-      (hail [%rock p.sec q.sec])
-    ::
-        {$plow *}
-      $(sec q.sec, wat p.sec)
-    ::
-        {$reed *}
-      %-  hail
-      =.  wat  ~
-      [%wtcl [%bust %bean] $(sec p.sec) $(sec q.sec)]
-    ::
-        {$vine *}
-      %-  hail
-      =.  wat  ~
-      [%wtcl [%bust %bean] $(sec p.sec) $(sec q.sec)]
-    ::
-        {$weed *}
-      (hail (home p.sec))
-    ==
-  ++  clam  
-    ^-  hoon
-    =/  raw  [%brts [~ ~] [%base %noun] (whip(gom 7) 6)]
-    ::
-    ::  this performance fix should unify a bunch of trivial formulas,
-    ::  but breaks on certain hacks in ++raid:zuse.
-    ::
-    ::  ?.  ?=(?($axil $leaf) -.sec)  raw
-    ::  [%tsgr [%rock %n ~] raw]
-    raw
-  ::
-  ++  whip
-    |=  axe/axis
-    =+  ^=  tun
-        |=  $:  def/tile 
-                noy/$-(* hoon)
-            == 
-        ^-  hoon
-        ?@  nag
-          =+  luz=[%cnts [[%& 1] ~] [[[%& axe] ~] bunt(sec def)] ~]
-          ?:  =(& nag)
-            [%tsgr [%wtpt [[%& axe] ~] luz [%$ 1]] (noy [& &])]
-          [%tsgr luz (noy [& &])]
-        (noy nag)
-    ^-  hoon
-    ~+
-    ?-    sec
-        {^ *}
-      %-  hail
-      =.  wat  ~
-      %+  tun  [%axil %cell]  |=  gon/*  =>  .(nag gon)  ^-  hoon
-      :-  ^$(sec -.sec, nag -.nag, axe (peg axe 2))
-      ^$(sec +.sec, nag +.nag, axe (peg axe 3))
-    ::
-        {$axil *}
-      %-  hail
-      =.  wat  ~
-      ?-    p.sec
-          {$atom *}
-        =+  buv=bunt
-        |-  ^-  hoon
-        ?@  nag
-          ?:(=(& nag) [%wtpt [[%& axe] ~] $(nag |) buv] [%ktls buv [%$ axe]])
-        buv
-      ::
-          $noun
-        [%kthp [%base %noun] [%$ axe]]
-      ::
-          $cell
-        =+  buv=bunt
-        |-  ^-  hoon
-        ?@  nag
-          ?:(=(& nag) [%wtpt [[%& axe] ~] buv $(nag [& &])] buv)
-        [%ktls buv [%$ axe]]
-      ::
-          $bean
-        :^    %wtcl
-            [%dtts [%rock %$ |] [%$ axe]]
-          [%rock %f |]
-        [%rock %f &]
-      ::
-          $void
-        bunt
-      ::
-          $null
-        bunt
-      ==
-    ::
-        {$bark *}
-      [%ktts p.sec $(sec q.sec)]
-    ::
-        {$vine *}
-      %-  hail
-      =.  wat  ~
-      %+  tun  [%axil %cell]  |=  gon/*  =>  .(nag gon)  ^-  hoon
-      ?@  -.nag
-        ?:  =(& -.nag)
-          [%wtpt [[%& (peg axe 2)] ~] ^$(sec q.sec) ^$(sec p.sec)]
-        ^$(sec q.sec)
-      ^$(sec p.sec)
-    ::
-        {$deet *}
-      [%dbug p.sec $(sec q.sec)]
-    ::
-        {$fern *}
-      %-  hail
-      =.  wat  ~
-      |-  ^-  hoon
-      ?~  t.p.sec
-        ^$(sec i.p.sec)
-      :+  %tsls
-        ^$(sec i.p.sec)
-      =>  .(axe (peg 3 axe), gom (peg 3 gom))
-      :^    %wtcl
-          [%dtts [%$ axe] [%$ 2]]
-        [%$ 2]
-      $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec)
-    ::
-        {$herb *}
-      %-  hail
-      =.  wat  ~
-      =+  cys=~(boil ap p.sec)
-      ?:  ?=($herb -.cys)
-        [%cnhp (home p.sec) [%$ axe] ~]
-      $(sec cys)
-    ::
-        {$kelp *}
-      %-  hail
-      =.  wat  ~
-      =/  def/tile
-        :_  [%axil %noun]
-        =<  p
-        |-  ^-  line
-        ?~(t.p.sec i.p.sec $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec))
-      %+  tun  def  |=  gon/*  =>  .(nag gon)
-      |-  ^-  hoon
-      ?~  t.p.sec
-        :-  [%rock +.p.i.p.sec]
-        ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
-      :^    %wtcl
-          [%dtts [%$ (peg axe 2)] [%rock +.p.i.p.sec]]
-        :-  [%rock +.p.i.p.sec]
-        ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
-      $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec)
-    ::
-        {$leaf *}
-      (hail [%rock p.sec q.sec])
-    ::
-        {$plow *}
-      $(sec q.sec, wat p.sec)
-    ::
-        {$reed *}
-      %-  hail
-      =.  wat  ~
-      ?-  nag
-        $&  [%wtpt [[%& axe] ~] $(sec p.sec, nag |) $(sec q.sec, nag [& &])]
-        $|  $(sec p.sec)
-        ^   $(sec q.sec)
-        *   !!
-      ==
-    ::
-        {$weed *}
-      (hail (home p.sec))
-    ==
-  --
-::
 ++  ap                                                  ::  hoon engine
   ~%    %ap
       +>+
@@ -8323,25 +8079,25 @@
     ::  ~|  mask.bus
     =+  jon=(apex:musk bus q.pro)
     ?~  jon
-      ::  ?:  fab
-      ::    [p.pro [%10 [%live %1 %constant-stop] q.pro]]
-      ::  [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
+      ?:  fab
+        [p.pro [%10 [%live %1 %constant-stop] q.pro]]
+      [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
       ::  ~_  (dunk '%constant-blocked-type')
       ::  ~|  [%constant-stopped-gene gen]
       ::  ~|  [%constant-stopped-mask mask.bus]
       ::  ~|  [%constant-stopped-formula `@p`(mug q.pro) q.pro]
-      ~|  %constant-folding-stopped
-      !!
+      ::  ~|  %constant-folding-stopped
+      ::  !!
     ?:  ?=($| -.u.jon)
-      ::  ?:  fab
-      ::    [p.pro [%10 [%live %1 %constant-block] q.pro]]
-      ::  [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
+      ?:  fab
+        [p.pro [%10 [%live %1 %constant-block] q.pro]]
+      [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
       ::  ~_  (dunk '%constant-blocked-type')
       ::  ~|  [%constant-blocked-gene gen]
       ::  ~|  [%constant-blocked-mask mask.bus]
       ::  ~|  [%constant-blocked-formula `@p`(mug q.pro) q.pro]
-      ~|  %constant-folding-blocked
-      !!
+      ::  ~|  %constant-folding-blocked
+      ::  !!
     ::  [p.pro [%10 [%live %1 %constant-nonblocked] %1 p.u.jon]]
     [p.pro %1 p.u.jon]
   ::
