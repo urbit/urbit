@@ -495,3 +495,535 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 
   return u3n_nock_et(gul, bus, fol);
 }
+
+/* _n_mush_in(): see _n_mush().
+*/
+static u3_noun
+_n_mush_in(u3_noun val)
+{
+  if ( c3n == u3du(val) ) {
+    return u3_nul;
+  }
+  else {
+    u3_noun h_val = u3h(val);
+    u3_noun ite;
+
+    if ( c3n == u3ud(h_val) ) {
+      ite = u3nc(c3__leaf, u3_nul);
+    } else {
+      ite = u3nc(c3__leaf, u3qe_trip(h_val));
+    }
+    return u3nc(ite, _n_mush_in(u3t(val)));
+      case c3_
+    }
+  }
+}
+
+#define FRAG 0
+#define QUOT 1
+#define NOCK 2
+#define DEEP 3
+#define BUMP 4
+#define SAME 5
+#define BAIL 6
+#define HEAD 7
+#define TAIL 8
+#define COPY 9
+#define SWAP 10
+#define CONS 11
+#define SCON 12
+#define SKIN 13
+#define SKIP 14
+#define WISH 15
+#define KICK 16
+
+static inline c3_y
+_n_emit(u3_noun *ops, u3_noun op)
+{
+  *ops = u3nc(op, *ops);
+  if ( c3n == u3du(op) ) {
+    return sizeof(c3_y);
+  }
+  else switch ( u3h(op) ) {
+    case SKIP:
+    case SKIN: 
+      return sizeof(c3_y) + sizeof(c3_s);
+    case QUOT:
+    case QUIP:
+    case FRAG:
+    case TICK:
+    case KICK:
+      return sizeof(c3_y) + sizeof(u3_noun);
+    default:
+      c3_assert(0);
+  }
+}
+
+static c3_s _n_comp(u3_noun*, u3_noun, c3_o);
+
+static c3_s _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
+{
+  if ( c3n == u3du(hif) ) {
+    // no currently recognized static hints
+    return _n_comp(ops, nef, tel_o);
+  }
+  else {
+    c3_s tot_s = 0;
+    u3_noun zep, hod;
+    u3x_cell(hif, &zep, &hod);
+
+    switch ( zep ) {
+      default:
+        tos += _n_emit(ops, COPY);
+        tos += _n_comp(ops, hod, c3n);
+        tos += _n_emit(ops, TOSS);
+        tos += _n_comp(ops, nef, tel_o);
+        break;
+
+      case c3__hunk:
+      case c3__lose:
+      case c3__mean:
+      case c3__spot: 
+        tot_s += _n_emit(ops, u3nc(QUIP, zep));
+        tot_s += _n_emit(ops, COPY);
+        tot_s += _n_comp(ops, hod, c3n);
+        tot_s += _n_emit(ops, CONS);
+        tot_s += _n_emit(ops, STAP);
+        tot_s += _n_comp(ops, nef, c3n);
+        tot_s += _n_emit(ops, STOP);
+        break;
+
+      case c3__live: 
+        tot_s += _n_emit(ops, COPY);
+        tot_s += _n_comp(ops, hod, c3n);
+        tot_s += _n_emit(ops, PEEP);
+        tot_s += _n_emit(ops, u3nc(SKIN, sizeof(c3_y) +
+                                         sizeof(c3_y) + sizeof(c3_s)));
+        tot_s += _n_emit(ops, HECK);
+        tot_s += _n_emit(ops, u3nc(SKIP, sizeof(c3_y)));
+        tot_s += _n_emit(ops, TOSS);
+        tot_s += _n_comp(ops, nef, tel_o);
+        break;
+
+      case c3__slog: 
+        tot_s += _n_emit(ops, COPY);
+        tot_s += _n_comp(ops, hod, c3n);
+        tot_s += _n_emit(ops, SLOG);
+        tot_s += _n_comp(ops, nef, tel_o);
+        break;
+
+      case c3__fast: 
+        tot_s += _n_emit(ops, COPY);
+        tot_s += _n_comp(ops, hod, c3n);
+        tot_s += _n_emit(ops, SWAP);
+        tot_s += _n_comp(ops, nef, c3n);
+        tot_s += _n_emit(ops, FAST);
+        break;
+
+      case c3__memo: {
+        u3_noun nop = u3_nul;
+        c3_s n_s    = _n_comp(&nop, nef, c3n);
+
+        n_s   += _n_emit(ops, PUMO);
+        tot_s += _n_comp(ops, hod, c3n);
+        tot_s += _n_emit(ops, GEMO);
+        tot_s += _n_emit(ops, PEEP);
+        tot_s += _n_emit(ops, u3nc(SKIN, sizeof(c3_y) + 
+                                         sizeof(c3_y) + sizeof(c3_s)));
+        tot_s += _n_emit(ops, TAIL);
+        tot_s += _n_emit(ops, u3nc(SKIP, n_s));
+
+        _n_apen(ops, nop);
+        tot_s += n_s;
+        break;
+      }
+    }
+    return tot_s;
+  }
+}
+
+/* fol is RETAINED */
+static c3_s
+_n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
+  c3_s tot_s = 0;
+  u3_noun cod, arg, hed, tel;
+  u3x_cell(fol, &cod, &arg);
+
+  if ( c3y == u3du(cod) ) {
+    tot_s += _n_emit(ops, COPY);
+    tot_s += _n_comp(ops, cod, c3n);
+    tot_s += _n_emit(ops, SWAP);
+    tot_s += _n_comp(ops, arg, c3n);
+    tot_s += _n_emit(ops, CONS);
+  }
+  else switch ( cod ) {
+    case 0: 
+      if ( c3n == u3ud(arg) ) {
+        return u3m_bail(c3__exit);
+      }
+      switch ( arg ) {
+        case 0:
+          tot_s += _n_emit(ops, BAIL);
+          break;
+        case 1:
+          break;
+        case 2:
+          tot_s += _n_emit(ops, HEAD);
+          break;
+        case 3:
+          tot_s += _n_emit(ops, TAIL);
+          break;
+        default:
+          tot_s += _n_emit(ops, u3nc(FRAG, u3k(arg)));
+      }
+      break;
+    case 1: {
+      tot_s += _n_emit(ops, u3nc(QUOT, u3k(arg)));
+      break;
+    }
+    case 2:
+      u3x_cell(arg, &hed, &tel);
+      tot_s += _n_emit(ops, COPY);
+      tot_s += _n_comp(ops, hed, c3n);
+      tot_s += _n_emit(ops, SWAP);
+      tot_s += _n_comp(ops, tel, c3n);
+      tot_s += _n_emit(ops, (tel_o ? NOCT : NOCK));
+      break;
+    case 3:
+      tot_s += _n_comp(ops, arg, c3n);
+      tot_s += _n_emit(ops, DEEP);
+      break;
+    case 4:
+      tot_s += _n_comp(ops, arg, c3n);
+      tot_s += _n_emit(ops, BUMP);
+      break;
+    case 5:
+      u3x_cell(arg, &hed, &tel);
+      tot_s += _n_emit(ops, COPY);
+      tot_s += _n_comp(ops, hed, c3n);
+      tot_s += _n_emit(ops, SWAP);
+      tot_s += _n_comp(ops, tel, c3n);
+      tot_s += _n_emit(ops, SAME);
+      break;
+    case 6: {
+      u3_noun mid;
+      u3x_trel(arg, &hed, &mid, &tel);
+
+      tot_s += _n_comp(ops, hed, c3n);
+
+      u3_noun yep   = u3_nul,
+              nop   = u3_nul;
+      c3_s    y_s   = _n_comp(&yep, mid, tel_o),
+              n_s   = _n_comp(&nop, tel, tel_o),
+              sin_s = y_s + sizeof(c3_y) + sizeof(c3_s);
+
+      tot_s += _n_emit(ops, u3nc(SKIN, sin_s));
+      _n_apen(ops, yep);
+      tot_s += y_s;
+
+      tot_s += _n_emit(ops, u3nc(SKIP, n_s));
+      _n_apen(ops, nop);
+      tot_s += n_s;
+      break;
+    }
+    case 7:
+      u3x_cell(arg, &hed, &tel);
+      tot_s += _n_comp(ops, hed, c3n);
+      tot_s += _n_comp(ops, tel, tel_o);
+      break;
+    case 8:
+      u3x_cell(arg, &hed, &tel);
+      tot_s += _n_emit(ops, COPY);
+      tot_s += _n_comp(ops, hed, c3n);
+      tot_s += _n_emit(ops, SCON);
+      tot_s += _n_comp(ops, tel, tel_o);
+      break;
+    case 9:
+      u3x_cell(arg, &hed, &tel);
+      if ( 3 == u3qc_cap(hed) ) {
+        u3_noun mac = u3nq(7, u3k(tel), 2, u3nt(u3nc(0, 1), 0, u3k(hed)));
+        tot_s += _n_comp(ops, mac, tel_o);
+        u3z(mac);
+      }
+      else {
+        tot_s += _n_comp(ops, tel, c3n);
+        tot_s += _n_emit(ops, u3nc((tel_o ? TICK : KICK), u3k(hed)));
+      }
+      break;
+    case 10:
+      u3x_cell(arg, &hed, &tel);
+      tot_s += _n_bint(ops, hed, tel, tel_o);
+      break;
+    case 11:
+      u3x_cell(arg, &hed, &tel);
+      tot_s += _n_emit(ops, COPY);
+      tot_s += _n_comp(ops, hed, c3n);
+      tot_s += _n_emit(ops, SWAP);
+      tot_s += _n_comp(ops, tel, c3n);
+      tot_s += _n_emit(ops, WISH);
+      break;
+  }
+  return tot_s;
+}
+
+static c3_y*
+_n_asm(u3_noun ops)
+{
+  u3_noun   top   = ops;
+  c3_s      i_s   = _n_comp(&ops, fol);
+  c3_y*     buf_y = u3a_malloc(sizeof(c3_y) * (i_s+1));
+
+  buf_y[i_s] = HALT;
+  while ( --i_s >= 0 ) {
+    u3_noun op = u3h(ops);
+    if ( c3y == u3ud(op) ) {
+      buf_y[i_s] = (c3_y) u3h(ops);
+    }
+    else {
+      u3_noun cod = u3h(op);
+      switch ( cod ) {
+        case SKIP:
+        case SKIN: {
+          c3_s off_s = u3t(op);
+          buf_y[i_s--] = (c3_y) (off_s >> 8);
+          buf_y[i_s--] = (c3_y) off_s;
+          buf_y[i_s]   = (c3_y) cod;
+          break;
+        }
+        case QUOT:
+        case QUIP:
+        case FRAG:
+        case TICK:
+        case KICK: {
+          c3_w non_w = u3t(op);
+          buf_y[i_s--] = (c3_y) (non_w >> 24);
+          buf_y[i_s--] = (c3_y) (non_w >> 16);
+          buf_y[i_s--] = (c3_y) (non_w >> 8);
+          buf_y[i_s--] = (c3_y) non_w;
+          buf_y[i_s]   = (c3_y) cod;
+          break;
+        }
+        default:
+          c3_assert(0);
+      }
+    }
+    ops = u3t(ops);
+  }
+
+  u3z(ops);
+  return buf_y;
+}
+
+static inline void
+_n_push(u3_noun a)
+{
+  u3_noun* p = (u3_noun*) u3a_push(sizeof(u3_noun));
+  *p = a;
+}
+
+static inline u3_noun*
+_n_peek()
+{
+  return (u3_noun*) u3a_peek(sizeof(u3_noun));
+}
+
+static inline u3_noun
+_n_pop()
+{
+  u3_noun r = *(_n_peek());
+  u3a_pop(sizeof(u3_noun));
+  return r;
+}
+
+static inline void
+_n_toss()
+{
+  u3z(_n_pop());
+}
+
+static inline c3_s
+_n_resh(c3_y* buf, c3_s* ip_s)
+{
+  c3_y les = buf[(*ip_s)++];
+  c3_y mos = buf[(*ip_s)++];
+  return les | (mos << 8);
+}
+
+static inline u3_noun
+_n_rean(c3_y* buf, c3_s* ip_s)
+{
+  c3_y one = buf[(*ip_s)++],
+       two = buf[(*ip_s)++],
+       tre = buf[(*ip_s)++],
+       qua = buf[(*ip_s)++];
+  return one | (two << 8) | (tre << 16) | (qua << 24);
+}
+
+static inline c3_y*
+_n_bite(u3_noun fol)
+{
+  return _n_asm(_n_comp(&bok, fol, c3y));
+}
+
+static c3_y*
+_n_find(u3_noun fol)
+{
+  u3_noun got = u3h_get(u3R->byc.har_p, fol);
+  if ( u3_none != got ) {
+    return u3a_to_ptr(got);
+  }
+  else {
+    c3_y* gop = _n_bite(fol);
+    got = u3a_to_off(gop);
+    u3h_put(u3R->byc.har_p, fol, got);
+    return gop;
+  }
+}
+
+static u3_noun 
+_n_burn(c3_y* pog)
+{
+  static void* lab[] = {
+    &&do_halt, &&do_copy, &&do_swap,
+    &&do_toss, &&do_skip, &&do_skin,
+    &&do_cons, &&do_scon,
+    &&do_head, &&do_tail, &&do_frag,
+    &&do_quot, &&do_quip,
+    &&do_nock, &&do_noct,
+    &&do_deep, &&do_peep,
+    &&do_bump, &&do_same,
+  };
+  #define BURN() goto *lab[pog[ip_s++]]
+
+  c3_s sip_s, ip_s = 0;
+  c3_y  op;
+  c3_y* gop;
+  u3_noun* top;
+  u3_noun* up;
+  u3_noun x, o;
+  u3p(void) empty = u3R->cap_p;
+
+  BURN();
+  while ( 1 ) {
+    do_halt: 
+      x = _n_pop();
+      c3_assert( empty == u3R->cap_p );
+      return x;
+
+    do_copy:
+      top = _n_peek();
+      _n_push(u3k(*top));
+      BURN();
+
+    do_swap:
+      up   = (u3_noun*) u3a_peek(sizeof(u3_noun) + sizeof(u3_noun));
+      top  = _n_peek();
+      x    = *top;
+      *top = *up;
+      *up  = x;
+      BURN();
+
+    do_toss:
+      _n_toss();
+      BURN();
+
+    do_skip:
+      ip_s += _n_resh(pog, &ip_s);
+      BURN();
+
+    do_skin:
+      sip_s  = _n_resh(pog, &ip_s);
+      x      = _n_pop();
+      if ( c3n == x ) {
+        ip_s += sip_s;
+      }
+      else if ( c3y != x ) {
+        return u3m_bail(c3__exit);
+      }
+      BURN();
+
+    do_cons:
+      x    = _n_pop();
+      top  = _n_peek();
+      *top = u3nc(*top, x);
+      BURN();
+
+    do_scon:
+      x    = _n_pop();
+      top  = _n_peek();
+      *top = u3nc(x, *top);
+      BURN();
+
+    do_head:
+      top  = _n_peek();
+      o    = *top;
+      if ( c3n == u3du(o) ) {
+        return u3m_bail(c3__exit);
+      }
+      *top = u3k(u3h(o));
+      u3z(o);
+      BURN();
+
+    do_tail:
+      top  = _n_peek();
+      o    = *top;
+      if ( c3n == u3du(o) ) {
+        return u3m_bail(c3__exit);
+      }
+      *top = u3k(u3t(o));
+      u3z(o);
+      BURN();
+
+    do_frag:
+      top  = _n_peek();
+      o    = *top;
+      x    = u3x_at(_n_rean(pog, &ip_s), o);
+      *top = u3k(x);
+      u3z(o);
+      BURN();
+
+    do_quot:
+      _n_toss();
+    do_quip:
+      _n_push(_n_rean(pog, &ip_s));
+      BURN();
+
+    do_nock:
+      gop = _n_find(_n_pop());
+      _n_push(_n_burn(gop));
+      BURN();
+
+    do_noct:
+      pog  = _n_find(_n_pop());
+      ip_s = 0;
+      BURN();
+
+    do_deep:
+      top  = _n_peek();
+      o    = *top;
+      *top = u3du(o);
+      u3z(o);
+      BURN();
+
+    do_peep:
+      top = _n_peek();
+      _n_push(u3du(*top));
+      BURN();
+
+    do_bump:
+      top = _n_peek();
+      o   = *top;
+      *top = u3i_vint(o);
+      u3z(o);
+      BURN();
+
+    do_same:
+      x    = _n_pop();
+      top  = _n_peek();
+      o    = *top;
+      *top = u3r_sing(x, o);
+      u3z(x);
+      u3z(o);
+      BURN();
+  }
+}
