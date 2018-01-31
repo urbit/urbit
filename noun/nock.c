@@ -519,23 +519,37 @@ _n_mush_in(u3_noun val)
   }
 }
 
-#define FRAG 0
-#define QUOT 1
-#define NOCK 2
-#define DEEP 3
-#define BUMP 4
-#define SAME 5
-#define BAIL 6
-#define HEAD 7
-#define TAIL 8
-#define COPY 9
-#define SWAP 10
-#define CONS 11
-#define SCON 12
-#define SKIN 13
-#define SKIP 14
-#define WISH 15
-#define KICK 16
+/* These must match the order in the section marked OPCODE TABLE */
+#define HALT 0
+#define COPY 1
+#define TOSS 2
+#define SWAP 3
+#define SWAT 4
+#define SKIP 5
+#define SKIN 6
+#define CONS 7
+#define SCON 8
+#define HEAD 9
+#define TAIL 10
+#define FRAG 11
+#define QUOT 12
+#define QUIP 13
+#define NOCK 14
+#define NOCT 15
+#define DEEP 16
+#define PEEP 17
+#define BUMP 18
+#define SAME 19
+#define KICK 20
+#define TICK 21
+#define WISH 22
+#define FAST 23
+#define CUSH 24
+#define DROP 25
+#define PUMO 26
+#define GEMO 27
+#define HECK 28
+#define SLOG 29
 
 static inline void
 _n_apen(u3_noun* dst, u3_noun src)
@@ -600,17 +614,28 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
         tot_s += _n_emit(ops, DROP);
         break;
 
-      case c3__live: 
+      case c3__live: {
+        u3_noun yep = u3_nul,
+                nop = u3_nul;
+        c3_s    y_s = 0,
+                n_s = 0;
+
         tot_s += _n_emit(ops, COPY);
         tot_s += _n_comp(ops, hod, c3n);
         tot_s += _n_emit(ops, PEEP);
-        tot_s += _n_emit(ops, u3nc(SKIN, sizeof(c3_y) +
-                                         sizeof(c3_y) + sizeof(c3_s)));
-        tot_s += _n_emit(ops, TOSS);
-        tot_s += _n_emit(ops, u3nc(SKIP, sizeof(c3_y)));
-        tot_s += _n_emit(ops, HECK);
+
+        n_s += _n_emit(&nop, HECK);
+
+        y_s += _n_emit(&yep, TOSS);
+        y_s += _n_emit(&yep, u3nc(SKIP, n_s));
+
+        tot_s += n_emit(ops, u3nc(SKIN, y_s));
+        _n_apen(ops, yep); tot_s += y_s;
+        _n_apen(ops, nop); tot_s += n_s;
+
         tot_s += _n_comp(ops, nef, tel_o);
         break;
+      }
 
       case c3__slog: 
         tot_s += _n_emit(ops, COPY);
@@ -632,6 +657,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
       case c3__memo: {
         u3_noun nop = u3_nul,
                 yep = u3_nul;
+
         c3_s y_s = 0,
              n_s = 0;                                // top->[bus]
         tot_s += _n_emit(ops, COPY);                 // [bus bus]
@@ -647,11 +673,11 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
         n_s += _n_emit(&nop, TOSS);                  // [key bus]
         n_s += _n_emit(&nop, SWAP);                  // [bus key]
         n_s += _n_comp(&nop, nef, c3n);              // [pro key]
-        n_s += _n_emit(ops, PUMO);
+        n_s += _n_emit(&nop, PUMO);
 
         // YES branch, i.e. gemo gave us [0 pro]
         y_s += _n_emit(&yep, TAIL);                  // [pro key bus]
-        y_s += _n_emit(ops, SWAT);                   // [pro bus]
+        y_s += _n_emit(&yep, SWAT);                  // [pro bus]
         y_s += _n_emit(&yep, u3nc(SKIP, n_s));
 
         tot_s += _n_emit(ops, u3nc(SKIN, y_s));
@@ -788,11 +814,11 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
 }
 
 static c3_y*
-_n_asm(u3_noun ops)
+_n_asm(u3_noun ops, c3_s len_s)
 {
   u3_noun   top   = ops;
-  c3_s      i_s   = _n_comp(&ops, fol);
-  c3_y*     buf_y = u3a_malloc(sizeof(c3_y) * (i_s+1));
+  c3_y*     buf_y = u3a_malloc(sizeof(c3_y) * (len_s+1));
+  c3_s      i_s   = len_s;
 
   buf_y[i_s] = HALT;
   while ( --i_s >= 0 ) {
@@ -889,7 +915,9 @@ _n_rean(c3_y* buf, c3_s* ip_s)
 static inline c3_y*
 _n_bite(u3_noun fol)
 {
-  return _n_asm(_n_comp(&bok, fol, c3y));
+  u3_noun bok = u3_nul;
+  c3_s len_s  = _n_comp(&bok, fol, c3y)
+  return _n_asm(bok, len_s);
 }
 
 static c3_y*
@@ -907,9 +935,12 @@ _n_find(u3_noun fol)
   }
 }
 
-static u3_noun 
+/* _n_burn(): run pog, subject is top of cap stack, return value on cap stack
+ */
+static void
 _n_burn(c3_y* pog)
 {
+  /* OPCODE TABLE */
   static void* lab[] = {
     &&do_halt, &&do_copy, &&do_toss,
     &&do_swap, &&do_swat, 
@@ -921,11 +952,11 @@ _n_burn(c3_y* pog)
     &&do_deep, &&do_peep,
     &&do_bump, &&do_same,
     &&do_kick, &&do_tick,
+    &&do_wish, &&do_fast,
     &&do_cush, &&do_drop,
     &&do_pumo, &&do_gemo,
-    &&do_heck, &&do_slog, &&do_fast,
+    &&do_heck, &&do_slog,
   };
-  #define BURN() goto *lab[pog[ip_s++]]
 
   c3_s sip_s, ip_s = 0;
   c3_y  op;
@@ -935,12 +966,11 @@ _n_burn(c3_y* pog)
   u3_noun x, o;
   u3p(void) empty = u3R->cap_p;
 
+  #define BURN() goto *lab[pog[ip_s++]]
   BURN();
   while ( 1 ) {
     do_halt: 
-      x = _n_pop();
-      c3_assert( empty == u3R->cap_p );
-      return x;
+      return;
 
     do_copy:
       top = _n_peek();
@@ -1031,7 +1061,7 @@ _n_burn(c3_y* pog)
 
     do_nock:
       gop = _n_find(_n_pop());
-      _n_push(_n_burn(gop));
+      _n_burn(gop);
       BURN();
 
     do_noct:
@@ -1079,9 +1109,9 @@ _n_burn(c3_y* pog)
         if ( u3_none == fol ) {
           return u3m_bail(c3__exit);
         }
+        *top = o;
         gop  = _n_find(fol);
-        _n_push(o);
-        *top = _n_burn(gop);
+        _n_burn(gop);
       }
       BURN();
 
@@ -1102,6 +1132,38 @@ _n_burn(c3_y* pog)
         ip_s = 0;
       }
       BURN();
+
+    do_fast: // top->[pro clu]
+      top = _n_peek();
+      up  = _n_peet();
+      u3t_off(noc_o);
+      u3j_mine(*up, u3k(*top));
+      u3t_on(noc_o);
+      *up = *top;
+      u3a_pop(sizeof(u3_noun));
+      BURN();
+
+    do_wish:
+      top = _n_peek();
+      up  = _n_peet();
+      u3t_off(noc_o);
+      x   = u3m_soft_esc(*up, u3k(*top));
+      u3t_on(noc_o);
+
+      if ( c3n == u3du(x) ) {
+        return u3m_bail(u3nt(1, *top, 0));
+      }
+      else if ( c3n == u3du(u3t(x)) ) {
+        //  replace with proper error stack push
+        u3t_push(u3nc(c3__hunk, _n_mush(*top)));
+        return u3m_bail(c3__exit);
+      }
+      else {
+        u3z(*top);
+        *top = u3k(u3t(u3t(x)));
+        u3z(x);
+        BURN();
+      }
 
     do_cush:
       u3t_push(_n_pop());
@@ -1135,16 +1197,6 @@ _n_burn(c3_y* pog)
       u3t_off(noc_o);
       u3t_slog(_n_pop());
       u3t_on(noc_o);
-      BURN();
-
-    do_fast: // top->[pro clu]
-      top = _n_peek();
-      up  = _n_peet();
-      u3t_off(noc_o);
-      u3j_mine(*up, u3k(*top));
-      u3t_on(noc_o);
-      *up = *top;
-      u3a_pop(sizeof(u3_noun));
       BURN();
   }
 }
