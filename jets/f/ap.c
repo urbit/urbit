@@ -1005,9 +1005,9 @@
   {
     u3_noun cor = _ap_core(ter, gen);
 
-#if 0
+#if 1
     if ( c3n == fab ) {
-      cor = u3i_molt(core, 14, c3n, 0);
+      cor = u3i_molt(cor, 14, c3n, 0);
     }
 #endif
     return u3j_soft(cor, "open");
