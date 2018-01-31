@@ -1,4 +1,4 @@
-::                                                      ::
+::                                                      :: 
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
@@ -6939,7 +6939,9 @@
         :+  %cnts 
           [[%& 1] ~] 
         :_  ~
-        [fetch-wing ersatz:clear(mod any)]
+        ::  correct but slow
+        ::  [fetch-wing ersatz:clear(mod any)]
+        [fetch-wing ersatz:clear(mod ?~(def [%axil %cell] u.def))]
       ?:  =(& top)
         [%tsgr [%wtpt fetch-wing luz [%$ 1]] boc]
       [%tsgr luz boc]
