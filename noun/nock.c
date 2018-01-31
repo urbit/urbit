@@ -892,6 +892,7 @@ _n_burn(c3_y* pog)
     &&do_nock, &&do_noct,
     &&do_deep, &&do_peep,
     &&do_bump, &&do_same,
+    &&do_kick, &&do_tick,
   };
   #define BURN() goto *lab[pog[ip_s++]]
 
@@ -985,7 +986,7 @@ _n_burn(c3_y* pog)
     do_quot:
       _n_toss();
     do_quip:
-      _n_push(_n_rean(pog, &ip_s));
+      _n_push(u3k(_n_rean(pog, &ip_s)));
       BURN();
 
     do_nock:
@@ -1024,6 +1025,42 @@ _n_burn(c3_y* pog)
       *top = u3r_sing(x, o);
       u3z(x);
       u3z(o);
+      BURN();
+
+    do_kick:
+      x    = _n_rean(pog, &ip_s);
+      top  = _n_peek();
+      o    = *top;
+      u3t_off(noc_o);
+      *top = u3j_kick(o, x);
+      u3t_on(noc_o);
+      if ( u3_none == *top ) {
+        u3_noun fol = u3r_at(x, o);
+        if ( u3_none == fol ) {
+          return u3m_bail(c3__exit);
+        }
+        gop  = _n_find(fol);
+        _n_push(o);
+        *top = _n_burn(gop);
+      }
+      BURN();
+
+    do_tick:
+      x    = _n_rean(pog, &ip_s);
+      top  = _n_peek();
+      o    = *top;
+      u3t_off(noc_o);
+      *top = u3j_kick(o, x);
+      u3t_on(noc_o);
+      if ( u3_none == *top ) {
+        u3_noun fol = u3r_at(x, o);
+        if ( u3_none == fol ) {
+          return u3m_bail(c3__exit);
+        }
+        *top = o;
+        pog  = _n_find(fol);
+        ip_s = 0;
+      }
       BURN();
   }
 }
