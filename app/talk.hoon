@@ -1,4 +1,4 @@
-::                                                      ::  ::
+::                                                      ::  ::  
 ::::  /app/talk/hoon                                    ::  ::
   ::                                                    ::  ::
 ::
@@ -16,6 +16,7 @@
 /-    hall, sole                                        ::  structures
 /+    hall, sole                                        ::  libraries
 /=    seed  /~  !>(.)
+!:
 ::
 ::::
   ::
@@ -592,7 +593,7 @@
       ::
       |=  cal/sole-change
       ^+  +>
-      =^  inv  say.she  (~(transceive sole say.she) cal)
+      =^  inv  say.she  (~(transceive ^sole say.she) cal)
       =+  fix=(sh-sane inv buf.say.she)
       ?~  lit.fix
         +>.$
@@ -932,7 +933,7 @@
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
-          (~(transmit sole say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
+          (~(transmit ^sole say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
       (sh-fact [%mor [%det lic] ?~(err ~ [%err u.err]~)])
     ::
     ++  sh-obey
@@ -954,7 +955,7 @@
       =+  buf=buf.say.she
       =?  ..sh-obey  &(?=({$';' *} buf) !?=($reply -.u.jub))
         (sh-note (tufa `(list @)`buf))
-      =^  cal  say.she  (~(transmit sole say.she) [%set ~])
+      =^  cal  say.she  (~(transmit ^sole say.she) [%set ~])
       %+  sh-fact  %mor
       :~  [%nex ~]
           [%det cal]
@@ -2250,12 +2251,12 @@
   ++  tr-tach
     :>  renders an attachment.
     ::
-    |=  a/attache
+    |=  att/attache
     ^-  tang
-    ?-  -.a
-      $name  (welp $(a tac.a) leaf+"= {(trip nom.a)}" ~)
-      $tank  +.a
-      $text  (turn (flop +.a) |=(b/cord leaf+(trip b)))
+    ?-  -.att
+      $name  (welp $(att tac.att) leaf+"= {(trip nom.att)}" ~)
+      $tank  +.att
+      $text  (turn (flop `(list cord)`+.att) |=(b/cord leaf+(trip b)))
     ==
   ::
   ++  tr-chow
