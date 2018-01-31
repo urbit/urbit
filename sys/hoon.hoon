@@ -6577,7 +6577,6 @@
 ::
 ++  ax
   =+  :*  ::  dom: axis to home
-          ::  fab: advanced fabrication
           ::  doc: documentation
           ::  bug: debug annotations
           ::  def: default 
@@ -6768,15 +6767,20 @@
     ?:  ?=($plow -.mod)  factory(mod q.mod, doc [p.mod doc])
     ?:  ?=($deet -.mod)  factory(mod q.mod, bug [p.mod bug])
     ?:  ?=($deft -.mod)  factory(mod q.mod, def `p.mod)
+    ^-  hoon
     =-  ::  for basic molds that don't need the subject,
-        ::  clear it so constants fold better
+        ::  clear it so constants fold better 
         ::
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
-    :^  %brts  ~^~
-      ?:  fab
-        ?~(def [%base %noun] ersatz:clear(mod u.def))
-      [%ktls [%base %noun] ersatz:clear(mod dummy)]
+    ?:  fab
+      :^  %brts  ~^~
+        [%base %noun]
+      ~(construct sample(dom (peg 7 dom)) [6 %&])
+    :^  %brcl  ~^~
+      ?:  ?=($axil -.mod)
+        [%bust %noun]
+      [%ktls [%bust %noun] ersatz:clear(mod dummy)]
     ~(construct sample(dom (peg 7 dom)) [6 %&])
   ::
   ++  sample
@@ -6935,7 +6939,6 @@
         :+  %cnts 
           [[%& 1] ~] 
         :_  ~
-        ::  [fetch-wing ersatz:clear(mod ?~(def [%axil %cell] u.def))]
         [fetch-wing ersatz:clear(mod any)]
       ?:  =(& top)
         [%tsgr [%wtpt fetch-wing luz [%$ 1]] boc]
