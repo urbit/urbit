@@ -591,10 +591,10 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
       case c3__lose:
       case c3__mean:
       case c3__spot: 
-        tot_s += _n_emit(ops, u3nc(QUIP, zep));
         tot_s += _n_emit(ops, COPY);
         tot_s += _n_comp(ops, hod, c3n);
-        tot_s += _n_emit(ops, CONS);
+        tot_s += _n_emit(ops, u3nc(QUIP, zep));
+        tot_s += _n_emit(ops, SNOC);
         tot_s += _n_emit(ops, CUSH);
         tot_s += _n_comp(ops, nef, c3n);
         tot_s += _n_emit(ops, DROP);
@@ -739,16 +739,12 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
       u3_noun yep   = u3_nul,
               nop   = u3_nul;
       c3_s    y_s   = _n_comp(&yep, mid, tel_o),
-              n_s   = _n_comp(&nop, tel, tel_o),
-              sin_s = y_s + sizeof(c3_y) + sizeof(c3_s);
+              n_s   = _n_comp(&nop, tel, tel_o);
 
-      tot_s += _n_emit(ops, u3nc(SKIN, sin_s));
-      _n_apen(ops, yep);
-      tot_s += y_s;
-
-      tot_s += _n_emit(ops, u3nc(SKIP, n_s));
-      _n_apen(ops, nop);
-      tot_s += n_s;
+      y_s   += _n_emit(&yep, u3nc(SKIP, n_s));
+      tot_s += _n_emit(ops, u3nc(SKIN, y_s));
+      _n_apen(ops, yep); tot_s += y_s;
+      _n_apen(ops, nop); tot_s += n_s;
       break;
     }
     case 7:
