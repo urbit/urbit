@@ -9,6 +9,7 @@
 ::  worth noting that many of the clay-related structures are defined in zuse.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:
 |=  pit/vase
 =,  clay
 =>  |%
@@ -3643,8 +3644,8 @@
             {$many p/? q/moat r/(map path lobe)}
         ==
       ++  cult-2  (jug rove-2 duct)
-      ++  dojo-2  (cork dojo |=(a/dojo a(qyx *cult-2)))
-      ++  rede-2  (cork rede |=(a/rede a(qyx *cult-2)))
+      ++  dojo-2  (cork dojo |=(a/dojo a(qyx $:cult-2)))
+      ++  rede-2  (cork rede |=(a/rede a(qyx $:cult-2)))
       ++  room-2  (cork room |=(a/room a(dos (~(run by dos.a) dojo-2))))
       ++  rung-2  (cork rung |=(a/rung a(rus (~(run by rus.a) rede-2))))
       ++  raft-2

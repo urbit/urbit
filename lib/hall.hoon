@@ -5,7 +5,7 @@
 ::
 ::::
   ::
-[. ^hall]
+=,  ^hall
 |_  bol/bowl:gall
 ::
 ::TODO  add to zuse?
@@ -222,18 +222,19 @@
     (^$(buk t-buk) wer)
   ::
   ++  or
-    =+  tmp=|-($@(@tas {@tas $}))  ::TODO typ/that syntax-errors...
-    |*  typ/tmp
-    |=  con/coin
-    ::^-  _(snag *@ (turn (limo typ) |*(a/@tas [a (odo:raid:wired a)])))
-    ?>  ?=($$ -.con)
-    =/  i-typ  ?@(typ typ -.typ)
-    ?:  =(i-typ p.p.con)
-      :-  i-typ
-      ^-  (odo:raid:wired i-typ)
-      q.p.con
-    ?@  typ  ~|(%bad-odor !!)
-    (^$(typ +.typ) con)
+    =+  typ=$:|-($@(@tas {@tas $}))  
+    |%  +-  $
+          |=  con/coin
+          ::^-  _(snag *@ (turn (limo typ) |*(a/@tas [a (odo:raid:wired a)])))
+          ?>  ?=($$ -.con)
+          =/  i-typ  ?@(typ typ -.typ)
+          ?:  =(i-typ p.p.con)
+            :-  i-typ
+            ^-  (odo:raid:wired i-typ)
+            q.p.con
+          ?@  typ  ~|(%bad-odor !!)
+          (^$(typ +.typ) con)
+    --
   ::
   ++  do
     |*  typ/@tas

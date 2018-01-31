@@ -460,7 +460,7 @@
       =-  (ta-think & our.bol tos)
       |-  ^-  tos/(list thought)
       ?~  ses  ~
-      =^  sir  eny.bol  ~(uniq hall bol)
+      =^  sir  eny.bol  ~(uniq ^hall bol)
       :_  $(ses t.ses)
       [sir aud [now.bol i.ses]]
     ::

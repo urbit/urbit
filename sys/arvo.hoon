@@ -6,8 +6,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-=>
-~%  %hex  +  ~
+=>  
 |%
 ++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
 ++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
@@ -79,6 +78,13 @@
               {$give p/b}                               ::  retreat
           ==                                            ::
 ++  wire  path                                          ::  event pretext
+--
+=>
+~%  %hex  +>  ~
+|%
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::                section 3bE, Arvo core                ::
+::
 ++  sloy
   !:
   |=  sod/slyd
@@ -103,8 +109,6 @@
   ?~  bop  ~
   ?~  u.bop  [~ ~]
   [~ ~ +.q.u.u.bop]
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bE, Arvo core                ::
 ::
 ++  vent                                                ::  vane core
   |=  {lal/@tas vil/vile bud/vase sew/(pair worm vase)}

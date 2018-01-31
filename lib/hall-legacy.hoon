@@ -2,7 +2,7 @@
 /?    310
 /-  hall
 /+  old-zuse
-[old-zuse .]
+=,  old-zuse
 =>
 |%
 ++  audience  (map partner (pair envelope delivery))    ::  destination+state
@@ -55,8 +55,8 @@
 --
 |%
 ++  from-json
-  =>  [jo ..telegram]
-  |=  a/^json  ^-  (list telegram:hall)
+  =,  jo
+  |:  $:{a/^json}  ^-  (list telegram:hall)
   =-  %-  zing
       %+  turn
         (need ((ar (ot ship+(su fed:ag) thought+thot ~)) a))

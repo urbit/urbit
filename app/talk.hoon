@@ -179,7 +179,7 @@
   :>  using a mapping of character to audiences, create
   :>  a mapping of audience to character.
   ::
-  |=  bin/_binds
+  |:  bin=binds
   ^+  bound
   %-  ~(gas by *(map audience char))
   =-  (zing -)
@@ -593,7 +593,7 @@
       ::
       |=  cal/sole-change
       ^+  +>
-      =^  inv  say.she  (~(transceive ^sole say.she) cal)
+      =^  inv  say.she  (~(transceive ^^sole say.she) cal)
       =+  fix=(sh-sane inv buf.say.she)
       ?~  lit.fix
         +>.$
@@ -933,7 +933,7 @@
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
-          (~(transmit ^sole say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
+          (~(transmit ^^sole say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
       (sh-fact [%mor [%det lic] ?~(err ~ [%err u.err]~)])
     ::
     ++  sh-obey
@@ -955,7 +955,7 @@
       =+  buf=buf.say.she
       =?  ..sh-obey  &(?=({$';' *} buf) !?=($reply -.u.jub))
         (sh-note (tufa `(list @)`buf))
-      =^  cal  say.she  (~(transmit ^sole say.she) [%set ~])
+      =^  cal  say.she  (~(transmit ^^sole say.she) [%set ~])
       %+  sh-fact  %mor
       :~  [%nex ~]
           [%det cal]
