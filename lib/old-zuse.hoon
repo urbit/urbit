@@ -31,8 +31,6 @@
 ++  jone        numb:enjs:format                        ::  number from unsigned
 ++  jode        time:enjs:format                        ::  ms timestamp
 ++  jesc        jesc:en-json:html                       ::  escape for json
-++  scanf       scanf:userlib                           ::  formatted scan
-++  parsf       parsf:scanf:userlib                     ::  make parser from:
 ++  taco        as-octs:mimes:html                      ::  atom to octstream
 ++  tact        as-octt:mimes:html                      ::  tape to octstream
 ++  tell        of-wall:format                          ::  wall to octstream
