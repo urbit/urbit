@@ -132,6 +132,10 @@
           u3_noun       das;                  //  cold state
         } jed;
 
+        struct {                              // bytecode state
+          u3p(u3h_root) har_p;                // formula->post of bytecode
+        } byc;
+
         struct {                              //  namespace
           u3_noun gul;                        //  (list $+(* (unit (unit)))) now
         } ski;

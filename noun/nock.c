@@ -505,7 +505,7 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 #define SKIP 5  // skip N (c3_s) instructions
 #define SKIN 6  // pop loob, skip N if it is no, bail if not yes
 #define CONS 7  // makes a cell of [under, TOS]
-#define SCON 8  // makes a cell of [TOS, under]
+#define SNOC 8  // makes a cell of [TOS, under]
 #define HEAD 9  // replaces TOS with its head (old TOS lost)
 #define TAIL 10 // as HEAD, but for the tail
 #define FRAG 11 // as HEAD/TAIL, but with an arbitrary noun axis 
@@ -583,10 +583,10 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
 
     switch ( zep ) {
       default:
-        tos += _n_emit(ops, COPY);
-        tos += _n_comp(ops, hod, c3n);
-        tos += _n_emit(ops, TOSS);
-        tos += _n_comp(ops, nef, tel_o);
+        tot_s += _n_emit(ops, COPY);
+        tot_s += _n_comp(ops, hod, c3n);
+        tot_s += _n_emit(ops, TOSS);
+        tot_s += _n_comp(ops, nef, tel_o);
         break;
 
       case c3__hunk:
@@ -617,7 +617,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
         y_s += _n_emit(&yep, TOSS);
         y_s += _n_emit(&yep, u3nc(SKIP, n_s));
 
-        tot_s += n_emit(ops, u3nc(SKIN, y_s));
+        tot_s += _n_emit(ops, u3nc(SKIN, y_s));
         _n_apen(ops, yep); tot_s += y_s;
         _n_apen(ops, nop); tot_s += n_s;
 
@@ -653,7 +653,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
         tot_s += _n_comp(ops, hod, c3n);             // [clue bus bus]
         tot_s += _n_emit(ops, TOSS);                 // [bus bus]
         tot_s += _n_emit(ops, u3nc(QUIP, u3k(nef))); // [fol bus bus]
-        tot_s += _n_emit(ops, SCON);                 // [[bus fol] bus]
+        tot_s += _n_emit(ops, SNOC);                 // [[bus fol] bus]
         tot_s += _n_emit(ops, GEMO);                 // [u key bus]
         tot_s += _n_emit(ops, PEEP);                 // [b u key bus]
 
@@ -669,7 +669,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
         y_s += _n_emit(&yep, u3nc(SKIP, n_s));
 
         tot_s += _n_emit(ops, u3nc(SKIN, y_s));
-        _n_apen(ops, yup); tot_s += y_s;
+        _n_apen(ops, yep); tot_s += y_s;
         _n_apen(ops, nop); tot_s += n_s;
 
         // both branches leave an extra value under the top
@@ -773,7 +773,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
       u3x_cell(arg, &hed, &tel);
       tot_s += _n_emit(ops, COPY);
       tot_s += _n_comp(ops, hed, c3n);
-      tot_s += _n_emit(ops, SCON);
+      tot_s += _n_emit(ops, SNOC);
       tot_s += _n_comp(ops, tel, tel_o);
       break;
     case 9:
@@ -814,7 +814,7 @@ _n_asm(u3_noun ops, c3_s len_s)
   c3_s      i_s   = len_s;
 
   buf_y[i_s] = HALT;
-  while ( --i_s >= 0 ) {
+  while ( i_s-- > 0 ) {
     u3_noun op = u3h(ops);
     if ( c3y == u3ud(op) ) {
       buf_y[i_s] = (c3_y) u3h(ops);
@@ -824,7 +824,7 @@ _n_asm(u3_noun ops, c3_s len_s)
       switch ( cod ) {
         case SKIP:
         case SKIN: {
-          c3_s off_s = u3t(op);
+          c3_s off_s   = u3t(op);
           buf_y[i_s--] = (c3_y) (off_s >> 8);
           buf_y[i_s--] = (c3_y) off_s;
           buf_y[i_s]   = (c3_y) cod;
@@ -835,7 +835,7 @@ _n_asm(u3_noun ops, c3_s len_s)
         case FRAG:
         case TICK:
         case KICK: {
-          c3_w non_w = u3t(op);
+          c3_w non_w   = u3k(u3t(op));
           buf_y[i_s--] = (c3_y) (non_w >> 24);
           buf_y[i_s--] = (c3_y) (non_w >> 16);
           buf_y[i_s--] = (c3_y) (non_w >> 8);
@@ -850,7 +850,7 @@ _n_asm(u3_noun ops, c3_s len_s)
     ops = u3t(ops);
   }
 
-  u3z(ops);
+  u3z(top);
   return buf_y;
 }
 
@@ -925,7 +925,7 @@ static inline c3_y*
 _n_bite(u3_noun fol)
 {
   u3_noun bok = u3_nul;
-  c3_s len_s  = _n_comp(&bok, fol, c3y)
+  c3_s len_s  = _n_comp(&bok, fol, c3y);
   return _n_asm(bok, len_s);
 }
 
@@ -936,11 +936,11 @@ _n_find(u3_noun fol)
 {
   u3_noun got = u3h_get(u3R->byc.har_p, fol);
   if ( u3_none != got ) {
-    return u3a_to_ptr(got);
+    return u3a_into(got);
   }
   else {
     c3_y* gop = _n_bite(fol);
-    got = u3a_to_off(gop);
+    got = u3a_outa(gop);
     u3h_put(u3R->byc.har_p, fol, got);
     return gop;
   }
@@ -970,7 +970,6 @@ _n_burn(c3_y* pog)
   };
 
   c3_s sip_s, ip_s = 0;
-  c3_y  op;
   c3_y* gop;
   u3_noun* top;
   u3_noun* up;
@@ -1022,7 +1021,8 @@ _n_burn(c3_y* pog)
         ip_s += sip_s;
       }
       else if ( c3y != x ) {
-        return u3m_bail(c3__exit);
+        u3m_bail(c3__exit);
+        return;
       }
       BURN();
 
@@ -1042,7 +1042,8 @@ _n_burn(c3_y* pog)
       top  = _n_peek();
       o    = *top;
       if ( c3n == u3du(o) ) {
-        return u3m_bail(c3__exit);
+        u3m_bail(c3__exit);
+        return;
       }
       *top = u3k(u3h(o));
       u3z(o);
@@ -1052,7 +1053,8 @@ _n_burn(c3_y* pog)
       top  = _n_peek();
       o    = *top;
       if ( c3n == u3du(o) ) {
-        return u3m_bail(c3__exit);
+        u3m_bail(c3__exit);
+        return;
       }
       *top = u3k(u3t(o));
       u3z(o);
@@ -1124,7 +1126,8 @@ _n_burn(c3_y* pog)
       if ( u3_none == *top ) {
         u3_noun fol = u3r_at(x, o);
         if ( u3_none == fol ) {
-          return u3m_bail(c3__exit);
+          u3m_bail(c3__exit);
+          return;
         }
         *top = o;
         gop  = _n_find(fol);
@@ -1142,7 +1145,8 @@ _n_burn(c3_y* pog)
       if ( u3_none == *top ) {
         u3_noun fol = u3r_at(x, o);
         if ( u3_none == fol ) {
-          return u3m_bail(c3__exit);
+          u3m_bail(c3__exit);
+          return;
         }
         *top = o;
         pog  = _n_find(fol);
@@ -1168,12 +1172,14 @@ _n_burn(c3_y* pog)
       u3t_on(noc_o);
 
       if ( c3n == u3du(x) ) {
-        return u3m_bail(u3nt(1, *top, 0));
+        u3m_bail(u3nt(1, *top, 0));
+        return;
       }
       else if ( c3n == u3du(u3t(x)) ) {
         //  replace with proper error stack push
         u3t_push(u3nc(c3__hunk, _n_mush(*top)));
-        return u3m_bail(c3__exit);
+        u3m_bail(c3__exit);
+        return;
       }
       else {
         u3z(*top);
@@ -1223,7 +1229,8 @@ _n_burn(c3_y* pog)
       BURN();
 
     do_bail:
-      return u3m_bail(c3__exit);
+      u3m_bail(c3__exit);
+      return;
   }
 }
 
