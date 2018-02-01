@@ -37,14 +37,10 @@
 ::       (ot wat+(cu (hard kind) so) des+so pub+bo vis+bo ses+(as (se %p)) ~)
       |=  a=json
       ~|  a
-      =+  ^-  [wat=kind des=cord ses=(set @p)]
+      =+  ^-  [wat=kind des=cord pub=? vis=? ses=(set @p)]
           %.  a
-          :: ses expects an ace-delimited string of ship names
-          :: TODO change to an array of strings AA
-          (ot wat+(cu (hard kind) so) des+so ses+(su (cook sy (more ace fed:ag))) ~)
-      ?>  ?=([%o *] a)
-      =/  pub  (~(has by p.a) %pub)
-      =/  vis  (~(has by p.a) %vis)
+          :: change this to accept an array of @p
+          (ot wat+(cu (hard kind) so) des+so pub+bo vis+bo ses+(su (cook sy (more ace fed:ag))) ~)
       [wat des pub vis ses]
     ::
     ++  wain  (su (more newline (cook crip (star prn))))
