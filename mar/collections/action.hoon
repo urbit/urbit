@@ -40,7 +40,13 @@
       =+  ^-  [wat=kind des=cord pub=? vis=? ses=(set @p)]
           %.  a
           :: change this to accept an array of @p
-          (ot wat+(cu (hard kind) so) des+so pub+bo vis+bo ses+(su (cook sy (more ace fed:ag))) ~)
+          %-  ot  
+          :~  wat+(cu (hard kind) so) 
+              des+so 
+              pub+bo 
+              vis+bo 
+              ses+(su (cook sy (more ace fed:ag)))
+          ==
       [wat des pub vis ses]
     ::
     ++  wain  (su (more newline (cook crip (star prn))))
