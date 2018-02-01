@@ -496,67 +496,51 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
   return u3n_nock_et(gul, bus, fol);
 }
 
-/* _n_mush_in(): see _n_mush().
-*/
-static u3_noun
-_n_mush_in(u3_noun val)
-{
-  if ( c3n == u3du(val) ) {
-    return u3_nul;
-  }
-  else {
-    u3_noun h_val = u3h(val);
-    u3_noun ite;
-
-    if ( c3n == u3ud(h_val) ) {
-      ite = u3nc(c3__leaf, u3_nul);
-    } else {
-      ite = u3nc(c3__leaf, u3qe_trip(h_val));
-    }
-    return u3nc(ite, _n_mush_in(u3t(val)));
-      case c3_
-    }
-  }
-}
-
 /* These must match the order in the section marked OPCODE TABLE */
-#define HALT 0
-#define COPY 1
-#define TOSS 2
-#define SWAP 3
-#define SWAT 4
-#define SKIP 5
-#define SKIN 6
-#define CONS 7
-#define SCON 8
-#define HEAD 9
-#define TAIL 10
-#define FRAG 11
-#define QUOT 12
-#define QUIP 13
-#define NOCK 14
-#define NOCT 15
-#define DEEP 16
-#define PEEP 17
-#define BUMP 18
-#define SAME 19
-#define KICK 20
-#define TICK 21
-#define WISH 22
-#define FAST 23
-#define CUSH 24
-#define DROP 25
-#define PUMO 26
-#define GEMO 27
-#define HECK 28
-#define SLOG 29
+#define HALT 0  // stop executing, leaving the product on the top of stack
+#define COPY 1  // copy TOS, keep, and push it
+#define TOSS 2  // throw away and lose TOS
+#define SWAP 3  // exchange TOS with item underneat
+#define SWAT 4  // toss item under TOS (under)
+#define SKIP 5  // skip N (c3_s) instructions
+#define SKIN 6  // pop loob, skip N if it is no, bail if not yes
+#define CONS 7  // makes a cell of [under, TOS]
+#define SCON 8  // makes a cell of [TOS, under]
+#define HEAD 9  // replaces TOS with its head (old TOS lost)
+#define TAIL 10 // as HEAD, but for the tail
+#define FRAG 11 // as HEAD/TAIL, but with an arbitrary noun axis 
+#define QUOT 12 // toss TOS, push literal noun argument
+#define QUIP 13 // as QUOT, but without the toss
+#define NOCK 14 // *(under, TOS)
+#define NOCT 15 // as NOCK, but in tail position
+#define DEEP 16 // pop TOS and push isCell loob
+#define PEEP 17 // as DEEP, but doesn't pop
+#define BUMP 18 // increment TOS
+#define SAME 19 // pop two items and push equality loob
+#define KICK 20 // pull argument arm from TOS
+#define TICK 21 // KICK, but in tail position
+#define WISH 22 // ref is under, gof is TOS, u3m_soft_esc
+#define FAST 23 // u3j_mine TOS
+#define CUSH 24 // u3t_push TOS
+#define DROP 25 // u3t_drop
+#define PUMO 26 // saves memo from tos->[pro key]
+#define GEMO 27 // pushes (unit pro) of u3z_save with key=TOS
+#define HECK 28 // u3t_heck TOS
+#define SLOG 29 // u3t_slog TOS
+#define BAIL 30 // bail %exit
 
+/* _n_apen(): emit the instructions contained in src to dst
+ */
 static inline void
 _n_apen(u3_noun* dst, u3_noun src)
 {
   *dst = u3qb_weld(src, *dst);
 }
 
+/* _n_emit(): emit a single instruction to ops, returning
+ *            the size (in bytes) required to store that
+ *            opcode.
+ */
 static inline c3_y
 _n_emit(u3_noun *ops, u3_noun op)
 {
@@ -581,6 +565,10 @@ _n_emit(u3_noun *ops, u3_noun op)
 
 static c3_s _n_comp(u3_noun*, u3_noun, c3_o);
 
+/* _n_bint(): hint-processing helper for _n_comp.
+ *            hif: hint-formula (first part of 10). RETAIN.
+ *            nef: next-formula (second part of 10). RETAIN.
+ */
 static c3_s
 _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
 {
@@ -693,7 +681,10 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
   }
 }
 
-/* fol is RETAINED */
+/* _n_comp(): emit instructions from fol to ops.
+ *            tel_o indicates tail tail position.
+ *            fol is RETAINED.
+ */
 static c3_s
 _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
   c3_s tot_s = 0;
@@ -813,6 +804,8 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
   return tot_s;
 }
 
+/* _n_asm(): assemble an accumulated list of instructions (i.e. from _n_comp)
+ */
 static c3_y*
 _n_asm(u3_noun ops, c3_s len_s)
 {
@@ -861,6 +854,8 @@ _n_asm(u3_noun ops, c3_s len_s)
   return buf_y;
 }
 
+/* _n_push(): push a noun onto the stack. RETAIN
+ */
 static inline void
 _n_push(u3_noun a)
 {
@@ -868,18 +863,24 @@ _n_push(u3_noun a)
   *p = a;
 }
 
+/* _n_peet(): address of the top of stack
+ */
 static inline u3_noun*
 _n_peek()
 {
   return (u3_noun*) u3a_peek(sizeof(u3_noun));
 }
 
+/* _n_peet(): address of the next-to-top of stack
+ */
 static inline u3_noun*
 _n_peet()
 {
   return (u3_noun*) u3a_peek(sizeof(u3_noun) + sizeof(u3_noun));
 }
 
+/* _n_pop(): pop a noun from the cap stack
+ */
 static inline u3_noun
 _n_pop()
 {
@@ -888,12 +889,16 @@ _n_pop()
   return r;
 }
 
+/* _n_toss(): pop and lose
+ */
 static inline void
 _n_toss()
 {
   u3z(_n_pop());
 }
 
+/* _n_rean(): read a c3_s from the bytecode stream
+ */
 static inline c3_s
 _n_resh(c3_y* buf, c3_s* ip_s)
 {
@@ -902,6 +907,8 @@ _n_resh(c3_y* buf, c3_s* ip_s)
   return les | (mos << 8);
 }
 
+/* _n_rean(): read a noun from the bytecode stream
+ */
 static inline u3_noun
 _n_rean(c3_y* buf, c3_s* ip_s)
 {
@@ -912,6 +919,8 @@ _n_rean(c3_y* buf, c3_s* ip_s)
   return one | (two << 8) | (tre << 16) | (qua << 24);
 }
 
+/* _n_bite(): compile a nock formula to bytecode
+ */
 static inline c3_y*
 _n_bite(u3_noun fol)
 {
@@ -920,6 +929,8 @@ _n_bite(u3_noun fol)
   return _n_asm(bok, len_s);
 }
 
+/* _n_find(): return bytecode for given formula. fol is RETAINED.
+ */
 static c3_y*
 _n_find(u3_noun fol)
 {
@@ -955,7 +966,7 @@ _n_burn(c3_y* pog)
     &&do_wish, &&do_fast,
     &&do_cush, &&do_drop,
     &&do_pumo, &&do_gemo,
-    &&do_heck, &&do_slog,
+    &&do_heck, &&do_slog, &&do_bail
   };
 
   c3_s sip_s, ip_s = 0;
@@ -964,7 +975,9 @@ _n_burn(c3_y* pog)
   u3_noun* top;
   u3_noun* up;
   u3_noun x, o;
-  u3p(void) empty = u3R->cap_p;
+
+  // could save interpreter frames on cap instead of using c stack (ip_s + pog)
+  //   XX: do this after the simpler version works
 
   #define BURN() goto *lab[pog[ip_s++]]
   BURN();
@@ -1060,13 +1073,17 @@ _n_burn(c3_y* pog)
       BURN();
 
     do_nock:
-      gop = _n_find(_n_pop());
+      o   = _n_pop();
+      gop = _n_find(o);
       _n_burn(gop);
+      u3z(o);
       BURN();
 
     do_noct:
-      pog  = _n_find(_n_pop());
+      o    = _n_pop();
+      pog  = _n_find(o);
       ip_s = 0;
+      u3z(o);
       BURN();
 
     do_deep:
@@ -1194,9 +1211,36 @@ _n_burn(c3_y* pog)
       BURN();
 
     do_slog:
-      u3t_off(noc_o);
-      u3t_slog(_n_pop());
-      u3t_on(noc_o);
+      x = _n_pop();
+      if ( !(u3C.wag_w & u3o_quiet) ) {
+        u3t_off(noc_o);
+        u3t_slog(x);
+        u3t_on(noc_o);
+      }
+      else {
+        u3z(x);
+      }
       BURN();
+
+    do_bail:
+      return u3m_bail(c3__exit);
   }
+}
+
+/* _n_burn_on(): produce .*(bus fol) with bytecode interpreter
+ */
+static u3_noun
+_n_burn_on(u3_noun bus, u3_noun fol)
+{
+  u3p(void) empty = u3R->cap_p;
+  c3_y* pog = _n_find(fol);
+  u3_noun r;
+
+  u3z(fol);
+  _n_push(bus);
+  _n_burn(pog);
+  r = _n_pop();
+
+  c3_assert( empty == u3R->cap_p );
+  return r;
 }
