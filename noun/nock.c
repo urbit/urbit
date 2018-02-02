@@ -729,7 +729,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
       tot_s += _n_comp(ops, hed, c3n);
       tot_s += _n_emit(ops, SWAP);
       tot_s += _n_comp(ops, tel, c3n);
-      tot_s += _n_emit(ops, (tel_o ? NOCT : NOCK));
+      tot_s += _n_emit(ops, ((c3y == tel_o)? NOCT : NOCK));
       break;
     case 3:
       tot_s += _n_comp(ops, arg, c3n);
@@ -751,6 +751,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
       u3_noun mid;
       u3x_trel(arg, &hed, &mid, &tel);
 
+      tot_s += _n_emit(ops, COPY);
       tot_s += _n_comp(ops, hed, c3n);
 
       u3_noun yep   = u3_nul,
@@ -785,7 +786,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
       }
       else {
         tot_s += _n_comp(ops, tel, c3n);
-        tot_s += _n_emit(ops, u3nc((tel_o ? TICK : KICK), u3k(hed)));
+        tot_s += _n_emit(ops, u3nc((c3y == tel_o) ? TICK : KICK, u3k(hed)));
       }
       break;
     case 10:
@@ -803,6 +804,8 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
   }
   return tot_s;
 }
+
+static void _n_print_byc(c3_y* pog);
 
 /* _n_asm(): assemble an accumulated list of instructions (i.e. from _n_comp)
  */
@@ -863,7 +866,7 @@ _n_push(u3_noun a)
   *p = a;
 }
 
-/* _n_peet(): address of the top of stack
+/* _n_peek(): address of the top of stack
  */
 static inline u3_noun*
 _n_peek()
@@ -876,7 +879,7 @@ _n_peek()
 static inline u3_noun*
 _n_peet()
 {
-  return (u3_noun*) u3a_peek(sizeof(u3_noun) + sizeof(u3_noun));
+  return u3to(u3_noun, u3R->cap_p + (_(u3a_is_north(u3R)) ? 1 : -2));
 }
 
 /* _n_pop(): pop a noun from the cap stack
@@ -926,7 +929,8 @@ _n_bite(u3_noun fol)
 {
   u3_noun bok = u3_nul;
   c3_s len_s  = _n_comp(&bok, fol, c3y);
-  return _n_asm(bok, len_s);
+  c3_y* buf_y = _n_asm(bok, len_s);
+  return buf_y;
 }
 
 /* _n_find(): return bytecode for given formula. fol is RETAINED.
@@ -956,7 +960,7 @@ _n_burn(c3_y* pog)
     &&do_halt, &&do_copy, &&do_toss,
     &&do_swap, &&do_swat, 
     &&do_skip, &&do_skin,
-    &&do_cons, &&do_scon,
+    &&do_cons, &&do_snoc,
     &&do_head, &&do_tail, &&do_frag,
     &&do_quot, &&do_quip,
     &&do_nock, &&do_noct,
@@ -1032,7 +1036,7 @@ _n_burn(c3_y* pog)
       *top = u3nc(*top, x);
       BURN();
 
-    do_scon:
+    do_snoc:
       x    = _n_pop();
       top  = _n_peek();
       *top = u3nc(x, *top);
@@ -1234,6 +1238,82 @@ _n_burn(c3_y* pog)
   }
 }
 
+static void
+_n_print_byc(c3_y* pog)
+{
+  static char* names[] = {
+    "halt", "copy", "toss",
+    "swap", "swat", 
+    "skip", "skin",
+    "cons", "snoc",
+    "head", "tail", "frag",
+    "quot", "quip",
+    "nock", "noct",
+    "deep", "peep",
+    "bump", "same",
+    "kick", "tick",
+    "wish", "fast",
+    "cush", "drop",
+    "pumo", "gemo",
+    "heck", "slog", "bail"
+  };
+  c3_s ip_s = 0;
+  printf("bytecode: {");
+  int first = 1;
+  while ( pog[ip_s] ) {
+    if ( first ) {
+      first = 0;
+    }
+    else {
+      printf(" ");
+    }
+    switch ( pog[ip_s] ) {
+      default:
+        printf("%s", names[pog[ip_s++]]);
+        break;
+
+      case SKIP:
+      case SKIN: 
+        printf("[%s ", names[pog[ip_s++]]);
+        printf("%d]", _n_resh(pog, &ip_s));
+        break;
+
+      case QUOT:
+      case QUIP:
+      case FRAG:
+      case TICK:
+      case KICK:
+        printf("[%s ", names[pog[ip_s++]]);
+        printf("%d]", _n_rean(pog, &ip_s));
+        break;
+    }
+  }
+  printf(" halt}\r\n");
+}
+
+static void _n_print_stack(u3p(u3_noun) empty) {
+  c3_w cur_p = u3R->cap_p;
+  printf("[");
+  int first = 1;
+  while ( cur_p != empty ) {
+    if ( first ) {
+      first = 0;
+    }
+    else {
+      printf(" ");
+    }
+    if ( c3y == u3a_is_north(u3R) ) {
+      printf("%d", *(u3to(u3_noun, cur_p)));
+      cur_p++;
+    }
+    else {
+      printf("%d", *(u3to(u3_noun, cur_p-1)));
+      cur_p--;
+    }
+  }
+  printf("]\r\n");
+}
+
 /* _n_burn_on(): produce .*(bus fol) with bytecode interpreter
  */
 static u3_noun
@@ -1250,4 +1330,14 @@ _n_burn_on(u3_noun bus, u3_noun fol)
 
   c3_assert( empty == u3R->cap_p );
   return r;
+}
+
+u3_noun
+u3n_burn_on(u3_noun bus, u3_noun fol)
+{
+  u3_noun pro;
+  u3t_on(noc_o);
+  pro = _n_burn_on(bus, fol);
+  u3t_off(noc_o);
+  return pro;
 }
