@@ -741,8 +741,8 @@
   ++  bilk  (pair beak silk)                            ::  sourced request
   ++  gage                                              ::  recursive cage+tang
     $%  {$& p/cage}                                     ::  success
-        {$| p/tang}                                     ::  error
         {$tabl p/(list (pair gage gage))}               ::  table of results
+        {$| p/tang}                                     ::  error
     ==                                                  ::
   ++  hood                                              ::  assembly plan
     $:  zus/@ud                                         ::  zuse kelvin
