@@ -8,7 +8,7 @@
 ::  Here are the structures.  `++raft` is the formal arvo state.  It's also
 ::  worth noting that many of the clay-related structures are defined in zuse.
 ::
-!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |=  pit/vase
 =,  clay
 =>  |%
