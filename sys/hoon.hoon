@@ -6917,19 +6917,20 @@
       ::
       fin
     ::
-    ++  probe
-      ::  probe for tuple
+    ++  construct
+      ::  local constructor
       ::
-      |=  $:  ::  tow: tuple width we need
-              ::  any: default if probe fails
-              ::
-              tow/@ud
-              any/crib
-          ==
-      ::  yad: topographic map of correct tuple width
+      ::  ~&  [%construct axe mod]
+      ~+
+      ^-  hoon
+      ::  tow: width of ideal tuple
       ::
-      =/  yad/tope  
-        |-(?:(=(1 tow) & [& $(tow (dec tow))]))
+      =/  tow/@ud
+        ?+  mod      1
+          {^ *}      2
+          {$kelp *}  2
+          {$vine *}  2
+        ==
       ::  joy: tuple test (~ fails, [~ ~] succeeds, [~ ~ ~] needs test)
       :: 
       =/  joy
@@ -6938,66 +6939,54 @@
         ?:  =(| top)  ~
         ?:  =(& top)  [~ ~ ~]
         $(top +.top, tow (dec tow))
-      ::  boc: construct against full tuple
+      ::  boc: construction given ideal subject
       ::
-      =/  boc/hoon  construct(top yad)
-      ?:  =([~ ~] joy)  
-        ::  no test needed
+      =;  boc
+        ?:  =([~ ~] joy)
+          ::  width is already ideal
+          ::
+          boc
+        ::  mac: matching crib
         ::
-        boc
-      ::  mac: matching crib
-      ::
-      =/  mac
-        |-  ^-  crib
-        ?:  =(2 tow) 
-          [%axil %cell] 
-        [[%axil %noun] $(tow (dec tow))]
-      ::  yum: matching hoon
-      ::
-      =/  yum
-        |-  ^-  hoon 
-        ?:  =(2 tow) 
-          [%base %cell] 
-        [[%base %noun] $(tow (dec tow))]
-      ::  luz: subject edited to inject default
-      ::
-      =/  luz/hoon  
-        :+  %cnts 
-          [[%& 1] ~] 
-        :_  ~
-        ::  correct but slow
-        ::  [fetch-wing ersatz:clear(mod any)]
-        [fetch-wing ersatz:clear(mod ?~(def mac u.def))]
-      ?:  =(~ joy)      
-        ::  unconditional build
+        =/  mac
+          |-  ^-  crib
+          ?:  =(2 tow) 
+            [%axil %cell] 
+          [[%axil %noun] $(tow (dec tow))]
+        ::  yum: matching hoon
         ::
-        [%tsgr luz boc]
-      ::  conditional build
+        =/  yum
+          |-  ^-  hoon 
+          ?:  =(2 tow) 
+            [%base %cell] 
+          [[%base %noun] $(tow (dec tow))]
+        ::  luz: subject edited to inject default
+        ::
+        =/  luz/hoon  
+          :+  %cnts 
+            [[%& 1] ~] 
+          :_  ~
+          ::  correct but slow
+          ::  [fetch-wing ersatz:clear(mod any)]
+          [fetch-wing ersatz:clear(mod ?~(def mac u.def))]
+        ?:  =(~ joy)      
+          ::  unconditional build
+          ::
+          [%tsgr luz boc]
+        ::  conditional build
+        ::
+        [%tsgr [%wtcl [%wtts yum fetch-wing] [%$ 1] luz] boc]
+      ::  idealize topography (should be a smarter merge)
       ::
-      [%tsgr [%wtcl [%wtts yum fetch-wing] [%$ 1] luz] boc]
-    ::
-    ++  construct
-      ::  local constructor
-      ::
-      ::  ~&  [%construct axe mod]
-      ~+
-      ^-  hoon
+      =.  top  ?:(=(1 tow) top |-(?:(=(1 tow) & [& $(tow (dec tow))])))
       ?-    mod
       ::
       ::  cell
       ::
           {^ *}
-        ::  apply help
-        ::
         %-  decorate
-        ::  probe unless we know the sample is a cell
-        ::
-        ?@  top  
-          (probe 2 dummy)
-        ::  if known cell, descend directly
-        ::
-        :-  construct:clear(mod -.mod, top p.top, axe (peg axe 2))
-        construct:clear(mod +.mod, top q.top, axe (peg axe 3))
+        :-  construct:clear(mod -.mod, top -.top, axe (peg axe 2))
+        construct:clear(mod +.mod, top +.top, axe (peg axe 3))
       ::
       ::  base
       ::
@@ -7036,12 +7025,6 @@
       ::  switch, $%
       :: 
           {$kelp *}
-        ::  if atom or unknown, probe
-        ::
-        ?@  top  
-          (probe 2 dummy)
-        ::  if cell, enter switch directly
-        ::
         (switch i.p.mod t.p.mod)
       ::
       ::  constant
@@ -7080,8 +7063,6 @@
       ::
           {$vine *}
         %-  decorate
-        ?@  top  
-          (probe 2 dummy)
         :^    %wtpt
             fetch-wing(axe (peg axe 2))
           construct:clear(top [%| %&], mod q.mod) 
