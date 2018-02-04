@@ -6630,7 +6630,7 @@
     ^-  hoon
     :+  %tsls
       [%ktls [%bust %noun] ersatz:clear(mod dummy)]
-    ~(construct sample(dom (peg 3 dom)) [2 %&])
+    ~(construct local(dom (peg 3 dom)) [2 %&])
   ::
   ++  basal
     ::  ersatz base case
@@ -6777,18 +6777,18 @@
     ?:  fab
       :^  %brts  ~^~
         [%base %noun]
-      ~(construct sample(dom (peg 7 dom)) [6 %&])
+      ~(construct local(dom (peg 7 dom)) [6 %&])
     :^  %brcl  ~^~
       ?:  ?=($axil -.mod)
         [%bust %noun]
       [%ktls [%bust %noun] ersatz:clear(mod dummy)]
-    ~(construct sample(dom (peg 7 dom)) [6 %&])
+    ~(construct local(dom (peg 7 dom)) [6 %&])
   ::
-  ++  sample
-    ::  normalize a sample of the subject
+  ++  local
+    ::  normalize a fragment of the subject
     ::
-    |_  $:  ::  axe: axis to sample
-            ::  top: topographic type of sample
+    |_  $:  ::  axe: axis to fragment
+            ::  top: topographic type of fragment
             ::
             axe/axis
             top/tope 
@@ -6834,9 +6834,9 @@
         ersatz
       ==
     ++  clear
-      .(..sample ^clear)
+      .(..local ^clear)
     ++  fetch
-      ::  load the sample
+      ::  load the fragment
       ::
       ^-  hoon
       [%$ axe]
@@ -6871,13 +6871,13 @@
       ::  build trial noun
       ::
       :+  %tsls
-        ::  build the sample with the first option
+        ::  build the fragment with the first option
         ::
         construct:clear(mod one)
       ::  build test
       ::
       :^    %wtcl
-          ::  if the trial noun equals the sample
+          ::  if the trial noun equals the fragment
           ::
           [%dtts new fetch(axe (peg 3 axe))]
         ::  produce the trial noun
@@ -6918,22 +6918,47 @@
       fin
     ::
     ++  probe
-      ::  probe for cell or default
+      ::  probe for tuple
       ::
-      |=  $:  ::  any: default if probe fails
+      |=  $:  ::  tow: tuple width we need
+              ::  any: default if probe fails
               ::
+              tow/@ud
               any/crib
           ==
-      ^-  hoon
-      ::  boc: construct against cell
+      ::  yad: topographic map of correct tuple width
       ::
-      =/  boc/hoon  construct(top [& &])
-      ?^  top
-        ::  no probe is needed if already a cell 
+      =/  yad/tope  
+        |-(?:(=(1 tow) & [& $(tow (dec tow))]))
+      ::  joy: tuple test (~ fails, [~ ~] succeeds, [~ ~ ~] needs test)
+      :: 
+      =/  joy
+        |-  ^-  (unit (unit ~))
+        ?:  =(1 tow)  [~ ~]
+        ?:  =(| top)  ~
+        ?:  =(& top)  [~ ~ ~]
+        $(top +.top, tow (dec tow))
+      ::  boc: construct against full tuple
+      ::
+      =/  boc/hoon  construct(top yad)
+      ?:  =([~ ~] joy)  
+        ::  no test needed
         ::
         boc
-      :+  %ktls
-        boc
+      ::  mac: matching crib
+      ::
+      =/  mac
+        |-  ^-  crib
+        ?:  =(2 tow) 
+          [%axil %cell] 
+        [[%axil %noun] $(tow (dec tow))]
+      ::  yum: matching hoon
+      ::
+      =/  yum
+        |-  ^-  hoon 
+        ?:  =(2 tow) 
+          [%base %cell] 
+        [[%base %noun] $(tow (dec tow))]
       ::  luz: subject edited to inject default
       ::
       =/  luz/hoon  
@@ -6942,13 +6967,17 @@
         :_  ~
         ::  correct but slow
         ::  [fetch-wing ersatz:clear(mod any)]
-        [fetch-wing ersatz:clear(mod ?~(def [%axil %cell] u.def))]
-      ?:  =(& top)
-        [%tsgr [%wtpt fetch-wing luz [%$ 1]] boc]
-      [%tsgr luz boc]
+        [fetch-wing ersatz:clear(mod ?~(def mac u.def))]
+      ?:  =(~ joy)      
+        ::  unconditional build
+        ::
+        [%tsgr luz boc]
+      ::  conditional build
+      ::
+      [%tsgr [%wtcl [%wtts yum fetch-wing] [%$ 1] luz] boc]
     ::
     ++  construct
-      ::  constructor at arbitrary sample
+      ::  local constructor
       ::
       ::  ~&  [%construct axe mod]
       ~+
@@ -6964,7 +6993,7 @@
         ::  probe unless we know the sample is a cell
         ::
         ?@  top  
-          (probe dummy)
+          (probe 2 dummy)
         ::  if known cell, descend directly
         ::
         :-  construct:clear(mod -.mod, top p.top, axe (peg axe 2))
@@ -7010,7 +7039,7 @@
         ::  if atom or unknown, probe
         ::
         ?@  top  
-          (probe dummy)
+          (probe 2 dummy)
         ::  if cell, enter switch directly
         ::
         (switch i.p.mod t.p.mod)
@@ -7052,7 +7081,7 @@
           {$vine *}
         %-  decorate
         ?@  top  
-          (probe dummy)
+          (probe 2 dummy)
         :^    %wtpt
             fetch-wing(axe (peg axe 2))
           construct:clear(top [%| %&], mod q.mod) 
