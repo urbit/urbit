@@ -5994,7 +5994,7 @@
               {$leaf p/term q/@}                        ::  constant atom
               {$plow p/what q/crib}                     ::  apply help
               {$reed p/crib q/crib}                     ::  atom+cell
-              ::  {$tupl p/{i/crib t/(list crib)}}      ::  aka row
+              {$tupl p/{i/crib t/(list crib)}}      ::  aka row
               {$vine p/crib q/crib}                     ::  pair+tag
               {$weed p/hoon}                            ::  example
           ==                                            ::
@@ -6675,10 +6675,14 @@
     ?^  def  u.def
     ?+  mod      mod
       {^ *}      [dummy(mod p.mod) dummy(mod q.mod)]
+      {$tupl *}  :+  %tupl
+                   dummy(mod i.p.mod)
+                 (turn t.p.mod |=(crib dummy(mod +<)))
       {$bark *}  dummy(mod q.mod)
       {$deet *}  dummy(mod q.mod)
       {$deft *}  p.mod
-      {$fern *}  |-  ^-  crib
+      {$fern *}  
+                 |-  ^-  crib
                  ?~  t.p.mod  i.p.mod  
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
       {$kelp *}  |-  ^-  crib
@@ -6721,6 +6725,11 @@
                      ?~  t.p.mod  &
                      $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
                  ==
+      {$tupl *}  |-  ^-  ?
+                 ?&  clean(mod i.p.mod)
+                     ?~  t.p.mod  &
+                     $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
+                 ==
       {$leaf *}  &
       {$plow *}  clean(mod q.mod)
       {$reed *}  &(clean(mod p.mod) clean(mod q.mod))
@@ -6755,6 +6764,12 @@
         {$leaf *}  (decorate [%rock p.mod q.mod])
         {$plow *}  ersatz(mod q.mod, doc [p.mod doc])
         {$reed *}  trivial
+        {$tupl *}  %-  decorate
+                   |-  ^-  hoon
+                   ?~  t.p.mod
+                       ersatz:clear(mod i.p.mod)
+                   :-  ersatz:clear(mod i.p.mod)
+                   ersatz:clear(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
         {$vine *}  trivial
         {$weed *}  (home p.mod)
     ==
@@ -6774,7 +6789,7 @@
         ::
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
-    ?:  fab
+    ?:  &
       :^  %brts  ~^~
         [%base %noun]
       ~(construct local(dom (peg 7 dom)) [6 %&])
@@ -6930,6 +6945,7 @@
           {^ *}      2
           {$kelp *}  2
           {$vine *}  2
+          {$tupl *}  +((lent t.p.mod))
         ==
       ::  joy: tuple test (~ fails, [~ ~] succeeds, [~ ~ ~] needs test)
       :: 
@@ -7021,6 +7037,21 @@
         ?:  ?=($herb -.cys)
           [%cnhp (home p.mod) fetch ~]
         construct(mod cys)
+      ::
+      ::  tuple, $:
+      ::
+          {$tupl *}
+        %-  decorate
+        |-  ^-  hoon
+        ?~  t.p.mod
+          construct:clear(mod i.p.mod)
+        :-  construct:clear(mod i.p.mod, top -.top, axe (peg axe 2))
+        %=  construct
+          i.p.mod  i.t.p.mod
+          t.p.mod  t.t.p.mod
+          top      +.top 
+          axe      (peg axe 3)
+        ==
       ::
       ::  switch, $%
       :: 
@@ -7323,6 +7354,14 @@
       $(sec q.sec)
     ?:  ?=({{$deet *} *} sec)
       $(p.sec q.p.sec)
+    ?:  ?=({$tupl {$leaf *} * *} sec)
+      :+  %&
+        [%leaf p.i.p.sec q.i.p.sec] 
+      [%tupl i.t.p.sec t.t.p.sec]
+    ?:  ?=({$tupl {$deet * {$leaf *}} * *} sec)
+      :+  %& 
+        [%leaf p.q.i.p.sec q.q.i.p.sec]
+      [%tupl i.t.p.sec t.t.p.sec]
     ?:  ?=({{$leaf *} *} sec)
       [%& [%leaf p.p.sec q.p.sec] q.sec]
     [%| sec]
@@ -7337,10 +7376,13 @@
         {$bcpt *}  [%reed boil(gen p.gen) boil(gen q.gen)]
         {$bccb *}  [%weed p.gen]
         {$bccl *}
-      |-  ^-  crib
+      ?:  fab
+        |-  ^-  crib
+        ?~  p.gen  [%axil %null]
+        ?~  t.p.gen  boil(gen i.p.gen)
+        [boil(gen i.p.gen) $(p.gen t.p.gen)]
       ?~  p.gen  [%axil %null]
-      ?~  t.p.gen  boil(gen i.p.gen)
-      [boil(gen i.p.gen) $(p.gen t.p.gen)]
+      [%tupl boil(gen i.p.gen) (turn t.p.gen |=(hoon boil(gen +<)))]
     ::
         {$bccn *}
       ?~  p.gen
@@ -7351,7 +7393,11 @@
               ^=  end  ^-  (list line)
               ~_  leaf+"book-foul"
               %+  turn  `(list hoon)`t.p.gen
-              |=(a/hoon =+(bile(gen a) ?>(?=($& -<) ->)))
+              |=  a/hoon 
+              =+  sec=boil(gen a)
+              =+  foo=bile(gen a) 
+              ~_  leaf+?^(-.sec "celly" (weld (trip -.sec) "-bad"))
+              ?>(?=($& -.foo) +.foo)
           ==
       ?-  -.def
         $&  [%kelp p.def end]
