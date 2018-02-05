@@ -1021,12 +1021,18 @@ _n_find(u3_noun fol)
   }
 }
 
-/* _n_burn(): run pog, subject is top of cap stack, return value on cap stack
+typedef struct {
+  c3_y* pog;
+  c3_s  ip_s;
+} burnframe;
+
+/* _n_burn(): pog: program
+ *            bus: subject
  *            mov: -1 north, 1 south
  *            off: 0 north, -1 south
  */
-static void
-_n_burn(c3_y* pog, c3_ys mov, c3_ys off)
+static u3_noun
+_n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 {
   /* OPCODE TABLE */
   static void* lab[] = {
@@ -1050,19 +1056,32 @@ _n_burn(c3_y* pog, c3_ys mov, c3_ys off)
   };
 
   c3_s sip_s, ip_s = 0;
-  c3_y* gop;
   u3_noun* top;
   u3_noun* up;
   u3_noun x, o;
+  u3p(void) empty;
+  burnframe* fam;
 
-  // could save interpreter frames on cap instead of using c stack (ip_s + pog)
-  //   XX: do this after the simpler version works
+  empty = u3R->cap_p;
+  _n_push(mov, off, bus);
 
   #define BURN() goto *lab[pog[ip_s++]]
   BURN();
   while ( 1 ) {
     do_halt: 
-      return;
+      x = _n_pep(mov, off);
+      if ( empty == u3R->cap_p ) {
+        return x;
+      }
+      else {
+        fam  = u3to(burnframe, u3R->cap_p) + off;
+        pog  = fam->pog;
+        ip_s = fam->ip_s;
+
+        u3R->cap_p = u3of(burnframe, fam - mov);
+        _n_push(mov, off, x);
+        BURN();
+      }
 
     do_copy:
       top = _n_peek(off);
@@ -1111,7 +1130,7 @@ _n_burn(c3_y* pog, c3_ys mov, c3_ys off)
       }
       else if ( c3y != x ) {
         u3m_bail(c3__exit);
-        return;
+        return u3_none;
       }
       BURN();
 
@@ -1132,7 +1151,7 @@ _n_burn(c3_y* pog, c3_ys mov, c3_ys off)
       o    = *top;
       if ( c3n == u3du(o) ) {
         u3m_bail(c3__exit);
-        return;
+        return u3_none;
       }
       *top = u3k(u3h(o));
       u3z(o);
@@ -1143,7 +1162,7 @@ _n_burn(c3_y* pog, c3_ys mov, c3_ys off)
       o    = *top;
       if ( c3n == u3du(o) ) {
         u3m_bail(c3__exit);
-        return;
+        return u3_none;
       }
       *top = u3k(u3t(o));
       u3z(o);
@@ -1173,10 +1192,18 @@ _n_burn(c3_y* pog, c3_ys mov, c3_ys off)
       BURN();
 
     do_nock:
-      o   = _n_pep(mov, off);
-      gop = _n_find(o);
-      _n_burn(gop, mov, off);
+      o    = _n_pep(mov, off);
+      x    = _n_pep(mov, off);
+
+      fam        = u3to(burnframe, u3R->cap_p) + off + mov;
+      u3R->cap_p = u3of(burnframe, fam);
+      fam->ip_s  = ip_s;
+      fam->pog   = pog;
+
+      pog  = _n_find(o);
+      ip_s = 0;
       u3z(o);
+      _n_push(mov, off, x);
       BURN();
 
     do_noct:
@@ -1234,11 +1261,18 @@ _n_burn(c3_y* pog, c3_ys mov, c3_ys off)
         u3_noun fol = u3r_at(x, o);
         if ( u3_none == fol ) {
           u3m_bail(c3__exit);
-          return;
+          return u3_none;
         }
-        *top = o;
-        gop  = _n_find(fol);
-        _n_burn(gop, mov, off);
+        _n_pop(mov);
+
+        fam        = u3to(burnframe, u3R->cap_p) + off + mov;
+        u3R->cap_p = u3of(burnframe, fam);
+        fam->ip_s  = ip_s;
+        fam->pog   = pog;
+
+        pog  = _n_find(fol);
+        ip_s = 0;
+        _n_push(mov, off, o);
       }
       BURN();
 
@@ -1262,7 +1296,7 @@ _n_burn(c3_y* pog, c3_ys mov, c3_ys off)
         u3_noun fol = u3r_at(x, o);
         if ( u3_none == fol ) {
           u3m_bail(c3__exit);
-          return;
+          return u3_none;
         }
         *top = o;
         pog  = _n_find(fol);
@@ -1277,7 +1311,7 @@ _n_burn(c3_y* pog, c3_ys mov, c3_ys off)
       u3j_mine(*up, u3k(*top));
       u3t_on(noc_o);
       *up = *top;
-      u3a_pop(sizeof(u3_noun));
+      _n_pop(mov);
       BURN();
 
     do_wish:
@@ -1289,13 +1323,13 @@ _n_burn(c3_y* pog, c3_ys mov, c3_ys off)
 
       if ( c3n == u3du(x) ) {
         u3m_bail(u3nt(1, *top, 0));
-        return;
+        return u3_none;
       }
       else if ( c3n == u3du(u3t(x)) ) {
         //  replace with proper error stack push
         u3t_push(u3nc(c3__hunk, _n_mush(*top)));
         u3m_bail(c3__exit);
-        return;
+        return u3_none;
       }
       else {
         u3z(*top);
@@ -1346,7 +1380,7 @@ _n_burn(c3_y* pog, c3_ys mov, c3_ys off)
 
     do_bail:
       u3m_bail(c3__exit);
-      return;
+      return u3_none;
   }
 }
 
@@ -1446,10 +1480,8 @@ static void _n_print_stack(u3p(u3_noun) empty) {
 static u3_noun
 _n_burn_on(u3_noun bus, u3_noun fol)
 {
-  u3p(void) empty = u3R->cap_p;
   c3_y* pog = _n_find(fol);
   c3_ys mov, off;
-  u3_noun r;
 
   u3z(fol);
   if ( c3y == u3a_is_north(u3R) ) {
@@ -1460,13 +1492,7 @@ _n_burn_on(u3_noun bus, u3_noun fol)
     mov = 1;
     off = -1;
   }
-  _n_push(mov, off, bus);
-  _n_burn(pog, mov, off);
-
-  r = _n_pep(mov, off);
-
-  c3_assert( empty == u3R->cap_p );
-  return r;
+  return _n_burn(pog, bus, mov, off);
 }
 
 u3_noun
