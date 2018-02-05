@@ -58,3 +58,7 @@
     */
       u3_noun
       u3n_nock_an(u3_noun bus, u3_noun fol);
+
+    /* u3n_beep(): promote bytecode state.
+     */
+    void u3n_beep(u3p(u3h_root) har_p);

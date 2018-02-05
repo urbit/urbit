@@ -508,26 +508,29 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 #define SNOC 8  // makes a cell of [TOS, under]
 #define HEAD 9  // replaces TOS with its head (old TOS lost)
 #define TAIL 10 // as HEAD, but for the tail
-#define FRAG 11 // as HEAD/TAIL, but with an arbitrary noun axis 
-#define QUOT 12 // toss TOS, push literal noun argument
-#define QUIP 13 // as QUOT, but without the toss
-#define NOCK 14 // *(under, TOS)
-#define NOCT 15 // as NOCK, but in tail position
-#define DEEP 16 // pop TOS and push isCell loob
-#define PEEP 17 // as DEEP, but doesn't pop
-#define BUMP 18 // increment TOS
-#define SAME 19 // pop two items and push equality loob
-#define KICK 20 // pull argument arm from TOS
-#define TICK 21 // KICK, but in tail position
-#define WISH 22 // ref is under, gof is TOS, u3m_soft_esc
-#define FAST 23 // u3j_mine TOS
-#define CUSH 24 // u3t_push TOS
-#define DROP 25 // u3t_drop
-#define PUMO 26 // saves memo from tos->[pro key]
-#define GEMO 27 // pushes (unit pro) of u3z_save with key=TOS
-#define HECK 28 // u3t_heck TOS
-#define SLOG 29 // u3t_slog TOS
-#define BAIL 30 // bail %exit
+#define STAG 11 // copy tos w/o keep to prepare for hear/tair fragment
+#define HART 12 // keep tos and swat
+#define HEAR 13 // take head of TOS, no keep/loss
+#define TAIR 14 // take tail of TOS, no keep/loss
+#define QUOT 15 // toss TOS, push literal noun argument
+#define QUIP 16 // as QUOT, but without the toss
+#define NOCK 17 // *(under, TOS)
+#define NOCT 18 // as NOCK, but in tail position
+#define DEEP 19 // pop TOS and push isCell loob
+#define PEEP 20 // as DEEP, but doesn't pop
+#define BUMP 21 // increment TOS
+#define SAME 22 // pop two items and push equality loob
+#define KICK 23 // pull argument arm from TOS
+#define TICK 24 // KICK, but in tail position
+#define WISH 25 // ref is under, gof is TOS, u3m_soft_esc
+#define FAST 26 // u3j_mine TOS
+#define CUSH 27 // u3t_push TOS
+#define DROP 28 // u3t_drop
+#define PUMO 29 // saves memo from tos->[pro key]
+#define GEMO 30 // pushes (unit pro) of u3z_save with key=TOS
+#define HECK 31 // u3t_heck TOS
+#define SLOG 32 // u3t_slog TOS
+#define BAIL 33 // bail %exit
 
 /* _n_apen(): emit the instructions contained in src to dst
  */
@@ -554,7 +557,6 @@ _n_emit(u3_noun *ops, u3_noun op)
       return sizeof(c3_y) + sizeof(c3_s);
     case QUOT:
     case QUIP:
-    case FRAG:
     case TICK:
     case KICK:
       return sizeof(c3_y) + sizeof(u3_noun);
@@ -715,8 +717,16 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
         case 3:
           tot_s += _n_emit(ops, TAIL);
           break;
-        default:
-          tot_s += _n_emit(ops, u3nc(FRAG, u3k(arg)));
+        default: {
+          u3_noun a;
+          tot_s += _n_emit(ops, STAG);
+          for ( a = u3k(arg); a > 1; u3z(a), a = u3qc_mas(a) ) {
+            tot_s += _n_emit(ops, 2 == u3qc_cap(a) ? HEAR : TAIR);
+          }
+          u3z(a);
+          tot_s += _n_emit(ops, HART);
+          break;
+        }
       }
       break;
     case 1: {
@@ -835,7 +845,6 @@ _n_asm(u3_noun ops, c3_s len_s)
         }
         case QUOT:
         case QUIP:
-        case FRAG:
         case TICK:
         case KICK: {
           c3_w non_w   = u3k(u3t(op));
@@ -930,6 +939,7 @@ _n_bite(u3_noun fol)
   u3_noun bok = u3_nul;
   c3_s len_s  = _n_comp(&bok, fol, c3y);
   c3_y* buf_y = _n_asm(bok, len_s);
+  _n_print_byc(buf_y);
   return buf_y;
 }
 
@@ -961,7 +971,9 @@ _n_burn(c3_y* pog)
     &&do_swap, &&do_swat, 
     &&do_skip, &&do_skin,
     &&do_cons, &&do_snoc,
-    &&do_head, &&do_tail, &&do_frag,
+    &&do_head, &&do_tail,
+    &&do_stag, &&do_hart,
+    &&do_hear, &&do_tair,
     &&do_quot, &&do_quip,
     &&do_nock, &&do_noct,
     &&do_deep, &&do_peep,
@@ -1064,12 +1076,36 @@ _n_burn(c3_y* pog)
       u3z(o);
       BURN();
 
-    do_frag:
-      top  = _n_peek();
-      o    = *top;
-      x    = u3x_at(_n_rean(pog, &ip_s), o);
-      *top = u3k(x);
+    do_stag:
+      _n_push(*(_n_peek()));
+      BURN();
+      
+    do_hart:
+      top = _n_peek();
+      up  = _n_peet();
+      o   = *up;
+      *up = u3k(_n_pop());
       u3z(o);
+      BURN();
+
+    do_hear:
+      top = _n_peek();
+      o   = *top;
+      if ( c3n == u3du(o) ) {
+        u3m_bail(c3__exit);
+        return;
+      }
+      *top = u3h(o);
+      BURN();
+
+    do_tair:
+      top = _n_peek();
+      o   = *top;
+      if ( c3n == u3du(o) ) {
+        u3m_bail(c3__exit);
+        return;
+      }
+      *top = u3t(o);
       BURN();
 
     do_quot:
@@ -1246,7 +1282,9 @@ _n_print_byc(c3_y* pog)
     "swap", "swat", 
     "skip", "skin",
     "cons", "snoc",
-    "head", "tail", "frag",
+    "head", "tail", 
+    "stag", "hart",
+    "hear", "tair",
     "quot", "quip",
     "nock", "noct",
     "deep", "peep",
@@ -1280,7 +1318,6 @@ _n_print_byc(c3_y* pog)
 
       case QUOT:
       case QUIP:
-      case FRAG:
       case TICK:
       case KICK:
         printf("[%s ", names[pog[ip_s++]]);
@@ -1340,4 +1377,12 @@ u3n_burn_on(u3_noun bus, u3_noun fol)
   pro = _n_burn_on(bus, fol);
   u3t_off(noc_o);
   return pro;
+}
+
+/* u3n_beep(): promote bytecode state.
+*/
+void
+u3n_beep(u3p(u3h_root) har_p)
+{
+  u3m_p("beep", 0);
 }

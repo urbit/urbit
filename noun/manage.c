@@ -459,6 +459,7 @@ _pave_parts(void)
 {
   u3R->cax.har_p = u3h_new();
   u3R->jed.har_p = u3h_new();
+  u3R->byc.har_p = u3h_new();
   u3R->jed.das = u3_nul;
 }
 
@@ -469,6 +470,7 @@ u3m_mark(void)
 {
   c3_w tot_w = 0;
   tot_w += u3h_mark(u3R->jed.har_p);
+  tot_w += u3h_mark(u3R->byc.har_p);
   tot_w += u3a_mark_noun(u3R->jed.das);
   tot_w += u3a_mark_noun(u3R->ski.gul);
   tot_w += u3a_mark_noun(u3R->bug.tax);
@@ -508,6 +510,7 @@ u3m_clear(void)
 {
   u3h_free(u3R->cax.har_p);
   u3h_free(u3R->jed.har_p);
+  u3h_free(u3R->byc.har_p);
   u3a_lose(u3R->jed.das);
 }
 
@@ -802,6 +805,7 @@ u3m_love(u3_noun pro)
     pro = u3a_take(pro);
 
     u3j_reap(das, har_p);
+    u3n_beep(u3R->byc.har_p);
 
     u3R->cap_p = u3R->ear_p;
     u3R->ear_p = 0;
