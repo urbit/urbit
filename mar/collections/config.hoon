@@ -20,8 +20,8 @@
         :-  'except:'
         %+  turn  (sort ~(tap in mems.con) aor)
         |=  a=@p
+        (cat 3 '  ' (scot %p a))
     ==
-    (cat 3 '  ' (scot %p a))
   ++  elem  :: web display
     ;div
       ::;pre: {(trip (of-wain:format txt))}
@@ -42,13 +42,16 @@
   ++  txt
     |=  txs/(pole @t)
     ~&  %reading-config
-    ?>  ?=([des=@t pub=@t vis=@t %'except:' mem=*] txs)
-    :^  (rash des.txs ;~(pfix (jest '> ') (cook crip (star next))))
-        (rash pub.txs ;~(pfix (jest 'public: ') (flag %y %n)))
-        (rash vis.txs ;~(pfix (jest 'visible: ') (flag %y %n)))
-    %-  sy
-    %+  turn  (skip mem.txs |=(a=@t =(a '')))  :: skip trailing blank
-    (curr rash ;~(pfix (jest '  ~') fed:ag))
+    ?>  ?=([desc=@t publ=@t visi=@t comm=@t xeno=@t %'except:' mem=*] txs)
+    :*  (rash desc.txs ;~(pfix (jest '> ') (cook crip (star next))))
+        (rash publ.txs ;~(pfix (jest 'public: ') (flag %y %n)))
+        (rash visi.txs ;~(pfix (jest 'visible: ') (flag %y %n)))
+        (rash comm.txs ;~(pfix (jest 'comments: ') (flag %y %n)))
+        (rash xeno.txs ;~(pfix (jest 'xenopost: ') (flag %y %n)))
+        %-  sy
+        %+  turn  (skip mem.txs |=(a=@t =(a '')))  :: skip trailing blank
+        (curr rash ;~(pfix (jest '  ~') fed:ag))
+    ==
   --
 ++  grad  %txt
 --
