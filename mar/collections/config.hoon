@@ -24,7 +24,11 @@
     (cat 3 '  ' (scot %p a))
   ++  elem  :: web display
     ;div
-      ;pre: {(trip (of-wain:format txt))}
+      ::;pre: {(trip (of-wain:format txt))}
+      ;h1:  {(trip desc.con)}
+      ::;div 
+      ::  {(trip desc.con)}
+      ::==
       ;list;  :: show topics
     ==
   ++  front  (my title+desc.con ~)  :: title in lists
@@ -37,6 +41,7 @@
     (txt (to-wain:format q.q))
   ++  txt
     |=  txs/(pole @t)
+    ~&  %reading-config
     ?>  ?=([des=@t pub=@t vis=@t %'except:' mem=*] txs)
     :^  (rash des.txs ;~(pfix (jest '> ') (cook crip (star next))))
         (rash pub.txs ;~(pfix (jest 'public: ') (flag %y %n)))
