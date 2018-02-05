@@ -17,16 +17,20 @@
   ;h1: {(trip desc.y)}
   ;*  ?:  authed
     ;=
-      ;a(href "")
-        ;button.btn.btn-secondary
-          Write →
+      ;div.row
+        ;a(href "/~~/pages/nutalk/collections/post")
+          ;button.btn.btn-secondary
+            Write →
+          ==
         ==
       ==
     ==
   ;=
-    ;a(href "")
-      ;button.btn.btn-primary
-        Subscribe →
+    ;div.row
+      ;a(href "")
+        ;button.btn.btn-primary
+          Subscribe →
+        ==
       ==
     ==
   ==
@@ -34,20 +38,14 @@
   ;*  %+  turn
         %+  sort
           ~(tap by x)
-          ::aor
         |=  [a=(pair knot topicful:collections) b=(pair knot topicful:collections)]
-        ::&
         (gth (unt (slav %da p.a)) (unt (slav %da p.b)))
       |=  [t=knot con=topicful:collections]
       ;li
         ;div
-          ;a(href "{(trip t)}")
-            {(trip t)}
-          ==
+          ;a(href "{(trip (scot %p mod.info.con))}/{(trip t)}"): {(trip t)}
         ==
-        ;div
-          ;h2: {(trip tit.info.con)}
-        ==
+        ;h2.mt-0: {(trip tit.info.con)}
       ==
   ==
 ==
