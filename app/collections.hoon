@@ -69,7 +69,7 @@
   ~&  %poked
   =<  ta-done
   ?~  a  
-    (ta-create:ta %fora ['a description' pub=& vis=& [~palzod ~ ~]])
+    (ta-create:ta ['a description' publ=& visi=& comm=& xeno=& ~])
   ?@  a
     (ta-submit:ta a 'a topic' ~['with contents'])
   (ta-comment:ta p.a q.a now.bol ~['a comment' 'yo'])
@@ -137,7 +137,8 @@
   ::  %performing-actions
   ::
   ++  ta-create
-    |=  {wat/kind:api cof/config}
+    ::|=  {wat/kind:api cof/config}
+    |=  cof/config
     ^+  +>
     ::XX unhandled kind
     (ta-write /config now.bol %collections-config !>(cof))
@@ -322,6 +323,7 @@
     ::      that generally won't result in visible notifications.
     :^  %source  (circle-for col)  &
     (sy `source:hall`[our.bol nam]~ ~)
+  ::
   ::
   ++  ta-hall-configure
     |=  [nam=term cof=config]  ^+  +>

@@ -32,10 +32,12 @@
   ++  kind  ?($blog $fora $note)                      ::
   ++  action                                          ::
     $%  $:  $create                                   ::  create a collection
-            wat/kind                                  ::  collection kind
-            des/cord                                  ::  name
-            pub/?                                     ::  public or private
-            vis/?                                     ::  visible or hidden
+            ::wat/kind                                  ::  collection kind
+            desc/cord                                 ::  name
+            publ/?                                    ::  public or private
+            visi/?                                    ::  visible or hidden
+            comm/?                                    ::  others can comment
+            xeno/?                                    ::  others can post
             ses/(set ship)                            ::  black/whitelist
         ==                                            ::
         {$submit col/time tit/cord wat/wain}          ::  submit a post/note

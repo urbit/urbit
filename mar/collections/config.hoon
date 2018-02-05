@@ -12,12 +12,15 @@
     (of-wain:format txt)
   ++  txt
     ^-  (list @t)
-    :^    (cat 3 '> ' desc.con)
+    :*  (cat 3 '> ' desc.con)
         (cat 3 'public: ' ?:(publ.con 'y' 'n'))
-      (cat 3 'visible: ' ?:(visi.con 'y' 'n'))
-    :-  'except:'
-    %+  turn  (sort ~(tap in mems.con) aor)
-    |=  a=@p
+        (cat 3 'visible: ' ?:(visi.con 'y' 'n'))
+        (cat 3 'comments: ' ?:(comm.con 'y' 'n'))
+        (cat 3 'xenopost: ' ?:(xeno.con 'y' 'n'))
+        :-  'except:'
+        %+  turn  (sort ~(tap in mems.con) aor)
+        |=  a=@p
+    ==
     (cat 3 '  ' (scot %p a))
   ++  elem  :: web display
     ;div

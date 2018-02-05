@@ -37,17 +37,20 @@
 ::       (ot wat+(cu (hard kind) so) des+so pub+bo vis+bo ses+(as (se %p)) ~)
       |=  a=json
       ~|  a
-      =+  ^-  [wat=kind des=cord pub=? vis=? ses=(set @p)]
+      ::=+  ^-  [wat=kind des=cord pub=? vis=? ses=(set @p)]
+      =+  ^-  [desc=cord publ=? visi=? comm=? xeno=? ses=(set @p)]
           %.  a
           :: change this to accept an array of @p
           %-  ot  
-          :~  wat+(cu (hard kind) so) 
-              des+so 
-              pub+bo 
-              vis+bo 
+          :::~  wat+(cu (hard kind) so) 
+          :~  desc+so 
+              publ+bo 
+              visi+bo 
+              comm+bo 
+              xeno+bo 
               ses+(su (cook sy (more ace fed:ag)))
           ==
-      [wat des pub vis ses]
+      [desc publ visi comm xeno ses]
     ::
     ++  wain  (su (more newline (cook crip (star prn))))
     :: ++  newline  (just '\0a')
