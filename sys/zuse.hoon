@@ -407,7 +407,7 @@
           {$mont p/desk q/beam}                         ::  mount to unix
           {$dirk p/desk}                                ::  mark mount dirty
           {$ogre p/$@(desk beam)}                       ::  delete mount point
-          {$perm des/desk pax/path rit/rite}            ::  change permissions
+          {$perm our/ship des/desk pax/path rit/rite}   ::  change permissions
           {$warp p/sock q/riff}                         ::  file request
           {$wegh $~}                                    ::  report memory
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm

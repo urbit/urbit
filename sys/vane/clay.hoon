@@ -792,6 +792,23 @@
         (lobe-to-silk:ze a p.-)
     ==
   ::
+  ::  Set permissions for a node.
+  ::
+  ++  perm
+    |=  {pax/path rit/rite}
+    ^+  +>
+    =<  (emit hen %give %mack ~)
+    ?-  -.rit
+      $r    wake(per (put-perm per pax red.rit))
+      $w    wake(pew (put-perm pew pax wit.rit))
+      $rw   wake(per (put-perm per pax red.rit), pew (put-perm pew pax wit.rit))
+    ==
+  ::
+  ++  put-perm
+    |=  {pes/(map path rule) pax/path new/(unit rule)}
+    ?~  new  (~(del by pes) pax)
+    (~(put by pes) pax u.new)
+  ::
   ::  Cancel a request.
   ::
   ::  For local requests, we just remove it from `qyx`.  For foreign requests,
@@ -3586,6 +3603,13 @@
       (skim ~(tap by mon.ruf) (corl (cury test p.q.hic) tail))
     |=  {pot/term bem/beam}
     [u.hez.ruf %give %ogre pot]
+  ::
+      $perm
+    =^  mos  ruf
+      ::TODO  after new boot system, just use our from global.
+      =+  den=((de now hen ~ ruf) [. .]:our.q.hic des.q.hic)
+      abet:(perm:den pax.q.hic rit.q.hic)
+    [mos ..^$]
   ::
       $warp
     =^  mos  ruf
