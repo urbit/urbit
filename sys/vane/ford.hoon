@@ -611,7 +611,7 @@
   sym=(cook crip ;~(plug low (star ;~(pose low nud))))
 ::
 ++  za                                                  ::  per event
-  =/  dbg  &
+  =/  dbg  |
   =|  $:  $:  our/ship                                  ::  computation owner
               hen/duct                                  ::  event floor
               $:  now/@da                               ::  event date
