@@ -15,6 +15,8 @@
   $:  desc/cord                                     ::  description
       publ/?                                        ::  public or private
       visi/?                                        ::  visible or hidden
+      comm/?                                       ::  comments
+      xeno/?                                        ::  foreign posters?
       mems/(set ship)                               ::  ships on list
   ==                                                ::
 ++  topic                                           ::
