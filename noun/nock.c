@@ -596,6 +596,52 @@ _n_skin(c3_s len_s)
   return u3nc((len_s < 0xFF ? SBIN : SKIN), len_s);
 }
 
+static inline c3_s
+_n_one(u3_noun* ops, u3_noun fol)
+{
+  c3_assert(c3y == u3du(fol));
+  c3_s tot_s = 0;
+  if ( 1 == u3h(fol) ) {
+    tot_s += _n_emit(ops, u3nc(QUIP, u3k(u3t(fol))));
+  }
+  else {
+    tot_s += _n_emit(ops, COPY);
+    tot_s += _n_comp(ops, fol, c3n);
+  }
+  return tot_s;
+}
+
+static inline c3_s
+_n_two(u3_noun* ops, u3_noun one, u3_noun two)
+{
+  c3_assert(c3y == u3du(one));
+  c3_assert(c3y == u3du(two));
+  c3_s tot_s = 0;
+  if ( 1 == u3h(one) ) {
+    if ( 1 == u3h(two) ) {
+      tot_s += _n_emit(ops, TOSS);
+      tot_s += _n_emit(ops, u3nc(QUIP, u3k(u3t(one))));
+      tot_s += _n_emit(ops, u3nc(QUIP, u3k(u3t(two))));
+    }
+    else {
+      tot_s += _n_emit(ops, u3nc(QUIP, u3k(u3t(one))));
+      tot_s += _n_emit(ops, SWAP);
+      tot_s += _n_comp(ops, two, c3n);
+    }
+  }
+  else if ( 1 == u3h(two) ) {
+    tot_s += _n_comp(ops, one, c3n);
+    tot_s += _n_emit(ops, u3nc(QUIP, u3k(u3t(two))));
+  }
+  else {
+    tot_s += _n_emit(ops, COPY);
+    tot_s += _n_comp(ops, one, c3n);
+    tot_s += _n_emit(ops, SWAP);
+    tot_s += _n_comp(ops, two, c3n);
+  }
+  return tot_s;
+}
+
 /* _n_bint(): hint-processing helper for _n_comp.
  *            hif: hint-formula (first part of 10). RETAIN.
  *            nef: next-formula (second part of 10). RETAIN.
@@ -614,8 +660,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
 
     switch ( zep ) {
       default:
-        tot_s += _n_emit(ops, COPY);
-        tot_s += _n_comp(ops, hod, c3n);
+        tot_s += _n_one(ops, hod);
         tot_s += _n_emit(ops, TOSS);
         tot_s += _n_comp(ops, nef, tel_o);
         break;
@@ -624,8 +669,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
       case c3__lose:
       case c3__mean:
       case c3__spot: 
-        tot_s += _n_emit(ops, COPY);
-        tot_s += _n_comp(ops, hod, c3n);
+        tot_s += _n_one(ops, hod);
         tot_s += _n_emit(ops, u3nc(QUIP, zep));
         tot_s += _n_emit(ops, SNOC);
         tot_s += _n_emit(ops, CUSH);
@@ -639,8 +683,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
         c3_s    y_s = 0,
                 n_s = 0;
 
-        tot_s += _n_emit(ops, COPY);
-        tot_s += _n_comp(ops, hod, c3n);
+        tot_s += _n_one(ops, hod);
         tot_s += _n_emit(ops, PEEP);
 
         n_s += _n_emit(&nop, HECK);
@@ -657,8 +700,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
       }
 
       case c3__slog: 
-        tot_s += _n_emit(ops, COPY);
-        tot_s += _n_comp(ops, hod, c3n);
+        tot_s += _n_one(ops, hod);
         tot_s += _n_emit(ops, SLOG);
         tot_s += _n_comp(ops, nef, tel_o);
         break;
@@ -666,10 +708,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
       // germ and sole are unused...
 
       case c3__fast: 
-        tot_s += _n_emit(ops, COPY);
-        tot_s += _n_comp(ops, hod, c3n);
-        tot_s += _n_emit(ops, SWAP);
-        tot_s += _n_comp(ops, nef, c3n);
+        tot_s += _n_two(ops, hod, nef);
         tot_s += _n_emit(ops, FAST);
         break;
 
@@ -680,8 +719,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o tel_o)
         c3_s y_s = 0,
              n_s = 0;                                // top->[bus]
         tot_s += _n_emit(ops, COPY);                 // [bus bus]
-        tot_s += _n_emit(ops, COPY);                 // [bus bus bus]
-        tot_s += _n_comp(ops, hod, c3n);             // [clue bus bus]
+        tot_s += _n_one(ops, hod);                   // [clue bus bus]
         tot_s += _n_emit(ops, TOSS);                 // [bus bus]
         tot_s += _n_emit(ops, u3nc(QUIP, u3k(nef))); // [fol bus bus]
         tot_s += _n_emit(ops, SNOC);                 // [[bus fol] bus]
@@ -723,10 +761,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
   u3x_cell(fol, &cod, &arg);
 
   if ( c3y == u3du(cod) ) {
-    tot_s += _n_emit(ops, COPY);
-    tot_s += _n_comp(ops, cod, c3n);
-    tot_s += _n_emit(ops, SWAP);
-    tot_s += _n_comp(ops, arg, c3n);
+    tot_s += _n_two(ops, cod, arg);
     tot_s += _n_emit(ops, CONS);
   }
   else switch ( cod ) {
@@ -759,10 +794,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
     }
     case 2:
       u3x_cell(arg, &hed, &tel);
-      tot_s += _n_emit(ops, COPY);
-      tot_s += _n_comp(ops, hed, c3n);
-      tot_s += _n_emit(ops, SWAP);
-      tot_s += _n_comp(ops, tel, c3n);
+      tot_s += _n_two(ops, hed, tel);
       tot_s += _n_emit(ops, ((c3y == tel_o)? NOCT : NOCK));
       break;
     case 3:
@@ -775,18 +807,14 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
       break;
     case 5:
       u3x_cell(arg, &hed, &tel);
-      tot_s += _n_emit(ops, COPY);
-      tot_s += _n_comp(ops, hed, c3n);
-      tot_s += _n_emit(ops, SWAP);
-      tot_s += _n_comp(ops, tel, c3n);
+      tot_s += _n_two(ops, hed, tel);
       tot_s += _n_emit(ops, SAME);
       break;
     case 6: {
       u3_noun mid;
       u3x_trel(arg, &hed, &mid, &tel);
 
-      tot_s += _n_emit(ops, COPY);
-      tot_s += _n_comp(ops, hed, c3n);
+      tot_s += _n_one(ops, hed);
 
       u3_noun yep   = u3_nul,
               nop   = u3_nul;
@@ -806,8 +834,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
       break;
     case 8:
       u3x_cell(arg, &hed, &tel);
-      tot_s += _n_emit(ops, COPY);
-      tot_s += _n_comp(ops, hed, c3n);
+      tot_s += _n_one(ops, hed);
       tot_s += _n_emit(ops, SNOC);
       tot_s += _n_comp(ops, tel, tel_o);
       break;
@@ -833,10 +860,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o tel_o) {
       break;
     case 11:
       u3x_cell(arg, &hed, &tel);
-      tot_s += _n_emit(ops, COPY);
-      tot_s += _n_comp(ops, hed, c3n);
-      tot_s += _n_emit(ops, SWAP);
-      tot_s += _n_comp(ops, tel, c3n);
+      tot_s += _n_two(ops, hed, tel);
       tot_s += _n_emit(ops, WISH);
       break;
   }
@@ -1000,6 +1024,7 @@ _n_bite(u3_noun fol)
   u3_noun bok = u3_nul;
   c3_s len_s  = _n_comp(&bok, fol, c3y);
   c3_y* buf_y = _n_asm(bok, len_s);
+  u3m_p("fol", fol);
   _n_print_byc(buf_y);
   return buf_y;
 }
