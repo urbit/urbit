@@ -668,7 +668,8 @@
     ::
     ::
     ?:  =(`@`0 dep)
-      ~&(dep-empty+hen +>.$)
+      ::  ~&(dep-empty+hen +>.$)
+      +>.$
     ?:  =(dep 0vtest)                 ::  upstream testing
       +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
         ::
