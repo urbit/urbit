@@ -373,6 +373,7 @@
 ::
 ::  --  current time `now`
 ::  --  current duct `hen`
+::  --  foreign requester `for`, if any
 ::  --  local urbit `our`
 ::  --  target urbit `her`
 ::  --  target desk `syd`
@@ -412,7 +413,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |%
 ++  de                                                  ::  per desk
-  |=  {now/@da hen/duct src/(unit ship) raft}
+  |=  {now/@da hen/duct for/(unit ship) raft}
   |=  {{our/@p her/@p} syd/desk}
   =*  ruf  +>+<+>+
   =+  ^-  {hun/(unit duct) rede}
@@ -3463,12 +3464,6 @@
         ((hard task:able) q.hic)
       ==
   ^+  [p=*(list move) q=..^$]
-  =/  src/(unit ship)
-    %+  roll  hen
-    |=  {wir/wire src/(unit ship)}
-    ?^  src  src
-    ?.  ?=({$a @ @ *} wir)  ~
-    `(slav %p i.t.t.wir)
   ?-    -.q.hic
       $boat
     :_  ..^$
@@ -3476,7 +3471,7 @@
   ::
       $drop
     =^  mos  ruf
-      =+  den=((de now hen src ruf) [. .]:p.q.hic q.q.hic)
+      =+  den=((de now hen ~ ruf) [. .]:p.q.hic q.q.hic)
       abet:drop-me:den
     [mos ..^$]
   ::
@@ -3484,7 +3479,7 @@
     ?:  =(%$ q.q.hic)
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen src ruf) [. .]:p.q.hic q.q.hic)
+      =+  den=((de now hen ~ ruf) [. .]:p.q.hic q.q.hic)
       abet:(edit:den now r.q.hic)
     [mos ..^$]
   ::
@@ -3538,7 +3533,7 @@
     ?:  =(%$ q.q.hic)
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen src ruf) [. .]:p.q.hic q.q.hic)
+      =+  den=((de now hen ~ ruf) [. .]:p.q.hic q.q.hic)
       abet:abet:(start:(me:ze:den [r.q.hic s.q.hic] ~ &) t.q.hic u.q.hic)
     [mos ..^$]
   ::
@@ -3557,7 +3552,7 @@
     ?~  dos
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen src ruf) [. .]:p.q.q.hic q.q.q.hic)
+      =+  den=((de now hen ~ ruf) [. .]:p.q.q.hic q.q.q.hic)
       abet:(mont:den p.q.hic q.q.hic)
     [mos ..^$]
   ::
@@ -3594,7 +3589,8 @@
   ::
       $warp
     =^  mos  ruf
-      =+  den=((de now hen src ruf) p.q.hic p.q.q.hic)
+      =+  for=?:(=(p.p.q.hic q.p.q.hic) ~&(%local-warp ~) `q.p.q.hic)
+      =+  den=((de now hen for ruf) p.q.hic p.q.q.hic)
       ::  =-  ~?  ?=([~ %sing %w *] q.q.q.hic)
       ::        :*  %someones-warping
       ::            rav=u.q.q.q.hic
@@ -3625,7 +3621,8 @@
     =+  syd=(slav %tas i.t.q.q.hic)
     =+  inx=(slav %ud i.t.t.q.q.hic)
     =^  mos  ruf
-      =+  den=((de now hen src ruf) p.q.hic syd)
+      =+  for=?:(=(p.p.q.hic q.p.q.hic) ~&(%local-west ~) `q.p.q.hic)
+      =+  den=((de now hen for ruf) p.q.hic syd)
       abet:(take-foreign-update:den inx ((hard (unit rand)) r.q.hic))
     [[[hen %give %mack ~] mos] ..^$]
   ::
@@ -3705,7 +3702,15 @@
     [~ ~]
   =+  run=((soft care) ren)
   ?~  run  [~ ~]
-  =+  den=((de now [/scryduct ~] `his ruf) [. .]:his syd)
+  ::TODO  if it ever gets filled properly, pass in the full fur.
+  =/  for/(unit ship)
+    %-  ~(rep in (fall fur ~))
+    |=  {m/monk s/(unit ship)}
+    ?^  s  s
+    ?:  ?=($| -.m)  ~
+    ?:  =(p.m his)  ~
+    `p.m
+  =+  den=((de now [/scryduct ~] ?:(=(for `his) ~ for) ruf) [. .]:his syd)
   =+  (aver:den u.run u.luk tyl)
   ?~  -               -
   ?~  u.-             -
