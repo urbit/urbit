@@ -1529,6 +1529,9 @@
         $d
       ~|  %totally-temporary-error-please-replace-me
       !!
+        $p
+      ~|  %requesting-foreign-permissions-is-invalid
+      !!
         $u
       ~|  %im-thinkin-its-prolly-a-bad-idea-to-request-rang-over-the-network
       !!
@@ -2327,9 +2330,10 @@
     ::  eliminate ++read and ++query
     ::
     ++  query                                           ::    query:ze
-      |=  ren/$?($u $v $x $y $z)                        ::  endpoint query
+      |=  ren/$?($p $u $v $x $y $z)                     ::  endpoint query
       ^-  (unit cage)
       ?-  ren
+        $p  !!
         $u  !!  ::  [~ %null [%atom %n] ~]
         $v  [~ %dome !>(dom)]
         $x  !!  ::  ?~(q.ank.dom ~ [~ q.u.q.ank.dom])
@@ -2355,12 +2359,35 @@
         ?^(r.mun ~ !!) :: [~ %w !>([t.yak (forge-nori yak)])])-all
       (query(ank.dom ank:(descend-path:(zu ank.dom) r.mun)) p.mun) ::  dead code
     ::
+    ::  Gets the permissions that apply to a particular node.
+    ::
+    ::  If the node has no permissions of its own, we use its parent's.
+    ::  If no permissions have been set for the entire tree above the node,
+    ::  we default to fully private (empty whitelist).
+    ::
+    ++  read-p
+      |=  pax/path
+      ^-  (unit (unit (each cage lobe)))
+      =-  [~ ~ %& %noun !>(-)]
+      :-  (read-p-in pax per.red)
+      (read-p-in pax pew.red)
+    ::
+    ++  read-p-in
+      |=  {pax/path pes/(map path rule)}
+      ^-  dict
+      =+  rul=(~(get by pes) pax)
+      ?^  rul  [pax u.rul]
+      ?~  pax  [/ %white ~]
+      $(pax t.pax)
     ::
     ++  may-read
       |=  {who/ship car/care yon/aeon pax/path}
       ^-  ?
       ?+  car
         (allowed-by who pax per.red)
+      ::
+          $p
+        =(who our)
       ::
           ?($y $z)
         =+  tak=(~(get by hit.dom) yon)
@@ -2549,6 +2576,8 @@
         ?^  r.mun
           ~&(%no-cd-path [~ ~])
         [~ ~ %& %noun !>(~(key by dos.u.rom))]
+      ?:  ?=($p p.mun)
+        (read-p r.mun)
       ?:  ?=($u p.mun)
         (read-u yon r.mun)
       ?:  ?=($v p.mun)
