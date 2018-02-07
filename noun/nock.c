@@ -582,7 +582,7 @@ _n_emit(u3_noun *ops, u3_noun op)
   }
 }
 
-static c3_s _n_comp(u3_noun*, u3_noun, c3_o);
+static c3_s _n_comp(u3_noun*, c3_o*, u3_noun, c3_o);
 
 static u3_noun
 _n_skip(c3_s len_s)
@@ -604,8 +604,8 @@ _n_one(u3_noun* ops, c3_o* tos_o, u3_noun fol)
   c3_s tot_s = 0;
   u3_noun bok = u3_nul;
 
-  tot_s += _n_comp(&bok, &tos_o, fol, c3n);
-  if ( c3n == tos_o ) {
+  tot_s += _n_comp(&bok, tos_o, fol, c3n);
+  if ( c3n == *tos_o ) {
     tot_s += _n_emit(ops, COPY);
   }
   _n_apen(ops, bok);
@@ -613,49 +613,47 @@ _n_one(u3_noun* ops, c3_o* tos_o, u3_noun fol)
   return tot_s;
 }
 
-/* _n_two(): emit one and two's ops, regarding and updating tos_o, 
- *           and managing the COPY/SWAP dance, pushing one's product
- *           and then two's. */
+/* _n_two(): _n_comp() helper for computing two products
+ *           from a single subject
+ */
 static c3_s
-_n_two(u3_noun* ops, c3_o* tos_o, u3_noun one, u3_noun two)
+_n_two(u3_noun* ops, c3_o* lev_o, u3_noun one, u3_noun two, c3_o cop_o)
 {
-  c3_assert(c3y == u3du(one));
-  c3_assert(c3y == u3du(two));
-  c3_s tot_s = 0;
-  c3_o one_o = *tos_o,
-       two_o = one_o;
-
   u3_noun one_bok = u3_nul,
           two_bok = u3_nul;
 
-  tot_s += _n_comp(&one_bok, &one_o, one, c3n);
-  tot_s += _n_comp(&two_bok, &two_o, two, c3n);
+  c3_s tot_s = 0;
+  c3_o one_o, two_o;
+
+  tot_s += _n_comp(&one_bok, &one_o, one, cop_o, c3n);
+  tot_s += _n_comp(&two_bok, &two_o, two, cop_o, c3n);
 
   if ( c3y == one_o ) {
     if ( c3y == two_o ) {
-      tot_s += _n_emit(ops, TOSS);
       _n_apen(ops, one_bok);
       _n_apen(ops, two_bok);
+      *lev_o = c3y;
     }
     else {
       _n_apen(ops, one_bok);
       tot_s += _n_emit(ops, SWAP);
       _n_apen(ops, two_bok);
+      *lev_o = c3n;
     }
-    *tos_o = two_o;
   }
   else {
     if ( c3y == two_o ) {
-      _n_apen(one_bok);
-      _n_apen(two_bok);
+      _n_apen(ops, one_bok);
+      _n_apen(ops, two_bok);
+      *lev_o = c3n;
     }
     else {
       tot_s += _n_emit(ops, COPY);
-      _n_apen(one_bok);
+      _n_apen(ops, one_bok);
       tot_s += _n_emit(ops, SWAP);
-      _n_apen(two_bok);
+      _n_apen(ops, two_bok);
+      *lev_o = c3n;
     }
-    *tos_o = c3n;
   }
 
   return tot_s;
@@ -668,51 +666,34 @@ _n_two(u3_noun* ops, c3_o* tos_o, u3_noun one, u3_noun two)
 static c3_s
 _n_bint(u3_noun* ops, c3_o* tos_o, u3_noun hif, u3_noun nef, c3_o tel_o)
 {
+  *tos_o = c3n;
+  // XX todo: hints don't currently participate in optimization because it's
+  // complicated and i want to test it without them.
   if ( c3n == u3du(hif) ) {
     // no currently recognized static hints
     return _n_comp(ops, tos_o, nef, tel_o);
   }
   else {
-    c3_s bok_s, tot_s = 0;
-    c3_o bok_o;
-    u3_noun zep, hod, bok;
+    c3_s tot_s = 0;
+    u3_noun zep, hod;
     u3x_cell(hif, &zep, &hod);
 
     switch ( zep ) {
       default:
-        bok   = u3_nul;
-        bok_o = *tos_o;
-        bok_s = _n_comp(&bok, &bok_o, nef, tel_o);
-
-        c3_assert(c3y == u3du(hod));
-        if ( 1 == u3h(hod) ) {
-          // safe to omit 1 hods because we would just toss them
-          // and they have no side effects
-          *tos_o = bok_o;
-        }
-        else {
-          *tos_o = bok_o;
-          tot_s += _n_one(ops, tos_o, hod);
-          tot_s += _n_emit(ops, TOSS);
-          if ( *tos_o != bok_o ) {
-            u3z(bok);
-            bok   = u3_nul;
-            bok_o = c3n;
-            bok_s = _n_comp(&bok, &bok_o, hif, c3n);
-          }
-        }
-        tot_s += bok_s; _n_apen(ops, bok);
+        tot_s += _n_one(ops, tos_o, hod);
+        tot_s += _n_emit(ops, TOSS);
+        tot_s += _n_comp(ops, tos_o, nef, tel_o);
         break;
 
       case c3__hunk:
       case c3__lose:
       case c3__mean:
       case c3__spot: 
-        tot_s += _n_one(ops, hod);
+        tot_s += _n_one(ops, tos_o, hod);
         tot_s += _n_emit(ops, u3nc(QUIP, zep));
         tot_s += _n_emit(ops, SNOC);
         tot_s += _n_emit(ops, CUSH);
-        tot_s += _n_comp(ops, nef, c3n);
+        tot_s += _n_comp(ops, tos_o, nef, c3n);
         tot_s += _n_emit(ops, DROP);
         break;
 
@@ -722,7 +703,7 @@ _n_bint(u3_noun* ops, c3_o* tos_o, u3_noun hif, u3_noun nef, c3_o tel_o)
         c3_s    y_s = 0,
                 n_s = 0;
 
-        tot_s += _n_one(ops, hod);
+        tot_s += _n_one(ops, tos_o, hod);
         tot_s += _n_emit(ops, PEEP);
 
         n_s += _n_emit(&nop, HECK);
@@ -734,20 +715,20 @@ _n_bint(u3_noun* ops, c3_o* tos_o, u3_noun hif, u3_noun nef, c3_o tel_o)
         _n_apen(ops, yep); tot_s += y_s;
         _n_apen(ops, nop); tot_s += n_s;
 
-        tot_s += _n_comp(ops, nef, tel_o);
+        tot_s += _n_comp(ops, tos_o, nef, tel_o);
         break;
       }
 
       case c3__slog: 
-        tot_s += _n_one(ops, hod);
+        tot_s += _n_one(ops, tos_o, hod);
         tot_s += _n_emit(ops, SLOG);
-        tot_s += _n_comp(ops, nef, tel_o);
+        tot_s += _n_comp(ops, tos_o, nef, tel_o);
         break;
 
       // germ and sole are unused...
 
       case c3__fast: 
-        tot_s += _n_two(ops, hod, nef);
+        tot_s += _n_two(ops, tos_o, hod, nef);
         tot_s += _n_emit(ops, FAST);
         break;
 
@@ -758,7 +739,7 @@ _n_bint(u3_noun* ops, c3_o* tos_o, u3_noun hif, u3_noun nef, c3_o tel_o)
         c3_s y_s = 0,
              n_s = 0;                                // top->[bus]
         tot_s += _n_emit(ops, COPY);                 // [bus bus]
-        tot_s += _n_one(ops, hod);                   // [clue bus bus]
+        tot_s += _n_one(ops, tos_o, hod);           // [clue bus bus]
         tot_s += _n_emit(ops, TOSS);                 // [bus bus]
         tot_s += _n_emit(ops, u3nc(QUIP, u3k(nef))); // [fol bus bus]
         tot_s += _n_emit(ops, SNOC);                 // [[bus fol] bus]
@@ -768,7 +749,7 @@ _n_bint(u3_noun* ops, c3_o* tos_o, u3_noun hif, u3_noun nef, c3_o tel_o)
         // NO branch, i.e. gemo gave us ~
         n_s += _n_emit(&nop, TOSS);                  // [key bus]
         n_s += _n_emit(&nop, SWAP);                  // [bus key]
-        n_s += _n_comp(&nop, nef, c3n);              // [pro key]
+        n_s += _n_comp(&nop, tos_o, nef, c3n);      // [pro key]
         n_s += _n_emit(&nop, PUMO);
 
         // YES branch, i.e. gemo gave us [0 pro]
@@ -789,31 +770,30 @@ _n_bint(u3_noun* ops, c3_o* tos_o, u3_noun hif, u3_noun nef, c3_o tel_o)
   }
 }
 
-/* _n_comp(): emit instructions from fol to ops.
- *            tel_o indicates tail position.
- *            fol is RETAINED.
- *
- *            if *tos_o is c3y when called, attempt to emit instructions
- *            that assume the subject is left off the top of the stack,
- *            writing *tos_o = c3n when encountering instructions that cannot
- *            ignore their subject.
+/* _n_comp(): compile nock formula to reversed opcode list
+ *            ops is a pointer to a list (to be emitted to)
+ *            lev_o is written: c3y/n whether the operand is left on the stack
+ *            fol is the nock formula to compile. RETAIN.
+ *            cop_o indicates the subject/product stack position is a COPY
+ *              if this is taken advantage of (lev_o), the caller should
+ *              omit the COPY
+ *            tel_o is yes if this formula is in tail position
+ *            return: the number of bytes needed for this opcode list
  */
 static c3_s
-_n_comp(u3_noun* ops, c3_o* tos_o, u3_noun fol, c3_o tel_o) {
+_n_comp(u3_noun* ops, c3_o* lev_o, u3_noun fol, c3_o cop_o, c3_o tel_o) {
   c3_s tot_s = 0;
-  c3_o n_o = c3n;
+  c3_y op_y;
   u3_noun cod, arg, hed, tel;
   u3x_cell(fol, &cod, &arg);
 
   if ( c3y == u3du(cod) ) {
-    tot_s += _n_two(ops, tos_o, cod, arg);
+    tot_s += _n_two(ops, lev_o, cod, arg, cop_o);
     tot_s += _n_emit(ops, CONS);
   }
   else switch ( cod ) {
     case 0: 
-      if ( c3n == u3ud(arg) ) {
-        return u3m_bail(c3__exit);
-      }
+      c3_assert( c3y == u3ud(arg) );
       switch ( arg ) {
         case 0:
           tot_s += _n_emit(ops, BAIL);
@@ -821,26 +801,29 @@ _n_comp(u3_noun* ops, c3_o* tos_o, u3_noun fol, c3_o tel_o) {
         case 1:
           break;
         case 2:
-          tot_s += _n_emit(ops, HEAD);
+          tot_s += _n_emit(ops, (c3y == cop_o) ? HELD : HEAD);
           break;
         case 3:
-          tot_s += _n_emit(ops, TAIL);
+          tot_s += _n_emit(ops, (c3y == cop_o) ? TALL : TAIL);
           break;
-        default: 
-          tot_s += _n_emit(ops, u3nc(
-                (arg < 0xFF ? FRAB : arg < 0xFFFF ? FRAS : FRAG),
-                arg));
+        default:
+          op_y = (c3y == cop_o)
+               ? (arg < 0xFF ? GRAB : arg < 0xFFFF ? GRAS : GRAN)
+               : (arg < 0xFF ? FRAG : arg < 0xFFFF ? FRAS : FRAG);
+          tot_s += _n_emit(ops, u3nc(op_y, arg));
           break;
       }
-      *tos_o = c3n;
+      *lev_o = cop_o;
       break;
     case 1: 
-      tot_s += _n_emit(ops, u3nc(((c3y == *tos_o) ? QUIP : QUOT), u3k(arg)));
+      op_y   = (c3y == cop_o) ? QUIP : QUOT;
+      tot_s += _n_emit(ops, u3nc(op_y, u3k(arg)));
+      *lev_o = cop_o;
       break;
     case 2:
       u3x_cell(arg, &hed, &tel);
-      tot_s += _n_two(ops, tos_o, hed, tel);
-      tot_s += _n_emit(ops, ((c3y == tel_o)? NOCT : NOCK));
+      tot_s += _n_two(ops, lev_o, hed, tel, cop_o);
+      tot_s += _n_emit(ops, (c3y == tel_o)? NOCT : NOCK);
       break;
     case 3:
       tot_s += _n_comp(ops, tos_o, arg, c3n);
@@ -857,7 +840,7 @@ _n_comp(u3_noun* ops, c3_o* tos_o, u3_noun fol, c3_o tel_o) {
       break;
     case 6: {
       u3_noun mid, tes, yep, nop;
-      c3_s yep_s, nop_s;
+      c3_s yep_s, nop_s, tes_s;
       c3_o ban_o, yep_o, nop_o;
 
       u3x_trel(arg, &hed, &mid, &tel);
@@ -876,11 +859,13 @@ _n_comp(u3_noun* ops, c3_o* tos_o, u3_noun fol, c3_o tel_o) {
       else {
         if ( c3y == yep_o ) {
           u3z(yep);
-          yep_s = n_comp(&yep, &n_o, mid, tel_o);
+          yep = u3_nul;
+          yep_s = _n_comp(&yep, &n_o, mid, tel_o);
         }
         else {
-          u3z(no);
-          nop_s = n_comp(&nop, &n_o, tel, tel_o);
+          u3z(nop);
+          nop = u3_nul;
+          nop_s = _n_comp(&nop, &n_o, tel, tel_o);
         }
         ban_o = c3n;
       }
@@ -1107,7 +1092,8 @@ static inline c3_y*
 _n_bite(u3_noun fol)
 {
   u3_noun bok = u3_nul;
-  c3_s len_s  = _n_comp(&bok, fol, c3y);
+  c3_o tos_o  = c3n;
+  c3_s len_s  = _n_comp(&bok, &tos_o, fol, c3y);
   c3_y* buf_y = _n_asm(bok, len_s);
   u3m_p("fol", fol);
   _n_print_byc(buf_y);
