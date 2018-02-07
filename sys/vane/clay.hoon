@@ -2355,6 +2355,41 @@
         ?^(r.mun ~ !!) :: [~ %w !>([t.yak (forge-nori yak)])])-all
       (query(ank.dom ank:(descend-path:(zu ank.dom) r.mun)) p.mun) ::  dead code
     ::
+    ::
+    ++  may-read
+      |=  {who/ship car/care yon/aeon pax/path}
+      ^-  ?
+      ?+  car
+        (allowed-by who pax per.red)
+      ::
+          ?($y $z)
+        =+  tak=(~(get by hit.dom) yon)
+        ?~  tak  |
+        =+  yak=(tako-to-yaki u.tak)
+        =+  len=(lent pax)
+        %+  levy  ~(tap by (~(del in ~(key by q.yak)) pax))
+        |=  p/path
+        ?&  =(pax (scag len p))
+            |(?=($z car) =(+(len) (lent p)))
+        ==
+      ==
+    ::
+    ++  may-write
+      |=  {w/ship p/path}
+      (allowed-by w p pew.red)
+    ::
+    ++  allowed-by
+      |=  {who/ship pax/path pes/(map path rule)}
+      ^-  ?
+      =+  rul=rul:(read-p-in pax pes)
+      =-  =(0 -)
+      %+  mix  ?=($black mod.rul)
+      %-  ~(rep in who.rul)
+      |=  {w/whom h/?}
+      ?:  h  &
+      ?:  ?=($& -.w)  =(w &+who)
+      (~(has in (fall (~(get by cez) p.w) ~)) who)
+    ::
     ::  Checks for existence of a node at an aeon.
     ::
     ::  This checks for existence of content at the node, and does *not* look
@@ -2503,6 +2538,8 @@
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  {for/(unit ship) yon/aeon mun/mood}           ::  seek and read
       ^-  (unit (unit (each cage lobe)))
+      ?.  |(?=($~ for) (may-read u.for p.mun yon r.mun))
+        ~
       ?:  &(?=($w p.mun) !?=($ud -.q.mun))              ::  NB only her speed
         ?^(r.mun [~ ~] [~ ~ %& %aeon !>(yon)])
       ?:  ?=($d p.mun)
