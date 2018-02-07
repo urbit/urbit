@@ -56,7 +56,7 @@
 ::  A map of requests to a set of all the subscribers who should be notified
 ::  when the request is filled/updated.
 ::
-++  cult  (jug rove duct)
+++  cult  (jug wove duct)
 ::
 ::  Domestic desk state.
 ::
@@ -277,6 +277,7 @@
 ::  Generally used when we store a request in our state somewhere.
 ::
 ++  cach  (unit (unit (each cage lobe)))                ::  cached result
+++  wove  {p/(unit ship) q/rove}                        ::  stored source + req
 ++  rove                                                ::  stored request
           $%  {$sing p/mood}                            ::  single request
               {$next p/mood q/cach}                     ::  next version
@@ -413,9 +414,9 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |%
 ++  de                                                  ::  per desk
-  |=  {now/@da hen/duct for/(unit ship) raft}
+  |=  {now/@da hen/duct raft}
   |=  {{our/@p her/@p} syd/desk}
-  =*  ruf  +>+<+>+
+  =*  ruf  +>+<+>
   =+  ^-  {hun/(unit duct) rede}
       =+  rom=(~(get by fat.ruf) her)
       ?~  rom
@@ -458,14 +459,14 @@
   ::  Handle `%sing` requests
   ::
   ++  aver
-    |=  mun/mood
+    |=  {for/(unit ship) mun/mood}
     ^-  (unit (unit (each cage lobe)))
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
     ?^  ezy
       `(bind u.ezy |=(a/cage [%& a]))
     =+  nao=(case-to-aeon:ze q.mun)
     ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
-    ?~(nao ~ (read-at-aeon:ze u.nao mun))
+    ?~(nao ~ (read-at-aeon:ze for u.nao mun))
   ::
   ++  ford-fail  |=(tan/tang ~|(%ford-fail (mean tan)))
   ::
@@ -662,14 +663,14 @@
   ::  foreign ship.
   ::
   ++  duce                                              ::  produce request
-    |=  rov/rove
+    |=  wov/wove
     ^+  +>
-    =.  rov  (dedupe rov)
-    =.  qyx  (~(put ju qyx) rov hen)
+    =.  wov  (dedupe wov)
+    =.  qyx  (~(put ju qyx) wov hen)
     ?~  ref
-      (mabe rov |=(@da (bait hen +<)))
+      (mabe q.wov |=(@da (bait hen +<)))
     |-  ^+  +>+.$
-    =+  rav=(reve rov)
+    =+  rav=(reve q.wov)
     =+  ^=  vaw  ^-  rave
       ?.  ?=({$sing $v *} rav)  rav
       [%many %| [%ud let.dom] `case`q.p.rav r.p.rav]
@@ -691,17 +692,21 @@
   ::  all get filled at once.
   ::
   ++  dedupe                                            ::  find existing alias
-    |=  rov/rove  ^-  rove
-    =;  ron/(unit rove)  (fall ron rov)
+    |=  wov/wove
+    ^-  wove
+    =;  won/(unit wove)  (fall won wov)
+    =*  rov  q.wov
     ?-    -.rov
         $sing  ~
         $next
       =+  aey=(case-to-aeon:ze q.p.rov)
       ?~  aey  ~
-      %+  roll  ~(tap in ~(key by qyx))
-      |=  {hav/rove res/(unit rove)}
+      %-  ~(rep in ~(key by qyx))
+      |=  {haw/wove res/(unit wove)}
       ?^  res  res
-      =-  ?:(- `hav ~)
+      ?.  =(p.wov p.haw)  ~
+      =*  hav  q.haw
+      =-  ?:(- `haw ~)
       ?&  ?=($next -.hav)
           =(p.hav p.rov(q q.p.hav))
         ::
@@ -714,10 +719,12 @@
         $mult
       =+  aey=(case-to-aeon:ze p.p.rov)
       ?~  aey  ~
-      %+  roll  ~(tap in ~(key by qyx))
-      |=  {hav/rove res/(unit rove)}
+      %-  ~(rep in ~(key by qyx))
+      |=  {haw/wove res/(unit wove)}
       ?^  res  res
-      =-  ?:(- `hav ~)
+      ?.  =(p.wov p.haw)  ~
+      =*  hav  q.haw
+      =-  ?:(- `haw ~)
       ?&  ?=($mult -.hav)
           =(p.hav p.rov(p p.p.hav))
         ::
@@ -735,10 +742,12 @@
         $many
       =+  aey=(case-to-aeon:ze p.q.rov)
       ?~  aey  ~
-      %+  roll  ~(tap in ~(key by qyx))
-      |=  {hav/rove res/(unit rove)}
+      %-  ~(rep in ~(key by qyx))
+      |=  {haw/wove res/(unit wove)}
       ?^  res  res
-      =-  ?:(- `hav ~)
+      ?.  =(p.wov p.haw)  ~
+      =*  hav  q.haw
+      =-  ?:(- `haw ~)
       ?&  ?=($many -.hav)
           =(hav rov(p.q p.q.hav))
         ::
@@ -816,17 +825,17 @@
   ::
   ++  cancel-request                                    ::  release request
     ^+  .
-    =^  ros/(list rove)  qyx
+    =^  wos/(list wove)  qyx
       :_  (~(run by qyx) |=(a/(set duct) (~(del in a) hen)))
       %-  ~(rep by qyx)
-      |=  {{a/rove b/(set duct)} c/(list rove)}
+      |=  {{a/wove b/(set duct)} c/(list wove)}
       ?.((~(has in b) hen) c [a c])
     ?~  ref
       =>  .(ref `(unit rind)`ref)     ::  XX TMI
-      ?:  =(~ ros)  +                                        ::  XX handle?
+      ?:  =(~ wos)  +                                        ::  XX handle?
       |-  ^+  +>
-      ?~  ros  +>
-      $(ros t.ros, +> (mabe i.ros |=(@da (best hen +<))))
+      ?~  wos  +>
+      $(wos t.wos, +> (mabe q.i.wos |=(@da (best hen +<))))
     ^+  ..cancel-request
     =+  nux=(~(get by fod.u.ref) hen)
     ?~  nux  ..cancel-request
@@ -844,13 +853,13 @@
   ::  and then waiting if the subscription range extends into the future.
   ::
   ++  start-request
-    |=  rav/rave
+    |=  {for/(unit ship) rav/rave}
     ^+  +>
     ?-    -.rav
         $sing
-      =+  ver=(aver p.rav)
+      =+  ver=(aver for p.rav)
       ?~  ver
-        (duce rav)
+        (duce for rav)
       ?~  u.ver
         (blub hen)
       (blab hen p.rav u.u.ver)
@@ -903,9 +912,11 @@
                 new/(map (pair care path) cach)
             ==
         ^+  ..start-request
+        %+  duce  for
+        ^-  rove
         ?:  ?=($mult -.rav)
-          (duce -.rav p.rav nex old new)
-        %^  duce  -.rav  p.rav
+          [-.rav p.rav nex old new]
+        :+  -.rav  p.rav
         =+  ole=~(tap by old)
         ?>  (lte (lent ole) 1)
         ?~  ole  ~
@@ -929,26 +940,26 @@
         %+  turn  ~(tap by req)
         |=  {c/care p/path}
         ^-  (pair (pair care path) cach)
-        [[c p] (aver c cas p)]
+        [[c p] (aver for c cas p)]
       --
     ::
         $many
       =+  nab=(case-to-aeon:ze p.q.rav)
       ?~  nab
         ?>  =(~ (case-to-aeon:ze q.q.rav))
-        (duce [- p q ~]:rav)
+        (duce for [- p q ~]:rav)
       =+  huy=(case-to-aeon:ze q.q.rav)
       ?:  &(?=(^ huy) |((lth u.huy u.nab) &(=(0 u.huy) =(0 u.nab))))
         (blub hen)
       =+  top=?~(huy let.dom u.huy)
-      =+  ear=(lobes-at-path:ze top r.q.rav)
+      =+  ear=(lobes-at-path:ze for top r.q.rav)
       =.  +>.$
         (bleb hen u.nab ?:(p.rav ~ `[u.nab top]))
       ?^  huy
         (blub hen)
       =+  ^=  ptr  ^-  case
           [%ud +(let.dom)]
-      (duce `rove`[%many p.rav [ptr q.q.rav r.q.rav] ear])
+      (duce for `rove`[%many p.rav [ptr q.q.rav r.q.rav] ear])
     ==
   ::
   ::  Print a summary of changes to dill.
@@ -1774,32 +1785,34 @@
   ++  wake                                            ::  update subscribers
     ^+  .
     =+  xiq=~(tap by qyx)
-    =|  xaq/(list {p/rove q/(set duct)})
+    =|  xaq/(list {p/wove q/(set duct)})
     |-  ^+  ..wake
     ?~  xiq
       ..wake(qyx (~(gas by *cult) xaq))
     ?:  =(~ q.i.xiq)  $(xiq t.xiq, xaq xaq)           :: drop forgotten
-    ?-    -.p.i.xiq
+    =*  for  p.p.i.xiq
+    =*  rov  q.p.i.xiq
+    ?-    -.rov
         $sing
-      =+  cas=?~(ref ~ (~(get by haw.u.ref) `mood`p.p.i.xiq))
+      =+  cas=?~(ref ~ (~(get by haw.u.ref) `mood`p.rov))
       ?^  cas
         %=    $
             xiq  t.xiq
             ..wake  ?~  u.cas  (blub-all q.i.xiq ~)
-                    (blab-all q.i.xiq p.p.i.xiq %& u.u.cas)
+                    (blab-all q.i.xiq p.rov %& u.u.cas)
         ==
-      =+  nao=(case-to-aeon:ze q.p.p.i.xiq)
+      =+  nao=(case-to-aeon:ze q.p.rov)
       ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
       ::  ~&  %reading-at-aeon
-      =+  vid=(read-at-aeon:ze u.nao p.p.i.xiq)
+      =+  vid=(read-at-aeon:ze for u.nao p.rov)
       ::  ~&  %red-at-aeon
       ?~  vid
         ::  ?:  =(0 u.nao)
-        ::    ~&  [%oh-poor `path`[syd '0' r.p.p.i.xiq]]
+        ::    ~&  [%oh-poor `path`[syd '0' r.p.rov]]
         ::    $(xiq t.xiq)
-        ::  ~&  [%oh-well desk=syd mood=p.p.i.xiq aeon=u.nao]
+        ::  ~&  [%oh-well desk=syd mood=p.rov aeon=u.nao]
         $(xiq t.xiq, xaq [i.xiq xaq])
-      $(xiq t.xiq, ..wake (balk-all q.i.xiq u.vid p.p.i.xiq))
+      $(xiq t.xiq, ..wake (balk-all q.i.xiq u.vid p.rov))
     ::
     ::  %next is just %mult with one path, so we pretend %next = %mult here.
         ?($next $mult)
@@ -1808,7 +1821,7 @@
       ::  {old} is the revision at {(dec yon)}, {new} is the revision at {yon}.
       ::  if we have no {yon} yet, that means it was still unknown last time
       ::  we checked.
-      =*  vor  p.i.xiq
+      =*  vor  rov
       |^
       =/  rov/rove
         ?:  ?=($mult -.vor)  vor
@@ -1874,7 +1887,7 @@
       ++  store                                         ::  check again later
         |=  rov/rove
         ^+  ..wake
-        =-  ^^$(xiq t.xiq, xaq [i.xiq(p -) xaq])
+        =-  ^^$(xiq t.xiq, xaq [i.xiq(p [for -]) xaq])
         ?>  ?=($mult -.rov)
         ?:  ?=($mult -.vor)  rov
         ?>  ?=({* $~ $~} r.rov)
@@ -1901,7 +1914,7 @@
       ++  read-unknown                                  ::  fill in the blanks
         |=  {mol/mool hav/(map (pair care path) cach)}
         %.  |=  {{c/care p/path} o/cach}
-            ?^(o o (aver c p.mol p))
+            ?^(o o (aver for c p.mol p))
         =-  ~(urn by -)
         ?^  hav  hav
         %-  ~(gas by *(map (pair care path) cach))
@@ -1909,8 +1922,8 @@
       --
     ::
         $many
-      =+  mot=`moat`q.p.i.xiq
-      =*  sav  r.p.i.xiq
+      =+  mot=`moat`q.rov
+      =*  sav  r.rov
       =+  nab=(case-to-aeon:ze p.mot)
       ?~  nab
         $(xiq t.xiq, xaq [i.xiq xaq])
@@ -1919,19 +1932,19 @@
         =.  p.mot  [%ud +(let.dom)]
         %=  $
           xiq     t.xiq
-          xaq     [i.xiq(q.p mot) xaq]
+          xaq     [i.xiq(q.q.p mot) xaq]
           ..wake  =+  ^=  ear
-                      (lobes-at-path:ze let.dom r.mot)
+                      (lobes-at-path:ze for let.dom r.mot)
                   ?:  =(sav ear)  ..wake
-                  (bleb-all q.i.xiq let.dom ?:(p.p.i.xiq ~ `[u.nab let.dom]))
+                  (bleb-all q.i.xiq let.dom ?:(p.rov ~ `[u.nab let.dom]))
         ==
       %=  $
         xiq     t.xiq
         ..wake  =-  (blub-all:- q.i.xiq ~)
                 =+  ^=  ear
-                    (lobes-at-path:ze u.huy r.mot)
+                    (lobes-at-path:ze for u.huy r.mot)
                 ?:  =(sav ear)  (blub-all q.i.xiq ~)
-                (bleb-all q.i.xiq +(u.nab) ?:(p.p.i.xiq ~ `[u.nab u.huy]))
+                (bleb-all q.i.xiq +(u.nab) ?:(p.rov ~ `[u.nab u.huy]))
       ==
     ==
   ++  drop-me
@@ -2221,7 +2234,7 @@
     ::  Gets a map of the data at the given path and all children of it.
     ::
     ++  lobes-at-path
-      |=  {yon/aeon pax/path}
+      |=  {for/(unit ship) yon/aeon pax/path}
       ^-  (map path lobe)
       ?:  =(0 yon)  ~
       %-  malt
@@ -2488,7 +2501,7 @@
     ::  Should change last few lines to an explicit ++read-w.
     ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
-      |=  {yon/aeon mun/mood}                           ::  seek and read
+      |=  {for/(unit ship) yon/aeon mun/mood}           ::  seek and read
       ^-  (unit (unit (each cage lobe)))
       ?:  &(?=($w p.mun) !?=($ud -.q.mun))              ::  NB only her speed
         ?^(r.mun [~ ~] [~ ~ %& %aeon !>(yon)])
@@ -3488,7 +3501,7 @@
   ::
       $drop
     =^  mos  ruf
-      =+  den=((de now hen ~ ruf) [. .]:p.q.hic q.q.hic)
+      =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
       abet:drop-me:den
     [mos ..^$]
   ::
@@ -3496,7 +3509,7 @@
     ?:  =(%$ q.q.hic)
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ~ ruf) [. .]:p.q.hic q.q.hic)
+      =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
       abet:(edit:den now r.q.hic)
     [mos ..^$]
   ::
@@ -3550,7 +3563,7 @@
     ?:  =(%$ q.q.hic)
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ~ ruf) [. .]:p.q.hic q.q.hic)
+      =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
       abet:abet:(start:(me:ze:den [r.q.hic s.q.hic] ~ &) t.q.hic u.q.hic)
     [mos ..^$]
   ::
@@ -3569,7 +3582,7 @@
     ?~  dos
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ~ ruf) [. .]:p.q.q.hic q.q.q.hic)
+      =+  den=((de now hen ruf) [. .]:p.q.q.hic q.q.q.hic)
       abet:(mont:den p.q.hic q.q.hic)
     [mos ..^$]
   ::
@@ -3607,14 +3620,13 @@
       $perm
     =^  mos  ruf
       ::TODO  after new boot system, just use our from global.
-      =+  den=((de now hen ~ ruf) [. .]:our.q.hic des.q.hic)
+      =+  den=((de now hen ruf) [. .]:our.q.hic des.q.hic)
       abet:(perm:den pax.q.hic rit.q.hic)
     [mos ..^$]
   ::
       $warp
     =^  mos  ruf
-      =+  for=?:(=(p.p.q.hic q.p.q.hic) ~&(%local-warp ~) `q.p.q.hic)
-      =+  den=((de now hen for ruf) p.q.hic p.q.q.hic)
+      =+  den=((de now hen ruf) p.q.hic p.q.q.hic)
       ::  =-  ~?  ?=([~ %sing %w *] q.q.q.hic)
       ::        :*  %someones-warping
       ::            rav=u.q.q.q.hic
@@ -3624,7 +3636,8 @@
       =<  abet
       ?~  q.q.q.hic
         cancel-request:den
-      (start-request:den u.q.q.q.hic)
+      =+  for=?:(=(p.p.q.hic q.p.q.hic) ~&(%local-warp ~) `q.p.q.hic)
+      (start-request:den for u.q.q.q.hic)
     [mos ..^$]
   ::
       $went
@@ -3639,14 +3652,14 @@
           :-  hen
           :^  %pass  [(scot %p p.p.q.hic) (scot %p q.p.q.hic) t.q.q.hic]
             %c
+          ::TODO  ...so, this circumvents permission checks?
           [%warp [p.p.q.hic p.p.q.hic] ryf]
       ==
     ?>  ?=({$answer @ @ $~} q.q.hic)
     =+  syd=(slav %tas i.t.q.q.hic)
     =+  inx=(slav %ud i.t.t.q.q.hic)
     =^  mos  ruf
-      =+  for=?:(=(p.p.q.hic q.p.q.hic) ~&(%local-west ~) `q.p.q.hic)
-      =+  den=((de now hen for ruf) p.q.hic syd)
+      =+  den=((de now hen ruf) p.q.hic syd)
       abet:(take-foreign-update:den inx ((hard (unit rand)) r.q.hic))
     [[[hen %give %mack ~] mos] ..^$]
   ::
@@ -3734,8 +3747,8 @@
     ?:  ?=($| -.m)  ~
     ?:  =(p.m his)  ~
     `p.m
-  =+  den=((de now [/scryduct ~] ?:(=(for `his) ~ for) ruf) [. .]:his syd)
-  =+  (aver:den u.run u.luk tyl)
+  =+  den=((de now [/scryduct ~] ruf) [. .]:his syd)
+  =+  (aver:den for u.run u.luk tyl)
   ?~  -               -
   ?~  u.-             -
   ?:  ?=($& -.u.u.-)  ``p.u.u.-
@@ -3760,7 +3773,7 @@
         |=  dojo
         dom
     =^  mos  ruf
-      =+  den=((de now hen ~ ruf) [. .]:our syd)
+      =+  den=((de now hen ruf) [. .]:our syd)
       abet:abet:(route:(me:ze:den [her sud] kan |) sat dat)
     [mos ..^$]
   ?:  ?=({$blab care @ @ *} tea)
@@ -3791,7 +3804,7 @@
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ~ ruf) [. .]:our syd)
+        =+  den=((de now hen ruf) [. .]:our syd)
         abet:(take-inserting:den wen q.q.hin)
       [mos ..^$]
     ::
@@ -3801,7 +3814,7 @@
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ~ ruf) [. .]:our syd)
+        =+  den=((de now hen ruf) [. .]:our syd)
         abet:(take-diffing:den wen q.q.hin)
       [mos ..^$]
     ::
@@ -3811,7 +3824,7 @@
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ~ ruf) [. .]:our syd)
+        =+  den=((de now hen ruf) [. .]:our syd)
         abet:(take-castify:den wen q.q.hin)
       [mos ..^$]
     ::
@@ -3821,7 +3834,7 @@
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ~ ruf) [. .]:our syd)
+        =+  den=((de now hen ruf) [. .]:our syd)
         abet:(take-mutating:den wen q.q.hin)
       [mos ..^$]
     ::
@@ -3830,7 +3843,7 @@
       =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ~ ruf) [. .]:our syd)
+        =+  den=((de now hen ruf) [. .]:our syd)
         abet:(take-patch:den q.q.hin)
       [mos ..^$]
     ::
@@ -3839,7 +3852,7 @@
       =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ~ ruf) [. .]:our syd)
+        =+  den=((de now hen ruf) [. .]:our syd)
         abet:(take-ergo:den q.q.hin)
       [mos ..^$]
     ::
@@ -3850,7 +3863,7 @@
       =*  syd  i.t.t.t.tea
       =+  lem=(slav %da i.t.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ~ ruf) [our her] syd)
+        =+  den=((de now hen ruf) [our her] syd)
         abet:(take-foreign-plops:den ?~(lem ~ `lem) q.q.hin)
       [mos ..^$]
     ::
@@ -3866,7 +3879,7 @@
           ->+
       =*  pax  t.t.t.t.t.t.tea
       =^  mos  ruf
-        =+  den=((de now hen ~ ruf) [our her] syd)
+        =+  den=((de now hen ruf) [our her] syd)
         abet:(take-foreign-x:den car cas pax q.q.hin)
       [mos ..^$]
     ==
