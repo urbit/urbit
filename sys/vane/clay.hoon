@@ -353,7 +353,7 @@
               {$writ p/riot}                            ::
           ==  ==                                        ::
               $:  $f                                    ::
-          $%  {$made p/@uvH q/gage:ford}                     ::
+          $%  {$made p/@uvH q/gage:ford}                ::
           ==  ==                                        ::
               $:  $t                                    ::
           $%  {$wake $~}                                ::  timer activate
@@ -1971,7 +1971,7 @@
   ::      and content
   ::  --  creating commits and content and adding them to the tree
   ::  --  finding which data needs to be sent over the network to keep the
-  ::  --  other urbit up-to-date
+  ::      other urbit up-to-date
   ::  --  reading from the file tree through different `++care` options
   ::  --  the `++me` core for merging.
   ::
@@ -3719,7 +3719,7 @@
       =<  abet
       ?~  q.q.q.hic
         cancel-request:den
-      =+  for=?:(=(p.p.q.hic q.p.q.hic) ~&(%local-warp ~) `q.p.q.hic)
+      =+  for=?:(=(p.p.q.hic q.p.q.hic) ~ `q.p.q.hic)
       (start-request:den for u.q.q.q.hic)
     [mos ..^$]
   ::
