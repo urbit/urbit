@@ -70,7 +70,7 @@
           {$poke wire dock pear}                        ::
           {$wipe wire @p $~}                            ::
           {$wait wire @da}                              ::
-          {$warp wire sock riff}                        ::
+          {$warp wire ship sock riff}                   ::
       ==                                                ::
     ++  pear                                            ::  poke fruit
       $%  {$hall-command command:hall}                  ::
@@ -222,7 +222,7 @@
   ++  subscribe-next
     %-  emit
     ^-  card
-    :*  %warp  /kiln/autoload  [our our]  %home  ~
+    :*  %warp  /kiln/autoload  our  [our our]  %home  ~
         %next  %z  da+now  /sys
     ==
   ::
@@ -349,7 +349,7 @@
     %-  blab  :_  ~
     :*  ust  %warp
         /kiln/sync/[syd]/(scot %p her)/[sud]
-        [our her]  sud  ~
+        our  [our her]  sud  ~
     ==
   ::
   ++  start-track
@@ -358,7 +358,7 @@
     %-  blab
     :~  :*  ost  %warp
             /kiln/sync/[syd]/(scot %p her)/[sud]
-            [our her]  sud  ~  %sing  %y  ud+let  /
+            our  [our her]  sud  ~  %sing  %y  ud+let  /
     ==  ==
   ::
   ++  start-sync
@@ -367,7 +367,7 @@
     %-  blab
     :~  :*  ost  %warp
             [%kiln %sync syd (scot %p her) sud ?:(reset /reset /)]
-            [our her]  sud  ~  %sing  %w  [%da now]  /
+            our  [our her]  sud  ~  %sing  %w  [%da now]  /
     ==  ==
   ::
   ++  writ
@@ -414,7 +414,7 @@
     %-  blab  :_  ~
     :*  ost  %warp
         /kiln/sync/[syd]/(scot %p her)/[sud]
-        [our her]  sud  ~  %sing  %y  ud+let  /
+        our  [our her]  sud  ~  %sing  %y  ud+let  /
     ==
   --
 ::

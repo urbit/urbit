@@ -47,7 +47,7 @@
   ==                                                    ::
 ++  note-clay                                           ::
   $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:clay}::  merge desks
-      {$warp p/sock q/riff:clay}                       ::  wait for clay hack
+      {$warp p/ship q/sock r/riff:clay}                 ::  wait for clay hack
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  {$crud p/@tas q/(list tank)}                      ::
@@ -297,7 +297,7 @@
               %pass
               /
               %c
-              [%warp [our our] %base `[%sing %y [%ud 1] /]]
+              [%warp our [our our] %base `[%sing %y [%ud 1] /]]
           ==
         ==
       ::

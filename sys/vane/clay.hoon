@@ -329,7 +329,7 @@
       $:  $c                                            ::  to %clay
   $%  {$info p/@p q/@tas r/nori}                        ::  internal edit
       {$merg p/@p q/@tas r/@p s/@tas t/case u/germ}     ::  merge desks
-      {$warp p/sock q/riff}                             ::
+      {$warp p/ship q/sock r/riff}                      ::
   ==  ==                                                ::
       $:  $d                                            ::
   $%  {$flog p/{$crud p/@tas q/(list tank)}}            ::  to %dill
@@ -2777,7 +2777,7 @@
         %-  emit(wat.dat %ali)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ali ~]
-            %c  %warp  [p.bob p.ali]  q.ali
+            %c  %warp  p.bob  [p.bob p.ali]  q.ali
             `[%sing %v cas.dat /]
         ==
       ::
@@ -3709,18 +3709,18 @@
   ::
       $warp
     =^  mos  ruf
-      =+  den=((de now hen ruf) p.q.hic p.q.q.hic)
-      ::  =-  ~?  ?=([~ %sing %w *] q.q.q.hic)
+      =+  den=((de now hen ruf) q.q.hic p.r.q.hic)
+      ::  =-  ~?  ?=([~ %sing %w *] q.r.q.hic)
       ::        :*  %someones-warping
-      ::            rav=u.q.q.q.hic
+      ::            rav=u.q.r.q.hic
       ::            mos=-<
       ::        ==
       ::      -
       =<  abet
-      ?~  q.q.q.hic
+      ?~  q.r.q.hic
         cancel-request:den
-      =+  for=?:(=(p.p.q.hic q.p.q.hic) ~ `q.p.q.hic)
-      (start-request:den for u.q.q.q.hic)
+      =+  for=?:(=(p.q.hic p.q.q.hic) ~ `p.q.hic)
+      (start-request:den for u.q.r.q.hic)
     [mos ..^$]
   ::
       $went
@@ -3735,8 +3735,7 @@
           :-  hen
           :^  %pass  [(scot %p p.p.q.hic) (scot %p q.p.q.hic) t.q.q.hic]
             %c
-          ::TODO  ...so, this circumvents permission checks?
-          [%warp [p.p.q.hic p.p.q.hic] ryf]
+          [%warp q.p.q.hic [p.p.q.hic p.p.q.hic] ryf]
       ==
     ?>  ?=({$answer @ @ $~} q.q.hic)
     =+  syd=(slav %tas i.t.q.q.hic)
