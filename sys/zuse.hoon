@@ -381,7 +381,7 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$cruz cez/(map @tas crew)}                   ::  permission groups
+      $%  {$cruz cez/(map @ta crew)}                    ::  permission groups
           {$dirk p/@tas}                                ::  mark mount dirty
           {$ergo p/@tas q/mode}                         ::  version update
           {$hill p/(list @tas)}                         ::  mount points
@@ -397,8 +397,8 @@
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$boat $~}                                    ::  pier rebooted
-          {$cred nom/@ta cew/crew}                      ::  set permission group
-          {$crew $~}                                    ::  permission groups
+          {$cred our/ship nom/@ta cew/crew}             ::  set permission group
+          {$crew our/ship}                              ::  permission groups
           {$drop p/@p q/desk}                           ::  cancel pending merge
           {$info p/@p q/desk r/nori}                    ::  internal edit
           {$init p/@p}                                  ::  report install

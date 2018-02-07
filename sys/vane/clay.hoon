@@ -3535,6 +3535,23 @@
       $boat
     :_  ..^$
     [hen %give %hill (turn ~(tap by mon.ruf) head)]~
+  ::.
+      $cred
+    =.  cez.ruf
+      ?~  cew.q.hic  (~(del by cez.ruf) nom.q.hic)
+      (~(put by cez.ruf) nom.q.hic cew.q.hic)
+    ::  wake all desks, a request may have been affected.
+    =|  mos/(list move)
+    =+  rom=(fall (~(get by fat.ruf) our.q.hic) *room)
+    =+  des=~(tap in ~(key by dos.rom))
+    |-
+    ?~  des  [[[hen %give %mack ~] mos] ..^^$]
+    =+  den=((de now hen ruf) [. .]:our.q.hic i.des)
+    =^  mor  ruf  abet:wake:den
+    $(des t.des, mos (weld mos mor))
+  ::
+      $crew
+    [[hen %give %cruz cez.ruf]~ ..^$]
   ::
       $drop
     =^  mos  ruf
