@@ -3815,8 +3815,13 @@
           %-  ~(gas by *cult)
           (turn ~(tap by a) |=({p/wove-3 q/(set duct)} [(wov p) q]))
         =/  rom
-          =+  doj=|=(dojo-3 [(cul qyx) dom dok mer ~ ~])
-          |=(a/room-3 a(dos (~(run by dos.a) doj)))
+          |=  room-3
+          :-  hun
+          %-  ~(urn by dos)
+          |=  {d/desk dojo-3}
+          =/  n/dojo  [(cul qyx) dom dok mer ~ ~]
+          ?.  =(%kids d)  n
+          n(per [[/ %black ~] ~ ~])
         =/  run
           =/  red
             |=  rede-3
