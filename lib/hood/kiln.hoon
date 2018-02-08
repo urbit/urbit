@@ -79,6 +79,12 @@
           {$helm-reset $~}                              ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
+    ++  riot                                            ::tmp  up-to-date riot
+      %-  unit
+      $:  p/{p/?($d $p $u $v $w $x $y $z) q/case r/desk}
+          q/path
+          r/cage
+      ==
     --
 |_  moz/(list move)
 ++  abet                                                ::  resolve
