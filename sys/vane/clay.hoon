@@ -3536,7 +3536,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  $3                                            ::  vane version
+    $:  $4                                            ::  vane version
         ruf/raft                                      ::  revision tree
     ==                                                ::
 |=  {now/@da eny/@ ski/sley}                          ::  activate
@@ -3767,44 +3767,55 @@
 ::
 ++  load
   =>  |%
-      +=  rove-2
-        $%  {$sing p/mood}
-            {$next p/mood q/(unit (each cage lobe))}
-            {$many p/? q/moat r/(map path lobe)}
+      +=  wove-3  rove
+      ++  cult-3  (jug wove-3 duct)
+      ++  dojo-3
+        $:  qyx/cult-3
+            dom/dome
+            dok/(unit dork)
+            mer/(unit mery)
         ==
-      ++  cult-2  (jug rove-2 duct)
-      ++  dojo-2  (cork dojo |=(a/dojo a(qyx *cult-2)))
-      ++  rede-2  (cork rede |=(a/rede a(qyx *cult-2)))
-      ++  room-2  (cork room |=(a/room a(dos (~(run by dos.a) dojo-2))))
-      ++  rung-2  (cork rung |=(a/rung a(rus (~(run by rus.a) rede-2))))
-      ++  raft-2
-        %+  cork  raft
-        |=(a/raft a(fat (~(run by fat.a) room-2), hoy (~(run by hoy.a) rung-2)))
-      ++  axle    $%({$2 ruf/raft-2} {$3 ruf/raft})
+      ++  rede-3
+        $:  lim/@da
+            ref/(unit rind)
+            qyx/cult-3
+            dom/dome
+            dok/(unit dork)
+            mer/(unit mery)
+        ==
+      ++  room-3  (cork room |=(a/room a(dos (~(run by dos.a) dojo-3))))
+      ++  rung-3  (cork rung |=(a/rung a(rus (~(run by rus.a) rede-3))))
+      ++  raft-3
+        $:  fat/(map ship room-3)
+            hoy/(map ship rung-3)
+            ran/rang
+            mon/(map term beam)
+            hez/(unit duct)
+        ==
+      ++  axle    $%({$3 ruf/raft-3} {$4 ruf/raft})
       --
   |=  old/axle
   ^+  ..^$
   ?-  -.old
-    $3  ..^$(ruf ruf.old)
-    $2  =/  rov
-          |=  a/rove-2  ^-  rove
-          ?+  -.a  a
-              $next
-            ?~  q.a  a
-            a(q `q.a)
-          ==
+    $4  ..^$(ruf ruf.old)
+    $3  =/  wov
+          |=  a/wove-3  ^-  wove
+          [~ a]
         =/  cul
-          |=  a/cult-2  ^-  cult
+          |=  a/cult-3  ^-  cult
           %-  ~(gas by *cult)
-          (turn ~(tap by a) |=({p/rove-2 q/(set duct)} [(rov p) q]))
+          (turn ~(tap by a) |=({p/wove-3 q/(set duct)} [(wov p) q]))
         =/  rom
-          =+  doj=|=(a/dojo-2 a(qyx (cul qyx.a)))
-          |=(a/room-2 a(dos (~(run by dos.a) doj)))
+          =+  doj=|=(dojo-3 [(cul qyx) dom dok mer ~ ~])
+          |=(a/room-3 a(dos (~(run by dos.a) doj)))
         =/  run
-          =+  red=|=(a/rede-2 a(qyx (cul qyx.a)))
-          |=(a/rung-2 a(rus (~(run by rus.a) red)))
-        =+  r=ruf.old
-        $(old [%3 r(fat (~(run by fat.r) rom), hoy (~(run by hoy.r) run))])
+          =/  red
+            |=  rede-3
+            =+  [[/ %black ~] ~ ~]
+            [lim ref (cul qyx) dom dok mer - -]
+          |=(a/rung-3 a(rus (~(run by rus.a) red)))
+        =+  ruf.old
+        $(old [%4 [(~(run by fat) rom) (~(run by hoy) run) ran mon hez ~]])
   ==
 ::
 ++  scry                                              ::  inspect
@@ -3836,7 +3847,7 @@
   ?:  ?=($& -.u.u.-)  ``p.u.u.-
   ~
 ::
-++  stay  [%3 ruf]
+++  stay  [%4 ruf]
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
