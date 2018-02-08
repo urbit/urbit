@@ -2395,11 +2395,13 @@
         ?~  tak  |
         =+  yak=(tako-to-yaki u.tak)
         =+  len=(lent pax)
-        %+  levy  ~(tap by (~(del in ~(key by q.yak)) pax))
-        |=  p/path
-        ?&  =(pax (scag len p))
-            |(?=($z car) =(+(len) (lent p)))
-        ==
+        =-  (levy ~(tap in -) |=(p/path (allowed-by who p per.red)))
+        %+  roll  ~(tap in (~(del in ~(key by q.yak)) pax))
+        |=  {p/path s/(set path)}
+        ?.  =(pax (scag len p))  s
+        %-  ~(put in s)
+        ?:  ?=($z car)  p
+        (scag +(len) p)
       ==
     ::
     ++  may-write
