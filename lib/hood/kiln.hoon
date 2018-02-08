@@ -371,14 +371,7 @@
     ==  ==
   ::
   ++  writ
-    |=  $:  reset/?
-            $=  rot
-            %-  unit
-            $:  p/{p/?($d $p $u $v $w $x $y $z) q/case r/desk}
-                q/path
-                r/cage
-            ==
-        ==
+    |=  {reset/? rot/riot}
     ?~  rot
       %^    spam
           leaf+"bad %writ response"
