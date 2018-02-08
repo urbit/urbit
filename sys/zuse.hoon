@@ -408,7 +408,8 @@
           {$dirk p/desk}                                ::  mark mount dirty
           {$ogre p/$@(desk beam)}                       ::  delete mount point
           {$perm our/ship des/desk pax/path rit/rite}   ::  change permissions
-          {$warp p/ship q/sock r/riff}                  ::  file request.
+          {$warp p/sock q/riff}                         ::  internal file req
+          {$werp p/ship q/sock r/riff}                  ::  external file req
           {$wegh $~}                                    ::  report memory
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
           {$west p/sack q/path r/*}                     ::  network request

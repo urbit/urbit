@@ -12,7 +12,7 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $c                                    ::  to %clay
-          $%  {$warp p/ship q/sock r/riff:clay}         ::
+          $%  {$warp p/sock q/riff:clay}                ::
           ==  ==                                        ::
               $:  $f                                    ::  to %ford
           $%  {$exec p/@p q/(unit bilk:ford)}          ::
@@ -294,7 +294,7 @@
     |=  {ren/care:clay bem/beam ask/?}
     :: ~&  warp+[(en-beam bem) ask]
     :+  %pass  [(scot %p our) ren (en-beam bem)]
-    [%c [%warp our [our p.bem] q.bem ?.(ask ~ `[%next ren r.bem (flop s.bem)])]]
+    [%c [%warp [our p.bem] q.bem ?.(ask ~ `[%next ren r.bem (flop s.bem)])]]
   ::
   ::
   ++  zo
@@ -321,7 +321,7 @@
       |=  {van/vane ren/care:clay bem/beam}  
       ^-  (wind note gift:able)
       ?+  van  ~|(stub-cancel+van !!)
-        $c  [%pass (camp-wire +<) van [%warp our [our p.bem] q.bem ~]]
+        $c  [%pass (camp-wire +<) van [%warp [our p.bem] q.bem ~]]
         $g  [%pass (camp-wire +<) van [%deal [our p.bem] q.bem [%pull ~]]]
       ==
     ::
@@ -351,7 +351,7 @@
         ::
             $c
           :+  %pass  (camp-wire +<.$)
-          [%c [%warp our [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]]
+          [%c [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]]
         ==
       ==
     ::

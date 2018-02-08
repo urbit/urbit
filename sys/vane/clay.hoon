@@ -329,7 +329,8 @@
       $:  $c                                            ::  to %clay
   $%  {$info p/@p q/@tas r/nori}                        ::  internal edit
       {$merg p/@p q/@tas r/@p s/@tas t/case u/germ}     ::  merge desks
-      {$warp p/ship q/sock r/riff}                      ::
+      {$warp p/sock q/riff}                             ::
+      {$werp p/ship q/sock r/riff}                      ::
   ==  ==                                                ::
       $:  $d                                            ::
   $%  {$flog p/{$crud p/@tas q/(list tank)}}            ::  to %dill
@@ -2777,7 +2778,7 @@
         %-  emit(wat.dat %ali)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ali ~]
-            %c  %warp  p.bob  [p.bob p.ali]  q.ali
+            %c  %warp  [p.bob p.ali]  q.ali
             `[%sing %v cas.dat /]
         ==
       ::
@@ -3707,9 +3708,16 @@
       abet:(perm:den pax.q.hic rit.q.hic)
     [mos ..^$]
   ::
-      $warp
+      ?($warp $werp)
+    =^  for  q.hic
+      ?:  ?=($warp -.q.hic)
+        [~ q.hic]
+      :_  [%warp q.q.hic r.q.hic]
+      ?:  =(p.q.hic p.q.q.hic)  ~&([%huh-this-west-may-be-weird p.q.hic] ~)
+      `p.q.hic
+    ?>  ?=($warp -.q.hic)
     =^  mos  ruf
-      =+  den=((de now hen ruf) q.q.hic p.r.q.hic)
+      =+  den=((de now hen ruf) p.q.hic p.q.q.hic)
       ::  =-  ~?  ?=([~ %sing %w *] q.r.q.hic)
       ::        :*  %someones-warping
       ::            rav=u.q.r.q.hic
@@ -3717,10 +3725,9 @@
       ::        ==
       ::      -
       =<  abet
-      ?~  q.r.q.hic
+      ?~  q.q.q.hic
         cancel-request:den
-      =+  for=?:(=(p.q.hic p.q.q.hic) ~ `p.q.hic)
-      (start-request:den for u.q.r.q.hic)
+      (start-request:den for u.q.q.q.hic)
     [mos ..^$]
   ::
       $went
@@ -3735,7 +3742,7 @@
           :-  hen
           :^  %pass  [(scot %p p.p.q.hic) (scot %p q.p.q.hic) t.q.q.hic]
             %c
-          [%warp q.p.q.hic [p.p.q.hic p.p.q.hic] ryf]
+          [%werp q.p.q.hic [p.p.q.hic p.p.q.hic] ryf]
       ==
     ?>  ?=({$answer @ @ $~} q.q.hic)
     =+  syd=(slav %tas i.t.q.q.hic)
