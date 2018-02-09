@@ -399,20 +399,24 @@
       $%  {$boat $~}                                    ::  pier rebooted
           {$cred our/ship nom/@ta cew/crew}             ::  set permission group
           {$crew our/ship}                              ::  permission groups
-          {$drop p/@p q/desk}                           ::  cancel pending merge
-          {$info p/@p q/desk r/nori}                    ::  internal edit
-          {$init p/@p}                                  ::  report install
-          {$into p/desk q/? r/mode}                     ::  external edit
-          {$merg p/@p q/desk r/@p s/desk t/case u/germ} ::  merge desks
-          {$mont p/desk q/beam}                         ::  mount to unix
-          {$dirk p/desk}                                ::  mark mount dirty
-          {$ogre p/$@(desk beam)}                       ::  delete mount point
+          {$drop our/@p des/desk}                       ::  cancel pending merge
+          {$info our/@p des/desk dit/nori}              ::  internal edit
+          {$init our/@p}                                ::  report install
+          {$into des/desk all/? fis/mode}               ::  external edit
+          $:  $merg                                     ::  merge desks
+              our/@p  des/desk                          ::  target
+              her/@p  dem/desk  cas/case                ::  source
+              how/germ                                  ::  method
+          ==                                            ::
+          {$mont des/desk bem/beam}                     ::  mount to unix
+          {$dirk des/desk}                              ::  mark mount dirty
+          {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm our/ship des/desk pax/path rit/rite}   ::  change permissions
-          {$warp p/sock q/riff}                         ::  internal file req
-          {$werp p/ship q/sock r/riff}                  ::  external file req
+          {$warp wer/sock rif/riff}                     ::  internal file req
+          {$werp who/ship wer/sock rif/riff}            ::  external file req
           {$wegh $~}                                    ::  report memory
-          {$went p/sack q/path r/@ud s/coop}            ::  response confirm
-          {$west p/sack q/path r/*}                     ::  network request
+          {$went wer/sack pax/path num/@ud ack/coop}    ::  response confirm
+          {$west wer/sack pax/path res/*}               ::  network request
       ==                                                ::
     --  ::able
   ::

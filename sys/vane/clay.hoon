@@ -3589,28 +3589,28 @@
   ::
       $drop
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:p.req q.req)
+      =+  den=((de now hen ruf) [. .]:our.req des.req)
       abet:drop-me:den
     [mos ..^$]
   ::
       $info
-    ?:  =(%$ q.req)
+    ?:  =(%$ des.req)
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:p.req q.req)
-      abet:(edit:den now r.req)
+      =+  den=((de now hen ruf) [. .]:our.req des.req)
+      abet:(edit:den now dit.req)
     [mos ..^$]
   ::
       $init
     :_  %_    ..^$
             fat.ruf
-          ?<  (~(has by fat.ruf) p.req)
-          (~(put by fat.ruf) p.req [-(hun hen)]:[*room .])
+          ?<  (~(has by fat.ruf) our.req)
+          (~(put by fat.ruf) our.req [-(hun hen)]:[*room .])
         ==
-    =+  [bos=(sein:title p.req) can=(clan:title p.req)]
+    =+  [bos=(sein:title our.req) can=(clan:title our.req)]
     %-  zing  ^-  (list (list move))
-    :~  ?:  =(bos p.req)  ~
-        [hen %pass /init-merge %c %merg p.req %base bos %kids da+now %init]~
+    :~  ?:  =(bos our.req)  ~
+        [hen %pass /init-merge %c %merg our.req %base bos %kids da+now %init]~
     ::
         ~
     ==
@@ -3618,9 +3618,9 @@
       $into
     =.  hez.ruf  `hen
     :_  ..^$
-    =+  bem=(~(get by mon.ruf) p.req)
-    ?:  &(?=($~ bem) !=(%$ p.req))
-      ~|([%bad-mount-point-from-unix p.req] !!)
+    =+  bem=(~(get by mon.ruf) des.req)
+    ?:  &(?=($~ bem) !=(%$ des.req))
+      ~|([%bad-mount-point-from-unix des.req] !!)
     =+  ^-  bem/beam
         ?^  bem
           u.bem
@@ -3632,7 +3632,7 @@
     ?~  dos
       ~
     ?:  =(0 let.dom.u.dos)
-      =+  cos=(mode-to-soba ~ s.bem q.req r.req)
+      =+  cos=(mode-to-soba ~ s.bem all.req fis.req)
       =+  ^-  {one/(list {path miso}) two/(list {path miso})}
           %+  skid  cos
           |=  {a/path b/miso}
@@ -3644,66 +3644,68 @@
           [hen %pass /two %c %info p.bem q.bem %& two]
       ==
     =+  yak=(~(got by hut.ran.ruf) (~(got by hit.dom.u.dos) let.dom.u.dos))
-    =+  cos=(mode-to-soba q.yak (flop s.bem) q.req r.req)
+    =+  cos=(mode-to-soba q.yak (flop s.bem) all.req fis.req)
     [hen %pass /both %c %info p.bem q.bem %& cos]~
   ::
       $merg                                               ::  direct state up
-    ?:  =(%$ q.req)
+    ?:  =(%$ des.req)
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:p.req q.req)
-      abet:abet:(start:(me:ze:den [r.req s.req] ~ &) t.req u.req)
+      =+  den=((de now hen ruf) [. .]:our.req des.req)
+      abet:abet:(start:(me:ze:den [her.req dem.req] ~ &) cas.req how.req)
     [mos ..^$]
   ::
       $mont
     =.  hez.ruf  ?^(hez.ruf hez.ruf `[[%$ %sync ~] ~])
-    =+  pot=(~(get by mon.ruf) p.req)
+    =+  pot=(~(get by mon.ruf) des.req)
     ?^  pot
       ~&  [%already-mounted pot]
       [~ ..^$]
+    =*  bem  bem.req
     =.  mon.ruf
-      (~(put by mon.ruf) p.req [p.q.req q.q.req r.q.req] s.q.req)
-    =+  yar=(~(get by fat.ruf) p.q.req)
+      (~(put by mon.ruf) des.req [p.bem q.bem r.bem] s.bem)
+    =+  yar=(~(get by fat.ruf) p.bem)
     ?~  yar
       [~ ..^$]
-    =+  dos=(~(get by dos.u.yar) q.q.req)
+    =+  dos=(~(get by dos.u.yar) q.bem)
     ?~  dos
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:p.q.req q.q.req)
-      abet:(mont:den p.req q.req)
+      =+  den=((de now hen ruf) [. .]:p.bem q.bem)
+      abet:(mont:den des.req bem)
     [mos ..^$]
   ::
       $dirk
     ?~  hez.ruf
       ~&  %no-sync-duct
       [~ ..^$]
-    ?.  (~(has by mon.ruf) p.req)
-      ~&  [%not-mounted p.req]
+    ?.  (~(has by mon.ruf) des.req)
+      ~&  [%not-mounted des.req]
       [~ ..^$]
-    :-  ~[[u.hez.ruf %give %dirk p.req]]
+    :-  ~[[u.hez.ruf %give %dirk des.req]]
         ..^$
   ::
       $ogre
     ?~  hez.ruf
       ~&  %no-sync-duct
       [~ ..^$]
-    ?@  p.req
-      ?.  (~(has by mon.ruf) p.req)
-        ~&  [%not-mounted p.req]
+    =*  pot  pot.req
+    ?@  pot
+      ?.  (~(has by mon.ruf) pot)
+        ~&  [%not-mounted pot]
         [~ ..^$]
-      :_  ..^$(mon.ruf (~(del by mon.ruf) p.req))
-      [u.hez.ruf %give %ogre p.req]~
+      :_  ..^$(mon.ruf (~(del by mon.ruf) pot))
+      [u.hez.ruf %give %ogre pot]~
     :_  %_    ..^$
             mon.ruf
           %-  molt
           %+  skip  ~(tap by mon.ruf)
-          (corl (cury test p.req) tail)
+          (corl (cury test pot) tail)
         ==
     %+  turn
-      (skim ~(tap by mon.ruf) (corl (cury test p.req) tail))
-    |=  {pot/term bem/beam}
-    [u.hez.ruf %give %ogre pot]
+      (skim ~(tap by mon.ruf) (corl (cury test pot) tail))
+    |=  {pon/term bem/beam}
+    [u.hez.ruf %give %ogre pon]
   ::
       $perm
     =^  mos  ruf
@@ -3716,13 +3718,13 @@
     =^  for  req
       ?:  ?=($warp -.req)
         [~ req]
-      :_  [%warp q.req r.req]
-      ?:  =(p.req p.q.req)  ~
-      `p.req
+      :_  [%warp wer.req rif.req]
+      ?:  =(who.req p.wer.req)  ~
+      `who.req
     ?>  ?=($warp -.req)
-    =*  rif  q.req
+    =*  rif  rif.req
     =^  mos  ruf
-      =+  den=((de now hen ruf) p.req p.rif)
+      =+  den=((de now hen ruf) wer.req p.rif)
       =<  abet
       ?~  q.rif
         cancel-request:den
@@ -3734,21 +3736,23 @@
     !!
   ::
       $west
-    ?:  ?=({$question *} q.req)
-      =+  ryf=((hard riff) r.req)
+    =*  wer  wer.req
+    =*  pax  pax.req
+    ?:  ?=({$question *} pax)
+      =+  ryf=((hard riff) res.req)
       :_  ..^$
       :~  [hen %give %mack ~]
           :-  hen
-          :^  %pass  [(scot %p p.p.req) (scot %p q.p.req) t.q.req]
+          :^  %pass  [(scot %p p.wer) (scot %p q.wer) t.pax]
             %c
-          [%werp q.p.req [p.p.req p.p.req] ryf]
+          [%werp q.wer [p.wer p.wer] ryf]
       ==
-    ?>  ?=({$answer @ @ $~} q.req)
-    =+  syd=(slav %tas i.t.q.req)
-    =+  inx=(slav %ud i.t.t.q.req)
+    ?>  ?=({$answer @ @ $~} pax)
+    =+  syd=(slav %tas i.t.pax)
+    =+  inx=(slav %ud i.t.t.pax)
     =^  mos  ruf
-      =+  den=((de now hen ruf) p.req syd)
-      abet:(take-foreign-update:den inx ((hard (unit rand)) r.req))
+      =+  den=((de now hen ruf) wer syd)
+      abet:(take-foreign-update:den inx ((hard (unit rand)) res.req))
     [[[hen %give %mack ~] mos] ..^$]
   ::
       $wegh
