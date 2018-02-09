@@ -375,7 +375,6 @@
 ::
 ::  --  current time `now`
 ::  --  current duct `hen`
-::  --  foreign requester `for`, if any
 ::  --  local urbit `our`
 ::  --  target urbit `her`
 ::  --  target desk `syd`
@@ -3717,21 +3716,16 @@
       ?:  ?=($warp -.q.hic)
         [~ q.hic]
       :_  [%warp q.q.hic r.q.hic]
-      ?:  =(p.q.hic p.q.q.hic)  ~&([%huh-this-west-may-be-weird p.q.hic] ~)
+      ?:  =(p.q.hic p.q.q.hic)  ~
       `p.q.hic
     ?>  ?=($warp -.q.hic)
+    =*  rif  q.q.hic
     =^  mos  ruf
-      =+  den=((de now hen ruf) p.q.hic p.q.q.hic)
-      ::  =-  ~?  ?=([~ %sing %w *] q.r.q.hic)
-      ::        :*  %someones-warping
-      ::            rav=u.q.r.q.hic
-      ::            mos=-<
-      ::        ==
-      ::      -
+      =+  den=((de now hen ruf) p.q.hic p.rif)
       =<  abet
-      ?~  q.q.q.hic
+      ?~  q.rif
         cancel-request:den
-      (start-request:den for u.q.q.q.hic)
+      (start-request:den for u.q.rif)
     [mos ..^$]
   ::
       $went
@@ -3809,14 +3803,26 @@
   ^+  ..^$
   ?-  -.old
     $4  ..^$(ruf ruf.old)
-    $3  =/  wov
+    $3  |^
+          =-  ^$(old [%4 -])
+          =+  ruf.old
+          :*  (~(run by fat) rom)
+              (~(run by hoy) run)
+              ran  mon  hez  ~
+          ==
+        ::
+        ++  wov
           |=  a/wove-3  ^-  wove
           [~ a]
-        =/  cul
+        ::
+        ++  cul
           |=  a/cult-3  ^-  cult
           %-  ~(gas by *cult)
-          (turn ~(tap by a) |=({p/wove-3 q/(set duct)} [(wov p) q]))
-        =/  rom
+          %+  turn  ~(tap by a)
+          |=  {p/wove-3 q/(set duct)}
+          [(wov p) q]
+        ::
+        ++  rom
           |=  room-3
           :-  hun
           %-  ~(urn by dos)
@@ -3824,14 +3830,14 @@
           =/  n/dojo  [(cul qyx) dom dok mer ~ ~]
           ?.  =(%kids d)  n
           n(per [[/ %black ~] ~ ~])
-        =/  run
+        ::
+        ++  run
           =/  red
             |=  rede-3
             =+  [[/ %black ~] ~ ~]
             [lim ref (cul qyx) dom dok mer - -]
           |=(a/rung-3 a(rus (~(run by rus.a) red)))
-        =+  ruf.old
-        $(old [%4 [(~(run by fat) rom) (~(run by hoy) run) ran mon hez ~]])
+        --
   ==
 ::
 ++  scry                                              ::  inspect
