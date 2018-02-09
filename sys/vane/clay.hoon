@@ -430,8 +430,8 @@
             dom=*dome
             dok=~
             mer=~
-            per=[[/ %black ~] ~ ~]
-            pew=[[/ %black ~] ~ ~]
+            per=~
+            pew=~
         ==
       :-  `hun.u.rom
       =+  jod=(fall (~(get by dos.u.rom) syd) *dojo)
