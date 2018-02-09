@@ -5987,7 +5987,7 @@
               {$bark p/toga q/crib}                     ::  name
               {$funk p/crib q/crib}                     ::  function type
               {$deet p/spot q/crib}                     ::  set debug
-              {$deft p/crib q/crib}                     ::  default
+              {$deft p/hoon q/crib}                     ::  default
               {$fern p/{i/crib t/(list crib)}}          ::  plain selection
               {$herb p/hoon}                            ::  assembly
               {$kelp p/{i/line t/(list line)}}          ::  tag selection
@@ -6065,7 +6065,7 @@
     {$bccn p/(list root)}                               ::  $% tagged fork
     {$bchp p/root q/root}                               ::  $- function
     {$bckt p/root q/root}                               ::  $^ pairhead fork
-    {$bcsg p/hoon q/hoon}                               ::  $~ default
+    {$bcsg p/hoon q/root}                               ::  $~ default
     {$bcwt p/(list root)}                               ::  $? untagged fork
     {$bcts p/toga q/root}                               ::  $= name
     {$bcsm p/hoon}                                      ::  $; assembly
@@ -6580,12 +6580,12 @@
   =+  :*  ::  dom: axis to home
           ::  doc: documentation
           ::  bug: debug annotations
-          ::  def: default 
+          ::  def: default expression
           ::
           dom=`axis`1
           doc=*(list what)
           bug=*(list spot)
-          def=*(unit crib)
+          def=*(unit hoon)
       ==
   |_  {fab/? mod/crib}
   ++  bunt  ~+
@@ -6629,7 +6629,7 @@
     ::
     ^-  hoon
     :+  %tsls
-      [%ktls [%bust %noun] ersatz:clear(mod dummy)]
+      [%ktls [%bust %noun] scratch]
     ~(construct local(dom (peg 3 dom)) [2 %&])
   ::
   ++  basal
@@ -6667,29 +6667,34 @@
       [%zpzp ~] 
     ==
   ::
-  ++  dummy
-    ::  reduce to minimal dummy crib
+  ++  scratch
+    ::  produce expression that generates default noun
     ::
-    ^-  crib
+    ^-  hoon
     ~+
-    ?^  def  u.def
+    ::  if default is set, use it
+    ::
+    ?^  def  (home u.def)
+    ::  bunt a minimized dummy structure
+    ::
+    =-  ersatz:clear(mod -)
+    |-  ^-  crib
     ?+  mod      mod
-      {^ *}      [dummy(mod p.mod) dummy(mod q.mod)]
+      {^ *}      [$(mod p.mod) $(mod q.mod)]
       {$tupl *}  :+  %tupl
-                   dummy(mod i.p.mod)
-                 (turn t.p.mod |=(crib dummy(mod +<)))
-      {$bark *}  dummy(mod q.mod)
-      {$deet *}  dummy(mod q.mod)
-      {$deft *}  p.mod
-      {$fern *}  
-                 |-  ^-  crib
+                   $(mod i.p.mod)
+                 (turn t.p.mod |=(crib ^$(mod +<)))
+      {$bark *}  $(mod q.mod)
+      {$deet *}  $(mod q.mod)
+      {$deft *}  [%weed p.mod]
+      {$fern *}  |-  ^-  crib
                  ?~  t.p.mod  i.p.mod  
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
       {$kelp *}  |-  ^-  crib
-                 ?~  t.p.mod  dummy(mod i.p.mod)
+                 ?~  t.p.mod  ^$(mod i.p.mod)
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-      {$reed *}  dummy(mod p.mod)
-      {$vine *}  dummy(mod q.mod)
+      {$reed *}  $(mod p.mod)
+      {$vine *}  $(mod q.mod)
     ==
   ::
   ++  decorate
@@ -6713,7 +6718,7 @@
       {$bark *}  clean(mod q.mod)
       {$herb *}  |
       {$deet *}  clean(mod q.mod)
-      {$deft *}  &(clean(mod p.mod) clean(mod q.mod))
+      {$deft *}  |
       {$funk *}  &(clean(mod p.mod) clean(mod q.mod))
       {$fern *}  |-  ^-  ?
                  ?&  clean(mod i.p.mod)
@@ -6756,7 +6761,7 @@
         (home [%tsgl [%limb %$] p.mod])
       ersatz:clear(doc ~, mod cys)
     ::  
-        {$deft *}  ersatz(mod q.mod, def `p.mod)
+        {$deft *}  [%ktls ersatz(mod q.mod) (home p.mod)]
         {$deet *}  ersatz(mod q.mod, bug [p.mod bug])
         {$fern *}  trivial
         {$funk *}  (decorate (function:clear p.mod q.mod))
@@ -6789,14 +6794,12 @@
         ::
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
-    ?:  &
+    ?:  fab
       :^  %brts  ~^~
         [%base %noun]
       ~(construct local(dom (peg 7 dom)) [6 %&])
     :^  %brcl  ~^~
-      ?:  ?=($axil -.mod)
-        [%bust %noun]
-      [%ktls [%bust %noun] ersatz:clear(mod dummy)]
+      [%ktls [%bust %noun] scratch]
     ~(construct local(dom (peg 7 dom)) [6 %&])
   ::
   ++  local
@@ -6947,6 +6950,8 @@
           {$vine *}  2
           {$tupl *}  +((lent t.p.mod))
         ==
+      ::  =-  ~?  =(3 tow)  [%construct-three foo] foo
+      ::  ^=  foo
       ::  joy: tuple test (~ fails, [~ ~] succeeds, [~ ~ ~] needs test)
       :: 
       =/  joy
@@ -6974,8 +6979,8 @@
         =/  yum
           |-  ^-  hoon 
           ?:  =(2 tow) 
-            [%base %cell] 
-          [[%base %noun] $(tow (dec tow))]
+            [%bust %cell] 
+          [[%bust %noun] $(tow (dec tow))]
         ::  luz: subject edited to inject default
         ::
         =/  luz/hoon  
@@ -6984,14 +6989,14 @@
           :_  ~
           ::  correct but slow
           ::  [fetch-wing ersatz:clear(mod any)]
-          [fetch-wing ersatz:clear(mod ?~(def mac u.def))]
+          [fetch-wing ?^(def u.def ersatz:clear(mod mac))]
         ?:  =(~ joy)      
           ::  unconditional build
           ::
           [%tsgr luz boc]
         ::  conditional build
         ::
-        [%tsgr [%wtcl [%wtts yum fetch-wing] [%$ 1] luz] boc]
+        [%tsgr [%wtcl [%fits yum fetch-wing] [%$ 1] luz] boc]
       ::  idealize topography (should be a smarter merge)
       ::
       =.  top  ?:(=(1 tow) top |-(?:(=(1 tow) & [& $(tow (dec tow))])))
@@ -7074,7 +7079,7 @@
         %-  decorate 
         =/  fun  (function:clear p.mod q.mod)
         ?^  def
-          [%ktls fun ersatz:clear(mod u.def)]
+          [%ktls fun u.def]
         fun 
       ::
       ::  branch, $@
@@ -7376,11 +7381,6 @@
         {$bcpt *}  [%reed boil(gen p.gen) boil(gen q.gen)]
         {$bccb *}  [%weed p.gen]
         {$bccl *}
-      ?:  fab
-        |-  ^-  crib
-        ?~  p.gen  [%axil %null]
-        ?~  t.p.gen  boil(gen i.p.gen)
-        [boil(gen i.p.gen) $(p.gen t.p.gen)]
       ?~  p.gen  [%axil %null]
       [%tupl boil(gen i.p.gen) (turn t.p.gen |=(hoon boil(gen +<)))]
     ::
@@ -7409,7 +7409,7 @@
     ::
         {$halo *}  [%plow p.gen boil(gen q.gen)]
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
-        {$bcsg *}  [%deft boil(gen p.gen) boil(gen q.gen)]
+        {$bcsg *}  [%deft p.gen boil(gen q.gen)]
         {$bcwt *}  =+  (turn p.gen |=(a/hoon boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
         {$bcsm *}  [%herb p.gen]
@@ -11890,7 +11890,7 @@
                       [':' (rune col %bccl exqs)]
                       ['%' (rune cen %bccn exqs)]
                       ['^' (rune ket %bckt exqb)]
-                      ['~' (rune sig %bcsg exqb)]
+                      ['~' (rune sig %bcsg exqd)]
                       ['-' (rune hep %bchp exqb)]
                       ['=' (rune tis %bcts exqg)]
                       ['?' (rune wut %bcwt exqs)]
@@ -11935,7 +11935,7 @@
                     [':' (rune col %bccl exqs)]
                     ['%' (rune cen %bccn exqs)]
                     ['^' (rune ket %bckt exqb)]
-                    ['~' (rune sig %bcsg exqb)]
+                    ['~' (rune sig %bcsg exqd)]
                     ['-' (rune hep %bchp exqb)]
                     ['=' (rune tis %bcts exqg)]
                     ['?' (rune wut %bcwt exqs)]
@@ -12279,6 +12279,7 @@
     ++  exqa  |.(loan)                                  ::  one hoon
     ++  exqb  |.(;~(gunk loan loan))                    ::  two roots
     ++  exqc  |.(;~(gunk loan loaf))                    ::  root then hoon
+    ++  exqd  |.(;~(gunk loaf loan))                    ::  hoon then root
     ++  exqs  |.((butt hunk))                           ::  closed gapped roots
     ++  exqg  |.(;~(gunk sym loan))                     ::  term and root
     ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one root

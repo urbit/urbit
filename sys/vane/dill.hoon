@@ -232,10 +232,10 @@
         ++  deco                                        ::  ANSI effects
           |=  a/^deco  ^-  @
           ?-  a
-            $~   '0'
-            $br  '1'
-            $un  '4'
-            $bl  '5'
+            ~   '0'
+            %br  '1'
+            %un  '4'
+            %bl  '5'
           ==
         ::
         ++  tint                                        ::  ANSI colors (fg)
