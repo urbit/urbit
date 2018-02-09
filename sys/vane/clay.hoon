@@ -2241,6 +2241,8 @@
       |=  {for/(unit ship) yon/aeon pax/path}
       ^-  (map path lobe)
       ?:  =(0 yon)  ~
+      ::  we use %z for the check because it looks at all child paths.
+      ?:  |(?=($~ for) (may-read u.for %z yon pax))  ~
       %-  malt
       %+  skim
         %~  tap  by
