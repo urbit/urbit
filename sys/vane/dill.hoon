@@ -1,7 +1,6 @@
 ::
 ::  dill (4d), terminal handling
 ::
-!:
 |=  pit/vase
 =,  dill
 =>  |%                                                  ::  interface tiles

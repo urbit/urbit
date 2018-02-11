@@ -1,4 +1,4 @@
-::  "Hello world" sample generator
+::  "Hello world" sample generator  
 ::
 ::::  /hoon/hello/gen
   ::
@@ -6,8 +6,8 @@
 ::
 ::::
   ::
-~&  %buggin
 ^%
+!:
 :-  %say
 |=  *
 =,  clay
@@ -20,6 +20,7 @@
 ::  else we store it as (map path lobe).
 ::
 ++  ankh                                                ::  expanded node
+  $~  [~ ~]
   $:  fil/(unit {p/lobe q/cage})                        ::  file
       dir/(map @ta ankh)                                ::  folders
   ==                                                    ::
@@ -64,9 +65,9 @@
 ::  local changes), and possible merge state (for incoming merges).
 ::
 ++  dojo
-  $:  qyx/@ud                                          ::  subscribers
-      dom/@ud                                          ::  desk state
-      dok/(unit @ud)                                   ::  commit state
+  $:  qyx/cult                                          ::  subscribers
+      dom/dome                                          ::  desk state
+      dok/(unit dork)                                   ::  commit state
       mer/(unit mery)                                   ::  merge state
   ==
 ::
@@ -185,7 +186,10 @@
 ::  --  `hez` is the unix duct that %ergo's should be sent to.
 ::
 ++  raft                                                ::  filesystem
-  $:  fat/(map @p room)                               ::  domestic
+  $:  fat/(map ship room)                               ::  domestic
+      hoy/(map ship rung)                               ::  foreign
+      ran/rang                                          ::  hashes
+      mon/(map term beam)                               ::  mount points
       hez/(unit duct)                                   ::  sync duct
   ==                                                    ::
 ::
@@ -305,7 +309,7 @@
 --
 =>  |%
     ++  de
-      |=  {now/@da hen/duct yex/ankh}
+      |=  foo/raft
       !!
     --
 :-  %noun

@@ -51,6 +51,7 @@
   ==                                                    ::
 ++  bolt                                                ::  gonadic edge
   |*  a=mold                                            ::  product clam
+  $~  [*cafe [%0 ~ *a]]                                 :: 
   $:  p=cafe                                            ::  cache
     $=  q                                               ::
       $%  [$0 p=(set dent) q=a]                         ::  depends+product
@@ -59,11 +60,12 @@
       ==                                                ::
   ==                                                    ::
 ::                                                      ::
-++  burg                                                ::  gonadic rule
+++  burg                                                ::  gonadic rule  
   |*  [a=mold b=mold]                                   ::  from and to
   $-([c=cafe d=a] (bolt b))                             ::
 ::                                                      ::
 +=  cafe                                                ::  live cache
+  $~  [~ ~ [~ ~] [~ ~]]
   $:  p=(set calx)                                      ::  used
       q=(map * calx)                                    ::  cache
       r=deps                                            ::  depends
@@ -414,7 +416,7 @@
   ::
   ++  some-in-map
     |*  fun/(burg knot (unit))
-    =+  res=_(need [?+(-.q !! $0 q.q)]:*fun)
+    =+  res=|=(* (need [?+(-.q !! $0 q.q)]:*fun))
     =+  marv=(map knot res)
     |=  {cof/cafe sud/(map knot $~)}  ^-  (bolt marv)
     ?~  sud  (new cof ~)
@@ -428,7 +430,7 @@
         (with (lift |*(* [dir +<])))
       ==
       %-  with
-      |=  {lam/marv ram/marv nod/(unit {knot res})}
+      |=  {lam/marv ram/marv nod/$~(~ (unit {knot res}))}
       ?^(nod [u.nod lam ram] (~(uni by lam) ram))
     ==
   --

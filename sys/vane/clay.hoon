@@ -20,6 +20,7 @@
 ::  else we store it as (map path lobe).
 ::
 ++  ankh                                                ::  expanded node
+  $~  [~ ~]
   $:  fil/(unit {p/lobe q/cage})                        ::  file
       dir/(map @ta ankh)                                ::  folders
   ==                                                    ::

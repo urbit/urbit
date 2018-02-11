@@ -6,6 +6,7 @@
 =>  =~
 |%
 ++  sqeu  |*  {a/_* b/_*}                               ::  binary skew queno
+          $~  [0 *a *b ~]
           $:  r/@u                                      ::  rank+depth
               k/a                                       ::  priority
               n/b                                       ::  value
@@ -14,10 +15,11 @@
 ++  broq  |*  {a/_* b/_*}                               ::  brodal skew qeu
           (list (sqeu a b))                             ::
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
-++  note  $~                                            ::  out request $->
-++  sign  $~                                            ::  in result $<-
++=  note  ~                                             ::  out request $->
++=  sign  ~                                             ::  in result $<-
 ++  clok  (broq @da duct)                               ::  stored timers
-++  coke  $:  $0                                        ::  all state
+++  coke  $~  [%0 ~ ~]
+          $:  $0                                        ::  all state
               tym/{p/clok q/clok}                       ::  positive+negative
           ==                                            ::
 --

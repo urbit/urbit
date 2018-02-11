@@ -417,7 +417,8 @@
 ++  knot  @ta                                           ::  ASCII text
 ++  noun  *                                             ::  any noun
 ++  tang  (list tank)                                   ::  bottom-first error
-++  tank  $%  {$leaf p/tape}                            ::  printing formats
+++  tank  $~  [%leaf ~]                                 ::
+          $%  {$leaf p/tape}                            ::  printing formats
               $:  $palm                                 ::  backstep list
                   p/{p/tape q/tape r/tape s/tape}       ::
                   q/(list tank)                         ::
@@ -3613,7 +3614,8 @@
 ::
 ::::  3g: molds and mold builders
   ::
-++  coin  $%  {$$ p/dime}                               ::  print format
+++  coin  $~  [%$ %ud 0]                                ::  print format
+          $%  {$$ p/dime}                               ::
               {$blob p/*}                               ::
               {$many p/(list coin)}                     ::
           ==                                            ::
@@ -5496,6 +5498,7 @@
       ++  seminoun  
         ::  partial noun; blocked subtrees are ~ 
         ::
+        $~  [[%& ~] ~]
         {mask/stencil data/noun}
       ::
       ++  stencil  
@@ -6022,10 +6025,10 @@
   |%                                                ::REVIEW
   ++  beer  $@(char {~ p/hoon})                    ::  simple embed
   ++  mane  $@(@tas {@tas @tas})                    ::  XML name+space
-  ++  manx  {g/marx c/marl}                         ::  dynamic XML node
+  ++  manx  $~([[%$ ~] ~] {g/marx c/marl})          ::  dynamic XML node
   ++  marl  (list tuna)                             ::  dynamic XML nodes
   ++  mart  (list {n/mane v/(list beer)})           ::  dynamic XML attrs
-  ++  marx  {n/mane a/mart}                         ::  dynamic XML tag
+  ++  marx  $~([%$ ~] {n/mane a/mart})              ::  dynamic XML tag
   ++  mare  (each manx marl)                        ::  node or nodes
   ++  maru  (each tuna marl)                        ::  interp or nodes
   ++  tuna                                          ::  maybe interpolation
@@ -6589,7 +6592,7 @@
       ==
   |_  {fab/? mod/crib}
   ++  bunt  ~+
-    ersatz
+    example
   ::
   ++  clam  ~+
     factory
@@ -6604,7 +6607,7 @@
     :+  %tsgr
       ::  context is example of both cribs
       ::
-      [ersatz:clear(mod fun) ersatz:clear(mod arg)]
+      [example:clear(mod fun) example:clear(mod arg)]
     ::  produce an %iron (contravariant) core
     ::
     :-  %ktbr
@@ -6624,22 +6627,14 @@
     ^+  .
     .(doc ~, bug ~, def ~)
   ::
-  ++  trivial
-    ::  ersatz by trivial construction
-    ::
-    ^-  hoon
-    :+  %tsls
-      [%ktls [%bust %noun] scratch]
-    ~(construct local(dom (peg 3 dom)) [2 %&])
-  ::
   ++  basal
-    ::  ersatz base case
+    ::  example base case
     ::  
     |=  bas/base
     ?-    bas
     ::
         {$atom *}
-      ::  trivial zero
+      ::  we may want specific defaults
       ::
       [%sand p.bas 0]
     ::
@@ -6667,7 +6662,7 @@
       [%zpzp ~] 
     ==
   ::
-  ++  scratch
+  ++  trivial
     ::  produce expression that generates default noun
     ::
     ^-  hoon
@@ -6677,7 +6672,7 @@
     ?^  def  (home u.def)
     ::  bunt a minimized dummy structure
     ::
-    =-  ersatz:clear(mod -)
+    =-  example:clear(mod -)
     |-  ^-  crib
     ?+  mod      mod
       {^ *}      [$(mod p.mod) $(mod q.mod)]
@@ -6709,7 +6704,7 @@
     ?~(i.doc fin [%docs u.i.doc fin])
   ::
   ++  clean
-    ::  yes if subject is not used and can be cleared
+    ::  structure is not dependent on subject
     ::
     ^-  ?
     ?-  mod
@@ -6742,40 +6737,43 @@
       {$weed *}  |
     ==
   ::
-  ++  ersatz
+  ++  example
     ::  produce a correctly typed instance without data
     ::
     ~+
     ^-  hoon
-    ?-    mod
+    ?+    mod
+    ::  default approach: build a trivial 
+    ::
+      :+  %tsls
+        [%ktls [%bust %noun] trivial]
+      ~(normal local(dom (peg 3 dom)) [2 %&])
+    ::
+    ::
         {^ *}
       %-  decorate
-      [ersatz:clear(mod -.mod) ersatz:clear(mod +.mod)]
+      [example:clear(mod -.mod) example:clear(mod +.mod)]
     ::
         {$axil *}  (decorate (basal p.mod))
-        {$bark *}  (decorate [%ktts p.mod ersatz:clear(mod q.mod)])
+        {$bark *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
         {$herb *}
       %-  decorate
       =+  cys=~(boil ap p.mod)
       ?:  ?=($herb -.cys)
         (home [%tsgl [%limb %$] p.mod])
-      ersatz:clear(doc ~, mod cys)
+      example:clear(doc ~, mod cys)
     ::  
-        {$deft *}  [%ktls ersatz(mod q.mod) (home p.mod)]
-        {$deet *}  ersatz(mod q.mod, bug [p.mod bug])
-        {$fern *}  trivial
+        {$deft *}  [%ktls example(mod q.mod) (home p.mod)]
+        {$deet *}  example(mod q.mod, bug [p.mod bug])
         {$funk *}  (decorate (function:clear p.mod q.mod))
-        {$kelp *}  trivial
         {$leaf *}  (decorate [%rock p.mod q.mod])
-        {$plow *}  ersatz(mod q.mod, doc [p.mod doc])
-        {$reed *}  trivial
+        {$plow *}  example(mod q.mod, doc [p.mod doc])
         {$tupl *}  %-  decorate
                    |-  ^-  hoon
                    ?~  t.p.mod
-                       ersatz:clear(mod i.p.mod)
-                   :-  ersatz:clear(mod i.p.mod)
-                   ersatz:clear(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-        {$vine *}  trivial
+                       example:clear(mod i.p.mod)
+                   :-  example:clear(mod i.p.mod)
+                   example:clear(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
         {$weed *}  (home p.mod)
     ==
   ::
@@ -6797,10 +6795,10 @@
     ?:  fab
       :^  %brts  ~^~
         [%base %noun]
-      ~(construct local(dom (peg 7 dom)) [6 %&])
+      ~(normal local(dom (peg 7 dom)) [6 %&])
     :^  %brcl  ~^~
-      [%ktls [%bust %noun] scratch]
-    ~(construct local(dom (peg 7 dom)) [6 %&])
+      [%ktls [%bust %noun] trivial]
+    ~(normal local(dom (peg 7 dom)) [6 %&])
   ::
   ++  local
     ::  normalize a fragment of the subject
@@ -6818,7 +6816,7 @@
           {%atom *}
         ::  rez: fake instance
         ::
-        =/  rez  ersatz
+        =/  rez  example
         ?^  top  rez
         ?:  =(%| top)
           ::  xx sanitize
@@ -6833,23 +6831,23 @@
         ?^  top  fetch
         ::  rez: fake instance
         ::
-        =/  rez  ersatz
+        =/  rez  example
         ?:  =(%| top)
           rez
         [%wtpt fetch-wing rez fetch]
       ::
           $bean
-        ?^  top  ersatz
+        ?^  top  example
         :^    %wtcl
             [%dtts [%rock %$ |] [%$ axe]]
           [%rock %f |]
         [%rock %f &]
       ::
           $null
-        ersatz
+        example
       ::
           $void
-        ersatz
+        example
       ==
     ++  clear
       .(..local ^clear)
@@ -6877,7 +6875,7 @@
       ^-  hoon
       ::  if no other choices, construct head
       ::
-      ?~  rep  construct:clear(mod one)
+      ?~  rep  normal:clear(mod one)
       ::  fin: loop completion
       ::
       =/  fin/hoon  $(one i.rep, rep t.rep)
@@ -6891,7 +6889,7 @@
       :+  %tsls
         ::  build the fragment with the first option
         ::
-        construct:clear(mod one)
+        normal:clear(mod one)
       ::  build test
       ::
       :^    %wtcl
@@ -6917,7 +6915,7 @@
       |-  ^-  hoon
       ::  if no other choices, construct head
       ::
-      ?~  rep  construct(mod `crib`one) 
+      ?~  rep  normal(mod `crib`one) 
       ::  fin: loop completion
       ::
       =/  fin/hoon  $(one i.rep, rep t.rep)
@@ -6930,15 +6928,15 @@
         ::  if so, use this form
         ::
         :-  [%rock p.p.one q.p.one]
-        construct(mod q.one, top &, axe (peg axe 3))
+        normal(mod q.one, top &, axe (peg axe 3))
       ::  continue in the loop
       ::
       fin
     ::
-    ++  construct
+    ++  normal
       ::  local constructor
       ::
-      ::  ~&  [%construct axe mod]
+      ::  ~&  [%normal axe mod]
       ~+
       ^-  hoon
       ::  tow: width of ideal tuple
@@ -6950,7 +6948,7 @@
           {$vine *}  2
           {$tupl *}  +((lent t.p.mod))
         ==
-      ::  =-  ~?  =(3 tow)  [%construct-three foo] foo
+      ::  =-  ~?  =(3 tow)  [%normal-three foo] foo
       ::  ^=  foo
       ::  joy: tuple test (~ fails, [~ ~] succeeds, [~ ~ ~] needs test)
       :: 
@@ -6981,6 +6979,12 @@
           ?:  =(2 tow) 
             [%bust %cell] 
           [[%bust %noun] $(tow (dec tow))]
+        ?.  fab
+          ?:  =(~ joy)
+            ::  unconditional trivial
+            ::
+            [%ktls boc trivial]
+          [%ktls boc [%wtcl [%fits yum fetch-wing] boc trivial]]
         ::  luz: subject edited to inject default
         ::
         =/  luz/hoon  
@@ -6988,8 +6992,8 @@
             [[%& 1] ~] 
           :_  ~
           ::  correct but slow
-          ::  [fetch-wing ersatz:clear(mod any)]
-          [fetch-wing ?^(def u.def ersatz:clear(mod mac))]
+          ::  [fetch-wing example:clear(mod any)]  
+          [fetch-wing ?^(def u.def example:clear(mod mac))]
         ?:  =(~ joy)      
           ::  unconditional build
           ::
@@ -7006,8 +7010,8 @@
       ::
           {^ *}
         %-  decorate
-        :-  construct:clear(mod -.mod, top -.top, axe (peg axe 2))
-        construct:clear(mod +.mod, top +.top, axe (peg axe 3))
+        :-  normal:clear(mod -.mod, top -.top, axe (peg axe 2))
+        normal:clear(mod +.mod, top +.top, axe (peg axe 3))
       ::
       ::  base
       ::
@@ -7017,17 +7021,17 @@
       ::  name, $=
       ::
           {$bark *}
-        [%ktts p.mod construct(mod q.mod)]
+        [%ktts p.mod normal(mod q.mod)]
       ::
       ::  debug
       ::
           {$deet *}
-        construct(mod q.mod, bug [p.mod bug])
+        normal(mod q.mod, bug [p.mod bug])
       ::
       ::  default
       ::
           {$deft *}
-        construct(mod q.mod, def `p.mod)
+        normal(mod q.mod, def `p.mod)
       ::
       ::  choice, $?
       ::
@@ -7041,7 +7045,7 @@
         =+  cys=~(boil ap p.mod)
         ?:  ?=($herb -.cys)
           [%cnhp (home p.mod) fetch ~]
-        construct(mod cys)
+        normal(mod cys)
       ::
       ::  tuple, $:
       ::
@@ -7049,9 +7053,9 @@
         %-  decorate
         |-  ^-  hoon
         ?~  t.p.mod
-          construct:clear(mod i.p.mod)
-        :-  construct:clear(mod i.p.mod, top -.top, axe (peg axe 2))
-        %=  construct
+          normal:clear(mod i.p.mod)
+        :-  normal:clear(mod i.p.mod, top -.top, axe (peg axe 2))
+        %=  normal
           i.p.mod  i.t.p.mod
           t.p.mod  t.t.p.mod
           top      +.top 
@@ -7071,7 +7075,7 @@
       ::  documentation
       ::
           {$plow *}
-        construct(doc [p.mod doc], mod q.mod)
+        normal(doc [p.mod doc], mod q.mod)
       ::
       ::  function
       ::
@@ -7088,12 +7092,12 @@
         %-  decorate
         ?@  top
           ?:  =(%| top)
-            construct:clear(mod p.mod)
+            normal:clear(mod p.mod)
           :^    %wtpt
               fetch-wing
-            construct:clear(top %|, mod p.mod)
-          construct:clear(top [%& %&], mod q.mod)
-        construct:clear(mod q.mod)
+            normal:clear(top %|, mod p.mod)
+          normal:clear(top [%& %&], mod q.mod)
+        normal:clear(mod q.mod)
       ::
       ::  bridge, $^
       ::
@@ -7101,8 +7105,8 @@
         %-  decorate
         :^    %wtpt
             fetch-wing(axe (peg axe 2))
-          construct:clear(top [%| %&], mod q.mod) 
-        construct:clear(top [[%& %&] %&], mod p.mod)
+          normal:clear(top [%| %&], mod q.mod) 
+        normal:clear(top [[%& %&] %&], mod p.mod)
       ::
       ::  weed, $_
       ::
@@ -12674,16 +12678,16 @@
       ++  z  *(unit (unit cage))                        ::  current subtree
   --                                                    ::
 ++  mane  $@(@tas {@tas @tas})                          ::  XML name+space
-++  manx  {g/marx c/marl}                               ::  XML node
+++  manx  $~([[%$ ~] ~] {g/marx c/marl})                ::  dynamic XML node
 ++  marc                                                ::  structured mark
   $@  mark                                              ::  plain mark
   $%  {$tabl p/(list (pair marc marc))}                 ::  map
   ==                                                    ::
 ++  mark  @tas                                          ::  content type
 ++  marl  (list manx)                                   ::  XML node list
-++  mars  {t/{n/$$ a/{i/{n/$$ v/tape} t/~}} c/~}      ::  XML cdata
+++  mars  {t/{n/$$ a/{i/{n/$$ v/tape} t/~}} c/~}        ::  XML cdata
 ++  mart  (list {n/mane v/tape})                        ::  XML attributes
-++  marx  {n/mane a/mart}                               ::  XML tag
+++  marx  $~([%$ ~] {n/mane a/mart})                    ::  dynamic XML tag
 ++  mash  |=(* (mass +<))                               ::  producing mass
 ++  mass  (pair cord (each noun (list mash)))           ::  memory usage
 ++  mill  (each vase milt)                              ::  vase+metavase
