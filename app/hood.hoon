@@ -1,4 +1,4 @@
-::                                                      ::  ::  
+::                                                      ::  ::
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  zuse version
@@ -16,6 +16,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+!:
 |%
 ++  hood-module
   ::  each hood module follows this general shape
@@ -24,7 +25,7 @@
       +=  pith  ~
       ::
       +=  move  [bone card]
-      +=  card  $%  [%fake _!!]
+      +=  card  $%  [%fake ~]
                 ==
       --
   |=  [bowl:gall own=part]
