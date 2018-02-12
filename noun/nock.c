@@ -497,45 +497,62 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 }
 
 /* These must match the order in the section marked OPCODE TABLE */
-#define HALT 0  // stop executing, leaving the product on the top of stack
-#define COPY 1  // copy TOS, keep, and push it
-#define TOSS 2  // throw away and lose TOS
-#define SWAP 3  // exchange TOS with item underneat
-#define SWAT 4  // toss item under TOS (under)
-#define SKIP 5  // skip N (c3_s) instructions
-#define SKIN 6  // pop loob, skip N if it is no, bail if not yes
-#define SBIP 7  // skip with byte argument
-#define SBIN 8  // skin with byte argument
-#define CONS 9  // makes a cell of [under, TOS]
-#define SNOC 10 // makes a cell of [TOS, under]
-#define HEAD 11 // replaces TOS with its head (old TOS lost)
-#define TAIL 12 // as HEAD, but for the tail
-#define FRAG 13 // as HEAD/TAIL but with arbitrary noun axis
-#define FRAS 14 // frag with short
-#define FRAB 15 // frag with byte axis
-#define QUOT 16 // toss TOS, push literal noun argument
-#define QUIP 17 // as QUOT, but without the toss
-#define NOCK 18 // *(under, TOS)
-#define NOCT 19 // as NOCK, but in tail position
-#define DEEP 20 // pop TOS and push isCell loob
-#define PEEP 21 // as DEEP, but doesn't pop
-#define BUMP 22 // increment TOS
-#define SAME 23 // pop two items and push equality loob
-#define KICK 24 // pull noun axis from TOS
-#define KICS 25 // kick with short axis
-#define KICB 26 // kick with byte axis
-#define TICK 27 // KICK, but in tail position
-#define TICS 28 // tick with short axis
-#define TICB 29 // tick with byte axis
-#define WISH 30 // ref is under, gof is TOS, u3m_soft_esc
-#define FAST 31 // u3j_mine TOS
-#define CUSH 32 // u3t_push TOS
-#define DROP 33 // u3t_drop
-#define PUMO 34 // saves memo from tos->[pro key]
-#define GEMO 35 // pushes (unit pro) of u3z_save with key=TOS
-#define HECK 36 // u3t_heck TOS
-#define SLOG 37 // u3t_slog TOS
-#define BAIL 37 // bail %exit
+#define HALT 0
+#define BAIL 1
+#define COPY 2
+#define SWAP 3
+#define TOSS 4
+#define AUTO 5
+#define AULT 6
+#define HEAD 7
+#define HELD 8
+#define TAIL 9
+#define TALL 10
+#define FRAS 11
+#define FRAG 12
+#define FRAB 13
+#define FLAS 14
+#define FLAG 15
+#define FLAB 16
+#define LITB 17
+#define LITS 18
+#define LITN 19
+#define LILB 20
+#define LILS 21
+#define LILN 22
+#define NOLT 23
+#define NOLK 24
+#define NOCT 25
+#define NOCK 26
+#define DEEP 27
+#define BUMP 28
+#define SAME 29
+#define SALM 30
+#define SKIP 31
+#define SBIP 32
+#define SKIN 33
+#define SBIN 34
+#define SNOC 35
+#define SNOL 36
+#define KICB 37
+#define KICS 38
+#define KICK 39
+#define TICB 40
+#define TICS 41
+#define TICK 42
+#define WILS 43
+#define WISH 44
+#define CUSH 45
+#define DROP 46
+#define HECK 47
+#define SLOG 48
+#define FALT 49
+#define FAST 50
+#define SKIB 51
+#define SKIM 52
+#define SLIB 53
+#define SLIM 54
+#define SAVE 55
 
 /* _n_apen(): emit the instructions contained in src to dst
  */
@@ -557,44 +574,49 @@ _n_emit(u3_noun *ops, u3_noun op)
     return sizeof(c3_y);
   }
   else switch ( u3h(op) ) {
+    case FRAB:
+    case FLAB:
+    case LILB:
+    case LITB:
     case SBIP:
     case SBIN:
     case KICB:
     case TICB:
-    case FRAB:
       return sizeof(c3_y) + sizeof(c3_y);
 
+    case FRAS:
+    case FLAS:
+    case LILS:
+    case LITS:
+    case SKIP:
+    case SKIN:
     case KICS:
     case TICS:
-    case FRAS:
-    case SKIP:
-    case SKIN: 
       return sizeof(c3_y) + sizeof(c3_s);
 
+    case CUSH:
     case FRAG:
-    case QUOT:
-    case QUIP:
+    case FLAG:
+    case LILN:
+    case LITN:
     case TICK:
     case KICK:
       return sizeof(c3_y) + sizeof(u3_noun);
+
+    case SKIM:
+    case SLIM:
+      return sizeof(c3_y) + sizeof(c3_s) + sizeof(u3_noun);
+
+    case SKIB:
+    case SLIB:
+      return sizeof(c3_y) + sizeof(c3_y) + sizeof(u3_noun);
+
     default:
       c3_assert(0);
   }
 }
 
 static c3_s _n_comp(u3_noun*, u3_noun, c3_o, c3_o);
-
-static u3_noun
-_n_skip(c3_s len_s)
-{
-  return u3nc((len_s < 0xFF ? SBIP : SKIP), len_s);
-}
-
-static u3_noun
-_n_skin(c3_s len_s)
-{
-  return u3nc((len_s < 0xFF ? SBIN : SKIN), len_s);
-}
 
 /* _n_bint(): hint-processing helper for _n_comp.
  *            hif: hint-formula (first part of 10). RETAIN.
@@ -629,17 +651,11 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         tot_s += _n_emit(ops, DROP);
         break;
 
-      case c3__live: {
-        u3_noun yep = u3_nul,
-                nop = u3_nul;
-        c3_s    y_s = 0,
-                n_s = 0;
-
+      case c3__live:
         tot_s += _n_comp(ops, hod, c3n, c3n);
         tot_s += _n_emit(ops, HECK);
         tot_s += _n_comp(ops, nef, los_o, tel_o);
         break;
-      }
 
       case c3__slog: 
         tot_s += _n_comp(ops, hod, c3n, c3n);
@@ -658,7 +674,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
 
       case c3__memo: {
         u3_noun mem = u3_nul;
-        c3_s mem_s;
+        c3_s mem_s = 0;
         c3_y op_y;
 
         tot_s += _n_comp(ops, hod, c3n, c3n);
@@ -671,8 +687,8 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         mem_s += _n_emit(ops, SAVE);
 
         op_y = (c3y == los_o)
-             ? (( mem_s < 0xFF ) ? SLIB : SLIM)
-             : (( mem_s < 0xFF ) ? SKIB : SKIM);
+             ? (( mem_s <= 0xFF ) ? SLIB : SLIM)
+             : (( mem_s <= 0xFF ) ? SKIB : SKIM);
 
         // SKIM leaves [pro bus] and SLIM leaves [pro]
         tot_s += _n_emit(ops, u3nt(op_y, mem_s, u3k(nef)));
@@ -727,17 +743,17 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
           break;
         default:
           op_y = (c3y == los_o)
-               ? (arg < 0xFF ? FLAB : arg < 0xFFFF ? FLAS : FLAG)
-               : (arg < 0xFF ? FRAB : arg < 0xFFFF ? FRAS : FRAG);
-          tot_s += _n_emit(ops, u3nc(op, arg));
+               ? (arg <= 0xFF ? FLAB : arg <= 0xFFFF ? FLAS : FLAG)
+               : (arg <= 0xFF ? FRAB : arg <= 0xFFFF ? FRAS : FRAG);
+          tot_s += _n_emit(ops, u3nc(op_y, arg));
           break;
       }
       break;
 
     case 1:
       op_y = (c3y == los_o)
-           ? (arg < 0xFF ? LILB : arg < 0xFFFF ? LILS : LILN)
-           : (arg < 0xFF ? LITB : arg < 0xFFFF ? LITS : LITN);
+           ? (arg <= 0xFF ? LILB : arg <= 0xFFFF ? LILS : LILN)
+           : (arg <= 0xFF ? LITB : arg <= 0xFFFF ? LITS : LITN);
       tot_s += _n_emit(ops, u3nc(op_y, u3k(arg)));
       break;
 
@@ -772,13 +788,15 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
 
     case 6: {
       u3_noun mid, yep, nop;
-      c3_y    yep_s, nop_s;
+      c3_s    yep_s, nop_s;
       u3x_trel(arg, &hed, &mid, &tel);
       tot_s += _n_comp(ops, hed, c3n, c3n);
       yep_s  = _n_comp(&yep, mid, los_o, tel_o);
       nop_s  = _n_comp(&nop, tel, los_o, tel_o);
-      yep_s += _n_emit(&yep, _n_skip(nop_s));
-      tot_s += _n_emit(ops, _n_skin(yep_s));
+      op_y   = (nop_s <= 0xFF ? SBIP : SKIP);
+      yep_s += _n_emit(&yep, u3nc(op_y, nop_s));
+      op_y   = (yep_s <= 0xFF ? SBIN : SKIN);
+      tot_s += _n_emit(ops, u3nc(op_y, yep_s));
       tot_s += yep_s; _n_apen(ops, yep);
       tot_s += nop_s; _n_apen(ops, nop);
       break;
@@ -801,13 +819,13 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       u3x_cell(arg, &hed, &tel);
       if ( 3 == u3qc_cap(hed) ) {
         u3_noun mac = u3nq(7, u3k(tel), 2, u3nt(u3nc(0, 1), 0, u3k(hed)));
-        tot_s += _n_comp(ops, mac, tel_o);
+        tot_s += _n_comp(ops, mac, los_o, tel_o);
         u3z(mac);
       }
       else {
         op_y = (c3y == tel_o) 
-             ? (hed < 0xFF ? TICB : hed < 0xFFFF ? TICS : TICK)
-             : (hed < 0xFF ? KICB : hed < 0xFFFF ? KICS : KICK);
+             ? (hed <= 0xFF ? TICB : hed <= 0xFFFF ? TICS : TICK)
+             : (hed <= 0xFF ? KICB : hed <= 0xFFFF ? KICS : KICK);
         tot_s += _n_comp(ops, tel, los_o, c3n);
         tot_s += _n_emit(ops, u3nc(op_y, u3k(hed)));
       }
@@ -853,29 +871,38 @@ _n_asm(u3_noun ops, c3_s len_s)
     else {
       u3_noun cod = u3h(op);
       switch ( cod ) {
+        case FRAB:
+        case FLAB:
+        case LILB:
+        case LITB:
         case SBIP:
         case SBIN:
         case KICB:
         case TICB:
-        case FRAB:
           buf_y[i_s--] = (c3_y) u3t(op);
           buf_y[i_s]   = (c3_y) cod;
           break;
 
-        case KICS:
-        case TICS:
         case FRAS:
+        case FLAS:
+        case LILS:
+        case LITS:
         case SKIP:
-        case SKIN: {
+        case SKIN:
+        case KICS:
+        case TICS: {
           c3_s off_s   = u3t(op);
           buf_y[i_s--] = (c3_y) (off_s >> 8);
           buf_y[i_s--] = (c3_y) off_s;
           buf_y[i_s]   = (c3_y) cod;
           break;
         }
+
+        case CUSH:
         case FRAG:
-        case QUOT:
-        case QUIP:
+        case FLAG:
+        case LILN:
+        case LITN:
         case TICK:
         case KICK: {
           c3_w non_w   = u3k(u3t(op));
@@ -886,6 +913,33 @@ _n_asm(u3_noun ops, c3_s len_s)
           buf_y[i_s]   = (c3_y) cod;
           break;
         }
+
+        case SKIB:
+        case SLIB: {
+          c3_w non_w   = u3k(u3t(u3t(op)));
+          buf_y[i_s--] = (c3_y) (non_w >> 24);
+          buf_y[i_s--] = (c3_y) (non_w >> 16);
+          buf_y[i_s--] = (c3_y) (non_w >> 8);
+          buf_y[i_s--] = (c3_y) non_w;
+          buf_y[i_s--] = (c3_y) u3h(u3t(op));
+          buf_y[i_s]   = (c3_y) cod;
+          break;
+        }
+
+        case SKIM:
+        case SLIM: {
+          c3_w non_w   = u3k(u3t(u3t(op)));
+          c3_s sip_s   = u3h(u3t(op));
+          buf_y[i_s--] = (c3_y) (non_w >> 24);
+          buf_y[i_s--] = (c3_y) (non_w >> 16);
+          buf_y[i_s--] = (c3_y) (non_w >> 8);
+          buf_y[i_s--] = (c3_y) non_w;
+          buf_y[i_s--] = (c3_y) (sip_s >> 8);
+          buf_y[i_s--] = (c3_y) sip_s;
+          buf_y[i_s]   = (c3_y) cod;
+          break;
+        }
+
         default:
           u3m_bail(c3__exit);
           return 0;
@@ -1051,23 +1105,31 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 {
   /* OPCODE TABLE */
   static void* lab[] = {
-    &&do_halt, &&do_copy, &&do_toss,
-    &&do_swap, &&do_swat, 
-    &&do_skip, &&do_skin,
-    &&do_sbip, &&do_sbin,
-    &&do_cons, &&do_snoc,
-    &&do_head, &&do_tail,
-    &&do_frag, &&do_fras, &&do_frab,
-    &&do_quot, &&do_quip,
-    &&do_nock, &&do_noct,
-    &&do_deep, &&do_peep,
-    &&do_bump, &&do_same,
-    &&do_kick, &&do_kics, &&do_kicb,
-    &&do_tick, &&do_tics, &&do_ticb,
-    &&do_wish, &&do_fast,
+    &&do_halt, &&do_bail,
+    &&do_copy, &&do_swap, &&do_toss,
+    &&do_auto, &&do_ault,
+    &&do_head, &&do_held,
+    &&do_tail, &&do_tall,
+    &&do_fras, &&do_frag, &&do_frab,
+    &&do_flas, &&do_flag, &&do_flab,
+    &&do_litb, &&do_lits, &&do_litn,
+    &&do_lilb, &&do_lils, &&do_liln,
+    &&do_nolt, &&do_nolk,
+    &&do_noct, &&do_nock,
+    &&do_deep, &&do_bump,
+    &&do_same, &&do_salm,
+    &&do_skip, &&do_sbip,
+    &&do_skin, &&do_sbin,
+    &&do_snoc, &&do_snol,
+    &&do_kicb, &&do_kics, &&do_kick,
+    &&do_ticb, &&do_tics, &&do_tick,
+    &&do_wils, &&do_wish,
     &&do_cush, &&do_drop,
-    &&do_pumo, &&do_gemo,
-    &&do_heck, &&do_slog, &&do_bail
+    &&do_heck, &&do_slog,
+    &&do_falt, &&do_fast,
+    &&do_skib, &&do_skim,
+    &&do_slib, &&do_slim,
+    &&do_save
   };
 
   c3_s sip_s, ip_s = 0;
@@ -1085,7 +1147,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
   while ( 1 ) {
     do_halt: // [product subject ...burnframes...]
       x = _n_pep(mov, off);
-      _n_toss(mov);
+      _n_toss(mov, off);
       if ( empty == u3R->cap_p ) {
         return x;
       }
@@ -1098,6 +1160,10 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
         _n_push(mov, off, x);
         BURN();
       }
+
+    do_bail:
+      u3m_bail(c3__exit);
+      return u3_none;
 
     do_copy:
       top = _n_peek(off);
@@ -1116,10 +1182,6 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       _n_toss(mov, off);
       BURN();
 
-    do_bail:
-      u3m_bail(c3__exit);
-      return u3_none;
-
     do_auto:                         // [tel bus hed]
       x    = _n_pep(mov, off);       // [bus hed]
       top  = _n_swap(mov, off);      // [hed bus]
@@ -1135,7 +1197,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 
     do_head:
       top  = _n_peek(off);
-      _n_push(u3k(u3h(_n_kale(*top))));
+      _n_push(mov, off, u3k(u3h(_n_kale(*top))));
       BURN();
 
     do_held:
@@ -1147,7 +1209,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 
     do_tail:
       top = _n_peek(off);
-      _n_push(u3k(u3t(_n_kale(*top))));
+      _n_push(mov, off, u3k(u3t(_n_kale(*top))));
       BURN();
 
     do_tall:
@@ -1169,7 +1231,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       x = pog[ip_s++];
     frag_in:
       top = _n_peek(off);
-      _n_push(u3k(u3x_at(x, *top)));
+      _n_push(mov, off, u3k(u3x_at(x, *top)));
       BURN();
 
     do_flas:
@@ -1191,7 +1253,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 
     do_lils:
       _n_toss(mov, off);
-    do_litb:
+    do_lits:
       x = _n_resh(pog, &ip_s);
       goto quot_in;
 
@@ -1329,7 +1391,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       u3t_on(noc_o);
       if ( u3_none == *top ) {
         u3_noun fol = u3x_at(x, o);
-        _n_toss(mov);
+        _n_toss(mov, off);
 
         fam        = u3to(burnframe, u3R->cap_p) + off + mov;
         u3R->cap_p = u3of(burnframe, fam);
@@ -1433,7 +1495,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 
     do_falt:                   // [pro bus clu]
       o   = _n_pep(mov, off);  // [bus clu]
-      _n_toss();               // [clu]
+      _n_toss(mov, off);       // [clu]
       top = _n_peek(off);
       goto fast_in;
 
@@ -1475,7 +1537,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       }
       else {
         ip_s += sip_s;
-        _n_push(o);
+        _n_push(mov, off, o);
         u3z(x);
       }
       BURN();
@@ -1496,24 +1558,33 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 static void
 _n_print_byc(c3_y* pog)
 {
+  // match to OPCODE TABLE
   static char* names[] = {
-    "halt", "copy", "toss",
-    "swap", "swat", 
-    "skip", "skin",
-    "sbip", "sbin",
-    "cons", "snoc",
-    "head", "tail", 
-    "frag", "fras", "frab",
-    "quot", "quip",
-    "nock", "noct",
-    "deep", "peep",
-    "bump", "same",
-    "kick", "kics", "kicb",
-    "tick", "tics", "ticb",
-    "wish", "fast",
+    "halt", "bail",
+    "copy", "swap", "toss",
+    "auto", "ault",
+    "head", "held",
+    "tail", "tall",
+    "fras", "frag", "frab",
+    "flas", "flag", "flab",
+    "litb", "lits", "litn",
+    "lilb", "lils", "liln",
+    "nolt", "nolk",
+    "noct", "nock",
+    "deep", "bump",
+    "same", "salm",
+    "skip", "sbip",
+    "skin", "sbin",
+    "snoc", "snol",
+    "kicb", "kics", "kick",
+    "ticb", "tics", "tick",
+    "wils", "wish",
     "cush", "drop",
-    "pumo", "gemo",
-    "heck", "slog", "bail"
+    "heck", "slog",
+    "falt", "fast",
+    "skib", "skim",
+    "slib", "slim",
+    "save"
   };
   c3_s ip_s = 0;
   printf("bytecode: {");
@@ -1530,30 +1601,52 @@ _n_print_byc(c3_y* pog)
         printf("%s", names[pog[ip_s++]]);
         break;
 
+      case FRAB:
+      case FLAB:
+      case LILB:
+      case LITB:
       case SBIP:
       case SBIN:
       case KICB:
       case TICB:
-      case FRAB:
         printf("[%s ", names[pog[ip_s++]]);
         printf("%d]", pog[ip_s++]);
         break;
 
+      case FRAS:
+      case FLAS:
+      case LILS:
+      case LITS:
+      case SKIP:
+      case SKIN:
       case KICS:
       case TICS:
-      case FRAS:
-      case SKIP:
-      case SKIN: 
         printf("[%s ", names[pog[ip_s++]]);
         printf("%d]", _n_resh(pog, &ip_s));
         break;
 
-      case QUOT:
-      case QUIP:
-      case TICK:
+      case CUSH:
       case FRAG:
+      case FLAG:
+      case LILN:
+      case LITN:
+      case TICK:
       case KICK:
         printf("[%s ", names[pog[ip_s++]]);
+        printf("%d]", _n_rean(pog, &ip_s));
+        break;
+
+      case SKIB:
+      case SLIB:
+        printf("[%s", names[pog[ip_s++]]);
+        printf(" %d ", pog[ip_s++]);
+        printf("%d]", _n_rean(pog, &ip_s));
+        break;
+
+      case SKIM:
+      case SLIM:
+        printf("[%s", names[pog[ip_s++]]);
+        printf(" %d ", _n_resh(pog, &ip_s));
         printf("%d]", _n_rean(pog, &ip_s));
         break;
     }
@@ -1573,11 +1666,11 @@ static void _n_print_stack(u3p(u3_noun) empty) {
       printf(" ");
     }
     if ( c3y == u3a_is_north(u3R) ) {
-      printf("%d", *(u3to(u3_noun, cur_p)));
+      printf("%x", *(u3to(u3_noun, cur_p)));
       cur_p++;
     }
     else {
-      printf("%d", *(u3to(u3_noun, cur_p-1)));
+      printf("%x", *(u3to(u3_noun, cur_p-1)));
       cur_p--;
     }
   }
