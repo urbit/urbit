@@ -387,7 +387,7 @@
   (b u.a)
 ::
 ++  bind                                                ::  argue
-  |*  {a/(unit) b/$-(* *)}
+  |*  {a/(unit) b/gate}
   ?~  a  ~
   [~ u=(b u.a)]
 ::
@@ -661,7 +661,7 @@
 ::
 ++  turn                                                ::  transform
   ~/  %turn
-  |*  {a/(list) b/$-(* *)}
+  |*  {a/(list) b/gate}
   |-
   ?~  a  ~
   [i=(b i.a) t=$(a t.a)]
@@ -1472,7 +1472,7 @@
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  rib                                               ::  transform + product
-    |*  {b/* c/$-(* *)}
+    |*  {b/* c/gate}
     |-  ^+  [b a]
     ?~  a  [b ~]
     =+  d=(c n.a b)
@@ -1482,7 +1482,7 @@
     [-.f [n.a +.e +.f]]
   ::
   +-  run                                               ::  apply gate to values
-    |*  b/$-(* *)
+    |*  b/gate
     |-
     ?~  a  a
     [n=[p=p.n.a q=(b q.n.a)] l=$(a l.a) r=$(a r.a)]
@@ -1764,7 +1764,7 @@
 ::::  2n: functional hacks                              ::
   ::                                                    ::
   ::
-++  aftr  |*(a/$-(* *) |*(b/$-(* *) (pair b a)))        ::  pair after
+++  aftr  |*(a/gate |*(b/gate (pair b a)))              ::  pair after
 ++  cork  |*({a/_|=(* **) b/gate} (corl b a))           ::  compose forward
 ++  corl                                                ::  compose backwards
   |*  {a/gate b/_|=(* **)}
@@ -1782,9 +1782,9 @@
   |*  b/_+<+.a
   (a b c)
 ::
-++  fore  |*(a/$-(* *) |*(b/$-(* *) (pair a b)))        ::  pair before
+++  fore  |*(a/gate |*(b/gate (pair a b)))              ::  pair before
 ++  hard                                                ::  force remold
-  |*  han/$-(* *)
+  |*  han/gate
   |=  fud/*  ^-  han
   ~_  leaf+"hard"
   =+  gol=(han fud)
@@ -1794,7 +1794,7 @@
 ++  head  |*(^ ,:+<-)                                   ::  get head
 ++  same  |*(* +<)                                      ::  identity
 ++  soft                                                ::  maybe remold
-  |*  han/$-(* *)
+  |*  han/gate
   |=  fud/*  ^-  (unit han)
   =+  gol=(han fud)
   ?.(=(gol fud) ~ [~ gol])
@@ -3627,7 +3627,7 @@
 ++  dime  {p/@ta q/@}                                   ::
 ++  edge  {p/hair q/(unit {p/* q/nail})}                ::  parsing output
 ++  hair  {p/@ud q/@ud}                                 ::  parsing trace
-++  like  |*  a/$-(* *)                                 ::  generic edge
+++  like  |*  a/gate                                    ::  generic edge
           |=  b/_`*`[(hair) ~]                          ::
           :-  p=(hair -.b)                              ::
           ^=  q                                         ::
@@ -4410,7 +4410,7 @@
 ::
 ++  cook                                                ::  apply gate
   ~/  %cook
-  |*  {poq/$-(* *) sef/rule}
+  |*  {poq/gate sef/rule}
   ~/  %fun
   |=  tub/nail
   =+  vex=(sef tub)
@@ -12651,7 +12651,7 @@
          ==                                            ::
 ++  desk  @tas                                          ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a/$-(* *) (pair mark a))                   ::  global data
+++  cask  |*(a/gate (pair mark a))                      ::  global data
 ++  cuff                                                ::  permissions
           $:  p/(unit (set monk))                       ::  can be read by
               q/(set monk)                              ::  caused or created by
@@ -12659,8 +12659,8 @@
 ++  curd  {p/@tas q/*}                                  ::  typeless card
 ++  dock  (pair @p term)                                ::  message target
 ++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a/$-(* *) (pair type a))                   ::  type associated
-++  hobo  |*  a/$-(* *)                                 ::  task wrapper
+++  hypo  |*(a/gate (pair type a))                      ::  type associated
+++  hobo  |*  a/gate                                    ::  task wrapper
           $?  $%  {$soft p/*}                           ::
               ==                                        ::
               a                                         ::
@@ -12716,7 +12716,7 @@
               mev/type                                  ::  -:!>([%meta *vase])
           ==                                            ::
 ++  wind                                                ::  new kernel action
-          |*  {a/$-(* *) b/$-(* *)}                     ::  forward+reverse
+          |*  {a/gate b/gate}                           ::  forward+reverse
           $%  {$pass p/path q/a}                        ::  advance
               {$slip p/a}                               ::  lateral
               {$give p/b}                               ::  retreat
