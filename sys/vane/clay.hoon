@@ -68,8 +68,8 @@
       dom/dome                                          ::  desk state
       dok/(unit dork)                                   ::  commit state
       mer/(unit mery)                                   ::  merge state
-      per/(map path rule)                               ::  read perms per path
-      pew/(map path rule)                               ::  write perms per path
+      per/regs                                          ::  read perms per path
+      pew/regs                                          ::  write perms per path
   ==
 ::
 ::  Desk state.
@@ -242,8 +242,8 @@
               dom/dome                                  ::  revision state
               dok/(unit dork)                           ::  outstanding diffs
               mer/(unit mery)                           ::  outstanding merges
-              per/(map path rule)                       ::  read perms per path
-              pew/(map path rule)                       ::  write perms per path
+              per/regs                                  ::  read perms per path
+              pew/regs                                  ::  write perms per path
           ==                                            ::
 ::
 ::  Foreign request manager.
@@ -831,7 +831,7 @@
     ==
   ::
   ++  put-perm
-    |=  {pes/(map path rule) pax/path new/(unit rule)}
+    |=  {pes/regs pax/path new/(unit rule)}
     ?~  new  (~(del by pes) pax)
     (~(put by pes) pax u.new)
   ::
@@ -845,8 +845,8 @@
     ==
   ::
   ++  forget-crew-in
-    |=  {nom/@ta rus/(map path rule)}
-    %-  ~(run by rus)
+    |=  {nom/@ta pes/regs}
+    %-  ~(run by pes)
     |=  r/rule
     r(who (~(del in who.r) |+nom))
   ::
@@ -2407,7 +2407,7 @@
       (read-p-in pax pew.red)
     ::
     ++  read-p-in
-      |=  {pax/path pes/(map path rule)}
+      |=  {pax/path pes/regs}
       ^-  dict
       =+  rul=(~(get by pes) pax)
       ?^  rul  [pax u.rul]
@@ -2442,7 +2442,7 @@
       (allowed-by w p pew.red)
     ::
     ++  allowed-by
-      |=  {who/ship pax/path pes/(map path rule)}
+      |=  {who/ship pax/path pes/regs}
       ^-  ?
       =+  rul=rul:(read-p-in pax pes)
       =-  =(0 -)

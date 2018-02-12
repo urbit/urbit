@@ -505,6 +505,7 @@
         {$mult p/mool}                                  ::  next version of any
         {$many p/? q/moat}                              ::  track range
     ==                                                  ::
+  ++  regs  (map path rule)                             ::  rules for paths
   ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
   ++  rite                                              ::  new permissions
     $%  {$r red/(unit rule)}                            ::  for read
