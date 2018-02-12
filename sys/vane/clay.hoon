@@ -3622,6 +3622,27 @@
       $crew
     [[hen %give %cruz cez.ruf]~ ..^$]
   ::
+      $crow
+    =+  rom=(fall (~(get by fat.ruf) our.req) *room)
+    =+  des=~(tap by dos.rom)
+    =|  rus/(map desk {r/regs w/regs})
+    |^
+      ?~  des  [[hen %give %croz rus]~ ..^^$]
+      =+  per=(filter-rules per.q.i.des)
+      =+  pew=(filter-rules pew.q.i.des)
+      $(des t.des, rus (~(put by rus) p.i.des per pew))
+    ::
+    ++  filter-rules
+      |=  pes/regs
+      ^+  pes
+      =-  (~(gas in *regs) -)
+      %+  murn  ~(tap by pes)
+      |=  {p/path r/rule}
+      ^-  (unit (pair path rule))
+      ?.  (~(has in who.r) |+nom.req)  ~
+      `[p r]
+    --
+  ::
       $drop
     =^  mos  ruf
       =+  den=((de now hen ruf) [. .]:our.req des.req)
