@@ -1,6 +1,7 @@
 ::  ::  %gall, agent execution  
 !?  163
 ::::
+^%
 |=  pit/vase
 =,  gall
 =>  =~

@@ -2,6 +2,7 @@
 ::  ::  %ford, new execution control
 !?  143
 ::::
+^%
 |=  pit=vase
 =,  ford
 =,  format

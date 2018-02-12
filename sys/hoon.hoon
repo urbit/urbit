@@ -6,6 +6,7 @@
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
+^%
 ~%  %k.143  ~  ~                                        ::
 |%
 ++  hoon-version  +
@@ -6922,7 +6923,7 @@
       |-  ^-  hoon
       ::  if no other choices, construct head
       ::
-      ?~  rep  relative(mod `crib`one) 
+      ?~  rep  relative:clear(mod `crib`one) 
       ::  fin: loop completion
       ::
       =/  fin/hoon  $(one i.rep, rep t.rep)
@@ -6935,7 +6936,7 @@
         ::  if so, use this form
         ::
         :-  [%rock p.p.one q.p.one]
-        relative(mod q.one, top &, axe (peg axe 3))
+        relative:clear(mod q.one, top &, axe (peg axe 3))
       ::  continue in the loop
       ::
       fin
@@ -9388,7 +9389,7 @@
       ^-  ?
       =-  ?:  -  &
           ?.  tel  |
-          ::  ~_  (dunk %zpwt)
+          ::  ~_  (dunk %need)
           ::  ~_  (dunk(sut ref) %have)
           ~>(%mean.[%leaf "nest-fail"] !!)
       ?:  =(sut ref)  &
