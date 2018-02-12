@@ -806,6 +806,23 @@
   ++  perm
     |=  {pax/path rit/rite}
     ^+  +>
+    =/  mis/(set @ta)
+      %+  roll
+        =-  ~(tap in -)
+        ?-  -.rit
+          $r    who:(fall red.rit *rule)
+          $w    who:(fall wit.rit *rule)
+          $rw   (~(uni in who:(fall red.rit *rule)) who:(fall wit.rit *rule))
+        ==
+      |=  {w/whom s/(set @ta)}
+      ?:  |(?=($& -.w) (~(has by cez) p.w))  s
+      (~(put in s) p.w)
+    ?^  mis
+      =-  (emit hen %give %mack `[%leaf "No such group(s): {-}"]~)
+      %+  roll  ~(tap in `(set @ta)`mis)
+      |=  {g/@ta t/tape}
+      ?~  t  (trip g)
+      :(weld t ", " (trip g))
     =<  (emit hen %give %mack ~)
     ?-  -.rit
       $r    wake(per (put-perm per pax red.rit))
