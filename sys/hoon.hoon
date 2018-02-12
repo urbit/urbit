@@ -5481,378 +5481,6 @@
   |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
   (mook (mink [sub fol] gul))
 ::
-++  musk                                                ::  nock with block set
-  =>  ::  keep soft core out of models
-      +
-  =>  |%
-      ++  block  
-        ::  identity of resource awaited
-        ::  XX parameterize
-        noun
-      ::
-      ++  result  
-        ::  internal interpreter result
-        ::
-        $@(~ seminoun)
-      ::
-      ++  seminoun  
-        ::  partial noun; blocked subtrees are ~ 
-        ::
-        $~  [[%& ~] ~]
-        {mask/stencil data/noun}
-      ::
-      ++  stencil  
-        ::  noun knowledge map
-        ::
-        $%  ::  no; noun has partial block substructure
-            ::
-            {$| left/stencil rite/stencil}
-            ::  yes; noun is either fully complete, or fully blocked
-            ::
-            {$& blocks/(set block)}
-        == 
-      ::
-      ++  output
-        ::  nil; interpreter stopped
-        ::
-        %-  unit
-        ::  yes, complete noun; no, list of blocks
-        ::
-        (each noun (list block))
-      -- 
-  |%  
-  ++  abet
-    ::  simplify raw result
-    ::
-    |=  $:  ::  noy: raw result
-            ::
-            noy/result
-        ==
-    ^-  output
-    ::  propagate stop
-    ::
-    ?~  noy  ~
-    :-  ~
-    ::  merge all blocking sets
-    ::
-    =/  blocks  (squash mask.noy) 
-    ?:  =(~ blocks)
-      ::  no blocks, data is complete
-      ::
-      &+data.noy
-    ::  reduce block set to block list
-    ::
-    |+~(tap in blocks)
-  ::
-  ++  araw
-    ::  execute nock on partial subject
-    ::
-    |=  $:  ::  bus: subject, a partial noun
-            ::  fol: formula, a complete noun
-            ::
-            bus/seminoun
-            fol/noun
-        ==
-    ::  interpreter loop
-    ::
-    |-  ^-  result
-    ?@  fol  
-      ::  bad formula, stop
-      ::
-      ~
-    ?:  ?=(^ -.fol)  
-      ::  hed: interpret head
-      ::
-      =+  hed=$(fol -.fol)
-      ::  propagate stop
-      ::
-      ?~  hed  ~
-      ::  tal: interpret tail
-      ::
-      =+  tal=$(fol +.fol)
-      ::  propagate stop
-      ::
-      ?~  tal  ~
-      ::  combine 
-      ::
-      (combine hed tal)
-    ?+    fol  
-    ::  bad formula; stop
-    ::
-        ~
-    ::  0; fragment
-    ::
-        {$0 b/@}
-      ::  if bad axis, stop
-      ::
-      ?:  =(0 b.fol)  ~
-      ::  reduce to fragment
-      ::
-      (fragment b.fol bus)
-    ::
-    ::  1; constant
-    ::
-        {$1 b/*}
-      ::  constant is complete
-      ::
-      [&+~ b.fol]
-    ::
-    ::  2; recursion
-    ::
-        {$2 b/* c/*}
-      ::  require complete formula
-      ::
-      %+  require
-        ::  compute formula with current subject
-        ::
-        $(fol c.fol)
-      |=  ::  ryf: next formula
-          ::
-          ryf/noun
-      ::  lub: next subject
-      ::
-      =+  lub=^$(fol b.fol)
-      ::  propagate stop
-      ::
-      ?~  lub  ~
-      ::  recurse
-      ::
-      ^$(fol ryf, bus lub)
-    ::
-    ::  3; probe
-    ::
-        {$3 b/*}
-      %+  require
-        $(fol b.fol)
-      |=  ::  fig: probe input
-          ::
-          fig/noun
-      ::  yes if cell, no if atom
-      ::
-      [&+~ .?(fig)]
-    ::
-    ::  4; increment
-    ::
-        {$4 b/*}
-      %+  require
-        $(fol b.fol)
-      |=  ::  fig: increment input
-          ::
-          fig/noun
-      ::  stop for cells, increment for atoms
-      ::
-      ?^(fig ~ [&+~ +(fig)])
-    ::
-    ::  5; compare
-    ::
-        {$5 b/*}
-      %+  require
-        $(fol b.fol)
-      |=  ::  fig: operator input
-          ::
-          fig/noun
-      ::  stop for atoms, compare cells
-      ::
-      ?@(fig ~ [&+~ =(-.fig +.fig)])
-
-
-    ::
-    ::  6; if-then-else
-    ::
-        {$6 b/* c/* d/*}
-      ::  semantic expansion
-      ::
-      %+  require
-        $(fol b.fol)
-      |=  ::  fig: boolean
-          ::
-          fig/noun
-      ::  apply proper booleans
-      ::
-      ?:  =(& fig)  ^$(fol c.fol)
-      ?:  =(| fig)  ^$(fol d.fol)
-      ::  stop on bad test
-      ::
-      ~
-    ::
-    ::  7; composition
-    ::
-        {$7 b/* c/*}       
-      ::  one: input
-      ::
-      =+  one=$(fol b.fol)
-      ::  propagate stop
-      ::
-      ?~  one  ~
-      ::  complete composition
-      ::
-      $(fol c.fol, bus one)
-    ::  
-    ::  8; introduction
-    ::
-        {$8 b/* c/*}       
-      ::  one: input
-      ::
-      =+  one=$(fol b.fol)
-      ::  propagate stop
-      ::
-      ?~  one  ~
-      ::  complete introduction
-      ::
-      $(fol c.fol, bus (combine one bus))
-    ::
-    ::  9; invocation
-    ::
-        {$9 b/* c/*}       
-      ::  semantic expansion
-      ::
-      ?^  b.fol  ~
-      ::  one: core
-      ::
-      =+  one=$(fol c.fol)
-      ::  propagate stop
-      ::
-      ?~  one  ~
-      ::  complete call
-      ::
-      %+  require
-        ::  retrieve formula
-        ::
-        (fragment b.fol one)
-      ::  continue
-      ::
-      |=(noun ^$(bus one, fol +<))
-    ::
-    ::  10; static hint
-    ::
-        {$10 @ c/*}        
-      ::  ignore hint
-      ::
-      $(fol c.fol)
-    ::
-    ::  10; dynamic hint
-    ::
-        {$10 {b/* c/*} d/*}
-      ::  noy: dynamic hint
-      ::
-      =+  noy=$(fol c.fol)
-      ::  propagate stop
-      ::
-      ?~  noy  ~
-      ::  otherwise, ignore hint
-      ::
-      $(fol d.fol)
-    ==
-  ::
-  ++  apex
-    ::  execute nock on partial subject
-    ::
-    |=  $:  ::  bus: subject, a partial noun
-            ::  fol: formula, a complete noun
-            ::
-            bus/seminoun
-            fol/noun
-        ==
-    ^-  output
-    ::  simplify result
-    ::
-    (abet (araw bus fol))
-  ::
-  ++  combine
-    ::  combine a pair of seminouns
-    ::
-    |=  $:  ::  hed: head of pair
-            ::  tal: tail of pair
-            ::
-            hed/seminoun 
-            tal/seminoun
-        ==
-    ^-  seminoun
-    ?.  ?&  &(?=($& -.mask.hed) ?=($& -.mask.tal))
-            =(=(~ blocks.mask.hed) =(~ blocks.mask.tal))
-        ==
-      ::  default merge
-      ::
-      [|+[mask.hed mask.tal] [data.hed data.tal]]
-    ::  both sides total
-    ::
-    ?:  =(~ blocks.mask.hed)
-      ::  both sides are complete
-      ::
-      [&+~ data.hed data.tal]
-    ::  both sides are blocked
-    ::
-    [&+(~(uni in blocks.mask.hed) blocks.mask.tal) ~]
-  ::
-  ++  fragment
-    ::  seek to an axis in a seminoun
-    ::
-    |=  $:  ::  axe: tree address of subtree
-            ::  bus: partial noun
-            ::
-            axe/axis
-            bus/seminoun
-        ==
-    ^-  result
-    ::  1 is the root
-    ::
-    ?:  =(1 axe)  bus
-    ::  now: 2 or 3, top of axis
-    ::  lat: rest of axis
-    ::
-    =+  [now=(cap axe) lat=(mas axe)]
-    ?-  -.mask.bus
-    ::  subject is fully blocked or complete
-    ::
-      $&  ::  if fully blocked, produce self
-          ::
-          ?^  blocks.mask.bus  bus
-          ::  descending into atom, stop
-          ::
-          ?@  data.bus  ~
-          ::  descend into complete cell
-          ::
-          $(axe lat, bus [&+~ ?:(=(2 now) -.data.bus +.data.bus)])
-    ::  subject is partly blocked
-    ::
-      $|  ::  descend into partial cell
-          ::
-          %=  $
-            axe  lat
-            bus  ?:  =(2 now) 
-                   [left.mask.bus -.data.bus] 
-                 [rite.mask.bus +.data.bus]
-    ==    ==
-  ::  require complete intermediate step
-  ::
-  ++  require
-    |=  $:  noy/result
-            yen/$-(* result)
-        ==
-    ^-  result
-    ::  propagate stop
-    ::
-    ?~  noy  ~
-    ::  if partial block, squash blocks and stop
-    ::
-    ?:  ?=($| -.mask.noy)  [&+(squash mask.noy) ~]
-    ::  if full block, propagate block
-    ::
-    ?:  ?=(^ blocks.mask.noy)  [mask.noy ~]
-    ::  otherwise use complete noun
-    ::
-    (yen data.noy)
-  ::
-  ++  squash
-    ::  convert stencil to block set
-    ::
-    |=  tyn/stencil
-    ^-  (set block)
-    ?-  -.tyn
-      $&  blocks.tyn
-      $|  (~(uni in $(tyn left.tyn)) $(tyn rite.tyn))
-    ==
-  --
 ++  mook
   |=  ton/tone
   ^-  toon
@@ -6286,6 +5914,385 @@
   ==
 |%
 ::
+::::  5aa: new partial nock interpreter
+  ::
+++  musk  !.                                            ::  nock with block set
+  =>  ::  keep soft core out of models
+      +
+  =>  |%
+      ++  block  
+        ::  identity of resource awaited
+        ::  XX parameterize
+        noun
+      ::
+      ++  result  
+        ::  internal interpreter result
+        ::
+        $@(~ seminoun)
+      ::
+      ++  seminoun  
+        ::  partial noun; blocked subtrees are ~ 
+        ::
+        $~  [[%& ~] ~]
+        {mask/stencil data/noun}
+      ::
+      ++  stencil  
+        ::  noun knowledge map
+        ::
+        $%  ::  no; noun has partial block substructure
+            ::
+            {$| left/stencil rite/stencil}
+            ::  yes; noun is either fully complete, or fully blocked
+            ::
+            {$& blocks/(set block)}
+        == 
+      ::
+      ++  output
+        ::  nil; interpreter stopped
+        ::
+        %-  unit
+        ::  yes, complete noun; no, list of blocks
+        ::
+        (each noun (list block))
+      -- 
+  |%  
+  ++  abet
+    ::  simplify raw result
+    ::
+    |=  $:  ::  noy: raw result
+            ::
+            noy/result
+        ==
+    ^-  output
+    ::  propagate stop
+    ::
+    ?~  noy  ~
+    :-  ~
+    ::  merge all blocking sets
+    ::
+    =/  blocks  (squash mask.noy) 
+    ?:  =(~ blocks)
+      ::  no blocks, data is complete
+      ::
+      &+data.noy
+    ::  reduce block set to block list
+    ::
+    |+~(tap in blocks)
+  ::
+  ++  araw
+    ::  execute nock on partial subject
+    ::
+    |=  $:  ::  bus: subject, a partial noun
+            ::  fol: formula, a complete noun
+            ::
+            bus/seminoun
+            fol/noun
+        ==
+    ::  interpreter loop
+    ::
+    |-  ^-  result
+    ?@  fol  
+      ::  bad formula, stop
+      ::
+      ~
+    ?:  ?=(^ -.fol)  
+      ::  hed: interpret head
+      ::
+      =+  hed=$(fol -.fol)
+      ::  propagate stop
+      ::
+      ?~  hed  ~
+      ::  tal: interpret tail
+      ::
+      =+  tal=$(fol +.fol)
+      ::  propagate stop
+      ::
+      ?~  tal  ~
+      ::  combine 
+      ::
+      (combine hed tal)
+    ?+    fol  
+    ::  bad formula; stop
+    ::
+        ~
+    ::  0; fragment
+    ::
+        {$0 b/@}
+      ::  if bad axis, stop
+      ::
+      ?:  =(0 b.fol)  ~
+      ::  reduce to fragment
+      ::
+      (fragment b.fol bus)
+    ::
+    ::  1; constant
+    ::
+        {$1 b/*}
+      ::  constant is complete
+      ::
+      [&+~ b.fol]
+    ::
+    ::  2; recursion
+    ::
+        {$2 b/* c/*}
+      ::  require complete formula
+      ::
+      %+  require
+        ::  compute formula with current subject
+        ::
+        $(fol c.fol)
+      |=  ::  ryf: next formula
+          ::
+          ryf/noun
+      ::  lub: next subject
+      ::
+      =+  lub=^$(fol b.fol)
+      ::  propagate stop
+      ::
+      ?~  lub  ~
+      ::  recurse
+      ::
+      ^$(fol ryf, bus lub)
+    ::
+    ::  3; probe
+    ::
+        {$3 b/*}
+      %+  require
+        $(fol b.fol)
+      |=  ::  fig: probe input
+          ::
+          fig/noun
+      ::  yes if cell, no if atom
+      ::
+      [&+~ .?(fig)]
+    ::
+    ::  4; increment
+    ::
+        {$4 b/*}
+      %+  require
+        $(fol b.fol)
+      |=  ::  fig: increment input
+          ::
+          fig/noun
+      ::  stop for cells, increment for atoms
+      ::
+      ?^(fig ~ [&+~ +(fig)])
+    ::
+    ::  5; compare
+    ::
+        {$5 b/*}
+      %+  require
+        $(fol b.fol)
+      |=  ::  fig: operator input
+          ::
+          fig/noun
+      ::  stop for atoms, compare cells
+      ::
+      ?@(fig ~ [&+~ =(-.fig +.fig)])
+    ::
+    ::  6; if-then-else
+    ::
+        {$6 b/* c/* d/*}
+      ::  semantic expansion
+      ::
+      %+  require
+        $(fol b.fol)
+      |=  ::  fig: boolean
+          ::
+          fig/noun
+      ::  apply proper booleans
+      ::
+      ?:  =(& fig)  ^$(fol c.fol)
+      ?:  =(| fig)  ^$(fol d.fol)
+      ::  stop on bad test
+      ::
+      ~
+    ::
+    ::  7; composition
+    ::
+        {$7 b/* c/*}       
+      ::  one: input
+      ::
+      =+  one=$(fol b.fol)
+      ::  propagate stop
+      ::
+      ?~  one  ~
+      ::  complete composition
+      ::
+      $(fol c.fol, bus one)
+    ::  
+    ::  8; introduction
+    ::
+        {$8 b/* c/*}       
+      ::  one: input
+      ::
+      =+  one=$(fol b.fol)
+      ::  propagate stop
+      ::
+      ?~  one  ~
+      ::  complete introduction
+      ::
+      $(fol c.fol, bus (combine one bus))
+    ::
+    ::  9; invocation
+    ::
+        {$9 b/* c/*}       
+      ::  semantic expansion
+      ::
+      ?^  b.fol  ~
+      ::  one: core
+      ::
+      =+  one=$(fol c.fol)
+      ::  propagate stop
+      ::
+      ?~  one  ~
+      ::  complete call
+      ::
+      %+  require
+        ::  retrieve formula
+        ::
+        (fragment b.fol one)
+      ::  continue
+      ::
+      |=(noun ^$(bus one, fol +<))
+    ::
+    ::  10; static hint
+    ::
+        {$10 @ c/*}        
+      ::  ignore hint
+      ::
+      $(fol c.fol)
+    ::
+    ::  10; dynamic hint
+    ::
+        {$10 {b/* c/*} d/*}
+      ::  noy: dynamic hint
+      ::
+      =+  noy=$(fol c.fol)
+      ::  propagate stop
+      ::
+      ?~  noy  ~
+      ::  if hint is a fully computed trace
+      ::
+      ?:  &(?=($spot b.fol) ?=([[%& ~] *] noy))
+        ::  compute within trace
+        ::
+        ~_((show %o +.noy) $(fol d.fol))
+      ::  else ignore hint
+      ::
+      $(fol d.fol)
+    ==
+  ::
+  ++  apex
+    ::  execute nock on partial subject
+    ::
+    |=  $:  ::  bus: subject, a partial noun
+            ::  fol: formula, a complete noun
+            ::
+            bus/seminoun
+            fol/noun
+        ==
+    ^-  output
+    ::  simplify result
+    ::
+    (abet (araw bus fol))
+  ::
+  ++  combine
+    ::  combine a pair of seminouns
+    ::
+    |=  $:  ::  hed: head of pair
+            ::  tal: tail of pair
+            ::
+            hed/seminoun 
+            tal/seminoun
+        ==
+    ^-  seminoun
+    ?.  ?&  &(?=($& -.mask.hed) ?=($& -.mask.tal))
+            =(=(~ blocks.mask.hed) =(~ blocks.mask.tal))
+        ==
+      ::  default merge
+      ::
+      [|+[mask.hed mask.tal] [data.hed data.tal]]
+    ::  both sides total
+    ::
+    ?:  =(~ blocks.mask.hed)
+      ::  both sides are complete
+      ::
+      [&+~ data.hed data.tal]
+    ::  both sides are blocked
+    ::
+    [&+(~(uni in blocks.mask.hed) blocks.mask.tal) ~]
+  ::
+  ++  fragment
+    ::  seek to an axis in a seminoun
+    ::
+    |=  $:  ::  axe: tree address of subtree
+            ::  bus: partial noun
+            ::
+            axe/axis
+            bus/seminoun
+        ==
+    ^-  result
+    ::  1 is the root
+    ::
+    ?:  =(1 axe)  bus
+    ::  now: 2 or 3, top of axis
+    ::  lat: rest of axis
+    ::
+    =+  [now=(cap axe) lat=(mas axe)]
+    ?-  -.mask.bus
+    ::  subject is fully blocked or complete
+    ::
+      $&  ::  if fully blocked, produce self
+          ::
+          ?^  blocks.mask.bus  bus
+          ::  descending into atom, stop
+          ::
+          ?@  data.bus  ~
+          ::  descend into complete cell
+          ::
+          $(axe lat, bus [&+~ ?:(=(2 now) -.data.bus +.data.bus)])
+    ::  subject is partly blocked
+    ::
+      $|  ::  descend into partial cell
+          ::
+          %=  $
+            axe  lat
+            bus  ?:  =(2 now) 
+                   [left.mask.bus -.data.bus] 
+                 [rite.mask.bus +.data.bus]
+    ==    ==
+  ::  require complete intermediate step
+  ::
+  ++  require
+    |=  $:  noy/result
+            yen/$-(* result)
+        ==
+    ^-  result
+    ::  propagate stop
+    ::
+    ?~  noy  ~
+    ::  if partial block, squash blocks and stop
+    ::
+    ?:  ?=($| -.mask.noy)  [&+(squash mask.noy) ~]
+    ::  if full block, propagate block
+    ::
+    ?:  ?=(^ blocks.mask.noy)  [mask.noy ~]
+    ::  otherwise use complete noun
+    ::
+    (yen data.noy)
+  ::
+  ++  squash
+    ::  convert stencil to block set
+    ::
+    |=  tyn/stencil
+    ^-  (set block)
+    ?-  -.tyn
+      $&  blocks.tyn
+      $|  (~(uni in $(tyn left.tyn)) $(tyn rite.tyn))
+    ==
+  --
+::
 ::::  5a: compiler utilities
   ::
 ++  bool  `type`(fork [%atom %f `0] [%atom %f `1] ~)    ::  make loobean
@@ -6679,8 +6686,8 @@
       {$tupl *}  :+  %tupl
                    $(mod i.p.mod)
                  (turn t.p.mod |=(crib ^$(mod +<)))
-      {$bark *}  $(mod q.mod)
-      {$deet *}  $(mod q.mod)
+      {$bark *}  [%bark p.mod $(mod q.mod)]
+      {$deet *}  [%deet p.mod $(mod q.mod)]
       {$deft *}  [%weed p.mod]
       {$fern *}  |-  ^-  crib
                  ?~  t.p.mod  i.p.mod  
@@ -6747,7 +6754,7 @@
     ::
       :+  %tsls
         [%ktls [%bust %noun] trivial]
-      ~(normal local(dom (peg 3 dom)) [2 %&])
+      ~(relative local(dom (peg 3 dom)) [2 %&])
     ::
     ::
         {^ *}
@@ -6795,10 +6802,10 @@
     ?:  fab
       :^  %brts  ~^~
         [%base %noun]
-      ~(normal local(dom (peg 7 dom)) [6 %&])
+      ~(relative local(dom (peg 7 dom)) [6 %&])
     :^  %brcl  ~^~
       [%ktls [%bust %noun] trivial]
-    ~(normal local(dom (peg 7 dom)) [6 %&])
+    ~(relative local(dom (peg 7 dom)) [6 %&])
   ::
   ++  local
     ::  normalize a fragment of the subject
@@ -6875,7 +6882,7 @@
       ^-  hoon
       ::  if no other choices, construct head
       ::
-      ?~  rep  normal:clear(mod one)
+      ?~  rep  relative:clear(mod one)
       ::  fin: loop completion
       ::
       =/  fin/hoon  $(one i.rep, rep t.rep)
@@ -6889,7 +6896,7 @@
       :+  %tsls
         ::  build the fragment with the first option
         ::
-        normal:clear(mod one)
+        relative:clear(mod one)
       ::  build test
       ::
       :^    %wtcl
@@ -6915,7 +6922,7 @@
       |-  ^-  hoon
       ::  if no other choices, construct head
       ::
-      ?~  rep  normal(mod `crib`one) 
+      ?~  rep  relative(mod `crib`one) 
       ::  fin: loop completion
       ::
       =/  fin/hoon  $(one i.rep, rep t.rep)
@@ -6928,15 +6935,15 @@
         ::  if so, use this form
         ::
         :-  [%rock p.p.one q.p.one]
-        normal(mod q.one, top &, axe (peg axe 3))
+        relative(mod q.one, top &, axe (peg axe 3))
       ::  continue in the loop
       ::
       fin
     ::
-    ++  normal
+    ++  relative
       ::  local constructor
       ::
-      ::  ~&  [%normal axe mod]
+      ::  ~&  [%relative axe mod]
       ~+
       ^-  hoon
       ::  tow: width of ideal tuple
@@ -6948,7 +6955,7 @@
           {$vine *}  2
           {$tupl *}  +((lent t.p.mod))
         ==
-      ::  =-  ~?  =(3 tow)  [%normal-three foo] foo
+      ::  =-  ~?  =(3 tow)  [%relative-three foo] foo
       ::  ^=  foo
       ::  joy: tuple test (~ fails, [~ ~] succeeds, [~ ~ ~] needs test)
       :: 
@@ -7010,8 +7017,8 @@
       ::
           {^ *}
         %-  decorate
-        :-  normal:clear(mod -.mod, top -.top, axe (peg axe 2))
-        normal:clear(mod +.mod, top +.top, axe (peg axe 3))
+        :-  relative:clear(mod -.mod, top -.top, axe (peg axe 2))
+        relative:clear(mod +.mod, top +.top, axe (peg axe 3))
       ::
       ::  base
       ::
@@ -7021,17 +7028,17 @@
       ::  name, $=
       ::
           {$bark *}
-        [%ktts p.mod normal(mod q.mod)]
+        [%ktts p.mod relative(mod q.mod)]
       ::
       ::  debug
       ::
           {$deet *}
-        normal(mod q.mod, bug [p.mod bug])
+        relative(mod q.mod, bug [p.mod bug])
       ::
       ::  default
       ::
           {$deft *}
-        normal(mod q.mod, def `p.mod)
+        relative(mod q.mod, def `p.mod)
       ::
       ::  choice, $?
       ::
@@ -7045,7 +7052,7 @@
         =+  cys=~(boil ap p.mod)
         ?:  ?=($herb -.cys)
           [%cnhp (home p.mod) fetch ~]
-        normal(mod cys)
+        relative(mod cys)
       ::
       ::  tuple, $:
       ::
@@ -7053,9 +7060,9 @@
         %-  decorate
         |-  ^-  hoon
         ?~  t.p.mod
-          normal:clear(mod i.p.mod)
-        :-  normal:clear(mod i.p.mod, top -.top, axe (peg axe 2))
-        %=  normal
+          relative:clear(mod i.p.mod)
+        :-  relative:clear(mod i.p.mod, top -.top, axe (peg axe 2))
+        %=  relative
           i.p.mod  i.t.p.mod
           t.p.mod  t.t.p.mod
           top      +.top 
@@ -7075,7 +7082,7 @@
       ::  documentation
       ::
           {$plow *}
-        normal(doc [p.mod doc], mod q.mod)
+        relative(doc [p.mod doc], mod q.mod)
       ::
       ::  function
       ::
@@ -7092,12 +7099,12 @@
         %-  decorate
         ?@  top
           ?:  =(%| top)
-            normal:clear(mod p.mod)
+            relative:clear(mod p.mod)
           :^    %wtpt
               fetch-wing
-            normal:clear(top %|, mod p.mod)
-          normal:clear(top [%& %&], mod q.mod)
-        normal:clear(mod q.mod)
+            relative:clear(top %|, mod p.mod)
+          relative:clear(top [%& %&], mod q.mod)
+        relative:clear(mod q.mod)
       ::
       ::  bridge, $^
       ::
@@ -7105,8 +7112,8 @@
         %-  decorate
         :^    %wtpt
             fetch-wing(axe (peg axe 2))
-          normal:clear(top [%| %&], mod q.mod) 
-        normal:clear(top [[%& %&] %&], mod p.mod)
+          relative:clear(top [%| %&], mod q.mod) 
+        relative:clear(top [[%& %&] %&], mod p.mod)
       ::
       ::  weed, $_
       ::
