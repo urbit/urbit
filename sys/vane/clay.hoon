@@ -818,6 +818,21 @@
     ?~  new  (~(del by pes) pax)
     (~(put by pes) pax u.new)
   ::
+  ::  Remove a group from all rules.
+  ::
+  ++  forget-crew
+    |=  nom/@ta
+    %=  +>
+      per  (forget-crew-in nom per)
+      pew  (forget-crew-in nom pew)
+    ==
+  ::
+  ++  forget-crew-in
+    |=  {nom/@ta rus/(map path rule)}
+    %-  ~(run by rus)
+    |=  r/rule
+    r(who (~(del in who.r) |+nom))
+  ::
   ::  Cancel a request.
   ::
   ::  For local requests, we just remove it from `qyx`.  For foreign requests,
@@ -3581,7 +3596,10 @@
     |-
     ?~  des  [[[hen %give %mack ~] mos] ..^^$]
     =+  den=((de now hen ruf) [. .]:our.req i.des)
-    =^  mor  ruf  abet:wake:den
+    =^  mor  ruf
+      =<  abet:wake
+      ?:  ?=(^ cew.req)  den
+      (forget-crew:den nom.req)
     $(des t.des, mos (weld mos mor))
   ::
       $crew
