@@ -1,4 +1,4 @@
-::                                                      ::  ::    
+::                                                      ::  ::
 ::::  /hoon/dojo/app                                    ::  ::::
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
@@ -57,7 +57,8 @@
           q/dojo-build                                  ::  general build
       ==                                                ::
     ++  dojo-build                                      ::  one arvo step
-      $%  {$ur p/(unit knot) q/purl:eyre}              ::  http GET request
+      $~  [%ex *hoon]
+      $%  {$ur p/(unit knot) q/purl:eyre}               ::  http GET request
           {$ge p/dojo-model}                            ::  generator
           {$dv p/path}                                  ::  core from source
           {$ex p/hoon}                                  ::  hoon expression
