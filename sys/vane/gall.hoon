@@ -1227,6 +1227,7 @@
         $conf  `%g
         $cred  `%c
         $crew  `%c
+        $crow  `%c
         $deal  `%g
         $exec  `%f
         $flog  `%d
