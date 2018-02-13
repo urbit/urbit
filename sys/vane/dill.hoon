@@ -80,6 +80,7 @@
   $%  {$mere p/(each (set path) (pair term tang))}      ::
       {$note p/@tD q/tank}                              ::
       {$writ p/riot:clay}                               ::
+      {$mack p/(unit tang)}                             ::
   ==                                                    ::
 ++  sign-dill                                           ::
   $%  {$blit p/(list blit)}                             ::
@@ -281,6 +282,7 @@
                   (sync %home our %base)
                 (init-sync %home our %base)
         =.  +>  ?.  ?=(?($duke $king $czar) can)  +>
+                ::  make kids desk publicly readable, so syncs work.
                 (show %kids):(sync %kids our %base)
         =.  +>  autoload
         =.  +>  peer
@@ -407,6 +409,10 @@
         ::
             {$c $writ *}
           init
+        ::
+            {$c $mack *}
+          ?~  p.sih  +>.$
+          (mean >%dill-clay-nack< u.p.sih)
         ::
             {$d $blit *}
           (done +.sih)
