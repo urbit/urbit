@@ -1,9 +1,12 @@
-{ crossenv, expat, curses }:
+# Note: This package has only been tested on Windows, and the pdcurses library
+# it uses does not support Linux in console mode or mac OS X.
 
 # Note: GDB has a bundled copy of readline that it uses.
 # There is a --with-system-readline option we could try to use.
 
 # Note: consider providing a mingw-w64 isl to gdb because its configure script looks for it
+
+{ crossenv, expat, curses }:
 
 crossenv.make_derivation rec {
   name = "gdb-${version}";
