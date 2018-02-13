@@ -1,9 +1,12 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:
 ^%
 =>  +7
 ~>  %slog.[0 leaf+"%arvo-assembly"]
+=-  ~>  %slog.[0 leaf+"%arvo-assembled"]
+    -
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -50,7 +53,8 @@
   ==                                                    ::
 ++  mark  @tas                                          ::  content type
 ++  mash  |=(* (mass +<))                               ::  producing mass
-++  mass  (pair cord (each noun (list mash)))           ::  memory usage  
+++  mass  $~  [%$ [%& ~]]                               ::  memory usage  
+          (pair cord (each noun (list mash)))           ::
 ++  mill  (each vase milt)                              ::  vase+metavase
 ++  milt  {p/* q/*}                                     ::  metavase
 ++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
@@ -335,11 +339,11 @@
 ++  viol                                                ::  vane tools
   |=  but/type
   ^-  vile
-  =+  pal=|=(a/@t ^-(type (~(play ut but) (vice a))))
-  :*  typ=(pal '*type')
-      duc=(pal '*duct')
-      pah=(pal '*path')
-      mev=(pal '*{$meta $vase}')
+  =+  pal=|=(a/@t ^-(type (~(play ut but) [%ktcn (vice a)])))
+  :*  typ=(pal '$:type')
+      duc=(pal '$:duct')
+      pah=(pal '$:path')
+      mev=(pal '$:{$meta $vase}')
   ==
 ::
 ++  is                                                  ::  operate in time
