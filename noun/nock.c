@@ -514,44 +514,48 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 #define FLAS 14
 #define FLAG 15
 #define FLAB 16
-#define LITB 17
-#define LITS 18
-#define LITN 19
-#define LILB 20
-#define LILS 21
-#define LILN 22
-#define NOLK 23
-#define NOCT 24
-#define NOCK 25
-#define DEEP 26
-#define BUMP 27
-#define SAME 28
-#define SALM 29
-#define SKIP 30
-#define SBIP 31
-#define SKIN 32
-#define SBIN 33
-#define SNOC 34
-#define SNOL 35
-#define KICB 36
-#define KICS 37
-#define KICK 38
-#define TICB 39
-#define TICS 40
-#define TICK 41
-#define WILS 42
-#define WISH 43
-#define CUSH 44
-#define DROP 45
-#define HECK 46
-#define SLOG 47
-#define FALT 48
-#define FAST 49
-#define SKIB 50
-#define SKIM 51
-#define SLIB 52
-#define SLIM 53
-#define SAVE 54
+#define LIT0 17
+#define LIT1 18
+#define LITB 19
+#define LITS 20
+#define LITN 21
+#define LIL0 22
+#define LIL1 23
+#define LILB 24
+#define LILS 25
+#define LILN 26
+#define NOLK 27
+#define NOCT 28
+#define NOCK 29
+#define DEEP 30
+#define BUMP 31
+#define SAME 32
+#define SALM 33
+#define SKIP 34
+#define SBIP 35
+#define SKIN 36
+#define SBIN 37
+#define SNOC 38
+#define SNOL 39
+#define KICB 40
+#define KICS 41
+#define KICK 42
+#define TICB 43
+#define TICS 44
+#define TICK 45
+#define WILS 46
+#define WISH 47
+#define CUSH 48
+#define DROP 49
+#define HECK 50
+#define SLOG 51
+#define FALT 52
+#define FAST 53
+#define SKIB 54
+#define SKIM 55
+#define SLIB 56
+#define SLIM 57
+#define SAVE 58
 
 /* _n_apen(): emit the instructions contained in src to dst
  */
@@ -750,10 +754,20 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       break;
 
     case 1:
-      op_y = (c3y == los_o)
-           ? (arg <= 0xFF ? LILB : arg <= 0xFFFF ? LILS : LILN)
-           : (arg <= 0xFF ? LITB : arg <= 0xFFFF ? LITS : LITN);
-      tot_s += _n_emit(ops, u3nc(op_y, u3k(arg)));
+      switch ( arg ) {
+        case 0:
+          tot_s += _n_emit(ops, (c3y == los_o) ? LIL0 : LIT0);
+          break;
+        case 1:
+          tot_s += _n_emit(ops, (c3y == los_o) ? LIL1 : LIT1);
+          break;
+        default:
+          op_y = (c3y == los_o)
+               ? (arg <= 0xFF ? LILB : arg <= 0xFFFF ? LILS : LILN)
+               : (arg <= 0xFF ? LITB : arg <= 0xFFFF ? LITS : LITN);
+          tot_s += _n_emit(ops, u3nc(op_y, u3k(arg)));
+          break;
+      }
       break;
 
     case 2:
@@ -1114,7 +1128,9 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
     &&do_tail, &&do_tall,
     &&do_fras, &&do_frag, &&do_frab,
     &&do_flas, &&do_flag, &&do_flab,
+    &&do_lit0, &&do_lit1,
     &&do_litb, &&do_lits, &&do_litn,
+    &&do_lil0, &&do_lil1,
     &&do_lilb, &&do_lils, &&do_liln,
     &&do_nolk, &&do_noct, &&do_nock,
     &&do_deep, &&do_bump,
@@ -1246,6 +1262,18 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       u3z(o);
       BURN();
 
+    do_lil0:
+      _n_toss(mov, off);
+    do_lit0:
+      x = 0;
+      goto quot_in;
+
+    do_lil1:
+      _n_toss(mov, off);
+    do_lit1:
+      x = 1;
+      goto quot_in;
+
     do_lils:
       _n_toss(mov, off);
     do_lits:
@@ -1255,7 +1283,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
     do_liln:
       _n_toss(mov, off);
     do_litn:
-      x = _n_rean(pog, &ip_s);
+      x = u3k(_n_rean(pog, &ip_s));
       goto quot_in;
 
     do_lilb:
@@ -1263,7 +1291,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
     do_litb:
       x = pog[ip_s++];
     quot_in:
-      _n_push(mov, off, u3k(x));
+      _n_push(mov, off, x);
       BURN();
 
     do_noct:                // [fol old bus]
@@ -1553,7 +1581,9 @@ _n_print_byc(c3_y* pog)
     "tail", "tall",
     "fras", "frag", "frab",
     "flas", "flag", "flab",
+    "lit0", "lit1",
     "litb", "lits", "litn",
+    "lil0", "lil1",
     "lilb", "lils", "liln",
     "nolk", "noct", "nock",
     "deep", "bump",
