@@ -1,3 +1,6 @@
+# Note: This has only been tested on Windows, and is using pdcurses
+# which only seems to work on Windows.
+
 { crossenv, curses }:
 
 let

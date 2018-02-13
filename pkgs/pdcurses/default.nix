@@ -1,3 +1,5 @@
+# Note: This only seems to work on Windows.
+
 { crossenv }:
 
 let
