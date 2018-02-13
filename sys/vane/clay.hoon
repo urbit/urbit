@@ -2445,12 +2445,11 @@
       |=  {who/ship pax/path pes/regs}
       ^-  ?
       =+  rul=rul:(read-p-in pax pes)
-      =-  =(0 -)
-      %+  mix  ?=($black mod.rul)
+      =-  ?:(?=($black mod.rul) !- -)
       %-  ~(rep in who.rul)
-      |=  {w/whom h/?}
+      |=  {w/whom h/_|}
       ?:  h  &
-      ?:  ?=($& -.w)  =(w &+who)
+      ?:  ?=($& -.w)  =(p.w who)
       (~(has in (fall (~(get by cez) p.w) ~)) who)
     ::
     ::  Checks for existence of a node at an aeon.
