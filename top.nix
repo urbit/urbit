@@ -55,7 +55,9 @@ rec {
   );
   filter = builtins.filterSource filter_func;
 
-  # bundle is a function that can take a set of derivations
+  # bundle is a function that takes a set of derivations and makes a
+  # derivation for a bundle that has symbolic links in it to each of
+  # the input derivations.
   bundle = drvs: native.make_derivation rec {
     name = "bundle";
     builder = ./bundle_builder.sh;
