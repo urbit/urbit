@@ -1,0 +1,45 @@
+define all = win32, win64, linux32, linux64, linux-rpi, mac
+define windows = win32, win64
+define linux = linux32, linux64, linux-rpi
+
+{$windows}.angle{,examples}
+{$all}.at-spi2-headers
+{$all}.dejavu-fonts
+{$windows}.devcon
+{$all}.expat
+{$all}.fixesproto
+{$windows}.gdb
+{$all}.hello
+{$all}.hello_cpp
+{$all}.inputproto
+{$all}.kbproto
+{$linux}.libudev
+{$all}.libusbp{,examples}
+{$all}.libx11
+{$all}.libxall
+{$all}.libxau
+{$all}.libxcb{,examples}
+{$all}.libxext
+{$all}.libxfixes
+{$all}.libxi
+{$all}.open-zwave{,examples}
+{$all}.pavr2
+{$windows}.pdcurses{,examples}
+{$all}.p-load
+{$all}.qt{,examples}
+{$windows}.readline
+{$all}.tic
+{$windows}.usbview
+{$all}.xcb-proto
+{$all}.xcb-util
+{$all}.xcb-util-image
+{$all}.xcb-util-keysyms
+{$all}.xcb-util-renderutil
+{$all}.xcb-util-wm
+{$all}.xextproto
+{$all}.xorg-macros
+{$all}.xproto
+{$all}.xtrans
+{$all}.zlib
+
+# TODO: Test building the license_sets somehow too.
