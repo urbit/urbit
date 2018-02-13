@@ -6973,42 +6973,20 @@
           ::  width is already ideal
           ::
           boc
-        ::  mac: matching crib
-        ::
-        =/  mac
-          |-  ^-  crib
-          ?:  =(2 tow) 
-            [%axil %cell] 
-          [[%axil %noun] $(tow (dec tow))]
+        ?:  =(~ joy)
+          ::  unconditional trivial
+          ::
+          [%ktls boc trivial]
         ::  yum: matching hoon
         ::
-        =/  yum
+        =*  yum
           |-  ^-  hoon 
           ?:  =(2 tow) 
             [%bust %cell] 
           [[%bust %noun] $(tow (dec tow))]
-        ?.  fab
-          ?:  =(~ joy)
-            ::  unconditional trivial
-            ::
-            [%ktls boc trivial]
-          [%ktls boc [%wtcl [%fits yum fetch-wing] boc trivial]]
-        ::  luz: subject edited to inject default
+        ::  could be trivial
         ::
-        =/  luz/hoon  
-          :+  %cnts 
-            [[%& 1] ~] 
-          :_  ~
-          ::  correct but slow
-          ::  [fetch-wing example:clear(mod any)]  
-          [fetch-wing ?^(def u.def example:clear(mod mac))]
-        ?:  =(~ joy)      
-          ::  unconditional build
-          ::
-          [%tsgr luz boc]
-        ::  conditional build
-        ::
-        [%tsgr [%wtcl [%fits yum fetch-wing] [%$ 1] luz] boc]
+        [%ktls boc [%wtcl [%fits yum fetch-wing] boc trivial]]
       ::  idealize topography (should be a smarter merge)
       ::
       =.  top  ?:(=(1 tow) top |-(?:(=(1 tow) & [& $(tow (dec tow))])))
