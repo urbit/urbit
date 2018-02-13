@@ -133,6 +133,7 @@
 ++  coup-kiln-spam            (wrap take-coup-spam):from-kiln
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  init-helm                 |=({way/wire *} [~ +>])
+++  mack-kiln                 (wrap mack):from-kiln
 ++  made-write                (wrap made):from-write
 ++  made-kiln                 (wrap take-made):from-kiln
 ++  mere-kiln                 (wrap take-mere):from-kiln
@@ -186,6 +187,7 @@
 ++  poke-kiln-overload        (wrap poke-overload):from-kiln
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
 ++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
+++  poke-kiln-permission      (wrap poke-permission):from-kiln
 ++  poke-womb-invite          (wrap poke-invite):from-womb
 ++  poke-womb-save            (wrap poke-save):from-womb
 ++  poke-womb-obey            (wrap poke-obey):from-womb
