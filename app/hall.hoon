@@ -1931,7 +1931,7 @@
         %^  circle-wire  nom
           ~[%grams %config-l %group-l]
         [cir ran]
-      [0 %pull wir [hos.cir dap.bol] ~]
+      [ost.bol %pull wir [hos.cir dap.bol] ~]
     ::
     ++  sa-eject
       :>  removes ships {sis} from {followers}.
@@ -1996,7 +1996,7 @@
   |=  wir/wire
   ^-  move
   =+  tar=(wire-to-target wir)
-  [0 %peer wir [p.tar dap.bol] q.tar]
+  [ost.bol %peer wir [p.tar dap.bol] q.tar]
 ::
 ++  wire-to-target
   :>    ship+path from wire
@@ -2091,12 +2091,12 @@
   %+  turn  ~(tap in ~(key by stories))
   |=  n/name
   ^-  (list move)
-  :~  :^  0  %poke  /
+  :~  :^  ost.bol  %poke  /
       :+  [our.bol dap.bol]  %hall-action
       :^  %source  n  |
       [[[our.bol nom.qer] ran.qer] ~ ~]
     ::
-      :^  0  %pull
+      :^  ost.bol  %pull
         %^  circle-wire  n  ~(tap in wat.qer)
         [[our.bol nom.qer] ran.qer]
       [[our.bol dap.bol] ~]
@@ -2847,6 +2847,15 @@
         lent=(lent grams.s)
       known=k
     mismatch=m
+  ?:  =(a 'check subs')
+    ~&  'here are all incoming non-circle subs'
+    ~&  ^-  (list (pair ship path))
+        %+  murn  ~(tap by sup.bol)
+        |=  {b/bone s/ship p/path}
+        ^-  (unit (pair ship path))
+        ?:  ?=({$circle *} p)  ~
+        `[s p]
+    [~ +>]
   ?:  =(a 'rebuild')
     ~&  'rebuilding message references...'
     =-  [~ +>.$(stories -)]
@@ -2867,7 +2876,7 @@
     :_  +>
     =+  bov=(above our.bol)
     ?:  =(bov our.bol)  ~
-    :~  [0 %pull /burden [bov dap.bol] ~]
+    :~  [ost.bol %pull /burden [bov dap.bol] ~]
         (wire-to-peer /burden)
     ==
   ?:  =(a 'incoming')
@@ -2882,5 +2891,10 @@
         |=  {n/name s/story}
         [n src.shape.s]
     [~ +>]
+  ?:  =(`0 (find "re-listen " (trip a)))
+    ~&  're-listening'
+    :_  +>
+    :_  ~
+    (wire-to-peer /report/(crip (slag 10 (trip a))))
   [~ +>]
 --
