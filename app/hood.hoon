@@ -17,6 +17,7 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 !:
+^%
 |%
 ++  hood-module
   ::  each hood module follows this general shape

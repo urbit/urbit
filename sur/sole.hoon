@@ -1,6 +1,7 @@
 ::
 ::::  /hoon/sole/sur
   ::
+^%
 =>  |%
 ++  sole-action                                         ::  sole to app
   $%  ::  {$abo ~}                                      ::  reset interaction

@@ -541,7 +541,7 @@
         {$sav p/path q/@}                               ::  save to file
         {$url p/@t}                                     ::  activate url
     ==                                                  ::
-  ++  deco  ?($~ $bl $br $un)                           ::  text decoration
+  ++  deco  ?($bl $br $un $~)                           ::  text decoration
   ++  dill-belt                                         ::  new belt
     $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
         {$bac $~}                                       ::  true backspace
@@ -585,7 +585,7 @@
     (pair (unit tint) (unit tint))                      ::
   ::                                                    ::
   ++  styx  (list $@(@t (pair styl styx)))              ::  styled text
-  ++  tint  ?($~ $r $g $b $c $m $y $k $w)               ::  text color
+  ++  tint  ?($r $g $b $c $m $y $k $w $~)               ::  text color
   --  ::dill
 ::                                                      ::::
 ::::                    ++eyre                            ::  (1e) oldweb
