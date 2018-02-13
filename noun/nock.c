@@ -537,25 +537,27 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 #define SBIN 37
 #define SNOC 38
 #define SNOL 39
-#define KICB 40
-#define KICS 41
-#define KICK 42
-#define TICB 43
-#define TICS 44
-#define TICK 45
-#define WILS 46
-#define WISH 47
-#define CUSH 48
-#define DROP 49
-#define HECK 50
-#define SLOG 51
-#define FALT 52
-#define FAST 53
-#define SKIB 54
-#define SKIM 55
-#define SLIB 56
-#define SLIM 57
-#define SAVE 58
+#define SLAM 40
+#define KICB 41
+#define KICS 42
+#define KICK 43
+#define SLAT 44
+#define TICB 45
+#define TICS 46
+#define TICK 47
+#define WILS 48
+#define WISH 49
+#define CUSH 50
+#define DROP 51
+#define HECK 52
+#define SLOG 53
+#define FALT 54
+#define FAST 55
+#define SKIB 56
+#define SKIM 57
+#define SLIB 58
+#define SLIM 59
+#define SAVE 60
 
 /* _n_apen(): emit the instructions contained in src to dst
  */
@@ -839,11 +841,16 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
         u3z(mac);
       }
       else {
-        op_y = (c3y == tel_o) 
-             ? (hed <= 0xFF ? TICB : hed <= 0xFFFF ? TICS : TICK)
-             : (hed <= 0xFF ? KICB : hed <= 0xFFFF ? KICS : KICK);
         tot_s += _n_comp(ops, tel, (c3y == tel_o ? c3y : los_o), c3n);
-        tot_s += _n_emit(ops, u3nc(op_y, u3k(hed)));
+        if ( 2 == hed ) {
+          tot_s += _n_emit(ops, (c3y == tel_o) ? SLAT : SLAM);
+        }
+        else {
+          op_y = (c3y == tel_o) 
+               ? (hed <= 0xFF ? TICB : hed <= 0xFFFF ? TICS : TICK)
+               : (hed <= 0xFF ? KICB : hed <= 0xFFFF ? KICS : KICK);
+          tot_s += _n_emit(ops, u3nc(op_y, u3k(hed)));
+        }
       }
       break;
 
@@ -1138,8 +1145,8 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
     &&do_skip, &&do_sbip,
     &&do_skin, &&do_sbin,
     &&do_snoc, &&do_snol,
-    &&do_kicb, &&do_kics, &&do_kick,
-    &&do_ticb, &&do_tics, &&do_tick,
+    &&do_slam, &&do_kicb, &&do_kics, &&do_kick,
+    &&do_slat, &&do_ticb, &&do_tics, &&do_tick,
     &&do_wils, &&do_wish,
     &&do_cush, &&do_drop,
     &&do_heck, &&do_slog,
@@ -1397,7 +1404,10 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       goto kick_in;
 
     do_kicb:
-      x    = pog[ip_s++];
+      x = pog[ip_s++];
+      goto kick_in;
+    do_slam:
+      x = 2;
     kick_in:
       top  = _n_peek(off);
       o    = *top;
@@ -1428,7 +1438,11 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       goto tick_in;
 
     do_ticb:
-      x    = pog[ip_s++];
+      x = pog[ip_s++];
+      goto tick_in;
+
+    do_slat:
+      x = 2;
     tick_in:
       top  = _n_peek(off);
       o    = *top;
@@ -1591,8 +1605,8 @@ _n_print_byc(c3_y* pog)
     "skip", "sbip",
     "skin", "sbin",
     "snoc", "snol",
-    "kicb", "kics", "kick",
-    "ticb", "tics", "tick",
+    "slam", "kicb", "kics", "kick",
+    "slat", "ticb", "tics", "tick",
     "wils", "wish",
     "cush", "drop",
     "heck", "slog",
