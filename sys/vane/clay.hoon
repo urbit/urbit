@@ -2412,7 +2412,7 @@
       =+  rul=(~(get by pes) pax)
       ?^  rul  [pax u.rul]
       ?~  pax  [/ %white ~]
-      $(pax t.pax)
+      $(pax (scag (dec (lent pax)) `path`pax))
     ::
     ++  may-read
       |=  {who/ship car/care yon/aeon pax/path}
