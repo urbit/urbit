@@ -2,7 +2,7 @@ define all = win32, win64, linux32, linux64, linux-rpi, mac
 define windows = win32, win64
 define linux = linux32, linux64, linux-rpi
 
-{$windows}.angle{,examples}
+{$windows}.angle{,.examples}
 {$all}.at-spi2-headers
 {$all}.dejavu-fonts
 {$windows}.devcon
@@ -14,19 +14,19 @@ define linux = linux32, linux64, linux-rpi
 {$all}.inputproto
 {$all}.kbproto
 {$linux}.libudev
-{$all}.libusbp{,examples}
+{$all}.libusbp{,.examples}
 {$all}.libx11
 {$all}.libxall
 {$all}.libxau
-{$all}.libxcb{,examples}
+{$all}.libxcb{,.examples}
 {$all}.libxext
 {$all}.libxfixes
 {$all}.libxi
-{$all}.open-zwave{,examples}
+{$all}.open-zwave{,.examples}
 {$all}.pavr2
-{$windows}.pdcurses{,examples}
+{$windows}.pdcurses{,.examples}
 {$all}.p-load
-{$all}.qt{,examples}
+{$all}.qt{,.examples}
 {$windows}.readline
 {$all}.tic
 {$windows}.usbview

@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 
+require 'open3'
 require 'pathname'
+
+class AnticipatedError < RuntimeError
+end
 
 # Don't automatically change directory because maybe people want to test one
 # nixcrpkgs repository using the test script from another one.  But do give an
@@ -24,11 +28,11 @@ def expand_brackets_core(str, depth)
   active_parts = [+'']
   while true
     if str.empty?
-      raise "Unmatched opening brace" if depth > 0
+      raise AnticipatedError, "Unmatched opening brace" if depth > 0
       break
     elsif str.start_with?('}')
       str.slice!(0)
-      raise "Unmatched closing brace" if depth == 0
+      raise AnticipatedError, "Unmatched closing brace" if depth == 0
       break
     elsif str.start_with?('{')
       # Recurse, which removes everything up to and
@@ -40,7 +44,7 @@ def expand_brackets_core(str, depth)
         options.map { |p2| p1 + p2 }
       }
     elsif str.start_with?(',')
-      raise "Comma at top level" if depth == 0
+      raise AnticipatedError, "Comma at top level" if depth == 0
       # Remove the comma, mark the parts we are working
       # on as finished, and start a new part.
       str.slice!(0)
@@ -63,10 +67,11 @@ def expand_brackets(str)
   expand_brackets_core(str.dup, 0)
 end
 
-def parse_derivation_list(str)
+def parse_derivation_list(filename)
   defs = {}
-  drvs = []
-  str.each_line.with_index do |line, n|
+  paths = []
+  File.foreach(filename).with_index do |line, line_index|
+    line_num = line_index + 1
     line.strip!
     next if line.empty?
     next if line.start_with?('#')
@@ -81,18 +86,38 @@ def parse_derivation_list(str)
     end
 
     line = substitute_definitions(defs, line)
-    drvs += expand_brackets(line)
+    paths += expand_brackets(line)
+  rescue AnticipatedError => e
+    raise AnticipatedError, "#{filename}:#{line_num}: error: #{e}"
   end
 
-  drvs.each do |drv|
-    if !drv.match?(/^[\w.-]+$/)
-      raise "Invalid characters in derivation name: #{drv}"
+  paths.each do |path|
+    if !path.match?(/^[\w.-]+$/)
+      raise "Invalid characters in path name: #{path}"
     end
   end
 
-  { defs: defs, drvs: drvs }
+  { defs: defs, paths: paths }
 end
 
-check_directory!
+def instantiate_drv(path)
+end
 
-p parse_derivation_list(File.read('test/derivations.txt'))
+def instantiate_drvs(paths)
+  cmd = 'nix-instantiate ' + paths.map { |p| "-A #{p}" }.join(' ')
+  stdout_str, stderr_str, status = Open3.capture3(cmd)
+  if !status.success?
+    $stderr.puts stderr_str
+    raise AnticipatedError, "Failed to instantiate derivations."
+  end
+
+  paths.zip(stdout_str.split).to_h
+end
+
+begin
+  check_directory!
+  settings = parse_derivation_list('test/derivations.txt')
+  p instantiate_drvs(settings.fetch(:paths))
+rescue AnticipatedError => e
+  puts e
+end
