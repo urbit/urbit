@@ -1,27 +1,51 @@
 /-  collections
-/+  rekey, old-zuse
+/+  rekey, old-zuse, colls
 /=  gas  /$  fuel:html
-/=  x  /^  (map knot topicful:collections)  /_  /collections-topic-full/  
-::  need a way to get the content
-/=  y  /^  config:collections  /%  /&collections-config&/txt/
+/=  topics  /^  (map knot topicful:collections)  /_  /collections-topic-full/  
+/=  config  /^  config:collections  /%  /&collections-config&/txt/
 |%
-++  authed
-    %+  lien
-      ~(tap in (~(get ju aut.ced.gas) %$)) 
-    |=  a/knot 
-    =((scot %p p.bem.gas) a)
+++  esoo
+  |=  d/@d
+  ^-  tape
+  =/  t  (yore d)
+  ;:  welp
+      (scag 1 (scow %ud y.t))
+      (swag [2 3] (scow %ud y.t))
+      "-"
+      (double m.t)
+      "-"
+      (double d.t.t)
+      "T"
+      (double h.t.t)
+      ":"
+      (double m.t.t)
+      ":"
+      (double s.t.t)
+      "Z"
+  ==
+:: ud to leading zero tape
+++  double
+  |=  a/@ud
+  ^-  tape
+  =/  x  (scow %ud a)
+  ?:  (lth a 10)
+    (welp "0" x)
+  x
 --
 ^-  manx
 =,  old-zuse
-;div
-  ;h1: {(trip desc.y)}
-  ;*  ?:  authed
+;div.collection-index
+  ;h1: {(trip desc.config)}
+  ;*  ?:  (authed:colls gas)
     ;=
       ;div.row
-        ;a(href "/~~/pages/nutalk/collections/post")
+        ;a(href "/~~/pages/nutalk/collection/post?coll={(trip -.s.bem.gas)}")
           ;button.btn.btn-secondary
-            Write →
+            ; Write →
           ==
+        ==
+        ;a.ml-4.mt-2.text-600(href "")
+            ; Settings →
         ==
       ==
     ==
@@ -29,23 +53,64 @@
     ;div.row
       ;a(href "")
         ;button.btn.btn-primary
-          Subscribe →
+          ; Subscribe →
         ==
       ==
     ==
   ==
   ;ul
-  ;*  %+  turn
-        %+  sort
-          ~(tap by x)
-        |=  [a=(pair knot topicful:collections) b=(pair knot topicful:collections)]
-        (gth (unt (slav %da p.a)) (unt (slav %da p.b)))
-      |=  [t=knot con=topicful:collections]
-      ;li
-        ;div
-          ;a(href "{(trip (scot %p mod.info.con))}/{(trip t)}"): {(trip t)}
-        ==
-        ;h2.mt-0: {(trip tit.info.con)}
-      ==
+    ;*  %+  turn
+          %+  sort
+            ~(tap by topics)
+          |=  [a=(pair knot topicful:collections) b=(pair knot topicful:collections)]
+          (dor:colls p.a p.b)
+        |=  [t=knot con=topicful:collections]
+        ;*  ?:  comm.config
+              ;*  ?:  xeno.config
+                ;li.forum
+                  ;div.text-mono
+                    {(trip t)}
+                  ==
+                  ;div.h3.mt-0
+                    ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}"): {(trip tit.info.con)}
+                  ==
+                  ;div.who
+                    ; {(trip (scot %p who.info.con))}
+                  ==
+                  ;div.com-count
+                    ; {(trip (scot %ud (lent ~(tap by coms.con))))} comments
+                  ==
+                ==
+              ;li.blog
+                ;div.text-mono
+                  {(trip t)}
+                ==
+                ;div.h2.mt-0
+                  ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}"): {(trip tit.info.con)}
+                ==
+                ;div.snippet
+                  {(trip (of-wain:format (scag 3 (no-title:colls wat.info.con))))}
+                ==
+              ==
+            ;li.notes
+              ;div.da(data-da "{(esoo mod.info.con)}");
+              ;div.h3.mt-0.text-mono
+                ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}"): {(trip t)}
+              ==
+              ;div.snippet
+                {(trip (of-wain:format (scag 3 (no-title:colls wat.info.con))))}
+              ==
+            ==
+        ;script:'''
+                var das = document.querySelectorAll('[data-da]');
+                for (var i=0; i < das.length; i ++) { 
+                  var urbD = das[i].dataset.da;  // UTC
+                  console.log(urbD);
+                  var t = new Date(new Date(urbD).toUTCString()); // local
+                  var clientDate = new Date(); // local
+                  document.querySelector("[data-da='" + urbD + "']").innerHTML = t - clientDate;
+                }
+                '''
   ==
+
 ==
