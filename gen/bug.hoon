@@ -7,27 +7,38 @@
 ::::
   ::
 !:
+^%
 :-  %say
 |=  *
-=,  clay
 =>  |%
-++  kant  ^%
-          $~  [%leaf ~]                                 ::
-          $%  {$leaf p/tape}                            ::  printing formats
-              $:  $palm                                 ::  backstep list
-                  p/@ud
-                  q/(list kant)                         ::
-              ==                                        ::
-              $:  $rose                                 ::  flat list
-                  p/{p/tape q/tape r/tape}              ::  mid open close
-                  q/(list kant)                         ::
-              ==                                        ::
-          ==                                            ::
+++  raip
+  |*  {a/$-(* *) b/$-(* *)} 
+  {p/a q/b}
+::
+::
+++  etre
+  |*  a/$-(* *) 
+  $@  ~ 
+  {n/a l/(etre a) r/(etre a)}
+::
+++  mapp  
+  |*  {a/$-(* *) b/$-(* *)} 
+  =+  foo=(raip a b)
+  (etre foo)
+::
+++  ankh                                                ::  expanded node
+  $~  [~ ~]
+  $:  fil/(unit {p/@uvI q/cage})                        ::  file
+      dir/(mapp @ta ankh)                                ::  folders
+  ==                                                    ::
 --
 =>  |%
     ++  de
       |=  foo/@ud
       !!
+    ++  moo
+      $:ankh
     --
 :-  %noun
+=+  foo=moo
 "hello, world"

@@ -1,7 +1,6 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-^%
 =>  +7
 ~>  %slog.[0 leaf+"%arvo-assembly"]
 =-  ~>  %slog.[0 leaf+"%arvo-assembled"]
@@ -125,7 +124,8 @@
     ^=  res  %-  mule  |.
     =+  arg=[~2000.1.1 0 =>(~ |~(* ~))]
     =+  rig=(slym q.sew arg)
-    =+  rev=(slym (slap bud (rain pax txt)) bud)
+    =+  gen=(rain pax txt)
+    =+  rev=(slym (slap bud gen) bud)
     =+  syg=(slym rev arg)
     ~|  %load-lost
     +>.^$(q.sew (slam (slap syg [%limb %load]) (slap rig [%limb %stay])))
@@ -333,7 +333,9 @@
   |=  {lal/@tas vil/vile bud/vase pax/path txt/@ta}     ::
   =-  ?:(?=($| -.res) ((slog p.res) ~) (some p.res))
   ^=  res  %-  mule  |.
-  (vent lal vil bud *worm (slym (slap bud (rain pax txt)) bud))
+  =+  gen=(rain pax txt)
+  ~&  [%vane-compiled `@p`(mug gen)]
+  (vent lal vil bud *worm (slym (slap bud gen) bud))
 ::
 ++  viol                                                ::  vane tools
   |=  but/type

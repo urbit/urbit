@@ -6,7 +6,6 @@
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-^%
 ~%  %k.143  ~  ~                                        ::
 |%
 ++  hoon-version  +
@@ -5614,7 +5613,8 @@
           $%  {$& p/(unit term) q/wing}                 ::  simple wing
               {$| p/(unit term) q/hoon}                 ::  named wing
           ==                                            ::
-++  crib  $^  {p/crib q/crib}                           ::  ordered pair
+++  crib                                                ::  data structure
+          $^  {p/crib q/crib}                           ::  ordered pair
           $%  {$axil p/base}                            ::  base type
               {$bark p/toga q/crib}                     ::  name
               {$funk p/crib q/crib}                     ::  function type
@@ -6668,6 +6668,59 @@
       ::  should not actually be a thing
       ::
       [%zpzp ~] 
+    ==
+  ::
+  ++  ripple
+    ::  build default sample
+    ::
+    ^-  hoon
+    ::  typeless for now
+    ::
+    :+  %ktls
+      [%bust %noun] 
+    ::  use home as subject
+    ::
+    %-  home
+    ::  if default is set, use it
+    ::
+    ?^  def  u.def
+    ::  else map structure to expression
+    ::
+    ~+
+    |-  ^-  hoon
+    ?-  mod
+      {^ *}      [$(mod p.mod) $(mod q.mod)]
+      {$axil *}  (basal p.mod)
+      {$bark *}  [%ktts p.mod $(mod q.mod)]
+      {$deet *}  [%dbug p.mod $(mod q.mod)]
+      {$deft *}  p.mod
+      {$fern *}  ::  use last entry
+                 ::
+                 |-  ^-  hoon
+                 ?~  t.p.mod  ^$(mod i.p.mod)
+                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
+      {$funk *}  ::  build trivial gate
+                 :: 
+                :+  %tsgr
+                  [$(mod p.mod) $(mod q.mod)]
+                 [%ktbr [%brcl [~ ~] [%$ 2] [%$ 15]]]
+      {$herb *}  ::  borrow sample
+                 ::
+                 [%tsgl [%$ 6] p.mod]
+      {$kelp *}  ::  use last entry
+                 ::
+                 |-  ^-  hoon
+                 ?~  t.p.mod  ^$(mod i.p.mod)
+                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
+      {$leaf *}  [%rock p.mod q.mod]
+      {$plow *}  $(mod q.mod)
+      {$reed *}  $(mod p.mod)
+      {$tupl *}  |-  ^-  hoon
+                 ?~  t.p.mod  ^$(mod i.p.mod) 
+                 :-  ^$(mod i.p.mod) 
+                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
+      {$vine *}  $(mod q.mod)
+      {$weed *}  p.mod
     ==
   ::
   ++  trivial

@@ -3,7 +3,6 @@
   ::                                                    ::  ::
 /?    310                                               ::  version
 /+    hall, old-phon
-^%
 =,  wired
 =,  title
 ::                                                      ::  ::

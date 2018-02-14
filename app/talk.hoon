@@ -16,8 +16,6 @@
 /-    hall, sole                                        ::  structures
 /+    hall, sole                                        ::  libraries
 /=    seed  /~  !>(.)
-!:
-^%
 ::
 ::::
   ::

@@ -4,7 +4,6 @@
 /?  309                                                 ::  arvo kelvin
 /-  sole, lens                                          ::  console structures
 /+  sole                                                ::  console library
-^%
 =,  sole
 =,  space:userlib
 =,  format

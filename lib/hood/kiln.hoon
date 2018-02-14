@@ -5,7 +5,6 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-^%
 =,  clay
 =,  space:userlib
 =,  format

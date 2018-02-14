@@ -4,7 +4,6 @@
 /?    310                                               ::  version
 /-    sole, hall
 /+    sole
-^%
 =,    ^sole
 ::                                                      ::  ::
 ::::                                                    ::  ::

@@ -4,7 +4,6 @@
   ::
 /?    310
 /-    plan-diff, plan-acct
-^%
 =,  format
 =*  as-octs  as-octs:mimes:html
 =,  space:userlib
