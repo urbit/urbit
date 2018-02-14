@@ -439,6 +439,7 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
   u3t_off(noc_o);
 
   return pro;
+  //return u3n_burn_on(bus, fol);
 }
 
 /* u3n_kick_on(): fire `gat` without changing the sample.
@@ -694,10 +695,10 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         tot_s += _n_emit(ops, TOSS);
 
         // SKIM leaves [bus key] on the stack in the unmemoized case
-        mem_s += _n_comp(&mem, nef, c3n, c3n);
+        mem_s += _n_comp(&mem, nef, los_o, c3n);
 
         // now [pro key bus?], where bus was left on if appropropriate
-        mem_s += _n_emit(ops, SAVE);
+        mem_s += _n_emit(&mem, SAVE);
 
         op_y = (c3y == los_o)
              ? (( mem_s <= 0xFF ) ? SLIB : SLIM)
@@ -822,10 +823,10 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       }
       if ( hec_t && tec_t ) {
         if ( c3y == u3r_sing(u3t(hed), u3t(tel)) ) {
-          _n_emit(ops, (c3y == los_o) ? LIL0 : LIT0);
+          tot_s += _n_emit(ops, (c3y == los_o) ? LIL0 : LIT0);
         }
         else {
-          _n_emit(ops, (c3y == los_o) ? LIL1 : LIT1);
+          tot_s += _n_emit(ops, (c3y == los_o) ? LIL1 : LIT1);
         }
       }
       else if ( !hec_t && !tec_t ) {
@@ -926,6 +927,38 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
 }
 
 static void _n_print_byc(c3_y* pog);
+
+// match to OPCODE TABLE
+static char* names[] = {
+  "halt", "bail",
+  "copy", "swap", "toss",
+  "auto", "ault",
+  "head", "held",
+  "tail", "tall",
+  "fras", "frag", "frab",
+  "flas", "flag", "flab",
+  "lit0", "lit1",
+  "litb", "lits", "litn",
+  "lil0", "lil1",
+  "lilb", "lils", "liln",
+  "nolk", "noct", "nock",
+  "deep", "bump",
+  "sam0", "sam1",
+  "samb", "sams", "samn",
+  "same", "salm",
+  "skip", "sbip",
+  "skin", "sbin",
+  "snoc", "snol",
+  "slam", "kicb", "kics", "kick",
+  "slat", "ticb", "tics", "tick",
+  "wils", "wish",
+  "cush", "drop",
+  "heck", "slog",
+  "falt", "fast",
+  "skib", "skim",
+  "slib", "slim",
+  "save"
+};
 
 /* _n_asm(): assemble an accumulated list of instructions (i.e. from _n_comp)
  */
@@ -1121,7 +1154,7 @@ _n_bite(u3_noun fol)
   u3_noun bok = u3_nul;
   c3_s len_s  = _n_comp(&bok, fol, c3y, c3y);
   c3_y* buf_y = _n_asm(bok, len_s);
-  u3m_p("fol", fol);
+  //u3m_p("fol", fol);
   _n_print_byc(buf_y);
   return buf_y;
 }
@@ -1325,16 +1358,16 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       u3z(o);
       BURN();
 
-    do_lil0:
-      _n_toss(mov, off);
-    do_lit0:
-      x = 0;
-      goto quot_in;
-
     do_lil1:
       _n_toss(mov, off);
     do_lit1:
       x = 1;
+      goto quot_in;
+
+    do_lilb:
+      _n_toss(mov, off);
+    do_litb:
+      x = pog[ip_s++];
       goto quot_in;
 
     do_lils:
@@ -1349,10 +1382,10 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       x = u3k(_n_rean(pog, &ip_s));
       goto quot_in;
 
-    do_lilb:
+    do_lil0:
       _n_toss(mov, off);
-    do_litb:
-      x = pog[ip_s++];
+    do_lit0:
+      x = 0;
     quot_in:
       _n_push(mov, off, x);
       BURN();
@@ -1666,37 +1699,6 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 static void
 _n_print_byc(c3_y* pog)
 {
-  // match to OPCODE TABLE
-  static char* names[] = {
-    "halt", "bail",
-    "copy", "swap", "toss",
-    "auto", "ault",
-    "head", "held",
-    "tail", "tall",
-    "fras", "frag", "frab",
-    "flas", "flag", "flab",
-    "lit0", "lit1",
-    "litb", "lits", "litn",
-    "lil0", "lil1",
-    "lilb", "lils", "liln",
-    "nolk", "noct", "nock",
-    "deep", "bump",
-    "sam0", "sam1",
-    "samb", "sams", "samn",
-    "same", "salm",
-    "skip", "sbip",
-    "skin", "sbin",
-    "snoc", "snol",
-    "slam", "kicb", "kics", "kick",
-    "slat", "ticb", "tics", "tick",
-    "wils", "wish",
-    "cush", "drop",
-    "heck", "slog",
-    "falt", "fast",
-    "skib", "skim",
-    "slib", "slim",
-    "save"
-  };
   c3_s ip_s = 0;
   printf("bytecode: {");
   int first = 1;
@@ -1716,6 +1718,7 @@ _n_print_byc(c3_y* pog)
       case FLAB:
       case LILB:
       case LITB:
+      case SAMB:
       case SBIP:
       case SBIN:
       case KICB:
@@ -1728,6 +1731,7 @@ _n_print_byc(c3_y* pog)
       case FLAS:
       case LILS:
       case LITS:
+      case SAMS:
       case SKIP:
       case SKIN:
       case KICS:
@@ -1741,6 +1745,7 @@ _n_print_byc(c3_y* pog)
       case FLAG:
       case LILN:
       case LITN:
+      case SAMN:
       case TICK:
       case KICK:
         printf("[%s ", names[pog[ip_s++]]);
