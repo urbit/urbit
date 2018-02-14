@@ -100,9 +100,6 @@ def parse_derivation_list(filename)
   { defs: defs, paths: paths }
 end
 
-def instantiate_drv(path)
-end
-
 def instantiate_drvs(paths)
   cmd = 'nix-instantiate ' + paths.map { |p| "-A #{p}" }.join(' ')
   stdout_str, stderr_str, status = Open3.capture3(cmd)
@@ -114,10 +111,38 @@ def instantiate_drvs(paths)
   paths.zip(stdout_str.split).to_h
 end
 
+# TODO: Try to do something better here, because the output path
+# actually exists while the derivations is getting built, or could
+# be left around if the system crashes during a build.
+def is_drv_maybe_built?(drv)
+  contents = File.read(drv)
+  md = contents.match(/"out","(\/nix\/store\/[\w.-]+)"/)
+  raise "Could not find output for #{drv}" if !md
+  out_dir = md[1]
+  File.exist?(out_dir)
+end
+
+def print_drv_stats(built_map)
+  built_count = 0
+  not_built_count = 0
+  built_map.each do |path, built|
+    if built
+      built_count += 1
+    else
+      not_built_count += 1
+    end
+  end
+
+  puts "Derivations built or building: #{built_count}"
+  puts "Derivations not built:         #{not_built_count}"
+end
+
 begin
   check_directory!
   settings = parse_derivation_list('test/derivations.txt')
-  p instantiate_drvs(settings.fetch(:paths))
+  drv_map = instantiate_drvs(settings.fetch(:paths))
+  built_map = drv_map.transform_values(&method(:is_drv_maybe_built?))
+  print_drv_stats(built_map)
 rescue AnticipatedError => e
   puts e
 end
