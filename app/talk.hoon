@@ -1180,7 +1180,11 @@
         ::
         |=  {inv/? nom/name sis/(set ship)}
         ^+  ..sh-work
-        (sh-act %permit nom inv sis)
+        =.  ..sh-work  (sh-act %permit nom inv sis)
+        =-  (sh-act %phrase - [%inv inv [self nom]]~)
+        %-  ~(rep in sis)
+        |=  {s/ship a/audience}
+        (~(put in a) [s %inbox])
       ::
       ++  filter
         |=  {nom/name cus/? utf/?}

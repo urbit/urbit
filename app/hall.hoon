@@ -1392,14 +1392,6 @@
       =/  sus/(set ship)
         %.  sis.con.shape
         ?:(add ~(dif in sis) ~(int in sis))
-      =.  +>.$
-        ::  if banishing: notify only those affected.
-        ::  if inviting: notify all targets.
-        =?  sis  !inv  sus
-        =-  (so-act [%phrase - [%inv inv so-cir]~])
-        %-  ~(rep in `(set ship)`sis)
-        |=  {s/ship a/audience}
-        (~(put in a) [s %inbox])
       ?~  sus  +>.$
       ::  if banished, remove their presences.
       =?  +>.$  !inv
