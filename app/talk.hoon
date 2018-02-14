@@ -1856,6 +1856,7 @@
         $(dif [%filter fit.cof.dif])
       ?:  ?=($remove -.dif)
         (sh-note (weld "rip " (~(cr-show cr cir) ~)))
+      ?:  ?=($usage -.dif)  +>
       %-  sh-note
       %+  weld
         (weld ~(cr-phat cr cir) ": ")
