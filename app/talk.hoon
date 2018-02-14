@@ -105,6 +105,11 @@
           {$help $~}                                    :<  print usage info
       ==                                                ::
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   :<  circle char pool '
+    ::
+    ++  old-state
+      (cork state |=(a/state a(mirrors (~(run by mirrors.a) old-config))))
+    ++  old-config
+      {src/(set source) cap/cord fit/filter con/control}
     --
 ::
 :>  #
@@ -121,11 +126,14 @@
 ++  prep
   :>  adapts state
   ::
-  |=  old/(unit state)
+  |=  old/(unit old-state)
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  [~ ..prep(+<+ u.old)]
+  =-  [~ ..prep(+<+ `state`u.old(mirrors -))]
+  %-  ~(run by mirrors.u.old)
+  |=  old-config
+  [src cap ~ fit con]
 ::
 :>  #
 :>  #  %utility

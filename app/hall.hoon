@@ -110,6 +110,13 @@
       $%  {$repeat cir/circle ses/(list serial)}        :<  messaging wire
           {$circle nom/name src/source}                 :<  subscription wire
       ==                                                ::
+    ::
+    ++  old-state
+      (cork state |=(a/state a(stories (~(run by stories.a) old-story))))
+    ++  old-story
+      (cork story |=(a/story a(shape *old-config, mirrors (~(run by mirrors.a) old-config))))
+    ++  old-config
+      {src/(set source) cap/cord fit/filter con/control}
     --
 ::
 :>  #
@@ -125,12 +132,15 @@
 ++  prep
   :>  adapts state.
   ::
-  |=  old/(unit state)
+  |=  old/(unit old-state)
   ^-  (quip move _..prep)
   ?~  old
     %-  pre-bake
     ta-done:ta-init:ta
-  [~ ..prep(+<+ u.old)]
+  =-  [~ ..prep(+<+ `state`u.old(stories -))]
+  %-  ~(run by stories.u.old)
+  |=  soy/old-story
+  (story soy(shape [src cap ~ fit con]:shape.soy))
 ::
 :>  #  %engines
 :>    main cores.
