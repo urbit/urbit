@@ -20,7 +20,6 @@
 ::  else we store it as (map path lobe).
 ::
 ++  ankh                                                ::  expanded node
-  ~>  %slog.[%0 leaf+"thanks"]
   $~  [~ ~]
   $:  fil/(unit {p/lobe q/cage})                        ::  file
       dir/(map @ta ankh)                                ::  folders

@@ -340,7 +340,7 @@
 ++  viol                                                ::  vane tools
   |=  but/type
   ^-  vile
-  =+  pal=|=(a/@t ^-(type (~(play ut but) [%ktcn (vice a)])))
+  =+  pal=|=(a/@t ^-(type (~(play ut but) (vice a))))
   :*  typ=(pal '$:type')
       duc=(pal '$:duct')
       pah=(pal '$:path')
@@ -626,6 +626,6 @@
 ::
 ++  wish                                                ::  external compute
  |=  txt/@
-  q:(slap bud [%ktcn (ream txt)])
+  q:(slap bud (ream txt))
 --
 
