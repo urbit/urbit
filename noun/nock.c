@@ -529,35 +529,40 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 #define NOCK 29
 #define DEEP 30
 #define BUMP 31
-#define SAME 32
-#define SALM 33
-#define SKIP 34
-#define SBIP 35
-#define SKIN 36
-#define SBIN 37
-#define SNOC 38
-#define SNOL 39
-#define SLAM 40
-#define KICB 41
-#define KICS 42
-#define KICK 43
-#define SLAT 44
-#define TICB 45
-#define TICS 46
-#define TICK 47
-#define WILS 48
-#define WISH 49
-#define CUSH 50
-#define DROP 51
-#define HECK 52
-#define SLOG 53
-#define FALT 54
-#define FAST 55
-#define SKIB 56
-#define SKIM 57
-#define SLIB 58
-#define SLIM 59
-#define SAVE 60
+#define SAM0 32
+#define SAM1 33
+#define SAMB 34
+#define SAMS 35
+#define SAMN 36
+#define SAME 37
+#define SALM 38
+#define SKIP 39
+#define SBIP 40
+#define SKIN 41
+#define SBIN 42
+#define SNOC 43
+#define SNOL 44
+#define SLAM 45
+#define KICB 46
+#define KICS 47
+#define KICK 48
+#define SLAT 49
+#define TICB 50
+#define TICS 51
+#define TICK 52
+#define WILS 53
+#define WISH 54
+#define CUSH 55
+#define DROP 56
+#define HECK 57
+#define SLOG 58
+#define FALT 59
+#define FAST 60
+#define SKIB 61
+#define SKIM 62
+#define SLIB 63
+#define SLIM 64
+#define SAVE 65
 
 /* _n_apen(): emit the instructions contained in src to dst
  */
@@ -583,6 +588,7 @@ _n_emit(u3_noun *ops, u3_noun op)
     case FLAB:
     case LILB:
     case LITB:
+    case SAMB:
     case SBIP:
     case SBIN:
     case KICB:
@@ -593,6 +599,7 @@ _n_emit(u3_noun *ops, u3_noun op)
     case FLAS:
     case LILS:
     case LITS:
+    case SAMS:
     case SKIP:
     case SKIN:
     case KICS:
@@ -604,6 +611,7 @@ _n_emit(u3_noun *ops, u3_noun op)
     case FLAG:
     case LILN:
     case LITN:
+    case SAMN:
     case TICK:
     case KICK:
       return sizeof(c3_y) + sizeof(u3_noun);
@@ -794,13 +802,56 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       tot_s += _n_emit(ops, BUMP);
       break;
 
-    case 5:
+    case 5: {
+      c3_t hec_t, tec_t;
       u3x_cell(arg, &hed, &tel);
-      tot_s += _n_comp(ops, hed, c3n, c3n);
-      tot_s += _n_emit(ops, SWAP);
-      tot_s += _n_comp(ops, tel, c3n, c3n);
-      tot_s += _n_emit(ops, (c3y == los_o) ? SALM : SAME);
+
+      if ( c3n == u3du(hed) ) {
+        u3m_bail(c3__exit);
+        break;
+      }
+      else {
+        hec_t = (1 == u3h(hed));
+      }
+      if ( c3n == u3du(tel) ) {
+        u3m_bail(c3__exit);
+        break;
+      }
+      else {
+        tec_t = (1 == u3h(tel));
+      }
+      if ( hec_t && tec_t ) {
+        if ( c3y == u3r_sing(u3t(hed), u3t(tel)) ) {
+          _n_emit(ops, (c3y == los_o) ? LIL0 : LIT0);
+        }
+        else {
+          _n_emit(ops, (c3y == los_o) ? LIL1 : LIT1);
+        }
+      }
+      else if ( !hec_t && !tec_t ) {
+        tot_s += _n_comp(ops, hed, c3n, c3n);
+        tot_s += _n_emit(ops, SWAP);
+        tot_s += _n_comp(ops, tel, c3n, c3n);
+        tot_s += _n_emit(ops, (c3y == los_o) ? SALM : SAME);
+      }
+      else {
+        tot_s += _n_comp(ops, (hec_t ? tel : hed), los_o, c3n);
+        u3_noun lit = u3t(hec_t ? hed : tel);
+        switch ( lit ) {
+          case 0:
+            tot_s += _n_emit(ops, SAM0);
+            break;
+          case 1:
+            tot_s += _n_emit(ops, SAM1);
+            break;
+          default:
+            op_y = lit <= 0xFF ? SAMB : lit <= 0xFFFF ? SAMS : SAMN;
+            tot_s += _n_emit(ops, u3nc(op_y, u3k(lit)));
+        }
+      }
+
       break;
+    }
 
     case 6: {
       u3_noun mid, 
@@ -898,6 +949,7 @@ _n_asm(u3_noun ops, c3_s len_s)
         case FLAB:
         case LILB:
         case LITB:
+        case SAMB:
         case SBIP:
         case SBIN:
         case KICB:
@@ -910,6 +962,7 @@ _n_asm(u3_noun ops, c3_s len_s)
         case FLAS:
         case LILS:
         case LITS:
+        case SAMS:
         case SKIP:
         case SKIN:
         case KICS:
@@ -926,6 +979,7 @@ _n_asm(u3_noun ops, c3_s len_s)
         case FLAG:
         case LILN:
         case LITN:
+        case SAMN:
         case TICK:
         case KICK: {
           c3_w non_w   = u3k(u3t(op));
@@ -1141,6 +1195,8 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
     &&do_lilb, &&do_lils, &&do_liln,
     &&do_nolk, &&do_noct, &&do_nock,
     &&do_deep, &&do_bump,
+    &&do_sam0, &&do_sam1,
+    &&do_samb, &&do_sams, &&do_samn,
     &&do_same, &&do_salm,
     &&do_skip, &&do_sbip,
     &&do_skin, &&do_sbin,
@@ -1341,21 +1397,45 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       u3z(o);
       BURN();
 
-    do_same:
-      x    = _n_pep(mov, off);
-      top  = _n_swap(mov, off);
+    do_sam1:
+      x = 1;
+      goto samd_in;
+
+    do_samb:
+      x = pog[ip_s++];
+      goto samd_in;
+
+    do_sams:
+      x = _n_resh(pog, &ip_s);
+      goto samd_in;
+
+    do_sam0:
+      x = 0;
+    samd_in:
+      top  = _n_peek(off);
       o    = *top;
       *top = u3r_sing(x, o);
-      u3z(o);
+      u3z(o); // don't bother losing x
       BURN();
 
+    do_same:
+      x = _n_pep(mov, off);
+      _n_swap(mov, off);
+      goto same_in;
+
     do_salm:
-      x    = _n_pep(mov, off);
+      x = _n_pep(mov, off);
       _n_toss(mov, off);
+      goto same_in;
+
+    do_samn:
+      x = u3k(_n_rean(pog, &ip_s));
+    same_in:
       top  = _n_peek(off);
       o    = *top;
       *top = u3r_sing(x, o);
       u3z(o);
+      u3z(x);
       BURN();
 
     do_skip:
@@ -1601,6 +1681,8 @@ _n_print_byc(c3_y* pog)
     "lilb", "lils", "liln",
     "nolk", "noct", "nock",
     "deep", "bump",
+    "sam0", "sam1",
+    "samb", "sams", "samn",
     "same", "salm",
     "skip", "sbip",
     "skin", "sbin",
