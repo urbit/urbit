@@ -95,25 +95,15 @@
                   {(trip (of-wain:format (scag 3 (no-title:colls wat.info.con))))}
                 ==
               ==
-            ;li.notes
-              ;div.da(data-da "{(esoo mod.info.con)}");
-              ;div.h3.mt-0.text-mono
+            ;li.notes.mb-8
+              ;div.da.text-mono(data-urb-elapsed "{(esoo mod.info.con)}");
+              ;div.h3.mt-0.text-mono.note-uuid
                 ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}"): {(trip t)}
               ==
               ;div.snippet
                 {(trip (of-wain:format (scag 3 (no-title:colls wat.info.con))))}
               ==
             ==
-        ;script:'''
-                var das = document.querySelectorAll('[data-da]');
-                for (var i=0; i < das.length; i ++) { 
-                  var urbD = das[i].dataset.da;  // UTC
-                  console.log(urbD);
-                  var t = new Date(new Date(urbD).toUTCString()); // local
-                  var clientDate = new Date(); // local
-                  document.querySelector("[data-da='" + urbD + "']").innerHTML = t - clientDate;
-                }
-                '''
   ==
 
 ==
