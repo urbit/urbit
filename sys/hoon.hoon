@@ -5917,7 +5917,7 @@
 ::
 ::::  5aa: new partial nock interpreter
   ::
-++  musk  !.                                            ::  nock with block set
+++  musk  !:                                            ::  nock with block set
   =>  ::  keep soft core out of models
       +
   =>  |%
@@ -5931,30 +5931,42 @@
         ::
         $@(~ seminoun)
       ::
+      ++  thunk
+        ::  typeless trap, |.(*)
+        ::
+        *
+      ::
       ++  seminoun  
         ::  partial noun; blocked subtrees are ~ 
         ::
-        $~  [[%& ~] ~]
+        $~  [[%full ~] ~]
         {mask/stencil data/noun}
       ::
       ++  stencil  
         ::  noun knowledge map
         ::
-        $%  ::  no; noun has partial block substructure
+        $%  ::  noun has partial block substructure
             ::
-            {$| left/stencil rite/stencil}
-            ::  yes; noun is either fully complete, or fully blocked
+            {$half left/stencil rite/stencil}
+            ::  noun is either fully complete, or fully blocked
             ::
-            {$& blocks/(set block)}
+            {$full blocks/(set block)}
+            ::  noun can be built from a trap
+            ::  
+            {$lazy trap/thunk}
         == 
       ::
       ++  output
-        ::  nil; interpreter stopped
+        ::  null; interpreter stopped
         ::
         %-  unit
-        ::  yes, complete noun; no, list of blocks
-        ::
-        (each noun (list block))
+        $%  ::  output is complete
+            ::
+            {$done p/noun}
+            ::  output is waiting for resources
+            ::
+            {$wait p/(list block)}
+        ==
       -- 
   |%  
   ++  abet
@@ -5975,10 +5987,10 @@
     ?:  =(~ blocks)
       ::  no blocks, data is complete
       ::
-      &+data.noy
+      done/data.noy
     ::  reduce block set to block list
     ::
-    |+~(tap in blocks)
+    wait/~(tap in blocks)
   ::
   ++  araw
     ::  execute nock on partial subject
@@ -6031,7 +6043,7 @@
         {$1 b/*}
       ::  constant is complete
       ::
-      [&+~ b.fol]
+      [full/~ b.fol]
     ::
     ::  2; recursion
     ::
@@ -6065,7 +6077,7 @@
           fig/noun
       ::  yes if cell, no if atom
       ::
-      [&+~ .?(fig)]
+      [full/~ .?(fig)]
     ::
     ::  4; increment
     ::
@@ -6077,7 +6089,7 @@
           fig/noun
       ::  stop for cells, increment for atoms
       ::
-      ?^(fig ~ [&+~ +(fig)])
+      ?^(fig ~ [full/~ +(fig)])
     ::
     ::  5; compare
     ::
@@ -6089,7 +6101,7 @@
           fig/noun
       ::  stop for atoms, compare cells
       ::
-      ?@(fig ~ [&+~ =(-.fig +.fig)])
+      ?@(fig ~ [full/~ =(-.fig +.fig)])
     ::
     ::  6; if-then-else
     ::
@@ -6175,7 +6187,7 @@
       ?~  noy  ~
       ::  if hint is a fully computed trace
       ::
-      ?:  &(?=($spot b.fol) ?=([[%& ~] *] noy))
+      ?:  &(?=($spot b.fol) ?=([[%full ~] *] noy))
         ::  compute within trace
         ::
         ~_((show %o +.noy) $(fol d.fol))
@@ -6208,21 +6220,38 @@
             tal/seminoun
         ==
     ^-  seminoun
-    ?.  ?&  &(?=($& -.mask.hed) ?=($& -.mask.tal))
+    ?.  ?&  &(?=($full -.mask.hed) ?=($full -.mask.tal))
             =(=(~ blocks.mask.hed) =(~ blocks.mask.tal))
         ==
       ::  default merge
       ::
-      [|+[mask.hed mask.tal] [data.hed data.tal]]
+      [half/[mask.hed mask.tal] [data.hed data.tal]]
     ::  both sides total
     ::
     ?:  =(~ blocks.mask.hed)
       ::  both sides are complete
       ::
-      [&+~ data.hed data.tal]
+      [full/~ data.hed data.tal]
     ::  both sides are blocked
     ::
-    [&+(~(uni in blocks.mask.hed) blocks.mask.tal) ~]
+    [full/(~(uni in blocks.mask.hed) blocks.mask.tal) ~]
+  ::
+  ++  complete
+    ::  complete any laziness
+    ::
+    |=  bus/seminoun
+    ^-  seminoun
+    ?-  -.mask.bus
+      $full  bus
+      $lazy  ::  execute thunk
+             ::
+             [full/~ .*(trap.mask.bus -.trap.mask.bus)]
+      $half  ::  recursive descent
+             :: 
+             %+  combine 
+               $(bus [left.mask.bus -.data.bus])
+             $(bus [rite.mask.bus +.data.bus])
+    ==
   ::
   ++  fragment
     ::  seek to an axis in a seminoun
@@ -6242,27 +6271,31 @@
     ::
     =+  [now=(cap axe) lat=(mas axe)]
     ?-  -.mask.bus
+    ::  subject is lazy
+    ::
+      $lazy  $(bus (complete bus))
+    ::
     ::  subject is fully blocked or complete
     ::
-      $&  ::  if fully blocked, produce self
-          ::
-          ?^  blocks.mask.bus  bus
-          ::  descending into atom, stop
-          ::
-          ?@  data.bus  ~
-          ::  descend into complete cell
-          ::
-          $(axe lat, bus [&+~ ?:(=(2 now) -.data.bus +.data.bus)])
+      $full  ::  if fully blocked, produce self
+             ::
+             ?^  blocks.mask.bus  bus
+             ::  descending into atom, stop
+             ::
+             ?@  data.bus  ~
+             ::  descend into complete cell
+             ::
+             $(axe lat, bus [full/~ ?:(=(2 now) -.data.bus +.data.bus)])
     ::  subject is partly blocked
     ::
-      $|  ::  descend into partial cell
-          ::
-          %=  $
-            axe  lat
-            bus  ?:  =(2 now) 
-                   [left.mask.bus -.data.bus] 
-                 [rite.mask.bus +.data.bus]
-    ==    ==
+      $half  ::  descend into partial cell
+             ::
+             %=  $
+               axe  lat
+               bus  ?:  =(2 now) 
+                      [left.mask.bus -.data.bus] 
+                    [rite.mask.bus +.data.bus]
+    ==       ==
   ::  require complete intermediate step
   ::
   ++  require
@@ -6273,15 +6306,19 @@
     ::  propagate stop
     ::
     ?~  noy  ~
+    ::  suppress laziness
+    ::
+    =/  bus/seminoun  (complete noy)
+    ?<  ?=($lazy -.mask.bus)
     ::  if partial block, squash blocks and stop
     ::
-    ?:  ?=($| -.mask.noy)  [&+(squash mask.noy) ~]
+    ?:  ?=($half -.mask.bus)  [full/(squash mask.bus) ~]
     ::  if full block, propagate block
     ::
-    ?:  ?=(^ blocks.mask.noy)  [mask.noy ~]
+    ?:  ?=(^ blocks.mask.bus)  [mask.bus ~]
     ::  otherwise use complete noun
     ::
-    (yen data.noy)
+    (yen data.bus)
   ::
   ++  squash
     ::  convert stencil to block set
@@ -6289,8 +6326,9 @@
     |=  tyn/stencil
     ^-  (set block)
     ?-  -.tyn
-      $&  blocks.tyn
-      $|  (~(uni in $(tyn left.tyn)) $(tyn rite.tyn))
+      $lazy  $(tyn -:(complete tyn ~))
+      $full  blocks.tyn
+      $half  (~(uni in $(tyn left.tyn)) $(tyn rite.tyn))
     ==
   --
 ::
@@ -8191,7 +8229,7 @@
       ::  ~|  [%constant-stopped-formula `@p`(mug q.pro) q.pro]
       ::  ~|  %constant-folding-stopped
       ::  !!
-    ?:  ?=($| -.u.jon)
+    ?:  ?=($wait -.u.jon)
       ?:  fab
         [p.pro [%10 [%live %1 %constant-block] q.pro]]
       [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
@@ -8225,23 +8263,20 @@
     =+  gil=*(set type)
     |-  ^-  seminoun:musk
     ?-    sut
-      $noun      [&+[~ ~ ~] ~]
-      $void      [&+[~ ~ ~] ~]
-      {$atom *}  ?~(q.sut [&+[~ ~ ~] ~] [&+~ u.q.sut])
+      $noun      [full/[~ ~ ~] ~]
+      $void      [full/[~ ~ ~] ~]
+      {$atom *}  ?~(q.sut [full/[~ ~ ~] ~] [full/~ u.q.sut])
       {$cell *}  (combine:musk $(sut p.sut) $(sut q.sut))
-      {$core *}  =/  num
-                    %-  ~(rep by (~(run by q.s.q.sut) |=(tomb ~(wyt by q))))
-                    |=([[@ a=@u] b=@u] (add a b))
-                  %+  combine:musk 
+      {$core *}  %+  combine:musk 
                    ?~  p.s.q.sut  
-                     [&+[~ ~ ~] ~]
-                   [&+~ p.s.q.sut]
+                     [full/[~ ~ ~] ~]
+                   [full/~ p.s.q.sut]
                  $(sut p.sut) 
       {$face *}  $(sut repo)
-      {$fork *}  [&+[~ ~ ~] ~]
+      {$fork *}  [full/[~ ~ ~] ~]
       {$help *}  $(sut repo)
       {$hold *}  ?:  (~(has in gil) sut)
-                   [&+[~ ~ ~] ~]
+                   [full/[~ ~ ~] ~]
                  $(sut repo, gil (~(put in gil) sut))
     ==
   ::
