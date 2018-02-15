@@ -67,23 +67,26 @@
         |=  [t=knot con=topicful:collections]
         ;*  ?:  comm.config
               ;*  ?:  xeno.config
-                ;li.forum
+                ;li.forum.mb-8
                   ;div.text-mono
-                    {(trip t)}
+                    ; {(trip t)}
                   ==
                   ;div.h3.mt-0
                     ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}"): {(trip tit.info.con)}
                   ==
-                  ;div.who
+                  ;div.who.text-mono.text-600
                     ; {(trip (scot %p who.info.con))}
                   ==
-                  ;div.com-count
-                    ; {(trip (scot %ud (lent ~(tap by coms.con))))} comments
+                  ;div.meta-cont
+                    ;div.da.text-mono(data-urb-elapsed "{(esoo mod.info.con)}");
+                    ;div.com-count.ml-12
+                      ; {(trip (scot %ud (lent ~(tap by coms.con))))} comments
+                    ==
                   ==
                 ==
-              ;li.blog
+              ;li.blog.mb-8
                 ;div.text-mono
-                  {(trip t)}
+                  ; {(trip t)}
                 ==
                 ;div.h2.mt-0
                   ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}"): {(trip tit.info.con)}
