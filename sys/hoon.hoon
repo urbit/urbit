@@ -1320,7 +1320,7 @@
   +-  run                                               ::  apply gate to values
     ~/  %run
     |*  b/gate
-    =|  c/(set _?>(?=(^ a) (b n.a)))
+    =+  c=`(set _?>(?=(^ a) (b n.a)))`~
     |-  ?~  a  c
     =.  c  (~(put in c) (b n.a))
     =.  c  $(a l.a, c c)
@@ -1329,7 +1329,7 @@
   +-  tap                                               ::  convert to list
     =<  $
     ~/  %tap
-    =|  b/(list _?>(?=(^ a) n.a))
+    =+  b=`(list _?>(?=(^ a) n.a))`~
     |.  ^+  b
     ?~  a
       b
@@ -1580,7 +1580,7 @@
   +-  tap                                               ::  listify pairs
     =<  $
     ~/  %tap
-    =|  b/(list _?>(?=(^ a) n.a))
+    =+  b=`(list _?>(?=(^ a) n.a))`~
     |.  ^+  b
     ?~  a
       b
@@ -1646,13 +1646,13 @@
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   ::
   +-  key                                               ::  set of keys
-    =|  b/(set _?>(?=(^ a) p.n.a))
+    =+  b=`(set _?>(?=(^ a) p.n.a))`~
     |-  ^+  b
     ?~  a   b
     $(a r.a, b $(a l.a, b (~(put in b) p.n.a)))
   ::
   +-  val                                               ::  list of vals
-    =|  b/(list _?>(?=(^ a) q.n.a))
+    =+  b=`(list _?>(?=(^ a) q.n.a))`~
     |-  ^+  b
     ?~  a   b
     $(a r.a, b [q.n.a $(a l.a)])
@@ -1768,7 +1768,7 @@
     bal(a a(l $(a l.a)))
   ::
   +-  tap                                               ::  adds list to end
-    =|  b/(list _?>(?=(^ a) n.a))
+    =+  b=`(list _?>(?=(^ a) n.a))`~
     |-  ^+  b
     =+  0                                               ::  hack for jet match
     ?~  a
@@ -6853,13 +6853,11 @@
         ::
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
-    ?:  fab
-      :^  %brts  ~^~
-        [%base %noun]
-      ~(relative local(dom (peg 7 dom)) [6 %&])
+    ::  :^  %brts  ~^~
+    ::    [%base %noun]
+    ::  ~(relative local(dom (peg 7 dom)) [6 %&])
     :^  %brcl  ~^~
-      ::  [%ktls [%bust %noun] trivial]
-      ripple
+      [%cold ripple]
     ~(relative local(dom (peg 7 dom)) [6 %&])
   ::
   ++  local
