@@ -6858,7 +6858,8 @@
         [%base %noun]
       ~(relative local(dom (peg 7 dom)) [6 %&])
     :^  %brcl  ~^~
-      [%ktls [%bust %noun] trivial]
+      ::  [%ktls [%bust %noun] trivial]
+      ripple
     ~(relative local(dom (peg 7 dom)) [6 %&])
   ::
   ++  local
