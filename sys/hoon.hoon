@@ -6857,7 +6857,7 @@
     ::    [%base %noun]
     ::  ~(relative local(dom (peg 7 dom)) [6 %&])
     :^  %brcl  ~^~
-      [%cold ripple]
+      ripple
     ~(relative local(dom (peg 7 dom)) [6 %&])
   ::
   ++  local
