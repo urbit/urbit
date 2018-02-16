@@ -34,8 +34,8 @@ deploy:
   provider: releases
   prerelease: true # turn this off for official releases
   api_key:
-    secure: V4E7784ECSS3MO6ZIRtang9XwibDyvDYGb0MoSaP2CTlmzIAhdokr4KJFM0qM4KRaaajCdQuqi0lojgOjwdxs7e0GkAwScb33LFxQ7Chj/QkFOY7V1AnSRLR5OsXnazB0nur5aSwvcvnggQ2XW3OeF7zIvGfs9aR97SEz/xCrVE=
+    secure: zEmeceUBtdtI3TsSUZ6zA6341jH6CGmjHinTc9EFQhqOvtd9niIeVcwURd9E2HsZ0UlzzZT4yAoYrUGvw50p/eAgTiD0FUMyIQSw8/kP1CoqKmY8AG60DPHL8U9D4bnWrdMuTiapVhdQV5KY4cUh0XIkDAW/iQTqfSmTQvI8KBimMMry1xdJyJ3p9kZKv/h21ybdAxOrRijBIk6QY8ZGo6w59OioflmfepfYvELTrYoE1fe/41SepIv7fWCw2nQMPpulgAxkg2pTC7cqqmhcJ1NNn94rwqV7T6T5OiK3amZv1N2OuDLOnchHlHK7aFAHsf4hQ61Is3kBUHQrAPflF8XHualldqOjoWt5wH7sCkKCQduf/2igBmJRFcQI469oBJhLAwf3IS+h7DF+3KOuocTYQnbwdx1spgVpyl2WUnq/wFigCrIH6O5XsvwGdI1VyfhalwDYqA4lL7nOAk7F0XQj6tcCR6YgHkDff9ZTCKOT5ZqYhQ4MeibzeQXmhAlwso4gjt9CJ8+TNz3FG7UgNrS/zdzfe57pIhg1Otfp0EvA76XQN3UvK6ZTQNLDVXRzviZUfB2osXao8/aqZoqSml/vDR4syp/Pg23JRXZQWnh+ZVqQ/sgqIv5Eg0+BJ1oyvwLKLrZ2XpmhYs3qKKodmMxmWM7AKa1zL6nadr5jkF8=
   file: bin/urbit # TODO upload package from before_deploy
   on:
-    repo: urbit/urbit
+    repo: joemfb/urbit
     tags: true
