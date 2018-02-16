@@ -1,4 +1,4 @@
-!:
+::
 ::  dill (4d), terminal handling
 ::
 |=  pit/vase
@@ -43,11 +43,12 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note-ames                                           ::  weird ames move
   $%  {$make p/(unit @t) q/@ud r/@ s/?}                 ::
-      {$sith p/@p q/@uw r/?}                            ::
+      {$sith p/@p q/@uw r/?}                          ::
   ==                                                    ::
 ++  note-clay                                           ::
   $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:clay}::  merge desks
-      {$warp p/sock q/riff:clay}                       ::  wait for clay hack
+      {$warp p/sock q/riff:clay}                        ::  wait for clay hack
+      {$perm p/ship q/desk r/path s/rite:clay}          ::  change permissions
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  {$crud p/@tas q/(list tank)}                      ::
@@ -55,7 +56,7 @@
       {$init p/ship}                                    ::
       {$text p/tape}                                    ::
       {$veer p/@ta q/path r/@t}                         ::  install vane
-      {$vega p/path}                                    ::  reboot by path
+      {$vega p/path q/path}                             ::  reboot by path
       {$velo p/@t q/@t}                                 ::  reboot by path
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
@@ -72,19 +73,21 @@
   ==  ==                                                ::
 ++  sign-ames                                           ::
   $%  {$nice $~}                                        ::
+      {$send p/lane:ames q/@}                           ::
       {$init p/ship}                                    ::
   ==                                                    ::
 ++  sign-clay                                           ::
   $%  {$mere p/(each (set path) (pair term tang))}      ::
       {$note p/@tD q/tank}                              ::
-      {$writ p/riot:clay}                              ::
+      {$writ p/riot:clay}                               ::
+      {$mack p/(unit tang)}                             ::
   ==                                                    ::
 ++  sign-dill                                           ::
   $%  {$blit p/(list blit)}                             ::
   ==                                                    ::
 ++  sign-gall                                           ::
-  $%  {$onto p/(each suss:gall tang)}                  ::
-      {$unto p/cuft:gall}                              ::
+  $%  {$onto p/(each suss:gall tang)}                   ::
+      {$unto p/cuft:gall}                               ::
   ==                                                    ::
 ++  sign                                                ::  in result $<-
   $?  {?($a $b $c $e $f $g) $mass p/mass}               ::
@@ -279,7 +282,8 @@
                   (sync %home our %base)
                 (init-sync %home our %base)
         =.  +>  ?.  ?=(?($duke $king $czar) can)  +>
-                (sync %kids our %base)
+                ::  make kids desk publicly readable, so syncs work.
+                (show %kids):(sync %kids our %base)
         =.  +>  autoload
         =.  +>  peer
         |-  ^+  +>+
@@ -313,6 +317,16 @@
         %_    .
             moz
           :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum])
+        ==
+      ::
+      ++  show                                          ::  permit reads on desk
+        |=  des/desk
+        %_    +>.$
+            moz
+          :_  moz
+          :*  hen  %pass  /show  %c  %perm  our
+              des  /  r+`[%black ~]
+          ==
         ==
       ::
       ++  sync
@@ -364,6 +378,9 @@
             {$a $init *}
           +>(moz :_(moz [hen %give +.sih]))
         ::
+            {$a $send *}
+          +>(moz :_(moz [hen %give +.sih]))
+        ::
             {$c $mere *}
           ?:  ?=($& -.p.sih)
             +>.$
@@ -385,7 +402,6 @@
                      +>.$
                    (dump:(crud %reap u.p.p.+>.sih) %logo ~)
             $diff  pump:(from ((hard dill-blit) q:`vase`+>+>.sih))
-            $doff  !!
           ==
         ::
             {$c $note *}
@@ -393,6 +409,10 @@
         ::
             {$c $writ *}
           init
+        ::
+            {$c $mack *}
+          ?~  p.sih  +>.$
+          (mean >%dill-clay-nack< u.p.sih)
         ::
             {$d $blit *}
           (done +.sih)
@@ -477,7 +497,7 @@
     :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d p.q.hic]~))
   =.  hey.all  ?^(hey.all hey.all `hen)
   ?:  ?=($init -.q.hic)
-    ::  ~&  [%call-init hen]
+    ::  ~&  [%cnhp-init hen]
     ?:  =(ore.all `p.q.hic)
       [[hen %give q.hic]~ ..^$]
     =:  ore.all  `p.q.hic

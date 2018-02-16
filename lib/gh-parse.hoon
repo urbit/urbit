@@ -79,6 +79,19 @@
       'watchers'^ni
       'default_branch'^so
   ==
+++  commit
+  ^-  $-(json (unit commit:gh))
+  =+  jo
+  %-  ot  :~
+      'sha'^so
+      'url'^so
+      'author'^author
+      'committer'^author
+      'message'^so
+      'tree'^point
+      'parents'^(ar point)
+      'verification'^verification
+  ==
 ++  user
   ^-  $-(json (unit user:gh))
   =+  jo
@@ -127,6 +140,30 @@
       'updated_at'^so
       'closed_at'^(mu so)
       'body'^so
+  ==
+++  author
+  ^-  $-(json (unit author:gh))
+  =+  jo
+  %-  ot  :~
+      'date'^so
+      'name'^so
+      'email'^so
+  ==
+++  point
+  ^-  $-(json (unit point:gh))
+  =+  jo
+  %-  ot  :~
+      'url'^so
+      'sha'^so
+  ==
+++  verification
+  ^-  $-(json (unit verification:gh))
+  =+  jo
+  %-  ot  :~
+      'verified'^bo
+      'reason'^so
+      'signature'^(mu so)
+      'payload'^(mu so)
   ==
 ++  label
   ^-  $-(json (unit label:gh))

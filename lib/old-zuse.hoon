@@ -7,10 +7,6 @@
 ++  fu          fu:number                               ::  modulo (mul p q)
 ++  aes         aes:crypto                              ::  aes, all sizes
 ++  crua        crua:crypto                             ::  cryptosuite A (RSA)
-++  bruw        bruw:suite:crypto                       ::  create keypair
-++  haul        haul:suite:crypto                       ::  activate public key
-++  weur        weur:suite:crypto                       ::  activate secret key
-++  trua        trua:test:crypto                        ::  test rsa
 ++  crub        crub:crypto                             ::  cryptosuite B (Ed)
 ++  trub        trub:test:crypto                        ::  test crub
 ++  hmac        hmac:crypto                             ::  HMAC-SHA1
@@ -24,8 +20,8 @@
 ++  yu          yu:chrono:userlib                       ::  UTC format constants
 ++  moon        en-mite:mimes:html                      ::  mime type to text
 ++  perk        perk.is                                 ::  parse cube fork 
-++  poja        en-json:html                            ::  parse JSON
-++  pojo        de-json:html                            ::  print json
+++  poja        de-json:html                            ::  parse JSON
+++  pojo        en-json:html                            ::  print json
 ++  poxo        en-xml:html                             ::  node to tape
 ++  poxa        de-xml:html                             ::  xml parser
 ++  jo          dejs-soft:format                        ::  json reparser
@@ -54,7 +50,6 @@
 ++  ofis        de-base64:mimes:html                    ::  64-bit decode
 ++  dray        dray:wired                              ::  load tuple into path
 ++  raid        raid:wired                              ::  demand path odors
-++  read        read:wired                              ::  parse odored path
 ++  urle        en-urlt:html                            ::  URL encode
 ++  urld        de-urlt:html                            ::  URL decode
 ++  earn        en-purl:html                            ::  purl to tape
@@ -83,9 +78,8 @@
 ++  agon        !!                                      ::  XX deprecated
 ++  ankh        ankh:clay                               ::  fs node (new)
 ++  apex        !!                                      ::  XX deprecated
-++  ares        ares.is                                 ::  possible error
 ++  bale        bale:eyre                               ::  driver state
-++  iden        !!                                      ::  username
+++  iden        user:eyre                               ::  username
 ++  sec-move    sec-move:eyre                           ::  driver effect
 ++  ball        !!                                      ::  XX deprecated
 ++  bait        bait:ames                               ::  fmt nrecvd spec
@@ -112,7 +106,6 @@
 ++  coal        !!                                      ::  XX depreacted
 ++  code        code:xmas                               ::  symmetric key
 ++  cone        !!                                      ::  XX depreacted
-++  coop        coop.is                                 ::  e2e ack
 ++  corn        !!                                      ::  XX depreacted
 ++  cred        cred:eyre                               ::  credential
 ++  deco        deco:dill                               ::  text decoration
@@ -144,7 +137,6 @@
 ++  httr        httr:eyre                               ::  raw http response
 ++  httx        httx:eyre                               ::  encapsulated http
 ++  kite        !!                                      ::  XX deprecated
-++  json        json.is                                 ::  normal json value
 ++  lamb        !!                                      ::  XX deprecated
 ++  lane        lane:xmas                               ::  packet route
 ++  lang        lang:ames                               ::  IETF lang as code
@@ -164,7 +156,6 @@
 ++  mess        mess:eyre                               ::  raw http headers
 ++  meta        !!                                      ::  path metadata
 ++  meth        meth:eyre                               ::  http methods
-++  mime        mime.is                                 ::  mimetyped data
 ++  mite        mite:eyre                               ::  mime type
 ++  miso        miso:clay                               ::  ankh delta
 ++  misu        misu:clay                               ::  computed delta
@@ -207,7 +198,6 @@
 ++  rout        rout:eyre                               ::  http route (new)
 ++  rump        rump:clay                               ::  relative path
 ++  saba        saba:clay                               ::  patch+merge
-++  sack        sack.is                                 ::  incoming [our his]
 ++  sufi        sufi:ames                               ::  domestic host
 ++  salt        !!                                      ::  XX deprecated
 ++  seal        !!                                      ::  XX deprecated
@@ -220,7 +210,6 @@
 ++  soup        soup:ames                               ::  new statement id
 ++  soul        soul:ames                               ::  packet in travel
 ++  soba        soba:clay                               ::  delta
-++  sock        sock.is                                 ::  outgoing [from to]
 ++  spur        spur.is                                 ::  ship desk case spur
 ++  step        step:ames                               ::  identity stage
 ++  stub        stub:dill                               ::  styled tuba
@@ -231,12 +220,11 @@
 ++  tako        tako:clay                               ::  yaki ref
 ++  tick        tick:ames                               ::  process id
 ++  tint        tint:dill                               ::  text color
-++  toro        toro:clay                               ::  general change
+++  toro        toro:clay                               ::  general change 
 ++  town        town:ames                               ::  all security state
 ++  tube        !!                                      ::  canonical path
 ++  tutu        !!                                      ::  XX deprecated
 ++  yaki        yaki:clay                               ::  XX deprecated
-++  view        view:clay                               ::  view mode
 ++  waks        !!                                      ::  XX deprecated
 ++  what        what:ames                               ::  logical identity
 ++  whom        whom:ames                               ::  year+govt+id
@@ -290,4 +278,7 @@
 ++  kiss-arvo   task-arvo                               ::  in request ->$
 ++  note-arvo   note-arvo                               ::  out request $->
 ++  sign-arvo   sign-arvo                               ::  in result $<-
+++  nule        nule:unix:userlib                       ::  lines to unix cord
+++  lore        to-wain:format                          ::  atom to line list
+++  role        of-wain:format                          ::  line list to atom
 --

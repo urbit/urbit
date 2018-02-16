@@ -1,5 +1,6 @@
 !:                                                      ::  /van/jael
 ::                                                      ::  %reference/0
+^%
 !?  150
 ::
 ::
@@ -21,7 +22,6 @@
 =,  able:jael 
 =,  title
 =,  crypto
-=*  womb  womb:jael
 =,  jael
 ::                                                      ::::
 ::::                    # models                        ::  data structures
@@ -131,48 +131,48 @@
       0w0                           ::   27, ~hec, Tlon Investor 8
       0w0                           ::   28, ~ryt, Tlon Investor 8
       0w0                           ::   29, ~tyv, Tlon Investor 8
-      0w0                           ::   30, ~syd, Jennifer Kollmer
+      0w0                           ::   30, ~syd, Curtis Yarvin
       0w0                           ::   31, ~nex, Prakhar Goel
       0w0                           ::   32, ~lun, Tlon Investor 9
       0w0                           ::   33, ~mep, Tlon Investor 9
       0w0                           ::   34, ~lut, Tlon Investor 9
       0w0                           ::   35, ~sep, Tlon Investor 9
-      0w0                           ::   36, ~pes, Jennifer Kollmer
+      0w0                           ::   36, ~pes, Curtis Yarvin
       0w0                           ::   37, ~del, Kingdon Barrett
       0w0                           ::   38, ~sul, John Burnham
       0w0                           ::   39, ~ped, Jeremy Wall
       0w0                           ::   40, ~tem, Tlon Investor 10
       0w0                           ::   41, ~led, Nick Caruso
-      0w0                           ::   42, ~tul, Susan Yarvin
-      0w0                           ::   43, ~met, Susan Yarvin
-      0w0                           ::   44, ~wen, Susan Yarvin
-      0w0                           ::   45, ~byn, Susan Yarvin
+      0w0                           ::   42, ~tul, Curtis Yarvin
+      0w0                           ::   43, ~met, Curtis Yarvin
+      0w0                           ::   44, ~wen, Curtis Yarvin
+      0w0                           ::   45, ~byn, Curtis Yarvin
       0w0                           ::   46, ~hex, James Torre
       0w0                           ::   47, ~feb, urbit.org
       0w0                           ::   48, ~pyl, Michael Hartl
-      0w0                           ::   49, ~dul, Jennifer Kollmer
-      0w0                           ::   50, ~het, Jennifer Kollmer
-      0w0                           ::   51, ~mev, Herbert Yarvin
-      0w0                           ::   52, ~rut, Herbert Yarvin
+      0w0                           ::   49, ~dul, Galen Wolfe-Pauly
+      0w0                           ::   50, ~het, Galen Wolfe-Pauly
+      0w0                           ::   51, ~mev, Curtis Yarvin
+      0w0                           ::   52, ~rut, Curtis Yarvin
       0w0                           ::   53, ~tyl, Tlon Investor 11
       0w0                           ::   54, ~wyd, Curtis Yarvin
-      0w0                           ::   55, ~tep, Sibyl Kollmer
-      0w0                           ::   56, ~bes, Sibyl Kollmer
+      0w0                           ::   55, ~tep, Curtis Yarvin
+      0w0                           ::   56, ~bes, Curtis Yarvin
       0w0                           ::   57, ~dex, Jared Hance
       0w0                           ::   58, ~sef, Owen Rescher
       0w0                           ::   59, ~wyc, Galen Wolfe-Pauly
       0w0                           ::   60, ~bur, Galen Wolfe-Pauly
       0w0                           ::   61, ~der, Galen Wolfe-Pauly
       0w0                           ::   62, ~nep, Galen Wolfe-Pauly
-      0w0                           ::   63, ~pur, Herbert Yarvin
+      0w0                           ::   63, ~pur, Paul Driver
       0w0                           ::   64, ~rys, Charlie Cummings
-      0w0                           ::   65, ~reb, Herbert Yarvin
+      0w0                           ::   65, ~reb, Curtis Yarvin
       0w0                           ::   66, ~den, Michael Hartl
-      0w0                           ::   67, ~nut, Henry Yarvin
-      0w0                           ::   68, ~sub, Henry Yarvin
-      0w0                           ::   69, ~pet, Henry Yarvin
-      0w0                           ::   70, ~rul, Henry Yarvin
-      0w0                           ::   71, ~syn, Henry Ault
+      0w0                           ::   67, ~nut, Curtis Yarvin
+      0w0                           ::   68, ~sub, Curtis Yarvin
+      0w0                           ::   69, ~pet, Curtis Yarvin
+      0w0                           ::   70, ~rul, Curtis Yarvin
+      0w0                           ::   71, ~syn, Pantera
       0w0                           ::   72, ~reg, Henry Ault
       0w0                           ::   73, ~tyd, Henry Ault
       0w0                           ::   74, ~sup, Henry Ault
@@ -184,13 +184,13 @@
       0w0                           ::   80, ~sec, Curtis Yarvin
       0w0                           ::   81, ~mul, Curtis Yarvin
       0w0                           ::   82, ~nym, Max Greer
-      0w0                           ::   83, ~tev, Sibyl Kollmer
+      0w0                           ::   83, ~tev, Curtis Yarvin
       0w0                           ::   84, ~web, Ar Vicco
       0w0                           ::   85, ~sum, Philip Monk
       0w0                           ::   86, ~mut, Philip Monk
       0w0                           ::   87, ~nyx, Philip Monk
       0w0                           ::   88, ~rex, Tlon Investor 12
-      0w0                           ::   89, ~teb, Sibyl Kollmer
+      0w0                           ::   89, ~teb, Michael Vassar
       0w0                           ::   90, ~fus, Tlon Corporation
       0w0                           ::   91, ~hep, urbit.org
       0w0                           ::   92, ~ben, urbit.org
@@ -258,7 +258,7 @@
       0w0                           ::  154, ~tus, Tlon
       0w0                           ::  155, ~tyc, Tlon
       0w0                           ::  156, ~leg, Tlon
-      0w0                           ::  157, ~nem, Tlon
+      0w0                           ::  157, ~nem, Jeremy Tunnell
       0w0                           ::  158, ~fer, Tlon
       0w0                           ::  159, ~mer, Tlon
       0w0                           ::  160, ~ten, Tlon
@@ -297,7 +297,7 @@
       0w0                           ::  193, ~duc, Tlon
       0w0                           ::  194, ~fur, Tlon
       0w0                           ::  195, ~fex, Tlon
-      0w0                           ::  196, ~nul, Tlon
+      0w0                           ::  196, ~nul, Matthew Liston
       0w0                           ::  197, ~luc, Tlon
       0w0                           ::  198, ~len, Tlon
       0w0                           ::  199, ~ner, Tlon
@@ -445,7 +445,7 @@
     [n.b ~ ~]
   ::                                                    ::  ++put:py
   ++  put                                               ::  insert
-    |=  b/@  ^-  pile
+    |=  b/ship  ^-  pile
     (uni [b b] ~ ~)
   ::                                                    ::  ++sub:py
   ++  sub                                               ::  subtract
@@ -468,10 +468,10 @@
     $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
   ::
   ++  tap
-    =|  out/(list @u)
+    =|  out/(list (pair ship ship))
     |-  ^+  out
     ?~  a  out
-    $(a l.a, out (welp (gulf n.a) $(a r.a)))
+    $(a l.a, out [n.a $(a r.a)])
   ::                                                    ::  ++uni:py
   ++  uni                                               ::  merge two piles
     |=  b/pile
@@ -519,7 +519,7 @@
           $apple  ?>(?=($apple -.ryt) (table %apple p.lef p.ryt))
           $block  ?>(?=($block -.ryt) [~ ~])
           $email  ?>(?=($email -.ryt) (sable %email p.lef p.ryt))
-          $final  ?>(?=($final -.ryt) (cable %final p.lef p.ryt))
+          $final  ?>(?=($final -.ryt) (table %final p.lef p.ryt))
           $fungi  ?>(?=($fungi -.ryt) (noble %fungi p.lef p.ryt))
           $guest  ?>(?=($guest -.ryt) [~ ~])
           $hotel  ?>(?=($hotel -.ryt) (bible %hotel p.lef p.ryt))
@@ -529,11 +529,6 @@
           $token  ?>(?=($token -.ryt) (ruble %token p.lef p.ryt))
           $urban  ?>(?=($urban -.ryt) (table %urban p.lef p.ryt))
         ==
-    ::                                                  ::  ++cable:dif:ry
-    ++  cable                                           ::  diff atom
-      |*  {nut/@tas new/@ old/@}
-      ?:  =(new old)  [~ ~]
-      [`[nut new] `[nut old]]
     ::                                                  ::  ++bible:dif:ry
     ++  bible                                           ::  diff pile
       |*  {nut/@tas new/(map dorm pile) old/(map dorm pile)}
@@ -629,7 +624,7 @@
           $apple  ?>(?=($apple -.ryt) [%apple (table p.lef p.ryt)])
           $block  ?>(?=($block -.ryt) [%block ~])
           $email  ?>(?=($email -.ryt) [%email (sable p.lef p.ryt)])
-          $final  ?>(?=($final -.ryt) [%final (cable p.lef p.ryt)])
+          $final  ?>(?=($final -.ryt) [%final (table p.lef p.ryt)])
           $fungi  ?>(?=($fungi -.ryt) [%fungi (noble p.lef p.ryt)])
           $guest  ?>(?=($guest -.ryt) [%guest ~])
           $hotel  ?>(?=($hotel -.ryt) [%hotel (bible p.lef p.ryt)])
@@ -639,11 +634,6 @@
           $token  ?>(?=($token -.ryt) [%token (ruble p.lef p.ryt)])
           $urban  ?>(?=($urban -.ryt) [%urban (table p.lef p.ryt)])
         ==
-    ::                                                  ::  ++cable:uni:ry
-    ++  cable                                           ::  union atom
-      |=  {new/@ old/@}
-      ?>  =(new old)
-      new
     ::                                                  ::  ++bible:uni:ry
     ++  bible                                           ::  union pile
       |=  {new/(map dorm pile) old/(map dorm pile)}
@@ -710,7 +700,7 @@
     |=  ryt/rite
     ^-  safe
     ?~  pig
-      !!                              :: not found
+      ~
     ?.  =(-.ryt -.n.pig)
       ?:  (gor -.ryt -.n.pig)
         [n.pig $(pig l.pig) r.pig]
@@ -793,7 +783,7 @@
       [%apple (~(run by p.rys) |=(@ (mug +<)))]
     ::
         $final
-      [%final (mug p.rys)]
+      [%final (~(run by p.rys) |=(@ (mug +<)))]
     ::
         $login
       [%login ~]
@@ -851,7 +841,7 @@
     (bind instant |=((pair life cert) p))
   ::                                                    ::  ++forward:we
   ++  forward                                           ::  sort oldest first
-    (collate |=({{a/life *} {b/life *}} (lth a b)))
+    (collate |=({a/{life *} b/{life *}} (lth -.a -.b)))
   ::                                                    ::  ++instant:we
   ++  instant                                           ::  current cert
     ^-  (unit (pair life cert))
@@ -859,7 +849,7 @@
     ?~(- ~ `i)
   ::                                                    ::  ++reverse:we
   ++  reverse                                           ::  sort latest first
-    (collate |=({{a/life *} {b/life *}} (gth a b)))
+    (collate |=({a/{life *} b/{life *}} (gth -.a -.b)))
   --
 --
 ::                                                      ::::
@@ -911,33 +901,6 @@
   ++  burb                                              ::  per ship
     |=  who/ship
     ~(able ~(ex ur urb) who)
-  ::
-  ++  read-womb
-    =,  wired  :: XX ":eyre"
-    =,  womb
-    |=  pax/path  ^-  (unit scry:womb)
-    ?~  pax  ~
-    ?+    i.pax  ~
-        $balance
-      %+  bind  (read t.pax /[%uv])
-      |=(a/passcode [%balance a])
-    ::
-        $stats
-      %+  bind  (read t.pax /[%p])
-      |=(a/ship [%stats a])
-    ::
-        $shop
-      %+  biff  (read t.pax /[%tas]/[%ud])
-      |=  {typ/term nth/@u}
-      ?.  ?=(?($star $planet) typ)  ~
-      `[%shop typ nth]
-    ==
-  ::                                                    ::  ++scry:of
-  ++  scry                                              ::  read
-    |=  {syd/@tas pax/path}  ^-  (unit gilt)
-    ?+    syd  ~
-        $womb  (biff (read-womb pax) scry-womb:(burb our))
-    ==
   ::                                                    ::  ++call:of
   ++  call                                              ::  invoke
     |=  $:  ::  hen: event cause
@@ -1006,13 +969,6 @@
     ::
         $next
       (cure abet:abet:(next:(burb our) eny.sys p.tac))
-    ::
-    ::
-    ::  extend our certificate with a new private key
-    ::    {$jaelwomb p/task:womb}
-    ::
-        $jaelwomb
-      (cure abet:abet:(jaelwomb:(burb our) p.tac))
     ::
     ::  open secure channel
     ::    {$veil p/ship}
@@ -1506,8 +1462,6 @@
       ::  it is the best reference for the semantics of
       ::  the urbit pki.
       ::
-  =*  our  !!
-      ::
       ::  it is absolutely verboten to use [our] in ++ur.
       ::
   =|  hab/(list change)
@@ -1550,6 +1504,73 @@
     |=  rex/ship
     ^-  (pair life (map life ring))
     lean:~(able ex rex)
+  ::                                                    ::  ++make:ur
+  ++  make                                              ::  initialize urbit
+    |=  $:  ::  now: date
+            ::  eny: entropy
+            ::  gen: bootstrap ticket
+            ::  nym: self-description
+            ::
+            now/@da
+            eny/@e 
+            gen/@pG
+            nym/arms
+        ==
+    ^+  +>
+    ::  key: generated key
+    ::  bul: initial bull
+    ::
+    =/  key  (ypt:scr (mix our %jael-make) gen)
+    =*  doc  `bull`[(sein our) & nym]
+    ::
+    ::  register generator as login secret
+    ::
+    =.  +>.$  abet:(deal:~(able ex our) our [[[%login [gen ~ ~]] ~ ~] ~])
+    ::
+    ::  initialize hierarchical property
+    ::
+    =.  +>.$  
+      =-  abet:(deal:~(able ex our) our - ~)
+      ^-  safe
+      %-  intern:up
+      ^-  (list rite)
+      =/  mir  (clan our)
+      ?+    mir  ~
+          $czar
+        :~  [%fungi [%usr 255] ~ ~]
+            [%hotel [[our 3] [1 255] ~ ~] ~ ~]
+        ==
+          $king
+        :~  [%fungi [%upl 65.535] ~ ~]
+            [%hotel [[our 4] [1 65.535] ~ ~] ~ ~]
+        ==
+          $duke
+        :~  [%hotel [[our 5] [1 0xffff.ffff] ~ ~] ~ ~]
+        ==
+      ==
+    ::
+    ::  create initial communication secrets
+    ::
+    ?:  (lth our 256)
+      ::
+      ::  create galaxy with generator as seed
+      ::
+      abet:(next:~(able ex our) key doc)
+    ::
+    ::  had: key handle
+    ::  ryt: initial right
+    ::
+    =/  key  (ypt:scr (mix our %jael-make) gen)  
+    =*  had  (shaf %hand key)
+    =*  ryt  `rite`[%urban [had (add ~m1 now) key] ~ ~]
+    ::
+    ::  register initial symmetric key from ticket
+    ::
+    =.  +>.$  abet:(hail:~(able ex (sein our)) our %& [ryt ~ ~])
+    ::
+    ::  create initial private key and certificate
+    ::
+    abet:(next:~(able ex our) (mix eny key) doc)
   ::                                                    ::  ++meet:ur
   ++  meet                                              ::  calculate merge
     |=  $:  ::  vie: authenticated source
@@ -1634,72 +1655,6 @@
       |=  pal/ship
       ^-  safe
       =-(?~(- ~ u.-) (~(get by shy) pal))
-    ::                                                  ::  ++make:ex:ur
-    ++  make                                            ::  initialize urbit
-      |=  $:  ::  now: date
-              ::  eny: entropy
-              ::  gen: bootstrap ticket
-              ::  nym: self-description
-              ::
-              now/@da
-              eny/@e
-              gen/@pG
-              nym/arms
-          ==
-      ^+  +>
-      ::
-      ::  register generator as login secret
-      ::
-      =.  +>.$  (deal rex [[[%login [gen ~ ~]] ~ ~] ~])
-      ::
-      ::  initialize hierarchical property
-      ::
-      =.  +>.$
-        =-  (deal rex - ~)
-        ^-  safe
-        %-  intern:up
-        ^-  (list rite)
-        =/  mir  (clan rex)
-        ?+    mir  ~
-            $czar
-          :~  [%fungi [%usr 255] ~ ~]
-              [%hotel [[rex 3] [1 255] ~ ~] ~ ~]
-          ==
-            $king
-          :~  [%fungi [%upl 65.535] ~ ~]
-              [%hotel [[rex 4] [1 65.535] ~ ~] ~ ~]
-          ==
-            $duke
-          :~  [%hotel [[rex 5] [1 0xffff.ffff] ~ ~] ~ ~]
-          ==
-        ==
-      ::
-      ::  create initial communication secrets
-      ::
-      ::  key: generated key
-      ::  bul: initial bull
-      ::
-      =/  key  (ypt:scr (mix rex %jael-make) gen)
-      =*  doc  `bull`[(sein rex) & nym]
-      ?:  (lth rex 256)
-        ::
-        ::  create galaxy with generator as seed
-        ::
-        (next key doc)
-      ::
-      ::  had: key handle
-      ::  ryt: initial right
-      ::
-      =*  had  (shaf %hand key)
-      =*  ryt  `rite`[%urban [had (add ~m1 now) key] ~ ~]
-      ::
-      ::  register initial symmetric key from ticket
-      ::
-      =.  ..ex  abet:(hail:~(able ex (sein rex)) rex %& [ryt ~ ~])
-      ::
-      ::  create initial private key and certificate
-      ::
-      (next (mix eny key) doc)
     ::                                                  ::  ++next:ex:ur
     ++  next                                            ::  advance private key
       |=  {eny/@e doc/bull}
@@ -1722,139 +1677,6 @@
       =.  +>.$  (deal rex [[ryt ~ ~] ~])
       =.  ..ex  (meet [~ ~] hec)
       +>.$
-    ::
-    ++  as-hotel                    :: XX moveme
-      |=  a/ship  ^-  (map {ship bloq} pile)
-      =/  b  (xeb (xeb a))
-      =-  (my - ~)
-      :-  [(sein a) b]
-      (put:py (rsh (dec b) 1 a))
-    ::
-    ++  add-rite                                        ::  new promise
-      |=({pal/ship ryt/rite} (deal pal [ryt ~ ~] ~))
-    ::
-    ++  mov-rite                                        ::  transfer promise
-      |=  {{pal/ship par/ship} ryt/rite}
-      ^+  +>
-      =.  deal  (deal pal ~ [ryt ~ ~])
-      (deal par [ryt ~ ~] ~)
-    ::
-    ++  del-rite                                        ::  dead promise
-      |=({pal/ship ryt/rite} (deal pal ~ [ryt ~ ~]))
-    ::
-    ++  jaelwomb                                        ::  manage ship %fungi
-      |=  taz/task:womb
-      ^+  +>
-      ?-    -.taz
-      ::
-      ::  create passcode balance
-      ::    {$invite tid/passcode inv/{who/mail pla/@ud sta/@ud}}
-      ::
-          $invite
-        =/  pas/@p  (shaf %pass tid.taz)
-        =*  inv  inv.taz
-        ?<  (~(has by shy) pas)
-        =.  +>.$  (add-rite pas [%email (sy who.inv ~)])
-        %+  mov-rite  [rex pas]
-        [%fungi (my [%upl pla.inv] [%usr sta.inv] ~)]
-      ::
-      ::  increase existing balance
-      ::    {$reinvite aut/passcode pla/@ud sta/@ud}
-      ::
-          $bonus
-        =/  pas/@p  (shaf %pass tid.taz)
-        ?>  (~(has by shy) pas)
-        %+  mov-rite  [rex pas]
-        [%fungi (my [%upl pla.taz] [%usr sta.taz] ~)]
-      ::
-      ::  split passcode balance
-      ::    {$reinvite aut/passcode tid/passcode inv/{who/mail pla/@ud sta/@ud}}
-      ::
-          $reinvite
-        =/  pas/@p  (shaf %pass tid.taz)
-        =*  inv  inv.taz
-        ?<  (~(has by shy) pas)
-        =.  +>.$  (add-rite pas [%email (sy who.inv ~)])
-        ::  XX history
-        =/  ole/@p  (shaf %pass aut.taz)
-        %+  mov-rite  [ole pas]
-        [%fungi (my [%upl pla.inv] [%usr sta.inv] ~)]
-      ::
-      ::  redeem ship invitation
-      ::    {$claim aut/passcode her/@p tik/ticket}
-      ::
-          $claim
-        =/  pas/@p  (shaf %pass aut.taz)
-        ?>  =(rex (sein her.taz))  :: XX deal with foreign ships?
-        =/  len  (xeb (xeb her.taz))
-        =/  fun  ?+((clan her.taz) !! $duke %upl, $king %usr)
-        =.  +>.$
-          (del-rite pas [%fungi (my [fun 1] ~)])
-        =.  +>.$
-          (del-rite rex [%hotel (as-hotel her.taz)])
-        =/  who  (need %.(%email ~(expose up (lawn pas))))
-        =.  +>.$  (add-rite her.taz who)
-        (add-rite her.taz [%final tik.taz])
-      ==
-    ::                                                  ::  div-at-most:ex:ur
-    ++  div-at-most                                     ::  skip n ships
-      |=  {a/pile b/@u}  ^-  (pair pile pile)
-      (fall (~(div py a) b) [a *pile])
-    ::                                                  ::  scry-womb:ex:ur
-    ++  scry-womb                                       ::  read data
-      |=  req/scry:womb  ^-  (unit gilt:womb)
-      ?-    -.req
-      ::
-      ::  ship details
-      ::    {$stats who/ship}
-      ::
-          $stats
-        %+  some  %womb-owner
-        %+  bind  (~(get by shy) who.req)
-        |=  a/safe  ^-  mail:womb
-        :: XX deal with multiple emails?
-        =+  (need (~(expose up a) %email))
-        ?>  ?=({$email {@ $~ $~}} -)
-        n.p.-
-      ::
-      ::  invite details
-      ::    {$balance aut/passcode}
-      ::
-          $balance
-        %+  some  %womb-balance
-        %+  bind  (~(get by shy) (shaf %pass aut.req))
-        |=  a/safe  ^-  balance:womb
-        =/  who  :: XX deal with multiple emails?
-          =+  (need (~(expose up a) %email))
-          ?>  ?=({$email {@ $~ $~}} -)
-          n.p.-
-        =/  fun
-          =+  (fall (~(expose up a) %fungi) [%fungi p=~])
-          ?>  ?=($fungi -.-)
-          p.-
-        :+  who=who
-          pla=(fall (~(get by fun) %earl) 0)
-        sta=(fall (~(get by fun) %king) 0)
-      ::
-      ::  available ships
-      ::    {$shop typ/?($star $planet) nth/@u}
-      ::
-          $shop
-        =*  ships-per-shop  3
-        =*  skip-ships  (mul nth.req ships-per-shop)
-        ::
-        %+  some  %ships  ^-  (list ship)
-        =/  hot
-          =+  (fall (~(expose up (lawn rex)) %hotel) [%hotel p=~])
-          ?>  ?=($hotel -.-)
-          p.-
-        =/  syz/bloq  ?-(typ.req $star 3, $planet 4)
-        =/  pyl/pile  (fall (~(get by hot) [rex syz]) ~)
-        =.  pyl  q:(div-at-most pyl skip-ships)
-        =/  got  p:(div-at-most pyl ships-per-shop)
-        %+  turn  ~(tap py got)
-        |=(a/@u `ship`(rep syz ~[rex a]))
-      ==
     ::                                                  ::  grow:ex:ur
     ++  grow                                            ::  merge wills
       |=  $:  ::  vie: data source
@@ -2065,7 +1887,54 @@
         =*  val  (sign:as:(nol:nu:crub q.pev) *@ ash)
         new(syg (~(put by syg.new) dad [p.pev val]))
   --  --
---  --
+    --
+++  neon
+  |=  our/ship
+  ^-  (vane task gift sign note state state)
+  =|  lex/state
+  |%
+  ++  load  |=(state +>)
+  ++  stay  lex
+  ++  plow
+    =|  $:  now/@da
+            eny/@e
+            sky/roof
+        ==
+    |%
+    ++  doze  ~
+    ++  peek
+      |=  $:  lyc/(unit (set ship))
+              car/term
+              bem/beam
+          ==
+      ^-  (unit (unit (cask vase)))
+      ::
+      ::  XX: needs review
+      ::
+      ?.  &(=(p.bem our) =(r.bem `case`[%da now]))  ~
+      %-  some
+      ?.  =(%$ car)  ~
+      %+  bind  (~(scry of [now eny] lex) q.bem s.bem)
+      |=(a/gilt [-.a (slot 3 (spec !>(a)))])
+    ::
+    ++  spin
+      =|  $:  hen/duct
+              moz/(list (pair duct (wind note gift)))
+          ==
+      |%
+      ++  call  
+        |=  tac/task
+        ^+  +>
+        =^  did  lex  abet:(~(call of [now eny] lex) hen tac)
+        +>.$(moz (weld moz did))
+      ::
+      ++  take  
+        |=  {tea/wire hin/sign}
+        +>
+      --
+    --
+  --
+--
 ::                                                      ::::
 ::::                    #  vane                         ::  interface
   ::                                                    ::::
@@ -2093,7 +1962,7 @@
       ==
   =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task) p.q.hic)))
   ^-  {p/(list move) q/_..^$}
-  =^  did  lex  abet:(~(call of [now eny] lex) hen q.hic)
+  =^  did  lex  abet:~(call of [now eny] lex)
   [did ..^$]
 ::                                                      ::  ++doze
 ++  doze                                                ::  await
@@ -2130,12 +1999,7 @@
           tyl/spur
       ==
   ^-  (unit (unit cage))
-  :: XX security
-  ?.  =(lot [%$ %da now])  ~
-  %-  some
-  ?.  =(%$ ren)  ~
-  %+  bind  (~(scry of [now eny] lex) syd tyl)
-  |=(a/gilt [-.a (slot 3 (spec !>(a)))])
+  ~
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve
   lex

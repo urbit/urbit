@@ -2,12 +2,12 @@
 ::::  /hoon/ask/app
   ::
 /?    310
-/+    sole, womb, prey
+/+    sole, hood-womb, prey
 [. sole]
 |%
   ++  card
     $%  {$diff $sole-effect sole-effect}
-        {$poke wire {ship $hood} $womb-invite {cord invite}:womb}
+        {$poke wire {ship $hood} $womb-invite ,=,(hood-womb {cord reference invite})}
     ==
   ++  invited  ?($new $sent $ignored)
   ++  email  @t
@@ -29,7 +29,7 @@
 ::
 ++  peer-sole
   |=  path
-  ^-  (quip {bone card} +>)
+  ^-  (quip {bone card} _+>)
   ~|  [%not-in-whitelist src.bow]
   ?>  |((~(has in admins) src.bow) =(our.bow src.bow))
   :_  +>.$(sos (~(put by sos) ost.bow *sole-share))
@@ -69,7 +69,7 @@
 ::
 ++  poke-ask-mail
   |=  ask/@t
-  ^-  (quip {bone card} +>)
+  ^-  (quip {bone card} _+>)
   ~|  have-mail+ask
   ?<  (~(has by adr) ask)
   =.  adr  (~(put by adr) ask now.bow %new) :: XX electroplating
@@ -81,7 +81,7 @@
 ::
 ++  poke-sole-action
   |=  act/sole-action
-  ^-  (quip {bone card} +>)
+  ^-  (quip {bone card} _+>)
   =/  som  (~(got by sos) ost.bow)
   ?-    -.act
       $clr  `+>.$
@@ -154,7 +154,8 @@
   ^-  card
   :^  %poke  /invite/(scot %t ask)  [(need wom) %hood]  
   :-  %womb-invite
-  ^-  {cord invite}:womb
+  =,  hood-womb
+  ^-  [cord reference invite]
   =+  inv=(scot %uv (end 7 1 eny.bow))
-  [inv [ask 1 0 "You have been invited to Urbit: {(trip inv)}" ""]]
+  [inv ~ [ask 1 0 "You have been invited to Urbit: {(trip inv)}" ""]]
 --

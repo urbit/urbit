@@ -3,8 +3,8 @@
   font-family: 'scp'; }
 
 div.input.valid-false {
-  color: #E20B0B;
-  border-color: #E20B0B; }
+  color: #FF0808;
+  border-color: #FF0808; }
 
 .grams {
   list-style-type: none;
@@ -79,6 +79,17 @@ div.gram.same:hover div.meta {
   position: absolute;
   z-index: 1;
   margin-left: 1.875rem; }
+  .speech .fat {
+    max-height: 0;
+    transition: max-height .1s ease-in-out;
+    overflow: hidden; }
+  .speech .fat pre {
+    color: #fff; }
+  .speech:hover .fat {
+    max-height: 16rem;
+    overflow: scroll;
+    background-color: #000;
+    color: #fff; }
 
 .exp {
   font-family: 'scp';
@@ -90,17 +101,6 @@ div.gram.same:hover div.meta {
     color: #fff;
     background-color: #000;
     padding: .3rem; }
-  .exp .fat {
-    max-height: 0;
-    transition: max-height .1s ease-in-out;
-    overflow: hidden; }
-  .exp .fat pre {
-    color: #fff; }
-  .exp:hover .fat {
-    max-height: 16rem;
-    overflow: scroll;
-    background-color: #000;
-    color: #fff; }
 
 .comment .speech a.btn {
   background-color: transparent;
@@ -138,7 +138,7 @@ input.action {
   font-size: .8rem; }
 
 input.action.valid-false {
-  color: #E20B0B; }
+  color: #FF0808; }
 
 input.action::-webkit-input-placeholder {
   color: #000;
@@ -196,7 +196,7 @@ input.action:focus:-ms-input-placeholder {
     margin-left: .6rem;
     font-weight: 600;
     font-size: .8rem;
-    color: #E20B0B; }
+    color: #FF0808; }
   .menu .room:hover .close {
     display: inline; }
   .menu .room.disabled {

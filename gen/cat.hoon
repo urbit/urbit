@@ -3,13 +3,12 @@
 ::::  /hoon/cat/gen
   ::
 /?    310
-//  /%%/ls/subdir
-//  /%/pretty
+/+    pretty-file, show-dir
 ::
 ::::
   ::
 :-  %say
-|=  {^ {arg/(list path)} vane/?($c $g)}
+|=  {^ {arg/(list path)} vane/?($g $c)}
 =-  tang+(flop `tang`(zing -))
 %+  turn  arg
 |=  pax/path
@@ -29,6 +28,6 @@
     *
   =-  [palm+[": " ``~]^-]~
   :~  rose+[" " `~]^~[leaf+"*" (smyt pax)]
-      `tank`(subdir vane pax dir.ark)
+      `tank`(show-dir vane pax dir.ark)
   ==
 ==

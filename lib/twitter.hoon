@@ -32,7 +32,7 @@
   ?-  med
     $get  [url med *math ~]
     $post
-      =+  hed=(my content-type+['application/x-www-form-urlencoded']~ ~)
+      =+  hed=(my:nl content-type+['application/x-www-form-urlencoded']~ ~)
       [url(r ~) med hed ?~(r.url ~ (some (as-octt +:(tail:en-purl r.url))))]
   ==
 ::
@@ -149,7 +149,7 @@
     :-  (hep-to-cab -.p)
     ?+  -.p  p.p  :: usually plain text
       ?($source-id $target-id)       (tid:print p.p)
-      ?($id $name $user-id)  (lid:print p.p)
+      ?($id $name $user-id)          (lid:print p.p)
       $screen-name                   (lsc:print p.p)
     ==
   --

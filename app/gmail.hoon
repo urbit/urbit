@@ -41,17 +41,20 @@
       ==
     ++  card
       $%  {$diff subscription-result}
-          {$hiss wire {$~ $~} $httr {$hiss hiss}}
+          {$hiss wire {$~ $~} $httr {$hiss hiss:eyre}}
       ==
-    ++  easy-ot  |*({key/@t parser/fist:jo} =+(jo (ot [key parser] ~)))
+    ++  easy-ot
+      =,  dejs-soft:format
+      |*  {key/@t parser/fist}
+      (ot [key parser] ~)
     ++  sifo-google
-  |=  a/cord  ^-  cord
-  =;  fel  (crip (scan (sifo a) fel))
-  (star ;~(pose (cold '-' (just '+')) (cold '_' (just '/')) next))
+      |=  a/cord  ^-  cord
+      =;  fel  (crip (scan (en-base64 a) fel))
+      (star ;~(pose (cold '-' (just '+')) (cold '_' (just '/')) next))
     ++  ofis-google
-  |=  a/cord  ^-  cord
-  =;  fel  (ofis (crip (rash a fel)))
-  (star ;~(pose (cold '+' (just '-')) (cold '/' (just '_')) next))
+      |=  a/cord  ^-  cord
+      =;  fel  (de-base64 (crip (rash a fel)))
+      (star ;~(pose (cold '+' (just '-')) (cold '/' (just '_')) next))
     --
 ::
 =,  gall
@@ -73,7 +76,7 @@
 ++  peer-scry
   |=  pax/path
   ^-  {(list move) _+>.$}
-  ?>  ?=({care ^} pax)                ::  assert %u
+  ?>  ?=({care:clay ^} pax)                             ::  assert %u
   =>  (help i.pax i.t.pax t.t.pax)
   =>  scry
   %=  make-move
@@ -81,7 +84,7 @@
   ==
 ::
 ++  poke-email
-  |=  {adr/@ta tyl/tape mez/wall}  ^-  (quip move +>)
+  |=  {adr/@ta tyl/tape mez/wall}  ^-  (quip move _+>)
   ?>  =(our.hid src.hid)
   %-  poke-gmail-req  :*
     %post
@@ -93,11 +96,11 @@
     [;~((glue pat) . .)]:(cook crip (plus ;~(less pat next)))  :: /[^@]+@[^@]+/
   ::
     (crip tyl)
-    (of-wain (turn mez crip))
+    (of-wain:format (turn mez crip))
   ==
 ::
 ++  poke-gmail-req
-  |=  $:  method/meth  endpoint/path  quy/quay
+  |=  $:  method/meth:eyre  endpoint/path  quy/quay:eyre
           mes/message:rfc
           :: label-req:gmail-label
       ==
@@ -107,13 +110,14 @@
   :_  +>.$  :_  ~
   ^-  move
   :*  ost.hid  %hiss  /poke/[method]  `~  %httr  %hiss
-      ^-  purl
+      ^-  purl:eyre
       :+  [& ~ [%& /com/googleapis/www]]
         [~ gmail+v1+users+me+`valid-get-endpoint`endpoint]
-      `quay`[[%alt %json] ~]
+      `quay:eyre`[[%alt %json] ~]
   ::
-      :+  method  `math`(malt ~[content-type+['application/json']~])
-      =+  hoon-json-object=(joba %raw s+(sifo-google (message-to-rfc822:rfc mes)))
+      :+  method  `math:eyre`(malt ~[content-type+['application/json']~])
+      =/  hoon-json-object
+        (frond:enjs:format %raw s+(sifo-google (message-to-rfc822:rfc mes)))
       =+  request-body=(as-octt (en-json hoon-json-object))
       (some request-body)
       ::(some (en-json label-req-to-json:gmail-label label-req:gmail-label ~)) XX
@@ -124,10 +128,10 @@
 ::
 
 ++  sigh-httr
-  |=  {wir/wire res/httr}
+  |=  {wir/wire res/httr:eyre}
   ^-  {(list move) _+>.$}
   :: ~&  wir+wir
-  ?.  ?=({care @ @ @ *} wir)
+  ?.  ?=({care:clay @ @ @ *} wir)
     ::  pokes don't return anything
     ~&  sigh-poke+p.res
     [~ +>.$]
@@ -137,13 +141,14 @@
   :+  ost.hid  %diff
   ?+  i.wir  null+~
       $x
+    =,  enjs:format
     ?~  r.res
-      json+(jobe err+s+%empty-response code+(jone p.res) ~)
+      json+(pairs err+s+%empty-response code+(numb p.res) ~)
     =+  jon=(rush q.u.r.res apex:de-json)
     ?~  jon
-      json+(jobe err+s+%bad-json code+(jone p.res) body+s+q.u.r.res ~)
+      json+(pairs err+s+%bad-json code+(numb p.res) body+s+q.u.r.res ~)
     ?.  =(2 (div p.res 100))
-      json+(jobe err+s+%request-rejected code+(jone p.res) msg+u.jon ~)
+      json+(pairs err+s+%request-rejected code+(numb p.res) msg+u.jon ~)
     ::
     ::  Once we know we have good data, we drill into the JSON
     ::  to find the specific piece of data referred to by 'arg'
@@ -153,7 +158,8 @@
     =+  switch=t.t.t.t.wir
     ?+  switch  [%json `json`u.jon]
       {$messages $~}
-    =+  new-mezes=((ot messages+(ar (ot id+so 'threadId'^so ~)) ~):jo u.jon)
+    =/  new-mezes
+      ((ot messages+(ar (ot id+so 'threadId'^so ~)) ~):dejs-soft:format u.jon)
     ::%+  turn  new-mezes
     ::|=  id
     ::?<  ?=($~ new-mezes)
@@ -173,7 +179,7 @@
         ~|  u.jon
         =-  (need (reparse u.jon))
         ^=  reparse
-        =+  jo
+        =,  dejs-soft:format
         =+  ^=  from-and-subject
             |=  a/(map @t @t)  ^-  {@t @t}
             [(~(got by a) 'From') (~(got by a) 'Subject')]
@@ -193,30 +199,30 @@
     ::=+  body==+(jo ((ot body+(easy-ot 'body' (easy-ot 'data' so))) parsed-message))
     [%message headers]
     ==
-
-  =+  dir=((om:jo some) u.jon)
-  ?~  dir  json+(jobe err+s+%no-children ~)
+  ::
+  =+  dir=((om:dejs-soft:format some) u.jon)
+  ?~  dir  json+(pairs:enjs:format err+s+%no-children ~)
   =+  new-jon=(~(get by u.dir) i.arg)
   `subscription-result`$(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
            ::  redo with next argument
   ::
     $y
   ?~  r.res
-    ~&  [err+s+%empty-response code+(jone p.res)]
+    ~&  [err+s+%empty-response code+(numb:enjs:format p.res)]
       arch+*arch
   =+  jon=(rush q.u.r.res apex:de-json)
   ?~  jon
-    ~&  [err+s+%bad-json code+(jone p.res) body+s+q.u.r.res]
+    ~&  [err+s+%bad-json code+(numb:enjs:format p.res) body+s+q.u.r.res]
     arch+*arch
   ?.  =(2 (div p.res 100))
-    ~&  [err+s+%request-rejected code+(jone p.res) msg+u.jon]
+    ~&  [err+s+%request-rejected code+(numb:enjs:format p.res) msg+u.jon]
     arch+*arch
     ::
     ::  Once we know we have good data, we drill into the JSON
     ::  to find the specific piece of data referred to by 'arg'
     ::
     |-  ^-  subscription-result
-    =+  dir=((om:jo some) u.jon)
+    =+  dir=((om:dejs-soft:format some) u.jon)
     ?~  dir
       [%arch `(shax (jam u.jon)) ~]
     ?~  arg
@@ -232,11 +238,11 @@
   :_  +>.$  ~
 ::
 ++  help
-  |=  {ren/care style/@tas pax/path}
+  |=  {ren/care:clay style/@tas pax/path}
   =^  query  pax
     =+  xap=(flop pax)
     ?~  xap  [~ ~]
-    =+  query=(rush i.xap ;~(pfix wut yquy:urlp))
+    =+  query=(rush i.xap ;~(pfix wut yquy:de-purl))
     ?~  query  [~ pax]
     [u.query (flop t.xap)]
   =^  arg  pax  ~|(pax [+ -]:(split pax))
@@ -251,13 +257,13 @@
     ::
   ++  endpoint-to-purl
     |=  endpoint/path
-    ^-  purl
+    ^-  purl:eyre
     %+  scan
       "https://www.googleapis.com/gmail/v1/users/me{<`path`endpoint>}"
-    auri:urlp
+    auri:de-purl
     ::  Send an HTTP req
   ++  send-http
-    |=  hiz/hiss
+    |=  hiz/hiss:eyre
     ^+  +>
     =+  wir=`wire`[ren (scot %ud count) (scot %uv (jam arg)) style pax]
     =+  new-move=[ost.hid %hiss wir `~ %httr [%hiss hiz]]

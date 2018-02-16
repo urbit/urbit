@@ -1,4 +1,4 @@
-!:  ::  %behn, just a timer
+::  ::  %behn, just a timer
 !?  164
 ::::
 =,  behn
@@ -17,6 +17,9 @@
 ++  note  $~                                            ::  out request $->
 ++  sign  $~                                            ::  in result $<-
 ++  clok  (broq @da duct)                               ::  stored timers
+++  coke  $:  $0                                        ::  all state
+              tym/{p/clok q/clok}                       ::  positive+negative
+          ==                                            ::
 --
 ::
 |%
