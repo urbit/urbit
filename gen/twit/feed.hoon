@@ -2,13 +2,16 @@
 ::
 ::::  /hoon/feed/twit/gen
   ::
+/?    310
 /-    twitter
+/+  old-zuse
+=,  old-zuse
 ::
 ::::  ~fyr
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bek/beak}
-        {{who/iden $~} typ/?($home $user)}
+        {{who/iden $~} typ/?($user $home)}
     ==
 =+  pax=/(scot %p p.bek)/twit/(scot %da now)/[typ]/[who]
 :-  %tang

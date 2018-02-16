@@ -7,11 +7,8 @@ Persistence = require('./Persistence.coffee');
 
 module.exports = {
   setPasscode: function(pass) {
-    Dispatcher.dispatch({
+    return Dispatcher.dispatch({
       setPasscode: pass
-    });
-    return $('.womb-pass-input').each(function() {
-      return this.value || (this.value = pass);
     });
   },
   recycleTicket: function(arg, pass) {
@@ -32,6 +29,14 @@ module.exports = {
         return _this.setPasscode(pass);
       };
     })(this));
+  },
+  confirmShip: function(pass, ship) {
+    return Dispatcher.dispatch({
+      confirmClaim: {
+        pass: pass,
+        ship: ship
+      }
+    });
   },
   claimShip: function(pass, ship) {
     Dispatcher.dispatch({
@@ -168,6 +173,17 @@ WombStore = _.extend((new EventEmitter).setMaxListeners(50), {
     path = arg1.path, data = arg1.data;
     return _data[path] = data;
   },
+  confirmClaim: function(arg1) {
+    var k, ship, v;
+    ship = arg1.ship;
+    for (k in _data) {
+      v = _data[k];
+      if (k.indexOf('claim/') !== -1 && v === "confirm") {
+        _data[k] = "none";
+      }
+    }
+    return _data["claim/" + ship] = "confirm";
+  },
   putClaim: function(arg1) {
     var ship;
     ship = arg1.ship;
@@ -278,22 +294,21 @@ Balance = Scry("/balance/:pass", function(arg) {
     }, Label("Invalid passcode", "warning"));
   }
   planets = balance.planets, stars = balance.stars, owner = balance.owner, history = balance.history;
-  return div({}, h3({}, "Balance"), p({}, "Hello ", Mail(owner), ", "), p({}, "This balance was ", History(history)), p({}, "You currently hold ", b({}, planets || "no"), " Planets ", "and ", b({}, stars || "no"), " Stars."), stars ? rele(Stars) : void 0, planets ? rele(Planets) : void 0);
+  return div({}, h3({}, "Balance"), p({}, "Hello ", Mail(owner), ", "), p({}, "This balance was ", History(history)), p({}, "You currently hold ", b({}, planets || "no"), " Planets ", "and ", b({}, stars || "no"), " Stars."), p({
+    className: 'red'
+  }, b({}, "Warning: "), "When you click 'Claim' we will send the ticket to the email address above.  This can only be done once!"), stars ? rele(Stars) : void 0, planets ? rele(Planets) : void 0);
 });
 
 module.exports = name("Claim", FromStore("pass", function(arg) {
   var pass;
   pass = arg.pass;
   return div({}, p({}, "To view your ships, input your passcode."), PassInput({
-    minLength: 32,
+    minLength: 28,
     defaultValue: pass,
     onInputPass: Actions.setPasscode
   }), pass ? rele(Balance, {
-    key: "balance",
     pass: pass
-  }) : div({
-    key: "recycle"
-  }, h3({}, "Convert an old ticket"), rele(Recycling, {})));
+  }) : div({}, h3({}, "Convert an old ticket"), rele(Recycling, {})));
 }));
 
 
@@ -325,31 +340,38 @@ ClaimButton = FromStore("pass", function(arg) {
   pass = arg.pass, ship = arg.ship;
   if (!ship) {
     return button({
-      disabled: true
-    }, "Claim (invalid)");
+      disabled: true,
+      className: 'claim invalid'
+    }, "Invalid");
   }
   return rele(_ClaimButton, {
-    ship: ship,
-    onClick: function() {
-      return Actions.claimShip(pass, ship);
-    }
+    pass: pass,
+    ship: ship
   });
 });
 
 _ClaimButton = FromStore("claim/:ship", function(arg) {
-  var claim, onClick;
-  claim = arg.claim, onClick = arg.onClick;
+  var claim, pass, ship;
+  claim = arg.claim, pass = arg.pass, ship = arg.ship;
   switch (claim) {
     case "own":
       return Label("Claimed!", "success");
     case "wait":
       return Label("Claiming...");
     case "xeno":
-      return Label("Taken", "warning");
+      return Label("Not available", "warning");
     case "none":
       return button({
-        onClick: onClick
+        onClick: function() {
+          return Actions.confirmShip(pass, ship);
+        }
       }, "Claim");
+    case "confirm":
+      return button({
+        onClick: function() {
+          return Actions.claimShip(pass, ship);
+        }
+      }, "Click again to confirm.");
     default:
       throw new Error("Bad claim type: " + claim);
   }
@@ -439,26 +461,32 @@ module.exports = name("MailInput", function(arg) {
 
 
 },{"../util.coffee":18}],10:[function(require,module,exports){
-var Claim, NET, Ships, div, h3, h4, ref, rele;
+var Claim, NET, Recycling, Ships, a, div, h3, h4, ref, rele;
 
 Claim = require('./Claim.coffee');
 
 Ships = require('./Ships.coffee');
 
+Recycling = require('./Recycling.coffee');
+
 rele = React.createElement;
 
-NET = false;
+NET = true;
 
-ref = React.DOM, div = ref.div, h3 = ref.h3, h4 = ref.h4;
+ref = React.DOM, div = ref.div, h3 = ref.h3, h4 = ref.h4, a = ref.a;
 
 module.exports = function() {
   return div({}, h3({
     className: 'first-a'
-  }, "Claim an invite"), rele(Claim, {}), NET ? div({}, h4({}, "Network"), rele(Ships, {})) : void 0);
+  }, "Claim an invite"), rele(Claim, {}), NET ? div({}, h3({}, "Network"), rele(Ships, {})) : void 0, div({
+    className: 'footer'
+  }, "Questions?  Email us:", a({
+    href: "mailto:urbit@urbit.org"
+  }, "urbit@urbit.org"), "."));
 };
 
 
-},{"./Claim.coffee":5,"./Ships.coffee":15}],11:[function(require,module,exports){
+},{"./Claim.coffee":5,"./Recycling.coffee":12,"./Ships.coffee":15}],11:[function(require,module,exports){
 var input, name, recl, uvShape;
 
 uvShape = require('../util.coffee').uvShape;
@@ -478,7 +506,7 @@ module.exports = name("PassInput", function(arg) {
   onInputPass = arg.onInputPass, minLength = arg.minLength, defaultValue = arg.defaultValue;
   return input({
     defaultValue: defaultValue,
-    className: 'mono womb-pass-input',
+    className: 'mono',
     style: {
       width: '100%'
     },
@@ -542,23 +570,27 @@ RecycleTicket = name("RecycleTicket", Scry("/ticket/~:ship/~:tick", function(arg
       mail: mail
     }, passcode);
   };
-  switch (status != null ? status : "fail") {
-    case "fail":
-      return Label("Bad ticket", "warning");
-    case "good":
-      return rele(RecycleButton, {
-        disabled: !mail,
-        onClick: doRecycle
-      });
-    case "used":
-      return span({}, a({
-        onClick: function() {
-          return Actions.setPasscode(passcode);
-        }
-      }, passcode), Label("Ticket exchanged", "info"));
-    default:
-      throw new Error("Bad ticket status: " + status);
-  }
+  return div({
+    className: 'recycleTicket'
+  }, (function() {
+    switch (status != null ? status : "fail") {
+      case "fail":
+        return Label("Bad ticket", "warning");
+      case "good":
+        return rele(RecycleButton, {
+          disabled: !mail,
+          onClick: doRecycle
+        });
+      case "used":
+        return span({}, a({
+          onClick: function() {
+            return Actions.setPasscode(passcode);
+          }
+        }, passcode), Label("Ticket exchanged", "info"));
+      default:
+        throw new Error("Bad ticket status: " + status);
+    }
+  })());
 }));
 
 Recycling = recl({
@@ -746,7 +778,7 @@ module.exports = name("ShipInput", function(arg) {
   return input({
     defaultValue: defaultValue,
     placeholder: placeholder,
-    className: 'mono',
+    className: 'mono pick',
     onChange: function(arg1) {
       var ship, target;
       target = arg1.target;
@@ -790,7 +822,9 @@ labels = {
 Stat = name("Stat", function(arg) {
   var className, dist, free, live, owned, ship, split, stats;
   stats = arg.stats;
-  return ul({}, (function() {
+  return ul({
+    className: 'network'
+  }, (function() {
     var ref1, results;
     results = [];
     for (ship in stats) {
@@ -802,7 +836,7 @@ Stat = name("Stat", function(arg) {
         key: ship
       }, span({
         className: "mono"
-      }, "~" + ship), " (", live, "): ", (function() {
+      }, "~" + ship), (function() {
         switch (false) {
           case free == null:
             return Label(labels.free);
@@ -830,7 +864,7 @@ module.exports = Scry("/stats", Stat);
 
 
 },{"./Label.coffee":8,"./Scry.coffee":13,"classnames":19}],16:[function(require,module,exports){
-var ClaimButton, Scry, ShipInput, Shop, ShopShips, button, div, h6, li, recl, ref, rele, span, ul;
+var ClaimButton, Scry, ShipInput, Shop, ShopShips, button, code, div, h6, li, recl, ref, rele, span, ul;
 
 Scry = require('./Scry.coffee');
 
@@ -838,7 +872,7 @@ ShipInput = require('./ShipInput.coffee');
 
 ClaimButton = require('./ClaimButton.coffee');
 
-ref = React.DOM, ul = ref.ul, li = ref.li, div = ref.div, h6 = ref.h6, button = ref.button, span = ref.span;
+ref = React.DOM, ul = ref.ul, li = ref.li, div = ref.div, h6 = ref.h6, button = ref.button, span = ref.span, code = ref.code;
 
 recl = React.createClass;
 
@@ -888,17 +922,26 @@ Shop = function(type, length) {
     },
     render: function() {
       var ref1;
-      return div({}, h6({}, "Avaliable " + type + " (random). ", button({
-        onClick: this.reroll
-      }, "Reroll")), rele(ShopShips, _.extend({}, this.props, {
+      return div({}, h6({}, "Avaliable " + type + " — "), rele(ShopShips, _.extend({}, this.props, {
         type: type,
         nth: this.state.shipSelector
-      })), h6({}, "Custom"), div({}, "Specific " + type + ": ", rele(ShipInput, {
+      })), button({
+        onClick: this.reroll,
+        className: 'reroll'
+      }, "Get a new set"), h6({}, "Custom " + type + " — "), div({}, div({
+        style: {
+          marginBottom: ".3rem"
+        }
+      }, "If you understand how to pick a ", code({}, "@p"), " for " + type + ", feel free:"), div({
+        style: {
+          marginBottom: "1rem"
+        }
+      }, rele(ShipInput, {
         length: length,
         onInputShip: this.onInputShip
       }), rele(ClaimButton, {
         ship: (ref1 = this.state.customShip) != null ? ref1 : ""
-      })));
+      }))));
     }
   });
 };
@@ -922,9 +965,9 @@ var PO, PO_old, SHIPSHAPE,
 
 SHIPSHAPE = /^~?([a-z]{3}|[a-z]{6}(-[a-z]{6}){0,3}|[a-z]{6}(-[a-z]{6}){3}(--[a-z]{6}(-[a-z]{6}){3})+)$/;
 
-PO_old = 'dozmarbinwansamlitsighidfidlissogdirwacsabwissib\nrigsoldopmodfoglidhopdardorlorhodfolrintogsilmir\nholpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\nlosdilforpilramtirwintadbicdifrocwidbisdasmidlop\nrilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\nritpodmottamtolsavposnapnopsomfinfonbanporworsip\nronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\nsivtagpadsaldivdactansidfabtarmonranniswolmispal\nlasdismaprabtobrollatlonnodnavfignomnibpagsopral\nbilhaddocridmocpacravripfaltodtiltinhapmicfanpat\ntaclabmogsimsonpinlomrictapfirhasbosbatpochactid\nhavsaplindibhosdabbitbarracparloddosbortochilmac\ntomdigfilfasmithobharmighinradmashalraglagfadtop\nmophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\nnimlarfitwalrapsarnalmoslandondanladdovrivbacpol\nlaptalpitnambonrostonfodponsovnocsorlavmatmipfap\n\nzodnecbudwessevpersutletfulpensytdurwepserwylsun\nrypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex\nlunmeplutseppesdelsulpedtemledtulmetwenbynhexfeb\npyldulhetmevruttylwydtepbesdexsefwycburderneppur\nrysrebdennutsubpetrulsynregtydsupsemwynrecmegnet\nsecmulnymtevwebsummutnyxrextebfushepbenmuswyxsym\nselrucdecwexsyrwetdylmynmesdetbetbeltuxtugmyrpel\nsyptermebsetdutdegtexsurfeltudnuxruxrenwytnubmed\nlytdusnebrumtynseglyxpunresredfunrevrefmectedrus\nbexlebduxrynnumpyxrygryxfeptyrtustyclegnemfermer\ntenlusnussyltecmexpubrymtucfyllepdebbermughuttun\nbylsudpemdevlurdefbusbeprunmelpexdytbyttyplevmyl\nwedducfurfexnulluclennerlexrupnedlecrydlydfenwel\nnydhusrelrudneshesfetdesretdunlernyrsebhulryllud\nremlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\nlyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes';
+PO_old = 'doz mar bin wan sam lit sig hid fid lis sog dir wac sab wis sib\nrig sol dop mod fog lid hop dar dor lor hod fol rin tog sil mir\nhol pas lac rov liv dal sat lib tab han tic pid tor bol fos dot\nlos dil for pil ram tir win tad bic dif roc wid bis das mid lop\nril nar dap mol san loc nov sit nid tip sic rop wit nat pan min\nrit pod mot tam tol sav pos nap nop som fin fon ban por wor sip\nron nor bot wic soc wat dol mag pic dav bid bal tim tas mal lig\nsiv tag pad sal div dac tan sid fab tar mon ran nis wol mis pal\nlas dis map rab tob rol lat lon nod nav fig nom nib pag sop ral\nbil had doc rid moc pac rav rip fal tod til tin hap mic fan pat\ntac lab mog sim son pin lom ric tap fir has bos bat poc hac tid\nhav sap lin dib hos dab bit bar rac par lod dos bor toc hil mac\ntom dig fil fas mit hob har mig hin rad mas hal rag lag fad top\nmop hab nil nos mil fop fam dat nol din hat nac ris fot rib hoc\nnim lar fit wal rap sar nal mos lan don dan lad dov riv bac pol\nlap tal pit nam bon ros ton fod pon sov noc sor lav mat mip fap\n\n/  /  /  /  /  /  /  /  /  /  /  /  /  /  /\nzod nec bud wes sev per sut let ful pen syt dur wep ser wyl sun\nryp syx dyr nup heb peg lup dep dys put lug hec ryt tyv syd nex\nlun mep lut sep pes del sul ped tem led tul met wen byn hex feb\npyl dul het mev rut tyl wyd tep bes dex sef wyc bur der nep pur\nrys reb den nut sub pet rul syn reg tyd sup sem wyn rec meg net\nsec mul nym tev web sum mut nyx rex teb fus hep ben mus wyx sym\nsel ruc dec wex syr wet dyl myn mes det bet bel tux tug myr pel\nsyp ter meb set dut deg tex sur fel tud nux rux ren wyt nub med\nlyt dus neb rum tyn seg lyx pun res red fun rev ref mec ted rus\nbex leb dux ryn num pyx ryg ryx fep tyr tus tyc leg nem fer mer\nten lus nus syl tec mex pub rym tuc fyl lep deb ber mug hut tun\nbyl sud pem dev lur def bus bep run mel pex dyt byt typ lev myl\nwed duc fur fex nul luc len ner lex rup ned lec ryd lyd fen wel\nnyd hus rel rud nes hes fet des ret dun ler nyr seb hul ryl lud\nrem lys fyn wer ryc sug nys nyl lyn dyn dem lux fed sed bec mun\nlyr tes mud nyt byr sen weg fyr mur tel rep teg pec nel nev fes';
 
-PO = 'dozmarbinwansamlitsighidfidlissogdirwacsabwissib\nrigsoldopmodfoglidhopdardorlorhodfolrintogsilmir\nholpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\nlosdilforpilramtirwintadbicdifrocwidbisdasmidlop\nrilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\nritpodmottamtolsavposnapnopsomfinfonbandorworsip\nronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\nsivtagpadsaldivdactansidfabtarmonranniswolmispal\nlasdismaprabtobrollatlonnodnavfignomnibpagsopral\nbilhaddocridmocpacravripfaltodtiltinhapmicfanpat\ntaclabmogsimsonpinlomrictapfirhasbosbatpochactid\nhavsaplindibhosdabbitbarracparloddosbortochilmac\ntomdigfilfasmithobharmighinradmashalraglagfadtop\nmophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\nnimlarfitwalrapsarnalmoslandondanladdovrivbacpol\nlaptalpitnambonrostonfodponsovnocsorlavmatmipfip\n\nzodnecbudwessevpersutletfulpensytdurwepserwylsun\nrypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex\nlunmeplutseppesdelsulpedtemledtulmetwenbynhexfeb\npyldulhetmevruttylwydtepbesdexsefwycburderneppur\nrysrebdennutsubpetrulsynregtydsupsemwynrecmegnet\nsecmulnymtevwebsummutnyxrextebfushepbenmuswyxsym\nselrucdecwexsyrwetdylmynmesdetbetbeltuxtugmyrpel\nsyptermebsetdutdegtexsurfeltudnuxruxrenwytnubmed\nlytdusnebrumtynseglyxpunresredfunrevrefmectedrus\nbexlebduxrynnumpyxrygryxfeptyrtustyclegnemfermer\ntenlusnussyltecmexpubrymtucfyllepdebbermughuttun\nbylsudpemdevlurdefbusbeprunmelpexdytbyttyplevmyl\nwedducfurfexnulluclennerlexrupnedlecrydlydfenwel\nnydhusrelrudneshesfetdesretdunlernyrsebhulryllud\nremlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\nlyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes';
+PO = 'doz mar bin wan sam lit sig hid fid lis sog dir wac sab wis sib\nrig sol dop mod fog lid hop dar dor lor hod fol rin tog sil mir\nhol pas lac rov liv dal sat lib tab han tic pid tor bol fos dot\nlos dil for pil ram tir win tad bic dif roc wid bis das mid lop\nril nar dap mol san loc nov sit nid tip sic rop wit nat pan min\nrit pod mot tam tol sav pos nap nop som fin fon ban dor wor sip\nron nor bot wic soc wat dol mag pic dav bid bal tim tas mal lig\nsiv tag pad sal div dac tan sid fab tar mon ran nis wol mis pal\nlas dis map rab tob rol lat lon nod nav fig nom nib pag sop ral\nbil had doc rid moc pac rav rip fal tod til tin hap mic fan pat\ntac lab mog sim son pin lom ric tap fir has bos bat poc hac tid\nhav sap lin dib hos dab bit bar rac par lod dos bor toc hil mac\ntom dig fil fas mit hob har mig hin rad mas hal rag lag fad top\nmop hab nil nos mil fop fam dat nol din hat nac ris fot rib hoc\nnim lar fit wal rap sar nal mos lan don dan lad dov riv bac pol\nlap tal pit nam bon ros ton fod pon sov noc sor lav mat mip fip\n\nzod nec bud wes sev per sut let ful pen syt dur wep ser wyl sun\nryp syx dyr nup heb peg lup dep dys put lug hec ryt tyv syd nex\nlun mep lut sep pes del sul ped tem led tul met wen byn hex feb\npyl dul het mev rut tyl wyd tep bes dex sef wyc bur der nep pur\nrys reb den nut sub pet rul syn reg tyd sup sem wyn rec meg net\nsec mul nym tev web sum mut nyx rex teb fus hep ben mus wyx sym\nsel ruc dec wex syr wet dyl myn mes det bet bel tux tug myr pel\nsyp ter meb set dut deg tex sur fel tud nux rux ren wyt nub med\nlyt dus neb rum tyn seg lyx pun res red fun rev ref mec ted rus\nbex leb dux ryn num pyx ryg ryx fep tyr tus tyc leg nem fer mer\nten lus nus syl tec mex pub rym tuc fyl lep deb ber mug hut tun\nbyl sud pem dev lur def bus bep run mel pex dyt byt typ lev myl\nwed duc fur fex nul luc len ner lex rup ned lec ryd lyd fen wel\nnyd hus rel rud nes hes fet des ret dun ler nyr seb hul ryl lud\nrem lys fyn wer ryc sug nys nyl lyn dyn dem lux fed sed bec mun\nlyr tes mud nyt byr sen weg fyr mur tel rep teg pec nel nev fes';
 
 module.exports = {
   unpackFrond: function(a) {
@@ -948,7 +991,7 @@ module.exports = {
   },
   mailShape: function(a) {
     var valid;
-    return valid = a.indexOf('@') !== -1 && a.indexOf('.') !== -1 && a.length > 7 && a.split(".")[1].length > 1 && a.split("@")[0].length > 0 && a.split("@")[1].length > 4;
+    return valid = a.indexOf('@') !== -1 && a.indexOf('.') !== -1 && a.length > 7 && a.split(".").slice(-1)[0].length > 1 && a.split("@")[0].length > 0 && a.split("@")[1].length > 4;
   }
 };
 
@@ -1063,8 +1106,12 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 

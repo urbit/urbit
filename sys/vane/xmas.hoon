@@ -8,8 +8,8 @@
 ::::                                                    ::::::  ames structures
   ::                                                    ::  ::
 ::
-=*  pipe  channel:able:^jael                            ::  secure channel
-=*  gree  farm:pki:^jael                                ::  pki information
+=*  pipe  channel:able:jael                             ::  secure channel
+=*  gree  farm:pki:jael                                 ::  pki information
 |%                                                      ::
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
 ++  bath                                                ::  per friend
@@ -479,7 +479,7 @@
     ::  data will crash the packet when we install it.
     ::
     %-  (bond |.(pub.dat:(~(got by (~(got by gyr) lyf)) him)))
-    (bind (~(get by pub.det) lyf) |=(cert:pki:^jael pub.dat))
+    (bind (~(get by pub.det) lyf) |=(cert:pki:jael pub.dat))
   --
 ::                                                      ::
 ::::  hose                                              ::
@@ -1029,23 +1029,23 @@
       ^+  +>
       ?-    -.fic
           $good
-        ::  ~&  [%ok her `@p`(mug p.fic) r.fic]
+        ~&  [%ok her `@p`(mug p.fic) r.fic]
         (wy-good q.fic s.fic)
       ::
           $send
-        ::  ~&  [%go her `@p`(mug p.fic) q.fic]
+        ~&  [%go her `@p`(mug p.fic) q.fic]
         +>(fex [[%send p.fic r.fic] fex])
       ==
     ::                                                  ::
     ++  wy-back                                         ::  hear an ack
       |=  {dam/flap cop/coop lag/@dr}
-      ::  ~&  [%wy-back (flam dam) cop lag]
+      ~&  [%wy-back (flam dam) cop lag]
       +>(mup (work:mup now %back dam cop lag))
     ::                                                  ::
     ++  wy-feed                                         ::  feed pump
       ^+  .
       =^  cly  .  (wy-find want.mup)
-      ::  ~&  [%wy-feed want.mup (lent cly)]
+      ~&  [%wy-feed want.mup (lent cly)]
       +(mup (work:mup now %pack cly))
     ::                                                  ::
     ++  wy-find                                         ::  collect packets
@@ -1075,7 +1075,7 @@
       ^+  +>
       =+  bum=(~(get by cob) q.paz)
       ?:  |(?=($~ bum) =(~ cly.u.bum))
-        ::  ~&  [%wy-good-ignore paz ?=($~ cop)]
+        ~&  [%wy-good-ignore paz ?=($~ cop)]
         +>.$
       ?^  cop
         ::
@@ -1096,7 +1096,7 @@
       ^+  +>
       =+  yex=((knit her lyf wyr det) now eny [%bond [(mix kos 1) seq] cha val])
       =.  fex  (weld (flop p.yex) fex)
-      ::  ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
+      ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent fex)]
       %_    +>.$
           seq  +(seq)
           cob
@@ -1119,7 +1119,7 @@
       =+  zup=(~(get by cob) lac)
       ?~  zup  +.$
       ?~  cup.u.zup  +.$
-      ::  ~&  [?:(=(0 (end 0 1 kos)) %ta %ba) her kos lac]
+      ~&  [?:(=(0 (end 0 1 kos)) %ta %ba) her kos lac]
       %=  $
         lac  +(lac)
         cob  (~(del by cob) lac)
@@ -1194,6 +1194,64 @@
       [(turn fex lung) ..^$]
     --
 |%                                                    ::  vane interface
+++  neon
+  |=  our/ship
+  ^-  (vane task:able gift:able sign:able note:able silo silo)
+  =|  syl/silo
+  |%
+  ++  load  |=(silo +>)
+  ++  stay  syl
+  ++  plow
+    =|  $:  now/@da
+            eny/@e
+            sky/roof
+        ==
+    |%
+    ++  doze  ~
+    ++  peek
+      |=  $:  lyc/(unit (set ship))
+              car/term
+              bem/beam
+          ==
+      ^-  (unit (unit (cask vase)))
+      ~
+    ::
+    ++  spin
+      =|  $:  hen/duct
+              moz/(list move)
+          ==
+      |%
+      ++  call  
+        |=  tac/task:able
+        ^+  +>
+        =*  job  ^-  task:loft
+            ?-  -.tac
+              $hear  tac
+              $mess  [%mess p.tac hen q.tac r.tac]
+              $wake  tac
+            ==
+        =^  fex  syl  abet:(apex:love job)
+        +>.$(moz (weld (turn fex lung) moz))
+      ::
+      ++  take  
+        |=  {tea/wire hin/sign:able}
+        =*  job  ^-  task:loft
+          ?+    -.tea  !!
+              $msg
+            ?>  ?=({@ @ $~} +.tea)
+            =+  [who kos]=[(slav %p i.t.tea) (slav %ud i.t.t.tea)]
+            ?-  +<.hin
+                $rend  
+              [%rend who kos p.+.hin q.+.hin]
+                $mack  
+              [%done who kos ?~(p.+.hin ~ `coop`[~ `[%fail u.p.+.hin]])]
+            ==
+          ==
+        =^  fex  syl  abet:(apex:love job)
+        +>.$(moz (weld (turn fex lung) moz))
+      --
+    --
+  --
 ++  call                                              ::  handle request
   |=  $:  hen/duct
           hic/(hypo task:able:xmas)

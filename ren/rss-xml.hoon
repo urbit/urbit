@@ -19,7 +19,7 @@
 ::  urb:front attrs confuse RSS validators, readers
 =+  no-meta=|=(a/marl ^+(a ?~(a ~ ?.(?=($meta n.g.i.a) a $(a t.a)))))
 ::
-%-  crip  %-  print
+%-  crip  %-  en-xml
 ;rss(version "2.0")
   ;channel
     ;title: *{hed.sum}

@@ -1,5 +1,5 @@
-!:                                                      ::  /van/zuse
-::                                                      ::  !%reference/1
+::                                                      ::  /van/zuse
+::                                                      ::  %reference/1
 ::  %zuse: arvo library.
 ::
 ::  %zuse is two nested cores: the first for models
@@ -29,60 +29,142 @@
 ::  it's important to keep %zuse minimal.  models and
 ::  engines not used outside a vane should stay inside
 ::  that vane.
-::
 ~%  %zuse  +>  ~
 =>
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
 |%
+:>  #  %misc
+:>
+:>  miscellaneous systems types
++|
+++  ares  (unit {p/term q/(list tank)})                 ::  possible error
+++  coop  (unit ares)                                   ::  possible error
+++  json                                                ::  normal json value
+  $@  $~                                                ::  null
+  $%  {$a p/(list json)}                                ::  array
+      {$b p/?}                                          ::  boolean
+      {$o p/(map @t json)}                              ::  object
+      {$n p/@ta}                                        ::  number
+      {$s p/@t}                                         ::  string
+  ==                                                    ::
+++  mime  {p/mite q/octs}                               ::  mimetyped data
+++  octs  {p/@ud q/@t}                                  ::  octet-stream
+++  sack  {p/ship q/ship}                               ::  incoming [our his]
+++  sock  {p/ship q/ship}                               ::  outgoing [our his]
+::+|
+::
+++  roof  (room vase)                                   ::  namespace
+++  room                                                ::  either namespace
+  |*  vase/mold                                         ::  vase or maze
+  $-  $:  ref/*                                         ::  reference type
+          lyc/(unit (set ship))                         ::  leakset
+          car/term                                      ::  perspective
+          bem/beam                                      ::  path
+      ==                                                ::
+  %-  unit                                              ::  ~: unknown
+  %-  unit                                              ::  ~ ~: invalid
+  (cask vase)                                           ::  marked cargo
+++  vane                                                ::  kernel module
+  |*  $:  task/mold                                     ::  ->$ in request
+          gift/mold                                     ::  <-$ out result
+          sign/mold                                     ::  $<- in result
+          note/mold                                     ::  $-> out request
+          mind/mold                                     ::  current state
+          seed/mold                                     ::  prior state
+      ==                                                ::
+  =*  self  (vane task gift sign note mind seed)        ::
+  $_  =|  mind
+  ^|  |%
+  ++  load  |~(seed ^|(+>))
+  ++  stay  $:mind                                      ::  preserve
+  ++  plow                                              ::  work in time
+    =|  $:  now/@da                                     ::  date
+            eny/@e                                      ::  entropy
+            sky/roof                                    ::  namespace
+        ==                                              ::
+    ^|  |%
+    ++  doze  *(unit @da)                               ::  awake when
+    ++  peek
+      |~  $:  lyc/(unit (set ship))                     ::  leakset
+              car/term                                  ::  perspective
+              bem/beam                                  ::  global path
+          ==
+      *(unit (unit (cask vase)))
+    ::
+    ++  spin                                            ::  work on state
+      =|  $:  hen/duct                                  ::  cause stack
+              moz/(list (pair duct (wind note gift)))   ::  actions, reversed
+          ==
+      ^|  |%
+      ++  call                                          ::  advancing effect
+        |~(task ^|(+>))
+      ::
+      ++  take                                          ::  returning effect
+        |~({wire sign} ^|(+>))
+      --                                                ::
+    --
+  --                                                    ::
 ::                                                      ::::
 ::::                      ++ames                          ::  (1a) network
   ::                                                    ::::
 ++  ames  ^?
   |%
   ::                                                    ::
-  ::::                  ++able:behn                     ::  (1a1) arvo moves
+  ::::                  ++able:ames                     ::  (1a1) arvo moves
     ::                                                  ::::
   ++  able  ^?
     |%
-    ++  card                                            ::  out cards
-      $%  {$went p/sack q/path r/@ud s/coop}            ::  response confirm
-          {$west p/sack q/path r/@ud s/*}               ::  network request
-      ==                                                ::
+    ++  note                                            ::  out request $->
+      $?  $:  $d                                        ::  to %dill
+      $%  {$flog p/flog:dill}                           ::
+      ==  ==                                            ::
+          $:  $a                                        ::  to %ames
+      $%  {$kick p/@da}                                 ::
+      ==  ==                                            ::
+          $:  $g                                        ::  to %gall
+      $%  {$deal p/sock q/cush:gall}                    ::
+      ==  ==                                            ::
+          $:  @tas                                      ::  to any
+      $%  {$init p/@p}                                  ::
+          {$west p/sack q/path r/*}                     ::
+      ==  ==  ==                                        ::
     ++  gift                                            ::  out result <-$
-      $%  {$drop $~}                                    ::  drop packet
-          {$hear p/lane q/@}                            ::  receive packet
-          {$east p/sock q/*}                            ::  network response
+      $%  {$hear p/lane q/@}                            ::  receive packet
           {$init p/@p}                                  ::  report install
+          {$mack p/(unit tang)}                         ::  
           {$mass p/mass}                                ::  memory usage
           {$send p/lane q/@}                            ::  transmit packet
-          {$waft p/ship q/path r/*}                     ::  response message
-          {$wart p/sock q/@tas r/path s/*}              ::  network request
-          {$went p/ship q/cape}                         ::  reaction message
-          {$woot p/ship q/path r/coop}                  ::  e2e reaction message
+          {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
-    ++  note                                            ::  out request $->
-      $%  {$c card}                                     ::  to %clay
-          {$e card}                                     ::  to %eyre
-          {$g card}                                     ::  to %gall
-      ==                                                ::
+    ++  sign                                            ::  in result _<-
+      $?  $:  $g                                        ::  from %gall
+      $%  {$unto p/cuft:gall}                           ::
+          {$mean p/ares}                                ::  XX old clean up
+          {$nice $~}                                    ::
+      ==  ==                                            ::
+          $:  @tas                                      ::
+      $%  {$crud p/@tas q/(list tank)}                  ::  by any
+          {$mack p/(unit tang)}                         ::  message ack
+          {$woot p/ship q/coop}                         ::  reaction message
+      ==  ==  ==                                        ::
     ++  task                                            ::  in request ->$
-      $%  ::  {$born p/@p q/@pG r/?}                    ::  ticket birth
-          {$barn $~}                                    ::  new unix process
+      $%  {$barn $~}                                    ::  new unix process
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$cash p/@p q/buck}                           ::  civil license
-          ::  {$funk p/@p q/@p r/@}                     ::  symtix from/to/key
           {$hear p/lane q/@}                            ::  receive packet
+          {$halo p/lane q/@ r/ares}                     ::  hole with trace
           {$hole p/lane q/@}                            ::  packet failed
           {$junk p/@}                                   ::  entropy
           {$kick p/@da}                                 ::  wake up
+          {$nuke p/@p}                                  ::  toggle auto-block
           {$make p/(unit @t) q/@ud r/@ s/?}             ::  wild license
           {$sith p/@p q/@uw r/?}                        ::  imperial generator
           {$wake $~}                                    ::  timer activate
-          {$want p/sock q/path r/*}                     ::  send message
           {$wegh $~}                                    ::  report memory
-          {$wont p/sock q/path r/*}                     ::  e2e send message
+          {$west p/sack q/path r/*}                     ::  network request
+          {$want p/sock q/path r/*}                     ::  forward message
       ==                                                ::
     --  ::able
   ::
@@ -113,14 +195,16 @@
       --  ::nu                                          ::
     --  ::acru                                          ::
   ++  bait  {p/skin q/@ud r/dove}                       ::  fmt nrecvd spec
+  ++  bath                                              ::  convo per client
+    $:  sop/shed                                        ::  not stalled
+        raz/(map path race)                             ::  statements inbound
+        ryl/(map path rill)                             ::  statements outbound
+    ==                                                  ::
   ++  boon                                              ::  fort output
-    $%  {$beer p/ship}                                  ::  gained ownership
-        {$bier p/ship q/deyd}                           ::  unsigned deyd
+    $%  {$beer p/ship q/@uvG}                           ::  gained ownership
         {$cake p/sock q/soap r/coop s/duct}             ::  e2e message result
-        {$coke p/sock q/soap r/cape s/duct}             ::  message result
         {$mead p/lane q/rock}                           ::  accept packet
-        {$milk p/sock q/soap r/*}                       ::  accept message
-        {$mulk p/sock q/soap r/*}                       ::  e2e pass message
+        {$milk p/sock q/soap r/*}                       ::  e2e pass message
         {$ouzo p/lane q/rock}                           ::  transmit packet
         {$wine p/sock q/tape}                           ::  notify user
     ==                                                  ::
@@ -137,6 +221,12 @@
         qim/(map hand code)                             ::  inbound
     ==                                                  ::
   ++  code  @uvI                                        ::  symmetric key
+  ++  corn                                              ::  flow by server
+    $:  hen/duct                                        ::  admin channel
+        nys/(map flap bait)                             ::  packets incoming
+        olz/(map flap cape)                             ::  packets completed
+        wab/(map ship bath)                             ::  relationship
+    ==                                                  ::
   ++  deyd  {p/@ q/step r/?}                            ::  sig stage fake?
   ++  dore                                              ::  foreign contact
     $:  wod/road                                        ::  connection to
@@ -148,6 +238,14 @@
   ++  flow                                              ::  packet connection
     $:  rtt/@dr                                         ::  decaying avg rtt
         wid/@ud                                         ::  logical wdow msgs
+    ==                                                  ::
+  ++  fort                                              ::  formal state
+    $:  $0                                              ::  version
+        gad/duct                                        ::  client interface
+        hop/@da                                         ::  network boot date
+        bad/(set @p)                                    ::  bad ships
+        ton/town                                        ::  security
+        zac/(map ship corn)                             ::  flows by server
     ==                                                  ::
   ++  gcos                                              ::  id description
     $%  {$czar $~}                                      ::  8-bit ship
@@ -169,10 +267,8 @@
   ++  life  @ud                                         ::  regime number
   ++  mace  (list {p/life q/ring})                      ::  private secrets
   ++  meal                                              ::  payload
-    $%  {$back p/cape q/flap r/@dr}                     ::  acknowledgment
-        {$buck p/coop q/flap r/@dr}                     ::  e2e ack
+    $%  {$back p/coop q/flap r/@dr}                     ::  ack
         {$bond p/life q/path r/@ud s/*}                 ::  message
-        {$bund p/life q/path r/@ud s/*}                 ::  e2e message
         {$carp p/@ q/@ud r/@ud s/flap t/@}              ::  skin+inx+cnt+hash
         {$fore p/ship q/(unit lane) r/@}                ::  forwarded packet
     ==                                                  ::
@@ -285,7 +381,9 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$dirk p/@tas}                                ::  mark mount dirty
+      $%  {$croz rus/(map desk {r/regs w/regs})}        ::  rules for group
+          {$cruz cez/(map @ta crew)}                    ::  permission groups
+          {$dirk p/@tas}                                ::  mark mount dirty
           {$ergo p/@tas q/mode}                         ::  version update
           {$hill p/(list @tas)}                         ::  mount points
           {$mack p/(unit tang)}                         ::  ack
@@ -293,22 +391,34 @@
           {$mere p/(each (set path) (pair term tang))}  ::  merge result
           {$note p/@tD q/tank}                          ::  debug message
           {$ogre p/@tas}                                ::  delete mount point
+          {$rule red/dict wit/dict}                     ::  node r+w permissions
+          {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
+          {$wris p/case p/(set (pair care path))}       ::  many changes
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$boat $~}                                    ::  pier rebooted
-          {$drop p/@p q/desk}                           ::  cancel pending merge
-          {$info p/@p q/desk r/nori}                    ::  internal edit
-          {$init p/@p}                                  ::  report install
-          {$into p/desk q/? r/mode}                     ::  external edit
-          {$merg p/@p q/desk r/@p s/desk t/case u/germ} ::  merge desks
-          {$mont p/desk q/beam}                         ::  mount to unix
-          {$dirk p/desk}                                ::  mark mount dirty
-          {$ogre p/$@(desk beam)}                       ::  delete mount point
-          {$warp p/sock q/riff}                         ::  file request
+          {$cred our/ship nom/@ta cew/crew}             ::  set permission group
+          {$crew our/ship}                              ::  permission groups
+          {$crow our/ship nom/@ta}                      ::  group usage
+          {$drop our/@p des/desk}                       ::  cancel pending merge
+          {$info our/@p des/desk dit/nori}              ::  internal edit
+          {$init our/@p}                                ::  report install
+          {$into des/desk all/? fis/mode}               ::  external edit
+          $:  $merg                                     ::  merge desks
+              our/@p  des/desk                          ::  target
+              her/@p  dem/desk  cas/case                ::  source
+              how/germ                                  ::  method
+          ==                                            ::
+          {$mont des/desk bem/beam}                     ::  mount to unix
+          {$dirk des/desk}                              ::  mark mount dirty
+          {$ogre pot/$@(desk beam)}                     ::  delete mount point
+          {$perm our/ship des/desk pax/path rit/rite}   ::  change permissions
+          {$warp wer/sock rif/riff}                     ::  internal file req
+          {$werp who/ship wer/sock rif/riff}            ::  external file req
           {$wegh $~}                                    ::  report memory
-          {$went p/sack q/path r/@ud s/coop}            ::  response confirm
-          {$west p/sack q/path r/@ud s/*}               ::  network request
+          {$went wer/sack pax/path num/@ud ack/coop}    ::  response confirm
+          {$west wer/sack pax/path res/*}               ::  network request
       ==                                                ::
     --  ::able
   ::
@@ -325,13 +435,15 @@
     $%  {$delta p/lobe q/{p/mark q/lobe} r/page}        ::  delta on q
         {$direct p/lobe q/page}                         ::  immediate
     ==                                                  ::
-  ++  care  ?($d $u $v $w $x $y $z)                     ::  clay submode
+  ++  care  ?($d $p $u $v $w $x $y $z)                  ::  clay submode
   ++  case                                              ::  ship desk case spur
     $%  {$da p/@da}                                     ::  date
         {$tas p/@tas}                                   ::  label
         {$ud p/@ud}                                     ::  number
     ==                                                  ::
   ++  coop  (unit ares)                                 ::  e2e ack
+  ++  crew  (set ship)                                  ::  permissions group
+  ++  dict  {src/path rul/rule}                         ::  effective permission
   ++  dome                                              ::  project state
     $:  ank/ankh                                        ::  state
         let/@ud                                         ::  top id
@@ -367,8 +479,9 @@
   ++  mizu  {p/@u q/(map @ud tako) r/rang}              ::  new state
   ++  moar  {p/@ud q/@ud}                               ::  normal change range
   ++  moat  {p/case q/case r/path}                      ::  change range
-  ++  mode  (list {path (unit mime)})                   ::
+  ++  mode  (list {path (unit mime)})                   ::  external files
   ++  mood  {p/care q/case r/path}                      ::  request in desk
+  ++  mool  {p/case q/(set (pair care path))}           ::  requests in desk
   ++  nori                                              ::  repository action
     $%  {$& p/soba}                                     ::  delta
         {$| p/@tas}                                     ::  label
@@ -384,17 +497,25 @@
         lat/(map lobe blob)                             ::  data
     ==                                                  ::
   ++  rant                                              ::  response to request
-    $:  p/{p/care q/case r/@tas}                        ::  clade release book
+    $:  p/{p/care q/case r/desk}                        ::  clade release book
         q/path                                          ::  spur
         r/cage                                          ::  data
     ==                                                  ::
   ++  rave                                              ::  general request
     $%  {$sing p/mood}                                  ::  single request
         {$next p/mood}                                  ::  await next version
+        {$mult p/mool}                                  ::  next version of any
         {$many p/? q/moat}                              ::  track range
     ==                                                  ::
+  ++  regs  (map path rule)                             ::  rules for paths
   ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
+  ++  rite                                              ::  new permissions
+    $%  {$r red/(unit rule)}                            ::  for read
+        {$w wit/(unit rule)}                            ::  for write
+        {$rw red/(unit rule) wit/(unit rule)}           ::  for read and write
+    ==                                                  ::
   ++  riot  (unit rant)                                 ::  response+complete
+  ++  rule  {mod/?($black $white) who/(set whom)}       ::  node permission
   ++  rump  {p/care q/case r/@tas s/path}               ::  relative path
   ++  saba  {p/ship q/@tas r/moar s/dome}               ::  patch+merge
   ++  soba  (list {p/path q/miso})                      ::  delta
@@ -407,6 +528,7 @@
         {$| p/(list a) q/(list a)}                      ::  p -> q[chunk]
     ==                                                  ::
   ++  urge  |*(a/mold (list (unce a)))                  ::  list change
+  ++  whom  (each ship @ta)                             ::  ship or named crew
   ++  yaki                                              ::  commit
     $:  p/(list tako)                                   ::  parents
         q/(map path lobe)                               ::  namespace
@@ -431,8 +553,9 @@
           {$init p/@p}                                  ::  set owner
           {$logo $~}                                    ::  logout
           {$mass p/mass}                                ::  memory usage
+          {$send p/lane:ames q/@}                       ::  transmit packet
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$vega p/path}                                ::  old reboot
+          {$vega p/path q/path}                         ::  old reboot
           {$velo p/@t q/@t}                             ::  reboot
           {$verb $~}                                    ::  verbose mode
       ==                                                ::
@@ -453,7 +576,7 @@
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$vega p/path}                                ::  old reboot
+          {$vega p/path q/path}                         ::  old reboot
           {$velo p/@t q/@t}                             ::  reboot
           {$verb $~}                                    ::  verbose mode
       ==                                                ::
@@ -514,7 +637,7 @@
         {$heft $~}                                      ::
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane
-        {$vega p/path}                                  ::  old reboot
+        {$vega p/path q/path}                           ::  old reboot
         {$velo p/@t q/@t}                               ::  reboot
         {$verb $~}                                      ::  verbose mode
     ==                                                  ::
@@ -537,32 +660,30 @@
     ::                                                  ::::
   ++  able  ^?
     |%
-    ++  gift                                            ::  out result <-$
-      $%  {$mass p/mass}                                ::  memory usage
-          {$mack p/(unit tang)}                         ::  message ack
-          {$sigh p/cage}                                ::  marked http response
-          {$thou p/httr}                                ::  raw http response
-          {$thus p/@ud q/(unit hiss)}                   ::  http request+cancel
-          {$veer p/@ta q/path r/@t}                     ::  drop-through
-          {$vega p/path}                                ::  drop-through
-          {$velo p/@t q/@t}                             ::  drop-through
-          {$mini-jael-gift *}
+    +=  gift                                            ::  out result <-$
+      $%  [%mass p=mass]                                ::  memory usage
+          [%mack p=(unit tang)]                         ::  message ack
+          [%sigh p=cage]                                ::  marked http response
+          [%thou p=httr]                                ::  raw http response
+          [%thus p=@ud q=(unit hiss)]                   ::  http request+cancel
+          [%veer p=@ta q=path r=@t]                     ::  drop-through
+          [%vega p=path q=path]                         ::  drop-through
+          [%velo p=@t q=@t]                             ::  drop-through
       ==                                                ::
-    ++  task                                            ::  in request ->$
-      $%  {$born $~}                                    ::  new unix process
-          {$crud p/@tas q/(list tank)}                  ::  XX rethink
-          {$hiss p/(unit user) q/mark r/cage}           ::  outbound user req
-          {$init p/@p}                                  ::  report install
-          {$serv p/$@(desk beam)}                       ::  set serving root
-          {$them p/(unit hiss)}                         ::  outbound request
-          {$they p/@ud q/httr}                          ::  inbound response
-          {$chis p/? q/clip r/httq}                     ::  IPC inbound request
-          {$this p/? q/clip r/httq}                     ::  inbound request
-          {$thud $~}                                    ::  inbound cancel
-          {$wegh $~}                                    ::  report memory
-          {$went p/sack q/path r/@ud s/coop}            ::  response confirm
-          {$west p/sack q/{path @ud *}}                 ::  network request
-          {$mini-jael-task *}
+    +=  task                                            ::  in request ->$
+      $%  [%born ~]                                     ::  new unix process
+          [%crud p=@tas q=(list tank)]                  ::  XX rethink
+          [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
+          [%init p=@p]                                  ::  report install
+          [%serv p=$@(desk beam)]                       ::  set serving root
+          [%them p=(unit hiss)]                         ::  outbound request
+          [%they p=@ud q=httr]                          ::  inbound response
+          [%chis p=? q=clip r=httq]                     ::  IPC inbound request
+          [%this p=? q=clip r=httq]                     ::  inbound request
+          [%thud ~]                                     ::  inbound cancel
+          [%wegh ~]                                     ::  report memory
+          [%went p=sack q=path r=@ud s=coop]            ::  response confirm
+          [%west p=sack q=[path *]]                     ::  network request
       ==                                                ::
     --  ::able
   ::
@@ -588,12 +709,14 @@
     $:  qix/(map @t @t)                                 ::  query
         ced/cred                                        ::  client credentials
         bem/beam                                        ::  original path
-        but/path                                        ::  ending
     ==                                                  ::
-  ++  gram                                              ::  inter-ship message
-    $?  {{$get $~} p/@uvH q/{? clip httq}}              ::  remote request
-        {{$got $~} p/@uvH q/httr}                       ::  remote response
-        {{$gib $~} p/@uvH}                              ::  remote cancel
+  +=  gram                                              ::  inter-ship message
+    $?  [[%lon ~] p=hole]                               ::  login request
+        [[%aut ~] p=hole]                               ::  login reply
+        [[%hat ~] p=hole q=hart]                        ::  login redirect
+        [[%get ~] p=@uvH q=[? clip httq]]               ::  remote request
+        [[%got ~] p=@uvH q=httr]                        ::  remote response
+        [[%gib ~] p=@uvH]                               ::  remote cancel
     ==                                                  ::
   ++  hart  {p/? q/(unit @ud) r/host}                   ::  http sec+port+host
   ++  hate  {p/purl q/@p r/moth}                        ::  semi-cooked request
@@ -644,6 +767,7 @@
   ++  purf  (pair purl (unit @t))                       ::  url with fragment
   ++  purl  {p/hart q/pork r/quay}                      ::  parsed url
   ++  quay  (list {p/@t q/@t})                          ::  parsed url query
+  ++  quer  |-($@($~ {p/@t q/@t t/$}))                  ::  query tree
   ++  quri                                              ::  request-uri
     $%  {$& p/purl}                                     ::  absolute
         {$| p/pork q/quay}                              ::  relative
@@ -693,7 +817,7 @@
     ==                                                  ::
   ++  hoof  (trel ? term (unit (pair case ship)))       ::  resource reference
   ++  hoop                                              ::  source in hood
-    $%  {$& p/twig}                                     ::  direct twig
+    $%  {$& p/hoon}                                     ::  direct hoon
         {$| p/beam}                                     ::  resource location
     ==                                                  ::
   ++  hops                                              ::  XX late-bound path
@@ -701,23 +825,21 @@
         pof/(unit {p/@ud q/tyke})                       ::
     ==                                                  ::
   ++  horn                                              ::  resource tree
-    $%  {$ape p/twig}                                   ::  /~  twig by hand
-        {$arg p/twig}                                   ::  /$  argument
-        {$alt p/(list horn)}                            ::  /|  options
-        {$dep p/horn}                                   ::  /#  insert dephash
-        {$dub p/term q/horn}                            ::  /=  apply face
-        {$fan p/(list horn)}                            ::  /.  list
-        {$for p/(list (pair spur horn))}                ::  /,  switch by path
-        {$hel p/horn}                                   ::  /%  propagate args
-        {$lin p/(list mark) q/horn}                     ::  /&  translates
-        {$man p/(map knot horn)}                        ::  /*  hetero map
-        {$nap p/horn}                                   ::  /_  homo map
-        {$now p/horn}                                   ::  deprecated
-        {$nod p/term q/horn}                            ::  /_  @  list by odor
-        {$saw p/twig q/horn}                            ::  /;  operate on
-        {$see p/hops q/horn}                            ::  /:  relative to
-        {$sic p/twig q/horn}                            ::  /^  cast
-        {$toy p/? q/mark}                               ::  /mark/  static/hook
+    $%  {$fssg p/hoon}                                  ::  /~  twig by hand
+        {$fsbc p/hoon}                                  ::  /$  argument
+        {$fsbr p/(list horn)}                           ::  /|  options
+        {$fshx p/horn}                                  ::  /#  insert dephash
+        {$fsts p/term q/horn}                           ::  /=  apply face
+        {$fsdt p/(list horn)}                           ::  /.  list
+        {$fscm p/(list (pair spur horn))}               ::  /,  switch by path
+        {$fscn p/horn}                                  ::  /%  propagate args
+        {$fspm p/(list mark) q/horn}                    ::  /&  translates
+        {$fscb p/horn}                                  ::  /_  homo map
+        {$fssm p/hoon q/horn}                           ::  /;  operate on
+        {$fscl p/hops q/horn}                           ::  /:  relative to
+        {$fskt p/hoon q/horn}                           ::  /^  cast
+        {$fszp q/mark}                                  ::  /!mark/ eval value
+        {$fszy q/mark}                                  ::  /mark/ static/grow
     ==                                                  ::
   ++  milk  (trel ship desk silk)                       ::  sourced silk
   ++  silk                                              ::  construction layer
@@ -739,7 +861,7 @@
         {$pact p/silk q/silk}                           ::  patch
         {$plan p/beam q/coin r/hood}                    ::  structured assembly
         {$reef $~}                                      ::  kernel reef
-        {$ride p/twig q/silk}                           ::  silk thru twig
+        {$ride p/hoon q/silk}                           ::  silk thru hoon
         {$tabl p/(list (pair silk silk))}               ::  list
         {$vale p/mark q/*}                              ::  validate
         {$volt p/(cask *)}                              ::  unsafe add type
@@ -767,7 +889,7 @@
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
-          {$west p/sack q/path r/@ud s/*}               ::  network request
+          {$west p/sack q/path r/*}                     ::  network request
           {$wegh $~}                                    ::  report memory
       ==                                                ::
     --  ::able
@@ -797,11 +919,11 @@
         {$pull $~}                                      ::  unsubscribe
         {$punk p/mark q/cage}                           ::  translated poke
         {$pump $~}                                      ::  pump yes+no
+        {$peer-not p/tang}                              ::  poison pill peer
     ==                                                  ::
   ++  cuft                                              ::  internal gift
     $%  {$coup p/(unit tang)}                           ::  poke result
         {$diff p/cage}                                  ::  subscription output
-        {$doff p/mark q/noun}                           ::  untyped diff
         {$quit $~}                                      ::  close subscription
         {$reap p/(unit tang)}                           ::  peer result
     ==                                                  ::
@@ -814,6 +936,11 @@
   ++  cush  (pair term club)                            ::  internal task
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
+  ++  scar                                              ::  opaque duct
+    $:  p/@ud                                           ::  bone sequence
+        q/(map duct bone)                               ::  by duct
+        r/(map bone duct)                               ::  by bone
+    ==                                                  ::
   ++  scup  (pair ship desk)                            ::  autoupdate
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::
@@ -905,21 +1032,20 @@
       %+  each  balance                                 ::  complete
       action                                            ::  change
     ::
-    ++  task                                            ::  in request ->$
-      $%  {$burn p/ship q/safe}                         ::  destroy rights
-          {$hail p/ship q/remote}                       ::  remote update
-          {$init p/@pG q/arms}                          ::  initialize urbit
-          {$meet p/(unit (unit ship)) q/farm}           ::  integrate pki from
-          {$mint p/ship q/safe}                         ::  create rights
-          {$move p/ship q/ship r/safe}                  ::  transfer from/to
-          {$next p/bull}                                ::  update private key
-          {$nuke $~}                                    ::  cancel tracker from
-          {$veil p/ship}                                ::  view secret channel
-          {$vein $~}                                    ::  view signing keys
-          {$vest $~}                                    ::  view public balance
-          {$vine $~}                                    ::  view secret history
-          {$jaelwomb p/task:womb}                       ::  XX not factored in
-          {$west p/ship q/path r/*}                     ::  remote request
+    +=  task                                            ::  in request ->$
+      $%  [%burn p=ship q=safe]                         ::  destroy rights
+          [%hail p=ship q=remote]                       ::  remote update
+          [%init p=@pG q=arms]                          ::  initialize urbit
+          [%meet p=(unit (unit ship)) q=farm]           ::  integrate pki from
+          [%mint p=ship q=safe]                         ::  create rights
+          [%move p=ship q=ship r=safe]                  ::  transfer from=to
+          [%next p=bull]                                ::  update private key
+          [%nuke ~]                                     ::  cancel tracker from
+          [%veil p=ship]                                ::  view secret channel
+          [%vein ~]                                     ::  view signing keys
+          [%vest ~]                                     ::  view public balance
+          [%vine ~]                                     ::  view secret history
+          [%west p=ship q=path r=*]                     ::  remote request
       ==                                                ::
     ++  gilt  gilt:womb
     --
@@ -1087,6 +1213,11 @@
     ++  card                                            ::  out cards
       $%  {$west p/ship q/path r/*}                     ::  network request
       ==                                                ::
+    ++  sign                                            ::  in response $-<
+      $:  $g                                            ::
+          $%  {$rend p/path q/*}                        ::  network request
+              {$mack p/(unit tang)}                     ::  message ack
+      ==  ==                                            ::
     ++  note                                            ::  out request $->
       $%  {$c $west p/ship q/path r/*}                  ::  to %clay
           {$e $west p/ship q/path r/*}                  ::  to %eyre
@@ -2135,7 +2266,7 @@
           =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
           =+  ii=(exp.fq (div (dec q) 4) 2)
           [b=b q=q fq=fq l=l d=d ii=ii]
-      ~%  %coed  +>  ~
+      ~%  %coed  ..is  ~
       |%
       ::                                                ::  ++norm:ed:crypto
       ++  norm                                          ::
@@ -2206,7 +2337,7 @@
         =+  bby=(pro.fq 4 (inv.fq 5))
         [(xrec bby) bby]
       --  ::
-    ~%  %ed  +>  ~
+    ~%  %ed  +  ~
     |%
     ::                                                  ::  ++puck:ed:crypto
     ++  puck                                            ::  public key
@@ -2297,7 +2428,7 @@
   ::::                    ++scr:crypto                  ::  (2b3) scrypt
     ::                                                  ::::
   ++  scr
-    ~%  %scr  +>  ~
+    ~%  %scr  ..is  ~
     |%
     ::                                                  ::  ++sal:scr:crypto
     ++  sal                                             ::  salsa20 hash
@@ -2504,7 +2635,7 @@
   ::                                                    ::
   ::::                    ++crub:crypto                 ::  (2b4) suite B, Ed
     ::                                                  ::::
-  ++  crub
+  ++  crub  !:
     ^-  acru
     =|  {pub/{cry/@ sgn/@} sek/(unit {cry/@ sgn/@})}
     |%
@@ -2807,26 +2938,7 @@
   ::::                    ++test:crypto                 ::  (2b6) test crypto
     ::                                                  ::::
   ++  test  ^?
-    ::
-    ::  XX: ++bruw, ++haul and ++weur are obsolete crua interfaces;
-    ::  delete or restructure
     |%
-    ::                                                  ::  ++trua:test:crypto
-    ++  trua                                            ::  test crua
-      |=  msg/@tas
-      ^-  @
-      =+  ali=(bruw:suite 1.024 (shax 'ali'))
-      =+  bob=(bruw:suite 1.024 (shax 'bob'))
-      =+  tef=(sign:as.ali [0 msg])
-      =+  lov=(sure:as.ali [0 tef])
-      ?.  &(?=(^ lov) =(msg u.lov))
-        ~|(%test-fail-sign !!)
-      =+  key=(shax (shax (shax msg)))
-      =+  sax=(seal:as.ali pub:ex.bob key msg)
-      =+  tin=(tear:as.bob pub:ex.ali sax)
-      ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
-        ~|(%test-fail-seal !!)
-      msg
     ::                                                  ::  ++trub:test:crypto
     ++  trub                                            ::  test crub
       |=  msg/@t
@@ -2854,34 +2966,6 @@
       ::  alice decrypts with same key
       `@t`(dy.ali secret-key crypted-msg)
     --  ::test
-  ::                                                    ::
-  ::::                    ++suite:crypto                ::  (2b7) generalized
-    ::                                                  ::::
-  ++  suite  ^?
-    ::
-    ::  XX: ++bruw, ++haul and ++weur are obsolete crua interfaces;
-    ::  delete or restructure
-    |%
-    ::                                                  ::  ++bruw:suite:crypto
-    ++  bruw                                            ::  create keypair
-      |=  {width/@ seed/@}
-      ^-  acru
-      (pit:nu:crua width seed)
-    ::                                                  ::  ++haul:suite:crypto
-    ++  haul                                            ::  activate public key
-      |=  a/pass
-      ^-  acru
-      =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-      ?>  =('a' mag)
-      (com:nu:crua bod)
-    ::                                                  ::  ++weur:suite:crypto
-    ++  weur                                            ::  activate secret key
-      |=  a/ring
-      ^-  acru
-      =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-      ?>  =('A' mag)
-      (nol:nu:crua bod)
-    --  ::suite
   --  ::crypto
 ::                                                      ::::
 ::::                      ++unity                       ::  (2c) unit promotion
@@ -2906,13 +2990,11 @@
     (some (~(run by lum) need))
   ::                                                    ::  ++drop-pole:unity
   ++  drop-pole                                         ::  unit tuple
-    |*  a/(pole (unit))
-    ?-    a
-        {i/(unit) t/*}
-      ?~  t.a  i.a
-      %+  both  i.a
-      (drop-pole t.a)
-    ==
+    |*  but/(pole (unit))
+    ?~  but  !!
+    ?~  +.but  
+      u:->.but
+    [u:->.but (drop-pole +.but)]
   --
 ::                                                      ::::
 ::::                      ++format                      ::  (2d) common formats
@@ -3154,6 +3236,35 @@
     ::                                                  ::  ++ul:dejs:format
     ++  ul                                              ::  null
       |=(jon/json ?~(jon ~ !!))
+    ::
+    ++  za                                              ::  full unit pole
+      |*  pod/(pole (unit))
+      ?~  pod  &
+      ?~  -.pod  |
+      (za +.pod)
+    ::
+    ++  zl                                              ::  collapse unit list
+      |*  lut/(list (unit))
+      ?.  |-  ^-  ?
+          ?~(lut & ?~(i.lut | $(lut t.lut)))
+        ~
+      %-  some
+      |-
+      ?~  lut  ~
+      [i=u:+.i.lut t=$(lut t.lut)]
+    ::
+    ++  zp                                              ::  unit tuple
+      |*  but/(pole (unit))
+      ?~  but  !!
+      ?~  +.but  
+        u:->.but
+      [u:->.but (zp +.but)]
+    ::
+    ++  zm                                              ::  collapse unit map
+      |*  lum/(map term (unit))
+      ?:  (~(rep by lum) |=({{@ a/(unit)} b/_|} |(b ?=($~ a))))
+        ~
+      (some (~(run by lum) need))
     --  ::dejs
   ::                                                    ::  ++dejs-soft:format
   ++  dejs-soft                                         ::  json reparse to unit
@@ -3161,149 +3272,174 @@
     =>  |%  ++  grub  (unit *)                          ::  result
             ++  fist  $-(json grub)                     ::  reparser instance
         --  ::
+    ::
+    ::  XX: this is old code that replaced a rewritten dejs.
+    ::      the rewritten dejs rest-looped with ++redo.  the old
+    ::      code is still in revision control -- revise and replace.
+    ::
     |%
-    ::                                                  ::  ++ar:dejs-soft:
     ++  ar                                              ::  array as list
       |*  wit/fist
-      |=  jon/json  ^-  (unit (list _(need (wit *json))))
+      |=  jon/json
       ?.  ?=({$a *} jon)  ~
-      %-  drop-list
-      |-
+      %-  zl
+      |-  
       ?~  p.jon  ~
       [i=(wit i.p.jon) t=$(p.jon t.p.jon)]
-    ::                                                  ::  ++at:dejs-soft:
+    ::
     ++  at                                              ::  array as tuple
       |*  wil/(pole fist)
       |=  jon/json
       ?.  ?=({$a *} jon)  ~
-      ((at-raw wil) p.jon)
-    ::                                                  ::  ++at-raw:dejs-soft:
+      =+  raw=((at-raw wil) p.jon)
+      ?.((za raw) ~ (some (zp raw)))
+    ::
     ++  at-raw                                          ::  array as tuple
       |*  wil/(pole fist)
       |=  jol/(list json)
-      ?~  jol  ~
-      ?-    wil                                         :: mint-vain on empty
-          :: {wit/* t/*}
-          {* t/*}
-        =>  .(wil [wit ~]=wil)
-        ?~  t.wil  ?^(t.jol ~ (wit.wil i.jol))
-        %+  both  (wit.wil i.jol)
-        ((at-raw t.wil) t.jol)
-      ==
-    ::                                                  ::  ++bo:dejs-soft:
+      ?~  wil  ~
+      :-  ?~(jol ~ (-.wil i.jol))
+      ((at-raw +.wil) ?~(jol ~ t.jol))
+    ::
     ++  bo                                              ::  boolean
       |=(jon/json ?.(?=({$b *} jon) ~ [~ u=p.jon]))
-    ::                                                  ::  ++bu:dejs-soft:
+    ::
     ++  bu                                              ::  boolean not
       |=(jon/json ?.(?=({$b *} jon) ~ [~ u=!p.jon]))
-    ::                                                  ::  ++ci:dejs-soft:
+    ::
     ++  ci                                              ::  maybe transform
       |*  {poq/gate wit/fist}
       |=  jon/json
       (biff (wit jon) poq)
-    ::                                                  ::  ++cu:dejs-soft:
+    ::
     ++  cu                                              ::  transform
       |*  {poq/gate wit/fist}
       |=  jon/json
       (bind (wit jon) poq)
-    ::                                                  ::  ++di:dejs-soft:
+    ::
+    ++  da                                              ::  UTC date
+      |=  jon/json
+      ?.  ?=({$s *} jon)  ~
+      (bind (stud:chrono:userlib p.jon) |=(a/date (year a)))
+    ::
     ++  di                                              ::  millisecond date
       %+  cu
         |=  a/@u  ^-  @da
         (add ~1970.1.1 (div (mul ~s1 a) 1.000))
       ni
-    ::                                                  ::  ++mu:dejs-soft:
+    ::
     ++  mu                                              ::  true unit
       |*  wit/fist
       |=  jon/json
       ?~(jon (some ~) (bind (wit jon) some))
-    ::                                                  ::  ++ne:dejs-soft:
+    ::
     ++  ne                                              ::  number as real
       |=  jon/json
       ^-  (unit @rd)
-      ::  please implement me, it's not that hard!
       !!
-    ::                                                  ::  ++ni:dejs-soft:
+    ::
     ++  ni                                              ::  number as integer
-      |=  jon/json
+      |=  jon/json 
       ?.  ?=({$n *} jon)  ~
       (rush p.jon dem)
-    ::                                                  ::  ++no:dejs-soft:
+    ::
     ++  no                                              ::  number as cord
       |=  jon/json
       ?.  ?=({$n *} jon)  ~
       (some p.jon)
-    ::                                                  ::  ++of:dejs-soft:
+    ::
     ++  of                                              ::  object as frond
       |*  wer/(pole {cord fist})
       |=  jon/json
       ?.  ?=({$o {@ *} $~ $~} jon)  ~
       |-
-      ?-    wer                                         :: mint-vain on empty
-          :: {{key/@t wit/*} t/*}
-          {{key/@t *} t/*}
-        =>  .(wer [[~ wit] ~]=wer)
-        ?:  =(key.wer p.n.p.jon)
-          ((pe key.wer wit.wer) q.n.p.jon)
-        ?~  t.wer  ~
-        ((of t.wer) jon)
-      ==
-    ::                                                  ::  ++ot:dejs-soft:
+      ?~  wer  ~
+      ?:  =(-.-.wer p.n.p.jon)  
+        ((pe -.-.wer +.-.wer) q.n.p.jon)
+      ((of +.wer) jon)
+    ::
     ++  ot                                              ::  object as tuple
       |*  wer/(pole {cord fist})
       |=  jon/json
       ?.  ?=({$o *} jon)  ~
-      ((ot-raw wer) p.jon)
-    ::                                                  ::  ++ot-raw:dejs-soft:
+      =+  raw=((ot-raw wer) p.jon)
+      ?.((za raw) ~ (some (zp raw)))
+    ::
     ++  ot-raw                                          ::  object as tuple
       |*  wer/(pole {cord fist})
       |=  jom/(map @t json)
-      ?-    wer                                         :: mint-vain on empty
-          :: {{key/@t wit/*} t/*}
-          {{key/@t *} t/*}
-        =>  .(wer [[~ wit] ~]=wer)
-        =/  ten  (biff (~(get by jom) key.wer) wit.wer)
-        ?~  t.wer  ten
-        (both ten ((ot-raw t.wer) jom))
-      ==
-    ::                                                  ::  ++om:dejs-soft:
+      ?~  wer  ~
+      =+  ten=(~(get by jom) -.-.wer)
+      [?~(ten ~ (+.-.wer u.ten)) ((ot-raw +.wer) jom)]
+    ::
     ++  om                                              ::  object as map
       |*  wit/fist
       |=  jon/json
       ?.  ?=({$o *} jon)  ~
-      (drop-map (~(run by p.jon) wit))
-    ::                                                  ::  ++op:dejs-soft:
+      (zm (~(run by p.jon) wit))
+    ::
     ++  op                                              ::  parse keys of map
       |*  {fel/rule wit/fist}
-      |=  jon/json  ^-  (unit (map _(wonk *fel) _*wit))
-      =/  jom  ((om wit) jon)
-      ?~  jom  ~
-      %-  drop-map
-      %-  malt
-      %+  turn  ~(tap by jom)
-      |*  {a/cord b/*}
-      (both (rush a fel) (some b))
-    ::                                                  ::  ++pe:dejs-soft:
+      %+  cu  
+        |=  a/(list (pair _(wonk *fel) _(need *wit)))
+        (my:nl a)
+      %-  ci  :_  (om wit)
+      |=  a/(map cord _(need *wit))
+      ^-  (unit (list _[(wonk *fel) (need *wit)]))
+      %-  zl
+      %+  turn  ~(tap by a)
+      |=  {a/cord b/_(need *wit)}
+      =+  nit=(rush a fel) 
+      ?~  nit  ~
+      (some [u.nit b])
+    ::
     ++  pe                                              ::  prefix
       |*  {pre/* wit/fist}
       (cu |*(* [pre +<]) wit)
-    ::                                                  ::  ++sa:dejs-soft:
+    ::
     ++  sa                                              ::  string as tape
       |=  jon/json
       ?.(?=({$s *} jon) ~ (some (trip p.jon)))
-    ::                                                  ::  ++so:dejs-soft:
+    ::
     ++  so                                              ::  string as cord
       |=  jon/json
       ?.(?=({$s *} jon) ~ (some p.jon))
-    ::                                                  ::  ++su:dejs-soft:
+    ::
     ++  su                                              ::  parse string
       |*  sab/rule
       |=  jon/json
       ?.  ?=({$s *} jon)  ~
       (rush p.jon sab)
-    ::                                                  ::  ++ul:dejs-soft:
-    ++  ul                                              ::  null
-      |=(jon/json ?~(jon (some ~) ~))
+    ::
+    ++  ul  |=(jon/json ?~(jon (some ~) ~))             ::  null
+    ++  za                                              ::  full unit pole
+      |*  pod/(pole (unit))
+      ?~  pod  &
+      ?~  -.pod  |
+      (za +.pod)
+    ::
+    ++  zl                                              ::  collapse unit list
+      |*  lut/(list (unit))
+      ?.  |-  ^-  ?
+          ?~(lut & ?~(i.lut | $(lut t.lut)))
+        ~
+      %-  some
+      |-
+      ?~  lut  ~
+      [i=u:+.i.lut t=$(lut t.lut)]
+    ::
+    ++  zp                                              ::  unit tuple
+      |*  but/(pole (unit))
+      ?~  but  !!
+      ?~  +.but  
+        u:->.but
+      [u:->.but (zp +.but)]
+    ::
+    ++  zm                                              ::  collapse unit map
+      |*  lum/(map term (unit))
+      ?:  (~(rep by lum) |=({{@ a/(unit)} b/_|} |(b ?=($~ a))))
+        ~
+      (some (~(run by lum) need))
     --  ::dejs-soft
   --
 ::                                                      ::
@@ -3788,7 +3924,7 @@
     ++  enty                                            ::  entity
       %+  ifix  pam^sem
       ;~  pose
-        =+  def=^+(ent (my [%gt '>'] [%lt '<'] [%amp '&'] [%quot '"'] ~))
+        =+  def=^+(ent (my:nl [%gt '>'] [%lt '<'] [%amp '&'] [%quot '"'] ~))
         %+  sear  ~(get by (~(uni by def) ent))
         (cook crip ;~(plug alf (stun 1^31 aln)))
         %+  cook  |=(a/@c ?:((gth a 0x10.ffff) '�' (tuft a)))
@@ -4086,16 +4222,40 @@
   ::  MOVEME
   ::                                                    ::  ++fuel:html
   ++  fuel                                              ::  parse urbit fcgi
-      |=  {bem/beam ced/noun:cred quy/|-($@($~ {p/@t q/@t t/$}))}
+      |=  {bem/beam ced/noun:cred quy/quer}
       ^-  epic
       =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
-      [(malt qix) ((hard cred) ced) bem /]
+      [(malt qix) ((hard cred) ced) bem]
   --  ::eyre
 ::                                                      ::
 ::::                      ++wired                       ::  wire formatting
   ::                                                    ::::
 ++  wired  ^?
   |%
+  ::
+  ++  auld                                              ::  ++auld:wired
+    |=  sky/roof                                        ::  old style namespace
+    ^-  slyt
+    |=  {ref/* raw/*}
+    =+  pux=((soft path) raw)
+    ?~  pux  ~
+    ?.  ?=({@ @ @ @ *} u.pux)  ~
+    =+  :*  hyr=(slay i.u.pux)
+            fal=(slay i.t.u.pux)
+            dyc=(slay i.t.t.u.pux)
+            ved=(slay i.t.t.t.u.pux)
+            tyl=t.t.t.t.u.pux
+        ==
+    ?.  ?=({$~ $$ $tas @} hyr)  ~
+    ?.  ?=({$~ $$ $p @} fal)  ~
+    ?.  ?=({$~ $$ $tas @} dyc)  ~
+    ?.  ?=(^ ved)  ~
+    =+  ron=q.p.u.hyr
+    =+  bed=[[q.p.u.fal q.p.u.dyc (case p.u.ved)] (flop tyl)]
+    =+  bop=(sky ref ~ ron bed)
+    ?~  bop  ~
+    ?~  u.bop  [~ ~]
+    [~ ~ +.q.u.u.bop]
   ::                                                    ::  ++dray:wired
   ++  dray                                              ::  load tuple in path
     ::
@@ -4103,14 +4263,14 @@
     ::  (dray ~[p=%tas q=%p r=%f] %ack ~sarnel &)
     ::
     =-  |*  {a/{@tas (pole @tas)} b/*}  ^-  (paf a)
-        =>  .(b `(tup -.a +.a)`b)
+        =>  .(b `,(tup -.a +.a)`b)
         ?~  +.a  [(scot -.a b) ~]
-        [(scot -.a -.b) `(paf +.a)`(..$ +.a +.b)]
-    :-  paf=|*(a/(pole) ?~(a $~ {(odo:raid -.a(. %ta)) (..$ +.a)}))
+        [(scot -.a -.b) `,(paf +.a)`(..$ +.a +.b)]
+    :-  paf=|*(a/(pole) ?~(a $~ {(odo:raid ,-.a(. %ta)) ,(..$ +.a)}))
     ^=  tup
     |*  {a/@tas b/(pole @tas)}
     =+  c=(odo:raid a)
-    ?~(b c {c (..$ -.b +.b)})
+    ?~(b c {c (..$ ,-.b ,+.b)})
   ::                                                    ::  ++raid:wired
   ++  raid                                              ::  demand path odors
     ::
@@ -4118,29 +4278,31 @@
     ::  (raid /ack/~sarnel+.y p=%tas q=%p r=%f ~)
     ::
     =-  |*  {a/path b/{@tas (pole @tas)}}
-        ?~  +.b  `(odo -.b)`(slav -.b -.a)
-        [`(odo -.b)`(slav -.b -.a) (..$ +.a +.b)]
+        =*  fog  (odo -.b)
+        ?~  +.b  `fog`(slav -.b -.a)
+        [`fog`(slav -.b -.a) (..$ +.a +.b)]
     ^=  odo
     |*  a/@tas
     |=  b/*
-    =<  a(, (. b))                  ::  preserve face
+    =-  a(, (- b))                  ::  preserve face
     ?+  a   @
       $c  @c  $da  @da  $dr  @dr  $f   @f   $if  @if  $is  @is  $p   @p
       $u  @u  $uc  @uc  $ub  @ub  $ui  @ui  $ux  @ux  $uv  @uv  $uw  @uw
       $s  @s  $t   @t   $ta  @ta  $tas  @tas
     ==
-  ::                                                    ::  ++read:wired
-  ++  read                                              ::  parse odored path
-    =<  |*({a/path b/{@tas (pole @tas)}} ((+> b) a))
-    |*  b/{@tas (pole @tas)}
-    |=  a/path
-    ?~  a  ~
-    =+  hed=(slaw -.b i.a)
-    ?~  +.b
-      ^-  (unit (odo:raid -.b))
-      ?^(+.a ~ hed)
-    ^-  (unit {(odo:raid -.b) _(need *(..^$ +.b))})
-    (both hed ((..^$ +.b) +.a))
+::  ::                                                    ::  ++read:wired
+::  ++  read                                              ::  parse odored path
+::    =<  |*({a/path b/{@tas (pole @tas)}} ((+> b) a))
+::    |*  b/{@tas (pole @tas)}
+::    |=  a/path
+::    ?~  a  ~
+::    =+  hed=(slaw -.b i.a)
+::    =*  fog  (odo:raid -.b)
+::    ?~  +.b
+::      ^-  (unit fog)
+::      ?^(+.a ~ hed)
+::    ^-  (unit {fog _(need *(..^$ +.b))})
+::    (both hed ((..^$ +.b) +.a))
   --  ::wired
 ::                                                      ::
 ::::                      ++title                       ::  (2j) namespace
@@ -4175,7 +4337,7 @@
   ++  gnom                                              ::  ship display name
     |=  {{our/@p now/@da} him/@p}  ^-  @t
     =+  yow=(scot %p him)
-    =+  pax=[(scot %p our) %name (scot %da now) yow ~]
+    =+  pax=[(scot %p our) %ktts (scot %da now) yow ~]
     =+  woy=.^(@t %a pax)
     ?:  =(%$ woy)  yow
     (rap 3 yow ' ' woy ~)
@@ -4217,11 +4379,11 @@
     |=  who/ship  ^-  ship
     =+  mir=(clan who)
     ?-  mir
-      $czar  ~zod
+      $czar  who
       $king  (end 3 1 who)
       $duke  (end 4 1 who)
       $earl  (end 5 1 who)
-      $pawn  (end 4 1 who)
+      $pawn  ~zod
     ==
   ::                                                    ::  ++team:title
   ++  team                                              ::  our / our moon
@@ -4230,6 +4392,39 @@
         &(?=($earl (clan him)) =(our (sein him)))
     ==
   --  ::title
+::                                                      ::
+::::                      ++milly                       ::  (2k) milliseconds
+  ::                                                    ::::
+++  milly  ^?
+  |_  now/@da
+  ::                                                    ::  ++around:milly
+  ++  around                                            ::  relative msec
+    |=  wen/@da
+    ^-  @tas
+    ?:  =(wen now)  %now
+    ?:  (gth wen now)
+      (cat 3 (scot %ud (msec (sub wen now))) %ms)
+    (cat 3 '-' $(now wen, wen now))
+  ::  
+  ++  about                                             ::  ++about:milly
+    |=  wun/(unit @da)                                  ::  unit relative msec
+    ^-  @tas
+    ?~(wun %no (around u.wun))
+  ::                                                    ::  ++mill:milly
+  ++  mill                                              ::  msec diff
+    |=  one/@dr
+    ^-  @tas
+    ?:  =(`@`0 one)  '0ms'
+    (cat 3 (scot %ud (msec one)) %ms)
+  ::                                                    ::  ++msec:milly
+  ++  msec                                              ::  @dr to @ud ms
+    |=(a/@dr `@ud`(div a (div ~s1 1.000)))
+  ::                                                    ::  ++mull:milly
+  ++  mull                                              ::  unit msec diff
+    |=  une/(unit @dr)
+    ^-  @tas
+    ?~(une %no (mill u.une))
+  --
 ::                                                      ::
 ::::                      ++userlib                     ::  (2u) non-vane utils
   ::                                                    ::::
@@ -4300,10 +4495,10 @@
       "{(num h.t.yed)}:{(num m.t.yed)}:{(num s.t.yed)} +0000"
     ::                                                  ::  ++stud:chrono:
     ++  stud                                            ::  parse UTC format
-      =<  |=  a/cord
+      =<  |=  a/cord                                    ::  expose parsers
           %+  biff  (rush a (more sepa elem))
           |=  b/(list _(wonk *elem))  ^-  (unit date)
-          %-  drop-pole:unity
+          =-  ?.((za:dejs:format -) ~ (some (zp:dejs:format -)))
           ^+  =+  [*date u=unit]
               *{(u _[a y]) (u _m) (u _d.t) (u _+.t) $~}
           :~
@@ -4447,7 +4642,7 @@
       [p.one [%& (weld p.q.one p.q.two)]]
     --  ::space
   ::                                                    ::
-  ::::                    ++unix:userlib                ::  (2uD) unix line-lists
+  ::::                  ++unix:userlib                  ::  (2uD) unix line-list
     ::                                                  ::::
   ++  unix  ^?
     |%
@@ -4588,4 +4783,18 @@
       {$j gift:able:jael}
   ==
 ::
+++  unix-task                                           ::  input from unix
+  $%  {$belt p/belt:dill}                               ::  dill: keyboard
+      {$blew p/blew:dill}                               ::  dill: configure
+      {$boat $~}                                        ::  clay: reboot
+      {$born $~}                                        ::  eyre: new process
+      {$hail $~}                                        ::  dill: refresh
+      {$hear p/lane:ames q/@}                           ::  ames: input packet
+      {$hook $~}                                        ::  dill: hangup
+      {$into p/desk q/? r/mode:clay}                    ::  clay: external edit
+      {$they p/@ud q/httr:eyre}                         ::  eyre: in response
+      {$this p/? q/clip:eyre r/httq:eyre}               ::  eyre: in request
+      {$thud $~}                                        ::  eyre: in cancel
+      {$wake $~}                                        ::  behn: wakeup
+  == 
 --  ::
