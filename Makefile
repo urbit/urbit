@@ -494,7 +494,7 @@ endif
 
 # This should start a comet or something
 test:
-	export ASAN_OPTIONS=protect_shadow_gap=false
+	export ASAN_OPTIONS="protect_shadow_gap=0:replace_intrin=0:detect_leaks=0"
 	$(BIN)/urbit -FI zod -A . -c zod
 	@echo "FIXME no tests defined"
 
