@@ -12660,7 +12660,7 @@
          ==                                            ::
 ++  desk  @tas                                          ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a/gate (pair mark a))                      ::  global data
+++  cask  |*(a/mold (pair mark a))                      ::  global data
 ++  cuff                                                ::  permissions
           $:  p/(unit (set monk))                       ::  can be read by
               q/(set monk)                              ::  caused or created by
@@ -12668,7 +12668,7 @@
 ++  curd  {p/@tas q/*}                                  ::  typeless card
 ++  dock  (pair @p term)                                ::  message target
 ++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a/gate (pair type a))                      ::  type associated
+++  hypo  |*(a/mold (pair type a))                      ::  type associated
 ++  hobo  |*  a/gate                                    ::  task wrapper
           $?  $%  {$soft p/*}                           ::
               ==                                        ::
