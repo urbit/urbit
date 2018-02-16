@@ -67,7 +67,7 @@
           {$dirk wire @tas}                             ::
           {$ogre wire $@(@tas beam)}                    ::
           {$merg wire @p @tas @p @tas case germ}        ::
-          {$perm wire ship desk path rite:clay}         ::
+          {$perm wire ship desk path rite}              ::
           {$poke wire dock pear}                        ::
           {$wipe wire @p $~}                            ::
           {$wait wire @da}                              ::
@@ -86,6 +86,13 @@
           q/path
           r/cage
       ==
+    ++  rite                                            ::tmp
+      $%  {$r red/(unit rule)}
+          {$w wit/(unit rule)}
+          {$rw red/(unit rule) wit/(unit rule)}
+      ==
+    ++  rule  {mod/?($black $white) who/(set whom)}     ::tmp
+    ++  whom  (each ship @ta)                           ::tmp
     --
 |_  moz/(list move)
 ++  abet                                                ::  resolve
