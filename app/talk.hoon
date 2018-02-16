@@ -105,6 +105,11 @@
           {$help $~}                                    :<  print usage info
       ==                                                ::
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   :<  circle char pool '
+    ::
+    ++  old-state
+      (cork state |=(a/state a(mirrors (~(run by mirrors.a) old-config))))
+    ++  old-config
+      {src/(set source) cap/cord fit/filter con/control}
     --
 ::
 :>  #
@@ -121,11 +126,14 @@
 ++  prep
   :>  adapts state
   ::
-  |=  old/(unit state)
+  |=  old/(unit old-state)
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  [~ ..prep(+<+ u.old)]
+  =-  [~ ..prep(+<+ `state`u.old(mirrors -))]
+  %-  ~(run by mirrors.u.old)
+  |=  old-config
+  [src cap ~ fit con]
 ::
 :>  #
 :>  #  %utility
@@ -1180,7 +1188,11 @@
         ::
         |=  {inv/? nom/name sis/(set ship)}
         ^+  ..sh-work
-        (sh-act %permit nom inv sis)
+        =.  ..sh-work  (sh-act %permit nom inv sis)
+        =-  (sh-act %phrase - [%inv inv [self nom]]~)
+        %-  ~(rep in sis)
+        |=  {s/ship a/audience}
+        (~(put in a) [s %inbox])
       ::
       ++  filter
         |=  {nom/name cus/? utf/?}
@@ -1828,6 +1840,7 @@
         $(dif [%filter fit.cof.dif])
       ?:  ?=($remove -.dif)
         (sh-note (weld "rip " (~(cr-show cr cir) ~)))
+      ?:  ?=($usage -.dif)  +>
       %-  sh-note
       %+  weld
         (weld ~(cr-phat cr cir) ": ")

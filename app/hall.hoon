@@ -110,6 +110,13 @@
       $%  {$repeat cir/circle ses/(list serial)}        :<  messaging wire
           {$circle nom/name src/source}                 :<  subscription wire
       ==                                                ::
+    ::
+    ++  old-state
+      (cork state |=(a/state a(stories (~(run by stories.a) old-story))))
+    ++  old-story
+      (cork story |=(a/story a(shape *old-config, mirrors (~(run by mirrors.a) old-config))))
+    ++  old-config
+      {src/(set source) cap/cord fit/filter con/control}
     --
 ::
 :>  #
@@ -125,12 +132,15 @@
 ++  prep
   :>  adapts state.
   ::
-  |=  old/(unit state)
+  |=  old/(unit old-state)
   ^-  (quip move _..prep)
   ?~  old
     %-  pre-bake
     ta-done:ta-init:ta
-  [~ ..prep(+<+ u.old)]
+  =-  [~ ..prep(+<+ `state`u.old(stories -))]
+  %-  ~(run by stories.u.old)
+  |=  soy/old-story
+  (story soy(shape [src cap ~ fit con]:shape.soy))
 ::
 :>  #  %engines
 :>    main cores.
@@ -316,11 +326,13 @@
       ?-  -.act
         ::  circle configuration
         $create  (action-create +.act)
+        $design  (action-design +.act)
         $source  (action-source +.act)
         $depict  (action-depict +.act)
         $filter  (action-filter +.act)
         $permit  (action-permit +.act)
         $delete  (action-delete +.act)
+        $usage   (action-usage +.act)
         ::  messaging
         $convey  (action-convey +.act)
         $phrase  (action-phrase +.act)
@@ -384,11 +396,20 @@
         %^  impact  nom  %new
         :*  [[[our.bol nom] ~] ~ ~]
             des
+            ~
             *filter
             :-  typ
             ?.  ?=(?($village $journal) typ)  ~
             [our.bol ~ ~]
         ==
+      (ta-evil (crip "{(trip nom)}: already exists"))
+    ::
+    ++  action-design
+      :>  creates a story with the specified config.
+      ::
+      |=  {nom/name cof/config}
+      ?.  (~(has in stories) nom)
+        (impact nom %new cof)
       (ta-evil (crip "{(trip nom)}: already exists"))
     ::
     ++  action-delete
@@ -437,6 +458,15 @@
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
       so-done:(~(so-sources so nom ~ u.soy) sub srs)
+    ::
+    ++  action-usage
+      :>  add or remove usage tags.
+      ::
+      |=  {nom/name add/? tas/tags}
+      =+  soy=(~(get by stories) nom)
+      ?~  soy
+        (ta-evil (crip "no story {(trip nom)}"))
+      so-done:(~(so-usage so nom ~ u.soy) add tas)
     ::
     :>  #  %messaging
     +|
@@ -1102,6 +1132,17 @@
       ?:  =(cap cap.shape)  +>
       (so-delta-our %config so-cir %caption cap)
     ::
+    ++  so-usage
+      :>  add or remove usage tags.
+      ::
+      |=  {add/? tas/tags}
+      ^+  +>
+      =/  sas/tags
+        %.  tag.shape
+        ?:(add ~(dif in tas) ~(int in tas))
+      ?~  sas  +>.$
+      (so-delta-our %config so-cir %usage add sas)
+    ::
     ++  so-filter
       :>    change message rules
       :>
@@ -1361,14 +1402,6 @@
       =/  sus/(set ship)
         %.  sis.con.shape
         ?:(add ~(dif in sis) ~(int in sis))
-      =.  +>.$
-        ::  if banishing: notify only those affected.
-        ::  if inviting: notify all targets.
-        =?  sis  !inv  sus
-        =-  (so-act [%phrase - [%inv inv so-cir]~])
-        %-  ~(rep in `(set ship)`sis)
-        |=  {s/ship a/audience}
-        (~(put in a) [s %inbox])
       ?~  sus  +>.$
       ::  if banished, remove their presences.
       =?  +>.$  !inv
