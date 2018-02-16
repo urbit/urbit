@@ -2226,7 +2226,7 @@
       =+  ^=  q  %+  max
           ?:  (gth m prc)  (^sub m prc)  0              ::  reduce precision
         %-  abs:si  ?:  =(den %i)  --0                  ::  enforce min. exp
-          ?:  =((cmp:si e.a emn) -1)  (dif:si emn e.a)  --0
+        ?:  =((cmp:si e.a emn) -1)  (dif:si emn e.a)  --0
       =^  b  a  :-  (end 0 q a.a)
         a(e (sum:si e.a (sun:si q)), a (rsh 0 q a.a))
       ::
