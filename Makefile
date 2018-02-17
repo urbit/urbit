@@ -494,7 +494,8 @@ endif
 
 # This should start a comet or something
 test:
-	ASAN_OPTIONS=help=1 $(BIN)/urbit -FI zod -A . -c zod
+	echo $ASAN_OPTIONS
+	ASAN_OPTIONS=verbose=1 $(BIN)/urbit -FI zod -A . -c zod
 	@echo "FIXME no tests defined"
 
 test_hash: $(BIN)/test_hash
