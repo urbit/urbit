@@ -494,8 +494,6 @@ endif
 
 # This should start a comet or something
 test:
-	cc --version
-	which llvm-symbolizer
 	ASAN_OPTIONS=help=1 $(BIN)/urbit -FI zod -A . -c zod
 	@echo "FIXME no tests defined"
 
