@@ -137,16 +137,7 @@ END
 end
 
 def print_drv_stats(built_map)
-  built_count = 0
-  not_built_count = 0
-  built_map.each do |drv, built|
-    if built
-      built_count += 1
-    else
-      not_built_count += 1
-    end
-  end
-
+  built_count = built_map.count { |drv, built| built }
   puts "Derivations built: #{built_count} out of #{built_map.size}"
 end
 
