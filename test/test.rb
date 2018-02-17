@@ -2,6 +2,7 @@
 
 require 'open3'
 require 'pathname'
+require 'sqlite3'  # gem install sqlite3
 
 class AnticipatedError < RuntimeError
 end
@@ -111,21 +112,34 @@ def instantiate_drvs(paths)
   paths.zip(stdout_str.split).to_h
 end
 
-# TODO: Try to do something better here, because the output path
-# actually exists while the derivations is getting built, or could
-# be left around if the system crashes during a build.
-def is_drv_maybe_built?(drv)
-  contents = File.read(drv)
-  md = contents.match(/"out","(\/nix\/store\/[\w.-]+)"/)
-  raise "Could not find output for #{drv}" if !md
-  out_dir = md[1]
-  File.exist?(out_dir)
+def nix_db
+  return $db if $db
+  $db = SQLite3::Database.new '/nix/var/nix/db/db.sqlite', readonly: true
+end
+
+def get_build_status(drvs)
+  drv_list_str = drvs.map { |d| "\"#{d}\"" }.join(", ")
+  query = <<END
+select d.path, v.id
+from ValidPaths d
+left join DerivationOutputs o on d.id == o.drv
+left join ValidPaths v on o.path == v.path
+where d.path in (#{drv_list_str});
+END
+  r = {}
+  nix_db.execute(query)
+  nix_db.execute(query)
+  nix_db.execute(query) do |drv, output_id|
+    output_built = !output_id.nil?
+    r[drv] = r.fetch(drv, true) && output_built
+  end
+  r
 end
 
 def print_drv_stats(built_map)
   built_count = 0
   not_built_count = 0
-  built_map.each do |path, built|
+  built_map.each do |drv, built|
     if built
       built_count += 1
     else
@@ -133,16 +147,16 @@ def print_drv_stats(built_map)
     end
   end
 
-  puts "Derivations built or building: #{built_count}"
-  puts "Derivations not built:         #{not_built_count}"
+  puts "Derivations built: #{built_count} out of #{built_map.size}"
 end
 
 begin
   check_directory!
   settings = parse_derivation_list('test/derivations.txt')
-  drv_map = instantiate_drvs(settings.fetch(:paths))
-  built_map = drv_map.transform_values(&method(:is_drv_maybe_built?))
-  print_drv_stats(built_map)
+  path_drv_map = instantiate_drvs(settings.fetch(:paths))
+  drvs = path_drv_map.values.uniq
+  drv_built_map = get_build_status(drvs)
+  print_drv_stats(drv_built_map)
 rescue AnticipatedError => e
   puts e
 end
