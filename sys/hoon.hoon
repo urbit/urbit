@@ -6891,9 +6891,10 @@
         ::
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
-    ::  :^  %brts  ~^~
-    ::    [%base %noun]
-    ::  ~(relative local(dom (peg 7 dom)) [6 %&])
+    ?:  fab
+      :^  %brts  ~^~
+        [%base %noun]
+      ~(relative local(dom (peg 7 dom)) [6 %&])
     :^  %brcl  ~^~
       [%cold ripple]
     ~(relative local(dom (peg 7 dom)) [6 %&])
@@ -7058,24 +7059,47 @@
         $(top +.top, tow (dec tow))
       ::  boc: construction given ideal subject
       ::
-      =;  boc
+      =;  boc/hoon
         ?:  =([~ ~] joy)
           ::  width is already ideal
           ::
           boc
-        ?:  =(~ joy)
-          ::  unconditional trivial
-          ::
-          [%ktls boc trivial]
+        ::  mac: matching crib
+        ::
+        =/  mac
+          |-  ^-  crib
+          ?:  =(2 tow) 
+            [%axil %cell] 
+          [[%axil %noun] $(tow (dec tow))]
         ::  yum: matching hoon
         ::
-        =*  yum
+        =/  yum
           |-  ^-  hoon 
           ?:  =(2 tow) 
             [%bust %cell] 
           [[%bust %noun] $(tow (dec tow))]
-        ::  could be trivial
+        ?:  fab
+          ::  luz: subject edited to inject default
+          ::
+          =/  luz/hoon  
+            :+  %cnts 
+              [[%& 1] ~] 
+            :_  ~
+            ::  correct but slow
+            ::  [fetch-wing example:clear(mod any)]  
+            [fetch-wing ?^(def u.def example:clear(mod mac))]
+          ?:  =(~ joy)      
+            ::  unconditional build
+            ::
+            [%tsgr luz boc]
+          ::  conditional build
+          ::
+          [%tsgr [%wtcl [%fits yum fetch-wing] [%$ 1] luz] boc]
         ::
+        ?:  =(~ joy)
+          ::  unconditional trivial
+          ::
+          [%ktls boc trivial]
         [%ktls boc [%wtcl [%fits yum fetch-wing] boc trivial]]
       ::  idealize topography (should be a smarter merge)
       ::
