@@ -5917,7 +5917,7 @@
 ::
 ::::  5aa: new partial nock interpreter
   ::
-++  musk  !:                                            ::  nock with block set
+++  musk  !.                                            ::  nock with block set
   =>  ::  keep soft core out of models
       +
   =>  |%
@@ -8191,6 +8191,7 @@
       %fuse   fuse
       %gain   gain
       %lose   lose
+      %mine   mine
       %mint   mint
       %moot   moot
       %mull   mull
@@ -8954,21 +8955,56 @@
     |=  gen/hoon  ^-  type
     (chip & gen)
   ::
+  ++  hemp
+    ::  generate formula from foot
+    ::
+    |=  fut/foot
+    ^-  nock
+    ~+
+    ?-  -.fut
+      $ash  q:(mint %noun p.fut)
+      $elm  q:(mint(vet |) %noun p.fut)
+    ==
+  ::
+  ++  hoof
+    ::  lazy formula generator for cores being compiled
+    ::
+    |=  dom/(map @ tomb)
+    ^-  seminoun:musk
+    ~+
+    |-  ^-  seminoun:musk
+    ?:  ?=(~ dom)
+      *seminoun:musk
+    =/  dov
+        =/  dab/(map term (pair what foot))  q.q.n.dom
+        |-  ^-  seminoun:musk
+        ?:  ?=(~ dab)
+          *seminoun:musk
+        =/  vad/seminoun:musk  =+(hemp [[%lazy -(+< q.q.n.dab)] ~])
+        ?-    dab
+          {* ~ ~}   vad
+          {* ~ *}   (combine:musk vad $(dab r.dab))
+          {* * ~}   (combine:musk vad $(dab l.dab))
+          {* * *}   :(combine:musk vad $(dab l.dab) $(dab r.dab))
+        ==
+    ?-    dom
+      {* ~ ~}   dov
+      {* ~ *}   (combine:musk dov $(dom r.dom))
+      {* * ~}   (combine:musk dov $(dom l.dom))
+      {* * *}   :(combine:musk dov $(dom l.dom) $(dom r.dom))
+    ==
+  ::
   ++  harp
     |=  dab/(map term (pair what foot))
     ^-  ?(~ ^)
     ?:  ?=(~ dab)
       ~
-    =+  ^=  vad
-        ?-  -.q.q.n.dab
-          $ash  q:(mint %noun p.q.q.n.dab)
-          $elm  q:(mint(vet |) %noun p.q.q.n.dab)
-        ==
+    =+  vad=(hemp q.q.n.dab)
     ?-    dab
       {* ~ ~}   vad
-      {* ~ *}    [vad $(dab r.dab)]
-      {* * ~}    [vad $(dab l.dab)]
-      {* * *}     [vad $(dab l.dab) $(dab r.dab)]
+      {* ~ *}   [vad $(dab r.dab)]
+      {* * ~}   [vad $(dab l.dab)]
+      {* * *}   [vad $(dab l.dab) $(dab r.dab)]
     ==
   ::
   ++  hope
@@ -8979,9 +9015,9 @@
     =+  dov=(harp q.q.n.dom)
     ?-    dom
       {* ~ ~}   dov
-      {* ~ *}    [dov $(dom r.dom)]
-      {* * ~}    [dov $(dom l.dom)]
-      {* * *}     [dov $(dom l.dom) $(dom r.dom)]
+      {* ~ *}   [dov $(dom r.dom)]
+      {* * ~}   [dov $(dom l.dom)]
+      {* * *}   [dov $(dom l.dom) $(dom r.dom)]
     ==
   ::
   ++  lose
@@ -9000,6 +9036,14 @@
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     =+  neg=~(open ap gen)
     ?:(=(neg gen) sut $(gen neg))
+  ::
+  ++  mine
+    ::  compile a core, minting all within it.
+    ::
+    ~/  %mine
+    |=  dom/(map @ tomb)
+    ^-  ?(~ ^)
+    (hope(sut (core sut %gold sut *chap ~ dom)) dom)
   ::
   ++  mint
     ~/  %mint
@@ -9158,8 +9202,7 @@
       |=  {mel/vair ruf/hoon wad/chap dom/(map @ tomb)}
       ^-  {p/type q/nock}
       =+  dan=^$(gen ruf, gol %noun)
-      =+  toc=(core p.dan [%gold p.dan wad [~ dom]])
-      =+  dez=(hope(sut toc) dom)
+      =+  dez=(mine(sut p.dan) dom)
       :-  (nice (core p.dan mel p.dan wad [dez dom]))
       (cons [%1 dez] q.dan)
     --
