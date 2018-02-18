@@ -1432,7 +1432,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
     nock_in:
       x          = _n_pep(mov, off);
       fam        = u3to(burnframe, u3R->cap_p) + off + mov;
-      u3R->cap_p = u3of(burnframe, fam);
+      u3R->cap_p = u3of(burnframe, fam - off);
       fam->ip_s  = ip_s;
       fam->pog   = pog;
       _n_push(mov, off, x);
@@ -1569,7 +1569,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
         _n_toss(mov, off);
 
         fam        = u3to(burnframe, u3R->cap_p) + off + mov;
-        u3R->cap_p = u3of(burnframe, fam);
+        u3R->cap_p = u3of(burnframe, fam - off);
         fam->ip_s  = ip_s;
         fam->pog   = pog;
 
