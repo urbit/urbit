@@ -48,59 +48,65 @@
   x
 --
 ^-  manx
-;div
-  ;div.row.coll-title
-    {(trip desc:(need config))} /
+;div.post
+  ;div.topic-info.mb-4
+    ;div.row.coll-title
+      {(trip desc:(need config))} /
+    ==
+    ;div.row.mod.text-mono
+      ; {(trip (scot %da mod.info.b.extratopic))}
+    ==
   ==
-  ;div.row.mod.text-mono
-    {(trip (scot %da mod.info.b.extratopic))}
-  ==
-  ;div.row.tit
-    ;h1: {(trip tit.info.b.extratopic)}
-  ==
-  ::
-  ;*  ?:  (authed:colls gas)
-        ;=
-          ;a(href "/~~/pages/nutalk/collection/post?coll={(trip +<:s.bem.gas)}&top={(trip -:s.bem.gas)}")
-            ;button.btn.btn-primary.mb-4
-              ; Edit →
-            ==
+  ;div#show
+    ;div.row.tit
+      ;h1: {(trip tit.info.b.extratopic)}
+    ==
+    ;*  ?:  (authed:colls gas)
+          ;=
+            ::;a(href "/~~/pages/nutalk/collection/post?coll={(trip +<:s.bem.gas)}&top={(trip -:s.bem.gas)}")
+              ;button#edit-btn.btn.btn-primary.mb-4
+                ; Edit →
+              ==
+            ::==
           ==
-        ==
-      ~
-  ;div.row.content.mb-18
-    +{a.extratopic}
-  ==
-  ;*  ?:  comm:(need config)
-    ;=
-      ;div.coms
-        ;h3: Comments
-          ;ol
-            ;*  %+  turn
-                  %+  sort
-                    ~(tap by coms.b.extratopic)
-                  |=  [a=[c=@da d=[mod=@da who=@p wat=wain]] b=[c=@da d=[mod=@da who=@p wat=wain]]]
-                  (lth (unt c.a) (unt c.b))
-                  ::
-                |=  [c=@da d=[mod=@da who=@p wat=wain]]
-                ;li
-                  ;div.da.text-mono.ml-12(data-urb-elapsed "{(esoo mod.d)}");
-                  ;div.com.ml-12.mb-6
-                    ;div.who.text-mono
-                      ;a(href "")
-                        {(trip (scot %p who.d))}
+        ~
+    ;div.row.content.mb-18
+      +{a.extratopic}
+    ==
+    ;*  ?:  comm:(need config)
+      ;=
+        ;div.coms
+          ;h3: Comments
+            ;ol
+              ;*  %+  turn
+                    %+  sort
+                      ~(tap by coms.b.extratopic)
+                    |=  [a=[c=@da d=[mod=@da who=@p wat=wain]] b=[c=@da d=[mod=@da who=@p wat=wain]]]
+                    (lth (unt c.a) (unt c.b))
+                    ::
+                  |=  [c=@da d=[mod=@da who=@p wat=wain]]
+                  ;li
+                    ;div.da.text-mono.ml-12(data-urb-elapsed "{(esoo mod.d)}");
+                    ;div.com.ml-12.mb-6
+                      ;div.who.text-mono
+                        ;a(href "")
+                          {(trip (scot %p who.d))}
+                        ==
+                      ==
+                      ;div.com-body
+                        ; {(trip (of-wain:format wat.d))}
                       ==
                     ==
-                    ;div.com-body
-                      ; {(trip (of-wain:format wat.d))}
-                    ==
                   ==
-                ==
-          ==
-          ;div.ml-12(data-component "CommentCreate", data-coll "{(trip +<:s.bem.gas)}", data-top "{(trip -:s.bem.gas)}");
+            ==
+            ;div.ml-12(data-component "CommentCreate", data-coll "{(trip +<:s.bem.gas)}", data-top "{(trip -:s.bem.gas)}");
+        ==
       ==
-    ==
-  ~
+    ~
+  ==
+  ::
+  ;div#edit(data-component "TopicCreatePage", data-coll "{(trip +<:s.bem.gas)}", data-top "{(trip -:s.bem.gas)}", data-top-text "{(trip (of-wain:format wat.info.b.extratopic))}");
+  ;script@"/~~/pages/toggle.js";
 ==
 
 
