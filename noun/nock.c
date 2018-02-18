@@ -1455,9 +1455,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 
     do_bump:
       top  = _n_peek(off);
-      o    = *top;
-      *top = u3i_vint(o);
-      u3z(o);
+      *top = u3i_vint(*top);
       BURN();
 
     do_sam1:
