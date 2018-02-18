@@ -1372,36 +1372,48 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       u3z(o);
       BURN();
 
-    do_lil1:
-      _n_toss(mov, off);
+    do_lit0:
+      _n_push(mov, off, 0);
+      BURN();
+
     do_lit1:
+      _n_push(mov, off, 1);
+      BURN();
+
+    do_litb:
+      _n_push(mov, off,  pog[ip_s++]);
+      BURN();
+
+    do_lits:
+      _n_push(mov, off, _n_resh(pog, &ip_s));
+      BURN();
+
+    do_litn:
+      _n_push(mov, off, u3k(_n_rean(pog, &ip_s)));
+      BURN();
+
+    do_lil1:
       x = 1;
-      goto quot_in;
+      goto lil_in;
 
     do_lilb:
-      _n_toss(mov, off);
-    do_litb:
       x = pog[ip_s++];
-      goto quot_in;
+      goto lil_in;
 
     do_lils:
-      _n_toss(mov, off);
-    do_lits:
       x = _n_resh(pog, &ip_s);
-      goto quot_in;
+      goto lil_in;
 
     do_liln:
-      _n_toss(mov, off);
-    do_litn:
       x = u3k(_n_rean(pog, &ip_s));
-      goto quot_in;
+      goto lil_in;
 
     do_lil0:
-      _n_toss(mov, off);
-    do_lit0:
       x = 0;
-    quot_in:
-      _n_push(mov, off, x);
+    lil_in:
+      top = _n_peek(off);
+      u3z(*top);
+      *top = x;
       BURN();
 
     do_noct:                // [fol old bus]
