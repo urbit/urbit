@@ -3,6 +3,8 @@
 */
 #include "all.h"
 
+//#define VERBYC
+
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 
       /* u3_term_io_hija(): hijack console for cooked print.
@@ -432,6 +434,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 u3_noun
 u3n_nock_on(u3_noun bus, u3_noun fol)
 {
+  /*
   u3_noun pro;
 
   u3t_on(noc_o);
@@ -439,7 +442,8 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
   u3t_off(noc_o);
 
   return pro;
-  //return u3n_burn_on(bus, fol);
+  */
+  return u3n_burn_on(bus, fol);
 }
 
 /* u3n_kick_on(): fire `gat` without changing the sample.
@@ -537,6 +541,7 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 #define SAMN 36
 #define SAME 37
 #define SALM 38
+#define SAMC 39
 #define SKIP 39
 #define SBIP 40
 #define SKIN 41
@@ -691,20 +696,17 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         c3_s mem_s = 0;
         c3_y op_y;
 
+        // we just throw away the hint (why is this not a static hint?)
         tot_s += _n_comp(ops, hod, c3n, c3n);
         tot_s += _n_emit(ops, TOSS);
 
-        // SKIM leaves [bus key] on the stack in the unmemoized case
-        mem_s += _n_comp(&mem, nef, los_o, c3n);
-
-        // now [pro key bus?], where bus was left on if appropropriate
+        // memoizing code always loses TOS because SAVE needs [pro key]
+        mem_s += _n_comp(&mem, nef, c3y, c3n);
         mem_s += _n_emit(&mem, SAVE);
 
         op_y = (c3y == los_o)
              ? (( mem_s <= 0xFF ) ? SLIB : SLIM)
              : (( mem_s <= 0xFF ) ? SKIB : SKIM);
-
-        // SKIM leaves [pro bus] and SLIM leaves [pro]
         tot_s += _n_emit(ops, u3nt(op_y, mem_s, u3k(nef)));
         tot_s += mem_s; _n_apen(ops, mem);
         break;
@@ -804,53 +806,52 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       break;
 
     case 5: {
-      c3_t hec_t, tec_t;
       u3x_cell(arg, &hed, &tel);
 
       if ( c3n == u3du(hed) ) {
-        u3m_bail(c3__exit);
-        break;
+        tot_s += _n_comp(ops, arg, los_o, c3n);
+        tot_s += _n_emit(ops, SAMC);
       }
       else {
+        c3_t hec_t, tec_t;
         hec_t = (1 == u3h(hed));
-      }
-      if ( c3n == u3du(tel) ) {
-        u3m_bail(c3__exit);
-        break;
-      }
-      else {
-        tec_t = (1 == u3h(tel));
-      }
-      if ( hec_t && tec_t ) {
-        if ( c3y == u3r_sing(u3t(hed), u3t(tel)) ) {
-          tot_s += _n_emit(ops, (c3y == los_o) ? LIL0 : LIT0);
+        if ( c3n == u3du(tel) ) {
+          u3m_bail(c3__exit);
+          break;
         }
         else {
-          tot_s += _n_emit(ops, (c3y == los_o) ? LIL1 : LIT1);
+          tec_t = (1 == u3h(tel));
+        }
+        if ( hec_t && tec_t ) {
+          if ( c3y == u3r_sing(u3t(hed), u3t(tel)) ) {
+            tot_s += _n_emit(ops, (c3y == los_o) ? LIL0 : LIT0);
+          }
+          else {
+            tot_s += _n_emit(ops, (c3y == los_o) ? LIL1 : LIT1);
+          }
+        }
+        else if ( !hec_t && !tec_t ) {
+          tot_s += _n_comp(ops, hed, c3n, c3n);
+          tot_s += _n_emit(ops, SWAP);
+          tot_s += _n_comp(ops, tel, c3n, c3n);
+          tot_s += _n_emit(ops, (c3y == los_o) ? SALM : SAME);
+        }
+        else {
+          tot_s += _n_comp(ops, (hec_t ? tel : hed), los_o, c3n);
+          u3_noun lit = u3t(hec_t ? hed : tel);
+          switch ( lit ) {
+            case 0:
+              tot_s += _n_emit(ops, SAM0);
+              break;
+            case 1:
+              tot_s += _n_emit(ops, SAM1);
+              break;
+            default:
+              op_y = lit <= 0xFF ? SAMB : lit <= 0xFFFF ? SAMS : SAMN;
+              tot_s += _n_emit(ops, u3nc(op_y, u3k(lit)));
+          }
         }
       }
-      else if ( !hec_t && !tec_t ) {
-        tot_s += _n_comp(ops, hed, c3n, c3n);
-        tot_s += _n_emit(ops, SWAP);
-        tot_s += _n_comp(ops, tel, c3n, c3n);
-        tot_s += _n_emit(ops, (c3y == los_o) ? SALM : SAME);
-      }
-      else {
-        tot_s += _n_comp(ops, (hec_t ? tel : hed), los_o, c3n);
-        u3_noun lit = u3t(hec_t ? hed : tel);
-        switch ( lit ) {
-          case 0:
-            tot_s += _n_emit(ops, SAM0);
-            break;
-          case 1:
-            tot_s += _n_emit(ops, SAM1);
-            break;
-          default:
-            op_y = lit <= 0xFF ? SAMB : lit <= 0xFFFF ? SAMS : SAMN;
-            tot_s += _n_emit(ops, u3nc(op_y, u3k(lit)));
-        }
-      }
-
       break;
     }
 
@@ -926,7 +927,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
   return tot_s;
 }
 
-static void _n_print_byc(c3_y* pog);
+static void _n_print_byc(c3_y* pog, c3_s her_s);
 
 // match to OPCODE TABLE
 static char* names[] = {
@@ -945,7 +946,7 @@ static char* names[] = {
   "deep", "bump",
   "sam0", "sam1",
   "samb", "sams", "samn",
-  "same", "salm",
+  "same", "salm", "samc",
   "skip", "sbip",
   "skin", "sbin",
   "snoc", "snol",
@@ -1057,6 +1058,7 @@ _n_asm(u3_noun ops, c3_s len_s)
     }
     ops = u3t(ops);
   }
+  c3_assert(u3_nul == ops);
 
   u3z(top);
   return buf_y;
@@ -1124,7 +1126,7 @@ _n_toss(c3_ys mov, c3_ys off)
   u3z(_n_pep(mov, off));
 }
 
-/* _n_rean(): read a c3_s from the bytecode stream
+/* _n_resh(): read a c3_s from the bytecode stream
  */
 static inline c3_s
 _n_resh(c3_y* buf, c3_s* ip_s)
@@ -1134,7 +1136,8 @@ _n_resh(c3_y* buf, c3_s* ip_s)
   return les | (mos << 8);
 }
 
-/* _n_rean(): read a noun from the bytecode stream
+/* _n_rean(): read a noun from the bytecode stream.
+ *            refcount is NOT incremented.
  */
 static inline u3_noun
 _n_rean(c3_y* buf, c3_s* ip_s)
@@ -1155,7 +1158,8 @@ _n_bite(u3_noun fol)
   c3_s len_s  = _n_comp(&bok, fol, c3y, c3y);
   c3_y* buf_y = _n_asm(bok, len_s);
   //u3m_p("fol", fol);
-  _n_print_byc(buf_y);
+  //_n_print_byc(buf_y);
+  //printf("%d bytes\n", len_s);
   return buf_y;
 }
 
@@ -1230,7 +1234,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
     &&do_deep, &&do_bump,
     &&do_sam0, &&do_sam1,
     &&do_samb, &&do_sams, &&do_samn,
-    &&do_same, &&do_salm,
+    &&do_same, &&do_salm, &&do_samc,
     &&do_skip, &&do_sbip,
     &&do_skin, &&do_sbin,
     &&do_snoc, &&do_snol,
@@ -1254,11 +1258,18 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
   empty = u3R->cap_p;
   _n_push(mov, off, bus);
 
+#ifdef VERBYC
+  #define BURN() fprintf(stderr, "%s ", names[pog[ip_s]]); goto *lab[pog[ip_s++]]
+#else
   #define BURN() goto *lab[pog[ip_s++]]
+#endif
   BURN();
   while ( 1 ) {
     do_halt: // [product ...burnframes...]
       x = _n_pep(mov, off);
+#ifdef VERBYC
+      fprintf(stderr, "return\r\n");
+#endif
       if ( empty == u3R->cap_p ) {
         return x;
       }
@@ -1269,6 +1280,9 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 
         u3R->cap_p = u3of(burnframe, fam - mov);
         _n_push(mov, off, x);
+#ifdef VERBYC
+        _n_print_byc(pog, ip_s);
+#endif
         BURN();
       }
 
@@ -1413,6 +1427,10 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
     nock_out:
       pog  = _n_find(o);             
       ip_s = 0;
+#ifdef VERBYC
+      fprintf(stderr, "\r\nnock jump: %u\r\n", o);
+      _n_print_byc(pog, ip_s);
+#endif
       u3z(o);
       BURN();
       
@@ -1442,6 +1460,10 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       x = _n_resh(pog, &ip_s);
       goto samd_in;
 
+    do_samn:
+      x = _n_rean(pog, &ip_s);
+      goto samd_in;
+
     do_sam0:
       x = 0;
     samd_in:
@@ -1461,14 +1483,19 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       _n_toss(mov, off);
       goto same_in;
 
-    do_samn:
-      x = u3k(_n_rean(pog, &ip_s));
     same_in:
       top  = _n_peek(off);
       o    = *top;
       *top = u3r_sing(x, o);
       u3z(o);
       u3z(x);
+      BURN();
+
+    do_samc:
+      top  = _n_peek(off);
+      o    = *top;
+      *top = u3r_sing(u3h(o), u3t(o));
+      u3z(o);
       BURN();
 
     do_skip:
@@ -1538,8 +1565,18 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 
         pog  = _n_find(fol);
         ip_s = 0;
+#ifdef VERBYC
+        fprintf(stderr, "\r\nhead kick jump: %u, sp: %p\r\n", fol, top);
+        _n_print_byc(pog, ip_s);
+#endif
         _n_push(mov, off, o);
       }
+#ifdef VERBYC
+      else {
+        fprintf(stderr, "head jet\r\n");
+//        u3m_p("head jet", *top);
+      }
+#endif
       BURN();
 
     do_tics:
@@ -1563,11 +1600,21 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       *top = u3j_kick(o, x);
       u3t_on(noc_o);
       if ( u3_none == *top ) {
-        u3_noun fol = u3r_at(x, o);
+        u3_noun fol = u3x_at(x, o);
         *top = o;
         pog  = _n_find(fol);
         ip_s = 0;
+#ifdef VERBYC
+        fprintf(stderr, "\r\ntail kick jump: %u, sp: %p\r\n", fol, top);
+        _n_print_byc(pog, ip_s);
+#endif
       }
+#ifdef VERBYC
+      else {
+        fprintf(stderr, "tail jet\r\n");
+//        u3m_p("tail jet", *top);
+      }
+#endif
       BURN();
 
     do_wils:                // [gof bus ref]
@@ -1655,22 +1702,24 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       sip_s = _n_resh(pog, &ip_s);
       goto skim_in;
 
+    do_skib:
+      sip_s = pog[ip_s++];
+    skim_in:
+      top = _n_peek(off);
+      x   = u3k(*top);
+      goto skim_out;
+
     do_slim:
       sip_s = _n_resh(pog, &ip_s);
       goto slim_in;
 
     do_slib:
       sip_s = pog[ip_s++];
-      goto slim_in;
-
-    do_skib:
-      sip_s = pog[ip_s++];
-    skim_in:
-      top = _n_peek(off);
-      _n_push(mov, off, u3k(*top));
     slim_in:
+      x = _n_pep(mov, off);
+    skim_out:
       o = _n_rean(pog, &ip_s);
-      x = u3nc(u3k(o), _n_pep(mov, off));
+      x = u3nc(u3k(o), x);
       o = u3z_find(144 + c3__nock, x);
       if ( u3_none == o ) {
         _n_push(mov, off, x);
@@ -1697,21 +1746,29 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 }
 
 static void
-_n_print_byc(c3_y* pog)
+_n_print_byc(c3_y* pog, c3_s her_s)
 {
   c3_s ip_s = 0;
-  printf("bytecode: {");
+  if ( her_s == 0 ) {
+    fprintf(stderr, "begin: {");
+  }
+  else {
+    fprintf(stderr, "resume: {");
+  }
   int first = 1;
   while ( pog[ip_s] ) {
     if ( first ) {
       first = 0;
     }
+    else if (ip_s == her_s) {
+      fprintf(stderr, " [*]");
+    }
     else {
-      printf(" ");
+      fprintf(stderr, " ");
     }
     switch ( pog[ip_s] ) {
       default:
-        printf("%s", names[pog[ip_s++]]);
+        fprintf(stderr, "%s", names[pog[ip_s++]]);
         break;
 
       case FRAB:
@@ -1723,8 +1780,8 @@ _n_print_byc(c3_y* pog)
       case SBIN:
       case KICB:
       case TICB:
-        printf("[%s ", names[pog[ip_s++]]);
-        printf("%u]", pog[ip_s++]);
+        fprintf(stderr, "[%s ", names[pog[ip_s++]]);
+        fprintf(stderr, "%u]", pog[ip_s++]);
         break;
 
       case FRAS:
@@ -1736,8 +1793,8 @@ _n_print_byc(c3_y* pog)
       case SKIN:
       case KICS:
       case TICS:
-        printf("[%s ", names[pog[ip_s++]]);
-        printf("%u]", _n_resh(pog, &ip_s));
+        fprintf(stderr, "[%s ", names[pog[ip_s++]]);
+        fprintf(stderr, "%u]", _n_resh(pog, &ip_s));
         break;
 
       case CUSH:
@@ -1748,49 +1805,49 @@ _n_print_byc(c3_y* pog)
       case SAMN:
       case TICK:
       case KICK:
-        printf("[%s ", names[pog[ip_s++]]);
-        printf("%u]", _n_rean(pog, &ip_s));
+        fprintf(stderr, "[%s ", names[pog[ip_s++]]);
+        fprintf(stderr, "%u]", _n_rean(pog, &ip_s));
         break;
 
       case SKIB:
       case SLIB:
-        printf("[%s", names[pog[ip_s++]]);
-        printf(" %u ", pog[ip_s++]);
-        printf("%u]", _n_rean(pog, &ip_s));
+        fprintf(stderr, "[%s", names[pog[ip_s++]]);
+        fprintf(stderr, " %u ", pog[ip_s++]);
+        fprintf(stderr, "%u]", _n_rean(pog, &ip_s));
         break;
 
       case SKIM:
       case SLIM:
-        printf("[%s", names[pog[ip_s++]]);
-        printf(" %u ", _n_resh(pog, &ip_s));
-        printf("%u]", _n_rean(pog, &ip_s));
+        fprintf(stderr, "[%s", names[pog[ip_s++]]);
+        fprintf(stderr, " %u ", _n_resh(pog, &ip_s));
+        fprintf(stderr, "%u]", _n_rean(pog, &ip_s));
         break;
     }
   }
-  printf(" halt}\r\n");
+  fprintf(stderr, " halt}\r\n");
 }
 
 static void _n_print_stack(u3p(u3_noun) empty) {
   c3_w cur_p = u3R->cap_p;
-  printf("[");
+  fprintf(stderr, "[");
   int first = 1;
   while ( cur_p != empty ) {
     if ( first ) {
       first = 0;
     }
     else {
-      printf(" ");
+      fprintf(stderr, " ");
     }
     if ( c3y == u3a_is_north(u3R) ) {
-      printf("%u", *(u3to(u3_noun, cur_p)));
+      fprintf(stderr, "%u", *(u3to(u3_noun, cur_p)));
       cur_p++;
     }
     else {
-      printf("%u", *(u3to(u3_noun, cur_p-1)));
+      fprintf(stderr, "%u", *(u3to(u3_noun, cur_p-1)));
       cur_p--;
     }
   }
-  printf("]\r\n");
+  fprintf(stderr, "]\r\n");
 }
 
 /* _n_burn_on(): produce .*(bus fol) with bytecode interpreter
