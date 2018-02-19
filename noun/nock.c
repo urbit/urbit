@@ -3,7 +3,7 @@
 */
 #include "all.h"
 
-//#define VERBYC
+#define VERBYC
 
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 
@@ -1168,14 +1168,24 @@ _n_bite(u3_noun fol)
 static inline c3_y*
 _n_find(u3_noun fol)
 {
-  u3_noun got = u3h_get(u3R->byc.har_p, fol);
-  if ( u3_none != got ) {
-    return u3a_into(got);
+  u3a_road* rod_u = u3R;
+
+  while ( 1 ) {
+    u3_weak jaw = u3h_gut(rod_u->byc.har_p, fol);
+
+    if ( u3_none != jaw ) {
+      return u3a_into(jaw);
+    }
+
+    if ( rod_u->par_p ) {
+      rod_u = u3to(u3_road, rod_u->par_p);
+    }
+    else break;
   }
-  else {
+
+  {
     c3_y* gop = _n_bite(fol);
-    got = u3a_outa(gop);
-    u3h_put(u3R->byc.har_p, fol, got);
+    u3h_put(u3R->byc.har_p, fol, u3a_outa(gop));
     return gop;
   }
 }
@@ -1278,7 +1288,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
         pog  = fam->pog;
         ip_s = fam->ip_s;
 
-        u3R->cap_p = u3of(burnframe, fam - mov);
+        u3R->cap_p = u3of(burnframe, fam - (mov+off));
         _n_push(mov, off, x);
 #ifdef VERBYC
         _n_print_byc(pog, ip_s);
@@ -1890,10 +1900,33 @@ u3n_burn_on(u3_noun bus, u3_noun fol)
   return pro;
 }
 
+/* _n_reap(): reap key and value from byc table.
+*/
+static void
+_n_reap(u3_noun kev)
+{
+  u3_noun fol = u3h(kev);
+  u3_noun got = u3t(kev);
+
+  if ( _(u3a_left(fol)) ) {
+    if ( !_(u3a_is_junior(u3R, fol)) &&
+         (u3_none != u3h_git(u3R->byc.har_p, fol)) ) {
+      fprintf(stderr, "_n_reap: promote collision (fol %x)\r\n", u3r_mug(fol));
+      u3m_p("collision", fol);
+    }
+    else {
+      u3_noun lof = u3a_take(fol);
+      u3_noun tog = u3a_take(got);
+      u3h_put(u3R->byc.har_p, lof, tog);
+      u3z(lof);
+    }
+  }
+}
+
 /* u3n_beep(): promote bytecode state.
 */
 void
 u3n_beep(u3p(u3h_root) har_p)
 {
-  u3m_p("beep", 0);
+  u3h_walk(har_p, _n_reap);
 }
