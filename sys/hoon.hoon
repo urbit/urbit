@@ -8215,6 +8215,7 @@
       %fuse   fuse
       %gain   gain
       %lose   lose
+      %mile   mile
       %mine   mine
       %mint   mint
       %moot   moot
@@ -9018,32 +9019,6 @@
       {* * *}   :(combine:musk dov $(dom l.dom) $(dom r.dom))
     ==
   ::
-  ++  harp
-    |=  dab/(map term (pair what foot))
-    ^-  ?(~ ^)
-    ?:  ?=(~ dab)
-      ~
-    =+  vad=(hemp q.q.n.dab)
-    ?-    dab
-      {* ~ ~}   vad
-      {* ~ *}   [vad $(dab r.dab)]
-      {* * ~}   [vad $(dab l.dab)]
-      {* * *}   [vad $(dab l.dab) $(dab r.dab)]
-    ==
-  ::
-  ++  hope
-    |=  dom/(map @ tomb)
-    ^-  ?(~ ^)
-    ?:  ?=(~ dom)
-      ~
-    =+  dov=(harp q.q.n.dom)
-    ?-    dom
-      {* ~ ~}   dov
-      {* ~ *}   [dov $(dom r.dom)]
-      {* * ~}   [dov $(dom l.dom)]
-      {* * *}   [dov $(dom l.dom) $(dom r.dom)]
-    ==
-  ::
   ++  lose
     ~/  %lose
     |=  gen/hoon  ^-  type
@@ -9061,13 +9036,72 @@
     =+  neg=~(open ap gen)
     ?:(=(neg gen) sut $(gen neg))
   ::
+  ++  bake
+    |=  [dox/type dab/(map term (pair what foot))]
+    ^-  *
+    ?:  ?=(~ dab)
+      ~
+    =+  ^=  dov
+        ?-  -.q.q.n.dab
+          $ash  (mull %noun dox p.q.q.n.dab)
+          $elm  ~
+        ==
+    ?-  dab
+      {* ~ ~}  dov
+      {* ~ *}  [dov $(dab r.dab)]
+      {* * ~}  [dov $(dab l.dab)]
+      {* * *}  [dov $(dab l.dab) $(dab r.dab)]
+    ==
+  ::
+  ++  balk
+    |=  [dox/type dom/(map @ tomb)]
+    ^-  *
+    ?:  ?=(~ dom)
+      ~
+    =+  dov=(bake dox q.q.n.dom)
+    ?-    dom
+      {* ~ ~}   dov
+      {* ~ *}   [dov $(dom r.dom)]
+      {* * ~}   [dov $(dom l.dom)]
+      {* * *}   [dov $(dom l.dom) $(dom r.dom)]
+    ==
+  ::
+  ++  mile
+    ::  mull all chapters and feet in a core
+    ::
+    |=  [dox=type dom=(map @ tomb)]
+    =.  sut  (core sut %gold sut *chap ~ dom)
+    =.  dox  (core dox %gold dox *chap ~ dom)
+    (balk dox dom)
+  ::
   ++  mine
-    ::  compile a core, minting all within it.
+    ::  mint all chapters and feet in a core
     ::
     ~/  %mine
+    ~+
     |=  dom/(map @ tomb)
-    ^-  ?(~ ^)
-    (hope(sut (core sut %gold sut *chap ~ dom)) dom)
+    =.  sut  (core sut %gold sut *chap ~ dom)
+    |-  ^-  ?(~ ^)
+    ?:  ?=(~ dom)
+      ~
+    =/  dov/?(~ ^)
+      =/  dab/(map term (pair what foot))  q.q.n.dom
+      |-  ^-  ?(~ ^)
+      ?:  ?=(~ dab)
+        ~
+      =+  vad=(hemp q.q.n.dab)
+      ?-    dab
+        {* ~ ~}   vad
+        {* ~ *}   [vad $(dab r.dab)]
+        {* * ~}   [vad $(dab l.dab)]
+        {* * *}   [vad $(dab l.dab) $(dab r.dab)]
+      ==
+    ?-    dom
+      {* ~ ~}   dov
+      {* ~ *}   [dov $(dom r.dom)]
+      {* * ~}   [dov $(dom l.dom)]
+      {* * *}   [dov $(dom l.dom) $(dom r.dom)]
+    ==
   ::
   ++  mint
     ~/  %mint
@@ -9386,44 +9420,13 @@
     ::
     ++  grow
       |=  {mel/vair ruf/hoon wad/chap dom/(map @ tomb)}
+      ::  make al 
       ~_  leaf+"mull-grow"
       ^-  {p/type q/type}
       =+  dan=^$(gen ruf, gol %noun)
-      =+  ^=  toc  :-  p=(core p.dan [%gold p.dan wad [~ dom]])
-                   q=(core q.dan [%gold q.dan wad [~ dom]])
-      =+  (balk(sut p.toc, dox q.toc) dom)
+      =+  (mile(sut p.dan) q.dan dom)
       :-  (nice (core p.dan mel p.dan wad [[%0 0] dom]))
       (core q.dan [mel q.dan wad [[%0 0] dom]])
-    ::
-    ++  bake
-      |=  dab/(map term (pair what foot))
-      ^-  *
-      ?:  ?=(~ dab)
-        ~
-      =+  ^=  dov
-          ?-  -.q.q.n.dab
-            $ash  ^$(gol %noun, gen p.q.q.n.dab)
-            $elm  ~
-          ==
-      ?-  dab
-        {* ~ ~}  dov
-        {* ~ *}   [dov $(dab r.dab)]
-        {* * ~}   [dov $(dab l.dab)]
-        {* * *}    [dov $(dab l.dab) $(dab r.dab)]
-      ==
-    ::
-    ++  balk
-      |=  dom/(map @ tomb)
-      ^-  *
-      ?:  ?=(~ dom)
-        ~
-      =+  dov=(bake q.q.n.dom)
-      ?-    dom
-        {* ~ ~}   dov
-        {* ~ *}    [dov $(dom r.dom)]
-        {* * ~}    [dov $(dom l.dom)]
-        {* * *}     [dov $(dom l.dom) $(dom r.dom)]
-      ==
     --
   ++  meet  |=(ref/type &((nest | ref) (nest(sut ref) | sut)))
   ::                                                    ::
