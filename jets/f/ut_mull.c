@@ -9,17 +9,6 @@
   _mull_in(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
 
   static u3_noun
-  _mull_core(u3_noun pac,
-             u3_noun con)
-  {
-    if ( (c3__void == pac) ) {
-      return c3__void;
-    } else {
-      return u3nt(c3__core, pac, con);
-    }
-  }
-
-  static u3_noun
   _mull_bean()
   {
     return u3kf_fork(u3nt(u3nq(c3__atom, 'f', u3_nul, 0),
@@ -59,6 +48,8 @@
   _mull_mile(u3_noun van,
              u3_noun sut,
              u3_noun dox,
+             u3_noun mel,
+             u3_noun wad,
              u3_noun dom)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
@@ -67,8 +58,12 @@
     return u3n_kick_on(u3i_molt(gat, 
                                 u3x_sam_2,
                                 u3k(dox),
-                                u3x_sam_3,
-                                u3k(dom), 
+                                u3x_sam_6,
+                                u3k(mel), 
+                                u3x_sam_14,
+                                u3k(wad),
+                                u3x_sam_15,
+                                u3k(dom),
                                 0));
   }
 
@@ -114,22 +109,12 @@
     u3_noun dan = _mull_in(van, sut, c3__noun, dox, ruf);
     u3_noun p_dan = u3h(dan);
     u3_noun q_dan = u3t(dan);
-    u3_noun buk   = _mull_mile(van, p_dan, q_dan, dom);
-    u3_noun p_ret = _mull_core(u3k(p_dan),
-                               u3nq(u3k(mel),
-                                    u3k(p_dan),
-                                    u3k(wan),
-                                    u3nc(u3nc(u3_nul, u3_nul),
-                                         u3k(dom))));
-    u3_noun q_ret = _mull_core(u3k(q_dan),
-                               u3nq(u3k(mel),
-                                    u3k(q_dan),
-                                    u3k(wan),
-                                    u3nc(u3nc(u3_nul, u3_nul),
-                                         u3k(dom))));
-    u3_noun ret = u3nc(_mull_nice(van, gol, p_ret), q_ret);
+    u3_noun yaz   = _mull_mile(van, p_dan, q_dan, mel, wan, dom);
+    u3_noun p_yaz = u3h(yaz);
+    u3_noun q_yaz = u3t(yaz);
+    u3_noun ret = u3nc(_mull_nice(van, gol, u3k(p_yaz)), u3k(q_yaz));
 
-    u3z(buk);
+    u3z(yaz);
     u3z(dan);
 
     return ret;

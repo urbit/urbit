@@ -32,26 +32,21 @@
   static u3_noun
   _mint_mine(u3_noun van,
              u3_noun sut,
+             u3_noun mel,
+             u3_noun wad,
              u3_noun dom)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_hook(von, "mine");
 
     return u3n_kick_on(u3i_molt(gat, 
-                                u3x_sam, 
-                                u3k(dom), 
+                                u3x_sam_2,
+                                u3k(mel), 
+                                u3x_sam_6,
+                                u3k(wad),
+                                u3x_sam_7,
+                                u3k(dom),
                                 0));
-  }
-
-  static u3_noun
-  _mint_core(u3_noun pac,
-             u3_noun con)
-  {
-    if ( (c3__void == pac) ) {
-      return c3__void;
-    } else {
-      return u3nt(c3__core, pac, con);
-    }
   }
 
   static u3_noun
@@ -133,19 +128,11 @@
     u3_noun dan = _mint_in(van, sut, c3__noun, ruf);
     u3_noun p_dan = u3h(dan);
     u3_noun q_dan = u3t(dan);
-    u3_noun dez = _mint_mine(van, p_dan, dom);
-    u3_noun zod = u3nc(1, dez);
-    u3_noun cot = _mint_core(u3k(p_dan),
-                             u3nq(mel,
-                                  u3k(p_dan),
-                                  u3k(wan),
-                                  u3nc(u3k(dez),
-                                       u3k(dom))));
-    u3_noun ret = u3nc(_mint_nice(van, gol, cot),
-                       u3qf_cons(zod, q_dan));
+    u3_noun pul = _mint_mine(van, p_dan, mel, wan, dom);
+    u3_noun ret = u3nc(_mint_nice(van, gol, u3k(u3h(pul))),
+                       u3qf_cons(u3t(pul), q_dan));
 
-
-    u3z(zod);
+    u3z(pul);
     u3z(dan);
     return ret;
   }
