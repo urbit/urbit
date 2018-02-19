@@ -2672,11 +2672,10 @@
   |=  pax/path
   ^-  (quip move _+>)
   %-  pre-bake
-  :_  ~
   =+  qer=(path-to-query %circle pax)
   ?>  ?=($circle -.qer)
-  :+  %story  nom.qer
-  [%peer | src.bol qer]
+  ?.  (~(has by stories) nom.qer)  ~
+  [%story nom.qer %peer | src.bol qer]~
 ::
 ++  reap
   :>    subscription n/ack
