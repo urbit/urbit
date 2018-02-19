@@ -30,6 +30,20 @@
   }
 
   static u3_noun
+  _mint_mine(u3_noun van,
+             u3_noun sut,
+             u3_noun dom)
+  {
+    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+    u3_noun gat = u3j_hook(von, "mine");
+
+    return u3n_kick_on(u3i_molt(gat, 
+                                u3x_sam, 
+                                u3k(dom), 
+                                0));
+  }
+
+  static u3_noun
   _mint_core(u3_noun pac,
              u3_noun con)
   {
@@ -108,119 +122,6 @@
   }
 
   static u3_noun
-  _mint_brew(u3_noun van,
-             u3_noun sut,
-             u3_noun tov,
-             u3_noun gen)
-  {
-    u3_noun von;
-
-    switch ( tov ) {
-      default: return u3m_bail(c3__fail);
-      case c3y:
-        von = u3k(van); break;
-      case c3n:
-        von = u3i_molt(u3k(van), u3qfu_van_vet, c3n, 0); break;
-    }
-    {
-      u3_noun mil = u3qfu_mint(von, sut, c3__noun, gen);
-      u3_noun fol = u3k(u3t(mil));
-
-      u3z(mil);
-      u3z(von);
-      return fol;
-    }
-  }
-
-  static u3_noun
-  _mint_harp(u3_noun van,
-             u3_noun sut,
-             u3_noun dab)
-  {
-    if ( (u3_nul == dab) ) {
-      return 0;
-    }
-    else {
-      u3_noun n_dab, l_dab, r_dab;
-
-      u3r_trel(dab, &n_dab, &l_dab, &r_dab);
-      if ( c3n == u3du(n_dab) ) {
-        return u3m_bail(c3__fail);
-      }
-      else {
-        u3_noun qqn_dab = u3t(u3t(n_dab));
-        u3_noun vad;
-
-        switch ( u3h(qqn_dab) ) {
-          default: return u3m_bail(c3__exit);
-          case c3__ash: {
-            vad = _mint_brew(van, sut, c3y, u3t(qqn_dab));
-            break;
-          }
-          case c3__elm: {
-            vad = _mint_brew(van, sut, c3n, u3t(qqn_dab));
-            break;
-          }
-        }
-
-        if ( (u3_nul == l_dab) && (u3_nul == r_dab) ) {
-          return vad;
-        }
-        else if ( (u3_nul == l_dab) ) {
-          return u3nc(vad, _mint_harp(van, sut, r_dab));
-        }
-        else if ( (u3_nul == r_dab) ) {
-          return u3nc(vad, _mint_harp(van, sut, l_dab));
-        }
-        else {
-          return u3nt(vad,
-                      _mint_harp(van, sut, l_dab),
-                      _mint_harp(van, sut, r_dab));
-        }
-      }
-    }
-  }
-
-  static u3_noun
-  _mint_hope(u3_noun van,
-             u3_noun sut,
-             u3_noun dom)
-  {
-    if ( (u3_nul == dom) ) {
-      return 0;
-    }
-    else {
-      u3_noun n_dom, l_dom, r_dom;
-
-      u3r_trel(dom, &n_dom, &l_dom, &r_dom);
-      if ( c3n == u3du(n_dom) ) {
-        return u3m_bail(c3__fail);
-      }
-      else {
-        u3_noun qqn_dom = u3t(u3t(n_dom));
-        u3_noun dov;
-
-        dov = _mint_harp(van, sut, qqn_dom);
-
-        if ( (u3_nul == l_dom) && (u3_nul == r_dom) ) {
-          return dov;
-        }
-        else if ( (u3_nul == l_dom) ) {
-          return u3nc(dov, _mint_hope(van, sut, r_dom));
-        }
-        else if ( (u3_nul == r_dom) ) {
-          return u3nc(dov, _mint_hope(van, sut, l_dom));
-        }
-        else {
-          return u3nt(dov,
-                      _mint_hope(van, sut, l_dom),
-                      _mint_hope(van, sut, r_dom));
-        }
-      }
-    }
-  }
-
-  static u3_noun
   _mint_grow(u3_noun van,
              u3_noun sut,
              u3_noun gol,
@@ -232,13 +133,7 @@
     u3_noun dan = _mint_in(van, sut, c3__noun, ruf);
     u3_noun p_dan = u3h(dan);
     u3_noun q_dan = u3t(dan);
-    u3_noun toc = _mint_core(u3k(p_dan),
-                             u3nq(c3__gold,
-                                  u3k(p_dan),
-                                  u3k(wan),
-                                  u3nc(u3_nul,
-                                       u3k(dom))));
-    u3_noun dez = _mint_hope(van, toc, dom);
+    u3_noun dez = _mint_mine(van, p_dan, dom);
     u3_noun zod = u3nc(1, dez);
     u3_noun cot = _mint_core(u3k(p_dan),
                              u3nq(mel,
@@ -249,10 +144,9 @@
     u3_noun ret = u3nc(_mint_nice(van, gol, cot),
                        u3qf_cons(zod, q_dan));
 
-    u3z(zod);
-    u3z(toc);
-    u3z(dan);
 
+    u3z(zod);
+    u3z(dan);
     return ret;
   }
 

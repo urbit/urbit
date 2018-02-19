@@ -56,6 +56,23 @@
   }
 
   static u3_noun
+  _mull_mile(u3_noun van,
+             u3_noun sut,
+             u3_noun dox,
+             u3_noun dom)
+  {
+    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+    u3_noun gat = u3j_hook(von, "mile");
+
+    return u3n_kick_on(u3i_molt(gat, 
+                                u3x_sam_2,
+                                u3k(dox),
+                                u3x_sam_3,
+                                u3k(dom), 
+                                0));
+  }
+
+  static u3_noun
   _mull_doke(u3_noun van,
              u3_noun sut,
              u3_noun gen)
@@ -84,88 +101,6 @@
     else return typ;
   }
 
-  static void
-  _mull_bake(u3_noun van,
-             u3_noun sut,
-             u3_noun dox,
-             u3_noun dab)
-  {
-    if ( u3_nul != dab ) {
-      u3_noun n_dab, l_dab, r_dab;
-
-      u3r_trel(dab, &n_dab, &l_dab, &r_dab);
-      if ( c3n == u3du(n_dab) ) {
-        u3m_bail(c3__fail);
-      }
-      else {
-        u3_noun qqn_dab = u3t(u3t(n_dab));
-        u3_noun vad;
-
-        switch ( u3h(qqn_dab) ) {
-          default: u3m_bail(c3__exit);
-          case c3__ash: {
-            vad = _mull_in(van, sut, c3__noun, dox, u3t(qqn_dab));
-            break;
-          }
-          case c3__elm: {
-            vad = u3_nul;
-            break;
-          }
-        }
-        u3z(vad);
-
-        if ( (u3_nul == l_dab) && (u3_nul == r_dab) ) {
-          return;
-        }
-        else if ( (u3_nul == l_dab) ) {
-          _mull_bake(van, sut, dox, r_dab);
-        }
-        else if ( (u3_nul == r_dab) ) {
-          _mull_bake(van, sut, dox, l_dab);
-        }
-        else {
-          _mull_bake(van, sut, dox, l_dab);
-          _mull_bake(van, sut, dox, r_dab);
-        }
-      }
-    }
-  }
-
-  static void
-  _mull_balk(u3_noun van,
-             u3_noun sut,
-             u3_noun dox,
-             u3_noun dom)
-  {
-    if ( u3_nul != dom ) {
-      u3_noun n_dom, l_dom, r_dom;
-
-      u3r_trel(dom, &n_dom, &l_dom, &r_dom);
-      if ( c3n == u3du(n_dom) ) {
-        u3m_bail(c3__fail);
-      }
-      else {
-        u3_noun qqn_dom = u3t(u3t(n_dom));
-
-        _mull_bake(van, sut, dox, qqn_dom);
-
-        if ( (u3_nul == l_dom) && (u3_nul == r_dom) ) {
-          return;
-        }
-        else if ( (u3_nul == l_dom) ) {
-          _mull_balk(van, sut, dox, r_dom);
-        }
-        else if ( (u3_nul == r_dom) ) {
-          _mull_balk(van, sut, dox, l_dom);
-        }
-        else {
-          _mull_balk(van, sut, dox, l_dom);
-          _mull_balk(van, sut, dox, r_dom);
-        }
-      }
-    }
-  }
-
   static u3_noun
   _mull_grow(u3_noun van,
              u3_noun sut,
@@ -179,16 +114,7 @@
     u3_noun dan = _mull_in(van, sut, c3__noun, dox, ruf);
     u3_noun p_dan = u3h(dan);
     u3_noun q_dan = u3t(dan);
-    u3_noun p_toc = _mull_core(u3k(p_dan),
-                               u3nq(c3__gold,
-                                    u3k(p_dan),
-                                    u3k(wan),
-                                    u3nc(u3_nul, u3k(dom))));
-    u3_noun q_toc = _mull_core(u3k(q_dan),
-                               u3nq(c3__gold,
-                                    u3k(q_dan),
-                                    u3k(wan),
-                                    u3nc(u3_nul, u3k(dom))));
+    u3_noun buk   = _mull_mile(van, p_dan, q_dan, dom);
     u3_noun p_ret = _mull_core(u3k(p_dan),
                                u3nq(u3k(mel),
                                     u3k(p_dan),
@@ -203,10 +129,7 @@
                                          u3k(dom))));
     u3_noun ret = u3nc(_mull_nice(van, gol, p_ret), q_ret);
 
-    _mull_balk(van, p_toc, q_toc, dom);
-
-    u3z(q_toc);
-    u3z(p_toc);
+    u3z(buk);
     u3z(dan);
 
     return ret;
