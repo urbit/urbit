@@ -911,7 +911,8 @@
         $bear     (so-bear bur.rum)
         $peer     (so-delta-our rum)
         $gram     (so-open src nev.rum)
-        $remove   (so-delta-our %config src %remove ~)
+        $remove   ::TODO  should also remove from {remotes}?
+                  (so-delta-our %config src %remove ~)
       ::
           $new
         ?:  =(src so-cir)
@@ -2336,6 +2337,7 @@
     ?+  -.det  %hasnot
       $gram     %grams
       $new      %config-l
+      $remove   %config-l
       $config   ?:  =(cir.det [our.bol nom])
                 %config-l  %config-r
       $status   ?:  =(cir.det [our.bol nom])
@@ -2428,10 +2430,15 @@
     ?.  =(nom.qer nom.det)                            ~
     ?.  %-  circle-feel-story
         [wer.qer wat.qer nom.det det.det]             ~
-    =/  sor  (~(got by stories) nom.qer)
-    ?.  =<  in  %.  ran.qer
-        ~(so-in-range so:ta nom.qer ~ sor)            ~
-    ?.  ?=(?($gram $new $config $status) -.det.det)   ~
+    ?.  ?|  ?=($remove -.det.det)
+          ::
+            =<  in  %.  ran.qer
+            =+  soy=(~(got by stories) nom.qer)
+            ~(so-in-range so:ta nom.qer ~ soy)
+        ==
+      ~
+    =+  out=?($gram $new $config $status $remove)
+    ?.  ?=(out -.det.det)   ~
     :+  ~  %circle
     ?+  det.det  det.det
         {$gram *}
