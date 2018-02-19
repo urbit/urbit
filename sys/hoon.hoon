@@ -9069,17 +9069,22 @@
   ++  mile
     ::  mull all chapters and feet in a core
     ::
-    |=  [dox=type dom=(map @ tomb)]
-    =.  sut  (core sut %gold sut *chap ~ dom)
-    =.  dox  (core dox %gold dox *chap ~ dom)
-    (balk dox dom)
+    |=  [dox=type mel=vair wad=chap dom=(map @ tomb)]
+    ^-  (pair type type)
+    =+  %+  balk(sut (core sut %gold sut *chap ~ dom))
+          (core dox %gold dox *chap ~ dom)
+        dom
+    :-  (core sut mel sut wad [%0 0] dom)
+    (core dox mel dox wad [%0 0] dom)
   ::
   ++  mine
     ::  mint all chapters and feet in a core
     ::
-    ~/  %mine
-    ~+
-    |=  dom/(map @ tomb)
+    |=  [mel/vair wad/chap dom/(map @ tomb)]
+    ^-  (pair type nock)
+    =-  :_  [%1 dez]
+        (core sut mel sut wad dez dom)
+    ^=  dez
     =.  sut  (core sut %gold sut *chap ~ dom)
     |-  ^-  ?(~ ^)
     ?:  ?=(~ dom)
@@ -9260,9 +9265,8 @@
       |=  {mel/vair ruf/hoon wad/chap dom/(map @ tomb)}
       ^-  {p/type q/nock}
       =+  dan=^$(gen ruf, gol %noun)
-      =+  dez=(mine(sut p.dan) dom)
-      :-  (nice (core p.dan mel p.dan wad [dez dom]))
-      (cons [%1 dez] q.dan)
+      =+  pul=(mine mel wad dom)
+      [(nice p.pul) (cons q.pul q.dan)]
     --
   ::
   ++  moot
@@ -9424,9 +9428,8 @@
       ~_  leaf+"mull-grow"
       ^-  {p/type q/type}
       =+  dan=^$(gen ruf, gol %noun)
-      =+  (mile(sut p.dan) q.dan dom)
-      :-  (nice (core p.dan mel p.dan wad [[%0 0] dom]))
-      (core q.dan [mel q.dan wad [[%0 0] dom]])
+      =+  yaz=(mile(sut p.dan) q.dan mel wad dom)
+      [(nice p.yaz) q.yaz]
     --
   ++  meet  |=(ref/type &((nest | ref) (nest(sut ref) | sut)))
   ::                                                    ::
