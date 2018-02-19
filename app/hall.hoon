@@ -110,13 +110,6 @@
       $%  {$repeat cir/circle ses/(list serial)}        :<  messaging wire
           {$circle nom/name src/source}                 :<  subscription wire
       ==                                                ::
-    ::
-    ++  old-state
-      (cork state |=(a/state a(stories (~(run by stories.a) old-story))))
-    ++  old-story
-      (cork story |=(a/story a(shape *old-config, mirrors (~(run by mirrors.a) old-config))))
-    ++  old-config
-      {src/(set source) cap/cord fit/filter con/control}
     --
 ::
 :>  #
@@ -124,7 +117,7 @@
 :>  #
 :>    functional cores and arms.
 ::
-|_  {bol/bowl:gall state}
+|_  {bol/bowl:gall $1 state}
 ::
 :>  #  %transition
 :>    prep transition
@@ -132,15 +125,35 @@
 ++  prep
   :>  adapts state.
   ::
-  |=  old/(unit old-state)
+  =>  |%
+      ++  states
+        ?(state-0 $%({$1 s/state}))
+      ::
+      ++  state-0
+        (cork state |=(a/state a(stories (~(run by stories.a) story-0))))
+      ++  story-0
+        %+  cork  story
+        |=(a/story a(shape *config-0, mirrors (~(run by mirrors.a) config-0)))
+      ++  config-0
+        {src/(set source) cap/cord fit/filter con/control}
+      --
+  =|  mos/(list move)
+  |=  old/(unit states)
   ^-  (quip move _..prep)
   ?~  old
     %-  pre-bake
     ta-done:ta-init:ta
-  =-  [~ ..prep(+<+ `state`u.old(stories -))]
-  %-  ~(run by stories.u.old)
-  |=  soy/old-story
-  (story soy(shape [src cap ~ fit con]:shape.soy))
+  ?-  -.u.old
+      $1
+    [mos ..prep(+<+ u.old)]
+  ::
+      ?($~ ^)  ::  $0
+    =-  $(old `[%1 u.old(stories -)])
+    %-  ~(run by stories.u.old)
+    |=  soy/story-0
+    ^-  story
+    (story soy(shape [src cap ~ fit con]:shape.soy))
+  ==
 ::
 :>  #  %engines
 :>    main cores.
