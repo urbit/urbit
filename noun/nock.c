@@ -1237,13 +1237,16 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
   empty = u3R->cap_p;
   _n_push(mov, off, bus);
 
+#ifdef U3_CPU_DEBUG
+  u3R->pro.nox_d += 1;
+#endif
 #ifdef VERBYC
   #define BURN() fprintf(stderr, "%s ", names[pog[ip_s]]); goto *lab[pog[ip_s++]]
 #else
   #define BURN() goto *lab[pog[ip_s++]]
 #endif
   BURN();
-  while ( 1 ) {
+  {
     do_halt: // [product ...burnframes...]
       x = _n_pep(mov, off);
 #ifdef VERBYC
@@ -1418,6 +1421,9 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
     nock_out:
       pog  = _n_find(o);             
       ip_s = 0;
+#ifdef U3_CPU_DEBUG
+    u3R->pro.nox_d += 1;
+#endif
 #ifdef VERBYC
       fprintf(stderr, "\r\nnock jump: %u\r\n", o);
       _n_print_byc(pog, ip_s);
@@ -1554,6 +1560,9 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 
         pog  = _n_find(fol);
         ip_s = 0;
+#ifdef U3_CPU_DEBUG
+    u3R->pro.nox_d += 1;
+#endif
 #ifdef VERBYC
         fprintf(stderr, "\r\nhead kick jump: %u, sp: %p\r\n", fol, top);
         _n_print_byc(pog, ip_s);
@@ -1592,6 +1601,9 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
         *top = o;
         pog  = _n_find(fol);
         ip_s = 0;
+#ifdef U3_CPU_DEBUG
+    u3R->pro.nox_d += 1;
+#endif
 #ifdef VERBYC
         fprintf(stderr, "\r\ntail kick jump: %u, sp: %p\r\n", fol, top);
         _n_print_byc(pog, ip_s);
