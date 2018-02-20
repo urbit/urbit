@@ -1926,9 +1926,7 @@ _n_take_byc(c3_y* pog)
         break;
     }
     if ( u3_none != x ) {
-      if ( c3y == u3a_is_junior(u3R, x) ) {
-        x = u3a_take(x);
-      }
+      x = u3a_take(x);
       gop[ip_s++] = cod_y;
       gop[ip_s++] = (c3_y) x;
       gop[ip_s++] = (c3_y) (x >> 8);
@@ -1955,15 +1953,9 @@ _n_reap(u3_noun kev)
   c3_y*   pog = u3a_into(got);
   c3_y*   gop = _n_take_byc(pog);
   u3_noun tog = u3a_outa(gop);
-
-  if ( c3y == u3a_is_junior(u3R, fol) ) {
-    u3_noun lof = u3a_take(fol);
-    u3h_put(u3R->byc.har_p, lof, tog);
-    u3z(lof);
-  }
-  else {
-    u3h_put(u3R->byc.har_p, fol, tog);
-  }
+  u3_noun lof = u3a_take(fol);
+  u3h_put(u3R->byc.har_p, lof, tog);
+  u3z(lof);
 }
 
 /* u3n_beep(): promote bytecode state.
