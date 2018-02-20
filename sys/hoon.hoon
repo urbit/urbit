@@ -5583,7 +5583,7 @@
 ++  coil  $:  p/?($gold $iron $lead $zinc)              ::  core type
               q/type                                    ::  built with
               r/chap                                    ::  docs
-              s/{p/?(~ ^) q/(map @ tomb)}               ::  arms
+              s/{p/seminoun q/(map @ tomb)}               ::  arms
           ==                                            ::
 ++  foot  $%  {$ash p/hoon}                             ::  dry arm, geometric
               {$elm p/hoon}                             ::  wet arm, generic
@@ -5874,6 +5874,54 @@
           ::  $json                                     ::  json schema?
           ::  
           ==
+::  partial execution
+::
+++  block  
+  ::  abstract identity of resource awaited
+  ::
+  path
+::
+++  result  
+  ::  internal interpreter result
+  ::
+  $@(~ seminoun)
+::
+++  thunk
+  ::  typeless trap, |.(*)
+  ::
+  *
+::
+++  seminoun  
+  ::  partial noun; blocked subtrees are ~ 
+  ::
+  $~  [[%full ~] ~]
+  {mask/stencil data/noun}
+::
+++  stencil  
+  ::  noun knowledge map
+  ::
+  $%  ::  noun has partial block substructure
+      ::
+      {$half left/stencil rite/stencil}
+      ::  noun is either fully complete, or fully blocked
+      ::
+      {$full blocks/(set block)}
+      ::  noun can be built from a trap
+      ::  
+      {$lazy trap/thunk}
+  == 
+::
+++  output
+  ::  null; interpreter stopped
+  ::
+  %-  unit
+  $%  ::  output is complete
+      ::
+      {$done p/noun}
+      ::  output is waiting for resources
+      ::
+      {$wait p/(list block)}
+  ==
 :: profiling
 ++  doss
   $:  mon/moan                                          ::  sample count
@@ -5918,56 +5966,6 @@
 ::::  5aa: new partial nock interpreter
   ::
 ++  musk  !.                                            ::  nock with block set
-  =>  ::  keep soft core out of models
-      +
-  =>  |%
-      ++  block  
-        ::  identity of resource awaited
-        ::  XX parameterize
-        noun
-      ::
-      ++  result  
-        ::  internal interpreter result
-        ::
-        $@(~ seminoun)
-      ::
-      ++  thunk
-        ::  typeless trap, |.(*)
-        ::
-        *
-      ::
-      ++  seminoun  
-        ::  partial noun; blocked subtrees are ~ 
-        ::
-        $~  [[%full ~] ~]
-        {mask/stencil data/noun}
-      ::
-      ++  stencil  
-        ::  noun knowledge map
-        ::
-        $%  ::  noun has partial block substructure
-            ::
-            {$half left/stencil rite/stencil}
-            ::  noun is either fully complete, or fully blocked
-            ::
-            {$full blocks/(set block)}
-            ::  noun can be built from a trap
-            ::  
-            {$lazy trap/thunk}
-        == 
-      ::
-      ++  output
-        ::  null; interpreter stopped
-        ::
-        %-  unit
-        $%  ::  output is complete
-            ::
-            {$done p/noun}
-            ::  output is waiting for resources
-            ::
-            {$wait p/(list block)}
-        ==
-      -- 
   |%  
   ++  abet
     ::  simplify raw result
@@ -8294,9 +8292,7 @@
       {$atom *}  ?~(q.sut [full/[~ ~ ~] ~] [full/~ u.q.sut])
       {$cell *}  (combine:musk $(sut p.sut) $(sut q.sut))
       {$core *}  %+  combine:musk 
-                   ?~  p.s.q.sut  
-                     [full/[~ ~ ~] ~]
-                   [full/~ p.s.q.sut]
+                   p.s.q.sut
                  $(sut p.sut) 
       {$face *}  $(sut repo)
       {$fork *}  [full/[~ ~ ~] ~]
@@ -9071,11 +9067,11 @@
     ::
     |=  [dox=type mel=vair wad=chap dom=(map @ tomb)]
     ^-  (pair type type)
-    =+  %+  balk(sut (core sut %gold sut *chap ~ dom))
-          (core dox %gold dox *chap ~ dom)
+    =+  %+  balk(sut (core sut %gold sut wad *seminoun dom))
+          (core dox %gold dox wad *seminoun dom)
         dom
-    :-  (core sut mel sut wad [%0 0] dom)
-    (core dox mel dox wad [%0 0] dom)
+    :-  (core sut mel sut wad *seminoun dom)
+    (core dox mel dox wad *seminoun dom)
   ::
   ++  mine
     ::  mint all chapters and feet in a core
@@ -9083,9 +9079,9 @@
     |=  [mel/vair wad/chap dom/(map @ tomb)]
     ^-  (pair type nock)
     =-  :_  [%1 dez]
-        (core sut mel sut wad dez dom)
+        (core sut mel sut wad [[%full ~] dez] dom)
     ^=  dez
-    =.  sut  (core sut %gold sut *chap ~ dom)
+    =.  sut  (core sut %gold sut *chap *seminoun dom)
     |-  ^-  ?(~ ^)
     ?:  ?=(~ dom)
       ~
@@ -9642,7 +9638,7 @@
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
       {$ktcn *}  $(fab |, gen p.gen)
-      {$brcn *}  (core sut %gold sut p.gen [[%0 0] q.gen])
+      {$brcn *}  (core sut %gold sut p.gen *seminoun q.gen)
       {$cnts *}  ~(play et p.gen q.gen)
       {$dtkt *}  $(gen [%bunt p.gen])
       {$dtls *}  [%atom %$ ~]
