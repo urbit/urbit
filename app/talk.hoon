@@ -105,11 +105,6 @@
           {$help $~}                                    :<  print usage info
       ==                                                ::
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   :<  circle char pool '
-    ::
-    ++  old-state
-      (cork state |=(a/state a(mirrors (~(run by mirrors.a) old-config))))
-    ++  old-config
-      {src/(set source) cap/cord fit/filter con/control}
     --
 ::
 :>  #
@@ -117,7 +112,7 @@
 :>  #
 :>    functional cores and arms.
 ::
-|_  {bol/bowl:gall state}
+|_  {bol/bowl:gall $1 state}
 ::
 :>  #  %transition
 :>    prep transition
@@ -126,14 +121,31 @@
 ++  prep
   :>  adapts state
   ::
-  |=  old/(unit old-state)
+  =>  |%
+      ++  states
+        ?(state-0 $%({$1 s/state}))
+      ::
+      ++  state-0
+        (cork state |=(a/state a(mirrors (~(run by mirrors.a) config-0))))
+      ++  config-0
+        {src/(set source) cap/cord fit/filter con/control}
+      --
+  =|  mos/(list move)
+  |=  old/(unit states)
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  =-  [~ ..prep(+<+ `state`u.old(mirrors -))]
-  %-  ~(run by mirrors.u.old)
-  |=  old-config
-  [src cap ~ fit con]
+  ?+  -.u.old
+      ::  $0
+    =+  ole=(state-0 u.old)
+    =-  $(old `[%1 ole(mirrors -)])
+    %-  ~(run by mirrors.ole)
+    |=  config-0
+    [src cap ~ fit con]
+  ::
+      $1
+    [mos ..prep(+<+ [%1 (state +.u.old)])]
+  ==
 ::
 :>  #
 :>  #  %utility

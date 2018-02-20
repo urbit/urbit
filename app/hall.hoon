@@ -110,13 +110,6 @@
       $%  {$repeat cir/circle ses/(list serial)}        :<  messaging wire
           {$circle nom/name src/source}                 :<  subscription wire
       ==                                                ::
-    ::
-    ++  old-state
-      (cork state |=(a/state a(stories (~(run by stories.a) old-story))))
-    ++  old-story
-      (cork story |=(a/story a(shape *old-config, mirrors (~(run by mirrors.a) old-config))))
-    ++  old-config
-      {src/(set source) cap/cord fit/filter con/control}
     --
 ::
 :>  #
@@ -124,7 +117,7 @@
 :>  #
 :>    functional cores and arms.
 ::
-|_  {bol/bowl:gall state}
+|_  {bol/bowl:gall $1 state}
 ::
 :>  #  %transition
 :>    prep transition
@@ -132,15 +125,35 @@
 ++  prep
   :>  adapts state.
   ::
-  |=  old/(unit old-state)
+  =>  |%
+      ++  states
+        ?(state-0 $%({$1 s/state}))
+      ::
+      ++  state-0
+        (cork state |=(a/state a(stories (~(run by stories.a) story-0))))
+      ++  story-0
+        %+  cork  story
+        |=(a/story a(shape *config-0, mirrors (~(run by mirrors.a) config-0)))
+      ++  config-0
+        {src/(set source) cap/cord fit/filter con/control}
+      --
+  =|  mos/(list move)
+  |=  old/(unit states)
   ^-  (quip move _..prep)
   ?~  old
     %-  pre-bake
     ta-done:ta-init:ta
-  =-  [~ ..prep(+<+ `state`u.old(stories -))]
-  %-  ~(run by stories.u.old)
-  |=  soy/old-story
-  (story soy(shape [src cap ~ fit con]:shape.soy))
+  ?-  -.u.old
+      $1
+    [mos ..prep(+<+ u.old)]
+  ::
+      ?($~ ^)  ::  $0
+    =-  $(old `[%1 u.old(stories -)])
+    %-  ~(run by stories.u.old)
+    |=  soy/story-0
+    ^-  story
+    (story soy(shape [src cap ~ fit con]:shape.soy))
+  ==
 ::
 :>  #  %engines
 :>    main cores.
@@ -898,7 +911,8 @@
         $bear     (so-bear bur.rum)
         $peer     (so-delta-our rum)
         $gram     (so-open src nev.rum)
-        $remove   (so-delta-our %config src %remove ~)
+        $remove   ::TODO  should also remove from {remotes}?
+                  (so-delta-our %config src %remove ~)
       ::
           $new
         ?:  =(src so-cir)
@@ -2323,6 +2337,7 @@
     ?+  -.det  %hasnot
       $gram     %grams
       $new      %config-l
+      $remove   %config-l
       $config   ?:  =(cir.det [our.bol nom])
                 %config-l  %config-r
       $status   ?:  =(cir.det [our.bol nom])
@@ -2415,10 +2430,15 @@
     ?.  =(nom.qer nom.det)                            ~
     ?.  %-  circle-feel-story
         [wer.qer wat.qer nom.det det.det]             ~
-    =/  sor  (~(got by stories) nom.qer)
-    ?.  =<  in  %.  ran.qer
-        ~(so-in-range so:ta nom.qer ~ sor)            ~
-    ?.  ?=(?($gram $new $config $status) -.det.det)   ~
+    ?.  ?|  ?=($remove -.det.det)
+          ::
+            =<  in  %.  ran.qer
+            =+  soy=(~(got by stories) nom.qer)
+            ~(so-in-range so:ta nom.qer ~ soy)
+        ==
+      ~
+    =+  out=?($gram $new $config $status $remove)
+    ?.  ?=(out -.det.det)   ~
     :+  ~  %circle
     ?+  det.det  det.det
         {$gram *}
@@ -2672,11 +2692,10 @@
   |=  pax/path
   ^-  (quip move _+>)
   %-  pre-bake
-  :_  ~
   =+  qer=(path-to-query %circle pax)
   ?>  ?=($circle -.qer)
-  :+  %story  nom.qer
-  [%peer | src.bol qer]
+  ?.  (~(has by stories) nom.qer)  ~
+  [%story nom.qer %peer | src.bol qer]~
 ::
 ++  reap
   :>    subscription n/ack
