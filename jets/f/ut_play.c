@@ -177,7 +177,7 @@
                       u3nq(u3k(mel),
                            u3k(dan),
                            u3k(wan),
-                           u3nc(u3nc(u3_nul, u3_nul),
+                           u3nc(u3nc(u3nc(c3__full, u3_nul), u3_nul),
                                 u3k(dom))));
   }
 
