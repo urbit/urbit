@@ -3,9 +3,8 @@
 */
 #include "all.h"
 
-//#define VERBYC
-
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
+static u3_noun _n_burn_on(u3_noun bus, u3_noun fol);
 
       /* u3_term_io_hija(): hijack console for cooked print.
       */
@@ -434,16 +433,14 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 u3_noun
 u3n_nock_on(u3_noun bus, u3_noun fol)
 {
-  /*
   u3_noun pro;
 
   u3t_on(noc_o);
-  pro = _n_nock_on(bus, fol);
+  //pro = _n_nock_on(bus, fol);
+  pro = _n_burn_on(bus, fol);
   u3t_off(noc_o);
 
   return pro;
-  */
-  return u3n_burn_on(bus, fol);
 }
 
 /* u3n_kick_on(): fire `gat` without changing the sample.
@@ -570,6 +567,7 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 #define SLIM 65
 #define SAVE 66
 
+#ifdef VERBYC
 // match to OPCODE TABLE
 static char* names[] = {
   "halt", "bail",
@@ -601,6 +599,7 @@ static char* names[] = {
   "slib", "slim",
   "save"
 };
+#endif
 
 /* _n_apen(): emit the instructions contained in src to dst
  */
@@ -942,8 +941,9 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
   return tot_s;
 }
 
+#ifdef VERBYC
 static void _n_print_byc(c3_y* pog, c3_s her_s);
-
+#endif
 
 /* _n_asm(): assemble an accumulated list of instructions (i.e. from _n_comp)
  */
@@ -963,28 +963,16 @@ _n_asm(u3_noun ops, c3_s len_s)
     else {
       u3_noun cod = u3h(op);
       switch ( cod ) {
-        case FRAB:
-        case FLAB:
-        case LILB:
-        case LITB:
-        case SAMB:
-        case SBIP:
-        case SBIN:
-        case KICB:
-        case TICB:
+        case FRAB: case FLAB: case LILB: case LITB:
+        case SAMB: case SBIP: case SBIN:
+        case KICB: case TICB:
           buf_y[i_s--] = (c3_y) u3t(op);
           buf_y[i_s]   = (c3_y) cod;
           break;
 
-        case FRAS:
-        case FLAS:
-        case LILS:
-        case LITS:
-        case SAMS:
-        case SKIP:
-        case SKIN:
-        case KICS:
-        case TICS: {
+        case FRAS: case FLAS: case LILS: case LITS:
+        case SAMS: case SKIP: case SKIN:
+        case KICS: case TICS: {
           c3_s off_s   = u3t(op);
           buf_y[i_s--] = (c3_y) (off_s >> 8);
           buf_y[i_s--] = (c3_y) off_s;
@@ -992,14 +980,9 @@ _n_asm(u3_noun ops, c3_s len_s)
           break;
         }
 
-        case CUSH:
-        case FRAG:
-        case FLAG:
-        case LILN:
-        case LITN:
-        case SAMN:
-        case TICK:
-        case KICK: {
+        case CUSH: case FRAG: case FLAG:
+        case LILN: case LITN:
+        case SAMN: case TICK: case KICK: {
           c3_w non_w   = u3k(u3t(op));
           buf_y[i_s--] = (c3_y) (non_w >> 24);
           buf_y[i_s--] = (c3_y) (non_w >> 16);
@@ -1009,8 +992,7 @@ _n_asm(u3_noun ops, c3_s len_s)
           break;
         }
 
-        case SKIB:
-        case SLIB: {
+        case SKIB: case SLIB: {
           c3_w non_w   = u3k(u3t(u3t(op)));
           buf_y[i_s--] = (c3_y) (non_w >> 24);
           buf_y[i_s--] = (c3_y) (non_w >> 16);
@@ -1021,8 +1003,7 @@ _n_asm(u3_noun ops, c3_s len_s)
           break;
         }
 
-        case SKIM:
-        case SLIM: {
+        case SKIM: case SLIM: {
           c3_w non_w   = u3k(u3t(u3t(op)));
           c3_s sip_s   = u3h(u3t(op));
           buf_y[i_s--] = (c3_y) (non_w >> 24);
@@ -1042,6 +1023,8 @@ _n_asm(u3_noun ops, c3_s len_s)
     }
     ops = u3t(ops);
   }
+  // this will trigger if we ever have a nock formula that compiles to more
+  // than 2^16 opcodes. if needed, ip can be a c3_w.
   c3_assert(u3_nul == ops);
 
   u3z(top);
@@ -1141,9 +1124,6 @@ _n_bite(u3_noun fol)
   u3_noun bok = u3_nul;
   c3_s len_s  = _n_comp(&bok, fol, c3y, c3y);
   c3_y* buf_y = _n_asm(bok, len_s);
-  //u3m_p("fol", fol);
-  //_n_print_byc(buf_y);
-  //printf("%d bytes\n", len_s);
   return buf_y;
 }
 
@@ -1202,6 +1182,11 @@ typedef struct {
   c3_y* pog;
   c3_s  ip_s;
 } burnframe;
+
+/* defining this will cause the bytecode interpreter to print out every opcode
+ * as it executes, along with some other information. very spammy.
+ * #define VERBYC
+ */
 
 /* _n_burn(): pog: program
  *            bus: subject
@@ -1578,7 +1563,6 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 #ifdef VERBYC
       else {
         fprintf(stderr, "head jet\r\n");
-//        u3m_p("head jet", *top);
       }
 #endif
       BURN();
@@ -1616,7 +1600,6 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 #ifdef VERBYC
       else {
         fprintf(stderr, "tail jet\r\n");
-//        u3m_p("tail jet", *top);
       }
 #endif
       BURN();
@@ -1749,6 +1732,9 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
   }
 }
 
+#ifdef VERBYC
+/* _n_print_byc(): print bytecode. used for debugging.
+ */
 static void
 _n_print_byc(c3_y* pog, c3_s her_s)
 {
@@ -1830,29 +1816,7 @@ _n_print_byc(c3_y* pog, c3_s her_s)
   }
   fprintf(stderr, " halt}\r\n");
 }
-
-static void _n_print_stack(u3p(u3_noun) empty) {
-  c3_w cur_p = u3R->cap_p;
-  fprintf(stderr, "[");
-  int first = 1;
-  while ( cur_p != empty ) {
-    if ( first ) {
-      first = 0;
-    }
-    else {
-      fprintf(stderr, " ");
-    }
-    if ( c3y == u3a_is_north(u3R) ) {
-      fprintf(stderr, "%u", *(u3to(u3_noun, cur_p)));
-      cur_p++;
-    }
-    else {
-      fprintf(stderr, "%u", *(u3to(u3_noun, cur_p-1)));
-      cur_p--;
-    }
-  }
-  fprintf(stderr, "]\r\n");
-}
+#endif
 
 /* _n_burn_on(): produce .*(bus fol) with bytecode interpreter
  */
@@ -1875,6 +1839,10 @@ _n_burn_on(u3_noun bus, u3_noun fol)
   return pro;
 }
 
+#if 0
+/* u3n_burn_on(): useful for distinguishing the bytecode interpreter from the
+ *                tree-walking interpreter.
+ */
 u3_noun
 u3n_burn_on(u3_noun bus, u3_noun fol)
 {
@@ -1884,6 +1852,7 @@ u3n_burn_on(u3_noun bus, u3_noun fol)
   u3t_off(noc_o);
   return pro;
 }
+#endif
 
 /* _n_take_byc(): copy bytecode from a junior road
  */
@@ -1965,3 +1934,31 @@ u3n_beep(u3p(u3h_root) har_p)
 {
   u3h_walk(har_p, _n_reap);
 }
+
+#if 0
+/* _n_print_stack(): print out the cap stack up to a designated "empty"
+ *                   used only for debugging
+ */
+static void _n_print_stack(u3p(u3_noun) empty) {
+  c3_w cur_p = u3R->cap_p;
+  fprintf(stderr, "[");
+  int first = 1;
+  while ( cur_p != empty ) {
+    if ( first ) {
+      first = 0;
+    }
+    else {
+      fprintf(stderr, " ");
+    }
+    if ( c3y == u3a_is_north(u3R) ) {
+      fprintf(stderr, "%u", *(u3to(u3_noun, cur_p)));
+      cur_p++;
+    }
+    else {
+      fprintf(stderr, "%u", *(u3to(u3_noun, cur_p-1)));
+      cur_p--;
+    }
+  }
+  fprintf(stderr, "]\r\n");
+}
+#endif

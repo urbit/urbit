@@ -9,10 +9,12 @@
       u3_noun
       u3n_nock_on(u3_noun bus, u3_noun fol);
 
-    /* u3n_burn_on(): TEMPORARY: produce .*(bus fol) with bytecode interpreter.
+#if 0
+    /* u3n_burn_on(): produce .*(bus fol) with bytecode interpreter.
     */
       u3_noun
       u3n_burn_on(u3_noun bus, u3_noun fol);
+#endif
 
     /* u3n_slam_on(): produce (gat sam).
     */
