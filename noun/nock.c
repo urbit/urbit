@@ -3,7 +3,7 @@
 */
 #include "all.h"
 
-#define VERBYC
+//#define VERBYC
 
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 
@@ -570,12 +570,73 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 #define SLIM 65
 #define SAVE 66
 
+// match to OPCODE TABLE
+static char* names[] = {
+  "halt", "bail",
+  "copy", "swap", "toss",
+  "auto", "ault",
+  "head", "held",
+  "tail", "tall",
+  "fras", "frag", "frab",
+  "flas", "flag", "flab",
+  "lit0", "lit1",
+  "litb", "lits", "litn",
+  "lil0", "lil1",
+  "lilb", "lils", "liln",
+  "nolk", "noct", "nock",
+  "deep", "bump",
+  "sam0", "sam1",
+  "samb", "sams", "samn",
+  "same", "salm", "samc",
+  "skip", "sbip",
+  "skin", "sbin",
+  "snoc", "snol",
+  "slam", "kicb", "kics", "kick",
+  "slat", "ticb", "tics", "tick",
+  "wils", "wish",
+  "cush", "drop",
+  "heck", "slog",
+  "falt", "fast",
+  "skib", "skim",
+  "slib", "slim",
+  "save"
+};
+
 /* _n_apen(): emit the instructions contained in src to dst
  */
 static inline void
 _n_apen(u3_noun* dst, u3_noun src)
 {
   *dst = u3qb_weld(src, *dst);
+}
+
+/* _n_emit(): return the size (in bytes) of an opcode's argument
+ */
+static inline c3_y
+_n_arg(c3_y cod_y)
+{
+  switch ( cod_y ) {
+    case FRAB: case FLAB: case LILB: case LITB: case SAMB:
+    case SBIP: case SBIN: case KICB: case TICB:
+      return sizeof(c3_y);
+
+    case FRAS: case FLAS: case LILS: case LITS: case SAMS:
+    case SKIP: case SKIN: case KICS: case TICS:
+      return sizeof(c3_s);
+
+    case CUSH: case FRAG: case FLAG: case LILN: case LITN:
+    case SAMN: case TICK: case KICK:
+      return sizeof(u3_noun);
+
+    case SKIM: case SLIM:
+      return sizeof(c3_s) + sizeof(u3_noun);
+
+    case SKIB: case SLIB:
+      return sizeof(c3_y) + sizeof(u3_noun);
+
+    default:
+      return 0;
+  }
 }
 
 /* _n_emit(): emit a single instruction to ops, returning
@@ -586,53 +647,7 @@ static inline c3_y
 _n_emit(u3_noun *ops, u3_noun op)
 {
   *ops = u3nc(op, *ops);
-  if ( c3n == u3du(op) ) {
-    return sizeof(c3_y);
-  }
-  else switch ( u3h(op) ) {
-    case FRAB:
-    case FLAB:
-    case LILB:
-    case LITB:
-    case SAMB:
-    case SBIP:
-    case SBIN:
-    case KICB:
-    case TICB:
-      return sizeof(c3_y) + sizeof(c3_y);
-
-    case FRAS:
-    case FLAS:
-    case LILS:
-    case LITS:
-    case SAMS:
-    case SKIP:
-    case SKIN:
-    case KICS:
-    case TICS:
-      return sizeof(c3_y) + sizeof(c3_s);
-
-    case CUSH:
-    case FRAG:
-    case FLAG:
-    case LILN:
-    case LITN:
-    case SAMN:
-    case TICK:
-    case KICK:
-      return sizeof(c3_y) + sizeof(u3_noun);
-
-    case SKIM:
-    case SLIM:
-      return sizeof(c3_y) + sizeof(c3_s) + sizeof(u3_noun);
-
-    case SKIB:
-    case SLIB:
-      return sizeof(c3_y) + sizeof(c3_y) + sizeof(u3_noun);
-
-    default:
-      c3_assert(0);
-  }
+  return sizeof(c3_y) + (c3n == u3du(op) ? 0 : _n_arg(u3h(op)));
 }
 
 static c3_s _n_comp(u3_noun*, u3_noun, c3_o, c3_o);
@@ -929,37 +944,6 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
 
 static void _n_print_byc(c3_y* pog, c3_s her_s);
 
-// match to OPCODE TABLE
-static char* names[] = {
-  "halt", "bail",
-  "copy", "swap", "toss",
-  "auto", "ault",
-  "head", "held",
-  "tail", "tall",
-  "fras", "frag", "frab",
-  "flas", "flag", "flab",
-  "lit0", "lit1",
-  "litb", "lits", "litn",
-  "lil0", "lil1",
-  "lilb", "lils", "liln",
-  "nolk", "noct", "nock",
-  "deep", "bump",
-  "sam0", "sam1",
-  "samb", "sams", "samn",
-  "same", "salm", "samc",
-  "skip", "sbip",
-  "skin", "sbin",
-  "snoc", "snol",
-  "slam", "kicb", "kics", "kick",
-  "slat", "ticb", "tics", "tick",
-  "wils", "wish",
-  "cush", "drop",
-  "heck", "slog",
-  "falt", "fast",
-  "skib", "skim",
-  "slib", "slim",
-  "save"
-};
 
 /* _n_asm(): assemble an accumulated list of instructions (i.e. from _n_comp)
  */
@@ -1637,18 +1621,18 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 #endif
       BURN();
 
-    do_wils:                // [gof bus ref]
-      o = _n_pep(mov,off);  // [bus ref]
-      _n_toss(mov, off);    // [ref]
+    do_wils:                   // [gof bus ref]
+      o = _n_pep(mov,off);     // [bus ref]
+      _n_toss(mov, off);       // [ref]
       top = _n_peek(off);
       goto wish_in;
 
-    do_wish:                // [gof bus ref]
-      o = _n_pep(mov,off);  // [bus ref]
-      top = _n_swap(mov, off);    // [ref bus]
+    do_wish:                   // [gof bus ref]
+      o = _n_pep(mov,off);     // [bus ref]
+      top = _n_swap(mov, off); // [ref bus]
     wish_in:
       u3t_off(noc_o);
-      x   = u3m_soft_esc(u3k(o), *top);
+      x   = u3m_soft_esc(*top, u3k(o));
       u3t_on(noc_o);
 
       if ( c3n == u3du(x) ) {
@@ -1739,11 +1723,11 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       x = _n_pep(mov, off);
     skim_out:
       o = _n_rean(pog, &ip_s);
-      x = u3nc(u3k(o), x);
+      x = u3nc(x, u3k(o));
       o = u3z_find(144 + c3__nock, x);
       if ( u3_none == o ) {
         _n_push(mov, off, x);
-        _n_push(mov, off, u3k(u3t(x)));
+        _n_push(mov, off, u3k(u3h(x)));
       }
       else {
         ip_s += sip_s;
@@ -1887,7 +1871,8 @@ _n_burn_on(u3_noun bus, u3_noun fol)
     mov = 1;
     off = -1;
   }
-  return _n_burn(pog, bus, mov, off);
+  u3_noun pro = _n_burn(pog, bus, mov, off);
+  return pro;
 }
 
 u3_noun
@@ -1900,6 +1885,66 @@ u3n_burn_on(u3_noun bus, u3_noun fol)
   return pro;
 }
 
+/* _n_take_byc(): copy bytecode from a junior road
+ */
+static c3_y*
+_n_take_byc(c3_y* pog)
+{
+  u3_noun x;
+  c3_s sax_s, ip_s, len_s;
+  c3_y* gop, cod_y;
+
+  // measure
+  for ( ip_s = 0; (cod_y = pog[ip_s]) != HALT; ++ip_s ) {
+    ip_s += _n_arg(cod_y);
+  }
+  len_s = ip_s + 1;
+
+  gop = u3a_malloc(len_s);
+  for ( ip_s = 0; ip_s < len_s; ) {
+    cod_y = gop[ip_s] = pog[ip_s];
+    x     = u3_none;
+    sax_s = ip_s + 1;
+    switch ( cod_y ) {
+      default:
+        sax_s += _n_arg(cod_y);
+        break;
+
+      case CUSH: case FRAG: case FLAG: case LILN: case LITN:
+      case SAMN: case TICK: case KICK:
+        x = _n_rean(pog, &sax_s);
+        break;
+
+      case SKIB: case SLIB:
+        sax_s += sizeof(c3_y);
+        x = _n_rean(pog, &sax_s);
+        break;
+
+      case SKIM: case SLIM:
+        sax_s += sizeof(c3_s);
+        x = _n_rean(pog, &sax_s);
+        break;
+    }
+    if ( u3_none != x ) {
+      if ( c3y == u3a_is_junior(u3R, x) ) {
+        x = u3a_take(x);
+      }
+      gop[ip_s++] = cod_y;
+      gop[ip_s++] = (c3_y) x;
+      gop[ip_s++] = (c3_y) (x >> 8);
+      gop[ip_s++] = (c3_y) (x >> 16);
+      gop[ip_s++] = (c3_y) (x >> 24);
+    }
+    else {
+      while ( ip_s < sax_s ) {
+        gop[ip_s] = pog[ip_s];
+        ++ip_s;
+      }
+    }
+  }
+  return gop;
+}
+
 /* _n_reap(): reap key and value from byc table.
 */
 static void
@@ -1907,19 +1952,17 @@ _n_reap(u3_noun kev)
 {
   u3_noun fol = u3h(kev);
   u3_noun got = u3t(kev);
+  c3_y*   pog = u3a_into(got);
+  c3_y*   gop = _n_take_byc(pog);
+  u3_noun tog = u3a_outa(gop);
 
-  if ( _(u3a_left(fol)) ) {
-    if ( !_(u3a_is_junior(u3R, fol)) &&
-         (u3_none != u3h_git(u3R->byc.har_p, fol)) ) {
-      fprintf(stderr, "_n_reap: promote collision (fol %x)\r\n", u3r_mug(fol));
-      u3m_p("collision", fol);
-    }
-    else {
-      u3_noun lof = u3a_take(fol);
-      u3_noun tog = u3a_take(got);
-      u3h_put(u3R->byc.har_p, lof, tog);
-      u3z(lof);
-    }
+  if ( c3y == u3a_is_junior(u3R, fol) ) {
+    u3_noun lof = u3a_take(fol);
+    u3h_put(u3R->byc.har_p, lof, tog);
+    u3z(lof);
+  }
+  else {
+    u3h_put(u3R->byc.har_p, fol, tog);
   }
 }
 
