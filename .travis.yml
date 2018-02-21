@@ -6,36 +6,37 @@ script: make DEBUG=yes SANITIZE=$ASAN && make test # no ./configure
 # notifications:
 #   email: false
 
-matrix: include
-  - os: linux
-    env:
-      - ASAN=no
-      - FILENAME=urbit-linux
-    addons:
-      apt:
-        packages:
-        - libgmp3-dev
-        - libsigsegv-dev
-        - openssl
-        - libssl-dev
-        - libncurses5-dev
-        - make
-        - exuberant-ctags
-        - automake
-        - autoconf
-        - libtool
-        - g++
-        - ragel
-        - cmake
-        - re2c
-        - libcurl4-gnutls-dev
-        - python
-  - os: osx
-    before_install:
-      - brew install --only-dependencies urbit
-    env:
-      - ASAN=yes
-      - FILENAME=urbit-osx
+matrix:
+  include:
+    - os: linux
+      env:
+        - ASAN=no
+        - FILENAME=urbit-linux
+      addons:
+        apt:
+          packages:
+          - libgmp3-dev
+          - libsigsegv-dev
+          - openssl
+          - libssl-dev
+          - libncurses5-dev
+          - make
+          - exuberant-ctags
+          - automake
+          - autoconf
+          - libtool
+          - g++
+          - ragel
+          - cmake
+          - re2c
+          - libcurl4-gnutls-dev
+          - python
+    - os: osx
+      before_install:
+        - brew install --only-dependencies urbit
+      env:
+        - ASAN=yes
+        - FILENAME=urbit-osx
 
 # before_deploy: "make deb" # TODO
 deploy:
