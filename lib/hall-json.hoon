@@ -178,7 +178,6 @@
       $full     (conf cof.a)
       $source   (pairs add+b+add.a src+(sorc src.a) ~)
       $caption  s+cap.a
-      $usage    (pairs add+b+add.a tas+(sa tas.a cord) ~)
       $filter   (filt fit.a)
       $secure   s+sec.a
       $permit   (pairs add+b+add.a sis+(sa sis.a ship) ~)
@@ -230,7 +229,6 @@
     %-  pairs  :~
       src+(sa src.a sorc)
       cap+s+cap.a
-      tag+(sa tag.a cord)
       fit+(filt fit.a)
       con+(cont con.a)
     ==
@@ -427,7 +425,6 @@
     %-  of  :~
       full+conf
       source+(ot add+bo src+sorc ~)
-      usage+(ot add+bo tas+(as so) ~)
       caption+so
       filter+filt
       secure+secu
@@ -472,7 +469,6 @@
     %-  ot  :~
       src+(as sorc)
       cap+so
-      tag+(as so)
       fit+filt
       con+cont
     ==
