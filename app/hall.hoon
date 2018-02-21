@@ -117,7 +117,7 @@
 :>  #
 :>    functional cores and arms.
 ::
-|_  {bol/bowl:gall $1 state}
+|_  {bol/bowl:gall $2 state}
 ::
 :>  #  %transition
 :>    prep transition
@@ -127,15 +127,15 @@
   ::
   =>  |%
       ++  states
-        ?(state-0 $%({$1 s/state}))
+        ?(state $%({$1 s/state-1} {$2 s/state}))
       ::
-      ++  state-0
-        (cork state |=(a/state a(stories (~(run by stories.a) story-0))))
-      ++  story-0
+      ++  state-1
+        (cork state |=(a/state a(stories (~(run by stories.a) story-1))))
+      ++  story-1
         %+  cork  story
-        |=(a/story a(shape *config-0, mirrors (~(run by mirrors.a) config-0)))
-      ++  config-0
-        {src/(set source) cap/cord fit/filter con/control}
+        |=(a/story a(shape *config-1, mirrors (~(run by mirrors.a) config-1)))
+      ++  config-1
+        {src/(set source) cap/cord tag/(set knot) fit/filter con/control}
       --
   =|  mos/(list move)
   |=  old/(unit states)
@@ -144,15 +144,18 @@
     %-  pre-bake
     ta-done:ta-init:ta
   ?-  -.u.old
-      $1
+      $2
     [mos ..prep(+<+ u.old)]
   ::
-      ?($~ ^)  ::  $0
-    =-  $(old `[%1 u.old(stories -)])
-    %-  ~(run by stories.u.old)
-    |=  soy/story-0
+      $1
+    =-  $(old `[%2 s.u.old(stories -)])
+    %-  ~(run by stories.s.u.old)
+    |=  soy/story-1
     ^-  story
-    (story soy(shape [src cap ~ fit con]:shape.soy))
+    (story soy(shape [src cap fit con]:shape.soy))
+  ::
+      ?($~ ^)  ::  $0
+    $(old `[%2 u.old])
   ==
 ::
 :>  #  %engines

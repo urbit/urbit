@@ -112,7 +112,7 @@
 :>  #
 :>    functional cores and arms.
 ::
-|_  {bol/bowl:gall $1 state}
+|_  {bol/bowl:gall $2 state}
 ::
 :>  #  %transition
 :>    prep transition
@@ -123,12 +123,12 @@
   ::
   =>  |%
       ++  states
-        ?(state-0 $%({$1 s/state}))
+        ?(state $%({$1 s/state-1} {$2 s/state}))
       ::
-      ++  state-0
-        (cork state |=(a/state a(mirrors (~(run by mirrors.a) config-0))))
-      ++  config-0
-        {src/(set source) cap/cord fit/filter con/control}
+      ++  state-1
+        (cork state |=(a/state a(mirrors (~(run by mirrors.a) config-1))))
+      ++  config-1
+        {src/(set source) cap/cord tag/(set knot) fit/filter con/control}
       --
   =|  mos/(list move)
   |=  old/(unit states)
@@ -137,14 +137,18 @@
     ta-done:ta-init:ta
   ?+  -.u.old
       ::  $0
-    =+  ole=(state-0 u.old)
-    =-  $(old `[%1 ole(mirrors -)])
-    %-  ~(run by mirrors.ole)
-    |=  config-0
-    [src cap ~ fit con]
+    $(old `[%2 u.old])
+  ::
+      $2
+    [mos ..prep(+<+ [%2 (state +.u.old)])]
   ::
       $1
-    [mos ..prep(+<+ [%1 (state +.u.old)])]
+    ::  we hard-cast here because it find-errors on s.u.old otherwise?
+    =+  ole=(state-1 +.u.old)
+    =-  $(old `[%2 ole(mirrors -)])
+    %-  ~(run by mirrors.ole)
+    |=  config-1
+    [src cap fit con]
   ==
 ::
 :>  #
