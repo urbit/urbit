@@ -8,26 +8,10 @@ env:
 #
 # notifications:
 #   email: false
-
+os: osx
+before_install:
+  - brew install urbit
 addons:
-  apt:
-    packages:
-    - libgmp3-dev
-    - libsigsegv-dev
-    - openssl
-    - libssl-dev
-    - libncurses5-dev
-    - make
-    - exuberant-ctags
-    - automake
-    - autoconf
-    - libtool
-    - g++
-    - ragel
-    - cmake
-    - re2c
-    - libcurl4-gnutls-dev
-    - python
 # before_deploy: "make deb" # TODO
 deploy:
   skip_cleanup: true
