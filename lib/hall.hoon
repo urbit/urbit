@@ -127,15 +127,6 @@
     $filter   cof(fit fit.dif)
     $remove   cof
   ::
-      $usage
-    %=  cof
-        tag
-      %.  tas.dif
-      ?:  add.dif
-        ~(uni in tag.cof)
-      ~(dif in tag.cof)
-    ==
-  ::
       $source
     %=  cof
         src
