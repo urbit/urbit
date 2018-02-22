@@ -2192,9 +2192,9 @@
     ::  only auto-federate channels for now.
     ?.  ?=($channel sec.con.shape.s)  ~
     :+  ~  n
-    ::  share no more than 2k messages at once, for performance reasons.
-    :+  ?:  (lte count.s 2.000)  grams.s
-        (slag (sub count.s 2.000) grams.s)
+    ::  share no more than the last 100, for performance reasons.
+    :+  ?:  (lte count.s 100)  grams.s
+        (slag (sub count.s 100) grams.s)
       [shape.s mirrors.s]
     [locals.s remotes.s]
   ::
