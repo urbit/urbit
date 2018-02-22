@@ -19,6 +19,7 @@
 =/  config  (~(get by configs) +<:s.bem.gas)
 =,  old-zuse
 |%
+:: TODO this needs to be in the js
 ++  esoo
   |=  d/@d
   ^-  tape
@@ -63,11 +64,11 @@
     ==
     ;*  ?:  (authed:colls gas)
           ;=
-            ::;a(href "/~~/pages/nutalk/collection/post?coll={(trip +<:s.bem.gas)}&top={(trip -:s.bem.gas)}")
+            ;a(href "/~~/collections/{(trip +<:s.bem.gas)}/{(trip -:s.bem.gas)}.collections-edit")
               ;button#edit-btn.btn.btn-primary.mb-4
                 ; Edit →
               ==
-            ::==
+            ==
           ==
         ~
     ;div.row.content.mb-18
@@ -105,8 +106,6 @@
     ~
   ==
   ::
-  ;div#edit(data-component "TopicCreatePage", data-coll "{(trip +<:s.bem.gas)}", data-top "{(trip -:s.bem.gas)}", data-top-text "{(trip (of-wain:format wat.info.b.extratopic))}");
-  ;script@"/~~/pages/toggle.js";
 ==
 
 
