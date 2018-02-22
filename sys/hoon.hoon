@@ -9907,14 +9907,20 @@
       --
   |_  sut/type
   ++  dash
-      |=  {mil/tape lim/char}  ^-  tape
-      :-  lim
-      |-  ^-  tape
-      ?~  mil  [lim ~]
-      ?:  =(lim i.mil)  ['\\' i.mil $(mil t.mil)]
-      ?:  =('\\' i.mil)  ['\\' i.mil $(mil t.mil)]
-      ?:  (lte ' ' i.mil)  [i.mil $(mil t.mil)]
-      ['\\' ~(x ne (rsh 2 1 i.mil)) ~(x ne (end 2 1 i.mil)) $(mil t.mil)]
+    |=  {mil/tape lim/char lam/tape}
+    ^-  tape
+    =/  esc  (~(gas in *(set @tD)) lam)
+    :-  lim
+    |-  ^-  tape
+    ?~  mil  [lim ~]
+    ?:  ?|  =(lim i.mil)
+            =('\\' i.mil)
+            (~(has in esc) i.mil)
+        ==
+      ['\\' i.mil $(mil t.mil)]
+    ?:  (lte ' ' i.mil)
+      [i.mil $(mil t.mil)]
+    ['\\' ~(x ne (rsh 2 1 i.mil)) ~(x ne (end 2 1 i.mil)) $(mil t.mil)]
   ::
   ++  deal  |=(lum/* (dish dole lum))
   ++  dial
@@ -10046,7 +10052,7 @@
       [(need ^$(q.ham %yarn, lum -.lum)) $(lum +.lum)]
     ::
         $yarn
-      [~ %leaf (dash (tape lum) '"')]
+      [~ %leaf (dash (tape lum) '"' "\{")]
     ::
         $void
       ~
@@ -10059,7 +10065,7 @@
       ?+    (rash p.q.ham ;~(sfix (cook crip (star low)) (star hig)))
           ~(rend co [%$ p.q.ham lum])
         $$    ~(rend co [%$ %ud lum])
-        $t    (dash (rip 3 lum) '\'')
+        $t    (dash (rip 3 lum) '\'' ~)
         $tas  ['%' ?.(=(0 lum) (rip 3 lum) ['$' ~])]
       ==
     ::
