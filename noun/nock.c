@@ -571,7 +571,7 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
  * as it executes, along with some other information. very spammy.
  */
 
-#if 1
+#if 0
 // match to OPCODE TABLE
 static char* names[] = {
   "halt", "bail",
@@ -945,7 +945,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
   return tot_s;
 }
 
-#if 1
+#if 0
 static void _n_print_byc(c3_y* pog, c3_s her_s);
 #endif
 
@@ -1743,7 +1743,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
   }
 }
 
-#if 1
+#if 0
 /* _n_print_byc(): print bytecode. used for debugging.
  */
 static void
@@ -1865,17 +1865,29 @@ u3n_burn_on(u3_noun bus, u3_noun fol)
 }
 #endif
 
-#if 0
-// FIXME: we could avoid recompiling by traversing the bytecode and copying
-//        out quoted nouns, but u3a_take() is complicated and we haven't
-//        gotten it to work right yet.
+static void
+_n_take_narg(c3_y* pog, c3_y* gop, c3_s sip_s, c3_s* ip_s)
+{
+  c3_s i_s;
+  while ( sip_s-- > 0 ) {
+    gop[*ip_s] = pog[*ip_s];
+    *ip_s += 1;
+  }
+  u3_noun x = u3a_take(_n_rean(pog, ip_s));
+  i_s = *ip_s;
+  gop[--i_s] = (c3_y) (x >> 24);
+  gop[--i_s] = (c3_y) (x >> 16);
+  gop[--i_s] = (c3_y) (x >> 8);
+  gop[--i_s] = (c3_y) x;
+}
+
 /* _n_take_byc(): copy bytecode from a junior road
  */
 static c3_y*
 _n_take_byc(c3_y* pog)
 {
-  u3_noun x;
-  c3_s sax_s, ip_s, len_s;
+  c3_y  i_y;
+  c3_s  ip_s, len_s;
   c3_y* gop, cod_y;
 
   // measure
@@ -1887,55 +1899,31 @@ _n_take_byc(c3_y* pog)
   gop = u3a_malloc(len_s);
   for ( ip_s = 0; ip_s < len_s; ) {
     cod_y = gop[ip_s] = pog[ip_s];
-    x     = u3_none;
-    sax_s = ip_s + 1;
+    ip_s += 1;
     switch ( cod_y ) {
       default:
-        sax_s += _n_arg(cod_y);
+        for ( i_y = _n_arg(cod_y); i_y > 0; --i_y ) {
+          gop[ip_s] = pog[ip_s];
+          ip_s += 1;
+        }
         break;
 
       case CUSH: case FRAG: case FLAG: case LILN: case LITN:
       case SAMN: case TICK: case KICK:
-        x = _n_rean(pog, &sax_s);
+        _n_take_narg(pog, gop, 0, &ip_s);
         break;
 
       case SKIB: case SLIB:
-        sax_s += sizeof(c3_y);
-        x = _n_rean(pog, &sax_s);
+        _n_take_narg(pog, gop, 1, &ip_s);
         break;
 
       case SKIM: case SLIM:
-        sax_s += sizeof(c3_s);
-        x = _n_rean(pog, &sax_s);
+        _n_take_narg(pog, gop, 2, &ip_s);
         break;
-    }
-    if ( u3_none != x ) {
-      if ( c3y == u3a_left(x) ) {
-        x = u3a_take(x);
-      }
-      else {
-        // TRICKY: new location is stored in mug, relies on u3a internals
-        u3m_p("relocating", x);
-        u3a_noun* dog_u = u3a_to_ptr(x);
-        x = u3a_take(dog_u->mug_w);
-        u3m_p("relocated", x);
-      }
-      gop[ip_s++] = cod_y;
-      gop[ip_s++] = (c3_y) x;
-      gop[ip_s++] = (c3_y) (x >> 8);
-      gop[ip_s++] = (c3_y) (x >> 16);
-      gop[ip_s++] = (c3_y) (x >> 24);
-    }
-    else {
-      while ( ip_s < sax_s ) {
-        gop[ip_s] = pog[ip_s];
-        ++ip_s;
-      }
     }
   }
   return gop;
 }
-#endif
 
 /* _n_reap(): reap key and value from byc table.
 */
@@ -1943,14 +1931,12 @@ static void
 _n_reap(u3_noun kev)
 {
   u3_noun fol = u3h(kev);
-  //u3_noun got = u3t(kev);
-  //c3_y*   pog = u3a_into(got);
-  //c3_y*   gop = _n_take_byc(pog);
-  //u3_noun tog = u3a_outa(gop);
+  u3_noun got = u3t(kev);
   u3_noun lof = u3a_take(fol);
-  // recompile rather than traverse bytecode, simpler
-  u3h_put(u3R->byc.har_p, lof, u3a_outa(_n_bite(lof)));
-  //u3h_put(u3R->byc.har_p, lof, tog);
+  c3_y*   pog = u3a_into(got);
+  c3_y*   gop = _n_take_byc(pog);
+  u3_noun tog = u3a_outa(gop);
+  u3h_put(u3R->byc.har_p, lof, tog);
   u3z(lof);
 }
 
@@ -1962,7 +1948,7 @@ u3n_beep(u3p(u3h_root) har_p)
   u3h_walk(har_p, _n_reap);
 }
 
-#if 1
+#if 0
 /* _n_print_stack(): print out the cap stack up to a designated "empty"
  *                   used only for debugging
  */
