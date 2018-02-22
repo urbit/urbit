@@ -1,4 +1,4 @@
-::                                                      :: 
+::                                                      ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
@@ -5874,41 +5874,42 @@
           ::  $json                                     ::  json schema?
           ::  
           ==
-::  partial execution
+::::
+::  +block: abstract identity of resource awaited
 ::
 ++  block  
-  ::  abstract identity of resource awaited
-  ::
   path
+::::
+::  +result: internal interpreter result
 ::
 ++  result  
-  ::  internal interpreter result
-  ::
   $@(~ seminoun)
+::::
+::  +thunk: fragment constructor
 ::
 ++  thunk
-  ::  typeless trap, |.(*)
-  ::
-  *
+  $-(@ud (unit noun))
+::::
+::  +seminoun: 
 ::
 ++  seminoun  
   ::  partial noun; blocked subtrees are ~ 
   ::
   $~  [[%full ~] ~]
   {mask/stencil data/noun}
+::::
+::  +stencil: noun knowledge map
 ::
 ++  stencil  
-  ::  noun knowledge map
-  ::
-  $%  ::  noun has partial block substructure
+  $%  ::  %half: noun has partial block substructure
       ::
-      {$half left/stencil rite/stencil}
-      ::  noun is either fully complete, or fully blocked
+      [%half left=stencil rite=stencil]
+      ::  %full: noun is either fully complete, or fully blocked
       ::
-      {$full blocks/(set block)}
-      ::  noun can be built from a trap
+      [%full blocks=(set block)]
+      ::  %lazy: noun can be generated from virtual subtree
       ::  
-      {$lazy trap/thunk}
+      [%lazy fragment/axis resolve/thunk]
   == 
 ::
 ++  output
@@ -6243,7 +6244,16 @@
       $full  bus
       $lazy  ::  execute thunk
              ::
-             [full/~ .*(trap.mask.bus -.trap.mask.bus)]
+             =+  (resolve.mask.bus fragment.mask.bus)
+             ::  if product is nil
+             ::
+             ?~  - 
+               ::  then blocked
+               ::
+               [[%full [~ ~ ~]] ~]
+             ::  else use value
+             ::
+             [[%full ~] u.-]
       $half  ::  recursive descent
              :: 
              %+  combine 
@@ -6264,18 +6274,16 @@
     ::  1 is the root
     ::
     ?:  =(1 axe)  bus
-    ::  now: 2 or 3, top of axis
+    ::  now: top of axis (2 or 3)
     ::  lat: rest of axis
     ::
     =+  [now=(cap axe) lat=(mas axe)]
     ?-  -.mask.bus
-    ::  subject is lazy
+      %lazy  ::  propagate laziness
+             ::
+             bus(fragment.mask (peg fragment.mask.bus axe))
     ::
-      $lazy  $(bus (complete bus))
-    ::
-    ::  subject is fully blocked or complete
-    ::
-      $full  ::  if fully blocked, produce self
+      %full  ::  if fully blocked, produce self
              ::
              ?^  blocks.mask.bus  bus
              ::  descending into atom, stop
@@ -6284,9 +6292,8 @@
              ::  descend into complete cell
              ::
              $(axe lat, bus [full/~ ?:(=(2 now) -.data.bus +.data.bus)])
-    ::  subject is partly blocked
     ::
-      $half  ::  descend into partial cell
+      %half  ::  descend into partial cell
              ::
              %=  $
                axe  lat
@@ -8987,33 +8994,74 @@
       $elm  q:(mint(vet |) %noun p.fut)
     ==
   ::
-  ++  hoof
-    ::  lazy formula generator for cores being compiled
+  ++  laze
+    ::  produce lazy core generator for static execution
     ::
     |=  dom/(map @ tomb)
-    ^-  seminoun:musk
     ~+
-    |-  ^-  seminoun:musk
-    ?:  ?=(~ dom)
-      *seminoun:musk
-    =/  dov
-        =/  dab/(map term (pair what foot))  q.q.n.dom
-        |-  ^-  seminoun:musk
-        ?:  ?=(~ dab)
-          *seminoun:musk
-        =/  vad/seminoun:musk  =+(hemp [[%lazy -(+< q.q.n.dab)] ~])
-        ?-    dab
-          {* ~ ~}   vad
-          {* ~ *}   (combine:musk vad $(dab r.dab))
-          {* * ~}   (combine:musk vad $(dab l.dab))
-          {* * *}   :(combine:musk vad $(dab l.dab) $(dab r.dab))
-        ==
-    ?-    dom
-      {* ~ ~}   dov
-      {* ~ *}   (combine:musk dov $(dom r.dom))
-      {* * ~}   (combine:musk dov $(dom l.dom))
-      {* * *}   :(combine:musk dov $(dom l.dom) $(dom r.dom))
-    ==
+    ^-  seminoun
+    ::  tal: map from battery axis to foot
+    ::
+    =;  tal/(map @ud foot)
+      ::  produce lazy battery
+      ::
+      :_  ~
+      :+  %lazy  1
+      |=  axe/@ud
+      ^-  (unit noun)
+      %+  bind  (~(get by tal) axe)
+      |=  fut/foot
+      (hemp(sut (core sut %gold sut *chap [[%lazy 1 ..^$] ~] dom)) fut)
+    ::
+    %-  ~(gas by *(map @ud foot))
+    =|  yeb/(list (pair @ud foot))
+    =+  axe=1
+    |^  ?-  dom
+          ~        yeb
+          [* ~ ~]  (chapter q.q.n.dom)
+          [* * ~]  %=  $
+                     dom  l.dom
+                     axe  (peg axe 3)
+                     yeb  (chapter(axe (peg axe 2)) q.q.n.dom)
+                   ==
+          [* ~ *]  %=  $
+                     dom  r.dom
+                     axe  (peg axe 3) 
+                     yeb  (chapter(axe (peg axe 2)) q.q.n.dom)
+                   ==
+          [* * *]  %=  $
+                     dom  r.dom
+                     axe  (peg axe 7)
+                     yeb  %=  $
+                            dom  l.dom
+                            axe  (peg axe 6)
+                            yeb  (chapter(axe (peg axe 2)) q.q.n.dom)
+        ==         ==     ==
+    ++  chapter
+      |=  dab/(map term (pair what foot))
+      ^+  yeb
+      ?-  dab
+        ~        yeb
+        [* ~ ~]  [[axe q.q.n.dab] yeb]
+        [* * ~]  %=  $
+                   dab  l.dab
+                   axe  (peg axe 3)
+                   yeb  [[(peg axe 2) q.q.n.dab] yeb]
+                 ==
+        [* ~ *]  %=  $
+                   dab  r.dab
+                   axe  (peg axe 3)
+                   yeb  [[(peg axe 2) q.q.n.dab] yeb]
+                 ==
+        [* * *]  %=  $
+                   dab  r.dab
+                   axe  (peg axe 7)
+                   yeb  %=  $
+                          dab  l.dab
+                          axe  (peg axe 6)
+                          yeb  [[(peg axe 2) q.q.n.dab] yeb]
+      ==         ==     ==
+    --
   ::
   ++  lose
     ~/  %lose
@@ -9078,6 +9126,7 @@
     ::
     |=  [mel/vair wad/chap dom/(map @ tomb)]
     ^-  (pair type nock)
+    =+  foo=(laze dom)
     =-  :_  [%1 dez]
         (core sut mel sut wad [[%full ~] dez] dom)
     ^=  dez
