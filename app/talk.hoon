@@ -229,7 +229,8 @@
       %+  welp  /circle/[inbox]/grams/config/group
       ?.  =(0 last)
         [(scot %ud last) ~]
-      [(scot %da (sub now.bol ~d5)) ~]
+      =+  history-days=~d5
+      [(scot %da (sub now.bol history-days)) ~]
   ==
 ::
 :>  #
