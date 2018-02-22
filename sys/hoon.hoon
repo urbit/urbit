@@ -5742,6 +5742,7 @@
     {$kthp p/root q/hoon}                               ::  ^-
     {$ktpm p/hoon}                                      ::  ^&
     {$ktsg p/hoon}                                      ::  ^~
+    {$kthx p/hoon}                                      ::  ^#
     {$ktts p/toga q/hoon}                               ::  ^=
     {$ktwt p/hoon}                                      ::  ^?
   ::                                            ::::::  hints
@@ -7673,6 +7674,7 @@
     ::
         {$ktdt *}  [%ktls [%cnhp p.gen q.gen ~] q.gen]
         {$kthp *}  [%ktls ~(bunt ax fab [%herb p.gen]) q.gen]
+        {$kthx *}  [%cold p.gen]
         {$sgbr *}
       :+  %sggr
         :-  %mean
@@ -7993,6 +7995,7 @@
         $kthp  (lead -.gen %.(+.gen dubs))
         $ktpm  (lead -.gen %.(+.gen expr))
         $ktsg  (lead -.gen %.(+.gen expr))
+        $kthx  (lead -.gen %.(+.gen expr))
         $ktts  (lead -.gen %.(+.gen nexp))
         $ktwt  (lead -.gen %.(+.gen expr))
         $halo  (lead -.gen %.(+.gen nexp))
@@ -12194,6 +12197,7 @@
                     ['+' (rune lus %ktls expb)]
                     ['&' (rune pam %ktpm expa)]
                     ['~' (rune sig %ktsg expa)]
+                    ['#' (rune hax %kthx expa)]
                     ['=' (rune tis %ktts expg)]
                     ['?' (rune wut %ktwt expa)]
                     ['%' (rune cen %ktcn expa)]
