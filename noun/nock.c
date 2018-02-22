@@ -567,7 +567,11 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 #define SLIM 65
 #define SAVE 66
 
-#ifdef VERBYC
+/* defining this will cause the bytecode interpreter to print out every opcode
+ * as it executes, along with some other information. very spammy.
+ */
+
+#if 1
 // match to OPCODE TABLE
 static char* names[] = {
   "halt", "bail",
@@ -941,7 +945,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
   return tot_s;
 }
 
-#ifdef VERBYC
+#if 1
 static void _n_print_byc(c3_y* pog, c3_s her_s);
 #endif
 
@@ -1182,11 +1186,6 @@ typedef struct {
   c3_y* pog;
   c3_s  ip_s;
 } burnframe;
-
-/* defining this will cause the bytecode interpreter to print out every opcode
- * as it executes, along with some other information. very spammy.
- * #define VERBYC
- */
 
 /* _n_burn(): pog: program
  *            bus: subject
@@ -1744,7 +1743,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
   }
 }
 
-#ifdef VERBYC
+#if 1
 /* _n_print_byc(): print bytecode. used for debugging.
  */
 static void
@@ -1866,6 +1865,10 @@ u3n_burn_on(u3_noun bus, u3_noun fol)
 }
 #endif
 
+#if 0
+// FIXME: we could avoid recompiling by traversing the bytecode and copying
+//        out quoted nouns, but u3a_take() is complicated and we haven't
+//        gotten it to work right yet.
 /* _n_take_byc(): copy bytecode from a junior road
  */
 static c3_y*
@@ -1907,7 +1910,16 @@ _n_take_byc(c3_y* pog)
         break;
     }
     if ( u3_none != x ) {
-      x = u3a_take(x);
+      if ( c3y == u3a_left(x) ) {
+        x = u3a_take(x);
+      }
+      else {
+        // TRICKY: new location is stored in mug, relies on u3a internals
+        u3m_p("relocating", x);
+        u3a_noun* dog_u = u3a_to_ptr(x);
+        x = u3a_take(dog_u->mug_w);
+        u3m_p("relocated", x);
+      }
       gop[ip_s++] = cod_y;
       gop[ip_s++] = (c3_y) x;
       gop[ip_s++] = (c3_y) (x >> 8);
@@ -1923,6 +1935,7 @@ _n_take_byc(c3_y* pog)
   }
   return gop;
 }
+#endif
 
 /* _n_reap(): reap key and value from byc table.
 */
@@ -1930,12 +1943,14 @@ static void
 _n_reap(u3_noun kev)
 {
   u3_noun fol = u3h(kev);
-  u3_noun got = u3t(kev);
-  c3_y*   pog = u3a_into(got);
-  c3_y*   gop = _n_take_byc(pog);
-  u3_noun tog = u3a_outa(gop);
+  //u3_noun got = u3t(kev);
+  //c3_y*   pog = u3a_into(got);
+  //c3_y*   gop = _n_take_byc(pog);
+  //u3_noun tog = u3a_outa(gop);
   u3_noun lof = u3a_take(fol);
-  u3h_put(u3R->byc.har_p, lof, tog);
+  // recompile rather than traverse bytecode, simpler
+  u3h_put(u3R->byc.har_p, lof, u3a_outa(_n_bite(lof)));
+  //u3h_put(u3R->byc.har_p, lof, tog);
   u3z(lof);
 }
 
@@ -1947,7 +1962,7 @@ u3n_beep(u3p(u3h_root) har_p)
   u3h_walk(har_p, _n_reap);
 }
 
-#if 0
+#if 1
 /* _n_print_stack(): print out the cap stack up to a designated "empty"
  *                   used only for debugging
  */
