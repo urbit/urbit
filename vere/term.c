@@ -585,7 +585,6 @@ static void
 _term_it_show_blank(u3_utty* uty_u)
 {
   _term_it_write_txt(uty_u, uty_u->ufo_u.out.clear_y);
-  uty_u->tat_u.mir.cus_w = 0;
 }
 
 /* _term_it_show_cursor(): set current line, transferring pointer.
