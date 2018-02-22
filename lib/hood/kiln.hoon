@@ -80,19 +80,6 @@
           {$helm-reset $~}                              ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
-    ++  riot                                            ::tmp  up-to-date riot
-      %-  unit
-      $:  p/{p/?($d $p $u $v $w $x $y $z) q/case r/desk}
-          q/path
-          r/cage
-      ==
-    ++  rite                                            ::tmp
-      $%  {$r red/(unit rule)}
-          {$w wit/(unit rule)}
-          {$rw red/(unit rule) wit/(unit rule)}
-      ==
-    ++  rule  {mod/?($black $white) who/(set whom)}     ::tmp
-    ++  whom  (each ship @ta)                           ::tmp
     --
 |_  moz/(list move)
 ++  abet                                                ::  resolve

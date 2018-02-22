@@ -117,7 +117,7 @@
 :>  #
 :>    functional cores and arms.
 ::
-|_  {bol/bowl:gall $2 state}
+|_  {bol/bowl:gall $0 state}
 ::
 :>  #  %transition
 :>    prep transition
@@ -127,15 +127,7 @@
   ::
   =>  |%
       ++  states
-        ?(state $%({$1 s/state-1} {$2 s/state}))
-      ::
-      ++  state-1
-        (cork state |=(a/state a(stories (~(run by stories.a) story-1))))
-      ++  story-1
-        %+  cork  story
-        |=(a/story a(shape *config-1, mirrors (~(run by mirrors.a) config-1)))
-      ++  config-1
-        {src/(set source) cap/cord tag/(set knot) fit/filter con/control}
+        $%({$0 s/state})
       --
   =|  mos/(list move)
   |=  old/(unit states)
@@ -144,18 +136,8 @@
     %-  pre-bake
     ta-done:ta-init:ta
   ?-  -.u.old
-      $2
+      $0
     [mos ..prep(+<+ u.old)]
-  ::
-      $1
-    =-  $(old `[%2 s.u.old(stories -)])
-    %-  ~(run by stories.s.u.old)
-    |=  soy/story-1
-    ^-  story
-    (story soy(shape [src cap fit con]:shape.soy))
-  ::
-      ?($~ ^)  ::  $0
-    $(old `[%2 u.old])
   ==
 ::
 :>  #  %engines
@@ -342,11 +324,13 @@
       ?-  -.act
         ::  circle configuration
         $create  (action-create +.act)
+        $design  (action-design +.act)
         $source  (action-source +.act)
         $depict  (action-depict +.act)
         $filter  (action-filter +.act)
         $permit  (action-permit +.act)
         $delete  (action-delete +.act)
+        $usage   (action-usage +.act)
         ::  messaging
         $convey  (action-convey +.act)
         $phrase  (action-phrase +.act)
@@ -410,11 +394,20 @@
         %^  impact  nom  %new
         :*  [[[our.bol nom] ~] ~ ~]
             des
+            ~
             *filter
             :-  typ
             ?.  ?=(?($village $journal) typ)  ~
             [our.bol ~ ~]
         ==
+      (ta-evil (crip "{(trip nom)}: already exists"))
+    ::
+    ++  action-design
+      :>  creates a story with the specified config.
+      ::
+      |=  {nom/name cof/config}
+      ?.  (~(has in stories) nom)
+        (impact nom %new cof)
       (ta-evil (crip "{(trip nom)}: already exists"))
     ::
     ++  action-delete
@@ -463,6 +456,15 @@
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
       so-done:(~(so-sources so nom ~ u.soy) sub srs)
+    ::
+    ++  action-usage
+      :>  add or remove usage tags.
+      ::
+      |=  {nom/name add/? tas/tags}
+      =+  soy=(~(get by stories) nom)
+      ?~  soy
+        (ta-evil (crip "no story {(trip nom)}"))
+      so-done:(~(so-usage so nom ~ u.soy) add tas)
     ::
     :>  #  %messaging
     +|
@@ -1128,6 +1130,17 @@
       ^+  +>
       ?:  =(cap cap.shape)  +>
       (so-delta-our %config so-cir %caption cap)
+    ::
+    ++  so-usage
+      :>  add or remove usage tags.
+      ::
+      |=  {add/? tas/tags}
+      ^+  +>
+      =/  sas/tags
+        %.  tag.shape
+        ?:(add ~(dif in tas) ~(int in tas))
+      ?~  sas  +>.$
+      (so-delta-our %config so-cir %usage add sas)
     ::
     ++  so-filter
       :>    change message rules
@@ -2192,9 +2205,9 @@
     ::  only auto-federate channels for now.
     ?.  ?=($channel sec.con.shape.s)  ~
     :+  ~  n
-    ::  share no more than 2k messages at once, for performance reasons.
-    :+  ?:  (lte count.s 2.000)  grams.s
-        (slag (sub count.s 2.000) grams.s)
+    ::  share no more than the last 100, for performance reasons.
+    :+  ?:  (lte count.s 100)  grams.s
+        (slag (sub count.s 100) grams.s)
       [shape.s mirrors.s]
     [locals.s remotes.s]
   ::
