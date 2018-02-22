@@ -227,7 +227,7 @@
       server
     ::
       %+  welp  /circle/[inbox]/grams/config/group
-      ?.  =(0 last)
+      ?.  =(0 count)
         [(scot %ud last) ~]
       =+  history-days=~d5
       [(scot %da (sub now.bol history-days)) ~]
