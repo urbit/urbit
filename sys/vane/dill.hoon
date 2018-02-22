@@ -7,15 +7,9 @@
 ++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
 =>  |%                                                  ::  console protocol
-++  all-axle  ?(old-axle axle)                          ::
-++  old-axle                                            ::  all dill state
-  $:  $2                                                ::
-      ore/(unit ship)                                   ::  identity once set
-      hey/(unit duct)                                   ::  default duct
-      dug/(map duct axon)                               ::  conversations
-  ==                                                    ::
+++  all-axle  ?(axle)                                   ::
 ++  axle                                                ::
-  $:  $3                                                ::
+  $:  $0                                                ::
       ore/(unit ship)                                   ::  identity once set
       hey/(unit duct)                                   ::  default duct
       dug/(map duct axon)                               ::  conversations
@@ -520,8 +514,6 @@
 ::
 ++  load                                                ::  trivial
   |=  old/all-axle
-  ?:  ?=($2 -.old)
-    $(old [%3 ore hey dug ~ ~ ~ ~ ~ ~]:old)
   ..^$(all old)
   ::  |=  old=*   ::  diable
   ::  ..^$(ore.all `~zod)

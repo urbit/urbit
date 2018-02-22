@@ -3571,7 +3571,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  $4                                            ::  vane version
+    $:  $0                                            ::  vane version
         ruf/raft                                      ::  revision tree
     ==                                                ::
 |=  {now/@da eny/@ ski/sley}                          ::  activate
@@ -3832,72 +3832,12 @@
 ::
 ++  load
   =>  |%
-      +=  wove-3  rove
-      ++  cult-3  (jug wove-3 duct)
-      ++  dojo-3
-        $:  qyx/cult-3
-            dom/dome
-            dok/(unit dork)
-            mer/(unit mery)
-        ==
-      ++  rede-3
-        $:  lim/@da
-            ref/(unit rind)
-            qyx/cult-3
-            dom/dome
-            dok/(unit dork)
-            mer/(unit mery)
-        ==
-      ++  room-3  (cork room |=(a/room a(dos (~(run by dos.a) dojo-3))))
-      ++  rung-3  (cork rung |=(a/rung a(rus (~(run by rus.a) rede-3))))
-      ++  raft-3
-        $:  fat/(map ship room-3)
-            hoy/(map ship rung-3)
-            ran/rang
-            mon/(map term beam)
-            hez/(unit duct)
-        ==
-      ++  axle    $%({$3 ruf/raft-3} {$4 ruf/raft})
+      ++  axle  $%({$0 ruf/raft})
       --
   |=  old/axle
   ^+  ..^$
   ?-  -.old
-    $4  ..^$(ruf ruf.old)
-    $3  |^
-          =-  ^$(old [%4 -])
-          =+  ruf.old
-          :*  (~(run by fat) rom)
-              (~(run by hoy) run)
-              ran  mon  hez  ~
-          ==
-        ::
-        ++  wov
-          |=  a/wove-3  ^-  wove
-          [~ a]
-        ::
-        ++  cul
-          |=  a/cult-3  ^-  cult
-          %-  ~(gas by *cult)
-          %+  turn  ~(tap by a)
-          |=  {p/wove-3 q/(set duct)}
-          [(wov p) q]
-        ::
-        ++  rom
-          |=  room-3
-          :-  hun
-          %-  ~(urn by dos)
-          |=  {d/desk dojo-3}
-          =/  n/dojo  [(cul qyx) dom dok mer ~ ~]
-          ?.  =(%kids d)  n
-          n(per [[/ %black ~] ~ ~])
-        ::
-        ++  run
-          =/  red
-            |=  rede-3
-            =+  [[/ %black ~] ~ ~]
-            [lim ref (cul qyx) dom dok mer - -]
-          |=(a/rung-3 a(rus (~(run by rus.a) red)))
-        --
+    $0  ..^$(ruf ruf.old)
   ==
 ::
 ++  scry                                              ::  inspect
@@ -3929,7 +3869,7 @@
   ?:  ?=($& -.u.u.-)  ``p.u.u.-
   ~
 ::
-++  stay  [%4 ruf]
+++  stay  [%0 ruf]
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
