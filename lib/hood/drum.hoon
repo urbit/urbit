@@ -392,8 +392,9 @@
 ++  se-show                                           ::  show buffer, raw
   |=  lin/(pair @ud stub:dill)
   ^+  +>
+  =.  p.lin  (add p.lin (lent-stye:klr q.lin))
   ?:  =(mir lin)  +>
-  =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop (add p.lin (lent-stye:klr q.lin))))
+  =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop p.lin))
   =.  +>  ?:(=(q.mir q.lin) +> (se-blit %pom q.lin))
   +>(mir lin)
 ::
@@ -401,13 +402,13 @@
   |=  {pom/stub:dill lin/(pair @ud (list @c))}
   ^+  +>
   =/  pol  (lent-char:klr pom)
-  =/  end  (sub edg pol)
   =/  pos  (add pol p.lin)
   ?:  (gte (div (mul pol 100) edg) 35)      :: old style (long prompt)
-    =/  off  ?:((lte p.lin end) 0 (sub p.lin end))
+    =/  off  ?:((lte pos edg) 0 (sub pos edg))
     %+  se-show
       (sub pos off)
     (swag:klr [off edg] (welp pom [*stye:dill q.lin]~))
+  =/  end  (sub edg pol)
   =.  off  ?:  (gth p.lin (add end off))
              (sub p.lin end)
            ?:  (lth p.lin off)
