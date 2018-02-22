@@ -6896,7 +6896,8 @@
         ::
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
-    ?:  fab
+    ::  ?:  fab
+    ?:  &
       :^  %brts  ~^~
         [%base %noun]
       ~(relative local(dom (peg 7 dom)) [6 %&])
@@ -7083,7 +7084,8 @@
           ?:  =(2 tow) 
             [%bust %cell] 
           [[%bust %noun] $(tow (dec tow))]
-        ?:  fab
+        ?:  &
+        ::  ?:  fab
           ::  luz: subject edited to inject default
           ::
           =/  luz/hoon  
@@ -8997,7 +8999,7 @@
   ++  laze
     ::  produce lazy core generator for static execution
     ::
-    |=  dom/(map @ tomb)
+    |=  [wad=chap dom=(map @ tomb)]
     ~+
     ^-  seminoun
     ::  tal: map from battery axis to foot
@@ -9009,9 +9011,13 @@
       :+  %lazy  1
       |=  axe/@ud
       ^-  (unit noun)
-      %+  bind  (~(get by tal) axe)
-      |=  fut/foot
-      (hemp(sut (core sut %gold sut *chap [[%lazy 1 ..^$] ~] dom)) fut)
+      ::  %+  bind  (~(get by tal) axe)
+      ::  |=  fut/foot
+      ::  (hemp(sut (core sut %gold sut wad [[%lazy 1 ..^$] ~] dom)) fut)
+      =+  (~(get by tal) axe)
+      ?~  -
+        ~
+      `%.(u.- hemp(sut (core sut %gold sut wad [[%lazy 1 ..$] ~] dom)))
     ::
     %-  ~(gas by *(map @ud foot))
     =|  yeb/(list (pair @ud foot))
@@ -9126,11 +9132,14 @@
     ::
     |=  [mel/vair wad/chap dom/(map @ tomb)]
     ^-  (pair type nock)
-    =+  foo=(laze dom)
     =-  :_  [%1 dez]
         (core sut mel sut wad [[%full ~] dez] dom)
     ^=  dez
-    =.  sut  (core sut %gold sut *chap *seminoun dom)
+    =+  foo=(laze wad dom)
+    =.  sut  
+      ?:  fab
+        (core sut %gold sut wad *seminoun dom)
+      (core sut %gold sut wad (laze wad dom) dom)
     |-  ^-  ?(~ ^)
     ?:  ?=(~ dom)
       ~
