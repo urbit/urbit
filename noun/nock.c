@@ -1442,29 +1442,55 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       *top = u3i_vint(*top);
       BURN();
 
+    do_sam0:
+      top = _n_peek(off);
+      if ( *top == 0 ) {
+        *top = c3y;
+      }
+      else {
+        u3z(*top);
+        *top = c3n;
+      }
+      BURN();
+
     do_sam1:
-      x = 1;
-      goto samd_in;
+      top = _n_peek(off);
+      if ( *top == 1 ) {
+        *top = c3y;
+      }
+      else {
+        u3z(*top);
+        *top = c3n;
+      }
+      BURN();
 
     do_samb:
-      x = pog[ip_s++];
-      goto samd_in;
+      top = _n_peek(off);
+      if ( *top == pog[ip_s++] ) {
+        *top = c3y;
+      }
+      else {
+        u3z(*top);
+        *top = c3n;
+      }
+      BURN();
 
     do_sams:
-      x = _n_resh(pog, &ip_s);
-      goto samd_in;
+      top = _n_peek(off);
+      if ( *top == _n_resh(pog, &ip_s) ) {
+        *top = c3y;
+      }
+      else {
+        u3z(*top);
+        *top = c3n;
+      }
+      BURN();
 
     do_samn:
-      x = _n_rean(pog, &ip_s);
-      goto samd_in;
-
-    do_sam0:
-      x = 0;
-    samd_in:
       top  = _n_peek(off);
       o    = *top;
-      *top = u3r_sing(x, o);
-      u3z(o); // don't bother losing x
+      *top = u3r_sing(o, _n_rean(pog, &ip_s));
+      u3z(o);
       BURN();
 
     do_same:
@@ -1865,6 +1891,7 @@ u3n_burn_on(u3_noun bus, u3_noun fol)
 }
 #endif
 
+/* _n_take_narg(): helper for copying noun-parts of bytecode */
 static void
 _n_take_narg(c3_y* pog, c3_y* gop, c3_s sip_s, c3_s* ip_s)
 {
