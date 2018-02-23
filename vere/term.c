@@ -1228,6 +1228,8 @@ u3_term_ef_ctlc(void)
   u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
 
   u3v_plan(pax, u3nt(c3__belt, c3__ctl, 'c'));
+
+  _term_it_refresh_line(_term_main());
 }
 
 /* u3_term_ef_boil(): initial effects for loaded servers.
