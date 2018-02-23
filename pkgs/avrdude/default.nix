@@ -1,3 +1,7 @@
+# Note: There are no patches to help AVRDUDE find its configuration
+# file, so it will expect that file to be at
+# /nix/store/...-avrdude/etc/avrdude.conf
+
 { crossenv }:
 
 crossenv.make_derivation rec {
