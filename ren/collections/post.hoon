@@ -70,7 +70,9 @@
               ==
             ==
           ==
-        ~
+        ;=
+          ;div(data-component "Subscribe", data-circle "{(scow %p p.bem.gas)}/collection_~{(trip +<:s.bem.gas)}_~{(trip -:s.bem.gas)}");
+        ==
     ;div.row.content.mb-18
       +{a.extratopic}
     ==
