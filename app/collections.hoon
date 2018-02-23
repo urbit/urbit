@@ -22,6 +22,7 @@
 ::::
   ::
 :: XX belongs back in zuse
+~&  [%cols cols]
 |%
 ++  pack                                                ::  light path encoding
   |=  {a/term b/path}  ^-  knot
@@ -341,7 +342,7 @@
     %-  ta-hall-action
     =-  :+  %phrase  [[our.bol tar] ~ ~]
         [%fat [%text wat] [%lin | msg]]~
-    ^-  {tar/naem:hall msg/cord}
+    ^-  {tar/name:hall msg/cord}
     ::TODO
     [(circle-for col) 'TODO']
   --
