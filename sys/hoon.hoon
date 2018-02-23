@@ -6243,7 +6243,13 @@
     ^-  seminoun
     ?-  -.mask.bus
       $full  bus
-      $lazy  ::  execute thunk
+      $lazy  ::  fragment 1 is the whole thing
+             ::
+             ?:  =(1 fragment.mask.bus)
+               ::  blocked; otherwise, an
+               ::
+               [[%full [~ ~ ~]] ~]
+             ::  execute thunk
              ::
              =+  (resolve.mask.bus fragment.mask.bus)
              ::  if product is nil
@@ -6897,8 +6903,7 @@
         ::
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
-    ::  ?:  fab
-    ?:  &
+    ?:  fab
       :^  %brts  ~^~
         [%base %noun]
       ~(relative local(dom (peg 7 dom)) [6 %&])
@@ -7085,8 +7090,7 @@
           ?:  =(2 tow) 
             [%bust %cell] 
           [[%bust %noun] $(tow (dec tow))]
-        ?:  &
-        ::  ?:  fab
+        ?:  fab
           ::  luz: subject edited to inject default
           ::
           =/  luz/hoon  
@@ -9014,13 +9018,9 @@
       :+  %lazy  1
       |=  axe/@ud
       ^-  (unit noun)
-      ::  %+  bind  (~(get by tal) axe)
-      ::  |=  fut/foot
-      ::  (hemp(sut (core sut %gold sut wad [[%lazy 1 ..^$] ~] dom)) fut)
-      =+  (~(get by tal) axe)
-      ?~  -
-        ~
-      `%.(u.- hemp(sut (core sut %gold sut wad [[%lazy 1 ..$] ~] dom)))
+      %+  bind  (~(get by tal) axe)
+      |=  fut/foot
+      %.(fut hemp(sut (core sut %gold sut wad [[%lazy 1 ..^$] ~] dom)))
     ::
     %-  ~(gas by *(map @ud foot))
     =|  yeb/(list (pair @ud foot))
@@ -9140,7 +9140,7 @@
     ^=  dez
     =+  foo=(laze wad dom)
     =.  sut  
-      ?:  fab
+      ?:  |
         (core sut %gold sut wad *seminoun dom)
       (core sut %gold sut wad (laze wad dom) dom)
     |-  ^-  ?(~ ^)

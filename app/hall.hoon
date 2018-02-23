@@ -222,7 +222,7 @@
     :>  if it doesn't, does nothing.
     ::
     |=  nom/name
-    |=  fun/$-(_so _ta)
+    |:  $:{fun/$-(_so _ta)}
     ^+  +>+>
     =+  pur=(~(get by stories) nom)
     ?~  pur
@@ -247,7 +247,7 @@
           :~  [%mailbox %inbox 'default home']
               [%journal %public 'visible activity']
           ==
-        |=  {{typ/security nom/name des/cord} _ta}
+        |:  $:{{typ/security nom/name des/cord} _ta}
         (ta-action [%create nom des typ])
     %-  ta-deltas
     ::  if needed, subscribe to our parent's /burden.

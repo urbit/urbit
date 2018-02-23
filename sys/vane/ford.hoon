@@ -688,7 +688,7 @@
     ::
     =/  des  (~(got by def.deh.bay) dep)
     %-  ~(rep in (dep-beams des))
-    |=  [dep=[beam care:clay] dis=_this]
+    |:  $:{dep=[beam care:clay] dis=_this}
     (maybe-warp:dis dep)
   ::
   ++  wasp-cancel
@@ -699,7 +699,7 @@
     ::
     =/  des  (~(got by def.deh.bay) dep)
     %-  ~(rep in (dep-beams des))
-    |=  [dep=[beam care:clay] dis=_this]
+    |:  $:{dep=[beam care:clay] dis=_this}
     (maybe-cancel:dis dep)
   ::
   ++  maybe-warp
@@ -788,7 +788,7 @@
       ::  clay told us something had changed.
       =.  this
         %-  ~(rep in (dep-beams upd))
-        |=  [dep=[bem=beam care:clay] dis=_this]
+        |:  $:{dep=[bem=beam care:clay] dis=_this}
         (maybe-warp:dis dep(r.bem wen))
       ::
       ::  make hash depend on dents at new beak
@@ -1902,7 +1902,7 @@
         |=  {cof/cafe hyd/hood}                         ::  TODO: $ and |^
         ^-  (bolt vase)
         %+  tug:bo  (apex cof hyd)
-        |=  {cof/cafe sel/_..abut}
+        |:  $:{cof/cafe sel/_..abut}
         =.  ..abut  sel
         %+  tug:bo  (to-cage:bo (make cof %reef ~))
         |=  {cof/cafe mark zus/vase}
@@ -1922,13 +1922,13 @@
         ::=.  dyv  +(dyv)
         ::~&  [`term`(cat 3 %apex (fil 4 dyv '  ')) `path`(flop s.how) libs]
         ::=-  ~&  [`term`(cat 3 %xepa (fil 4 dyv '  ')) `path`(flop s.how)]  -
-        |=  {cof/cafe sel/_..apex}
+        |:  $:{cof/cafe sel/_..apex}
         =.  ..apex  sel
         %+  tug:bo  (neck cof lib.hyd)
-        |=  {cof/cafe sel/_..apex}
+        |:  $:{cof/cafe sel/_..apex}
         =.  ..apex  sel(boy boy)
         %+  tug:bo  (head cof sur.hyd)
-        |=  {cof/cafe sel/_..apex}
+        |:  $:{cof/cafe sel/_..apex}
         (new:bo cof sel)
       ::
       ++  body                                          ::  produce functions
@@ -1936,7 +1936,7 @@
         ^-  (bolt _..body)
         ?~  src  (new:bo cof ..body)
         %+  tug:bo  (wilt cof i.src)
-        |=  {cof/cafe sel/_..body}
+        |:  $:{cof/cafe sel/_..body}
         ^$(src t.src, ..body sel, cof cof)
       ::
       ++  chai                                          ::  atomic map
@@ -2089,7 +2089,7 @@
         %+  tug:bo  (compile-to-hood cof bem)
         |=  {cof/cafe hyd/hood}
         %+  tug:bo  (apex(how bem, boy ~) cof hyd)
-        |=  {cof/cafe sel/_..head}
+        |:  $:{cof/cafe sel/_..head}
         =.  ..head
             %=  sel
               boy  boy
@@ -2125,7 +2125,7 @@
         %+  tug:bo  (compile-to-hood cof bem)
         |=  {cof/cafe hyd/hood}
         %+  tug:bo  (apex(how bem, boy ~) cof hyd)
-        |=  {cof/cafe sel/_..neck}
+        |:  $:{cof/cafe sel/_..neck}
         =.  ..neck
             %=  sel
               how  how
@@ -2149,27 +2149,27 @@
             %+  tug:bo  (compile-to-hood cof p.hop)
             |=  {cof/cafe hyd/hood}
             %+  tug:bo  (apex(boy ~) cof hyd)
-            (with:bo |=(sel/_..wilt sel(boy [[%tssg boy.sel] boy])))
+            (with:bo |:(sel=..wilt sel(boy [[%tssg boy.sel] boy])))
           =+  [all=(lark (slat %tas) arc) sel=..wilt]
           %+  tug:bo
             |-  ^-  (bolt (pair (map term (pair what foot)) _..wilt))
             ?~  all  (new:bo cof ~ ..wilt)
             %+  tug:bo  $(all l.all)
-            |=  {cof/cafe lef/(map term (pair what foot)) sel/_..wilt}
+            |:  $:{cof/cafe lef/(map term (pair what foot)) sel/_..wilt}
             %+  tug:bo  ^$(all r.all, cof cof, sel sel)
-            |=  {cof/cafe rig/(map term (pair what foot)) sel/_..wilt}
+            |:  $:{cof/cafe rig/(map term (pair what foot)) sel/_..wilt}
             %+  tug:bo
               %=    ^^^^$
                   cof      cof
                   ..wilt   sel(boy ~)
                   s.p.hop  [p.n.all s.p.hop]
               ==
-            |=  {cof/cafe sel/_..wilt}
+            |:  $:{cof/cafe sel/_..wilt}
             %+  new:bo  cof
             :_  sel
             ^-  (map term (pair what foot))
             [[p.n.all [~ %ash [%tssg boy.sel]]] lef rig]
-          |=  {cof/cafe mav/(map term (pair what foot)) sel/_..wilt}
+          |:  $:{cof/cafe mav/(map term (pair what foot)) sel/_..wilt}
           ?~  mav
             (err:bo cof [%leaf "source missing: {<(en-beam p.hop)>}"]~)
           (new:bo cof sel(boy [[%brcn [~ ~] [[0 [~ ~] mav] ~ ~]] boy]))
