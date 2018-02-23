@@ -4,6 +4,7 @@ define linux = linux32, linux64, linux-rpi
 
 {$windows}.angle{,examples}
 {$all}.at-spi2-headers
+{$all}.avrdude
 {$all}.dejavu-fonts
 {$windows}.devcon
 {$all}.expat
