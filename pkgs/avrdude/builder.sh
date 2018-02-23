@@ -7,6 +7,7 @@ ls -lad avrdude
 cd avrdude
 chmod -R u+w .
 cp $config_dot_sub config.sub
+cat $extra_conf >> avrdude.conf.in
 cd ..
 
 mkdir build

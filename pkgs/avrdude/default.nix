@@ -11,13 +11,8 @@ crossenv.make_derivation rec {
   };
 
   native_inputs = [
-    #crossenv.nixpkgs.autoconf
-    #crossenv.nixpkgs.automake
-    #crossenv.nixpkgs.m4
-    #crossenv.nixpkgs.libtool
     crossenv.nixpkgs.yacc
     crossenv.nixpkgs.flex
-    #crossenv.nixpkgs.bison
   ];
 
   cross_inputs = [
@@ -28,6 +23,7 @@ crossenv.make_derivation rec {
   ];
 
   config_dot_sub = ./config.sub;
+  extra_conf = ./extra.conf;
 
   builder = ./builder.sh;
 }
