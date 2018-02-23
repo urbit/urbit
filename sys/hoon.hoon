@@ -640,17 +640,17 @@
 ++  spin                                                :>  stateful turn
   :>
   :>  a: list
-  :>  b: gate from list-item and state to product and new state
-  :>  c: state
+  :>  b: state
+  :>  c: gate from list-item and state to product and new state
   ~/  %spin
-  |*  [a=(list) b=_|=(^ [** +<+]) c=*]
-  =>  .(b `$-([_?>(?=(^ a) i.a) _c] [* _c])`b)
-  =/  acc=(list _-:(b))  ~
+  |*  [a=(list) b=* c=_|=(^ [** +<+])]
+  =>  .(c `$-([_?>(?=(^ a) i.a) _b] [* _b])`c)
+  =/  acc=(list _-:(c))  ~
   :>  transformed list and updated state
-  |-  ^-  (pair _acc _c)
+  |-  ^-  (pair _acc _b)
   ?~  a
-    [(flop acc) c]
-  =^  res  c  (b i.a c)
+    [(flop acc) b]
+  =^  res  b  (c i.a b)
   $(acc [res acc], a t.a)
 ::
 ++  spun                                                :>  internal spin
@@ -660,7 +660,7 @@
   ~/  %spun
   |*  [a=(list) b=_|=(^ [** +<+])]
   :>  transformed list
-  p:(spin a b +<+.b)
+  p:(spin a +<+.b b)
 ::
 ++  swag                                                ::  slice
   |*  {{a/@ b/@} c/(list)}
