@@ -29,9 +29,10 @@
     |%
     ++  state                                           :>  application state
       $:  ::  messaging state                           ::
-          count/@ud                                     :<  (lent grams)
           grams/(list telegram)                         :<  all history
           known/(map serial @ud)                        :<  messages heard
+          last/@ud                                      :<  last heard
+          count/@ud                                     :<  (lent grams)
           sources/(set circle)                          :<  our subscriptions
           ::  circle details                            ::
           remotes/(map circle group)                    :<  remote presences
@@ -112,7 +113,7 @@
 :>  #
 :>    functional cores and arms.
 ::
-|_  {bol/bowl:gall $1 state}
+|_  {bol/bowl:gall $0 state}
 ::
 :>  #  %transition
 :>    prep transition
@@ -123,28 +124,16 @@
   ::
   =>  |%
       ++  states
-        ?(state-0 $%({$1 s/state}))
-      ::
-      ++  state-0
-        (cork state |=(a/state a(mirrors (~(run by mirrors.a) config-0))))
-      ++  config-0
-        {src/(set source) cap/cord fit/filter con/control}
+        $%({$0 s/state})
       --
   =|  mos/(list move)
   |=  old/(unit states)
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  ?+  -.u.old
-      ::  $0
-    =+  ole=(state-0 u.old)
-    =-  $(old `[%1 ole(mirrors -)])
-    %-  ~(run by mirrors.ole)
-    |=  config-0
-    [src cap ~ fit con]
-  ::
-      $1
-    [mos ..prep(+<+ [%1 (state +.u.old)])]
+  ?-  -.u.old
+      $0
+    [mos ..prep(+<+ u.old)]
   ==
 ::
 :>  #
@@ -238,7 +227,10 @@
       server
     ::
       %+  welp  /circle/[inbox]/grams/config/group
-      ?:(=(0 count) ~ [(scot %ud count) ~])
+      ?.  =(0 count)
+        [(scot %ud last) ~]
+      =+  history-days=~d5
+      [(scot %da (sub now.bol history-days)) ~]
   ==
 ::
 :>  #
@@ -379,7 +371,7 @@
         ~&([%unexpected-circle-rumor -.rum] +>)
     ::
         $gram
-      (ta-learn gam.nev.rum)
+      (ta-open nev.rum)
     ::
         $config
       =+  cur=(fall (~(get by mirrors) cir.rum) *config)
@@ -465,15 +457,16 @@
     ::
     |=  nes/(list envelope)
     ^+  +>
-    (ta-lesson (turn nes tail))
+    ?~  nes  +>
+    $(nes t.nes, +> (ta-open i.nes))
   ::
-  ++  ta-lesson
-    :>  learn all telegrams in a list.
+  ++  ta-open
+    :>  learn message from an envelope.
     ::
-    |=  gaz/(list telegram)
+    |=  nev/envelope
     ^+  +>
-    ?~  gaz  +>
-    $(gaz t.gaz, +> (ta-learn i.gaz))
+    =?  last  (gth num.nev last)  num.nev
+    (ta-learn gam.nev)
   ::
   ++  ta-learn
     :>    save/update message
@@ -2470,7 +2463,7 @@
     ==
   ?:  =(a 'reset')
     ~&  'full reset incoming, hold on to your cli...'
-    :_  +>(grams ~, known ~, count 0)
+    :_  +>(grams ~, known ~, count 0, last 0)
     :~  [ost.bol %pull /server/client server ~]
         [ost.bol %pull /server/inbox server ~]
         peer-client

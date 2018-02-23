@@ -117,7 +117,7 @@
 :>  #
 :>    functional cores and arms.
 ::
-|_  {bol/bowl:gall $1 state}
+|_  {bol/bowl:gall $0 state}
 ::
 :>  #  %transition
 :>    prep transition
@@ -127,15 +127,7 @@
   ::
   =>  |%
       ++  states
-        ?(state-0 $%({$1 s/state}))
-      ::
-      ++  state-0
-        (cork state |=(a/state a(stories (~(run by stories.a) story-0))))
-      ++  story-0
-        %+  cork  story
-        |=(a/story a(shape *config-0, mirrors (~(run by mirrors.a) config-0)))
-      ++  config-0
-        {src/(set source) cap/cord fit/filter con/control}
+        $%({$0 s/state})
       --
   =|  mos/(list move)
   |=  old/(unit states)
@@ -144,15 +136,8 @@
     %-  pre-bake
     ta-done:ta-init:ta
   ?-  -.u.old
-      $1
+      $0
     [mos ..prep(+<+ u.old)]
-  ::
-      ?($~ ^)  ::  $0
-    =-  $(old `[%1 u.old(stories -)])
-    %-  ~(run by stories.u.old)
-    |=  soy/story-0
-    ^-  story
-    (story soy(shape [src cap ~ fit con]:shape.soy))
   ==
 ::
 :>  #  %engines
@@ -2220,9 +2205,9 @@
     ::  only auto-federate channels for now.
     ?.  ?=($channel sec.con.shape.s)  ~
     :+  ~  n
-    ::  share no more than 2k messages at once, for performance reasons.
-    :+  ?:  (lte count.s 2.000)  grams.s
-        (slag (sub count.s 2.000) grams.s)
+    ::  share no more than the last 100, for performance reasons.
+    :+  ?:  (lte count.s 100)  grams.s
+        (slag (sub count.s 100) grams.s)
       [shape.s mirrors.s]
     [locals.s remotes.s]
   ::
