@@ -57,6 +57,10 @@ rec {
     inherit crossenv libusbp;
   };
 
+  avrdude = import ./pkgs/avrdude {
+    inherit crossenv;
+  };
+
   angle = import ./pkgs/angle {
     inherit crossenv gdb;
   };
