@@ -277,7 +277,7 @@
   :>  input if it fits or a default value if it doesn't.
   :>
   :>  examples: * @ud ,[p=time q=?(%a %b)]
-  _|=(* +<)
+  _|~(* +<)
 ::
 ++  pair
   :>    dual tuple
