@@ -70,6 +70,21 @@ def instantiate_drvs(paths)
   paths.zip(stdout_str.split.map(&:to_sym)).to_h
 end
 
+# We want there to be a one-to-one mapping between paths in the derivations.txt
+# list and derivations, so we can make a graph of dependencies of the
+# derivations and each derivation in the graph will have a unique path in the
+# derivations.txt list.
+def check_paths_are_unique!(path_drv_map)
+  set = Set.new
+  path_drv_map.each do |key, drv|
+    if set.include?(drv)
+      raise AnticipatedError, "The derivation #{key} is the same as " \
+        "other derivations in the list.  Maybe use the 'omni' namespace."
+    end
+    set << drv
+  end
+end
+
 def nix_db
   return $db if $db
   $db = SQLite3::Database.new '/nix/var/nix/db/db.sqlite', readonly: true
@@ -141,6 +156,7 @@ begin
   check_directory!
   settings = parse_derivation_list('test/derivations.txt')
   path_drv_map = instantiate_drvs(settings.fetch(:paths))
+  check_paths_are_unique!(path_drv_map)
   drvs = path_drv_map.values.uniq
   drv_built_map = get_build_status(drvs)
   global_drv_graph = get_drv_graph
