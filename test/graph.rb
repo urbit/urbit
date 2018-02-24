@@ -34,18 +34,18 @@ def depth_first_search_exclude_start(graph, start)
   end
 end
 
-def restricted_transitive_closure(graph, allowed_nodes)
-  tc = {}
-  allowed_nodes.each do |node|
-    next if !allowed_nodes.include?(node)
-    descendents = []
-    depth_first_search_exclude_start(graph, node) do |descendent|
-      next if !allowed_nodes.include?(descendent)
-      descendents << descendent
+def restricted_transitive_closure(graph, allowed)
+  rtc = {}
+  graph.each_key do |node|
+    next if !allowed.include?(node)
+    reached_nodes = []
+    depth_first_search_exclude_start(graph, node) do |reached_node|
+      next if !allowed.include?(reached_node)
+      reached_nodes << reached_node
     end
-    tc[node] = descendents
+    rtc[node] = reached_nodes
   end
-  tc
+  rtc
 end
 
 def transitive_reduction(graph)
