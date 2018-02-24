@@ -4,6 +4,7 @@
 :: reach up and get config file?
 /=  configs  /:  /===/web/collections
             /^  (map knot config:collections)  /_  /collections-config/
+:: this was a dumb way to do do this, clean up
 /=  extratopic  /^  {a=manx b=topicful:collections ~}  
        /%  
        /.    /&  elem 
@@ -18,36 +19,6 @@
        ==
 =/  config  (~(get by configs) +<:s.bem.gas)
 =,  old-zuse
-|%
-:: TODO this needs to be in the js
-++  esoo
-  |=  d/@d
-  ^-  tape
-  =/  t  (yore d)
-  ;:  welp
-      (scag 1 (scow %ud y.t))
-      (swag [2 3] (scow %ud y.t))
-      "-"
-      (double m.t)
-      "-"
-      (double d.t.t)
-      "T"
-      (double h.t.t)
-      ":"
-      (double m.t.t)
-      ":"
-      (double s.t.t)
-      "Z"
-  ==
-:: ud to leading zero tape
-++  double
-  |=  a/@ud
-  ^-  tape
-  =/  x  (scow %ud a)
-  ?:  (lth a 10)
-    (welp "0" x)
-  x
---
 ^-  manx
 ;div.post
   ;div.topic-info.mb-4
@@ -58,6 +29,7 @@
       ; {(trip (scot %da mod.info.b.extratopic))}
     ==
   ==
+  ::
   ;div#show
     ;div.row.tit
       ;h1: {(trip tit.info.b.extratopic)}
@@ -89,7 +61,7 @@
                     ::
                   |=  [c=@da d=[mod=@da who=@p wat=wain]]
                   ;li
-                    ;div.da.text-mono.ml-12(data-urb-elapsed "{(esoo mod.d)}");
+                    ;div.da.text-mono.ml-12(data-urb-elapsed "{(esoo:colls mod.d)}");
                     ;div.com.ml-12.mb-6
                       ;div.who.text-mono
                         ;a(href "")
