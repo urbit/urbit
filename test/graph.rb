@@ -17,15 +17,6 @@ def check_graph!(graph)
   end
 end
 
-def restrict_graph(graph, allowed_nodes)
-  rg = {}
-  graph.each do |node, nodes|
-    next if !allowed_nodes.include?(node)
-    rg[node] = nodes.select &allowed_nodes.method(:include?)
-  end
-  rg
-end
-
 def depth_first_search_exclude_start(graph, start)
   stack = [graph.fetch(start).to_enum]
   visited = Set.new
@@ -43,10 +34,16 @@ def depth_first_search_exclude_start(graph, start)
   end
 end
 
-def transitive_closure(graph)
+def restricted_transitive_closure(graph, allowed_nodes)
   tc = {}
-  graph.each_key do |node|
-    tc[node] = enum_for(:depth_first_search_exclude_start, graph, node).to_a
+  allowed_nodes.each do |node|
+    next if !allowed_nodes.include?(node)
+    descendents = []
+    depth_first_search_exclude_start(graph, node) do |descendent|
+      next if !allowed_nodes.include?(descendent)
+      descendents << descendent
+    end
+    tc[node] = descendents
   end
   tc
 end
