@@ -3,7 +3,7 @@
 let
   version = "2017-01-26";
 
-  name = "fixesproto";  # TODO: add -${version} (mass rebuild)
+  name = "fixesproto-${version}"
 
   src = crossenv.nixpkgs.fetchgit {
     url = "https://anongit.freedesktop.org/git/xorg/proto/fixesproto";
