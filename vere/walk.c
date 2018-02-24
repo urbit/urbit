@@ -107,16 +107,54 @@ u3_walk_load(c3_c* pas_c)
   }
 }
 
+/* _walk_mkdirp(): recursively make directories in pax at bas_c (RETAIN)
+*/
+static void
+_walk_mkdirp(c3_c* bas_c, u3_noun pax)
+{
+  c3_c* pax_c;
+  c3_y* waq_y;
+  c3_w  pax_w, fas_w, len_w;
+
+  if ( u3_nul == pax ) {
+    return;
+  }
+
+  pax_w = u3r_met(3, u3h(pax));
+  fas_w = strlen(bas_c);
+  len_w = 1 + fas_w + pax_w;
+
+  pax_c = c3_malloc(1 + len_w);
+  strncpy(pax_c, bas_c, len_w);
+  pax_c[fas_w] = '/';
+  waq_y = (void*)(1 + pax_c + fas_w);
+  u3r_bytes(0, pax_w, waq_y, u3h(pax));
+  pax_c[len_w] = '\0';
+
+  if ( 0 != mkdir(pax_c, 0755) && EEXIST != errno ) {
+    uL(fprintf(uH, "error mkdiring %s: %s\n", pax_c, strerror(errno)));
+    u3m_bail(c3__fail);
+  }
+
+  _walk_mkdirp(pax_c, u3t(pax));
+  free(pax_c);
+}
+
 /* u3_walk_save(): save file or bail.
 */
 void
-u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad)
+u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax)
 {
   c3_i  fid_i = open(pas_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
   c3_w  fln_w, rit_w;
   c3_y* pad_y;
 
   if ( fid_i < 0 ) {
+    if ( ENOENT == errno && u3_nul != pax ) {
+      _walk_mkdirp(bas_c, pax);
+      return u3_walk_save(pas_c, tim, pad, 0, u3_nul);
+    }
+
     uL(fprintf(uH, "%s: %s\n", pas_c, strerror(errno)));
     u3m_bail(c3__fail);
   }
@@ -125,6 +163,7 @@ u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad)
   pad_y = c3_malloc(fln_w);
   u3r_bytes(0, fln_w, pad_y, pad);
   u3z(pad);
+  u3z(pax);
 
   rit_w = write(fid_i, pad_y, fln_w);
   close(fid_i);
