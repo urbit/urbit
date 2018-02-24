@@ -114,10 +114,7 @@ END
 end
 
 def graph_restrict_nodes(graph, allowed_nodes)
-  check_graph!(graph)
-  puts "Making restricted transitive closure"
   graph = restricted_transitive_closure(graph, Set.new(allowed_nodes))
-  puts "Getting transitive reduction"
   transitive_reduction(graph)
 end
 

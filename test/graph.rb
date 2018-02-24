@@ -18,18 +18,17 @@ def check_graph!(graph)
 end
 
 def depth_first_search_exclude_start(graph, start)
-  stack = [graph.fetch(start).to_enum]
+  stack = [graph.fetch(start).to_a.reverse]
   visited = Set.new
   until stack.empty?
-    begin
-      node = stack.last.next
-    rescue StopIteration
+    node = stack.last.pop
+    if node.nil?
       stack.pop
       next
     end
     next if visited.include?(node)
     visited << node
-    stack << graph.fetch(node).to_enum
+    stack << graph.fetch(node).to_a.reverse
     yield node
   end
 end
