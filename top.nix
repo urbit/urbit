@@ -30,6 +30,11 @@ rec {
   armv6-linux-musl = pkgFun crossenvs.armv6-linux-musl;
   macos = pkgFun crossenvs.macos;
 
+  # omni is convenient name for packages that are used for cross-compiling but
+  # are actually the same on all platforms.  You can just refer to it by
+  # 'omni.package_name' instead of 'some_platform.package_name'.
+  omni = pkgFun { inherit native nixpkgs; };
+
   # Handy aliases.
   win32 = i686-w64-mingw32;
   win64 = x86_64-w64-mingw32;
