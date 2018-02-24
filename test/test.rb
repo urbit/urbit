@@ -152,6 +152,31 @@ def print_drv_stats(built_map)
   puts "Derivations built: #{built_count} out of #{built_map.size}"
 end
 
+def output_graphviz(path_graph, path_drv_map, drv_build_map)
+  subgraph_names = Set.new
+  path_graph.each_key do |path|
+    path_components = path.split('.')
+    name = path_components.first
+    subgraph_names << name if name
+  end
+
+  File.open('paths.gv', 'w') do |f|
+    f.puts "digraph {"
+    subgraph_names.sort.each do |subgraph_name|
+      f.puts "subgraph \"cluster_#{subgraph_name}\" {"
+      f.puts "label=\"#{subgraph_name}\";"
+      path_graph.each do |path, deps|
+        next if !path.start_with?("#{subgraph_name}.")
+        deps.each do |dep|
+          f.puts "\"#{path}\" -> \"#{dep}\""
+        end
+      end
+      f.puts "}"
+    end
+    f.puts "}"
+  end
+end
+
 begin
   check_directory!
   settings = parse_derivation_list('test/derivations.txt')
@@ -162,7 +187,8 @@ begin
   global_drv_graph = get_drv_graph
   drv_graph = graph_restrict_nodes(global_drv_graph, drvs)
   path_graph = graph_unmap(drv_graph, path_drv_map)
-  print_graph(path_graph)
+  output_graphviz(path_graph, path_drv_map, drv_built_map)
+  # print_graph(path_graph)
   print_drv_stats(drv_built_map)
 rescue AnticipatedError => e
   puts e
