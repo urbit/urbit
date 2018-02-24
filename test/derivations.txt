@@ -8,16 +8,16 @@ mac.clang
 
 # Packages
 {$windows}.angle{,.examples}
-{$all}.at-spi2-headers
-{$all}.dejavu-fonts
+omni.at-spi2-headers
+omni.dejavu-fonts
 {$windows}.devcon
 {$all}.expat
-{$all}.fixesproto
+omni.fixesproto
 {$windows}.gdb
 {$all}.hello
 {$all}.hello_cpp
-{$all}.inputproto
-{$all}.kbproto
+omni.inputproto
+omni.kbproto
 {$linux}.libudev
 {$all}.libusbp{,.examples}
 {$all}.libx11
@@ -35,16 +35,16 @@ mac.clang
 {$windows}.readline
 {$all}.tic
 {$windows}.usbview
-{$all}.xcb-proto
+omni.xcb-proto
 {$all}.xcb-util
 {$all}.xcb-util-image
 {$all}.xcb-util-keysyms
 {$all}.xcb-util-renderutil
 {$all}.xcb-util-wm
-{$all}.xextproto
-{$all}.xorg-macros
+omni.xextproto
+omni.xorg-macros
 {$all}.xproto
-{$all}.xtrans
+omni.xtrans
 {$all}.zlib
 
 # TODO: Test building the license_sets somehow too.

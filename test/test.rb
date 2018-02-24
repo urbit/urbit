@@ -67,7 +67,6 @@ def instantiate_drvs(paths)
     $stderr.puts stderr_str
     raise AnticipatedError, "Failed to instantiate derivations."
   end
-
   paths.zip(stdout_str.split.map(&:to_sym)).to_h
 end
 
@@ -118,6 +117,21 @@ def graph_restrict_nodes(graph, allowed_nodes)
   transitive_reduction(graph)
 end
 
+def graph_unmap(graph, map)
+  rmap = {}
+  map.each do |k, v|
+    raise "Mapping is not one-to-one: multiple items map to #{v}" if rmap.key?(v)
+    rmap[v] = k
+  end
+  gu = {}
+  graph.each do |parent, children|
+    gu[rmap.fetch(parent)] = children.map do |child|
+      rmap.fetch(child)
+    end
+  end
+  gu
+end
+
 def print_drv_stats(built_map)
   built_count = built_map.count { |drv, built| built }
   puts "Derivations built: #{built_count} out of #{built_map.size}"
@@ -131,7 +145,8 @@ begin
   drv_built_map = get_build_status(drvs)
   global_drv_graph = get_drv_graph
   drv_graph = graph_restrict_nodes(global_drv_graph, drvs)
-  print_graph(drv_graph)  # tmphax
+  path_graph = graph_unmap(drv_graph, path_drv_map)
+  print_graph(path_graph)
   print_drv_stats(drv_built_map)
 rescue AnticipatedError => e
   puts e
