@@ -68,7 +68,7 @@ def instantiate_drvs(paths)
     raise AnticipatedError, "Failed to instantiate derivations."
   end
 
-  paths.zip(stdout_str.split).to_h
+  paths.zip(stdout_str.split.map(&:to_sym)).to_h
 end
 
 def nix_db
@@ -105,6 +105,8 @@ join ValidPaths r2 on r2.id == reference
 where r1.path like '%.drv' and r2.path like '%.drv';
 END
   nix_db.execute(query) do |drv1, drv2|
+    drv1 = drv1.to_sym
+    drv2 = drv2.to_sym
     (map[drv1] ||= []) << drv2
     map[drv2] ||= []
   end
