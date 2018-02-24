@@ -531,10 +531,10 @@ u3t_print_steps(c3_c* cap_c, c3_d sep_d)
 void
 u3t_damp(void)
 {
-  fprintf(stderr, "\r\n");
-
   if ( 0 != u3R->pro.day ) {
     u3_noun wol = u3do("pi-tell", u3R->pro.day);
+
+    fprintf(stderr, "\r\n");
     u3_term_wall(wol);
 
     /* bunt a +doss
