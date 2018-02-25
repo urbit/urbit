@@ -4,9 +4,6 @@
 [submodule "subprojects/ed25519"]
 	path = subprojects/ed25519
 	url = https://github.com/mikolajpp/ed25519.git
-[submodule "subprojects/urbit-scrypt"]
-	path = subprojects/urbit-scrypt
-	url = https://github.com/mikolajpp/urbit-scrypt.git
 [submodule "subprojects/murmur3"]
 	path = subprojects/murmur3
 	url = https://github.com/mikolajpp/murmur3.git
@@ -16,3 +13,6 @@
 [submodule "subprojects/http-parser-legacy"]
 	path = subprojects/http-parser-legacy
 	url = https://github.com/mikolajpp/http-parser-legacy.git
+[submodule "subprojects/libscrypt"]
+	path = subprojects/libscrypt
+	url = git@github.com:mikolajpp/libscrypt.git
