@@ -10,9 +10,9 @@
 [submodule "subprojects/http-parser-legacy"]
 	path = subprojects/http-parser-legacy
 	url = https://github.com/mikolajpp/http-parser-legacy.git
-[submodule "subprojects/libscrypt"]
-	path = subprojects/libscrypt
-	url = git@github.com:mikolajpp/libscrypt.git
 [submodule "subprojects/ed25519"]
 	path = subprojects/ed25519
-	url = git@github.com:mikolajpp/ed25519.git
+	url = https://github.com/mikolajpp/ed25519-1.git
+[submodule "subprojects/libscrypt"]
+	path = subprojects/libscrypt
+	url = https://github.com/mikolajpp/libscrypt.git
