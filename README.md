@@ -16,13 +16,12 @@ If you're doing development on Urbit, keep reading.
 `vere`, the Urbit virtual machine, depends on the following:
 
 - C compiler ([gcc](https://gcc.gnu.org) or [clang](http://clang.llvm.org))
-- [GNU Make](https://www.gnu.org/software/make/)
+- [Meson](http://mesonbuild.com/)
 - [GMP](https://gmplib.org)
-- [CMake](https://cmake.org)
-- automake, autoconf, and libtool
 - [OpenSSL](https://www.openssl.org)
 - [libsigsegv](https://www.gnu.org/software/libsigsegv/)
 - [libcurl](https://curl.haxx.se/libcurl/)
+- [commonmark](commonmark.org/)
 - curses implementation (ncurses on Linux distributions, OS curses otherwise)
 - [Ragel](https://www.colm.net/open-source/ragel/)
 - [re2c](http://re2c.org)
@@ -34,16 +33,26 @@ for future unbundling or removal wherever possible.
 
 ## Building
 
-Our Makefile should handle the build smoothly on all supported platforms. It's
-just a simple Makefile, written by hand for GNU Make, and the most complicated
-parts of its internal machinery have to do with the varied build systems of the
-bundled libraries.
+Urbit uses Meson build system.
 
-Useful targets are the default `all`, `clean`, and `distclean`. The last may not
-produce an entirely clean distribution directory, and runs a bundled library's
-configure script; `git clean` may be a better option.
+Some libraries which are not found in major distributions:
+- ed25519
+- http-parser legacy version 0.1.0
+- murmur3
+- softfloat3
+- urbit-scrypt
+- commonmark legacy version 0.12.0
 
-The `vere` binary is produced in `bin/urbit`.
+are included as git submodules. To build urbit from source, perform the following steps:
+
+1. Install all required dependencies.
+2. `git submodule init` in the urbit repository
+3. `git submodule update`
+4. `meson build`
+5. If the last step was successful, type `cd ./build` followed by `ninja`
+   to compile urbit.
+6. The executable should appear in `./build` directory.
+
 
 ## Building the Debian Package
 
