@@ -135,7 +135,7 @@ _http_write_cb(uv_write_t* wri_u, c3_i sas_i)
 {
   _u3_write_t* ruq_u = (void *)wri_u;
 
-  if ( (u3C.wag_w & u3o_verbose) && 0 != sas_i && UV__EPIPE != sas_i ) {
+  if ( (u3C.wag_w & u3o_verbose) && 0 != sas_i && UV_EPIPE != sas_i ) {
     uL(fprintf(uH, "http: write: ERROR %d\n", sas_i));
     uL(fprintf(uH, "  (%s)\n", uv_strerror(sas_i)));
   }
