@@ -50,6 +50,7 @@ On macos, you need to make sure `pkg-config` uses the correct homebrew path.
  The `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/opt/openssl/lib/pkgconfig/`
  should setup the `pkg-config` path correctly, solving errors with homebrew package discovery (notably with `openssl` paths).
 
+## Configuration & compilation
 
 1. Install all required dependencies.
 2. `git submodule init` in the urbit repository
