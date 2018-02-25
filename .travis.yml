@@ -17,6 +17,7 @@ before_install:
   - ./configure --prefix=/usr
   - make
   - sudo make install
+  - cd ..
 install:
   - pip3 install --user meson
 
