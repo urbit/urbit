@@ -47,7 +47,7 @@ are included as git submodules. To build urbit from source, perform the followin
 
 ## MacOS specifics
 On macos, you need to make sure `pkg-config` uses the correct homebrew path.
- The `export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig/`
+ The `export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig/:$PKG_CONFIG_PATH`
  should setup the `pkg-config` path correctly, solving errors with homebrew package discovery (notably with `openssl` paths).
 
 ## Configuration & compilation
