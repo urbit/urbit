@@ -2,7 +2,7 @@
 **
 */
 #include "all.h"
-#include "softfloat.h"
+#include <softfloat.h>
 
 #define HALFNAN 0x7e00
 
@@ -151,8 +151,8 @@
 /* div
 */
   u3_noun
-  u3qes_div(u3_atom a, 
-            u3_atom b, 
+  u3qes_div(u3_atom a,
+            u3_atom b,
             u3_atom r)
   {
     union half c, d, e;
@@ -183,7 +183,7 @@
 /* sqt
 */
   u3_noun
-  u3qes_sqt(u3_atom a, 
+  u3qes_sqt(u3_atom a,
             u3_atom r)
   {
     union half c, d;
