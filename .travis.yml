@@ -1,10 +1,10 @@
 language: c
-script: make && make test # no ./configure
+script: meson build && cd ./build && ninja
 
 # Uncomment me if this gets annoying
 #
-# notifications: 
-#   email: false 
+# notifications:
+#   email: false
 
 addons:
   apt:
@@ -12,16 +12,12 @@ addons:
     - libgmp3-dev
     - libsigsegv-dev
     - openssl
+    - libuv-dev
     - libssl-dev
     - libncurses5-dev
-    - make
-    - exuberant-ctags
-    - automake
-    - autoconf
-    - libtool
+    - meson
     - g++
     - ragel
-    - cmake
     - re2c
     - libcurl4-gnutls-dev
     - python
