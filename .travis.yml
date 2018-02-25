@@ -7,7 +7,7 @@ script: meson build && cd ./build && ninja
 #   email: false
 
 install:
-  - pip install meson
+  - pip3 install meson
 
 addons:
   apt:
@@ -24,6 +24,7 @@ addons:
     - re2c
     - libcurl4-gnutls-dev
     - python3
+    - python3-pip
 # before_deploy: "make deb" # TODO
 deploy:
   skip_cleanup: true
