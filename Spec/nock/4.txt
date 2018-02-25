@@ -19,8 +19,8 @@ nock(a)             *a
 /a                  /a
 
 #[1 a b]            a
-#[(a + a) b c]      #[a [b /[(a + a + 1) c]]]
-#[(a + a + 1) b c]  #[a [/[(a + a) c] b]]
+#[(a + a) b c]      #[a [b /[(a + a + 1) c]] c]
+#[(a + a + 1) b c]  #[a [/[(a + a) c] b] c]
 #a                  #a
 
 *[a [b c] d]        [*[a b c] *[a d]]
