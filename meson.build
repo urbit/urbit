@@ -248,7 +248,7 @@ sigsegv_dep = meson.get_compiler('c').find_library('sigsegv')
 
 
 # For these libs we provide fallback bundle
-cmark_dep = dependency('libcmark', version: ['<0.13.0', '>=0.12.0'], fallback: ['commonmark-legacy', 'cmark_dep'])
+cmark_dep = dependency('libcmark', version: '0.12.0', fallback: ['commonmark-legacy', 'cmark_dep'])
 urbitscrypt_dep = dependency('urbit-scrypt', fallback: ['urbit-scrypt', 'urbit_scrypt_dep'])
 ed25519_dep = dependency('ed25519', fallback: ['ed25519', 'ed25519_dep'])
 murmur3_dep = dependency('murmur3', fallback: ['murmur3', 'murmur3_dep'])
