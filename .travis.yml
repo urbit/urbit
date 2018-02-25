@@ -16,7 +16,6 @@ before_install:
   - sh autogen.sh
   - ./configure --prefix=/usr
   - make
-  - make check
   - sudo make install
 install:
   - pip3 install --user meson
@@ -40,7 +39,6 @@ addons:
     - python3
     - python3-pip
     - unzip
-    - gyp
 # before_deploy: "make deb" # TODO
 deploy:
   skip_cleanup: true
