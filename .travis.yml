@@ -7,7 +7,7 @@ script: meson build && cd ./build && ninja
 #   email: false
 
 install:
-  - pip3 install meson
+  - pip install meson
 
 addons:
   apt:
