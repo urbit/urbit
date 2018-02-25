@@ -214,13 +214,28 @@ conf_data = configuration_data()
 conf_data.set('URBIT_VERSION', '"0.5.1"')
 
 osdet = build_machine.system()
+os_c_flags = []
+os_deps = []
+os_link_flags = []
 
 if osdet == 'linux'
   conf_data.set('U3_OS_linux', true)
+
+  pthread_dep = meson.get_compiler('c').find_library('pthread')
+  os_deps = os_deps + [pthread_dep]
+
 elif osdet == 'darwin'
   conf_data.set('U3_OS_osx', true)
+
+  os_c_flags = os_c_flags + ['-bind_at_load']
+  os_link_flags = ['-framework CoreServices', '-framework CoreFoundation']
+
 elif osdet == 'bsd'
   conf_data.set('U3_OS_bsd', true)
+
+  pthread_dep = meson.get_compiler('c').find_library('pthread')
+  kvm_dep = meson.get_compiler('c').find_library('kvm')
+  os_deps = os_deps + [kvm_dep, pthread_dep]
 else
   error('Unsupported OS detected:' + osdet)
 endif
@@ -259,6 +274,8 @@ softfloat3_dep = dependency('softfloat3', fallback: ['softfloat3', 'softfloat3_d
 executable('urbit',
 sources : sources,
 include_directories : incdir,
+c_flags : ['-O3'] + os_c_flags,
+link_args: os_link_flags,
 dependencies: [openssl_dep,
                curl_dep,
                libuv_dep,
@@ -270,5 +287,5 @@ dependencies: [openssl_dep,
                ed25519_dep,
                murmur3_dep,
                http_parser_dep,
-               softfloat3_dep],
+               softfloat3_dep] + os_deps,
 install: true)
