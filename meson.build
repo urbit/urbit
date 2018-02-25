@@ -231,7 +231,7 @@ elif osdet == 'darwin'
   os_c_flags = os_c_flags + ['-bind_at_load']
   os_link_flags = ['-framework CoreServices', '-framework CoreFoundation']
   ncurses_dep = meson.get_compiler('c').find_library('ncurses')
-  os_deps = os_deps + ncurses_dep
+  os_deps = os_deps + [ncurses_dep]
 
 elif osdet == 'bsd'
   conf_data.set('U3_OS_bsd', true)
