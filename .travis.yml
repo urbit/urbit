@@ -23,7 +23,6 @@ addons:
     - ragel
     - re2c
     - libcurl4-gnutls-dev
-    - meson
     - python
     - python3
 # before_deploy: "make deb" # TODO
