@@ -1,9 +1,6 @@
 [submodule "subprojects/softfloat3"]
 	path = subprojects/softfloat3
 	url = https://github.com/mikolajpp/berkeley-softfloat-3.git
-[submodule "subprojects/ed25519"]
-	path = subprojects/ed25519
-	url = https://github.com/mikolajpp/ed25519.git
 [submodule "subprojects/murmur3"]
 	path = subprojects/murmur3
 	url = https://github.com/mikolajpp/murmur3.git
@@ -16,3 +13,6 @@
 [submodule "subprojects/libscrypt"]
 	path = subprojects/libscrypt
 	url = git@github.com:mikolajpp/libscrypt.git
+[submodule "subprojects/ed25519"]
+	path = subprojects/ed25519
+	url = git@github.com:mikolajpp/ed25519.git
