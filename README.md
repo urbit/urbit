@@ -45,6 +45,12 @@ Some libraries which are not found in major distributions:
 
 are included as git submodules. To build urbit from source, perform the following steps:
 
+## MacOS specifics
+On macos, you need to make sure `pkg-config` uses the correct homebrew path.
+ The `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/opt/openssl/lib/pkgconfig/`
+ should setup the `pkg-config` path correctly, solving errors with homebrew package discovery (notably with `openssl` paths).
+
+
 1. Install all required dependencies.
 2. `git submodule init` in the urbit repository
 3. `git submodule update`
