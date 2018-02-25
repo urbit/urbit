@@ -223,9 +223,7 @@ if osdet == 'linux'
 
   pthread_dep = meson.get_compiler('c').find_library('pthread')
   ncurses_dep = dependency('ncurses')
-  openssl_dep = dependency('openssl', version: '>=1.0.0')
-
-  os_deps = os_deps + [pthread_dep, ncurses_dep, openssl_dep]
+  os_deps = os_deps + [pthread_dep, ncurses_dep]
 
 elif osdet == 'darwin'
   conf_data.set('U3_OS_osx', true)
@@ -242,9 +240,7 @@ elif osdet == 'bsd'
   pthread_dep = meson.get_compiler('c').find_library('pthread')
   kvm_dep = meson.get_compiler('c').find_library('kvm')
   ncurses_dep = dependency('ncurses')
-  openssl_dep = dependency('openssl', version: '>=1.0.0')
-
-  os_deps = os_deps + [kvm_dep, pthread_dep, ncurses_dep, openssl_dep]
+  os_deps = os_deps + [kvm_dep, pthread_dep, ncurses_dep]
 else
   error('Unsupported OS detected:' + osdet)
 endif
@@ -262,6 +258,7 @@ configure_file(input : 'include/config.h.in',
                configuration : conf_data)
 
 # We expect these libs to supplied with the distribution
+openssl_dep = dependency('openssl', version: '>=1.0.0')
 curl_dep = dependency('libcurl')
 libuv_dep = dependency('libuv')
 
@@ -290,7 +287,8 @@ sources : sources,
 include_directories : incdir,
 c_args : opt_flags + os_c_flags,
 link_args: os_link_flags,
-dependencies: [curl_dep,
+dependencies: [openssl_dep,
+               curl_dep,
                libuv_dep,
                cmark_dep,
                gmp_dep,
