@@ -222,7 +222,7 @@
     :>  if it doesn't, does nothing.
     ::
     |=  nom/name
-    |:  $:{fun/$-(_so _ta)}
+    |:  fun=^|(|:(so ta))
     ^+  +>+>
     =+  pur=(~(get by stories) nom)
     ?~  pur

@@ -5875,22 +5875,22 @@
           ::  $json                                     ::  json schema?
           ::  
           ==
-::::
+::
 ::  +block: abstract identity of resource awaited
 ::
 ++  block  
   path
-::::
+::
 ::  +result: internal interpreter result
 ::
 ++  result  
   $@(~ seminoun)
-::::
+::
 ::  +thunk: fragment constructor
 ::
 ++  thunk
   $-(@ud (unit noun))
-::::
+::
 ::  +seminoun: 
 ::
 ++  seminoun  
@@ -5898,31 +5898,36 @@
   ::
   $~  [[%full ~] ~]
   {mask/stencil data/noun}
-::::
+::
 ::  +stencil: noun knowledge map
 ::
 ++  stencil  
-  $%  ::  %half: noun has partial block substructure
+  $%  ::
+      ::  %half: noun has partial block substructure
       ::
       [%half left=stencil rite=stencil]
+      ::
       ::  %full: noun is either fully complete, or fully blocked
       ::
       [%full blocks=(set block)]
+      ::
       ::  %lazy: noun can be generated from virtual subtree
       ::  
       [%lazy fragment/axis resolve/thunk]
   == 
 ::
 ++  output
-  ::  null; interpreter stopped
+  ::  ~: interpreter stopped
   ::
   %-  unit
-  $%  ::  output is complete
+  $%  ::
+      ::  %done: output is complete
       ::
-      {$done p/noun}
-      ::  output is waiting for resources
+      [%done p/noun]
       ::
-      {$wait p/(list block)}
+      ::  %wait: output is waiting for resources
+      ::
+      [%wait p/(list block)]
   ==
 :: profiling
 ++  doss
@@ -6149,7 +6154,7 @@
     ::
     ::  9; invocation
     ::
-        {$9 b/* c/*}       
+        {$9 b/* c/*}
       ::  semantic expansion
       ::
       ?^  b.fol  ~
@@ -6159,7 +6164,19 @@
       ::  propagate stop
       ::
       ?~  one  ~
-      ::  complete call
+      ::  if core is constant
+      ::
+      ?:  ?=([[%full ~] *] one)
+        ::  then call virtual nock directly
+        ::
+        =+  (mack data.one [%9 b.fol %0 1])
+        ::  propagate stop
+        ::
+        ?~  -  ~
+        ::  produce result
+        ::
+        [[%full ~] u.-]
+      ::  else complete call
       ::
       %+  require
         ::  retrieve formula

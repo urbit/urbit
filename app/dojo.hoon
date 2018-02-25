@@ -593,6 +593,7 @@
       ::
       :>  the part of a {type} being inspected.
       ++  item
+        $~  [%view ~]
         $%  :>  overview of type
             {$view items/overview}
             :>  inspecting a full core.
@@ -1152,11 +1153,11 @@
       $?  hoon
           $^  {dy-shown dy-shown}
           $%  {$ur (unit knot) purl:eyre}
-              {$dv path}
               {$sa mark}
               {$as mark dy-shown}
               {$do hoon dy-shown}
               {$ge path (list dy-shown) (map term (unit dy-shown))}
+              {$dv path}
           ==
       ==
     ::

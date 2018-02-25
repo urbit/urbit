@@ -84,6 +84,7 @@
 ++  stat  (pair live dist)                              ::  external info
 ++  live  ?($cold $seen $live)                          ::  online status
 ++  dist                                                ::  allocation
+  $~  [%split ~]
   $%  {$free $~}                                        ::  unallocated
       {$owned p/mail}                                   ::  granted, status
       {$split p/(map ship stat)}                        ::  all given ships
