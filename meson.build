@@ -270,4 +270,5 @@ dependencies: [openssl_dep,
                ed25519_dep,
                murmur3_dep,
                http_parser_dep,
-               softfloat3_dep])
+               softfloat3_dep],
+install: true)
