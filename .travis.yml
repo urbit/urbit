@@ -5,10 +5,13 @@ script: meson build && cd ./build && ninja
 #
 # notifications:
 #   email: false
+python:
+  3.6
+
+install:
+  - pip install meson
 
 addons:
-  pip:
-    - meson
   apt:
     packages:
     - libgmp3-dev
