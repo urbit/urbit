@@ -223,8 +223,7 @@ if osdet == 'linux'
 
   pthread_dep = meson.get_compiler('c').find_library('pthread')
   ncurses_dep = dependency('ncurses')
-
-  os_deps = os_deps + [pthread_dep, ncurses]
+  os_deps = os_deps + [pthread_dep, ncurses_dep]
 
 elif osdet == 'darwin'
   conf_data.set('U3_OS_osx', true)
