@@ -271,10 +271,17 @@ http_parser_dep = dependency('http-parser', version: '0.1.0', fallback: ['http-p
 softfloat3_dep = dependency('softfloat3', fallback: ['softfloat3', 'softfloat3_dep'])
 
 
+opt_flags = []
+if get_option('debug')
+  opt_flags = ['-g']
+else
+  opt_flags = ['-O3']
+endif
+
 executable('urbit',
 sources : sources,
 include_directories : incdir,
-c_flags : ['-O3'] + os_c_flags,
+c_flags : opt_flags + os_c_flags,
 link_args: os_link_flags,
 dependencies: [openssl_dep,
                curl_dep,
