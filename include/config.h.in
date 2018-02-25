@@ -1,0 +1,13 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#mesondefine URBIT_VERSION
+
+#mesondefine U3_OS_linux
+#mesondefine U3_OS_bsd
+#mesondefine U3_OS_osx
+
+#mesondefine U3_OS_ENDIAN_little
+#mesondefine U3_OS_ENDIAN_big
+
+#endif /*CONFIG_H*/
