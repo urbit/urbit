@@ -281,7 +281,7 @@ endif
 executable('urbit',
 sources : sources,
 include_directories : incdir,
-c_flags : opt_flags + os_c_flags,
+c_args : opt_flags + os_c_flags,
 link_args: os_link_flags,
 dependencies: [openssl_dep,
                curl_dep,
