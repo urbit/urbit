@@ -5489,14 +5489,14 @@
   :: =.  p.ton  (moop p.ton)
   =+  yel=(lent p.ton)
   =.  p.ton
-    ?.  (gth yel 256)  p.ton
+    ?.  (gth yel 1.024)  p.ton
     %+  weld
-      (scag 128 p.ton)
+      (scag 512 p.ton)
     ^-  (list {@ta *})
-    :_  (slag (sub yel 128) p.ton)
+    :_  (slag (sub yel 512) p.ton)
     :-  %lose
     %+  rap  3
-    "[skipped {(scow %ud (sub yel 256))} frames]"
+    "[skipped {(scow %ud (sub yel 1.024))} frames]"
   |-  ^-  (list tank)
   ?~  p.ton  ~
   =+  rep=$(p.ton t.p.ton)
@@ -5626,7 +5626,7 @@
               {$leaf p/term q/@}                        ::  constant atom
               {$plow p/what q/crib}                     ::  apply help
               {$reed p/crib q/crib}                     ::  atom+cell
-              {$tupl p/{i/crib t/(list crib)}}      ::  aka row
+              {$tupl p/{i/crib t/(list crib)}}          ::  aka row
               {$vine p/crib q/crib}                     ::  pair+tag
               {$weed p/hoon}                            ::  example
           ==                                            ::
@@ -6246,7 +6246,7 @@
       $lazy  ::  fragment 1 is the whole thing
              ::
              ?:  =(1 fragment.mask.bus)
-               ::  blocked; otherwise, an
+               ::  blocked; we can't get fragment 1 while compiling it
                ::
                [[%full [~ ~ ~]] ~]
              ::  execute thunk
@@ -6637,7 +6637,7 @@
   ++  wtts  |=(gen/hoon (gray [%wtts (blue gen) puce]))
   --
 ::
-++  ax
+++  ax  !:
   =+  :*  ::  dom: axis to home
           ::  doc: documentation
           ::  bug: debug annotations
@@ -9138,7 +9138,6 @@
     =-  :_  [%1 dez]
         (core sut mel sut wad [[%full ~] dez] dom)
     ^=  dez
-    =+  foo=(laze wad dom)
     =.  sut  
       ?:  |
         (core sut %gold sut wad *seminoun dom)

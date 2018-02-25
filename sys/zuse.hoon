@@ -29,6 +29,7 @@
 ::  it's important to keep %zuse minimal.  models and
 ::  engines not used outside a vane should stay inside
 ::  that vane.
+!:
 ~%  %zuse  +>  ~
 =>
 ::                                                      ::  ::
@@ -372,6 +373,7 @@
     ::
   ++  aeon  @ud                                         ::  version number
   ++  ankh                                              ::  fs node (new)
+    $~  [~ ~]
     $:  fil/(unit {p/lobe q/cage})                      ::  file
         dir/(map @ta ankh)                              ::  folders
     ==                                                  ::
@@ -404,6 +406,7 @@
         $meld                                           ::  force merge
     ==                                                  ::
   ++  khan                                              ::
+    $~  [~ ~]
     $:  fil/(unit (unit cage))                          ::  see ++khan-to-soba
         dir/(unit (map @ta (unit khan)))                ::
     ==                                                  ::

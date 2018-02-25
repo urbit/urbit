@@ -1788,6 +1788,7 @@
         ==
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<- +<+))
+    ++  boss  +>
     ++  execute  
       |=({a/whir-se b/{beak silk:ford}} (execute:abet se+[a usr dom] b))
     ++  dead-this  |=(a/tang (fail:abet 500 0v0 a))
@@ -1938,13 +1939,13 @@
     ++  do-give  (with !>(|=({$give a/httr} a)) fin-httr)
     ++  do-show  (with !>(auth-print) _abet)
     ++  do-send
-      |=  wir/whir-se  ^-  $-(vase _abet)
+      |=  wir/whir-se  ^-  $-(vase _boss)
       |=  res/vase
       =.  liv  |  :: block requests until a reponse is given
       (eyre-them wir (slam !>(|=({$send a/hiss} a)) res))
     ::
     ++  handle-moves
-      |=  a/(list {p/term q/$-(vase _abet)})
+      |=  a/(list {p/term q/$-(vase _boss)})
       |=  b/vase
       ~>  %nil.
         ~|  %bad-sec-move  :: XX move ~| into ?> properly
@@ -1957,12 +1958,12 @@
       $(a t.a)
     ::
     ++  on-ford-fail
-      |:  $:{err/$-(tang _abet) try/$-((each cage tang) _abet)}
+      |:  $:{err/$-(tang _boss) try/$-((each cage tang) _boss)}
       |=  a/(each cage tang)  ^+  abet
       ?-(-.a $| (err p.a), $& (try a))
     ::
     ++  on-error
-      |:  $:{err/$-(tang _abet) handle-move/_|.(|~(vase abet))}
+      |:  $:{err/$-(tang _boss) handle-move/_|.(|~(vase abet))}
       |=  a/(each cage tang)  ^+  abet
       =+  try=(possibly-stateful |:(b=self (handle-move(+ b))))  :: XX types
       ?:  ?=($| -.a)  (err p.a)
@@ -1970,7 +1971,7 @@
       (mule |.(~|(driver+dom ~|(bad-res+p.q.p.a (try q.p.a)))))
     ::
     ++  possibly-stateful
-      |:  $:{han/$-(_self $-(vase _abet))}  :: XX |.(|+(vase abet))
+      |:  $:{han/$-(_self $-(vase _boss))}  :: XX |.(|+(vase abet))
       |=  res/vase  ^+  abet
       ?:  ?=({@ *} q.res)
         =.  p.res  (~(fuse ut p.res) p:!>(*{@ *}))
