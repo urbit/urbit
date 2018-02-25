@@ -257,7 +257,7 @@ configure_file(input : 'include/config.h.in',
                configuration : conf_data)
 
 # We expect these libs to supplied with the distribution
-openssl_dep = dependency('openssl')
+openssl_dep = dependency('openssl', version: '>=1.0.0')
 curl_dep = dependency('libcurl')
 libuv_dep = dependency('libuv')
 
