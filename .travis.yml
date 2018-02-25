@@ -7,6 +7,8 @@ script: meson build && cd ./build && ninja
 #   email: false
 
 addons:
+  pip:
+    - meson
   apt:
     packages:
     - libgmp3-dev
@@ -15,7 +17,7 @@ addons:
     - libuv-dev
     - libssl-dev
     - libncurses5-dev
-    - meson
+    - ninja-build
     - g++
     - ragel
     - re2c
