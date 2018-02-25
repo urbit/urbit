@@ -222,20 +222,25 @@ if osdet == 'linux'
   conf_data.set('U3_OS_linux', true)
 
   pthread_dep = meson.get_compiler('c').find_library('pthread')
-  os_deps = os_deps + [pthread_dep]
+  ncurses_dep = dependency('ncurses')
+
+  os_deps = os_deps + [pthread_dep, ncurses]
 
 elif osdet == 'darwin'
   conf_data.set('U3_OS_osx', true)
 
   os_c_flags = os_c_flags + ['-bind_at_load']
   os_link_flags = ['-framework CoreServices', '-framework CoreFoundation']
+  ncurses_dep = meson.get_compiler('c').find_library('ncurses')
+  os_deps = os_deps + ncurses_dep
 
 elif osdet == 'bsd'
   conf_data.set('U3_OS_bsd', true)
 
   pthread_dep = meson.get_compiler('c').find_library('pthread')
   kvm_dep = meson.get_compiler('c').find_library('kvm')
-  os_deps = os_deps + [kvm_dep, pthread_dep]
+  ncurses_dep = dependency('ncurses')
+  os_deps = os_deps + [kvm_dep, pthread_dep, ncurses_dep]
 else
   error('Unsupported OS detected:' + osdet)
 endif
@@ -256,7 +261,6 @@ configure_file(input : 'include/config.h.in',
 openssl_dep = dependency('openssl')
 curl_dep = dependency('libcurl')
 libuv_dep = dependency('libuv')
-ncurses_dep = dependency('ncurses')
 
 gmp_dep = meson.get_compiler('c').find_library('gmp')
 sigsegv_dep = meson.get_compiler('c').find_library('sigsegv')
@@ -287,7 +291,6 @@ dependencies: [openssl_dep,
                curl_dep,
                libuv_dep,
                cmark_dep,
-               ncurses_dep,
                gmp_dep,
                sigsegv_dep,
                urbitscrypt_dep,
