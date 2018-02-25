@@ -19,7 +19,7 @@ addons:
     - libgmp3-dev
     - libsigsegv-dev
     - openssl
-    - libuv-dev
+    - libuv1-dev
     - libssl-dev
     - libncurses5-dev
     - g++
