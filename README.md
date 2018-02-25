@@ -21,7 +21,7 @@ If you're doing development on Urbit, keep reading.
 - [OpenSSL](https://www.openssl.org)
 - [libsigsegv](https://www.gnu.org/software/libsigsegv/)
 - [libcurl](https://curl.haxx.se/libcurl/)
-- [commonmark](commonmark.org/)
+- [libuv](http://libuv.org)
 - curses implementation (ncurses on Linux distributions, OS curses otherwise)
 - [Ragel](https://www.colm.net/open-source/ragel/)
 - [re2c](http://re2c.org)
@@ -53,6 +53,18 @@ are included as git submodules. To build urbit from source, perform the followin
    to compile urbit.
 6. The executable should appear in `./build` directory.
 
+## Using meson & ninja
+
+To configure project, enter the build directory and user
+`meson configure`. Without any arguments this command will display available
+options. For example, to compile debug build of urbit, use
+`meson configure -Ddebug=true`.
+To set the prefix for installation use
+`meson configure -Dprefix=/usr`, and so on.
+
+Once the project is configured, use `ninja` to build it.
+To install it into the default prefix, use `ninja install`.
+If you want to specify custom `DESTDIR`, use `DESTDIR=... ninja install`.
 
 ## Building the Debian Package
 
