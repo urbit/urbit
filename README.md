@@ -32,7 +32,6 @@ Packages collection (Nixpkgs)][nixpkgs].
   - pkg-config (as implemented by [pkgconf](https://github.com/pkgconf/pkgconf))
   - [GNU Bash](https://www.gnu.org/software/bash/)
   - [Ruby](https://www.ruby-lang.org/)
-  - [GDB](https://www.gnu.org/software/gdb/)
 - Notable supported libraries:
   - [Qt](https://www.qt.io/) 5.9.2
   - [libusbp](https://github.com/pololu/libusbp)
