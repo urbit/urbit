@@ -18,7 +18,7 @@
       ==
 ::
 ::::
-  ::
+  ::  
 =,  hall
 =>  :>  #
     :>  #  %arch
@@ -247,7 +247,7 @@
           :~  [%mailbox %inbox 'default home']
               [%journal %public 'visible activity']
           ==
-        |:  $:{{typ/security nom/name des/cord} _ta}
+        |:  [[typ=*security nom=*name des=*cord] ta]
         (ta-action [%create nom des typ])
     %-  ta-deltas
     ::  if needed, subscribe to our parent's /burden.

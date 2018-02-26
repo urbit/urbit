@@ -429,8 +429,9 @@
               ==                                        ::
           ==                                            ::
 ++  tanq                                                ::  tomorrow's tank
-          $?  {~ p/(list tanq)}                        ::  list of printables
-              {~ ~ p/tape}                            ::  simple string
+          $~  [~ ~]
+          $?  {~ p/(list tanq)}                         ::  list of printables
+              {~ ~ p/tape}                              ::  simple string
               (pair @tas tanq)                          ::  captioned
           ==                                            ::
 ++  tape  (list @tD)                                    ::  UTF8 string as list
@@ -5643,6 +5644,7 @@
       ==                                                ::
   (pair tope tope)                                      ::  cell
 ++  tuna                                                ::  tagflow
+          $~  [%f ~]
           $%  {$a p/hoon}                               ::  plain text
               {$b p/hoon}                               ::  single tag
               {$c p/hoon}                               ::  simple list
@@ -5650,7 +5652,7 @@
               {$e p/hoon q/(list tuna)}                 ::  element
               {$f p/(list tuna)}                        ::  subflow
           ==                                            ::
-++  hoon-models
+++  hoon-structures
   |%                                                ::REVIEW
   ++  beer  $@(char {~ p/hoon})                    ::  simple embed
   ++  mane  $@(@tas {@tas @tas})                    ::  XML name+space
@@ -5661,10 +5663,15 @@
   ++  mare  (each manx marl)                        ::  node or nodes
   ++  maru  (each tuna marl)                        ::  interp or nodes
   ++  tuna                                          ::  maybe interpolation
-      $^(manx {?($tape $manx $marl $call) p/hoon})  ::
+      $~  [[%$ ~] ~]
+      $^  manx 
+      $:  ?($tape $manx $marl $call) 
+          p/hoon
+      ==
   --                                                ::
 ++  hoon                                                ::
-  =,  hoon-models
+  =,  hoon-structures
+  $~  [%zpzp ~]
   $^  {p/hoon q/hoon}                                   ::
   $%                                                    ::
     {$$ p/axis}                                         ::  simple leg
@@ -5844,6 +5851,7 @@
           ==                                            ::
 ++  tool  $@(term tune)                                 ::  type decoration
 ++  tune                                                ::  complex
+          $~  [~ ~]                                     ::
           $:  p/(map term (pair what (unit hoon)))      ::  aliases
               q/(list hoon)                             ::  bridges
           ==                                            ::
@@ -7107,7 +7115,8 @@
           ?:  =(2 tow) 
             [%bust %cell] 
           [[%bust %noun] $(tow (dec tow))]
-        ?:  fab
+        ::  ?:  fab
+        ?:  &
           ::  luz: subject edited to inject default
           ::
           =/  luz/hoon  
@@ -8279,23 +8288,23 @@
     ?~  jon
       ?:  fab
         [p.pro [%10 [%live %1 %constant-stop] q.pro]]
-      [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
-      ::  ~_  (dunk '%constant-blocked-type')
-      ::  ~|  [%constant-stopped-gene gen]
-      ::  ~|  [%constant-stopped-mask mask.bus]
-      ::  ~|  [%constant-stopped-formula `@p`(mug q.pro) q.pro]
-      ::  ~|  %constant-folding-stopped
-      ::  !!
+      ::  [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
+      ~_  (dunk '%constant-blocked-type')
+      ~|  [%constant-stopped-gene gen]
+      ~|  [%constant-stopped-mask mask.bus]
+      ~|  [%constant-stopped-formula `@p`(mug q.pro) q.pro]
+      ~|  %constant-folding-stopped
+      !!
     ?:  ?=($wait -.u.jon)
       ?:  fab
         [p.pro [%10 [%live %1 %constant-block] q.pro]]
-      [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
-      ::  ~_  (dunk '%constant-blocked-type')
-      ::  ~|  [%constant-blocked-gene gen]
-      ::  ~|  [%constant-blocked-mask mask.bus]
-      ::  ~|  [%constant-blocked-formula `@p`(mug q.pro) q.pro]
-      ::  ~|  %constant-folding-blocked
-      ::  !!
+      ::  [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
+      ~_  (dunk '%constant-blocked-type')
+      ~|  [%constant-blocked-gene gen]
+      ~|  [%constant-blocked-mask mask.bus]
+      ~|  [%constant-blocked-formula `@p`(mug q.pro) q.pro]
+      ~|  %constant-folding-blocked
+      !!
     ::  [p.pro [%10 [%live %1 %constant-nonblocked] %1 p.u.jon]]
     [p.pro %1 p.u.jon]
   ::
