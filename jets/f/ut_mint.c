@@ -50,6 +50,15 @@
   }
 
   static u3_noun
+  _mint_burp(u3_noun van,
+             u3_noun sut)
+  {
+    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+
+    return u3j_hook(von, "burp");
+  }
+
+  static u3_noun
   _mint_cond(u3_noun pex,
              u3_noun yom,
              u3_noun woq)
@@ -768,7 +777,8 @@
         u3_noun zur   = u3qfu_play(van, sut, p_gen);
         u3_noun p_vos = u3h(vos);
         u3_noun q_vos = u3t(vos);
-        u3_noun waz   = u3nc(1, u3k(p_vos));
+        u3_noun waz   = u3nc(1, _mint_burp(van, p_vos));
+        //  u3_noun waz   = u3nc(1, u3k(p_vos));
         u3_noun sif   = u3k(zur);
         u3_noun cig   = u3qf_cell(sif, p_vos);
         u3_noun ret;
