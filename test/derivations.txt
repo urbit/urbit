@@ -9,6 +9,7 @@ mac.clang
 # Packages
 {$windows}.angle{,.examples}
 omni.at-spi2-headers
+omni.avrdude
 omni.dejavu-fonts
 {$windows}.devcon
 {$all}.expat
