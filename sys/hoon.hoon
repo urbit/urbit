@@ -7115,8 +7115,7 @@
           ?:  =(2 tow) 
             [%bust %cell] 
           [[%bust %noun] $(tow (dec tow))]
-        ::  ?:  fab
-        ?:  &
+        ?:  fab
           ::  luz: subject edited to inject default
           ::
           =/  luz/hoon  
@@ -8235,6 +8234,7 @@
       %vet    vet
       %fab    fab
       %blow   blow
+      %burp   burp
       %burn   burn
       %busk   busk
       %buss   buss
@@ -8288,23 +8288,23 @@
     ?~  jon
       ?:  fab
         [p.pro [%10 [%live %1 %constant-stop] q.pro]]
-      ::  [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
-      ~_  (dunk '%constant-blocked-type')
-      ~|  [%constant-stopped-gene gen]
-      ~|  [%constant-stopped-mask mask.bus]
-      ~|  [%constant-stopped-formula `@p`(mug q.pro) q.pro]
-      ~|  %constant-folding-stopped
-      !!
+      [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
+      ::  ~_  (dunk '%constant-blocked-type')
+      ::  ~|  [%constant-stopped-gene gen]
+      ::  ~|  [%constant-stopped-mask mask.bus]
+      ::  ~|  [%constant-stopped-formula `@p`(mug q.pro) q.pro]
+      ::  ~|  %constant-folding-stopped
+      ::  !!
     ?:  ?=($wait -.u.jon)
       ?:  fab
         [p.pro [%10 [%live %1 %constant-block] q.pro]]
-      ::  [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
-      ~_  (dunk '%constant-blocked-type')
-      ~|  [%constant-blocked-gene gen]
-      ~|  [%constant-blocked-mask mask.bus]
-      ~|  [%constant-blocked-formula `@p`(mug q.pro) q.pro]
-      ~|  %constant-folding-blocked
-      !!
+      [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
+      ::  ~_  (dunk '%constant-blocked-type')
+      ::  ~|  [%constant-blocked-gene gen]
+      ::  ~|  [%constant-blocked-mask mask.bus]
+      ::  ~|  [%constant-blocked-formula `@p`(mug q.pro) q.pro]
+      ::  ~|  %constant-folding-blocked
+      ::  !!
     ::  [p.pro [%10 [%live %1 %constant-nonblocked] %1 p.u.jon]]
     [p.pro %1 p.u.jon]
   ::
@@ -8342,6 +8342,30 @@
       {$hold *}  ?:  (~(has in gil) sut)
                    [full/[~ ~ ~] ~]
                  $(sut repo, gil (~(put in gil) sut))
+    ==
+  ::
+  ++  burp
+    ::  expel undigested seminouns
+    ::
+    ^-  type
+    ~+
+    ~=  sut
+    ?+  sut      sut
+      [%cell *]  [%cell burp(sut p.sut) burp(sut q.sut)]
+      [%core *]  :+  %core
+                   burp(sut p.sut)
+                 :*  p.q.sut
+                     burp(sut q.q.sut)
+                     r.q.sut
+                     :_  q.s.q.sut
+                     ?:  ?=([[%full ~] *] p.s.q.sut)
+                       p.s.q.sut
+                     [[%full ~ ~ ~] ~]
+                  ==
+      [%face *]  [%face p.sut burp(sut q.sut)]
+      [%fork *]  [%fork (~(run in p.sut) |=(type burp(sut +<)))]
+      [%help *]  [%help p.sut burp(sut q.sut)]
+      [%hold *]  [%hold burp(sut p.sut) q.sut]
     ==
   ::
   ++  busk
@@ -9317,13 +9341,13 @@
       =+  vos=$(gol %noun, gen q.gen)
       =+  ref=p:$(gol %noun, gen p.gen)
       ?>  (~(nest ut p:!>(*type)) & ref)
-      [(nice (cell ref p.vos)) (cons [%1 p.vos] q.vos)]
+      [(nice (cell ref p.vos)) (cons [%1 burp(sut p.vos)] q.vos)]
     ::
         {$zpgr *}
       =+  vat=$(gen p.gen)
       %=    $
           gen
-        :-  [%cnhp [%limb %onan] [%hand p:!>(*type) [%1 p.vat]] ~]
+        :-  [%cnhp [%limb %onan] [%hand p:!>(*type) [%1 burp(sut p.vat)]] ~]
         [%hand p.vat q.vat]
       ==
     ::
