@@ -258,7 +258,7 @@ configure_file(input : 'include/config.h.in',
 
 # We expect these libs to supplied with the distribution
 openssl_dep = dependency('openssl', version: '>=1.0.0')
-curl_dep = dependency('libcurl', version: '>=7.47.0')
+curl_dep = dependency('libcurl', version: '>=7.35.0')
 libuv_dep = dependency('libuv', version: '>=1.8.0')
 
 gmp_dep = meson.get_compiler('c').find_library('gmp')
