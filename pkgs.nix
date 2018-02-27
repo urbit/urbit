@@ -50,8 +50,6 @@ rec {
   libusbp = import ./pkgs/libusbp {
     inherit crossenv libudev;
   };
-  libusbp_examples = libusbp.examples;
-  libusbp_license_fragment = libusbp.license_fragment;
 
   p-load = import ./pkgs/p-load {
     inherit crossenv libusbp;
@@ -165,8 +163,6 @@ rec {
   qt = import ./pkgs/qt {
     inherit crossenv libudev libxall at-spi2-headers dejavu-fonts;
   };
-  qt_examples = qt.examples;
-  qt_license_fragment = qt.license_fragment;
 
   open-zwave = import ./pkgs/open-zwave {
     inherit crossenv;
