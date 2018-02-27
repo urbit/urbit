@@ -363,6 +363,7 @@ module.exports = recl({
           key: "speech"
         }, url);
       case !exp:
+        exp.res = exp.res || ["evaluating..."];
         return div({}, exp.exp, div({
           className: "fat"
         }, pre({}, exp.res.join("\n"))));
@@ -865,7 +866,7 @@ module.exports = recl({
     return indexOf.call(src, s) < 0 && indexOf.call(s, "/") >= 0 && s[0] === "~" && s.length >= 5;
   },
   onKeyUp: function(e) {
-    var $input, v;
+    var $input, d, v;
     $('.menu.depth-1 .add').removeClass('valid-false');
     if (e.keyCode === 13) {
       $input = $(e.target);
@@ -874,6 +875,8 @@ module.exports = recl({
         v = "~" + v;
       }
       if (this.validateSource(v)) {
+        d = new Date(new Date() - 24 * 3600 * 1000);
+        v = v + "/" + window.urb.util.toDate(d);
         StationActions.addSources(this.state.station, [v]);
         $input.val('');
         return $input.blur();
@@ -1212,7 +1215,7 @@ module.exports = recl({
       return;
     }
     if (this.props['audience-lock'] != null) {
-      audi = _.union(audi, ["~" + window.urb.ship + "/" + this.props.station]);
+      audi = ["~" + window.urb.ship + "/" + this.props.station];
     }
     audi = this.addCC(audi);
     txt = this.$message.text().trim().replace(/\xa0/g, ' ');
@@ -1351,6 +1354,9 @@ module.exports = recl({
     if (valid === true) {
       stan = $('#audience .input').text() || util.mainStationPath(window.urb.user);
       stan = (stan.split(/\ +/)).map(function(v) {
+        if (v.indexOf("/") === -1) {
+          v = v + "/inbox";
+        }
         if (v[0] === "~") {
           return v;
         } else {
@@ -1542,17 +1548,11 @@ TreeActions.registerComponent("talk-station", StationComponent);
 
 
 },{"./actions/StationActions.coffee":2,"./components/MessageListComponent.coffee":6,"./components/StationComponent.coffee":7,"./components/WritingComponent.coffee":8,"./util.coffee":15}],11:[function(require,module,exports){
-var send, util;
+var util;
 
 util = require('../util.coffee');
 
 window.urb.appl = "hall";
-
-send = function(data, cb) {
-  return window.urb.send(data, {
-    mark: "hall-action"
-  }, cb);
-};
 
 module.exports = function(arg) {
   var MessageActions;
@@ -1624,15 +1624,31 @@ module.exports = function(arg) {
       });
     },
     sendMessage: function(message, cb) {
-      return send({
-        convey: [message]
-      }, function(err, res) {
-        console.log('sent');
-        console.log(arguments);
-        if (cb) {
-          return cb(err, res);
-        }
-      });
+      if (window.urb.user === window.urb.ship) {
+        return window.urb.send({
+          convey: [message]
+        }, {
+          mark: "hall-action"
+        }, function(err, res) {
+          console.log('sent local');
+          console.log(arguments);
+          if (cb) {
+            return cb(err, res);
+          }
+        });
+      } else {
+        return window.urb.send({
+          publish: [message]
+        }, {
+          mark: "hall-command"
+        }, function(err, res) {
+          console.log('sent remote');
+          console.log(arguments);
+          if (cb) {
+            return cb(err, res);
+          }
+        });
+      }
     }
   };
 };

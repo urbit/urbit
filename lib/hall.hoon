@@ -44,6 +44,19 @@
   ^-  {serial _eny.bol}
   [(shaf %serial eny.bol) (shax eny.bol)]
 ::
+::TODO  add to zuse?
+++  simple-wrap
+  |=  {txt/tape wyd/@ud}
+  ^-  (list tape)
+  ?~  txt  ~
+  =+  ^-  {end/@ud nex/?}
+    ?:  (lte (lent txt) wyd)  [(lent txt) &]
+    =+  ace=(find " " (flop (scag +(wyd) `tape`txt)))
+    ?~  ace  [wyd |]
+    [(sub wyd u.ace) &]
+  :-  (tufa (scag end `(list @)`txt))
+  $(txt (slag ?:(nex +(end) end) `tape`txt))
+::
 ++  range-to-path
   :>    msg range to path
   :>
@@ -113,6 +126,15 @@
     $caption  cof(cap cap.dif)
     $filter   cof(fit fit.dif)
     $remove   cof
+  ::
+      $usage
+    %=  cof
+        tag
+      %.  tas.dif
+      ?:  add.dif
+        ~(uni in tag.cof)
+      ~(dif in tag.cof)
+    ==
   ::
       $source
     %=  cof

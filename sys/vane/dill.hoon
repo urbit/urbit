@@ -7,15 +7,9 @@
 ++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
 =>  |%                                                  ::  console protocol
-++  all-axle  ?(old-axle axle)                          ::
-++  old-axle                                            ::  all dill state
-  $:  $2                                                ::
-      ore/(unit ship)                                   ::  identity once set
-      hey/(unit duct)                                   ::  default duct
-      dug/(map duct axon)                               ::  conversations
-  ==                                                    ::
+++  all-axle  ?(axle)                                   ::
 ++  axle                                                ::
-  $:  $3                                                ::
+  $:  $0                                                ::
       ore/(unit ship)                                   ::  identity once set
       hey/(unit duct)                                   ::  default duct
       dug/(map duct axon)                               ::  conversations
@@ -47,7 +41,8 @@
   ==                                                    ::
 ++  note-clay                                           ::
   $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:clay}::  merge desks
-      {$warp p/sock q/riff:clay}                       ::  wait for clay hack
+      {$warp p/sock q/riff:clay}                        ::  wait for clay hack
+      {$perm p/ship q/desk r/path s/rite:clay}          ::  change permissions
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  {$crud p/@tas q/(list tank)}                      ::
@@ -79,6 +74,7 @@
   $%  {$mere p/(each (set path) (pair term tang))}      ::
       {$note p/@tD q/tank}                              ::
       {$writ p/riot:clay}                               ::
+      {$mack p/(unit tang)}                             ::
   ==                                                    ::
 ++  sign-dill                                           ::
   $%  {$blit p/(list blit)}                             ::
@@ -280,7 +276,8 @@
                   (sync %home our %base)
                 (init-sync %home our %base)
         =.  +>  ?.  ?=(?($duke $king $czar) can)  +>
-                (sync %kids our %base)
+                ::  make kids desk publicly readable, so syncs work.
+                (show %kids):(sync %kids our %base)
         =.  +>  autoload
         =.  +>  peer
         |-  ^+  +>+
@@ -314,6 +311,16 @@
         %_    .
             moz
           :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum])
+        ==
+      ::
+      ++  show                                          ::  permit reads on desk
+        |=  des/desk
+        %_    +>.$
+            moz
+          :_  moz
+          :*  hen  %pass  /show  %c  %perm  our
+              des  /  r+`[%black ~]
+          ==
         ==
       ::
       ++  sync
@@ -396,6 +403,10 @@
         ::
             {$c $writ *}
           init
+        ::
+            {$c $mack *}
+          ?~  p.sih  +>.$
+          (mean >%dill-clay-nack< u.p.sih)
         ::
             {$d $blit *}
           (done +.sih)
@@ -503,8 +514,6 @@
 ::
 ++  load                                                ::  trivial
   |=  old/all-axle
-  ?:  ?=($2 -.old)
-    $(old [%3 ore hey dug ~ ~ ~ ~ ~ ~]:old)
   ..^$(all old)
   ::  |=  old=*   ::  diable
   ::  ..^$(ore.all `~zod)

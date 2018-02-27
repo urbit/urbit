@@ -55,7 +55,7 @@
   |=  {a/purl b/quay}  ^-  hiss
   =.  b  (quay:hep-to-cab b)
   =-  [a %post - ?~(b ~ (some (as-octt +:(tail:en-purl:html b))))]
-  (my content-type+['application/x-www-form-en-urlt:htmlncoded']~ ~)
+  (my content-type+['application/x-www-form-urlencoded']~ ~)
 ::
 ::
 ++  mean-wall  !.

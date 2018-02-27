@@ -12,7 +12,7 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $c                                    ::  to %clay
-          $%  {$warp p/sock q/riff:clay}               ::
+          $%  {$warp p/sock q/riff:clay}                ::
           ==  ==                                        ::
               $:  $f                                    ::  to %ford
           $%  {$exec p/@p q/(unit bilk:ford)}          ::
@@ -33,7 +33,7 @@
 --                                                      ::
 |%                                                      ::  structures
 ++  axle                                                ::  all %ford state
-  $:  $2                                                ::  version for update
+  $:  $0                                                ::  version for update
       pol/(map ship baby)                               ::
   ==                                                    ::
 ++  baby                                                ::  state by ship
@@ -1599,7 +1599,7 @@
           |=  {cof/cafe dir/knot}
           =+  nod=(chap(s.how [dir s.how]) cof bax hon)
           ?:  ?=($2 -.q.nod)
-            (flue cof)
+            (flue p.nod)
           (cope nod (flux some))
         %-  flux
         |=  doy/(map @ cage)  ^-  vase

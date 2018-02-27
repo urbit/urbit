@@ -1,9 +1,10 @@
-::  ::  ames (4a), networking  
+::  ::  ames (4a), networking
 ::
   |=  pit=vase
   =>  =~
 ::  structures
 =,  ames
+=+  protocol-version=0
 |%
 +=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
 --
@@ -159,25 +160,25 @@
         0w0                           ::   42, ~tul, Curtis Yarvin
         0w0                           ::   43, ~met, Curtis Yarvin
         0w0                           ::   44, ~wen, Curtis Yarvin
-        0w0                           ::   45, ~byn, Curtis Yarvin 
+        0w0                           ::   45, ~byn, Curtis Yarvin
         0w0                           ::   46, ~hex, James Torre
         0w0                           ::   47, ~feb, urbit.org
         0wK.GoKEY.rMjfn.ZcvFQ.n4BmX   ::   48, ~pyl, Michael Hartl (oldkey)
-        0w0                           ::   49, ~dul, Curtis Yarvin
-        0w0                           ::   50, ~het, Curtis Yarvin
+        0w0                           ::   49, ~dul, Galen Wolfe-Pauly
+        0w0                           ::   50, ~het, Galen Wolfe-Pauly
         0w0                           ::   51, ~mev, Curtis Yarvin
         0w0                           ::   52, ~rut, Curtis Yarvin
         0w2L.M6-o5.DDTFL.R4sFL.7Zuay  ::   53, ~tyl, Tlon Investor 11 (oldkey)
         0w0                           ::   54, ~wyd, Curtis Yarvin
         0w0                           ::   55, ~tep, Curtis Yarvin
         0w0                           ::   56, ~bes, Curtis Yarvin
-        0w0                           ::   57, ~dex, Jared Hance 
+        0w0                           ::   57, ~dex, Jared Hance
         0w0                           ::   58, ~sef, Owen Rescher
         0w0                           ::   59, ~wyc, Galen Wolfe-Pauly
         0w0                           ::   60, ~bur, Galen Wolfe-Pauly
         0w0                           ::   61, ~der, Galen Wolfe-Pauly
         0w0                           ::   62, ~nep, Galen Wolfe-Pauly
-        0w0                           ::   63, ~pur, Curtis Yarvin
+        0w0                           ::   63, ~pur, Paul Driver
         0w30.VtXvV.S~xIV.iMCL~.j9zTC  ::   64, ~rys, Charlie Cummings (oldkey)
         0w0                           ::   65, ~reb, Curtis Yarvin
         0wp.LslIa.IFSM9.mIp-z.KBIBh   ::   66, ~den, Michael Hartl (oldkey)
@@ -267,7 +268,7 @@
         0w2g.gLmg4.MtrHQ.A5VmH.WPk6G  ::  150, ~ryg, Dan Haffey (oldkey)
         0w0                           ::  151, ~ryx, Tlon
         0w0                           ::  152, ~fep, Tlon
-        0w2j.T1u2s.BfXjV.ldOGR.aiZrQ  ::  153, ~tyr, Steve Dee (oldkey)
+        0w3x.y5stk.FMmvV.LQo3X.OCXkI  ::  153, ~tyr, Steven Dee
         0w0                           ::  154, ~tus, Tlon
         0w0                           ::  155, ~tyc, Tlon
         0w0                           ::  156, ~leg, Tlon
@@ -385,7 +386,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(7 vez)
+    ?>  =(protocol-version vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -405,7 +406,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 7]
+      :~  [3 protocol-version]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -975,10 +976,10 @@
       |=  [our=ship ger=@uw fak=?]                      ::  instantiate emperor
       ^-  [p=(list boon) q=fort]
       =+  ^=  loy
-          ?:  fak                     
+          ?:  fak
             ::  fake uses carrier number as seed
             ::
-            (pit:nu:crub:crypto 512 our) 
+            (pit:nu:crub:crypto 512 our)
           (pit:nu:crub:crypto 512 ger)
       =+  fim==(fig:ex:loy (zeno our))
       ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
@@ -995,7 +996,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(7 (end 0 3 pac))  [~ fox]
+      ?.  =(protocol-version (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1114,7 +1115,7 @@
             ::  it now, since it obviously won't be processed.
             ::
             ~&  [%fail-ack did.rum]
-            =^  gud  +>.$  
+            =^  gud  +>.$
               (cook ``[%dead-message ~] cha `[q.u.cun r.u.cun])
             ?.  gud  +>.$
             %=    +>.$
@@ -1275,15 +1276,15 @@
                 ::  or negative ack if this ship is blocked
                 ::
                 =*  cop  ^-  coop
-                  %+  fall  
-                    (~(get by bum.rum) num) 
+                  %+  fall
+                    (~(get by bum.rum) num)
                   ?:(bad ~ ``[%blocked ~])
                 con:(cook (~(get by bum.rum) num) cha `[ryn dam])
               ::
               ::  insert this message in unprocessed set
               ::
               =.  mis.rum  (~(put by mis.rum) num [kay ryn dam dut])
-              :: 
+              ::
               ::  if ship is blocked, advance pointer to latest message
               ::
               =.  did.rum  ?.(bad did.rum num)
@@ -1552,7 +1553,7 @@
       (hunt lth doz rtn.sop.bah)
     ::
     ++  load
-      |=  old=fort 
+      |=  old=fort
       ~&  %ames-reload
       ..^$(fox old)
     ::
@@ -1599,7 +1600,7 @@
       ==
     ::
         %cake
-      ~?  ?=(^ r.bon)  [%cake-woot-bad hen r.bon]
+      ::  ~?  ?=(^ r.bon)  [%cake-woot-bad hen r.bon]
       :_  fox
       :~  [s.bon %give %woot q.p.bon r.bon]
       ==
@@ -1613,7 +1614,7 @@
       :_  fox  [hen %pass pax i.q.q.bon %west p.bon t.q.q.bon r.bon]~
     ::
         %ouzo
-      ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))] 
+      ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
@@ -1683,7 +1684,7 @@
     ?:  ?=(%wegh -.kyz)
       ~&  %ames-weighing
       [[hen %give %mass wegh]~ +>]
-    =+  ^=  fuy  
+    =+  ^=  fuy
         ^-  [p=(list boon) q=fort]
         ?-    -.kyz
             %barn
