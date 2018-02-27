@@ -257,9 +257,9 @@ configure_file(input : 'include/config.h.in',
                configuration : conf_data)
 
 # We expect these libs to supplied with the distribution
-openssl_dep = dependency('openssl')
-curl_dep = dependency('libcurl')
-libuv_dep = dependency('libuv')
+openssl_dep = dependency('openssl', version: '>=1.0.0')
+curl_dep = dependency('libcurl', version: '>=7.47.0')
+libuv_dep = dependency('libuv', version: '>=1.8.0')
 
 gmp_dep = meson.get_compiler('c').find_library('gmp')
 sigsegv_dep = meson.get_compiler('c').find_library('sigsegv')
@@ -267,12 +267,12 @@ sigsegv_dep = meson.get_compiler('c').find_library('sigsegv')
 
 # For these libs we provide fallback bundle
 cmark_dep = dependency('libcmark', version: '0.12.0', fallback: ['commonmark-legacy', 'cmark_dep'])
-urbitscrypt_dep = dependency('libscrypt', fallback: ['libscrypt', 'libscrypt_dep'])
+urbitscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
 
-ed25519_dep = dependency('ed25519', fallback: ['ed25519', 'ed25519_dep'])
-murmur3_dep = dependency('murmur3', fallback: ['murmur3', 'murmur3_dep'])
-http_parser_dep = dependency('http-parser', version: '0.1.0', fallback: ['http-parser-legacy', 'http_parser_dep'])
-softfloat3_dep = dependency('softfloat3', fallback: ['softfloat3', 'softfloat3_dep'])
+ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
+murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'murmur3_dep'])
+http_parser_dep = dependency('http-parser',  version: '0.1.0', fallback: ['http-parser-legacy', 'http_parser_dep'])
+softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
 
 
 opt_flags = []
