@@ -8278,25 +8278,23 @@
     ?~  jon
       ?:  fab
         [p.pro [%10 [%live %1 %constant-stop] q.pro]]
-      [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
-      ::  ~&  %constant-stopped
+      ::  [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
       ::  ~_  (dunk '%constant-stopped-type')
       ::  ~|  [%constant-stopped-gene gen]
       ::  ~|  [%constant-stopped-mask mask.bus]
       ::  ~|  [%constant-stopped-formula `@p`(mug q.pro) q.pro]
-      ::  ~|  %constant-folding-stopped
-      ::  !!
+      ~|  %constant-folding-stopped
+      !!
     ?:  ?=($wait -.u.jon)
       ?:  fab
         [p.pro [%10 [%live %1 %constant-block] q.pro]]
-      [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
-      ::  ~&  %constant-blocked
+      ::  [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
       ::  ~_  (dunk '%constant-blocked-type')
       ::  ~|  [%constant-blocked-gene gen]
       ::  ~|  [%constant-blocked-mask mask.bus]
       ::  ~|  [%constant-blocked-formula `@p`(mug q.pro) q.pro]
-      ::  ~|  %constant-folding-blocked
-      ::  !!
+      ~|  %constant-folding-blocked
+      !!
     ::  [p.pro [%10 [%live %1 %constant-nonblocked] %1 p.u.jon]]
     [p.pro %1 p.u.jon]
   ::
