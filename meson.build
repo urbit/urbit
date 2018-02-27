@@ -1,4 +1,4 @@
-project('urbit', 'c')
+project('urbit', 'c', meson_version: '>=0.40.0')
 
 jets_a_src =  [
 'jets/a/add.c',
