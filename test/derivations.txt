@@ -1,6 +1,6 @@
-define all = win32, win64, linux32, linux64, linux-rpi, mac
-define windows = win32, win64
-define linux = linux32, linux64, linux-rpi
+define all = win32,win64,linux32,linux64,linux-rpi,mac
+define windows = win32,win64
+define linux = linux32,linux64,linux-rpi
 
 # Cross-compiler toolchains
 {$windows,$linux}.gcc

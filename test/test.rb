@@ -23,7 +23,7 @@ end
 
 def substitute_definitions(defs, str)
   str.gsub(/\$([\w-]+)/) do |x|
-    defs.fetch($1).join(",")
+    defs.fetch($1)
   end
 end
 
@@ -40,8 +40,7 @@ def parse_derivation_list(filename)
       md = line.match(/^define\s+([\w-]+)\s*=\s*(.*)$/)
       raise "Invalid definition syntax at line #{n}" if !md
       name, value = md[1], md[2]
-      list = value.split(',').map(&:strip)
-      defs[name] = list
+      defs[name] = value
       next
     end
 
