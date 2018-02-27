@@ -77,6 +77,16 @@
       watchers/@ud
       default-branch/@t
   ==
+++  commit
+  $:  sha/@t
+      url/@t
+      author/author
+      committer/author
+      message/@t
+      tree/point
+      parents/(list point)
+      verification/verification
+  ==
 ++  user
   $:  login/@t
       id/id
@@ -117,6 +127,21 @@
       updated-at/time
       closed-at/(unit time)
       body/@t
+  ==
+++  author
+  $:  date/@t
+      name/@t
+      email/@t
+  ==
+++  point
+  $:  url/@t
+      sha/@t
+  ==
+++  verification
+  $:  verified/?
+      reason/@t
+      signature/(unit @t)
+      payload/(unit @t)
   ==
 ++  label
   $:  url/@t

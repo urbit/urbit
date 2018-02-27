@@ -31,27 +31,11 @@
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    %gall state
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-++  axle-n  ?(axle-1 axle-2 axle-3 axle-4)              ::  upgrade path
-++  axle-1  {$1 pol/(map ship mast-1)}                  ::
-++  mast-1                                              ::
-  (cork mast-2 |=(mast-2 +<(bum (~(run by bum) seat-1)))) ::
-++  seat-1                                              ::
-  (cork seat-2 |=(seat-2 +<+))                          ::
-++  axle-2  {$2 pol/(map ship mast-2)}                  ::
-++  mast-2  (cork mast-3 |=(mast-3 +<+))                ::
-++  seat-2  seat-3                                      ::
-++  axle-3  {$3 pol/(map ship mast-3)}                  ::
-++  mast-3                                              ::
-  (cork mast-4 |=(mast-4 +<(bum (~(run by bum) seat-3)))) ::
-++  seat-3                                              ::
-  (cork seat-4 |=(seat-4 +<+))                          ::
-++  axle-4  axle                                        ::
-++  mast-4  mast                                        ::
-++  seat-4  seat                                        ::  
+++  axle-n  ?(axle)                                     ::  upgrade path
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::  state proper
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  axle                                                ::  all state
-  $:  $4                                                ::  state version
+  $:  $0                                                ::  state version
       pol/(map ship mast)                               ::  apps by ship
   ==                                                    ::
 ++  gest                                                ::  subscriber data
@@ -782,7 +766,7 @@
       ?^  -.q.vax  :_(+>.$ [%| (ap-suck "move: invalid move (bone)")])
       ?@  +.q.vax  :_(+>.$ [%| (ap-suck "move: invalid move (card)")])
       =+  hun=(~(get by r.zam) -.q.vax)
-      ?.  (~(has by r.zam) -.q.vax) 
+      ?.  &((~(has by r.zam) -.q.vax) !=(0 -.q.vax))
         :_(+>.$ [%| (ap-suck "move: invalid card (bone {<-.q.vax>})")])
       =^  pec  vel  (~(spot wa vel) 3 vax)
       =^  cav  vel  (~(slot wa vel) 3 pec)
@@ -1225,6 +1209,9 @@
                ~
         $cash  `%a
         $conf  `%g
+        $cred  `%c
+        $crew  `%c
+        $crow  `%c
         $deal  `%g
         $exec  `%f
         $flog  `%d
@@ -1234,6 +1221,7 @@
         $mont  `%c
         $nuke  `%a
         $ogre  `%c
+        $perm  `%c
         $serv  `%e
         $them  `%e
         $wait  `%b
@@ -1307,50 +1295,30 @@
   |=  old/axle-n
   ^+  ..^$
   ?-  -.old
-      $4  ..^$(all old)
-      $3
-    %=  $
-      old  ^-  axle-4
-           =>  |=(seat-3 `seat-4`[*misvale-data +<])
-           =>  |=(mast-3 +<(bum (~(run by bum) +>)))
-           old(- %4, pol (~(run by pol.old) .))
-    ==
-  ::
-      $2
-    %=  $
-      old  ^-  axle-3
-           =>  |=(mast-2 [*(unit duct) +<])
-           old(- %3, pol (~(run by pol.old) .))
-    ==
-  ::
-      $1
-    %=  $
-      old  ^-  axle-2
-           =>  |=(seat-1 `seat-2`[*worm +<])
-           =>  |=(mast-1 +<(bum (~(run by bum) +>)))
-           old(- %2, pol (~(run by pol.old) .))
-    ==
+      $0  ..^$(all old)
   ==
 ::
 ++  scry
-  |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
+  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
+  ?.  ?=($& -.why)  ~
+  =*  his  p.why
   ?:  ?&  =(%u ren)
           =(~ tyl)
           =([%$ %da now] lot)
-          (~(has by pol.all) who)
-          (~(has by bum:(~(got by pol.all) who)) syd)
+          (~(has by pol.all) his)
+          (~(has by bum:(~(got by pol.all) his)) syd)
       ==
     ``[%null !>(~)]
-  ?.  (~(has by pol.all) who)
+  ?.  (~(has by pol.all) his)
     ~
   ?.  =([%$ %da now] lot)
     ~
-  ?.  (~(has by bum:(~(got by pol.all) who)) syd)
+  ?.  (~(has by bum:(~(got by pol.all) his)) syd)
     [~ ~]
   ?.  ?=(^ tyl)
     ~
-  (mo-peek:(mo-abed:mo who *duct) syd high+`who ren tyl)
+  (mo-peek:(mo-abed:mo his *duct) syd high+`his ren tyl)
 ::
 ++  stay                                                ::  save w+o cache
   `axle`all

@@ -381,7 +381,9 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$dirk p/@tas}                                ::  mark mount dirty
+      $%  {$croz rus/(map desk {r/regs w/regs})}        ::  rules for group
+          {$cruz cez/(map @ta crew)}                    ::  permission groups
+          {$dirk p/@tas}                                ::  mark mount dirty
           {$ergo p/@tas q/mode}                         ::  version update
           {$hill p/(list @tas)}                         ::  mount points
           {$mack p/(unit tang)}                         ::  ack
@@ -389,23 +391,34 @@
           {$mere p/(each (set path) (pair term tang))}  ::  merge result
           {$note p/@tD q/tank}                          ::  debug message
           {$ogre p/@tas}                                ::  delete mount point
+          {$rule red/dict wit/dict}                     ::  node r+w permissions
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
+          {$wris p/case p/(set (pair care path))}       ::  many changes
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$boat $~}                                    ::  pier rebooted
-          {$drop p/@p q/desk}                           ::  cancel pending merge
-          {$info p/@p q/desk r/nori}                    ::  internal edit
-          {$init p/@p}                                  ::  report install
-          {$into p/desk q/? r/mode}                     ::  external edit
-          {$merg p/@p q/desk r/@p s/desk t/case u/germ} ::  merge desks
-          {$mont p/desk q/beam}                         ::  mount to unix
-          {$dirk p/desk}                                ::  mark mount dirty
-          {$ogre p/$@(desk beam)}                       ::  delete mount point
-          {$warp p/sock q/riff}                         ::  file request
+          {$cred our/ship nom/@ta cew/crew}             ::  set permission group
+          {$crew our/ship}                              ::  permission groups
+          {$crow our/ship nom/@ta}                      ::  group usage
+          {$drop our/@p des/desk}                       ::  cancel pending merge
+          {$info our/@p des/desk dit/nori}              ::  internal edit
+          {$init our/@p}                                ::  report install
+          {$into des/desk all/? fis/mode}               ::  external edit
+          $:  $merg                                     ::  merge desks
+              our/@p  des/desk                          ::  target
+              her/@p  dem/desk  cas/case                ::  source
+              how/germ                                  ::  method
+          ==                                            ::
+          {$mont des/desk bem/beam}                     ::  mount to unix
+          {$dirk des/desk}                              ::  mark mount dirty
+          {$ogre pot/$@(desk beam)}                     ::  delete mount point
+          {$perm our/ship des/desk pax/path rit/rite}   ::  change permissions
+          {$warp wer/sock rif/riff}                     ::  internal file req
+          {$werp who/ship wer/sock rif/riff}            ::  external file req
           {$wegh $~}                                    ::  report memory
-          {$went p/sack q/path r/@ud s/coop}            ::  response confirm
-          {$west p/sack q/path r/*}                     ::  network request
+          {$went wer/sack pax/path num/@ud ack/coop}    ::  response confirm
+          {$west wer/sack pax/path res/*}               ::  network request
       ==                                                ::
     --  ::able
   ::
@@ -422,13 +435,15 @@
     $%  {$delta p/lobe q/{p/mark q/lobe} r/page}        ::  delta on q
         {$direct p/lobe q/page}                         ::  immediate
     ==                                                  ::
-  ++  care  ?($d $u $v $w $x $y $z)                     ::  clay submode
+  ++  care  ?($d $p $u $v $w $x $y $z)                  ::  clay submode
   ++  case                                              ::  ship desk case spur
     $%  {$da p/@da}                                     ::  date
         {$tas p/@tas}                                   ::  label
         {$ud p/@ud}                                     ::  number
     ==                                                  ::
   ++  coop  (unit ares)                                 ::  e2e ack
+  ++  crew  (set ship)                                  ::  permissions group
+  ++  dict  {src/path rul/rule}                         ::  effective permission
   ++  dome                                              ::  project state
     $:  ank/ankh                                        ::  state
         let/@ud                                         ::  top id
@@ -466,6 +481,7 @@
   ++  moat  {p/case q/case r/path}                      ::  change range
   ++  mode  (list {path (unit mime)})                   ::  external files
   ++  mood  {p/care q/case r/path}                      ::  request in desk
+  ++  mool  {p/case q/(set (pair care path))}           ::  requests in desk
   ++  nori                                              ::  repository action
     $%  {$& p/soba}                                     ::  delta
         {$| p/@tas}                                     ::  label
@@ -481,17 +497,25 @@
         lat/(map lobe blob)                             ::  data
     ==                                                  ::
   ++  rant                                              ::  response to request
-    $:  p/{p/care q/case r/@tas}                        ::  clade release book
+    $:  p/{p/care q/case r/desk}                        ::  clade release book
         q/path                                          ::  spur
         r/cage                                          ::  data
     ==                                                  ::
   ++  rave                                              ::  general request
     $%  {$sing p/mood}                                  ::  single request
         {$next p/mood}                                  ::  await next version
+        {$mult p/mool}                                  ::  next version of any
         {$many p/? q/moat}                              ::  track range
     ==                                                  ::
+  ++  regs  (map path rule)                             ::  rules for paths
   ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
+  ++  rite                                              ::  new permissions
+    $%  {$r red/(unit rule)}                            ::  for read
+        {$w wit/(unit rule)}                            ::  for write
+        {$rw red/(unit rule) wit/(unit rule)}           ::  for read and write
+    ==                                                  ::
   ++  riot  (unit rant)                                 ::  response+complete
+  ++  rule  {mod/?($black $white) who/(set whom)}       ::  node permission
   ++  rump  {p/care q/case r/@tas s/path}               ::  relative path
   ++  saba  {p/ship q/@tas r/moar s/dome}               ::  patch+merge
   ++  soba  (list {p/path q/miso})                      ::  delta
@@ -504,6 +528,7 @@
         {$| p/(list a) q/(list a)}                      ::  p -> q[chunk]
     ==                                                  ::
   ++  urge  |*(a/mold (list (unce a)))                  ::  list change
+  ++  whom  (each ship @ta)                             ::  ship or named crew
   ++  yaki                                              ::  commit
     $:  p/(list tako)                                   ::  parents
         q/(map path lobe)                               ::  namespace
@@ -937,7 +962,7 @@
     ::  and change subscriptions.
     ::
     ::  change tasks are designed to match high-level
-    ::  operations - for instance, we have %ktsg, %mint,
+    ::  operations - for instance, we have %burn, %mint,
     ::  and %move, not just a single delta operation.
     ::  more of these operations will probably be added,
     ::  and invariants enforced at transaction end.
@@ -1009,7 +1034,7 @@
       action                                            ::  change
     ::
     +=  task                                            ::  in request ->$
-      $%  [%ktsg p=ship q=safe]                         ::  destroy rights
+      $%  [%burn p=ship q=safe]                         ::  destroy rights
           [%hail p=ship q=remote]                       ::  remote update
           [%init p=@pG q=arms]                          ::  initialize urbit
           [%meet p=(unit (unit ship)) q=farm]           ::  integrate pki from

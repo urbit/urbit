@@ -13,7 +13,7 @@
 |=  $:  {now/@da eny/@uvJ bek/beak}
         {{who/iden $~} typ/?($user $home)}
     ==
-=+  pax=/(scot %p p.bek)/twit/(scot %da now)/[typ]/[who]
+=+  pax=/(scot %p p.bek)/twit/(scot %da now)/[typ]/[who]/twit-feed
 :-  %tang
 %+  turn   (flop .^((list post:twitter) %gx pax))
 |=  post:twitter  ^-  tank

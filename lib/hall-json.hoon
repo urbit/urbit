@@ -29,31 +29,22 @@
 ++  de-tape                                             ::>  tape to sur (parse)
   |%
   ++  circ                                              ::>  circle
-    ;~((glue fas) ;~(pfix sig fed:ag) urt:ab)
+    ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
   ::
-  ++  rang                                              ::>  range
-    =/  pont
-      ;~  pose
-        (stag %ud dim:ag)
-        %+  stag  %da
-        %+  sear
-          |=  a/coin
-          ^-  (unit @da)
-          ?.  ?=({$$ $da @da} a)  ~
-          `q.p.a
-        nuck:so
-      ==
-    =+  ;~  pose
-          (cook some ;~(pfix fas pont))
-          (easy ~)
+  ++  pont
+    ;~  pfix  fas
+      %+  sear
+        |=  a/coin
+        ^-  (unit place)
+        ?+  a  ~
+          {$$ $da @da}  `p.a
+          {$$ $ud @ud}  `p.a
         ==
-    ;~  pose
-      (cook some ;~(plug ;~(pfix fas pont) -))
-      (easy ~)
+      nuck:so
     ==
   ::
-  ++  sorc                                              ::>  source
-    ;~(plug circ rang)
+  ++  sorc
+    ;~(plug circ (punt ;~(plug pont (punt pont))))
   --
 ::
 ++  enjs                                                ::>  sur to json
@@ -187,6 +178,7 @@
       $full     (conf cof.a)
       $source   (pairs add+b+add.a src+(sorc src.a) ~)
       $caption  s+cap.a
+      $usage    (pairs add+b+add.a tas+(sa tas.a cord) ~)
       $filter   (filt fit.a)
       $secure   s+sec.a
       $permit   (pairs add+b+add.a sis+(sa sis.a ship) ~)
@@ -238,6 +230,7 @@
     %-  pairs  :~
       src+(sa src.a sorc)
       cap+s+cap.a
+      tag+(sa tag.a cord)
       fit+(filt fit.a)
       con+(cont con.a)
     ==
@@ -434,6 +427,7 @@
     %-  of  :~
       full+conf
       source+(ot add+bo src+sorc ~)
+      usage+(ot add+bo tas+(as so) ~)
       caption+so
       filter+filt
       secure+secu
@@ -478,6 +472,7 @@
     %-  ot  :~
       src+(as sorc)
       cap+so
+      tag+(as so)
       fit+filt
       con+cont
     ==
