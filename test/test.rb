@@ -29,34 +29,76 @@ end
 
 def parse_derivation_list(filename)
   defs = {}
-  paths = []
+  all_paths = Set.new
+  all_attrs = {}
   File.foreach(filename).with_index do |line, line_index|
-    line_num = line_index + 1
     line.strip!
-    next if line.empty?
-    next if line.start_with?('#')
 
+    # Handle empty lines and comments.
+    next if line.empty? || line.start_with?('#')
+
+    # Handle variable definitions (e.g. "define windows = win32,win64").
     if line.start_with?('define')
       md = line.match(/^define\s+([\w-]+)\s*=\s*(.*)$/)
-      raise "Invalid definition syntax at line #{n}" if !md
+      if !md
+        raise AnticipatedError, "Invalid definition syntax."
+      end
       name, value = md[1], md[2]
       defs[name] = value
       next
     end
 
+    # Expand variable definitions (e.g. $windows expands to "win32,win64").
     line = substitute_definitions(defs, line)
-    paths += expand_brackets(line)
+
+    # Figure out which parts of the line are attribute paths with brackets and
+    # which are attributes.
+    items = line.split(' ')
+    attr_defs, path_items = items.partition { |p| p.include?('=') }
+
+    # Expand any brackets in the attribute paths to get the complete list of
+    # paths specified on this line.
+    paths = path_items.flat_map { |p| expand_brackets(p) }
+
+    # Process attribute definitions on the line, like "priority=1".
+    attrs = {}
+    attr_defs.each do |attr_def|
+      md = attr_def.match(/^(\w+)=(\d+)$/)
+      if !md
+        raise AnticipatedError, "Invalid attribute definition: #{attr_def.inspect}."
+      end
+      name, value = md[1], md[2]
+      case name
+      when 'priority'
+        attrs[:priority] = value.to_i
+      else
+        raise AnticipatedError, "Unrecognized attribute: #{name.inspect}."
+      end
+    end
+
+    # Record the paths for this line and the attributes for those paths,
+    # overriding previous attributes values if necessary.
+    all_paths += paths
+    if !attrs.empty?
+      paths.each do |path|
+        (all_attrs[path] ||= {}).merge!(attrs)
+      end
+    end
   rescue AnticipatedError => e
-    raise AnticipatedError, "#{filename}:#{line_num}: error: #{e}"
+    raise AnticipatedError, "#{filename}:#{line_index + 1}: error: #{e}"
   end
 
-  paths.each do |path|
+  if all_paths.empty?
+    raise AnticipatedError, "#{filename} specifies no paths"
+  end
+
+  all_paths.each do |path|
     if !path.match?(/^[\w.-]+$/)
       raise "Invalid characters in path name: #{path}"
     end
   end
 
-  { defs: defs, paths: paths }
+  { defs: defs, paths: all_paths.to_a, attrs: all_attrs }
 end
 
 def instantiate_drvs(paths)

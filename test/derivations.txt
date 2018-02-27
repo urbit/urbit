@@ -48,4 +48,7 @@ omni.xorg-macros
 omni.xtrans
 {$all}.zlib
 
+# Derivations we care about at Pololu
+{win32,linux32,linux-rpi,mac}.{p-load,pavr2,tic} priority=1
+
 # TODO: Test building the license_sets somehow too.
