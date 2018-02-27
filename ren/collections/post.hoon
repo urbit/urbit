@@ -5,9 +5,7 @@
 /=  configs  /:  /===/web/collections
             /^  (map knot config:collections)  /_  /collections-config/
 :: this was a dumb way to do do this, clean up
-/=  extratopic  /^  {a=manx b=topicful:collections ~}  
-       /%  
-       /.    /&  elem 
+/=  content  /&  elem 
              /&  md
              ::  don't render first line if there's a title
              /;  |=  a/topic:collections 
@@ -15,8 +13,7 @@
                    (of-wain:format +:wat.a)
                  (of-wain:format wat.a)
              /collections-topic/
-           /collections-topic-full/
-       ==
+/=  metawcom  /^  topicful:collections  /collections-topic-full/
 =/  config  (~(get by configs) +<:s.bem.gas)
 =,  old-zuse
 ^-  manx
@@ -26,13 +23,13 @@
       {(trip desc:(need config))} /
     ==
     ;div.row.mod.text-mono
-      ; {(trip (scot %da mod.info.b.extratopic))}
+      ; {(trip (scot %da mod.info.metawcom))}
     ==
   ==
   ::
   ;div#show
     ;div.row.tit
-      ;h1: {(trip tit.info.b.extratopic)}
+      ;h1: {(trip tit.info.metawcom)}
     ==
     ;*  ?:  (authed:colls gas)
           ;=
@@ -46,7 +43,7 @@
           ;div(data-component "Subscribe", data-circle "{(scow %p p.bem.gas)}/collection_~{(trip +<:s.bem.gas)}_~{(trip -:s.bem.gas)}");
         ==
     ;div.row.content.mb-18
-      +{a.extratopic}
+      +{content}
     ==
     ;*  ?:  comm:(need config)
       ;=
@@ -55,7 +52,7 @@
             ;ol
               ;*  %+  turn
                     %+  sort
-                      ~(tap by coms.b.extratopic)
+                      ~(tap by coms.metawcom)
                     |=  [a=[c=@da d=[mod=@da who=@p wat=wain]] b=[c=@da d=[mod=@da who=@p wat=wain]]]
                     (lth (unt c.a) (unt c.b))
                     ::
