@@ -6795,7 +6795,7 @@
                  :-  ^$(mod i.p.mod) 
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
       {$vine *}  $(mod q.mod)
-      {$weed *}  p.mod
+      {$weed *}  [%rock %n 0]
     ==
   ::
   ++  trivial
@@ -6925,7 +6925,7 @@
     ^-  hoon
     =-  ::  for basic molds that don't need the subject,
         ::  clear it so constants fold better 
-        ::
+        ::  
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
     ?:  fab
@@ -7101,43 +7101,33 @@
           ::  width is already ideal
           ::
           boc
-        ::  mac: matching crib
-        ::
-        =/  mac
-          |-  ^-  crib
-          ?:  =(2 tow) 
-            [%axil %cell] 
-          [[%axil %noun] $(tow (dec tow))]
         ::  yum: matching hoon
         ::
-        =/  yum
+        =*  yum
           |-  ^-  hoon 
           ?:  =(2 tow) 
             [%bust %cell] 
           [[%bust %noun] $(tow (dec tow))]
-        ?:  fab
-          ::  luz: subject edited to inject default
-          ::
-          =/  luz/hoon  
-            :+  %cnts 
-              [[%& 1] ~] 
-            :_  ~
-            ::  correct but slow
-            ::  [fetch-wing example:clear(mod any)]  
-            [fetch-wing ?^(def u.def example:clear(mod mac))]
-          ?:  =(~ joy)      
-            ::  unconditional build
-            ::
-            [%tsgr luz boc]
-          ::  conditional build
-          ::
-          [%tsgr [%wtcl [%fits yum fetch-wing] [%$ 1] luz] boc]
+        ::  luz: subject edited to inject default
         ::
-        ?:  =(~ joy)
-          ::  unconditional trivial
+        =/  luz/hoon  
+          :+  %cnts 
+            [[%& 1] ~] 
+          :_  ~
+          [fetch-wing ripple]
+        ?:  =(~ joy)      
+          ::  unconditional default
           ::
-          [%ktls boc trivial]
-        [%ktls boc [%wtcl [%fits yum fetch-wing] boc trivial]]
+          [%tsgr luz boc]
+        ::  conditional default
+        ::
+        [%tsgr [%wtcl [%fits yum fetch-wing] [%$ 1] luz] boc]
+        ::
+        ::  ?:  =(~ joy)
+        ::    ::  unconditional trivial
+        ::    ::
+        ::    [%ktls boc trivial]
+        ::  [%ktls boc [%wtcl [%fits yum fetch-wing] boc trivial]]
       ::  idealize topography (should be a smarter merge)
       ::
       =.  top  ?:(=(1 tow) top |-(?:(=(1 tow) & [& $(tow (dec tow))])))
@@ -8289,7 +8279,8 @@
       ?:  fab
         [p.pro [%10 [%live %1 %constant-stop] q.pro]]
       [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
-      ::  ~_  (dunk '%constant-blocked-type')
+      ::  ~&  %constant-stopped
+      ::  ~_  (dunk '%constant-stopped-type')
       ::  ~|  [%constant-stopped-gene gen]
       ::  ~|  [%constant-stopped-mask mask.bus]
       ::  ~|  [%constant-stopped-formula `@p`(mug q.pro) q.pro]
@@ -8299,6 +8290,7 @@
       ?:  fab
         [p.pro [%10 [%live %1 %constant-block] q.pro]]
       [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
+      ::  ~&  %constant-blocked
       ::  ~_  (dunk '%constant-blocked-type')
       ::  ~|  [%constant-blocked-gene gen]
       ::  ~|  [%constant-blocked-mask mask.bus]
@@ -9174,11 +9166,12 @@
     ::
     |=  [dox=type mel=vair wad=chap dom=(map @ tomb)]
     ^-  (pair type type)
-    =+  %+  balk(sut (core sut %gold sut wad *seminoun dom))
-          (core dox %gold dox wad *seminoun dom)
+    =+  yet=(core sut %gold sut wad (laze wad dom) dom)
+    =+  hum=(core dox %gold dox wad (laze wad dom) dom)
+    =+  %+  balk(sut yet)
+          hum
         dom
-    :-  (core sut mel sut wad *seminoun dom)
-    (core dox mel dox wad *seminoun dom)
+    [yet hum]
   ::
   ++  mine
     ::  mint all chapters and feet in a core
@@ -9188,10 +9181,7 @@
     =-  :_  [%1 dez]
         (core sut mel sut wad [[%full ~] dez] dom)
     ^=  dez
-    =.  sut  
-      ?:  |
-        (core sut %gold sut wad *seminoun dom)
-      (core sut %gold sut wad (laze wad dom) dom)
+    =.  sut  (core sut %gold sut wad (laze wad dom) dom)
     |-  ^-  ?(~ ^)
     ?:  ?=(~ dom)
       ~

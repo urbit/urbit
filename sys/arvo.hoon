@@ -334,8 +334,10 @@
   =-  ?:(?=($| -.res) ((slog p.res) ~) (some p.res))
   ^=  res  %-  mule  |.
   =+  gen=(rain pax txt)
-  ~&  [%vane-compiled `@p`(mug gen)]
-  (vent lal vil bud *worm (slym (slap bud gen) bud))
+  ~&  [%vane-parsed `@p`(mug gen)]
+  =+  pro=(vent lal vil bud *worm (slym (slap bud gen) bud))
+  ~&  [%vane-compiled `@p`(mug pro)]
+  pro
 ::
 ++  viol                                                ::  vane tools
   |=  but/type
