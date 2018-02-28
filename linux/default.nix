@@ -10,14 +10,14 @@ let
 
   exe_suffix = "";
 
-  binutils = import ./binutils { inherit nixpkgs host; };
+  binutils = import ./binutils { inherit native host; };
 
   linux_arch =
     if arch == "i686" || arch == "x86_64" then "x86"
     else if arch == "armv6" || arch == "armv7" then "arm"
     else throw "not sure what Linux architecture code to use";
 
-  headers = nixpkgs.stdenv.mkDerivation rec {
+  headers = native.make_derivation rec {
     name = "linux-headers-${linux_arch}-${version}";
     inherit linux_arch;
     version = "4.4.10";
@@ -29,7 +29,7 @@ let
   };
 
   gcc = import ./gcc {
-    inherit nixpkgs host binutils headers gcc_options;
+    inherit native host binutils headers gcc_options;
   };
 
   license = native.make_derivation {
