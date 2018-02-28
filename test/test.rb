@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+# This requires Ruby 2.5.0 or later because it uses a new syntax
+# for 'rescue' directly inside a block.
+
 require 'open3'
 require 'pathname'
 require 'set'
