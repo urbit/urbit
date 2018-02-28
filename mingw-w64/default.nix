@@ -5,7 +5,7 @@ let
 
   host = "${arch}-w64-mingw32";
 
-  binutils = import ./binutils { inherit nixpkgs host; };
+  binutils = import ./binutils { inherit native host; };
 
   mingw-w64_info = rec {
     name = "mingw-w64-${version}";
@@ -22,7 +22,7 @@ let
     configure_flags = "--enable-secure-api --enable-idl";
   };
 
-  mingw-w64_headers = nixpkgs.stdenv.mkDerivation {
+  mingw-w64_headers = native.make_derivation {
     name = "${mingw-w64_info.name}-headers";
     inherit host;
     inherit (mingw-w64_info) src patches configure_flags;
@@ -33,10 +33,10 @@ let
   gcc_stage_1 = import ./gcc {
     stage = 1;
     libc = mingw-w64_headers;
-    inherit nixpkgs arch binutils;
+    inherit native arch binutils;
   };
 
-  mingw-w64_full = nixpkgs.stdenv.mkDerivation {
+  mingw-w64_full = native.make_derivation {
     name = "${mingw-w64_info.name}-${host}";
     inherit host;
     inherit (mingw-w64_info) version src patches;
@@ -44,13 +44,14 @@ let
       "--host=${host} " +
       "--disable-shared --enable-static " +
       mingw-w64_info.configure_flags;
-    buildInputs = [ binutils gcc_stage_1 ];
+    native_inputs = [ binutils gcc_stage_1 ];
     builder = ./builder.sh;
+    just_headers = false;
   };
 
   gcc = import ./gcc {
     libc = mingw-w64_full;
-    inherit nixpkgs arch binutils;
+    inherit native arch binutils;
   };
 
   license = native.make_derivation {

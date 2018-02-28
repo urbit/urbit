@@ -1,13 +1,11 @@
-# TODO: build without stdenv
+{ native, host }:
 
-{ nixpkgs, host }:
-
-nixpkgs.stdenv.mkDerivation rec {
+native.make_derivation rec {
   name = "binutils-${version}-${host}";
 
   version = "2.27";
 
-  src = nixpkgs.fetchurl {
+  src = native.nixpkgs.fetchurl {
     url = "mirror://gnu/binutils/binutils-${version}.tar.bz2";
     sha256 = "125clslv17xh1sab74343fg6v31msavpmaa1c1394zsqa773g5rn";
   };
@@ -16,7 +14,7 @@ nixpkgs.stdenv.mkDerivation rec {
     ./deterministic.patch
   ];
 
-  buildInputs = [ nixpkgs.bison nixpkgs.zlib ];
+  build_inputs = [ native.nixpkgs.bison native.nixpkgs.zlib ];
 
   configure_flags =
     "--target=${host} " +
@@ -25,9 +23,4 @@ nixpkgs.stdenv.mkDerivation rec {
     "--disable-werror ";
 
   builder = ./builder.sh;
-
-  meta = with nixpkgs.stdenv.lib; {
-    homepage = https://www.gnu.org/software/binutils/;
-    license = licenses.gpl3Plus;
-  };
 }

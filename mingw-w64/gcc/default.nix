@@ -1,6 +1,7 @@
-{ nixpkgs, arch, stage ? 2, binutils, libc }:
+{ native, arch, stage ? 2, binutils, libc }:
 
 let
+  nixpkgs = native.nixpkgs;
   isl = nixpkgs.isl_0_14;
   inherit (nixpkgs) stdenv lib fetchurl;
   inherit (nixpkgs) gettext gmp libmpc libelf mpfr texinfo which zlib;
@@ -9,7 +10,7 @@ let
               else assert stage == 2; "";
 in
 
-stdenv.mkDerivation rec {
+native.make_derivation rec {
   name = "gcc-${version}-${target}${stageName}";
 
   target = "${arch}-w64-mingw32";
@@ -30,13 +31,17 @@ stdenv.mkDerivation rec {
     ./libstdc++-target.patch
     ./no-sys-dirs.patch
     ./cppdefault.patch
+
+    # Fix a compiler error in GCC's ubsan.c: ISO C++ forbids comparison
+    # between pointer and integer.
+    ./ubsan.patch
   ];
 
   # TODO: can probably remove libelf here, and might as well remove
   # the libraries that are given to GCC as configure flags
   # TODO: just let GCC use its own gettext (intl)
-  buildInputs = [
-    binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
+  native_inputs = [
+    binutils gettext libelf texinfo which zlib
   ];
 
   configure_flags =
@@ -93,11 +98,6 @@ stdenv.mkDerivation rec {
       ["install-strip"];
 
   hardeningDisable = [ "format" ];
-
-  meta = {
-    homepage = http://gcc.gnu.org/;
-    license = lib.licenses.gpl3Plus;
-  };
 }
 
 # TODO: why is GCC providing a fixed limits.h?
