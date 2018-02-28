@@ -53,7 +53,8 @@ stdenv.mkDerivation rec {
     "--with-mpfr-include=${mpfr.dev}/include " +
     "--with-mpfr-lib=${mpfr.out}/lib " +
     "--with-mpc=${libmpc} " +
-    "--with-system-zlib " +
+    "--with-zlib-include=${zlib.dev}/include " +
+    "--with-zlib-lib=${zlib.out}/lib " +
     "--enable-lto " +
     "--enable-plugin " +
     "--enable-static " +

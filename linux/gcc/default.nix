@@ -57,8 +57,8 @@ native.make_derivation rec {
     "--with-mpfr-include=${mpfr.dev}/include " +
     "--with-mpfr-lib=${mpfr.out}/lib " +
     "--with-mpc=${libmpc.out} " +
-    "--with-zlib=${zlib.dev}" +
-    "--with-zlib-lib=${zlib.out}" +
+    "--with-zlib-include=${zlib.dev}/include " +
+    "--with-zlib-lib=${zlib.out}/lib " +
     "--enable-deterministic-archives " +
     "--enable-languages=c,c++ " +
     "--enable-libstdcxx-time " +
