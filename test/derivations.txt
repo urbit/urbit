@@ -3,11 +3,11 @@ define windows = win32,win64
 define linux = linux32,linux64,linux-rpi
 
 # Cross-compiler toolchains
-{$windows,$linux}.gcc
-mac.clang
+{$windows,$linux}.gcc slow=1
+mac.toolchain slow=1
 
 # Packages
-{$windows}.angle{,.examples}
+{$windows}.angle{,.examples} slow=1
 omni.at-spi2-headers
 {$all}.avrdude
 omni.dejavu-fonts
@@ -32,7 +32,8 @@ omni.kbproto
 {$all}.pavr2
 {$windows}.pdcurses{,.examples}
 {$all}.p-load
-{$all}.qt{,.examples}
+{$all}.qt slow=1
+{$all}.qt.examples
 {$windows}.readline
 {$all}.tic
 {$windows}.usbview

@@ -72,8 +72,8 @@ def parse_derivation_list(filename)
       end
       name, value = md[1], md[2]
       case name
-      when 'priority'
-        attrs[:priority] = value.to_i
+      when 'priority', 'slow'
+        attrs[name.to_sym] = value.to_i
       else
         raise AnticipatedError, "Unrecognized attribute: #{name.inspect}."
       end
@@ -104,6 +104,28 @@ def parse_derivation_list(filename)
   { defs: defs, paths: all_paths.to_a, attrs: all_attrs }
 end
 
+# Make a hash holding the priority of each Nix attribute path we want to build.
+# This routine determines the default priority.
+def make_path_priority_map(settings)
+  attrs = settings.fetch(:attrs)
+  m = {}
+  settings.fetch(:paths).each do |path|
+    m[path] = attrs.fetch(path, {}).fetch(:priority, 0)
+  end
+  m
+end
+
+# Make a hash holding the relative build time of each Nix attribute path we want
+# to build.  This routine detrmines the default time, and what "slow" means.
+def make_path_time_map(settings)
+  attrs = settings.fetch(:attrs)
+  m = {}
+  settings.fetch(:paths).each do |path|
+    m[path] = attrs.fetch(path, {})[:slow] ? 100 : 1
+  end
+  m
+end
+
 def instantiate_drvs(paths)
   cmd = 'nix-instantiate ' + paths.map { |p| "-A #{p}" }.join(' ')
   stdout_str, stderr_str, status = Open3.capture3(cmd)
@@ -129,6 +151,10 @@ def check_paths_are_unique!(path_drv_map)
   end
 end
 
+def map_compose(map1, map2)
+  map1.transform_values &map2.method(:fetch)
+end
+
 def nix_db
   return $db if $db
   $db = SQLite3::Database.new '/nix/var/nix/db/db.sqlite', readonly: true
@@ -145,6 +171,7 @@ where d.path in (#{drv_list_str});
 END
   r = {}
   nix_db.execute(query) do |drv, output_id|
+    drv = drv.to_sym
     output_built = !output_id.nil?
     r[drv] = r.fetch(drv, true) && output_built
   end
@@ -231,6 +258,9 @@ begin
   global_drv_graph = get_drv_graph
   drv_graph = graph_restrict_nodes(global_drv_graph, drvs)
   path_graph = graph_unmap(drv_graph, path_drv_map)
+  path_built_map = map_compose(path_drv_map, drv_built_map)
+  path_priority_map = make_path_priority_map(settings)
+  path_time_map = make_path_time_map(settings)
   output_graphviz(path_graph, path_drv_map, drv_built_map)
   # print_graph(path_graph)
   print_drv_stats(drv_built_map)
