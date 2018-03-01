@@ -224,16 +224,22 @@ def print_drv_stats(built_map)
 end
 
 def output_graphviz(path_graph, path_built_map, path_time_map)
+  # Breaks a path name into two parts: subgraph name, component name.
+  # For example, for :"linux32.qt.examples", returns ["linux32", "qt.examples"].
+  decompose = lambda do |path|
+    r = path.to_s.split('.', 2)
+    r.size == 2 ? r : [nil, path.to_s]
+  end
+
   # Make one subgraph for each system (e.g. 'linux32', 'win32').  Decide which
   # paths to show in the graph, excluding omni.* paths because the make the
   # graphs really messy.
   subgraph_names = Set.new
   visible_paths = []
   path_graph.each_key do |path|
-    path_components = path.to_s.split('.')
-    name = path_components.first
-    next if name == 'omni'
-    subgraph_names << name if name
+    subgraph, component = decompose.(path)
+    next if subgraph == 'omni'
+    subgraph_names << subgraph
     visible_paths << path
   end
 
@@ -244,9 +250,9 @@ def output_graphviz(path_graph, path_built_map, path_time_map)
       f.puts "subgraph \"cluster_#{subgraph_name}\" {"
       f.puts "label=\"#{subgraph_name}\";"
       path_graph.each do |path, deps|
-        next if !path.to_s.start_with?("#{subgraph_name}.")
-        component_name = path.to_s[subgraph_name.size + 1, path.to_s.size]
-        f.puts "\"#{path}\" [label=\"#{component_name}\"]"
+        subgraph, component = decompose.(path)
+        next if subgraph != subgraph_name
+        f.puts "\"#{path}\" [label=\"#{component}\"]"
       end
       f.puts "}"
     end
@@ -254,7 +260,7 @@ def output_graphviz(path_graph, path_built_map, path_time_map)
     # Output dependencies between nodes.
     visible_paths.each do |path|
       path_graph.fetch(path).each do |dep|
-        next if dep.to_s.start_with?('omni.')
+        next if decompose.(dep).first == 'omni'
         f.puts "\"#{path}\" -> \"#{dep}\""
       end
     end
