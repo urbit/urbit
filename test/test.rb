@@ -223,12 +223,15 @@ def print_drv_stats(built_map)
   puts "Derivations built: #{built_count} out of #{built_map.size}"
 end
 
-def output_graphviz(path_graph, path_drv_map, drv_build_map)
+def output_graphviz(path_graph, path_built_map, path_time_map)
   subgraph_names = Set.new
+  visible_paths = []
   path_graph.each_key do |path|
     path_components = path.to_s.split('.')
     name = path_components.first
+    next if name == 'omni'
     subgraph_names << name if name
+    visible_paths << path
   end
 
   File.open('paths.gv', 'w') do |f|
@@ -238,11 +241,16 @@ def output_graphviz(path_graph, path_drv_map, drv_build_map)
       f.puts "label=\"#{subgraph_name}\";"
       path_graph.each do |path, deps|
         next if !path.to_s.start_with?("#{subgraph_name}.")
-        deps.each do |dep|
-          f.puts "\"#{path}\" -> \"#{dep}\""
-        end
+        f.puts "\"#{path}\""
       end
       f.puts "}"
+    end
+
+    visible_paths.each do |path|
+      path_graph.fetch(path).each do |dep|
+        next if dep.to_s.start_with?('omni.')
+        f.puts "\"#{path}\" -> \"#{dep}\""
+      end
     end
     f.puts "}"
   end
@@ -261,7 +269,7 @@ begin
   path_built_map = map_compose(path_drv_map, drv_built_map)
   path_priority_map = make_path_priority_map(settings)
   path_time_map = make_path_time_map(settings)
-  output_graphviz(path_graph, path_drv_map, drv_built_map)
+  output_graphviz(path_graph, path_built_map, path_time_map)
   # print_graph(path_graph)
   print_drv_stats(drv_built_map)
 rescue AnticipatedError => e
