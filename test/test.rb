@@ -223,7 +223,7 @@ def print_drv_stats(built_map)
   puts "Derivations built: #{built_count} out of #{built_map.size}"
 end
 
-def output_graphviz(path_graph, path_built_map, path_time_map)
+def output_graphviz(path_graph, path_built_map, path_time_map, path_priority_map)
   # Breaks a path name into two parts: subgraph name, component name.
   # For example, for :"linux32.qt.examples", returns ["linux32", "qt.examples"].
   decompose = lambda do |path|
@@ -245,6 +245,9 @@ def output_graphviz(path_graph, path_built_map, path_time_map)
 
   File.open('paths.gv', 'w') do |f|
     f.puts "digraph {"
+    f.puts "node ["
+    f.puts "colorscheme=\"accent3\""
+    f.puts "]"
     subgraph_names.sort.each do |subgraph_name|
       # Output the subgraphs and the nodes in them.
       f.puts "subgraph \"cluster_#{subgraph_name}\" {"
@@ -252,7 +255,23 @@ def output_graphviz(path_graph, path_built_map, path_time_map)
       path_graph.each do |path, deps|
         subgraph, component = decompose.(path)
         next if subgraph != subgraph_name
-        f.puts "\"#{path}\" [label=\"#{component}\"]"
+        more_attrs = ''
+
+        # Show nodes that are built with a green background.
+        if path_built_map.fetch(path)
+          more_attrs << " style=filled fillcolor=\"1\""
+        end
+
+        # Draw high-priority nodes with a thick pen.
+        if path_priority_map.fetch(path) > 0
+          more_attrs << " penwidth=3"
+        end
+
+        # Draw slow nodes as a double octagon.
+        if path_time_map.fetch(path) > 10
+          more_attrs << " shape=doubleoctagon"
+        end
+        f.puts "\"#{path}\" [label=\"#{component}\"#{more_attrs}]"
       end
       f.puts "}"
     end
@@ -281,7 +300,7 @@ begin
   path_built_map = map_compose(path_drv_map, drv_built_map)
   path_priority_map = make_path_priority_map(settings)
   path_time_map = make_path_time_map(settings)
-  output_graphviz(path_graph, path_built_map, path_time_map)
+  output_graphviz(path_graph, path_built_map, path_time_map, path_priority_map)
   # print_graph(path_graph)
   print_drv_stats(drv_built_map)
 rescue AnticipatedError => e
