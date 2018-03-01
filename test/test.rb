@@ -61,7 +61,7 @@ def parse_derivation_list(filename)
 
     # Expand any brackets in the attribute paths to get the complete list of
     # paths specified on this line.
-    paths = path_items.flat_map { |p| expand_brackets(p) }
+    paths = path_items.flat_map { |p| expand_brackets(p) }.map(&:to_sym)
 
     # Process attribute definitions on the line, like "priority=1".
     attrs = {}
@@ -226,7 +226,7 @@ end
 def output_graphviz(path_graph, path_drv_map, drv_build_map)
   subgraph_names = Set.new
   path_graph.each_key do |path|
-    path_components = path.split('.')
+    path_components = path.to_s.split('.')
     name = path_components.first
     subgraph_names << name if name
   end
@@ -237,7 +237,7 @@ def output_graphviz(path_graph, path_drv_map, drv_build_map)
       f.puts "subgraph \"cluster_#{subgraph_name}\" {"
       f.puts "label=\"#{subgraph_name}\";"
       path_graph.each do |path, deps|
-        next if !path.start_with?("#{subgraph_name}.")
+        next if !path.to_s.start_with?("#{subgraph_name}.")
         deps.each do |dep|
           f.puts "\"#{path}\" -> \"#{dep}\""
         end
