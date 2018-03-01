@@ -224,6 +224,9 @@ def print_drv_stats(built_map)
 end
 
 def output_graphviz(path_graph, path_built_map, path_time_map)
+  # Make one subgraph for each system (e.g. 'linux32', 'win32').  Decide which
+  # paths to show in the graph, excluding omni.* paths because the make the
+  # graphs really messy.
   subgraph_names = Set.new
   visible_paths = []
   path_graph.each_key do |path|
@@ -237,6 +240,7 @@ def output_graphviz(path_graph, path_built_map, path_time_map)
   File.open('paths.gv', 'w') do |f|
     f.puts "digraph {"
     subgraph_names.sort.each do |subgraph_name|
+      # Output the subgraphs and the nodes in them.
       f.puts "subgraph \"cluster_#{subgraph_name}\" {"
       f.puts "label=\"#{subgraph_name}\";"
       path_graph.each do |path, deps|
@@ -246,6 +250,7 @@ def output_graphviz(path_graph, path_built_map, path_time_map)
       f.puts "}"
     end
 
+    # Output dependencies between nodes.
     visible_paths.each do |path|
       path_graph.fetch(path).each do |dep|
         next if dep.to_s.start_with?('omni.')
