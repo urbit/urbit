@@ -245,7 +245,8 @@ def output_graphviz(path_graph, path_built_map, path_time_map)
       f.puts "label=\"#{subgraph_name}\";"
       path_graph.each do |path, deps|
         next if !path.to_s.start_with?("#{subgraph_name}.")
-        f.puts "\"#{path}\""
+        component_name = path.to_s[subgraph_name.size + 1, path.to_s.size]
+        f.puts "\"#{path}\" [label=\"#{component_name}\"]"
       end
       f.puts "}"
     end
