@@ -223,7 +223,12 @@ def print_drv_stats(built_map)
   puts "Derivations built: #{built_count} out of #{built_map.size}"
 end
 
-def output_graphviz(path_graph, path_built_map, path_time_map, path_priority_map)
+def output_graphviz(path_state)
+  path_graph = path_state.fetch(:graph)
+  path_priority_map = path_state.fetch(:priority_map)
+  path_time_map = path_state.fetch(:time_map)
+  path_built_map = path_state.fetch(:built_map)
+
   # Breaks a path name into two parts: subgraph name, component name.
   # For example, for :"linux32.qt.examples", returns ["linux32", "qt.examples"].
   decompose = lambda do |path|
@@ -287,6 +292,13 @@ def output_graphviz(path_graph, path_built_map, path_time_map, path_priority_map
   end
 end
 
+def make_build_plan(path_state)
+  path_graph = path_state.fetch(:graph)
+  path_priority_map = path_state.fetch(:priority_map)
+  path_time_map = path_state.fetch(:time_map)
+  path_built_map = path_state.fetch(:built_map)
+end
+
 begin
   check_directory!
   settings = parse_derivation_list('test/derivations.txt')
@@ -296,12 +308,14 @@ begin
   drv_built_map = get_build_status(drvs)
   global_drv_graph = get_drv_graph
   drv_graph = graph_restrict_nodes(global_drv_graph, drvs)
-  path_graph = graph_unmap(drv_graph, path_drv_map)
-  path_built_map = map_compose(path_drv_map, drv_built_map)
-  path_priority_map = make_path_priority_map(settings)
-  path_time_map = make_path_time_map(settings)
-  output_graphviz(path_graph, path_built_map, path_time_map, path_priority_map)
-  # print_graph(path_graph)
+  path_state = {
+    graph: graph_unmap(drv_graph, path_drv_map).freeze,
+    priority_map: make_path_priority_map(settings).freeze,
+    time_map: make_path_time_map(settings).freeze,
+    built_map: map_compose(path_drv_map, drv_built_map).freeze,
+  }.freeze
+  output_graphviz(path_state)
+  build_plan = make_build_plan(path_state)
   print_drv_stats(drv_built_map)
 rescue AnticipatedError => e
   puts e
