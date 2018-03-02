@@ -33,6 +33,14 @@ def depth_first_search_exclude_start(graph, start)
   end
 end
 
+def transitive_closure(graph)
+  tc = {}
+  graph.each_key do |node|
+    tc[node] = enum_for(:depth_first_search_exclude_start, graph, node).to_a
+  end
+  tc
+end
+
 def restricted_transitive_closure(graph, allowed)
   rtc = {}
   graph.each_key do |node|

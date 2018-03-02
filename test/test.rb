@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-# This requires Ruby 2.5.0 or later because it uses a new syntax
-# for 'rescue' directly inside a block.
+# This requires Ruby 2.5.0 or later because it uses a new syntax for rescuing
+# exceptions in a block with needing to make an extra begin/end pair.
 
 require 'open3'
 require 'pathname'
@@ -297,6 +297,81 @@ def make_build_plan(path_state)
   path_priority_map = path_state.fetch(:priority_map)
   path_time_map = path_state.fetch(:time_map)
   path_built_map = path_state.fetch(:built_map)
+
+  # It's handy to be able to get all the dependencies of a node in one step, and
+  # we will use that frequently to calculate how expensive it is to build a
+  # node and to make the toplogical sort.
+  path_graph = transitive_closure(path_graph).freeze
+
+  # The paths we need to build.  In the future we could filter this by priority.
+  required_paths = Set.new(path_graph.keys).freeze
+
+  # built_paths: The set of paths that are already built.  We will mutate this
+  # as we simulate our build plan.
+  built_paths = Set.new
+  path_built_map.each do |path, built|
+    built_paths << path if built
+  end
+
+  # List of paths to build.  Each path should only be built once all the paths it
+  # depends on are built.  I know nix-build can take care of that for us, but it's
+  # nice to see the precise order of what is going to be built so we can tell when
+  # slow things will get built.
+  build_plan = []
+
+  # Computes the time to build a path, taking into account what has already been
+  # built.
+  calculate_time = lambda do |path|
+    deps = path_graph.fetch(path) + [path]
+    deps.reject! &built_paths.method(:include?)
+    deps.map(&path_time_map.method(:fetch)).sum
+  end
+
+  # Adds plans to build this path and all of its unbuilt depedencies.
+  add_to_build_plan = lambda do |path|
+    deps = path_graph.fetch(path) + [path]
+
+    # Remove dependencies that are already built.
+    deps.reject! &built_paths.method(:include?)
+
+    # Topological sort
+    deps.sort! do |p1, p2|
+      case
+      when path_graph.fetch(p1).include?(p2) then 1
+      when path_graph.fetch(p2).include?(p1) then -1
+      else 0
+      end
+    end
+
+    deps.each do |path|
+      build_plan << path
+      built_paths << path
+    end
+  end
+
+  while true
+    unbuilt_required_paths = required_paths - built_paths
+    break if unbuilt_required_paths.empty?
+
+    # Find the maximum priority of the unbuilt required paths.
+    max_priority = nil
+    unbuilt_required_paths.each do |path|
+      priority = path_priority_map.fetch(path)
+      if !max_priority || priority > max_priority
+        max_priority = priority
+      end
+    end
+
+    top_priority_paths = unbuilt_required_paths.select do |path|
+      path_priority_map.fetch(path) == max_priority
+    end
+
+    target = top_priority_paths.min_by(&calculate_time)
+
+    add_to_build_plan.(target)
+  end
+
+  build_plan
 end
 
 begin
@@ -316,6 +391,7 @@ begin
   }.freeze
   output_graphviz(path_state)
   build_plan = make_build_plan(path_state)
+  p build_plan
   print_drv_stats(drv_built_map)
 rescue AnticipatedError => e
   $stderr.puts e
