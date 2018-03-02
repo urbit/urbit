@@ -253,7 +253,9 @@ _main_getopt(c3_i argc, c3_c** argv)
            && u3_Host.ops_u.url_c == 0
            && u3_Host.ops_u.arv_c == 0 ) {
 
-    fprintf(stderr, "-s only makes sense with -A\n");
+    fprintf(stderr, "-s only makes sense with -A\n"
+                    "If creating a comet, try -B zod/.urb/urbit.pill\n"
+                    "\n");
     return c3n;
   }
 
