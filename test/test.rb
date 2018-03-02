@@ -318,5 +318,5 @@ begin
   build_plan = make_build_plan(path_state)
   print_drv_stats(drv_built_map)
 rescue AnticipatedError => e
-  puts e
+  $stderr.puts e
 end
