@@ -20,10 +20,12 @@
 ;div.post
   ;div.topic-info.mb-4
     ;div.row.coll-title
-      {(trip desc:(need config))} /
+      ;a(href "/~~/collections/{(trip +<:s.bem.gas)}")
+        {(trip desc:(need config))} /
+      ==
     ==
     ;div.row.mod.text-mono
-      ; {(trip (scot %da mod.info.metawcom))}
+      ; {(trip -:s.bem.gas)}
     ==
   ==
   ::
