@@ -291,22 +291,6 @@
           void*
           u3a_wealloc(void* lag_v, c3_w len_w);
 
-        /* u3a_push(): allocate space on the road stack
-        */
-          void*
-          u3a_push(c3_w len_w);
-
-        /* u3a_pop(): deallocate space on the road stack
-        */
-          void
-          u3a_pop(c3_w len_w);
-
-        /* u3a_peek(): examine the top of the road stack
-        */
-          void*
-          u3a_peek(c3_w len_w);
-
-
       /* C-style aligned allocation - *not* compatible with above.
       */
         /* u3a_malloc(): aligned storage measured in bytes.
