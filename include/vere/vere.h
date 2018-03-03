@@ -96,6 +96,7 @@
         h2o_context_t*   ctx_u;             //  h2o ctx
         h2o_accept_ctx_t* cep_u;            //  h2o accept ctx (wat for?)
         h2o_hostconf_t*  hos_u;             //  h2o host config
+        h2o_handler_t*   han_u;             //  h2o request handler
         c3_w             sev_l;             //  server number
         c3_w             coq_l;             //  next connection number
         c3_w             por_w;             //  running port

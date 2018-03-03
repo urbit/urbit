@@ -22,12 +22,6 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
-// XX keep here (or in new http.h?)
-typedef struct _h2o_ctx_wrap {
-  h2o_context_t     cxt_u;            //  h2o ctx
-  struct _u3_http*    htp_u;            //  server backlink
-} h2o_ctx_wrap;
-
 // XX rename
 typedef struct _h2hed {
   struct _h2hed* nex_u;
@@ -39,7 +33,6 @@ typedef struct _h2hed {
 
 /* forward declarations
 */
-static u3_noun _http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l);
 static void _http_request(u3_hreq* req_u, u3_noun recq);
 static void _http_request_kill(u3_hreq* req_u);
 static void _http_req_link(u3_hcon* hon_u, u3_hreq* req_u);
@@ -105,10 +98,9 @@ _http_vec_from_octs(u3_noun oct)
     vec_u->len = 0;
   }
   else {
-    // XX c3n == ?
-    if ( !_(u3a_is_cat(u3h(u3t(oct)))) ) {
-      //  2GB max
-      u3m_bail(c3__fail); return 0;
+    //  2GB max
+    if ( c3n == u3a_is_cat(u3h(u3t(oct))) ) {
+      u3m_bail(c3__fail);
     }
 
     vec_u->len = u3h(u3t(oct));
@@ -126,12 +118,12 @@ static u3_noun
 _http_heds_to_noun(h2o_headers_t* hed_u)
 {
   u3_noun hed = u3_nul;
-  size_t dex = hed_u->size;
+  c3_d dex_d  = hed_u->size;
 
   h2o_header_t deh;
 
-  while ( 0 < dex ) {
-    deh = hed_u->entries[--dex];
+  while ( 0 < dex_d ) {
+    deh = hed_u->entries[--dex_d];
     hed = u3nc(u3nc(_http_vec_to_atom(*deh.name),
                     _http_vec_to_atom(deh.value)), hed);
   }
@@ -207,12 +199,6 @@ _http_req_free(u3_hreq* req_u)
 static u3_hreq*
 _http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
 {
-  // unnecessary, just an example
-#if 0
-  h2o_ctx_wrap* ctx_u = (h2o_ctx_wrap*)rec_u->conn->ctx;
-  u3_http* htp_u = ctx_u->htp_u;
-#endif
-
   u3_hreq* req_u = c3_malloc(sizeof(*req_u));
   req_u->rec_u = rec_u;
   _http_req_link(hon_u, req_u);
@@ -250,7 +236,7 @@ _http_send_response(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
 
   h2o_iovec_t* bod_u = _http_vec_from_octs(u3k(bod));
   rec_u->res.content_length = bod_u->len;
-  h2o_send(rec_u, bod_u, 1, 1);
+  h2o_send(rec_u, bod_u, 1, H2O_SEND_STATE_FINAL);
 
   _http_req_free(req_u);
 
@@ -311,7 +297,7 @@ _http_handle_new_req(h2o_handler_t* han_u, h2o_req_t* rec_u)
     rec_u->res.status = 400;
     rec_u->res.reason = "Bad Request";
     h2o_start_response(rec_u, &gen_u);
-    h2o_send(rec_u, 0, 0, 1);
+    h2o_send(rec_u, 0, 0, H2O_SEND_STATE_FINAL);
   }
   else {
     u3_hcon* hon_u = _http_conn_from_req(rec_u);
@@ -365,8 +351,14 @@ _http_conn_new(u3_http* htp_u)
 
   uv_tcp_init(u3L, &hon_u->wax_u);
 
-  if ( 0 != uv_accept((uv_stream_t*)&htp_u->wax_u,
-                      (uv_stream_t*)&hon_u->wax_u) ) {
+  c3_i sas_i;
+
+  if ( 0 != (sas_i = uv_accept((uv_stream_t*)&htp_u->wax_u,
+                               (uv_stream_t*)&hon_u->wax_u)) ) {
+    if ( (u3C.wag_w & u3o_verbose) ) {
+      uL(fprintf(uH, "http: accept: %s\n", uv_strerror(sas_i)));
+    }
+
     uv_close((uv_handle_t*)&hon_u->wax_u,
              (uv_close_cb)_http_conn_free_early);
     return;
@@ -549,13 +541,6 @@ _http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l)
 static void
 _http_request(u3_hreq* req_u, u3_noun recq)
 {
-#if 0
-  uL(fprintf(uH, "new request:\n"));
-  u3_noun span = u3v_wish("-:!>(*{@t @t (list {p/@t q/@t}) (unit {p/@ q/@})})");
-  u3m_tape(u3dc("text", span, u3k(recq)));
-  uL(fprintf(uH, "\n"));
-#endif
-
   u3_noun pox = _http_pox_to_noun(req_u->hon_u->htp_u->sev_l,
                                   req_u->hon_u->coq_l,
                                   req_u->seq_l);
@@ -624,8 +609,7 @@ _http_respond(c3_l sev_l, c3_l coq_l, c3_l seq_l, u3_noun rep)
 static void
 _http_init_h2o(u3_http* htp_u)
 {
-  htp_u->fig_u = c3_malloc(sizeof(*htp_u->fig_u));
-  memset(htp_u->fig_u, 0, sizeof(*htp_u->fig_u));
+  htp_u->fig_u = c3_calloc(sizeof(*htp_u->fig_u));
   h2o_config_init(htp_u->fig_u);
 
   // XX use u3_Host.ops_u.nam_c? Or ship.urbit.org? Multiple hosts?
@@ -634,19 +618,8 @@ _http_init_h2o(u3_http* htp_u)
                                           h2o_iovec_init(H2O_STRLIT("default")),
                                           htp_u->por_w);
 
-  // wrapped for server backlink (wrapper unnecessary, just an example)
-  htp_u->ctx_u = c3_malloc(sizeof(h2o_ctx_wrap));
-  memset(htp_u->ctx_u, 0, sizeof(h2o_ctx_wrap));
-  h2o_ctx_wrap* ctx_u = (h2o_ctx_wrap*)htp_u->ctx_u;
-  ctx_u->htp_u = htp_u;
-
-  //// FAILED ATTEMPTS:
-  //   can't wrap handler and link server, see pointer math in request.c call_handlers
-  //   can't use htp_u->ctx_u->_module_configs (don't know why)
-
-  htp_u->cep_u = c3_malloc(sizeof(*htp_u->cep_u));
-  memset(htp_u->cep_u, 0, sizeof(*htp_u->cep_u));
-
+  htp_u->ctx_u = c3_calloc(sizeof(*htp_u->ctx_u));
+  htp_u->cep_u = c3_calloc(sizeof(*htp_u->cep_u));
   htp_u->cep_u->ctx = (h2o_context_t*)htp_u->ctx_u;
   htp_u->cep_u->hosts = htp_u->fig_u->hosts;
 
@@ -654,16 +627,10 @@ _http_init_h2o(u3_http* htp_u)
     htp_u->cep_u->ssl_ctx = tls_u;
   }
 
-  // XX attach to server?
-  h2o_handler_t* han_u = h2o_create_handler(&htp_u->hos_u->fallback_path, sizeof(*han_u));
-  han_u->on_req = _http_handle_new_req;
+  htp_u->han_u = h2o_create_handler(&htp_u->hos_u->fallback_path, sizeof(*htp_u->han_u));
+  htp_u->han_u->on_req = _http_handle_new_req;
 
-  // XX handler lifecycle
-  // han_u->on_context_init
-  // han_u->on_context_dispose
-  // han_u->dispose
-
-  h2o_context_init((h2o_context_t*)htp_u->ctx_u, u3L, htp_u->fig_u);
+  h2o_context_init(htp_u->ctx_u, u3L, htp_u->fig_u);
 }
 
 /* _http_start(): start http server.
@@ -693,29 +660,29 @@ _http_start(u3_http* htp_u)
   /*  Try ascending ports.
   */
   while ( 1 ) {
-    c3_i ret;
+    c3_i sas_i;
 
     adr_u.sin_port = htons(htp_u->por_w);
+    sas_i = uv_tcp_bind(&htp_u->wax_u, (const struct sockaddr*)&adr_u, 0);
 
-    // XX maybe don't check uv_tcp_bind ret
-    if ( 0 != (ret = uv_tcp_bind(&htp_u->wax_u, (const struct sockaddr*)&adr_u, 0)) ||
-         0 != (ret = uv_listen((uv_stream_t*)&htp_u->wax_u,
-                               TCP_BACKLOG, _http_listen_cb)) ) {
-      if ( UV_EADDRINUSE == ret ) {
+    if ( 0 != sas_i ||
+         0 != (sas_i = uv_listen((uv_stream_t*)&htp_u->wax_u,
+                                 TCP_BACKLOG, _http_listen_cb)) ) {
+      if ( UV_EADDRINUSE == sas_i ) {
         htp_u->por_w++;
         continue;
       }
-      else {
-        uL(fprintf(uH, "http: listen: %s\n", uv_strerror(ret)));
-      }
+
+      uL(fprintf(uH, "http: listen: %s\n", uv_strerror(sas_i)));
+      return;
     }
+
+    _http_init_h2o(htp_u);
 
     uL(fprintf(uH, "http: live (%s, %s) on %d\n",
                    (c3y == htp_u->sec) ? "secure" : "insecure",
                    (c3y == htp_u->lop) ? "loopback" : "public",
                    htp_u->por_w));
-
-    _http_init_h2o(htp_u);
     break;
   }
 }
