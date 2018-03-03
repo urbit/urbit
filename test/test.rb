@@ -390,6 +390,7 @@ def build_paths(path_graph, path_built_map, build_plan, keep_going: true)
 
     if $?.success?
       path_built_map[path] = true
+      puts
     else
       puts " # failed"
       return false if !keep_going
