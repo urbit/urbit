@@ -31,15 +31,6 @@ typedef struct _h2hed {
   c3_c*          val_c;
 } h2hed;
 
-/* forward declarations
-*/
-static void _http_request(u3_hreq* req_u, u3_noun recq);
-static void _http_request_kill(u3_hreq* req_u);
-static void _http_req_link(u3_hcon* hon_u, u3_hreq* req_u);
-static void _http_req_unlink(u3_hreq* req_u);
-static void _http_conn_link(u3_http* htp_u, u3_hcon* hon_u);
-static void _http_conn_unlink(u3_hcon* hon_u);
-
 static const c3_i TCP_BACKLOG = 16;
 
 // XX u3_Host.tls_u ?
@@ -161,239 +152,17 @@ _http_heds_from_noun(u3_noun hed)
   return hed_u;
 }
 
-/* _http_req_to_httq(): convert h2o_req_t to httq
-*/
-static u3_weak
-_http_req_to_httq(h2o_req_t* rec_u)
-{
-  u3_noun med = _http_vec_to_meth(rec_u->method);
-
-  if ( u3_none == med ) {
-    return u3_none;
-  }
-
-  u3_noun url = _http_vec_to_atom(rec_u->path);
-  u3_noun hed = _http_heds_to_noun(&rec_u->headers);
-
-  // restore host header
-  hed = u3nc(u3nc(u3i_string("host"),
-                  _http_vec_to_atom(rec_u->authority)),
-             hed);
-
-  u3_noun bod = _http_vec_to_octs(rec_u->entity);
-
-  return u3nq(med, url, hed, bod);
-}
-
-/* _http_req_free(): free http request.
+/* _http_heds_from_noun(): free h2hed linked list
 */
 static void
-_http_req_free(u3_hreq* req_u)
+_http_heds_free(h2hed* hed_u)
 {
-  _http_req_unlink(req_u);
-  free(req_u);
-}
-
-/* _http_req_new(): receive http request.
-*/
-static u3_hreq*
-_http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
-{
-  u3_hreq* req_u = c3_malloc(sizeof(*req_u));
-  req_u->rec_u = rec_u;
-  _http_req_link(hon_u, req_u);
-
-  return req_u;
-}
-
-/* _http_send_response(): write httr to h2o_req_t->res and send
-*/
-static void
-_http_send_response(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
-{
-  h2o_req_t* rec_u = req_u->rec_u;
-
-  rec_u->res.status = sas;
-  rec_u->res.reason = (sas < 200) ? "Weird" :
-                      (sas < 300) ? "OK" :
-                      (sas < 400) ? "Moved" :
-                      (sas < 500) ? "Missing" :
-                      "Hosed";
-
-  h2hed* hed_u = _http_heds_from_noun(u3k(hed));
-  h2hed* deh_u = hed_u;
-
   while ( 0 != hed_u ) {
-    h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
-                          hed_u->nam_c, hed_u->nam_w, 0, 0,
-                          hed_u->val_c, hed_u->val_w);
-    hed_u = hed_u->nex_u;
-  }
-
-  // XX free req_u on disponse (rec_u should be freed by h2o)
-  static h2o_generator_t gen_u = {NULL, NULL};
-  h2o_start_response(rec_u, &gen_u);
-
-  h2o_iovec_t* bod_u = _http_vec_from_octs(u3k(bod));
-  rec_u->res.content_length = bod_u->len;
-  h2o_send(rec_u, bod_u, 1, H2O_SEND_STATE_FINAL);
-
-  _http_req_free(req_u);
-
-  // XX allocate on &req_u->pool and skip these?
-  free(bod_u->base);
-  free(bod_u);
-  while ( 0 != deh_u ) {
-    h2hed* duh_u = deh_u;
-    deh_u = deh_u->nex_u;
-    free(duh_u->nam_c);
-    free(duh_u->val_c);
-    free(duh_u);
-  }
-
-  u3z(sas); u3z(hed); u3z(bod);
-}
-
-// for casting and retrieving h2o_socket_t; see st_h2o_http1_conn_t
-typedef struct _h2o_con_http1 {
-  h2o_conn_t       con_u;             //  h2o connection
-  h2o_socket_t*    sok_u;             //  h2o connection socket
-} h2o_con_http1;
-
-// for casting and retrieving u3_hcon; see st_h2o_uv_socket_t
-typedef struct _h2o_sok_uv {
-  h2o_socket_t     sok_u;             //  h2o connection socket
-  struct {
-    uv_stream_t *stream;              //  client stream handler (u3_hcon)
-    uv_close_cb close_cb;
-  } uv;
-} h2o_sok_uv;
-
-/* _http_conn_from_req(); retrieve connection from h2o http1 request.
-*/
-static u3_hcon*
-_http_conn_from_req(h2o_req_t* rec_u)
-{
-  // XX HTTP2 wat do?
-  h2o_con_http1* noc_u = (h2o_con_http1*)rec_u->conn;
-  h2o_sok_uv* kos_u = (h2o_sok_uv*)noc_u->sok_u;
-  return (u3_hcon*)kos_u->uv.stream;
-};
-
-/* _http_handle_new_req(); handle incoming http request from h2o.
-*/
-static c3_i
-_http_handle_new_req(h2o_handler_t* han_u, h2o_req_t* rec_u)
-{
-  u3_weak recq = _http_req_to_httq(rec_u);
-
-  if ( u3_none == recq ) {
-    if ( (u3C.wag_w & u3o_verbose) ) {
-      uL(fprintf(uH, "strange %.*s request\n", (int)rec_u->method.len,
-                                               rec_u->method.base));
-    }
-
-    static h2o_generator_t gen_u = {NULL, NULL};
-    rec_u->res.status = 400;
-    rec_u->res.reason = "Bad Request";
-    h2o_start_response(rec_u, &gen_u);
-    h2o_send(rec_u, 0, 0, H2O_SEND_STATE_FINAL);
-  }
-  else {
-    u3_hcon* hon_u = _http_conn_from_req(rec_u);
-    u3_hreq* req_u = _http_req_new(hon_u, rec_u);
-    _http_request(req_u, recq);
-  }
-
-  return 0;
-}
-
-/* _http_conn_free_early(): free http connection on failure.
-*/
-static void
-_http_conn_free_early(uv_handle_t* han_t)
-{
-  u3_hcon* hon_u = (u3_hcon*)han_t;
-  free(hon_u);
-}
-
-/* _http_conn_free(): free http connection on close.
-*/
-static void
-_http_conn_free(uv_handle_t* han_t)
-{
-  u3_hcon* hon_u = (u3_hcon*)han_t;
-
-  while ( 0 != hon_u->req_u ) {
-    u3_hreq* req_u = hon_u->req_u;
-    u3_hreq* nex_u = req_u->nex_u;
-
-    _http_request_kill(req_u);
-    _http_req_free(req_u);
-    hon_u->req_u = nex_u;
-  }
-
-  _http_conn_unlink(hon_u);
-  free(hon_u);
-}
-
-/* _http_conn_new(): create and accept http connection.
-*/
-static void
-_http_conn_new(u3_http* htp_u)
-{
-  // TODO where?
-  // u3_lo_open();
-
-  u3_hcon* hon_u = c3_malloc(sizeof(*hon_u));
-  hon_u->seq_l = 1;
-  hon_u->req_u = 0;
-
-  uv_tcp_init(u3L, &hon_u->wax_u);
-
-  c3_i sas_i;
-
-  if ( 0 != (sas_i = uv_accept((uv_stream_t*)&htp_u->wax_u,
-                               (uv_stream_t*)&hon_u->wax_u)) ) {
-    if ( (u3C.wag_w & u3o_verbose) ) {
-      uL(fprintf(uH, "http: accept: %s\n", uv_strerror(sas_i)));
-    }
-
-    uv_close((uv_handle_t*)&hon_u->wax_u,
-             (uv_close_cb)_http_conn_free_early);
-    return;
-  }
-
-  _http_conn_link(htp_u, hon_u);
-
-  hon_u->sok_u = h2o_uv_socket_create((uv_stream_t*)&hon_u->wax_u,
-                                      (uv_close_cb)_http_conn_free);
-  h2o_accept(htp_u->cep_u, hon_u->sok_u);
-
-  // capture h2o connection (XX fragile)
-  hon_u->con_u = (h2o_conn_t*)hon_u->sok_u->data;
-
-  struct sockaddr_in adr_u;
-  h2o_socket_getpeername(hon_u->sok_u, (struct sockaddr*)&adr_u);
-  hon_u->ipf_w = ( adr_u.sin_family != AF_INET ) ?
-                 0 : ntohl(adr_u.sin_addr.s_addr);
-
-  // TODO where?
-  // u3_lo_shut(c3y);
-}
-
-/* _http_listen_cb(): uv_connection_cb for uv_listen
-*/
-static void
-_http_listen_cb(uv_stream_t* str_u, c3_i sas_i)
-{
-  u3_http* htp_u = (u3_http*)str_u;
-
-  if ( 0 != sas_i ) {
-    uL(fprintf(uH, "http: listen_cb: %s\n", uv_strerror(sas_i)));
-  }
-  else {
-    _http_conn_new(htp_u);
+    h2hed* deh_u = hed_u;
+    hed_u = deh_u->nex_u;
+    free(deh_u->nam_c);
+    free(deh_u->val_c);
+    free(deh_u);
   }
 }
 
@@ -450,6 +219,172 @@ _http_req_unlink(u3_hreq* req_u)
   }
 }
 
+/* _http_req_free(): free http request.
+*/
+static void
+_http_req_free(u3_hreq* req_u)
+{
+  _http_req_unlink(req_u);
+  free(req_u);
+}
+
+/* _http_req_new(): receive http request.
+*/
+static u3_hreq*
+_http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
+{
+  u3_hreq* req_u = c3_malloc(sizeof(*req_u));
+  req_u->rec_u = rec_u;
+  _http_req_link(hon_u, req_u);
+
+  return req_u;
+}
+
+/* _http_req_to_duct(): translate srv/con/req to duct
+*/
+static u3_noun
+_http_req_to_duct(u3_hreq* req_u)
+{
+  return u3nt(u3_blip, c3__http,
+              u3nq(u3dc("scot", c3_s2('u','v'), req_u->hon_u->htp_u->sev_l),
+                   u3dc("scot", c3_s2('u','d'), req_u->hon_u->coq_l),
+                   u3dc("scot", c3_s2('u','d'), req_u->seq_l),
+                   u3_nul));
+}
+
+/* _http_req_kill(): kill http request in %eyre.
+*/
+static void
+_http_req_kill(u3_hreq* req_u)
+{
+  u3_noun pox = _http_req_to_duct(req_u);
+  u3v_plan(pox, u3nc(c3__thud, u3_nul));
+}
+
+/* _http_req_dispatch(): dispatch http request to %eyre
+*/
+static void
+_http_req_dispatch(u3_hreq* req_u, u3_noun req)
+{
+  u3_noun pox = _http_req_to_duct(req_u);
+  u3_noun typ = _(req_u->hon_u->htp_u->lop) ? c3__chis : c3__this;
+
+  u3v_plan(pox, u3nq(typ,
+                     req_u->hon_u->htp_u->sec,
+                     u3nc(c3y, u3i_words(1, &req_u->hon_u->ipf_w)),
+                     req));
+}
+
+/* _http_req_respond(): write httr to h2o_req_t->res and send
+*/
+static void
+_http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
+{
+  h2o_req_t* rec_u = req_u->rec_u;
+
+  rec_u->res.status = sas;
+  rec_u->res.reason = (sas < 200) ? "Weird" :
+                      (sas < 300) ? "OK" :
+                      (sas < 400) ? "Moved" :
+                      (sas < 500) ? "Missing" :
+                      "Hosed";
+
+  h2hed* hed_u = _http_heds_from_noun(u3k(hed));
+  h2hed* deh_u = hed_u;
+
+  while ( 0 != hed_u ) {
+    h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
+                          hed_u->nam_c, hed_u->nam_w, 0, 0,
+                          hed_u->val_c, hed_u->val_w);
+    hed_u = hed_u->nex_u;
+  }
+
+  static h2o_generator_t gen_u = {0, 0};
+  h2o_start_response(rec_u, &gen_u);
+
+  h2o_iovec_t* bod_u = _http_vec_from_octs(u3k(bod));
+  rec_u->res.content_length = bod_u->len;
+  h2o_send(rec_u, bod_u, 1, H2O_SEND_STATE_FINAL);
+
+  _http_req_free(req_u);
+
+  // XX allocate on &req_u->rec_u->pool and skip these?
+  _http_heds_free(deh_u);
+  free(bod_u->base);
+  free(bod_u);
+
+  u3z(sas); u3z(hed); u3z(bod);
+}
+
+/* _http_rec_to_httq(): convert h2o_req_t to httq
+*/
+static u3_weak
+_http_rec_to_httq(h2o_req_t* rec_u)
+{
+  u3_noun med = _http_vec_to_meth(rec_u->method);
+
+  if ( u3_none == med ) {
+    return u3_none;
+  }
+
+  u3_noun url = _http_vec_to_atom(rec_u->path);
+  u3_noun hed = _http_heds_to_noun(&rec_u->headers);
+
+  // restore host header
+  hed = u3nc(u3nc(u3i_string("host"),
+                  _http_vec_to_atom(rec_u->authority)),
+             hed);
+
+  u3_noun bod = _http_vec_to_octs(rec_u->entity);
+
+  return u3nq(med, url, hed, bod);
+}
+
+/* _http_rec_fail(): fail on bad h2o_req_t
+*/
+static void
+_http_rec_fail(h2o_req_t* rec_u)
+{
+  static h2o_generator_t gen_u = {0, 0};
+  rec_u->res.status = 400;
+  rec_u->res.reason = "Bad Request";
+  h2o_start_response(rec_u, &gen_u);
+  h2o_send(rec_u, 0, 0, H2O_SEND_STATE_FINAL);
+}
+
+struct h2o_con_wrap {                 //  see private st_h2o_http1_conn_t
+  h2o_conn_t         con_u;           //  connection
+  struct {                            //  see private st_h2o_uv_socket_t
+    h2o_socket_t     sok_u;           //  socket
+    uv_stream_t*     han_u;           //  client stream handler (u3_hcon)
+  } *sok_u;
+};
+
+/* _http_rec_accept(); handle incoming http request from h2o.
+*/
+static c3_i
+_http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
+{
+  u3_weak req = _http_rec_to_httq(rec_u);
+
+  if ( u3_none == req ) {
+    if ( (u3C.wag_w & u3o_verbose) ) {
+      uL(fprintf(uH, "strange %.*s request\n", (int)rec_u->method.len,
+                                               rec_u->method.base));
+    }
+    _http_rec_fail(rec_u);
+  }
+  else {
+    // XX HTTP2 wat do?
+    struct h2o_con_wrap* noc_u = (struct h2o_con_wrap*)rec_u->conn;
+    u3_hcon* hon_u = (u3_hcon*)noc_u->sok_u->han_u;
+    u3_hreq* req_u = _http_req_new(hon_u, rec_u);
+    _http_req_dispatch(req_u, req);
+  }
+
+  return 0;
+}
+
 /* _http_conn_find(): find http connection in server by sequence.
 */
 static u3_hcon*
@@ -503,6 +438,80 @@ _http_conn_unlink(u3_hcon* hon_u)
   }
 }
 
+/* _http_conn_free_early(): free http connection on failure.
+*/
+static void
+_http_conn_free_early(uv_handle_t* han_t)
+{
+  u3_hcon* hon_u = (u3_hcon*)han_t;
+  free(hon_u);
+}
+
+/* _http_conn_free(): free http connection on close.
+*/
+static void
+_http_conn_free(uv_handle_t* han_t)
+{
+  u3_hcon* hon_u = (u3_hcon*)han_t;
+
+  while ( 0 != hon_u->req_u ) {
+    u3_hreq* req_u = hon_u->req_u;
+    u3_hreq* nex_u = req_u->nex_u;
+
+    _http_req_kill(req_u);
+    _http_req_free(req_u);
+    hon_u->req_u = nex_u;
+  }
+
+  _http_conn_unlink(hon_u);
+  free(hon_u);
+}
+
+/* _http_conn_new(): create and accept http connection.
+*/
+static void
+_http_conn_new(u3_http* htp_u)
+{
+  // TODO where?
+  // u3_lo_open();
+
+  u3_hcon* hon_u = c3_malloc(sizeof(*hon_u));
+  hon_u->seq_l = 1;
+  hon_u->req_u = 0;
+
+  uv_tcp_init(u3L, &hon_u->wax_u);
+
+  c3_i sas_i;
+
+  if ( 0 != (sas_i = uv_accept((uv_stream_t*)&htp_u->wax_u,
+                               (uv_stream_t*)&hon_u->wax_u)) ) {
+    if ( (u3C.wag_w & u3o_verbose) ) {
+      uL(fprintf(uH, "http: accept: %s\n", uv_strerror(sas_i)));
+    }
+
+    uv_close((uv_handle_t*)&hon_u->wax_u,
+             (uv_close_cb)_http_conn_free_early);
+    return;
+  }
+
+  _http_conn_link(htp_u, hon_u);
+
+  hon_u->sok_u = h2o_uv_socket_create((uv_stream_t*)&hon_u->wax_u,
+                                      (uv_close_cb)_http_conn_free);
+  h2o_accept(htp_u->cep_u, hon_u->sok_u);
+
+  // capture h2o connection (XX fragile)
+  hon_u->con_u = (h2o_conn_t*)hon_u->sok_u->data;
+
+  struct sockaddr_in adr_u;
+  h2o_socket_getpeername(hon_u->sok_u, (struct sockaddr*)&adr_u);
+  hon_u->ipf_w = ( adr_u.sin_family != AF_INET ) ?
+                 0 : ntohl(adr_u.sin_addr.s_addr);
+
+  // TODO where?
+  // u3_lo_shut(c3y);
+}
+
 /* _http_serv_find(): find http server by sequence.
 */
 static u3_http*
@@ -521,93 +530,27 @@ _http_serv_find(c3_l sev_l)
   return 0;
 }
 
-// XX serv_link and serv_unlink
+// XX serv link/unlink/free/new
 
-// XX rename
-/* _http_pox_to_noun(): translate srv/con/req to path noun (pox).
-*/
-static u3_noun
-_http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l)
-{
-  return u3nt(u3_blip, c3__http,
-              u3nq(u3dc("scot", c3_s2('u','v'), sev_l),
-                   u3dc("scot", c3_s2('u','d'), coq_l),
-                   u3dc("scot", c3_s2('u','d'), seq_l),
-                   u3_nul));
-}
-
-/* _http_request(): dispatch http request to %eyre
+/* _http_serv_listen_cb(): uv_connection_cb for uv_listen
 */
 static void
-_http_request(u3_hreq* req_u, u3_noun recq)
+_http_serv_listen_cb(uv_stream_t* str_u, c3_i sas_i)
 {
-  u3_noun pox = _http_pox_to_noun(req_u->hon_u->htp_u->sev_l,
-                                  req_u->hon_u->coq_l,
-                                  req_u->seq_l);
+  u3_http* htp_u = (u3_http*)str_u;
 
-  u3_noun typ = _(req_u->hon_u->htp_u->lop) ? c3__chis : c3__this;
-
-  u3v_plan(pox, u3nq(typ,
-                     req_u->hon_u->htp_u->sec,
-                     u3nc(c3y, u3i_words(1, &req_u->hon_u->ipf_w)),
-                     recq));
-}
-
-/* _http_request_kill(): kill http request in %eyre.
-*/
-static void
-_http_request_kill(u3_hreq* req_u)
-{
-  u3_noun pox = _http_pox_to_noun(req_u->hon_u->htp_u->sev_l,
-                                  req_u->hon_u->coq_l,
-                                  req_u->seq_l);
-
-  u3v_plan(pox, u3nc(c3__thud, u3_nul));
-}
-
-/* _http_respond(): attach %eyre response to open request.
-*/
-static void
-_http_respond(c3_l sev_l, c3_l coq_l, c3_l seq_l, u3_noun rep)
-{
-  u3_http* htp_u;
-  u3_hcon* hon_u;
-  u3_hreq* req_u;
-  c3_w bug_w = u3C.wag_w & u3o_verbose;
-
-  if ( !(htp_u = _http_serv_find(sev_l)) ) {
-    if ( bug_w ) {
-      uL(fprintf(uH, "http: server not found: %x\r\n", sev_l));
-    }
-  }
-  else if ( !(hon_u = _http_conn_find(htp_u, coq_l)) ) {
-    if ( bug_w ) {
-      uL(fprintf(uH, "http: connection not found: %x/%d\r\n", sev_l, coq_l));
-    }
-  }
-  else if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
-    if ( bug_w ) {
-      uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n", sev_l, coq_l, seq_l));
-    }
+  if ( 0 != sas_i ) {
+    uL(fprintf(uH, "http: listen_cb: %s\n", uv_strerror(sas_i)));
   }
   else {
-    u3_noun p_rep, q_rep, r_rep;
-
-    if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) {
-      uL(fprintf(uH, "http: strange response\n"));
-    }
-    else {
-      _http_send_response(req_u, u3k(p_rep), u3k(q_rep), u3k(r_rep));
-    }
+    _http_conn_new(htp_u);
   }
-
-  u3z(rep);
 }
 
-/* _http_init_h2o(): initialize h2o ctx and handlers for server.
+/* _http_serv_init_h2o(): initialize h2o ctx and handlers for server.
 */
 static void
-_http_init_h2o(u3_http* htp_u)
+_http_serv_init_h2o(u3_http* htp_u)
 {
   htp_u->fig_u = c3_calloc(sizeof(*htp_u->fig_u));
   h2o_config_init(htp_u->fig_u);
@@ -628,15 +571,15 @@ _http_init_h2o(u3_http* htp_u)
   }
 
   htp_u->han_u = h2o_create_handler(&htp_u->hos_u->fallback_path, sizeof(*htp_u->han_u));
-  htp_u->han_u->on_req = _http_handle_new_req;
+  htp_u->han_u->on_req = _http_rec_accept;
 
   h2o_context_init(htp_u->ctx_u, u3L, htp_u->fig_u);
 }
 
-/* _http_start(): start http server.
+/* _http_serv_start(): start http server.
 */
 static void
-_http_start(u3_http* htp_u)
+_http_serv_start(u3_http* htp_u)
 {
   struct sockaddr_in adr_u;
   memset(&adr_u, 0, sizeof(adr_u));
@@ -667,7 +610,7 @@ _http_start(u3_http* htp_u)
 
     if ( 0 != sas_i ||
          0 != (sas_i = uv_listen((uv_stream_t*)&htp_u->wax_u,
-                                 TCP_BACKLOG, _http_listen_cb)) ) {
+                                 TCP_BACKLOG, _http_serv_listen_cb)) ) {
       if ( UV_EADDRINUSE == sas_i ) {
         htp_u->por_w++;
         continue;
@@ -678,7 +621,7 @@ _http_start(u3_http* htp_u)
       return;
     }
 
-    _http_init_h2o(htp_u);
+    _http_serv_init_h2o(htp_u);
 
     uL(fprintf(uH, "http: live (%s, %s) on %d\n",
                    (c3y == htp_u->sec) ? "secure" : "insecure",
@@ -736,7 +679,7 @@ _http_init_tls()
 
 /* _http_write_ports_file(): update .http.ports
 */
-void
+static void
 _http_write_ports_file(c3_c *pax_c)
 {
   c3_i    pal_i;
@@ -765,7 +708,7 @@ _http_write_ports_file(c3_c *pax_c)
 
 /* _http_release_ports_file(): remove .http.ports
 */
-void
+static void
 _http_release_ports_file(c3_c *pax_c)
 {
   c3_i pal_i;
@@ -798,7 +741,38 @@ u3_http_ef_thou(c3_l     sev_l,
                 c3_l     seq_l,
                 u3_noun  rep)
 {
-  _http_respond(sev_l, coq_l, seq_l, rep);
+  u3_http* htp_u;
+  u3_hcon* hon_u;
+  u3_hreq* req_u;
+  c3_w bug_w = u3C.wag_w & u3o_verbose;
+
+  if ( !(htp_u = _http_serv_find(sev_l)) ) {
+    if ( bug_w ) {
+      uL(fprintf(uH, "http: server not found: %x\r\n", sev_l));
+    }
+  }
+  else if ( !(hon_u = _http_conn_find(htp_u, coq_l)) ) {
+    if ( bug_w ) {
+      uL(fprintf(uH, "http: connection not found: %x/%d\r\n", sev_l, coq_l));
+    }
+  }
+  else if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
+    if ( bug_w ) {
+      uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n", sev_l, coq_l, seq_l));
+    }
+  }
+  else {
+    u3_noun p_rep, q_rep, r_rep;
+
+    if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) {
+      uL(fprintf(uH, "http: strange response\n"));
+    }
+    else {
+      _http_req_respond(req_u, u3k(p_rep), u3k(q_rep), u3k(r_rep));
+    }
+  }
+
+  u3z(rep);
 }
 
 /* u3_http_io_init(): initialize http I/O.
@@ -864,9 +838,6 @@ u3_http_io_init()
   }
 
   tls_u = _http_init_tls();
-
-  // XX why is this here?
-  u3_Host.ctp_u.coc_u = 0;
 }
 
 /* u3_http_io_talk(): start http I/O.
@@ -877,7 +848,7 @@ u3_http_io_talk()
   u3_http* htp_u;
 
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
-    _http_start(htp_u);
+    _http_serv_start(htp_u);
   }
 
   _http_write_ports_file(u3_Host.dir_c);
