@@ -6745,7 +6745,7 @@
       [%zpzp ~] 
     ==
   ::
-  ++  ripple
+  ++  spore
     ::  build default sample
     ::
     ^-  hoon
@@ -6796,36 +6796,6 @@
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
       {$vine *}  $(mod q.mod)
       {$weed *}  [%rock %n 0]
-    ==
-  ::
-  ++  trivial
-    ::  produce expression that generates default noun
-    ::
-    ^-  hoon
-    ~+
-    ::  if default is set, use it
-    ::
-    ?^  def  (home u.def)
-    ::  bunt a minimized dummy structure
-    ::
-    =-  example:clear(mod -)
-    |-  ^-  crib
-    ?+  mod      mod
-      {^ *}      [$(mod p.mod) $(mod q.mod)]
-      {$tupl *}  :+  %tupl
-                   $(mod i.p.mod)
-                 (turn t.p.mod |=(crib ^$(mod +<)))
-      {$bark *}  [%bark p.mod $(mod q.mod)]
-      {$deet *}  [%deet p.mod $(mod q.mod)]
-      {$deft *}  [%weed p.mod]
-      {$fern *}  |-  ^-  crib
-                 ?~  t.p.mod  i.p.mod  
-                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-      {$kelp *}  |-  ^-  crib
-                 ?~  t.p.mod  ^$(mod i.p.mod)
-                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-      {$reed *}  $(mod p.mod)
-      {$vine *}  $(mod q.mod)
     ==
   ::
   ++  decorate
@@ -6882,7 +6852,7 @@
     ::  default approach: build a trivial 
     ::
       :+  %tsls
-        [%ktls [%bust %noun] trivial]
+        [%ktls [%bust %noun] spore]
       ~(relative local(dom (peg 3 dom)) [2 %&])
     ::
     ::
@@ -6928,12 +6898,8 @@
         ::  
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
-    ?:  fab
-      :^  %brts  ~^~
-        [%base %noun]
-      ~(relative local(dom (peg 7 dom)) [6 %&])
     :^  %brcl  ~^~
-      [%cold ripple]
+      [%cold spore]
     ~(relative local(dom (peg 7 dom)) [6 %&])
   ::
   ++  local
@@ -7108,13 +7074,13 @@
           ?:  =(2 tow) 
             [%bust %cell] 
           [[%bust %noun] $(tow (dec tow))]
-        ::  luz: subject edited to inject default
+        ::  luz: subject edited to inject spore
         ::
         =/  luz/hoon  
           :+  %cnts 
             [[%& 1] ~] 
           :_  ~
-          [fetch-wing ripple]
+          [fetch-wing spore]
         ?:  =(~ joy)      
           ::  unconditional default
           ::
@@ -7122,12 +7088,6 @@
         ::  conditional default
         ::
         [%tsgr [%wtcl [%fits yum fetch-wing] [%$ 1] luz] boc]
-        ::
-        ::  ?:  =(~ joy)
-        ::    ::  unconditional trivial
-        ::    ::
-        ::    [%ktls boc trivial]
-        ::  [%ktls boc [%wtcl [%fits yum fetch-wing] boc trivial]]
       ::  idealize topography (should be a smarter merge)
       ::
       =.  top  ?:(=(1 tow) top |-(?:(=(1 tow) & [& $(tow (dec tow))])))
@@ -8278,23 +8238,23 @@
     ?~  jon
       ?:  fab
         [p.pro [%10 [%live %1 %constant-stop] q.pro]]
-      ::  [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
+      ~|  %constant-folding-stopped
+      [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
+      ::  !!
       ::  ~_  (dunk '%constant-stopped-type')
       ::  ~|  [%constant-stopped-gene gen]
       ::  ~|  [%constant-stopped-mask mask.bus]
       ::  ~|  [%constant-stopped-formula `@p`(mug q.pro) q.pro]
-      ~|  %constant-folding-stopped
-      !!
     ?:  ?=($wait -.u.jon)
       ?:  fab
         [p.pro [%10 [%live %1 %constant-block] q.pro]]
-      ::  [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
+      ~|  %constant-folding-blocked
+      ::  !!
+      [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
       ::  ~_  (dunk '%constant-blocked-type')
       ::  ~|  [%constant-blocked-gene gen]
       ::  ~|  [%constant-blocked-mask mask.bus]
       ::  ~|  [%constant-blocked-formula `@p`(mug q.pro) q.pro]
-      ~|  %constant-folding-blocked
-      !!
     ::  [p.pro [%10 [%live %1 %constant-nonblocked] %1 p.u.jon]]
     [p.pro %1 p.u.jon]
   ::
