@@ -374,6 +374,30 @@ def make_build_plan(path_state)
   build_plan
 end
 
+def build_paths(path_graph, path_built_map, build_plan, keep_going: true)
+  path_built_map = path_built_map.dup
+  path_graph = transitive_closure(path_graph)
+  build_plan.each do |path|
+    if !path_graph.fetch(path).all?(&path_built_map.method(:fetch))
+      # One of the dependencies of this path has not been built, presumably
+      # because there was an error.
+      puts "# skipping #{path}"
+      next
+    end
+
+    print "nix-build -A #{path}"
+    system("nix-build -A #{path} > /dev/null 2> /dev/null")
+
+    if $?.success?
+      path_built_map[path] = true
+    else
+      puts " # failed"
+      return false if !keep_going
+    end
+  end
+  true
+end
+
 begin
   check_directory!
   settings = parse_derivation_list('test/derivations.txt')
@@ -391,8 +415,9 @@ begin
   }.freeze
   output_graphviz(path_state)
   build_plan = make_build_plan(path_state)
-  p build_plan
   print_drv_stats(drv_built_map)
+  success = build_paths(path_state[:graph], path_state[:built_map], build_plan)
+  exit(1) if !success
 rescue AnticipatedError => e
   $stderr.puts e
 end
