@@ -8249,8 +8249,8 @@
       ?:  fab
         [p.pro [%10 [%live %1 %constant-block] q.pro]]
       ~|  %constant-folding-blocked
-      ::  !!
-      [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
+      !!
+      ::  [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
       ::  ~_  (dunk '%constant-blocked-type')
       ::  ~|  [%constant-blocked-gene gen]
       ::  ~|  [%constant-blocked-mask mask.bus]
