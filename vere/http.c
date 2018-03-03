@@ -650,8 +650,8 @@ _http_start(u3_http* htp_u)
   }
 
   if ( c3y == htp_u->sec && 0 == tls_u ) {
-    uL(fprintf(uH, "secure server error %u: no tls config\n", htp_u->sev_l));
-    // c3_assert(0);
+    uL(fprintf(uH, "http: secure server error: no tls config\n"));
+    htp_u->por_w = 0;
     return;
   }
 
@@ -674,6 +674,7 @@ _http_start(u3_http* htp_u)
       }
 
       uL(fprintf(uH, "http: listen: %s\n", uv_strerror(sas_i)));
+      htp_u->por_w = 0;
       return;
     }
 
@@ -738,7 +739,6 @@ _http_init_tls()
 void
 _http_write_ports_file(c3_c *pax_c)
 {
-#if 0
   c3_i    pal_i;
   c3_c    *paf_c;
   c3_i    por_i;
@@ -752,14 +752,15 @@ _http_write_ports_file(c3_c *pax_c)
   u3a_free(paf_c);
 
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
-    dprintf(por_i, "%u %s %s\n", htp_u->por_w,
-                   (c3y == htp_u->sec) ? "secure" : "insecure",
-                   (c3y == htp_u->lop) ? "loopback" : "public");
+    if ( 0 < htp_u->por_w ) {
+      dprintf(por_i, "%u %s %s\n", htp_u->por_w,
+                     (c3y == htp_u->sec) ? "secure" : "insecure",
+                     (c3y == htp_u->lop) ? "loopback" : "public");
+    }
   }
 
   c3_sync(por_i);
   close(por_i);
-#endif
 }
 
 /* _http_release_ports_file(): remove .http.ports
@@ -767,7 +768,6 @@ _http_write_ports_file(c3_c *pax_c)
 void
 _http_release_ports_file(c3_c *pax_c)
 {
-#if 0
   c3_i pal_i;
   c3_c *paf_c;
 
@@ -777,7 +777,6 @@ _http_release_ports_file(c3_c *pax_c)
 
   unlink(paf_c);
   u3a_free(paf_c);
-#endif
 }
 
 // XX rename (is a card an effect?)
