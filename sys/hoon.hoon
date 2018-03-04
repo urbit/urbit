@@ -6776,11 +6776,9 @@
                  |-  ^-  hoon
                  ?~  t.p.mod  ^$(mod i.p.mod)
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-      {$funk *}  ::  build trivial gate
-                 :: 
-                :+  %tsgr
-                  [$(mod p.mod) $(mod q.mod)]
-                 [%ktbr [%brcl [~ ~] [%$ 2] [%$ 15]]]
+      {$funk *}  ::  see under %weed
+                 ::
+                 [%rock %n 0]
       {$herb *}  ::  borrow sample
                  ::
                  [%tsgl [%$ 6] p.mod]
@@ -6901,7 +6899,7 @@
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
     :^  %brcl  ~^~
-      ?:(fab [%cold spore] [%iced spore])
+      [%iced spore]
     ~(relative local(dom (peg 7 dom)) [6 %&])
   ::
   ++  local
@@ -8237,8 +8235,10 @@
     =+  pro=(mint gol gen)
     =+  jon=(apex:musk bran q.pro)
     ?:  |(?=(~ jon) ?=($wait -.u.jon))
-      ~&  %bleu-fail
-      !!
+      ?:  &(!fab vet)
+        ~&  %bleu-fail
+        !!
+      [p.pro q.pro]
     [p.pro %1 p.u.jon]
   ::
   ++  blow
@@ -8472,7 +8472,7 @@
       |-  ^-  (pair type type)
       ?~  rig
         [p.q.p.lop p.q.q.lop]
-      =+  zil=(mull(fab &) %noun dox q.i.rig)
+      =+  zil=(mull %noun dox q.i.rig)
       =+  ^=  dar
           :-  p=(tack(sut p.q.p.lop) p.i.rig p.zil)
               q=(tack(sut p.q.q.lop) p.i.rig q.zil)
@@ -8489,7 +8489,7 @@
     |-  ^-  (pair (list (pair type foot)) (list (pair type foot)))
     ?~  rig
       hag
-    =+  zil=(mull(fab &) %noun dox q.i.rig)
+    =+  zil=(mull %noun dox q.i.rig)
     =+  ^=  dix
         :-  p=(toss p.i.rig p.zil p.hag)
             q=(toss p.i.rig q.zil q.hag)
@@ -8993,7 +8993,7 @@
     ~+
     ?-  -.fut
       $ash  q:(mint %noun p.fut)
-      $elm  q:(mint(fab &, vet |) %noun p.fut)
+      $elm  q:(mint(vet |) %noun p.fut)
     ==
   ::
   ++  laze
