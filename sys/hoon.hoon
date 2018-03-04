@@ -5680,6 +5680,7 @@
     {$bunt p/root}                                      ::  mold default value
     {$bust p/base}                                      ::  bunt base
     {$cold p/hoon}                                      ::  fold constant
+    {$iced p/hoon}                                      ::  force fold
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
@@ -6230,6 +6231,7 @@
             bus/seminoun
             fol/noun
         ==
+    ~+
     ^-  output
     ::  simplify result
     ::
@@ -6852,7 +6854,7 @@
     ::  default approach: build a trivial 
     ::
       :+  %tsls
-        [%ktls [%bust %noun] spore]
+        spore
       ~(relative local(dom (peg 3 dom)) [2 %&])
     ::
     ::
@@ -6899,7 +6901,7 @@
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
     :^  %brcl  ~^~
-      [%cold spore]
+      ?:(fab [%cold spore] [%iced spore])
     ~(relative local(dom (peg 7 dom)) [6 %&])
   ::
   ++  local
@@ -7514,6 +7516,7 @@
         {$base *}  ~(clam ax fab boil)
         {$bust *}  ~(bunt ax fab %axil p.gen)
         {$cold *}  p.gen
+        {$iced *}  p.gen
         {$dbug *}   q.gen
         {$eror *}  ~|(p.gen !!)
     ::
@@ -8183,6 +8186,7 @@
       %rib    rib
       %vet    vet
       %fab    fab
+      %bleu   bleu
       %blow   blow
       %burp   burp
       %burn   burn
@@ -8227,35 +8231,23 @@
       ==
   =+  sut=`type`%noun
   |%
+  ++  bleu
+    |=  {gol/type gen/hoon}
+    ^-  {type nock}
+    =+  pro=(mint gol gen)
+    =+  jon=(apex:musk bran q.pro)
+    ?:  |(?=(~ jon) ?=($wait -.u.jon))
+      ~&  %bleu-fail
+      !!
+    [p.pro %1 p.u.jon]
+  ::
   ++  blow
     |=  {gol/type gen/hoon}
     ^-  {type nock}
     =+  pro=(mint gol gen)
-    ::  ~>  %slog.[%0 (dunk 'blow-subject')]
-    =+  bus=bran
-    ::  ~|  mask.bus
-    =+  jon=(apex:musk bus q.pro)
-    ?~  jon
-      ?:  fab
-        [p.pro [%10 [%live %1 %constant-stop] q.pro]]
-      ~|  %constant-folding-stopped
-      [p.pro [%10 [%live %1 %constant-stop-fab] q.pro]]
-      ::  !!
-      ::  ~_  (dunk '%constant-stopped-type')
-      ::  ~|  [%constant-stopped-gene gen]
-      ::  ~|  [%constant-stopped-mask mask.bus]
-      ::  ~|  [%constant-stopped-formula `@p`(mug q.pro) q.pro]
-    ?:  ?=($wait -.u.jon)
-      ?:  fab
-        [p.pro [%10 [%live %1 %constant-block] q.pro]]
-      ~|  %constant-folding-blocked
-      !!
-      ::  [p.pro [%10 [%live %1 %constant-block-fab] q.pro]]
-      ::  ~_  (dunk '%constant-blocked-type')
-      ::  ~|  [%constant-blocked-gene gen]
-      ::  ~|  [%constant-blocked-mask mask.bus]
-      ::  ~|  [%constant-blocked-formula `@p`(mug q.pro) q.pro]
-    ::  [p.pro [%10 [%live %1 %constant-nonblocked] %1 p.u.jon]]
+    =+  jon=(apex:musk bran q.pro)
+    ?:  |(?=(~ jon) ?=($wait -.u.jon))
+      [p.pro q.pro]
     [p.pro %1 p.u.jon]
   ::
   ++  burn
@@ -8276,6 +8268,7 @@
         $void       ~
     ==
   ++  bran
+    ~+
     =+  gil=*(set type)
     |-  ^-  seminoun:musk
     ?-    sut
@@ -8479,7 +8472,7 @@
       |-  ^-  (pair type type)
       ?~  rig
         [p.q.p.lop p.q.q.lop]
-      =+  zil=(mull %noun dox q.i.rig)
+      =+  zil=(mull(fab &) %noun dox q.i.rig)
       =+  ^=  dar
           :-  p=(tack(sut p.q.p.lop) p.i.rig p.zil)
               q=(tack(sut p.q.q.lop) p.i.rig q.zil)
@@ -8496,7 +8489,7 @@
     |-  ^-  (pair (list (pair type foot)) (list (pair type foot)))
     ?~  rig
       hag
-    =+  zil=(mull %noun dox q.i.rig)
+    =+  zil=(mull(fab &) %noun dox q.i.rig)
     =+  ^=  dix
         :-  p=(toss p.i.rig p.zil p.hag)
             q=(toss p.i.rig q.zil q.hag)
@@ -9000,13 +8993,16 @@
     ~+
     ?-  -.fut
       $ash  q:(mint %noun p.fut)
-      $elm  q:(mint(vet |) %noun p.fut)
+      $elm  q:(mint(fab &, vet |) %noun p.fut)
     ==
   ::
   ++  laze
     ::  produce lazy core generator for static execution
     ::
     |=  [wad=chap dom=(map @ tomb)]
+    ::  only one layer of fabrication analysis
+    ::
+    =.  fab  &
     ~+
     ^-  seminoun
     ::  tal: map from battery axis to foot
@@ -9180,6 +9176,7 @@
       [(nice (cell p.hed p.tal)) (cons q.hed q.tal)]
     ::
         {$cold *}  (blow gol p.gen)
+        {$iced *}  (bleu gol p.gen)
         {$ktcn *}  $(fab |, gen p.gen)
         {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
     ::
