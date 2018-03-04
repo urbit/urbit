@@ -160,7 +160,7 @@ static void node_to_html(strbuf *html, cmark_node *node)
 			info = &cur->as.code.info;
 			cr(html);
 
-			if (&cur->as.code.fence_length == 0
+			if (cur->as.code.fence_length == 0
 			    || strbuf_len(info) == 0) {
 				strbuf_puts(html, "<pre><code>");
 			}
