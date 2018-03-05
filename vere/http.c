@@ -374,6 +374,11 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     // XX HTTP2 wat do?
     struct h2o_con_wrap* noc_u = (struct h2o_con_wrap*)rec_u->conn;
     u3_hcon* hon_u = (u3_hcon*)noc_u->sok_u->han_u;
+
+    // sanity check
+    c3_assert((void *)hon_u->con_u == (void *)noc_u);
+    c3_assert((void *)hon_u->sok_u == (void *)noc_u->sok_u);
+
     u3_hreq* req_u = _http_req_new(hon_u, rec_u);
     _http_req_dispatch(req_u, req);
   }
