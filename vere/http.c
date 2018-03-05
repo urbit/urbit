@@ -79,28 +79,25 @@ _http_vec_to_octs(h2o_iovec_t vec_u)
 
 /* _http_vec_from_octs(): convert (unit octs) to h2o_iovec_t
 */
-static h2o_iovec_t*
+static h2o_iovec_t
 _http_vec_from_octs(u3_noun oct)
 {
-  h2o_iovec_t* vec_u = c3_malloc(sizeof(*vec_u));
-
   if ( u3_nul == oct ) {
-    vec_u->base = 0;
-    vec_u->len = 0;
+    return h2o_iovec_init(0, 0);
   }
-  else {
-    //  2GB max
-    if ( c3n == u3a_is_cat(u3h(u3t(oct))) ) {
-      u3m_bail(c3__fail);
-    }
 
-    vec_u->len = u3h(u3t(oct));
-    vec_u->base = c3_malloc(vec_u->len);
-    u3r_bytes(0, vec_u->len, (c3_y*)vec_u->base, u3t(u3t(oct)));
+  //  2GB max
+  if ( c3n == u3a_is_cat(u3h(u3t(oct))) ) {
+    u3m_bail(c3__fail);
   }
+
+  c3_w len_w  = u3h(u3t(oct));
+  c3_y* buf_y = c3_malloc(len_w);
+
+  u3r_bytes(0, len_w, buf_y, u3t(u3t(oct)));
 
   u3z(oct);
-  return vec_u;
+  return h2o_iovec_init(buf_y, len_w);
 }
 
 /* _http_heds_to_noun(): convert h2o_headers_t to (list (pair @t @t))
@@ -302,16 +299,15 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
   static h2o_generator_t gen_u = {0, 0};
   h2o_start_response(rec_u, &gen_u);
 
-  h2o_iovec_t* bod_u = _http_vec_from_octs(u3k(bod));
-  rec_u->res.content_length = bod_u->len;
-  h2o_send(rec_u, bod_u, 1, H2O_SEND_STATE_FINAL);
+  h2o_iovec_t bod_u = _http_vec_from_octs(u3k(bod));
+  rec_u->res.content_length = bod_u.len;
+  h2o_send(rec_u, &bod_u, 1, H2O_SEND_STATE_FINAL);
 
   _http_req_free(req_u);
 
   // XX allocate on &req_u->rec_u->pool and skip these?
   _http_heds_free(deh_u);
-  free(bod_u->base);
-  free(bod_u);
+  free(bod_u.base);
 
   u3z(sas); u3z(hed); u3z(bod);
 }
