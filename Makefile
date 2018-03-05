@@ -121,6 +121,7 @@ CFLAGS+= $(COSFLAGS) -ffast-math \
 	-Ioutside/scrypt \
 	-Ioutside/softfloat-3/source/include \
 	-Ioutside/murmur3 \
+	-Ioutside/h2o-2.2.3/include \
 	$(DEFINES) \
 	$(MDEFINES)
 
@@ -411,6 +412,8 @@ LIBUV_MAKEFILE2=outside/$(LIBUV_VER)/config.log
 
 LIBUV=outside/$(LIBUV_VER)/.libs/libuv.a
 
+LIBH2O=outside/h2o-2.2.3/libh2o.a
+
 LIBED25519=outside/ed25519/ed25519.a
 
 LIBANACHRONISM=outside/anachronism/build/libanachronism.a
@@ -459,6 +462,10 @@ $(LIBUV_MAKEFILE2): $(LIBUV_MAKEFILE)
 $(LIBUV): $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2)
 	$(MAKE) -C outside/$(LIBUV_VER) all-am -j1
 
+# cmake -DWITH_MRUBY=off -DWITH_BUNDLED_SSL=off -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
+$(LIBH2O):
+	$(MAKE) -C outside/h2o-2.2.3 libh2o
+
 $(LIBED25519):
 	$(MAKE) -C outside/ed25519
 
@@ -477,14 +484,14 @@ $(LIBSOFTFLOAT):
 $(V_OFILES): include/vere/vere.h
 
 ifdef NO_SILENT_RULES
-$(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+$(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBH2O) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBH2O) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 else
-$(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+$(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBH2O) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	@echo "    CCLD  $(BIN)/urbit"
 	@mkdir -p $(BIN)
-	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBH2O) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 endif
 
 # This should start a comet or something
