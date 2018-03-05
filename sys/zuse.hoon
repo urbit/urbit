@@ -3015,6 +3015,12 @@
     ::  core
     ::
     ++  hash
+      :>  per:  permutation function with configurable width.
+      :>  pad:  padding function.
+      :>  rat:  bitrate, size in bits of blocks to operate on.
+      :>  cap:  capacity, bits of sponge padding.
+      :>  out:  length of desired output, in bits.
+      :>  inp:  input to hash.
       |=  $:  per=$-(@ud $-(@ @))
               pad=$-([octs @ud] @)
               rat=@ud
@@ -3051,11 +3057,11 @@
     ++  sponge
       :>  sponge construction
       ::
-      :>  premute:  permutation function with configurable width.
+      :>  preperm:  permutation function with configurable width.
       :>  padding:  padding function.
       :>  bitrate:  size of blocks to operate on.
       :>  capacity:  sponge padding.
-      |=  $:  premute=$-(@ud $-(@ @))
+      |=  $:  preperm=$-(@ud $-(@ @))
               padding=$-([octs @ud] @)
               bitrate=@ud
               capacity=@ud
@@ -3064,7 +3070,7 @@
       ::  preparing
       =+  bitrate-bytes=(div bitrate 8)
       =+  blockwidth=(add bitrate capacity)
-      =+  permute=(premute blockwidth)
+      =+  permute=(preperm blockwidth)
       ::
       |=  [input=octs output=@ud]
       |^  ^-  @
