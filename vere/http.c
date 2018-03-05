@@ -339,11 +339,11 @@ _http_rec_to_httq(h2o_req_t* rec_u)
 /* _http_rec_fail(): fail on bad h2o_req_t
 */
 static void
-_http_rec_fail(h2o_req_t* rec_u)
+_http_rec_fail(h2o_req_t* rec_u, c3_i sas_i, c3_c* sas_c)
 {
   static h2o_generator_t gen_u = {0, 0};
-  rec_u->res.status = 400;
-  rec_u->res.reason = "Bad Request";
+  rec_u->res.status = sas_i;
+  rec_u->res.reason = sas_c;
   h2o_start_response(rec_u, &gen_u);
   h2o_send(rec_u, 0, 0, H2O_SEND_STATE_FINAL);
 }
@@ -368,7 +368,7 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
       uL(fprintf(uH, "strange %.*s request\n", (int)rec_u->method.len,
                                                rec_u->method.base));
     }
-    _http_rec_fail(rec_u);
+    _http_rec_fail(rec_u, 400, "Bad Request");
   }
   else {
     // XX HTTP2 wat do?
