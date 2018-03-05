@@ -3136,7 +3136,7 @@
         %+  can  3
         =-  (turn - |=(a=@ [1 a]))
         =+  (flop (rip 3 a))
-        (weld - (reap (sub 8 (lent -)) 0x0))
+        (weld (reap (sub 8 (lent -)) 0x0) -)
       --
     ::
     ++  keccak-f
