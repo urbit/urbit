@@ -771,7 +771,11 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
 c3_o
 u3r_sang(u3_noun a, u3_noun b)
 {
-  return _song_x(a, b, &_sang_one);
+  c3_o ret_o;
+  u3t_on(euq_o);
+  ret_o = _song_x(a, b, &_sang_one);
+  u3t_off(euq_o);
+  return ret_o;
 }
 
 /* u3r_sing():
@@ -783,13 +787,7 @@ u3r_sing(u3_noun a, u3_noun b)
 {
 #ifndef U3_MEMORY_DEBUG
   if ( u3R->par_p ) {
-    c3_o ret_o;
-
-    u3t_on(euq_o);
-    ret_o = u3r_sang(a, b);
-    u3t_off(euq_o);
-
-    return ret_o;
+    return u3r_sang(a, b);
   } 
 #endif
   {
@@ -808,7 +806,11 @@ u3r_sing(u3_noun a, u3_noun b)
 c3_o
 u3r_sung(u3_noun a, u3_noun b)
 {
-  return _song_x(a, b, &_sung_one);
+  c3_o ret_o;
+  u3t_on(euq_o);
+  ret_o = _song_x(a, b, &_sung_one);
+  u3t_off(euq_o);
+  return ret_o;
 }
 
 c3_o
