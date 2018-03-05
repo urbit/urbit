@@ -436,8 +436,11 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
   u3_noun pro;
 
   u3t_on(noc_o);
-  //pro = _n_nock_on(bus, fol);
+#ifdef TREE_NOCK
+  pro = _n_nock_on(bus, fol);
+#else
   pro = _n_burn_on(bus, fol);
+#endif
   u3t_off(noc_o);
 
   return pro;

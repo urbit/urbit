@@ -1673,6 +1673,12 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
   */
   u3j_boot();
 
+#ifdef TREE_NOCK
+  printf("nock: tree\r\n");
+#else
+  printf("nock: bytecode\r\n");
+#endif
+
   /* Install or reactivate the kernel.
   */
   if ( _(nuu_o) ) {
