@@ -25,6 +25,7 @@ addons:
   apt:
     packages:
     - python3
+    - python3-pip
     - libgmp3-dev
     - libsigsegv-dev
     - openssl
