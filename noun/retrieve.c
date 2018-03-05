@@ -719,7 +719,9 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
           else {
             if ( har_p != 0 ) {
               u3_noun key = u3nc(u3a_to_off(a), u3a_to_off(b));
+              u3t_off(euq_o);
               u3_noun got = u3h_get(har_p, key);
+              u3t_on(euq_o);
               u3z(key);
               if ( u3_none != got ) {
                 _eq_pop();
@@ -749,7 +751,9 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
       }
       if ( 0 != har_p ) {
         u3_noun key = u3nc(u3a_to_off(a), u3a_to_off(b));
+        u3t_off(euq_o);
         u3h_put(har_p, key, c3y);
+        u3t_on(euq_o);
         u3z(key);
       }
       _eq_pop();
