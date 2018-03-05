@@ -613,7 +613,7 @@ static char* names[] = {
 static inline void
 _n_apen(u3_noun* dst, u3_noun src)
 {
-  *dst = u3qb_weld(src, *dst);
+  *dst = u3kb_weld(src, *dst);
 }
 
 /* _n_emit(): return the size (in bytes) of an opcode's argument
