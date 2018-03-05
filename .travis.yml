@@ -5,8 +5,6 @@ script: meson build && cd ./build && ninja
 #
 # notifications:
 #   email: false
-python:
-  - "3.6"
 
 before_install:
   - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
@@ -25,7 +23,10 @@ install:
 
 addons:
   apt:
+    sources:
+    - deadsnakes # source required so it finds the package definition 
     packages:
+    - python3.5
     - libgmp3-dev
     - libsigsegv-dev
     - openssl
