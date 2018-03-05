@@ -22,65 +22,13 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
-static const c3_i TCP_BACKLOG = 16;
-
-// XX put this on u3_host ?
-static h2o_globalconf_t fig_u;
-
-// XX rename and move to vere.h
-typedef struct _h2htp {
-  uv_tcp_t          wax_u;            //  server stream handler
-  h2o_context_t*    ctx_u;            //  h2o ctx
-  h2o_accept_ctx_t* cep_u;            //  h2o accept ctx (wat for?)
-  h2o_hostconf_t*   hos_u;            //  h2o host config
-  c3_w              sev_l;            //  server number
-  c3_w              coq_l;            //  next connection number
-  c3_w              por_w;            //  running port
-  c3_o              sec;              //  logically secure
-  c3_o              lop;              //  loopback-only
-  struct _h2con*    hon_u;            //  connection list
-  struct _h2htp*    nex_u;            //  next in list
-} h2htp;
-
-typedef struct _h2con {
-  uv_tcp_t         wax_u;             //  client stream handler
-  h2o_conn_t*      con_u;             //  h2o connection
-  h2o_socket_t*    sok_u;             //  h2o connection socket
-  c3_w             ipf_w;             //  client ipv4
-  c3_w             coq_l;             //  connection number
-  c3_w             seq_l;             //  next request number
-  struct _h2htp*   htp_u;             //  server backlink
-  struct _h2req*   req_u;             //  request list
-  struct _h2con*   nex_u;             //  next in server's list
-} h2con;
-
-typedef struct _h2req {
-  h2o_req_t*       rec_u;             //  h2o request
-  c3_w             seq_l;             //  sequence within connection
-  struct _h2con*   hon_u;             //  connection backlink
-  struct _h2req*   nex_u;             //  next in connection's list
-} h2req;
-
-// XX u3_Host.htp_u
-static h2htp* sev_u = 0;  // global server list
-
-// XX u3_Host.tls_u ?
-static SSL_CTX* tls_u = 0;
-
-static u3_noun _http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l);
-static void _http_request(h2req* req_u, u3_noun recq);
-static void _http_request_kill(h2req* req_u);
-static void _http_req_link(h2con* hon_u, h2req* req_u);
-static void _http_req_unlink(h2req* req_u);
-static void _http_conn_link(h2htp* htp_u, h2con* hon_u);
-static void _http_conn_unlink(h2con* hon_u);
-
 // XX keep here (or in new http.h?)
 typedef struct _h2o_ctx_wrap {
   h2o_context_t     cxt_u;            //  h2o ctx
-  struct _h2htp*    htp_u;            //  server backlink
+  struct _u3_http*    htp_u;            //  server backlink
 } h2o_ctx_wrap;
 
+// XX rename
 typedef struct _h2hed {
   struct _h2hed* nex_u;
   c3_w           nam_w;
@@ -88,6 +36,24 @@ typedef struct _h2hed {
   c3_w           val_w;
   c3_c*          val_c;
 } h2hed;
+
+/* forward declarations
+*/
+static u3_noun _http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l);
+static void _http_request(u3_hreq* req_u, u3_noun recq);
+static void _http_request_kill(u3_hreq* req_u);
+static void _http_req_link(u3_hcon* hon_u, u3_hreq* req_u);
+static void _http_req_unlink(u3_hreq* req_u);
+static void _http_conn_link(u3_http* htp_u, u3_hcon* hon_u);
+static void _http_conn_unlink(u3_hcon* hon_u);
+
+static const c3_i TCP_BACKLOG = 16;
+
+// XX put this on u3_host ?
+static h2o_globalconf_t fig_u;
+
+// XX u3_Host.tls_u ?
+static SSL_CTX* tls_u = 0;
 
 /* _http_vec_to_meth(): convert h2o_iovec_t to meth
 */
@@ -233,7 +199,7 @@ _http_req_to_httq(h2o_req_t* rec_u)
 /* _http_req_free(): free http request.
 */
 static void
-_http_req_free(h2req* req_u)
+_http_req_free(u3_hreq* req_u)
 {
   _http_req_unlink(req_u);
   free(req_u);
@@ -241,14 +207,16 @@ _http_req_free(h2req* req_u)
 
 /* _http_req_new(): receive http request.
 */
-static h2req*
-_http_req_new(h2con* hon_u, h2o_req_t* rec_u)
+static u3_hreq*
+_http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
 {
   // unnecessary, just an example
+#if 0
   h2o_ctx_wrap* ctx_u = (h2o_ctx_wrap*)rec_u->conn->ctx;
-  h2htp* htp_u = ctx_u->htp_u;
+  u3_http* htp_u = ctx_u->htp_u;
+#endif
 
-  h2req* req_u = c3_malloc(sizeof(*req_u));
+  u3_hreq* req_u = c3_malloc(sizeof(*req_u));
   req_u->rec_u = rec_u;
   _http_req_link(hon_u, req_u);
 
@@ -258,7 +226,7 @@ _http_req_new(h2con* hon_u, h2o_req_t* rec_u)
 /* _http_send_response(): write httr to h2o_req_t->res and send
 */
 static void
-_http_send_response(h2req* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
+_http_send_response(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
 {
   h2o_req_t* rec_u = req_u->rec_u;
 
@@ -309,24 +277,24 @@ typedef struct _h2o_con_http1 {
   h2o_socket_t*    sok_u;             //  h2o connection socket
 } h2o_con_http1;
 
-// for casting and retrieving h2con; see st_h2o_uv_socket_t
+// for casting and retrieving u3_hcon; see st_h2o_uv_socket_t
 typedef struct _h2o_sok_uv {
   h2o_socket_t     sok_u;             //  h2o connection socket
   struct {
-    uv_stream_t *stream;              //  client stream handler (h2con)
+    uv_stream_t *stream;              //  client stream handler (u3_hcon)
     uv_close_cb close_cb;
   } uv;
 } h2o_sok_uv;
 
 /* _http_conn_from_req(); retrieve connection from h2o http1 request.
 */
-static h2con*
+static u3_hcon*
 _http_conn_from_req(h2o_req_t* rec_u)
 {
   // XX HTTP2 wat do?
   h2o_con_http1* noc_u = (h2o_con_http1*)rec_u->conn;
   h2o_sok_uv* kos_u = (h2o_sok_uv*)noc_u->sok_u;
-  return (h2con*)kos_u->uv.stream;
+  return (u3_hcon*)kos_u->uv.stream;
 };
 
 /* _http_handle_new_req(); handle incoming http request from h2o.
@@ -347,8 +315,8 @@ _http_handle_new_req(h2o_handler_t* han_u, h2o_req_t* rec_u)
     h2o_send(rec_u, 0, 0, 1);
   }
   else {
-    h2con* hon_u = _http_conn_from_req(rec_u);
-    h2req* req_u = _http_req_new(hon_u, rec_u);
+    u3_hcon* hon_u = _http_conn_from_req(rec_u);
+    u3_hreq* req_u = _http_req_new(hon_u, rec_u);
     _http_request(req_u, recq);
   }
 
@@ -360,7 +328,7 @@ _http_handle_new_req(h2o_handler_t* han_u, h2o_req_t* rec_u)
 static void
 _http_conn_free_early(uv_handle_t* han_t)
 {
-  h2con* hon_u = (h2con*)han_t;
+  u3_hcon* hon_u = (u3_hcon*)han_t;
   free(hon_u);
 }
 
@@ -369,11 +337,11 @@ _http_conn_free_early(uv_handle_t* han_t)
 static void
 _http_conn_free(uv_handle_t* han_t)
 {
-  h2con* hon_u = (h2con*)han_t;
+  u3_hcon* hon_u = (u3_hcon*)han_t;
 
   while ( 0 != hon_u->req_u ) {
-    h2req* req_u = hon_u->req_u;
-    h2req* nex_u = req_u->nex_u;
+    u3_hreq* req_u = hon_u->req_u;
+    u3_hreq* nex_u = req_u->nex_u;
 
     _http_request_kill(req_u);
     _http_req_free(req_u);
@@ -387,12 +355,12 @@ _http_conn_free(uv_handle_t* han_t)
 /* _http_conn_new(): create and accept http connection.
 */
 static void
-_http_conn_new(h2htp* htp_u)
+_http_conn_new(u3_http* htp_u)
 {
   // TODO where?
   // u3_lo_open();
 
-  h2con* hon_u = c3_malloc(sizeof(*hon_u));
+  u3_hcon* hon_u = c3_malloc(sizeof(*hon_u));
   hon_u->seq_l = 1;
   hon_u->req_u = 0;
 
@@ -428,7 +396,7 @@ _http_conn_new(h2htp* htp_u)
 static void
 _http_listen_cb(uv_stream_t* str_u, c3_i sas_i)
 {
-  h2htp* htp_u = (h2htp*)str_u;
+  u3_http* htp_u = (u3_http*)str_u;
 
   if ( 0 != sas_i ) {
     // XX retrieve and print error?
@@ -441,10 +409,10 @@ _http_listen_cb(uv_stream_t* str_u, c3_i sas_i)
 
 /* _http_req_find(): find http request in connection by sequence.
 */
-static h2req*
-_http_req_find(h2con* hon_u, c3_w seq_l)
+static u3_hreq*
+_http_req_find(u3_hcon* hon_u, c3_w seq_l)
 {
-  h2req* req_u = hon_u->req_u;
+  u3_hreq* req_u = hon_u->req_u;
 
   //  XX glories of linear search
   //
@@ -460,7 +428,7 @@ _http_req_find(h2con* hon_u, c3_w seq_l)
 /* _http_req_link(): link http request to connection
 */
 static void
-_http_req_link(h2con* hon_u, h2req* req_u)
+_http_req_link(u3_hcon* hon_u, u3_hreq* req_u)
 {
   req_u->hon_u = hon_u;
   req_u->seq_l = hon_u->seq_l++;
@@ -471,15 +439,15 @@ _http_req_link(h2con* hon_u, h2req* req_u)
 /* _http_req_unlink(): remove http request from connection
 */
 static void
-_http_req_unlink(h2req* req_u)
+_http_req_unlink(u3_hreq* req_u)
 {
-  h2con* hon_u = req_u->hon_u;
+  u3_hcon* hon_u = req_u->hon_u;
 
   if ( hon_u->req_u == req_u ) {
     hon_u->req_u = req_u->nex_u;
   }
   else {
-    h2req* pre_u = hon_u->req_u;
+    u3_hreq* pre_u = hon_u->req_u;
 
     //  XX glories of linear search
     //
@@ -494,10 +462,10 @@ _http_req_unlink(h2req* req_u)
 
 /* _http_conn_find(): find http connection in server by sequence.
 */
-static h2con*
-_http_conn_find(h2htp *htp_u, c3_w coq_l)
+static u3_hcon*
+_http_conn_find(u3_http *htp_u, c3_w coq_l)
 {
-  h2con* hon_u = htp_u->hon_u;
+  u3_hcon* hon_u = htp_u->hon_u;
 
   //  XX glories of linear search
   //
@@ -513,7 +481,7 @@ _http_conn_find(h2htp *htp_u, c3_w coq_l)
 /* _http_conn_link(): link http request to connection
 */
 static void
-_http_conn_link(h2htp* htp_u, h2con* hon_u)
+_http_conn_link(u3_http* htp_u, u3_hcon* hon_u)
 {
   hon_u->htp_u = htp_u;
   hon_u->coq_l = htp_u->coq_l++;
@@ -524,15 +492,15 @@ _http_conn_link(h2htp* htp_u, h2con* hon_u)
 /* _http_conn_unlink(): remove http request from connection
 */
 static void
-_http_conn_unlink(h2con* hon_u)
+_http_conn_unlink(u3_hcon* hon_u)
 {
-  h2htp* htp_u = hon_u->htp_u;
+  u3_http* htp_u = hon_u->htp_u;
 
   if ( htp_u->hon_u == hon_u ) {
     htp_u->hon_u = hon_u->nex_u;
   }
   else {
-    h2con *pre_u = htp_u->hon_u;
+    u3_hcon *pre_u = htp_u->hon_u;
 
     //  XX glories of linear search
     //
@@ -547,10 +515,10 @@ _http_conn_unlink(h2con* hon_u)
 
 /* _http_serv_find(): find http server by sequence.
 */
-static h2htp*
+static u3_http*
 _http_serv_find(c3_l sev_l)
 {
-  h2htp* htp_u = sev_u; // u3_Host.htp_u;
+  u3_http* htp_u = u3_Host.htp_u;
 
   //  XX glories of linear search
   //
@@ -581,7 +549,7 @@ _http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l)
 /* _http_request(): dispatch http request to %eyre
 */
 static void
-_http_request(h2req* req_u, u3_noun recq)
+_http_request(u3_hreq* req_u, u3_noun recq)
 {
 #if 1
   uL(fprintf(uH, "new request:\n"));
@@ -605,7 +573,7 @@ _http_request(h2req* req_u, u3_noun recq)
 /* _http_request_kill(): kill http request in %eyre.
 */
 static void
-_http_request_kill(h2req* req_u)
+_http_request_kill(u3_hreq* req_u)
 {
   u3_noun pox = _http_pox_to_noun(req_u->hon_u->htp_u->sev_l,
                                   req_u->hon_u->coq_l,
@@ -619,9 +587,9 @@ _http_request_kill(h2req* req_u)
 static void
 _http_respond(c3_l sev_l, c3_l coq_l, c3_l seq_l, u3_noun rep)
 {
-  h2htp* htp_u;
-  h2con* hon_u;
-  h2req* req_u;
+  u3_http* htp_u;
+  u3_hcon* hon_u;
+  u3_hreq* req_u;
 
   if ( !(htp_u = _http_serv_find(sev_l)) ) {
     if ( (u3C.wag_w & u3o_verbose) ) {
@@ -662,7 +630,7 @@ _http_respond(c3_l sev_l, c3_l coq_l, c3_l seq_l, u3_noun rep)
 /* _http_init_h2o(): initialize h2o ctx and handlers for server.
 */
 static void
-_http_init_h2o(h2htp* htp_u)
+_http_init_h2o(u3_http* htp_u)
 {
   // wrapped for server backlink (wrapper unnecessary, just an example)
   htp_u->ctx_u = c3_malloc(sizeof(h2o_ctx_wrap));
@@ -704,7 +672,7 @@ _http_init_h2o(h2htp* htp_u)
 /* _http_start(): start http server.
 */
 static void
-_http_start(h2htp* htp_u)
+_http_start(u3_http* htp_u)
 {
   struct sockaddr_in adr_u;
   memset(&adr_u, 0, sizeof(adr_u));
@@ -876,7 +844,7 @@ u3_http_io_init()
 {
   //  Lens port
   {
-    h2htp *htp_u = c3_malloc(sizeof(*htp_u));
+    u3_http *htp_u = c3_malloc(sizeof(*htp_u));
 
     htp_u->sev_l = u3A->sev_l + 2;
     htp_u->coq_l = 1;
@@ -889,14 +857,13 @@ u3_http_io_init()
     htp_u->hon_u = 0;
     htp_u->nex_u = 0;
 
-    // XX u3_Host.htp_u
-    htp_u->nex_u = sev_u;
-    sev_u = htp_u;
+    htp_u->nex_u = u3_Host.htp_u;
+    u3_Host.htp_u = htp_u;
   }
 
   //  Secure port.
   {
-    h2htp *htp_u = c3_malloc(sizeof(*htp_u));
+    u3_http *htp_u = c3_malloc(sizeof(*htp_u));
 
     htp_u->sev_l = u3A->sev_l + 1;
     htp_u->coq_l = 1;
@@ -909,14 +876,13 @@ u3_http_io_init()
     htp_u->hon_u = 0;
     htp_u->nex_u = 0;
 
-    // XX u3_Host.htp_u
-    htp_u->nex_u = sev_u;
-    sev_u = htp_u;
+    htp_u->nex_u = u3_Host.htp_u;
+    u3_Host.htp_u = htp_u;
   }
 
    // Insecure port.
   {
-    h2htp* htp_u = c3_malloc(sizeof(*htp_u));
+    u3_http* htp_u = c3_malloc(sizeof(*htp_u));
 
     htp_u->sev_l = u3A->sev_l;
     htp_u->coq_l = 1;
@@ -929,9 +895,8 @@ u3_http_io_init()
     htp_u->hon_u = 0;
     htp_u->nex_u = 0;
 
-    // XX u3_Host.htp_u
-    htp_u->nex_u = sev_u;
-    sev_u = htp_u;
+    htp_u->nex_u = u3_Host.htp_u;
+    u3_Host.htp_u = htp_u;
   }
 
   tls_u = _http_init_tls();
@@ -945,13 +910,12 @@ u3_http_io_init()
 void
 u3_http_io_talk()
 {
-  h2htp* htp_u;
+  u3_http* htp_u;
 
   // XX "global" per server?
   h2o_config_init(&fig_u);
 
-  // XX u3_Host.htp_u
-  for ( htp_u = sev_u; htp_u; htp_u = htp_u->nex_u ) {
+  for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
     _http_start(htp_u);
   }
 

@@ -2,6 +2,9 @@
 **
 ** This file is in the public domain.
 */
+
+#include "h2o.h"
+
   /** Quasi-tunable parameters.
   **/
     /* First kernel this executable can boot.
@@ -65,51 +68,33 @@
     /* u3_hreq: incoming http request.
     */
       typedef struct _u3_hreq {
-        struct _u3_hcon* hon_u;             //  connection
+        h2o_req_t*       rec_u;             //  h2o request
         c3_w             seq_l;             //  sequence within connection
-        u3_hmet          met_e;             //  method
-        u3_hrat          rat_e;             //  parser state
-        c3_c*            url_c;             //  url
-        c3_w             ipf_w;             //  ipv4
-        c3_o             liv;               //  keepalive
-        c3_o             end;               //  all responses added
-        u3_hhed*         hed_u;             //  headers
-        u3_hbod*         bod_u;             //  body parts (exit)
-        u3_hbod*         dob_u;             //  body parts (entry)
-        struct _u3_hreq* nex_u;             //  next in request queue
-        u3_hbod*         rub_u;             //  exit of write queue
-        u3_hbod*         bur_u;             //  entry of write queue
+        struct _u3_hcon* hon_u;             //  connection backlink
+        struct _u3_hreq* nex_u;             //  next in connection's list
       } u3_hreq;
-
-    /* u3_hrep: outgoing http response.
-    */
-      typedef struct _u3_hrep {
-        c3_w             sev_l;             //  server number
-        c3_w             coq_l;             //  connection number
-        c3_w             seq_l;             //  request number
-        c3_w             sas_w;             //  status
-        u3_hhed*         hed_u;             //  headers
-        u3_hbod*         bod_u;             //  body (one part)
-      } u3_hrep;
 
     /* u3_hcon: incoming http connection.
     */
       typedef struct _u3_hcon {
-        uv_tcp_t         wax_u;             //  event handler state
+        uv_tcp_t         wax_u;             //  client stream handler
+        h2o_conn_t*      con_u;             //  h2o connection
+        h2o_socket_t*    sok_u;             //  h2o connection socket
+        c3_w             ipf_w;             //  client ipv4
         c3_w             coq_l;             //  connection number
         c3_w             seq_l;             //  next request number
-        struct _u3_http* htp_u;             //  backlink to server
+        struct _u3_http* htp_u;             //  server backlink
+        struct _u3_hreq* req_u;             //  request list
         struct _u3_hcon* nex_u;             //  next in server's list
-        struct _u3_hreq* ruc_u;             //  request under construction
-        struct _u3_hreq* req_u;             //  exit of request queue
-        struct _u3_hreq* qer_u;             //  entry of request queue
-        void*            par_u;             //  struct http_parser *
       } u3_hcon;
 
     /* u3_http: http server.
     */
       typedef struct _u3_http {
-        uv_tcp_t         wax_u;             //  event handler state
+        uv_tcp_t         wax_u;             //  server stream handler
+        h2o_context_t*   ctx_u;             //  h2o ctx
+        h2o_accept_ctx_t* cep_u;            //  h2o accept ctx (wat for?)
+        h2o_hostconf_t*  hos_u;             //  h2o host config
         c3_w             sev_l;             //  server number
         c3_w             coq_l;             //  next connection number
         c3_w             por_w;             //  running port
