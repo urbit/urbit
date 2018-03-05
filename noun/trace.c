@@ -361,7 +361,12 @@ u3t_damp(void)
 void _ct_sigaction(c3_i x_i) 
 { 
   // fprintf(stderr, "itimer!\r\n"); abort();
+
+  // sampling mid-equality can break without this
+  c3_o meq_o = u3T.euq_o;
+  u3T.euq_o  = c3n;
   u3t_samp();
+  u3T.euq_o  = meq_o;
 }
 
 /* u3t_init(): initialize tracing layer.
