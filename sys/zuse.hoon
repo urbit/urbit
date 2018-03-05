@@ -3022,7 +3022,7 @@
       :>  out:  length of desired output, in bits.
       :>  inp:  input to hash.
       |=  $:  per=$-(@ud $-(@ @))
-              pad=$-([octs @ud] @)
+              pad=$-([octs @ud] octs)
               rat=@ud
               cap=@ud
               out=@ud
@@ -3045,11 +3045,12 @@
       |=  dsb=@ux
       ?>  (lte dsb 0xff)
       |=  [inp=octs mut=@ud]
-      ^-  @
+      ^-  octs
       =.  mut  (div mut 8)
       =+  pal=(sub mut (mod p.inp mut))
       =?  pal  =(pal 0)  mut
       =.  pal  (dec pal)
+      :-  (add p.inp +(pal))
       ::  padding is provided in lane bit ordering,
       ::  ie, LSB = left.
       (cat 3 (con (lsh 3 pal dsb) 0x80) q.inp)
@@ -3062,7 +3063,7 @@
       :>  bitrate:  size of blocks to operate on.
       :>  capacity:  sponge padding.
       |=  $:  preperm=$-(@ud $-(@ @))
-              padding=$-([octs @ud] @)
+              padding=$-([octs @ud] octs)
               bitrate=@ud
               capacity=@ud
           ==
@@ -3076,18 +3077,19 @@
       |^  ^-  @
         ::
         ::  padding
-        =/  padded=@  (padding input bitrate)
+        =.  input  (padding input bitrate)
         ::
         ::  absorbing
         =/  pieces=(list @)
           ::  amount of bitrate-sized blocks.
-          =+  i=(div (met 3 padded) bitrate-bytes)
+          ?>  =(0 (mod p.input bitrate-bytes))
+          =+  i=(div p.input bitrate-bytes)
           |-
           ?:  =(i 0)  ~
           :_  $(i (dec i))
           ::  get the bitrate-sized block of bytes
           ::  that ends with the byte at -.
-          =-  (cut 3 [- bitrate-bytes] padded)
+          =-  (cut 3 [- bitrate-bytes] q.input)
           (mul (dec i) bitrate-bytes)
         =/  state=@
           ::  for every piece,
