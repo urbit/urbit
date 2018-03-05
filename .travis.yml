@@ -19,7 +19,7 @@ before_install:
   - sudo make install
   - cd ..
 install:
-  - pip install --user -I meson==0.44.1
+  - pip3 install --user -I meson==0.44.1
 
 addons:
   apt:
