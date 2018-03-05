@@ -2974,10 +2974,10 @@
     ::
     ::  keccak
     ::
-    ++  keccak-224  |=(a=@ (keccak 1.152 448 224 a))
-    ++  keccak-256  |=(a=@ (keccak 1.088 512 256 a))
-    ++  keccak-384  |=(a=@ (keccak 832 768 384 a))
-    ++  keccak-512  |=(a=@ (keccak 576 1.024 512 a))
+    ++  keccak-224  |=(a=octs (keccak 1.152 448 224 a))
+    ++  keccak-256  |=(a=octs (keccak 1.088 512 256 a))
+    ++  keccak-384  |=(a=octs (keccak 832 768 384 a))
+    ++  keccak-512  |=(a=octs (keccak 576 1.024 512 a))
     ::
     ++  keccak  (cury (cury hash keccak-f) padding-keccak)
     ::
@@ -2985,10 +2985,10 @@
     ::
     ::  sha3
     ::
-    ++  sha3-224  |=(a=@ (sha3 1.152 448 224 a))
-    ++  sha3-256  |=(a=@ (sha3 1.088 512 256 a))
-    ++  sha3-384  |=(a=@ (sha3 832 768 384 a))
-    ++  sha3-512  |=(a=@ (sha3 576 1.024 512 a))
+    ++  sha3-224  |=(a=octs (sha3 1.152 448 224 a))
+    ++  sha3-256  |=(a=octs (sha3 1.088 512 256 a))
+    ++  sha3-384  |=(a=octs (sha3 832 768 384 a))
+    ++  sha3-512  |=(a=octs (sha3 576 1.024 512 a))
     ::
     ++  sha3  (cury (cury hash keccak-f) padding-sha3)
     ::
@@ -2996,8 +2996,8 @@
     ::
     ::  shake
     ::
-    ++  shake-128  |=([o=@ud i=@] (shake 1.344 256 o i))
-    ++  shake-224  |=([o=@ud i=@] (shake 1.088 512 o i))
+    ++  shake-128  |=([o=@ud i=octs] (shake 1.344 256 o i))
+    ++  shake-224  |=([o=@ud i=octs] (shake 1.088 512 o i))
     ::
     ++  shake  (cury (cury hash keccak-f) padding-shake)
     ::
@@ -3005,8 +3005,8 @@
     ::
     ::  rawshake
     ::
-    ++  rawshake-128  |=([o=@ud i=@] (rawshake 1.344 256 o i))
-    ++  rawshake-224  |=([o=@ud i=@] (rawshake 1.088 512 o i))
+    ++  rawshake-128  |=([o=@ud i=octs] (rawshake 1.344 256 o i))
+    ++  rawshake-224  |=([o=@ud i=octs] (rawshake 1.088 512 o i))
     ::
     ++  rawshake  (cury (cury hash keccak-f) padding-rawshake)
     ::
@@ -3016,28 +3016,37 @@
     ::
     ++  hash
       |=  $:  per=$-(@ud $-(@ @))
-              pad=$-([@ @ud] @)
+              pad=$-([octs @ud] @)
               rat=@ud
               cap=@ud
               out=@ud
-              inp=@
+              inp=octs
           ==
+      ^-  @
+      ::  urbit's little-endian to keccak's big-endian.
+      =.  q.inp
+        =+  (swp 3 q.inp)
+        (lsh 3 (sub p.inp (met 3 q.inp)) -)
       %.  [inp out]
       (sponge per pad rat cap)
     ::
+    ::NOTE  if ++keccak ever needs to be made to operate
+    ::      on bits rather than bytes, all that needs to
+    ::      be done is updating the way this padding
+    ::      function works. (and also "octs" -> "bits")
     ++  multirate-padding
       :>  dsb:  domain separation byte, reverse bit order.
       |=  dsb=@ux
       ?>  (lte dsb 0xff)
-      |=  [inp=@ mut=@ud]
-      =+  len=(met 3 inp)
+      |=  [inp=octs mut=@ud]
+      ^-  @
       =.  mut  (div mut 8)
-      =+  pal=(sub mut (mod len mut))
+      =+  pal=(sub mut (mod p.inp mut))
       =?  pal  =(pal 0)  mut
       =.  pal  (dec pal)
       ::  padding is provided in lane bit ordering,
       ::  ie, LSB = left.
-      (cat 3 (con (lsh 3 pal dsb) 0x80) inp)
+      (cat 3 (con (lsh 3 pal dsb) 0x80) q.inp)
     ::
     ++  sponge
       :>  sponge construction
@@ -3047,7 +3056,7 @@
       :>  bitrate:  size of blocks to operate on.
       :>  capacity:  sponge padding.
       |=  $:  premute=$-(@ud $-(@ @))
-              padding=$-([@ @ud] @)
+              padding=$-([octs @ud] @)
               bitrate=@ud
               capacity=@ud
           ==
@@ -3057,22 +3066,22 @@
       =+  blockwidth=(add bitrate capacity)
       =+  permute=(premute blockwidth)
       ::
-      |=  [input=@ output=@ud]
-      |^
+      |=  [input=octs output=@ud]
+      |^  ^-  @
         ::
         ::  padding
-        =.  input  (padding input bitrate)
+        =/  padded=@  (padding input bitrate)
         ::
         ::  absorbing
         =/  pieces=(list @)
           ::  amount of bitrate-sized blocks.
-          =+  i=(div (met 3 input) bitrate-bytes)
+          =+  i=(div (met 3 padded) bitrate-bytes)
           |-
           ?:  =(i 0)  ~
           :_  $(i (dec i))
           ::  get the bitrate-sized block of bytes
           ::  that ends with the byte at -.
-          =-  (cut 3 [- bitrate-bytes] input)
+          =-  (cut 3 [- bitrate-bytes] padded)
           (mul (dec i) bitrate-bytes)
         =/  state=@
           ::  for every piece,
