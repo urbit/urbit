@@ -34,7 +34,6 @@ addons:
     - make
     - libtool
     - g++
-    - ragel
     - re2c
     - libcurl4-gnutls-dev
     - python3

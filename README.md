@@ -23,7 +23,6 @@ If you're doing development on Urbit, keep reading.
 - [libcurl](https://curl.haxx.se/libcurl/)
 - [libuv](http://libuv.org)
 - curses implementation (ncurses on Linux distributions, OS curses otherwise)
-- [Ragel](https://www.colm.net/open-source/ragel/)
 - [re2c](http://re2c.org)
 
 Most of these dependencies are unfortunate; we aim to drastically shrink the
