@@ -5678,7 +5678,6 @@
     {$base p/base}                                      ::  base
     {$bunt p/root}                                      ::  mold default value
     {$bust p/base}                                      ::  bunt base
-    {$cold p/hoon}                                      ::  fold constant
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
@@ -5748,7 +5747,6 @@
     {$kthp p/root q/hoon}                               ::  ^-
     {$ktpm p/hoon}                                      ::  ^&
     {$ktsg p/hoon}                                      ::  ^~
-    {$kthx p/hoon}                                      ::  ^#
     {$ktts p/toga q/hoon}                               ::  ^=
     {$ktwt p/hoon}                                      ::  ^?
   ::                                            ::::::  hints
@@ -6890,7 +6888,7 @@
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
     :^  %brcl  ~^~
-      [%cold spore]
+      [%ktsg spore]
     ~(relative local(dom (peg 7 dom)) [6 %&])
   ::
   ++  local
@@ -7489,7 +7487,6 @@
     ::
         {$base *}  ~(clam ax fab boil)
         {$bust *}  ~(bunt ax fab %axil p.gen)
-        {$cold *}  p.gen
         {$dbug *}   q.gen
         {$eror *}  ~|(p.gen !!)
     ::
@@ -7598,7 +7595,7 @@
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$bunt *}  [%cold ~(bunt ax fab %herb p.gen)]
+        {$bunt *}  [%ktsg ~(bunt ax fab %herb p.gen)]
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
         {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
@@ -7629,7 +7626,6 @@
     ::
         {$ktdt *}  [%ktls [%cnhp p.gen q.gen ~] q.gen]
         {$kthp *}  [%ktls ~(bunt ax fab [%herb p.gen]) q.gen]
-        {$kthx *}  [%cold p.gen]
         {$sgbr *}
       :+  %sggr
         :-  %mean
@@ -7950,7 +7946,6 @@
         $kthp  (lead -.gen %.(+.gen dubs))
         $ktpm  (lead -.gen %.(+.gen expr))
         $ktsg  (lead -.gen %.(+.gen expr))
-        $kthx  (lead -.gen %.(+.gen expr))
         $ktts  (lead -.gen %.(+.gen nexp))
         $ktwt  (lead -.gen %.(+.gen expr))
         $halo  (lead -.gen %.(+.gen nexp))
@@ -9149,7 +9144,6 @@
       =+  tal=$(gen q.gen, gol %noun)
       [(nice (cell p.hed p.tal)) (cons q.hed q.tal)]
     ::
-        {$cold *}  (blow gol p.gen)
         {$ktcn *}  $(fab |, gen p.gen)
         {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
     ::
@@ -9177,14 +9171,7 @@
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
     ::
         {$ktpm *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) q.vat])
-        {$ktsg *}
-      =+  nef=$(gen p.gen)
-      :-  p.nef
-      =+  cag=burn
-      ?~  cag  q.nef
-      =+  moc=(mink [u.cag q.nef] |=({* *} ~))
-      ?:(?=($0 -.moc) [%1 p.moc] q.nef)
-    ::
+        {$ktsg *}  (blow gol p.gen)
         {$ktts *}  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
         {$tune *}  [(face p.gen sut) [%0 %1]]
         {$ktwt *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
@@ -12164,7 +12151,6 @@
                     ['+' (rune lus %ktls expb)]
                     ['&' (rune pam %ktpm expa)]
                     ['~' (rune sig %ktsg expa)]
-                    ['#' (rune hax %kthx expa)]
                     ['=' (rune tis %ktts expg)]
                     ['?' (rune wut %ktwt expa)]
                     ['%' (rune cen %ktcn expa)]
