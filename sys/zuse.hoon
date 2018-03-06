@@ -2997,7 +2997,7 @@
     ::  shake
     ::
     ++  shake-128  |=([o=@ud i=octs] (shake 1.344 256 o i))
-    ++  shake-224  |=([o=@ud i=octs] (shake 1.088 512 o i))
+    ++  shake-256  |=([o=@ud i=octs] (shake 1.088 512 o i))
     ::
     ++  shake  (cury (cury hash keccak-f) padding-shake)
     ::
@@ -3006,7 +3006,7 @@
     ::  rawshake
     ::
     ++  rawshake-128  |=([o=@ud i=octs] (rawshake 1.344 256 o i))
-    ++  rawshake-224  |=([o=@ud i=octs] (rawshake 1.088 512 o i))
+    ++  rawshake-256  |=([o=@ud i=octs] (rawshake 1.088 512 o i))
     ::
     ++  rawshake  (cury (cury hash keccak-f) padding-rawshake)
     ::
