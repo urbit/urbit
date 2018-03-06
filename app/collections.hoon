@@ -64,6 +64,10 @@
     ta-done:(ta-update:ta (fall old *@da))
   [mow ..prep(upd now.bol)]
 ::
+++  now-id
+  ::  HACK "sanitized" now for id use, can't get mistaken for file with extension in url
+  `@da`(sub now.bol (div (mod now.bol ~s1) 2))
+::
 ++  poke-noun
   |=  a=$@(?(~ @da) [p=@da q=@da])
   ^-  (quip move _+>)
@@ -73,7 +77,7 @@
     (ta-create:ta ['a description' publ=& visi=& comm=& xeno=& ~])
   ?@  a
     (ta-submit:ta a 'a topic' ~['with contents'])
-  (ta-comment:ta p.a q.a now.bol ~['a comment' 'yo'])
+  (ta-comment:ta p.a q.a now-id ~['a comment' 'yo'])
 ::
 ++  writ
   |=  {wir/wire rit/riot:clay}
@@ -142,12 +146,12 @@
     |=  cof/config
     ^+  +>
     ::XX unhandled kind
-    (ta-write /config now.bol %collections-config !>(cof))
+    (ta-write /config now-id %collections-config !>(cof))
   ::
   ++  ta-submit
     |=  {col/time tit/cord wat/wain}
     =/  top/topic  [tit src.bol wat]
-    (ta-write /topic [col now.bol] %collections-topic !>(top))
+    (ta-write /topic [col now-id] %collections-topic !>(top))
   ::
   ++  ta-resubmit
     |=  {col/time wen/@da tit/cord wat/wain}
@@ -158,12 +162,12 @@
   ++  ta-comment
     |=  {col/time top/@da com/?(~ @da) wat/wain}
     ^+  +>
-    ?~  com  $(com now.bol)  :: new comment
+    ?~  com  $(com now-id)  :: new comment
     =;  res/$@(~ _+>.$)  ?^(res res +>.$)
     %+  biff  (ta-get-topic col top)
     |=  [^ cos=(map @da {@da comment}) ~]
     =/  old/{@da comment}
-      (fall (~(get by cos) com) [now.bol src.bol wat])
+      (fall (~(get by cos) com) [now-id src.bol wat])
     ?.  =(who.old src.bol)  ..ta-comment  ::REVIEW error?
     %^  ta-write  /comment
       [col top com]
