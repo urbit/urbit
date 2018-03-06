@@ -40,6 +40,7 @@
       (u3k(x), u3nc(u3nc(x, u3qc_lsh(0, 1, u3t(d))), u3k(l)), 0);
 
     u3z(d);
+    u3z(l);
 
     return y;
   }
@@ -55,6 +56,7 @@
 
     u3z(d);
     u3z(x);
+    u3z(l);
 
     return z;
   }
@@ -92,6 +94,7 @@
     return (jamframe*) u3a_peek(sizeof(jamframe));
   }
 
+
   u3_noun
   u3qe_jam(u3_atom a)
   {
@@ -113,7 +116,7 @@
         {
           u3_noun z = u3qa_add(2, fam->b);
           u3_noun y = u3qa_add(z, p_d);
-          _jam_push(u3t(fam->a), y, q_d, &(fam->tel));
+          _jam_push(u3t(fam->a), y, u3k(q_d), &(fam->tel));
           u3z(z);
           continue;
         }
@@ -136,7 +139,7 @@
           }
           else {
             u3_noun z = u3qa_add(2, fam->b);
-            u3_noun w = u3nc(u3nc(2, 1), u3k(fam->l));
+            u3_noun w = u3nc(u3nc(2, 1), fam->l);
             _jam_push(u3h(a), z, w, &(fam->hed));
             continue;
           }
