@@ -1177,7 +1177,7 @@ u3_sist_boot(void)
 
     if ( 0 == u3_Host.ops_u.imp_c ) {
       u3_noun ten = _sist_zen();
-      uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
+      uL(fprintf(uH, "generating curve25519 key pair...\n"));
 
       pig = u3nq(c3__make, u3_nul, 11, u3nc(ten, u3_Host.ops_u.fak));
     }
