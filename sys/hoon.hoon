@@ -5615,7 +5615,6 @@
               {$| p/(unit term) q/hoon}                 ::  named wing
           ==                                            ::
 ++  crib                                                ::  data structure
-          $^  {p/crib q/crib}                           ::  ordered pair
           $%  {$axil p/base}                            ::  base type
               {$bark p/toga q/crib}                     ::  name
               {$funk p/crib q/crib}                     ::  function type
@@ -5680,7 +5679,6 @@
     {$bunt p/root}                                      ::  mold default value
     {$bust p/base}                                      ::  bunt base
     {$cold p/hoon}                                      ::  fold constant
-    {$iced p/hoon}                                      ::  force fold
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
@@ -6664,7 +6662,7 @@
   ++  wtts  |=(gen/hoon (gray [%wtts (blue gen) puce]))
   --
 ::
-++  ax  !:
+++  ax
   =+  :*  ::  dom: axis to home
           ::  doc: documentation
           ::  bug: debug annotations
@@ -6766,7 +6764,6 @@
     ~+
     |-  ^-  hoon
     ?-  mod
-      {^ *}      [$(mod p.mod) $(mod q.mod)]
       {$axil *}  (basal p.mod)
       {$bark *}  [%ktts p.mod $(mod q.mod)]
       {$deet *}  [%dbug p.mod $(mod q.mod)]
@@ -6785,7 +6782,7 @@
       {$kelp *}  ::  use last entry
                  ::
                  |-  ^-  hoon
-                 ?~  t.p.mod  ^$(mod i.p.mod)
+                 ?~  t.p.mod  ^$(mod [%tupl p.i.p.mod q.i.p.mod ~])
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
       {$leaf *}  [%rock p.mod q.mod]
       {$plow *}  $(mod q.mod)
@@ -6814,7 +6811,6 @@
     ::
     ^-  ?
     ?-  mod
-      {^ *}      &(clean(mod -.mod) clean(mod +.mod))
       {$axil *}  &
       {$bark *}  clean(mod q.mod)
       {$herb *}  |
@@ -6827,7 +6823,7 @@
                      $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
                  ==
       {$kelp *}  |-  ^-  ?
-                 ?&  clean(mod i.p.mod)
+                 ?&  clean(mod [%tupl p.i.p.mod q.i.p.mod ~])
                      ?~  t.p.mod  &
                      $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
                  ==
@@ -6854,11 +6850,6 @@
       :+  %tsls
         spore
       ~(relative local(dom (peg 3 dom)) [2 %&])
-    ::
-    ::
-        {^ *}
-      %-  decorate
-      [example:clear(mod -.mod) example:clear(mod +.mod)]
     ::
         {$axil *}  (decorate (basal p.mod))
         {$bark *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
@@ -6899,7 +6890,7 @@
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
     :^  %brcl  ~^~
-      [%iced spore]
+      [%cold spore]
     ~(relative local(dom (peg 7 dom)) [6 %&])
   ::
   ++  local
@@ -7012,12 +7003,10 @@
               one/line
               rep/(list line)
           ==
-      ::    :+  %sgbc
-      ::  %run-switch
       |-  ^-  hoon
       ::  if no other choices, construct head
       ::
-      ?~  rep  relative:clear(mod `crib`one) 
+      ?~  rep  relative:clear(mod [%tupl p.one q.one ~])
       ::  fin: loop completion
       ::
       =/  fin/hoon  $(one i.rep, rep t.rep)
@@ -7045,7 +7034,6 @@
       ::
       =/  tow/@ud
         ?+  mod      1
-          {^ *}      2
           {$kelp *}  2
           {$vine *}  2
           {$tupl *}  +((lent t.p.mod))
@@ -7092,13 +7080,6 @@
       ::
       =.  top  ?:(=(1 tow) top |-(?:(=(1 tow) & [& $(tow (dec tow))])))
       ?-    mod
-      ::
-      ::  cell
-      ::
-          {^ *}
-        %-  decorate
-        :-  relative:clear(mod -.mod, top -.top, axe (peg axe 2))
-        relative:clear(mod +.mod, top +.top, axe (peg axe 3))
       ::
       ::  base
       ::
@@ -7448,8 +7429,6 @@
       $(sec q.sec)
     ?:  ?=({$deet *} sec)
       $(sec q.sec)
-    ?:  ?=({{$deet *} *} sec)
-      $(p.sec q.p.sec)
     ?:  ?=({$tupl {$leaf *} * *} sec)
       :+  %&
         [%leaf p.i.p.sec q.i.p.sec] 
@@ -7458,8 +7437,6 @@
       :+  %& 
         [%leaf p.q.i.p.sec q.q.i.p.sec]
       [%tupl i.t.p.sec t.t.p.sec]
-    ?:  ?=({{$leaf *} *} sec)
-      [%& [%leaf p.p.sec q.p.sec] q.sec]
     [%| sec]
   ::
   ++  boil
@@ -7487,7 +7464,6 @@
               |=  a/hoon 
               =+  sec=boil(gen a)
               =+  foo=bile(gen a) 
-              ~_  leaf+?^(-.sec "celly" (weld (trip -.sec) "-bad"))
               ?>(?=($& -.foo) +.foo)
           ==
       ?-  -.def
@@ -7514,7 +7490,6 @@
         {$base *}  ~(clam ax fab boil)
         {$bust *}  ~(bunt ax fab %axil p.gen)
         {$cold *}  p.gen
-        {$iced *}  p.gen
         {$dbug *}   q.gen
         {$eror *}  ~|(p.gen !!)
     ::
@@ -8184,7 +8159,6 @@
       %rib    rib
       %vet    vet
       %fab    fab
-      %bleu   bleu
       %blow   blow
       %burp   burp
       %burn   burn
@@ -9176,7 +9150,6 @@
       [(nice (cell p.hed p.tal)) (cons q.hed q.tal)]
     ::
         {$cold *}  (blow gol p.gen)
-        {$iced *}  (bleu gol p.gen)
         {$ktcn *}  $(fab |, gen p.gen)
         {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
     ::
