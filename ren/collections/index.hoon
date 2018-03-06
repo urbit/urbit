@@ -65,7 +65,6 @@
                 ;div.text-mono
                   ; {(trip t)}
                 ==
-                ::;div:(h2:"*{hed.snip}" div:"*{tal.snip}")
                 ;div.h2.mt-0
                   ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}") 
                   *{hed.snip}
@@ -91,9 +90,16 @@
                 ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}"): {(trip t)}
               ==
               ;div.snippet
-                {(trip (of-wain:format (scag 3 (no-title:colls wat.info.con))))}
+                ::{(trip (of-wain:format (scag 3 (no-title:colls wat.info.con))))}
+                ;div.h3
+                  ; *{hed.snip}
+                ==
+                ;div
+                  ; *{tal.snip}
+                ==
               ==
             ==
   ==
+  ;script@"/~~/pages/elapsed.js";
 
 ==

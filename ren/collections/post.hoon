@@ -78,6 +78,7 @@
       ==
     ~
   ==
+  ;script@"/~~/pages/elapsed.js";
   ::
 ==
 
