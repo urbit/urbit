@@ -66,7 +66,7 @@
 ::
 ++  now-id
   ::  HACK "sanitized" now for id use, can't get mistaken for file with extension in url
-  `@da`(sub now.bol (div (mod now.bol ~s1) 2))
+  `@da`(sub now.bol (div (dis now.bol ~s0..fffe) 2))
 ::
 ++  poke-noun
   |=  a=$@(?(~ @da) [p=@da q=@da])
