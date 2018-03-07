@@ -1326,6 +1326,7 @@
               ?=(^ tal.u.ran.src)
             ::
               ?-  -.u.tal.u.ran.src
+                $sd   &
                 $da   (gte now.bol +.u.tal.u.ran.src)
                 $ud   ?&  ?=(^ seq)
                           (gte u.seq +.u.tal.u.ran.src)
@@ -1348,8 +1349,12 @@
       =.  ran
         ?~  ran  `[[%ud 0] `[%ud count]]
         =*  hed  hed.u.ran
+        =?  hed  ?=($sd -.hed)
+          [%ud (sub count (min count (abs:si +.hed)))]
         ?~  tal.u.ran  `[hed `[%ud count]]
         =*  tal  u.tal.u.ran
+        =?  tal  ?=($sd -.tal)
+          [%ud (sub count (min count (abs:si +.tal)))]
         ran
       ::  never fails, but compiler needs it.
       ?>  &(?=(^ ran) ?=(^ tal.u.ran))
@@ -1358,17 +1363,17 @@
       %-  flop
       |-  ^-  (list telegram)
       ?~  gaz  zeg
-      ?:  ?-  -.tal                                     ::  after the end
+      ?:  ?-  -.u.tal.u.ran                             ::  after the end
+            $ud  (lth +.u.tal.u.ran num)
+            $da  (lth +.u.tal.u.ran wen.i.gaz)
             $sd  !!  ::  caught above
-            $ud  (lth +.tal num)
-            $da  (lth +.tal wen.i.gaz)
           ==
         ::  if past the range, we're done searching.
         zeg
-      ?:  ?-  -.hed                                     ::  before the start
+      ?:  ?-  -.hed.u.ran                               ::  before the start
+            $ud  (lth num +.hed.u.ran)
+            $da  (lth wen.i.gaz +.hed.u.ran)
             $sd  !!  ::  caught above
-            $ud  (lth num +.hed)
-            $da  (lth wen.i.gaz +.hed)
           ==
         ::  if before the range, continue onward.
         $(num +(num), gaz t.gaz)
@@ -1388,20 +1393,18 @@
       ^-  {in/? done/?}
       ?~  ran  [& |]
       =/  min
-        =*  hed  hed.u.ran
-        ?-  -.hed
+        ?-  -.hed.u.ran
           $sd  &  ::  relative is always in.
-          $ud  (gth count +.hed)
-          $da  (gth now.bol +.hed)
+          $ud  (gth count +.hed.u.ran)
+          $da  (gth now.bol +.hed.u.ran)
         ==
       ?~  tal.u.ran
         [min |]
       =-  [&(min -) !-]
-      =*  tal  u.tal.u.ran
-      ?-  -.tal
+      ?-  -.u.tal.u.ran
         $sd  |  ::  relative is always done.
-        $ud  (gte +(+.tal) count)
-        $da  (gte +.tal now.bol)
+        $ud  (gte +(+.u.tal.u.ran) count)
+        $da  (gte +.u.tal.u.ran now.bol)
       ==
     ::
     :>  #
