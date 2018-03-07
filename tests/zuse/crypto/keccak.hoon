@@ -19,6 +19,7 @@
 /+  tester
 =,  keccak:crypto
 ::
+::  per bytelength, an example input.
 =/  keccak-inputs=(map @ud @)
   =-  (~(run by -) (cury swp 3))
   %-  ~(gas by *(map @ud @))
@@ -73,13 +74,29 @@
 ::
 |_  tst=tester-type:tester
 ::
+::  check a list of bytelength-answer pairs to see if
+::  they match the output given by {hash} for the
+::  corresponding example input from {keccak-inputs}.
+++  check-known-answers
+  |=  $:  hash=$-(octs @)
+          name=tape
+          answers=(list (pair @ud @))
+      ==
+  ^+  tst
+  ?~  answers  tst
+  =*  bytes  p.i.answers
+  =*  answer  q.i.answers
+  =-  $(tst -, answers t.answers)
+  %^  expect-eq.tst
+      (hash bytes (~(got by keccak-inputs) bytes))
+    answer
+  "{name} {(scow %ud bytes)} bytes"
+::
 ::  keccak
 ::
 ++  test-keccak-224
-  ^+  tst
-  =/  answers=(list (pair @ud @))
-    :~
-      :-  0
+  %^  check-known-answers  keccak-224  "keccak-224"
+  :~  :-  0
       0xf718.3750.2ba8.e108.37bd.d8d3.65ad.b855.
         9189.5602.fc55.2b48.b739.0abd
     ::
@@ -106,21 +123,11 @@
       :-  255
       0x5af5.6987.ea9c.f11f.cd0e.ac5e.bc14.b037.
         365e.9b11.23e3.1cb2.dfc7.929a
-    ==
-  |-
-  ?~  answers  tst
-  =.  tst
-    %^  expect-eq.tst
-        (keccak-224 p.i.answers (~(got by keccak-inputs) p.i.answers))
-      q.i.answers
-    "keccak-224 {(scow %ud p.i.answers)} bytes"
-  $(answers t.answers)
+  ==
 ::
 ++  test-keccak-256
-  ^+  tst
-  =/  answers=(list (pair @ud @))
-    :~
-      :-  0
+  %^  check-known-answers  keccak-256  "keccak-256"
+  :~  :-  0
       0xc5d2.4601.86f7.233c.927e.7db2.dcc7.03c0.
         e500.b653.ca82.273b.7bfa.d804.5d85.a470
     ::
@@ -147,21 +154,11 @@
       :-  255
       0x348f.b774.adc9.70a1.6b11.0566.9442.625e.
         6ada.a825.7a89.effd.b5a8.02f1.61b8.62ea
-    ==
-  |-
-  ?~  answers  tst
-  =.  tst
-    %^  expect-eq.tst
-        (keccak-256 p.i.answers (~(got by keccak-inputs) p.i.answers))
-      q.i.answers
-    "keccak-256 {(scow %ud p.i.answers)} bytes"
-  $(answers t.answers)
+  ==
 ::
 ++  test-keccak-384
-  ^+  tst
-  =/  answers=(list (pair @ud @))
-    :~
-      :-  0
+  %^  check-known-answers  keccak-384  "keccak-384"
+  :~  :-  0
       0x2c23.146a.63a2.9acf.99e7.3b88.f8c2.4eaa.
         7dc6.0aa7.7178.0ccc.006a.fbfa.8fe2.479b.
         2dd2.b213.6233.7441.ac12.b515.9119.57ff
@@ -195,21 +192,11 @@
       0x6bff.1c84.05a3.fe59.4e36.0e3b.ccea.1ebc.
         d509.310d.c79b.9e45.c263.783d.7a5d.d662.
         c678.9b18.bd56.7dbd.da15.54f5.bee6.a860
-    ==
-  |-
-  ?~  answers  tst
-  =.  tst
-    %^  expect-eq.tst
-        (keccak-384 p.i.answers (~(got by keccak-inputs) p.i.answers))
-      q.i.answers
-    "keccak-384 {(scow %ud p.i.answers)} bytes"
-  $(answers t.answers)
+  ==
 ::
 ++  test-keccak-512
-  ^+  tst
-  =/  answers=(list (pair @ud @))
-    :~
-      :-  0
+  %^  check-known-answers  keccak-512  "keccak-512"
+  :~  :-  0
        0xeab.42de.4c3c.eb92.35fc.91ac.ffe7.46b2.
         9c29.a8c3.66b7.c60e.4e67.c466.f36a.4304.
         c00f.a9ca.f9d8.7976.ba46.9bcb.e067.13b4.
@@ -250,15 +237,7 @@
         59e8.1af5.4c7c.a9e6.aeee.71c0.10fc.5467.
         4663.12a0.1aa5.c137.cfb1.4064.6941.5567.
         96f6.12c9.3512.6873.7c7e.9a2b.9631.d1fa
-    ==
-  |-
-  ?~  answers  tst
-  =.  tst
-    %^  expect-eq.tst
-        (keccak-512 p.i.answers (~(got by keccak-inputs) p.i.answers))
-      q.i.answers
-    "keccak-512 {(scow %ud p.i.answers)}"
-  $(answers t.answers)
+  ==
 ::
 ::  sha3
 ::
