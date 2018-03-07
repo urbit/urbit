@@ -1359,12 +1359,14 @@
       |-  ^-  (list telegram)
       ?~  gaz  zeg
       ?:  ?-  -.tal                                     ::  after the end
+            $sd  !!  ::  caught above
             $ud  (lth +.tal num)
             $da  (lth +.tal wen.i.gaz)
           ==
         ::  if past the range, we're done searching.
         zeg
       ?:  ?-  -.hed                                     ::  before the start
+            $sd  !!  ::  caught above
             $ud  (lth num +.hed)
             $da  (lth wen.i.gaz +.hed)
           ==
@@ -1388,6 +1390,7 @@
       =/  min
         =*  hed  hed.u.ran
         ?-  -.hed
+          $sd  &  ::  relative is always in.
           $ud  (gth count +.hed)
           $da  (gth now.bol +.hed)
         ==
@@ -1396,6 +1399,7 @@
       =-  [&(min -) !-]
       =*  tal  u.tal.u.ran
       ?-  -.tal
+        $sd  |  ::  relative is always done.
         $ud  (gte +(+.tal) count)
         $da  (gte +.tal now.bol)
       ==
