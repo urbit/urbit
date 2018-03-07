@@ -284,8 +284,8 @@
       %+  welp  /circle/[inbox]/grams/config/group
       ?.  =(0 count)
         [(scot %ud last) ~]
-      =+  history-days=~d5
-      [(scot %da (sub now.bol history-days)) ~]
+      =+  history-msgs=200
+      [(cat 3 '-' (scot %ud history-msgs)) ~]
   ==
 ::
 :>  #
