@@ -700,7 +700,7 @@
         ;~  pose
           (cold [%da now.bol] (jest 'now'))
           (stag %da (drat hed))
-          (stag %ud dem:ag)
+          placer
         ==
       ::
       ++  rang                                          :<  subscription range
