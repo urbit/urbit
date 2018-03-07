@@ -77,7 +77,7 @@
 ::  check a list of bytelength-answer pairs to see if
 ::  they match the output given by {hash} for the
 ::  corresponding example input from {keccak-inputs}.
-++  check-known-answers
+++  verify-known-answers
   |=  $:  hash=$-(octs @)
           name=tape
           answers=(list (pair @ud @))
@@ -95,7 +95,7 @@
 ::  keccak
 ::
 ++  test-keccak-224
-  %^  check-known-answers  keccak-224  "keccak-224"
+  %^  verify-known-answers  keccak-224  "keccak-224"
   :~  :-  0
       0xf718.3750.2ba8.e108.37bd.d8d3.65ad.b855.
         9189.5602.fc55.2b48.b739.0abd
@@ -126,7 +126,7 @@
   ==
 ::
 ++  test-keccak-256
-  %^  check-known-answers  keccak-256  "keccak-256"
+  %^  verify-known-answers  keccak-256  "keccak-256"
   :~  :-  0
       0xc5d2.4601.86f7.233c.927e.7db2.dcc7.03c0.
         e500.b653.ca82.273b.7bfa.d804.5d85.a470
@@ -157,7 +157,7 @@
   ==
 ::
 ++  test-keccak-384
-  %^  check-known-answers  keccak-384  "keccak-384"
+  %^  verify-known-answers  keccak-384  "keccak-384"
   :~  :-  0
       0x2c23.146a.63a2.9acf.99e7.3b88.f8c2.4eaa.
         7dc6.0aa7.7178.0ccc.006a.fbfa.8fe2.479b.
@@ -195,7 +195,7 @@
   ==
 ::
 ++  test-keccak-512
-  %^  check-known-answers  keccak-512  "keccak-512"
+  %^  verify-known-answers  keccak-512  "keccak-512"
   :~  :-  0
        0xeab.42de.4c3c.eb92.35fc.91ac.ffe7.46b2.
         9c29.a8c3.66b7.c60e.4e67.c466.f36a.4304.
