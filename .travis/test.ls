@@ -15,12 +15,15 @@ urbit.on \exit (code)->
 
 process.on \exit -> urbit.write '\04' # send EOF to gracefully checkpoint
 
+exit-code = 0
+
 
 on-next = (re,cb)->
   urbit.pipe (new stream-snitch re).on \match once cb
   
 on-next /\r\x1b\[K(\/~|ford: )/ ->
   console.log "\n\n---\nnode: detected error, exiting in ~s30\n---\n\n"
+  exit-code := 1
   set-timeout (-> process.exit 1), 30000
 
 <- on-next /dojo> /
@@ -28,10 +31,12 @@ on-next /\r\x1b\[K(\/~|ford: )/ ->
 urbit.write "%got-dojo\r"
 <- on-next /%got-dojo/
 
-exit-code = 0
 
 urbit.write "|start %test\r:test [%cores /]\r"
 <- on-next /%cores-tested/
+
+if exit-code
+  process.exit exit-code
 
 urbit.write "+test, =defer |, =seed `@uvI`(shaz %reproducible)\r"
 on-next /(FAILED|CRASHED)/ ->
@@ -40,6 +45,10 @@ on-next /(FAILED|CRASHED)/ ->
 
 urbit.write "%tested\r"
 <- on-next /%tested/
+
+
+if exit-code
+  process.exit exit-code
 
 console.log "\n\n---\nnode: STUB insert further tests here\n---\n\n"
 
