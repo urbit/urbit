@@ -30,6 +30,9 @@ urbit.write "%got-dojo\r"
 
 exit-code = 0
 
+urbit.write "|start %test\r:test [%cores /]\r"
+<- on-next /%cores-tested/
+
 urbit.write "+test, =defer |, =seed `@uvI`(shaz %reproducible)\r"
 on-next /(FAILED|CRASHED)/ ->
   console.log "\n\n---\nnode: detected error\n---\n\n"
@@ -39,4 +42,6 @@ urbit.write "%tested\r"
 <- on-next /%tested/
 
 console.log "\n\n---\nnode: STUB insert further tests here\n---\n\n"
+
+urbit.write '\04'
 set-timeout (-> process.exit exit-code), 1000

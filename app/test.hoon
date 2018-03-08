@@ -16,7 +16,7 @@
       ==
   =/  nex/(list spur)
     =<(p ;;(,[%& %cont * p=(list spur)] q.i.p.b))
-  ?~  nex  ~
+  ?~  nex  ~&(%cores-tested ~)
   [ost (build-core nex)]~
 ::
 ++  build-core
