@@ -296,11 +296,12 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
     hed_u = hed_u->nex_u;
   }
 
+  h2o_iovec_t bod_u = _http_vec_from_octs(u3k(bod));
+  rec_u->res.content_length = bod_u.len;
+
   static h2o_generator_t gen_u = {0, 0};
   h2o_start_response(rec_u, &gen_u);
 
-  h2o_iovec_t bod_u = _http_vec_from_octs(u3k(bod));
-  rec_u->res.content_length = bod_u.len;
   h2o_send(rec_u, &bod_u, 1, H2O_SEND_STATE_FINAL);
 
   _http_req_free(req_u);
