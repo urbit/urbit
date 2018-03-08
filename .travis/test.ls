@@ -19,9 +19,9 @@ process.on \exit -> urbit.write '\04' # send EOF to gracefully checkpoint
 on-next = (re,cb)->
   urbit.pipe (new stream-snitch re).on \match once cb
   
-on-next /\n(\/~|ford: )/ ->
-  console.log "\n\n---\nnode: detected error\n---\n\n"
-  set-timeout (-> process.exit 1), 1000
+on-next /\r\x1b\[K(\/~|ford: )/ ->
+  console.log "\n\n---\nnode: detected error, exiting in ~s30\n---\n\n"
+  set-timeout (-> process.exit 1), 30000
 
 <- on-next /dojo> /
 
