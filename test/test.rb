@@ -218,7 +218,7 @@ def graph_unmap(graph, map)
   gu
 end
 
-def print_drv_stats(built_map)
+def print_stats(built_map)
   built_count = built_map.count { |drv, built| built }
   puts "Derivations built: #{built_count} out of #{built_map.size}"
 end
@@ -399,26 +399,65 @@ def build_paths(path_graph, path_built_map, build_plan, keep_going: true)
   true
 end
 
+def parse_args(argv)
+  action = case argv.first
+           when 'graph' then :graph
+           when 'build' then :build
+           when 'plan' then :plan
+           when 'stats', nil then :stats
+           else raise AnticipatedError, "Invalid action: #{argv.first.inspect}"
+           end
+
+  { action: action }
+end
+
 begin
   check_directory!
+  args = parse_args(ARGV)
+  action = args.fetch(:action)
+
   settings = parse_derivation_list('test/derivations.txt')
+
   path_drv_map = instantiate_drvs(settings.fetch(:paths))
   check_paths_are_unique!(path_drv_map)
+
   drvs = path_drv_map.values.uniq
   drv_built_map = get_build_status(drvs)
-  global_drv_graph = get_drv_graph
-  drv_graph = graph_restrict_nodes(global_drv_graph, drvs)
-  path_state = {
-    graph: graph_unmap(drv_graph, path_drv_map).freeze,
-    priority_map: make_path_priority_map(settings).freeze,
-    time_map: make_path_time_map(settings).freeze,
-    built_map: map_compose(path_drv_map, drv_built_map).freeze,
-  }.freeze
-  output_graphviz(path_state)
-  build_plan = make_build_plan(path_state)
-  print_drv_stats(drv_built_map)
-  success = build_paths(path_state[:graph], path_state[:built_map], build_plan)
-  exit(1) if !success
+
+  if [:graph, :build, :plan].include?(action)
+    global_drv_graph = get_drv_graph
+    drv_graph = graph_restrict_nodes(global_drv_graph, drvs)
+    path_state = {
+      graph: graph_unmap(drv_graph, path_drv_map).freeze,
+      priority_map: make_path_priority_map(settings).freeze,
+      time_map: make_path_time_map(settings).freeze,
+      built_map: map_compose(path_drv_map, drv_built_map).freeze,
+    }.freeze
+  end
+
+  if action == :graph
+    output_graphviz(path_state)
+  end
+
+  if [:build, :plan].include?(action)
+    build_plan = make_build_plan(path_state)
+  end
+
+  if action == :plan
+    puts "Build plan:"
+    build_plan.each do |path|
+      puts "nix-build -A #{path}"
+    end
+  end
+
+  if action == :build
+    success = build_paths(path_state[:graph], path_state[:built_map], build_plan)
+    exit(1) if !success
+  end
+
+  if action == :stats
+    print_stats(drv_built_map)
+  end
 rescue AnticipatedError => e
   $stderr.puts e
 end
