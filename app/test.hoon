@@ -40,6 +40,7 @@
 ++  list-cores
   |=  a/path  ^-  (list spur)
   =/  sup  (flop a)
+  ~&  [%findining-hoons under=a]
   |-  ^-  (list spur)
   %-  zing
   %+  turn
