@@ -7,7 +7,8 @@ mkdir build
 cd build
 
 cmake-cross ../tic \
-  -DCMAKE_INSTALL_PREFIX=$out
+  -DCMAKE_INSTALL_PREFIX=$out \
+  -DBUILD_SHARED_LIBS=false
 
 make
 
