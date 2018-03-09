@@ -15,8 +15,8 @@ export class Urbit
     @reset-listeners!
     process.on \exit ~> @pty.write '\04' # send EOF to gracefully checkpoint
   #
-  note: (...args)-> console.log "\nnode:".blue, ...args
-  warn: (...args)-> console.log "\nnode:".red, ...args
+  note: (...args)-> console.log "\n#{'_'*40}\nnode:".blue, ...args
+  warn: (...args)-> console.log "\n#{'!'*40}\nnode:".red, ...args
   wait-silent: ~> # this feels hacky
     new Promise (resolve)~>
       a = set-interval ~>
