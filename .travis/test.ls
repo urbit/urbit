@@ -6,7 +6,7 @@ Promise.resolve urbit
   urb.note "Booting urbit"
   Promise.race [
     urb.expect ERROR .then ->
-      urb.warn "Error detected"
+      urb.warn "Boot error detected"
       throw Error "Stack trace while booting"
   , do
     <- urb.expect /dojo> / .then
@@ -15,12 +15,19 @@ Promise.resolve urbit
   ]
 .then (urb)->
   urb.note "Testing compilation"
-  # TODO tally ford stack traces
-  #      urb.warn etc
+  errs = {} #REVIEW stream reduce?
+  cur = "init"
+  urb.every />> (\/[ -~]+)/ ([_,path])-> cur := path
+  urb.every ERROR, ->
+    unless errs[cur]
+      errs[cur] = true
+      urb.warn "Compile error detected"
+  #
   <- urb.line "|start %test" .then
   <- urb.line ":test [%cores /]" .then
   <- urb.expect-echo "%compilation-tested" .then
-  #if tally => throw # a fit
+  errs := Object.keys errs
+  if errs.length => throw Error "in #errs"
   urb.unpipe!
 .then (urb)->
   urb.note "Running /===/tests"

@@ -25,6 +25,8 @@ export class Urbit
       , 200
   #
   unpipe: ~> @pty.socket.unpipe!; @ # TODO separate "listeners" stream
+  every: (re, cb)~> 
+    @pty.pipe (new stream-snitch re).on "match" cb
   expect: (re)~>
     new Promise (resolve)~>
        @pty.pipe (new stream-snitch re).once "match" resolve
