@@ -19,7 +19,7 @@ export class Urbit
   wait-silent: ~> # this feels hacky
     new Promise (resolve)~>
       a = set-interval ~>
-        if Date.now! > @last-output + 2000
+        if Date.now! > @last-output + 1000
           clear-interval a
           resolve @last-output
       , 200
@@ -32,8 +32,9 @@ export class Urbit
       @wait-silent!then -> throw Error "Expected #re during event"
     ]
   #
-  line: ->
-    @pty.write it
+  line: (s)->
+    <~ @wait-silent!then
+    @pty.write s
     <~ @wait-silent!then
     @stdout.write "\n"
     @pty.write "\r"
