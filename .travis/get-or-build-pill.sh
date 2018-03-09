@@ -1,37 +1,38 @@
 #!/bin/bash
 set -euo pipefail
-# set -x
+set -x
 
 # XX use -s instead of hash pill
 HASH=$(git -C .. log -1 HEAD --format=%H -- sys/)
 export PILL_NAME="git-${HASH:0:10}"
 
 if [ ! ${PILL_FORCE:-} ]; then
+  : Trying pill for commit
   wget https://bootstrap.urbit.org/$PILL_NAME.pill -O urbit.pill && exit 0
 fi
 
 # if wget failed
 
 if [ ${TRAVIS_COMMIT:-} ] && [ $TRAVIS_COMMIT != $HASH ]; then
-  echo Directory sys/ not modified in commit $TRAVIS_COMMIT
-  echo FIXME ignoring, as current sys/ commits are unlikely to contain the pill-build code
-  echo
-#   echo For auto-build please tag and push $HASH
+  : Directory sys/ not modified in commit $TRAVIS_COMMIT
+  : FIXME ignoring, as current sys/ commits are unlikely to contain the pill-build code
+  :
+#   : For auto-build please tag and push $HASH
 #   exit 1
 fi
 
 mkdir prev
 {
-  echo Pilling: trying pinned fakezod
+  : Pilling: trying pinned fakezod
   wget -i pin-parent-pill-pier.url -O - | tar xvz -C prev/ &&
-  echo Downloaded prev/zod &&
+  : Downloaded prev/zod &&
   lsc ./in-urbit.ls -FI zod prev/zod <<'  .'
     |autoload |
     |mount %
   .
   [ $? = 0 ] && cp -r ../sys/ prev/zod/home/sys
 } || {
-  echo Pilling: Parent-pill pier not available, trying preceding pill commit
+  : Pilling: Parent-pill pier not available, trying preceding pill commit
   HASH2=$(git -C .. log -2 $HASH --format=%H -- sys/ | tail -1)
   PILL_NAME2="git-${HASH2:0:10}"
   wget https://bootstrap.urbit.org/$PILL_NAME2.pill -O prev/urbit.pill &&
@@ -39,10 +40,11 @@ mkdir prev
     %booted-prev-zod
   .
 } || {
-  echo Pilling: Out of ideas
+  : Pilling: Out of ideas
   exit 1
 }
 
+: Pier created, soliding actual pill
 lsc ./in-urbit.ls -FI zod prev/zod <<.
   |label %home %$PILL_NAME
   .urbit/pill +solid /==/$PILL_NAME/sys, =dub &
@@ -51,6 +53,6 @@ lsc ./in-urbit.ls -FI zod prev/zod <<.
 cp prev/zod/.urb/put/urbit.pill urbit.pill
 mkdir built-pill; cp urbit.pill built-pill/$PILL_NAME.pill
 
-echo
-echo Created $PILL_NAME.pill, to be uploaded if tests pass
-echo
+:
+: Created $PILL_NAME.pill, to be uploaded if tests pass
+:
