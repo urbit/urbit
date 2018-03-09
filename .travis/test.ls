@@ -1,11 +1,11 @@
-{Urbit} = require './runner.ls'
+{Urbit,ERROR} = require './runner.ls'
 
 urbit = new Urbit <[-B urbit.pill -A .. -cFI zod zod]> 
 Promise.resolve urbit
 .then (urb)->
   urb.note "Booting urbit"
   Promise.race [
-    urb.expect-error!then ->
+    urb.expect ERROR .then ->
       urb.warn "Error detected"
       throw Error "Stack trace while booting"
   , do

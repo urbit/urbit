@@ -1,6 +1,7 @@
 require! <[ stream-snitch colors escape-string-regexp ]>
 pty = require \pty.js
 
+export ERROR = /(ford: |\r\x1b\[K\/~)/
 export class Urbit
   (args)->
     @stdout = process.stdout # overridable
@@ -24,9 +25,7 @@ export class Urbit
       , 200
   expect: (re)~>
     new Promise (resolve)~>
-      #@listeners.push 
-      @pty.pipe (new stream-snitch re).once "match" resolve
-  expect-error: -> @expect /(ford: |\r\x1b\[K\/~)/ #ALT if-error
+       @pty.pipe (new stream-snitch re).once "match" resolve
   expect-immediate: (re)->
     Promise.race [
       @expect re
