@@ -31,10 +31,13 @@ Promise.resolve urbit
   urb.unpipe!
 .then (urb)->
   urb.note "Running /===/tests"
-  # TODO tally FAILED and CRASHED
+  errs = "" #REVIEW stream reduce?
+  urb.every /(\/[ -~]* (FAILED|CRASHED))/, ([_,result])->
+    if !errs => urb.warn "First error"
+    errs += "\n  #result"
   <- urb.line "+test, =defer |, =seed `@uvI`(shaz %reproducible)" .then
   <- urb.expect-echo "%ran-tests" .then
-  #if tally => throw # a fit
+  if errs => throw Error errs
   urb.unpipe!
 .then ->
   urbit.exit 0
