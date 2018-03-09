@@ -7002,9 +7002,12 @@
               rep/(list line)
           ==
       |-  ^-  hoon
+      ::  tup: tuple matching this line
+      ::
+      =/  tup/crib  [%tupl p.one q.one ~]
       ::  if no other choices, construct head
       ::
-      ?~  rep  relative:clear(mod [%tupl p.one q.one ~])
+      ?~  rep  relative:clear(mod tup)
       ::  fin: loop completion
       ::
       =/  fin/hoon  $(one i.rep, rep t.rep)
@@ -7013,7 +7016,9 @@
       :^    %wtcl
           ::  test if the head matches this wing
           ::
-          [%wtts p.one fetch-wing(axe (peg axe 2))]
+          :+  %fits
+            [%tsgl [%$ 2] example:clear(mod tup)]
+          fetch-wing(axe (peg axe 2))
         ::  if so, use this form
         ::
         :-  [%rock p.p.one q.p.one]
