@@ -1,4 +1,4 @@
-require! <[ stream-snitch colors escape-string-regexp ]>
+require! <[ stream stream-snitch colors escape-string-regexp ]>
 pty = require \pty.js
 
 export ERROR = /(ford: |\r\x1b\[K\/~)/
@@ -12,6 +12,7 @@ export class Urbit
     @last-output = Date.now()
     @pty.on \data ~> @last-output = Date.now()
     #
+    @reset-listeners!
     process.on \exit ~> @pty.write '\04' # send EOF to gracefully checkpoint
   #
   note: (...args)-> console.log "\nnode:".blue, ...args
@@ -24,12 +25,15 @@ export class Urbit
           resolve @last-output
       , 200
   #
-  unpipe: ~> @pty.socket.unpipe!; @ # TODO separate "listeners" stream
+  reset-listeners: ~>
+    @pty.socket.unpipe @listeners
+    @pty.socket.pipe (@listeners = new stream.PassThrough)
+    @
   every: (re, cb)~> 
-    @pty.pipe (new stream-snitch re).on "match" cb
+    @listeners.pipe (new stream-snitch re).on "match" cb
   expect: (re)~>
     new Promise (resolve)~>
-       @pty.pipe (new stream-snitch re).once "match" resolve
+       @listeners.pipe (new stream-snitch re).once "match" resolve
   expect-immediate: (re)->
     Promise.race [
       @expect re

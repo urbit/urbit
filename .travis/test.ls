@@ -11,7 +11,7 @@ Promise.resolve urbit
   , do
     <- urb.expect /dojo> / .then
     <- urb.expect-echo "%dojo-booted" .then
-    urb.unpipe!
+    urb.reset-listeners!
   ]
 .then (urb)->
   urb.note "Testing compilation"
@@ -28,7 +28,7 @@ Promise.resolve urbit
   <- urb.expect-echo "%compilation-tested" .then
   errs := Object.keys errs
   if errs.length => throw Error "in #errs"
-  urb.unpipe!
+  urb.reset-listeners!
 .then (urb)->
   urb.note "Running /===/tests"
   errs = "" #REVIEW stream reduce?
@@ -38,7 +38,7 @@ Promise.resolve urbit
   <- urb.line "+test, =defer |, =seed `@uvI`(shaz %reproducible)" .then
   <- urb.expect-echo "%ran-tests" .then
   if errs => throw Error errs
-  urb.unpipe!
+  urb.reset-listeners!
 .then ->
   urbit.exit 0
 .catch (err)->
