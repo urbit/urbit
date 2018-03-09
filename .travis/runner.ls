@@ -41,7 +41,6 @@ export class Urbit
     ]
   #
   line: (s)->
-    <~ @wait-silent!then
     @pty.write s
     <~ @wait-silent!then
     @stdout.write "\n"
@@ -49,7 +48,7 @@ export class Urbit
   #
   expect-echo: (s)-> #ALT send-and-expect
     <~ @line s .then
-    @expect-immediate new RegExp escape-string-regexp s
+    @expect new RegExp escape-string-regexp s
   #
   exit: (code)->
     @pty.on \exit -> process.exit code #REVIEW just return promise?
