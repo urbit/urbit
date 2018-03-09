@@ -24,53 +24,30 @@ mkdir prev
 {
   echo Pilling: trying pinned fakezod
   wget -i pin-parent-pill-pier.url -O - | tar xvz -C prev/ &&
-  echo Downloaded prev/zod
+  echo Downloaded prev/zod &&
+  lsc ./in-urbit.ls -FI zod prev/zod <<'  .'
+    |autoload |
+    |mount %
+  .
+  [ $? = 0 ] && cp -r ../sys/ prev/zod/home/sys
 } || {
   echo Pilling: Parent-pill pier not available, trying preceding pill commit
   HASH2=$(git -C .. log -2 $HASH --format=%H -- sys/ | tail -1)
   PILL_NAME2="git-${HASH2:0:10}"
-  wget https://bootstrap.urbit.org/$PILL_NAME2.pill -O urbit.pill &&
-  echo FIXME running test script to create fakezod, this might be overkill &&
-  lsc test.ls &&
-  mv urbit.pill prev/urbit.pill &&
-  mv zod prev/zod &&
-  export PIER_FRESH="y"
+  wget https://bootstrap.urbit.org/$PILL_NAME2.pill -O prev/urbit.pill &&
+  lsc ./in-urbit.ls -A .. -B prev/urbit.pill -cFI zod prev/zod <<'  .'
+    %booted-prev-zod
+  .
 } || {
   echo Pilling: Out of ideas
   exit 1
 }
 
-lsc <<done
-do
-  require! <[ stream-snitch once recursive-copy wait-on ]>
-  pty = require \pty.js
-  
-  urbit = pty.spawn 'urbit' <[-FI zod prev/zod]>
-             .on \data -> process.stdout.write it
+lsc ./in-urbit.ls -FI zod prev/zod <<.
+  |label %home %$PILL_NAME
+  .urbit/pill +solid /==/$PILL_NAME/sys, =dub &
+.
 
-  on-next = (re,cb)->
-    urbit.pipe (new stream-snitch re).on \match once cb
-
-  on-next /\n(\/~|ford: )/ ->
-    console.log "\n\n---\nnode: detected error\n---\n\n"
-    set-timeout (-> process.exit 1), 1000
-  
-  <- on-next /dojo> /
-  {PILL_NAME} = process.env
-  do-pill = ->
-    urbit.write "|label %home %#PILL_NAME\r"
-    urbit.write ".urbit/pill +solid /==/#PILL_NAME/sys, =dub &\r"
-    <- wait-on resources: <[ prev/zod/.urb/put/urbit.pill ]>
-    urbit.write "\04"
-    process.exit 0
-  #
-  if process.env.PIER_FRESH then do-pill!
-  urbit.write "|autoload |\r"
-  urbit.write "|mount %\r"
-  <- wait-on resources: <[ prev/zod/home ]>
-  <- recursive-copy '../sys/' 'prev/zod/home/sys/' {+overwrite} .then
-  on-next /sync/ do-pill
-done
 cp prev/zod/.urb/put/urbit.pill urbit.pill
 mkdir built-pill; cp urbit.pill built-pill/$PILL_NAME.pill
 
