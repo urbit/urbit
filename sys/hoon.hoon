@@ -5593,7 +5593,6 @@
           $%  {$& p/axis}                               ::  by geometry
               {$| p/@ud q/(unit term)}                  ::  by name
           ==                                            ::
-++  line  {p/{$leaf p/aura q/@} q/crib}                 ::  %bccn case
 ++  metl  ?($gold $iron $zinc $lead)                    ::  core variance
 +=  null  ~                                             ::  null, nil, etc
 ++  onyx  (list (pair type foot))                       ::  arm activation
@@ -5607,27 +5606,27 @@
 ++  port  (each palo (pair type nock))                  ::  successful match
 ++  root  hoon                                          ::  produce model
 ++  tent                                                ::  model builder
-          $%  {$| p/wing q/tent r/(list crib)}          ::  ~(p q r...)
+          $%  {$| p/wing q/tent r/(list plan)}          ::  ~(p q r...)
               {$& p/(list wing)}                        ::  a.b:c.d
           ==                                            ::
 ++  tiki                                                ::  test case
           $%  {$& p/(unit term) q/wing}                 ::  simple wing
               {$| p/(unit term) q/hoon}                 ::  named wing
           ==                                            ::
-++  crib                                                ::  data structure
+++  plan                                                ::  data structure
           $%  {$axil p/base}                            ::  base type
-              {$bark p/toga q/crib}                     ::  name
-              {$funk p/crib q/crib}                     ::  function type
-              {$deet p/spot q/crib}                     ::  set debug
-              {$deft p/hoon q/crib}                     ::  default
-              {$fern p/{i/crib t/(list crib)}}          ::  plain selection
+              {$bark p/toga q/plan}                     ::  name
+              {$funk p/plan q/plan}                     ::  function type
+              {$deet p/spot q/plan}                     ::  set debug
+              {$deft p/hoon q/plan}                     ::  default
+              {$fern p/{i/plan t/(list plan)}}          ::  plain selection
               {$herb p/hoon}                            ::  assembly
-              {$kelp p/{i/line t/(list line)}}          ::  tag selection
+              {$kelp p/{i/plan t/(list plan)}}          ::  new selection
               {$leaf p/term q/@}                        ::  constant atom
-              {$plow p/what q/crib}                     ::  apply help
-              {$reed p/crib q/crib}                     ::  atom+cell
-              {$tupl p/{i/crib t/(list crib)}}          ::  aka row
-              {$vine p/crib q/crib}                     ::  pair+tag
+              {$plow p/what q/plan}                     ::  apply help
+              {$reed p/plan q/plan}                     ::  atom+cell
+              {$tupl p/{i/plan t/(list plan)}}          ::  aka row
+              {$vine p/plan q/plan}                     ::  pair+tag
               {$weed p/hoon}                            ::  example
           ==                                            ::
 ++  toga                                                ::  face control
@@ -5874,9 +5873,9 @@
   ==                                                    ::
 ++  writ                                                ::  type annotation
           $%  {$docs p/cord q/(list sect)}              ::  description
-              {$made p/type q/crib}                     ::  construction
-          ::  $mark                                     ::  described as mark?
-          ::  $mime                                     ::  described as mime:
+              {$made p/type q/plan}                     ::  construction
+          ::  $mark                                     ::  desplaned as mark?
+          ::  $mime                                     ::  desplaned as mime:
           ::  $json                                     ::  json schema?
           ::  
           ==
@@ -6671,7 +6670,7 @@
           bug=*(list spot)
           def=*(unit hoon)
       ==
-  |_  {fab/? mod/crib}
+  |_  {fab/? mod/plan}
   ++  bunt  ~+
     example
   ::
@@ -6681,12 +6680,12 @@
   ++  function
     ::  construct a function example
     ::
-    |=  {fun/crib arg/crib}
+    |=  {fun/plan arg/plan}
     ^-  hoon
     ::  minimal context as subject
     ::
     :+  %tsgr
-      ::  context is example of both cribs
+      ::  context is example of both plans
       ::
       [example:clear(mod fun) example:clear(mod arg)]
     ::  produce an %iron (contravariant) core
@@ -6780,7 +6779,7 @@
       {$kelp *}  ::  use last entry
                  ::
                  |-  ^-  hoon
-                 ?~  t.p.mod  ^$(mod [%tupl p.i.p.mod q.i.p.mod ~])
+                 ?~  t.p.mod  ^$(mod i.p.mod)
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
       {$leaf *}  [%rock p.mod q.mod]
       {$plow *}  $(mod q.mod)
@@ -6821,7 +6820,7 @@
                      $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
                  ==
       {$kelp *}  |-  ^-  ?
-                 ?&  clean(mod [%tupl p.i.p.mod q.i.p.mod ~])
+                 ?&  clean(mod i.p.mod)
                      ?~  t.p.mod  &
                      $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
                  ==
@@ -6960,8 +6959,8 @@
       |=  $:  ::  one: first option
               ::  rep: other options
               ::
-              one/crib
-              rep/(list crib)
+              one/plan
+              rep/(list plan)
           ==
       ^-  hoon
       ::  if no other choices, construct head
@@ -6998,16 +6997,13 @@
       |=  $:  ::  one: first format
               ::  two: more formats
               ::
-              one/line
-              rep/(list line)
+              one/plan
+              rep/(list plan)
           ==
       |-  ^-  hoon
-      ::  tup: tuple matching this line
-      ::
-      =/  tup/crib  [%tupl p.one q.one ~]
       ::  if no other choices, construct head
       ::
-      ?~  rep  relative:clear(mod tup)
+      ?~  rep  relative:clear(mod one)
       ::  fin: loop completion
       ::
       =/  fin/hoon  $(one i.rep, rep t.rep)
@@ -7017,11 +7013,11 @@
           ::  test if the head matches this wing
           ::
           :+  %fits
-            [%tsgl [%$ 2] example:clear(mod tup)]
+            [%tsgl [%$ 2] example:clear(mod one)]
           fetch-wing(axe (peg axe 2))
         ::  if so, use this form
         ::
-        relative:clear(mod tup, top [& &])
+        relative:clear(mod one, top [& &])
       ::  continue in the loop
       ::
       fin
@@ -7424,25 +7420,8 @@
       {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
     ==
   ::
-  ++  bile
-    =+  sec=boil
-    |-  ^-  (each line crib)
-    ?:  ?=({$plow *} sec)
-      $(sec q.sec)
-    ?:  ?=({$deet *} sec)
-      $(sec q.sec)
-    ?:  ?=({$tupl {$leaf *} * *} sec)
-      :+  %&
-        [%leaf p.i.p.sec q.i.p.sec] 
-      [%tupl i.t.p.sec t.t.p.sec]
-    ?:  ?=({$tupl {$deet * {$leaf *}} * *} sec)
-      :+  %& 
-        [%leaf p.q.i.p.sec q.q.i.p.sec]
-      [%tupl i.t.p.sec t.t.p.sec]
-    [%| sec]
-  ::
   ++  boil
-    ^-  crib
+    ^-  plan
     ?+  gen        [%herb gen]
         {$base *}  [%axil p.gen]
         {$dbug *}  [%deet p.gen boil(gen q.gen)]
@@ -7454,25 +7433,8 @@
       ?~  p.gen  [%axil %null]
       [%tupl boil(gen i.p.gen) (turn t.p.gen |=(hoon boil(gen +<)))]
     ::
-        {$bccn *}
-      ?~  p.gen
-        [%axil %void]
-      ?~  t.p.gen
-        boil(gen i.p.gen)
-      =+  :*  def=bile(gen i.p.gen)
-              ^=  end  ^-  (list line)
-              ~_  leaf+"book-foul"
-              %+  turn  `(list hoon)`t.p.gen
-              |=  a/hoon 
-              =+  sec=boil(gen a)
-              =+  foo=bile(gen a) 
-              ?>(?=($& -.foo) +.foo)
-          ==
-      ?-  -.def
-        $&  [%kelp p.def end]
-        $|  ?~(end p.def [%fern p.def [%kelp end] ~])
-      ==
-    ::
+        {$bccn *}  =+  (turn p.gen |=(a/hoon boil(gen a)))
+                   ?~(- [%axil %void] [%kelp -])
         {$bckt *}  [%vine boil(gen p.gen) boil(gen q.gen)]
         {$bchp *}  [%funk boil(gen p.gen) boil(gen q.gen)]
     ::
@@ -12414,11 +12376,11 @@
     ++  expe  |.(wisp)                                  ::  core tail
     ++  expf  |.(;~(gunk ;~(pfix cen sym) loaf))        ::  %term and hoon
     ++  expg  |.(;~(gunk sym loaf))                     ::  term and hoon
-    ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [crib hoon]s
+    ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [plan hoon]s
     ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more hoons
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two hoons
     ++  expl  |.(;~(gunk (stag ~ sym) loaf loaf))       ::  term, two hoons
-    ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [crib hoon]s
+    ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [plan hoon]s
     ++  expo  |.(;~(gunk wise loaf loaf))               ::  =;
     ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing hoon]s, hoon
     ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two hoons
