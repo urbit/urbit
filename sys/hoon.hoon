@@ -7021,8 +7021,7 @@
           fetch-wing(axe (peg axe 2))
         ::  if so, use this form
         ::
-        :-  [%rock p.p.one q.p.one]
-        relative:clear(mod q.one, top &, axe (peg axe 3))
+        relative:clear(mod tup, top [& &])
       ::  continue in the loop
       ::
       fin
