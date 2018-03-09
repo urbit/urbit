@@ -9,6 +9,8 @@
   "author": "~fyr",
   "license": "MIT",
   "dependencies": {
+    "colors": "^1.1.2",
+    "escape-string-regexp": "^1.0.5",
     "livescript": "^1.5.0",
     "once": "^1.4.0",
     "promise-streams": "^2.1.1",
