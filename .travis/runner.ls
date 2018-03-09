@@ -13,12 +13,12 @@ export class Urbit
     #
     process.on \exit ~> @pty.write '\04' # send EOF to gracefully checkpoint
   #
-  note: -> console.log "\nnode:".blue, it
-  warn: -> console.log "\nnode:".red, it
+  note: (...args)-> console.log "\nnode:".blue, ...args
+  warn: (...args)-> console.log "\nnode:".red, ...args
   wait-silent: ~> # this feels hacky
     new Promise (resolve)~>
       a = set-interval ~>
-        if Date.now! > @last-output + 1000
+        if Date.now! > @last-output + 2000
           clear-interval a
           resolve @last-output
       , 200

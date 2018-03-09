@@ -4,10 +4,15 @@ urbit = new Urbit <[-B urbit.pill -A .. -cFI zod zod]>
 Promise.resolve urbit
 .then (urb)->
   urb.note "Booting urbit"
-  # TODO exit on ford stack trace
-  <- urb.expect /dojo> / .then
-  <- urb.expect-echo "%dojo-booted" .then
-  urb
+  Promise.race [
+    urb.expect-error!then ->
+      urb.warn "Error detected"
+      throw Error "Stack trace while booting"
+  , do
+    <- urb.expect /dojo> / .then
+    <- urb.expect-echo "%dojo-booted" .then
+    urb
+  ]
 .then (urb)->
   urb.note "Testing compilation"
   # TODO tally ford stack traces
@@ -28,5 +33,5 @@ Promise.resolve urbit
   urbit.exit 0
 .catch (err)->
   <- urbit.wait-silent!then # assumptions?
-  urbit.warn err
+  urbit.warn "Test aborted:" err
   urbit.exit 1
