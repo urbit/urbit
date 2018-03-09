@@ -11,7 +11,7 @@ Promise.resolve urbit
   , do
     <- urb.expect /dojo> / .then
     <- urb.expect-echo "%dojo-booted" .then
-    urb
+    urb.unpipe!
   ]
 .then (urb)->
   urb.note "Testing compilation"
@@ -21,14 +21,14 @@ Promise.resolve urbit
   <- urb.line ":test [%cores /]" .then
   <- urb.expect-echo "%compilation-tested" .then
   #if tally => throw # a fit
-  urb
+  urb.unpipe!
 .then (urb)->
   urb.note "Running /===/tests"
   # TODO tally FAILED and CRASHED
   <- urb.line "+test, =defer |, =seed `@uvI`(shaz %reproducible)" .then
   <- urb.expect-echo "%ran-tests" .then
   #if tally => throw # a fit
-  urb
+  urb.unpipe!
 .then ->
   urbit.exit 0
 .catch (err)->

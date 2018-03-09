@@ -23,6 +23,8 @@ export class Urbit
           clear-interval a
           resolve @last-output
       , 200
+  #
+  unpipe: ~> @pty.socket.unpipe!; @ # TODO separate "listeners" stream
   expect: (re)~>
     new Promise (resolve)~>
        @pty.pipe (new stream-snitch re).once "match" resolve
