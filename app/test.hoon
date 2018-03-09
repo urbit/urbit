@@ -48,15 +48,15 @@
     dir:.^(arch %cy (en-beam now-beak sup))
   |=  [a=knot ~]  ^-  (list spur)
   =.  sup  [a sup]
-  ?:  (~(has in ignore) (flop sup))
-    ~&(ignoring+(flop sup) ~)
+  ?:  (~(has in skips) (flop sup))
+    ~&(> [(flop sup) %skipped] ~)
   ?~  [fil:.^(arch %cy (en-beam now-beak [%hoon sup]))]
     ^$
   ~&  (flop sup)
   [sup ^$]
 ::
 ++  now-beak  %_(byk r [%da now])
-++  ignore
+++  skips
   %-  sy  :~ ::TODO don't hardcode
     /app/gh          :: hangs for some reason
     /mar/gh          :: hangs for some reason
