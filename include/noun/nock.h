@@ -64,3 +64,7 @@
     /* u3n_beep(): promote bytecode state.
      */
     void u3n_beep(u3p(u3h_root) har_p);
+
+    /* u3n_bark(): mark bytecode cache.
+     */
+    c3_w u3n_bark();

@@ -3,6 +3,8 @@
 */
 #include "all.h"
 
+#define TREE_NOCK
+
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 static u3_noun _n_burn_on(u3_noun bus, u3_noun fol);
 
@@ -574,7 +576,7 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
  * as it executes, along with some other information. very spammy.
  */
 
-#if 0
+#if 1
 // match to OPCODE TABLE
 static char* names[] = {
   "halt", "bail",
@@ -948,7 +950,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
   return tot_s;
 }
 
-#if 0
+#if 1
 static void _n_print_byc(c3_y* pog, c3_s her_s);
 #endif
 
@@ -1191,7 +1193,7 @@ typedef struct {
 } burnframe;
 
 /* _n_burn(): pog: program
- *            bus: subject
+ *            bus: subject (TRANSFER)
  *            mov: -1 north, 1 south
  *            off: 0 north, -1 south
  */
@@ -1772,7 +1774,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
   }
 }
 
-#if 0
+#if 1
 /* _n_print_byc(): print bytecode. used for debugging.
  */
 static void
@@ -1866,7 +1868,7 @@ _n_burn_on(u3_noun bus, u3_noun fol)
   c3_y* pog = _n_find(fol);
   c3_ys mov, off;
 
-  u3z(fol);
+  //u3z(fol);
   if ( c3y == u3a_is_north(u3R) ) {
     mov = -1;
     off = 0;
@@ -1875,7 +1877,8 @@ _n_burn_on(u3_noun bus, u3_noun fol)
     mov = 1;
     off = -1;
   }
-  u3_noun pro = _n_burn(pog, bus, mov, off);
+  //u3_noun pro = _n_burn(pog, bus, mov, off);
+  u3_noun pro = _n_nock_on(bus, fol);
   return pro;
 }
 
@@ -1976,6 +1979,68 @@ void
 u3n_beep(u3p(u3h_root) har_p)
 {
   u3h_walk(har_p, _n_reap);
+}
+
+static c3_w
+_n_mark_byc(c3_y* pog)
+{
+  c3_y cod_y;
+  c3_s ip_s  = 0;
+  c3_w tot_w = 0;
+  u3_noun non;
+
+  while ( pog[ip_s] != HALT ) {
+    cod_y = pog[ip_s++];
+    switch ( cod_y ) {
+      default:
+        ip_s += _n_arg(cod_y);
+        break;
+
+      case CUSH: case FRAG: case FLAG: case LILN: case LITN:
+      case SAMN: case TICK: case KICK:
+        non = _n_rean(pog, &ip_s);
+        tot_w += u3a_mark_noun(non);
+        break;
+
+      case SKIB: case SLIB:
+        ip_s += sizeof(c3_y);
+        non = _n_rean(pog, &ip_s);
+        tot_w += u3a_mark_noun(non);
+        break;
+
+      case SKIM: case SLIM:
+        ip_s += sizeof(c3_s);
+        non = _n_rean(pog, &ip_s);
+        tot_w += u3a_mark_noun(non);
+        break;
+    }
+  }
+
+  return tot_w;
+}
+
+static c3_w bam_w;
+
+/* _n_bam(): u3h_walk helper for u3n_bark
+ */
+static void
+_n_bam(u3_noun kev)
+{
+  c3_y* pog = u3a_into(u3t(kev));
+  bam_w += u3a_mark_noun(kev) + _n_mark_byc(pog);
+}
+
+/* u3n_bark(): mark the bytecode cache for gc.
+ */
+c3_w
+u3n_bark()
+{
+  return 0;
+  /*
+  bam_w = 0;
+  u3h_walk(u3R->byc.har_p, _n_bam);
+  return bam_w;
+  */
 }
 
 #if 0

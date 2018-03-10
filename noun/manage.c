@@ -470,7 +470,7 @@ u3m_mark(void)
 {
   c3_w tot_w = 0;
   tot_w += u3h_mark(u3R->jed.har_p);
-  tot_w += u3h_mark(u3R->byc.har_p);
+  tot_w += u3n_bark();
   tot_w += u3a_mark_noun(u3R->jed.das);
   tot_w += u3a_mark_noun(u3R->ski.gul);
   tot_w += u3a_mark_noun(u3R->bug.tax);
@@ -1672,12 +1672,6 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
   /* Initialize the jet system.
   */
   u3j_boot();
-
-#ifdef TREE_NOCK
-  printf("nock: tree\r\n");
-#else
-  printf("nock: bytecode\r\n");
-#endif
 
   /* Install or reactivate the kernel.
   */
