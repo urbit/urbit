@@ -3,8 +3,6 @@
 */
 #include "all.h"
 
-#define TREE_NOCK
-
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 static u3_noun _n_burn_on(u3_noun bus, u3_noun fol);
 
@@ -1868,7 +1866,7 @@ _n_burn_on(u3_noun bus, u3_noun fol)
   c3_y* pog = _n_find(fol);
   c3_ys mov, off;
 
-  //u3z(fol);
+  u3z(fol);
   if ( c3y == u3a_is_north(u3R) ) {
     mov = -1;
     off = 0;
@@ -1877,8 +1875,7 @@ _n_burn_on(u3_noun bus, u3_noun fol)
     mov = 1;
     off = -1;
   }
-  //u3_noun pro = _n_burn(pog, bus, mov, off);
-  u3_noun pro = _n_nock_on(bus, fol);
+  u3_noun pro = _n_burn(pog, bus, mov, off);
   return pro;
 }
 
@@ -2016,6 +2013,7 @@ _n_mark_byc(c3_y* pog)
     }
   }
 
+  tot_w += u3a_mark_mptr(pog);
   return tot_w;
 }
 
@@ -2027,7 +2025,7 @@ static void
 _n_bam(u3_noun kev)
 {
   c3_y* pog = u3a_into(u3t(kev));
-  bam_w += u3a_mark_noun(kev) + _n_mark_byc(pog);
+  bam_w += _n_mark_byc(pog);
 }
 
 /* u3n_bark(): mark the bytecode cache for gc.
@@ -2035,12 +2033,10 @@ _n_bam(u3_noun kev)
 c3_w
 u3n_bark()
 {
-  return 0;
-  /*
+  u3p(u3h_root) har_p = u3R->byc.har_p;
   bam_w = 0;
-  u3h_walk(u3R->byc.har_p, _n_bam);
-  return bam_w;
-  */
+  u3h_walk(har_p, _n_bam);
+  return bam_w + u3h_mark(har_p);
 }
 
 #if 0
