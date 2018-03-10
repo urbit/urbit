@@ -44,12 +44,18 @@
   |=  {key/@ta value/tests}
   [key [%| value]]
 ::
+++  has-test-prefix
+  |=  a=term  ^-  ?
+  ?|  =((end 3 5 a) 'test-')
+      =((end 3 6 a) 'check-')
+  ==
+::
 ++  gen-tests
   :>  creates a {tests} list out of a vase of a test suite
   |=  v=vase
   ^-  tests
   =+  arms=(sort (sloe p.v) aor)
-  %+  turn  arms
+  %+  turn  (skim arms has-test-prefix)
   |=  arm/term
   ::REVIEW fewer asserts? recouple the nock and eat the runtime compile cost?
   ?>  (~(nest ut (~(peek ut p.v) %free 6)) & p:!>((init-test)))
