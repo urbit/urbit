@@ -11,6 +11,11 @@
       $~                                            ::  /.  compatibility
   ==                                                ::
 ::                                                  ::
+++  topicshow
+  $:  top/topicful
+      snip/{hed/marl tal/marl}
+      $~
+  ==
 ++  config                                          ::
   $:  desc/cord                                     ::  description
       publ/?                                        ::  public or private
