@@ -61,11 +61,7 @@
 :>  #  %per-test
 :>    data initialized on a per-test basis.
 ::
-++  init-test
-  |=  {cookie/@uvJ}
-  ~(. tester `(list tape)`~ cookie 10 0)
-::
-++  tester-type  _(init-test `@uvJ`0)
+++  init-test  |=({eny/@uvJ} %*(. tester eny eny, check-iterations 10))
 ::
 ++  tester
   |_  $:  error-lines=(list tape)                     :<  output messages

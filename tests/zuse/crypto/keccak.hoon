@@ -72,7 +72,7 @@
       d79d.c266.f6a5.be6b.b0e4.a92e.ceeb.aeb1
   ==
 ::
-|_  tst=tester-type:tester
+|_  tst=_tester:tester
 ::
 ::  check a list of bytelength-answer pairs to see if
 ::  they match the output given by {hash} for the

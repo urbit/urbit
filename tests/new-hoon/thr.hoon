@@ -2,7 +2,7 @@
 /+  new-hoon, tester
 =,  thr:new-hoon
 =/  data/(list (either @u tape))  [[%& 1] [%| "one"] [%& 2] [%| "two"] ~]
-|_  tester-type:tester
+|_  _tester:tester
 ++  test-apply
   %+  expect-eq
     %^  apply  `(either @u tape)`[%| "one"]

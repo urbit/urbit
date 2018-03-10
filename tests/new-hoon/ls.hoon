@@ -1,6 +1,6 @@
 /+  new-hoon, tester
 =,  ls:new-hoon
-|_  tester-type:tester
+|_  _tester:tester
 ++  test-head
   (expect-eq (head [1 ~]) 1)
 ::

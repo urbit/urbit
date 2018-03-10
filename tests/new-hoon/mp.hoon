@@ -2,7 +2,7 @@
 =,  dct:new-hoon
 =+  four=(from-list [[1 "one"] [2 "two"] [3 "three"] [4 "four"] ~])
 =+  three=(from-list [[1 "one"] [2 "two"] [3 "three"] ~])
-|_  tester-type:tester
+|_  _tester:tester
 ++  test-empty
   (expect-eq (empty four) %.n)
 ::

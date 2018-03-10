@@ -1,6 +1,6 @@
 /+  new-hoon, tester
 =,  myb:new-hoon
-|_  tester-type:tester
+|_  _tester:tester
 ++  test-from-list-null
   (expect-eq (from-list ~) ~)
 ::
