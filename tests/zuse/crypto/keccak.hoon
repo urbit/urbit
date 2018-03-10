@@ -87,10 +87,10 @@
   =*  bytes  p.i.answers
   =*  answer  q.i.answers
   =-  $(tst -, answers t.answers)
-  %^  expect-eq.tst
-      (hash bytes (~(got by keccak-inputs) bytes))
-    answer
-  "{name} {(scow %ud bytes)} bytes"
+  %+  expect-eq.tst
+    (hash bytes (~(got by keccak-inputs) bytes))
+  answer
+  ::"{name} {(scow %ud bytes)} bytes"
 ::
 ::  keccak
 ::
@@ -242,71 +242,63 @@
 ::  sha3
 ::
 ++  test-sha3-224
-  %^  expect-eq.tst
-      (sha3-224 0 `@`0)
-    0x6b4e.0342.3667.dbb7.3b6e.1545.4f0e.b1ab.
-      d459.7f9a.1b07.8e3f.5b5a.6bc7
-  "sha3-224"
+  %+  expect-eq.tst
+    (sha3-224 0 `@`0)
+  0x6b4e.0342.3667.dbb7.3b6e.1545.4f0e.b1ab.
+    d459.7f9a.1b07.8e3f.5b5a.6bc7
 ::
 ++  test-sha3-256
-  %^  expect-eq.tst
-      (sha3-256 0 `@`0)
-    0xa7ff.c6f8.bf1e.d766.51c1.4756.a061.d662.
-      f580.ff4d.e43b.49fa.82d8.0a4b.80f8.434a
-  "sha3-256"
+  %+  expect-eq.tst
+    (sha3-256 0 `@`0)
+  0xa7ff.c6f8.bf1e.d766.51c1.4756.a061.d662.
+    f580.ff4d.e43b.49fa.82d8.0a4b.80f8.434a
 ::
 ++  test-sha3-384
-  %^  expect-eq.tst
-      (sha3-384 0 `@`0)
-     0xc63.a75b.845e.4f7d.0110.7d85.2e4c.2485.
-      c51a.50aa.aa94.fc61.995e.71bb.ee98.3a2a.
-      c371.3831.264a.db47.fb6b.d1e0.58d5.f004
-  "sha3-384"
+  %+  expect-eq.tst
+    (sha3-384 0 `@`0)
+   0xc63.a75b.845e.4f7d.0110.7d85.2e4c.2485.
+    c51a.50aa.aa94.fc61.995e.71bb.ee98.3a2a.
+    c371.3831.264a.db47.fb6b.d1e0.58d5.f004
 ::
 ++  test-sha3-512
-  %^  expect-eq.tst
-      (sha3-512 0 `@`0)
-    0xa69f.73cc.a23a.9ac5.c8b5.67dc.185a.756e.
-      97c9.8216.4fe2.5859.e0d1.dcc1.475c.80a6.
-      15b2.123a.f1f5.f94c.11e3.e940.2c3a.c558.
-      f500.199d.95b6.d3e3.0175.8586.281d.cd26
-  "sha3-512"
+  %+  expect-eq.tst
+    (sha3-512 0 `@`0)
+  0xa69f.73cc.a23a.9ac5.c8b5.67dc.185a.756e.
+    97c9.8216.4fe2.5859.e0d1.dcc1.475c.80a6.
+    15b2.123a.f1f5.f94c.11e3.e940.2c3a.c558.
+    f500.199d.95b6.d3e3.0175.8586.281d.cd26
 ::
 ::  shake
 ::
 ++  test-shake-128
-  %^  expect-eq.tst
-      (shake-128 512 0 `@`0)
-    0x7f9c.2ba4.e88f.827d.6160.4550.7605.853e.
-      d73b.8093.f6ef.bc88.eb1a.6eac.fa66.ef26.
-      3cb1.eea9.8800.4b93.103c.fb0a.eefd.2a68.
-      6e01.fa4a.58e8.a363.9ca8.a1e3.f9ae.57e2
-  "shake-128"
+  %+  expect-eq.tst
+    (shake-128 512 0 `@`0)
+  0x7f9c.2ba4.e88f.827d.6160.4550.7605.853e.
+    d73b.8093.f6ef.bc88.eb1a.6eac.fa66.ef26.
+    3cb1.eea9.8800.4b93.103c.fb0a.eefd.2a68.
+    6e01.fa4a.58e8.a363.9ca8.a1e3.f9ae.57e2
 ::
 ++  test-shake-256
-  %^  expect-eq.tst
-      (shake-256 512 0 `@`0)
-    0x46b9.dd2b.0ba8.8d13.233b.3feb.743e.eb24.
-      3fcd.52ea.62b8.1b82.b50c.2764.6ed5.762f.
-      d75d.c4dd.d8c0.f200.cb05.019d.67b5.92f6.
-      fc82.1c49.479a.b486.4029.2eac.b3b7.c4be
-  "shake-256"
+  %+  expect-eq.tst
+    (shake-256 512 0 `@`0)
+  0x46b9.dd2b.0ba8.8d13.233b.3feb.743e.eb24.
+    3fcd.52ea.62b8.1b82.b50c.2764.6ed5.762f.
+    d75d.c4dd.d8c0.f200.cb05.019d.67b5.92f6.
+    fc82.1c49.479a.b486.4029.2eac.b3b7.c4be
 ::
 ++  test-rawshake-128
-  %^  expect-eq.tst
-      (rawshake-128 512 0 `@`0)
-    0xfa01.9a3b.1763.0df6.0148.53b5.4707.73f1.
-      3c3a.b704.4782.11d7.a658.6751.5dea.1cc7.
-      926b.2147.e396.076b.22cb.7263.3af5.0647.
-      c7f2.3d0d.8f00.1d6d.8daf.0f6f.2e92.fc0e
-  "rawshake-128"
+  %+  expect-eq.tst
+    (rawshake-128 512 0 `@`0)
+  0xfa01.9a3b.1763.0df6.0148.53b5.4707.73f1.
+    3c3a.b704.4782.11d7.a658.6751.5dea.1cc7.
+    926b.2147.e396.076b.22cb.7263.3af5.0647.
+    c7f2.3d0d.8f00.1d6d.8daf.0f6f.2e92.fc0e
 ::
 ++  test-rawshake-256
-  %^  expect-eq.tst
-      (rawshake-256 512 0 `@`0)
-    0x3a11.08d4.a90a.31b8.5a10.bdce.77f4.bfbd.
-      cc5b.1d70.dd40.5686.f8bb.de83.4aa1.a410.
-      db8c.9e1c.166c.3e23.9cd7.6a55.f6a6.92aa.
-      2d17.49f2.ec79.cd0b.a3b1.7bb6.5995.9b6e
-  "rawshake-256"
+  %+  expect-eq.tst
+    (rawshake-256 512 0 `@`0)
+  0x3a11.08d4.a90a.31b8.5a10.bdce.77f4.bfbd.
+    cc5b.1d70.dd40.5686.f8bb.de83.4aa1.a410.
+    db8c.9e1c.166c.3e23.9cd7.6a55.f6a6.92aa.
+    2d17.49f2.ec79.cd0b.a3b1.7bb6.5995.9b6e
 --

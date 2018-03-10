@@ -139,15 +139,14 @@
   +|
   ::  todo: unit testing libraries have a lot more to them than just eq.
   ++  expect-eq
-    |*  [a=* b=* c=tape]
+    |*  [a=* b=*]
     ^+  +>
     ?:  =(a b)
       +>.$
     %=  +>.$
       error-lines  :*
-        "failure: '{c}'"
-        "  actual:   '{(noah !>(a))}'"
-        "  expected: '{(noah !>(b))}'"
+        "actual:   '{(noah !>(a))}'"
+        "expected: '{(noah !>(b))}'"
         error-lines
       ==
     ==
