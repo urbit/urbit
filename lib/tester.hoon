@@ -135,5 +135,15 @@
     :~  "actual:   '{(noah !>(a))}'"
         "expected: '{(noah !>(b))}'"
     ==
+  :>  #
+  :>  #  %formatting
+  :>  #
+  :>    test result presentation
+  +|
+  ++  category
+    |=  [a=tape b=wall]
+    ?:  =(~ b)  ~  :: test OK
+    :-  "in: '{a}'"
+    (turn b |=(c=tape "  {c}"))
   --
 --

@@ -86,10 +86,10 @@
   ?~  answers  ~
   %+  weld  $(answers t.answers)
   =+  `[bytes=@ud answer=@]`i.answers
+  %+  category.tst  name
   %+  expect-eq.tst
     (hash bytes (~(got by keccak-inputs) bytes))
   answer
-  ::"{name} {(scow %ud bytes)} bytes"
 ::
 ::  keccak
 ::
