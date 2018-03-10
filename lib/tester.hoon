@@ -22,7 +22,7 @@
   :>    combine the current file and subdirectory.
   :>
   :>  this merges the file {base} with its child files {recur}.
-  |=  [base=vase recur=(map @ta tests:tester)]
+  |=  [base=vase recur=(map @ta tests)]
   ^-  tests
   =+  a=(gen-tests base)
   =+  b=(test-map-to-test-list recur)
@@ -33,15 +33,15 @@
 ++  test-map-to-test-list
   :>    translates ford output to something we can work with.
   :>
-  :>  ford gives us a `(map @ta tests:tester)`, but we actually
+  :>  ford gives us a `(map @ta tests)`, but we actually
   :>  want something like ++tests.
-  |=  a=(map @ta tests:tester)
+  |=  a=(map @ta tests)
   ::  todo: i'd like to sort this, but ++sort has -find.a problems much like
   ::  ++weld does above!?
   ^-  tests
   %+  turn
     (to-list:dct:new-hoon a)
-  |=  {key/@ta value/tests:tester}
+  |=  {key/@ta value/tests}
   [key [%| value]]
 ::
 ++  gen-tests
