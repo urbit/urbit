@@ -1,18 +1,11 @@
 /-  collections
-/+  rekey, old-zuse, colls
+/+  old-zuse, colls
 /=  gas  /$  fuel:html
 :: reach up and get config file?
 /=  configs  /:  /===/web/collections
             /^  (map knot config:collections)  /_  /collections-config/
 :: this was a dumb way to do do this, clean up
-/=  content  /&  elem 
-             /&  md
-             ::  don't render first line if there's a title
-             /;  |=  a/topic:collections 
-                 ?:  =((scag 2 (trip -:wat.a)) "# ")
-                   (of-wain:format +:wat.a)
-                 (of-wain:format wat.a)
-             /collections-topic/
+/=  content  /&elem&md&/collections-topic/
 /=  metawcom  /^  topicful:collections  /collections-topic-full/
 =/  config  (~(get by configs) +<:s.bem.gas)
 =,  old-zuse
@@ -78,8 +71,6 @@
       ==
     ~
   ==
-  ;script@"/~~/pages/elapsed.js";
-  ::
 ==
 
 
