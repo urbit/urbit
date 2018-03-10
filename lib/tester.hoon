@@ -22,7 +22,7 @@
   :>    combine the current file and subdirectory.
   :>
   :>  this merges the file {base} with its child files {recur}.
-  |=  [base=vase recur=(map @ta tests:tester)]
+  |=  [base=vase recur=(map @ta tests)]
   ^-  tests
   =+  a=(gen-tests base)
   =+  b=(test-map-to-test-list recur)
@@ -33,43 +33,47 @@
 ++  test-map-to-test-list
   :>    translates ford output to something we can work with.
   :>
-  :>  ford gives us a `(map @ta tests:tester)`, but we actually
+  :>  ford gives us a `(map @ta tests)`, but we actually
   :>  want something like ++tests.
-  |=  a=(map @ta tests:tester)
+  |=  a=(map @ta tests)
   ::  todo: i'd like to sort this, but ++sort has -find.a problems much like
   ::  ++weld does above!?
   ^-  tests
   %+  turn
     (to-list:dct:new-hoon a)
-  |=  {key/@ta value/tests:tester}
+  |=  {key/@ta value/tests}
   [key [%| value]]
+::
+++  has-test-prefix
+  |=  a=term  ^-  ?
+  ?|  =((end 3 5 a) 'test-')
+      =((end 3 6 a) 'check-')
+  ==
 ::
 ++  gen-tests
   :>  creates a {tests} list out of a vase of a test suite
   |=  v=vase
   ^-  tests
   =+  arms=(sort (sloe p.v) aor)
-  %+  turn  arms
+  %+  turn  (skim arms has-test-prefix)
   |=  arm/term
+  ::REVIEW fewer asserts? recouple the nock and eat the runtime compile cost?
+  ?>  (~(nest ut (~(peek ut p.v) %free 6)) & p:!>((init-test)))
+  =/  call  (~(mint ut p.v) p:!>(*wall) [%limb arm])
+  ?>  (~(nest ut p:!>(*wall)) & p.call)
+  ::
   :-  arm
   :-  %&
-  |=  eny=@uvJ
-  =+  context=(slop !>((init-test eny)) v)
-  =/  r  (slap context [%cnsg [arm ~] [%$ 3] [[%$ 2] ~]])
-  ((hard (list tape)) q:(slap r [%limb %results]))
+  |=  eny=@uvJ  ^-  wall
+  ((hard wall) .*(q.v(+6 (init-test eny)) q.call))
 ::
 :>  #  %per-test
 :>    data initialized on a per-test basis.
 ::
-++  init-test
-  |=  {cookie/@uvJ}
-  ~(. tester `(list tape)`~ cookie 10 0)
-::
-++  tester-type  _(init-test `@uvJ`0)
+++  init-test  |=({eny/@uvJ} %*(. tester eny eny, check-iterations 10))
 ::
 ++  tester
-  |_  $:  error-lines=(list tape)                     :<  output messages
-          eny=@uvJ                                    :<  entropy
+  |_  $:  eny=@uvJ                                    :<  entropy
           check-iterations=@u                         :<  # of check trials
           current-iteration=@u                        :<  current iteration
       ==
@@ -80,27 +84,21 @@
   +|
   +-  check
     |*  [generator=$-(@uvJ *) test=$-(* ?)]
-    |-
-    ^+  +>.$
+    |-  ^-  wall
     ?:  (gth current-iteration check-iterations)
-      +>.$
+      ~
     ::  todo: wrap generator in mule so it can crash.
     =+  sample=(generator eny)
     ::  todo: wrap test in mule so it can crash.
-    =+  ret=(test sample)
-    ?:  ret
+    ?:  (test sample)
       %=  $
         eny    (shaf %huh eny)                        ::  xxx: better random?
         current-iteration  (add current-iteration 1)
       ==
-    =+  case=(add 1 current-iteration)
-    =+  case-plural=?:(=(case 1) "case" "cases")
-    %=  +>.$
-      error-lines  :*
-        "falsified after {(noah !>(case))} {case-plural} by '{(noah !>(sample))}'"
-        error-lines
-      ==
-    ==
+    =/  case  +(current-iteration)
+    =/  pl  ?+(case "" %1 "s")
+    ::XXX sample is a noun
+    ["falsified after {<case>} case{pl} by '{<`*`sample>}', seed {<eny>}"]~
   ::
   ::  todo: a generate function that takes an arbitrary span.
   ::
@@ -139,27 +137,23 @@
   +|
   ::  todo: unit testing libraries have a lot more to them than just eq.
   ++  expect-eq
-    |*  [a=* b=* c=tape]
-    ^+  +>
-    ?:  =(a b)
-      +>.$
-    %=  +>.$
-      error-lines  :*
-        "failure: '{c}'"
-        "  actual:   '{(noah !>(a))}'"
-        "  expected: '{(noah !>(b))}'"
-        error-lines
-      ==
+    |=  a=vase
+    ^-  wall
+    ?@  q.a  ["ex-expected-pair: '{(text a)}'"]~
+    ?:  =(-.q.a +.q.a)
+      ~
+    :~  "expected: '{(text (slot 2 a))}'"
+        "actual:   '{(text (slot 3 a))}'"
     ==
-  ::
   :>  #
-  :>  #  %output
+  :>  #  %formatting
   :>  #
-  :>    called by the test harness
-  ::
-  ++  results
-    :>  returns results.
-    ^-  (list tape)
-    error-lines
+  :>    test result presentation
+  +|
+  ++  category
+    |=  [a=tape b=wall]
+    ?:  =(~ b)  ~  :: test OK
+    :-  "in: '{a}'"
+    (turn b |=(c=tape "  {c}"))
   --
 --
