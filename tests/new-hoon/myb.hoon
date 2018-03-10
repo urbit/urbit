@@ -2,30 +2,30 @@
 =,  myb:new-hoon
 |_  _tester:tester
 ++  test-from-list-null
-  (expect-eq (from-list ~) ~)
+  (expect-eq !>([~ (from-list ~)]))
 ::
 ++  test-from-list-real
-  (expect-eq (from-list [5 ~]) [~ 5])
+  (expect-eq !>([[~ 5] (from-list [5 ~])]))
 ::
 ++  test-to-list-null
-  (expect-eq (to-list ~) ~)
+  (expect-eq !>([~ (to-list ~)]))
 ::
 ++  test-to-list-real
-  (expect-eq (to-list [~ 5]) [5 ~])
+  (expect-eq !>([[5 ~] (to-list [~ 5])]))
 ::
 ++  test-concat-null
-  (expect-eq (concat ~) ~)
+  (expect-eq !>([~ (concat ~)]))
 ::
 ++  test-concat-real
   ::  wait, if i pull the cast out from below, the concat implementation
   ::  doesn't compile anymore?
-  (expect-eq (concat `(list (maybe @ud))`[~ [~ 1] ~ [~ 2] ~]) [1 2 ~])
+  (expect-eq !>([[1 2 ~] (concat `(list (maybe @ud))`[~ [~ 1] ~ [~ 2] ~])]))
 ::
 ++  test-map
-  %+  expect-eq
-    %+  map:myb
-      [1 2 3 2 ~]
-    |=(a/@u ?:(=(2 a) [~ 2] ~))
-  [2 2 ~]
+  %-  expect-eq  !>
+  :-  [2 2 ~]
+  %+  map:myb
+    [1 2 3 2 ~]
+  |=(a/@u ?:(=(2 a) [~ 2] ~))
 --
 

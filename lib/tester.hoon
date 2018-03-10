@@ -137,12 +137,13 @@
   +|
   ::  todo: unit testing libraries have a lot more to them than just eq.
   ++  expect-eq
-    |*  [a=* b=*]
+    |=  a=vase
     ^-  wall
-    ?:  =(a b)
+    ?@  q.a  ["ex-expected-pair: '{(text a)}'"]~
+    ?:  =(-.q.a +.q.a)
       ~
-    :~  "actual:   '{(noah !>(a))}'"
-        "expected: '{(noah !>(b))}'"
+    :~  "expected: '{(text (slot 2 a))}'"
+        "actual:   '{(text (slot 3 a))}'"
     ==
   :>  #
   :>  #  %formatting
