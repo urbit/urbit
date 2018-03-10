@@ -51,12 +51,15 @@
   =+  arms=(sort (sloe p.v) aor)
   %+  turn  arms
   |=  arm/term
+  ::REVIEW fewer asserts? recouple the nock and eat the runtime compile cost?
+  ?>  (~(nest ut (~(peek ut p.v) %free 6)) & p:!>((init-test)))
+  =/  call  (~(mint ut p.v) p:!>(*wall) [%limb arm])
+  ?>  (~(nest ut p:!>(*wall)) & p.call)
+  ::
   :-  arm
   :-  %&
-  |=  eny=@uvJ
-  =+  context=(slop !>((init-test eny)) v)
-  =/  r  (slap context [%cnsg [arm ~] [%$ 3] [[%$ 2] ~]])
-  ((hard (list tape)) q.r)
+  |=  eny=@uvJ  ^-  wall
+  ((hard wall) .*(q.v(+6 (init-test eny)) q.call))
 ::
 :>  #  %per-test
 :>    data initialized on a per-test basis.
