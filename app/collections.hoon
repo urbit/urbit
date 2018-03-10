@@ -1,7 +1,7 @@
 ::  /app/collection/hoon
 ::
 /-  hall, *collections
-/+  hall, rekey
+/+  hall, rekey, colls
 /=  cols   /:  /===/web/collections  /collections/
 ::
 ::    things to keep in sync, unique by date:
@@ -22,7 +22,6 @@
 ::::
   ::
 :: XX belongs back in zuse
-~&  [%cols cols]
 |%
 ++  pack                                                ::  light path encoding
   |=  {a/term b/path}  ^-  knot
@@ -236,7 +235,18 @@
   ++  ta-write
     |=  [wir=[term ~] loc=?(@ {@ @} {@ @ @}) cay=cage]  ^+  +>
     =/  pax  (ta-full-path loc)
-    %+  ta-emit  ost.bol
+    ::  if the wire is /config, we make a latest.hoon
+    %-  ta-emil  
+    ?:  =(wir /config)
+      =/  latest-pax
+      (weld (flop t:+:(flop pax)) /latest/hoon)
+      :~  :-  ost.bol
+          [%info (weld wir pax) our.bol (foal pax cay)]
+          :-  ost.bol
+          [%info latest-pax our.bol (foal latest-pax [%hoon !>(latest-post:colls)])]
+      ==
+    :_  ~
+    :-  ost.bol
     [%info (weld wir pax) our.bol (foal pax cay)]
   ::
   ++  ta-remove
