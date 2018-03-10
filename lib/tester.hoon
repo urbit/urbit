@@ -56,7 +56,7 @@
   |=  eny=@uvJ
   =+  context=(slop !>((init-test eny)) v)
   =/  r  (slap context [%cnsg [arm ~] [%$ 3] [[%$ 2] ~]])
-  ((hard (list tape)) q:(slap r [%limb %results]))
+  ((hard (list tape)) q.r)
 ::
 :>  #  %per-test
 :>    data initialized on a per-test basis.
@@ -64,8 +64,7 @@
 ++  init-test  |=({eny/@uvJ} %*(. tester eny eny, check-iterations 10))
 ::
 ++  tester
-  |_  $:  error-lines=(list tape)                     :<  output messages
-          eny=@uvJ                                    :<  entropy
+  |_  $:  eny=@uvJ                                    :<  entropy
           check-iterations=@u                         :<  # of check trials
           current-iteration=@u                        :<  current iteration
       ==
@@ -76,27 +75,21 @@
   +|
   +-  check
     |*  [generator=$-(@uvJ *) test=$-(* ?)]
-    |-
-    ^+  +>.$
+    |-  ^-  wall
     ?:  (gth current-iteration check-iterations)
-      +>.$
+      ~
     ::  todo: wrap generator in mule so it can crash.
     =+  sample=(generator eny)
     ::  todo: wrap test in mule so it can crash.
-    =+  ret=(test sample)
-    ?:  ret
+    ?:  (test sample)
       %=  $
         eny    (shaf %huh eny)                        ::  xxx: better random?
         current-iteration  (add current-iteration 1)
       ==
-    =+  case=(add 1 current-iteration)
-    =+  case-plural=?:(=(case 1) "case" "cases")
-    %=  +>.$
-      error-lines  :*
-        "falsified after {(noah !>(case))} {case-plural} by '{(noah !>(sample))}'"
-        error-lines
-      ==
-    ==
+    =/  case  +(current-iteration)
+    =/  pl  ?+(case "" %1 "s")
+    ::XXX sample is a noun
+    ["falsified after {<case>} case{pl} by '{<`*`sample>}', seed {<eny>}"]~
   ::
   ::  todo: a generate function that takes an arbitrary span.
   ::
@@ -136,25 +129,11 @@
   ::  todo: unit testing libraries have a lot more to them than just eq.
   ++  expect-eq
     |*  [a=* b=*]
-    ^+  +>
+    ^-  wall
     ?:  =(a b)
-      +>.$
-    %=  +>.$
-      error-lines  :*
-        "actual:   '{(noah !>(a))}'"
+      ~
+    :~  "actual:   '{(noah !>(a))}'"
         "expected: '{(noah !>(b))}'"
-        error-lines
-      ==
     ==
-  ::
-  :>  #
-  :>  #  %output
-  :>  #
-  :>    called by the test harness
-  ::
-  ++  results
-    :>  returns results.
-    ^-  (list tape)
-    error-lines
   --
 --

@@ -82,11 +82,10 @@
           name=tape
           answers=(list (pair @ud @))
       ==
-  ^+  tst
-  ?~  answers  tst
-  =*  bytes  p.i.answers
-  =*  answer  q.i.answers
-  =-  $(tst -, answers t.answers)
+  ^-  wall
+  ?~  answers  ~
+  %+  weld  $(answers t.answers)
+  =+  `[bytes=@ud answer=@]`i.answers
   %+  expect-eq.tst
     (hash bytes (~(got by keccak-inputs) bytes))
   answer
