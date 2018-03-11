@@ -11690,22 +11690,25 @@
   ::
   ++  scab
     %+  cook
-      |=  a/(list wing)  ^-  hoon
+      |=  a/(list wing)  ^-  plan
       :-  %bcsm
       |-  ^-  hoon
       ?~(a !! ?~(t.a [%wing i.a] [%tsgl [%wing i.a] $(a t.a)]))
     (most col rope)
   ::
   ++  scad
-    %+  knee  *root  |.  ~+
+    %+  knee  *plan  |.  ~+
     %-  stew
     ^.  stet  ^.  limo
     :~
       :-  '_'
+        %+  cook  |=(plan +<)
         ;~(pfix cab (stag %bccb wide))
       :-  ','
+        %+  cook  |=(plan +<)
         ;~(pfix com (stag %bcsm wide))
       :-  '$'
+        %+  cook  |=(plan +<)
         ;~  pose
           ;~  pfix  buc
             ;~  pose
@@ -11719,6 +11722,7 @@
           (stag %bcsm rump)
         ==
       :-  '%'
+        %+  cook  |=(plan +<)
         ;~  pose
           ;~  pfix  cen
             ;~  pose
@@ -11731,24 +11735,31 @@
           ==
         ==
       :-  '('
+        %+  cook  |=(plan +<)
         %+  stag  %bcsm
         %+  stag  %cnhp
         %+  ifix  [pel per]
         ;~(plug wide ;~(pose ;~(pfix ace (most ace wyde)) (easy ~)))
       :-  '{'
+        %+  cook  |=(plan +<)
         (stag %bccl (ifix [kel ker] (most ace wyde)))
       :-  '['
+        %+  cook  |=(plan +<)
         (stag %bccl (ifix [sel ser] (most ace wyde)))
       :-  '*'
+        %+  cook  |=(plan +<)
         (cold [%base %noun] tar)
       :-  '@'
+        %+  cook  |=(plan +<)
         ;~(pfix pat (stag %base (stag %atom mota)))
       :-  '?'
+        %+  cook  |=(plan +<)
         ;~  pose
           (stag %bcwt ;~(pfix wut (ifix [pel per] (most ace wyde))))
           (cold [%base %bean] wut)
         ==
       :-  '~'
+        %+  cook  |=(plan +<)
         (cold [%base %null] sig)  
       :-  '^'
         ;~  pose
@@ -11756,10 +11767,11 @@
           (cold [%base %cell] ket)
         ==
       :-  '='
+        %+  cook  |=(plan +<)
         ;~  pfix  tis
           %+  sear
             |=  hon/hoon
-            ^-  (unit hoon)      
+            ^-  (unit plan)      
             %+  bind
               |-  ^-  (unit term)
               ?+  hon  ~
@@ -11770,10 +11782,11 @@
                 {$tsgl *}  $(hon ~(open ap hon))
                 {$tsgr *}  $(hon q.hon)
               ==
-            |=(term [%bcts +< hon])
-          wyde
+            |=(term [%bcts +< %bcsm hon])
+          wide
         ==
       :-  ['a' 'z']
+        %+  cook  |=(plan +<)
         ;~  pose
           (stag %bcts ;~(plug sym ;~(pfix ;~(pose fas tis) wyde)))
           scab
@@ -11974,206 +11987,210 @@
     ==
   ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
   ++  norm                                              ::  rune regular form
-    |=  {rut/? tol/?}
-    =<  ?:  rut
-          %-  stew
-          ^.  stet  ^.  limo
-          :~  :-  '$'
-                ;~  pfix  buc
-                  %-  stew
-                  ^.  stet  ^.  limo
-                  :~  ['@' (rune pat %bcpt exqb)]
-                      ['_' (rune cab %bccb expa)]
-                      [':' (rune col %bccl exqs)]
-                      ['%' (rune cen %bccn exqs)]
-                      ['^' (rune ket %bckt exqb)]
-                      ['~' (rune sig %bcsg exqd)]
-                      ['-' (rune hep %bchp exqb)]
-                      ['=' (rune tis %bcts exqg)]
-                      ['?' (rune wut %bcwt exqs)]
-                      [';' (rune sem %bcsm expa)]
-                  ==
-                ==
-            :-  '%'
-              ;~  pfix  cen
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  ['^' (rune ket %cnkt exqy)]
-                    ['+' (rune lus %cnls exqx)]
-                    ['-' (rune hep %cnhp exqk)]
-                    [':' (rune col %cnhp exqz)]
-                ==
-              ==
-          ==
-        %-  stew
-        ^.  stet  ^.  limo
-        :~  :-  '|'
-              ;~  pfix  bar
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  ['_' (runo cab %brcb [~ ~] exqr)]
-                    ['%' (runo cen %brcn [~ ~] expe)]
-                    [':' (runo col %brcl [~ ~] expb)]
-                    ['.' (runo dot %brdt [~ ~] expa)]
-                    ['-' (runo hep %brhp [~ ~] expa)]
-                    ['^' (runo ket %brkt [~ ~] expx)]
-                    ['~' (runo sig %brsg [~ ~] exqc)]
-                    ['*' (runo tar %brtr [~ ~] exqc)]
-                    ['=' (runo tis %brts [~ ~] exqc)]
-                    ['?' (runo wut %brwt [~ ~] expa)]
-                ==
-              ==
-            :-  '$'
-              ;~  pfix  buc
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  ['@' (rune pat %bcpt exqb)]
-                    ['_' (rune cab %bccb expa)]
-                    [':' (rune col %bccl exqs)]
-                    ['%' (rune cen %bccn exqs)]
-                    ['^' (rune ket %bckt exqb)]
-                    ['~' (rune sig %bcsg exqd)]
-                    ['-' (rune hep %bchp exqb)]
-                    ['=' (rune tis %bcts exqg)]
-                    ['?' (rune wut %bcwt exqs)]
-                    [';' (rune sem %bcsm exqa)]
-                ==
-              ==
-            :-  '%'
-              ;~  pfix  cen
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  ['_' (rune cab %cncb exph)]
-                    ['.' (rune dot %cndt expb)]
-                    ['^' (rune ket %cnkt expd)]
-                    ['+' (rune lus %cnls expc)]
-                    ['-' (rune hep %cnhp expk)]
-                    [':' (rune col %cnhp expi)]
-                    ['~' (rune sig %cnsg expu)]
-                    ['*' (rune tar %cntr expm)]
-                    ['=' (rune tis %cnts exph)]
-                ==
-              ==
-            :-  ':'
-              ;~  pfix  col
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  ['_' (rune cab %clcb expb)]
-                    ['^' (rune ket %clkt expd)]
-                    ['+' (rune lus %clls expc)]
-                    ['-' (rune hep %clhp expb)]
-                    ['~' (rune sig %clsg exps)]
-                    ['*' (rune tar %cltr exps)]
-                ==
-              ==
-            :-  '.'
-              ;~  pfix  dot
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  ['+' (rune lus %dtls expa)]
-                    ['*' (rune tar %dttr expb)]
-                    ['=' (rune tis %dtts expb)]
-                    ['?' (rune wut %dtwt expa)]
-                    ['^' (rune ket %dtkt exqn)]
-                ==
-              ==
-            :-  '^'
-              ;~  pfix  ket
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  ['|' (rune bar %ktbr expa)]
-                    ['.' (rune dot %ktdt expb)]
-                    ['-' (rune hep %kthp exqc)]
-                    ['+' (rune lus %ktls expb)]
-                    ['&' (rune pam %ktpm expa)]
-                    ['~' (rune sig %ktsg expa)]
-                    ['=' (rune tis %ktts expg)]
-                    ['?' (rune wut %ktwt expa)]
-                    ['%' (rune cen %ktcn expa)]
-                ==
-              ==
-            :-  '~'
-              ;~  pfix  sig
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  ['|' (rune bar %sgbr expb)]
-                    ['$' (rune buc %sgbc expf)]
-                    ['_' (rune cab %sgcb expb)]
-                    ['%' (rune cen %sgcn hind)]
-                    ['/' (rune fas %sgfs hine)]
-                    ['<' (rune gal %sggl hinb)]
-                    ['>' (rune gar %sggr hinb)]
-                    ['+' (rune lus %sgls hinc)]
-                    ['&' (rune pam %sgpm hinf)]
-                    ['?' (rune wut %sgwt hing)]
-                    ['=' (rune tis %sgts expb)]
-                    ['!' (rune zap %sgzp expb)]
-                ==
-              ==
-            :-  ';'
-              ;~  pfix  sem
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  [':' (rune col %smcl expi)]
-                    ['/' (rune fas %smfs expa)]
-                    ['~' (rune sig %smsg expi)]
-                    [';' (rune sem %smsm expb)]
-                ==
-              ==
-            :-  '='
-              ;~  pfix  tis
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  ['|' (rune bar %tsbr exqc)]
-                    ['.' (rune dot %tsdt expq)]
-                    ['?' (rune wut %tswt expw)]
-                    ['^' (rune ket %tskt expt)]
-                    [':' (rune col %tscl expp)]
-                    ['/' (rune fas %tsfs expo)]
-                    [';' (rune sem %tssm expo)]
-                    ['<' (rune gal %tsgl expb)]
-                    ['>' (rune gar %tsgr expb)]
-                    ['-' (rune hep %tshp expb)]
-                    ['*' (rune tar %tstr expl)]
-                    [',' (rune com %tscm expb)]
-                    ['+' (rune lus %tsls expb)]
-                    ['~' (rune sig %tssg expi)]
-                ==
-              ==
-            :-  '?'
-              ;~  pfix  wut
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  ['|' (rune bar %wtbr exps)]
-                    [':' (rune col %wtcl expc)]
-                    ['.' (rune dot %wtdt expc)]
-                    ['<' (rune gal %wtgl expb)]
-                    ['>' (rune gar %wtgr expb)]
-                    ['-' ;~(pfix hep (toad tkhp))]
-                    ['^' ;~(pfix ket (toad tkkt))]
-                    ['=' ;~(pfix tis (toad tkts))]
-                    ['+' ;~(pfix lus (toad tkls))]
-                    ['&' (rune pam %wtpm exps)]
-                    ['@' ;~(pfix pat (toad tkpt))]
-                    ['~' ;~(pfix sig (toad tksg))]
-                    ['!' (rune zap %wtzp expa)]
-                ==
-              ==
-            :-  '!'
-              ;~  pfix  zap
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  [':' ;~(pfix col (toad expz))]
-                    ['.' ;~(pfix dot (toad |.(loaf(bug |))))]
-                    [',' (rune com %zpcm expb)]
-                    [';' (rune sem %zpsm expb)]
-                    ['>' (rune gar %zpgr expa)]
-                    ['=' (rune tis %zpts expa)]
-                    ['?' (rune wut %zpwt hinh)]
-                ==
-              ==
-        ==
+    |=  tol/?
     |%
+    ++  structure
+      %+  cook  |=(plan +<)
+      %-  stew
+      ^.  stet  ^.  limo
+      :~  :-  '$'
+            ;~  pfix  buc
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  ['@' (rune pat %bcpt exqb)]
+                  ['_' (rune cab %bccb expa)]
+                  [':' (rune col %bccl exqs)]
+                  ['%' (rune cen %bccn exqs)]
+                  ['^' (rune ket %bckt exqb)]
+                  ['~' (rune sig %bcsg exqd)]
+                  ['-' (rune hep %bchp exqb)]
+                  ['=' (rune tis %bcts exqg)]
+                  ['?' (rune wut %bcwt exqs)]
+                  [';' (rune sem %bcsm expa)]
+              ==
+            ==
+        :-  '%'
+          %+  stag  %bcsm
+          ;~  pfix  cen
+            %-  stew
+            ^.  stet  ^.  limo
+            :~  ['^' (rune ket %cnkt exqy)]
+                ['+' (rune lus %cnls exqx)]
+                ['-' (rune hep %cnhp exqk)]
+                [':' (rune col %cnhp exqz)]
+            ==
+          ==
+      ==
+    ++  expression
+      %-  stew
+      ^.  stet  ^.  limo
+      :~  :-  '|'
+            ;~  pfix  bar
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  ['_' (runo cab %brcb [~ ~] exqr)]
+                  ['%' (runo cen %brcn [~ ~] expe)]
+                  [':' (runo col %brcl [~ ~] expb)]
+                  ['.' (runo dot %brdt [~ ~] expa)]
+                  ['-' (runo hep %brhp [~ ~] expa)]
+                  ['^' (runo ket %brkt [~ ~] expx)]
+                  ['~' (runo sig %brsg [~ ~] exqc)]
+                  ['*' (runo tar %brtr [~ ~] exqc)]
+                  ['=' (runo tis %brts [~ ~] exqc)]
+                  ['?' (runo wut %brwt [~ ~] expa)]
+              ==
+            ==
+          :-  '$'
+            ;~  pfix  buc
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  ['@' (rune pat %bcpt exqb)]
+                  ['_' (rune cab %bccb expa)]
+                  [':' (rune col %bccl exqs)]
+                  ['%' (rune cen %bccn exqs)]
+                  ['^' (rune ket %bckt exqb)]
+                  ['~' (rune sig %bcsg exqd)]
+                  ['-' (rune hep %bchp exqb)]
+                  ['=' (rune tis %bcts exqg)]
+                  ['?' (rune wut %bcwt exqs)]
+                  [';' (rune sem %bcsm exqa)]
+              ==
+            ==
+          :-  '%'
+            ;~  pfix  cen
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  ['_' (rune cab %cncb exph)]
+                  ['.' (rune dot %cndt expb)]
+                  ['^' (rune ket %cnkt expd)]
+                  ['+' (rune lus %cnls expc)]
+                  ['-' (rune hep %cnhp expk)]
+                  [':' (rune col %cnhp expi)]
+                  ['~' (rune sig %cnsg expu)]
+                  ['*' (rune tar %cntr expm)]
+                  ['=' (rune tis %cnts exph)]
+              ==
+            ==
+          :-  ':'
+            ;~  pfix  col
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  ['_' (rune cab %clcb expb)]
+                  ['^' (rune ket %clkt expd)]
+                  ['+' (rune lus %clls expc)]
+                  ['-' (rune hep %clhp expb)]
+                  ['~' (rune sig %clsg exps)]
+                  ['*' (rune tar %cltr exps)]
+              ==
+            ==
+          :-  '.'
+            ;~  pfix  dot
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  ['+' (rune lus %dtls expa)]
+                  ['*' (rune tar %dttr expb)]
+                  ['=' (rune tis %dtts expb)]
+                  ['?' (rune wut %dtwt expa)]
+                  ['^' (rune ket %dtkt exqn)]
+              ==
+            ==
+          :-  '^'
+            ;~  pfix  ket
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  ['|' (rune bar %ktbr expa)]
+                  ['.' (rune dot %ktdt expb)]
+                  ['-' (rune hep %kthp exqc)]
+                  ['+' (rune lus %ktls expb)]
+                  ['&' (rune pam %ktpm expa)]
+                  ['~' (rune sig %ktsg expa)]
+                  ['=' (rune tis %ktts expg)]
+                  ['?' (rune wut %ktwt expa)]
+                  ['%' (rune cen %ktcn expa)]
+              ==
+            ==
+          :-  '~'
+            ;~  pfix  sig
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  ['|' (rune bar %sgbr expb)]
+                  ['$' (rune buc %sgbc expf)]
+                  ['_' (rune cab %sgcb expb)]
+                  ['%' (rune cen %sgcn hind)]
+                  ['/' (rune fas %sgfs hine)]
+                  ['<' (rune gal %sggl hinb)]
+                  ['>' (rune gar %sggr hinb)]
+                  ['+' (rune lus %sgls hinc)]
+                  ['&' (rune pam %sgpm hinf)]
+                  ['?' (rune wut %sgwt hing)]
+                  ['=' (rune tis %sgts expb)]
+                  ['!' (rune zap %sgzp expb)]
+              ==
+            ==
+          :-  ';'
+            ;~  pfix  sem
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  [':' (rune col %smcl expi)]
+                  ['/' (rune fas %smfs expa)]
+                  ['~' (rune sig %smsg expi)]
+                  [';' (rune sem %smsm expb)]
+              ==
+            ==
+          :-  '='
+            ;~  pfix  tis
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  ['|' (rune bar %tsbr exqc)]
+                  ['.' (rune dot %tsdt expq)]
+                  ['?' (rune wut %tswt expw)]
+                  ['^' (rune ket %tskt expt)]
+                  [':' (rune col %tscl expp)]
+                  ['/' (rune fas %tsfs expo)]
+                  [';' (rune sem %tssm expo)]
+                  ['<' (rune gal %tsgl expb)]
+                  ['>' (rune gar %tsgr expb)]
+                  ['-' (rune hep %tshp expb)]
+                  ['*' (rune tar %tstr expl)]
+                  [',' (rune com %tscm expb)]
+                  ['+' (rune lus %tsls expb)]
+                  ['~' (rune sig %tssg expi)]
+              ==
+            ==
+          :-  '?'
+            ;~  pfix  wut
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  ['|' (rune bar %wtbr exps)]
+                  [':' (rune col %wtcl expc)]
+                  ['.' (rune dot %wtdt expc)]
+                  ['<' (rune gal %wtgl expb)]
+                  ['>' (rune gar %wtgr expb)]
+                  ['-' ;~(pfix hep (toad tkhp))]
+                  ['^' ;~(pfix ket (toad tkkt))]
+                  ['=' ;~(pfix tis (toad tkts))]
+                  ['+' ;~(pfix lus (toad tkls))]
+                  ['&' (rune pam %wtpm exps)]
+                  ['@' ;~(pfix pat (toad tkpt))]
+                  ['~' ;~(pfix sig (toad tksg))]
+                  ['!' (rune zap %wtzp expa)]
+              ==
+            ==
+          :-  '!'
+            ;~  pfix  zap
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  [':' ;~(pfix col (toad expz))]
+                  ['.' ;~(pfix dot (toad |.(loaf(bug |))))]
+                  [',' (rune com %zpcm expb)]
+                  [';' (rune sem %zpsm expb)]
+                  ['>' (rune gar %zpgr expa)]
+                  ['=' (rune tis %zpts expa)]
+                  ['?' (rune wut %zpwt hinh)]
+              ==
+            ==
+      ==
+    ::
     ++  boog                                            ::  core arms
       %+  knee  [p=*term q=*(pair what foot)]  |.  ~+
       %+  cook
@@ -12555,22 +12572,28 @@
     ==  
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
-    |.(~+((wart (wrap ;~(pose (norm | &) long lute apex:(sail &))))))
+    |.(~+((wart (wrap ;~(pose expression:(norm &) long lute apex:(sail &))))))
   ++  till                                              ::  mold tall form
-    %+  knee  *root
-    |.(~+((wart (wrap ;~(pose (norm & &) scad)))))
+    %+  knee  *plan
+    |.(~+((wert ;~(pose structure:(norm &) scad))))
   ++  wede                                              ::  wide bulb
     ;~(pfix ;~(pose lus fas) wide)
   ++  wide                                              ::  full wide form
     %+  knee  *hoon
-    |.(~+((wart ;~(pose (norm | |) long apex:(sail |)))))
+    |.(~+((wart ;~(pose expression:(norm |) long apex:(sail |)))))
   ++  wyde                                              ::  mold wide form
-    %+  knee  *root
-    |.(~+((wart ;~(pose (norm & |) scad))))
+    %+  knee  *plan
+    |.(~+((wert ;~(pose structure:(norm |) scad))))
   ++  wart
     |*  zor/rule
     %+  here
       |=  {a/pint b/hoon}
+      ?:(bug [%dbug [wer a] b] b)
+    zor
+  ++  wert
+    |*  zor/rule
+    %+  here
+      |=  {a/pint b/plan}
       ?:(bug [%dbug [wer a] b] b)
     zor
   --
