@@ -551,6 +551,7 @@
 #   define c3__i      c3_s1('i')
 #   define c3__ic     c3_s2('i','c')
 #   define c3__ice    c3_s3('i','c','e')
+#   define c3__iced   c3_s4('i','c','e','d')
 #   define c3__if     c3_s2('i','f')
 #   define c3__ifix   c3_s4('i','f','i','x')
 #   define c3__in     c3_s2('i','n')

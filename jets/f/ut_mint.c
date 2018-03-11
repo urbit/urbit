@@ -567,31 +567,6 @@
         return u3nc(u3qf_face(p_gen, sut), u3nc(0, 1));
       }
 
-      case c3__ktsg: p_gen = u3t(gen);
-      _mint_used();
-      {
-        u3_noun nef = _mint_in(van, sut, gol, p_gen);
-        u3_noun p_nef = u3h(nef);
-        u3_noun q_nef = u3t(nef);
-        u3_noun fom;
-
-        {
-          u3_noun cag = u3qfu_burn(van, sut);
-          u3_noun wim = u3n_nock_an(cag, u3k(q_nef));
-
-          if ( 0 == u3h(wim) ) {
-            fom = u3nc(1, u3k(u3t(wim)));
-          } else {
-            fom = u3k(q_nef);
-          }
-          u3z(wim);
-        }
-        ret = u3nc(u3k(p_nef), fom);
-
-        u3z(nef);
-        return ret;
-      }
-
       case c3__ktls: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
@@ -719,7 +694,8 @@
         return ret;
       }
 
-      case c3__cold: p_gen = u3t(gen);
+      case c3__cold:
+      case c3__ktsg: p_gen = u3t(gen);
       _mint_used();
       {
 
