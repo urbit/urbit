@@ -12570,12 +12570,35 @@
       fel
       apse:docs
     ==  
+  ++  wrip
+    |*  fel/rule
+    %+  cook
+      |=  {a/whit b/plan c/whit}
+      ^-  plan
+      b
+    ::
+    ::  XX performance: this makes the parser about 50% slower.
+    ::  because we double-parse most of the spaces in the file.
+    ::  just so we can do a postfix doc-comment.
+    ::  
+    ::  the correct solution to this problem is to unify the
+    ::  parsing of docs with the parsing of comments/spaces.
+    ::  but at this point we're pretty much in parser rewrite.
+    ::
+    ::  it should go without saying that ++vast needs a rewrite.
+    ::  it dates to 2011.
+    ::
+    ;~  plug
+      apex:docs
+      fel
+      apse:docs
+    ==  
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
     |.(~+((wart (wrap ;~(pose expression:(norm &) long lute apex:(sail &))))))
   ++  till                                              ::  mold tall form
     %+  knee  *plan
-    |.(~+((wert ;~(pose structure:(norm &) scad))))
+    |.(~+((wert (wrip ;~(pose structure:(norm &) scad)))))
   ++  wede                                              ::  wide bulb
     ;~(pfix ;~(pose lus fas) wide)
   ++  wide                                              ::  full wide form
