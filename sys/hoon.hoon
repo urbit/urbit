@@ -5697,14 +5697,14 @@
   ::                                            ::::::  molds
     {$bcpt p/root q/root}                               ::  $@ depth fork
     {$bccb p/hoon}                                      ::  $_ example
-    {$bccl p/(list root)}                               ::  $: tuple
-    {$bccn p/(list root)}                               ::  $% tagged fork
+    {$bccl p/root q/(list root)}                        ::  $: tuple
+    {$bccn p/root q/(list root)}                        ::  $% tagged fork
     {$bchp p/root q/root}                               ::  $- function
     {$bckt p/root q/root}                               ::  $^ pairhead fork
     {$bcsg p/hoon q/root}                               ::  $~ default
-    {$bcwt p/(list root)}                               ::  $? untagged fork
+    {$bcwt p/root q/(list root)}                        ::  $? untagged fork
     {$bcts p/toga q/root}                               ::  $= name
-    {$bcsm p/hoon}                                      ::  $; assembly
+    {$bcsm p/hoon}                                      ::  $; manual
   ::                                            ::::::  cores
     {$brcb p/chap q/root r/alas s/(map @ tomb)}         ::  |_
     {$brcl p/chap q/hoon r/hoon}                        ::  |:
@@ -7396,29 +7396,6 @@
       {^ *}              =+  toe=[$(gen p.gen) $(gen q.gen)]
                          ?:(=(toe [[%0 ~] [%0 ~]]) [%0 ~] [%2 toe])
     ==
-  ++  bent
-    |-  ^-  (list wing)
-    ?+  gen  !!
-      {$$ *}     [[[%& p.gen] ~] ~]
-      {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
-      {$tsgl *}  $(gen open)
-      {$tsgr *}  (weld $(gen p.gen) $(gen q.gen))
-      {$wing *}  [p.gen ~]
-      {$limb *}  [[p.gen ~] ~]
-    ==                 
-  ::
-  ++  bawl
-    ~|  %bawl-failure
-    ~|  [%bawl gen]
-    |-  ^-  tent
-    ?+  gen   [%& bent]
-      {$cnsg *}  [%| p.gen $(gen q.gen) (turn r.gen |=(hoon boil(gen +<)))]
-      {$cnhp *}  $(gen open)
-      {$cnkt *}  $(gen open)
-      {$cnls *}  $(gen open)
-      {$cndt *}  $(gen open)
-      {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
-    ==
   ::
   ++  boil
     ^-  plan
@@ -7426,23 +7403,16 @@
         {$base *}  [%axil p.gen]
         {$dbug *}  [%deet p.gen boil(gen q.gen)]
         {$leaf *}  [%leaf p.gen]
-    ::
         {$bcpt *}  [%reed boil(gen p.gen) boil(gen q.gen)]
         {$bccb *}  [%weed p.gen]
-        {$bccl *}
-      ?~  p.gen  [%axil %null]
-      [%tupl boil(gen i.p.gen) (turn t.p.gen |=(hoon boil(gen +<)))]
-    ::
-        {$bccn *}  =+  (turn p.gen |=(a/hoon boil(gen a)))
-                   ?~(- [%axil %void] [%kelp -])
+        {$bccl *}  [%tupl boil(gen p.gen) (turn q.gen |=(hoon boil(gen +<)))]
+        {$bccn *}  [%kelp boil(gen p.gen) (turn q.gen |=(hoon boil(gen +<)))]
         {$bckt *}  [%vine boil(gen p.gen) boil(gen q.gen)]
         {$bchp *}  [%funk boil(gen p.gen) boil(gen q.gen)]
-    ::
         {$halo *}  [%plow p.gen boil(gen q.gen)]
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
         {$bcsg *}  [%deft p.gen boil(gen q.gen)]
-        {$bcwt *}  =+  (turn p.gen |=(a/hoon boil(gen a)))
-                   ?~(- [%axil %void] [%fern -])
+        {$bcwt *}  [%fern boil(gen p.gen) (turn q.gen |=(hoon boil(gen +<)))]
         {$bcsm *}  [%herb p.gen]
     ==
   ::
@@ -7868,12 +7838,12 @@
         $yell  (lead -.gen %.(+.gen moar))
         $bcpt  (lead -.gen %.(+.gen dubs))
         $bccb  (lead -.gen %.(+.gen expr))
-        $bccl  (lead -.gen %.(+.gen moar))
-        $bccn  (lead -.gen %.(+.gen moar))
+        $bccl  (lead -.gen %.(+.gen (twin expr moar)))
+        $bccn  (lead -.gen %.(+.gen (twin expr moar)))
         $bchp  (lead -.gen %.(+.gen dubs))
         $bckt  (lead -.gen %.(+.gen dubs))
         $bcsg  (lead -.gen %.(+.gen dubs))
-        $bcwt  (lead -.gen %.(+.gen moar))
+        $bcwt  (lead -.gen %.(+.gen (twin expr moar)))
         $bcts  (lead -.gen %.(+.gen nexp))
         $bcsm  (lead -.gen %.(+.gen expr))
         $brcb  (lead -.gen %.(+.gen (quad noop expr exps arms)))
