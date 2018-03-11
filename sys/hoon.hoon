@@ -5614,20 +5614,20 @@
               {$| p/(unit term) q/hoon}                 ::  named wing
           ==                                            ::
 ++  plan                                                ::  data structure
-          $%  {$axil p/base}                            ::  base type
-              {$bark p/toga q/plan}                     ::  name
-              {$funk p/plan q/plan}                     ::  function type
-              {$deet p/spot q/plan}                     ::  set debug
-              {$deft p/hoon q/plan}                     ::  default
-              {$fern p/{i/plan t/(list plan)}}          ::  plain selection
-              {$herb p/hoon}                            ::  assembly
-              {$kelp p/{i/plan t/(list plan)}}          ::  new selection
+          $%  {$base p/base}                            ::  base type
+              {$bcts p/toga q/plan}                     ::  name
+              {$bchp p/plan q/plan}                     ::  function type
+              {$dbug p/spot q/plan}                     ::  set debug
+              {$bcsg p/hoon q/plan}                     ::  default
+              {$bcwt p/{i/plan t/(list plan)}}          ::  plain selection
+              {$bcsm p/hoon}                            ::  assembly
+              {$bccn p/{i/plan t/(list plan)}}          ::  new selection
               {$leaf p/term q/@}                        ::  constant atom
-              {$plow p/what q/plan}                     ::  apply help
-              {$reed p/plan q/plan}                     ::  atom+cell
-              {$tupl p/{i/plan t/(list plan)}}          ::  aka row
-              {$vine p/plan q/plan}                     ::  pair+tag
-              {$weed p/hoon}                            ::  example
+              {$halo p/what q/plan}                     ::  apply help
+              {$bcpt p/plan q/plan}                     ::  atom+cell
+              {$bccl p/{i/plan t/(list plan)}}          ::  aka row
+              {$bckt p/plan q/plan}                     ::  pair+tag
+              {$bccb p/hoon}                            ::  example
           ==                                            ::
 ++  toga                                                ::  face control
           $@  p/term                                    ::  two togas
@@ -6761,35 +6761,35 @@
     ~+
     |-  ^-  hoon
     ?-  mod
-      {$axil *}  (basal p.mod)
-      {$bark *}  [%ktts p.mod $(mod q.mod)]
-      {$deet *}  [%dbug p.mod $(mod q.mod)]
-      {$deft *}  p.mod
-      {$fern *}  ::  use last entry
+      {$base *}  (basal p.mod)
+      {$bcts *}  [%ktts p.mod $(mod q.mod)]
+      {$dbug *}  [%dbug p.mod $(mod q.mod)]
+      {$bcsg *}  p.mod
+      {$bcwt *}  ::  use last entry
                  ::
                  |-  ^-  hoon
                  ?~  t.p.mod  ^$(mod i.p.mod)
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-      {$funk *}  ::  see under %weed
+      {$bchp *}  ::  see under %bccb
                  ::
                  [%rock %n 0]
-      {$herb *}  ::  borrow sample
+      {$bcsm *}  ::  borrow sample
                  ::
                  [%tsgl [%$ 6] p.mod]
-      {$kelp *}  ::  use last entry
+      {$bccn *}  ::  use last entry
                  ::
                  |-  ^-  hoon
                  ?~  t.p.mod  ^$(mod i.p.mod)
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
       {$leaf *}  [%rock p.mod q.mod]
-      {$plow *}  $(mod q.mod)
-      {$reed *}  $(mod p.mod)
-      {$tupl *}  |-  ^-  hoon
+      {$halo *}  $(mod q.mod)
+      {$bcpt *}  $(mod p.mod)
+      {$bccl *}  |-  ^-  hoon
                  ?~  t.p.mod  ^$(mod i.p.mod) 
                  :-  ^$(mod i.p.mod) 
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-      {$vine *}  $(mod q.mod)
-      {$weed *}  [%rock %n 0]
+      {$bckt *}  $(mod q.mod)
+      {$bccb *}  [%rock %n 0]
     ==
   ::
   ++  decorate
@@ -6808,32 +6808,32 @@
     ::
     ^-  ?
     ?-  mod
-      {$axil *}  &
-      {$bark *}  clean(mod q.mod)
-      {$herb *}  |
-      {$deet *}  clean(mod q.mod)
-      {$deft *}  |
-      {$funk *}  &(clean(mod p.mod) clean(mod q.mod))
-      {$fern *}  |-  ^-  ?
+      {$base *}  &
+      {$bcts *}  clean(mod q.mod)
+      {$bcsm *}  |
+      {$dbug *}  clean(mod q.mod)
+      {$bcsg *}  |
+      {$bchp *}  &(clean(mod p.mod) clean(mod q.mod))
+      {$bcwt *}  |-  ^-  ?
                  ?&  clean(mod i.p.mod)
                      ?~  t.p.mod  &
                      $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
                  ==
-      {$kelp *}  |-  ^-  ?
+      {$bccn *}  |-  ^-  ?
                  ?&  clean(mod i.p.mod)
                      ?~  t.p.mod  &
                      $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
                  ==
-      {$tupl *}  |-  ^-  ?
+      {$bccl *}  |-  ^-  ?
                  ?&  clean(mod i.p.mod)
                      ?~  t.p.mod  &
                      $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
                  ==
       {$leaf *}  &
-      {$plow *}  clean(mod q.mod)
-      {$reed *}  &(clean(mod p.mod) clean(mod q.mod))
-      {$vine *}  &(clean(mod p.mod) clean(mod q.mod))
-      {$weed *}  |
+      {$halo *}  clean(mod q.mod)
+      {$bcpt *}  &(clean(mod p.mod) clean(mod q.mod))
+      {$bckt *}  &(clean(mod p.mod) clean(mod q.mod))
+      {$bccb *}  |
     ==
   ::
   ++  example
@@ -6848,27 +6848,27 @@
         spore
       ~(relative local(dom (peg 3 dom)) [2 %&])
     ::
-        {$axil *}  (decorate (basal p.mod))
-        {$bark *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
-        {$herb *}
+        {$base *}  (decorate (basal p.mod))
+        {$bcts *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
+        {$bcsm *}
       %-  decorate
       =+  cys=~(boil ap p.mod)
-      ?:  ?=($herb -.cys)
+      ?:  ?=($bcsm -.cys)
         (home [%tsgl [%limb %$] p.mod])
       example:clear(doc ~, mod cys)
     ::  
-        {$deft *}  [%ktls example(mod q.mod) (home p.mod)]
-        {$deet *}  example(mod q.mod, bug [p.mod bug])
-        {$funk *}  (decorate (function:clear p.mod q.mod))
+        {$bcsg *}  [%ktls example(mod q.mod) (home p.mod)]
+        {$dbug *}  example(mod q.mod, bug [p.mod bug])
+        {$bchp *}  (decorate (function:clear p.mod q.mod))
         {$leaf *}  (decorate [%rock p.mod q.mod])
-        {$plow *}  example(mod q.mod, doc [p.mod doc])
-        {$tupl *}  %-  decorate
+        {$halo *}  example(mod q.mod, doc [p.mod doc])
+        {$bccl *}  %-  decorate
                    |-  ^-  hoon
                    ?~  t.p.mod
                        example:clear(mod i.p.mod)
                    :-  example:clear(mod i.p.mod)
                    example:clear(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-        {$weed *}  (home p.mod)
+        {$bccb *}  (home p.mod)
     ==
   ::
   ++  factory
@@ -6877,9 +6877,9 @@
     ^-  hoon
     ::  process annotations outside construct, to catch default
     ::
-    ?:  ?=($plow -.mod)  factory(mod q.mod, doc [p.mod doc])
-    ?:  ?=($deet -.mod)  factory(mod q.mod, bug [p.mod bug])
-    ?:  ?=($deft -.mod)  factory(mod q.mod, def `p.mod)
+    ?:  ?=($halo -.mod)  factory(mod q.mod, doc [p.mod doc])
+    ?:  ?=($dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
+    ?:  ?=($bcsg -.mod)  factory(mod q.mod, def `p.mod)
     ^-  hoon
     =-  ::  for basic molds that don't need the subject,
         ::  clear it so constants fold better 
@@ -7032,9 +7032,9 @@
       ::
       =/  tow/@ud
         ?+  mod      1
-          {$kelp *}  2
-          {$vine *}  2
-          {$tupl *}  +((lent t.p.mod))
+          {$bccn *}  2
+          {$bckt *}  2
+          {$bccl *}  +((lent t.p.mod))
         ==
       ::  =-  ~?  =(3 tow)  [%relative-three foo] foo
       ::  ^=  foo
@@ -7081,41 +7081,41 @@
       ::
       ::  base
       ::
-          {$axil *}
+          {$base *}
         (decorate (basic:clear p.mod))
       ::
       ::  name, $=
       ::
-          {$bark *}
+          {$bcts *}
         [%ktts p.mod relative(mod q.mod)]
       ::
       ::  debug
       ::
-          {$deet *}
+          {$dbug *}
         relative(mod q.mod, bug [p.mod bug])
       ::
       ::  default
       ::
-          {$deft *}
+          {$bcsg *}
         relative(mod q.mod, def `p.mod)
       ::
       ::  choice, $?
       ::
-          {$fern *}
+          {$bcwt *}
         (decorate (choice i.p.mod t.p.mod))
       ::
       ::  synthesis, $;
       ::
-          {$herb *}
+          {$bcsm *}
         %-  decorate
         =+  cys=~(boil ap p.mod)
-        ?:  ?=($herb -.cys)
+        ?:  ?=($bcsm -.cys)
           [%cnhp (home p.mod) fetch ~]
         relative(mod cys)
       ::
       ::  tuple, $:
       ::
-          {$tupl *}
+          {$bccl *}
         %-  decorate
         |-  ^-  hoon
         ?~  t.p.mod
@@ -7130,7 +7130,7 @@
       ::
       ::  switch, $%
       :: 
-          {$kelp *}
+          {$bccn *}
         (switch i.p.mod t.p.mod)
       ::
       ::  constant
@@ -7140,12 +7140,12 @@
       ::
       ::  documentation
       ::
-          {$plow *}
+          {$halo *}
         relative(doc [p.mod doc], mod q.mod)
       ::
       ::  function
       ::
-          {$funk *}  
+          {$bchp *}  
         %-  decorate 
         =/  fun  (function:clear p.mod q.mod)
         ?^  def
@@ -7154,7 +7154,7 @@
       ::
       ::  branch, $@
       ::
-          {$reed *}
+          {$bcpt *}
         %-  decorate
         ?@  top
           ?:  =(%| top)
@@ -7167,16 +7167,16 @@
       ::
       ::  bridge, $^
       ::
-          {$vine *}
+          {$bckt *}
         %-  decorate
         :^    %wtpt
             fetch-wing(axe (peg axe 2))
           relative:clear(top [%| %&], mod q.mod) 
         relative:clear(top [[%& %&] %&], mod p.mod)
       ::
-      ::  weed, $_
+      ::  bccb, $_
       ::
-          {$weed *}
+          {$bccb *}
         (decorate (home p.mod))
       ==
     --
@@ -7399,21 +7399,21 @@
   ::
   ++  boil
     ^-  plan
-    ?+  gen        [%herb gen]
-        {$base *}  [%axil p.gen]
-        {$dbug *}  [%deet p.gen boil(gen q.gen)]
+    ?+  gen        [%bcsm gen]
+        {$base *}  [%base p.gen]
+        {$dbug *}  [%dbug p.gen boil(gen q.gen)]
         {$leaf *}  [%leaf p.gen]
-        {$bcpt *}  [%reed boil(gen p.gen) boil(gen q.gen)]
-        {$bccb *}  [%weed p.gen]
-        {$bccl *}  [%tupl boil(gen p.gen) (turn q.gen |=(hoon boil(gen +<)))]
-        {$bccn *}  [%kelp boil(gen p.gen) (turn q.gen |=(hoon boil(gen +<)))]
-        {$bckt *}  [%vine boil(gen p.gen) boil(gen q.gen)]
-        {$bchp *}  [%funk boil(gen p.gen) boil(gen q.gen)]
-        {$halo *}  [%plow p.gen boil(gen q.gen)]
-        {$bcts *}  [%bark p.gen boil(gen q.gen)]
-        {$bcsg *}  [%deft p.gen boil(gen q.gen)]
-        {$bcwt *}  [%fern boil(gen p.gen) (turn q.gen |=(hoon boil(gen +<)))]
-        {$bcsm *}  [%herb p.gen]
+        {$bcpt *}  [%bcpt boil(gen p.gen) boil(gen q.gen)]
+        {$bccb *}  [%bccb p.gen]
+        {$bccl *}  [%bccl boil(gen p.gen) (turn q.gen |=(hoon boil(gen +<)))]
+        {$bccn *}  [%bccn boil(gen p.gen) (turn q.gen |=(hoon boil(gen +<)))]
+        {$bckt *}  [%bckt boil(gen p.gen) boil(gen q.gen)]
+        {$bchp *}  [%bchp boil(gen p.gen) boil(gen q.gen)]
+        {$halo *}  [%halo p.gen boil(gen q.gen)]
+        {$bcts *}  [%bcts p.gen boil(gen q.gen)]
+        {$bcsg *}  [%bcsg p.gen boil(gen q.gen)]
+        {$bcwt *}  [%bcwt boil(gen p.gen) (turn q.gen |=(hoon boil(gen +<)))]
+        {$bcsm *}  [%bcsm p.gen]
     ==
   ::
   ++  open
@@ -7422,7 +7422,7 @@
         {~ *}     [%cnts [[%& p.gen] ~] ~]
     ::
         {$base *}  ~(clam ax fab boil)
-        {$bust *}  ~(bunt ax fab %axil p.gen)
+        {$bust *}  ~(bunt ax fab %base p.gen)
         {$dbug *}   q.gen
         {$eror *}  ~|(p.gen !!)
     ::
@@ -7531,7 +7531,7 @@
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$bunt *}  [%ktsg ~(bunt ax fab %herb p.gen)]
+        {$bunt *}  [%ktsg ~(bunt ax fab %bcsm p.gen)]
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
         {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
@@ -7561,7 +7561,7 @@
       (turn r.gen |=({p/wing q/hoon} [p [%tsgr [%$ 3] q]]))
     ::
         {$ktdt *}  [%ktls [%cnhp p.gen q.gen ~] q.gen]
-        {$kthp *}  [%ktls ~(bunt ax fab [%herb p.gen]) q.gen]
+        {$kthp *}  [%ktls ~(bunt ax fab [%bcsm p.gen]) q.gen]
         {$sgbr *}
       :+  %sggr
         :-  %mean
@@ -7680,7 +7680,7 @@
       [%limb %c]                                        ::
     ::
         {$tsbr *}
-      [%tsls ~(bunt ax fab %herb p.gen) q.gen]
+      [%tsls ~(bunt ax fab %bcsm p.gen) q.gen]
     ::
         {$tscl *}
       [%tsgr [%cncb [[%& 1] ~] p.gen] q.gen]
@@ -7760,7 +7760,7 @@
     ::
         {$wtpt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
-        {$wtts *}   [%fits ~(bunt ax fab %herb p.gen) q.gen]
+        {$wtts *}   [%fits ~(bunt ax fab %bcsm p.gen) q.gen]
         {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {$zpgr *}
       [%cnhp [%limb %onan] [%zpsm [%bunt [%limb %abel]] p.gen] ~]
@@ -8982,7 +8982,7 @@
     ~/  %chip
     |=  {how/? gen/hoon}  ^-  type
     ?:  ?=({$wtts *} gen)
-      (cool how q.gen (play ~(bunt ax fab [%herb p.gen])))
+      (cool how q.gen (play ~(bunt ax fab [%bcsm p.gen])))
     ?:  ?&(how ?=({$wtpm *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=({$wtbr *} gen))
@@ -9322,7 +9322,7 @@
       [(nice (fork p.hiq p.ran ~)) (fork q.hiq q.ran ~)]
     ::
         {$wtts *}
-      =+  nob=~(bunt ax fab %herb p.gen)  
+      =+  nob=~(bunt ax fab %bcsm p.gen)  
       =+  waz=[p=(play nob) q=(play(sut dox) nob)]
       =+  ^=  syx  :-  p=(cove q:(mint %noun [%wing q.gen]))
                    q=(cove q:(mint(sut dox) %noun [%wing q.gen]))
