@@ -510,8 +510,7 @@ u3m_clear(void)
 {
   u3h_free(u3R->cax.har_p);
   u3h_free(u3R->jed.har_p);
-  // TODO: free entries in byc.har_p
-  u3h_free(u3R->byc.har_p);
+  u3n_bree();
   u3a_lose(u3R->jed.das);
 }
 

@@ -1972,6 +1972,59 @@ u3n_bark()
   return bam_w + u3h_mark(har_p);
 }
 
+/* _n_free_byc(): free memory retained by bytecode
+*/
+static void
+_n_free_byc(c3_y* pog)
+{
+  c3_y cod_y;
+  c3_s ip_s  = 0;
+
+  while ( pog[ip_s] != HALT ) {
+    cod_y = pog[ip_s++];
+    switch ( cod_y ) {
+      default:
+        ip_s += _n_arg(cod_y);
+        break;
+
+      case CUSH: case FRAG: case FLAG: case LILN: case LITN:
+      case SAMN: case TICK: case KICK:
+        u3z(_n_rean(pog, &ip_s));
+        break;
+
+      case SKIB: case SLIB:
+        ip_s += sizeof(c3_y);
+        u3z(_n_rean(pog, &ip_s));
+        break;
+
+      case SKIM: case SLIM:
+        ip_s += sizeof(c3_s);
+        u3z(_n_rean(pog, &ip_s));
+        break;
+    }
+  }
+
+  u3a_free(pog);
+}
+
+/* _n_feb(): u3h_walk helper for u3n_bree
+ */
+static void
+_n_feb(u3_noun kev)
+{
+  _n_free_byc(u3a_into(u3t(kev)));
+}
+
+/* u3n_bree(): free bytecode cache
+ */
+void
+u3n_bree()
+{
+  u3p(u3h_root) har_p = u3R->byc.har_p;
+  u3h_walk(har_p, _n_feb);
+  u3h_free(har_p);
+}
+
 /* u3n_kick_on(): fire `gat` without changing the sample.
 */
 u3_noun
