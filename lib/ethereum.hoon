@@ -1,15 +1,27 @@
 ::
 /-  ethereum
 =,  ^ethereum
+=,  keccak:crypto
 =,  mimes:html
+::
+|%
+::
+::  encoding
 ::
 ::  ABI spec used for reference:
 ::  https://ethereum.gitbooks.io/frontier-guide/content/abi.html
 ::
-|%
+++  encode-call
+  |=  [fun=@t das=(list data)]
+  ^-  tape
+  ::TODO  should this check to see if the data matches the function signature?
+  =-  (weld - (encode-args das))
+  %+  scag  8
+  (render-hex-bytes 32 (keccak-256 (as-octs fun)))
 ::
-++  encode-params
-  :>  encode list of parameters
+++  encode-args
+  :>  encode list of arguments.
+  ::
   |=  das=(list data)
   ^-  tape
   (encode-data [%array-n das])
@@ -56,12 +68,10 @@
     ?.  =(t hol)  (weld nes t)
     ::  calculate byte offset of data we need to reference.
     =/  ofs/@ud
-      =-  ~&  [%full -]
-          (div - 2)       ::  two hex digits per byte.
+      =-  (div - 2)       ::  two hex digits per byte.
       %+  add  led        ::  count head, and
       %-  lent  %-  zing  ::  count all tail data
       (scag i tas)        ::  preceding ours.
-    ~&  [%offset-at i ofs `@ux`ofs]
     =+  ref=^$(dat [%uint ofs])
     ::  shouldn't hit this unless we're sending over 2gb of data?
     ~|  [%weird-ref-lent (lent ref)]
