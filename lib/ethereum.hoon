@@ -1,6 +1,7 @@
 ::
 /-  ethereum
 =,  ^ethereum
+=,  mimes:html
 ::
 ::  ABI spec used for reference:
 ::  https://ethereum.gitbooks.io/frontier-guide/content/abi.html
@@ -85,7 +86,7 @@
     ::  uint256 followed by the actual value of X as a byte sequence, followed
     ::  by the minimum number of zero-bytes such that len(enc(X)) is a multiple
     ::  of 32.
-    %+  weld  $(dat [%uint (met 3 p.dat)])
+    %+  weld  $(dat [%uint p.p.dat])
     $(dat [%bytes-n p.dat])
   ::
       %string
@@ -93,13 +94,13 @@
     ::  interpreted as of bytes type and encoded further. Note that the length
     ::  used in this subsequent encoding is the number of bytes of the utf-8
     ::  encoded string, not its number of characters.
-    $(dat [%bytes (crip (flop p.dat))])
+    $(dat [%bytes (lent p.dat) (swp 3 (crip p.dat))])
   ::
       %uint
     ::  enc(X) is the big-endian encoding of X, padded on the higher-order
     ::  (left) side with zero-bytes such that the length is a multiple of 32
     ::  bytes.
-    (pad-to-multiple (render-hex-bytes `@ux`p.dat) 64 %left)
+    (pad-to-multiple (render-hex-bytes (as-octs p.dat)) 64 %left)
   ::
       %bool
     ::  as in the uint8 case, where 1 is used for true and 0 for false
@@ -119,10 +120,10 @@
 ::
 ++  render-hex-bytes
   :>  atom to string of hex bytes without 0x prefix and dots.
-  |=  a=@ux
-  =-  ?:(=(1 (mod (lent -) 2)) ['0' -] -)
-  %+  skip  (slag 2 (scow %ux a))
-  |=(b=@t =(b '.'))
+  |=  a=octs
+  ^-  tape
+  =-  (weld (reap (sub (mul 2 p.a) (lent -)) '0') -)
+  (slag 2 (scow %i q.a))
 ::
 ++  pad-to-multiple
   |=  [wat=tape mof=@ud wer=?(%left %right)]

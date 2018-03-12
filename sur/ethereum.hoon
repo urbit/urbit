@@ -8,8 +8,8 @@
       [%uint p=@ud]
       [%real p=@rs]
       [%ureal p=@urs]
-      [%bytes-n p=@]
-      [%bytes p=@]
+      [%bytes-n p=octs]
+      [%bytes p=octs]
       [%array-n p=(list data)]
       [%array p=(list data)]
   ==
