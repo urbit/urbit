@@ -5675,17 +5675,18 @@
     {$$ p/axis}                                         ::  simple leg
   ::                                                    ::
     {$base p/base}                                      ::  base
-    {$bunt p/root}                                      ::  mold default value
+    {$bunt p/root}                                      ::  default value
     {$bust p/base}                                      ::  bunt base
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
     {$docs p/(pair cord (list sect)) q/hoon}            ::  annotate image
     {$fits p/hoon q/wing}                               ::  underlying ?=
-    {$halo p/what q/root}                               ::  annotate model
+    {$halo p/what q/hoon}                               ::  annotate model
     {$knit p/(list woof)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
     {$limb p/term}                                      ::  pulls limb p
+    {$mold p/plan}                                      ::  factory
     {$lost p/hoon}                                      ::  not to be taken
     {$rock p/term q/*}                                  ::  fixed constant
     {$sand p/term q/*}                                  ::  unfixed constant
@@ -5769,6 +5770,7 @@
     {$smsm p/hoon q/hoon}                                ::  ;;  normalize
   ::                                            ::::::  compositions
     {$tsbr p/root q/hoon}                                ::  =|  push bunt
+    {$txbr p/plan q/hoon}                                ::  =|  push bunt
     {$tscl p/(list (pair wing hoon)) q/hoon}             ::  =:  q w/ p changes
     {$tsfs p/toro q/hoon r/hoon}                         ::  =/  typed variable
     {$tssm p/toro q/hoon r/hoon}                         ::  =;  =/(q p r)
@@ -7532,6 +7534,7 @@
       [i.p.gen $(p.gen t.p.gen)]
     ::
         {$bunt *}  [%ktsg ~(bunt ax fab %bcsm p.gen)]
+        {$mold *}  ~(clam ax fab p.gen)
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
         {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
@@ -7681,6 +7684,9 @@
     ::
         {$tsbr *}
       [%tsls ~(bunt ax fab %bcsm p.gen) q.gen]
+    ::
+        {$txbr *}
+      [%tsls ~(bunt ax fab p.gen) q.gen]
     ::
         {$tscl *}
       [%tsgr [%cncb [[%& 1] ~] p.gen] q.gen]
@@ -7884,6 +7890,7 @@
         $ktsg  (lead -.gen %.(+.gen expr))
         $ktts  (lead -.gen %.(+.gen nexp))
         $ktwt  (lead -.gen %.(+.gen expr))
+        $mold  (lead -.gen %.(+.gen stir))
         $halo  (lead -.gen %.(+.gen nexp))
         $sgbr  (lead -.gen %.(+.gen dubs))
         $sgcb  (lead -.gen %.(+.gen dubs))
@@ -7903,6 +7910,7 @@
         $smsg   (lead -.gen %.(+.gen (twin expr moar)))
         $smsm   (lead -.gen %.(+.gen dubs))
         $tsbr   (lead -.gen %.(+.gen dubs))
+        $txbr   (lead -.gen %.(+.gen (twin noop expr)))
         $tscl   (lead -.gen %.(+.gen (twin moan expr)))
         $tsfs   (lead -.gen %.(+.gen (trio tora expr expr)))
         $tssm   (lead -.gen %.(+.gen (trio tora expr expr)))
@@ -7997,6 +8005,10 @@
     ++  noop
       |*  bud/*
       [bud vit]
+    ::
+    ++  stir
+      |=  p/plan
+      [p vit]
     ::
     ++  quad
       =+  =<  $
@@ -12041,6 +12053,7 @@
               ==
             ==
           :-  '$'
+            %+  stag  %mold
             ;~  pfix  buc
               %-  stew
               ^.  stet  ^.  limo
@@ -12141,7 +12154,7 @@
             ;~  pfix  tis
               %-  stew
               ^.  stet  ^.  limo
-              :~  ['|' (rune bar %tsbr exqc)]
+              :~  ['|' (rune bar %txbr exqc)]
                   ['.' (rune dot %tsdt expq)]
                   ['?' (rune wut %tswt expw)]
                   ['^' (rune ket %tskt expt)]
