@@ -25,10 +25,18 @@
 #include "all.h"
 #include "vere/vere.h"
 
+#include "h2o.h"
+
 #ifdef U3_OS_osx
 #  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #  pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #endif
+
+static h2o_mem_pool_t pool;
+h2o_multithread_queue_t *queue;
+h2o_multithread_receiver_t getaddr_receiver;
+h2o_timeout_t io_timeout;
+h2o_http1client_ctx_t ctx = {NULL, &getaddr_receiver, &io_timeout};
 
 #define CTTP_NO_PIPELINE
 
@@ -260,6 +268,7 @@ _cttp_mcut_str(c3_c* buf_c, c3_w len_w, const c3_c* str_c)
   return (len_w + str_w);
 }
 
+// XX rename _mcut_knot
 /* _cttp_mcut_span(): measure/cut span.
 */
 static c3_w
@@ -1587,6 +1596,112 @@ _cttp_ccon_send(u3_ccon* coc_u, u3_creq* ceq_u)
   }
 }
 
+// XX called multiple times on chunked response, wat do
+static int
+on_body(h2o_http1client_t *client, const char *errstr)
+{
+  uL(fprintf(uH, "on_body (size: %ld) (eos: %d)\n", client->sock->input->size, h2o_http1client_error_is_eos == errstr));
+
+  if ( 0 != errstr && h2o_http1client_error_is_eos != errstr ) {
+    uL(fprintf(uH, "on body err: %s\n", errstr));
+    uL(fprintf(uH, "remaining bytes: %ld\n", client->sock->input->size));
+    return -1;
+  }
+
+  uL(fprintf(uH, "\n%.*s\n", (int)client->sock->input->size, client->sock->input->bytes));
+  h2o_buffer_consume(&client->sock->input, client->sock->input->size);
+
+  return 0;
+}
+
+static h2o_http1client_body_cb
+on_head(h2o_http1client_t *client, const char *errstr, int minor_version, int status, h2o_iovec_t msg,
+                                h2o_header_t *headers, size_t num_headers, int rlen)
+{
+  uL(fprintf(uH, "on_head len: %d\n", rlen));
+  size_t i;
+
+  if ( 0 != errstr && h2o_http1client_error_is_eos != errstr ) {
+    uL(fprintf(uH, "on head err: %s\n", errstr));
+    return 0;
+  }
+
+  uL(fprintf(uH, "HTTP/1.%d %d %.*s\n", minor_version, status, (int)msg.len, msg.base));
+  for (i = 0; i != num_headers; ++i)
+      uL(fprintf(uH, "%.*s: %.*s\n", (int)headers[i].name->len,
+                                     headers[i].name->base,
+                                     (int)headers[i].value.len,
+                                     headers[i].value.base));
+  uL(fprintf(uH, "\n"));
+
+  if ( h2o_http1client_error_is_eos == errstr ) {
+    uL(fprintf(uH, "no body\n"));
+    return 0;
+  }
+
+  return on_body;
+}
+
+static h2o_http1client_head_cb
+on_connect(h2o_http1client_t *client, const char *errstr, h2o_iovec_t **reqbufs,
+                                      size_t *reqbufcnt, int *method_is_head)
+{
+  u3_ccon* coc_u = (u3_ccon *)client->data;
+
+  uL(fprintf(uH, "on_connect\n"));
+  if ( 0 != errstr ) {
+    // TODO: fail connection/request
+    uL(fprintf(uH, "on connect err: %s\n", errstr));
+    return 0;
+  }
+
+  {
+    u3_hbod* rub_u = coc_u->rub_u;
+    c3_w len_w = 0;
+    h2o_iovec_t* cev_u;
+
+    while( rub_u ) {
+      len_w++;
+      rub_u = rub_u->nex_u;
+    }
+
+    cev_u = c3_malloc(sizeof(h2o_iovec_t) * len_w);
+
+    c3_w i = 0;
+    rub_u = coc_u->rub_u;
+
+    while( rub_u ) {
+      cev_u[i] = h2o_iovec_init(rub_u->hun_y, rub_u->len_w);
+      i++;
+      rub_u = rub_u->nex_u;
+    }
+
+    *reqbufcnt = len_w;
+    *reqbufs = cev_u;
+  }
+
+  // TODO
+  *method_is_head = 0;
+
+  return on_head;
+}
+
+static void
+_cttp_h2o_stuff(u3_ccon* coc_u, u3_creq* ceq_u)
+{
+  h2o_timeout_init(ctx.loop, &io_timeout, 10000);
+
+  h2o_iovec_t host = h2o_iovec_init(ceq_u->hot_c, strlen(ceq_u->hot_c));
+
+    // TODO: pass client double pointer
+  h2o_http1client_connect(NULL, coc_u, &ctx, host, ceq_u->por_s, 0, on_connect);
+
+  _cttp_ccon_fire(coc_u, ceq_u);
+
+  // uL(fprintf(uH, "req host %s\n", ceq_u->hot_c));
+  // _cttp_httr_fail(ceq_u->num_l, 504, 0);
+}
+
 /* u3_cttp_ef_thus(): send %thus effect (outgoing request) to cttp.
 */
 void
@@ -1597,11 +1712,36 @@ u3_cttp_ef_thus(c3_l    num_l,
     uL(fprintf(uH, "thus: cancel?\n"));
   }
   else {
+#if 1
+    // ++  hiss  {p/purl q/moth}
+    // ++  purl  {p/hart q/pork r/quay}
+    // ++  hart  {p/? q/(unit @ud) r/host}
+    // ++  host  (each (list @t) @if)
+    // ++  pork  {p/(unit @ta) q/(list @t)}
+    // ++  quay  (list {p/@t q/@t})
+    // ++  moth  {p/meth q/math r/(unit octs)}
+    // ++  math  (map @t (list @t))
+    u3_noun span = u3v_wish("-:!>(*{"
+                              "purl={"
+                                "p/{p/? q/(unit @ud) r/(each (list @t) @if)} "
+                                "q/{p/(unit @ta) q/(list @t)} "
+                                "r/(list {p/@t q/@t})"
+                              "} "
+                              "moth={p/@tas q/(map @t (list @t)) r/(unit octs)}"
+                            "})");
+
+    u3m_tape(u3dc("text", span, u3k(u3t(cuq))));
+    uL(fprintf(uH, "\n"));
+#endif
+
     u3_creq* ceq_u = _cttp_creq_new(num_l, u3k(u3t(cuq)));
     u3_ccon* coc_u = _cttp_ccon(ceq_u->sec, ceq_u->por_s, ceq_u->hot_c);
 
     ceq_u->coc_u = coc_u;
-    _cttp_ccon_send(coc_u, ceq_u);
+    coc_u->ceq_u = ceq_u;
+
+    _cttp_h2o_stuff(coc_u, ceq_u);
+    // _cttp_ccon_send(coc_u, ceq_u);
   }
   u3z(cuq);
 }
@@ -1628,6 +1768,12 @@ u3_cttp_io_init()
   SSL_CTX_set_cipher_list(u3S, "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:"
                           "ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:"
                           "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
+
+  ctx.ssl_ctx = u3S;
+  ctx.loop = u3L;
+  h2o_mem_init_pool(&pool);
+  queue = h2o_multithread_create_queue(ctx.loop);
+  h2o_multithread_register_receiver(queue, ctx.getaddr_receiver, h2o_hostinfo_getaddr_receiver);
 }
 
 /* u3_cttp_io_poll(): poll kernel for cttp I/O.
