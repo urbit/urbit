@@ -1598,44 +1598,74 @@ _cttp_ccon_send(u3_ccon* coc_u, u3_creq* ceq_u)
 
 // XX called multiple times on chunked response, wat do
 static int
-on_body(h2o_http1client_t *client, const char *errstr)
+on_body(h2o_http1client_t* cli_u, const c3_c* err_c)
 {
-  uL(fprintf(uH, "on_body (size: %ld) (eos: %d)\n", client->sock->input->size, h2o_http1client_error_is_eos == errstr));
+  u3_ccon* coc_u = (u3_ccon *)cli_u->data;
+  u3_cres* res_u = coc_u->ceq_u->res_u;
 
-  if ( 0 != errstr && h2o_http1client_error_is_eos != errstr ) {
-    uL(fprintf(uH, "on body err: %s\n", errstr));
-    uL(fprintf(uH, "remaining bytes: %ld\n", client->sock->input->size));
+  if ( 0 != err_c && h2o_http1client_error_is_eos != err_c ) {
+    _cttp_httr_fail(coc_u->ceq_u->num_l, 504, (c3_c *)err_c);
     return -1;
   }
 
-  uL(fprintf(uH, "\n%.*s\n", (int)client->sock->input->size, client->sock->input->bytes));
-  h2o_buffer_consume(&client->sock->input, client->sock->input->size);
+  h2o_buffer_t* buf_u = cli_u->sock->input;
+
+  if ( buf_u->size ) {
+    u3_hbod* bod_u = _cttp_bod(buf_u->size, (const c3_y *)buf_u->bytes);
+
+    if ( !(res_u->bod_u) ) {
+      res_u->bod_u = res_u->dob_u = bod_u;
+    }
+    else {
+      res_u->dob_u->nex_u = bod_u;
+      res_u->dob_u = bod_u;
+    }
+
+    // uL(fprintf(uH, "\n%.*s\n", (int)buf_u->size, buf_u->bytes));
+    h2o_buffer_consume(&buf_u, buf_u->size);
+  }
+
+  if ( h2o_http1client_error_is_eos == err_c ) {
+    _cttp_httr_cres(coc_u->ceq_u->num_l, res_u);
+    _cttp_cres_free(res_u);
+    // XX free the rest
+  }
 
   return 0;
 }
 
 static h2o_http1client_body_cb
-on_head(h2o_http1client_t *client, const char *errstr, int minor_version, int status, h2o_iovec_t msg,
-                                h2o_header_t *headers, size_t num_headers, int rlen)
+on_head(h2o_http1client_t* cli_u, const c3_c* err_c, c3_i ver_i, c3_i sas_i,
+                                  h2o_iovec_t sas_u, h2o_header_t* hed_u,
+                                  size_t hed_t, c3_i len_i)
 {
-  uL(fprintf(uH, "on_head len: %d\n", rlen));
-  size_t i;
+  u3_ccon* coc_u = (u3_ccon *)cli_u->data;
 
-  if ( 0 != errstr && h2o_http1client_error_is_eos != errstr ) {
-    uL(fprintf(uH, "on head err: %s\n", errstr));
+  if ( 0 != err_c && h2o_http1client_error_is_eos != err_c ) {
+    _cttp_httr_fail(coc_u->ceq_u->num_l, 504, (c3_c *)err_c);
     return 0;
   }
 
-  uL(fprintf(uH, "HTTP/1.%d %d %.*s\n", minor_version, status, (int)msg.len, msg.base));
-  for (i = 0; i != num_headers; ++i)
-      uL(fprintf(uH, "%.*s: %.*s\n", (int)headers[i].name->len,
-                                     headers[i].name->base,
-                                     (int)headers[i].value.len,
-                                     headers[i].value.base));
+  u3_cres* res_u = c3_calloc(sizeof(*res_u));
+  coc_u->ceq_u->res_u = res_u;
+
+  res_u->sas_w = (c3_w)sas_i;
+
+  // XX attach headers
+  size_t i;
+
+  uL(fprintf(uH, "HTTP/1.%d %d %.*s\n", ver_i, sas_i, (int)sas_u.len, sas_u.base));
+  for (i = 0; i != hed_t; ++i)
+      uL(fprintf(uH, "%.*s: %.*s\n", (int)hed_u[i].name->len,
+                                     hed_u[i].name->base,
+                                     (int)hed_u[i].value.len,
+                                     hed_u[i].value.base));
   uL(fprintf(uH, "\n"));
 
-  if ( h2o_http1client_error_is_eos == errstr ) {
-    uL(fprintf(uH, "no body\n"));
+  if ( h2o_http1client_error_is_eos == err_c ) {
+    _cttp_httr_cres(coc_u->ceq_u->num_l, res_u);
+    _cttp_cres_free(res_u);
+    // XX free the rest
     return 0;
   }
 
@@ -1643,15 +1673,13 @@ on_head(h2o_http1client_t *client, const char *errstr, int minor_version, int st
 }
 
 static h2o_http1client_head_cb
-on_connect(h2o_http1client_t *client, const char *errstr, h2o_iovec_t **reqbufs,
-                                      size_t *reqbufcnt, int *method_is_head)
+on_connect(h2o_http1client_t* cli_u, const c3_c* err_c, h2o_iovec_t** vec_p,
+                                     size_t* vec_t, c3_i* hed_i)
 {
-  u3_ccon* coc_u = (u3_ccon *)client->data;
+  u3_ccon* coc_u = (u3_ccon *)cli_u->data;
 
-  uL(fprintf(uH, "on_connect\n"));
-  if ( 0 != errstr ) {
-    // TODO: fail connection/request
-    uL(fprintf(uH, "on connect err: %s\n", errstr));
+  if ( 0 != err_c ) {
+    _cttp_httr_fail(coc_u->ceq_u->num_l, 504, (c3_c *)err_c);
     return 0;
   }
 
@@ -1676,12 +1704,11 @@ on_connect(h2o_http1client_t *client, const char *errstr, h2o_iovec_t **reqbufs,
       rub_u = rub_u->nex_u;
     }
 
-    *reqbufcnt = len_w;
-    *reqbufs = cev_u;
+    *vec_t = len_w;
+    *vec_p = cev_u;
   }
 
-  // TODO
-  *method_is_head = 0;
+  *hed_i = ( coc_u->ceq_u->met_e == u3_hmet_head );
 
   return on_head;
 }
