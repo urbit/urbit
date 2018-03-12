@@ -3,9 +3,6 @@
 */
 #include "all.h"
 
-static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
-static u3_noun _n_burn_on(u3_noun bus, u3_noun fol);
-
       /* u3_term_io_hija(): hijack console for cooked print.
       */
         FILE*
@@ -23,6 +20,48 @@ static u3_noun _n_burn_on(u3_noun bus, u3_noun fol);
 #       define uH    u3_term_io_hija()
 #       define uL(x) u3_term_io_loja(x)
 
+// define to have each opcode printed as it executes,
+// along with some other debugging info
+#        undef VERBOSE_BYTECODE
+
+/* _n_mush_in(): see _n_mush().
+*/
+static u3_noun
+_n_mush_in(u3_noun val)
+{
+  if ( c3n == u3du(val) ) {
+    return u3_nul;
+  }
+  else {
+    u3_noun h_val = u3h(val);
+    u3_noun ite;
+
+    if ( c3n == u3ud(h_val) ) {
+      ite = u3nc(c3__leaf, u3_nul);
+    } else {
+      ite = u3nc(c3__leaf, u3qe_trip(h_val));
+    }
+    return u3nc(ite, _n_mush_in(u3t(val)));
+  }
+}
+
+/* _n_mush(): tank from failed path request.
+*/
+static u3_noun
+_n_mush(u3_noun val)
+{
+  u3_noun pro;
+
+  pro = u3nt(c3__rose,
+             u3nt(u3nc('/', u3_nul), u3nc('/', u3_nul), u3_nul),
+             _n_mush_in(val));
+  u3z(val);
+  return pro;
+}
+
+#if 0
+// Retained for debugging purposes.
+static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 
 /* _n_hint(): process hint.
 */
@@ -149,41 +188,6 @@ _n_hint(u3_noun zep,
       }
     }
   }
-}
-
-/* _n_mush_in(): see _n_mush().
-*/
-static u3_noun
-_n_mush_in(u3_noun val)
-{
-  if ( c3n == u3du(val) ) {
-    return u3_nul;
-  }
-  else {
-    u3_noun h_val = u3h(val);
-    u3_noun ite;
-
-    if ( c3n == u3ud(h_val) ) {
-      ite = u3nc(c3__leaf, u3_nul);
-    } else {
-      ite = u3nc(c3__leaf, u3qe_trip(h_val));
-    }
-    return u3nc(ite, _n_mush_in(u3t(val)));
-  }
-}
-
-/* _n_mush(): tank from failed path request.
-*/
-static u3_noun 
-_n_mush(u3_noun val)
-{
-  u3_noun pro;
-
-  pro = u3nt(c3__rose,
-             u3nt(u3nc('/', u3_nul), u3nc('/', u3_nul), u3_nul),
-             _n_mush_in(val));
-  u3z(val);
-  return pro;
 }
 
 /* _n_nock_on(): produce .*(bus fol).  Do not virtualize.
@@ -427,79 +431,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
     }
   }
 }
-
-/* u3n_nock_on(): produce .*(bus fol).  Do not virtualize.
-*/
-u3_noun
-u3n_nock_on(u3_noun bus, u3_noun fol)
-{
-  u3_noun pro;
-
-  u3t_on(noc_o);
-#ifdef TREE_NOCK
-  pro = _n_nock_on(bus, fol);
-#else
-  pro = _n_burn_on(bus, fol);
 #endif
-  u3t_off(noc_o);
-
-  return pro;
-}
-
-/* u3n_kick_on(): fire `gat` without changing the sample.
-*/
-u3_noun
-u3n_kick_on(u3_noun gat)
-{
-  return u3j_kink(gat, 2);
-}
-
-c3_w exc_w;
-
-/* u3n_slam_on(): produce (gat sam).
-*/
-u3_noun
-u3n_slam_on(u3_noun gat, u3_noun sam)
-{
-  u3_noun cor = u3nc(u3k(u3h(gat)), u3nc(sam, u3k(u3t(u3t(gat)))));
-
-#if 0
-  if ( &u3H->rod_u == u3R ) {
-    if ( exc_w == 1 ) {
-      c3_assert(0);
-    } 
-    exc_w++;
-  }
-#endif
-  u3z(gat);
-  return u3n_kick_on(cor);
-}
-
-/* u3n_nock_et(): produce .*(bus fol), as ++toon, in namespace.
-*/
-u3_noun
-u3n_nock_et(u3_noun gul, u3_noun bus, u3_noun fol)
-{
-  return u3m_soft_run(gul, u3n_nock_on, bus, fol);
-}
-
-/* u3n_slam_et(): produce (gat sam), as ++toon, in namespace.
-*/
-u3_noun
-u3n_slam_et(u3_noun gul, u3_noun gat, u3_noun sam)
-{
-  return u3m_soft_run(gul, u3n_slam_on, gat, sam);
-}
-
-/* u3n_nock_an(): as slam_in(), but with empty fly.
-*/
-u3_noun
-u3n_nock_an(u3_noun bus, u3_noun fol)
-{
-  u3_noun gul = u3nt(u3nt(1, 0, 0), 0, 0);  //  |=(a/{* *} ~)
-
-  return u3n_nock_et(gul, bus, fol);
-}
 
 /* These must match the order in the section marked OPCODE TABLE */
 #define HALT 0
@@ -570,13 +502,37 @@ u3n_nock_an(u3_noun bus, u3_noun fol)
 #define SLIM 65
 #define SAVE 66
 
-/* defining this will cause the bytecode interpreter to print out every opcode
- * as it executes, along with some other information. very spammy.
+#if 0
+/* _n_print_stack(): print out the cap stack up to a designated "empty"
+ *                   used only for debugging
  */
+static void _n_print_stack(u3p(u3_noun) empty) {
+  c3_w cur_p = u3R->cap_p;
+  fprintf(stderr, "[");
+  int first = 1;
+  while ( cur_p != empty ) {
+    if ( first ) {
+      first = 0;
+    }
+    else {
+      fprintf(stderr, " ");
+    }
+    if ( c3y == u3a_is_north(u3R) ) {
+      fprintf(stderr, "%u", *(u3to(u3_noun, cur_p)));
+      cur_p++;
+    }
+    else {
+      fprintf(stderr, "%u", *(u3to(u3_noun, cur_p-1)));
+      cur_p--;
+    }
+  }
+  fprintf(stderr, "]\r\n");
+}
+#endif
 
-#if 1
+#ifdef VERBOSE_BYTECODE
 // match to OPCODE TABLE
-static char* names[] = {
+static char* opcode_names[] = {
   "halt", "bail",
   "copy", "swap", "toss",
   "auto", "ault",
@@ -616,7 +572,7 @@ _n_apen(u3_noun* dst, u3_noun src)
   *dst = u3kb_weld(src, *dst);
 }
 
-/* _n_emit(): return the size (in bytes) of an opcode's argument
+/* _n_arg(): return the size (in bytes) of an opcode's argument
  */
 static inline c3_y
 _n_arg(c3_y cod_y)
@@ -684,7 +640,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
       case c3__hunk:
       case c3__lose:
       case c3__mean:
-      case c3__spot: 
+      case c3__spot:
         tot_s += _n_comp(ops, hod, c3n, c3n);
         tot_s += _n_emit(ops, u3nc(CUSH, zep));
         tot_s += _n_comp(ops, nef, los_o, c3n);
@@ -697,7 +653,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         tot_s += _n_comp(ops, nef, los_o, tel_o);
         break;
 
-      case c3__slog: 
+      case c3__slog:
         tot_s += _n_comp(ops, hod, c3n, c3n);
         tot_s += _n_emit(ops, SLOG);
         tot_s += _n_comp(ops, nef, los_o, tel_o);
@@ -705,7 +661,7 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
 
       // germ and sole are unused...
 
-      case c3__fast: 
+      case c3__fast:
         tot_s += _n_comp(ops, hod, c3n, c3n);
         tot_s += _n_emit(ops, SWAP);
         tot_s += _n_comp(ops, nef, c3n, c3n);
@@ -811,7 +767,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       tot_s += _n_comp(ops, tel, c3n, c3n);
       /* things in tail position replace (so, lose) top of stack,
        * so NOCT "loses" and there is no non-losing version */
-      op_y   = (c3y == tel_o)  ? NOCT 
+      op_y   = (c3y == tel_o)  ? NOCT
              : ((c3y == los_o) ? NOLK : NOCK);
       tot_s += _n_emit(ops, op_y);
       break;
@@ -877,7 +833,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
     }
 
     case 6: {
-      u3_noun mid, 
+      u3_noun mid,
               yep = u3_nul,
               nop = u3_nul;
       c3_s    yep_s, nop_s;
@@ -894,13 +850,13 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       break;
     }
 
-    case 7: 
+    case 7:
       u3x_cell(arg, &hed, &tel);
       tot_s += _n_comp(ops, hed, los_o, c3n);
       tot_s += _n_comp(ops, tel, c3y, tel_o);
       break;
 
-    case 8: 
+    case 8:
       u3x_cell(arg, &hed, &tel);
       tot_s += _n_comp(ops, hed, c3n, c3n);
       tot_s += _n_emit(ops, (c3y == los_o) ? SNOL : SNOC);
@@ -920,7 +876,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
           tot_s += _n_emit(ops, (c3y == tel_o) ? SLAT : SLAM);
         }
         else {
-          op_y = (c3y == tel_o) 
+          op_y = (c3y == tel_o)
                ? (hed <= 0xFF ? TICB : hed <= 0xFFFF ? TICS : TICK)
                : (hed <= 0xFF ? KICB : hed <= 0xFFFF ? KICS : KICK);
           tot_s += _n_emit(ops, u3nc(op_y, u3k(hed)));
@@ -948,8 +904,68 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
   return tot_s;
 }
 
-#if 1
-static void _n_print_byc(c3_y* pog, c3_s her_s);
+#ifdef VERBOSE_BYTECODE
+/* _n_print_byc(): print bytecode. used for debugging.
+ */
+static void
+_n_print_byc(c3_y* pog, c3_s her_s)
+{
+  c3_s ip_s = 0;
+  if ( her_s == 0 ) {
+    fprintf(stderr, "begin: {");
+  }
+  else {
+    fprintf(stderr, "resume: {");
+  }
+  int first = 1;
+  while ( pog[ip_s] ) {
+    if ( first ) {
+      first = 0;
+    }
+    else if (ip_s == her_s) {
+      fprintf(stderr, " [*]");
+    }
+    else {
+      fprintf(stderr, " ");
+    }
+    switch ( pog[ip_s] ) {
+      default:
+        fprintf(stderr, "%s", opcode_names[pog[ip_s++]]);
+        break;
+
+      case FRAB: case FLAB: case LILB: case LITB: case SAMB:
+      case SBIP: case SBIN: case KICB: case TICB:
+        fprintf(stderr, "[%s ", opcode_names[pog[ip_s++]]);
+        fprintf(stderr, "%u]", pog[ip_s++]);
+        break;
+
+      case FRAS: case FLAS: case LILS: case LITS: case SAMS:
+      case SKIP: case SKIN: case KICS: case TICS:
+        fprintf(stderr, "[%s ", opcode_names[pog[ip_s++]]);
+        fprintf(stderr, "%u]", _n_resh(pog, &ip_s));
+        break;
+
+      case CUSH: case FRAG: case FLAG: case LILN:
+      case LITN: case SAMN: case TICK: case KICK:
+        fprintf(stderr, "[%s ", opcode_names[pog[ip_s++]]);
+        fprintf(stderr, "%u]", _n_rean(pog, &ip_s));
+        break;
+
+      case SKIB: case SLIB:
+        fprintf(stderr, "[%s", opcode_names[pog[ip_s++]]);
+        fprintf(stderr, " %u ", pog[ip_s++]);
+        fprintf(stderr, "%u]", _n_rean(pog, &ip_s));
+        break;
+
+      case SKIM: case SLIM:
+        fprintf(stderr, "[%s", opcode_names[pog[ip_s++]]);
+        fprintf(stderr, " %u ", _n_resh(pog, &ip_s));
+        fprintf(stderr, "%u]", _n_rean(pog, &ip_s));
+        break;
+    }
+  }
+  fprintf(stderr, " halt}\r\n");
+}
 #endif
 
 /* _n_asm(): assemble an accumulated list of instructions (i.e. from _n_comp)
@@ -1031,7 +1047,7 @@ _n_asm(u3_noun ops, c3_s len_s)
     ops = u3t(ops);
   }
   // this will trigger if we ever have a nock formula that compiles to more
-  // than 2^16 opcodes. if needed, ip can be a c3_w.
+  // than 2^16 bytes. if needed, ip can be a c3_w.
   c3_assert(u3_nul == ops);
 
   u3z(top);
@@ -1047,7 +1063,6 @@ _n_push(c3_ys mov, c3_ys off, u3_noun a)
 {
   u3R->cap_p += mov;
   u3_noun* p = u3to(u3_noun, u3R->cap_p + off);
-  //u3_noun* p = (u3_noun*) u3a_push(sizeof(u3_noun));
   *p = a;
 }
 
@@ -1058,7 +1073,6 @@ static inline u3_noun*
 _n_peek(c3_ys off)
 {
   return u3to(u3_noun, u3R->cap_p + off);
-  //return (u3_noun*) u3a_peek(sizeof(u3_noun));
 }
 
 /* _n_peet(): address of the next-to-top of stack
@@ -1175,7 +1189,7 @@ _n_swap(c3_ys mov, c3_ys off)
 }
 
 /* _n_kale(): bail(exit) if not cell
- */ 
+ */
 static inline u3_noun
 _n_kale(u3_noun a)
 {
@@ -1242,8 +1256,8 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 #ifdef U3_CPU_DEBUG
   u3R->pro.nox_d += 1;
 #endif
-#ifdef VERBYC
-  #define BURN() fprintf(stderr, "%s ", names[pog[ip_s]]); goto *lab[pog[ip_s++]]
+#ifdef VERBOSE_BYTECODE
+  #define BURN() fprintf(stderr, "%s ", opcode_names[pog[ip_s]]); goto *lab[pog[ip_s++]]
 #else
   #define BURN() goto *lab[pog[ip_s++]]
 #endif
@@ -1251,7 +1265,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
   {
     do_halt: // [product ...burnframes...]
       x = _n_pep(mov, off);
-#ifdef VERBYC
+#ifdef VERBOSE_BYTECODE
       fprintf(stderr, "return\r\n");
 #endif
       if ( empty == u3R->cap_p ) {
@@ -1264,7 +1278,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 
         u3R->cap_p = u3of(burnframe, fam - (mov+off));
         _n_push(mov, off, x);
-#ifdef VERBYC
+#ifdef VERBOSE_BYTECODE
         _n_print_byc(pog, ip_s);
 #endif
         BURN();
@@ -1296,7 +1310,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
     do_ault:                         // [tel bus hed]
       x    = _n_pep(mov, off);       // [bus hed]
       _n_toss(mov, off);             // [hed]
-      top  = _n_peek(off);      
+      top  = _n_peek(off);
       *top = u3nc(*top, x);          // [pro]
       BURN();
 
@@ -1421,18 +1435,18 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
       fam->pog   = pog;
       _n_push(mov, off, x);
     nock_out:
-      pog  = _n_find(o);             
+      pog  = _n_find(o);
       ip_s = 0;
 #ifdef U3_CPU_DEBUG
     u3R->pro.nox_d += 1;
 #endif
-#ifdef VERBYC
+#ifdef VERBOSE_BYTECODE
       fprintf(stderr, "\r\nnock jump: %u\r\n", o);
       _n_print_byc(pog, ip_s);
 #endif
       u3z(o);
       BURN();
-      
+
     do_deep:
       top  = _n_peek(off);
       o    = *top;
@@ -1561,7 +1575,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
     do_kics:
       x = _n_resh(pog, &ip_s);
       goto kick_in;
-      
+
     do_kick:
       x = _n_rean(pog, &ip_s);
       goto kick_in;
@@ -1591,13 +1605,13 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 #ifdef U3_CPU_DEBUG
     u3R->pro.nox_d += 1;
 #endif
-#ifdef VERBYC
+#ifdef VERBOSE_BYTECODE
         fprintf(stderr, "\r\nhead kick jump: %u, sp: %p\r\n", fol, top);
         _n_print_byc(pog, ip_s);
 #endif
         _n_push(mov, off, o);
       }
-#ifdef VERBYC
+#ifdef VERBOSE_BYTECODE
       else {
         fprintf(stderr, "head jet\r\n");
       }
@@ -1607,7 +1621,7 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
     do_tics:
       x = _n_resh(pog, &ip_s);
       goto tick_in;
-      
+
     do_tick:
       x = _n_rean(pog, &ip_s);
       goto tick_in;
@@ -1632,12 +1646,12 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
 #ifdef U3_CPU_DEBUG
     u3R->pro.nox_d += 1;
 #endif
-#ifdef VERBYC
+#ifdef VERBOSE_BYTECODE
         fprintf(stderr, "\r\ntail kick jump: %u, sp: %p\r\n", fol, top);
         _n_print_byc(pog, ip_s);
 #endif
       }
-#ifdef VERBYC
+#ifdef VERBOSE_BYTECODE
       else {
         fprintf(stderr, "tail jet\r\n");
       }
@@ -1772,92 +1786,6 @@ _n_burn(c3_y* pog, u3_noun bus, c3_ys mov, c3_ys off)
   }
 }
 
-#if 1
-/* _n_print_byc(): print bytecode. used for debugging.
- */
-static void
-_n_print_byc(c3_y* pog, c3_s her_s)
-{
-  c3_s ip_s = 0;
-  if ( her_s == 0 ) {
-    fprintf(stderr, "begin: {");
-  }
-  else {
-    fprintf(stderr, "resume: {");
-  }
-  int first = 1;
-  while ( pog[ip_s] ) {
-    if ( first ) {
-      first = 0;
-    }
-    else if (ip_s == her_s) {
-      fprintf(stderr, " [*]");
-    }
-    else {
-      fprintf(stderr, " ");
-    }
-    switch ( pog[ip_s] ) {
-      default:
-        fprintf(stderr, "%s", names[pog[ip_s++]]);
-        break;
-
-      case FRAB:
-      case FLAB:
-      case LILB:
-      case LITB:
-      case SAMB:
-      case SBIP:
-      case SBIN:
-      case KICB:
-      case TICB:
-        fprintf(stderr, "[%s ", names[pog[ip_s++]]);
-        fprintf(stderr, "%u]", pog[ip_s++]);
-        break;
-
-      case FRAS:
-      case FLAS:
-      case LILS:
-      case LITS:
-      case SAMS:
-      case SKIP:
-      case SKIN:
-      case KICS:
-      case TICS:
-        fprintf(stderr, "[%s ", names[pog[ip_s++]]);
-        fprintf(stderr, "%u]", _n_resh(pog, &ip_s));
-        break;
-
-      case CUSH:
-      case FRAG:
-      case FLAG:
-      case LILN:
-      case LITN:
-      case SAMN:
-      case TICK:
-      case KICK:
-        fprintf(stderr, "[%s ", names[pog[ip_s++]]);
-        fprintf(stderr, "%u]", _n_rean(pog, &ip_s));
-        break;
-
-      case SKIB:
-      case SLIB:
-        fprintf(stderr, "[%s", names[pog[ip_s++]]);
-        fprintf(stderr, " %u ", pog[ip_s++]);
-        fprintf(stderr, "%u]", _n_rean(pog, &ip_s));
-        break;
-
-      case SKIM:
-      case SLIM:
-        fprintf(stderr, "[%s", names[pog[ip_s++]]);
-        fprintf(stderr, " %u ", _n_resh(pog, &ip_s));
-        fprintf(stderr, "%u]", _n_rean(pog, &ip_s));
-        break;
-    }
-  }
-  fprintf(stderr, " halt}\r\n");
-}
-#endif
-
 /* _n_burn_on(): produce .*(bus fol) with bytecode interpreter
  */
 static u3_noun
@@ -1879,20 +1807,23 @@ _n_burn_on(u3_noun bus, u3_noun fol)
   return pro;
 }
 
-#if 0
-/* u3n_burn_on(): useful for distinguishing the bytecode interpreter from the
- *                tree-walking interpreter.
- */
+/* u3n_nock_on(): produce .*(bus fol).  Do not virtualize.
+*/
 u3_noun
-u3n_burn_on(u3_noun bus, u3_noun fol)
+u3n_nock_on(u3_noun bus, u3_noun fol)
 {
   u3_noun pro;
+
   u3t_on(noc_o);
+#if 0
+  pro = _n_nock_on(bus, fol);
+#else
   pro = _n_burn_on(bus, fol);
+#endif
   u3t_off(noc_o);
+
   return pro;
 }
-#endif
 
 /* _n_take_narg(): helper for copying noun-parts of bytecode */
 static void
@@ -1978,6 +1909,8 @@ u3n_beep(u3p(u3h_root) har_p)
   u3h_walk(har_p, _n_reap);
 }
 
+/* _n_mark_byc(): mark bytecode for gc.
+*/
 static c3_w
 _n_mark_byc(c3_y* pog)
 {
@@ -2039,30 +1972,57 @@ u3n_bark()
   return bam_w + u3h_mark(har_p);
 }
 
-#if 0
-/* _n_print_stack(): print out the cap stack up to a designated "empty"
- *                   used only for debugging
- */
-static void _n_print_stack(u3p(u3_noun) empty) {
-  c3_w cur_p = u3R->cap_p;
-  fprintf(stderr, "[");
-  int first = 1;
-  while ( cur_p != empty ) {
-    if ( first ) {
-      first = 0;
-    }
-    else {
-      fprintf(stderr, " ");
-    }
-    if ( c3y == u3a_is_north(u3R) ) {
-      fprintf(stderr, "%u", *(u3to(u3_noun, cur_p)));
-      cur_p++;
-    }
-    else {
-      fprintf(stderr, "%u", *(u3to(u3_noun, cur_p-1)));
-      cur_p--;
-    }
-  }
-  fprintf(stderr, "]\r\n");
+/* u3n_kick_on(): fire `gat` without changing the sample.
+*/
+u3_noun
+u3n_kick_on(u3_noun gat)
+{
+  return u3j_kink(gat, 2);
 }
+
+c3_w exc_w;
+
+/* u3n_slam_on(): produce (gat sam).
+*/
+u3_noun
+u3n_slam_on(u3_noun gat, u3_noun sam)
+{
+  u3_noun cor = u3nc(u3k(u3h(gat)), u3nc(sam, u3k(u3t(u3t(gat)))));
+
+#if 0
+  if ( &u3H->rod_u == u3R ) {
+    if ( exc_w == 1 ) {
+      c3_assert(0);
+    }
+    exc_w++;
+  }
 #endif
+  u3z(gat);
+  return u3n_kick_on(cor);
+}
+
+/* u3n_nock_et(): produce .*(bus fol), as ++toon, in namespace.
+*/
+u3_noun
+u3n_nock_et(u3_noun gul, u3_noun bus, u3_noun fol)
+{
+  return u3m_soft_run(gul, u3n_nock_on, bus, fol);
+}
+
+/* u3n_slam_et(): produce (gat sam), as ++toon, in namespace.
+*/
+u3_noun
+u3n_slam_et(u3_noun gul, u3_noun gat, u3_noun sam)
+{
+  return u3m_soft_run(gul, u3n_slam_on, gat, sam);
+}
+
+/* u3n_nock_an(): as slam_in(), but with empty fly.
+*/
+u3_noun
+u3n_nock_an(u3_noun bus, u3_noun fol)
+{
+  u3_noun gul = u3nt(u3nt(1, 0, 0), 0, 0);  //  |=(a/{* *} ~)
+
+  return u3n_nock_et(gul, bus, fol);
+}
