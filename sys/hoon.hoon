@@ -5740,6 +5740,7 @@
     {$cnts p/wing q/(list (pair wing hoon))}            ::  %=
   ::                                            ::::::  nock
     {$dtkt p/root q/hoon}                               ::  .^  nock 11
+    {$dxkt p/plan q/hoon}                               ::  .^  nock 11
     {$dtls p/hoon}                                      ::  .+  nock 4
     {$dttr p/hoon q/hoon}                               ::  .*  nock 2
     {$dtts p/hoon q/hoon}                               ::  .=  nock 5
@@ -7974,6 +7975,7 @@
         $cnsg  (lead -.gen %.(+.gen (trio noop expr moar)))
         $cnts  (lead -.gen %.(+.gen (twin noop moan)))
         $dtkt  (lead -.gen %.(+.gen dubs))
+        $dxkt  (lead -.gen %.(+.gen (twin stir expr)))
         $dtls  (lead -.gen %.(+.gen expr))
         $dttr  (lead -.gen %.(+.gen dubs))
         $dtts  (lead -.gen %.(+.gen dubs))
@@ -9213,6 +9215,10 @@
       =+  nef=$(gen [%bunt p.gen])
       [p.nef [%11 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
     ::
+        {$dxkt *}
+      =+  nef=$(gen [%bunx p.gen])
+      [p.nef [%11 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
+    ::
         {$dtls *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
         {$sand *}  [(nice (play gen)) [%1 q.gen]]
         {$rock *}  [(nice (play gen)) [%1 q.gen]]
@@ -9373,6 +9379,7 @@
         {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
         {$cnts *}  (~(mull et p.gen q.gen) gol dox)
         {$dtkt *}  =+($(gen q.gen, gol %noun) $(gen [%bunt p.gen]))
+        {$dxkt *}  =+($(gen q.gen, gol %noun) $(gen [%bunx p.gen]))
         {$dtls *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
         {$sand *}  (beth (play gen))
         {$rock *}  (beth (play gen))
@@ -9716,6 +9723,7 @@
       {$brcn *}  (core sut %gold sut p.gen *seminoun q.gen)
       {$cnts *}  ~(play et p.gen q.gen)
       {$dtkt *}  $(gen [%bunt p.gen])
+      {$dxkt *}  $(gen [%bunx p.gen])
       {$dtls *}  [%atom %$ ~]
       {$rock *}  |-  ^-  type
                  ?@  q.gen  [%atom p.gen `q.gen]
@@ -12152,15 +12160,15 @@
             ;~  pfix  bar
               %-  stew
               ^.  stet  ^.  limo
-              :~  ['_' (runo cab %brcb [~ ~] exqr)]
+              :~  ['_' (runo cab %bxcb [~ ~] exqr)]
                   ['%' (runo cen %brcn [~ ~] expe)]
                   [':' (runo col %brcl [~ ~] expb)]
                   ['.' (runo dot %brdt [~ ~] expa)]
                   ['-' (runo hep %brhp [~ ~] expa)]
                   ['^' (runo ket %brkt [~ ~] expx)]
-                  ['~' (runo sig %brsg [~ ~] exqc)]
-                  ['*' (runo tar %brtr [~ ~] exqc)]
-                  ['=' (runo tis %brts [~ ~] exqc)]
+                  ['~' (runo sig %bxsg [~ ~] exqc)]
+                  ['*' (runo tar %bxtr [~ ~] exqc)]
+                  ['=' (runo tis %bxts [~ ~] exqc)]
                   ['?' (runo wut %brwt [~ ~] expa)]
               ==
             ==
@@ -12269,10 +12277,10 @@
               :~  ['|' (rune bar %txbr exqc)]
                   ['.' (rune dot %tsdt expq)]
                   ['?' (rune wut %tswt expw)]
-                  ['^' (rune ket %tskt expt)]
+                  ['^' (rune ket %txkt expt)]
                   [':' (rune col %tscl expp)]
-                  ['/' (rune fas %tsfs expo)]
-                  [';' (rune sem %tssm expo)]
+                  ['/' (rune fas %txfs expo)]
+                  [';' (rune sem %txsm expo)]
                   ['<' (rune gal %tsgl expb)]
                   ['>' (rune gar %tsgr expb)]
                   ['-' (rune hep %tshp expb)]
