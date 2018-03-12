@@ -19,6 +19,8 @@
 #include <dirent.h>
 #include <openssl/ssl.h>
 
+#include "h2o.h"
+
 #define U3_GLOBAL
 #define C3_GLOBAL
 #include "all.h"
@@ -461,6 +463,7 @@ report(void)
   printf("openssl: %s\n", SSLeay_version(SSLEAY_VERSION));
   printf("curses: %s\n", curses_version());
   printf("libuv: %s\n", uv_version_string());
+  printf("libh2o: %d.%d.%d\n", H2O_LIBRARY_VERSION_MAJOR, H2O_LIBRARY_VERSION_MINOR, H2O_LIBRARY_VERSION_PATCH);
 }
 
 void
