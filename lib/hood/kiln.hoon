@@ -269,8 +269,10 @@
   --
 ::
 ++  poke-overload
-  |=  tym/@dr
-  abet:(emit %wait /kiln/overload/(scot %dr tym) (add ~s10 now))
+  :>  +poke-overload: wipes ford cache at {start}, and then every {recur}.
+  |=  [recur=@dr start=@da]
+  ?>  (gte start now)
+  abet:(emit %wait /kiln/overload/(scot %dr recur) start)
 ::
 ++  poke-wipe-ford  |=($~ abet:(emit %wipe /kiln our ~))
 ::
