@@ -239,7 +239,13 @@
     %-  ta-emil  
     ?:  =(wir /config)
       =/  latest-pax
-      (weld (flop t:+:(flop pax)) /latest/hoon)
+      %+  weld
+        %+  scag
+          %-  dec
+          %-  lent
+          pax
+        pax
+      /latest/hoon
       :~  :-  ost.bol
           [%info (weld wir pax) our.bol (foal pax cay)]
           :-  ost.bol
