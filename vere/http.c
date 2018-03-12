@@ -354,7 +354,7 @@ struct h2o_con_wrap {                 //  see private st_h2o_http1_conn_t
   struct {                            //  see private st_h2o_uv_socket_t
     h2o_socket_t     sok_u;           //  socket
     uv_stream_t*     han_u;           //  client stream handler (u3_hcon)
-  } *sok_u;
+  } *suv_u;
 };
 
 /* _http_rec_accept(); handle incoming http request from h2o.
@@ -374,11 +374,10 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
   else {
     // XX HTTP2 wat do?
     struct h2o_con_wrap* noc_u = (struct h2o_con_wrap*)rec_u->conn;
-    u3_hcon* hon_u = (u3_hcon*)noc_u->sok_u->han_u;
+    u3_hcon* hon_u = (u3_hcon*)noc_u->suv_u->han_u;
 
     // sanity check
-    c3_assert((void *)hon_u->con_u == (void *)noc_u);
-    c3_assert((void *)hon_u->sok_u == (void *)noc_u->sok_u);
+    c3_assert(hon_u->sok_u == &noc_u->suv_u->sok_u);
 
     u3_hreq* req_u = _http_req_new(hon_u, rec_u);
     _http_req_dispatch(req_u, req);
@@ -638,8 +637,9 @@ _http_serv_start(u3_http* htp_u)
 static SSL_CTX*
 _http_init_tls()
 {
-  SSL_CTX* tls_u = c3_malloc(sizeof(*tls_u));
+  SSL_CTX* tls_u;
 
+  // XX only call these once between here and cttp (maybe in loop.c or main.c?)
   SSL_library_init();
   SSL_load_error_strings();
 
