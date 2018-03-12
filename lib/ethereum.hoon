@@ -132,8 +132,7 @@
   :>  atom to string of hex bytes without 0x prefix and dots.
   |=  a=octs
   ^-  tape
-  =-  (weld (reap (sub (mul 2 p.a) (lent -)) '0') -)
-  (slag 2 (scow %i q.a))
+  ((x-co:co (mul 2 p.a)) q.a)
 ::
 ++  pad-to-multiple
   |=  [wat=tape mof=@ud wer=?(%left %right)]
