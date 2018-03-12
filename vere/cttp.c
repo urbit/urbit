@@ -20,7 +20,6 @@
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>
-#include <openssl/rand.h>
 
 #include "../outside/jhttp/http_parser.h"   // Joyent HTTP
 #include "all.h"
@@ -1612,13 +1611,7 @@ u3_cttp_ef_thus(c3_l    num_l,
 void
 u3_cttp_io_init()
 {
-  c3_i rad;
-  c3_y buf[4096];
-
   u3_Host.ctp_u.coc_u = 0;
-
-  SSL_library_init();
-  SSL_load_error_strings();
 
   u3_Host.ssl_u = SSL_CTX_new(TLSv1_client_method());
   SSL_CTX_set_options(u3S, SSL_OP_NO_SSLv2);
@@ -1635,16 +1628,6 @@ u3_cttp_io_init()
   SSL_CTX_set_cipher_list(u3S, "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:"
                           "ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:"
                           "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
-
-  // RAND_status, at least on OS X, never returns true.
-  // 4096 bytes should be enough entropy for anyone, right?
-  rad = open("/dev/urandom", O_RDONLY);
-  if ( 4096 != read(rad, &buf, 4096) ) {
-    perror("rand-seed");
-    exit(1);
-  }
-  RAND_seed(buf, 4096);
-  close(rad);
 }
 
 /* u3_cttp_io_poll(): poll kernel for cttp I/O.

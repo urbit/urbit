@@ -20,7 +20,6 @@
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>
-#include <openssl/rand.h>
 
 // XX rename
 typedef struct _h2hed {
@@ -637,13 +636,7 @@ _http_serv_start(u3_http* htp_u)
 static SSL_CTX*
 _http_init_tls()
 {
-  SSL_CTX* tls_u;
-
-  // XX only call these once between here and cttp (maybe in loop.c or main.c?)
-  SSL_library_init();
-  SSL_load_error_strings();
-
-  tls_u = SSL_CTX_new(TLSv1_2_server_method());
+  SSL_CTX* tls_u = SSL_CTX_new(TLSv1_2_server_method());
 
   SSL_CTX_set_options(tls_u, SSL_OP_NO_SSLv2);
   // SSL_CTX_set_verify(tls_u, SSL_VERIFY_NONE, NULL);
