@@ -6,6 +6,80 @@
 ::
 |%
 ::
+::  making calls to nodes
+::
+::  see also the json rpc api spec
+::  https://ethereum.gitbooks.io/frontier-guide/content/rpc.html
+::
+++  json-request
+  =,  eyre
+  |=  [url=purl jon=json]
+  ^-  hiss
+  :^  url  %post
+    (malt ~[content-type+['application/x-www-form-urlencoded']~])
+  (some (as-octt (en-json:html jon)))
+::
+++  read-request
+  |=  [adr=@ux fun=@t das=(list data)]
+  %-  request-to-json
+  :+  %eth-call
+    [~ `@`adr ~ ~ ~ `tape`(encode-call fun das)]
+  [%label %latest]
+::
+++  request-to-json
+  =,  enjs:format
+  |=  req=request:jrpc-api
+  ^-  json
+  %-  pairs
+  =;  cal=[m=@t p=(list json)]
+    :~  jsonrpc+s+'2.0'
+        id+s+'use wire to id response in hoon'
+        method+s+m.cal
+        params+a+p.cal
+    ==
+  ?+  -.req  ~|([%unsupported-request -.req] !!)
+      %eth-block-number
+    ['eth_blockNumber' ~]
+  ::
+      %eth-call
+    :-  'eth_call'
+    :~  (eth-call-to-json cal.req)
+        (default-block-to-json deb.req)
+    ==
+  ==
+::
+++  eth-call-to-json
+  |=  cal=call:jrpc-api
+  ^-  json
+  :-  %o  %-  ~(gas by *(map @t json))
+  =-  (murn - same)
+  ^-  (list (unit (pair @t json)))
+  :~  ?~  from.cal  ~
+      `['from' s+(crip (render-hex-bytes 20 `@`u.from.cal))]
+    ::
+      `['to' s+(crip (render-hex-bytes 20 `@`to.cal))]
+    ::
+      ?~  gas.cal  ~
+      `['gas' n+(crip ((d-co:co 0) u.gas.cal))]
+    ::
+      ?~  gas-price.cal  ~
+      `['gasPrice' n+(crip ((d-co:co 0) u.gas-price.cal))]
+    ::
+      ?~  value.cal  ~
+      `['value' n+(crip ((d-co:co 0) u.value.cal))]
+    ::
+      ?~  data.cal  ~
+      `['data' s+(crip data.cal)]
+  ==
+::
+++  default-block-to-json
+  |=  dob=default-block:jrpc-api
+  ^-  json
+  ?-  -.dob
+    %quantity   n+(crip ((d-co:co 0) n.dob))
+    %label      s+l.dob
+  ==
+::
 ::  encoding
 ::
 ::  ABI spec used for reference:
