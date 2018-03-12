@@ -5676,6 +5676,7 @@
   ::                                                    ::
     {$base p/base}                                      ::  base
     {$bunt p/root}                                      ::  default value
+    {$bunx p/plan}                                      ::  default value
     {$bust p/base}                                      ::  bunt base
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
@@ -5708,22 +5709,26 @@
     {$bcsm p/hoon}                                      ::  $; manual
   ::                                            ::::::  cores
     {$brcb p/chap q/root r/alas s/(map @ tomb)}         ::  |_
+    {$bxcb p/chap q/plan r/alas s/(map @ tomb)}         ::  |_
     {$brcl p/chap q/hoon r/hoon}                        ::  |:
     {$brcn p/chap q/(map @ tomb)}                       ::  |%
     {$brdt p/chap q/hoon}                               ::  |.
     {$brkt p/chap q/hoon r/(map @ tomb)}                ::  |^
     {$brhp p/chap q/hoon}                               ::  |-
-    {$brsg p/chap q/hoon r/hoon}                        ::  |~
+    {$brsg p/chap q/root r/hoon}                        ::  |~
+    {$bxsg p/chap q/plan r/hoon}                        ::  |~
     {$brtr p/chap q/root r/hoon}                        ::  |*
+    {$bxtr p/chap q/plan r/hoon}                        ::  |*
     {$brts p/chap q/root r/hoon}                        ::  |=
+    {$bxts p/chap q/plan r/hoon}                        ::  |=
     {$brwt p/chap q/hoon}                               ::  |?
   ::                                            ::::::  tuples
-    {$clcb p/hoon q/hoon}                                ::  :_ [q p]
-    {$clkt p/hoon q/hoon r/hoon s/hoon}                  ::  :^ [p q r s]
-    {$clhp p/hoon q/hoon}                                ::  :- [p q]
-    {$clls p/hoon q/hoon r/hoon}                         ::  :+ [p q r]
-    {$clsg p/(list hoon)}                                ::  :~ [p ~]
-    {$cltr p/(list hoon)}                                ::  :* p as a tuple
+    {$clcb p/hoon q/hoon}                               ::  :_ [q p]
+    {$clkt p/hoon q/hoon r/hoon s/hoon}                 ::  :^ [p q r s]
+    {$clhp p/hoon q/hoon}                               ::  :- [p q]
+    {$clls p/hoon q/hoon r/hoon}                        ::  :+ [p q r]
+    {$clsg p/(list hoon)}                               ::  :~ [p ~]
+    {$cltr p/(list hoon)}                               ::  :* p as a tuple
   ::                                            ::::::  invocations
     {$cncb p/wing q/(list (pair wing hoon))}            ::  %_
     {$cndt p/hoon q/hoon}                               ::  %.
@@ -5745,6 +5750,7 @@
     {$ktdt p/hoon q/hoon}                               ::  ^.
     {$ktls p/hoon q/hoon}                               ::  ^+
     {$kthp p/root q/hoon}                               ::  ^-
+    {$kxhp p/plan q/hoon}                               ::  ^-
     {$ktpm p/hoon}                                      ::  ^&
     {$ktsg p/hoon}                                      ::  ^~
     {$ktts p/toga q/hoon}                               ::  ^=
@@ -5763,50 +5769,56 @@
     {$sgwt p/@ud q/hoon r/hoon s/hoon}                  ::  ~?  tested printf
     {$sgzp p/hoon q/hoon}                               ::  ~!  type on trace
   ::                                            ::::::  miscellaneous
-    {$smts p/marl}                                       ::  ;=  list templating
-    {$smcl p/hoon q/(list hoon)}                         ::  ;:  binary to nary
-    {$smfs p/hoon}                                       ::  ;/  [%$ [%$ p ~] ~]
-    {$smsg p/hoon q/(list hoon)}                         ::  ;~  kleisli arrow
-    {$smsm p/hoon q/hoon}                                ::  ;;  normalize
+    {$smts p/marl}                                      ::  ;=  list templating
+    {$smcl p/hoon q/(list hoon)}                        ::  ;:  binary to nary
+    {$smfs p/hoon}                                      ::  ;/  [%$ [%$ p ~] ~]
+    {$smsg p/hoon q/(list hoon)}                        ::  ;~  kleisli arrow
+    {$smsm p/hoon q/hoon}                               ::  ;;  normalize
   ::                                            ::::::  compositions
-    {$tsbr p/root q/hoon}                                ::  =|  push bunt
-    {$txbr p/plan q/hoon}                                ::  =|  push bunt
-    {$tscl p/(list (pair wing hoon)) q/hoon}             ::  =:  q w/ p changes
-    {$tsfs p/toro q/hoon r/hoon}                         ::  =/  typed variable
-    {$tssm p/toro q/hoon r/hoon}                         ::  =;  =/(q p r)
-    {$tsdt p/wing q/hoon r/hoon}                         ::  =.  r with p as q
-    {$tswt p/wing q/hoon r/hoon s/hoon}                  ::  =?  conditional =.
-    {$tsgl p/hoon q/hoon}                                ::  =<  =>(q p)
-    {$tshp p/hoon q/hoon}                                ::  =-  =+(q p)
-    {$tsgr p/hoon q/hoon}                                ::  =>  q w/subject p
-    {$tskt p/toro q/wing r/hoon s/hoon}                  ::  =^  state machine
-    {$tsls p/hoon q/hoon}                                ::  =+  q w/[p subject]
-    {$tssg p/(list hoon)}                                ::  =~  hoon stack
-    {$tstr p/(pair what term) q/hoon r/hoon}             ::  =*  r w/alias p/q
-    {$tscm p/hoon q/hoon}                                ::  =,  overload p in q
+    {$tsbr p/root q/hoon}                               ::  =|  push bunt
+    {$txbr p/plan q/hoon}                               ::  =|  push bunt
+    {$tscl p/(list (pair wing hoon)) q/hoon}            ::  =:  q w/ p changes
+    {$tsfs p/toro q/hoon r/hoon}                        ::  =/  typed variable
+    {$txfs p/sofa q/hoon r/hoon}                        ::  =/  typed variable
+    {$tssm p/toro q/hoon r/hoon}                        ::  =;  =/(q p r)
+    {$txsm p/sofa q/hoon r/hoon}                        ::  =;  =/(q p r)
+    {$tsdt p/wing q/hoon r/hoon}                        ::  =.  r with p as q
+    {$tswt p/wing q/hoon r/hoon s/hoon}                 ::  =?  conditional =.
+    {$tsgl p/hoon q/hoon}                               ::  =<  =>(q p)
+    {$tshp p/hoon q/hoon}                               ::  =-  =+(q p)
+    {$tsgr p/hoon q/hoon}                               ::  =>  q w/subject p
+    {$tskt p/toro q/wing r/hoon s/hoon}                 ::  =^  state machine
+    {$txkt p/sofa q/wing r/hoon s/hoon}                 ::  =^  state machine
+    {$tsls p/hoon q/hoon}                               ::  =+  q w/[p subject]
+    {$tssg p/(list hoon)}                               ::  =~  hoon stack
+    {$tstr p/(pair what term) q/hoon r/hoon}            ::  =*  r w/alias p/q
+    {$tscm p/hoon q/hoon}                               ::  =,  overload p in q
   ::                                            ::::::  conditionals
-    {$wtbr p/(list hoon)}                                 ::  ?|  loobean or
+    {$wtbr p/(list hoon)}                               ::  ?|  loobean or
     {$wthp p/wing q/(list (pair root hoon))}            ::  ?-  pick case in q
-    {$wtcl p/hoon q/hoon r/hoon}                          ::  ?:  if/then/else
+    {$wxhp p/wing q/(list (pair plan hoon))}            ::  ?-  pick case in q
+    {$wtcl p/hoon q/hoon r/hoon}                        ::  ?:  if/then/else
     {$wtdt p/hoon q/hoon r/hoon}                        ::  ?.  ?:(p r q)
     {$wtkt p/wing q/hoon r/hoon}                        ::  ?^  if p is a cell
     {$wtgl p/hoon q/hoon}                               ::  ?<  ?:(p !! q)
     {$wtgr p/hoon q/hoon}                               ::  ?>  ?:(p q !!)
     {$wtls p/wing q/hoon r/(list (pair root hoon))}     ::  ?+  ?-  w/default
-    {$wtpm p/(list hoon)}                                ::  ?&  loobean and
+    {$wxls p/wing q/hoon r/(list (pair plan hoon))}     ::  ?+  ?-  w/default
+    {$wtpm p/(list hoon)}                               ::  ?&  loobean and
     {$wtpt p/wing q/hoon r/hoon}                        ::  ?@  if p is atom
     {$wtsg p/wing q/hoon r/hoon}                        ::  ?~  if p is null
-  ::
     {$wtts p/root q/wing}                               ::  ?=  if q matches p
-    {$wtzp p/hoon}                                       ::  ?!  loobean not
+    {$wxts p/plan q/wing}                               ::  ?=  if q matches p
+    {$wtzp p/hoon}                                      ::  ?!  loobean not
   ::                                            ::::::  special
     {$zpcm p/hoon q/hoon}                               ::  !,
     {$zpgr p/hoon}                                      ::  !>
     {$zpsm p/hoon q/hoon}                               ::  !;
     {$zpts p/hoon}                                      ::  !=
     {$zpwt p/$@(p/@ {p/@ q/@}) q/hoon}                  ::  !?
-    {$zpzp ~}                                          ::  !!
+    {$zpzp ~}                                           ::  !!
   ==                                                    ::
+++  sofa  (pair toga (unit plan))
 ++  toro  (pair toga (unit root))                       ::
 ++  twit  hoon                                          ::  last-gen hoon
 ++  tyre  (list {p/term q/hoon})                        ::
@@ -6652,13 +6664,20 @@
   ++  wthp  |=  opt/(list (pair root hoon))
             %+  gray  %wthp
             [puce (turn opt |=({a/root b/hoon} [a (blue b)]))]
+  ++  wxhp  |=  opt/(list (pair plan hoon))
+            %+  gray  %wxhp
+            [puce (turn opt |=({a/plan b/hoon} [a (blue b)]))]
   ++  wtkt  |=({sic/hoon non/hoon} (gray [%wtkt puce (blue sic) (blue non)]))
   ++  wtls  |=  {gen/hoon opt/(list (pair root hoon))}
             %+  gray  %wtls
             [puce (blue gen) (turn opt |=({a/root b/hoon} [a (blue b)]))]
+  ++  wxls  |=  {gen/hoon opt/(list (pair plan hoon))}
+            %+  gray  %wxls
+            [puce (blue gen) (turn opt |=({a/plan b/hoon} [a (blue b)]))]
   ++  wtpt  |=({sic/hoon non/hoon} (gray [%wtpt puce (blue sic) (blue non)]))
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
   ++  wtts  |=(gen/hoon (gray [%wtts (blue gen) puce]))
+  ++  wxts  |=(mod/plan (gray [%fits (blue [%bunx mod]) puce]))
   --
 ::
 ++  ax
@@ -7266,14 +7285,18 @@
           $bcts   flam 
           $bcsm   runk
           $brcb   ((doof -.gen +>.gen) p.gen)
+          $bxcb   ((doof -.gen +>.gen) p.gen)
           $brcl   ((doof -.gen +>.gen) p.gen)
           $brcn   ((doof -.gen +>.gen) p.gen)
           $brdt   ((doof -.gen +>.gen) p.gen)
           $brkt   ((doof -.gen +>.gen) p.gen)
           $brhp   ((doof -.gen +>.gen) p.gen)
           $brsg   ((doof -.gen +>.gen) p.gen)
+          $bxsg   ((doof -.gen +>.gen) p.gen)
           $brtr   ((doof -.gen +>.gen) p.gen)
+          $bxtr   ((doof -.gen +>.gen) p.gen)
           $brts   ((doof -.gen +>.gen) p.gen)
+          $bxts   ((doof -.gen +>.gen) p.gen)
           $brwt   ((doof -.gen +>.gen) p.gen)
         ==
       ::
@@ -7285,10 +7308,13 @@
         ?+  -.gen  flam
           $ktts  ((helk -.gen +>.gen) p.gen)
           $bcts  ((helk -.gen +>.gen) p.gen)
-          $tsfs   ((hulp -.gen +>.gen) p.gen)
-          $tssm   ((hulp -.gen +>.gen) p.gen)
-          $tskt   ((hulp -.gen +>.gen) p.gen)
-          $tstr   ((humm -.gen +>.gen) p.gen)
+          $tsfs  ((hulp -.gen +>.gen) p.gen)
+          $txfs  ((himp -.gen +>.gen) p.gen)
+          $tssm  ((hulp -.gen +>.gen) p.gen)
+          $txsm  ((himp -.gen +>.gen) p.gen)
+          $tskt  ((hulp -.gen +>.gen) p.gen)
+          $txkt  ((himp -.gen +>.gen) p.gen)
+          $tstr  ((humm -.gen +>.gen) p.gen)
         ==
       ::
       ++  flam  [gen wit]
@@ -7325,6 +7351,13 @@
         ^-  (pair hoon whit)
         =^  tog  wit  (tong p.hot)
         [[pif [tog q.hot] suf] wit] 
+      ::
+      ++  himp
+        |*  {pif/@tas suf/*}
+        |=  het/sofa
+        ^-  (pair hoon whit)
+        =^  tog  wit  (tong p.het)
+        [[pif [tog q.het] suf] wit] 
       ::
       ++  humm
         |*  {pif/@tas suf/*}
@@ -7494,6 +7527,21 @@
                    |-  ^-  hoon
                    ?~  r.gen  p.q.a
                    [%tstr [~ p.i.r.gen] q.i.r.gen $(r.gen t.r.gen)]
+    ::
+        {$bxcb *}  :+  %tsls  [%bunx q.gen]
+                   :+  %brcn  p.gen
+                   %-  ~(run by s.gen)
+                   |=  tom/tomb
+                   ^+  tom
+                   :-  p.tom
+                   %-  ~(run by q.tom)
+                   |=  a/(pair what foot)
+                   ^+  a
+                   :-  p.a
+                   =-  ?:(?=({$ash *} q.a) [-.q.a -] [-.q.a -])
+                   |-  ^-  hoon
+                   ?~  r.gen  p.q.a
+                   [%tstr [~ p.i.r.gen] q.i.r.gen $(r.gen t.r.gen)]
         {$brcl *}  [%tsls q.gen [%brdt p.gen r.gen]]
         {$brdt *}  :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
@@ -7506,11 +7554,19 @@
                    [%limb %$]
         {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen q.gen]]
         {$brsg *}  [%ktbr [%brts p.gen q.gen r.gen]]
+        {$bxsg *}  [%ktbr [%bxts p.gen q.gen r.gen]]
         {$brtr *}  :+  %tsls  [%bunt q.gen]
                    :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
+        {$bxtr *}  :+  %tsls  [%bunx q.gen]
+                   :+  %brcn  p.gen
+                   =-  [[0 [~ ~] -] ~ ~]
+                   (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
         {$brts *}  :^  %brcb  p.gen  q.gen
+                   =-  [~ [[0 [~ ~] -] ~ ~]]
+                   (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
+        {$bxts *}  :^  %bxcb  p.gen  q.gen
                    =-  [~ [[0 [~ ~] -] ~ ~]]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
         {$brwt *}  [%ktwt %brdt p.gen q.gen]
@@ -7534,6 +7590,7 @@
       [i.p.gen $(p.gen t.p.gen)]
     ::
         {$bunt *}  [%ktsg ~(bunt ax fab %bcsm p.gen)]
+        {$bunx *}  [%ktsg ~(bunt ax fab p.gen)]
         {$mold *}  ~(clam ax fab p.gen)
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
@@ -7565,6 +7622,7 @@
     ::
         {$ktdt *}  [%ktls [%cnhp p.gen q.gen ~] q.gen]
         {$kthp *}  [%ktls ~(bunt ax fab [%bcsm p.gen]) q.gen]
+        {$kxhp *}  [%ktls ~(bunt ax fab p.gen) q.gen]
         {$sgbr *}
       :+  %sggr
         :-  %mean
@@ -7696,7 +7754,13 @@
         [%tsls [%ktts p.p.gen q.gen] r.gen]
       [%tsls [%kthp [%bcts p.p.gen u.q.p.gen] q.gen] r.gen]
     ::
+        {$txfs *}
+      ?~  q.p.gen
+        [%tsls [%ktts p.p.gen q.gen] r.gen]
+      [%tsls [%kxhp [%bcts p.p.gen u.q.p.gen] q.gen] r.gen]
+    ::
         {$tssm *}  [%tsfs p.gen r.gen q.gen]
+        {$txsm *}  [%txfs p.gen r.gen q.gen]
         {$tsdt *}
       [%tsgr [%cncb [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
         {$tswt *}                                        ::                  =?
@@ -7713,6 +7777,21 @@
                      :+  %kthp
                         :+  %bcts  p.p.gen
                         [%tsgr [%limb %v] u.q.p.gen]
+                     [%tsgl [%$ 2] [%limb %a]] 
+                [%limb %v]
+      s.gen
+    ::
+        {$txkt *}                                        ::                  =^
+      =+  wuy=(weld q.gen `wing`[%v ~])                 ::
+      :+  %tsgr  [%ktts %v %$ 1]                         ::  =>  v=.
+      :+  %tsls  [%ktts %a %tsgr [%limb %v] r.gen]        ::  =+  a==>(v \r.gen)
+      :^  %tsdt  wuy  [%tsgl [%$ 3] [%limb %a]]
+      :+  %tsgr  :-  ?~  q.p.gen
+                       :+  %ktts  p.p.gen
+                       [%tsgl [%$ 2] [%limb %a]]
+                     :+  %kxhp
+                        :+  %bcts  p.p.gen
+                        [%bcsm [%tsgr [%limb %v] u.q.p.gen]]
                      [%tsgl [%$ 2] [%limb %a]] 
                 [%limb %v]
       s.gen
@@ -7744,8 +7823,20 @@
         q.i.q.gen
       $(q.gen t.q.gen)
     ::
+        {$wxhp *}
+      |-
+      ?~  q.gen
+        [%lost [%wing p.gen]]
+      :^    %wtcl
+          [%wxts p.i.q.gen p.gen]
+        q.i.q.gen
+      $(q.gen t.q.gen)
+    ::
         {$wtls *}
       [%wthp p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
+    ::
+        {$wxls *}
+      [%wxhp p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
     ::
         {$wtpm *}
       |-
@@ -7767,6 +7858,7 @@
         {$wtpt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
         {$wtts *}   [%fits ~(bunt ax fab %bcsm p.gen) q.gen]
+        {$wxts *}   [%fits ~(bunt ax fab p.gen) q.gen]
         {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {$zpgr *}
       [%cnhp [%limb %onan] [%zpsm [%bunt [%limb %abel]] p.gen] ~]
@@ -7828,6 +7920,7 @@
         $$     (lead -.gen %.(+.gen noop))
         $base  (lead -.gen %.(+.gen noop))
         $bunt  (lead -.gen %.(+.gen expr))
+        $bunx  (lead -.gen %.(+.gen stir))
         $bust  (lead -.gen %.(+.gen noop))
         $docs  (lead -.gen %.(+.gen nexp))
         $dbug  (lead -.gen %.(+.gen nexp))
@@ -7853,14 +7946,18 @@
         $bcts  (lead -.gen %.(+.gen nexp))
         $bcsm  (lead -.gen %.(+.gen expr))
         $brcb  (lead -.gen %.(+.gen (quad noop expr exps arms)))
+        $bxcb  (lead -.gen %.(+.gen (quad noop stir exps arms)))
         $brcl  (lead -.gen %.(+.gen (twin noop dubs)))
         $brcn  (lead -.gen %.(+.gen (twin noop arms)))
         $brdt  (lead -.gen %.(+.gen (twin noop expr)))
         $brkt  (lead -.gen %.(+.gen (trio noop expr arms)))
         $brhp  (lead -.gen %.(+.gen (twin noop expr)))
         $brsg  (lead -.gen %.(+.gen (twin noop dubs)))
+        $bxsg  (lead -.gen %.(+.gen (trio noop stir expr)))
         $brtr  (lead -.gen %.(+.gen (twin noop dubs)))
+        $bxtr  (lead -.gen %.(+.gen (trio noop stir expr)))
         $brts  (lead -.gen %.(+.gen (twin noop dubs)))
+        $bxts  (lead -.gen %.(+.gen (trio noop stir expr)))
         $brwt  (lead -.gen %.(+.gen (twin noop expr)))
         $clcb  (lead -.gen %.(+.gen dubs))
         $clkt  (lead -.gen %.(+.gen (quad expr expr expr expr)))
@@ -7905,38 +8002,44 @@
         $sgts  (lead -.gen %.(+.gen dubs))
         $sgwt  (lead -.gen %.(+.gen (quad noop expr expr expr)))
         $sgzp  (lead -.gen %.(+.gen dubs))
-        $smcl   (lead -.gen %.(+.gen (twin expr moar)))
-        $smfs   (lead -.gen %.(+.gen expr))
-        $smsg   (lead -.gen %.(+.gen (twin expr moar)))
-        $smsm   (lead -.gen %.(+.gen dubs))
-        $tsbr   (lead -.gen %.(+.gen dubs))
-        $txbr   (lead -.gen %.(+.gen (twin noop expr)))
-        $tscl   (lead -.gen %.(+.gen (twin moan expr)))
-        $tsfs   (lead -.gen %.(+.gen (trio tora expr expr)))
-        $tssm   (lead -.gen %.(+.gen (trio tora expr expr)))
-        $tsdt   (lead -.gen %.(+.gen trip))
-        $tswt   (lead -.gen %.(+.gen (quad noop expr expr expr)))
-        $tsgl   (lead -.gen %.(+.gen dubs))
-        $tshp   (lead -.gen %.(+.gen dubs))
-        $tsgr   (lead -.gen %.(+.gen dubs))
-        $tskt   (lead -.gen %.(+.gen (quad tora noop expr expr)))
-        $tsls   (lead -.gen %.(+.gen dubs))
-        $tssg   (lead -.gen %.(+.gen moar))
-        $tstr   (lead -.gen %.(+.gen trip))
-        $tscm   (lead -.gen %.(+.gen dubs))
-        $wtbr    (lead -.gen %.(+.gen moar))
+        $smcl  (lead -.gen %.(+.gen (twin expr moar)))
+        $smfs  (lead -.gen %.(+.gen expr))
+        $smsg  (lead -.gen %.(+.gen (twin expr moar)))
+        $smsm  (lead -.gen %.(+.gen dubs))
+        $tsbr  (lead -.gen %.(+.gen dubs))
+        $txbr  (lead -.gen %.(+.gen (twin noop expr)))
+        $tscl  (lead -.gen %.(+.gen (twin moan expr)))
+        $tsfs  (lead -.gen %.(+.gen (trio tora expr expr)))
+        $txfs  (lead -.gen %.(+.gen (trio torp expr expr)))
+        $tssm  (lead -.gen %.(+.gen (trio tora expr expr)))
+        $txsm  (lead -.gen %.(+.gen (trio torp expr expr)))
+        $tsdt  (lead -.gen %.(+.gen trip))
+        $tswt  (lead -.gen %.(+.gen (quad noop expr expr expr)))
+        $tsgl  (lead -.gen %.(+.gen dubs))
+        $tshp  (lead -.gen %.(+.gen dubs))
+        $tsgr  (lead -.gen %.(+.gen dubs))
+        $tskt  (lead -.gen %.(+.gen (quad tora noop expr expr)))
+        $txkt  (lead -.gen %.(+.gen (quad torp noop expr expr)))
+        $tsls  (lead -.gen %.(+.gen dubs))
+        $tssg  (lead -.gen %.(+.gen moar))
+        $tstr  (lead -.gen %.(+.gen trip))
+        $tscm  (lead -.gen %.(+.gen dubs))
+        $wtbr  (lead -.gen %.(+.gen moar))
         $wthp  (lead -.gen %.(+.gen (twin noop (moto dubs))))
-        $wtcl    (lead -.gen %.(+.gen trey))
+        $wxhp  (lead -.gen %.(+.gen (twin noop (moto (twin stir expr)))))
+        $wtcl  (lead -.gen %.(+.gen trey))
         $wtdt  (lead -.gen %.(+.gen trey))
         $wtkt  (lead -.gen %.(+.gen trip))
         $wtgl  (lead -.gen %.(+.gen dubs))
         $wtgr  (lead -.gen %.(+.gen dubs))
         $wtls  (lead -.gen %.(+.gen (trio noop expr (moto dubs))))
-        $wtpm   (lead -.gen %.(+.gen moar))
+        $wxls  (lead -.gen %.(+.gen (trio noop expr (moto (twin stir expr)))))
+        $wtpm  (lead -.gen %.(+.gen moar))
         $wtpt  (lead -.gen %.(+.gen trip))
         $wtsg  (lead -.gen %.(+.gen trip))
         $wtts  (lead -.gen %.(+.gen (twin expr noop)))
-        $wtzp   (lead -.gen %.(+.gen expr))
+        $wxts  (lead -.gen %.(+.gen (twin stir noop)))
+        $wtzp  (lead -.gen %.(+.gen expr))
         $zpcm  (lead -.gen %.(+.gen dubs))
         $zpgr  (lead -.gen %.(+.gen expr))
         $zpsm  (lead -.gen %.(+.gen dubs))
@@ -8068,6 +8171,9 @@
     ++  tora
       (twin noop twee)
     ::
+    ++  torp
+      (twin noop twef)
+    ::
     ++  tung
       |=  bud/{p/what q/$@(term tune)}
       ?@  q.bud  [bud vit]
@@ -8077,6 +8183,11 @@
       |=  bud/(unit hoon)
       ?~  bud  [~ vit]
       (lead ~ (expr u.bud))
+    ::
+    ++  twef
+      |=  bud/(unit plan)
+      ?~  bud  [~ vit]
+      (lead ~ (stir u.bud))
     ::
     ++  twin
       =+  =<  $
@@ -8995,6 +9106,8 @@
     |=  {how/? gen/hoon}  ^-  type
     ?:  ?=({$wtts *} gen)
       (cool how q.gen (play ~(bunt ax fab [%bcsm p.gen])))
+    ?:  ?=({$wxts *} gen)
+      (cool how q.gen (play ~(bunt ax fab p.gen)))
     ?:  ?&(how ?=({$wtpm *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=({$wtbr *} gen))
@@ -9333,9 +9446,8 @@
           $(sut p.wux, dox q.wux, gen r.gen)
       [(nice (fork p.hiq p.ran ~)) (fork q.hiq q.ran ~)]
     ::
-        {$wtts *}
-      =+  nob=~(bunt ax fab %bcsm p.gen)  
-      =+  waz=[p=(play nob) q=(play(sut dox) nob)]
+        {$fits *}
+      =+  waz=[p=(play p.gen) q=(play(sut dox) p.gen)]
       =+  ^=  syx  :-  p=(cove q:(mint %noun [%wing q.gen]))
                    q=(cove q:(mint(sut dox) %noun [%wing q.gen]))
       =+  pov=[p=(fish(sut p.waz) p.syx) q=(fish(sut q.waz) q.syx)]
@@ -9634,7 +9746,7 @@
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
                    ?:(=(%void wux) %void $(sut wux, gen r.gen))
                  ==
-      {$wtts *}  bool
+      {$fits *}  bool
       {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
       {$zpcm *}  (play p.gen)
       {$zpgr *}  %=    $
@@ -12422,11 +12534,17 @@
     ++  tkhp  |.  %+  cook  |=  {a/tiki b/(list (pair root hoon))}
                             (~(wthp ah a) b)
                   (butt ;~(gunk teak ruck))
+    ++  txhp  |.  %+  cook  |=  {a/tiki b/(list (pair plan hoon))}
+                            (~(wxhp ah a) b)
+                  (butt ;~(gunk teak ruck))
     ++  tkkt  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
                             (~(wtkt ah a) b c)
                   ;~(gunk teak loaf loaf)
     ++  tkls  |.  %+  cook  |=  {a/tiki b/hoon c/(list (pair root hoon))}
                             (~(wtls ah a) b c)
+                  (butt ;~(gunk teak loaf ruck))
+    ++  txls  |.  %+  cook  |=  {a/tiki b/hoon c/(list (pair plan hoon))}
+                            (~(wxls ah a) b c)
                   (butt ;~(gunk teak loaf ruck))
     ++  tkpt  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
                             (~(wtpt ah a) b c)
@@ -12436,6 +12554,9 @@
                   ;~(gunk teak loaf loaf)
     ++  tkts  |.  %+  cook  |=  {a/root b/tiki}
                             (~(wtts ah b) a)
+                  ;~(gunk loan teak)
+    ++  txts  |.  %+  cook  |=  {a/plan b/tiki}
+                            (~(wxts ah b) a)
                   ;~(gunk loan teak)
     ::
     ::    hint syntax
