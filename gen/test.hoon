@@ -20,8 +20,11 @@
   ?.  matches
     ~
   ?-  -.q.b
-    %&  (run-test [p.b pax] eny p.q.b)
-    %|  ^$(pax [p.b pax], a p.q.b)
+      %&
+    (run-test [p.b pax] eny p.q.b)
+  ::
+      %|
+    ^$(pax [p.b pax], a p.q.b)
   ==
 ::
 ++  run-test
