@@ -28,7 +28,7 @@
 ::
 ++  request-to-json
   =,  enjs:format
-  |=  req=request:jrpc-api
+  |=  req=request
   ^-  json
   %-  pairs
   =;  cal=[m=@t p=(list json)]
@@ -49,7 +49,7 @@
   ==
 ::
 ++  eth-call-to-json
-  |=  cal=call:jrpc-api
+  |=  cal=call
   ^-  json
   :-  %o  %-  ~(gas by *(map @t json))
   =-  (murn - same)
@@ -73,7 +73,7 @@
   ==
 ::
 ++  default-block-to-json
-  |=  dob=default-block:jrpc-api
+  |=  dob=default-block
   ^-  json
   ?-  -.dob
     %quantity   n+(crip ((d-co:co 0) n.dob))
