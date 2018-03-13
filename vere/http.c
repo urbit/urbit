@@ -554,6 +554,7 @@ _http_serv_init_h2o(u3_http* htp_u)
 {
   htp_u->fig_u = c3_calloc(sizeof(*htp_u->fig_u));
   h2o_config_init(htp_u->fig_u);
+  htp_u->fig_u->server_name = h2o_iovec_init(H2O_STRLIT("urbit/vere-" URBIT_VERSION));
 
   // XX use u3_Host.ops_u.nam_c? Or ship.urbit.org? Multiple hosts?
   // see https://github.com/urbit/urbit/issues/914
