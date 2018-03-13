@@ -1357,21 +1357,7 @@
       =.  gen  (ope gen)
       ?:  ?=({$cnts {@ $~} $~} gen)
         (bind (~(get by var) i.p.gen) head)
-      ?.  ?=($dtkt -.gen)  ~
-      =.  p.gen  (ope p.gen)
-      ?@  -.p.gen  ~
-      ?+    ~(feck ap p.p.gen)  ~
-          {$~ $cx}
-        =+  gin=(ope q.p.gen)
-        |-
-        ?@  -.gin  ~
-        =.  q.gin  (ope q.gin)
-        ?^  -.q.gin  $(gin q.gin)
-        =.  p.gin  (ope p.gin)
-        ?.  ?=({{?($rock $sand) @ @} {$rock $n $~}} gin)
-          ~
-        (some q.p.gin)
-      ==
+      ~
     ::
     ++  dy-mare                                         ::  build expression
       |=  gen/hoon
@@ -1638,7 +1624,7 @@
             $get-api
           :*  %ex
               %dtkt
-              [%wing ~[%json]]
+              [%bcsm [%wing ~[%json]]]
               :*  %clsg
                   [%rock %tas %gx]
                   [%sand %ta (scot %p our.hid)]

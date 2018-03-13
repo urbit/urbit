@@ -5708,19 +5708,15 @@
     {$bcts p/toga q/root}                               ::  $= name
     {$bcsm p/hoon}                                      ::  $; manual
   ::                                            ::::::  cores
-    {$brcb p/chap q/root r/alas s/(map @ tomb)}         ::  |_
-    {$bxcb p/chap q/plan r/alas s/(map @ tomb)}         ::  |_
+    {$brcb p/chap q/plan r/alas s/(map @ tomb)}         ::  |_
     {$brcl p/chap q/hoon r/hoon}                        ::  |:
     {$brcn p/chap q/(map @ tomb)}                       ::  |%
     {$brdt p/chap q/hoon}                               ::  |.
     {$brkt p/chap q/hoon r/(map @ tomb)}                ::  |^
     {$brhp p/chap q/hoon}                               ::  |-
-    {$brsg p/chap q/root r/hoon}                        ::  |~
-    {$bxsg p/chap q/plan r/hoon}                        ::  |~
-    {$brtr p/chap q/root r/hoon}                        ::  |*
-    {$bxtr p/chap q/plan r/hoon}                        ::  |*
-    {$brts p/chap q/root r/hoon}                        ::  |=
-    {$bxts p/chap q/plan r/hoon}                        ::  |=
+    {$brsg p/chap q/plan r/hoon}                        ::  |~
+    {$brtr p/chap q/plan r/hoon}                        ::  |*
+    {$brts p/chap q/plan r/hoon}                        ::  |=
     {$brwt p/chap q/hoon}                               ::  |?
   ::                                            ::::::  tuples
     {$clcb p/hoon q/hoon}                               ::  :_ [q p]
@@ -5739,8 +5735,7 @@
     {$cnsg p/wing q/hoon r/(list hoon)}                 ::  %~
     {$cnts p/wing q/(list (pair wing hoon))}            ::  %=
   ::                                            ::::::  nock
-    {$dtkt p/root q/hoon}                               ::  .^  nock 11
-    {$dxkt p/plan q/hoon}                               ::  .^  nock 11
+    {$dtkt p/plan q/hoon}                               ::  .^  nock 11
     {$dtls p/hoon}                                      ::  .+  nock 4
     {$dttr p/hoon q/hoon}                               ::  .*  nock 2
     {$dtts p/hoon q/hoon}                               ::  .=  nock 5
@@ -5776,19 +5771,16 @@
     {$smsg p/hoon q/(list hoon)}                        ::  ;~  kleisli arrow
     {$smsm p/hoon q/hoon}                               ::  ;;  normalize
   ::                                            ::::::  compositions
-    {$tsbr p/root q/hoon}                               ::  =|  push bunt
-    {$txbr p/plan q/hoon}                               ::  =|  push bunt
+    {$tsbr p/plan q/hoon}                               ::  =|  push bunt
     {$tscl p/(list (pair wing hoon)) q/hoon}            ::  =:  q w/ p changes
-    {$tsfs p/toro q/hoon r/hoon}                        ::  =/  typed variable
-    {$txfs p/sofa q/hoon r/hoon}                        ::  =/  typed variable
-    {$tssm p/toro q/hoon r/hoon}                        ::  =;  =/(q p r)
-    {$txsm p/sofa q/hoon r/hoon}                        ::  =;  =/(q p r)
+    {$tsfs p/sofa q/hoon r/hoon}                        ::  =/  typed variable
+    {$tssm p/sofa q/hoon r/hoon}                        ::  =;  =/(q p r)
     {$tsdt p/wing q/hoon r/hoon}                        ::  =.  r with p as q
     {$tswt p/wing q/hoon r/hoon s/hoon}                 ::  =?  conditional =.
     {$tsgl p/hoon q/hoon}                               ::  =<  =>(q p)
     {$tshp p/hoon q/hoon}                               ::  =-  =+(q p)
     {$tsgr p/hoon q/hoon}                               ::  =>  q w/subject p
-    {$tskt p/toro q/wing r/hoon s/hoon}                 ::  =^  state machine
+    {$tskt p/sofa q/wing r/hoon s/hoon}                 ::  =^  state machine
     {$txkt p/sofa q/wing r/hoon s/hoon}                 ::  =^  state machine
     {$tsls p/hoon q/hoon}                               ::  =+  q w/[p subject]
     {$tssg p/(list hoon)}                               ::  =~  hoon stack
@@ -5820,7 +5812,6 @@
     {$zpzp ~}                                           ::  !!
   ==                                                    ::
 ++  sofa  (pair toga (unit plan))
-++  toro  (pair toga (unit root))                       ::
 ++  twit  hoon                                          ::  last-gen hoon
 ++  tyre  (list {p/term q/hoon})                        ::
 ++  tyke  (list (unit hoon))                            ::
@@ -7286,18 +7277,14 @@
           $bcts   flam 
           $bcsm   runk
           $brcb   ((doof -.gen +>.gen) p.gen)
-          $bxcb   ((doof -.gen +>.gen) p.gen)
           $brcl   ((doof -.gen +>.gen) p.gen)
           $brcn   ((doof -.gen +>.gen) p.gen)
           $brdt   ((doof -.gen +>.gen) p.gen)
           $brkt   ((doof -.gen +>.gen) p.gen)
           $brhp   ((doof -.gen +>.gen) p.gen)
           $brsg   ((doof -.gen +>.gen) p.gen)
-          $bxsg   ((doof -.gen +>.gen) p.gen)
           $brtr   ((doof -.gen +>.gen) p.gen)
-          $bxtr   ((doof -.gen +>.gen) p.gen)
           $brts   ((doof -.gen +>.gen) p.gen)
-          $bxts   ((doof -.gen +>.gen) p.gen)
           $brwt   ((doof -.gen +>.gen) p.gen)
         ==
       ::
@@ -7309,11 +7296,9 @@
         ?+  -.gen  flam
           $ktts  ((helk -.gen +>.gen) p.gen)
           $bcts  ((helk -.gen +>.gen) p.gen)
-          $tsfs  ((hulp -.gen +>.gen) p.gen)
-          $txfs  ((himp -.gen +>.gen) p.gen)
-          $tssm  ((hulp -.gen +>.gen) p.gen)
-          $txsm  ((himp -.gen +>.gen) p.gen)
-          $tskt  ((hulp -.gen +>.gen) p.gen)
+          $tsfs  ((himp -.gen +>.gen) p.gen)
+          $tssm  ((himp -.gen +>.gen) p.gen)
+          $tskt  ((himp -.gen +>.gen) p.gen)
           $txkt  ((himp -.gen +>.gen) p.gen)
           $tstr  ((humm -.gen +>.gen) p.gen)
         ==
@@ -7345,13 +7330,6 @@
         ^-  (pair hoon whit)
         =^  gef  wit  (tong got)
         [[pif gef suf] wit]
-      ::
-      ++  hulp
-        |*  {pif/@tas suf/*}
-        |=  hot/toro
-        ^-  (pair hoon whit)
-        =^  tog  wit  (tong p.hot)
-        [[pif [tog q.hot] suf] wit] 
       ::
       ++  himp
         |*  {pif/@tas suf/*}
@@ -7514,22 +7492,7 @@
         {$halo *}  ~(clam ax fab boil)
         {$bcsm *}  p.gen
     ::
-        {$brcb *}  :+  %tsls  [%bunt q.gen]
-                   :+  %brcn  p.gen
-                   %-  ~(run by s.gen)
-                   |=  tom/tomb
-                   ^+  tom
-                   :-  p.tom
-                   %-  ~(run by q.tom)
-                   |=  a/(pair what foot)
-                   ^+  a
-                   :-  p.a
-                   =-  ?:(?=({$ash *} q.a) [-.q.a -] [-.q.a -])
-                   |-  ^-  hoon
-                   ?~  r.gen  p.q.a
-                   [%tstr [~ p.i.r.gen] q.i.r.gen $(r.gen t.r.gen)]
-    ::
-        {$bxcb *}  :+  %tsls  [%bunx q.gen]
+        {$brcb *}  :+  %tsls  [%bunx q.gen]
                    :+  %brcn  p.gen
                    %-  ~(run by s.gen)
                    |=  tom/tomb
@@ -7555,19 +7518,11 @@
                    [%limb %$]
         {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen q.gen]]
         {$brsg *}  [%ktbr [%brts p.gen q.gen r.gen]]
-        {$bxsg *}  [%ktbr [%bxts p.gen q.gen r.gen]]
-        {$brtr *}  :+  %tsls  [%bunt q.gen]
-                   :+  %brcn  p.gen
-                   =-  [[0 [~ ~] -] ~ ~]
-                   (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
-        {$bxtr *}  :+  %tsls  [%bunx q.gen]
+        {$brtr *}  :+  %tsls  [%bunx q.gen]
                    :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
         {$brts *}  :^  %brcb  p.gen  q.gen
-                   =-  [~ [[0 [~ ~] -] ~ ~]]
-                   (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
-        {$bxts *}  :^  %bxcb  p.gen  q.gen
                    =-  [~ [[0 [~ ~] -] ~ ~]]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
         {$brwt *}  [%ktwt %brdt p.gen q.gen]
@@ -7742,9 +7697,6 @@
       [%limb %c]                                        ::
     ::
         {$tsbr *}
-      [%tsls ~(bunt ax fab %bcsm p.gen) q.gen]
-    ::
-        {$txbr *}
       [%tsls ~(bunt ax fab p.gen) q.gen]
     ::
         {$tscl *}
@@ -7753,21 +7705,15 @@
         {$tsfs *}
       ?~  q.p.gen
         [%tsls [%ktts p.p.gen q.gen] r.gen]
-      [%tsls [%kthp [%bcts p.p.gen u.q.p.gen] q.gen] r.gen]
-    ::
-        {$txfs *}
-      ?~  q.p.gen
-        [%tsls [%ktts p.p.gen q.gen] r.gen]
       [%tsls [%kxhp [%bcts p.p.gen u.q.p.gen] q.gen] r.gen]
     ::
         {$tssm *}  [%tsfs p.gen r.gen q.gen]
-        {$txsm *}  [%txfs p.gen r.gen q.gen]
         {$tsdt *}
       [%tsgr [%cncb [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
         {$tswt *}                                        ::                  =?
       [%tsdt p.gen [%wtcl q.gen r.gen [%wing p.gen]] s.gen]
     ::
-        {$tskt *}                                        ::                  =^
+        {$txkt *}                                        ::                  =^
       =+  wuy=(weld q.gen `wing`[%v ~])                 ::
       :+  %tsgr  [%ktts %v %$ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%limb %v] r.gen]        ::  =+  a==>(v \r.gen)
@@ -7775,14 +7721,14 @@
       :+  %tsgr  :-  ?~  q.p.gen
                        :+  %ktts  p.p.gen
                        [%tsgl [%$ 2] [%limb %a]]
-                     :+  %kthp
+                     :+  %kxhp
                         :+  %bcts  p.p.gen
-                        [%tsgr [%limb %v] u.q.p.gen]
+                        [%bcsm [%tsgr [%limb %v] u.q.p.gen]]
                      [%tsgl [%$ 2] [%limb %a]] 
                 [%limb %v]
       s.gen
     ::
-        {$txkt *}                                        ::                  =^
+        {$tskt *}                                        ::                  =^
       =+  wuy=(weld q.gen `wing`[%v ~])                 ::
       :+  %tsgr  [%ktts %v %$ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%limb %v] r.gen]        ::  =+  a==>(v \r.gen)
@@ -7946,19 +7892,15 @@
         $bcwt  (lead -.gen %.(+.gen (twin expr moar)))
         $bcts  (lead -.gen %.(+.gen nexp))
         $bcsm  (lead -.gen %.(+.gen expr))
-        $brcb  (lead -.gen %.(+.gen (quad noop expr exps arms)))
-        $bxcb  (lead -.gen %.(+.gen (quad noop stir exps arms)))
+        $brcb  (lead -.gen %.(+.gen (quad noop stir exps arms)))
         $brcl  (lead -.gen %.(+.gen (twin noop dubs)))
         $brcn  (lead -.gen %.(+.gen (twin noop arms)))
         $brdt  (lead -.gen %.(+.gen (twin noop expr)))
         $brkt  (lead -.gen %.(+.gen (trio noop expr arms)))
         $brhp  (lead -.gen %.(+.gen (twin noop expr)))
-        $brsg  (lead -.gen %.(+.gen (twin noop dubs)))
-        $bxsg  (lead -.gen %.(+.gen (trio noop stir expr)))
-        $brtr  (lead -.gen %.(+.gen (twin noop dubs)))
-        $bxtr  (lead -.gen %.(+.gen (trio noop stir expr)))
-        $brts  (lead -.gen %.(+.gen (twin noop dubs)))
-        $bxts  (lead -.gen %.(+.gen (trio noop stir expr)))
+        $brsg  (lead -.gen %.(+.gen (trio noop stir expr)))
+        $brtr  (lead -.gen %.(+.gen (trio noop stir expr)))
+        $brts  (lead -.gen %.(+.gen (trio noop stir expr)))
         $brwt  (lead -.gen %.(+.gen (twin noop expr)))
         $clcb  (lead -.gen %.(+.gen dubs))
         $clkt  (lead -.gen %.(+.gen (quad expr expr expr expr)))
@@ -7974,8 +7916,7 @@
         $cnls  (lead -.gen %.(+.gen trey))
         $cnsg  (lead -.gen %.(+.gen (trio noop expr moar)))
         $cnts  (lead -.gen %.(+.gen (twin noop moan)))
-        $dtkt  (lead -.gen %.(+.gen dubs))
-        $dxkt  (lead -.gen %.(+.gen (twin stir expr)))
+        $dtkt  (lead -.gen %.(+.gen (twin stir expr)))
         $dtls  (lead -.gen %.(+.gen expr))
         $dttr  (lead -.gen %.(+.gen dubs))
         $dtts  (lead -.gen %.(+.gen dubs))
@@ -8008,20 +7949,17 @@
         $smfs  (lead -.gen %.(+.gen expr))
         $smsg  (lead -.gen %.(+.gen (twin expr moar)))
         $smsm  (lead -.gen %.(+.gen dubs))
-        $tsbr  (lead -.gen %.(+.gen dubs))
-        $txbr  (lead -.gen %.(+.gen (twin noop expr)))
+        $tsbr  (lead -.gen %.(+.gen (twin stir expr)))
         $tscl  (lead -.gen %.(+.gen (twin moan expr)))
-        $tsfs  (lead -.gen %.(+.gen (trio tora expr expr)))
-        $txfs  (lead -.gen %.(+.gen (trio torp expr expr)))
-        $tssm  (lead -.gen %.(+.gen (trio tora expr expr)))
-        $txsm  (lead -.gen %.(+.gen (trio torp expr expr)))
+        $tsfs  (lead -.gen %.(+.gen (trio torp expr expr)))
+        $tssm  (lead -.gen %.(+.gen (trio torp expr expr)))
         $tsdt  (lead -.gen %.(+.gen trip))
         $tswt  (lead -.gen %.(+.gen (quad noop expr expr expr)))
         $tsgl  (lead -.gen %.(+.gen dubs))
         $tshp  (lead -.gen %.(+.gen dubs))
         $tsgr  (lead -.gen %.(+.gen dubs))
-        $tskt  (lead -.gen %.(+.gen (quad tora noop expr expr)))
         $txkt  (lead -.gen %.(+.gen (quad torp noop expr expr)))
+        $tskt  (lead -.gen %.(+.gen (quad torp noop expr expr)))
         $tsls  (lead -.gen %.(+.gen dubs))
         $tssg  (lead -.gen %.(+.gen moar))
         $tstr  (lead -.gen %.(+.gen trip))
@@ -9211,11 +9149,8 @@
         {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
     ::
         {$cnts *}  (~(mint et p.gen q.gen) gol)
-        {$dtkt *}
-      =+  nef=$(gen [%bunt p.gen])
-      [p.nef [%11 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
     ::
-        {$dxkt *}
+        {$dtkt *}
       =+  nef=$(gen [%bunx p.gen])
       [p.nef [%11 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
     ::
@@ -9378,8 +9313,7 @@
         {$ktcn *}  $(fab |, gen p.gen)
         {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
         {$cnts *}  (~(mull et p.gen q.gen) gol dox)
-        {$dtkt *}  =+($(gen q.gen, gol %noun) $(gen [%bunt p.gen]))
-        {$dxkt *}  =+($(gen q.gen, gol %noun) $(gen [%bunx p.gen]))
+        {$dtkt *}  =+($(gen q.gen, gol %noun) $(gen [%bunx p.gen]))
         {$dtls *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
         {$sand *}  (beth (play gen))
         {$rock *}  (beth (play gen))
@@ -9722,8 +9656,7 @@
       {$ktcn *}  $(fab |, gen p.gen)
       {$brcn *}  (core sut %gold sut p.gen *seminoun q.gen)
       {$cnts *}  ~(play et p.gen q.gen)
-      {$dtkt *}  $(gen [%bunt p.gen])
-      {$dxkt *}  $(gen [%bunx p.gen])
+      {$dtkt *}  $(gen [%bunx p.gen])
       {$dtls *}  [%atom %$ ~]
       {$rock *}  |-  ^-  type
                  ?@  q.gen  [%atom p.gen `q.gen]
@@ -12160,15 +12093,15 @@
             ;~  pfix  bar
               %-  stew
               ^.  stet  ^.  limo
-              :~  ['_' (runo cab %bxcb [~ ~] exqr)]
+              :~  ['_' (runo cab %brcb [~ ~] exqr)]
                   ['%' (runo cen %brcn [~ ~] expe)]
                   [':' (runo col %brcl [~ ~] expb)]
                   ['.' (runo dot %brdt [~ ~] expa)]
                   ['-' (runo hep %brhp [~ ~] expa)]
                   ['^' (runo ket %brkt [~ ~] expx)]
-                  ['~' (runo sig %bxsg [~ ~] exqc)]
-                  ['*' (runo tar %bxtr [~ ~] exqc)]
-                  ['=' (runo tis %bxts [~ ~] exqc)]
+                  ['~' (runo sig %brsg [~ ~] exqc)]
+                  ['*' (runo tar %brtr [~ ~] exqc)]
+                  ['=' (runo tis %brts [~ ~] exqc)]
                   ['?' (runo wut %brwt [~ ~] expa)]
               ==
             ==
@@ -12274,13 +12207,13 @@
             ;~  pfix  tis
               %-  stew
               ^.  stet  ^.  limo
-              :~  ['|' (rune bar %txbr exqc)]
+              :~  ['|' (rune bar %tsbr exqc)]
                   ['.' (rune dot %tsdt expq)]
                   ['?' (rune wut %tswt expw)]
-                  ['^' (rune ket %txkt expt)]
+                  ['^' (rune ket %tskt expt)]
                   [':' (rune col %tscl expp)]
-                  ['/' (rune fas %txfs expo)]
-                  [';' (rune sem %txsm expo)]
+                  ['/' (rune fas %tsfs expo)]
+                  [';' (rune sem %tssm expo)]
                   ['<' (rune gal %tsgl expb)]
                   ['>' (rune gar %tsgr expb)]
                   ['-' (rune hep %tshp expb)]
