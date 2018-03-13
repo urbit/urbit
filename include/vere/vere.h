@@ -88,6 +88,7 @@
     */
       typedef struct _u3_creq {             //  client request
         c3_l             num_l;             //  request number
+        h2o_http1client_t* cli_u;           //  h2o client
         c3_o             sec;               //  yes == https
         c3_w             ipf_w;             //  IP
         c3_c*            ipf_c;             //  IP (string)

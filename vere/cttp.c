@@ -26,11 +26,6 @@
 
 #include "h2o.h"
 
-// XX replace with uv_getaddrinfo
-h2o_multithread_queue_t *queue;
-h2o_multithread_receiver_t getaddr_receiver;
-h2o_timeout_t io_timeout;
-
 /* _cttp_bod(): create a data buffer.
 */
 static u3_hbod*
@@ -212,24 +207,10 @@ _cttp_mcut_char(c3_c* buf_c, c3_w len_w, c3_c chr_c)
   return len_w + 1;
 }
 
-/* _cttp_mcut_str(): measure/cut string.
+/* _cttp_mcut_cord(): measure/cut cord.
 */
 static c3_w
-_cttp_mcut_str(c3_c* buf_c, c3_w len_w, const c3_c* str_c)
-{
-  c3_w str_w = strlen(str_c);
-
-  if ( buf_c ) {
-    strncpy(buf_c + len_w, str_c, str_w);
-  }
-  return (len_w + str_w);
-}
-
-// XX rename _mcut_knot
-/* _cttp_mcut_span(): measure/cut span.
-*/
-static c3_w
-_cttp_mcut_span(c3_c* buf_c, c3_w len_w, u3_noun san)
+_cttp_mcut_cord(c3_c* buf_c, c3_w len_w, u3_noun san)
 {
   c3_w ten_w = u3r_met(3, san);
 
@@ -240,7 +221,7 @@ _cttp_mcut_span(c3_c* buf_c, c3_w len_w, u3_noun san)
   return (len_w + ten_w);
 }
 
-/* _cttp_mcut_path(): measure/cut span list.
+/* _cttp_mcut_path(): measure/cut cord list.
 */
 static c3_w
 _cttp_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u3_noun pax)
@@ -250,7 +231,7 @@ _cttp_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u3_noun pax)
   while ( u3_nul != axp ) {
     u3_noun h_axp = u3h(axp);
 
-    len_w = _cttp_mcut_span(buf_c, len_w, u3k(h_axp));
+    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(h_axp));
     axp = u3t(axp);
 
     if ( u3_nul != axp ) {
@@ -266,51 +247,10 @@ _cttp_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u3_noun pax)
 static c3_w
 _cttp_mcut_host(c3_c* buf_c, c3_w len_w, u3_noun hot)
 {
-  if ( c3y == u3h(hot) ) {
-    len_w = _cttp_mcut_path(buf_c, len_w, '.', u3kb_flop(u3k(u3t(hot))));
-  }
-  else {
-    c3_w ipf_w = u3r_word(0, u3t(hot));
-    c3_c ipf_c[17];
-
-    snprintf(ipf_c, 16, "%d.%d.%d.%d", (ipf_w >> 24),
-                                       ((ipf_w >> 16) & 255),
-                                       ((ipf_w >> 8) & 255),
-                                       (ipf_w & 255));
-    len_w = _cttp_mcut_str(buf_c, len_w, ipf_c);
-  }
+  len_w = _cttp_mcut_path(buf_c, len_w, '.', u3kb_flop(u3k(hot)));
   u3z(hot);
   return len_w;
 }
-
-#if 0
-/* _cttp_mcut_pfix(): measure/cut prefix.
-*/
-static c3_w
-_cttp_mcut_pfix(c3_c* buf_c, c3_w len_w, u3_noun hat)
-{
-  u3_noun p_hat = u3h(hat);
-  u3_noun q_hat = u3h(u3t(hat));
-  u3_noun r_hat = u3t(u3t(hat));
-
-  if ( c3y == p_hat ) {
-    len_w = _cttp_mcut_str(buf_c, len_w, "https://");
-  } else {
-    len_w = _cttp_mcut_str(buf_c, len_w, "http://");
-  }
-  len_w = _cttp_mcut_host(buf_c, len_w, u3k(r_hat));
-
-  if ( u3_nul != q_hat ) {
-    c3_w por_w = 0xffff & u3r_word(0, u3t(q_hat));
-    c3_c por_c[8];
-
-    snprintf(por_c, 7, ":%d", por_w);
-    len_w = _cttp_mcut_str(buf_c, len_w, por_c);
-  }
-  u3z(hat);
-  return len_w;
-}
-#endif
 
 /* _cttp_mcut_pork(): measure/cut path/extension.
 */
@@ -323,7 +263,7 @@ _cttp_mcut_pork(c3_c* buf_c, c3_w len_w, u3_noun pok)
   len_w = _cttp_mcut_path(buf_c, len_w, '/', u3k(t_pok));
   if ( u3_nul != h_pok ) {
     len_w = _cttp_mcut_char(buf_c, len_w, '.');
-    len_w = _cttp_mcut_span(buf_c, len_w, u3k(u3t(h_pok)));
+    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(u3t(h_pok)));
   }
   u3z(pok);
   return len_w;
@@ -344,9 +284,9 @@ _cttp_mcut_quay(c3_c* buf_c, c3_w len_w, u3_noun quy)
     u3_noun t_quy = u3t(quy);
 
     len_w = _cttp_mcut_char(buf_c, len_w, '&');
-    len_w = _cttp_mcut_span(buf_c, len_w, u3k(pi_quy));
+    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(pi_quy));
     len_w = _cttp_mcut_char(buf_c, len_w, '=');
-    len_w = _cttp_mcut_span(buf_c, len_w, u3k(qi_quy));
+    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(qi_quy));
 
     len_w = _cttp_mcut_quay(buf_c, len_w, u3k(t_quy));
   }
@@ -362,7 +302,6 @@ _cttp_mcut_url(c3_c* buf_c, c3_w len_w, u3_noun pul)
   u3_noun q_pul = u3h(u3t(pul));
   u3_noun r_pul = u3t(u3t(pul));
 
-  // len_w = _cttp_mcut_pfix(buf_c, len_w, u3k(p_pul));
   len_w = _cttp_mcut_char(buf_c, len_w, '/');
   len_w = _cttp_mcut_pork(buf_c, len_w, u3k(q_pul));
 
@@ -374,7 +313,7 @@ _cttp_mcut_url(c3_c* buf_c, c3_w len_w, u3_noun pul)
   return len_w;
 }
 
-/* _cttp_creq_port(): construct url from noun.
+/* _cttp_creq_port(): stringify port
 */
 static c3_c*
 _cttp_creq_port(c3_s por_s)
@@ -410,6 +349,19 @@ _cttp_creq_host(u3_noun hot)
   hot_c[len_w] = 0;
 
   return hot_c;
+}
+
+/* _cttp_creq_ip(): stringify ip
+*/
+static c3_c*
+_cttp_creq_ip(c3_w ipf_w)
+{
+  c3_c* ipf_c = c3_malloc(17);
+  snprintf(ipf_c, 16, "%d.%d.%d.%d", (ipf_w >> 24),
+                                     ((ipf_w >> 16) & 255),
+                                     ((ipf_w >> 8) & 255),
+                                     (ipf_w & 255));
+  return ipf_c;
 }
 
 /* _cttp_httr(): deliver http result.
@@ -507,16 +459,18 @@ _cttp_creq_fire(u3_creq* ceq_u)
   _cttp_creq_fire_str(ceq_u, ceq_u->url_c);
   _cttp_creq_fire_str(ceq_u, " HTTP/1.1\r\n");
 
-  if ( ceq_u->por_c ) {
-    c3_w len_w  = strlen(ceq_u->hot_c) + 1 + strlen(ceq_u->por_c) + 1;
-    c3_c* hot_c = c3_malloc(len_w);
-    snprintf(hot_c, len_w, "%s:%s", ceq_u->hot_c, ceq_u->por_c);
+  c3_c* hot_c = ceq_u->hot_c ? ceq_u->hot_c : ceq_u->ipf_c;
 
-    _cttp_creq_fire_body(ceq_u, _cttp_bud("Host", hot_c));
-    free(hot_c);
+  if ( ceq_u->por_c ) {
+    c3_w len_w  = strlen(hot_c) + 1 + strlen(ceq_u->por_c) + 1;
+    c3_c* hos_c = c3_malloc(len_w);
+    snprintf(hos_c, len_w, "%s:%s", hot_c, ceq_u->por_c);
+
+    _cttp_creq_fire_body(ceq_u, _cttp_bud("Host", hos_c));
+    free(hos_c);
   }
   else {
-    _cttp_creq_fire_body(ceq_u, _cttp_bud("Host", ceq_u->hot_c));
+    _cttp_creq_fire_body(ceq_u, _cttp_bud("Host", hot_c));
   }
 
   _cttp_creq_fire_str(ceq_u, "User-Agent: urbit/vere-" URBIT_VERSION "\r\n");
@@ -535,10 +489,10 @@ _cttp_creq_fire(u3_creq* ceq_u)
 }
 
 static void
-_cttp_creq_link(u3_cttp* ctp_u, u3_creq* ceq_u)
+_cttp_creq_link(u3_creq* ceq_u)
 {
-  ceq_u->nex_u = ctp_u->ceq_u;
-  ctp_u->ceq_u = ceq_u;
+  ceq_u->nex_u = u3_Host.ctp_u.ceq_u;
+  u3_Host.ctp_u.ceq_u = ceq_u;
 }
 
 static void
@@ -546,6 +500,9 @@ _cttp_creq_unlink(u3_creq* ceq_u)
 {
   if ( ceq_u->pre_u ) {
     ceq_u->pre_u->nex_u = ceq_u->nex_u;
+  }
+  else {
+    u3_Host.ctp_u.ceq_u = ceq_u->nex_u;
   }
 }
 
@@ -589,21 +546,28 @@ _cttp_creq_new(c3_l num_l, u3_noun hes)
 
   ceq_u->num_l = num_l;
   ceq_u->sec   = sec;
-  ceq_u->ipf_w = ( c3y == u3h(hot) ) ? 0 : u3r_word(0, u3t(hot));
-  //  XX conditionally on ipf_w?
-  ceq_u->hot_c = _cttp_creq_host(u3k(hot));
-  ceq_u->por_s = ( u3_nul != por ) ? u3t(por) : ( (c3y == sec) ? 443 : 80 );
-  ceq_u->por_c = ( u3_nul != por ) ? _cttp_creq_port(ceq_u->por_s) : 0;
+
+  if ( c3y == u3h(hot) ) {
+    ceq_u->hot_c = _cttp_creq_host(u3k(u3t(hot)));
+  } else {
+    ceq_u->ipf_w = u3r_word(0, u3t(hot));
+    ceq_u->ipf_c = _cttp_creq_ip(ceq_u->ipf_w);
+  }
+
+  if ( u3_nul != por ) {
+    ceq_u->por_s = u3t(por);
+    ceq_u->por_c = _cttp_creq_port(ceq_u->por_s);
+  }
+
   ceq_u->met_m = met;
   ceq_u->url_c = _cttp_creq_url(u3k(pul));
-
   ceq_u->hed_u = _cttp_heds_math(0, u3k(mah));
 
   if ( u3_nul != bod ) {
     ceq_u->bod_u = _cttp_octs_to_bod(u3k(u3t(bod)));
   }
 
-  _cttp_creq_link(&u3_Host.ctp_u, ceq_u);
+  _cttp_creq_link(ceq_u);
 
   u3z(hes);
   return ceq_u;
@@ -651,7 +615,7 @@ _cttp_bufs_to_vec(u3_hbod* rub_u, c3_w* tot_w)
   return vec_u;
 }
 
-// XX called multiple times on chunked response, wat do
+// XX research: may be called with closed client?
 static int
 on_body(h2o_http1client_t* cli_u, const c3_c* err_c)
 {
@@ -664,11 +628,11 @@ on_body(h2o_http1client_t* cli_u, const c3_c* err_c)
     return -1;
   }
 
-  h2o_buffer_t* buf_u = cli_u->sock->input;
+  h2o_socket_t* sok_u = cli_u->sock;
 
-  if ( buf_u->size ) {
-    _cttp_cres_queue_buf(res_u, buf_u);
-    h2o_buffer_consume(&buf_u, buf_u->size);
+  if ( sok_u->input->size ) {
+    _cttp_cres_queue_buf(res_u, sok_u->input);
+    h2o_buffer_consume(&sok_u->input, sok_u->input->size);
   }
 
   if ( h2o_http1client_error_is_eos == err_c ) {
@@ -748,23 +712,91 @@ on_connect(h2o_http1client_t* cli_u, const c3_c* err_c, h2o_iovec_t** vec_p,
   ceq_u->vec_u = _cttp_bufs_to_vec(ceq_u->rub_u, &len_w);
   *vec_t = len_w;
   *vec_p = ceq_u->vec_u;
-  *hed_i = ceq_u->met_m == c3__head;
+  *hed_i = c3__head == ceq_u->met_m;
 
   return on_head;
 }
 
 static void
-_cttp_creq_start(u3_creq* ceq_u)
+_cttp_creq_connect(u3_creq* ceq_u)
 {
-  h2o_timeout_init(u3L, &io_timeout, 10000);
+  c3_assert(ceq_u->ipf_c);
 
-  h2o_iovec_t host = h2o_iovec_init(ceq_u->hot_c, strlen(ceq_u->hot_c));
+  h2o_iovec_t ipf_u = h2o_iovec_init(ceq_u->ipf_c, strlen(ceq_u->ipf_c));
+  c3_s por_s = ceq_u->por_s ? ceq_u->por_s :
+               ( c3y == ceq_u->sec ) ? 443 : 80;
 
-  // TODO: resolve host with uv_getaddrinfo, connect with ipf_c
-  // TODO: pass client double pointer
-  h2o_http1client_connect(NULL, ceq_u, u3_Host.ctp_u.ctx_u, host, ceq_u->por_s, 0, on_connect);
+  // connect by IP
+  h2o_http1client_connect(&ceq_u->cli_u, ceq_u, u3_Host.ctp_u.ctx_u, ipf_u,
+                                         por_s, c3y == ceq_u->sec, on_connect);
+
+  // set hostname for TLS handshake
+  if ( ceq_u->hot_c && c3y == ceq_u->sec ) {
+    free(ceq_u->cli_u->ssl.server_name);
+    c3_w len_w = 1 + strlen(ceq_u->hot_c);
+    ceq_u->cli_u->ssl.server_name = c3_malloc(len_w);
+    strncpy(ceq_u->cli_u->ssl.server_name, ceq_u->hot_c, len_w);
+  }
 
   _cttp_creq_fire(ceq_u);
+}
+
+static void
+_cttp_creq_resolve_cb(uv_getaddrinfo_t* adr_u,
+                      c3_i              sas_i,
+                      struct addrinfo*  aif_u)
+{
+  u3_creq* ceq_u = adr_u->data;
+
+  if ( 0 != sas_i ) {
+    _cttp_httr_fail(ceq_u->num_l, 504, (c3_c *)uv_strerror(sas_i));
+    _cttp_creq_free(ceq_u);
+    return;
+  }
+
+  ceq_u->ipf_w = ntohl(((struct sockaddr_in *)aif_u->ai_addr)->sin_addr.s_addr);
+  ceq_u->ipf_c = _cttp_creq_ip(ceq_u->ipf_w);
+
+  uv_freeaddrinfo(aif_u);
+
+  _cttp_creq_connect(ceq_u);
+}
+
+static void
+_cttp_creq_resolve(u3_creq* ceq_u)
+{
+  c3_assert(ceq_u->hot_c);
+
+  uv_getaddrinfo_t* adr_u = c3_malloc(sizeof(*adr_u));
+  adr_u->data = ceq_u;
+
+  struct addrinfo hin_u;
+  memset(&hin_u, 0, sizeof(struct addrinfo));
+
+  hin_u.ai_family = PF_INET;
+  hin_u.ai_socktype = SOCK_STREAM;
+  hin_u.ai_protocol = IPPROTO_TCP;
+
+  c3_c* por_c = ceq_u->por_c ? ceq_u->por_c :
+                ( c3y == ceq_u->sec ) ? "443" : "80";
+
+  c3_i sas_i;
+
+  if ( 0 != (sas_i = uv_getaddrinfo(u3L, adr_u, _cttp_creq_resolve_cb,
+                                         ceq_u->hot_c, por_c, &hin_u)) ) {
+    _cttp_httr_fail(ceq_u->num_l, 504, (c3_c *)uv_strerror(sas_i));
+    _cttp_creq_free(ceq_u);
+  }
+}
+
+static void
+_cttp_creq_start(u3_creq* ceq_u)
+{
+  if ( ceq_u->ipf_c ) {
+    _cttp_creq_connect(ceq_u);
+  } else {
+    _cttp_creq_resolve(ceq_u);
+  }
 }
 
 /* u3_cttp_ef_thus(): send %thus effect (outgoing request) to cttp.
@@ -812,7 +844,7 @@ u3_cttp_io_init()
 {
   u3_Host.ssl_u = SSL_CTX_new(TLSv1_client_method());
   SSL_CTX_set_options(u3S, SSL_OP_NO_SSLv2);
-  SSL_CTX_set_verify(u3S, SSL_VERIFY_PEER, NULL);
+  SSL_CTX_set_verify(u3S, SSL_VERIFY_PEER, 0);
   SSL_CTX_set_default_verify_paths(u3S);
   // if ( 0 == SSL_CTX_load_verify_locations(u3S,
   //             "/etc/ssl/certs/ca-certificates.crt", NULL) ) {
@@ -826,15 +858,15 @@ u3_cttp_io_init()
                           "ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:"
                           "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
 
+  h2o_timeout_t* tim_u = c3_malloc(sizeof(*tim_u));
 
-  h2o_http1client_ctx_t* ctx_u = c3_calloc(sizeof(h2o_http1client_ctx_t));
+  // XX how long? 1 minute?
+  h2o_timeout_init(u3L, tim_u, 10000);
+
+  h2o_http1client_ctx_t* ctx_u = c3_calloc(sizeof(*ctx_u));
   ctx_u->loop = u3L;
   ctx_u->ssl_ctx = u3S;
-  ctx_u->io_timeout = &io_timeout;
-  ctx_u->getaddr_receiver = &getaddr_receiver;
-
-  queue = h2o_multithread_create_queue(u3L);
-  h2o_multithread_register_receiver(queue, &getaddr_receiver, h2o_hostinfo_getaddr_receiver);
+  ctx_u->io_timeout = tim_u;
 
   u3_Host.ctp_u.ceq_u = 0;
   u3_Host.ctp_u.ctx_u = ctx_u;
@@ -853,4 +885,6 @@ void
 u3_cttp_io_exit(void)
 {
     SSL_CTX_free(u3S);
+    free(u3_Host.ctp_u.ctx_u->io_timeout);
+    free(u3_Host.ctp_u.ctx_u);
 }
