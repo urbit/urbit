@@ -66,20 +66,6 @@ _cttp_bud(c3_c* nam_c, c3_c* val_c)
   return bod_u;
 }
 
-/* _cttp_heds_to_list(): C headers to list.
-*/
-static u3_noun
-_cttp_heds_to_list(u3_hhed* hed_u)
-{
-  if ( 0 == hed_u ) {
-    return u3_nul;
-  } else {
-    return u3nc(u3nc(u3i_string(hed_u->nam_c),
-                     hed_u->val_c ? u3i_string(hed_u->val_c) : u3_nul),
-                _cttp_heds_to_list(hed_u->nex_u));
-  }
-}
-
 /* _cttp_heds_free(): free header structure.
 */
 static void
@@ -442,11 +428,9 @@ _cttp_httr(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct)
 static void
 _cttp_httr_cres(c3_l num_l, u3_cres* res_u)
 {
-  _cttp_httr
-    (num_l,
-     res_u->sas_w,
-     _cttp_heds_to_list(res_u->hed_u),
-     res_u->bod_u ? u3nc(u3_nul, _cttp_bods_to_octs(res_u->bod_u)) : u3_nul);
+  _cttp_httr(num_l, res_u->sas_w, res_u-> hed,
+             ( !res_u->bod_u ) ? u3_nul :
+             u3nc(u3_nul, _cttp_bods_to_octs(res_u->bod_u)));
 }
 
 /* _cttp_httr_fail(): fail out a request by number.
@@ -467,7 +451,6 @@ _cttp_httr_fail(c3_l num_l, c3_w cod_w, c3_c* msg_c)
 static void
 _cttp_cres_free(u3_cres* res_u)
 {
-  _cttp_heds_free(res_u->hed_u);
   _cttp_bods_free(res_u->bod_u);
   free(res_u);
 }
@@ -696,6 +679,32 @@ on_body(h2o_http1client_t* cli_u, const c3_c* err_c)
   return 0;
 }
 
+/* _http_vec_to_atom(): convert h2o_iovec_t to atom (cord)
+*/
+static u3_noun
+_http_vec_to_atom(h2o_iovec_t vec_u)
+{
+  // XX portable?
+  return u3i_bytes(vec_u.len, (const c3_y*)vec_u.base);
+}
+
+static u3_noun
+_cttp_heds_to_noun(h2o_header_t* hed_u, c3_d hed_d)
+{
+  u3_noun hed = u3_nul;
+  c3_d dex_d  = hed_d;
+
+  h2o_header_t deh_u;
+
+  while ( 0 < dex_d ) {
+    deh_u = hed_u[--dex_d];
+    hed = u3nc(u3nc(_http_vec_to_atom(*deh_u.name),
+                    _http_vec_to_atom(deh_u.value)), hed);
+  }
+
+  return hed;
+}
+
 static h2o_http1client_body_cb
 on_head(h2o_http1client_t* cli_u, const c3_c* err_c, c3_i ver_i, c3_i sas_i,
                                   h2o_iovec_t sas_u, h2o_header_t* hed_u,
@@ -712,17 +721,7 @@ on_head(h2o_http1client_t* cli_u, const c3_c* err_c, c3_i ver_i, c3_i sas_i,
   u3_cres* res_u = c3_calloc(sizeof(*res_u));
   ceq_u->res_u = res_u;
   res_u->sas_w = (c3_w)sas_i;
-
-  // XX attach headers
-  size_t i;
-
-  uL(fprintf(uH, "HTTP/1.%d %d %.*s\n", ver_i, sas_i, (int)sas_u.len, sas_u.base));
-  for (i = 0; i != hed_t; ++i)
-      uL(fprintf(uH, "%.*s: %.*s\n", (int)hed_u[i].name->len,
-                                     hed_u[i].name->base,
-                                     (int)hed_u[i].value.len,
-                                     hed_u[i].value.base));
-  uL(fprintf(uH, "\n"));
+  res_u->hed = _cttp_heds_to_noun(hed_u, hed_t);
 
   if ( h2o_http1client_error_is_eos == err_c ) {
     _cttp_httr_cres(ceq_u->num_l, res_u);

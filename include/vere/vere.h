@@ -79,7 +79,7 @@
     */
       typedef struct _u3_cres {
         c3_w             sas_w;             //  status code
-        u3_hhed*         hed_u;             //  headers
+        u3_noun          hed;               //  headers
         u3_hbod*         bod_u;             //  exit of body queue
         u3_hbod*         dob_u;             //  entry of body queue
       } u3_cres;
