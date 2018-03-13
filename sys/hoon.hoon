@@ -5615,19 +5615,19 @@
           ==                                            ::
 ++  plan                                                ::  data structure
           $%  {$base p/base}                            ::  base type
-              {$bcts p/toga q/plan}                     ::  name
-              {$bchp p/plan q/plan}                     ::  function type
-              {$dbug p/spot q/plan}                     ::  set debug
-              {$bcsg p/hoon q/plan}                     ::  default
-              {$bcwt p/{i/plan t/(list plan)}}          ::  plain selection
-              {$bcsm p/hoon}                            ::  assembly
-              {$bccn p/{i/plan t/(list plan)}}          ::  new selection
-              {$leaf p/term q/@}                        ::  constant atom
-              {$halo p/what q/plan}                     ::  apply help
-              {$bcpt p/plan q/plan}                     ::  atom+cell
-              {$bccl p/{i/plan t/(list plan)}}          ::  aka row
-              {$bckt p/plan q/plan}                     ::  pair+tag
               {$bccb p/hoon}                            ::  example
+              {$bccl p/{i/plan t/(list plan)}}          ::  aka row
+              {$bccn p/{i/plan t/(list plan)}}          ::  selection
+              {$bchp p/plan q/plan}                     ::  function type
+              {$bckt p/plan q/plan}                     ::  pair+tag
+              {$bcpt p/plan q/plan}                     ::  atom+cell
+              {$bcsg p/hoon q/plan}                     ::  default
+              {$bcsm p/hoon}                            ::  assembly
+              {$bcts p/toga q/plan}                     ::  name
+              {$bcwt p/{i/plan t/(list plan)}}          ::  plain selection
+              {$dbug p/spot q/plan}                     ::  set debug
+              {$halo p/what q/plan}                     ::  apply help
+              {$leaf p/term q/@}                        ::  constant atom
           ==                                            ::
 ++  toga                                                ::  face control
           $@  p/term                                    ::  two togas
@@ -5695,17 +5695,6 @@
     {$wing p/wing}                                      ::  pulls p
     {$yell p/(list hoon)}                               ::  render as tank
     {$xray p/manx}                                      ::  ;foo; templating
-  ::                                            ::::::  molds
-    {$bcpt p/root q/root}                               ::  $@ depth fork
-    {$bccb p/hoon}                                      ::  $_ example
-    {$bccl p/root q/(list root)}                        ::  $: tuple
-    {$bccn p/root q/(list root)}                        ::  $% tagged fork
-    {$bchp p/root q/root}                               ::  $- function
-    {$bckt p/root q/root}                               ::  $^ pairhead fork
-    {$bcsg p/hoon q/root}                               ::  $~ default
-    {$bcwt p/root q/(list root)}                        ::  $? untagged fork
-    {$bcts p/toga q/root}                               ::  $= name
-    {$bcsm p/hoon}                                      ::  $; manual
   ::                                            ::::::  cores
     {$brcb p/chap q/plan r/alas s/(map @ tomb)}         ::  |_
     {$brcl p/chap q/hoon r/hoon}                        ::  |:
@@ -6857,13 +6846,7 @@
     ::
         {$base *}  (decorate (basal p.mod))
         {$bcts *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
-        {$bcsm *}
-      %-  decorate
-      =+  cys=~(boil ap p.mod)
-      ?:  ?=($bcsm -.cys)
-        (home [%tsgl [%limb %$] p.mod])
-      example:clear(doc ~, mod cys)
-    ::  
+        {$bcsm *}  (decorate (home [%tsgl [%limb %$] p.mod]))
         {$bcsg *}  [%ktls example(mod q.mod) (home p.mod)]
         {$dbug *}  example(mod q.mod, bug [p.mod bug])
         {$bchp *}  (decorate (function:clear p.mod q.mod))
@@ -6888,6 +6871,10 @@
     ?:  ?=($dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
     ?:  ?=($bcsg -.mod)  factory(mod q.mod, def `p.mod)
     ^-  hoon
+    ?:  ?=([%bcsm *] mod)
+      ::  don't re-indirect through handmade molds
+      ::
+      (home p.mod)
     =-  ::  for basic molds that don't need the subject,
         ::  clear it so constants fold better 
         ::  
@@ -7114,11 +7101,7 @@
       ::  synthesis, $;
       ::
           {$bcsm *}
-        %-  decorate
-        =+  cys=~(boil ap p.mod)
-        ?:  ?=($bcsm -.cys)
-          [%cnhp (home p.mod) fetch ~]
-        relative(mod cys)
+        (decorate [%cnhp (home p.mod) fetch ~])
       ::
       ::  tuple, $:
       ::
@@ -7260,16 +7243,6 @@
           $halo   flam
           $base   runk
           $leaf   runk
-          $bcpt   runk
-          $bccb   runk
-          $bccl   runk
-          $bccn   runk
-          $bchp   runk
-          $bckt   runk
-          $bcsg   runk
-          $bcwt   runk
-          $bcts   flam 
-          $bcsm   runk
           $brcb   ((doof -.gen +>.gen) p.gen)
           $brcl   ((doof -.gen +>.gen) p.gen)
           $brcn   ((doof -.gen +>.gen) p.gen)
@@ -7289,7 +7262,6 @@
         ?:  ?=(^ -.gen)  flam
         ?+  -.gen  flam
           $ktts  ((helk -.gen +>.gen) p.gen)
-          $bcts  ((helk -.gen +>.gen) p.gen)
           $tsfs  ((himp -.gen +>.gen) p.gen)
           $tssm  ((himp -.gen +>.gen) p.gen)
           $tskt  ((himp -.gen +>.gen) p.gen)
@@ -7404,32 +7376,14 @@
                          ?:(=(toe [[%0 ~] [%0 ~]]) [%0 ~] [%2 toe])
     ==
   ::
-  ++  boil
-    ^-  plan
-    ?+  gen        [%bcsm gen]
-        {$base *}  [%base p.gen]
-        {$dbug *}  [%dbug p.gen boil(gen q.gen)]
-        {$leaf *}  [%leaf p.gen]
-        {$bcpt *}  [%bcpt boil(gen p.gen) boil(gen q.gen)]
-        {$bccb *}  [%bccb p.gen]
-        {$bccl *}  [%bccl boil(gen p.gen) (turn q.gen |=(hoon boil(gen +<)))]
-        {$bccn *}  [%bccn boil(gen p.gen) (turn q.gen |=(hoon boil(gen +<)))]
-        {$bckt *}  [%bckt boil(gen p.gen) boil(gen q.gen)]
-        {$bchp *}  [%bchp boil(gen p.gen) boil(gen q.gen)]
-        {$halo *}  [%halo p.gen boil(gen q.gen)]
-        {$bcts *}  [%bcts p.gen boil(gen q.gen)]
-        {$bcsg *}  [%bcsg p.gen boil(gen q.gen)]
-        {$bcwt *}  [%bcwt boil(gen p.gen) (turn q.gen |=(hoon boil(gen +<)))]
-        {$bcsm *}  [%bcsm p.gen]
-    ==
-  ::
   ++  open
     ^-  hoon
     ?-    gen
         {~ *}     [%cnts [[%& p.gen] ~] ~]
     ::
-        {$base *}  ~(clam ax fab boil)
+        {$base *}  ~(clam ax fab `plan`gen)
         {$bust *}  ~(bunt ax fab %base p.gen)
+        {$mold *}  ~(clam ax fab p.gen)
         {$dbug *}   q.gen
         {$eror *}  ~|(p.gen !!)
     ::
@@ -7467,23 +7421,12 @@
         [%$ ~]                                          ::  $
       [[[%a ~] [%tsgl [%$ 3] [%limb %a]]] ~]             ::  a  +.a
     ::
-        {$leaf *}  ~(clam ax fab boil)
+        {$leaf *}  ~(clam ax fab `plan`gen)
         {$limb *}  [%cnts [p.gen ~] ~]
         {$tell *}  [%cnhp [%limb %noah] [%zpgr [%cltr p.gen]] ~]
         {$wing *}  [%cnts p.gen ~]
         {$yell *}  [%cnhp [%limb %cain] [%zpgr [%cltr p.gen]] ~]
-    ::
-        {$bcpt *}  ~(clam ax fab boil)
-        {$bccb *}  ~(clam ax fab boil)
-        {$bccl *}  ~(clam ax fab boil)
-        {$bccn *}  ~(clam ax fab boil)
-        {$bchp *}  ~(clam ax fab boil)
-        {$bckt *}  ~(clam ax fab boil)
-        {$bcwt *}  ~(clam ax fab boil)
-        {$bcsg *}  ~(clam ax fab boil)
-        {$bcts *}  ~(clam ax fab boil)
-        {$halo *}  ~(clam ax fab boil)
-        {$bcsm *}  p.gen
+        {$halo *}  q.gen
     ::
         {$brcb *}  :+  %tsls  [%bunt q.gen]
                    :+  %brcn  p.gen
@@ -7539,7 +7482,6 @@
       [i.p.gen $(p.gen t.p.gen)]
     ::
         {$bunt *}  [%ktsg ~(bunt ax fab p.gen)]
-        {$mold *}  ~(clam ax fab p.gen)
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
         {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
@@ -7714,7 +7656,7 @@
                        [%tsgl [%$ 2] [%limb %a]]
                      :+  %kthp
                         :+  %bcts  p.p.gen
-                        [%bcsm [%tsgr [%limb %v] u.q.p.gen]]
+                        [%bcsm [%tsgr [%limb %v] [%mold u.q.p.gen]]]
                      [%tsgl [%$ 2] [%limb %a]] 
                 [%limb %v]
       s.gen
@@ -11723,13 +11665,10 @@
     ^.  stet  ^.  limo
     :~
       :-  '_'
-        %+  cook  |=(plan +<)
         ;~(pfix cab (stag %bccb wide))
       :-  ','
-        %+  cook  |=(plan +<)
         ;~(pfix com (stag %bcsm wide))
       :-  '$'
-        %+  cook  |=(plan +<)
         ;~  pose
           ;~  pfix  buc
             ;~  pose
@@ -11743,7 +11682,6 @@
           (stag %bcsm rump)
         ==
       :-  '%'
-        %+  cook  |=(plan +<)
         ;~  pose
           ;~  pfix  cen
             ;~  pose
@@ -11756,31 +11694,29 @@
           ==
         ==
       :-  '('
-        %+  cook  |=(plan +<)
         %+  stag  %bcsm
         %+  stag  %cnhp
         %+  ifix  [pel per]
-        ;~(plug wide ;~(pose ;~(pfix ace (most ace wyde)) (easy ~)))
+        ;~  plug
+          wide
+          ;~(pose ;~(pfix ace (most ace (stag %mold wyde))) (easy ~))
+        ==
       :-  '{'
-        %+  cook  |=(plan +<)
         (stag %bccl (ifix [kel ker] (most ace wyde)))
       :-  '['
-        %+  cook  |=(plan +<)
         (stag %bccl (ifix [sel ser] (most ace wyde)))
       :-  '*'
-        %+  cook  |=(plan +<)
         (cold [%base %noun] tar)
       :-  '@'
-        %+  cook  |=(plan +<)
         ;~(pfix pat (stag %base (stag %atom mota)))
       :-  '?'
-        %+  cook  |=(plan +<)
         ;~  pose
-          (stag %bcwt ;~(pfix wut (ifix [pel per] (most ace wyde))))
+          %+  stag  %bcwt
+          ;~(pfix wut (ifix [pel per] (most ace wyde)))
+        ::
           (cold [%base %bean] wut)
         ==
       :-  '~'
-        %+  cook  |=(plan +<)
         (cold [%base %null] sig)  
       :-  '^'
         ;~  pose
@@ -11788,7 +11724,6 @@
           (cold [%base %cell] ket)
         ==
       :-  '='
-        %+  cook  |=(plan +<)
         ;~  pfix  tis
           %+  sear
             |=  hon/hoon
@@ -11796,7 +11731,6 @@
             %+  bind
               |-  ^-  (unit term)
               ?+  hon  ~
-                {$bcsm *}  $(hon p.hon)
                 {$wing *}  ?~(p.hon ~ ?^(i.p.hon ~ `i.p.hon))
                 {$limb *}  `p.hon
                 {$dbug *}  $(hon ~(open ap hon))
@@ -11807,7 +11741,6 @@
           wide
         ==
       :-  ['a' 'z']
-        %+  cook  |=(plan +<)
         ;~  pose
           (stag %bcts ;~(plug sym ;~(pfix ;~(pose fas tis) wyde)))
           scab
@@ -11821,7 +11754,7 @@
     :~
       :-  ','
         ;~  pose
-          ;~(pfix com wyde)
+          (stag %mold ;~(pfix com wyde))
           (stag %wing rope)
         ==
       :-  '!'
@@ -12013,7 +11946,6 @@
     |=  tol/?
     |%
     ++  structure
-      %+  cook  |=(plan +<)
       %-  stew
       ^.  stet  ^.  limo
       :~  :-  '$'
@@ -12037,15 +11969,33 @@
           ;~  pfix  cen
             %-  stew
             ^.  stet  ^.  limo
-            :~  ['^' (rune ket %cnkt exqy)]
-                ['+' (rune lus %cnls exqx)]
-                ['-' (rune hep %cnhp exqk)]
-                [':' (rune col %cnhp exqz)]
+            :~  :-  '^' 
+                %+  cook  
+                  |=  [%cnkt a/hoon b/plan c/plan d/plan] 
+                  [%cnkt a mold/b mold/c mold/d]
+                (rune ket %cnkt exqy)
+            ::
+                :-  '+'
+                %+  cook
+                  |=  [%cnls a/hoon b/plan c/plan] 
+                  [%cnls a mold/b mold/c]
+                (rune lus %cnls exqx)
+            ::
+                :-  '-' 
+                %+  cook
+                  |=  [%cnhp a/hoon b/plan c/~] 
+                  [%cnhp a mold/b c]
+                (rune hep %cnhp exqk)
+            ::
+                :-  ':'
+                %+  cook
+                  |=  [%cnhp a/hoon b/(list plan)]
+                  [%cnhp a (turn b |=(plan mold/+<))]
+                (rune col %cnhp exqz)
             ==
           ==
       ==
     ++  expression
-      %+  cook  |=(hoon +<)
       %-  stew
       ^.  stet  ^.  limo
       :~  :-  '|'
@@ -12065,20 +12015,20 @@
               ==
             ==
           :-  '$'
-            %+  stag  %mold
             ;~  pfix  buc
               %-  stew
               ^.  stet  ^.  limo
-              :~  ['@' (rune pat %bcpt exqb)]
-                  ['_' (rune cab %bccb expa)]
-                  [':' (rune col %bccl exqs)]
-                  ['%' (rune cen %bccn exqs)]
-                  ['^' (rune ket %bckt exqb)]
-                  ['~' (rune sig %bcsg exqd)]
-                  ['-' (rune hep %bchp exqb)]
-                  ['=' (rune tis %bcts exqg)]
-                  ['?' (rune wut %bcwt exqs)]
-                  [';' (rune sem %bcsm exqa)]
+              :~  ['@' (stag %mold (rune pat %bcpt exqb))]
+                  ['_' (stag %mold (rune cab %bccb expa))]
+                  [':' (stag %mold (rune col %bccl exqs))]
+                  ['%' (stag %mold (rune cen %bccn exqs))]
+                  ['^' (stag %mold (rune ket %bckt exqb))]
+                  ['~' (stag %mold (rune sig %bcsg exqd))]
+                  ['-' (stag %mold (rune hep %bchp exqb))]
+                  ['=' (stag %mold (rune tis %bcts exqg))]
+                  ['?' (stag %mold (rune wut %bcwt exqs))]
+                  ['.' (rune dot %bunt exqa)]
+                  [',' (rune com %mold exqa)]
               ==
             ==
           :-  '%'
@@ -12259,7 +12209,7 @@
             (cold %ash (jest '+='))
             ;~(pfix gap sym)
             apse:docs
-            ;~(pfix gap loan)
+            ;~(pfix gap (stag %mold loan))
           ==
         ==
       ==
