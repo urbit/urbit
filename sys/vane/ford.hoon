@@ -1926,7 +1926,7 @@
       ?~(buy *baby u.buy)
   =^  mos  bay
     ?-    -.kis
-        $wipe  ~&(%ford-cache-wiped [~ bay(jav ~)])
+        $wipe  ~&(ford-cache-wiped/at=now [~ bay(jav ~)])
         $wasp
       (~(wasp za [our hen [now eny ski] ~] bay) q.kis)
         $exec
