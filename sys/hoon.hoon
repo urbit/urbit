@@ -5402,7 +5402,7 @@
   =+  ton=(mink [sub fol] |=({* *} ~))
   ?.(?=({$0 *} ton) ~ [~ p.ton])
 ::
-++  mink
+++  mink  !.
   ~/  %mink
   |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
   =+  tax=*(list {@ta *})
@@ -5675,8 +5675,7 @@
     {$$ p/axis}                                         ::  simple leg
   ::                                                    ::
     {$base p/base}                                      ::  base
-    {$bunt p/root}                                      ::  default value
-    {$bunx p/plan}                                      ::  default value
+    {$bunt p/plan}                                      ::  example
     {$bust p/base}                                      ::  bunt base
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
@@ -5786,20 +5785,17 @@
     {$tscm p/hoon q/hoon}                               ::  =,  overload p in q
   ::                                            ::::::  conditionals
     {$wtbr p/(list hoon)}                               ::  ?|  loobean or
-    {$wthp p/wing q/(list (pair root hoon))}            ::  ?-  pick case in q
-    {$wxhp p/wing q/(list (pair plan hoon))}            ::  ?-  pick case in q
+    {$wthp p/wing q/(list (pair plan hoon))}            ::  ?-  pick case in q
     {$wtcl p/hoon q/hoon r/hoon}                        ::  ?:  if/then/else
     {$wtdt p/hoon q/hoon r/hoon}                        ::  ?.  ?:(p r q)
     {$wtkt p/wing q/hoon r/hoon}                        ::  ?^  if p is a cell
     {$wtgl p/hoon q/hoon}                               ::  ?<  ?:(p !! q)
     {$wtgr p/hoon q/hoon}                               ::  ?>  ?:(p q !!)
-    {$wtls p/wing q/hoon r/(list (pair root hoon))}     ::  ?+  ?-  w/default
-    {$wxls p/wing q/hoon r/(list (pair plan hoon))}     ::  ?+  ?-  w/default
+    {$wtls p/wing q/hoon r/(list (pair plan hoon))}     ::  ?+  ?-  w/default
     {$wtpm p/(list hoon)}                               ::  ?&  loobean and
     {$wtpt p/wing q/hoon r/hoon}                        ::  ?@  if p is atom
     {$wtsg p/wing q/hoon r/hoon}                        ::  ?~  if p is null
-    {$wtts p/root q/wing}                               ::  ?=  if q matches p
-    {$wxts p/plan q/wing}                               ::  ?=  if q matches p
+    {$wtts p/plan q/wing}                               ::  ?=  if q matches p
     {$wtzp p/hoon}                                      ::  ?!  loobean not
   ::                                            ::::::  special
     {$zpcm p/hoon q/hoon}                               ::  !,
@@ -6651,23 +6647,17 @@
       $|  [[%& 2] ~]
     ==
   ::
-  ++  wthp  |=  opt/(list (pair root hoon))
+  ++  wthp  |=  opt/(list (pair plan hoon))
             %+  gray  %wthp
-            [puce (turn opt |=({a/root b/hoon} [a (blue b)]))]
-  ++  wxhp  |=  opt/(list (pair plan hoon))
-            %+  gray  %wxhp
             [puce (turn opt |=({a/plan b/hoon} [a (blue b)]))]
   ++  wtkt  |=({sic/hoon non/hoon} (gray [%wtkt puce (blue sic) (blue non)]))
-  ++  wtls  |=  {gen/hoon opt/(list (pair root hoon))}
+  ++  wtls  |=  {gen/hoon opt/(list (pair plan hoon))}
             %+  gray  %wtls
-            [puce (blue gen) (turn opt |=({a/root b/hoon} [a (blue b)]))]
-  ++  wxls  |=  {gen/hoon opt/(list (pair plan hoon))}
-            %+  gray  %wxls
             [puce (blue gen) (turn opt |=({a/plan b/hoon} [a (blue b)]))]
   ++  wtpt  |=({sic/hoon non/hoon} (gray [%wtpt puce (blue sic) (blue non)]))
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
-  ++  wtts  |=(gen/hoon (gray [%wtts (blue gen) puce]))
-  ++  wxts  |=(mod/plan (gray [%wxts mod puce]))
+  ::  ++  wtts  |=(gen/hoon (gray [%wtts (blue gen) puce]))
+  ++  wtts  |=(mod/plan (gray [%wtts mod puce]))
   --
 ::
 ++  ax
@@ -7495,7 +7485,7 @@
         {$halo *}  ~(clam ax fab boil)
         {$bcsm *}  p.gen
     ::
-        {$brcb *}  :+  %tsls  [%bunx q.gen]
+        {$brcb *}  :+  %tsls  [%bunt q.gen]
                    :+  %brcn  p.gen
                    %-  ~(run by s.gen)
                    |=  tom/tomb
@@ -7521,7 +7511,7 @@
                    [%limb %$]
         {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen q.gen]]
         {$brsg *}  [%ktbr [%brts p.gen q.gen r.gen]]
-        {$brtr *}  :+  %tsls  [%bunx q.gen]
+        {$brtr *}  :+  %tsls  [%bunt q.gen]
                    :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
@@ -7548,8 +7538,7 @@
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$bunt *}  [%ktsg ~(bunt ax fab %bcsm p.gen)]
-        {$bunx *}  [%ktsg ~(bunt ax fab p.gen)]
+        {$bunt *}  [%ktsg ~(bunt ax fab p.gen)]
         {$mold *}  ~(clam ax fab p.gen)
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
@@ -7757,20 +7746,8 @@
         q.i.q.gen
       $(q.gen t.q.gen)
     ::
-        {$wxhp *}
-      |-
-      ?~  q.gen
-        [%lost [%wing p.gen]]
-      :^    %wtcl
-          [%wxts p.i.q.gen p.gen]
-        q.i.q.gen
-      $(q.gen t.q.gen)
-    ::
         {$wtls *}
       [%wthp p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
-    ::
-        {$wxls *}
-      [%wxhp p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
     ::
         {$wtpm *}
       |-
@@ -7791,11 +7768,10 @@
     ::
         {$wtpt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
-        {$wtts *}   [%fits ~(bunt ax fab %bcsm p.gen) q.gen]
-        {$wxts *}   [%fits ~(bunt ax fab p.gen) q.gen]
+        {$wtts *}   [%fits ~(bunt ax fab p.gen) q.gen]
         {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {$zpgr *}
-      [%cnhp [%limb %onan] [%zpsm [%bunt [%limb %abel]] p.gen] ~]
+      [%cnhp [%limb %onan] [%zpsm [%bunt [%bcsm %limb %abel]] p.gen] ~]
     ::
         {$zpwt *}
       ?:  ?:  ?=(@ p.gen)
@@ -7853,8 +7829,7 @@
       ?-  -.gen
         $$     (lead -.gen %.(+.gen noop))
         $base  (lead -.gen %.(+.gen noop))
-        $bunt  (lead -.gen %.(+.gen expr))
-        $bunx  (lead -.gen %.(+.gen stir))
+        $bunt  (lead -.gen %.(+.gen stir))
         $bust  (lead -.gen %.(+.gen noop))
         $docs  (lead -.gen %.(+.gen nexp))
         $dbug  (lead -.gen %.(+.gen nexp))
@@ -7951,20 +7926,17 @@
         $tstr  (lead -.gen %.(+.gen trip))
         $tscm  (lead -.gen %.(+.gen dubs))
         $wtbr  (lead -.gen %.(+.gen moar))
-        $wthp  (lead -.gen %.(+.gen (twin noop (moto dubs))))
-        $wxhp  (lead -.gen %.(+.gen (twin noop (moto (twin stir expr)))))
+        $wthp  (lead -.gen %.(+.gen (twin noop (moto (twin stir expr)))))
         $wtcl  (lead -.gen %.(+.gen trey))
         $wtdt  (lead -.gen %.(+.gen trey))
         $wtkt  (lead -.gen %.(+.gen trip))
         $wtgl  (lead -.gen %.(+.gen dubs))
         $wtgr  (lead -.gen %.(+.gen dubs))
-        $wtls  (lead -.gen %.(+.gen (trio noop expr (moto dubs))))
-        $wxls  (lead -.gen %.(+.gen (trio noop expr (moto (twin stir expr)))))
+        $wtls  (lead -.gen %.(+.gen (trio noop expr (moto (twin stir expr)))))
         $wtpm  (lead -.gen %.(+.gen moar))
         $wtpt  (lead -.gen %.(+.gen trip))
         $wtsg  (lead -.gen %.(+.gen trip))
-        $wtts  (lead -.gen %.(+.gen (twin expr noop)))
-        $wxts  (lead -.gen %.(+.gen (twin stir noop)))
+        $wtts  (lead -.gen %.(+.gen (twin stir noop)))
         $wtzp  (lead -.gen %.(+.gen expr))
         $zpcm  (lead -.gen %.(+.gen dubs))
         $zpgr  (lead -.gen %.(+.gen expr))
@@ -9031,8 +9003,6 @@
     ~/  %chip
     |=  {how/? gen/hoon}  ^-  type
     ?:  ?=({$wtts *} gen)
-      (cool how q.gen (play ~(bunt ax fab [%bcsm p.gen])))
-    ?:  ?=({$wxts *} gen)
       (cool how q.gen (play ~(bunt ax fab p.gen)))
     ?:  ?&(how ?=({$wtpm *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
@@ -9137,7 +9107,7 @@
         {$cnts *}  (~(mint et p.gen q.gen) gol)
     ::
         {$dtkt *}
-      =+  nef=$(gen [%bunx p.gen])
+      =+  nef=$(gen [%bunt p.gen])
       [p.nef [%11 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
     ::
         {$dtls *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
@@ -9299,7 +9269,7 @@
         {$ktcn *}  $(fab |, gen p.gen)
         {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
         {$cnts *}  (~(mull et p.gen q.gen) gol dox)
-        {$dtkt *}  =+($(gen q.gen, gol %noun) $(gen [%bunx p.gen]))
+        {$dtkt *}  =+($(gen q.gen, gol %noun) $(gen [%bunt p.gen]))
         {$dtls *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
         {$sand *}  (beth (play gen))
         {$rock *}  (beth (play gen))
@@ -9642,7 +9612,7 @@
       {$ktcn *}  $(fab |, gen p.gen)
       {$brcn *}  (core sut %gold sut p.gen *seminoun q.gen)
       {$cnts *}  ~(play et p.gen q.gen)
-      {$dtkt *}  $(gen [%bunx p.gen])
+      {$dtkt *}  $(gen [%bunt p.gen])
       {$dtls *}  [%atom %$ ~]
       {$rock *}  |-  ^-  type
                  ?@  q.gen  [%atom p.gen `q.gen]
@@ -11860,7 +11830,7 @@
           (stag %zpzp (cold ~ ;~(plug zap zap)))
         ==
       :-  '_'
-        ;~(pfix cab (stag %bccb wide))
+        ;~(pfix cab (stag %mold (stag %bccb wide)))
       :-  '$'
         ;~  pose
           ;~  pfix  buc
@@ -11898,7 +11868,7 @@
       :-  '('
         (stag %cnhp (ifix [pel per] (most ace wide)))
       :-  '{'
-        (stag %bccl (ifix [kel ker] (most ace wyde)))
+        (stag %mold (stag %bccl (ifix [kel ker] (most ace wyde))))
       :-  '*'
         ;~  pose
           (stag %bunt ;~(pfix tar wyde))
@@ -11950,7 +11920,9 @@
         (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
         ;~  pose
+          %+  stag  %mold
           (stag %bcwt ;~(pfix wut (ifix [pel per] (most ace wyde))))
+        ::
           (cold [%base %bean] wut)
         ==
       :-  '['
@@ -12282,7 +12254,7 @@
           ==
         ::
           %+  cook
-            |=({a/$ash b/term c/whit d/root} [b c a d])
+            |=({a/$ash b/term c/whit d/hoon} [b c a d])
           ;~  plug
             (cold %ash (jest '+='))
             ;~(pfix gap sym)
@@ -12367,9 +12339,9 @@
     ++  ulva  |*  zor/rule                              ::  closing -- and tall
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
     ++  hank  (most muck loaf)                          ::  gapped hoons
-    ++  hunk  (most muck loan)                          ::  gapped roots
+    ++  hunk  (most muck loan)                          ::  gapped plans
     ++  loaf  ?:(tol tall wide)                         ::  tall/wide hoon
-    ++  loan  ?:(tol till wyde)                         ::  tall/wide root
+    ++  loan  ?:(tol till wyde)                         ::  tall/wide plan
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
     ++  muck  ?:(tol gap ace)                           ::  general separator
     ++  teak  %+  knee  *tiki  |.  ~+                   ::  wing or hoon
@@ -12404,7 +12376,7 @@
                 (stag %| (stag ~ tall))
               ==
     ++  rack  (most mash ;~(gunk loaf loaf))            ::  list [hoon hoon]
-    ++  ruck  (most mash ;~(gunk loan loaf))            ::  list [root hoon]
+    ++  ruck  (most mash ;~(gunk loan loaf))            ::  list [plan hoon]
     ++  rick  (most mash ;~(gunk rope loaf))            ::  list [wing hoon]
     ::
     ::    hoon contents
@@ -12441,38 +12413,32 @@
                     wisp                                ::
                   ==                                    ::
     ++  expz  |.(loaf(bug &))                           ::  hoon with tracing
-    ::    root contents
+    ::    plan contents
     ::
     ++  exqa  |.(loan)                                  ::  one hoon
-    ++  exqb  |.(;~(gunk loan loan))                    ::  two roots
-    ++  exqc  |.(;~(gunk loan loaf))                    ::  root then hoon
-    ++  exqd  |.(;~(gunk loaf loan))                    ::  hoon then root
-    ++  exqs  |.((butt hunk))                           ::  closed gapped roots
-    ++  exqg  |.(;~(gunk sym loan))                     ::  term and root
-    ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one root
-    ++  exqr  |.(;~(gunk loan ;~(plug wasp wisp)))      ::  root/aliases?/tail
+    ++  exqb  |.(;~(gunk loan loan))                    ::  two plans
+    ++  exqc  |.(;~(gunk loan loaf))                    ::  plan then hoon
+    ++  exqd  |.(;~(gunk loaf loan))                    ::  hoon then plan
+    ++  exqs  |.((butt hunk))                           ::  closed gapped plans
+    ++  exqg  |.(;~(gunk sym loan))                     ::  term and plan
+    ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one plan
+    ++  exqr  |.(;~(gunk loan ;~(plug wasp wisp)))      ::  plan/aliases?/tail
     ++  exqn  |.(;~(gunk loan (stag %cltr (butt hank))))::  autoconsed hoons
-    ++  exqw  |.(;~(gunk loaf loan))                    ::  hoon and root
-    ++  exqx  |.(;~(gunk loaf loan loan))               ::  hoon, two roots
-    ++  exqy  |.(;~(gunk loaf loan loan loan))          ::  hoon, three roots
-    ++  exqz  |.(;~(gunk loaf (butt hunk)))             ::  hoon, n roots
+    ++  exqw  |.(;~(gunk loaf loan))                    ::  hoon and plan
+    ++  exqx  |.(;~(gunk loaf loan loan))               ::  hoon, two plans
+    ++  exqy  |.(;~(gunk loaf loan loan loan))          ::  hoon, three plans
+    ++  exqz  |.(;~(gunk loaf (butt hunk)))             ::  hoon, n plans
     ::
     ::    tiki expansion for %wt runes
     ::
-    ++  tkhp  |.  %+  cook  |=  {a/tiki b/(list (pair root hoon))}
-                            (~(wthp ah a) b)
-                  (butt ;~(gunk teak ruck))
     ++  txhp  |.  %+  cook  |=  {a/tiki b/(list (pair plan hoon))}
-                            (~(wxhp ah a) b)
+                            (~(wthp ah a) b)
                   (butt ;~(gunk teak ruck))
     ++  tkkt  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
                             (~(wtkt ah a) b c)
                   ;~(gunk teak loaf loaf)
-    ++  tkls  |.  %+  cook  |=  {a/tiki b/hoon c/(list (pair root hoon))}
-                            (~(wtls ah a) b c)
-                  (butt ;~(gunk teak loaf ruck))
     ++  txls  |.  %+  cook  |=  {a/tiki b/hoon c/(list (pair plan hoon))}
-                            (~(wxls ah a) b c)
+                            (~(wtls ah a) b c)
                   (butt ;~(gunk teak loaf ruck))
     ++  tkpt  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
                             (~(wtpt ah a) b c)
@@ -12480,11 +12446,8 @@
     ++  tksg  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
                             (~(wtsg ah a) b c)
                   ;~(gunk teak loaf loaf)
-    ++  tkts  |.  %+  cook  |=  {a/root b/tiki}
-                            (~(wtts ah b) a)
-                  ;~(gunk loan teak)
     ++  txts  |.  %+  cook  |=  {a/plan b/tiki}
-                            (~(wxts ah b) a)
+                            (~(wtts ah b) a)
                   ;~(gunk loan teak)
     ::
     ::    hint syntax
