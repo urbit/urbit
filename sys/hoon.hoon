@@ -257,12 +257,18 @@
   :>  sample type of `*`.
   $-(* *)
 ::
+++  lest
+  :>    null-terminated non-empty list
+  :>
+  :>  mold generator: produces a mold of a null-terminated list of the
+  :>  homogeneous type {a} with at least one element.
+  |*(a/mold {i/a t/(list a)})
 ++  list
   :>    null-terminated list
   :>
   :>  mold generator: produces a mold of a null-terminated list of the
   :>  homogeneous type {a}.
-  |*(a/mold $@($~ {i/a t/(list a)}))
+  |*(a/mold $@($~ (lest a)))
 ::
 ++  lone
   :>    single item tuple
