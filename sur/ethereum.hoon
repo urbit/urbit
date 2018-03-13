@@ -39,25 +39,4 @@
         [%label l=?(%earliest %latest %pending)]
     ==
   --
-::
-::  json-rpc
-::
-++  json-rpc
-  |%
-  ++  response
-    $%  [%result res=@t]
-        [%error code=@t message=@t]  ::TODO  data?
-    ==
-  ::
-  ++  request
-    $:  method=@t
-        params=parameters
-        id=(unit @t)  ::TODO  ?
-    ==
-  ::
-  ++  parameters
-    $%  [%array (list @t)]
-        [%object (map @t @t)]
-    ==
-  --
 --

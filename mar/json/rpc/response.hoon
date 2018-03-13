@@ -1,7 +1,7 @@
 ::
-/-  ethereum
+/-  json-rpc
 /+  httr-to-json
-=,  json-rpc:ethereum
+=,  json-rpc
 ::
 |_  res=response
 ::
