@@ -21,15 +21,6 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
-// XX rename
-typedef struct _h2hed {
-  struct _h2hed* nex_u;
-  c3_w           nam_w;
-  c3_c*          nam_c;
-  c3_w           val_w;
-  c3_c*          val_c;
-} h2hed;
-
 static const c3_i TCP_BACKLOG = 16;
 
 // XX u3_Host.tls_u ?
@@ -99,47 +90,62 @@ _http_vec_from_octs(u3_noun oct)
   return h2o_iovec_init(buf_y, len_w);
 }
 
-/* _http_heds_to_noun(): convert h2o_headers_t to (list (pair @t @t))
+/* _http_heds_to_noun(): convert h2o_header_t to (list (pair @t @t))
 */
 static u3_noun
-_http_heds_to_noun(h2o_headers_t* hed_u)
+_http_heds_to_noun(h2o_header_t* hed_u, c3_d hed_d)
 {
   u3_noun hed = u3_nul;
-  c3_d dex_d  = hed_u->size;
+  c3_d dex_d  = hed_d;
 
-  h2o_header_t deh;
+  h2o_header_t deh_u;
 
   while ( 0 < dex_d ) {
-    deh = hed_u->entries[--dex_d];
-    hed = u3nc(u3nc(_http_vec_to_atom(*deh.name),
-                    _http_vec_to_atom(deh.value)), hed);
+    deh_u = hed_u[--dex_d];
+    hed = u3nc(u3nc(_http_vec_to_atom(*deh_u.name),
+                    _http_vec_to_atom(deh_u.value)), hed);
   }
 
   return hed;
 }
 
-/* _http_heds_from_noun(): convert (list (pair @t @t)) to h2hed
+// XX allocating hed_u and members at once causes SIGSEGV. WTF?
+/* _http_hed_new(): create u3_hhed from nam/val cords
 */
-static h2hed*
+static u3_hhed*
+_http_hed_new(u3_atom nam, u3_atom val)
+{
+  c3_w     nam_w = u3r_met(3, nam);
+  c3_w     val_w = u3r_met(3, val);
+  u3_hhed* hed_u = c3_malloc(sizeof(*hed_u));
+
+  hed_u->nam_c = c3_malloc(nam_w);
+  hed_u->val_c = c3_malloc(val_w);
+  hed_u->nex_u = 0;
+  hed_u->nam_w = nam_w;
+  hed_u->val_w = val_w;
+
+  u3r_bytes(0, nam_w, (c3_y*)hed_u->nam_c, nam);
+  u3r_bytes(0, val_w, (c3_y*)hed_u->val_c, val);
+
+  return hed_u;
+}
+
+/* _http_heds_from_noun(): convert (list (pair @t @t)) to u3_hhed
+*/
+static u3_hhed*
 _http_heds_from_noun(u3_noun hed)
 {
   u3_noun deh = hed;
-  h2hed* hed_u = 0;
+  u3_noun i_hed;
+
+  u3_hhed* hed_u = 0;
 
   while ( u3_nul != hed ) {
-    u3_noun nam = u3h(u3h(hed));
-    u3_noun val = u3t(u3h(hed));
-
-    h2hed* nex_u = c3_malloc(sizeof(*nex_u));
-    nex_u->nam_w = u3r_met(3, nam);
-    nex_u->val_w = u3r_met(3, val);
-    nex_u->nam_c = c3_malloc(nex_u->nam_w);
-    nex_u->val_c = c3_malloc(nex_u->val_w);
-
-    u3r_bytes(0, nex_u->nam_w, (c3_y*)nex_u->nam_c, nam);
-    u3r_bytes(0, nex_u->val_w, (c3_y*)nex_u->val_c, val);
-
+    i_hed = u3h(hed);
+    u3_hhed* nex_u = _http_hed_new(u3h(i_hed), u3t(i_hed));
     nex_u->nex_u = hed_u;
+
     hed_u = nex_u;
     hed = u3t(hed);
   }
@@ -148,17 +154,18 @@ _http_heds_from_noun(u3_noun hed)
   return hed_u;
 }
 
-/* _http_heds_from_noun(): free h2hed linked list
+/* _http_heds_free(): free header linked list
 */
 static void
-_http_heds_free(h2hed* hed_u)
+_http_heds_free(u3_hhed* hed_u)
 {
-  while ( 0 != hed_u ) {
-    h2hed* deh_u = hed_u;
-    hed_u = deh_u->nex_u;
-    free(deh_u->nam_c);
-    free(deh_u->val_c);
-    free(deh_u);
+  while ( hed_u ) {
+    u3_hhed* nex_u = hed_u->nex_u;
+
+    free(hed_u->nam_c);
+    free(hed_u->val_c);
+    free(hed_u);
+    hed_u = nex_u;
   }
 }
 
@@ -285,8 +292,8 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
                       (sas < 500) ? "Missing" :
                       "Hosed";
 
-  h2hed* hed_u = _http_heds_from_noun(u3k(hed));
-  h2hed* deh_u = hed_u;
+  u3_hhed* hed_u = _http_heds_from_noun(u3k(hed));
+  u3_hhed* deh_u = hed_u;
 
   while ( 0 != hed_u ) {
     h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
@@ -324,7 +331,8 @@ _http_rec_to_httq(h2o_req_t* rec_u)
   }
 
   u3_noun url = _http_vec_to_atom(rec_u->path);
-  u3_noun hed = _http_heds_to_noun(&rec_u->headers);
+  u3_noun hed = _http_heds_to_noun(rec_u->headers.entries,
+                                   rec_u->headers.size);
 
   // restore host header
   hed = u3nc(u3nc(u3i_string("host"),
