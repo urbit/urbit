@@ -19,7 +19,6 @@
 #include <term.h>
 
 #include <openssl/ssl.h>
-#include <openssl/err.h>
 
 #include "all.h"
 #include "vere/vere.h"
@@ -911,27 +910,35 @@ u3_cttp_ef_thus(c3_l    num_l,
   u3z(cuq);
 }
 
-/* u3_cttp_io_init(): initialize http client I/O.
+/* _cttp_init_tls: initialize OpenSSL context
 */
-void
-u3_cttp_io_init()
+static SSL_CTX*
+_cttp_init_tls()
 {
-  u3_Host.ssl_u = SSL_CTX_new(TLSv1_client_method());
-  SSL_CTX_set_options(u3S, SSL_OP_NO_SSLv2);
-  SSL_CTX_set_verify(u3S, SSL_VERIFY_PEER, 0);
-  SSL_CTX_set_default_verify_paths(u3S);
-  // if ( 0 == SSL_CTX_load_verify_locations(u3S,
-  //             "/etc/ssl/certs/ca-certificates.crt", NULL) ) {
-  //   fprintf(stderr, "\tload-error\r\n");
-  // } else {
-  //   fprintf(stderr, "\tload-good\r\n");
-  // }
+  // XX require 1.1.0 and use TLS_client_method()
+  SSL_CTX* tls_u = SSL_CTX_new(SSLv23_client_method());
+  // XX use SSL_CTX_set_max_proto_version() and SSL_CTX_set_min_proto_version()
+  SSL_CTX_set_options(tls_u, SSL_OP_NO_SSLv2 |
+                             SSL_OP_NO_SSLv3 |
+                             // SSL_OP_NO_TLSv1 | // XX test
+                             SSL_OP_NO_COMPRESSION);
 
-  SSL_CTX_set_session_cache_mode(u3S, SSL_SESS_CACHE_OFF);
-  SSL_CTX_set_cipher_list(u3S, "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:"
+  SSL_CTX_set_verify(tls_u, SSL_VERIFY_PEER, 0);
+  SSL_CTX_set_default_verify_paths(tls_u);
+  SSL_CTX_set_session_cache_mode(tls_u, SSL_SESS_CACHE_OFF);
+  SSL_CTX_set_cipher_list(tls_u,
+                          "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:"
                           "ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:"
                           "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
 
+  return tls_u;
+}
+
+/* _cttp_init_h2o: initialize h2o client ctx and timeout
+*/
+static h2o_http1client_ctx_t*
+_cttp_init_h2o()
+{
   h2o_timeout_t* tim_u = c3_malloc(sizeof(*tim_u));
 
   // XX how long? 1 minute?
@@ -939,11 +946,20 @@ u3_cttp_io_init()
 
   h2o_http1client_ctx_t* ctx_u = c3_calloc(sizeof(*ctx_u));
   ctx_u->loop = u3L;
-  ctx_u->ssl_ctx = u3S;
   ctx_u->io_timeout = tim_u;
 
+  return ctx_u;
+};
+
+/* u3_cttp_io_init(): initialize http client I/O.
+*/
+void
+u3_cttp_io_init()
+{
+  u3_Host.ctp_u.tls_u = _cttp_init_tls();
+  u3_Host.ctp_u.ctx_u = _cttp_init_h2o();
+  u3_Host.ctp_u.ctx_u->ssl_ctx = u3_Host.ctp_u.tls_u;
   u3_Host.ctp_u.ceq_u = 0;
-  u3_Host.ctp_u.ctx_u = ctx_u;
 }
 
 /* u3_cttp_io_poll(): poll kernel for cttp I/O.
@@ -958,7 +974,7 @@ u3_cttp_io_poll(void)
 void
 u3_cttp_io_exit(void)
 {
-    SSL_CTX_free(u3S);
+    SSL_CTX_free(u3_Host.ctp_u.tls_u);
     free(u3_Host.ctp_u.ctx_u->io_timeout);
     free(u3_Host.ctp_u.ctx_u);
 }

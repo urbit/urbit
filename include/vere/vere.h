@@ -132,7 +132,9 @@
     */
       typedef struct _u3_cttp {
         u3_creq*         ceq_u;             //  request list
-        h2o_http1client_ctx_t* ctx_u;       //  h2o client ctx
+        h2o_http1client_ctx_t*              //
+                         ctx_u;             //  h2o client ctx
+        void*            tls_u;             //  client SSL_CTX*
       } u3_cttp;
 
     /* u3_apac: ames packet, coming or going.
@@ -526,12 +528,10 @@
         u3_behn    teh_u;                   //  behn timer
         c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
-        void*      ssl_u;                   //  struct SSL_CTX*
       } u3_host;                            //  host == computer == process
 
 #     define u3L  u3_Host.lup_u             //  global event loop
 #     define u3Z  (&(u3_Raft))
-#     define u3S  u3_Host.ssl_u
 
   /** Global variables.
   **/
