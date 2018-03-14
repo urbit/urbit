@@ -4716,41 +4716,29 @@
 ++  cen  (just '%')
 ++  col  (just ':')
 ++  com  (just ',')
-++  doq  (just '"')     ::  toc
-++  toc  (just '"')     ::  toc
 ++  dot  (just '.')
-++  fas  (just '/')     ::  net
-++  net  (just '/')     ::  net
 ++  gal  (just '<')
 ++  gar  (just '>')
+++  hat  (just '@')
 ++  hax  (just '#')
-++  kel  (just '{')     ::  lef
-++  lef  (just '{')     ::  lef
-++  ker  (just '}')     ::  ref
-++  ref  (just '}')     ::  ref
-++  ket  (just '^')
-++  lus  (just '+')
 ++  hep  (just '-')
-++  pel  (just '(')     ::  lit
-++  lit  (just '(')     ::  lit
-++  pam  (just '&')     ::  pad
-++  pad  (just '&')     ::  pad
-++  per  (just ')')     ::  rit
-++  rit  (just ')')     ::  rit
-++  pat  (just '@')     ::  hat
-++  hat  (just '@')     ::  hat
-++  sel  (just '[')     ::  lac
-++  lac  (just '[')     ::  lac
-++  sem  (just ';')     ::  mic
-++  mic  (just ';')     ::  mic
-++  ser  (just ']')     ::  rac
-++  rac  (just ']')     ::  rac
+++  ket  (just '^')
+++  lef  (just '{') 
+++  lit  (just '(')
+++  lac  (just '[')
+++  lus  (just '+')
+++  mic  (just ';')
+++  net  (just '/')
+++  pad  (just '&')
+++  rac  (just ']')
+++  ref  (just '}')
+++  rit  (just ')') 
+++  say  (just '\'')
 ++  sig  (just '~')
-++  soq  (just '\'')    ::  say
-++  say  (just '\'')    ::  say
 ++  tar  (just '*')
 ++  tec  (just '`')
 ++  tis  (just '=')
+++  toc  (just '"')
 ++  wut  (just '?')
 ++  zap  (just '!')
 ::
@@ -4778,7 +4766,7 @@
          ==
 ++  gaw  (cold ~ (star ;~(pose vul gah)))               ::  classic white
 ++  gay  ;~(pose gap (easy ~))                          ::
-++  gon  ;~(pose ;~(plug bas gay fas) (easy ~))         ::  long numbers \ /
+++  gon  ;~(pose ;~(plug bas gay net) (easy ~))         ::  long numbers \ /
 ++  gul  ;~(pose (cold 2 gal) (cold 3 gar))             ::  axis syntax < >
 ++  hex  (bass 16 (most gon hit))                       ::  hex to atom
 ++  hig  (shim 'A' 'Z')                                 ::  uppercase
@@ -4819,13 +4807,13 @@
              ;~(less ;~(plug (just `@`10) soz) (just `@`10))
          ==
 ++  qit  ;~  pose                                       ::  chars in a cord
-             ;~(less bas soq prn)
-             ;~(pfix bas ;~(pose bas soq mes))          ::  escape chars
+             ;~(less bas say prn)
+             ;~(pfix bas ;~(pose bas say mes))          ::  escape chars
          ==
-++  qut  ;~  simu  soq                                  ::  cord
+++  qut  ;~  simu  say                                  ::  cord
            ;~  pose
              ;~  less  soz
-               (ifix [soq soq] (boss 256 (more gon qit)))
+               (ifix [say say] (boss 256 (more gon qit)))
              ==
              =+  hed=;~(pose ;~(plug (plus ace) vul) (just '\0a'))
              %-  iny  %+  ifix
@@ -4834,7 +4822,7 @@
              (boss 256 (star qat))
            ==
          ==
-++  soz  ;~(plug soq soq soq)                           ::  delimiting '''
+++  soz  ;~(plug say say say)                           ::  delimiting '''
 ++  sym                                                 ::  symbol
   %+  cook
     |=(a/tape (rap 3 ^-((list @) a)))
@@ -4930,7 +4918,7 @@
              (cook tuft (ifix [sig dot] hex))
              ;~(pfix sig ;~(pose sig dot))
            ==
-  ++  voy  ;~(pfix bas ;~(pose bas soq bix))
+  ++  voy  ;~(pfix bas ;~(pose bas say bix))
   --
 ++  ag
   |%
@@ -5403,7 +5391,7 @@
 ++  spat  |=(pax/path (crip (spud pax)))                ::  render path to cord
 ++  spud  |=(pax/path ~(ram re (smyt pax)))             ::  render path to tape
 ++  stab                                                ::  parse cord to path
-  =+  fel=;~(pfix fas (more fas urs:ab))
+  =+  fel=;~(pfix net (more net urs:ab))
   |=(zep/@t `path`(rash zep fel))
 ::
 ::::  4n: virtualization
@@ -5628,13 +5616,13 @@
 ++  plan                                                ::  data structure
           $%  {$base p/base}                            ::  base type
               {$bccb p/hoon}                            ::  example
-              {$bccl p/{i/plan t/(list plan)}}          ::  aka row
+              {$bccl p/{i/plan t/(list plan)}}          ::  tuple
               {$bccn p/{i/plan t/(list plan)}}          ::  selection
               {$bchp p/plan q/plan}                     ::  function type
               {$bckt p/plan q/plan}                     ::  pair+tag
-              {$bcpt p/plan q/plan}                     ::  atom+cell
+              {$bcht p/plan q/plan}                     ::  atom+cell
               {$bcsg p/hoon q/plan}                     ::  default
-              {$bcsm p/hoon}                            ::  assembly
+              {$bcmc p/hoon}                            ::  assembly
               {$bcts p/toga q/plan}                     ::  name
               {$bcwt p/{i/plan t/(list plan)}}          ::  plain selection
               {$dbug p/spot q/plan}                     ::  set debug
@@ -6777,7 +6765,7 @@
       {$bchp *}  ::  see under %bccb
                  ::
                  [%rock %n 0]
-      {$bcsm *}  ::  borrow sample
+      {$bcmc *}  ::  borrow sample
                  ::
                  [%tsgl [%$ 6] p.mod]
       {$bccn *}  ::  use last entry
@@ -6787,7 +6775,7 @@
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
       {$leaf *}  [%rock p.mod q.mod]
       {$halo *}  $(mod q.mod)
-      {$bcpt *}  $(mod p.mod)
+      {$bcht *}  $(mod p.mod)
       {$bccl *}  |-  ^-  hoon
                  ?~  t.p.mod  ^$(mod i.p.mod) 
                  :-  ^$(mod i.p.mod) 
@@ -6820,7 +6808,7 @@
     ?-  mod
       {$base *}  &
       {$bcts *}  clean(mod q.mod)
-      {$bcsm *}  |
+      {$bcmc *}  |
       {$dbug *}  clean(mod q.mod)
       {$bcsg *}  |
       {$bchp *}  &(clean(mod p.mod) clean(mod q.mod))
@@ -6841,7 +6829,7 @@
                  ==
       {$leaf *}  &
       {$halo *}  clean(mod q.mod)
-      {$bcpt *}  &(clean(mod p.mod) clean(mod q.mod))
+      {$bcht *}  &(clean(mod p.mod) clean(mod q.mod))
       {$bckt *}  &(clean(mod p.mod) clean(mod q.mod))
       {$bccb *}  |
     ==
@@ -6860,7 +6848,7 @@
     ::
         {$base *}  (decorate (basal p.mod))
         {$bcts *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
-        {$bcsm *}  (decorate (home [%tsgl [%limb %$] p.mod]))
+        {$bcmc *}  (decorate (home [%tsgl [%limb %$] p.mod]))
         {$bcsg *}  [%ktls example(mod q.mod) (home p.mod)]
         {$dbug *}  example(mod q.mod, bug [p.mod bug])
         {$bchp *}  (decorate (function:clear p.mod q.mod))
@@ -6885,7 +6873,7 @@
     ?:  ?=($dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
     ?:  ?=($bcsg -.mod)  factory(mod q.mod, def `p.mod)
     ^-  hoon
-    ?:  ?=([%bcsm *] mod)
+    ?:  ?=([%bcmc *] mod)
       ::  don't re-indirect through handmade molds
       ::
       (home p.mod)
@@ -7114,7 +7102,7 @@
       ::
       ::  synthesis, $;
       ::
-          {$bcsm *}
+          {$bcmc *}
         (decorate [%cncl (home p.mod) fetch ~])
       ::
       ::  tuple, $:
@@ -7158,7 +7146,7 @@
       ::
       ::  branch, $@
       ::
-          {$bcpt *}
+          {$bcht *}
         %-  decorate
         ?@  top
           ?:  =(%| top)
@@ -7669,7 +7657,7 @@
                        [%tsgl [%$ 2] [%limb %a]]
                      :+  %kthp
                         :+  %bcts  p.p.gen
-                        [%bcsm [%tsgr [%limb %v] [%bccm u.q.p.gen]]]
+                        [%bcmc [%tsgr [%limb %v] [%bccm u.q.p.gen]]]
                      [%tsgl [%$ 2] [%limb %a]] 
                 [%limb %v]
       s.gen
@@ -7726,7 +7714,7 @@
         {$wtts *}   [%fits ~(bunt ax fab p.gen) q.gen]
         {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {$zpgr *}
-      [%cncl [%limb %onan] [%zpmc [%bcdt [%bcsm %limb %abel]] p.gen] ~]
+      [%cncl [%limb %onan] [%zpmc [%bcdt [%bcmc %limb %abel]] p.gen] ~]
     ::
         {$zpwt *}
       ?:  ?:  ?=(@ p.gen)
@@ -7785,6 +7773,7 @@
         $$     (lead -.gen %.(+.gen noop))
         $base  (lead -.gen %.(+.gen noop))
         $bcdt  (lead -.gen %.(+.gen stir))
+        $bccm  (lead -.gen %.(+.gen stir))
         $bust  (lead -.gen %.(+.gen noop))
         $docs  (lead -.gen %.(+.gen nexp))
         $dbug  (lead -.gen %.(+.gen nexp))
@@ -7799,16 +7788,6 @@
         $tune  (lead -.gen %.(+.gen tung))
         $wing  (lead -.gen %.(+.gen noop))
         $yell  (lead -.gen %.(+.gen moar))
-        $bcpt  (lead -.gen %.(+.gen dubs))
-        $bccb  (lead -.gen %.(+.gen expr))
-        $bccl  (lead -.gen %.(+.gen (twin expr moar)))
-        $bccn  (lead -.gen %.(+.gen (twin expr moar)))
-        $bchp  (lead -.gen %.(+.gen dubs))
-        $bckt  (lead -.gen %.(+.gen dubs))
-        $bcsg  (lead -.gen %.(+.gen dubs))
-        $bcwt  (lead -.gen %.(+.gen (twin expr moar)))
-        $bcts  (lead -.gen %.(+.gen nexp))
-        $bcsm  (lead -.gen %.(+.gen expr))
         $brcb  (lead -.gen %.(+.gen (quad noop stir exps arms)))
         $brcl  (lead -.gen %.(+.gen (twin noop dubs)))
         $brcn  (lead -.gen %.(+.gen (twin noop arms)))
@@ -7848,7 +7827,6 @@
         $ktsg  (lead -.gen %.(+.gen expr))
         $ktts  (lead -.gen %.(+.gen nexp))
         $ktwt  (lead -.gen %.(+.gen expr))
-        $bccm  (lead -.gen %.(+.gen stir))
         $sgbr  (lead -.gen %.(+.gen dubs))
         $sgcb  (lead -.gen %.(+.gen dubs))
         $crap  (lead -.gen %.(+.gen (raid expr)))
@@ -10492,7 +10470,7 @@
   ++  gash  %+  cook                                    ::  parse path
               |=  a/(list tyke)  ^-  tyke
               ?~(a ~ (weld i.a $(a t.a)))
-            (more fas limp)
+            (more net limp)
   ++  gasp  ;~  pose                                    ::  parse =path= etc.
               %+  cook
                 |=({a/tyke b/tyke c/tyke} :(weld a b c))
@@ -10505,8 +10483,8 @@
             ==
   ++  glam  ~+((glue ace))
   ++  hasp  ;~  pose                                    ::  path element
-              (ifix [sel ser] wide)
-              (stag %cncl (ifix [pel per] (most ace wide)))
+              (ifix [lac rac] wide)
+              (stag %cncl (ifix [lit rit] (most ace wide)))
               (stag %sand (stag %tas (cold %$ buc)))
               (stag %sand (stag %t qut))
               %+  cook
@@ -10517,7 +10495,7 @@
               |=  {a/(list) b/tyke}
               ?~  a  b
               $(a t.a, b [`[%sand %tas %$] b])
-            ;~(plug (star fas) gasp)
+            ;~(plug (star net) gasp)
   ++  mota  %+  cook
               |=({a/tape b/tape} (rap 3 (weld a b)))
             ;~(plug (star low) (star hig))
@@ -10695,7 +10673,7 @@
   ++  porc
     ;~  plug
       (cook |=(a/(list) (lent a)) (star cen))
-      ;~(pfix fas gash)
+      ;~(pfix net gash)
     ==
   ::
   ++  rump
@@ -10705,7 +10683,7 @@
     ;~(plug rope ;~(pose (stag ~ wede) (easy ~)))
   ::
   ++  rood
-    ;~  pfix  fas
+    ;~  pfix  net
       (stag %clsg poor)
     ==
   ::
@@ -10751,12 +10729,12 @@
       top-level
     ::
     ++  top-level                                        ::  entry-point
-      ;~(pfix sem ?:(in-tall-form tall-top wide-top))
+      ;~(pfix mic ?:(in-tall-form tall-top wide-top))
     ::
     ++  inline-embed                                    ::  brace interpolation
       %+  cook  |=(a/tuna:hoon a)
       ;~  pose
-        ;~(pfix sem bracketed-elem(in-tall-form |))
+        ;~(pfix mic bracketed-elem(in-tall-form |))
         ;~(plug tuna-mode sump)
         (stag %tape sump)
       ==
@@ -10794,13 +10772,13 @@
     ++  wide-attrs                                      ::  wide attributes
       %+  cook  |=(a/(unit mart:hoon) (fall a ~))
       %-  punt
-      %+  ifix  [pel per]
+      %+  ifix  [lit rit]
       %+  more  (jest ', ')
       ;~((glue ace) a-mane hopefully-quote)
     ::
     ++  wide-tail                                       ::  wide elements
       %+  cook  |=(a/marl:hoon a)
-      ;~(pose ;~(pfix col wrapped-elems) (cold ~ sem) (easy ~))
+      ;~(pose ;~(pfix col wrapped-elems) (cold ~ mic) (easy ~))
     ::
     ++  wide-elems                                      ::  wide elements
       %+  cook  |=(a/marl:hoon a)
@@ -10810,7 +10788,7 @@
     ++  wide-paren-elems                                ::  wide flow
       %+  cook  |=(a/marl:hoon a)
       %+  cook  join-tops
-      (ifix [pel per] (more ace wide-inner-top))
+      (ifix [lit rit] (more ace wide-inner-top))
     ::
     ::+|
     ::
@@ -10831,7 +10809,7 @@
       %+  cook  |=(a/marl:hoon a)
       ;~  pose
         ;~  less  (jest '"""')
-          (ifix [doq doq] (cook collapse-chars quote-innards))
+          (ifix [toc toc] (cook collapse-chars quote-innards))
         ==
       ::
         %-  inde
@@ -10843,14 +10821,14 @@
       %+  cook  |=(a/(list $@(@ tuna:hoon)) a)
       %-  star
       ;~  pose
-        ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
+        ;~(pfix bas ;~(pose (mask "-+*%;\{") bas toc bix:ab))
         inline-embed
-        ;~(less bas kel ?:(in-tall-form fail doq) prn)
+        ;~(less bas lef ?:(in-tall-form fail toc) prn)
         ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
       ==
     ::
     ++  bracketed-elem                                  ::  bracketed element
-      %+  ifix  [kel ker]
+      %+  ifix  [lef ref]
       ;~(plug tag-head wide-elems)
     ::
     ++  wrapped-elems                                   ::  wrapped tuna
@@ -10897,7 +10875,7 @@
         ;~  plug
           (punt ;~(plug (cold %id hax) (cook trip sym)))
           (cook en-class (star ;~(plug (cold %class dot) sym)))
-          (punt ;~(plug ;~(pose (cold %href fas) (cold %src pat)) soil))
+          (punt ;~(plug ;~(pose (cold %href net) (cold %src hat)) soil))
           (easy ~)
         ==
       ::
@@ -10945,7 +10923,7 @@
       %+  cook  |=(a/marl:hoon a)
       %+  ifix  [gap ;~(plug gap duz)]
       %+  most  gap
-      ;~  pfix  sem
+      ;~  pfix  mic
         %+  cook  |=(a/tape ;/(a))
         ;~  pose
           ;~(pfix ace (star prn))
@@ -10957,7 +10935,7 @@
       ?>  in-tall-form
       %+  cook  |=(a/marl:hoon a)
       ;~  pose
-        (cold ~ sem)
+        (cold ~ mic)
         ;~(pfix col wrapped-elems(in-tall-form |))
         ;~(pfix col ace (cook collapse-chars(in-tall-form |) quote-innards))
         (ifix [gap ;~(plug gap duz)] tall-kids)
@@ -11375,7 +11353,7 @@
           ::
             (cold [%one %rule] ;~(plug hep hep hep))    ::  --- horizontal ruler
             (cold [%one %fens] ;~(plug tec tec tec))    ::  ``` code fence
-            (cold [%one %expr] sem)                     ::  ;sail expression
+            (cold [%one %expr] mic)                     ::  ;sail expression
           ::
             (cold [%new %head] ;~(plug (star hax) ace)) ::  # heading
             (cold [%new %lint] ;~(plug hep ace))        ::  - line item
@@ -11484,7 +11462,7 @@
         ::
         ::  "quoted text"
         ::
-          (stag %quod (ifix [doq doq] (cool (cash doq) work)))
+          (stag %quod (ifix [toc toc] (cool (cash toc) work)))
         ::
         ::  `classic markdown quote`
         ::
@@ -11498,8 +11476,8 @@
         ::
           %+  stag  %link
           ;~  (glue (punt whit))
-            (ifix [sel ser] (cool (cash ser) work))
-            (ifix [pel per] (cash per))
+            (ifix [lac rac] (cool (cash rac) work))
+            (ifix [lit rit] (cash rit))
           ==
         ::
         ::  #hoon
@@ -11524,7 +11502,7 @@
               tash:so
               ;~(pfix dot perd:so)
               ;~(pfix sig ;~(pose twid:so (easy [%$ %n 0])))
-              ;~(pfix cen ;~(pose sym buc pam bar qut nuck:so))
+              ;~(pfix cen ;~(pose sym buc pad bar qut nuck:so))
             ==
           ::
             ;~(simu whit (easy ~))
@@ -11668,7 +11646,7 @@
   ++  scab
     %+  cook
       |=  a/(list wing)  ^-  plan
-      :-  %bcsm
+      :-  %bcmc
       |-  ^-  hoon
       ?~(a !! ?~(t.a [%wing i.a] [%tsgl [%wing i.a] $(a t.a)]))
     (most col rope)
@@ -11681,26 +11659,26 @@
       :-  '_'
         ;~(pfix cab (stag %bccb wide))
       :-  ','
-        ;~(pfix com (stag %bcsm wide))
+        ;~(pfix com (stag %bcmc wide))
       :-  '$'
         ;~  pose
           ;~  pfix  buc
             ;~  pose
               (stag %leaf (stag %tas (cold %$ buc)))
-              (stag %leaf (stag %f (cold & pam)))
+              (stag %leaf (stag %f (cold & pad)))
               (stag %leaf (stag %f (cold | bar)))
               (stag %leaf (stag %t qut))
               (stag %leaf (sear |=(a/coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
             ==
           ==
-          (stag %bcsm rump)
+          (stag %bcmc rump)
         ==
       :-  '%'
         ;~  pose
           ;~  pfix  cen
             ;~  pose
               (stag %leaf (stag %tas (cold %$ buc)))
-              (stag %leaf (stag %f (cold & pam)))
+              (stag %leaf (stag %f (cold & pad)))
               (stag %leaf (stag %f (cold | bar)))
               (stag %leaf (stag %t qut))
               (stag %leaf (sear |=(a/coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
@@ -11708,25 +11686,25 @@
           ==
         ==
       :-  '('
-        %+  stag  %bcsm
+        %+  stag  %bcmc
         %+  stag  %cncl
-        %+  ifix  [pel per]
+        %+  ifix  [lit rit]
         ;~  plug
           wide
           ;~(pose ;~(pfix ace (most ace (stag %bccm wyde))) (easy ~))
         ==
       :-  '{'
-        (stag %bccl (ifix [kel ker] (most ace wyde)))
+        (stag %bccl (ifix [lef ref] (most ace wyde)))
       :-  '['
-        (stag %bccl (ifix [sel ser] (most ace wyde)))
+        (stag %bccl (ifix [lac rac] (most ace wyde)))
       :-  '*'
         (cold [%base %noun] tar)
       :-  '@'
-        ;~(pfix pat (stag %base (stag %atom mota)))
+        ;~(pfix hat (stag %base (stag %atom mota)))
       :-  '?'
         ;~  pose
           %+  stag  %bcwt
-          ;~(pfix wut (ifix [pel per] (most ace wyde)))
+          ;~(pfix wut (ifix [lit rit] (most ace wyde)))
         ::
           (cold [%base %bean] wut)
         ==
@@ -11751,12 +11729,12 @@
                 {$tsgl *}  $(hon ~(open ap hon))
                 {$tsgr *}  $(hon q.hon)
               ==
-            |=(term [%bcts +< %bcsm hon])
+            |=(term [%bcts +< %bcmc hon])
           wide
         ==
       :-  ['a' 'z']
         ;~  pose
-          (stag %bcts ;~(plug sym ;~(pfix ;~(pose fas tis) wyde)))
+          (stag %bcts ;~(plug sym ;~(pfix ;~(pose net tis) wyde)))
           scab
         ==
     ==
@@ -11783,7 +11761,7 @@
           ;~  pfix  buc
             ;~  pose
               (stag %leaf (stag %tas (cold %$ buc)))
-              (stag %leaf (stag %f (cold & pam)))
+              (stag %leaf (stag %f (cold & pad)))
               (stag %leaf (stag %f (cold | bar)))
               (stag %leaf (stag %t qut))
               (stag %leaf (sear |=(a/coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
@@ -11796,7 +11774,7 @@
           ;~  pose
             (stag %clsg (sear |~({a/@ud b/tyke} (posh ~ ~ a b)) porc))
             (stag %rock (stag %tas (cold %$ buc)))
-            (stag %rock (stag %f (cold & pam)))
+            (stag %rock (stag %f (cold & pad)))
             (stag %rock (stag %f (cold | bar)))
             (stag %rock (stag %t qut))
             (cook (jock &) nuck:so)
@@ -11806,26 +11784,26 @@
       :-  '&'
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
-          (stag %wtpm ;~(pfix pam (ifix [pel per] (most ace wide))))
-          ;~(plug (stag %rock (stag %f (cold & pam))) wede)
-          (stag %sand (stag %f (cold & pam)))
+          (stag %wtpm ;~(pfix pad (ifix [lit rit] (most ace wide))))
+          ;~(plug (stag %rock (stag %f (cold & pad))) wede)
+          (stag %sand (stag %f (cold & pad)))
         ==
       :-  '\''
         (stag %sand (stag %t qut))
       :-  '('
-        (stag %cncl (ifix [pel per] (most ace wide)))
+        (stag %cncl (ifix [lit rit] (most ace wide)))
       :-  '{'
-        (stag %bccm (stag %bccl (ifix [kel ker] (most ace wyde))))
+        (stag %bccm (stag %bccl (ifix [lef ref] (most ace wyde))))
       :-  '*'
         ;~  pose
           (stag %bcdt ;~(pfix tar wyde))
           (cold [%base %noun] tar)
         ==
       :-  '@'
-        ;~(pfix pat (stag %base (stag %atom mota)))
+        ;~(pfix hat (stag %base (stag %atom mota)))
       :-  '+'
         ;~  pose
-          (stag %dtls ;~(pfix lus (ifix [pel per] wide)))
+          (stag %dtls ;~(pfix lus (ifix [lit rit] wide)))
         ::
           %+  cook
             |=  a/(list (list woof))
@@ -11859,16 +11837,16 @@
       :-  ':'
         ;~  pfix  col
           ;~  pose
-            (stag %mccl (ifix [pel per] (most ace wide)))
-            ;~(pfix fas (stag %mcnt wide))
+            (stag %mccl (ifix [lit rit] (most ace wide)))
+            ;~(pfix net (stag %mcnt wide))
           ==
         ==
       :-  '='
-        (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
+        (stag %dtts ;~(pfix tis (ifix [lit rit] ;~(glam wide wide))))
       :-  '?'
         ;~  pose
           %+  stag  %bccm
-          (stag %bcwt ;~(pfix wut (ifix [pel per] (most ace wyde))))
+          (stag %bcwt ;~(pfix wut (ifix [lit rit] (most ace wyde))))
         ::
           (cold [%base %bean] wut)
         ==
@@ -11884,7 +11862,7 @@
           ;~  pose
             %+  cook
               |=({a/@ta b/hoon} [%ktls [%sand a 0] [%ktls [%sand %$ 0] b]])
-            ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
+            ;~(pfix hat ;~(plug mota ;~(pfix tec wide)))
             ;~  pfix  tar
               (stag %kthp (stag [%base %noun] ;~(pfix tec wide)))
             ==
@@ -11903,7 +11881,7 @@
       :-  '|'
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
-          (stag %wtbr ;~(pfix bar (ifix [pel per] (most ace wide))))
+          (stag %wtbr ;~(pfix bar (ifix [lit rit] (most ace wide))))
           ;~(plug (stag %rock (stag %f (cold | bar))) wede)
           (stag %sand (stag %f (cold | bar)))
         ==
@@ -11913,11 +11891,11 @@
         ::
           ;~  pfix  sig
             ;~  pose
-              (stag %clsg (ifix [sel ser] (most ace wide)))
+              (stag %clsg (ifix [lac rac] (most ace wide)))
             ::
               %+  stag  %cnsg
               %+  ifix
-                [pel per]
+                [lit rit]
               ;~(glam rope wide (most ace wide))
             ::
               (cook (jock |) twid:so)
@@ -11936,11 +11914,11 @@
   ++  soil
     ;~  pose
       ;~  less  (jest '"""')
-        %+  ifix  [doq doq]
+        %+  ifix  [toc toc]
         %-  star
         ;~  pose
-          ;~(pfix bas ;~(pose bas doq kel bix:ab))
-          ;~(less doq bas kel prn)
+          ;~(pfix bas ;~(pose bas toc lef bix:ab))
+          ;~(less toc bas lef prn)
           (stag ~ sump)
         ==
       ==
@@ -11949,13 +11927,13 @@
         [(jest '"""\0a') (jest '\0a"""')]
       %-  star
       ;~  pose
-        ;~(pfix bas ;~(pose bas kel bix:ab))
-        ;~(less bas kel prn)
+        ;~(pfix bas ;~(pose bas lef bix:ab))
+        ;~(less bas lef prn)
         ;~(less (jest '\0a"""') (just `@`10))
         (stag ~ sump)
       ==
     ==
-  ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
+  ++  sump  (ifix [lef ref] (stag %cltr (most ace wide)))
   ++  norm                                              ::  rune regular form
     |=  tol/?
     |%
@@ -11966,7 +11944,7 @@
             ;~  pfix  buc
               %-  stew
               ^.  stet  ^.  limo
-              :~  ['@' (rune pat %bcpt exqb)]
+              :~  ['@' (rune hat %bcht exqb)]
                   ['_' (rune cab %bccb expa)]
                   [':' (rune col %bccl exqs)]
                   ['%' (rune cen %bccn exqs)]
@@ -11975,11 +11953,11 @@
                   ['-' (rune hep %bchp exqb)]
                   ['=' (rune tis %bcts exqg)]
                   ['?' (rune wut %bcwt exqs)]
-                  [';' (rune sem %bcsm expa)]
+                  [';' (rune mic %bcmc expa)]
               ==
             ==
         :-  '%'
-          %+  stag  %bcsm
+          %+  stag  %bcmc
           ;~  pfix  cen
             %-  stew
             ^.  stet  ^.  limo
@@ -12032,7 +12010,7 @@
             ;~  pfix  buc
               %-  stew
               ^.  stet  ^.  limo
-              :~  ['@' (stag %bccm (rune pat %bcpt exqb))]
+              :~  ['@' (stag %bccm (rune hat %bcht exqb))]
                   ['_' (stag %bccm (rune cab %bccb expa))]
                   [':' (stag %bccm (rune col %bccl exqs))]
                   ['%' (stag %bccm (rune cen %bccn exqs))]
@@ -12091,7 +12069,7 @@
                   ['.' (rune dot %ktdt expb)]
                   ['-' (rune hep %kthp exqc)]
                   ['+' (rune lus %ktls expb)]
-                  ['&' (rune pam %ktpd expa)]
+                  ['&' (rune pad %ktpd expa)]
                   ['~' (rune sig %ktsg expa)]
                   ['=' (rune tis %ktts expg)]
                   ['?' (rune wut %ktwt expa)]
@@ -12106,24 +12084,24 @@
                   ['$' (rune buc %sgbc expf)]
                   ['_' (rune cab %sgcb expb)]
                   ['%' (rune cen %sgcn hind)]
-                  ['/' (rune fas %sgnt hine)]
+                  ['/' (rune net %sgnt hine)]
                   ['<' (rune gal %sggl hinb)]
                   ['>' (rune gar %sggr hinb)]
                   ['+' (rune lus %sgls hinc)]
-                  ['&' (rune pam %sgpm hinf)]
+                  ['&' (rune pad %sgpm hinf)]
                   ['?' (rune wut %sgwt hing)]
                   ['=' (rune tis %sgts expb)]
                   ['!' (rune zap %sgzp expb)]
               ==
             ==
           :-  ';'
-            ;~  pfix  sem
+            ;~  pfix  mic
               %-  stew
               ^.  stet  ^.  limo
               :~  [':' (rune col %mccl expi)]
-                  ['/' (rune fas %mcnt expa)]
+                  ['/' (rune net %mcnt expa)]
                   ['~' (rune sig %mcsg expi)]
-                  [';' (rune sem %mcmc expb)]
+                  [';' (rune mic %mcmc expb)]
               ==
             ==
           :-  '='
@@ -12135,8 +12113,8 @@
                   ['?' (rune wut %tswt expw)]
                   ['^' (rune ket %tskt expt)]
                   [':' (rune col %tscl expp)]
-                  ['/' (rune fas %tsnt expo)]
-                  [';' (rune sem %tsmc expo)]
+                  ['/' (rune net %tsnt expo)]
+                  [';' (rune mic %tsmc expo)]
                   ['<' (rune gal %tsgl expb)]
                   ['>' (rune gar %tsgr expb)]
                   ['-' (rune hep %tshp expb)]
@@ -12159,8 +12137,8 @@
                   ['^' ;~(pfix ket (toad tkkt))]
                   ['=' ;~(pfix tis (toad txts))]
                   ['+' ;~(pfix lus (toad txls))]
-                  ['&' (rune pam %wtpm exps)]
-                  ['@' ;~(pfix pat (toad tkht))]
+                  ['&' (rune pad %wtpm exps)]
+                  ['@' ;~(pfix hat (toad tkht))]
                   ['~' ;~(pfix sig (toad tksg))]
                   ['!' (rune zap %wtzp expa)]
               ==
@@ -12172,7 +12150,7 @@
               :~  [':' ;~(pfix col (toad expz))]
                   ['.' ;~(pfix dot (toad |.(loaf(bug |))))]
                   [',' (rune com %zpcm expb)]
-                  [';' (rune sem %zpmc expb)]
+                  [';' (rune mic %zpmc expb)]
                   ['>' (rune gar %zpgr expa)]
                   ['=' (rune tis %zpts expa)]
                   ['?' (rune wut %zpwt hinh)]
@@ -12279,7 +12257,7 @@
     ++  toad                                            ::  untrap parser exp
       =+  har=expa
       |%  +-  $
-            =+  dur=(ifix [pel per] $:har(tol |))
+            =+  dur=(ifix [lit rit] $:har(tol |))
             ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
       --
     ::
@@ -12443,7 +12421,7 @@
         ;~  gunk
           ;~  pose
             dem
-            (ifix [sel ser] ;~(plug dem ;~(pfix ace dem)))
+            (ifix [lac rac] ;~(plug dem ;~(pfix ace dem)))
           ==
           loaf
         ==
@@ -12456,7 +12434,7 @@
       ;~  pose
         (cold ~ sig)
         %+  ifix
-          ?:(tol [;~(plug duz gap) ;~(plug gap duz)] [pel per])
+          ?:(tol [;~(plug duz gap) ;~(plug gap duz)] [lit rit])
         (more mash ;~(gunk ;~(pfix cen sym) loaf))
       ==
     --
@@ -12467,7 +12445,7 @@
         $%  {$tis p/hoon}
             {$col p/hoon}
             {$ket p/hoon}
-            {$pel p/(list (pair wing hoon))}
+            {$lit p/(list (pair wing hoon))}
         ==
     ==
   ::
@@ -12478,7 +12456,7 @@
     ^-  (unit hoon)
     ?-    -.vil
       $col  ?:(=([%base %bean] ros) ~ [~ %tsgl ros p.vil])
-      $pel  (bind ~(reek ap ros) |=(hyp/wing [%cnts hyp p.vil]))
+      $lit  (bind ~(reek ap ros) |=(hyp/wing [%cnts hyp p.vil]))
       $ket  [~ ros p.vil]
       $tis  =+  tog=~(hock ap ros)
             ?:(=([%0 ~] tog) ~ [~ %ktts tog p.vil])
@@ -12493,8 +12471,8 @@
         ;~(plug (cold %col col) wide)
         ;~(plug (cold %ket ket) wide)
         ;~  plug
-          (easy %pel)
-          (ifix [pel per] lobo)
+          (easy %lit)
+          (ifix [lit rit] lobo)
         ==
       ==
     ==
@@ -12506,7 +12484,7 @@
     %+  cook  |=(hoon +<)
     %+  stag  %cltr
     %+  ifix
-      [;~(plug sel gap) ;~(plug gap ser)]
+      [;~(plug lac gap) ;~(plug gap rac)]
     (most gap tall)
   ::
   ++  rope                                              ::  wing form
@@ -12524,14 +12502,14 @@
         |=(a/axis [%& a])
       ;~  pose
         ;~(pfix lus dim:ag)
-        ;~(pfix pam (cook |=(a/@ ?:(=(0 a) 0 (mul 2 +($(a (dec a)))))) dim:ag))
+        ;~(pfix pad (cook |=(a/@ ?:(=(0 a) 0 (mul 2 +($(a (dec a)))))) dim:ag))
         ;~(pfix bar (cook |=(a/@ ?:(=(0 a) 1 +((mul 2 $(a (dec a)))))) dim:ag))
         ven
         (cold 1 dot)
       ==
     ==
   ::
-  ++  wise  ;~(plug sym (punt ;~(pfix ;~(pose fas tis) wyde)))
+  ++  wise  ;~(plug sym (punt ;~(pfix ;~(pose net tis) wyde)))
   ++  wrap
     |*  fel/rule
     %+  cook
@@ -12585,7 +12563,7 @@
     %+  knee  *plan
     |.(~+((wert (wrip ;~(pose structure:(norm &) scad)))))
   ++  wede                                              ::  wide bulb
-    ;~(pfix ;~(pose lus fas) wide)
+    ;~(pfix ;~(pose lus net) wide)
   ++  wide                                              ::  full wide form
     %+  knee  *hoon
     |.(~+((wart ;~(pose expression:(norm |) long apex:(sail |)))))

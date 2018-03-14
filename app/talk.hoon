@@ -641,14 +641,14 @@
         ;~  pose
           (cold incir col)
           ;~(pfix cen (stag self urs:ab))
-          ;~(pfix fas (stag (sein:title self) urs:ab))
+          ;~(pfix net (stag (sein:title self) urs:ab))
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
             [a ?^(b u.b %inbox)]
           ;~  plug
             ship
-            (punt ;~(pfix fas urs:ab))
+            (punt ;~(pfix net urs:ab))
           ==
         ==
       ::
@@ -692,11 +692,11 @@
       ::
       ++  rang                                          :<  subscription range
         =+  ;~  pose
-              (cook some ;~(pfix fas (pont |)))
+              (cook some ;~(pfix net (pont |)))
               (easy ~)
             ==
         ;~  pose
-          (cook some ;~(plug ;~(pfix fas (pont &)) -))
+          (cook some ;~(plug ;~(pfix net (pont &)) -))
           (easy ~)
         ==
       ::
@@ -705,7 +705,7 @@
         (most ;~(plug com (star ace)) ;~(plug circ rang))
       ::
       ++  pick                                          :<  message reference
-        ;~(pose nump (cook lent (star sem)))
+        ;~(pose nump (cook lent (star mic)))
       ::
       ++  nump                                          :<  number reference
         ;~  pose
@@ -736,8 +736,8 @@
         %+  most  (jest '•')
         ;~  pose
           (stag %url aurf:de-purl:html)
-          :(stag %lin & ;~(pfix pat text))
-          :(stag %lin | ;~(less sem hax text))
+          :(stag %lin & ;~(pfix hat text))
+          :(stag %lin | ;~(less mic hax text))
         ==
       ::
       ++  text                                          :<  msg without break
@@ -755,7 +755,7 @@
         ==
       ++  work                                          :<  full input
         %+  knee  *^work  |.  ~+
-        =-  ;~(pose ;~(pfix sem -) message)
+        =-  ;~(pose ;~(pfix mic -) message)
         ;~  pose
         ::
         ::  circle management

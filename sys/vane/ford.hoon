@@ -448,15 +448,15 @@
       [~ u=p.a]
     nuck:so
   ::
-  ++  mota  ;~(pfix pat mota:vez)                       ::  atom odor
+  ++  mota  ;~(pfix hat mota:vez)                       ::  atom odor
   ++  hath  (sear plex (stag %clsg poor)):vez           ::  hood path
-  ++  have  (sear de-beam ;~(pfix fas hath))               ::  hood beam
+  ++  have  (sear de-beam ;~(pfix net hath))            ::  hood beam
   ++  hith                                              ::  static path
     =>  vez
-    (sear plex (stag %clsg (more fas hasp)))
+    (sear plex (stag %clsg (more net hasp)))
   ::
   ++  hive                                              ::  late-bound path
-    ;~  pfix  fas
+    ;~  pfix  net
       %+  cook  |=(a/hops a)
       =>  vez
       ;~  plug
@@ -469,17 +469,17 @@
     %+  ifix  [gay gay]
     ;~  plug
       ;~  pose
-        (ifix [;~(plug fas wut gap) gap] dem)
+        (ifix [;~(plug net wut gap) gap] dem)
         (easy zuse)
       ==
     ::
       ;~  pose
-        (ifix [;~(plug fas hep gap) gap] (most ;~(plug com gaw) hoof))
+        (ifix [;~(plug net hep gap) gap] (most ;~(plug com gaw) hoof))
         (easy ~)
       ==
     ::
       ;~  pose
-        (ifix [;~(plug fas lus gap) gap] (most ;~(plug com gaw) hoof))
+        (ifix [;~(plug net lus gap) gap] (most ;~(plug com gaw) hoof))
         (easy ~)
       ==
     ::
@@ -491,7 +491,7 @@
     ;~  plug
       sym
       %-  punt
-      ;~(pfix fas ;~((glue fas) case ship))
+      ;~(pfix net ;~((glue net) case ship))
     ==
   ::
   ++  ship  ;~(pfix sig fed:ag)
@@ -504,7 +504,7 @@
   ::
   ++  hoop
     ;~  pose
-      (stag %| ;~(pfix ;~(plug fas fas gap) have))
+      (stag %| ;~(pfix ;~(plug net net gap) have))
       (stag %& tall:vez)
     ==
   ::
@@ -514,7 +514,7 @@
     |%
     ++  apex
       %+  knee  *^horn  |.  ~+
-      ;~  pfix  fas
+      ;~  pfix  net
         ;~  pose
           (stag %fssg ;~(pfix sig hoon:read))           ::  /~  hoon by hand
           (stag %fsbc ;~(pfix buc hoon:read))           ::  /$  extra arguments
@@ -524,13 +524,13 @@
           (stag %fsdt ;~(pfix dot list:read))           ::  /.  list
           (stag %fscm ;~(pfix com case:read))           ::  /,  switch by path
           (stag %fscn ;~(pfix cen horn:read))           ::  /%  propagate args
-          (stag %fspm ;~(pfix pam pipe:read))           ::  /&  translates
+          (stag %fspm ;~(pfix pad pipe:read))           ::  /&  translates
           (stag %fscb ;~(pfix cab horn:read))           ::  /_  homo map
-          (stag %fssm ;~(pfix sem gate:read))           ::  /;  operate on
+          (stag %fssm ;~(pfix mic gate:read))           ::  /;  operate on
           (stag %fscl ;~(pfix col path:read))           ::  /:  relative to
           (stag %fskt ;~(pfix ket cast:read))           ::  /^  cast
-          (stag %fszp ;~(pfix zap ;~(sfix sym fas)))    ::  /!mark/ run to mark
-          (stag %fszy ;~(sfix sym fas))                 ::  /mark/ render file
+          (stag %fszp ;~(pfix zap ;~(sfix sym net)))    ::  /!mark/ run to mark
+          (stag %fszy ;~(sfix sym net))                 ::  /mark/ render file
         ==
       ==
     ::
@@ -542,12 +542,12 @@
     ++  read
       |%  ++  hoon
             %+  rail
-              (ifix [sel ser] (stag %cltr (most ace wide:vez)))
+              (ifix [lac rac] (stag %cltr (most ace wide:vez)))
             ;~(pfix gap tall:vez)
       ::
           ++  alts
             %+  rail
-              (ifix [pel per] (most ace horn))
+              (ifix [lit rit] (most ace horn))
             ;~(sfix (star horn) gap duz)
       ::
           ++  horn
@@ -567,17 +567,17 @@
           ++  case
             %+  rail  fail
             =-  ;~(sfix (star -) gap duz)
-            ;~(pfix gap fas ;~(plug hith horn))
+            ;~(pfix gap net ;~(plug hith horn))
       ::
           ++  pipe
             %+  rail
-              ;~(plug (plus ;~(sfix sym pam)) horn)
+              ;~(plug (plus ;~(sfix sym pad)) horn)
             =+  (cook |=(a/term [a ~]) sym)
             ;~(pfix gap ;~(plug - horn))
       ::
           ++  gate
             %+  rail
-              ;~(plug ;~(sfix wide:vez sem) horn)
+              ;~(plug ;~(sfix wide:vez mic) horn)
             ;~(pfix gap ;~(plug tall:vez horn))
       ::
           ++  path
@@ -2050,7 +2050,7 @@
             $fskt
           %+  tug:bo  $(hon q.hon)
           |=  {cof/cafe mar/mark vax/vase}
-          %+  tug:bo  (wrapped-slap cof bax [%bcdt %bcsm p.hon])
+          %+  tug:bo  (wrapped-slap cof bax [%bcdt %bcmc p.hon])
           |=  {cof/cafe tug/vase}
           ?.  (~(nest ut p.tug) | p.vax)
             (err:bo cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)

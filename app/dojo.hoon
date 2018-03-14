@@ -176,7 +176,7 @@
           ==
         ==
       ::
-        ;~  pfix  fas 
+        ;~  pfix  net 
           ;~  pose
             (dp-variable (cold %sur hep) ;~(pfix gap dp-hooves))
             (dp-variable (cold %lib lus) ;~(pfix gap dp-hooves))
@@ -201,8 +201,8 @@
     ++  dp-sink
       ;~  pose
         ;~(plug (cold %file tar) dp-beam)
-        ;~(plug (cold %flat pat) (most fas sym))
-        ;~(plug (cold %pill dot) (most fas sym))
+        ;~(plug (cold %flat hat) (most net sym))
+        ;~(plug (cold %pill dot) (most net sym))
         ;~(plug (cold %http lus) (stag %post dp-iden-url))
         ;~(plug (cold %http hep) (stag %put dp-iden-url))
         (stag %show (cook $?($1 $2 $3) (cook lent (stun [1 3] wut))))
@@ -215,8 +215,8 @@
         :(stag %sand %f ;~(pose (cold %| tar) (easy %&)))
         :(stag %sand %tas sym)
         %-  dp-hoon-punt
-        ;~  (glue fas) 
-          ;~(pfix fas (sear dp-case-hoon nuck:so))
+        ;~  (glue net) 
+          ;~(pfix net (sear dp-case-hoon nuck:so))
           (stag %sand ;~(plug (cold %p sig) fed:ag))
         ==
       ==
@@ -237,7 +237,7 @@
       ;~  pose
         ;~(plug (cold %ur lus) dp-iden-url)
         ;~(plug (cold %ge lus) dp-model)
-        ;~(plug (cold %as pam) sym ;~(pfix ace dp-source))
+        ;~(plug (cold %as pad) sym ;~(pfix ace dp-source))
         ;~(plug (cold %do cab) dp-hoon ;~(pfix ace dp-source))
         dp-value
       ==
@@ -247,7 +247,7 @@
       ;~  pose
         ;~  plug
           ;~(pfix sig fed:ag)
-          ;~(pose ;~(pfix fas sym) (easy dp-default-app))
+          ;~(pose ;~(pfix net sym) (easy dp-default-app))
         ==
         %+  stag  our.hid
         ;~(pose sym (easy dp-default-app))
@@ -264,7 +264,7 @@
     ::
     ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
     ++  dp-path    (en-beam he-beam)                       ::  ++path
-    ++  dp-server  (stag 0 (most fas sym))              ::  ++dojo-server
+    ++  dp-server  (stag 0 (most net sym))              ::  ++dojo-server
     ++  dp-hoon    tall:(vang | dp-path)                ::  ++hoon
     ++  dp-rood                                         ::  'dir' hoon
       =>  (vang | (en-beam dir))
@@ -280,9 +280,9 @@
       ==
     ++  dp-value                                        ::  ++dojo-source
       ;~  pose
-        (stag %sa ;~(pfix tar pam sym))
+        (stag %sa ;~(pfix tar pad sym))
         (stag %ex dp-hoon)
-        (stag %tu (ifix [sel ser] (most ace dp-source)))
+        (stag %tu (ifix [lac rac] (most ace dp-source)))
       ==
     ::
     ++  dp-config                                       ::  ++dojo-config
@@ -1624,7 +1624,7 @@
             $get-api
           :*  %ex
               %dtkt
-              [%bcsm [%wing ~[%json]]]
+              [%bcmc [%wing ~[%json]]]
               :*  %clsg
                   [%rock %tas %gx]
                   [%sand %ta (scot %p our.hid)]

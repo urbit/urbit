@@ -122,9 +122,9 @@
   ++  parn
     ^-  $-(nail (like partner))
     %+  pick
-      ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
+      ;~((glue net) ;~(pfix sig fed:ag) urs:ab)
     %+  sear  (soft passport)
-    ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
+    ;~((glue net) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
   ::
   ++  stam  (ot date+di bouquet+(as (ar so)) speech+spec ~)
   ++  spec
