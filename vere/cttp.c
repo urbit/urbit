@@ -59,7 +59,8 @@ _cttp_bud(u3_hhed* hed_u)
   return bod_u;
 }
 
-/* _cttp_heds_free(): free header structure.
+// XX deduplicate with _http_heds_free
+/* _cttp_heds_free(): free header linked list
 */
 static void
 _cttp_heds_free(u3_hhed* hed_u)
@@ -118,6 +119,9 @@ _cttp_bods_to_octs(u3_hbod* bod_u)
   return u3nc(len_w, cos);
 }
 
+// XX deduplicate with _http_hed_new
+/* _cttp_hed_new(): create u3_hhed from nam/val cords
+*/
 static u3_hhed*
 _cttp_hed_new(u3_atom nam, u3_atom val)
 {
@@ -134,6 +138,7 @@ _cttp_hed_new(u3_atom nam, u3_atom val)
   return hed_u;
 }
 
+// XX vv similar to _http_heds_from_noun
 /* _cttp_heds_math(): create headers from ++math
 */
 static u3_hhed*
@@ -679,15 +684,19 @@ on_body(h2o_http1client_t* cli_u, const c3_c* err_c)
   return 0;
 }
 
-/* _http_vec_to_atom(): convert h2o_iovec_t to atom (cord)
+// XX deduplicate with _http_vec_to_atom
+/* _cttp_vec_to_atom(): convert h2o_iovec_t to atom (cord)
 */
 static u3_noun
-_http_vec_to_atom(h2o_iovec_t vec_u)
+_cttp_vec_to_atom(h2o_iovec_t vec_u)
 {
   // XX portable?
   return u3i_bytes(vec_u.len, (const c3_y*)vec_u.base);
 }
 
+// XX deduplicate with _http_heds_to_noun
+/* _cttp_heds_to_noun(): convert h2o_header_t to (list (pair @t @t))
+*/
 static u3_noun
 _cttp_heds_to_noun(h2o_header_t* hed_u, c3_d hed_d)
 {
@@ -698,8 +707,8 @@ _cttp_heds_to_noun(h2o_header_t* hed_u, c3_d hed_d)
 
   while ( 0 < dex_d ) {
     deh_u = hed_u[--dex_d];
-    hed = u3nc(u3nc(_http_vec_to_atom(*deh_u.name),
-                    _http_vec_to_atom(deh_u.value)), hed);
+    hed = u3nc(u3nc(_cttp_vec_to_atom(*deh_u.name),
+                    _cttp_vec_to_atom(deh_u.value)), hed);
   }
 
   return hed;
