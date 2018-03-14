@@ -5619,7 +5619,8 @@
               {$dbug p/spot q/plan}                     ::  set debug
               {$halo p/what q/plan}                     ::  apply help
               {$leaf p/term q/@}                        ::  constant atom
-          ::
+              {$over p/wing q/plan}                     ::  relative subject
+          ::                                            ::
               {$bccb p/hoon}                            ::  example
               {$bccl p/{i/plan t/(list plan)}}          ::  tuple
               {$bccn p/{i/plan t/(list plan)}}          ::  selection
@@ -6625,6 +6626,11 @@
     ?.  &(?=($| -.tik) ?=(~ p.tik))  gen
     [%tsgr [%$ 3] gen]
   ::
+  ++  teal
+    |=  mod/plan
+    ^-  plan
+    [%over [%& 3]~ mod]
+  ::
   ++  gray
     |=  gen/hoon
     ^-  hoon
@@ -6649,27 +6655,23 @@
             [puce (blue gen) (turn opt |=({a/plan b/hoon} [a (blue b)]))]
   ++  wtht  |=({sic/hoon non/hoon} (gray [%wtht puce (blue sic) (blue non)]))
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
-  ::  ++  wtts  |=(gen/hoon (gray [%wtts (blue gen) puce]))
-  ++  wtts  |=(mod/plan (gray [%wtts mod puce]))
+  ++  wtts  |=(mod/plan (gray [%wtts (teal mod) puce]))
   --
 ::
 ++  ax
   =+  :*  ::  dom: axis to home
+          ::  hay: wing to home
           ::  doc: documentation
           ::  bug: debug annotations
           ::  def: default expression
           ::
           dom=`axis`1
+          hay=*wing
           doc=*(list what)
           bug=*(list spot)
           def=*(unit hoon)
       ==
   |_  {fab/? mod/plan}
-  ++  bunt  ~+
-    example
-  ::
-  ++  clam  ~+
-    factory
   ::
   ++  function
     ::  construct a function example
@@ -6694,7 +6696,14 @@
   ++  home  
     ::  express a hoon against the original subject
     ::
-    |=(gen/hoon ^-(hoon ?:(=(1 dom) gen [%tsgr [%$ dom] gen])))
+    |=  gen/hoon 
+    ^-  hoon 
+    =+  ^-  wing 
+        ?:  =(1 dom)
+          hay
+        (weld hay `wing`[[%& dom] ~])
+    ?~  -  gen
+    [%tsgr [%wing -] gen]
   ::
   ++  clear
     ::  clear annotations
@@ -6736,57 +6745,7 @@
       [%zpzp ~] 
     ==
   ::
-  ++  spore
-    ::  build default sample
-    ::
-    ^-  hoon
-    ::  typeless for now
-    ::
-    :+  %ktls
-      [%bust %noun] 
-    ::  use home as subject
-    ::
-    %-  home
-    ::  if default is set, use it
-    ::
-    ?^  def  u.def
-    ::  else map structure to expression
-    ::
-    ~+
-    |-  ^-  hoon
-    ?-  mod
-      {$base *}  (basal p.mod)
-      {$bcts *}  [%ktts p.mod $(mod q.mod)]
-      {$dbug *}  [%dbug p.mod $(mod q.mod)]
-      {$bcsg *}  p.mod
-      {$bcwt *}  ::  use last entry
-                 ::
-                 |-  ^-  hoon
-                 ?~  t.p.mod  ^$(mod i.p.mod)
-                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-      {$bchp *}  ::  see under %bccb
-                 ::
-                 [%rock %n 0]
-      {$bcmc *}  ::  borrow sample
-                 ::
-                 [%tsgl [%$ 6] p.mod]
-      {$bccn *}  ::  use last entry
-                 ::
-                 |-  ^-  hoon
-                 ?~  t.p.mod  ^$(mod i.p.mod)
-                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-      {$leaf *}  [%rock p.mod q.mod]
-      {$halo *}  $(mod q.mod)
-      {$bcht *}  $(mod p.mod)
-      {$bccl *}  |-  ^-  hoon
-                 ?~  t.p.mod  ^$(mod i.p.mod) 
-                 :-  ^$(mod i.p.mod) 
-                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-      {$bckt *}  $(mod q.mod)
-      {$bccb *}  [%rock %n 0]
-    ==
-  ::
-  ++  descend
+  ++  ascend
     ::  record an axis to original subject
     ::
     |=  axe/axis
@@ -6831,9 +6790,61 @@
                  ==
       {$leaf *}  &
       {$halo *}  clean(mod q.mod)
+      {$over *}  clean(mod q.mod)
       {$bcht *}  &(clean(mod p.mod) clean(mod q.mod))
       {$bckt *}  &(clean(mod p.mod) clean(mod q.mod))
       {$bccb *}  |
+    ==
+  ::
+  ++  spore
+    ::  build default sample
+    ::
+    ^-  hoon
+    ::  typeless for now
+    ::
+    :+  %ktls
+      [%bust %noun] 
+    ::  use home as subject
+    ::
+    %-  home
+    ::  if default is set, use it
+    ::
+    ?^  def  u.def
+    ::  else map structure to expression
+    ::
+    ~+
+    |-  ^-  hoon
+    ?-  mod
+      {$base *}  (basal p.mod)
+      {$bcts *}  [%ktts p.mod $(mod q.mod)]
+      {$dbug *}  [%dbug p.mod $(mod q.mod)]
+      {$bcsg *}  p.mod
+      {$bcwt *}  ::  use last entry
+                 ::
+                 |-  ^-  hoon
+                 ?~  t.p.mod  ^$(mod i.p.mod)
+                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
+      {$bchp *}  ::  see under %bccb
+                 ::
+                 [%rock %n 0]
+      {$bcmc *}  ::  borrow sample
+                 ::
+                 [%tsgl [%$ 6] p.mod]
+      {$bccn *}  ::  use last entry
+                 ::
+                 |-  ^-  hoon
+                 ?~  t.p.mod  ^$(mod i.p.mod)
+                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
+      {$leaf *}  [%rock p.mod q.mod]
+      {$over *}  $(hay p.mod, mod q.mod)
+      {$halo *}  $(mod q.mod)
+      {$bcht *}  $(mod p.mod)
+      {$bccl *}  |-  ^-  hoon
+                 ?~  t.p.mod  ^$(mod i.p.mod) 
+                 :-  ^$(mod i.p.mod) 
+                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
+      {$bckt *}  $(mod q.mod)
+      {$bccb *}  [%rock %n 0]
     ==
   ::
   ++  example
@@ -6846,13 +6857,14 @@
     ::
       :+  %tsls
         spore
-      ~(relative local:(descend 3) [2 %&])
+      ~(relative local:(ascend 3) [2 %&])
     ::
         {$base *}  (decorate (basal p.mod))
         {$bcts *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
         {$bcmc *}  (decorate (home [%tsgl [%limb %$] p.mod]))
         {$bcsg *}  [%ktls example(mod q.mod) (home p.mod)]
         {$dbug *}  example(mod q.mod, bug [p.mod bug])
+        {$over *}  example(hay p.mod, mod q.mod)
         {$bchp *}  (decorate (function:clear p.mod q.mod))
         {$leaf *}  (decorate [%rock p.mod q.mod])
         {$halo *}  example(mod q.mod, doc [p.mod doc])
@@ -6886,7 +6898,7 @@
         [%tsgr [%rock %n 0] -]
     :^  %brcl  ~^~
       [%ktsg spore]
-    ~(relative local:(descend 7) [6 %&])
+    ~(relative local:(ascend 7) [6 %&])
   ::
   ++  local
     ::  normalize a fragment of the subject
@@ -7131,6 +7143,11 @@
       ::
           {$leaf *}
         (decorate [%rock p.mod q.mod])
+      ::
+      ::  subjective
+      ::
+          {$over *}  
+        relative(hay p.mod, mod q.mod)
       ::
       ::  documentation
       ::
@@ -7384,9 +7401,9 @@
     ?-    gen
         {~ *}     [%cnts [[%& p.gen] ~] ~]
     ::
-        {$base *}  ~(clam ax fab `plan`gen)
-        {$bust *}  ~(bunt ax fab %base p.gen)
-        {$bccm *}  ~(clam ax fab p.gen)
+        {$base *}  ~(factory ax fab `plan`gen)
+        {$bust *}  ~(example ax fab %base p.gen)
+        {$bccm *}  ~(factory ax fab p.gen)
         {$dbug *}   q.gen
         {$eror *}  ~|(p.gen !!)
     ::
@@ -7424,7 +7441,7 @@
         [%$ ~]                                          ::  $
       [[[%a ~] [%tsgl [%$ 3] [%limb %a]]] ~]             ::  a  +.a
     ::
-        {$leaf *}  ~(clam ax fab `plan`gen)
+        {$leaf *}  ~(factory ax fab `plan`gen)
         {$limb *}  [%cnts [p.gen ~] ~]
         {$tell *}  [%cncl [%limb %noah] [%zpgr [%cltr p.gen]] ~]
         {$wing *}  [%cnts p.gen ~]
@@ -7483,20 +7500,22 @@
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$bcdt *}  [%ktsg ~(bunt ax fab p.gen)]
+        {$bcdt *}  [%ktsg ~(example ax fab p.gen)]
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cncl q.gen [p.gen ~]]
         {$cnkt *}  [%cncl p.gen q.gen r.gen s.gen ~]
         {$cnls *}  [%cncl p.gen q.gen r.gen ~]
         {$cnhp *}  [%cncl p.gen q.gen ~]
+        ::  this probably should work, but doesn't
+        ::
+        ::  {$cncl *}  [%cntr [%$ ~] p.gen [[[[%& 6] ~] [%cltr q.gen]] ~]]
         {$cncl *}  [%cnsg [%$ ~] p.gen q.gen]
-        {$cnsg *}  :: [%cntr p.gen q.gen (hail(gen [%cltr r.gen]) 6)]
+        {$cnsg *}
+      ::  this complex matching system is a leftover from the old
+      ::  "electroplating" era.  %cnsg should be removed and replaced
+      ::  with the commented-out %cncl above.  but something is broken.
+      ::
       :^  %cntr  p.gen  q.gen
-      ::
-      ::  the use of ++hail is probably the right language design, but
-      ::  it's impractically slow without validating %=.
-      ::
-::    ?:(=(~ r.gen) ~ (hail(gen [%cltr r.gen]) 6))
       =+  axe=6
       |-  ^-  (list {wing hoon})
       ?~  r.gen  ~
@@ -7514,7 +7533,7 @@
       (turn r.gen |=({p/wing q/hoon} [p [%tsgr [%$ 3] q]]))
     ::
         {$ktdt *}  [%ktls [%cncl p.gen q.gen ~] q.gen]
-        {$kthp *}  [%ktls ~(bunt ax fab p.gen) q.gen]
+        {$kthp *}  [%ktls ~(example ax fab p.gen) q.gen]
         {$sgbr *}
       :+  %sggr
         :-  %mean
@@ -7633,7 +7652,7 @@
       [%limb %c]                                        ::
     ::
         {$tsbr *}
-      [%tsls ~(bunt ax fab p.gen) q.gen]
+      [%tsls ~(example ax fab p.gen) q.gen]
     ::
         {$tscl *}
       [%tsgr [%cncb [[%& 1] ~] p.gen] q.gen]
@@ -7659,7 +7678,7 @@
                        [%tsgl [%$ 2] [%limb %a]]
                      :+  %kthp
                         :+  %bcts  p.p.gen
-                        [%bcmc [%tsgr [%limb %v] [%bccm u.q.p.gen]]]
+                        [%over [%| 0 `%v]~ u.q.p.gen]
                      [%tsgl [%$ 2] [%limb %a]] 
                 [%limb %v]
       s.gen
@@ -7713,7 +7732,7 @@
     ::
         {$wtht *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
-        {$wtts *}   [%fits ~(bunt ax fab p.gen) q.gen]
+        {$wtts *}   [%fits ~(example ax fab p.gen) q.gen]
         {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {$zpgr *}
       [%cncl [%limb %onan] [%zpmc [%bcdt [%bcmc %limb %abel]] p.gen] ~]
@@ -8938,7 +8957,7 @@
     ~/  %chip
     |=  {how/? gen/hoon}  ^-  type
     ?:  ?=({$wtts *} gen)
-      (cool how q.gen (play ~(bunt ax fab p.gen)))
+      (cool how q.gen (play ~(example ax fab p.gen)))
     ?:  ?&(how ?=({$wtpm *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=({$wtbr *} gen))
