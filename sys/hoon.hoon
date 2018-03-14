@@ -5614,7 +5614,12 @@
               {$| p/(unit term) q/hoon}                 ::  named wing
           ==                                            ::
 ++  plan                                                ::  data structure
+          $~  [%base %null]                             ::
           $%  {$base p/base}                            ::  base type
+              {$dbug p/spot q/plan}                     ::  set debug
+              {$halo p/what q/plan}                     ::  apply help
+              {$leaf p/term q/@}                        ::  constant atom
+          ::
               {$bccb p/hoon}                            ::  example
               {$bccl p/{i/plan t/(list plan)}}          ::  tuple
               {$bccn p/{i/plan t/(list plan)}}          ::  selection
@@ -5625,9 +5630,6 @@
               {$bcmc p/hoon}                            ::  assembly
               {$bcts p/toga q/plan}                     ::  name
               {$bcwt p/{i/plan t/(list plan)}}          ::  plain selection
-              {$dbug p/spot q/plan}                     ::  set debug
-              {$halo p/what q/plan}                     ::  apply help
-              {$leaf p/term q/@}                        ::  constant atom
           ==                                            ::
 ++  toga                                                ::  face control
           $@  p/term                                    ::  two togas
