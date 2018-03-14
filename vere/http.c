@@ -19,12 +19,8 @@
 #include "h2o.h"
 
 #include <openssl/ssl.h>
-#include <openssl/err.h>
 
 static const c3_i TCP_BACKLOG = 16;
-
-// XX u3_Host.tls_u ?
-static SSL_CTX* tls_u = 0;
 
 /* _http_vec_to_meth(): convert h2o_iovec_t to meth
 */
@@ -576,7 +572,7 @@ _http_serv_init_h2o(u3_http* htp_u)
   htp_u->cep_u->hosts = htp_u->fig_u->hosts;
 
   if ( c3y == htp_u->sec ) {
-    htp_u->cep_u->ssl_ctx = tls_u;
+    htp_u->cep_u->ssl_ctx = u3_Host.tls_u;
   }
 
   htp_u->han_u = h2o_create_handler(&htp_u->hos_u->fallback_path, sizeof(*htp_u->han_u));
@@ -601,7 +597,7 @@ _http_serv_start(u3_http* htp_u)
     adr_u.sin_addr.s_addr = INADDR_ANY;
   }
 
-  if ( c3y == htp_u->sec && 0 == tls_u ) {
+  if ( c3y == htp_u->sec && 0 == u3_Host.tls_u ) {
     uL(fprintf(uH, "http: secure server error: no tls config\n"));
     htp_u->por_w = 0;
     return;
@@ -645,10 +641,14 @@ _http_serv_start(u3_http* htp_u)
 static SSL_CTX*
 _http_init_tls()
 {
-  SSL_CTX* tls_u = SSL_CTX_new(TLSv1_2_server_method());
+  // XX require 1.1.0 and use TLS_server_method()
+  SSL_CTX* tls_u = SSL_CTX_new(SSLv23_server_method());
+  // XX use SSL_CTX_set_max_proto_version() and SSL_CTX_set_min_proto_version()
+  SSL_CTX_set_options(tls_u, SSL_OP_NO_SSLv2 |
+                             SSL_OP_NO_SSLv3 |
+                             // SSL_OP_NO_TLSv1 | // XX test
+                             SSL_OP_NO_COMPRESSION);
 
-  SSL_CTX_set_options(tls_u, SSL_OP_NO_SSLv2);
-  // SSL_CTX_set_verify(tls_u, SSL_VERIFY_NONE, NULL);
   SSL_CTX_set_default_verify_paths(tls_u);
   SSL_CTX_set_session_cache_mode(tls_u, SSL_SESS_CACHE_OFF);
   SSL_CTX_set_cipher_list(tls_u,
@@ -841,7 +841,7 @@ u3_http_io_init()
     u3_Host.htp_u = htp_u;
   }
 
-  tls_u = _http_init_tls();
+  u3_Host.tls_u = _http_init_tls();
 }
 
 /* u3_http_io_talk(): start http I/O.
