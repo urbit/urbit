@@ -429,7 +429,7 @@
       case c3__dtkt: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
-        u3_noun nog = u3nc(c3__bunt, u3k(p_gen));
+        u3_noun nog = u3nc(c3__bcdt, u3k(p_gen));
         u3_noun nef = _mint_in(van, sut, gol, nog);
         u3_noun viz = _mint_in(van, sut, c3__noun, q_gen);
 
@@ -502,6 +502,7 @@
         return pro;
       }
 
+      case c3__ktpd:
       case c3__ktpm: p_gen = u3t(gen);
       _mint_used();
       {
@@ -745,8 +746,8 @@
         return ret;
       }
 
-      case c3__zpsm:
-      case c3__zpmc: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__zpmc:
+      case c3__zpsm: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun vos   = _mint_in(van, sut, c3__noun, q_gen);

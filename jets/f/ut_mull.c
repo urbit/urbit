@@ -408,7 +408,7 @@
       case c3__dtkt: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
-        u3_noun nog = u3nc(c3__bunt, u3k(p_gen));
+        u3_noun nog = u3nc(c3__bcdt, u3k(p_gen));
         u3_noun vay = _mull_in(van, sut, c3__noun, dox, q_gen);
         u3_noun ret;
 
@@ -476,6 +476,7 @@
         return pro;
       }
 
+      case c3__ktpd:
       case c3__ktpm: p_gen = u3t(gen);
       _mull_used();
       {

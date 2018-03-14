@@ -285,7 +285,7 @@
       case c3__dtkt: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
-        u3_noun nog = u3nc(c3__bunt, u3k(p_gen));
+        u3_noun nog = u3nc(c3__bcdt, u3k(p_gen));
         u3_noun ret = _play_x(van, sut, nog);
 
         u3z(nog);
