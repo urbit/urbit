@@ -77,6 +77,15 @@
         struct _u3_http* nex_u;             //  next in list
       } u3_http;
 
+    /* u3_csat: client connection state.
+    */
+      typedef enum {
+        u3_csat_init = 0,                   //  initialized
+        u3_csat_addr = 1,                   //  address resolution begun
+        u3_csat_quit = 2,                   //  cancellation requested
+        u3_csat_ripe = 3                    //  passed to libh2o
+      } u3_csat;
+
     /* u3_cres: response to http client.
     */
       typedef struct _u3_cres {
@@ -91,6 +100,7 @@
       typedef struct _u3_creq {             //  client request
         c3_l             num_l;             //  request number
         h2o_http1client_t* cli_u;           //  h2o client
+        u3_csat          sat_e;             //  connection state
         c3_o             sec;               //  yes == https
         c3_w             ipf_w;             //  IP
         c3_c*            ipf_c;             //  IP (string)

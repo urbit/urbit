@@ -557,6 +557,23 @@ _cttp_creq_free(u3_creq* ceq_u)
   free(ceq_u);
 }
 
+/* _cttp_creq_quit(): cancel a u3_creq
+*/
+static void
+_cttp_creq_quit(u3_creq* ceq_u)
+{
+  if ( u3_csat_addr == ceq_u->sat_e ) {
+    ceq_u->sat_e = u3_csat_quit;
+    return;  // wait to be called again on address resolution
+  }
+
+  if ( ceq_u->cli_u ) {
+    h2o_http1client_cancel(ceq_u->cli_u);
+  }
+
+  _cttp_creq_free(ceq_u);
+}
+
 static void
 _cttp_creq_fail(u3_creq* ceq_u, const c3_c* err_c)
 {
@@ -588,6 +605,7 @@ _cttp_creq_new(c3_l num_l, u3_noun hes)
   u3_noun mah = u3h(u3t(moh)); // ++math
   u3_noun bod = u3t(u3t(moh));
 
+  ceq_u->sat_e = u3_csat_init;
   ceq_u->num_l = num_l;
   ceq_u->sec   = sec;
 
@@ -762,6 +780,7 @@ on_connect(h2o_http1client_t* cli_u, const c3_c* err_c, h2o_iovec_t** vec_p,
 static void
 _cttp_creq_connect(u3_creq* ceq_u)
 {
+  c3_assert(u3_csat_ripe == ceq_u->sat_e);
   c3_assert(ceq_u->ipf_c);
 
   h2o_iovec_t ipf_u = h2o_iovec_init(ceq_u->ipf_c, strlen(ceq_u->ipf_c));
@@ -792,9 +811,12 @@ _cttp_creq_resolve_cb(uv_getaddrinfo_t* adr_u,
 {
   u3_creq* ceq_u = adr_u->data;
 
+  if ( u3_csat_quit == ceq_u->sat_e ) {
+    return _cttp_creq_quit(ceq_u);;
+  }
+
   if ( 0 != sas_i ) {
-    _cttp_creq_fail(ceq_u, uv_strerror(sas_i));
-    return;
+    return _cttp_creq_fail(ceq_u, uv_strerror(sas_i));
   }
 
   ceq_u->ipf_w = ntohl(((struct sockaddr_in *)aif_u->ai_addr)->sin_addr.s_addr);
@@ -802,12 +824,14 @@ _cttp_creq_resolve_cb(uv_getaddrinfo_t* adr_u,
 
   uv_freeaddrinfo(aif_u);
 
+  ceq_u->sat_e = u3_csat_ripe;
   _cttp_creq_connect(ceq_u);
 }
 
 static void
 _cttp_creq_resolve(u3_creq* ceq_u)
 {
+  c3_assert(u3_csat_addr == ceq_u->sat_e);
   c3_assert(ceq_u->hot_c);
 
   uv_getaddrinfo_t* adr_u = c3_malloc(sizeof(*adr_u));
@@ -835,8 +859,10 @@ static void
 _cttp_creq_start(u3_creq* ceq_u)
 {
   if ( ceq_u->ipf_c ) {
+    ceq_u->sat_e = u3_csat_ripe;
     _cttp_creq_connect(ceq_u);
   } else {
+    ceq_u->sat_e = u3_csat_addr;
     _cttp_creq_resolve(ceq_u);
   }
 }
@@ -853,8 +879,7 @@ u3_cttp_ef_thus(c3_l    num_l,
     ceq_u =_cttp_creq_find(num_l);
 
     if ( ceq_u ) {
-      h2o_http1client_cancel(ceq_u->cli_u);
-      _cttp_creq_free(ceq_u);
+      _cttp_creq_quit(ceq_u);
     }
   }
   else {
