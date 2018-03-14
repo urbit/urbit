@@ -29,12 +29,12 @@
 /* _cttp_bod(): create a data buffer.
 */
 static u3_hbod*
-_cttp_bod(c3_w len_w, const c3_y* hun_y)
+_cttp_bod(c3_w len_w, c3_c* hun_c)
 {
   u3_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
 
   bod_u->len_w = len_w;
-  memcpy(bod_u->hun_y, hun_y, len_w);
+  memcpy(bod_u->hun_y, (const c3_y*)hun_c, len_w);
 
   bod_u->nex_u = 0;
   return bod_u;
@@ -43,17 +43,15 @@ _cttp_bod(c3_w len_w, const c3_y* hun_y)
 /* _cttp_bud(): create a header buffer.  Not null-terminated!
 */
 static u3_hbod*
-_cttp_bud(c3_c* nam_c, c3_c* val_c)
+_cttp_bud(u3_hhed* hed_u)
 {
-  c3_w lnm_w     = strlen(nam_c);
-  c3_w lvl_w     = strlen(val_c);
-  c3_w len_w     = lnm_w + 2 + lvl_w + 2;
+  c3_w len_w     = hed_u->nam_w + 2 + hed_u->val_w + 2;
   u3_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
 
-  strncpy((c3_c *)bod_u->hun_y, nam_c, lnm_w);
-  strncpy((c3_c *)bod_u->hun_y + lnm_w, ": ", 2);
-  strncpy((c3_c *)bod_u->hun_y + lnm_w + 2, val_c, lvl_w);
-  strncpy((c3_c *)bod_u->hun_y + lnm_w + 2 + lvl_w, "\r\n", 2);
+  memcpy(bod_u->hun_y, hed_u->nam_c, hed_u->nam_w);
+  memcpy(bod_u->hun_y + hed_u->nam_w, ": ", 2);
+  memcpy(bod_u->hun_y + hed_u->nam_w + 2, hed_u->val_c, hed_u->val_w);
+  memcpy(bod_u->hun_y + hed_u->nam_w + 2 + hed_u->val_w, "\r\n", 2);
 
   bod_u->len_w = len_w;
   bod_u->nex_u = 0;
@@ -68,9 +66,6 @@ _cttp_heds_free(u3_hhed* hed_u)
 {
   while ( hed_u ) {
     u3_hhed* nex_u = hed_u->nex_u;
-
-    if ( hed_u->nam_c ) free(hed_u->nam_c);
-    if ( hed_u->val_c ) free(hed_u->val_c);
 
     free(hed_u);
     hed_u = nex_u;
@@ -123,52 +118,49 @@ _cttp_bods_to_octs(u3_hbod* bod_u)
   return u3nc(len_w, cos);
 }
 
-/* _cttp_heds_list(): create headers from list.
-*/
 static u3_hhed*
-_cttp_heds_list(u3_hhed* hed_u, u3_noun nam, u3_noun vaz)
+_cttp_hed_new(u3_atom nam, u3_atom val)
 {
-  u3_noun viz = vaz;
+  c3_w     nam_w = u3r_met(3, nam);
+  c3_w     val_w = u3r_met(3, val);
+  u3_hhed* hed_u = c3_malloc(nam_w + val_w + sizeof(*hed_u));
 
-  while ( u3_nul != viz ) {
-    u3_hhed* deh_u;
+  hed_u->nex_u = 0;
+  hed_u->nam_w = nam_w;
+  hed_u->val_w = val_w;
+  u3r_bytes(0, nam_w, (c3_y*)hed_u->nam_c, nam);
+  u3r_bytes(0, val_w, (c3_y*)hed_u->val_c, val);
 
-    deh_u = c3_malloc(sizeof(*deh_u));
-    deh_u->nam_c = u3r_string(nam);
-    deh_u->val_c = u3r_string(u3h(viz));
-
-    deh_u->nex_u = hed_u;
-    hed_u = deh_u;
-
-    viz = u3t(viz);
-  }
-  u3z(nam);
-  u3z(vaz);
   return hed_u;
 }
 
-/* _cttp_heds_math(): create headers from noun.
+/* _cttp_heds_math(): create headers from ++math
 */
 static u3_hhed*
-_cttp_heds_math(u3_hhed* hed_u, u3_noun mah)
+_cttp_heds_math(u3_noun mah)
 {
-  if ( u3_nul == mah ) {
-    return hed_u;
-  }
-  else {
-    u3_noun n_mah = u3h(mah);
-    u3_noun pn_mah = u3h(n_mah);
-    u3_noun qn_mah = u3t(n_mah);
-    u3_noun l_mah = u3h(u3t(mah));
-    u3_noun r_mah = u3t(u3t(mah));
+  u3_noun hed = u3kdi_tap(mah);
+  u3_noun deh = hed;
 
-    hed_u = _cttp_heds_list(hed_u, u3k(pn_mah), u3k(qn_mah));
-    hed_u = _cttp_heds_math(hed_u, u3k(l_mah));
-    hed_u = _cttp_heds_math(hed_u, u3k(r_mah));
+  u3_hhed* hed_u = 0;
 
-    u3z(mah);
-    return hed_u;
+  while ( u3_nul != hed ) {
+    u3_noun nam = u3h(u3h(hed));
+    u3_noun lit = u3t(u3h(hed));
+
+    while ( u3_nul != lit ) {
+      u3_hhed* nex_u = _cttp_hed_new(nam, u3h(lit));
+      nex_u->nex_u = hed_u;
+
+      hed_u = nex_u;
+      lit = u3t(lit);
+    }
+
+    hed = u3t(hed);
   }
+
+  u3z(deh);
+  return hed_u;
 }
 
 /* _cttp_octs_to_bod(): translate octet-stream noun into body.
@@ -419,6 +411,8 @@ _cttp_cres_new(u3_creq* ceq_u, c3_w sas_w)
 static void
 _cttp_creq_fire_body(u3_creq* ceq_u, u3_hbod *rub_u)
 {
+  c3_assert(!rub_u->nex_u);
+
   if ( !(ceq_u->rub_u) ) {
     ceq_u->rub_u = ceq_u->bur_u = rub_u;
   }
@@ -431,9 +425,9 @@ _cttp_creq_fire_body(u3_creq* ceq_u, u3_hbod *rub_u)
 /* _cttp_creq_fire_str(): attach string to request buffers.
 */
 static void
-_cttp_creq_fire_str(u3_creq* ceq_u, const c3_c* str_c)
+_cttp_creq_fire_str(u3_creq* ceq_u, c3_c* str_c)
 {
-  _cttp_creq_fire_body(ceq_u, _cttp_bod(strlen(str_c), (const c3_y*)str_c));
+  _cttp_creq_fire_body(ceq_u, _cttp_bod(strlen(str_c), str_c));
 }
 
 /* _cttp_creq_fire_heds(): attach output headers.
@@ -442,7 +436,7 @@ static void
 _cttp_creq_fire_heds(u3_creq* ceq_u, u3_hhed* hed_u)
 {
   while ( hed_u ) {
-    _cttp_creq_fire_body(ceq_u, _cttp_bud(hed_u->nam_c, hed_u->val_c));
+    _cttp_creq_fire_body(ceq_u, _cttp_bud(hed_u));
     hed_u = hed_u->nex_u;
   }
 }
@@ -466,31 +460,38 @@ _cttp_creq_fire(u3_creq* ceq_u)
   _cttp_creq_fire_str(ceq_u, ceq_u->url_c);
   _cttp_creq_fire_str(ceq_u, " HTTP/1.1\r\n");
 
-  c3_c* hot_c = ceq_u->hot_c ? ceq_u->hot_c : ceq_u->ipf_c;
+  {
+    c3_c* hot_c = ceq_u->hot_c ? ceq_u->hot_c : ceq_u->ipf_c;
+    c3_c* hos_c;
+    c3_w  len_w;
 
-  if ( ceq_u->por_c ) {
-    c3_w len_w  = strlen(hot_c) + 1 + strlen(ceq_u->por_c) + 1;
-    c3_c* hos_c = c3_malloc(len_w);
-    snprintf(hos_c, len_w, "%s:%s", hot_c, ceq_u->por_c);
+    if ( ceq_u->por_c ) {
+      len_w = 6 + strlen(hot_c) + 1 + strlen(ceq_u->por_c) + 3;
+      hos_c = c3_malloc(len_w);
+      len_w = snprintf(hos_c, len_w, "Host: %s:%s\r\n", hot_c, ceq_u->por_c);
+    }
+    else {
+      len_w = 6 + strlen(hot_c) + 3;
+      hos_c = c3_malloc(len_w);
+      len_w = snprintf(hos_c, len_w, "Host: %s\r\n", hot_c);
+    }
 
-    _cttp_creq_fire_body(ceq_u, _cttp_bud("Host", hos_c));
+    _cttp_creq_fire_body(ceq_u, _cttp_bod(len_w, hos_c));
     free(hos_c);
-  }
-  else {
-    _cttp_creq_fire_body(ceq_u, _cttp_bud("Host", hot_c));
   }
 
   _cttp_creq_fire_str(ceq_u, "User-Agent: urbit/vere-" URBIT_VERSION "\r\n");
   _cttp_creq_fire_heds(ceq_u, ceq_u->hed_u);
 
   if ( !ceq_u->bod_u ) {
-    _cttp_creq_fire_str(ceq_u, "\r\n");
+    _cttp_creq_fire_body(ceq_u, _cttp_bod(2, "\r\n"));
   }
   else {
-    c3_c len_c[21];
-    snprintf(len_c, 20, "%u", ceq_u->bod_u->len_w);
+    c3_c len_c[41];
+    c3_w len_w = snprintf(len_c, 40, "Content-Length: %u\r\n",
+                                     ceq_u->bod_u->len_w);
 
-    _cttp_creq_fire_body(ceq_u, _cttp_bud("Content-Length", len_c));
+    _cttp_creq_fire_body(ceq_u, _cttp_bod(len_w, len_c));
     _cttp_creq_fire_body(ceq_u, ceq_u->bod_u);
   }
 }
@@ -599,7 +600,7 @@ _cttp_creq_new(c3_l num_l, u3_noun hes)
 
   ceq_u->met_m = met;
   ceq_u->url_c = _cttp_creq_url(u3k(pul));
-  ceq_u->hed_u = _cttp_heds_math(0, u3k(mah));
+  ceq_u->hed_u = _cttp_heds_math(u3k(mah));
 
   if ( u3_nul != bod ) {
     ceq_u->bod_u = _cttp_octs_to_bod(u3k(u3t(bod)));
@@ -614,7 +615,7 @@ _cttp_creq_new(c3_l num_l, u3_noun hes)
 static void
 _cttp_cres_queue_buf(u3_cres* res_u, h2o_buffer_t* buf_u)
 {
-  u3_hbod* bod_u = _cttp_bod(buf_u->size, (const c3_y *)buf_u->bytes);
+  u3_hbod* bod_u = _cttp_bod(buf_u->size, buf_u->bytes);
 
   if ( !(res_u->bod_u) ) {
     res_u->bod_u = res_u->dob_u = bod_u;

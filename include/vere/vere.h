@@ -22,7 +22,9 @@
     */
       typedef struct _u3_hhed {
         struct _u3_hhed* nex_u;
+        c3_w             nam_w;
         c3_c*            nam_c;
+        c3_w             val_w;
         c3_c*            val_c;
       } u3_hhed;
 
