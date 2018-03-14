@@ -13,10 +13,16 @@
     =,  dejs-soft:format
     |=  a=json
     ^-  response
+    =;  dere
+      =+  res=((ar dere) a)
+      ?~  res  (need (dere a))
+      [%batch u.res]
+    |=  a=json
+    ^-  (unit response)
     =/  res=(unit @t)
       ((ot result+so ~) a)
-    ?^  res  result+u.res
-    :-  %error  %-  need
+    ?^  res  `result+u.res
+    :+  ~  %error  %-  need
     ((ot code+so message+so ~) a)
   --
 --

@@ -19,12 +19,23 @@
     (malt ~[content-type+['application/x-www-form-urlencoded']~])
   (some (as-octt (en-json:html jon)))
 ::
+++  batch-read-request
+  |=  req=(list [@ux @t (list data)])
+  ^-  json
+  a+(turn req read-request)
+::
 ++  read-request
   |=  [adr=@ux fun=@t das=(list data)]
+  ^-  json
   %-  request-to-json
   :+  %eth-call
     [~ `@`adr ~ ~ ~ `tape`(encode-call fun das)]
   [%label %latest]
+::
+++  batch-request-to-json
+  |=  req=(list request)
+  ^-  json
+  a+(turn req request-to-json)
 ::
 ++  request-to-json
   =,  enjs:format
@@ -33,6 +44,7 @@
   %-  pairs
   =;  cal=[m=@t p=(list json)]
     :~  jsonrpc+s+'2.0'
+        ::TODO  allow to self-set, because batch requests.
         id+s+'use wire to id response in hoon'
         method+s+m.cal
         params+a+p.cal
