@@ -80,6 +80,110 @@
     %label      s+l.dob
   ==
 ::
+::  decoding
+::
+::  for details on encoding, see below.
+::
+++  decode-results
+  :>  rex:  string of hex bytes with leading 0x.
+  |=  [rex=@t tys=(list etyp)]
+  (decode-arguments (rsh 3 2 rex) tys)
+::
+++  decode-arguments
+  :>  res:  string of hex bytes without leading 0x.
+  |=  [res=@t tys=(list etyp)]
+  :>  wos:  input as list of 32 byte words in hex.
+  =/  wos=(list @t)  (rip 9 res)
+  :>  win:  index of the word to process.
+  =|  win=@ud
+  :>  das:  resulting data, should match {tys}.
+  =|  das=(list data)
+  |-  ^+  das
+  ?~  tys  (flop `(list data)`das)
+  =*  typ  i.tys
+  ?:  (gte win (lent wos))  ~|(%insufficient-data !!)
+  =-  $(das [dat das], win nin, tys t.tys)
+  ::=<  (decode-next win i.tys)  ::TODO  urbit/arvo#673
+  |^  ::|%  ++  decode-next  |=  [win=@ud typ=etyp]
+    ^-  [nin=@ud dat=data]
+    =+  wor=(snag win wos)
+    ?+  typ
+      ~|  [%unsupported-type typ]
+      !!
+    ::
+        ?(%address %bool %uint)  ::  %int %real %ureal
+      :-  +(win)
+      ?-  typ
+        %address  address+(rash wor hex)
+        %uint     uint+(rash wor hex)
+        %bool     bool+=(0 (rash wor hex))
+      ==
+    ::
+        %string
+      =+  $(typ %bytes)
+      ?>  ?=(%bytes -.dat)
+      [nin %string (trip (swp 3 q.p.dat))]
+    ::
+        %bytes
+      :+  +(win)  %bytes
+      ::  find the word index of the actual data.
+      =/  lic=@ud  (div (rash wor hex) 32)
+      ::  learn the bytelength of the data.
+      =/  len=@ud  (rash (snag lic wos) hex)
+      (decode-bytes-n +(lic) len)
+    ::
+        [%bytes-n *]
+      :-  (add win +((div n.typ 32)))
+      [%bytes-n (decode-bytes-n win n.typ)]
+    ::
+        [%array *]
+      :+  +(win)  %array
+      ::  find the word index of the actual data.
+      =.  win  (div (rash wor hex) 32)
+      ::  read the elements from their location.
+      ::TODO  see ++decode-array-n
+      :: %^  decode-array-n  t.typ  +(win)
+      :: (rash (snag win wos) hex)
+      =/  len=@ud  (rash (snag win wos) hex)
+      =.  win  +(win)
+      =|  els=(list data)
+      |-  ^+  els
+      ?:  =(len 0)  (flop els)
+      =+  ^$(typ t.typ, win win)
+      $(els [dat els], win nin, len (dec len))
+    ::
+        [%array-n *]
+      ::TODO  see ++decode-array-n
+      :: (decode-array-n t.typ win n.typ)
+      =|  els=(list data)
+      |-
+      ?:  =(n.typ 0)  [win %array-n (flop els)]
+      ~&  [%arr-left n.typ win]
+      =+  ^$(typ t.typ, win win)
+      $(els [dat els], win nin, n.typ (dec n.typ))
+    ==
+  ::
+  ++  decode-bytes-n
+    |=  [fro=@ud bys=@ud]
+    ^-  octs
+    ::  parse {bys} bytes from {fro}.
+    =-  [bys (rash - hex)]
+    %^  end  3  (mul 2 bys)
+    %+  can  9
+    %+  turn
+      (swag [fro +((div bys 32))] wos)
+    |=(a=@t [1 a])
+  ::
+  ::TODO  uncomment and use once urbit/arvo#673 gets resolved/a workaround.
+  :: ++  decode-array-n
+  ::   |=  [typ=etyp fro=@ud len=@ud]
+  ::   =|  els=(list data)
+  ::   |-  ^+  els
+  ::   ?:  =(len 0)  (flop els)
+  ::   =+  (decode-next typ fro)
+  ::   $(els [dat els], fro nin, len (dec len))
+  --
+::
 ::  encoding
 ::
 ::  ABI spec used for reference:

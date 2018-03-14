@@ -1,5 +1,17 @@
 ::
 |%
+++  etyp
+  $?  ::  static
+      %address  %bool
+      %int      %uint
+      %real     %ureal
+      [%bytes-n n=@ud]
+      ::  dynamic
+      %bytes    %string
+      [%array-n t=etyp n=@ud]
+      [%array t=etyp]
+  ==
+::
 ++  data                                                :>  typed data
   $%  [%address p=@ux]
       [%string p=tape]
