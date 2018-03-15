@@ -36,6 +36,7 @@
 ::
 ++  grab
   |%
+  ++  noun  config  :: validate over ames
   ++  mime
     |=  {p/mite:eyre q/octs:eyre}
     (txt (to-wain:format q.q))
