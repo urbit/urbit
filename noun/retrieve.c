@@ -509,24 +509,21 @@ typedef struct {
 } eqframe;
 
 static inline eqframe*
-_eq_peek()
+_eq_push(c3_ys mov, c3_ys off, u3_noun a, u3_noun b)
 {
-  return (eqframe*) u3a_peek(sizeof(eqframe));
+  u3R->cap_p += mov;
+  eqframe* cur = u3to(eqframe, u3R->cap_p + off);
+  cur->a = a;
+  cur->b = b;
+  cur->sat_y = 0;
+  return cur;
 }
 
-static inline void
-_eq_push(u3_noun a, u3_noun b)
+static inline eqframe*
+_eq_pop(c3_ys mov, c3_ys off)
 {
-  eqframe* cur = (eqframe*) u3a_push(sizeof(eqframe));
-  cur->a       = a;
-  cur->b       = b;
-  cur->sat_y   = 0;
-}
-
-static inline void
-_eq_pop()
-{
-  u3a_pop(sizeof(eqframe));
+  u3R->cap_p -= mov;
+  return u3to(eqframe, u3R->cap_p + off);
 }
 
 /* _sing_one(): do not pick a unified pointer for identical (a) and (b).
@@ -671,19 +668,22 @@ _song_atom(u3_atom a, u3_atom b)
 static c3_o
 _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
 {
-  eqframe* fam;
-  u3p(eqframe) empty = u3R->cap_p;
-  c3_w wis_w = 0;
-  c3_o r_o = c3n;
+  u3p(eqframe) empty  = u3R->cap_p;
   u3p(u3h_root) har_p = 0;
 
-  _eq_push(a, b);
+  c3_y  wis_y = c3_wiseof(eqframe);
+  c3_o  nor_o = u3a_is_north(u3R);
+  c3_ys mov   = ( c3y == nor_o ? -wis_y : wis_y );
+  c3_ys off   = ( c3y == nor_o ? 0 : -wis_y );
+  c3_w  wis_w = 0;
+  c3_o  r_o   = c3n;
+  eqframe* fam = _eq_push(mov, off, a, b);
+
   /* there's a while and a switch here. continues all mean "do the loop again"
   ** and breaks all mean "fall through this switch case". There are no breaks
   ** that early terminate the loop.
   */
   while ( empty != u3R->cap_p ) {
-    fam = _eq_peek();
     if ( (a = fam->a) == (b = fam->b) ) {
       r_o = c3y;
     }
@@ -705,8 +705,8 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
 
         case 1:
           uni(&(a_u->hed), &(b_u->hed));
-          _eq_push(a_u->tel, b_u->tel);
           fam->sat_y = 2;
+          fam = _eq_push(mov, off, a_u->tel, b_u->tel);
           continue;
 
         case 0: {
@@ -724,12 +724,12 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
               u3t_on(euq_o);
               u3z(key);
               if ( u3_none != got ) {
-                _eq_pop();
+                fam = _eq_pop(mov, off);
                 continue;
               }
             }
-            _eq_push(a_u->hed, b_u->hed);
             fam->sat_y = 1;
+            fam = _eq_push(mov, off, a_u->hed, b_u->hed);
             continue;
           }
         }
@@ -756,7 +756,7 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
         u3t_on(euq_o);
         u3z(key);
       }
-      _eq_pop();
+      fam = _eq_pop(mov, off);
     }
   }
 
