@@ -54,7 +54,7 @@ On macos, you need to make sure `pkg-config` uses the correct homebrew path.
 1. Install all required dependencies.
 2. `git submodule init` in the urbit repository
 3. `git submodule update`
-4. `meson build`
+4. `mkdir build && meson build`
 5. If the last step was successful, type `cd ./build` followed by `ninja`
    to compile urbit.
 6. The executable should appear in `./build` directory.
