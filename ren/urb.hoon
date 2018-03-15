@@ -11,7 +11,14 @@
               /web/collections
           :: put collections through the same .htm
           :: routing structure as nutalk
-          /;  urb-split  /#  /;  nutalk  /|(/!htm/ /htm/)  ::a lot of stuff in here isn't .hoon files
+          :: this is basically the same code as urb-split, just eliminates the dependency
+          /;  |=  {dep/@uvH urb/manx}  ^-  {hed/{@uvh marl} bod/{@uvH marl}}
+              ~|  [%malformed-urb urb]  :: XX types
+              ?>  ?=({{$html $~} {{$head $~} *} {{$body $~} *} $~} urb)
+              =+  `{{$html $~} {{$head $~} hed/marl} {{$body $~} bod/marl} $~}`urb
+              :-  [0v0 hed]                         
+              [0v0 bod]
+              /#  /;  nutalk  /|(/!htm/ /htm/)  ::a lot of stuff in here isn't .hoon files
               /
           /urb-tree/
       ==
