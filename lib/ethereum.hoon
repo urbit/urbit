@@ -8,7 +8,7 @@
 ::
 ::  making calls to nodes
 ::
-::  see also the json rpc api spec
+::  see also the json rpc api spec:
 ::  https://ethereum.gitbooks.io/frontier-guide/content/rpc.html
 ::
 ++  json-request
@@ -16,26 +16,22 @@
   |=  [url=purl jon=json]
   ^-  hiss
   :^  url  %post
-    (malt ~[content-type+['application/x-www-form-urlencoded']~])
+    %-  ~(gas in *math)
+    ~[content-type+['application/x-www-form-urlencoded']~]
   (some (as-octt (en-json:html jon)))
 ::
 ++  batch-read-request
-  |=  req=(list [(unit @t) @ux @t (list data)])
+  |=  req=(list [(unit @t) address @t (list data)])
   ^-  json
   a+(turn req read-request)
 ::
 ++  read-request
-  |=  [riq=(unit @t) adr=@ux fun=@t das=(list data)]
+  |=  [riq=(unit @t) adr=address fun=@t das=(list data)]
   ^-  json
   %+  request-to-json  riq
   :+  %eth-call
-    [~ `@`adr ~ ~ ~ `tape`(encode-call fun das)]
+    [~ adr ~ ~ ~ `tape`(encode-call fun das)]
   [%label %latest]
-::
-++  batch-request-to-json
-  |=  req=(list (pair (unit @t) request))
-  ^-  json
-  a+(turn req request-to-json)
 ::
 ++  request-to-json
   =,  enjs:format
@@ -50,7 +46,7 @@
         ?~  riq  ~
         [id+s+u.riq]~
     ==
-  ?+  -.req  ~|([%unsupported-request -.req] !!)
+  ?-  -.req
       %eth-block-number
     ['eth_blockNumber' ~]
   ::

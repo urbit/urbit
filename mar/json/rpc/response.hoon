@@ -8,7 +8,7 @@
 ++  grab                                                ::  convert from
   |%
   ++  noun  response                                    ::  from noun
-  ++  httr  (cork httr-to-json json)
+  ++  httr  (cork httr-to-json json)                    ::  from httr
   ++  json                                              ::  from json
     =,  dejs-soft:format
     |=  a=json
