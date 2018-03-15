@@ -90,12 +90,14 @@
   static u3_noun
   _jam_cap(u3_atom a)
   {
+    u3p(jamframe) empty = u3R->cap_p;
     u3p(u3h_root) har_p = u3h_new();
     c3_o          nor_o = u3a_is_north(u3R);
     c3_y          wis_y = c3_wiseof(jamframe);
     c3_ys         mov   = ( c3y == nor_o ? -wis_y : wis_y );
     c3_ys         off   = ( c3y == nor_o ? 0 : -wis_y );
     jamframe*     fam   = _jam_push(mov, off);
+    jamframe*     don   = u3to(jamframe, empty + off);
 
     fam->sat_y = JAM_NONE;
     fam->nun   = a;
@@ -103,9 +105,8 @@
     fam->lis   = u3_nul;
 
     u3_noun q, r = u3_none;
-    c3_w    dep_w;
 
-    for ( dep_w = 1; dep_w > 0; ) {
+    while ( don != fam ) {
       switch ( fam->sat_y ) {
         case JAM_NONE: {
           u3_noun nun = fam->nun;
@@ -118,7 +119,6 @@
             if ( c3n == u3du(nun) ) {
               r   = _jam_flat(nun, lis);
               fam = _jam_pop(mov, off);
-              --dep_w;
               u3z(len);
             }
             else {
@@ -128,7 +128,6 @@
               fam->nun    = u3h(nun);
               fam->len    = u3qa_add(2, len);
               fam->lis    = u3nc(u3nc(2, 1), lis);
-              ++dep_w;
             }
           }
           else {
@@ -139,7 +138,6 @@
               r = _jam_ptr(got, lis);
             }
             fam = _jam_pop(mov, off);
-            --dep_w;
             u3z(len);
           }
           break;
@@ -157,14 +155,12 @@
           fam->len    = u3qa_add(z, p_r);
           fam->lis    = u3k(q_r);
           u3z(z);
-          ++dep_w;
           break;
         }
         case JAM_TAIL: {
           u3_noun len = fam->len;
           r   = _jam_pair(u3qa_add(2, len), fam->hed, r);
           fam = _jam_pop(mov, off);
-          --dep_w;
           u3z(len);
           break;
         }
