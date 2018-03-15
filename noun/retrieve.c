@@ -502,10 +502,14 @@ _sang_one(u3_noun* a, u3_noun* b)
   }
 }
 
+#define SONG_NONE 0
+#define SONG_HEAD 1
+#define SONG_TAIL 2
+
 typedef struct {
+  c3_y     sat_y;
   u3_noun  a;
   u3_noun  b;
-  c3_y sat_y;
 } eqframe;
 
 static inline eqframe*
@@ -513,9 +517,9 @@ _eq_push(c3_ys mov, c3_ys off, u3_noun a, u3_noun b)
 {
   u3R->cap_p += mov;
   eqframe* cur = u3to(eqframe, u3R->cap_p + off);
-  cur->a = a;
-  cur->b = b;
-  cur->sat_y = 0;
+  cur->sat_y = SONG_NONE;
+  cur->a     = a;
+  cur->b     = b;
   return cur;
 }
 
@@ -659,10 +663,6 @@ _song_atom(u3_atom a, u3_atom b)
   return c3y;
 }
 
-/* knob: set lower to get more/earlier memoize-by-pointer,
- *       higher to avoid allocating the u3h as often */
-#define EQ_WHISTLE 1024
-
 /* _song_x(): yes if a and b are the same noun, use uni to unify
 */
 static c3_o
@@ -671,50 +671,39 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
   u3p(eqframe) empty  = u3R->cap_p;
   u3p(u3h_root) har_p = 0;
 
-  c3_y  wis_y = c3_wiseof(eqframe);
-  c3_o  nor_o = u3a_is_north(u3R);
-  c3_ys mov   = ( c3y == nor_o ? -wis_y : wis_y );
-  c3_ys off   = ( c3y == nor_o ? 0 : -wis_y );
-  c3_w  wis_w = 0;
-  c3_o  r_o   = c3n;
+  c3_y  wis_y  = c3_wiseof(eqframe);
+  c3_o  nor_o  = u3a_is_north(u3R);
+  c3_ys mov    = ( c3y == nor_o ? -wis_y : wis_y );
+  c3_ys off    = ( c3y == nor_o ? 0 : -wis_y );
+  c3_o  r_o    = c3n;
+  c3_w  ovr_w  = 0;
   eqframe* fam = _eq_push(mov, off, a, b);
+  eqframe* don = u3to(eqframe, empty + off);
 
   /* there's a while and a switch here. continues all mean "do the loop again"
-  ** and breaks all mean "fall through this switch case". There are no breaks
-  ** that early terminate the loop.
+  ** and breaks all mean jump to end of switch. There are no breaks
+  ** that terminate the loop.
   */
-  while ( empty != u3R->cap_p ) {
-    if ( (a = fam->a) == (b = fam->b) ) {
-      r_o = c3y;
-    }
-    else if ( c3y == u3a_is_atom(a) ) {
-      r_o = _song_atom(a, b);
-    }
-    else if ( c3y == u3a_is_atom(b) ) {
-      r_o = c3n;
-    }
-    else {
-      u3a_cell* a_u = u3a_to_ptr(a);
-      u3a_cell* b_u = u3a_to_ptr(b);
-
-      switch ( fam->sat_y ) {
-        case 2:
-          uni(&(a_u->tel), &(b_u->tel));
+  while ( don != fam ) {
+    switch ( fam->sat_y ) {
+      case SONG_NONE:
+        if ( (a = fam->a) == (b = fam->b) ) {
           r_o = c3y;
-          break;
+        }
+        else if ( c3y == u3a_is_atom(a) ) {
+          r_o = _song_atom(a, b);
+        }
+        else if ( c3y == u3a_is_atom(b) ) {
+          r_o = c3n;
+        }
+        else {
+          u3a_cell* a_u = u3a_to_ptr(a);
+          u3a_cell* b_u = u3a_to_ptr(b);
 
-        case 1:
-          uni(&(a_u->hed), &(b_u->hed));
-          fam->sat_y = 2;
-          fam = _eq_push(mov, off, a_u->tel, b_u->tel);
-          continue;
-
-        case 0: {
           if ( a_u->mug_w &&
                b_u->mug_w &&
                (a_u->mug_w != b_u->mug_w) ) {
             r_o = c3n;
-            break;
           }
           else {
             if ( har_p != 0 ) {
@@ -728,14 +717,33 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
                 continue;
               }
             }
-            fam->sat_y = 1;
+            fam->sat_y = SONG_HEAD;
             fam = _eq_push(mov, off, a_u->hed, b_u->hed);
             continue;
           }
         }
-        default:
-          c3_assert(0);
+        break;
+
+      case SONG_HEAD: {
+        u3a_cell* a_u = u3a_to_ptr(fam->a);
+        u3a_cell* b_u = u3a_to_ptr(fam->b);
+        uni(&(a_u->hed), &(b_u->hed));
+        fam->sat_y = SONG_TAIL;
+        fam = _eq_push(mov, off, a_u->tel, b_u->tel);
+        continue;
       }
+
+      case SONG_TAIL: {
+        u3a_cell* a_u = u3a_to_ptr(fam->a);
+        u3a_cell* b_u = u3a_to_ptr(fam->b);
+        uni(&(a_u->tel), &(b_u->tel));
+        r_o = c3y;
+        break;
+      }
+
+      default:
+        c3_assert(0);
+        break;
     }
 
     if ( c3n == r_o ) {
@@ -746,7 +754,9 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
       return c3n;
     }
     else {
-      if ( 0 == har_p && (wis_w++ > EQ_WHISTLE) ) {
+      // ovr_w counts iterations. when it overflows, we know we've hit a
+      // pathological case and MUST start de-duplicating comparisons.
+      if ( 0 == har_p && 0 == ++ovr_w ) {
         har_p = u3h_new();
       }
       if ( 0 != har_p ) {
