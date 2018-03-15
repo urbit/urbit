@@ -762,7 +762,7 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
   c3_o  nor_o  = u3a_is_north(u3R);
   c3_ys mov    = ( c3y == nor_o ? -wis_y : wis_y );
   c3_ys off    = ( c3y == nor_o ? 0 : -wis_y );
-  c3_w  ovr_w  = 0;
+  c3_s  ovr_s  = 0;
   eqframe* fam = _eq_push(mov, off, a, b);
   eqframe* don = u3to(eqframe, empty + off);
 
@@ -826,7 +826,7 @@ _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
         break;
     }
 
-    if ( 0 == ++ovr_w ) {
+    if ( 0 == ++ovr_s ) {
       u3p(u3h_root) har_p = u3h_new();
       c3_o ret_o = _song_x_cape(mov, off, fam, don, har_p, uni);
       u3h_free(har_p);
