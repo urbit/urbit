@@ -1,6 +1,14 @@
 ::  /mar/collections/topic/hoon
 ::
 /-  *collections
+|%
+  ++  titled
+    |=  a/wain
+    ^-  wain
+    ?:  =((scag 2 (trip -.a)) "# ")
+      +.a
+    a
+--
 |_  top=topic
 ::
 ++  grow
@@ -15,9 +23,10 @@
       (scot %p who.top)
     wat.top
   ::
+  ++  md  (of-wain:format (titled wat.top))
   ++  elem  :: web display
     ;div
-      ;pre: {(trip (of-wain:format txt))}
+      ;pre: {(trip (of-wain:format (titled txt)))}
       ;hr;
       ;kids;  :: show comments
     ==
