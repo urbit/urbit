@@ -716,13 +716,26 @@
       builds-by-schematic=(map schematic (list @da))
       ::  builds-by-date: all attempted builds, grouped by time
       ::
-      builds-by-date=(map @da (set schematic))
+      builds-by-date=(jug @da schematic)
       ::  components: bidirectional linkages between sub-builds and clients
       ::
       ::    The first of the two jugs maps from a build to its sub-builds.
       ::    The second of the two jugs maps from a build to its client builds.
       ::
-      components=(bi-jug sub-build=build client=build)
+      components=(bi-jug build build)
+      ::  rebuilds: bidirectional linkages between old and new identical builds
+      ::
+      ::    Old and new build must have the same schematic and result.
+      ::    This can form a chain, like build<-->build<-->build.
+      ::
+      $=  rebuilds
+      $:  ::  new: map from old build to new build
+          ::
+          new=(map build build)
+          ::  old: map from new build to old build
+          ::
+          old=(map build build)
+      ==
       ::  blocks: map from +dependency to all builds waiting for its retrieval
       ::
       blocks=(jug dependency build)
@@ -974,6 +987,9 @@
       |=  [=move mapping=_builds-by-listener.state]
       =*  duct  -.move
       (~(del by mapping) duct)
+    ::  try to delete this build entirely if nothing depends on it
+    ::
+    =.  state  (cleanup build)
     ::  recurse with changes applied
     ::
     %_    $
@@ -981,6 +997,157 @@
         moves                     (welp moves moves-for-build)
         listeners.state           (~(del by listeners.state) build)
     ==
+  ::  +cleanup: try to clean up a build and its sub-builds
+  ::
+  ++  cleanup
+    |=  =build
+    ^-  ford-state
+    ::
+    =*  sub-builds  p.components.state
+    =*  client-builds  q.components.state
+    ::
+    =*  new-builds  new.rebuilds.state
+    =*  old-builds  old.rebuilds.state
+    ::  if something depends on this build, no-op and return
+    ::
+    ?:  ?|  (~(has by client-builds) build)
+            (~(has by old-builds) build)
+            (~(has by listeners.state) build)
+        ==
+      state
+    ::  remove :build from :state, starting with its cache line
+    ::
+    =.  results.state  (~(del by results.state) build)
+    ::  remove :date.build from list of dates for this schematic
+    ::
+    =.  builds-by-schematic.state
+      %+  ~(put by builds-by-schematic.state)  schematic.build
+      ::
+      =/  dates  (~(got by builds-by-schematic.state) schematic.build)
+      =|  new-dates=(list @da)
+      ::
+      %-  flop
+      |-  ^+  new-dates
+      ?~  dates  new-dates
+      ::
+      ?:  =(i.dates date.build)
+        $(dates t.dates)
+      $(dates t.dates, new-dates [i.dates new-dates])
+    ::  remove :build from :builds-by-state
+    ::
+    =.  builds-by-date.state
+      (~(del ju builds-by-date.state) date.build build)
+    ::  if no more builds at this date, remove the date from :dependency-updates
+    ::
+    =?    dependency-updates.state
+        !(~(has by builds-by-date.state) date.build)
+      (~(del by dependency-updates.state) date.build)
+    ::  kids: :build's sub-builds
+    ::
+    =/  kids  ~(tap in (~(get ju sub-builds) build))
+    ::  gather :dependencies from :build and its :kids
+    ::
+    =/  direct-deps  (fall (~(get by dependencies.state) build) ~)
+    ::
+    =/  dependencies=(jug disc dependency)  direct-deps
+    =.  dependencies
+      |-  ^+  dependencies
+      ?~  kids  dependencies
+      ::
+      =/  grandkids  ~(tap in (~(get ju sub-builds) i.kids))
+      =/  kid-deps-set  (~(get by dependencies.state) i.kids)
+      =/  kid-deps  ~(tap by (fall kid-deps-set ~))
+      =/  unified-deps
+        |-  ^+  dependencies
+        ?~  kid-deps  dependencies
+        ::
+        ::=+  [disc deps-set]=i.kid-deps is broken because of q face?
+        =/  disc=disc  p.i.kid-deps
+        =/  deps-set=(set dependency)  q.i.kid-deps
+        =/  deps  ~(tap in deps-set)
+        =.  dependencies
+          |-  ^+  dependencies
+          ?~  deps  dependencies
+          ::
+          $(deps t.deps, dependencies (~(put ju dependencies) disc i.deps))
+        ::
+        $(kid-deps t.kid-deps)
+      ::
+      $(kids (weld t.kids grandkids), dependencies unified-deps)
+    ::  remove :build's direct dependencies
+    ::
+    =.  dependencies.state  (~(del by dependencies.state) build)
+    ::  remove :build from :blocks
+    ::
+    =/  dep-values
+      =-  ~(tap in -)
+      %+  roll  ~(val by direct-deps)
+      |=  [deps=(set dependency) dep-values=(set dependency)]
+      (~(uni in dep-values) deps)
+    ::
+    =.  blocks.state
+      |-  ^+  blocks.state
+      ?~  dep-values  blocks.state
+      ::
+      %_  $
+        dep-values  t.dep-values
+        blocks.state  (~(del ju blocks.state) i.dep-values build)
+      ==
+    ::  for each dependency :build relied on, remove it from :live-leaf-builds
+    ::
+    =.  live-leaf-builds.state 
+       |-  ^+  live-leaf-builds.state
+       ?~  dep-values  live-leaf-builds.state
+       ::
+       %_  $
+           dep-values  t.dep-values
+       ::
+           live-leaf-builds.state
+         (~(del ju live-leaf-builds.state) i.dep-values build)
+       ==
+    ::  for each +disc :build relied on, delete :build from :live-root-builds
+    ::
+    =/  discs  ~(tap in ~(key by dependencies))
+    =.  live-root-builds.state
+      |-  ^+  live-root-builds.state
+      ?~  discs  live-root-builds.state
+      ::
+      %_  $
+          discs  t.discs
+      ::
+          live-root-builds.state
+        (~(del ju live-root-builds.state) i.discs build)
+      ==
+    ::  remove the mapping from :build to its sub-builds
+    ::
+    =.  sub-builds  (~(del by sub-builds) build)
+    ::  for each +build in :kids, remove :build from its clients
+    ::
+    =.  client-builds
+      |-  ^+  client-builds
+      ?~  kids  client-builds
+      $(kids t.kids, client-builds (~(del ju client-builds) i.kids build))
+    ::  if there is a newer rebuild of :build, delete the linkage
+    ::
+    =/  rebuild  (~(get by new-builds) build)
+    =?  rebuilds.state  ?=(^ rebuild)
+      %_  rebuilds.state
+        new  (~(del by new-builds) build)
+        old  (~(del by old-builds) build)
+      ==
+    ::  recurse on :kids
+    ::
+    =.  state
+      |-  ^+  state
+      ?~  kids  state
+      ::
+      =.  state  ^$(build i.kids)
+      $(kids t.kids)
+    ::  recurse on :rebuild; note this must be done after recursing on :kids
+    ::
+    =?  state  ?=(^ rebuild)  $(build u.rebuild)
+    ::
+    state
   --
 --
 ::
