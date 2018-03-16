@@ -19,7 +19,7 @@
 ++  test-call
   ~&  %test-call
   %-  expect-eq  !>
-  :-  ~
+  :-  [duct=~ %give %made now %complete %result %$ %noun !>(**)]~
   =-  -.-
   %-  call:(ford-turbo)
   :*  duct=~

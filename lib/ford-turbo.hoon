@@ -816,13 +816,67 @@
 ::  +ev: per-event core
 ::
 ++  ev
-  |_  [[our=@p now=@da scry=sley] =ford-state]
+  |_  [[our=@p =duct now=@da scry=sley] =ford-state]
   ::  +build: perform a fresh +build, either live or once
   ::
-  ++  build
+  ++  start-build
     |=  [=schematic date=(unit @da)]
     ^-  [(list move) ^ford-state]
-    [~ ford-state]
+    ::
+    ?~  date
+      (execute [now schematic] live=&)
+    (execute [u.date schematic] live=|)
+ ::
+  ++  execute
+    |=  [=build live=?]
+    ^-  [moves=(list move) ^ford-state]
+    ::  TODO this is only a dummy; fill in state mutation logic
+    (make build)
+  ::
+  ++  make
+    |=  =build
+    ^-  [(list move) ^ford-state]
+    |^
+    ?-    -.schematic.build
+        ^  !!
+        %$  (literal literal.schematic.build)
+    ::
+        %alts  !!
+        %bake  !!
+        %bunt  !!
+        %call  !!
+        %cast  !!
+        %core  !!
+        %dude  !!
+        %file  !!
+        %hood  !!
+        %path  !!
+        %plan  !!
+        %reef  !!
+        %ride  !!
+        %slit  !!
+        %slim  !!
+        %scry  !!
+        %vale  !!
+        %volt  !!
+    ::
+    ::  clay diff and merge operations
+    ::
+        %diff  !!
+        %join  !!
+        %mash  !!
+        %mute  !!
+        %pact  !!
+    ==
+    ++  literal
+      |=  =cage
+      ^-  [(list move) ^ford-state]
+      :_  ford-state
+      :_  ~
+      ^-  move
+      :-  duct
+      [%give %made date.build result=[%complete [%result [%$ cage]]]]
+    --
   ++  rebuild  !!
   ++  unblock  !!
   ++  cancel  !!
@@ -871,8 +925,8 @@
    ::    with the new :ship-state and produce it along with :moves.
    ::
    =^  ship-state  state-by-ship  (find-or-create-ship-state our.task)
-   =*  event-args  [[our.task now scry] ship-state]
-   =*  build-func  ~(build ev event-args)
+   =*  event-args  [[our.task duct now scry] ship-state]
+   =*  build-func  ~(start-build ev event-args)
    =^  moves  ship-state  (build-func schematic.task date.task)
    =.  state-by-ship  (~(put by state-by-ship) our.task ship-state)
    ::
