@@ -787,9 +787,9 @@
           ::    Updated every time this result is used in another build or
           ::    requested in a build request.
           last-accessed=@da
-          ::  result: the referentially transparent result of a +build
+          ::  build-result: the referentially transparent result of a +build
           ::
-          result=build-result
+          =build-result
       ==
       ::  %tombstone: marker that this build has been run and its result wiped
       ::
@@ -811,31 +811,75 @@
           b=mold
       ==
   (pair (jug a b) (jug b a))
+::  +block: something a build can get stuck on
+::
++=  block
+  $%  ::  %build: the build blocked on another build, :build
+      ::
+      [%build =build]
+      ::  %dependency: the build blocked on an external :dependency
+      ::
+      [%dependency =dependency]
+  ==
 --
 |%
 ::  +ev: per-event core
 ::
 ++  ev
-  |_  [[our=@p =duct now=@da scry=sley] =ford-state]
-  ::  +build: perform a fresh +build, either live or once
+  ::  completed-builds: root builds completed in this event, in reverse order
+  ::
+  =|  completed-builds=(list build)
+  ::
+  |_  [[our=@p =duct now=@da scry=sley] state=ford-state]
+  ::  |entry-points: externally fired arms
+  ::
+  ::+|  entry-points
+  ::
+  ::  +start-build: perform a fresh +build, either live or once
   ::
   ++  start-build
     |=  [=schematic date=(unit @da)]
-    ^-  [(list move) ^ford-state]
+    ^-  [(list move) ford-state]
+    ::
+    =<  finalize
     ::
     ?~  date
       (execute [now schematic] live=&)
     (execute [u.date schematic] live=|)
- ::
+  ::
+  ++  rebuild  !!
+  ++  unblock  !!
+  ++  cancel  !!
+  ::  |construction: arms for performing builds
+  ::
+  ::+|  construction
+  ::
   ++  execute
     |=  [=build live=?]
-    ^-  [moves=(list move) ^ford-state]
-    ::  TODO this is only a dummy; fill in state mutation logic
-    (make build)
+    ^+  this
+    ::
+    =^  made  state  (make build)
+    ::
+    ?-    -.made
+        ::  %&: build completed and produced its result
+        ::
+        %&
+      =*  cache-entry  [%result last-accessed=now build-result=p.made]
+      ::
+      %_  this
+        completed-builds  [build completed-builds]
+        results.state  (~(put by results.state) build cache-entry)
+      ==
+    ::
+        ::  %|: build got stuck and produced a set of blocks
+        ::
+        %|
+      !!
+    ==
   ::
   ++  make
     |=  =build
-    ^-  [(list move) ^ford-state]
+    ^-  [(each build-result (set block)) ford-state]
     |^
     ?-    -.schematic.build
         ^  !!
@@ -870,16 +914,27 @@
     ==
     ++  literal
       |=  =cage
-      ^-  [(list move) ^ford-state]
-      :_  ford-state
-      :_  ~
-      ^-  move
-      :-  duct
-      [%give %made date.build result=[%complete [%result [%$ cage]]]]
+      [[%& %result %$ cage] state]
     --
-  ++  rebuild  !!
-  ++  unblock  !!
-  ++  cancel  !!
+  ::  |utilities:
+  ::
+  ::+|  utilities
+  ::
+  ++  this  .
+  ::  +finalize: convert local state to moves and persistent state
+  ::
+  ++  finalize
+    ^-  [(list move) ford-state]
+    ::  mades: list of %made moves to emit, one per duct on a completed build
+    ::
+    =/  mades=(list move)
+      %+  turn  (flop completed-builds)
+      |=  =build
+      =/  cache  (~(got by results.state) build)
+      ?>  ?=(%result -.cache)
+      [duct %give %made date.build %complete build-result.cache]
+    ::
+    [mades state]
   --
 --
 ::
