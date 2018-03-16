@@ -843,6 +843,16 @@
     ::
     =<  finalize
     ::
+    =+  [live when]=?~(date [& now] [| u.date])
+    =/  build  [when schematic]
+    ::
+    =:  listeners.state
+      (~(put ju listeners.state) build [duct live])
+    ::
+        builds-by-listener.state
+      (~(put by builds-by-listener.state) duct build)
+    ==
+    ::
     ?~  date
       (execute [now schematic] live=&)
     (execute [u.date schematic] live=|)
@@ -866,10 +876,13 @@
         %&
       =*  cache-entry  [%result last-accessed=now build-result=p.made]
       ::
-      %_  this
-        completed-builds  [build completed-builds]
-        results.state  (~(put by results.state) build cache-entry)
-      ==
+      =.  completed-builds  [build completed-builds]
+      ::
+      =?    results.state
+          (~(has by listeners.state) build)
+        (~(put by results.state) build cache-entry)
+      ::
+      this
     ::
         ::  %|: build got stuck and produced a set of blocks
         ::
@@ -923,18 +936,51 @@
   ++  this  .
   ::  +finalize: convert local state to moves and persistent state
   ::
+  ::    TODO: needs rework to support live builds
+  ::
   ++  finalize
     ^-  [(list move) ford-state]
     ::  mades: list of %made moves to emit, one per duct on a completed build
     ::
-    =/  mades=(list move)
-      %+  turn  (flop completed-builds)
-      |=  =build
-      =/  cache  (~(got by results.state) build)
-      ?>  ?=(%result -.cache)
-      [duct %give %made date.build %complete build-result.cache]
+    =|  moves=(list move)
+    ::  sort completed-builds chronologically (they was originally reversed)
     ::
-    [mades state]
+    =.  completed-builds  (flop completed-builds)
+    ::
+    =<  [moves state]
+    ::  process the completed builds in a loop
+    ::
+    |-  ^-  [moves=(list move) _this]
+    ::  exit condition: no builds left to process
+    ::
+    ?~  completed-builds
+      [moves this]
+    ::
+    =*  build  i.completed-builds
+    ::  look up :build's result from cache
+    ::
+    =/  cache  (~(got by results.state) build)
+    ?>  ?=(%result -.cache)
+    ::  create moves to send out for this build
+    ::
+    =/  moves-for-build
+      %+  turn  ~(tap in (~(get ju listeners.state) build))
+      |=  [duct=^duct live=?]
+      [duct %give %made date.build %complete build-result.cache]
+    ::  remove all ducts related to this build
+    ::
+    =.  builds-by-listener.state
+      %+  roll  moves-for-build
+      |=  [=move mapping=_builds-by-listener.state]
+      =*  duct  -.move
+      (~(del by mapping) duct)
+    ::  recurse with changes applied
+    ::
+    %_    $
+        completed-builds          t.completed-builds
+        moves                     (welp moves moves-for-build)
+        listeners.state           (~(del by listeners.state) build)
+    ==
   --
 --
 ::
