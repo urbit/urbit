@@ -1044,14 +1044,18 @@
 ::+|
 ::
 ++  this  .
+::  +find-or-create-ship-state: find or create a ford-state for a @p
+::
+::    Accesses and modifies :state-by-ship.
 ::
 ++  find-or-create-ship-state
   |=  our=@p
   ^-  [ford-state _state-by-ship]
+  ::
   =/  existing  (~(get by state-by-ship) our)
-  ?^  existing  [u.existing state-by-ship]
-  =?    state-by-ship
-      !(~(has by state-by-ship) our)
-    (~(put by state-by-ship) our *ford-state)
-  [(~(got by state-by-ship) our) state-by-ship]
+  ?^  existing
+    [u.existing state-by-ship]
+  ::
+  =|  new-state=ford-state
+  [new-state (~(put by state-by-ship) our new-state)]
 --
