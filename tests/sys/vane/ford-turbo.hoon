@@ -1,10 +1,10 @@
-::  /=  ford  //  %/lib/ford-turbo/hoon
-/+  tester
-::
-::
+/+  ford-turbo, tester
 ::
 |_  _tester:tester
-++  test-ford-compiles
+++  test-ford-call
   ~&  %ford-compiles
-  (expect-eq !>([1 1]))
+  %-  expect-eq  !>
+  [1 1]
+  ::  :-  ~
+  ::  -:(call:(ford-turbo *@da *@ *sley))
 --

@@ -4,7 +4,7 @@
 ::  |ford: build system vane interface
 ::
 |%
-++  ford  ^?
+++  ford-api  ^?
   |%
   ::  |able:ford: ford's public +move interface
   ::
@@ -16,16 +16,23 @@
       $%  ::  %make: perform a build, either live or once
           ::
           $:  %make
+              ::  our: who our ship is (remove after cc-release)
+              ::
+              our=@p
               ::  plan: the schematic to build
               ::
-              plan=schematic
+              =schematic
               ::  date: the formal date of the build, or ~ for live
               ::
               date=(unit @da)
           ==
           ::  %kill: stop a build; send on same duct as original %make request
           ::
-          [%kill ~]
+          $:  %kill
+              ::  our: who our ship is (remove after cc-release)s
+              ::
+              our=@p
+          ==
           ::  %wegh: produce memory usage information
           ::
           [%wegh ~]
@@ -90,9 +97,9 @@
     ==
   ::  +build-result: the referentially transparent result of a +build
   ::
-  ::    A +build produces either an error or a result. A result is a tagged union
-  ::    of the various kinds of datatypes a build can produce. The tag represents
-  ::    the sub-type of +schematic that produced the result.
+  ::    A +build produces either an error or a result. A result is a tagged
+  ::    union of the various kinds of datatypes a build can produce. The tag
+  ::    represents the sub-type of +schematic that produced the result.
   ::
   +=  build-result
     $%  ::  %error: the build produced an error whose description is :message
@@ -607,7 +614,74 @@
 ::
 ::  sys/ford/hoon
 ::
-=,  ford
+::  when ford becomes a real vane, it'll start from a vase
+::
+::  |=  pit=vase
+::
+=,  ford-api
+::  ford internal data structures
+::
+=>  =~
+=,  ford-api  ::  TODO remove once in vane
+|%
+::  +move: arvo moves that ford can emit
+::
+++  move
+  ::
+  $:  ::  duct: request identifier
+      ::
+      =duct
+      ::  card: move contents; either a +note or a +gift:able 
+      ::
+      card=(wind note gift:able)
+  ==
+::  +note: private request from ford to another vane
+::
+++  note
+  $%  ::  %c: to clay
+      ::
+      $:  %c
+      ::  %warp: internal (intra-ship) file request
+      ::
+      $%  $:  %warp
+              ::  sock: pair of requesting ship, requestee ship
+              ::
+              =sock
+              ::  riff: clay request contents
+              ::
+              riff=riff:clay
+      ==  ==  ==
+      ::  %f: to ford itself
+      ::
+      $:  %f
+      ::  %make: perform a build
+      ::
+      $%  $:  %make
+              ::  schematic: the schematic to build
+              ::
+              =schematic
+              ::  date: the formal date of the build, or ~ for live
+              ::
+              date=(unit @da)
+      ==  ==  ==
+      ::  %g: to gall
+      ::
+      $:  %g
+      ::  %unto: full transmission
+      ::
+      ::    TODO: document more fully
+      ::
+      $%  $:  %deal
+          ::  sock: pair of requesting ship, requestee ship
+          ::
+          =sock
+          ::  cush: gall request contents
+          ::
+          cush=cush:gall
+  ==  ==  ==  ==
+--
+=,  ford-api  ::  TODO remove once in vane
+::
 |%
 ::
 ::  +axle: overall ford state
@@ -692,9 +766,9 @@
   $:  ::  date: the formal date of this build; unrelated to time of execution
       ::
       date=@da
-      ::  plan: the schematic that determines how to run this build
+      ::  schematic: the schematic that determines how to run this build
       ::
-      plan=schematic
+      =schematic
   ==
 ::  +cache-line: a record of our result of running a +build
 ::
@@ -737,4 +811,92 @@
           b=mold
       ==
   (pair (jug a b) (jug b a))
+--
+|%
+::  +ev: per-event core
+::
+++  ev
+  |_  [[our=@p now=@da scry=sley] =ford-state]
+  ::  +build: perform a fresh +build, either live or once
+  ::
+  ++  build
+    |=  [=schematic date=(unit @da)]
+    ^-  [(list move) ^ford-state]
+    [~ ford-state]
+  ++  rebuild  !!
+  ++  unblock  !!
+  ++  cancel  !!
+  --
+--
+::
+::  end =~
+::
+.  ==
+=,  ford-api  ::  TODO remove once in vane
+::
+::::  vane core
+  ::
+=|  axle
+|=  [now=@da eny=@ scry=sley]
+::  allow jets to be registered within this core
+::
+~%  %ford-d  ..is  ~  ::  XX  why the '-d'?
+::
+::  ^?  ::  to be added to real vane
+::
+|%
+::  +call: handle a +task:able from arvo
+::
+++  call
+  |=  [=duct type=* wrapped-task=(hobo task:able)]
+  ^-  [(list move) q=_this]
+  ::  unwrap task
+  ::
+  =/  task=task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ((hard task:able) p.wrapped-task)
+  ::
+  ?-    -.task
+      ::  %make: request to perform a build
+      ::
+      %make
+   ::  perform the build indicated by :task
+   ::
+   ::    First, we find or create the :ship-state for :our.task,
+   ::    modifying :state-by-ship as necessary. Then we dispatch to the |ev
+   ::    by constructing :event-args and using them to create a :build-func
+   ::    that performs the build. The result of :build-func is a pair of
+   ::    :moves and a mutant :ship-state. We update our :state-by-ship map
+   ::    with the new :ship-state and produce it along with :moves.
+   ::
+   =^  ship-state  state-by-ship  (find-or-create-ship-state our.task)
+   =*  event-args  [[our.task now scry] ship-state]
+   =*  build-func  ~(build ev event-args)
+   =^  moves  ship-state  (build-func schematic.task date.task)
+   =.  state-by-ship  (~(put by state-by-ship) our.task ship-state)
+   ::
+   [moves this]
+  ::
+      %kill  !!
+  ::
+      %wipe  !!
+  ::
+      %wegh  !!
+  ==
+::  %utilities
+::
+::+|
+::
+++  this  .
+::
+++  find-or-create-ship-state
+  |=  our=@p
+  ^-  [ford-state _state-by-ship]
+  =/  existing  (~(get by state-by-ship) our)
+  ?^  existing  [u.existing state-by-ship]
+  =?    state-by-ship
+      !(~(has by state-by-ship) our)
+    (~(put by state-by-ship) our *ford-state)
+  [(~(got by state-by-ship) our) state-by-ship]
 --
