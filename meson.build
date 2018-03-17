@@ -1,5 +1,13 @@
 project('urbit', 'c', meson_version: '>=0.29.0')
 
+legacy_meson = false
+
+if(meson.version() == '0.29.0')
+  legacy_meson = true
+elif(meson.version() != '0.45.0')
+  error('Meson 0.29.0 is last legacy version supported. Otherwise please upgrade to 0.45.0.')
+endif
+
 jets_a_src =  [
 'jets/a/add.c',
 'jets/a/dec.c',
@@ -221,7 +229,12 @@ os_link_flags = []
 if osdet == 'linux'
   conf_data.set('U3_OS_linux', true)
 
-  pthread_dep = find_library('pthread')
+  if(legacy_meson)
+    pthread_dep = find_library('pthread')
+  else
+    pthread_dep = meson.get_compiler('c').find_library('pthread')
+  endif
+
   ncurses_dep = dependency('ncurses')
   os_deps = os_deps + [pthread_dep, ncurses_dep]
 
@@ -230,7 +243,12 @@ elif osdet == 'darwin'
 
   os_c_flags = os_c_flags + ['-bind_at_load']
   #  os_link_flags = ['-framework CoreServices', '-framework CoreFoundation']
-  ncurses_dep = find_library('ncurses')
+  if(legacy_meson)
+    ncurses_dep = find_library('ncurses')
+  else
+    ncurses_dep = meson.get_compiler('c').find_library('ncurses')
+  endif
+
   os_deps = os_deps + [ncurses_dep]
 
 elif osdet == 'bsd'
@@ -261,9 +279,13 @@ openssl_dep = dependency('openssl', version: '>=1.0.0')
 curl_dep = dependency('libcurl', version: '>=7.35.0')
 libuv_dep = dependency('libuv', version: '>=1.8.0')
 
-gmp_dep = find_library('gmp')
-sigsegv_dep = find_library('sigsegv')
-
+if(legacy_meson)
+  gmp_dep = find_library('gmp')
+  sigsegv_dep = find_library('sigsegv')
+else
+  gmp_dep = meson.get_compiler('c').find_library('gmp')
+  sigsegv_dep = meson.get_compiler('c').find_library('sigsegv')
+endif
 
 # For these libs we provide fallback bundle
 cmark_dep = dependency('libcmark', version: '0.12.0', fallback: ['commonmark-legacy', 'cmark_dep'])
