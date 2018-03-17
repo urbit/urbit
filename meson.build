@@ -2,10 +2,13 @@ project('urbit', 'c', meson_version: '>=0.29.0')
 
 legacy_meson = false
 
-if(meson.version() == '0.29.0')
+detect_meson_version = run_command('meson', '--version')
+meson_ver = detect_meson_version.stdout()
+
+if(meson_ver == '0.29.0\n')
   legacy_meson = true
-elif(meson.version() != '0.45.0')
-  error('Meson 0.29.0 is last legacy version supported. Otherwise please upgrade to 0.45.0.')
+elif(meson_ver.version_compare('>=0.40.0'))
+  error('Meson 0.29.0 is last legacy version supported. Otherwise please upgrade to 0.40.0 or higher.')
 endif
 
 jets_a_src =  [
