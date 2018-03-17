@@ -1,32 +1,47 @@
-require! \stream-snitch
-pty = require \pty.js
+{Urbit,ERROR} = require './runner.ls'
 
-urbit =
-  # TODO abort on failure
-  pty.spawn 'urbit' <[-B urbit.pill -A .. -cFI zod zod]> 
-     .on \data -> process.stdout.write it
-     
-urbit.on \exit (code)->
-  console.log "\nnode: urbit exited with code #code\n"
-  process.exit code
-
-console.log "FIXME Running Ubuntu 14.04, which causes a libtinfo version info warning. Should update to 16.04.\n"
-  
-fin = no
-urbit.pipe (new stream-snitch /dojo> /g).on \match ->
-    return if fin
-    fin := yes
-    console.log "\n\n---\nnode: got dojo!\n---\n\n"
-    set-timeout (-> process.exit 0), 1000 # should probably test further
-    
-urbit.pipe (new stream-snitch /\n(\/~|ford: )/g).on \match ->
-    return if fin
-    fin := yes
-    console.log "\n\n---\nnode: detected error\n---\n\n"
-    set-timeout (-> process.exit 1), 1000
-    
-set-timeout ...
-  -> console.log "\n\n---\nnode: timed out after 5 min\n---"
-  5*60000
-  
-process.on \exit -> urbit.write '\04' # send EOF to gracefully checkpoint
+urbit = new Urbit <[-B urbit.pill -A .. -cFI zod zod]> 
+Promise.resolve urbit
+.then (urb)->
+  urb.note "Booting urbit"
+  Promise.race [
+    urb.expect ERROR .then ->
+      urb.warn "Boot error detected"
+      throw Error "Stack trace while booting"
+  , do
+    <- urb.expect /dojo> / .then
+    <- urb.expect-echo "%dojo-booted" .then
+    urb.reset-listeners!
+  ]
+.then (urb)->
+  urb.note "Testing compilation"
+  errs = {} #REVIEW stream reduce?
+  cur = "init"
+  urb.every />> (\/[ -~]+)/ ([_,path])-> cur := path
+  urb.every ERROR, ->
+    unless errs[cur]
+      errs[cur] = true
+      urb.warn "Compile error detected"
+  #
+  <- urb.line "|start %test" .then
+  <- urb.line ":test [%cores /]" .then
+  <- urb.expect-echo "%compilation-tested" .then
+  errs := Object.keys errs
+  if errs.length => throw Error "in #errs"
+  urb.reset-listeners!
+.then (urb)->
+  urb.note "Running /===/tests"
+  errs = "" #REVIEW stream reduce?
+  urb.every /(\/[ -~]* (FAILED|CRASHED))/, ([_,result])->
+    if !errs => urb.warn "First error"
+    errs += "\n  #result"
+  <- urb.line "+test, =defer |, =seed `@uvI`(shaz %reproducible)" .then
+  <- urb.expect-echo "%ran-tests" .then
+  if errs => throw Error errs
+  urb.reset-listeners!
+.then ->
+  urbit.exit 0
+.catch (err)->
+  <- urbit.wait-silent!then # assumptions?
+  urbit.warn "Test aborted:" err
+  urbit.exit 1
