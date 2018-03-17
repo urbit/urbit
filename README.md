@@ -50,23 +50,30 @@ On macos, you need to make sure `pkg-config` uses the correct homebrew path.
  should setup the `pkg-config` path correctly, solving errors with homebrew package discovery (notably with `openssl` paths).
 
 ## Configuration & compilation
+(For instructions for legacy meson, also see below)
 
 1. Install all required dependencies.
 2. `git submodule init` in the urbit repository
 3. `git submodule update`
-4. `mkdir build && meson build`
+4. `meson ./build`
 5. If the last step was successful, type `cd ./build` followed by `ninja`
    to compile urbit.
 6. The executable should appear in `./build` directory.
 
-## Using meson & ninja
-
-To configure project, enter the build directory and user
+### Using meson & ninja
+To configure project, enter the build directory and enter
 `meson configure`. Without any arguments this command will display available
 options. For example, to compile debug build of urbit, use
 `meson configure -Ddebug=true`.
 To set the prefix for installation use
 `meson configure -Dprefix=/usr`, and so on.
+
+## Configuration & compilation for legacy meson
+
+The syntax for legacy meson (Version `0.29`) is a bit different.
+1. Manually create `build` directory and invoke meson as `meson . ./build`
+2. If you want to set options, this is done in one step.
+   Use `meson -D [options] . ./build` to prepare customized build.
 
 Once the project is configured, use `ninja` to build it.
 To install it into the default prefix, use `ninja install`.
