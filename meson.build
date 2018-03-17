@@ -7,7 +7,7 @@ meson_ver = detect_meson_version.stdout()
 
 if(meson_ver == '0.29.0\n')
   legacy_meson = true
-elif(meson_ver.version_compare('>=0.40.0'))
+elif(not meson.version().version_compare('>=0.40.0'))
   error('Meson 0.29.0 is last legacy version supported. Otherwise please upgrade to 0.40.0 or higher.')
 endif
 
