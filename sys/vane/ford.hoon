@@ -1411,7 +1411,7 @@
       =.  s.bem  [for s.bem]
       %+  tug:bo  (load-arch cof bem)
       |=  {cof/cafe arc/arch}
-      (new:bo cof (bind fil.arc $~))
+      (new:bo cof (bind fil.arc |=(* ~)))
     ::
     ++  lace                                            ::  load file
       |=  {cof/cafe for/mark bem/beam}

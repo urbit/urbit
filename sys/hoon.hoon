@@ -7064,9 +7064,9 @@
       ::  constant
       ::
           {$leaf *}
-        ::  %-  decorate
-        ::  :+  %wtgr
-        ::  [%dtts fetch [%rock %$ q.mod]]
+        %-  decorate
+        :+  %wtgr
+          [%dtts fetch [%rock %$ q.mod]]
         [%rock p.mod q.mod]
       ::
       ::  subjective
