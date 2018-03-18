@@ -24,16 +24,16 @@
       $dbug  $(gen q.gen)
   ::
       $xray
-    [[n.g.p.gen (turn a.g.p.gen shut-mart)] $(gen [%smts c.p.gen])]~
+    [[n.g.p.gen (turn a.g.p.gen shut-mart)] $(gen [%mcts c.p.gen])]~
   ::
-      $smts
+      $mcts
     ?~  p.gen  ~
     =-  (weld - $(p.gen t.p.gen))
     ?^  -.i.p.gen  $(gen [%xray i.p.gen])
     ~|  [%shut-tuna -.i.p.gen]
     ?+  -.i.p.gen  !!
       $manx  ?>(?=($xray -.p.i.p.gen) $(gen p.i.p.gen))
-      $marl  ?>(?=($smts -.p.i.p.gen) $(gen p.i.p.gen))
+      $marl  ?>(?=($mcts -.p.i.p.gen) $(gen p.i.p.gen))
     ==
   ==
 ::

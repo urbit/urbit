@@ -1,19 +1,13 @@
 ::
 ::  dill (4d), terminal handling
 ::
+!:
 |=  pit/vase
 =,  dill
 =>  |%                                                  ::  interface tiles
 ++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
 =>  |%                                                  ::  console protocol
-++  all-axle  ?(old-axle axle)                          ::
-++  old-axle                                            ::  all dill state
-  $:  $2                                                ::
-      ore/(unit ship)                                   ::  identity once set
-      hey/(unit duct)                                   ::  default duct
-      dug/(map duct axon)                               ::  conversations
-  ==                                                    ::
 ++  axle                                                ::
   $:  $3                                                ::
       ore/(unit ship)                                   ::  identity once set
@@ -43,11 +37,16 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note-ames                                           ::  weird ames move
   $%  {$make p/(unit @t) q/@ud r/@ s/?}                 ::
-      {$sith p/@p q/@uw r/?}                          ::
+      {$sith p/@p q/@uw r/?}                            ::
+      {$wegh $~}                                        ::
+  ==                                                    ::
+++  note-behn                                           ::
+  $%  {$wegh $~}                                        ::
   ==                                                    ::
 ++  note-clay                                           ::
   $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:clay}::  merge desks
-      {$warp p/sock q/riff:clay}                       ::  wait for clay hack
+      {$warp p/sock q/riff:clay}                        ::  wait for clay hack
+      {$wegh $~}                                        ::
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  {$crud p/@tas q/(list tank)}                      ::
@@ -59,41 +58,64 @@
       {$velo p/@t q/@t}                                 ::  reboot by path
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
+++  note-eyre                                           ::
+  $%  {$wegh $~}                                        ::
+  ==                                                    ::
+++  note-ford                                           ::
+  $%  {$wegh $~}                                        ::
+  ==                                                    ::
 ++  note-gall                                           ::
   $%  {$conf dock $load ship desk}                      ::
-      {$deal p/sock q/cush:gall}                       ::
+      {$deal p/sock q/cush:gall}                        ::
+      {$wegh $~}                                        ::
   ==                                                    ::
 ++  note                                                ::  out request $->
-  $?  {?($a $b $c $e $f $g) $wegh $~}                   ::
   $%  {$a note-ames}                                    ::
+      {$b note-behn}                                    ::
       {$c note-clay}                                    ::
       {$d note-dill}                                    ::
+      {$e note-eyre}                                    ::
+      {$f note-ford}                                    ::
       {$g note-gall}                                    ::
-  ==  ==                                                ::
+  ==                                                    ::
 ++  sign-ames                                           ::
   $%  {$nice $~}                                        ::
       {$send p/lane:ames q/@}                           ::
       {$init p/ship}                                    ::
+      {$mass p/mass}                                    ::
+  ==                                                    ::
+++  sign-behn                                           ::
+  $%  {$mass p/mass}                                    ::
   ==                                                    ::
 ++  sign-clay                                           ::
   $%  {$mere p/(each (set path) (pair term tang))}      ::
       {$note p/@tD q/tank}                              ::
       {$writ p/riot:clay}                               ::
+      {$mass p/mass}                                    ::
   ==                                                    ::
 ++  sign-dill                                           ::
   $%  {$blit p/(list blit)}                             ::
   ==                                                    ::
+++  sign-eyre                                           ::
+  $%  {$mass p/mass}                                    ::
+  ==                                                    ::
+++  sign-ford                                           ::
+  $%  {$mass p/mass}                                    ::
+  ==                                                    ::
 ++  sign-gall                                           ::
   $%  {$onto p/(each suss:gall tang)}                   ::
       {$unto p/cuft:gall}                               ::
+      {$mass p/mass}                                    ::
   ==                                                    ::
 ++  sign                                                ::  in result $<-
-  $?  {?($a $b $c $e $f $g) $mass p/mass}               ::
   $%  {$a sign-ames}                                    ::
+      {$b sign-behn}                                    ::
       {$c sign-clay}                                    ::
       {$d sign-dill}                                    ::
+      {$e sign-eyre}                                    ::
+      {$f sign-ford}                                    ::
       {$g sign-gall}                                    ::
-  ==  ==                                                ::
+  ==
 ::::::::                                                ::  dill tiles
 --
 =|  all/axle
@@ -502,12 +524,8 @@
   ~
 ::
 ++  load                                                ::  trivial
-  |=  old/all-axle
-  ?:  ?=($2 -.old)
-    $(old [%3 ore hey dug ~ ~ ~ ~ ~ ~]:old)
+  |=  old/axle
   ..^$(all old)
-  ::  |=  old=*   ::  diable
-  ::  ..^$(ore.all `~zod)
 ::
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}

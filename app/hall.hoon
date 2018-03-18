@@ -79,13 +79,13 @@
           ==                                            ::
       ==                                                ::
     ++  delta-story                                     :>  story delta
-      $?  diff-story                                    :<  both in & outward
       $%  {$inherited ihr/?}                            :<  inherited flag
           {$follow sub/? srs/(set source)}              :<  un/subscribe
           {$sequent cir/circle num/@ud}                 :<  update last-heard
           {$gram src/circle gam/telegram}               :<  new/changed msgs
           {$sourced src/circle num/@ud}                 :<  new heard-from
-      ==  ==                                            ::
+          diff-story                                    :<  both in & outward
+      ==                                                ::
     :>  #  %out
     :>    outgoing data
     +|

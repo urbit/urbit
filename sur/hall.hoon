@@ -103,9 +103,9 @@
       {$remove $~}                                      :<  removed story
   ==                                                    ::
 ++  rumor-story                                         :>  story rumor
-  $?  diff-story                                        :<  both in & outward
   $%  {$gram src/circle nev/envelope}                   :<  new/changed message
-  ==  ==                                                ::
+      diff-story                                        :<  both in & outward
+  ==                                                    ::
 ++  diff-config                                         :>  config change
   $%  {$full cof/config}                                :<  set w/o side-effects
       {$source add/? src/source}                        :<  add/rem sources

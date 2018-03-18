@@ -75,7 +75,7 @@
   ++  able  ^?
     |%
     ++  note                                            ::  out request $->
-      $?  $:  $d                                        ::  to %dill
+      $%  $:  $d                                        ::  to %dill
       $%  {$flog p/flog:dill}                           ::
       ==  ==                                            ::
           $:  $a                                        ::  to %ames
@@ -97,7 +97,7 @@
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
     ++  sign                                            ::  in result _<-
-      $?  $:  $g                                        ::  from %gall
+      $%  $:  $g                                        ::  from %gall
       $%  {$unto p/cuft:gall}                           ::
           {$mean p/ares}                                ::  XX old clean up
           {$nice $~}                                    ::
@@ -649,7 +649,7 @@
         bem/beam                                        ::  original path
     ==                                                  ::
   +=  gram                                              ::  inter-ship message
-    $?  [[%lon ~] p=hole]                               ::  login request
+    $%  [[%lon ~] p=hole]                               ::  login request
         [[%aut ~] p=hole]                               ::  login reply
         [[%hat ~] p=hole q=hart]                        ::  login redirect
         [[%get ~] p=@uvH q=[? clip httq]]               ::  remote request
@@ -945,7 +945,7 @@
           pub/will                                      ::  their public keys
        ==                                               ::
     ++  gift                                            ::  out result <-$
-      $?  {$veil p/channel}                             ::  secure channel
+      $%  {$veil p/channel}                             ::  secure channel
           {$vest p/tally}                               ::  balance update
           {$vein p/life q/(map life ring)}              ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
@@ -4640,7 +4640,7 @@
 ::
 ++  zuse  %309                                          ::  hoon+zuse kelvin
 ++  gift-arvo                                           ::  out result <-$
-  $?  gift:able:ames
+  $%  gift:able:ames
       gift:able:behn
       gift:able:clay
       gift:able:dill
@@ -4649,7 +4649,7 @@
       gift:able:gall
   ==
 ++  task-arvo                                           ::  in request ->$
-  $?  task:able:ames
+  $%  task:able:ames
       task:able:clay
       task:able:behn
       task:able:dill
@@ -4658,7 +4658,6 @@
       task:able:gall
   ==
 ++  note-arvo                                           ::  out request $->
-  $?  {@tas $meta vase}
   $%  {$a task:able:ames}
       {$b task:able:behn}
       {$c task:able:clay}
@@ -4666,7 +4665,8 @@
       {$e task:able:eyre}
       {$f task:able:ford}
       {$g task:able:gall}
-  ==  ==
+      {@tas $meta vase}
+  ==
 ++  sign-arvo                                           ::  in result $<-
   $%  {$a gift:able:ames}
       {$b gift:able:behn}

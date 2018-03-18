@@ -342,7 +342,7 @@
   ==  ==  ==                                            ::
 ++  riot  (unit rant)                                   ::  response+complete
 ++  sign                                                ::  in result $<-
-          $?  $:  $a                                    ::  by %ames
+          $%  $:  $a                                    ::  by %ames
           $%  {$woot p/ship q/coop}                     ::
               {$send p/lane:ames q/@}                   ::  transmit packet
           ==  ==                                        ::

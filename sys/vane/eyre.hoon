@@ -35,7 +35,7 @@
           $%  {$deal p/sock q/cush:gall}               ::  full transmission
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
-          $?  $:  $a                                    ::  by %ames
+          $%  $:  $a                                    ::  by %ames
           $%  {$woot p/ship q/coop}                     ::  acknowledgment
               {$went ship cape:ames}                    ::  XX ignore
           ==  ==                                        ::
@@ -2032,16 +2032,8 @@
   ~
 ::
 ++  load                                                ::  take previous state
-  =+  driv-5=_=>(*driv [cor=p req=req.q])
-  =+  bolo-5={$5 _=+($:bolo +.-(sec (~(run by sec.-) driv-5)))}
-  =+  bolo-4={$4 _%*(+ $:bolo-5 lyv *(map duct ^))}
-  ::|=  *  %.  (bolo +<)
-  |:  $:{old/?(bolo bolo-5 bolo-4)}  ^+  ..^$
-  ?-  -.old
-    $6  ..^$(+>- old)
-    $5  $(old [%6 +.old(sec (~(run by sec.old) |=(driv-5 [cor & req])))])
-    $4  $(old [%5 +.old(lyv ~)])          :: minor leak
-  ==
+  |=  old/bolo
+  ..^$(+>- old)
 ::
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}

@@ -1,6 +1,7 @@
 ::                                                      ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::
+!:
 =<  ride
 =>  %143  =>
 ::                                                      ::
@@ -427,12 +428,6 @@
                   p/{p/tape q/tape r/tape}              ::  mid open close
                   q/(list tank)                         ::
               ==                                        ::
-          ==                                            ::
-++  tanq                                                ::  tomorrow's tank
-          $~  [~ ~]
-          $?  {~ p/(list tanq)}                         ::  list of printables
-              {~ ~ p/tape}                              ::  simple string
-              (pair @tas tanq)                          ::  captioned
           ==                                            ::
 ++  tape  (list @tD)                                    ::  UTF8 string as list
 ++  tarp  {d/@ud h/@ud m/@ud s/@ud f/(list @ux)}        ::  parsed time
@@ -6976,32 +6971,58 @@
       ::  if no other choices, construct head
       ::
       ?~  rep  relative:clear(mod one)
-      ::  fin: loop completion
-      ::
-      =/  fin/hoon  $(one i.rep, rep t.rep)
-      ::  new: trial product
-      ::  old: original subject
-      ::
-      =/  new  [%$ 2]
-      =*  old  [%$ 3]
-      ::  build trial noun
-      ::
-      :+  %tsls
-        ::  build the fragment with the first option
-        ::
-        relative:clear(mod one)
       ::  build test
       ::
       :^    %wtcl
-          ::  if the trial noun equals the fragment
+          ::  if we fit the type of this choice
           ::
-          [%dtts new fetch(axe (peg 3 axe))]
-        ::  produce the trial noun
+          [%fits example:clear(mod one) fetch-wing]
+        ::  build with this choice
         ::
-        new
-      ::  continue with the original subject
+        relative:clear(mod one)
+      ::  continue through loop
       ::
-      [%tsgr old fin]
+      $(one i.rep, rep t.rep)
+    ::
+::    ++  choice
+::      ::  match full models, by trying them
+::      ::
+::      |=  $:  ::  one: first option
+::              ::  rep: other options
+::              ::
+::              one/plan
+::              rep/(list plan)
+::          ==
+::      ^-  hoon
+::      ::  if no other choices, construct head
+::      ::
+::      ?~  rep  relative:clear(mod one)
+::      ::  fin: loop completion
+::      ::
+::      =/  fin/hoon  $(one i.rep, rep t.rep)
+::      ::  new: trial product
+::      ::  old: original subject
+::      ::
+::      =/  new  [%$ 2]
+::      =*  old  [%$ 3]
+::      ::  build trial noun
+::      ::
+::      :+  %tsls
+::        ::  build the fragment with the first option
+::        ::
+::        relative:clear(mod one)
+::      ::  build test
+::      ::
+::      :^    %wtcl
+::          ::  if the trial noun equals the fragment
+::          ::
+::          [%dtts new fetch(axe (peg 3 axe))]
+::        ::  produce the trial noun
+::        ::
+::        new
+::      ::  continue with the original subject
+::      ::
+::      [%tsgr old fin]
     ::
     ++  switch
       |=  $:  ::  one: first format
@@ -8807,7 +8828,7 @@
         [%3 %0 axe]
       (flan $(sut p.sut, axe (peg axe 2)) $(sut q.sut, axe (peg axe 3)))
     ::
-        {$core *}   [%0 0]
+        {$core *}   ~>(%mean.[%leaf "fish-core"] !!)
         {$face *}   $(sut q.sut)
         {$fork *}   =+  yed=~(tap in p.sut)
                     |-  ^-  nock
@@ -8815,7 +8836,7 @@
         {$help *}   $(sut q.sut)
         {$hold *}
       ?:  (~(has in vot) sut)
-        [%0 0]
+        ~>(%mean.[%leaf "fish-loop"] !!)
       =>  %=(. vot (~(put in vot) sut))
       $(sut repo)
     ==
@@ -11457,7 +11478,10 @@
       ::
       ++  word                                          ::  tarp parser
         %+  knee  *(list graf)  |.  ~+
-        %+  cook  |=(a/?(graf (list graf)) ?+(a a {@ *} [a]~))
+        %+  cook  
+          |=  a/$%(graf [%list (list graf)]) 
+          ^-  (list graf)
+          ?:(?=(%list -.a) +.a [a ~])
         ;~  pose
         ::
         ::  ordinary word
@@ -11503,6 +11527,7 @@
         ::
         ::  #hoon
         ::
+          %+  stag  %list
           ;~  plug
             (stag %text ;~(pose (cold " " whit) (easy-sol ~)))
             (stag %code ;~(pfix hax (echo wide)))
@@ -11511,6 +11536,7 @@
         ::
         ::  direct hoon constant
         ::
+          %+  stag  %list
           ;~  plug
             (stag %text ;~(pose (cold " " whit) (easy-sol ~)))
           ::

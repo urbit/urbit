@@ -466,8 +466,10 @@
     ::
     ++  dy-over                                         ::  finish construction
       ^+  +>
-      ?:  ?=({$show $3} -.mad)
-        (dy-rash %tan (dy-show-source q.mad) ~)        ::  XX separate command
+      ::  XX needs filter
+      ::
+      :: ?:  ?=({$show $3} -.mad)
+      ::  (dy-rash %tan (dy-show-source q.mad) ~)       ::  XX separate command
       ?:  ?=($brev -.mad)
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
@@ -546,6 +548,7 @@
           $0  ~
           $1  [[%rose [~ "  " ~] (skol p.q.cay) ~] (mar)]
           $2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] (mar)]
+          $3  ~
         ==
       ==
     ::
@@ -1149,39 +1152,41 @@
         {$hold *}  a(p $(a p.a))
       ==
     ::
-    ++  dy-shown
-      $?  hoon
-          $^  {dy-shown dy-shown}
-          $%  {$ur (unit knot) purl:eyre}
-              {$sa mark}
-              {$as mark dy-shown}
-              {$do hoon dy-shown}
-              {$ge path (list dy-shown) (map term (unit dy-shown))}
-              {$dv path}
-          ==
-      ==
+    ::  XX needs filter
     ::
-    ++  dy-show-source
-      |=  a/dojo-source  ^-  tank
-      =-  >[-]<
-      =+  `{@ bil/dojo-build}`a
-      |-  ^-  dy-shown
-      ?-  -.bil
-        $?($ur $dv $sa)  bil
-        $ex  ?.  ?=({$cltr *} p.bil)  p.bil
-                 |-  ^-  hoon
-                 ?~  p.p.bil  !!
-                 ?~  t.p.p.bil  i.p.p.bil
-                 [i.p.p.bil $(p.p.bil t.p.p.bil)]
-        $tu  ?~  p.bil  !!
-             |-
-             ?~  t.p.bil  ^$(bil q.i.p.bil)
-             [^$(bil q.i.p.bil) $(p.bil t.p.bil)]
-        $as  bil(q $(bil q.q.bil))
-        $do  bil(q $(bil q.q.bil))
-        $ge  :+  %ge  q.p.p.bil
-             [(turn p.q.p.bil ..$) (~(run by q.q.p.bil) (lift ..$))]
-      ==
+::  ++  dy-shown
+::    $?  hoon
+::        $^  {dy-shown dy-shown}
+::        $%  {$ur (unit knot) purl:eyre}
+::            {$sa mark}
+::            {$as mark dy-shown}
+::            {$do hoon dy-shown}
+::            {$ge path (list dy-shown) (map term (unit dy-shown))}
+::            {$dv path}
+::        ==
+::    ==
+::  ::
+::  ++  dy-show-source
+::    |=  a/dojo-source  ^-  tank
+::    =-  >[-]<
+::    =+  `{@ bil/dojo-build}`a
+::    |-  ^-  dy-shown
+::    ?-  -.bil
+::      $?($ur $dv $sa)  bil
+::      $ex  ?.  ?=({$cltr *} p.bil)  p.bil
+::               |-  ^-  hoon
+::               ?~  p.p.bil  !!
+::               ?~  t.p.p.bil  i.p.p.bil
+::               [i.p.p.bil $(p.p.bil t.p.p.bil)]
+::      $tu  ?~  p.bil  !!
+::           |-
+::           ?~  t.p.bil  ^$(bil q.i.p.bil)
+::           [^$(bil q.i.p.bil) $(p.bil t.p.bil)]
+::      $as  bil(q $(bil q.q.bil))
+::      $do  bil(q $(bil q.q.bil))
+::      $ge  :+  %ge  q.p.p.bil
+::           [(turn p.q.p.bil ..$) (~(run by q.q.p.bil) (lift ..$))]
+::    ==
     ::
     ++  dy-edit                                         ::  handle edit
       |=  cal/sole-change
@@ -1679,26 +1684,10 @@
   --
 ::
 ++  prep
-  =+  session-4==+($:session _-(lib *(list), sur *(list)))
-  =+  session-1==+($:session-4 _-(poy *(unit)))
-  =+  session-0==+($:session-1 _[_say syd=desk * _|2.-])
-  :: ,_`..prep
-  =+  ^=  hoze
-      $%  {$0 p/(map bone session-0)}
-          {$1 p/(map bone session-1)}
-          {$2 p/(map bone session-1)}
-          {$3 p/(map bone session-4)}
-          {$4 p/@ q/(map bone session-4)}
-      ==
-  |=  old/(unit ?(house hoze))  ^+  [~ ..prep]
+  |=  old/(unit house)
+  ^+  [~ ..prep]
   ?~  old  `..prep
-  ?+  -.u.old  !!
-    $4  %=  $
-          -.u.old  %5 
-          q.u.old  (~(run by q.u.old) |:($:session-4 +<(sur ~, lib ~)))
-        ==
-    $5  `..prep(+<+ u.old)
-  ==
+  `..prep(+<+ u.old)
 ::
 ::  pattern:  ++  foo  |=(data he-abet:(~(he-foo he (~(got by hoc) ost)) data))
 ++  arm  (arm-session ~ (~(got by hoc) ost.hid))
