@@ -10,6 +10,10 @@
 
 #include "all.h"
 
+#if defined(U3_OS_linux) || defined(U3_OS_osx)
+#include <execinfo.h>
+#endif
+
 #undef NO_OVERFLOW
 
       /* (u3_noun)setjmp(u3R->esc.buf): setjmp within road.
@@ -588,6 +592,33 @@ u3m_dump(void)
 }
 #endif
 
+void
+u3m_print_trace()
+{
+#if defined(U3_OS_linux) || defined(U3_OS_osx)
+  c3_w   siz_w = 20;
+  void*  tac_u[20];  // stack addresses
+  c3_c** str_c;      // trace strings
+  c3_w   len_w;
+
+  siz_w = backtrace(tac_u, siz_w);
+  str_c = backtrace_symbols(tac_u, siz_w);
+
+  // skip ourselves and u3m_bail
+  //
+  len_w = 3;
+
+  fprintf(stderr, "\r\nbacktrace:\r\n");
+
+  while ( len_w < siz_w ) {
+    fprintf(stderr, "%s\r\n", str_c[len_w++]);
+  }
+  fprintf(stderr, "\r\n");
+
+  free(str_c);
+#endif
+}
+
 c3_w Exit;
 
 /* u3m_bail(): bail out.  Does not return.
@@ -615,6 +646,7 @@ c3_i
 u3m_bail(u3_noun how)
 {
   if ( (c3__exit == how) && (u3R == &u3H->rod_u) ) {
+    u3m_print_trace();
     abort();
   }
 
@@ -643,6 +675,7 @@ u3m_bail(u3_noun how)
     }
 
     case c3__meme: {
+      u3m_print_trace();
       fprintf(stderr, "bailing out\r\n");
       abort();
     }
@@ -659,6 +692,7 @@ u3m_bail(u3_noun how)
     }
     case c3__foul:
     case c3__oops:
+      u3m_print_trace();
       fprintf(stderr, "bailing out\r\n");
       assert(0);
   }
@@ -682,6 +716,7 @@ u3m_bail(u3_noun how)
           break;
         }
         case c3__need: {
+          u3m_print_trace();
           c3_assert(0);
         }
         default: {
