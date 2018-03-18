@@ -8,6 +8,10 @@
 #include <sigsegv.h>
 #include <curl/curl.h>
 
+#if defined(U3_OS_linux) || defined(U3_OS_osx)
+#include <execinfo.h>
+#endif
+
 #include "all.h"
 
 #undef NO_OVERFLOW
@@ -603,6 +607,27 @@ u3m_bail(u3_noun how)
       u3m_p("bail", u3t(how));
     }
   }
+
+#if defined(U3_OS_linux) || defined(U3_OS_osx)
+  {
+    void* tac_u[11]; // stack addresses
+    c3_c** str_c;    // trace strings
+    c3_w tac_w;      // stack size
+    c3_w len_w;
+
+    tac_w = backtrace(tac_u, 11);
+    str_c = backtrace_symbols(tac_u, tac_w);
+
+    // skip ourselves
+    len_w = 1;
+
+    fprintf(stderr, "\r\nbacktrace:\r\n");
+    while (len_w < tac_w) {
+      fprintf(stderr, "%s\r\n", str_c[len_w++]);
+    }
+    fprintf(stderr, "\r\n");
+  }
+#endif
 
   switch ( how ) {
     case c3__fail:
