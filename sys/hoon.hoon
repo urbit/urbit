@@ -5628,7 +5628,7 @@
           ==                                            ::
 ++  toga                                                ::  face control
           $@  p/term                                    ::  two togas
-          $%  {$0 ~}                                   ::  no toga
+          $%  {$0 ~}                                    ::  no toga
               {$1 p/(pair what term) q/toga}            ::  deep toga
               {$2 p/toga q/toga}                        ::  cell toga
           ==                                            ::
@@ -6739,7 +6739,7 @@
       [%zpzp ~] 
     ==
   ::
-  ++  ascend
+  ++  descend
     ::  record an axis to original subject
     ::
     |=  axe/axis
@@ -6851,7 +6851,7 @@
     ::
       :+  %tsls
         spore
-      ~(relative local:(ascend 3) [2 %&])
+      ~(relative local:(descend 3) 2)
     ::
         {$base *}  (decorate (basal p.mod))
         {$bcts *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
@@ -6892,16 +6892,14 @@
         [%tsgr [%rock %n 0] -]
     :^  %brcl  ~^~
       [%ktsg spore]
-    ~(relative local:(ascend 7) [6 %&])
+    ~(relative local:(descend 7) 6)
   ::
   ++  local
     ::  normalize a fragment of the subject
     ::
     |_  $:  ::  axe: axis to fragment
-            ::  top: topographic type of fragment
             ::
             axe/axis
-            top/tope 
         ==
     ++  basic
       |=  bas/base
@@ -6911,31 +6909,25 @@
         ::  rez: fake instance
         ::
         =/  rez  example
-        ?^  top  rez
-        ?:  =(%| top)
-          ::  xx sanitize
-          ::
-          fetch
-        [%ktls rez [%wtht fetch-wing fetch rez]]
+        :+  %ktls  rez
+        [%wtht fetch-wing fetch [%zpzp ~]]
       ::
           $noun
         fetch
       ::
           $cell
-        ?^  top  fetch
-        ::  rez: fake instance
-        ::
-        =/  rez  example
-        ?:  =(%| top)
-          rez
-        [%wtht fetch-wing rez fetch]
+        :+  %ktls  example
+        =+  fetch-wing
+        :-  [%wing [[%& %2] -]]
+            [%wing [[%& %3] -]]
       ::
           $bean
-        ?^  top  example
         :^    %wtcl
-            [%dtts [%rock %$ |] [%$ axe]]
-          [%rock %f |]
-        [%rock %f &]
+            [%dtts [%rock %$ &] [%$ axe]]
+          [%rock %f &]
+        :+  %wtgr
+          [%dtts [%rock %$ |] [%$ axe]]
+        [%rock %f |]
       ::
           $null
         example
@@ -6983,46 +6975,6 @@
       ::
       $(one i.rep, rep t.rep)
     ::
-::    ++  choice
-::      ::  match full models, by trying them
-::      ::
-::      |=  $:  ::  one: first option
-::              ::  rep: other options
-::              ::
-::              one/plan
-::              rep/(list plan)
-::          ==
-::      ^-  hoon
-::      ::  if no other choices, construct head
-::      ::
-::      ?~  rep  relative:clear(mod one)
-::      ::  fin: loop completion
-::      ::
-::      =/  fin/hoon  $(one i.rep, rep t.rep)
-::      ::  new: trial product
-::      ::  old: original subject
-::      ::
-::      =/  new  [%$ 2]
-::      =*  old  [%$ 3]
-::      ::  build trial noun
-::      ::
-::      :+  %tsls
-::        ::  build the fragment with the first option
-::        ::
-::        relative:clear(mod one)
-::      ::  build test
-::      ::
-::      :^    %wtcl
-::          ::  if the trial noun equals the fragment
-::          ::
-::          [%dtts new fetch(axe (peg 3 axe))]
-::        ::  produce the trial noun
-::        ::
-::        new
-::      ::  continue with the original subject
-::      ::
-::      [%tsgr old fin]
-    ::
     ++  switch
       |=  $:  ::  one: first format
               ::  two: more formats
@@ -7047,7 +6999,7 @@
           fetch-wing(axe (peg axe 2))
         ::  if so, use this form
         ::
-        relative:clear(mod one, top [& &])
+        relative:clear(mod one)
       ::  continue in the loop
       ::
       fin
@@ -7058,55 +7010,6 @@
       ::  ~&  [%relative axe mod]
       ~+
       ^-  hoon
-      ::  tow: width of ideal tuple
-      ::
-      =/  tow/@ud
-        ?+  mod      1
-          {$bccn *}  2
-          {$bckt *}  2
-          {$bccl *}  +((lent t.p.mod))
-        ==
-      ::  =-  ~?  =(3 tow)  [%relative-three foo] foo
-      ::  ^=  foo
-      ::  joy: tuple test (~ fails, [~ ~] succeeds, [~ ~ ~] needs test)
-      :: 
-      =/  joy
-        |-  ^-  (unit (unit ~))
-        ?:  =(1 tow)  [~ ~]
-        ?:  =(| top)  ~
-        ?:  =(& top)  [~ ~ ~]
-        $(top +.top, tow (dec tow))
-      ::  boc: construction given ideal subject
-      ::
-      =;  boc/hoon
-        ?:  =([~ ~] joy)
-          ::  width is already ideal
-          ::
-          boc
-        ::  yum: matching hoon
-        ::
-        =*  yum
-          |-  ^-  hoon 
-          ?:  =(2 tow) 
-            [%bust %cell] 
-          [[%bust %noun] $(tow (dec tow))]
-        ::  luz: subject edited to inject spore
-        ::
-        =/  luz/hoon  
-          :+  %cnts 
-            [[%& 1] ~] 
-          :_  ~
-          [fetch-wing spore]
-        ?:  =(~ joy)      
-          ::  unconditional default
-          ::
-          [%tsgr luz boc]
-        ::  conditional default
-        ::
-        [%tsgr [%wtcl [%fits yum fetch-wing] [%$ 1] luz] boc]
-      ::  idealize topography (should be a smarter merge)
-      ::
-      =.  top  ?:(=(1 tow) top |-(?:(=(1 tow) & [& $(tow (dec tow))])))
       ?-    mod
       ::
       ::  base
@@ -7146,23 +7049,25 @@
         |-  ^-  hoon
         ?~  t.p.mod
           relative:clear(mod i.p.mod)
-        :-  relative:clear(mod i.p.mod, top -.top, axe (peg axe 2))
+        :-  relative:clear(mod i.p.mod, axe (peg axe 2))
         %=  relative
           i.p.mod  i.t.p.mod
           t.p.mod  t.t.p.mod
-          top      +.top 
           axe      (peg axe 3)
         ==
       ::
       ::  switch, $%
       :: 
           {$bccn *}
-        (switch i.p.mod t.p.mod)
+        (decorate (switch i.p.mod t.p.mod))
       ::
       ::  constant
       ::
           {$leaf *}
-        (decorate [%rock p.mod q.mod])
+        ::  %-  decorate
+        ::  :+  %wtgr
+        ::  [%dtts fetch [%rock %$ q.mod]]
+        [%rock p.mod q.mod]
       ::
       ::  subjective
       ::
@@ -7187,23 +7092,19 @@
       ::
           {$bcht *}
         %-  decorate
-        ?@  top
-          ?:  =(%| top)
-            relative:clear(mod p.mod)
-          :^    %wtht
-              fetch-wing
-            relative:clear(top %|, mod p.mod)
-          relative:clear(top [%& %&], mod q.mod)
-        relative:clear(mod q.mod)
+        :^    %wtcl
+            [%dtwt fetch]
+          relative:clear(mod q.mod)
+        relative:clear(mod p.mod)
       ::
       ::  bridge, $^
       ::
           {$bckt *}
         %-  decorate
-        :^    %wtht
-            fetch-wing(axe (peg axe 2))
-          relative:clear(top [%| %&], mod q.mod) 
-        relative:clear(top [[%& %&] %&], mod p.mod)
+        :^    %wtcl
+            [%dtwt fetch(axe (peg axe 2))]
+          relative:clear(mod p.mod) 
+        relative:clear(mod q.mod)
       ::
       ::  bccb, $_
       ::
