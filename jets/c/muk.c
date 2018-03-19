@@ -2,7 +2,7 @@
 **
 */
 #include "all.h"
-#include <murmur3.h>
+#include <MurmurHash3.h>
 
 /* functions
 */

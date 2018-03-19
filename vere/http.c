@@ -19,7 +19,7 @@
 #include <termios.h>
 #include <term.h>
 
-#include <http_parser.h>  // Joyent HTTP
+#include "../outside/jhttp/http_parser.h"   // Joyent HTTP
 #include "all.h"
 #include "vere/vere.h"
 
@@ -587,7 +587,7 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
   u3_lo_open();
   {
     if ( siz_w == UV_EOF ) {
-      _http_conn_dead(hon_u);
+      _http_conn_dead(hon_u);      
     } else if ( siz_w < 0 ) {
       uL(fprintf(uH, "http: read: %s\n", uv_strerror(siz_w)));
       _http_conn_dead(hon_u);
@@ -891,7 +891,7 @@ _http_request(u3_hreq* req_u)
       _(req_u->hon_u->htp_u->lop) ?
         c3__chis :
       c3__this;
-
+    
     u3v_plan(pox,
                u3nq(typ,
                     req_u->hon_u->htp_u->sec,
