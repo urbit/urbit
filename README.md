@@ -45,7 +45,7 @@ instructions on the [Nix website][nix].
 
 Next, run `df -h` to make sure you have enough disk space.
 
-- The filesystem that holds `/nix` should also have several gigabytes of free
+- The filesystem that holds `/nix` should have several gigabytes of free
 space.  Each GCC cross-compiler takes about 300 MB while each Qt installation
 takes about 800 MB.
 - The filesystem that holds `/tmp` should have at least 4 gigabytes of free
@@ -84,7 +84,7 @@ anything that depends on them, ensuring that you always get a consistent build.
 
 ### Obtaining the macOS SDK
 
-If you are trying to build software for macOS, you will need to get
+If you are trying to build software for macOS, you will need to get a
 macOS SDK tarball and put it in the the right place.  Otherwise, you
 will get an error like this:
 
