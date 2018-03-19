@@ -392,7 +392,7 @@
     =.  let  +(let)
     =.  +>.$
       %-  spam
-      ?:  ?=($& -.mes)
+      ?:  ?=(%& -.mes)
         [(render "sync succeeded" sud her syd) ~]
       ?+  p.p.mes
         :*  (render "sync failed" sud her syd)
@@ -444,7 +444,7 @@
   ::
   ++  unwrap-tang
     |*  res/(each * tang)
-    ?:  ?=($& -.res)
+    ?:  ?=(%& -.res)
       p.res
     (ford-fail p.res)
   ::
@@ -462,12 +462,12 @@
     ?~  p.gag  ~
     ?-    -.p.i.p.gag
         $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-        $|     (mule |.(`$~`(ford-fail p.p.i.p.gag)))
-        $&
+        %|     (mule |.(`$~`(ford-fail p.p.i.p.gag)))
+        %&
       ?-  -.q.i.p.gag
         $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-        $|     (mule |.(`$~`(ford-fail p.q.i.p.gag)))
-        $&     =+  $(p.gag t.p.gag)
+        %|     (mule |.(`$~`(ford-fail p.q.i.p.gag)))
+        %&     =+  $(p.gag t.p.gag)
                ?+(- [[p.p p.q]:i.p.gag -] {@ *} -)
       ==
     ==
@@ -509,7 +509,7 @@
     |=  are/(each (set path) (pair term tang))
     ^+  +>
     ?:  =(%meld gem)
-      ?:  ?=($& -.are)
+      ?:  ?=(%& -.are)
         ?.  auto
           =+  "merged with strategy {<gem>}"
           win:(spam leaf+- ?~(p.are ~ [>`(set path)`p.are< ~]))
@@ -538,7 +538,7 @@
         ==
       =+  "failed to merge with strategy meld"
       lose:(spam leaf+- >p.p.are< q.p.are)
-    ?:  ?=($& -.are)
+    ?:  ?=(%& -.are)
       =+  "merged with strategy {<gem>}"
       win:(spam leaf+- ?~(p.are ~ [>`(set path)`p.are< ~]))
     ?.  auto
@@ -590,7 +590,7 @@
   ++  made
     |=  {dep/@uvH reg/gage:ford}
     ^+  +>
-    ?:  ?=($| -.reg)
+    ?:  ?=(%| -.reg)
       =+  "failed to mash"
       lose:(spam leaf+- p.reg)
     =+  ^-  can/(list (pair path (unit miso)))

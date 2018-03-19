@@ -657,8 +657,8 @@
         ^-  (set circle)
         ?~  a  ~
         ?-  -.i.a
-          $&  (~(put in $(a t.a)) p.i.a)
-          $|  (~(uni in $(a t.a)) p.i.a)
+          %&  (~(put in $(a t.a)) p.i.a)
+          %|  (~(uni in $(a t.a)) p.i.a)
         ==
       ::
       ++  cirs                                          :<  non-empty circles
@@ -913,7 +913,7 @@
       |=  {inv/sole-edit buf/(list @c)}
       ^-  {lit/(list sole-edit) err/(unit @u)}
       =+  res=(rose (tufa buf) sh-read)
-      ?:  ?=($| -.res)  [[inv]~ `p.res]
+      ?:  ?=(%| -.res)  [[inv]~ `p.res]
       :_  ~
       ?~  p.res  ~
       =+  wok=u.p.res
@@ -2325,7 +2325,7 @@
       =+  hok=r.p.p.url.sep
       =-  (swag [a=(sub (max wyd (lent -)) wyd) b=wyd] -)
       ^-  tape
-      =<  ?:  ?=($& -.hok)
+      =<  ?:  ?=(%& -.hok)
             (reel p.hok .)
           +:(scow %if p.hok)
       |=  {a/knot b/tape}

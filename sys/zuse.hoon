@@ -429,12 +429,12 @@
   ++  mood  {p/care q/case r/path}                      ::  request in desk
   ++  mool  {p/case q/(set (pair care path))}           ::  requests in desk
   ++  nori                                              ::  repository action
-    $%  {$& p/soba}                                     ::  delta
-        {$| p/@tas}                                     ::  label
+    $%  {%& p/soba}                                     ::  delta
+        {%| p/@tas}                                     ::  label
     ==                                                  ::
   ++  nuri                                              ::  repository action
-    $%  {$& p/suba}                                     ::  delta
-        {$| p/@tas}                                     ::  label
+    $%  {%& p/suba}                                     ::  delta
+        {%| p/@tas}                                     ::  label
     ==                                                  ::
   ++  page  (cask *)                                    ::  untyped cage
   ++  plop  blob                                        ::  unvalidated blob
@@ -463,8 +463,8 @@
   ++  toro  {p/@ta q/nori}                              ::  general change
   ++  unce                                              ::  change part
     |*  a/mold                                          ::
-    $%  {$& p/@ud}                                      ::  skip[copy]
-        {$| p/(list a) q/(list a)}                      ::  p -> q[chunk]
+    $%  {%& p/@ud}                                      ::  skip[copy]
+        {%| p/(list a) q/(list a)}                      ::  p -> q[chunk]
     ==                                                  ::
   ++  urge  |*(a/mold (list (unce a)))                  ::  list change
   ++  yaki                                              ::  commit
@@ -707,8 +707,8 @@
   ++  quay  (list {p/@t q/@t})                          ::  parsed url query
   ++  quer  |-($@($~ {p/@t q/@t t/$}))                  ::  query tree
   ++  quri                                              ::  request-uri
-    $%  {$& p/purl}                                     ::  absolute
-        {$| p/pork q/quay}                              ::  relative
+    $%  {%& p/purl}                                     ::  absolute
+        {%| p/pork q/quay}                              ::  relative
     ==                                                  ::
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
   ++  sec-move                                          ::  driver effect
@@ -742,9 +742,9 @@
     --  ::able
   ++  bilk  (pair beak silk)                            ::  sourced request
   ++  gage                                              ::  recursive cage+tang
-    $%  {$& p/cage}                                     ::  success
+    $%  {%& p/cage}                                     ::  success
         {$tabl p/(list (pair gage gage))}               ::  table of results
-        {$| p/tang}                                     ::  error
+        {%| p/tang}                                     ::  error
     ==                                                  ::
   ++  hood                                              ::  assembly plan
     $:  zus/@ud                                         ::  zuse kelvin
@@ -755,8 +755,8 @@
     ==                                                  ::
   ++  hoof  (trel ? term (unit (pair case ship)))       ::  resource reference
   ++  hoop                                              ::  source in hood
-    $%  {$& p/hoon}                                     ::  direct hoon
-        {$| p/beam}                                     ::  resource location
+    $%  {%& p/hoon}                                     ::  direct hoon
+        {%| p/beam}                                     ::  resource location
     ==                                                  ::
   ++  hops                                              ::  XX late-bound path
     $:  pre/(unit tyke)                                 ::
@@ -1994,8 +1994,8 @@
         %-  ~(en cbca key 0)
         %+  mix  +.pdt
         ?-  -.pdt
-          $&  -.sub
-          $|  +.sub
+          %&  -.sub
+          %|  +.sub
         ==
       ::  spec says MSBs, LSBs match test vectors
       ::
@@ -2014,8 +2014,8 @@
         %-  ~(en cbcb key 0)
         %+  mix  +.pdt
         ?-  -.pdt
-          $&  -.sub
-          $|  +.sub
+          %&  -.sub
+          %|  +.sub
         ==
       ::  spec says MSBs, LSBs match test vectors
       ::
@@ -2034,8 +2034,8 @@
         %-  ~(en cbcc key 0)
         %+  mix  +.pdt
         ?-  -.pdt
-          $&  -.sub
-          $|  +.sub
+          %&  -.sub
+          %|  +.sub
         ==
       ::  spec says MSBs, LSBs match test vectors
       ::
@@ -3394,8 +3394,8 @@
     ?~  bur  ~
     :_  $(bur t.bur)
     ?-  -.i.bur
-      $&  i.bur
-      $|  [%| q.i.bur p.i.bur]
+      %&  i.bur
+      %|  [%| q.i.bur p.i.bur]
     ==
   ::                                                    ::  ++loss:differ
   ++  loss                                              ::  longest subsequence
@@ -3474,14 +3474,14 @@
     |-  ^+  hel
     ?~  rug  (flop war)
     ?-    -.i.rug
-        $&
+        %&
       %=   $
         rug  t.rug
         hel  (slag p.i.rug hel)
         war  (weld (flop (scag p.i.rug hel)) war)
       ==
     ::
-        $|
+        %|
       %=  $
         rug  t.rug
         hel  =+  gur=(flop p.i.rug)
@@ -3495,7 +3495,7 @@
   ++  lusk                                              ::  lcs to list patch
     |*  {hel/(list) hev/(list) lcs/(list)}
     =+  ^=  rag
-        ^-  {$%({$& p/@ud} {$| p/_lcs q/_lcs})}
+        ^-  {$%({%& p/@ud} {%| p/_lcs q/_lcs})}
         [%& 0]
     =>  .(rag [p=rag q=*(list _rag)])
     =<  abet  =<  main
@@ -3509,13 +3509,13 @@
       |:  new=p.rag
       ^+  rag
       ?-  -.p.rag
-        $|   ?-  -.new
-              $|  [[%| (weld p.new p.p.rag) (weld q.new q.p.rag)] q.rag]
-              $&  [new [p.rag q.rag]]
+        %|   ?-  -.new
+              %|  [[%| (weld p.new p.p.rag) (weld q.new q.p.rag)] q.rag]
+              %&  [new [p.rag q.rag]]
             ==
-        $&   ?-  -.new
-              $|  [new ?:(=(0 p.p.rag) q.rag [p.rag q.rag])]
-              $&  [[%& (add p.p.rag p.new)] q.rag]
+        %&   ?-  -.new
+              %|  [new ?:(=(0 p.p.rag) q.rag [p.rag q.rag])]
+              %&  [[%& (add p.p.rag p.new)] q.rag]
             ==
       ==
     ::                                                  ::  ++main:lusk:differ
@@ -3936,8 +3936,8 @@
     ++  apex                                            ::
       |=  qur/quri  ^-  tape
       ?-  -.qur
-        $&  (weld (head p.p.qur) `tape`$(qur [%| +.p.qur]))
-        $|  ['/' (weld (body p.qur) (tail q.qur))]
+        %&  (weld (head p.p.qur) `tape`$(qur [%| +.p.qur]))
+        %|  ['/' (weld (body p.qur) (tail q.qur))]
       ==
     ::                                                  ::  ++apix:en-purl:html
     ++  apix                                            ::  purf to tape
@@ -3960,8 +3960,8 @@
         ?:(&(p.har !?=(hoke r.har)) "https://" "http://")
       ::
         ?-  -.r.har
-          $|  (trip (rsh 3 1 (scot %if p.r.har)))
-          $&  =+  rit=(flop p.r.har)
+          %|  (trip (rsh 3 1 (scot %if p.r.har)))
+          %&  =+  rit=(flop p.r.har)
               |-  ^-  tape
               ?~  rit  ~
               (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)]))
@@ -4575,7 +4575,7 @@
       ^-  toro
       ~|  %furl
       ?>  ?&  =(p.one p.two)                            ::  same path
-              &(?=($& -.q.one) ?=($& -.q.two))          ::  both deltas
+              &(?=(%& -.q.one) ?=(%& -.q.two))          ::  both deltas
           ==
       [p.one [%& (weld p.q.one p.q.two)]]
     --  ::space

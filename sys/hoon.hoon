@@ -291,7 +291,7 @@
   :>
   :>  mold generator: produces a discriminated fork between two types,
   :>  defaulting to {a}.
-  |*({a/$-(* *) b/$-(* *)} $%({$| p/b} {$& p/a}))
+  |*({a/$-(* *) b/$-(* *)} $%({%| p/b} {%& p/a}))
 ::
 ++  gate
   :>    function
@@ -3768,7 +3768,7 @@
       rud
     rux
   ::
-  ++  rf    `tape`[?-(a $& '&', $| '|', * !!) ~]
+  ++  rf    `tape`[?-(a %& '&', %| '|', * !!) ~]
   ++  rn    `tape`[?>(=(0 a) '~') ~]
   ++  rt    `tape`['\'' (weld (mesc (trip a)) `tape`['\'' ~])]
   ++  rta   rt
@@ -4268,12 +4268,12 @@
     ?+  -.lim  (show '#')
         ~   (show '$')
         c/@  (show c.lim)
-        {$& $1}  (show '.')
-        {$& c/@}
+        {%& $1}  (show '.')
+        {%& c/@}
       [%leaf '+' ~(rud at c.lim)]
     ::
-        {$| @ ~}  (show ',')
-        {$| n/@ ~ c/@}
+        {%| @ ~}  (show ',')
+        {%| n/@ ~ c/@}
       [%leaf (weld (reap n.lim '^') ?~(c.lim "$" (trip c.lim)))]
     ==
   --
@@ -5532,8 +5532,8 @@
   |%  +-  $
         =+  mud=(mute taq)
         ?-  -.mud
-          $&  [%& p=$:taq]
-          $|  [%| p=p.mud]
+          %&  [%& p=$:taq]
+          %|  [%| p=p.mud]
         ==
   --
 ::
@@ -5584,15 +5584,15 @@
               {$elm p/hoon}                             ::  wet arm, generic
           ==                                            ::
 ++  limb  $@  term                                      ::  wing element
-          $%  {$& p/axis}                               ::  by geometry
-              {$| p/@ud q/(unit term)}                  ::  by name
+          $%  {%& p/axis}                               ::  by geometry
+              {%| p/@ud q/(unit term)}                  ::  by name
           ==                                            ::
 ++  metl  ?($gold $iron $zinc $lead)                    ::  core variance
 +=  null  ~                                             ::  null, nil, etc
 ++  onyx  (list (pair type foot))                       ::  arm activation
 ++  opal                                                ::  limb match
-          $%  {$& p/type}                               ::  leg
-              {$| p/axis q/(set {p/type q/foot})}       ::  arm
+          $%  {%& p/type}                               ::  leg
+              {%| p/axis q/(set {p/type q/foot})}       ::  arm
           ==                                            ::
 ++  pica  (pair ? cord)                                 ::  & prose, | code
 ++  palo  (pair vein opal)                              ::  wing trace, match
@@ -5600,12 +5600,12 @@
 ++  port  (each palo (pair type nock))                  ::  successful match
 ++  root  hoon                                          ::  produce model
 ++  tent                                                ::  model builder
-          $%  {$| p/wing q/tent r/(list plan)}          ::  ~(p q r...)
-              {$& p/(list wing)}                        ::  a.b:c.d
+          $%  {%| p/wing q/tent r/(list plan)}          ::  ~(p q r...)
+              {%& p/(list wing)}                        ::  a.b:c.d
           ==                                            ::
 ++  tiki                                                ::  test case
-          $%  {$& p/(unit term) q/wing}                 ::  simple wing
-              {$| p/(unit term) q/hoon}                 ::  named wing
+          $%  {%& p/(unit term) q/wing}                 ::  simple wing
+              {%| p/(unit term) q/hoon}                 ::  named wing
           ==                                            ::
 ++  plan                                                ::  data structure
           $~  [%base %null]                             ::
@@ -5830,8 +5830,8 @@
           ==                                            ::
 ++  tine                                                ::  partial noun
           $@  ~                                        ::  open
-          $%  {$& p/tine q/tine}                        ::  half-blocked
-              {$| p/(set)}                              ::  fully blocked
+          $%  {%& p/tine q/tine}                        ::  half-blocked
+              {%| p/(set)}                              ::  fully blocked
           ==                                            ::
 ++  tool  $@(term tune)                                 ::  type decoration
 ++  tune                                                ::  complex
@@ -6617,7 +6617,7 @@
   ++  blue
     |=  gen/hoon
     ^-  hoon
-    ?.  &(?=($| -.tik) ?=(~ p.tik))  gen
+    ?.  &(?=(%| -.tik) ?=(~ p.tik))  gen
     [%tsgr [%$ 3] gen]
   ::
   ++  teal
@@ -6629,15 +6629,15 @@
     |=  gen/hoon
     ^-  hoon
     ?-  -.tik
-      $&  ?~(p.tik gen [%tstr [~ u.p.tik] [%wing q.tik] gen])
-      $|  [%tsls ?~(p.tik q.tik [%ktts u.p.tik q.tik]) gen]
+      %&  ?~(p.tik gen [%tstr [~ u.p.tik] [%wing q.tik] gen])
+      %|  [%tsls ?~(p.tik q.tik [%ktts u.p.tik q.tik]) gen]
     ==
   ::
   ++  puce
     ^-  wing
     ?-  -.tik
-      $&  ?~(p.tik q.tik [u.p.tik ~])
-      $|  [[%& 2] ~]
+      %&  ?~(p.tik q.tik [u.p.tik ~])
+      %|  [[%& 2] ~]
     ==
   ::
   ++  wthp  |=  opt/(list (pair plan hoon))
@@ -8187,8 +8187,8 @@
     ^-  type
     =+  fid=(find %both hyp)
     ?-  -.fid
-      $|  sut
-      $&  =<  q
+      %|  sut
+      %&  =<  q
           %+  take  p.p.fid
           |=(a/type ?:(pol (fuse(sut a) ref) (crop(sut a) ref)))
     ==
@@ -8204,7 +8204,7 @@
   ++  elbo
     |=  {lop/palo rig/(list (pair wing hoon))}
     ^-  type
-    ?:  ?=($& -.q.lop)
+    ?:  ?=(%& -.q.lop)
       |-  ^-  type
       ?~  rig
         p.q.lop
@@ -8231,7 +8231,7 @@
     ^-  (pair type nock)
     =+  axe=(tend p.lop)
     =|  hej/(list (pair axis nock))
-    ?:  ?=($& -.q.lop)
+    ?:  ?=(%& -.q.lop)
       =-  [p.- (hike axe q.-)]
       |-  ^-  (pair type (list (pair axis nock)))
       ?~  rig
@@ -8259,8 +8259,8 @@
   ++  endo
     |=  {lop/(pair palo palo) dox/type rig/(list (pair wing hoon))}
     ^-  (pair type type)
-    ?:  ?=($& -.q.p.lop)
-      ?>  ?=($& -.q.q.lop)
+    ?:  ?=(%& -.q.p.lop)
+      ?>  ?=(%& -.q.q.lop)
       |-  ^-  (pair type type)
       ?~  rig
         [p.q.p.lop p.q.q.lop]
@@ -8274,7 +8274,7 @@
         p.q.p.lop  q.p.dar
         p.q.q.lop  q.q.dar
       ==
-    ?>  ?=($| -.q.q.lop)
+    ?>  ?=(%| -.q.q.lop)
     ?>  =(p.q.p.lop p.q.q.lop)
     =+  hag=[p=~(tap in q.q.p.lop) q=~(tap in q.q.q.lop)]
     =-  [(fire p.-) (fire(vet |) q.-)]
@@ -8423,7 +8423,7 @@
     =+  cin=(oc (bin:ad make:lib:ad))
     =.  rig  (flop rig)         ::  XX this unbreaks, void order in devulc
     =+  axe=(tend p.lop)
-    ?:  ?=($& -.q.lop)
+    ?:  ?=(%& -.q.lop)
       =-  [p.- (hike axe q.-)]
       (echo:cin p.q.lop rig)
     =-  [p.- [%9 p.q.lop (hike axe q.-)]]
@@ -8435,14 +8435,14 @@
     ++  play
       ^-  type
       =+  lug=(find %read hyp)
-      ?:  ?=($| -.lug)  ~>(%mean.[%leaf "hoon"] ?>(?=(~ rig) p.p.lug))
+      ?:  ?=(%| -.lug)  ~>(%mean.[%leaf "hoon"] ?>(?=(~ rig) p.p.lug))
       (elbo p.lug rig)
     ::
     ++  mint
       |=  gol/type
       ^-  (pair type nock)
       =+  lug=(find %read hyp)
-      ?:  ?=($| -.lug)  ~>(%mean.[%leaf "hoon"] ?>(?=(~ rig) p.lug))
+      ?:  ?=(%| -.lug)  ~>(%mean.[%leaf "hoon"] ?>(?=(~ rig) p.lug))
       =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
       (etco p.lug rig)
     ::
@@ -8450,10 +8450,10 @@
       |=  {gol/type dox/type}
       ^-  {type type}
       =+  lug=[p=(find %read hyp) q=(find(sut dox) %read hyp)]
-      ?:  ?=($| -.p.lug)
-        ?>   &(?=($| -.q.lug) ?=(~ rig))
+      ?:  ?=(%| -.p.lug)
+        ?>   &(?=(%| -.q.lug) ?=(~ rig))
         [p.p.p.lug p.p.q.lug]
-      ?>  ?=($& -.q.lug)
+      ?>  ?=(%& -.q.lug)
       =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
       (endo [p.p.lug p.q.lug] dox rig)
     --
@@ -8481,8 +8481,8 @@
     |=  lap/opal
     ^-  type
     ?-  -.lap
-      $&  p.lap
-      $|  %-  fire
+      %&  p.lap
+      %|  %-  fire
           %+  turn  ~(tap in q.lap)
           |=  {a/type b/foot}
           [a [%ash %$ 1]]
@@ -8505,22 +8505,22 @@
       [%& ~ ~ %& sut]
     =+  mor=$(hyp t.hyp)
     ?-    -.mor
-        $|
+        %|
       ?-    -.p.mor
-          $&  mor
-          $|
+          %&  mor
+          %|
         =+  fex=(mint(sut p.q.p.p.mor) %noun [%wing i.hyp ~])
         [%| %| p.p.p.mor p.fex (comb q.q.p.p.mor q.fex)]
       ==
     ::
-        $&
+        %&
       =.  sut  (felt q.q.p.mor)
       =>  :_  +
           :*  axe=`axis`1
               lon=p.q.p.mor
               heg=?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
           ==
-      ?:  ?=($& -.heg)
+      ?:  ?=(%& -.heg)
         [%& ~ [`p.heg lon] %& (peek way p.heg)]
       =|  gil/(set type)
       =<  $
@@ -8536,22 +8536,22 @@
                     ?:  =(hax yor)  hax
                     ?~  hax  yor
                     ?~  yor  hax
-                    ?:  ?=($| -.hax)
-                      ?>  ?&  ?=($| -.yor)
-                              ?=($| -.p.hax)
-                              ?=($| -.p.yor)
+                    ?:  ?=(%| -.hax)
+                      ?>  ?&  ?=(%| -.yor)
+                              ?=(%| -.p.hax)
+                              ?=(%| -.p.yor)
                               =(q.q.p.p.hax q.q.p.p.yor)
                           ==
                       :^    %|
                           %|
                         (join p.p.p.hax p.p.p.yor)
                       [(fork p.q.p.p.hax p.q.p.p.yor ~) q.q.p.p.hax]
-                    ?>  ?=($& -.yor)
+                    ?>  ?=(%& -.yor)
                     ?>  =(p.q.p.hax p.q.p.yor)
-                    ?:  &(?=($& -.q.q.p.hax) ?=($& -.q.q.p.yor))
+                    ?:  &(?=(%& -.q.q.p.hax) ?=(%& -.q.q.p.yor))
                       :^  %&  (join p.p.hax p.p.yor)  p.q.p.hax
                       [%& (fork p.q.q.p.hax p.q.q.p.yor ~)]
-                    ?>  &(?=($| -.q.q.p.hax) ?=($| -.q.q.p.yor))
+                    ?>  &(?=(%| -.q.q.p.hax) ?=(%| -.q.q.p.yor))
                     ?>  =(p.q.q.p.hax p.q.q.p.yor)
                     =+  wal=(~(uni in q.q.q.p.hax) q.q.q.p.yor)
                     :^  %&  ~  p.q.p.hax
@@ -8566,7 +8566,7 @@
               ?~  q.heg  here
               =+  taf=$(axe (peg axe 2), sut p.sut)
               ?~  taf  ~
-              ?:  |(?=($& -.taf) ?=($| -.p.taf))
+              ?:  |(?=(%& -.taf) ?=(%| -.p.taf))
                 taf
               $(axe (peg axe 3), p.heg p.p.taf, sut q.sut)
             ::
@@ -8605,8 +8605,8 @@
                   $(sut q.sut, lon [~ lon], p.heg +(p.heg))
                 =+  tor=(fund way u.q.u.tyr)
                 ?-  -.tor
-                  $&  [%& ~ (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
-                  $|  [%| %| p.u.tyr p.p.tor (comb [%0 axe] q.p.tor)]
+                  %&  [%& ~ (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
+                  %|  [%| %| p.u.tyr p.p.tor (comb [%0 axe] q.p.tor)]
                 ==
               ++  next
                 |-  ^-  pony
@@ -8615,12 +8615,12 @@
                 =+  tiv=(mint(sut q.sut) %noun i.q.zot)
                 =+  fid=^$(sut p.tiv, lon ~, axe 1, gil ~)
                 ?~  fid  ~
-                ?:  ?=({$| $& *} fid)
+                ?:  ?=({%| %& *} fid)
                   $(q.zot t.q.zot, p.heg p.p.fid)
                 =+  ^-  {wat/what vat/(pair type nock)}
                     ?-    -.fid
-                      $&  [p.p.fid (fine %& q.p.fid)]
-                      $|  [p.p.p.fid (fine %| q.p.p.fid)]
+                      %&  [p.p.fid (fine %& q.p.fid)]
+                      %|  [p.p.p.fid (fine %| q.p.p.fid)]
                     ==
                 [%| %| wat p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
               --
@@ -8647,10 +8647,10 @@
     ~_  (show [%c %find] %l hyp)
     =-  ?@  -  !!
         ?-    -<
-          $&  [%& q.p.-]
-          $|  ?-  -.p.-
-                $|  [%| q.p.p.-]
-                $&  !!
+          %&  [%& q.p.-]
+          %|  ?-  -.p.-
+                %|  [%| q.p.p.-]
+                %&  !!
         ==    ==
     (fond way hyp)
   ::
@@ -8668,11 +8668,11 @@
     |=  tor/port
     ^-  (pair type nock)
     ?-  -.tor
-      $|  p.tor
-      $&  =+  axe=(tend p.p.tor)
+      %|  p.tor
+      %&  =+  axe=(tend p.p.tor)
           ?-  -.q.p.tor
-            $&  [`type`p.q.p.tor %0 axe]
-            $|  [(fire ~(tap in q.q.p.tor)) [%9 p.q.p.tor %0 axe]]
+            %&  [`type`p.q.p.tor %0 axe]
+            %|  [(fire ~(tap in q.q.p.tor)) [%9 p.q.p.tor %0 axe]]
     ==    ==
   ::
   ++  fire
@@ -9007,7 +9007,7 @@
         {$sgzp *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
         {$sggr *}
       =+  hum=$(gen q.gen)
-      :: ?:  &(huz !?=($|(@ [?(%sgcn %sgls) ^]) p.gen))
+      :: ?:  &(huz !?=(%|(@ [?(%sgcn %sgls) ^]) p.gen))
       ::  hum
       :-  p.hum
       :+  %10
@@ -9047,11 +9047,11 @@
       ~|  [%test q.gen]
       |-  ^-  nock
       ?-  -.fid
-        $&  ?-  -.q.p.fid
-              $&  (fish(sut ref) (tend p.p.fid))
-              $|  $(fid [%| (fine fid)])
+        %&  ?-  -.q.p.fid
+              %&  (fish(sut ref) (tend p.p.fid))
+              %|  $(fid [%| (fine fid)])
             ==
-        $|  [%7 q.p.fid (fish(sut ref) 1)]
+        %|  [%7 q.p.fid (fish(sut ref) 1)]
       ==
     ::
         {$dbug *}
@@ -9809,7 +9809,7 @@
     |=  {hyp/wing mur/type}
     ~_  (show [%c %tack] %l hyp)
     =+  fid=(find %rite hyp)
-    ?>  ?=($& -.fid)
+    ?>  ?=(%& -.fid)
     (take p.p.fid |=(type mur))
   ::
   ++  tend
@@ -10656,8 +10656,8 @@
       %+  cook
         |=  tum/(each manx:hoon marl:hoon)  ^-  hoon
         ?-  -.tum
-          $&  [%xray p.tum]
-          $|  [%mcts p.tum]
+          %&  [%xray p.tum]
+          %|  [%mcts p.tum]
         ==
       top-level
     ::
@@ -10728,8 +10728,8 @@
     ++  drop-top
       |=  a/(each tuna:hoon marl:hoon)  ^-  marl:hoon
       ?-  -.a
-        $&  [p.a]~
-        $|  p.a
+        %&  [p.a]~
+        %|  p.a
       ==
     ::
     ++  join-tops
@@ -12225,9 +12225,9 @@
     ++  muck  ?:(tol gap ace)                           ::  general separator
     ++  teak  %+  knee  *tiki  |.  ~+                   ::  wing or hoon
               =+  ^=  gub
-                  |=  {a/term b/$%({$& p/wing} {$| p/hoon})}
+                  |=  {a/term b/$%({%& p/wing} {%| p/hoon})}
                   ^-  tiki
-                  ?-(-.b $& [%& [~ a] p.b], $| [%| [~ a] p.b])
+                  ?-(-.b %& [%& [~ a] p.b], %| [%| [~ a] p.b])
               =+  ^=  wyp
                   ;~  pose
                      %+  cook  gub
@@ -12594,8 +12594,8 @@
     =^  mes  +>+<.$  (slot 6 dor)
     =^  hip  +>+<.$
       ?-  -.som
-         $&  (nest p.mes p.p.som)
-         $|  (nets p.mes -.p.som)
+         %&  (nest p.mes p.p.som)
+         %|  (nets p.mes -.p.som)
       ==
     ?>  hip
     [[p.dor q.dor(+6 +7.som)] +>+<.$] 
@@ -12605,8 +12605,8 @@
     ^-  worm
     =^  hip  +>+<.$
       ?-  -.som
-        $&  (nest typ p.p.som)
-        $|  (nets typ -.p.som)
+        %&  (nest typ p.p.som)
+        %|  (nets typ -.p.som)
       ==
     ?>  hip
     +>+<.$

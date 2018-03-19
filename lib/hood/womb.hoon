@@ -34,8 +34,8 @@
   |*  (managed)                                         ::
   ?-  +<                                                ::
     $~      ~                                           ::  unsplit
-    {$~ $| *}  ~                                        ::  delivered
-    {$~ $& *}  (some p.u.+<)                            ::  subdivided
+    {$~ %| *}  ~                                        ::  delivered
+    {$~ %& *}  (some p.u.+<)                            ::  subdivided
   ==                                                    ::
 ::                                                      ::
 ++  moon  (managed _!!)                                 ::  undivided moon
@@ -375,7 +375,7 @@
   =+  (~(get by stars.office) who)
   ?^  -  u
   =+  gal=(get-managed-galaxy (sein who))
-  ?.  ?=({$~ $& *} gal)  ~|(unavailable-star+(sein who) !!)
+  ?.  ?=({$~ %& *} gal)  ~|(unavailable-star+(sein who) !!)
   (fall (~(get by box.r.p.u.gal) (neis who)) ~)
 ::
 ++  mod-managed-star                                  ::  office write
@@ -385,7 +385,7 @@
     +>.$(stars.office (~(put by stars.office) who sta))
   %+  mod-managed-galaxy  (sein who)
   |=  gal/galaxy  ^-  galaxy
-  ?>  ?=({$~ $& *} gal)
+  ?>  ?=({$~ %& *} gal)
   gal(r.p.u (~(put fo r.p.u.gal) (neis who) sta))
 ::
 ++  get-managed-planet                                ::  office read
@@ -394,10 +394,10 @@
   ?^  -  u
   ?:  (~(has by galaxies.office) (sein who))
     =+  gal=(get-managed-galaxy (sein who))
-    ?.  ?=({$~ $& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
+    ?.  ?=({$~ %& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
     (~(get fo q.p.u.gal) who)
   =+  sta=(get-managed-star (sein who))
-  ?.  ?=({$~ $& *} sta)  ~|(unavailable-star+(sein who) !!)
+  ?.  ?=({$~ %& *} sta)  ~|(unavailable-star+(sein who) !!)
   (~(get fo q.p.u.sta) who)
 ::
 ++  mod-managed-planet                                ::  office write
@@ -408,11 +408,11 @@
   ?:  (~(has by galaxies.office) (sein who))
     %+  mod-managed-galaxy  (sein who)
     |=  gal/galaxy  ^-  galaxy
-    ?>  ?=({$~ $& *} gal)
+    ?>  ?=({$~ %& *} gal)
     gal(q.p.u (~(put fo q.p.u.gal) (neis who) pla))
   %+  mod-managed-star  (sein who)
   |=  sta/star  ^-  star
-  ?>  ?=({$~ $& *} sta)
+  ?>  ?=({$~ %& *} sta)
   sta(q.p.u (~(put fo q.p.u.sta) (neis who) pla))
 ::
 ++  get-live                                          ::  last-heard time ++live
@@ -430,7 +430,7 @@
 ::
 ++  stat-planet                                       ::  stat of planet
   |=  {who/@p man/planet}  ^-  stat
-  ?.  ?=({$~ $& ^} man)  (stat-any who man)
+  ?.  ?=({$~ %& ^} man)  (stat-any who man)
   :-  (get-live who)
   =+  pla=u:(divided man)
   :-  %split
@@ -440,7 +440,7 @@
 ::
 ++  stat-star                                         ::  stat of star
   |=  {who/@p man/star}  ^-  stat
-  ?.  ?=({$~ $& ^} man)  (stat-any who man)
+  ?.  ?=({$~ %& ^} man)  (stat-any who man)
   :-  (get-live who)
   =+  sta=u:(divided man)
   :-  %split
@@ -453,7 +453,7 @@
 ::
 ++  stat-galaxy                                       :: stat of galaxy
   |=  {who/@p man/galaxy}  ^-  stat
-  ?.  ?=({$~ $& ^} man)  (stat-any who man)
+  ?.  ?=({$~ %& ^} man)  (stat-any who man)
   =+  gal=u:(divided man)
   :-  (get-live who)
   :-  %split
@@ -718,8 +718,8 @@
 ++  needy
   |*  a/(each * tang)
   ?-  -.a
-    $&  p.a
-    $|  ((slog (flop p.a)) (mean p.a))
+    %&  p.a
+    %|  ((slog (flop p.a)) (mean p.a))
   ==
 ::
 ++  poke-do-claim                                     ::  deliver ticket

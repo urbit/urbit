@@ -1274,13 +1274,13 @@
       =.  +>+>.$  (he-diff %tan tan)
       =+  vax=(spec (slot 3 q.cag))
       ?+    -.q.vax  !!
-          $&
+          %&
         ?~  +.q.vax
           ~&  %dy-made-dial-abort
           (dy-rash %bel ~)
         (dy-meal (slot 7 vax))
       ::
-          $|
+          %|
         =<  he-pone
         %-  dy-diff(pro `(slap (slot 7 vax) [%limb %q]))
         =+  pom=(sole-prompt +<.q.vax)
@@ -1297,15 +1297,15 @@
       =+  vax=(spec (slot 3 q.cag))
       ~_  (sell q.cag)
       ?+    -.q.vax  !!
-          $&
+          %&
         ?~  +.q.vax
           ~&  %dy-made-scar-abort
           (dy-rash %bel ~)
         (dy-meal (slot 7 vax))
       ::
-          $|
-        =>  .(vax (slap vax !,(*hoon ?>(?=($| -) .))))  :: XX working spec  #72
-        =+  typ={$| (unit knot) hiss:eyre *}
+          %|
+        =>  .(vax (slap vax !,(*hoon ?>(?=(%| -) .))))  :: XX working spec  #72
+        =+  typ={%| (unit knot) hiss:eyre *}
         =+  [~ usr hiz ~]=((dy-cast typ !>($:typ)) vax)
         =.  ..dy  (he-diff %tan leaf+"< {(en-purl:html p.hiz)}" ~)
         (dy-eyre(pro `(slap (slot 15 vax) limb+%r)) /scar usr hiz)
@@ -1401,8 +1401,8 @@
     ^-  (each (unit (each dojo-command tape)) @ud)
     =+  foy=(he-dope txt)
     ?-  -.foy
-      $|  [%| q.p.foy]
-      $&  [%& p.foy]
+      %|  [%| q.p.foy]
+      %&  [%& p.foy]
     ==
   ::
   ++  he-easter                                         ::  hint messages
@@ -1490,7 +1490,7 @@
     ?>  ?=(^ poy)
     =<  he-pine
     ?-  -.reg
-      $&  %.  p.reg
+      %&  %.  p.reg
           =+  dye=~(. dy u.poy(pux ~))
           ?+  way  !!
             {$hand $~}  dy-hand:dye
@@ -1500,7 +1500,7 @@
             {$scar $~}  dy-made-scar:dye
             {$edit $~}  dy-made-edit:dye
           ==
-      $|  (he-diff(poy ~) %tan p.reg)
+      %|  (he-diff(poy ~) %tan p.reg)
       $tabl  !!
     ==
   ::
@@ -1542,7 +1542,7 @@
         ==
       +>.$
     =+  foy=(he-dope (tufa buf.say))
-    ?:  ?=($& -.foy)  +>.$
+    ?:  ?=(%& -.foy)  +>.$
     ::  ~&  [%bad-change dat ted.cal]
     ::  ~&  [%our-leg leg.say]
     (he-errd `dat q.p.foy)
@@ -1565,16 +1565,16 @@
       ==
     =+  doy=(he-duke txt)
     ?-    -.doy
-        $|  (he-errd ~ p.doy)
-        $&
+        %|  (he-errd ~ p.doy)
+        %&
       ?~  p.doy
         (he-errd ~ (lent txt))
       =+  old=(weld ?~(buf "> " "  ") (tufa buf.say))
       =^  cal  say  (~(transmit ^sole say) [%set ~])
       =.  +>.$   (he-diff %mor txt+old nex+~ det+cal ~)
       ?-  -.u.p.doy
-        $&  (he-plan(buf ~) p.u.p.doy)
-        $|  he-prom(buf p.u.p.doy)
+        %&  (he-plan(buf ~) p.u.p.doy)
+        %|  he-prom(buf p.u.p.doy)
       ==
     ==
   ::

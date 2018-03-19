@@ -28,8 +28,8 @@
     %-  mule  |.
     elm:(static:cram (rash (nule:unix ';>' a) apex:(sail &):vast))
   ?-  -.try
-    $&  p.try
-    $|  ;div
+    %&  p.try
+    %|  ;div
           ;h3: ERROR
           ;pre: {(wush 120 p.try)}
   ==    ==

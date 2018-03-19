@@ -654,8 +654,8 @@
       =+  maf=(eat-headers r.heq)
       =+  ^=  pul  ^-  purl
           ?-  -.ryp
-            $&  ?>(=(sec p.p.p.ryp) p.ryp)
-            $|  =+  hot=(~(get ja maf) %host)
+            %&  ?>(=(sec p.p.p.ryp) p.ryp)
+            %|  =+  hot=(~(get ja maf) %host)
                 ?>  ?=({@ ~} hot)
                 [[sec (rash i.hot thor:de-purl)] p.ryp q.ryp]
           ==
@@ -833,8 +833,8 @@
       |:  $:{sus/(each duct ixor) con/_..axon}
       =.  ..axon  con
       ?-  -.sus
-        $&  (give-json(hen p.sus) 200 ~ %s (scot %uv p.sih))
-        $|  (get-even:(ire-ix p.sus) +.sih)
+        %&  (give-json(hen p.sus) 200 ~ %s (scot %uv p.sih))
+        %|  (get-even:(ire-ix p.sus) +.sih)
       ==
     ::
         $made
@@ -848,7 +848,7 @@
           {$si ~}  (give-sigh q.sih)
           {$se ^}   (get-made:(dom-vi q.tee) p.tee [p q]:sih)
           {$hi ^}
-        ?:  ?=($| -.q.sih)
+        ?:  ?=(%| -.q.sih)
           (give-sigh q.sih)  ::  XX crash?
         =*  cay  p.q.sih
         ?>  ?=($hiss p.cay)
@@ -856,13 +856,13 @@
           (eyre-them tee q.cay)
         =+  usr=(slav %ta p.tee)
         =+  ((hard {pul/purl ^}) q.q.cay)
-        ?.  ?=($& -.r.p.pul)
+        ?.  ?=(%& -.r.p.pul)
           ~&  [%auth-lost usr (head:en-purl p.pul)]
           (eyre-them tee q.cay)
         (get-req:(dom-vi usr (scag 2 p.r.p.pul)) q.tee q.cay)
       ::
 ::           {$hi ^}
-::         ?:  ?=($| -.q.sih)
+::         ?:  ?=(%| -.q.sih)
 ::           (give-sigh q.sih)  ::  XX crash?
 ::         =*  cay  p.q.sih
 ::         ?>  ?=($hiss p.cay)
@@ -879,14 +879,14 @@
         ==     ==
       ::
           {$of @ ^}
-        ?:  ?=($| -.q.sih)
+        ?:  ?=(%| -.q.sih)
           ((slog p.q.sih) +>.^$)             ::  XX get-even %mean
         %+  get-rush:(ire-ix p.tee)  q.tee
         ?>  ?=($json p.p.q.sih)                    ::  XX others
         ((hard json) q.q.p.q.sih)
       ::
           {$at ^}
-        ?:  ?=($| -.q.sih)  $(tee q.tee)
+        ?:  ?=(%| -.q.sih)  $(tee q.tee)
         ?.  ?=($js -.p.q.sih)
           ~&  e+at-lost+[-.p.q.sih q.tee]
           $(tee q.tee)
@@ -899,7 +899,7 @@
           {$ac ^}  ?>((~(has by wup) p.tee) $(ses `p.tee, tee q.tee))
           {$ha *}
         %-  emule  |.  ^+  ..apex
-        ?.  ?=($& -.q.sih)
+        ?.  ?=(%& -.q.sih)
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
         ?:  ?=($red-quri p.cay)
@@ -936,7 +936,7 @@
   ++  ses-authed
     |=  ses/hole
     =+  sap=(~(get by sop) ses)
-    ?:  ?=({~ @ $&} sap)  &
+    ?:  ?=({~ @ %&} sap)  &
     =+  cyz=(~(get by wup) ses)
     ?~  cyz  |
     (~(has in aut.u.cyz) our)
@@ -1024,7 +1024,7 @@
   ++  give-sigh                                       ::  userspace done
     |=  res/(each cage tang)
     =-  +>.$(mow :_(mow [hen %give %sigh `cage`-]))
-    ?.  ?=($| -.res)  p.res
+    ?.  ?=(%| -.res)  p.res
     [%tang !>(p.res)]
   ::
   ++  mean-json  |=({sas/@uG err/ares} (give-json sas ~ (ares-to-json err)))
@@ -1036,7 +1036,7 @@
     ^-  (unit ship)
     :: =+  gow=(~(get by dop) hot)    ::  XX trust
     :: ?^  gow  gow
-    ?.  ?=($& -.hot)  ~
+    ?.  ?=(%& -.hot)  ~
     =+  dom=(flop p.hot)                                ::  domain name
     ?~  dom  ~
     (rush i.dom fed:ag)
@@ -1080,7 +1080,7 @@
       =+  oar=(host-to-ship r.hat)
       =.  our  ?~(oar our u.oar)  ::  XX
       =+  pez=process
-      ?:  ?=($| -.pez)  p.pez
+      ?:  ?=(%| -.pez)  p.pez
       (resolve ~ p.pez)
     ::
     ++  lens
@@ -1215,7 +1215,7 @@
             $ac
           ?~  but  ~|(no-host+`path`/~/[pef] !!)
           =+  `dom/host`~|(bad-host+i.but (rash i.but thos:de-purl))
-          ?:  ?=($| -.dom)  ~|(auth-ip+dom !!)
+          ?:  ?=(%| -.dom)  ~|(auth-ip+dom !!)
           =-  [%oath - p.dom]
           ~|  bad-user+`path`t.but
           ?>  ?=({@ $in ~} t.but)
@@ -1323,7 +1323,7 @@
     ++  process
       ^-  (each pest _done)
       =+  pet=parse
-      ?:  ?=($| -.pet)
+      ?:  ?=(%| -.pet)
         [%& %$ p.pet]
       (process-parsed p.pet)
     ::
@@ -1404,7 +1404,7 @@
           $at
         =.  ..ya  abet.yac
         =+  pez=process(pok p.ham, aut |)
-        ?.  ?=($& -.pez)  ~|(no-inject+p.ham !!)
+        ?.  ?=(%& -.pez)  ~|(no-inject+p.ham !!)
         ?~  p.pez  pez
         ?+    -.p.pez  ~&(bad-inject+p.pez !!)
             $red  pez
@@ -1431,7 +1431,7 @@
         ?:  |(=(anon him.ham) (~(has in aut.yac) him.ham))
           =.  ..ya  abet.yac(him him.ham)
           =+  pez=process(pok rem.ham, aut &)
-          ?:  ?=($| -.pez)  pez
+          ?:  ?=(%| -.pez)  pez
           [%| (resolve ~ p.pez)]
         ?.  =(our him.ham)
           [%| ((teba foreign-auth.yac) him.ham hat rem.ham quy)]
@@ -1468,12 +1468,12 @@
     ++  cookie-domain
       ^-  cord
       ?-  r.hat
-        {$| @}  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
-        {$& $org $urbit *}  '; Domain=.urbit.org'
-        {$& @ @ *}  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
+        {%| @}  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
+        {%& $org $urbit *}  '; Domain=.urbit.org'
+        {%& @ @ *}  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
                     (turn (flop `path`t.p.r.hat) |=(a/knot (cat 3 a '.')))
 
-        {$& *}  ''  ::  XX security?
+        {%& *}  ''  ::  XX security?
       ==
     ::
     ++  set-cookie
@@ -1566,7 +1566,7 @@
             ..ya
           =+  sap=(~(get by sop) ses)
           ::  ~&  sap+sap
-          ?.  ?=({~ @ $|} sap)
+          ?.  ?=({~ @ %|} sap)
             ..ya
           (ames-gram -.u.sap aut+~ ses)
       ==
@@ -1960,14 +1960,14 @@
     ++  on-ford-fail
       |:  $:{err/$-(tang _boss) try/$-((each cage tang) _boss)}
       |=  a/(each cage tang)  ^+  abet
-      ?-(-.a $| (err p.a), $& (try a))
+      ?-(-.a %| (err p.a), %& (try a))
     ::
     ++  on-error
       |:  $:{err/$-(tang _boss) handle-move/_|.(|~(vase abet))}
       |=  a/(each cage tang)  ^+  abet
       =+  try=(possibly-stateful |:(b=self (handle-move(+ b))))  :: XX types
-      ?:  ?=($| -.a)  (err p.a)
-      =-  ?-(-.- $& p.-, $| (err p.-))
+      ?:  ?=(%| -.a)  (err p.a)
+      =-  ?-(-.- %& p.-, %| (err p.-))
       (mule |.(~|(driver+dom ~|(bad-res+p.q.p.a (try q.p.a)))))
     ::
     ++  possibly-stateful
@@ -2038,7 +2038,7 @@
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ?.  ?=($& -.why)  ~
+  ?.  ?=(%& -.why)  ~
   =*  who  p.why
   =+  our=(need hov)                  :: XX single home
   =+  ska=(sloy ski)

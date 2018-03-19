@@ -22,7 +22,7 @@
   [%& %oauth-hostname "api hostname: https://"]
 %+  sole-go  thos:urlp
 |=  hot/host
-?:  ?=($| -.hot)
+?:  ?=(%| -.hot)
   ~|(%ips-unsupported !!)
 %+  sole-lo
   [%& %oauth-client "consumer key: "]

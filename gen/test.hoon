@@ -31,12 +31,12 @@
   =+  name=(spud (flop pax))
   =+  run=(mule |.((test eny)))
   ?-  -.run
-    $|  ::  the stack is already flopped for output?
+    %|  ::  the stack is already flopped for output?
         ;:  weld
           p:run
           `tang`[[%leaf (weld name " CRASHED")] ~]
         ==
-    $&  ?:  =(~ p:run)
+    %&  ?:  =(~ p:run)
           [[%leaf (weld name " OK")] ~]
         ::  Create a welded list of all failures indented.
         %-  flop

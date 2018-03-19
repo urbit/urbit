@@ -161,11 +161,11 @@
       =-  (cook crip (lite -))
       %+  sear
         %-  flit
-        |=  a/$^({marx $~} $%({$& marx} {$| p/mane}))
+        |=  a/$^({marx $~} $%({%& marx} {%| p/mane}))
         ?-  -.a
           ^   (madn n.a) 
-          $&  (madn n.a) 
-          $|  (madn p.a)
+          %&  (madn n.a) 
+          %|  (madn p.a)
         ==
       ;~(pose empt:de-xml (pech [head tail]:de-xml))
     ::
@@ -307,7 +307,7 @@
     =>  |%
         ++  nufh  {tape kids}
         ++  fens  ?($'*' $'_')
-        ++  nuft  {nufh ?(tape {tape ?($| fens)})}
+        ++  nuft  {nufh ?(tape {tape ?(%| fens)})}
         ++  reso
           |=  a/nufh
           ^-  kids
@@ -393,8 +393,8 @@
     ::
     ++  flome
       |=  a/_+:*nuft
-      ^-  {(unit ?($| fens)) tape}
-      ?.  ?=({* ?($| fens)} a)
+      ^-  {(unit ?(%| fens)) tape}
+      ?.  ?=({* ?(%| fens)} a)
         [~ a]
       [[~ +.a] -.a]
     ::
@@ -579,8 +579,8 @@
   ?~  q.i.c  
     i.c
   ?.  ?&  ?=({* $~} q.i.c)
-          ?=({$emph $|} -.i.c)  
-          ?=({$emph $|} -.i.q.i.c)
+          ?=({$emph %|} -.i.c)  
+          ?=({$emph %|} -.i.q.i.c)
       ==
     i.c(q $(c q.i.c))
   [[%emph %&] $(c q.i.q.i.c)]

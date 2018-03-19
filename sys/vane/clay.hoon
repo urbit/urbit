@@ -470,7 +470,7 @@
   ::
   ++  unwrap-tang
     |*  res/(each * tang)
-    ?:(?=($& -.res) p.res (mean p.res))
+    ?:(?=(%& -.res) p.res (mean p.res))
   ::
   ::  Parse a gage to a list of pairs of cages, crashing on error.
   ::
@@ -489,16 +489,16 @@
     |=  gag/gage:ford
     ^-  (list (pair cage cage))
     ?.  ?=($tabl -.gag)
-      (ford-fail ?-(-.gag $| p.gag, $& [>%strange-gage p.p.gag<]~))
+      (ford-fail ?-(-.gag %| p.gag, %& [>%strange-gage p.p.gag<]~))
     %+  murn  p.gag
     |=  {key/gage:ford val/gage:ford}
     ^-  (unit {cage cage})
-    ?.  ?=($& -.key)
-      (ford-fail ?-(-.key $| p.key, $tabl [>%strange-gage<]~))
+    ?.  ?=(%& -.key)
+      (ford-fail ?-(-.key %| p.key, $tabl [>%strange-gage<]~))
     ?-  -.val
       $tabl  (ford-fail >%strange-gage< ~)
-      $&     (some [p.key p.val])
-      $|     =.  p.val  [(sell q.p.key) p.val]
+      %&     (some [p.key p.val])
+      %|     =.  p.val  [(sell q.p.key) p.val]
              ~>  %slog.[0 %*(. >%ford-fail syd %her %why< |2.+> p.val)]
              ~
     ==
@@ -511,7 +511,7 @@
   ++  gage-to-cages-or-error
     |=  gag/gage:ford
     ^-  (each (list (pair cage cage)) tang)
-    ?:  ?=($| -.gag)  (mule |.(`$~`(ford-fail p.gag)))
+    ?:  ?=(%| -.gag)  (mule |.(`$~`(ford-fail p.gag)))
     ?.  ?=($tabl -.gag)
       (mule |.(`$~`(ford-fail >%strange-gage p.p.gag< ~)))
     =<  ?+(. [%& .] {@ *} .)
@@ -520,11 +520,11 @@
     =*  hed  i.p.gag
     ?-  -.p.i.p.gag
       $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-      $|     (mule |.(`$~`(ford-fail p.p.i.p.gag)))
-      $&     ?-  -.q.i.p.gag
+      %|     (mule |.(`$~`(ford-fail p.p.i.p.gag)))
+      %&     ?-  -.q.i.p.gag
         $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-        $|     (mule |.(`$~`(ford-fail p.q.i.p.gag)))
-        $&     =+  $(p.gag t.p.gag)
+        %|     (mule |.(`$~`(ford-fail p.q.i.p.gag)))
+        %&     =+  $(p.gag t.p.gag)
                ?+(- [[p.p p.q]:i.p.gag -] {@ *} -)
     ==       ==
   ::
@@ -583,7 +583,7 @@
   ++  blab
     |=  {hen/duct mun/mood dat/(each cage lobe)}
     ^+  +>
-    ?:  ?=($& -.dat)
+    ?:  ?=(%& -.dat)
       (emit hen %give %writ ~ [p.mun q.mun syd] r.mun p.dat)
     %-  emit
     :*  hen  %pass  [%blab p.mun (scot q.mun) syd r.mun]
@@ -740,7 +740,7 @@
         :-  [%$ %path !>(a)]
         :+  %cast  %mime
         =+  (need (need (read-x:ze cas a)))
-        ?:  ?=($& -<)
+        ?:  ?=(%& -<)
           [%$ p.-]
         (lobe-to-silk:ze a p.-)
     ==
@@ -838,8 +838,8 @@
     ^+  +>
     =+  pre=`path`~[(scot %p her) syd (scot %ud let.dom)]
     ?-  -.lem
-      $|  (print-to-dill '=' %leaf :(weld (trip p.lem) " " (spud pre)))
-      $&  |-  ^+  +>.^$
+      %|  (print-to-dill '=' %leaf :(weld (trip p.lem) " " (spud pre)))
+      %&  |-  ^+  +>.^$
           ?~  p.lem  +>.^$
           =.  +>.^$
             %+  print-to-dill
@@ -918,7 +918,7 @@
   ++  edit                                              ::  apply changes
     |=  {wen/@da lem/nori}
     ^+  +>
-    ?:  ?=($| -.lem)
+    ?:  ?=(%| -.lem)
       =^  hat  +>.$
         (execute-changes:ze wen lem)
       ?~  hat
@@ -960,7 +960,7 @@
               |=  {pax/path mis/miso}
               ?>  ?=($dif -.mis)
               =+  (need (need (read-x:ze let.dom pax)))
-              ?>  ?=($& -<)
+              ?>  ?=(%& -<)
               :-  [%$ %path -:!>(*path) pax]
               [%pact [%$ p.-] [%$ p.mis]]
           ==
@@ -1241,7 +1241,7 @@
     |=  res/gage:ford
     ^+  +>
     ::  ~&  %taking-patch
-    ?:  ?=($| -.res)
+    ?:  ?=(%| -.res)
       =.  dok  ~
       (print-to-dill '!' %rose [" " "" ""] leaf+"clay patch failed" p.res)
     ::  ~&  %editing
@@ -1317,7 +1317,7 @@
         ?^  -  [%$ %mime !>(u.-)]
         :+  %cast  %mime
         =+  (need (need (read-x:ze let.dom a)))
-        ?:  ?=($& -<)
+        ?:  ?=(%& -<)
           [%$ p.-]
         (lobe-to-silk:ze a p.-)
     ==
@@ -1331,7 +1331,7 @@
   ++  take-ergo
     |=  res/gage:ford
     ^+  +>
-    ?:  ?=($| -.res)
+    ?:  ?=(%| -.res)
       (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" p.res)
     ?~  hez  ~|(%no-sync-duct !!)
     =+  ^-  can/(map path (unit mime))
@@ -1493,9 +1493,9 @@
     |=  {car/care cas/case pax/path res/gage:ford}
     ^+  +>
     ?>  ?=(^ ref)
-    ?.  ?=($& -.res)
+    ?.  ?=(%& -.res)
       ~|  "validate foreign x failed"
-      =+  why=?-(-.res $| p.res, $tabl ~[>%bad-marc<])
+      =+  why=?-(-.res %| p.res, $tabl ~[>%bad-marc<])
       ~>  %mean.|.(%*(. >[%plop-fail %why]< |1.+> why))
       !!
     ?>  ?=(@ p.p.res)
@@ -1796,7 +1796,7 @@
       |-  ^-  silk:ford
       ?:  =([~ lob] lol)
         =+  (need (need (read-x let.dom pax)))
-        ?>  ?=($& -<)
+        ?>  ?=(%& -<)
         [%$ p.-]
       =+  bol=(~(got by lat.ran) lob)
       ?-  -.bol
@@ -1814,11 +1814,11 @@
     ++  equivalent-data
       |=  {one/(each cage lobe) two/(each cage lobe)}
       ^-  ?
-      ?:  ?=($& -.one)
-        ?:  ?=($& -.two)
+      ?:  ?=(%& -.one)
+        ?:  ?=(%& -.two)
           =([p q.q]:p.one [p q.q]:p.two)
         =(p.two (page-to-lobe [p q.q]:p.one))
-      ?:  ?=($& -.two)
+      ?:  ?=(%& -.two)
         =(p.one (page-to-lobe [p q.q]:p.two))
       =(p.one p.two)
     ::
@@ -1900,7 +1900,7 @@
       |=  {wen/@da lem/nuri}
       ^-  {(unit (map path lobe)) _..ze}
       ?-  -.lem
-        $&
+        %&
            =^  yak  lat.ran  (forge-yaki wen p.lem)     ::  create new commit
            ?.  ?|  =(0 let.dom)
                    !=((lent p.yak) 1)
@@ -1913,7 +1913,7 @@
            ==
            [`q.yak ..ze]
            ::  +>.$(ank (map-to-ankh q.yak))
-        $|
+        %|
            ?<  (~(has by lab.dom) p.lem)
            [~ ..ze(lab.dom (~(put by lab.dom) p.lem let.dom))]
       ==
@@ -2404,7 +2404,7 @@
                   henmer=hen.u.mer
               ==
           [%| %already-merging-from-somewhere]
-      ?:  ?=($| -.dat)
+      ?:  ?=(%| -.dat)
         ~|(p.dat !!)
       =+  dat=p.dat
       =|  don/?                                         ::  keep going
@@ -2451,13 +2451,13 @@
               ==
            !!
         ?+  +<  ~|((crip <[%bad-stage sat ?~(-.res %riot %gage)]>) !!)
-          {$ali $& *}       %.(p.res fetched-ali)
-          {$diff-ali $| *}  %.(q.p.res diffed-ali)
-          {$diff-bob $| *}  %.(q.p.res diffed-bob)
-          {$merge $| *}     %.(q.p.res merged)
-          {$build $| *}     %.(q.p.res built)
-          {$checkout $| *}  %.(p.res checked-out)
-          {$ergo $| *}      %.(q.p.res ergoed)
+          {$ali %& *}       %.(p.res fetched-ali)
+          {$diff-ali %| *}  %.(q.p.res diffed-ali)
+          {$diff-bob %| *}  %.(q.p.res diffed-bob)
+          {$merge %| *}     %.(q.p.res merged)
+          {$build %| *}     %.(q.p.res built)
+          {$checkout %| *}  %.(p.res checked-out)
+          {$ergo %| *}      %.(q.p.res ergoed)
         ==
       ::
       ::  Start a merge.
@@ -2759,12 +2759,12 @@
         |=  res/gage:ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
-        ?:  ?=($| -.tay)
+        ?:  ?=(%| -.tay)
           (error:he %diff-ali-bad-made leaf+"merge diff ali failed" p.tay)
         =+  can=(cages-to-map p.tay)
-        ?:  ?=($| -.can)
+        ?:  ?=(%| -.can)
           (error:he %diff-ali p.can)
-        ?:  ?=($| -.gon.dat)
+        ?:  ?=(%| -.gon.dat)
           +>.$
         =.  new.dal.dat
           %-  molt
@@ -2807,12 +2807,12 @@
         |=  res/gage:ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
-        ?:  ?=($| -.tay)
+        ?:  ?=(%| -.tay)
           (error:he %diff-bob-bad-made leaf+"merge diff bob failed" p.tay)
         =+  can=(cages-to-map p.tay)
-        ?:  ?=($| -.can)
+        ?:  ?=(%| -.can)
           (error:he %diff-bob p.can)
-        ?:  ?=($| -.gon.dat)
+        ?:  ?=(%| -.gon.dat)
           +>.$
         =.  new.dob.dat
           %-  molt
@@ -2874,13 +2874,13 @@
       ++  merged
         |=  res/gage:ford
         =+  tay=(gage-to-cages-or-error res)
-        ?:  ?=($| -.tay)
+        ?:  ?=(%| -.tay)
           (error:he %merge-bad-made leaf+"merging failed" p.tay)
         =+  can=(cages-to-map p.tay)
-        ?:  ?=($| -.can)
+        ?:  ?=(%| -.can)
           (error:he %merge p.can)
         =+  bof=(~(run by p.can) (flit |=({a/mark ^} !?=($null a))))
-        ?:  ?=($| -.gon.dat)
+        ?:  ?=(%| -.gon.dat)
           +>.$
         =.  bof.dat  bof
         build
@@ -2923,12 +2923,12 @@
         |=  res/gage:ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
-        ?:  ?=($| -.tay)
+        ?:  ?=(%| -.tay)
           (error:he %build-bad-made leaf+"delta building failed" p.tay)
         =+  bop=(cages-to-map p.tay)
-        ?:  ?=($| -.bop)
+        ?:  ?=(%| -.bop)
           (error:he %built p.bop)
-        ?:  ?=($| -.gon.dat)
+        ?:  ?=(%| -.gon.dat)
           +>.$
         =.  bop.dat  p.bop
         =+  ^-  con/(map path *)                        ::  2-change conflict
@@ -3059,12 +3059,12 @@
         |=  {dep/@uvH res/gage:ford}
         ^+  this
         =+  tay=(gage-to-cages-or-error res)
-        ?:  ?=($| -.tay)
+        ?:  ?=(%| -.tay)
           (error:he %checkout-bad-made leaf+"merge checkout failed" p.tay)
         =+  can=(cages-to-map p.tay)
-        ?:  ?=($| -.can)
+        ?:  ?=(%| -.can)
           (error:he %checkout p.can)
-        ?:  ?=($| -.gon.dat)
+        ?:  ?=(%| -.gon.dat)
           this
         =.  let.dom  +(let.dom)
         =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
@@ -3127,7 +3127,7 @@
         |=  res/gage:ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
-        ?:  ?=($| -.tay)
+        ?:  ?=(%| -.tay)
           (error:he %ergo-bad-made leaf+"merge ergo failed" p.tay)
         =+  =|  nac/mode
             |-  ^-  tan/$^(mode {p/term q/tang})
@@ -3142,7 +3142,7 @@
         =+  `can/(map path (unit mime))`(malt tan)
         ?~  hez
           (error:he %ergo-no-hez ~)
-        ?:  ?=($| -.gon.dat)
+        ?:  ?=(%| -.gon.dat)
           +>.$
         =+  mus=(must-ergo (turn ~(tap by erg.dat) head))
         =<  done:he
@@ -3168,7 +3168,7 @@
         ::
         ++  done
           ^+  ..he
-          ?<  ?=($| -.gon.dat)
+          ?<  ?=(%| -.gon.dat)
           ..he(don |)
         ::
         ::  Cancel the merge gracefully and produce an error.
@@ -3195,7 +3195,7 @@
           |-  ^-  silk:ford
           ?:  =([~ lob] lol)
             =+  (need (need (read-x let.dom pax)))
-            ?>  ?=($& -<)
+            ?>  ?=(%& -<)
             [%$ p.-]
           ?:  =([~ lob] lal)
             [%$ +:(need fil.ank:(descend-path:(zu ank:(need alh)) pax))]
@@ -3495,7 +3495,7 @@
 ++  scry                                              ::  inspect
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ?.  ?=($& -.why)  ~
+  ?.  ?=(%& -.why)  ~
   =*  his  p.why
   ::  ~&  scry+[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
   ::  =-  ~&  %scry-done  -
@@ -3510,7 +3510,7 @@
   =+  (aver:den u.run u.luk tyl)
   ?~  -               -
   ?~  u.-             -
-  ?:  ?=($& -.u.u.-)  ``p.u.u.-
+  ?:  ?=(%& -.u.u.-)  ``p.u.u.-
   ~
 ::
 ++  stay  [%1 ruf]
@@ -3537,9 +3537,9 @@
     [mos ..^$]
   ?:  ?=({$blab care @ @ *} tea)
     ?>  ?=($made +<.q.hin)
-    ?.  ?=($& -.q.q.hin)
+    ?.  ?=(%& -.q.q.hin)
       ~|  %blab-fail
-      ~>  %mean.|.(?+(-.q.q.hin -.q.q.hin $| p.q.q.hin))
+      ~>  %mean.|.(?+(-.q.q.hin -.q.q.hin %| p.q.q.hin))
       !!                              ::  interpolate ford fail into stack trace
     :_  ..^$  :_  ~
     :*  hen  %give  %writ  ~
@@ -3647,7 +3647,7 @@
     ==
   ::
       $mere
-    ?:  ?=($& -.p.+.q.hin)
+    ?:  ?=(%& -.p.+.q.hin)
       ~&  'initial merge succeeded'
       [~ ..^$]
     ~>  %slog.

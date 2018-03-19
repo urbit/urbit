@@ -89,7 +89,7 @@
     ?^  wom  [[(effect mor+help)]~ +>.$]    :: show help
     ?:  =(~ buf.som)  [[(effect txt+"Please enter womb ship")]~ +>.$]
     =/  try  (rose (tufa buf.som) fed:ag)
-    ?.  ?=({$& ^} try)
+    ?.  ?=({%& ^} try)
       [[(effect bel+~)]~ +>.$]
     =>  .(wom p.try)  :: XX TMI
     (transmit set+~ pro+prompt ~)   :: XX handle multiple links?

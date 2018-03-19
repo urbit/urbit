@@ -230,8 +230,8 @@
   |=  saw/(each suss:gall tang)  =<  abet
   %-  emit
   ?-   -.saw
-    $|  [%flog ~ %crud %onto `tang`p.saw]
-    $&  [%flog ~ %text "<{<p.saw>}>"]
+    %|  [%flog ~ %crud %onto `tang`p.saw]
+    %&  [%flog ~ %text "<{<p.saw>}>"]
   ==
 ::
 ++  take-note                                         ::  result of %init

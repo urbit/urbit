@@ -253,7 +253,7 @@
       $post
     =+  (raid:wired +.pax mez=%uv ~)
     =+  sta=(~(get by out) mez)
-    ?.  ?=({$~ $| *} sta)
+    ?.  ?=({$~ %| *} sta)
       [%none ~]
     [%full twit-post+p.u.sta]
   ::

@@ -150,11 +150,11 @@
     ^+  +>
     ?-    -.gux
         $tabl  ~|(%made-tabl !!)
-        $|
+        %|
       =.  +>  (mo-bold byk dap dep)
       =.  +>  (mo-give %onto %| p.gux)
       +>
-        $&
+        %&
       ?>  ?=(@ p.p.gux)
       ?.  (mo-okay q.p.gux)
         (mo-give %onto %| [%leaf "{<dap>}: bogus core"]~)
@@ -196,8 +196,8 @@
     =.  +>.$  (mo-bold byk dap dep)
     ?-  -.gux
       $tabl  ~|(%made-tabl !!)
-      $|     (mo-give %onto %| p.gux)
-      $&     ?>  ?=(@ p.p.gux)
+      %|     (mo-give %onto %| p.gux)
+      %&     ?>  ?=(@ p.p.gux)
              ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.p.gux)
     ==
   ::
@@ -335,8 +335,8 @@
       ?>  ?=({$f $made *} sih)
       ?-  -.q.+.sih
         $tabl  ~|(%made-tabl !!)
-        $&    (mo-give %unto %diff p.q.+>.sih)
-        $|     =.  p.q.+>.sih  (turn p.q.+>.sih |=(a/tank rose+[~ "! " ~]^[a]~))
+        %&    (mo-give %unto %diff p.q.+>.sih)
+        %|     =.  p.q.+>.sih  (turn p.q.+>.sih |=(a/tank rose+[~ "! " ~]^[a]~))
               ~>  %slog.`%*(. >[%wh %y]< +> [>%mo-cyst-fail< (flop p.q.+>.sih)])
               (mo-give %unto %quit ~)   ::  XX better errors pls
       ==
@@ -366,8 +366,8 @@
           ==
       ?-  -.q.+>.sih
         $tabl  ~|(%made-tabl !!)
-        $|     (mo-give %mack `p.q.+>.sih)                  ::  XX should crash
-        $&     =.  +>.$  (mo-give %mack ~)             ::  XX pump should ack
+        %|     (mo-give %mack `p.q.+>.sih)                  ::  XX should crash
+        %&     =.  +>.$  (mo-give %mack ~)             ::  XX pump should ack
                (mo-give(hen (mo-ball him num)) %unto %diff `cage`p.q.+>.sih)
       ==
     ::
@@ -380,8 +380,8 @@
       ?:  ?=({$f $made *} sih)
         ?-  -.q.+>.sih
           $tabl  ~|(%made-tabl !!)
-          $|  (mo-give %mack `p.q.+>.sih)               ::  XX should crash
-          $&  (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke p.q.+>.sih)
+          %|  (mo-give %mack `p.q.+>.sih)               ::  XX should crash
+          %&  (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke p.q.+>.sih)
         ==
       ?:  ?=({$a $woot *} sih)  +>.$                    ::  quit ack, boring
       ?>  ?=({$g $unto *} sih)
@@ -401,8 +401,8 @@
       ?>  ?=({$f $made *} sih)
       ?-  -.q.+>.sih
         $tabl  !!
-        $|     (mo-give %unto %coup `p.q.+>.sih)        ::  XX invalid, crash
-        $&     (mo-clip dap `prey`[%high ~ him] %poke p.q.sih)
+        %|     (mo-give %unto %coup `p.q.+>.sih)        ::  XX invalid, crash
+        %&     (mo-clip dap `prey`[%high ~ him] %poke p.q.sih)
       ==
     ::
         $way                                            ::  outbound request
@@ -606,9 +606,9 @@
       ^-  {(unit tang) _+>}
       =.  +>  ap-bowl 
       =^  arm  +>.$  (ap-farm cog)
-      ?:  ?=($| -.arm)  [`p.arm +>.$]
+      ?:  ?=(%| -.arm)  [`p.arm +>.$]
       =^  zem  +>.$  (ap-slam cog p.arm arg)
-      ?:  ?=($| -.zem)  [`p.zem +>.$]
+      ?:  ?=(%| -.zem)  [`p.zem +>.$]
       (ap-sake p.zem) 
     ::
     ++  ap-peek
@@ -623,9 +623,9 @@
       ?~  cug
         ((slog leaf+"peek find fail" >tyl< >mar< ~) [~ ~])
       =^  arm  +>.$  (ap-farm q.u.cug)
-      ?:  ?=($| -.arm)  ((slog leaf+"peek farm fail" p.arm) [~ ~])
+      ?:  ?=(%| -.arm)  ((slog leaf+"peek farm fail" p.arm) [~ ~])
       =^  zem  +>.$  (ap-slam q.u.cug p.arm !>((slag p.u.cug `path`[ren tyl]))) 
-      ?:  ?=($| -.zem)  ((slog leaf+"peek slam fail" p.zem) [~ ~])
+      ?:  ?=(%| -.zem)  ((slog leaf+"peek slam fail" p.zem) [~ ~])
       ?+  q.p.zem  ((slog leaf+"peek bad result" ~) [~ ~])
         $~              ~
         {$~ $~}         [~ ~]
@@ -694,7 +694,7 @@
       |=  cog/term
       ^-  {(each vase tang) _+>}
       =+  pyz=(mule |.((~(mint wa vel) p.hav [%limb cog])))
-      ?:  ?=($| -.pyz)  
+      ?:  ?=(%| -.pyz)  
         :_(+>.$ [%| +.pyz])
       :_  +>.$(vel `worm`+>.pyz)
       =+  ton=(mock [q.hav q.+<.pyz] ap-sled)
@@ -851,7 +851,7 @@
       |=  {sto/bone vax/vase}
       ^-  {(each cove tang) _+>}
       =^  yep  +>.$  (ap-move-mess vax)
-      ?:  ?=($| -.yep)  :_(+>.$ yep)
+      ?:  ?=(%| -.yep)  :_(+>.$ yep)
       =^  gaw  vel  (~(slot wa vel) 7 vax)
       ?.  &(?=({p/@ q/*} q.gaw) ((sane %tas) p.q.gaw))
         :_(+>.$ [%| (ap-suck "poke: malformed cage")])
@@ -866,7 +866,7 @@
       ^-  {(each cove tang) _+>}
       =^  yep  +>.$  (ap-move-mess vax)
       :_  +>.$
-      ?:  ?=($| -.yep)  yep
+      ?:  ?=(%| -.yep)  yep
       =+  mar=((soft mark) +>-.q.vax)
       ?~  mar
         [%| (ap-suck "peel: malformed mark")]
@@ -887,7 +887,7 @@
       ^-  {(each cove tang) _+>}
       =^  yep  +>.$  (ap-move-mess vax)
       :_  +>.$
-      ?:  ?=($| -.yep)  yep
+      ?:  ?=(%| -.yep)  yep
       =+  pux=((soft path) +>.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         [%| (ap-suck "peer: malformed path")]
@@ -905,7 +905,7 @@
       ^-  {(each cove tang) _+>}
       =^  yep  +>.$  (ap-move-mess vax)
       :_  +>.$
-      ?:  ?=($| -.yep)  yep
+      ?:  ?=(%| -.yep)  yep
       ?.  =(~ +>.q.vax)
         [%| (ap-suck "pull: malformed card")]
       :^  %&  sto  %pass
@@ -1136,11 +1136,11 @@
       ?@  q.vax  :_(+>.$ [%| (ap-suck "move: malformed list")])
       =^  hed  vel  (~(slot wa vel) 2 vax)
       =^  sud  +>.$  (ap-move hed)
-      ?:  ?=($| -.sud)  :_(+>.$ sud)
+      ?:  ?=(%| -.sud)  :_(+>.$ sud)
       =^  tel  vel  (~(slot wa vel) 3 vax)
       =^  res  +>.$  $(vax tel)
       :_  +>.$
-      ?:  ?=($| -.res)  res
+      ?:  ?=(%| -.res)  res
       [%& p.sud p.res]
     ::
     ++  ap-sake                                         ::  handle result
@@ -1150,10 +1150,10 @@
         [`(ap-suck "sake: invalid product (atom)") +>.$]
       =^  hed  vel  (~(slot wa vel) 2 vax)
       =^  muz  +>.$  (ap-safe hed)
-      ?:  ?=($| -.muz)  [`p.muz +>.$]
+      ?:  ?=(%| -.muz)  [`p.muz +>.$]
       =^  tel  vel  (~(slot wa vel) 3 vax)
       =^  sav  +>.$  (ap-save tel)
-      ?:  ?=($| -.sav)  [`p.sav +>.$]
+      ?:  ?=(%| -.sav)  [`p.sav +>.$]
       :-  ~
       %_  +>.$
         zip  (weld (flop p.muz) zip)
@@ -1175,7 +1175,7 @@
       ^-  {(each vase tang) _+>}
       =+  ^=  wyz  %-  mule  |.
           (~(mint wa vel) [%cell p.gat p.arg] [%cnsg [%$ ~] [%$ 2] [%$ 3] ~])
-      ?:  ?=($| -.wyz)
+      ?:  ?=(%| -.wyz)
         %-  =+  sam=(~(peek ut p.gat) %free 6)
             (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)
         :_(+>.$ [%| (ap-suck "call: {<cog>}: type mismatch")])
@@ -1291,7 +1291,7 @@
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ?.  ?=($& -.why)  ~
+  ?.  ?=(%& -.why)  ~
   =*  his  p.why
   ?:  ?&  =(%u ren)
           =(~ tyl)

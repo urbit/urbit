@@ -168,14 +168,14 @@
     |=  p/partner
     ^-  (unit circle:hall)
     ?-  -.p
-      $&  :+  ~  p.p.p
+      %&  :+  ~  p.p.p
           ?:  ?|  =(q.p.p 'porch')
                   =(q.p.p 'court')
                   =(q.p.p 'floor')
               ==
             %inbox
           q.p.p
-      $|  ~
+      %|  ~
     ==
   ::
   ++  convert-speech

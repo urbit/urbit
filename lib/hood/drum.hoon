@@ -201,8 +201,8 @@
   ?>  (~(has by fur) i.t.way)
   =/  wel/well:gall  [i.way i.t.way]
   ?-  saw
-    {$| *}  (se-dump p.saw)
-    {$& *}  ?>  =(q.wel p.p.saw)
+    {%| *}  (se-dump p.saw)
+    {%& *}  ?>  =(q.wel p.p.saw)
             ::  =.  +>.$  (se-text "live {<p.saw>}")
             +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))
   ==

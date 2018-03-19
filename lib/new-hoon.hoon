@@ -9,7 +9,7 @@
   |*  a=^
   +.a
 ::
-++  either  |*([a=mold b=mold] $%({$& p/a} {$| p/b}))   ::  either
+++  either  |*([a=mold b=mold] $%({%& p/a} {%| p/b}))   ::  either
 ::
 ++  thr
   |%
@@ -17,8 +17,8 @@
     :>  applies {b} {a} is first, or {b} to {a} is second.
     |*  [a=(either) b=$-(* *) c=$-(* *)]
     ?-  -.a
-      $&  (b p.a)
-      $|  (c p.a)
+      %&  (b p.a)
+      %|  (c p.a)
     ==
   ::
   ++  firsts
@@ -29,8 +29,8 @@
     ?~  a
       ~
     ?-  -.i.a
-      $&  [p.i.a $(a t.a)]
-      $|  $(a t.a)
+      %&  [p.i.a $(a t.a)]
+      %|  $(a t.a)
     ==
   ::
   ++  seconds
@@ -41,8 +41,8 @@
     ?~  a
       ~
     ?-  -.i.a
-      $&  $(a t.a)
-      $|  [p.i.a $(a t.a)]
+      %&  $(a t.a)
+      %|  [p.i.a $(a t.a)]
     ==
   ::
   ++  partition
@@ -55,8 +55,8 @@
       [~ ~]
     =+  ret=$(a t.a)
     ?-  -.i.a
-      $&  [[p.i.a -.ret] +.ret]
-      $|  [-.ret [p.i.a +.ret]]
+      %&  [[p.i.a -.ret] +.ret]
+      %|  [-.ret [p.i.a +.ret]]
     ==
   --
 ++  maybe  |*(a=mold $@($~ {$~ u/a}))                   ::  maybe
@@ -1452,8 +1452,8 @@
     =+  x=(fun n.a)
     ~!  x
     ?-  -.x
-      $&  [(put (union -.lr -.rr) p.n.a +.x) (union +.lr +.rr)]
-      $|  [(union -.lr -.rr) (put (union +.lr +.rr) p.n.a +.x)]
+      %&  [(put (union -.lr -.rr) p.n.a +.x) (union +.lr +.rr)]
+      %|  [(union -.lr -.rr) (put (union +.lr +.rr) p.n.a +.x)]
     ==
   ::
   ::  ++split, ++split-lookup and ++split-root do not make sense without

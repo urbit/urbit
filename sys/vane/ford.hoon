@@ -234,8 +234,8 @@
     |=  {a/cafe b/gage}
     ?-  -.b
       $tabl  (err:bo a >%bad-marc< ~)
-      $|     (err:bo a p.b)
-      $&     (new:bo a p.b)
+      %|     (err:bo a p.b)
+      %&     (new:bo a p.b)
     ==
   ::
   ++  catch-error
@@ -371,18 +371,18 @@
       $0  [%0 p=*(set dent) q=(fun p.ton)]
       $1  ::  ~&  [%from-toon:bo-need ((list path) p.ton)]
           =-  ?-  -.faw                                 ::  TODO =;
-                $&  :-  %1
+                %&  :-  %1
                     ^=  p
                     %-  silt
                     %+  turn  p.faw
                     |=(a/{vane care:clay beam} [-.a +<.a +>.a *tang])
-                $|  [%2 p=*(set dent) q=p.faw]
+                %|  [%2 p=*(set dent) q=p.faw]
               ==
           ^=  faw
           |-  ^-  (each (list (trel vane care:clay beam)) tang)
           ?~  p.ton  [%& ~]
           =+  nex=$(p.ton t.p.ton)
-          =+  err=|=(a/tape [%| leaf+a ?:(?=($& -.nex) ~ p.nex)])
+          =+  err=|=(a/tape [%| leaf+a ?:(?=(%& -.nex) ~ p.nex)])
           =+  pax=(path i.p.ton)
           ?~  pax  (err "blocking empty")
           =+  ren=((soft care:clay) (rsh 3 1 i.pax))
@@ -393,13 +393,13 @@
             (err "blocking not beam: {<t.pax>}")
           ?:  ?=($g (end 3 1 i.pax))
             ?-  -.nex
-              $&  [%& [%g u.ren u.zis] p.nex]
-              $|  nex
+              %&  [%& [%g u.ren u.zis] p.nex]
+              %|  nex
             ==
           ?:  ?=($c (end 3 1 i.pax))
             ?-  -.nex
-              $&  [%& [%c u.ren u.zis] p.nex]
-              $|  nex
+              %&  [%& [%c u.ren u.zis] p.nex]
+              %|  nex
             ==
           (err "blocking bad vane")
     ==
@@ -409,8 +409,8 @@
     |*  {tod/(each * tang) fun/gate}
     %+  (from-toon cof)
       ?-  -.tod
-        $&  [%0 p=p.tod]
-        $|  [%2 p=p.tod]
+        %&  [%0 p=p.tod]
+        %|  [%2 p=p.tod]
       ==
     fun
   ::
@@ -1064,7 +1064,7 @@
         ?>  ?=($g van)
         =.  kig  (~(del in kig) +<-.$)                  ::  TODO rename kig
         =.  pass  (pass (cancel van ren bem))
-        ?:  ?=($| -.gag)
+        ?:  ?=(%| -.gag)
           abut:(give [%made dep %| leaf+"ford-scry-made-fail" p.gag])
         ?:  ?=($tabl -.gag)
           abut:(give [%made dep %| leaf+"ford-scry-made-strange" ~])
@@ -1376,7 +1376,7 @@
             ~[leaf+"ford: keel" rose+[" " ~ ~]^(murn yom +)]
         |=  {a/wing b/type *}  ^-  (unit tank)
         =+  typ=(mule |.(p:(slap suh wing+a)))
-        ?:  ?=($| -.typ)
+        ?:  ?=(%| -.typ)
           (some (show [%c %pull] %l a))
         ?:  (~(nest ut p.typ) | b)  ~
         %^  some  %palm  ["." ~ ~ ~]
@@ -1650,8 +1650,8 @@
       |=  {cof/cafe sut/type gen/hoon}
       =+  puz=(mule |.((~(mint ut sut) [%noun gen])))
       ?-  -.puz
-        $|  (err:bo cof p.puz)
-        $&  (new:bo cof p.puz)
+        %|  (err:bo cof p.puz)
+        %&  (new:bo cof p.puz)
       ==
     ::
     ++  wrapped-slap
@@ -1860,8 +1860,8 @@
       %+  admit:bo  |.(%.(%want ~(dunk ut (~(peek ut gat) %free 6))))
       =+  top=(mule |.((slit gat sam)))
       ?-  -.top
-        $|  (err:bo cof p.top)
-        $&  (new:bo cof p.top)
+        %|  (err:bo cof p.top)
+        %&  (new:bo cof p.top)
       ==
     ::
     ++  maul                                            ::  slam
@@ -2139,8 +2139,8 @@
         |=  {cof/cafe hop/hoop}
         ^-  (bolt _..wilt)
         ?-    -.hop
-            $&  (new:bo cof ..wilt(boy [p.hop boy]))
-            $|
+            %&  (new:bo cof ..wilt(boy [p.hop boy]))
+            %|
           =.  r.p.hop  ?:(?=({$ud $0} r.p.hop) r.how r.p.hop)
           %+  admit:bo  |.(leaf+"ford: wilt {<[(en-beam p.hop)]>}")
           %+  tug:bo  (load-arch cof p.hop)

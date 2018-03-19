@@ -390,15 +390,15 @@
           +>(moz :_(moz [hen %give +.sih]))
         ::
             {$c $mere *}
-          ?:  ?=($& -.p.sih)
+          ?:  ?=(%& -.p.sih)
             +>.$
           (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
         ::
             {$g $onto *}
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
-            $|  (crud %onto p.p.+>.sih)
-            $&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
+            %|  (crud %onto p.p.+>.sih)
+            %&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
           ==
         ::
             {$g $unto *}
@@ -529,7 +529,7 @@
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ?.  ?=($& -.why)  ~
+  ?.  ?=(%& -.why)  ~
   =*  his  p.why
   [~ ~]
 ::

@@ -7,8 +7,8 @@
   %-  ~(run by a)
   |=  b/(each vase tang)
   ?-  -.b
-    $&  (tape:enjs (text p.b))
-    $|  (tape:enjs (of-wall (wush 160 (flop p.b))))
+    %&  (tape:enjs (text p.b))
+    %|  (tape:enjs (of-wall (wush 160 (flop p.b))))
   ==
 ++  wush
   |=  {wid/@u tan/tang}  ^-  wall
@@ -32,11 +32,11 @@
   %-  malt
   %+  turn  p.a
   |=  {k/gage v/gage}  ^-  {mark (each vase tang)}
-  :-  ?>(?=({$& $mark * @tas} k) q.q.p.k)
+  :-  ?>(?=({%& $mark * @tas} k) q.q.p.k)
   ?-  -.v
     $tabl  !!
-    $&  [%& q.p.v]
-    $|  v
+    %&  [%& q.p.v]
+    %|  v
   ==
 ::
 ++  build-marks
