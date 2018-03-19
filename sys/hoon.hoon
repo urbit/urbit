@@ -6751,40 +6751,6 @@
     =/  fin  $(doc t.doc)
     ?~(i.doc fin [%docs u.i.doc fin])
   ::
-  ++  clean
-    ::  structure is not dependent on subject
-    ::
-    ^-  ?
-    ?-  mod
-      {$base *}  &
-      {$bcts *}  clean(mod q.mod)
-      {$bcmc *}  |
-      {$dbug *}  clean(mod q.mod)
-      {$bcsg *}  |
-      {$bchp *}  &(clean(mod p.mod) clean(mod q.mod))
-      {$bcwt *}  |-  ^-  ?
-                 ?&  clean(mod i.p.mod)
-                     ?~  t.p.mod  &
-                     $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-                 ==
-      {$bccn *}  |-  ^-  ?
-                 ?&  clean(mod i.p.mod)
-                     ?~  t.p.mod  &
-                     $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-                 ==
-      {$bccl *}  |-  ^-  ?
-                 ?&  clean(mod i.p.mod)
-                     ?~  t.p.mod  &
-                     $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-                 ==
-      {$leaf *}  &
-      {$halo *}  clean(mod q.mod)
-      {$over *}  clean(mod q.mod)
-      {$bcvt *}  &(clean(mod p.mod) clean(mod q.mod))
-      {$bckt *}  &(clean(mod p.mod) clean(mod q.mod))
-      {$bccb *}  |
-    ==
-  ::
   ++  spore
     ::  build default sample
     ::
@@ -6877,16 +6843,10 @@
     ?:  ?=($dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
     ?:  ?=($bcsg -.mod)  factory(mod q.mod, def `p.mod)
     ^-  hoon
-    ?:  ?=([%bcmc *] mod)
+    ?:  &(=(~ def) ?=([%bcmc *] mod))
       ::  collapse trivial indirection
       ::
       (decorate (home p.mod))
-    =-  ::  for basic molds that don't need the subject,
-        ::  clear it so constants fold better 
-        ::  
-        ?.  clean  -
-        [%tsgr [%rock %n 0] -]
-        ::  -
     :^  %brcl  ~^~
       [%ktsg spore]
     ~(relative analyze:(descend 7) 6)
