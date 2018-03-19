@@ -35,5 +35,5 @@
   ::
   %-  expect-eq  !>
   :-  state-by-ship.+>+<.ford
-  (~(gas by `(map ship ford-state:ford-turbo)`~) [~nul *ford-state:ford-turbo]~)
+  (my [~nul *ford-state:ford-turbo]~)
 --
