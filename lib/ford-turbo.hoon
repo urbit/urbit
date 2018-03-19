@@ -1030,7 +1030,6 @@
     %_    $
         completed-builds          t.completed-builds
         moves                     (welp moves moves-for-build)
-        listeners.state           (~(del by listeners.state) build)
     ==
   ::  +cleanup: try to clean up a build and its sub-builds
   ::
