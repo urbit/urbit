@@ -5556,7 +5556,6 @@
   $@  $?  $noun                                         ::  any noun
           $cell                                         ::  any cell
           $bean                                         ::  loobean
-          $void                                         ::  no nouns
           $null                                         ::  ~ == 0
       ==                                                ::
   {$atom p/aura}                                        ::  atom
@@ -6732,11 +6731,6 @@
     ::
         $null
       [%rock %n 0]
-    ::
-        $void
-      ::  should not actually be a thing
-      ::
-      [%zpzp ~] 
     ==
   ::
   ++  descend
@@ -6906,10 +6900,7 @@
       ^-  hoon
       ?-    bas
           {%atom *}
-        ::  rez: fake instance
-        ::
-        =/  rez  example
-        :+  %ktls  rez
+        :+  %ktls  example
         [%wtht fetch-wing fetch [%zpzp ~]]
       ::
           $noun
@@ -6930,10 +6921,9 @@
         [%rock %f |]
       ::
           $null
-        example
-      ::
-          $void
-        example
+        :+  %wtgr
+          [%dtts [%bust %noun] [%$ axe]]
+        [%rock %n ~]
       ==
     ++  clear
       .(..local ^clear)
