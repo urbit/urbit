@@ -835,6 +835,68 @@
       ::
       [%dependency =dependency]
   ==
+::  +by-schematic: door for manipulating :builds-by-schematic.ford-state
+::
+++  by-schematic
+  |_  builds=(map schematic (list @da))
+  ::  +put: add a +build to :builds
+  ::
+  ++  put
+    |=  =build
+    ^+  builds
+    %+  ~(put by builds)  schematic.build
+    ::  insert :date.build into :builds-by-schematic at the correct index
+    ::
+    ::    The :dates in :build-by-schematic are sorted in reverse
+    ::    chronological order.
+    ::
+    =|  newer-dates=(list @da)
+    =|  older-dates=(list @da)
+    =/  exists  |
+    ::
+    =;  res=[newer-dates=(list @da) exists=? older-dates=(list @da)]
+      ;:  welp
+        (flop newer-dates.res)
+        ?:(exists.res ~ ~[date.build])
+        (flop older-dates.res)
+      ==
+    ::
+    =/  dates  (fall (~(get by builds) schematic.build) ~)
+    |-  ^+  [newer-dates exists older-dates]
+    ?~  dates  [newer-dates exists older-dates]
+    ::
+    ?:  (gte i.dates date.build)
+      $(dates t.dates, newer-dates [i.dates newer-dates])
+    ::
+    ?:  =(i.dates date.build)
+      $(dates t.dates, exists &)
+    ::
+    $(dates t.dates, older-dates [i.dates older-dates])
+  ::  +del: remove a +build from :builds
+  ::
+  ++  del
+    |=  =build
+    ^+  builds
+    =.  builds  %+  ~(put by builds)  schematic.build
+      ::
+      =/  dates  (~(got by builds) schematic.build)
+      =|  new-dates=(list @da)
+      ::
+      %-  flop
+      |-  ^+  new-dates
+      ?~  dates  new-dates
+      ::
+      ?:  =(i.dates date.build)
+        $(dates t.dates)
+      $(dates t.dates, new-dates [i.dates new-dates])
+    ::  if :builds has an empty entry for :build, delete it
+    ::
+    =?    builds
+        =([~ ~] (~(get by builds) schematic.build))
+      (~(del by builds) schematic.build)
+    ::
+    builds
+  --
 --
 |%
 ::  +ev: per-event core
@@ -871,35 +933,7 @@
       (~(put ju builds-by-date.state) date.build schematic.build)
     ::
         builds-by-schematic.state
-      %+  ~(put by builds-by-schematic.state)
-        schematic
-      ::  insert :date.build into :builds-by-schematic at the correct index
-      ::
-      ::    The :dates in :build-by-schematic are sorted in reverse
-      ::    chronological order.
-      ::
-      =|  newer-dates=(list @da)
-      =|  older-dates=(list @da)
-      =/  exists  |
-      ::
-      =;  res=[newer-dates=(list @da) exists=? older-dates=(list @da)]
-        ;:  welp
-          (flop newer-dates.res)
-          ?:(exists.res ~ ~[date.build])
-          (flop older-dates.res)
-        ==
-      ::
-      =/  dates  (fall (~(get by builds-by-schematic.state) schematic) ~)
-      |-  ^+  [newer-dates exists older-dates]
-      ?~  dates  [newer-dates exists older-dates]
-      ::
-      ?:  (gte i.dates date.build)
-        $(dates t.dates, newer-dates [i.dates newer-dates])
-      ::
-      ?:  =(i.dates date.build)
-        $(dates t.dates, exists &)
-      ::
-      $(dates t.dates, older-dates [i.dates older-dates])
+      (~(put by-schematic builds-by-schematic.state) build)
     ==
     ::
     ?~  date
@@ -1058,23 +1092,8 @@
     ::  remove :date.build from list of dates for this schematic
     ::
     =.  builds-by-schematic.state
-      %+  ~(put by builds-by-schematic.state)  schematic.build
-      ::
-      =/  dates  (~(got by builds-by-schematic.state) schematic.build)
-      =|  new-dates=(list @da)
-      ::
-      %-  flop
-      |-  ^+  new-dates
-      ?~  dates  new-dates
-      ::
-      ?:  =(i.dates date.build)
-        $(dates t.dates)
-      $(dates t.dates, new-dates [i.dates new-dates])
-    ::
-    =?    builds-by-schematic.state
-        =([~ ~] (~(get by builds-by-schematic.state) schematic.build))
-      (~(del by builds-by-schematic.state) schematic.build)
-    ::  remove :build from :builds-by-state
+      (~(del by-schematic builds-by-schematic.state) build)
+    ::  remove :build from :builds-by-date
     ::
     =.  builds-by-date.state
       (~(del ju builds-by-date.state) date.build schematic.build)
@@ -1099,6 +1118,8 @@
       =/  grandkids  ~(tap in (~(get ju sub-builds) i.kids))
       =/  kid-deps-set  (~(get by dependencies.state) i.kids)
       =/  kid-deps  ~(tap by (fall kid-deps-set ~))
+      ::  TODO replace with ~(uni ju dependencies) kid-deps), requires +uni:ju
+      ::
       =/  unified-deps
         |-  ^+  dependencies
         ?~  kid-deps  dependencies
