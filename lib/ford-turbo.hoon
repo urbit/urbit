@@ -841,37 +841,18 @@
   |_  builds=(map schematic (list @da))
   ::  +put: add a +build to :builds
   ::
+  ::    The :dates in :build-by-schematic are sorted in reverse
+  ::    chronological order.
+  ::
   ++  put
     |=  =build
     ^+  builds
     %+  ~(put by builds)  schematic.build
-    ::  insert :date.build into :builds-by-schematic at the correct index
-    ::
-    ::    The :dates in :build-by-schematic are sorted in reverse
-    ::    chronological order.
-    ::
-    =|  newer-dates=(list @da)
-    =|  older-dates=(list @da)
-    =/  exists  |
-    ::
-    =;  res=[newer-dates=(list @da) exists=? older-dates=(list @da)]
-      ;:  welp
-        (flop newer-dates.res)
-        ?:(exists.res ~ ~[date.build])
-        (flop older-dates.res)
-      ==
     ::
     =/  dates  (fall (~(get by builds) schematic.build) ~)
-    |-  ^+  [newer-dates exists older-dates]
-    ?~  dates  [newer-dates exists older-dates]
-    ::
-    ?:  (gte i.dates date.build)
-      $(dates t.dates, newer-dates [i.dates newer-dates])
-    ::
-    ?:  =(i.dates date.build)
-      $(dates t.dates, exists &)
-    ::
-    $(dates t.dates, older-dates [i.dates older-dates])
+    ?^  (find [date.build]~ dates)
+      dates
+    (sort [date.build dates] gte)
   ::  +del: remove a +build from :builds
   ::
   ++  del
@@ -880,19 +861,12 @@
     =.  builds  %+  ~(put by builds)  schematic.build
       ::
       =/  dates  (~(got by builds) schematic.build)
-      =|  new-dates=(list @da)
-      ::
-      %-  flop
-      |-  ^+  new-dates
-      ?~  dates  new-dates
-      ::
-      ?:  =(i.dates date.build)
-        $(dates t.dates)
-      $(dates t.dates, new-dates [i.dates new-dates])
+      =/  date-index  (need (find [date.build]~ dates))
+      (oust [date-index 1] dates)
     ::  if :builds has an empty entry for :build, delete it
     ::
     =?    builds
-        =([~ ~] (~(get by builds) schematic.build))
+        =(~ (~(got by builds) schematic.build))
       (~(del by builds) schematic.build)
     ::
     builds
@@ -936,9 +910,7 @@
       (~(put by-schematic builds-by-schematic.state) build)
     ==
     ::
-    ?~  date
-      (execute [now schematic] live=&)
-    (execute [u.date schematic] live=|)
+    (execute build live)
   ::
   ++  rebuild  !!
   ++  unblock  !!
