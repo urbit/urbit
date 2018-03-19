@@ -867,6 +867,9 @@
         builds-by-listener.state
       (~(put by builds-by-listener.state) duct build)
     ::
+        builds-by-date.state
+      (~(put ju builds-by-date.state) date.build schematic.build)
+    ::
         builds-by-schematic.state
       %+  ~(put by builds-by-schematic.state)
         schematic
@@ -1074,7 +1077,7 @@
     ::  remove :build from :builds-by-state
     ::
     =.  builds-by-date.state
-      (~(del ju builds-by-date.state) date.build build)
+      (~(del ju builds-by-date.state) date.build schematic.build)
     ::  if no more builds at this date, remove the date from :dependency-updates
     ::
     =?    dependency-updates.state
