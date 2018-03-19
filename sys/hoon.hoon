@@ -6805,10 +6805,17 @@
     |-  ^-  hoon
     ?-  mod
       {$base *}  (basal p.mod)
-      {$bcts *}  [%ktts p.mod $(mod q.mod)]
       {$dbug *}  [%dbug p.mod $(mod q.mod)]
-      {$bcsg *}  p.mod
-      {$bcwt *}  ::  use last entry
+      {$halo *}  $(mod q.mod)
+      {$leaf *}  [%rock p.mod q.mod]
+      {$over *}  $(hay p.mod, mod q.mod)
+    ::
+      {$bccb *}  [%rock %n 0]
+      {$bccl *}  |-  ^-  hoon
+                 ?~  t.p.mod  ^$(mod i.p.mod) 
+                 :-  ^$(mod i.p.mod) 
+                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
+      {$bccn *}  ::  use last entry
                  ::
                  |-  ^-  hoon
                  ?~  t.p.mod  ^$(mod i.p.mod)
@@ -6816,24 +6823,18 @@
       {$bchp *}  ::  see under %bccb
                  ::
                  [%rock %n 0]
+      {$bckt *}  $(mod q.mod)
       {$bcmc *}  ::  borrow sample
                  ::
                  [%tsgl [%$ 6] p.mod]
-      {$bccn *}  ::  use last entry
+      {$bcsg *}  p.mod
+      {$bcts *}  [%ktts p.mod $(mod q.mod)]
+      {$bcvt *}  $(mod p.mod)
+      {$bcwt *}  ::  use last entry
                  ::
                  |-  ^-  hoon
                  ?~  t.p.mod  ^$(mod i.p.mod)
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-      {$leaf *}  [%rock p.mod q.mod]
-      {$over *}  $(hay p.mod, mod q.mod)
-      {$halo *}  $(mod q.mod)
-      {$bcvt *}  $(mod p.mod)
-      {$bccl *}  |-  ^-  hoon
-                 ?~  t.p.mod  ^$(mod i.p.mod) 
-                 :-  ^$(mod i.p.mod) 
-                 $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-      {$bckt *}  $(mod q.mod)
-      {$bccb *}  [%rock %n 0]
     ==
   ::
   ++  example
@@ -6842,11 +6843,11 @@
     ~+
     ^-  hoon
     ?+    mod
-    ::  default approach: build a trivial 
-    ::
+      ::  any example can be made by analyzing a spore
+      ::
       :+  %tsls
         spore
-      ~(relative local:(descend 3) 2)
+      ~(relative analyze:(descend 3) 2)
     ::
         {$base *}  (decorate (basal p.mod))
         {$bcts *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
@@ -6877,19 +6878,20 @@
     ?:  ?=($bcsg -.mod)  factory(mod q.mod, def `p.mod)
     ^-  hoon
     ?:  ?=([%bcmc *] mod)
-      ::  don't re-indirect through handmade molds
+      ::  collapse trivial indirection
       ::
-      (home p.mod)
+      (decorate (home p.mod))
     =-  ::  for basic molds that don't need the subject,
         ::  clear it so constants fold better 
         ::  
         ?.  clean  -
         [%tsgr [%rock %n 0] -]
+        ::  -
     :^  %brcl  ~^~
       [%ktsg spore]
-    ~(relative local:(descend 7) 6)
+    ~(relative analyze:(descend 7) 6)
   ::
-  ++  local
+  ++  analyze
     ::  normalize a fragment of the subject
     ::
     |_  $:  ::  axe: axis to fragment
@@ -6927,7 +6929,7 @@
         [%rock %n ~]
       ==
     ++  clear
-      .(..local ^clear)
+      .(..analyze ^clear)
     ++  fetch
       ::  load the fragment
       ::

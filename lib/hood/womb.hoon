@@ -166,7 +166,7 @@
   ^+  ?~(a !! *(map _p.n.a _(need (b q.n.a))))
   %-  malt
   %+  murn  ~(tap by a)
-  ?~  a  ~
+  ?~  a  ,~
   |:  c=n.a  ^-  (unit _[p.n.a (need (b q.n.a))])
   =+  d=(b q.c)
   ?~(d ~ (some [p.c u.d]))

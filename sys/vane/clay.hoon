@@ -1,3 +1,4 @@
+!:
 ::  clay (4c), revision control
 ::
 ::  This is split in three top-level sections:  structure definitions, main
@@ -1531,13 +1532,13 @@
     ~|  :*  %bad-foreign-update
             :*  gar=gar
                 let=let
-                nut=(~(run by nut) ~)
-                nat=(~(run by nat) ~)
+                nut=(~(run by nut) ,~)
+                nat=(~(run by nat) ,~)
             ==
             :*  hitdom=hit.dom
                 letdom=let.dom
-                hutran=(~(run by hut.ran) ~)
-                latran=(~(run by lat.ran) ~)
+                hutran=(~(run by hut.ran) ,~)
+                latran=(~(run by lat.ran) ,~)
             ==
         ==
     =+  hit=(~(uni by hit.dom) gar)
@@ -1862,7 +1863,7 @@
         ?:  =(0 let.dom)  [~ 0]                         ::  avoid underflow
         ?:  %+  gte  p.lok
             =<  t
-            ~|  [%letdom let=let.dom hit=hit.dom hut=(~(run by hut.ran) ~)]
+            ~|  [%letdom let=let.dom hit=hit.dom hut=(~(run by hut.ran) ,~)]
             ~|  [%getdom (~(get by hit.dom) let.dom)]
             %-  aeon-to-yaki
             let.dom
@@ -2690,7 +2691,7 @@
               %-  ~(uni by `(map path *)`can.dob.dat)
               `(map path *)`old.dob.dat
           ?^  bof
-            (error:he %meet-conflict >(~(run by `(map path *)`bof) ~)< ~)
+            (error:he %meet-conflict >(~(run by `(map path *)`bof) ,~)< ~)
           =+  ^-  old/(map path lobe)
               %+  roll  ~(tap by (~(uni by old.dal.dat) old.dob.dat))
               =<  .(old q.bas.dat)
