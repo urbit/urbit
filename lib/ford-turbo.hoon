@@ -1,3 +1,4 @@
+!:
 ::
 ::  sys/zuse/hoon
 ::
@@ -857,13 +858,45 @@
     =<  finalize
     ::
     =+  [live when]=?~(date [& now] [| u.date])
-    =/  build  [when schematic]
+    =/  build=build  [when schematic]
+    ::  add :build to our state
     ::
     =:  listeners.state
       (~(put ju listeners.state) build [duct live])
     ::
         builds-by-listener.state
       (~(put by builds-by-listener.state) duct build)
+    ::
+        builds-by-schematic.state
+      %+  ~(put by builds-by-schematic.state)
+        schematic
+      ::  insert :date.build into :builds-by-schematic at the correct index
+      ::
+      ::    The :dates in :build-by-schematic are sorted in reverse
+      ::    chronological order.
+      ::
+      =|  newer-dates=(list @da)
+      =|  older-dates=(list @da)
+      =/  exists  |
+      ::
+      =;  res=[newer-dates=(list @da) exists=? older-dates=(list @da)]
+        ;:  welp
+          (flop newer-dates.res)
+          ?:(exists.res ~ ~[date.build])
+          (flop older-dates.res)
+        ==
+      ::
+      =/  dates  (fall (~(get by builds-by-schematic.state) schematic) ~)
+      |-  ^+  [newer-dates exists older-dates]
+      ?~  dates  [newer-dates exists older-dates]
+      ::
+      ?:  (gte i.dates date.build)
+        $(dates t.dates, newer-dates [i.dates newer-dates])
+      ::
+      ?:  =(i.dates date.build)
+        $(dates t.dates, exists &)
+      ::
+      $(dates t.dates, older-dates [i.dates older-dates])
     ==
     ::
     ?~  date
@@ -987,6 +1020,8 @@
       |=  [=move mapping=_builds-by-listener.state]
       =*  duct  -.move
       (~(del by mapping) duct)
+    ::
+    =.  listeners.state  (~(del by listeners.state) build)
     ::  try to delete this build entirely if nothing depends on it
     ::
     =.  state  (cleanup build)
@@ -1033,6 +1068,10 @@
       ?:  =(i.dates date.build)
         $(dates t.dates)
       $(dates t.dates, new-dates [i.dates new-dates])
+    ::
+    =?    builds-by-schematic.state
+        =([~ ~] (~(get by builds-by-schematic.state) schematic.build))
+      (~(del by builds-by-schematic.state) schematic.build)
     ::  remove :build from :builds-by-state
     ::
     =.  builds-by-date.state
@@ -1042,12 +1081,13 @@
     =?    dependency-updates.state
         !(~(has by builds-by-date.state) date.build)
       (~(del by dependency-updates.state) date.build)
+    ::  direct-deps: dependencies of :build itself, not :kids
+    ::
+    =/  direct-deps  (fall (~(get by dependencies.state) build) ~)
     ::  kids: :build's sub-builds
     ::
     =/  kids  ~(tap in (~(get ju sub-builds) build))
     ::  gather :dependencies from :build and its :kids
-    ::
-    =/  direct-deps  (fall (~(get by dependencies.state) build) ~)
     ::
     =/  dependencies=(jug disc dependency)  direct-deps
     =.  dependencies
