@@ -1,0 +1,18 @@
+[submodule "subprojects/softfloat3"]
+	path = subprojects/softfloat3
+	url = https://github.com/urbit/berkeley-softfloat-3.git
+[submodule "subprojects/commonmark-legacy"]
+	path = subprojects/commonmark-legacy
+	url = https://github.com/urbit/commonmark-legacy.git
+[submodule "subprojects/http-parser-legacy"]
+	path = subprojects/http-parser-legacy
+	url = https://github.com/urbit/http-parser-legacy.git
+[submodule "subprojects/ed25519"]
+	path = subprojects/ed25519
+	url = https://github.com/urbit/ed25519.git
+[submodule "subprojects/libscrypt"]
+	path = subprojects/libscrypt
+	url = https://github.com/urbit/libscrypt.git
+[submodule "subprojects/murmur3"]
+	path = subprojects/murmur3
+	url = https://github.com/urbit/murmur3.git
