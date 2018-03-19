@@ -142,8 +142,8 @@
     ?@  q.a  ["ex-expected-pair: '{(text a)}'"]~
     ?:  =(-.q.a +.q.a)
       ~
-    :~  "expected: '{(text (slot 2 a))}'"
-        "actual:   '{(text (slot 3 a))}'"
+    :~  "expected: '{(text (slot 3 a))}'"
+        "actual:   '{(text (slot 2 a))}'"
     ==
   :>  #
   :>  #  %formatting
