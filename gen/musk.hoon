@@ -2,7 +2,7 @@
 ::::
   ::
 :-  %say
-|=  {^ {{typ/type gen/hoon $~} $~}}
+|=  {^ {{typ/type gen/hoon ~} ~}}
 =<  :-  %noun
     =+  pro=(~(mint ut typ) %noun gen)
     ~_  (~(dunk ut typ) 'blow-subject')

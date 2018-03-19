@@ -11,7 +11,7 @@
   !:
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/$@($~ {top/path $~}) dub/_|}
+        {arg/$@(~ {top/path ~}) dub/_|}
     ==
 ?~  arg  $(arg ~[top=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/sys])
 ::

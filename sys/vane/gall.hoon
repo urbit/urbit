@@ -10,13 +10,13 @@
 ++  torc  $@(?($iron $gold) {$lead p/ship})             ::  security control
 ++  roon                                                ::  reverse ames msg
   $%  {$d p/mark q/*}                                   ::  diff (diff)
-      {$x $~}                                           ::
+      {$x ~}                                           ::
   ==                                                    ::
 ++  rook                                                ::  forward ames msg
   $%  {$m p/mark q/*}                                   ::  message
       {$l p/mark q/path}                                ::  "peel" subscribe
       {$s p/path}                                       ::  subscribe
-      {$u $~}                                           ::  cancel+unsubscribe
+      {$u ~}                                           ::  cancel+unsubscribe
   ==                                                    ::
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    local arvo
@@ -305,7 +305,7 @@
   ++  mo-chew                                           ::  reverse build path
     |=  pax/path
     ^-  beak
-    ?>  ?=({@ @ @ $~} pax)
+    ?>  ?=({@ @ @ ~} pax)
     [(slav %p i.pax) i.t.pax da+(slav %da i.t.t.pax)]
   ::
   ++  mo-cyst                                           ::  take in /sys
@@ -314,23 +314,23 @@
     ?+    -.pax  !!
         $dep                                            ::  update
       ?>  ?=({$f $news *} sih)
-      ?>  ?=({@ @ @ $~} t.pax)
+      ?>  ?=({@ @ @ ~} t.pax)
       %^  mo-boot  i.t.t.t.pax
         ?:((~(has by bum) i.t.t.t.pax) %old %new)
       [(slav %p i.t.pax) i.t.t.pax [%da now]]
     ::
         $new
       ?>  ?=({$f $made *} sih)
-      ?>  ?=({@ @ @ @ $~} t.pax)
+      ?>  ?=({@ @ @ @ ~} t.pax)
       (mo-boom i.t.pax (mo-chew t.t.pax) +>.sih)
     ::
         $old                                            ::  reload old
       ?>  ?=({$f $made *} sih)
-      ?>  ?=({@ @ @ @ $~} t.pax)
+      ?>  ?=({@ @ @ @ ~} t.pax)
       (mo-boon i.t.pax (mo-chew t.t.pax) +>.sih)
     ::
         $pel                                            ::  translated peer
-      ?>  ?=({@ $~} t.pax)
+      ?>  ?=({@ ~} t.pax)
       =+  mar=i.t.pax
       ?>  ?=({$f $made *} sih)
       ?-  -.q.+.sih
@@ -342,7 +342,7 @@
       ==
     ::
         $red                                            ::  diff ack
-      ?>  ?=({@ @ @ $~} t.pax)
+      ?>  ?=({@ @ @ ~} t.pax)
       ?.  ?=({$a $woot *} sih)
         ~&  [%red-went pax]
         +>.$
@@ -358,7 +358,7 @@
       (mo-pass [%sys pax] %a %want [our him] [%g %gh dap ~] [num %x ~])
     ::
         $rep                                            ::  reverse request
-      ?>  ?=({@ @ @ $~} t.pax)
+      ?>  ?=({@ @ @ ~} t.pax)
       ?>  ?=({$f $made *} sih)
       =+  :*  him=(slav %p i.t.pax)
               dap=i.t.t.pax
@@ -372,7 +372,7 @@
       ==
     ::
         $req                                            ::  inbound request
-      ?>  ?=({@ @ @ $~} t.pax)
+      ?>  ?=({@ @ @ ~} t.pax)
       =+  :*  him=(slav %p i.t.pax)
               dap=i.t.t.pax
               num=(slav %ud i.t.t.t.pax)
@@ -396,7 +396,7 @@
       ==
     ::
         $val                                            ::  inbound validate
-      ?>  ?=({@ @ $~} t.pax)
+      ?>  ?=({@ @ ~} t.pax)
       =+  [him=(slav %p i.t.pax) dap=i.t.t.pax]
       ?>  ?=({$f $made *} sih)
       ?-  -.q.+>.sih
@@ -407,7 +407,7 @@
     ::
         $way                                            ::  outbound request
       ?>  ?=({$a $woot *} sih)
-      ?>  ?=({@ $~} t.pax)
+      ?>  ?=({@ ~} t.pax)
       %-  mo-awed
       :*  `ship`p.+>.sih
           ;;(?($peer $peel $poke $pull) i.t.pax)
@@ -627,9 +627,9 @@
       =^  zem  +>.$  (ap-slam q.u.cug p.arm !>((slag p.u.cug `path`[ren tyl]))) 
       ?:  ?=(%| -.zem)  ((slog leaf+"peek slam fail" p.zem) [~ ~])
       ?+  q.p.zem  ((slog leaf+"peek bad result" ~) [~ ~])
-        $~              ~
-        {$~ $~}         [~ ~]
-        {$~ $~ ^}
+        ~              ~
+        {~ ~}         [~ ~]
+        {~ ~ ^}
           =+  caz=(spec (slot 7 p.zem))
           ?.  &(?=({p/@ *} q.caz) ((sane %tas) p.q.caz))
             ((slog leaf+"scry: malformed cage" ~) [~ ~])
@@ -680,7 +680,7 @@
       ^+  .
       ?.  (~(has by sup.ged) ost)  .
       =+  soy=(~(get by qel.ged) ost)
-      ?:  |(?=($~ soy) =(0 u.soy))  
+      ?:  |(?=(~ soy) =(0 u.soy))  
         ::  ~&  [%ap-fill-under [our dap] q.q.pry ost]
         +
       =.  u.soy  (dec u.soy)
@@ -1251,7 +1251,7 @@
     ?.  (~(has by pol.all) p.p.q.hic)
       ~&  [%gall-not-ours p.q.hic]
       [~ ..^$]
-    ?>  ?=({?($ge $gh) @ $~} q.q.hic)
+    ?>  ?=({?($ge $gh) @ ~} q.q.hic)
     =+  dap=i.t.q.q.hic
     =+  our=p.p.q.hic
     =+  him=q.p.q.hic

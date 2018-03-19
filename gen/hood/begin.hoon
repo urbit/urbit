@@ -16,7 +16,7 @@
 =,  sole
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/_(scug *@ *{his/@p tic/@p $~})}
+        {arg/_(scug *@ *{his/@p tic/@p ~})}
         safety/?($off $on)
     ==
 ^-  (sole-result (cask begs))

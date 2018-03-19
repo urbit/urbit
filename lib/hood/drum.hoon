@@ -108,7 +108,7 @@
 ::
 ++  de-gill                                           ::  gill from wire
   |=  way/wire  ^-  gill:gall
-  ?>(?=({@ @ $~} way) [(slav %p i.way) i.t.way])
+  ?>(?=({@ @ ~} way) [(slav %p i.way) i.t.way])
 --
 ::
 ::::
@@ -129,7 +129,7 @@
           {$diff lime}                                ::
           {$peer wire dock path}                      ::
           {$poke wire dock pear}                      ::
-          {$pull wire dock $~}                        ::
+          {$pull wire dock ~}                        ::
       ==                                              ::
     ++  move  (pair bone card)                        ::  user-level move
     --
@@ -169,7 +169,7 @@
   (se-klin gyl)
 ::
 ++  poke-exit                                         ::  shutdown
-  |=  $~
+  |=  ~
   se-abet:(se-blit-sys `dill-blit:dill`[%qit ~])
 ::
 ++  poke-put                                          ::  write file
@@ -197,7 +197,7 @@
 ++  take-onto                                         ::  ack start
   |=  {way/wire saw/(each suss:gall tang)}
   =<  se-abet  =<  se-view
-  ?>  ?=({@ @ $~} way)
+  ?>  ?=({@ @ ~} way)
   ?>  (~(has by fur) i.t.way)
   =/  wel/well:gall  [i.way i.t.way]
   ?-  saw
@@ -240,7 +240,7 @@
   |:  $:{wel/well:gall con/_..se-adit}  ^+  con
   =.  +>.$  con
   =+  hig=(~(get by fur) q.wel)
-  ?:  &(?=(^ hig) |(?=($~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
+  ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
   =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   %-  se-emit(fur (~(put by fur) q.wel ~))
   [ost.hid %conf [%drum p.wel q.wel ~] [our.hid q.wel] %load our.hid p.wel]
@@ -280,7 +280,7 @@
   ^-  ?
   ?.  (~(has by bin) ost.hid)  &
   =+  gyr=(~(get by fug) gyl)
-  |(?=($~ gyr) ?=($~ u.gyr))
+  |(?=(~ gyr) ?=(~ u.gyr))
 ::
 ++  se-alas                                           ::  recalculate index
   |=  gyl/gill:gall
@@ -293,7 +293,7 @@
 ++  se-amor                                           ::  live targets
   ^-  (list gill:gall)
   %+  skim  ~(tap in eel)
-  |=(a/gill:gall ?=({$~ $~ *} (~(get by fug) a)))
+  |=(a/gill:gall ?=({~ ~ *} (~(get by fug) a)))
 ::
 ++  se-anon                                           ::  rotate index
   =+  wag=se-amor
@@ -318,7 +318,7 @@
       {$yow *}  ~&([%no-yow -.bet] +>)
     ==
   =+  gul=se-agon
-  ?:  |(?=($~ gul) (se-aint u.gul))
+  ?:  |(?=(~ gul) (se-aint u.gul))
     (se-blit %bel ~)
   ta-abet:(ta-belt:(se-tame u.gul) bet)
 ::
@@ -364,7 +364,7 @@
   |=  gyl/gill:gall
   ^+  +>
   =.  +>  (se-text "[linked to {<gyl>}]")
-  ?>  ?=($~ (~(got by fug) gyl))
+  ?>  ?=(~ (~(got by fug) gyl))
   (se-alas(fug (~(put by fug) gyl `*target)) gyl)
 ::
 ++  se-nuke                                           ::  teardown connection
@@ -420,7 +420,7 @@
 ++  se-view                                           ::  flush buffer
   ^+  .
   =+  gul=se-agon
-  ?:  |(?=($~ gul) (se-aint u.gul))  +
+  ?:  |(?=(~ gul) (se-aint u.gul))  +
   (se-just ta-vew:(se-tame u.gul))
 ::
 ++  se-emit                                           ::  emit move
@@ -775,7 +775,7 @@
     ^+  .
     =.  ris  ~
     =.  lay.hit  ~
-    ?:  ?|  ?=($~ buf.say.inp)
+    ?:  ?|  ?=(~ buf.say.inp)
             &(?=(^ old.hit) =(buf.say.inp i.old.hit))
         ==
       .(pos.hit num.hit)
@@ -820,7 +820,7 @@
   ++  ta-ser                                          ::  reverse search
     |=  ext/(list @c)
     ^+  +>
-    ?:  |(?=($~ ris) =(0 pos.u.ris))
+    ?:  |(?=(~ ris) =(0 pos.u.ris))
       ta-bel
     =+  sop=?~(ext (dec pos.u.ris) pos.u.ris)
     =+  tot=(weld str.u.ris ext)
@@ -923,7 +923,7 @@
     |=  a/(list @)
     =|  i/@ud
     |-  ^-  @ud
-    ?:  |(?=($~ a) (alnm i.a))  i
+    ?:  |(?=(~ a) (alnm i.a))  i
     $(i +(i), a t.a)
   --
 ::

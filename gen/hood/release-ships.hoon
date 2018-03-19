@@ -8,7 +8,7 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {who/(list ship) $~}
+        {who/(list ship) ~}
     ==
 :-  %womb-release-ships
 ~?  =(~ who)  %no-ships-released

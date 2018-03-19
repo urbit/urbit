@@ -70,7 +70,7 @@
           ::  story state                               ::
           {$story nom/name det/delta-story}             :<  change to story
           ::  side-effects                              ::
-          {$init $~}                                    :<  initialize
+          {$init ~}                                    :<  initialize
           {$observe who/ship}                           :<  watch burden bearer
           $:  $present                                  :>  send %present cmd
               hos/ship                                  ::
@@ -103,8 +103,8 @@
           {$info wire ship term nori:clay}              ::
           {$peer wire dock path}                        ::
           {$poke wire dock pear}                        ::
-          {$pull wire dock $~}                          ::
-          {$quit $~}                                    ::
+          {$pull wire dock ~}                          ::
+          {$quit ~}                                    ::
       ==                                                ::
     ++  weir                                            :>  parsed wire
       $%  {$repeat cir/circle ses/(list serial)}        :<  messaging wire
@@ -885,7 +885,7 @@
           (~(get by mirrors) cir.rum)
         ::  ignore if it won't result in change.
         ?.  ?|  &(?=($remove -.dif.rum) ?=(^ old))
-                ?=($~ old)
+                ?=(~ old)
                 !=(u.old (change-config u.old dif.rum))
             ==
           +>.$
@@ -905,7 +905,7 @@
           (fall (~(get by remotes) cir.rum) *group)
         ::  ignore if it won't result in change.
         ?.  ?|  &(?=($remove -.dif.rum) ?=(^ old))
-                ?=($~ old)
+                ?=(~ old)
                 !=(u.old (change-status u.old dif.rum))
             ==
           +>.$
@@ -1027,7 +1027,7 @@
               =+  new=(change-status - dif)
               ?&  !=(old new)
                 ::
-                  ?=  $~
+                  ?=  ~
                   (rush (fall han.man.new '') ;~(pfix sig fed:ag))
                   ::TODO  calling with %+ gives syntax error
               ==
@@ -1337,7 +1337,7 @@
       ?.  &(?=(^ old) =(gam (snag u.old grams)))
         (so-delta-our %gram src gam)
       =+  sed=(~(get by sourced) src)
-      ?:  |(?=($~ sed) ?=($~ (find [u.old]~ u.sed)))
+      ?:  |(?=(~ sed) ?=(~ (find [u.old]~ u.sed)))
         (so-delta-our %sourced src u.old)
       +>.$
     ::
@@ -1536,7 +1536,7 @@
       ::  for every serial, add %pending state.
       %+  roll  ses
       |=  {s/serial o/_outbox}
-      =?  o  ?=($~ o)  outbox
+      =?  o  ?=(~ o)  outbox
       =+  t=(fall (~(get by o) s) *tracking)
       %+  ~(put by o)  s
       (~(put by t) cir %pending)
@@ -2037,7 +2037,7 @@
       [(slav %p i.t.t.wir) i.t.t.t.wir]
     (path-to-range t.t.t.t.wir)
   ::
-      {$repeat @ @ @ $~}
+      {$repeat @ @ @ ~}
     :+  %repeat
       [(slav %p i.t.wir) i.t.t.wir]
     ((list serial) (cue (slav %ud i.t.t.t.wir)))

@@ -12,7 +12,7 @@
 =+  [sole]
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{who/ship $~} $~}
+        {{who/ship ~} ~}
     ==
 ^-  (sole-result (cask tang))
 %+  sole-yo  leaf+"generating carrier {(scow %p who)} (#{(scow %ud who)})"

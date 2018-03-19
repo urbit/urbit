@@ -10,8 +10,8 @@
 =,  sole
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/$@($~ {dom/path $~})}
-        $~
+        {arg/$@(~ {dom/path ~})}
+        ~
     ==
 ^-  (sole-result {$write-sec-atom p/host:eyre q/@})
 =-  ?~  arg  -

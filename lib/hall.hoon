@@ -81,7 +81,7 @@
   ^-  range
   ?~  pax  ~
   ::  skip past non-number parts of path.
-  ?:  ?=({$~ $~} [(slaw %da i.pax) (slaw %ud i.pax)])
+  ?:  ?=({~ ~} [(slaw %da i.pax) (slaw %ud i.pax)])
     $(pax t.pax)
   :+  ~
     =+  hed=(slaw %da i.pax)

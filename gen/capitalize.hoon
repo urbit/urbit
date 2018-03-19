@@ -279,7 +279,7 @@
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [n=tape $~]
-        $~
+        [n=tape ~]
+        ~
     ==
 :-  %tape  (transform n to-upper)

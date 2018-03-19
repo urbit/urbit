@@ -161,7 +161,7 @@
       =-  (cook crip (lite -))
       %+  sear
         %-  flit
-        |=  a/$^({marx $~} $%({%& marx} {%| p/mane}))
+        |=  a/$^({marx ~} $%({%& marx} {%| p/mane}))
         ?-  -.a
           ^   (madn n.a) 
           %&  (madn n.a) 
@@ -177,7 +177,7 @@
       |=  a/inline
       ^-  ?
       ?&  ?=($$ -.a)
-          ?=($~ (strip (star ;~(pose ace nal)) p.a))
+          ?=(~ (strip (star ;~(pose ace nal)) p.a))
       ==
     ::
     ++  link  ::=+(blot=fail |=(nail (fail +<)))
@@ -201,7 +201,7 @@
         =+  [~ atr]=(wonk vex)
         ?^  atr
           `atr
-        ?.  ?=($~ atr)
+        ?.  ?=(~ atr)
           (~(get by ref) atr)
         =+  vux=(text:href tub)
         ?~  q.vux  ~
@@ -333,7 +333,7 @@
           %+  weld  
             ?@  -.i.a
               ?+  -.i.a  <i.a>
-                $~  p.i.a
+                ~  p.i.a
               ==
             =+  [p q]=i.a
             ?+  -.p  "[{(trip -.p)}]<{$(a q)}>"
@@ -353,10 +353,10 @@
     =>  pars                            ::  XX  
     |=  tub/nail  ^-  (like kids)
     =-  [[0 0] ~ (reso -<) [0 0] ;;(tape ->)]           ::  XX
-    =+  [ins=`?(fens $~)`~ bof=| noz=|]
+    =+  [ins=`?(fens ~)`~ bof=| noz=|]
     ?~  q.tub  [`~ ~]
     =+  [p=*char [i t]=[i t]:q.tub]                     ::  prev current next
-    =<  ?<(&(?=({* @} +) !?=($~ +>)) .)                  ::  XX  do type stuff
+    =<  ?<(&(?=({* @} +) !?=(~ +>)) .)                  ::  XX  do type stuff
     |^  ^-  nuft
         ?:  ?=(?($'*' $'_') i)
           dlim
@@ -410,8 +410,8 @@
       ?:  &(?=(^ a) =(i i.a))
         $(a t.a)
       ?>  ?=(fens i)                                    ::  XX  do type stuff
-      ?&  |(?=($~ b) !=(' ' i.b))
-        |(=('*' i) [?=($~ q)]:(aln 1^1 a))
+      ?&  |(?=(~ b) !=(' ' i.b))
+        |(=('*' i) [?=(~ q)]:(aln 1^1 a))
       ==
     ::
     ++  dlim
@@ -448,7 +448,7 @@
 |%
 ++  nesting  $%  {$bloq *}                              ::  Used for fishing
                  {$item *}
-                 {$list {$item $~}}
+                 {$list {$item ~}}
              ==
 ++  accepting  ?($para $code)
 ++  list-nest                                           ::  can add list item?
@@ -465,7 +465,7 @@
 ++  closes-code
  =+  sam=[?>(?=($code -) p..)]:(node [%code ~])         ::  XX do type stuff
  |=  {a/_sam b/_sam}
- ?~  a  ?=($~ b)
+ ?~  a  ?=(~ b)
  ?~  b  |
  ?^  r.u.b  |
  ?&  =(p.u.a p.u.b)
@@ -550,7 +550,7 @@
     =-  ;~(pose fel $(a +.a))
     ^=  fel
     %+  cook      
-      |=  {b/(list) c/tape $~}
+      |=  {b/(list) c/tape ~}
       ^+  [?>(?=($code -) .)]:*node                       ::  XX do type stuff
       [%code `[-.a (add 3 (lent b)) c] ~]
     ;~  plug
@@ -578,7 +578,7 @@
   ?@  -.i.c  i.c
   ?~  q.i.c  
     i.c
-  ?.  ?&  ?=({* $~} q.i.c)
+  ?.  ?&  ?=({* ~} q.i.c)
           ?=({$emph %|} -.i.c)  
           ?=({$emph %|} -.i.q.i.c)
       ==
@@ -623,11 +623,11 @@
         ?~  p.a  a
         a(r.u.p (unesc:inli r.u.p.a))
       $para
-        ?>  ?=({{$$ *} $~} p.a)                         ::  XX do type stuff
+        ?>  ?=({{$$ *} ~} p.a)                         ::  XX do type stuff
         a(p (pac p.i.p.a))
       $head
         ?~  q.a  a
-        ?>  ?=({{$$ *} $~} q.a)                         ::  XX do type stuff
+        ?>  ?=({{$$ *} ~} q.a)                         ::  XX do type stuff
         a(q (pac p.i.q.a))
     ==
   ::
@@ -785,7 +785,7 @@
   ++  nil-li  
     ?&  ?=($defn -.nod) 
         ?=(^ cur)
-        ?=({{$item $~} $~} q.i.cur)
+        ?=({{$item ~} ~} q.i.cur)
     ==
   ++  widen  ^+  cur                                    ::  list loosening
     =<  ?~  cur  ~
@@ -795,7 +795,7 @@
     |=  a/_cur  ^+  a
     ~?  >  bug  naro+[debu nil-li a cur]
     ?~  a  a
-    ?:  ?=({{$item $~} $~} q.i.a)
+    ?:  ?=({{$item ~} ~} q.i.a)
       a
     ?.  ?=($list -.p.q.i.a)
       [i.a $(a t.a)]
@@ -817,7 +817,7 @@
       ?:  bun.sep  sep
       knot:eat.+
     =>  [ruc .]=olds:eat  
-    ?:  &(?=($~ ruc) ?=({$code ^ *} nod))
+    ?:  &(?=(~ ruc) ?=({$code ^ *} nod))
       code:eat
     =+  sep=(sepa:eat ruc)
     ?:  bun.sep
@@ -943,7 +943,7 @@
         (pump [%html ~])  
       =+  ^=  hez
           %+  stag  %heas
-          ?.  ?=({$para {$$ *} $~} nod)
+          ?.  ?=({$para {$$ *} ~} nod)
             fail
           ;~(plug setext:donp (cold p.nod (ahed eol)))
       =+  ico=?:(?=($para -.nod) fail icode:donp)
@@ -962,7 +962,7 @@
         $heas   self(nod u.neu(- %head))     ::  replace extant para
         $code   ?^  p.u.neu
                   (pump u.neu (dec saf))
-                ?:  ?=({$code $~ *} nod)
+                ?:  ?=({$code ~ *} nod)
                   self
                 (pump u.neu)
       ==

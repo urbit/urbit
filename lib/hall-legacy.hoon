@@ -23,7 +23,7 @@
 ++  speech                                              ::  narrative action
   $%  {$lan p/knot q/@t}                                ::  local announce
       {$exp p/@t}                                       ::  hoon line
-      {$non $~}                                         ::  no content (yo)
+      {$non ~}                                         ::  no content (yo)
       {$ext p/@tas q/*}                                 ::  extended action
       {$fat p/torso q/speech}                           ::  attachment
       {$url p/purf}                                     ::  parsed url

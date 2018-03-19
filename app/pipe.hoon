@@ -22,7 +22,7 @@
   (poke-pipe-connect app source station)
 ::
 ++  poke-pipe-list
-  |=  $~
+  |=  ~
   ^-  {(list move) _+>.$}
   %-  %-  slog
       %+  turn  ~(tap in connections)

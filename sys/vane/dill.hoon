@@ -493,10 +493,10 @@
     :_(..^$ [hen %pass ~ (note %a p.q.hic)]~)
   ?:  ?=($flog -.q.hic)
     ::  ~&  [%dill-flog +.q.hic]
-    ?:  ?=({$crud $hax-init {$leaf *} $~} p.q.hic)
+    ?:  ?=({$crud $hax-init {$leaf *} ~} p.q.hic)
       =+  him=(slav %p (crip p.i.q.p.q.hic))
       :_(..^$ ?~(hey.all ~ [u.hey.all %give %init him]~))
-    ?:  ?=({$crud $hax-heft $~} p.q.hic)
+    ?:  ?=({$crud $hax-heft ~} p.q.hic)
       :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d %heft ~]~))
     :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d p.q.hic]~))
   =.  hey.all  ?^(hey.all hey.all `hen)

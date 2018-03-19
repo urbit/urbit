@@ -128,9 +128,9 @@
       :>  subtract {a} to get the new character
       [%sub s=@u]
       :>  take no action; return self
-      [%none $~]
+      [%none ~]
       :>  represents series of alternating uppercase/lowercase characters
-      [%uplo $~]
+      [%uplo ~]
   ==
 ::
 ++  case-node

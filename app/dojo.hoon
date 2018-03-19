@@ -94,12 +94,12 @@
     ++  clap                                            ::  action, user
       $%  {$peer p/path}                                ::  subscribe
           {$poke p/(cask)}                              ::  apply
-          {$pull $~}                                    ::  unsubscribe
+          {$pull ~}                                    ::  unsubscribe
       ==                                                ::
     ++  club                                            ::  action, system
       $%  {$peer p/path}                                ::  subscribe
           {$poke p/cage}                                ::  apply
-          {$pull $~}                                    ::  unsubscribe
+          {$pull ~}                                    ::  unsubscribe
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff $sole-effect sole-effect}              ::
@@ -226,7 +226,7 @@
     ::
     ++  dp-case-hoon
       |=  a/coin  ^-  (unit hoon)
-      ?.  ?=({$~ case} a)  ~
+      ?.  ?=({~ case} a)  ~
       %+  some
         [%rock %tas p.p.a]
       [%sand p.a]
@@ -305,13 +305,13 @@
     ++  dy-ford                                         ::  send work to ford
       |=  {way/wire kas/silk:ford}
       ^+  +>+>
-      ?>  ?=($~ pux)
+      ?>  ?=(~ pux)
       (he-card(poy `+>+<(pux `way)) %exec way our.hid `[he-beak kas])
     ::
     ++  dy-eyre                                         ::  send work to eyre
       |=  {way/wire usr/(unit knot) req/hiss:eyre}
       ^+  +>+>
-      ?>  ?=($~ pux)
+      ?>  ?=(~ pux)
       (he-card(poy `+>+<(pux `way)) %hiss way usr %httr %hiss req)
     ::
     ++  dy-stop                                         ::  stop work
@@ -452,7 +452,7 @@
     ::
     ++  dy-done                                         ::  dialog submit
       |=  txt/tape
-      ?:  |(?=(^ per) ?=(^ pux) ?=($~ pro))
+      ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
         ~&  %dy-no-prompt
         (dy-diff %bel ~)
       (dy-slam /dial u.pro !>(txt))
@@ -497,9 +497,9 @@
         ::
             $dir  =+  ^=  pax  ^-  path
                       =+  pax=((dy-cast path !>(*path)) q.cay)
-                      ?:  ?=($~ pax)  ~[(scot %p our.hid) %home '0']
-                      ?:  ?=({@ $~} pax)  ~[i.pax %home '0']
-                      ?:  ?=({@ @ $~} pax)  ~[i.pax i.t.pax '0']
+                      ?:  ?=(~ pax)  ~[(scot %p our.hid) %home '0']
+                      ?:  ?=({@ ~} pax)  ~[i.pax %home '0']
+                      ?:  ?=({@ @ ~} pax)  ~[i.pax i.t.pax '0']
                       pax
                   =.  dir  (need (de-beam pax))
                   =-  +>(..dy (he-diff %tan - ~))
@@ -1192,7 +1192,7 @@
       |=  cal/sole-change
       ^+  +>+>
       =^  dat  say  (~(transceive ^sole say) cal)
-      ?:  |(?=(^ per) ?=(^ pux) ?=($~ pro))
+      ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
         ~&  %dy-edit-busy
         =^  lic  say  (~(transmit ^sole say) dat)
         (dy-diff %mor [%det lic] [%bel ~] ~)
@@ -1223,7 +1223,7 @@
         ::  
         ::  naked gate
         ::
-        ?.  &(?=({* $~} p.cig) ?=($~ q.cig))     
+        ?.  &(?=({* ~} p.cig) ?=(~ q.cig))     
           ~|(%one-argument !!)
         :-  /noun
         :+  %call  (dy-silk-vase q.cay)
@@ -1360,7 +1360,7 @@
           ?.(=(gen -) $(gen -) gen)
       |=  gen/hoon  ^-  (unit mark)
       =.  gen  (ope gen)
-      ?:  ?=({$cnts {@ $~} $~} gen)
+      ?:  ?=({$cnts {@ ~} ~} gen)
         (bind (~(get by var) i.p.gen) head)
       ~
     ::
@@ -1376,7 +1376,7 @@
     ++  dy-step                                         ::  advance project
       |=  nex/@ud
       ^+  +>+>
-      ?>  ?=($~ cud)
+      ?>  ?=(~ cud)
       ?:  ?=({$show $3} -.mad)
         he-easter:dy-over
       ?:  =(nex num)
@@ -1493,12 +1493,12 @@
       %&  %.  p.reg
           =+  dye=~(. dy u.poy(pux ~))
           ?+  way  !!
-            {$hand $~}  dy-hand:dye
-            {$dial $~}  dy-made-dial:dye
-            {$gent $~}  dy-made-gent:dye
-            {$noun $~}  dy-made-noun:dye
-            {$scar $~}  dy-made-scar:dye
-            {$edit $~}  dy-made-edit:dye
+            {$hand ~}  dy-hand:dye
+            {$dial ~}  dy-made-dial:dye
+            {$gent ~}  dy-made-gent:dye
+            {$noun ~}  dy-made-noun:dye
+            {$scar ~}  dy-made-scar:dye
+            {$edit ~}  dy-made-edit:dye
           ==
       %|  (he-diff(poy ~) %tan p.reg)
       $tabl  !!
@@ -1512,9 +1512,9 @@
     %.  [%httr !>(hit)]
     =+  dye=~(. dy u.poy(pux ~))
     ?+  way  !!
-      {$hand $~}  dy-hand:dye
-      {$show $~}  dy-show:dye
-      {$scar $~}  dy-sigh-scar:dye
+      {$hand ~}  dy-hand:dye
+      {$show ~}  dy-show:dye
+      {$scar ~}  dy-sigh-scar:dye
     ==
   ::
   ++  he-unto                                           ::  result from behn
@@ -1550,7 +1550,7 @@
   ++  he-plan                                           ::  execute command
     |=  mad/dojo-command
     ^+  +>
-    ?>  ?=($~ poy)
+    ?>  ?=(~ poy)
     he-pine:(dy-step:~(dy-init dy %*(. *dojo-project mad mad)) 0)
   ::
   ++  he-done                                           ::  parse command

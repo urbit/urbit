@@ -33,9 +33,9 @@
 ++  divided                                             ::  get division state
   |*  (managed)                                         ::
   ?-  +<                                                ::
-    $~      ~                                           ::  unsplit
-    {$~ %| *}  ~                                        ::  delivered
-    {$~ %& *}  (some p.u.+<)                            ::  subdivided
+    ~         ~                                         ::  unsplit
+    {~ %| *}  ~                                         ::  delivered
+    {~ %& *}  (some p.u.+<)                             ::  subdivided
   ==                                                    ::
 ::                                                      ::
 ++  moon  (managed _!!)                                 ::  undivided moon
@@ -84,8 +84,8 @@
 ++  stat  (pair live dist)                              ::  external info
 ++  live  ?($cold $seen $live)                          ::  online status
 ++  dist                                                ::  allocation
-  $~  [%split ~]
-  $%  {$free $~}                                        ::  unallocated
+  $~  [%split ~]                                        ::
+  $%  {$free ~}                                         ::  unallocated
       {$owned p/mail}                                   ::  granted, status
       {$split p/(map ship stat)}                        ::  all given ships
   ==                                                    ::
@@ -116,7 +116,7 @@
 ++  card                                                ::
   $%  {$flog wire flog:dill}                           ::
       {$info wire @p @tas nori:clay}                   ::  fs write (backup)
-      :: {$wait $~}                                     :: delay acknowledgment
+      :: {$wait ~}                                     :: delay acknowledgment
       {$diff gilt}                                      :: subscription response
       {$poke wire dock pear}                            ::  app RPC
       {$next wire p/ring}                               ::  update private key
@@ -166,7 +166,7 @@
   ^+  ?~(a !! *(map _p.n.a _(need (b q.n.a))))
   %-  malt
   %+  murn  ~(tap by a)
-  ?~  a  $~
+  ?~  a  ~
   |:  c=n.a  ^-  (unit _[p.n.a (need (b q.n.a))])
   =+  d=(b q.c)
   ?~(d ~ (some [p.c u.d]))
@@ -174,7 +174,7 @@
 ++  unsplit
   |=  a/(map ship (managed))  ^-  (list {ship *})
   %+  skim  ~(tap by a)
-  |=({@ a/(managed)} ?=($~ a))
+  |=({@ a/(managed)} ?=(~ a))
 ::
 ++  issuing
   |*  a/(map ship (managed))
@@ -195,7 +195,7 @@
   [min=1 ctr=1 und=~ ove=~ max=(dec (bex (bex a))) box=~]
 ::
 ++  fo
-  |_  (foil $@($~ *))
+  |_  (foil $@(~ *))
   ++  nth                                             ::  index
     |=  a/@u  ^-  (pair (unit @u) @u)
     ?:  (lth a ~(wyt in und))
@@ -375,7 +375,7 @@
   =+  (~(get by stars.office) who)
   ?^  -  u
   =+  gal=(get-managed-galaxy (sein who))
-  ?.  ?=({$~ %& *} gal)  ~|(unavailable-star+(sein who) !!)
+  ?.  ?=({~ %& *} gal)  ~|(unavailable-star+(sein who) !!)
   (fall (~(get by box.r.p.u.gal) (neis who)) ~)
 ::
 ++  mod-managed-star                                  ::  office write
@@ -385,7 +385,7 @@
     +>.$(stars.office (~(put by stars.office) who sta))
   %+  mod-managed-galaxy  (sein who)
   |=  gal/galaxy  ^-  galaxy
-  ?>  ?=({$~ %& *} gal)
+  ?>  ?=({~ %& *} gal)
   gal(r.p.u (~(put fo r.p.u.gal) (neis who) sta))
 ::
 ++  get-managed-planet                                ::  office read
@@ -394,10 +394,10 @@
   ?^  -  u
   ?:  (~(has by galaxies.office) (sein who))
     =+  gal=(get-managed-galaxy (sein who))
-    ?.  ?=({$~ %& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
+    ?.  ?=({~ %& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
     (~(get fo q.p.u.gal) who)
   =+  sta=(get-managed-star (sein who))
-  ?.  ?=({$~ %& *} sta)  ~|(unavailable-star+(sein who) !!)
+  ?.  ?=({~ %& *} sta)  ~|(unavailable-star+(sein who) !!)
   (~(get fo q.p.u.sta) who)
 ::
 ++  mod-managed-planet                                ::  office write
@@ -408,11 +408,11 @@
   ?:  (~(has by galaxies.office) (sein who))
     %+  mod-managed-galaxy  (sein who)
     |=  gal/galaxy  ^-  galaxy
-    ?>  ?=({$~ %& *} gal)
+    ?>  ?=({~ %& *} gal)
     gal(q.p.u (~(put fo q.p.u.gal) (neis who) pla))
   %+  mod-managed-star  (sein who)
   |=  sta/star  ^-  star
-  ?>  ?=({$~ %& *} sta)
+  ?>  ?=({~ %& *} sta)
   sta(q.p.u (~(put fo q.p.u.sta) (neis who) pla))
 ::
 ++  get-live                                          ::  last-heard time ++live
@@ -430,7 +430,7 @@
 ::
 ++  stat-planet                                       ::  stat of planet
   |=  {who/@p man/planet}  ^-  stat
-  ?.  ?=({$~ %& ^} man)  (stat-any who man)
+  ?.  ?=({~ %& ^} man)  (stat-any who man)
   :-  (get-live who)
   =+  pla=u:(divided man)
   :-  %split
@@ -440,7 +440,7 @@
 ::
 ++  stat-star                                         ::  stat of star
   |=  {who/@p man/star}  ^-  stat
-  ?.  ?=({$~ %& ^} man)  (stat-any who man)
+  ?.  ?=({~ %& ^} man)  (stat-any who man)
   :-  (get-live who)
   =+  sta=u:(divided man)
   :-  %split
@@ -453,7 +453,7 @@
 ::
 ++  stat-galaxy                                       :: stat of galaxy
   |=  {who/@p man/galaxy}  ^-  stat
-  ?.  ?=({$~ %& ^} man)  (stat-any who man)
+  ?.  ?=({~ %& ^} man)  (stat-any who man)
   =+  gal=u:(divided man)
   :-  (get-live who)
   :-  %split
@@ -517,7 +517,7 @@
 ++  peek-x-ticket
   |=  tyl/path
   ^-  (unit (unit {$womb-ticket-info passcode ?($fail $good $used)}))
-  ?.  ?=({@ @ $~} tyl)  ~|(bad-path+tyl !!)
+  ?.  ?=({@ @ ~} tyl)  ~|(bad-path+tyl !!)
   =+  [him tik]=(parse-ticket i.tyl i.t.tyl)
   %+  bind  (check-old-ticket him tik)
   |=  gud/?
@@ -684,7 +684,7 @@
   [%jam-crub !>((en:crub:crypto pas (jam `part`+:abet)))]
 ::
 ++  poke-rekey                                        ::  extend wyll
-  |=  $~
+  |=  ~
   =<  abet
   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
   ::  (emit /rekey %next sec:ex:(pit:nu:crub 512 (shaz (mix %next (shaz eny)))))
@@ -763,7 +763,7 @@
 ++  claim-any                                        ::  register
   |=  {aut/passcode her/@p}
   =;  claimed
-    :: =.  claimed  (emit.claimed %wait $~)          :: XX delay ack
+    :: =.  claimed  (emit.claimed %wait ~)          :: XX delay ack
     (emit.claimed %poke /womb/tick [(sein her) %hood] [%womb-do-ticket her])
   =+  ~|(%bad-passcode bal=(~(got by bureau) (shaf %pass aut)))
   ?+    (clan her)  ~|(bad-size+(clan her) !!)

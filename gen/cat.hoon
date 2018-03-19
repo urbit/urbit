@@ -19,10 +19,10 @@
     [>.^((map @da cord) (cat 3 vane %x) pax)<]~
   [leaf+(spud pax) (pretty-file .^(noun (cat 3 vane %x) pax))]
 ?-     dir.ark                                          ::  handle ambiguity
-    $~
+    ~
   [rose+[" " `~]^~[leaf+"~" (smyt pax)]]~
 ::
-    {{@t $~} $~ $~}
+    {{@t ~} ~ ~}
   $(pax (welp pax /[p.n.dir.ark]))
 ::
     *

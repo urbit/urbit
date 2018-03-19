@@ -11602,9 +11602,9 @@
         ;~  pose
           ;~  pfix  buc
             ;~  pose
+            ::  XX: these are all obsolete in hoon 142
+            ::
               (stag %leaf (stag %tas (cold %$ buc)))
-              (stag %leaf (stag %f (cold & pad)))
-              (stag %leaf (stag %f (cold | bar)))
               (stag %leaf (stag %t qut))
               (stag %leaf (sear |=(a/coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
             ==
@@ -11698,9 +11698,9 @@
         ;~  pose
           ;~  pfix  buc
             ;~  pose
+              ::  XX: these are all obsolete in hoon 142
+              ::
               (stag %leaf (stag %tas (cold %$ buc)))
-              (stag %leaf (stag %f (cold & pad)))
-              (stag %leaf (stag %f (cold | bar)))
               (stag %leaf (stag %t qut))
               (stag %leaf (sear |=(a/coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
             ==

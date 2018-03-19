@@ -28,7 +28,7 @@
 ::  special handling for <pre urb:codemirror>foo</pre>
 ++  urb-codemirror                                      ::  render code blocks
   |=  src/manx  ^-  manx
-  ?>  ?=({{$pre *} _;/(**) $~} src)
+  ?>  ?=({{$pre *} _;/(**) ~} src)
   ;codemirror(value "{v.i.a.g.i.c.src}");
 ::
 ++  elem-to-react-json                                  ::  serialize DOM as json

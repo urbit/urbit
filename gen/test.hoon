@@ -61,8 +61,8 @@
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [filter=$?($~ [pax=path $~])]
-        $~
+        [filter=$?(~ [pax=path ~])]
+        ~
     ==
 :-  %tang
 %^  test-runner

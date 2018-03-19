@@ -11,7 +11,7 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bek/beak}
-        {{who/iden $~} typ/?($user $home)}
+        {{who/iden ~} typ/?($user $home)}
     ==
 =+  pax=/(scot %p p.bek)/twit/(scot %da now)/[typ]/[who]
 :-  %tang

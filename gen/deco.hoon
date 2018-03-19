@@ -124,7 +124,7 @@
     +|
     ++  binary-tree                                     :<  tree pattern
       |*  a=$-(* *)
-      $@($~ [n=a l=(binary-tree a) r=(binary-tree a)])
+      $@(~ [n=a l=(binary-tree a) r=(binary-tree a)])
     :>  #
     :>  #  %constant
     :>  #

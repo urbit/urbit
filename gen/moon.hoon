@@ -12,8 +12,8 @@
   ::
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        $~
-        $~
+        ~
+        ~
     ==
 =/  ran  (clan p.bec)
 ?:  ?=({?($earl $pawn)} ran)

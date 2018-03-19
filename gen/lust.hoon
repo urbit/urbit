@@ -288,7 +288,7 @@
       |-  ^-  (unit (list tank))
       ?~  p.q.ham
         ~
-      ?:  ?=({* $~} p.q.ham)
+      ?:  ?=({* ~} p.q.ham)
         =+  wal=^$(q.ham i.p.q.ham)
         ?~(wal ~ [~ [u.wal ~]])
       ?@  lum
@@ -307,7 +307,7 @@
       =.  p.q.ham
         (rash p.q.ham ;~(sfix (cook crip (star low)) (star hig)))
       =+  fox=$(q.ham [%mato p.q.ham])
-      ?>  ?=({$~ $leaf ^} fox)
+      ?>  ?=({~ $leaf ^} fox)
       ?:  ?=(?($n $tas) p.q.ham)
         fox
       [~ %leaf '%' p.u.fox]
@@ -360,7 +360,7 @@
     ^=  woz
     ^-  wine
     ?.  ?=({$stop *} q.ham)
-      ?:  ?&  ?=  {$bcwt {$pear $n $0} {$plot {$pear $n $0} {$face *} $~} $~}
+      ?:  ?&  ?=  {$bcwt {$pear $n $0} {$plot {$pear $n $0} {$face *} ~} ~}
                 q.ham
               =(1 (met 3 p.i.t.p.i.t.p.q.ham))
           ==
@@ -371,12 +371,12 @@
       q.ham
     =+  nul=[%pear %n 0]
     ?.  ?&  ?=({$bcwt *} u.may)
-            ?=({* * $~} p.u.may)
+            ?=({* * ~} p.u.may)
             |(=(nul i.p.u.may) =(nul i.t.p.u.may))
         ==
       q.ham
     =+  din=?:(=(nul i.p.u.may) i.t.p.u.may i.p.u.may)
-    ?:  ?&  ?=({$plot {$face *} {$face * $stop *} $~} din)
+    ?:  ?&  ?=({$plot {$face *} {$face * $stop *} ~} din)
             =(p.q.ham p.q.i.t.p.din)
             =(1 (met 3 p.i.p.din))
             =(1 (met 3 p.i.t.p.din))
@@ -387,7 +387,7 @@
     ?:  ?&  ?=  $:  $plot
                     {$face *}
                     {$face * $stop *}
-                    {{$face * $stop *} $~}
+                    {{$face * $stop *} ~}
                 ==
                 din
             =(p.q.ham p.q.i.t.p.din)

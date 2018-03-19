@@ -59,7 +59,7 @@
       %|  [-.ret [p.i.a +.ret]]
     ==
   --
-++  maybe  |*(a=mold $@($~ {$~ u/a}))                   ::  maybe
+++  maybe  |*(a=mold $@(~ {~ u/a}))                   ::  maybe
 ++  myb
   |%
   ++  is-null
@@ -165,7 +165,7 @@
   ::  the list. but we then can't deal with incoming lists that do have faces,
   ::  as `+:[i="one" t=~]` is `t=~`, not `~`.
   ::
-  ::  what i really want is that the sapn outside a |* is `{"" 2 "" $~}`, but
+  ::  what i really want is that the sapn outside a |* is `{"" 2 "" ~}`, but
   ::  inside, it is `(list $?(@ud tape))`. all of a sudden, you don't need
   ::  ++limo or ++homo, because you have the right span from the beginning!
   ::  those two functions really feel like they're working around the type
@@ -884,7 +884,7 @@
     :>  grab value by key.
     |*  [a=(dict) key=*]
     ^-  (maybe _?>(?=(^ a) q.n.a))
-    ::  ^-  {$@($~ {$~ u/_?>(?=(^ a) q.n.a)})}
+    ::  ^-  {$@(~ {~ u/_?>(?=(^ a) q.n.a)})}
     ?~  a
       ~
     ?:  =(key p.n.a)
@@ -1484,7 +1484,7 @@
   ++  pop-top
     :>  removes the head of the tree and rebalances the tree below.
     |*  a=(dict)
-    ^-  {$?($~ _a)}
+    ^-  {$?(~ _a)}
     ?~  a  ~
     |-
     ?~  l.a  r.a

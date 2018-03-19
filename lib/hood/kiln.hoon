@@ -60,7 +60,7 @@
 ?>  =(src our)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$exec wire @p $~ {beak silk:ford}}                ::
+      $%  {$exec wire @p ~ {beak silk:ford}}                ::
           {$drop wire @p @tas}                          ::
           {$info wire @p @tas nori}                     ::
           {$mont wire @tas beam}                        ::
@@ -68,7 +68,7 @@
           {$ogre wire $@(@tas beam)}                    ::
           {$merg wire @p @tas @p @tas case germ}        ::
           {$poke wire dock pear}                        ::
-          {$wipe wire @p $~}                            ::
+          {$wipe wire @p ~}                            ::
           {$wait wire @da}                              ::
           {$warp wire sock riff}                        ::
       ==                                                ::
@@ -76,7 +76,7 @@
       $%  {$hall-command command:hall}                  ::
           {$kiln-merge kiln-merge}                      ::
           {$helm-reload (list term)}                    ::
-          {$helm-reset $~}                              ::
+          {$helm-reset ~}                              ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     --
@@ -130,7 +130,7 @@
   abet:abet:(start-sync:(auto hos) |)
 ::
 ++  poke-syncs                                        ::  print sync config
-  |=  $~
+  |=  ~
   =<  abet  %-  spam
   ?:  =(0 ~(wyt by syn))
     [%leaf "no syncs configured"]~
@@ -186,7 +186,7 @@
   `(foal where %sched !>((~(put by old) tym eve)))
 ::
 ++  poke-autoload  |=(lod/(unit ?) abet:(poke:autoload lod))
-++  poke-start-autoload  |=($~ abet:start:autoload)
+++  poke-start-autoload  |=(~ abet:start:autoload)
 ::
 ++  autoload
   |%
@@ -265,9 +265,9 @@
   |=  tym/@dr
   abet:(emit %wait /kiln/overload/(scot %dr tym) (add ~s10 now))
 ::
-++  poke-wipe-ford  |=($~ abet:(emit %wipe /kiln our ~))
+++  poke-wipe-ford  |=(~ abet:(emit %wipe /kiln our ~))
 ::
-++  take  |=(way/wire ?>(?=({@ $~} way) (work i.way))) ::  general handler
+++  take  |=(way/wire ?>(?=({@ ~} way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
   |=  {way/wire are/(each (set path) (pair term tang))}
   abet:abet:(mere:(take way) are)
@@ -311,13 +311,13 @@
 ::
 ++  take-writ-autoload
   |=  {way/wire rot/riot}
-  ?>  ?=($~ way)
+  ?>  ?=(~ way)
   ?>  ?=(^ rot)
   abet:writ:autoload
 ::
 ++  take-wake-overload
-  |=  {way/wire $~}
-  ?>  ?=({@ $~} way)
+  |=  {way/wire ~}
+  ?>  ?=({@ ~} way)
   =+  tym=(slav %dr i.way)
   =.  +>.$
     (emit %wipe /kiln/overload/[i.way] our ~)
@@ -456,17 +456,17 @@
     |=  gag/gage:ford
     ^-  (each (list (pair cage cage)) tang)
     ?.  ?=($tabl -.gag)
-      (mule |.(`$~`(ford-fail >%strange-gage< ~)))
+      (mule |.(`~`(ford-fail >%strange-gage< ~)))
     =<  ?+(. [%& .] {@ *} .)
-    |-  ^-  ?((list {cage cage}) (each $~ tang))
+    |-  ^-  ?((list {cage cage}) (each ~ tang))
     ?~  p.gag  ~
     ?-    -.p.i.p.gag
-        $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-        %|     (mule |.(`$~`(ford-fail p.p.i.p.gag)))
+        $tabl  (mule |.(`~`(ford-fail >%strange-gage< ~)))
+        %|     (mule |.(`~`(ford-fail p.p.i.p.gag)))
         %&
       ?-  -.q.i.p.gag
-        $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-        %|     (mule |.(`$~`(ford-fail p.q.i.p.gag)))
+        $tabl  (mule |.(`~`(ford-fail >%strange-gage< ~)))
+        %|     (mule |.(`~`(ford-fail p.q.i.p.gag)))
         %&     =+  $(p.gag t.p.gag)
                ?+(- [[p.p p.q]:i.p.gag -] {@ *} -)
       ==

@@ -8,7 +8,7 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{pas/@uvG who/@t pla/@u sta/@u $~} $~}
+        {{pas/@uvG who/@t pla/@u sta/@u ~} ~}
     ==
 :-  %womb-reinvite
 =/  new  `@uv`(end 7 1 eny)

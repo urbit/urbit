@@ -12,7 +12,7 @@
 ::
 ++  single                                              :: unwrap one-elem marl
   |=  xml/marl  ^-  manx
-  ?:  ?=({* $~} xml)  i.xml
+  ?:  ?=({* ~} xml)  i.xml
   ~|(%many-elems !!)
 ::
 ++  shut-mart                                           :: xml attrs

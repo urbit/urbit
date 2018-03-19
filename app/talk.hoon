@@ -63,7 +63,7 @@
       $%  {$diff lime}                                  ::
           {$poke wire dock pear}                        ::
           {$peer wire dock path}                        ::
-          {$pull wire dock $~}                          ::
+          {$pull wire dock ~}                          ::
       ==                                                ::
     ++  work                                            :>  interface action
       $%  ::  circle management                         ::
@@ -89,7 +89,7 @@
           {$number $@(@ud {@u @ud})}                    :<  relative/absolute
           {$who audience}                               :<  presence
           {$what (unit $@(char audience))}              :<  show bound glyph
-          {$circles $~}                                 :<  show our circles
+          {$circles ~}                                 :<  show our circles
           {$sources circle}                             :<  show active sources
           ::  ui settings                               ::
           {$bind char (unit audience)}                  :<  bind glyph
@@ -102,7 +102,7 @@
           ::  miscellaneous                             ::
           {$show circle}                                :<  show membership
           {$hide circle}                                :<  hide membership
-          {$help $~}                                    :<  print usage info
+          {$help ~}                                    :<  print usage info
       ==                                                ::
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   :<  circle char pool '
     --
@@ -379,7 +379,7 @@
         =/  sho
           ::  only present if we're here indefinitely.
           =*  ran  ran.src.dif.rum
-          ?.  |(?=($~ ran) ?=($~ tal.u.ran))
+          ?.  |(?=(~ ran) ?=(~ tal.u.ran))
             ~(. sh cli)
           %-  ~(sh-act sh cli)
           [%notify [cir ~ ~] `%hear]
@@ -1404,7 +1404,7 @@
         |=  {cha/char aud/(unit audience)}
         ^+  ..sh-work
         ?.  ?|  &(?=(^ aud) (~(has by bound) u.aud))
-                &(?=($~ aud) (~(has by binds) cha))
+                &(?=(~ aud) (~(has by binds) cha))
             ==
           ..sh-work
         %.  "unbound {<cha>}"
@@ -1419,7 +1419,7 @@
         |=  {her/(unit ship) nym/(unit ^nick)}
         ^+  ..sh-work
         ::  no arguments, show all
-        ?:  ?=({$~ $~} +<)
+        ?:  ?=({~ ~} +<)
           %+  sh-fact  %mor
           %+  turn  ~(tap by nicks)
           |=  {p/ship q/^nick}
@@ -1564,7 +1564,7 @@
       ::  no circle.
       ?:  =(~ lax)  ~
       ::  single circle.
-      ?:  ?=({* $~ $~} lax)  `n.lax
+      ?:  ?=({* ~ ~} lax)  `n.lax
       ::  in case of multiple audiences, pick the most recently active one.
       |-  ^-  (unit audience)
       ?~  grams  ~
@@ -2044,7 +2044,7 @@
     ::
     ^-  ?
     =.  .  ar-deaf
-    !?=($@($~ {* $~ $~}) aud)
+    !?=($@(~ {* ~ ~}) aud)
   ::
   ++  ar-phat
     :>  render all circles, no glyphs.
@@ -2102,7 +2102,7 @@
     ?^  cha  ~[u.cha]
     ?.  (lien ~(tap by aud) ar-dire)
       "*"
-    ?:  ?=({^ $~ $~} aud)
+    ?:  ?=({^ ~ ~} aud)
       ":"
     ";"
   --
