@@ -502,31 +502,32 @@ _sang_one(u3_noun* a, u3_noun* b)
   }
 }
 
+#define SONG_NONE 0
+#define SONG_HEAD 1
+#define SONG_TAIL 2
+
 typedef struct {
+  c3_y     sat_y;
   u3_noun  a;
   u3_noun  b;
-  c3_y sat_y;
 } eqframe;
 
 static inline eqframe*
-_eq_peek()
+_eq_push(c3_ys mov, c3_ys off, u3_noun a, u3_noun b)
 {
-  return (eqframe*) u3a_peek(sizeof(eqframe));
+  u3R->cap_p += mov;
+  eqframe* cur = u3to(eqframe, u3R->cap_p + off);
+  cur->sat_y = SONG_NONE;
+  cur->a     = a;
+  cur->b     = b;
+  return cur;
 }
 
-static inline void
-_eq_push(u3_noun a, u3_noun b)
+static inline eqframe*
+_eq_pop(c3_ys mov, c3_ys off)
 {
-  eqframe* cur = (eqframe*) u3a_push(sizeof(eqframe));
-  cur->a       = a;
-  cur->b       = b;
-  cur->sat_y   = 0;
-}
-
-static inline void
-_eq_pop()
-{
-  u3a_pop(sizeof(eqframe));
+  u3R->cap_p -= mov;
+  return u3to(eqframe, u3R->cap_p + off);
 }
 
 /* _sing_one(): do not pick a unified pointer for identical (a) and (b).
@@ -662,107 +663,179 @@ _song_atom(u3_atom a, u3_atom b)
   return c3y;
 }
 
-/* knob: set lower to get more/earlier memoize-by-pointer,
- *       higher to avoid allocating the u3h as often */
-#define EQ_WHISTLE 1024
+/* _song_x_cape(): unifying equality with comparison deduplication
+ *                 (tightly coupled to _song_x)
+ */
+static c3_o
+_song_x_cape(c3_ys mov, c3_ys off,
+             eqframe* fam, eqframe* don,
+             u3p(u3h_root) har_p,
+             void (*uni)(u3_noun*, u3_noun*))
+{
+  u3_noun a, b, key;
+  u3_weak got;
+  u3a_cell* a_u;
+  u3a_cell* b_u;
+
+  while ( don != fam ) {
+    a = fam->a;
+    b = fam->b;
+    switch ( fam->sat_y ) {
+      case SONG_NONE:
+        if ( a == b ) {
+          break;
+        }
+        else if ( c3y == u3a_is_atom(a) ) {
+          if ( c3n == _song_atom(a, b) ) {
+            return c3n;
+          }
+          else {
+            break;
+          }
+        }
+        else if ( c3y == u3a_is_atom(b) ) {
+          return c3n;
+        }
+        else {
+          u3a_cell* a_u = u3a_to_ptr(a);
+          u3a_cell* b_u = u3a_to_ptr(b);
+
+          if ( a_u->mug_w &&
+               b_u->mug_w &&
+               (a_u->mug_w != b_u->mug_w) ) {
+            return c3n;
+          }
+          else {
+            key = u3nc(u3a_to_off(a), u3a_to_off(b));
+            u3t_off(euq_o);
+            got = u3h_get(har_p, key);
+            u3t_on(euq_o);
+            u3z(key);
+            if ( u3_none != got ) {
+              fam = _eq_pop(mov, off);
+              continue;
+            }
+            fam->sat_y = SONG_HEAD;
+            fam = _eq_push(mov, off, a_u->hed, b_u->hed);
+            continue;
+          }
+        }
+
+      case SONG_HEAD:
+        a_u = u3a_to_ptr(a);
+        b_u = u3a_to_ptr(b);
+        uni(&(a_u->hed), &(b_u->hed));
+        fam->sat_y = SONG_TAIL;
+        fam = _eq_push(mov, off, a_u->tel, b_u->tel);
+        continue;
+
+      case SONG_TAIL:
+        a_u = u3a_to_ptr(a);
+        b_u = u3a_to_ptr(b);
+        uni(&(a_u->tel), &(b_u->tel));
+        break;
+
+      default:
+        c3_assert(0);
+        break;
+    }
+
+    key = u3nc(u3a_to_off(a), u3a_to_off(b));
+    u3t_off(euq_o);
+    u3h_put(har_p, key, c3y);
+    u3t_on(euq_o);
+    u3z(key);
+    fam = _eq_pop(mov, off);
+  }
+
+  return c3y;
+}
 
 /* _song_x(): yes if a and b are the same noun, use uni to unify
 */
 static c3_o
 _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
 {
-  eqframe* fam;
   u3p(eqframe) empty = u3R->cap_p;
-  c3_w wis_w = 0;
-  c3_o r_o = c3n;
-  u3p(u3h_root) har_p = 0;
 
-  _eq_push(a, b);
-  /* there's a while and a switch here. continues all mean "do the loop again"
-  ** and breaks all mean "fall through this switch case". There are no breaks
-  ** that early terminate the loop.
-  */
-  while ( empty != u3R->cap_p ) {
-    fam = _eq_peek();
-    if ( (a = fam->a) == (b = fam->b) ) {
-      r_o = c3y;
-    }
-    else if ( c3y == u3a_is_atom(a) ) {
-      r_o = _song_atom(a, b);
-    }
-    else if ( c3y == u3a_is_atom(b) ) {
-      r_o = c3n;
-    }
-    else {
-      u3a_cell* a_u = u3a_to_ptr(a);
-      u3a_cell* b_u = u3a_to_ptr(b);
+  c3_y  wis_y  = c3_wiseof(eqframe);
+  c3_o  nor_o  = u3a_is_north(u3R);
+  c3_ys mov    = ( c3y == nor_o ? -wis_y : wis_y );
+  c3_ys off    = ( c3y == nor_o ? 0 : -wis_y );
+  c3_s  ovr_s  = 0;
+  eqframe* fam = _eq_push(mov, off, a, b);
+  eqframe* don = u3to(eqframe, empty + off);
 
-      switch ( fam->sat_y ) {
-        case 2:
-          uni(&(a_u->tel), &(b_u->tel));
-          r_o = c3y;
+  u3a_cell* a_u;
+  u3a_cell* b_u;
+
+  while ( don != fam ) {
+    a = fam->a;
+    b = fam->b;
+    switch ( fam->sat_y ) {
+      case SONG_NONE:
+        if ( a == b ) {
           break;
+        }
+        else if ( c3y == u3a_is_atom(a) ) {
+          if ( c3n == _song_atom(a, b) ) {
+            u3R->cap_p = empty;
+            return c3n;
+          }
+          else {
+            break;
+          }
+        }
+        else if ( c3y == u3a_is_atom(b) ) {
+          u3R->cap_p = empty;
+          return c3n;
+        }
+        else {
+          a_u = u3a_to_ptr(a);
+          b_u = u3a_to_ptr(b);
 
-        case 1:
-          uni(&(a_u->hed), &(b_u->hed));
-          _eq_push(a_u->tel, b_u->tel);
-          fam->sat_y = 2;
-          continue;
-
-        case 0: {
           if ( a_u->mug_w &&
                b_u->mug_w &&
                (a_u->mug_w != b_u->mug_w) ) {
-            r_o = c3n;
-            break;
+            u3R->cap_p = empty;
+            return c3n;
           }
           else {
-            if ( har_p != 0 ) {
-              u3_noun key = u3nc(u3a_to_off(a), u3a_to_off(b));
-              u3t_off(euq_o);
-              u3_noun got = u3h_get(har_p, key);
-              u3t_on(euq_o);
-              u3z(key);
-              if ( u3_none != got ) {
-                _eq_pop();
-                continue;
-              }
-            }
-            _eq_push(a_u->hed, b_u->hed);
-            fam->sat_y = 1;
+            fam->sat_y = SONG_HEAD;
+            fam = _eq_push(mov, off, a_u->hed, b_u->hed);
             continue;
           }
         }
-        default:
-          c3_assert(0);
-      }
+
+      case SONG_HEAD:
+        a_u = u3a_to_ptr(a);
+        b_u = u3a_to_ptr(b);
+        uni(&(a_u->hed), &(b_u->hed));
+        fam->sat_y = SONG_TAIL;
+        fam = _eq_push(mov, off, a_u->tel, b_u->tel);
+        continue;
+
+      case SONG_TAIL:
+        a_u = u3a_to_ptr(a);
+        b_u = u3a_to_ptr(b);
+        uni(&(a_u->tel), &(b_u->tel));
+        break;
+
+      default:
+        c3_assert(0);
+        break;
     }
 
-    if ( c3n == r_o ) {
-      if ( 0 != har_p ) {
-        u3h_free(har_p);
-      }
+    if ( 0 == ++ovr_s ) {
+      u3p(u3h_root) har_p = u3h_new();
+      c3_o ret_o = _song_x_cape(mov, off, fam, don, har_p, uni);
+      u3h_free(har_p);
       u3R->cap_p = empty;
-      return c3n;
+      return ret_o;
     }
-    else {
-      if ( 0 == har_p && (wis_w++ > EQ_WHISTLE) ) {
-        har_p = u3h_new();
-      }
-      if ( 0 != har_p ) {
-        u3_noun key = u3nc(u3a_to_off(a), u3a_to_off(b));
-        u3t_off(euq_o);
-        u3h_put(har_p, key, c3y);
-        u3t_on(euq_o);
-        u3z(key);
-      }
-      _eq_pop();
-    }
+    fam = _eq_pop(mov, off);
   }
 
-  if ( 0 != har_p ) {
-    u3h_free(har_p);
-  }
   return c3y;
 }
 
