@@ -5618,6 +5618,8 @@
               {$bccb p/hoon}                            ::  example
               {$bccl p/{i/plan t/(list plan)}}          ::  tuple
               {$bccn p/{i/plan t/(list plan)}}          ::  selection
+              {$bcgl p/plan q/plan}                     ::  filter: exclude
+              {$bcgr p/plan q/plan}                     ::  filter: require
               {$bchp p/plan q/plan}                     ::  function type
               {$bckt p/plan q/plan}                     ::  pair+tag
               {$bcvt p/plan q/plan}                     ::  atom+cell
@@ -6789,6 +6791,8 @@
       {$bchp *}  ::  see under %bccb
                  ::
                  [%rock %n 0]
+      {$bcgl *}  $(mod q.mod)
+      {$bcgr *}  $(mod q.mod)
       {$bckt *}  $(mod q.mod)
       {$bcmc *}  ::  borrow sample
                  ::
@@ -6808,29 +6812,30 @@
     ::
     ~+
     ^-  hoon
-    ?+    mod
+    ?+  mod
       ::  any example can be made by analyzing a spore
       ::
       :+  %tsls
         spore
       ~(relative analyze:(descend 3) 2)
     ::
-        {$base *}  (decorate (basal p.mod))
-        {$bcts *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
-        {$bcmc *}  (decorate (home [%tsgl [%limb %$] p.mod]))
-        {$bcsg *}  [%ktls example(mod q.mod) (home p.mod)]
-        {$dbug *}  example(mod q.mod, bug [p.mod bug])
-        {$over *}  example(hay p.mod, mod q.mod)
-        {$bchp *}  (decorate (function:clear p.mod q.mod))
-        {$leaf *}  (decorate [%rock p.mod q.mod])
-        {$halo *}  example(mod q.mod, doc [p.mod doc])
-        {$bccl *}  %-  decorate
-                   |-  ^-  hoon
-                   ?~  t.p.mod
-                       example:clear(mod i.p.mod)
-                   :-  example:clear(mod i.p.mod)
-                   example:clear(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
-        {$bccb *}  (home p.mod)
+      {$base *}  (decorate (basal p.mod))
+      {$dbug *}  example(mod q.mod, bug [p.mod bug])
+      {$halo *}  example(mod q.mod, doc [p.mod doc])
+      {$leaf *}  (decorate [%rock p.mod q.mod])
+      {$over *}  example(hay p.mod, mod q.mod)
+    ::
+      {$bccb *}  (home p.mod)
+      {$bccl *}  %-  decorate
+                 |-  ^-  hoon
+                 ?~  t.p.mod
+                   example:clear(mod i.p.mod)
+                 :-  example:clear(mod i.p.mod)
+                 example:clear(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
+      {$bchp *}  (decorate (function:clear p.mod q.mod))
+      {$bcmc *}  (decorate (home [%tsgl [%limb %$] p.mod]))
+      {$bcsg *}  [%ktls example(mod q.mod) (home p.mod)]
+      {$bcts *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
     ==
   ::
   ++  factory
@@ -6866,9 +6871,6 @@
         :+  %ktls  example
         [%wtvt fetch-wing fetch [%zpzp ~]]
       ::
-          $noun
-        fetch
-      ::
           $cell
         :+  %ktls  example
         =+  fetch-wing
@@ -6883,6 +6885,9 @@
           [%dtts [%rock %$ |] [%$ axe]]
         [%rock %f |]
       ::
+          $noun
+        fetch
+      ::
           $null
         :+  %wtgr
           [%dtts [%bust %noun] [%$ axe]]
@@ -6890,6 +6895,7 @@
       ==
     ++  clear
       .(..analyze ^clear)
+    ::
     ++  fetch
       ::  load the fragment
       ::
@@ -6965,6 +6971,29 @@
       ^-  hoon
       ?-    mod
       ::
+      ::  constant
+      ::
+          {$leaf *}
+        %-  decorate
+        :+  %wtgr
+          [%dtts fetch [%rock %$ q.mod]]
+        [%rock p.mod q.mod]
+      ::
+      ::  subjective
+      ::
+          {$over *}  
+        relative(hay p.mod, mod q.mod)
+      ::
+      ::  documentation
+      ::
+          {$halo *}
+        relative(doc [p.mod doc], mod q.mod)
+      ::
+      ::  debug
+      ::
+          {$dbug *}
+        relative(mod q.mod, bug [p.mod bug])
+      ::
       ::  base
       ::
           {$base *}
@@ -6974,11 +7003,6 @@
       ::
           {$bcts *}
         [%ktts p.mod relative(mod q.mod)]
-      ::
-      ::  debug
-      ::
-          {$dbug *}
-        relative(mod q.mod, bug [p.mod bug])
       ::
       ::  default
       ::
@@ -7009,28 +7033,28 @@
           axe      (peg axe 3)
         ==
       ::
+      ::  exclude, $<
+      ::
+          {$bcgl *}
+        :+  %tsls
+          relative
+        :+  %wtgl
+          [%wtts [%over ~[&/3] p.mod] ~[&/4]]
+        $/2
+      ::
+      ::  require, $>
+      ::
+          {$bcgr *}
+        :+  %tsls
+          relative
+        :+  %wtgr
+          [%wtts [%over ~[&/3] p.mod] ~[&/4]]
+        $/2
+      ::
       ::  switch, $%
       :: 
           {$bccn *}
         (decorate (switch i.p.mod t.p.mod))
-      ::
-      ::  constant
-      ::
-          {$leaf *}
-        %-  decorate
-        :+  %wtgr
-          [%dtts fetch [%rock %$ q.mod]]
-        [%rock p.mod q.mod]
-      ::
-      ::  subjective
-      ::
-          {$over *}  
-        relative(hay p.mod, mod q.mod)
-      ::
-      ::  documentation
-      ::
-          {$halo *}
-        relative(doc [p.mod doc], mod q.mod)
       ::
       ::  function
       ::
@@ -11848,6 +11872,8 @@
                   ['_' (rune cab %bccb expa)]
                   [':' (rune col %bccl exqs)]
                   ['%' (rune cen %bccn exqs)]
+                  ['<' (rune gal %bcgl exqb)]
+                  ['>' (rune gar %bcgr exqb)]
                   ['^' (rune ket %bckt exqb)]
                   ['~' (rune sig %bcsg exqd)]
                   ['-' (rune hep %bchp exqb)]
@@ -11914,6 +11940,8 @@
                   ['_' (stag %bccm (rune cab %bccb expa))]
                   [':' (stag %bccm (rune col %bccl exqs))]
                   ['%' (stag %bccm (rune cen %bccn exqs))]
+                  ['<' (stag %bccm (rune gal %bcgl exqb))]
+                  ['>' (stag %bccm (rune gar %bcgr exqb))]
                   ['^' (stag %bccm (rune ket %bckt exqb))]
                   ['~' (stag %bccm (rune sig %bcsg exqd))]
                   ['-' (stag %bccm (rune hep %bchp exqb))]
