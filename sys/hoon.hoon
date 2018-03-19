@@ -5556,7 +5556,6 @@
 ++  base                                                ::  base mold
   $@  $?  $noun                                         ::  any noun
           $cell                                         ::  any cell
-          $bean                                         ::  loobean
           $flag                                         ::  loobean
           $null                                         ::  ~ == 0
       ==                                                ::
@@ -5782,7 +5781,6 @@
     {$wtgr p/hoon q/hoon}                               ::  ?>  ?:(p q !!)
     {$wtls p/wing q/hoon r/(list (pair plan hoon))}     ::  ?+  ?-  w/default
     {$wtpm p/(list hoon)}                               ::  ?&  loobean and
-    {$wtht p/wing q/hoon r/hoon}                        ::  ?@  if p is atom
     {$wtvt p/wing q/hoon r/hoon}                        ::  ?@  if p is atom
     {$wtsg p/wing q/hoon r/hoon}                        ::  ?~  if p is null
     {$wtts p/plan q/wing}                               ::  ?=  if q matches p
@@ -6649,7 +6647,6 @@
   ++  wtls  |=  {gen/hoon opt/(list (pair plan hoon))}
             %+  gray  %wtls
             [puce (blue gen) (turn opt |=({a/plan b/hoon} [a (blue b)]))]
-  ++  wtht  |=({sic/hoon non/hoon} (gray [%wtht puce (blue sic) (blue non)]))
   ++  wtvt  |=({sic/hoon non/hoon} (gray [%wtvt puce (blue sic) (blue non)]))
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
   ++  wtts  |=(mod/plan (gray [%wtts (teal mod) puce]))
@@ -6727,11 +6724,6 @@
       ::  reduce to pair of nouns
       ::
       =+($(bas %noun) [- -])
-    ::
-        $bean
-      ::  comparison produces boolean type
-      ::
-      =+([%rock %$ 0] [%ktls [%dtts - -] -])
     ::
         $flag
       ::  comparison produces boolean type
@@ -6920,14 +6912,6 @@
         =+  fetch-wing
         :-  [%wing [[%& %2] -]]
             [%wing [[%& %3] -]]
-      ::
-          $bean
-        :^    %wtcl
-            [%dtts [%rock %$ &] [%$ axe]]
-          [%rock %f &]
-        :+  %wtgr
-          [%dtts [%rock %$ |] [%$ axe]]
-        [%rock %f |]
       ::
           $flag
         :^    %wtcl
@@ -7341,7 +7325,7 @@
       :+  %ktls                                         ::  ^+
         :+  %brhp  [~ ~]                                ::  |-
         :^    %wtcl                                       ::  ?:
-            [%bust %bean]                               ::  ?
+            [%bust %flag]                               ::  ?
           [%bust %null]                                 ::  ~
         :-  [%ktts %i [%sand 'tD' *@]]                  ::  :-  i=~~
         [%ktts %t [%limb %$]]                           ::  t=$
@@ -7658,7 +7642,6 @@
         [(open-mane n) %knit v]
       --
     ::
-        {$wtht *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtvt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
         {$wtts *}   [%fits ~(example ax fab p.gen) q.gen]
@@ -7817,7 +7800,6 @@
         $wtgr  (lead -.gen %.(+.gen dubs))
         $wtls  (lead -.gen %.(+.gen (trio noop expr (moto (twin stir expr)))))
         $wtpm  (lead -.gen %.(+.gen moar))
-        $wtht  (lead -.gen %.(+.gen trip))
         $wtvt  (lead -.gen %.(+.gen trip))
         $wtsg  (lead -.gen %.(+.gen trip))
         $wtts  (lead -.gen %.(+.gen (twin stir noop)))
@@ -11662,7 +11644,7 @@
           %+  stag  %bcwt
           ;~(pfix wut (ifix [lit rit] (most ace wyde)))
         ::
-          (cold [%base %bean] wut)
+          (cold [%base %flag] wut)
         ==
       :-  '~'
         (cold [%base %null] sig)  
@@ -11804,7 +11786,7 @@
           %+  stag  %bccm
           (stag %bcwt ;~(pfix wut (ifix [lit rit] (most ace wyde))))
         ::
-          (cold [%base %bean] wut)
+          (cold [%base %flag] wut)
         ==
       :-  '['
         rupl
@@ -12411,7 +12393,7 @@
     |:  $:lang
     ^-  (unit hoon)
     ?-    -.vil
-      $col  ?:(=([%base %bean] ros) ~ [~ %tsgl ros p.vil])
+      $col  ?:(=([%base %flag] ros) ~ [~ %tsgl ros p.vil])
       $lit  (bind ~(reek ap ros) |=(hyp/wing [%cnts hyp p.vil]))
       $ket  [~ ros p.vil]
       $tis  =+  tog=~(hock ap ros)
