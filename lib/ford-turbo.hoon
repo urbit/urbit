@@ -1049,13 +1049,10 @@
     ::
     =*  sub-builds  p.components.state
     =*  client-builds  q.components.state
-    ::
-    =*  new-builds  new.rebuilds.state
-    =*  old-builds  old.rebuilds.state
     ::  if something depends on this build, no-op and return
     ::
     ?:  ?|  (~(has by client-builds) build)
-            (~(has by old-builds) build)
+            (~(has by old.rebuilds.state) build)
             (~(has by listeners.state) build)
         ==
       state
@@ -1083,33 +1080,33 @@
     =/  kids  ~(tap in (~(get ju sub-builds) build))
     ::  gather :dependencies from :build and its :kids
     ::
-    =/  dependencies=(jug disc dependency)  direct-deps
-    =.  dependencies
-      |-  ^+  dependencies
-      ?~  kids  dependencies
+    =/  all-deps=(jug disc dependency)  direct-deps
+    =.  all-deps
+      |-  ^+  all-deps
+      ?~  kids  all-deps
       ::
       =/  grandkids  ~(tap in (~(get ju sub-builds) i.kids))
       =/  kid-deps-set  (~(get by dependencies.state) i.kids)
       =/  kid-deps  ~(tap by (fall kid-deps-set ~))
-      ::  TODO replace with ~(uni ju dependencies) kid-deps), requires +uni:ju
+      ::  TODO replace with ~(uni ju all-deps) kid-deps), requires +uni:ju
       ::
       =/  unified-deps
-        |-  ^+  dependencies
-        ?~  kid-deps  dependencies
+        |-  ^+  all-deps
+        ?~  kid-deps  all-deps
         ::
         ::=+  [disc deps-set]=i.kid-deps is broken because of q face?
         =/  disc=disc  p.i.kid-deps
         =/  deps-set=(set dependency)  q.i.kid-deps
         =/  deps  ~(tap in deps-set)
-        =.  dependencies
-          |-  ^+  dependencies
-          ?~  deps  dependencies
+        =.  all-deps
+          |-  ^+  all-deps
+          ?~  deps  all-deps
           ::
-          $(deps t.deps, dependencies (~(put ju dependencies) disc i.deps))
+          $(deps t.deps, all-deps (~(put ju all-deps) disc i.deps))
         ::
         $(kid-deps t.kid-deps)
       ::
-      $(kids (weld t.kids grandkids), dependencies unified-deps)
+      $(kids (weld t.kids grandkids), all-deps unified-deps)
     ::  remove :build's direct dependencies
     ::
     =.  dependencies.state  (~(del by dependencies.state) build)
@@ -1133,7 +1130,7 @@
       (~(del ju live-leaf-builds) dep build)
     ::  for each +disc :build relied on, delete :build from :live-root-builds
     ::
-    =/  discs  ~(tap in ~(key by dependencies))
+    =/  discs  ~(tap in ~(key by all-deps))
     =.  live-root-builds.state
       %+  roll  discs
       |=  [=disc live-root-builds=_live-root-builds.state]
@@ -1149,11 +1146,11 @@
       (~(del ju clients) kid ^build)
     ::  if there is a newer rebuild of :build, delete the linkage
     ::
-    =/  rebuild  (~(get by new-builds) build)
+    =/  rebuild  (~(get by new.rebuilds.state) build)
     =?  rebuilds.state  ?=(^ rebuild)
       %_  rebuilds.state
-        new  (~(del by new-builds) build)
-        old  (~(del by old-builds) build)
+        new  (~(del by new.rebuilds.state) build)
+        old  (~(del by old.rebuilds.state) build)
       ==
     ::  recurse on :kids
     ::
