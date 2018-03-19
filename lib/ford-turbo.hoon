@@ -930,12 +930,11 @@
         ::
         %&
       =*  cache-entry  [%result last-accessed=now build-result=p.made]
+      ::  prepend :build to :completed-builds, which is in reverse order
       ::
       =.  completed-builds  [build completed-builds]
       ::
-      =?    results.state
-          (~(has by listeners.state) build)
-        (~(put by results.state) build cache-entry)
+      =.  results.state  (~(put by results.state) build cache-entry)
       ::
       this
     ::
@@ -998,7 +997,7 @@
     ::  mades: list of %made moves to emit, one per duct on a completed build
     ::
     =|  moves=(list move)
-    ::  sort completed-builds chronologically (they was originally reversed)
+    ::  sort completed-builds chronologically (they were originally reversed)
     ::
     =.  completed-builds  (flop completed-builds)
     ::
@@ -1014,21 +1013,23 @@
     =*  build  i.completed-builds
     ::  look up :build's result from cache
     ::
-    =/  cache  (~(got by results.state) build)
-    ?>  ?=(%result -.cache)
+    =/  cache-line  (~(got by results.state) build)
+    ::  :build just completed, so there's no way it could have been reclaimed
+    ::
+    ?>  ?=(%result -.cache-line)
     ::  create moves to send out for this build
     ::
     =/  moves-for-build
       %+  turn  ~(tap in (~(get ju listeners.state) build))
       |=  [duct=^duct live=?]
-      [duct %give %made date.build %complete build-result.cache]
+      [duct %give %made date.build %complete build-result.cache-line]
     ::  remove all ducts related to this build
     ::
     =.  builds-by-listener.state
       %+  roll  moves-for-build
-      |=  [=move mapping=_builds-by-listener.state]
+      |=  [=move builds-by-listener=_builds-by-listener.state]
       =*  duct  -.move
-      (~(del by mapping) duct)
+      (~(del by builds-by-listener) duct)
     ::
     =.  listeners.state  (~(del by listeners.state) build)
     ::  try to delete this build entirely if nothing depends on it
@@ -1121,47 +1122,31 @@
       (~(uni in dep-values) deps)
     ::
     =.  blocks.state
-      |-  ^+  blocks.state
-      ?~  dep-values  blocks.state
-      ::
-      %_  $
-        dep-values  t.dep-values
-        blocks.state  (~(del ju blocks.state) i.dep-values build)
-      ==
+      %+  roll  dep-values
+      |=  [dep=dependency blocks=_blocks.state]
+      (~(del ju blocks) dep build)
     ::  for each dependency :build relied on, remove it from :live-leaf-builds
     ::
     =.  live-leaf-builds.state 
-       |-  ^+  live-leaf-builds.state
-       ?~  dep-values  live-leaf-builds.state
-       ::
-       %_  $
-           dep-values  t.dep-values
-       ::
-           live-leaf-builds.state
-         (~(del ju live-leaf-builds.state) i.dep-values build)
-       ==
+      %+  roll  dep-values
+      |=  [dep=dependency live-leaf-builds=_live-leaf-builds.state]
+      (~(del ju live-leaf-builds) dep build)
     ::  for each +disc :build relied on, delete :build from :live-root-builds
     ::
     =/  discs  ~(tap in ~(key by dependencies))
     =.  live-root-builds.state
-      |-  ^+  live-root-builds.state
-      ?~  discs  live-root-builds.state
-      ::
-      %_  $
-          discs  t.discs
-      ::
-          live-root-builds.state
-        (~(del ju live-root-builds.state) i.discs build)
-      ==
+      %+  roll  discs
+      |=  [=disc live-root-builds=_live-root-builds.state]
+      (~(del ju live-root-builds.state) disc build)
     ::  remove the mapping from :build to its sub-builds
     ::
     =.  sub-builds  (~(del by sub-builds) build)
     ::  for each +build in :kids, remove :build from its clients
     ::
     =.  client-builds
-      |-  ^+  client-builds
-      ?~  kids  client-builds
-      $(kids t.kids, client-builds (~(del ju client-builds) i.kids build))
+      %+  roll  kids
+      |=  [kid=^build clients=_client-builds]
+      (~(del ju clients) kid ^build)
     ::  if there is a newer rebuild of :build, delete the linkage
     ::
     =/  rebuild  (~(get by new-builds) build)
