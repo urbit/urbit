@@ -524,7 +524,7 @@ _term_it_show_more(u3_utty* uty_u)
 /* _term_it_path(): path for console file.
 */
 static c3_c*
-_term_it_path(u3_noun fyl, u3_noun pax)
+_term_it_path(c3_o fyl, u3_noun pax)
 {
   c3_w len_w;
   c3_c *pas_c;
@@ -574,12 +574,26 @@ static void
 _term_it_save(u3_noun pax, u3_noun pad)
 {
   c3_c* pax_c;
+  c3_c* bas_c = 0;
+  c3_w  xap_w = u3kb_lent(u3k(pax));
+  u3_noun xap = u3_nul;
+  u3_noun urb = c3_s4('.','u','r','b');
+  u3_noun put = c3_s3('p','u','t');
 
-  pax = u3nt(c3_s4('.','u','r','b'), c3_s3('p','u','t'), pax);
+  // directory base and relative path
+  if ( 2 < xap_w ) {
+    u3_noun bas = u3nt(urb, put, u3_nul);
+    bas_c = _term_it_path(c3n, bas);
+    xap = u3qb_scag(xap_w - 2, pax);
+  }
+
+  pax = u3nt(urb, put, pax);
   pax_c = _term_it_path(c3y, pax);
 
-  u3_walk_save(pax_c, 0, pad);
+  u3_walk_save(pax_c, 0, pad, bas_c, xap);
+
   free(pax_c);
+  free(bas_c);
 }
 
 /* _term_io_belt(): send belt.

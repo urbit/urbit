@@ -683,7 +683,7 @@
       /* u3_walk_save(): save file or bail.
       */
         void
-        u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad);
+        u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax);
 
       /* u3_sync_reck(): traverse filesystem for changes -> lamb
       */
