@@ -32,7 +32,7 @@
         string-number    :: digit/tape        digit value, even if non-decimal
         string-number    :: numeric/tape      numeric value, including fractions
       ::
-        (flag 'Y' 'N')   :: mirrored/?        is char mirrored in bidi text?
+        (fuss 'Y' 'N')   :: mirrored/?        is char mirrored in bidi text?
         name-string      :: old-name/tape     unicode 1.0 compatibility name
         name-string      :: iso/tape          iso 10646 comment field
         (punt hex)       :: up/(unit @c)      uppercase mapping codepoint

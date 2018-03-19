@@ -1,3 +1,4 @@
+!:
 ::                                                      ::  /van/zuse
 ::                                                      ::  %reference/1
 ::  %zuse: arvo library.
@@ -834,7 +835,7 @@
   ++  bitt  (map bone (pair ship path))                 ::  incoming subs
   ++  boat                                              ::  outgoing subs
     %+  map  (pair bone wire)                           ::
-    (trel bean ship path)                               ::
+    (trel flag ship path)                               ::
   ++  bowl                                              ::  standard app state
           $:  $:  our/ship                              ::  host
                   src/ship                              ::  guest

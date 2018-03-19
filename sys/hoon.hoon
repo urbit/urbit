@@ -411,6 +411,7 @@
   ::
 ++  axis  @                                             ::  tree address
 ++  bean  ?                                             ::  0=&=yes, 1=|=no
+++  flag  ?
 ++  char  @t                                            ::  UTF8 byte
 ++  cord  @t                                            ::  UTF8, LSB first
 ++  date  {{a/? y/@ud} m/@ud t/tarp}                    ::  parsed date
@@ -4424,7 +4425,7 @@
   ^-  (like _huf)
   [p=p.tub q=[~ u=[p=huf q=tub]]]
 ::
-++  flag
+++  fuss
   |=  {sic/@t non/@t}
   ;~(pose (cold %& (jest sic)) (cold %| (jest non)))
 ::
@@ -5556,6 +5557,7 @@
   $@  $?  $noun                                         ::  any noun
           $cell                                         ::  any cell
           $bean                                         ::  loobean
+          $flag                                         ::  loobean
           $null                                         ::  ~ == 0
       ==                                                ::
   {$atom p/aura}                                        ::  atom
@@ -5781,6 +5783,7 @@
     {$wtls p/wing q/hoon r/(list (pair plan hoon))}     ::  ?+  ?-  w/default
     {$wtpm p/(list hoon)}                               ::  ?&  loobean and
     {$wtht p/wing q/hoon r/hoon}                        ::  ?@  if p is atom
+    {$wtvt p/wing q/hoon r/hoon}                        ::  ?@  if p is atom
     {$wtsg p/wing q/hoon r/hoon}                        ::  ?~  if p is null
     {$wtts p/plan q/wing}                               ::  ?=  if q matches p
     {$wtzp p/hoon}                                      ::  ?!  loobean not
@@ -6647,6 +6650,7 @@
             %+  gray  %wtls
             [puce (blue gen) (turn opt |=({a/plan b/hoon} [a (blue b)]))]
   ++  wtht  |=({sic/hoon non/hoon} (gray [%wtht puce (blue sic) (blue non)]))
+  ++  wtvt  |=({sic/hoon non/hoon} (gray [%wtvt puce (blue sic) (blue non)]))
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
   ++  wtts  |=(mod/plan (gray [%wtts (teal mod) puce]))
   --
@@ -6725,6 +6729,11 @@
       =+($(bas %noun) [- -])
     ::
         $bean
+      ::  comparison produces boolean type
+      ::
+      =+([%rock %$ 0] [%ktls [%dtts - -] -])
+    ::
+        $flag
       ::  comparison produces boolean type
       ::
       =+([%rock %$ 0] [%ktls [%dtts - -] -])
@@ -6901,7 +6910,7 @@
       ?-    bas
           {%atom *}
         :+  %ktls  example
-        [%wtht fetch-wing fetch [%zpzp ~]]
+        [%wtvt fetch-wing fetch [%zpzp ~]]
       ::
           $noun
         fetch
@@ -6913,6 +6922,14 @@
             [%wing [[%& %3] -]]
       ::
           $bean
+        :^    %wtcl
+            [%dtts [%rock %$ &] [%$ axe]]
+          [%rock %f &]
+        :+  %wtgr
+          [%dtts [%rock %$ |] [%$ axe]]
+        [%rock %f |]
+      ::
+          $flag
         :^    %wtcl
             [%dtts [%rock %$ &] [%$ axe]]
           [%rock %f &]
@@ -7344,7 +7361,7 @@
         [%ktts %b res]                                  ::  b={res}
       ^-  hoon                                          ::
       :+  %brhp  [~ ~]                                  ::  |-
-      :^    %wtht                                       ::  ?@
+      :^    %wtvt                                       ::  ?@
           [%a ~]                                        ::  a
         [%limb %b]                                      ::  b
       :-  [%tsgl [%$ 2] [%limb %a]]                      ::  :-  -.a
@@ -7642,6 +7659,7 @@
       --
     ::
         {$wtht *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
+        {$wtvt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
         {$wtts *}   [%fits ~(example ax fab p.gen) q.gen]
         {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
@@ -7800,6 +7818,7 @@
         $wtls  (lead -.gen %.(+.gen (trio noop expr (moto (twin stir expr)))))
         $wtpm  (lead -.gen %.(+.gen moar))
         $wtht  (lead -.gen %.(+.gen trip))
+        $wtvt  (lead -.gen %.(+.gen trip))
         $wtsg  (lead -.gen %.(+.gen trip))
         $wtts  (lead -.gen %.(+.gen (twin stir noop)))
         $wtzp  (lead -.gen %.(+.gen expr))
@@ -12075,7 +12094,7 @@
                   ['=' ;~(pfix tis (toad txts))]
                   ['+' ;~(pfix lus (toad txls))]
                   ['&' (rune pad %wtpm exps)]
-                  ['@' ;~(pfix hat (toad tkht))]
+                  ['@' ;~(pfix hat (toad tkvt))]
                   ['~' ;~(pfix sig (toad tksg))]
                   ['!' (rune zap %wtzp expa)]
               ==
@@ -12318,8 +12337,8 @@
     ++  txls  |.  %+  cook  |=  {a/tiki b/hoon c/(list (pair plan hoon))}
                             (~(wtls ah a) b c)
                   (butt ;~(gunk teak loaf ruck))
-    ++  tkht  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
-                            (~(wtht ah a) b c)
+    ++  tkvt  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
+                            (~(wtvt ah a) b c)
                   ;~(gunk teak loaf loaf)
     ++  tksg  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
                             (~(wtsg ah a) b c)
