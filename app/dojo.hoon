@@ -201,7 +201,7 @@
     ++  dp-sink
       ;~  pose
         ;~(plug (cold %file tar) dp-beam)
-        ;~(plug (cold %flat hat) (most net sym))
+        ;~(plug (cold %flat vat) (most net sym))
         ;~(plug (cold %pill dot) (most net sym))
         ;~(plug (cold %http lus) (stag %post dp-iden-url))
         ;~(plug (cold %http hep) (stag %put dp-iden-url))

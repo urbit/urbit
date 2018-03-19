@@ -3717,7 +3717,7 @@
       ==
     ::                                                  ::  ++obje:de-json:html
     ++  obje                                            ::  object list
-      %+  ifix  [(wish lef) (wish ref)]
+      %+  ifix  [(wish leb) (wish reb)]
       (more (wish com) pear)
     ::                                                  ::  ++obox:de-json:html
     ++  obox                                            ::  object
@@ -4030,7 +4030,7 @@
         [q.a [[p.a r.a] b]]
       ::
       ;~  plug
-        ;~(plug htts (punt ;~(sfix urt:ab hat)) thor)
+        ;~(plug htts (punt ;~(sfix urt:ab vat)) thor)
         ;~(plug ;~(pose apat (easy *pork)) yque)
       ==
     ::                                                  ::  ++htts:de-purl:html
@@ -4056,7 +4056,7 @@
       (cook crip (star pquo))
     ::                                                  ::  ++pcar:de-purl:html
     ++  pcar                                            ::  2396 path char
-      ;~(pose pure pesc psub col hat)
+      ;~(pose pure pesc psub col vat)
     ::                                                  ::  ++pcok:de-purl:html
     ++  pcok                                            ::  cookie char
       ;~(less bas mic com toc prn)

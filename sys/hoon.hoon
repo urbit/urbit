@@ -4714,11 +4714,11 @@
 ++  dot  (just '.')
 ++  gal  (just '<')
 ++  gar  (just '>')
-++  hat  (just '@')
+++  vat  (just '@')
 ++  hax  (just '#')
 ++  hep  (just '-')
 ++  ket  (just '^')
-++  lef  (just '{') 
+++  leb  (just '{')
 ++  lit  (just '(')
 ++  lac  (just '[')
 ++  lus  (just '+')
@@ -4726,7 +4726,7 @@
 ++  net  (just '/')
 ++  pad  (just '&')
 ++  rac  (just ']')
-++  ref  (just '}')
+++  reb  (just '}')
 ++  rit  (just ')') 
 ++  say  (just '\'')
 ++  sig  (just '~')
@@ -5620,7 +5620,7 @@
               {$bccn p/{i/plan t/(list plan)}}          ::  selection
               {$bchp p/plan q/plan}                     ::  function type
               {$bckt p/plan q/plan}                     ::  pair+tag
-              {$bcht p/plan q/plan}                     ::  atom+cell
+              {$bcvt p/plan q/plan}                     ::  atom+cell
               {$bcsg p/hoon q/plan}                     ::  default
               {$bcmc p/hoon}                            ::  assembly
               {$bcts p/toga q/plan}                     ::  name
@@ -6780,7 +6780,7 @@
       {$leaf *}  &
       {$halo *}  clean(mod q.mod)
       {$over *}  clean(mod q.mod)
-      {$bcht *}  &(clean(mod p.mod) clean(mod q.mod))
+      {$bcvt *}  &(clean(mod p.mod) clean(mod q.mod))
       {$bckt *}  &(clean(mod p.mod) clean(mod q.mod))
       {$bccb *}  |
     ==
@@ -6827,7 +6827,7 @@
       {$leaf *}  [%rock p.mod q.mod]
       {$over *}  $(hay p.mod, mod q.mod)
       {$halo *}  $(mod q.mod)
-      {$bcht *}  $(mod p.mod)
+      {$bcvt *}  $(mod p.mod)
       {$bccl *}  |-  ^-  hoon
                  ?~  t.p.mod  ^$(mod i.p.mod) 
                  :-  ^$(mod i.p.mod) 
@@ -7081,7 +7081,7 @@
       ::
       ::  branch, $@
       ::
-          {$bcht *}
+          {$bcvt *}
         %-  decorate
         :^    %wtcl
             [%dtwt fetch]
@@ -10756,12 +10756,12 @@
       ;~  pose
         ;~(pfix bas ;~(pose (mask "-+*%;\{") bas toc bix:ab))
         inline-embed
-        ;~(less bas lef ?:(in-tall-form fail toc) prn)
+        ;~(less bas leb ?:(in-tall-form fail toc) prn)
         ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
       ==
     ::
     ++  bracketed-elem                                  ::  bracketed element
-      %+  ifix  [lef ref]
+      %+  ifix  [leb reb]
       ;~(plug tag-head wide-elems)
     ::
     ++  wrapped-elems                                   ::  wrapped tuna
@@ -10808,7 +10808,7 @@
         ;~  plug
           (punt ;~(plug (cold %id hax) (cook trip sym)))
           (cook en-class (star ;~(plug (cold %class dot) sym)))
-          (punt ;~(plug ;~(pose (cold %href net) (cold %src hat)) soil))
+          (punt ;~(plug ;~(pose (cold %href net) (cold %src vat)) soil))
           (easy ~)
         ==
       ::
@@ -11632,13 +11632,13 @@
           ;~(pose ;~(pfix ace (most ace (stag %bccm wyde))) (easy ~))
         ==
       :-  '{'
-        (stag %bccl (ifix [lef ref] (most ace wyde)))
+        (stag %bccl (ifix [leb reb] (most ace wyde)))
       :-  '['
         (stag %bccl (ifix [lac rac] (most ace wyde)))
       :-  '*'
         (cold [%base %noun] tar)
       :-  '@'
-        ;~(pfix hat (stag %base (stag %atom mota)))
+        ;~(pfix vat (stag %base (stag %atom mota)))
       :-  '?'
         ;~  pose
           %+  stag  %bcwt
@@ -11731,14 +11731,14 @@
       :-  '('
         (stag %cncl (ifix [lit rit] (most ace wide)))
       :-  '{'
-        (stag %bccm (stag %bccl (ifix [lef ref] (most ace wyde))))
+        (stag %bccm (stag %bccl (ifix [leb reb] (most ace wyde))))
       :-  '*'
         ;~  pose
           (stag %bcdt ;~(pfix tar wyde))
           (cold [%base %noun] tar)
         ==
       :-  '@'
-        ;~(pfix hat (stag %base (stag %atom mota)))
+        ;~(pfix vat (stag %base (stag %atom mota)))
       :-  '+'
         ;~  pose
           (stag %dtls ;~(pfix lus (ifix [lit rit] wide)))
@@ -11800,7 +11800,7 @@
           ;~  pose
             %+  cook
               |=({a/@ta b/hoon} [%ktls [%sand a 0] [%ktls [%sand %$ 0] b]])
-            ;~(pfix hat ;~(plug mota ;~(pfix tec wide)))
+            ;~(pfix vat ;~(plug mota ;~(pfix tec wide)))
             ;~  pfix  tar
               (stag %kthp (stag [%base %noun] ;~(pfix tec wide)))
             ==
@@ -11855,8 +11855,8 @@
         %+  ifix  [toc toc]
         %-  star
         ;~  pose
-          ;~(pfix bas ;~(pose bas toc lef bix:ab))
-          ;~(less toc bas lef prn)
+          ;~(pfix bas ;~(pose bas toc leb bix:ab))
+          ;~(less toc bas leb prn)
           (stag ~ sump)
         ==
       ==
@@ -11865,13 +11865,13 @@
         [(jest '"""\0a') (jest '\0a"""')]
       %-  star
       ;~  pose
-        ;~(pfix bas ;~(pose bas lef bix:ab))
-        ;~(less bas lef prn)
+        ;~(pfix bas ;~(pose bas leb bix:ab))
+        ;~(less bas leb prn)
         ;~(less (jest '\0a"""') (just `@`10))
         (stag ~ sump)
       ==
     ==
-  ++  sump  (ifix [lef ref] (stag %cltr (most ace wide)))
+  ++  sump  (ifix [leb reb] (stag %cltr (most ace wide)))
   ++  norm                                              ::  rune regular form
     |=  tol/?
     |%
@@ -11882,7 +11882,7 @@
             ;~  pfix  buc
               %-  stew
               ^.  stet  ^.  limo
-              :~  ['@' (rune hat %bcht exqb)]
+              :~  ['@' (rune vat %bcvt exqb)]
                   ['_' (rune cab %bccb expa)]
                   [':' (rune col %bccl exqs)]
                   ['%' (rune cen %bccn exqs)]
@@ -11948,7 +11948,7 @@
             ;~  pfix  buc
               %-  stew
               ^.  stet  ^.  limo
-              :~  ['@' (stag %bccm (rune hat %bcht exqb))]
+              :~  ['@' (stag %bccm (rune vat %bcvt exqb))]
                   ['_' (stag %bccm (rune cab %bccb expa))]
                   [':' (stag %bccm (rune col %bccl exqs))]
                   ['%' (stag %bccm (rune cen %bccn exqs))]
@@ -12076,7 +12076,7 @@
                   ['=' ;~(pfix tis (toad txts))]
                   ['+' ;~(pfix lus (toad txls))]
                   ['&' (rune pad %wtpm exps)]
-                  ['@' ;~(pfix hat (toad tkvt))]
+                  ['@' ;~(pfix vat (toad tkvt))]
                   ['~' ;~(pfix sig (toad tksg))]
                   ['!' (rune zap %wtzp expa)]
               ==

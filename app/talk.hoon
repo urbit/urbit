@@ -736,7 +736,7 @@
         %+  most  (jest '•')
         ;~  pose
           (stag %url aurf:de-purl:html)
-          :(stag %lin & ;~(pfix hat text))
+          :(stag %lin & ;~(pfix vat text))
           :(stag %lin | ;~(less mic hax text))
         ==
       ::

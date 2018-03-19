@@ -448,7 +448,7 @@
       [~ u=p.a]
     nuck:so
   ::
-  ++  mota  ;~(pfix hat mota:vez)                       ::  atom odor
+  ++  mota  ;~(pfix vat mota:vez)                       ::  atom odor
   ++  hath  (sear plex (stag %clsg poor)):vez           ::  hood path
   ++  have  (sear de-beam ;~(pfix net hath))            ::  hood beam
   ++  hith                                              ::  static path
