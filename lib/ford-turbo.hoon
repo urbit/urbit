@@ -85,16 +85,16 @@
   +=  dependency
     $%  ::  live dependency on a clay path; varies with time
         ::
-        [%clay-live ren=care:clay bel=(pair disc spur)]
+        [%clay-live care=care:clay bel=(pair disc spur)]
         ::  once dependency on a clay path; pinned time
         ::
-        [%clay-once ren=care:clay =beam]
+        [%clay-once care=care:clay =beam]
         ::  live dependency on a gall path; varies with time
         ::
-        [%gall-live ren=care:clay bel=(pair disc spur)]
+        [%gall-live care=care:clay bel=(pair disc spur)]
         ::  once dependency on a gall path; pinned time
         ::
-        [%gall-once ren=care:clay =beam]
+        [%gall-once care=care:clay =beam]
     ==
   ::  +build-result: the referentially transparent result of a +build
   ::
@@ -638,7 +638,7 @@
   ==
 ::  +note: private request from ford to another vane
 ::
-++  note
++=  note
   $%  ::  %c: to clay
       ::
       $:  %c
@@ -680,7 +680,21 @@
           ::
           cush=cush:gall
   ==  ==  ==  ==
+::  +sign: private response from another vane to ford
+::
++=  sign
+  $%  ::  %c: from clay
+      ::
+      $:  %c
+      ::  %writ: internal (intra-ship) file response
+      ::
+      $%  $:  %writ
+              ::  riot: response contents
+              ::
+              riot=riot:clay
+  ==  ==  ==  ==
 --
+::
 =,  ford-api  ::  TODO remove once in vane
 ::
 |%
@@ -843,6 +857,11 @@
       ::
       [%dependency =dependency]
   ==
+::  +vane: short names for vanes
+::
+::    TODO: move to zuse
+::
++=  vane  ?(%a %b %c %d %e %f %g)
 --
 =,  format
 |%
@@ -867,6 +886,64 @@
     $(vals t.vals, a (~(put ju a) key i.vals))
   ::
   $(tapped t.tapped)
+::  +to-wire: encode a +dependency in a +wire
+::
+++  to-wire
+  |=  =dependency
+  ^-  wire
+  |^  ?-    -.dependency
+          ::
+          %clay-live
+        ::
+        =/  beam=beam
+          [[ship=p.p.bel desk=q.p.bel case=[%ud 0]] spur=q.bel]:dependency
+        ::
+        (encode %c care.dependency & beam)
+      ::
+          %clay-once
+        ::
+        (encode %c care.dependency | beam.dependency)
+      ::
+          %gall-live
+        =/  beam=beam
+          [[ship=p.p.bel desk=q.p.bel case=[%ud 0]] spur=q.bel]:dependency
+        ::
+        (encode %g care.dependency & beam)
+      ::
+          %gall-once
+        ::
+        (encode %g care.dependency | beam.dependency)
+      ==
+  ::
+  ++  encode
+    |=  [vane=?(%c %g) care=care:clay live=? =beam]
+    ^-  wire
+    ::
+    [vane care (scot %f live) (en-beam beam)]
+  --
+::  +from-wire: decode a +dependency from a +wire
+::
+++  from-wire
+  |=  =wire
+  ^-  dependency
+  ::
+  ?>  ?=([@ @ @ *] wire)
+  ::
+  =/  vane  ((hard ?(%c %g)) i.wire)
+  =/  care  ((hard care:clay) i.t.wire)
+  =/  live  =(0 (slav %f i.t.t.wire))
+  =/  beam  (need (de-beam ((hard ^wire) t.t.t.wire)))
+  ::
+  ?.  live
+    ?:  =(%c vane)
+      [%clay-once care beam]
+    [%gall-once care beam]
+  ::
+  =/  bel  [disc=[p.beam q.beam] spur=s.beam]
+  ::
+  ?:  =(%c vane)
+    [%clay-live care bel]
+  [%gall-live care bel]
 ::  +by-schematic: door for manipulating :builds-by-schematic.ford-state
 ::
 ++  by-schematic
@@ -903,9 +980,9 @@
     ::
     builds
   --
-::  +ev: per-event core
+::  +per-event: per-event core
 ::
-++  ev
+++  per-event
   ::  completed-builds: root builds completed in this event, in reverse order
   ::
   =|  completed-builds=(list build)
@@ -943,7 +1020,15 @@
     (execute build live)
   ::
   ++  rebuild  !!
-  ++  unblock  !!
+  ++  unblock
+    |=  =dependency
+    ^-  [(list move) ford-state]
+    ::
+    !!
+::    =<  finalize
+::    ::
+::    =/  dependency=dependency  [
+
   ++  cancel  !!
   ::  |construction: arms for performing builds
   ::
@@ -1004,40 +1089,39 @@
     |=  =build
     ^-  make-product
     ::
-    |^
-    ?-    -.schematic.build
-    ::
-        ^  (autocons head.schematic.build tail.schematic.build)
-    ::
-        %$  (literal literal.schematic.build)
-    ::
-        %alts  !!
-        %bake  !!
-        %bunt  !!
-        %call  !!
-        %cast  !!
-        %core  !!
-        %dude  !!
-        %file  !!
-        %hood  !!
-        %path  !!
-        %plan  !!
-        %reef  !!
-        %ride  !!
-        %slit  !!
-        %slim  !!
-        %scry  (scry dependency.schematic.build)
-        %vale  !!
-        %volt  !!
-    ::
-    ::  clay diff and merge operations
-    ::
-        %diff  !!
-        %join  !!
-        %mash  !!
-        %mute  !!
-        %pact  !!
-    ==
+    |^  ?-    -.schematic.build
+        ::
+            ^  (autocons head.schematic.build tail.schematic.build)
+        ::
+            %$  (literal literal.schematic.build)
+        ::
+            %alts  !!
+            %bake  !!
+            %bunt  !!
+            %call  !!
+            %cast  !!
+            %core  !!
+            %dude  !!
+            %file  !!
+            %hood  !!
+            %path  !!
+            %plan  !!
+            %reef  !!
+            %ride  !!
+            %slit  !!
+            %slim  !!
+            %scry  (scry dependency.schematic.build)
+            %vale  !!
+            %volt  !!
+        ::
+        ::  clay diff and merge operations
+        ::
+            %diff  !!
+            %join  !!
+            %mash  !!
+            %mute  !!
+            %pact  !!
+        ==
     ::
     ++  literal
       |=  =cage  ^-  make-product
@@ -1080,7 +1164,7 @@
         ::  perform the scry operation
         ::
         =/  scry-response
-          (^scry ~ ~ `@tas`(cat 3 %c ren.dependency) beam.dependency)
+          (^scry ~ ~ `@tas`(cat 3 %c care.dependency) beam.dependency)
         ::  scry blocked
         ::
         ?~  scry-response
@@ -1091,7 +1175,7 @@
         ?~  u.scry-response
           =/  error=tang
             :~  leaf+"clay-live scry failed for"
-                leaf+"%c{(trip ren.dependency)} {<(en-beam beam.dependency)>}"
+                leaf+"%c{(trip care.dependency)} {<(en-beam beam.dependency)>}"
             ==
           ^-  make-product
           [[%build-result %error error] state]
@@ -1323,8 +1407,8 @@
 ::
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task:able)]
-  ^-  [(list move) q=_this]
-  ::  unwrap task
+  ^-  [(list move) _this]
+  ::  unwrap :task from :wrapped-task
   ::
   =/  task=task:able
     ?.  ?=(%soft -.wrapped-task)
@@ -1346,7 +1430,7 @@
    ::
    =^  ship-state  state-by-ship  (find-or-create-ship-state our.task)
    =*  event-args  [[our.task duct now scry] ship-state]
-   =*  build-func  ~(start-build ev event-args)
+   =*  build-func  ~(start-build per-event event-args)
    =^  moves  ship-state  (build-func schematic.task date.task)
    =.  state-by-ship  (~(put by state-by-ship) our.task ship-state)
    ::
@@ -1358,6 +1442,33 @@
   ::
       %wegh  !!
   ==
+::  +take: receive a response from another vane
+::
+++  take
+  |=  [=wire =duct wrapped-sign=(hypo sign)]
+  ^-  [(list move) _this]
+  ::  unwrap :sign from :wrapped-sign
+  ::
+  ::    TODO: verify wrapped-sign isn't an evil vase?
+  ::
+  =/  sign=sign  q.wrapped-sign
+  ::  parse :wire
+  ::
+  ::    TODO: move to separate function
+  ::
+  ?>  ?=([@ @ *] wire)
+  =/  our=@p  (slav %p i.wire)
+  =/  ship-state  (~(got by state-by-ship) our)
+  =/  dependency  (from-wire t.wire)
+  ::
+  ::  TODO check whether we need rebuild or unblock
+  ::
+  =*  event-args  [[our duct now scry] ship-state]
+  =*  build-func  ~(unblock per-event event-args)
+  =^  moves  ship-state  (build-func dependency)
+  =.  state-by-ship  (~(put by state-by-ship) our ship-state)
+  ::
+  [moves this]
 ::  %utilities
 ::
 ::+|

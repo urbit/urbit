@@ -11,11 +11,13 @@
 ;:  weld
   test-compiles
   test-unify-jugs
+  test-dependency-wire-encoding
   test-literal
   test-autocons-same
   test-autocons-different
   test-scry-clay-succeed
   test-scry-clay-fail
+  ::test-scry-clay-block
 ==
 ++  test-compiles
   ~&  %test-compiles
@@ -30,6 +32,50 @@
       `(jug @tas @ud)`(my ~[[%b (sy 5 6 ~)] [%c (sy 7 8 ~)]])
   ::
   `(jug @tas @ud)`(my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 5 6 ~)] [%c (sy 7 8 ~)]])
+::
+++  test-dependency-wire-encoding
+  ~&  %test-dependency-wire-encoding
+  ;:  welp
+    %-  expect-eq  !>
+    :-  `path`(to-wire:ford [%clay-live care=%x bel=[[~nul %desk] /foo/bar]])
+    /c/x/.y/~nul/desk/0/bar/foo
+  ::
+    %-  expect-eq  !>
+    :-  `dependency:ford`[%clay-live care=%x bel=[[~nul %desk] /foo/bar]]
+    (from-wire:ford /c/x/.y/~nul/desk/0/bar/foo)
+  ::
+    %-  expect-eq  !>
+    :-  ^-  path
+      (to-wire:ford [%clay-once care=%x beam=[[~nul %desk %ud 42] /foo/bar]])
+    /c/x/.n/~nul/desk/42/bar/foo
+  ::
+    %-  expect-eq  !>
+    :-  ^-  dependency:ford
+      [%clay-once care=%x beam=[[~nul %desk %ud 42] /foo/bar]]
+    (from-wire:ford /c/x/.n/~nul/desk/42/bar/foo)
+  ::
+    %-  expect-eq  !>
+    :-  ^-  path
+      (to-wire:ford [%gall-live care=%x bel=[[~nul %desk] /foo/bar]])
+    /g/x/.y/~nul/desk/0/bar/foo
+  ::
+    %-  expect-eq  !>
+    :-  ^-  dependency:ford
+      [%gall-live care=%x bel=[[~nul %desk] /foo/bar]]
+    (from-wire:ford /g/x/.y/~nul/desk/0/bar/foo)
+  ::
+    %-  expect-eq  !>
+    :-  ^-  path
+      %-  to-wire:ford
+      [%gall-once care=%x beam=[[~nul %desk %da ~1234.5.6] /foo/bar]]
+    /g/x/.n/~nul/desk/~1234.5.6/bar/foo
+  ::
+    %-  expect-eq  !>
+    :-  ^-  dependency:ford
+      [%gall-once care=%x beam=[[~nul %desk %da ~1234.5.6] /foo/bar]]
+    (from-wire:ford /g/x/.n/~nul/desk/~1234.5.6/bar/foo)
+  ::
+  ==
 ::
 ++  test-literal
   ~&  %test-literal
@@ -163,4 +209,57 @@
   %-  expect-eq  !>
   :-  state-by-ship.+>+<.ford
   (my [~nul *ford-state:ford-turbo]~)
+::
+::++  test-scry-clay-block
+::  ~&  %test-scry-clay-block
+::  =/  scry-block
+::    |=  [* (unit (set monk)) =term =beam]
+::    ^-  (unit (unit cage))
+::    ::
+::    ?>  =(term %cx)
+::    ?>  =(beam [[~nul %desk %da ~1234.5.6] /bar/foo])
+::    ::
+::    ~
+::  ::
+::  =/  scry-succeed
+::    |=  [* (unit (set monk)) =term =beam]
+::    ^-  (unit (unit cage))
+::    ::
+::    ?>  =(term %cx)
+::    ?>  =(beam [[~nul %desk %da ~1234.5.6] /foo/bar])
+::    ::
+::    [~ ~ %noun !>(42)]
+::  ::
+::  =.  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-fail)
+::  =^  moves  ford
+::    %-  call:ford
+::    :*  duct=~
+::        type=~
+::        %make
+::        ~nul
+::        plan=[%scry %clay-once ren=%x bem=[[~nul %desk %da ~1234.5.6] /bar/foo]]
+::        date=`~1234.5.6
+::    ==
+::  %+  welp
+::    %-  expect-eq  !>
+::    [moves ~]  ::  TODO should be a move to Clay, not ~
+::  ::
+::  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-succeed)
+::  ::
+::  =^  moves2  ford
+::    %-  take:ford
+::    :*
+::    ==
+::  ::
+::  %+  welp
+::    %-  expect-eq  !>
+::    :-  moves
+::    :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %error
+::        :~  leaf+"clay-live scry failed for"
+::            leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
+::    ==  ==  ==
+::  ::
+::  %-  expect-eq  !>
+::  :-  state-by-ship.+>+<.ford
+::  (my [~nul *ford-state:ford-turbo]~)
 --
