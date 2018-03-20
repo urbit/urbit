@@ -5612,7 +5612,7 @@
           $%  {$base p/base}                            ::  base type
               {$dbug p/spot q/plan}                     ::  set debug
               {$leaf p/term q/@}                        ::  constant atom
-              {$make p/hoon q/(list plan)}              ::  artificial plan
+              {$make p/hoon q/(list plan)}              ::  composite plan
               {$over p/wing q/plan}                     ::  relative subject
           ::                                            ::
               {$bcbr p/plan q/hoon}                     ::  verify
@@ -6736,6 +6736,11 @@
       [%rock %n 0]
     ==
   ::
+  ++  unfold
+    |=  [fun/hoon arg/(list plan)]
+    ^-  hoon
+    [%cncl fun (turn arg |=(plan bccm/+<))]
+  ::
   ++  descend
     ::  record an axis to original subject
     ::
@@ -6775,7 +6780,7 @@
       {$base *}  (basal p.mod)
       {$dbug *}  [%dbug p.mod $(mod q.mod)]
       {$leaf *}  [%rock p.mod q.mod]
-      {$make *}  $(mod [%bcmc %cncl p.mod (turn q.mod |=(plan bccm/+<))])
+      {$make *}  $(mod bcmc/(unfold p.mod q.mod))
       {$over *}  $(hay p.mod, mod q.mod)
     ::
       {$bcbr *}  $(mod p.mod)
@@ -6824,7 +6829,7 @@
       {$base *}  (decorate (basal p.mod))
       {$dbug *}  example(mod q.mod, bug [p.mod bug])
       {$leaf *}  (decorate [%rock p.mod q.mod])
-      {$make *}  example(mod [%bcmc %cncl p.mod (turn q.mod |=(plan bccm/+<))])
+      {$make *}  example(mod bcmc/(unfold p.mod q.mod))
       {$over *}  example(hay p.mod, mod q.mod)
     ::
       {$bccb *}  (decorate (home p.mod))
@@ -6856,7 +6861,7 @@
     ?:  &(=(~ def) ?=([%make *] mod))
       ::  collapse trivial indirection
       ::
-      (decorate (home [%cncl p.mod (turn q.mod |=(plan bccm/+<))]))
+      (decorate (home (unfold p.mod q.mod)))
     :^  %brcl  ~^~
       [%ktsg spore]
     ~(relative analyze:(descend 7) 6)
@@ -6993,10 +6998,10 @@
           [%dtts fetch [%rock %$ q.mod]]
         [%rock p.mod q.mod]
       ::
-      ::  artificial
+      ::  composite
       ::
           {$make *}  
-        relative(mod [%bcmc %cncl p.mod (turn q.mod |=(plan bccm/+<))])
+        relative(mod bcmc/(unfold p.mod q.mod))
       ::
       ::  subjective
       ::
