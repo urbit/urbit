@@ -723,7 +723,14 @@
       ::    The first of the two jugs maps from a build to its sub-builds.
       ::    The second of the two jugs maps from a build to its client builds.
       ::
-      components=(bi-jug build build)
+      $=  components
+      $:  ::  sub-builds: jug from a build to its sub-builds
+          ::
+          sub-builds=(jug build build)
+          ::  client-builds: jug from a build to its client builds
+          ::
+          client-builds=(jug build build)
+      ==
       ::  rebuilds: bidirectional linkages between old and new identical builds
       ::
       ::    Old and new build must have the same schematic and result.
@@ -809,22 +816,6 @@
       ::
       [%tombstone ~]
   ==
-::  +bi-jug: bi-directional jug
-::
-::    A pair of jugs. The first jug maps from :a to :b; the second maps
-::    backward from :b to :a. Both jugs must be kept in sync with each other to
-::    be a valid bi-jug. If :a and :b are the same, it can be used to represent
-::    arbitrary DAGs traversable in approximately log time in either direction.
-::
-++  bi-jug
-  |*  $:  ::  a: key type for forward mapping; value type for backward mapping
-          ::
-          a=mold
-          ::  b: value type for forward mapping: key type for backward mapping
-          ::
-          b=mold
-      ==
-  (pair (jug a b) (jug b a))
 ::  +block: something a build can get stuck on
 ::
 +=  block
@@ -922,34 +913,69 @@
   ++  execute
     |=  [=build live=?]
     ^+  this
+    ::  if the build is complete, we're done 
+    ::
+    ::    TODO: make sure we don't need to do anything here
+    ::
+    ?^  (~(get by results.state) build)
+      this
     ::
     =^  made  state  (make build)
     ::
-    ?-    -.made
-        ::  %&: build completed and produced its result
+    ?-    -.result.made
+        ::  %build-result: build completed and produced its result
         ::
-        %&
-      =*  cache-entry  [%result last-accessed=now build-result=p.made]
-      ::  prepend :build to :completed-builds, which is in reverse order
+        %build-result
       ::
-      =.  completed-builds  [build completed-builds]
+      =*  cache-entry
+        [%result last-accessed=now build-result=build-result.result.made]
       ::
       =.  results.state  (~(put by results.state) build cache-entry)
+      ::  prepend :build to :completed-builds, which is in reverse order
       ::
-      this
+      =?  completed-builds  (~(has by listeners.state) build)
+        [build completed-builds]
+      ::  run :build's clients now that it's done
+      ::
+      =/  clients=(set ^build)
+        (fall (~(get by client-builds.components.state) build) ~)
+      ::
+      ^+  this
+      %+  roll  ~(tap in clients)
+      |=  [client=^build that=_this]
+      (execute:that client live)
     ::
-        ::  %|: build got stuck and produced a set of blocks
+        ::  %blocks: build got stuck and produced a set of blocks
         ::
-        %|
-      !!
+        %blocks
+      ::
+      ^+  this
+      %+  roll  ~(tap in blocks.result.made)
+      |=  [=block that=_this]
+      ?-    -.block
+          %build
+        =.  that  (execute:that build.block live)
+        that
+      ::
+          %dependency
+        !!
+      ==
     ==
   ::
   ++  make
     |=  =build
-    ^-  [(each build-result (set block)) ford-state]
+    ^-  $:  $=  result
+            $%  [%build-result =build-result]
+                [%blocks blocks=(set block)]
+            ==
+            ford-state
+        ==
+    ::
     |^
     ?-    -.schematic.build
-        ^  !!
+    ::
+        ^  (autocons head.schematic.build tail.schematic.build)
+    ::
         %$  (literal literal.schematic.build)
     ::
         %alts  !!
@@ -979,9 +1005,66 @@
         %mute  !!
         %pact  !!
     ==
+    ::
     ++  literal
       |=  =cage
-      [[%& %result %$ cage] state]
+      [[%build-result %result %$ cage] state]
+    ::
+    ++  autocons
+      |=  [head=schematic tail=schematic]
+      ::
+      =^  head-result  state  (depend-on head)
+      =^  tail-result  state  (depend-on tail)
+      ::
+      =|  blocks=(set block)
+      =?  blocks  ?=(~ head-result)  (~(put in blocks) [%build date.build head])
+      =?  blocks  ?=(~ tail-result)  (~(put in blocks) [%build date.build tail])
+      ::  if either build blocked, we're not done
+      ::
+      ?^  blocks
+        ::
+        [[%blocks blocks] state]
+      ::
+      ?<  ?=(~ head-result)
+      ?<  ?=(~ tail-result)
+      ::
+      =-  [[%build-result -] state]
+      `build-result`[%result u.head-result u.tail-result]
+    ::  |utilities: helper arms
+    ::
+    ::+|  utilities
+    ::
+    ::  +depend-on: register dependency on a sub-build
+    ::
+    ++  depend-on
+      |=  kid=schematic
+      ^-  [(unit build-result) ford-state]
+      ::
+      =/  sub-build=^build  [date.build kid]
+      ::
+      =:
+          builds-by-date.state
+        (~(put ju builds-by-date.state) date.build kid)
+      ::
+          builds-by-schematic.state
+        (~(put by-schematic builds-by-schematic.state) sub-build)
+      ::
+          sub-builds.components.state
+        (~(put ju sub-builds.components.state) build sub-build)
+      ::
+          client-builds.components.state
+        (~(put ju client-builds.components.state) sub-build build)
+      ==
+      ::
+      =/  maybe-cache-line  (~(get by results.state) sub-build)
+      ?~  maybe-cache-line
+        [~ state]
+      ::
+      =*  cache-line  u.maybe-cache-line
+      ?:  ?=(%tombstone -.cache-line)
+        [~ state]
+      ::
+      [`build-result.cache-line state]
     --
   ::  |utilities:
   ::
@@ -1047,11 +1130,9 @@
     |=  =build
     ^-  ford-state
     ::
-    =*  sub-builds  p.components.state
-    =*  client-builds  q.components.state
     ::  if something depends on this build, no-op and return
     ::
-    ?:  ?|  (~(has by client-builds) build)
+    ?:  ?|  (~(has by client-builds.components.state) build)
             (~(has by old.rebuilds.state) build)
             (~(has by listeners.state) build)
         ==
@@ -1077,7 +1158,7 @@
     =/  direct-deps  (fall (~(get by dependencies.state) build) ~)
     ::  kids: :build's sub-builds
     ::
-    =/  kids  ~(tap in (~(get ju sub-builds) build))
+    =/  kids  ~(tap in (~(get ju sub-builds.components.state) build))
     ::  gather :dependencies from :build and its :kids
     ::
     =/  all-deps=(jug disc dependency)  direct-deps
@@ -1085,7 +1166,7 @@
       |-  ^+  all-deps
       ?~  kids  all-deps
       ::
-      =/  grandkids  ~(tap in (~(get ju sub-builds) i.kids))
+      =/  grandkids  ~(tap in (~(get ju sub-builds.components.state) i.kids))
       =/  kid-deps-set  (~(get by dependencies.state) i.kids)
       =/  kid-deps  ~(tap by (fall kid-deps-set ~))
       ::  TODO replace with ~(uni ju all-deps) kid-deps), requires +uni:ju
@@ -1137,13 +1218,14 @@
       (~(del ju live-root-builds.state) disc build)
     ::  remove the mapping from :build to its sub-builds
     ::
-    =.  sub-builds  (~(del by sub-builds) build)
+    =.  sub-builds.components.state
+      (~(del by sub-builds.components.state) build)
     ::  for each +build in :kids, remove :build from its clients
     ::
-    =.  client-builds
+    =.  client-builds.components.state
       %+  roll  kids
-      |=  [kid=^build clients=_client-builds]
-      (~(del ju clients) kid ^build)
+      |=  [kid=^build clients=_client-builds.components.state]
+      (~(del ju clients) kid build)
     ::  if there is a newer rebuild of :build, delete the linkage
     ::
     =/  rebuild  (~(get by new.rebuilds.state) build)
@@ -1155,14 +1237,12 @@
     ::  recurse on :kids
     ::
     =.  state
-      |-  ^+  state
-      ?~  kids  state
-      ::
-      =.  state  ^$(build i.kids)
-      $(kids t.kids)
+      %+  roll  kids
+      |=  [kid=^build new-state=_state]
+      (cleanup(state new-state) kid)
     ::  recurse on :rebuild; note this must be done after recursing on :kids
     ::
-    =?  state  ?=(^ rebuild)  $(build u.rebuild)
+    =?  state  ?=(^ rebuild)  (cleanup u.rebuild)
     ::
     state
   --
