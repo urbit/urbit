@@ -31,6 +31,20 @@
   }
 
   static u3_noun
+  _mull_feel(u3_noun van,
+             u3_noun sut,
+             u3_noun rot)
+  {
+    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+    u3_noun gat = u3j_hook(von, "feel");
+
+    return u3n_kick_on(u3i_molt(gat, 
+                                u3x_sam, 
+                                u3k(rot), 
+                                0));
+  }
+
+  static u3_noun
   _mull_coke(u3_noun nug)
   {
     if ( 0 == u3h(nug) ) {
@@ -700,6 +714,23 @@
 
         return u3nc
           (_mull_nice(van, gol, p_ret), q_ret);
+      }
+      case c3__zpvt: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
+      _mull_used();
+      {
+        c3_o fes = _mull_feel(van, sut, p_gen);
+        c3_o fed = _mull_feel(van, dox, p_gen);
+
+        if ( fes != fed ) {
+          return u3m_error("mull-bonk-f");
+        }
+        else {
+          if ( c3y == _mull_feel(van, sut, p_gen) ) {
+            return _mull_in(van, sut, gol, dox, q_gen);
+          } else {
+            return _mull_in(van, sut, gol, dox, r_gen);
+          }
+        }
       }
 
       case c3__lost:

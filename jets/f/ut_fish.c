@@ -90,7 +90,7 @@
         }
       }
       case c3__core: {
-        return u3nc(0, 0);
+        return u3m_error("fish-core");
       }
       case c3__help:
       case c3__face: {

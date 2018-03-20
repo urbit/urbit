@@ -1249,6 +1249,7 @@
 #   define c3__zptm   c3_s4('z','p','t','m')
 #   define c3__zpts   c3_s4('z','p','t','s')
 #   define c3__zpvn   c3_s4('z','p','v','n')
+#   define c3__zpvt   c3_s4('z','p','v','t')
 #   define c3__zpzp   c3_s4('z','p','z','p')
 #   define c3__zuse   c3_s4('z','u','s','e')
 #   define c3__zush   c3_s4('z','u','s','h')
