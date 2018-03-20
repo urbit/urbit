@@ -1,30 +1,44 @@
 language: c
-script: make && make test # no ./configure
+script: meson build && cd ./build && ninja
 
 # Uncomment me if this gets annoying
 #
-# notifications: 
-#   email: false 
+# notifications:
+#   email: false
+
+before_install:
+  - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
+  - unzip ninja-linux.zip
+  - sudo mv ninja /usr/bin/
+  - wget https://github.com/libuv/libuv/archive/v1.19.2.tar.gz
+  - tar -xvf v1.19.2.tar.gz
+  - cd libuv-1.19.2
+  - sh autogen.sh
+  - ./configure --prefix=/usr
+  - make
+  - sudo make install
+  - cd ..
+install:
+  - pip3 install --user -I meson==0.44.1
 
 addons:
   apt:
     packages:
+    - python3
+    - python3-pip
     - libgmp3-dev
     - libsigsegv-dev
     - openssl
     - libssl-dev
     - libncurses5-dev
-    - make
-    - exuberant-ctags
     - automake
     - autoconf
+    - make
     - libtool
     - g++
-    - ragel
-    - cmake
     - re2c
     - libcurl4-gnutls-dev
-    - python
+    - unzip
 # before_deploy: "make deb" # TODO
 deploy:
   skip_cleanup: true
@@ -32,7 +46,7 @@ deploy:
   prerelease: true # turn this off for official releases
   api_key:
     secure: V4E7784ECSS3MO6ZIRtang9XwibDyvDYGb0MoSaP2CTlmzIAhdokr4KJFM0qM4KRaaajCdQuqi0lojgOjwdxs7e0GkAwScb33LFxQ7Chj/QkFOY7V1AnSRLR5OsXnazB0nur5aSwvcvnggQ2XW3OeF7zIvGfs9aR97SEz/xCrVE=
-  file: bin/urbit # TODO upload package from before_deploy
+  file: ./build/urbit # TODO upload package from before_deploy
   on:
     repo: urbit/urbit
     tags: true

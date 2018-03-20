@@ -22,7 +22,7 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
-#include "../outside/jhttp/http_parser.h"   // Joyent HTTP
+#include <http_parser.h>
 #include "all.h"
 #include "vere/vere.h"
 
@@ -1166,14 +1166,14 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
     if ( siz_w == UV_EOF ) {
 #if 1
       _cttp_ccon_fail(coc_u, c3n);
-#else    
+#else
       // old workaround:
       //
       // https://github.com/urbit/urbit/issues/254
       //
       uv_close((uv_handle_t*) tcp_u, NULL);
 #endif
-    } 
+    }
     else if ( siz_w < 0 ) {
       uL(fprintf(uH, "cttp: read 2: %s\n", uv_strerror(siz_w)));
       _cttp_ccon_fail(coc_u, c3y);
@@ -1222,7 +1222,7 @@ _cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
     if ( siz_w == UV_EOF ) {
 #if 1
       _cttp_ccon_fail(coc_u, c3n);
-#else    
+#else
       // old workaround:
       //
       // https://github.com/urbit/urbit/issues/254
@@ -1403,7 +1403,7 @@ _cttp_ccon(u3_noun sec, c3_s por_s, c3_c* hot_c)
     free(hot_c);
     return coc_c;
   }
-  else 
+  else
 #endif
   return _cttp_ccon_new(sec, por_s, hot_c);
 }
