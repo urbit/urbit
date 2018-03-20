@@ -225,7 +225,7 @@ conf_data = configuration_data()
 conf_data.set('URBIT_VERSION', '"0.5.1"')
 
 osdet = build_machine.system()
-os_c_flags = []
+os_c_flags = ['-funsigned-char','-ffast-math']
 os_deps = []
 os_link_flags = []
 
