@@ -1,10 +1,13 @@
 language: c
-script: make && make test # no ./configure
+script: make DEBUG=yes SANITIZE=yes && make test # no ./configure
+compiler: clang
+env:
+  - ASAN_OPTIONS=protect_shadow_gap=false
 
 # Uncomment me if this gets annoying
 #
-# notifications: 
-#   email: false 
+# notifications:
+#   email: false
 
 addons:
   apt:
