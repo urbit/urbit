@@ -1,6 +1,6 @@
 ::                                                      ::
 ::::    /sys/hoon                                       ::
-  ::                                                    ::
+  ::                                                    ::  
 =<  ride
 =>  %143  =>
 ::                                                      ::
@@ -5611,10 +5611,10 @@
           $~  [%base %null]                             ::
           $%  {$base p/base}                            ::  base type
               {$dbug p/spot q/plan}                     ::  set debug
-              {$halo p/what q/plan}                     ::  apply help
               {$leaf p/term q/@}                        ::  constant atom
               {$over p/wing q/plan}                     ::  relative subject
           ::                                            ::
+              {$bcbr p/plan q/hoon}                     ::  verify
               {$bccb p/hoon}                            ::  example
               {$bccl p/{i/plan t/(list plan)}}          ::  tuple
               {$bccn p/{i/plan t/(list plan)}}          ::  selection
@@ -5622,10 +5622,11 @@
               {$bcgr p/plan q/plan}                     ::  filter: require
               {$bchp p/plan q/plan}                     ::  function type
               {$bckt p/plan q/plan}                     ::  pair+tag
-              {$bcvt p/plan q/plan}                     ::  atom+cell
-              {$bcsg p/hoon q/plan}                     ::  default
               {$bcmc p/hoon}                            ::  assembly
+              {$bcpd p/plan q/hoon}                     ::  repair
+              {$bcsg p/hoon q/plan}                     ::  default
               {$bcts p/toga q/plan}                     ::  name
+              {$bcvt p/plan q/plan}                     ::  atom+cell
               {$bcwt p/{i/plan t/(list plan)}}          ::  plain selection
           ==                                            ::
 ++  toga                                                ::  face control
@@ -5678,7 +5679,6 @@
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
-    {$halo p/what q/hoon}                               ::  annotate model
     {$docs p/(pair cord (list sect)) q/hoon}            ::  annotate expression
     {$fits p/hoon q/wing}                               ::  underlying ?=
     {$knit p/(list woof)}                               ::  assemble string
@@ -5717,7 +5717,7 @@
     {$cncb p/wing q/(list (pair wing hoon))}            ::  %_
     {$cndt p/hoon q/hoon}                               ::  %.
     {$cnhp p/hoon q/hoon}                               ::  %-
-    {$cncl p/hoon q/(list hoon)}                        ::  %-
+    {$cncl p/hoon q/(list hoon)}                        ::  %:
     {$cntr p/wing q/hoon r/(list (pair wing hoon))}     ::  %*
     {$cnkt p/hoon q/hoon r/hoon s/hoon}                 ::  %^
     {$cnls p/hoon q/hoon r/hoon}                        ::  %+
@@ -5749,6 +5749,7 @@
     {$sgbc p/term q/hoon}                               ::  ~$  profiler hit
     {$sgls p/@ q/hoon}                                  ::  ~+  cache/memoize
     {$sgpm p/@ud q/hoon r/hoon}                         ::  ~&  printf/priority
+    {$sgpd p/@ud q/hoon r/hoon}                         ::  ~&  printf/priority
     {$sgts p/hoon q/hoon}                               ::  ~=  don't duplicate
     {$sgwt p/@ud q/hoon r/hoon s/hoon}                  ::  ~?  tested printf
     {$sgzp p/hoon q/hoon}                               ::  ~!  type on trace
@@ -5783,6 +5784,7 @@
     {$wtgr p/hoon q/hoon}                               ::  ?>  ?:(p q !!)
     {$wtls p/wing q/hoon r/(list (pair plan hoon))}     ::  ?+  ?-  w/default
     {$wtpm p/(list hoon)}                               ::  ?&  loobean and
+    {$wtpd p/(list hoon)}                               ::  ?&  loobean and
     {$wtvt p/wing q/hoon r/hoon}                        ::  ?@  if p is atom
     {$wtsg p/wing q/hoon r/hoon}                        ::  ?~  if p is null
     {$wtts p/plan q/wing}                               ::  ?=  if q matches p
@@ -6774,10 +6776,10 @@
     ?-  mod
       {$base *}  (basal p.mod)
       {$dbug *}  [%dbug p.mod $(mod q.mod)]
-      {$halo *}  $(mod q.mod)
       {$leaf *}  [%rock p.mod q.mod]
       {$over *}  $(hay p.mod, mod q.mod)
     ::
+      {$bcbr *}  $(mod p.mod)
       {$bccb *}  [%rock %n 0]
       {$bccl *}  |-  ^-  hoon
                  ?~  t.p.mod  ^$(mod i.p.mod) 
@@ -6797,6 +6799,7 @@
       {$bcmc *}  ::  borrow sample
                  ::
                  [%tsgl [%$ 6] p.mod]
+      {$bcpd *}  $(mod p.mod)
       {$bcsg *}  p.mod
       {$bcts *}  [%ktts p.mod $(mod q.mod)]
       {$bcvt *}  $(mod p.mod)
@@ -6821,11 +6824,10 @@
     ::
       {$base *}  (decorate (basal p.mod))
       {$dbug *}  example(mod q.mod, bug [p.mod bug])
-      {$halo *}  example(mod q.mod, doc [p.mod doc])
       {$leaf *}  (decorate [%rock p.mod q.mod])
       {$over *}  example(hay p.mod, mod q.mod)
     ::
-      {$bccb *}  (home p.mod)
+      {$bccb *}  (decorate (home p.mod))
       {$bccl *}  %-  decorate
                  |-  ^-  hoon
                  ?~  t.p.mod
@@ -6844,7 +6846,6 @@
     ^-  hoon
     ::  process annotations outside construct, to catch default
     ::
-    ?:  ?=($halo -.mod)  factory(mod q.mod, doc [p.mod doc])
     ?:  ?=($dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
     ?:  ?=($bcsg -.mod)  factory(mod q.mod, def `p.mod)
     ^-  hoon
@@ -6966,10 +6967,22 @@
     ++  relative
       ::  local constructor
       ::
-      ::  ~&  [%relative axe mod]
       ~+
       ^-  hoon
+      ::  reuse original value if possible
+      ::
+      :+  %sgts  fetch
       ?-    mod
+      ::
+      ::  base
+      ::
+          {$base *}
+        (decorate (basic:clear p.mod))
+      ::
+      ::  debug
+      ::
+          {$dbug *}
+        relative(mod q.mod, bug [p.mod bug])
       ::
       ::  constant
       ::
@@ -6984,40 +6997,69 @@
           {$over *}  
         relative(hay p.mod, mod q.mod)
       ::
-      ::  documentation
+      ::  normalize, $&
       ::
-          {$halo *}
-        relative(doc [p.mod doc], mod q.mod)
+          {$bcpd *}
+        ::  push the raw result  [./1]
+        ::
+        ^-  hoon
+        :+  %tsls  relative(mod p.mod)
+        ::  push repair function  [raw/2 ./3]
+        ::
+        ^-  hoon
+        :+  %tsls
+          [%tsgr $/3 q.mod]
+        ::  push repaired product   [fun/2 raw/6 ./7]
+        ::
+        ^-  hoon
+        :+  %tsls
+          [%cnhp $/2 $/6]
+        ^-  hoon
+        ::  sanity-check repaired product [repair/2 fun/6 raw/14 ./15]
+        ::
+        ^-  hoon
+        ::  assert
+        ::
+        :+  %wtgr 
+          ::  either
+          ::
+          :~  %wtbr 
+              ::  the repair did not change anything
+              ::
+              [%dtts $/14 $/2]
+              ::  when we fix it again, it stays fixed
+              ::
+              [%dtts $/2 [%cnhp $/6 $/2]]
+          ==
+        $/2
       ::
-      ::  debug
+      ::  verify, $|
       ::
-          {$dbug *}
-        relative(mod q.mod, bug [p.mod bug])
+          {$bcbr *}
+        ^-  hoon
+        ::  push the raw product
+        ::
+        :+  %tsls  relative(mod p.mod)
+        ^-  hoon
+        ::  assert
+        ::
+        :+  %wtgr  
+          ::  run the verifier
+          ::
+          [%cnhp [%tsgr $/3 q.mod] $/2]
+        ::  produce verified product
+        ::
+        $/2 
       ::
-      ::  base
+      ::  special, $_
       ::
-          {$base *}
-        (decorate (basic:clear p.mod))
+          {$bccb *}
+        (decorate (home p.mod))
       ::
-      ::  name, $=
-      ::
-          {$bcts *}
-        [%ktts p.mod relative(mod q.mod)]
-      ::
-      ::  default
-      ::
-          {$bcsg *}
-        relative(mod q.mod, def `p.mod)
-      ::
-      ::  choice, $?
-      ::
-          {$bcwt *}
-        (decorate (choice i.p.mod t.p.mod))
-      ::
-      ::  synthesis, $;
-      ::
-          {$bcmc *}
-        (decorate [%cncl (home p.mod) fetch ~])
+      ::  switch, $%
+      :: 
+          {$bccn *}
+        (decorate (switch i.p.mod t.p.mod))
       ::
       ::  tuple, $:
       ::
@@ -7051,11 +7093,6 @@
           [%wtts [%over ~[&/3] p.mod] ~[&/4]]
         $/2
       ::
-      ::  switch, $%
-      :: 
-          {$bccn *}
-        (decorate (switch i.p.mod t.p.mod))
-      ::
       ::  function
       ::
           {$bchp *}  
@@ -7064,15 +7101,6 @@
         ?^  def
           [%ktls fun u.def]
         fun 
-      ::
-      ::  branch, $@
-      ::
-          {$bcvt *}
-        %-  decorate
-        :^    %wtcl
-            [%dtwt fetch]
-          relative:clear(mod q.mod)
-        relative:clear(mod p.mod)
       ::
       ::  bridge, $^
       ::
@@ -7083,10 +7111,34 @@
           relative:clear(mod p.mod) 
         relative:clear(mod q.mod)
       ::
-      ::  bccb, $_
+      ::  synthesis, $;
       ::
-          {$bccb *}
-        (decorate (home p.mod))
+          {$bcmc *}
+        (decorate [%cncl (home p.mod) fetch ~])
+      ::
+      ::  default
+      ::
+          {$bcsg *}
+        relative(mod q.mod, def `p.mod)
+      ::
+      ::  choice, $?
+      ::
+          {$bcwt *}
+        (decorate (choice i.p.mod t.p.mod))
+      ::
+      ::  name, $=
+      ::
+          {$bcts *}
+        [%ktts p.mod relative(mod q.mod)]
+      ::
+      ::  branch, $@
+      ::
+          {$bcvt *}
+        %-  decorate
+        :^    %wtcl
+            [%dtwt fetch]
+          relative:clear(mod q.mod)
+        relative:clear(mod p.mod)
       ==
     --
   --
@@ -7463,13 +7515,17 @@
       :+  %sggr
         [%slog [%sand %$ p.gen] [%cncl [%limb %cain] [%zpgr q.gen] ~]]
       r.gen
+        {$sgpd *}
+      :+  %sggr
+        [%slog [%sand %$ p.gen] [%cncl [%limb %cain] [%zpgr q.gen] ~]]
+      r.gen
     ::
         {$sgts *}  [%sggr [%germ p.gen] q.gen]
         {$sgwt *}
       :+  %tsls  [%wtdt q.gen [%bust %null] [[%bust %null] r.gen]]
       :^  %wtsg  [%& 2]~
         [%tsgr [%$ 3] s.gen]
-      [%sgpm p.gen [%$ 5] [%tsgr [%$ 3] s.gen]]
+      [%sgpd p.gen [%$ 5] [%tsgr [%$ 3] s.gen]]
     ::
         {$mcts *}
       |-
@@ -7615,6 +7671,10 @@
       |-
       ?~(p.gen [%rock %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
     ::
+        {$wtpd *}
+      |-
+      ?~(p.gen [%rock %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
+    ::
         {$xray *}
       |^  :-  [(open-mane n.g.p.gen) %clsg (turn a.g.p.gen open-mart)] 
           [%mcts c.p.gen]
@@ -7756,6 +7816,7 @@
         $sgbc  (lead -.gen %.(+.gen nexp))
         $sgls  (lead -.gen %.(+.gen nexp))
         $sgpm  (lead -.gen %.(+.gen trip))
+        $sgpd  (lead -.gen %.(+.gen trip))
         $sgts  (lead -.gen %.(+.gen dubs))
         $sgwt  (lead -.gen %.(+.gen (quad noop expr expr expr)))
         $sgzp  (lead -.gen %.(+.gen dubs))
@@ -7786,6 +7847,7 @@
         $wtgr  (lead -.gen %.(+.gen dubs))
         $wtls  (lead -.gen %.(+.gen (trio noop expr (moto (twin stir expr)))))
         $wtpm  (lead -.gen %.(+.gen moar))
+        $wtpd  (lead -.gen %.(+.gen moar))
         $wtvt  (lead -.gen %.(+.gen trip))
         $wtsg  (lead -.gen %.(+.gen trip))
         $wtts  (lead -.gen %.(+.gen (twin stir noop)))
@@ -8857,6 +8919,8 @@
     ?:  ?=({$wtts *} gen)
       (cool how q.gen (play ~(example ax fab p.gen)))
     ?:  ?&(how ?=({$wtpm *} gen))
+      |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
+    ?:  ?&(how ?=({$wtpd *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=({$wtbr *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
@@ -11708,7 +11772,7 @@
       :-  '&'
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
-          (stag %wtpm ;~(pfix pad (ifix [lit rit] (most ace wide))))
+          (stag %wtpd ;~(pfix pad (ifix [lit rit] (most ace wide))))
           ;~(plug (stag %rock (stag %f (cold & pad))) wede)
           (stag %sand (stag %f (cold & pad)))
         ==
@@ -11868,14 +11932,16 @@
             ;~  pfix  buc
               %-  stew
               ^.  stet  ^.  limo
-              :~  ['@' (rune vat %bcvt exqb)]
-                  ['_' (rune cab %bccb expa)]
-                  [':' (rune col %bccl exqs)]
+              :~  [':' (rune col %bccl exqs)]
                   ['%' (rune cen %bccn exqs)]
                   ['<' (rune gal %bcgl exqb)]
                   ['>' (rune gar %bcgr exqb)]
                   ['^' (rune ket %bckt exqb)]
                   ['~' (rune sig %bcsg exqd)]
+                  ['|' (rune bar %bcbr exqc)]
+                  ['&' (rune pad %bcpd exqc)]
+                  ['@' (rune vat %bcvt exqb)]
+                  ['_' (rune cab %bccb expa)]
                   ['-' (rune hep %bchp exqb)]
                   ['=' (rune tis %bcts exqg)]
                   ['?' (rune wut %bcwt exqs)]
@@ -11942,6 +12008,8 @@
                   ['%' (stag %bccm (rune cen %bccn exqs))]
                   ['<' (stag %bccm (rune gal %bcgl exqb))]
                   ['>' (stag %bccm (rune gar %bcgr exqb))]
+                  ['|' (stag %bccm (rune bar %bcbr exqc))]
+                  ['&' (stag %bccm (rune pad %bcpd exqc))]
                   ['^' (stag %bccm (rune ket %bckt exqb))]
                   ['~' (stag %bccm (rune sig %bcsg exqd))]
                   ['-' (stag %bccm (rune hep %bchp exqb))]
@@ -12016,7 +12084,7 @@
                   ['<' (rune gal %sggl hinb)]
                   ['>' (rune gar %sggr hinb)]
                   ['+' (rune lus %sgls hinc)]
-                  ['&' (rune pad %sgpm hinf)]
+                  ['&' (rune pad %sgpd hinf)]
                   ['?' (rune wut %sgwt hing)]
                   ['=' (rune tis %sgts expb)]
                   ['!' (rune zap %sgzp expb)]
@@ -12065,7 +12133,7 @@
                   ['^' ;~(pfix ket (toad tkkt))]
                   ['=' ;~(pfix tis (toad txts))]
                   ['+' ;~(pfix lus (toad txls))]
-                  ['&' (rune pad %wtpm exps)]
+                  ['&' (rune pad %wtpd exps)]
                   ['@' ;~(pfix vat (toad tkvt))]
                   ['~' ;~(pfix sig (toad tksg))]
                   ['!' (rune zap %wtzp expa)]
