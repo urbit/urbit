@@ -5612,6 +5612,7 @@
           $%  {$base p/base}                            ::  base type
               {$dbug p/spot q/plan}                     ::  set debug
               {$leaf p/term q/@}                        ::  constant atom
+              {$make p/hoon q/(list plan)}              ::  artificial plan
               {$over p/wing q/plan}                     ::  relative subject
           ::                                            ::
               {$bcbr p/plan q/hoon}                     ::  verify
@@ -5748,7 +5749,6 @@
     {$sggr p/$@(term {p/term q/hoon}) q/hoon}           ::  ~>  forward hint
     {$sgbc p/term q/hoon}                               ::  ~$  profiler hit
     {$sgls p/@ q/hoon}                                  ::  ~+  cache/memoize
-    {$sgpm p/@ud q/hoon r/hoon}                         ::  ~&  printf/priority
     {$sgpd p/@ud q/hoon r/hoon}                         ::  ~&  printf/priority
     {$sgts p/hoon q/hoon}                               ::  ~=  don't duplicate
     {$sgwt p/@ud q/hoon r/hoon s/hoon}                  ::  ~?  tested printf
@@ -5783,7 +5783,6 @@
     {$wtgl p/hoon q/hoon}                               ::  ?<  ?:(p !! q)
     {$wtgr p/hoon q/hoon}                               ::  ?>  ?:(p q !!)
     {$wtls p/wing q/hoon r/(list (pair plan hoon))}     ::  ?+  ?-  w/default
-    {$wtpm p/(list hoon)}                               ::  ?&  loobean and
     {$wtpd p/(list hoon)}                               ::  ?&  loobean and
     {$wtvt p/wing q/hoon r/hoon}                        ::  ?@  if p is atom
     {$wtsg p/wing q/hoon r/hoon}                        ::  ?~  if p is null
@@ -6665,7 +6664,6 @@
           ::
           dom=`axis`1
           hay=*wing
-          doc=*(list what)
           bug=*(list spot)
           def=*(unit hoon)
       ==
@@ -6706,7 +6704,7 @@
   ++  clear
     ::  clear annotations
     ^+  .
-    .(doc ~, bug ~, def ~)
+    .(bug ~, def ~)
   ::
   ++  basal
     ::  example base case
@@ -6749,20 +6747,20 @@
     ::
     |=  gen/hoon
     ^-  hoon
-    ?~  doc  
-      |-  ^-  hoon
-      ?~(bug gen [%dbug i.bug $(bug t.bug)])
-    =/  fin  $(doc t.doc)
-    ?~(i.doc fin [%docs u.i.doc fin])
+    |-  ^-  hoon
+    ?~(bug gen [%dbug i.bug $(bug t.bug)])
   ::
   ++  spore
     ::  build default sample
     ::
     ^-  hoon
-    ::  typeless for now
+    ::  sample is always typeless
     ::
     :+  %ktls
-      [%bust %noun] 
+      [%bust %noun]
+    ::  consume debugging context
+    ::
+    %-  decorate
     ::  use home as subject
     ::
     %-  home
@@ -6777,6 +6775,7 @@
       {$base *}  (basal p.mod)
       {$dbug *}  [%dbug p.mod $(mod q.mod)]
       {$leaf *}  [%rock p.mod q.mod]
+      {$make *}  $(mod [%bcmc %cncl p.mod (turn q.mod |=(plan bccm/+<))])
       {$over *}  $(hay p.mod, mod q.mod)
     ::
       {$bcbr *}  $(mod p.mod)
@@ -6811,12 +6810,12 @@
     ==
   ::
   ++  example
-    ::  produce a correctly typed instance without data
+    ::  produce a correctly typed default instance
     ::
     ~+
     ^-  hoon
     ?+  mod
-      ::  any example can be made by analyzing a spore
+      ::  in the general case, make and analyze a spore
       ::
       :+  %tsls
         spore
@@ -6825,6 +6824,7 @@
       {$base *}  (decorate (basal p.mod))
       {$dbug *}  example(mod q.mod, bug [p.mod bug])
       {$leaf *}  (decorate [%rock p.mod q.mod])
+      {$make *}  example(mod [%bcmc %cncl p.mod (turn q.mod |=(plan bccm/+<))])
       {$over *}  example(hay p.mod, mod q.mod)
     ::
       {$bccb *}  (decorate (home p.mod))
@@ -6853,6 +6853,10 @@
       ::  collapse trivial indirection
       ::
       (decorate (home p.mod))
+    ?:  &(=(~ def) ?=([%make *] mod))
+      ::  collapse trivial indirection
+      ::
+      (decorate (home [%cncl p.mod (turn q.mod |=(plan bccm/+<))]))
     :^  %brcl  ~^~
       [%ktsg spore]
     ~(relative analyze:(descend 7) 6)
@@ -6969,9 +6973,6 @@
       ::
       ~+
       ^-  hoon
-      ::  reuse original value if possible
-      ::
-      :+  %sgts  fetch
       ?-    mod
       ::
       ::  base
@@ -6991,6 +6992,11 @@
         :+  %wtgr
           [%dtts fetch [%rock %$ q.mod]]
         [%rock p.mod q.mod]
+      ::
+      ::  artificial
+      ::
+          {$make *}  
+        relative(mod [%bcmc %cncl p.mod (turn q.mod |=(plan bccm/+<))])
       ::
       ::  subjective
       ::
@@ -7511,10 +7517,6 @@
         {$sggl *}  [%tsgl [%sggr p.gen [%$ 1]] q.gen]
         {$sgbc *}  [%sggr [%live [%rock %$ p.gen]] q.gen]
         {$sgls *}  [%sggr [%memo %rock %$ p.gen] q.gen]
-        {$sgpm *}
-      :+  %sggr
-        [%slog [%sand %$ p.gen] [%cncl [%limb %cain] [%zpgr q.gen] ~]]
-      r.gen
         {$sgpd *}
       :+  %sggr
         [%slog [%sand %$ p.gen] [%cncl [%limb %cain] [%zpgr q.gen] ~]]
@@ -7667,10 +7669,6 @@
         {$wtls *}
       [%wthp p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
     ::
-        {$wtpm *}
-      |-
-      ?~(p.gen [%rock %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
-    ::
         {$wtpd *}
       |-
       ?~(p.gen [%rock %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
@@ -7815,7 +7813,6 @@
         $sggr  (lead -.gen %.(+.gen (twin toad expr)))
         $sgbc  (lead -.gen %.(+.gen nexp))
         $sgls  (lead -.gen %.(+.gen nexp))
-        $sgpm  (lead -.gen %.(+.gen trip))
         $sgpd  (lead -.gen %.(+.gen trip))
         $sgts  (lead -.gen %.(+.gen dubs))
         $sgwt  (lead -.gen %.(+.gen (quad noop expr expr expr)))
@@ -7846,7 +7843,6 @@
         $wtgl  (lead -.gen %.(+.gen dubs))
         $wtgr  (lead -.gen %.(+.gen dubs))
         $wtls  (lead -.gen %.(+.gen (trio noop expr (moto (twin stir expr)))))
-        $wtpm  (lead -.gen %.(+.gen moar))
         $wtpd  (lead -.gen %.(+.gen moar))
         $wtvt  (lead -.gen %.(+.gen trip))
         $wtsg  (lead -.gen %.(+.gen trip))
@@ -8918,8 +8914,6 @@
     |=  {how/? gen/hoon}  ^-  type
     ?:  ?=({$wtts *} gen)
       (cool how q.gen (play ~(example ax fab p.gen)))
-    ?:  ?&(how ?=({$wtpm *} gen))
-      |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(how ?=({$wtpd *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=({$wtbr *} gen))
@@ -11674,12 +11668,12 @@
           ==
         ==
       :-  '('
-        %+  stag  %bcmc
-        %+  stag  %cncl
+        %+  cook  |=(plan +<)
+        %+  stag  %make
         %+  ifix  [lit rit]
         ;~  plug
           wide
-          ;~(pose ;~(pfix ace (most ace (stag %bccm wyde))) (easy ~))
+          ;~(pose ;~(pfix ace (most ace wyde)) (easy ~))
         ==
       :-  '{'
         (stag %bccl (ifix [leb reb] (most ace wyde)))
@@ -11949,32 +11943,31 @@
               ==
             ==
         :-  '%'
-          %+  stag  %bcmc
           ;~  pfix  cen
             %-  stew
             ^.  stet  ^.  limo
             :~  :-  '^' 
                 %+  cook  
                   |=  [%cnkt a/hoon b/plan c/plan d/plan] 
-                  [%cnkt a bccm/b bccm/c bccm/d]
+                  [%make a b c d ~]
                 (rune ket %cnkt exqy)
             ::
                 :-  '+'
                 %+  cook
                   |=  [%cnls a/hoon b/plan c/plan] 
-                  [%cnls a bccm/b bccm/c]
+                  [%make a b c ~]
                 (rune lus %cnls exqx)
             ::
                 :-  '-' 
                 %+  cook
                   |=  [%cnhp a/hoon b/plan] 
-                  [%cnhp a bccm/b]
+                  [%make a b ~]
                 (rune hep %cnhp exqd)
             ::
                 :-  ':'
                 %+  cook
                   |=  [%cncl a/hoon b/(list plan)]
-                  [%cncl a (turn b |=(plan bccm/+<))]
+                  [%make a b]
                 (rune col %cncl exqz)
             ==
           ==
