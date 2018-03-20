@@ -826,6 +826,29 @@
       ::
       [%dependency =dependency]
   ==
+--
+|%
+::  +unify-jugs: make a new jug, unifying sets for all keys
+::
+++  unify-jugs
+  |*  [a=(jug) b=(jug)]
+  ^+  a
+  ::
+  =/  tapped  ~(tap by b)
+  ::
+  |-  ^+  a
+  ?~  tapped  a
+  ::
+  =/  key  p.i.tapped
+  =/  vals  ~(tap in q.i.tapped)
+  ::
+  =.  a
+    |-  ^+  a
+    ?~  vals  a
+    ::
+    $(vals t.vals, a (~(put ju a) key i.vals))
+  ::
+  $(tapped t.tapped)
 ::  +by-schematic: door for manipulating :builds-by-schematic.ford-state
 ::
 ++  by-schematic
@@ -862,8 +885,6 @@
     ::
     builds
   --
---
-|%
 ::  +ev: per-event core
 ::
 ++  ev
@@ -954,8 +975,7 @@
       |=  [=block that=_this]
       ?-    -.block
           %build
-        =.  that  (execute:that build.block live)
-        that
+        (execute:that build.block live)
       ::
           %dependency
         !!

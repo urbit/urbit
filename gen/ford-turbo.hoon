@@ -10,6 +10,7 @@
 ^-  wall
 ;:  weld
   test-compiles
+  test-unify-jugs
   test-literal
   test-autocons-same
   test-autocons-different
@@ -18,6 +19,15 @@
   ~&  %test-compiles
   %-  expect-eq  !>
   [ford-turbo ford-turbo]
+::
+++  test-unify-jugs
+  ~&  %test-unify-jugs
+  %-  expect-eq  !>
+  :-  %+  unify-jugs:ford
+        `(jug @tas @ud)`(my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 ~)]])
+      `(jug @tas @ud)`(my ~[[%b (sy 5 6 ~)] [%c (sy 7 8 ~)]])
+  ::
+  `(jug @tas @ud)`(my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 5 6 ~)] [%c (sy 7 8 ~)]])
 ::
 ++  test-literal
   ~&  %test-literal
