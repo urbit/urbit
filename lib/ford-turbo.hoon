@@ -1187,27 +1187,9 @@
       ?~  kids  all-deps
       ::
       =/  grandkids  ~(tap in (~(get ju sub-builds.components.state) i.kids))
-      =/  kid-deps-set  (~(get by dependencies.state) i.kids)
-      =/  kid-deps  ~(tap by (fall kid-deps-set ~))
-      ::  TODO replace with ~(uni ju all-deps) kid-deps), requires +uni:ju
+      =/  kid-deps  (fall (~(get by dependencies.state) i.kids) ~)
       ::
-      =/  unified-deps
-        |-  ^+  all-deps
-        ?~  kid-deps  all-deps
-        ::
-        ::=+  [disc deps-set]=i.kid-deps is broken because of q face?
-        =/  disc=disc  p.i.kid-deps
-        =/  deps-set=(set dependency)  q.i.kid-deps
-        =/  deps  ~(tap in deps-set)
-        =.  all-deps
-          |-  ^+  all-deps
-          ?~  deps  all-deps
-          ::
-          $(deps t.deps, all-deps (~(put ju all-deps) disc i.deps))
-        ::
-        $(kid-deps t.kid-deps)
-      ::
-      $(kids (weld t.kids grandkids), all-deps unified-deps)
+      $(kids (weld t.kids grandkids), all-deps (unify-jugs all-deps kid-deps))
     ::  remove :build's direct dependencies
     ::
     =.  dependencies.state  (~(del by dependencies.state) build)
