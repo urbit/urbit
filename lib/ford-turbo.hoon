@@ -88,13 +88,13 @@
         [%clay-live ren=care:clay bel=(pair disc spur)]
         ::  once dependency on a clay path; pinned time
         ::
-        [%clay-once ren=care:clay bem=beam]
+        [%clay-once ren=care:clay =beam]
         ::  live dependency on a gall path; varies with time
         ::
         [%gall-live ren=care:clay bel=(pair disc spur)]
         ::  once dependency on a gall path; pinned time
         ::
-        [%gall-once ren=care:clay bem=beam]
+        [%gall-once ren=care:clay =beam]
     ==
   ::  +build-result: the referentially transparent result of a +build
   ::
@@ -284,7 +284,7 @@
         $:  %scry
             ::  request: the request to be made against the namespace
             ::
-            request=dependency
+            =dependency
         ==
         ::  %slim: compile a hoon against a subject type
         ::
@@ -816,6 +816,23 @@
       ::
       [%tombstone ~]
   ==
+::  +make-product: the result of running +make
+::
++=  make-product
+  $:  ::  result: result of running a build
+      ::
+      $=  result
+      $%  ::  %build-result: the build completed
+          ::
+          [%build-result =build-result]
+          ::  %blocks: the build is waiting on something else
+          ::
+          [%blocks blocks=(set block)]
+      ==
+      ::  possibly mutated version of the rest of the persistent state
+      ::
+      ford-state
+  ==
 ::  +block: something a build can get stuck on
 ::
 +=  block
@@ -827,6 +844,7 @@
       [%dependency =dependency]
   ==
 --
+=,  format
 |%
 ::  +unify-jugs: make a new jug, unifying sets for all keys
 ::
@@ -984,12 +1002,7 @@
   ::
   ++  make
     |=  =build
-    ^-  $:  $=  result
-            $%  [%build-result =build-result]
-                [%blocks blocks=(set block)]
-            ==
-            ford-state
-        ==
+    ^-  make-product
     ::
     |^
     ?-    -.schematic.build
@@ -1013,7 +1026,7 @@
         %ride  !!
         %slit  !!
         %slim  !!
-        %scry  !!
+        %scry  (scry dependency.schematic.build)
         %vale  !!
         %volt  !!
     ::
@@ -1027,11 +1040,11 @@
     ==
     ::
     ++  literal
-      |=  =cage
+      |=  =cage  ^-  make-product
       [[%build-result %result %$ cage] state]
     ::
     ++  autocons
-      |=  [head=schematic tail=schematic]
+      |=  [head=schematic tail=schematic]  ^-  make-product
       ::
       =^  head-result  state  (depend-on head)
       =^  tail-result  state  (depend-on tail)
@@ -1050,6 +1063,46 @@
       ::
       =-  [[%build-result -] state]
       `build-result`[%result u.head-result u.tail-result]
+    ::
+    ++  scry
+      |=  =dependency  ^-  make-product
+      ?-    -.dependency
+          %clay-live  !!
+          %clay-once
+        ::  link :dependency to :build
+        ::
+        =.  dependencies.state
+          %+  ~(put by dependencies.state)  build
+          %-  ~(put ju (fall (~(get by dependencies.state) build) ~))
+          =*  disc  [p q]:beam.dependency
+          ::
+          [disc dependency]
+        ::  perform the scry operation
+        ::
+        =/  scry-response
+          (^scry ~ ~ `@tas`(cat 3 %c ren.dependency) beam.dependency)
+        ::  scry blocked
+        ::
+        ?~  scry-response
+          ^-  make-product
+          [[%blocks (sy [%dependency dependency]~)] state]
+        ::  scry failed
+        ::
+        ?~  u.scry-response
+          =/  error=tang
+            :~  leaf+"clay-live scry failed for"
+                leaf+"%{<ren.dependency>} {<(en-beam beam.dependency)>}"
+            ==
+          ^-  make-product
+          [[%build-result %error error] state]
+        ::  scry succeeded
+        ::
+        ^-  make-product
+        [[%build-result %result %scry u.u.scry-response] state]
+       ::
+          %gall-live  !!
+          %gall-once  !!
+      ==
     ::  |utilities: helper arms
     ::
     ::+|  utilities

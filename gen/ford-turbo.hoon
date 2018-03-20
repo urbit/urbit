@@ -14,6 +14,7 @@
   test-literal
   test-autocons-same
   test-autocons-different
+  test-scry-clay
 ==
 ++  test-compiles
   ~&  %test-compiles
@@ -91,6 +92,38 @@
             %result
             [%result %$ %noun !>(42)]
             [%result %$ %noun !>(43)]
+    ==  ==
+  ::
+  %-  expect-eq  !>
+  :-  state-by-ship.+>+<.ford
+  (my [~nul *ford-state:ford-turbo]~)
+::
+++  test-scry-clay
+  ~&  %test-scry-clay
+  =/  scry
+    |=  [* (unit (set monk)) =term =beam]
+    ^-  (unit (unit cage))
+    ::
+    ?>  =(term %cx)
+    ?>  =(beam [[~nul %desk %da ~1234.5.6] /foo/bar])
+    ::
+    [~ ~ %noun !>(42)]
+  ::
+  =.  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =^  moves  ford
+    %-  call:ford
+    :*  duct=~
+        type=~
+        %make
+        ~nul
+        plan=[%scry %clay-once ren=%x bem=[[~nul %desk %da ~1234.5.6] /foo/bar]]
+        date=`~1234.5.6
+    ==
+  %+  welp
+    %-  expect-eq  !>
+    :-  moves
+    :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
+            [%scry %noun !>(42)]
     ==  ==
   ::
   %-  expect-eq  !>
