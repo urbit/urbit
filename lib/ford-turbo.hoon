@@ -1091,7 +1091,7 @@
         ?~  u.scry-response
           =/  error=tang
             :~  leaf+"clay-live scry failed for"
-                leaf+"%{<ren.dependency>} {<(en-beam beam.dependency)>}"
+                leaf+"%c{(trip ren.dependency)} {<(en-beam beam.dependency)>}"
             ==
           ^-  make-product
           [[%build-result %error error] state]

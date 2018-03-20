@@ -14,7 +14,8 @@
   test-literal
   test-autocons-same
   test-autocons-different
-  test-scry-clay
+  test-scry-clay-succeed
+  test-scry-clay-fail
 ==
 ++  test-compiles
   ~&  %test-compiles
@@ -98,8 +99,8 @@
   :-  state-by-ship.+>+<.ford
   (my [~nul *ford-state:ford-turbo]~)
 ::
-++  test-scry-clay
-  ~&  %test-scry-clay
+++  test-scry-clay-succeed
+  ~&  %test-scry-clay-succeed
   =/  scry
     |=  [* (unit (set monk)) =term =beam]
     ^-  (unit (unit cage))
@@ -125,6 +126,39 @@
     :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
             [%scry %noun !>(42)]
     ==  ==
+  ::
+  %-  expect-eq  !>
+  :-  state-by-ship.+>+<.ford
+  (my [~nul *ford-state:ford-turbo]~)
+::
+++  test-scry-clay-fail
+  ~&  %test-scry-clay-fail
+  =/  scry
+    |=  [* (unit (set monk)) =term =beam]
+    ^-  (unit (unit cage))
+    ::
+    ?>  =(term %cx)
+    ?>  =(beam [[~nul %desk %da ~1234.5.6] /bar/foo])
+    ::
+    [~ ~]
+  ::
+  =.  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =^  moves  ford
+    %-  call:ford
+    :*  duct=~
+        type=~
+        %make
+        ~nul
+        plan=[%scry %clay-once ren=%x bem=[[~nul %desk %da ~1234.5.6] /bar/foo]]
+        date=`~1234.5.6
+    ==
+  %+  welp
+    %-  expect-eq  !>
+    :-  moves
+    :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %error
+        :~  leaf+"clay-live scry failed for"
+            leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
+    ==  ==  ==
   ::
   %-  expect-eq  !>
   :-  state-by-ship.+>+<.ford
