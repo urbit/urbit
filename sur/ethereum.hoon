@@ -36,7 +36,7 @@
 ::  supported requests.
 ++  request
   $%  [%eth-block-number ~]
-      [%eth-call cal=call deb=default-block]
+      [%eth-call cal=call deb=block]
   ==
 ::
 ::  data for eth_call.
@@ -50,8 +50,8 @@
   ==
 ::
 ::  block to operate on.
-++  default-block
-  $%  [%quantity n=@ud]
+++  block
+  $%  [%number n=@ud]
       [%label l=?(%earliest %latest %pending)]
   ==
 --

@@ -53,7 +53,7 @@
       %eth-call
     :-  'eth_call'
     :~  (eth-call-to-json cal.req)
-        (default-block-to-json deb.req)
+        (block-to-json deb.req)
     ==
   ==
 ::
@@ -81,12 +81,12 @@
       `['data' s+(crip data.cal)]
   ==
 ::
-++  default-block-to-json
-  |=  dob=default-block
+++  block-to-json
+  |=  dob=block
   ^-  json
   ?-  -.dob
-    %quantity   n+(crip ((d-co:co 0) n.dob))
-    %label      s+l.dob
+    %number   n+(crip ((d-co:co 0) n.dob))
+    %label    s+l.dob
   ==
 ::
 ::  decoding
