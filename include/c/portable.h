@@ -189,3 +189,10 @@
 #      else
 #        define c3_rand u3_sist_rand
 #      endif
+
+/* Static assertion
+ */
+#define ASSERT_CONCAT_(a, b) a##b
+#define ASSERT_CONCAT(a, b) ASSERT_CONCAT_(a, b)
+#define STATIC_ASSERT(e,m) \
+        ;enum { ASSERT_CONCAT(assert_line_, __LINE__) = 1/(int)(!!(e)) }
