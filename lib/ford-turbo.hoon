@@ -1113,7 +1113,7 @@
       ::
       =?  completed-builds  (~(has by listeners.state) build)
         [build completed-builds]
-      ::  recurse "upward" into client builds now that :build is done 
+      ::  recurse "upward" into client builds now that :build is done
       ::
       =/  clients=(list ^build)
         ~(tap in (fall (~(get by client-builds.components.state) build) ~))
