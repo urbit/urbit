@@ -117,9 +117,14 @@
                 [%call vase]
                 [%cast cage]
                 [%core vase]
+                [%diff cage]
                 [%dude build-result]
                 [%file cage]
                 [%hood scaffold]
+                [%join cage]
+                [%mash cage]
+                [%mute cage]
+                [%pact cage]
                 [%path (pair disc spur)]
                 [%plan vase]
                 [%reef vase]
@@ -129,14 +134,6 @@
                 [%scry cage]
                 [%vale cage]
                 [%volt cage]
-            ::
-            ::  clay diff and merge operations
-            ::
-                [%diff cage]
-                [%join cage]
-                [%mash cage]
-                [%mute cage]
-                [%pact cage]
     ==  ==  ==
   ::
   ::  +schematic: plan for building
@@ -219,6 +216,19 @@
             ::
             source-path=rail
         ==
+        ::  %diff: produce marked diff from :first to :second
+        ::
+        $:  %diff
+            ::  location: where in clay to load the mark from
+            ::
+            location=view
+            ::  old: schematic producing data to be used as diff starting point
+            ::
+            start=schematic
+            ::  new: schematic producing data to be used as diff ending point
+            ::
+            end=schematic
+        ==
         ::  %dude: wrap a failure's error message with an extra message
         ::
         $:  %dude
@@ -235,6 +245,64 @@
             ::  source-path: clay path from which to load hoon source
             ::
             source-path=rail
+        ==
+        ::  %join: merge two diffs into one diff; produces `~` if conflicts
+        ::
+        $:  %join
+            ::  location: where in clay to load the mark from
+            ::
+            location=view
+            ::  mark: name of the mark to use for diffs; also file path in mar/
+            ::
+            mark=term
+            ::  first: schematic producing first diff
+            ::
+            first=schematic
+            ::  second: schematic producing second diff
+            ::
+            second=schematic
+        ==
+        ::  %mash: force a merge, annotating any conflicts
+        ::
+        $:  %mash
+            ::  location: where in clay to load the mark from
+            ::
+            location=view
+            ::  mark: name of mark used in diffs; also file path in mar/
+            ::
+            mark=term
+            ::  first: schematic producing first diff
+            ::
+            first=schematic
+            ::  second: schematic producing second diff
+            ::
+            second=schematic
+        ==
+        ::  %mute: mutate a noun by replacing its wings with new values
+        ::
+        $:  %mute
+            ::  subject: schematic producing the noun to mutate
+            ::
+            subject=schematic
+            ::  mutations: axes and schematics to produce their new contents
+            ::
+            mutations=(list (pair wing schematic))
+        ==
+        ::  %pact: patch a marked noun by applying a diff
+        ::
+        $:  %pact
+            ::  location: where in clay to load the mark from
+            ::
+            location=view
+            ::  mark: name of mark to use in diff; also file path in mar/
+            ::
+            mark=term
+            ::  start: schematic producing a noun to be patched
+            ::
+            start=schematic
+            ::  diff: schematic producing the diff to apply to :start
+            ::
+            diff=schematic
         ==
         ::  %path: resolve a path with `-`s to a path with `/`s
         ::
@@ -331,80 +399,6 @@
             ::  input: the noun to be converted using the mark
             ::
             input=*
-        ==
-    ::
-    ::  clay diff and merge operations
-    ::
-        ::  %diff: produce marked diff from :first to :second
-        ::
-        $:  %diff
-            ::  location: where in clay to load the mark from
-            ::
-            location=view
-            ::  old: schematic producing data to be used as diff starting point
-            ::
-            start=schematic
-            ::  new: schematic producing data to be used as diff ending point
-            ::
-            end=schematic
-        ==
-        ::  %join: merge two diffs into one diff; produces `~` if conflicts
-        ::
-        $:  %join
-            ::  location: where in clay to load the mark from
-            ::
-            location=view
-            ::  mark: name of the mark to use for diffs; also file path in mar/
-            ::
-            mark=term
-            ::  first: schematic producing first diff
-            ::
-            first=schematic
-            ::  second: schematic producing second diff
-            ::
-            second=schematic
-        ==
-        ::  %mash: force a merge, annotating any conflicts
-        ::
-        $:  %mash
-            ::  location: where in clay to load the mark from
-            ::
-            location=view
-            ::  mark: name of mark used in diffs; also file path in mar/
-            ::
-            mark=term
-            ::  first: schematic producing first diff
-            ::
-            first=schematic
-            ::  second: schematic producing second diff
-            ::
-            second=schematic
-        ==
-        ::  %mute: mutate a noun by replacing its wings with new values
-        ::
-        $:  %mute
-            ::  subject: schematic producing the noun to mutate
-            ::
-            subject=schematic
-            ::  mutations: axes and schematics to produce their new contents
-            ::
-            mutations=(list (pair wing schematic))
-        ==
-        ::  %pact: patch a marked noun by applying a diff
-        ::
-        $:  %pact
-            ::  location: where in clay to load the mark from
-            ::
-            location=view
-            ::  mark: name of mark to use in diff; also file path in mar/
-            ::
-            mark=term
-            ::  start: schematic producing a noun to be patched
-            ::
-            start=schematic
-            ::  diff: schematic producing the diff to apply to :start
-            ::
-            diff=schematic
         ==
     ==
   ::
@@ -563,6 +557,7 @@
             ::    resulting map are the basenames of the files in the directory,
             ::    and each value is the result of running that crane on the
             ::    contents of the file.
+            ::
             %fscb
             =crane
         ==
@@ -821,6 +816,7 @@
           ::
           ::    Updated every time this result is used in another build or
           ::    requested in a build request.
+          ::
           last-accessed=@da
           ::  build-result: the referentially transparent result of a +build
           ::
@@ -888,6 +884,9 @@
   $(tapped t.tapped)
 ::  +to-wire: encode a +dependency in a +wire
 ::
+::    If :dependency is live, create a +beam from :bel.dependency
+::    by using revision 0 as the +case and encode that.
+::
 ++  to-wire
   |=  =dependency
   ^-  wire
@@ -914,6 +913,7 @@
         ::
         (encode %g care.dependency | beam.dependency)
       ==
+  ::  +encode:to-wire: encode :vane, :care, :live, and :beam into a +wire
   ::
   ++  encode
     |=  [vane=?(%c %g) care=care:clay live=? =beam]
@@ -928,6 +928,7 @@
   ^-  dependency
   ::
   ?>  ?=([@ @ @ *] wire)
+  ::  parse :wire's components into :vane, :care, :live, and :beam
   ::
   =/  vane  ((hard ?(%c %g)) i.wire)
   =/  care  ((hard care:clay) i.t.wire)
@@ -946,12 +947,17 @@
   [%gall-live care bel]
 ::  +by-schematic: door for manipulating :builds-by-schematic.ford-state
 ::
+::    The :dates list for each key in :builds is sorted in reverse
+::    chronological order. These operations access and mutate keys and values
+::    of :builds and maintain that sort order.
+::
 ++  by-schematic
   |_  builds=(map schematic (list @da))
   ::  +put: add a +build to :builds
   ::
-  ::    The :dates in :build-by-schematic are sorted in reverse
-  ::    chronological order.
+  ::    If :build already exists in :builds, this is a no-op.
+  ::    Otherwise, replace the value at the key :schematic.build
+  ::    with a new :dates list that contains :date.build.
   ::
   ++  put
     |=  =build
@@ -963,6 +969,11 @@
       dates
     (sort [date.build dates] gte)
   ::  +del: remove a +build from :builds
+  ::
+  ::    Removes :build from :builds by replacing the value at
+  ::    the key :schematic.build with a new :dates list with
+  ::    :date.build omitted. If the resulting :dates list is
+  ::    empty, then remove the key-value pair from :builds.
   ::
   ++  del
     |=  =build
@@ -992,6 +1003,7 @@
   ::    Otherwise, the value will contain a +cage.
   ::
   =|  scry-results=(map dependency (unit cage))
+  ::  the +per-event door; each event will have a different sample
   ::
   |_  [[our=@p =duct now=@da scry=sley] state=ford-state]
   ::  |entry-points: externally fired arms
@@ -1026,13 +1038,30 @@
     (execute build)
   ::
   ++  rebuild  !!
+  ::  +unblock: continue builds that had blocked on :dependency
+  ::
   ++  unblock
     |=  [=dependency scry-result=(unit cage)]
     ^-  [(list move) ford-state]
     ::
     =<  (finalize moves=-)
+    ::  find all the :blocked-builds to continue
     ::
     =/  blocked-builds  ~(tap in (~(get ju blocks.state) dependency))
+    ::  place :scry-result in :scry-results.per-event
+    ::
+    ::    We don't want to call the actual +scry function again,
+    ::    because we already tried that in a previous event and it
+    ::    had no synchronous answer. This +unblock call is a result
+    ::    of the response to the asynchronous request we made to
+    ::    retrieve that resource from another vane.
+    ::
+    ::    Instead, we'll intercept any calls to +scry by looking up
+    ::    the arguments in :scry-results.per-event. This is ok because
+    ::    in this function we attempt to run every +build that had
+    ::    blocked on the resource, so the information is guaranteed
+    ::    to be used during this event before it goes out of scope.
+    ::
     =.  scry-results  (~(put by scry-results) dependency scry-result)
     ::
     =|  moves=(list move)
@@ -1048,6 +1077,14 @@
   ::
   ::+|  construction
   ::
+  ::  +execute: main recursive construction algorithm
+  ::
+  ::    Runs +make on :build if necessary, and recurses potentially
+  ::    "upward" to :build's clients and "downward" to :build's sub-builds.
+  ::    Enqueues moves to Clay to request resources for blocked +scry
+  ::    operations and places completed root builds in :completed-builds
+  ::    to be processed at the end of the event.
+  ::
   ++  execute
     |=  =build
     ^-  [(list move) _this]
@@ -1057,13 +1094,16 @@
     ::
     ?^  (~(get by results.state) build)
       [~ this]
+    ::  the build isn't complete, so try running +make on it
     ::
     =^  made  state  (make build)
+    ::  dispatch on the product of +make
     ::
     ?-    -.result.made
         ::  %build-result: build completed and produced its result
         ::
         %build-result
+      ::  place completed result in persistent cache
       ::
       =*  cache-entry
         [%result last-accessed=now build-result=build-result.result.made]
@@ -1073,7 +1113,7 @@
       ::
       =?  completed-builds  (~(has by listeners.state) build)
         [build completed-builds]
-      ::  run :build's clients now that it's done
+      ::  recurse "upward" into client builds now that :build is done 
       ::
       =/  clients=(list ^build)
         ~(tap in (fall (~(get by client-builds.components.state) build) ~))
@@ -1092,6 +1132,7 @@
       ::
       =/  blocks  ~(tap in blocks.result.made)
       =|  moves=(list move)
+      ::  recurse "downward" into the builds we blocked on
       ::
       |-  ^+  [moves this]
       ?~  blocks  [moves this]
@@ -1099,7 +1140,7 @@
       =*  block  i.blocks
       ::
       ?-    -.block
-          ::  %build: :build got stuck on another +build
+          ::  %build: :build blocked on a sub-build, so run the sub-build
           ::
           %build
         ::
@@ -1107,7 +1148,12 @@
         ::
         $(moves (welp moves new-moves), blocks t.blocks)
       ::
-          ::  %dependency: :build got stuck on an external +dependency
+          ::  %dependency: :build blocked on a +dependency
+          ::
+          ::    Enqueue a request +move to fetch the blocked resource.
+          ::    Link :block and :build in :blocks.state so we know
+          ::    which build to rerun in a later event when we +unblock
+          ::    on that +dependency.
           ::
           %dependency
         ::
@@ -1132,10 +1178,16 @@
         [[move moves] this]
       ==
     ==
+  ::  +make: attempt to perform :build, non-recursively
+  ::
+  ::    Registers component linkages between :build and its sub-builds.
+  ::    Attempts to perform +scry if necessary. Does not directly enqueue
+  ::    any moves.
   ::
   ++  make
     |=  =build
     ^-  make-product
+    ::  dispatch based on the kind of +schematic in :build
     ::
     |^  ?-    -.schematic.build
         ::
@@ -1149,9 +1201,14 @@
             %call  !!
             %cast  !!
             %core  !!
+            %diff  !!
             %dude  !!
             %file  !!
             %hood  !!
+            %join  !!
+            %mash  !!
+            %mute  !!
+            %pact  !!
             %path  !!
             %plan  !!
             %reef  !!
@@ -1161,14 +1218,6 @@
             %scry  (scry dependency.schematic.build)
             %vale  !!
             %volt  !!
-        ::
-        ::  clay diff and merge operations
-        ::
-            %diff  !!
-            %join  !!
-            %mash  !!
-            %mute  !!
-            %pact  !!
         ==
     ::
     ++  literal
@@ -1211,6 +1260,9 @@
           [disc dependency]
         ::  perform scry operation if we don't already know the result
         ::
+        ::    Look up :dependency in :scry-results.per-event to avoid
+        ::    rerunning a previously blocked +scry.
+        ::
         =/  scry-response
           ?:  (~(has by scry-results) dependency)
             (~(get by scry-results) dependency)
@@ -1237,11 +1289,11 @@
           %gall-live  !!
           %gall-once  !!
       ==
-    ::  |utilities: helper arms
+    ::  |utilities:make: helper arms
     ::
     ::+|  utilities
     ::
-    ::  +depend-on: register dependency on a sub-build
+    ::  +depend-on: register component linkage between :build and :kid
     ::
     ++  depend-on
       |=  kid=schematic
@@ -1273,12 +1325,16 @@
       ::
       [`build-result.cache-line state]
     --
-  ::  |utilities:
+  ::  |utilities:per-event: helper arms
   ::
   ::+|  utilities
   ::
   ++  this  .
-  ::  +finalize: convert local state to moves and persistent state
+  ::  +finalize: convert per-event state to moves and persistent state
+  ::
+  ::    Converts :completed-builds to %made +move's, performs +duct
+  ::    accounting, and runs +cleanup on completed once builds and
+  ::    stale live builds.
   ::
   ::    TODO: needs rework to support live builds
   ::
@@ -1471,15 +1527,15 @@
    ::
    ::    First, we find or create the :ship-state for :our.task,
    ::    modifying :state-by-ship as necessary. Then we dispatch to the |ev
-   ::    by constructing :event-args and using them to create a :build-func
-   ::    that performs the build. The result of :build-func is a pair of
+   ::    by constructing :event-args and using them to create :start-build,
+   ::    which performs the build. The result of :start-build is a pair of
    ::    :moves and a mutant :ship-state. We update our :state-by-ship map
    ::    with the new :ship-state and produce it along with :moves.
    ::
    =^  ship-state  state-by-ship  (find-or-create-ship-state our.task)
    =*  event-args  [[our.task duct now scry] ship-state]
-   =*  build-func  ~(start-build per-event event-args)
-   =^  moves  ship-state  (build-func schematic.task date.task)
+   =*  start-build  ~(start-build per-event event-args)
+   =^  moves  ship-state  (start-build schematic.task date.task)
    =.  state-by-ship  (~(put by state-by-ship) our.task ship-state)
    ::
    [moves this]
@@ -1503,25 +1559,34 @@
   ::  TODO: support other responses
   ::
   ?>  ?=([%c %writ *] sign)
+  ::  scry-result: parse a (unit cage) from :sign
+  ::
+  ::    If the result is `~`, the requested resource was not available.
   ::
   =/  scry-result=(unit cage)
     ?~  riot.sign
       ~
     `r.u.riot.sign
-  ::  parse :wire
-  ::
-  ::    TODO: move to separate function
+  ::  parse :wire into :our, :ship-state, and :dependency
   ::
   ?>  ?=([@ @ *] wire)
   =/  our=@p  (slav %p i.wire)
+  ::  we know :our is already in :state-by-ship because we sent this request
+  ::
   =/  ship-state  (~(got by state-by-ship) our)
   =/  dependency  (from-wire t.wire)
+  ::  unblock the builds that had blocked on :dependency
+  ::
+  ::    First, we create :event-args and use them as the sample for
+  ::    +unblock:per-event. Then grab :moves and a mutated :ship-state
+  ::    from the result of that call, and place the new :ship-state
+  ::    back in :state-by-ship.state.
   ::
   ::  TODO check whether we need rebuild or unblock
   ::
   =*  event-args  [[our duct now scry] ship-state]
-  =*  build-func  ~(unblock per-event event-args)
-  =^  moves  ship-state  (build-func dependency scry-result)
+  =*  unblock  ~(unblock per-event event-args)
+  =^  moves  ship-state  (unblock dependency scry-result)
   =.  state-by-ship  (~(put by state-by-ship) our ship-state)
   ::
   [moves this]
