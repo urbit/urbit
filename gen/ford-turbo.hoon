@@ -202,7 +202,7 @@
     %-  expect-eq  !>
     :-  moves
     :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %error
-        :~  leaf+"clay-live scry failed for"
+        :~  leaf+"clay-once scry failed for"
             leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
     ==  ==  ==
   ::
@@ -220,17 +220,15 @@
     ?>  =(beam [[~nul %desk %da ~1234.5.6] /bar/foo])
     ::
     ~
+  ::  scry-is-forbidden: makes sure ford does not attempt to scry
   ::
-  =/  scry-succeed
+  =/  scry-is-forbidden
     |=  [* (unit (set monk)) =term =beam]
     ^-  (unit (unit cage))
     ::
     ~|  term+term
-    ?>  =(term %cx)
     ~|  beam+beam
-    ?>  =(beam [[~nul %desk %da ~1234.5.6] /bar/foo])
-    ::
-    [~ ~ %noun !>(42)]
+    !!
   ::
   =.  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-block)
   =^  moves  ford
@@ -250,7 +248,7 @@
             ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
     ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-succeed)
+  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-is-forbidden)
   ::
   =^  moves2  ford
     %-  take:ford

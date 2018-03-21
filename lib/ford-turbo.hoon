@@ -986,6 +986,12 @@
   ::  completed-builds: root builds completed in this event, in reverse order
   ::
   =|  completed-builds=(list build)
+  ::  scry-results: responses to scry's to handle in this event
+  ::
+  ::    If a value is `~`, the requested resource is not available.
+  ::    Otherwise, the value will contain a +cage.
+  ::
+  =|  scry-results=(map dependency (unit cage))
   ::
   |_  [[our=@p =duct now=@da scry=sley] state=ford-state]
   ::  |entry-points: externally fired arms
@@ -1021,12 +1027,13 @@
   ::
   ++  rebuild  !!
   ++  unblock
-    |=  =dependency
+    |=  [=dependency scry-result=(unit cage)]
     ^-  [(list move) ford-state]
     ::
     =<  (finalize moves=-)
     ::
     =/  blocked-builds  ~(tap in (~(get ju blocks.state) dependency))
+    =.  scry-results  (~(put by scry-results) dependency scry-result)
     ::
     =|  moves=(list move)
     |-  ^+  [moves this]
@@ -1202,9 +1209,11 @@
           =*  disc  [p q]:beam.dependency
           ::
           [disc dependency]
-        ::  perform the scry operation
+        ::  perform scry operation if we don't already know the result
         ::
         =/  scry-response
+          ?:  (~(has by scry-results) dependency)
+            (~(get by scry-results) dependency)
           (^scry ~ ~ `@tas`(cat 3 %c care.dependency) beam.dependency)
         ::  scry blocked
         ::
@@ -1215,7 +1224,7 @@
         ::
         ?~  u.scry-response
           =/  error=tang
-            :~  leaf+"clay-live scry failed for"
+            :~  leaf+"clay-once scry failed for"
                 leaf+"%c{(trip care.dependency)} {<(en-beam beam.dependency)>}"
             ==
           ^-  make-product
@@ -1491,6 +1500,14 @@
   ::    TODO: verify wrapped-sign isn't an evil vase?
   ::
   =/  sign=sign  q.wrapped-sign
+  ::  TODO: support other responses
+  ::
+  ?>  ?=([%c %writ *] sign)
+  ::
+  =/  scry-result=(unit cage)
+    ?~  riot.sign
+      ~
+    `r.u.riot.sign
   ::  parse :wire
   ::
   ::    TODO: move to separate function
@@ -1504,7 +1521,7 @@
   ::
   =*  event-args  [[our duct now scry] ship-state]
   =*  build-func  ~(unblock per-event event-args)
-  =^  moves  ship-state  (build-func dependency)
+  =^  moves  ship-state  (build-func dependency scry-result)
   =.  state-by-ship  (~(put by state-by-ship) our ship-state)
   ::
   [moves this]
