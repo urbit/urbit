@@ -19,10 +19,10 @@
       [%batch u.res]
     |=  a=json
     ^-  (unit response)
-    =/  res=(unit @t)
-      ((ot result+so ~) a)
-    ?^  res  `result+u.res
+    =/  res=(unit [@t json])
+      ((ot id+so result+some ~) a)
+    ?^  res  `[%result u.res]
     :+  ~  %error  %-  need
-    ((ot code+so message+so ~) a)
+    ((ot id+so code+so message+so ~) a)
   --
 --
