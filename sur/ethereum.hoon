@@ -37,6 +37,28 @@
 ++  request
   $%  [%eth-block-number ~]
       [%eth-call cal=call deb=block]
+      $:  %eth-new-filter
+          fro=(unit block)
+          tob=(unit block)
+          adr=(list address)
+          top=(list octs)
+      ==
+      [%eth-get-filter-changes fid=@ud]
+  ==
+::
+++  filter-change
+  $:  ::  null for pending logs
+      $=  mined  %-  unit
+      $:  log-index=@ud
+          transaction-index=@ud
+          block-hash=@ux
+          block-number=@ud
+      ==
+    ::
+      address=@ux
+      data=@t
+      event=@ux
+      topics=(list @t)
   ==
 ::
 ::  data for eth_call.

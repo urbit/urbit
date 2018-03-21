@@ -55,30 +55,58 @@
     :~  (eth-call-to-json cal.req)
         (block-to-json deb.req)
     ==
+  ::
+      %eth-new-filter
+    :-  'eth_newFilter'
+    :_  ~
+    :-  %o  %-  ~(gas by *(map @t json))
+    =-  (murn - same)
+    ^-  (list (unit (pair @t json)))
+    :~  ?~  fro.req  ~
+        `['fromBlock' (block-to-json u.fro.req)]
+      ::
+        ?~  tob.req  ~
+        `['toBlock' (block-to-json u.tob.req)]
+      ::
+        ::TODO  fucking tmi
+        ?:  =(0 (lent adr.req))  ~
+        :+  ~  'address'
+        ?:  =(1 (lent adr.req))  (tape (address-to-hex (snag 0 adr.req)))
+        :-  %a
+        (turn adr.req (cork address-to-hex tape))
+      ::
+        ?~  top.req  ~
+        :^  ~  'topics'  %a
+        (turn `(list octs)`top.req :(cork render-hex-bytes prefix-hex tape))
+    ==
+  ::
+      %eth-get-filter-changes
+    ['eth_getFilterChanges' (tape (num-to-hex fid.req)) ~]
   ==
 ::
 ++  eth-call-to-json
+  =,  enjs:format
   |=  cal=call
   ^-  json
   :-  %o  %-  ~(gas by *(map @t json))
   =-  (murn - same)
   ^-  (list (unit (pair @t json)))
   :~  ?~  from.cal  ~
-      `['from' s+(crip (render-hex-bytes 20 `@`u.from.cal))]
+      `['from' (tape (address-to-hex u.from.cal))]
     ::
-      `['to' s+(crip (render-hex-bytes 20 `@`to.cal))]
+      `['to' (tape (address-to-hex to.cal))]
     ::
       ?~  gas.cal  ~
-      `['gas' n+(crip ((d-co:co 0) u.gas.cal))]
+      `['gas' (tape (num-to-hex u.gas.cal))]
     ::
       ?~  gas-price.cal  ~
-      `['gasPrice' n+(crip ((d-co:co 0) u.gas-price.cal))]
+      `['gasPrice' (tape (num-to-hex u.gas-price.cal))]
     ::
       ?~  value.cal  ~
-      `['value' n+(crip ((d-co:co 0) u.value.cal))]
+      `['value' (tape (num-to-hex u.value.cal))]
     ::
       ?~  data.cal  ~
-      `['data' s+(crip data.cal)]
+      `['data' (tape data.cal)]
   ==
 ::
 ++  block-to-json
@@ -88,6 +116,62 @@
     %number   n+(crip ((d-co:co 0) n.dob))
     %label    s+l.dob
   ==
+::
+++  num-to-hex
+  |=  n=@ud
+  ^-  tape
+  %-  prefix-hex
+  (render-hex-bytes (as-octs n))
+::
+++  address-to-hex
+  |=  a=address
+  ^-  tape
+  %-  prefix-hex
+  (render-hex-bytes 20 `@`a)
+::
+++  prefix-hex
+  |=  a=tape
+  ^-  tape
+  ['0' 'x' a]
+::
+::  parsing responses from nodes
+::
+++  parse-eth-new-filter-res
+  |=  j=json
+  ^-  @ud
+  ?>  ?=(%s -.j)
+  (hex-to-num p.j)
+::
+++  parse-eth-get-filter-changes-res
+  =,  dejs:format
+  |=  j=json
+  =-  ((ar -) j)
+  |=  cha=json
+  ^-  filter-change
+  =-  ((ot -) cha)
+  :~  =-  [type+(cu - so)]
+      |=  m=@t
+      ?.  =(m 'mined')  ~
+      =-  `((ot -) cha)  ::TODO  not sure if elegant or hacky.
+      :~  'logIndex'^(cu hex-to-num so)
+          'transactionIndex'^(cu hex-to-num so)
+          'blockHash'^(cu hex-to-num so)
+          'blockNumber'^(cu hex-to-num so)
+      ==
+    ::
+      address+(cu hex-to-num so)
+      data+so
+    ::
+      ::TODO  doesn't account for the anonymous event case, which has no hash.
+      =-  topics+(cu - (ar so))
+      |=  r=(list @t)
+      ?>  ?=([@t *] r)
+      [(hex-to-num i.r) t.r]
+  ==
+::
+++  hex-to-num
+  |=  a=@t
+  (rash (rsh 3 2 a) hex)
 ::
 ::  decoding
 ::
