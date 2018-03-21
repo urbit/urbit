@@ -148,7 +148,7 @@
     ::
     $^  [head=schematic tail=schematic]
     ::
-    $%  ::  %$: literal value. Produces its input unchanged. 
+    $%  ::  %$: literal value. Produces its input unchanged.
         ::
         $:  %$
             ::  literal: the value to be produced by the build
@@ -290,7 +290,7 @@
         ::
         $:  %slim
             ::  compile-time subject type for the :formula
-            ::  
+            ::
             subject-type=type
             ::  formula: a +hoon to be compiled to (pair type nock)
             ::
@@ -632,7 +632,7 @@
   $:  ::  duct: request identifier
       ::
       =duct
-      ::  card: move contents; either a +note or a +gift:able 
+      ::  card: move contents; either a +note or a +gift:able
       ::
       card=(wind note gift:able)
   ==
@@ -998,7 +998,7 @@
     |=  [=schematic date=(unit @da)]
     ^-  [(list move) ford-state]
     ::
-    =<  finalize
+    =<  (finalize moves=-)
     ::
     =+  [live when]=?~(date [& now] [| u.date])
     =/  build=build  [when schematic]
@@ -1017,32 +1017,39 @@
       (~(put by-schematic builds-by-schematic.state) build)
     ==
     ::
-    (execute build live)
+    (execute build)
   ::
   ++  rebuild  !!
   ++  unblock
     |=  =dependency
     ^-  [(list move) ford-state]
     ::
-    !!
-::    =<  finalize
-::    ::
-::    =/  dependency=dependency  [
-
+    =<  (finalize moves=-)
+    ::
+    =/  blocked-builds  ~(tap in (~(get ju blocks.state) dependency))
+    ::
+    =|  moves=(list move)
+    |-  ^+  [moves this]
+    ?~  blocked-builds  [moves this]
+    ::
+    =^  new-moves  this  (execute i.blocked-builds)
+    ::
+    $(moves (welp moves new-moves), blocked-builds t.blocked-builds)
+  ::
   ++  cancel  !!
   ::  |construction: arms for performing builds
   ::
   ::+|  construction
   ::
   ++  execute
-    |=  [=build live=?]
-    ^+  this
-    ::  if the build is complete, we're done 
+    |=  =build
+    ^-  [(list move) _this]
+    ::  if the build is complete, we're done
     ::
     ::    TODO: make sure we don't need to do anything here
     ::
     ?^  (~(get by results.state) build)
-      this
+      [~ this]
     ::
     =^  made  state  (make build)
     ::
@@ -1061,27 +1068,61 @@
         [build completed-builds]
       ::  run :build's clients now that it's done
       ::
-      =/  clients=(set ^build)
-        (fall (~(get by client-builds.components.state) build) ~)
+      =/  clients=(list ^build)
+        ~(tap in (fall (~(get by client-builds.components.state) build) ~))
       ::
-      ^+  this
-      %+  roll  ~(tap in clients)
-      |=  [client=^build that=_this]
-      (execute:that client live)
+      =|  moves=(list move)
+      |-  ^+  [moves this]
+      ?~  clients  [moves this]
+      ::
+      =^  new-moves  this  (execute i.clients)
+      ::
+      $(moves (welp moves new-moves), clients t.clients)
     ::
         ::  %blocks: build got stuck and produced a set of blocks
         ::
         %blocks
       ::
-      ^+  this
-      %+  roll  ~(tap in blocks.result.made)
-      |=  [=block that=_this]
-      ?-    -.block
-          %build
-        (execute:that build.block live)
+      =/  blocks  ~(tap in blocks.result.made)
+      =|  moves=(list move)
       ::
+      |-  ^+  [moves this]
+      ?~  blocks  [moves this]
+      ::
+      =*  block  i.blocks
+      ::
+      ?-    -.block
+          ::  %build: :build got stuck on another +build
+          ::
+          %build
+        ::
+        =^  new-moves  this  (execute build.block)
+        ::
+        $(moves (welp moves new-moves), blocks t.blocks)
+      ::
+          ::  %dependency: :build got stuck on an external +dependency
+          ::
           %dependency
-        !!
+        ::
+        =/  dependency=dependency  dependency.block
+        ::  TODO: remove to handle other kinds of +dependency
+        ::
+        ?>  ?=(%clay-once -.dependency)
+        ::  store :dependency in persistent state
+        ::
+        =.  blocks.state  (~(put ju blocks.state) dependency build)
+        ::  construct new :move to request blocked resource
+        ::
+        =/  wire  (to-wire dependency)
+        =/  note=note
+          =,  dependency
+          :*  %c  %warp  sock=[our their=p.beam]
+              [q.beam `[%sing care case=r.beam spur=s.beam]]
+          ==
+        ::
+        =/  move=move  [duct=~ [%pass wire note]]
+        ::
+        [[move moves] this]
       ==
     ==
   ::
@@ -1233,10 +1274,8 @@
   ::    TODO: needs rework to support live builds
   ::
   ++  finalize
+    |=  moves=(list move)
     ^-  [(list move) ford-state]
-    ::  mades: list of %made moves to emit, one per duct on a completed build
-    ::
-    =|  moves=(list move)
     ::  sort completed-builds chronologically (they were originally reversed)
     ::
     =.  completed-builds  (flop completed-builds)
@@ -1344,7 +1383,7 @@
       (~(del ju blocks) dep build)
     ::  for each dependency :build relied on, remove it from :live-leaf-builds
     ::
-    =.  live-leaf-builds.state 
+    =.  live-leaf-builds.state
       %+  roll  dep-values
       |=  [dep=dependency live-leaf-builds=_live-leaf-builds.state]
       (~(del ju live-leaf-builds) dep build)
