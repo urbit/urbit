@@ -35,7 +35,7 @@
             ==
           ==
         ;=
-          ;div(data-component "Subscribe", data-circle "{(scow %p p.bem.gas)}/collection_~{(trip +<:s.bem.gas)}_~{(trip -:s.bem.gas)}");
+          ;div(urb-component "Subscribe", urb-circle "{(scow %p p.bem.gas)}/collection_~{(trip +<:s.bem.gas)}_~{(trip -:s.bem.gas)}");
         ==
     ;div.row.content.mb-18
       +{content}
@@ -53,7 +53,7 @@
                     ::
                   |=  [c=@da d=[mod=@da who=@p wat=wain]]
                   ;li
-                    ;div.da.text-mono.ml-12(data-urb-elapsed "{(esoo:colls mod.d)}");
+                    ;div.da.text-mono.ml-12(urb-component "Elapsed", urb-timestring "{(esoo:colls mod.d)}");
                     ;div.com.ml-12.mb-6
                       ;div.who.text-mono
                         ;a(href "")
@@ -66,7 +66,7 @@
                     ==
                   ==
             ==
-            ;div.ml-12(data-component "CommentCreate", data-coll "{(trip +<:s.bem.gas)}", data-top "{(trip -:s.bem.gas)}");
+            ;div.ml-12(urb-component "CommentCreate", urb-coll "{(trip +<:s.bem.gas)}", urb-top "{(trip -:s.bem.gas)}");
         ==
       ==
     ~
