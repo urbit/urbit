@@ -194,7 +194,7 @@
   |-  ^+  das
   ?~  tys  (flop `(list data)`das)
   =*  typ  i.tys
-  ?:  (gte win (lent wos))  ~|(%insufficient-data !!)
+  ?:  (gte win (lent wos))  ~|([%insufficient-data tys] !!)
   =-  $(das [dat das], win nin, tys t.tys)
   ::=<  (decode-next win i.tys)  ::TODO  urbit/arvo#673
   |^  ::|%  ++  decode-next  |=  [win=@ud typ=etyp]
@@ -226,7 +226,7 @@
       (decode-bytes-n +(lic) len)
     ::
         [%bytes-n *]
-      :-  (add win +((div n.typ 32)))
+      :-  (add win +((div (dec n.typ) 32)))
       [%bytes-n (decode-bytes-n win n.typ)]
     ::
         [%array *]
@@ -264,7 +264,7 @@
     %^  end  3  (mul 2 bys)
     %+  can  9
     %+  turn
-      (swag [fro +((div bys 32))] wos)
+      (swag [fro +((div (dec bys) 32))] wos)
     |=(a=@t [1 a])
   ::
   ::TODO  uncomment and use once urbit/arvo#673 gets resolved/a workaround.
