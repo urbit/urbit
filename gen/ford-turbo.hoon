@@ -243,7 +243,8 @@
   %+  welp
     %-  expect-eq  !>
     :-  moves
-    :~  :*  duct=~  %pass  wire=/c/x/.n/~nul/desk/~1234.5.6/foo/bar
+    :~  :*  duct=~  %pass
+            wire=/~nul/dependency/c/x/.n/~nul/desk/~1234.5.6/foo/bar
             %c  %warp  [~nul ~nul]  %desk
             ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
     ==  ==
@@ -252,7 +253,7 @@
   ::
   =^  moves2  ford
     %-  take:ford
-    :*  wire=/~nul/c/x/.n/~nul/desk/~1234.5.6/foo/bar  duct=~
+    :*  wire=/~nul/dependency/c/x/.n/~nul/desk/~1234.5.6/foo/bar  duct=~
         ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
         [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
     ==
@@ -286,7 +287,7 @@
         type=~
         %make
         ~nul
-        plan=[%scry %clay-once ren=%x bem=[[~nul %desk %da ~1234.5.6] /foo/bar]]
+        plan=[%scry %clay-once care=%x bem=[[~nul %desk %da ~1234.5.6] /foo/bar]]
         date=~
     ==
   %+  welp
@@ -295,11 +296,18 @@
     :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
             [%scry %noun !>(42)]
         ==
-        :*  duct=~  %pass  wire=/
+        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
             %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%z /foo/bar]~)]
+            `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
     ==  ==
   ::
+  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry)
+  =^  moves2  ford
+    %-  take:ford
+    :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+        [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
+    ==
   %-  expect-eq  !>
   [~ ~]
   :::-  state-by-ship.+>+<.ford

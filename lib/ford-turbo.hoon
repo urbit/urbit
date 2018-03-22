@@ -681,12 +681,22 @@
   $%  ::  %c: from clay
       ::
       $:  %c
-      ::  %writ: internal (intra-ship) file response
-      ::
-      $%  $:  %writ
+      $%  ::  %writ: internal (intra-ship) file response
+          ::
+          $:  %writ
               ::  riot: response contents
               ::
               riot=riot:clay
+          ==
+          ::  %wris: response to %mult; many changed files
+          ::
+          $:  %wris
+              ::  case: case of the new files
+              ::
+              =case
+              ::  care-paths: the +care:clay and +path of each file
+              ::
+              care-paths=(set [care=care:clay =path])
   ==  ==  ==  ==
 --
 ::
@@ -1058,8 +1068,40 @@
     ==
     ::
     (execute build)
+  ::  +rebuild: rebuild any live builds based on +dependency updates
   ::
-  ++  rebuild  !!
+  ++  rebuild
+    |=  [=beak care-paths=(set [care=care:clay =path])]
+    ^-  [(list move) ford-state]
+    ::
+    =<  finalize
+    ::
+    =/  date=@da  ?>(?=(%da -.r.beak) p.r.beak)
+    =/  disc=disc  [p.beak q.beak]
+    ::  store changed dependencies persistently in case rebuilds finish later
+    ::
+    =.  dependency-updates.state
+      %+  roll  ~(tap in care-paths)
+      |=  [[care=care:clay =path] dependency-updates=_dependency-updates.state]
+      ::
+      =/  dependency=dependency  [%clay-live care bel=[disc spur=path]]
+      ::
+      =-  (~(put by dependency-updates) date -)
+      =-  (~(put ju -) disc dependency)
+      (fall (~(get by dependency-updates) date) ~)
+    ::
+    =/  dependencies  (~(got by (~(got by dependency-updates.state) date)) disc)
+    ::
+    =/  builds-to-rebuild=(set build)
+      %+  roll  ~(tap in dependencies)
+      |=  [=dependency builds-to-rebuild=(set build)]
+      ::
+      %-  ~(uni in builds-to-rebuild)
+      (fall (~(get by live-leaf-builds.state) dependency) ~)
+    ::
+    %+  roll  ~(tap in builds-to-rebuild)
+    |=  [=build _this]
+    (execute build)
   ::  +unblock: continue builds that had blocked on :dependency
   ::
   ++  unblock
@@ -1166,12 +1208,30 @@
       =/  live-listeners=(set listener)
         %-  ~(uni in (sy live.current-listeners))
         (sy previous-live-listeners)
+      ::  populate :live-leaf-builds.state with :build's :dependencies
+      ::
+      =/  dependencies-jug=(jug disc dependency)
+        (fall (~(get by dependencies.state) build) ~)
+      ::
+      =/  dependencies=(set dependency)
+        %+  roll  ~(tap by dependencies-jug)
+        |=  [[=disc deps=(set dependency)] accumulator=(set dependency)]
+        ::
+        (~(uni in accumulator) deps)
+      ::
+      =.  live-leaf-builds.state
+        %+  roll  ~(tap in dependencies)
+        |=  [=dependency live-leaf-builds=_live-leaf-builds.state]
+        ::  if :dependency is not live, don't add it to :live-leaf-builds
+        ::
+        ?.  ?=(?(%clay-live %gall-live) -.dependency)
+          live-leaf-builds
+        (~(put ju live-leaf-builds) dependency build)
       ::  recursively gather :discs that :build depends on and store them
       ::
-      =/  direct-discs  ~(key by (fall (~(get by dependencies.state) build) ~))
       =/  kids  ~(tap in (~(get ju sub-builds.components.state) build))
       ::
-      =/  discs=(set disc)  direct-discs
+      =/  discs=(set disc)  ~(key by dependencies-jug)
       =.  discs
         |-  ^+  discs
         ?~  kids  discs
@@ -1244,8 +1304,8 @@
         ~(tap in (fall (~(get by client-builds.components.state) build) ~))
       ::
       %+  roll  clients
-      |=  [client=^build that=_this]
-      (execute:that client)
+      |=  [client=^build _this]
+      (execute client)
     ::
         ::  %blocks: build got stuck and produced a set of blocks
         ::
@@ -1281,7 +1341,7 @@
         =.  blocks.state  (~(put ju blocks.state) `dependency`dep ^build)
         ::  construct new :move to request blocked resource
         ::
-        =/  wire  (to-wire dep)
+        =/  wire=wire  (welp /(scot %p our)/dependency (to-wire dep))
         =/  note=note
           =,  dep
           :*  %c  %warp  sock=[our their=p.beam]
@@ -1503,9 +1563,7 @@
         |=  =dependency  ^-  (unit [care:clay path])
         ?:  ?=(?(%gall-live %gall-once) -.dependency)
           ~
-        ::  no matter what :care.dependency was, subscribe to a %z (folder hash)
-        ::
-        =-  `[%z -]
+        =-  `[care.dependency -]
         ?-  -.dependency
           %clay-live  spur=q.bel.dependency
           %clay-once  spur=s.beam.dependency
@@ -1518,13 +1576,15 @@
           ?(%clay-once %gall-once)  ship=p.beam.n.dependencies
         ==
       ::
+      =/  desk=term  q.disc
+      ::
       =/  note=note
         :^  %c  %warp  sock=[our their]
         ^-  riff:clay
-        [desk=q.disc `[%mult case=[%da date.n.roots] request-contents]]
+        [desk `[%mult case=[%da date.n.roots] request-contents]]
       ::
       ^-  move
-      [duct=~ [%pass wire=/ note]]
+      [duct=~ [%pass wire=/(scot %p our)/clay-sub/(scot %p their)/[desk] note]]
     ::
     this
   ::  +cleanup: try to clean up a build and its sub-builds
@@ -1700,35 +1760,47 @@
   =/  sign=sign  q.wrapped-sign
   ::  TODO: support other responses
   ::
-  ?>  ?=([%c %writ *] sign)
-  ::  scry-result: parse a (unit cage) from :sign
-  ::
-  ::    If the result is `~`, the requested resource was not available.
-  ::
-  =/  scry-result=(unit cage)
-    ?~  riot.sign
-      ~
-    `r.u.riot.sign
   ::  parse :wire into :our, :ship-state, and :dependency
   ::
   ?>  ?=([@ @ *] wire)
-  =/  our=@p  (slav %p i.wire)
   ::  we know :our is already in :state-by-ship because we sent this request
   ::
-  =/  ship-state  (~(got by state-by-ship) our)
-  =/  dependency  (from-wire t.wire)
-  ::  unblock the builds that had blocked on :dependency
-  ::
-  ::    First, we create :event-args and use them as the sample for
-  ::    +unblock:per-event. Then grab :moves and a mutated :ship-state
-  ::    from the result of that call, and place the new :ship-state
-  ::    back in :state-by-ship.state.
-  ::
-  ::  TODO check whether we need rebuild or unblock
-  ::
+  =/  our=@p  (slav %p i.wire)
+  =/  ship-state  ~|(our+our (~(got by state-by-ship) our))
   =*  event-args  [[our duct now scry] ship-state]
-  =*  unblock  ~(unblock per-event event-args)
-  =^  moves  ship-state  (unblock dependency scry-result)
+  ::  %clay-sub: response to a clay %mult subscription
+  ::
+  =^  moves  ship-state
+    ?:  =(%clay-sub i.t.wire)
+      ::
+      ?>  ?=([%c %wris *] sign)
+      =+  [ship desk]=(raid:wired t.t.wire ~[%p %tas])
+      ::
+      =*  rebuild  ~(rebuild per-event event-args)
+      (rebuild [ship desk case.sign] care-paths.sign)
+    ::  %dependency: response to a request for a +dependency
+    ::
+    ?:  =(%dependency i.t.wire)
+      ::
+      ?>  ?=([%c %writ *] sign)
+      ::  dependency: the +dependency we had previously blocked on
+      ::
+      =/  dependency  (from-wire t.t.wire)
+      ::  scry-result: parse a (unit cage) from :sign
+      ::
+      ::    If the result is `~`, the requested resource was not available.
+      ::
+      =/  scry-result=(unit cage)
+        ?~  riot.sign
+          ~
+        `r.u.riot.sign
+      ::  unblock the builds that had blocked on :dependency
+      ::
+      =*  unblock  ~(unblock per-event event-args)
+      (unblock dependency scry-result)
+    ::
+    ~|(unknown-take+i.t.wire !!)
+  ::
   =.  state-by-ship  (~(put by state-by-ship) our ship-state)
   ::
   [moves this]
