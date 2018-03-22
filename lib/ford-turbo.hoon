@@ -740,7 +740,7 @@
           ::
           client-builds=(jug build build)
       ==
-      ::  rebuilds: bidirectional linkages between old and new identical builds
+      ::  rebuilds: bidirectional links between old and new identical builds
       ::
       ::    Old and new build must have the same schematic and result.
       ::    This can form a chain, like build<-->build<-->build.
@@ -759,10 +759,10 @@
   ::
   ::  build request tracking
   ::
-      ::  listeners: external requests for a build, both live (:live=&) and once
+      ::  listeners: external requests for a build
       ::
-      listeners=(jug build [listener=duct live=?])
-      ::  builds-by-listener: reverse lookup for :listeners; find build by duct
+      listeners=(jug build listener)
+      ::  builds-by-listener: reverse lookup for :listeners
       ::
       builds-by-listener=(map duct build)
   ::
@@ -852,6 +852,16 @@
       ::  %dependency: the build blocked on an external :dependency
       ::
       [%dependency =dependency]
+  ==
+::  +listener: either a :live :duct or a once :duct
+::
++=  listener
+  $:  ::  duct: where to send a response
+      ::
+      =duct
+      ::  live: whether :duct had requested a live build
+      ::
+      live=?
   ==
 ::  +vane: short names for vanes
 ::
@@ -980,6 +990,7 @@
     ^+  builds
     =.  builds  %+  ~(put by builds)  schematic.build
       ::
+      ~|  build+build
       =/  dates  (~(got by builds) schematic.build)
       =/  date-index  (need (find [date.build]~ dates))
       (oust [date-index 1] dates)
@@ -990,13 +1001,30 @@
       (~(del by builds) schematic.build)
     ::
     builds
+  ::  +find-previous: find the most recent older build with :schematic.build
+  ::
+  ++  find-previous
+    |=  =build
+    ^-  (unit ^build)
+    ::
+    =/  dates=(list @da)  (fall (~(get by builds) schematic.build) ~)
+    ::
+    |-  ^-  (unit ^build)
+    ?~  dates  ~
+    ::
+    ?:  (lth i.dates date.build)
+      `[i.dates schematic.build]
+    $(dates t.dates)
   --
 ::  +per-event: per-event core
 ::
 ++  per-event
-  ::  completed-builds: root builds completed in this event, in reverse order
+  ::  moves: the moves to be sent out at the end of this event, reversed
   ::
-  =|  completed-builds=(list build)
+  =|  moves=(list move)
+  ::  done-live-roots: live root builds completed in this event, reversed
+  ::
+  =|  done-live-roots=(list build)
   ::  scry-results: responses to scry's to handle in this event
   ::
   ::    If a value is `~`, the requested resource is not available.
@@ -1016,23 +1044,17 @@
     |=  [=schematic date=(unit @da)]
     ^-  [(list move) ford-state]
     ::
-    =<  (finalize moves=-)
+    =<  finalize
     ::
     =+  [live when]=?~(date [& now] [| u.date])
     =/  build=build  [when schematic]
-    ::  add :build to our state
+    ::  associate +listener with :build in :state
     ::
     =:  listeners.state
       (~(put ju listeners.state) build [duct live])
     ::
         builds-by-listener.state
       (~(put by builds-by-listener.state) duct build)
-    ::
-        builds-by-date.state
-      (~(put ju builds-by-date.state) date.build schematic.build)
-    ::
-        builds-by-schematic.state
-      (~(put by-schematic builds-by-schematic.state) build)
     ==
     ::
     (execute build)
@@ -1044,7 +1066,7 @@
     |=  [=dependency scry-result=(unit cage)]
     ^-  [(list move) ford-state]
     ::
-    =<  (finalize moves=-)
+    =<  finalize
     ::  find all the :blocked-builds to continue
     ::
     =/  blocked-builds  ~(tap in (~(get ju blocks.state) dependency))
@@ -1064,13 +1086,9 @@
     ::
     =.  scry-results  (~(put by scry-results) dependency scry-result)
     ::
-    =|  moves=(list move)
-    |-  ^+  [moves this]
-    ?~  blocked-builds  [moves this]
-    ::
-    =^  new-moves  this  (execute i.blocked-builds)
-    ::
-    $(moves (welp moves new-moves), blocked-builds t.blocked-builds)
+    %+  roll  blocked-builds
+    |=  [=build that=_this]
+    (execute:that build)
   ::
   ++  cancel  !!
   ::  |construction: arms for performing builds
@@ -1082,18 +1100,27 @@
   ::    Runs +make on :build if necessary, and recurses potentially
   ::    "upward" to :build's clients and "downward" to :build's sub-builds.
   ::    Enqueues moves to Clay to request resources for blocked +scry
-  ::    operations and places completed root builds in :completed-builds
+  ::    operations and places completed root builds in :done-live-roots
   ::    to be processed at the end of the event.
   ::
   ++  execute
     |=  =build
-    ^-  [(list move) _this]
+    ^+  this
     ::  if the build is complete, we're done
     ::
     ::    TODO: make sure we don't need to do anything here
     ::
     ?^  (~(get by results.state) build)
-      [~ this]
+      this
+    ::  place :build in :state if it isn't already there
+    ::
+    =:
+        builds-by-date.state
+      (~(put ju builds-by-date.state) date.build schematic.build)
+    ::
+        builds-by-schematic.state
+      (~(put by-schematic builds-by-schematic.state) build)
+    ==
     ::  the build isn't complete, so try running +make on it
     ::
     =^  made  state  (make build)
@@ -1109,44 +1136,132 @@
         [%result last-accessed=now build-result=build-result.result.made]
       ::
       =.  results.state  (~(put by results.state) build cache-entry)
-      ::  prepend :build to :completed-builds, which is in reverse order
+      ::  all-current-listeners: all listeners on :build
       ::
-      =?  completed-builds  (~(has by listeners.state) build)
-        [build completed-builds]
+      =/  all-current-listeners=(list listener)
+        ~(tap in (fall (~(get by listeners.state) build) ~))
+      ::  current-listeners: pair of :live and :once lists
+      ::
+      =/  current-listeners=[live=(list listener) once=(list listener)]
+        (skid all-current-listeners |=([* live=?] live))
+      ::  find live listeners on previous build
+      ::
+      =/  previous-build
+        (~(find-previous by-schematic builds-by-schematic.state) build)
+      ::
+      =/  previous-result
+        ?~  previous-build  ~
+        (~(get by results.state) u.previous-build)
+      ::  even if :previous-result is a %tombstone, still grab its listeners
+      ::
+      =/  previous-listeners=(set listener)
+        ?~  previous-build  ~
+        ?~  previous-result  ~
+        (fall (~(get by listeners.state) u.previous-build) ~)
+      ::
+      =/  previous-live-listeners=(list listener)
+        (skim ~(tap in previous-listeners) |=([* live=?] live))
+      ::  all live listeners, from :build and :previous-build
+      ::
+      =/  live-listeners=(set listener)
+        %-  ~(uni in (sy live.current-listeners))
+        (sy previous-live-listeners)
+      ::  recursively gather :discs that :build depends on and store them
+      ::
+      =/  direct-discs  ~(key by (fall (~(get by dependencies.state) build) ~))
+      =/  kids  ~(tap in (~(get ju sub-builds.components.state) build))
+      ::
+      =/  discs=(set disc)  direct-discs
+      =.  discs
+        |-  ^+  discs
+        ?~  kids  discs
+        ::
+        =/  grandkids  ~(tap in (~(get ju sub-builds.components.state) i.kids))
+        =/  kid-deps  (fall (~(get by dependencies.state) i.kids) ~)
+        =/  kid-discs  ~(key by kid-deps)
+        ::
+        $(kids (weld t.kids grandkids), discs (~(uni in discs) kid-discs))
+      ::
+      =.  live-root-builds.state
+        %+  roll  ~(tap in discs)
+        |=  [=disc live-root-builds=_live-root-builds.state]
+        (~(put ju live-root-builds) disc build)
+      ::  all-listeners: once and live from current and live from previous
+      ::
+      =/  all-listeners=(set listener)
+        (~(uni in live-listeners) (sy all-current-listeners))
+      ::  send %made moves for :all-listeners
+      ::
+      =.  moves
+        %+  roll  ~(tap in all-listeners)
+        |=  [=listener moves=_moves]
+        :_  moves
+        :*  duct.listener  %give
+            %made  date.build  %complete  build-result.result.made
+        ==
+      ::  move old live ducts from old to new
+      ::
+      =.  state
+        %+  roll  previous-live-listeners
+        |=  [=listener state=_state]
+        ::
+        %_    state
+            listeners
+          =-  (~(put ju -) build listener)
+          ?~  previous-build  listeners.state
+          (~(del ju listeners.state) u.previous-build listener)
+        ::
+            builds-by-listener
+          (~(put by builds-by-listener.state) duct.listener build)
+        ==
+      ::  clean up old build
+      ::
+      =?  state  ?=(^ previous-build)  (cleanup u.previous-build)
+      ::  remove once ducts from :build
+      ::
+      =.  state
+        %+  roll  once.current-listeners
+        |=  [=listener state=_state]
+        ::
+        %_    state
+            listeners
+          (~(del ju listeners.state) build listener)
+        ::
+            builds-by-listener
+          (~(del by builds-by-listener.state) duct.listener)
+        ==
+      ::  clean up :build
+      ::
+      =.  state  (cleanup build)
+      ::  prepend :build to :done-live-roots, which is in reverse order
+      ::
+      =?    done-live-roots
+          |(?=(^ live.current-listeners) ?=(^ previous-live-listeners))
+        [build done-live-roots]
       ::  recurse "upward" into client builds now that :build is done
       ::
       =/  clients=(list ^build)
         ~(tap in (fall (~(get by client-builds.components.state) build) ~))
       ::
-      =|  moves=(list move)
-      |-  ^+  [moves this]
-      ?~  clients  [moves this]
-      ::
-      =^  new-moves  this  (execute i.clients)
-      ::
-      $(moves (welp moves new-moves), clients t.clients)
+      %+  roll  clients
+      |=  [client=^build that=_this]
+      (execute:that client)
     ::
         ::  %blocks: build got stuck and produced a set of blocks
         ::
         %blocks
       ::
       =/  blocks  ~(tap in blocks.result.made)
-      =|  moves=(list move)
+      %+  roll  blocks
+      |=  [block=block _this]
       ::  recurse "downward" into the builds we blocked on
-      ::
-      |-  ^+  [moves this]
-      ?~  blocks  [moves this]
-      ::
-      =*  block  i.blocks
       ::
       ?-    -.block
           ::  %build: :build blocked on a sub-build, so run the sub-build
           ::
           %build
         ::
-        =^  new-moves  this  (execute build.block)
-        ::
-        $(moves (welp moves new-moves), blocks t.blocks)
+        (execute build.block)
       ::
           ::  %dependency: :build blocked on a +dependency
           ::
@@ -1157,25 +1272,24 @@
           ::
           %dependency
         ::
-        =/  dependency=dependency  dependency.block
+        =/  dep=dependency  dependency.block
         ::  TODO: remove to handle other kinds of +dependency
         ::
-        ?>  ?=(%clay-once -.dependency)
-        ::  store :dependency in persistent state
+        ?>  ?=(%clay-once -.dep)
+        ::  store :dependency in persistent state (`this` shadows `build`)
         ::
-        =.  blocks.state  (~(put ju blocks.state) dependency build)
+        =.  blocks.state  (~(put ju blocks.state) `dependency`dep ^build)
         ::  construct new :move to request blocked resource
         ::
-        =/  wire  (to-wire dependency)
+        =/  wire  (to-wire dep)
         =/  note=note
-          =,  dependency
+          =,  dep
           :*  %c  %warp  sock=[our their=p.beam]
               [q.beam `[%sing care case=r.beam spur=s.beam]]
           ==
         ::
-        =/  move=move  [duct=~ [%pass wire note]]
-        ::
-        [[move moves] this]
+        =.  moves  [[duct=~ [%pass wire note]] moves]
+        this
       ==
     ==
   ::  +make: attempt to perform :build, non-recursively
@@ -1332,59 +1446,87 @@
   ++  this  .
   ::  +finalize: convert per-event state to moves and persistent state
   ::
-  ::    Converts :completed-builds to %made +move's, performs +duct
+  ::    Converts :done-live-roots to %made +move's, performs +duct
   ::    accounting, and runs +cleanup on completed once builds and
   ::    stale live builds.
   ::
   ::    TODO: needs rework to support live builds
   ::
   ++  finalize
-    |=  moves=(list move)
     ^-  [(list move) ford-state]
-    ::  sort completed-builds chronologically (they were originally reversed)
+    ::  once we're done, +flop :moves to put them in chronological order
     ::
-    =.  completed-builds  (flop completed-builds)
+    =<  [(flop moves) state]
+    ::  discs: the set of discs on which we'll make clay requests
     ::
-    =<  [moves state]
-    ::  process the completed builds in a loop
+    =/  discs=(set disc)
+      %+  roll  done-live-roots
+      |=  [=build discs=(set disc)]
+      %-  ~(uni in discs)
+      ~(key by (fall (~(get by dependencies.state) build) ~))
+    ::  if none of the completed builds depend on a +disc, no-op
     ::
-    |-  ^-  [moves=(list move) _this]
-    ::  exit condition: no builds left to process
+    ?~  discs
+      this
+    ::  root builds that depend on :discs; will not be `~`
     ::
-    ?~  completed-builds
-      [moves this]
+    =/  roots=(set build)
+      %+  roll  ~(tap in `(set disc)`discs)
+      |=  [=disc roots=(set build)]
+      (~(uni in roots) (~(get ju live-root-builds.state) disc))
     ::
-    =*  build  i.completed-builds
-    ::  look up :build's result from cache
+    ?>  ?=(^ roots)
+    ::  produce moves
     ::
-    =/  cache-line  (~(got by results.state) build)
-    ::  :build just completed, so there's no way it could have been reclaimed
+    =.  moves  %-  welp  :_  moves
+      ::
+      %+  turn  ~(tap in `(set disc)`discs)
+      |=  =disc  ^-  move
+      ::  dependencies: all dependencies on :valid-disc for any of :roots
+      ::
+      =/  dependencies=(set dependency)
+        %+  roll  ~(tap in `(set build)`roots)
+        |=  [=build dependencies=(set dependency)]
+        ::
+        =/  all-deps=(jug ^disc dependency)
+          (fall (~(get by dependencies.state) build) ~)
+        ::
+        (~(uni in dependencies) (~(get ju all-deps) disc))
+      ::  :dependencies must not be `~`
+      ::
+      ?>  ?=(^ dependencies)
+      ::  request-contents: the set of [care path]s to subscribe to in clay
+      ::
+      =/  request-contents=(set [care:clay path])
+        %-  sy  ^-  (list [care:clay path])
+        %+  murn  ~(tap in `(set dependency)`dependencies)
+        |=  =dependency  ^-  (unit [care:clay path])
+        ?:  ?=(?(%gall-live %gall-once) -.dependency)
+          ~
+        ::  no matter what :care.dependency was, subscribe to a %z (folder hash)
+        ::
+        =-  `[%z -]
+        ?-  -.dependency
+          %clay-live  spur=q.bel.dependency
+          %clay-once  spur=s.beam.dependency
+        ==
+      ::  their: requestee +ship
+      ::
+      =/  their=@p
+        ?-  -.n.dependencies
+          ?(%clay-live %gall-live)  ship=p.p.bel.n.dependencies
+          ?(%clay-once %gall-once)  ship=p.beam.n.dependencies
+        ==
+      ::
+      =/  note=note
+        :^  %c  %warp  sock=[our their]
+        ^-  riff:clay
+        [desk=q.disc `[%mult case=[%da date.n.roots] request-contents]]
+      ::
+      ^-  move
+      [duct=~ [%pass wire=/ note]]
     ::
-    ?>  ?=(%result -.cache-line)
-    ::  create moves to send out for this build
-    ::
-    =/  moves-for-build
-      %+  turn  ~(tap in (~(get ju listeners.state) build))
-      |=  [duct=^duct live=?]
-      [duct %give %made date.build %complete build-result.cache-line]
-    ::  remove all ducts related to this build
-    ::
-    =.  builds-by-listener.state
-      %+  roll  moves-for-build
-      |=  [=move builds-by-listener=_builds-by-listener.state]
-      =*  duct  -.move
-      (~(del by builds-by-listener) duct)
-    ::
-    =.  listeners.state  (~(del by listeners.state) build)
-    ::  try to delete this build entirely if nothing depends on it
-    ::
-    =.  state  (cleanup build)
-    ::  recurse with changes applied
-    ::
-    %_    $
-        completed-builds          t.completed-builds
-        moves                     (welp moves moves-for-build)
-    ==
+    this
   ::  +cleanup: try to clean up a build and its sub-builds
   ::
   ++  cleanup

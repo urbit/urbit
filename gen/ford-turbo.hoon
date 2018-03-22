@@ -3,7 +3,6 @@
 :-  %say
 |=  [[now=@da eny=@ =beak] ~ ~]
 :-  %noun
-=+  our=p.beak
 =+  tester:tester
 =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=*sley)
 |^  
@@ -18,6 +17,7 @@
   test-scry-clay-succeed
   test-scry-clay-fail
   test-scry-clay-block
+  test-scry-clay-live
 ==
 ++  test-compiles
   ~&  %test-compiles
@@ -267,4 +267,41 @@
   %-  expect-eq  !>
   :-  state-by-ship.+>+<.ford
   (my [~nul *ford-state:ford-turbo]~)
+::
+++  test-scry-clay-live
+  ~&  %test-scry-clay-live
+  =/  scry
+    |=  [* (unit (set monk)) =term =beam]
+    ^-  (unit (unit cage))
+    ::
+    ?>  =(term %cx)
+    ?>  =(beam [[~nul %desk %da ~1234.5.6] /foo/bar])
+    ::
+    [~ ~ %noun !>(42)]
+  ::
+  =.  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =^  moves  ford
+    %-  call:ford
+    :*  duct=~
+        type=~
+        %make
+        ~nul
+        plan=[%scry %clay-once ren=%x bem=[[~nul %desk %da ~1234.5.6] /foo/bar]]
+        date=~
+    ==
+  %+  welp
+    %-  expect-eq  !>
+    :-  moves
+    :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
+            [%scry %noun !>(42)]
+        ==
+        :*  duct=~  %pass  wire=/
+            %c  %warp  [~nul ~nul]  %desk
+            `[%mult [%da ~1234.5.6] (sy [%z /foo/bar]~)]
+    ==  ==
+  ::
+  %-  expect-eq  !>
+  [~ ~]
+  :::-  state-by-ship.+>+<.ford
+  ::(my [~nul *ford-state:ford-turbo]~)
 --
