@@ -1,3 +1,3 @@
 ^-  manx
 
-;div(data-component "CollectionCreatePage");
+;div(urb-component "CollectionCreatePage");
