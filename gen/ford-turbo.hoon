@@ -81,10 +81,7 @@
   ~&  %test-literal
   =^  moves  ford
     %-  call:ford
-    :*  duct=~
-        type=~
-        %make
-        ~nul
+    :*  duct=~  type=~  %make  ~nul
         plan=[%$ %noun !>(**)]
         date=`~1234.5.6
     ==
@@ -101,10 +98,7 @@
   ~&  %test-autocons-same
   =^  moves  ford
     %-  call:ford
-    :*  duct=~
-        type=~
-        %make
-        ~nul
+    :*  duct=~  type=~  %make  ~nul
         plan=[[%$ %noun !>(**)] [%$ %noun !>(**)]]
         date=`~1234.5.6
     ==
@@ -125,10 +119,7 @@
   ~&  %test-autocons-different
   =^  moves  ford
     %-  call:ford
-    :*  duct=~
-        type=~
-        %make
-        ~nul
+    :*  duct=~  type=~  %make  ~nul
         plan=[[%$ %noun !>(42)] [%$ %noun !>(43)]]
         date=`~1234.5.6
     ==
@@ -147,23 +138,13 @@
 ::
 ++  test-scry-clay-succeed
   ~&  %test-scry-clay-succeed
-  =/  scry
-    |=  [* (unit (set monk)) =term =beam]
-    ^-  (unit (unit cage))
-    ::
-    ?>  =(term %cx)
-    ?>  =(beam [[~nul %desk %da ~1234.5.6] /foo/bar])
-    ::
-    [~ ~ %noun !>(42)]
+  =/  scry  (scry-succeed ~1234.5.6 [%noun !>(42)])
   ::
   =.  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
   =^  moves  ford
     %-  call:ford
-    :*  duct=~
-        type=~
-        %make
-        ~nul
-        plan=[%scry %clay-once ren=%x bem=[[~nul %desk %da ~1234.5.6] /foo/bar]]
+    :*  duct=~  type=~  %make  ~nul
+        plan=[%scry %clay-once ren=%x bem=[[~nul %desk %da ~1234.5.6] /bar/foo]]
         date=`~1234.5.6
     ==
   %+  welp
@@ -179,22 +160,12 @@
 ::
 ++  test-scry-clay-fail
   ~&  %test-scry-clay-fail
-  =/  scry
-    |=  [* (unit (set monk)) =term =beam]
-    ^-  (unit (unit cage))
-    ::
-    ?>  =(term %cx)
-    ?>  =(beam [[~nul %desk %da ~1234.5.6] /bar/foo])
-    ::
-    [~ ~]
+  =/  scry  (scry-fail ~1234.5.6)
   ::
   =.  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
   =^  moves  ford
     %-  call:ford
-    :*  duct=~
-        type=~
-        %make
-        ~nul
+    :*  duct=~  type=~  %make  ~nul
         plan=[%scry %clay-once ren=%x bem=[[~nul %desk %da ~1234.5.6] /bar/foo]]
         date=`~1234.5.6
     ==
@@ -212,31 +183,12 @@
 ::
 ++  test-scry-clay-block
   ~&  %test-scry-clay-block
-  =/  scry-block
-    |=  [* (unit (set monk)) =term =beam]
-    ^-  (unit (unit cage))
-    ::
-    ?>  =(term %cx)
-    ?>  =(beam [[~nul %desk %da ~1234.5.6] /bar/foo])
-    ::
-    ~
-  ::  scry-is-forbidden: makes sure ford does not attempt to scry
+  =/  scry-blocked  (scry-block ~1234.5.6)
   ::
-  =/  scry-is-forbidden
-    |=  [* (unit (set monk)) =term =beam]
-    ^-  (unit (unit cage))
-    ::
-    ~|  term+term
-    ~|  beam+beam
-    !!
-  ::
-  =.  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-block)
+  =.  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-blocked)
   =^  moves  ford
     %-  call:ford
-    :*  duct=~
-        type=~
-        %make
-        ~nul
+    :*  duct=~  type=~  %make  ~nul
         plan=[%scry %clay-once ren=%x bem=[[~nul %desk %da ~1234.5.6] /bar/foo]]
         date=`~1234.5.6
     ==
@@ -271,34 +223,14 @@
 ::
 ++  test-scry-clay-live
   ~&  %test-scry-clay-live
-  =/  scry-42
-    |=  [* (unit (set monk)) =term =beam]
-    ^-  (unit (unit cage))
-    ::
-    ?>  =(term %cx)
-    ?>  =(beam [[~nul %desk %da ~1234.5.6] /foo/bar])
-    ~&  %scry-42
-    ::
-    [~ ~ %noun !>(42)]
-  ::
-  =/  scry-43
-    |=  [* (unit (set monk)) =term =beam]
-    ^-  (unit (unit cage))
-    ::
-    ?>  =(term %cx)
-    ?>  =(beam [[~nul %desk %da ~1234.5.7] /foo/bar])
-    ~&  %scry-43
-    ::
-    [~ ~ %noun !>(43)]
+  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
+  =/  scry-43  (scry-succeed ~1234.5.7 [%noun !>(43)])
   ::
   =.  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-42)
   =^  moves  ford
     %-  call:ford
-    :*  duct=~
-        type=~
-        %make
-        ~nul
-        plan=[%scry %clay-live care=%x bel=[[~nul %desk] /foo/bar]]
+    :*  duct=~  type=~  %make  ~nul
+        plan=[%scry %clay-live care=%x bel=[[~nul %desk] /bar/foo]]
         date=~
     ==
   %+  welp
@@ -330,4 +262,53 @@
   ==  ==
   :::-  state-by-ship.+>+<.ford
   ::(my [~nul *ford-state:ford-turbo]~)
+::
+::  |utilities: helper arms
+::
+::+|  utilities
+::
+::  +scry-succeed: produces a scry function with a known request and answer
+::
+++  scry-succeed
+  |=  [date=@da result=cage]  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ~|  scry-succeed+[beam+beam term+term]
+  ?>  =(term %cx)
+  ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ::
+  [~ ~ result]
+::  +scry-fail: produces a scry function with a known request and failed answer
+::
+++  scry-fail
+  |=  date=@da  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ~|  scry-fail+[beam+beam term+term]
+  ?>  =(term %cx)
+  ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ::
+  [~ ~]
+::  +scry-block: produces a scry function with known request and blocked answer
+::
+++  scry-block
+  |=  date=@da  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ~|  scry-block+[beam+beam term+term]
+  ?>  =(term %cx)
+  ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ::
+  ~
+::  +scry-is-forbidden: makes sure ford does not attempt to scry
+::
+++  scry-is-forbidden  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ~|  scry-is-forbidden+[beam+beam term+term]
+  !!
 --

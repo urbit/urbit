@@ -910,36 +910,29 @@
 ++  to-wire
   |=  =dependency
   ^-  wire
-  |^  ?-    -.dependency
-          ::
-          %clay-live
-        ::
-        =/  beam=beam
-          [[ship=p.p.bel desk=q.p.bel case=[%ud 0]] spur=q.bel]:dependency
-        ::
-        (encode %c care.dependency & beam)
+  ::
+  =/  beam=beam
+    ?-    -.dependency
+        ?(%clay-once %gall-once)  beam.dependency
+        ?(%clay-live %gall-live)
       ::
-          %clay-once
-        ::
-        (encode %c care.dependency | beam.dependency)
-      ::
-          %gall-live
-        =/  beam=beam
-          [[ship=p.p.bel desk=q.p.bel case=[%ud 0]] spur=q.bel]:dependency
-        ::
-        (encode %g care.dependency & beam)
-      ::
-          %gall-once
-        ::
-        (encode %g care.dependency | beam.dependency)
+      =,  bel.dependency
+      [[ship=p.p desk=q.p case=[%ud 0]] spur=q]
+    ==
+  ::
+  |^  ?-  -.dependency
+        %clay-live  (encode %c &)
+        %clay-once  (encode %c |)
+        %gall-live  (encode %g &)
+        %gall-once  (encode %g |)
       ==
   ::  +encode:to-wire: encode :vane, :care, :live, and :beam into a +wire
   ::
   ++  encode
-    |=  [vane=?(%c %g) care=care:clay live=? =beam]
+    |=  [vane=?(%c %g) live=?]
     ^-  wire
     ::
-    [vane care (scot %f live) (en-beam beam)]
+    [vane care.dependency (scot %f live) (en-beam beam)]
   --
 ::  +from-wire: decode a +dependency from a +wire
 ::
@@ -1098,7 +1091,7 @@
       %+  roll  ~(tap in care-paths)
       |=  [[care=care:clay =path] dependency-updates=_dependency-updates.state]
       ::
-      =/  dependency=dependency  [%clay-live care bel=[disc spur=path]]
+      =/  dependency=dependency  [%clay-live care bel=[disc spur=(flop path)]]
       ::
       =-  (~(put by dependency-updates) date -)
       =-  (~(put ju -) disc dependency)
@@ -1801,7 +1794,7 @@
         |=  =dependency  ^-  (unit [care:clay path])
         ?:  ?=(?(%gall-live %gall-once) -.dependency)
           ~
-        =-  `[care.dependency -]
+        =-  `[care.dependency (flop `path`-)]
         ?-  -.dependency
           %clay-live  spur=q.bel.dependency
           %clay-once  spur=s.beam.dependency
