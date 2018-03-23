@@ -271,23 +271,34 @@
 ::
 ++  test-scry-clay-live
   ~&  %test-scry-clay-live
-  =/  scry
+  =/  scry-42
     |=  [* (unit (set monk)) =term =beam]
     ^-  (unit (unit cage))
     ::
     ?>  =(term %cx)
     ?>  =(beam [[~nul %desk %da ~1234.5.6] /foo/bar])
+    ~&  %scry-42
     ::
     [~ ~ %noun !>(42)]
   ::
-  =.  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =/  scry-43
+    |=  [* (unit (set monk)) =term =beam]
+    ^-  (unit (unit cage))
+    ::
+    ?>  =(term %cx)
+    ?>  =(beam [[~nul %desk %da ~1234.5.7] /foo/bar])
+    ~&  %scry-43
+    ::
+    [~ ~ %noun !>(43)]
+  ::
+  =.  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-42)
   =^  moves  ford
     %-  call:ford
     :*  duct=~
         type=~
         %make
         ~nul
-        plan=[%scry %clay-once care=%x bem=[[~nul %desk %da ~1234.5.6] /foo/bar]]
+        plan=[%scry %clay-live care=%x bel=[[~nul %desk] /foo/bar]]
         date=~
     ==
   %+  welp
@@ -301,7 +312,7 @@
             `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
     ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry)
+  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-43)
   =^  moves2  ford
     %-  take:ford
     :*  wire=/~nul/clay-sub/~nul/desk  duct=~
@@ -309,7 +320,14 @@
         [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
     ==
   %-  expect-eq  !>
-  [~ ~]
+  :-  moves2
+  :~  :*  duct=~  %give  %made  ~1234.5.7  %complete  %result
+          [%scry %noun !>(43)]
+      ==
+      :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+          %c  %warp  [~nul ~nul]  %desk
+          `[%mult [%da ~1234.5.7] (sy [%x /foo/bar]~)]
+  ==  ==
   :::-  state-by-ship.+>+<.ford
   ::(my [~nul *ford-state:ford-turbo]~)
 --
