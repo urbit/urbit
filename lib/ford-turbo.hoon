@@ -1164,13 +1164,12 @@
   ++  execute
     |=  =build
     ^+  this
+    ::  if the build is complete and not a %tombstone, we're done
     ::
-    ::  if the build is complete, we're done
+    =^  maybe-cache-line  results.state  (access-cache build)
     ::
-    ::    TODO: rebuild if %tombstone
-    ::
-    ::  TODO replace with arm that updates :last-accessed
-    ?^  (~(get by results.state) build)
+    ?:  ?=([~ %result *] maybe-cache-line)
+      ::
       this
     ::  place :build in :state if it isn't already there
     ::
@@ -1181,14 +1180,15 @@
         builds-by-schematic.state
       (~(put by-schematic builds-by-schematic.state) build)
     ==
+    ::  find :previous-build and :previous-result in :state
     ::
     =/  previous-build
       (~(find-previous by-schematic builds-by-schematic.state) build)
     ::
-    ::  TODO use arm that updates :last-accessed
-    =/  previous-result
-      ?~  previous-build  ~
-      (~(get by results.state) u.previous-build)
+    =^  previous-result  results.state
+      ?~  previous-build  [~ results.state]
+      (access-cache u.previous-build)
+    ::  kids: sub-builds of :build
     ::
     =/  kids  ~(tap in (~(get ju sub-builds.components.state) build))
     ::  result: +build-result to be populated by +make or a previous result
@@ -1200,7 +1200,9 @@
     ::
     ::  if :build is unchanged from :previous-build, don't run +make
     ::
-    ?.  |(sub-builds-changed dependencies-changed)
+    =^  subs-changed  results.state  sub-builds-changed
+    ::
+    ?.  |(subs-changed dependencies-changed)
       ::  copy :previous-result to new date
       ::
       ?>  ?=([~ %result *] previous-result)
@@ -1303,27 +1305,74 @@
     ==
     ::  +sub-builds-changed: did sub-builds change since :previous-build?
     ::
-    ++  sub-builds-changed  ^-  ?
-      ?~  previous-build  &
+    ::    Produces a mutant version of :results.state, since it accesses
+    ::    cache lines and updates their :last-accessed. Note that freshness
+    ::    will be somewhat chaotic due to the lack of ordering of sub-builds.
+    ::    We stop at the first sub-build that has a changed value.
+    ::
+    ++  sub-builds-changed  ^-  [? _results.state]
+      ?~  previous-build  [& results.state]
       =/  old-sub-builds
         (~(get ju sub-builds.components.state) u.previous-build)
       ::
-      %+  lien  ~(tap in old-sub-builds)
-      |=  sub=^build  ^-  ?
+      =/  any-changed=?  |
+      =/  subs  ~(tap in old-sub-builds)
+      ::  loop over the sub-builds until we see a changed result
       ::
-      =/  sub-result  (~(got by results.state) sub)
-      ?:  ?=(%tombstone -.sub-result)  &
+      |-  ^+  [any-changed results.state]
+      ::  if any have changed, we're done
+      ::
+      ?:  any-changed  [& results.state]
+      ::  if we've checked all :subs, we're done
+      ::
+      ?~  subs  [| results.state]
+      ::
+      =/  sub=^build  i.subs
+      ::  if :sub is newer than :build, don't check it; we're done with :sub
+      ::
+      ?:  (gth date.sub date.build)
+        $(subs t.subs)
+      ::
+      =^  sub-result  results.state  (access-cache sub)
+      ::  if there's no result for a sub-build, treat :build as changed
+      ::
+      ?~  sub-result
+        [& results.state]
+      ::  if the sub-build's result has been reclaimed, treat :build as changed
+      ::
+      ?:  ?=(%tombstone -.u.sub-result)
+        [& results.state]
+      ::  loop over rebuilds of :sub
+      ::
+      |-  ^+  [any-changed results.state]
+      ::  find the :next rebuild of :sub
       ::
       =/  next  (~(find-next by-schematic builds-by-schematic.state) sub)
-      ?~  next  |
+      ::  if there's no :next, or it's newer than :build, we're done with :sub
       ::
-      ?:  (gth date.u.next date.build)  |
+      ?~  next
+        ^$(subs t.subs)
       ::
-      =/  next-result  (~(get by results.state) u.next)
-      ?~  next-result  |
-      ?:  ?=(%tombstone -.u.next-result)  &
+      ?:  (gth date.u.next date.build)
+        ^$(subs t.subs)
+      ::  obtain :next-result by looking up :next's result in cache
       ::
-      !=(build-result.u.next-result build-result.sub-result)
+      =^  next-result  results.state  (access-cache u.next)
+      ::  if there's no result for a sub-build, treat :build as changed
+      ::
+      ?~  next-result
+        [& results.state]
+      ::  if the sub-build's result has been reclaimed, treat :build as changed
+      ::
+      ?:  ?=(%tombstone -.u.next-result)
+        [& results.state]
+      ::  if :next's result differs from :sub's, treat :build as changed
+      ::
+      ?.  =(build-result.u.next-result build-result.u.sub-result)
+        [& results.state]
+      ::  if :next's date is earlier than :build's, check the next rebuild
+      ::
+      $(sub u.next)
     ::  +dependencies-changed: did dependencies change since :previous-build?
     ::
     ++  dependencies-changed  ^-  ?
@@ -1670,7 +1719,30 @@
   ::+|  utilities
   ::
   ++  this  .
-  ::  +finalize: convert per-event state to moves and persistent state
+  ::  +access-cache: access the +cache-line for :build, updating :last-accessed
+  ::
+  ::    Usage:
+  ::    ```
+  ::    =^  maybe-cache-line  results.state  (access-cache build)
+  ::    ```
+  ::
+  ++  access-cache
+    |=  =build
+    ^-  [(unit cache-line) _results.state]
+    ::
+    =/  maybe-original=(unit cache-line)  (~(get by results.state) build)
+    ?~  maybe-original
+      [~ results.state]
+    ::
+    =/  original=cache-line  u.maybe-original
+    ::
+    ?:  ?=(%tombstone -.original)
+      [`original results.state]
+    ::
+    =/  mutant=cache-line  original(last-accessed now)
+    ::
+    [`mutant (~(put by results.state) build mutant)]
+  ::  +finalize: convert per-event state to moves and per sistent state
   ::
   ::    Converts :done-live-roots to %made +move's, performs +duct
   ::    accounting, and runs +cleanup on completed once builds and
