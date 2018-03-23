@@ -1704,7 +1704,7 @@
         (~(put ju client-builds.components.state) sub-build build)
       ==
       ::
-      =/  maybe-cache-line  (~(get by results.state) sub-build)
+      =^  maybe-cache-line  results.state  (access-cache sub-build)
       ?~  maybe-cache-line
         [~ state]
       ::
