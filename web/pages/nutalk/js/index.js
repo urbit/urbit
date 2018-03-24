@@ -40000,7 +40000,7 @@ function (_Component) {
     _this.createTopic = _this.createTopic.bind(_this);
     _this.valueChange = _this.valueChange.bind(_this);
     _this.state = {
-      topicContent: _this.props.topText ? _this.props.topText : ''
+      topicContent: _this.props.text ? _this.props.text : ''
     };
     return _this;
   }
@@ -40337,17 +40337,6 @@ function (_Component) {
 
   return Elapsed;
 }(react_1);
-
-/**
-  Anatomy:
-
-  "ComponentLabel": {
-    comp:         // main component
-    compProps:    // props for main component
-    head:         // header component
-    headProps:    // props for header
-}
-**/
 
 var ComponentMap = {
   "StreamPage": {
