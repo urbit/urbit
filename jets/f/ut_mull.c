@@ -546,6 +546,31 @@
         return ret;
       }
 
+      case c3__form: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _mull_used();
+      {
+        u3_noun vat = _mull_in(van, sut, gol, dox, q_gen);
+        u3_noun nup, dur;
+
+        if ( c3__void == u3h(vat) ) {
+          nup = c3__void;
+        }
+        else { 
+          nup = u3nt(c3__form, u3nc(u3k(sut), u3k(p_gen)), u3k(u3h(vat)));
+        }
+
+        if ( c3__void == u3t(vat) ) {
+          dur = c3__void;
+        }
+        else { 
+          dur = u3nt(c3__form, u3nc(u3k(dox), u3k(p_gen)), u3k(u3t(vat)));
+        }
+        ret = u3nc(nup, dur);
+
+        u3z(vat);
+        return ret;
+      }
+
       case c3__ktts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
@@ -725,7 +750,7 @@
           return u3m_error("mull-bonk-f");
         }
         else {
-          if ( c3y == _mull_feel(van, sut, p_gen) ) {
+          if ( c3y == fes ) {
             return _mull_in(van, sut, gol, dox, q_gen);
           } else {
             return _mull_in(van, sut, gol, dox, r_gen);

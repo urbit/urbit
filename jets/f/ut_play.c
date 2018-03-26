@@ -388,6 +388,19 @@
         return ret;
       }
 
+      case c3__form: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _play_used();
+      {
+        u3_noun boc = _play_x(van, sut, q_gen);
+
+        if ( c3__void == boc ) {
+          return boc;
+        } 
+        else {
+          return u3nt(c3__form, u3nc(u3k(sut), u3k(p_gen)), boc);
+        }
+      }
+
       case c3__docs: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
