@@ -237,7 +237,7 @@ u3_weak
 u3j_spot(u3_noun cor)
 {
   u3_weak reg = _cj_find_cold(u3h(cor));
-  if ( u3_none == sag ) {
+  if ( u3_none == reg ) {
     return u3_none;
   }
   else {
@@ -282,6 +282,7 @@ _cj_scan(u3_noun cor)
 
     rum = u3qdb_get(rut, u3t(cor));
     if ( c3y == u3qdb_has(rut, u3t(cor)) ) {
+      u3z(reg);
       return c3y;
     }
     else {
@@ -291,10 +292,12 @@ _cj_scan(u3_noun cor)
         par = u3r_at(axe, cor);
         if ( (c3y == u3qdi_has(bas, u3h(par))) &&
              (c3y == _cj_scan(par)) ) {
+          u3z(reg);
           return c3y;
         }
         kid = u3t(kid);
       }
+      u3z(reg);
       return c3n;
     }
   }
@@ -707,22 +710,27 @@ _cj_fine(u3_noun cup, u3_noun mop, u3_noun cor)
 u3_weak
 u3j_kick(u3_noun cor, u3_noun axe)
 {
-  if ( !_(u3du(cor)) ) { return u3_none; } 
-
   u3t_on(glu_o);
-  {
-    u3_noun bat = u3h(cor);
-    u3_weak cax = u3j_find(bat);
+  u3_weak loc = _cj_find_cold(cor);
+  if ( u3_none == loc ) {
+    u3t_off(glu_o);
+    return u3_none;
+  }
+  else {
+    u3_weak act = _cj_find_warm(loc);
+    u3z(loc);
+    if ( u3_none == act ) {
+      u3t_off(glu_o);
+      return u3_none;
+    }
+    else {
+      c3_l jax_l;
+      u3_noun hap, bal, jit, inx;
 
-    if ( u3_none == cax ) { u3t_off(glu_o); return u3_none; }
-    {
-      u3_noun mop = u3t(u3h(u3t(cax)));
-      u3_noun hap = u3h(u3t(u3h(cax)));
-      u3_noun cup = u3h(u3t(u3t(cax)));
-      u3_noun inx = u3kdb_get(u3k(hap), u3k(axe));
+      u3x_qual(act, &jax_l, &hap, &bal, &jit);
 
-      if ( u3_none == inx ) {
-        u3z(cax);
+      if ( u3_none == (inx = u3qdb_get(hap, axe)) ) {
+        u3z(act);
         u3t_off(glu_o); 
         {
           c3_o pof_o = __(u3C.wag_w & u3o_debug_cpu);
@@ -741,25 +749,14 @@ u3j_kick(u3_noun cor, u3_noun axe)
           }
         }
       }
-#if 1
-      else if ( !_(_cj_fine(cup, mop, cor)) ) {
-        fprintf(stderr, "improper core %x\r\n", u3r_mug(cor));
-        u3m_p("improper label", u3h(u3t(u3t(u3h(cax)))));
-        u3m_bail(c3__exit);
-
-        u3t_off(glu_o); 
-        return u3_none;
-      }
-#endif
       else {
-        c3_l      jax_l = u3h(u3h(cax));
         u3j_core* cop_u = &u3D.ray_u[jax_l];
         c3_l      inx_l = inx;
         u3j_harm* ham_u = &cop_u->arm_u[inx_l];
         c3_o      pof_o = __(u3C.wag_w & u3o_debug_cpu);
         u3_noun   pro;
 
-        u3z(cax);
+        u3z(act);
         if ( _(pof_o) ) {
           pof_o = u3t_come(bat);
         }
@@ -829,6 +826,63 @@ _cj_jit(c3_l jax_l, u3_noun bat)
 --
 */
 
+/* cj_register_old(): attempt to update correct set within lan with
+ *                    bat. u3_none if axe not found within lan. RETAIN.
+ */
+static u3_weak
+_cj_register_old(u3_noun lan, u3_noun bat, u3_noun axe)
+{
+  u3_noun ank;
+  if ( u3_nul == lan ) {
+    return u3_none;
+  }
+  else if ( u3r_sing(axe, ank = u3h(lan)) ) {
+    u3_noun bas = u3qdi_put(u3t(ank), bat),
+            kan = u3nc(axe, bas);
+    return u3nc(kan, u3k(u3t(lan)));
+  }
+  else {
+    u3_weak nex = _cj_register_old(u3t(lan), bat, axe);
+    if ( u3_none == nex ) {
+      return u3_none;
+    }
+    else {
+      return u3nc(u3k(ank), nex);
+    }
+  }
+}
+
+/* cj_register_new(): insert ancestor within lan at sorted index. RETAIN.
+ */
+static u3_noun
+_cj_register_new(u3_noun lan, u3_noun bat, u3_noun axe)
+{
+  u3_noun ank;
+  if ( (u3_nul == lan) || (c3y == u3qa_lth(axe, u3h(u3h(lan)))) ) {
+    ank = u3nc(axe, u3qdi_put(u3_nul, bat));
+    return u3nc(ank, lan);
+  }
+  else {
+    return u3nc(u3k(u3h(lan)),
+                _cj_register_new(u3t(lan), bat, axe));
+  }
+}
+
+/* _cj_register(): register a battery as an ancestor in a list of ancestors.
+ *                 RETAIN.
+ */
+static u3_noun
+_cj_register(u3_noun lan, u3_noun bat, u3_noun axe)
+{
+  u3_weak old = _cj_register_old(lan, bat, axe);
+  if ( u3_none != old ) {
+    return old;
+  }
+  else {
+    return _cj_register_new(lan, bat, axe);
+  }
+}
+
 /* _cj_mine(): declare a core.  RETAIN.
 */
 static void
@@ -844,12 +898,12 @@ _cj_mine(u3_noun cey, u3_noun cor)
     reg   = _cj_find_cold(bat);
     loc   = u3nq(c3y, c3y, u3k(nam), u3k(pay));
     if ( u3_none == reg ) {
-      reg = u3nc(u3qdb_put(u3_nul, pay, bat), u3_nul);
+      reg = u3nc(u3qdb_put(u3_nul, pay, loc), u3_nul);
     }
     else {
       u3_noun rut, ger;
       u3x_cell(reg, &rut, &kid);
-      ger = u3nc(u3qdb_put(rut, pay, bat), kid);
+      ger = u3nc(u3qdb_put(rut, pay, loc), kid);
       u3z(reg);
       reg = ger;
     }
@@ -884,11 +938,12 @@ _cj_mine(u3_noun cey, u3_noun cor)
                      bal,
                      _cj_jit(jax_l, bat));
 
+        u3z(pac);
         if ( (3 == axe) && (c3y == u3h(pel)) ) {
-          loc = u3nq(c3y, c3n, u3k(nam), u3k(pel));
+          loc = u3nq(c3y, c3n, u3k(nam), pel);
         }
         else {
-          loc = u3nq(c3n, u3k(nam), u3k(axe), u3k(pel));
+          loc = u3nq(c3n, u3k(nam), u3k(axe), pel);
         }
 
         reg = _cj_find_cold(bat);
@@ -899,10 +954,10 @@ _cj_mine(u3_noun cey, u3_noun cor)
           reg = u3nc(u3_nul, kid);
         }
         else {
-          u3_noun rut, ger, kid;
+          u3_noun rut, ger, kid, ank;
           u3x_cell(reg, &rut, &kid);
-          kid = _cj_add_kid(kid, axe, loc);
-          ger = u3nc(rut, kid);
+          ank = _cj_register(kid, bat, axe);
+          ger = u3nc(u3k(rut), ank);
           u3z(reg);
           reg = ger;
         }
