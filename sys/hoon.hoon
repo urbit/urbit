@@ -3866,7 +3866,10 @@
 ++  sane                                                ::  atom sanity
   |=  a/@ta
   |=  b/@  ^-  ?
-  ?>  =(%t (end 3 1 a))
+  ?.  =(%t (end 3 1 a))
+    ::  XX more and better sanity
+    ::
+    &
   =+  [inx=0 len=(met 3 b)]
   ?:  =(%tas a)
     |-  ^-  ?
@@ -3896,6 +3899,13 @@
   ?&  |(=(1 len) =+(i=1 |-(|(=(i len) &((gte (cut 3 [i 1] b) 128) $(i +(i)))))))
       $(b (rsh 3 len b))
   ==
+::
+++  ruth                                                ::  biblical sanity
+  |=  {a/@ta b/*}
+  ^-  @
+  ?^  b  !!
+  ::  ?.  ((sane a) b)  !!
+  b
 ::
 ++  trim                                                ::  tape split
   |=  {a/@ b/tape}
@@ -5587,6 +5597,8 @@
           $%  {%& p/axis}                               ::  by geometry
               {%| p/@ud q/(unit term)}                  ::  by name
           ==                                            ::
+            ::  XX more and better sanity
+            ::
 ++  metl  ?($gold $iron $zinc $lead)                    ::  core variance
 +=  null  ~                                             ::  null, nil, etc
 ++  onyx  (list (pair type foot))                       ::  arm activation
@@ -5681,6 +5693,7 @@
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
     {$docs p/(pair cord (list sect)) q/hoon}            ::  annotate expression
+    {$form p/plan q/hoon}                               ::  annotate with plan 
     {$fits p/hoon q/wing}                               ::  underlying ?=
     {$knit p/(list woof)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
@@ -5793,6 +5806,7 @@
     {$zpgr p/hoon}                                      ::  !>
     {$zpmc p/hoon q/hoon}                               ::  !;
     {$zpts p/hoon}                                      ::  !=
+    {$zpvt p/(list wing) q/hoon r/hoon}                 ::  !@
     {$zpwt p/$@(p/@ {p/@ q/@}) q/hoon}                  ::  !?
     {$zpzp ~}                                           ::  !!
   ==                                                    ::
@@ -5815,7 +5829,8 @@
               {$11 p/nock q/nock}                       ::  grab data from sky
               {$0 p/@}                                  ::  axis select
           ==                                            ::
-++  type  $@  $?  $noun                                 ::  any nouns
+++  type  $~  %noun                                     :: 
+          $@  $?  $noun                                 ::  any nouns
                   $void                                 ::  no noun
               ==                                        ::
           $%  {$atom p/term q/(unit @)}                 ::  atom / constant
@@ -5823,6 +5838,7 @@
               {$core p/type q/coil}                     ::  object
               {$face p/{p/what q/$@(term tune)} q/type} ::  namespace (new)
               {$fork p/(set type)}                      ::  union
+              {$form p/(pair type plan) q/type}         ::  annotation
               {$help p/writ q/type}                     ::  description
               {$hold p/type q/hoon}                     ::  lazy evaluation
           ==                                            ::
@@ -5832,7 +5848,7 @@
               {$2 p/(list {@ta *})}                     ::  error ~_s
           ==                                            ::
 ++  tine                                                ::  partial noun
-          $@  ~                                        ::  open
+          $@  ~                                         ::  open
           $%  {%& p/tine q/tine}                        ::  half-blocked
               {%| p/(set)}                              ::  fully blocked
           ==                                            ::
@@ -6372,6 +6388,14 @@
   ^-  type
   ?:(=(%void pac) %void [%core pac con])
 ::
+++  form
+  ~/  %form
+  |=  {p/(pair type plan) q/type}
+  ^-  type
+  ?:  =(%void q)
+    %void
+  [%form p q]
+::
 ++  help
   ~/  %help
   |=  {p/writ q/type}
@@ -6713,9 +6737,9 @@
     ?-    bas
     ::
         {$atom *}
-      ::  we may want specific defaults
+      ::  we may want spec
       ::
-      [%sand p.bas 0]
+      [%sand p.bas ?:(=(%da p.bas) ~2000.1.1 0)]
     ::
         $noun
       ::  raw nock produces noun type
@@ -6879,6 +6903,10 @@
       ?-    bas
           {%atom *}
         :+  %ktls  example
+        ^-  hoon
+        :^    %zpvt  
+            [[[%| 0 `%ruth] ~] ~]
+          [%cnls [%limb %ruth] [%sand %ta p.bas] fetch]  
         [%wtvt fetch-wing fetch [%zpzp ~]]
       ::
           $cell
@@ -7011,25 +7039,18 @@
       ::  normalize, $&
       ::
           {$bcpd *}
-        ::  push the raw result  [./1]
+        ::  push the raw result
         ::
-        ^-  hoon
         :+  %tsls  relative(mod p.mod)
-        ::  push repair function  [raw/2 ./3]
+        ::  push repair function
         ::
-        ^-  hoon
         :+  %tsls
           [%tsgr $/3 q.mod]
-        ::  push repaired product   [fun/2 raw/6 ./7]
+        ::  push repaired product
         ::
-        ^-  hoon
         :+  %tsls
           [%cnhp $/2 $/6]
-        ^-  hoon
-        ::  sanity-check repaired product [repair/2 fun/6 raw/14 ./15]
-        ::
-        ^-  hoon
-        ::  assert
+        ::  sanity-check repaired product
         ::
         :+  %wtgr 
           ::  either
@@ -7293,8 +7314,9 @@
       ::
       ++  runk
         ^-  (pair hoon whit)
-        ?~  boy  flam
-        [[%docs u.boy gen] wit(boy ~)]
+        ::  ?~  boy  flam
+        ::  [[%docs u.boy gen] wit(boy ~)]
+        flam
       ::
       ++  tong
         |=  got/toga
@@ -8038,6 +8060,7 @@
       %epla   epla
       %emin   emin
       %emul   emul
+      %feel   feel
       %felt   felt
       %fine   fine
       %fire   fire
@@ -8101,6 +8124,7 @@
         {$core *}   (biff $(sut p.sut) |=(* `[p.s.q.sut +<]))
         {$face *}   $(sut repo)
         {$fork *}   ~
+        {$form *}   $(sut repo)
         {$help *}   $(sut repo)
         {$hold *}   ?:  (~(has in gil) sut)
                       ~
@@ -8122,6 +8146,7 @@
                  $(sut p.sut) 
       {$face *}  $(sut repo)
       {$fork *}  [full/[~ ~ ~] ~]
+      {$form *}  $(sut repo)
       {$help *}  $(sut repo)
       {$hold *}  ?:  (~(has in gil) sut)
                    [full/[~ ~ ~] ~]
@@ -8211,6 +8236,7 @@
           {$core *}  ?:(?=(?({$atom *} {$cell *}) ref) sut sint)
           {$face *}  (face p.sut dext(sut q.sut))
           {$fork *}  (fork (turn ~(tap in p.sut) |=(type dext(sut +<))))
+          {$form *}  (form p.sut dext(sut q.sut))
           {$help *}  (help p.sut dext(sut q.sut))
           {$hold *}  ?<  (~(has in bix) [sut ref])
                      dext(sut repo, bix (~(put in bix) [sut ref]))
@@ -8536,13 +8562,34 @@
           |=  {a/type b/foot}
           [a [%ash %$ 1]]
     ==
+  ::                                                    ::
+  ++  feel                                              ::  detect existence
+    |=  rot/(list wing)
+    ^-  ?
+    =.  rot  (flop rot)
+    |-  ^-  ?
+    ?~  rot  &
+    =/  yep  (fond %free i.rot)
+    ?~  yep  |
+    ?-    -.yep
+      %&  %=  $
+            rot  t.rot
+            sut  p:(fine %& q.p.yep) 
+          ==
+      %|  ?-  -.p.yep
+            %&  |
+            %|  %=  $
+                  rot  t.rot
+                  sut  p:(fine %| q.p.p.yep)
+                ==
+    ==    ==
   ::
   ++  fond
     ~/  %fond
     |=  {way/vial hyp/wing}
     =>  |%
         ++  pony                                        ::  raw match
-                  $@  ~                                ::  void
+                  $@  ~                                 ::  void
                   %+  each                              ::  natural/abnormal
                     (pair what palo)                    ::  arm or leg
                   %+  each                              ::  abnormal
@@ -8634,6 +8681,9 @@
               ?.  sam.pec  lose
               ?:  con.pec  $(sut p.sut, axe (peg axe 3))
               $(sut (peek(sut p.sut) way 2), axe (peg axe 6))
+            ::
+                {$form *}
+              $(sut repo)
             ::
                 {$help *}
               $(sut repo)
@@ -8773,6 +8823,7 @@
         {$fork *}   =+  yed=~(tap in p.sut)
                     |-  ^-  nock
                     ?~(yed [%1 1] (flor ^$(sut i.yed) $(yed t.yed)))
+        {$form *}   $(sut q.sut)
         {$help *}   $(sut q.sut)
         {$hold *}
       ?:  (~(has in vot) sut)
@@ -8811,6 +8862,7 @@
         {$core *}  $(sut repo)
         {$face *}  (face p.sut $(sut q.sut))
         {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
+        {$form *}  (form p.sut $(sut q.sut))
         {$help *}  (help p.sut $(sut q.sut))
         {$hold *}
       ?:  (~(has in bix) [sut ref])
@@ -9053,6 +9105,10 @@
       =+  hum=$(gen q.gen)
       [(help [%docs p.gen] p.hum) q.hum]
     ::
+        {$form *}
+      =+  hum=$(gen q.gen)
+      [(form [sut p.gen] p.hum) q.hum]
+    ::
         {$sgzp *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
         {$sggr *}
       =+  hum=$(gen q.gen)
@@ -9121,15 +9177,9 @@
       ?>  (~(nest ut p:!>(*type)) & ref)
       [(nice (cell ref p.vos)) (cons [%1 burp(sut p.vos)] q.vos)]
     ::
-        {$zpgr *}
-      =+  vat=$(gen p.gen)
-      %=    $
-          gen
-        :-  [%cncl [%limb %onan] [%hand p:!>(*type) [%1 burp(sut p.vat)]] ~]
-        [%hand p.vat q.vat]
-      ==
-    ::
         {$zpts *}   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
+        {$zpvt *}   ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
+    ::
         {$zpzp ~}  [%void [%0 0]]
         *
       =+  doz=~(open ap gen)
@@ -9162,6 +9212,7 @@
       {$core *}  $(sut p.sut)
       {$face *}  $(sut q.sut)
       {$fork *}  (lien ~(tap in p.sut) |=(type ^$(sut +<)))
+      {$form *}  $(sut q.sut)
       {$help *}  $(sut q.sut)
       {$hold *}  |((~(has in gil) sut) $(gil (~(put in gil) sut), sut repo))
       $noun      |
@@ -9219,6 +9270,10 @@
         {$docs *}
       =+  vat=$(gen q.gen) 
       [(help [%docs p.gen] p.vat) (help [%docs p.gen] q.vat)]
+    ::
+        {$form *}
+      =+  vat=$(gen q.gen) 
+      [(form [sut p.gen] p.vat) (form [dox p.gen] q.vat)]
     ::
         {$ktsg *}  $(gen p.gen)
         {$sgzp *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
@@ -9278,12 +9333,16 @@
         {$zpts *}  (beth %noun)
     ::
         {$zpmc *}
-      =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!
+      =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!  
       [(nice (cell (play p.gen) p.vos)) (cell (play(sut dox) p.gen) q.vos)]
     ::
-        {$zpgr *}
-      ?>  =(sut dox)
-      =+(typ=(play gen) [typ typ])
+        {$zpvt *}  
+      =+  [(feel p.gen) (feel(sut dox) p.gen)]
+      ?.  =(-< ->)
+        ~>(%mean.[%leaf "mull-bonk-f"] !!)
+      ?:  -<
+        $(gen q.gen)
+      $(gen r.gen)
     ::
         {$zpzp *}  (beth %void)
         *
@@ -9342,6 +9401,7 @@
         {$fork *}  %+  levy  ~(tap in p.sut)
                    |=(type dext(sut +<))
         {$face *}  dext(sut q.sut) 
+        {$form *}  dext(sut q.sut)
         {$help *}  dext(sut q.sut)
         {$hold *}  =+  (~(gas in *(set type)) `(list type)`[sut ref ~])
                    ?:  (~(has in gil) -)
@@ -9442,6 +9502,7 @@
         {$face *}  dext(sut q.sut)
         {$fork *}  ?.  ?=(?({$atom *} $noun {$cell *} {$core *}) ref)  sint
                    (lien ~(tap in p.sut) |=(type dext(tel |, sut +<)))
+        {$form *}  dext(sut q.sut)
         {$help *}  dext(sut q.sut)
         {$hold *}  ?:  (~(has in seg) sut)  |
                    ?:  (~(has in gil) [sut ref])  &
@@ -9462,6 +9523,7 @@
         {$core *}   dext(ref repo(sut ref))
         {$face *}   dext(ref q.ref)
         {$fork *}   (levy ~(tap in p.ref) |=(type sint(ref +<)))
+        {$form *}   dext(ref q.ref)
         {$help *}   dext(ref q.ref)
         {$hold *}   ?:  (~(has in reg) ref)  &
                     ?:  (~(has in gil) [sut ref])  &
@@ -9550,6 +9612,7 @@
       {$ktts *}  (conk(sut $(gen q.gen)) p.gen)
       {$ktwt *}  (wrap(sut $(gen p.gen)) %lead)
       {$docs *}  (help [%docs p.gen] $(gen q.gen))
+      {$form *}  (form [sut p.gen] $(gen q.gen))
       {$sgzp *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       {$sggr *}  $(gen q.gen)
       {$tsgr *}   $(gen q.gen, sut $(gen p.gen))
@@ -9562,13 +9625,10 @@
       {$fits *}  bool
       {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
       {$zpcm *}  (play p.gen)
-      {$zpgr *}  %=    $
-                     gen
-                   [%cncl [%limb %onan] [%hand p:!>(*type) [%1 $(gen p.gen)]] ~]
-                 ==
       {$lost *}  %void
       {$zpmc *}  (cell $(gen p.gen) $(gen q.gen))
       {$zpts *}  %noun
+      {$zpvt *}  ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
       {$zpzp *}  %void
       *          =+  doz=~(open ap gen)
                  ?:  =(doz gen)
@@ -9699,6 +9759,11 @@
         ::
         [%help p.sut dext(sut q.sut)]
       ::
+          {$form *}
+        ::  work through form
+        ::
+        [%form p.sut dext(sut q.sut)]
+      ::
           {$fork *}
         ::  reconstruct each case in fork 
         ::
@@ -9758,6 +9823,7 @@
       ::      -
       ?+    ref  .
           {$help *}  $(ref q.ref)
+          {$form *}  $(ref q.ref)
           {$face *}
         ::  extend all stacks in set
         ::
@@ -9798,7 +9864,7 @@
     ?-  sut
       {$core *}   [%cell %noun p.sut]
       {$face *}   q.sut
-      {$help *}   q.sut
+      {$form *}   q.sut
       {$hold *}   (rest [[p.sut q.sut] ~])
       $noun       (fork [%atom %$ ~] [%cell %noun %noun] ~)
       *           ~>(%mean.[%leaf "repo-fltt"] !!)
@@ -9849,6 +9915,7 @@
       {$face *}  (face p.sut $(sut q.sut))
       {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
       {$help *}  (help p.sut $(sut q.sut))
+      {$form *}  (form p.sut $(sut q.sut))
       {$hold *}  ?:  (~(has in vil) sut)
                    %void
                  $(sut repo, vil (~(put in vil) sut))
@@ -9889,6 +9956,7 @@
       {$core *}  ?>(|(=(%gold p.q.sut) =(%lead yoz)) sut(p.q yoz))
       {$face *}  (face p.sut $(sut q.sut))
       {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
+      {$form *}  (form p.sut $(sut q.sut))
       {$help *}  (help p.sut $(sut q.sut))
       {$hold *}  $(sut repo)
     ==
@@ -10291,6 +10359,9 @@
       ==
     ::
         {$help *}
+      $(sut q.sut)
+    ::
+        {$form *}
       $(sut q.sut)
     ::
         {$face *}
@@ -12146,6 +12217,7 @@
                   [',' (rune com %zpcm expb)]
                   [';' (rune mic %zpmc expb)]
                   ['>' (rune gar %zpgr expa)]
+                  ['@' (rune vat %zpvt expy)]
                   ['=' (rune tis %zpts expa)]
                   ['?' (rune wut %zpwt hinh)]
               ==
@@ -12156,16 +12228,17 @@
       %+  knee  [p=*term q=*(pair what foot)]  |.  ~+
       %+  cook
         |=  {a/whit b/term c/whit d/foot}
-        =+  e=(glom a c)
-        =?  boy.e  =(~ boy.e)
-          |-(?+(-.p.d ~ $dbug $(p.d q.p.d), %docs `p.p.d))
-        =.  p.d
-          |-
-          ?+  p.d  ?~(boy.e p.d [%docs u.boy.e p.d])
-            [%dbug ^]  p.d(q $(p.d q.p.d))
-            [%docs ^]  p.d
-          ==
-        [b boy.e d]
+        [b ~ d]
+::      =+  e=(glom a c)
+::      =?  boy.e  =(~ boy.e)
+::        |-(?+(-.p.d ~ $dbug $(p.d q.p.d), %docs `p.p.d))
+::      =.  p.d
+::        |-
+::        ?+  p.d  ?~(boy.e p.d [%docs u.boy.e p.d])
+::          [%dbug ^]  p.d(q $(p.d q.p.d))
+::          [%docs ^]  p.d
+::        ==
+::      [b boy.e d]
       ::
       ;~  plug
         apex:docs
@@ -12347,6 +12420,7 @@
                       [~ u=a]                           ::
                     wisp                                ::
                   ==                                    ::
+    ++  expy  |.(;~(gunk ropa loaf loaf))               ::  wings and two hoons
     ++  expz  |.(loaf(bug &))                           ::  hoon with tracing
     ::    plan contents
     ::
@@ -12481,6 +12555,7 @@
       [;~(plug lac gap) ;~(plug gap rac)]
     (most gap tall)
   ::
+  ++  ropa  (most col rope)
   ++  rope                                              ::  wing form
     %+  knee  *wing
     |.  ~+

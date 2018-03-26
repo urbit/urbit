@@ -712,6 +712,9 @@
           ::  set of topics. Walk through it instead of showing it.
           (find-item-in-type t.topics q.sut)
         ::
+            {$form *}
+          $(sut q.sut)
+        ::
             {$hold *}  $(sut (~(play ut p.sut) q.sut))
             $noun      ~
             $void      ~
@@ -752,6 +755,7 @@
           ?>  ?=($docs -.p.sut)
           `[%view [%header `+.p.sut (item-as-overview rest-type)]~]
         ::
+            {$form *}  $(sut q.sut)
             {$hold *}  $(sut (~(play ut p.sut) q.sut))
             $noun      ~
             $void      ~
@@ -869,6 +873,7 @@
         ?+  sut  ~
           {$core *}  q.r.q.sut
           {$help *}  ?>(?=($docs -.p.sut) `+.p.sut)
+          {$form *}  $(sut q.sut)
           {$hold *}  $(sut (~(play ut p.sut) q.sut))
         ==
       ::
@@ -1147,6 +1152,7 @@
         {?($cube $face) ^}  a(q $(a q.a))
         {$cell ^}  a(p $(a p.a), q $(a q.a))
         {$fork *}  a(p (silt (turn ~(tap in p.a) |=(b/type ^$(a b)))))
+        {$form *}  !!
         {$help *}  !!
         {$core ^}  `wain`/core
         {$hold *}  a(p $(a p.a))
