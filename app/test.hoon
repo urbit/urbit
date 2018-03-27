@@ -77,6 +77,8 @@
   ::
     :-  /app/gh             "hangs for some reason"
     :-  /mar/gh             "hangs for some reason"
+    :-  /app/twit           "slow and/or crash"
+    :-  /gen/twit           "slow and/or crash"
     :-  /mar/twit           "slow and/or crash"
   ==
 ::
