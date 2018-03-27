@@ -91,7 +91,6 @@
   ::
     :-  /lib/down-jet/parse       "// nonsense"
     :-  /lib/down-jet/rend        "// nonsense"
-    :-  /lib/hood/drum            "ford can't handle surs from libs"
     :-  /lib/hood/kiln            "ford can't handle surs from libs"
     :-  /lib/sole                 "ford can't handle surs from libs"
     :-  /lib/hall                 "ford can't handle surs from libs"
