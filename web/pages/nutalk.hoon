@@ -1,3 +1,3 @@
 ^-  manx
 
-;div(data-component "InboxPage");
+;div(urb-component "InboxPage");

@@ -30,7 +30,7 @@
       ==
     ==
   ;=
-    ;div(data-component "Subscribe", data-circle "{(scow %p p.bem.gas)}/collection_~{(trip -:s.bem.gas)}");
+    ;div(urb-component "Subscribe", urb-circle "{(scow %p p.bem.gas)}/collection_~{(trip -:s.bem.gas)}");
   ==
   ;ul
     ;*  %+  turn
@@ -52,7 +52,7 @@
                     ; {(trip (scot %p who.info.top.topi))}
                   ==
                   ;div.meta-cont
-                    ;div.da.text-mono(data-urb-elapsed "{(esoo:colls mod.info.top.topi)}");
+                    ;div.da.text-mono(urb-component "Elapsed", urb-timestring "{(esoo:colls mod.info.top.topi)}");
                     ;div.com-count.ml-12
                       ; {(trip (scot %ud (lent ~(tap by coms.top.topi))))} comments
                     ==
@@ -82,7 +82,7 @@
                     ==
               ==
             ;li.notes.mb-8
-              ;div.da.text-mono(data-urb-elapsed "{(esoo:colls mod.info.top.topi)}");
+              ;div.da.text-mono(urb-component "Elapsed", urb-timestring "{(esoo:colls mod.info.top.topi)}");
               ;div.h3.mt-0.text-mono.note-uuid
                 ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}"): {(trip t)}
               ==

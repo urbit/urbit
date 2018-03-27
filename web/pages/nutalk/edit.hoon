@@ -16,7 +16,7 @@
         ;a/"/~~/nutalk/pages/preview": Preview
       ==
 
-      ;div(data-component "PostEditTextarea");
+      ;div(urb-component "PostEditTextarea");
     ==
   ==
 ==

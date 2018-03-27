@@ -1,3 +1,3 @@
 ^-  manx
 
-;div(data-component "StreamCreatePage");
+;div(urb-component "StreamCreatePage");
