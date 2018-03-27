@@ -1120,6 +1120,7 @@
 #   define c3__tsms   c3_s4('t','s','m','s')
 #   define c3__tssg   c3_s4('t','s','s','g')
 #   define c3__tstr   c3_s4('t','s','t','r')
+#   define c3__tstc   c3_s4('t','s','t','c')
 #   define c3__tub    c3_s3('t','u','b')
 #   define c3__tul    c3_s3('t','u','l')
 #   define c3__tule   c3_s4('t','u','l','e')

@@ -435,6 +435,16 @@
         return ret;
       }
 
+      case c3__tstc: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
+      _play_used();
+      {
+        u3_noun boc = u3qfu_bust(van, sut, p_gen, q_gen);
+        u3_noun ret = _play_x(van, boc, r_gen);
+
+        u3z(boc);
+        return ret;
+      }
+
       case c3__tscm: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
