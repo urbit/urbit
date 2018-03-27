@@ -1,7 +1,7 @@
 require! <[ stream stream-snitch colors escape-string-regexp ]>
 pty = require \pty.js
 
-export ERROR = /(ford: |\r\x1b\[K\/~)/
+export ERROR = /((ford|warn): |\r\x1b\[K\/~)/
 export class Urbit
   (args)->
     @stdout = process.stdout # overridable
