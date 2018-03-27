@@ -4,16 +4,28 @@
 =,  format
 |_  {bowl $~}
 ++  peek  _~
+++  report-error
+  |=  [a=spur b=(each cage tang)]  ^-  tang
+  =/  should-fail  (~(get by failing) (flop a))
+  ?-    -.b
+      %&
+    ?~  should-fail  ~
+    :~  leaf+"warn: expected failure, {<`tape`u.should-fail>}"
+        leaf+"warn: built succesfully"
+        (sell q.p.b)
+    ==
+  ::
+      %|
+    ?^  should-fail
+      ~[>[%failed-known `tape`(weld "TODO: " u.should-fail)]<]
+    (flop p.b)
+  ==
+::
 ++  made-a-core
   |=  {a/spur @uvH b/gage}
   :_  +>.$
-  ?>  ?=([%tabl ^ ~] b)
-  =/  cur  p.i.p.b
-  %-  %-  slog
-      ?+  -.cur  !!
-        %|  (flop p.cur)
-        %&  ~ ::[(sell q.p.cur)]~
-      ==
+  ?>  ?=([%tabl [(each) (each)] ~] b)
+  %-  (slog (report-error a p.i.p.b))
   =/  nex/(list spur)
     =<(p ;;(,[%& %cont * p=(list spur)] q.i.p.b))
   ?~  nex  ~&(%cores-tested ~)
@@ -48,7 +60,7 @@
     dir:.^(arch %cy (en-beam now-beak sup))
   |=  [a=knot ~]  ^-  (list spur)
   =.  sup  [a sup]
-  =/  ded  (~(get by skips) (flop sup))
+  =/  ded  (~(get by skip-completely) (flop sup))
   ?^  ded
     ~&(> [(flop sup) %skipped `tape`u.ded] ~)
   ?~  [fil:.^(arch %cy (en-beam now-beak [%hoon sup]))]
@@ -57,14 +69,20 @@
   [sup ^$]
 ::
 ++  now-beak  %_(byk r [%da now])
-++  skips
+++  skip-completely
   ^~  ^-  (map path tape)
   %-  my  :~ ::TODO don't hardcode
+    :-  /ren/test-tree      "recursive"
+    :-  /sys                "generally out of scope"
+  ::
     :-  /app/gh             "hangs for some reason"
     :-  /mar/gh             "hangs for some reason"
     :-  /mar/twit           "slow and/or crash"
-    :-  /ren/test-tree      "recursive"
-    :-  /sys                "generally out of scope"
+  ==
+::
+++  failing
+  ^~  ^-  (map path tape)
+  %-  my  :~ ::TODO don't hardcode
   ::
     :-  /app/pipe           "wants 'flavor:hall' to exist"
     :-  /gen/capitalize     "wants unicode-data/txt"
