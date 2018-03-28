@@ -5,6 +5,7 @@
       [%cores p=path]
       [%hoons p=path]
       [%names p=path]
+      [%render p=path]
   ==
 --
 ::
@@ -13,6 +14,8 @@
   |=  {a/cord b/(list cord)}
   ?~  b  ''
   (rap 3 |-([i.b ?~(t.b ~ [a $(b t.b)])]))
+::
+++  fake-fcgi  [%many [%blob *cred:eyre] $+[%n ~] ~]
 --
 ::
 =,  gall
@@ -58,6 +61,31 @@
     [[%core now-beak a] [%$ %cont !>(b)]]
   ==
 ::
+++  made-a-rend
+  |=  {a/wire @uvH b/gage}
+  ?>  ?=([ren=mark ~] a)
+  =+  `[ren=term pax=path]`?~(a !! a)
+  :_  +>.$
+  ?>  ?=([%tabl [(each) (each)] ~] b)
+  %-  (slog (report-error /[ren.i.a]/ren p.i.p.b))
+  =/  nex/(list term)
+    =<(p ;;(,[%& %cont * p=(list term)] q.i.p.b))
+  ?~  nex  ~&(%rens-tested ~)
+  [ost (build-rend nex)]~
+::
+++  build-rend
+  |=  [a=term b=(list term)]
+  ~&  >>  [%ren a]
+  =/  bem/beam  (need (de-beam %/example))
+  =.  -.bem  now-beak
+  :^  %exec  a-rend+/[a]  our
+  %-  some
+  ^-  bilk
+  :-  -.bem
+  :~  %tabl
+    [`silk`[%bake a fake-fcgi bem] [%$ %cont !>(b)]]
+  ==
+::
 ++  poke-noun
   |=  a=test
   :_  +>
@@ -66,6 +94,7 @@
       %cores  [ost (build-core [- +]:(list-hoons p.a))]~
       %names  ~&((list-names p.a) ~)
       %marks  !! ::TODO restore historical handler
+      %render  [ost (build-rend [- +]:(list-names p.a))]~
   ==    
 ::
 ++  list-names
@@ -98,8 +127,11 @@
 ++  skip-completely
   ^~  ^-  (map path tape)
   %-  my  :~ ::TODO don't hardcode
-    :-  /ren/test-tree      "recursive"
     :-  /sys                "generally out of scope"
+  ::
+    :-  /ren/css            "not meant to be called outside /web/pack"
+    :-  /ren/js             "not meant to be called outside /web/pack"
+    :-  /ren/run            "not meant to be called except on a (different) hoon file"
   ::
     :-  /app/gh             "hangs for some reason"
     :-  /mar/gh             "hangs for some reason"
@@ -121,15 +153,6 @@
     :-  /lib/sole                 "ford can't handle surs from libs"
     :-  /lib/hall                 "ford can't handle surs from libs"
     :-  /lib/twitter              "ford can't handle surs from libs"
-    :-  /ren/css                  "not meant to be called outside /web/pack"
-    :-  /ren/js                   "not meant to be called outside /web/pack"
-    :-  /ren/rss-xml              "uses /$"
-    :-  /ren/run                  "not meant to be called except on a (different) hoon file"
-    :-  /ren/tree/body            "uses ren/tree"
-    :-  /ren/tree/head            "uses /$"
-    :-  /ren/tree/json            "uses /$"
-    :-  /ren/urb                  "uses ren/tree"
-    :-  /ren/urb/tree             "uses ren/tree"
     :-  /sys/arvo                 "BROKEN"
     :-  /sys/vane/jael            "expects our"
     :-  /sys/vane/xmas            "expects our"
