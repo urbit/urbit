@@ -5,7 +5,7 @@
       [%cores p=path]
       [%hoons p=path]
       [%names p=path]
-      [%render p=path]
+      [%renders p=path]
   ==
 --
 ::
@@ -90,24 +90,24 @@
   |=  a=test
   :_  +>
   ?-    -.a
-      %hoons  ~&((list-hoons p.a) ~)
-      %cores  [ost (build-core [- +]:(list-hoons p.a))]~
+      %hoons  ~&((list-hoons p.a ~) ~)
+      %cores  [ost (build-core [- +]:(list-hoons p.a skip=(sy /sys /ren ~)))]~
       %names  ~&((list-names p.a) ~)
       %marks  !! ::TODO restore historical handler
-      %render  [ost (build-rend [- +]:(list-names p.a))]~
+      %renders  [ost (build-rend [- +]:(list-names (weld /ren p.a)))]~
   ==    
 ::
 ++  list-names
   |=  a/path  ^-  (list term)
-  =/  hon  (list-hoons a)
+  =/  hon  (list-hoons a ~)
   %+  turn  hon
   |=  b=spur
   (join '-' (slag 1 (flop b)))
 ::
 ++  list-hoons
-  |=  a/path  ^-  (list spur)
-  =/  sup  (flop a)
-  ~&  [%findining-hoons under=a]
+  |=  [under=path skipping=(set spur)]  ^-  (list spur)
+  =/  sup  (flop under)
+  ~&  [%findining-hoons under=under]
   |-  ^-  (list spur)
   %-  zing
   %+  turn
@@ -115,6 +115,8 @@
     dir:.^(arch %cy (en-beam now-beak sup))
   |=  [a=knot ~]  ^-  (list spur)
   =.  sup  [a sup]
+  ?:  (~(has in skipping) (flop sup))
+    ~&(> [(flop sup) %out-of-scope] ~)
   =/  ded  (~(get by skip-completely) (flop sup))
   ?^  ded
     ~&(> [(flop sup) %skipped `tape`u.ded] ~)
@@ -127,8 +129,6 @@
 ++  skip-completely
   ^~  ^-  (map path tape)
   %-  my  :~ ::TODO don't hardcode
-    :-  /sys                "generally out of scope"
-  ::
     :-  /ren/css            "not meant to be called outside /web/pack"
     :-  /ren/js             "not meant to be called outside /web/pack"
     :-  /ren/run            "not meant to be called except on a (different) hoon file"
