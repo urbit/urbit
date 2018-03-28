@@ -12,6 +12,7 @@
                                (of-wain:format wat.a)
                   /collections-topic/
               ==
+~&  [%tops tops]
 ^-  manx
 =,  old-zuse
 ;div.collection-index
@@ -64,10 +65,10 @@
                 ==
                 ;div.h2.mt-0
                   ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}") 
-                  *{hed.snip.topi}
+                  {(trip tit.info.top.topi)}
                   ==
                 ==
-                ;*  ?~  hed.snip.topi
+                ;*  ?:  =(tit.info.top.topi '')
                       ;=
                         ;div.snippet
                           ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}") 
