@@ -1,7 +1,8 @@
 ::
 |%
 ++  test
-  $%  [%marks ~]
+  $%  [%arvo ~]       ::UNIMPLEMENTED 
+      [%marks ~]      ::UNIMPLEMENTED  
       [%cores p=path]
       [%hoons p=path]
       [%names p=path]
@@ -90,10 +91,11 @@
   |=  a=test
   :_  +>
   ?-    -.a
+      %arvo  ~|(%stub !!) ::basically double solid?
       %hoons  ~&((list-hoons p.a ~) ~)
       %cores  [ost (build-core [- +]:(list-hoons p.a skip=(sy /sys /ren ~)))]~
       %names  ~&((list-names p.a) ~)
-      %marks  !! ::TODO restore historical handler
+      %marks  ~|(%stub !!) ::TODO restore historical handler
       %renders  [ost (build-rend [- +]:(list-names (weld /ren p.a)))]~
   ==    
 ::
