@@ -260,7 +260,7 @@
         0w0                           ::  142, ~ted, urbit.org
         0w2d.GLlYg.-MwtO.ZCPBE.OqGB9  ::  143, ~rus, Stephen Burnham (oldkey)
         0w0                           ::  144, ~bex, urbit.org
-        0w0                           ::  145, ~leb, Justin LeBlanc
+        0w1M.E6dLP.eXY5V.Mh5TT.-u9KN  ::  145, ~leb, Justin LeBlanc
         0w0                           ::  146, ~dux, urbit.org
         0w0                           ::  147, ~ryn, urbit.org
         0w0                           ::  148, ~num, Tlon
