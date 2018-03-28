@@ -1,4 +1,20 @@
 ::
+|%
+++  test
+  $%  [%marks ~]
+      [%cores p=path]
+      [%hoons p=path]
+      [%names p=path]
+  ==
+--
+::
+|%
+++  join
+  |=  {a/cord b/(list cord)}
+  ?~  b  ''
+  (rap 3 |-([i.b ?~(t.b ~ [a $(b t.b)])]))
+--
+::
 =,  gall
 =,  ford
 =,  format
@@ -43,13 +59,23 @@
   ==
 ::
 ++  poke-noun
-  |=  [%cores a=path]  ::TODO restore historical [%marks ~] handler
+  |=  a=test
   :_  +>
-  ?:  [dry=|]
-    ~&((list-cores a) ~)
-  [ost (build-core [- +]:(list-cores a))]~
+  ?-    -.a
+      %hoons  ~&((list-hoons p.a) ~)
+      %cores  [ost (build-core [- +]:(list-hoons p.a))]~
+      %names  ~&((list-names p.a) ~)
+      %marks  !! ::TODO restore historical handler
+  ==    
 ::
-++  list-cores
+++  list-names
+  |=  a/path  ^-  (list term)
+  =/  hon  (list-hoons a)
+  %+  turn  hon
+  |=  b=spur
+  (join '-' (slag 1 (flop b)))
+::
+++  list-hoons
   |=  a/path  ^-  (list spur)
   =/  sup  (flop a)
   ~&  [%findining-hoons under=a]
