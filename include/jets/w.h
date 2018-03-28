@@ -248,7 +248,6 @@
 
     u3_noun u3wfu_burn(u3_noun);
     u3_noun u3wfu_busk(u3_noun);
-    u3_noun u3wfu_bust(u3_noun);
     u3_noun u3wfu_conk(u3_noun);
     u3_noun u3wfu_crop(u3_noun);
     u3_noun u3wfu_cull(u3_noun);
@@ -303,7 +302,6 @@
 
     u3_noun u3wzu_burn(u3_noun);
     u3_noun u3wzu_busk(u3_noun);
-    u3_noun u3wzu_bust(u3_noun);
     u3_noun u3wzu_conk(u3_noun);
     u3_noun u3wzu_crop(u3_noun);
     u3_noun u3wzu_cull(u3_noun);
