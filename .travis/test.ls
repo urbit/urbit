@@ -30,6 +30,21 @@ Promise.resolve urbit
   if errs.length => throw Error "in #errs"
   urb.reset-listeners!
 .then (urb)->
+  urb.note "Testing renderers"
+  errs = {} #REVIEW stream reduce?
+  cur = "init"
+  urb.every />> (\[[ -~]+)/ ([_,ren])-> cur := ren
+  urb.every ERROR, ->
+    unless errs[cur]
+      errs[cur] = true
+      urb.warn "Renderer error detected"
+  #
+  <- urb.line ":test [%renders /]" .then
+  <- urb.expect-echo "%renderers-tested" .then
+  errs := Object.keys errs
+  if errs.length => throw Error "in #errs"
+  urb.reset-listeners!
+.then (urb)->
   urb.note "Running /===/tests"
   errs = "" #REVIEW stream reduce?
   urb.every /(\/[ -~]* (FAILED|CRASHED))/, ([_,result])->
