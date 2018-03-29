@@ -11616,6 +11616,21 @@
       ?~(a !! ?~(t.a [%wing i.a] [%tsgl [%wing i.a] $(a t.a)]))
     (most col rope)
   ::
+  ++  espy                                              ::  face for =model
+      |=  rot=root
+      ^-  (unit (pair term root))
+      =;  mot
+        ?~(mot ~ `[u.mot rot])
+      |-  ^-  (unit term)
+      ?+  rot  ~
+        {$bcsm *}  $(rot p.rot)
+        {$wing *}  ?~(p.rot ~ ?^(i.p.rot ~ `i.p.rot))
+        {$limb *}  `p.rot
+        {$dbug *}  $(rot ~(open ap rot))
+        {$tsgl *}  $(rot ~(open ap rot))
+        {$tsgr *}  $(rot q.rot)
+      ==
+  ::
   ++  scad
     %+  knee  *root  |.  ~+
     %-  stew
@@ -11677,21 +11692,9 @@
         ==
       :-  '='
         ;~  pfix  tis
-          %+  sear
-            |=  hon/hoon
-            ^-  (unit hoon)      
-            %+  bind
-              |-  ^-  (unit term)
-              ?+  hon  ~
-                {$bcsm *}  $(hon p.hon)
-                {$wing *}  ?~(p.hon ~ ?^(i.p.hon ~ `i.p.hon))
-                {$limb *}  `p.hon
-                {$dbug *}  $(hon ~(open ap hon))
-                {$tsgl *}  $(hon ~(open ap hon))
-                {$tsgr *}  $(hon q.hon)
-              ==
-            |=(term [%bcts +< hon])
-          wyde
+          %+  cook
+            |=([mot=term rot=root] [%bcts mot rot])
+          (sear espy wyde)
         ==
       :-  ['a' 'z']
         ;~  pose
@@ -12440,7 +12443,16 @@
       ==
     ==
   ::
-  ++  wise  ;~(plug sym (punt ;~(pfix ;~(pose fas tis) wyde)))
+  ++  wise                                              ::  toro form
+    ;~  pose
+      ;~  pfix  tis
+        %+  cook
+          |=([mot=term rot=root] [mot ~ rot])
+        (sear espy wyde)
+      ==
+      ;~(plug sym (punt ;~(pfix ;~(pose fas tis) wyde)))
+    ==
+  ::
   ++  wrap
     |*  fel/rule
     %+  cook
