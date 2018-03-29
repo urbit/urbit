@@ -30,7 +30,7 @@ mkdir prev
     |autoload |
     |mount %
   .
-  [ $? = 0 ] && cp -r ../sys/ prev/zod/home/sys
+  [ $? = 0 ] && cp -r ../sys prev/zod/home/
 } || {
   : Pilling: Parent-pill pier not available, trying preceding pill commit
   HASH2=$(git -C .. log -2 $HASH --format=%H -- sys/ | tail -1)
