@@ -5611,36 +5611,36 @@
 ++  pock  (pair axis nock)                              ::  changes
 ++  port  (each palo (pair type nock))                  ::  successful match
 ++  root  hoon                                          ::  produce model
-++  plan                                                ::  structure definition
+++  spec                                                ::  structure definition
           $~  [%base %null]                             ::
           $%  {$base p/base}                            ::  base type
-              {$dbug p/spot q/plan}                     ::  set debug
+              {$dbug p/spot q/spec}                     ::  set debug
               {$leaf p/term q/@}                        ::  constant atom
-              {$make p/hoon q/(list plan)}              ::  composite plan
-              {$over p/wing q/plan}                     ::  relative subject
+              {$make p/hoon q/(list spec)}              ::  composite spec
+              {$over p/wing q/spec}                     ::  relative subject
           ::                                            ::
-              {$bcbr p/plan q/hoon}                     ::  verify
+              {$bcbr p/spec q/hoon}                     ::  verify
               {$bccb p/hoon}                            ::  example
-              {$bccl p/{i/plan t/(list plan)}}          ::  tuple
-              {$bccn p/{i/plan t/(list plan)}}          ::  selection
-              {$bcdt p/plan q/(map term plan)}          ::  gold core
-              {$bcnt p/plan q/(map term plan)}          ::  iron core
-              {$bczp p/plan q/(map term plan)}          ::  lead core
-              {$bctc p/plan q/(map term plan)}          ::  zinc core
-              {$bcgl p/plan q/plan}                     ::  filter: exclude
-              {$bcgr p/plan q/plan}                     ::  filter: require
-              {$bchp p/plan q/plan}                     ::  function type
-              {$bckt p/plan q/plan}                     ::  pair+tag
-              {$bcls p/term q/plan}                     ::  set mark
+              {$bccl p/{i/spec t/(list spec)}}          ::  tuple
+              {$bccn p/{i/spec t/(list spec)}}          ::  selection
+              {$bcdt p/spec q/(map term spec)}          ::  gold core
+              {$bcnt p/spec q/(map term spec)}          ::  iron core
+              {$bczp p/spec q/(map term spec)}          ::  lead core
+              {$bctc p/spec q/(map term spec)}          ::  zinc core
+              {$bcgl p/spec q/spec}                     ::  filter: exclude
+              {$bcgr p/spec q/spec}                     ::  filter: require
+              {$bchp p/spec q/spec}                     ::  function type
+              {$bckt p/spec q/spec}                     ::  pair+tag
+              {$bcls p/term q/spec}                     ::  set mark
               {$bcmc p/hoon}                            ::  assembly
-              {$bcpd p/plan q/hoon}                     ::  repair
-              {$bcsg p/hoon q/plan}                     ::  default
-              {$bcts p/toga q/plan}                     ::  name
-              {$bcvt p/plan q/plan}                     ::  atom+cell
-              {$bcwt p/{i/plan t/(list plan)}}          ::  plain selection
+              {$bcpd p/spec q/hoon}                     ::  repair
+              {$bcsg p/hoon q/spec}                     ::  default
+              {$bcts p/toga q/spec}                     ::  name
+              {$bcvt p/spec q/spec}                     ::  atom+cell
+              {$bcwt p/{i/spec t/(list spec)}}          ::  plain selection
           ==                                            ::
 ++  tent                                                ::  model builder
-          $%  {%| p/wing q/tent r/(list plan)}          ::  ~(p q r...)
+          $%  {%| p/wing q/tent r/(list spec)}          ::  ~(p q r...)
               {%& p/(list wing)}                        ::  a.b:c.d
           ==                                            ::
 ++  tiki                                                ::  test case
@@ -5698,7 +5698,7 @@
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
     {$docs p/(pair cord (list sect)) q/hoon}            ::  annotate expression
-    {$form p/plan q/hoon}                               ::  annotate with plan 
+    {$form p/spec q/hoon}                               ::  annotate with spec 
     {$fits p/hoon q/wing}                               ::  underlying ?=
     {$knit p/(list woof)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
@@ -5712,18 +5712,18 @@
     {$yell p/(list hoon)}                               ::  render as tank
     {$xray p/manx}                                      ::  ;foo; templating
   ::                                            ::::::  structures
-    {$bcdt p/plan}                                      ::  example
-    {$bccm p/plan}                                      ::  factory
+    {$bcdt p/spec}                                      ::  example
+    {$bccm p/spec}                                      ::  factory
   ::                                            ::::::  cores
-    {$brcb p/chap q/plan r/alas s/(map @ tomb)}         ::  |_
+    {$brcb p/chap q/spec r/alas s/(map @ tomb)}         ::  |_
     {$brcl p/chap q/hoon r/hoon}                        ::  |:
     {$brcn p/chap q/(map @ tomb)}                       ::  |%
     {$brdt p/chap q/hoon}                               ::  |.
     {$brkt p/chap q/hoon r/(map @ tomb)}                ::  |^
     {$brhp p/chap q/hoon}                               ::  |-
-    {$brsg p/chap q/plan r/hoon}                        ::  |~
-    {$brtr p/chap q/plan r/hoon}                        ::  |*
-    {$brts p/chap q/plan r/hoon}                        ::  |=
+    {$brsg p/chap q/spec r/hoon}                        ::  |~
+    {$brtr p/chap q/spec r/hoon}                        ::  |*
+    {$brts p/chap q/spec r/hoon}                        ::  |=
     {$brwt p/chap q/hoon}                               ::  |?
   ::                                            ::::::  tuples
     {$clcb p/hoon q/hoon}                               ::  :_ [q p]
@@ -5743,7 +5743,7 @@
     {$cnsg p/wing q/hoon r/(list hoon)}                 ::  %~
     {$cnts p/wing q/(list (pair wing hoon))}            ::  %=
   ::                                            ::::::  nock
-    {$dtkt p/plan q/hoon}                               ::  .^  nock 11
+    {$dtkt p/spec q/hoon}                               ::  .^  nock 11
     {$dtls p/hoon}                                      ::  .+  nock 4
     {$dttr p/hoon q/hoon}                               ::  .*  nock 2
     {$dtts p/hoon q/hoon}                               ::  .=  nock 5
@@ -5753,7 +5753,7 @@
     {$ktcn p/hoon}                                      ::  ^%  enter test mode
     {$ktdt p/hoon q/hoon}                               ::  ^.  self-cast
     {$ktls p/hoon q/hoon}                               ::  ^+  expression cast
-    {$kthp p/plan q/hoon}                               ::  ^-  structure cast
+    {$kthp p/spec q/hoon}                               ::  ^-  structure cast
     {$ktpd p/hoon}                                      ::  ^&  covariant
     {$ktsg p/hoon}                                      ::  ^~  constant
     {$ktts p/toga q/hoon}                               ::  ^=  label
@@ -5778,7 +5778,7 @@
     {$mcsg p/hoon q/(list hoon)}                        ::  ;~  kleisli arrow
     {$mcmc p/hoon q/hoon}                               ::  ;;  normalize
   ::                                            ::::::  compositions
-    {$tsbr p/plan q/hoon}                               ::  =|  push bunt
+    {$tsbr p/spec q/hoon}                               ::  =|  push bunt
     {$tscl p/(list (pair wing hoon)) q/hoon}            ::  =:  q w/ p changes
     {$tsnt p/sofa q/hoon r/hoon}                        ::  =/  typed variable
     {$tsmc p/sofa q/hoon r/hoon}                        ::  =;  =/(q p r)
@@ -5794,17 +5794,17 @@
     {$tscm p/hoon q/hoon}                               ::  =,  overload p in q
   ::                                            ::::::  conditionals
     {$wtbr p/(list hoon)}                               ::  ?|  loobean or
-    {$wthp p/wing q/(list (pair plan hoon))}            ::  ?-  pick case in q
+    {$wthp p/wing q/(list (pair spec hoon))}            ::  ?-  pick case in q
     {$wtcl p/hoon q/hoon r/hoon}                        ::  ?:  if/then/else
     {$wtdt p/hoon q/hoon r/hoon}                        ::  ?.  ?:(p r q)
     {$wtkt p/wing q/hoon r/hoon}                        ::  ?^  if p is a cell
     {$wtgl p/hoon q/hoon}                               ::  ?<  ?:(p !! q)
     {$wtgr p/hoon q/hoon}                               ::  ?>  ?:(p q !!)
-    {$wtls p/wing q/hoon r/(list (pair plan hoon))}     ::  ?+  ?-  w/default
+    {$wtls p/wing q/hoon r/(list (pair spec hoon))}     ::  ?+  ?-  w/default
     {$wtpd p/(list hoon)}                               ::  ?&  loobean and
     {$wtvt p/wing q/hoon r/hoon}                        ::  ?@  if p is atom
     {$wtsg p/wing q/hoon r/hoon}                        ::  ?~  if p is null
-    {$wtts p/plan q/wing}                               ::  ?=  if q matches p
+    {$wtts p/spec q/wing}                               ::  ?=  if q matches p
     {$wtzp p/hoon}                                      ::  ?!  loobean not
   ::                                            ::::::  special
     {$zpcm p/hoon q/hoon}                               ::  !,
@@ -5815,7 +5815,7 @@
     {$zpwt p/$@(p/@ {p/@ q/@}) q/hoon}                  ::  !?
     {$zpzp ~}                                           ::  !!
   ==                                                    ::
-++  sofa  (pair toga (unit plan))
+++  sofa  (pair toga (unit spec))
 ++  twit  hoon                                          ::  last-gen hoon
 ++  tyre  (list {p/term q/hoon})                        ::
 ++  tyke  (list (unit hoon))                            ::
@@ -5843,7 +5843,7 @@
               {$core p/type q/coil}                     ::  object
               {$face p/{p/what q/$@(term tune)} q/type} ::  namespace (new)
               {$fork p/(set type)}                      ::  union
-              {$form p/(pair type plan) q/type}         ::  annotation
+              {$form p/(pair type spec) q/type}         ::  annotation
               {$help p/writ q/type}                     ::  description
               {$hold p/type q/hoon}                     ::  lazy evaluation
           ==                                            ::
@@ -5885,9 +5885,9 @@
   ==                                                    ::
 ++  writ                                                ::  type annotation
           $%  {$docs p/cord q/(list sect)}              ::  description
-              {$made p/type q/plan}                     ::  construction
-          ::  $mark                                     ::  desplaned as mark?
-          ::  $mime                                     ::  desplaned as mime:
+              {$made p/type q/spec}                     ::  construction
+          ::  $mark                                     ::  desspeced as mark?
+          ::  $mime                                     ::  desspeced as mime:
           ::  $json                                     ::  json schema?
           ::  
           ==
@@ -6395,7 +6395,7 @@
 ::
 ++  form
   ~/  %form
-  |=  {p/(pair type plan) q/type}
+  |=  {p/(pair type spec) q/type}
   ^-  type
   ?:  =(%void q)
     %void
@@ -6653,8 +6653,8 @@
     [%tsgr [%$ 3] gen]
   ::
   ++  teal
-    |=  mod/plan
-    ^-  plan
+    |=  mod/spec
+    ^-  spec
     [%over [%& 3]~ mod]
   ::
   ++  gray
@@ -6672,16 +6672,16 @@
       %|  [[%& 2] ~]
     ==
   ::
-  ++  wthp  |=  opt/(list (pair plan hoon))
+  ++  wthp  |=  opt/(list (pair spec hoon))
             %+  gray  %wthp
-            [puce (turn opt |=({a/plan b/hoon} [a (blue b)]))]
+            [puce (turn opt |=({a/spec b/hoon} [a (blue b)]))]
   ++  wtkt  |=({sic/hoon non/hoon} (gray [%wtkt puce (blue sic) (blue non)]))
-  ++  wtls  |=  {gen/hoon opt/(list (pair plan hoon))}
+  ++  wtls  |=  {gen/hoon opt/(list (pair spec hoon))}
             %+  gray  %wtls
-            [puce (blue gen) (turn opt |=({a/plan b/hoon} [a (blue b)]))]
+            [puce (blue gen) (turn opt |=({a/spec b/hoon} [a (blue b)]))]
   ++  wtvt  |=({sic/hoon non/hoon} (gray [%wtvt puce (blue sic) (blue non)]))
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
-  ++  wtts  |=(mod/plan (gray [%wtts (teal mod) puce]))
+  ++  wtts  |=(mod/spec (gray [%wtts (teal mod) puce]))
   --
 ::
 ++  ax
@@ -6696,17 +6696,17 @@
           bug=*(list spot)
           def=*(unit hoon)
       ==
-  |_  {fab/? mod/plan}
+  |_  {fab/? mod/spec}
   ::
   ++  function
     ::  construct a function example
     ::
-    |=  {fun/plan arg/plan}
+    |=  {fun/spec arg/spec}
     ^-  hoon
     ::  minimal context as subject
     ::
     :+  %tsgr
-      ::  context is example of both plans
+      ::  context is example of both specs
       ::
       [example:clear(mod fun) example:clear(mod arg)]
     ::  produce an %iron (contravariant) core
@@ -6721,7 +6721,7 @@
   ++  interface
     ::  construct a core example
     ::
-    |=  {variance/vair payload/plan arms/(map term plan)}
+    |=  {variance/vair payload/spec arms/(map term spec)}
     ^-  hoon
     ::  attach proper variance control
     ::
@@ -6739,13 +6739,13 @@
     ^-  (list (trel term what foot))
     %+  turn
       ~(tap by arms)
-    |=  [=term =plan]
+    |=  [=term =spec]
     ::
-    ::  note that we *don't* make arm plans in an interface
+    ::  note that we *don't* make arm specs in an interface
     ::  hygienic -- we leave them in context, to support
     ::  maximum programmer flexibility
     ::
-    [term *what %ash example:clear(mod plan)]
+    [term *what %ash example:clear(mod spec)]
   ::
   ++  home  
     ::  express a hoon against the original subject
@@ -6771,7 +6771,7 @@
     ?-    bas
     ::
         {$atom *}
-      ::  we may want spec
+      ::  we may want sped
       ::
       [%sand p.bas ?:(=(%da p.bas) ~2000.1.1 0)]
     ::
@@ -6795,9 +6795,9 @@
     ==
   ::
   ++  unfold
-    |=  [fun/hoon arg/(list plan)]
+    |=  [fun/hoon arg/(list spec)]
     ^-  hoon
-    [%cncl fun (turn arg |=(plan bccm/+<))]
+    [%cncl fun (turn arg |=(spec bccm/+<))]
   ::
   ++  descend
     ::  record an axis to original subject
@@ -6996,8 +6996,8 @@
       |=  $:  ::  one: first option
               ::  rep: other options
               ::
-              one/plan
-              rep/(list plan)
+              one/spec
+              rep/(list spec)
           ==
       ^-  hoon
       ::  if no other choices, construct head
@@ -7020,8 +7020,8 @@
       |=  $:  ::  one: first format
               ::  two: more formats
               ::
-              one/plan
-              rep/(list plan)
+              one/spec
+              rep/(list spec)
           ==
       |-  ^-  hoon
       ::  if no other choices, construct head
@@ -7434,7 +7434,7 @@
     ?-    gen
         {~ *}     [%cnts [[%& p.gen] ~] ~]
     ::
-        {$base *}  ~(factory ax fab `plan`gen)
+        {$base *}  ~(factory ax fab `spec`gen)
         {$bust *}  ~(example ax fab %base p.gen)
         {$bccm *}  ~(factory ax fab p.gen)
         {$dbug *}   q.gen
@@ -7474,7 +7474,7 @@
         [%$ ~]                                          ::  $
       [[[%a ~] [%tsgl [%$ 3] [%limb %a]]] ~]             ::  a  +.a
     ::
-        {$leaf *}  ~(factory ax fab `plan`gen)
+        {$leaf *}  ~(factory ax fab `spec`gen)
         {$limb *}  [%cnts [p.gen ~] ~]
         {$tell *}  [%cncl [%limb %noah] [%zpgr [%cltr p.gen]] ~]
         {$wing *}  [%cnts p.gen ~]
@@ -7995,7 +7995,7 @@
       [bud vit]
     ::
     ++  stir
-      |=  p/plan
+      |=  p/spec
       [p vit]
     ::
     ++  quad
@@ -8070,7 +8070,7 @@
       (lead ~ (expr u.bud))
     ::
     ++  twef
-      |=  bud/(unit plan)
+      |=  bud/(unit spec)
       ?~  bud  [~ vit]
       (lead ~ (stir u.bud))
     ::
@@ -10550,7 +10550,7 @@
   |=  {gat/vase sam/*}  ^-  vase
   (slap gat(+<.q sam) [%limb %$])
 ::
-++  stud                                                ::  reconstruct type
+++  sped                                                ::  reconstruct type
   |=  vax/vase
   ^-  vase
   :_  q.vax
@@ -11237,7 +11237,7 @@
           [[lin `~] +<.^$]
         [[lin ~] eat-newline]
       ::
-      ++  look                                          ::  inspect line
+      ++  look                                          ::  inspedt line
         ^-  (unit trig)
         %+  bind  (wonk (look:parse loc txt))
         |=  a/trig  ^+  a
@@ -11753,14 +11753,14 @@
   ::
   ++  scab
     %+  cook
-      |=  a/(list wing)  ^-  plan
+      |=  a/(list wing)  ^-  spec
       :-  %bcmc
       |-  ^-  hoon
       ?~(a !! ?~(t.a [%wing i.a] [%tsgl [%wing i.a] $(a t.a)]))
     (most col rope)
   ::
   ++  scad
-    %+  knee  *plan  |.  ~+
+    %+  knee  *spec  |.  ~+
     %-  stew
     ^.  stet  ^.  limo
     :~
@@ -11794,7 +11794,7 @@
           ==
         ==
       :-  '('
-        %+  cook  |=(plan +<)
+        %+  cook  |=(spec +<)
         %+  stag  %make
         %+  ifix  [lit rit]
         ;~  plug
@@ -11827,7 +11827,7 @@
         ;~  pfix  tis
           %+  sear
             |=  hon/hoon
-            ^-  (unit plan)      
+            ^-  (unit spec)      
             %+  bind
               |-  ^-  (unit term)
               ?+  hon  ~
@@ -12074,25 +12074,25 @@
             ^.  stet  ^.  limo
             :~  :-  '^' 
                 %+  cook  
-                  |=  [%cnkt a/hoon b/plan c/plan d/plan] 
+                  |=  [%cnkt a/hoon b/spec c/spec d/spec] 
                   [%make a b c d ~]
                 (rune ket %cnkt exqy)
             ::
                 :-  '+'
                 %+  cook
-                  |=  [%cnls a/hoon b/plan c/plan] 
+                  |=  [%cnls a/hoon b/spec c/spec] 
                   [%make a b c ~]
                 (rune lus %cnls exqx)
             ::
                 :-  '-' 
                 %+  cook
-                  |=  [%cnhp a/hoon b/plan] 
+                  |=  [%cnhp a/hoon b/spec] 
                   [%make a b ~]
                 (rune hep %cnhp exqd)
             ::
                 :-  ':'
                 %+  cook
-                  |=  [%cncl a/hoon b/(list plan)]
+                  |=  [%cncl a/hoon b/(list spec)]
                   [%make a b]
                 (rune col %cncl exqz)
             ==
@@ -12397,9 +12397,9 @@
     ++  ulva  |*  zor/rule                              ::  closing -- and tall
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
     ++  hank  (most muck loaf)                          ::  gapped hoons
-    ++  hunk  (most muck loan)                          ::  gapped plans
+    ++  hunk  (most muck loan)                          ::  gapped specs
     ++  loaf  ?:(tol tall wide)                         ::  tall/wide hoon
-    ++  loan  ?:(tol till wyde)                         ::  tall/wide plan
+    ++  loan  ?:(tol till wyde)                         ::  tall/wide spec
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
     ++  muck  ?:(tol gap ace)                           ::  general separator
     ++  teak  %+  knee  *tiki  |.  ~+                   ::  wing or hoon
@@ -12434,7 +12434,7 @@
                 (stag %| (stag ~ tall))
               ==
     ++  rack  (most mash ;~(gunk loaf loaf))            ::  list [hoon hoon]
-    ++  ruck  (most mash ;~(gunk loan loaf))            ::  list [plan hoon]
+    ++  ruck  (most mash ;~(gunk loan loaf))            ::  list [spec hoon]
     ++  rick  (most mash ;~(gunk rope loaf))            ::  list [wing hoon]
     ::
     ::    hoon contents
@@ -12446,11 +12446,11 @@
     ++  expe  |.(wisp)                                  ::  core tail
     ++  expf  |.(;~(gunk ;~(pfix cen sym) loaf))        ::  %term and hoon
     ++  expg  |.(;~(gunk sym loaf))                     ::  term and hoon
-    ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [plan hoon]s
+    ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [spec hoon]s
     ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more hoons
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two hoons
     ++  expl  |.(;~(gunk (stag ~ sym) loaf loaf))       ::  term, two hoons
-    ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [plan hoon]s
+    ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [spec hoon]s
     ++  expo  |.(;~(gunk wise loaf loaf))               ::  =;
     ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing hoon]s, hoon
     ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two hoons
@@ -12472,31 +12472,31 @@
                   ==                                    ::
     ++  expy  |.(;~(gunk ropa loaf loaf))               ::  wings and two hoons
     ++  expz  |.(loaf(bug &))                           ::  hoon with tracing
-    ::    plan contents
+    ::    spec contents
     ::
     ++  exqa  |.(loan)                                  ::  one hoon
-    ++  exqb  |.(;~(gunk loan loan))                    ::  two plans
-    ++  exqc  |.(;~(gunk loan loaf))                    ::  plan then hoon
-    ++  exqd  |.(;~(gunk loaf loan))                    ::  hoon then plan
-    ++  exqs  |.((butt hunk))                           ::  closed gapped plans
-    ++  exqg  |.(;~(gunk sym loan))                     ::  term and plan
-    ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one plan
-    ++  exqr  |.(;~(gunk loan ;~(plug wasp wisp)))      ::  plan/aliases?/tail
+    ++  exqb  |.(;~(gunk loan loan))                    ::  two specs
+    ++  exqc  |.(;~(gunk loan loaf))                    ::  spec then hoon
+    ++  exqd  |.(;~(gunk loaf loan))                    ::  hoon then spec
+    ++  exqs  |.((butt hunk))                           ::  closed gapped specs
+    ++  exqg  |.(;~(gunk sym loan))                     ::  term and spec
+    ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one spec
+    ++  exqr  |.(;~(gunk loan ;~(plug wasp wisp)))      ::  spec/aliases?/tail
     ++  exqn  |.(;~(gunk loan (stag %cltr (butt hank))))::  autoconsed hoons
-    ++  exqw  |.(;~(gunk loaf loan))                    ::  hoon and plan
-    ++  exqx  |.(;~(gunk loaf loan loan))               ::  hoon, two plans
-    ++  exqy  |.(;~(gunk loaf loan loan loan))          ::  hoon, three plans
-    ++  exqz  |.(;~(gunk loaf (butt hunk)))             ::  hoon, n plans
+    ++  exqw  |.(;~(gunk loaf loan))                    ::  hoon and spec
+    ++  exqx  |.(;~(gunk loaf loan loan))               ::  hoon, two specs
+    ++  exqy  |.(;~(gunk loaf loan loan loan))          ::  hoon, three specs
+    ++  exqz  |.(;~(gunk loaf (butt hunk)))             ::  hoon, n specs
     ::
     ::    tiki expansion for %wt runes
     ::
-    ++  txhp  |.  %+  cook  |=  {a/tiki b/(list (pair plan hoon))}
+    ++  txhp  |.  %+  cook  |=  {a/tiki b/(list (pair spec hoon))}
                             (~(wthp ah a) b)
                   (butt ;~(gunk teak ruck))
     ++  tkkt  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
                             (~(wtkt ah a) b c)
                   ;~(gunk teak loaf loaf)
-    ++  txls  |.  %+  cook  |=  {a/tiki b/hoon c/(list (pair plan hoon))}
+    ++  txls  |.  %+  cook  |=  {a/tiki b/hoon c/(list (pair spec hoon))}
                             (~(wtls ah a) b c)
                   (butt ;~(gunk teak loaf ruck))
     ++  tkvt  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
@@ -12505,7 +12505,7 @@
     ++  tksg  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
                             (~(wtsg ah a) b c)
                   ;~(gunk teak loaf loaf)
-    ++  txts  |.  %+  cook  |=  {a/plan b/tiki}
+    ++  txts  |.  %+  cook  |=  {a/spec b/tiki}
                             (~(wtts ah b) a)
                   ;~(gunk loan teak)
     ::
@@ -12655,8 +12655,8 @@
   ++  wrip
     |*  fel/rule
     %+  cook
-      |=  {a/whit b/plan c/whit}
-      ^-  plan
+      |=  {a/whit b/spec c/whit}
+      ^-  spec
       b
     ::
     ::  XX performance: this makes the parser about 50% slower.
@@ -12679,7 +12679,7 @@
     %+  knee  *hoon
     |.(~+((wart (wrap ;~(pose expression:(norm &) long lute apex:(sail &))))))
   ++  till                                              ::  mold tall form
-    %+  knee  *plan
+    %+  knee  *spec
     |.(~+((wert (wrip ;~(pose structure:(norm &) scad)))))
   ++  wede                                              ::  wide bulb
     ::  XX: lus here is deprecated in Hoon 143
@@ -12689,7 +12689,7 @@
     %+  knee  *hoon
     |.(~+((wart ;~(pose expression:(norm |) long apex:(sail |)))))
   ++  wyde                                              ::  mold wide form
-    %+  knee  *plan
+    %+  knee  *spec
     |.(~+((wert ;~(pose structure:(norm |) scad))))
   ++  wart
     |*  zor/rule
@@ -12700,7 +12700,7 @@
   ++  wert
     |*  zor/rule
     %+  here
-      |=  {a/pint b/plan}
+      |=  {a/pint b/spec}
       ?:(bug [%dbug [wer a] b] b)
     zor
   --
@@ -12839,7 +12839,7 @@
     =^  gun  +>+<  (mint p.vax [%$ axe])
     [[p.gun .*(q.vax [0 axe])] +>+<.$]
   ::
-  ++  stud                                              ::  specialize vase
+  ++  sped                                              ::  specialize vase
     |=  vax/vase
     ^-  {vase worm}
     =+  ^=  gen  ^-  hoon
@@ -12849,16 +12849,16 @@
     =^  typ  +>+<.$  (play p.vax [%wtgr gen [%$ 1]])
     [[typ q.vax] +>+<.$]
   ::
-  ++  spot                                              ::  slot then stud
+  ++  spot                                              ::  slot then sped
     |=  {axe/@ vax/vase}
     ^-  {vase worm}
     =^  xav  +>+<  (slot axe vax)
-    (stud xav)
+    (sped xav)
   ::
-  ++  stop                                              ::  stud then slot
+  ++  stop                                              ::  sped then slot
     |=  {axe/@ vax/vase}
     ^-  {vase worm}
-    =^  xav  +>+<  (stud vax)
+    =^  xav  +>+<  (sped vax)
     (slot axe xav)
   --
 ::

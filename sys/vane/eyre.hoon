@@ -1313,7 +1313,7 @@
     :: process-payload handles the translation of a payload for post.
     :: currently this involves treating the payload as a urlencoded
     :: request. In the future it's possible the payload could be
-    :: a specific mark instead.
+    :: a spedific mark instead.
     ::
     ++  process-payload
       ^-  {quay meth}
@@ -1810,7 +1810,7 @@
       :::+  %dude  [|.(+)]:>%mod-samp<
       ^-  silk:ford
       :^  %mute  core+[root-beak (flop %_(dom . sec+dom))]
-        [[%& 12]~ %$ bale+!>(*(bale @))]  :: XX specify on type?
+        [[%& 12]~ %$ bale+!>(*(bale @))]  :: XX spedify on type?
       ?~  cor  ~
       ?~  u.cor  ~
       ?:  (has-arm %discard-state)  ~
@@ -1954,7 +1954,7 @@
       |-
       ?~  a  ~|(allowed=(opt) !!)
       ?:  =(p.i.a -.q.b)
-        (q.i.a (spec b))
+        (q.i.a (sped b))
       $(a t.a)
     ::
     ++  on-ford-fail

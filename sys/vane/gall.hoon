@@ -630,7 +630,7 @@
         ~              ~
         {~ ~}         [~ ~]
         {~ ~ ^}
-          =+  caz=(spec (slot 7 p.zem))
+          =+  caz=(sped (slot 7 p.zem))
           ?.  &(?=({p/@ *} q.caz) ((sane %tas) p.q.caz))
             ((slog leaf+"scry: malformed cage" ~) [~ ~])
           ?.  =(mar p.q.caz)
@@ -654,7 +654,7 @@
     ::
     ++  ap-diff                                         ::  pour a diff
       |=  {her/ship pax/path cag/cage}
-      ::  =.  q.cag  (spec q.cag)
+      ::  =.  q.cag  (sped q.cag)
       =+  cug=(ap-find [%diff p.cag +.pax])
       ?~  cug
         %.  [| her +.pax]
@@ -789,7 +789,7 @@
     ++  ap-move-diff                                    ::  give diff move
       |=  {sto/bone vax/vase}
       ^-  {(each cove tang) _+>}
-      =^  pec  vel  (~(spec wa vel) vax)
+      =^  pec  vel  (~(sped wa vel) vax)
       ?.  &(?=(^ q.pec) ?=(@ -.q.pec) ((sane %tas) -.q.pec))
         :_(+>.$ [%| (ap-suck "diff: improper give")])
       =^  tel  vel  (~(slot wa vel) 3 pec)
@@ -1048,7 +1048,7 @@
       ?^  cam   (ap-lame q.u.cug u.cam)
       +>.$
     ::
-    ++  ap-pout                                         ::  specific take
+    ++  ap-pout                                         ::  spedific take
       |=  {pax/path cuf/cuft}
       ^+  +>
       ?-  -.cuf

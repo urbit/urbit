@@ -846,7 +846,7 @@
           [%item :(weld (trip u.p.p.current) ":" core-name) q.p.current]~
         $(tombs t.tombs)
       ::
-      :>    returns an overview of the arms in a specific chapter.
+      :>    returns an overview of the arms in a spedific chapter.
       ++  arms-in-chapter
         |=  {sut/type con/coil chapter-id/@}
         ^-  overview
@@ -1278,7 +1278,7 @@
         (dy-errd ~ q.q.cag)
       =+  tan=((list tank) +2.q.q.cag)
       =.  +>+>.$  (he-diff %tan tan)
-      =+  vax=(spec (slot 3 q.cag))
+      =+  vax=(sped (slot 3 q.cag))
       ?+    -.q.vax  !!
           %&
         ?~  +.q.vax
@@ -1300,7 +1300,7 @@
         (dy-errd ~ q.q.cag)
       =+  tan=((list tank) +2.q.q.cag)
       =.  +>+>.$  (he-diff %tan tan)
-      =+  vax=(spec (slot 3 q.cag))
+      =+  vax=(sped (slot 3 q.cag))
       ~_  (sell q.cag)
       ?+    -.q.vax  !!
           %&
@@ -1310,7 +1310,7 @@
         (dy-meal (slot 7 vax))
       ::
           %|
-        =>  .(vax (slap vax !,(*hoon ?>(?=(%| -) .))))  :: XX working spec  #72
+        =>  .(vax (slap vax !,(*hoon ?>(?=(%| -) .))))  :: XX working sped  #72
         =+  typ={%| (unit knot) hiss:eyre *}
         =+  [~ usr hiz ~]=((dy-cast typ !>($:typ)) vax)
         =.  ..dy  (he-diff %tan leaf+"< {(en-purl:html p.hiz)}" ~)
