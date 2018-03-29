@@ -106,25 +106,6 @@ u3t_heck(u3_atom cog)
   }
 }
 
-/* _t_jet_label():
-*/
-u3_weak
-_t_jet_label(u3a_road* rod_u, u3_noun bat)
-{
-  while ( 1 ) {
-    u3_weak cax = u3h_git(rod_u->jed.har_p, bat);
-
-    if ( u3_none != cax ) {
-      return u3h(u3t(u3t(u3h(cax))));
-    }
-
-    if ( rod_u->par_p ) {
-      rod_u = u3to(u3_road, rod_u->par_p);
-    }
-    else return u3_none;
-  }
-}
-
 #if 1
 /* _t_samp_process(): process raw sample data from live road.
 */
@@ -141,22 +122,7 @@ _t_samp_process(u3_road* rod_u)
     u3_noun don = rod_u->pro.don;
 
     while ( u3_nul != don ) {
-      u3_noun bat = u3h(don);
-      u3_noun lab;
-
-      //  Find the label from this battery, surface allocated.
-      //
-      {
-        u3_noun laj = _t_jet_label(rod_u, bat);
-        
-        if ( u3_none == laj ) {
-          don = u3t(don);
-          continue;
-        }
-
-        // lab = u3nc(u3i_string("foobar"), u3_nul);
-        lab = u3a_take(laj); u3a_wash(laj);
-      }
+      u3_noun lab = u3h(don);
       //  Add the label to the traced label stack, trimming recursion.
       //  
       {
@@ -273,10 +239,10 @@ u3t_samp(void)
 /* u3t_come(): push on profile stack; return yes if active push.  RETAIN.
 */
 c3_o
-u3t_come(u3_noun bat)
+u3t_come(u3_noun lab)
 {
-  if ( (u3_nul == u3R->pro.don) || !_(u3r_sing(bat, u3h(u3R->pro.don))) ) {
-    u3R->pro.don = u3nc(u3k(bat), u3R->pro.don);
+  if ( (u3_nul == u3R->pro.don) || !_(u3r_sing(bal, u3h(u3R->pro.don))) ) {
+    u3R->pro.don = u3nc(u3k(lab), u3R->pro.don);
     return c3y;
   } 
   else return c3n;

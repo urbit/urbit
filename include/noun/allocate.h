@@ -128,8 +128,8 @@
         } all;
 
         struct {                              //  jet dashboard
-          u3p(u3h_root) har_p;                //  warm state
-          u3_noun       das;                  //  cold state
+          u3p(u3h_root) war_p;                //  warm state
+          u3p(u3h_root) cod_p;                //  cold state
         } jed;
 
         struct {                              // bytecode state
