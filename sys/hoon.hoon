@@ -5697,7 +5697,6 @@
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
-    {$docs p/(pair cord (list sect)) q/hoon}            ::  annotate expression
     {$form p/spec q/hoon}                               ::  annotate with spec 
     {$fits p/hoon q/wing}                               ::  underlying ?=
     {$knit p/(list woof)}                               ::  assemble string
@@ -5844,7 +5843,6 @@
               {$face p/{p/what q/$@(term tune)} q/type} ::  namespace (new)
               {$fork p/(set type)}                      ::  union
               {$form p/(pair type spec) q/type}         ::  annotation
-              {$help p/writ q/type}                     ::  description
               {$hold p/type q/hoon}                     ::  lazy evaluation
           ==                                            ::
 ++  tony                                                ::  ++tone done right
@@ -5883,14 +5881,6 @@
       pay/(map (pair type hoon) type)                   ::  ++play
       mit/(map (pair type hoon) (pair type nock))       ::  ++mint
   ==                                                    ::
-++  writ                                                ::  type annotation
-          $%  {$docs p/cord q/(list sect)}              ::  description
-              {$made p/type q/spec}                     ::  construction
-          ::  $mark                                     ::  desspeced as mark?
-          ::  $mime                                     ::  desspeced as mime:
-          ::  $json                                     ::  json schema?
-          ::  
-          ==
 ::
 ::  +block: abstract identity of resource awaited
 ::
@@ -6400,14 +6390,6 @@
   ?:  =(%void q)
     %void
   [%form p q]
-::
-++  help
-  ~/  %help
-  |=  {p/writ q/type}
-  ^-  type
-  ?:  =(%void q)
-    %void
-  [%help p q]
 ::
 ++  face                                                ::  make %face type
   ~/  %face
@@ -7829,7 +7811,6 @@
         $bcdt  (lead -.gen %.(+.gen stir))
         $bccm  (lead -.gen %.(+.gen stir))
         $bust  (lead -.gen %.(+.gen noop))
-        $docs  (lead -.gen %.(+.gen nexp))
         $dbug  (lead -.gen %.(+.gen nexp))
         $hand  (lead -.gen %.(+.gen noop))
         $knit  (lead -.gen %.(+.gen (moto bark)))
@@ -8175,7 +8156,6 @@
         {$face *}   $(sut repo)
         {$fork *}   ~
         {$form *}   $(sut repo)
-        {$help *}   $(sut repo)
         {$hold *}   ?:  (~(has in gil) sut)
                       ~
                     $(sut repo, gil (~(put in gil) sut))
@@ -8197,7 +8177,6 @@
       {$face *}  $(sut repo)
       {$fork *}  [full/[~ ~ ~] ~]
       {$form *}  $(sut repo)
-      {$help *}  $(sut repo)
       {$hold *}  ?:  (~(has in gil) sut)
                    [full/[~ ~ ~] ~]
                  $(sut repo, gil (~(put in gil) sut))
@@ -8223,7 +8202,7 @@
                   ==
       [%face *]  [%face p.sut burp(sut q.sut)]
       [%fork *]  [%fork (~(run in p.sut) |=(type burp(sut +<)))]
-      [%help *]  [%help p.sut burp(sut q.sut)]
+      [%form *]  [%form p.sut burp(sut q.sut)]
       [%hold *]  [%hold burp(sut p.sut) q.sut]
     ==
   ::
@@ -8287,7 +8266,6 @@
           {$face *}  (face p.sut dext(sut q.sut))
           {$fork *}  (fork (turn ~(tap in p.sut) |=(type dext(sut +<))))
           {$form *}  (form p.sut dext(sut q.sut))
-          {$help *}  (help p.sut dext(sut q.sut))
           {$hold *}  ?<  (~(has in bix) [sut ref])
                      dext(sut repo, bix (~(put in bix) [sut ref]))
           $noun      dext(sut repo)
@@ -8735,9 +8713,6 @@
                 {$form *}
               $(sut repo)
             ::
-                {$help *}
-              $(sut repo)
-            ::
                 {$face *}
               ?:  ?=(~ q.heg)  here(sut q.sut)
               =*  zot  q.p.sut
@@ -8874,7 +8849,6 @@
                     |-  ^-  nock
                     ?~(yed [%1 1] (flor ^$(sut i.yed) $(yed t.yed)))
         {$form *}   $(sut q.sut)
-        {$help *}   $(sut q.sut)
         {$hold *}
       ?:  (~(has in vot) sut)
         ~>(%mean.[%leaf "fish-loop"] !!)
@@ -8913,7 +8887,6 @@
         {$face *}  (face p.sut $(sut q.sut))
         {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         {$form *}  (form p.sut $(sut q.sut))
-        {$help *}  (help p.sut $(sut q.sut))
         {$hold *}
       ?:  (~(has in bix) [sut ref])
         ~>(%mean.[%leaf "fuse-loop"] !!)
@@ -9151,10 +9124,6 @@
         {$tune *}  [(face p.gen sut) [%0 %1]]
         {$ktwt *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
     ::
-        {$docs *}
-      =+  hum=$(gen q.gen)
-      [(help [%docs p.gen] p.hum) q.hum]
-    ::
         {$form *}
       =+  hum=$(gen q.gen)
       [(form [sut p.gen] p.hum) q.hum]
@@ -9263,7 +9232,6 @@
       {$face *}  $(sut q.sut)
       {$fork *}  (lien ~(tap in p.sut) |=(type ^$(sut +<)))
       {$form *}  $(sut q.sut)
-      {$help *}  $(sut q.sut)
       {$hold *}  |((~(has in gil) sut) $(gil (~(put in gil) sut), sut repo))
       $noun      |
       $void      &
@@ -9316,10 +9284,6 @@
     ::
         {$ktwt *}
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) (wrap(sut q.vat) %lead)])
-    ::
-        {$docs *}
-      =+  vat=$(gen q.gen) 
-      [(help [%docs p.gen] p.vat) (help [%docs p.gen] q.vat)]
     ::
         {$form *}
       =+  vat=$(gen q.gen) 
@@ -9452,7 +9416,6 @@
                    |=(type dext(sut +<))
         {$face *}  dext(sut q.sut) 
         {$form *}  dext(sut q.sut)
-        {$help *}  dext(sut q.sut)
         {$hold *}  =+  (~(gas in *(set type)) `(list type)`[sut ref ~])
                    ?:  (~(has in gil) -)
                       &
@@ -9553,7 +9516,6 @@
         {$fork *}  ?.  ?=(?({$atom *} $noun {$cell *} {$core *}) ref)  sint
                    (lien ~(tap in p.sut) |=(type dext(tel |, sut +<)))
         {$form *}  dext(sut q.sut)
-        {$help *}  dext(sut q.sut)
         {$hold *}  ?:  (~(has in seg) sut)  |
                    ?:  (~(has in gil) [sut ref])  &
                    %=  dext
@@ -9574,7 +9536,6 @@
         {$face *}   dext(ref q.ref)
         {$fork *}   (levy ~(tap in p.ref) |=(type sint(ref +<)))
         {$form *}   dext(ref q.ref)
-        {$help *}   dext(ref q.ref)
         {$hold *}   ?:  (~(has in reg) ref)  &
                     ?:  (~(has in gil) [sut ref])  &
                     %=  dext
@@ -9661,7 +9622,6 @@
       {$ktsg *}  $(gen p.gen)
       {$ktts *}  (conk(sut $(gen q.gen)) p.gen)
       {$ktwt *}  (wrap(sut $(gen p.gen)) %lead)
-      {$docs *}  (help [%docs p.gen] $(gen q.gen))
       {$form *}  (form [sut p.gen] $(gen q.gen))
       {$sgzp *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       {$sggr *}  $(gen q.gen)
@@ -9804,11 +9764,6 @@
         ::
         dext(hos [q.p.sut hos], sut q.sut)
       ::
-          {$help *}
-        ::  work through help
-        ::
-        [%help p.sut dext(sut q.sut)]
-      ::
           {$form *}
         ::  work through form
         ::
@@ -9872,7 +9827,6 @@
       ::      ~>  %slog.[0 (dunk(sut =>(- ref)) 'sint: pro')]
       ::      -
       ?+    ref  .
-          {$help *}  $(ref q.ref)
           {$form *}  $(ref q.ref)
           {$face *}
         ::  extend all stacks in set
@@ -9964,7 +9918,6 @@
                  (core $(sut p.sut, u.i.vit lat) q.sut)
       {$face *}  (face p.sut $(sut q.sut))
       {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
-      {$help *}  (help p.sut $(sut q.sut))
       {$form *}  (form p.sut $(sut q.sut))
       {$hold *}  ?:  (~(has in vil) sut)
                    %void
@@ -10007,7 +9960,6 @@
       {$face *}  (face p.sut $(sut q.sut))
       {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
       {$form *}  (form p.sut $(sut q.sut))
-      {$help *}  (help p.sut $(sut q.sut))
       {$hold *}  $(sut repo)
     ==
   --
@@ -10407,9 +10359,6 @@
           [1 (add 'a' (mod (div gum 26) 26))]
           [1 (add 'a' (mod (div gum 676) 26))]
       ==
-    ::
-        {$help *}
-      $(sut q.sut)
     ::
         {$form *}
       $(sut q.sut)

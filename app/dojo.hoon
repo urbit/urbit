@@ -707,10 +707,10 @@
             $(types t.types)
           res
         ::
-            {$help *}
+          ::  {$help *}
           ::  while we found a raw help, it's associated on the wrong side of a
           ::  set of topics. Walk through it instead of showing it.
-          (find-item-in-type t.topics q.sut)
+          ::  (find-item-in-type t.topics q.sut)
         ::
             {$form *}
           $(sut q.sut)
@@ -750,10 +750,10 @@
           =*  items  (turn types build-inspectable-recursively)
           (roll items join-items)
         ::
-            {$help *}
-          =*  rest-type  (build-inspectable-recursively q.sut)
-          ?>  ?=($docs -.p.sut)
-          `[%view [%header `+.p.sut (item-as-overview rest-type)]~]
+          ::  {$help *}
+          ::  =*  rest-type  (build-inspectable-recursively q.sut)
+          ::  ?>  ?=($docs -.p.sut)
+          ::  `[%view [%header `+.p.sut (item-as-overview rest-type)]~]
         ::
             {$form *}  $(sut q.sut)
             {$hold *}  $(sut (~(play ut p.sut) q.sut))
@@ -872,7 +872,7 @@
         |=  sut/type
         ?+  sut  ~
           {$core *}  q.r.q.sut
-          {$help *}  ?>(?=($docs -.p.sut) `+.p.sut)
+          ::  {$help *}  ?>(?=($docs -.p.sut) `+.p.sut)
           {$form *}  $(sut q.sut)
           {$hold *}  $(sut (~(play ut p.sut) q.sut))
         ==
@@ -1153,7 +1153,6 @@
         {$cell ^}  a(p $(a p.a), q $(a q.a))
         {$fork *}  a(p (silt (turn ~(tap in p.a) |=(b/type ^$(a b)))))
         {$form *}  !!
-        {$help *}  !!
         {$core ^}  `wain`/core
         {$hold *}  a(p $(a p.a))
       ==
