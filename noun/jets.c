@@ -195,6 +195,9 @@ _cj_sham(u3_noun som)       //  XX wrong, does not match ++sham
   return haf;
 }
 
+/* _cj_find_cold(): search cold state for `bat`s registry.
+ *                  RETAIN.
+ */
 static u3_weak
 _cj_find_cold(u3_noun bat)
 {
@@ -214,6 +217,9 @@ _cj_find_cold(u3_noun bat)
   }
 }
 
+/* _cj_find_warm(): search warm state for `loc`s activation.
+ *                  RETAIN.
+ */
 static u3_weak
 _cj_find_warm(u3_noun loc)
 {
@@ -233,6 +239,8 @@ _cj_find_warm(u3_noun loc)
   }
 }
 
+/* u3j_spot(): identify `cor`s location. RETAIN.
+ */
 u3_weak
 u3j_spot(u3_noun cor)
 {
@@ -241,40 +249,34 @@ u3j_spot(u3_noun cor)
     return u3_none;
   }
   else {
-    u3_noun rut, ban;
-    u3x_cell(reg, &rut, &ban);
-    u3_noun rum = u3qdb_get(rut, u3t(cor));
+    u3_noun rut = u3h(reg),
+            lan = u3t(reg),
+            rum = u3qdb_get(rut, u3t(cor));
     if ( u3_nul != rum ) {
-      u3_noun loc = u3nt(c3y, c3y, u3k(u3t(rum)));
+      u3_noun loc = u3k(u3t(rum));
       u3z(rum);
       return loc;
     }
     else {
-      while ( u3_nul != ban ) {
-        u3_weak pel, par;
-        u3_noun axe, luk;
-        u3x_cell(u3h(ban), &axe, &luk);
-        par = u3r_at(axe, cor);
-        if ( u3_none == par ) {
-          return u3_none;
-        }
-        pel = u3j_spot(par);
-        if ( u3_none != pel ) {
-          u3_noun huc = u3qdb_get(luk, pel);
-          if ( u3_nul == huc ) {
+      while ( u3_nul != lan ) {
+        u3_noun pas = u3h(lan),
+                axe = u3h(pas),
+                lol = u3t(pas);
+        u3_weak par = u3r_at(axe, cor),
+                pel;
+        if ( u3_none != par ) {
+          pel = u3j_spot(par);
+          if ( u3_none != pel ) {
+            u3_noun nit = u3qdb_get(lol, pel);
             u3z(pel);
-          }
-          else {
-            u3_noun loc = ( (3 == axe) && (c3y == u3h(pel)) )
-                        ? u3nc(c3y,
-                            u3nq(c3n, u3k(nam), pel, u3k(u3t(huc))))
-                        : u3nc(c3n,
-                            u3nq(u3k(nam), u3k(axe), pel, u3k(u3t(huc))));
-            u3z(huc);
-            return loc;
+            if ( u3_nul != nit ) {
+              u3_noun loc = u3k(u3t(nit));
+              u3z(nit);
+              return loc;
+            }
           }
         }
-        ban = u3t(ban);
+        lan = u3t(lan);
       }
       return u3_none;
     }
@@ -286,37 +288,10 @@ u3j_spot(u3_noun cor)
 static c3_o
 _cj_scan(u3_noun cor)
 {
-  u3_weak reg = _cj_find_cold(u3h(cor));
-  if ( u3_none == reg ) {
-    return c3n;
-  }
-  else {
-    u3_noun rut, ban;
-    u3x_cell(reg, &rut, &ban);
-    u3_noun rum = u3qdb_get(rut, u3t(cor));
-    if ( u3_nul != rum ) {
-      u3z(rum);
-      return c3y;
-    }
-    else {
-      while ( u3_nul != ban ) {
-        u3_weak par;
-        u3_noun axe, luk;
-        u3x_cell(u3h(ban), &axe, &luk);
-        par = u3r_at(axe, cor);
-        if ( u3_none == par ) {
-          return c3n;
-        }
-        else if ( c3y == _cj_scan(par) ) {
-          return c3y;
-        }
-        else {
-          ban = u3t(ban);
-        }
-      }
-      return c3n;
-    }
-  }
+  u3_weak loc = u3j_spot(cor);
+  c3_o  reg_o = (u3_none == loc) ? c3y : c3n;
+  u3z(loc);
+  return reg_o;
 }
 
 /* _cj_warm_hump(): generate axis-to-arm map.  RETAIN.
@@ -529,62 +504,30 @@ _cj_hook_in(u3_noun     cor,
             const c3_c* tam_c,
             c3_o        jet_o)
 {
+  u3_weak   loc, col;
+  u3_noun   roc, tem, got, pat, nam, huc;
+
   if ( c3n == u3du(cor) ) {
     return u3m_bail(c3__fail);
   }
-  else {
-    u3_weak loc = u3j_spot(cor);
 
-    if ( u3_none == loc ) {
-      return u3m_bail(c3__fail);
-    }
-    else {
+  loc = u3j_spot(cor);
+  if ( u3_none == loc ) {
+    return u3m_bail(c3__fail);
+  }
+
+  tem = u3i_string(tam_c),
+  while ( 1 ) {
+    u3x_trel(loc, &pat, &name, &huc);
+    got = u3qdb_get(huc, tem);
+    if ( u3_nul != got ) {
+      u3_noun pro, fol;
       u3j_core* cop_u;
-      u3_noun tem = u3i_string(tam_c),
-              got = u3_nul;
-      while ( 1 ) {
-        if ( c3y == u3h(loc) ) {
-          u3_noun sat = u3t(loc),
-                  las = u3t(u3t(sat)),
-                  huc = u3t(las);
-          got = u3qdb_get(huc, tem);
-          if ( u3_nul != got ) {
-            break;
-          }
-          else {
-            if ( c3y == u3h(sat) ) {
-              return u3m_bail(c3__fail);
-            }
-            else {
-              u3_noun col = u3k(u3h(las));
-              cor = u3t(cor);
-              u3z(loc);
-              loc = col;
-            }
-          }
-        }
-        else {
-          u3_noun nam, axe, par, huc;
-          u3x_qual(u3t(loc), &nam, &axe, &par, &huc);
-          got = u3qdb_get(huc, tem);
-          if ( u3_nul != got ) {
-            break;
-          }
-          else {
-            u3_noun col = u3k(par);
-            u3z(loc);
-            loc = col;
-            cor = u3r_at(axe, cor);
-            c3_assert(u3_none != cor);
-          }
-        }
-      }
-     
+
       u3z(tem);
       fol = u3k(u3t(got));
       u3z(got);
       axe_l = _cj_axis(fol);
-
       if ( 0 == axe_l ) {
         pro = u3n_nock_on(cor, fol);
       }
@@ -593,7 +536,7 @@ _cj_hook_in(u3_noun     cor,
         u3_noun hap, act, pro, fol;
 
         u3z(fol);
-        act  = _cj_find_warm(loc);
+        act   = _cj_find_warm(loc);
         jax_l = u3h(act);
         hap   = u3h(u3t(act));
         cop_u = &u3D.ray_u[jax_l];
@@ -613,6 +556,30 @@ _cj_hook_in(u3_noun     cor,
       }
       u3z(loc);
       return pro;
+    }
+    else if ( c3n == u3h(pat) ) {
+      u3_noun dyn = u3t(pat),
+              axe = u3h(dyn),
+              pel = u3t(dyn);
+      roc = u3k(u3r_at(axe, cor));
+      u3z(cor);
+      cor = roc;
+      col = u3k(pel);
+      u3z(loc);
+      loc = col;
+    }
+    else {
+      u3_noun sat = u3t(pat);
+      if ( c3y == u3h(sat) ) {
+        return u3m_bail(c3__fail);
+      }
+      else {
+        col = u3k(u3t(sat));
+        u3z(loc);
+        loc = col;
+        roc = u3k(u3t(cor));
+        cor = roc;
+      }
     }
   }
 }
@@ -745,60 +712,60 @@ _cj_jit(c3_l jax_l, u3_noun bat)
   return u3_nul;
 }
 
-/* _cj_register_old(): register hooks and parent location within existing 
+/* _cj_mine_par_old(): register hooks and parent location within existing
  *                     axis in ancestor list or u3_none. RETAIN.
  */
 static u3_weak
-_cj_register_old(u3_noun lan, u3_noun loc, u3_noun huc, u3_noun axe)
+_cj_mine_par_old(u3_noun lan, u3_noun axe, u3_noun pel, u3_noun loc)
 {
-  u3_noun ank;
+  u3_noun par;
   if ( u3_nul == lan ) {
     return u3_none;
   }
-  else if ( u3r_sing(axe, ank = u3h(lan)) ) {
-    u3_noun hal = u3qdb_put(u3t(ank), loc, huc),
-            kan = u3nc(axe, hal);
-    return u3nc(kan, u3k(u3t(lan)));
+  else if ( u3r_sing(axe, u3h(par = u3h(lan))) ) {
+    u3_noun lol = u3qdb_put(u3t(par), pel, loc),
+            rap = u3nc(u3k(axe), lol);
+    return u3nc(rap, u3k(u3t(lan)));
   }
   else {
-    u3_weak nex = _cj_register_old(u3t(lan), loc, huc, axe);
+    u3_weak nex = _cj_mine_par_old(u3t(lan), axe, pel, loc);
     if ( u3_none == nex ) {
       return u3_none;
     }
     else {
-      return u3nc(u3k(ank), nex);
+      return u3nc(u3k(par), nex);
     }
   }
 }
 
-/* cj_register_new(): insert ancestor within lan at sorted index. RETAIN.
+/* _cj_mine_par_new(): insert ancestor within lan at sorted index. RETAIN.
  */
 static u3_noun
-_cj_register_new(u3_noun lan, u3_noun loc, u3_noun huc, u3_noun axe)
+_cj_mine_par_new(u3_noun lan, u3_noun axe, u3_noun pel, u3_noun loc)
 {
-  u3_noun ank;
+  u3_noun par;
   if ( (u3_nul == lan) || (c3y == u3qa_lth(axe, u3h(u3h(lan)))) ) {
-    ank = u3nc(axe, u3qdb_put(u3_nul, loc, huc));
-    return u3nc(ank, u3k(lan));
+    par = u3nc(u3k(axe), u3qdb_put(u3_nul, pel, loc));
+    return u3nc(par, u3k(lan));
   }
   else {
     return u3nc(u3k(u3h(lan)),
-                _cj_register_new(u3t(lan), loc, huc, axe));
+                _cj_mine_par_new(u3t(lan), axe, pel, loc));
   }
 }
 
-/* _cj_register(): register a location as an ancestor in a list of ancestors.
+/* _cj_mine_par(): register a location as an ancestor in a list of ancestors.
  *                 RETAIN.
  */
 static u3_noun
-_cj_register(u3_noun lan, u3_noun loc, u3_noun huc, u3_noun axe)
+_cj_mine_par(u3_noun lan, u3_noun axe, u3_noun pel, u3_noun loc)
 {
-  u3_weak old = _cj_register_old(lan, loc, huc, axe);
+  u3_weak old = _cj_mine_par_old(lan, axe, pel, loc);
   if ( u3_none != old ) {
     return old;
   }
   else {
-    return _cj_register_new(lan, loc, huc, axe);
+    return _cj_mine_par_new(lan, axe, pel, loc);
   }
 }
 
@@ -807,30 +774,30 @@ _cj_register(u3_noun lan, u3_noun loc, u3_noun huc, u3_noun axe)
 static void
 _cj_mine(u3_noun cey, u3_noun cor)
 {
-  c3_l jax_l, par_l;
-  u3_weak par, pel;
-  u3_noun pac, rut, ger, pay, ank, bal,
-          nam, axe, huc, reg, loc, act;
-  u3_noun bat = u3h(cor);
+  c3_l jax_l;
+  u3_noun bat = u3h(cor),
+          reg, loc, bal, act, nam, axe, huc, ger;
 
   u3x_trel(cey, &nam, &axe, &huc);
-
   if ( 0 == axe ) {
-    pay   = u3t(cor);
+    u3_noun pay = u3t(cor);
     jax_l = 0;
     reg   = _cj_find_cold(bat);
-    rut   = u3nt(u3k(nam), u3k(pay), u3k(huc));
-    loc   = u3nt(c3y, c3y, rut);
+    loc   = u3nt(u3nt(c3y, c3y, u3k(pay)), u3k(nam), u3k(huc));
     if ( u3_none == reg ) {
       reg = u3nc(u3_nul, u3_nul);
     }
-    ger   = u3nc(u3qdb_put(u3h(reg), pay, rut), u3k(u3t(reg)));
+    ger   = u3nc(u3qdb_put(u3h(reg), pay, loc), u3k(u3t(reg)));
     u3z(reg);
     reg   = ger;
     bal   = u3nc(u3k(nam), u3_nul);
     act   = u3nq(jax_l, u3_nul, bal, _cj_jit(jax_l, bat));
   }
   else {
+    u3_weak par, pel, pac;
+    u3_noun pat;
+    c3_l par_l;
+
     par = u3r_at(axe, cor);
     if ( u3_none == par || c3n == u3du(par) ) {
       fprintf(stderr, "fund: %s is bogus\r\n", u3r_string(nam));
@@ -854,25 +821,26 @@ _cj_mine(u3_noun cey, u3_noun cor)
                _cj_warm_hump(jax_l, huc),
                bal,
                _cj_jit(jax_l, bat));
-    loc = ( (3 == axe) && (c3y == u3h(pel)) )
-        ? u3nt(c3y, c3n, u3nt(u3k(nam), pel, u3k(huc)))
-        : u3nc(c3n, u3nq(u3k(nam), u3k(axe), pel, u3k(huc)));
+    pat = ( ( 3 == axe ) && (c3y == u3h(pel)) )
+        ? u3nt(c3y, c3n, u3k(pel))
+        : u3nt(c3n, u3k(axe), u3k(pel));
+    loc = u3nt(pat, u3k(nam), u3k(huc));
     reg = _cj_find_cold(bat);
     if ( u3_none == reg ) {
       reg = u3nc(u3_nul, u3_nul);
     }
-    ank = _cj_register(u3t(reg), loc, huc, axe);
-    ger = u3nc(u3k(u3h(reg)), ank);
-    u3z(reg);
+    ger = u3nc(u3k(u3h(reg)),
+               _cj_mine_par(u3t(reg), axe, pel, loc));
+    u3z(pel); u3z(reg);
     reg = ger;
   }
-  u3h_put(u3R->jed.cod_p, bat, reg);
-  u3h_put(u3R->jed.war_p, loc, act);
-  u3z(loc);
 #if 0
   u3m_p("new jet", bal);
   fprintf(stderr, "  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
 #endif
+  u3h_put(u3R->jed.cod_p, bat, reg);
+  u3h_put(u3R->jed.war_p, loc, act);
+  u3z(loc);
 }
 
 /* u3j_mine(): register core for jets.
@@ -912,15 +880,15 @@ _cj_warm_reap(u3_noun kev)
 
 /* 
 |%
-+=  battery     ^
-+=  hooks       (map term axis)
-+=  root        [name=term payload=* hooks]
-+=  branch      [name=term parent=static hooks]
-+=  dynamic     [name=term where=axis parent=location hooks]
-+=  static      (each root branch)
-+=  location    (each static dynamic)
-+=  registry    [roots=(map * root) parents=(list ancestor)]
-+=  ancestor    (pair axis (map location location))
++=  location    $:  pattern=(each static dynamic)
+                    name=term
+                    hooks=(map term axis)
+                ==
++=  static      (each payload=* parent=static)
++=  dynamic     [where=axis parent=location]
+::
++=  registry    [roots=(map * location) parents=(list parent)]
++=  parent      (pair axis (map location location))
 ::
 +=  activation  $:  hot-index=@ud
                     drivers=(map axis @ud)
@@ -928,17 +896,16 @@ _cj_warm_reap(u3_noun kev)
                     jit=*
                 ==
 ::
-+=  cold        (map battery registry)
++=  cold        (map battery=^ registry)
 +=  warm        (map location activation)
 --
 */
-
-/* _cj_merge_ancestors(): merge ancestor lists.
- *                        sel is TRANSFERRED.
- *                        jul is RETAINED.
+/* _cj_remarry(): merge parent lists.
+ *                sel is TRANSFERRED.
+ *                jul is RETAINED.
  */
 static u3_noun
-_cj_merge_ancestors(u3_noun sel, u3_noun jul)
+_cj_remarry(u3_noun sel, u3_noun jul)
 {
   u3_noun kel, kev, i, j, ank, les, axe, loc, huc;
   for ( i = jul; u3_nul != i; i = u3t(i) ) {
@@ -958,12 +925,12 @@ _cj_merge_ancestors(u3_noun sel, u3_noun jul)
   return sel;
 }
 
-/* _cj_merge_roots(): merge root maps of ancestor.
- *                    sor is TRANSFERRED.
- *                    jor is RETAINED.
+/* _cj_graft(): merge root maps of registry.
+ *              sor is TRANSFERRED.
+ *              jor is RETAINED.
  */
 static u3_noun
-_cj_merge_roots(u3_noun sor, u3_noun jor)
+_cj_graft(u3_noun sor, u3_noun jor)
 {
   u3_noun i, rut, kel = u3qdb_tap(jor);
   for ( i = kel; u3_nul != i; i = u3t(i) ) {
@@ -984,8 +951,8 @@ _cj_cold_reap(u3_noun kev)
   u3_weak ser = _cj_find_cold(bat);
   u3_noun reg = ( u3_none == ser )
               ? u3a_take(jur)
-              : u3nc(_cj_merge_roots(u3k(u3h(ser)), u3h(jur)),
-                     _cj_merge_ancestors(u3k(u3t(ser)), u3t(jur)));
+              : u3nc(_cj_graft(u3k(u3h(ser)), u3h(jur)),
+                     _cj_remarry(u3k(u3t(ser)), u3t(jur)));
   u3h_put(u3R->jed.cod_p, bat, reg);
   u3z(ser); u3z(bat);
 }
