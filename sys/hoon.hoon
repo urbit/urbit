@@ -5588,7 +5588,7 @@
 ++  coil  $:  p/?($gold $iron $lead $zinc)              ::  core type
               q/type                                    ::  built with
               r/chap                                    ::  docs
-              s/{p/seminoun q/(map @ tomb)}               ::  arms
+              s/{p/seminoun q/(map @ tomb)}             ::  arms
           ==                                            ::
 ++  foot  $%  {$ash p/hoon}                             ::  dry arm, geometric
               {$elm p/hoon}                             ::  wet arm, generic
@@ -5611,15 +5611,7 @@
 ++  pock  (pair axis nock)                              ::  changes
 ++  port  (each palo (pair type nock))                  ::  successful match
 ++  root  hoon                                          ::  produce model
-++  tent                                                ::  model builder
-          $%  {%| p/wing q/tent r/(list plan)}          ::  ~(p q r...)
-              {%& p/(list wing)}                        ::  a.b:c.d
-          ==                                            ::
-++  tiki                                                ::  test case
-          $%  {%& p/(unit term) q/wing}                 ::  simple wing
-              {%| p/(unit term) q/hoon}                 ::  named wing
-          ==                                            ::
-++  plan                                                ::  data structure
+++  plan                                                ::  structure definition
           $~  [%base %null]                             ::
           $%  {$base p/base}                            ::  base type
               {$dbug p/spot q/plan}                     ::  set debug
@@ -5631,16 +5623,29 @@
               {$bccb p/hoon}                            ::  example
               {$bccl p/{i/plan t/(list plan)}}          ::  tuple
               {$bccn p/{i/plan t/(list plan)}}          ::  selection
+              {$bcdt p/plan q/(map term plan)}          ::  gold core
+              {$bcnt p/plan q/(map term plan)}          ::  iron core
+              {$bczp p/plan q/(map term plan)}          ::  lead core
+              {$bctc p/plan q/(map term plan)}          ::  zinc core
               {$bcgl p/plan q/plan}                     ::  filter: exclude
               {$bcgr p/plan q/plan}                     ::  filter: require
               {$bchp p/plan q/plan}                     ::  function type
               {$bckt p/plan q/plan}                     ::  pair+tag
+              {$bcls p/term q/plan}                     ::  set mark
               {$bcmc p/hoon}                            ::  assembly
               {$bcpd p/plan q/hoon}                     ::  repair
               {$bcsg p/hoon q/plan}                     ::  default
               {$bcts p/toga q/plan}                     ::  name
               {$bcvt p/plan q/plan}                     ::  atom+cell
               {$bcwt p/{i/plan t/(list plan)}}          ::  plain selection
+          ==                                            ::
+++  tent                                                ::  model builder
+          $%  {%| p/wing q/tent r/(list plan)}          ::  ~(p q r...)
+              {%& p/(list wing)}                        ::  a.b:c.d
+          ==                                            ::
+++  tiki                                                ::  test case
+          $%  {%& p/(unit term) q/wing}                 ::  simple wing
+              {%| p/(unit term) q/hoon}                 ::  named wing
           ==                                            ::
 ++  toga                                                ::  face control
           $@  p/term                                    ::  two togas
@@ -6713,6 +6718,35 @@
       [%$ 2]
     [%$ 15]  
   ::
+  ++  interface
+    ::  construct a core example
+    ::
+    |=  {variance/vair payload/plan arms/(map term plan)}
+    ^-  hoon
+    ::  attach proper variance control
+    ::
+    =-  ?-  variance
+          %gold  -
+          %lead  [%ktwt -]
+          %zinc  [%ktpd -]
+          %iron  [%ktbr -]
+        ==
+    ^-  hoon
+    :+  %tsgr  example:clear(mod payload)
+    :+  %brcn  *chap
+    =-  [[0 [~ ~] -] ~ ~]
+    %-  ~(gas by *(map term (pair what foot)))
+    ^-  (list (trel term what foot))
+    %+  turn
+      ~(tap by arms)
+    |=  [=term =plan]
+    ::
+    ::  note that we *don't* make arm plans in an interface
+    ::  hygienic -- we leave them in context, to support
+    ::  maximum programmer flexibility
+    ::
+    [term *what %ash example:clear(mod plan)]
+  ::
   ++  home  
     ::  express a hoon against the original subject
     ::
@@ -6824,6 +6858,7 @@
       {$bcgl *}  $(mod q.mod)
       {$bcgr *}  $(mod q.mod)
       {$bckt *}  $(mod q.mod)
+      {$bcls *}  $(mod q.mod)
       {$bcmc *}  ::  borrow sample
                  ::
                  [%tsgl [%$ 6] p.mod]
@@ -6836,6 +6871,10 @@
                  |-  ^-  hoon
                  ?~  t.p.mod  ^$(mod i.p.mod)
                  $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod)
+      {$bcdt *}  [%rock %n 0]
+      {$bcnt *}  [%rock %n 0]
+      {$bctc *}  [%rock %n 0]
+      {$bczp *}  [%rock %n 0]
     ==
   ::
   ++  example
@@ -6866,7 +6905,12 @@
       {$bchp *}  (decorate (function:clear p.mod q.mod))
       {$bcmc *}  (decorate (home [%tsgl [%limb %$] p.mod]))
       {$bcsg *}  [%ktls example(mod q.mod) (home p.mod)]
+      {$bcls *}  (decorate example(mod q.mod))
       {$bcts *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
+      {$bcdt *}  (decorate (home (interface %gold p.mod q.mod)))
+      {$bcnt *}  (decorate (home (interface %iron p.mod q.mod)))
+      {$bczp *}  (decorate (home (interface %lead p.mod q.mod)))
+      {$bctc *}  (decorate (home (interface %zinc p.mod q.mod)))
     ==
   ::
   ++  factory
@@ -7171,6 +7215,12 @@
             [%dtwt fetch]
           relative:clear(mod q.mod)
         relative:clear(mod p.mod)
+      ::
+        {$bcls *}  relative(mod q.mod)
+        {$bcdt *}  (decorate (home (interface %gold p.mod q.mod)))
+        {$bcnt *}  (decorate (home (interface %iron p.mod q.mod)))
+        {$bczp *}  (decorate (home (interface %lead p.mod q.mod)))
+        {$bctc *}  (decorate (home (interface %zinc p.mod q.mod)))
       ==
     --
   --
@@ -10500,7 +10550,7 @@
   |=  {gat/vase sam/*}  ^-  vase
   (slap gat(+<.q sam) [%limb %$])
 ::
-++  spec                                                ::  reconstruct type
+++  stud                                                ::  reconstruct type
   |=  vax/vase
   ^-  vase
   :_  q.vax
@@ -12632,6 +12682,8 @@
     %+  knee  *plan
     |.(~+((wert (wrip ;~(pose structure:(norm &) scad)))))
   ++  wede                                              ::  wide bulb
+    ::  XX: lus here is deprecated in Hoon 143
+    ::
     ;~(pfix ;~(pose lus net) wide)
   ++  wide                                              ::  full wide form
     %+  knee  *hoon
@@ -12787,7 +12839,7 @@
     =^  gun  +>+<  (mint p.vax [%$ axe])
     [[p.gun .*(q.vax [0 axe])] +>+<.$]
   ::
-  ++  spec                                              ::  specialize vase
+  ++  stud                                              ::  specialize vase
     |=  vax/vase
     ^-  {vase worm}
     =+  ^=  gen  ^-  hoon
@@ -12797,16 +12849,16 @@
     =^  typ  +>+<.$  (play p.vax [%wtgr gen [%$ 1]])
     [[typ q.vax] +>+<.$]
   ::
-  ++  spot                                              ::  slot then spec
+  ++  spot                                              ::  slot then stud
     |=  {axe/@ vax/vase}
     ^-  {vase worm}
     =^  xav  +>+<  (slot axe vax)
-    (spec xav)
+    (stud xav)
   ::
-  ++  stop                                              ::  spec then slot
+  ++  stop                                              ::  stud then slot
     |=  {axe/@ vax/vase}
     ^-  {vase worm}
-    =^  xav  +>+<  (spec vax)
+    =^  xav  +>+<  (stud vax)
     (slot axe xav)
   --
 ::
