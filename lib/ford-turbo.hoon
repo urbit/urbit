@@ -948,7 +948,7 @@
   ?-  -.dependency
     ?(%clay-live %gall-live)  disc.rail.dependency
   ==
-::  +get-sub-schematics: blah
+::  +get-sub-schematics: find any schematics contained within :schematic
 ::
 ++  get-sub-schematics
   |=  =schematic
