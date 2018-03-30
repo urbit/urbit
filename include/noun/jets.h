@@ -96,10 +96,12 @@
         u3j_soft(u3_noun     cor,
                    const c3_c* tam_c);
 
-      /* u3j_find(): in warm state, return u3_none or calx.  RETAINS.
+      /* u3j_spot():
+      **
+      **   Identify `cor`s location. RETAIN.
       */
         u3_weak
-        u3j_find(u3_noun bat);
+        u3j_spot(u3_noun cor);
 
       /* u3j_kick(): try to kick by jet.  If no kick, produce u3_none.
       **
@@ -129,4 +131,4 @@
       /* u3j_reap(): promote jet state.  RETAINS.
       */
         void
-        u3j_reap(u3_noun das, u3p(u3h_root) har_p);
+        u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p);

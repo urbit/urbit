@@ -458,9 +458,9 @@ static void
 _pave_parts(void)
 {
   u3R->cax.har_p = u3h_new();
-  u3R->jed.har_p = u3h_new();
+  u3R->jed.war_p = u3h_new();
+  u3R->jed.cod_p = u3h_new();
   u3R->byc.har_p = u3h_new();
-  u3R->jed.das = u3_nul;
 }
 
 /* u3m_mark(): mark all nouns in the road.
@@ -469,9 +469,9 @@ c3_w
 u3m_mark(void)
 {
   c3_w tot_w = 0;
-  tot_w += u3h_mark(u3R->jed.har_p);
+  tot_w += u3h_mark(u3R->jed.war_p);
+  tot_w += u3h_mark(u3R->jed.cod_p);
   tot_w += u3n_bark();
-  tot_w += u3a_mark_noun(u3R->jed.das);
   tot_w += u3a_mark_noun(u3R->ski.gul);
   tot_w += u3a_mark_noun(u3R->bug.tax);
   tot_w += u3a_mark_noun(u3R->bug.mer);
@@ -797,15 +797,15 @@ u3_noun
 u3m_love(u3_noun pro)
 {
   {
-    u3_noun das         = u3R->jed.das;
-    u3p(u3h_root) har_p = u3R->jed.har_p;
+    u3p(u3h_root) cod_p = u3R->jed.cod_p;
+    u3p(u3h_root) war_p = u3R->jed.war_p;
     u3p(u3h_root) byc_p = u3R->byc.har_p;
 
     u3m_fall();
 
     pro = u3a_take(pro);
 
-    u3j_reap(das, har_p);
+    u3j_reap(cod_p, war_p);
     u3n_beep(byc_p);
 
     u3R->cap_p = u3R->ear_p;

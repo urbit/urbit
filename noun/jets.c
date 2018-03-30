@@ -182,19 +182,6 @@ _cj_je_fsck(u3_noun clu)
   return u3nt(u3i_string(nam_c), axe_l, huk);
 }
 
-/* _cj_sham(): ++sham.
-*/
-static u3_atom
-_cj_sham(u3_noun som)       //  XX wrong, does not match ++sham
-{
-  u3_atom jam = u3ke_jam(som);
-  u3_noun sha = u3qe_shax(jam);
-  u3_noun haf = u3qc_end(7, 1, sha);
-
-  u3z(jam); u3z(sha);
-  return haf;
-}
-
 /* _cj_find_cold(): search cold state for `bat`s registry.
  *                  RETAIN.
  */
@@ -516,11 +503,12 @@ _cj_hook_in(u3_noun     cor,
     return u3m_bail(c3__fail);
   }
 
-  tem = u3i_string(tam_c),
+  tem = u3i_string(tam_c);
   while ( 1 ) {
-    u3x_trel(loc, &pat, &name, &huc);
+    u3x_trel(loc, &pat, &nam, &huc);
     got = u3qdb_get(huc, tem);
     if ( u3_nul != got ) {
+      c3_l axe_l;
       u3_noun pro, fol;
       u3j_core* cop_u;
 
@@ -532,8 +520,8 @@ _cj_hook_in(u3_noun     cor,
         pro = u3n_nock_on(cor, fol);
       }
       else {
-        c3_l axe_l, inx_l;
-        u3_noun hap, act, pro, fol;
+        c3_l jax_l, inx_l;
+        u3_noun hap, act;
 
         u3z(fol);
         act   = _cj_find_warm(loc);
@@ -848,9 +836,6 @@ _cj_mine(u3_noun cey, u3_noun cor)
 void
 u3j_mine(u3_noun clu, u3_noun cor)
 {
-  u3_noun bat = u3h(cor);
-  u3_noun cax;
-
   u3t_on(glu_o);
   if ( (c3n == u3du(cor)) || (c3y == _cj_scan(cor)) ) {
     u3z(clu);
@@ -874,7 +859,7 @@ _cj_warm_reap(u3_noun kev)
 {
   u3_noun loc = u3a_take(u3h(kev));
   u3_noun act = u3a_take(u3t(kev));
-  u3h_put(u3R->jed.har_p, loc, act);
+  u3h_put(u3R->jed.war_p, loc, act);
   u3z(loc);
 }
 
@@ -950,9 +935,8 @@ static void
 _cj_ream(u3_noun all)
 {
   c3_l par_l, jax_l;
-  u3_noun i, j, k,
-          all, lop, rul, loc, bal, act, lop,
-          pol, rem, rec, bat, pel, nam, huc;
+  u3_noun i, j, k, rul, loc, bal, act, lop, kev, rut,
+          pat, reg, pol, rem, rec, bat, pel, nam, huc;
   u3_weak pac;
 
   for ( i = all, lop = u3_nul; i != u3_nul; i = u3t(i) ) {
@@ -1030,8 +1014,6 @@ _cj_warm_tap(u3_noun kev)
 void
 u3j_ream(void)
 {
-  u3_noun rut, bat, reg, kev, rem, lop, i;
-  u3_weak pel;
   u3h_free(u3R->jed.war_p);
   u3R->jed.war_p = u3h_new();
   c3_assert(u3R == &(u3H->rod_u));

@@ -241,7 +241,7 @@ u3t_samp(void)
 c3_o
 u3t_come(u3_noun lab)
 {
-  if ( (u3_nul == u3R->pro.don) || !_(u3r_sing(bal, u3h(u3R->pro.don))) ) {
+  if ( (u3_nul == u3R->pro.don) || !_(u3r_sing(lab, u3h(u3R->pro.don))) ) {
     u3R->pro.don = u3nc(u3k(lab), u3R->pro.don);
     return c3y;
   } 
