@@ -18,9 +18,10 @@
   test-scry-clay-fail
   test-scry-clay-block
   test-scry-clay-live
+  test-pinned-in-live
 ==
 ++  test-is-schematic-live
-  ~&  %test-is-live-build
+  ~&  %test-is-schematic-live
   ::
   =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
   ::  pinned-schematic shows a once build
@@ -315,6 +316,59 @@
       :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
               %c  %warp  [~nul ~nul]  %desk  ~
       ==  ==
+    ::
+    %-  expect-eq  !>
+    :-  state-by-ship.+>+<.ford
+    (my [~nul *ford-state:ford-turbo]~)
+  ==
+++  test-pinned-in-live
+  ~&  %test-pinned-in-live
+  ::
+  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
+  =/  scry-43  (scry-succeed ~1234.5.7 [%noun !>(43)])
+  ::
+  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-42)
+  ::
+  =/  schematic=schematic:ford
+    :*  %same  %pin  ~1234.5.6
+        [%scry %clay-live care=%x rail=[[~nul %desk] /bar/foo]]
+    ==
+  =/  build=build:ford  [~1234.5.6 schematic]
+  =/  result=build-result:ford
+    [%result %same %result %pin ~1234.5.6 %result [%scry %noun !>(42)]]
+  ::
+  =^  moves  ford  (call:ford [duct=~ type=~ %make ~nul schematic])
+  ;:  welp
+    %-  expect-eq  !>
+    :-  moves
+    [duct=~ %give %made ~1234.5.6 %complete result]~
+  ::
+    %-  expect-eq  !>
+    :-  results:(~(got by state-by-ship.+>+<.ford) ~nul)
+    %-  my  :~
+      :-  [~1234.5.6 [%scry %clay-live care=%x rail=[[~nul %desk] /bar/foo]]]
+      [%result ~1234.5.6 %result %scry %noun !>(42)]
+    ::
+      :-  :*  ~1234.5.6  %pin  ~1234.5.6
+              [%scry %clay-live care=%x rail=[[~nul %desk] /bar/foo]]
+          ==
+      [%result ~1234.5.6 %result %pin ~1234.5.6 %result %scry %noun !>(42)]
+    ::
+      :-  :*  ~1234.5.6  %same  %pin  ~1234.5.6
+              [%scry %clay-live care=%x rail=[[~nul %desk] /bar/foo]]
+          ==
+      :*  %result  ~1234.5.6  %result  %same  %result  %pin  ~1234.5.6
+          %result  %scry  %noun  !>(42)
+      ==
+    ==
+  ::
+    =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
+    =^  moves2  ford
+      (call:ford [duct=~ type=~ %kill ~nul])
+    ::
+    %+  welp
+      %-  expect-eq  !>
+      [moves2 ~]
     ::
     %-  expect-eq  !>
     :-  state-by-ship.+>+<.ford

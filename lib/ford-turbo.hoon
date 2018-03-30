@@ -114,6 +114,7 @@
                 [%plan vase]
                 [%reef vase]
                 [%ride vase]
+                [%same build-result]
                 [%slit type]
                 [%slim (pair type nock)]
                 [%scry cage]
@@ -144,6 +145,12 @@
         ::    pinned to a specifc time. In once builds, we want to specify a
         ::    specific date, which we apply recursively to any sub-schematics
         ::    contained within :schematic.
+        ::
+        ::    If a build has a %pin at the top level, we consider it to be a
+        ::    once build. Otherwise, we consider it to be a live build. We do
+        ::    this so schematics which depend on the result of a once build can
+        ::    be cached, giving the client explicit control over the caching
+        ::    behaviour.
         ::
         $:  %pin
             ::  date: time at which to perform the build
@@ -347,6 +354,19 @@
             ::  subject: a schematic whose result will be used as subject
             ::
             subject=schematic
+        ==
+        ::  %same: the identity function
+        ::
+        ::    Functionally used to "unpin" a build for caching reasons. If you
+        ::    run a %pin build, it is treated as a once build and is therefore
+        ::    not cached. Wrapping the %pin schematic in a %same schematic
+        ::    converts it to a live build, which will be cached due to live
+        ::    build subscription semantics.
+        ::
+        $:  %same
+            ::  schematic that we evaluate to
+            ::
+            =schematic
         ==
         ::  %scry: lookup a value from the urbit namespace
         ::
@@ -974,6 +994,7 @@
       %plan  ~
       %reef  ~
       %ride  ~[subject.schematic]
+      %same  ~[schematic.schematic]
       %scry  ~
       %slim  ~
       %slit  ~
@@ -983,7 +1004,7 @@
 ::  +date-from-schematic: finds the latest pin date from this schematic tree.
 ::
 ++  date-from-schematic
-  |=  schematic=^schematic
+  |=  =schematic
   ^-  @da
   =+  children=(get-sub-schematics schematic)
   =/  dates  (turn children date-from-schematic)
@@ -991,23 +1012,14 @@
   ?.  ?=(%pin -.schematic)
     children-latest
   (max date.schematic children-latest)
-
 ::  +is-schematic-live:
 ::
-::    A schematic is live if it contains a %scry that's not behind a %pin.
+::    A schematic is live if it is not pinned.
 ::
 ++  is-schematic-live
-  |=  schematic=^schematic
+  |=  =schematic
   ^-  ?
-  ?:  ?=(%pin -.schematic)
-    %.n
-  ?:  ?=(%scry -.schematic)
-    %.y
-  ::
-  =/  children  (get-sub-schematics schematic)
-  ?~  children
-    %.y
-  (lien `(list ^schematic)`children is-schematic-live)
+  !?=(%pin -.schematic)
 ::  +is-listener-live: helper function for loops
 ::
 ++  is-listener-live  |=(=listener live.listener)
@@ -1658,6 +1670,7 @@
             %plan  !!
             %reef  !!
             %ride  !!
+            %same  (same schematic.schematic.build)
             %slit  !!
             %slim  !!
             %scry  (scry dependency.schematic.build)
@@ -1703,6 +1716,15 @@
       ?~  result
         [[%blocks [date schematic]~] this]
       [[%build-result %result %pin date u.result] this]
+    ::
+    ++  same
+      |=  =schematic
+      ::
+      =^  result  state  (depend-on schematic)
+      ::
+      ?~  result
+        [[%blocks [date.build schematic]~] this]
+      [[%build-result %result %same u.result] this]
     ::
     ++  scry
       |=  =dependency
@@ -1823,10 +1845,30 @@
   ::+|  utilities
   ::
   ++  this  .
-  ::  +is-build-live: does :build have any live listeners?
+  ::  +is-build-live: whether this is a live or a once build
   ::
   ++  is-build-live
     |=  =build  ^-  ?
+    ::
+    ?:  ?=(%pin -.schematic.build)
+      %.n
+    =/  has-pinned-client
+      ::  iterate across all clients recursively, exiting early on %pin
+      ::
+      =/  clients  ~(tap in (~(get ju client-builds.components.state) build))
+      |-
+      ?~  clients
+        %.n
+      ?:  ?=(%pin -.schematic.i.clients)
+        %.y
+      %_    $
+          clients
+        %+  weld  t.clients
+        ~(tap in (~(get ju client-builds.components.state) i.clients))
+      ==
+    ?:  has-pinned-client
+      %.n
+    ::  check if :build has any live listeners
     ::
     =/  listeners  ~(tap in (fall (~(get by listeners.state) build) ~))
     ?~  listeners
