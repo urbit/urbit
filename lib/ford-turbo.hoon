@@ -23,9 +23,6 @@
               ::  plan: the schematic to build
               ::
               =schematic
-              ::  date: the formal date of the build, or ~ for live
-              ::
-              date=(unit @da)
           ==
           ::  %kill: stop a build; send on same duct as original %make request
           ::
@@ -66,35 +63,22 @@
     --
   ::  +disc: a desk on a ship; can be used as a beak that varies with time
   ::
-  +=  disc  (pair ship desk)
-  ::  +view: a possibly time-varying view of a +disc
+  +=  disc  [=ship =desk]
+  ::  +rail: a time-varying full path
   ::
-  ::    Either it contains a +case, which means it's pinned to a time,
-  ::    or the (unit case) is ~, meaning the time can vary.
+  ::    This can be thought of as a +beam without a +case, which is what
+  ::    would specify the time. :spur is flopped just like the +spur in a +beam.
   ::
-  +=  view  (trel ship desk (unit case))
-  ::  +rail: a possibly time-varying full path
-  ::
-  ::    Either its +view contains a +case, which means it's pinned to a time
-  ::    (in which case it's equivalent to a +beam), or the (unit case) is ~,
-  ::    meaning the time can vary.
-  ::
-  +=  rail  (pair view spur)
+  +=  rail  [=disc =spur]
   ::  +dependency: dependency on a value from the urbit namespace
   ::
   +=  dependency
     $%  ::  live dependency on a clay path; varies with time
         ::
-        [%clay-live care=care:clay bel=(pair disc spur)]
-        ::  once dependency on a clay path; pinned time
-        ::
-        [%clay-once care=care:clay =beam]
+        [%clay-live care=care:clay =rail]
         ::  live dependency on a gall path; varies with time
         ::
-        [%gall-live care=care:clay bel=(pair disc spur)]
-        ::  once dependency on a gall path; pinned time
-        ::
-        [%gall-once care=care:clay =beam]
+        [%gall-live care=care:clay =rail]
     ==
   ::  +build-result: the referentially transparent result of a +build
   ::
@@ -111,6 +95,7 @@
         $:  %result
             $^  [head=build-result tail=build-result]
             $%  [%$ cage]
+                [%pin date=@da build-result]
                 [%alts build-result]
                 [%bake cage]
                 [%bunt cage]
@@ -152,6 +137,22 @@
             ::
             literal=cage
         ==
+        ::  %pin: pins a sub-schematic to a date
+        ::
+        ::    There is a difference between live builds and once builds. In
+        ::    live builds, we produce results over and over again and aren't
+        ::    pinned to a specifc time. In once builds, we want to specify a
+        ::    specific date, which we apply recursively to any sub-schematics
+        ::    contained within :schematic.
+        ::
+        $:  %pin
+            ::  date: time at which to perform the build
+            ::
+            date=@da
+            ::  schematic: wrapped schematic of pinned time
+            ::
+            =schematic
+        ==
         ::  %alts: alternative build choices
         ::
         ::    Try each choice in :choices, in order; accept the first one that
@@ -179,9 +180,9 @@
         ::  %bunt: produce the default value for a mark
         ::
         $:  %bunt
-            ::  location: where in clay to load the mark from
+            ::  disc where in clay to load the mark from
             ::
-            location=view
+            =disc
             ::  mark: name of mark; also its file path in mar/
             ::
             mark=term
@@ -199,9 +200,9 @@
         ::  %cast: cast the result of a schematic through a mark
         ::
         $:  %cast
-            ::  location: where in clay to load the mark from
+            ::  disc where in clay to load the mark from
             ::
-            location=view
+            =disc
             ::  mark: name of mark; also its file path in ren/
             ::
             mark=term
@@ -219,9 +220,9 @@
         ::  %diff: produce marked diff from :first to :second
         ::
         $:  %diff
-            ::  location: where in clay to load the mark from
+            ::  disc where in clay to load the mark from
             ::
-            location=view
+            =disc
             ::  old: schematic producing data to be used as diff starting point
             ::
             start=schematic
@@ -249,9 +250,9 @@
         ::  %join: merge two diffs into one diff; produces `~` if conflicts
         ::
         $:  %join
-            ::  location: where in clay to load the mark from
+            ::  disc where in clay to load the mark from
             ::
-            location=view
+            =disc
             ::  mark: name of the mark to use for diffs; also file path in mar/
             ::
             mark=term
@@ -265,9 +266,9 @@
         ::  %mash: force a merge, annotating any conflicts
         ::
         $:  %mash
-            ::  location: where in clay to load the mark from
+            ::  disc where in clay to load the mark from
             ::
-            location=view
+            =disc
             ::  mark: name of mark used in diffs; also file path in mar/
             ::
             mark=term
@@ -291,9 +292,9 @@
         ::  %pact: patch a marked noun by applying a diff
         ::
         $:  %pact
-            ::  location: where in clay to load the mark from
+            ::  disc where in clay to load the mark from
             ::
-            location=view
+            =disc
             ::  mark: name of mark to use in diff; also file path in mar/
             ::
             mark=term
@@ -314,7 +315,7 @@
         ::    TODO verify current implementation
         ::
         $:  %path
-            ::  location: the +disc within which to resolve :file-path
+            ::  disc the +disc within which to resolve :file-path
             ::
             location=disc
             ::  file-path: the path to resolve
@@ -377,9 +378,9 @@
         ::  %vale: coerce a noun to a mark, validated
         ::
         $:  %vale
-            ::  location: where in clay to load the mark from
+            ::  disc where in clay to load the mark from
             ::
-            location=view
+            =disc
             ::  mark: name of mark to use; also file path in mar/
             ::
             mark=term
@@ -390,9 +391,9 @@
         ::  %volt: coerce a noun to a mark, unsafe
         ::
         $:  %volt
-            ::  location: where in clay to load the mark from
+            ::  disc where in clay to load the mark from
             ::
-            location=view
+            =disc
             ::  mark: name of mark to use; also file path in mar/
             ::
             mark=term
@@ -413,16 +414,16 @@
         zuse-version=@ud
         ::  structures: files from %/sur which are included
         ::
-        structures/(list cable)
+        structures=(list cable)
         ::  libraries: files from %/lib which are included
         ::
-        libraries/(list cable)
+        libraries=(list cable)
         ::  cranes: a list of resources to transform and include
         ::
-        cranes/(list crane)
+        cranes=(list crane)
         ::  sources: hoon sources, either parsed or on the filesystem
         ::
-        sources/(list brick)
+        sources=(list brick)
     ==
   ::  +cable: a reference to something on the filesystem
   ::
@@ -458,8 +459,8 @@
   ::    represents a path with holes that need to be filled in.
   ::
   +=  truss
-    $:  pre/(unit tyke)
-        pof/(unit {p/@ud q/tyke})
+    $:  pre=(unit tyke)
+        pof=(unit [p=@ud q=tyke])
     ==
   ::  +crane: parsed rune used to include and transform resources
   ::
@@ -622,7 +623,7 @@
 |%
 ::  +move: arvo moves that ford can emit
 ::
-++  move
++=  move
   ::
   $:  ::  duct: request identifier
       ::
@@ -656,9 +657,6 @@
               ::  schematic: the schematic to build
               ::
               =schematic
-              ::  date: the formal date of the build, or ~ for live
-              ::
-              date=(unit @da)
       ==  ==  ==
       ::  %g: to gall
       ::
@@ -774,27 +772,36 @@
       listeners=(jug build listener)
       ::  builds-by-listener: reverse lookup for :listeners
       ::
-      builds-by-listener=(map duct build)
+      builds-by-listener=(map duct [=build live=?])
+      ::  root-builds: only the root builds, not all builds.
+      ::
+      root-builds=(jug build listener)
   ::
   ::  update tracking
   ::
-      ::  live-leaf-builds: which live builds depend on a live +dependency
+      ::  dependencies: live clay dependencies
       ::
-      live-leaf-builds=(jug dependency build)
-      ::  live-root-builds: which live builds depend on any files in a +disc
+      ::    Used for looking up which +dependency's rely on a particular
+      ::    +disc, so that we can send a new Clay subscription with all
+      ::    the resources we care about within that disc.
       ::
-      live-root-builds=(jug disc build)
-      ::  dependencies: dependencies of a live build
+      dependencies=(jug disc dependency)
+      ::  latest-by-disc: latest formal date of a completed live build on disc
       ::
-      dependencies=(map build (jug disc dependency))
+      ::    Updated each time we complete a build of a +dependency,
+      ::    if the build's formal date is later than the stored value.
+      ::
+      latest-by-disc=(map disc @da)
+      ::  clay-subscriptions: ducts we'll use to cancel existing clay requests
+      ::
+      clay-subscriptions=(set disc)
       ::  dependency-updates: all clay updates we need to know about
       ::
       ::    dependency-updates stores all Clay changes at dates that
       ::    Ford needs to track because Ford is tracking attempted builds with
-      ::    that formal date. The changed dependencies are grouped first by
-      ::    date, then within a single date, they're grouped by +disc.
+      ::    that formal date.
       ::
-      dependency-updates=(map @da (jug disc dependency))
+      dependency-updates=(jug @da dependency)
   ==
 ::  +build: a referentially transparent request for a build.
 ::
@@ -835,33 +842,6 @@
       ::  %tombstone: marker that this build has been run and its result wiped
       ::
       [%tombstone ~]
-  ==
-::  +make-product: the result of running +make
-::
-+=  make-product
-  $:  ::  result: result of running a build
-      ::
-      $=  result
-      $%  ::  %build-result: the build completed
-          ::
-          [%build-result =build-result]
-          ::  %blocks: the build is waiting on something else
-          ::
-          [%blocks blocks=(set block)]
-      ==
-      ::  possibly mutated version of the rest of the persistent state
-      ::
-      ford-state
-  ==
-::  +block: something a build can get stuck on
-::
-+=  block
-  $%  ::  %build: the build blocked on another build, :build
-      ::
-      [%build =build]
-      ::  %dependency: the build blocked on an external :dependency
-      ::
-      [%dependency =dependency]
   ==
 ::  +listener: either a :live :duct or a once :duct
 ::
@@ -904,35 +884,29 @@
   $(tapped t.tapped)
 ::  +to-wire: encode a +dependency in a +wire
 ::
-::    If :dependency is live, create a +beam from :bel.dependency
+::    If :dependency is live, create a +beam from :rail.dependency
 ::    by using revision 0 as the +case and encode that.
 ::
 ++  to-wire
   |=  =dependency
   ^-  wire
+  ::  todo: remove %clay-live, %gall-live. replace with %c and %g. most of this
+  ::  fucntion goes away.
   ::
-  =/  beam=beam
-    ?-    -.dependency
-        ?(%clay-once %gall-once)  beam.dependency
-        ?(%clay-live %gall-live)
-      ::
-      =,  bel.dependency
-      [[ship=p.p desk=q.p case=[%ud 0]] spur=q]
-    ==
   ::
   |^  ?-  -.dependency
-        %clay-live  (encode %c &)
-        %clay-once  (encode %c |)
-        %gall-live  (encode %g &)
-        %gall-once  (encode %g |)
+        %clay-live  (encode %c)
+        %gall-live  (encode %g)
       ==
   ::  +encode:to-wire: encode :vane, :care, :live, and :beam into a +wire
   ::
   ++  encode
-    |=  [vane=?(%c %g) live=?]
+    |=  vane=?(%c %g)
     ^-  wire
     ::
-    [vane care.dependency (scot %f live) (en-beam beam)]
+    =/  beam=beam  (extract-beam dependency date=~)
+    ::
+    [vane care.dependency (en-beam beam)]
   --
 ::  +from-wire: decode a +dependency from a +wire
 ::
@@ -940,24 +914,103 @@
   |=  =wire
   ^-  dependency
   ::
-  ?>  ?=([@ @ @ *] wire)
+  ?>  ?=([@ @ *] wire)
   ::  parse :wire's components into :vane, :care, :live, and :beam
   ::
   =/  vane  ((hard ?(%c %g)) i.wire)
   =/  care  ((hard care:clay) i.t.wire)
-  =/  live  =(0 (slav %f i.t.t.wire))
-  =/  beam  (need (de-beam ((hard ^wire) t.t.t.wire)))
+  =/  beam  (need (de-beam ((hard ^wire) t.t.wire)))
   ::
-  ?.  live
-    ?:  =(%c vane)
-      [%clay-once care beam]
-    [%gall-once care beam]
-  ::
-  =/  bel  [disc=[p.beam q.beam] spur=s.beam]
+  =/  rail  [disc=[p.beam q.beam] spur=s.beam]
   ::
   ?:  =(%c vane)
-    [%clay-live care bel]
-  [%gall-live care bel]
+    [%clay-live care rail]
+  [%gall-live care rail]
+::  +extract-beam: obtain a +beam from a +dependency
+::
+::    Fills case with [%ud 0] for live dependencies if :date is `~`.
+::    For once dependencies, ignore :date.
+::
+++  extract-beam
+  |=  [=dependency date=(unit @da)]  ^-  beam
+  ?-    -.dependency
+      ?(%clay-live %gall-live)
+    ::
+    =/  case=case  ?~(date [%ud 0] [%da u.date])
+    ::
+    =,  rail.dependency
+    [[ship.disc desk.disc case] spur]
+  ==
+::  +extract-disc: obtain a +disc from a +dependency
+::
+++  extract-disc
+  |=  =dependency  ^-  disc
+  ?-  -.dependency
+    ?(%clay-live %gall-live)  disc.rail.dependency
+  ==
+::  +get-sub-schematics: blah
+::
+++  get-sub-schematics
+  |=  =schematic
+  ^-  (list ^schematic)
+  ?-    -.schematic
+      ^      ~[head.schematic tail.schematic]
+      %$     ~
+      %pin   ~[schematic.schematic]
+      %alts  choices.schematic
+      %bake  ~
+      %bunt  ~
+      %call  ~[gate.schematic sample.schematic]
+      %cast  ~[input.schematic]
+      %core  ~
+      %diff  ~[start.schematic end.schematic]
+      %dude  ~[attempt.schematic]
+      %hood  ~
+      %join  ~[first.schematic second.schematic]
+      %mash  ~[first.schematic second.schematic]
+      %mute  [subject.schematic (turn mutations.schematic tail)]
+      %pact  ~[start.schematic diff.schematic]
+      %path  ~
+      %plan  ~
+      %reef  ~
+      %ride  ~[subject.schematic]
+      %scry  ~
+      %slim  ~
+      %slit  ~
+      %vale  ~
+      %volt  ~
+  ==
+::  +date-from-schematic: finds the latest pin date from this schematic tree.
+::
+++  date-from-schematic
+  |=  schematic=^schematic
+  ^-  @da
+  =+  children=(get-sub-schematics schematic)
+  =/  dates  (turn children date-from-schematic)
+  =+  children-latest=(roll dates max)
+  ?.  ?=(%pin -.schematic)
+    children-latest
+  (max date.schematic children-latest)
+
+::  +is-schematic-live:
+::
+::    A schematic is live if it contains a %scry that's not behind a %pin.
+::
+++  is-schematic-live
+  |=  schematic=^schematic
+  ^-  ?
+  ?:  ?=(%pin -.schematic)
+    %.n
+  ?:  ?=(%scry -.schematic)
+    %.y
+  ::
+  =/  children  (get-sub-schematics schematic)
+  ?~  children
+    %.y
+  (lien `(list ^schematic)`children is-schematic-live)
+::  +is-listener-live: helper function for loops
+::
+++  is-listener-live  |=(=listener live.listener)
 ::  +by-schematic: door for manipulating :builds-by-schematic.ford-state
 ::
 ::    The :dates list for each key in :builds is sorted in reverse
@@ -1039,18 +1092,30 @@
   ::  moves: the moves to be sent out at the end of this event, reversed
   ::
   =|  moves=(list move)
-  ::  done-live-roots: live root builds completed in this event, reversed
+  ::  dirty-discs: discs whose dependencies have changed during this event
   ::
-  =|  done-live-roots=(list build)
+  =|  dirty-discs=(set disc)
   ::  scry-results: responses to scry's to handle in this event
   ::
   ::    If a value is `~`, the requested resource is not available.
   ::    Otherwise, the value will contain a +cage.
   ::
   =|  scry-results=(map dependency (unit cage))
-  ::  the +per-event door; each event will have a different sample
+  ::  the +per-event gate; each event will have a different sample
   ::
-  |_  [[our=@p =duct now=@da scry=sley] state=ford-state]
+  ::    Not a `|_` because of the `=/`s at the beginning.
+  ::    Produces a core containing four public arms:
+  ::    +start-build, +rebuild, +unblock, and +cancel.
+  ::
+  |=  [[our=@p =duct now=@da scry=sley] state=ford-state]
+  ::  original-clay-subscriptions: outstanding clay subscriptions at event start
+  ::
+  =/  original-clay-subscriptions  clay-subscriptions.state
+  ::  original-dependencies: :dependencies.state at event start
+  ::
+  =/  original-dependencies  dependencies.state
+  ::
+  |%
   ::  |entry-points: externally fired arms
   ::
   ::+|  entry-points
@@ -1058,23 +1123,51 @@
   ::  +start-build: perform a fresh +build, either live or once
   ::
   ++  start-build
-    |=  [=schematic date=(unit @da)]
+    |=  =schematic
     ^-  [(list move) ford-state]
     ::
     =<  finalize
     ::
-    =+  [live when]=?~(date [& now] [| u.date])
-    =/  build=build  [when schematic]
-    ::  associate +listener with :build in :state
+    |^  =+  live=(is-schematic-live schematic)
+        ?:  live
+          start-live-build
+        start-once-build
     ::
-    =:  listeners.state
-      (~(put ju listeners.state) build [duct live])
+    ++  start-live-build
+      ^+  this
+      =/  build=build  [now schematic]
+      ::
+      =:    listeners.state
+        (~(put ju listeners.state) build [duct %.y])
+      ::
+          builds-by-listener.state
+        (~(put by builds-by-listener.state) duct [build %.y])
+      ::
+          root-builds.state
+        (~(put ju root-builds.state) build [duct %.y])
+      ==
+      ::
+      (execute build from=~)
     ::
-        builds-by-listener.state
-      (~(put by builds-by-listener.state) duct build)
-    ==
+    ++  start-once-build
+      ^+  this
+      =/  pin-date=@da  (date-from-schematic schematic)
+      =/  build=build  [pin-date schematic]
+      ::  associate +listener with :build in :state
+      ::
+      =:  listeners.state
+        (~(put ju listeners.state) build [duct %.n])
+      ::
+          builds-by-listener.state
+        (~(put by builds-by-listener.state) duct [build %.n])
+      ::
+          root-builds.state
+        (~(put ju root-builds.state) build [duct %.n])
+      ==
+      ::
+      (execute build from=~)
     ::
-    (execute build)
+    --
   ::  +rebuild: rebuild any live builds based on +dependency updates
   ::
   ++  rebuild
@@ -1085,32 +1178,28 @@
     ::
     =/  date=@da  ?>(?=(%da -.r.beak) p.r.beak)
     =/  disc=disc  [p.beak q.beak]
+    ::  delete the now-dead clay subscription
+    ::
+    =.  clay-subscriptions.state  (~(del in clay-subscriptions.state) disc)
+    ::
+    =/  dependencies=(list dependency)
+      %+  turn  ~(tap in care-paths)
+      |=  [care=care:clay =path]  ^-  dependency
+      ::
+      [%clay-live care bel=[disc spur=(flop path)]]
     ::  store changed dependencies persistently in case rebuilds finish later
     ::
     =.  dependency-updates.state
-      %+  roll  ~(tap in care-paths)
-      |=  [[care=care:clay =path] dependency-updates=_dependency-updates.state]
+      %+  roll  dependencies
+      |=  [=dependency dependency-updates=_dependency-updates.state]
       ::
-      =/  dependency=dependency  [%clay-live care bel=[disc spur=(flop path)]]
-      ::
-      =-  (~(put by dependency-updates) date -)
-      =-  (~(put ju -) disc dependency)
-      (fall (~(get by dependency-updates) date) ~)
+      (~(put ju dependency-updates) date dependency)
+    ::  rebuild dependency builds at the new date
     ::
-    =/  dependencies  (~(got by (~(got by dependency-updates.state) date)) disc)
-    ::
-    =/  builds-to-rebuild=(set build)
-      %+  roll  ~(tap in dependencies)
-      |=  [=dependency builds-to-rebuild=(set build)]
-      ::
-      %-  ~(uni in builds-to-rebuild)
-      (fall (~(get by live-leaf-builds.state) dependency) ~)
-    ::  rebuild :builds-to-rebuild at the new :date
-    ::
-    %+  roll  ~(tap in builds-to-rebuild)
-    |=  [old-build=build that=_this]
-    =/  new-build=build  [date schematic.old-build]
-    (execute:that new-build)
+    %+  roll  dependencies
+    |=  [=dependency that=_this]
+    =/  build=build  [date `schematic`[%scry dependency]]
+    (execute:that build from=~)
   ::  +unblock: continue builds that had blocked on :dependency
   ::
   ++  unblock
@@ -1139,9 +1228,51 @@
     ::
     %+  roll  blocked-builds
     |=  [=build that=_this]
-    (execute:that build)
+    (execute:that build from=~)
   ::
-  ++  cancel  !!
+  ++  cancel  ^+  [moves state]
+    ::
+    =<  finalize
+    ::
+    =/  build-and-live  (~(get by builds-by-listener.state) duct)
+    ::
+    ?~  build-and-live
+      ~&(no-build-for-duct+duct this)
+    ::
+    =+  [build live]=u.build-and-live
+    ::
+    =.  state  (remove-listener-from-build [duct live] build)
+    ::
+    (cleanup build)
+  ::  +remove-listener-from-build: recursively remove listener from (sub)builds
+  ::
+  ++  remove-listener-from-build
+    |=  [=listener =build]
+    ^+  state
+    %_    state
+        listeners
+      ::  remove mappings from :build and its sub-builds to :duct
+      ::
+      =/  builds=(list ^build)  ~[build]
+      ::
+      |-  ^+  listeners.state
+      ?~  builds  listeners.state
+      ::
+      =.  listeners.state
+        (~(del ju listeners.state) i.builds listener)
+      ::
+      =/  sub-builds  (~(get ju sub-builds.components.state) i.builds)
+      ::
+      $(builds (welp t.builds ~(tap in sub-builds)))
+    ::
+        ::  remove mapping from :duct to :build
+        ::
+        builds-by-listener
+      (~(del by builds-by-listener.state) duct.listener)
+    ::
+        root-builds
+      (~(del ju root-builds.state) build listener)
+    ==
   ::  |construction: arms for performing builds
   ::
   ::+|  construction
@@ -1155,11 +1286,25 @@
   ::    to be processed at the end of the event.
   ::
   ++  execute
-    |=  =build
+    |=  [=build from=(unit build)]
     ^+  this
+    ::  normalize :date.build for a %pin schematic
+    ::
+    =?  date.build  ?=(%pin -.schematic.build)  date.schematic.build
     ::  if the build is complete and not a %tombstone, we're done
     ::
+    ::    TODO send %mades on future builds when this build completes.
+    ::
     =^  maybe-cache-line  results.state  (access-cache build)
+    ::  copy all the ducts from :from to this one
+    ::
+    =?  listeners.state  ?=(^ from)
+      =/  consolidated
+        %-  ~(uni in (fall (~(get by listeners.state) build) ~))
+        (fall (~(get by listeners.state) u.from) ~)
+      ?~  consolidated
+        listeners.state
+      (~(put by listeners.state) build consolidated)
     ::
     ?:  ?=([~ %result *] maybe-cache-line)
       ::
@@ -1211,7 +1356,7 @@
       ==
     ::  the build isn't complete, so try running +make on it
     ::
-    =^  made  state  (make build)
+    =^  made  ..execute  (make build)
     ::  dispatch on the product of +make
     ::
     ?-    -.result.made
@@ -1224,7 +1369,7 @@
       =>  store-result
       =>  update-live-tracking
       =>  promote-live-listeners
-      =>  (send-mades current-once-listeners)
+      =>  (send-mades root-once-listeners)
       =>  delete-once-listeners
       ::  if result is same as previous, note sameness
       ::
@@ -1239,7 +1384,7 @@
         ::
         link-rebuilds
       ::
-      =>  (send-mades current-live-listeners)
+      =>  (send-mades root-live-listeners)
       =>  ?~(previous-build this (cleanup u.previous-build))
       =>  (cleanup build)
       ::  recurse "upward" into client builds now that :build is done
@@ -1247,160 +1392,93 @@
       =/  clients=(list ^build)
         ~(tap in (fall (~(get by client-builds.components.state) build) ~))
       ::
-      %+  roll  clients
-      |=  [client=^build _this]
-      this(..execute (execute client))
+      |-  ^+  this
+      ?~  clients  this
+      $(clients t.clients, ..execute (execute i.clients from=`build))
     ::
-        ::  %blocks: build got stuck and produced a set of blocks
+        ::  %blocks: build got stuck and produced a list of blocks
         ::
         %blocks
       ::
-      =/  blocks  ~(tap in blocks.result.made)
-      %+  roll  blocks
-      |=  [block=block _this]
-      ::  recurse "downward" into the builds we blocked on
+      =/  blocks=(list ^build)  builds.result.made
+      |-  ^+  this
+      ?~  blocks  this
       ::
-      ?-    -.block
-          ::  %build: :build blocked on a sub-build, so run the sub-build
-          ::
-          %build
-        ::
-        this(..execute (execute build.block))
-      ::
-          ::  %dependency: :build blocked on a +dependency
-          ::
-          ::    Enqueue a request +move to fetch the blocked resource.
-          ::    Link :block and :build in :blocks.state so we know
-          ::    which build to rerun in a later event when we +unblock
-          ::    on that +dependency.
-          ::
-          %dependency
-        ::
-        =/  dep=dependency  dependency.block
-        ::  TODO: remove to handle other kinds of +dependency
-        ::
-        ?>  ?=(%clay-once -.dep)
-        ::  store :dependency in persistent state
-        ::
-        =.  blocks.state  (~(put ju blocks.state) `dependency`dep build)
-        ::  construct new :move to request blocked resource
-        ::
-        =/  wire=wire  (welp /(scot %p our)/dependency (to-wire dep))
-        =/  note=note
-          =,  dep
-          :*  %c  %warp  sock=[our their=p.beam]
-              [q.beam `[%sing care case=r.beam spur=s.beam]]
-          ==
-        ::
-        =.  moves  [[duct=~ [%pass wire note]] moves]
-        this
-      ==
+      =*  block  i.blocks
+      $(blocks t.blocks, ..execute (execute block from=`build))
     ==
     ::  +sub-builds-changed: did sub-builds change since :previous-build?
     ::
-    ::    Produces a mutant version of :results.state, since it accesses
-    ::    cache lines and updates their :last-accessed. Note that freshness
-    ::    will be somewhat chaotic due to the lack of ordering of sub-builds.
-    ::    We stop at the first sub-build that has a changed value.
+    ::    Produces the answer and a mutant version of :results.state,
+    ::    since it freshens cache lines.
     ::
-    ++  sub-builds-changed  ^-  [? _results.state]
+    ++  sub-builds-changed  ^-  [any-changed=? _results.state]
+      ::  if there's nothing to promote, consider :build changed
+      ::
       ?~  previous-build  [& results.state]
+      ::  grab the sub-builds of :previous-build
+      ::
       =/  old-sub-builds
         (~(get ju sub-builds.components.state) u.previous-build)
       ::
-      =/  any-changed=?  |
       =/  subs  ~(tap in old-sub-builds)
-      ::  loop over the sub-builds until we see a changed result
+      ::  freshen cache for old sub-builds and their rebuilds
       ::
-      |-  ^+  [any-changed results.state]
-      ::  if any have changed, we're done
+      ::    If any :subs don't have a :rebuild, :build needs to be rebuilt.
       ::
-      ?:  any-changed  [& results.state]
-      ::  if we've checked all :subs, we're done
+      %+  roll  subs
+      |=  $:  sub=^build
+              [any-changed=_| results=_results.state]
+          ==
+      ::  place :results in the state so +access-cache sees them
       ::
-      ?~  subs  [| results.state]
+      =.  results.state  results
+      ::  freshen the cache for :sub
       ::
-      =/  sub=^build  i.subs
-      ::  if :sub is newer than :build, don't check it; we're done with :sub
+      =^  old-result  results.state  (access-cache sub)
+      ::  find a later +build of :sub with an identical result
       ::
-      ?:  (gth date.sub date.build)
-        $(subs t.subs)
+      =/  rebuild  (~(get by new.rebuilds.state) sub)
+      ::  if there's no :rebuild of :sub, :build needs to be rebuilt.
       ::
-      =^  sub-result  results.state  (access-cache sub)
-      ::  if there's no result for a sub-build, treat :build as changed
-      ::
-      ?~  sub-result
+      ?~  rebuild
         [& results.state]
-      ::  if the sub-build's result has been reclaimed, treat :build as changed
+      ::  freshen the cache for :rebuild
       ::
-      ?:  ?=(%tombstone -.u.sub-result)
-        [& results.state]
-      ::  loop over rebuilds of :sub
+      =^  new-result  results.state  (access-cache u.rebuild)
       ::
-      |-  ^+  [any-changed results.state]
-      ::  find the :next rebuild of :sub
-      ::
-      =/  next  (~(find-next by-schematic builds-by-schematic.state) sub)
-      ::  if there's no :next, or it's newer than :build, we're done with :sub
-      ::
-      ?~  next
-        ^$(subs t.subs)
-      ::
-      ?:  (gth date.u.next date.build)
-        ^$(subs t.subs)
-      ::  obtain :next-result by looking up :next's result in cache
-      ::
-      =^  next-result  results.state  (access-cache u.next)
-      ::  if there's no result for a sub-build, treat :build as changed
-      ::
-      ?~  next-result
-        [& results.state]
-      ::  if the sub-build's result has been reclaimed, treat :build as changed
-      ::
-      ?:  ?=(%tombstone -.u.next-result)
-        [& results.state]
-      ::  if :next's result differs from :sub's, treat :build as changed
-      ::
-      ?.  =(build-result.u.next-result build-result.u.sub-result)
-        [& results.state]
-      ::  if :next's date is earlier than :build's, check the next rebuild
-      ::
-      $(sub u.next)
+      [any-changed results.state]
     ::  +dependencies-changed: did dependencies change since :previous-build?
     ::
     ++  dependencies-changed  ^-  ?
-      =/  dependencies-jug=(jug disc dependency)
-        ?~  previous-build  ~
-        (fall (~(get by dependencies.state) u.previous-build) ~)
+      ?.  ?=(%scry -.schematic.build)
+        |
       ::
-      =/  dependencies=(set dependency)
-        %+  roll  ~(tap by dependencies-jug)
-        |=  [[=disc deps=(set dependency)] accumulator=(set dependency)]
-        ::
-        (~(uni in accumulator) deps)
+      =/  dependency  dependency.schematic.build
       ::
-      =/  updates-jug=(jug disc dependency)
-        (fall (~(get by dependency-updates.state) date.build) ~)
+      ?.  ?=(%clay-live -.dependency)
+        |
       ::
-      =/  updates=(set dependency)
-        %+  roll  ~(tap by updates-jug)
-        |=  [[=disc deps=(set dependency)] accumulator=(set dependency)]
-        ::
-        (~(uni in accumulator) deps)
+      =/  updates  (fall (~(get by dependency-updates.state) date.build) ~)
       ::
-      !=(~ (~(int in dependencies) updates))
+      (~(has in updates) dependency)
     ::  +promote-live-listeners: move live listeners :previous-build -> :build
+    ::
+    ::    We don't have to promote the listeners of old sub-builds
+    ::    because they will have already been run at :date.build
+    ::    by the time this code gets run.
     ::
     ++  promote-live-listeners  ^+  this
       ::
       ?~  previous-build
         this
-      ::
-      %_    this
-          state
-        ::
+      =.  state
         %+  roll  previous-live-listeners
         |=  [=listener state=_state]
+        ::  if :listener ain't live, we wrote this wrong
+        ::
+        ?>  live.listener
+        ::  move :listener off :previous-build onto :build
         ::
         %_    state
             listeners
@@ -1408,17 +1486,40 @@
           (~(del ju listeners.state) u.previous-build listener)
         ::
             builds-by-listener
-          (~(put by builds-by-listener.state) duct.listener build)
+          (~(put by builds-by-listener.state) duct.listener [build &])
         ==
-      ==
+      ::
+      =.  state
+        %+  roll
+          ~(tap in (fall (~(get by root-builds.state) u.previous-build) ~))
+        |=  [=listener state=_state]
+        =?    root-builds.state
+            (is-listener-live listener)
+          =-  (~(put ju -) build listener)
+          (~(del ju root-builds.state) u.previous-build listener)
+        state
+      ::
+      this
+    ::  +root-listeners: listeners that treat :build as a root build
+    ::
+    ++  root-listeners  ^-  (list listener)
+      ~(tap in (fall (~(get by root-builds.state) build) ~))
+    ::  +root-once-listeners: once listeners that treat :build as a root build
+    ::
+    ++  root-once-listeners  ^-  (list listener)
+      (skip root-listeners is-listener-live)
+    ::  +root-live-listeners: live listeners that treat :build as a root build
+    ::
+    ++  root-live-listeners  ^-  (list listener)
+      (skim root-listeners is-listener-live)
     ::  +current-once-listeners: once listeners on :build
     ::
     ++  current-once-listeners  ^-  (list listener)
-      (skip current-listeners |=([* live=?] live))
+      (skip current-listeners is-listener-live)
     ::  +current-live-listeners: live listeners on :build
     ::
     ++  current-live-listeners  ^-  (list listener)
-      (skim current-listeners |=([* live=?] live))
+      (skim current-listeners is-listener-live)
     ::  +current-listeners: listeners on :build, both live and once
     ::
     ++  current-listeners  ^-  (list listener)
@@ -1433,7 +1534,7 @@
         ?~  previous-result  ~
         (fall (~(get by listeners.state) u.previous-build) ~)
       ::
-      (skim ~(tap in previous-listeners) |=([* live=?] live))
+      (skim ~(tap in previous-listeners) is-listener-live)
     ::  +link-rebuilds: link old and new same build in :rebuilds.state
     ::
     ++  link-rebuilds  ^+  this
@@ -1447,60 +1548,20 @@
           new.rebuilds.state
         (~(put by new.rebuilds.state) u.previous-build build)
       ==
-    ::  update :state to reflect the fact that :build is done
-    ::
-    ::    Potentially mutates :live-leaf-builds.state,
-    ::    :live-root-builds.state, and :done-live-roots.per-event.
+    ::  update :dirty-discs.per-event to reflect the fact that :build is done
     ::
     ++  update-live-tracking  ^+  this
-      ::  populate :live-leaf-builds.state with :build's :dependencies
+      ?.  ?=(%scry -.schematic.build)
+        this
       ::
-      =/  dependencies-jug=(jug disc dependency)
-        (fall (~(get by dependencies.state) build) ~)
+      =/  dependency  dependency.schematic.build
       ::
-      =/  dependencies=(set dependency)
-        %+  roll  ~(tap by dependencies-jug)
-        |=  [[=disc deps=(set dependency)] accumulator=(set dependency)]
-        ::
-        (~(uni in accumulator) deps)
+      ?.  ?=(%clay-live -.dependency)
+        this
       ::
-      =.  live-leaf-builds.state
-        %+  roll  ~(tap in dependencies)
-        |=  [=dependency live-leaf-builds=_live-leaf-builds.state]
-        ::  if :dependency is not live, don't add it to :live-leaf-builds
-        ::
-        ?.  ?=(?(%clay-live %gall-live) -.dependency)
-          live-leaf-builds
-        (~(put ju live-leaf-builds) dependency build)
-      ::  recursively gather :discs that :build depends on and store them
+      =/  disc=disc  disc.rail.dependency
       ::
-      =/  discs=(set disc)  ~(key by dependencies-jug)
-      =.  discs
-        |-  ^+  discs
-        ?~  kids  discs
-        ::
-        =/  grandkids  ~(tap in (~(get ju sub-builds.components.state) i.kids))
-        =/  kid-deps  (fall (~(get by dependencies.state) i.kids) ~)
-        =/  kid-discs  ~(key by kid-deps)
-        ::
-        $(kids (weld t.kids grandkids), discs (~(uni in discs) kid-discs))
-      ::
-      =.  live-root-builds.state
-        %+  roll  ~(tap in discs)
-        |=  [=disc live-root-builds=_live-root-builds.state]
-        (~(put ju live-root-builds) disc build)
-      ::  prepend :build to :done-live-roots, which is in reverse order
-      ::
-      =?    done-live-roots
-          ::  need these declarations, otherwise mint-coke error
-          =/  current-live=(list listener)  current-live-listeners
-          =/  previous-live=(list listener)  previous-live-listeners
-          ::
-          |(?=(^ current-live) ?=(^ previous-live))
-        ::
-        [build done-live-roots]
-      ::
-      this
+      this(dirty-discs (~(put in dirty-discs) disc))
     ::  +send-mades: send one %made move per listener in :listeners
     ::
     ++  send-mades
@@ -1523,16 +1584,10 @@
     ++  delete-once-listeners  ^+  this
       %_    this
           state
-        %+  roll  current-once-listeners
-        |=  [=listener state=_state]
-        ::
-        %_    state
-            listeners
-          (~(del ju listeners.state) build listener)
-        ::
-            builds-by-listener
-          (~(del by builds-by-listener.state) duct.listener)
-        ==
+        %+  roll  root-once-listeners
+        |=  [=listener accumulator=_state]
+        =.  state  accumulator
+        (remove-listener-from-build listener build)
       ==
     ::  +store-result: store :result in :state
     ::
@@ -1550,7 +1605,7 @@
     ::
     ++  cleanup
       |=  build=^build  ^+  this
-      this(state (^cleanup build))
+      this(..execute (^cleanup build))
     ::
     ++  this  .
     --
@@ -1562,7 +1617,20 @@
   ::
   ++  make
     |=  =build
-    ^-  make-product
+    ^-  $:  ::  result: result of running a build
+            ::
+            $=  result
+            $%  ::  %build-result: the build completed
+                ::
+                [%build-result =build-result]
+                ::  %blocks: :build is waiting on other builds or a dependency
+                ::
+                [%blocks builds=(list ^build)]
+            ==
+            ::  possibly mutated version of the +per-event core
+            ::
+            _this
+        ==
     ::  dispatch based on the kind of +schematic in :build
     ::
     |^  ?-    -.schematic.build
@@ -1571,6 +1639,7 @@
         ::
             %$  (literal literal.schematic.build)
         ::
+            %pin   (pin date.schematic.build schematic.schematic.build)
             %alts  !!
             %bake  !!
             %bunt  !!
@@ -1595,55 +1664,61 @@
             %vale  !!
             %volt  !!
         ==
+    ::  |schematic-handlers:make: implementation of the schematics
     ::
-    ++  literal
-      |=  =cage  ^-  make-product
-      [[%build-result %result %$ cage] state]
+    ::    All of these produce a value of the same type as +make itself.
+    ::
+    ::  +|  schematic-handlers
     ::
     ++  autocons
-      |=  [head=schematic tail=schematic]  ^-  make-product
+      |=  [head=schematic tail=schematic]
       ::
       =^  head-result  state  (depend-on head)
       =^  tail-result  state  (depend-on tail)
       ::
-      =|  blocks=(set block)
-      =?  blocks  ?=(~ head-result)  (~(put in blocks) [%build date.build head])
-      =?  blocks  ?=(~ tail-result)  (~(put in blocks) [%build date.build tail])
+      =|  blocks=(list ^build)
+      =?  blocks  ?=(~ head-result)  [[date.build head] blocks]
+      =?  blocks  ?=(~ tail-result)  [[date.build tail] blocks]
       ::  if either build blocked, we're not done
       ::
       ?^  blocks
         ::
-        [[%blocks blocks] state]
+        [[%blocks blocks] this]
       ::
       ?<  ?=(~ head-result)
       ?<  ?=(~ tail-result)
       ::
-      =-  [[%build-result -] state]
+      =-  [[%build-result -] this]
       `build-result`[%result u.head-result u.tail-result]
     ::
+    ++  literal
+      |=  =cage
+      [[%build-result %result %$ cage] this]
+    ::
+    ++  pin
+      |=  [date=@da =schematic]
+      ::
+      =^  result  state  (depend-on schematic)
+      ::
+      ?~  result
+        [[%blocks [date schematic]~] this]
+      [[%build-result %result %pin date u.result] this]
+    ::
     ++  scry
-      |=  =dependency  ^-  make-product
+      |=  =dependency
       ::  construct a full +beam to make the scry request
       ::
-      =/  beam=beam
-        ?-    -.dependency
-            ?(%clay-live %gall-live)
-          =,  bel.dependency
-          [beak=[p.p q.p [%da date.build]] spur=q]
-        ::
-            ?(%clay-once %gall-once)
-          beam.dependency
-        ==
+      =/  beam  (extract-beam dependency `date.build)
       ::  extract :disc from :beam
       ::
-      =/  disc=disc  [p q]:beam
-      ::  link :dependency to :build
+      =/  disc=disc  (extract-disc dependency)
       ::
-      =.  dependencies.state
-        %+  ~(put by dependencies.state)  build
-        %-  ~(put ju (fall (~(get by dependencies.state) build) ~))
-        ::
-        [disc dependency]
+      =/  live=?  (is-build-live build)
+      ::  link :disc to :dependency
+      ::
+      =?    dependencies.state
+          &(live ?=(%clay-live -.dependency))
+        (~(put ju dependencies.state) [disc dependency])
       ::  perform scry operation if we don't already know the result
       ::
       ::    Look up :dependency in :scry-results.per-event to avoid
@@ -1656,21 +1731,57 @@
       ::  scry blocked
       ::
       ?~  scry-response
-        ^-  make-product
-        [[%blocks (sy [%dependency dependency]~)] state]
+        ::  :build blocked on :dependency
+        ::
+        ::    Enqueue a request +move to fetch the blocked resource.
+        ::    Link :block and :build in :blocks.state so we know
+        ::    which build to rerun in a later event when we +unblock
+        ::    on that +dependency.
+        ::
+        ::  store :dependency in persistent state
+        ::
+        =.  blocks.state  (~(put ju blocks.state) dependency build)
+        ::  construct new :move to request blocked resource
+        ::
+        =/  wire=wire  (welp /(scot %p our)/dependency (to-wire dependency))
+        =/  note=note
+          =,  rail.dependency
+          :*  %c  %warp  sock=[our their=ship.disc]
+              [desk.disc `[%sing care.dependency case=[%da date.build] spur]]
+          ==
+        ::
+        =.  moves  [[duct=~ [%pass wire note]] moves]
+        [[%blocks ~] this]
+      ::  update :latest-by-disc.state if :date.build is later
+      ::
+      =?    latest-by-disc.state
+          ?&  live
+          ::
+              ?=(%clay-live -.dependency)
+          ::
+              =/  latest-date  (~(get by latest-by-disc.state) disc)
+              ::
+              ?|  ?=(~ latest-date)
+                  (gth date.build u.latest-date)
+          ==  ==
+        ::
+        (~(put by latest-by-disc.state) disc date.build)
+      ::  mark :disc as dirty if we're building a live dependency
+      ::
+      =?    dirty-discs
+          &(live ?=(%clay-live -.dependency))
+        (~(put in dirty-discs) disc)
       ::  scry failed
       ::
       ?~  u.scry-response
         =/  error=tang
-          :~  leaf+"clay-once scry failed for"
+          :~  leaf+"clay-live scry failed for"
               leaf+"%c{(trip care.dependency)} {<(en-beam beam)>}"
           ==
-        ^-  make-product
-        [[%build-result %error error] state]
+        [[%build-result %error error] this]
       ::  scry succeeded
       ::
-      ^-  make-product
-      [[%build-result %result %scry u.u.scry-response] state]
+      [[%build-result %result %scry u.u.scry-response] this]
     ::  |utilities:make: helper arms
     ::
     ::+|  utilities
@@ -1712,6 +1823,15 @@
   ::+|  utilities
   ::
   ++  this  .
+  ::  +is-build-live: does :build have any live listeners?
+  ::
+  ++  is-build-live
+    |=  =build  ^-  ?
+    ::
+    =/  listeners  ~(tap in (fall (~(get by listeners.state) build) ~))
+    ?~  listeners
+      %.y
+    (lien `(list listener)`listeners is-listener-live)
   ::  +access-cache: access the +cache-line for :build, updating :last-accessed
   ::
   ::    Usage:
@@ -1748,81 +1868,96 @@
     ::  once we're done, +flop :moves to put them in chronological order
     ::
     =<  [(flop moves) state]
-    ::  discs: the set of discs on which we'll make clay requests
     ::
-    =/  discs=(set disc)
-      %+  roll  done-live-roots
-      |=  [=build discs=(set disc)]
-      %-  ~(uni in discs)
-      ~(key by (fall (~(get by dependencies.state) build) ~))
-    ::  if none of the completed builds depend on a +disc, no-op
+    =/  discs  ~(tap in dirty-discs)
     ::
-    ?~  discs
-      this
-    ::  root builds that depend on :discs; will not be `~`
+    |-  ^+  this
+    ?~  discs  this
     ::
-    =/  roots=(set build)
-      %+  roll  ~(tap in `(set disc)`discs)
-      |=  [=disc roots=(set build)]
-      (~(uni in roots) (~(get ju live-root-builds.state) disc))
+    =*  disc  i.discs
+    ::  dependencies: all dependencies on :disc
     ::
-    ?>  ?=(^ roots)
-    ::  produce moves
+    =/  dependencies=(set dependency)
+      (fall (~(get by dependencies.state) disc) ~)
+    ::  if no dependencies on :disc, don't make a new clay subscription
     ::
-    =.  moves  %-  welp  :_  moves
+    ?~  dependencies
+      ::  cancel clay subscriptions when we don't have any dependencies left
       ::
-      %+  turn  ~(tap in `(set disc)`discs)
-      |=  =disc  ^-  move
-      ::  dependencies: all dependencies on :valid-disc for any of :roots
-      ::
-      =/  dependencies=(set dependency)
-        %+  roll  ~(tap in `(set build)`roots)
-        |=  [=build dependencies=(set dependency)]
+      ?:  (~(has in original-clay-subscriptions) disc)
+        =+  [their desk]=disc
+        =/  note=note
+          :^  %c  %warp  sock=[our their]
+          ^-  riff:clay
+          [desk ~]
         ::
-        =/  all-deps=(jug ^disc dependency)
-          (fall (~(get by dependencies.state) build) ~)
+        =.  moves  :_  moves
+          ^-  move
+          [duct=~ [%pass wire=(clay-sub-wire disc) note]]
         ::
-        (~(uni in dependencies) (~(get ju all-deps) disc))
-      ::  :dependencies must not be `~`
+        =.  clay-subscriptions.state  (~(del in clay-subscriptions.state) disc)
+        ::
+        =.  latest-by-disc.state  (~(del by latest-by-disc.state) disc)
+        ::
+        $(discs t.discs)
       ::
-      ?>  ?=(^ dependencies)
-      ::  request-contents: the set of [care path]s to subscribe to in clay
-      ::
-      =/  request-contents=(set [care:clay path])
-        %-  sy  ^-  (list [care:clay path])
-        %+  murn  ~(tap in `(set dependency)`dependencies)
-        |=  =dependency  ^-  (unit [care:clay path])
-        ?:  ?=(?(%gall-live %gall-once) -.dependency)
-          ~
-        =-  `[care.dependency (flop `path`-)]
-        ?-  -.dependency
-          %clay-live  spur=q.bel.dependency
-          %clay-once  spur=s.beam.dependency
-        ==
-      ::  their: requestee +ship
-      ::
-      =/  their=@p
-        ?-  -.n.dependencies
-          ?(%clay-live %gall-live)  ship=p.p.bel.n.dependencies
-          ?(%clay-once %gall-once)  ship=p.beam.n.dependencies
+      $(discs t.discs)
+    ::  TODO: We keep track of the original dependencies. Check that if the
+    ::        dependency is in original and not in current dependencies. If
+    ::        so, then unsubscribe.
+    ::
+    ::
+    ::  prevent thrashing; don't unsubscribe then immediately resubscribe
+    ::
+    ::    When we send a request to a foreign ship, that ship may have
+    ::    started responding before we send a cancellation. In that case,
+    ::    cancelling and then resubscribing might cause the foreign ship
+    ::    to send the response twice, which would be extra network traffic.
+    ::
+    ?:  ?&  (~(has in original-clay-subscriptions) disc)
+        ::
+            (~(has in clay-subscriptions.state) disc)
+        ::
+            .=  (~(get by original-dependencies) disc)
+            (~(get by dependencies.state) disc)
         ==
       ::
-      =/  desk=term  q.disc
+      $(discs t.discs)
+    ::  request-contents: the set of [care path]s to subscribe to in clay
+    ::
+    =/  request-contents=(set [care:clay path])
+      %-  sy  ^-  (list [care:clay path])
+      %+  murn  ~(tap in `(set dependency)`dependencies)
+      |=  =dependency  ^-  (unit [care:clay path])
       ::
-      =/  note=note
-        :^  %c  %warp  sock=[our their]
-        ^-  riff:clay
-        [desk `[%mult case=[%da date.n.roots] request-contents]]
+      ?.  ?=(%clay-live -.dependency)  ~
       ::
+      `[care.dependency (flop spur.rail.dependency)]
+    ::  if :request-contents is `~`, this code is incorrect
+    ::
+    ?<  ?=(~ request-contents)
+    ::  their: requestee +ship
+    ::
+    =+  [their desk]=disc
+    =/  latest-date  (~(got by latest-by-disc.state) disc)
+    ::
+    =/  note=note
+      :^  %c  %warp  sock=[our their]
+      ^-  riff:clay
+      [desk `[%mult case=[%da latest-date] request-contents]]
+    ::
+    =.  moves  :_  moves
       ^-  move
-      [duct=~ [%pass wire=/(scot %p our)/clay-sub/(scot %p their)/[desk] note]]
+      [duct=~ [%pass wire=(clay-sub-wire disc) note]]
     ::
-    this
+    =.  clay-subscriptions.state  (~(put in clay-subscriptions.state) disc)
+    ::
+    $(discs t.discs)
   ::  +cleanup: try to clean up a build and its sub-builds
   ::
   ++  cleanup
     |=  =build
-    ^-  ford-state
+    ^+  this
     ::
     ::  if something depends on this build, no-op and return
     ::
@@ -1830,7 +1965,7 @@
             (~(has by old.rebuilds.state) build)
             (~(has by listeners.state) build)
         ==
-      state
+      this
     ::  remove :build from :state, starting with its cache line
     ::
     =.  results.state  (~(del by results.state) build)
@@ -1847,51 +1982,53 @@
     =?    dependency-updates.state
         !(~(has by builds-by-date.state) date.build)
       (~(del by dependency-updates.state) date.build)
-    ::  direct-deps: dependencies of :build itself, not :kids
     ::
-    =/  direct-deps  (fall (~(get by dependencies.state) build) ~)
+    =?    blocks.state
+        ::
+        ?=(%scry -.schematic.build)
+      ::
+      =*  dependency  dependency.schematic.build
+      ::
+      (~(del ju blocks.state) dependency build)
+    ::  check if :build depends on a live clay +dependency
+    ::
+    =/  has-live-dependency  ?=([%scry %clay-live *] schematic.build)
+    ::  clean up dependency tracking and maybe cancel clay subscription
+    ::
+    =?  this  has-live-dependency
+      ::  type system didn't know, so tell it again
+      ::
+      ?>  ?=([%scry %clay-live *] schematic.build)
+      ::
+      =/  dependency  dependency.schematic.build
+      =/  disc=disc  (extract-disc dependency)
+      ::
+      =/  should-delete-dependency=?
+        ::  checks if there are other live builds of this dependency
+        ::
+        =/  dates=(list @da)
+          (fall (~(get by builds-by-schematic.state) schematic.build) ~)
+        ?!
+        %+  lien  dates
+        |=  date=@da
+        ^-  ?
+        =/  other-build  [date schematic.build]
+        =/  listeners=(set listener)
+          (fall (~(get by root-builds.state) other-build) ~)
+        ::
+        (lien ~(tap in listeners) is-listener-live)
+      ::
+      =?  dependencies.state  should-delete-dependency
+        (~(del ju dependencies.state) disc dependency)
+      ::
+      =?  dirty-discs  should-delete-dependency
+        (~(put in dirty-discs) disc)
+      ::
+      this
     ::  kids: :build's sub-builds
     ::
-    =/  kids  ~(tap in (~(get ju sub-builds.components.state) build))
-    ::  gather :dependencies from :build and its :kids
-    ::
-    =/  all-deps=(jug disc dependency)  direct-deps
-    =.  all-deps
-      |-  ^+  all-deps
-      ?~  kids  all-deps
-      ::
-      =/  grandkids  ~(tap in (~(get ju sub-builds.components.state) i.kids))
-      =/  kid-deps  (fall (~(get by dependencies.state) i.kids) ~)
-      ::
-      $(kids (weld t.kids grandkids), all-deps (unify-jugs all-deps kid-deps))
-    ::  remove :build's direct dependencies
-    ::
-    =.  dependencies.state  (~(del by dependencies.state) build)
-    ::  remove :build from :blocks
-    ::
-    =/  dep-values
-      =-  ~(tap in -)
-      %+  roll  ~(val by direct-deps)
-      |=  [deps=(set dependency) dep-values=(set dependency)]
-      (~(uni in dep-values) deps)
-    ::
-    =.  blocks.state
-      %+  roll  dep-values
-      |=  [dep=dependency blocks=_blocks.state]
-      (~(del ju blocks) dep build)
-    ::  for each dependency :build relied on, remove it from :live-leaf-builds
-    ::
-    =.  live-leaf-builds.state
-      %+  roll  dep-values
-      |=  [dep=dependency live-leaf-builds=_live-leaf-builds.state]
-      (~(del ju live-leaf-builds) dep build)
-    ::  for each +disc :build relied on, delete :build from :live-root-builds
-    ::
-    =/  discs  ~(tap in ~(key by all-deps))
-    =.  live-root-builds.state
-      %+  roll  discs
-      |=  [=disc live-root-builds=_live-root-builds.state]
-      (~(del ju live-root-builds.state) disc build)
+    =/  kids=(list ^build)
+      ~(tap in (~(get ju sub-builds.components.state) build))
     ::  remove the mapping from :build to its sub-builds
     ::
     =.  sub-builds.components.state
@@ -1912,15 +2049,23 @@
       ==
     ::  recurse on :kids
     ::
-    =.  state
+    =.  this
       %+  roll  kids
-      |=  [kid=^build new-state=_state]
-      (cleanup(state new-state) kid)
+      |=  [kid=^build that=_this]
+      (cleanup:that kid)
     ::  recurse on :rebuild; note this must be done after recursing on :kids
     ::
-    =?  state  ?=(^ rebuild)  (cleanup u.rebuild)
+    ?~  rebuild
+      this
+    (cleanup u.rebuild)
+  ::  +clay-sub-wire: the wire to use for a clay subscription
+  ::
+  ++  clay-sub-wire
+    |=  =disc  ^-  wire
     ::
-    state
+    =+  [their desk]=disc
+    ::
+    /(scot %p our)/clay-sub/(scot %p their)/[desk]
   --
 --
 ::
@@ -1967,13 +2112,22 @@
    ::
    =^  ship-state  state-by-ship  (find-or-create-ship-state our.task)
    =*  event-args  [[our.task duct now scry] ship-state]
-   =*  start-build  ~(start-build per-event event-args)
-   =^  moves  ship-state  (start-build schematic.task date.task)
+   =*  start-build  start-build:(per-event event-args)
+   =^  moves  ship-state  (start-build schematic.task)
    =.  state-by-ship  (~(put by state-by-ship) our.task ship-state)
    ::
    [moves this]
   ::
-      %kill  !!
+      ::  %kill: cancel a %make
+      ::
+      %kill
+    ::
+    =/  ship-state  ~|(our+our.task (~(got by state-by-ship) our.task))
+    =*  event-args  [[our.task duct now scry] ship-state]
+    =^  moves  ship-state  cancel:(per-event event-args)
+    =.  state-by-ship  (~(put by state-by-ship) our.task ship-state)
+    ::
+    [moves this]
   ::
       %wipe  !!
   ::
@@ -2007,7 +2161,7 @@
       ?>  ?=([%c %wris *] sign)
       =+  [ship desk]=(raid:wired t.t.wire ~[%p %tas])
       ::
-      =*  rebuild  ~(rebuild per-event event-args)
+      =*  rebuild  rebuild:(per-event event-args)
       (rebuild [ship desk case.sign] care-paths.sign)
     ::  %dependency: response to a request for a +dependency
     ::
@@ -2027,7 +2181,7 @@
         `r.u.riot.sign
       ::  unblock the builds that had blocked on :dependency
       ::
-      =*  unblock  ~(unblock per-event event-args)
+      =*  unblock  unblock:(per-event event-args)
       (unblock dependency scry-result)
     ::
     ~|(unknown-take+i.t.wire !!)
