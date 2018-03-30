@@ -237,7 +237,7 @@ u3j_spot(u3_noun cor)
   }
   else {
     u3_noun rut = u3h(reg),
-            lan = u3t(reg),
+            pas = u3t(reg),
             rum = u3qdb_get(rut, u3t(cor));
     if ( u3_nul != rum ) {
       u3_noun loc = u3k(u3t(rum));
@@ -245,10 +245,10 @@ u3j_spot(u3_noun cor)
       return loc;
     }
     else {
-      while ( u3_nul != lan ) {
-        u3_noun pas = u3h(lan),
-                axe = u3h(pas),
-                lol = u3t(pas);
+      while ( u3_nul != pas ) {
+        u3_noun pap = u3h(pas),
+                axe = u3h(pap),
+                lol = u3t(pap);
         u3_weak par = u3r_at(axe, cor),
                 pel;
         if ( u3_none != par ) {
@@ -263,7 +263,7 @@ u3j_spot(u3_noun cor)
             }
           }
         }
-        lan = u3t(lan);
+        pas = u3t(pas);
       }
       return u3_none;
     }
@@ -276,7 +276,7 @@ static c3_o
 _cj_scan(u3_noun cor)
 {
   u3_weak loc = u3j_spot(cor);
-  c3_o  reg_o = (u3_none == loc) ? c3y : c3n;
+  c3_o  reg_o = (u3_none == loc) ? c3n : c3y;
   u3z(loc);
   return reg_o;
 }
@@ -809,7 +809,7 @@ _cj_mine(u3_noun cey, u3_noun cor)
                _cj_warm_hump(jax_l, huc),
                bal,
                _cj_jit(jax_l, bat));
-    pat = ( ( 3 == axe ) && (c3y == u3h(pel)) )
+    pat = ( ( 3 == axe ) && (c3y == u3h(u3h(pel))) )
         ? u3nt(c3y, c3n, u3k(pel))
         : u3nt(c3n, u3k(axe), u3k(pel));
     loc = u3nt(pat, u3k(nam), u3k(huc));
