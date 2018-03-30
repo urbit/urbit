@@ -984,6 +984,8 @@ _cj_ream(u3_noun all)
     }
   }
 
+  // ordering is random so we need to push onto rem when parent
+  // isn't yet present in the warm state
   while ( u3_nul != lop ) {
     rem = u3_nul;
     for ( i = lop; u3_nul != i; i = u3t(i) ) {
