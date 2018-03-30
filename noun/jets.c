@@ -878,28 +878,6 @@ _cj_warm_reap(u3_noun kev)
   u3z(loc);
 }
 
-/* 
-|%
-+=  location    $:  pattern=(each static dynamic)
-                    name=term
-                    hooks=(map term axis)
-                ==
-+=  static      (each payload=* parent=static)
-+=  dynamic     [where=axis parent=location]
-::
-+=  registry    [roots=(map * location) parents=(list parent)]
-+=  parent      (pair axis (map location location))
-::
-+=  activation  $:  hot-index=@ud
-                    drivers=(map axis @ud)
-                    label=path
-                    jit=*
-                ==
-::
-+=  cold        (map battery=^ registry)
-+=  warm        (map location activation)
---
-*/
 /* _cj_remarry(): merge parent lists.
  *                sel is TRANSFERRED.
  *                jul is RETAINED.
@@ -907,20 +885,20 @@ _cj_warm_reap(u3_noun kev)
 static u3_noun
 _cj_remarry(u3_noun sel, u3_noun jul)
 {
-  u3_noun kel, kev, i, j, ank, les, axe, loc, huc;
+  u3_noun kel, kev, i, j, par, les, axe, pel, loc;
   for ( i = jul; u3_nul != i; i = u3t(i) ) {
-    ank = u3h(i);
-    axe = u3a_take(u3h(ank));
-    kel = u3qdb_tap(u3t(ank));
+    par = u3h(i);
+    axe = u3a_take(u3h(par));
+    kel = u3qdb_tap(u3t(par));
     for ( j = kel; u3_nul != j; j = u3t(j) ) {
       kev = u3h(j);
-      loc = u3a_take(u3h(kev));
-      huc = u3a_take(u3t(kev));
-      les = _cj_register(sel, loc, huc, axe);
-      u3z(sel); u3z(loc); u3z(huc);
+      pel = u3a_take(u3h(kev));
+      loc = u3a_take(u3t(kev));
+      les = _cj_mine_par(sel, axe, pel, loc);
+      u3z(sel); u3z(pel); u3z(loc);
       sel = les;
     }
-    u3z(kel); u3z(ank); u3z(axe);
+    u3z(kel); u3z(axe);
   }
   return sel;
 }
@@ -1088,30 +1066,28 @@ _cj_warm_ream_in(u3_noun taw)
 }
 
 
-/* _cj_warm_ream_all(): tap cod_p to rel
+/* _cj_warm_tap(): tap war_p to rel
 */
 static u3_noun rel;
 static void
-_cj_warm_ream_all(u3_noun kev)
+_cj_warm_tap(u3_noun kev)
 {
   rel = u3nc(kev, u3k(rel));
 }
 
-/* u3j_ream(): rebuild warm state from cold state
-*/
-void
-u3j_ream(void)
+/* _cj_ream(): ream list of battery registry pairs. RETAIN.
+ */
+static void
+_cj_ream(u3_noun all)
 {
-  u3_noun rut, lan, bat, reg, kev, rem, dol, lok;
-  u3_weak pel;
-  u3h_free(u3R->jed.war_p);
-  u3R->jed.war_p = u3h_new();
-  c3_assert(u3R == &(u3H->rod_u));
-  rel = u3_nul;
-  u3h_walk(u3R->jed.cod_p, _cj_warm_ream_all);
+  c3_l par_l, jax_l;
+  u3_noun i, j, k,
+          all, lop, rul, loc, bal, act, lop,
+          pol, rem, rec, bat, pel, nam, huc;
+  u3_weak pac;
 
-  for ( lok = rel, dol = u3_nul; lok != u3_nul; lok = u3t(lok) ) {
-    kev = u3h(lok);
+  for ( i = all, lop = u3_nul; i != u3_nul; i = u3t(i) ) {
+    kev = u3h(i);
     bat = u3h(kev);
     reg = u3t(kev);
     rut = u3h(reg);
@@ -1119,64 +1095,91 @@ u3j_ream(void)
     // register roots
     rul   = u3qdb_tap(rut);
     jax_l = 0;
-    for ( rep = rul; rep != u3_nul; rep = u3t(rep) ) {
-      nut = u3h(rep);
-      rin = u3t(nut);
-      bal = u3nc(u3k(u3h(rin)), u3_nul);
+    for ( j = rul; j != u3_nul; j = u3t(j) ) {
+      loc = u3t(u3h(j));
+      bal = u3nc(u3k(u3h(u3t(loc))), u3_nul);
       act = u3nq(jax_l, u3_nul, bal, _cj_jit(jax_l, bat));
-      loc = u3nt(c3y, c3y, u3k(rin));
       u3h_put(u3R->jed.war_p, loc, act);
     }
     u3z(rul);
 
-    // put ancestors in dol
-    for ( lan = u3t(reg); lan != u3_nul; lan = u3t(lan) ) {
-      ank = u3h(lan);
-      axe = u3h(ank);
-      kel = u3qdb_tap(u3t(ank));
-      for ( pul = kel; pul != u3_nul; pul = u3t(pul) ) {
-        dol = u3nc(u3nc(u3k(axe, u3k(u3h(pul)))), u3k(dol));
+    // put ancestors in lop (list [battery=^ parent=location this=location])
+    for ( j = u3t(reg); j != u3_nul; j = u3t(j) ) {
+      pol = lop;
+      lop = u3qdb_tap(u3t(u3h(j)));
+      for ( k = lop; u3_nul != k; k = u3t(k) ) {
+        pol = u3nc(u3nc(u3k(bat), u3k(u3h(k))), pol);
       }
-      u3z(kel);
+      u3z(lop);
+      lop = pol;
     }
   }
-  u3z(rel);
 
-  while ( u3_nul != dol ) {
-    top = dol;
+  while ( u3_nul != lop ) {
     rem = u3_nul;
-    while ( u3_nul != dol ) {
-      rec = u3h(dol);
-      dol = u3t(dol);
-      u3x_qual(rec, &axe, &pel, &nam, &huc);
+    for ( i = lop; u3_nul != i; i = u3t(i) ) {
+      rec = u3h(i);
+      u3x_trel(rec, &bat, &pel, &loc);
       pac = _cj_find_warm(pel);
       if ( u3_none == pac ) {
-        rem = u3nc(u3k(rec), u3k(rem));
+        rem = u3nc(u3k(rec), rem);
       }
       else {
+        u3x_trel(loc, &pat, &nam, &huc);
         par_l = u3h(pac);
         jax_l = _cj_hot_mean(par_l, nam);
         bal   = u3nc(u3k(nam), u3k(u3h(u3t(u3t(pac)))));
         u3z(pac);
+
         act = u3nq(jax_l, 
                    _cj_warm_hump(jax_l, huc),
                    bal,
                    _cj_jit(jax_l, bat));
-        loc = ( (3 == axe) && (c3y == u3h(pel)) )
-            ? u3nt(c3y, c3n, u3nt(u3k(nam), pel, u3k(huc)))
-            : u3nc(c3n, u3nq(u3k(nam), u3k(axe), pel, u3k(huc)));
-        reg = _cj_find_cold(bat);
+        u3h_put(u3R->jed.war_p, loc, act);
+        u3z(loc);
       }
+      lop = u3t(lop);
     }
-    u3z(top);
-    dol = rem;
-  }
-
-  w
-  for ( top = dol, rem = u3_nul;
-        dol != u3_nul;
-         = dol = rem ) {
-    rec = u3h(dol);
-
+    u3z(lop);
+    lop = rem;
   }
 }
+
+/* u3j_ream(): rebuild warm state
+*/
+void
+u3j_ream(void)
+{
+  u3_noun rut, bat, reg, kev, rem, lop, i;
+  u3_weak pel;
+  u3h_free(u3R->jed.war_p);
+  u3R->jed.war_p = u3h_new();
+  c3_assert(u3R == &(u3H->rod_u));
+  rel = u3_nul;
+  u3h_walk(u3R->jed.cod_p, _cj_warm_tap);
+  _cj_ream(rel);
+  u3z(rel);
+}
+
+/*  XX FIXME: move to u3.md
+|%
++=  location    $:  pattern=(each static dynamic)
+                    name=term
+                    hooks=(map term axis)
+                ==
++=  static      (each payload=* parent=static)
++=  dynamic     [where=axis parent=location]
+::
++=  registry    [roots=(map * location) parents=(list parent)]
++=  parent      (pair axis (map location location))
+::
++=  activation  $:  hot-index=@ud
+                    drivers=(map axis @ud)
+                    label=path
+                    jit=*
+                ==
+::
++=  cold        (map battery=^ registry)
++=  warm        (map location activation)
+--
+*/
