@@ -27,11 +27,11 @@
   ::  pinned-schematic shows a once build
   ::
   =/  pinned-schematic=schematic:ford
-    [%pin now [%scry [%clay-live care=%x bel=[[~nul %desk] /foo/bar]]]]
+    [%pin now [%scry [%c care=%x bel=[[~nul %desk] /foo/bar]]]]
   ::  live-schematic shows a live build
   ::
   =/  live-schematic=schematic:ford
-    [%scry [%clay-live care=%x bel=[[~nul %desk] /baz/doo]]]
+    [%scry [%c care=%x bel=[[~nul %desk] /baz/doo]]]
   ::  eternal-schematic shows a trivial live build
   ::
   =/  eternal-schematic=schematic:ford
@@ -58,11 +58,11 @@
   =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
   ::
   =/  six-schematic=schematic:ford
-    [%pin ~1234.5.6 [%scry [%clay-live care=%x bel=[[~nul %desk] /foo/bar]]]]
+    [%pin ~1234.5.6 [%scry [%c care=%x bel=[[~nul %desk] /foo/bar]]]]
   =/  nine-schematic=schematic:ford
-    [%pin ~1234.5.9 [%scry [%clay-live care=%x bel=[[~nul %desk] /baz/doo]]]]
+    [%pin ~1234.5.9 [%scry [%c care=%x bel=[[~nul %desk] /baz/doo]]]]
   =/  three-schematic=schematic:ford
-    [%pin ~1234.5.3 [%scry [%clay-live care=%x bel=[[~nul %desk] /car/dor]]]]
+    [%pin ~1234.5.3 [%scry [%c care=%x bel=[[~nul %desk] /car/dor]]]]
   ;:  welp
   ::
     %-  expect-eq  !>
@@ -93,21 +93,21 @@
   ::
   ;:  welp
     %-  expect-eq  !>
-    :-  `path`(to-wire:ford [%clay-live care=%x bel=[[~nul %desk] /foo/bar]])
+    :-  `path`(to-wire:ford [%c care=%x bel=[[~nul %desk] /foo/bar]])
     /c/x/~nul/desk/0/bar/foo
   ::
     %-  expect-eq  !>
-    :-  `dependency:ford`[%clay-live care=%x bel=[[~nul %desk] /foo/bar]]
+    :-  `dependency:ford`[%c care=%x bel=[[~nul %desk] /foo/bar]]
     (from-wire:ford /c/x/~nul/desk/0/bar/foo)
   ::
     %-  expect-eq  !>
     :-  ^-  path
-      (to-wire:ford [%gall-live care=%x bel=[[~nul %desk] /foo/bar]])
+      (to-wire:ford [%g care=%x bel=[[~nul %desk] /foo/bar]])
     /g/x/~nul/desk/0/bar/foo
   ::
     %-  expect-eq  !>
     :-  ^-  dependency:ford
-      [%gall-live care=%x bel=[[~nul %desk] /foo/bar]]
+      [%g care=%x bel=[[~nul %desk] /foo/bar]]
     (from-wire:ford /g/x/~nul/desk/0/bar/foo)
   ==
 ::
@@ -187,7 +187,7 @@
   =^  moves  ford
     %-  call:ford
     :*  duct=~  type=~  %make  ~nul
-        [%pin ~1234.5.6 [%scry %clay-live ren=%x rail=[[~nul %desk] /bar/foo]]]
+        [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
     ==
   %+  welp
     %-  expect-eq  !>
@@ -209,7 +209,7 @@
   =^  moves  ford
     %-  call:ford
     :*  duct=~  type=~  %make  ~nul
-        [%pin ~1234.5.6 [%scry %clay-live ren=%x rail=[[~nul %desk] /bar/foo]]]
+        [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
         ::
     ==
   %+  welp
@@ -217,7 +217,7 @@
     :-  moves
     :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
         %result  %pin  ~1234.5.6  %error
-        :~  leaf+"clay-live scry failed for"
+        :~  leaf+"scry failed for"
             leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
     ==  ==  ==
   ::
@@ -234,7 +234,7 @@
   =^  moves  ford
     %-  call:ford
     :*  duct=~  type=~  %make  ~nul
-        [%pin ~1234.5.6 [%scry %clay-live ren=%x rail=[[~nul %desk] /bar/foo]]]
+        [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
     ==
   %+  welp
     %-  expect-eq  !>
@@ -276,7 +276,7 @@
   =^  moves  ford
     %-  call:ford
     :*  duct=~  type=~  %make  ~nul
-        [%scry %clay-live care=%x rail=[[~nul %desk] /bar/foo]]
+        [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
     ==
   ;:  welp
     %-  expect-eq  !>
@@ -331,7 +331,7 @@
   ::
   =/  schematic=schematic:ford
     :*  %same  %pin  ~1234.5.6
-        [%scry %clay-live care=%x rail=[[~nul %desk] /bar/foo]]
+        [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
     ==
   =/  build=build:ford  [~1234.5.6 schematic]
   =/  result=build-result:ford
@@ -346,16 +346,16 @@
     %-  expect-eq  !>
     :-  results:(~(got by state-by-ship.+>+<.ford) ~nul)
     %-  my  :~
-      :-  [~1234.5.6 [%scry %clay-live care=%x rail=[[~nul %desk] /bar/foo]]]
+      :-  [~1234.5.6 [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]]
       [%result ~1234.5.6 %result %scry %noun !>(42)]
     ::
       :-  :*  ~1234.5.6  %pin  ~1234.5.6
-              [%scry %clay-live care=%x rail=[[~nul %desk] /bar/foo]]
+              [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
           ==
       [%result ~1234.5.6 %result %pin ~1234.5.6 %result %scry %noun !>(42)]
     ::
       :-  :*  ~1234.5.6  %same  %pin  ~1234.5.6
-              [%scry %clay-live care=%x rail=[[~nul %desk] /bar/foo]]
+              [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
           ==
       :*  %result  ~1234.5.6  %result  %same  %result  %pin  ~1234.5.6
           %result  %scry  %noun  !>(42)

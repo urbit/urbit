@@ -73,12 +73,18 @@
   ::  +dependency: dependency on a value from the urbit namespace
   ::
   +=  dependency
-    $%  ::  live dependency on a clay path; varies with time
+    $:  ::  vane which we are querying
         ::
-        [%clay-live care=care:clay =rail]
-        ::  live dependency on a gall path; varies with time
+        vane=?(%c %g)
+        ::  type of request
         ::
-        [%gall-live care=care:clay =rail]
+        ::    TODO: care:clay should be cleaned up in zuse as it is a general
+        ::    type, not a clay specific one.
+        ::
+        care=care:clay
+        ::  path on which to depend, missing time which will be filled in
+        ::
+        =rail
     ==
   ::  +build-result: the referentially transparent result of a +build
   ::
@@ -910,24 +916,7 @@
 ++  to-wire
   |=  =dependency
   ^-  wire
-  ::  todo: remove %clay-live, %gall-live. replace with %c and %g. most of this
-  ::  fucntion goes away.
-  ::
-  ::
-  |^  ?-  -.dependency
-        %clay-live  (encode %c)
-        %gall-live  (encode %g)
-      ==
-  ::  +encode:to-wire: encode :vane, :care, :live, and :beam into a +wire
-  ::
-  ++  encode
-    |=  vane=?(%c %g)
-    ^-  wire
-    ::
-    =/  beam=beam  (extract-beam dependency date=~)
-    ::
-    [vane care.dependency (en-beam beam)]
-  --
+  [vane.dependency care.dependency (en-beam (extract-beam dependency date=~))]
 ::  +from-wire: decode a +dependency from a +wire
 ::
 ++  from-wire
@@ -935,17 +924,15 @@
   ^-  dependency
   ::
   ?>  ?=([@ @ *] wire)
-  ::  parse :wire's components into :vane, :care, :live, and :beam
+  ::  parse :wire's components into :vane, :care, and :rail
   ::
   =/  vane  ((hard ?(%c %g)) i.wire)
   =/  care  ((hard care:clay) i.t.wire)
-  =/  beam  (need (de-beam ((hard ^wire) t.t.wire)))
   ::
+  =/  beam  (need (de-beam ((hard ^wire) t.t.wire)))
   =/  rail  [disc=[p.beam q.beam] spur=s.beam]
   ::
-  ?:  =(%c vane)
-    [%clay-live care rail]
-  [%gall-live care rail]
+  [vane care rail]
 ::  +extract-beam: obtain a +beam from a +dependency
 ::
 ::    Fills case with [%ud 0] for live dependencies if :date is `~`.
@@ -953,21 +940,16 @@
 ::
 ++  extract-beam
   |=  [=dependency date=(unit @da)]  ^-  beam
-  ?-    -.dependency
-      ?(%clay-live %gall-live)
-    ::
-    =/  case=case  ?~(date [%ud 0] [%da u.date])
-    ::
-    =,  rail.dependency
-    [[ship.disc desk.disc case] spur]
-  ==
+  ::
+  =/  case=case  ?~(date [%ud 0] [%da u.date])
+  ::
+  =,  rail.dependency
+  [[ship.disc desk.disc case] spur]
 ::  +extract-disc: obtain a +disc from a +dependency
 ::
 ++  extract-disc
   |=  =dependency  ^-  disc
-  ?-  -.dependency
-    ?(%clay-live %gall-live)  disc.rail.dependency
-  ==
+  disc.rail.dependency
 ::  +get-sub-schematics: find any schematics contained within :schematic
 ::
 ++  get-sub-schematics
@@ -1198,7 +1180,7 @@
       %+  turn  ~(tap in care-paths)
       |=  [care=care:clay =path]  ^-  dependency
       ::
-      [%clay-live care bel=[disc spur=(flop path)]]
+      [%c care rail=[disc spur=(flop path)]]
     ::  store changed dependencies persistently in case rebuilds finish later
     ::
     =.  dependency-updates.state
@@ -1468,7 +1450,7 @@
       ::
       =/  dependency  dependency.schematic.build
       ::
-      ?.  ?=(%clay-live -.dependency)
+      ?.  ?=(%c -.dependency)
         |
       ::
       =/  updates  (fall (~(get by dependency-updates.state) date.build) ~)
@@ -1568,7 +1550,7 @@
       ::
       =/  dependency  dependency.schematic.build
       ::
-      ?.  ?=(%clay-live -.dependency)
+      ?.  ?=(%c -.dependency)
         this
       ::
       =/  disc=disc  disc.rail.dependency
@@ -1739,7 +1721,7 @@
       ::  link :disc to :dependency
       ::
       =?    dependencies.state
-          &(live ?=(%clay-live -.dependency))
+          &(live ?=(%c -.dependency))
         (~(put ju dependencies.state) [disc dependency])
       ::  perform scry operation if we don't already know the result
       ::
@@ -1779,7 +1761,7 @@
       =?    latest-by-disc.state
           ?&  live
           ::
-              ?=(%clay-live -.dependency)
+              ?=(%c -.dependency)
           ::
               =/  latest-date  (~(get by latest-by-disc.state) disc)
               ::
@@ -1791,13 +1773,13 @@
       ::  mark :disc as dirty if we're building a live dependency
       ::
       =?    dirty-discs
-          &(live ?=(%clay-live -.dependency))
+          &(live ?=(%c -.dependency))
         (~(put in dirty-discs) disc)
       ::  scry failed
       ::
       ?~  u.scry-response
         =/  error=tang
-          :~  leaf+"clay-live scry failed for"
+          :~  leaf+"scry failed for"
               leaf+"%c{(trip care.dependency)} {<(en-beam beam)>}"
           ==
         [[%build-result %error error] this]
@@ -1972,7 +1954,7 @@
       %+  murn  ~(tap in `(set dependency)`dependencies)
       |=  =dependency  ^-  (unit [care:clay path])
       ::
-      ?.  ?=(%clay-live -.dependency)  ~
+      ?.  ?=(%c -.dependency)  ~
       ::
       `[care.dependency (flop spur.rail.dependency)]
     ::  if :request-contents is `~`, this code is incorrect
@@ -2034,13 +2016,13 @@
       (~(del ju blocks.state) dependency build)
     ::  check if :build depends on a live clay +dependency
     ::
-    =/  has-live-dependency  ?=([%scry %clay-live *] schematic.build)
+    =/  has-live-dependency  ?=([%scry %c *] schematic.build)
     ::  clean up dependency tracking and maybe cancel clay subscription
     ::
     =?  this  has-live-dependency
       ::  type system didn't know, so tell it again
       ::
-      ?>  ?=([%scry %clay-live *] schematic.build)
+      ?>  ?=([%scry %c *] schematic.build)
       ::
       =/  dependency  dependency.schematic.build
       =/  disc=disc  (extract-disc dependency)
