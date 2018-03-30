@@ -1192,8 +1192,13 @@
     ::
     %+  roll  dependencies
     |=  [=dependency that=_this]
+    ::
     =/  build=build  [date `schematic`[%scry dependency]]
-    (execute:that build from=~)
+    ::
+    =/  previous-build=^build
+      (need (~(find-previous by-schematic builds-by-schematic.state) build))
+    ::
+    (execute:that build from=`previous-build)
   ::  +unblock: continue builds that had blocked on :dependency
   ::
   ++  unblock
@@ -1343,9 +1348,12 @@
       ::
       =~  store-result
           update-live-tracking
-          promote-live-listeners
+          ::
+          ?<  ?=(~ previous-build)
+          =.  state  (promote-live-listeners u.previous-build build)
+          ::
           link-rebuilds
-          (send-mades current-once-listeners)
+          =.  ..execute  (send-mades build current-once-listeners)
           delete-once-listeners
       ==
     ::  the build isn't complete, so try running +make on it
@@ -1362,8 +1370,11 @@
       ::
       =>  store-result
       =>  update-live-tracking
-      =>  promote-live-listeners
-      =>  (send-mades root-once-listeners)
+      ::
+      =?  state  &(?=(^ previous-build) ?=(^ previous-result))
+        (promote-live-listeners u.previous-build build)
+      ::
+      =.  ..execute  (send-mades build (root-once-listeners build))
       =>  delete-once-listeners
       ::  if result is same as previous, note sameness
       ::
@@ -1378,17 +1389,40 @@
         ::
         link-rebuilds
       ::
-      =>  (send-mades root-live-listeners)
+      =.  ..execute  (send-mades build (root-live-listeners build))
       =>  ?~(previous-build this (cleanup u.previous-build))
       =>  (cleanup build)
-      ::  recurse "upward" into client builds now that :build is done
-      ::
-      =/  clients=(list ^build)
-        ~(tap in (fall (~(get by client-builds.components.state) build) ~))
+      =>  ::  recurse "upward" into client builds now that :build is done
+          ::
+          =/  clients=(list ^build)
+            ~(tap in (fall (~(get by client-builds.components.state) build) ~))
+          ::
+          |-  ^+  this
+          ?~  clients  this
+          $(clients t.clients, ..execute (execute i.clients from=`build))
       ::
       |-  ^+  this
-      ?~  clients  this
-      $(clients t.clients, ..execute (execute i.clients from=`build))
+      =/  next  (~(find-next by-schematic builds-by-schematic.state) build)
+      ?~  next
+        ::  no future build
+        ::
+        this
+      ::
+      =^  next-result  results.state  (access-cache u.next)
+      ?~  next-result
+        ::  unfinished future build
+        ::
+        this
+      ?:  ?=(%result -.u.next-result)
+        ::
+        =.  state  (promote-live-listeners build u.next)
+        =.  this  (cleanup build)
+        ::
+        =.  ..execute  (send-mades u.next (root-live-listeners u.next))
+        ::
+        $(build u.next)
+      ::
+      this(..execute (execute u.next from=~))
     ::
         ::  %blocks: build got stuck and produced a list of blocks
         ::
@@ -1456,56 +1490,6 @@
       =/  updates  (fall (~(get by dependency-updates.state) date.build) ~)
       ::
       (~(has in updates) dependency)
-    ::  +promote-live-listeners: move live listeners :previous-build -> :build
-    ::
-    ::    We don't have to promote the listeners of old sub-builds
-    ::    because they will have already been run at :date.build
-    ::    by the time this code gets run.
-    ::
-    ++  promote-live-listeners  ^+  this
-      ::
-      ?~  previous-build
-        this
-      =.  state
-        %+  roll  previous-live-listeners
-        |=  [=listener state=_state]
-        ::  if :listener ain't live, we wrote this wrong
-        ::
-        ?>  live.listener
-        ::  move :listener off :previous-build onto :build
-        ::
-        %_    state
-            listeners
-          =-  (~(put ju -) build listener)
-          (~(del ju listeners.state) u.previous-build listener)
-        ::
-            builds-by-listener
-          (~(put by builds-by-listener.state) duct.listener [build &])
-        ==
-      ::
-      =.  state
-        %+  roll
-          ~(tap in (fall (~(get by root-builds.state) u.previous-build) ~))
-        |=  [=listener state=_state]
-        =?    root-builds.state
-            (is-listener-live listener)
-          =-  (~(put ju -) build listener)
-          (~(del ju root-builds.state) u.previous-build listener)
-        state
-      ::
-      this
-    ::  +root-listeners: listeners that treat :build as a root build
-    ::
-    ++  root-listeners  ^-  (list listener)
-      ~(tap in (fall (~(get by root-builds.state) build) ~))
-    ::  +root-once-listeners: once listeners that treat :build as a root build
-    ::
-    ++  root-once-listeners  ^-  (list listener)
-      (skip root-listeners is-listener-live)
-    ::  +root-live-listeners: live listeners that treat :build as a root build
-    ::
-    ++  root-live-listeners  ^-  (list listener)
-      (skim root-listeners is-listener-live)
     ::  +current-once-listeners: once listeners on :build
     ::
     ++  current-once-listeners  ^-  (list listener)
@@ -1518,17 +1502,6 @@
     ::
     ++  current-listeners  ^-  (list listener)
       ~(tap in (fall (~(get by listeners.state) build) ~))
-    ::  +previous-live-listeners: live listeners on :previous-build
-    ::
-    ++  previous-live-listeners  ^-  (list listener)
-      ::  even if :previous-result is a %tombstone, still grab its listeners
-      ::
-      =/  previous-listeners=(set listener)
-        ?~  previous-build  ~
-        ?~  previous-result  ~
-        (fall (~(get by listeners.state) u.previous-build) ~)
-      ::
-      (skim ~(tap in previous-listeners) is-listener-live)
     ::  +link-rebuilds: link old and new same build in :rebuilds.state
     ::
     ++  link-rebuilds  ^+  this
@@ -1556,29 +1529,12 @@
       =/  disc=disc  disc.rail.dependency
       ::
       this(dirty-discs (~(put in dirty-discs) disc))
-    ::  +send-mades: send one %made move per listener in :listeners
-    ::
-    ++  send-mades
-      |=  [listeners=(list listener)]  ^+  this
-      ::
-      ?<  ?=(~ result)
-      ::
-      %_    this
-          moves
-        %+  roll  listeners
-        |=  [=listener moves=_moves]
-        ::
-        :_  moves
-        :*  duct.listener  %give
-            %made  date.build  %complete  u.result
-        ==
-      ==
     ::  +delete-once-listeners: remove once listeners on :build from :state
     ::
     ++  delete-once-listeners  ^+  this
       %_    this
           state
-        %+  roll  root-once-listeners
+        %+  roll  (root-once-listeners build)
         |=  [=listener accumulator=_state]
         =.  state  accumulator
         (remove-listener-from-build listener build)
@@ -1717,12 +1673,29 @@
       ::
       =/  disc=disc  (extract-disc dependency)
       ::
-      =/  live=?  (is-build-live build)
+      =/  is-live-clay=?  &((is-build-live build) ?=(%c -.dependency))
       ::  link :disc to :dependency
       ::
       =?    dependencies.state
-          &(live ?=(%c -.dependency))
+          is-live-clay
         (~(put ju dependencies.state) [disc dependency])
+      ::  update :latest-by-disc.state if :date.build is later
+      ::
+      =?    latest-by-disc.state
+          ?&  is-live-clay
+          ::
+              =/  latest-date  (~(get by latest-by-disc.state) disc)
+              ::
+              ?|  ?=(~ latest-date)
+                  (gth date.build u.latest-date)
+          ==  ==
+        ::
+        (~(put by latest-by-disc.state) disc date.build)
+      ::  mark :disc as dirty if we're building a live dependency
+      ::
+      =?    dirty-discs
+          is-live-clay
+        (~(put in dirty-discs) disc)
       ::  perform scry operation if we don't already know the result
       ::
       ::    Look up :dependency in :scry-results.per-event to avoid
@@ -1756,25 +1729,6 @@
         ::
         =.  moves  [[duct=~ [%pass wire note]] moves]
         [[%blocks ~] this]
-      ::  update :latest-by-disc.state if :date.build is later
-      ::
-      =?    latest-by-disc.state
-          ?&  live
-          ::
-              ?=(%c -.dependency)
-          ::
-              =/  latest-date  (~(get by latest-by-disc.state) disc)
-              ::
-              ?|  ?=(~ latest-date)
-                  (gth date.build u.latest-date)
-          ==  ==
-        ::
-        (~(put by latest-by-disc.state) disc date.build)
-      ::  mark :disc as dirty if we're building a live dependency
-      ::
-      =?    dirty-discs
-          &(live ?=(%c -.dependency))
-        (~(put in dirty-discs) disc)
       ::  scry failed
       ::
       ?~  u.scry-response
@@ -1827,6 +1781,85 @@
   ::+|  utilities
   ::
   ++  this  .
+  ::  +send-mades: send one %made move for :build per listener in :listeners
+  ::
+  ++  send-mades
+    |=  [=build listeners=(list listener)]  ^+  this
+    ::
+    =^  result  results.state  (access-cache build)
+    ::
+    ?>  ?=([~ %result *] result)
+    ::
+    %_    this
+        moves
+      %+  roll  listeners
+      |=  [=listener moves=_moves]
+      ::
+      :_  moves
+      :*  duct.listener  %give
+          %made  date.build  %complete  build-result.u.result
+      ==
+    ==
+  ::  +promote-live-listeners: move live listeners from :old to :new
+  ::
+  ++  promote-live-listeners
+    |=  [old=build new=build]
+    ^+  state
+    ::
+    =/  old-live-listeners=(list listener)
+      =-  (skim - is-listener-live)
+      =-  ~(tap in `(set listener)`(fall - ~))
+      (~(get by listeners.state) old)
+    ::
+    =.  state
+      %+  roll  old-live-listeners
+      |=  [=listener state=_state]
+      ::  if :listener ain't live, we wrote this wrong
+      ::
+      ?>  live.listener
+      ::  move :listener off :previous-build onto :build
+      ::
+      %_    state
+          listeners
+        =-  (~(put ju -) new listener)
+        (~(del ju listeners.state) old listener)
+      ::
+          builds-by-listener
+        (~(put by builds-by-listener.state) duct.listener [new &])
+      ==
+    ::
+    %+  roll  ~(tap in (fall (~(get by root-builds.state) old) ~))
+    |=  [=listener state=_state]
+    ::
+    =?    root-builds.state
+        (is-listener-live listener)
+      ::
+      =-  (~(put ju -) new listener)
+      (~(del ju root-builds.state) old listener)
+    ::
+    state
+  ::  +root-live-listeners: live listeners for which :build is the root build
+  ::
+  ++  root-live-listeners
+    |=  =build
+    ^-  (list listener)
+    ::
+    (skim (root-listeners build) is-listener-live)
+  ::  +root-once-listeners: once listeners for which :build is the root build
+  ::
+  ++  root-once-listeners
+    |=  =build
+    ^-  (list listener)
+    ::
+    (skip (root-listeners build) is-listener-live)
+  ::  +root-listeners: listeners for which :build is the root build
+  ::
+  ++  root-listeners
+    |=  =build
+    ^-  (list listener)
+    ::
+    =-  ~(tap in `(set listener)`(fall - ~))
+    (~(get by root-builds.state) build)
   ::  +is-build-live: whether this is a live or a once build
   ::
   ++  is-build-live
@@ -1926,11 +1959,6 @@
         $(discs t.discs)
       ::
       $(discs t.discs)
-    ::  TODO: We keep track of the original dependencies. Check that if the
-    ::        dependency is in original and not in current dependencies. If
-    ::        so, then unsubscribe.
-    ::
-    ::
     ::  prevent thrashing; don't unsubscribe then immediately resubscribe
     ::
     ::    When we send a request to a foreign ship, that ship may have
