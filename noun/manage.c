@@ -509,9 +509,9 @@ void
 u3m_clear(void)
 {
   u3h_free(u3R->cax.har_p);
-  u3h_free(u3R->jed.har_p);
+  u3h_free(u3R->jed.war_p);
+  u3h_free(u3R->jed.cod_p);
   u3n_bree();
-  u3a_lose(u3R->jed.das);
 }
 
 void
