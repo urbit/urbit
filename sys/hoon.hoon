@@ -429,7 +429,8 @@
                   q/(list tank)                         ::
               ==                                        ::
           ==                                            ::
-++  tape  (list @tD)                                    ::  UTF8 string as list
+++  tape  (list @tD)                                    ::  utf8 string as list
+++  tour  (list @c)                                     ::  utf32 clusters
 ++  tarp  {d/@ud h/@ud m/@ud s/@ud f/(list @ux)}        ::  parsed time
 ++  term  @tas                                          ::  ascii symbol
 ++  wain  (list cord)                                   ::  text lines
@@ -5568,6 +5569,7 @@
           $cell                                         ::  any cell
           $flag                                         ::  loobean
           $null                                         ::  ~ == 0
+          $void                                         ::  empty set
       ==                                                ::
   {$atom p/aura}                                        ::  atom
 ::
@@ -5608,6 +5610,27 @@
           ==                                            ::
 ++  pica  (pair ? cord)                                 ::  & prose, | code
 ++  palo  (pair vein opal)                              ::  wing trace, match
+++  plot                                                ::  output analysis
+          $~  [%base %noun]                             ::
+          $%  [%base p=base]                            ::  base type
+              [%core p=plot q=@udF r=(set term)]        ::  core with arms, mug
+              [%leaf p=@tas]                            ::  constant
+              [%loop p=@ud]                             ::  repetition point
+              [%list p=plot]                            ::  i-t list
+              [%many p=(list plot)]                     ::  tuple
+              [%mark p=term q=plot]                     ::  famous format
+              [%name p=term q=plot]                     ::  name attached
+              [%pair p=plot q=plot]                     ::  pq cell
+              [%path ~]                                 ::  with @ta segments
+              [%pick p=(list plot)]                     ::  overlap
+              [%qual p=plot q=plot r=plot]              ::  formal 
+              [%quil p=plot q=plot r=plot s=plot t=plot]::  formal quintuple
+              [%tape ~]                                 ::  utf8 bytes
+              [%tour ~]                                 ::  utf32 graphemes
+              [%tree p=plot]                            ::  n-l-r tree
+              [%trip p=plot q=plot r=plot s=plot]       ::  formal triple
+              [%unit p=plot]                            ::  maybe
+          ==                                            ::
 ++  pock  (pair axis nock)                              ::  changes
 ++  port  (each palo (pair type nock))                  ::  successful match
 ++  root  hoon                                          ::  produce model
@@ -5616,28 +5639,28 @@
           $%  {$base p/base}                            ::  base type
               {$dbug p/spot q/spec}                     ::  set debug
               {$leaf p/term q/@}                        ::  constant atom
-              {$make p/hoon q/(list spec)}              ::  composite spec
+              {$make p/hoon q/(list spec)}              ::  composed spec
               {$over p/wing q/spec}                     ::  relative subject
           ::                                            ::
-              {$bcbr p/spec q/hoon}                     ::  verify
-              {$bccb p/hoon}                            ::  example
-              {$bccl p/{i/spec t/(list spec)}}          ::  tuple
-              {$bccn p/{i/spec t/(list spec)}}          ::  selection
-              {$bcdt p/spec q/(map term spec)}          ::  gold core
-              {$bcnt p/spec q/(map term spec)}          ::  iron core
-              {$bczp p/spec q/(map term spec)}          ::  lead core
-              {$bctc p/spec q/(map term spec)}          ::  zinc core
-              {$bcgl p/spec q/spec}                     ::  filter: exclude
-              {$bcgr p/spec q/spec}                     ::  filter: require
-              {$bchp p/spec q/spec}                     ::  function type
-              {$bckt p/spec q/spec}                     ::  pair+tag
-              {$bcls p/term q/spec}                     ::  set mark
-              {$bcmc p/hoon}                            ::  assembly
-              {$bcpd p/spec q/hoon}                     ::  repair
-              {$bcsg p/hoon q/spec}                     ::  default
-              {$bcts p/toga q/spec}                     ::  name
-              {$bcvt p/spec q/spec}                     ::  atom+cell
-              {$bcwt p/{i/spec t/(list spec)}}          ::  plain selection
+              {$bcbr p/spec q/hoon}                     ::  $|, verify
+              {$bccb p/hoon}                            ::  $_, example
+              {$bccl p/{i/spec t/(list spec)}}          ::  $:, tuple
+              {$bccn p/{i/spec t/(list spec)}}          ::  $%, head pick
+              {$bcdt p/spec q/(map term spec)}          ::  $., gold core
+              {$bcnt p/spec q/(map term spec)}          ::  $/, iron core
+              {$bczp p/spec q/(map term spec)}          ::  $!, lead core
+              {$bctc p/spec q/(map term spec)}          ::  $`, zinc core
+              {$bcgl p/spec q/spec}                     ::  $<, filter: exclude
+              {$bcgr p/spec q/spec}                     ::  $>, filter: require
+              {$bchp p/spec q/spec}                     ::  $-, function core
+              {$bckt p/spec q/spec}                     ::  $^, cons pick
+              {$bcls p/term q/spec}                     ::  $+, trademark
+              {$bcmc p/hoon}                            ::  $;, manual 
+              {$bcpd p/spec q/hoon}                     ::  $&, repair
+              {$bcsg p/hoon q/spec}                     ::  $~, default
+              {$bcts p/toga q/spec}                     ::  $=, name
+              {$bcvt p/spec q/spec}                     ::  $@, atom pick
+              {$bcwt p/{i/spec t/(list spec)}}          ::  $?, full pick
           ==                                            ::
 ++  tent                                                ::  model builder
           $%  {%| p/wing q/tent r/(list spec)}          ::  ~(p q r...)
@@ -6666,6 +6689,140 @@
   ++  wtts  |=(mod/spec (gray [%wtts (teal mod) puce]))
   --
 ::
+::  +cosmetic: type analysis for type and data inspection
+::
+++  cosmetic
+  ::  block-count: number of recursion blocks
+  ::  block-map-forward: recursion blocks by number
+  ::  block-map-reverse: recursion blocks by type
+  ::
+  =|  block-count/@ud
+  =|  block-map-forward/(map @ud type)
+  =|  block-map-reverse/(map type @ud)
+  ::
+  |_  $:  ::  sut: non-void type we're analyzing
+          ::
+          sut/type
+      ==
+  =<  ::  public interface
+      ::
+      |?  |%
+      ::
+      ::  +structure:cosmetic: structure and context for type inspection
+      ::
+      ++  structure
+        ^-  $:  ::  main: cosmetically correct structure description
+                ::  context: recursion points by synthetic name
+                ::
+                main=spec
+                context=(map @tas spec)
+            ==
+        !!
+      ::
+      ::  +pattern:cosmetic: pattern and context for data inspection
+      ::
+      ++  pattern
+        ^-  $:  ::  main: rendering pattern 
+                ::  context: recursion points by counter
+                ::
+                main=plot
+                context=(map @ud plot)
+            ==
+        !!
+      --
+  ::  private core
+  ::
+  |%
+  ::
+  ::  +specify:cosmetic: convert :sut to a cosmetic spec
+  ::
+  ++  specify
+    ^-  [spec _.]
+    =<  [- +>]
+    |^  ^-  [spec _.]
+        
+        ?+  sut  !!
+          %void      [%base %void]
+          %noun      [%base %noun]
+        ::
+          [%atom *]  (simplify (atom p.sut q.sut))
+          [%cell *]  (simplify (cell p.sut q.sut))
+          [%face *]  (simplify (face p.sut q.sut))
+        ==
+    ::
+    ::  +atom:specify:cosmetic: convert atomic type to spec
+    ::
+    ++  atom
+      |=  $:  ::  aura: flavor of atom
+              ::  constant: one value, or all values
+              ::
+              aura=term 
+              constant=(unit @)
+          ==
+      ::  pure function
+      ::
+      :_  +>  ^-  spec
+      ::  if atom is not constant
+      ::
+      ?~  constant
+        ::  %base: flavored atom with arbitrary value
+        ::
+        [%base atom/aura]
+      ::  %leaf: flavored constant
+      ::
+      [%leaf aura u.constant]
+    ::
+    ::  +cell:specify:cosmetic: convert %cell type to spec
+    ::
+    ++  cell
+      |=  $:  ::  left: head of cell
+              ::  rite: tail of cell
+              ::
+              left=type
+              rite=type
+          ==
+      ::  full procedure
+      ::
+      ^-  [spec _+>]
+      ::  head: cosmetic structure of head
+      ::  tail: cosmetic structure of tail
+      ::
+      =^  head  +>.$  $(sut left)
+      =^  tail  +>.$  $(sut rite)
+      ::  %bccl: raw tuple
+      ::
+      [[%bccl head tail ~] +>.$]
+    ::
+    ::  +face:specify:cosmetic: convert %face decoration to a +spec.
+    ::
+    ++  face
+      |=  $:  ::  decor: decoration 
+              ::  content: decorated content
+              ::
+              decor=(pair what $@(term tune))
+              content=type
+          ==
+      =^  body  +>.$  $(sut content)
+      :_  +>.$
+      ::  XX: handle nontrivial cases
+      ::
+      ?@  q.p.sut  [%bcts q.p.sut body]
+      
+    --
+  ::
+  ::  +explore:cosmetic: convert :sut to an inspection pattern (+plot).
+  ::
+  ++  explore
+    ^-  [plot _.]
+    =<  [- +>] 
+    |^  ^-  [plot _.]
+        ?+  sut  !!
+          %void  [%base %void]
+          %noun  [%base %noun]
+        ==
+    --
+  --
+::
 ++  ax
   =+  :*  ::  dom: axis to home
           ::  hay: wing to home
@@ -6774,6 +6931,9 @@
     ::
         $null
       [%rock %n 0]
+    ::
+        $void
+      [%zpzp ~]
     ==
   ::
   ++  unfold
@@ -6817,7 +6977,7 @@
     ~+
     |-  ^-  hoon
     ?-  mod
-      {$base *}  (basal p.mod)
+      {$base *}  ?:(=(%void p.mod) [%rock %n 0] (basal p.mod))
       {$dbug *}  [%dbug p.mod $(mod q.mod)]
       {$leaf *}  [%rock p.mod q.mod]
       {$make *}  $(mod bcmc/(unfold p.mod q.mod))
@@ -11767,6 +11927,8 @@
         ==
       :-  '~'
         (cold [%base %null] sig)  
+      :-  '!'
+        (cold [%base %void] ;~(plug zap zap))
       :-  '^'
         ;~  pose
           scab
