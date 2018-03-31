@@ -1003,19 +1003,15 @@ _cj_ream(u3_noun all)
         par_l = u3h(pac);
         jax_l = _cj_hot_mean(par_l, nam);
         bal   = u3nc(u3k(nam), u3k(u3h(u3t(u3t(pac)))));
+        hap   = _cj_warm_hump(jax_l, huc),
         u3z(pac);
-
-        act = u3nq(jax_l, 
-                   _cj_warm_hump(jax_l, huc),
-                   bal,
-                   _cj_jit(jax_l, bat));
+        act   = u3nq(jax_l, hap, bal, _cj_jit(jax_l, bat));
 #if 0
         u3m_p("old jet", bal);
         fprintf(stderr, "  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
 #endif
         u3h_put(u3R->jed.war_p, loc, act);
       }
-      lop = u3t(lop);
     }
     u3z(lop);
     lop = rem;
@@ -1028,7 +1024,7 @@ static u3_noun rel;
 static void
 _cj_warm_tap(u3_noun kev)
 {
-  rel = u3nc(u3k(kev), u3k(rel));
+  rel = u3nc(u3k(kev), rel);
 }
 
 /* u3j_ream(): rebuild warm state
