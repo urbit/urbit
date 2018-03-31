@@ -241,7 +241,7 @@ u3j_spot(u3_noun cor)
             rum = u3qdb_get(rut, u3t(cor));
     if ( u3_nul != rum ) {
       u3_noun loc = u3k(u3t(rum));
-      u3z(rum);
+      u3z(rum); u3z(reg);
       return loc;
     }
     else {
@@ -258,13 +258,14 @@ u3j_spot(u3_noun cor)
             u3z(pel);
             if ( u3_nul != nit ) {
               u3_noun loc = u3k(u3t(nit));
-              u3z(nit);
+              u3z(nit); u3z(reg);
               return loc;
             }
           }
         }
         pas = u3t(pas);
       }
+      u3z(reg);
       return u3_none;
     }
   }
