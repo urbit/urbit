@@ -557,6 +557,29 @@ u3m_dump(void)
 }
 #endif
 
+#if defined(U3_OS_linux) || defined(U3_OS_osx)
+static void
+u3m_print_trace()
+{
+  void* tac_u[12]; // stack addresses
+  c3_c** str_c;    // trace strings
+  c3_w tac_w;      // stack size
+  c3_w len_w;
+
+  tac_w = backtrace(tac_u, 12);
+  str_c = backtrace_symbols(tac_u, tac_w);
+
+  // skip ourselves and u3m_bail
+  len_w = 2;
+
+  fprintf(stderr, "\r\nbacktrace:\r\n");
+  while (len_w < tac_w) {
+    fprintf(stderr, "%s\r\n", str_c[len_w++]);
+  }
+  fprintf(stderr, "\r\n");
+}
+#endif
+
 c3_w Exit;
 
 /* u3m_bail(): bail out.  Does not return.
@@ -584,6 +607,9 @@ c3_i
 u3m_bail(u3_noun how)
 {
   if ( (c3__exit == how) && (u3R == &u3H->rod_u) ) {
+#if defined(U3_OS_linux) || defined(U3_OS_osx)
+    u3m_print_trace();
+#endif
     abort();
   }
 
@@ -608,30 +634,12 @@ u3m_bail(u3_noun how)
     }
   }
 
-#if defined(U3_OS_linux) || defined(U3_OS_osx)
-  {
-    void* tac_u[11]; // stack addresses
-    c3_c** str_c;    // trace strings
-    c3_w tac_w;      // stack size
-    c3_w len_w;
-
-    tac_w = backtrace(tac_u, 11);
-    str_c = backtrace_symbols(tac_u, tac_w);
-
-    // skip ourselves
-    len_w = 1;
-
-    fprintf(stderr, "\r\nbacktrace:\r\n");
-    while (len_w < tac_w) {
-      fprintf(stderr, "%s\r\n", str_c[len_w++]);
-    }
-    fprintf(stderr, "\r\n");
-  }
-#endif
-
   switch ( how ) {
     case c3__fail:
     case c3__meme: {
+#if defined(U3_OS_linux) || defined(U3_OS_osx)
+      u3m_print_trace();
+#endif
       fprintf(stderr, "bailing out\r\n");
       abort();
     }
@@ -648,6 +656,9 @@ u3m_bail(u3_noun how)
     }
     case c3__foul:
     case c3__oops:
+#if defined(U3_OS_linux) || defined(U3_OS_osx)
+      u3m_print_trace();
+#endif
       fprintf(stderr, "bailing out\r\n");
       assert(0);
   }
@@ -671,6 +682,9 @@ u3m_bail(u3_noun how)
           break;
         }
         case c3__need: {
+#if defined(U3_OS_linux) || defined(U3_OS_osx)
+          u3m_print_trace();
+#endif
           c3_assert(0);
         }
         default: {
