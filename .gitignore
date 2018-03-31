@@ -10,10 +10,8 @@
 *.swp
 *.o
 /outside/**/*.a
-/outside/re2/obj
 # build
-/bin/urbit
-/bin/test_hash
+/bin/
 /vere.pkg
 .tags
 .etags
