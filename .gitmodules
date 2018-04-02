@@ -16,3 +16,6 @@
 [submodule "subprojects/murmur3"]
 	path = subprojects/murmur3
 	url = https://github.com/mikolajpp/murmur3.git
+[submodule "subprojects/libuv"]
+	path = subprojects/libuv
+	url = https://github.com/mikolajpp/libuv.git
