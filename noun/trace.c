@@ -122,7 +122,13 @@ _t_samp_process(u3_road* rod_u)
     u3_noun don = rod_u->pro.don;
 
     while ( u3_nul != don ) {
-      u3_noun lab = u3h(don);
+      //  Get surface allocated label
+      //
+      //  u3_noun lab = u3nc(u3i_string("foobar"), 0);
+      u3_noun laj = u3h(don),
+              lab = u3a_take(laj);
+      u3a_wash(laj);
+
       //  Add the label to the traced label stack, trimming recursion.
       //  
       {
