@@ -141,7 +141,15 @@
         c3_w
         u3h_mark(u3p(u3h_root) har_p);
 
-      /* u3h_walk(): traverse hashtable with key, value fn; RETAINS.
+      /* u3h_walk_with(): traverse hashtable with key, value fn and data
+       *                  argument; RETAINS.
+      */
+        void
+        u3h_walk_with(u3p(u3h_root) har_p,
+                      void (*fun_f)(u3_noun, void*),
+                      void* wit);
+
+      /* u3h_walk(): u3h_walk_with, but with no data argument
       */
         void
         u3h_walk(u3p(u3h_root) har_p, void (*fun_f)(u3_noun));
