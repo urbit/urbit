@@ -1153,13 +1153,23 @@ _n_bite(u3_noun fol)
 static inline c3_y*
 _n_find(u3_noun fol)
 {
+  /* check on the home road first. not only is this likely to be faster, it
+   * protects us from things which compile bytecode on the home road
+   * mid-computation (like u3t_samp())
+   */
   u3a_road* rod_u = u3R;
+  u3a_road* hom_u = &(u3H->rod_u);
+  u3_weak byc     = u3h_gut(hom_u->byc.har_p, fol);
 
-  while ( 1 ) {
-    u3_weak jaw = u3h_gut(rod_u->byc.har_p, fol);
+  if ( u3_none != byc ) {
+    return u3a_into(byc);
+  }
 
-    if ( u3_none != jaw ) {
-      return u3a_into(jaw);
+  while ( rod_u != hom_u ) {
+    byc = u3h_gut(rod_u->byc.har_p, fol);
+
+    if ( u3_none != byc ) {
+      return u3a_into(byc);
     }
 
     if ( rod_u->par_p ) {
@@ -1894,10 +1904,15 @@ _n_reap(u3_noun kev)
   u3_noun fol = u3h(kev);
   u3_noun got = u3t(kev);
   u3_noun lof = u3a_take(fol);
-  c3_y*   pog = u3a_into(got);
-  c3_y*   gop = _n_take_byc(pog);
-  u3_noun tog = u3a_outa(gop);
-  u3h_put(u3R->byc.har_p, lof, tog);
+  u3_weak con = u3h_get(u3R->byc.har_p, lof);
+  // u3t_samp() etc. can interrupt us while we're compiling
+  // so we need to avoid leaking any parent bytecode
+  if ( u3_none == con ) {
+    c3_y*   pog = u3a_into(got);
+    c3_y*   gop = _n_take_byc(pog);
+    u3_noun tog = u3a_outa(gop);
+    u3h_put(u3R->byc.har_p, lof, tog);
+  }
   u3z(lof);
 }
 
@@ -1950,15 +1965,14 @@ _n_mark_byc(c3_y* pog)
   return tot_w;
 }
 
-static c3_w bam_w;
-
-/* _n_bam(): u3h_walk helper for u3n_bark
+/* _n_bam(): u3h_walk_with helper for u3n_bark
  */
 static void
-_n_bam(u3_noun kev)
+_n_bam(u3_noun kev, void* dat)
 {
-  c3_y* pog = u3a_into(u3t(kev));
-  bam_w += _n_mark_byc(pog);
+  c3_w* bam_w = dat;
+  c3_y* pog   = u3a_into(u3t(kev));
+  *bam_w += _n_mark_byc(pog);
 }
 
 /* u3n_bark(): mark the bytecode cache for gc.
@@ -1966,9 +1980,9 @@ _n_bam(u3_noun kev)
 c3_w
 u3n_bark()
 {
+  c3_w bam_w = 0;
   u3p(u3h_root) har_p = u3R->byc.har_p;
-  bam_w = 0;
-  u3h_walk(har_p, _n_bam);
+  u3h_walk_with(har_p, _n_bam, &bam_w);
   return bam_w + u3h_mark(har_p);
 }
 
