@@ -1292,8 +1292,6 @@
     =?  date.build  ?=(%pin -.schematic.build)  date.schematic.build
     ::  if the build is complete and not a %tombstone, we're done
     ::
-    ::    TODO send %mades on future builds when this build completes.
-    ::
     =^  maybe-cache-line  results.state  (access-cache build)
     ::  copy all the ducts from :from to this one
     ::
@@ -1399,7 +1397,14 @@
           ::
           |-  ^+  this
           ?~  clients  this
-          $(clients t.clients, ..execute (execute i.clients from=`build))
+          ::  don't copy listeners upward
+          ::
+          ::    We need to copy listeners downward so that sub-builds inherit
+          ::    listeners from the root. We don't want to copy listeners upward
+          ::    because then all roots would get listeners copied to each
+          ::    other.
+          ::
+          $(clients t.clients, ..execute (execute i.clients from=~))
       ::
       |-  ^+  this
       =/  next  (~(find-next by-schematic builds-by-schematic.state) build)
@@ -1715,9 +1720,15 @@
         ::    which build to rerun in a later event when we +unblock
         ::    on that +dependency.
         ::
+        =/  already-blocked=?  (~(has by blocks.state) dependency)
         ::  store :dependency in persistent state
         ::
         =.  blocks.state  (~(put ju blocks.state) dependency build)
+        ::
+        ?:  already-blocked
+          ::  this dependency was already blocked
+          ::
+          [[%blocks ~] this]
         ::  construct new :move to request blocked resource
         ::
         =/  wire=wire  (welp /(scot %p our)/dependency (to-wire dependency))
