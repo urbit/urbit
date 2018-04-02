@@ -21,6 +21,7 @@
   test-pinned-in-live
   test-live-build-that-blocks
   test-live-and-once
+  test-slim
 ==
 ++  test-is-schematic-live
   ~&  %test-is-schematic-live
@@ -523,6 +524,26 @@
   %-  expect-eq  !>
   :-  state-by-ship.+>+<.ford
   (my [~nul *ford-state:ford-turbo]~)
+::
+++  test-slim
+  ~&  %test-slim
+  ::
+  =/  formula=hoon  (ream '(add 2 2)')
+  =/  subject-type=type  -:!>(.)
+  ::
+  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
+  ::
+  =^  moves  ford
+    %-  call:ford
+    :*  duct=~[/dead]  type=~  %make  ~nul
+        [%slim subject-type formula]
+    ==
+  ::
+  %-  expect-eq  !>
+  :-  moves
+  :~  :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+          [%result [%slim (~(mint ut subject-type) [%noun formula])]]
+  ==  ==
 ::
 ::  |utilities: helper arms
 ::

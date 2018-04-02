@@ -1590,11 +1590,11 @@
     ::
     |^  ?-    -.schematic.build
         ::
-            ^  (autocons head.schematic.build tail.schematic.build)
+            ^  (autocons [head tail]:schematic.build)
         ::
             %$  (literal literal.schematic.build)
         ::
-            %pin   (pin date.schematic.build schematic.schematic.build)
+            %pin   (pin [date schematic]:schematic.build)
             %alts  !!
             %bake  !!
             %bunt  !!
@@ -1612,10 +1612,10 @@
             %path  !!
             %plan  !!
             %reef  !!
-            %ride  !!
+            %ride  (ride [formula subject]:schematic.build)
             %same  (same schematic.schematic.build)
             %slit  !!
-            %slim  !!
+            %slim  (slim [subject-type formula]:schematic.build)
             %scry  (scry dependency.schematic.build)
             %vale  !!
             %volt  !!
@@ -1659,6 +1659,34 @@
       ?~  result
         [[%blocks [date schematic]~] this]
       [[%build-result %result %pin date u.result] this]
+    ::
+    ++  ride
+      |=  [formula=hoon =schematic]
+      ::
+      =^  result  state  (depend-on schematic)
+      ?~  result
+        [[%blocks [date.build schematic]~] this]
+      ::
+      !!
+      ::  =*  subject  u.result
+      ::  =*  subject-cage  (result-to-cage subject)
+      ::  =^  slim-result  state  (depend-on [%slim p.q.subject-cage formula])
+      ::  ?>  ?=(^ slim-result)
+      ::  ::  val is a toon, which might be a list of blocks.
+      ::  ::
+      ::  ::    TODO: We need an intercepted scry to figure out the dependencies,
+      ::  ::    which also knows about the results of previous runs so we can feeed
+      ::  ::    the results back in.
+      ::  ::
+      ::  ::    TODO: Implement slim. It's sort of a prerequisite to getting this
+      ::  ::    working.
+      ::  ::
+      ::  ::    TODO: +result-to-cage? +result-to-vase?
+      ::  ::
+      ::  ::    TODO: test cases
+      ::  ::
+      ::  =+  val=(mock [q.q.subject-cage u.slim-result] (sloy ^scry))
+      ::  [[%build-result %result %ride vase] this]
     ::
     ++  same
       |=  =schematic
@@ -1751,6 +1779,17 @@
       ::  scry succeeded
       ::
       [[%build-result %result %scry u.u.scry-response] this]
+    ::
+    ++  slim
+      |=  [subject-type=type formula=hoon]
+      ::
+      =/  compiled=(each (pair type nock) tang)
+        (mule |.((~(mint ut subject-type) [%noun formula])))
+      ::
+      ?-  -.compiled
+        %|  [[%build-result %error [leaf+"%slim failed: " p.compiled]] this]
+        %&  [[%build-result %result %slim p.compiled] this]
+      ==
     ::  |utilities:make: helper arms
     ::
     ::+|  utilities
