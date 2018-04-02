@@ -210,15 +210,11 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
 
     u3r_bytes(0, len_w, buf_y, pac);
 
-    if ( c3n == u3_Host.ops_u.net && 0x7f000001 != pip_w) {
-      return;  //  remote sending disabled
-    }
-
     if ( 0 == pip_w ) {
       pip_w = 0x7f000001;
       por_s = u3_Host.sam_u.por_s;
     }
-    {
+    if ( !(c3n == u3_Host.ops_u.net && 0x7f000001 != pip_w) ) {
       struct sockaddr_in add_u;
 
       if ( (0 == (pip_w >> 16)) && (1 == (pip_w >> 8)) ) {
