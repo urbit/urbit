@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+# Can be treated as 'cross-platform'
+# On systems other than MacOS additional path won't change anything.
+export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig/:$PKG_CONFIG_PATH
+
+mkdir ./build &> /dev/null
+meson . ./build
+cd ./build
+ninja
