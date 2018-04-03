@@ -278,8 +278,15 @@ configure_file(input : 'include/config.h.in',
                configuration : conf_data)
 
 # We expect these libs to supplied with the distribution
-openssl_dep = dependency('openssl', version: '>=1.0.0')
 curl_dep = dependency('libcurl', version: '>=7.35.0')
+
+if osdet == 'darwin'
+  libcrypto = meson.get_compiler('c').find_library('crypto', dirs: [ '/usr/local/opt/openssl/lib/' ])
+  libssl = meson.get_compiler('c').find_library('ssl', dirs: [ '/usr/local/opt/openssl/lib/' ])
+  openssl_dep = declare_dependency(dependencies: [libcrypto, libssl], include_directories: include_directories('/usr/local/opt/openssl/include'))
+else
+  openssl_dep = dependency('openssl', version: '>=1.0.0')
+endif
 
 if(legacy_meson)
   gmp_dep = find_library('gmp')
