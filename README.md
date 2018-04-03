@@ -48,11 +48,9 @@ are included as git submodules. To build urbit from source, perform the followin
 (For instructions for legacy meson, also see below)
 
 1. Install all required dependencies.
-2. `git submodule init` in the urbit repository
-3. `git submodule update`
-4. `meson ./build`
-5. If the last step was successful, type `ninja -C build` to compile urbit.
-6. The executable should appear in `./build` directory.
+2. Run `./scripts/bootstrap`
+3. Run `./scripts/build`
+4. The executable should appear in `./build` directory.
 
 ### Using meson & ninja
 To configure project, enter the build directory and enter
