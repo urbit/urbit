@@ -44,21 +44,18 @@ Some libraries which are not found in major distributions:
 
 are included as git submodules. To build urbit from source, perform the following steps:
 
-## MacOS specifics
-On macos, you need to make sure `pkg-config` uses the correct homebrew path.
- The `export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig/:$PKG_CONFIG_PATH`
- should setup the `pkg-config` path correctly, solving errors with homebrew package discovery (notably with `openssl` paths).
-
 ## Configuration & compilation
 (For instructions for legacy meson, also see below)
 
 1. Install all required dependencies.
-2. `git submodule init` in the urbit repository
-3. `git submodule update`
-4. `meson ./build`
-5. If the last step was successful, type `cd ./build` followed by `ninja`
-   to compile urbit.
-6. The executable should appear in `./build` directory.
+2. Run `./scripts/bootstrap`
+3. Run `./scripts/build`
+3. The urbit executable will result in `./build` directory
+
+## Advanced Usage
+
+### Preparation
+Source `env` script: `. ./scripts/env`
 
 ### Using meson & ninja
 To configure project, enter the build directory and enter
