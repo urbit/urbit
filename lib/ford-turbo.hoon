@@ -100,32 +100,31 @@
         ::
         $:  %result
             $^  [head=build-result tail=build-result]
-            $%  [%$ cage]
-                [%pin date=@da build-result]
-                [%alts build-result]
-                [%bake cage]
-                [%bunt cage]
-                [%call vase]
-                [%cast cage]
-                [%core vase]
-                [%diff cage]
-                [%dude build-result]
-                [%file cage]
-                [%hood scaffold]
-                [%join cage]
-                [%mash cage]
-                [%mute cage]
-                [%pact cage]
-                [%path (pair disc spur)]
-                [%plan vase]
-                [%reef vase]
-                [%ride vase]
-                [%same build-result]
-                [%slit type]
-                [%slim (pair type nock)]
-                [%scry cage]
-                [%vale cage]
-                [%volt cage]
+            $%  [%$ =cage]
+                [%pin date=@da =build-result]
+                [%alts =build-result]
+                [%bake =cage]
+                [%bunt =cage]
+                [%call =vase]
+                [%cast =cage]
+                [%core =vase]
+                [%diff =cage]
+                [%dude =build-result]
+                [%hood =scaffold]
+                [%join =cage]
+                [%mash =cage]
+                [%mute =cage]
+                [%pact =cage]
+                [%path =rail]
+                [%plan =vase]
+                [%reef =vase]
+                [%ride =vase]
+                [%same =build-result]
+                [%scry =cage]
+                [%slim [=type =nock]]
+                [%slit =type]
+                [%vale =cage]
+                [%volt =cage]
     ==  ==  ==
   ::
   ::  +schematic: plan for building
@@ -983,6 +982,43 @@
       %vale  ~
       %volt  ~
   ==
+::  +result-to-cage
+::
+::    Maybe we should return vases instead of cages.
+::
+++  result-to-cage
+  |=  result=build-result
+  ^-  cage
+  ?:  ?=(%error -.result)
+    [%tang !>(message.result)]
+  ?-    -.+.result
+      ^      [%noun (slop q:$(result head.result) q:$(result tail.result))]
+      %$     cage.result
+      %pin   $(result build-result.result)
+      %alts  $(result build-result.result)
+      %bake  cage.result
+      %bunt  cage.result
+      %call  [%noun vase.result]
+      %cast  cage.result
+      %core  [%noun vase.result]
+      %diff  cage.result
+      %dude  $(result build-result.result)
+      %hood  [%noun !>(scaffold.result)]
+      %join  cage.result
+      %mash  cage.result
+      %mute  cage.result
+      %pact  cage.result
+      %path  [%noun !>(rail.result)]
+      %plan  [%noun vase.result]
+      %reef  [%noun vase.result]
+      %ride  [%noun vase.result]
+      %same  $(result build-result.result)
+      %scry  cage.result
+      %slim  [%noun !>([type nock]:result)]
+      %slit  [%noun !>(type.result)]
+      %vale  cage.result
+      %volt  cage.result
+  ==
 ::  +date-from-schematic: finds the latest pin date from this schematic tree.
 ::
 ++  date-from-schematic
@@ -1603,7 +1639,6 @@
             %core  !!
             %diff  !!
             %dude  !!
-            %file  !!
             %hood  !!
             %join  !!
             %mash  !!
@@ -1666,8 +1701,8 @@
       =^  result  state  (depend-on schematic)
       ?~  result
         [[%blocks [date.build schematic]~] this]
-      ::
       !!
+      ::  ::
       ::  =*  subject  u.result
       ::  =*  subject-cage  (result-to-cage subject)
       ::  =^  slim-result  state  (depend-on [%slim p.q.subject-cage formula])
@@ -1677,11 +1712,6 @@
       ::  ::    TODO: We need an intercepted scry to figure out the dependencies,
       ::  ::    which also knows about the results of previous runs so we can feeed
       ::  ::    the results back in.
-      ::  ::
-      ::  ::    TODO: Implement slim. It's sort of a prerequisite to getting this
-      ::  ::    working.
-      ::  ::
-      ::  ::    TODO: +result-to-cage? +result-to-vase?
       ::  ::
       ::  ::    TODO: test cases
       ::  ::
