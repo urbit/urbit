@@ -10,14 +10,6 @@ before_install:
   - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
   - unzip ninja-linux.zip
   - sudo mv ninja /usr/bin/
-  - wget https://github.com/libuv/libuv/archive/v1.19.2.tar.gz
-  - tar -xvf v1.19.2.tar.gz
-  - cd libuv-1.19.2
-  - sh autogen.sh
-  - ./configure --prefix=/usr
-  - make
-  - sudo make install
-  - cd ..
 install:
   - pip3 install --user -I meson==0.44.1
 
