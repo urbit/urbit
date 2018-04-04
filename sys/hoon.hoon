@@ -11965,7 +11965,7 @@
                     ['+' (rune lus %cnls expc)]
                     ['-' (rune hep %cnhp expk)]
                     [':' (rune col %cnhp expi)]
-                    ['~' (rune sig %cnsg expu)]
+                    ['~' (rune sig %cnsg expn)]
                     ['#' (rune hax %cnsg expn)]
                     ['*' (rune tar %cntr expm)]
                     ['=' (rune tis %cnts exph)]
@@ -12271,7 +12271,6 @@
     ++  expr  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
     ++  exps  |.((butt hank))                           ::  closed gapped hoons
     ++  expt  |.(;~(gunk wise rope loaf loaf))          ::  =^
-    ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, hoon, hoons
     ++  expv  |.((butt rick))                           ::  just changes
     ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three hoons
     ++  expx  |.  ;~  gunk  loaf                        ::  hoon and core tail
