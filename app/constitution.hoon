@@ -61,62 +61,37 @@
   ?:  ?=(%error -.r)  ~  ::TODO  retry on error?
   ?>  ?=(%result -.r)
   ?>  ?=(%s -.res.r)
-  =/  des=(list data)
-    %+  decode-results  p.res.r
-    :~  %address  %uint  %uint  %uint  %uint  [%bytes-n 32]
-        %uint     %uint  %uint  %bool  %address
-    ==
+  =/  hul=hull:eth-noun
+    (decode-results p.res.r hull:eth-type)
   ::  don't care about latent ships.
-  ::?:  =([%uint 0] (snag 1 des))  ~
+  ?.  active.hul  ~
   :+  ~  (slav %p id.r)
-  (hull-from-data des)
+  (hull-from-eth hul)
 ::
 ::TODO  there definitely needs to be a helper function of some kind,
 ::      but is there a way for the type system to be aware of the return
 ::      type if we ask for ie ~[%address %uint %bool] data as a noun?
-++  hull-from-data
-  |=  das=(list data)
+++  hull-from-eth
+  |=  hul=hull:eth-noun
   ^-  hull
-  ::NOTE  we expect das to contain, on order:
-  ::　    address pilot
-  ::　    uint8 state
-  ::　    uint64 locked
-  ::　    uint64 completed
-  ::　    uint16 children
-  ::　    bytes32 key
-  ::　    uint256 revision
-  ::　    uint32 sponsor
-  ::　    uint32 escape
-  ::　    bool escaping
-  ::　    address transferrer
-  :*  =+  own=(snag 0 das)
-      ?>  ?=(%address -.own)
-      p.own
+  =,  hul
+  :*  owner
+      spawn-count
     ::
-      =+  cic=(snag 4 das)
-      ?>  ?=(%uint -.cic)
-      p.cic
+      ?>  =(32 p.encryption-key)
+      `@`q.encryption-key
     ::
-      ::TODO  new key model
-      =+  puk=(snag 5 das)
-      ?>  ?=(%bytes-n -.puk)
-      ?>  =(p.p.puk 32)  ::  valid key length
-      q.p.puk
+      ?>  =(32 p.authentication-key)
+      `@`q.authentication-key
     ::
-      0  ::TODO  key rev
+      key-revision
+      `@p`sponsor
     ::
-      ^-  @p
-      =+  sop=(snag 7 das)
-      ?>  ?=(%uint -.sop)
-      `@`p.sop
+      ?.  escape-requested  ~
+      ``@p`escape-to
     ::
-      =+  act=(snag 9 das)
-      ?>  ?=(%bool -.act)
-      ~&  p.act
-      ?.  p.act  ~
-      =+  esc=(snag 8 das)
-      ?>  ?=(%uint -.esc)
-      ``@`p.esc
+      spawn-proxy
+      transfer-proxy
   ==
 ::
 ++  poke-noun

@@ -7,17 +7,50 @@
 ++  registry  (map @p hull)
 ::
 ++  hull
-  $:  pilot=address
-      child-count=@ud
-      pub-key=@
-      key-rev=@ud
+  $:  owner=address
+      spawn-count=@ud
+      encryption-key=@
+      authentication-key=@
+      key-revision=@ud
       sponsor=@p
       escape=(unit @p)
+      spawn-proxy=address
+      transfer-proxy=address
   ==
 ::
-++  ship-state
-  $%  [%locked until=@da completed=@da]
-      [%living ~]
+++  eth-type
+  |%
+  ++  hull
+    :~  %address        ::  owner
+        %bool           ::  active
+        %uint           ::  spawnCount
+        [%bytes-n 32]   ::  encryptionKey
+        [%bytes-n 32]   ::  authenticationKey
+        %uint           ::  keyRevisionNumber
+        %uint           ::  sponsor
+        %bool           ::  escapeRequested
+        %uint           ::  escapeRequestedTo
+        %address        ::  spawnProxy
+        %address        ::  transferProxy
+    ==
+  --
+::
+++  eth-noun
+  |%
+  ++  hull
+    $:  owner=address
+        active=?
+        spawn-count=@ud
+        encryption-key=octs
+        authentication-key=octs
+        key-revision=@ud
+        sponsor=@ud
+        escape-requested=?
+        escape-to=@ud
+        spawn-proxy=address
+        transfer-proxy=address
+    ==
+  --
   ==
 ::
 ::  constants
