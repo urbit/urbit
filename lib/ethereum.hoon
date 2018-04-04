@@ -212,7 +212,7 @@
       ?-  typ
         %address  `@ux`(rash wor hex)
         %uint     `@ud`(rash wor hex)
-        %bool     =(0 (rash wor hex))
+        %bool     =(1 (rash wor hex))
       ==
     ::
         %string
