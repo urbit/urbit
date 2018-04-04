@@ -11968,6 +11968,7 @@
                     ['-' (rune hep %cnhp expk)]
                     [':' (rune col %cnhp expi)]
                     ['~' (rune sig %cnsg expu)]
+                    ['#' (rune hax %cnsg expn)]
                     ['*' (rune tar %cntr expm)]
                     ['=' (rune tis %cnts exph)]
                 ==
@@ -12263,6 +12264,9 @@
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two hoons
     ++  expl  |.(;~(gunk (stag ~ sym) loaf loaf))       ::  term, two hoons
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [tile hoon]s
+    ++  expn  |.  ;~  gunk  rope  loaf                  ::  wing, hoon,
+                    ;~(plug loaf (easy ~))              ::  list of one hoon
+                  ==                                    ::
     ++  expo  |.(;~(gunk wise loaf loaf))               ::  =;
     ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing hoon]s, hoon
     ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two hoons
