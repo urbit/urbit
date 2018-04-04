@@ -9800,10 +9800,9 @@
       ~>(%mean.[%leaf "rest-loop"] !!)
     =>  .(fan (~(gas in fan) leg))
     %-  fork
-    %~  tap  in
-      %-  ~(gas in *(set type))
-      (turn leg |=({p/type q/hoon} (play(sut p) q)))
-    ==
+    %#  tap  in
+    %-  ~(gas in *(set type))
+    (turn leg |=({p/type q/hoon} (play(sut p) q)))
   ::
   ++  take
     |=  {vit/vein duz/tyro}
@@ -10270,11 +10269,10 @@
       :_  q.doy
       :_  p.doy
       %^  cat  3
-        %~  rent  co
-            :+  %$  %ud
-            %-  ~(rep by (~(run by q.s.q.sut) |=(tomb ~(wyt by q))))
-            |=([[@ a=@u] b=@u] (add a b))
-        ==
+        %#  rent  co
+        :+  %$  %ud
+        %-  ~(rep by (~(run by q.s.q.sut) |=(tomb ~(wyt by q))))
+        |=([[@ a=@u] b=@u] (add a b))
       %^  cat  3
         ?-(p.q.sut $gold '.', $iron '|', $lead '?', $zinc '&')
       =+  gum=(mug q.s.q.sut)
