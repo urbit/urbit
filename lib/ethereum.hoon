@@ -179,26 +179,29 @@
 ::
 ++  decode-results
   :>  rex:  string of hex bytes with leading 0x.
-  |=  [rex=@t tys=(list etyp)]
+  |*  [rex=@t tys=(list etyp)]
   (decode-arguments (rsh 3 2 rex) tys)
 ::
 ++  decode-arguments
-  :>  res:  string of hex bytes without leading 0x.
-  |=  [res=@t tys=(list etyp)]
-  :>  wos:  input as list of 32 byte words in hex.
-  =/  wos=(list @t)  (rip 9 res)
-  :>  win:  index of the word to process.
+  |*  [res=@t tys=(list etyp)]
   =|  win=@ud
-  :>  das:  resulting data, should match {tys}.
-  =|  das=(list data)
-  |-  ^+  das
-  ?~  tys  (flop `(list data)`das)
-  =*  typ  i.tys
-  ?:  (gte win (lent wos))  ~|([%insufficient-data tys] !!)
-  =-  $(das [dat das], win nin, tys t.tys)
-  ::=<  (decode-next win i.tys)  ::TODO  urbit/arvo#673
-  |^  ::|%  ++  decode-next  |=  [win=@ud typ=etyp]
-    ^-  [nin=@ud dat=data]
+  =/  wos=(list @t)  (rip 9 res)
+  =<  (decode-from 0 tys)
+  |%
+  ++  decode-from
+    |*  [win=@ud tys=(list etyp)]
+    ?~  tys  !!
+    =-  ?~  t.tys  dat
+        [dat $(win nin, tys t.tys)]
+    (decode-one win ~[i.tys])
+  ::
+  ++  decode-one
+    ::NOTE  we take (list etyp) even though we only operate on
+    ::      a single etyp as a workaround for urbit/arvo#673
+    |*  [win=@ud tys=(list etyp)]
+    =-  [nin dat]=-  ::NOTE  ^= regular form broken
+    ?~  tys  !!
+    =*  typ  i.tys
     =+  wor=(snag win wos)
     ?+  typ
       ~|  [%unsupported-type typ]
@@ -207,18 +210,18 @@
         ?(%address %bool %uint)  ::  %int %real %ureal
       :-  +(win)
       ?-  typ
-        %address  address+(rash wor hex)
-        %uint     uint+(rash wor hex)
-        %bool     bool+=(0 (rash wor hex))
+        %address  `@ux`(rash wor hex)
+        %uint     `@ud`(rash wor hex)
+        %bool     =(0 (rash wor hex))
       ==
     ::
         %string
-      =+  $(typ %bytes)
-      ?>  ?=(%bytes -.dat)
-      [nin %string (trip (swp 3 q.p.dat))]
+      =+  $(tys ~[%bytes])
+      ~!  -
+      [nin (trip (swp 3 q.dat))]
     ::
         %bytes
-      :+  +(win)  %bytes
+      :-  +(win)
       ::  find the word index of the actual data.
       =/  lic=@ud  (div (rash wor hex) 32)
       ::  learn the bytelength of the data.
@@ -227,33 +230,18 @@
     ::
         [%bytes-n *]
       :-  (add win +((div (dec n.typ) 32)))
-      [%bytes-n (decode-bytes-n win n.typ)]
+      (decode-bytes-n win n.typ)
     ::
         [%array *]
-      :+  +(win)  %array
+      :-  +(win)
       ::  find the word index of the actual data.
       =.  win  (div (rash wor hex) 32)
       ::  read the elements from their location.
-      ::TODO  see ++decode-array-n
-      :: %^  decode-array-n  t.typ  +(win)
-      :: (rash (snag win wos) hex)
-      =/  len=@ud  (rash (snag win wos) hex)
-      =.  win  +(win)
-      =|  els=(list data)
-      |-  ^+  els
-      ?:  =(len 0)  (flop els)
-      =+  ^$(typ t.typ, win win)
-      $(els [dat els], win nin, len (dec len))
+      %^  decode-array-n  ~[t.typ]  +(win)
+      (rash (snag win wos) hex)
     ::
         [%array-n *]
-      ::TODO  see ++decode-array-n
-      :: (decode-array-n t.typ win n.typ)
-      =|  els=(list data)
-      |-
-      ?:  =(n.typ 0)  [win %array-n (flop els)]
-      ~&  [%arr-left n.typ win]
-      =+  ^$(typ t.typ, win win)
-      $(els [dat els], win nin, n.typ (dec n.typ))
+      (decode-array-n ~[t.typ] win n.typ)
     ==
   ::
   ++  decode-bytes-n
@@ -267,14 +255,17 @@
       (swag [fro +((div (dec bys) 32))] wos)
     |=(a=@t [1 a])
   ::
-  ::TODO  uncomment and use once urbit/arvo#673 gets resolved/a workaround.
-  :: ++  decode-array-n
-  ::   |=  [typ=etyp fro=@ud len=@ud]
-  ::   =|  els=(list data)
-  ::   |-  ^+  els
-  ::   ?:  =(len 0)  (flop els)
-  ::   =+  (decode-next typ fro)
-  ::   $(els [dat els], fro nin, len (dec len))
+  ++  decode-array-n
+    ::NOTE  we take (list etyp) even though we only operate on
+    ::      a single etyp as a workaround for urbit/arvo#673
+    =|  res=(list)
+    ~&  %watch-out--arrays-without-typeinfo
+    |*  [tys=(list etyp) fro=@ud len=@ud]
+    ^-  [@ud (list)]
+    ?~  tys  !!
+    ?:  =(len 0)  [fro (flop `(list)`res)]
+    =+  (decode-one fro ~[i.tys])  ::  [nin=@ud dat=*]
+    $(res ^+(res [dat res]), fro nin, len (dec len))
   --
 ::
 ::  encoding
