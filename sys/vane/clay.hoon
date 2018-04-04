@@ -2276,7 +2276,7 @@
       ?:  |(?=($~ for) (may-read u.for %z yon pax))  ~
       %-  malt
       %+  skim
-        %#  tap  by
+        %~  tap  by
         =<  q
         %-  aeon-to-yaki
         yon
@@ -3001,7 +3001,7 @@
               ~
             `[pax ~]
           =+  ^=  bof
-              %-  %#  int  by
+              %-  %~  int  by
                   %-  ~(uni by `(map path *)`new.dal.dat)
                   %-  ~(uni by `(map path *)`cal.dal.dat)
                   %-  ~(uni by `(map path *)`can.dal.dat)
@@ -3341,7 +3341,7 @@
         =.  erg.dat  %-  ~(uni by del)
                      ^-  (map path ?)
                      %.  |=(lobe %&)
-                     %#  run  by
+                     %~  run  by
                      %-  ~(uni by new.dal.dat)
                      %-  ~(uni by cal.dal.dat)
                      %-  ~(uni by cas)

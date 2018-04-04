@@ -9800,7 +9800,7 @@
       ~>(%mean.[%leaf "rest-loop"] !!)
     =>  .(fan (~(gas in fan) leg))
     %-  fork
-    %#  tap  in
+    %~  tap  in
     %-  ~(gas in *(set type))
     (turn leg |=({p/type q/hoon} (play(sut p) q)))
   ::
@@ -10269,7 +10269,7 @@
       :_  q.doy
       :_  p.doy
       %^  cat  3
-        %#  rent  co
+        %~  rent  co
         :+  %$  %ud
         %-  ~(rep by (~(run by q.s.q.sut) |=(tomb ~(wyt by q))))
         |=([[@ a=@u] b=@u] (add a b))

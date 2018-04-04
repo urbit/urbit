@@ -4182,7 +4182,7 @@
       (weld (trip -.man) `tape`[':' (trip +.man)])
     ::                                                  ::  ++clot:en-xml:html
     ++  clot  ~+                                        ::  self-closing tags
-      %#  has  in
+      %~  has  in
       %-  silt  ^-  (list term)  :~
         %area  %base  %br  %col  %command  %embed  %hr  %img  %inputt
         %keygen  %link  %meta  %param     %source   %track  %wbr

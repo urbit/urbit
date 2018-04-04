@@ -2356,7 +2356,7 @@
         ?:  &(?=(^ pre) p.u.pre)  q.u.pre
         ?:  pat.sep  " "
         =-  (weld - q:(fall pre [p=| q=" "]))
-        %#  ar-glyf  ar
+        %~  ar-glyf  ar
         ?:  =(who self)  aud
         (~(del in aud) [who %inbox])
       =/  lis/(list tape)

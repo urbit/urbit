@@ -454,7 +454,7 @@
       ?.  ?=($flow -.kyz)  ~
       %-  some
       %.  q.kyz
-      %#  into  as
+      %~  into  as
       :-  [~ hen u.ore.all]
       :*  p.kyz
           [~ ~]
