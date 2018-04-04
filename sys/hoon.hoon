@@ -11966,7 +11966,6 @@
                     ['-' (rune hep %cnhp expk)]
                     [':' (rune col %cnhp expi)]
                     ['~' (rune sig %cnsg expn)]
-                    ['#' (rune hax %cnsg expn)]
                     ['*' (rune tar %cntr expm)]
                     ['=' (rune tis %cnts exph)]
                 ==
