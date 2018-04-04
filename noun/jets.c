@@ -567,6 +567,7 @@ _cj_hook_in(u3_noun     cor,
         u3z(loc);
         loc = col;
         roc = u3k(u3t(cor));
+        u3z(cor);
         cor = roc;
       }
     }
