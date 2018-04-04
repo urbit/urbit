@@ -1021,11 +1021,11 @@ _cj_ream(u3_noun all)
 
 /* _cj_warm_tap(): tap war_p to rel
 */
-static u3_noun rel;
 static void
-_cj_warm_tap(u3_noun kev)
+_cj_warm_tap(u3_noun kev, void* wit)
 {
-  rel = u3nc(u3k(kev), rel);
+  u3_noun* rel = wit;
+  *rel = u3nc(u3k(kev), *rel);
 }
 
 /* u3j_ream(): rebuild warm state
@@ -1033,11 +1033,11 @@ _cj_warm_tap(u3_noun kev)
 void
 u3j_ream(void)
 {
+  u3_noun rel = u3_nul;
   u3h_free(u3R->jed.war_p);
   u3R->jed.war_p = u3h_new();
   c3_assert(u3R == &(u3H->rod_u));
-  rel = u3_nul;
-  u3h_walk(u3R->jed.cod_p, _cj_warm_tap);
+  u3h_walk_with(u3R->jed.cod_p, _cj_warm_tap, &rel);
   _cj_ream(rel);
   u3z(rel);
 }
