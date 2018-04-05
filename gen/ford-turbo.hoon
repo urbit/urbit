@@ -22,6 +22,7 @@
   test-live-build-that-blocks
   test-live-and-once
   test-slim
+  test-ride
 ==
 ++  test-is-schematic-live
   ~&  %test-is-schematic-live
@@ -93,22 +94,22 @@
   ::
   ;:  welp
     %-  expect-eq  !>
-    :-  `path`(to-wire:ford [%c care=%x bel=[[~nul %desk] /foo/bar]])
-    /c/x/~nul/desk/0/bar/foo
+    :-  `path`(dependency-to-path:ford [%c care=%x bel=[[~nul %desk] /foo/bar]])
+    /cx/~nul/desk/0/bar/foo
   ::
     %-  expect-eq  !>
     :-  `dependency:ford`[%c care=%x bel=[[~nul %desk] /foo/bar]]
-    (from-wire:ford /c/x/~nul/desk/0/bar/foo)
+    (need (path-to-dependency:ford /cx/~nul/desk/0/bar/foo))
   ::
     %-  expect-eq  !>
     :-  ^-  path
-      (to-wire:ford [%g care=%x bel=[[~nul %desk] /foo/bar]])
-    /g/x/~nul/desk/0/bar/foo
+      (dependency-to-path:ford [%g care=%x bel=[[~nul %desk] /foo/bar]])
+    /gx/~nul/desk/0/bar/foo
   ::
     %-  expect-eq  !>
     :-  ^-  dependency:ford
       [%g care=%x bel=[[~nul %desk] /foo/bar]]
-    (from-wire:ford /g/x/~nul/desk/0/bar/foo)
+    (need (path-to-dependency:ford /gx/~nul/desk/0/bar/foo))
   ==
 ::
 ++  test-literal
@@ -240,7 +241,7 @@
     %-  expect-eq  !>
     :-  moves
     :~  :*  duct=~  %pass
-            wire=/~nul/dependency/c/x/~nul/desk/0/foo/bar
+            wire=/~nul/dependency/cx/~nul/desk/0/foo/bar
             %c  %warp  [~nul ~nul]  %desk
             ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
     ==  ==
@@ -249,7 +250,7 @@
   ::
   =^  moves2  ford
     %-  take:ford
-    :*  wire=/~nul/dependency/c/x/~nul/desk/0/foo/bar  duct=~
+    :*  wire=/~nul/dependency/cx/~nul/desk/0/foo/bar  duct=~
         ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
         [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
     ==
@@ -394,7 +395,7 @@
     %-  expect-eq  !>
     :-  moves
     :~  :*  duct=~  %pass
-            wire=/~nul/dependency/c/x/~nul/desk/0/foo/bar
+            wire=/~nul/dependency/cx/~nul/desk/0/foo/bar
             %c  %warp  [~nul ~nul]  %desk
             ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
         ==
@@ -423,7 +424,7 @@
   =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-42)
   =^  moves3  ford
     %-  take:ford
-    :*  wire=/~nul/dependency/c/x/~nul/desk/0/foo/bar  duct=~
+    :*  wire=/~nul/dependency/cx/~nul/desk/0/foo/bar  duct=~
         ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
         [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
     ==
@@ -471,7 +472,7 @@
     %-  expect-eq  !>
     :-  moves
     :~  :*  duct=~  %pass
-            wire=/~nul/dependency/c/x/~nul/desk/0/foo/bar
+            wire=/~nul/dependency/cx/~nul/desk/0/foo/bar
             %c  %warp  [~nul ~nul]  %desk
             ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
         ==
@@ -495,7 +496,7 @@
   =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
   =^  moves2  ford
   %-  take:ford
-  :*  wire=/~nul/dependency/c/x/~nul/desk/0/foo/bar  duct=~
+  :*  wire=/~nul/dependency/cx/~nul/desk/0/foo/bar  duct=~
       ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
       [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
   ==
@@ -544,6 +545,42 @@
   :~  :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
           [%result [%slim (~(mint ut subject-type) [%noun formula])]]
   ==  ==
+::
+++  test-ride  !:
+  ~&  %test-ride
+  ::
+  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
+  ::
+  =/  fun  |=(a=@ (add 2 a))
+  =/  formula=hoon  (ream '!:  (fun 3)')
+  =/  subject-schematic=schematic:ford  [%$ %noun !>(.)]
+  ::
+  =^  moves  ford
+    %-  call:ford
+    :*  duct=~[/dead]  type=~  %make  ~nul
+        [%ride formula subject-schematic]
+    ==
+  ::
+  ?>  =(1 (lent moves))
+  ?>  ?=(^ moves)
+  ?>  ?=([* %give %made @da %complete %result %ride *] i.moves)
+  ::
+  %+  welp
+    %-  expect-eq  !>
+    ::  compare the move to the expected move, omitting type checking on vase
+    ::
+    ::    Types can't be compared using simple equality, so normalize the type
+    ::    to check the rest of the move.
+    ::
+    :-  i.moves(&8 *type)
+    :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+        [%result [%ride *type 5]]
+    ==
+  ::
+  %-  expect-eq  !>
+  ~&  [%here-goes &8:i.moves]
+  :-  (~(nest ut &8:i.moves) | -:!>(*@))
+  &
 ::
 ::  |utilities: helper arms
 ::

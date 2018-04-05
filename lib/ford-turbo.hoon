@@ -878,6 +878,21 @@
       ::
       live=?
   ==
+::  +scry-request: parsed arguments to a scry operation
+::
++=  scry-request
+  $:  ::  vane: the vane from which to make the request
+      ::
+      ::    TODO: use +vane here
+      ::
+      vane=?(%c %g)
+      ::  care: type of request
+      ::
+      care=care:clay
+      ::  beam: request path
+      ::
+      =beam
+  ==
 ::  +vane: short names for vanes
 ::
 ::    TODO: move to zuse
@@ -907,31 +922,53 @@
     $(vals t.vals, a (~(put ju a) key i.vals))
   ::
   $(tapped t.tapped)
-::  +to-wire: encode a +dependency in a +wire
+::  +dependency-to-path: encode a +dependency in a +wire
 ::
 ::    If :dependency is live, create a +beam from :rail.dependency
 ::    by using revision 0 as the +case and encode that.
 ::
-++  to-wire
+++  dependency-to-path
   |=  =dependency
-  ^-  wire
-  [vane.dependency care.dependency (en-beam (extract-beam dependency date=~))]
-::  +from-wire: decode a +dependency from a +wire
+  ^-  path
+  =/  term=term  (cat 3 [vane care]:dependency)
+  [term (en-beam (extract-beam dependency date=~))]
+::  +path-to-dependency: decode a +dependency from a +wire
 ::
-++  from-wire
-  |=  =wire
-  ^-  dependency
+++  path-to-dependency
+  |=  =path
+  ^-  (unit dependency)
   ::
-  ?>  ?=([@ @ *] wire)
-  ::  parse :wire's components into :vane, :care, and :rail
+  =/  scry-request=(unit scry-request)  (path-to-scry-request path)
+  ?~  scry-request
+    ~
+  =+  [vane care bem]=u.scry-request
+  =/  beam=beam  bem
+  =/  rail=rail  [disc=[p.beam q.beam] spur=s.beam]
+  `[vane care rail]
+::  +path-to-scry-request: parse :path to a :scry-request
+::
+++  path-to-scry-request
+  |=  =path
+  ^-  (unit scry-request)
   ::
-  =/  vane  ((hard ?(%c %g)) i.wire)
-  =/  care  ((hard care:clay) i.t.wire)
+  ?.  ?=([@ @ *] path)
+    ~
+  ::  parse :path's components into :vane, :care, and :rail
   ::
-  =/  beam  (need (de-beam ((hard ^wire) t.t.wire)))
-  =/  rail  [disc=[p.beam q.beam] spur=s.beam]
+  =/  vane=(unit ?(%c %g))  ((soft ?(%c %g)) (end 3 1 i.path))
+  ?~  vane
+    ~
+  =/  care=(unit care:clay)  ((soft care:clay) (rsh 3 1 i.path))
+  ?~  care
+    ~
+  =/  rest=(unit ^path)  ((soft ^path) t.path)
+  ?~  rest
+    ~
+  =/  beam  (de-beam u.rest)
+  ?~  beam
+    ~
   ::
-  [vane care rail]
+  `[u.vane u.care u.beam]
 ::  +extract-beam: obtain a +beam from a +dependency
 ::
 ::    Fills case with [%ud 0] for live dependencies if :date is `~`.
@@ -1701,22 +1738,84 @@
       =^  result  state  (depend-on schematic)
       ?~  result
         [[%blocks [date.build schematic]~] this]
-      !!
-      ::  ::
-      ::  =*  subject  u.result
-      ::  =*  subject-cage  (result-to-cage subject)
-      ::  =^  slim-result  state  (depend-on [%slim p.q.subject-cage formula])
-      ::  ?>  ?=(^ slim-result)
-      ::  ::  val is a toon, which might be a list of blocks.
-      ::  ::
-      ::  ::    TODO: We need an intercepted scry to figure out the dependencies,
-      ::  ::    which also knows about the results of previous runs so we can feeed
-      ::  ::    the results back in.
-      ::  ::
-      ::  ::    TODO: test cases
-      ::  ::
-      ::  =+  val=(mock [q.q.subject-cage u.slim-result] (sloy ^scry))
-      ::  [[%build-result %result %ride vase] this]
+      ::
+      =*  subject  u.result
+      =*  subject-cage  (result-to-cage subject)
+      =/  slim-schematic=^schematic  [%slim p.q.subject-cage formula]
+      =^  slim-result  state  (depend-on slim-schematic)
+      ?~  slim-result
+        [[%blocks [date.build slim-schematic]~] this]
+      ::
+      ?:  ?=(%error -.u.slim-result)
+        :_  this
+        [%build-result %error [%leaf "%ride: "] message.u.slim-result]
+      ::
+      ?>  ?=([%result %slim *] u.slim-result)
+      ::
+      =/  val
+        (mock [q.q.subject-cage nock.u.slim-result] (sloy ^scry))
+      ::  val is a toon, which might be a list of blocks.
+      ::
+      ?-    -.val
+      ::
+          %0
+        [[%build-result %result %ride [type.u.slim-result p.val]] this]
+      ::
+          %1
+        =/  blocked-paths=(list path)  ((hard (list path)) +.p.val)
+        ::
+        =/  blocks-or-failures=(list (each ^build tank))
+          %+  turn  blocked-paths
+          |=  =path
+          ::
+          =/  scry-request=(unit scry-request)  (path-to-scry-request path)
+          ?~  scry-request
+            [%| [%leaf "ford: %slim: invalid scry path: {<path>}"]]
+          ::
+          =*  case  r.beam.u.scry-request
+          ::
+          ?.  ?=(%da -.case)
+            [%| [%leaf "ford: %slim: invalid case in scry path: {<path>}"]]
+          ::
+          =/  date=@da  p.case
+          ::
+          =/  dependency=(unit dependency)  (path-to-dependency path)
+          ?~  dependency
+            :-  %|
+            [%leaf "ford: %slim: invalid dependency in scry path: {<path>}"]
+          ::
+          =/  sub-schematic=^schematic  [%pin date %scry u.dependency]
+          ::
+          [%& `^build`[date sub-schematic]]
+        ::
+        =/  failed=tang
+          %+  murn  blocks-or-failures
+          |=  block=(each ^build tank)
+          ^-  (unit tank)
+          ?-  -.block
+            %&  ~
+            %|  `p.block
+          ==
+        ::
+        ?^  failed
+          ::  some failed
+          ::
+          [[%build-result %error failed] this]
+        ::  no failures
+        ::
+        =/  blocks=(list ^build)
+          %+  turn  blocks-or-failures
+          |=  block=(each ^build tank)
+          ?>  ?=(%& -.block)
+          ::
+          p.block
+        ::
+        [[%blocks blocks] this]
+      ::
+          %2
+        =/  message=tang  [[%leaf "ford: %ride failed:"] p.val]
+        [[%build-result %error message] this]
+      ==
     ::
     ++  same
       |=  =schematic
@@ -1767,7 +1866,7 @@
       =/  scry-response
         ?:  (~(has by scry-results) dependency)
           (~(get by scry-results) dependency)
-        (^scry ~ ~ `@tas`(cat 3 %c care.dependency) beam)
+        (^scry [%143 %noun] ~ `@tas`(cat 3 [vane care]:dependency) beam)
       ::  scry blocked
       ::
       ?~  scry-response
@@ -1789,7 +1888,9 @@
           [[%blocks ~] this]
         ::  construct new :move to request blocked resource
         ::
-        =/  wire=wire  (welp /(scot %p our)/dependency (to-wire dependency))
+        =/  wire=path
+          (welp /(scot %p our)/dependency (dependency-to-path dependency))
+        ::
         =/  note=note
           =,  rail.dependency
           :*  %c  %warp  sock=[our their=ship.disc]
@@ -1861,6 +1962,47 @@
   ::+|  utilities
   ::
   ++  this  .
+  ::  +intercepted-scry: use local results as a scry facade
+  ::
+  ++  intercepted-scry
+    ::%-  sloy  ^-  slyd
+    |=  [[hoon-version=@ type=*] (unit (set monk)) =term =beam]
+    ^-  (unit (unit (cask)))
+    ::  TODO: is %151 ok?
+    ::
+    ~|  hoon-version=hoon-version
+    ?>  ?=(%143 hoon-version)
+    ::
+    =/  vane=(unit ?(%c %g))  ((soft ?(%c %g)) (end 3 1 term))
+    ?~  vane
+      ~
+    =/  care=(unit care:clay)  ((soft care:clay) (rsh 3 1 term))
+    ?~  care
+      ~
+    ::
+    =/  dependency=dependency
+      [u.vane u.care rail=[[p.beam q.beam] s.beam]]
+    ::
+    =/  build=build  [now %scry dependency]
+    ::  look up the scry result from our permanent state
+    ::
+    ::    Note: we can't freshen this cache entry because we can't modify
+    ::    the state in this gate.
+    ::
+    =/  local-result  (~(get by results.state) build)
+    ?~  local-result
+      ~
+    ?:  ?=(%tombstone -.u.local-result)
+      ~
+    ::
+    =/  local-cage=cage  (result-to-cage build-result.u.local-result)
+    ::  if :local-result does not nest in :type, produce an error
+    ::
+    ?.  -:(nets:wa type `^type`p.q.local-cage)
+      ~&  [%scry-nest-fail term=term beam=beam]
+      [~ ~]
+    ::
+    ``local-cage
   ::  +send-mades: send one %made move for :build per listener in :listeners
   ::
   ++  send-mades
@@ -2297,26 +2439,28 @@
       (rebuild [ship desk case.sign] care-paths.sign)
     ::  %dependency: response to a request for a +dependency
     ::
-    ?:  =(%dependency i.t.wire)
+    ?.  =(%dependency i.t.wire)
       ::
-      ?>  ?=([%c %writ *] sign)
-      ::  dependency: the +dependency we had previously blocked on
-      ::
-      =/  dependency  (from-wire t.t.wire)
-      ::  scry-result: parse a (unit cage) from :sign
-      ::
-      ::    If the result is `~`, the requested resource was not available.
-      ::
-      =/  scry-result=(unit cage)
-        ?~  riot.sign
-          ~
-        `r.u.riot.sign
-      ::  unblock the builds that had blocked on :dependency
-      ::
-      =*  unblock  unblock:(per-event event-args)
-      (unblock dependency scry-result)
+      ~|(unknown-take+i.t.wire !!)
     ::
-    ~|(unknown-take+i.t.wire !!)
+    ?>  ?=([%c %writ *] sign)
+    ::  dependency: the +dependency we had previously blocked on
+    ::
+    =/  dependency
+      ~|  [%bad-dependency wire]
+      (need (path-to-dependency t.t.wire))
+    ::  scry-result: parse a (unit cage) from :sign
+    ::
+    ::    If the result is `~`, the requested resource was not available.
+    ::
+    =/  scry-result=(unit cage)
+      ?~  riot.sign
+        ~
+      `r.u.riot.sign
+    ::  unblock the builds that had blocked on :dependency
+    ::
+    =*  unblock  unblock:(per-event event-args)
+    (unblock dependency scry-result)
   ::
   =.  state-by-ship  (~(put by state-by-ship) our ship-state)
   ::
