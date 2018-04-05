@@ -24,6 +24,7 @@
   test-slim
   test-ride
   test-ride-scry-succeed
+  test-ride-scry-fail
   test-ride-scry-block
 ==
 ++  test-is-schematic-live
@@ -617,6 +618,33 @@
   %-  expect-eq  !>
   :-  (~(nest ut &8:i.moves) | -:!>(*@))
   &
+::
+++  test-ride-scry-fail
+  ~&  %test-ride-scry-fail
+  ::
+  =/  scry-failed  (scry-fail ~1234.5.6)
+  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-failed)
+  ::
+  =/  formula=hoon  (ream '!:  .^(* %cx /~nul/desk/~1234.5.6/foo/bar)')
+  =/  subject-schematic=schematic:ford  [%$ %noun !>(.)]
+  ::
+  =^  moves  ford
+    %-  call:ford
+    :*  duct=~[/dead]  type=~  %make  ~nul
+        [%ride formula subject-schematic]
+    ==
+  ::
+  ?>  =(1 (lent moves))
+  ?>  ?=(^ moves)
+  ?>  ?=([* %give %made @da %complete %error *] i.moves)
+  ::
+  %-  expect-eq  !>
+  ::  compare the move to the expected move, omitting check on stack trace
+  ::
+  :-  i.moves(|7 ~)
+  :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+      [%error [leaf+"ford: %ride failed:" ~]]
+  ==
 ::
 ++  test-ride-scry-block
   ~&  %test-ride-scry-block
