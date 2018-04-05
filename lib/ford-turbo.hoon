@@ -901,6 +901,25 @@
 --
 =,  format
 |%
+::  +build-to-tank: convert :build to a printable format
+::
+++  build-to-tank
+  |=  =build
+  ^-  tank
+  ::
+  =+  [date schematic]=build
+  ::
+  :-  %leaf
+  %+  weld  (trip (scot %da date))
+  %+  weld  "  "
+  ::
+  %-  trip
+  ?+    -.schematic
+      -.schematic
+    ::
+    %$  %literal
+    ^  %autocons
+  ==
 ::  +unify-jugs: make a new jug, unifying sets for all keys
 ::
 ++  unify-jugs
@@ -1753,7 +1772,7 @@
       ?>  ?=([%result %slim *] u.slim-result)
       ::
       =/  val
-        (mock [q.q.subject-cage nock.u.slim-result] (sloy ^scry))
+        (mock [q.q.subject-cage nock.u.slim-result] intercepted-scry)
       ::  val is a toon, which might be a list of blocks.
       ::
       ?-    -.val
@@ -1762,7 +1781,7 @@
         [[%build-result %result %ride [type.u.slim-result p.val]] this]
       ::
           %1
-        =/  blocked-paths=(list path)  ((hard (list path)) +.p.val)
+        =/  blocked-paths=(list path)  ((hard (list path)) p.val)
         ::
         =/  blocks-or-failures=(list (each ^build tank))
           %+  turn  blocked-paths
@@ -1809,6 +1828,12 @@
           ?>  ?=(%& -.block)
           ::
           p.block
+        ::
+        =.  state
+          %+  roll  blocks
+          |=  [block=^build accumulator=_state]
+          =.  state  accumulator
+          +:(depend-on schematic.block)
         ::
         [[%blocks blocks] this]
       ::
@@ -1965,13 +1990,15 @@
   ::  +intercepted-scry: use local results as a scry facade
   ::
   ++  intercepted-scry
-    ::%-  sloy  ^-  slyd
-    |=  [[hoon-version=@ type=*] (unit (set monk)) =term =beam]
+    %-  sloy  ^-  slyd
+    |=  [ref=* (unit (set monk)) =term =beam]
     ^-  (unit (unit (cask)))
-    ::  TODO: is %151 ok?
+    ?>  ?=([@ *] ref)
+    =/  hoon-version=@ud  -.ref
+    =/  type=type  ((hard type) +.ref)
     ::
     ~|  hoon-version=hoon-version
-    ?>  ?=(%143 hoon-version)
+    ?>  ?=(?(%143 %151) hoon-version)
     ::
     =/  vane=(unit ?(%c %g))  ((soft ?(%c %g)) (end 3 1 term))
     ?~  vane
@@ -1982,8 +2009,20 @@
     ::
     =/  dependency=dependency
       [u.vane u.care rail=[[p.beam q.beam] s.beam]]
+    ::  TODO: handle other kinds of +case
     ::
-    =/  build=build  [now %scry dependency]
+    =/  date=@da
+      ~|  bad-case+r.beam
+      ?>  ?=(%da -.r.beam)
+      p.r.beam
+    ::
+    =/  build=build  [date %scry dependency]
+    ::  if the actual scry produces a value, use that value; otherwise use local
+    ::
+    =/  scry-response  (scry +<.$)
+    ::
+    ?^  scry-response
+      scry-response
     ::  look up the scry result from our permanent state
     ::
     ::    Note: we can't freshen this cache entry because we can't modify
@@ -2002,7 +2041,7 @@
       ~&  [%scry-nest-fail term=term beam=beam]
       [~ ~]
     ::
-    ``local-cage
+    [~ ~ `(cask)`local-cage]
   ::  +send-mades: send one %made move for :build per listener in :listeners
   ::
   ++  send-mades

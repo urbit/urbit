@@ -23,6 +23,8 @@
   test-live-and-once
   test-slim
   test-ride
+  test-ride-scry-succeed
+  test-ride-scry-block
 ==
 ++  test-is-schematic-live
   ~&  %test-is-schematic-live
@@ -546,7 +548,7 @@
           [%result [%slim (~(mint ut subject-type) [%noun formula])]]
   ==  ==
 ::
-++  test-ride  !:
+++  test-ride
   ~&  %test-ride
   ::
   =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
@@ -578,9 +580,108 @@
     ==
   ::
   %-  expect-eq  !>
-  ~&  [%here-goes &8:i.moves]
   :-  (~(nest ut &8:i.moves) | -:!>(*@))
   &
+::
+++  test-ride-scry-succeed
+  ~&  %test-ride-scry-succeed
+  ::
+  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
+  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-42)
+  ::
+  =/  formula=hoon  (ream '!:  .^(* %cx /~nul/desk/~1234.5.6/foo/bar)')
+  =/  subject-schematic=schematic:ford  [%$ %noun !>(.)]
+  ::
+  =^  moves  ford
+    %-  call:ford
+    :*  duct=~[/dead]  type=~  %make  ~nul
+        [%ride formula subject-schematic]
+    ==
+  ::
+  ?>  =(1 (lent moves))
+  ?>  ?=(^ moves)
+  ?>  ?=([* %give %made @da %complete %result %ride *] i.moves)
+  ::
+  %+  welp
+    %-  expect-eq  !>
+    ::  compare the move to the expected move, omitting type checking on vase
+    ::
+    ::    Types can't be compared using simple equality, so normalize the type
+    ::    to check the rest of the move.
+    ::
+    :-  i.moves(&8 *type)
+    :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+        [%result [%ride *type 42]]
+    ==
+  ::
+  %-  expect-eq  !>
+  :-  (~(nest ut &8:i.moves) | -:!>(*@))
+  &
+::
+++  test-ride-scry-block
+  ~&  %test-ride-scry-block
+  ::
+  =/  scry-blocked  (scry-block ~1234.5.6)
+  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-blocked)
+  ::
+  =/  formula=hoon  (ream '!:  .^(* %cx /~nul/desk/~1234.5.6/foo/bar)')
+  =/  subject-schematic=schematic:ford  [%$ %noun !>(.)]
+  ::
+  =^  moves  ford
+    %-  call:ford
+    :*  duct=~[/live]  type=~  %make  ~nul
+        [%ride formula subject-schematic]
+    ==
+  %+  welp
+    %-  expect-eq  !>
+    :-  moves
+    :~  :*  duct=~  %pass
+            wire=/~nul/dependency/cx/~nul/desk/0/foo/bar
+            %c  %warp  [~nul ~nul]  %desk
+            ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
+    ==  ==
+  ::
+  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-blocked)
+  ::
+  =^  moves2  ford
+    %-  take:ford
+    :*  wire=/~nul/dependency/cx/~nul/desk/0/foo/bar  duct=~
+        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
+        [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+    ==
+  ::
+  ?>  =(1 (lent moves2))
+  ?>  ?=(^ moves2)
+  ?>  ?=([* %give %made @da %complete %result %ride *] i.moves2)
+  ::
+  %+  welp
+    %-  expect-eq  !>
+    ::  compare the move to the expected move, omitting type checking on vase
+    ::
+    ::    Types can't be compared using simple equality, so normalize the type
+    ::    to check the rest of the move.
+    ::
+    :-  i.moves2(&8 *type)
+    :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete
+        [%result [%ride *type 42]]
+    ==
+  ::
+  %+  welp
+    %-  expect-eq  !>
+    :-  (~(nest ut &8:i.moves2) | -:!>(*@))
+    &
+  ::
+  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
+  =^  moves3  ford
+    (call:ford [duct=~[/live] type=~ %kill ~nul])
+  ::
+  %+  welp
+    %-  expect-eq  !>
+    [moves3 ~]
+  ::
+  %-  expect-eq  !>
+  :-  state-by-ship.+>+<.ford
+  (my [~nul *ford-state:ford-turbo]~)
 ::
 ::  |utilities: helper arms
 ::
