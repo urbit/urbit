@@ -14,6 +14,10 @@ export class Urbit
     #
     @reset-listeners!
     process.on \exit ~> @pty.write '\04' # send EOF to gracefully checkpoint
+    @pty.on \exit (code,signal)~>
+      | code   => process.exit code
+      | signal => process.exit 128 + signal  # repack exit code
+      | _ => #TODO report if unexpected?
   #
   note: (...args)-> console.log "\n#{'_'*40}\nnode:".blue, ...args
   warn: (...args)-> console.log "\n#{'!'*40}\nnode:".red, ...args
