@@ -1,4 +1,4 @@
-::                                                      ::
+::                                                      ::  
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
 =<  ride
@@ -5646,21 +5646,21 @@
               {$bccb p/hoon}                            ::  $_, example
               {$bccl p/{i/spec t/(list spec)}}          ::  $:, tuple
               {$bccn p/{i/spec t/(list spec)}}          ::  $%, head pick
-              {$bcdt p/spec q/(map term spec)}          ::  $., gold core
-              {$bcnt p/spec q/(map term spec)}          ::  $/, iron core
-              {$bczp p/spec q/(map term spec)}          ::  $!, lead core
-              {$bctc p/spec q/(map term spec)}          ::  $`, zinc core
+              {$bcdt p/spec q/(map term spec)}          ::  $., read-write core
               {$bcgl p/spec q/spec}                     ::  $<, filter: exclude
               {$bcgr p/spec q/spec}                     ::  $>, filter: require
               {$bchp p/spec q/spec}                     ::  $-, function core
               {$bckt p/spec q/spec}                     ::  $^, cons pick
               {$bcls p/term q/spec}                     ::  $+, trademark
+              {$bcnt p/spec q/(map term spec)}          ::  $/, write-only core
               {$bcmc p/hoon}                            ::  $;, manual 
               {$bcpd p/spec q/hoon}                     ::  $&, repair
               {$bcsg p/hoon q/spec}                     ::  $~, default
+              {$bctc p/spec q/(map term spec)}          ::  $/, read-only core
               {$bcts p/toga q/spec}                     ::  $=, name
               {$bcvt p/spec q/spec}                     ::  $@, atom pick
               {$bcwt p/{i/spec t/(list spec)}}          ::  $?, full pick
+              {$bczp p/spec q/(map term spec)}          ::  $!, opaque core
           ==                                            ::
 ++  tent                                                ::  model builder
           $%  {%| p/wing q/tent r/(list spec)}          ::  ~(p q r...)
@@ -6688,22 +6688,19 @@
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
   ++  wtts  |=(mod/spec (gray [%wtts (teal mod) puce]))
   --
-::
-::  +cosmetic: type analysis for type and data inspection
-::
 ++  cosmetic
+  ::  hold-trace: recursion points
   ::  block-count: number of recursion blocks
   ::  block-map-forward: recursion blocks by number
   ::  block-map-reverse: recursion blocks by type
   ::
-  =|  block-count/@ud
-  =|  block-map-forward/(map @ud type)
-  =|  block-map-reverse/(map type @ud)
+  =|  hold-trace=(set type)
+  =|  block-count=@ud
+  =|  block-map=(map @ud type)
   ::
-  |_  $:  ::  sut: non-void type we're analyzing
-          ::
-          sut/type
-      ==
+  ::  sut: non-void type we're analyzing
+  ::
+  =|  sut/type
   =<  ::  public interface
       ::
       |?  |%
@@ -6733,24 +6730,54 @@
   ::  private core
   ::
   |%
+  ::  +synthetic: convert :number to a synthetic name
   ::
-  ::  +specify:cosmetic: convert :sut to a cosmetic spec
+  ++  synthetic
+    |=  number=@ud
+    ^-  @tas
+    ?:  (lte number 26)
+      (add 'a' number)
+    (cat 3 (add 'a' (mod number 26)) $(number (div number 26)))
+  ::
+  ::  +specify: convert :sut to a cosmetic spec
   ::
   ++  specify
     ^-  [spec _.]
     =<  [- +>]
     |^  ^-  [spec _.]
-        
-        ?+  sut  !!
-          %void      [%base %void]
-          %noun      [%base %noun]
+        =-  [`spec:+`(simplify:+ -<) `_+`->]
+        ?-  sut
+          %void      :_(. [%base %void])
+          %noun      :_(. [%base %noun])
         ::
-          [%atom *]  (simplify (atom p.sut q.sut))
-          [%cell *]  (simplify (cell p.sut q.sut))
-          [%face *]  (simplify (face p.sut q.sut))
-        ==
+          [%atom *]  (atom p.sut q.sut)
+          [%cell *]  (cell p.sut q.sut)
+          [%core *]  (core p.sut q.sut)
+          [%face *]  (face p.sut q.sut)
+          [%form *]  :_(. (reform p.sut))
+          [%fork *]  (fork p.sut)
+          [%hold *]  ?.  (~(has in hold-trace) sut)
+                       %_  $
+                         sut         ~(repo ut sut)
+                         hold-trace  (~(put in hold-trace) sut)
+                       ==
+                     :-  `spec`[%bcmc %limb (synthetic block-count)]
+                     %_  .
+                       block-count  +(block-count)
+                       block-map    (~(put by block-map) block-count sut)
+        ==           ==
+    ::  +reform: rationalize spec decoration 
     ::
-    ::  +atom:specify:cosmetic: convert atomic type to spec
+    ++  reform
+      |=  [=type =spec]
+      spec
+    ::  +simplify: identify and reduce patterns
+    ::
+    ++  simplify
+      |=  =spec
+      spec
+    ::
+    ::  +atom: convert atomic type to spec
     ::
     ++  atom
       |=  $:  ::  aura: flavor of atom
@@ -6772,7 +6799,7 @@
       ::
       [%leaf aura u.constant]
     ::
-    ::  +cell:specify:cosmetic: convert %cell type to spec
+    ::  +cell: convert a %cell to a spec
     ::
     ++  cell
       |=  $:  ::  left: head of cell
@@ -6781,8 +6808,6 @@
               left=type
               rite=type
           ==
-      ::  full procedure
-      ::
       ^-  [spec _+>]
       ::  head: cosmetic structure of head
       ::  tail: cosmetic structure of tail
@@ -6793,7 +6818,53 @@
       ::
       [[%bccl head tail ~] +>.$]
     ::
-    ::  +face:specify:cosmetic: convert %face decoration to a +spec.
+    ::  +core: convert a %core to a spec
+    ::
+    ++  core
+      |=  $:  ::  payload: data 
+              ::  battery: code
+              ::
+              payload=type
+              battery=coil
+          ==
+      ^-  [spec _+>]
+      ::  payload-spec: converted payload
+      ::
+      =^  payload-spec  +>.$  ^$(sut payload)
+      ::  arms: all arms in the core, as hoons
+      ::
+      =/  arms
+        ^-  (list (pair term hoon))
+        %-  zing
+        ^-  (list (list (pair term hoon)))
+        %+  turn  ~(tap by q.s.battery)
+        |=  [term =tomb]
+        ^-  (list (pair term hoon))
+        %+  turn  ~(tap by q.tomb)
+        |=  [=term =what =foot]
+        ^-  (pair @tas hoon)
+        [term p.foot]
+      ::  arm-specs: all arms in the core, as specs
+      ::
+      =^  arm-specs  +>.$
+        |-  ^-  [(list (pair term spec)) _+>.^$]
+        ?~  arms  [~ +>.^$]
+        =^  mor  +>.^$  $(arms t.arms)
+        =^  les  +>.^$  
+          ^^$(sut [%hold [%core payload battery] q.i.arms])
+        [[[p.i.arms les] mor] +>.^$]
+      ::  arm-map: all arms in the core, as a a spec map
+      ::
+      =*  arm-map  (~(gas by *(map term spec)) arm-specs)
+      :_  +>.$
+      ?-  p.battery
+        %lead  [%bczp payload-spec arm-map]
+        %gold  [%bcdt payload-spec arm-map]
+        %zinc  [%bctc payload-spec arm-map]
+        %iron  [%bcnt payload-spec arm-map]
+      ==
+    ::
+    ::  +face: convert a %face to a +spec
     ::
     ++  face
       |=  $:  ::  decor: decoration 
@@ -6802,12 +6873,32 @@
               decor=(pair what $@(term tune))
               content=type
           ==
-      =^  body  +>.$  $(sut content)
+      ^-  [spec _+>]
+      =^  body  +>.$  ^$(sut content)
       :_  +>.$
-      ::  XX: handle nontrivial cases
+      ?@  q.decor  [%bcts q.decor body]
+      ::  discard aliases, etc
       ::
-      ?@  q.p.sut  [%bcts q.p.sut body]
-      
+      body
+    ::
+    ::  +fork: convert a %fork to a +spec
+    ::
+    ++  fork
+      |=  types=(set type)
+      ^-  [spec _+>]
+      ::  type-list: type set as a list
+      ::
+      =/  type-list  ~(tap by types)
+      ::  specs: type set as a list of specs
+      ::
+      =^  specs  +>.$
+        |-  ^-  [(list spec) _+>.^$]
+        ?~  type-list  [~ +>.^$]
+        =^  mor  +>.^$  $(type-list t.type-list)
+        =^  les  +>.^$  ^^$(sut i.type-list)
+        [[les mor] +>.^$]
+      ?<  ?=(~ specs)
+      :_(+>.$ [%bcwt specs])
     --
   ::
   ::  +explore:cosmetic: convert :sut to an inspection pattern (+plot).
@@ -6817,9 +6908,10 @@
     =<  [- +>] 
     |^  ^-  [plot _.]
         ?+  sut  !!
-          %void  [%base %void]
-          %noun  [%base %noun]
+          %void  :_(. [%base %void])
+          %noun  :_(. [%base %noun])
         ==
+    ++  foo  !!
     --
   --
 ::
@@ -7116,6 +7208,9 @@
         :+  %wtgr
           [%dtts [%bust %noun] [%$ axe]]
         [%rock %n ~]
+      :::
+          $void
+        [%zpzp ~]
       ==
     ++  clear
       .(..analyze ^clear)
