@@ -22,7 +22,8 @@
     =/  res=(unit [@t json])
       ((ot id+so result+some ~) a)
     ?^  res  `[%result u.res]
+    ~|  a
     :+  ~  %error  %-  need
-    ((ot id+so code+so message+so ~) a)
+    ((ot id+so error+(ot code+no message+so ~) ~) a)
   --
 --
