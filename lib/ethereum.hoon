@@ -21,16 +21,17 @@
   (some (as-octt (en-json:html jon)))
 ::
 ++  batch-read-request
-  |=  req=(list [(unit @t) address @t (list data)])
+  |=  req=(list proto-read-request)
   ^-  json
   a+(turn req read-request)
 ::
 ++  read-request
-  |=  [riq=(unit @t) adr=address fun=@t das=(list data)]
+  |=  proto-read-request
   ^-  json
-  %+  request-to-json  riq
+  %+  request-to-json  id
   :+  %eth-call
-    [~ adr ~ ~ ~ `tape`(encode-call fun das)]
+    ^-  call
+    [~ to ~ ~ ~ `tape`(encode-call function arguments)]
   [%label %latest]
 ::
 ++  request-to-json
@@ -274,12 +275,12 @@
 ::  https://ethereum.gitbooks.io/frontier-guide/content/abi.html
 ::
 ++  encode-call
-  |=  [fun=@t das=(list data)]
+  |=  call-data
   ^-  tape
   ::TODO  should this check to see if the data matches the function signature?
-  =-  (weld - (encode-args das))
+  =-  (weld - (encode-args arguments))
   %+  scag  8
-  (render-hex-bytes 32 (keccak-256 (as-octs fun)))
+  (render-hex-bytes 32 (keccak-256 (as-octs function)))
 ::
 ++  encode-args
   :>  encode list of arguments.

@@ -71,6 +71,19 @@
       data=tape
   ==
 ::
+::  minimum data needed to construct a read call
+++  proto-read-request
+  $:  id=(unit @t)
+      to=address
+      call-data
+  ==
+::
+::  raw call data
+++  call-data
+  $:  function=@t
+      arguments=(list data)
+  ==
+::
 ::  block to operate on.
 ++  block
   $%  [%number n=@ud]
