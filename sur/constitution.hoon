@@ -2,9 +2,7 @@
 =,  ethereum
 |%
 ::
-::  shapes
-::
-++  registry  (map @p hull)
+::  #  shapes
 ::
 ++  hull
   $:  owner=address
@@ -51,37 +49,64 @@
         transfer-proxy=address
     ==
   --
+::
+++  function
+  |%
+  ++  ships
+    $%  [%ships who=@p]
+    ==
+  --
+::
+::  #  diffs
+::
+++  diff-hull
+  $%  [%full new=hull]
+      [%owner new=address]
+      [%spawn-count ~]  ::  increments
+      [%keys enc=@ aut=@]
+      [%sponsor new=@p]
+      [%escape new=(unit @p)]
+      [%spawn-proxy new=address]
+      [%transfer-proxy new=address]
   ==
 ::
-::  constants
+::  #  constants
+::
+::  contract addresses
+++  contracts
+  |%
+  ++  ships
+    0xe083.4579.269e.ac6b.eca2.
+      882a.6a21.f6fb.0b1d.7196
+  --
 ::
 ::  hashes of ship event signatures
 ++  ships-events
   |%
   ::
-  ::  ChangedPilot(uint32,address)
-  ++  changed-pilot
-    0xb041.b798.8638.1a51.f9c6.29fb.4afc.6ab2.
-      5059.09f4.d12e.168d.0ffc.bcb9.d78c.9179
+  ::  Transferred(uint32,address)
+  ++  transferred
+    0x9014.bd16.807a.ce11.f497.2993.3667.4031.
+      8029.4d9f.0e4f.42a1.5be6.0d26.5369.171c
   ::
-  ::  ChangedStatus(uint32,uint8,uint64)
-  ++  changed-status
-    0x7d33.b6e7.2395.c6e3.c518.9773.7331.77c1.
-      5ba8.9ed5.0e0e.30ca.ebaa.3877.9a3e.1a79
+  ::  Activated(uint32)
+  ++  activated
+    0xe74c.0380.9d07.69e1.b1f7.06cc.8414.258c.
+      d1f3.b6fe.020c.d15d.0165.c210.ba50.3a0f
   ::
-  ::  ChangedEscape(uint32,uint32)
-  ++  changed-escape
-    0x7de2.bea0.d602.2858.c601.a403.71b6.3de0.
-      2940.cda9.6fef.97e4.318b.65cf.de91.5d79
+  ::  EscapeRequested(uint32,uint32)
+  ++  escape-requested
+    0xb4d4.850b.8f21.8218.141c.5665.cba3.79e5.
+      3e9b.b015.b51e.8d93.4be7.0210.aead.874a
   ::
-  ::  ChangedSponsor(uint32,uint32)
-  ++  changed-sponsor
-    0x7941.482b.dede.7ff1.c27c.f2c6.e768.2155.
-      a893.029d.c4a6.c619.8279.28fe.6031.9db4
+  ::  EscapeAccepted(uint32,uint32)
+  ++  escape-accepted
+    0x7e44.7c9b.1bda.4b17.4b07.96e1.00bf.7f34.
+      ebf3.6dbb.7fe6.6549.0b1b.fce6.246a.9da5
   ::
-  ::  ChangedKey(uint32,bytes32,uint256)
+  ::  ChangedKeys(uint32,bytes32,bytes32,uint32)
   ++  changed-key
-    0xadc9.fc32.173c.d091.e0d2.ee96.60b4.b67a.
-      586f.eb5a.0a30.e62c.5e9d.cfa3.573d.f8e4
+    0x6a39.f4e0.c935.b557.860d.3df3.9f1f.cb6b.
+      d63c.5a23.2d9e.fc28.5388.2994.f60c.708a
   --
 --
