@@ -238,6 +238,7 @@
       ::  find the word index of the actual data.
       =.  win  (div (rash wor hex) 32)
       ::  read the elements from their location.
+      %-  tail
       %^  decode-array-n  ~[t.typ]  +(win)
       (rash (snag win wos) hex)
     ::
