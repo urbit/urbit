@@ -11,6 +11,7 @@
 #include <signal.h>
 #include <gmp.h>
 #include <stdint.h>
+#include <limits.h>
 #include <uv.h>
 #include <sigsegv.h>
 #include <curses.h>
@@ -23,6 +24,10 @@
 #define C3_GLOBAL
 #include "all.h"
 #include "vere/vere.h"
+
+/* Require unsigned char
+ */
+STATIC_ASSERT(( 0 == CHAR_MIN && UCHAR_MAX == CHAR_MAX ), "unsigned char required");
 
 /* _main_readw(): parse a word from a string.
 */
