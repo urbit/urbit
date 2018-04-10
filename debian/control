@@ -2,7 +2,7 @@ Source: urbit
 Section: net
 Priority: extra
 Maintainer: Ted Blackman <ted@tlon.io>
-Build-Depends: debhelper (>= 9), libgmp3-dev, libsigsegv-dev, openssl, libssl-dev, automake, autoconf, libtool, g++, ragel, cmake, re2c, libcurl4-gnutls-dev
+Build-Depends: debhelper (>= 9), libgmp3-dev, libsigsegv-dev, openssl, libssl-dev,libtool, meson, re2c, libcurl4-gnutls-dev
 Standards-Version: 3.9.5
 Homepage: http://urbit.org
 

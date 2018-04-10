@@ -2,7 +2,7 @@
 **
 ** This file is in the public domain.
 */
-#   include "version.h"
+#   include "config.h"
   /** c3: C environment.
   **/
 #   include "c/portable.h"  //  C and OS portability
@@ -12,7 +12,7 @@
 
   /** u3: noun environment.
   **/
-#   include "noun/aliases.h"   //  general u3 
+#   include "noun/aliases.h"   //  general u3
 
 #   include "noun/allocate.h"  //  u3a: allocation
 #   include "noun/events.h"    //  u3e: persistence
@@ -24,7 +24,7 @@
 #   include "noun/options.h"   //  u3o: config options
 #   include "noun/retrieve.h"  //  u3r: noun access (error returns)
 #   include "noun/trace.h"     //  u3t: profiling / tracing
-#   include "noun/xtract.h"    //  u3x: noun access (error crashes) 
+#   include "noun/xtract.h"    //  u3x: noun access (error crashes)
 #   include "noun/vortex.h"    //  u3v: arvo kernel
 #   include "noun/zave.h"      //  u3z: memoization
 
@@ -52,4 +52,3 @@
   */
 #   define uH    u3_term_io_hija()
 #   define uL(x) u3_term_io_loja(x)
-

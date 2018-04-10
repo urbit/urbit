@@ -4,10 +4,15 @@
 */
   /** Must be compiled on gcc with C99 support.
   **/
+
+#include "config.h"
+
 #    ifndef __GNUC__
 #      error "port me"
 #    endif
+#    ifndef _GNU_SOURCE
 #    define _GNU_SOURCE
+#    endif
 
 
   /** System include files.
