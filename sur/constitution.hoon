@@ -6,10 +6,11 @@
 ::
 ++  hull
   $:  owner=address
-      spawn-count=@ud
       encryption-key=@
       authentication-key=@
       key-revision=@ud
+      spawn-count=@ud
+      spawned=(set @p)
       sponsor=@p
       escape=(unit @p)
       spawn-proxy=address
@@ -21,10 +22,10 @@
   ++  hull
     :~  %address        ::  owner
         %bool           ::  active
-        %uint           ::  spawnCount
         [%bytes-n 32]   ::  encryptionKey
         [%bytes-n 32]   ::  authenticationKey
         %uint           ::  keyRevisionNumber
+        %uint           ::  spawnCount
         %uint           ::  sponsor
         %bool           ::  escapeRequested
         %uint           ::  escapeRequestedTo
@@ -38,10 +39,10 @@
   ++  hull
     $:  owner=address
         active=?
-        spawn-count=@ud
         encryption-key=octs
         authentication-key=octs
         key-revision=@ud
+        spawn-count=@ud
         sponsor=@ud
         escape-requested=?
         escape-to=@ud
@@ -54,6 +55,7 @@
   |%
   ++  ships
     $%  [%ships who=@p]
+        [%get-spawned who=@p]
     ==
   --
 ::

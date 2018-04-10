@@ -1,7 +1,7 @@
 /-  constitution, ethereum, json-rpc
-/+  ethereum
+/+  constitution, ethereum
 ::TODO  =,  ethereum / constitution causes bail fail. find minimal repro
-=>  [. constitution ethereum]
+=>  [. constitution ^constitution ethereum]
 =,  eyre
 |%
 ++  state
@@ -29,7 +29,7 @@
   |=  old=(unit *)
   :: ?~  old
     ta-save:ta-init:ta
-  :: [~ ..prep(fid u.old)]
+  :: ta-save:ta
 ::
 ++  ta
   |_  $:  moves=(list move)                             ::  side-effects
@@ -40,12 +40,13 @@
   ::
   ++  ta-save
     ^-  (quip move _+>)
-    =-  [[`move`- `(list move)`(flop moves)] ..ta]
-    ^-  move
-    :-  `bone`ost.bol
-    ^-  card
+    =-  [(weld - (flop moves)) ..ta]
+    ^-  (list move)
+    ?~  reqs  ~
+    :_  ~
+    :-  ost.bol
     %+  rpc-request:ca  wir
-    `json`a+(turn (flop reqs) request-to-json)
+    a+(turn (flop reqs) request-to-json)
   ::
   ++  ta-move
     |=  mov=move
@@ -71,6 +72,10 @@
         %ships
       :-  (crip "ships({(scow %p who.cal)})")
       ['ships(uint32)' ~[uint+`@`who.cal]]
+    ::
+        %get-spawned
+      :-  (crip "getSpawned({(scow %p who.cal)})")
+      ['getSpawned(uint32)' ~[uint+`@`who.cal]]
     ==
   ::
   ++  ta-read-ships
@@ -96,22 +101,31 @@
   ++  ta-init-result
     |=  rep=response:json-rpc
     ?<  ?=(%batch -.rep)
-    ~&  id.rep
     ?:  ?=(%error -.rep)
       ~&  [%rpc-error message.rep]
       ::TODO  retry or something
       +>.$
     ?>  ?=(%s -.res.rep)
+    =+  cal=(parse-id id.rep)
+    ?:  ?=(%get-spawned -.cal)
+      =/  kis=(list @p)
+        %-  (list @p)  ::NOTE  because arrays are still typeless
+        (decode-results p.res.rep [%array %uint]~)
+      =.  ships
+        %+  ~(put by ships)  who.cal
+        =+  (~(got by ships) who.cal)
+        -(spawned (~(gas in spawned) kis))
+      (ta-read-ships kis)
+    ::?>  ?=(%ships -.cal)
+    ?>  ?=(%s -.res.rep)
     =/  hul=hull:eth-noun
       (decode-results p.res.rep hull:eth-type)
     ?.  active.hul  +>.$
-    =/  who=@p
-      %+  rash  id.rep
-      (ifix [(jest 'ships(~') (just ')')] fed:ag)
     =.  ships
-      %+  ~(put by ships)  who
+      %+  ~(put by ships)  who.cal
       (hull-from-eth hul)
-    (ta-read-ships (kids who))
+    ?:  =(0 spawn-count.hul)  +>.$
+    (ta-read %get-spawned who.cal)
   --
 ::
 ::  arms for card generation
@@ -150,7 +164,6 @@
   ^-  hull
   =,  hul
   :*  owner
-      spawn-count
     ::
       ?>  =(32 p.encryption-key)
       `@`q.encryption-key
@@ -159,6 +172,11 @@
       `@`q.authentication-key
     ::
       key-revision
+    ::
+      spawn-count
+    ::
+      ~
+    ::
       `@p`sponsor
     ::
       ?.  escape-requested  ~
