@@ -46,7 +46,7 @@ _ames_free(void* ptr_v)
 /* _ames_czar(): quasi-static route to emperor.
 */
 static c3_w
-_ames_czar(c3_y imp_y, c3_s* por_s)
+_ames_czar(c3_y imp_y, c3_s* por_s, c3_c* bos_c)
 {
   u3_ames* sam_u = &u3_Host.sam_u;
 
@@ -66,9 +66,9 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
            || (now - sam_u->imp_t[imp_y]) > 300 ) { /* 5 minute TTL */
       u3_noun nam   = u3dc("scot", 'p', imp_y);
       c3_c*   nam_c = u3r_string(nam);
-      c3_c    dns_c[64];
+      c3_c    dns_c[256];
 
-      snprintf(dns_c, 64, "%s.urbit.org", nam_c + 1);
+      snprintf(dns_c, 256, "%s.%s", nam_c + 1, bos_c);
       // uL(fprintf(uH, "czar %s, dns %s\n", nam_c, dns_c));
 
       free(nam_c);
@@ -210,6 +210,10 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
 
     u3r_bytes(0, len_w, buf_y, pac);
 
+    if ( c3n == u3_Host.ops_u.net && 0x7f000001 != pip_w) {
+      return;  //  remote sending disabled
+    }
+
     if ( 0 == pip_w ) {
       pip_w = 0x7f000001;
       por_s = u3_Host.sam_u.por_s;
@@ -220,7 +224,7 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
       if ( (0 == (pip_w >> 16)) && (1 == (pip_w >> 8)) ) {
         c3_y imp_y = (pip_w & 0xff);
 
-        pip_w = _ames_czar(imp_y, &por_s);
+        pip_w = _ames_czar(imp_y, &por_s, u3_Host.ops_u.dns_c);
       }
 
       if ( 0 != pip_w ) {
@@ -325,7 +329,7 @@ u3_ames_io_init()
     }
     num_y = u3r_byte(0, u3t(num));
 
-    _ames_czar(num_y, &por_s);
+    _ames_czar(num_y, &por_s, u3_Host.ops_u.dns_c);
     if ( c3y == u3_Host.ops_u.net ) {
       uL(fprintf(uH, "ames: czar: %s on %d\n", u3_Host.ops_u.imp_c, por_s));
     }
@@ -349,7 +353,9 @@ u3_ames_io_init()
 
     memset(&add_u, 0, sizeof(add_u));
     add_u.sin_family = AF_INET;
-    add_u.sin_addr.s_addr = htonl(INADDR_ANY);
+    add_u.sin_addr.s_addr = _(u3_Host.ops_u.net) ?
+                              htonl(INADDR_ANY) :
+                              htonl(INADDR_LOOPBACK);
     add_u.sin_port = htons(por_s);
 
     int ret;

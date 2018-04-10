@@ -479,6 +479,7 @@
     */
       typedef struct _u3_opts {
         c3_c*   arv_c;                      //  -A, initial sync from
+        c3_c*   dns_c;                      //  -H, ames bootstrap domain
         c3_c*   gen_c;                      //  -G, czar generator
         c3_c*   imp_c;                      //  -I, czar name
         c3_c*   nam_c;                      //  -n, unix hostname
@@ -629,7 +630,7 @@
       /* u3_walk_save(): save file or bail.
       */
         void
-        u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad);
+        u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax);
 
       /* u3_sync_reck(): traverse filesystem for changes -> lamb
       */
