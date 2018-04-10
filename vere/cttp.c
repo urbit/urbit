@@ -180,6 +180,8 @@ _cttp_heds_free(u3_hhed* hed_u)
   while ( hed_u ) {
     u3_hhed* nex_u = hed_u->nex_u;
 
+    free(hed_u->nam_c);
+    free(hed_u->val_c);
     free(hed_u);
     hed_u = nex_u;
   }
@@ -193,11 +195,14 @@ _cttp_hed_new(u3_atom nam, u3_atom val)
 {
   c3_w     nam_w = u3r_met(3, nam);
   c3_w     val_w = u3r_met(3, val);
-  u3_hhed* hed_u = c3_malloc(nam_w + val_w + sizeof(*hed_u));
+  u3_hhed* hed_u = c3_malloc(sizeof(*hed_u));
 
+  hed_u->nam_c = c3_malloc(nam_w);
+  hed_u->val_c = c3_malloc(val_w);
   hed_u->nex_u = 0;
   hed_u->nam_w = nam_w;
   hed_u->val_w = val_w;
+
   u3r_bytes(0, nam_w, (c3_y*)hed_u->nam_c, nam);
   u3r_bytes(0, val_w, (c3_y*)hed_u->val_c, val);
 
