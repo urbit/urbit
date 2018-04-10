@@ -12,13 +12,10 @@
 #include <netinet/in.h>
 #include <uv.h>
 #include <errno.h>
-
+#include <openssl/ssl.h>
+#include <h2o.h>
 #include "all.h"
 #include "vere/vere.h"
-
-#include "h2o.h"
-
-#include <openssl/ssl.h>
 
 static const c3_i TCP_BACKLOG = 16;
 
@@ -45,7 +42,6 @@ _http_vec_to_meth(h2o_iovec_t vec_u)
 static u3_noun
 _http_vec_to_atom(h2o_iovec_t vec_u)
 {
-  // XX portable?
   return u3i_bytes(vec_u.len, (const c3_y*)vec_u.base);
 }
 
@@ -105,7 +101,21 @@ _http_heds_to_noun(h2o_header_t* hed_u, c3_d hed_d)
   return hed;
 }
 
-// XX allocating hed_u and members at once causes SIGSEGV. WTF?
+/* _http_heds_free(): free header linked list
+*/
+static void
+_http_heds_free(u3_hhed* hed_u)
+{
+  while ( hed_u ) {
+    u3_hhed* nex_u = hed_u->nex_u;
+
+    free(hed_u->nam_c);
+    free(hed_u->val_c);
+    free(hed_u);
+    hed_u = nex_u;
+  }
+}
+
 /* _http_hed_new(): create u3_hhed from nam/val cords
 */
 static u3_hhed*
@@ -148,21 +158,6 @@ _http_heds_from_noun(u3_noun hed)
 
   u3z(deh);
   return hed_u;
-}
-
-/* _http_heds_free(): free header linked list
-*/
-static void
-_http_heds_free(u3_hhed* hed_u)
-{
-  while ( hed_u ) {
-    u3_hhed* nex_u = hed_u->nex_u;
-
-    free(hed_u->nam_c);
-    free(hed_u->val_c);
-    free(hed_u);
-    hed_u = nex_u;
-  }
 }
 
 /* _http_req_find(): find http request in connection by sequence.
@@ -282,11 +277,11 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
   h2o_req_t* rec_u = req_u->rec_u;
 
   rec_u->res.status = sas;
-  rec_u->res.reason = (sas < 200) ? "Weird" :
-                      (sas < 300) ? "OK" :
-                      (sas < 400) ? "Moved" :
-                      (sas < 500) ? "Missing" :
-                      "Hosed";
+  rec_u->res.reason = (sas < 200) ? "weird" :
+                      (sas < 300) ? "ok" :
+                      (sas < 400) ? "moved" :
+                      (sas < 500) ? "missing" :
+                      "hosed";
 
   u3_hhed* hed_u = _http_heds_from_noun(u3k(hed));
   u3_hhed* deh_u = hed_u;
@@ -372,7 +367,7 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
       uL(fprintf(uH, "strange %.*s request\n", (int)rec_u->method.len,
                                                rec_u->method.base));
     }
-    _http_rec_fail(rec_u, 400, "Bad Request");
+    _http_rec_fail(rec_u, 400, "bad request");
   }
   else {
     // XX HTTP2 wat do?
@@ -558,7 +553,8 @@ _http_serv_init_h2o(u3_http* htp_u)
 {
   htp_u->fig_u = c3_calloc(sizeof(*htp_u->fig_u));
   h2o_config_init(htp_u->fig_u);
-  htp_u->fig_u->server_name = h2o_iovec_init(H2O_STRLIT("urbit/vere-" URBIT_VERSION));
+  htp_u->fig_u->server_name = h2o_iovec_init(
+                                H2O_STRLIT("urbit/vere-" URBIT_VERSION));
 
   // XX use u3_Host.ops_u.nam_c? Or ship.urbit.org? Multiple hosts?
   // see https://github.com/urbit/urbit/issues/914
@@ -575,7 +571,8 @@ _http_serv_init_h2o(u3_http* htp_u)
     htp_u->cep_u->ssl_ctx = u3_Host.tls_u;
   }
 
-  htp_u->han_u = h2o_create_handler(&htp_u->hos_u->fallback_path, sizeof(*htp_u->han_u));
+  htp_u->han_u = h2o_create_handler(&htp_u->hos_u->fallback_path,
+                                    sizeof(*htp_u->han_u));
   htp_u->han_u->on_req = _http_rec_accept;
 
   h2o_context_init(htp_u->ctx_u, u3L, htp_u->fig_u);
@@ -726,7 +723,6 @@ _http_release_ports_file(c3_c *pax_c)
   u3a_free(paf_c);
 }
 
-// XX rename (is a card an effect?)
 /* u3_http_ef_bake(): notify %eyre that we're live
 */
 void
@@ -762,7 +758,8 @@ u3_http_ef_thou(c3_l     sev_l,
   }
   else if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
     if ( bug_w ) {
-      uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n", sev_l, coq_l, seq_l));
+      uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n",
+                 			sev_l, coq_l, seq_l));
     }
   }
   else {

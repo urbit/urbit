@@ -1,4 +1,4 @@
-/* v/http.c
+/* v/cttp.c
 **
 */
 #include <stdio.h>
@@ -7,23 +7,16 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
 #include <stdint.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <uv.h>
 #include <errno.h>
-#include <curses.h>
-#include <termios.h>
-#include <term.h>
-
 #include <openssl/ssl.h>
-
+#include <h2o.h>
 #include "all.h"
 #include "vere/vere.h"
 
-#include "h2o.h"
 
 // XX deduplicate with _http_vec_to_atom
 /* _cttp_vec_to_atom(): convert h2o_iovec_t to atom (cord)
@@ -644,7 +637,6 @@ _cttp_creq_fire(u3_creq* ceq_u)
     free(hos_c);
   }
 
-  _cttp_creq_fire_str(ceq_u, "User-Agent: urbit/vere-" URBIT_VERSION "\r\n");
   _cttp_creq_fire_heds(ceq_u, ceq_u->hed_u);
 
   if ( !ceq_u->bod_u ) {
@@ -733,7 +725,8 @@ _cttp_creq_on_body(h2o_http1client_t* cli_u, const c3_c* err_c)
   h2o_buffer_t* buf_u = cli_u->sock->input;
 
   if ( buf_u->size ) {
-    _cttp_cres_fire_body(ceq_u->res_u, _cttp_bod_new(buf_u->size, buf_u->bytes));
+    _cttp_cres_fire_body(ceq_u->res_u,
+                         _cttp_bod_new(buf_u->size, buf_u->bytes));
     h2o_buffer_consume(&cli_u->sock->input, buf_u->size);
   }
 
