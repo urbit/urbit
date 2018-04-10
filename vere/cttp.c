@@ -652,7 +652,7 @@ _cttp_creq_fire(u3_creq* ceq_u)
   }
   else {
     c3_c len_c[41];
-    c3_w len_w = snprintf(len_c, 40, "Content-Length: %u\r\n",
+    c3_w len_w = snprintf(len_c, 40, "Content-Length: %u\r\n\r\n",
                                      ceq_u->bod_u->len_w);
 
     _cttp_creq_fire_body(ceq_u, _cttp_bod_new(len_w, len_c));
