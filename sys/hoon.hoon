@@ -417,6 +417,51 @@
 ++  date  {{a/? y/@ud} m/@ud t/tarp}                    ::  parsed date
 ++  knot  @ta                                           ::  ASCII text
 ++  noun  *                                             ::  any noun
+++  plum                                                ::  new output noun
+  =>  |%
+      ::  +deco: output decoration
+      ::
+      ++  deco
+        $:  ::  wide: one-line syntax
+            ::
+            $=  wide
+            ::  default to wide regular form
+            ::
+            %-  unit
+            ::  specify irregular syntax
+            ::
+            $:  ::  delimit: delimiter between items
+                ::  enclose: enclosure around items
+                ::
+                delimit=knot
+                enclose=(pair knot knot)
+            ==
+            ::  tall: multiline syntax
+            ::
+            $=  tall
+            $:  ::  intro: initial rune (like |%)
+                ::  sigil: before each item (like ++)
+                ::  final: final rune (like --)
+                ::  
+                intro=knot
+                sigil=knot
+                final=knot
+        ==  ==
+      --
+  $@  cord
+  $~  [%cold %$ ~]
+  $%  ::  %cold: printable atom
+      ::  %leaf: tape (deprecated, do not use)
+      ::  %good: standardized noun
+      ::  %soar: fixed-width list
+      ::  %tilt: fixed-width tuple
+      ::
+      [%cold aura=@tas atom=@]
+      [%good mark=@tas =noun]
+      [%leaf =tape]
+      [%soar =deco list=(list plum)]
+      [%tilt =deco list=(list plum)]
+  ==
 ++  tang  (list tank)                                   ::  bottom-first error
 ++  tank  $~  [%leaf ~]                                 ::
           $%  {$leaf p/tape}                            ::  printing formats
@@ -6698,32 +6743,27 @@
   =|  block-count=@ud
   =|  block-map=(map @ud type)
   ::
-  ::  sut: non-void type we're analyzing
+  ::  sut: type we're analyzing
   ::
   =|  sut/type
   =<  ::  public interface
       ::
       |?  |%
       ::
-      ::  +structure:cosmetic: structure and context for type inspection
+      ::  +structure: make cosmetic hoon representing :sut
       ::
       ++  structure
-        ^-  $:  ::  main: cosmetically correct structure description
-                ::  context: recursion points by synthetic name
-                ::
-                main=spec
-                context=(map @tas spec)
-            ==
+        ^-  hoon
         !!
       ::
-      ::  +pattern:cosmetic: pattern and context for data inspection
+      ::  +pattern: pattern and context for data inspection
       ::
       ++  pattern
         ^-  $:  ::  main: rendering pattern 
                 ::  context: recursion points by counter
                 ::
                 main=plot
-                context=(map @ud plot)
+                loop=(map @ud plot)
             ==
         !!
       --
@@ -6761,16 +6801,18 @@
                          sut         ~(repo ut sut)
                          hold-trace  (~(put in hold-trace) sut)
                        ==
-                     :-  `spec`[%bcmc %limb (synthetic block-count)]
+                     :-  [%bcmc %limb (synthetic block-count)]
                      %_  .
                        block-count  +(block-count)
                        block-map    (~(put by block-map) block-count sut)
         ==           ==
+    ::
     ::  +reform: rationalize spec decoration 
     ::
     ++  reform
       |=  [=type =spec]
       spec
+    ::
     ::  +simplify: identify and reduce patterns
     ::
     ++  simplify
@@ -7031,6 +7073,7 @@
   ++  unfold
     |=  [fun/hoon arg/(list spec)]
     ^-  hoon
+    ?~  arg  fun
     [%cncl fun (turn arg |=(spec bccm/+<))]
   ::
   ++  descend
