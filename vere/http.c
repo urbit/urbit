@@ -598,7 +598,7 @@ _http_serv_start(u3_http* htp_u)
   }
 
   if ( c3y == htp_u->sec && 0 == u3_Host.tls_u ) {
-    uL(fprintf(uH, "http: secure server error: no tls config\n"));
+    uL(fprintf(uH, "http: secure server not started: .urb/tls/ not found\n"));
     htp_u->por_w = 0;
     return;
   }
