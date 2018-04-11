@@ -1210,6 +1210,7 @@
               ?=(^ tal.u.ran.src)
             ::
               ?-  -.u.tal.u.ran.src
+                $sd   &
                 $da   (gte now.bol +.u.tal.u.ran.src)
                 $ud   ?&  ?=(^ seq)
                           (gte u.seq +.u.tal.u.ran.src)
@@ -1227,29 +1228,40 @@
       |=  ran/range
       ^-  (list telegram)
       =+  [num=0 gaz=grams zeg=*(list telegram)]
-      ::  fill in empty ranges to select all grams.
+      ::  fill in empty ranges to select all grams,
+      ::  and calculate absolutes for relative places.
       =.  ran
         ?~  ran  `[[%ud 0] `[%ud count]]
-        ?~  tal.u.ran  `[hed.u.ran `[%ud count]]
+        =*  hed  hed.u.ran
+        =?  hed  ?=($sd -.hed)
+          [%ud (sub count (min count (abs:si +.hed)))]
+        ?~  tal.u.ran  `[hed `[%ud count]]
+        =*  tal  u.tal.u.ran
+        =?  tal  ?=($sd -.tal)
+          [%ud (sub count (min count (abs:si +.tal)))]
         ran
       ::  never fails, but compiler needs it.
       ?>  &(?=(^ ran) ?=(^ tal.u.ran))
+      =*  hed  hed.u.ran
+      =*  tal  u.tal.u.ran
       %-  flop
       |-  ^-  (list telegram)
       ?~  gaz  zeg
-      ?:  ?-  -.u.tal.u.ran                             ::  after the end
-            $ud  (lth +.u.tal.u.ran num)
-            $da  (lth +.u.tal.u.ran wen.i.gaz)
+      ?:  ?-  -.tal                                     ::  after the end
+            $sd  !!  ::  caught above
+            $ud  (lth +.tal num)
+            $da  (lth +.tal wen.i.gaz)
           ==
-        ::  if past the river, we're done searching.
+        ::  if past the range, we're done searching.
         zeg
-      ?:  ?-  -.hed.u.ran                               ::  before the start
-            $ud  (lth num +.hed.u.ran)
-            $da  (lth wen.i.gaz +.hed.u.ran)
+      ?:  ?-  -.hed                                     ::  before the start
+            $sd  !!  ::  caught above
+            $ud  (lth num +.hed)
+            $da  (lth wen.i.gaz +.hed)
           ==
-        ::  if before the river, continue onward.
+        ::  if before the range, continue onward.
         $(num +(num), gaz t.gaz)
-      ::  if in the river, add this gram and continue.
+      ::  if in the range, add this gram and continue.
       $(num +(num), gaz t.gaz, zeg [i.gaz zeg])
     ::
     ++  so-in-range
@@ -1265,16 +1277,20 @@
       ^-  {in/? done/?}
       ?~  ran  [& |]
       =/  min
-        ?-  -.hed.u.ran
-          $ud  (gth count +.hed.u.ran)
-          $da  (gth now.bol +.hed.u.ran)
+        =*  hed  hed.u.ran
+        ?-  -.hed
+          $sd  &  ::  relative is always in.
+          $ud  (gth count +.hed)
+          $da  (gth now.bol +.hed)
         ==
       ?~  tal.u.ran
         [min |]
       =-  [&(min -) !-]
-      ?-  -.u.tal.u.ran
-        $ud  (gte +(+.u.tal.u.ran) count)
-        $da  (gte +.u.tal.u.ran now.bol)
+      =*  tal  u.tal.u.ran
+      ?-  -.tal
+        $sd  |  ::  relative is always done.
+        $ud  (gte +(+.tal) count)
+        $da  (gte +.tal now.bol)
       ==
     ::
     :>  #
