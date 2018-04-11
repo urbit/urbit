@@ -454,14 +454,14 @@
       ?.  ?=($flow -.kyz)  ~
       %-  some
       %.  q.kyz
-      %~  into  as
-          :-  [~ hen u.ore.all]
-          :*  p.kyz
-              [~ ~]
-              80
-              0
-              (tuba "<awaiting {(trip p.kyz)}, this may take a few minutes>")
-      ==  ==
+      %#  into  as
+      :-  [~ hen u.ore.all]
+      :*  p.kyz
+          [~ ~]
+          80
+          0
+          (tuba "<awaiting {(trip p.kyz)}, this may take a few minutes>")
+      ==
     --
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request
