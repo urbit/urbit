@@ -5708,6 +5708,11 @@
               {$bcwt p/{i/spec t/(list spec)}}          ::  $?, full pick
               {$bczp p/spec q/(map term spec)}          ::  $!, opaque core
           ==                                            ::
+++  stud                                                ::  standard name
+          $@  @tas                                      ::  auth=urbit
+          $:  auth=@tas                                 ::  standards authority
+              type=path                                 ::  standard label
+          ==                                            ::
 ++  tent                                                ::  model builder
           $%  {%| p/wing q/tent r/(list spec)}          ::  ~(p q r...)
               {%& p/(list wing)}                        ::  a.b:c.d
@@ -6751,11 +6756,32 @@
       ::
       |?  |%
       ::
-      ::  +structure: make cosmetic hoon representing :sut
+      ::  +structure: make cosmetic spec from 
       ::
       ++  structure
-        ^-  hoon
-        !!
+        |-  ^-  spec
+        =^  main  +>+.$  specify 
+        ?:  =(~ block-map)  main
+        ^-  spec
+        :+  %bcdt  *spec
+        ::  collect specs from the block map
+        ::
+        ^-  (map term spec)
+        %-  ~(gas by `(map term spec)`[[%main main] ~ ~])
+        =/  blocks  ~(tap by block-map)
+        ^-  (list (pair term spec))
+        ::
+        ::  discarding any new blocks we acquire -- we shouldn't
+        ::  be acquiring any, but feels funky
+        ::
+        =<  -
+        |-  ^-  [(list (pair term spec)) _+>+.^$]
+        ?~  blocks  [~ +>+.^$]
+        =^  mor  +>+.^$  $(blocks t.blocks)
+        =^  les  +>+.^$  specify(sut q.i.blocks)
+        :_  +>+.^$
+        ^-  (list (pair term spec))
+        [[(synthetic p.i.blocks) les] mor]
       ::
       ::  +pattern: pattern and context for data inspection
       ::
@@ -6780,13 +6806,12 @@
       (add 'a' number)
     (cat 3 (add 'a' (mod number 26)) $(number (div number 26)))
   ::
-  ::  +specify: convert :sut to a cosmetic spec
+  ::  +specify: make a cosmetic spec
   ::
   ++  specify
     ^-  [spec _.]
     =<  [- +>]
     |^  ^-  [spec _.]
-        =-  [`spec:+`(simplify:+ -<) `_+`->]
         ?-  sut
           %void      :_(. [%base %void])
           %noun      :_(. [%base %noun])
@@ -6795,7 +6820,7 @@
           [%cell *]  (cell p.sut q.sut)
           [%core *]  (core p.sut q.sut)
           [%face *]  (face p.sut q.sut)
-          [%form *]  :_(. (reform p.sut))
+          [%form *]  (form(sut p.p.sut) q.p.sut)
           [%fork *]  (fork p.sut)
           [%hold *]  ?.  (~(has in hold-trace) sut)
                        %_  $
@@ -6808,17 +6833,26 @@
                        block-map    (~(put by block-map) block-count sut)
         ==           ==
     ::
-    ::  +reform: rationalize spec decoration 
+    ::  +form: rationalize structure from trace
     ::
-    ++  reform
-      |=  [=type =spec]
-      spec
-    ::
-    ::  +simplify: identify and reduce patterns
-    ::
-    ++  simplify
+    ++  form
       |=  =spec
-      spec
+      ^-  [^spec _+>]
+      :_  +>
+      |-  ^-  ^spec
+      ::  reform a spec left as a type annotation
+      ::
+      ?-    -.spec  spec
+        %dbug  $(spec q.spec)
+        %like  ::  hub: type of context
+               ::  poy: reference 
+               ::
+               =/  hub  %-  ~(play ut sut)
+                        |-  ^-  hoon
+                        ?~  q.spec  [%$ 1]
+                        [%tsgl [%wing i.q.spec] $(spec t.q.spec)]
+               ?:  ?=([%& *
+      ==
     ::
     ::  +atom: convert atomic type to spec
     ::
@@ -6857,9 +6891,12 @@
       ::
       =^  head  +>.$  $(sut left)
       =^  tail  +>.$  $(sut rite)
+      :_  +>.$
       ::  %bccl: raw tuple
       ::
-      [[%bccl head tail ~] +>.$]
+      ?:  ?=(%bccl -.tail)
+        [%bccl head +.tail]
+      [%bccl head tail ~]
     ::
     ::  +core: convert a %core to a spec
     ::
