@@ -90,3 +90,10 @@
         c3_assert(!"memory lost");              \
       }                                         \
       rut;})
+
+/* c3_calloc(): asserting calloc
+ */
+#define c3_calloc(s) ({                         \
+      void* rut = c3_malloc(s);                 \
+      memset(rut, 0, s);                        \
+      rut;})

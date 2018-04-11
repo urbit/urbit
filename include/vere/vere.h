@@ -2,6 +2,9 @@
 **
 ** This file is in the public domain.
 */
+
+#include "h2o.h"
+
   /** Quasi-tunable parameters.
   **/
     /* First kernel this executable can boot.
@@ -19,7 +22,9 @@
     */
       typedef struct _u3_hhed {
         struct _u3_hhed* nex_u;
+        c3_w             nam_w;
         c3_c*            nam_c;
+        c3_w             val_w;
         c3_c*            val_c;
       } u3_hhed;
 
@@ -31,85 +36,38 @@
         c3_y             hun_y[0];
       } u3_hbod;
 
-    /* u3_hrat: http parser state.
-    */
-      typedef enum {
-        u3_hreq_non,
-        u3_hreq_nam,
-        u3_hreq_val
-      } u3_hrat;
-
-    /* u3_csat: client connection state.
-    */
-      typedef enum {
-        u3_csat_dead = 0,                   //  connection dead
-        u3_csat_addr = 1,                   //  connection addressed
-        u3_csat_clyr = 2,                   //  connection open in cleartext
-        u3_csat_crop = 3,                   //  connection open, ssl needs hs
-        u3_csat_sing = 4,                   //  connection handshaking ssl
-        u3_csat_cryp = 5,                   //  connection open, ssl open
-      } u3_csat;
-
-    /* u3_hmet: http method.  Matches jhttp encoding.
-    */
-      typedef enum {
-        u3_hmet_delete,
-        u3_hmet_get,
-        u3_hmet_head,
-        u3_hmet_post,
-        u3_hmet_put,
-        u3_hmet_nop,                        //  virtual method
-        u3_hmet_other                       //  ie, unsupported
-      } u3_hmet;
-
     /* u3_hreq: incoming http request.
     */
       typedef struct _u3_hreq {
-        struct _u3_hcon* hon_u;             //  connection
+        h2o_req_t*       rec_u;             //  h2o request
         c3_w             seq_l;             //  sequence within connection
-        u3_hmet          met_e;             //  method
-        u3_hrat          rat_e;             //  parser state
-        c3_c*            url_c;             //  url
-        c3_w             ipf_w;             //  ipv4
-        c3_o             liv;               //  keepalive
-        c3_o             end;               //  all responses added
-        u3_hhed*         hed_u;             //  headers
-        u3_hbod*         bod_u;             //  body parts (exit)
-        u3_hbod*         dob_u;             //  body parts (entry)
-        struct _u3_hreq* nex_u;             //  next in request queue
-        u3_hbod*         rub_u;             //  exit of write queue
-        u3_hbod*         bur_u;             //  entry of write queue
+        struct _u3_hcon* hon_u;             //  connection backlink
+        struct _u3_hreq* nex_u;             //  next in connection's list
       } u3_hreq;
-
-    /* u3_hrep: outgoing http response.
-    */
-      typedef struct _u3_hrep {
-        c3_w             sev_l;             //  server number
-        c3_w             coq_l;             //  connection number
-        c3_w             seq_l;             //  request number
-        c3_w             sas_w;             //  status
-        u3_hhed*         hed_u;             //  headers
-        u3_hbod*         bod_u;             //  body (one part)
-      } u3_hrep;
 
     /* u3_hcon: incoming http connection.
     */
       typedef struct _u3_hcon {
-        uv_tcp_t         wax_u;             //  event handler state
+        uv_tcp_t         wax_u;             //  client stream handler
+        h2o_conn_t*      con_u;             //  h2o connection
+        h2o_socket_t*    sok_u;             //  h2o connection socket
+        c3_w             ipf_w;             //  client ipv4
         c3_w             coq_l;             //  connection number
         c3_w             seq_l;             //  next request number
-        struct _u3_http* htp_u;             //  backlink to server
+        struct _u3_http* htp_u;             //  server backlink
+        struct _u3_hreq* req_u;             //  request list
         struct _u3_hcon* nex_u;             //  next in server's list
-        struct _u3_hreq* ruc_u;             //  request under construction
-        struct _u3_hreq* req_u;             //  exit of request queue
-        struct _u3_hreq* qer_u;             //  entry of request queue
-        void*            par_u;             //  struct http_parser *
       } u3_hcon;
 
     /* u3_http: http server.
     */
       typedef struct _u3_http {
-        uv_tcp_t         wax_u;             //  event handler state
+        uv_tcp_t         wax_u;             //  server stream handler
+        h2o_globalconf_t* fig_u;            //  h2o global config
+        h2o_context_t*   ctx_u;             //  h2o ctx
+        h2o_accept_ctx_t* cep_u;            //  h2o accept ctx (wat for?)
+        h2o_hostconf_t*  hos_u;             //  h2o host config
+        h2o_handler_t*   han_u;             //  h2o request handler
         c3_w             sev_l;             //  server number
         c3_w             coq_l;             //  next connection number
         c3_w             por_w;             //  running port
@@ -119,13 +77,20 @@
         struct _u3_http* nex_u;             //  next in list
       } u3_http;
 
+    /* u3_csat: client connection state.
+    */
+      typedef enum {
+        u3_csat_init = 0,                   //  initialized
+        u3_csat_addr = 1,                   //  address resolution begun
+        u3_csat_quit = 2,                   //  cancellation requested
+        u3_csat_ripe = 3                    //  passed to libh2o
+      } u3_csat;
+
     /* u3_cres: response to http client.
     */
       typedef struct _u3_cres {
-        u3_hrat          rat_e;             //  parser state
-        void*            par_u;             //  struct http_parser *
         c3_w             sas_w;             //  status code
-        u3_hhed*         hed_u;             //  headers
+        u3_noun          hed;               //  headers
         u3_hbod*         bod_u;             //  exit of body queue
         u3_hbod*         dob_u;             //  entry of body queue
       } u3_cres;
@@ -134,59 +99,42 @@
     */
       typedef struct _u3_creq {             //  client request
         c3_l             num_l;             //  request number
+        h2o_http1client_t* cli_u;           //  h2o client
+        u3_csat          sat_e;             //  connection state
+        c3_o             sec;               //  yes == https
+        c3_w             ipf_w;             //  IP
+        c3_c*            ipf_c;             //  IP (string)
         c3_c*            hot_c;             //  host
         c3_s             por_s;             //  port
+        c3_c*            por_c;             //  port (string)
+        c3_m             met_m;             //  method
         c3_c*            url_c;             //  url
-        c3_o             sec;               //  yes == https
-        u3_hmet          met_e;             //  method
         u3_hhed*         hed_u;             //  headers
         u3_hbod*         bod_u;             //  body
-        u3_cres*         res_u;             //  nascent response
-        struct _u3_ccon* coc_u;             //  parent connection
-        struct _u3_creq* nex_u;             //  next in queue
-      } u3_creq;
-
-    /* u3_sslx: per-connection ssl context.
-     */
-      typedef struct _u3_sslx {
-        void*           ssl_u;              //  struct SSL*
-        void*           rio_u;              //  struct BIO* for read
-        void*           wio_u;              //  struct BIO* for write
-      } u3_sslx;
-
-    /* u3_ccon: outgoing http connection.
-    */
-      typedef struct _u3_ccon {             //  client connection
-        uv_tcp_t         wax_u;             //  i/o handler state
-        uv_connect_t     cot_u;             //  connection handler state
-        uv_getaddrinfo_t adr_u;             //  resolver state
-        u3_sslx          ssl;               //  ssl state
-        u3_csat          sat_e;             //  connection state
-        c3_c*            hot_c;             //  hostname
-        c3_s             por_s;             //  port
-        c3_w             ipf_w;             //  IP
-        c3_o             sec;               //  yes == https
         u3_hbod*         rub_u;             //  exit of send queue
         u3_hbod*         bur_u;             //  entry of send queue
-        u3_creq*         ceq_u;             //  exit of request queue
-        u3_creq*         qec_u;             //  entry of request queue
-        struct _u3_ccon* pre_u;             //  previous in list
-        struct _u3_ccon* nex_u;             //  next in list
-      } u3_ccon;
+        h2o_iovec_t*     vec_u;             //  send-buffer array
+        u3_cres*         res_u;             //  nascent response
+        struct _u3_creq* nex_u;             //  next in list
+        struct _u3_creq* pre_u;             //  previous in list
+      } u3_creq;
 
     /* u3_chot: foreign host (not yet used).
     */
       typedef struct _u3_chot {
         c3_w             ipf_w;             //  ip address (or 0)
         c3_c*            hot_c;             //  hostname (no port) (or 0)
-        struct _u3_ccon* ins_u;             //  insecure connection (or 0)
-        struct _u3_ccon* sec_u;             //  secure connection (or 0)
+        void*            ins_u;             //  insecure connection (or 0)
+        void*            sec_u;             //  secure connection (or 0)
       } u3_chot;
 
     /* u3_cttp: http client.
     */
       typedef struct _u3_cttp {
-        struct _u3_ccon* coc_u;             //  connection list
+        u3_creq*         ceq_u;             //  request list
+        h2o_http1client_ctx_t*              //
+                         ctx_u;             //  h2o client ctx
+        void*            tls_u;             //  client SSL_CTX*
       } u3_cttp;
 
     /* u3_apac: ames packet, coming or going.
@@ -581,12 +529,11 @@
         u3_behn    teh_u;                   //  behn timer
         c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
-        void*      ssl_u;                   //  struct SSL_CTX*
+        void*      tls_u;                   //  server SSL_CTX*
       } u3_host;                            //  host == computer == process
 
 #     define u3L  u3_Host.lup_u             //  global event loop
 #     define u3Z  (&(u3_Raft))
-#     define u3S  u3_Host.ssl_u
 
   /** Global variables.
   **/

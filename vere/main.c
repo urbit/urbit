@@ -19,6 +19,9 @@
 #include <term.h>
 #include <dirent.h>
 #include <openssl/ssl.h>
+#include <openssl/rand.h>
+
+#include "h2o.h"
 
 #define U3_GLOBAL
 #define C3_GLOBAL
@@ -475,6 +478,7 @@ report(void)
   printf("openssl: %s\n", SSLeay_version(SSLEAY_VERSION));
   printf("curses: %s\n", curses_version());
   printf("libuv: %s\n", uv_version_string());
+  printf("libh2o: %d.%d.%d\n", H2O_LIBRARY_VERSION_MAJOR, H2O_LIBRARY_VERSION_MINOR, H2O_LIBRARY_VERSION_PATCH);
 }
 
 void
@@ -622,6 +626,24 @@ main(c3_i   argc,
       printf("saved.\r\n");
     }
 #endif
+  }
+
+  SSL_library_init();
+  SSL_load_error_strings();
+
+  {
+    c3_i rad;
+    c3_y buf[4096];
+
+    // RAND_status, at least on OS X, never returns true.
+    // 4096 bytes should be enough entropy for anyone, right?
+    rad = open("/dev/urandom", O_RDONLY);
+    if ( 4096 != read(rad, &buf, 4096) ) {
+      perror("rand-seed");
+      exit(1);
+    }
+    RAND_seed(buf, 4096);
+    close(rad);
   }
 
   // u3e_grab("main", u3_none);

@@ -4,9 +4,6 @@
 [submodule "subprojects/commonmark-legacy"]
 	path = subprojects/commonmark-legacy
 	url = https://github.com/urbit/commonmark-legacy.git
-[submodule "subprojects/http-parser-legacy"]
-	path = subprojects/http-parser-legacy
-	url = https://github.com/urbit/http-parser-legacy.git
 [submodule "subprojects/ed25519"]
 	path = subprojects/ed25519
 	url = https://github.com/urbit/ed25519.git
@@ -19,3 +16,6 @@
 [submodule "subprojects/libuv"]
 	path = subprojects/libuv
 	url = https://github.com/urbit/libuv.git
+[submodule "subprojects/h2o"]
+	path = subprojects/libh2o
+	url = https://github.com/urbit/h2o.git
