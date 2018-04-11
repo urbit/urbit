@@ -5684,8 +5684,9 @@
           $%  {$base p/base}                            ::  base type
               {$dbug p/spot q/spec}                     ::  set debug
               {$leaf p/term q/@}                        ::  constant atom
+              {$like p/wing q/(list wing)}              ::  reference
               {$make p/hoon q/(list spec)}              ::  composed spec
-              {$over p/wing q/spec}                     ::  relative subject
+              {$over p/wing q/spec}                     ::  relative to subject
           ::                                            ::
               {$bcbr p/spec q/hoon}                     ::  $|, verify
               {$bccb p/hoon}                            ::  $_, example
@@ -6971,6 +6972,39 @@
       ==
   |_  {fab/? mod/spec}
   ::
+  ++  autoname
+    ::  derive name from spec
+    ::
+    |-  ^-  (unit term)
+    ?-  -.mod 
+      $base  ?.(?=([%atom *] p.mod) ~ `p.p.mod)
+      $dbug  $(mod q.mod)
+      $leaf  `p.mod
+      $like  ?~(p.mod ~ ?^(i.p.mod ~ `i.p.mod))
+      $make  ~(name ap p.mod)
+      $over  $(mod q.mod)
+    ::
+      $bcbr  $(mod p.mod)
+      $bccb  ~(name ap p.mod)
+      $bccl  $(mod i.p.mod)
+      $bccn  $(mod i.p.mod)
+      $bcdt  ~
+      $bcgl  $(mod q.mod)
+      $bcgr  $(mod q.mod)
+      $bchp  $(mod p.mod)
+      $bckt  $(mod q.mod)
+      $bcls  `p.mod
+      $bcnt  ~ 
+      $bcmc  ~(name ap p.mod)
+      $bcpd  $(mod p.mod)
+      $bcsg  $(mod q.mod)
+      $bctc  ~
+      $bcts  $(mod q.mod)
+      $bcvt  $(mod q.mod)
+      $bcwt  $(mod i.p.mod)
+      $bczp  ~
+    ==
+  ::
   ++  function
     ::  construct a function example
     ::
@@ -7073,8 +7107,12 @@
   ++  unfold
     |=  [fun/hoon arg/(list spec)]
     ^-  hoon
-    ?~  arg  fun
     [%cncl fun (turn arg |=(spec bccm/+<))]
+  ::
+  ++  unreel
+    |=  [one/wing res/(list wing)]
+    ^-  hoon
+    ?~(res [%wing one] [%tsgl [%wing one] $(one i.res, res t.res)])
   ::
   ++  descend
     ::  record an axis to original subject
@@ -7115,6 +7153,7 @@
       {$base *}  ?:(=(%void p.mod) [%rock %n 0] (basal p.mod))
       {$dbug *}  [%dbug p.mod $(mod q.mod)]
       {$leaf *}  [%rock p.mod q.mod]
+      {$like *}  $(mod bcmc/(unreel p.mod q.mod))
       {$make *}  $(mod bcmc/(unfold p.mod q.mod))
       {$over *}  $(hay p.mod, mod q.mod)
     ::
@@ -7169,6 +7208,7 @@
       {$base *}  (decorate (basal p.mod))
       {$dbug *}  example(mod q.mod, bug [p.mod bug])
       {$leaf *}  (decorate [%rock p.mod q.mod])
+      {$like *}  example(mod bcmc/(unreel p.mod q.mod))
       {$make *}  example(mod bcmc/(unfold p.mod q.mod))
       {$over *}  example(hay p.mod, mod q.mod)
     ::
@@ -7191,7 +7231,7 @@
     ==
   ::
   ++  factory
-    ::  produce a normalizing gate (mold)
+    ::  make a normalizing gate (mold)
     ::
     ^-  hoon
     ::  process annotations outside construct, to catch default
@@ -7199,14 +7239,20 @@
     ?:  ?=($dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
     ?:  ?=($bcsg -.mod)  factory(mod q.mod, def `p.mod)
     ^-  hoon
-    ?:  &(=(~ def) ?=([%bcmc *] mod))
-      ::  collapse trivial indirection
+    ::  if we recognize a computed gate
+    ::
+    ?:  &(=(~ def) ?=(?(%bcmc %like %make) -.mod))
+      ::  then use it directly
       ::
-      (decorate (home p.mod))
-    ?:  &(=(~ def) ?=([%make *] mod))
-      ::  collapse trivial indirection
-      ::
-      (decorate (home (unfold p.mod q.mod)))
+      %-  decorate
+      %-  home
+      ?-  -.mod
+        %bcmc  p.mod
+        %like  (unreel p.mod q.mod)
+        %make  (unfold p.mod q.mod)
+      ==
+    ::  else 
+    ::
     :^  %brcl  ~^~
       [%ktsg spore]
     ~(relative analyze:(descend 7) 6)
@@ -7354,6 +7400,11 @@
       ::
           {$make *}  
         relative(mod bcmc/(unfold p.mod q.mod))
+      ::
+      ::  indirect
+      ::
+          {$like *}  
+        relative(mod bcmc/(unreel p.mod q.mod))
       ::
       ::  subjective
       ::
@@ -7522,6 +7573,16 @@
       ?>(?=(@ p.gen) p.gen)
     =+  voq=~(open ap gen)
     ?<(=(gen voq) $(gen voq))
+  ::
+  ++  name
+    |-  ^-  (unit term)
+    ?+  gen  ~
+      {$wing *}  ?~(p.gen ~ ?^(i.p.gen ~ `i.p.gen))
+      {$limb *}  `p.gen
+      {$dbug *}  $(gen ~(open ap gen))
+      {$tsgl *}  $(gen ~(open ap gen))
+      {$tsgr *}  $(gen q.gen)
+    ==
   ::
   ++  feck
     |-  ^-  (unit term)
@@ -11998,14 +12059,6 @@
       --
     --
   ::
-  ++  scab
-    %+  cook
-      |=  a/(list wing)  ^-  spec
-      :-  %bcmc
-      |-  ^-  hoon
-      ?~(a !! ?~(t.a [%wing i.a] [%tsgl [%wing i.a] $(a t.a)]))
-    (most col rope)
-  ::
   ++  scad
     %+  knee  *spec  |.  ~+
     %-  stew
@@ -12026,7 +12079,7 @@
               (stag %leaf (sear |=(a/coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
             ==
           ==
-          (stag %bcmc rump)
+          (stag %like (most col rope))
         ==
       :-  '%'
         ;~  pose
@@ -12069,30 +12122,19 @@
         (cold [%base %void] ;~(plug zap zap))
       :-  '^'
         ;~  pose
-          scab
+          (stag %like (most col rope))
           (cold [%base %cell] ket)
         ==
       :-  '='
         ;~  pfix  tis
           %+  sear
-            |=  hon/hoon
-            ^-  (unit spec)      
-            %+  bind
-              |-  ^-  (unit term)
-              ?+  hon  ~
-                {$wing *}  ?~(p.hon ~ ?^(i.p.hon ~ `i.p.hon))
-                {$limb *}  `p.hon
-                {$dbug *}  $(hon ~(open ap hon))
-                {$tsgl *}  $(hon ~(open ap hon))
-                {$tsgr *}  $(hon q.hon)
-              ==
-            |=(term [%bcts +< %bcmc hon])
-          wide
+            |=(mod/spec (bind ~(autoname ax & +<) |=(term [%bcts +< +>+<])))
+          wyde
         ==
       :-  ['a' 'z']
         ;~  pose
           (stag %bcts ;~(plug sym ;~(pfix ;~(pose net tis) wyde)))
-          scab
+          (stag %like (most col rope))
         ==
     ==
   ::
