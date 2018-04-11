@@ -946,20 +946,6 @@ u3_cttp_ef_thus(c3_l    num_l,
     }
   }
   else {
-#if 1
-    u3_noun span = u3v_wish("-:!>(*{"
-                              "purl={"
-                                "p/{p/? q/(unit @ud) r/(each (list @t) @if)} "
-                                "q/{p/(unit @ta) q/(list @t)} "
-                                "r/(list {p/@t q/@t})"
-                              "} "
-                              "moth={p/@tas q/(map @t (list @t)) r/(unit octs)}"
-                            "})");
-
-    u3m_tape(u3dc("text", span, u3k(u3t(cuq))));
-    uL(fprintf(uH, "\n"));
-#endif
-
     ceq_u = _cttp_creq_new(num_l, u3k(u3t(cuq)));
     _cttp_creq_start(ceq_u);
   }
