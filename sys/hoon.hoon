@@ -643,23 +643,30 @@
   ^+  t.a
   [i.a $(a (skim t.a |=(c/_i.a !(b c i.a))))]
 ::
-++  spin
-  |*  {a/(list) b/_|=({* *} [** +<+]) c/*}
-  ::  ?<  ?=($-([_?<(?=($~ a) i.a) _c] [* _c]) b)
-  |-
+++  spin                                                :>  stateful turn
+  :>
+  :>  a: list
+  :>  b: state
+  :>  c: gate from list-item and state to product and new state
+  ~/  %spin
+  |*  [a=(list) b=* c=_|=(^ [** +<+])]
+  =>  .(c `$-([_?>(?=(^ a) i.a) _b] [* _b])`c)
+  =/  acc=(list _-:(c))  ~
+  :>  transformed list and updated state
+  |-  ^-  (pair _acc _b)
   ?~  a
-    ~
-  =+  v=(b i.a c)
-  [i=-.v t=$(a t.a, c +.v)]
+    [(flop acc) b]
+  =^  res  b  (c i.a b)
+  $(acc [res acc], a t.a)
 ::
-++  spun
-  |*  {a/(list) b/_|=({* *} [** +<+])}
-  =|  c/_+<+.b
-  |-
-  ?~  a
-    ~
-  =+  v=(b i.a c)
-  [i=-.v t=$(a t.a, c +.v)]
+++  spun                                                :>  internal spin
+  :>
+  :>  a: list
+  :>  b: gate from list-item and state to product and new state
+  ~/  %spun
+  |*  [a=(list) b=_|=(^ [** +<+])]
+  :>  transformed list
+  p:(spin a +<+.b b)
 ::
 ++  swag                                                ::  slice
   |*  {{a/@ b/@} c/(list)}
