@@ -45,8 +45,8 @@ _cttp_bods_free(u3_hbod* bod_u)
 static u3_hbod*
 _cttp_bod_new(c3_w len_w, c3_c* hun_c)
 {
-  u3_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
-
+  u3_hbod* bod_u = c3_malloc(1 + len_w + sizeof(*bod_u));
+  bod_u->hun_y[len_w] = 0;
   bod_u->len_w = len_w;
   memcpy(bod_u->hun_y, (const c3_y*)hun_c, len_w);
 
@@ -59,8 +59,9 @@ _cttp_bod_new(c3_w len_w, c3_c* hun_c)
 static u3_hbod*
 _cttp_bod_from_hed(u3_hhed* hed_u)
 {
-  c3_w len_w     = hed_u->nam_w + 2 + hed_u->val_w + 2;
+  c3_w len_w     = hed_u->nam_w + 2 + hed_u->val_w + 3;
   u3_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
+  bod_u->hun_y[len_w] = 0;
 
   memcpy(bod_u->hun_y, hed_u->nam_c, hed_u->nam_w);
   memcpy(bod_u->hun_y + hed_u->nam_w, ": ", 2);
@@ -91,7 +92,8 @@ _cttp_bods_to_octs(u3_hbod* bod_u)
       bid_u = bid_u->nex_u;
     }
   }
-  buf_y = c3_malloc(len_w);
+  buf_y = c3_malloc(1 + len_w);
+  buf_y[len_w] = 0;
 
   {
     c3_y* ptr_y = buf_y;
@@ -120,8 +122,8 @@ _cttp_bod_from_octs(u3_noun oct)
   len_w = u3h(oct);
 
   {
-    u3_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
-
+    u3_hbod* bod_u = c3_malloc(1 + len_w + sizeof(*bod_u));
+    bod_u->hun_y[len_w] = 0;
     bod_u->len_w = len_w;
     u3r_bytes(0, len_w, bod_u->hun_y, u3t(oct));
 
@@ -190,8 +192,10 @@ _cttp_hed_new(u3_atom nam, u3_atom val)
   c3_w     val_w = u3r_met(3, val);
   u3_hhed* hed_u = c3_malloc(sizeof(*hed_u));
 
-  hed_u->nam_c = c3_malloc(nam_w);
-  hed_u->val_c = c3_malloc(val_w);
+  hed_u->nam_c = c3_malloc(1 + nam_w);
+  hed_u->val_c = c3_malloc(1 + val_w);
+  hed_u->nam_c[nam_w] = 0;
+  hed_u->val_c[val_w] = 0;
   hed_u->nex_u = 0;
   hed_u->nam_w = nam_w;
   hed_u->val_w = val_w;
@@ -419,7 +423,7 @@ static c3_c*
 _cttp_creq_url(u3_noun pul)
 {
   c3_w  len_w = _cttp_mcut_url(0, 0, u3k(pul));
-  c3_c* url_c = c3_malloc(len_w + 1);
+  c3_c* url_c = c3_malloc(1 + len_w);
 
   _cttp_mcut_url(url_c, 0, pul);
   url_c[len_w] = 0;
@@ -433,7 +437,7 @@ static c3_c*
 _cttp_creq_host(u3_noun hot)
 {
   c3_w  len_w = _cttp_mcut_host(0, 0, u3k(hot));
-  c3_c* hot_c = c3_malloc(len_w + 1);
+  c3_c* hot_c = c3_malloc(1 + len_w);
 
   _cttp_mcut_host(hot_c, 0, hot);
   hot_c[len_w] = 0;

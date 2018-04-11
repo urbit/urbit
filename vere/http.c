@@ -74,7 +74,8 @@ _http_vec_from_octs(u3_noun oct)
   }
 
   c3_w len_w  = u3h(u3t(oct));
-  c3_y* buf_y = c3_malloc(len_w);
+  c3_y* buf_y = c3_malloc(1 + len_w);
+  buf_y[len_w] = 0;
 
   u3r_bytes(0, len_w, buf_y, u3t(u3t(oct)));
 
@@ -125,8 +126,10 @@ _http_hed_new(u3_atom nam, u3_atom val)
   c3_w     val_w = u3r_met(3, val);
   u3_hhed* hed_u = c3_malloc(sizeof(*hed_u));
 
-  hed_u->nam_c = c3_malloc(nam_w);
-  hed_u->val_c = c3_malloc(val_w);
+  hed_u->nam_c = c3_malloc(1 + nam_w);
+  hed_u->val_c = c3_malloc(1 + val_w);
+  hed_u->nam_c[nam_w] = 0;
+  hed_u->val_c[val_w] = 0;
   hed_u->nex_u = 0;
   hed_u->nam_w = nam_w;
   hed_u->val_w = val_w;
