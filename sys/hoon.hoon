@@ -4790,6 +4790,7 @@
 ++  tec  (just '`')
 ++  tis  (just '=')
 ++  toc  (just '"')
+++  yel  (just '"')
 ++  wut  (just '?')
 ++  zap  (just '!')
 ::
@@ -5702,7 +5703,7 @@
               {$bcmc p/hoon}                            ::  $;, manual 
               {$bcpd p/spec q/hoon}                     ::  $&, repair
               {$bcsg p/hoon q/spec}                     ::  $~, default
-              {$bctc p/spec q/(map term spec)}          ::  $/, read-only core
+              {$bctc p/spec q/(map term spec)}          ::  $`, read-only core
               {$bcts p/toga q/spec}                     ::  $=, name
               {$bcvt p/spec q/spec}                     ::  $@, atom pick
               {$bcwt p/{i/spec t/(list spec)}}          ::  $?, full pick
@@ -6739,7 +6740,7 @@
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
   ++  wtts  |=(mod/spec (gray [%wtts (teal mod) puce]))
   --
-++  cosmetic
+++  cosmetic  !:
   ::  hold-trace: recursion points
   ::  block-count: number of recursion blocks
   ::  block-map-forward: recursion blocks by number
@@ -6806,7 +6807,7 @@
       (add 'a' number)
     (cat 3 (add 'a' (mod number 26)) $(number (div number 26)))
   ::
-  ::  +specify: make a cosmetic spec
+  ::  +specify: make spec that 
   ::
   ++  specify
     ^-  [spec _.]
@@ -6842,7 +6843,9 @@
       |-  ^-  ^spec
       ::  reform a spec left as a type annotation
       ::
-      ?-    -.spec  spec
+      ?+    -.spec  spec
+        ::  incomplete
+        ::
         %dbug  $(spec q.spec)
         %like  ::  hub: type of context
                ::  poy: reference 
@@ -6850,8 +6853,15 @@
                =/  hub  %-  ~(play ut sut)
                         |-  ^-  hoon
                         ?~  q.spec  [%$ 1]
-                        [%tsgl [%wing i.q.spec] $(spec t.q.spec)]
-               ?:  ?=([%& *
+                        [%tsgl [%wing i.q.spec] $(q.spec t.q.spec)]
+               =/  poy  (~(fond ut hub) %free p.spec)
+               ::  if we have a simple arm
+               ::
+               ?:  ?=([%& * * %| *] poy)
+                 ::  then keep the spec
+                 ::
+                 spec
+               !!
       ==
     ::
     ::  +atom: convert atomic type to spec
