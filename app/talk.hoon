@@ -113,7 +113,7 @@
 :>  #
 :>    functional cores and arms.
 ::
-|_  {bol/bowl:gall $0 state}
+|_  {bol/bowl:gall $1 state}
 ::
 :>  #  %transition
 :>    prep transition
@@ -124,7 +124,24 @@
   ::
   =>  |%
       ++  states
-        $%({$0 s/state})
+        $%({$1 s/state} {$0 s/state-0})
+      ::
+      ++  state-0
+        (cork state |=(a/state a(mirrors (~(run by mirrors.a) config-0))))
+      ++  config-0
+        {src/(set source-0) cap/cord tag/tags fit/filter con/control}
+      ++  source-0
+        {cir/circle ran/range-0}
+      ++  range-0
+        %-  unit
+        $:  hed/place-0
+            tal/(unit place-0)
+        ==
+      ++  place-0
+        $%  {$da @da}
+            {$ud @ud}
+            {$sd @sd}
+        ==
       --
   =|  mos/(list move)
   |=  old/(unit states)
@@ -132,8 +149,46 @@
   ?~  old
     ta-done:ta-init:ta
   ?-  -.u.old
-      $0
+      $1
     [mos ..prep(+<+ u.old)]
+  ::
+      $0
+    =.  mos  [[ost.bol %pull /server/inbox server ~] peer-inbox mos]
+    =-  $(old `[%1 s.u.old(mirrors -)])
+    |^
+      (~(run by mirrors.s.u.old) prep-config)
+    ::
+    ++  prep-config
+      |=  cof/config-0
+      ^-  config
+      %=  cof
+          src
+        %-  ~(gas in *(set source))
+        (murn ~(tap in src.cof) prep-source)
+      ==
+    ::
+    ++  prep-source
+      |=  src/source-0
+      ^-  (unit source)
+      =+  nan=(prep-range ran.src)
+      ?~  nan
+        ~&  [%forgetting-source src]
+        ~
+      `src(ran u.nan)
+    ::
+    ++  prep-range
+      |=  ran/range-0
+      ^-  (unit range)
+      ?~  ran  `ran
+      ::  ranges with a relative end aren't stored because they end
+      ::  immediately, so if we find one we can safely discard it.
+      ?:  ?=({$~ {$sd @sd}} tal.u.ran)  ~
+      ::  we replace relative range starts with the current date.
+      ::  this is practically correct.
+      ?:  ?=({$sd @sd} hed.u.ran)
+        `ran(hed.u [%da now.bol])
+      `ran
+    --
   ==
 ::
 :>  #
@@ -229,8 +284,8 @@
       %+  welp  /circle/[inbox]/grams/config/group
       ?.  =(0 count)
         [(scot %ud last) ~]
-      =+  history-msgs=200
-      [(cat 3 '-' (scot %ud history-msgs)) ~]
+      =+  history-days=~d5
+      [(scot %da (sub now.bol history-days)) ~]
   ==
 ::
 :>  #

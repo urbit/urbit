@@ -78,8 +78,7 @@
   ::
   |=  pla/place
   ^-  knot
-  ?.  ?=($sd -.pla)  (scot -.pla +.pla)
-  (cat 3 '-' (scot %ud (abs:si +.pla)))
+  (scot -.pla +.pla)
 ::
 ++  path-to-range
   :>    path to msg range
@@ -106,10 +105,6 @@
     |=  a/dime
     ^-  (unit @da)
     ?:(?=($da p.a) `q.a ~)
-  ::
-    %+  stag  %sd
-    %+  cook  (cury new:si |)
-    ;~(pfix hep dem:ag)
   ==
 ::
 ++  change-glyphs                                       :<  ...

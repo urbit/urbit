@@ -117,7 +117,7 @@
 :>  #
 :>    functional cores and arms.
 ::
-|_  {bol/bowl:gall $0 state}
+|_  {bol/bowl:gall $1 state}
 ::
 :>  #  %transition
 :>    prep transition
@@ -127,7 +127,41 @@
   ::
   =>  |%
       ++  states
-        $%({$0 s/state})
+        $%({$1 s/state} {$0 s/state-0})
+      ::
+      ++  state-0
+        (cork state |=(a/state a(stories (~(run by stories.a) story-0))))
+      ++  story-0
+        %+  cork  story
+        |=  a/story
+        %=  a
+          shape     *config-0
+          mirrors   (~(run by mirrors.a) config-0)
+          peers     (~(run by peers.a) |=(a/(list query) (turn a query-0)))
+        ==
+      ++  query-0
+        $?  $:  $circle
+                nom/name
+                wer/(unit circle)
+                wat/(set circle-data)
+                ran/range-0
+            ==
+            query
+        ==
+      ++  config-0
+        {src/(set source-0) cap/cord tag/tags fit/filter con/control}
+      ++  source-0
+        {cir/circle ran/range-0}
+      ++  range-0
+        %-  unit
+        $:  hed/place-0
+            tal/(unit place-0)
+        ==
+      ++  place-0
+        $%  {$da @da}
+            {$ud @ud}
+            {$sd @sd}
+        ==
       --
   =|  mos/(list move)
   |=  old/(unit states)
@@ -136,8 +170,64 @@
     %-  pre-bake
     ta-done:ta-init:ta
   ?-  -.u.old
-      $0
+      $1
     [mos ..prep(+<+ u.old)]
+  ::
+      $0
+    =-  $(old `[%1 s.u.old(stories -)])
+    |^  %-  ~(run by stories.s.u.old)
+        |=  soy/story-0
+        ^-  story
+        %=  soy
+          shape     (prep-config shape.soy)
+          mirrors   (~(run by mirrors.soy) prep-config)
+          peers     %-  ~(run by peers.soy)
+                    |=  a/(list query-0)
+                    ^-  (list query)
+                    (murn a prep-query)
+        ==
+    ::
+    ++  prep-config
+      |=  cof/config-0
+      ^-  config
+      %=  cof
+          src
+        %-  ~(gas in *(set source))
+        (murn ~(tap in src.cof) prep-source)
+      ==
+    ::
+    ++  prep-source
+      |=  src/source-0
+      ^-  (unit source)
+      =+  nan=(prep-range ran.src)
+      ?~  nan
+        ~&  [%forgetting-source src]
+        ~
+      `src(ran u.nan)
+    ::
+    ++  prep-query
+      |=  que/query-0
+      ^-  (unit query)
+      ?.  ?=($circle -.que)  `que
+      =+  nan=(prep-range ran.que)
+      ?~  nan
+        ~&  [%forgetting-query que]
+        ~
+      `que(ran u.nan)
+    ::
+    ++  prep-range
+      |=  ran/range-0
+      ^-  (unit range)
+      ?~  ran  `ran
+      ::  ranges with a relative end aren't stored because they end
+      ::  immediately, so if we find one we can safely discard it.
+      ?:  ?=({$~ {$sd @sd}} tal.u.ran)  ~
+      ::  we replace relative range starts with the current date.
+      ::  this is practically correct.
+      ?:  ?=({$sd @sd} hed.u.ran)
+        `ran(hed.u [%da now.bol])
+      `ran
+    --
   ==
 ::
 :>  #  %engines
@@ -1210,7 +1300,6 @@
               ?=(^ tal.u.ran.src)
             ::
               ?-  -.u.tal.u.ran.src
-                $sd   &
                 $da   (gte now.bol +.u.tal.u.ran.src)
                 $ud   ?&  ?=(^ seq)
                           (gte u.seq +.u.tal.u.ran.src)
@@ -1233,12 +1322,8 @@
       =.  ran
         ?~  ran  `[[%ud 0] `[%ud count]]
         =*  hed  hed.u.ran
-        =?  hed  ?=($sd -.hed)
-          [%ud (sub count (min count (abs:si +.hed)))]
         ?~  tal.u.ran  `[hed `[%ud count]]
         =*  tal  u.tal.u.ran
-        =?  tal  ?=($sd -.tal)
-          [%ud (sub count (min count (abs:si +.tal)))]
         ran
       ::  never fails, but compiler needs it.
       ?>  &(?=(^ ran) ?=(^ tal.u.ran))
@@ -1248,14 +1333,12 @@
       |-  ^-  (list telegram)
       ?~  gaz  zeg
       ?:  ?-  -.tal                                     ::  after the end
-            $sd  !!  ::  caught above
             $ud  (lth +.tal num)
             $da  (lth +.tal wen.i.gaz)
           ==
         ::  if past the range, we're done searching.
         zeg
       ?:  ?-  -.hed                                     ::  before the start
-            $sd  !!  ::  caught above
             $ud  (lth num +.hed)
             $da  (lth wen.i.gaz +.hed)
           ==
@@ -1279,7 +1362,6 @@
       =/  min
         =*  hed  hed.u.ran
         ?-  -.hed
-          $sd  &  ::  relative is always in.
           $ud  (gth count +.hed)
           $da  (gth now.bol +.hed)
         ==
@@ -1288,7 +1370,6 @@
       =-  [&(min -) !-]
       =*  tal  u.tal.u.ran
       ?-  -.tal
-        $sd  |  ::  relative is always done.
         $ud  (gte +(+.tal) count)
         $da  (gte +.tal now.bol)
       ==
