@@ -539,7 +539,7 @@ typedef struct {
 } _n_rite;
 
 typedef struct {
-  c3_w    sip_w;
+  c3_l    sip_l;
   u3_noun key;
 } _n_memo;
 
@@ -554,9 +554,9 @@ typedef struct {
 } _n_prog_lit;
 
 typedef struct {
-  c3_o     own_w;
+  c3_o     own_o;
   c3_w     len_w;
-  c3_y*    ops_u;
+  c3_y*    ops_y;
 } _n_prog_ops;
 
 typedef struct {
@@ -575,15 +575,46 @@ typedef struct {
   _n_prog_memo mem_u;
   _n_prog_call cal_u;
   _n_prog_reg  reg_u;
-  void*        dat[0];
+  c3_y*        dat[0];
 } _n_prog;
+
+/* _n_arg(): return the size (in bytes) of an opcode's argument
+ */
+static inline c3_y
+_n_arg(c3_y cod_y)
+{
+  switch ( cod_y ) {
+    case FABK: case FABL: case FIBL: case FIBK:
+    case LILB: case LITB: case LIBL: case LIBK:
+    case SAMB: case SANB: case SBIP: case SBIN:
+    case SLIB: case SKIB: case KICB: case TICB:
+    case BUSH: case BAST: case BALT:
+      return sizeof(c3_y);
+
+    case FASK: case FASL: case FISL: case FISK:
+    case LILS: case LITS: case LISL: case LISK:
+    case SAMS: case SANS: case SIPS: case SINS:
+    case SLIS: case SKIS: case KICS: case TICS:
+    case SUSH: case SAST: case SALT: 
+      return sizeof(c3_s);
+
+    case SWIP: case SWIN:
+      return sizeof(c3_l);
+
+    default:
+      return 0;
+  }
+}
+
 
 /* _n_melt(): measure space for list of ops (from _n_comp) */
 static void
 _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
         c3_w* reg_w, c3_w* lit_w, c3_w* mem_w)
 {
+  c3_y cod_y;
   c3_w i_w;
+  u3_noun op;
 
   while ( u3_nul != ops ) {
     op  = u3h(ops);
@@ -668,84 +699,66 @@ _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
 }
 
 static _n_prog*
-_n_prog_new(u3_noun bok)
+_n_prog_new(c3_w byc_w, c3_w cal_w,
+            c3_w reg_w, c3_w lit_w, c3_w mem_w)
 {
-  _n_prog* pog_u;
-  c3_w byc_w = 1, // HALT
-       cal_w = 0,
-       reg_w = 0,
-       lit_w = 0,
-       mem_w = 0,
-       off_w, cab_w, reb_w, lib_w, meb_w;
+  c3_w cab_w = (sizeof(_n_site) * cal_w),
+       reb_w = (sizeof(_n_rite) * reg_w),
+       lib_w = (sizeof(u3_noun) * lit_w),
+       meb_w = (sizeof(_n_memo) * mem_w),
+       dat_w = byc_w + cab_w + reb_w + lib_w + meb_w;
 
-  _n_melt(bok, &byc_w, &cal_w, &reg_w, &lit_w, &mem_w);
-  
-  cab_w = (sizeof(_n_site) * cal_w);
-  reb_w = (sizeof(_n_rite) * reg_w);
-  lib_w = (sizeof(u3_noun) * lit_w);
-  meb_w = (sizeof(_n_memo) * mem_w);
-  pog_u = u3a_calloc(sizeof(_n_prog) +
-      sizeof(_n_prog_ops)  + byc_w +
-      sizeof(_n_prog_call) + cab_w +
-      sizeof(_n_prog_reg)  + reb_w +
-      sizeof(_n_prog_lit)  + lib_w +
-      sizeof(_n_prog_memo) + meb_w);
-
+  _n_prog* pog_u     = u3a_malloc(sizeof(_n_prog) + dat_w);
   pog_u->byc_u.own_o = c3y;
   pog_u->byc_u.len_w = byc_w;
-  pog_u->byc_u.ops_u = &(pog_u->dat);
+  pog_u->byc_u.ops_y = (c3_y*) (&(pog_u->dat));
 
   pog_u->lit_u.len_w = lit_w;
-  pog_u->cal_u.lit_u = &(pog_u->dat) + (off_w = byc_w);
+  pog_u->lit_u.non   = (u3_noun*) (pog_u->byc_u.ops_y + pog_u->byc_u.len_w);
 
   pog_u->mem_u.len_w = mem_w;
-  pog_u->mem_u.sot_u = &(pog_u->dat) + (off_w += lib_w);
+  pog_u->mem_u.sot_u = (_n_memo*) (pog_u->lit_u.non + pog_u->lit_u.len_w);
 
   pog_u->cal_u.len_w = cal_w;
-  pog_u->cal_u.sit_u = &(pog_u->dat) + (off_w += meb_w);
+  pog_u->cal_u.sit_u = (_n_site*) (pog_u->mem_u.sot_u + pog_u->mem_u.len_w);
 
   pog_u->reg_u.len_w = reg_w;
-  pog_u->reg_u.rit_u = &(pog_u->dat) + (off_w + cab_w);
+  pog_u->reg_u.rit_u = (_n_rite*) (pog_u->cal_u.sit_u + pog_u->cal_u.len_w);
 
-  _n_prog_asm(bok, pog_u);
   return pog_u;
 }
 
 static _n_prog*
-_n_prog_old(_n_prog* sep)
+_n_prog_old(_n_prog* sep_u)
 {
-  c3_w cab_w = sizeof(_n_site) * sep->cal_u.len_w,
-       reb_w = sizeof(_n_rite) * sep->reg_u.len_w,
-       lib_w = sizeof(u3_noun) * sep->lit_u.len_w,
-       meb_w = sizeof(_n_memo) * sep->mem_u.len_w;
+  c3_w cab_w = sizeof(_n_site) * sep_u->cal_u.len_w,
+       reb_w = sizeof(_n_rite) * sep_u->reg_u.len_w,
+       lib_w = sizeof(u3_noun) * sep_u->lit_u.len_w,
+       meb_w = sizeof(_n_memo) * sep_u->mem_u.len_w,
+       dat_w = cab_w + reb_w + lib_w + meb_w;
 
-  _n_prog* pog_u = u3a_calloc(sizeof(_n_prog) +
-      sizeof(_n_prog_ops)  +
-      sizeof(_n_prog_call) + cab_w +
-      sizeof(_n_prog_reg)  + reb_w +
-      sizeof(_n_prog_lit)  + lib_w +
-      sizeof(_n_prog_memo) + meb_w);
-
+  _n_prog* pog_u     = u3a_malloc(sizeof(_n_prog) + dat_w);
   pog_u->byc_u.own_o = c3n;
-  pog_u->byc_u.len_w = sep->byc_u.len_w;
-  pog_u->byc_u.ops_u = sep->byc_u.ops_u;
+  pog_u->byc_u.len_w = sep_u->byc_u.len_w;
+  pog_u->byc_u.ops_y = sep_u->byc_u.ops_y;
 
-  pog_u->lit_u.len_w = sep->lit_u.len_w;
-  pog_u->cal_u.lit_u = &(pog_u->dat);
+  pog_u->lit_u.len_w = sep_u->lit_u.len_w;
+  pog_u->lit_u.non   = (u3_noun*) &(pog_u->dat);
 
-  pog_u->mem_u.len_w = sep->mem_u.len_w;
-  pog_u->mem_u.sot_u = &(pog_u->dat) + (off_w = lib_w);
+  pog_u->mem_u.len_w = sep_u->mem_u.len_w;
+  pog_u->mem_u.sot_u = (_n_memo*) (pog_u->lit_u.non + pog_u->lit_u.len_w);
 
-  pog_u->cal_u.len_w = sep->cal_u.len_w;
-  pog_u->cal_u.sit_u = &(pog_u->dat) + (off_w += meb_w);
+  pog_u->cal_u.len_w = sep_u->cal_u.len_w;
+  pog_u->cal_u.sit_u = (_n_site*) (pog_u->mem_u.sot_u + pog_u->mem_u.len_w);
 
-  pog_u->reg_u.len_w = sep->reg_u.len_w;
-  pog_u->reg_u.rit_u = &(pog_u->dat) + (off_w + cab_w);
+  pog_u->reg_u.len_w = sep_u->reg_u.len_w;
+  pog_u->reg_u.rit_u = (_n_rite*) (pog_u->cal_u.sit_u + pog_u->cal_u.len_w);
 
+  memcpy(pog_u->dat, sep_u->dat, dat_w);
   return pog_u;
 }
 
-static inline void
+static void
 _n_prog_asm_inx(c3_y* buf_y, c3_w* i_w, c3_s inx_s, c3_y cod)
 {
   if ( inx_s <= 0xFF ) {
@@ -764,16 +777,17 @@ _n_prog_asm_inx(c3_y* buf_y, c3_w* i_w, c3_s inx_s, c3_y cod)
 static void
 _n_prog_asm(u3_noun ops, _n_prog* pog_u)
 {
-  u3_noun top    = ops;
-  c3_y*   buf_y  = pog_u->byc.ops_y;
-  c3_w    i_w    = pog_u->byc.len_w,
-          sip_l  = 0,
-          ip_l   = 0,
-  c3_l    wil_l, was_l;
+  u3_noun top    = ops,
+          sil    = u3_nul;
+  c3_y*   buf_y  = pog_u->byc_u.ops_y;
+  c3_y    sod_y;
   c3_s    lit_s  = 0,
           cal_s  = 0,
           mem_s  = 0,
           reg_s  = 0;
+  c3_l    wil_l, was_l;
+  c3_w    i_w    = pog_u->byc_u.len_w,
+          ip_l   = 0;
 
   buf_y[i_w] = HALT;
 
@@ -787,7 +801,7 @@ _n_prog_asm(u3_noun ops, _n_prog* pog_u)
       switch ( cod ) {
         default:
           c3_assert(0);
-          return 0;
+          return;
 
         /* skips cannot be computed until we have generated the next
          * n opcodes, so we create some state and finish the insert 
@@ -843,7 +857,7 @@ _n_prog_asm(u3_noun ops, _n_prog* pog_u)
         /* memo index args */
         case SKIB: case SLIB: {
           _n_prog_asm_inx(buf_y, &i_w, mem_s, cod);
-          _n_mem* mem_u = &(pog_u->mem_u.sot_u[mem_s++]);
+          _n_memo* mem_u = &(pog_u->mem_u.sot_u[mem_s++]);
           mem_u->sip_l = u3h(u3t(op));
           mem_u->key   = u3k(u3t(u3t(op)));
           break;
@@ -869,7 +883,7 @@ _n_prog_asm(u3_noun ops, _n_prog* pog_u)
     while ( u3_nul != sil ) {
       u3_noun cod, wil, was;
       u3x_trel(u3h(sil), &cod, &wil, &was);
-      cod_y = (c3_y) cod;
+      sod_y = (c3_y) cod;
       wil_l = (c3_l) wil;
       was_l = (c3_l) was;
       if ( ip_l != wil_l ) {
@@ -901,7 +915,7 @@ _n_prog_asm(u3_noun ops, _n_prog* pog_u)
             buf_y[was_l--] = (c3_y) dif_w;
             buf_y[was_l]   = sod_y + 2;
             break;
-          defaut:
+          default:
             c3_assert(0);
             break;
         }
@@ -912,9 +926,23 @@ _n_prog_asm(u3_noun ops, _n_prog* pog_u)
   }
   // this assert will fail if we overflow a c3_w worth of instructions
   c3_assert(u3_nul == ops);
-
   u3z(top);
-  return buf_y;
+}
+
+static _n_prog*
+_n_prog_from_ops(u3_noun ops)
+{
+  _n_prog* pog_u;
+  c3_w byc_w = 1, // HALT
+       cal_w = 0,
+       reg_w = 0,
+       lit_w = 0,
+       mem_w = 0;
+
+  _n_melt(ops, &byc_w, &cal_w, &reg_w, &lit_w, &mem_w);
+  pog_u = _n_prog_new(byc_w, cal_w, reg_w, lit_w, mem_w);
+  _n_prog_asm(ops, pog_u);
+  return pog_u;
 }
 
 #if 0
@@ -982,34 +1010,6 @@ static inline void
 _n_apen(u3_noun* dst, u3_noun src)
 {
   *dst = u3kb_weld(src, *dst);
-}
-
-/* _n_arg(): return the size (in bytes) of an opcode's argument
- */
-static inline c3_y
-_n_arg(c3_y cod_y)
-{
-  switch ( cod_y ) {
-    case FABK: case FABL: case FIBL: case FIBK:
-    case LILB: case LITB: case LIBL: case LIBK:
-    case SAMB: case SANB: case SBIP: case SBIN:
-    case SLIB: case SKIB: case KICB: case TICB:
-    case BUSH: case BAST: case BALT:
-      return sizeof(c3_y);
-
-    case FASK: case FASL: case FISL: case FISK:
-    case LILS: case LITS: case LISL: case LISK:
-    case SAMS: case SANS: case SIPS: case SINS:
-    case SLIS: case SKIS: case KICS: case TICS:
-    case SUSH: case SAST: case SALT: 
-      return sizeof(c3_s);
-
-    case SWIP: case SWIN:
-      return sizeof(c3_l);
-
-    default:
-      return 0;
-  }
 }
 
 /* _n_emit(): emit a single instruction to ops
@@ -1092,11 +1092,11 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
 
         op_y   = (c3y == los_o) ? SLIB : SKIB; // overflows to SLIS / SKIS
         ++tot_w; _n_emit(ops, u3nt(op_y, mem_w, u3k(nef)));
-        tot_s += mem_w; _n_apen(ops, mem);
+        tot_w += mem_w; _n_apen(ops, mem);
         break;
       }
     }
-    return tot_s;
+    return tot_w;
   }
 }
 
@@ -1417,10 +1417,10 @@ _n_toss(c3_ys mov, c3_ys off)
 /* _n_resh(): read a c3_s from the bytecode stream
  */
 static inline c3_s
-_n_resh(c3_y* buf, c3_s* ip_s)
+_n_resh(c3_y* buf, c3_w* ip_w)
 {
-  c3_y les = buf[(*ip_s)++];
-  c3_y mos = buf[(*ip_s)++];
+  c3_y les = buf[(*ip_w)++];
+  c3_y mos = buf[(*ip_w)++];
   return les | (mos << 8);
 }
 
@@ -1443,7 +1443,7 @@ static inline _n_prog*
 _n_bite(u3_noun fol) {
   u3_noun ops  = u3_nul;
   _n_comp(&ops, fol, c3y, c3y);
-  return _n_prog_new(ops);
+  return _n_prog_from_ops(ops);
 }
 
 /* _n_find(): return prog for given formula. fol is RETAINED.
@@ -1456,16 +1456,16 @@ _n_find(u3_noun fol)
     return u3to(_n_prog, pog);
   }
   else {
-    u3a_road* rod_u = u3R->par_p;
+    u3a_road* rod_u = u3to(u3a_road, u3R->par_p);
     while ( rod_u ) {
       pog = u3h_git(rod_u->byc.har_p, fol);
       if ( u3_none != pog ) {
         _n_prog* old = _n_prog_old(u3to(_n_prog, pog)); 
-        u3h_put(u3R->byc.har_p, u3a_outa(old));
+        u3h_put(u3R->byc.har_p, fol, u3a_outa(old));
         return old;
       }
       else {
-        rod_u = rod_u->par_p;
+        rod_u = u3to(u3a_road, rod_u->par_p);
       }
     }
     {
@@ -1543,9 +1543,10 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
   };
 
   _n_site* sit_u;
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
   _n_rite* rit_u;
   _n_memo* mem_u;
-  c3_y *pog = pog_u->byc.ops_u;
+  c3_y *pog = pog_u->byc_u.ops_y;
   c3_w sip_w, ip_w = 0;
   u3_noun* top;
   u3_noun x, o;
@@ -1576,7 +1577,7 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       else {
         fam   = u3to(burnframe, u3R->cap_p) + off;
         pog_u = fam->pog_u;
-        pog   = pog_u->byc.ops_u;
+        pog   = pog_u->byc_u.ops_y;
         ip_w  = fam->ip_w;
 
         u3R->cap_p = u3of(burnframe, fam - (mov+off));
@@ -1693,9 +1694,6 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       u3z(o);
       BURN();
 
-    &&do_lit0, &&do_lit1, &&do_litb, &&do_lits,
-    &&do_libk, &&do_lisk,
-
     do_lit0:
       _n_push(mov, off, 0);
       BURN();
@@ -1770,7 +1768,7 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       _n_push(mov, off, x);
     nock_out:
       pog_u = _n_find(o);
-      pog   = pog_u->byc.ops_u;
+      pog   = pog_u->byc_u.ops_y;
       ip_w  = 0;
 #ifdef U3_CPU_DEBUG
     u3R->pro.nox_d += 1;
@@ -1932,11 +1930,11 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
         fam         = u3to(burnframe, u3R->cap_p) + off + mov;
         u3R->cap_p  = u3of(burnframe, fam - off);
         fam->ip_w   = ip_w;
-        fam->pog->u = pog_u;
+        fam->pog_u  = pog_u;
 
         pog_u = _n_find(fol);
-        pog   = pog_u->byc.ops_u;
-        ip_w = 0;
+        pog   = pog_u->byc_u.ops_y;
+        ip_w  = 0;
 #ifdef U3_CPU_DEBUG
     u3R->pro.nox_d += 1;
 #endif
@@ -1971,7 +1969,7 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
         u3_noun fol = u3x_at(x, o);
         *top  = o;
         pog_u = _n_find(fol);
-        pog   = pog_u->byc.ops_u;
+        pog   = pog_u->byc_u.ops_y;
         ip_w  = 0;
 #ifdef U3_CPU_DEBUG
     u3R->pro.nox_d += 1;
@@ -2090,8 +2088,6 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       *top = o;
       BURN();
 
-    &&do_skib, &&do_skis, &&do_slib, &&do_slis,
-    &&do_save,
     do_skis:
       x     = _n_resh(pog, &ip_w);
       goto skim_in;
@@ -2099,7 +2095,7 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     do_skib:
       x     = pog[ip_w++];
     skim_in:
-      mem_u = &(pog_u->mem_u.mem_u[x]);
+      mem_u = &(pog_u->mem_u.sot_u[x]);
       top   = _n_peek(off);
       x     = u3k(*top);
       goto skim_out;
@@ -2111,7 +2107,7 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     do_slib:
       x     = pog[ip_w++];
     slim_in:
-      mem_u = &(pog_u->mem_u.mem_u[x]);
+      mem_u = &(pog_u->mem_u.sot_u[x]);
       x     = _n_pep(mov, off);
     skim_out:
       o     = u3k(mem_u->key);
@@ -2122,7 +2118,7 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
         _n_push(mov, off, u3k(u3h(x)));
       }
       else {
-        ip_w += mem_u->sip_w;
+        ip_w += mem_u->sip_l;
         _n_push(mov, off, o);
         u3z(x);
       }
@@ -2146,8 +2142,8 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
 static u3_noun
 _n_burn_on(u3_noun bus, u3_noun fol)
 {
-  c3_y* pog = _n_find(fol);
   c3_ys mov, off;
+  _n_prog* pog_u = _n_find(fol);
 
   u3z(fol);
   if ( c3y == u3a_is_north(u3R) ) {
@@ -2158,7 +2154,7 @@ _n_burn_on(u3_noun bus, u3_noun fol)
     mov = 1;
     off = -1;
   }
-  u3_noun pro = _n_burn(pog, bus, mov, off);
+  u3_noun pro = _n_burn(pog_u, bus, mov, off);
   return pro;
 }
 
@@ -2180,65 +2176,76 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
   return pro;
 }
 
-/* _n_take_narg(): helper for copying noun-parts of bytecode */
-static void
-_n_take_narg(c3_y* pog, c3_y* gop, c3_s sip_w, c3_s* ip_w)
+/* _n_prog_take(): copy program from a junior road
+ */
+static _n_prog*
+_n_prog_take(_n_prog* pog_u)
 {
-  c3_s i_s;
-  while ( sip_w-- > 0 ) {
-    gop[*ip_w] = pog[*ip_w];
-    *ip_w += 1;
+  _n_prog* gop_u;
+  c3_w     i_w;
+
+  if ( c3y == pog_u->byc_u.own_o ) {
+    gop_u = _n_prog_new(pog_u->byc_u.len_w,
+        pog_u->cal_u.len_w, pog_u->reg_u.len_w,
+        pog_u->lit_u.len_w, pog_u->mem_u.len_w);
+    memcpy(gop_u->byc_u.ops_y, pog_u->byc_u.ops_y, pog_u->byc_u.len_w);
   }
-  u3_noun x = u3a_take(_n_rean(pog, ip_w));
-  i_s = *ip_w;
-  gop[--i_s] = (c3_y) (x >> 24);
-  gop[--i_s] = (c3_y) (x >> 16);
-  gop[--i_s] = (c3_y) (x >> 8);
-  gop[--i_s] = (c3_y) x;
+  else {
+    gop_u = _n_prog_old(pog_u);
+  }
+
+  for ( i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w ) {
+    gop_u->lit_u.non[i_w] = u3a_take(pog_u->lit_u.non[i_w]);
+  }
+
+  for ( i_w = 0; i_w < pog_u->mem_u.len_w; ++i_w ) {
+    _n_memo* new_u = &(gop_u->mem_u.sot_u[i_w]);
+    _n_memo* old_u = &(pog_u->mem_u.sot_u[i_w]);
+    new_u->sip_l   = old_u->sip_l;
+    new_u->key     = u3a_take(old_u->key);
+  }
+
+  for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
+    _n_site* new_u = &(gop_u->cal_u.sit_u[i_w]);
+    _n_site* old_u = &(pog_u->cal_u.sit_u[i_w]);
+    new_u->axe     = u3a_take(old_u->axe);
+  }
+
+  /* nothing to do yet
+  for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
+    _n_rite* new_u = &(gop_u->reg_u.rit_u[i_w]);
+    _n_rite* old_u = &(pog_u->reg_u.rit_u[i_w]);
+  }
+  */
+
+  return gop_u;
 }
 
-/* _n_take_byc(): copy bytecode from a junior road
- */
-static c3_y*
-_n_take_byc(c3_y* pog)
+/* _n_prog_free(): free memory retained by program
+*/
+static void
+_n_prog_free(_n_prog* pog_u)
 {
-  c3_y  i_y;
-  c3_s  ip_w, len_s;
-  c3_y* gop, cod_y;
+  c3_w i_w;
 
-  // measure
-  for ( ip_w = 0; (cod_y = pog[ip_w]) != HALT; ++ip_w ) {
-    ip_w += _n_arg(cod_y);
+  for ( i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w ) {
+    u3z(pog_u->lit_u.non[i_w]);
   }
-  len_s = ip_w + 1;
 
-  gop = u3a_malloc(len_s);
-  for ( ip_w = 0; ip_w < len_s; ) {
-    cod_y = gop[ip_w] = pog[ip_w];
-    ip_w += 1;
-    switch ( cod_y ) {
-      default:
-        for ( i_y = _n_arg(cod_y); i_y > 0; --i_y ) {
-          gop[ip_w] = pog[ip_w];
-          ip_w += 1;
-        }
-        break;
-
-      case CUSH: case FRAG: case FLAG: case LILN: case LITN:
-      case SAMN: case TICK: case KICK:
-        _n_take_narg(pog, gop, 0, &ip_w);
-        break;
-
-      case SKIB: case SLIB:
-        _n_take_narg(pog, gop, 1, &ip_w);
-        break;
-
-      case SKIM: case SLIM:
-        _n_take_narg(pog, gop, 2, &ip_w);
-        break;
-    }
+  for ( i_w = 0; i_w < pog_u->mem_u.len_w; ++i_w ) {
+    u3z(pog_u->mem_u.sot_u[i_w].key);
   }
-  return gop;
+
+  for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
+    u3z(pog_u->cal_u.sit_u[i_w].axe);
+  }
+
+  /* nothing to do yet
+  for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
+  }
+  */
+
+  u3a_free(pog_u);
 }
 
 /* _n_reap(): reap key and value from byc table.
@@ -2250,14 +2257,14 @@ _n_reap(u3_noun kev)
   u3_noun got = u3t(kev);
   u3_noun lof = u3a_take(fol);
   u3_weak con = u3h_get(u3R->byc.har_p, lof);
-  // u3t_samp() etc. can interrupt us while we're compiling
-  // so we need to avoid leaking any parent bytecode
-  if ( u3_none == con ) {
-    c3_y*   pog = u3a_into(got);
-    c3_y*   gop = _n_take_byc(pog);
-    u3_noun tog = u3a_outa(gop);
-    u3h_put(u3R->byc.har_p, lof, tog);
+
+  _n_prog* pog_u = u3to(_n_prog, got);
+  _n_prog* gop_u = _n_prog_take(pog_u);
+
+  if ( u3_none != con ) {
+    _n_prog_free(u3to(_n_prog, con));
   }
+  u3h_put(u3R->byc.har_p, lof, u3a_outa(gop_u));
   u3z(lof);
 }
 
@@ -2269,44 +2276,30 @@ u3n_beep(u3p(u3h_root) har_p)
   u3h_walk(har_p, _n_reap);
 }
 
-/* _n_mark_byc(): mark bytecode for gc.
+/* _n_prog_mark(): mark program for gc.
 */
 static c3_w
-_n_mark_byc(c3_y* pog)
+_n_prog_mark(_n_prog* pog_u)
 {
-  c3_y cod_y;
-  c3_w ip_w  = 0;
-  c3_w tot_w = 0;
-  u3_noun non;
+  c3_w i_w, tot_w = u3a_mark_mptr(pog_u);
 
-  while ( pog[ip_w] != HALT ) {
-    cod_y = pog[ip_w++];
-    switch ( cod_y ) {
-      default:
-        ip_w += _n_arg(cod_y);
-        break;
-
-      case CUSH: case FRAG: case FLAG: case LILN: case LITN:
-      case SAMN: case TICK: case KICK:
-        non = _n_rean(pog, &ip_w);
-        tot_w += u3a_mark_noun(non);
-        break;
-
-      case SKIB: case SLIB:
-        ip_w += sizeof(c3_y);
-        non = _n_rean(pog, &ip_w);
-        tot_w += u3a_mark_noun(non);
-        break;
-
-      case SKIM: case SLIM:
-        ip_w += sizeof(c3_s);
-        non = _n_rean(pog, &ip_w);
-        tot_w += u3a_mark_noun(non);
-        break;
-    }
+  for ( i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w ) {
+    tot_w += u3a_mark_noun(pog_u->lit_u.non[i_w]);
   }
 
-  tot_w += u3a_mark_mptr(pog);
+  for ( i_w = 0; i_w < pog_u->mem_u.len_w; ++i_w ) {
+    tot_w += u3a_mark_noun(pog_u->mem_u.sot_u[i_w].key);
+  }
+
+  for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
+    tot_w += u3a_mark_noun(pog_u->cal_u.sit_u[i_w].axe);
+  }
+
+  /* nothing to do yet for registration sites
+  for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
+  }
+  */
+
   return tot_w;
 }
 
@@ -2315,9 +2308,9 @@ _n_mark_byc(c3_y* pog)
 static void
 _n_bam(u3_noun kev, void* dat)
 {
-  c3_w* bam_w = dat;
-  c3_y* pog   = u3a_into(u3t(kev));
-  *bam_w += _n_mark_byc(pog);
+  c3_w* bam_w  = dat;
+  _n_prog* pog = u3to(_n_prog, u3t(kev));
+  *bam_w += _n_prog_mark(pog);
 }
 
 /* u3n_bark(): mark the bytecode cache for gc.
@@ -2331,47 +2324,12 @@ u3n_bark()
   return bam_w + u3h_mark(har_p);
 }
 
-/* _n_free_byc(): free memory retained by bytecode
-*/
-static void
-_n_free_byc(c3_y* pog)
-{
-  c3_y cod_y;
-  c3_w ip_w  = 0;
-
-  while ( pog[ip_w] != HALT ) {
-    cod_y = pog[ip_w++];
-    switch ( cod_y ) {
-      default:
-        ip_w += _n_arg(cod_y);
-        break;
-
-      case CUSH: case FRAG: case FLAG: case LILN: case LITN:
-      case SAMN: case TICK: case KICK:
-        u3z(_n_rean(pog, &ip_w));
-        break;
-
-      case SKIB: case SLIB:
-        ip_w += sizeof(c3_y);
-        u3z(_n_rean(pog, &ip_w));
-        break;
-
-      case SKIM: case SLIM:
-        ip_w += sizeof(c3_w);
-        u3z(_n_rean(pog, &ip_w));
-        break;
-    }
-  }
-
-  u3a_free(pog);
-}
-
 /* _n_feb(): u3h_walk helper for u3n_bree
  */
 static void
 _n_feb(u3_noun kev)
 {
-  _n_free_byc(u3a_into(u3t(kev)));
+  _n_prog_free(u3to(_n_prog, u3t(kev)));
 }
 
 /* u3n_bree(): free bytecode cache
