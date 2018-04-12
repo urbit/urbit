@@ -55,7 +55,7 @@
 ++  place                                               :>  range indicators
   $%  {$da @da}                                         :<  date
       {$ud @ud}                                         :<  message number
-      {$sd @sd}                                         :<  previous messages
+      :: {$sd @sd}                                         :<  previous messages
   ==                                                    ::
 ++  prize                                               :>  query result
   $%  {$client prize-client}                            :<  /client
