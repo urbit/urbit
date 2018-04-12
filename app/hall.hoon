@@ -1300,7 +1300,6 @@
               ?=(^ tal.u.ran.src)
             ::
               ?-  -.u.tal.u.ran.src
-                :: $sd   &
                 $da   (gte now.bol +.u.tal.u.ran.src)
                 $ud   ?&  ?=(^ seq)
                           (gte u.seq +.u.tal.u.ran.src)
@@ -1323,12 +1322,8 @@
       =.  ran
         ?~  ran  `[[%ud 0] `[%ud count]]
         =*  hed  hed.u.ran
-        :: =?  hed  ?=($sd -.hed)
-        ::   [%ud (sub count (min count (abs:si +.hed)))]
         ?~  tal.u.ran  `[hed `[%ud count]]
         =*  tal  u.tal.u.ran
-        :: =?  tal  ?=($sd -.tal)
-        ::   [%ud (sub count (min count (abs:si +.tal)))]
         ran
       ::  never fails, but compiler needs it.
       ?>  &(?=(^ ran) ?=(^ tal.u.ran))
@@ -1338,14 +1333,12 @@
       |-  ^-  (list telegram)
       ?~  gaz  zeg
       ?:  ?-  -.tal                                     ::  after the end
-            :: $sd  !!  ::  caught above
             $ud  (lth +.tal num)
             $da  (lth +.tal wen.i.gaz)
           ==
         ::  if past the range, we're done searching.
         zeg
       ?:  ?-  -.hed                                     ::  before the start
-            :: $sd  !!  ::  caught above
             $ud  (lth num +.hed)
             $da  (lth wen.i.gaz +.hed)
           ==
@@ -1369,7 +1362,6 @@
       =/  min
         =*  hed  hed.u.ran
         ?-  -.hed
-          :: $sd  &  ::  relative is always in.
           $ud  (gth count +.hed)
           $da  (gth now.bol +.hed)
         ==
@@ -1378,7 +1370,6 @@
       =-  [&(min -) !-]
       =*  tal  u.tal.u.ran
       ?-  -.tal
-        :: $sd  |  ::  relative is always done.
         $ud  (gte +(+.tal) count)
         $da  (gte +.tal now.bol)
       ==
