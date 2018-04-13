@@ -107,13 +107,12 @@
 ::
 ::
 ++  from-module                                         ::  create wrapper
-  |*  _[%module ..$ _abet]:(hood-module)
-  =>  .(+< [identity start finish]=+<)
+  |*  _[identity=%module start=..$ finish=_abet]:(hood-module)
   =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
   |*  handle/_finish
-  |=  _+<.handle
+  |=  a=_+<.handle
   =.  +>.handle  (start hid (able identity))
-  (ably (handle +<))
+  (ably (handle a))
 ::
 ::  per-module interface wrappers
 ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum))

@@ -66,10 +66,19 @@
   |=  ran/range
   ^-  path
   ?~  ran  ~
-  %+  welp
-    /(scot -.hed.u.ran +.hed.u.ran)
+  :-  (place-to-knot hed.u.ran)
   ?~  tal.u.ran  ~
-  /(scot -.u.tal.u.ran +.u.tal.u.ran)
+  [(place-to-knot u.tal.u.ran) ~]
+::
+++  place-to-knot
+  :>    msg pointer to path component
+  :>
+  :>  turns a place structure into a knot for use in
+  :>  subscription paths.
+  ::
+  |=  pla/place
+  ^-  knot
+  (scot -.pla +.pla)
 ::
 ++  path-to-range
   :>    path to msg range
@@ -80,18 +89,23 @@
   |=  pax/path
   ^-  range
   ?~  pax  ~
+  =/  hes/(unit place)  (rush i.pax placer)
   ::  skip past non-number parts of path.
-  ?:  ?=({$~ $~} [(slaw %da i.pax) (slaw %ud i.pax)])
-    $(pax t.pax)
-  :+  ~
-    =+  hed=(slaw %da i.pax)
-    ?^  hed  [%da u.hed]
-    [%ud (slav %ud i.pax)]
+  ?~  hes  $(pax t.pax)
+  :+  ~  u.hes
   ?~  t.pax  ~
-  :-  ~
-  =+  tal=(slaw %da i.t.pax)
-  ?^  tal  [%da u.tal]
-  [%ud (slav %ud i.t.pax)]
+  (rush i.t.pax placer)
+::
+++  placer
+  :>  parse a range place
+  ;~  pose
+    (stag %ud dem:ag)
+  ::
+    =-  (stag %da (sear - crub:so))
+    |=  a/dime
+    ^-  (unit @da)
+    ?:(?=($da p.a) `q.a ~)
+  ==
 ::
 ++  change-glyphs                                       :<  ...
   ::

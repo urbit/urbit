@@ -10,12 +10,15 @@
 ++  test-runner
   :>  run all tests in {a} with a filter.
   =|  pax=path
-  |=  [filter=path eny=@uvJ a=tests:tester]
+  |=  [filter=path [defer=? eny=@uvJ] a=tests:tester]
   ^-  tang
   %-  concat:ls
   %+  turn  a
   |=  b=instance:tester
   ^-  tang
+  =;  tan/tang
+    ?:  defer  tan
+    ((slog (flop tan)) ~)
   =^  matches  filter  (match-filter filter p.b)
   ?.  matches
     ~
@@ -65,10 +68,11 @@
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [filter=$?($~ [pax=path $~])]
-        $~
+        [defer=_& seed=?(~ @uvJ)]
     ==
+~?  !defer  %test-compiled
 :-  %tang
-%^  test-runner
-?~  filter  ~  pax.filter
-eny
+%^    test-runner
+    ?~(filter ~ pax.filter)
+  [defer ?~(seed eny seed)]
 (test-map-to-test-list:tester all-tests)

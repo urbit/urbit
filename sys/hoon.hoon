@@ -257,12 +257,18 @@
   :>  sample type of `*`.
   $-(* *)
 ::
+++  lest
+  :>    null-terminated non-empty list
+  :>
+  :>  mold generator: produces a mold of a null-terminated list of the
+  :>  homogeneous type {a} with at least one element.
+  |*(a/mold {i/a t/(list a)})
 ++  list
   :>    null-terminated list
   :>
   :>  mold generator: produces a mold of a null-terminated list of the
   :>  homogeneous type {a}.
-  |*(a/mold $@($~ {i/a t/(list a)}))
+  |*(a/mold $@($~ (lest a)))
 ::
 ++  lone
   :>    single item tuple
@@ -637,23 +643,30 @@
   ^+  t.a
   [i.a $(a (skim t.a |=(c/_i.a !(b c i.a))))]
 ::
-++  spin
-  |*  {a/(list) b/_|=({* *} [** +<+]) c/*}
-  ::  ?<  ?=($-([_?<(?=($~ a) i.a) _c] [* _c]) b)
-  |-
+++  spin                                                :>  stateful turn
+  :>
+  :>  a: list
+  :>  b: state
+  :>  c: gate from list-item and state to product and new state
+  ~/  %spin
+  |*  [a=(list) b=* c=_|=(^ [** +<+])]
+  =>  .(c `$-([_?>(?=(^ a) i.a) _b] [* _b])`c)
+  =/  acc=(list _-:(c))  ~
+  :>  transformed list and updated state
+  |-  ^-  (pair _acc _b)
   ?~  a
-    ~
-  =+  v=(b i.a c)
-  [i=-.v t=$(a t.a, c +.v)]
+    [(flop acc) b]
+  =^  res  b  (c i.a b)
+  $(acc [res acc], a t.a)
 ::
-++  spun
-  |*  {a/(list) b/_|=({* *} [** +<+])}
-  =|  c/_+<+.b
-  |-
-  ?~  a
-    ~
-  =+  v=(b i.a c)
-  [i=-.v t=$(a t.a, c +.v)]
+++  spun                                                :>  internal spin
+  :>
+  :>  a: list
+  :>  b: gate from list-item and state to product and new state
+  ~/  %spun
+  |*  [a=(list) b=_|=(^ [** +<+])]
+  :>  transformed list
+  p:(spin a +<+.b b)
 ::
 ++  swag                                                ::  slice
   |*  {{a/@ b/@} c/(list)}
@@ -9801,9 +9814,8 @@
     =>  .(fan (~(gas in fan) leg))
     %-  fork
     %~  tap  in
-      %-  ~(gas in *(set type))
-      (turn leg |=({p/type q/hoon} (play(sut p) q)))
-    ==
+    %-  ~(gas in *(set type))
+    (turn leg |=({p/type q/hoon} (play(sut p) q)))
   ::
   ++  take
     |=  {vit/vein duz/tyro}
@@ -10271,10 +10283,9 @@
       :_  p.doy
       %^  cat  3
         %~  rent  co
-            :+  %$  %ud
-            %-  ~(rep by (~(run by q.s.q.sut) |=(tomb ~(wyt by q))))
-            |=([[@ a=@u] b=@u] (add a b))
-        ==
+        :+  %$  %ud
+        %-  ~(rep by (~(run by q.s.q.sut) |=(tomb ~(wyt by q))))
+        |=([[@ a=@u] b=@u] (add a b))
       %^  cat  3
         ?-(p.q.sut $gold '.', $iron '|', $lead '?', $zinc '&')
       =+  gum=(mug q.s.q.sut)
@@ -11616,6 +11627,21 @@
       ?~(a !! ?~(t.a [%wing i.a] [%tsgl [%wing i.a] $(a t.a)]))
     (most col rope)
   ::
+  ++  espy                                              ::  face for =model
+      |=  rot=root
+      ^-  (unit (pair term root))
+      =;  mot
+        ?~(mot ~ `[u.mot rot])
+      |-  ^-  (unit term)
+      ?+  rot  ~
+        {$bcsm *}  $(rot p.rot)
+        {$wing *}  ?~(p.rot ~ ?^(i.p.rot ~ `i.p.rot))
+        {$limb *}  `p.rot
+        {$dbug *}  $(rot ~(open ap rot))
+        {$tsgl *}  $(rot ~(open ap rot))
+        {$tsgr *}  $(rot q.rot)
+      ==
+  ::
   ++  scad
     %+  knee  *root  |.  ~+
     %-  stew
@@ -11677,21 +11703,9 @@
         ==
       :-  '='
         ;~  pfix  tis
-          %+  sear
-            |=  hon/hoon
-            ^-  (unit hoon)      
-            %+  bind
-              |-  ^-  (unit term)
-              ?+  hon  ~
-                {$bcsm *}  $(hon p.hon)
-                {$wing *}  ?~(p.hon ~ ?^(i.p.hon ~ `i.p.hon))
-                {$limb *}  `p.hon
-                {$dbug *}  $(hon ~(open ap hon))
-                {$tsgl *}  $(hon ~(open ap hon))
-                {$tsgr *}  $(hon q.hon)
-              ==
-            |=(term [%bcts +< hon])
-          wyde
+          %+  cook
+            |=([mot=term rot=root] [%bcts mot rot])
+          (sear espy wyde)
         ==
       :-  ['a' 'z']
         ;~  pose
@@ -11967,7 +11981,7 @@
                     ['+' (rune lus %cnls expc)]
                     ['-' (rune hep %cnhp expk)]
                     [':' (rune col %cnhp expi)]
-                    ['~' (rune sig %cnsg expu)]
+                    ['~' (rune sig %cnsg expn)]
                     ['*' (rune tar %cntr expm)]
                     ['=' (rune tis %cnts exph)]
                 ==
@@ -12263,13 +12277,15 @@
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two hoons
     ++  expl  |.(;~(gunk (stag ~ sym) loaf loaf))       ::  term, two hoons
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [tile hoon]s
+    ++  expn  |.  ;~  gunk  rope  loaf                  ::  wing, hoon,
+                    ;~(plug loaf (easy ~))              ::  list of one hoon
+                  ==                                    ::
     ++  expo  |.(;~(gunk wise loaf loaf))               ::  =;
     ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing hoon]s, hoon
     ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two hoons
     ++  expr  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
     ++  exps  |.((butt hank))                           ::  closed gapped hoons
     ++  expt  |.(;~(gunk wise rope loaf loaf))          ::  =^
-    ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, hoon, hoons
     ++  expv  |.((butt rick))                           ::  just changes
     ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three hoons
     ++  expx  |.  ;~  gunk  loaf                        ::  hoon and core tail
@@ -12440,7 +12456,16 @@
       ==
     ==
   ::
-  ++  wise  ;~(plug sym (punt ;~(pfix ;~(pose fas tis) wyde)))
+  ++  wise                                              ::  toro form
+    ;~  pose
+      ;~  pfix  tis
+        %+  cook
+          |=([mot=term rot=root] [mot ~ rot])
+        (sear espy wyde)
+      ==
+      ;~(plug sym (punt ;~(pfix ;~(pose fas tis) wyde)))
+    ==
+  ::
   ++  wrap
     |*  fel/rule
     %+  cook
