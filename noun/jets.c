@@ -759,9 +759,9 @@ _cj_mine_par(u3_noun lan, u3_noun axe, u3_noun pel, u3_noun loc)
   }
 }
 
-/* _cj_mine(): declare a core.  RETAIN.
+/* _cj_mine(): declare a core and produce location. RETAIN.
 */
-static void
+static u3_weak
 _cj_mine(u3_noun cey, u3_noun cor)
 {
   c3_l par_l, jax_l;
@@ -789,7 +789,7 @@ _cj_mine(u3_noun cey, u3_noun cor)
     par = u3r_at(axe, cor);
     if ( u3_none == par || c3n == u3du(par) ) {
       fprintf(stderr, "fund: %s is bogus\r\n", u3r_string(nam));
-      return;
+      return u3_none;
     }
     pel = u3j_spot(par);
     if ( u3_none == pel ) {
@@ -797,7 +797,7 @@ _cj_mine(u3_noun cey, u3_noun cor)
                       u3r_string(nam),
                       u3r_mug(u3h(par)),
                       axe);
-      return;
+      return u3_none;
     }
     pac = _cj_find_warm(pel);
     c3_assert(u3_none != pac);
@@ -826,7 +826,49 @@ _cj_mine(u3_noun cey, u3_noun cor)
   act   = u3nq(jax_l, hap, bal, _cj_jit(jax_l, bat));
   u3h_put(u3R->jed.cod_p, bat, reg);
   u3h_put(u3R->jed.war_p, loc, act);
-  u3z(loc);
+
+  return loc;
+}
+
+/* _cj_moan(): register core known to be unregistered, returning
+ *             location.
+ */
+static u3_weak
+_cj_moan(u3_noun clu, u3_noun cor)
+{
+  u3_weak cey = _cj_je_fsck(clu);
+  u3_weak loc = u3_none;
+  if ( u3_none != cey ) {
+    loc = _cj_mine(cey, cor);
+    u3z(cey);
+  }
+  u3z(cor);
+  return loc;
+}
+
+/* u3j_mile(): register core for jets, returning location.
+*/
+u3_weak
+u3j_mile(u3_noun clu, u3_noun cor)
+{
+  u3t_on(glu_o);
+  u3_weak loc = u3_none;
+  if ( c3n == u3du(cor) ) {
+    u3z(clu);
+    u3z(cor);
+  }
+  else {
+    loc = u3j_spot(cor);
+    if ( u3_none == loc ) {
+      loc = _cj_moan(clu, cor);
+    }
+    else {
+      u3z(clu);
+      u3z(cor);
+    }
+  }
+  u3t_off(glu_o);
+  return loc;
 }
 
 /* u3j_mine(): register core for jets.
@@ -837,16 +879,14 @@ u3j_mine(u3_noun clu, u3_noun cor)
   u3t_on(glu_o);
   if ( (c3n == u3du(cor)) || (c3y == _cj_scan(cor)) ) {
     u3z(clu);
+    u3z(cor);
   }
   else {
-    u3_noun cey = _cj_je_fsck(clu);
-
-    if ( u3_none != cey ) {
-      _cj_mine(cey, cor);
-      u3z(cey);
+    u3_weak loc = _cj_moan(clu, cor);
+    if ( u3_none != loc ) {
+      u3z(loc);
     }
   }
-  u3z(cor);
   u3t_off(glu_o);
 }
 
@@ -1048,7 +1088,7 @@ u3j_ream(void)
                     name=term
                     hooks=(map term axis)
                 ==
-+=  static      (each payload=* parent=static)
++=  static      (each payload=* parent=location)
 +=  dynamic     [where=axis parent=location]
 ::
 +=  registry    [roots=(map * location) parents=(list parent)]

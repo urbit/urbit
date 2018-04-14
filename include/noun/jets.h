@@ -116,7 +116,13 @@
         u3_noun
         u3j_kink(u3_noun cor,
                    u3_noun axe);
- 
+
+
+      /* u3j_mile(): register core for jets, returning location.
+      */
+        u3_weak
+        u3j_mile(u3_noun clu, u3_noun cor);
+
       /* u3j_mine(): register core for jets.
       */
         void
