@@ -5700,7 +5700,7 @@
               {$bcgr p/spec q/spec}                     ::  $>, filter: require
               {$bchp p/spec q/spec}                     ::  $-, function core
               {$bckt p/spec q/spec}                     ::  $^, cons pick
-              {$bcls p/term q/spec}                     ::  $+, trademark
+              {$bcls p/stud q/spec}                     ::  $+, standard
               {$bcnt p/spec q/(map term spec)}          ::  $/, write-only core
               {$bcmc p/hoon}                            ::  $;, manual 
               {$bcpd p/spec q/hoon}                     ::  $&, repair
@@ -5774,7 +5774,7 @@
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
-    {$form p/spec q/hoon}                               ::  annotate with spec 
+    {$form p/note q/hoon}                               ::  annotate
     {$fits p/hoon q/wing}                               ::  underlying ?=
     {$knit p/(list woof)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
@@ -5910,6 +5910,11 @@
               {$11 p/nock q/nock}                       ::  grab data from sky
               {$0 p/@}                                  ::  axis select
           ==                                            ::
+++  note                                                ::  type annotation
+          $%  {$made p/spec}                            ::  constructed by
+              {$make p/spec}                            ::  constructor for
+              {$mark p/stud}                            ::  declared standard
+          ==                                            ::
 ++  type  $~  %noun                                     :: 
           $@  $?  $noun                                 ::  any nouns
                   $void                                 ::  no noun
@@ -5917,9 +5922,9 @@
           $%  {$atom p/term q/(unit @)}                 ::  atom / constant
               {$cell p/type q/type}                     ::  ordered pair
               {$core p/type q/coil}                     ::  object
-              {$face p/{p/what q/$@(term tune)} q/type} ::  namespace (new)
+              {$face p/{p/what q/$@(term tune)} q/type} ::  namespace
               {$fork p/(set type)}                      ::  union
-              {$form p/(pair type spec) q/type}         ::  annotation
+              {$form p/(pair type note) q/type}         ::  annotation
               {$hold p/type q/hoon}                     ::  lazy evaluation
           ==                                            ::
 ++  tony                                                ::  ++tone done right
@@ -6462,7 +6467,7 @@
 ::
 ++  form
   ~/  %form
-  |=  {p/(pair type spec) q/type}
+  |=  {p/(pair type note) q/type}
   ^-  type
   ?:  =(%void q)
     %void
@@ -6823,7 +6828,7 @@
           [%cell *]  (cell p.sut q.sut)
           [%core *]  (core p.sut q.sut)
           [%face *]  (face p.sut q.sut)
-          [%form *]  (form(sut p.p.sut) q.p.sut)
+          [%form *]  !!  ::  (form(sut p.p.sut) q.p.sut)
           [%fork *]  (fork p.sut)
           [%hold *]  ?.  (~(has in hold-trace) sut)
                        %_  $
@@ -7045,7 +7050,7 @@
       $bcgr  $(mod q.mod)
       $bchp  $(mod p.mod)
       $bckt  $(mod q.mod)
-      $bcls  `p.mod
+      $bcls  $(mod q.mod)
       $bcnt  ~ 
       $bcmc  ~(name ap p.mod)
       $bcpd  $(mod p.mod)
