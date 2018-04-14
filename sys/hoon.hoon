@@ -4789,7 +4789,7 @@
 ++  tar  (just '*')
 ++  tec  (just '`')
 ++  tis  (just '=')
-++  toc  (just '"')
+++  toc  (just '"')   ::  XX deprecated
 ++  yel  (just '"')
 ++  wut  (just '?')
 ++  zap  (just '!')
@@ -5686,9 +5686,11 @@
               {$dbug p/spot q/spec}                     ::  set debug
               {$leaf p/term q/@}                        ::  constant atom
               {$like p/wing q/(list wing)}              ::  reference
+              {$loop p/term}                            ::  hygienic reference
               {$make p/hoon q/(list spec)}              ::  composed spec
               {$over p/wing q/spec}                     ::  relative to subject
           ::                                            ::
+              {$bcbc p/spec q/(map term spec)}          ::  $$, recursion
               {$bcbr p/spec q/hoon}                     ::  $|, verify
               {$bccb p/hoon}                            ::  $_, example
               {$bccl p/{i/spec t/(list spec)}}          ::  $:, tuple
@@ -7008,12 +7010,13 @@
 ++  ax
   =+  :*  ::  dom: axis to home
           ::  hay: wing to home
-          ::  doc: documentation
+          ::  cox: hygienic context
           ::  bug: debug annotations
           ::  def: default expression
           ::
           dom=`axis`1
           hay=*wing
+          cox=*(map term spec)
           bug=*(list spot)
           def=*(unit hoon)
       ==
@@ -7027,10 +7030,12 @@
       $base  ?.(?=([%atom *] p.mod) ~ `p.p.mod)
       $dbug  $(mod q.mod)
       $leaf  `p.mod
+      $loop  `p.mod
       $like  ?~(p.mod ~ ?^(i.p.mod ~ `i.p.mod))
       $make  ~(name ap p.mod)
       $over  $(mod q.mod)
     ::
+      $bcbc  $(mod p.mod)
       $bcbr  $(mod p.mod)
       $bccb  ~(name ap p.mod)
       $bccl  $(mod i.p.mod)
@@ -7198,8 +7203,17 @@
     |-  ^-  hoon
     ?-  mod
       {$base *}  ?:(=(%void p.mod) [%rock %n 0] (basal p.mod))
+      {$bcbc *}  ::  track hygienic recursion points lexically
+                 ::
+                 %=  $
+                   mod  p.mod
+                   cox  ::  merge lexically and don't forget %$
+                        ::
+                        (~(put by ^+(cox (~(uni by cox) q.mod))) %$ p.mod)
+                 ==
       {$dbug *}  [%dbug p.mod $(mod q.mod)]
       {$leaf *}  [%rock p.mod q.mod]
+      {$loop *}  ~|([%loop p.mod] $(mod (~(got by cox) p.mod)))
       {$like *}  $(mod bcmc/(unreel p.mod q.mod))
       {$make *}  $(mod bcmc/(unfold p.mod q.mod))
       {$over *}  $(hay p.mod, mod q.mod)
@@ -7256,6 +7270,7 @@
       {$dbug *}  example(mod q.mod, bug [p.mod bug])
       {$leaf *}  (decorate [%rock p.mod q.mod])
       {$like *}  example(mod bcmc/(unreel p.mod q.mod))
+      {$loop *}  [%limb p.mod]
       {$make *}  example(mod bcmc/(unfold p.mod q.mod))
       {$over *}  example(hay p.mod, mod q.mod)
     ::
@@ -7286,19 +7301,20 @@
     ?:  ?=($dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
     ?:  ?=($bcsg -.mod)  factory(mod q.mod, def `p.mod)
     ^-  hoon
-    ::  if we recognize a computed gate
+    ::  if we recognize an indirection
     ::
-    ?:  &(=(~ def) ?=(?(%bcmc %like %make) -.mod))
-      ::  then use it directly
+    ?:  &(=(~ def) ?=(?(%bcmc %like %loop %make) -.mod))
+      ::  then short-circuit it
       ::
       %-  decorate
       %-  home
       ?-  -.mod
         %bcmc  p.mod
         %like  (unreel p.mod q.mod)
+        %loop  [%limb p.mod]
         %make  (unfold p.mod q.mod)
       ==
-    ::  else 
+    ::  else build a gate
     ::
     :^  %brcl  ~^~
       [%ktsg spore]
@@ -7453,10 +7469,31 @@
           {$like *}  
         relative(mod bcmc/(unreel p.mod q.mod))
       ::
+      ::  loop
+      ::
+          {$loop *} 
+        (decorate [%cnhp [%limb p.mod] fetch])
+      ::
       ::  subjective
       ::
           {$over *}  
         relative(hay p.mod, mod q.mod)
+      ::
+      ::  recursive, $$
+      ::
+          {$bcbc *}
+        ::
+        ::  apply semantically 
+        ::
+        :^  %brkt  *chap
+          relative(mod p.mod, dom (peg 3 dom))
+        =-  [[0 [~ ~] -] ~ ~]
+        %-  ~(gas by *(map term (pair what foot)))
+        ^-  (list (trel term what foot))
+        %+  turn
+          ~(tap by q.mod)
+        |=  [=term =spec]
+        [term *what %ash relative(mod spec, dom (peg 3 dom))]
       ::
       ::  normalize, $&
       ::
@@ -11267,7 +11304,7 @@
       %+  cook  |=(a/marl:hoon a)
       ;~  pose
         ;~  less  (jest '"""')
-          (ifix [toc toc] (cook collapse-chars quote-innards))
+          (ifix [yel yel] (cook collapse-chars quote-innards))
         ==
       ::
         %-  inde
@@ -11279,7 +11316,7 @@
       %+  cook  |=(a/(list $@(@ tuna:hoon)) a)
       %-  star
       ;~  pose
-        ;~(pfix bas ;~(pose (mask "-+*%;\{") bas toc bix:ab))
+        ;~(pfix bas ;~(pose (mask "-+*%;\{") bas yel bix:ab))
         inline-embed
         ;~(less bas leb ?:(in-tall-form fail toc) prn)
         ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
@@ -11923,7 +11960,7 @@
         ::
         ::  "quoted text"
         ::
-          (stag %quod (ifix [toc toc] (cool (cash toc) work)))
+          (stag %quod (ifix [yel yel] (cool (cash yel) work)))
         ::
         ::  `classic markdown quote`
         ::
@@ -12154,6 +12191,8 @@
         (stag %bccl (ifix [lac rac] (most ace wyde)))
       :-  '*'
         (cold [%base %noun] tar)
+      :-  '/'
+        ;~(pfix net (stag %loop ;~(pose (cold %$ buc) sym)))
       :-  '@'
         ;~(pfix vat (stag %base (stag %atom mota)))
       :-  '?'
@@ -12360,11 +12399,11 @@
   ++  soil
     ;~  pose
       ;~  less  (jest '"""')
-        %+  ifix  [toc toc]
+        %+  ifix  [yel yel]
         %-  star
         ;~  pose
-          ;~(pfix bas ;~(pose bas toc leb bix:ab))
-          ;~(less toc bas leb prn)
+          ;~(pfix bas ;~(pose bas yel leb bix:ab))
+          ;~(less yel bas leb prn)
           (stag ~ sump)
         ==
       ==
