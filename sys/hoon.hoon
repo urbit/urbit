@@ -6755,7 +6755,7 @@
   ::
   =|  hold-trace=(set type)
   =|  block-count=@ud
-  =|  block-map=(map @ud type)
+  =|  block-points=(map type (pair @ud spec))
   ::
   ::  sut: type we're analyzing
   ::
@@ -6767,29 +6767,20 @@
       ::  +structure: make cosmetic spec from 
       ::
       ++  structure
-        |-  ^-  spec
-        =^  main  +>+.$  specify 
-        ?:  =(~ block-map)  main
-        ^-  spec
-        :+  %bcdt  *spec
-        ::  collect specs from the block map
+        ::  spec: raw analysis product
         ::
-        ^-  (map term spec)
-        %-  ~(gas by `(map term spec)`[[%main main] ~ ~])
-        =/  blocks  ~(tap by block-map)
-        ^-  (list (pair term spec))
+        =^  spec  +>+.$  specify
+        ::  if we didn't block, just use it
         ::
-        ::  discarding any new blocks we acquire -- we shouldn't
-        ::  be acquiring any, but feels funky
+        ?:  =(~ block-points)  spec
+        ::  otherwise, use hygienic recursion
         ::
-        =<  -
-        |-  ^-  [(list (pair term spec)) _+>+.^$]
-        ?~  blocks  [~ +>+.^$]
-        =^  mor  +>+.^$  $(blocks t.blocks)
-        =^  les  +>+.^$  specify(sut q.i.blocks)
-        :_  +>+.^$
-        ^-  (list (pair term spec))
-        [[(synthetic p.i.blocks) les] mor]
+        :+  %bcbc  spec
+        %-  ~(gas by *(map term ^spec))
+        %+  turn
+          ~(tap by block-points)
+        |=  [=type index=@ud =^spec]
+        [(synthetic index) spec]
       ::
       ::  +pattern: pattern and context for data inspection
       ::
@@ -6814,12 +6805,40 @@
       (add 'a' number)
     (cat 3 (add 'a' (mod number 26)) $(number (div number 26)))
   ::
-  ::  +specify: make spec that 
+  ::  +specify: make spec that matches :sut
   ::
   ++  specify
     ^-  [spec _.]
     =<  [- +>]
     |^  ^-  [spec _.]
+        ::
+        ::  if we are already inside :sut
+        ::
+        ?:  (~(has in hold-trace) sut)
+          ::  then produce and record a block reference
+          ::
+          =+  [%loop (synthetic block-count)]
+          :-  -
+          %_  +
+            block-count  +(block-count)            
+            block-points  (~(put by block-points) sut [block-count -])
+          ==
+        ::  else filter main loop for block promotion
+        ::
+        =;  spec  .
+          ::  loc: output block record for :sut
+          ::
+          =/  loc=(unit (pair @ud type))  (~(get by block-points) sut)
+          ::  if we did not find :sut inside itself, pass through
+          ::
+          ?~  loc  [spec .]
+          ::  else produce a block reference and record the analysis
+          ::
+          :-  [%loop (synthetic p.u.loc)] 
+          .(block-points (~(put by block-points) sut [p.u.loc spec]))
+        ::
+        |-  ^-  [spec _+]
+        ::
         ?-  sut
           %void      :_(. [%base %void])
           %noun      :_(. [%base %noun])
