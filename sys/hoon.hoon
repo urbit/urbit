@@ -6747,15 +6747,14 @@
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
   ++  wtts  |=(mod/spec (gray [%wtts (teal mod) puce]))
   --
-++  cosmetic  !:
-  ::  hold-trace: recursion points
-  ::  block-count: number of recursion blocks
-  ::  block-map-forward: recursion blocks by number
-  ::  block-map-reverse: recursion blocks by type
+++  cosmetic
+  ::  entry-trace: current potential block entries
+  ::  block-count: cumulative blocks detected
+  ::  block-pairs: blocking numbers and specs
   ::
-  =|  hold-trace=(set type)
+  =|  entry-trace=(set type)
   =|  block-count=@ud
-  =|  block-points=(map type (pair @ud spec))
+  =|  block-pairs=(map type (pair @ud spec))
   ::
   ::  sut: type we're analyzing
   ::
@@ -6764,22 +6763,22 @@
       ::
       |?  |%
       ::
-      ::  +structure: make cosmetic spec from 
+      ::  +structure: make cosmetic spec from :sut
       ::
       ++  structure
         ::  spec: raw analysis product
         ::
-        =^  spec  +>+.$  specify
+        =^  spec  +>  specify
         ::  if we didn't block, just use it
         ::
-        ?:  =(~ block-points)  spec
-        ::  otherwise, use hygienic recursion
+        ?:  =(~ block-pairs)  spec
+        ::  otherwise, insert hygienic recursion
         ::
         :+  %bcbc  spec
         %-  ~(gas by *(map term ^spec))
         %+  turn
-          ~(tap by block-points)
-        |=  [=type index=@ud =^spec]
+          ~(tap by block-pairs)
+        |=  [=type index=@ud spec=^spec]
         [(synthetic index) spec]
       ::
       ::  +pattern: pattern and context for data inspection
@@ -6810,57 +6809,54 @@
   ++  specify
     ^-  [spec _.]
     =<  [- +>]
-    |^  ^-  [spec _.]
-        ::
-        ::  if we are already inside :sut
-        ::
-        ?:  (~(has in hold-trace) sut)
-          ::  then produce and record a block reference
-          ::
-          =+  [%loop (synthetic block-count)]
-          :-  -
-          %_  +
-            block-count  +(block-count)            
-            block-points  (~(put by block-points) sut [block-count -])
-          ==
-        ::  else filter main loop for block promotion
-        ::
-        =;  spec  .
-          ::  loc: output block record for :sut
-          ::
-          =/  loc=(unit (pair @ud type))  (~(get by block-points) sut)
-          ::  if we did not find :sut inside itself, pass through
-          ::
-          ?~  loc  [spec .]
-          ::  else produce a block reference and record the analysis
-          ::
-          :-  [%loop (synthetic p.u.loc)] 
-          .(block-points (~(put by block-points) sut [p.u.loc spec]))
-        ::
-        |-  ^-  [spec _+]
-        ::
-        ?-  sut
-          %void      :_(. [%base %void])
-          %noun      :_(. [%base %noun])
-        ::
-          [%atom *]  (atom p.sut q.sut)
-          [%cell *]  (cell p.sut q.sut)
-          [%core *]  (core p.sut q.sut)
-          [%face *]  (face p.sut q.sut)
-          [%form *]  !!  ::  (form(sut p.p.sut) q.p.sut)
-          [%fork *]  (fork p.sut)
-          [%hold *]  ?.  (~(has in hold-trace) sut)
-                       %_  $
-                         sut         ~(repo ut sut)
-                         hold-trace  (~(put in hold-trace) sut)
-                       ==
-                     :-  [%bcmc %limb (synthetic block-count)]
-                     %_  .
-                       block-count  +(block-count)
-                       block-map    (~(put by block-map) block-count sut)
-        ==           ==
+    =<  entry
+    |%
+    ::  +entry: make spec at potential entry point
     ::
-    ::  +form: rationalize structure from trace
+    ++  entry
+      ^-  [spec _.]
+      ::  if we are already inside :sut
+      ::
+      ?:  (~(has in entry-trace) sut)
+        ::  then produce and record a block reference
+        ::
+        =+  [%loop (synthetic block-count)]
+        :-  -
+        %_  +
+          block-count  +(block-count)            
+          block-pairs  (~(put by block-pairs) sut [block-count -])
+        ==
+      ::  else filter main loop for block promotion
+      ::
+      =^  spec  .  main(entry-trace (~(put in entry-trace) sut))
+      ::  loc: output block record for :sut
+      ::
+      =/  loc  (~(get by block-pairs) sut)
+      ::  if we did not find :sut inside itself, not a true entry point
+      ::
+      ?~  loc  [spec +>]
+      ::  else produce a block reference and record the analysis
+      ::
+      :-  [%loop (synthetic p.u.loc)] 
+      +>(block-pairs (~(put by block-pairs) sut [p.u.loc spec]))
+    ::
+    ::  +main: make spec from any type
+    ::
+    ++  main 
+      ?-  sut
+        %void      :_(. [%base %void])
+        %noun      :_(. [%base %noun])
+      ::
+        [%atom *]  (atom p.sut q.sut)
+        [%cell *]  (cell p.sut q.sut)
+        [%core *]  (core p.sut q.sut)
+        [%face *]  (face p.sut q.sut)
+        [%form *]  !!  ::  (form(sut p.p.sut) q.p.sut)
+        [%fork *]  (fork p.sut)
+        [%hold *]  entry(sut ~(repo ut sut))
+      == 
+    ::
+    ::  +form: rationalize structure from trace (stub)
     ::
     ++  form
       |=  =spec
@@ -6925,8 +6921,8 @@
       ::  head: cosmetic structure of head
       ::  tail: cosmetic structure of tail
       ::
-      =^  head  +>.$  $(sut left)
-      =^  tail  +>.$  $(sut rite)
+      =^  head  +>.$  main(sut left)
+      =^  tail  +>.$  main(sut rite)
       :_  +>.$
       ::  %bccl: raw tuple
       ::
@@ -6946,7 +6942,7 @@
       ^-  [spec _+>]
       ::  payload-spec: converted payload
       ::
-      =^  payload-spec  +>.$  ^$(sut payload)
+      =^  payload-spec  +>.$  main(sut payload)
       ::  arms: all arms in the core, as hoons
       ::
       =/  arms
@@ -6967,7 +6963,7 @@
         ?~  arms  [~ +>.^$]
         =^  mor  +>.^$  $(arms t.arms)
         =^  les  +>.^$  
-          ^^$(sut [%hold [%core payload battery] q.i.arms])
+          main(sut [%hold [%core payload battery] q.i.arms])
         [[[p.i.arms les] mor] +>.^$]
       ::  arm-map: all arms in the core, as a a spec map
       ::
@@ -6990,7 +6986,7 @@
               content=type
           ==
       ^-  [spec _+>]
-      =^  body  +>.$  ^$(sut content)
+      =^  body  +>.$  main(sut content)
       :_  +>.$
       ?@  q.decor  [%bcts q.decor body]
       ::  discard aliases, etc
@@ -7011,7 +7007,7 @@
         |-  ^-  [(list spec) _+>.^$]
         ?~  type-list  [~ +>.^$]
         =^  mor  +>.^$  $(type-list t.type-list)
-        =^  les  +>.^$  ^^$(sut i.type-list)
+        =^  les  +>.^$  main(sut i.type-list)
         [[les mor] +>.^$]
       ?<  ?=(~ specs)
       :_(+>.$ [%bcwt specs])
@@ -7685,7 +7681,10 @@
   ++  name
     |-  ^-  (unit term)
     ?+  gen  ~
-      {$wing *}  ?~(p.gen ~ ?^(i.p.gen ~ `i.p.gen))
+      {$wing *}  ?~  p.gen  ~ 
+                 ?^  i.p.gen 
+                   ?:(?=(%& -.i.p.gen) ~ q.i.p.gen) 
+                 `i.p.gen
       {$limb *}  `p.gen
       {$dbug *}  $(gen ~(open ap gen))
       {$tsgl *}  $(gen ~(open ap gen))
@@ -12246,6 +12245,7 @@
           (stag %bcts ;~(plug sym ;~(pfix ;~(pose net tis) wyde)))
           (stag %like (most col rope))
         ==
+        
     ==
   ::
   ++  scat
