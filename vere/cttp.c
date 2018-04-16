@@ -59,8 +59,8 @@ _cttp_bod_new(c3_w len_w, c3_c* hun_c)
 static u3_hbod*
 _cttp_bod_from_hed(u3_hhed* hed_u)
 {
-  c3_w len_w     = hed_u->nam_w + 2 + hed_u->val_w + 3;
-  u3_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
+  c3_w len_w     = hed_u->nam_w + 2 + hed_u->val_w + 2;
+  u3_hbod* bod_u = c3_malloc(1 + len_w + sizeof(*bod_u));
   bod_u->hun_y[len_w] = 0;
 
   memcpy(bod_u->hun_y, hed_u->nam_c, hed_u->nam_w);
