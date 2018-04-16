@@ -538,9 +538,13 @@ typedef struct {
   _n_fist fis_u[0];
 } _n_fink;
 
+struct __n_prog;
+
 /* placeholder: call site memory */
 typedef struct {
   u3_noun axe;
+  struct __n_prog *pog_u;
+  u3_noun bat;
 } _n_site;
 
 /* registration site memory */
@@ -581,7 +585,7 @@ typedef struct {
   _n_rite* rit_u;
 } _n_prog_reg;
 
-typedef struct {
+typedef struct __n_prog {
   _n_prog_ops  byc_u;
   _n_prog_lit  lit_u;
   _n_prog_memo mem_u;
@@ -1068,7 +1072,9 @@ _n_prog_asm(u3_noun ops, _n_prog* pog_u, u3_noun sip)
         case TICB: case KICB: {
           _n_prog_asm_inx(buf_y, &i_w, cal_s, cod);
           _n_site* sit_u = &(pog_u->cal_u.sit_u[cal_s++]);
-          sit_u->axe = u3k(u3t(op));
+          sit_u->axe   = u3k(u3t(op));
+          sit_u->pog_u = NULL;
+          sit_u->bat   = u3_none;
           break;
         }
       }
@@ -1099,7 +1105,7 @@ _n_prog_from_ops(u3_noun ops)
   return pog_u;
 }
 
-#if 1
+#if 0
 /* _n_print_stack(): print out the cap stack up to a designated "empty"
  *                   used only for debugging
  */
@@ -1127,7 +1133,7 @@ static void _n_print_stack(u3p(u3_noun) empty) {
 }
 #endif
 
-#if 1
+#ifdef VERBOSE_BYTECODE
 // match to OPCODE TABLE
 static char* opcode_names[] = {
   "halt", "bail",
@@ -1541,7 +1547,7 @@ _n_rewo(c3_y* buf, c3_w* ip_w)
   return one | (two << 8) | (tre << 16) | (qua << 24);
 }
 
-#if 1
+#ifdef VERBOSE_BYTECODE
 /* _n_print_byc(): print bytecode. used for debugging.
  */
 static void
@@ -1623,6 +1629,11 @@ _n_find(u3_noun fol)
           _n_rite* rit_u = &(old->reg_u.rit_u[i_w]);
           rit_u->own_o = c3n;
         }
+        for ( i_w = 0; i_w < old->cal_u.len_w; ++i_w ) {
+          _n_site* sit_u = &(old->cal_u.sit_u[i_w]);
+          sit_u->bat   = u3_none;
+          sit_u->pog_u = NULL;
+        }
         u3h_put(u3R->byc.har_p, fol, u3a_outa(old));
         return old;
       }
@@ -1634,6 +1645,29 @@ _n_find(u3_noun fol)
     u3h_put(u3R->byc.har_p, fol, u3a_outa(gop));
     return gop;
   }
+}
+
+static u3_weak
+_n_kick(u3_noun cor, _n_site* sit_u)
+{
+  u3_weak pro;
+  u3t_off(noc_o);
+  pro = u3j_kick(cor, sit_u->axe);
+  u3t_on(noc_o);
+  if ( u3_none == pro ) {
+    /*
+    if ( (u3_none != sit_u->bat) &&
+         (c3y == u3r_sing(sit_u->bat, u3h(cor))) ) {
+      return u3_none;
+    }
+    */
+    sit_u->pog_u = _n_find(u3r_at(sit_u->axe, cor));
+    if ( u3_none != sit_u->bat ) {
+      u3z(sit_u->bat);
+    }
+    sit_u->bat = u3k(u3h(cor));
+  }
+  return pro;
 }
 
 /* _n_swap(): swap two items on the top of the stack, return pointer to top
@@ -2078,12 +2112,8 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       sit_u = &(pog_u->cal_u.sit_u[x]);
       top   = _n_peek(off);
       o     = *top;
-      x     = sit_u->axe;
-      u3t_off(noc_o);
-      *top = u3j_kick(o, x);
-      u3t_on(noc_o);
+      *top = _n_kick(o, sit_u);
       if ( u3_none == *top ) {
-        u3_noun fol = u3x_at(x, o);
         _n_toss(mov, off);
 
         fam         = u3to(burnframe, u3R->cap_p) + off + mov;
@@ -2091,14 +2121,14 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
         fam->ip_w   = ip_w;
         fam->pog_u  = pog_u;
 
-        pog_u = _n_find(fol);
+        pog_u = sit_u->pog_u;
         pog   = pog_u->byc_u.ops_y;
         ip_w  = 0;
 #ifdef U3_CPU_DEBUG
     u3R->pro.nox_d += 1;
 #endif
 #ifdef VERBOSE_BYTECODE
-        fprintf(stderr, "\r\nhead kick jump: %u, sp: %p\r\n", fol, top);
+        fprintf(stderr, "\r\nhead kick jump: %u, sp: %p\r\n", u3r_at(sit_u->axe, cor), top);
         _n_print_byc(pog, ip_w);
 #endif
         _n_push(mov, off, o);
@@ -2120,21 +2150,17 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       sit_u = &(pog_u->cal_u.sit_u[x]);
       top   = _n_peek(off);
       o     = *top;
-      x     = sit_u->axe;
-      u3t_off(noc_o);
-      *top = u3j_kick(o, x);
-      u3t_on(noc_o);
+      *top = _n_kick(o, sit_u);
       if ( u3_none == *top ) {
-        u3_noun fol = u3x_at(x, o);
         *top  = o;
-        pog_u = _n_find(fol);
+        pog_u = sit_u->pog_u;
         pog   = pog_u->byc_u.ops_y;
         ip_w  = 0;
 #ifdef U3_CPU_DEBUG
     u3R->pro.nox_d += 1;
 #endif
 #ifdef VERBOSE_BYTECODE
-        fprintf(stderr, "\r\ntail kick jump: %u, sp: %p\r\n", fol, top);
+        fprintf(stderr, "\r\ntail kick jump: %u, sp: %p\r\n", u3x_at(sit_u->axe, o);, top);
         _n_print_byc(pog, ip_w);
 #endif
       }
@@ -2336,6 +2362,68 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
 }
 
 static void
+_n_site_take(_n_site* dst_u, _n_site* src_u, c3_o los_o)
+{
+  u3_noun old = dst_u->axe;
+  u3_noun bot = dst_u->bat;
+  dst_u->axe  = u3a_take(src_u->axe);
+
+  if ( c3n == los_o ) {
+    if ( u3_none == src_u->bat ) {
+      dst_u->bat   = u3_none;
+    }
+    else {
+      dst_u->bat   = u3a_take(src_u->bat);
+      dst_u->pog_u = src_u->pog_u;
+    }
+  }
+  else {
+    u3z(old);
+    if ( u3_none != bot ) {
+      u3z(bot);
+      dst_u->bat = u3_none;
+    }
+    /*
+    if ( u3_none != src_u->bat ) {
+      if ( (u3_none == bot) ||
+           (c3n == u3r_sing(bot, src_u->bat)) ) {
+        dst_u->bat   = u3a_take(src_u->bat);
+        dst_u->pog_u = src_u->pog_u;
+        if ( u3_none != bot ) {
+          u3z(bot);
+        }
+      }
+    }
+    */
+  }
+}
+
+static void
+_n_rite_take(_n_rite* dst_u, _n_rite* src_u, c3_o los_o)
+{
+  if ( u3_none == src_u->clu ) {
+    dst_u->clu   = u3_none;
+    dst_u->fin_u = NULL;
+  }
+  else {
+    u3_noun  old   = dst_u->clu;
+    _n_fink* fon_u = dst_u->fin_u;
+    c3_o     own_o = dst_u->own_o;
+    if ( c3y == src_u->own_o ) {
+      dst_u->own_o = c3y;
+      dst_u->clu   = u3a_take(src_u->clu);
+      dst_u->fin_u = _n_fink_take(src_u->fin_u);
+      if ( (c3y == los_o) &&
+          (u3_none != old) &&
+          (c3y == own_o) ) {
+        u3z(old);
+        _n_fink_free(fon_u);
+      }
+    }
+  }
+}
+
+static void
 _n_prog_take_dat(_n_prog* dst_u, _n_prog* src_u, c3_o los_o)
 {
   c3_w i_w;
@@ -2361,39 +2449,13 @@ _n_prog_take_dat(_n_prog* dst_u, _n_prog* src_u, c3_o los_o)
   }
 
   for ( i_w = 0; i_w < src_u->cal_u.len_w; ++i_w ) {
-    _n_site* dst = &(dst_u->cal_u.sit_u[i_w]);
-    _n_site* src = &(src_u->cal_u.sit_u[i_w]);
-    u3_noun  old = dst->axe;
-    dst->axe     = u3a_take(src->axe);
-    if ( c3y == los_o ) {
-      u3z(old);
-    }
+    _n_site_take(&(dst_u->cal_u.sit_u[i_w]),
+                 &(src_u->cal_u.sit_u[i_w]), los_o);
   }
 
   for ( i_w = 0; i_w < src_u->reg_u.len_w; ++i_w ) {
-    _n_rite* dst = &(dst_u->reg_u.rit_u[i_w]);
-    _n_rite* src = &(src_u->reg_u.rit_u[i_w]);
-
-    if ( u3_none == src->clu ) {
-      dst->clu   = u3_none;
-      dst->fin_u = NULL;
-    }
-    else {
-      u3_noun  old   = dst->clu;
-      _n_fink* fon_u = dst->fin_u;
-      c3_o     own_o = dst->own_o;
-      if ( c3y == src->own_o ) {
-        dst->own_o     = c3y;
-        dst->clu       = u3a_take(src->clu);
-        dst->fin_u     = _n_fink_take(src->fin_u);
-        if ( (c3y == los_o) &&
-             (u3_none != old) &&
-             (c3y == own_o) ) {
-          u3z(old);
-          _n_fink_free(fon_u);
-        }
-      }
-    }
+    _n_rite_take(&(dst_u->reg_u.rit_u[i_w]),
+                 &(src_u->reg_u.rit_u[i_w]), los_o);
   }
 }
 
@@ -2418,6 +2480,24 @@ _n_prog_take(_n_prog* pog_u)
   return gop_u;
 }
 
+static void
+_n_site_free(_n_site* sit_u)
+{
+  u3z(sit_u->axe);
+  if ( u3_none != sit_u->bat ) {
+    u3z(sit_u->bat);
+  }
+}
+
+static void
+_n_rite_free(_n_rite* rit_u)
+{
+  if ( (c3y == rit_u->own_o) && u3_none != rit_u->clu ) {
+    u3z(rit_u->clu);
+    _n_fink_free(rit_u->fin_u);
+  }
+}
+
 /* _n_prog_free(): free memory retained by program
 */
 static void
@@ -2434,15 +2514,11 @@ _n_prog_free(_n_prog* pog_u)
   }
 
   for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
-    u3z(pog_u->cal_u.sit_u[i_w].axe);
+    _n_site_free(&(pog_u->cal_u.sit_u[i_w]));
   }
 
   for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
-    _n_rite* rit_u = &(pog_u->reg_u.rit_u[i_w]);
-    if ( (c3y == rit_u->own_o) && u3_none != rit_u->clu ) {
-      u3z(rit_u->clu);
-      _n_fink_free(rit_u->fin_u);
-    }
+    _n_rite_free(&(pog_u->reg_u.rit_u[i_w]));
   }
 
   u3a_free(pog_u);
@@ -2451,22 +2527,45 @@ _n_prog_free(_n_prog* pog_u)
 /* _n_reap(): reap key and value from byc table.
 */
 static void
-_n_reap(u3_noun kev)
+_n_reap(u3_noun kev, void* dat)
 {
+  u3p(u3h_root) mov_p = *((u3p(u3h_root)*) dat);
   u3_noun fol = u3h(kev);
   u3_noun got = u3t(kev);
   u3_noun lof = u3a_take(fol);
+  u3_noun tog;
   u3_weak con = u3h_get(u3R->byc.har_p, lof);
   _n_prog* pog_u = u3to(_n_prog, got);
   
   if ( u3_none == con ) {
-    u3h_put(u3R->byc.har_p, lof, u3a_outa(_n_prog_take(pog_u)));
+    tog = u3a_outa(_n_prog_take(pog_u));
+    u3h_put(u3R->byc.har_p, lof, tog);
   }
   else {
     _n_prog* sep_u = u3to(_n_prog, con);
     _n_prog_take_dat(sep_u, pog_u, c3y);
+    tog = u3a_outa(sep_u);
   }
   u3z(lof);
+  u3h_put(mov_p, got, tog);
+}
+
+static void
+_n_move(u3_noun kev, void* dat)
+{
+  u3p(u3h_root) mov_p = *((u3p(u3h_root)*) dat);
+  _n_prog* pog_u = u3to(_n_prog, u3t(kev));
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
+    _n_site* sit_u = &(pog_u->cal_u.sit_u[i_w]);
+    if ( u3_none != sit_u->bat ) {
+      u3_weak got = u3h_git(mov_p, u3a_outa(sit_u->pog_u));
+      if ( u3_none != got ) {
+        sit_u->pog_u = u3to(_n_prog, got);
+      }
+    }
+  }
 }
 
 /* u3n_beep(): promote bytecode state.
@@ -2474,7 +2573,31 @@ _n_reap(u3_noun kev)
 void
 u3n_beep(u3p(u3h_root) har_p)
 {
-  u3h_walk(har_p, _n_reap);
+  u3p(u3h_root) mov_p = u3h_new();
+  u3h_walk_with(har_p, _n_reap, &mov_p);
+  u3h_walk_with(har_p, _n_move, &mov_p);
+  u3h_free(mov_p);
+}
+
+static c3_w
+_n_site_mark(_n_site* sit_u)
+{
+  c3_w tot_w = u3a_mark_noun(sit_u->axe);
+  if ( u3_none != sit_u->bat ) {
+    tot_w += u3a_mark_noun(sit_u->bat);
+  }
+  return tot_w;
+}
+
+static c3_w
+_n_rite_mark(_n_rite* rit_u)
+{
+  c3_w tot_w = 0;
+  if ( (c3y == rit_u->own_o) && u3_none != rit_u->clu ) {
+    tot_w += u3a_mark_noun(rit_u->clu);
+    tot_w += _n_fink_mark(rit_u->fin_u);
+  }
+  return tot_w;
 }
 
 /* _n_prog_mark(): mark program for gc.
@@ -2493,15 +2616,11 @@ _n_prog_mark(_n_prog* pog_u)
   }
 
   for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
-    tot_w += u3a_mark_noun(pog_u->cal_u.sit_u[i_w].axe);
+    tot_w += _n_site_mark(&(pog_u->cal_u.sit_u[i_w]));
   }
 
   for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
-    _n_rite* rit_u = &(pog_u->reg_u.rit_u[i_w]);
-    if ( (c3y == rit_u->own_o) && u3_none != rit_u->clu ) {
-      tot_w += u3a_mark_noun(rit_u->clu);
-      tot_w += _n_fink_mark(rit_u->fin_u);
-    }
+    tot_w += _n_rite_mark(&(pog_u->reg_u.rit_u[i_w]));
   }
 
   return tot_w;
