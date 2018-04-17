@@ -186,9 +186,6 @@
     ::
       ?.  escape-requested  ~
       ``@p`escape-to
-    ::
-      spawn-proxy
-      transfer-proxy
   ==
 ::
 ++  poke-noun

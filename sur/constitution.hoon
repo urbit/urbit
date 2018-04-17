@@ -13,8 +13,6 @@
       spawned=(set @p)
       sponsor=@p
       escape=(unit @p)
-      spawn-proxy=address
-      transfer-proxy=address
   ==
 ::
 ++  eth-type
@@ -69,8 +67,6 @@
       [%keys enc=@ aut=@ rev=@ud]
       [%sponsor new=@p]
       [%escape new=(unit @p)]
-      [%spawn-proxy new=address]
-      [%transfer-proxy new=address]
   ==
 ::
 ::  #  constants
