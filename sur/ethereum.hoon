@@ -43,6 +43,7 @@
           adr=(list address)
           top=(list octs)
       ==
+      [%eth-get-filter-logs fid=@ud]
       [%eth-get-filter-changes fid=@ud]
   ==
 ::

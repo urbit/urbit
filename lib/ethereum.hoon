@@ -81,6 +81,9 @@
         (turn `(list octs)`top.req :(cork render-hex-bytes prefix-hex tape))
     ==
   ::
+      %eth-get-filter-logs
+    ['eth_getFilterLogs' (tape (num-to-hex fid.req)) ~]
+  ::
       %eth-get-filter-changes
     ['eth_getFilterChanges' (tape (num-to-hex fid.req)) ~]
   ==
