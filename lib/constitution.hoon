@@ -10,12 +10,12 @@
   ~?  ?=(~ mined.log)  %processing-unmined-event
   ::
   ?:  =(event.log transferred)
-    =+  ^-  [who=@ wer=@ux]  ::TODO  should we make @p work here?
+    =+  ^-  [who=@ wer=address]  ::TODO  should we make @p work here?
         (decode-results data.log ~[%uint %address])
     [who %owner wer]~
   ::
   ?:  =(event.log activated)
-    =+  ^-  [who=@ wer=@ux]
+    =+  ^-  [who=@ wer=address]
         (decode-results data.log ~[%uint %address])
     :~  ^-  (pair ship diff-hull)
         :+  who  %full
@@ -47,12 +47,12 @@
     [who %keys q.enc q.aut rev]~
   ::
   ?:  =(event.log changed-spawn-proxy)
-    =+  ^-  [who=@ sox=@ux]
+    =+  ^-  [who=@ sox=address]
         (decode-results data.log ~[%uint %address])
     [who %spawn-proxy sox]~
   ::
   ?:  =(event.log changed-transfer-proxy)
-    =+  ^-  [who=@ tox=@ux]
+    =+  ^-  [who=@ tox=address]
         (decode-results data.log ~[%uint %address])
     [who %transfer-proxy tox]~
   ::
