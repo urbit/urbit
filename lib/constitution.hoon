@@ -50,6 +50,19 @@
   ~&  [%unimplemented-event event.log]
   ~
 ::
+++  apply-hull-diff
+  |=  [hul=hull dif=diff-hull]
+  ^-  hull
+  ?-  -.dif
+    %full     new.dif
+    %owner    hul(owner new.dif)
+    %spawned  =+  (~(put in spawned.hul) who.dif)
+              hul(spawn-count +(spawn-count.hul), spawned -)
+    %keys     hul(encryption-key enc.dif, authentication-key aut.dif)
+    %sponsor  hul(sponsor new.dif, escape ~)
+    %escape   hul(escape new.dif)
+  ==
+::
 ++  parse-id
   |=  id=@t
   ^-  ships:function
