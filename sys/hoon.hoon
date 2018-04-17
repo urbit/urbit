@@ -425,23 +425,17 @@
           ==                                            ::
 ++  plum                                                ::  new output noun
   $@  cord
-  $%  ::  %text: wrappable paragraphs without linebreaks
-      ::  %real: standardized noun
-      ::  %deep: decorated list
+  $%  ::  %|: wrappable paragraph without linebreaks
+      ::  %&: decorated list
       ::
-      [%text p=(list @t)]
-      [%real p=stud q=noun]
-      $:  %deep
+      [%| p=(list @t)]
+      $:  %&
           $=  decor
           $:  ::  wide: one-line syntax
               ::  tall: multiline syntax
               ::
               $=  wide
-              ::  default to wide regular form
-              ::
               %-  unit
-              ::  specify irregular syntax
-              ::
               $:  ::  delimit: delimiter between items
                   ::  enclose: enclosure around items
                   ::
@@ -449,22 +443,23 @@
                   enclose=(unit (pair knot knot))
               ==
               $=  tall
-              $:  ::  intro: initial rune (like |%)
+              %-  unit
+              $:  ::  intro: initial string (like |%)
                   ::
                   intro=knot
-                  ::  indef: indefinite width
+                  ::  indef: indefinite, not fixed, fanout
                   ::
                   $=  indef
                   %-  unit
                   $:  ::  sigil: before each item (like ++)
-                      ::  final: final rune (like --)
+                      ::  final: final string (like --)
                       ::  
                       sigil=knot
                       final=knot
           ==  ==  ==
           ::  list: subplums
           ::
-          list=(list plum)
+          =(list plum)
       ==
   ==
 ++  tang  (list tank)                                   ::  bottom-first error
@@ -6746,6 +6741,87 @@
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
   ++  wtts  |=(mod/spec (gray [%wtts (teal mod) puce]))
   --
+++  limb-to-plum
+  |=  =limb
+  ?-  -.limb
+    %&  (scot %ui p.limb)
+    %|  (crip (runt [0 p.limb] ?~(q.limb "," (trip u.q.limb))))
+  ==
+::
+++  wing-to-plum
+  |=  =wing
+  ^-  plum
+  :+  %&
+    [`['.' ~] ~]
+  (turn wing limb-to-plum)
+::
+++  battery-to-plum
+  |=  =(map term spec)
+  %+  turn  ~(tap by map)
+  |=  [=term =spec]
+  :+  %&
+    [`[' ' ~] `['' ~]]
+  [term (spec-to-plum spec) ~]
+::
+++  core-to-plum
+  |=  [=knot =spec =(map term spec)]
+  ^-  plum
+  :+  %&
+    [~ `[knot ~]]
+  :~  (spec-to-plum spec)
+      :+  %&
+        [~ `['' `['++' '==']]]
+      (battery-to-plum map)
+  ==
+::
+++  hoon-to-plum
+  |=  =hoon
+  ^-  plum
+  %hooon
+::
+++  spec-to-plum
+  |=  =spec
+  ^-  plum
+  ?+  -.spec  !!
+    %base  ?-  p.spec
+             %noun  '*'
+             %cell  '^'
+             %flag  '?'
+             %null  '~'
+             %void  '!!'
+             [%atom *]  (cat 3 '@' p.p.spec)
+           ==
+    %dbug  $(spec q.spec)
+    %leaf  (cat 3 '%' (scot p.spec q.spec))
+    %like  :+  %&
+             [`[':' ~] ~]
+           (turn `(list wing)`+.spec wing-to-plum)
+    %loop  (cat 3 '$' p.spec)
+    %make  =+  (lent q.spec)
+           :+  %&
+             :-  `[' ' `['(' ')']]
+             :-  ~
+             ?:  |((gth - 3) =(- 0))
+               ['%:' `['' '==']]
+             :_  ~
+             ?:  =(- 3)  '%^'
+             ?:  =(- 2)  '%+'  '%-'
+           [(hoon-to-plum p.spec) (turn q.spec ..$)]
+    %bcbc  (core-to-plum '$$' p.spec q.spec)
+    %bcbr  :+  %&
+             [`[' ' `['$|(' ')']] `['$|' ~]]
+           :~  $(spec p.spec)
+               (hoon-to-plum q.spec)
+           ==
+    %bccb  (hoon-to-plum p.spec)
+    %bccl  :+  %&
+             [`[' ' `['[' ']']] `['$:' `['' '==']]]
+           (turn `(list ^spec)`+.spec ..$)
+    %bccn  :+  %&
+             [`[' ' `['$%(' ')']] `['$%' `['' '==']]]
+           (turn `(list ^spec)`+.spec ..$)
+    %bcdt  (core-to-plum '$.' p.spec q.spec)
+  ==
 ++  cosmetic
   ::  entry-trace: current potential block entries
   ::  block-count: cumulative blocks detected
