@@ -7,6 +7,7 @@
 ++  state
   $:  ships=(map @p hull)
       block=@ud                                         ::  last heard
+      dns=[pri=@t sec=@t ter=@t]
       filter=(unit @ud)                                 ::  our filter id
   ==
 ::
@@ -76,6 +77,10 @@
         %get-spawned
       :-  (crip "getSpawned({(scow %p who.cal)})")
       ['getSpawned(uint32)' ~[uint+`@`who.cal]]
+    ::
+        %dns-domains
+      :-  (crip "dnsDomains({(scow %ud ind.cal)})")
+      ['dnsDomains(uint8)' ~[uint+ind.cal]]
     ==
   ::
   ++  ta-read-ships

@@ -56,6 +56,7 @@
   ++  ships
     $%  [%ships who=@p]
         [%get-spawned who=@p]
+        [%dns-domains ind=@ud]
     ==
   --
 ::
@@ -110,5 +111,10 @@
   ++  changed-key
     0x6a39.f4e0.c935.b557.860d.3df3.9f1f.cb6b.
       d63c.5a23.2d9e.fc28.5388.2994.f60c.708a
+  ::
+  ::  ChangedDns(string,string,string)
+  ++  changed-dns
+    0xfafd.04ad.e1da.ae2e.1fdb.0fc1.cc6a.899f.
+      d424.063e.d5c9.2120.e67e.0730.53b9.4898
   --
 --

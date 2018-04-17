@@ -1,13 +1,16 @@
 /-  constitution, ethereum
+/+  ethereum
+=>  [^constitution ethereum]
 |%
 ++  parse-id
   |=  id=@t
-  ^-  ships:function:^constitution
+  ^-  ships:function
   |^
     %+  rash  id
     ;~  pose
       (function %ships 'ships' shipname)
       (function %get-spawned 'getSpawned' shipname)
+      (function %dns-domains 'dnsDomain' dem:ag)
     ==
   ::
   ++  function
