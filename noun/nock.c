@@ -542,9 +542,16 @@ struct __n_prog;
 
 /* placeholder: call site memory */
 typedef struct {
-  u3_noun axe;
   struct __n_prog *pog_u;
-  u3_noun bat;
+  u3_noun   axe;
+  u3_weak   bat;
+  u3_weak   loc;
+  c3_o      jet_o;
+  c3_o      fon_o;
+  u3_weak   lab;
+  u3j_core* cop_u;
+  u3j_harm* ham_u;
+  _n_fink*  fin_u;
 } _n_site;
 
 /* registration site memory */
@@ -1075,6 +1082,13 @@ _n_prog_asm(u3_noun ops, _n_prog* pog_u, u3_noun sip)
           sit_u->axe   = u3k(u3t(op));
           sit_u->pog_u = NULL;
           sit_u->bat   = u3_none;
+          sit_u->loc   = u3_none;
+          sit_u->lab   = u3_none;
+          sit_u->jet_o = c3n;
+          sit_u->fon_o = c3n;
+          sit_u->cop_u = NULL;
+          sit_u->ham_u = NULL;
+          sit_u->fin_u = NULL;
           break;
         }
       }
@@ -1633,6 +1647,7 @@ _n_find(u3_noun fol)
           _n_site* sit_u = &(old->cal_u.sit_u[i_w]);
           sit_u->bat   = u3_none;
           sit_u->pog_u = NULL;
+          sit_u->fon_o = c3n;
         }
         u3h_put(u3R->byc.har_p, fol, u3a_outa(old));
         return old;
@@ -1648,22 +1663,111 @@ _n_find(u3_noun fol)
 }
 
 static u3_weak
-_n_kick(u3_noun cor, _n_site* sit_u)
+_n_spot(u3_noun cor)
+{
+  u3_weak loc;
+  u3t_off(noc_o);
+  loc = u3j_spot(cor);
+  u3t_on(noc_o);
+  return loc;
+}
+
+static u3_weak
+_n_lock(u3_noun cor, _n_site* sit_u)
+{
+  if ( (u3_none != sit_u->bat) &&
+       (c3y == u3r_sing(sit_u->bat, u3h(cor))) ) {
+    return u3_none;
+  }
+  sit_u->pog_u = _n_find(u3r_at(sit_u->axe, cor));
+  if ( u3_none != sit_u->bat ) {
+    u3z(sit_u->bat);
+  }
+  sit_u->bat = u3k(u3h(cor));
+  return u3_none;
+}
+
+static u3_noun _n_burn_out(u3_noun bus, _n_prog* pog_u);
+
+static u3_weak
+_n_hock(u3_noun cor, _n_site* sit_u)
 {
   u3_weak pro;
-  u3t_off(noc_o);
-  pro = u3j_kick(cor, sit_u->axe);
-  u3t_on(noc_o);
+  c3_o jet_o = sit_u->jet_o;
+  if ( c3n == __(u3C.wag_w & u3o_debug_cpu) ) {
+    if ( c3n == jet_o ) {
+      pro = u3_none;
+    }
+    else {
+      u3t_off(noc_o);
+      pro = u3j_hock(cor, sit_u->cop_u, sit_u->ham_u, sit_u->axe);
+      u3t_on(noc_o);
+    }
+    if ( u3_none == pro ) {
+      pro = _n_lock(cor, sit_u);
+    }
+  }
+  else {
+    u3t_come(sit_u->lab);
+    if ( c3y == jet_o ) {
+      u3t_off(noc_o);
+      pro = u3j_hock(cor, sit_u->cop_u, sit_u->ham_u, sit_u->axe);
+      u3t_on(noc_o);
+    }
+    if ( u3_none == pro ) {
+      pro = _n_lock(cor, sit_u);
+      if ( u3_none == pro ) {
+        pro = _n_burn_out(cor, sit_u->pog_u);
+      }
+    }
+    u3t_flee();
+  }
+  return pro;
+}
+
+static u3_weak
+_n_kick(u3_noun cor, _n_site* sit_u)
+{
+  u3_weak loc, pro = u3_none;
+
+  loc = _n_spot(cor);
+  if ( u3_none != loc ) {
+    _n_fink* fon_u = NULL;
+    u3_weak  lod   = u3_none;
+    u3_weak  lob   = u3_none;
+
+    if ( u3_none != sit_u->loc ) {
+      lod = sit_u->loc;
+      lob = sit_u->lab;
+      if ( c3y == sit_u->fon_o ) {
+        fon_u = sit_u->fin_u;
+      }
+    }
+
+    sit_u->loc   = loc;
+    sit_u->fin_u = _n_cast(cor, loc);
+    sit_u->fon_o = c3y;
+    if ( c3y ==
+      (sit_u->jet_o = u3j_nail(loc, sit_u->axe,
+          &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u))) )
+    {
+      pro = _n_hock(cor, sit_u);
+    }
+    else {
+      pro = u3_none;
+    }
+
+    if ( u3_none != lod ) {
+      u3z(lod);
+      u3z(lob);
+      if ( NULL != fon_u ) {
+        _n_fink_free(fon_u);
+      }
+    }
+  }
+
   if ( u3_none == pro ) {
-    if ( (u3_none != sit_u->bat) &&
-         (c3y == u3r_sing(sit_u->bat, u3h(cor))) ) {
-      return u3_none;
-    }
-    sit_u->pog_u = _n_find(u3r_at(sit_u->axe, cor));
-    if ( u3_none != sit_u->bat ) {
-      u3z(sit_u->bat);
-    }
-    sit_u->bat = u3k(u3h(cor));
+    pro = _n_lock(cor, sit_u);
   }
   return pro;
 }
@@ -2320,15 +2424,10 @@ _n_burn(_n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
   }
 }
 
-/* _n_burn_on(): produce .*(bus fol) with bytecode interpreter
- */
 static u3_noun
-_n_burn_on(u3_noun bus, u3_noun fol)
+_n_burn_out(u3_noun bus, _n_prog* pog_u)
 {
   c3_ys mov, off;
-  _n_prog* pog_u = _n_find(fol);
-
-  u3z(fol);
   if ( c3y == u3a_is_north(u3R) ) {
     mov = -1;
     off = 0;
@@ -2337,8 +2436,18 @@ _n_burn_on(u3_noun bus, u3_noun fol)
     mov = 1;
     off = -1;
   }
-  u3_noun pro = _n_burn(pog_u, bus, mov, off);
-  return pro;
+  return _n_burn(pog_u, bus, mov, off);
+}
+
+/* _n_burn_on(): produce .*(bus fol) with bytecode interpreter
+ */
+static u3_noun
+_n_burn_on(u3_noun bus, u3_noun fol)
+{
+  _n_prog* pog_u = _n_find(fol);
+
+  u3z(fol);
+  return _n_burn_out(bus, pog_u);
 }
 
 /* u3n_nock_on(): produce .*(bus fol).  Do not virtualize.
@@ -2371,6 +2480,48 @@ _n_site_take(_n_site* dst_u, _n_site* src_u, c3_o los_o)
   else {
     dst_u->bat   = u3_none;
     dst_u->pog_u = NULL;
+    dst_u->loc   = u3_none;
+    dst_u->lab   = u3_none;
+    dst_u->jet_o = c3n;
+    dst_u->fon_o = c3n;
+    dst_u->cop_u = NULL;
+    dst_u->ham_u = NULL;
+    dst_u->fin_u = NULL;
+  }
+
+  if ( u3_none != src_u->loc ) {
+    u3_noun  lob   = dst_u->lab,
+             lod   = dst_u->loc;
+    c3_o     fon_o = dst_u->fon_o;
+    _n_fink* fon_u = dst_u->fin_u;
+
+    dst_u->loc   = u3a_take(src_u->loc);
+    dst_u->lab   = u3a_take(src_u->lab);
+    dst_u->cop_u = src_u->cop_u;
+    dst_u->ham_u = src_u->ham_u;
+    dst_u->jet_o = src_u->jet_o;
+
+    if ( c3y == src_u->fon_o ) {
+      dst_u->fin_u = _n_fink_take(src_u->fin_u);
+      dst_u->fon_o = c3y;
+    }
+    else if ( fon_u != src_u->fin_u ) {
+      dst_u->fin_u = src_u->fin_u;
+      dst_u->fon_o = c3n;
+    }
+    else {
+      fon_o = c3n;
+    }
+
+    if ( c3y == los_o ) {
+      if ( u3_none != lod ) {
+        u3z(lod);
+        u3z(lob);
+        if ( c3y == fon_o ) {
+          _n_fink_free(fon_u);
+        }
+      }
+    }
   }
 }
 
@@ -2463,6 +2614,13 @@ _n_site_free(_n_site* sit_u)
   if ( u3_none != sit_u->bat ) {
     u3z(sit_u->bat);
   }
+  if ( u3_none != sit_u->loc ) {
+    u3z(sit_u->loc);
+    u3z(sit_u->lab);
+    if ( c3y == sit_u->fon_o ) {
+      _n_fink_free(sit_u->fin_u);
+    }
+  }
 }
 
 static void
@@ -2538,6 +2696,13 @@ _n_site_mark(_n_site* sit_u)
   c3_w tot_w = u3a_mark_noun(sit_u->axe);
   if ( u3_none != sit_u->bat ) {
     tot_w += u3a_mark_noun(sit_u->bat);
+  }
+  if ( u3_none != sit_u->loc ) {
+    tot_w += u3a_mark_noun(sit_u->loc);
+    tot_w += u3a_mark_noun(sit_u->lab);
+    if ( c3y == sit_u->fon_o ) {
+      tot_w += _n_fink_mark(sit_u->fin_u);
+    }
   }
   return tot_w;
 }

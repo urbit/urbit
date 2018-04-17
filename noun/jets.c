@@ -271,6 +271,45 @@ u3j_spot(u3_noun cor)
   }
 }
 
+/* u3j_nail(): resolve hot state for location and axis. RETAIN.
+**             return value indicates presence of driver.
+**/
+c3_o
+u3j_nail(u3_noun loc, u3_noun axe,
+         u3_noun* lab, u3j_core** cop_u, u3j_harm** ham_u)
+{
+  c3_o ret_o;
+  u3_noun jax, hap, bal, jit;
+  u3_weak act;
+
+  u3t_on(glu_o);
+  act = _cj_find_warm(loc);
+  c3_assert(u3_none != act);
+  u3x_qual(act, &jax, &hap, &bal, &jit);
+
+  *lab = u3k(bal);
+  if ( 0 == jax ) {
+    ret_o = c3n;
+  }
+  else {
+    u3_weak inx = u3kdb_get(u3k(hap), u3k(axe));
+    if ( u3_none == inx ) {
+      ret_o = c3n;
+    }
+    else {
+      c3_l jax_l = jax,
+           inx_l = inx;
+      *cop_u = &(u3D.ray_u[jax_l]);
+      *ham_u = &((*cop_u)->arm_u[inx_l]);
+      ret_o = c3y;
+    }
+  }
+
+  u3z(act);
+  u3t_off(glu_o);
+  return ret_o;
+}
+
 /* _cj_scan(): has this core been registered?
  */
 static c3_o
@@ -483,6 +522,22 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
     }
     return u3_none;
   }
+}
+
+/* u3j_hock(): Try to kick by jet with resolved hot state.
+**             If no kick, produce u3_none.
+**
+** `cor` is RETAINED iff there is no kick, TRANSFERRED if one.
+** `axe` is RETAINED.
+*/
+u3_weak
+u3j_hock(u3_noun cor,
+         u3j_core* cop_u,
+         u3j_harm* ham_u,
+         u3_atom axe)
+{
+  // this is where you would trace, if we traced this
+  return _cj_kick_z(cor, cop_u, ham_u, axe);
 }
 
 /* _cj_hook_in(): execute hook from core, or fail.
