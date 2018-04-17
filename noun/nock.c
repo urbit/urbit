@@ -1728,40 +1728,52 @@ _n_hock(u3_noun cor, _n_site* sit_u)
 static u3_weak
 _n_kick(u3_noun cor, _n_site* sit_u)
 {
-  u3_weak loc, pro = u3_none;
+  u3_weak loc = u3_none,
+          pro = u3_none;
 
-  loc = _n_spot(cor);
-  if ( u3_none != loc ) {
-    _n_fink* fon_u = NULL;
-    u3_weak  lod   = u3_none;
-    u3_weak  lob   = u3_none;
-
-    if ( u3_none != sit_u->loc ) {
-      lod = sit_u->loc;
-      lob = sit_u->lab;
-      if ( c3y == sit_u->fon_o ) {
-        fon_u = sit_u->fin_u;
+  if ( u3_none != sit_u->loc ) {
+    if ( c3y == _n_fine(cor, sit_u->fin_u) ) {
+      loc = sit_u->loc;
+      if ( c3y == sit_u->jet_o ) {
+        pro = _n_hock(cor, sit_u);
       }
     }
+  }
 
-    sit_u->loc   = loc;
-    sit_u->fin_u = _n_cast(cor, loc);
-    sit_u->fon_o = c3y;
-    if ( c3y ==
-      (sit_u->jet_o = u3j_nail(loc, sit_u->axe,
-          &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u))) )
-    {
-      pro = _n_hock(cor, sit_u);
-    }
-    else {
-      pro = u3_none;
-    }
+  if ( u3_none == loc ) {
+    loc = _n_spot(cor);
+    if ( u3_none != loc ) {
+      _n_fink* fon_u = NULL;
+      u3_weak  lod   = u3_none;
+      u3_weak  lob   = u3_none;
 
-    if ( u3_none != lod ) {
-      u3z(lod);
-      u3z(lob);
-      if ( NULL != fon_u ) {
-        _n_fink_free(fon_u);
+      if ( u3_none != sit_u->loc ) {
+        lod = sit_u->loc;
+        lob = sit_u->lab;
+        if ( c3y == sit_u->fon_o ) {
+          fon_u = sit_u->fin_u;
+        }
+      }
+
+      sit_u->loc   = loc;
+      sit_u->fin_u = _n_cast(cor, loc);
+      sit_u->fon_o = c3y;
+      if ( c3y ==
+        (sit_u->jet_o = u3j_nail(loc, sit_u->axe,
+            &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u))) )
+      {
+        pro = _n_hock(cor, sit_u);
+      }
+      else {
+        pro = u3_none;
+      }
+
+      if ( u3_none != lod ) {
+        u3z(lod);
+        u3z(lob);
+        if ( NULL != fon_u ) {
+          _n_fink_free(fon_u);
+        }
       }
     }
   }
@@ -1769,6 +1781,7 @@ _n_kick(u3_noun cor, _n_site* sit_u)
   if ( u3_none == pro ) {
     pro = _n_lock(cor, sit_u);
   }
+
   return pro;
 }
 
