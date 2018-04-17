@@ -65,8 +65,8 @@
 ++  diff-hull
   $%  [%full new=hull]
       [%owner new=address]
-      [%spawn-count ~]  ::  increments
-      [%keys enc=@ aut=@]
+      [%spawned who=@p]
+      [%keys enc=@ aut=@ rev=@ud]
       [%sponsor new=@p]
       [%escape new=(unit @p)]
       [%spawn-proxy new=address]
@@ -92,15 +92,20 @@
     0x9014.bd16.807a.ce11.f497.2993.3667.4031.
       8029.4d9f.0e4f.42a1.5be6.0d26.5369.171c
   ::
-  ::  Activated(uint32)
+  ::  Activated(uint32,address)
   ++  activated
-    0xe74c.0380.9d07.69e1.b1f7.06cc.8414.258c.
-      d1f3.b6fe.020c.d15d.0165.c210.ba50.3a0f
+     0xe5a.2849.1af6.e9a4.a694.b3a0.fa1a.7ff7.
+      3b8a.a7ce.fbf5.0808.a81c.d89e.dfeb.a20d
   ::
   ::  EscapeRequested(uint32,uint32)
   ++  escape-requested
     0xb4d4.850b.8f21.8218.141c.5665.cba3.79e5.
       3e9b.b015.b51e.8d93.4be7.0210.aead.874a
+  ::
+  ::  EscapeCanceled(uint32)
+  ++  escape-canceled
+    0x68f7.f1dc.6784.a962.1f80.dcbd.3e7f.ef93.
+      f77c.9228.d5c5.3dc7.a56f.10e1.c445.705a
   ::
   ::  EscapeAccepted(uint32,uint32)
   ++  escape-accepted
@@ -108,7 +113,7 @@
       ebf3.6dbb.7fe6.6549.0b1b.fce6.246a.9da5
   ::
   ::  ChangedKeys(uint32,bytes32,bytes32,uint32)
-  ++  changed-key
+  ++  changed-keys
     0x6a39.f4e0.c935.b557.860d.3df3.9f1f.cb6b.
       d63c.5a23.2d9e.fc28.5388.2994.f60c.708a
   ::
