@@ -45,6 +45,17 @@
         ~[%uint [%bytes-n 32] [%bytes-n 32] %uint]
     ?>  &(=(p.enc 32) =(p.aut 32))  ::  sanity
     [who %keys q.enc q.aut rev]~
+  ::
+  ?:  =(event.log changed-spawn-proxy)
+    =+  ^-  [who=@ sox=@ux]
+        (decode-results data.log ~[%uint %address])
+    [who %spawn-proxy sox]~
+  ::
+  ?:  =(event.log changed-transfer-proxy)
+    =+  ^-  [who=@ tox=@ux]
+        (decode-results data.log ~[%uint %address])
+    [who %transfer-proxy tox]~
+  ::
   ::NOTE  0x8be0...57e0 is Owneable's OwnershipTransferred(address,address).
   ::      changed-dns is handled separately since it doesn't affect hulls.
   ~&  [%unimplemented-event event.log]
@@ -61,6 +72,8 @@
     %keys     hul(encryption-key enc.dif, authentication-key aut.dif)
     %sponsor  hul(sponsor new.dif, escape ~)
     %escape   hul(escape new.dif)
+    %spawn-proxy      hul(spawn-proxy new.dif)
+    %transfer-proxy   hul(transfer-proxy new.dif)
   ==
 ::
 ++  parse-id

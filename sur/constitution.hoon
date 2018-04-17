@@ -13,6 +13,8 @@
       spawned=(set @p)
       sponsor=@p
       escape=(unit @p)
+      spawn-proxy=@ux
+      transfer-proxy=@ux
   ==
 ::
 ++  eth-type
@@ -67,6 +69,8 @@
       [%keys enc=@ aut=@ rev=@ud]
       [%sponsor new=@p]
       [%escape new=(unit @p)]
+      [%spawn-proxy new=address]
+      [%transfer-proxy new=address]
   ==
 ::
 ::  #  constants
@@ -112,6 +116,16 @@
   ++  changed-keys
     0x6a39.f4e0.c935.b557.860d.3df3.9f1f.cb6b.
       d63c.5a23.2d9e.fc28.5388.2994.f60c.708a
+  ::
+  ::  ChangedSpawnProxy(uint32,address)
+  ++  changed-spawn-proxy
+    0x9027.36af.7b3c.efe1.0d9e.840a.ed0d.687e.
+      35c8.4095.122b.2505.1a20.ead8.866f.006d
+  ::
+  ::  ChangedTransferProxy(uint32,address)
+  ++  changed-transfer-proxy
+    0xcfe3.69b7.197e.7f0c.f067.93ae.2472.a9b1.
+      3583.fecb.ed2f.78df.a14d.1f10.796b.847c
   ::
   ::  ChangedDns(string,string,string)
   ++  changed-dns
