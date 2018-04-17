@@ -17,7 +17,7 @@
   ^-  hiss
   :^  url  %post
     %-  ~(gas in *math)
-    ~[content-type+['application/x-www-form-urlencoded']~]
+    ~['Content-Type'^['application/json']~]
   (some (as-octt (en-json:html jon)))
 ::
 ++  batch-read-request
@@ -114,7 +114,7 @@
   |=  dob=block
   ^-  json
   ?-  -.dob
-    %number   n+(crip ((d-co:co 0) n.dob))
+    %number   s+(crip '0' 'x' ((d-co:co 1) n.dob))
     %label    s+l.dob
   ==
 ::
@@ -279,7 +279,7 @@
   |=  call-data
   ^-  tape
   ::TODO  should this check to see if the data matches the function signature?
-  =-  (weld - (encode-args arguments))
+  =-  :(weld "0x" - (encode-args arguments))
   %+  scag  8
   (render-hex-bytes 32 (keccak-256 (as-octs function)))
 ::
