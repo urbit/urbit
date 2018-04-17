@@ -146,21 +146,23 @@
   ?>  ?=(%s -.j)
   (hex-to-num p.j)
 ::
-++  parse-eth-get-filter-changes-res
+++  parse-event-logs
+  (ar:dejs:format parse-event-log)
+::
+++  parse-event-log
   =,  dejs:format
-  |=  j=json
-  =-  ((ar -) j)
-  |=  cha=json
-  ^-  filter-change
-  =-  ((ot -) cha)
-  :~  =-  [type+(cu - so)]
-      |=  m=@t
-      ?.  =(m 'mined')  ~
-      =-  `((ot -) cha)  ::TODO  not sure if elegant or hacky.
+  |=  log=json
+  ^-  event-log
+  =-  ((ot -) log)
+  :~  =-  ['logIndex'^(cu - (mu so))]
+      |=  li=(unit @t)
+      ?~  li  ~
+      =-  `((ot -) log)  ::TODO  not sure if elegant or hacky.
       :~  'logIndex'^(cu hex-to-num so)
           'transactionIndex'^(cu hex-to-num so)
-          'blockHash'^(cu hex-to-num so)
+          'transactionHash'^(cu hex-to-num so)
           'blockNumber'^(cu hex-to-num so)
+          'blockHash'^(cu hex-to-num so)
       ==
     ::
       address+(cu hex-to-num so)

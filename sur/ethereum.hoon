@@ -48,12 +48,14 @@
   ==
 ::
 ++  filter-change
+++  event-log
   $:  ::  null for pending logs
       $=  mined  %-  unit
       $:  log-index=@ud
           transaction-index=@ud
-          block-hash=@ux
+          transaction-hash=@ux
           block-number=@ud
+          block-hash=@ux
       ==
     ::
       address=@ux
