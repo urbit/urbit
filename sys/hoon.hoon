@@ -417,50 +417,55 @@
 ++  date  {{a/? y/@ud} m/@ud t/tarp}                    ::  parsed date
 ++  knot  @ta                                           ::  ASCII text
 ++  noun  *                                             ::  any noun
+++  path  (list knot)                                   ::  like unix path
+++  stud                                                ::  standard name
+          $@  @tas                                      ::  auth=urbit
+          $:  auth=@tas                                 ::  standards authority
+              type=path                                 ::  standard label
+          ==                                            ::
 ++  plum                                                ::  new output noun
-  =>  |%
-      ::  +deco: output decoration
-      ::
-      ++  deco
-        $:  ::  wide: one-line syntax
-            ::
-            $=  wide
-            ::  default to wide regular form
-            ::
-            %-  unit
-            ::  specify irregular syntax
-            ::
-            $:  ::  delimit: delimiter between items
-                ::  enclose: enclosure around items
-                ::
-                delimit=knot
-                enclose=(pair knot knot)
-            ==
-            ::  tall: multiline syntax
-            ::
-            $=  tall
-            $:  ::  intro: initial rune (like |%)
-                ::  sigil: before each item (like ++)
-                ::  final: final rune (like --)
-                ::  
-                intro=knot
-                sigil=knot
-                final=knot
-        ==  ==
-      --
   $@  cord
-  $~  [%cold %$ ~]
-  $%  ::  %cold: printable atom
-      ::  %leaf: tape (deprecated, do not use)
-      ::  %good: standardized noun
-      ::  %soar: fixed-width list
-      ::  %tilt: fixed-width tuple
+  $%  ::  %text: wrappable paragraphs without linebreaks
+      ::  %real: standardized noun
+      ::  %deep: decorated list
       ::
-      [%cold aura=@tas atom=@]
-      [%good mark=@tas =noun]
-      [%leaf =tape]
-      [%soar =deco list=(list plum)]
-      [%tilt =deco list=(list plum)]
+      [%text p=(list @t)]
+      [%real p=stud q=noun]
+      $:  %deep
+          $=  decor
+          $:  ::  wide: one-line syntax
+              ::  tall: multiline syntax
+              ::
+              $=  wide
+              ::  default to wide regular form
+              ::
+              %-  unit
+              ::  specify irregular syntax
+              ::
+              $:  ::  delimit: delimiter between items
+                  ::  enclose: enclosure around items
+                  ::
+                  delimit=knot
+                  enclose=(unit (pair knot knot))
+              ==
+              $=  tall
+              $:  ::  intro: initial rune (like |%)
+                  ::
+                  intro=knot
+                  ::  indef: indefinite width
+                  ::
+                  $=  indef
+                  %-  unit
+                  $:  ::  sigil: before each item (like ++)
+                      ::  final: final rune (like --)
+                      ::  
+                      sigil=knot
+                      final=knot
+          ==  ==  ==
+          ::  list: subplums
+          ::
+          list=(list plum)
+      ==
   ==
 ++  tang  (list tank)                                   ::  bottom-first error
 ++  tank  $~  [%leaf ~]                                 ::
@@ -3672,7 +3677,6 @@
           :-  ~                                         ::
           u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
 ++  nail  {p/hair q/tape}                               ::  parsing input
-++  path  (list knot)                                   ::  like unix path
 ++  pint  {p/{p/@ q/@} q/{p/@ q/@}}                     ::  line+column range
 ++  rule  _|:($:nail $:edge)                            ::  parsing rule
 ++  spot  {p/path q/pint}                               ::  range in file
@@ -5711,11 +5715,6 @@
               {$bcwt p/{i/spec t/(list spec)}}          ::  $?, full pick
               {$bczp p/spec q/(map term spec)}          ::  $!, opaque core
           ==                                            ::
-++  stud                                                ::  standard name
-          $@  @tas                                      ::  auth=urbit
-          $:  auth=@tas                                 ::  standards authority
-              type=path                                 ::  standard label
-          ==                                            ::
 ++  tent                                                ::  model builder
           $%  {%| p/wing q/tent r/(list spec)}          ::  ~(p q r...)
               {%& p/(list wing)}                        ::  a.b:c.d
@@ -7051,7 +7050,7 @@
       $dbug  $(mod q.mod)
       $leaf  `p.mod
       $loop  `p.mod
-      $like  ?~(p.mod ~ ?^(i.p.mod ~ `i.p.mod))
+      $like  ?~(p.mod ~ ?^(i.p.mod ?:(?=(%& -.i.p.mod) ~ q.i.p.mod) `i.p.mod))
       $make  ~(name ap p.mod)
       $over  $(mod q.mod)
     ::
@@ -12237,7 +12236,8 @@
       :-  '='
         ;~  pfix  tis
           %+  sear
-            |=(mod/spec (bind ~(autoname ax & +<) |=(term [%bcts +< +>+<])))
+            |=  mod/spec 
+            (bind ~(autoname ax & +<) |=(term [%bcts +< +>+<]))
           wyde
         ==
       :-  ['a' 'z']
