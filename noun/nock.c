@@ -1655,12 +1655,10 @@ _n_kick(u3_noun cor, _n_site* sit_u)
   pro = u3j_kick(cor, sit_u->axe);
   u3t_on(noc_o);
   if ( u3_none == pro ) {
-    /*
     if ( (u3_none != sit_u->bat) &&
          (c3y == u3r_sing(sit_u->bat, u3h(cor))) ) {
       return u3_none;
     }
-    */
     sit_u->pog_u = _n_find(u3r_at(sit_u->axe, cor));
     if ( u3_none != sit_u->bat ) {
       u3z(sit_u->bat);
@@ -2365,36 +2363,14 @@ static void
 _n_site_take(_n_site* dst_u, _n_site* src_u, c3_o los_o)
 {
   u3_noun old = dst_u->axe;
-  u3_noun bot = dst_u->bat;
   dst_u->axe  = u3a_take(src_u->axe);
 
-  if ( c3n == los_o ) {
-    if ( u3_none == src_u->bat ) {
-      dst_u->bat   = u3_none;
-    }
-    else {
-      dst_u->bat   = u3a_take(src_u->bat);
-      dst_u->pog_u = src_u->pog_u;
-    }
+  if ( c3y == los_o ) {
+    u3z(old);
   }
   else {
-    u3z(old);
-    if ( u3_none != bot ) {
-      u3z(bot);
-      dst_u->bat = u3_none;
-    }
-    /*
-    if ( u3_none != src_u->bat ) {
-      if ( (u3_none == bot) ||
-           (c3n == u3r_sing(bot, src_u->bat)) ) {
-        dst_u->bat   = u3a_take(src_u->bat);
-        dst_u->pog_u = src_u->pog_u;
-        if ( u3_none != bot ) {
-          u3z(bot);
-        }
-      }
-    }
-    */
+    dst_u->bat   = u3_none;
+    dst_u->pog_u = NULL;
   }
 }
 
@@ -2527,9 +2503,8 @@ _n_prog_free(_n_prog* pog_u)
 /* _n_reap(): reap key and value from byc table.
 */
 static void
-_n_reap(u3_noun kev, void* dat)
+_n_reap(u3_noun kev)
 {
-  u3p(u3h_root) mov_p = *((u3p(u3h_root)*) dat);
   u3_noun fol = u3h(kev);
   u3_noun got = u3t(kev);
   u3_noun lof = u3a_take(fol);
@@ -2547,25 +2522,6 @@ _n_reap(u3_noun kev, void* dat)
     tog = u3a_outa(sep_u);
   }
   u3z(lof);
-  u3h_put(mov_p, got, tog);
-}
-
-static void
-_n_move(u3_noun kev, void* dat)
-{
-  u3p(u3h_root) mov_p = *((u3p(u3h_root)*) dat);
-  _n_prog* pog_u = u3to(_n_prog, u3t(kev));
-  c3_w i_w;
-
-  for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
-    _n_site* sit_u = &(pog_u->cal_u.sit_u[i_w]);
-    if ( u3_none != sit_u->bat ) {
-      u3_weak got = u3h_git(mov_p, u3a_outa(sit_u->pog_u));
-      if ( u3_none != got ) {
-        sit_u->pog_u = u3to(_n_prog, got);
-      }
-    }
-  }
 }
 
 /* u3n_beep(): promote bytecode state.
@@ -2573,10 +2529,7 @@ _n_move(u3_noun kev, void* dat)
 void
 u3n_beep(u3p(u3h_root) har_p)
 {
-  u3p(u3h_root) mov_p = u3h_new();
-  u3h_walk_with(har_p, _n_reap, &mov_p);
-  u3h_walk_with(har_p, _n_move, &mov_p);
-  u3h_free(mov_p);
+  u3h_walk(har_p, _n_reap);
 }
 
 static c3_w
