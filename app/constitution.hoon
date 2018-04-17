@@ -6,8 +6,8 @@
 |%
 ++  state
   $:  ships=(map @p hull)
-      block=@ud                                         ::  last heard
       dns=[pri=@t sec=@t ter=@t]
+      latest-block=@ud                                  ::  last heard
       filter=(unit @ud)                                 ::  our filter id
   ==
 ::
@@ -41,7 +41,8 @@
   ::
   ++  ta-save
     ^-  (quip move _+>)
-    =-  [(weld - (flop moves)) ..ta]
+    :_  +>
+    =-  (weld - (flop moves))
     ^-  (list move)
     ?~  reqs  ~
     :_  ~
@@ -89,8 +90,71 @@
     $(who t.who, this (ta-read %ships i.who))
   ::
   ::
+  ++  ta-new-filter
+    %+  ta-request  `'new filter'
+    :*  %eth-new-filter
+        `[%number +(latest-block)]
+        ~
+        ~[ships:contracts]
+        ~
+    ==
+  ::
+  ++  ta-take-filter
+    |=  rep=response:json-rpc
+    ?<  ?=(%batch -.rep)
+    ?:  ?=(%error -.rep)
+      ~&  [%filter-rpc-error message.rep]
+      ::TODO  retry or something
+      +>
+    =.  filter  `(parse-eth-new-filter-res res.rep)
+    ta-read-filter
+  ::
+  ++  ta-poll-filter
+    =.  wir  /init
+    ?~  filter  ta-new-filter
+    %+  ta-request  `'poll filter'
+    [%eth-get-filter-changes u.filter]
+  ::
+  ++  ta-read-filter
+    =.  wir  /init
+    ?~  filter  ta-new-filter
+    %+  ta-request  `'filter logs'
+    [%eth-get-filter-logs u.filter]
+  ::
+  ++  ta-take-filter-results
+    |=  rep=response:json-rpc
+    ?<  ?=(%batch -.rep)
+    ?:  ?=(%error -.rep)
+      ?.  =('filter not found' message.rep)
+        ~&  [%filter-rpc-error message.rep]
+        +>
+      ta-new-filter
+    ?>  ?=(%a -.res.rep)
+    =*  changes  p.res.rep
+    ~&  [%filter-changes (lent changes)]
+    |-  ^+  +>.^$
+    ?~  changes  +>.^$
+    =.  +>.^$  (ta-take-filter-result i.changes)
+    $(changes t.changes)
+  ::
+  ++  ta-take-filter-result
+    |=  res=json
+    =,  dejs:format
+    =+  log=(parse-event-log res)
+    ?~  mined.log  +>.$
+    ?:  =(event.log changed-dns:ships-events)
+      ::TODO  update dns in state
+      =+  (decode-results data.log ~[%string %string %string])
+      +>.$
+    ~&  (turn (event-log-to-hull-diffs log) (cork tail head))
+    +>.$
+  ::
+  ::
   ++  ta-init
-    %-  ta-read-ships(wir /init)
+    =.  wir  /init
+    =<  ta-new-filter
+    ::TODO  =<  ta-read-dns
+    %-  ta-read-ships
     (gulf ~zod ~nec) ::TODO ~fes)
   ::
   ++  ta-init-results
@@ -106,8 +170,14 @@
   ++  ta-init-result
     |=  rep=response:json-rpc
     ?<  ?=(%batch -.rep)
+    ?:  =('new filter' id.rep)
+      (ta-take-filter rep)
+    ?:  ?|  =('poll filter' id.rep)
+            =('filter logs' id.rep)
+        ==
+      (ta-take-filter-results rep)
     ?:  ?=(%error -.rep)
-      ~&  [%rpc-error message.rep]
+      ~&  [%init-rpc-error message.rep]
       ::TODO  retry or something
       +>.$
     ?>  ?=(%s -.res.rep)
@@ -121,7 +191,7 @@
         =+  (~(got by ships) who.cal)
         -(spawned (~(gas in spawned) kis))
       (ta-read-ships kis)
-    ::?>  ?=(%ships -.cal)
+    ?>  ?=(%ships -.cal)
     ?>  ?=(%s -.res.rep)
     =/  hul=hull:eth-noun
       (decode-results p.res.rep hull:eth-type)
@@ -190,9 +260,16 @@
 ::
 ++  poke-noun
   |=  a/@
+  ^-  (quip move _+>)
   ?:  =(a 0)
     ~&  [%have-ships ~(key by ships)]
     [~ +>.$]
+  ?:  =(a 1)
+    ta-save:ta-poll-filter:ta
+  ?:  =(a 2)
+    ta-save:ta-new-filter:ta
+  ?:  =(a 3)
+    ta-save:ta-read-filter:ta
   [~ +>.$]
 ::
 ++  sigh-tang
@@ -205,6 +282,11 @@
   |=  [w=wire r=response:json-rpc]
   ~&  %got-init-response
   ta-save:(ta-init-results:ta r)
+::
+++  sigh-json-rpc-response-filter-poll
+  |=  [w=wire r=response:json-rpc]
+  ~&  %got-filter-poll-results
+  ta-save:(ta-take-filter-results:ta r)
 ::
 ++  sigh-json-rpc-response
   |=  [w=wire r=response:json-rpc]
