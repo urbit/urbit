@@ -5,10 +5,11 @@
 =,  eyre
 |%
 ++  state
-  $:  ships=(map @p hull)
+  $:  ships=(map @p complete-ship)
+      checking=(map @p hull)
       dns=[pri=@t sec=@t ter=@t]
       latest-block=@ud                                  ::  last heard
-      filter=(unit @ud)                                 ::  our filter id
+      filter=@ud                                        ::  our filter id
   ==
 ::
 ++  complete-ship
@@ -61,12 +62,21 @@
     |=  [id=(unit @t) req=request]
     %_(+> reqs [[id req] reqs])
   ::
+  ++  ta-request-single
+    |=  [wir=wire id=(unit @t) req=request]
+    %-  ta-card
+    %+  rpc-request:ca  wir
+    (request-to-json id req)
+  ::
   ++  ta-read
     |=  cal=ships:function
     =+  (ships:function-to-call cal)
     %+  ta-request  `id
     :+  %eth-call
       [~ ships:contracts ~ ~ ~ (encode-call dat)]
+    ::NOTE  we can't make read calls to not the latest block. however,
+    ::      you risk getting data that filter polling hasn't yet seen,
+    ::      so probably kick the filter before doing any important reads.
     [%label %latest]
   ::
   ++  ta-read-ships
@@ -77,116 +87,206 @@
   ::
   ::
   ++  ta-new-filter
-    %+  ta-request  `'new filter'
+    %-  ta-request-single
+    :+  /filter/new  `'new filter'
     :*  %eth-new-filter
-        `[%number +(latest-block)]
+        `[%number +(latest-block)]  ::TODO  or Ships origin block when 0
         ~
         ~[ships:contracts]
         ~
     ==
   ::
+  ++  ta-read-filter
+    %-  ta-request-single
+    :+  /filter  `'filter logs'
+    [%eth-get-filter-logs filter]
+  ::
+  ++  ta-poll-filter
+    %-  ta-request-single
+    :+  /filter  `'poll filter'
+    [%eth-get-filter-changes filter]
+  ::
+  ::
+  ++  ta-init  ta-new-filter
+  ::
+  ++  ta-run-check
+    |=  save=?
+    =.  wir  (weld /read ?:(save /reset /verify))
+    (ta-read-ships (gulf ~zod ~nec))  ::TODO  ~fes
+  ::
+  ::
   ++  ta-take-filter
     |=  rep=response:json-rpc
     ?<  ?=(%batch -.rep)
     ?:  ?=(%error -.rep)
-      ~&  [%filter-rpc-error message.rep]
-      ::TODO  retry or something
-      +>
-    =.  filter  `(parse-eth-new-filter-res res.rep)
+      ~&  [%filter-error--retrying message.rep]
+      ta-new-filter
+    =.  filter  (parse-eth-new-filter-res res.rep)
     ta-read-filter
-  ::
-  ++  ta-poll-filter
-    =.  wir  /init
-    ?~  filter  ta-new-filter
-    %+  ta-request  `'poll filter'
-    [%eth-get-filter-changes u.filter]
-  ::
-  ++  ta-read-filter
-    =.  wir  /init
-    ?~  filter  ta-new-filter
-    %+  ta-request  `'filter logs'
-    [%eth-get-filter-logs u.filter]
   ::
   ++  ta-take-filter-results
     |=  rep=response:json-rpc
+    ^+  +>
     ?<  ?=(%batch -.rep)
     ?:  ?=(%error -.rep)
       ?.  =('filter not found' message.rep)
-        ~&  [%filter-rpc-error message.rep]
+        ~&  [%unhandled-filter-error message.rep]
         +>
+      ~&  %filter-timed-out--recreating
       ta-new-filter
+    ::TODO  kick for poll
     ?>  ?=(%a -.res.rep)
     =*  changes  p.res.rep
     ~&  [%filter-changes (lent changes)]
     |-  ^+  +>.^$
     ?~  changes  +>.^$
-    =.  +>.^$  (ta-take-filter-result i.changes)
+    =.  +>.^$
+      (ta-take-event-log (parse-event-log i.changes))
     $(changes t.changes)
   ::
-  ++  ta-take-filter-result
-    |=  res=json
-    =,  dejs:format
-    =+  log=(parse-event-log res)
-    ?~  mined.log  +>.$
+  ++  ta-take-event-log
+    |=  log=event-log
+    ^+  +>
+    ?~  mined.log
+      ~&  %ignoring-unmined-event
+      +>
+    ::
+    =?  latest-block  (gth block-number.u.mined.log latest-block)
+      block-number.u.mined.log
+    ::
     ?:  =(event.log changed-dns:ships-events)
-      ::TODO  update dns in state
-      =+  (decode-results data.log ~[%string %string %string])
-      +>.$
-    ~&  (turn (event-log-to-hull-diffs log) (cork tail head))
-    +>.$
+      =+  ^-  [pri=tape sec=tape ter=tape]
+        (decode-results data.log ~[%string %string %string])
+      %_  +>.$
+        pri.dns  (crip pri)
+        sec.dns  (crip sec)
+        ter.dns  (crip ter)
+      ==
+    ::
+    =+  dis=(event-log-to-hull-diffs log)
+    |-  ^+  +>.^$
+    ?~  dis  +>.^$
+    $(dis t.dis, ships (store-hull-change i.dis))
   ::
   ::
-  ++  ta-init
-    =.  wir  /init
-    =<  ta-new-filter
-    ::TODO  =<  ta-read-dns
-    %-  ta-read-ships
-    (gulf ~zod ~nec) ::TODO ~fes)
-  ::
-  ++  ta-init-results
-    |=  rep=response:json-rpc
+  ++  ta-take-read-results
+    |=  [rep=response:json-rpc save=?]
     ^+  +>
     ?>  ?=(%batch -.rep)
-    =.  wir  /init
+    =.  wir  (weld /read ?:(save /reset /verify))
     |-  ^+  +>.^$
     ?~  bas.rep  +>.^$
-    =.  +>.^$  (ta-init-result i.bas.rep)
+    =.  +>.^$
+      (ta-take-read-result i.bas.rep save)
     $(bas.rep t.bas.rep)
   ::
-  ++  ta-init-result
-    |=  rep=response:json-rpc
+  ++  ta-take-read-result
+    |=  [rep=response:json-rpc save=?]
+    ^+  +>
     ?<  ?=(%batch -.rep)
-    ?:  =('new filter' id.rep)
-      (ta-take-filter rep)
-    ?:  ?|  =('poll filter' id.rep)
-            =('filter logs' id.rep)
-        ==
-      (ta-take-filter-results rep)
     ?:  ?=(%error -.rep)
-      ~&  [%init-rpc-error message.rep]
-      ::TODO  retry or something
-      +>.$
-    ?>  ?=(%s -.res.rep)
-    =+  cal=(parse-id id.rep)
-    ?:  ?=(%get-spawned -.cal)
+      ~&  [%unhandled-read-error id.rep message.rep]
+      +>
+    =/  cal=ships:function  (parse-id id.rep)
+    ::TODO  think about a better way to structure the comparison code below
+    ?-  -.cal  ::  ~&([%unhandled-read-result -.cal] +>.$)
+        %ships
+      ?>  ?=(%s -.res.rep)
+      =/  hul=hull:eth-noun
+        ~|  [id.rep p.res.rep]
+        (decode-results p.res.rep hull:eth-type)
+      ::  ignore inactive ships
+      ?.  active.hul  +>.$
+      ::  we store the read data for now, and only compare with state once we
+      ::  have completed it by learning the spawned ships.
+      =.  checking
+        (~(put by checking) who.cal (hull-from-eth hul))
+      (ta-read %get-spawned who.cal)
+    ::
+        %get-spawned
+      ?>  ?=(%s -.res.rep)
+      =+  hul=(~(got by checking) who.cal)
       =/  kis=(list @p)
+        ::TODO  can we let this be if we're cool with just @ ?
         %-  (list @p)  ::NOTE  because arrays are still typeless
         (decode-results p.res.rep [%array %uint]~)
+      =.  hul  hul(spawned (~(gas in *(set @p)) kis))
+      ::
+      =+  have=(~(get by ships) who.cal)
       =.  ships
-        %+  ~(put by ships)  who.cal
-        =+  (~(got by ships) who.cal)
-        -(spawned (~(gas in spawned) kis))
+        ?~  have
+          ~&  [%completely-missing who.cal]
+          ?.  save  ships
+          ~&  [%storing-chain-version-of who.cal]
+          (store-hull-change who.cal %full hul)
+        ::
+        =*  huv  state.u.have
+        ?:  =(huv hul)  ships
+        ~&  [%differs-from-chain-version who.cal]
+        ~&  [%what %have %chain]
+        ::TODO  can we maybe re-use some ++redo code to simplify this?
+        ~?  !=(owner.huv owner.hul)
+          :-  %owner-differs
+          [owner.huv owner.hul]
+        ~?  !=(encryption-key.huv encryption-key.hul)
+          :-  %encryption-key-differs
+          [encryption-key.huv encryption-key.hul]
+        ~?  !=(authentication-key.huv authentication-key.hul)
+          :-  %authentication-key-differs
+          [authentication-key.huv authentication-key.hul]
+        ~?  !=(key-revision.huv key-revision.hul)
+          :-  %key-revision-differs
+          [key-revision.huv key-revision.hul]
+        ~?  !=(spawn-count.huv spawn-count.hul)
+          :-  %spawn-count-differs
+          [spawn-count.huv spawn-count.hul]
+        ~?  !=(spawned.huv spawned.hul)
+          :-  %spawned-differs
+          [spawned.huv spawned.hul]
+        ~?  !=(sponsor.huv sponsor.hul)
+          :-  %sponsor-differs
+          [sponsor.huv sponsor.hul]
+        ~?  !=(escape.huv escape.hul)
+          :-  %escape-differs
+          [escape.huv escape.hul]
+        ~?  !=(spawn-proxy.huv spawn-proxy.hul)
+          :-  %spawn-proxy-differs
+          [spawn-proxy.huv spawn-proxy.hul]
+        ~?  !=(transfer-proxy.huv transfer-proxy.hul)
+          :-  %transfer-proxy-differs
+          [transfer-proxy.huv transfer-proxy.hul]
+        ::
+        ~&  %$
+        ?.  save  ships
+        ~&  [%storing-chain-version-of who.cal]
+        (store-hull-change who.cal %full hul)
+      ::
+      =.  checking  (~(del by checking) who.cal)
       (ta-read-ships kis)
-    ?>  ?=(%ships -.cal)
-    ?>  ?=(%s -.res.rep)
-    =/  hul=hull:eth-noun
-      (decode-results p.res.rep hull:eth-type)
-    ?.  active.hul  +>.$
-    =.  ships
-      %+  ~(put by ships)  who.cal
-      (hull-from-eth hul)
-    ?:  =(0 spawn-count.hul)  +>.$
-    (ta-read %get-spawned who.cal)
+    ==
+  ::
+  ++  store-hull-change
+    |=  [who=@p dif=diff-hull]
+    ^+  ships
+    ::  if new, first dif must be %full
+    ?>  |((~(has by ships) who) ?=(%full -.dif))
+    =+  old=(fall (~(get by ships) who) *complete-ship)
+    ::  catch key changes, store them in the key map
+    =?  keys.old  ?=(%keys -.dif)
+      ~?  &((gth rev.dif 0) !(~(has by keys.old) (dec rev.dif)))
+        [%missing-previous-key-rev who (dec rev.dif)]
+      (~(put by keys.old) rev.dif enc.dif aut.dif)
+    ::  for full, store the new keys in case we don't have them yet
+    =?  keys.old  ?=(%full -.dif)
+      =,  new.dif
+      ~?  &((gth key-revision 0) !(~(has by keys.old) (dec key-revision)))
+        [%missing-previous-key-rev who (dec key-revision)]
+      %+  ~(put by keys.old)  key-revision
+      [encryption-key authentication-key]
+    =.  state.old     (apply-hull-diff state.old dif)
+    =.  history.old   [dif history.old]
+    ::  apply dif to ship state
+    (~(put by ships) who old)
   --
 ::
 ::  arms for card generation
@@ -242,11 +342,15 @@
     ::
       ?.  escape-requested  ~
       ``@p`escape-to
+    ::
+      spawn-proxy
+      transfer-proxy
   ==
 ::
 ++  poke-noun
   |=  a/@
   ^-  (quip move _+>)
+  ?>  =(src.bol our.bol)
   ?:  =(a 0)
     ~&  [%have-ships ~(key by ships)]
     [~ +>.$]
@@ -256,23 +360,36 @@
     ta-save:ta-new-filter:ta
   ?:  =(a 3)
     ta-save:ta-read-filter:ta
+  ?:  =(a 4)
+    ta-save:(ta-run-check:ta |)
+  ?:  =(a 5)
+    ta-save:(ta-run-check:ta &)
   [~ +>.$]
 ::
 ++  sigh-tang
   |=  [w=wire t=tang]
-  ~&  [%failed-sigh]
+  ~&  [%failed-sigh w]
   ~&  (turn t (cury wash [0 80]))
   [~ +>.$]
 ::
-++  sigh-json-rpc-response-init
+::  when we get a new filter: read it, kick timer
+::  when we get log or poll results: apply them
+++  sigh-json-rpc-response-filter
   |=  [w=wire r=response:json-rpc]
-  ~&  %got-init-response
-  ta-save:(ta-init-results:ta r)
+  ~&  [%got-filter-results w]
+  =<  ta-save
+  ?:  ?=([%new *] w)
+    (ta-take-filter:ta r)
+  (ta-take-filter-results:ta r)
 ::
-++  sigh-json-rpc-response-filter-poll
+::  when we get read results: verify/reset
+++  sigh-json-rpc-response-read
   |=  [w=wire r=response:json-rpc]
-  ~&  %got-filter-poll-results
-  ta-save:(ta-take-filter-results:ta r)
+  =<  ta-save
+  ?+  w  ~&(%unknown-read-reason ta)
+    [%verify ~]   (ta-take-read-results:ta r |)
+    [%reset ~]    (ta-take-read-results:ta r &)
+  ==
 ::
 ++  sigh-json-rpc-response
   |=  [w=wire r=response:json-rpc]
