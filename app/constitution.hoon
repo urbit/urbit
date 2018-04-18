@@ -37,7 +37,6 @@
           reqs=(list (pair (unit @t) request))          ::  rpc requests
           wir=wire                                      ::  wire for reqs
       ==
-  +*  this  .
   ::
   ++  ta-save
     ^-  (quip move _+>)
@@ -72,8 +71,9 @@
   ::
   ++  ta-read-ships
     |=  who=(list @p)
-    ?~  who  this
-    $(who t.who, this (ta-read %ships i.who))
+    ?~  who  +>
+    =.  +>  (ta-read %ships i.who)
+    $(who t.who)
   ::
   ::
   ++  ta-new-filter
@@ -145,7 +145,7 @@
   ::
   ++  ta-init-results
     |=  rep=response:json-rpc
-    ^+  this
+    ^+  +>
     ?>  ?=(%batch -.rep)
     =.  wir  /init
     |-  ^+  +>.^$
