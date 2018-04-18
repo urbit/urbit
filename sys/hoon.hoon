@@ -5705,7 +5705,7 @@
               {$bcpd p/spec q/hoon}                     ::  $&, repair
               {$bcsg p/hoon q/spec}                     ::  $~, default
               {$bctc p/spec q/(map term spec)}          ::  $`, read-only core
-              {$bcts p/toga q/spec}                     ::  $=, name
+              {$bcts p/togi q/spec}                     ::  $=, name
               {$bcvt p/spec q/spec}                     ::  $@, atom pick
               {$bcwt p/{i/spec t/(list spec)}}          ::  $?, full pick
               {$bczp p/spec q/(map term spec)}          ::  $!, opaque core
@@ -5718,6 +5718,8 @@
           $%  {%& p/(unit term) q/wing}                 ::  simple wing
               {%| p/(unit term) q/hoon}                 ::  named wing
           ==                                            ::
+++  togi                                                ::  shallow name w/doc
+          $@(term (pair (pair cord (list sect)) term))  ::
 ++  toga                                                ::  face control
           $@  p/term                                    ::  two togas
           $%  {$0 ~}                                    ::  no toga
@@ -5885,7 +5887,7 @@
     {$zpwt p/$@(p/@ {p/@ q/@}) q/hoon}                  ::  !?
     {$zpzp ~}                                           ::  !!
   ==                                                    ::
-++  sofa  (pair toga (unit spec))
+++  sofa  (pair togi (unit spec))
 ++  twit  hoon                                          ::  last-gen hoon
 ++  tyre  (list {p/term q/hoon})                        ::
 ++  tyke  (list (unit hoon))                            ::
@@ -6634,6 +6636,11 @@
     [%cltr (turn p.lot |=(a/coin ^$(lot a)))]
   ==
 ::
+++  robo
+  |=  togi
+  ^-  toga
+  ?@(+< +< [%1 [`p.+< q.+<] %0 ~])
+::
 ++  look
   ~/  %look
   |=  {cog/term dab/(map term (pair what foot))}
@@ -7336,7 +7343,7 @@
                  [%tsgl [%$ 6] p.mod]
       {$bcpd *}  $(mod p.mod)
       {$bcsg *}  p.mod
-      {$bcts *}  [%ktts p.mod $(mod q.mod)]
+      {$bcts *}  [%ktts (robo p.mod) $(mod q.mod)]
       {$bcvt *}  $(mod p.mod)
       {$bcwt *}  ::  use last entry
                  ::
@@ -7380,7 +7387,7 @@
       {$bcmc *}  (decorate (home [%tsgl [%limb %$] p.mod]))
       {$bcsg *}  [%ktls example(mod q.mod) (home p.mod)]
       {$bcls *}  (decorate example(mod q.mod))
-      {$bcts *}  (decorate [%ktts p.mod example:clear(mod q.mod)])
+      {$bcts *}  (decorate [%ktts (robo p.mod) example:clear(mod q.mod)])
       {$bcdt *}  (decorate (home (interface %gold p.mod q.mod)))
       {$bcnt *}  (decorate (home (interface %iron p.mod q.mod)))
       {$bczp *}  (decorate (home (interface %lead p.mod q.mod)))
@@ -7715,7 +7722,7 @@
       ::  name, $=
       ::
           {$bcts *}
-        [%ktts p.mod relative(mod q.mod)]
+        [%ktts (robo p.mod) relative(mod q.mod)]
       ::
       ::  branch, $@
       ::
@@ -7875,7 +7882,7 @@
         |*  {pif/@tas suf/*}
         |=  het/sofa
         ^-  (pair hoon whit)
-        =^  tog  wit  (tong p.het)
+        =^  tog  wit  (toni p.het)
         [[pif [tog q.het] suf] wit] 
       ::
       ++  humm
@@ -7890,6 +7897,18 @@
         ::  ?~  boy  flam
         ::  [[%docs u.boy gen] wit(boy ~)]
         flam
+      ::
+      ++  toni
+        |=  gyt/togi
+        ^-  {togi whit}
+        ?@  gyt
+          =^  wat  wit  (grif gyt ~)
+          ?~  wat  [gyt wit]
+          [[u.wat gyt] wit]
+        =^  wat  wit  (grif q.gyt `p.gyt)
+        ?~  wat
+          [q.gyt wit]
+        [[u.wat q.gyt] wit]
       ::
       ++  tong
         |=  got/toga
@@ -8215,7 +8234,7 @@
     ::
         {$tsnt *}
       ?~  q.p.gen
-        [%tsls [%ktts p.p.gen q.gen] r.gen]
+        [%tsls [%ktts (robo p.p.gen) q.gen] r.gen]
       [%tsls [%kthp [%bcts p.p.gen u.q.p.gen] q.gen] r.gen]
     ::
         {$tsmc *}  [%tsnt p.gen r.gen q.gen]
@@ -8225,12 +8244,12 @@
       [%tsdt p.gen [%wtcl q.gen r.gen [%wing p.gen]] s.gen]
     ::
         {$tskt *}                                        ::                  =^
-      =+  wuy=(weld q.gen `wing`[%v ~])                 ::
+      =+  wuy=(weld q.gen `wing`[%v ~])                  ::
       :+  %tsgr  [%ktts %v %$ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%limb %v] r.gen]        ::  =+  a==>(v \r.gen)
       :^  %tsdt  wuy  [%tsgl [%$ 3] [%limb %a]]
       :+  %tsgr  :-  ?~  q.p.gen
-                       :+  %ktts  p.p.gen
+                       :+  %ktts  (robo p.p.gen)
                        [%tsgl [%$ 2] [%limb %a]]
                      :+  %kthp
                         :+  %bcts  p.p.gen
