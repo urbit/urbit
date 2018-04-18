@@ -86,11 +86,12 @@
   |=  id=@t
   ^-  ships:function
   |^
+    ~|  id
     %+  rash  id
     ;~  pose
       (function %ships 'ships' shipname)
       (function %get-spawned 'getSpawned' shipname)
-      (function %dns-domains 'dnsDomain' dem:ag)
+      (function %dns-domains 'dnsDomains' dem:ag)
     ==
   ::
   ++  function
