@@ -17,10 +17,12 @@
   ?:  =(event.log activated)
     =+  ^-  [who=@ wer=address]
         (decode-results data.log ~[%uint %address])
-    :~  ^-  (pair ship diff-hull)
+    :*  ^-  (pair ship diff-hull)
         :+  who  %full
         %*(. *hull owner wer, sponsor (sein:title who))
       ::
+        ?:  =(%czar (clan:title who))  ~
+        :_  ~
         ^-  (pair ship diff-hull)
         [(sein:title who) %spawned who]
     ==
@@ -69,7 +71,11 @@
     %owner    hul(owner new.dif)
     %spawned  =+  (~(put in spawned.hul) who.dif)
               hul(spawn-count +(spawn-count.hul), spawned -)
-    %keys     hul(encryption-key enc.dif, authentication-key aut.dif)
+    %keys     %_  hul
+                encryption-key      enc.dif
+                authentication-key  aut.dif
+                key-revision        rev.dif
+              ==
     %sponsor  hul(sponsor new.dif, escape ~)
     %escape   hul(escape new.dif)
     %spawn-proxy      hul(spawn-proxy new.dif)
