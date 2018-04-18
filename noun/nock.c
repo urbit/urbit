@@ -1692,8 +1692,8 @@ static u3_noun _n_burn_out(u3_noun bus, _n_prog* pog_u);
 static u3_weak
 _n_hock(u3_noun cor, _n_site* sit_u)
 {
-  u3_weak pro;
-  c3_o jet_o = sit_u->jet_o;
+  u3_weak pro = u3_none;
+  c3_o jet_o  = sit_u->jet_o;
   if ( c3n == __(u3C.wag_w & u3o_debug_cpu) ) {
     if ( c3n == jet_o ) {
       pro = u3_none;
@@ -2711,7 +2711,6 @@ _n_ream(u3_noun kev)
   for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
     _n_site* sit_u = &(pog_u->cal_u.sit_u[i_w]);
     if ( u3_none != sit_u->loc ) {
-      fprintf(stderr, ".");
       u3z(sit_u->lab);
       sit_u->jet_o = u3j_nail(sit_u->loc, sit_u->axe,
           &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u));
