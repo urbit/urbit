@@ -1,4 +1,4 @@
-::                                                      ::  
+::                                                      ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
 =<  ride
@@ -6781,6 +6781,18 @@
       (battery-to-plum map)
   ==
 ::
+++  regular
+  |=  @ta
+  [`[' ' `[(cat 3 +< '(') ')']] `[+< ~]]
+::
+++  standard
+  |=  =stud
+  ^-  plum
+  ?@  stud  stud
+  :+  %&
+    [`['/' ~] ~]
+  `(list plum)`[auth.stud type.stud]
+::
 ++  hoon-to-plum
   |=  =hoon
   ^-  plum
@@ -6789,7 +6801,7 @@
 ++  spec-to-plum
   |=  =spec
   ^-  plum
-  ?+  -.spec  !!
+  ?-  -.spec
     %base  ?-  p.spec
              %noun  '*'
              %cell  '^'
@@ -6800,10 +6812,9 @@
            ==
     %dbug  $(spec q.spec)
     %leaf  (cat 3 '%' (scot p.spec q.spec))
-    %like  :+  %&
-             [`[':' ~] ~]
-           (turn `(list wing)`+.spec wing-to-plum)
+    %like  &/[[`[':' ~] ~] (turn `(list wing)`+.spec wing-to-plum)]
     %loop  (cat 3 '$' p.spec)
+    %over  $(spec q.spec)
     %make  =+  (lent q.spec)
            :+  %&
              :-  `[' ' `['(' ')']]
@@ -6815,19 +6826,31 @@
              ?:  =(- 2)  '%+'  '%-'
            [(hoon-to-plum p.spec) (turn q.spec ..$)]
     %bcbc  (core-to-plum '$$' p.spec q.spec)
-    %bcbr  :+  %&
-             [`[' ' `['$|(' ')']] `['$|' ~]]
-           :~  $(spec p.spec)
-               (hoon-to-plum q.spec)
-           ==
+    %bcbr  &/[(regular '$|') $(spec p.spec) (hoon-to-plum q.spec) ~]
     %bccb  (hoon-to-plum p.spec)
     %bccl  :+  %&
              [`[' ' `['[' ']']] `['$:' `['' '==']]]
            (turn `(list ^spec)`+.spec ..$)
-    %bccn  :+  %&
-             [`[' ' `['$%(' ')']] `['$%' `['' '==']]]
-           (turn `(list ^spec)`+.spec ..$)
+    %bccn  &/[(regular '$%') (turn `(list ^spec)`+.spec ..$)]
     %bcdt  (core-to-plum '$.' p.spec q.spec)
+    %bcgl  &/[(regular '$<') $(spec p.spec) $(spec q.spec) ~]
+    %bcgr  &/[(regular '$>') $(spec p.spec) $(spec q.spec) ~]
+    %bchp  &/[(regular '$-') $(spec p.spec) $(spec q.spec) ~]
+    %bckt  &/[(regular '$-') $(spec p.spec) $(spec q.spec) ~]
+    %bcls  &/[(regular '$+') (standard p.spec) $(spec q.spec) ~]
+    %bcnt  (core-to-plum '$/' p.spec q.spec)
+    %bcmc  &/[(regular '$;') (hoon-to-plum p.spec) ~]
+    %bcpd  &/[(regular '$&') $(spec p.spec) (hoon-to-plum q.spec) ~]
+    %bcsg  &/[(regular '$~') (hoon-to-plum p.spec) $(spec q.spec) ~]
+    %bctc  (core-to-plum '$`' p.spec q.spec)
+    %bcts  :+  %&
+             [`['=' ~] `['$=' ~]]
+           :~  ?@(p.spec p.spec q.p.spec)
+               $(spec q.spec)
+           ==
+    %bcvt  &/[(regular '$@') $(spec p.spec) $(spec q.spec) ~]
+    %bcwt  &/[(regular '$?') (turn `(list ^spec)`+.spec ..$)]
+    %bczp  (core-to-plum '$.' p.spec q.spec)
   ==
 ++  cosmetic
   ::  entry-trace: current potential block entries
