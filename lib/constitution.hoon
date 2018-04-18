@@ -94,4 +94,24 @@
   ++  shipname
     ;~(pfix sig fed:ag)
   --
+::
+++  function-to-call
+  |%
+  ++  ships
+    |=  cal=ships:function
+    ^-  [id=@t dat=call-data]
+    ?-  -.cal
+        %ships
+      :-  (crip "ships({(scow %p who.cal)})")
+      ['ships(uint32)' ~[uint+`@`who.cal]]
+    ::
+        %get-spawned
+      :-  (crip "getSpawned({(scow %p who.cal)})")
+      ['getSpawned(uint32)' ~[uint+`@`who.cal]]
+    ::
+        %dns-domains
+      :-  (crip "dnsDomains({(scow %ud ind.cal)})")
+      ['dnsDomains(uint8)' ~[uint+ind.cal]]
+    ==
+  --
 --

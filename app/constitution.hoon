@@ -64,25 +64,11 @@
   ::
   ++  ta-read
     |=  cal=ships:function
-    =-  %+  ta-request  `id
-        :+  %eth-call
-          [~ ships:contracts ~ ~ ~ (encode-call dat)]
-        [%label %latest]
-    ::TODO  probably turn the below into a lib arm
-    ^-  [id=@t dat=call-data]
-    ?-  -.cal
-        %ships
-      :-  (crip "ships({(scow %p who.cal)})")
-      ['ships(uint32)' ~[uint+`@`who.cal]]
-    ::
-        %get-spawned
-      :-  (crip "getSpawned({(scow %p who.cal)})")
-      ['getSpawned(uint32)' ~[uint+`@`who.cal]]
-    ::
-        %dns-domains
-      :-  (crip "dnsDomains({(scow %ud ind.cal)})")
-      ['dnsDomains(uint8)' ~[uint+ind.cal]]
-    ==
+    =+  (ships:function-to-call cal)
+    %+  ta-request  `id
+    :+  %eth-call
+      [~ ships:contracts ~ ~ ~ (encode-call dat)]
+    [%label %latest]
   ::
   ++  ta-read-ships
     |=  who=(list @p)
