@@ -2703,6 +2703,31 @@ u3n_beep(u3p(u3h_root) har_p)
   u3h_walk(har_p, _n_reap);
 }
 
+void
+_n_ream(u3_noun kev)
+{
+  c3_w i_w;
+  _n_prog* pog_u = u3to(_n_prog, u3t(kev));
+  for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
+    _n_site* sit_u = &(pog_u->cal_u.sit_u[i_w]);
+    if ( u3_none != sit_u->loc ) {
+      fprintf(stderr, ".");
+      u3z(sit_u->lab);
+      sit_u->jet_o = u3j_nail(sit_u->loc, sit_u->axe,
+          &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u));
+    }
+  }
+}
+
+/* u3n_ream(): refresh after restoring from checkpoint.
+*/
+void
+u3n_ream()
+{
+  c3_assert(u3R == &(u3H->rod_u));
+  u3h_walk(u3R->byc.har_p, _n_ream);
+}
+
 static c3_w
 _n_site_mark(_n_site* sit_u)
 {

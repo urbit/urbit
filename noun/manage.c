@@ -1690,5 +1690,6 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
   else {
     u3v_hose();
     u3j_ream();
+    u3n_ream();
   }
 }

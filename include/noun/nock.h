@@ -56,12 +56,20 @@
 
     /* u3n_beep(): promote bytecode state.
      */
-      void u3n_beep(u3p(u3h_root) har_p);
+      void
+      u3n_beep(u3p(u3h_root) har_p);
 
     /* u3n_bark(): mark bytecode cache.
      */
-      c3_w u3n_bark();
+      c3_w
+      u3n_bark(void);
 
     /* u3n_bree(): free bytecode cache.
      */
-      void u3n_bree();
+      void
+      u3n_bree(void);
+
+    /* u3n_ream(): refresh after restoring from checkpoint.
+    */
+      void
+      u3n_ream(void);
