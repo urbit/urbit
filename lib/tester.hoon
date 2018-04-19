@@ -13,7 +13,7 @@
 ::
 +=  instance
   :>  a mapping between a term and part of a test tree.
-  (pair term (each $-(@uvJ (list tape)) tests))
+  (pair term (each $-(@uvJ (list tank)) tests))
 ::
 :>  #  %generate
 :>    utilities for generating ++tests from files and directories.
@@ -59,13 +59,13 @@
   |=  arm/term
   ::REVIEW fewer asserts? recouple the nock and eat the runtime compile cost?
   ?>  (~(nest ut (~(peek ut p.v) %free 6)) & p:!>((init-test)))
-  =/  call  (~(mint ut p.v) p:!>(*wall) [%limb arm])
-  ?>  (~(nest ut p:!>(*wall)) & p.call)
+  =/  call  (~(mint ut p.v) p:!>(*tang) [%limb arm])
+  ?>  (~(nest ut p:!>(*tang)) & p.call)
   ::
   :-  arm
   :-  %&
-  |=  eny=@uvJ  ^-  wall
-  ((hard wall) .*(q.v(+6 (init-test eny)) q.call))
+  |=  eny=@uvJ  ^-  tang
+  ((hard tang) .*(q.v(+6 (init-test eny)) q.call))
 ::
 :>  #  %per-test
 :>    data initialized on a per-test basis.
@@ -84,7 +84,7 @@
   +|
   +-  check
     |*  [generator=$-(@uvJ *) test=$-(* ?)]
-    |-  ^-  wall
+    |-  ^-  tang
     ?:  (gth current-iteration check-iterations)
       ~
     ::  todo: wrap generator in mule so it can crash.
@@ -98,7 +98,7 @@
     =/  case  +(current-iteration)
     =/  pl  ?+(case "" %1 "s")
     ::XXX sample is a noun
-    ["falsified after {<case>} case{pl} by '{<`*`sample>}', seed {<eny>}"]~
+    [leaf+"falsified after {<case>} case{pl} by '{<`*`sample>}', seed {<eny>}"]~
   ::
   ::  todo: a generate function that takes an arbitrary span.
   ::
@@ -138,12 +138,12 @@
   ::  todo: unit testing libraries have a lot more to them than just eq.
   ++  expect-eq
     |=  a=vase
-    ^-  wall
-    ?@  q.a  ["ex-expected-pair: '{(text a)}'"]~
+    ^-  tang
+    ?@  q.a  [palm+[": " ~ ~ ~]^~[>%ex-expected-pair< (sell a)]]~
     ?:  =(-.q.a +.q.a)
       ~
-    :~  "expected: '{(text (slot 2 a))}'"
-        "actual:   '{(text (slot 3 a))}'"
+    :~  palm+[": " ~ ~ ~]^~[leaf+"expected" (sell (slot 2 a))]
+        palm+[": " ~ ~ ~]^~[leaf+"actual" (sell (slot 3 a))]
     ==
   :>  #
   :>  #  %formatting
@@ -151,9 +151,9 @@
   :>    test result presentation
   +|
   ++  category
-    |=  [a=tape b=wall]
+    |=  [a=tape b=tang]  ^-  tang
     ?:  =(~ b)  ~  :: test OK
-    :-  "in: '{a}'"
-    (turn b |=(c=tape "  {c}"))
+    :-  leaf+"in: '{a}'"
+    (turn b |=(c=tank rose+[~ "  " ~]^~[c]))
   --
 --

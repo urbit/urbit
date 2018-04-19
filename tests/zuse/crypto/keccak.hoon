@@ -82,7 +82,7 @@
           name=tape
           answers=(list (pair @ud @))
       ==
-  ^-  wall
+  ^-  tang
   ?~  answers  ~
   %+  weld  $(answers t.answers)
   =+  `[bytes=@ud answer=@]`i.answers
