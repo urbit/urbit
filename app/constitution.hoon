@@ -85,6 +85,13 @@
     =.  +>  (ta-read %ships i.who)
     $(who t.who)
   ::
+  ++  ta-read-dns
+    =+  inx=(gulf 0 2)
+    |-
+    ?~  inx  ..ta-read-dns
+    =.  ..ta-read-dns  (ta-read %dns-domains i.inx)
+    $(inx t.inx)
+  ::
   ::
   ++  ta-new-filter
     %-  ta-request-single
@@ -112,6 +119,7 @@
   ++  ta-run-check
     |=  save=?
     =.  wir  (weld /read ?:(save /reset /verify))
+    =<  ta-read-dns
     (ta-read-ships (gulf ~zod ~nec))  ::TODO  ~fes
   ::
   ::
@@ -263,6 +271,28 @@
       ::
       =.  checking  (~(del by checking) who.cal)
       (ta-read-ships kis)
+    ::
+        %dns-domains
+      ?>  ?=(%s -.res.rep)
+      ~|  [id.rep p.res.rep]
+      =+  dom=(crip (decode-results p.res.rep ~[%string]))
+      ~&  [%comparing-dns dom]
+      ?:  =(0 ind.cal)
+        =?  pri.dns  !=(pri.dns dom)
+          ~&  [%primary-dns-differs pri.dns dom]
+          ?:(save dom pri.dns)
+        +>.$
+      ?:  =(1 ind.cal)
+        =?  sec.dns  !=(sec.dns dom)
+          ~&  [%secondary-dns-differs sec.dns dom]
+          ?:(save dom sec.dns)
+        +>.$
+      ?:  =(2 ind.cal)
+        =?  ter.dns  !=(ter.dns dom)
+          ~&  [%tertiary-dns-differs ter.dns dom]
+          ?:(save dom ter.dns)
+        +>.$
+      !!
     ==
   ::
   ++  store-hull-change
