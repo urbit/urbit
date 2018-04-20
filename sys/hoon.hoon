@@ -428,9 +428,8 @@
   $%  ::  %|: wrappable paragraph without linebreaks
       ::  %&: decorated list
       ::
-      [%| p=(list @t)]
+      [%| =(list @t)]
       $:  %&
-          $=  decor
           $:  ::  wide: one-line syntax
               ::  tall: multiline syntax
               ::
@@ -6748,6 +6747,41 @@
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
   ++  wtts  |=(mod/spec (gray [%wtts (teal mod) puce]))
   --
+::  highly unsatisfactory temporary converter
+::
+++  plum-to-tank
+  |=  =plum
+  ^-  tank
+  ?@  plum  [%leaf (trip plum)]
+  ?-  -.plum
+    %|  :+  %rose
+          ["" " " ""]
+        (turn list.plum |=(@ta [%leaf (trip +<)]))
+    %&  =/  list  (turn list.plum ..$)
+        ?~  tall.plum
+          ?>  ?=(^ wide.plum)
+          =?  enclose.u.wide.plum  ?=(~ enclose.u.wide.plum)  `['{' '}']
+          :+  %rose
+            :*  (trip delimit.u.wide.plum)
+                (trip +<:enclose.u.wide.plum)
+                (trip +>:enclose.u.wide.plum)
+            ==
+          list
+        ?:  ?=(^ indef.u.tall.plum)
+          :+  %rose
+            :*  (trip sigil.u.indef.u.tall.plum)
+                (weld (trip intro.u.tall.plum) "[")
+                (weld "]" (trip final.u.indef.u.tall.plum))
+            ==
+          list
+        :+  %palm
+          :*  (weld (trip intro.u.tall.plum) "(")
+              ""
+              ""
+              ")"
+          ==
+        list
+  ==
 ++  limb-to-plum
   |=  =limb
   ?-  -.limb
@@ -6852,6 +6886,7 @@
     %bcwt  &/[(regular '$?') (turn `(list ^spec)`+.spec ..$)]
     %bczp  (core-to-plum '$.' p.spec q.spec)
   ==
+::
 ++  cosmetic
   ::  entry-trace: current potential block entries
   ::  block-count: cumulative blocks detected
@@ -6863,43 +6898,38 @@
   ::
   ::  sut: type we're analyzing
   ::
-  =|  sut/type
-  =<  ::  public interface
-      ::
-      |?  |%
-      ::
-      ::  +structure: make cosmetic spec from :sut
-      ::
-      ++  structure
-        ::  spec: raw analysis product
-        ::
-        =^  spec  +>  specify
-        ::  if we didn't block, just use it
-        ::
-        ?:  =(~ block-pairs)  spec
-        ::  otherwise, insert hygienic recursion
-        ::
-        :+  %bcbc  spec
-        %-  ~(gas by *(map term ^spec))
-        %+  turn
-          ~(tap by block-pairs)
-        |=  [=type index=@ud spec=^spec]
-        [(synthetic index) spec]
-      ::
-      ::  +pattern: pattern and context for data inspection
-      ::
-      ++  pattern
-        ^-  $:  ::  main: rendering pattern 
-                ::  context: recursion points by counter
-                ::
-                main=plot
-                loop=(map @ud plot)
-            ==
-        !!
-      --
-  ::  private core
+  |_  sut/type
   ::
-  |%
+  ::  +structure: make cosmetic spec from :sut
+  ::
+  ++  structure
+    ^-  spec
+    ::  spec: raw analysis product
+    ::
+    =^  spec  .  specify
+    ::  if we didn't block, just use it
+    ::
+    ?:  =(~ block-pairs)  spec
+    ::  otherwise, insert hygienic recursion
+    ::
+    :+  %bcbc  spec
+    %-  ~(gas by *(map term ^spec))
+    %+  turn
+      ~(tap by block-pairs)
+    |=  [=type index=@ud spec=^spec]
+    [(synthetic index) spec]
+  ::
+  ::  +pattern: pattern and context for data inspection
+  ::
+  ++  pattern
+    ^-  $:  ::  main: rendering pattern 
+            ::  context: recursion points by counter
+            ::
+            main=plot
+            loop=(map @ud plot)
+        ==
+    !!
+  ::
   ::  +synthetic: convert :number to a synthetic name
   ::
   ++  synthetic
@@ -10992,7 +11022,15 @@
 ::
 ++  skol                                                ::  $-(type tank) for ~!
   |=  typ/type  ^-  tank
-  ~(duck ut typ)
+  =/  pec  ~(structure cosmetic typ)
+  ~&  [%spec pec]
+  =/  lum  (spec-to-plum pec)
+  ~&  [%plum lum]
+  =/  tax  (plum-to-tank lum)
+  ~&  [%tank tax]
+  tax
+  ::  (plum-to-tank `plum`(spec-to-plum `spec`~(structure cosmetic typ)))
+  ::  ~(duck ut typ)
 ::
 ++  slam                                                ::  slam a gate
   |=  {gat/vase sam/vase}  ^-  vase
