@@ -48,39 +48,63 @@
       ::
       %&  ::  trial: attempt at wide form
           ::
-          =/  trial  ?~(wide.plum ~ `linear)
-          ::  if wide form is available optimal
+          =/  trial  ?~(wide.plum ~ [~ u=linear])
+          ::  if wide form is available or optimal
           ::
           ?:  ?&  ?=(^ trial)
                   ?|  ?=(~ tall.plum)
-                      (lte length.line 40)
+                      (lte length.u.trial 40)
               ==  ==
             ::  then produce wide form
             ::
-            [0 text.trial]
+            [0 text.u.trial]~
           ::  else assert tall style (you gotta set either wide or tall)
           ::
           ?>  ?=(^ tall.plum)
           ::  family:  subwindows
           ::  prelude: intro as tape
           ::
-          =/  family   (turn list.plum |=(plum window(plum plum)))
+          =/  family   (turn list.plum |=(=^plum window(plum plum)))
           =/  prelude  (trip intro.u.tall.plum)
-          =/  prelen   (lent prelude)
-          ::  if :indef is empty
+          ::  if, :indef is empty
           ::
           ?~  indef.u.tall.plum
-            ::  then print in sloping mode
+            ::  then, print in sloping mode
             ::
-            !!
-          ::  else print in vertical mode
+            ::  if, no children,
+            ::
+            ?:  =(~ family)
+              ::  then, prelude if any
+              ::
+              ?~(prelude ~ [0 prelude]~)
+            ::  else, inject prelude into first child
+            ::
+            ^-  (list [indent=@ud text=tape])
+            %-  zing
+            =/  count  (lent family)
+            =/  index  1
+            |-  ^+  family
+            ?~  family  ~
+            :_  $(family t.family, index +(index))
+            ^-  (list [indent=@ud text=tape])
+            =/  indent  (mul 2 (sub count index))
+            =?  indent  =(1 index)  (max indent (add 2 (lent prelude)))
+            =.  i.family  (turn i.family |=([@ud tape] [(add indent +<-) +<+]))
+            ?~  i.family  ?~(prelude ~ [0 prelude]~)
+            ?~  prelude   i.family
+            :_  t.i.family
+            :-  0
+            %+  weld  prelude
+            (runt [(sub indent (lent prelude)) ' '] text.i.i.family)
+          ::
+          ::  else, print in vertical mode
           :: 
           ::  prefix: before each entry
           ::  finale: after all entries
           ::
           =/  prefix  (trip sigil.u.indef.u.tall.plum)
           =/  finale  (trip final.u.indef.u.tall.plum)
-          ::  if no children, then just prelude and finale
+          ::  if, no children, then, just prelude and finale
           ::
           ?:  =(~ family)
             %+  weld
@@ -92,8 +116,8 @@
             ::  kids: flat list of child lines
             ::  tab:  amount to indent kids
             ::
-            =*  tab   ?+(prelen 2 %0 0, %1 2, %2 4)
-            =/  kids  (zing family)
+            =/  kids  `(list [indent=@ud text=tape])`(zing family)
+            =*  tab   =+((lent prelude) ?+(- 2 %0 0, %1 2, %2 4))
             ::  indent kids by tab
             ::
             =.  kids  (turn kids |=([@ud tape] [(add tab +<-) +<+]))
@@ -103,7 +127,7 @@
               ?:  =(~ prelude)  kids
               ::  if no kids, or prelude doesn't fit
               ::
-              ?:  |(?=(~ kids) (gte +(prelen) indent.i.kids))
+              ?:  |(?=(~ kids) (gte +((lent prelude)) indent.i.kids))
                 ::  don't inject, just add to head if needed
                 ::
                 [[0 prelude] kids]
@@ -112,21 +136,22 @@
               =*  inject  %+  weld
                             prelude
                           %+  runt 
-                            [(sub indent.i.kids prelen) ' ']
+                            [(sub indent.i.kids (lent prelude)) ' ']
                           text.i.kids
               [[0 inject] t.kids]
             ::  append finale
             ::
             ?~  finale  kids
-            (weld kids [0 finale]~)
+            (weld kids ^+(kids [0 finale]~))
           ::  else, with :prefix
           ::  tab: amount to indent 
           ::
-          =*  tab  (add 2 prelen)
+          =*  tab  (add 2 (lent prelude))
           ::  append :finale 
           ::
           =-  ?~  finale  -
-              (weld - [0 finale]~)
+              (weld - ^+(- [0 finale]~))
+          ^-  (list [indent=@ud text=tape])
           %-  zing
           ::  combine each subtree with the prefix
           ::
@@ -134,19 +159,13 @@
           |=  =(list [indent=@ud text=tape])
           ^+  +<
           =.  list  (turn list |=([@ud tape] [(add tab +<-) +<+]))
+          ?~  list  ~
           :_  t.list
           :-  0
           %+  weld  
             prefix
-          (runt [(sub length.i.list (lent prefix)) ' '] text.i.list)
+          (runt [(sub indent.i.list (lent prefix)) ' '] text.i.list)
     ==
-    ::
-    ::  
-    ::
-    ::  if wide form is undesirable or too long, don't even try
-    ::
-    ?:  ?|  ?=(~ wide.plum)
-        ==
   ::
   ::  +linear: make length and tape
   ::
@@ -190,18 +209,20 @@
           ::
           =-  ::  add enclosure if any
               ::
-              ?~  enclose.u.wide.plum -
+              ?~  enclose.u.wide.plum  body
               =*  clamps  u.enclose.u.wide.plum
               =/  close  [(trip -.clamps) (trip +.clamps)]
-              :-  (add length.0 (lent -.close) (lent +.close))
-              :(weld -.close text.- +.close) 
-          ::  compose body
+              :-  :(add length.body (lent -.close) (lent +.close))
+              :(weld -.close text.body +.close) 
           ::
+          ::  body: body of wide rendering 
+          :: 
+          ^=  body
           =/  stop  (trip delimit.u.wide.plum)
           |-  ^-  [length=@ud text=tape]
           ?~  list.plum  [0 ~]
           =/  next  $(list.plum t.list.plum)
-          =/  this  ^$(plum i.list.plum) 
+          =/  this  linear(plum i.list.plum) 
           :-  :(add length.this (lent stop) length.next)
           :(weld text.this stop text.next)
     ==
