@@ -7,10 +7,288 @@
 ::::
   ::
 :-  %say
-|=  *
-:-  %noun
-=<  "hello, world"
+|=  {^ {{subject=type ~} ~}}
+:-  %txt
+^-  wain
+=<  =/  spec=spec  ~(structure cosmetic subject)
+    =/  plum=plum  (spec-to-plum spec)
+    ~(tall plume plum)    
 |%
+++  cosmetic
+  ::  entry-trace: current potential block entries
+  ::  block-count: cumulative blocks detected
+  ::  block-pairs: blocking numbers and specs
+  ::
+  =|  entry-trace=(set type)
+  =|  block-count=@ud
+  =|  block-pairs=(map type (pair @ud spec))
+  ::
+  ::  sut: type we're analyzing
+  ::
+  |_  sut/type
+  ::
+  ::  +structure: make cosmetic spec from :sut
+  ::
+  ++  structure
+    ^-  spec
+    ::  spec: raw analysis product
+    ::
+    =^  spec  .  specify
+    ::  if we didn't block, just use it
+    ::
+    ?:  =(~ block-pairs)  spec
+    ::  otherwise, insert hygienic recursion
+    ::
+    :+  %bcbc  spec
+    %-  ~(gas by *(map term ^spec))
+    %+  turn
+      ~(tap by block-pairs)
+    |=  [=type index=@ud spec=^spec]
+    [(synthetic index) spec]
+  ::
+  ::  +pattern: pattern and context for data inspection
+  ::
+  ++  pattern
+    ^-  $:  ::  main: rendering pattern 
+            ::  context: recursion points by counter
+            ::
+            main=plot
+            loop=(map @ud plot)
+        ==
+    !!
+  ::
+  ::  +synthetic: convert :number to a synthetic name
+  ::
+  ++  synthetic
+    |=  number=@ud
+    ^-  @tas
+    ?:  (lte number 26)
+      (add 'a' number)
+    (cat 3 (add 'a' (mod number 26)) $(number (div number 26)))
+  ::
+  ::  +specify: make spec that matches :sut
+  ::
+  ++  specify
+    ^-  [spec _.]
+    =<  [- +>]
+    =<  entry
+    |%
+    ::  +entry: make spec at potential entry point
+    ::
+    ++  entry
+      ^-  [spec _.]
+      ::  if we are already inside :sut
+      ::
+      ?:  (~(has in entry-trace) sut)
+        ::  then produce and record a block reference
+        ::
+        =+  [%loop (synthetic block-count)]
+        :-  -
+        %_  +
+          block-count  +(block-count)            
+          block-pairs  (~(put by block-pairs) sut [block-count -])
+        ==
+      ::  else filter main loop for block promotion
+      ::
+      =^  spec  .  main(entry-trace (~(put in entry-trace) sut))
+      ::  loc: output block record for :sut
+      ::
+      =/  loc  (~(get by block-pairs) sut)
+      ::  if we did not find :sut inside itself, not a true entry point
+      ::
+      ?~  loc  [spec +>]
+      ::  else produce a block reference and record the analysis
+      ::
+      :-  [%loop (synthetic p.u.loc)] 
+      +>(block-pairs (~(put by block-pairs) sut [p.u.loc spec]))
+    ::
+    ::  +main: make spec from any type
+    ::
+    ++  main 
+      ?-  sut
+        %void      :_(. [%base %void])
+        %noun      :_(. [%base %noun])
+      ::
+        [%atom *]  (atom p.sut q.sut)
+        [%cell *]  (cell p.sut q.sut)
+        [%core *]  (core p.sut q.sut)
+        [%face *]  (face p.sut q.sut)
+        [%form *]  !!  ::  (form(sut p.p.sut) q.p.sut)
+        [%fork *]  (fork p.sut)
+        [%hold *]  entry(sut ~(repo ut sut))
+      == 
+    ::
+    ::  +form: rationalize structure from trace (stub)
+    ::
+    ++  form
+      |=  =spec
+      ^-  [^spec _+>]
+      :_  +>
+      |-  ^-  ^spec
+      ::  reform a spec left as a type annotation
+      ::
+      ?+    -.spec  spec
+        ::  incomplete
+        ::
+        %dbug  $(spec q.spec)
+        %like  ::  hub: type of context
+               ::  poy: reference 
+               ::
+               =/  hub  %-  ~(play ut sut)
+                        |-  ^-  hoon
+                        ?~  q.spec  [%$ 1]
+                        [%tsgl [%wing i.q.spec] $(q.spec t.q.spec)]
+               =/  poy  (~(fond ut hub) %free p.spec)
+               ::  if we have a simple arm
+               ::
+               ?:  ?=([%& * * %| *] poy)
+                 ::  then keep the spec
+                 ::
+                 spec
+               !!
+      ==
+    ::
+    ::  +atom: convert atomic type to spec
+    ::
+    ++  atom
+      |=  $:  ::  aura: flavor of atom
+              ::  constant: one value, or all values
+              ::
+              aura=term 
+              constant=(unit @)
+          ==
+      ::  pure function
+      ::
+      :_  +>  ^-  spec
+      ::  if atom is not constant
+      ::
+      ?~  constant
+        ::  %base: flavored atom with arbitrary value
+        ::
+        [%base atom/aura]
+      ::  %leaf: flavored constant
+      ::
+      [%leaf aura u.constant]
+    ::
+    ::  +cell: convert a %cell to a spec
+    ::
+    ++  cell
+      |=  $:  ::  left: head of cell
+              ::  rite: tail of cell
+              ::
+              left=type
+              rite=type
+          ==
+      ^-  [spec _+>]
+      ::  head: cosmetic structure of head
+      ::  tail: cosmetic structure of tail
+      ::
+      =^  head  +>.$  main(sut left)
+      =^  tail  +>.$  main(sut rite)
+      :_  +>.$
+      ::  %bccl: raw tuple
+      ::
+      ?:  ?=(%bccl -.tail)
+        [%bccl head +.tail]
+      [%bccl head tail ~]
+    ::
+    ::  +core: convert a %core to a spec
+    ::
+    ++  core
+      |=  $:  ::  payload: data 
+              ::  battery: code
+              ::
+              payload=type
+              battery=coil
+          ==
+      ^-  [spec _+>]
+      ::  payload-spec: converted payload
+      ::
+      =^  payload-spec  +>.$  main(sut payload)
+      ::  arms: all arms in the core, as hoons
+      ::
+      =/  arms
+        ^-  (list (pair term hoon))
+        %-  zing
+        ^-  (list (list (pair term hoon)))
+        %+  turn  ~(tap by q.s.battery)
+        |=  [term =tomb]
+        ^-  (list (pair term hoon))
+        %+  turn  ~(tap by q.tomb)
+        |=  [=term =what =foot]
+        ^-  (pair @tas hoon)
+        [term p.foot]
+      ::  arm-specs: all arms in the core, as specs
+      ::
+      =^  arm-specs  +>.$
+        |-  ^-  [(list (pair term spec)) _+>.^$]
+        ?~  arms  [~ +>.^$]
+        =^  mor  +>.^$  $(arms t.arms)
+        =^  les  +>.^$  
+          main(sut [%hold [%core payload battery] q.i.arms])
+        [[[p.i.arms les] mor] +>.^$]
+      ::  arm-map: all arms in the core, as a a spec map
+      ::
+      =*  arm-map  (~(gas by *(map term spec)) arm-specs)
+      :_  +>.$
+      ?-  p.battery
+        %lead  [%bczp payload-spec arm-map]
+        %gold  [%bcdt payload-spec arm-map]
+        %zinc  [%bctc payload-spec arm-map]
+        %iron  [%bcnt payload-spec arm-map]
+      ==
+    ::
+    ::  +face: convert a %face to a +spec
+    ::
+    ++  face
+      |=  $:  ::  decor: decoration 
+              ::  content: decorated content
+              ::
+              decor=(pair what $@(term tune))
+              content=type
+          ==
+      ^-  [spec _+>]
+      =^  body  +>.$  main(sut content)
+      :_  +>.$
+      ?@  q.decor  [%bcts q.decor body]
+      ::  discard aliases, etc
+      ::
+      body
+    ::
+    ::  +fork: convert a %fork to a +spec
+    ::
+    ++  fork
+      |=  types=(set type)
+      ^-  [spec _+>]
+      ::  type-list: type set as a list
+      ::
+      =/  type-list  ~(tap by types)
+      ::  specs: type set as a list of specs
+      ::
+      =^  specs  +>.$
+        |-  ^-  [(list spec) _+>.^$]
+        ?~  type-list  [~ +>.^$]
+        =^  mor  +>.^$  $(type-list t.type-list)
+        =^  les  +>.^$  main(sut i.type-list)
+        [[les mor] +>.^$]
+      ?<  ?=(~ specs)
+      :_(+>.$ [%bcwt specs])
+    --
+  ::
+  ::  +explore:cosmetic: convert :sut to an inspection pattern (+plot).
+  ::
+  ++  explore
+    ^-  [plot _.]
+    =<  [- +>] 
+    |^  ^-  [plot _.]
+        ?+  sut  !!
+          %void  :_(. [%base %void])
+          %noun  :_(. [%base %noun])
+        ==
+    ++  foo  !!
+    --
+  --
+::
 ++  plume
   |_  =plum
   ::
@@ -26,6 +304,12 @@
     %+  turn  window
     |=  [indent=@ud text=tape]
     (crip (runt [indent ' '] text))
+  ::
+  ::  +adjust: adjust lines to right
+  ::
+  ++  adjust
+    |=  [tab=@ud =(list [length=@ud text=tape])]
+    (turn list |=([@ud tape] [(add tab +<-) +<+]))
   ::  
   ::  +window: print as list of tabbed lines
   ::
@@ -61,41 +345,73 @@
           ::  else assert tall style (you gotta set either wide or tall)
           ::
           ?>  ?=(^ tall.plum)
-          ::  family:  subwindows
+          ::  blocks:  subwindows
           ::  prelude: intro as tape
           ::
-          =/  family   (turn list.plum |=(=^plum window(plum plum)))
+          =/  blocks   (turn list.plum |=(=^plum window(plum plum)))
           =/  prelude  (trip intro.u.tall.plum)
           ::  if, :indef is empty
           ::
           ?~  indef.u.tall.plum
             ::  then, print in sloping mode
             ::
-            ::  if, no children,
+            ::  if, no children
             ::
-            ?:  =(~ family)
-              ::  then, prelude if any
+            ?:  =(~ blocks)
+              ::  then, the prelude if any
               ::
               ?~(prelude ~ [0 prelude]~)
-            ::  else, inject prelude into first child
+            ::  else, format children and inject any prelude
             ::
             ^-  (list [indent=@ud text=tape])
+            ::  concatenate child blocks into a single output
+            ::
             %-  zing
-            =/  count  (lent family)
+            ::  count: number of children
+            ::  index: current child from 1 to n
+            ::
+            =/  count  (lent blocks)
             =/  index  1
-            |-  ^+  family
-            ?~  family  ~
-            :_  $(family t.family, index +(index))
+            |-  ^+  blocks
+            ?~  blocks  ~
+            :_  $(blocks t.blocks, index +(index))
             ^-  (list [indent=@ud text=tape])
+            ::  indent: backstep indentation level
+            ::
             =/  indent  (mul 2 (sub count index))
-            =?  indent  =(1 index)  (max indent (add 2 (lent prelude)))
-            =.  i.family  (turn i.family |=([@ud tape] [(add indent +<-) +<+]))
-            ?~  i.family  ?~(prelude ~ [0 prelude]~)
-            ?~  prelude   i.family
-            :_  t.i.family
+            ::  unless, we're on the first block
+            ::
+            ?.  =(1 index)
+              ::  else, apply normal backstep indentation
+              ::
+              (adjust indent i.blocks)
+            ::  then, apply and/or inject prelude
+            ::
+            ::    this fixes the naive representations
+            ::
+            ::      :+  
+            ::          foo
+            ::        bar
+            ::      baz
+            ::
+            ::    and
+            ::
+            ::      :-
+            ::        foo
+            ::      bar
+            ::
+            =.  indent  (max indent (add 2 (lent prelude)))
+            =.  i.blocks  (adjust indent i.blocks)
+            ?~  i.blocks  ?~(prelude ~ [0 prelude]~)
+            ?~  prelude   i.blocks
+            :_  t.i.blocks
             :-  0
+            ~|  [%indent indent]
+            ~|  [%prelude prelude]
+            ~|  [%kids list.plum]
+            ~|  [%blocks blocks]
             %+  weld  prelude
-            (runt [(sub indent (lent prelude)) ' '] text.i.i.family)
+            (runt [(sub indent.i.i.blocks (lent prelude)) ' '] text.i.i.blocks)
           ::
           ::  else, print in vertical mode
           :: 
@@ -106,7 +422,7 @@
           =/  finale  (trip final.u.indef.u.tall.plum)
           ::  if, no children, then, just prelude and finale
           ::
-          ?:  =(~ family)
+          ?:  =(~ blocks)
             %+  weld
               ?~(prelude ~ [0 prelude]~)
             ?~(finale ~ [0 finale]~)
@@ -116,7 +432,7 @@
             ::  kids: flat list of child lines
             ::  tab:  amount to indent kids
             ::
-            =/  kids  `(list [indent=@ud text=tape])`(zing family)
+            =/  kids  `(list [indent=@ud text=tape])`(zing blocks)
             =*  tab   =+((lent prelude) ?+(- 2 %0 0, %1 2, %2 4))
             ::  indent kids by tab
             ::
@@ -155,7 +471,7 @@
           %-  zing
           ::  combine each subtree with the prefix
           ::
-          %+  turn  family
+          %+  turn  blocks
           |=  =(list [indent=@ud text=tape])
           ^+  +<
           =.  list  (turn list |=([@ud tape] [(add tab +<-) +<+]))
@@ -203,7 +519,7 @@
             ?~  window  [0 ~]
             =/  next  $(window t.window)
             :-  :(add (lent text.i.window) 2 length.next)
-            :(weld text.i.window "  " text.next)
+            ?~(text.next text.i.window :(weld text.i.window "  " text.next))
           ::
           ::  else use wide layout
           ::
@@ -223,10 +539,12 @@
           ?~  list.plum  [0 ~]
           =/  next  $(list.plum t.list.plum)
           =/  this  linear(plum i.list.plum) 
+          ?~  text.next  this
           :-  :(add length.this (lent stop) length.next)
           :(weld text.this stop text.next)
     ==
   --
+::  highly unsatisfactory temporary converter
 ::
 ++  plum-to-tank
   |=  =plum
@@ -241,22 +559,22 @@
           ?>  ?=(^ wide.plum)
           =?  enclose.u.wide.plum  ?=(~ enclose.u.wide.plum)  `['{' '}']
           :+  %rose
-            :*  (trip +<:enclose.u.wide.plum)
-                (trip delimit.u.wide.plum)
+            :*  (trip delimit.u.wide.plum)
+                (trip +<:enclose.u.wide.plum)
                 (trip +>:enclose.u.wide.plum)
             ==
           list
         ?:  ?=(^ indef.u.tall.plum)
           :+  %rose
-            :*  (weld (trip intro.u.tall.plum) "<")
-                (weld (trip sigil.u.indef.u.tall.plum) " ")
-                (weld "(" (trip final.u.indef.u.tall.plum))
+            :*  (trip sigil.u.indef.u.tall.plum)
+                (weld (trip intro.u.tall.plum) "[")
+                (weld "]" (trip final.u.indef.u.tall.plum))
             ==
           list
         :+  %palm
           :*  (weld (trip intro.u.tall.plum) "(")
-              " "
-              " "
+              ""
+              ""
               ")"
           ==
         list
@@ -366,4 +684,3 @@
     %bczp  (core-to-plum '$.' p.spec q.spec)
   ==
 --
-
