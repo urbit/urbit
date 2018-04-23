@@ -71,9 +71,14 @@
   ++  synthetic
     |=  number=@ud
     ^-  @tas
-    ?:  (lte number 26)
-      (add 'a' number)
-    (cat 3 (add 'a' (mod number 26)) $(number (div number 26)))
+    =/  alf/(list term)
+        ^~  :~  %alf  %bet  %gim  %dal  %hej  %vav  %zay  %het
+                %tet  %yod  %kaf  %lam  %mem  %nun  %sam  %ayn
+                %pej  %sad  %qof  %res  %sin  %tav
+            ==
+    ?:  (lth number 22)
+      (snag number alf)
+    (cat 3 (snag (mod number 22) alf) $(number (div number 22)))
   ::
   ::  +specify: make spec that matches :sut
   ::
@@ -85,6 +90,12 @@
     ::
     ++  entry
       ^-  [spec _load]
+      ::  old: old recursion binding for :sut
+      ::
+      =/  old  (~(get by pairs.load) sut)
+      ::  if, already bound, reuse binding
+      ::
+      ?^  old  [[%loop (synthetic p.u.old)] load]
       ::  if, we are already inside :sut
       ::
       ?:  (~(has in trace.coat) sut)
@@ -99,17 +110,19 @@
       ::  else, filter main loop for block promotion
       ::
       =^  spec  load  main(trace.coat (~(put in trace.coat) sut))
-      ::  loc: output block record for :sut
+      ::  check if we re-entered :sut while traversing
       ::
-      =/  loc  (~(get by pairs.load) sut)
-      ::  if we did not find :sut inside itself, not a true entry point
+      =/  new  (~(get by pairs.load) sut)
+      ::  if, we did not find :sut inside itself
       ::
-      ?~  loc  
+      ?~  new
+        ::  then, :sut is not a true entry point
+        ::
         [spec load]
-      ::  else produce a block reference and record the analysis
+      ::  else, produce a reference and record the analysis
       ::
-      :-  [%loop (synthetic p.u.loc)] 
-      load(pairs (~(put by pairs.load) sut [p.u.loc spec]))
+      :-  [%loop (synthetic p.u.new)] 
+      load(pairs (~(put by pairs.load) sut [p.u.new spec]))
     ::
     ::  +main: make spec from any type
     ::
@@ -436,7 +449,7 @@
             %+  weld
               ?~(prelude ~ [0 prelude]~)
             ?~(finale ~ [0 finale]~)
-          ::  if no :prefix
+          ::  if, no :prefix
           ::
           ?:  =(~ prefix)
             ::  kids: flat list of child lines
@@ -451,7 +464,7 @@
             ::
             =.  kids  
               ?:  =(~ prelude)  kids
-              ::  if no kids, or prelude doesn't fit
+              ::  if, no kids, or prelude doesn't fit
               ::
               ?:  |(?=(~ kids) (gte +((lent prelude)) indent.i.kids))
                 ::  don't inject, just add to head if needed
@@ -470,20 +483,24 @@
             ?~  finale  kids
             (weld kids ^+(kids [0 finale]~))
           ::  else, with :prefix
-          ::  tab: amount to indent 
           ::
-          =*  tab  (add 2 (lent prelude))
           ::  append :finale 
           ::
           =-  ?~  finale  -
               (weld - ^+(- [0 finale]~))
           ^-  (list [indent=@ud text=tape])
+          ::  clear: clearance needed to miss prefix
+          ::
+          =/  clear  (add 2 (lent prefix))
           %-  zing
           ::  combine each subtree with the prefix
           ::
           %+  turn  blocks
           |=  =(list [indent=@ud text=tape])
           ^+  +<
+          ::  tab: depth to indent
+          ::
+          =*  tab  ?~(list 0 (sub clear (min clear indent.i.list)))
           =.  list  (turn list |=([@ud tape] [(add tab +<-) +<+]))
           ?~  list  ~
           :_  t.list
@@ -658,7 +675,7 @@
     %dbug  $(spec q.spec)
     %leaf  =+((scot p.spec q.spec) ?:(=('~' -) - (cat 3 '%' -)))
     %like  &/[[`[':' ~] ~] (turn `(list wing)`+.spec wing-to-plum)]
-    %loop  (cat 3 '!' p.spec)
+    %loop  (cat 3 '$' p.spec)
     %over  $(spec q.spec)
     %make  =+  (lent q.spec)
            :+  %&
