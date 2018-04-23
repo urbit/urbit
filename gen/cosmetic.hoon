@@ -124,6 +124,12 @@
       :-  [%loop (synthetic p.u.new)] 
       load(pairs (~(put by pairs.load) sut [p.u.new spec]))
     ::
+    ::  +meta: try to make spec from type of filter
+    ::
+    ++  meta
+      ^-  [(unit spec) _load]
+       
+    ::
     ::  +main: make spec from any type
     ::
     ++  main
@@ -136,15 +142,17 @@
         [%cell *]  (cell p.sut q.sut)
         [%core *]  (core p.sut q.sut)
         [%face *]  (face p.sut q.sut)
-        [%form *]  !!  ::  (form(sut p.p.sut) q.p.sut)
+        [%form *]  ?:  ?=(%made -.q.p.sut)
+                     (reform(sut p.p.sut) p.q.p.sut)
+                   $(sut q.sut) 
         [%fork *]  (fork p.sut)
         [%hold *]  entry(sut ~(repo ut sut))
       == 
     ::
     ::  +form: rationalize structure from type (stub)
     ::
-    ++  form
-      |=  =spec
+    ++  reform
+      |=  =note
       ^-  [^spec _load]
       :_  load
       |-  ^-  ^spec
