@@ -542,7 +542,6 @@
         {$sav p/path q/@}                               ::  save to file
         {$url p/@t}                                     ::  activate url
     ==                                                  ::
-  ++  deco  ?($bl $br $un $~)                           ::  text decoration
   ++  dill-belt                                         ::  new belt
     $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
         {$bac $~}                                       ::  true backspace
@@ -579,14 +578,6 @@
         {$velo p/@t q/@t}                               ::  reboot
         {$verb $~}                                      ::  verbose mode
     ==                                                  ::
-  ++  stub  (list (pair stye (list @c)))                ::  styled tuba
-  ++  stye  (pair (set deco) (pair tint tint))          ::  decos/bg/fg
-  ++  styl                                              ::  cascading stye
-    %+  pair  (unit deco)                               ::
-    (pair (unit tint) (unit tint))                      ::
-  ::                                                    ::
-  ++  styx  (list $@(@t (pair styl styx)))              ::  styled text
-  ++  tint  ?($r $g $b $c $m $y $k $w $~)               ::  text color
   --  ::dill
 ::                                                      ::::
 ::::                    ++eyre                            ::  (1e) oldweb

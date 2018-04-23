@@ -46,7 +46,7 @@
       kil/kill                                          ::  kill buffer
       inx/@ud                                           ::  ring index
       fug/(map gill:gall (unit target))                ::  connections
-      mir/(pair @ud stub:dill)                         ::  mirrored terminal
+      mir/(pair @ud stub)                               ::  mirrored terminal
   ==                                                    ::
 ++  history                                             ::  past input
   $:  pos/@ud                                           ::  input position
@@ -390,7 +390,7 @@
   (se-emit [u.sys %diff %dill-blit bil])
 ::
 ++  se-show                                           ::  show buffer, raw
-  |=  lin/(pair @ud stub:dill)
+  |=  lin/(pair @ud stub)
   ^+  +>
   ?:  =(mir lin)  +>
   =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop (add p.lin (lent-stye:klr q.lin))))
@@ -398,7 +398,7 @@
   +>(mir lin)
 ::
 ++  se-just                                           ::  adjusted buffer
-  |=  {pom/stub:dill lin/(pair @ud (list @c))}
+  |=  {pom/stub lin/(pair @ud (list @c))}
   ^+  +>
   =/  pol  (lent-char:klr pom)
   =/  end  (sub edg pol)
@@ -407,7 +407,7 @@
     =/  off  ?:((lte p.lin end) 0 (sub p.lin end))
     %+  se-show
       (sub pos off)
-    (swag:klr [off edg] (welp pom [*stye:dill q.lin]~))
+    (swag:klr [off edg] (welp pom [*stye q.lin]~))
   =.  off  ?:  (gth p.lin (add end off))
              (sub p.lin end)
            ?:  (lth p.lin off)
@@ -415,7 +415,7 @@
            off
   %+  se-show
     (sub pos off)
-  (welp pom [*stye:dill (swag [off end] q.lin)]~)
+  (welp pom [*stye (swag [off end] q.lin)]~)
 ::
 ++  se-view                                           ::  flush buffer
   ^+  .
@@ -842,8 +842,8 @@
     (ta-hom (cat:edit pos.inp txt))
   ::
   ++  ta-vew                                          ::  computed prompt
-    ^-  {pom/stub:dill lin/(pair @ud (list @c))}
-    =;  vew/(pair (list @c) styx:dill)
+    ^-  {pom/stub lin/(pair @ud (list @c))}
+    =;  vew/(pair (list @c) styx)
       [(make:klr q.vew) pos.inp p.vew]
     ?:  vis.pom
       :-  buf.say.inp                                 ::  default prompt

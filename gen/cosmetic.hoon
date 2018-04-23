@@ -15,13 +15,22 @@
     ~(tall plume plum)    
 |%
 ++  cosmetic
-  ::  entry-trace: current potential block entries
-  ::  block-count: cumulative blocks detected
-  ::  block-pairs: blocking numbers and specs
-  ::
-  =|  entry-trace=(set type)
-  =|  block-count=@ud
-  =|  block-pairs=(map type (pair @ud spec))
+  =|  ::  coat: contextual metadata
+      ::
+      $=  coat
+      $:  ::  trace: type analysis stack
+          ::
+          trace=(set type)
+      ==
+  =|  ::  load: accumulating metadata (state)
+      ::
+      $=  load
+      $:  ::  count: cumulative blocks detected
+          ::  pairs: blocking numbers and specs
+          ::
+          count=@ud
+          pairs=(map type (pair @ud spec))
+      ==
   ::
   ::  sut: type we're analyzing
   ::
@@ -33,16 +42,16 @@
     ^-  spec
     ::  spec: raw analysis product
     ::
-    =^  spec  .  specify
+    =^  spec  load  specify
     ::  if we didn't block, just use it
     ::
-    ?:  =(~ block-pairs)  spec
+    ?:  =(~ pairs.load)  spec
     ::  otherwise, insert hygienic recursion
     ::
     :+  %bcbc  spec
     %-  ~(gas by *(map term ^spec))
     %+  turn
-      ~(tap by block-pairs)
+      ~(tap by pairs.load)
     |=  [=type index=@ud spec=^spec]
     [(synthetic index) spec]
   ::
@@ -69,45 +78,46 @@
   ::  +specify: make spec that matches :sut
   ::
   ++  specify
-    ^-  [spec _.]
-    =<  [- +>]
+    ^-  [spec _load]
     =<  entry
     |%
     ::  +entry: make spec at potential entry point
     ::
     ++  entry
-      ^-  [spec _.]
-      ::  if we are already inside :sut
+      ^-  [spec _load]
+      ::  if, we are already inside :sut
       ::
-      ?:  (~(has in entry-trace) sut)
-        ::  then produce and record a block reference
+      ?:  (~(has in trace.coat) sut)
+        ::  then, produce and record a block reference
         ::
-        =+  [%loop (synthetic block-count)]
+        =+  [%loop (synthetic count.load)]
         :-  -
-        %_  +
-          block-count  +(block-count)            
-          block-pairs  (~(put by block-pairs) sut [block-count -])
+        %_  load
+          count  +(count.load)            
+          pairs  (~(put by pairs.load) sut [count.load -])
         ==
-      ::  else filter main loop for block promotion
+      ::  else, filter main loop for block promotion
       ::
-      =^  spec  .  main(entry-trace (~(put in entry-trace) sut))
+      =^  spec  load  main(trace.coat (~(put in trace.coat) sut))
       ::  loc: output block record for :sut
       ::
-      =/  loc  (~(get by block-pairs) sut)
+      =/  loc  (~(get by pairs.load) sut)
       ::  if we did not find :sut inside itself, not a true entry point
       ::
-      ?~  loc  [spec +>]
+      ?~  loc  
+        [spec load]
       ::  else produce a block reference and record the analysis
       ::
       :-  [%loop (synthetic p.u.loc)] 
-      +>(block-pairs (~(put by block-pairs) sut [p.u.loc spec]))
+      load(pairs (~(put by pairs.load) sut [p.u.loc spec]))
     ::
     ::  +main: make spec from any type
     ::
-    ++  main 
+    ++  main
+      ^-  [spec _load]
       ?-  sut
-        %void      :_(. [%base %void])
-        %noun      :_(. [%base %noun])
+        %void      :_(load [%base %void])
+        %noun      :_(load [%base %noun])
       ::
         [%atom *]  (atom p.sut q.sut)
         [%cell *]  (cell p.sut q.sut)
@@ -118,12 +128,12 @@
         [%hold *]  entry(sut ~(repo ut sut))
       == 
     ::
-    ::  +form: rationalize structure from trace (stub)
+    ::  +form: rationalize structure from type (stub)
     ::
     ++  form
       |=  =spec
-      ^-  [^spec _+>]
-      :_  +>
+      ^-  [^spec _load]
+      :_  load
       |-  ^-  ^spec
       ::  reform a spec left as a type annotation
       ::
@@ -159,7 +169,7 @@
           ==
       ::  pure function
       ::
-      :_  +>  ^-  spec
+      :_  load  ^-  spec
       ::  if atom is not constant
       ::
       ?~  constant
@@ -179,13 +189,13 @@
               left=type
               rite=type
           ==
-      ^-  [spec _+>]
+      ^-  [spec _load]
       ::  head: cosmetic structure of head
       ::  tail: cosmetic structure of tail
       ::
-      =^  head  +>.$  main(sut left)
-      =^  tail  +>.$  main(sut rite)
-      :_  +>.$
+      =^  head  load  main(sut left)
+      =^  tail  load  main(sut rite)
+      :_  load
       ::  %bccl: raw tuple
       ::
       ?:  ?=(%bccl -.tail)
@@ -201,10 +211,10 @@
               payload=type
               battery=coil
           ==
-      ^-  [spec _+>]
+      ^-  [spec _load]
       ::  payload-spec: converted payload
       ::
-      =^  payload-spec  +>.$  main(sut payload)
+      =^  payload-spec  load  main(sut payload)
       ::  arms: all arms in the core, as hoons
       ::
       =/  arms
@@ -220,17 +230,17 @@
         [term p.foot]
       ::  arm-specs: all arms in the core, as specs
       ::
-      =^  arm-specs  +>.$
-        |-  ^-  [(list (pair term spec)) _+>.^$]
-        ?~  arms  [~ +>.^$]
-        =^  mor  +>.^$  $(arms t.arms)
-        =^  les  +>.^$  
+      =^  arm-specs  load
+        |-  ^-  [(list (pair term spec)) _load]
+        ?~  arms  [~ load]
+        =^  mor  load  $(arms t.arms)
+        =^  les  load
           main(sut [%hold [%core payload battery] q.i.arms])
-        [[[p.i.arms les] mor] +>.^$]
+        [[[p.i.arms les] mor] load]
       ::  arm-map: all arms in the core, as a a spec map
       ::
       =*  arm-map  (~(gas by *(map term spec)) arm-specs)
-      :_  +>.$
+      :_  load
       ?-  p.battery
         %lead  [%bczp payload-spec arm-map]
         %gold  [%bcdt payload-spec arm-map]
@@ -247,9 +257,9 @@
               decor=(pair what $@(term tune))
               content=type
           ==
-      ^-  [spec _+>]
-      =^  body  +>.$  main(sut content)
-      :_  +>.$
+      ^-  [spec _load]
+      =^  body  load  main(sut content)
+      :_  load
       ?@  q.decor  [%bcts q.decor body]
       ::  discard aliases, etc
       ::
@@ -259,20 +269,20 @@
     ::
     ++  fork
       |=  types=(set type)
-      ^-  [spec _+>]
+      ^-  [spec _load]
       ::  type-list: type set as a list
       ::
       =/  type-list  ~(tap by types)
       ::  specs: type set as a list of specs
       ::
-      =^  specs  +>.$
-        |-  ^-  [(list spec) _+>.^$]
-        ?~  type-list  [~ +>.^$]
-        =^  mor  +>.^$  $(type-list t.type-list)
-        =^  les  +>.^$  main(sut i.type-list)
-        [[les mor] +>.^$]
+      =^  specs  load
+        |-  ^-  [(list spec) _load]
+        ?~  type-list  [~ load]
+        =^  mor  load  $(type-list t.type-list)
+        =^  les  load  main(sut i.type-list)
+        [[les mor] load]
       ?<  ?=(~ specs)
-      :_(+>.$ [%bcwt specs])
+      :_(load [%bcwt specs])
     --
   ::
   ::  +explore:cosmetic: convert :sut to an inspection pattern (+plot).
@@ -598,7 +608,7 @@
   %+  turn  ~(tap by map)
   |=  [=term =spec]
   :+  %&
-    [`[' ' ~] `['' ~]]
+    [`['  ' ~] `['' ~]]
   [term (spec-to-plum spec) ~]
 ::
 ++  core-to-plum
@@ -608,11 +618,15 @@
     [~ `[knot ~]]
   :~  (spec-to-plum spec)
       :+  %&
-        [~ `['' `['++' '==']]]
+        [~ `['' `['++' '--']]]
       (battery-to-plum map)
   ==
 ::
-++  regular
+++  varying
+  |=  [intro=knot final=knot]
+  [`[' ' `[(cat 3 intro '(') ')']] `[intro `['' final]]]
+::
+++  fixed
   |=  @ta
   [`[' ' `[(cat 3 +< '(') ')']] `[+< ~]]
 ::
@@ -642,9 +656,9 @@
              [%atom *]  (cat 3 '@' p.p.spec)
            ==
     %dbug  $(spec q.spec)
-    %leaf  (cat 3 '%' (scot p.spec q.spec))
+    %leaf  =+((scot p.spec q.spec) ?:(=('~' -) - (cat 3 '%' -)))
     %like  &/[[`[':' ~] ~] (turn `(list wing)`+.spec wing-to-plum)]
-    %loop  (cat 3 '$' p.spec)
+    %loop  (cat 3 '!' p.spec)
     %over  $(spec q.spec)
     %make  =+  (lent q.spec)
            :+  %&
@@ -657,30 +671,32 @@
              ?:  =(- 2)  '%+'  '%-'
            [(hoon-to-plum p.spec) (turn q.spec ..$)]
     %bcbc  (core-to-plum '$$' p.spec q.spec)
-    %bcbr  &/[(regular '$|') $(spec p.spec) (hoon-to-plum q.spec) ~]
+    %bcbr  &/[(fixed '$|') $(spec p.spec) (hoon-to-plum q.spec) ~]
     %bccb  (hoon-to-plum p.spec)
     %bccl  :+  %&
              [`[' ' `['[' ']']] `['$:' `['' '==']]]
            (turn `(list ^spec)`+.spec ..$)
-    %bccn  &/[(regular '$%') (turn `(list ^spec)`+.spec ..$)]
+    %bccn  &/[(varying '$%' '==') (turn `(list ^spec)`+.spec ..$)]
     %bcdt  (core-to-plum '$.' p.spec q.spec)
-    %bcgl  &/[(regular '$<') $(spec p.spec) $(spec q.spec) ~]
-    %bcgr  &/[(regular '$>') $(spec p.spec) $(spec q.spec) ~]
-    %bchp  &/[(regular '$-') $(spec p.spec) $(spec q.spec) ~]
-    %bckt  &/[(regular '$-') $(spec p.spec) $(spec q.spec) ~]
-    %bcls  &/[(regular '$+') (standard p.spec) $(spec q.spec) ~]
+    %bcgl  &/[(fixed '$<') $(spec p.spec) $(spec q.spec) ~]
+    %bcgr  &/[(fixed '$>') $(spec p.spec) $(spec q.spec) ~]
+    %bchp  &/[(fixed '$-') $(spec p.spec) $(spec q.spec) ~]
+    %bckt  &/[(fixed '$-') $(spec p.spec) $(spec q.spec) ~]
+    %bcls  &/[(fixed '$+') (standard p.spec) $(spec q.spec) ~]
     %bcnt  (core-to-plum '$/' p.spec q.spec)
-    %bcmc  &/[(regular '$;') (hoon-to-plum p.spec) ~]
-    %bcpd  &/[(regular '$&') $(spec p.spec) (hoon-to-plum q.spec) ~]
-    %bcsg  &/[(regular '$~') (hoon-to-plum p.spec) $(spec q.spec) ~]
+    %bcmc  &/[(fixed '$;') (hoon-to-plum p.spec) ~]
+    %bcpd  &/[(fixed '$&') $(spec p.spec) (hoon-to-plum q.spec) ~]
+    %bcsg  &/[(fixed '$~') (hoon-to-plum p.spec) $(spec q.spec) ~]
     %bctc  (core-to-plum '$`' p.spec q.spec)
     %bcts  :+  %&
              [`['=' ~] `['$=' ~]]
            :~  ?@(p.spec p.spec q.p.spec)
                $(spec q.spec)
            ==
-    %bcvt  &/[(regular '$@') $(spec p.spec) $(spec q.spec) ~]
-    %bcwt  &/[(regular '$?') (turn `(list ^spec)`+.spec ..$)]
+    %bcvt  &/[(fixed '$@') $(spec p.spec) $(spec q.spec) ~]
+    %bcwt  :+  %&
+              [`[' ' `['?(' ')']] `['$?' `['' '==']]]
+           (turn `(list ^spec)`+.spec ..$)
     %bczp  (core-to-plum '$.' p.spec q.spec)
   ==
 --

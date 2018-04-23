@@ -414,6 +414,7 @@
 ++  flag  ?
 ++  char  @t                                            ::  UTF8 byte
 ++  cord  @t                                            ::  UTF8, LSB first
+++  deco  ?($bl $br $un $~)                             ::  text decoration
 ++  date  {{a/? y/@ud} m/@ud t/tarp}                    ::  parsed date
 ++  knot  @ta                                           ::  ASCII text
 ++  noun  *                                             ::  any noun
@@ -423,7 +424,18 @@
           $:  auth=@tas                                 ::  standards authority
               type=path                                 ::  standard label
           ==                                            ::
-++  plum                                                ::  new output noun
+++  stub  (list (pair stye (list @c)))                  ::  styled unicode
+++  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
+++  styl                                                ::  cascading style
+          %+  pair  (unit deco)                         ::
+          (pair (unit tint) (unit tint))                ::
+::                                                      ::
+++  styx  (list $@(@t (pair styl styx)))                ::  styled text
+++  tile  ::  XX: ?@(knot (pair styl knot))
+          ::
+          cord
+++  tint  ?($r $g $b $c $m $y $k $w $~)                 ::  text color
+++  plum                                                ::  text output noun
   $@  cord
   $%  ::  %|: wrappable paragraph without linebreaks
       ::  %&: decorated list
@@ -434,27 +446,33 @@
               ::  tall: multiline syntax
               ::
               $=  wide
+              ::  %~: no wide form
+              ::
               %-  unit
               $:  ::  delimit: delimiter between items
                   ::  enclose: enclosure around items
                   ::
-                  delimit=knot
-                  enclose=(unit (pair knot knot))
+                  delimit=tile
+                  enclose=(unit (pair tile tile))
               ==
               $=  tall
+              ::  %~: no tall form
+              ::
               %-  unit
               $:  ::  intro: initial string (like |%)
                   ::
-                  intro=knot
-                  ::  indef: indefinite, not fixed, fanout
+                  intro=tile
+                  ::  indef: indefinite fanout
                   ::
                   $=  indef
+                  ::  %~: fixed fanout
+                  ::
                   %-  unit
                   $:  ::  sigil: before each item (like ++)
                       ::  final: final string (like --)
                       ::  
-                      sigil=knot
-                      final=knot
+                      sigil=tile
+                      final=tile
           ==  ==  ==
           ::  list: subplums
           ::
@@ -6801,7 +6819,7 @@
   %+  turn  ~(tap by map)
   |=  [=term =spec]
   :+  %&
-    [`[' ' ~] `['' ~]]
+    [`['  ' ~] `['' ~]]
   [term (spec-to-plum spec) ~]
 ::
 ++  core-to-plum
@@ -6847,7 +6865,7 @@
     %dbug  $(spec q.spec)
     %leaf  (cat 3 '%' (scot p.spec q.spec))
     %like  &/[[`[':' ~] ~] (turn `(list wing)`+.spec wing-to-plum)]
-    %loop  (cat 3 '$' p.spec)
+    %loop  (cat 3 '!' p.spec)
     %over  $(spec q.spec)
     %make  =+  (lent q.spec)
            :+  %&
