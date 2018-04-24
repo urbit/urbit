@@ -1404,6 +1404,14 @@
       ~&(no-build-for-duct+duct this)
     ::
     =+  [build live]=u.build-and-live
+    ::  old-rebuilds and listeners don't interact well.
+    ::
+    ::    Have two ducts listening to the same build, causing a promotion.
+    ::    The new build has an old build. Both ducts by :builds-by-listener
+    ::    point to th new build. The new build has an old build and thus
+    ::    never gets cleaned up.
+    ::
+    ~&  [%cancel duct live (build-to-tape build)]
     ::
     =.  state  (remove-listener-from-build [duct live] build)
     ::
@@ -1671,6 +1679,7 @@
     ++  promote-build
       |=  [old-build=build date=@da]
       ^-  [(unit build) _..execute]
+      ~&  [%promote-build (build-to-tape old-build) date]
       ::
       =^  old-cache-line  results.state  (access-cache old-build)
       ::
@@ -1683,8 +1692,12 @@
       =.  rebuilds.state  (link-rebuilds old-build new-build)
       ::
       =?    latest-by-disc.state
+          ::  TODO: this isn't right; we can be promoting a non-live result to a live result.
+          ::
           ?&  ?=(%scry -.schematic.old-build)
               =/  disc  (extract-disc dependency.schematic.old-build)
+              ~|  disc+disc
+              ~|  latest-by-disc+latest-by-disc.state
               (gth date (~(got by latest-by-disc.state) disc))
           ==
         =/  disc  (extract-disc dependency.schematic.old-build)
@@ -1724,6 +1737,9 @@
             client-builds
           (~(del ju client-builds.provisional-components) new-sub new-build)
         ==
+      ::  send mades for the currently existing listeners before we add more
+      ::
+      =.  ..execute  (send-mades new-build (root-live-listeners new-build))
       ::
       =.  state  (promote-live-listeners old-build new-build)
       ::
@@ -1731,7 +1747,12 @@
       ::
       =.  state  (delete-root-once-listeners new-build)
       ::
-      (send-future-mades new-build)
+      =^  future  ..execute  (send-future-mades new-build)
+      ::
+      =.  ..execute  (cleanup old-build)
+      ::
+      [future ..execute]
+
     ::  +send-future-mades: send %made moves for future rebuilds
     ::
     ::    If a future rebuild has been wiped, then produce it along with
@@ -1856,6 +1877,7 @@
       ::
       ?-    -.result.made
           %build-result
+        ~&  [%build-result (build-to-tape build.made)]
         ::
         ?>  (~(has ju builds-by-date.state) date.build.made schematic.build.made)
         ::
@@ -2032,6 +2054,7 @@
         $(state-diffs t.state-diffs)
       ::
           %blocks
+        ~&  [%blocks (build-to-tape build.made)]
         =?    moves
             ?=(^ scry-blocked.result.made)
           ::
@@ -2824,15 +2847,15 @@
             (~(has by old.rebuilds.state) build)
             (~(has by listeners.state) build)
         ==
-      ::  ~&  :*  %cleanup-no-op
-      ::          build=(build-to-tape build)
-      ::          has-client-builds=(~(has by client-builds.components.state) build)
-      ::          has-provisional=(~(has by client-builds.provisional-components.state) build)
-      ::          has-old-rebuilds=(~(has by old.rebuilds.state) build)
-      ::          listeners=(~(get by listeners.state) build)
-      ::      ==
+      ~&  :*  %cleanup-no-op
+              build=(build-to-tape build)
+              has-client-builds=(~(has by client-builds.components.state) build)
+              has-provisional=(~(has by client-builds.provisional-components.state) build)
+              has-old-rebuilds=(~(has by old.rebuilds.state) build)
+              listeners=(~(get by listeners.state) build)
+          ==
       this
-    ::  ~&  [%cleaning-up (build-to-tape build)]
+    ~&  [%cleaning-up (build-to-tape build)]
     ::  remove :build from :state, starting with its cache line
     ::
     =.  results.state  (~(del by results.state) build)
