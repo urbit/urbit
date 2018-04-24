@@ -25,7 +25,7 @@
   test-live-two-deep
   test-live-three-deep
   test-live-triangle
-  ::  test-live-and-pinned-triangle
+  test-live-and-pinned-triangle
   test-slim
   test-ride
   test-ride-scry-succeed
@@ -340,7 +340,6 @@
   ::
   =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-42)
   ::
-  ~&  %first-----first
   =^  moves  ford
     %-  call:ford
     :*  duct=~[/first]  type=~  %make  ~nul
@@ -358,7 +357,6 @@
             `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
     ==  ==
   ::
-  ~&  %second-----second
   =.  ford  (ford now=~1234.5.7 eny=0xdead.beef scry=scry-is-forbidden)
   ::
   =^  moves2  ford
@@ -374,7 +372,6 @@
             [%scry %noun !>(42)]
     ==  ==
   ::
-  ~&  %third-----third
   =.  ford  (ford now=~1234.5.8 eny=0xdead.beef scry=scry-is-forbidden)
   ::
   =^  moves3  ford  (call:ford [duct=~[/first] type=~ %kill ~nul])
@@ -383,7 +380,6 @@
     %-  expect-eq  !>
     [moves3 ~]
   ::
-  ~&  %fourth-----fourth
   =^  moves4  ford  (call:ford [duct=~[/second] type=~ %kill ~nul])
   ::
   %+  welp
@@ -799,8 +795,8 @@
   (my [~nul *ford-state:ford-turbo]~)
 ::  like +test-live-triangle, but with another pinned build
 ::
-::    Ensures that we deal with an orphaned provisional build which is used
-::    by another build.
+::    Ensures that we deal with various issues with live builds which
+::    were partially pinned and their interaction with other live builds.
 ::
 ++  test-live-and-pinned-triangle
   ~&  %test-live-and-pinned-triangle
@@ -814,9 +810,6 @@
     ::
       :-  [%cx [[~nul %desk %da ~1234.5.7] /bar/foo]]
       [%noun scry-type %it-does-in-fact-matter]
-    ::
-      :-  [%cx [[~nul %desk %da ~1234.5.8] /bar/foo]]
-      [%noun !>(%changed)]
     ==
   ::
   =/  scry  (scry-with-results scry-results)
@@ -831,7 +824,6 @@
   ::
   =/  static=schematic:ford  [%same [%pin ~1234.5.6 autocons]]
   ::
-  ~&  %first--------first
   =^  moves  ford  (call:ford [duct=~[/static] type=~ %make ~nul static])
   ::
   %+  welp
@@ -843,7 +835,6 @@
             [%result [%scry %noun scry-type %it-does-in-fact-matter]]
     ==  ==
   ::
-  ~&  %second--------second
   =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry)
   ::
   =^  moves2  ford  (call:ford [duct=~[/autocons] type=~ %make ~nul autocons])
@@ -859,8 +850,30 @@
             %c  %warp  [~nul ~nul]  %desk
             `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
     ==  ==
-::  ~&  [%state (~(got by state-by-ship.+>+<.ford) ~nul)]
-  `wall`~
+  ::
+  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
+  ::
+  =^  moves3  ford  (call:ford [duct=~[/static] type=~ %kill ~nul])
+  ::
+  %+  welp
+    %-  expect-eq  !>
+    :-  moves3
+    ~
+  ::
+  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
+  ::
+  =^  moves4  ford  (call:ford [duct=~[/autocons] type=~ %kill ~nul])
+  ::
+  %+  welp
+    %-  expect-eq  !>
+    :-  moves4
+    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+            %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==
+  ::
+  %-  expect-eq  !>
+  :-  state-by-ship.+>+<.ford
+  (my [~nul *ford-state:ford-turbo]~)
 ::
 ++  test-slim
   ~&  %test-slim

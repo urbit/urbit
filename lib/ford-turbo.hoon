@@ -1411,8 +1411,6 @@
     ::    point to th new build. The new build has an old build and thus
     ::    never gets cleaned up.
     ::
-    ~&  [%cancel duct live (build-to-tape build)]
-    ::
     =.  state  (remove-listener-from-build [duct live] build)
     ::
     (cleanup build)
@@ -1594,6 +1592,13 @@
       ::
       ?:  ?=(%tombstone -.u.old-cache-line)
         ..execute(next-builds.state (~(put in next-builds.state) build))
+      ::  if any ancestors are pinned, we must rerun
+      ::
+      ::    We can't cleanly promote a once build to a live build because we
+      ::    didn't register its dependencies in the live tracking system.
+      ::
+      ?:  (has-pinned-client u.old-build)
+        ..execute(next-builds.state (~(put in next-builds.state) build))
       ::  old-subs: sub-builds of :u.old-build
       ::
       =/  old-subs=(list ^build)
@@ -1633,6 +1638,7 @@
       ::    When we can't directly promote ourselves, we're going to rerun
       ::    our build. It's possible that the sub-builds are different, in
       ::    which case we'll need to clean up the current sub-build dependency.
+      ::
       =.  provisional-components.state
         %+  roll  `(list ^build)`new-subs
         |=  [new-sub=^build provisional-components=_provisional-components.state]
@@ -1679,7 +1685,6 @@
     ++  promote-build
       |=  [old-build=build date=@da]
       ^-  [(unit build) _..execute]
-      ~&  [%promote-build (build-to-tape old-build) date]
       ::
       =^  old-cache-line  results.state  (access-cache old-build)
       ::
@@ -1692,8 +1697,6 @@
       =.  rebuilds.state  (link-rebuilds old-build new-build)
       ::
       =?    latest-by-disc.state
-          ::  TODO: this isn't right; we can be promoting a non-live result to a live result.
-          ::
           ?&  ?=(%scry -.schematic.old-build)
               =/  disc  (extract-disc dependency.schematic.old-build)
               ~|  disc+disc
@@ -1777,7 +1780,9 @@
         [~ ..execute]
       ::  if :next's result hasn't been wiped
       ::
-      ?:  ?=(%result -.u.next-result)
+      ?:  ?&  ?=(%result -.u.next-result)
+              !(has-pinned-client u.next)
+          ==
         ::
         =.  state  (promote-live-listeners build u.next)
         =.  ..execute  (cleanup build)
@@ -1877,7 +1882,6 @@
       ::
       ?-    -.result.made
           %build-result
-        ~&  [%build-result (build-to-tape build.made)]
         ::
         ?>  (~(has ju builds-by-date.state) date.build.made schematic.build.made)
         ::
@@ -1901,7 +1905,12 @@
           ::
           (access-cache u.previous-build)
         ::
-        =?  state  &(?=(^ previous-build) ?=(^ previous-result))
+        =?    state
+            ?&  ?=(^ previous-build)
+                ?=(^ previous-result)
+                ::  this is wrong! it can be some other build that has the pin
+                !(has-pinned-client u.previous-build)
+            ==
           (promote-live-listeners u.previous-build build.made)
         ::
         =.  ..execute  (send-mades build.made (root-once-listeners build.made))
@@ -1909,7 +1918,9 @@
         ::  if result is same as previous, note sameness
         ::
         =/  same-result=?
-          ?&  ?=([~ %result *] previous-result)
+          ?&  ?=(^ previous-build)
+              !(has-pinned-client u.previous-build)
+              ?=([~ %result *] previous-result)
               =(build-result.result.made build-result.u.previous-result)
           ==
         ::
@@ -2054,7 +2065,6 @@
         $(state-diffs t.state-diffs)
       ::
           %blocks
-        ~&  [%blocks (build-to-tape build.made)]
         =?    moves
             ?=(^ scry-blocked.result.made)
           ::
@@ -2089,6 +2099,15 @@
         =.  state
           %+  roll  builds.result.made
           |=  [block=build state=_state]
+          ::  deal with block already being unblocked
+          ::
+          ::    If :block was run in the same batch as :build.made, and we've
+          ::    already processed its result, then :build.made has already
+          ::    been unblocked. Don't reblock ourselves since nothing will
+          ::    unblock us.
+          ::
+          ?:  (~(has by results.state) block)
+            state
           ::
           %_    state
               sub-builds.blocked-builds
@@ -2694,21 +2713,7 @@
     ::
     ?:  ?=(%pin -.schematic.build)
       %.n
-    =/  has-pinned-client
-      ::  iterate across all clients recursively, exiting early on %pin
-      ::
-      =/  clients  ~(tap in (~(get ju client-builds.components.state) build))
-      |-
-      ?~  clients
-        %.n
-      ?:  ?=(%pin -.schematic.i.clients)
-        %.y
-      %_    $
-          clients
-        %+  weld  t.clients
-        ~(tap in (~(get ju client-builds.components.state) i.clients))
-      ==
-    ?:  has-pinned-client
+    ?:  (has-pinned-client build)
       %.n
     ::  check if :build has any live listeners
     ::
@@ -2716,6 +2721,24 @@
     ?~  listeners
       %.y
     (lien `(list listener)`listeners is-listener-live)
+  ::  +has-pinned-client: %.y if any of our ancestors are a %pin
+  ::
+  ++  has-pinned-client
+    |=  =build
+    ^-  ?
+    ::  iterate across all clients recursively, exiting early on %pin
+    ::
+    =/  clients  ~(tap in (~(get ju client-builds.components.state) build))
+    |-
+    ?~  clients
+      %.n
+    ?:  ?=(%pin -.schematic.i.clients)
+      %.y
+    %_    $
+        clients
+      %+  weld  t.clients
+      ~(tap in (~(get ju client-builds.components.state) i.clients))
+    ==
   ::  +access-cache: access the +cache-line for :build, updating :last-accessed
   ::
   ::    Usage:
@@ -2847,15 +2870,15 @@
             (~(has by old.rebuilds.state) build)
             (~(has by listeners.state) build)
         ==
-      ~&  :*  %cleanup-no-op
-              build=(build-to-tape build)
-              has-client-builds=(~(has by client-builds.components.state) build)
-              has-provisional=(~(has by client-builds.provisional-components.state) build)
-              has-old-rebuilds=(~(has by old.rebuilds.state) build)
-              listeners=(~(get by listeners.state) build)
-          ==
+      ::  ~&  :*  %cleanup-no-op
+      ::          build=(build-to-tape build)
+      ::          has-client-builds=(~(has by client-builds.components.state) build)
+      ::          has-provisional=(~(has by client-builds.provisional-components.state) build)
+      ::          has-old-rebuilds=(~(has by old.rebuilds.state) build)
+      ::          listeners=(~(get by listeners.state) build)
+      ::      ==
       this
-    ~&  [%cleaning-up (build-to-tape build)]
+    ::  ~&  [%cleaning-up (build-to-tape build)]
     ::  remove :build from :state, starting with its cache line
     ::
     =.  results.state  (~(del by results.state) build)
