@@ -126,9 +126,7 @@
     ::
     ::  +meta: try to make spec from type of filter
     ::
-    ++  meta
-      ^-  [(unit spec) _load]
-       
+    ::++  meta ^-  [(unit spec) _load]
     ::
     ::  +main: make spec from any type
     ::
@@ -142,9 +140,9 @@
         [%cell *]  (cell p.sut q.sut)
         [%core *]  (core p.sut q.sut)
         [%face *]  (face p.sut q.sut)
-        [%form *]  =-  ?~(- $(sut q.sut) [`-> load])
+        [%form *]  =-  ?~(- main(sut q.sut) [-> load])
                    ?.  ?=(%made -.q.p.sut)  ~
-                   (reform(sut p.p.sut) p.q.p.sut)
+                   (reform p.p.sut p.q.p.sut)
         [%fork *]  (fork p.sut)
         [%hold *]  entry(sut ~(repo ut sut))
       == 
@@ -153,27 +151,29 @@
     ::
     ++  reform
       |=  [=type =spec]
-      |-  ^-  (unit spec)
-      ::  reform a spec left as a type annotation
-      ::
-      ?+    -.spec
-        %base  spec
-        %dbug  $(spec q.spec)
-        %leaf  spec
-        %loop  spec
-        %like  ::  hub: type of context
-               ::  poy: reference 
-               ::
-               =/  hub  %-  ~(play ut sut)
-                        |-  ^-  hoon
-                        ?~  q.spec  [%$ 1]
-                        [%tsgl [%wing i.q.spec] $(q.spec t.q.spec)]
-               =/  poy  (~(fond ut hub) %free p.spec)
-               ::  if, we have a simple arm, keep the spec
-               ::
-               ?.(?=([%& * * %| *] poy) ~ `spec)
-        %make
-      ==
+      ^-  (unit ^spec)
+      `spec
+::    |-  ^-  (unit spec)
+::    ::  reform a spec left as a type annotation
+::    ::
+::    ?+    -.spec
+::      %base  spec
+::      %dbug  $(spec q.spec)
+::      %leaf  spec
+::      %loop  spec
+::      %like  ::  hub: type of context
+::             ::  poy: reference 
+::             ::
+::             =/  hub  %-  ~(play ut sut)
+::                      |-  ^-  hoon
+::                      ?~  q.spec  [%$ 1]
+::                      [%tsgl [%wing i.q.spec] $(q.spec t.q.spec)]
+::             =/  poy  (~(fond ut hub) %free p.spec)
+::             ::  if, we have a simple arm, keep the spec
+::             ::
+::             ?.(?=([%& * * %| *] poy) ~ `spec)
+::      %make
+::    ==
     ::
     ::  +atom: convert atomic type to spec
     ::

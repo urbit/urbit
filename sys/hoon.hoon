@@ -1,4 +1,4 @@
-::                                                      ::
+::                                                      ::  
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
 =<  ride
@@ -5787,7 +5787,7 @@
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
-    {$form p/note q/hoon}                               ::  annotate
+    {$note p/note q/hoon}                               ::  annotate
     {$fits p/hoon q/wing}                               ::  underlying ?=
     {$knit p/(list woof)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
@@ -7349,6 +7349,8 @@
     ::  apply documentation to expression
     ::
     |=  gen/hoon
+    ^-  hoon
+    ::  :+  %note  [%made mod]
     ^-  hoon
     |-  ^-  hoon
     ?~(bug gen [%dbug i.bug $(bug t.bug)])
@@ -9755,7 +9757,7 @@
         {$tune *}  [(face p.gen sut) [%0 %1]]
         {$ktwt *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
     ::
-        {$form *}
+        {$note *}
       =+  hum=$(gen q.gen)
       [(form [sut p.gen] p.hum) q.hum]
     ::
@@ -9916,7 +9918,7 @@
         {$ktwt *}
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) (wrap(sut q.vat) %lead)])
     ::
-        {$form *}
+        {$note *}
       =+  vat=$(gen q.gen) 
       [(form [sut p.gen] p.vat) (form [dox p.gen] q.vat)]
     ::
@@ -10253,7 +10255,7 @@
       {$ktsg *}  $(gen p.gen)
       {$ktts *}  (conk(sut $(gen q.gen)) p.gen)
       {$ktwt *}  (wrap(sut $(gen p.gen)) %lead)
-      {$form *}  (form [sut p.gen] $(gen q.gen))
+      {$note *}  (form [sut p.gen] $(gen q.gen))
       {$sgzp *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       {$sggr *}  $(gen q.gen)
       {$tsgr *}   $(gen q.gen, sut $(gen p.gen))
