@@ -34,6 +34,7 @@
   test-ride-scry-promote
   test-five-oh-fora
   test-alts
+  test-double-alts
 ==
 ++  test-is-schematic-live
   ~&  %test-is-schematic-live
@@ -1387,6 +1388,125 @@
     :-  moves4
     :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/first
             %c  %warp  [~nul ~nul]  %first  ~
+    ==  ==
+  ::
+  %-  expect-eq  !>
+  :-  state-by-ship.+>+<.ford
+  (my [~nul *ford-state:ford-turbo]~)
+::
+++  test-double-alts
+  ~&  %test-double-alts
+  ::
+  =/  scry-type=type  [%atom %tas ~]
+  ::
+  =/  scry-results=(map [term beam] (unit cage))
+    %-  my  :~
+      :-  [%cx [[~nul %desk %da ~1234.5.6] /one/scry]]
+      ~
+    ::
+      :-  [%cx [[~nul %desk %da ~1234.5.6] /two/scry]]
+      `[%noun scry-type 'scry-two']
+    ::
+      :-  [%cx [[~nul %desk %da ~1234.5.7] /one/scry]]
+      ~
+    ::
+      :-  [%cx [[~nul %desk %da ~1234.5.7] /two/scry]]
+      `[%noun scry-type 'scry-two']
+    ::
+      :-  [%cx [[~nul %desk %da ~1234.5.8] /one/scry]]
+      `[%noun scry-type 'scry-one']
+    ==
+  ::
+  =/  scry  (scry-with-results-and-failures scry-results)
+  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  ::
+  =/  scry2=schematic:ford  [%scry [%c %x [~nul %desk] /two/scry]]
+  =/  same=schematic:ford   [%same scry2]
+  ::  depend on scry2 for the duration of the test
+  ::
+  =^  moves  ford  (call:ford [duct=~[/same] type=~ %make ~nul same])
+  ::
+  %+  welp
+    %-  expect-eq  !>
+    :-  moves
+    :~  :*  duct=~[/same]  %give  %made  ~1234.5.6  %complete
+            %result  %same  %result  %scry  %noun  scry-type  'scry-two'
+        ==
+        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+            %c  %warp  [~nul ~nul]  %desk
+            `[%mult [%da ~1234.5.6] (sy [%x /scry/two] ~)]
+    ==  ==
+  ::
+  =/  scry1=schematic:ford  [%scry [%c %x [~nul %desk] /one/scry]]
+  =/  alts=schematic:ford   [%alts [scry1 scry2 ~]]
+  ::
+  =.  ford  (ford now=~1234.5.7 eny=0xdead.beef scry=scry)
+  ::  call the alts schematic
+  ::
+  ::    The alts schematic should fail to read /scry/one, and should fallback
+  ::    to /scry/two.
+  ::
+  =^  moves2  ford  (call:ford [duct=~[/alts] type=~ %make ~nul alts])
+  ::
+  %+  welp
+    %-  expect-eq  !>
+    :-  moves2
+    :~  :*  duct=~[/alts]  %give  %made  ~1234.5.7  %complete
+            %result  %alts  %result  %scry  %noun  scry-type  'scry-two'
+        ==
+        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+            %c  %warp  [~nul ~nul]  %desk
+            `[%mult [%da ~1234.5.7] (sy [%x /scry/two] [%x /scry/one] ~)]
+    ==  ==
+  ::
+  =.  ford  (ford now=~1234.5.8 eny=0xdead.beef scry=scry)
+  ::  tell ford that /scry/one exists now
+  ::
+  =^  moves3  ford
+    %-  take:ford
+    :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+        [%c %wris [%da ~1234.5.8] (sy [%x /scry/one]~)]
+    ==
+  ::
+  %+  welp
+    %-  expect-eq  !>
+    :-  moves3
+    :~  :*  duct=~[/alts]  %give  %made  ~1234.5.8  %complete
+            %result  %alts  %result  %scry  %noun  scry-type  'scry-one'
+        ==
+        ::  we subscribe to both paths because /same still exists.
+        ::
+        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+            %c  %warp  [~nul ~nul]  %desk
+            `[%mult [%da ~1234.5.8] (sy [%x /scry/one] [%x /scry/two] ~)]
+    ==  ==
+  ::
+  =.  ford  (ford now=~1234.5.9 eny=0xdead.beef scry=scry)
+  ::  kill the /same build
+  ::
+  ::    We should no longer subscribe to /scry/two in the resulting clay
+  ::    subscription.
+  ::
+  =^  moves4  ford  (call:ford [duct=~[/same] type=~ %kill ~nul])
+  ::
+  %+  welp
+    %-  expect-eq  !>
+    :-  moves4
+    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+            %c  %warp  [~nul ~nul]  %desk
+            `[%mult [%da ~1234.5.8] (sy [%x /scry/one] ~)]
+    ==  ==
+  ::
+  =.  ford  (ford now=~1234.5.10 eny=0xdead.beef scry=scry)
+  ::
+  =^  moves5  ford  (call:ford [duct=~[/alts] type=~ %kill ~nul])
+  ::
+  %+  welp
+    %-  expect-eq  !>
+    :-  moves5
+    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+            %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
   ::
   %-  expect-eq  !>
