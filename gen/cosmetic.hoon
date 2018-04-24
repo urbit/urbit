@@ -142,9 +142,9 @@
         [%cell *]  (cell p.sut q.sut)
         [%core *]  (core p.sut q.sut)
         [%face *]  (face p.sut q.sut)
-        [%form *]  ?:  ?=(%made -.q.p.sut)
-                     (reform(sut p.p.sut) p.q.p.sut)
-                   $(sut q.sut) 
+        [%form *]  =-  ?~(- $(sut q.sut) [`-> load])
+                   ?.  ?=(%made -.q.p.sut)  ~
+                   (reform(sut p.p.sut) p.q.p.sut)
         [%fork *]  (fork p.sut)
         [%hold *]  entry(sut ~(repo ut sut))
       == 
@@ -152,16 +152,15 @@
     ::  +form: rationalize structure from type (stub)
     ::
     ++  reform
-      |=  =note
-      ^-  [^spec _load]
-      :_  load
-      |-  ^-  ^spec
+      |=  [=type =spec]
+      |-  ^-  (unit spec)
       ::  reform a spec left as a type annotation
       ::
-      ?+    -.spec  spec
-        ::  incomplete
-        ::
+      ?+    -.spec
+        %base  spec
         %dbug  $(spec q.spec)
+        %leaf  spec
+        %loop  spec
         %like  ::  hub: type of context
                ::  poy: reference 
                ::
@@ -170,13 +169,10 @@
                         ?~  q.spec  [%$ 1]
                         [%tsgl [%wing i.q.spec] $(q.spec t.q.spec)]
                =/  poy  (~(fond ut hub) %free p.spec)
-               ::  if we have a simple arm
+               ::  if, we have a simple arm, keep the spec
                ::
-               ?:  ?=([%& * * %| *] poy)
-                 ::  then keep the spec
-                 ::
-                 spec
-               !!
+               ?.(?=([%& * * %| *] poy) ~ `spec)
+        %make
       ==
     ::
     ::  +atom: convert atomic type to spec
