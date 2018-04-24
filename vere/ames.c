@@ -210,10 +210,6 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
 
     u3r_bytes(0, len_w, buf_y, pac);
 
-    if ( c3n == u3_Host.ops_u.net && 0x7f000001 != pip_w) {
-      return;  //  remote sending disabled
-    }
-
     if ( 0 == pip_w ) {
       pip_w = 0x7f000001;
       por_s = u3_Host.sam_u.por_s;
@@ -227,7 +223,8 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
         pip_w = _ames_czar(imp_y, &por_s, u3_Host.ops_u.dns_c);
       }
 
-      if ( 0 != pip_w ) {
+      if ( (0 != pip_w) &&
+           ( (c3y == u3_Host.ops_u.net) || (0x7f000001 == pip_w) ) ) {
         uv_buf_t        buf_u = uv_buf_init((c3_c*)buf_y, len_w);
         _u3_udp_send_t* ruq_u = c3_malloc(sizeof(_u3_udp_send_t));
 
