@@ -762,6 +762,34 @@
             (ames-gram q.p.kyz aut+~ p.u.mez)
           =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
           (ames-gram q.p.kyz hat+~ p.u.mez our-host)
+      ::
+        $get-inner
+          %^  exec-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)  -.q.u.mez
+          ::
+          =/  ext  %urb-elem  ::XX in message?
+          =/  fig/coin  many+~  ::STUB fcgi params for /$
+          [%bake ext fig q.u.mez]
+      ::
+        $got-inner
+          ?.  (~(has by pox) p.u.mez)
+            ~&  lost-gram-inner+p.kyz^p.u.mez
+            +>.$
+          =:  hen  (~(got by pox) p.u.mez)
+              pox  (~(del by pox) p.u.mez)
+            ==
+          ?-    -.q.u.mez
+              %|
+            =/  dep  0v0  ::XX remote dependency?
+            (fail 500 dep p.q.u.mez)
+          ::
+              %&
+            =/  dep  0v0  ::XX remote dependency?
+            =/  bek  -.top  ::XX where is wrapper-renderer beak stored exactly
+            %^  exec-live  ha+(en-beam bek ~)  (norm-beak bek)
+            :+  %cast  %urb  ::XX hardcoded
+            :+  %call  [%core (norm-beak bek) /[%urb-wrap]/ren]
+            [[%$ deps+!>(dep)] [%vale p.q.u.mez]]
+          ==
       ==
     ::
       $wegh  !!                                         ::  handled elsewhere
@@ -844,10 +872,18 @@
       =|  ses/(unit hole)
       |-  ^+  ..axon
       ?-    tee
-          $@($~ {?($on $ay $ow) *})  ~|(e+ford+lost+tee !!)
+          $@($~ {?($on $ow) *})  ~|(e+ford+lost+tee !!)
           {$of @ $~}  ~|(e+ford+lost+tee !!)
           {$si $~}  (give-sigh q.sih)
           {$se ^}   (get-made:(dom-vi q.tee) p.tee [p q]:sih)
+          {$ay ^}
+        =/  res/(each (cask) tang)
+          ?-  -.q.sih
+            %|  [%| p.q.sih]
+            %&  [%& [p q.q]:p.q.sih]  ::  strip type
+          ==
+        (ames-gram (slav %p p.tee) got-inner+~ (slav %uv q.tee) res)
+      ::
           {$hi ^}
         ?:  ?=($| -.q.sih)
           (give-sigh q.sih)  ::  XX crash?
@@ -1060,6 +1096,7 @@
     ++  teba  |*(a/$-(* _..handle) |*(b/* %_(done ..handle (a b))))
     ++  del-deps  (teba ^del-deps)
     ++  new-deps  (teba ^new-deps)
+    ++  ames-gram  (teba ^ames-gram)
     ++  exec-live  (teba ^exec-live)
     ++  give-html  (teba ^give-html)
     ++  give-thou  (teba ^give-thou)
@@ -1336,6 +1373,13 @@
         =+  bem=?-(-.hem $beam p.hem, $spur [-.top (weld p.hem s.top)])
         ~|  bad-beam+q.bem
         ?<  =([~ 0] (sky [151 %noun] %cw (en-beam bem(+ ~, r [%da now]))))
+        ?.  =<  |  ::TEST
+            =(our p.bem) ::TODO also if it is?
+          =.  ext  %urb-elem ::XX
+          =.  -.bem  (norm-beak -.bem)
+          =/  han  (sham hen)
+          =.  pox  (~(put by pox) han hen)
+          [%| (ames-gram p.bem [%get-inner ~] han bem)]
         =+  wir=`whir`[%ha (en-beam -.bem ~)]
         =.  wir  ?+(mef !! $get wir, $head [%he wir])
         =.  r.bem  ?+(r.bem r.bem {$ud $0} da+now)
