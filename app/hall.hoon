@@ -1038,88 +1038,88 @@
       :>  state. in case of conflict, existing data is
       :>  overwritten.
       ::
+      ::NOTE  we don't use ++roll here because of urbit/arvo#447.
+      ::
       |=  {gaz/(list telegram) cos/lobby pes/crowd}
       ^+  +>
-      ~?  (gth (lent gaz) 2.000)
-        [%unexpected-scrollback-length nom (lent gaz)]
       =*  self  +>
+      ::
       ::  local config
       =.  self
         (so-config-full `shape loc.cos)
+      ::
       ::  remote config
       =.  self
         =+  rem=~(tap by rem.cos)
         |-  ^+  self
         ?~  rem  self
-        =.  self
-          (so-delta-our %config p.i.rem %full q.i.rem)
+        =*  wer  p.i.rem
+        =*  cof  q.i.rem
+        ::  only make a delta if it actually changed.
+        =?  self  !=(`cof (~(get by mirrors) wer))
+          (so-delta-our %config wer %full cof)
         $(rem t.rem)
-        ::TODO  eats previous change?
-        ::%+  roll  ~(tap by rem.cos)
-        ::|=  {{r/circle c/config} _self}
-        ::(so-delta-our %config r %full c)
+      ::
       ::  local status
       =.  self
         =+  sas=~(tap by loc.pes)
         |-  ^+  self
         ?~  sas  self
-        =.  deltas
+        =*  who  p.i.sas
+        =*  sat  q.i.sas
+        ::  only make a delta if it actually changed.
+        =?  deltas  !=(`sat (~(get by locals) who))
           :_  deltas
           :^  %story  nom  %status
-          [[our.bol nom] p.i.sas %full q.i.sas]
+          [[our.bol nom] who %full sat]
         $(sas t.sas)
-        ::TODO  ideally do below, but runtime error at so-delta-our
-        ::%+  roll  ~(tap by loc.pes)
-        ::|=  {{w/ship s/status} _self}
-        ::(so-delta-our %status so-cir w %full s)
+      ::
       ::  remote status
       =.  self
         =+  rem=~(tap by rem.pes)
         |-  ^+  self
         ?~  rem  self
-        =.  deltas
+        =*  wer  p.i.rem
+        =*  gou  q.i.rem
+        ::  only make deltas if it actually changed.
+        =?  deltas  !=(`gou (~(get by remotes) wer))
           %+  welp  deltas
-          =+  gop=~(tap by q.i.rem)
+          =+  gop=~(tap by gou)
+          =+  hav=(fall (~(get by remotes) wer) *group)
           =|  l/(list delta)
           |-  ^+  l
           ?~  gop  l
-          =.  l  [[%story nom %status p.i.rem p.i.gop %full q.i.gop] l]
+          =*  who  p.i.gop
+          =*  sat  q.i.gop
+          ::  only make a delta if it actually changed.
+          =?  l  !=(`sat (~(get by hav) who))
+            [[%story nom %status wer who %full sat] l]
           $(gop t.gop)
         $(rem t.rem)
-        ::TODO  below eats state?
-        ::%+  roll  ~(tap by rem.pes)
-        ::|=  {{c/circle g/group} _self}
-        ::%+  roll  ~(tap by g)
-        ::|=  {{w/ship s/status} _self}
-        ::(so-delta-our %status c w %full s)
+      ::
       ::  telegrams
       =.  self
         %_  self
             deltas
           %+  welp  deltas
           %-  flop
-          %+  turn  gaz
+          ^-  (list delta)
+          %+  murn  gaz
           |=  t/telegram
-          ^-  delta
-          :+  %story  nom
+          ^-  (unit delta)
+          ::  in audience, replace above with us.
+          ::TODO  this really should be done by the sender.
+          =.  aud.t
+            =+  dem=[(above our.bol) nom]
+            ?.  (~(has in aud.t) dem)  aud.t
+            =+  (~(del in aud.t) dem)
+            (~(put in -) so-cir)
+          =+  num=(~(get by known) uid.t)
+          ?:  &(?=(^ num) =(t (snag u.num grams)))  ~
           ::TODO  this really should have sent us the message
           ::      src as well but that's not an easy fix.
-          :+  %gram  [(above our.bol) nom]
-          ::  in audience, replace above with us.
-          =-  t(aud -)
-          =+  (~(del in aud.t) [(above our.bol) nom])
-          (~(put in -) so-cir)
+          `[%story nom %gram [(above our.bol) nom] t]
         ==
-        ::TODO  ideally do below, but runtime error
-        ::%-  so-deltas-our
-        ::%+  turn  gaz
-        ::|=  t/telegram
-        ::^-  delta-story
-        :::-  %gram
-        ::::  in audience, replace above with us.
-        ::=-  t(aud -)
-        ::=+  (~(del in aud.t) [(above our.bol) nom])
-        ::(~(put in -) so-cir)
       ::  inherited flag
       %_(self deltas [[%story nom %inherited &] deltas])
       ::TODO  runtime error
@@ -1165,23 +1165,49 @@
       ~?  &(?=(^ old) !=(src.u.old src.cof))
         %maybe-missing-src-changes
       %-  so-deltas
-      %+  turn
-        %+  weld
-          ^-  (list delta-story)
-          ?~  old  ~
-          ::TODO?  what to do about src?
-          :~  ::[%follow | src.u.old]
-              [%config so-cir %permit | sis.con.u.old]
-          ==
-        ^-  (list delta-story)
-        :~  ::[%follow & src.cof]
-            [%config so-cir %caption cap.cof]
-            [%config so-cir %filter fit.cof]
-            [%config so-cir %secure sec.con.cof]
-            [%config so-cir %permit & sis.con.cof]
+      =-  %+  turn  -
+          |=  d/diff-config
+          [%story nom [%config so-cir d]]
+      ^-  (list diff-config)
+      ::TODO  figure out how to deal with src changes here.
+      ::      %follow will probably behave a bit iffy in some cases.
+      ?~  old
+        ::  if we have no previous config, all diffs apply.
+        :~  [%caption cap.cof]
+            [%usage & tag.cof]
+            [%filter fit.cof]
+            [%secure sec.con.cof]
+            [%permit & sis.con.cof]
         ==
-      |=  d/delta-story
-      [%story nom d]
+      =-  (murn - same)
+      ^-  (list (unit diff-config))
+      =*  col  u.old
+      ::  if we have previous config, figure out the changes.
+      :~  ?:  =(cap.col cap.cof)  ~
+          `[%caption cap.cof]
+        ::
+          =+  gon=(~(dif in tag.col) tag.cof)
+          ?~  gon  ~
+          `[%usage | gon]
+        ::
+          =+  new=(~(dif in tag.cof) tag.col)
+          ?~  new  ~
+          `[%usage & new]
+        ::
+          ?:  =(fit.col fit.cof)  ~
+          `[%filter fit.cof]
+        ::
+          ?:  =(sec.con.col sec.con.cof)  ~
+          `[%secure sec.con.cof]
+        ::
+          =+  gon=(~(dif in sis.con.col) sis.con.cof)
+          ?~  gon  ~
+          `[%permit | gon]
+        ::
+          =+  new=(~(dif in sis.con.cof) sis.con.col)
+          ?~  new  ~
+          `[%permit & new]
+      ==
     ::
     ++  so-sources
       :>    change source
@@ -2491,9 +2517,9 @@
       $report
     ::  only send changes we didn't get from above.
     ?:  =(src.bol (above our.bol))  ~
-    ::  only send story reports about grams, status and peers.
+    ::  only send story reports about grams and status.
     ?.  ?=($story -.det)  ~
-    ?.  ?=(?($gram $status $peer) -.det.det)  ~
+    ?.  ?=(?($gram $status) -.det.det)  ~
     =+  soy=(~(got by stories) nom.det)
     ::  and only if the story is inherited.
     ?.  inherited.soy  ~
