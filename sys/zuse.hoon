@@ -135,6 +135,7 @@
           {$init p/@p}                                  ::  report install
           {$mack p/(unit tang)}                         ::  
           {$mass p/mass}                                ::  memory usage
+          {$rove p/ship q/lane}                         ::  lane change
           {$send p/lane q/@}                            ::  transmit packet
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
@@ -161,6 +162,7 @@
           {$nuke p/@p}                                  ::  toggle auto-block
           {$make p/(unit @t) q/@ud r/@ s/?}             ::  wild license
           {$sith p/@p q/@uw r/?}                        ::  imperial generator
+          {$tend $~}                                    ::  watch lane changes
           {$wake $~}                                    ::  timer activate
           {$wegh $~}                                    ::  report memory
           {$west p/sack q/path r/*}                     ::  network request
@@ -203,6 +205,7 @@
   ++  boon                                              ::  fort output
     $%  {$beer p/ship q/@uvG}                           ::  gained ownership
         {$cake p/sock q/soap r/coop s/duct}             ::  e2e message result
+        {$maze p/ship q/lane}                           ::  lane change
         {$mead p/lane q/rock}                           ::  accept packet
         {$milk p/sock q/soap r/*}                       ::  e2e pass message
         {$ouzo p/lane q/rock}                           ::  transmit packet
@@ -240,12 +243,13 @@
         wid/@ud                                         ::  logical wdow msgs
     ==                                                  ::
   ++  fort                                              ::  formal state
-    $:  $0                                              ::  version
+    $:  $1                                              ::  version
         gad/duct                                        ::  client interface
         hop/@da                                         ::  network boot date
         bad/(set @p)                                    ::  bad ships
         ton/town                                        ::  security
         zac/(map ship corn)                             ::  flows by server
+        ten/(set duct)                                  ::  watch lanes
     ==                                                  ::
   ++  gcos                                              ::  id description
     $%  {$czar $~}                                      ::  8-bit ship
