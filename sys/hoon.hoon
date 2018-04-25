@@ -409,7 +409,7 @@
 ::::  2q: molds and mold builders                       ::
   ::                                                    ::
   ::
-++  axis  @                                             ::  tree address
++=  axis  @                                             ::  tree address
 ++  bean  ?                                             ::  0=&=yes, 1=|=no
 ++  flag  ?
 ++  char  @t                                            ::  UTF8 byte
@@ -5666,12 +5666,12 @@
 ++  metl  ?($gold $iron $zinc $lead)                    ::  core variance
 +=  null  ~                                             ::  null, nil, etc
 ++  onyx  (list (pair type foot))                       ::  arm activation
-++  opal                                                ::  limb match
++=  opal                                                ::  limb match
           $%  {%& p/type}                               ::  leg
               {%| p/axis q/(set {p/type q/foot})}       ::  arm
           ==                                            ::
 ++  pica  (pair ? cord)                                 ::  & prose, | code
-++  palo  (pair vein opal)                              ::  wing trace, match
++=  palo  (pair vein opal)                              ::  wing trace, match
 ++  plot                                                ::  output analysis
           $~  [%base %noun]                             ::
           $%  [%base p=base]                            ::  base type
@@ -5703,7 +5703,9 @@
               {$leaf p/term q/@}                        ::  constant atom
               {$like p/wing q/(list wing)}              ::  reference
               {$loop p/term}                            ::  hygienic reference
+              {$made p/(pair term @ud) q/spec}          ::  annotate synthetic 
               {$make p/hoon q/(list spec)}              ::  composed spec
+              {$name p/term q/spec}                     ::  annotate simple
               {$over p/wing q/spec}                     ::  relative to subject
           ::                                            ::
               {$bcbc p/spec q/(map term spec)}          ::  $$, recursion
@@ -5773,7 +5775,7 @@
       $^  manx 
       $:  ?($tape $manx $marl $call) 
           p/hoon
-      ==
+  ==
   --                                                ::
 ++  hoon                                                ::
   =,  hoon-structures
@@ -5924,8 +5926,8 @@
               {$0 p/@}                                  ::  axis select
           ==                                            ::
 ++  note                                                ::  type annotation
-          $%  {$army p/term}                            ::  constructed by
-              {$navy p/term q/(list wing)}              ::  constructor for
+          $%  {$army p/term}                            ::  simple named
+              {$navy p/term q/(list wing)}              ::  synthetic named
               {$cops p/stud}                            ::  declared standard
           ==                                            ::
 ++  type  $~  %noun                                     :: 
@@ -5961,7 +5963,7 @@
 ++  vise  {p/typo q/*}                                  ::  old vase
 ++  vial  ?($read $rite $both $free)                    ::  co/contra/in/bi
 ++  vair  ?($gold $iron $lead $zinc)                    ::  in/contra/bi/co
-++  vein  (list (unit axis))                            ::  search trace
++=  vein  (list (unit axis))                            ::  search trace
 ++  sect  (list pica)                                   ::  paragraph
 ++  whit                                                ::  
           $:  lab/(unit term)                           ::  label
@@ -6867,6 +6869,7 @@
     %like  &/[[`[':' ~] ~] (turn `(list wing)`+.spec wing-to-plum)]
     %loop  (cat 3 '!' p.spec)
     %over  $(spec q.spec)
+    %made  $(spec q.spec)
     %make  =+  (lent q.spec)
            :+  %&
              :-  `[' ' `['(' ')']]
@@ -6877,6 +6880,7 @@
              ?:  =(- 3)  '%^'
              ?:  =(- 2)  '%+'  '%-'
            [(hoon-to-plum p.spec) (turn q.spec ..$)]
+    %name  $(spec q.spec)
     %bcbc  (core-to-plum '$$' p.spec q.spec)
     %bcbr  &/[(regular '$|') $(spec p.spec) (hoon-to-plum q.spec) ~]
     %bccb  (hoon-to-plum p.spec)
@@ -7207,7 +7211,9 @@
       $loop  `p.mod
       $like  ?~(p.mod ~ ?^(i.p.mod ?:(?=(%& -.i.p.mod) ~ q.i.p.mod) `i.p.mod))
       $make  ~(name ap p.mod)
+      $made  $(mod q.mod)
       $over  $(mod q.mod)
+      $name  $(mod q.mod)
     ::
       $bcbc  $(mod p.mod)
       $bcbr  $(mod p.mod)
@@ -7360,6 +7366,15 @@
     |-  ^-  hoon
     ?~(bug gen [%dbug i.bug $(bug t.bug)])
   ::
+  ++  pieces
+    ::  enumerate tuple wings
+    ::
+    |=  width/@ud
+    =/  axe  1
+    |-  ^-  (list wing)
+    ?:  =(1 width)  [[[%& axe] ~] ~]
+    [[[%& (peg axe 2)] ~] $(axe (peg axe 3))]
+  ::
   ++  spore
     ::  build default sample
     ::
@@ -7395,7 +7410,9 @@
       {$leaf *}  [%rock p.mod q.mod]
       {$loop *}  ~|([%loop p.mod] $(mod (~(got by cox) p.mod)))
       {$like *}  $(mod bcmc/(unreel p.mod q.mod))
+      {$made *}  $(mod q.mod)
       {$make *}  $(mod bcmc/(unfold p.mod q.mod))
+      {$name *}  $(mod q.mod)
       {$over *}  $(hay p.mod, mod q.mod)
     ::
       {$bcbr *}  $(mod p.mod)
@@ -7451,7 +7468,9 @@
       {$leaf *}  (decorate [%rock p.mod q.mod])
       {$like *}  example(mod bcmc/(unreel p.mod q.mod))
       {$loop *}  [%limb p.mod]
+      {$made *}  example(mod q.mod, nut `navy/[p.p.mod (pieces q.p.mod)])
       {$make *}  example(mod bcmc/(unfold p.mod q.mod))
+      {$name *}  example(mod q.mod, nut `army/[p.mod])
       {$over *}  example(hay p.mod, mod q.mod)
     ::
       {$bccb *}  (decorate (home p.mod))
@@ -7653,6 +7672,16 @@
       ::
           {$loop *} 
         (decorate [%cnhp [%limb p.mod] fetch])
+      ::
+      ::  simple named structure
+      ::
+          {$name *}  
+        relative(mod q.mod, nut `army/[p.mod])
+      ::
+      ::  synthetic named structure
+      ::
+          {$made *}  
+        relative(mod q.mod, nut `navy/[p.p.mod (pieces q.p.mod)])
       ::
       ::  subjective
       ::
@@ -12880,13 +12909,14 @@
           ==
         ::
           %+  cook
-            |=({a/$ash b/term c/whit d/hoon} [b c a d])
+            |=  {a/$ash b/term c/whit d/spec} 
+            [b c a [%bccm [%name b d]]]
           ;~  plug
             (cold %ash (jest '+='))
             ;~(pfix gap sym)
             apse:docs
-            ;~(pfix gap (stag %bccm loan))
-          ==
+            ;~(pfix gap loan)
+          ==  
         ==
       ==
     ::

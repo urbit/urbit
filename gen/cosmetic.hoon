@@ -141,9 +141,6 @@
         [%core *]  (core p.sut q.sut)
         [%face *]  (face p.sut q.sut)
         [%hint *]  =+((rely p.p.sut q.p.sut) ?^(- u.- main(sut q.sut)))
-        [%hint *]  =-  ?~(- main(sut q.sut) [-> load])
-                   ?.  ?=(%made -.q.p.sut)  ~
-                   (rehint p.p.sut p.q.p.sut)
         [%fork *]  (fork p.sut)
         [%hold *]  entry(sut ~(repo ut sut))
       == 
@@ -154,12 +151,12 @@
       |=  [=type =note]
       ^-  (unit [spec _load])
       ?+  -.note  ~
-        $army  `[%like [p.note ~]]
+        $army  `[`spec`[%like [[p.note ~] ~]] load]
         $navy  =-  `[[%make [%limb p.note] -<] ->]
                |-  ^-  [(list spec) _load]
                ?~  q.note  [~ load]
-               =^  more  load  $(note t.q.note)
-               =/  part  (~(play ut type) [%tsgl [%limb %$] [%wing i.q.note])
+               =^  more  load  $(q.note t.q.note)
+               =/  part  (~(play ut type) [%tsgl [%limb %$] [%wing i.q.note]])
                =^  spec  load  entry(sut part)
                [[spec more] load]
       ==
@@ -669,6 +666,8 @@
     %leaf  =+((scot p.spec q.spec) ?:(=('~' -) - (cat 3 '%' -)))
     %like  &/[[`[':' ~] ~] (turn `(list wing)`+.spec wing-to-plum)]
     %loop  (cat 3 '$' p.spec)
+    %name  $(spec q.spec)
+    %made  $(spec q.spec)
     %over  $(spec q.spec)
     %make  =+  (lent q.spec)
            :+  %&
