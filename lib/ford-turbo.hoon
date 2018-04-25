@@ -1962,11 +1962,11 @@
               next-builds
             (~(put in next-builds.state) client)
           ::
-              client-builds.components
-            (~(put ju client-builds.components.state) build.made client)
+              client-builds.provisional-components
+            (~(put ju client-builds.provisional-components.state) build.made client)
           ::
-              sub-builds.components
-            (~(put ju sub-builds.components.state) client build.made)
+              sub-builds.provisional-components
+            (~(put ju sub-builds.provisional-components.state) client build.made)
           ::
               builds-by-date
             (~(put ju builds-by-date.state) date.client schematic.client)
@@ -2949,11 +2949,15 @@
         new  (~(del by new.rebuilds.state) build)
         old  (~(del by old.rebuilds.state) u.rebuild)
       ==
-    ::  recurse on :rebuild; note this must be done after recursing on :kids
+    ::  if we have a :newer-build, clean it up too
     ::
-    ?~  rebuild
+    =/  newer-build
+      (~(find-next by-schematic builds-by-schematic.state) build)
+    ::
+    ?~  newer-build
       this
-    (cleanup u.rebuild)
+    ::
+    (cleanup u.newer-build)
   ::  +clay-sub-wire: the wire to use for a clay subscription
   ::
   ++  clay-sub-wire
