@@ -757,7 +757,7 @@
           (give-thou q.u.mez)
       ::
         $lon
-          ~&  ses-ask+[p.u.mez sop (~(run by wup) $~)]
+          ::  ~&  ses-ask+[p.u.mez sop (~(run by wup) $~)]
           ?:  (ses-authed p.u.mez)
             (ames-gram q.p.kyz aut+~ p.u.mez)
           =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
