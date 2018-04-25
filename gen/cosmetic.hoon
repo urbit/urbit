@@ -140,40 +140,29 @@
         [%cell *]  (cell p.sut q.sut)
         [%core *]  (core p.sut q.sut)
         [%face *]  (face p.sut q.sut)
-        [%form *]  =-  ?~(- main(sut q.sut) [-> load])
+        [%hint *]  =+((rely p.p.sut q.p.sut) ?^(- u.- main(sut q.sut)))
+        [%hint *]  =-  ?~(- main(sut q.sut) [-> load])
                    ?.  ?=(%made -.q.p.sut)  ~
-                   (reform p.p.sut p.q.p.sut)
+                   (rehint p.p.sut p.q.p.sut)
         [%fork *]  (fork p.sut)
         [%hold *]  entry(sut ~(repo ut sut))
       == 
     ::
-    ::  +form: rationalize structure from type (stub)
+    ::  +rely: rationalize structure from type (stub)
     ::
-    ++  reform
-      |=  [=type =spec]
-      ^-  (unit ^spec)
-      `spec
-::    |-  ^-  (unit spec)
-::    ::  reform a spec left as a type annotation
-::    ::
-::    ?+    -.spec
-::      %base  spec
-::      %dbug  $(spec q.spec)
-::      %leaf  spec
-::      %loop  spec
-::      %like  ::  hub: type of context
-::             ::  poy: reference 
-::             ::
-::             =/  hub  %-  ~(play ut sut)
-::                      |-  ^-  hoon
-::                      ?~  q.spec  [%$ 1]
-::                      [%tsgl [%wing i.q.spec] $(q.spec t.q.spec)]
-::             =/  poy  (~(fond ut hub) %free p.spec)
-::             ::  if, we have a simple arm, keep the spec
-::             ::
-::             ?.(?=([%& * * %| *] poy) ~ `spec)
-::      %make
-::    ==
+    ++  rely
+      |=  [=type =note]
+      ^-  (unit [spec _load])
+      ?+  -.note  ~
+        $army  `[%like [p.note ~]]
+        $navy  =-  `[[%make [%limb p.note] -<] ->]
+               |-  ^-  [(list spec) _load]
+               ?~  q.note  [~ load]
+               =^  more  load  $(note t.q.note)
+               =/  part  (~(play ut type) [%tsgl [%limb %$] [%wing i.q.note])
+               =^  spec  load  entry(sut part)
+               [[spec more] load]
+      ==
     ::
     ::  +atom: convert atomic type to spec
     ::
@@ -357,16 +346,16 @@
       ::
       ::  %&: text tree
       ::
-      %&  ::  trial: attempt at wide form
+      %&  ::  trial: attempt at wide hint
           ::
           =/  trial  ?~(wide.plum ~ [~ u=linear])
-          ::  if wide form is available or optimal
+          ::  if wide hint is available or optimal
           ::
           ?:  ?&  ?=(^ trial)
                   ?|  ?=(~ tall.plum)
                       (lte length.u.trial 40)
               ==  ==
-            ::  then produce wide form
+            ::  then produce wide hint
             ::
             [0 text.u.trial]~
           ::  else assert tall style (you gotta set either wide or tall)
