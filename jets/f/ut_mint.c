@@ -544,7 +544,7 @@
       {
         u3_noun hum = _mint_in(van, sut, gol, q_gen);
 
-        u3_noun ret = u3nc(u3qf_form(p_gen, u3h(hum)),
+        u3_noun ret = u3nc(u3qf_hint(p_gen, u3h(hum)),
                            u3k(u3t(hum)));
         u3z(hum);
         return ret;
@@ -556,7 +556,7 @@
         u3_noun hep = u3nc(c3__docs, u3k(p_gen));
         u3_noun hum = _mint_in(van, sut, gol, q_gen);
 
-        u3_noun ret = u3nc(u3qf_form(hep, u3h(hum)),
+        u3_noun ret = u3nc(u3qf_hint(hep, u3h(hum)),
                            u3k(u3t(hum)));
 
         u3z(hep);

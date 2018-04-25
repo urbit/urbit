@@ -204,7 +204,7 @@
     u3_noun u3qf_forq(u3_noun, u3_noun);
     u3_noun u3qf_fork(u3_noun);
     u3_noun u3qf_grof(u3_noun);
-    u3_noun u3qf_form(u3_noun, u3_noun);
+    u3_noun u3qf_hint(u3_noun, u3_noun);
     u3_noun u3qf_hike(u3_noun, u3_noun);
     u3_noun u3qf_look(u3_noun, u3_noun);
     u3_noun u3qf_loot(u3_noun, u3_noun);
@@ -282,7 +282,7 @@
     u3_noun u3qz_forq(u3_noun, u3_noun);
     u3_noun u3qz_fork(u3_noun);
     u3_noun u3qz_grof(u3_noun);
-    u3_noun u3qz_form(u3_noun, u3_noun);
+    u3_noun u3qz_hint(u3_noun, u3_noun);
     u3_noun u3qz_hike(u3_noun, u3_noun);
     u3_noun u3qz_look(u3_noun, u3_noun);
     u3_noun u3qz_loot(u3_noun, u3_noun);
