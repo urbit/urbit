@@ -2517,9 +2517,9 @@
       $report
     ::  only send changes we didn't get from above.
     ?:  =(src.bol (above our.bol))  ~
-    ::  only send story reports about grams, status and peers.
+    ::  only send story reports about grams and status.
     ?.  ?=($story -.det)  ~
-    ?.  ?=(?($gram $status $peer) -.det.det)  ~
+    ?.  ?=(?($gram $status) -.det.det)  ~
     =+  soy=(~(got by stories) nom.det)
     ::  and only if the story is inherited.
     ?.  inherited.soy  ~
