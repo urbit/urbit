@@ -765,28 +765,14 @@
       ::    The first of the two jugs maps from a build to its sub-builds.
       ::    The second of the two jugs maps from a build to its client builds.
       ::
-      $=  components
-      $:  ::  sub-builds: jug from a build to its sub-builds
-          ::
-          sub-builds=(jug build build)
-          ::  client-builds: jug from a build to its client builds
-          ::
-          client-builds=(jug build build)
-      ==
+      components=build-dag
       ::  provisional-components: expected linkage we can't prove yet
       ::
       ::    During the +gather step, we promote builds, but our promotion
       ::    decisions may be wrong. We record our predictions here so we
       ::    can undo them.
       ::
-      $=  provisional-components
-      $:  ::  sub-builds: jug from a build to its sub-builds
-          ::
-          sub-builds=(jug build build)
-          ::  client-builds: jug from a build to its client builds
-          ::
-          client-builds=(jug build build)
-      ==
+      provisional-components=build-dag
       ::  rebuilds: bidirectional links between old and new identical builds
       ::
       ::    Old and new build must have the same schematic and result.
@@ -811,14 +797,7 @@
       candidate-builds=(list build)
       ::  blocked builds: mappings between blocked and blocking builds
       ::
-      $=  blocked-builds
-      $:  ::  sub-builds: key is client, value is sub-build
-          ::
-          sub-builds=(jug build build)
-          ::  client-builds: key is sub-build, value is client
-          ::
-          client-builds=(jug build build)
-      ==
+      blocked-builds=build-dag
   ::
   ::  build request tracking
   ::
@@ -857,6 +836,16 @@
       ::    that formal date.
       ::
       dependency-updates=(jug @da dependency)
+  ==
+::  +build-dag: a directed acyclic graph of builds
+::
++=  build-dag
+  $:  ::  sub-builds: jug from a build to its sub-builds
+      ::
+      sub-builds=(jug build build)
+      ::  client-builds: jug from a build to its client builds
+      ::
+      client-builds=(jug build build)
   ==
 ::  +build: a referentially transparent request for a build.
 ::
@@ -1252,6 +1241,62 @@
       `[i.dates schematic.build]
     $(dates t.dates)
   --
+::  +by-build-dag: door for manipulating a :build-dag
+::
+++  by-build-dag
+  |_  dag=build-dag
+  ::  +get-subs: produce a list of sub-builds.
+  ::
+  ++  get-subs
+    |=  =build
+    ^-  (list ^build)
+    =-  ~(tap in (fall - ~))
+    (~(get by sub-builds.dag) build)
+  ::  +get-clients: produce a list of client-builds.
+  ::
+  ++  get-clients
+    |=  =build
+    ^-  (list ^build)
+    =-  ~(tap in (fall - ~))
+    (~(get by client-builds.dag) build)
+  ::
+  ::  +put: add a linkage between a :client and a :sub +build
+  ::
+  ++  put
+    |=  [client=build sub=build]
+    ^+  dag
+    %_  dag
+      sub-builds     (~(put ju sub-builds.dag) client sub)
+      client-builds  (~(put ju client-builds.dag) sub client)
+    ==
+  ::  +del: delete a linkage between a :client and a :sub +build
+  ::
+  ++  del
+    |=  [client=build sub=build]
+    ^+  dag
+    %_  dag
+      sub-builds     (~(del ju sub-builds.dag) client sub)
+      client-builds  (~(del ju client-builds.dag) sub client)
+    ==
+  ::  +del-build: remove all linkages containing :build
+  ::
+  ++  del-build
+    |=  =build
+    ^+  dag
+    ::
+    %_    dag
+      ::  remove the mapping from :build to its sub-builds
+      ::
+          sub-builds
+        (~(del by sub-builds.dag) build)
+      ::  for each +build in :kids, remove :build from its clients
+      ::
+          client-builds
+        %+  roll  ~(tap in (~(get ju sub-builds.dag) build))
+        |=  [kid=^build clients=_client-builds.dag]
+        (~(del ju clients) kid build)
+      ==
+  --
 ::  +per-event: per-event core
 ::
 ++  per-event
@@ -1457,24 +1502,16 @@
     =.  listeners.state
       (~(del ju listeners.state) build listener)
     ::
-    =/  sub-builds  (~(get ju sub-builds.components.state) build)
+    =/  sub-builds  (~(get-subs by-build-dag components.state) build)
     ::
     =/  provisional-sub-builds
-      (~(get ju sub-builds.provisional-components.state) build)
+      (~(get-subs by-build-dag provisional-components.state) build)
     ::
     =/  new-builds=(list ^build)
       ?:  =(build original-build)  ~
       (drop (~(find-next by-schematic builds-by-schematic.state) build))
     ::
-    %_    $
-        builds
-      ;:  welp
-        t.builds
-        ~(tap in sub-builds)
-        ~(tap in provisional-sub-builds)
-        new-builds
-      ==
-    ==
+    $(builds :(welp t.builds sub-builds provisional-sub-builds new-builds))
   ::  |construction: arms for performing builds
   ::
   ::+|  construction
@@ -1495,11 +1532,10 @@
     $(builds ~)
   ::  +execute: main recursive construction algorithm
   ::
-  ::    Runs +make on :build if necessary, and recurses potentially
-  ::    "upward" to :build's clients and "downward" to :build's sub-builds.
-  ::    Enqueues moves to Clay to request resources for blocked +scry
-  ::    operations and places completed root builds in :done-live-roots
-  ::    to be processed at the end of the event.
+  ::    Performs the three step build process: First, figure out which builds
+  ::    we're going to run this loop through the ford algorithm. Second, run
+  ::    the gathered builds, possibly in parallel. Third, apply the +state-diff
+  ::    algorithms to the ford state.
   ::
   ++  execute
     |=  builds=(set build)
@@ -1601,8 +1637,7 @@
         ..execute(next-builds.state (~(put in next-builds.state) build))
       ::  old-subs: sub-builds of :u.old-build
       ::
-      =/  old-subs=(list ^build)
-        ~(tap in (fall (~(get by sub-builds.components.state) u.old-build) ~))
+      =/  old-subs  (~(get-subs by-build-dag components.state) u.old-build)
       ::
       =/  new-subs  (turn old-subs |=(^build +<(date date.build)))
       ::  if all subs are in old.rebuilds.state, promote ourselves
@@ -1615,13 +1650,7 @@
           ::
           |=  [new-sub=^build state=_state]
           ::
-          %_    state
-              sub-builds.components
-            (~(put ju sub-builds.components.state) build new-sub)
-          ::
-              client-builds.components
-            (~(put ju client-builds.components.state) new-sub build)
-          ==
+          state(components (~(put by-build-dag components.state) build new-sub))
         ::
         =^  wiped-rebuild  ..execute  (promote-build u.old-build date.build)
         =?    next-builds.state
@@ -1643,14 +1672,11 @@
         %+  roll  `(list ^build)`new-subs
         |=  [new-sub=^build provisional-components=_provisional-components.state]
         ::
-        %_    provisional-components
-            sub-builds
-          (~(put ju sub-builds.provisional-components) build new-sub)
-        ::
-            client-builds
-          (~(put ju client-builds.provisional-components) new-sub build)
-        ==
+        (~(put by-build-dag provisional-components) build new-sub)
       ::  all new-subs have results, some are not rebuilds
+      ::
+      ::    We rerun :build because these non-rebuild results might be different,
+      ::    possibly giving :build a different result.
       ::
       =/  uncached-new-subs  (skip new-subs is-build-cached)
       ?~  uncached-new-subs
@@ -1664,13 +1690,7 @@
         %+  roll  `(list ^build)`uncached-new-subs
         |=  [new-sub=^build blocked-builds=_blocked-builds.state]
         ::
-        %_    blocked-builds
-            sub-builds
-          (~(put ju sub-builds.blocked-builds) build new-sub)
-        ::
-            client-builds
-          (~(put ju client-builds.blocked-builds) new-sub build)
-        ==
+        (~(put by-build-dag blocked-builds) build new-sub)
       ::
       %_    ..execute
           candidate-builds.state
@@ -1709,37 +1729,21 @@
       ?>  (~(has ju builds-by-date.state) date.new-build schematic.new-build)
       ::
       =.  components.state
-        %+  roll
-          =-  ~(tap in (fall - ~))
-          (~(get by sub-builds.components.state) old-build)
+        %+  roll  (~(get-subs by-build-dag components.state) old-build)
         ::
         |=  [old-sub=build components=_components.state]
         ::
         =/  new-sub=build  old-sub(date date)
-        %_    components
-            sub-builds
-          (~(put ju sub-builds.components) new-build new-sub)
-        ::
-            client-builds
-          (~(put ju client-builds.components) new-sub new-build)
-        ==
+        (~(put by-build-dag components) new-build new-sub)
       ::  promoted builds are no longer provisional
       ::
       =.  provisional-components.state
-        %+  roll
-          =-  ~(tap in (fall - ~))
-          (~(get by sub-builds.provisional-components.state) new-build)
+        %+  roll  (~(get-subs by-build-dag provisional-components.state) new-build)
         ::
         |=  [old-sub=build provisional-components=_provisional-components.state]
         ::
         =/  new-sub=build  old-sub(date date)
-        %_    provisional-components
-            sub-builds
-          (~(del ju sub-builds.provisional-components) new-build new-sub)
-        ::
-            client-builds
-          (~(del ju client-builds.provisional-components) new-sub new-build)
-        ==
+        (~(del by-build-dag provisional-components) new-build new-sub)
       ::  send mades for the currently existing listeners before we add more
       ::
       =.  ..execute  (send-mades new-build (root-live-listeners new-build))
@@ -1798,106 +1802,129 @@
       ::  if :next has been wiped, produce it
       ::
       [`u.next ..execute]
-    ::  reduce: TODO
+    ::  reduce: apply +state-diffs produce from the +make phase.
+    ::
+    ::    +gather produces builds to run make on. +make produces
+    ::    +state-diffs. It is in +reduce where we take these +state-diffs and
+    ::    apply them to ..execute.
     ::
     ++  reduce
       |=  state-diffs=(list state-diff)
       ^+  ..execute
       ::
-      |-  ^+  ..execute
-      ?~  state-diffs  ..execute
+      |^  ^+  ..execute
+          ?~  state-diffs  ..execute
+          ::
+          =.  ..execute  (apply-state-diff i.state-diffs)
+          $(state-diffs t.state-diffs)
+      ::  +apply-state-diff: applies a single state diff to ..execute
       ::
-      =*  made  i.state-diffs
-      ::  perform live accounting if :is-live-scry
-      ::
-      =?    ..execute
-          ?&  ?=(%scry -.schematic.build.made)
-              (is-build-live build.made)
+      ++  apply-state-diff
+        |=  made=state-diff
+        ::  perform live accounting if :is-live-scry
+        ::
+        =?    ..execute
+            ?&  ?=(%scry -.schematic.build.made)
+                (is-build-live build.made)
+            ==
+          ::
+          =/  dependency=dependency  dependency.schematic.build.made
+          =/  disc=disc  (extract-disc dependency)
+          ::
+          %_    ..execute
+          ::  link :disc to :dependency
+          ::
+              dependencies.state
+            (~(put ju dependencies.state) [disc dependency])
+          ::  mark :disc as dirty
+          ::
+              dirty-discs
+            (~(put in dirty-discs) disc)
+          ::  update :latest-by-disc.state if :date.build is later
+          ::
+              latest-by-disc.state
+            =/  latest-date  (~(get by latest-by-disc.state) disc)
+            ::
+            ?:  ?&  ?=(^ latest-date)
+                    (lte date.build.made u.latest-date)
+                ==
+              latest-by-disc.state
+            ::
+            (~(put by latest-by-disc.state) disc date.build.made)
+          ==
+        ::  clear the components
+        ::
+        =?    ..execute
+            clear-sub-builds.made
+          (unlink-sub-builds build.made)
+        ::  process :sub-builds.made
+        ::
+        =.  state
+          %+  roll  sub-builds.made
+          |=  [sub-build=build accumulator=_state]
+          =.  state  accumulator
+          ::  freshen cache for sub-build
+          ::
+          =.  results.state  +:(access-cache sub-build)
+          ::
+          ::
+          %_    state
+              builds-by-date
+            (~(put ju builds-by-date.state) date.build.made schematic.sub-build)
+          ::
+              builds-by-schematic
+            (~(put by-schematic builds-by-schematic.state) sub-build)
+          ::
+              components
+            (~(put by-build-dag components.state) build.made sub-build)
+          ::
+              listeners
+            ::
+            =/  unified-listeners
+              %-  ~(uni in (fall (~(get by listeners.state) sub-build) ~))
+              (fall (~(get by listeners.state) build.made) ~)
+            ::  don't put a key with an empty value
+            ::
+            ?~  unified-listeners
+              listeners.state
+            ::
+            (~(put by listeners.state) sub-build unified-listeners)
           ==
         ::
-        =/  dependency=dependency  dependency.schematic.build.made
-        =/  disc=disc  (extract-disc dependency)
+        ?-    -.result.made
+            %build-result
+          (apply-build-result made)
         ::
-        %_    ..execute
-        ::  link :disc to :dependency
-        ::
-            dependencies.state
-          (~(put ju dependencies.state) [disc dependency])
-        ::  mark :disc as dirty
-        ::
-            dirty-discs
-          (~(put in dirty-discs) disc)
-        ::  update :latest-by-disc.state if :date.build is later
-        ::
-            latest-by-disc.state
-          =/  latest-date  (~(get by latest-by-disc.state) disc)
-          ::
-          ?:  ?&  ?=(^ latest-date)
-                  (lte date.build.made u.latest-date)
-              ==
-            latest-by-disc.state
-          ::
-          (~(put by latest-by-disc.state) disc date.build.made)
+            %blocks
+          (apply-blocks build.made result.made sub-builds.made)
         ==
-      ::  clear the components
+      ::  +apply-build-result: apply a %build-result +state-diff to ..execute
       ::
-      =?    ..execute
-          clear-sub-builds.made
-        (unlink-sub-builds build.made)
-      ::  process :sub-builds.made
+      ::    Our build produced an actual result.
       ::
-      =.  state
-        %+  roll  sub-builds.made
-        |=  [sub-build=build accumulator=_state]
-        =.  state  accumulator
-        ::  freshen cache for sub-build
+      ++  apply-build-result
+        |=  $:  =build
+                $:  %build-result
+                    =build-result
+                ==
+                sub-builds=(list build)
+                clear-sub-builds=?
+            ==
+        ^+  ..execute
         ::
-        =.  results.state  +:(access-cache sub-build)
-        ::
-        %_    state
-            builds-by-date
-          (~(put ju builds-by-date.state) date.build.made schematic.sub-build)
-        ::
-            builds-by-schematic
-          (~(put by-schematic builds-by-schematic.state) sub-build)
-        ::
-            sub-builds.components
-          (~(put ju sub-builds.components.state) build.made sub-build)
-        ::
-            client-builds.components
-          (~(put ju client-builds.components.state) sub-build build.made)
-        ::
-            listeners
-          ::
-          =/  unified-listeners
-            %-  ~(uni in (fall (~(get by listeners.state) sub-build) ~))
-            (fall (~(get by listeners.state) build.made) ~)
-          ::  don't put a key with an empty value
-          ::
-          ?~  unified-listeners
-            listeners.state
-          ::
-          (~(put by listeners.state) sub-build unified-listeners)
-        ==
-      ::
-      ?-    -.result.made
-          %build-result
-        ::
-        ?>  (~(has ju builds-by-date.state) date.build.made schematic.build.made)
+        ?>  (~(has ju builds-by-date.state) date.build schematic.build)
+        ::  record the result returned from the build
         ::
         =.  results.state
-          %+  ~(put by results.state)  build.made
-          [%result last-accessed=now build-result.result.made]
+          %+  ~(put by results.state)  build
+          [%result last-accessed=now build-result]
+        ::  queue clients we can run now that we have this build result
         ::
-        =/  client-builds
-          =-  ~(tap in (fall - ~))
-          (~(get by client-builds.blocked-builds.state) build.made)
-        ::
-        =^  unblocked-clients  state  (mark-as-done build.made)
+        =^  unblocked-clients  state  (mark-as-done build)
         =.  next-builds.state  (~(gas in next-builds.state) unblocked-clients)
         ::
         =/  previous-build
-          (~(find-previous by-schematic builds-by-schematic.state) build.made)
+          (~(find-previous by-schematic builds-by-schematic.state) build)
         ::
         =^  previous-result  results.state
           ?~  previous-build
@@ -1908,65 +1935,59 @@
         =?    state
             ?&  ?=(^ previous-build)
                 ?=(^ previous-result)
-                ::  this is wrong! it can be some other build that has the pin
                 !(has-pinned-client u.previous-build)
             ==
-          (promote-live-listeners u.previous-build build.made)
+          (promote-live-listeners u.previous-build build)
         ::
-        =.  ..execute  (send-mades build.made (root-once-listeners build.made))
-        =.  state  (delete-root-once-listeners build.made)
+        =.  ..execute  (send-mades build (root-once-listeners build))
+        =.  state  (delete-root-once-listeners build)
         ::  if result is same as previous, note sameness
         ::
         =/  same-result=?
           ?&  ?=(^ previous-build)
               !(has-pinned-client u.previous-build)
               ?=([~ %result *] previous-result)
-              =(build-result.result.made build-result.u.previous-result)
+              =(build-result build-result.u.previous-result)
           ==
         ::
         =?    rebuilds.state
             same-result
           ::
           ?>  ?=(^ previous-build)
-          (link-rebuilds u.previous-build build.made)
+          (link-rebuilds u.previous-build build)
         ::
         =?    ..execute
             !same-result
-          (send-mades build.made (root-live-listeners build.made))
+          (send-mades build (root-live-listeners build))
         ::  rerun any old clients, updated to the current time
         ::
         =?    state
             &(!same-result ?=(^ previous-build))
           ::
-          =/  clients-to-rebuild=(list build)
+          =/  clients-to-rebuild=(list ^build)
             %+  turn
               %+  weld
-                =-  ~(tap in (fall - ~))
-                (~(get by client-builds.components.state) u.previous-build)
+                (~(get-clients by-build-dag components.state) u.previous-build)
               ::
               =/  older-build  (~(get by old.rebuilds.state) u.previous-build)
               ?~  older-build
                 ~
               ::
-              =-  ~(tap in (fall - ~))
-              (~(get by client-builds.components.state) u.older-build)
+              (~(get-clients by-build-dag components.state) u.older-build)
             ::
-            |=  old-client=build
-            old-client(date date.build.made)
+            |=  old-client=^build
+            old-client(date date.build)
           ::
           %+  roll  clients-to-rebuild
-          |=  [client=build state=_state]
+          |=  [client=^build state=_state]
           ::
           %_    state
           ::
               next-builds
             (~(put in next-builds.state) client)
           ::
-              client-builds.provisional-components
-            (~(put ju client-builds.provisional-components.state) build.made client)
-          ::
-              sub-builds.provisional-components
-            (~(put ju sub-builds.provisional-components.state) client build.made)
+              provisional-components
+            (~(put by-build-dag provisional-components.state) client build)
           ::
               builds-by-date
             (~(put ju builds-by-date.state) date.client schematic.client)
@@ -1981,18 +2002,12 @@
         ::    build set because they're no longer provisional.
         ::
         =.  provisional-components.state
-          %+  roll  sub-builds.made
-          |=  $:  sub-build=build
+          %+  roll  sub-builds
+          |=  $:  sub-build=^build
                   provisional-components=_provisional-components.state
               ==
           ::
-          %_    provisional-components
-              sub-builds
-            (~(del ju sub-builds.provisional-components) build.made sub-build)
-          ::
-              client-builds
-            (~(del ju client-builds.provisional-components) sub-build build.made)
-          ==
+          (~(del by-build-dag provisional-components) build sub-build)
         ::  clean up provisional builds: remove orphans
         ::
         ::    Any builds left in :provisional-components.state for our build
@@ -2001,10 +2016,9 @@
         ::
         =.  ..execute
           %+  roll
-            =-  ~(tap in (fall - ~))
-            (~(get by sub-builds.provisional-components.state) build.made)
+            (~(get-subs by-build-dag provisional-components.state) build)
           ::
-          |=  [sub-build=build accumulator=_..execute]
+          |=  [sub-build=^build accumulator=_..execute]
           =.  ..execute  accumulator
           ::  calculate the listeners to remove
           ::
@@ -2013,18 +2027,23 @@
           ::    remove them.
           ::
           =/  provisional-client-listeners=(set listener)
-            (fall (~(get by listeners.state) build.made) ~)
+            (fall (~(get by listeners.state) build) ~)
           ::
           =/  all-other-client-listeners=(set listener)
             %+  roll
               =-  ~(tap in -)
-              =-  (~(del in -) build.made)
+              =-  (~(del in -) build)
               =-  (fall - ~)
               (~(get by client-builds.provisional-components.state) sub-build)
-            |=  [=build listeners=(set listener)]
+            |=  [build=^build listeners=(set listener)]
             ::
             %-  ~(uni in listeners)
             (fall (~(get by listeners.state) build) ~)
+          ::  orphaned-listeners: the clients we actually have to remove
+          ::
+          ::    The clients that are actually orphaned are the ones which are
+          ::    in :provisional-client-listeners, but not
+          ::    :all-other-client-listeners.
           ::
           =/  orphaned-listeners
             (~(dif in provisional-client-listeners) all-other-client-listeners)
@@ -2037,38 +2056,52 @@
             (remove-listener-from-build listener sub-build)
           ::  remove the orphaned build from provisional builds
           ::
-          =:  sub-builds.provisional-components.state
-            %+  ~(del ju sub-builds.provisional-components.state)
-              build.made
+          =.  provisional-components.state
+            %+  ~(del by-build-dag provisional-components.state)
+              build
             sub-build
           ::
-              client-builds.provisional-components.state
-            %+  ~(del ju client-builds.provisional-components.state)
-              sub-build
-            build.made
-          ==
-          ::
           (cleanup sub-build)
+        ::  if we had a previous build, clean it up
         ::
         =?    ..execute
             ?=(^ previous-build)
           (cleanup u.previous-build)
+        ::  clean up our current build
         ::
-        =.  ..execute  (cleanup build.made)
+        ::    If :build was a once build, once we've sent its %mades, we
+        ::    delete it immediately.
         ::
-        =^  wiped-rebuild  ..execute  (send-future-mades build.made)
+        =.  ..execute  (cleanup build)
+        ::
+        =^  wiped-rebuild  ..execute  (send-future-mades build)
         ?~  wiped-rebuild
-          $(state-diffs t.state-diffs)
+          ..execute
         ::
         =.  next-builds.state  (~(put in next-builds.state) u.wiped-rebuild)
         ::
-        $(state-diffs t.state-diffs)
+        ..execute
       ::
-          %blocks
+      ::  +apply-blocks: apply a %blocks +state-diff to ..execute
+      ::
+      ::    :build blocked. Record information about what builds it blocked on
+      ::    and try those blocked builds as candidates in the next pass.
+      ::
+      ++  apply-blocks
+        |=  $:  =build
+                $:  %blocks
+                    blocks=(list build)
+                    scry-blocked=(unit dependency)
+                ==
+                sub-builds=(list build)
+            ==
+        ^+  ..execute
+        ::  if we scryed, send clay a request for the path we blocked on reading
+        ::
         =?    moves
-            ?=(^ scry-blocked.result.made)
+            ?=(^ scry-blocked)
           ::
-          =*  dependency  u.scry-blocked.result.made
+          =*  dependency  u.scry-blocked
           ::  TODO: handle other vanes
           ::
           ?>  ?=(%c vane.dependency)
@@ -2081,24 +2114,24 @@
             =/  disc=disc  (extract-disc dependency)
             =,  rail.dependency
             :*  %c  %warp  sock=[our their=ship.disc]  desk.disc
-                `[%sing care.dependency case=[%da date.build.made] spur]
+                `[%sing care.dependency case=[%da date.build] spur]
             ==
           ::
           [[duct=~ [%pass wire note]] moves]
         ::  register dependency block in :blocks.state
         ::
         =?    blocks.state
-            ?=(^ scry-blocked.result.made)
+            ?=(^ scry-blocked)
           ::
-          ?>  ?=(%scry -.schematic.build.made)
-          =*  dependency  dependency.schematic.build.made
+          ?>  ?=(%scry -.schematic.build)
+          =*  dependency  dependency.schematic.build
           ::
-          (~(put ju blocks.state) dependency build.made)
+          (~(put ju blocks.state) dependency build)
         ::  register blocks on sub-builds in :blocked-builds.state
         ::
         =.  state
-          %+  roll  builds.result.made
-          |=  [block=build state=_state]
+          %+  roll  blocks
+          |=  [block=^build state=_state]
           ::  deal with block already being unblocked
           ::
           ::    If :block was run in the same batch as :build.made, and we've
@@ -2110,18 +2143,15 @@
             state
           ::
           %_    state
-              sub-builds.blocked-builds
-            (~(put ju sub-builds.blocked-builds.state) build.made block)
-          ::
-              client-builds.blocked-builds
-            (~(put ju client-builds.blocked-builds.state) block build.made)
+              blocked-builds
+            (~(put by-build-dag blocked-builds.state) build block)
           ::
               candidate-builds
             [block candidate-builds.state]
           ==
         ::
-        $(state-diffs t.state-diffs)
-      ==
+        ..execute
+      --
     ::  +dependencies-changed: did dependencies change since :previous-build?
     ::
     ++  dependencies-changed
@@ -2539,20 +2569,14 @@
     ^-  [(list ^build) _state]
     ::
     =/  client-builds=(list ^build)
-      ~(tap in (fall (~(get by client-builds.blocked-builds.state) build) ~))
+      (~(get-clients by-build-dag blocked-builds.state) build)
     ::
     =.  blocked-builds.state
       %+  roll  client-builds
       ::
       |=  [client=^build blocked-builds=_blocked-builds.state]
       ::
-      %_    blocked-builds
-          sub-builds
-        (~(del ju sub-builds.blocked-builds) client build)
-      ::
-          client-builds
-        (~(del ju client-builds.blocked-builds) build client)
-      ==
+      (~(del by-build-dag blocked-builds) client build)
     ::
     :_  state
     ::
@@ -2594,32 +2618,10 @@
       (~(get ju sub-builds.provisional-components.state) build)
     ::
     =.  components.state
-      %_    components.state
-      ::  remove the mapping from :build to its sub-builds
-      ::
-          sub-builds
-        (~(del by sub-builds.components.state) build)
-      ::  for each +build in :kids, remove :build from its clients
-      ::
-          client-builds
-        %+  roll  kids
-        |=  [kid=^build clients=_client-builds.components.state]
-        (~(del ju clients) kid build)
-      ==
+      (~(del-build by-build-dag components.state) build)
     ::
     =.  provisional-components.state
-      %_    provisional-components.state
-      ::  remove the mapping from :build to its sub-builds
-      ::
-          sub-builds
-        (~(del by sub-builds.provisional-components.state) build)
-      ::  for each +build in :kids, remove :build from its clients
-      ::
-          client-builds
-        %+  roll  kids
-        |=  [kid=^build clients=_client-builds.provisional-components.state]
-        (~(del ju clients) kid build)
-      ==
+      (~(del-build by-build-dag provisional-components.state) build)
     ::
     %+  roll  kids
     |=  [kid=^build accumulator=_..execute]
@@ -2728,7 +2730,7 @@
     ^-  ?
     ::  iterate across all clients recursively, exiting early on %pin
     ::
-    =/  clients  ~(tap in (~(get ju client-builds.components.state) build))
+    =/  clients  (~(get-clients by-build-dag components.state) build)
     |-
     ?~  clients
       %.n
@@ -2737,7 +2739,7 @@
     %_    $
         clients
       %+  weld  t.clients
-      ~(tap in (~(get ju client-builds.components.state) i.clients))
+      (~(get-clients by-build-dag components.state) i.clients)
     ==
   ::  +access-cache: access the +cache-line for :build, updating :last-accessed
   ::
