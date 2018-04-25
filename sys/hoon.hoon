@@ -6482,8 +6482,8 @@
   ~/  %form
   |=  {p/(pair type note) q/type}
   ^-  type
-  ?:  =(%void q)
-    %void
+  ?:  =(%void q)  %void
+  ?:  =(%noun q)  %noun
   [%form p q]
 ::
 ++  face                                                ::  make %face type
@@ -7350,6 +7350,7 @@
     ::
     |=  gen/hoon
     ^-  hoon
+    ::  =-  ?:(fab - [%note [%made mod] -])
     ::  :+  %note  [%made mod]
     ^-  hoon
     |-  ^-  hoon
@@ -8094,6 +8095,7 @@
         {$tell *}  [%cncl [%limb %noah] [%zpgr [%cltr p.gen]] ~]
         {$wing *}  [%cnts p.gen ~]
         {$yell *}  [%cncl [%limb %cain] [%zpgr [%cltr p.gen]] ~]
+        {$note *}  q.gen
     ::
         {$brcb *}  :+  %tsls  [%bcdt q.gen]
                    :+  %brcn  p.gen
@@ -8714,7 +8716,6 @@
       %fab    fab
       %blow   blow
       %burp   burp
-      %burn   burn
       %busk   busk
       %buss   buss
       %crop   crop
@@ -8778,23 +8779,6 @@
       [p.pro q.pro]
     [p.pro %1 p.u.jon]
   ::
-  ++  burn
-    =+  gil=*(set type)
-    |-  ^-  (unit)
-    ?-    sut
-        {$atom *}   q.sut
-        {$cell *}   %+  biff  $(sut p.sut)
-                    |=(a/* (biff ^$(sut q.sut) |=(b/* `[a b])))
-        {$core *}   (biff $(sut p.sut) |=(* `[p.s.q.sut +<]))
-        {$face *}   $(sut repo)
-        {$fork *}   ~
-        {$form *}   $(sut repo)
-        {$hold *}   ?:  (~(has in gil) sut)
-                      ~
-                    $(sut repo, gil (~(put in gil) sut))
-        $noun       ~
-        $void       ~
-    ==
   ++  bran
     ~+
     =+  gil=*(set type)
@@ -8835,7 +8819,7 @@
                   ==
       [%face *]  [%face p.sut burp(sut q.sut)]
       [%fork *]  [%fork (~(run in p.sut) |=(type burp(sut +<)))]
-      [%form *]  [%form p.sut burp(sut q.sut)]
+      [%form *]  (form p.sut burp(sut q.sut))
       [%hold *]  [%hold burp(sut p.sut) q.sut]
     ==
   ::
@@ -8914,6 +8898,7 @@
                    |-  ^-  type
                    ?~  yed  sut
                    $(yed t.yed, sut dext(ref i.yed))
+        {$form *}  dext(ref repo(sut ref))
         {$hold *}  dext(ref repo(sut ref))
       ==
     --
@@ -10400,7 +10385,7 @@
           {$form *}
         ::  work through form
         ::
-        [%form p.sut dext(sut q.sut)]
+        (form p.sut dext(sut q.sut))
       ::
           {$fork *}
         ::  reconstruct each case in fork 
@@ -10531,6 +10516,7 @@
       |-  ^-  type
       ?+  sut      ^$(vit t.vit)
         {$face *}  (face p.sut ^$(vit t.vit, sut q.sut))
+        {$form *}  (form p.sut ^$(sut q.sut))
         {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         {$hold *}  $(sut repo)
       ==
@@ -11104,6 +11090,7 @@
   ^-  ?
   ?+  typ  |
       {$hold *}  $(typ ~(repo ut typ))
+      {$form *}  $(typ ~(repo ut typ))
       {$core *}
     |-  ^-  ?
     ?~  q.s.q.typ  |
