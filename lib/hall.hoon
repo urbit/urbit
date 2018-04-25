@@ -101,7 +101,7 @@
   ;~  pose
     (stag %ud dem:ag)
   ::
-    =-  (stag %da (sear - crub:so))
+    =-  (stag %da (sear - ;~(pfix sig crub:so)))
     |=  a/dime
     ^-  (unit @da)
     ?:(?=($da p.a) `q.a ~)
