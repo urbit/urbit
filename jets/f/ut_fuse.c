@@ -124,10 +124,10 @@
       {
         return _fuse_repo(van, sut, ref, bix);
       }
-      case c3__help: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      case c3__form: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun vot = _fuse_in(van, q_sut, ref, bix);
-        u3_noun ret = u3qf_help(p_sut, vot);
+        u3_noun ret = u3qf_form(p_sut, vot);
 
         u3z(vot);
         return ret;

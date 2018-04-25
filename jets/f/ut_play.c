@@ -378,37 +378,12 @@
         return pro;
       }
 
-      case c3__help: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__note: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, q_gen);
-        u3_noun ret = u3qf_help(p_gen, boc);
+        u3_noun ret = u3qf_form(p_gen, boc);
 
-        u3z(boc);
-        return ret;
-      }
-
-      case c3__form: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        u3_noun boc = _play_x(van, sut, q_gen);
-
-        if ( c3__void == boc ) {
-          return boc;
-        } 
-        else {
-          return u3nt(c3__form, u3nc(u3k(sut), u3k(p_gen)), boc);
-        }
-      }
-
-      case c3__docs: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        u3_noun boc = _play_x(van, sut, q_gen);
-        u3_noun hep = u3nc(c3__docs, u3k(p_gen));
-        u3_noun ret = u3qf_help(hep, boc);
-
-        u3z(hep);
         u3z(boc);
         return ret;
       }

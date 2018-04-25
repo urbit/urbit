@@ -308,7 +308,6 @@ J_F_OFILES=\
 
 J_F_OFILES_UT=\
        jets/f/ut.o \
-       jets/f/ut_burn.o \
        jets/f/ut_buss.o \
        jets/f/ut_conk.o \
        jets/f/ut_crop.o \

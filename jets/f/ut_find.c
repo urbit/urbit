@@ -675,10 +675,10 @@
         // fprintf(stderr, "core\r\n");
         return _find_buck_core(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
-      case c3__help:
+      case c3__form:
       {
         u3_noun fop = u3qfu_repo(van, sut);
-        u3_noun pro = _find_buck(van, fop, way, p_heg, q_heg, axe, lon, gil);
+        u3_noun pro = _find_bucx(van, fop, way, p_heg, q_heg, axe, lon, gil);
         u3z(fop);
         return pro;
       }
