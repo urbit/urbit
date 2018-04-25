@@ -364,7 +364,11 @@
         [%fat [%text wat] [%lin | msg]]~
     ^-  {tar/name:hall msg/cord}
     ::TODO
-    [(circle-for col) 'TODO']
+    ::
+    :: this can't be the best way to switch on top v com?
+    ?~  com
+      [(circle-for col) 'TODO']
+    [(circle-for-topic col top) 'TODO']
   --
 ::
 ++  hall-permit
