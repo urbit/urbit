@@ -272,6 +272,24 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
                      req));
 }
 
+typedef struct _u3_hgen {
+  h2o_generator_t neg_u;
+  h2o_iovec_t     bod_u;
+  u3_hreq*        req_u;
+  u3_hhed*        hed_u;
+} u3_hgen;
+
+/* _http_hgen_dispose(): dispose response generator and buffers
+*/
+static void
+_http_hgen_dispose(void* ptr_v)
+{
+  u3_hgen* gen_u = (u3_hgen*)ptr_v;
+  _http_req_free(gen_u->req_u);
+  _http_heds_free(gen_u->hed_u);
+  free(gen_u->bod_u.base);
+}
+
 /* _http_req_respond(): write httr to h2o_req_t->res and send
 */
 static void
@@ -287,7 +305,12 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
                       "hosed";
 
   u3_hhed* hed_u = _http_heds_from_noun(u3k(hed));
-  u3_hhed* deh_u = hed_u;
+
+  u3_hgen* gen_u = h2o_mem_alloc_shared(&rec_u->pool, sizeof(*gen_u),
+                                        _http_hgen_dispose);
+  gen_u->neg_u = (h2o_generator_t){0, 0};
+  gen_u->req_u = req_u;
+  gen_u->hed_u = hed_u;
 
   while ( 0 != hed_u ) {
     h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
@@ -296,19 +319,12 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
     hed_u = hed_u->nex_u;
   }
 
-  h2o_iovec_t bod_u = _http_vec_from_octs(u3k(bod));
-  rec_u->res.content_length = bod_u.len;
+  gen_u->bod_u = _http_vec_from_octs(u3k(bod));
+  rec_u->res.content_length = gen_u->bod_u.len;
 
-  static h2o_generator_t gen_u = {0, 0};
-  h2o_start_response(rec_u, &gen_u);
+  h2o_start_response(rec_u, &gen_u->neg_u);
+  h2o_send(rec_u, &gen_u->bod_u, 1, H2O_SEND_STATE_FINAL);
 
-  h2o_send(rec_u, &bod_u, 1, H2O_SEND_STATE_FINAL);
-
-  _http_req_free(req_u);
-
-  // XX allocate on &req_u->rec_u->pool and skip these?
-  _http_heds_free(deh_u);
-  free(bod_u.base);
 
   u3z(sas); u3z(hed); u3z(bod);
 }
