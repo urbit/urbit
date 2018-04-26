@@ -1213,6 +1213,51 @@ u3j_ream(void)
   u3z(rel);
 }
 
+static c3_w
+_cj_fink_mark(u3j_fink* fin_u)
+{
+  c3_w i_w, tot_w = u3a_mark_noun(fin_u->sat);
+  for ( i_w = 0; i_w < fin_u->len_w; ++i_w ) {
+    u3j_fist* fis_u = &(fin_u->fis_u[i_w]);
+    tot_w += u3a_mark_noun(fis_u->bat);
+    tot_w += u3a_mark_noun(fis_u->pax);
+  }
+  tot_w += u3a_mark_ptr(fin_u);
+  return tot_w;
+}
+
+/* u3j_rite_mark(): mark u3j_rite for gc.
+*/
+c3_w
+u3j_rite_mark(u3j_rite* rit_u)
+{
+  c3_w tot_w = 0;
+  if ( (c3y == rit_u->own_o) && u3_none != rit_u->clu ) {
+    tot_w += u3a_mark_noun(rit_u->clu);
+    tot_w += _cj_fink_mark(rit_u->fin_u);
+  }
+  return tot_w;
+}
+
+/* u3j_site_mark(): mark u3j_site for gc.
+*/
+c3_w
+u3j_site_mark(u3j_site* sit_u)
+{
+  c3_w tot_w = u3a_mark_noun(sit_u->axe);
+  if ( u3_none != sit_u->bat ) {
+    tot_w += u3a_mark_noun(sit_u->bat);
+  }
+  if ( u3_none != sit_u->loc ) {
+    tot_w += u3a_mark_noun(sit_u->loc);
+    tot_w += u3a_mark_noun(sit_u->lab);
+    if ( c3y == sit_u->fon_o ) {
+      tot_w += _cj_fink_mark(sit_u->fin_u);
+    }
+  }
+  return tot_w;
+}
+
 /*  XX FIXME: move to u3.md
 |%
 +=  location    $:  pattern=(each static dynamic)

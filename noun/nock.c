@@ -527,19 +527,6 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define SLIS 71
 #define SAVE 72
 
-static c3_w
-_n_fink_mark(u3j_fink* fin_u)
-{
-  c3_w i_w, tot_w = u3a_mark_noun(fin_u->sat);
-  for ( i_w = 0; i_w < fin_u->len_w; ++i_w ) {
-    u3j_fist* fis_u = &(fin_u->fis_u[i_w]);
-    tot_w += u3a_mark_noun(fis_u->bat);
-    tot_w += u3a_mark_noun(fis_u->pax);
-  }
-  tot_w += u3a_mark_ptr(fin_u);
-  return tot_w;
-}
-
 static void
 _n_fink_free(u3j_fink* fin_u)
 {
@@ -2602,34 +2589,6 @@ u3n_ream()
   u3h_walk(u3R->byc.har_p, _n_ream);
 }
 
-static c3_w
-_n_site_mark(u3j_site* sit_u)
-{
-  c3_w tot_w = u3a_mark_noun(sit_u->axe);
-  if ( u3_none != sit_u->bat ) {
-    tot_w += u3a_mark_noun(sit_u->bat);
-  }
-  if ( u3_none != sit_u->loc ) {
-    tot_w += u3a_mark_noun(sit_u->loc);
-    tot_w += u3a_mark_noun(sit_u->lab);
-    if ( c3y == sit_u->fon_o ) {
-      tot_w += _n_fink_mark(sit_u->fin_u);
-    }
-  }
-  return tot_w;
-}
-
-static c3_w
-_n_rite_mark(u3j_rite* rit_u)
-{
-  c3_w tot_w = 0;
-  if ( (c3y == rit_u->own_o) && u3_none != rit_u->clu ) {
-    tot_w += u3a_mark_noun(rit_u->clu);
-    tot_w += _n_fink_mark(rit_u->fin_u);
-  }
-  return tot_w;
-}
-
 /* _n_prog_mark(): mark program for gc.
 */
 static c3_w
@@ -2646,11 +2605,11 @@ _n_prog_mark(u3n_prog* pog_u)
   }
 
   for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
-    tot_w += _n_site_mark(&(pog_u->cal_u.sit_u[i_w]));
+    tot_w += u3j_site_mark(&(pog_u->cal_u.sit_u[i_w]));
   }
 
   for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
-    tot_w += _n_rite_mark(&(pog_u->reg_u.rit_u[i_w]));
+    tot_w += u3j_rite_mark(&(pog_u->reg_u.rit_u[i_w]));
   }
 
   return tot_w;

@@ -177,7 +177,6 @@
         u3j_kink(u3_noun cor,
                    u3_noun axe);
 
-
       /* u3j_mile(): register core for jets, returning location.
       */
         u3_weak
@@ -198,3 +197,13 @@
       */
         void
         u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p);
+
+      /* u3j_rite_mark(): mark u3j_rite for gc.
+      */
+        c3_w
+        u3j_rite_mark(u3j_rite* rit_u);
+
+      /* u3j_site_mark(): mark u3j_site for gc.
+      */
+        c3_w
+        u3j_site_mark(u3j_site* sit_u);
