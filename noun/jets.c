@@ -727,11 +727,12 @@ _cj_hook_in(u3_noun     cor,
 */
 u3_noun
 u3j_soft(u3_noun cor, 
-           const c3_c* tam_c)
+         const c3_c* tam_c)
 {
   u3_noun pro;
-
+  u3t_on(glu_o);
   pro = _cj_hook_in(cor, tam_c, c3n);
+  u3t_off(glu_o);
   return pro;
 }
 
@@ -739,12 +740,145 @@ u3j_soft(u3_noun cor,
 */
 u3_noun
 u3j_hook(u3_noun     cor,
-           const c3_c* tam_c)
+         const c3_c* tam_c)
 {
   u3_noun pro;
-
+  u3t_on(glu_o);
   pro = _cj_hook_in(cor, tam_c, c3y);
+  u3t_off(glu_o);
   return pro;
+}
+
+typedef struct {
+  u3_weak  hax;
+  u3j_site sit_u;
+} _cj_hank;
+
+static _cj_hank*
+_cj_hank_find(u3_noun pre, u3_noun tam)
+{
+  u3_noun key = u3nc(u3k(pre), u3k(tam));
+  u3_noun got = u3h_git(u3R->jed.han_p, key);
+  if ( u3_none != got ) {
+    u3z(key);
+    return u3to(_cj_hank, got);
+  }
+  else {
+    _cj_hank* new_u = u3a_walloc(c3_wiseof(_cj_hank));
+    u3a_road* rod_u = u3R;
+    while ( rod_u->par_p && u3_none == got ) {
+      rod_u = u3to(u3a_road, rod_u->par_p);
+      got   = u3h_git(u3R->jed.han_p, key);
+    }
+    if ( u3_none == got ) {
+      new_u->hax = u3_none;
+    }
+    else {
+      _cj_hank* old_u = u3to(_cj_hank, got);
+      if ( u3_none != (new_u->hax = old_u->hax) ) {
+        u3j_site_copy(&(new_u->sit_u), &(old_u->sit_u), c3n);
+      }
+    }
+    u3h_put(u3R->jed.han_p, key, u3a_outa(new_u));
+    u3z(key);
+    return new_u;
+  }
+}
+
+static c3_o
+_cj_hank_fine(_cj_hank* han_u, u3_noun cor, u3_noun *inn)
+{
+  u3_noun hax = han_u->hax;
+  if ( u3_none == hax ) {
+    return c3n;
+  }
+  else {
+    *inn = u3r_at(hax, cor);
+    if ( u3_none == *inn ) {
+      return c3n;
+    }
+    else {
+      u3j_site* sit_u = &(han_u->sit_u);
+      c3_assert(u3_none != sit_u->loc);
+      return _cj_fine(*inn, sit_u->fin_u);
+    }
+  }
+}
+
+static void
+_cj_hank_lose(_cj_hank* han_u)
+{
+  if ( u3_none != han_u->hax ) {
+    u3z(han_u->hax);
+    u3j_site_lose(&(han_u->sit_u));
+  }
+}
+
+static u3_noun
+_cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
+{
+  u3_weak   loc, col;
+  u3_noun   got, pat, nam, huc;
+  u3_noun   hax = 1;
+  u3j_site* sit_u = &(han_u->sit_u);
+
+  if ( c3n == u3du(cor) ) {
+    return u3m_bail(c3__fail);
+  }
+
+  if ( u3_none == (col = loc = _cj_spot(cor)) ) {
+    return u3m_bail(c3__fail);
+  }
+
+  while ( 1 ) {
+    u3x_trel(loc, &pat, &nam, &huc);
+    got = u3qdb_get(huc, tam);
+    if ( u3_nul != got ) {
+      u3_noun fol = u3k(u3t(got));
+      u3z(got);
+      sit_u->bat   = u3k(u3h(cor));
+      sit_u->loc   = u3k(loc);
+      sit_u->fin_u = _cj_cast(cor, loc);
+      sit_u->fon_o = c3y;
+      if ( 0 == (sit_u->axe = _cj_axis(fol)) ) {
+        sit_u->jet_o = c3n;
+        sit_u->pog_u = u3n_find(fol);
+      }
+      else {
+        han_u->sit_u.pog_u = u3n_find(u3r_at(sit_u->axe, cor));
+        han_u->sit_u.jet_o = _cj_nail(loc, sit_u->axe,
+            &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u));
+      }
+      u3z(fol);
+      u3z(col);
+      han_u->hax = hax;
+      return cor;
+    }
+    else if ( c3n == u3h(pat) ) {
+      u3_noun dyn = u3t(pat),
+              axe = u3h(dyn),
+              xah;
+      cor = u3r_at(axe, cor);
+      loc = u3t(dyn);
+      xah = u3qc_peg(axe, hax);
+      u3z(hax);
+      hax = xah;
+    }
+    else {
+      u3_noun sat = u3t(pat);
+      if ( c3y == u3h(sat) ) {
+        return u3m_bail(c3__fail);
+      }
+      else {
+        u3_noun xah;
+        cor = u3t(cor);
+        loc = u3t(sat);
+        xah = u3qc_peg(3, hax);
+        u3z(hax);
+        hax = xah;
+      }
+    }
+  }
 }
 
 /* u3j_kick(): new kick.
@@ -947,6 +1081,18 @@ u3j_site_copy(u3j_site* dst_u, u3j_site* src_u, c3_o los_o)
   }
 }
 
+/* u3j_site_ream(): refresh u3j_site after restoring from checkpoint
+*/
+void
+u3j_site_ream(u3j_site* sit_u)
+{
+  if ( u3_none != sit_u->loc ) {
+    u3z(sit_u->lab);
+    sit_u->jet_o = _cj_nail(sit_u->loc, sit_u->axe,
+        &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u));
+  }
+}
+
 static u3_weak
 _cj_site_lock(u3_noun cor, u3j_site* sit_u)
 {
@@ -994,14 +1140,11 @@ _cj_site_kick_hot(u3_noun cor, u3j_site* sit_u)
   return pro;
 }
 
-/* u3j_site_kick(): kick a core with a u3j_site cache.
- */
-u3_weak
-u3j_site_kick(u3_noun cor, u3j_site* sit_u)
+static u3_weak
+_cj_site_kick(u3_noun cor, u3j_site* sit_u)
 {
   u3_weak loc, pro;
 
-  u3t_on(glu_o);
   loc = pro = u3_none;
 
   if ( u3_none != sit_u->loc ) {
@@ -1055,6 +1198,47 @@ u3j_site_kick(u3_noun cor, u3j_site* sit_u)
     pro = _cj_site_lock(cor, sit_u);
   }
 
+  return pro;
+}
+
+/* u3j_site_kick(): kick a core with a u3j_site cache.
+ */
+u3_weak
+u3j_site_kick(u3_noun cor, u3j_site* sit_u)
+{
+  u3_weak pro;
+  u3t_on(glu_o);
+  pro = _cj_site_kick(cor, sit_u);
+  u3t_off(glu_o);
+  return pro;
+}
+
+/* u3j_cook(): Execute hook from core, call site cached by arbitrary c string
+*/
+u3_noun
+u3j_cook(const c3_c* key_c,
+         u3_noun     cor,
+         const c3_c* tam_c)
+{
+  u3_noun pro, key, tam, inn;
+  _cj_hank* han_u;
+
+  u3t_on(glu_o);
+  key = u3i_string(key_c);
+  tam = u3i_string(tam_c);
+  han_u = _cj_hank_find(key, tam);
+  if ( c3n == _cj_hank_fine(han_u, cor, &inn) ) {
+    _cj_hank_lose(han_u);
+    inn = _cj_hank_fill(han_u, tam, cor);
+  }
+  pro = _cj_site_kick(u3k(inn), &(han_u->sit_u));
+  if ( u3_none == pro ) {
+    pro = u3n_burn(inn, han_u->sit_u.pog_u);
+  }
+  u3z(cor);
+  
+  u3z(key);
+  u3z(tam);
   u3t_off(glu_o);
   return pro;
 }
@@ -1062,15 +1246,21 @@ u3j_site_kick(u3_noun cor, u3j_site* sit_u)
 /* u3j_kink(): kick either by jet or by nock.
 */
 u3_noun
-u3j_kink(u3_noun cor,
-           u3_noun axe)
+u3j_kink(u3_noun cor, u3_noun axe)
 {
   u3_weak pro = u3j_kick(cor, axe);
 
   if ( u3_none != pro ) {
     return pro;
-  } else {
-    return u3n_nock_on(cor, u3nq(9, axe, 0, 1));
+  }
+  else {
+    u3_weak fol = u3r_at(axe, cor);
+    if ( u3_none == fol ) {
+      return u3m_bail(c3__exit);
+    }
+    else {
+      return u3n_nock_on(cor, u3k(fol));
+    }
   }
 }
 
@@ -1387,13 +1577,44 @@ _cj_cold_reap(u3_noun kev)
   u3z(ser); u3z(bat);
 }
 
+static void
+_cj_hank_reap(u3_noun kev)
+{
+  u3_noun   key   = u3a_take(u3h(kev));
+  u3_noun   got   = u3h_git(u3R->jed.han_p, key);
+  _cj_hank* nah_u = u3to(_cj_hank, u3t(kev));
+  _cj_hank* han_u;
+
+  if ( u3_none != got ) {
+    if ( u3_none != nah_u->hax ) {
+      u3_weak old;
+      han_u = u3to(_cj_hank, got);
+      old = han_u->hax;
+      han_u->hax = u3a_take(nah_u->hax);
+      u3j_site_copy(&(han_u->sit_u), &(nah_u->sit_u), c3y);
+      if ( u3_none != old ) {
+        u3z(old);
+      }
+    }
+  }
+  else if ( u3_none != nah_u->hax ) {
+    han_u      = u3a_walloc(c3_wiseof(_cj_hank));
+    han_u->hax = u3a_take(nah_u->hax);
+    u3j_site_copy(&(han_u->sit_u), &(nah_u->sit_u), c3n);
+    u3h_put(u3R->jed.han_p, key, u3a_outa(han_u));
+  }
+
+  u3z(key);
+}
+
 /* u3j_reap(): promote jet state.
 */
 void
-u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p)
+u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p, u3p(u3h_root) han_p)
 {
   u3h_walk(cod_p, _cj_cold_reap);
   u3h_walk(war_p, _cj_warm_reap);
+  u3h_walk(han_p, _cj_hank_reap);
 }
 
 /* _cj_ream(): ream list of battery registry pairs. RETAIN.
@@ -1481,7 +1702,13 @@ _cj_warm_tap(u3_noun kev, void* wit)
   *rel = u3nc(u3k(kev), *rel);
 }
 
-/* u3j_ream(): rebuild warm state
+static void
+_cj_ream_hank(u3_noun kev)
+{
+  u3j_site_ream(&(u3to(_cj_hank, u3t(kev))->sit_u));
+}
+
+/* u3j_ream(): rebuild jet state
 */
 void
 u3j_ream(void)
@@ -1493,6 +1720,8 @@ u3j_ream(void)
   u3h_walk_with(u3R->jed.cod_p, _cj_warm_tap, &rel);
   _cj_ream(rel);
   u3z(rel);
+
+  u3h_walk(u3R->jed.han_p, _cj_ream_hank);
 }
 
 static c3_w
@@ -1567,6 +1796,53 @@ u3j_site_mark(u3j_site* sit_u)
     }
   }
   return tot_w;
+}
+
+static void
+_cj_mark_hank(u3_noun kev, void* dat)
+{
+  c3_w* tot_w = (c3_w*) dat;
+  _cj_hank* han_u = u3to(_cj_hank, u3t(kev));
+  *tot_w += u3a_mark_ptr(han_u);
+  if ( u3_none != han_u->hax ) {
+    *tot_w += u3a_mark_noun(han_u->hax);
+    *tot_w += u3j_site_mark(&(han_u->sit_u));
+  }
+}
+
+/* u3j_mark(): mark jet state for gc.
+*/
+c3_w
+u3j_mark(void)
+{
+  c3_w tot_w = 0;
+  tot_w += u3h_mark(u3R->jed.war_p);
+  tot_w += u3h_mark(u3R->jed.cod_p);
+  tot_w += u3h_mark(u3R->jed.han_p);
+  u3h_walk_with(u3R->jed.han_p, _cj_mark_hank, &tot_w);
+  return tot_w;
+}
+
+static void
+_cj_free_hank(u3_noun kev)
+{
+  _cj_hank* han_u = u3to(_cj_hank, u3t(kev));
+  if ( u3_none != han_u->hax ) {
+    u3z(han_u->hax);
+    u3j_site_lose(&(han_u->sit_u));
+  }
+  u3a_wfree(han_u);
+}
+
+/* u3j_free(): free jet state.
+*/
+void
+u3j_free(void)
+{
+  u3h_walk(u3R->jed.han_p, _cj_free_hank);
+  u3h_free(u3R->jed.war_p);
+  u3h_free(u3R->jed.cod_p);
+  u3h_free(u3R->jed.han_p);
 }
 
 /*  XX FIXME: move to u3.md

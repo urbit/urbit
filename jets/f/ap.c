@@ -991,7 +991,7 @@
   _ap_core(u3_noun ter,
            u3_noun gen)
   {
-    u3_noun gat = u3j_hook(u3k(ter), "ap");
+    u3_noun gat = u3j_cook("_ap_core-ap", u3k(ter), "ap");
 
     return u3i_molt(gat, u3x_sam, u3k(gen), 0);
   }

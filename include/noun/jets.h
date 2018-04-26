@@ -111,13 +111,22 @@
         void
         u3j_clear(void);
 
+      /* u3j_cook():
+      **
+      **   Execute hook from core, call site cached by arbitrary c string
+      */
+        u3_noun
+        u3j_cook(const c3_c* key_c,
+                 u3_noun     cor,
+                 const c3_c* tam_c);
+
       /* u3j_hook():
       **
       **   Execute hook from core. 
       */
         u3_noun
         u3j_hook(u3_noun     cor,
-                   const c3_c* tam_c);
+                 const c3_c* tam_c);
 
       /* u3j_soft():
       **
@@ -125,7 +134,7 @@
       */
         u3_noun
         u3j_soft(u3_noun     cor,
-                   const c3_c* tam_c);
+                 const c3_c* tam_c);
 
       /* u3j_spot():
       **
@@ -191,7 +200,7 @@
       /* u3j_reap(): promote jet state.  RETAINS.
       */
         void
-        u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p);
+        u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p, u3p(u3h_root) han_p);
 
       /* u3j_rite_mine(): mine cor with clu, using u3j_rite for caching
       */
@@ -209,6 +218,11 @@
       */
         void
         u3j_site_copy(u3j_site* dst_u, u3j_site* src_u, c3_o los_o);
+
+      /* u3j_site_ream(): refresh u3j_site after restoring from checkpoint
+      */
+        void
+        u3j_site_ream(u3j_site* sit_u);
 
       /* u3j_site_kick(): kick a core with a u3j_site cache.
        */
@@ -234,3 +248,13 @@
       */
         c3_w
         u3j_site_mark(u3j_site* sit_u);
+
+      /* u3j_mark(): mark jet state for gc.
+      */
+        c3_w
+        u3j_mark(void);
+
+      /* u3j_free(): free jet state.
+      */
+        void
+        u3j_free(void);

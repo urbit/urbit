@@ -2317,12 +2317,7 @@ _n_ream(u3_noun kev)
   c3_w i_w;
   u3n_prog* pog_u = u3to(u3n_prog, u3t(kev));
   for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
-    u3j_site* sit_u = &(pog_u->cal_u.sit_u[i_w]);
-    if ( u3_none != sit_u->loc ) {
-      u3z(sit_u->lab);
-      sit_u->jet_o = u3j_nail(sit_u->loc, sit_u->axe,
-          &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u));
-    }
+    u3j_site_ream(&(pog_u->cal_u.sit_u[i_w]));
   }
 }
 

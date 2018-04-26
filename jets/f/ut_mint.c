@@ -261,7 +261,7 @@
             u3_noun loc)
   {
     u3_noun mol = u3nc('o', u3k(loc));
-    u3_noun sho = u3j_hook(u3k(van), "show");
+    u3_noun sho = u3j_cook("_mint_loc-show", u3k(van), "show");
     u3_noun ret = u3i_molt(u3k(sho), u3x_sam, u3k(mol), 0);
 
     u3z(mol);
@@ -279,7 +279,7 @@
              u3_noun rig)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_hook(von, "emin");
+    u3_noun gat = u3j_cook("_mint_cnts-emin", von, "emin");
 
     return u3n_kick_on(u3i_molt(gat,
                                 u3x_sam_2,
@@ -839,7 +839,7 @@
         }
         else {
           u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-          u3_noun gat = u3j_hook(von, "blow");
+          u3_noun gat = u3j_cook("_mint_in-blow", von, "blow");
           u3_noun pro;
 
           pro = u3n_kick_on(u3i_molt(gat, 

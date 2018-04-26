@@ -19,7 +19,7 @@
              u3_noun lap)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_hook(von, "felt");
+    u3_noun gat = u3j_cook("u3qfu_felt-felt", von, "felt");
 
     return u3n_kick_on(u3i_molt(gat, 
                                 u3x_sam, 
@@ -34,7 +34,7 @@
              u3_noun gen)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_hook(von, "fund");
+    u3_noun gat = u3j_cook("u3qfu_fund-fund", von, "fund");
 
     return u3n_kick_on(u3i_molt(gat, 
                                 u3x_sam_2,
@@ -50,7 +50,7 @@
              u3_noun tor)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_hook(von, "fine");
+    u3_noun gat = u3j_cook("u3qfu_fine-fine", von, "fine");
 
     return u3n_kick_on(u3i_molt(gat, 
                                 u3x_sam, 

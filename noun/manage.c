@@ -460,6 +460,7 @@ _pave_parts(void)
   u3R->cax.har_p = u3h_new();
   u3R->jed.war_p = u3h_new();
   u3R->jed.cod_p = u3h_new();
+  u3R->jed.han_p = u3h_new();
   u3R->byc.har_p = u3h_new();
 }
 
@@ -469,8 +470,7 @@ c3_w
 u3m_mark(void)
 {
   c3_w tot_w = 0;
-  tot_w += u3h_mark(u3R->jed.war_p);
-  tot_w += u3h_mark(u3R->jed.cod_p);
+  tot_w += u3j_mark();
   tot_w += u3n_bark();
   tot_w += u3a_mark_noun(u3R->ski.gul);
   tot_w += u3a_mark_noun(u3R->bug.tax);
@@ -509,8 +509,7 @@ void
 u3m_clear(void)
 {
   u3h_free(u3R->cax.har_p);
-  u3h_free(u3R->jed.war_p);
-  u3h_free(u3R->jed.cod_p);
+  u3j_free();
   u3n_bree();
 }
 
@@ -799,13 +798,14 @@ u3m_love(u3_noun pro)
   {
     u3p(u3h_root) cod_p = u3R->jed.cod_p;
     u3p(u3h_root) war_p = u3R->jed.war_p;
+    u3p(u3h_root) han_p = u3R->jed.han_p;
     u3p(u3h_root) byc_p = u3R->byc.har_p;
 
     u3m_fall();
 
     pro = u3a_take(pro);
 
-    u3j_reap(cod_p, war_p);
+    u3j_reap(cod_p, war_p, han_p);
     u3n_beep(byc_p);
 
     u3R->cap_p = u3R->ear_p;
