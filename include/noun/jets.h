@@ -177,11 +177,6 @@
         u3j_kink(u3_noun cor,
                    u3_noun axe);
 
-      /* u3j_mile(): register core for jets, returning location.
-      */
-        u3_weak
-        u3j_mile(u3_noun clu, u3_noun cor);
-
       /* u3j_mine(): register core for jets.
       */
         void
@@ -198,10 +193,42 @@
         void
         u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p);
 
+      /* u3j_rite_mine(): mine cor with clu, using u3j_rite for caching
+      */
+        void
+        u3j_rite_mine(u3j_rite* rit_u, u3_noun clu, u3_noun cor);
+
+      /* u3j_rite_copy(): copy rite references from src_u to dst_u,
+      **                  losing old references if los_o is yes
+      */
+        void
+        u3j_rite_copy(u3j_rite* dst_u, u3j_rite* src_u, c3_o los_o);
+
+      /* u3j_site_copy(): copy site references from src_u to dst_u,
+      **                  losing old references if los_o is yes
+      */
+        void
+        u3j_site_copy(u3j_site* dst_u, u3j_site* src_u, c3_o los_o);
+
+      /* u3j_site_kick(): kick a core with a u3j_site cache.
+       */
+        u3_weak
+        u3j_site_kick(u3_noun cor, u3j_site* sit_u);
+
       /* u3j_rite_mark(): mark u3j_rite for gc.
       */
         c3_w
         u3j_rite_mark(u3j_rite* rit_u);
+
+      /* u3j_rite_lose(): lose references of u3j_rite (but do not free).
+      */
+        void
+        u3j_rite_lose(u3j_rite* rit_u);
+
+      /* u3j_site_lose(): lose references of u3j_site (but do not free).
+      */
+        void
+        u3j_site_lose(u3j_site* sit_u);
 
       /* u3j_site_mark(): mark u3j_site for gc.
       */

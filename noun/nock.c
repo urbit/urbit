@@ -527,65 +527,6 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define SLIS 71
 #define SAVE 72
 
-static void
-_n_fink_free(u3j_fink* fin_u)
-{
-  c3_w i_w;
-  u3z(fin_u->sat);
-  for ( i_w = 0; i_w < fin_u->len_w; ++i_w ) {
-    u3j_fist* fis_u = &(fin_u->fis_u[i_w]);
-    u3z(fis_u->bat);
-    u3z(fis_u->pax);
-  }
-  u3a_wfree(fin_u);
-}
-
-static u3j_fink*
-_n_fink_take(u3j_fink* jun_u)
-{
-  c3_w     i_w, len_w = jun_u->len_w;
-  u3j_fink* fin_u = u3a_walloc(c3_wiseof(u3j_fink) +
-                   (len_w * c3_wiseof(u3j_fist)));
-
-  fin_u->len_w = len_w;
-  fin_u->sat   = u3a_take(jun_u->sat);
-  for ( i_w = 0; i_w < len_w; ++i_w ) {
-    u3j_fist* fis_u = &(fin_u->fis_u[i_w]);
-    u3j_fist* sif_u = &(jun_u->fis_u[i_w]);
-    fis_u->bat = u3a_take(sif_u->bat);
-    fis_u->pax = u3a_take(sif_u->pax);
-  }
-  return fin_u;
-}
-
-static void
-_n_mine(u3j_rite* rit_u, u3_noun clu, u3_noun cor)
-{
-  c3_t non_t = (u3_none == rit_u->clu);
-
-  if ( non_t ||
-       c3n == u3r_sing(rit_u->clu, clu) ||
-       c3n == u3j_fine(cor, rit_u->fin_u) ) {
-    u3_weak loc = u3j_mile(u3k(clu), u3k(cor));
-    if ( u3_none != loc ) {
-      u3_noun  old   = rit_u->clu;
-      u3j_fink* fon_u = rit_u->fin_u;
-      c3_o     own_o = rit_u->own_o;
-      rit_u->own_o = c3y;
-      rit_u->clu   = u3k(clu);
-      rit_u->fin_u = u3j_cast(cor, loc);
-      u3z(loc);
-
-      if ( !non_t && (c3y == own_o) ) {
-         u3z(old);
-        _n_fink_free(fon_u);
-      }
-    }
-  }
-  u3z(clu);
-  u3z(cor);
-}
-
 /* _n_arg(): return the size (in bytes) of an opcode's argument
  */
 static inline c3_y
@@ -1486,7 +1427,7 @@ _n_bite(u3_noun fol) {
 
 /* _n_find(): return prog for given formula. fol is RETAINED.
  */
-static inline u3n_prog*
+static u3n_prog*
 _n_find(u3_noun fol)
 {
   u3_weak pog = u3h_git(u3R->byc.har_p, fol);
@@ -1524,127 +1465,16 @@ _n_find(u3_noun fol)
   }
 }
 
-static u3_weak
-_n_spot(u3_noun cor)
+/* u3n_find(): return prog for given formula. fol is RETAINED.
+ */
+u3n_prog*
+u3n_find(u3_noun fol)
 {
-  u3_weak loc;
-  u3t_off(noc_o);
-  loc = u3j_spot(cor);
+  u3n_prog* pog_u;
   u3t_on(noc_o);
-  return loc;
-}
-
-static u3_weak
-_n_lock(u3_noun cor, u3j_site* sit_u)
-{
-  if ( (u3_none != sit_u->bat) &&
-       (c3y == u3r_sing(sit_u->bat, u3h(cor))) ) {
-    return u3_none;
-  }
-  sit_u->pog_u = _n_find(u3r_at(sit_u->axe, cor));
-  if ( u3_none != sit_u->bat ) {
-    u3z(sit_u->bat);
-  }
-  sit_u->bat = u3k(u3h(cor));
-  return u3_none;
-}
-
-static u3_noun _n_burn_out(u3_noun bus, u3n_prog* pog_u);
-
-static u3_weak
-_n_hock(u3_noun cor, u3j_site* sit_u)
-{
-  u3_weak pro = u3_none;
-  c3_o jet_o  = sit_u->jet_o;
-  if ( c3n == __(u3C.wag_w & u3o_debug_cpu) ) {
-    if ( c3n == jet_o ) {
-      pro = u3_none;
-    }
-    else {
-      u3t_off(noc_o);
-      pro = u3j_hock(cor, sit_u->cop_u, sit_u->ham_u, sit_u->axe);
-      u3t_on(noc_o);
-    }
-    if ( u3_none == pro ) {
-      pro = _n_lock(cor, sit_u);
-    }
-  }
-  else {
-    u3t_come(sit_u->lab);
-    if ( c3y == jet_o ) {
-      u3t_off(noc_o);
-      pro = u3j_hock(cor, sit_u->cop_u, sit_u->ham_u, sit_u->axe);
-      u3t_on(noc_o);
-    }
-    if ( u3_none == pro ) {
-      pro = _n_lock(cor, sit_u);
-      if ( u3_none == pro ) {
-        pro = _n_burn_out(cor, sit_u->pog_u);
-      }
-    }
-    u3t_flee();
-  }
-  return pro;
-}
-
-static u3_weak
-_n_kick(u3_noun cor, u3j_site* sit_u)
-{
-  u3_weak loc = u3_none,
-          pro = u3_none;
-
-  if ( u3_none != sit_u->loc ) {
-    if ( c3y == u3j_fine(cor, sit_u->fin_u) ) {
-      loc = sit_u->loc;
-      if ( c3y == sit_u->jet_o ) {
-        pro = _n_hock(cor, sit_u);
-      }
-    }
-  }
-
-  if ( u3_none == loc ) {
-    loc = _n_spot(cor);
-    if ( u3_none != loc ) {
-      u3j_fink* fon_u = NULL;
-      u3_weak  lod   = u3_none;
-      u3_weak  lob   = u3_none;
-
-      if ( u3_none != sit_u->loc ) {
-        lod = sit_u->loc;
-        lob = sit_u->lab;
-        if ( c3y == sit_u->fon_o ) {
-          fon_u = sit_u->fin_u;
-        }
-      }
-
-      sit_u->loc   = loc;
-      sit_u->fin_u = u3j_cast(cor, loc);
-      sit_u->fon_o = c3y;
-      if ( c3y ==
-        (sit_u->jet_o = u3j_nail(loc, sit_u->axe,
-            &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u))) )
-      {
-        pro = _n_hock(cor, sit_u);
-      }
-      else {
-        pro = u3_none;
-      }
-
-      if ( u3_none != lod ) {
-        u3z(lod);
-        u3z(lob);
-        if ( NULL != fon_u ) {
-          _n_fink_free(fon_u);
-        }
-      }
-    }
-  }
-
-  if ( u3_none == pro ) {
-    pro = _n_lock(cor, sit_u);
-  }
-
-  return pro;
+  pog_u = _n_find(fol);
+  u3t_off(noc_o);
+  return pog_u;
 }
 
 /* _n_swap(): swap two items on the top of the stack, return pointer to top
@@ -1658,6 +1488,16 @@ _n_swap(c3_ys mov, c3_ys off)
   *up  = *top;
   *top = tmp;
   return top;
+}
+
+static u3_weak
+_n_kick(u3_noun cor, u3j_site* sit_u)
+{
+  u3_weak pro;
+  u3t_off(noc_o);
+  pro = u3j_site_kick(cor, sit_u);
+  u3t_off(noc_o);
+  return pro;
 }
 
 /* _n_kale(): bail(exit) if not cell
@@ -2245,7 +2085,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     fast_out:
       rit_u = &(pog_u->reg_u.rit_u[x]);
       u3t_off(noc_o);
-      _n_mine(rit_u, *top, u3k(o));
+      u3j_rite_mine(rit_u, *top, u3k(o));
       u3t_on(noc_o);
       *top = o;
       BURN();
@@ -2314,6 +2154,18 @@ _n_burn_out(u3_noun bus, u3n_prog* pog_u)
   return _n_burn(pog_u, bus, mov, off);
 }
 
+/* u3n_burn(): execute u3n_prog with bus as subject.
+ */
+u3_noun
+u3n_burn(u3_noun bus, u3n_prog* pog_u)
+{
+  u3_noun pro;
+  u3t_on(noc_o);
+  pro = _n_burn_out(bus, pog_u);
+  u3t_off(noc_o);
+  return pro;
+}
+
 /* _n_burn_on(): produce .*(bus fol) with bytecode interpreter
  */
 static u3_noun
@@ -2344,88 +2196,6 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
 }
 
 static void
-_n_site_take(u3j_site* dst_u, u3j_site* src_u, c3_o los_o)
-{
-  u3_noun old = dst_u->axe;
-  dst_u->axe  = u3a_take(src_u->axe);
-
-  if ( c3y == los_o ) {
-    u3z(old);
-  }
-  else {
-    dst_u->bat   = u3_none;
-    dst_u->pog_u = NULL;
-    dst_u->loc   = u3_none;
-    dst_u->lab   = u3_none;
-    dst_u->jet_o = c3n;
-    dst_u->fon_o = c3n;
-    dst_u->cop_u = NULL;
-    dst_u->ham_u = NULL;
-    dst_u->fin_u = NULL;
-  }
-
-  if ( u3_none != src_u->loc ) {
-    u3_noun  lob   = dst_u->lab,
-             lod   = dst_u->loc;
-    c3_o     fon_o = dst_u->fon_o;
-    u3j_fink* fon_u = dst_u->fin_u;
-
-    dst_u->loc   = u3a_take(src_u->loc);
-    dst_u->lab   = u3a_take(src_u->lab);
-    dst_u->cop_u = src_u->cop_u;
-    dst_u->ham_u = src_u->ham_u;
-    dst_u->jet_o = src_u->jet_o;
-
-    if ( c3y == src_u->fon_o ) {
-      dst_u->fin_u = _n_fink_take(src_u->fin_u);
-      dst_u->fon_o = c3y;
-    }
-    else if ( fon_u != src_u->fin_u ) {
-      dst_u->fin_u = src_u->fin_u;
-      dst_u->fon_o = c3n;
-    }
-    else {
-      fon_o = c3n;
-    }
-
-    if ( c3y == los_o ) {
-      if ( u3_none != lod ) {
-        u3z(lod);
-        u3z(lob);
-        if ( c3y == fon_o ) {
-          _n_fink_free(fon_u);
-        }
-      }
-    }
-  }
-}
-
-static void
-_n_rite_take(u3j_rite* dst_u, u3j_rite* src_u, c3_o los_o)
-{
-  if ( u3_none == src_u->clu ) {
-    dst_u->clu   = u3_none;
-    dst_u->fin_u = NULL;
-  }
-  else {
-    u3_noun  old   = dst_u->clu;
-    u3j_fink* fon_u = dst_u->fin_u;
-    c3_o     own_o = dst_u->own_o;
-    if ( c3y == src_u->own_o ) {
-      dst_u->own_o = c3y;
-      dst_u->clu   = u3a_take(src_u->clu);
-      dst_u->fin_u = _n_fink_take(src_u->fin_u);
-      if ( (c3y == los_o) &&
-          (u3_none != old) &&
-          (c3y == own_o) ) {
-        u3z(old);
-        _n_fink_free(fon_u);
-      }
-    }
-  }
-}
-
-static void
 _n_prog_take_dat(u3n_prog* dst_u, u3n_prog* src_u, c3_o los_o)
 {
   c3_w i_w;
@@ -2451,13 +2221,13 @@ _n_prog_take_dat(u3n_prog* dst_u, u3n_prog* src_u, c3_o los_o)
   }
 
   for ( i_w = 0; i_w < src_u->cal_u.len_w; ++i_w ) {
-    _n_site_take(&(dst_u->cal_u.sit_u[i_w]),
-                 &(src_u->cal_u.sit_u[i_w]), los_o);
+    u3j_site_copy(&(dst_u->cal_u.sit_u[i_w]),
+                  &(src_u->cal_u.sit_u[i_w]), los_o);
   }
 
   for ( i_w = 0; i_w < src_u->reg_u.len_w; ++i_w ) {
-    _n_rite_take(&(dst_u->reg_u.rit_u[i_w]),
-                 &(src_u->reg_u.rit_u[i_w]), los_o);
+    u3j_rite_copy(&(dst_u->reg_u.rit_u[i_w]),
+                  &(src_u->reg_u.rit_u[i_w]), los_o);
   }
 }
 
@@ -2482,30 +2252,6 @@ _n_prog_take(u3n_prog* pog_u)
   return gop_u;
 }
 
-static void
-_n_site_free(u3j_site* sit_u)
-{
-  u3z(sit_u->axe);
-  if ( u3_none != sit_u->bat ) {
-    u3z(sit_u->bat);
-  }
-  if ( u3_none != sit_u->loc ) {
-    u3z(sit_u->loc);
-    u3z(sit_u->lab);
-    if ( c3y == sit_u->fon_o ) {
-      _n_fink_free(sit_u->fin_u);
-    }
-  }
-}
-
-static void
-_n_rite_free(u3j_rite* rit_u)
-{
-  if ( (c3y == rit_u->own_o) && u3_none != rit_u->clu ) {
-    u3z(rit_u->clu);
-    _n_fink_free(rit_u->fin_u);
-  }
-}
 
 /* _n_prog_free(): free memory retained by program
 */
@@ -2523,11 +2269,11 @@ _n_prog_free(u3n_prog* pog_u)
   }
 
   for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
-    _n_site_free(&(pog_u->cal_u.sit_u[i_w]));
+    u3j_site_lose(&(pog_u->cal_u.sit_u[i_w]));
   }
 
   for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
-    _n_rite_free(&(pog_u->reg_u.rit_u[i_w]));
+    u3j_rite_lose(&(pog_u->reg_u.rit_u[i_w]));
   }
 
   u3a_free(pog_u);

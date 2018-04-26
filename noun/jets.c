@@ -226,10 +226,8 @@ _cj_find_warm(u3_noun loc)
   }
 }
 
-/* u3j_spot(): identify `cor`s location. RETAIN.
- */
-u3_weak
-u3j_spot(u3_noun cor)
+static u3_weak
+_cj_spot(u3_noun cor)
 {
   u3_weak reg = _cj_find_cold(u3h(cor));
   if ( u3_none == reg ) {
@@ -252,7 +250,7 @@ u3j_spot(u3_noun cor)
         u3_weak par = u3r_at(axe, cor),
                 pel;
         if ( u3_none != par ) {
-          pel = u3j_spot(par);
+          pel = _cj_spot(par);
           if ( u3_none != pel ) {
             u3_noun nit = u3qdb_get(lol, pel);
             u3z(pel);
@@ -269,6 +267,18 @@ u3j_spot(u3_noun cor)
       return u3_none;
     }
   }
+}
+
+/* u3j_spot(): identify `cor`s location. RETAIN.
+ */
+u3_weak
+u3j_spot(u3_noun cor)
+{
+  u3_weak loc;
+  u3t_on(glu_o);
+  loc = _cj_spot(cor);
+  u3t_off(glu_o);
+  return loc;
 }
 
 static u3j_fink*
@@ -347,18 +357,13 @@ u3j_fine(u3_noun cor, u3j_fink* fin_u)
   return ret_o;
 }
 
-/* u3j_nail(): resolve hot state for location and axis. RETAIN.
-**             return value indicates presence of driver.
-**/
-c3_o
-u3j_nail(u3_noun loc, u3_noun axe,
+static c3_o
+_cj_nail(u3_noun loc, u3_noun axe,
          u3_noun* lab, u3j_core** cop_u, u3j_harm** ham_u)
 {
   c3_o ret_o;
   u3_noun jax, hap, bal, jit;
   u3_weak act;
-
-  u3t_on(glu_o);
   act = _cj_find_warm(loc);
   c3_assert(u3_none != act);
   u3x_qual(act, &jax, &hap, &bal, &jit);
@@ -382,6 +387,19 @@ u3j_nail(u3_noun loc, u3_noun axe,
   }
 
   u3z(act);
+  return ret_o;
+}
+
+/* u3j_nail(): resolve hot state for location and axis. RETAIN.
+**             return value indicates presence of driver.
+**/
+c3_o
+u3j_nail(u3_noun loc, u3_noun axe,
+         u3_noun* lab, u3j_core** cop_u, u3j_harm** ham_u)
+{
+  c3_o ret_o;
+  u3t_on(glu_o);
+  ret_o = _cj_nail(loc, axe, lab, cop_u, ham_u);
   u3t_off(glu_o);
   return ret_o;
 }
@@ -391,7 +409,7 @@ u3j_nail(u3_noun loc, u3_noun axe,
 static c3_o
 _cj_scan(u3_noun cor)
 {
-  u3_weak loc = u3j_spot(cor);
+  u3_weak loc = _cj_spot(cor);
   c3_o  reg_o = (u3_none == loc) ? c3n : c3y;
   u3z(loc);
   return reg_o;
@@ -630,7 +648,7 @@ _cj_hook_in(u3_noun     cor,
     return u3m_bail(c3__fail);
   }
 
-  loc = u3j_spot(cor);
+  loc = _cj_spot(cor);
   if ( u3_none == loc ) {
     return u3m_bail(c3__fail);
   }
@@ -738,7 +756,7 @@ u3_weak
 u3j_kick(u3_noun cor, u3_noun axe)
 {
   u3t_on(glu_o);
-  u3_weak loc = u3j_spot(cor);
+  u3_weak loc = _cj_spot(cor);
   if ( u3_none == loc ) {
     u3t_off(glu_o);
     return u3_none;
@@ -808,6 +826,237 @@ u3j_kick(u3_noun cor, u3_noun axe)
       }
     }
   }
+}
+
+static u3j_fink*
+_cj_fink_take(u3j_fink* jun_u)
+{
+  c3_w     i_w, len_w = jun_u->len_w;
+  u3j_fink* fin_u = u3a_walloc(c3_wiseof(u3j_fink) +
+                   (len_w * c3_wiseof(u3j_fist)));
+
+  fin_u->len_w = len_w;
+  fin_u->sat   = u3a_take(jun_u->sat);
+  for ( i_w = 0; i_w < len_w; ++i_w ) {
+    u3j_fist* fis_u = &(fin_u->fis_u[i_w]);
+    u3j_fist* sif_u = &(jun_u->fis_u[i_w]);
+    fis_u->bat = u3a_take(sif_u->bat);
+    fis_u->pax = u3a_take(sif_u->pax);
+  }
+  return fin_u;
+}
+
+static void
+_cj_fink_free(u3j_fink* fin_u)
+{
+  c3_w i_w;
+  u3z(fin_u->sat);
+  for ( i_w = 0; i_w < fin_u->len_w; ++i_w ) {
+    u3j_fist* fis_u = &(fin_u->fis_u[i_w]);
+    u3z(fis_u->bat);
+    u3z(fis_u->pax);
+  }
+  u3a_wfree(fin_u);
+}
+
+/* u3j_rite_copy(): copy rite references from src_u to dst_u,
+**                  losing old references if los_o is yes
+*/
+void
+u3j_rite_copy(u3j_rite* dst_u, u3j_rite* src_u, c3_o los_o)
+{
+  if ( u3_none == src_u->clu ) {
+    dst_u->clu   = u3_none;
+    dst_u->fin_u = NULL;
+  }
+  else {
+    u3_noun  old    = dst_u->clu;
+    u3j_fink* fon_u = dst_u->fin_u;
+    c3_o     own_o  = dst_u->own_o;
+    if ( c3y == src_u->own_o ) {
+      dst_u->own_o = c3y;
+      dst_u->clu   = u3a_take(src_u->clu);
+      dst_u->fin_u = _cj_fink_take(src_u->fin_u);
+      if ( (c3y == los_o) &&
+          (u3_none != old) &&
+          (c3y == own_o) ) {
+        u3z(old);
+        _cj_fink_free(fon_u);
+      }
+    }
+  }
+}
+
+/* u3j_site_copy(): copy site references from src_u to dst_u,
+**                  losing old references if los_o is yes
+*/
+void
+u3j_site_copy(u3j_site* dst_u, u3j_site* src_u, c3_o los_o)
+{
+  u3_noun old = dst_u->axe;
+  dst_u->axe  = u3a_take(src_u->axe);
+
+  if ( c3y == los_o ) {
+    u3z(old);
+  }
+  else {
+    dst_u->bat   = u3_none;
+    dst_u->pog_u = NULL;
+    dst_u->loc   = u3_none;
+    dst_u->lab   = u3_none;
+    dst_u->jet_o = c3n;
+    dst_u->fon_o = c3n;
+    dst_u->cop_u = NULL;
+    dst_u->ham_u = NULL;
+    dst_u->fin_u = NULL;
+  }
+
+  if ( u3_none != src_u->loc ) {
+    u3_noun  lob   = dst_u->lab,
+             lod   = dst_u->loc;
+    c3_o     fon_o = dst_u->fon_o;
+    u3j_fink* fon_u = dst_u->fin_u;
+
+    dst_u->loc   = u3a_take(src_u->loc);
+    dst_u->lab   = u3a_take(src_u->lab);
+    dst_u->cop_u = src_u->cop_u;
+    dst_u->ham_u = src_u->ham_u;
+    dst_u->jet_o = src_u->jet_o;
+
+    if ( c3y == src_u->fon_o ) {
+      dst_u->fin_u = _cj_fink_take(src_u->fin_u);
+      dst_u->fon_o = c3y;
+    }
+    else if ( fon_u != src_u->fin_u ) {
+      dst_u->fin_u = src_u->fin_u;
+      dst_u->fon_o = c3n;
+    }
+    else {
+      fon_o = c3n;
+    }
+
+    if ( c3y == los_o ) {
+      if ( u3_none != lod ) {
+        u3z(lod);
+        u3z(lob);
+        if ( c3y == fon_o ) {
+          _cj_fink_free(fon_u);
+        }
+      }
+    }
+  }
+}
+
+static u3_weak
+_cj_site_lock(u3_noun cor, u3j_site* sit_u)
+{
+  if ( (u3_none != sit_u->bat) &&
+       (c3y == u3r_sing(sit_u->bat, u3h(cor))) ) {
+    return u3_none;
+  }
+  sit_u->pog_u = u3n_find(u3r_at(sit_u->axe, cor));
+  if ( u3_none != sit_u->bat ) {
+    u3z(sit_u->bat);
+  }
+  sit_u->bat = u3k(u3h(cor));
+  return u3_none;
+}
+
+static u3_weak
+_cj_site_kick_hot(u3_noun cor, u3j_site* sit_u)
+{
+  u3_weak pro = u3_none;
+  c3_o jet_o  = sit_u->jet_o;
+  if ( c3n == __(u3C.wag_w & u3o_debug_cpu) ) {
+    if ( c3n == jet_o ) {
+      pro = u3_none;
+    }
+    else {
+      pro = _cj_kick_z(cor, sit_u->cop_u, sit_u->ham_u, sit_u->axe);
+    }
+    if ( u3_none == pro ) {
+      pro = _cj_site_lock(cor, sit_u);
+    }
+  }
+  else {
+    u3t_come(sit_u->lab);
+    if ( c3y == jet_o ) {
+      pro = _cj_kick_z(cor, sit_u->cop_u, sit_u->ham_u, sit_u->axe);
+    }
+    if ( u3_none == pro ) {
+      pro = _cj_site_lock(cor, sit_u);
+      if ( u3_none == pro ) {
+        pro = u3n_burn(cor, sit_u->pog_u);
+      }
+    }
+    u3t_flee();
+  }
+  return pro;
+}
+
+/* u3j_site_kick(): kick a core with a u3j_site cache.
+ */
+u3_weak
+u3j_site_kick(u3_noun cor, u3j_site* sit_u)
+{
+  u3_weak loc, pro;
+
+  u3t_on(glu_o);
+  loc = pro = u3_none;
+
+  if ( u3_none != sit_u->loc ) {
+    if ( c3y == _cj_fine(cor, sit_u->fin_u) ) {
+      loc = sit_u->loc;
+      if ( c3y == sit_u->jet_o ) {
+        pro = _cj_site_kick_hot(cor, sit_u);
+      }
+    }
+  }
+
+  if ( u3_none == loc ) {
+    loc = _cj_spot(cor);
+    if ( u3_none != loc ) {
+      u3j_fink* fon_u = NULL;
+      u3_weak  lod   = u3_none;
+      u3_weak  lob   = u3_none;
+
+      if ( u3_none != sit_u->loc ) {
+        lod = sit_u->loc;
+        lob = sit_u->lab;
+        if ( c3y == sit_u->fon_o ) {
+          fon_u = sit_u->fin_u;
+        }
+      }
+
+      sit_u->loc   = loc;
+      sit_u->fin_u = _cj_cast(cor, loc);
+      sit_u->fon_o = c3y;
+      if ( c3y ==
+        (sit_u->jet_o = _cj_nail(loc, sit_u->axe,
+            &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u))) )
+      {
+        pro = _cj_site_kick_hot(cor, sit_u);
+      }
+      else {
+        pro = u3_none;
+      }
+
+      if ( u3_none != lod ) {
+        u3z(lod);
+        u3z(lob);
+        if ( NULL != fon_u ) {
+          _cj_fink_free(fon_u);
+        }
+      }
+    }
+  }
+
+  if ( u3_none == pro ) {
+    pro = _cj_site_lock(cor, sit_u);
+  }
+
+  u3t_off(glu_o);
+  return pro;
 }
 
 /* u3j_kink(): kick either by jet or by nock.
@@ -922,7 +1171,7 @@ _cj_mine(u3_noun cey, u3_noun cor)
       fprintf(stderr, "fund: %s is bogus\r\n", u3r_string(nam));
       return u3_none;
     }
-    pel = u3j_spot(par);
+    pel = _cj_spot(par);
     if ( u3_none == pel ) {
       fprintf(stderr, "fund: in %s, parent %x not found at %d\r\n", 
                       u3r_string(nam),
@@ -977,19 +1226,19 @@ _cj_moan(u3_noun clu, u3_noun cor)
   return loc;
 }
 
-/* u3j_mile(): register core for jets, returning location.
+
+/* _cj_mile(): register core for jets, returning location.
 */
-u3_weak
-u3j_mile(u3_noun clu, u3_noun cor)
+static u3_weak
+_cj_mile(u3_noun clu, u3_noun cor)
 {
-  u3t_on(glu_o);
   u3_weak loc = u3_none;
   if ( c3n == u3du(cor) ) {
     u3z(clu);
     u3z(cor);
   }
   else {
-    loc = u3j_spot(cor);
+    loc = _cj_spot(cor);
     if ( u3_none == loc ) {
       loc = _cj_moan(clu, cor);
     }
@@ -998,7 +1247,6 @@ u3j_mile(u3_noun clu, u3_noun cor)
       u3z(cor);
     }
   }
-  u3t_off(glu_o);
   return loc;
 }
 
@@ -1018,6 +1266,40 @@ u3j_mine(u3_noun clu, u3_noun cor)
       u3z(loc);
     }
   }
+  u3t_off(glu_o);
+}
+
+/* u3j_rite_mine(): mine cor with clue, using u3j_rite for caching
+*/
+void
+u3j_rite_mine(u3j_rite* rit_u, u3_noun clu, u3_noun cor)
+{
+  c3_t non_t;
+  u3t_on(glu_o);
+
+  non_t = (u3_none == rit_u->clu);
+
+  if ( non_t ||
+       c3n == u3r_sing(rit_u->clu, clu) ||
+       c3n == _cj_fine(cor, rit_u->fin_u) ) {
+    u3_weak loc = _cj_mile(u3k(clu), u3k(cor));
+    if ( u3_none != loc ) {
+      u3_noun   old   = rit_u->clu;
+      u3j_fink* fon_u = rit_u->fin_u;
+      c3_o      own_o = rit_u->own_o;
+      rit_u->own_o    = c3y;
+      rit_u->clu      = u3k(clu);
+      rit_u->fin_u    = _cj_cast(cor, loc);
+      u3z(loc);
+
+      if ( !non_t && (c3y == own_o) ) {
+         u3z(old);
+        _cj_fink_free(fon_u);
+      }
+    }
+  }
+  u3z(clu);
+  u3z(cor);
   u3t_off(glu_o);
 }
 
@@ -1224,6 +1506,35 @@ _cj_fink_mark(u3j_fink* fin_u)
   }
   tot_w += u3a_mark_ptr(fin_u);
   return tot_w;
+}
+
+/* u3j_site_lose(): lose references of u3j_site (but do not free).
+ */
+void
+u3j_site_lose(u3j_site* sit_u)
+{
+  u3z(sit_u->axe);
+  if ( u3_none != sit_u->bat ) {
+    u3z(sit_u->bat);
+  }
+  if ( u3_none != sit_u->loc ) {
+    u3z(sit_u->loc);
+    u3z(sit_u->lab);
+    if ( c3y == sit_u->fon_o ) {
+      _cj_fink_free(sit_u->fin_u);
+    }
+  }
+}
+
+/* u3j_rite_lose(): lose references of u3j_rite (but do not free).
+ */
+void
+u3j_rite_lose(u3j_rite* rit_u)
+{
+  if ( (c3y == rit_u->own_o) && u3_none != rit_u->clu ) {
+    u3z(rit_u->clu);
+    _cj_fink_free(rit_u->fin_u);
+  }
 }
 
 /* u3j_rite_mark(): mark u3j_rite for gc.
