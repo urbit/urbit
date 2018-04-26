@@ -271,6 +271,34 @@ u3j_spot(u3_noun cor)
   }
 }
 
+static c3_o
+_cj_fine(u3_noun cor, u3j_fink* fin_u)
+{
+  c3_w i_w;
+  for ( i_w = 0; i_w < fin_u->len_w; ++i_w ) {
+    u3j_fist* fis_u = &(fin_u->fis_u[i_w]);
+    if ( c3n == u3r_sing(fis_u->bat, u3h(cor)) ) {
+      return c3n;
+    }
+    else {
+      cor = u3r_at(fis_u->pax, cor);
+    }
+  }
+  return u3r_sing(fin_u->sat, cor);
+}
+
+/* u3j_fine(): check core against u3j_fink.
+ */
+c3_o
+u3j_fine(u3_noun cor, u3j_fink* fin_u)
+{
+  c3_o ret_o;
+  u3t_on(glu_o);
+  ret_o = _cj_fine(cor, fin_u);
+  u3t_off(glu_o);
+  return ret_o;
+}
+
 /* u3j_nail(): resolve hot state for location and axis. RETAIN.
 **             return value indicates presence of driver.
 **/

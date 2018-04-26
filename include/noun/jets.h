@@ -61,6 +61,37 @@
         u3j_core* ray_u;              //  dynamic array by axis
       } u3j_dash;
 
+      typedef struct {
+        u3_noun bat;
+        u3_noun pax;
+      } u3j_fist;
+
+      typedef struct {
+        c3_w    len_w;
+        u3_noun sat;
+        u3j_fist fis_u[0];
+      } u3j_fink;
+
+      typedef struct {
+        c3_o      own_o;
+        u3_weak   clu;
+        u3j_fink* fin_u;
+      } u3j_rite;
+
+      struct _u3n_prog;
+      typedef struct {
+        struct _u3n_prog *pog_u;
+        u3_noun   axe;
+        u3_weak   bat;
+        u3_weak   loc;
+        c3_o      jet_o;
+        c3_o      fon_o;
+        u3_weak   lab;
+        u3j_core* cop_u;
+        u3j_harm* ham_u;
+        u3j_fink* fin_u;
+      } u3j_site;
+
   /** Globals.
   **/
     /* u3_Dash: jet dashboard.
@@ -102,6 +133,11 @@
       */
         u3_weak
         u3j_spot(u3_noun cor);
+
+      /* u3j_fine(): check core against u3j_fink.
+       */
+        c3_o
+        u3j_fine(u3_noun cor, u3j_fink* fin_u);
 
       /* u3j_nail(): resolve hot state for location and axis. RETAIN.
       **             return value indicates presence of driver.

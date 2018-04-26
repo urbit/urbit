@@ -2,6 +2,39 @@
 **
 ** This file is in the public domain.
 */
+  /** Data structures.
+  ***
+  **/
+
+  typedef struct {
+    c3_l    sip_l;
+    u3_noun key;
+  } u3n_memo;
+
+  typedef struct _u3n_prog {
+    struct {
+      c3_o      own_o;
+      c3_w      len_w;
+      c3_y*     ops_y;
+    } byc_u;
+    struct {
+      c3_w      len_w;
+      u3_noun*  non;
+    } lit_u;
+    struct {
+      c3_w      len_w;
+      u3n_memo* sot_u;
+    } mem_u;
+    struct {
+      c3_w      len_w;
+      u3j_site* sit_u;
+    } cal_u;
+    struct {
+      c3_w      len_w;
+      u3j_rite* rit_u;
+    } reg_u;
+  } u3n_prog;
+
   /**  Functions.
   **/
     /* u3n_nock_on(): produce .*(bus fol).
