@@ -4118,8 +4118,34 @@
       (weld ram(tac i.q.tac) ?~(t.q.tac voz (weld p.p.tac voz)))
     ==
   ::
+  ++  gyp                                               :: horrible hack
+    |%
+    ++  hew
+      |=(a=tape `tape``(list @)`(tuba a))
+    ::
+    ++  fix
+      |=  wol=wall
+      %+  turn  wol
+      |=(a=tape (tufa `(list @c)``(list @)`a))
+    ::
+    ++  act
+      |=  tac=tank
+      ^-  tank
+      ?-  -.tac
+        %leaf  [%leaf (hew p.tac)]
+        %palm  :+  %palm
+                 [(hew p.p.tac) (hew q.p.tac) (hew r.p.tac) (hew s.p.tac)]
+               (turn q.tac act)
+        %rose  :+  %rose
+                 [(hew p.p.tac) (hew q.p.tac) (hew r.p.tac)]
+               (turn q.tac act)
+      ==
+    --
+  ::
   ++  win
     |=  {tab/@ edg/@}
+    =.  tac  (act:gyp tac)
+    %-  fix:gyp
     =+  lug=`wall`~
     |^  |-  ^-  wall
         ?-    -.tac
