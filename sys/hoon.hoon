@@ -4118,17 +4118,17 @@
       (weld ram(tac i.q.tac) ?~(t.q.tac voz (weld p.p.tac voz)))
     ==
   ::
-  ++  gyp                                               :: horrible hack
+  ++  ug                                                ::  horrible hack
     |%
-    ++  hew
-      |=(a=tape `tape``(list @)`(tuba a))
+    ++  ace                                             ::  strip ctrl chars
+      |=  a=tape
+      ^-  tape
+      ?~  a  ~
+      ?:  |((lth i.a 32) =(127 `@`i.a))
+        $(a t.a)
+      [i.a $(a t.a)]
     ::
-    ++  fix
-      |=  wol=wall
-      %+  turn  wol
-      |=(a=tape (tufa `(list @c)``(list @)`a))
-    ::
-    ++  act
+    ++  act                                             ::  pretend tapes
       |=  tac=tank
       ^-  tank
       ?-  -.tac
@@ -4140,12 +4140,20 @@
                  [(hew p.p.tac) (hew q.p.tac) (hew r.p.tac)]
                (turn q.tac act)
       ==
+    ::
+    ++  fix                                             ::  restore tapes
+      |=  wol=wall
+      %+  turn  wol
+      |=(a=tape (tufa `(list @c)``(list @)`a))
+    ::
+    ++  hew                                             ::  pretend tape
+      |=(a=tape `tape``(list @)`(tuba (ace a)))
     --
   ::
   ++  win
     |=  {tab/@ edg/@}
-    =.  tac  (act:gyp tac)
-    %-  fix:gyp
+    =.  tac  (act:ug tac)
+    %-  fix:ug
     =+  lug=`wall`~
     |^  |-  ^-  wall
         ?-    -.tac
