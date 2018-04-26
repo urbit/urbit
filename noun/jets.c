@@ -271,6 +271,54 @@ u3j_spot(u3_noun cor)
   }
 }
 
+static u3j_fink*
+_cj_cast(u3_noun cor, u3_noun loc)
+{
+  c3_w     i_w = 0;
+  u3_noun  j, par, bat, dyn, pax,
+           rev = u3_nul,
+           pat = u3h(loc);
+  u3j_fink* fin_u;
+
+  while ( c3n == u3h(pat) ) {
+    bat = u3h(cor);
+    dyn = u3t(pat);
+    pax = u3h(dyn);
+    loc = u3t(dyn);
+    pat = u3h(loc);
+    rev = u3nc(u3nc(u3k(bat), u3k(pax)), rev);
+    cor = u3r_at(pax, cor);
+    ++i_w;
+  }
+
+  fin_u = u3a_walloc(c3_wiseof(u3j_fink) +
+                     (i_w * c3_wiseof(u3j_fist)));
+  fin_u->len_w = i_w;
+  fin_u->sat   = u3k(cor);
+  for ( j = rev; i_w-- > 0; j = u3t(j) ) {
+    u3j_fist* fis_u = &(fin_u->fis_u[i_w]);
+    par        = u3h(j);
+    fis_u->bat = u3k(u3h(par));
+    fis_u->pax = u3k(u3t(par));
+  }
+  u3z(rev);
+  c3_assert( u3_nul == j );
+
+  return fin_u;
+}
+
+/* u3j_cast(): create u3j_fink from core and location.
+ */
+u3j_fink*
+u3j_cast(u3_noun cor, u3_noun loc)
+{
+  u3j_fink* fin_u;
+  u3t_on(glu_o);
+  fin_u = _cj_cast(cor, loc);
+  u3t_off(glu_o);
+  return fin_u;
+}
+
 static c3_o
 _cj_fine(u3_noun cor, u3j_fink* fin_u)
 {

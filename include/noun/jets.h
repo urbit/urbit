@@ -139,6 +139,11 @@
         c3_o
         u3j_fine(u3_noun cor, u3j_fink* fin_u);
 
+      /* u3j_cast(): create u3j_fink from core and location.
+       */
+        u3j_fink*
+        u3j_cast(u3_noun cor, u3_noun loc);
+
       /* u3j_nail(): resolve hot state for location and axis. RETAIN.
       **             return value indicates presence of driver.
       **/

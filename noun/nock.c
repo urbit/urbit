@@ -527,42 +527,6 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define SLIS 71
 #define SAVE 72
 
-static u3j_fink*
-_n_cast(u3_noun cor, u3_noun loc)
-{
-  c3_w     i_w = 0;
-  u3_noun  j, par, bat, dyn, pax,
-           rev = u3_nul,
-           pat = u3h(loc);
-  u3j_fink* fin_u;
-
-  while ( c3n == u3h(pat) ) {
-    bat = u3h(cor);
-    dyn = u3t(pat);
-    pax = u3h(dyn);
-    loc = u3t(dyn);
-    pat = u3h(loc);
-    rev = u3nc(u3nc(u3k(bat), u3k(pax)), rev);
-    cor = u3r_at(pax, cor);
-    ++i_w;
-  }
-
-  fin_u = u3a_walloc(c3_wiseof(u3j_fink) +
-                     (i_w * c3_wiseof(u3j_fist)));
-  fin_u->len_w = i_w;
-  fin_u->sat   = u3k(cor);
-  for ( j = rev; i_w-- > 0; j = u3t(j) ) {
-    u3j_fist* fis_u = &(fin_u->fis_u[i_w]);
-    par        = u3h(j);
-    fis_u->bat = u3k(u3h(par));
-    fis_u->pax = u3k(u3t(par));
-  }
-  u3z(rev);
-  c3_assert( u3_nul == j );
-
-  return fin_u;
-}
-
 static c3_w
 _n_fink_mark(u3j_fink* fin_u)
 {
@@ -622,7 +586,7 @@ _n_mine(u3j_rite* rit_u, u3_noun clu, u3_noun cor)
       c3_o     own_o = rit_u->own_o;
       rit_u->own_o = c3y;
       rit_u->clu   = u3k(clu);
-      rit_u->fin_u = _n_cast(cor, loc);
+      rit_u->fin_u = u3j_cast(cor, loc);
       u3z(loc);
 
       if ( !non_t && (c3y == own_o) ) {
@@ -1667,7 +1631,7 @@ _n_kick(u3_noun cor, u3j_site* sit_u)
       }
 
       sit_u->loc   = loc;
-      sit_u->fin_u = _n_cast(cor, loc);
+      sit_u->fin_u = u3j_cast(cor, loc);
       sit_u->fon_o = c3y;
       if ( c3y ==
         (sit_u->jet_o = u3j_nail(loc, sit_u->axe,
