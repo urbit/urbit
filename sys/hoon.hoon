@@ -5703,7 +5703,7 @@
               {$leaf p/term q/@}                        ::  constant atom
               {$like p/wing q/(list wing)}              ::  reference
               {$loop p/term}                            ::  hygienic reference
-              {$made p/(pair term @ud) q/spec}          ::  annotate synthetic 
+              {$made p/(pair term (list term)) q/spec}  ::  annotate synthetic 
               {$make p/hoon q/(list spec)}              ::  composed spec
               {$name p/term q/spec}                     ::  annotate simple
               {$over p/wing q/spec}                     ::  relative to subject
@@ -6481,7 +6481,6 @@
   ?:(=(%void pac) %void [%core pac con])
 ::
 ++  hint
-  ~/  %hint
   |=  {p/(pair type note) q/type}
   ^-  type
   ?:  =(%void q)  %void
@@ -7369,11 +7368,9 @@
   ++  pieces
     ::  enumerate tuple wings
     ::
-    |=  width/@ud
-    =/  axe  1
-    |-  ^-  (list wing)
-    ?:  =(1 width)  [[[%& axe] ~] ~]
-    [[[%& (peg axe 2)] ~] $(axe (peg axe 3))]
+    |=  =(list term)
+    ^-  (^list wing)
+    (turn list |=(=term `wing`[term ~]))
   ::
   ++  spore
     ::  build default sample
@@ -12871,7 +12868,7 @@
             ==
       ==
     ::
-    ++  boog                                            ::  core arms
+    ++  boog  !:                                         ::  core arms
       %+  knee  [p=*term q=*(pair what foot)]  |.  ~+
       %+  cook
         |=  {a/whit b/term c/whit d/foot}
@@ -12891,7 +12888,7 @@
         apex:docs
         ;~  pose
           %+  cook
-              |=({a/$ash b/term c/whit d/hoon} [b c a d])
+            |=({a/$ash b/term c/whit d/hoon} [b c a d])
           ;~  plug
             (cold %ash (jest '++'))
             ;~(pfix gap ;~(pose (cold %$ buc) sym))
@@ -12909,14 +12906,49 @@
           ==
         ::
           %+  cook
-            |=  {a/$ash b/term c/whit d/spec} 
-            [b c a [%bccm [%name b d]]]
-          ;~  plug
-            (cold %ash (jest '+='))
-            ;~(pfix gap sym)
-            apse:docs
-            ;~(pfix gap loan)
-          ==  
+            |=  {b/term c/whit d/spec} 
+            [b c %ash [%bccm [%name b d]]]
+          ;~  pfix  (jest '+=')
+            ;~  plug
+              ;~(pfix gap sym)
+              apse:docs
+              ;~(pfix gap loan)
+            ==  
+          ==
+        ::
+          %+  cook
+            |=  [b=term c=(list term) d=whit e=spec]
+            ^-  [term whit foot]
+            :*  b
+                d
+                %ash
+                ^-  hoon
+                :^  %brtr  *chap
+                  ^-  spec
+                  :-  %bccl 
+                  =-  ?>(?=(^ -) -)
+                  ^-  (list spec)
+                  %+  turn  c
+                  |=  =term
+                  ^-  spec
+                  :+  %bcts
+                    term
+                  [%bchp [%base %noun] [%base %noun]] 
+                ^-  hoon
+                :-  %bccm
+                ^-  spec
+                :+  %made
+                  [b c]
+                e
+            ==
+          ;~  pfix  (jest '+*')
+            ;~  plug
+              ;~(pfix gap sym)
+              ;~(pfix gap (ifix [lac rac] (most ace sym)))
+              apse:docs
+              ;~(pfix gap loan)
+            ==
+          ==
         ==
       ==
     ::

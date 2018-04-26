@@ -149,6 +149,7 @@
     ::
     ++  rely
       |=  [=type =note]
+      ~&  [%note `*`note]
       ^-  (unit [spec _load])
       ?+  -.note  ~
         $army  `[`spec`[%like [[p.note ~] ~]] load]
@@ -598,6 +599,7 @@
   ==
 ++  limb-to-plum
   |=  =limb
+  ?@  limb  limb
   ?-  -.limb
     %&  (scot %ui p.limb)
     %|  (crip (runt [0 p.limb] ?~(q.limb "," (trip u.q.limb))))
@@ -648,6 +650,10 @@
 ++  hoon-to-plum
   |=  =hoon
   ^-  plum
+  ::  XX fill this in please
+  ::
+  ?:  ?=([%limb *] hoon)
+    p.hoon
   %hooon
 ::
 ++  spec-to-plum
