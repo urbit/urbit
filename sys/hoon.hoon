@@ -1,4 +1,3 @@
-!:
 ::                                                      ::  
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
@@ -5741,15 +5740,15 @@
   (pair tope tope)                                      ::  cell
 ++  hoot                                                ::  hoon tools
   |%
-  ++  beer  $@(char {~ p/hoon})                    ::  simple embed
-  ++  mane  $@(@tas {@tas @tas})                    ::  XML name+space
-  ++  manx  $~([[%$ ~] ~] {g/marx c/marl})          ::  dynamic XML node
-  ++  marl  (list tuna)                             ::  dynamic XML nodes
-  ++  mart  (list {n/mane v/(list beer)})           ::  dynamic XML attrs
-  ++  marx  $~([%$ ~] {n/mane a/mart})              ::  dynamic XML tag
-  ++  mare  (each manx marl)                        ::  node or nodes
-  ++  maru  (each tuna marl)                        ::  interp or nodes
-  ++  tuna                                          ::  maybe interpolation
+  +=  beer  $@(char {~ p/hoon})                    ::  simple embed
+  +=  mane  $@(@tas {@tas @tas})                    ::  XML name+space
+  +=  manx  $~([[%$ ~] ~] {g/marx c/marl})          ::  dynamic XML node
+  +=  marl  (list tuna)                             ::  dynamic XML nodes
+  +=  mart  (list {n/mane v/(list beer)})           ::  dynamic XML attrs
+  +=  marx  $~([%$ ~] {n/mane a/mart})              ::  dynamic XML tag
+  +=  mare  (each manx marl)                        ::  node or nodes
+  +=  maru  (each tuna marl)                        ::  interp or nodes
+  +=  tuna                                          ::  maybe interpolation
       $~  [[%$ ~] ~]
       $^  manx 
       $:  ?($tape $manx $marl $call) 

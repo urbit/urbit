@@ -40,6 +40,12 @@
   ::
   ++  structure
     ^-  spec
+    ::  clear superficial structure and hints
+    ::
+    =.  sut  |-  ^-  type
+             ?.  ?=([?(%hint %hold) *] sut)  sut
+             $(sut ~(repo ut sut)) 
+    ::
     ::  spec: raw analysis product
     ::
     =^  spec  load  specify
@@ -149,7 +155,6 @@
     ::
     ++  rely
       |=  [=type =note]
-      ~&  [%note `*`note]
       ^-  (unit [spec _load])
       ?+  -.note  ~
         $army  `[`spec`[%like [[p.note ~] ~]] load]
