@@ -753,7 +753,7 @@
       results=(map build cache-line)
       ::  builds: registry of all attempted builds
       ::
-      builds=attempted-builds
+      builds=build-registry
       ::  components: bidirectional linkages between sub-builds and clients
       ::
       ::    The first of the two jugs maps from a build to its sub-builds.
@@ -831,9 +831,9 @@
       ::
       dependency-updates=(jug @da dependency)
   ==
-::  +attempted-builds: a registry of all attempted builds
+::  +build-registry: a registry of all attempted builds
 ::
-+=  attempted-builds
++=  build-registry
   $:  ::  builds-by-schematic: all attempted builds, sorted by time
       ::
       ::    For each schematic we've attempted to build at any time,
@@ -1251,7 +1251,7 @@
 ::  +by-builds: door for manipulating :builds.state
 ::
 ++  by-builds
-  |_  builds=attempted-builds
+  |_  builds=build-registry
   ::  +put: add a +build
   ::
   ++  put
@@ -1924,30 +1924,7 @@
                 (is-build-live build.made)
             ==
           ::
-          =/  dependency=dependency  dependency.schematic.build.made
-          =/  disc=disc  (extract-disc dependency)
-          ::
-          %_    ..execute
-          ::  link :disc to :dependency
-          ::
-              dependencies.state
-            (~(put ju dependencies.state) [disc dependency])
-          ::  mark :disc as dirty
-          ::
-              dirty-discs
-            (~(put in dirty-discs) disc)
-          ::  update :latest-by-disc.state if :date.build is later
-          ::
-              latest-by-disc.state
-            =/  latest-date  (~(get by latest-by-disc.state) disc)
-            ::
-            ?:  ?&  ?=(^ latest-date)
-                    (lte date.build.made u.latest-date)
-                ==
-              latest-by-disc.state
-            ::
-            (~(put by latest-by-disc.state) disc date.build.made)
-          ==
+          (update-live-dependency-state build.made dependency.schematic.build.made)
         ::  clear the components
         ::
         =?    ..execute
@@ -1955,34 +1932,7 @@
           (unlink-sub-builds build.made)
         ::  process :sub-builds.made
         ::
-        =.  state
-          %+  roll  sub-builds.made
-          |=  [sub-build=build accumulator=_state]
-          =.  state  accumulator
-          ::  freshen cache for sub-build
-          ::
-          =.  results.state  +:(access-cache sub-build)
-          ::
-          ::
-          %_    state
-              builds
-            (~(put by-builds builds.state) sub-build(date date.build.made))
-          ::
-              components
-            (~(put by-build-dag components.state) build.made sub-build)
-          ::
-              listeners
-            ::
-            =/  unified-listeners
-              %-  ~(uni in (fall (~(get by listeners.state) sub-build) ~))
-              (fall (~(get by listeners.state) build.made) ~)
-            ::  don't put a key with an empty value
-            ::
-            ?~  unified-listeners
-              listeners.state
-            ::
-            (~(put by listeners.state) sub-build unified-listeners)
-          ==
+        =.  state  (track-sub-builds build.made sub-builds.made)
         ::
         ?-    -.result.made
             %build-result
@@ -1990,6 +1940,69 @@
         ::
             %blocks
           (apply-blocks build.made result.made sub-builds.made)
+        ==
+      ::  +update-live-dependency-state: performs live build accounting
+      ::
+      ++  update-live-dependency-state
+        |=  [=build =dependency]
+        ^+  ..execute
+        =/  disc=disc  (extract-disc dependency)
+        ::
+        %_    ..execute
+        ::  link :disc to :dependency
+        ::
+            dependencies.state
+          (~(put ju dependencies.state) [disc dependency])
+        ::  mark :disc as dirty
+        ::
+            dirty-discs
+          (~(put in dirty-discs) disc)
+        ::  update :latest-by-disc.state if :date.build is later
+        ::
+            latest-by-disc.state
+          =/  latest-date  (~(get by latest-by-disc.state) disc)
+          ::
+          ?:  ?&  ?=(^ latest-date)
+                  (lte date.build u.latest-date)
+              ==
+            latest-by-disc.state
+          ::
+          (~(put by latest-by-disc.state) disc date.build)
+        ==
+      ::  +track-sub-builds:
+      ::
+      ::    For every sub-build discovered while running :build, we have to make
+      ::    sure that we track that sub-build and that it is associated with the
+      ::    right listeners.
+      ::
+      ++  track-sub-builds
+        |=  [=build sub-builds=(list build)]
+        ^+  state
+        %+  roll  sub-builds
+        |=  [sub-build=^build accumulator=_state]
+        =.  state  accumulator
+        ::  freshen cache for sub-build
+        ::
+        =.  results.state  +:(access-cache sub-build)
+        ::
+        %_    state
+            builds
+          (~(put by-builds builds.state) sub-build)
+        ::
+            components
+          (~(put by-build-dag components.state) build sub-build)
+        ::
+            listeners
+          ::
+          =/  unified-listeners
+            %-  ~(uni in (fall (~(get by listeners.state) sub-build) ~))
+            (fall (~(get by listeners.state) build) ~)
+          ::  don't put a key with an empty value
+          ::
+          ?~  unified-listeners
+            listeners.state
+          ::
+          (~(put by listeners.state) sub-build unified-listeners)
         ==
       ::  +apply-build-result: apply a %build-result +state-diff to ..execute
       ::
