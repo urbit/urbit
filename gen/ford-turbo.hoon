@@ -142,9 +142,7 @@
             %complete  %result  %pin  ~1234.5.6  %result  %$  %noun  !>(**)
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-autocons-same
   ~&  %test-autocons-same
@@ -165,9 +163,7 @@
             [%result %$ %noun !>(**)]
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-autocons-different
   ~&  %test-autocons-different
@@ -188,9 +184,7 @@
             [%result %$ %noun !>(43)]
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-scry-clay-succeed
   ~&  %test-scry-clay-succeed
@@ -210,9 +204,7 @@
             [%pin ~1234.5.6 %result [%scry %noun !>(42)]]
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-scry-clay-fail
   ~&  %test-scry-clay-fail
@@ -235,9 +227,7 @@
             leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
     ==  ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-scry-clay-block
   ~&  %test-scry-clay-block
@@ -275,9 +265,7 @@
             [%pin ~1234.5.6 %result [%scry %noun !>(42)]]
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-scry-clay-live
   ~&  %test-scry-clay-live
@@ -332,9 +320,7 @@
             %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-scry-clay-live-again
   ~&  %test-scry-clay-live-again
@@ -391,9 +377,7 @@
             %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-pinned-in-live
   ~&  %test-pinned-in-live
@@ -445,9 +429,7 @@
     %-  expect-eq  !>
     [moves2 ~]
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-live-build-that-blocks
   ~&  %test-live-build-that-blocks
@@ -522,9 +504,7 @@
             %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-live-and-once
   ~&  %test-live-and-once
@@ -594,9 +574,7 @@
             %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-live-two-deep
   ~&  %test-live-two-deep
@@ -651,9 +629,7 @@
             %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-live-three-deep
   ~&  %test-live-three-deep
@@ -719,9 +695,7 @@
             %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-live-triangle
   ~&  %test-live-triangle
@@ -790,11 +764,8 @@
     :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
             %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
-  =/  state  (~(got by state-by-ship.+>+<.ford) ~nul)
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::  like +test-live-triangle, but with another pinned build
 ::
 ::    Ensures that we deal with various issues with live builds which
@@ -873,9 +844,7 @@
             %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-slim
   ~&  %test-slim
@@ -906,9 +875,7 @@
     %-  expect-eq  !>
     [moves2 ~]
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-ride
   ~&  %test-ride
@@ -954,9 +921,7 @@
     %-  expect-eq  !>
     [moves2 ~]
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-ride-scry-succeed
   ~&  %test-ride-scry-succeed
@@ -1002,9 +967,7 @@
     %-  expect-eq  !>
     [moves2 ~]
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-ride-scry-fail
   ~&  %test-ride-scry-fail
@@ -1042,9 +1005,7 @@
     %-  expect-eq  !>
     [moves2 ~]
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-ride-scry-block
   ~&  %test-ride-scry-block
@@ -1107,9 +1068,7 @@
     %-  expect-eq  !>
     [moves3 ~]
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-ride-scry-promote
   ~&  %test-ride-scry-promote
@@ -1174,9 +1133,7 @@
             %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-five-oh-fora
   ~&  %test-five-oh-fora
@@ -1286,9 +1243,7 @@
             %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-alts
   ~&  %test-alts
@@ -1391,9 +1346,7 @@
             %c  %warp  [~nul ~nul]  %first  ~
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-alts-and-live
   ~&  %test-alts-and-live
@@ -1510,9 +1463,7 @@
             %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ++  test-double-alts
   ~&  %test-double-alts
@@ -1650,9 +1601,7 @@
             %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==
   ::
-  %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [~nul *ford-state:ford-turbo]~)
+  (expect-ford-empty ford ~nul)
 ::
 ::  |utilities: helper arms
 ::
@@ -1769,5 +1718,15 @@
   ::
   ~|  scry-is-forbidden+[beam+beam term+term]
   !!
-
-  --
+::  +expect-ford-empty: assert that ford's state is one empty ship
+::
+::    At the end of every test, we want to assert that we have cleaned up all
+::    state.
+::
+++  expect-ford-empty
+  |=  [ford=_(ford-turbo) ship=@p]
+  ^-  wall
+  %-  expect-eq  !>
+  :-  state-by-ship.+>+<.ford
+  (my [ship *ford-state:ford-turbo]~)
+--
