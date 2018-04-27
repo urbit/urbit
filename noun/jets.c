@@ -1264,6 +1264,67 @@ u3j_kink(u3_noun cor, u3_noun axe)
   }
 }
 
+/* u3j_gate_prep(): prepare a locally cached gate to call repeatedly.
+ */
+void
+u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
+{
+  u3_noun loc;
+  u3t_on(glu_o);
+  sit_u->axe   = 2;
+  sit_u->bat   = u3k(cor); // a lie, this isn't really the battery!
+  sit_u->pog_u = u3n_find(u3h(cor));
+  if ( u3_none != (loc = sit_u->loc = _cj_spot(cor)) ) {
+    u3_noun pax = u3h(u3t(loc)),
+            pay = u3qc_cap(pax),
+            pam = u3qc_mas(pax);
+    if ( pam < 4 || 3 != pay || 3 != u3qc_cap(pam) ) {
+      // parent axis includes sample :(
+      sit_u->jet_o = c3n;
+    }
+    else {
+      sit_u->jet_o = _cj_nail(loc, 2,
+        &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u));
+    }
+    u3z(pam);
+  }
+  u3t_off(glu_o);
+}
+
+/* u3j_gate_slam(): slam a site prepared by u3j_gate_find() with sample.
+ */
+u3_noun
+u3j_gate_slam(u3j_site* sit_u, u3_noun sam)
+{
+  u3_weak pro;
+  u3_noun cor;
+  u3t_on(glu_o);
+  pro = u3_none;
+  cor = u3nt(u3k(u3h(sit_u->bat)),
+             sam,
+             u3k(u3t(u3t(sit_u->bat))));
+  if ( (u3_none != sit_u->loc) && (c3y == sit_u->jet_o) ) {
+    pro = _cj_site_kick_hot(cor, sit_u);
+  }
+  if ( u3_none == pro ) {
+    pro = u3n_burn(cor, sit_u->pog_u);
+  }
+  u3t_off(glu_o);
+  return pro;
+}
+
+/* u3j_gate_lose(): clean up site prepared by u3j_gate_find().
+ */
+void
+u3j_gate_lose(u3j_site* sit_u)
+{
+  u3z(sit_u->bat);
+  if ( u3_none != sit_u->loc ) {
+    u3z(sit_u->loc);
+    u3z(sit_u->lab);
+  }
+}
+
 /* _cj_jit(): generate arbitrary warm jet-associated data.  RETAIN.
 */
 static u3_noun 

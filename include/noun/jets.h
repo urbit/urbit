@@ -229,6 +229,21 @@
         u3_weak
         u3j_site_kick(u3_noun cor, u3j_site* sit_u);
 
+      /* u3j_gate_prep(): prepare a locally cached gate to call repeatedly.
+       */
+        void
+        u3j_gate_prep(u3j_site* sit_u, u3_noun cor);
+
+      /* u3j_gate_slam(): slam a site prepared by u3j_gate_find() with sample.
+       */
+        u3_noun
+        u3j_gate_slam(u3j_site* sit_u, u3_noun sam);
+
+      /* u3j_gate_lose(): clean up site prepared by u3j_gate_find().
+       */
+        void
+        u3j_gate_lose(u3j_site* sit_u);
+
       /* u3j_rite_mark(): mark u3j_rite for gc.
       */
         c3_w
