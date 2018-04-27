@@ -1496,7 +1496,7 @@ _n_kick(u3_noun cor, u3j_site* sit_u)
   u3_weak pro;
   u3t_off(noc_o);
   pro = u3j_site_kick(cor, sit_u);
-  u3t_off(noc_o);
+  u3t_on(noc_o);
   return pro;
 }
 

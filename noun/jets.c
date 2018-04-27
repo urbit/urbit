@@ -618,22 +618,6 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
   }
 }
 
-/* u3j_hock(): Try to kick by jet with resolved hot state.
-**             If no kick, produce u3_none.
-**
-** `cor` is RETAINED iff there is no kick, TRANSFERRED if one.
-** `axe` is RETAINED.
-*/
-u3_weak
-u3j_hock(u3_noun cor,
-         u3j_core* cop_u,
-         u3j_harm* ham_u,
-         u3_atom axe)
-{
-  // this is where you would trace, if we traced this
-  return _cj_kick_z(cor, cop_u, ham_u, axe);
-}
-
 /* _cj_hook_in(): execute hook from core, or fail.
 */
 static u3_noun
@@ -667,7 +651,9 @@ _cj_hook_in(u3_noun     cor,
       u3z(got);
       axe_l = _cj_axis(fol);
       if ( 0 == axe_l ) {
+        u3t_off(glu_o);
         pro = u3n_nock_on(cor, fol);
+        u3t_on(glu_o);
       }
       else {
         c3_l jax_l, inx_l;
@@ -682,6 +668,7 @@ _cj_hook_in(u3_noun     cor,
         //  Tricky: the above case would work here too, but would
         //  disable jet_o and create some infinite recursions.
         //
+        u3t_off(glu_o);
         if ( (c3n == jet_o) ||
              (u3_none == (inx_l = u3kdb_get(u3k(hap), axe_l))) ||
              (u3_none == (pro = _cj_kick_z(cor,
@@ -690,6 +677,7 @@ _cj_hook_in(u3_noun     cor,
                                            axe_l))) ) {
           pro = u3n_nock_on(cor, u3k(u3x_at(axe_l, cor)));
         }
+        u3t_on(glu_o);
         u3z(act);
       }
       u3z(loc);
@@ -815,6 +803,26 @@ _cj_hank_lose(_cj_hank* han_u)
 }
 
 static u3_noun
+_cj_burn(u3_noun cor, u3n_prog* pog_u)
+{
+  u3_noun pro;
+  u3t_off(glu_o);
+  pro = u3n_burn(cor, pog_u);
+  u3t_on(glu_o);
+  return pro;
+}
+
+static u3n_prog*
+_cj_prog(u3_noun fol)
+{
+  u3n_prog* pog_u;
+  u3t_off(glu_o);
+  pog_u = u3n_find(fol);
+  u3t_on(glu_o);
+  return pog_u;
+}
+
+static u3_noun
 _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
 {
   u3_weak   loc, col;
@@ -842,10 +850,10 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
       sit_u->fon_o = c3y;
       if ( 0 == (sit_u->axe = _cj_axis(fol)) ) {
         sit_u->jet_o = c3n;
-        sit_u->pog_u = u3n_find(fol);
+        sit_u->pog_u = _cj_prog(fol);
       }
       else {
-        han_u->sit_u.pog_u = u3n_find(u3r_at(sit_u->axe, cor));
+        han_u->sit_u.pog_u = _cj_prog(u3r_at(sit_u->axe, cor));
         han_u->sit_u.jet_o = _cj_nail(loc, sit_u->axe,
             &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u));
       }
@@ -1100,7 +1108,7 @@ _cj_site_lock(u3_noun cor, u3j_site* sit_u)
        (c3y == u3r_sing(sit_u->bat, u3h(cor))) ) {
     return u3_none;
   }
-  sit_u->pog_u = u3n_find(u3r_at(sit_u->axe, cor));
+  sit_u->pog_u = _cj_prog(u3r_at(sit_u->axe, cor));
   if ( u3_none != sit_u->bat ) {
     u3z(sit_u->bat);
   }
@@ -1113,29 +1121,36 @@ _cj_site_kick_hot(u3_noun cor, u3j_site* sit_u)
 {
   u3_weak pro = u3_none;
   c3_o jet_o  = sit_u->jet_o;
-  if ( c3n == __(u3C.wag_w & u3o_debug_cpu) ) {
+  c3_o pof_o  =  __(u3C.wag_w & u3o_debug_cpu);
+  if ( c3n == pof_o ) {
     if ( c3n == jet_o ) {
       pro = u3_none;
     }
     else {
+      u3t_off(glu_o);
       pro = _cj_kick_z(cor, sit_u->cop_u, sit_u->ham_u, sit_u->axe);
+      u3t_on(glu_o);
     }
     if ( u3_none == pro ) {
       pro = _cj_site_lock(cor, sit_u);
     }
   }
   else {
-    u3t_come(sit_u->lab);
+    pof_o = u3t_come(sit_u->lab);
     if ( c3y == jet_o ) {
+      u3t_off(glu_o);
       pro = _cj_kick_z(cor, sit_u->cop_u, sit_u->ham_u, sit_u->axe);
+      u3t_on(glu_o);
     }
     if ( u3_none == pro ) {
       pro = _cj_site_lock(cor, sit_u);
       if ( u3_none == pro ) {
-        pro = u3n_burn(cor, sit_u->pog_u);
+        pro = _cj_burn(cor, sit_u->pog_u);
       }
     }
-    u3t_flee();
+    if ( c3y == pof_o ) {
+      u3t_flee();
+    }
   }
   return pro;
 }
@@ -1233,7 +1248,7 @@ u3j_cook(const c3_c* key_c,
   }
   pro = _cj_site_kick(u3k(inn), &(han_u->sit_u));
   if ( u3_none == pro ) {
-    pro = u3n_burn(inn, han_u->sit_u.pog_u);
+    pro = _cj_burn(inn, han_u->sit_u.pog_u);
   }
   u3z(cor);
   
@@ -1276,7 +1291,7 @@ u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
   }
   sit_u->axe   = 2;
   sit_u->bat   = u3k(cor); // a lie, this isn't really the battery!
-  sit_u->pog_u = u3n_find(u3h(cor));
+  sit_u->pog_u = _cj_prog(u3h(cor));
   if ( u3_none != (loc = sit_u->loc = _cj_spot(cor)) ) {
     u3_noun pax = u3h(u3t(loc)),
             pay = u3qc_cap(pax),
@@ -1301,6 +1316,7 @@ u3j_gate_slam(u3j_site* sit_u, u3_noun sam)
 {
   u3_weak pro;
   u3_noun cor;
+
   u3t_on(glu_o);
   pro = u3_none;
   cor = u3nt(u3k(u3h(sit_u->bat)),
@@ -1310,7 +1326,7 @@ u3j_gate_slam(u3j_site* sit_u, u3_noun sam)
     pro = _cj_site_kick_hot(cor, sit_u);
   }
   if ( u3_none == pro ) {
-    pro = u3n_burn(cor, sit_u->pog_u);
+    pro = _cj_burn(cor, sit_u->pog_u);
   }
   u3t_off(glu_o);
   return pro;

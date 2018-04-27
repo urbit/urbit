@@ -160,18 +160,6 @@
         u3j_nail(u3_noun loc, u3_noun axe,
                  u3_noun* lab, u3j_core** cop_u, u3j_harm** ham_u);
 
-      /* u3j_kick_hot(): Try to kick by jet with resolved hot state.
-      **                 If no kick, produce u3_none.
-      **
-      ** `cor` is RETAINED iff there is no kick, TRANSFERRED if one.
-      ** `axe` is RETAINED.
-      */
-        u3_weak
-        u3j_hock(u3_noun cor,
-                 u3j_core* cop_u,
-                 u3j_harm* ham_u,
-                 u3_atom axe);
-
       /* u3j_kick(): try to kick by jet.  If no kick, produce u3_none.
       **
       ** `axe` is RETAINED by the caller; `cor` is RETAINED iff there 
