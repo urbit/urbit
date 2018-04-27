@@ -1779,35 +1779,46 @@
       --
     ::  +promote-build: promote result of :build to newer :date
     ::
-    ::    Also promotes live listeners, links the two builds in :rebuilds.state,
-    ::    sends %made moves for any once listeners on the new build, and
-    ::    calls +send-future-mades to make sure listener tracking is up to date.
+    ::    Also performs relevant accounting, and possibly sends %made moves.
     ::
     ++  promote-build
       |=  [old-build=build date=@da]
       ^-  [(unit build) _..execute]
+      ::  grab the previous result, freshening the cache
       ::
       =^  old-cache-line  results.state  (access-cache old-build)
+      ::  we can only promote a cached result, not missing or a %tombstone
       ::
       ?>  ?=([~ %result *] old-cache-line)
+      ::  :new-build is :old-build at :date; promotion destination
       ::
-      =/  new-build=build  [date schematic.old-build]
+      =/  new-build=build  old-build(date date)
+      ::  copy the old result to :new-build
       ::
       =.  results.state  (~(put by results.state) new-build u.old-cache-line)
+      ::  link :old-build and :new-build persistently
+      ::
+      ::    We store identical rebuilds persistently so that we know we don't
+      ::    have to promote or rerun clients of the new rebuild.
       ::
       =.  rebuilds.state  (link-rebuilds old-build new-build)
+      ::  if this is the newest %scry on :disc, update :latest-by-disc.state
+      ::
+      ::    :latest-by-disc.state is used to create Clay subscriptions. This
+      ::    promoted build may now be the latest time for this :disc.
       ::
       =?    latest-by-disc.state
           ?&  ?=(%scry -.schematic.old-build)
               =/  disc  (extract-disc dependency.schematic.old-build)
-              ~|  disc+disc
-              ~|  latest-by-disc+latest-by-disc.state
+              ~|  [disc+disc latest-by-disc+latest-by-disc.state]
               (gth date (~(got by latest-by-disc.state) disc))
           ==
         =/  disc  (extract-disc dependency.schematic.old-build)
         (~(put by latest-by-disc.state) disc date)
+      ::  sanity check that +promote-build was called on a registered build
       ::
       ?>  (~(has ju by-date.builds.state) date.new-build schematic.new-build)
+      ::  mirror linkages between :old-build and subs to :new-build and subs
       ::
       =.  components.state
         %+  roll  (~(get-subs by-build-dag components.state) old-build)
@@ -1825,21 +1836,42 @@
         ::
         =/  new-sub=build  old-sub(date date)
         (~(del by-build-dag provisional-components) new-build new-sub)
-      ::  send mades for the currently existing listeners before we add more
+      ::  send %made moves for the previously established live listeners
+      ::
+      ::    We only want to send %made moves for live listeners which were
+      ::    already on :new-build. We don't want to send %made moves for
+      ::    listeners that we copy from :old-build because :new-build has the
+      ::    same result as :old-build; therefore, we would be sending a
+      ::    duplicate %made.
       ::
       =.  ..execute  (send-mades new-build (root-live-listeners new-build))
+      ::  move live listeners from :old-build to :new-build
       ::
-      =.  state  (promote-live-listeners old-build new-build)
+      ::    When we promote a build, we advance the live listeners from
+      ::    :old-build to :new-build. Live listeners should be attached to the
+      ::    most recent completed build for a given schematic.
+      ::
+      =.  state  (advance-live-listeners old-build new-build)
+      ::  send %made moves for once listeners and delete them
+      ::
+      ::    If we have once listeners, we can send %made moves for them and
+      ::    then no longer track them.
       ::
       =.  ..execute  (send-mades new-build (root-once-listeners new-build))
-      ::
       =.  state  (delete-root-once-listeners new-build)
+      ::  send %made moves for future builds
       ::
-      =^  future  ..execute  (send-future-mades new-build)
+      ::    We may have future results queued, waiting on this build to send a
+      ::    %made. Now that we've sent current %made moves, we can send future
+      ::    ones, as we need to send these in chronological order by formal
+      ::    date.
+      ::
+      =^  wiped-rebuild  ..execute  (send-future-mades new-build)
+      ::  :old-build might no longer be tracked by anything
       ::
       =.  ..execute  (cleanup old-build)
       ::
-      [future ..execute]
+      [wiped-rebuild ..execute]
     ::  +send-future-mades: send %made moves for future rebuilds
     ::
     ::    If a future rebuild has been wiped, then produce it along with
@@ -1868,7 +1900,7 @@
               !(has-pinned-client u.next)
           ==
         ::
-        =.  state  (promote-live-listeners build u.next)
+        =.  state  (advance-live-listeners build u.next)
         =.  ..execute  (cleanup build)
         ::  if the result has changed, send %made moves for live listeners
         ::
@@ -2045,7 +2077,7 @@
         ::
         ::    When we have a :previous-build with a :previous-result, and the
         ::    previous-build isn't a descendant of a %pin schematic, we need to
-        ::    promote live listeners because this is now the most recent build.
+        ::    advance live listeners because this is now the most recent build.
         ::
         =?    state
             ?&  ?=(^ previous-build)
@@ -2055,7 +2087,7 @@
                 ::  client
                 !(has-pinned-client u.previous-build)
             ==
-          (promote-live-listeners u.previous-build build)
+          (advance-live-listeners u.previous-build build)
         ::  send results to once listeners and delete them
         ::
         ::    Once listeners are deleted as soon as their %made has been sent
@@ -2113,16 +2145,16 @@
           (cleanup u.previous-build)
         ::  clean up our current build
         ::
-        ::    If :build was a once build, now that we've sent its %mades, we
+        ::    If :build was a once build, now that we've sent its %made moves, we
         ::    can delete it.
         ::
         =.  ..execute  (cleanup build)
         ::  now that we've handled :build, check any future builds
         ::
         ::    We may have future results queued, waiting on this build to send
-        ::    a %made. Now that we've sent current %mades, we can send future
-        ::    ones, as we need to send these in chronological order by formal
-        ::    date.
+        ::    a %made. Now that we've sent current %made moves, we can send
+        ::    future ones, as we need to send these in chronological order by
+        ::    formal date.
         ::
         =^  wiped-rebuild  ..execute  (send-future-mades build)
         ?~  wiped-rebuild
@@ -2809,9 +2841,9 @@
     ::
     =.  ..execute  accumulator
     (cleanup kid)
-  ::  +promote-live-listeners: move live listeners from :old to :new
+  ::  +advance-live-listeners: move live listeners from :old to :new
   ::
-  ++  promote-live-listeners
+  ++  advance-live-listeners
     |=  [old=build new=build]
     ^+  state
     ::
@@ -2994,7 +3026,7 @@
     ::
     ::    When we send a request to a foreign ship, that ship may have
     ::    started responding before we send a cancellation. In that case,
-    ::    cancelling and then resubscribing might cause the foreign ship
+    ::    canceling and then resubscribing might cause the foreign ship
     ::    to send the response twice, which would be extra network traffic.
     ::
     ?:  ?&  (~(has in original-clay-subscriptions) disc)
