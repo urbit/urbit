@@ -3,7 +3,7 @@
 */
 #include "all.h"
 
-  u3_noun
+  static u3_noun
   _turn_in(u3j_site* sit_u, u3_noun a)
   {
     if ( u3_nul == a ) {

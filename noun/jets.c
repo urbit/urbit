@@ -1271,6 +1271,9 @@ u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
 {
   u3_noun loc;
   u3t_on(glu_o);
+  if ( c3n == u3du(cor) || c3n == u3du(u3t(cor)) ) {
+    u3m_bail(c3__exit);
+  }
   sit_u->axe   = 2;
   sit_u->bat   = u3k(cor); // a lie, this isn't really the battery!
   sit_u->pog_u = u3n_find(u3h(cor));
