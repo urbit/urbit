@@ -1,6 +1,5 @@
 /+  tester
-=,  tester:tester
-=,  purl:eyre
+=,  eyre
 ::
 ::::  libraries
 ::
@@ -34,6 +33,59 @@
     :: XX assert rsa-len here too?
     =/  fu  (fu:number p.k q.k)
     (out.fu (exp.fu d.k (sit.fu m)))
+  --
+::
+++  asn1                                              ::  at least, a little
+  =>  |%
+      +=  spec
+        $%  [%oct p=@]
+            [%nul ~]
+            [%obj p=@]
+            [%seq p=(list spec)]
+        ==
+      ::
+      ++  obj                                         ::  constants (rfc4055)
+        |%                                            ::
+        ++  sha-256  0x1.0204.0365.0148.8660          :: 2.16.840.1.101.3.4.2.1
+        --
+      --
+  ::
+  |_  pec=spec
+  ++  ren                                             ::  bytes
+    ^-  (list @)
+    =/  a  lem
+    [tag (weld (len a) a)]
+  ::
+  ++  tag                                             ::  type tag
+    ^-  @
+    ?-  pec
+      [%oct *]   4
+      [%nul *]   5
+      [%obj *]   6
+      [%seq *]  48    :: (con 0x20 16)
+    ==
+  ::
+  ++  lem                                             ::  element bytes
+    ^-  (list @)
+    ?-  pec
+      [%oct *]  (rip 3 p.pec)
+      [%nul *]  ~
+      [%obj *]  (rip 3 p.pec)
+      [%seq *]  %-  zing
+                |-  ^-  (list (list @))
+                ?~  p.pec  ~
+                :-  ren:.(pec i.p.pec)
+                $(p.pec t.p.pec)
+    ==
+  ::
+  ++  len                                             ::  length bytes
+    |=  a=(list @)
+    ^-  (list @)
+    =/  b  (lent a)
+    ?:  (lte b 127)
+      [b ~]
+    :: XX not right
+    [(met 3 b) (rip 3 b)]
   --
 ::
 ++  rs256
@@ -292,6 +344,7 @@
 ++  prep  _[~ this]
 ::
 ++  test
+  =,  tester:tester
   =/  eny  eny.bow
     :: non-deterministic for now
     :: 0vhu.gp79o.hi7at.smp8u.g5hhr.u3rff.st8ms.q4dc2.hv5ls.tp5cp.10qds.
@@ -301,8 +354,9 @@
             :: testen-base64url
             :: testrsakey
             :: testrsa
+            test-asn1
             :: testjwkthumbprint
-            testjws
+            :: testjws
           ==
       ?~(out abet ((slog out) abet))
   ::
@@ -436,7 +490,26 @@
       %-  expect-eq  !>
         [m3 (de:rsa c3 k3)]
     ==
-  --
+  ::
+  ++  test-asn1
+    =/  nul=spec:asn1  [%nul ~]
+    =/  obj=spec:asn1  [%obj sha-256:obj:asn1]
+    =/  oct=spec:asn1  [%oct (shax 'hello\0a')]
+    =/  seq=spec:asn1  [%seq [%seq obj nul ~] oct ~]
+    ;:  weld
+      %-  expect-eq  !>
+        :-  [0x5 0x0 ~]
+        ~(ren asn1 nul)
+      %-  expect-eq  !>
+        :-  [0x6 0x9 0x60 0x86 0x48 0x1 0x65 0x3 0x4 0x2 0x1 ~]
+        ~(ren asn1 obj)
+      %-  expect-eq  !>
+        :-  0x420.5891.b5b5.22d5.df08.6d0f.f0b1.10fb.d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
+        `@ux`(swp 3 (rep 3 ~(ren asn1 oct)))
+      %-  expect-eq  !>
+        :-  0x30.3130.0d06.0960.8648.0165.0304.0201.0500.0420.5891.b5b5.22d5.df08.6d0f.f0b1.10fb.d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
+        `@ux`(swp 3 (rep 3 ~(ren asn1 seq)))
+    ==
   ::
   ++  testjwkthumbprint
     =/  n
@@ -594,5 +667,6 @@
       ::   :-  "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ"
       ::   (en-base64url (crip (en-json-sort lod-order lod)))
     ==
+    --
 --
 
