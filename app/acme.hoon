@@ -90,10 +90,21 @@
 ::
 ++  rs256
   |_  k=key:rsa
-  ++  sign  |=(m=@ (de:rsa (shax m) k))
+  ++  digest
+    |=  m=@
+    ^-  @
+    =/  pec=spec:asn1
+      :~  %seq
+          [%seq [%obj sha-256:obj:asn1] [%nul ~] ~]
+          [%oct (shax m)]
+      ==
+    (rep 3 ~(ren asn1 pec))
+  ::
+  ++  sign  |=(m=@ (de:rsa (digest m) k))
+  ::
   ++  verify
     |=  [s=@ m=@]
-    =((shax m) (en:rsa s k))
+    =((digest m) (en:rsa s k))
   --
 ::
 ++  en-json-sort                                      ::  print json
