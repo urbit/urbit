@@ -84,8 +84,38 @@
     =/  b  (lent a)
     ?:  (lte b 127)
       [b ~]
-    :: XX not right
-    [(met 3 b) (rip 3 b)]
+    [(con 0x80 (met 3 b)) (rip 3 b)]
+  ::
+  ++  decode
+    %+  cook  |*(a=* `spec:asn1`a)
+    ;~  pose
+      (stag %oct (boss 256 ;~(pfix (just `@`4) till)))
+      (stag %nul (cold ~ ;~(plug (just `@`5) (just `@`0))))
+      (stag %obj (boss 256 ;~(pfix (just `@`6) till)))
+      %+  stag  %seq
+      %+  sear
+        |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
+      ;~(pfix (just `@`48) till)
+    ==
+  ::
+  ++  till                                                ::  length-prefixed bytes
+    |=  tub/nail
+    ^-  (like (list @D))
+    ?~  q.tub
+      (fail tub)
+    =*  fuz  i.q.tub
+    =+  ^-  [nex=@ len=@]
+      =/  faz  (end 0 7 fuz)
+      ?:  =(0 (cut 0 [7 1] fuz))
+        [0 faz]
+      =/  fiz  (rep 3 (scag faz t.q.tub))
+      ?.  =(faz (met 3 fiz))  !! :: XX
+      [faz fiz]
+    =/  zuf  (scag len (slag nex t.q.tub))
+    ?.  =(len (lent zuf))
+      (fail tub)
+    =/  zaf  [p.p.tub (add +(nex) q.p.tub)]
+    [zaf `[zuf zaf (slag (add nex len) t.q.tub)]]
   --
 ::
 ++  rs256
@@ -512,14 +542,22 @@
         :-  [0x5 0x0 ~]
         ~(ren asn1 nul)
       %-  expect-eq  !>
+        [nul (scan ~(ren asn1 nul) decode:asn1)]
+      %-  expect-eq  !>
         :-  [0x6 0x9 0x60 0x86 0x48 0x1 0x65 0x3 0x4 0x2 0x1 ~]
         ~(ren asn1 obj)
+      %-  expect-eq  !>
+        [obj (scan ~(ren asn1 obj) decode:asn1)]
       %-  expect-eq  !>
         :-  0x420.5891.b5b5.22d5.df08.6d0f.f0b1.10fb.d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
         `@ux`(swp 3 (rep 3 ~(ren asn1 oct)))
       %-  expect-eq  !>
+        [oct (scan ~(ren asn1 oct) decode:asn1)]
+      %-  expect-eq  !>
         :-  0x30.3130.0d06.0960.8648.0165.0304.0201.0500.0420.5891.b5b5.22d5.df08.6d0f.f0b1.10fb.d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
         `@ux`(swp 3 (rep 3 ~(ren asn1 seq)))
+      %-  expect-eq  !>
+        [seq (scan ~(ren asn1 seq) decode:asn1)]
     ==
   ::
   ++  testjwkthumbprint
