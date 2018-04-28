@@ -351,11 +351,11 @@
     ::      h9bpt.vlmm7.lh375.f6u9n.krqv8.5jcml.cujkr.v1uqv.cjhe5.nplta
   |^  =/  out=tang
           ;:  weld
-            :: testen-base64url
-            :: testrsakey
-            :: testrsa
+            testen-base64url
+            testrsakey
+            testrsa
             test-asn1
-            :: testjwkthumbprint
+            testjwkthumbprint
             :: testjws
           ==
       ?~(out abet ((slog out) abet))
@@ -364,7 +364,7 @@
     =/  jon  '{"iss":"joe","exp":1300819380,"http://example.com/is_root":true}'
     ;:  weld
       %-  expect-eq  !>
-        :-  "AQAB"
+        :-  'AQAB'
         (en-base64url 65.537)
       :: expected value includes newlines
       :: %-  expect-eq  !>
@@ -528,7 +528,7 @@
       ==
     ::
     %-  expect-eq  !>
-      :-  "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs"
+      :-  'NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs'
       (thumbprint k)
   ::
   ++  testjws
