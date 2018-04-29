@@ -15,6 +15,8 @@ require 'sqlite3'  # gem install sqlite3
 require_relative 'graph'
 require_relative 'expand_brackets'
 
+ResultsDir = Pathname('support/results')
+
 class AnticipatedError < RuntimeError
 end
 
@@ -156,8 +158,24 @@ def check_paths_are_unique!(path_drv_map)
   end
 end
 
+# Makes a new map that has the same keys as map1, and the values
+# have all been mapped by map2.
+#
+# Requires map2 to have a key for every value in map1.
 def map_compose(map1, map2)
   map1.transform_values &map2.method(:fetch)
+end
+
+# Like map_compose, but excludes keys from map1 where the corresponding map1
+# value is not a key of map2.
+def map_join(map1, map2)
+  r = {}
+  map1.each do |key, value|
+    if map2.key?(value)
+      r[key] = map2.fetch(value)
+    end
+  end
+  r
 end
 
 def nix_db
@@ -165,6 +183,9 @@ def nix_db
   $db = SQLite3::Database.new '/nix/var/nix/db/db.sqlite', readonly: true
 end
 
+# Given an array of derivations (paths to .drv files in /nix), this function
+# queries the Nix database and returns hash table mapping derivations to
+# a boolean that is true if they have already been built.
 def get_build_status(drvs)
   drv_list_str = drvs.map { |d| "\"#{d}\"" }.join(", ")
   query = <<END
@@ -179,6 +200,27 @@ END
     drv = drv.to_sym
     output_built = !output_id.nil?
     r[drv] = r.fetch(drv, true) && output_built
+  end
+  r
+end
+
+# Given an array of derivations (paths to .drv files in /nix), returns
+# a hash mapping each derivation to a map that maps derivation output
+# names to valid paths in the Nix store.
+def get_valid_results(drvs)
+  drv_list_str = drvs.map { |d| "\"#{d}\"" }.join(", ")
+  query = <<END
+select d.path, o.id, o.path
+from ValidPaths d
+join DerivationOutputs o on d.id == o.drv
+join ValidPaths v on o.path == v.path
+where d.path in (#{drv_list_str});
+END
+  r = {}
+  nix_db.execute(query) do |drv, output_id, output_path|
+    drv = drv.to_sym
+    r[drv] ||= {}
+    r[drv][output_id.to_sym] = output_path
   end
   r
 end
@@ -379,6 +421,30 @@ def make_build_plan(path_state)
   build_plan
 end
 
+# Updates the 'support/results' directory, which holds
+# symbolic links to all the derivations defined by nixcrpkgs and
+# listed in support/derivations.txt which have already been built.
+#
+# Intended use:
+#   ln -s $PWD/support/results /nix/var/nix/gcroots/nixcrpkgs-results
+#   support/manage results
+#   nix-collect-garbage
+def update_results_dir(path_valid_results_map)
+  ResultsDir.mkdir if !ResultsDir.directory?
+  ResultsDir.children.each do |p|
+    p.unlink
+  end
+  modern_links = Set.new
+  path_valid_results_map.each do |path, results_map|
+    results_map.each do |id, result|
+      suffix = id == :out ? '' : ".#{id}"
+      link_name = "#{path}#{suffix}"
+      (ResultsDir + link_name).make_symlink(result)
+      modern_links << link_name
+    end
+  end
+end
+
 def build_paths(path_graph, path_built_map, build_plan, keep_going: true)
   path_built_map = path_built_map.dup
   path_graph = transitive_closure(path_graph)
@@ -407,6 +473,7 @@ end
 def parse_args(argv)
   action = case argv.first
            when 'graph' then :graph
+           when 'results' then :results
            when 'build' then :build
            when 'plan' then :plan
            when 'stats', nil then :stats
@@ -458,6 +525,12 @@ begin
   if action == :build
     success = build_paths(path_state[:graph], path_state[:built_map], build_plan)
     exit(1) if !success
+  end
+
+  if action == :results || action == :build
+    drv_valid_results_map = get_valid_results(drvs)
+    path_valid_results_map = map_join(path_drv_map, drv_valid_results_map).freeze
+    update_results_dir(path_valid_results_map)
   end
 
   if action == :stats
