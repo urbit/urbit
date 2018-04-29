@@ -1,5 +1,10 @@
 #!/usr/bin/env ruby
 
+# This part of hte code is under construction.  It will eventually be a script that
+# helps us check that the derivations we care about are all building,
+# and prints the status of those builds.
+
+
 # This requires Ruby 2.5.0 or later because it uses a new syntax for rescuing
 # exceptions in a block with needing to make an extra begin/end pair.
 
@@ -416,7 +421,7 @@ begin
   args = parse_args(ARGV)
   action = args.fetch(:action)
 
-  settings = parse_derivation_list('test/derivations.txt')
+  settings = parse_derivation_list('support/derivations.txt')
 
   path_drv_map = instantiate_drvs(settings.fetch(:paths))
   check_paths_are_unique!(path_drv_map)
