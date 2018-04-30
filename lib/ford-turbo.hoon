@@ -992,7 +992,7 @@
   ::
   =/  enclose  |=(tape "[{+<}]")
   =/  date=@da  date.build
-  =/  schematic=schematic  schematic.build
+  =/  =schematic  schematic.build
   ::
   %-  enclose
   %+  welp  (trip (scot %da date))
@@ -1043,7 +1043,7 @@
 ++  resource-to-path
   |=  =resource
   ^-  path
-  =/  term=term  (cat 3 [vane care]:resource)
+  =/  =term  (cat 3 [vane care]:resource)
   [term (en-beam (extract-beam resource date=~))]
 ::  +path-to-resource: decode a +resource from a +wire
 ::
@@ -1055,8 +1055,8 @@
   ?~  scry-request
     ~
   =+  [vane care bem]=u.scry-request
-  =/  beam=beam  bem
-  =/  rail=rail  [disc=[p.beam q.beam] spur=s.beam]
+  =/  =beam  bem
+  =/  =rail  [disc=[p.beam q.beam] spur=s.beam]
   `[vane care rail]
 ::  +path-to-scry-request: parse :path to a :scry-request
 ::
@@ -1090,7 +1090,7 @@
 ++  extract-beam
   |=  [=resource date=(unit @da)]  ^-  beam
   ::
-  =/  case=case  ?~(date [%ud 0] [%da u.date])
+  =/  =case  ?~(date [%ud 0] [%da u.date])
   ::
   =,  rail.resource
   [[ship.disc desk.disc case] spur]
@@ -1402,7 +1402,7 @@
     ::
     ++  start-live-build
       ^+  this
-      =/  build=build  [now schematic]
+      =/  =build  [now schematic]
       ::
       =.  state  (associate-build build duct %.y)
       ::
@@ -1411,7 +1411,7 @@
     ++  start-once-build
       ^+  this
       =/  pin-date=@da  (date-from-schematic schematic)
-      =/  build=build  [pin-date schematic]
+      =/  =build  [pin-date schematic]
       ::
       =.  state  (associate-build build duct %.n)
       ::
@@ -1443,7 +1443,7 @@
     =<  finalize
     ::
     =/  date=@da  ?>(?=(%da -.r.beak) p.r.beak)
-    =/  disc=disc  [p.beak q.beak]
+    =/  =disc  [p.beak q.beak]
     ::  delete the now-dead clay subscription
     ::
     =.  clay-subscriptions.state  (~(del in clay-subscriptions.state) disc)
@@ -1541,7 +1541,7 @@
     ::
     =/  clients-with-listener=?
       %+  lien
-        =-  ~(tap in -)
+        %~  tap  in
         =/  clients=(set ^build)
           (fall (~(get by client-builds.components.state) build) ~)
         %-  ~(uni in clients)
@@ -1996,7 +1996,7 @@
       ++  do-live-scry-accounting
         |=  [=build =resource]
         ^+  ..execute
-        =/  disc=disc  (extract-disc resource)
+        =/  =disc  (extract-disc resource)
         ::
         %_    ..execute
         ::  link :disc to :resource
@@ -2262,7 +2262,7 @@
         ::
         =/  all-other-client-listeners=(set listener)
           %+  roll
-            =-  ~(tap in -)
+            %~  tap  in
             ::  omit :build; it's all *other* client listeners
             ::
             =-  (~(del in -) build)
@@ -2342,11 +2342,11 @@
         |=  [date=@da =resource]
         ^-  move
         ::
-        =/  wire=path
+        =/  =wire
           (welp /(scot %p our)/resource (resource-to-path resource))
         ::
-        =/  note=note
-          =/  disc=disc  (extract-disc resource)
+        =/  =note
+          =/  =disc  (extract-disc resource)
           =,  rail.resource
           :*  %c  %warp  sock=[our their=ship.disc]  desk.disc
               `[%sing care.resource case=[%da date] spur]
@@ -2391,7 +2391,7 @@
       ?.  ?=(%scry -.schematic.build)
         |
       ::
-      =/  resource  resource.schematic.build
+      =/  =resource  resource.schematic.build
       ::
       ?.  ?=(%c -.resource)
         |
@@ -2649,7 +2649,7 @@
       ^-  build-receipt
       ::  construct a full +beam to make the scry request
       ::
-      =/  beam  (extract-beam resource `date.build)
+      =/  =beam  (extract-beam resource `date.build)
       ::  perform scry operation if we don't already know the result
       ::
       ::    Look up :resource in :scry-results.per-event to avoid
@@ -2744,7 +2744,7 @@
     ^-  (unit (unit (cask)))
     ?>  ?=([@ *] ref)
     =/  hoon-version=@ud  -.ref
-    =/  type=type  ((hard type) +.ref)
+    =/  =type  ((hard type) +.ref)
     ::
     ~|  hoon-version=hoon-version
     ?>  ?=(?(%143 %151) hoon-version)
@@ -2756,7 +2756,7 @@
     ?~  care
       ~
     ::
-    =/  resource=resource
+    =/  =resource
       [u.vane u.care rail=[[p.beam q.beam] s.beam]]
     ::  TODO: handle other kinds of +case
     ::
@@ -2765,7 +2765,7 @@
       ?>  ?=(%da -.r.beam)
       p.r.beam
     ::
-    =/  build=build  [date %scry resource]
+    =/  =build  [date %scry resource]
     ::  if the actual scry produces a value, use that value; otherwise use local
     ::
     =/  scry-response  (scry +<.$)
@@ -2844,7 +2844,7 @@
     ^+  ..execute
     ::
     =/  kids=(list ^build)
-      =-  ~(tap in -)
+      %~  tap  in
       %-  ~(uni in (~(get ju sub-builds.components.state) build))
       (~(get ju sub-builds.provisional-components.state) build)
     ::
@@ -3024,7 +3024,7 @@
       ::
       ?:  (~(has in original-clay-subscriptions) disc)
         =+  [their desk]=disc
-        =/  note=note
+        =/  =note
           :^  %c  %warp  sock=[our their]
           ^-  riff:clay
           [desk ~]
@@ -3074,7 +3074,7 @@
     =+  [their desk]=disc
     =/  latest-date  (~(got by latest-by-disc.state) disc)
     ::
-    =/  note=note
+    =/  =note
       :^  %c  %warp  sock=[our their]
       ^-  riff:clay
       [desk `[%mult case=[%da latest-date] request-contents]]
@@ -3141,8 +3141,8 @@
       ::
       ?>  ?=([%scry %c *] schematic.build)
       ::
-      =/  resource  resource.schematic.build
-      =/  disc=disc  (extract-disc resource)
+      =/  =resource  resource.schematic.build
+      =/  =disc  (extract-disc resource)
       ::
       =/  should-delete-resource=?
         ::  checks if there are other live builds of this resource
@@ -3270,7 +3270,7 @@
   ::
   ::    TODO: verify wrapped-sign isn't an evil vase?
   ::
-  =/  sign=sign  q.wrapped-sign
+  =/  =sign  q.wrapped-sign
   ::  TODO: support other responses
   ::
   ::  parse :wire into :our, :ship-state, and :resource
@@ -3300,7 +3300,7 @@
     ?>  ?=([%c %writ *] sign)
     ::  resource: the +resource we had previously blocked on
     ::
-    =/  resource
+    =/  =resource
       ~|  [%bad-resource wire]
       (need (path-to-resource t.t.wire))
     ::  scry-result: parse a (unit cage) from :sign
