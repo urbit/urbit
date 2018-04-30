@@ -713,6 +713,18 @@ u3j_hook(u3_noun     cor,
   return pro;
 }
 
+/* _cj_prog(): stop tracing glu and find a nock program
+ */
+static u3p(u3n_prog)
+_cj_prog(u3_noun fol)
+{
+  u3p(u3n_prog) pog_p;
+  u3t_off(glu_o);
+  pog_p = u3n_find(fol);
+  u3t_on(glu_o);
+  return pog_p;
+}
+
 /* cj_hank_find(): find cached hook information, keyed by arbitrary
  *                 prefix and term cords. RETAIN.
  */
@@ -782,30 +794,8 @@ _cj_hank_lose(_cj_hank* han_u)
   }
 }
 
-/* _cj_burn(): stop tracing glu and call a nock program
+/* _cj_hank_fill(): slow path, populate han_u.
  */
-static u3_noun
-_cj_burn(u3p(u3n_prog) pog_p, u3_noun cor)
-{
-  u3_noun pro;
-  u3t_off(glu_o);
-  pro = u3n_burn(pog_p, cor);
-  u3t_on(glu_o);
-  return pro;
-}
-
-/* _cj_prog(): stop tracing glu and find a nock program
- */
-static u3p(u3n_prog)
-_cj_prog(u3_noun fol)
-{
-  u3p(u3n_prog) pog_p;
-  u3t_off(glu_o);
-  pog_p = u3n_find(fol);
-  u3t_on(glu_o);
-  return pog_p;
-}
-
 static u3_noun
 _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
 {
@@ -954,6 +944,8 @@ u3j_kick(u3_noun cor, u3_noun axe)
   }
 }
 
+/* _cj_fink_take(): copy u3j_fink from junior road.
+*/
 static u3j_fink*
 _cj_fink_take(u3j_fink* jun_u)
 {
@@ -972,6 +964,8 @@ _cj_fink_take(u3j_fink* jun_u)
   return fin_u;
 }
 
+/* _cj_fink_take(): lose and free everything in a u3j_fink.
+*/
 static void
 _cj_fink_free(u3j_fink* fin_u)
 {
@@ -1085,19 +1079,32 @@ u3j_site_ream(u3j_site* sit_u)
   }
 }
 
-static u3_weak
+/* _cj_site_lock(): ensure site has a valid program pointer
+ */
+static void
 _cj_site_lock(u3_noun cor, u3j_site* sit_u)
 {
   if ( (u3_none != sit_u->bat) &&
        (c3y == u3r_sing(sit_u->bat, u3h(cor))) ) {
-    return u3_none;
+    return;
   }
   sit_u->pog_p = _cj_prog(u3r_at(sit_u->axe, cor));
   if ( u3_none != sit_u->bat ) {
     u3z(sit_u->bat);
   }
   sit_u->bat = u3k(u3h(cor));
-  return u3_none;
+}
+
+/* _cj_burn(): stop tracing glu and call a nock program
+ */
+static u3_noun
+_cj_burn(u3p(u3n_prog) pog_p, u3_noun cor)
+{
+  u3_noun pro;
+  u3t_off(glu_o);
+  pro = u3n_burn(pog_p, cor);
+  u3t_on(glu_o);
+  return pro;
 }
 
 static u3_weak
@@ -1116,7 +1123,7 @@ _cj_site_kick_hot(u3_noun cor, u3j_site* sit_u)
       u3t_on(glu_o);
     }
     if ( u3_none == pro ) {
-      pro = _cj_site_lock(cor, sit_u);
+      _cj_site_lock(cor, sit_u);
     }
   }
   else {
@@ -1127,10 +1134,8 @@ _cj_site_kick_hot(u3_noun cor, u3j_site* sit_u)
       u3t_on(glu_o);
     }
     if ( u3_none == pro ) {
-      pro = _cj_site_lock(cor, sit_u);
-      if ( u3_none == pro ) {
-        pro = _cj_burn(sit_u->pog_p, cor);
-      }
+      _cj_site_lock(cor, sit_u);
+      pro = _cj_burn(sit_u->pog_p, cor);
     }
     if ( c3y == pof_o ) {
       u3t_flee();
@@ -1194,7 +1199,7 @@ _cj_site_kick(u3_noun cor, u3j_site* sit_u)
   }
 
   if ( u3_none == pro ) {
-    pro = _cj_site_lock(cor, sit_u);
+    _cj_site_lock(cor, sit_u);
   }
 
   return pro;
