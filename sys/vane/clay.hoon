@@ -1886,6 +1886,12 @@
         $(rov [-.rov mol `+(u.aey) ~ ~])
       ::  if old isn't complete, try filling in the gaps.
       =?  old  !(complete old)
+        ::  if we're looking for changes in revision zero, then the previous
+        ::  revision only has "file does not exist" results.
+        ?:  =(u.yon 0)
+          %-  ~(gas by *(map (pair care path) cach))
+          %+  turn  ~(tap in q.mol)
+          |=(r=(pair care path) [r [~ ~]])
         (read-unknown mol(p [%ud (dec u.yon)]) old)
       ::  if the next aeon we want to compare is in the future, wait again.
       =+  aey=(case-to-aeon:ze [%ud u.yon])
