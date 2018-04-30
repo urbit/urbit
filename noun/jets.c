@@ -1881,6 +1881,8 @@ u3j_site_mark(u3j_site* sit_u)
   return tot_w;
 }
 
+/* _cj_mark_hank(): mark hank cache for gc.
+*/
 static void
 _cj_mark_hank(u3_noun kev, void* dat)
 {
@@ -1906,6 +1908,8 @@ u3j_mark(void)
   return tot_w;
 }
 
+/* _cj_free_hank(): free hank cache.
+*/
 static void
 _cj_free_hank(u3_noun kev)
 {
