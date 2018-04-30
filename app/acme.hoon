@@ -4,37 +4,6 @@
 ::::  libraries
 ::
 |%
-++  rsa                                                 ::  unpadded!
-  |%
-  +=  key  [p=@ux q=@ux n=@ux e=@ux d=@ux]
-  ++  elcm
-    |=  [a=@ b=@]
-    (div (mul a b) d:(egcd a b))
-  ::
-  ++  new-key
-    |=  [wid=@ eny=@]
-    ^-  key
-    =/  diw  (rsh 0 1 wid)
-    =/  p=@ux  (ramp:number diw [3 5 ~] eny)
-    =/  q=@ux  (ramp:number diw [3 5 ~] +(eny))
-    =/  n=@ux  (mul p q)
-    =/  e  `@ux`65.537
-    =/  d=@ux  (~(inv fo (elcm (dec p) (dec q))) e)
-    [p q n e d]
-  ::
-  ++  en
-    |=  [m=@ k=key]
-    ~|  %rsa-len
-    ?>  (lte (met 0 m) (met 0 n.k))
-    (~(exp fo n.k) e.k m)
-  ::
-  ++  de
-    |=  [m=@ k=key]
-    :: XX assert rsa-len here too?
-    =/  fu  (fu:number p.k q.k)
-    (out.fu (exp.fu d.k (sit.fu m)))
-  --
-::
 ++  asn1                                              ::  at least, a little
   =>  |%
       +=  spec
@@ -116,6 +85,37 @@
       (fail tub)
     =/  zaf  [p.p.tub (add +(nex) q.p.tub)]
     [zaf `[zuf zaf (slag (add nex len) t.q.tub)]]
+  --
+::
+++  rsa                                                 ::  unpadded!
+  |%
+  +=  key  [p=@ux q=@ux n=@ux e=@ux d=@ux]
+  ++  elcm
+    |=  [a=@ b=@]
+    (div (mul a b) d:(egcd a b))
+  ::
+  ++  new-key
+    =/  e  `@ux`65.537
+    |=  [wid=@ eny=@]
+    ^-  key
+    =/  diw  (rsh 0 1 wid)
+    =/  p=@ux  (ramp:number diw [3 5 ~] eny)
+    =/  q=@ux  (ramp:number diw [3 5 ~] +(eny))
+    =/  n=@ux  (mul p q)
+    =/  d=@ux  (~(inv fo (elcm (dec p) (dec q))) e)
+    [p q n e d]
+  ::
+  ++  en
+    |=  [m=@ k=key]
+    ~|  %rsa-len
+    ?>  (lte (met 0 m) (met 0 n.k))
+    (~(exp fo n.k) e.k m)
+  ::
+  ++  de
+    |=  [m=@ k=key]
+    :: XX assert rsa-len here too?
+    =/  fu  (fu:number p.k q.k)
+    (out.fu (exp.fu d.k (sit.fu m)))
   --
 ::
 ++  rs256
