@@ -61,39 +61,43 @@
         u3j_core* ray_u;              //  dynamic array by axis
       } u3j_dash;
 
-      /* u3j_fist: a single step in a fine check */
+    /* u3j_fist: a single step in a fine check
+    */
       typedef struct {
         u3_noun bat;                  //  battery
         u3_noun pax;                  //  parent axis
       } u3j_fist;
 
-      /* u3j_fink: (fine check) verify a located core */
+    /* u3j_fink: (fine check) verify a located core
+    */
       typedef struct {
         c3_w    len_w;                //  number of fists
         u3_noun sat;                  //  static noun at end of check
         u3j_fist fis_u[0];            //  fists
       } u3j_fink;
 
-      /* u3j_rite: site of a %fast, used to skip re-mining */
+    /* u3j_rite: site of a %fast, used to skip re-mining
+    */
       typedef struct {
         c3_o          own_o;          //  rite owns fink?
         u3_weak       clu;            //  cached product of clue formula
         u3p(u3j_fink) fin_p;          //  fine check
       } u3j_rite;
 
-      /* u3j_site: site of a nock 9 */
+    /* u3j_site: site of a kick (nock 9), used to cache call target
+    */
       struct _u3n_prog;
       typedef struct {
-        struct _u3n_prog *pog_u;
-        u3_noun   axe;
-        u3_weak   bat;
-        u3_weak   loc;
-        c3_o      jet_o;
-        c3_o      fon_o;
-        u3_weak   lab;
-        u3j_core* cop_u;
-        u3j_harm* ham_u;
-        u3j_fink* fin_u;
+        u3p(struct _u3n_prog) pog_p;  //  program for formula
+        u3_noun       axe;            //  axis
+        u3_weak       bat;            //  battery (for verification)
+        u3_weak       loc;            //  location (for reaming)
+        c3_o          jet_o;          //  have jet driver?
+        c3_o          fon_o;          //  site owns fink?
+        u3_weak       lab;            //  label (for tracing)
+        u3j_core*     cop_u;          //  jet core
+        u3j_harm*     ham_u;          //  jet arm
+        u3p(u3j_fink) fin_p;          //  fine check
       } u3j_site;
 
   /** Globals.

@@ -883,7 +883,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
           _n_prog_asm_inx(buf_y, &i_w, cal_s, cod);
           u3j_site* sit_u = &(pog_u->cal_u.sit_u[cal_s++]);
           sit_u->axe   = u3k(u3t(op));
-          sit_u->pog_u = NULL;
+          sit_u->pog_p = 0;
           sit_u->bat   = u3_none;
           sit_u->loc   = u3_none;
           sit_u->lab   = u3_none;
@@ -891,7 +891,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
           sit_u->fon_o = c3n;
           sit_u->cop_u = NULL;
           sit_u->ham_u = NULL;
-          sit_u->fin_u = NULL;
+          sit_u->fin_p = 0;
           break;
         }
       }
@@ -1449,7 +1449,7 @@ _n_find(u3_noun fol)
         for ( i_w = 0; i_w < old->cal_u.len_w; ++i_w ) {
           u3j_site* sit_u = &(old->cal_u.sit_u[i_w]);
           sit_u->bat   = u3_none;
-          sit_u->pog_u = NULL;
+          sit_u->pog_p = 0;
           sit_u->fon_o = c3n;
         }
         u3h_put(u3R->byc.har_p, fol, u3a_outa(old));
@@ -1938,7 +1938,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
         fam->ip_w   = ip_w;
         fam->pog_u  = pog_u;
 
-        pog_u = sit_u->pog_u;
+        pog_u = u3to(u3n_prog, sit_u->pog_p);
         pog   = pog_u->byc_u.ops_y;
         ip_w  = 0;
 #ifdef U3_CPU_DEBUG
@@ -1970,7 +1970,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       *top = _n_kick(o, sit_u);
       if ( u3_none == *top ) {
         *top  = o;
-        pog_u = sit_u->pog_u;
+        pog_u = u3to(u3n_prog, sit_u->pog_p);
         pog   = pog_u->byc_u.ops_y;
         ip_w  = 0;
 #ifdef U3_CPU_DEBUG

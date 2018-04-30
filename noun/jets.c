@@ -788,7 +788,7 @@ _cj_hank_fine(_cj_hank* han_u, u3_noun cor, u3_noun *inn)
     else {
       u3j_site* sit_u = &(han_u->sit_u);
       c3_assert(u3_none != sit_u->loc);
-      return _cj_fine(*inn, sit_u->fin_u);
+      return _cj_fine(*inn, u3to(u3j_fink, sit_u->fin_p));
     }
   }
 }
@@ -846,14 +846,14 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
       u3z(got);
       sit_u->bat   = u3k(u3h(cor));
       sit_u->loc   = u3k(loc);
-      sit_u->fin_u = _cj_cast(cor, loc);
+      sit_u->fin_p = u3of(u3j_fink, _cj_cast(cor, loc));
       sit_u->fon_o = c3y;
       if ( 0 == (sit_u->axe = _cj_axis(fol)) ) {
         sit_u->jet_o = c3n;
-        sit_u->pog_u = _cj_prog(fol);
+        sit_u->pog_p = u3of(u3n_prog, _cj_prog(fol));
       }
       else {
-        han_u->sit_u.pog_u = _cj_prog(u3r_at(sit_u->axe, cor));
+        han_u->sit_u.pog_p = u3of(u3n_prog, _cj_prog(u3r_at(sit_u->axe, cor)));
         han_u->sit_u.jet_o = _cj_nail(loc, sit_u->axe,
             &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u));
       }
@@ -1043,21 +1043,21 @@ u3j_site_copy(u3j_site* dst_u, u3j_site* src_u, c3_o los_o)
   }
   else {
     dst_u->bat   = u3_none;
-    dst_u->pog_u = NULL;
+    dst_u->pog_p = 0;
     dst_u->loc   = u3_none;
     dst_u->lab   = u3_none;
     dst_u->jet_o = c3n;
     dst_u->fon_o = c3n;
     dst_u->cop_u = NULL;
     dst_u->ham_u = NULL;
-    dst_u->fin_u = NULL;
+    dst_u->fin_p = 0;
   }
 
   if ( u3_none != src_u->loc ) {
     u3_noun  lob   = dst_u->lab,
              lod   = dst_u->loc;
     c3_o     fon_o = dst_u->fon_o;
-    u3j_fink* fon_u = dst_u->fin_u;
+    u3p(u3j_fink) fon_p = dst_u->fin_p;
 
     dst_u->loc   = u3a_take(src_u->loc);
     dst_u->lab   = u3a_take(src_u->lab);
@@ -1066,11 +1066,11 @@ u3j_site_copy(u3j_site* dst_u, u3j_site* src_u, c3_o los_o)
     dst_u->jet_o = src_u->jet_o;
 
     if ( c3y == src_u->fon_o ) {
-      dst_u->fin_u = _cj_fink_take(src_u->fin_u);
+      dst_u->fin_p = u3of(u3j_fink, _cj_fink_take(u3to(u3j_fink, src_u->fin_p)));
       dst_u->fon_o = c3y;
     }
-    else if ( fon_u != src_u->fin_u ) {
-      dst_u->fin_u = src_u->fin_u;
+    else if ( fon_p != src_u->fin_p ) {
+      dst_u->fin_p = src_u->fin_p;
       dst_u->fon_o = c3n;
     }
     else {
@@ -1082,7 +1082,7 @@ u3j_site_copy(u3j_site* dst_u, u3j_site* src_u, c3_o los_o)
         u3z(lod);
         u3z(lob);
         if ( c3y == fon_o ) {
-          _cj_fink_free(fon_u);
+          _cj_fink_free(u3to(u3j_fink, fon_p));
         }
       }
     }
@@ -1108,7 +1108,7 @@ _cj_site_lock(u3_noun cor, u3j_site* sit_u)
        (c3y == u3r_sing(sit_u->bat, u3h(cor))) ) {
     return u3_none;
   }
-  sit_u->pog_u = _cj_prog(u3r_at(sit_u->axe, cor));
+  sit_u->pog_p = u3of(u3n_prog, _cj_prog(u3r_at(sit_u->axe, cor)));
   if ( u3_none != sit_u->bat ) {
     u3z(sit_u->bat);
   }
@@ -1145,7 +1145,7 @@ _cj_site_kick_hot(u3_noun cor, u3j_site* sit_u)
     if ( u3_none == pro ) {
       pro = _cj_site_lock(cor, sit_u);
       if ( u3_none == pro ) {
-        pro = _cj_burn(cor, sit_u->pog_u);
+        pro = _cj_burn(cor, u3to(u3n_prog, sit_u->pog_p));
       }
     }
     if ( c3y == pof_o ) {
@@ -1163,7 +1163,7 @@ _cj_site_kick(u3_noun cor, u3j_site* sit_u)
   loc = pro = u3_none;
 
   if ( u3_none != sit_u->loc ) {
-    if ( c3y == _cj_fine(cor, sit_u->fin_u) ) {
+    if ( c3y == _cj_fine(cor, u3to(u3j_fink, sit_u->fin_p)) ) {
       loc = sit_u->loc;
       if ( c3y == sit_u->jet_o ) {
         pro = _cj_site_kick_hot(cor, sit_u);
@@ -1174,7 +1174,7 @@ _cj_site_kick(u3_noun cor, u3j_site* sit_u)
   if ( u3_none == loc ) {
     loc = _cj_spot(cor);
     if ( u3_none != loc ) {
-      u3j_fink* fon_u = NULL;
+      u3p(u3j_fink) fon_p = 0;
       u3_weak  lod   = u3_none;
       u3_weak  lob   = u3_none;
 
@@ -1182,12 +1182,12 @@ _cj_site_kick(u3_noun cor, u3j_site* sit_u)
         lod = sit_u->loc;
         lob = sit_u->lab;
         if ( c3y == sit_u->fon_o ) {
-          fon_u = sit_u->fin_u;
+          fon_p = sit_u->fin_p;
         }
       }
 
       sit_u->loc   = loc;
-      sit_u->fin_u = _cj_cast(cor, loc);
+      sit_u->fin_p = u3of(u3j_fink, _cj_cast(cor, loc));
       sit_u->fon_o = c3y;
       if ( c3y ==
         (sit_u->jet_o = _cj_nail(loc, sit_u->axe,
@@ -1202,8 +1202,8 @@ _cj_site_kick(u3_noun cor, u3j_site* sit_u)
       if ( u3_none != lod ) {
         u3z(lod);
         u3z(lob);
-        if ( NULL != fon_u ) {
-          _cj_fink_free(fon_u);
+        if ( 0 != fon_p ) {
+          _cj_fink_free(u3to(u3j_fink, fon_p));
         }
       }
     }
@@ -1248,7 +1248,7 @@ u3j_cook(const c3_c* key_c,
   }
   pro = _cj_site_kick(u3k(inn), &(han_u->sit_u));
   if ( u3_none == pro ) {
-    pro = _cj_burn(inn, han_u->sit_u.pog_u);
+    pro = _cj_burn(inn, u3to(u3n_prog, han_u->sit_u.pog_p));
   }
   u3z(cor);
   
@@ -1293,7 +1293,7 @@ u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
   }
   sit_u->axe   = 2;
   sit_u->bat   = cor; // a lie, this isn't really the battery!
-  sit_u->pog_u = _cj_prog(u3h(cor));
+  sit_u->pog_p = u3of(u3n_prog, _cj_prog(u3h(cor)));
   if ( u3_none != (loc = sit_u->loc = _cj_spot(cor)) ) {
     u3_noun pax = u3h(u3t(loc)),
             pay = u3qc_cap(pax),
@@ -1328,7 +1328,7 @@ u3j_gate_slam(u3j_site* sit_u, u3_noun sam)
     pro = _cj_site_kick_hot(cor, sit_u);
   }
   if ( u3_none == pro ) {
-    pro = _cj_burn(cor, sit_u->pog_u);
+    pro = _cj_burn(cor, u3to(u3n_prog, sit_u->pog_p));
   }
   u3t_off(glu_o);
   return pro;
@@ -1832,7 +1832,7 @@ u3j_site_lose(u3j_site* sit_u)
     u3z(sit_u->loc);
     u3z(sit_u->lab);
     if ( c3y == sit_u->fon_o ) {
-      _cj_fink_free(sit_u->fin_u);
+      _cj_fink_free(u3to(u3j_fink, sit_u->fin_p));
     }
   }
 }
@@ -1874,7 +1874,7 @@ u3j_site_mark(u3j_site* sit_u)
     tot_w += u3a_mark_noun(sit_u->loc);
     tot_w += u3a_mark_noun(sit_u->lab);
     if ( c3y == sit_u->fon_o ) {
-      tot_w += _cj_fink_mark(sit_u->fin_u);
+      tot_w += _cj_fink_mark(u3to(u3j_fink, sit_u->fin_p));
     }
   }
   return tot_w;
