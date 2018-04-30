@@ -118,7 +118,7 @@
     ::
         %dns-domains
       :-  (crip "dnsDomains({(scow %ud ind.cal)})")
-      ['dnsDomains(uint8)' ~[uint+ind.cal]]
+      ['dnsDomains(uint256)' ~[uint+ind.cal]]
     ==
   --
 --
