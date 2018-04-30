@@ -63,7 +63,8 @@
 ++  asn1                                              ::  at least, a little
   =>  |%
       +=  spec
-        $%  [%oct p=@]
+        $%  [%int p=@]
+            [%oct p=@]
             [%nul ~]
             [%obj p=@]
             [%seq p=(list spec)]
@@ -84,6 +85,7 @@
   ++  tag                                             ::  type tag
     ^-  @
     ?-  pec
+      [%int *]   2
       [%oct *]   4
       [%nul *]   5
       [%obj *]   6
@@ -93,9 +95,14 @@
   ++  lem                                             ::  element bytes
     ^-  (list @)
     ?-  pec
+      [%int *]  ?:  (lte p.pec 127)     :: XX unsigned only!
+                  [p.pec ~]
+                [0 (rip 3 p.pec)]
+      ::
       [%oct *]  (rip 3 p.pec)
       [%nul *]  ~
       [%obj *]  (rip 3 p.pec)
+      ::
       [%seq *]  %-  zing
                 |-  ^-  (list (list @))
                 ?~  p.pec  ~
@@ -114,9 +121,16 @@
   ++  decode
     %+  cook  |*(a=* `spec:asn1`a)
     ;~  pose
+      %+  stag  %int
+      %+  boss  256
+      %+  cook
+        |=(a=(list @) ?:(?=([@ @ *] a) t.a a))
+      ;~(pfix (just `@`2) till)
+      ::
       (stag %oct (boss 256 ;~(pfix (just `@`4) till)))
       (stag %nul (cold ~ ;~(plug (just `@`5) (just `@`0))))
       (stag %obj (boss 256 ;~(pfix (just `@`6) till)))
+      ::
       %+  stag  %seq
       %+  sear
         |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
@@ -557,6 +571,7 @@
   ::
   ++  test-asn1
     =/  nul=spec:asn1  [%nul ~]
+    =/  int=spec:asn1  [%int 187]
     =/  obj=spec:asn1  [%obj sha-256:obj:asn1]
     =/  oct=spec:asn1  [%oct (shax 'hello\0a')]
     =/  seq=spec:asn1  [%seq [%seq obj nul ~] oct ~]
@@ -566,6 +581,11 @@
         ~(ren asn1 nul)
       %-  expect-eq  !>
         [nul (scan ~(ren asn1 nul) decode:asn1)]
+      %-  expect-eq  !>
+        :-  [0x2 0x2 0x0 0xbb ~]
+        ~(ren asn1 int)
+      %-  expect-eq  !>
+        [int (scan ~(ren asn1 int) decode:asn1)]
       %-  expect-eq  !>
         :-  [0x6 0x9 0x60 0x86 0x48 0x1 0x65 0x3 0x4 0x2 0x1 ~]
         ~(ren asn1 obj)
