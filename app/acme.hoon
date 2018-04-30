@@ -410,7 +410,9 @@
       :: expected value includes newlines
       :: %-  expect-eq  !>
       ::   ~&  (en-base64:mimes:html jon)
-      ::   :-  "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ"
+      ::   :-  %+  weld
+      ::         "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQo"
+      ::       "gImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ"
       ::   (en-base64url jon)
     ==
   ::
@@ -549,12 +551,14 @@
       %-  expect-eq  !>
         [obj (scan ~(ren asn1 obj) decode:asn1)]
       %-  expect-eq  !>
-        :-  0x420.5891.b5b5.22d5.df08.6d0f.f0b1.10fb.d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
+        :-    0x420.5891.b5b5.22d5.df08.6d0f.f0b1.10fb.
+          d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
         `@ux`(swp 3 (rep 3 ~(ren asn1 oct)))
       %-  expect-eq  !>
         [oct (scan ~(ren asn1 oct) decode:asn1)]
       %-  expect-eq  !>
-        :-  0x30.3130.0d06.0960.8648.0165.0304.0201.0500.0420.5891.b5b5.22d5.df08.6d0f.f0b1.10fb.d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
+        :-  0x30.3130.0d06.0960.8648.0165.0304.0201.0500.0420.5891.b5b5.22d5.
+            df08.6d0f.f0b1.10fb.d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
         `@ux`(swp 3 (rep 3 ~(ren asn1 seq)))
       %-  expect-eq  !>
         [seq (scan ~(ren asn1 seq) decode:asn1)]
@@ -670,7 +674,8 @@
       ;:  weld
         "eyJhbGciOiJSUzI1NiJ9"
         "."
-        "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ"
+        "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQo"
+        "gImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ"
       ==
     =/  exp=@t
       %+  rap  3
@@ -713,7 +718,9 @@
         :: (en-base64url sig)
       :: expected value has newlines
       :: %-  expect-eq  !>
-      ::   :-  "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ"
+      ::   :-  %+  weld
+      ::         "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQo"
+      ::       "gImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ"
       ::   (en-base64url (crip (en-json-sort lod-order lod)))
     ==
     --
