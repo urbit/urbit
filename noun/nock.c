@@ -789,7 +789,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
           u3j_rite* rit_u = &(pog_u->reg_u.rit_u[reg_s++]);
           rit_u->own_o = c3n;
           rit_u->clu   = u3_none;
-          rit_u->fin_u = NULL;
+          rit_u->fin_p = 0;
           break;
         }
       }

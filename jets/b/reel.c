@@ -28,7 +28,7 @@
   {
     u3_noun  pro;
     u3j_site sit_u;
-    u3j_gate_prep(&sit_u, b);
+    u3j_gate_prep(&sit_u, u3k(b));
     pro = _reel_in(&sit_u, a, u3k(u3r_at(u3x_sam_3, b)));
     u3j_gate_lose(&sit_u);
     return pro;

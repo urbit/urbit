@@ -1009,16 +1009,16 @@ u3j_rite_copy(u3j_rite* dst_u, u3j_rite* src_u, c3_o los_o)
 {
   if ( u3_none == src_u->clu ) {
     dst_u->clu   = u3_none;
-    dst_u->fin_u = NULL;
+    dst_u->fin_p = 0;
   }
   else {
-    u3_noun  old    = dst_u->clu;
-    u3j_fink* fon_u = dst_u->fin_u;
-    c3_o     own_o  = dst_u->own_o;
+    u3_noun   old   = dst_u->clu;
+    u3j_fink* fon_u = u3to(u3j_fink, dst_u->fin_p);
+    c3_o      own_o = dst_u->own_o;
     if ( c3y == src_u->own_o ) {
       dst_u->own_o = c3y;
       dst_u->clu   = u3a_take(src_u->clu);
-      dst_u->fin_u = _cj_fink_take(src_u->fin_u);
+      dst_u->fin_p = u3of(u3j_fink, _cj_fink_take(u3to(u3j_fink, src_u->fin_p)));
       if ( (c3y == los_o) &&
           (u3_none != old) &&
           (c3y == own_o) ) {
@@ -1280,6 +1280,7 @@ u3j_kink(u3_noun cor, u3_noun axe)
 }
 
 /* u3j_gate_prep(): prepare a locally cached gate to call repeatedly.
+ *                  core is TRANSFERRED.
  */
 void
 u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
@@ -1288,9 +1289,10 @@ u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
   u3t_on(glu_o);
   if ( c3n == u3du(cor) || c3n == u3du(u3t(cor)) ) {
     u3m_bail(c3__exit);
+    return;
   }
   sit_u->axe   = 2;
-  sit_u->bat   = u3k(cor); // a lie, this isn't really the battery!
+  sit_u->bat   = cor; // a lie, this isn't really the battery!
   sit_u->pog_u = _cj_prog(u3h(cor));
   if ( u3_none != (loc = sit_u->loc = _cj_spot(cor)) ) {
     u3_noun pax = u3h(u3t(loc)),
@@ -1551,15 +1553,15 @@ u3j_rite_mine(u3j_rite* rit_u, u3_noun clu, u3_noun cor)
 
   if ( non_t ||
        c3n == u3r_sing(rit_u->clu, clu) ||
-       c3n == _cj_fine(cor, rit_u->fin_u) ) {
+       c3n == _cj_fine(cor, u3to(u3j_fink, rit_u->fin_p)) ) {
     u3_weak loc = _cj_mile(u3k(clu), u3k(cor));
     if ( u3_none != loc ) {
       u3_noun   old   = rit_u->clu;
-      u3j_fink* fon_u = rit_u->fin_u;
+      u3j_fink* fon_u = u3to(u3j_fink, rit_u->fin_p);
       c3_o      own_o = rit_u->own_o;
       rit_u->own_o    = c3y;
       rit_u->clu      = u3k(clu);
-      rit_u->fin_u    = _cj_cast(cor, loc);
+      rit_u->fin_p    = u3of(u3j_fink, _cj_cast(cor, loc));
       u3z(loc);
 
       if ( !non_t && (c3y == own_o) ) {
@@ -1842,7 +1844,7 @@ u3j_rite_lose(u3j_rite* rit_u)
 {
   if ( (c3y == rit_u->own_o) && u3_none != rit_u->clu ) {
     u3z(rit_u->clu);
-    _cj_fink_free(rit_u->fin_u);
+    _cj_fink_free(u3to(u3j_fink, rit_u->fin_p));
   }
 }
 
@@ -1854,7 +1856,7 @@ u3j_rite_mark(u3j_rite* rit_u)
   c3_w tot_w = 0;
   if ( (c3y == rit_u->own_o) && u3_none != rit_u->clu ) {
     tot_w += u3a_mark_noun(rit_u->clu);
-    tot_w += _cj_fink_mark(rit_u->fin_u);
+    tot_w += _cj_fink_mark(u3to(u3j_fink, rit_u->fin_p));
   }
   return tot_w;
 }

@@ -61,23 +61,27 @@
         u3j_core* ray_u;              //  dynamic array by axis
       } u3j_dash;
 
+      /* u3j_fist: a single step in a fine check */
       typedef struct {
-        u3_noun bat;
-        u3_noun pax;
+        u3_noun bat;                  //  battery
+        u3_noun pax;                  //  parent axis
       } u3j_fist;
 
+      /* u3j_fink: (fine check) verify a located core */
       typedef struct {
-        c3_w    len_w;
-        u3_noun sat;
-        u3j_fist fis_u[0];
+        c3_w    len_w;                //  number of fists
+        u3_noun sat;                  //  static noun at end of check
+        u3j_fist fis_u[0];            //  fists
       } u3j_fink;
 
+      /* u3j_rite: site of a %fast, used to skip re-mining */
       typedef struct {
-        c3_o      own_o;
-        u3_weak   clu;
-        u3j_fink* fin_u;
+        c3_o          own_o;          //  rite owns fink?
+        u3_weak       clu;            //  cached product of clue formula
+        u3p(u3j_fink) fin_p;          //  fine check
       } u3j_rite;
 
+      /* u3j_site: site of a nock 9 */
       struct _u3n_prog;
       typedef struct {
         struct _u3n_prog *pog_u;

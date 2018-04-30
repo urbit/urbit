@@ -33,7 +33,7 @@
   {
     u3j_site sit_u;
     u3_noun  pro;
-    u3j_gate_prep(&sit_u, b);
+    u3j_gate_prep(&sit_u, u3k(b));
     pro = _skip_in(&sit_u, a);
     u3j_gate_lose(&sit_u);
     return pro;
