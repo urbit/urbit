@@ -794,14 +794,16 @@ _cj_burn(u3p(u3n_prog) pog_p, u3_noun cor)
   return pro;
 }
 
-static u3n_prog*
+/* _cj_prog(): stop tracing glu and find a nock program
+ */
+static u3p(u3n_prog)
 _cj_prog(u3_noun fol)
 {
-  u3n_prog* pog_u;
+  u3p(u3n_prog) pog_p;
   u3t_off(glu_o);
-  pog_u = u3n_find(fol);
+  pog_p = u3n_find(fol);
   u3t_on(glu_o);
-  return pog_u;
+  return pog_p;
 }
 
 static u3_noun
@@ -832,10 +834,10 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
       sit_u->fon_o = c3y;
       if ( 0 == (sit_u->axe = _cj_axis(fol)) ) {
         sit_u->jet_o = c3n;
-        sit_u->pog_p = u3of(u3n_prog, _cj_prog(fol));
+        sit_u->pog_p = _cj_prog(fol);
       }
       else {
-        han_u->sit_u.pog_p = u3of(u3n_prog, _cj_prog(u3r_at(sit_u->axe, cor)));
+        han_u->sit_u.pog_p = _cj_prog(u3r_at(sit_u->axe, cor));
         han_u->sit_u.jet_o = _cj_nail(loc, sit_u->axe,
             &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u));
       }
@@ -1090,7 +1092,7 @@ _cj_site_lock(u3_noun cor, u3j_site* sit_u)
        (c3y == u3r_sing(sit_u->bat, u3h(cor))) ) {
     return u3_none;
   }
-  sit_u->pog_p = u3of(u3n_prog, _cj_prog(u3r_at(sit_u->axe, cor)));
+  sit_u->pog_p = _cj_prog(u3r_at(sit_u->axe, cor));
   if ( u3_none != sit_u->bat ) {
     u3z(sit_u->bat);
   }
@@ -1275,7 +1277,7 @@ u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
   }
   sit_u->axe   = 2;
   sit_u->bat   = cor; // a lie, this isn't really the battery!
-  sit_u->pog_p = u3of(u3n_prog, _cj_prog(u3h(cor)));
+  sit_u->pog_p = _cj_prog(u3h(cor));
   if ( u3_none != (loc = sit_u->loc = _cj_spot(cor)) ) {
     u3_noun pax = u3h(u3t(loc)),
             pay = u3qc_cap(pax),

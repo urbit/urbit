@@ -1467,14 +1467,14 @@ _n_find(u3_noun fol)
 
 /* u3n_find(): return prog for given formula. fol is RETAINED.
  */
-u3n_prog*
+u3p(u3n_prog)
 u3n_find(u3_noun fol)
 {
-  u3n_prog* pog_u;
+  u3p(u3n_prog) pog_p;
   u3t_on(noc_o);
-  pog_u = _n_find(fol);
+  pog_p = u3of(u3n_prog, _n_find(fol));
   u3t_off(noc_o);
-  return pog_u;
+  return pog_p;
 }
 
 /* _n_swap(): swap two items on the top of the stack, return pointer to top
