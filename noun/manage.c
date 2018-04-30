@@ -471,7 +471,7 @@ u3m_mark(void)
 {
   c3_w tot_w = 0;
   tot_w += u3j_mark();
-  tot_w += u3n_bark();
+  tot_w += u3n_mark();
   tot_w += u3a_mark_noun(u3R->ski.gul);
   tot_w += u3a_mark_noun(u3R->bug.tax);
   tot_w += u3a_mark_noun(u3R->bug.mer);
@@ -510,7 +510,7 @@ u3m_clear(void)
 {
   u3h_free(u3R->cax.har_p);
   u3j_free();
-  u3n_bree();
+  u3n_free();
 }
 
 void
@@ -806,7 +806,7 @@ u3m_love(u3_noun pro)
     pro = u3a_take(pro);
 
     u3j_reap(cod_p, war_p, han_p);
-    u3n_beep(byc_p);
+    u3n_reap(byc_p);
 
     u3R->cap_p = u3R->ear_p;
     u3R->ear_p = 0;

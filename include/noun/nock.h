@@ -97,20 +97,20 @@
       u3_noun
       u3n_nock_an(u3_noun bus, u3_noun fol);
 
-    /* u3n_beep(): promote bytecode state.
+    /* u3n_reap(): promote bytecode state.
      */
       void
-      u3n_beep(u3p(u3h_root) har_p);
+      u3n_reap(u3p(u3h_root) har_p);
 
-    /* u3n_bark(): mark bytecode cache.
+    /* u3n_mark(): mark bytecode cache.
      */
       c3_w
-      u3n_bark(void);
+      u3n_mark(void);
 
-    /* u3n_bree(): free bytecode cache.
+    /* u3n_free(): free bytecode cache.
      */
       void
-      u3n_bree(void);
+      u3n_free(void);
 
     /* u3n_ream(): refresh after restoring from checkpoint.
     */

@@ -680,12 +680,16 @@ _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
   return u3kb_flop(sip);
 }
 
+/* _n_prog_dat(): return pointer to program's data segment
+ */
 static void*
 _n_prog_dat(u3n_prog* pog_u)
 {
   return ((void*) pog_u) + sizeof(u3n_prog);
 }
 
+/* _n_prog_new(): allocate and set up pointers for u3n_prog
+ */
 static u3n_prog*
 _n_prog_new(c3_w byc_w, c3_w cal_w,
             c3_w reg_w, c3_w lit_w, c3_w mem_w)
@@ -716,6 +720,9 @@ _n_prog_new(c3_w byc_w, c3_w cal_w,
   return pog_u;
 }
 
+/* _n_prog_old(): as _n_prog_new(),
+ *                but leech off senior program's data segment
+ */
 static u3n_prog*
 _n_prog_old(u3n_prog* sep_u)
 {
@@ -746,6 +753,8 @@ _n_prog_old(u3n_prog* sep_u)
   return pog_u;
 }
 
+/* _n_prog_asm_inx(): write an index to the bytestream with overflow
+ */
 static void
 _n_prog_asm_inx(c3_y* buf_y, c3_w* i_w, c3_s inx_s, c3_y cod)
 {
@@ -762,6 +771,8 @@ _n_prog_asm_inx(c3_y* buf_y, c3_w* i_w, c3_s inx_s, c3_y cod)
   }
 }
 
+/* _n_prog_asm(): assemble list of ops (from _n_comp) into u3n_prog
+ */
 static void
 _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
 {
@@ -905,6 +916,8 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
   c3_assert(u3_nul == sip);
 }
 
+/* _n_prog_from_ops(): new program from _n_comp() product
+ */
 static u3n_prog*
 _n_prog_from_ops(u3_noun ops)
 {
@@ -1416,7 +1429,7 @@ _n_print_byc(c3_y* pog, c3_w her_w)
 }
 #endif
 
-/* _n_bite(): compile a nock formula to bytecode
+/* _n_bite(): compile a nock formula to bytecode. RETAIN.
  */
 static inline u3n_prog*
 _n_bite(u3_noun fol) {
@@ -1465,7 +1478,7 @@ _n_find(u3_noun fol)
   }
 }
 
-/* u3n_find(): return prog for given formula. fol is RETAINED.
+/* u3n_find(): return prog for given formula. RETAIN.
  */
 u3p(u3n_prog)
 u3n_find(u3_noun fol)
@@ -1490,6 +1503,8 @@ _n_swap(c3_ys mov, c3_ys off)
   return top;
 }
 
+/* _n_kick(): stop tracing noc and kick a u3j_site.
+ */
 static u3_weak
 _n_kick(u3_noun cor, u3j_site* sit_u)
 {
@@ -2139,6 +2154,8 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
   }
 }
 
+/* _n_burn_out(): execute u3n_prog with bus as subject.
+ */
 static u3_noun
 _n_burn_out(u3_noun bus, u3n_prog* pog_u)
 {
@@ -2195,6 +2212,10 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
   return pro;
 }
 
+/* _n_prog_take_dat(): copy references from src u3n_prog. overwritten
+ *                     values in dst u3n_prog are lost/freed only if
+ *                     los_o is yes.
+ */
 static void
 _n_prog_take_dat(u3n_prog* dst_u, u3n_prog* src_u, c3_o los_o)
 {
@@ -2303,14 +2324,16 @@ _n_reap(u3_noun kev)
   u3z(lof);
 }
 
-/* u3n_beep(): promote bytecode state.
+/* u3n_reap(): promote bytecode state.
 */
 void
-u3n_beep(u3p(u3h_root) har_p)
+u3n_reap(u3p(u3h_root) har_p)
 {
   u3h_walk(har_p, _n_reap);
 }
 
+/* _n_ream(): ream program call sites
+*/
 void
 _n_ream(u3_noun kev)
 {
@@ -2356,7 +2379,7 @@ _n_prog_mark(u3n_prog* pog_u)
   return tot_w;
 }
 
-/* _n_bam(): u3h_walk_with helper for u3n_bark
+/* _n_bam(): u3h_walk_with helper for u3n_mark
  */
 static void
 _n_bam(u3_noun kev, void* dat)
@@ -2366,10 +2389,10 @@ _n_bam(u3_noun kev, void* dat)
   *bam_w += _n_prog_mark(pog);
 }
 
-/* u3n_bark(): mark the bytecode cache for gc.
+/* u3n_mark(): mark the bytecode cache for gc.
  */
 c3_w
-u3n_bark()
+u3n_mark()
 {
   c3_w bam_w = 0;
   u3p(u3h_root) har_p = u3R->byc.har_p;
@@ -2385,10 +2408,10 @@ _n_feb(u3_noun kev)
   _n_prog_free(u3to(u3n_prog, u3t(kev)));
 }
 
-/* u3n_bree(): free bytecode cache
+/* u3n_free(): free bytecode cache
  */
 void
-u3n_bree()
+u3n_free()
 {
   u3p(u3h_root) har_p = u3R->byc.har_p;
   u3h_walk(har_p, _n_feb);
