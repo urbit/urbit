@@ -964,12 +964,13 @@ _cj_fink_take(u3j_fink* jun_u)
   return fin_u;
 }
 
-/* _cj_fink_take(): lose and free everything in a u3j_fink.
+/* _cj_fink_free(): lose and free everything in a u3j_fink.
 */
 static void
-_cj_fink_free(u3j_fink* fin_u)
+_cj_fink_free(u3p(u3j_fink) fin_p)
 {
   c3_w i_w;
+  u3j_fink* fin_u = u3to(u3j_fink, fin_p);
   u3z(fin_u->sat);
   for ( i_w = 0; i_w < fin_u->len_w; ++i_w ) {
     u3j_fist* fis_u = &(fin_u->fis_u[i_w]);
@@ -990,8 +991,8 @@ u3j_rite_copy(u3j_rite* dst_u, u3j_rite* src_u, c3_o los_o)
     dst_u->fin_p = 0;
   }
   else {
+    u3p(u3j_fink) fon_p = dst_u->fin_p;
     u3_noun   old   = dst_u->clu;
-    u3j_fink* fon_u = u3to(u3j_fink, dst_u->fin_p);
     c3_o      own_o = dst_u->own_o;
     if ( c3y == src_u->own_o ) {
       dst_u->own_o = c3y;
@@ -1001,7 +1002,7 @@ u3j_rite_copy(u3j_rite* dst_u, u3j_rite* src_u, c3_o los_o)
           (u3_none != old) &&
           (c3y == own_o) ) {
         u3z(old);
-        _cj_fink_free(fon_u);
+        _cj_fink_free(fon_p);
       }
     }
   }
@@ -1060,7 +1061,7 @@ u3j_site_copy(u3j_site* dst_u, u3j_site* src_u, c3_o los_o)
         u3z(lod);
         u3z(lob);
         if ( c3y == fon_o ) {
-          _cj_fink_free(u3to(u3j_fink, fon_p));
+          _cj_fink_free(fon_p);
         }
       }
     }
@@ -1107,6 +1108,9 @@ _cj_burn(u3p(u3n_prog) pog_p, u3_noun cor)
   return pro;
 }
 
+/* _cj_site_kick_hot(): execute site's kick on located core
+**                      (no validity checks).
+*/
 static u3_weak
 _cj_site_kick_hot(u3_noun cor, u3j_site* sit_u)
 {
@@ -1144,6 +1148,8 @@ _cj_site_kick_hot(u3_noun cor, u3j_site* sit_u)
   return pro;
 }
 
+/* _cj_site_kick(): execute site's kick on core.
+ */
 static u3_weak
 _cj_site_kick(u3_noun cor, u3j_site* sit_u)
 {
@@ -1192,7 +1198,7 @@ _cj_site_kick(u3_noun cor, u3j_site* sit_u)
         u3z(lod);
         u3z(lob);
         if ( 0 != fon_p ) {
-          _cj_fink_free(u3to(u3j_fink, fon_p));
+          _cj_fink_free(fon_p);
         }
       }
     }
@@ -1301,6 +1307,7 @@ u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
 }
 
 /* u3j_gate_slam(): slam a site prepared by u3j_gate_find() with sample.
+ *                  sam is TRANSFERRED.
  */
 u3_noun
 u3j_gate_slam(u3j_site* sit_u, u3_noun sam)
@@ -1472,7 +1479,7 @@ _cj_mine(u3_noun cey, u3_noun cor)
 }
 
 /* _cj_moan(): register core known to be unregistered, returning
- *             location.
+ *             location. clu and cor are TRANSFERRED.
  */
 static u3_weak
 _cj_moan(u3_noun clu, u3_noun cor)
@@ -1486,7 +1493,6 @@ _cj_moan(u3_noun clu, u3_noun cor)
   u3z(cor);
   return loc;
 }
-
 
 /* _cj_mile(): register core for jets, returning location.
 */
@@ -1545,8 +1551,8 @@ u3j_rite_mine(u3j_rite* rit_u, u3_noun clu, u3_noun cor)
        c3n == _cj_fine(cor, rit_u->fin_p) ) {
     u3_weak loc = _cj_mile(u3k(clu), u3k(cor));
     if ( u3_none != loc ) {
+      u3p(u3j_fink) fon_p = rit_u->fin_p;
       u3_noun   old   = rit_u->clu;
-      u3j_fink* fon_u = u3to(u3j_fink, rit_u->fin_p);
       c3_o      own_o = rit_u->own_o;
       rit_u->own_o    = c3y;
       rit_u->clu      = u3k(clu);
@@ -1555,7 +1561,7 @@ u3j_rite_mine(u3j_rite* rit_u, u3_noun clu, u3_noun cor)
 
       if ( !non_t && (c3y == own_o) ) {
          u3z(old);
-        _cj_fink_free(fon_u);
+        _cj_fink_free(fon_p);
       }
     }
   }
@@ -1648,6 +1654,8 @@ _cj_cold_reap(u3_noun kev)
   u3z(ser); u3z(bat);
 }
 
+/* _cj_hank_reap(): reap hook resolutions.
+ */
 static void
 _cj_hank_reap(u3_noun kev)
 {
@@ -1773,13 +1781,15 @@ _cj_warm_tap(u3_noun kev, void* wit)
   *rel = u3nc(u3k(kev), *rel);
 }
 
+/* _cj_ream_hank(): clear hot state out of hook sites.
+*/
 static void
 _cj_ream_hank(u3_noun kev)
 {
   u3j_site_ream(&(u3to(_cj_hank, u3t(kev))->sit_u));
 }
 
-/* u3j_ream(): rebuild jet state
+/* u3j_ream(): rebuild warm state
 */
 void
 u3j_ream(void)
@@ -1795,6 +1805,8 @@ u3j_ream(void)
   u3h_walk(u3R->jed.han_p, _cj_ream_hank);
 }
 
+/* _cj_fink_mark(): mark a u3j_fink for gc.
+*/
 static c3_w
 _cj_fink_mark(u3j_fink* fin_u)
 {
@@ -1821,7 +1833,7 @@ u3j_site_lose(u3j_site* sit_u)
     u3z(sit_u->loc);
     u3z(sit_u->lab);
     if ( c3y == sit_u->fon_o ) {
-      _cj_fink_free(u3to(u3j_fink, sit_u->fin_p));
+      _cj_fink_free(sit_u->fin_p);
     }
   }
 }
@@ -1833,7 +1845,7 @@ u3j_rite_lose(u3j_rite* rit_u)
 {
   if ( (c3y == rit_u->own_o) && u3_none != rit_u->clu ) {
     u3z(rit_u->clu);
-    _cj_fink_free(u3to(u3j_fink, rit_u->fin_p));
+    _cj_fink_free(rit_u->fin_p);
   }
 }
 
