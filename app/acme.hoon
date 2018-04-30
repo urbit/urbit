@@ -4,6 +4,62 @@
 ::::  libraries
 ::
 |%
+++  base64                                        :: rfc4648
+  =+  [pad=& url=|]                               :: section 4 or 5
+  |%
+  ++  en                                          :: encode base64
+    |=  tig=@
+    ^-  cord
+    =/  poc  (~(dif fo 3) 0 (met 3 tig))
+    =/  pad  (lsh 3 poc (swp 3 tig))
+    =/  cha
+      ?:  url
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+    %-  crip
+    %-  flop
+    %+  weld
+      ?.(^pad ~ (reap poc '='))
+    %+  slag  poc
+    |-  ^-  tape
+    ?~  pad  ~
+    =/  d  (end 3 3 pad)
+    :*  (cut 3 [(cut 0 [0 6] d) 1] cha)
+        (cut 3 [(cut 0 [6 6] d) 1] cha)
+        (cut 3 [(cut 0 [12 6] d) 1] cha)
+        (cut 3 [(cut 0 [18 6] d) 1] cha)
+        $(pad (rsh 3 3 pad))
+    ==
+  ::
+  ++  de                                          :: decode base64
+    |=  a=cord
+    ^-  (unit @)
+    %+  rush  a
+    %+  cook  (cury swp 3)
+    %+  bass  64
+    %+  cook  welp
+    ;~  plug
+      %-  plus
+      ;~  pose
+        (cook |=(a=@ (sub a 'A')) (shim 'A' 'Z'))
+        (cook |=(a=@ (sub a 'G')) (shim 'a' 'z'))
+        (cook |=(a=@ (add a 4)) (shim '0' '9'))
+        (cold 62 (just ?:(url '-' '+')))
+        (cold 63 (just ?:(url '_' '/')))
+      ==
+      ?:  pad
+        (stun 0^2 (cold %0 tis))
+      =/  b  (~(dif fo 4) 0 (met 3 a))
+      (cold (reap b %0) (easy ~))
+    ==
+  --
+::
+++  en-base64url                                        :: padding omitted
+  ~(en base64 | &)                                      :: per rfc7515
+::
+++  de-base64url
+  ~(de base64 | &)
+::
 ++  asn1                                              ::  at least, a little
   =>  |%
       +=  spec
@@ -184,45 +240,6 @@
     ==
   --
 ::
-++  en-base64url                                        :: rfc4648 section-5
-  |=  tig=@                                             :: padding omitted
-  ^-  cord                                              :: per rfc7515
-  =/  poc  (~(dif fo 3) 0 (met 3 tig))
-  =/  pad  (lsh 3 poc (swp 3 tig))
-  =/  cha  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
-  %-  crip
-  %-  flop
-  %+  slag  poc
-  |-  ^-  tape
-  ?~  pad  ~
-  =/  d  (end 3 3 pad)
-  :*  (cut 3 [(cut 0 [0 6] d) 1] cha)
-      (cut 3 [(cut 0 [6 6] d) 1] cha)
-      (cut 3 [(cut 0 [12 6] d) 1] cha)
-      (cut 3 [(cut 0 [18 6] d) 1] cha)
-      $(pad (rsh 3 3 pad))
-  ==
-::
-++  de-base64url
-  |=  a=cord
-  ^-  @
-  %+  rash  a
-  %+  cook  |~(a/@ (swp 3 a))
-  %+  bass  64
-  %+  cook  welp
-  ;~  plug
-    %-  plus
-    ;~  pose
-       (cook |=(a=@ (sub a 'A')) (shim 'A' 'Z'))
-       (cook |=(a=@ (sub a 'G')) (shim 'a' 'z'))
-       (cook |=(a=@ (add a 4)) (shim '0' '9'))
-       (cold 62 (just '-'))
-       (cold 63 (just '_'))
-    ==
-    =/  b  (~(dif fo 4) 0 (met 3 a))
-    (cold (reap b %0) (easy ~))
-  ==
-::
 ++  jwk
   |_  k=key:rsa
   ++  pass
@@ -392,21 +409,25 @@
     ::      h9bpt.vlmm7.lh375.f6u9n.krqv8.5jcml.cujkr.v1uqv.cjhe5.nplta
   |^  =/  out=tang
           ;:  weld
-            testen-base64url
+            test-base64
             testrsakey
             testrsa
             test-asn1
+            test-rsapem
             testjwkthumbprint
             :: testjws
           ==
       ?~(out abet ((slog out) abet))
   ::
-  ++  testen-base64url
+  ++  test-base64
     =/  jon  '{"iss":"joe","exp":1300819380,"http://example.com/is_root":true}'
     ;:  weld
       %-  expect-eq  !>
         :-  'AQAB'
         (en-base64url 65.537)
+      %-  expect-eq  !>
+        :-  65.537
+        (need (de-base64url 'AQAB'))
       :: expected value includes newlines
       :: %-  expect-eq  !>
       ::   ~&  (en-base64:mimes:html jon)
