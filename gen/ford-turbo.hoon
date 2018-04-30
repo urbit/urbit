@@ -5,6 +5,7 @@
 :-  %noun
 =+  tester:tester
 |^
+=-  ((slog (flop -)) ~)
 ^-  tang
 ;:  weld
   test-is-schematic-live
