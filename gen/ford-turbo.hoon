@@ -467,7 +467,7 @@
       moves=[duct=~ %give %made ~1234.5.6 %complete result]~
     ==
   ::
-  =/  results2=wall
+  =/  results2=tang
     %-  expect-eq  !>
     :-  results:(~(got by state-by-ship.+>+<.ford) ~nul)
     %-  my  :~
@@ -1062,7 +1062,7 @@
       ::
       ^=  comparator
         |=  moves=(list move:ford-turbo)
-        ^-  wall
+        ^-  tang
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
@@ -1124,7 +1124,7 @@
       ::
       ^=  comparator
         |=  moves=(list move:ford-turbo)
-        ^-  wall
+        ^-  tang
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
@@ -1185,7 +1185,7 @@
       ::
       ^=  comparator
         |=  moves=(list move:ford-turbo)
-        ^-  wall
+        ^-  tang
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
@@ -1256,7 +1256,7 @@
       ::
       ^=  comparator
         |=  moves=(list move:ford-turbo)
-        ^-  wall
+        ^-  tang
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
@@ -1417,7 +1417,7 @@
       ::
       ^=  comparator
         |=  moves=(list move:ford-turbo)
-        ^-  wall
+        ^-  tang
         ::
         ?>  ?=([^ ^ ~] moves)
         %+  welp
@@ -1446,7 +1446,7 @@
       ::
       ^=  comparator
         |=  moves=(list move:ford-turbo)
-        ^-  wall
+        ^-  tang
         ::
         ?>  ?=([^ ~] moves)
         %-  check-post-made  :*
@@ -1472,7 +1472,7 @@
       ::
       ^=  comparator
         |=  moves=(list move:ford-turbo)
-        ^-  wall
+        ^-  tang
         ::
         ?>  ?=([^ ^ ~] moves)
         %-  check-post-made  :*
@@ -2045,14 +2045,14 @@
           call-args=[=duct type=* wrapped-task=(hobo task:able:ford-turbo)]
           expected-moves=(list move:ford-turbo)
       ==
-  ^-  [wall _(ford-turbo)]
+  ^-  [tang _(ford-turbo)]
   ::
   =.  ford  (ford now=now eny=0xdead.beef scry=scry)
   ::
   =^  moves  ford
     %-  call:ford  call-args
   ::
-  =/  output=wall
+  =/  output=tang
     %-  expect-eq  !>
     :-  moves
     expected-moves
@@ -2066,14 +2066,14 @@
           take-args=[=wire =duct wrapped-sign=(hypo sign:ford-turbo)]
           expected-moves=(list move:ford-turbo)
       ==
-  ^-  [wall _(ford-turbo)]
+  ^-  [tang _(ford-turbo)]
   ::
   =.  ford  (ford now=now eny=0xdead.beef scry=scry)
   ::
   =^  moves  ford
     %-  take:ford  take-args
   ::
-  =/  output=wall
+  =/  output=tang
     %-  expect-eq  !>
     :-  moves
     expected-moves
@@ -2089,16 +2089,16 @@
           now=@da
           scry=sley
           call-args=[=duct type=* wrapped-task=(hobo task:able:ford-turbo)]
-          move-comparator=$-((list move:ford-turbo) wall)
+          move-comparator=$-((list move:ford-turbo) tang)
       ==
-  ^-  [wall _(ford-turbo)]
+  ^-  [tang _(ford-turbo)]
   ::
   =.  ford  (ford now=now eny=0xdead.beef scry=scry)
   ::
   =^  moves  ford
     %-  call:ford  call-args
   ::
-  =/  output=wall  (move-comparator moves)
+  =/  output=tang  (move-comparator moves)
   ::
   [output ford]
 ::  +test-ford-take-with-comparator
@@ -2108,16 +2108,16 @@
           now=@da
           scry=sley
           take-args=[=wire =duct wrapped-sign=(hypo sign:ford-turbo)]
-          move-comparator=$-((list move:ford-turbo) wall)
+          move-comparator=$-((list move:ford-turbo) tang)
       ==
-  ^-  [wall _(ford-turbo)]
+  ^-  [tang _(ford-turbo)]
   ::
   =.  ford  (ford now=now eny=0xdead.beef scry=scry)
   ::
   =^  moves  ford
     %-  take:ford  take-args
   ::
-  =/  output=wall  (move-comparator moves)
+  =/  output=tang  (move-comparator moves)
   ::
   [output ford]
 ::  +expect-ford-empty: assert that ford's state is one empty ship
