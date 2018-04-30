@@ -164,10 +164,6 @@ rec {
     inherit crossenv libudev libxall at-spi2-headers dejavu-fonts;
   };
 
-  open-zwave = import ./pkgs/open-zwave {
-    inherit crossenv;
-  };
-
   pavr2 = import ./pkgs/pavr2 {
     inherit crossenv libusbp qt;
   };
