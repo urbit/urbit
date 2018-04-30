@@ -280,7 +280,7 @@
 ++  wove  {p/(unit ship) q/rove}                        ::  stored source + req
 ++  rove                                                ::  stored request
           $%  {$sing p/mood}                            ::  single request
-              {$next p/mood q/cach}                     ::  next version
+              {$next p/mood q/(unit aeon) r/cach}       ::  next version of one
               $:  $mult                                 ::  next version of any
                   p/mool                                ::  original request
                   q/(unit aeon)                         ::  checking for change
@@ -907,7 +907,7 @@
       ::  if the requested case is in the future, we can't know anything yet.
       ?~  aey  (store ~ ~ ~)
       =+  old=(read-all-at cas)
-      =+  yon=+((need (case-to-aeon:ze cas)))
+      =+  yon=+(u.aey)
       |-  ^+  ..start-request
       ::  if we need future revisions to look for change, wait.
       ?:  (gth yon let.dom)
@@ -948,7 +948,7 @@
         ^-  rove
         ?:  ?=($mult -.rav)
           [-.rav p.rav nex old new]
-        :+  -.rav  p.rav
+        :^  -.rav  p.rav  nex
         =+  ole=~(tap by old)
         ?>  (lte (lent ole) 1)
         ?~  ole  ~
@@ -1860,10 +1860,11 @@
       |^
       =/  rov/rove
         ?:  ?=($mult -.vor)  vor
+        =*  mod  p.vor
         :*  %mult
-            [q.p.vor [[p.p.vor r.p.vor] ~ ~]]
-            `let.dom
-            [[[p.p.vor r.p.vor] q.vor] ~ ~]
+            [q.mod [[p.mod r.mod] ~ ~]]
+            q.vor
+            [[[p.mod r.mod] r.vor] ~ ~]
             ~
         ==
       ?>  ?=($mult -.rov)
@@ -1933,7 +1934,7 @@
         ?:  ?=($mult -.vor)  rov
         ?>  ?=({* $~ $~} r.rov)
         =*  one  n.r.rov
-        [%next [p.p.one p.p.rov q.p.one] q.one]
+        [%next [p.p.one p.p.rov q.p.one] q.rov q.one]
       ::
       ++  respond                                       ::  send changes
         |=  res/(map mood (each cage lobe))
