@@ -6,33 +6,37 @@
   ***
   **/
 
+  /* u3n_memo: %memo hint space
+   */
   typedef struct {
     c3_l    sip_l;
     u3_noun key;
   } u3n_memo;
 
+  /* u3n_prog: program compiled from nock
+   */
   typedef struct _u3n_prog {
     struct {
-      c3_o      own_o;
-      c3_w      len_w;
-      c3_y*     ops_y;
-    } byc_u;
+      c3_o      own_o;                // program owns ops_y?
+      c3_w      len_w;                // length of bytecode (bytes)
+      c3_y*     ops_y;                // actual array of bytes
+    } byc_u;                          // bytecode
     struct {
-      c3_w      len_w;
-      u3_noun*  non;
-    } lit_u;
+      c3_w      len_w;                // number of literals
+      u3_noun*  non;                  // array of literals
+    } lit_u;                          // literals
     struct {
-      c3_w      len_w;
-      u3n_memo* sot_u;
-    } mem_u;
+      c3_w      len_w;                // number of memo slots
+      u3n_memo* sot_u;                // array of memo slots
+    } mem_u;                          // memo slot data
     struct {
-      c3_w      len_w;
-      u3j_site* sit_u;
-    } cal_u;
+      c3_w      len_w;                // number of calls sites
+      u3j_site* sit_u;                // array of sites
+    } cal_u;                          // call site data
     struct {
-      c3_w      len_w;
-      u3j_rite* rit_u;
-    } reg_u;
+      c3_w      len_w;                // number of registration sites
+      u3j_rite* rit_u;                // array of sites
+    } reg_u;                          // registration site data
   } u3n_prog;
 
   /**  Functions.
