@@ -128,280 +128,345 @@
 ++  test-literal
   ~&  %test-literal
   ::
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
-  ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~  type=~  %make  ~nul
-        [%pin ~1234.5.6 [%$ %noun !>(**)]]
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::  send a pinned literal, expects a %made response with pinned literal
+      ::
+      ^=  call-args
+        [duct=~ type=~ %make ~nul [%pin ~1234.5.6 [%$ %noun !>(**)]]]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.6
+                %complete  %result  %pin  ~1234.5.6  %result  %$  %noun  !>(**)
+        ==  ==
     ==
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~  %give  %made  ~1234.5.6
-            %complete  %result  %pin  ~1234.5.6  %result  %$  %noun  !>(**)
-    ==  ==
   ::
+  %+  welp
+    results1
   (expect-ford-empty ford ~nul)
 ::
 ++  test-autocons-same
   ~&  %test-autocons-same
   ::
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::  if we autocons the same schematic, we should get two of it as a result
+      ::
+      ^=  call-args
+        :*  duct=~  type=~  %make  ~nul
+          [%pin ~1234.5.6 [%$ %noun !>(**)] [%$ %noun !>(**)]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
+                %result  %pin  ~1234.5.6  %result
+               [%result %$ %noun !>(**)]
+               [%result %$ %noun !>(**)]
+    ==  ==  ==
   ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~  type=~  %make  ~nul
-        [%pin ~1234.5.6 [%$ %noun !>(**)] [%$ %noun !>(**)]]
-    ==
   %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
-            %result  %pin  ~1234.5.6  %result
-            [%result %$ %noun !>(**)]
-            [%result %$ %noun !>(**)]
-    ==  ==
-  ::
+    results1
   (expect-ford-empty ford ~nul)
 ::
 ++  test-autocons-different
   ~&  %test-autocons-different
   ::
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      :: if we autocons different schematics, we get different values
+      ::
+      ^=  call-args
+        :*  duct=~  type=~  %make  ~nul
+          [%pin ~1234.5.6 [%$ %noun !>(42)] [%$ %noun !>(43)]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
+                %result  %pin  ~1234.5.6  %result
+                [%result %$ %noun !>(42)]
+                [%result %$ %noun !>(43)]
+    ==  ==  ==
   ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~  type=~  %make  ~nul
-        [%pin ~1234.5.6 [%$ %noun !>(42)] [%$ %noun !>(43)]]
-    ==
   %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
-            %result  %pin  ~1234.5.6  %result
-            [%result %$ %noun !>(42)]
-            [%result %$ %noun !>(43)]
-    ==  ==
-  ::
-  (expect-ford-empty ford ~nul)
+    results1
+    (expect-ford-empty ford ~nul)
 ::
 ++  test-scry-clay-succeed
   ~&  %test-scry-clay-succeed
   ::
-  =/  scry  (scry-succeed ~1234.5.6 [%noun !>(42)])
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
+      ::  test a pinned scry which succeeds
+      ::
+      ^=  call-args
+        :*  duct=~  type=~  %make  ~nul
+            [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
+                [%pin ~1234.5.6 %result [%scry %noun !>(42)]]
+    ==  ==  ==
   ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~  type=~  %make  ~nul
-        [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
-    ==
   %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
-            [%pin ~1234.5.6 %result [%scry %noun !>(42)]]
-    ==  ==
-  ::
+    results1
   (expect-ford-empty ford ~nul)
 ::
 ++  test-scry-clay-fail
   ~&  %test-scry-clay-fail
   ::
-  =/  scry  (scry-fail ~1234.5.6)
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-fail ~1234.5.6)
+      ::  attempting to scry a path which fails should produce an error
+      ::
+      ^=  call-args
+        :*  duct=~  type=~  %make  ~nul
+            [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
+                %result  %pin  ~1234.5.6  %error
+                :~  leaf+"scry failed for"
+                    leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
+    ==  ==  ==  ==
   ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~  type=~  %make  ~nul
-        [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
-        ::
-    ==
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
-        %result  %pin  ~1234.5.6  %error
-        :~  leaf+"scry failed for"
-            leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
-    ==  ==  ==
-  ::
-  (expect-ford-empty ford ~nul)
+  %+  weld
+    results1
+    (expect-ford-empty ford ~nul)
 ::
 ++  test-scry-clay-block
   ~&  %test-scry-clay-block
   ::
-  =/  scry-blocked  (scry-block ~1234.5.6)
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-blocked)
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-block ~1234.5.6)
+      ::  when we scry on a blocked path, expect a subscription move
+      ::
+      ^=  call-args
+        :*  duct=~  type=~  %make  ~nul
+            [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass
+                wire=/~nul/dependency/cx/~nul/desk/0/foo/bar
+                %c  %warp  [~nul ~nul]  %desk
+                ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
+    ==  ==  ==
   ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~  type=~  %make  ~nul
-        [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
-    ==
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~  %pass
-            wire=/~nul/dependency/cx/~nul/desk/0/foo/bar
-            %c  %warp  [~nul ~nul]  %desk
-            ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
-    ==  ==
+  =^  results2  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::  when clay responds, send a %made
+      ::
+      ^=  take-args
+        :*  wire=/~nul/dependency/cx/~nul/desk/0/foo/bar  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
+            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
+                [%pin ~1234.5.6 %result [%scry %noun !>(42)]]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-is-forbidden)
-  ::
-  =^  moves2  ford
-    %-  take:ford
-    :*  wire=/~nul/dependency/cx/~nul/desk/0/foo/bar  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
-        [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
-            [%pin ~1234.5.6 %result [%scry %noun !>(42)]]
-    ==  ==
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  welp
+    results1
+    results2
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-scry-clay-live
   ~&  %test-scry-clay-live
   ::
-  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
-  =/  scry-43  (scry-succeed ~1234.5.7 [%noun !>(43)])
-  ::
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-42)
-  ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~  type=~  %make  ~nul
-        [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
-    ==
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
-            [%scry %noun !>(42)]
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
+      ::
+      ^=  call-args
+        :*  duct=~  type=~  %make  ~nul
+            [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
         ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
+                [%scry %noun !>(42)]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-43)
-  =^  moves2  ford
-    %-  take:ford
-    :*  wire=/~nul/clay-sub/~nul/desk  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
-        [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
-    ==
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~  %give  %made  ~1234.5.7  %complete  %result
-            [%scry %noun !>(43)]
+  =^  results2  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.7
+      scry=(scry-succeed ~1234.5.7 [%noun !>(43)])
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
         ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.7] (sy [%x /foo/bar]~)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.7  %complete  %result
+                [%scry %noun !>(43)]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.7] (sy [%x /foo/bar]~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves3  ford
-    (call:ford [duct=~ type=~ %kill ~nul])
+  =^  results3  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~ type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves3
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~
-    ==  ==
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-scry-clay-live-again
   ~&  %test-scry-clay-live-again
-  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
-  ::
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-42)
-  ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~[/first]  type=~  %make  ~nul
-        [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~[/first]  %give  %made  ~1234.5.6  %complete  %result
-            [%scry %noun !>(42)]
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
+      ::  perform a live scry, we should get a %made and a clay subscription
+      ::
+      ^=  call-args
+        :*  duct=~[/first]  type=~  %make  ~nul
+            [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
         ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/first]  %give  %made  ~1234.5.6  %complete  %result
+                [%scry %noun !>(42)]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xdead.beef scry=scry-is-forbidden)
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::  a second scry from a different duct shouldn't resubscribe
+      ::
+      ^=  call-args
+        :*  duct=~[/second]  type=~  %make  ~nul
+            [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/second]  %give  %made  ~1234.5.7  %complete  %result
+                [%scry %noun !>(42)]
+    ==  ==  ==
   ::
-  =^  moves2  ford
-    %-  call:ford
-    :*  duct=~[/second]  type=~  %make  ~nul
-        [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
+  =^  results3  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/first] type=~ %kill ~nul]
+      moves=~
     ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~[/second]  %give  %made  ~1234.5.7  %complete  %result
-            [%scry %noun !>(42)]
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.8 eny=0xdead.beef scry=scry-is-forbidden)
-  ::
-  =^  moves3  ford  (call:ford [duct=~[/first] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    [moves3 ~]
-  ::
-  =^  moves4  ford  (call:ford [duct=~[/second] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves4
+  =^  results4  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.9
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/second] type=~ %kill ~nul]
+      ::
+      ^=  moves
         :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~
-    ==  ==
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
   ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-pinned-in-live
   ~&  %test-pinned-in-live
   ::
+  =/  ford  *ford-turbo
+  ::
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
   =/  scry-43  (scry-succeed ~1234.5.7 [%noun !>(43)])
-  ::
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-42)
   ::
   =/  schematic=schematic:ford
     :*  %same  %pin  ~1234.5.6
         [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
     ==
+  ::
   =/  build=build:ford  [~1234.5.6 schematic]
   =/  result=build-result:ford
     [%result %same %result %pin ~1234.5.6 %result [%scry %noun !>(42)]]
   ::
-  =^  moves  ford  (call:ford [duct=~ type=~ %make ~nul schematic])
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    [duct=~ %give %made ~1234.5.6 %complete result]~
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-42
+      ::
+      call-args=[duct=~ type=~ %make ~nul schematic]
+      moves=[duct=~ %give %made ~1234.5.6 %complete result]~
+    ==
   ::
-  %+  welp
+  =/  results2=wall
     %-  expect-eq  !>
     :-  results:(~(got by state-by-ship.+>+<.ford) ~nul)
     %-  my  :~
@@ -421,15 +486,22 @@
       ==
     ==
   ::
-  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves2  ford
-    (call:ford [duct=~ type=~ %kill ~nul])
+  =^  results3  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~ type=~ %kill ~nul]
+      moves=~
+    ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    [moves2 ~]
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-live-build-that-blocks
   ~&  %test-live-build-that-blocks
@@ -438,73 +510,88 @@
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
   =/  scry-43  (scry-succeed ~1234.5.7 [%noun !>(43)])
   ::
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-blocked)
-  ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~  type=~  %make  ~nul
-        [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
-    ==
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~  %pass
-            wire=/~nul/dependency/cx/~nul/desk/0/foo/bar
-            %c  %warp  [~nul ~nul]  %desk
-            ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-blocked
+      ::
+      ^=  call-args
+        :*  duct=~  type=~  %make  ~nul
+            [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
         ==
-    ::
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass
+                wire=/~nul/dependency/cx/~nul/desk/0/foo/bar
+                %c  %warp  [~nul ~nul]  %desk
+                ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
+            ==
+        ::
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-43)
-  =^  moves2  ford
-    %-  take:ford
-    :*  wire=/~nul/clay-sub/~nul/desk  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
-        [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.7] (sy [%x /foo/bar]~)]
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-42)
-  =^  moves3  ford
-    %-  take:ford
-    :*  wire=/~nul/dependency/cx/~nul/desk/0/foo/bar  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
-        [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves3
-    :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
-            [%scry %noun !>(42)]
+  =^  results2  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.7
+      scry=scry-43
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
         ==
-        :*  duct=~  %give  %made  ~1234.5.7  %complete  %result
-            [%scry %noun !>(43)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.7] (sy [%x /foo/bar]~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.9 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves4  ford
-    (call:ford [duct=~ type=~ %kill ~nul])
+  =^  results3  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.8
+      scry=scry-42
+      ::
+      ^=  take-args
+        :*  wire=/~nul/dependency/cx/~nul/desk/0/foo/bar  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
+            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
+                [%scry %noun !>(42)]
+            ==
+            :*  duct=~  %give  %made  ~1234.5.7  %complete  %result
+                [%scry %noun !>(43)]
+    ==  ==  ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves4
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~
-    ==  ==
+  =^  results4  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.9
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~ type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
   ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-live-and-once
   ~&  %test-live-and-once
@@ -513,68 +600,84 @@
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
   ::
   ::
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-blocked)
-  ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~[/live]  type=~  %make  ~nul
-        [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
-    ==
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~  %pass
-            wire=/~nul/dependency/cx/~nul/desk/0/foo/bar
-            %c  %warp  [~nul ~nul]  %desk
-            ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-blocked
+      ::
+      ^=  call-args
+        :*  duct=~[/live]  type=~  %make  ~nul
+            [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
         ==
-    ::
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass
+                wire=/~nul/dependency/cx/~nul/desk/0/foo/bar
+                %c  %warp  [~nul ~nul]  %desk
+                ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
+            ==
+        ::
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-blocked)
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~[/once]  type=~  %make  ~nul
-        [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-blocked
+      ::
+      ^=  call-args
+        :*  duct=~[/once]  type=~  %make  ~nul
+            [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
+        ==
+      ::
+      moves=~
     ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    [moves ~]
+  =^  results3  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      ^=  take-args
+        :*  wire=/~nul/dependency/cx/~nul/desk/0/foo/bar  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
+            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete
+                [%result [%scry %noun !>(42)]]
+            ==
+            :*  duct=~[/once]  %give  %made  ~1234.5.6  %complete
+                [%result [%pin ~1234.5.6 %result [%scry %noun !>(42)]]]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves2  ford
-  %-  take:ford
-  :*  wire=/~nul/dependency/cx/~nul/desk/0/foo/bar  duct=~
-      ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
-      [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+  =^  results4  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.9
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/live] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    (expect-ford-empty ford ~nul)
   ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete
-            [%result [%scry %noun !>(42)]]
-        ==
-        :*  duct=~[/once]  %give  %made  ~1234.5.6  %complete
-            [%result [%pin ~1234.5.6 %result [%scry %noun !>(42)]]]
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.9 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves4  ford
-    (call:ford [duct=~[/live] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves4
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~
-    ==  ==
-  ::
-  (expect-ford-empty ford ~nul)
 ::
 ++  test-live-two-deep
   ~&  %test-live-two-deep
@@ -582,54 +685,67 @@
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
   =/  scry-43  (scry-succeed ~1234.5.7 [%noun !>(43)])
   ::
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-42)
-  ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~  type=~  %make  ~nul
-        [%same [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]]
-    ==
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
-            %same  %result  [%scry %noun !>(42)]
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-42
+      ::
+      ^=  call-args
+        :*  duct=~  type=~  %make  ~nul
+            [%same [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]]
         ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %result
+                %same  %result  [%scry %noun !>(42)]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-43)
-  =^  moves2  ford
-    %-  take:ford
-    :*  wire=/~nul/clay-sub/~nul/desk  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
-        [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
-    ==
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~  %give  %made  ~1234.5.7  %complete  %result
-            %same  %result  [%scry %noun !>(43)]
+  =^  results2  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.7
+      scry=scry-43
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
         ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.7] (sy [%x /foo/bar]~)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.7  %complete  %result
+                %same  %result  [%scry %noun !>(43)]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.7] (sy [%x /foo/bar]~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves3  ford
-    (call:ford [duct=~ type=~ %kill ~nul])
+  =^  results3  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~ type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves3
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~
-    ==  ==
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-live-three-deep
   ~&  %test-live-three-deep
@@ -646,7 +762,7 @@
     ==
   ::
   =/  scry  (scry-with-results scry-results)
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =/  ford  *ford-turbo
   ::
   =/  formula=hoon  (ream '`@tas`%constant')
   =/  subject-schematic=schematic:ford  [%scry %c %x [~nul %desk] /bar/foo]
@@ -654,48 +770,60 @@
   =/  ride=schematic:ford  [%ride formula subject-schematic]
   =/  same=schematic:ford  [%same ride]
   ::
-  =^  moves  ford  (call:ford [duct=~[/ride] type=~ %make ~nul same])
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry
+      ::
+      call-args=[duct=~[/ride] type=~ %make ~nul same]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/ride]  %give  %made  ~1234.5.6  %complete
+                [%result [%same [%result [%ride scry-type %constant]]]]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
+    ==  ==  ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~[/ride]  %give  %made  ~1234.5.6  %complete
-            [%result [%same [%result [%ride scry-type %constant]]]]
+  =^  results2  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.7
+      scry=scry
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
         ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry)
+  =^  results3  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/ride] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
   ::
-  =^  moves2  ford
-    %-  take:ford
-    :*  wire=/~nul/clay-sub/~nul/desk  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
-        [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves3  ford
-    (call:ford [duct=~[/ride] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves3
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~
-    ==  ==
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-live-triangle
   ~&  %test-live-triangle
@@ -710,7 +838,7 @@
     ==
   ::
   =/  scry  (scry-with-results scry-results)
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =/  ford  *ford-turbo
   ::
   =/  formula=hoon  (ream '`@tas`%constant')
   =/  subject-schematic=schematic:ford  [%scry %c %x [~nul %desk] /bar/foo]
@@ -719,53 +847,65 @@
   =/  ride=schematic:ford  [%ride formula subject-schematic]
   =/  autocons=schematic:ford  [ride subject-schematic]
   ::
-  =^  moves  ford  (call:ford [duct=~[/ride] type=~ %make ~nul autocons])
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry
+      ::
+      call-args=[duct=~[/ride] type=~ %make ~nul autocons]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/ride]  %give  %made  ~1234.5.6  %complete  %result
+                [%result [%ride ride-type %constant]]
+                [%result [%scry %noun !>(%it-does-in-fact-matter)]]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
+    ==  ==  ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~[/ride]  %give  %made  ~1234.5.6  %complete  %result
-            [%result [%ride ride-type %constant]]
-            [%result [%scry %noun !>(%it-does-in-fact-matter)]]
+  =^  results2  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.7
+      scry=scry
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
         ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/ride]  %give  %made  ~1234.5.7  %complete  %result
+                [%result [%ride ride-type %constant]]
+                [%result [%scry %noun !>(%changed)]]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry)
+  =^  results3  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/ride] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
   ::
-  =^  moves2  ford
-    %-  take:ford
-    :*  wire=/~nul/clay-sub/~nul/desk  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
-        [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~[/ride]  %give  %made  ~1234.5.7  %complete  %result
-            [%result [%ride ride-type %constant]]
-            [%result [%scry %noun !>(%changed)]]
-        ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves3  ford
-    (call:ford [duct=~[/ride] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves3
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~
-    ==  ==
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    (expect-ford-empty ford ~nul)
+  ==
 ::  like +test-live-triangle, but with another pinned build
 ::
 ::    Ensures that we deal with various issues with live builds which
@@ -786,7 +926,7 @@
     ==
   ::
   =/  scry  (scry-with-results scry-results)
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =/  ford  *ford-turbo
   ::
   =/  formula=hoon  (ream '`@tas`%constant')
   =/  subject-schematic=schematic:ford  [%scry %c %x [~nul %desk] /bar/foo]
@@ -797,54 +937,70 @@
   ::
   =/  static=schematic:ford  [%same [%pin ~1234.5.6 autocons]]
   ::
-  =^  moves  ford  (call:ford [duct=~[/static] type=~ %make ~nul static])
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry
+      ::
+      call-args=[duct=~[/static] type=~ %make ~nul static]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/static]  %give  %made  ~1234.5.6  %complete  %result
+                %same  %result  %pin  ~1234.5.6  %result
+                [%result [%ride ride-type %constant]]
+                [%result [%scry %noun scry-type %it-does-in-fact-matter]]
+    ==  ==  ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~[/static]  %give  %made  ~1234.5.6  %complete  %result
-            %same  %result  %pin  ~1234.5.6  %result
-            [%result [%ride ride-type %constant]]
-            [%result [%scry %noun scry-type %it-does-in-fact-matter]]
-    ==  ==
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry
+      ::
+      call-args=[duct=~[/autocons] type=~ %make ~nul autocons]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/autocons]  %give  %made  ~1234.5.7  %complete  %result
+                [%result [%ride ride-type %constant]]
+                [%result [%scry %noun scry-type %it-does-in-fact-matter]]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry)
+  =^  results3  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/static] type=~ %kill ~nul]
+      ::
+      moves=~
+    ==
   ::
-  =^  moves2  ford  (call:ford [duct=~[/autocons] type=~ %make ~nul autocons])
+  =^  results4  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/autocons] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~[/autocons]  %give  %made  ~1234.5.7  %complete  %result
-            [%result [%ride ride-type %constant]]
-            [%result [%scry %noun scry-type %it-does-in-fact-matter]]
-        ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
-  ::
-  =^  moves3  ford  (call:ford [duct=~[/static] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves3
-    ~
-  ::
-  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
-  ::
-  =^  moves4  ford  (call:ford [duct=~[/autocons] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves4
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~
-    ==  ==
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-slim
   ~&  %test-slim
@@ -852,223 +1008,293 @@
   =/  formula=hoon  (ream '(add 2 2)')
   =/  subject-type=type  -:!>(.)
   ::
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/dead] type=~ %make ~nul [%slim subject-type formula]]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+                [%result [%slim (~(mint ut subject-type) [%noun formula])]]
+    ==  ==  ==
   ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~[/dead]  type=~  %make  ~nul
-        [%slim subject-type formula]
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/dead] type=~ %kill ~nul]
+      ::
+      moves=~
     ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
-            [%result [%slim (~(mint ut subject-type) [%noun formula])]]
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves2  ford
-    (call:ford [duct=~[/dead] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    [moves2 ~]
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-ride
   ~&  %test-ride
   ::
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
+  =/  ford  *ford-turbo
   ::
   =/  fun  |=(a=@ (add 2 a))
   =/  formula=hoon  (ream '!:  (fun 3)')
   =/  subject-schematic=schematic:ford  [%$ %noun !>(.)]
   ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~[/dead]  type=~  %make  ~nul
-        [%ride formula subject-schematic]
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      ^=  call-args
+        :*  duct=~[/dead]  type=~  %make  ~nul
+            [%ride formula subject-schematic]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-turbo)
+        ^-  wall
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %result %ride *] i.moves)
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          ::  compare the move to the expected move, omitting vase type checking
+          ::
+          ::    Types can't be compared using simple equality, so normalize the
+          ::    type to check the rest of the move.
+          ::
+          :-  i.moves(&8 *type)
+          :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+              [%result [%ride *type 5]]
+          ==
+        ::  make sure the returned type nests
+        ::
+        %-  expect-eq  !>
+        :-  (~(nest ut &8:i.moves) | -:!>(*@))
+        &
     ==
   ::
-  ?>  =(1 (lent moves))
-  ?>  ?=(^ moves)
-  ?>  ?=([* %give %made @da %complete %result %ride *] i.moves)
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    ::  compare the move to the expected move, omitting type checking on vase
-    ::
-    ::    Types can't be compared using simple equality, so normalize the type
-    ::    to check the rest of the move.
-    ::
-    :-  i.moves(&8 *type)
-    :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
-        [%result [%ride *type 5]]
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/dead] type=~ %kill ~nul]
+      moves=~
     ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  (~(nest ut &8:i.moves) | -:!>(*@))
-    &
-  ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves2  ford
-    (call:ford [duct=~[/dead] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    [moves2 ~]
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-ride-scry-succeed
   ~&  %test-ride-scry-succeed
   ::
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-42)
+  =/  ford  *ford-turbo
   ::
   =/  formula=hoon  (ream '!:  .^(* %cx /~nul/desk/~1234.5.6/foo/bar)')
   =/  subject-schematic=schematic:ford  [%$ %noun !>(.)]
   ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~[/dead]  type=~  %make  ~nul
-        [%ride formula subject-schematic]
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry-42
+      ::
+      ^=  call-args
+        :*  duct=~[/dead]  type=~  %make  ~nul
+            [%ride formula subject-schematic]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-turbo)
+        ^-  wall
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %result %ride *] i.moves)
+        ::
+        %+  welp
+          %-  expect-eq  !>
+          ::  compare the move to the expected move, omitting vase type checking
+          ::
+          ::    Types can't be compared using simple equality, so normalize the
+          ::    type to check the rest of the move.
+          ::
+          :-  i.moves(&8 *type)
+          :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+              [%result [%ride *type 42]]
+          ==
+        ::
+        %-  expect-eq  !>
+        :-  (~(nest ut &8:i.moves) | -:!>(*@))
+        &
     ==
   ::
-  ?>  =(1 (lent moves))
-  ?>  ?=(^ moves)
-  ?>  ?=([* %give %made @da %complete %result %ride *] i.moves)
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    ::  compare the move to the expected move, omitting type checking on vase
-    ::
-    ::    Types can't be compared using simple equality, so normalize the type
-    ::    to check the rest of the move.
-    ::
-    :-  i.moves(&8 *type)
-    :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
-        [%result [%ride *type 42]]
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/dead] type=~ %kill ~nul]
+      moves=~
     ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  (~(nest ut &8:i.moves) | -:!>(*@))
-    &
-  ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves2  ford
-    (call:ford [duct=~[/dead] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    [moves2 ~]
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-ride-scry-fail
   ~&  %test-ride-scry-fail
   ::
   =/  scry-failed  (scry-fail ~1234.5.6)
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-failed)
+  =/  ford  *ford-turbo
   ::
   =/  formula=hoon  (ream '!:  .^(* %cx /~nul/desk/~1234.5.6/foo/bar)')
   =/  subject-schematic=schematic:ford  [%$ %noun !>(.)]
   ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~[/dead]  type=~  %make  ~nul
-        [%ride formula subject-schematic]
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry-failed
+      ::
+      ^=  call-args
+        :*  duct=~[/dead]  type=~  %make  ~nul
+            [%ride formula subject-schematic]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-turbo)
+        ^-  wall
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %error *] i.moves)
+        ::
+        %-  expect-eq  !>
+        ::  compare the move to the expected move, omitting check on stack trace
+        ::
+        :-  i.moves(|7 ~)
+        :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+            [%error [leaf+"ford: %ride failed:" ~]]
+    ==  ==
+  ::
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/dead] type=~ %kill ~nul]
+      moves=~
     ==
   ::
-  ?>  =(1 (lent moves))
-  ?>  ?=(^ moves)
-  ?>  ?=([* %give %made @da %complete %error *] i.moves)
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    ::  compare the move to the expected move, omitting check on stack trace
-    ::
-    :-  i.moves(|7 ~)
-    :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
-        [%error [leaf+"ford: %ride failed:" ~]]
-    ==
-  ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves2  ford
-    (call:ford [duct=~[/dead] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    [moves2 ~]
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-ride-scry-block
   ~&  %test-ride-scry-block
   ::
   =/  scry-blocked  (scry-block ~1234.5.6)
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-blocked)
+  =/  ford  *ford-turbo
   ::
   =/  formula=hoon  (ream '!:  .^(* %cx /~nul/desk/~1234.5.6/foo/bar)')
   =/  subject-schematic=schematic:ford  [%$ %noun !>(.)]
   ::
-  =^  moves  ford
-    %-  call:ford
-    :*  duct=~[/live]  type=~  %make  ~nul
-        [%ride formula subject-schematic]
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-blocked
+      ::
+      ^=  call-args
+        :*  duct=~[/live]  type=~  %make  ~nul
+            [%ride formula subject-schematic]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass
+                wire=/~nul/dependency/cx/~nul/desk/0/foo/bar
+                %c  %warp  [~nul ~nul]  %desk
+                ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
+    ==  ==  ==
+  ::
+  =^  results2  ford
+    %-  test-ford-take-with-comparator  :*
+      ford
+      now=~1234.5.7
+      scry=scry-blocked
+      ::
+      ^=  call-args
+        :*  wire=/~nul/dependency/cx/~nul/desk/0/foo/bar  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
+            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-turbo)
+        ^-  wall
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %result %ride *] i.moves)
+        ::
+        %+  welp
+          %-  expect-eq  !>
+          ::  compare the move to the expected move, omitting vase type checking
+          ::
+          ::    Types can't be compared using simple equality, so normalize the
+          ::    type to check the rest of the move.
+          ::
+          :-  i.moves(&8 *type)
+          :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete
+              [%result [%ride *type 42]]
+          ==
+        ::  make sure the types nest
+        ::
+        %-  expect-eq  !>
+        :-  (~(nest ut &8:i.moves) | -:!>(*@))
+        &
     ==
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~  %pass
-            wire=/~nul/dependency/cx/~nul/desk/0/foo/bar
-            %c  %warp  [~nul ~nul]  %desk
-            ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
-    ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry-blocked)
-  ::
-  =^  moves2  ford
-    %-  take:ford
-    :*  wire=/~nul/dependency/cx/~nul/desk/0/foo/bar  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
-        [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+  =^  results3  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/live] type=~ %kill ~nul]
+      moves=~
     ==
   ::
-  ?>  =(1 (lent moves2))
-  ?>  ?=(^ moves2)
-  ?>  ?=([* %give %made @da %complete %result %ride *] i.moves2)
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    ::  compare the move to the expected move, omitting type checking on vase
-    ::
-    ::    Types can't be compared using simple equality, so normalize the type
-    ::    to check the rest of the move.
-    ::
-    :-  i.moves2(&8 *type)
-    :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete
-        [%result [%ride *type 42]]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  (~(nest ut &8:i.moves2) | -:!>(*@))
-    &
-  ::
-  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves3  ford
-    (call:ford [duct=~[/live] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    [moves3 ~]
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-ride-scry-promote
   ~&  %test-ride-scry-promote
@@ -1085,55 +1311,67 @@
     ==
   ::
   =/  scry  (scry-with-results scry-results)
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =/  ford  *ford-turbo
   ::
   =/  formula=hoon  (ream '`@tas`%constant')
   =/  subject-schematic=schematic:ford  [%scry %c %x [~nul %desk] /bar/foo]
   ::
   =/  ride=schematic:ford  [%ride formula subject-schematic]
   ::
-  =^  moves  ford  (call:ford [duct=~[/ride] type=~ %make ~nul ride])
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry
+      ::
+      call-args=[duct=~[/ride] type=~ %make ~nul ride]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/ride]  %give  %made  ~1234.5.6  %complete
+                [%result [%ride scry-type %constant]]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
+    ==  ==  ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~[/ride]  %give  %made  ~1234.5.6  %complete
-            [%result [%ride scry-type %constant]]
+  =^  results2  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.7
+      scry=scry
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
         ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry)
+  =^  results3  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/ride] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
   ::
-  =^  moves2  ford
-    %-  take:ford
-    :*  wire=/~nul/clay-sub/~nul/desk  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
-        [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves3  ford
-    (call:ford [duct=~[/ride] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves3
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~
-    ==  ==
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-five-oh-fora
   ~&  %test-five-oh-fora
@@ -1154,7 +1392,7 @@
     ==
   ::
   =/  scry  (scry-with-results scry-results)
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =/  ford  *ford-turbo
   ::
   =/  post-a=schematic:ford  [%scry [%c %x [~nul %desk] /a/posts]]
   =/  title-a=schematic:ford  [%ride (ream '!:  title') post-a]
@@ -1168,82 +1406,114 @@
   =/  rendered-b=schematic:ford  [post-b sidebar]
   ::  first, ask ford to build rendered-a
   ::
-  =^  moves  ford  (call:ford [duct=~[/post-a] type=~ %make ~nul rendered-a])
-  ::
-  ?>  ?=([^ ^ ~] moves)
-  %+  welp
-    %-  check-post-made  :*
-      move=i.moves
-      duct=~[/post-a]
-      type=scry-type
-      date=~1234.5.6
-      title='post-a'
-      contents="post-a-contents"
-    ==
-  %+  welp
-    %-  expect-eq  !>
-    :-  i.t.moves
-    :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-        %c  %warp  [~nul ~nul]  %desk
-        `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
-    ==
-  ::
-  =.  ford  (ford now=~1234.5.7 eny=0xbeef.dead scry=scry)
-  ::
-  =^  moves2  ford  (call:ford [duct=~[/post-b] type=~ %make ~nul rendered-b])
-  ::
-  ?>  ?=([^ ~] moves2)
-  %+  welp
-    %-  check-post-made  :*
-      move=i.moves2
-      duct=~[/post-b]
-      type=scry-type
-      date=~1234.5.7
-      title='post-b'
-      contents="post-b-contents"
-    ==
-  ::
-  =.  ford  (ford now=~1234.5.8 eny=0xbeef.dead scry=scry)
-  ::
-  =^  moves3  ford
-    %-  take:ford
-    :*  wire=/~nul/clay-sub/~nul/desk  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
-        [%c %wris [%da ~1234.5.8] (sy [%x /posts/a]~)]
-    ==
-  ::
-  ?>  ?=([^ ^ ~] moves3)
-  %+  welp
-    %-  check-post-made  :*
-      move=i.moves3
-      duct=~[/post-a]
-      type=scry-type
-      date=~1234.5.8
-      title='post-a'
-      contents="post-a-contents-changed"
-    ==
-  ::
-  =.  ford  (ford now=~1234.5.9 eny=0xbeef.dead scry=scry-is-forbidden)
-  ::
-  =^  moves4  ford  (call:ford [duct=~[/post-b] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    [moves4 ~]
-  ::
-  =.  ford  (ford now=~1234.5.10 eny=0xbeef.dead scry=scry-is-forbidden)
-  ::
-  =^  moves5  ford  (call:ford [duct=~[/post-a] type=~ %kill ~nul])
-  ::
-  =/  state  (~(got by state-by-ship.+>+<.ford) ~nul)
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves5
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry
+      ::
+      call-args=[duct=~[/post-a] type=~ %make ~nul rendered-a]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-turbo)
+        ^-  wall
+        ::
+        ?>  ?=([^ ^ ~] moves)
+        %+  welp
+          %-  check-post-made  :*
+            move=i.moves
+            duct=~[/post-a]
+            type=scry-type
+            date=~1234.5.6
+            title='post-a'
+            contents="post-a-contents"
+          ==
+        %-  expect-eq  !>
+        :-  i.t.moves
+        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+            %c  %warp  [~nul ~nul]  %desk
+            `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
     ==  ==
   ::
-  (expect-ford-empty ford ~nul)
+  =^  results2  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.7
+      scry=scry
+      ::
+      call-args=[duct=~[/post-b] type=~ %make ~nul rendered-b]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-turbo)
+        ^-  wall
+        ::
+        ?>  ?=([^ ~] moves)
+        %-  check-post-made  :*
+          move=i.moves
+          duct=~[/post-b]
+          type=scry-type
+          date=~1234.5.7
+          title='post-b'
+          contents="post-b-contents"
+    ==  ==
+  ::
+  =^  results3  ford
+    %-  test-ford-take-with-comparator  :*
+      ford
+      now=~1234.5.8
+      scry=scry
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.8] (sy [%x /posts/a]~)]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-turbo)
+        ^-  wall
+        ::
+        ?>  ?=([^ ^ ~] moves)
+        %-  check-post-made  :*
+          move=i.moves
+          duct=~[/post-a]
+          type=scry-type
+          date=~1234.5.8
+          title='post-a'
+          contents="post-a-contents-changed"
+    ==  ==
+  ::
+  =^  results4  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.9
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/post-b] type=~ %kill ~nul]
+      moves=~
+    ==
+  ::
+  =^  results5  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.10
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/post-a] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    results5
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-alts
   ~&  %test-alts
@@ -1269,84 +1539,98 @@
     ==
   ::
   =/  scry  (scry-with-results-and-failures scry-results)
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =/  ford  *ford-turbo
   ::
   =/  scry1=schematic:ford  [%scry [%c %x [~nul %first] /one/scry]]
   =/  scry2=schematic:ford  [%scry [%c %x [~nul %second] /two/scry]]
   =/  alts=schematic:ford   [%alts [scry1 scry2 ~]]
   ::
-  =^  moves  ford  (call:ford [duct=~[/alts] type=~ %make ~nul alts])
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry
+      ::
+      call-args=[duct=~[/alts] type=~ %make ~nul alts]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/alts]  %give  %made  ~1234.5.6  %complete
+                [%error [%leaf "%alts: all options failed"]~]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/first
+                %c  %warp  [~nul ~nul]  %first
+                `[%mult [%da ~1234.5.6] (sy [%x /scry/one] ~)]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/second
+                %c  %warp  [~nul ~nul]  %second
+                `[%mult [%da ~1234.5.6] (sy [%x /scry/two] ~)]
+    ==  ==  ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~[/alts]  %give  %made  ~1234.5.6  %complete
-            [%error [%leaf "%alts: all options failed"]~]
+  =^  results2  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.7
+      scry=scry
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/second  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.7] (sy [%x /scry/two]~)]
         ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/first
-            %c  %warp  [~nul ~nul]  %first
-            `[%mult [%da ~1234.5.6] (sy [%x /scry/one] ~)]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/alts]  %give  %made  ~1234.5.7  %complete
+                %result  %alts  %result  %scry  %noun  scry-type  'scry-two'
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/second
+                %c  %warp  [~nul ~nul]  %second
+                `[%mult [%da ~1234.5.7] (sy [%x /scry/two] ~)]
+    ==  ==  ==
+  ::
+  =^  results3  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.8
+      scry=scry
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/first  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.8] (sy [%x /scry/one]~)]
         ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/second
-            %c  %warp  [~nul ~nul]  %second
-            `[%mult [%da ~1234.5.6] (sy [%x /scry/two] ~)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/alts]  %give  %made  ~1234.5.8  %complete
+                %result  %alts  %result  %scry  %noun  scry-type  'scry-one'
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/first
+                %c  %warp  [~nul ~nul]  %first
+                `[%mult [%da ~1234.5.8] (sy [%x /scry/one] ~)]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/second
+                %c  %warp  [~nul ~nul]  %second  ~
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.7 eny=0xdead.beef scry=scry)
+  =^  results4  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.9
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/alts] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/first
+                %c  %warp  [~nul ~nul]  %first  ~
+    ==  ==  ==
   ::
-  =^  moves2  ford
-    %-  take:ford
-    :*  wire=/~nul/clay-sub/~nul/second  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
-        [%c %wris [%da ~1234.5.7] (sy [%x /scry/two]~)]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~[/alts]  %give  %made  ~1234.5.7  %complete
-            %result  %alts  %result  %scry  %noun  scry-type  'scry-two'
-        ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/second
-            %c  %warp  [~nul ~nul]  %second
-            `[%mult [%da ~1234.5.7] (sy [%x /scry/two] ~)]
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.8 eny=0xdead.beef scry=scry)
-  ::
-  =^  moves3  ford
-    %-  take:ford
-    :*  wire=/~nul/clay-sub/~nul/first  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
-        [%c %wris [%da ~1234.5.8] (sy [%x /scry/one]~)]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves3
-    :~  :*  duct=~[/alts]  %give  %made  ~1234.5.8  %complete
-            %result  %alts  %result  %scry  %noun  scry-type  'scry-one'
-        ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/first
-            %c  %warp  [~nul ~nul]  %first
-            `[%mult [%da ~1234.5.8] (sy [%x /scry/one] ~)]
-        ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/second
-            %c  %warp  [~nul ~nul]  %second  ~
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.9 eny=0xbeef.dead scry=scry-is-forbidden)
-  =^  moves4  ford
-    (call:ford [duct=~[/alts] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves4
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/first
-            %c  %warp  [~nul ~nul]  %first  ~
-    ==  ==
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-alts-and-live
   ~&  %test-alts-and-live
@@ -1372,98 +1656,118 @@
     ==
   ::
   =/  scry  (scry-with-results-and-failures scry-results)
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =/  ford  *ford-turbo
   ::
   =/  scry2=schematic:ford  [%scry [%c %x [~nul %desk] /two/scry]]
   =/  same=schematic:ford   [%same scry2]
   ::  depend on scry2 for the duration of the test
   ::
-  =^  moves  ford  (call:ford [duct=~[/same] type=~ %make ~nul same])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~[/same]  %give  %made  ~1234.5.6  %complete
-            %result  %same  %result  %scry  %noun  scry-type  'scry-two'
-        ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /scry/two] ~)]
-    ==  ==
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry
+      ::
+      call-args=[duct=~[/same] type=~ %make ~nul same]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/same]  %give  %made  ~1234.5.6  %complete
+                %result  %same  %result  %scry  %noun  scry-type  'scry-two'
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /scry/two] ~)]
+    ==  ==  ==
   ::
   =/  scry1=schematic:ford  [%scry [%c %x [~nul %desk] /one/scry]]
   =/  alts=schematic:ford   [%alts [scry1 scry2 ~]]
-  ::
-  =.  ford  (ford now=~1234.5.7 eny=0xdead.beef scry=scry)
   ::  call the alts schematic
   ::
   ::    The alts schematic should fail to read /scry/one, and should fallback
   ::    to /scry/two.
   ::
-  =^  moves2  ford  (call:ford [duct=~[/alts] type=~ %make ~nul alts])
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry
+      ::
+      call-args=[duct=~[/alts] type=~ %make ~nul alts]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/alts]  %give  %made  ~1234.5.7  %complete
+                %result  %alts  %result  %scry  %noun  scry-type  'scry-two'
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.7] (sy [%x /scry/two] [%x /scry/one] ~)]
+    ==  ==  ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~[/alts]  %give  %made  ~1234.5.7  %complete
-            %result  %alts  %result  %scry  %noun  scry-type  'scry-two'
-        ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.7] (sy [%x /scry/two] [%x /scry/one] ~)]
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.8 eny=0xdead.beef scry=scry)
   ::  tell ford that /scry/one exists now
   ::
-  =^  moves3  ford
-    %-  take:ford
-    :*  wire=/~nul/clay-sub/~nul/desk  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
-        [%c %wris [%da ~1234.5.8] (sy [%x /scry/one]~)]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves3
-    :~  :*  duct=~[/alts]  %give  %made  ~1234.5.8  %complete
-            %result  %alts  %result  %scry  %noun  scry-type  'scry-one'
+  =^  results3  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.8
+      scry=scry
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.8] (sy [%x /scry/one]~)]
         ==
-        ::  we subscribe to both paths because /same still exists.
-        ::
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.8] (sy [%x /scry/one] [%x /scry/two] ~)]
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/alts]  %give  %made  ~1234.5.8  %complete
+                %result  %alts  %result  %scry  %noun  scry-type  'scry-one'
+            ==
+            ::  we subscribe to both paths because /same still exists.
+            ::
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.8] (sy [%x /scry/one] [%x /scry/two] ~)]
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.9 eny=0xdead.beef scry=scry)
   ::  kill the /same build
   ::
   ::    We should no longer subscribe to /scry/two in the resulting clay
   ::    subscription.
   ::
-  =^  moves4  ford  (call:ford [duct=~[/same] type=~ %kill ~nul])
+  =^  results4  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.9
+      scry=scry
+      ::
+      call-args=[duct=~[/same] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.8] (sy [%x /scry/one] ~)]
+    ==  ==  ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves4
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.8] (sy [%x /scry/one] ~)]
-    ==  ==
+  =^  results5  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.10
+      scry=scry
+      ::
+      call-args=[duct=~[/alts] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.10 eny=0xdead.beef scry=scry)
-  ::
-  =^  moves5  ford  (call:ford [duct=~[/alts] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves5
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~
-    ==  ==
-  ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    results5
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ++  test-double-alts
   ~&  %test-double-alts
@@ -1498,7 +1802,7 @@
     ==
   ::
   =/  scry  (scry-with-results-and-failures scry-results)
-  =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry)
+  =/  ford  *ford-turbo
   ::
   =/  scry1=schematic:ford  [%scry [%c %x [~nul %desk] /one/scry]]
   =/  scry2=schematic:ford  [%scry [%c %x [~nul %desk] /two/scry]]
@@ -1507,99 +1811,113 @@
   =/  alts2=schematic:ford  [%alts [scry3 scry2 ~]]
   ::  alts1 will depend on both scry1 and scry2
   ::
-  =^  moves  ford  (call:ford [duct=~[/first] type=~ %make ~nul alts1])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves
-    :~  :*  duct=~[/first]  %give  %made  ~1234.5.6  %complete
-            %result  %alts  %result  %scry  %noun  scry-type  'scry-two'
-        ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /scry/one] [%x /scry/two] ~)]
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.7 eny=0xdead.beef scry=scry)
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry
+      ::
+      call-args=[duct=~[/first] type=~ %make ~nul alts1]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/first]  %give  %made  ~1234.5.6  %complete
+                %result  %alts  %result  %scry  %noun  scry-type  'scry-two'
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /scry/one] [%x /scry/two] ~)]
+    ==  ==  ==
   ::  alts2 will depend on both scry3 and scry2
   ::
-  =^  moves2  ford  (call:ford [duct=~[/second] type=~ %make ~nul alts2])
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry
+      ::
+      call-args=[duct=~[/second] type=~ %make ~nul alts2]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/second]  %give  %made  ~1234.5.7  %complete
+                %result  %alts  %result  %scry  %noun  scry-type  'scry-two'
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.7]
+                (sy [%x /scry/one] [%x /scry/two] [%x /scry/three] ~)
+    ==  ==  ==
   ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves2
-    :~  :*  duct=~[/second]  %give  %made  ~1234.5.7  %complete
-            %result  %alts  %result  %scry  %noun  scry-type  'scry-two'
-        ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.7]
-            (sy [%x /scry/one] [%x /scry/two] [%x /scry/three] ~)
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.8 eny=0xdead.beef scry=scry)
   ::  alts2 should now just return 'scry-three'
   ::
-  =^  moves3  ford
-    %-  take:ford
-    :*  wire=/~nul/clay-sub/~nul/desk  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
-        [%c %wris [%da ~1234.5.8] (sy [%x /scry/three]~)]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves3
-    :~  :*  duct=~[/second]  %give  %made  ~1234.5.8  %complete
-            %result  %alts  %result  %scry  %noun  scry-type  'scry-three'
+  =^  results3  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.8
+      scry=scry
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.8] (sy [%x /scry/three]~)]
         ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.8]
-            (sy [%x /scry/one] [%x /scry/two] [%x /scry/three] ~)
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/second]  %give  %made  ~1234.5.8  %complete
+                %result  %alts  %result  %scry  %noun  scry-type  'scry-three'
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.8]
+                (sy [%x /scry/one] [%x /scry/two] [%x /scry/three] ~)
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.9 eny=0xdead.beef scry=scry)
   ::  alts1 should now just return 'scry-one'
   ::
-  =^  moves4  ford
-    %-  take:ford
-    :*  wire=/~nul/clay-sub/~nul/desk  duct=~
-        ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
-        [%c %wris [%da ~1234.5.9] (sy [%x /scry/one] [%x /scry/two] ~)]
-    ==
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves4
-    :~  :*  duct=~[/first]  %give  %made  ~1234.5.9  %complete
-            %result  %alts  %result  %scry  %noun  scry-type  'scry-one'
+  =^  results4  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.9
+      scry=scry
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.9] (sy [%x /scry/one] [%x /scry/two] ~)]
         ==
-        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.9]
-            (sy [%x /scry/one] [%x /scry/three] ~)
-    ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/first]  %give  %made  ~1234.5.9  %complete
+                %result  %alts  %result  %scry  %noun  scry-type  'scry-one'
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.9]
+                (sy [%x /scry/one] [%x /scry/three] ~)
+    ==  ==  ==
   ::
-  =.  ford  (ford now=~1234.5.10 eny=0xdead.beef scry=scry)
+  =^  results5  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.10
+      scry=scry
+      ::
+      call-args=[duct=~[/first] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.9]
+                (sy [%x /scry/three] ~)
+    ==  ==  ==
   ::
-  =^  moves5  ford  (call:ford [duct=~[/first] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves5
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.9]
-            (sy [%x /scry/three] ~)
-    ==  ==
-  ::
-  =.  ford  (ford now=~1234.5.11 eny=0xdead.beef scry=scry)
-  ::
-  =^  moves6  ford  (call:ford [duct=~[/second] type=~ %kill ~nul])
-  ::
-  %+  welp
-    %-  expect-eq  !>
-    :-  moves6
-    :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk  ~
-    ==  ==
+  =^  results6  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.11
+      scry=scry
+      ::
+      call-args=[duct=~[/second] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
   ::
   (expect-ford-empty ford ~nul)
 ::
@@ -1718,6 +2036,89 @@
   ::
   ~|  scry-is-forbidden+[beam+beam term+term]
   !!
+::
+++  test-ford-call
+  |=  $:  ford=_(ford-turbo)
+          now=@da
+          scry=sley
+          call-args=[=duct type=* wrapped-task=(hobo task:able:ford-turbo)]
+          expected-moves=(list move:ford-turbo)
+      ==
+  ^-  [wall _(ford-turbo)]
+  ::
+  =.  ford  (ford now=now eny=0xdead.beef scry=scry)
+  ::
+  =^  moves  ford
+    %-  call:ford  call-args
+  ::
+  =/  output=wall
+    %-  expect-eq  !>
+    :-  moves
+    expected-moves
+  ::
+  [output ford]
+::
+++  test-ford-take
+  |=  $:  ford=_(ford-turbo)
+          now=@da
+          scry=sley
+          take-args=[=wire =duct wrapped-sign=(hypo sign:ford-turbo)]
+          expected-moves=(list move:ford-turbo)
+      ==
+  ^-  [wall _(ford-turbo)]
+  ::
+  =.  ford  (ford now=now eny=0xdead.beef scry=scry)
+  ::
+  =^  moves  ford
+    %-  take:ford  take-args
+  ::
+  =/  output=wall
+    %-  expect-eq  !>
+    :-  moves
+    expected-moves
+  ::
+  [output ford]
+::  +test-ford-call-with-comparator
+::
+::    Sometimes we can't just do simple comparisons between the moves statements and
+::    must instead specify a gate that performs the comparisons.
+::
+++  test-ford-call-with-comparator
+  |=  $:  ford=_(ford-turbo)
+          now=@da
+          scry=sley
+          call-args=[=duct type=* wrapped-task=(hobo task:able:ford-turbo)]
+          move-comparator=$-((list move:ford-turbo) wall)
+      ==
+  ^-  [wall _(ford-turbo)]
+  ::
+  =.  ford  (ford now=now eny=0xdead.beef scry=scry)
+  ::
+  =^  moves  ford
+    %-  call:ford  call-args
+  ::
+  =/  output=wall  (move-comparator moves)
+  ::
+  [output ford]
+::  +test-ford-take-with-comparator
+::
+++  test-ford-take-with-comparator
+  |=  $:  ford=_(ford-turbo)
+          now=@da
+          scry=sley
+          take-args=[=wire =duct wrapped-sign=(hypo sign:ford-turbo)]
+          move-comparator=$-((list move:ford-turbo) wall)
+      ==
+  ^-  [wall _(ford-turbo)]
+  ::
+  =.  ford  (ford now=now eny=0xdead.beef scry=scry)
+  ::
+  =^  moves  ford
+    %-  take:ford  take-args
+  ::
+  =/  output=wall  (move-comparator moves)
+  ::
+  [output ford]
 ::  +expect-ford-empty: assert that ford's state is one empty ship
 ::
 ::    At the end of every test, we want to assert that we have cleaned up all
