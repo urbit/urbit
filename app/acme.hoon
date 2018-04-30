@@ -431,7 +431,7 @@
       ==
     =/  k1  (new-key:rsa 2.048 eny)
     ::
-    =/  k2
+    =/  k2=key:rsa
       =/  p  0x1837.be57.1286.bf6a.3cf8.4716.634f.ef85.f947.c654.da6e.e222.
           5654.9466.0ab0.a2ef.1985.1095.e3c3.9e74.9478.e3f3.ee92.f885.ec3c.
           84c3.6b3c.9731.65f9.9d1d.f743.646f.37d7.82d8.3f4a.856c.6453.b2c8.
@@ -445,7 +445,7 @@
       =/  n  (mul p q)
       =/  e  0x1.0001
       =/  d  (~(inv fo (elcm:rsa (dec p) (dec q))) e)
-      (key:rsa [p q n e d])
+      [p q n e d]
     ::
     |^  ^-  tang
         ;:  weld
@@ -483,17 +483,17 @@
     --
   ::
   ++  testrsa
-    =/  k1
-      =/  p  61
-      =/  q  53
-      =/  e  17
+    =/  k1=key:rsa
+      =/  p  `@ux`61
+      =/  q  `@ux`53
+      =/  e  `@ux`17
       =/  n  (mul p q)
       =/  d  (~(inv fo (elcm:rsa (dec p) (dec q))) e)
-      (key:rsa [p q n e d])
+      [p q n e d]
     ::
-    =/  k2  (key:rsa [11 13 143 7 103])
+    =/  k2=key:rsa  [`@ux`11 `@ux`13 `@ux`143 `@ux`7 `@ux`103]
     ::
-    =/  k3
+    =/  k3=key:rsa
       =/  p
     12.131.072.439.211.271.897.323.671.531.612.440.428.472.427.633.701.410.
        925.634.549.312.301.964.373.042.085.619.324.197.365.322.416.866.541.
@@ -505,7 +505,7 @@
       =/  n  (mul p q)
       =/  e  65.537
       =/  d  (~(inv fo (elcm:rsa (dec p) (dec q))) e)
-      (key:rsa [p q n e d])
+      [`@ux`p `@ux`q `@ux`n `@ux`e `@ux`d]
     =/  m3  (swp 3 'attack at dawn')
     =/  c3
       35.052.111.338.673.026.690.212.423.937.053.328.511.880.760.811.579.981.
@@ -651,8 +651,8 @@
         797f.8b2e.abe3.5e02.a0ce.d5d8.255a.c1d8.ee13.521f.6797.377d.2fc8.
         280b.9b43.c6bf.03e5.88ec.bdd3.2c2f.cf3f.1e40.3c96.7ca5.0b9d.0f59.
         627b.7049.e964.1d75.611d.1f57.0045.6c52.7ec3.2b0a.cd69.a471.ae12
-    =/  e  65.537
-    =/  k  (key:rsa [p q n e d])
+    =/  e  `@ux`65.537
+    =/  k=key:rsa  [p q n e d]
     =/  hed=json  o+(my alg+s+'RS256' ~)
     =/  lod=json
       :-  %o  %-  my  :~
