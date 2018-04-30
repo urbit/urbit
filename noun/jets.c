@@ -226,6 +226,8 @@ _cj_find_warm(u3_noun loc)
   }
 }
 
+/* _cj_spot(): find location of cor. expensive. cor is RETAINED.
+ */
 static u3_weak
 _cj_spot(u3_noun cor)
 {
@@ -269,19 +271,10 @@ _cj_spot(u3_noun cor)
   }
 }
 
-/* u3j_spot(): identify `cor`s location. RETAIN.
+/* _cj_cast(): create a u3j_fink that can be used to efficiently verify
+ *             that another core is located where this one is.
  */
-u3_weak
-u3j_spot(u3_noun cor)
-{
-  u3_weak loc;
-  u3t_on(glu_o);
-  loc = _cj_spot(cor);
-  u3t_off(glu_o);
-  return loc;
-}
-
-static u3j_fink*
+static u3p(u3j_fink)
 _cj_cast(u3_noun cor, u3_noun loc)
 {
   c3_w     i_w = 0;
@@ -314,24 +307,15 @@ _cj_cast(u3_noun cor, u3_noun loc)
   u3z(rev);
   c3_assert( u3_nul == j );
 
-  return fin_u;
+  return u3of(u3j_fink, fin_u);
 }
 
-/* u3j_cast(): create u3j_fink from core and location.
+/* _cj_fine(): check that a core matches a u3j_fink
  */
-u3j_fink*
-u3j_cast(u3_noun cor, u3_noun loc)
-{
-  u3j_fink* fin_u;
-  u3t_on(glu_o);
-  fin_u = _cj_cast(cor, loc);
-  u3t_off(glu_o);
-  return fin_u;
-}
-
 static c3_o
-_cj_fine(u3_noun cor, u3j_fink* fin_u)
+_cj_fine(u3_noun cor, u3p(u3j_fink) fin_p)
 {
+  u3j_fink* fin_u = u3to(u3j_fink, fin_p);
   c3_w i_w;
   for ( i_w = 0; i_w < fin_u->len_w; ++i_w ) {
     u3j_fist* fis_u = &(fin_u->fis_u[i_w]);
@@ -343,18 +327,6 @@ _cj_fine(u3_noun cor, u3j_fink* fin_u)
     }
   }
   return u3r_sing(fin_u->sat, cor);
-}
-
-/* u3j_fine(): check core against u3j_fink.
- */
-c3_o
-u3j_fine(u3_noun cor, u3j_fink* fin_u)
-{
-  c3_o ret_o;
-  u3t_on(glu_o);
-  ret_o = _cj_fine(cor, fin_u);
-  u3t_off(glu_o);
-  return ret_o;
 }
 
 static c3_o
@@ -387,20 +359,6 @@ _cj_nail(u3_noun loc, u3_noun axe,
   }
 
   u3z(act);
-  return ret_o;
-}
-
-/* u3j_nail(): resolve hot state for location and axis. RETAIN.
-**             return value indicates presence of driver.
-**/
-c3_o
-u3j_nail(u3_noun loc, u3_noun axe,
-         u3_noun* lab, u3j_core** cop_u, u3j_harm** ham_u)
-{
-  c3_o ret_o;
-  u3t_on(glu_o);
-  ret_o = _cj_nail(loc, axe, lab, cop_u, ham_u);
-  u3t_off(glu_o);
   return ret_o;
 }
 
@@ -788,7 +746,7 @@ _cj_hank_fine(_cj_hank* han_u, u3_noun cor, u3_noun *inn)
     else {
       u3j_site* sit_u = &(han_u->sit_u);
       c3_assert(u3_none != sit_u->loc);
-      return _cj_fine(*inn, u3to(u3j_fink, sit_u->fin_p));
+      return _cj_fine(*inn, sit_u->fin_p);
     }
   }
 }
@@ -846,7 +804,7 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
       u3z(got);
       sit_u->bat   = u3k(u3h(cor));
       sit_u->loc   = u3k(loc);
-      sit_u->fin_p = u3of(u3j_fink, _cj_cast(cor, loc));
+      sit_u->fin_p = _cj_cast(cor, loc);
       sit_u->fon_o = c3y;
       if ( 0 == (sit_u->axe = _cj_axis(fol)) ) {
         sit_u->jet_o = c3n;
@@ -1163,7 +1121,7 @@ _cj_site_kick(u3_noun cor, u3j_site* sit_u)
   loc = pro = u3_none;
 
   if ( u3_none != sit_u->loc ) {
-    if ( c3y == _cj_fine(cor, u3to(u3j_fink, sit_u->fin_p)) ) {
+    if ( c3y == _cj_fine(cor, sit_u->fin_p) ) {
       loc = sit_u->loc;
       if ( c3y == sit_u->jet_o ) {
         pro = _cj_site_kick_hot(cor, sit_u);
@@ -1187,7 +1145,7 @@ _cj_site_kick(u3_noun cor, u3j_site* sit_u)
       }
 
       sit_u->loc   = loc;
-      sit_u->fin_p = u3of(u3j_fink, _cj_cast(cor, loc));
+      sit_u->fin_p = _cj_cast(cor, loc);
       sit_u->fon_o = c3y;
       if ( c3y ==
         (sit_u->jet_o = _cj_nail(loc, sit_u->axe,
@@ -1553,7 +1511,7 @@ u3j_rite_mine(u3j_rite* rit_u, u3_noun clu, u3_noun cor)
 
   if ( non_t ||
        c3n == u3r_sing(rit_u->clu, clu) ||
-       c3n == _cj_fine(cor, u3to(u3j_fink, rit_u->fin_p)) ) {
+       c3n == _cj_fine(cor, rit_u->fin_p) ) {
     u3_weak loc = _cj_mile(u3k(clu), u3k(cor));
     if ( u3_none != loc ) {
       u3_noun   old   = rit_u->clu;
@@ -1561,7 +1519,7 @@ u3j_rite_mine(u3j_rite* rit_u, u3_noun clu, u3_noun cor)
       c3_o      own_o = rit_u->own_o;
       rit_u->own_o    = c3y;
       rit_u->clu      = u3k(clu);
-      rit_u->fin_p    = u3of(u3j_fink, _cj_cast(cor, loc));
+      rit_u->fin_p    = _cj_cast(cor, loc);
       u3z(loc);
 
       if ( !non_t && (c3y == own_o) ) {

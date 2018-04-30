@@ -61,14 +61,14 @@
         u3j_core* ray_u;              //  dynamic array by axis
       } u3j_dash;
 
-    /* u3j_fist: a single step in a fine check
+    /* u3j_fist: a single step in a fine check.
     */
       typedef struct {
         u3_noun bat;                  //  battery
         u3_noun pax;                  //  parent axis
       } u3j_fist;
 
-    /* u3j_fink: (fine check) verify a located core
+    /* u3j_fink: (fine check) enough data to verify a located core.
     */
       typedef struct {
         c3_w    len_w;                //  number of fists
@@ -76,7 +76,7 @@
         u3j_fist fis_u[0];            //  fists
       } u3j_fink;
 
-    /* u3j_rite: site of a %fast, used to skip re-mining
+    /* u3j_rite: site of a %fast, used to skip re-mining.
     */
       typedef struct {
         c3_o          own_o;          //  rite owns fink?
@@ -84,7 +84,7 @@
         u3p(u3j_fink) fin_p;          //  fine check
       } u3j_rite;
 
-    /* u3j_site: site of a kick (nock 9), used to cache call target
+    /* u3j_site: site of a kick (nock 9), used to cache call target.
     */
       struct _u3n_prog;
       typedef struct {
@@ -143,30 +143,6 @@
         u3_noun
         u3j_soft(u3_noun     cor,
                  const c3_c* tam_c);
-
-      /* u3j_spot():
-      **
-      **   Identify `cor`s location. RETAIN.
-      */
-        u3_weak
-        u3j_spot(u3_noun cor);
-
-      /* u3j_fine(): check core against u3j_fink.
-       */
-        c3_o
-        u3j_fine(u3_noun cor, u3j_fink* fin_u);
-
-      /* u3j_cast(): create u3j_fink from core and location.
-       */
-        u3j_fink*
-        u3j_cast(u3_noun cor, u3_noun loc);
-
-      /* u3j_nail(): resolve hot state for location and axis. RETAIN.
-      **             return value indicates presence of driver.
-      **/
-        c3_o
-        u3j_nail(u3_noun loc, u3_noun axe,
-                 u3_noun* lab, u3j_core** cop_u, u3j_harm** ham_u);
 
       /* u3j_kick(): try to kick by jet.  If no kick, produce u3_none.
       **
