@@ -5,7 +5,7 @@
 :-  %noun
 =+  tester:tester
 |^
-^-  wall
+^-  tang
 ;:  weld
   test-is-schematic-live
   test-date-from-schematic
@@ -1614,7 +1614,7 @@
           title=@tas
           contents=tape
       ==
-  ^-  wall
+  ^-  tang
   ::
   ?>  ?=([* %give %made @da %complete %result ^ *] move)
   =/  result  result.p.card.move
@@ -1725,7 +1725,7 @@
 ::
 ++  expect-ford-empty
   |=  [ford=_(ford-turbo) ship=@p]
-  ^-  wall
+  ^-  tang
   %-  expect-eq  !>
   :-  state-by-ship.+>+<.ford
   (my [ship *ford-state:ford-turbo]~)
