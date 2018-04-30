@@ -5,23 +5,24 @@
   /** Noun semantics.
   **/
 #if 0
-  ++  bane  ,@tas                                         ::  battery name
-  ++  bash  ,@uvH                                         ::  label hash
-  ++  bosh  ,@uvH                                         ::  battery hash
-  ++  batt  ,*                                            ::  battery
-  ++  calf                                                ::  
-    $:  jax=,@ud                                          ::  hot core index
-        hap=(map ,@ud ,@ud)                               ::  axis/hot arm index
-        lab=path                                          ::  label as path
-        jit=*                                             ::  arbitrary data
-    ==                                                    ::
-  ++  calx  (trel calf (pair bash cope) club)             ::  cached by battery
-  ++  clog  (pair cope (map batt club))                   ::  label record
-  ++  club  (pair corp (map term nock))                   ::  battery pattern
-  ++  cope  (trel bane axis (each bash noun))             ::  core pattern
-  ++  core  ,*
-  ++  corp  (each core batt)                              ::  parent or static
-  ++  dash  (map bash clog)                               ::  jet system
++=  location    $:  pattern=(each static dynamic)
+                    name=term
+                    hooks=(map term axis)
+                ==
++=  static      (each payload=* parent=location)
++=  dynamic     [where=axis parent=location]
+::
++=  registry    [roots=(map * location) parents=(list parent)]
++=  parent      (pair axis (map location location))
+::
++=  activation  $:  hot-index=@ud
+                    drivers=(map axis @ud)
+                    label=path
+                    jit=*
+                ==
+::
++=  cold        (map battery=^ registry)
++=  warm        (map location activation)
 #endif
 
   /** Data structures.

@@ -3,6 +3,19 @@
 */
 #include "all.h"
 
+/**  Data structures.
+**/
+
+  /* _cj_hank: cached hook information.
+   */
+  typedef struct {
+    u3_weak  hax;                     //  axis of hooked inner core
+    u3j_site sit_u;                   //  call-site data
+  } _cj_hank;
+
+/**  Functions.
+**/
+
   /* _cj_count(): count and link dashboard entries.
   */
   static c3_w 
@@ -329,6 +342,11 @@ _cj_fine(u3_noun cor, u3p(u3j_fink) fin_p)
   return u3r_sing(fin_u->sat, cor);
 }
 
+/* _cj_nail(): resolve hot state for arm at axis within cores located
+ *             at loc. a label will be PRODUCED at *lab, unconditionally.
+ *             Arguments are RETAINED. Return value is yes if a jet driver
+ *             is present.
+ */
 static c3_o
 _cj_nail(u3_noun loc, u3_noun axe,
          u3_noun* lab, u3j_core** cop_u, u3j_harm** ham_u)
@@ -362,7 +380,7 @@ _cj_nail(u3_noun loc, u3_noun axe,
   return ret_o;
 }
 
-/* _cj_scan(): has this core been registered?
+/* _cj_scan(): has this core been registered?  RETAIN.
  */
 static c3_o
 _cj_scan(u3_noun cor)
@@ -695,11 +713,9 @@ u3j_hook(u3_noun     cor,
   return pro;
 }
 
-typedef struct {
-  u3_weak  hax;
-  u3j_site sit_u;
-} _cj_hank;
-
+/* cj_hank_find(): find cached hook information, keyed by arbitrary
+ *                 prefix and term cords. RETAIN.
+ */
 static _cj_hank*
 _cj_hank_find(u3_noun pre, u3_noun tam)
 {
@@ -731,6 +747,10 @@ _cj_hank_find(u3_noun pre, u3_noun tam)
   }
 }
 
+/* _cj_hank_fine(): check that cached hook information is valid
+ *                  for given core. *inn will point to the hooked
+ *                  core on return if valid. RETAIN.
+ */
 static c3_o
 _cj_hank_fine(_cj_hank* han_u, u3_noun cor, u3_noun *inn)
 {
@@ -751,6 +771,8 @@ _cj_hank_fine(_cj_hank* han_u, u3_noun cor, u3_noun *inn)
   }
 }
 
+/* _cj_hank_lose(): release memory maintained in a hook cache.
+*/
 static void
 _cj_hank_lose(_cj_hank* han_u)
 {
@@ -760,12 +782,14 @@ _cj_hank_lose(_cj_hank* han_u)
   }
 }
 
+/* _cj_burn(): stop tracing glu and call a nock program
+ */
 static u3_noun
-_cj_burn(u3_noun cor, u3n_prog* pog_u)
+_cj_burn(u3p(u3n_prog) pog_p, u3_noun cor)
 {
   u3_noun pro;
   u3t_off(glu_o);
-  pro = u3n_burn(cor, pog_u);
+  pro = u3n_burn(pog_p, cor);
   u3t_on(glu_o);
   return pro;
 }
@@ -1103,7 +1127,7 @@ _cj_site_kick_hot(u3_noun cor, u3j_site* sit_u)
     if ( u3_none == pro ) {
       pro = _cj_site_lock(cor, sit_u);
       if ( u3_none == pro ) {
-        pro = _cj_burn(cor, u3to(u3n_prog, sit_u->pog_p));
+        pro = _cj_burn(sit_u->pog_p, cor);
       }
     }
     if ( c3y == pof_o ) {
@@ -1206,7 +1230,7 @@ u3j_cook(const c3_c* key_c,
   }
   pro = _cj_site_kick(u3k(inn), &(han_u->sit_u));
   if ( u3_none == pro ) {
-    pro = _cj_burn(inn, u3to(u3n_prog, han_u->sit_u.pog_p));
+    pro = _cj_burn(han_u->sit_u.pog_p, inn);
   }
   u3z(cor);
   
@@ -1286,7 +1310,7 @@ u3j_gate_slam(u3j_site* sit_u, u3_noun sam)
     pro = _cj_site_kick_hot(cor, sit_u);
   }
   if ( u3_none == pro ) {
-    pro = _cj_burn(cor, u3to(u3n_prog, sit_u->pog_p));
+    pro = _cj_burn(sit_u->pog_p, cor);
   }
   u3t_off(glu_o);
   return pro;
@@ -1885,25 +1909,3 @@ u3j_free(void)
   u3h_free(u3R->jed.han_p);
 }
 
-/*  XX FIXME: move to u3.md
-|%
-+=  location    $:  pattern=(each static dynamic)
-                    name=term
-                    hooks=(map term axis)
-                ==
-+=  static      (each payload=* parent=location)
-+=  dynamic     [where=axis parent=location]
-::
-+=  registry    [roots=(map * location) parents=(list parent)]
-+=  parent      (pair axis (map location location))
-::
-+=  activation  $:  hot-index=@ud
-                    drivers=(map axis @ud)
-                    label=path
-                    jit=*
-                ==
-::
-+=  cold        (map battery=^ registry)
-+=  warm        (map location activation)
---
-*/

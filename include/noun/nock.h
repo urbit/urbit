@@ -50,7 +50,7 @@
     /* u3n_burn(): execute u3n_prog with bus as subject.
      */
       u3_noun
-      u3n_burn(u3_noun bus, u3n_prog* pog_u);
+      u3n_burn(u3p(u3n_prog) pog_p, u3_noun bus);
 
     /* u3n_slam_on(): produce (gat sam).
     */

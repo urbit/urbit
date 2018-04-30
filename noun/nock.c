@@ -2157,11 +2157,11 @@ _n_burn_out(u3_noun bus, u3n_prog* pog_u)
 /* u3n_burn(): execute u3n_prog with bus as subject.
  */
 u3_noun
-u3n_burn(u3_noun bus, u3n_prog* pog_u)
+u3n_burn(u3p(u3n_prog) pog_p, u3_noun bus)
 {
   u3_noun pro;
   u3t_on(noc_o);
-  pro = _n_burn_out(bus, pog_u);
+  pro = _n_burn_out(bus, u3to(u3n_prog, pog_p));
   u3t_off(noc_o);
   return pro;
 }
