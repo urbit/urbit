@@ -22,6 +22,7 @@
 ++  card                                                ::  side-effect
   $%  [%peer wire gill:gall path]
       [%hiss wire (unit user:eyre) mark [%hiss hiss]]
+      [%wait wire @da]
   ==
 --
 ::
@@ -113,6 +114,11 @@
     :+  /filter  `'poll filter'
     [%eth-get-filter-changes filter]
   ::
+  ++  ta-wait-poll
+    %-  ta-card
+    ::NOTE  may adjust wrt filter timeout
+    [%wait /poll (add now.bol ~m4)]
+  ::
   ::
   ++  ta-init  ta-new-filter
   ::
@@ -142,7 +148,7 @@
         +>
       ~&  %filter-timed-out--recreating
       ta-new-filter
-    ::TODO  kick for poll
+    =.  +>  ta-wait-poll
     ?>  ?=(%a -.res.rep)
     =*  changes  p.res.rep
     ~&  [%filter-changes (lent changes)]
@@ -401,6 +407,11 @@
   ~&  [%failed-sigh w]
   ~&  (turn t (cury wash [0 80]))
   [~ +>.$]
+::
+::  when we get the timer: poll filter
+++  wake-poll
+  |=  [w=wire ~]
+  ta-save:ta-poll-filter:ta
 ::
 ::  when we get a new filter: read it, kick timer
 ::  when we get log or poll results: apply them
