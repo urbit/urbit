@@ -280,7 +280,7 @@
         :~  :*  duct=~  %pass
                 wire=/~nul/resource/cx/~nul/desk/0/foo/bar
                 %c  %warp  [~nul ~nul]  %desk
-                ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
+                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
     ==  ==  ==
   ::
   =^  results2  ford
@@ -531,7 +531,7 @@
         :~  :*  duct=~  %pass
                 wire=/~nul/resource/cx/~nul/desk/0/foo/bar
                 %c  %warp  [~nul ~nul]  %desk
-                ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
+                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
             ==
         ::
             :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
@@ -621,7 +621,7 @@
         :~  :*  duct=~  %pass
                 wire=/~nul/resource/cx/~nul/desk/0/foo/bar
                 %c  %warp  [~nul ~nul]  %desk
-                ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
+                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
             ==
         ::
             :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
@@ -1243,7 +1243,7 @@
         :~  :*  duct=~  %pass
                 wire=/~nul/resource/cx/~nul/desk/0/foo/bar
                 %c  %warp  [~nul ~nul]  %desk
-                ~  %sing  %x  [%da ~1234.5.6]  /bar/foo
+                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
     ==  ==  ==
   ::
   =^  results2  ford

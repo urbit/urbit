@@ -2360,7 +2360,7 @@
           =/  =disc  (extract-disc resource)
           =,  rail.resource
           :*  %c  %warp  sock=[our their=ship.disc]  desk.disc
-              `[%sing care.resource case=[%da date] spur]
+              `[%sing care.resource case=[%da date] (flop spur)]
           ==
         ::
         [duct=~ [%pass wire note]]
