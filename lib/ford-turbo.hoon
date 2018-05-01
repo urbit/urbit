@@ -1493,6 +1493,17 @@
     =/  blocked-builds  (~(get ju blocks.state) resource)
     ::
     (execute-loop blocked-builds)
+  ::  +cancel: cancel a build
+  ::
+  ::    When called on a live build, removes all tracking related to the live
+  ::    build, and no more %made moves will be sent for that build.
+  ::
+  ::    When called on a once build, removes all tracking related to the once
+  ::    build, and that build will never be completed or have a %made sent.
+  ::
+  ::    When called on a build that isn't registered in :state, such as a
+  ::    completed once build, or a build that has already been canceled,
+  ::    prints and no-ops.
   ::
   ++  cancel  ^+  [moves state]
     ::
@@ -3257,10 +3268,71 @@
     ::
     [moves this]
   ::
-      %wipe  !!
+      ::  %wipe: wipe the cache, clearing half the entries
+      ::
+      %wipe
+    ::
+    =/  ship-states=(list [@p ford-state])  ~(tap by state-by-ship)
+    ::  wipe each ship in the state separately
+    ::
+    =.  state-by-ship
+      %+  roll  ship-states
+      |=  [[ship=@p state=ford-state] accumulator=(map @p ford-state)]
+      ::
+      (~(put by accumulator) ship (wipe state))
+    ::
+    [~ this]
   ::
       %wegh  !!
   ==
+::  +wipe: wipe half a +ford-state's cache, in LRU (least recently used) order
+::
+++  wipe
+  |=  state=ford-state
+  ^+  state
+  ::
+  =/  cache-list=(list [build cache-line])  ~(tap by results.state)
+  ::
+  =/  split-cache=[(list [build cache-line]) (list [build cache-line])]
+    %+  skid  cache-list
+    |=([=build =cache-line] ?=(%tombstone -.cache-line))
+  ::
+  =/  tombstones=(list [build cache-line])  -.split-cache
+  =/  values=(list [build cache-line])      +.split-cache
+  ::  sort the cache lines in chronological order by :last-accessed
+  ::
+  =/  sorted=(list [build cache-line])
+    %+  sort  values
+    |=  [a=[=build =cache-line] b=[=build =cache-line]]
+    ^-  ?
+    ::
+    ?>  ?=(%value -.cache-line.a)
+    ?>  ?=(%value -.cache-line.b)
+    ::
+    (lte last-accessed.cache-line.a last-accessed.cache-line.b)
+  ::
+  =/  num-entries=@  (lent cache-list)
+  ::  num-stale: half of :num-entries, rounded up in case :num-entries is 1
+  ::
+  =/  num-stale  (sub num-entries (div num-entries 2))
+  ~&  "ford: wipe: {<num-stale>} cache entries"
+  ::
+  =/  stale=(list [build cache-line])  (scag num-stale sorted)
+  =/  fresh=(list [build cache-line])  (slag num-stale sorted)
+  ::
+  =/  stale-tombstones=(list [build cache-line])
+    %+  turn  stale
+    |=  [=build =cache-line]
+    ^+  +<
+    [build [%tombstone ~]]
+  ::
+  =|  results=(map build cache-line)
+  ::
+  =.  results  (~(gas by results) tombstones)
+  =.  results  (~(gas by results) stale-tombstones)
+  =.  results  (~(gas by results) fresh)
+  ::
+  state(results results)
 ::  +take: receive a response from another vane
 ::
 ++  take

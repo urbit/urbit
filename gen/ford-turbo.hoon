@@ -37,6 +37,9 @@
   test-alts
   test-alts-and-live
   test-double-alts
+  test-cache-reclamation-trivial
+  test-cache-reclamation-live-rebuild
+  test-cache-reclamation-live-promote
 ==
 ++  test-is-schematic-live
   ~&  %test-is-schematic-live
@@ -1921,7 +1924,228 @@
                 %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==  ==
   ::
-  (expect-ford-empty ford ~nul)
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    results5
+    results6
+    (expect-ford-empty ford ~nul)
+  ==
+::  +test-cache-reclamation-trivial: reclaim cache on a blank slate ford
+::
+++  test-cache-reclamation-trivial
+  ~&  %test-cache-reclamation-trivial
+  ::
+  =/  ford  *ford-turbo
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::  send a pinned literal, expects a %made response with pinned literal
+      ::
+      ^=  call-args
+        [duct=~ type=~ %make ~nul [%pin ~1234.5.6 [%$ %noun !>(**)]]]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.6
+                %complete  %success  %pin  ~1234.5.6  %success  %$  %noun  !>(**)
+        ==  ==
+    ==
+  ::
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::  ask ford to wipe its cache
+      ::
+      call-args=[duct=~ type=~ %wipe ~]
+      ::  cache wiping should never produce any moves
+      ::
+      moves=~
+    ==
+  ::
+  ;:  welp
+    results1
+    results2
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-cache-reclamation-live-rebuild
+  ~&  %test-cache-reclamation-live-rebuild
+  ::
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
+      ::
+      ^=  call-args
+        :*  duct=~  type=~  %make  ~nul
+            [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %success
+                [%scry %noun !>(42)]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
+    ==  ==  ==
+  ::
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::  ask ford to wipe its cache
+      ::
+      call-args=[duct=~ type=~ %wipe ~]
+      ::  cache wiping should never produce any moves
+      ::
+      moves=~
+    ==
+  ::
+  =^  results3  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.7
+      scry=(scry-succeed ~1234.5.7 [%noun !>(43)])
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %give  %made  ~1234.5.7  %complete  %success
+                [%scry %noun !>(43)]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.7] (sy [%x /foo/bar]~)]
+    ==  ==  ==
+  ::
+  =^  results4  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~ type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-cache-reclamation-live-promote
+  ~&  %test-cache-reclamation-live-promote
+  ::
+  =/  scry-type=type  [%atom %tas ~]
+  ::
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %desk %da ~1234.5.6] /bar/foo]]
+      [%noun scry-type %it-doesnt-matter]
+    ::
+      :-  [%cx [[~nul %desk %da ~1234.5.7] /bar/foo]]
+      [%noun scry-type %changed]
+    ==
+  ::
+  =/  scry  (scry-with-results scry-results)
+  =/  ford  *ford-turbo
+  ::
+  =/  formula=hoon  (ream '`@tas`%constant')
+  =/  subject-schematic=schematic:ford  [%scry %c %x [~nul %desk] /bar/foo]
+  ::
+  =/  ride=schematic:ford  [%ride formula subject-schematic]
+  =/  same=schematic:ford  [%same ride]
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry
+      ::
+      call-args=[duct=~[/ride] type=~ %make ~nul same]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/ride]  %give  %made  ~1234.5.6  %complete
+                [%success [%same [%success [%ride scry-type %constant]]]]
+            ==
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
+    ==  ==  ==
+  ::
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::  ask ford to wipe its cache
+      ::
+      call-args=[duct=~ type=~ %wipe ~]
+      ::  cache wiping should never produce any moves
+      ::
+      moves=~
+    ==
+  ::
+  =^  results3  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.7
+      scry=scry
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
+    ==  ==  ==
+  ::
+  =^  results4  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/ride] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    (expect-ford-empty ford ~nul)
+  ==
+
 ::
 ::  |utilities: helper arms
 ::
