@@ -147,10 +147,12 @@
       =/  faz  (end 0 7 fuz)
       ?:  =(0 (cut 0 [7 1] fuz))
         [0 faz]
-      =/  fiz  (rep 3 (scag faz t.q.tub))
-      ?.  =(faz (met 3 fiz))  !! :: XX
-      [faz fiz]
-    =/  zuf  (scag len (slag nex t.q.tub))
+      [faz (rep 3 (scag faz t.q.tub))]
+    ?:  ?&  !=(0 nex)
+            !=(nex (met 3 len))
+        ==
+      (fail tub)
+    =/  zuf  (swag [nex len] t.q.tub)
     ?.  =(len (lent zuf))
       (fail tub)
     =/  zaf  [p.p.tub (add +(nex) q.p.tub)]
