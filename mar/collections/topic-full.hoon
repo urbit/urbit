@@ -107,6 +107,23 @@
       ;h2: Post comment:
       ;+  form-comment-post
     ==
+  ++  json
+    =,  enjs:format
+    %-  pairs
+    :~  title+[%s tit.info.top]
+        who+[%s (scot %p who.info.top)]
+        what+[%s (of-wain:format wat.info.top)]
+        :-  %comments
+        %-  pairs
+        %+  turn
+          ~(tap by coms.top)
+        |=  [a=@da b=[c=@da d=comment]]
+        :-  (scot %da a)
+        %-  pairs
+        :~  who+[%s (scot %p who.d.b)]
+            what+[%s (of-wain:format wat.d.b)]
+        ==
+    ==
   --
 ::
 ++  grab

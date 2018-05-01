@@ -31,6 +31,13 @@
       ;kids;  :: show comments
     ==
   ++  front  (my title+tit.top ~)  :: title in lists
+  ++  json
+    =,  enjs:format
+    %-  pairs
+    :~  title+[%s tit.top]
+        who+[%s (scot %p who.top)]
+        what+[%s (of-wain:format wat.top)]
+    ==
   --
 ::
 ++  grab

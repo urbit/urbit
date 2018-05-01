@@ -31,11 +31,27 @@
       ::==
       ;list;  :: show topics
     ==
+  ++  json
+    =,  enjs:format
+    %-  pairs
+    :~  description+[%s desc.con]
+        public+[%b publ.con]
+        visible+[%b visi.con]
+        comments+[%b comm.con]
+        xenopost+[%b xeno.con]
+        :-  %except
+        :-  %a
+        %+  turn
+          ~(tap in mems.con)
+        |=  a/@p
+        [%s (scot %p a)]
+    ==
   ++  front  (my title+desc.con ~)  :: title in lists
   --
 ::
 ++  grab
   |%
+  ++  noun  config  :: validate over ames
   ++  mime
     |=  {p/mite:eyre q/octs:eyre}
     (txt (to-wain:format q.q))
