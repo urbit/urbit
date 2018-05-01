@@ -175,6 +175,51 @@
     =/  d=@ux  (~(inv fo (elcm (dec p) (dec q))) e)
     [p q n e d]
   ::
+  ++  der
+    |%
+    ++  en
+      |%
+      ++  pass  !!
+      ++  ring
+        |=  k=key
+        ^-  @ux
+        =;  pec
+          (rep 3 ~(ren asn1 pec))
+        :~  %seq
+            [%int 0]
+            [%int n.k]
+            [%int e.k]
+            [%int d.k]
+            [%int p.k]
+            [%int q.k]
+            [%int (mod d.k (dec p.k))]
+            [%int (mod d.k (dec q.k))]
+            [%int (~(inv fo p.k) q.k)]
+        ==
+      --
+    ++  de
+      !!
+    --
+  ::
+  ++  pem
+    |%
+    ++  en
+      |%
+      ++  pass  !!
+      ++  ring
+        |=  k=key
+        ^-  wain
+        :-  '-----BEGIN RSA PRIVATE KEY-----'
+        =/  a  (en:base64 (ring:en:der k))
+        |-  ^-  wain
+        ?~  a
+          ['-----END RSA PRIVATE KEY-----' ~]
+        [(end 3 64 a) $(a (rsh 3 64 a))]
+      --
+    ++  de
+      !!
+    --
+  ::
   ++  en
     |=  [m=@ k=key]
     ~|  %rsa-len
@@ -516,6 +561,16 @@
         ==
       ~
     --
+  ::
+  ++  test-rsapem
+    =/  k=key:rsa  [`@ux`17 `@ux`11 `@ux`187 `@ux`7 `@ux`23]
+    =/  exp=wain
+      :~  '-----BEGIN RSA PRIVATE KEY-----'
+          'MBwCAQACAgC7AgEHAgEXAgERAgELAgEHAgEDAgEO'
+          '-----END RSA PRIVATE KEY-----'
+      ==
+    %-  expect-eq  !>
+      [exp (ring:en:pem:rsa k)]
   ::
   ++  testrsa
     =/  k1=key:rsa
