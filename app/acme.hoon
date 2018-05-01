@@ -198,7 +198,31 @@
         ==
       --
     ++  de
-      !!
+      |%
+      ++  pass  !!
+      ++  ring
+        |=  a=@
+        ^-  (unit key)
+        =/  b  (rush a decode:asn1)
+        ?~  b  ~
+        ?.  ?=([%seq *] u.b)  ~
+        ?.  ?=  $:  [%int *]
+                    [%int *]
+                    [%int *]
+                    [%int *]
+                    [%int *]
+                    [%int *]
+                    *
+                ==
+            p.u.b
+          ~
+        =*  n  p.i.t.p.u.b
+        =*  e  p.i.t.t.p.u.b
+        =*  d  p.i.t.t.t.p.u.b
+        =*  p  p.i.t.t.t.t.p.u.b
+        =*  q  p.i.t.t.t.t.t.p.u.b
+        `[p q n e d]
+      --
     --
   ::
   ++  pem
@@ -217,7 +241,19 @@
         [(end 3 64 a) $(a (rsh 3 64 a))]
       --
     ++  de
-      !!
+      |%
+      ++  pass  !!
+      ++  ring
+        |=  mep=wain
+        ^-  (unit key)
+        =/  a  (sub (lent mep) 2)
+        ?~  mep  ~
+        ?.  =('-----BEGIN RSA PRIVATE KEY-----' i.mep)  ~
+        ?.  =('-----END RSA PRIVATE KEY-----' (snag a t.mep))  ~
+        =/  b  (de:base64 (rap 3 (scag a t.mep)))
+        ?~  b  ~
+        (ring:de:der u.b)
+      --
     --
   ::
   ++  en
@@ -569,8 +605,12 @@
           'MBwCAQACAgC7AgEHAgEXAgERAgELAgEHAgEDAgEO'
           '-----END RSA PRIVATE KEY-----'
       ==
-    %-  expect-eq  !>
-      [exp (ring:en:pem:rsa k)]
+    ;:  weld
+      %-  expect-eq  !>
+        [exp (ring:en:pem:rsa k)]
+      %-  expect-eq  !>
+        [k (need (ring:de:pem:rsa exp))]
+    ==
   ::
   ++  testrsa
     =/  k1=key:rsa
