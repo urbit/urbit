@@ -40,6 +40,7 @@
   test-cache-reclamation-trivial
   test-cache-reclamation-live-rebuild
   test-cache-reclamation-live-promote
+  test-five-oh-cache-reclamation
 ==
 ++  test-is-schematic-live
   ~&  %test-is-schematic-live
@@ -2145,7 +2146,160 @@
     results4
     (expect-ford-empty ford ~nul)
   ==
-
+::  tests that doing a cache reclamation during the five-oh-fora rebuild works
+::
+++  test-five-oh-cache-reclamation
+  ~&  %test-five-oh-cache-reclamation
+  ::
+  =/  scry-type=type
+    [%cell [%face [~ %title] [%atom %tas ~]] [%face [~ %contents] -:!>("")]]
+  ::
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %desk %da ~1234.5.6] /a/posts]]
+      [%noun scry-type [title='post-a' contents="post-a-contents"]]
+    ::
+      :-  [%cx [[~nul %desk %da ~1234.5.6] /b/posts]]
+      [%noun scry-type [title='post-b' contents="post-b-contents"]]
+    ::
+      :-  [%cx [[~nul %desk %da ~1234.5.9] /a/posts]]
+      [%noun scry-type [title='post-a' contents="post-a-contents-changed"]]
+    ==
+  ::
+  =/  scry  (scry-with-results scry-results)
+  =/  ford  *ford-turbo
+  ::
+  =/  post-a=schematic:ford  [%scry [%c %x [~nul %desk] /a/posts]]
+  =/  title-a=schematic:ford  [%ride (ream '!:  title') post-a]
+  ::
+  =/  post-b=schematic:ford  [%scry [%c %x [~nul %desk] /b/posts]]
+  =/  title-b=schematic:ford  [%ride (ream '!:  title') post-b]
+  ::
+  =/  sidebar=schematic:ford  [title-a title-b]
+  ::
+  =/  rendered-a=schematic:ford  [post-a sidebar]
+  =/  rendered-b=schematic:ford  [post-b sidebar]
+  ::  first, ask ford to build rendered-a
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry
+      ::
+      call-args=[duct=~[/post-a] type=~ %make ~nul rendered-a]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-turbo)
+        ^-  tang
+        ::
+        ?>  ?=([^ ^ ~] moves)
+        %+  welp
+          %-  check-post-made  :*
+            move=i.moves
+            duct=~[/post-a]
+            type=scry-type
+            date=~1234.5.6
+            title='post-a'
+            contents="post-a-contents"
+          ==
+        %-  expect-eq  !>
+        :-  i.t.moves
+        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+            %c  %warp  [~nul ~nul]  %desk
+            `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
+    ==  ==
+  ::
+  =^  results2  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.7
+      scry=scry
+      ::
+      call-args=[duct=~[/post-b] type=~ %make ~nul rendered-b]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-turbo)
+        ^-  tang
+        ::
+        ?>  ?=([^ ~] moves)
+        %-  check-post-made  :*
+          move=i.moves
+          duct=~[/post-b]
+          type=scry-type
+          date=~1234.5.7
+          title='post-b'
+          contents="post-b-contents"
+    ==  ==
+  ::
+  =^  results3  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~ type=~ %wipe ~]
+      moves=~
+    ==
+  ::
+  =^  results4  ford
+    %-  test-ford-take-with-comparator  :*
+      ford
+      now=~1234.5.9
+      scry=scry
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.9] (sy [%x /posts/a]~)]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-turbo)
+        ^-  tang
+        ::
+        ?>  ?=([^ ^ ~] moves)
+        %-  check-post-made  :*
+          move=i.moves
+          duct=~[/post-a]
+          type=scry-type
+          date=~1234.5.9
+          title='post-a'
+          contents="post-a-contents-changed"
+    ==  ==
+  ::
+  =^  results5  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.10
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/post-b] type=~ %kill ~nul]
+      moves=~
+    ==
+  ::
+  =^  results6  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.11
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/post-a] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    results5
+    results6
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ::  |utilities: helper arms
 ::
