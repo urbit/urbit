@@ -7,7 +7,7 @@ mkdir build
 cd build
 
 $host-gcc -O2 ../bitwise/ion/main.c -o ion$exe_suffix \
-   -DIONHOME=$out/ionhome
+   -DIONHOME=\"$out/ionhome\"
 
 # TODO: make -DIONHOME actually work
 
