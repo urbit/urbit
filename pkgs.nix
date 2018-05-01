@@ -160,6 +160,10 @@ rec {
     inherit crossenv;
   };
 
+  ion = import ./pkgs/ion {
+    inherit crossenv;
+  };
+
   qt = import ./pkgs/qt {
     inherit crossenv libudev libxall at-spi2-headers dejavu-fonts;
   };

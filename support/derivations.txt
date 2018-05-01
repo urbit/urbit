@@ -19,6 +19,7 @@ omni.fixesproto
 {$all}.hello
 {$all}.hello_cpp
 omni.inputproto
+{$all}.ion
 omni.kbproto
 {$linux}.libudev
 {$all}.libusbp{,.examples}
