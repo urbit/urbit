@@ -280,7 +280,7 @@
 ++  wove  {p/(unit ship) q/rove}                        ::  stored source + req
 ++  rove                                                ::  stored request
           $%  {$sing p/mood}                            ::  single request
-              {$next p/mood q/cach}                     ::  next version
+              {$next p/mood q/(unit aeon) r/cach}       ::  next version of one
               $:  $mult                                 ::  next version of any
                   p/mool                                ::  original request
                   q/(unit aeon)                         ::  checking for change
@@ -907,7 +907,7 @@
       ::  if the requested case is in the future, we can't know anything yet.
       ?~  aey  (store ~ ~ ~)
       =+  old=(read-all-at cas)
-      =+  yon=+((need (case-to-aeon:ze cas)))
+      =+  yon=+(u.aey)
       |-  ^+  ..start-request
       ::  if we need future revisions to look for change, wait.
       ?:  (gth yon let.dom)
@@ -948,7 +948,7 @@
         ^-  rove
         ?:  ?=($mult -.rav)
           [-.rav p.rav nex old new]
-        :+  -.rav  p.rav
+        :^  -.rav  p.rav  nex
         =+  ole=~(tap by old)
         ?>  (lte (lent ole) 1)
         ?~  ole  ~
@@ -1860,10 +1860,11 @@
       |^
       =/  rov/rove
         ?:  ?=($mult -.vor)  vor
+        =*  mod  p.vor
         :*  %mult
-            [q.p.vor [[p.p.vor r.p.vor] ~ ~]]
-            `let.dom
-            [[[p.p.vor r.p.vor] q.vor] ~ ~]
+            [q.mod [[p.mod r.mod] ~ ~]]
+            q.vor
+            [[[p.mod r.mod] r.vor] ~ ~]
             ~
         ==
       ?>  ?=($mult -.rov)
@@ -1927,7 +1928,7 @@
         ?:  ?=($mult -.vor)  rov
         ?>  ?=({* $~ $~} r.rov)
         =*  one  n.r.rov
-        [%next [p.p.one p.p.rov q.p.one] q.one]
+        [%next [p.p.one p.p.rov q.p.one] q.rov q.one]
       ::
       ++  respond                                       ::  send changes
         |=  res/(map mood (each cage lobe))
@@ -3568,7 +3569,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  $0                                            ::  vane version
+    $:  $1                                            ::  vane version
         ruf/raft                                      ::  revision tree
     ==                                                ::
 |=  {now/@da eny/@ ski/sley}                          ::  activate
@@ -3829,12 +3830,79 @@
 ::
 ++  load
   =>  |%
-      ++  axle  $%({$0 ruf/raft})
+      ++  rove-0
+        $%  {$sing p/mood}
+            {$next p/mood q/cach}
+            $:  $mult
+                p/mool
+                q/(unit aeon)
+                r/(map (pair care path) cach)
+                s/(map (pair care path) cach)
+            ==
+            {$many p/? q/moat r/(map path lobe)}
+        ==
+      ++  wove-0  (cork wove |=(a/wove a(q (rove-0 q.a))))
+      ++  cult-0  (jug wove-0 duct)
+      ++  dojo-0  (cork dojo |=(a/dojo a(qyx *cult-0)))
+      ++  rede-0  (cork rede |=(a/rede a(qyx *cult-0)))
+      ++  room-0  (cork room |=(a/room a(dos (~(run by dos.a) dojo-0))))
+      ++  rung-0  (cork rung |=(a/rung a(rus (~(run by rus.a) rede-0))))
+      ++  raft-0
+        %+  cork  raft
+        |=  a/raft
+        %=  a
+          fat   (~(run by fat.a) room-0)
+          hoy   (~(run by hoy.a) rung-0)
+        ==
+      ::
+      ++  axle  $%({$1 ruf/raft} {$0 ruf/raft-0})
       --
   |=  old/axle
   ^+  ..^$
   ?-  -.old
-    $0  ..^$(ruf ruf.old)
+      $1
+    ..^$(ruf ruf.old)
+  ::
+      $0
+    |^
+      =-  ^$(old [%1 -])
+      =+  ruf.old
+      :*  (~(run by fat) rom)
+          (~(run by hoy) run)
+          ran  mon  hez  ~
+      ==
+    ::
+    ++  wov
+      |=  a/wove-0
+      ^-  wove
+      :-  p.a
+      ?.  ?=($next -.q.a)  q.a
+      [%next p.q.a ~ q.q.a]
+    ::
+    ++  cul
+      |=  a/cult-0
+      ^-  cult
+      %-  ~(gas by *cult)
+      %+  turn  ~(tap by a)
+      |=  {p/wove-0 q/(set duct)}
+      [(wov p) q]
+    ::
+    ++  rom
+      |=  room-0
+      ^-  room
+      :-  hun
+      %-  ~(run by dos)
+      |=  d/dojo-0
+      ^-  dojo
+      d(qyx (cul qyx.d))
+    ::
+    ++  run
+      |=  a/rung-0
+      =-  a(rus (~(run by rus.a) -))
+      |=  r/rede-0
+      ^-  rede
+      r(qyx (cul qyx.r))
+    --
   ==
 ::
 ++  scry                                              ::  inspect
@@ -3866,7 +3934,7 @@
   ?:  ?=($& -.u.u.-)  ``p.u.u.-
   ~
 ::
-++  stay  [%0 ruf]
+++  stay  [%1 ruf]
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
