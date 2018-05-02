@@ -28,6 +28,8 @@
   test-live-triangle
   test-live-and-pinned-triangle
   test-slim
+  test-slit
+  test-slit-error
   test-ride
   test-ride-scry-succeed
   test-ride-scry-fail
@@ -1035,6 +1037,110 @@
       scry=scry-is-forbidden
       ::
       call-args=[duct=~[/dead] type=~ %kill ~nul]
+      ::
+      moves=~
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-slit
+  ~&  %test-slit
+  ::
+  =/  gate=vase    (ride %noun '|=(a=@ud ["one" a])')
+  =/  sample=vase  !>(42)
+  ::
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/slit] type=~ %make ~nul [%slit gate sample]]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-turbo)
+        ^-  tang
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %slit *] i.moves)
+        ::  we are expecting a type, and all we can do is ensure it nests in
+        ::  the right type
+        ::
+        =/  expected-type=type  -:!>([*tape *@ud])
+        =/  actual-type=type    |7:i.moves
+        %-  expect-eq  !>
+        :-  (~(nest ut actual-type) | expected-type)
+        &
+    ==
+  ::
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/slit] type=~ %kill ~nul]
+      ::
+      moves=~
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-slit-error
+  ~&  %test-slit-error
+  ::
+  =/  gate=vase    (ride %noun '|=(a=@ud ["one" a])')
+  =/  sample=vase  !>("a tape instead of @ud")
+  ::
+  =/  ford  *ford-turbo
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/slit] type=~ %make ~nul [%slit gate sample]]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-turbo)
+        ^-  tang
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %error *] i.moves)
+        ::  ignore last message; contains source positions in the stack trace
+        ::
+        =/  messages=tang  (scag 4 `tang`|6:i.moves)
+        ::
+        %-  expect-eq  !>
+        :_  messages
+        :~  [%palm ["." "-" "" ""] [%leaf "have"] [%leaf "\"\""] ~]
+            :~  %palm  ["." "-" "" ""]
+                [%leaf "want"]
+                [%palm ["/" "" "" ""] [%leaf "a"] [%leaf "@ud"] ~]
+            ==
+            [%leaf "%slit failed: "]
+            [%leaf "nest-fail"]
+        ==
+    ==
+  ::
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/slit] type=~ %kill ~nul]
       ::
       moves=~
     ==

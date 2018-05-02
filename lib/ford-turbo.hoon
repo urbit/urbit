@@ -2470,9 +2470,9 @@
             %reef  !!
             %ride  (ride [formula subject]:schematic.build)
             %same  (same schematic.schematic.build)
-            %slit  !!
-            %slim  (slim [subject-type formula]:schematic.build)
             %scry  (scry resource.schematic.build)
+            %slim  (slim [subject-type formula]:schematic.build)
+            %slit  (slit [gate sample]:schematic.build)
             %vale  !!
             %volt  !!
         ==
@@ -2713,6 +2713,28 @@
           ?-  -.compiled
             %|  [%build-result %error [leaf+"%slim failed: " p.compiled]]
             %&  [%build-result %success %slim p.compiled]
+          ==
+          accessed-builds
+          |
+      ==
+    ::
+    ++  slit
+      |=  [gate=vase sample=vase]
+      ^-  build-receipt
+      ::
+      =/  product=(each type tang)
+        (mule |.((^slit p.gate p.sample)))
+      ::
+      :*  build
+          ?-  -.product
+            %|  :*  %build-result   %error
+                    :*  (~(dunk ut p.sample) %have)
+                        (~(dunk ut (~(peek ut p.gate) %free 6)) %want)
+                        leaf+"%slit failed: "
+                        p.product
+                    ==
+                ==
+            %&  [%build-result %success %slit p.product]
           ==
           accessed-builds
           |
