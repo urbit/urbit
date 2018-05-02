@@ -2356,42 +2356,6 @@
         $delta     (~(put in $(lob q.q.gar)) lob)
       ==
     ::
-    ::  Should be refactored, is only called form `++read`, and even then it
-    ::  can't be called with `$v` as the care, so it's really just a crash.
-    ::
-    ::  To be clear the refactoring should start at ++read-at-aeon and probably
-    ::  eliminate ++read and ++query
-    ::
-    ++  query                                           ::    query:ze
-      |=  ren/$?($p $u $v $x $y $z)                     ::  endpoint query
-      ^-  (unit cage)
-      ?-  ren
-        $p  !!
-        $u  !!  ::  [~ %null [%atom %n] ~]
-        $v  [~ %dome !>(dom)]
-        $x  !!  ::  ?~(q.ank.dom ~ [~ q.u.q.ank.dom])
-        $y  !!  ::  [~ %arch !>(as-arch)]
-        $z  !!  ::  [~ %ankh !>(ank.dom)]
-      ==
-    ::
-    ::  See ++query.
-    ::
-    ++  read                                            ::    read:ze
-      |=  mun/mood                                      ::  read at point
-      ^-  (unit cage)
-      ?:  ?=($d p.mun)
-        ~&  %dead-d  ~
-      ?:  ?=($v p.mun)
-        [~ %dome !>(dom)]                               ::  dead code
-      ?:  &(?=($w p.mun) !?=($ud -.q.mun))
-        ?^(r.mun ~ [~ %aeon !>(let.dom)])               ::  dead code
-      ?:  ?=($w p.mun)
-        =+  ^=  yak
-            %-  aeon-to-yaki
-            let.dom
-        ?^(r.mun ~ !!) :: [~ %w !>([t.yak (forge-nori yak)])])-all
-      (query(ank.dom ank:(descend-path:(zu ank.dom) r.mun)) p.mun) ::  dead code
-    ::
     ::  Gets the permissions that apply to a particular node.
     ::
     ::  If the node has no permissions of its own, we use its parent's.
@@ -2609,68 +2573,28 @@
     ::  meaning we either have the value directly or a content hash of the
     ::  value.
     ::
-    ::  Should change last few lines to an explicit ++read-w.
-    ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  {for/(unit ship) yon/aeon mun/mood}           ::  seek and read
       ^-  (unit (unit (each cage lobe)))
       ?.  |(?=($~ for) (may-read u.for p.mun yon r.mun))
         ~
-      ?:  &(?=($w p.mun) !?=($ud -.q.mun))              ::  NB only her speed
-        (read-w q.mun)
-      ?:  ?=($d p.mun)
+      ?-  p.mun
+          $d
         =+  rom=(~(get by fat.ruf) her)
         ?~  rom
           ~&(%null-rom-cd [~ ~])
         ?^  r.mun
           ~&(%no-cd-path [~ ~])
         [~ ~ %& %noun !>(~(key by dos.u.rom))]
-      ?:  ?=($p p.mun)
-        (read-p r.mun)
-      ?:  ?=($u p.mun)
-        (read-u yon r.mun)
-      ?:  ?=($v p.mun)
-        (bind (read-v yon r.mun) (lift |=(a/cage [%& a])))
-      ?:  ?=($x p.mun)
-        (read-x yon r.mun)
-      ?:  ?=($y p.mun)
-        ::  =-  ~&  :*  %dude-someones-getting-curious
-        ::              mun=mun
-        ::              yon=yon
-        ::              our=our
-        ::              her=her
-        ::              syd=syd
-        ::              hep=-
-        ::          ==
-        ::      -
-        (bind (read-y yon r.mun) (lift |=(a/cage [%& a])))
-      ?:  ?=($z p.mun)
-        (bind (read-z yon r.mun) (lift |=(a/cage [%& a])))
-      %+  bind
-        (rewind yon)
-      |=  a/(unit _+>.$)
-      ^-  (unit (each cage lobe))
-      ?~  a
-        ~
-      `(unit (each cage lobe))`(bind (read:u.a mun) |=(a/cage [%& a]))
-    ::
-    ::  Stubbed out, should be removed in the refactoring mentioned in ++query.
-    ::
-    ++  rewind                                          ::    rewind:ze
-      |=  yon/aeon                                      ::  rewind to aeon
-      ^-  (unit (unit _+>))
-      ?:  =(let.dom yon)  ``+>
-      ?:  (gth yon let.dom)  !!                         ::  don't have version
-      =+  hat=q:(aeon-to-yaki yon)
-      ?:  (~(any by hat) |=(a/lobe ?=($delta [-:(lobe-to-blob a)])))
-        ~
-      ~
-      ::=+  ^-  (map path cage)
-      ::    %-  ~(run by hat)
-      ::    |=  a=lobe
-      ::    =+  (lobe-to-blob a)
-      ::    ?-(-.- %direct q.-, %delta !!)
-      ::`+>.$(ank.dom (map-to-ankh -), let.dom yon)
+      ::
+        $p  (read-p r.mun)
+        $u  (read-u yon r.mun)
+        $v  (bind (read-v yon r.mun) (lift |=(a/cage [%& a])))
+        $w  (read-w q.mun)
+        $x  (read-x yon r.mun)
+        $y  (bind (read-y yon r.mun) (lift |=(a/cage [%& a])))
+        $z  (bind (read-z yon r.mun) (lift |=(a/cage [%& a])))
+      ==
     ::
     ::  Traverse an ankh.
     ::
