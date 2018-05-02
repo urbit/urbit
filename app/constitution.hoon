@@ -8,6 +8,7 @@
   $:  ships=(map @p complete-ship)
       checking=(map @p hull)
       dns=[pri=@t sec=@t ter=@t]
+      heard=(set (pair @ud @ud))
       latest-block=@ud                                  ::  last heard
       filter=@ud                                        ::  our filter id
   ==
@@ -18,9 +19,17 @@
       keys=(map @ud (pair @ @))
   ==
 ::
+::
+++  delta
+  $?  diff-constitution
+  $%  [%checking who=@p part=(unit hull)]
+  ==  ==
+::
+::
 +=  move  [bone card]                                   ::  [target side-effect]
 ++  card                                                ::  side-effect
   $%  [%peer wire gill:gall path]
+      [%diff %constitution-diff diff-constitution]
       [%hiss wire (unit user:eyre) mark [%hiss hiss]]
       [%wait wire @da]
   ==
@@ -29,22 +38,44 @@
 |_  {bol=bowl:gall state}
 ::
 ++  prep
-  |=  old=(unit *)
+  |=  old=(unit *)::state)
+  ^-  (quip move _+>)
   :: ?~  old
+    %-  complete
     ta-save:ta-init:ta
-  :: ta-save:ta
+  :: [~ ..prep(+<+ u.old)]
+::
+++  complete
+  |=  [des=(list delta) mos=(list move)]
+  ^-  (quip move _+>)
+  :-  (weld mos (share des))
+  da-save:(da-changes:da des)
+::
+++  share
+  |=  des=(list delta)
+  ^-  (list move)
+  %-  zing
+  %+  turn  des
+  |=  det=delta
+  ^-  (list move)
+  %+  murn  ~(tap by sup.bol)
+  |=  [b=bone s=ship p=path]
+  ^-  (unit move)
+  ?.  ?=([%state *] p)  ~
+  ?:  ?=(%checking -.det)  ~
+  `[b %diff %constitution-diff det]
 ::
 ++  ta
   |_  $:  moves=(list move)                             ::  side-effects
+          deltas=(list delta)
           reqs=(list (pair (unit @t) request))          ::  rpc requests
           wir=wire                                      ::  wire for reqs
       ==
   ::
   ++  ta-save
-    ^-  (quip move _+>)
-    :_  +>
+    ^-  [des=(list delta) mos=(list move)]
+    :-  (flop deltas)
     =-  (weld - (flop moves))
-    ^-  (list move)
     ?~  reqs  ~
     :_  ~
     :-  ost.bol
@@ -58,6 +89,10 @@
   ++  ta-card
     |=  car=card
     (ta-move [ost.bol car])
+  ::
+  ++  ta-change
+    |=  det=delta
+    %_(+> deltas [det deltas])
   ::
   ++  ta-request
     |=  [id=(unit @t) req=request]
@@ -165,22 +200,33 @@
       ~&  %ignoring-unmined-event
       +>
     ::
-    =?  latest-block  (gth block-number.u.mined.log latest-block)
-      block-number.u.mined.log
+    ::TODO  if the block number is less than latest, that means we got
+    ::      events out of order somehow and should probably reset.
+    ::
+    =*  place  u.mined.log
+    ?:  (~(has in heard) block-number.place log-index.place)
+      ~&  %ignoring-duplicate-event
+      +>
+    =.  +>.$
+      %+  ta-change  %heard
+      [block-number.place log-index.place]
     ::
     ?:  =(event.log changed-dns:ships-events)
       =+  ^-  [pri=tape sec=tape ter=tape]
         (decode-results data.log ~[%string %string %string])
-      %_  +>.$
-        pri.dns  (crip pri)
-        sec.dns  (crip sec)
-        ter.dns  (crip ter)
-      ==
+      =?  +>.$  !=(pri.dns (crip pri))
+        (ta-change %dns 0 (crip pri))
+      =?  +>.$  !=(sec.dns (crip sec))
+        (ta-change %dns 1 (crip sec))
+      =?  +>.$  !=(ter.dns (crip ter))
+        (ta-change %dns 2 (crip ter))
+      +>.$
     ::
     =+  dis=(event-log-to-hull-diffs log)
     |-  ^+  +>.^$
     ?~  dis  +>.^$
-    $(dis t.dis, ships (store-hull-change i.dis))
+    =.  +>.^$  (ta-change %hull i.dis)
+    $(dis t.dis)
   ::
   ::
   ++  ta-take-read-results
@@ -213,9 +259,8 @@
       ?.  active.hul  +>.$
       ::  we store the read data for now, and only compare with state once we
       ::  have completed it by learning the spawned ships.
-      =.  checking
-        (~(put by checking) who.cal (hull-from-eth hul))
-      (ta-read %get-spawned who.cal)
+      =.  +>.$  (ta-read %get-spawned who.cal)
+      (ta-change %checking who.cal `(hull-from-eth hul))
     ::
         %get-spawned
       ?>  ?=(%s -.res.rep)
@@ -227,15 +272,15 @@
       =.  hul  hul(spawned (~(gas in *(set @p)) kis))
       ::
       =+  have=(~(get by ships) who.cal)
-      =.  ships
+      =.  +>.$
         ?~  have
           ~&  [%completely-missing who.cal]
-          ?.  save  ships
+          ?.  save  +>.$
           ~&  [%storing-chain-version-of who.cal]
-          (store-hull-change who.cal %full hul)
+          (ta-change %hull who.cal %full hul)
         ::
         =*  huv  state.u.have
-        ?:  =(huv hul)  ships
+        ?:  =(huv hul)  +>.$
         ~&  [%differs-from-chain-version who.cal]
         ~&  [%what %have %chain]
         ::TODO  can we maybe re-use some ++redo code to simplify this?
@@ -271,39 +316,72 @@
           [transfer-proxy.huv transfer-proxy.hul]
         ::
         ~&  %$
-        ?.  save  ships
+        ?.  save  +>.$
         ~&  [%storing-chain-version-of who.cal]
-        (store-hull-change who.cal %full hul)
+        (ta-change %hull who.cal %full hul)
       ::
-      =.  checking  (~(del by checking) who.cal)
-      (ta-read-ships kis)
+      =.  +>.$  (ta-read-ships kis)
+      (ta-change %checking who.cal ~)
     ::
         %dns-domains
       ?>  ?=(%s -.res.rep)
-      ~|  [id.rep p.res.rep]
       =+  dom=(crip (decode-results p.res.rep ~[%string]))
-      ~&  [%comparing-dns dom]
       ?:  =(0 ind.cal)
-        =?  pri.dns  !=(pri.dns dom)
-          ~&  [%primary-dns-differs pri.dns dom]
-          ?:(save dom pri.dns)
-        +>.$
+        ?:  =(pri.dns dom)  +>.$
+        ~&  [%primary-dns-differs pri.dns dom]
+        ?.  save  +>.$
+        (ta-change %dns 0 dom)
       ?:  =(1 ind.cal)
-        =?  sec.dns  !=(sec.dns dom)
-          ~&  [%secondary-dns-differs sec.dns dom]
-          ?:(save dom sec.dns)
-        +>.$
+        ?:  =(sec.dns dom)  +>.$
+        ~&  [%secondary-dns-differs sec.dns dom]
+        ?.  save  +>.$
+        (ta-change %dns 1 dom)
       ?:  =(2 ind.cal)
-        =?  ter.dns  !=(ter.dns dom)
-          ~&  [%tertiary-dns-differs ter.dns dom]
-          ?:(save dom ter.dns)
-        +>.$
+        ?:  =(ter.dns dom)  +>.$
+        ~&  [%tertiary-dns-differs ter.dns dom]
+        ?.  save  +>.$
+        (ta-change %dns 2 dom)
       !!
     ==
+  --
+::
+::  arms for card generation
+++  ca
+  |%
+  ++  rpc-request
+    |=  [w=wire j=json]
+    ^-  card
+    :^  %hiss  w  ~
+    :+  %json-rpc-response  %hiss
+    =-  (json-request - j)
+    =+  (need (de-purl:html 'http://localhost:8545'))
+    -(p.p |)
+  --
+::
+::  arms for delta application
+++  da
+  |%
+  ++  da-save  ..da
   ::
-  ++  store-hull-change
+  ++  da-changes
+    |=  des=(list delta)
+    ?~  des  +>.$
+    =.  +>.$  (da-change i.des)
+    $(des t.des)
+  ::
+  ++  da-change
+    |=  det=delta
+    ^+  +>
+    ?-  -.det
+      %hull       (da-change-hull +.det)
+      %dns        (da-change-dns +.det)
+      %heard      (da-add-heard +.det)
+      %checking   (da-change-checking +.det)
+    ==
+  ::
+  ++  da-change-hull
     |=  [who=@p dif=diff-hull]
-    ^+  ships
+    =-  +>.$(ships -)
     ::  if new, first dif must be %full
     ?>  |((~(has by ships) who) ?=(%full -.dif))
     =+  old=(fall (~(get by ships) who) *complete-ship)
@@ -323,39 +401,28 @@
     =.  history.old   [dif history.old]
     ::  apply dif to ship state
     (~(put by ships) who old)
+  ::
+  ++  da-change-dns
+    |=  [ind=@ud new=@t]
+    ?:  =(0 ind)  +>(pri.dns new)
+    ?:  =(1 ind)  +>(sec.dns new)
+    ?:  =(2 ind)  +>(ter.dns new)
+    !!
+  ::
+  ++  da-add-heard
+    |=  [block=@ud log=@ud]
+    =-  +>.$(heard har, latest-block las)
+    ^-  [har=(set (pair @ud @ud)) las=@ud]
+    :-  (~(put in heard) block log)
+    (max latest-block block)
+  ::
+  ++  da-change-checking
+    |=  [who=@p tmp=(unit hull)]
+    =-  +>.$(checking -)
+    ?~  tmp  (~(del by checking) who)
+    (~(put by checking) who u.tmp)
   --
 ::
-::  arms for card generation
-++  ca
-  |%
-  ++  rpc-request
-    |=  [w=wire j=json]
-    ^-  card
-    :^  %hiss  w  ~
-    :+  %json-rpc-response  %hiss
-    =-  (json-request - j)
-    =+  (need (de-purl:html 'http://localhost:8545'))
-    -(p.p |)
-  --
-::
-++  kids
-  |=  pre=@p
-  ^-  (list @p)
-  =/  wyd=bloq
-    ?+  (clan:title pre)  0
-      %czar   3
-      %king   4
-      %duke   5
-    ==
-  %+  turn
-    (gulf 1 (dec (pow 2 (bex wyd))))
-  ?:  =(~zod pre)
-    |=(a=@p (lsh 3 1 a))
-  |=(a=@p (cat wyd pre a))
-::
-::TODO  there definitely needs to be a helper function of some kind,
-::      but is there a way for the type system to be aware of the return
-::      type if we ask for ie ~[%address %uint %bool] data as a noun?
 ++  hull-from-eth
   |=  hul=hull:eth-noun
   ^-  hull
@@ -387,9 +454,11 @@
   |=  a/@
   ^-  (quip move _+>)
   ?>  =(src.bol our.bol)
+  %-  complete
   ?:  =(a 0)
     ~&  [%have-ships ~(key by ships)]
-    [~ +>.$]
+    ~&  [%zod (~(get by ships) ~zod)]
+    ta-save:ta
   ?:  =(a 1)
     ta-save:ta-poll-filter:ta
   ?:  =(a 2)
@@ -400,7 +469,7 @@
     ta-save:(ta-run-check:ta |)
   ?:  =(a 5)
     ta-save:(ta-run-check:ta &)
-  [~ +>.$]
+  [~ ~]
 ::
 ++  sigh-tang
   |=  [w=wire t=tang]
@@ -411,6 +480,7 @@
 ::  when we get the timer: poll filter
 ++  wake-poll
   |=  [w=wire ~]
+  %-  complete
   ta-save:ta-poll-filter:ta
 ::
 ::  when we get a new filter: read it, kick timer
@@ -418,6 +488,7 @@
 ++  sigh-json-rpc-response-filter
   |=  [w=wire r=response:json-rpc]
   ~&  [%got-filter-results w]
+  %-  complete
   =<  ta-save
   ?:  ?=([%new *] w)
     (ta-take-filter:ta r)
@@ -426,6 +497,7 @@
 ::  when we get read results: verify/reset
 ++  sigh-json-rpc-response-read
   |=  [w=wire r=response:json-rpc]
+  %-  complete
   =<  ta-save
   ?+  w  ~&(%unknown-read-reason ta)
     [%verify ~]   (ta-take-read-results:ta r |)

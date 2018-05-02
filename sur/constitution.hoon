@@ -62,6 +62,12 @@
 ::
 ::  #  diffs
 ::
+++  diff-constitution
+  $%  [%hull who=@p dif=diff-hull]
+      [%dns ind=@ud new=@t]
+      [%heard block=@ud log=@ud]
+  ==
+::
 ++  diff-hull
   $%  [%full new=hull]
       [%owner new=address]
