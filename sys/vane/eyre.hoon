@@ -767,7 +767,7 @@
           %^  exec-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)  -.q.u.mez
           ::
           =/  ext  %urb-elem  ::XX in message?
-          =/  fig/coin  many+~  ::STUB fcgi params for /$
+          =/  fig/coin  (fcgi ~ *cred)  ::STUB fcgi params for /$
           [%bake ext fig q.u.mez]
       ::
         $got-inner
@@ -1373,8 +1373,9 @@
         =+  bem=?-(-.hem $beam p.hem, $spur [-.top (weld p.hem s.top)])
         ~|  bad-beam+q.bem
         ?<  =([~ 0] (sky [151 %noun] %cw (en-beam bem(+ ~, r [%da now]))))
-        ?.  =<  |  ::TEST
-            =(our p.bem) ::TODO also if it is?
+        ?.  ::=<  &  ::TEST
+            ::=(our p.bem) ::TODO also if it is?
+            ?=(^ p.pok)  ::  fetch local css etc
           =.  ext  %urb-elem ::XX
           =.  -.bem  (norm-beak -.bem)
           =/  han  (sham hen)
