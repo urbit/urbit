@@ -301,7 +301,7 @@ J_F_OFILES=\
        jets/f/flip.o \
        jets/f/flor.o \
        jets/f/fork.o \
-       jets/f/help.o \
+       jets/f/hint.o \
        jets/f/hike.o \
        jets/f/look.o \
        jets/f/loot.o

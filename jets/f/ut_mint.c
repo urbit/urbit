@@ -542,25 +542,13 @@
       case c3__note: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
+        u3_noun hit = u3nc(u3k(sut), u3k(p_gen));
         u3_noun hum = _mint_in(van, sut, gol, q_gen);
 
-        u3_noun ret = u3nc(u3qf_hint(p_gen, u3h(hum)),
+        u3_noun ret = u3nc(u3qf_hint(hit, u3h(hum)),
                            u3k(u3t(hum)));
         u3z(hum);
-        return ret;
-      }
-
-      case c3__docs: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _mint_used();
-      {
-        u3_noun hep = u3nc(c3__docs, u3k(p_gen));
-        u3_noun hum = _mint_in(van, sut, gol, q_gen);
-
-        u3_noun ret = u3nc(u3qf_hint(hep, u3h(hum)),
-                           u3k(u3t(hum)));
-
-        u3z(hep);
-        u3z(hum);
+        u3z(hit);
         return ret;
       }
 

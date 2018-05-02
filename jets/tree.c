@@ -105,7 +105,6 @@ static u3j_core _143_hex_d[] =
   static u3j_harm _143_pen_comb_a[] = {{".2", u3wf_comb}, {}};
   static u3j_harm _143_pen_cons_a[] = {{".2", u3wf_cons}, {}};
   static u3j_harm _143_pen_core_a[] = {{".2", u3wf_core}, {}};
-  static u3j_harm _143_pen_hint_a[] = {{".2", u3wf_hint}, {}};
   static u3j_harm _143_pen_face_a[] = {{".2", u3wf_face}, {}};
   static u3j_harm _143_pen_fitz_a[] = {{".2", u3wf_fitz}, {}};
   static u3j_harm _143_pen_flan_a[] = {{".2", u3wf_flan}, {}};
@@ -179,7 +178,6 @@ static u3j_core _143_pen_d[] =
     { "flip", _143_pen_flip_a },
     { "flor", _143_pen_flor_a },
     { "fork", _143_pen_fork_a },
-    { "hint", _143_pen_hint_a },
     { "hike", _143_pen_hike_a },
     { "look", _143_pen_look_a },
     { "loot", _143_pen_loot_a },

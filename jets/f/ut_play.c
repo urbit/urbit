@@ -382,8 +382,10 @@
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, q_gen);
-        u3_noun ret = u3qf_hint(p_gen, boc);
+        u3_noun hit = u3nc(u3k(sut), u3k(p_gen));
+        u3_noun ret = u3qf_hint(hit, boc);
 
+        u3z(hit);
         u3z(boc);
         return ret;
       }

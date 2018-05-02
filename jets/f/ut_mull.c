@@ -525,9 +525,13 @@
       _mull_used();
       {
         u3_noun vat = _mull_in(van, sut, gol, dox, q_gen);
-        u3_noun ret = u3nc(u3qf_hint(p_gen, u3h(vat)),
-                           u3qf_hint(p_gen, u3t(vat)));
+        u3_noun hit = u3nc(u3k(sut), u3k(p_gen));
+        u3_noun hix = u3nc(u3k(dox), u3k(p_gen));
+        u3_noun ret = u3nc(u3qf_hint(hit, u3h(vat)),
+                           u3qf_hint(hix, u3t(vat)));
 
+        u3z(hix);
+        u3z(hit);
         u3z(vat);
         return ret;
       }
