@@ -11,6 +11,7 @@
 #include <signal.h>
 #include <gmp.h>
 #include <stdint.h>
+#include <limits.h>
 #include <uv.h>
 #include <sigsegv.h>
 #include <curses.h>
@@ -18,11 +19,18 @@
 #include <term.h>
 #include <dirent.h>
 #include <openssl/ssl.h>
+#include <openssl/rand.h>
+
+#include "h2o.h"
 
 #define U3_GLOBAL
 #define C3_GLOBAL
 #include "all.h"
 #include "vere/vere.h"
+
+/* Require unsigned char
+ */
+STATIC_ASSERT(( 0 == CHAR_MIN && UCHAR_MAX == CHAR_MAX ), "unsigned char required");
 
 /* _main_readw(): parse a word from a string.
 */
@@ -83,7 +91,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:A:I:w:u:t:f:k:l:n:p:r:NabcdgqsvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:A:H:I:w:u:t:f:k:l:n:p:r:NabcdgqsvxFMPDXR")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -99,6 +107,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'A': {
         u3_Host.ops_u.arv_c = strdup(optarg);
+        break;
+      }
+      case 'H': {
+        u3_Host.ops_u.dns_c = strdup(optarg);
         break;
       }
       case 'I': {
@@ -253,6 +265,10 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
+  if ( u3_Host.ops_u.dns_c == 0 ) {
+    u3_Host.ops_u.dns_c = "urbit.org";
+  }
+
   if ( u3_Host.ops_u.pil_c != 0 ) {
     struct stat s;
     if ( stat(u3_Host.ops_u.pil_c, &s) != 0 ) {
@@ -314,15 +330,16 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-c pier       Create a new urbit in pier/\n",
     "-d            Daemon mode\n",
     "-D            Recompute from events\n",
-    "-F            Fake keys\n",
+    "-F            Fake keys; also disables networking\n",
     "-f            Fuzz testing\n",
     "-g            Set GC flag\n",
+    "-H domain     Set ames bootstrap domain (default urbit.org)\n",
     "-I galaxy     Start as ~galaxy\n",
     "-k stage      Start at Hoon kernel version stage\n",
-    "-L            Local-only network\n",
     "-l port       Initial peer port\n",
     "-M            Memory madness\n",
     "-n host       Set unix hostname\n",
+    "-N            Enable networking in fake mode (-F)\n",
     "-p ames_port  Set the HTTP port to bind to\n",
     "-P            Profiling\n",
     "-q            Quiet\n",
@@ -461,6 +478,7 @@ report(void)
   printf("openssl: %s\n", SSLeay_version(SSLEAY_VERSION));
   printf("curses: %s\n", curses_version());
   printf("libuv: %s\n", uv_version_string());
+  printf("libh2o: %d.%d.%d\n", H2O_LIBRARY_VERSION_MAJOR, H2O_LIBRARY_VERSION_MINOR, H2O_LIBRARY_VERSION_PATCH);
 }
 
 void
@@ -608,6 +626,24 @@ main(c3_i   argc,
       printf("saved.\r\n");
     }
 #endif
+  }
+
+  SSL_library_init();
+  SSL_load_error_strings();
+
+  {
+    c3_i rad;
+    c3_y buf[4096];
+
+    // RAND_status, at least on OS X, never returns true.
+    // 4096 bytes should be enough entropy for anyone, right?
+    rad = open("/dev/urandom", O_RDONLY);
+    if ( 4096 != read(rad, &buf, 4096) ) {
+      perror("rand-seed");
+      exit(1);
+    }
+    RAND_seed(buf, 4096);
+    close(rad);
   }
 
   // u3e_grab("main", u3_none);

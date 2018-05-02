@@ -1,0 +1,5 @@
+#!/bin/bash
+
+mkdir ./build &> /dev/null
+meson . ./build
+ninja -C build

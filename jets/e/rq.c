@@ -2,7 +2,7 @@
 **
 */
 #include "all.h"
-#include "softfloat.h"
+#include <softfloat.h>
 
 #define QUADNAN 0x7fff800000000000
 
