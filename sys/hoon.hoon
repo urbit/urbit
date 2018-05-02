@@ -435,7 +435,7 @@
   $%  ::  %|: wrappable paragraph without linebreaks
       ::  %&: decorated list
       ::
-      [%| =(list @t)]
+      [%| prefix=tile =(list @t)]
       $:  %&
           $:  ::  wide: one-line syntax
               ::  tall: multiline syntax
@@ -5630,7 +5630,7 @@
       ==                                                ::
   {$atom p/aura}                                        ::  atom
 ::
-+=  woof  $@(@ {~ p/hoon})                             ::  simple embed
++=  woof  $@(@ {~ p/hoon})                              ::  simple embed
 +=  chap  (pair (unit term) what)                       ::  labeled help
 +=  chum  $?  lef/term                                  ::  jet name
               {std/term kel/@}                          ::  kelvin version
@@ -5644,6 +5644,10 @@
           ==                                            ::
 +=  foot  $%  {$ash p/hoon}                             ::  dry arm, geometric
               {$elm p/hoon}                             ::  wet arm, generic
+          ==                                            ::
++=  help                                                ::  generic doc
+          $:  summary=cord                              ::  one-line summary
+              details=(list cord)                       ::  unparsed lines
           ==                                            ::
 +=  limb  $@  term                                      ::  wing element
           $%  {%& p/axis}                               ::  by geometry
@@ -5668,11 +5672,12 @@
               [%loop p=@ud]                             ::  repetition point
               [%list p=plot]                            ::  i-t list
               [%many p=(list plot)]                     ::  tuple
-              [%mark p=term q=plot]                     ::  famous format
+              [%mark p=stud q=plot]                     ::  famous format
               [%name p=term q=plot]                     ::  name attached
               [%pair p=plot q=plot]                     ::  pq cell
               [%path ~]                                 ::  with @ta segments
               [%pick p=(list plot)]                     ::  overlap
+              [%pool p=(map @ud plot)]                  ::  repetition pool
               [%qual p=plot q=plot r=plot]              ::  formal 
               [%quil p=plot q=plot r=plot s=plot t=plot]::  formal quintuple
               [%tape ~]                                 ::  utf8 bytes
@@ -5907,6 +5912,7 @@
           $%  {$army p/term}                            ::  simple named
               {$navy p/term q/(list wing)}              ::  synthetic named
               {$cops p/stud}                            ::  declared standard
+              {$help p/help}                            ::  documentation
           ==                                            ::
 +=  type  $~  %noun                                     :: 
           $@  $?  $noun                                 ::  any nouns
