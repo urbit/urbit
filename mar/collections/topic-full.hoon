@@ -114,14 +114,15 @@
         who+[%s (scot %p who.info.top)]
         what+[%s (of-wain:format wat.info.top)]
         :-  %comments
-        %-  pairs
+        :-  %a
         %+  turn
           ~(tap by coms.top)
         |=  [a=@da b=[c=@da d=comment]]
-        :-  (scot %da a)
         %-  pairs
         :~  who+[%s (scot %p who.d.b)]
             what+[%s (of-wain:format wat.d.b)]
+            id+[%s (scot %da a)]
+            modified+[%s (scot %da c.b)]
         ==
     ==
   --

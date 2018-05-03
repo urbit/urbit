@@ -65,15 +65,16 @@
                 [%s (scot %p a)]
             ==
             :-  %topics
-            %-  pairs
+            :-  %a
             %+  turn
               ~(tap by tops.col)
             |=  [e=@da f=topicful]
-            :-  (scot %da e)
             %-  pairs
             :~  title+[%s tit.info.f]
                 who+[%s (scot %p who.info.f)]
                 what+[%s (of-wain:format wat.info.f)]
+                id+[%s (scot %da e)]
+                modified+[%s (scot %da mod.info.f)]
             ==
         ==
   --

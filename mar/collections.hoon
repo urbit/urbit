@@ -53,9 +53,13 @@
       ~(tap by cos)
     |=  [a=@da b=collection]
     :-  (scot %da a)
-    %-  frond
+    %-  pairs
+    :~
     :-  %description
     [%s desc.conf.b]
+    :-  %modified
+    [%s (scot %da mod.conf.b)]
+    ==
   --
 ::
 ++  grab
