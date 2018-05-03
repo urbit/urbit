@@ -117,7 +117,7 @@
   |=  dob=block
   ^-  json
   ?-  -.dob
-    %number   s+(crip '0' 'x' ((d-co:co 1) n.dob))
+    %number   s+(crip '0' 'x' ((x-co:co 1) n.dob))
     %label    s+l.dob
   ==
 ::
