@@ -40,6 +40,9 @@
   |=  {way/wire p/case q/(set (pair care path))}
   ^-  [(list move) _+>.$]
   ~&  [%wris way p q]
+  ::
+  =.  turbo  (turbo now.bol eny.bol our-scry)
+  ::
   =^  vane-moves  turbo
     %-  take:turbo
     :*  wire=way  duct=~  *type  [%c %wris p q]
@@ -51,6 +54,9 @@
   |=  {way/wire rot/riot}
   ^-  [(list move) _+>.$]
   ~&  [%writ way rot]
+  ::
+  =.  turbo  (turbo now.bol eny.bol our-scry)
+  ::
   =^  vane-moves  turbo
     %-  take:turbo
     :*  wire=way  duct=~  *type  [%c %writ rot]
@@ -66,7 +72,6 @@
   ^-  [(list move) _+>.$]
   ::
   =/  gall-moves=(list move)
-    ~!  vane-moves
     %+  murn  vane-moves
     |=  [=duct card=(wind note:ford-turbo gift:able:ford-api:ford-turbo)]
     ^-  (unit move)
@@ -96,5 +101,7 @@
   |=  [one=* two=(unit (set monk)) =term =beam]
   ^-  (unit (unit cage))
   ::
+  ~&  [%scrying-for term beam]
   ~
 --
+

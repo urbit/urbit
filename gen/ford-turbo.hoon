@@ -2258,6 +2258,7 @@
         |=  moves=(list move:ford-turbo)
         ^-  tang
         ::
+        ~|  %didnt-get-two-moves
         ?>  ?=([^ ^ ~] moves)
         %-  check-post-made  :*
           move=i.moves
