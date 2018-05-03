@@ -23,6 +23,7 @@
 ++  delta
   $?  diff-constitution
   $%  [%checking who=@p part=(unit hull)]
+      [%filter id=@ud]
   ==  ==
 ::
 ::
@@ -62,7 +63,7 @@
   |=  [b=bone s=ship p=path]
   ^-  (unit move)
   ?.  ?=([%state *] p)  ~
-  ?:  ?=(%checking -.det)  ~
+  ?:  ?=(?(%checking %filter) -.det)  ~
   `[b %diff %constitution-diff det]
 ::
 ++  ta
@@ -170,8 +171,9 @@
     ?:  ?=(%error -.rep)
       ~&  [%filter-error--retrying message.rep]
       ta-new-filter
-    =.  filter  (parse-eth-new-filter-res res.rep)
-    ta-read-filter
+    =+  fit=(parse-eth-new-filter-res res.rep)
+    =.  +>.$  (ta-change %filter fit)
+    ta-read-filter(filter fit)
   ::
   ++  ta-take-filter-results
     |=  rep=response:json-rpc
@@ -377,6 +379,7 @@
       %dns        (da-change-dns +.det)
       %heard      (da-add-heard +.det)
       %checking   (da-change-checking +.det)
+      %filter     (da-change-filter +.det)
     ==
   ::
   ++  da-change-hull
@@ -421,6 +424,10 @@
     =-  +>.$(checking -)
     ?~  tmp  (~(del by checking) who)
     (~(put by checking) who u.tmp)
+  ::
+  ++  da-change-filter
+    |=  id=@ud
+    +>(filter id)
   --
 ::
 ++  hull-from-eth
