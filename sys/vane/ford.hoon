@@ -1098,7 +1098,7 @@
       ?:  ?=($ud -.r.bem)  (fine cof bem)
       =+  von=(syve [151 %noun] ~ %cw bem(s ~))
       ?~  von  [p=cof q=[%1 [%c %w bem ~] ~ ~]]
-      (fine cof bem(r [%ud ((hard @) +.+:(need u.von))]))
+      (fine cof bem(r [%ud ud:((hard cass:clay) +.+:(need u.von))]))
     ::
     ++  infer-product-type
       |=  {cof/cafe typ/type gen/hoon}
