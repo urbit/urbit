@@ -67,6 +67,7 @@
           {$dirk wire @tas}                             ::
           {$ogre wire $@(@tas beam)}                    ::
           {$merg wire @p @tas @p @tas case germ}        ::
+          {$perm wire ship desk path rite}              ::
           {$poke wire dock pear}                        ::
           {$wipe wire @p ~}                            ::
           {$wait wire @da}                              ::
@@ -185,6 +186,12 @@
   =+  old=;;((map @da cord) (fall (file where) ~))
   `(foal where %sched !>((~(put by old) tym eve)))
 ::
+++  poke-permission
+  |=  {syd/desk pax/path pub/?}
+  =<  abet
+  %^  emit  %perm  /kiln/permission
+  [our syd pax %r ~ ?:(pub %black %white) ~]
+::
 ++  poke-autoload  |=(lod/(unit ?) abet:(poke:autoload lod))
 ++  poke-start-autoload  |=(~ abet:start:autoload)
 ::
@@ -262,10 +269,17 @@
   --
 ::
 ++  poke-overload
-  |=  tym/@dr
-  abet:(emit %wait /kiln/overload/(scot %dr tym) (add ~s10 now))
+  :>  +poke-overload: wipes ford cache at {start}, and then every {recur}.
+  |=  [recur=@dr start=@da]
+  ?>  (gte start now)
+  abet:(emit %wait /kiln/overload/(scot %dr recur) start)
 ::
 ++  poke-wipe-ford  |=(~ abet:(emit %wipe /kiln our ~))
+::
+++  mack
+  |=  {way/wire saw/(unit tang)}
+  ~?  ?=(^ saw)  [%kiln-nack u.saw]
+  abet
 ::
 ++  take  |=(way/wire ?>(?=({@ ~} way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
@@ -274,6 +288,14 @@
 ::
 ++  take-made                                         ::
   |=  {way/wire dep/@uvH reg/gage:ford}
+  ::  hack for |overload
+  ::
+  ::    We might have gotten an ignorable response back for our cache priming
+  ::    ford call. If it matches our magic wire, ignore it.
+  ::
+  ?:  =(/prime/cache way)
+    ~&  %cache-primed
+    abet
   abet:abet:(made:(take way) dep reg)
 ::
 ++  take-coup-fancy                                   ::
@@ -319,6 +341,19 @@
   |=  {way/wire ~}
   ?>  ?=({@ ~} way)
   =+  tym=(slav %dr i.way)
+  ::  this builds up a ford build for the front page to prime the cache.
+  =.  +>.$
+    =/  request-data  :~
+        [0 [0 8.080] 0 'localhost' ~]
+        ::  associate 0 as the anonymous ship, which is the ++add result.
+        [[0 (scot %p (add our ^~((bex 64))))] ~ ~]
+        'not-yet-implemented'
+        `'en-US,en;q=0.9'
+        `.127.0.0.1
+      ==
+    =/  monies/coin  [%many ~[[%blob request-data] [%$ ~.n 0]]]
+    =/  request/silk:ford  [%bake %urb monies [our %home [%da now]] /web]
+    (emit `card`[%exec /kiln/prime/cache our `[[our %home [%da now]] request]])
   =.  +>.$
     (emit %wipe /kiln/overload/[i.way] our ~)
   =.  +>.$

@@ -117,7 +117,7 @@
 :>  #
 :>    functional cores and arms.
 ::
-|_  {bol/bowl:gall state}
+|_  {bol/bowl:gall $1 state}
 ::
 :>  #  %transition
 :>    prep transition
@@ -125,12 +125,110 @@
 ++  prep
   :>  adapts state.
   ::
-  |=  old/(unit state)
+  =>  |%
+      ++  states
+        $%({$1 s/state} {$0 s/state-0})
+      ::
+      ++  state-0
+        (cork state |=(a/state a(stories (~(run by stories.a) story-0))))
+      ++  story-0
+        %+  cork  story
+        |=  a/story
+        %=  a
+          shape     *config-0
+          mirrors   (~(run by mirrors.a) config-0)
+          peers     (~(run by peers.a) |=(a/(list query) (turn a query-0)))
+        ==
+      ++  query-0
+        $?  $:  $circle
+                nom/name
+                wer/(unit circle)
+                wat/(set circle-data)
+                ran/range-0
+            ==
+            query
+        ==
+      ++  config-0
+        {src/(set source-0) cap/cord tag/tags fit/filter con/control}
+      ++  source-0
+        {cir/circle ran/range-0}
+      ++  range-0
+        %-  unit
+        $:  hed/place-0
+            tal/(unit place-0)
+        ==
+      ++  place-0
+        $%  {$da @da}
+            {$ud @ud}
+            {$sd @sd}
+        ==
+      --
+  =|  mos/(list move)
+  |=  old/(unit states)
   ^-  (quip move _..prep)
   ?~  old
     %-  pre-bake
     ta-done:ta-init:ta
-  [~ ..prep(+<+ u.old)]
+  ?-  -.u.old
+      $1
+    [mos ..prep(+<+ u.old)]
+  ::
+      $0
+    =-  $(old `[%1 s.u.old(stories -)])
+    |^  %-  ~(run by stories.s.u.old)
+        |=  soy/story-0
+        ^-  story
+        %=  soy
+          shape     (prep-config shape.soy)
+          mirrors   (~(run by mirrors.soy) prep-config)
+          peers     %-  ~(run by peers.soy)
+                    |=  a/(list query-0)
+                    ^-  (list query)
+                    (murn a prep-query)
+        ==
+    ::
+    ++  prep-config
+      |=  cof/config-0
+      ^-  config
+      %=  cof
+          src
+        %-  ~(gas in *(set source))
+        (murn ~(tap in src.cof) prep-source)
+      ==
+    ::
+    ++  prep-source
+      |=  src/source-0
+      ^-  (unit source)
+      =+  nan=(prep-range ran.src)
+      ?~  nan
+        ~&  [%forgetting-source src]
+        ~
+      `src(ran u.nan)
+    ::
+    ++  prep-query
+      |=  que/query-0
+      ^-  (unit query)
+      ?.  ?=($circle -.que)  `que
+      =+  nan=(prep-range ran.que)
+      ?~  nan
+        ~&  [%forgetting-query que]
+        ~
+      `que(ran u.nan)
+    ::
+    ++  prep-range
+      |=  ran/range-0
+      ^-  (unit range)
+      ?~  ran  `ran
+      ::  ranges with a relative end aren't stored because they end
+      ::  immediately, so if we find one we can safely discard it.
+      ?:  ?=({$~ {$sd @sd}} tal.u.ran)  ~
+      ::  we replace relative range starts with the current date.
+      ::  this is practically correct.
+      ?:  ?=({$sd @sd} hed.u.ran)
+        `ran(hed.u [%da now.bol])
+      `ran
+    --
+  ==
 ::
 :>  #  %engines
 :>    main cores.
@@ -316,11 +414,13 @@
       ?-  -.act
         ::  circle configuration
         $create  (action-create +.act)
+        $design  (action-design +.act)
         $source  (action-source +.act)
         $depict  (action-depict +.act)
         $filter  (action-filter +.act)
         $permit  (action-permit +.act)
         $delete  (action-delete +.act)
+        $usage   (action-usage +.act)
         ::  messaging
         $convey  (action-convey +.act)
         $phrase  (action-phrase +.act)
@@ -384,11 +484,20 @@
         %^  impact  nom  %new
         :*  [[[our.bol nom] ~] ~ ~]
             des
+            ~
             *filter
             :-  typ
             ?.  ?=(?($village $journal) typ)  ~
             [our.bol ~ ~]
         ==
+      (ta-evil (crip "{(trip nom)}: already exists"))
+    ::
+    ++  action-design
+      :>  creates a story with the specified config.
+      ::
+      |=  {nom/name cof/config}
+      ?.  (~(has in stories) nom)
+        (impact nom %new cof)
       (ta-evil (crip "{(trip nom)}: already exists"))
     ::
     ++  action-delete
@@ -437,6 +546,15 @@
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
       so-done:(~(so-sources so nom ~ u.soy) sub srs)
+    ::
+    ++  action-usage
+      :>  add or remove usage tags.
+      ::
+      |=  {nom/name add/? tas/tags}
+      =+  soy=(~(get by stories) nom)
+      ?~  soy
+        (ta-evil (crip "no story {(trip nom)}"))
+      so-done:(~(so-usage so nom ~ u.soy) add tas)
     ::
     :>  #  %messaging
     +|
@@ -868,7 +986,8 @@
         $bear     (so-bear bur.rum)
         $peer     (so-delta-our rum)
         $gram     (so-open src nev.rum)
-        $remove   (so-delta-our %config src %remove ~)
+        $remove   ::TODO  should also remove from {remotes}?
+                  (so-delta-our %config src %remove ~)
       ::
           $new
         ?:  =(src so-cir)
@@ -919,88 +1038,88 @@
       :>  state. in case of conflict, existing data is
       :>  overwritten.
       ::
+      ::NOTE  we don't use ++roll here because of urbit/arvo#447.
+      ::
       |=  {gaz/(list telegram) cos/lobby pes/crowd}
       ^+  +>
-      ~?  (gth (lent gaz) 2.000)
-        [%unexpected-scrollback-length nom (lent gaz)]
       =*  self  +>
+      ::
       ::  local config
       =.  self
         (so-config-full `shape loc.cos)
+      ::
       ::  remote config
       =.  self
         =+  rem=~(tap by rem.cos)
         |-  ^+  self
         ?~  rem  self
-        =.  self
-          (so-delta-our %config p.i.rem %full q.i.rem)
+        =*  wer  p.i.rem
+        =*  cof  q.i.rem
+        ::  only make a delta if it actually changed.
+        =?  self  !=(`cof (~(get by mirrors) wer))
+          (so-delta-our %config wer %full cof)
         $(rem t.rem)
-        ::TODO  eats previous change?
-        ::%+  roll  ~(tap by rem.cos)
-        ::|=  {{r/circle c/config} _self}
-        ::(so-delta-our %config r %full c)
+      ::
       ::  local status
       =.  self
         =+  sas=~(tap by loc.pes)
         |-  ^+  self
         ?~  sas  self
-        =.  deltas
+        =*  who  p.i.sas
+        =*  sat  q.i.sas
+        ::  only make a delta if it actually changed.
+        =?  deltas  !=(`sat (~(get by locals) who))
           :_  deltas
           :^  %story  nom  %status
-          [[our.bol nom] p.i.sas %full q.i.sas]
+          [[our.bol nom] who %full sat]
         $(sas t.sas)
-        ::TODO  ideally do below, but runtime error at so-delta-our
-        ::%+  roll  ~(tap by loc.pes)
-        ::|=  {{w/ship s/status} _self}
-        ::(so-delta-our %status so-cir w %full s)
+      ::
       ::  remote status
       =.  self
         =+  rem=~(tap by rem.pes)
         |-  ^+  self
         ?~  rem  self
-        =.  deltas
+        =*  wer  p.i.rem
+        =*  gou  q.i.rem
+        ::  only make deltas if it actually changed.
+        =?  deltas  !=(`gou (~(get by remotes) wer))
           %+  welp  deltas
-          =+  gop=~(tap by q.i.rem)
+          =+  gop=~(tap by gou)
+          =+  hav=(fall (~(get by remotes) wer) *group)
           =|  l/(list delta)
           |-  ^+  l
           ?~  gop  l
-          =.  l  [[%story nom %status p.i.rem p.i.gop %full q.i.gop] l]
+          =*  who  p.i.gop
+          =*  sat  q.i.gop
+          ::  only make a delta if it actually changed.
+          =?  l  !=(`sat (~(get by hav) who))
+            [[%story nom %status wer who %full sat] l]
           $(gop t.gop)
         $(rem t.rem)
-        ::TODO  below eats state?
-        ::%+  roll  ~(tap by rem.pes)
-        ::|=  {{c/circle g/group} _self}
-        ::%+  roll  ~(tap by g)
-        ::|=  {{w/ship s/status} _self}
-        ::(so-delta-our %status c w %full s)
+      ::
       ::  telegrams
       =.  self
         %_  self
             deltas
           %+  welp  deltas
           %-  flop
-          %+  turn  gaz
+          ^-  (list delta)
+          %+  murn  gaz
           |=  t/telegram
-          ^-  delta
-          :+  %story  nom
+          ^-  (unit delta)
+          ::  in audience, replace above with us.
+          ::TODO  this really should be done by the sender.
+          =.  aud.t
+            =+  dem=[(above our.bol) nom]
+            ?.  (~(has in aud.t) dem)  aud.t
+            =+  (~(del in aud.t) dem)
+            (~(put in -) so-cir)
+          =+  num=(~(get by known) uid.t)
+          ?:  &(?=(^ num) =(t (snag u.num grams)))  ~
           ::TODO  this really should have sent us the message
           ::      src as well but that's not an easy fix.
-          :+  %gram  [(above our.bol) nom]
-          ::  in audience, replace above with us.
-          =-  t(aud -)
-          =+  (~(del in aud.t) [(above our.bol) nom])
-          (~(put in -) so-cir)
+          `[%story nom %gram [(above our.bol) nom] t]
         ==
-        ::TODO  ideally do below, but runtime error
-        ::%-  so-deltas-our
-        ::%+  turn  gaz
-        ::|=  t/telegram
-        ::^-  delta-story
-        :::-  %gram
-        ::::  in audience, replace above with us.
-        ::=-  t(aud -)
-        ::=+  (~(del in aud.t) [(above our.bol) nom])
-        ::(~(put in -) so-cir)
       ::  inherited flag
       %_(self deltas [[%story nom %inherited &] deltas])
       ::TODO  runtime error
@@ -1046,23 +1165,49 @@
       ~?  &(?=(^ old) !=(src.u.old src.cof))
         %maybe-missing-src-changes
       %-  so-deltas
-      %+  turn
-        %+  weld
-          ^-  (list delta-story)
-          ?~  old  ~
-          ::TODO?  what to do about src?
-          :~  ::[%follow | src.u.old]
-              [%config so-cir %permit | sis.con.u.old]
-          ==
-        ^-  (list delta-story)
-        :~  ::[%follow & src.cof]
-            [%config so-cir %caption cap.cof]
-            [%config so-cir %filter fit.cof]
-            [%config so-cir %secure sec.con.cof]
-            [%config so-cir %permit & sis.con.cof]
+      =-  %+  turn  -
+          |=  d/diff-config
+          [%story nom [%config so-cir d]]
+      ^-  (list diff-config)
+      ::TODO  figure out how to deal with src changes here.
+      ::      %follow will probably behave a bit iffy in some cases.
+      ?~  old
+        ::  if we have no previous config, all diffs apply.
+        :~  [%caption cap.cof]
+            [%usage & tag.cof]
+            [%filter fit.cof]
+            [%secure sec.con.cof]
+            [%permit & sis.con.cof]
         ==
-      |=  d/delta-story
-      [%story nom d]
+      =-  (murn - same)
+      ^-  (list (unit diff-config))
+      =*  col  u.old
+      ::  if we have previous config, figure out the changes.
+      :~  ?:  =(cap.col cap.cof)  ~
+          `[%caption cap.cof]
+        ::
+          =+  gon=(~(dif in tag.col) tag.cof)
+          ?~  gon  ~
+          `[%usage | gon]
+        ::
+          =+  new=(~(dif in tag.cof) tag.col)
+          ?~  new  ~
+          `[%usage & new]
+        ::
+          ?:  =(fit.col fit.cof)  ~
+          `[%filter fit.cof]
+        ::
+          ?:  =(sec.con.col sec.con.cof)  ~
+          `[%secure sec.con.cof]
+        ::
+          =+  gon=(~(dif in sis.con.col) sis.con.cof)
+          ?~  gon  ~
+          `[%permit | gon]
+        ::
+          =+  new=(~(dif in sis.con.cof) sis.con.col)
+          ?~  new  ~
+          `[%permit & new]
+      ==
     ::
     ++  so-sources
       :>    change source
@@ -1101,6 +1246,17 @@
       ^+  +>
       ?:  =(cap cap.shape)  +>
       (so-delta-our %config so-cir %caption cap)
+    ::
+    ++  so-usage
+      :>  add or remove usage tags.
+      ::
+      |=  {add/? tas/tags}
+      ^+  +>
+      =/  sas/tags
+        %.  tag.shape
+        ?:(add ~(dif in tas) ~(int in tas))
+      ?~  sas  +>.$
+      (so-delta-our %config so-cir %usage add sas)
     ::
     ++  so-filter
       :>    change message rules
@@ -1187,29 +1343,34 @@
       |=  ran/range
       ^-  (list telegram)
       =+  [num=0 gaz=grams zeg=*(list telegram)]
-      ::  fill in empty ranges to select all grams.
+      ::  fill in empty ranges to select all grams,
+      ::  and calculate absolutes for relative places.
       =.  ran
         ?~  ran  `[[%ud 0] `[%ud count]]
-        ?~  tal.u.ran  `[hed.u.ran `[%ud count]]
+        =*  hed  hed.u.ran
+        ?~  tal.u.ran  `[hed `[%ud count]]
+        =*  tal  u.tal.u.ran
         ran
       ::  never fails, but compiler needs it.
       ?>  &(?=(^ ran) ?=(^ tal.u.ran))
+      =*  hed  hed.u.ran
+      =*  tal  u.tal.u.ran
       %-  flop
       |-  ^-  (list telegram)
       ?~  gaz  zeg
-      ?:  ?-  -.u.tal.u.ran                             ::  after the end
-            $ud  (lth +.u.tal.u.ran num)
-            $da  (lth +.u.tal.u.ran wen.i.gaz)
+      ?:  ?-  -.tal                                     ::  after the end
+            $ud  (lth +.tal num)
+            $da  (lth +.tal wen.i.gaz)
           ==
-        ::  if past the river, we're done searching.
+        ::  if past the range, we're done searching.
         zeg
-      ?:  ?-  -.hed.u.ran                               ::  before the start
-            $ud  (lth num +.hed.u.ran)
-            $da  (lth wen.i.gaz +.hed.u.ran)
+      ?:  ?-  -.hed                                     ::  before the start
+            $ud  (lth num +.hed)
+            $da  (lth wen.i.gaz +.hed)
           ==
-        ::  if before the river, continue onward.
+        ::  if before the range, continue onward.
         $(num +(num), gaz t.gaz)
-      ::  if in the river, add this gram and continue.
+      ::  if in the range, add this gram and continue.
       $(num +(num), gaz t.gaz, zeg [i.gaz zeg])
     ::
     ++  so-in-range
@@ -1225,16 +1386,18 @@
       ^-  {in/? done/?}
       ?~  ran  [& |]
       =/  min
-        ?-  -.hed.u.ran
-          $ud  (gth count +.hed.u.ran)
-          $da  (gth now.bol +.hed.u.ran)
+        =*  hed  hed.u.ran
+        ?-  -.hed
+          $ud  (gth count +.hed)
+          $da  (gth now.bol +.hed)
         ==
       ?~  tal.u.ran
         [min |]
       =-  [&(min -) !-]
-      ?-  -.u.tal.u.ran
-        $ud  (gte +(+.u.tal.u.ran) count)
-        $da  (gte +.u.tal.u.ran now.bol)
+      =*  tal  u.tal.u.ran
+      ?-  -.tal
+        $ud  (gte +(+.tal) count)
+        $da  (gte +.tal now.bol)
       ==
     ::
     :>  #
@@ -1361,14 +1524,6 @@
       =/  sus/(set ship)
         %.  sis.con.shape
         ?:(add ~(dif in sis) ~(int in sis))
-      =.  +>.$
-        ::  if banishing: notify only those affected.
-        ::  if inviting: notify all targets.
-        =?  sis  !inv  sus
-        =-  (so-act [%phrase - [%inv inv so-cir]~])
-        %-  ~(rep in `(set ship)`sis)
-        |=  {s/ship a/audience}
-        (~(put in a) [s %inbox])
       ?~  sus  +>.$
       ::  if banished, remove their presences.
       =?  +>.$  !inv
@@ -2173,9 +2328,9 @@
     ::  only auto-federate channels for now.
     ?.  ?=($channel sec.con.shape.s)  ~
     :+  ~  n
-    ::  share no more than 2k messages at once, for performance reasons.
-    :+  ?:  (lte count.s 2.000)  grams.s
-        (slag (sub count.s 2.000) grams.s)
+    ::  share no more than the last 100, for performance reasons.
+    :+  ?:  (lte count.s 100)  grams.s
+        (slag (sub count.s 100) grams.s)
       [shape.s mirrors.s]
     [locals.s remotes.s]
   ::
@@ -2290,6 +2445,7 @@
     ?+  -.det  %hasnot
       $gram     %grams
       $new      %config-l
+      $remove   %config-l
       $config   ?:  =(cir.det [our.bol nom])
                 %config-l  %config-r
       $status   ?:  =(cir.det [our.bol nom])
@@ -2361,9 +2517,9 @@
       $report
     ::  only send changes we didn't get from above.
     ?:  =(src.bol (above our.bol))  ~
-    ::  only send story reports about grams, status and peers.
+    ::  only send story reports about grams and status.
     ?.  ?=($story -.det)  ~
-    ?.  ?=(?($gram $status $peer) -.det.det)  ~
+    ?.  ?=(?($gram $status) -.det.det)  ~
     =+  soy=(~(got by stories) nom.det)
     ::  and only if the story is inherited.
     ?.  inherited.soy  ~
@@ -2382,10 +2538,15 @@
     ?.  =(nom.qer nom.det)                            ~
     ?.  %-  circle-feel-story
         [wer.qer wat.qer nom.det det.det]             ~
-    =/  sor  (~(got by stories) nom.qer)
-    ?.  =<  in  %.  ran.qer
-        ~(so-in-range so:ta nom.qer ~ sor)            ~
-    ?.  ?=(?($gram $new $config $status) -.det.det)   ~
+    ?.  ?|  ?=($remove -.det.det)
+          ::
+            =<  in  %.  ran.qer
+            =+  soy=(~(got by stories) nom.qer)
+            ~(so-in-range so:ta nom.qer ~ soy)
+        ==
+      ~
+    =+  out=?($gram $new $config $status $remove)
+    ?.  ?=(out -.det.det)   ~
     :+  ~  %circle
     ?+  det.det  det.det
         {$gram *}
@@ -2639,11 +2800,10 @@
   |=  pax/path
   ^-  (quip move _+>)
   %-  pre-bake
-  :_  ~
   =+  qer=(path-to-query %circle pax)
   ?>  ?=($circle -.qer)
-  :+  %story  nom.qer
-  [%peer | src.bol qer]
+  ?.  (~(has by stories) nom.qer)  ~
+  [%story nom.qer %peer | src.bol qer]~
 ::
 ++  reap
   :>    subscription n/ack

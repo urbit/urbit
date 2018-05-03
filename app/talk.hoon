@@ -29,9 +29,10 @@
     |%
     ++  state                                           :>  application state
       $:  ::  messaging state                           ::
-          count/@ud                                     :<  (lent grams)
           grams/(list telegram)                         :<  all history
           known/(map serial @ud)                        :<  messages heard
+          last/@ud                                      :<  last heard
+          count/@ud                                     :<  (lent grams)
           sources/(set circle)                          :<  our subscriptions
           ::  circle details                            ::
           remotes/(map circle group)                    :<  remote presences
@@ -112,7 +113,7 @@
 :>  #
 :>    functional cores and arms.
 ::
-|_  {bol/bowl:gall state}
+|_  {bol/bowl:gall $1 state}
 ::
 :>  #  %transition
 :>    prep transition
@@ -121,11 +122,74 @@
 ++  prep
   :>  adapts state
   ::
-  |=  old/(unit state)
+  =>  |%
+      ++  states
+        $%({$1 s/state} {$0 s/state-0})
+      ::
+      ++  state-0
+        (cork state |=(a/state a(mirrors (~(run by mirrors.a) config-0))))
+      ++  config-0
+        {src/(set source-0) cap/cord tag/tags fit/filter con/control}
+      ++  source-0
+        {cir/circle ran/range-0}
+      ++  range-0
+        %-  unit
+        $:  hed/place-0
+            tal/(unit place-0)
+        ==
+      ++  place-0
+        $%  {$da @da}
+            {$ud @ud}
+            {$sd @sd}
+        ==
+      --
+  =|  mos/(list move)
+  |=  old/(unit states)
   ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
-  [~ ..prep(+<+ u.old)]
+  ?-  -.u.old
+      $1
+    [mos ..prep(+<+ u.old)]
+  ::
+      $0
+    =.  mos  [[ost.bol %pull /server/inbox server ~] peer-inbox mos]
+    =-  $(old `[%1 s.u.old(mirrors -)])
+    |^
+      (~(run by mirrors.s.u.old) prep-config)
+    ::
+    ++  prep-config
+      |=  cof/config-0
+      ^-  config
+      %=  cof
+          src
+        %-  ~(gas in *(set source))
+        (murn ~(tap in src.cof) prep-source)
+      ==
+    ::
+    ++  prep-source
+      |=  src/source-0
+      ^-  (unit source)
+      =+  nan=(prep-range ran.src)
+      ?~  nan
+        ~&  [%forgetting-source src]
+        ~
+      `src(ran u.nan)
+    ::
+    ++  prep-range
+      |=  ran/range-0
+      ^-  (unit range)
+      ?~  ran  `ran
+      ::  ranges with a relative end aren't stored because they end
+      ::  immediately, so if we find one we can safely discard it.
+      ?:  ?=({$~ {$sd @sd}} tal.u.ran)  ~
+      ::  we replace relative range starts with the current date.
+      ::  this is practically correct.
+      ?:  ?=({$sd @sd} hed.u.ran)
+        `ran(hed.u [%da now.bol])
+      `ran
+    --
+  ==
 ::
 :>  #
 :>  #  %utility
@@ -218,7 +282,10 @@
       server
     ::
       %+  welp  /circle/[inbox]/grams/config/group
-      ?:(=(0 count) ~ [(scot %ud count) ~])
+      ?.  =(0 count)
+        [(scot %ud last) ~]
+      =+  history-days=~d5
+      [(scot %da (sub now.bol history-days)) ~]
   ==
 ::
 :>  #
@@ -359,7 +426,7 @@
         ~&([%unexpected-circle-rumor -.rum] +>)
     ::
         $gram
-      (ta-learn gam.nev.rum)
+      (ta-open nev.rum)
     ::
         $config
       =+  cur=(fall (~(get by mirrors) cir.rum) *config)
@@ -445,15 +512,16 @@
     ::
     |=  nes/(list envelope)
     ^+  +>
-    (ta-lesson (turn nes tail))
+    ?~  nes  +>
+    $(nes t.nes, +> (ta-open i.nes))
   ::
-  ++  ta-lesson
-    :>  learn all telegrams in a list.
+  ++  ta-open
+    :>  learn message from an envelope.
     ::
-    |=  gaz/(list telegram)
+    |=  nev/envelope
     ^+  +>
-    ?~  gaz  +>
-    $(gaz t.gaz, +> (ta-learn i.gaz))
+    =?  last  (gth num.nev last)  num.nev
+    (ta-learn gam.nev)
   ::
   ++  ta-learn
     :>    save/update message
@@ -687,7 +755,7 @@
         ;~  pose
           (cold [%da now.bol] (jest 'now'))
           (stag %da (drat hed))
-          (stag %ud dem:ag)
+          placer
         ==
       ::
       ++  rang                                          :<  subscription range
@@ -1180,7 +1248,11 @@
         ::
         |=  {inv/? nom/name sis/(set ship)}
         ^+  ..sh-work
-        (sh-act %permit nom inv sis)
+        =.  ..sh-work  (sh-act %permit nom inv sis)
+        =-  (sh-act %phrase - [%inv inv [self nom]]~)
+        %-  ~(rep in sis)
+        |=  {s/ship a/audience}
+        (~(put in a) [s %inbox])
       ::
       ++  filter
         |=  {nom/name cus/? utf/?}
@@ -1828,6 +1900,7 @@
         $(dif [%filter fit.cof.dif])
       ?:  ?=($remove -.dif)
         (sh-note (weld "rip " (~(cr-show cr cir) ~)))
+      ?:  ?=($usage -.dif)  +>
       %-  sh-note
       %+  weld
         (weld ~(cr-phat cr cir) ": ")
@@ -2339,9 +2412,8 @@
         ?:  pat.sep  " "
         =-  (weld - q:(fall pre [p=| q=" "]))
         %~  ar-glyf  ar
-          ?:  =(who self)  aud
-          (~(del in aud) [who %inbox])
-        ==
+        ?:  =(who self)  aud
+        (~(del in aud) [who %inbox])
       =/  lis/(list tape)
         %+  simple-wrap
           `tape``(list @)`(tuba (trip msg.sep))
@@ -2445,7 +2517,7 @@
     ==
   ?:  =(a 'reset')
     ~&  'full reset incoming, hold on to your cli...'
-    :_  +>(grams ~, known ~, count 0)
+    :_  +>(grams ~, known ~, count 0, last 0)
     :~  [ost.bol %pull /server/client server ~]
         [ost.bol %pull /server/inbox server ~]
         peer-client

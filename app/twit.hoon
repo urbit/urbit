@@ -195,11 +195,11 @@
   |=  {usr/(unit user:eyre) req/(unit user:eyre)}
   ?~(req & =(usr req))
 ::
-::  .^(twit-feed %gx /=twit=/~/home/urbit_test)
-::  .^(twit-stat %gx /=twit=/~./post/0vv0old.0post.hash0.0000)
-++  peek
-  |=  {ren/care:clay pax/path}  ^-  (unit (unit gilt))
-  ?>  ?=($x ren)  ::  others unsupported
+::   /+  twitter
+::  .^((list post:twitter) %gx /=twit=/home/urbit_test/twit-feed)
+::  .^(post:twitter %gx /=twit=/post/0vv0old.0post.hash0.0000/twit-feed)
+++  peek-x
+  |=  pax/path  ^-  (unit (unit gilt))
   =+  usr=`~.  ::   =^  usr  pax  (user-from-path pax)
   ?.  ?=(twit-path pax)
     ~|([%missed-path pax] !!)
@@ -213,7 +213,7 @@
 ++  peer-scry-x
   |=  pax/path  ^+  done
   :_  +>
-  =+  pek=(peek %x pax)
+  =+  pek=(peek-x pax)
   ?^  pek
     ?~  u.pek  ~|(bad-scry+x+pax !!)
     ~[[ost %diff u.u.pek] [ost %quit ~]]

@@ -115,16 +115,12 @@
 ::
 ::
 ++  from-module                                         ::  create wrapper
-  =+  [%module ..$ _abet]:(hood-module)
-  |%  +-  $
-        =>  .(+< [identity start finish]=+<)
-        =-  [wrap=- $:start]             ::  usage (wrap handle-arm):from-foo
-        =+  handle=finish
-        |%  +-  $
-              |:  +<.handle
-              =.  +>.handle  (start hid (able identity))
-              (ably (handle +<))
-  --    --
+  |*  _[identity=%module start=..$ finish=_abet]:(hood-module)
+  =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
+  |*  handle/_finish
+  |=  a=_+<.handle
+  =.  +>.handle  (start hid (able identity))
+  (ably (handle a))
 ::
 ::  per-module interface wrappers
 ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum))
@@ -144,6 +140,7 @@
 ++  coup-kiln-spam            (wrap take-coup-spam):from-kiln
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  init-helm                 |=({way/wire *} [~ +>])
+++  mack-kiln                 (wrap mack):from-kiln
 ++  made-write                (wrap made):from-write
 ++  made-kiln                 (wrap take-made):from-kiln
 ++  mere-kiln                 (wrap take-mere):from-kiln
@@ -197,6 +194,7 @@
 ++  poke-kiln-overload        (wrap poke-overload):from-kiln
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
 ++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
+++  poke-kiln-permission      (wrap poke-permission):from-kiln
 ++  poke-womb-invite          (wrap poke-invite):from-womb
 ++  poke-womb-save            (wrap poke-save):from-womb
 ++  poke-womb-obey            (wrap poke-obey):from-womb

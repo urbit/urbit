@@ -84,7 +84,7 @@
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
-  $:  $6                                                ::  version
+  $:  $0                                                ::  version
       gub/@t                                            ::  random identity
       hov/(unit ship)                                   ::  master for remote
       top/beam                                          ::  ford serve prefix
@@ -756,7 +756,7 @@
           (give-thou q.u.mez)
       ::
         $lon
-          ~&  ses-ask+[p.u.mez sop (~(run by wup) ,~)]
+          ::  ~&  ses-ask+[p.u.mez sop (~(run by wup) ,~)]
           ?:  (ses-authed p.u.mez)
             (ames-gram q.p.kyz aut+~ p.u.mez)
           =.  sop  (~(put by sop) p.u.mez q.p.kyz |)

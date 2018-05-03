@@ -319,6 +319,13 @@
   :>
   p=item
 ::
++*  lest  [item]
+  :>    null-terminated non-empty list
+  :>
+  :>  mold generator: produces a mold of a null-terminated list of the
+  :>  homogeneous type {a} with at least one element.
+  [i/item t/(list item)]
+::
 ++  mold
   :>    normalizing gate
   :>
@@ -326,7 +333,7 @@
   :>  input if it fits or a default value if it doesn't.
   :>
   :>  examples: * @ud ,[p=time q=?(%a %b)]
-  _|=(* +<)
+  _|~(* +<)
 ::
 +*  pair  [head tail]
   :>    dual tuple
@@ -528,7 +535,7 @@
   (b u.a)
 ::
 ++  bind                                                ::  argue
-  |*  {a/(unit) b/$-(* *)}
+  |*  {a/(unit) b/gate}
   ?~  a  ~
   [~ u=(b u.a)]
 ::
@@ -778,23 +785,30 @@
   ^+  t.a
   [i.a $(a (skim t.a |:(c=i.a !(b c i.a))))]
 ::
-++  spin
-  |*  {a/(list) b/_=>(~ |=({* *} [** +<+])) c/*}
-  ::  ?<  ?=($-([_?<(?=(~ a) i.a) _c] [* _c]) b)
-  |-
+++  spin                                                :>  stateful turn
+  :>
+  :>  a: list
+  :>  b: state
+  :>  c: gate from list-item and state to product and new state
+  ~/  %spin
+  |*  [a=(list) b=* c=_|=(^ [** +<+])]
+  =>  .(c `$-([_?>(?=(^ a) i.a) _b] [* _b])`c)
+  =/  acc=(list _-:(c))  ~
+  :>  transformed list and updated state
+  |-  ^-  (pair _acc _b)
   ?~  a
-    ~
-  =+  v=(b i.a c)
-  [i=-.v t=$(a t.a, c +.v)]
+    [(flop acc) b]
+  =^  res  b  (c i.a b)
+  $(acc [res acc], a t.a)
 ::
-++  spun
-  |*  {a/(list) b/_=>(~ |=({* *} [** +<+]))}
-  =|  c/_+<+.b
-  |-
-  ?~  a
-    ~
-  =+  v=(b i.a c)
-  [i=-.v t=$(a t.a, c +.v)]
+++  spun                                                :>  internal spin
+  :>
+  :>  a: list
+  :>  b: gate from list-item and state to product and new state
+  ~/  %spun
+  |*  [a=(list) b=_|=(^ [** +<+])]
+  :>  transformed list
+  p:(spin a +<+.b b)
 ::
 ++  swag                                                ::  slice
   |*  {{a/@ b/@} c/(list)}
@@ -802,7 +816,7 @@
 ::
 ++  turn                                                ::  transform
   ~/  %turn
-  |*  {a/(list) b/$-(* *)}
+  |*  {a/(list) b/gate}
   |-
   ?~  a  ~
   [i=(b i.a) t=$(a t.a)]
@@ -1610,7 +1624,7 @@
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  rib                                               ::  transform + product
-    |*  {b/* c/$-(* *)}
+    |*  {b/* c/gate}
     |-  ^+  [b a]
     ?~  a  [b ~]
     =+  d=(c n.a b)
@@ -1620,7 +1634,7 @@
     [-.f [n.a +.e +.f]]
   ::
   +-  run                                               ::  apply gate to values
-    |*  b/$-(* *)
+    |*  b/gate
     |-
     ?~  a  a
     [n=[p=p.n.a q=(b q.n.a)] l=$(a l.a) r=$(a r.a)]
@@ -2274,7 +2288,7 @@
       =+  ^=  q  %+  max
           ?:  (gth m prc)  (^sub m prc)  0              ::  reduce precision
         %-  abs:si  ?:  =(den %i)  --0                  ::  enforce min. exp
-          ?:  =((cmp:si e.a emn) -1)  (dif:si emn e.a)  --0
+        ?:  =((cmp:si e.a emn) -1)  (dif:si emn e.a)  --0
       =^  b  a  :-  (end 0 q a.a)
         a(e (sum:si e.a (sun:si q)), a (rsh 0 q a.a))
       ::
@@ -4165,8 +4179,42 @@
       (weld ram(tac i.q.tac) ?~(t.q.tac voz (weld p.p.tac voz)))
     ==
   ::
+  ++  ug                                                ::  horrible hack
+    |%
+    ++  ace                                             ::  strip ctrl chars
+      |=  a=tape
+      ^-  tape
+      ?~  a  ~
+      ?:  |((lth i.a 32) =(127 `@`i.a))
+        $(a t.a)
+      [i.a $(a t.a)]
+    ::
+    ++  act                                             ::  pretend tapes
+      |=  tac=tank
+      ^-  tank
+      ?-  -.tac
+        %leaf  [%leaf (hew p.tac)]
+        %palm  :+  %palm
+                 [(hew p.p.tac) (hew q.p.tac) (hew r.p.tac) (hew s.p.tac)]
+               (turn q.tac act)
+        %rose  :+  %rose
+                 [(hew p.p.tac) (hew q.p.tac) (hew r.p.tac)]
+               (turn q.tac act)
+      ==
+    ::
+    ++  fix                                             ::  restore tapes
+      |=  wol=wall
+      %+  turn  wol
+      |=(a=tape (tufa `(list @c)``(list @)`a))
+    ::
+    ++  hew                                             ::  pretend tape
+      |=(a=tape `tape``(list @)`(tuba (ace a)))
+    --
+  ::
   ++  win
     |=  {tab/@ edg/@}
+    =.  tac  (act:ug tac)
+    %-  fix:ug
     =+  lug=`wall`~
     |^  |-  ^-  wall
         ?-    -.tac
@@ -4476,7 +4524,7 @@
 ::
 ++  cook                                                ::  apply gate
   ~/  %cook
-  |*  {poq/$-(* *) sef/rule}
+  |*  {poq/gate sef/rule}
   ~/  %fun
   |=  tub/nail
   =+  vex=(sef tub)
@@ -10166,7 +10214,7 @@
         {$cell *}   |
         {$core *}   dext(ref repo(sut ref))
         {$face *}   dext(ref q.ref)
-        {$fork *}   (levy ~(tap in p.ref) |=(type sint(ref +<)))
+        {$fork *}   (levy ~(tap in p.ref) |=(type dext(ref +<)))
         {$hint *}   dext(ref q.ref)
         {$hold *}   ?:  (~(has in reg) ref)  &
                     ?:  (~(has in gil) [sut ref])  &
@@ -10515,9 +10563,8 @@
     =>  .(fan (~(gas in fan) leg))
     %-  fork
     %~  tap  in
-      %-  ~(gas in *(set type))
-      (turn leg |=({p/type q/hoon} (play(sut p) q)))
-    ==
+    %-  ~(gas in *(set type))
+    (turn leg |=({p/type q/hoon} (play(sut p) q)))
   ::
   ++  take
     |=  {vit/vein duz/$-(type type)}
@@ -10622,14 +10669,20 @@
       --
   |_  sut/type
   ++  dash
-      |=  {mil/tape lim/char}  ^-  tape
-      :-  lim
-      |-  ^-  tape
-      ?~  mil  [lim ~]
-      ?:  =(lim i.mil)  ['\\' i.mil $(mil t.mil)]
-      ?:  =('\\' i.mil)  ['\\' i.mil $(mil t.mil)]
-      ?:  (lte ' ' i.mil)  [i.mil $(mil t.mil)]
-      ['\\' ~(x ne (rsh 2 1 i.mil)) ~(x ne (end 2 1 i.mil)) $(mil t.mil)]
+    |=  {mil/tape lim/char lam/tape}
+    ^-  tape
+    =/  esc  (~(gas in *(set @tD)) lam)
+    :-  lim
+    |-  ^-  tape
+    ?~  mil  [lim ~]
+    ?:  ?|  =(lim i.mil)
+            =('\\' i.mil)
+            (~(has in esc) i.mil)
+        ==
+      ['\\' i.mil $(mil t.mil)]
+    ?:  (lte ' ' i.mil)
+      [i.mil $(mil t.mil)]
+    ['\\' ~(x ne (rsh 2 1 i.mil)) ~(x ne (end 2 1 i.mil)) $(mil t.mil)]
   ::
   ++  deal  |=(lum/* (dish dole lum))
   ++  dial
@@ -10761,7 +10814,7 @@
       [(need ^$(q.ham %yarn, lum -.lum)) $(lum +.lum)]
     ::
         $yarn
-      [~ %leaf (dash (tape lum) '"')]
+      [~ %leaf (dash (tape lum) '"' "\{")]
     ::
         $void
       ~
@@ -10774,7 +10827,7 @@
       ?+    (rash p.q.ham ;~(sfix (cook crip (star low)) (star hig)))
           ~(rend co [%$ p.q.ham lum])
         $$    ~(rend co [%$ %ud lum])
-        $t    (dash (rip 3 lum) '\'')
+        $t    (dash (rip 3 lum) '\'' ~)
         $tas  ['%' ?.(=(0 lum) (rip 3 lum) ['$' ~])]
       ==
     ::
@@ -10980,10 +11033,9 @@
       :_  p.doy
       %^  cat  3
         %~  rent  co
-            :+  %$  %ud
-            %-  ~(rep by (~(run by q.s.q.sut) |=(tomb ~(wyt by q))))
-            |=([[@ a=@u] b=@u] (add a b))
-        ==
+        :+  %$  %ud
+        %-  ~(rep by (~(run by q.s.q.sut) |=(tomb ~(wyt by q))))
+        |=([[@ a=@u] b=@u] (add a b))
       %^  cat  3
         ?-(p.q.sut $gold '.', $iron '|', $lead '?', $zinc '&')
       =+  gum=(mug q.s.q.sut)
@@ -13069,7 +13121,6 @@
     ++  expr  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
     ++  exps  |.((butt hank))                           ::  closed gapped hoons
     ++  expt  |.(;~(gunk wise rope loaf loaf))          ::  =^
-    ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, hoon, hoons
     ++  expv  |.((butt rick))                           ::  just changes
     ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three hoons
     ++  expx  |.  ;~  gunk  loaf                        ::  hoon and core tail
@@ -13488,7 +13539,7 @@
          ==                                            ::
 ++  desk  @tas                                          ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a/$-(* *) (pair mark a))                   ::  global data
+++  cask  |*(a/mold (pair mark a))                      ::  global data
 ++  cuff                                                ::  permissions
           $:  p/(unit (set monk))                       ::  can be read by
               q/(set monk)                              ::  caused or created by
@@ -13496,8 +13547,8 @@
 ++  curd  {p/@tas q/*}                                  ::  typeless card
 ++  dock  (pair @p term)                                ::  message target
 ++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a/$-(* *) (pair type a))                   ::  type associated
-++  hobo  |*  a/$-(* *)                                 ::  task wrapper
+++  hypo  |*(a/mold (pair type a))                      ::  type associated
+++  hobo  |*  a/gate                                    ::  task wrapper
           $?  $%  {$soft p/*}                           ::
               ==                                        ::
               a                                         ::
@@ -13548,7 +13599,7 @@
               mev/type                                  ::  -:!>([%meta *vase])
           ==                                            ::
 ++  wind                                                ::  new kernel action
-          |*  {a/$-(* *) b/$-(* *)}                     ::  forward+reverse
+          |*  {a/gate b/gate}                           ::  forward+reverse
           $%  {$pass p/path q/a}                        ::  advance
               {$slip p/a}                               ::  lateral
               {$give p/b}                               ::  retreat

@@ -32,7 +32,7 @@
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    %gall state
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  axle                                                ::  all state
-  $:  $4                                                ::  state version
+  $:  $0                                                ::  state version
       pol/(map ship mast)                               ::  apps by ship
   ==                                                    ::
 ++  gest                                                ::  subscriber data
@@ -1206,6 +1206,9 @@
                ~
         $cash  `%a
         $conf  `%g
+        $cred  `%c
+        $crew  `%c
+        $crow  `%c
         $deal  `%g
         $exec  `%f
         $flog  `%d
@@ -1215,6 +1218,7 @@
         $mont  `%c
         $nuke  `%a
         $ogre  `%c
+        $perm  `%c
         $serv  `%e
         $them  `%e
         $wait  `%b

@@ -32,9 +32,9 @@
           ==  ==  ==                                    ::
 --                                                      ::
 |%                                                      ::  structures
-+=  axle                                                ::  all %ford state
-  $:  %3                                                ::  version for update
-      pol=(map ship baby)                               ::
+++  axle                                                ::  all %ford state
+  $:  $0                                                ::  version for update
+      pol/(map ship baby)                               ::
   ==                                                    ::
 +=  baby                                                ::  state by ship
   $:  tad=[p=@ud q=(map @ud task)]                      ::  tasks by number
@@ -1948,9 +1948,9 @@
           |=  {cof/cafe dir/knot}
           =+  nod=(chap(s.how [dir s.how]) cof bax hon)
           ?:  ?=($2 -.q.nod)
-            (new:bo cof ~)
-          (tug:bo nod (with:bo some))
-        %-  with:bo
+            (flue p.nod)
+          (cope nod (flux some))
+        %-  flux
         |=  doy/(map @ cage)  ^-  vase
         ?~  doy  [[%atom %n `0] 0]
         %+  slop
@@ -2291,7 +2291,7 @@
       ?~(buy *baby u.buy)
   =^  mos  bay
     ?-    -.kis
-        $wipe  ~&(%ford-cache-wiped [~ bay(jav ~)])
+        $wipe  ~&(ford-cache-wiped/at=now [~ bay(jav ~)])
         $wasp
       (~(wasp za [our hen [now eny ski] ~] bay) q.kis)
         $exec

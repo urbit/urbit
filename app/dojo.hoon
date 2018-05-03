@@ -561,7 +561,7 @@
         $tang  ;;(tang q.q.cay)
         $httr
           =+  hit=;;(httr:eyre q.q.cay)
-          =-  (flop (turn `wall`- |=(a/tape leaf+(dash:us a ''))))
+          =-  (flop (turn `wall`- |=(a/tape leaf+(dash:us a '' ~))))
           :-  "HTTP {<p.hit>}"
           %+  weld
             (turn q.hit |=({a/@t b/@t} "{(trip a)}: {(trip b)}"))

@@ -8,7 +8,7 @@
 --                                                      ::
 =>  |%                                                  ::  console protocol
 ++  axle                                                ::
-  $:  $3                                                ::
+  $:  $0                                                ::
       ore/(unit ship)                                   ::  identity once set
       hey/(unit duct)                                   ::  default duct
       dug/(map duct axon)                               ::  conversations
@@ -45,7 +45,11 @@
 ++  note-clay                                           ::
   $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:clay}::  merge desks
       {$warp p/sock q/riff:clay}                        ::  wait for clay hack
+<<<<<<< HEAD
       {$wegh $~}                                        ::
+=======
+      {$perm p/ship q/desk r/path s/rite:clay}          ::  change permissions
+>>>>>>> master
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  {$crud p/@tas q/(list tank)}                      ::
@@ -90,7 +94,11 @@
   $%  {$mere p/(each (set path) (pair term tang))}      ::
       {$note p/@tD q/tank}                              ::
       {$writ p/riot:clay}                               ::
+<<<<<<< HEAD
       {$mass p/mass}                                    ::
+=======
+      {$mack p/(unit tang)}                             ::
+>>>>>>> master
   ==                                                    ::
 ++  sign-dill                                           ::
   $%  {$blit p/(list blit)}                             ::
@@ -301,7 +309,8 @@
                   (sync %home our %base)
                 (init-sync %home our %base)
         =.  +>  ?.  ?=(?($duke $king $czar) can)  +>
-                (sync %kids our %base)
+                ::  make kids desk publicly readable, so syncs work.
+                (show %kids):(sync %kids our %base)
         =.  +>  autoload
         =.  +>  peer
         |-  ^+  +>+
@@ -335,6 +344,16 @@
         %_    .
             moz
           :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum])
+        ==
+      ::
+      ++  show                                          ::  permit reads on desk
+        |=  des/desk
+        %_    +>.$
+            moz
+          :_  moz
+          :*  hen  %pass  /show  %c  %perm  our
+              des  /  r+`[%black ~]
+          ==
         ==
       ::
       ++  sync
@@ -418,6 +437,10 @@
             {$c $writ *}
           init
         ::
+            {$c $mack *}
+          ?~  p.sih  +>.$
+          (mean >%dill-clay-nack< u.p.sih)
+        ::
             {$d $blit *}
           (done +.sih)
         ==
@@ -465,13 +488,13 @@
       %-  some
       %.  q.kyz
       %~  into  as
-          :-  [~ hen u.ore.all]
-          :*  p.kyz
-              [~ ~]
-              80
-              0
-              (tuba "<awaiting {(trip p.kyz)}, this may take a few minutes>")
-      ==  ==
+      :-  [~ hen u.ore.all]
+      :*  p.kyz
+          [~ ~]
+          80
+          0
+          (tuba "<awaiting {(trip p.kyz)}, this may take a few minutes>")
+      ==
     --
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request

@@ -339,7 +339,9 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$dirk p/@tas}                                ::  mark mount dirty
+      $%  {$croz rus/(map desk {r/regs w/regs})}        ::  rules for group
+          {$cruz cez/(map @ta crew)}                    ::  permission groups
+          {$dirk p/@tas}                                ::  mark mount dirty
           {$ergo p/@tas q/mode}                         ::  version update
           {$hill p/(list @tas)}                         ::  mount points
           {$mack p/(unit tang)}                         ::  ack
@@ -347,24 +349,34 @@
           {$mere p/(each (set path) (pair term tang))}  ::  merge result
           {$note p/@tD q/tank}                          ::  debug message
           {$ogre p/@tas}                                ::  delete mount point
+          {$rule red/dict wit/dict}                     ::  node r+w permissions
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
           {$wris p/case p/(set (pair care path))}       ::  many changes
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$boat $~}                                    ::  pier rebooted
-          {$drop p/@p q/desk}                           ::  cancel pending merge
-          {$info p/@p q/desk r/nori}                    ::  internal edit
-          {$init p/@p}                                  ::  report install
-          {$into p/desk q/? r/mode}                     ::  external edit
-          {$merg p/@p q/desk r/@p s/desk t/case u/germ} ::  merge desks
-          {$mont p/desk q/beam}                         ::  mount to unix
-          {$dirk p/desk}                                ::  mark mount dirty
-          {$ogre p/$@(desk beam)}                       ::  delete mount point
-          {$warp p/sock q/riff}                         ::  file request
+          {$cred our/ship nom/@ta cew/crew}             ::  set permission group
+          {$crew our/ship}                              ::  permission groups
+          {$crow our/ship nom/@ta}                      ::  group usage
+          {$drop our/@p des/desk}                       ::  cancel pending merge
+          {$info our/@p des/desk dit/nori}              ::  internal edit
+          {$init our/@p}                                ::  report install
+          {$into des/desk all/? fis/mode}               ::  external edit
+          $:  $merg                                     ::  merge desks
+              our/@p  des/desk                          ::  target
+              her/@p  dem/desk  cas/case                ::  source
+              how/germ                                  ::  method
+          ==                                            ::
+          {$mont des/desk bem/beam}                     ::  mount to unix
+          {$dirk des/desk}                              ::  mark mount dirty
+          {$ogre pot/$@(desk beam)}                     ::  delete mount point
+          {$perm our/ship des/desk pax/path rit/rite}   ::  change permissions
+          {$warp wer/sock rif/riff}                     ::  internal file req
+          {$werp who/ship wer/sock rif/riff}            ::  external file req
           {$wegh $~}                                    ::  report memory
-          {$went p/sack q/path r/@ud s/coop}            ::  response confirm
-          {$west p/sack q/path r/*}                     ::  network request
+          {$went wer/sack pax/path num/@ud ack/coop}    ::  response confirm
+          {$west wer/sack pax/path res/*}               ::  network request
       ==                                                ::
     --  ::able
   ::
@@ -382,13 +394,15 @@
     $%  {$delta p/lobe q/{p/mark q/lobe} r/page}        ::  delta on q
         {$direct p/lobe q/page}                         ::  immediate
     ==                                                  ::
-  ++  care  ?($d $u $v $w $x $y $z)                     ::  clay submode
+  ++  care  ?($d $p $u $v $w $x $y $z)                  ::  clay submode
   ++  case                                              ::  ship desk case spur
     $%  {$da p/@da}                                     ::  date
         {$tas p/@tas}                                   ::  label
         {$ud p/@ud}                                     ::  number
     ==                                                  ::
   ++  coop  (unit ares)                                 ::  e2e ack
+  ++  crew  (set ship)                                  ::  permissions group
+  ++  dict  {src/path rul/rule}                         ::  effective permission
   ++  dome                                              ::  project state
     $:  ank/ankh                                        ::  state
         let/@ud                                         ::  top id
@@ -453,8 +467,15 @@
         {$mult p/mool}                                  ::  next version of any
         {$many p/? q/moat}                              ::  track range
     ==                                                  ::
+  ++  regs  (map path rule)                             ::  rules for paths
   ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
+  ++  rite                                              ::  new permissions
+    $%  {$r red/(unit rule)}                            ::  for read
+        {$w wit/(unit rule)}                            ::  for write
+        {$rw red/(unit rule) wit/(unit rule)}           ::  for read and write
+    ==                                                  ::
   ++  riot  (unit rant)                                 ::  response+complete
+  ++  rule  {mod/?($black $white) who/(set whom)}       ::  node permission
   ++  rump  {p/care q/case r/@tas s/path}               ::  relative path
   ++  saba  {p/ship q/@tas r/moar s/dome}               ::  patch+merge
   ++  soba  (list {p/path q/miso})                      ::  delta
@@ -467,6 +488,7 @@
         {%| p/(list a) q/(list a)}                      ::  p -> q[chunk]
     ==                                                  ::
   ++  urge  |*(a/mold (list (unce a)))                  ::  list change
+  ++  whom  (each ship @ta)                             ::  ship or named crew
   ++  yaki                                              ::  commit
     $:  p/(list tako)                                   ::  parents
         q/(map path lobe)                               ::  namespace
@@ -2895,6 +2917,315 @@
       ::  alice decrypts with same key
       `@t`(dy.ali secret-key crypted-msg)
     --  ::test
+  ::                                                    ::
+  ::::                    ++keccak:crypto               ::  (2b7) keccak family
+    ::                                                  ::::
+  ++  keccak
+    |%
+    ::
+    ::  keccak
+    ::
+    ++  keccak-224  |=(a=octs (keccak 1.152 448 224 a))
+    ++  keccak-256  |=(a=octs (keccak 1.088 512 256 a))
+    ++  keccak-384  |=(a=octs (keccak 832 768 384 a))
+    ++  keccak-512  |=(a=octs (keccak 576 1.024 512 a))
+    ::
+    ++  keccak  (cury (cury hash keccak-f) padding-keccak)
+    ::
+    ++  padding-keccak  (multirate-padding 0x1)
+    ::
+    ::  sha3
+    ::
+    ++  sha3-224  |=(a=octs (sha3 1.152 448 224 a))
+    ++  sha3-256  |=(a=octs (sha3 1.088 512 256 a))
+    ++  sha3-384  |=(a=octs (sha3 832 768 384 a))
+    ++  sha3-512  |=(a=octs (sha3 576 1.024 512 a))
+    ::
+    ++  sha3  (cury (cury hash keccak-f) padding-sha3)
+    ::
+    ++  padding-sha3  (multirate-padding 0x6)
+    ::
+    ::  shake
+    ::
+    ++  shake-128  |=([o=@ud i=octs] (shake 1.344 256 o i))
+    ++  shake-256  |=([o=@ud i=octs] (shake 1.088 512 o i))
+    ::
+    ++  shake  (cury (cury hash keccak-f) padding-shake)
+    ::
+    ++  padding-shake  (multirate-padding 0x1f)
+    ::
+    ::  rawshake
+    ::
+    ++  rawshake-128  |=([o=@ud i=octs] (rawshake 1.344 256 o i))
+    ++  rawshake-256  |=([o=@ud i=octs] (rawshake 1.088 512 o i))
+    ::
+    ++  rawshake  (cury (cury hash keccak-f) padding-rawshake)
+    ::
+    ++  padding-rawshake  (multirate-padding 0x7)
+    ::
+    ::  core
+    ::
+    ++  hash
+      :>  per:  permutation function with configurable width.
+      :>  pad:  padding function.
+      :>  rat:  bitrate, size in bits of blocks to operate on.
+      :>  cap:  capacity, bits of sponge padding.
+      :>  out:  length of desired output, in bits.
+      :>  inp:  input to hash.
+      |=  $:  per=$-(@ud $-(@ @))
+              pad=$-([octs @ud] octs)
+              rat=@ud
+              cap=@ud
+              out=@ud
+              inp=octs
+          ==
+      ^-  @
+      ::  urbit's little-endian to keccak's big-endian.
+      =.  q.inp
+        =+  (swp 3 q.inp)
+        (lsh 3 (sub p.inp (met 3 q.inp)) -)
+      %.  [inp out]
+      (sponge per pad rat cap)
+    ::
+    ::NOTE  if ++keccak ever needs to be made to operate
+    ::      on bits rather than bytes, all that needs to
+    ::      be done is updating the way this padding
+    ::      function works. (and also "octs" -> "bits")
+    ++  multirate-padding
+      :>  dsb:  domain separation byte, reverse bit order.
+      |=  dsb=@ux
+      ?>  (lte dsb 0xff)
+      |=  [inp=octs mut=@ud]
+      ^-  octs
+      =.  mut  (div mut 8)
+      =+  pal=(sub mut (mod p.inp mut))
+      =?  pal  =(pal 0)  mut
+      =.  pal  (dec pal)
+      :-  (add p.inp +(pal))
+      ::  padding is provided in lane bit ordering,
+      ::  ie, LSB = left.
+      (cat 3 (con (lsh 3 pal dsb) 0x80) q.inp)
+    ::
+    ++  sponge
+      :>  sponge construction
+      ::
+      :>  preperm:  permutation function with configurable width.
+      :>  padding:  padding function.
+      :>  bitrate:  size of blocks to operate on.
+      :>  capacity:  sponge padding.
+      |=  $:  preperm=$-(@ud $-(@ @))
+              padding=$-([octs @ud] octs)
+              bitrate=@ud
+              capacity=@ud
+          ==
+      ::
+      ::  preparing
+      =+  bitrate-bytes=(div bitrate 8)
+      =+  blockwidth=(add bitrate capacity)
+      =+  permute=(preperm blockwidth)
+      ::
+      |=  [input=octs output=@ud]
+      |^  ^-  @
+        ::
+        ::  padding
+        =.  input  (padding input bitrate)
+        ::
+        ::  absorbing
+        =/  pieces=(list @)
+          ::  amount of bitrate-sized blocks.
+          ?>  =(0 (mod p.input bitrate-bytes))
+          =+  i=(div p.input bitrate-bytes)
+          |-
+          ?:  =(i 0)  ~
+          :_  $(i (dec i))
+          ::  get the bitrate-sized block of bytes
+          ::  that ends with the byte at -.
+          =-  (cut 3 [- bitrate-bytes] q.input)
+          (mul (dec i) bitrate-bytes)
+        =/  state=@
+          ::  for every piece,
+          %+  roll  pieces
+          |=  [p=@ s=@]
+          ::  pad with capacity,
+          =.  p  (lsh 0 capacity p)
+          ::  xor it into the state and permute it.
+          (permute (mix s (bytes-to-lanes p)))
+        ::
+        ::  squeezing
+        =|  res=@
+        =|  len=@ud
+        |-
+        ::  append a bitrate-sized head of state to the
+        ::  result.
+        =.  res
+          %+  con  (lsh 0 bitrate res)
+          (rsh 0 capacity (lanes-to-bytes state))
+        =.  len  (add len bitrate)
+        ?:  (gte len output)
+          ::  produce the requested bits of output.
+          (rsh 0 (sub len output) res)
+        $(res res, state (permute state))
+      ::
+      ++  bytes-to-lanes
+        :>  flip byte order in blocks of 8 bytes.
+        |=  a=@
+        %+  can  6
+        %+  turn  (rip 6 a)
+        |=  b=@
+        :-  1
+        (lsh 3 (sub 8 (met 3 b)) (swp 3 b))
+      ::
+      ++  lanes-to-bytes
+        :>  unflip byte order in blocks of 8 bytes.
+        |=  a=@
+        %+  can  6
+        %+  turn
+          =+  (rip 6 a)
+          (weld - (reap (sub 25 (lent -)) 0x0))
+        |=  a=@
+        :-  1
+        %+  can  3
+        =-  (turn - |=(a=@ [1 a]))
+        =+  (flop (rip 3 a))
+        (weld (reap (sub 8 (lent -)) 0x0) -)
+      --
+    ::
+    ++  keccak-f
+      :>  keccak permutation function
+      |=  [width=@ud]
+      ::  assert valid blockwidth.
+      ?>  =-  (~(has in -) width)
+          (sy 25 50 100 200 400 800 1.600 ~)
+      ::  assumes 5x5 lanes state, as is the keccak
+      ::  standard.
+      =+  size=5
+      =+  lanes=(mul size size)
+      =+  lane-bloq=(dec (xeb (div width lanes)))
+      =+  lane-size=(bex lane-bloq)
+      =+  rounds=(add 12 (mul 2 lane-bloq))
+      |=  [input=@]
+      ^-  @
+      =*  a  input
+      =+  round=0
+      |^
+        ?:  =(round rounds)  a
+        ::
+        ::  theta
+        =/  c=@
+          %+  roll  (gulf 0 (dec size))
+          |=  [x=@ud c=@]
+          %+  con  (lsh lane-bloq 1 c)
+          %+  roll  (gulf 0 (dec size))
+          |=  [y=@ud c=@]
+          (mix c (get-lane x y a))
+        =/  d=@
+          %+  roll  (gulf 0 (dec size))
+          |=  [x=@ud d=@]
+          %+  con  (lsh lane-bloq 1 d)
+          %+  mix
+            =-  (get-word - size c)
+            ?:(=(x 0) (dec size) (dec x))
+          %^  ~(rol fe lane-bloq)  0  1
+          (get-word (mod +(x) size) size c)
+        =.  a
+          %+  roll  (gulf 0 (dec lanes))
+          |=  [i=@ud a=_a]
+          %+  mix  a
+          %^  lsh  lane-bloq
+            (sub lanes +(i))
+          (get-word i size d)
+        ::
+        ::  rho and pi
+        =/  b=@
+          %+  roll  (gulf 0 (dec lanes))
+          |=  [i=@ b=@]
+          =+  x=(mod i 5)
+          =+  y=(div i 5)
+          %+  con  b
+          %^  lsh  lane-bloq
+            %+  sub  lanes
+            %+  add  +(y)
+            %+  mul  size
+            (mod (add (mul 2 x) (mul 3 y)) size)
+          %^  ~(rol fe lane-bloq)  0
+            (rotation-offset i)
+          (get-word i lanes a)
+        ::
+        ::  chi
+        =.  a
+          %+  roll  (gulf 0 (dec lanes))
+          |=  [i=@ud a=@]
+          %+  con  (lsh lane-bloq 1 a)
+          =+  x=(mod i 5)
+          =+  y=(div i 5)
+          %+  mix  (get-lane x y b)
+          %+  dis
+            =-  (get-lane - y b)
+            (mod (add x 2) size)
+          %^  not  lane-bloq  1
+          (get-lane (mod +(x) size) y b)
+        ::
+        ::  iota
+        =.  a
+          =+  (round-constant round)
+          (mix a (lsh lane-bloq (dec lanes) -))
+        ::
+        ::  next round
+        $(round +(round))
+      ::
+      ++  get-lane
+        :>  get the lane with coordinates
+        |=  [x=@ud y=@ud a=@]
+        =+  i=(add x (mul size y))
+        (get-word i lanes a)
+      ::
+      ++  get-word
+        :>  get word {n} from atom {a} of {m} words.
+        |=  [n=@ud m=@ud a=@]
+        (cut lane-bloq [(sub m +((mod n m))) 1] a)
+      ::
+      ++  round-constant
+        |=  c=@ud
+        =-  (snag (mod c 24) -)
+        ^-  (list @ux)
+        :~  0x1
+            0x8082
+            0x8000.0000.0000.808a
+            0x8000.0000.8000.8000
+            0x808b
+            0x8000.0001
+            0x8000.0000.8000.8081
+            0x8000.0000.0000.8009
+            0x8a
+            0x88
+            0x8000.8009
+            0x8000.000a
+            0x8000.808b
+            0x8000.0000.0000.008b
+            0x8000.0000.0000.8089
+            0x8000.0000.0000.8003
+            0x8000.0000.0000.8002
+            0x8000.0000.0000.0080
+            0x800a
+            0x8000.0000.8000.000a
+            0x8000.0000.8000.8081
+            0x8000.0000.0000.8080
+            0x8000.0001
+            0x8000.0000.8000.8008
+        ==
+      ::
+      ++  rotation-offset
+        |=  x=@ud
+        =-  (snag x -)
+        ^-  (list @ud)
+        :~   0   1  62  28  27
+            36  44   6  55  20
+             3  10  43  25  39
+            41  45  15  21   8
+            18   2  61  56  14
+        ==
+      --
+    --  ::keccak
   --  ::crypto
 ::                                                      ::::
 ::::                      ++unity                       ::  (2c) unit promotion
@@ -3803,10 +4134,10 @@
     ::                                                  ::  ++clot:en-xml:html
     ++  clot  ~+                                        ::  self-closing tags
       %~  has  in
-          %-  silt  ^-  (list term)  :~
-            %area  %base  %br  %col  %command  %embed  %hr  %img  %inputt
-            %keygen  %link  %meta  %param     %source   %track  %wbr
-      ==  ==
+      %-  silt  ^-  (list term)  :~
+        %area  %base  %br  %col  %command  %embed  %hr  %img  %inputt
+        %keygen  %link  %meta  %param     %source   %track  %wbr
+      ==
     --  ::en-xml
   ::                                                    ::  ++de-xml:html
   ++  de-xml                                            ::  xml parser

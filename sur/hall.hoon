@@ -16,6 +16,7 @@
 ::TODO  rename
 ++  name  term                                          :<  circle name
 ++  nick  cord                                          :<  local nickname
+++  tags  (set knot)                                    :<  usage tags
 ::
 :>  #
 :>  #  %query-models
@@ -110,6 +111,7 @@
   $%  {$full cof/config}                                :<  set w/o side-effects
       {$source add/? src/source}                        :<  add/rem sources
       {$caption cap/cord}                               :<  changed description
+      {$usage add/? tas/tags}                           :<  add/rem usage tags
       {$filter fit/filter}                              :<  changed filter
       {$secure sec/security}                            :<  changed security
       {$permit add/? sis/(set ship)}                    :<  add/rem to b/w-list
@@ -136,11 +138,13 @@
 ++  action                                              :>  user action
   $%  ::  circle configuration                          ::
       {$create nom/name des/cord sec/security}          :<  create circle
+      {$design nom/name cof/config}                     :<  create with config
       {$delete nom/name why/(unit cord)}                :<  delete + announce
       {$depict nom/name des/cord}                       :<  change description
       {$filter nom/name fit/filter}                     :<  change message rules
       {$permit nom/name inv/? sis/(set ship)}           :<  invite/banish
       {$source nom/name sub/? srs/(set source)}         :<  un/sub to/from src
+      {$usage nom/name add/? tas/tags}                  :<  add/rem usage tags
       ::  messaging                                     ::
       {$convey tos/(list thought)}                      :<  post exact
       {$phrase aud/audience ses/(list speech)}          :<  post easy
@@ -178,6 +182,7 @@
 ++  config                                              :>  circle config
   $:  src/(set source)                                  :<  active sources
       cap/cord                                          :<  description
+      tag/tags                                          :<  usage tags
       fit/filter                                        :<  message rules
       con/control                                       :<  restrictions
   ==                                                    ::
