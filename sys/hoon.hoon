@@ -12776,7 +12776,7 @@
                   ['+' (rune lus %cnls expc)]
                   ['-' (rune hep %cnhp expb)]
                   [':' (rune col %cncl expi)]
-                  ['~' (rune sig %cnsg expu)]
+                  ['~' (rune sig %cnsg expn)]
                   ['*' (rune tar %cntr expm)]
                   ['=' (rune tis %cnts exph)]
               ==
@@ -13115,12 +13115,16 @@
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two hoons
     ++  expl  |.(;~(gunk (stag ~ sym) loaf loaf))       ::  term, two hoons
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [spec hoon]s
+    ++  expn  |.  ;~  gunk  rope  loaf                  ::  wing, hoon,
+                    ;~(plug loaf (easy ~))              ::  list of one hoon
+                  ==                                    ::
     ++  expo  |.(;~(gunk wise loaf loaf))               ::  =;
     ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing hoon]s, hoon
     ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two hoons
     ++  expr  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
     ++  exps  |.((butt hank))                           ::  closed gapped hoons
     ++  expt  |.(;~(gunk wise rope loaf loaf))          ::  =^
+    ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, hoon, hoons
     ++  expv  |.((butt rick))                           ::  just changes
     ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three hoons
     ++  expx  |.  ;~  gunk  loaf                        ::  hoon and core tail

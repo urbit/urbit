@@ -45,11 +45,8 @@
 ++  note-clay                                           ::
   $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:clay}::  merge desks
       {$warp p/sock q/riff:clay}                        ::  wait for clay hack
-<<<<<<< HEAD
       {$wegh $~}                                        ::
-=======
       {$perm p/ship q/desk r/path s/rite:clay}          ::  change permissions
->>>>>>> master
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  {$crud p/@tas q/(list tank)}                      ::
@@ -94,11 +91,8 @@
   $%  {$mere p/(each (set path) (pair term tang))}      ::
       {$note p/@tD q/tank}                              ::
       {$writ p/riot:clay}                               ::
-<<<<<<< HEAD
       {$mass p/mass}                                    ::
-=======
       {$mack p/(unit tang)}                             ::
->>>>>>> master
   ==                                                    ::
 ++  sign-dill                                           ::
   $%  {$blit p/(list blit)}                             ::

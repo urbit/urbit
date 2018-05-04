@@ -140,7 +140,7 @@
           peers     (~(run by peers.a) |=(a/(list query) (turn a query-0)))
         ==
       ++  query-0
-        $?  $:  $circle
+        $%  $:  $circle
                 nom/name
                 wer/(unit circle)
                 wat/(set circle-data)
@@ -2545,8 +2545,7 @@
             ~(so-in-range so:ta nom.qer ~ soy)
         ==
       ~
-    =+  out=?($gram $new $config $status $remove)
-    ?.  ?=(out -.det.det)   ~
+    ?.  ?=(?($gram $new $config $status $remove) -.det.det)   ~
     :+  ~  %circle
     ?+  det.det  det.det
         {$gram *}

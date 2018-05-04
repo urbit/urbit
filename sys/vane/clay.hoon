@@ -13,6 +13,7 @@
 =,  clay
 =>  |%
 ++  aeon  @ud                                           ::  version number
+++  axle  $%([%0 ruf=raft])
 ::
 ::  Recursive structure of a desk's data.
 ::
@@ -608,6 +609,13 @@
         %f  %exec  our  ~  [her syd q.mun]  (lobe-to-silk:ze r.mun p.dat)
     ==
   ::
+  ++  blas
+    |=  {hen/duct das/(set mood)}
+    ^+  +>
+    ?>  ?=(^ das)
+    =-  (emit hen %give %wris q.n.das -)
+    (~(run in `(set mood)`das) |=(m/mood [p.m r.m]))
+  ::
   ::  Give next step in a subscription.
   ::
   ++  bleb
@@ -642,6 +650,7 @@
   ::
   ++  blub-all  (duct-lift |=({a/duct ~} (blub a)))    ::  lifted ++blub
   ++  blab-all  (duct-lift blab)                        ::  lifted ++blab
+  ++  blas-all  (duct-lift blas)                        ::  lifted ++blas
   ++  balk-all  (duct-lift balk)                        ::  lifted ++balk
   ++  bleb-all  (duct-lift bleb)                        ::  lifted ++bleb
   ::
@@ -820,7 +829,7 @@
           $rw   (~(uni in who:(fall red.rit *rule)) who:(fall wit.rit *rule))
         ==
       |=  {w/whom s/(set @ta)}
-      ?:  |(?=($& -.w) (~(has by cez) p.w))  s
+      ?:  |(?=(%& -.w) (~(has by cez) p.w))  s
       (~(put in s) p.w)
     ?^  mis
       =-  (emit hen %give %mack `[%leaf "No such group(s): {-}"]~)
@@ -893,7 +902,6 @@
     |=  {for/(unit ship) rav/rave}
     ^+  +>
     ?-    -.rav
-        $mult  !!
         $sing
       =+  ver=(aver for p.rav)
       ?~  ver
@@ -1798,6 +1806,9 @@
           `p.q.p.rov
         ::
             $next  ~
+        ::
+            $mult  ~
+        ::
             $many
           %^  hunt  lth
             ?.  ?=($da -.p.q.rov)  ~
@@ -1814,6 +1825,7 @@
     ?-  -.rov
       $sing  rov
       $next  [- p]:rov
+      $mult  [- p]:rov
       $many  [- p q]:rov
     ==
   ::
@@ -1876,7 +1888,7 @@
       =*  new  s.rov
       ::  we will either respond, or store the maybe updated request.
       =;  res/(each (map mood (each cage lobe)) rove)
-          ?:  ?=($& -.res)
+          ?:  ?=(%& -.res)
             (respond p.res)
           (store p.res)
       |-  ::  so that we can retry for the next aeon if possible/needed.
@@ -2451,7 +2463,7 @@
       %-  ~(rep in who.rul)
       |=  {w/whom h/_|}
       ?:  h  &
-      ?:  ?=($& -.w)  =(p.w who)
+      ?:  ?=(%& -.w)  =(p.w who)
       (~(has in (fall (~(get by cez) p.w) ~)) who)
     ::
     ::  Checks for existence of a node at an aeon.
@@ -3864,7 +3876,7 @@
     %-  ~(rep in (fall fur ~))
     |=  {m/monk s/(unit ship)}
     ?^  s  s
-    ?:  ?=($| -.m)  ~
+    ?:  ?=(%| -.m)  ~
     ?:  =(p.m his)  ~
     `p.m
   =+  den=((de now [/scryduct ~] ruf) [. .]:his syd)
@@ -3914,9 +3926,6 @@
   ::
       $crud
     [[[hen %slip %d %flog +.q.hin] ~] ..^$]
-  ::
-      $news
-    [~ ..^$]
   ::
       $made
     ?~  tea  !!
