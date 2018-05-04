@@ -11,6 +11,7 @@
       heard=(set (pair @ud @ud))
       latest-block=@ud                                  ::  last heard
       filter=@ud                                        ::  our filter id
+      config=configuration
   ==
 ::
 ++  complete-ship
@@ -19,12 +20,15 @@
       keys=(map @ud (pair @ @))
   ==
 ::
+++  configuration
+  $:  src=source
+      poll-time=@dr
+  ==
 ::
-++  delta
-  $?  diff-constitution
-  $%  [%checking who=@p part=(unit hull)]
-      [%filter id=@ud]
-  ==  ==
+++  source
+  $%  [%ship who=@p]
+      [%rpc url=purl]
+  ==
 ::
 ::
 +=  move  [bone card]                                   ::  [target side-effect]
@@ -39,49 +43,38 @@
 |_  {bol=bowl:gall state}
 ::
 ++  prep
-  |=  old=(unit *)::state)
+  |=  old=(unit state)
   ^-  (quip move _+>)
   :: ?~  old
-    %-  complete
     ta-save:ta-init:ta
   :: [~ ..prep(+<+ u.old)]
 ::
-++  complete
-  |=  [des=(list delta) mos=(list move)]
-  ^-  (quip move _+>)
-  :-  (weld mos (share des))
-  da-save:(da-changes:da des)
-::
-++  share
-  |=  des=(list delta)
-  ^-  (list move)
-  %-  zing
-  %+  turn  des
-  |=  det=delta
-  ^-  (list move)
-  %+  murn  ~(tap by sup.bol)
-  |=  [b=bone s=ship p=path]
-  ^-  (unit move)
-  ?.  ?=([%state *] p)  ~
-  ?:  ?=(?(%checking %filter) -.det)  ~
-  `[b %diff %constitution-diff det]
-::
 ++  ta
   |_  $:  moves=(list move)                             ::  side-effects
-          deltas=(list delta)
+          diffs=(list diff-constitution)
           reqs=(list (pair (unit @t) request))          ::  rpc requests
           wir=wire                                      ::  wire for reqs
       ==
   ::
   ++  ta-save
-    ^-  [des=(list delta) mos=(list move)]
-    :-  (flop deltas)
+    ^-  (quip move _+>)
+    :_  ..ta
     =-  (weld - (flop moves))
-    ?~  reqs  ~
-    :_  ~
-    :-  ost.bol
-    %+  rpc-request:ca  wir
-    a+(turn (flop reqs) request-to-json)
+    %+  weld
+      ?~  reqs  ~
+      =-  [ost.bol -]~
+      %+  rpc-request:ca  wir
+      a+(turn (flop reqs) request-to-json)
+    ^-  (list move)
+    %-  zing
+    %+  turn  (flop diffs)
+    |=  dif=diff-constitution
+    ^-  (list move)
+    %+  murn  ~(tap by sup.bol)
+    |=  [b=bone s=ship p=path]
+    ^-  (unit move)
+    ?.  ?=([%state *] p)  ~
+    `[b %diff %constitution-diff dif]
   ::
   ++  ta-move
     |=  mov=move
@@ -92,8 +85,8 @@
     (ta-move [ost.bol car])
   ::
   ++  ta-change
-    |=  det=delta
-    %_(+> deltas [det deltas])
+    |=  dif=diff-constitution
+    (da(diffs [dif diffs]) dif)
   ::
   ++  ta-request
     |=  [id=(unit @t) req=request]
@@ -152,11 +145,18 @@
   ::
   ++  ta-wait-poll
     %-  ta-card
-    ::NOTE  may adjust wrt filter timeout
-    [%wait /poll (add now.bol ~m4)]
+    [%wait /poll (add now.bol poll-time.config)]
   ::
   ::
-  ++  ta-init  ta-new-filter
+  ++  ta-init
+    =.  poll-time.config  ~m4
+    =+  bos=(sein:title our.bol)
+    ?.  =(our.bol bos)
+      =.  src.config  [%ship bos]
+      (ta-card (subscribe-to:ca bos))
+    =+  (need (de-purl:html 'http://localhost:8545'))
+    =.  src.config  [%rpc -(p.p |)]
+    ta-new-filter
   ::
   ++  ta-run-check
     |=  save=?
@@ -167,13 +167,13 @@
   ::
   ++  ta-take-filter
     |=  rep=response:json-rpc
+    ^+  +>
     ?<  ?=(%batch -.rep)
     ?:  ?=(%error -.rep)
       ~&  [%filter-error--retrying message.rep]
       ta-new-filter
-    =+  fit=(parse-eth-new-filter-res res.rep)
-    =.  +>.$  (ta-change %filter fit)
-    ta-read-filter(filter fit)
+    =-  ta-read-filter(filter -)
+    (parse-eth-new-filter-res res.rep)
   ::
   ++  ta-take-filter-results
     |=  rep=response:json-rpc
@@ -261,8 +261,8 @@
       ?.  active.hul  +>.$
       ::  we store the read data for now, and only compare with state once we
       ::  have completed it by learning the spawned ships.
-      =.  +>.$  (ta-read %get-spawned who.cal)
-      (ta-change %checking who.cal `(hull-from-eth hul))
+      =.  checking  (~(put by checking) who.cal (hull-from-eth hul))
+      (ta-read %get-spawned who.cal)
     ::
         %get-spawned
       ?>  ?=(%s -.res.rep)
@@ -322,8 +322,8 @@
         ~&  [%storing-chain-version-of who.cal]
         (ta-change %hull who.cal %full hul)
       ::
-      =.  +>.$  (ta-read-ships kis)
-      (ta-change %checking who.cal ~)
+      =.  checking  (~(del by checking) who.cal)
+      (ta-read-ships kis)
     ::
         %dns-domains
       ?>  ?=(%s -.res.rep)
@@ -345,6 +345,53 @@
         (ta-change %dns 2 dom)
       !!
     ==
+  ::
+  ++  da
+    |=  dif=diff-constitution
+    ^+  +>
+    |^  ?-  -.dif
+          %hull   (da-hull +.dif)
+          %dns    (da-dns +.dif)
+          %heard  (da-heard +.dif)
+        ==
+    ::
+    ++  da-hull
+      |=  [who=@p dif=diff-hull]
+      =-  ..da(ships -)
+      ::  if new, first dif must be %full
+      ?>  |((~(has by ships) who) ?=(%full -.dif))
+      =+  old=(fall (~(get by ships) who) *complete-ship)
+      ::  catch key changes, store them in the key map
+      =?  keys.old  ?=(%keys -.dif)
+        ~?  &((gth rev.dif 0) !(~(has by keys.old) (dec rev.dif)))
+          [%missing-previous-key-rev who (dec rev.dif)]
+        (~(put by keys.old) rev.dif enc.dif aut.dif)
+      ::  for full, store the new keys in case we don't have them yet
+      =?  keys.old  ?=(%full -.dif)
+        =,  new.dif
+        ~?  &((gth key-revision 0) !(~(has by keys.old) (dec key-revision)))
+          [%missing-previous-key-rev who (dec key-revision)]
+        %+  ~(put by keys.old)  key-revision
+        [encryption-key authentication-key]
+      =.  state.old     (apply-hull-diff state.old dif)
+      =.  history.old   [dif history.old]
+      ::  apply dif to ship state
+      (~(put by ships) who old)
+    ::
+    ++  da-dns
+      |=  [ind=@ud new=@t]
+      ?:  =(0 ind)  ..da(pri.dns new)
+      ?:  =(1 ind)  ..da(sec.dns new)
+      ?:  =(2 ind)  ..da(ter.dns new)
+      !!
+    ::
+    ++  da-heard
+      |=  [block=@ud log=@ud]
+      =-  ..da(heard har, latest-block las)
+      ^-  [har=(set (pair @ud @ud)) las=@ud]
+      :-  (~(put in heard) block log)
+      (max latest-block block)
+    --
   --
 ::
 ::  arms for card generation
@@ -356,78 +403,18 @@
     :^  %hiss  w  ~
     :+  %json-rpc-response  %hiss
     =-  (json-request - j)
-    =+  (need (de-purl:html 'http://localhost:8545'))
-    -(p.p |)
-  --
-::
-::  arms for delta application
-++  da
-  |%
-  ++  da-save  ..da
+    ?>  ?=(%rpc -.src.config)
+    url.src.config
   ::
-  ++  da-changes
-    |=  des=(list delta)
-    ?~  des  +>.$
-    =.  +>.$  (da-change i.des)
-    $(des t.des)
-  ::
-  ++  da-change
-    |=  det=delta
-    ^+  +>
-    ?-  -.det
-      %hull       (da-change-hull +.det)
-      %dns        (da-change-dns +.det)
-      %heard      (da-add-heard +.det)
-      %checking   (da-change-checking +.det)
-      %filter     (da-change-filter +.det)
+  ++  subscribe-to
+    |=  who=@p
+    ^-  card
+    :*  %peer
+        /source/(scot %p who)
+        [who dap.bol]
+        /state
     ==
   ::
-  ++  da-change-hull
-    |=  [who=@p dif=diff-hull]
-    =-  +>.$(ships -)
-    ::  if new, first dif must be %full
-    ?>  |((~(has by ships) who) ?=(%full -.dif))
-    =+  old=(fall (~(get by ships) who) *complete-ship)
-    ::  catch key changes, store them in the key map
-    =?  keys.old  ?=(%keys -.dif)
-      ~?  &((gth rev.dif 0) !(~(has by keys.old) (dec rev.dif)))
-        [%missing-previous-key-rev who (dec rev.dif)]
-      (~(put by keys.old) rev.dif enc.dif aut.dif)
-    ::  for full, store the new keys in case we don't have them yet
-    =?  keys.old  ?=(%full -.dif)
-      =,  new.dif
-      ~?  &((gth key-revision 0) !(~(has by keys.old) (dec key-revision)))
-        [%missing-previous-key-rev who (dec key-revision)]
-      %+  ~(put by keys.old)  key-revision
-      [encryption-key authentication-key]
-    =.  state.old     (apply-hull-diff state.old dif)
-    =.  history.old   [dif history.old]
-    ::  apply dif to ship state
-    (~(put by ships) who old)
-  ::
-  ++  da-change-dns
-    |=  [ind=@ud new=@t]
-    ?:  =(0 ind)  +>(pri.dns new)
-    ?:  =(1 ind)  +>(sec.dns new)
-    ?:  =(2 ind)  +>(ter.dns new)
-    !!
-  ::
-  ++  da-add-heard
-    |=  [block=@ud log=@ud]
-    =-  +>.$(heard har, latest-block las)
-    ^-  [har=(set (pair @ud @ud)) las=@ud]
-    :-  (~(put in heard) block log)
-    (max latest-block block)
-  ::
-  ++  da-change-checking
-    |=  [who=@p tmp=(unit hull)]
-    =-  +>.$(checking -)
-    ?~  tmp  (~(del by checking) who)
-    (~(put by checking) who u.tmp)
-  ::
-  ++  da-change-filter
-    |=  id=@ud
-    +>(filter id)
   --
 ::
 ++  hull-from-eth
@@ -461,25 +448,21 @@
   |=  a/@
   ^-  (quip move _+>)
   ?>  =(src.bol our.bol)
-  %-  complete
+  =<  ta-save
   ?:  =(a 0)
     ~&  [%have-ships ~(key by ships)]
     ~&  [%zod (~(get by ships) ~zod)]
-    ta-save:ta
-  ?:  =(a 1)
-    ta-save:ta-poll-filter:ta
-  ?:  =(a 2)
-    ta-save:ta-new-filter:ta
-  ?:  =(a 3)
-    ta-save:ta-read-filter:ta
-  ?:  =(a 4)
-    ta-save:(ta-run-check:ta |)
-  ?:  =(a 5)
-    ta-save:(ta-run-check:ta &)
-  [~ ~]
+    ta
+  ?:  =(a 1)  ta-poll-filter:ta
+  ?:  =(a 2)  ta-new-filter:ta
+  ?:  =(a 3)  ta-read-filter:ta
+  ?:  =(a 4)  (ta-run-check:ta |)
+  ?:  =(a 5)  (ta-run-check:ta &)
+  ta
 ::
 ++  sigh-tang
   |=  [w=wire t=tang]
+  ^-  (quip move _+>)
   ~&  [%failed-sigh w]
   ~&  (turn t (cury wash [0 80]))
   [~ +>.$]
@@ -487,15 +470,18 @@
 ::  when we get the timer: poll filter
 ++  wake-poll
   |=  [w=wire ~]
-  %-  complete
+  ^-  (quip move _+>)
+  ?.  ?=(%rpc -.src.config)  [~ +>]
+  ~&  [%waking-for-poll ost.bol now.bol]
+  ::TODO  maybe we need a way to get rid of double timers if they ever occur?
   ta-save:ta-poll-filter:ta
 ::
 ::  when we get a new filter: read it, kick timer
 ::  when we get log or poll results: apply them
 ++  sigh-json-rpc-response-filter
   |=  [w=wire r=response:json-rpc]
-  ~&  [%got-filter-results w]
-  %-  complete
+  ^-  (quip move _+>)
+  ?.  ?=(%rpc -.src.config)  [~ +>]
   =<  ta-save
   ?:  ?=([%new *] w)
     (ta-take-filter:ta r)
@@ -504,15 +490,11 @@
 ::  when we get read results: verify/reset
 ++  sigh-json-rpc-response-read
   |=  [w=wire r=response:json-rpc]
-  %-  complete
+  ^-  (quip move _+>)
+  ?.  ?=(%rpc -.src.config)  [~ +>]
   =<  ta-save
   ?+  w  ~&(%unknown-read-reason ta)
     [%verify ~]   (ta-take-read-results:ta r |)
     [%reset ~]    (ta-take-read-results:ta r &)
   ==
-::
-++  sigh-json-rpc-response
-  |=  [w=wire r=response:json-rpc]
-  ~&  [%rpc-resp w r]
-  [~ +>.$]
 --
