@@ -17,6 +17,18 @@
       transfer-proxy=address
   ==
 ::
+++  complete-ship
+  $:  state=hull
+      history=(list diff-hull)  ::TODO  maybe block/event nr?  ::  newest first
+      keys=(map @ud (pair @ @))
+  ==
+::
+++  fleet  (map @p complete-ship)
+::
++=  dnses  [pri=@t sec=@t ter=@t]
+::
+++  events  (set (pair @ud @ud))
+::
 ++  eth-type
   |%
   ++  hull
@@ -62,10 +74,16 @@
 ::
 ::  #  diffs
 ::
+++  update
+  $%  [%full ships=fleet dns=dnses heard=events]
+      [%diff dis=(list diff-constitution)]
+  ==
+::
+::TODO  maybe just send the event logs over instead?
 ++  diff-constitution
   $%  [%hull who=@p dif=diff-hull]
       [%dns ind=@ud new=@t]
-      [%heard block=@ud log=@ud]
+      [%heard block=@ud log=@ud]  ::TODO  why is this separate from the changes?
   ==
 ::
 ++  diff-hull

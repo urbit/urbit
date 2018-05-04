@@ -5,19 +5,13 @@
 =,  eyre
 |%
 ++  state
-  $:  ships=(map @p complete-ship)
+  $:  ships=fleet
       checking=(map @p hull)
-      dns=[pri=@t sec=@t ter=@t]
-      heard=(set (pair @ud @ud))
+      dns=dnses
+      heard=events
       latest-block=@ud                                  ::  last heard
       filter=@ud                                        ::  our filter id
       config=configuration
-  ==
-::
-++  complete-ship
-  $:  state=hull
-      history=(list diff-hull)                          ::  newest first
-      keys=(map @ud (pair @ @))
   ==
 ::
 ++  configuration
@@ -34,7 +28,8 @@
 +=  move  [bone card]                                   ::  [target side-effect]
 ++  card                                                ::  side-effect
   $%  [%peer wire gill:gall path]
-      [%diff %constitution-diff diff-constitution]
+      [%pull wire gill:gall ~]
+      [%diff %constitution-update update]
       [%hiss wire (unit user:eyre) mark [%hiss hiss]]
       [%wait wire @da]
   ==
@@ -61,32 +56,48 @@
     :_  ..ta
     =-  (weld - (flop moves))
     %+  weld
+      ^-  (list move)
       ?~  reqs  ~
       =-  [ost.bol -]~
       %+  rpc-request:ca  wir
       a+(turn (flop reqs) request-to-json)
-    ^-  (list move)
-    %-  zing
-    %+  turn  (flop diffs)
-    |=  dif=diff-constitution
+    ?:  =(0 (lent diffs))  ~  ::TODO  this is a tmi workaround
+    =.  diffs  (flop diffs)
     ^-  (list move)
     %+  murn  ~(tap by sup.bol)
     |=  [b=bone s=ship p=path]
     ^-  (unit move)
     ?.  ?=([%state *] p)  ~
-    `[b %diff %constitution-diff dif]
+    `[b (updates:ca diffs)]
   ::
   ++  ta-move
     |=  mov=move
     %_(+> moves [mov moves])
   ::
+  ++  ta-moves
+    |=  mos=(list move)
+    %_(+> moves (weld (flop mos) moves))
+  ::
   ++  ta-card
     |=  car=card
     (ta-move [ost.bol car])
   ::
+  ++  ta-to-all
+    |=  upd=update
+    %-  ta-moves
+    %+  murn  ~(tap by sup.bol)
+    |=  [b=bone s=ship p=path]
+    ^-  (unit move)
+    ?.  ?=([%state *] p)  ~
+    `[b %diff %constitution-update upd]
+  ::
   ++  ta-change
     |=  dif=diff-constitution
-    (da(diffs [dif diffs]) dif)
+    (da(diffs [dif diffs]) [dif]~)
+  ::
+  ++  ta-changes
+    |=  dis=(list diff-constitution)
+    (da(diffs (weld (flop dis) diffs)) dis)
   ::
   ++  ta-request
     |=  [id=(unit @t) req=request]
@@ -163,6 +174,20 @@
     =.  wir  (weld /read ?:(save /reset /verify))
     =<  ta-read-dns
     (ta-read-ships (gulf ~zod ~nec))  ::TODO  ~fes
+  ::
+  ::
+  ++  ta-serve  (ta-card full-state:ca)
+  ::
+  ++  ta-assume
+    |=  [s=fleet d=dnses h=events]
+    ?:  &(=(s ships) =(d dns) =(h heard))  +>
+    ~&  [%ta-assume ~(wyt by s) ~(wyt in h)]
+    (ta-to-all(ships s, dns d, heard h) %full s d h)
+  ::
+  ++  ta-accept
+    |=  dis=(list diff-constitution)
+    ~&  [%ta-accept (lent dis)]
+    (ta-changes dis)
   ::
   ::
   ++  ta-take-filter
@@ -346,14 +371,19 @@
       !!
     ==
   ::
+  ::
   ++  da
-    |=  dif=diff-constitution
+    |=  dis=(list diff-constitution)
     ^+  +>
-    |^  ?-  -.dif
-          %hull   (da-hull +.dif)
-          %dns    (da-dns +.dif)
-          %heard  (da-heard +.dif)
-        ==
+    |^  ?~  dis  +>.^$
+        =.  ..da
+          =*  dif  i.dis
+          ?-  -.dif
+            %hull   (da-hull +.dif)
+            %dns    (da-dns +.dif)
+            %heard  (da-heard +.dif)
+          ==
+        $(dis t.dis)
     ::
     ++  da-hull
       |=  [who=@p dif=diff-hull]
@@ -415,6 +445,24 @@
         /state
     ==
   ::
+  ++  unsubscribe-from
+    |=  who=@p
+    ^-  card
+    :*  %pull
+        /source/(scot %p who)
+        [who dap.bol]
+        ~
+    ==
+  ::
+  ++  full-state
+    ^-  card
+    :+  %diff  %constitution-update
+    [%full ships dns heard]
+  ::
+  ++  updates
+    |=  dis=(list diff-constitution)
+    ^-  card
+    [%diff %constitution-update %diff dis]
   --
 ::
 ++  hull-from-eth
@@ -460,12 +508,23 @@
   ?:  =(a 5)  (ta-run-check:ta &)
   ta
 ::
-++  sigh-tang
-  |=  [w=wire t=tang]
+::
+++  peer-state
+  |=  p=path
   ^-  (quip move _+>)
-  ~&  [%failed-sigh w]
-  ~&  (turn t (cury wash [0 80]))
-  [~ +>.$]
+  ~&  %peer-state
+  ~?  ?=(^ p)  [%ignoring-specific-state p]
+  ta-save:ta-serve:ta
+::
+++  diff-constitution-update
+  |=  [w=wire u=update]
+  ^-  (quip move _+>)
+  =<  ta-save
+  ?-  -.u
+    %full   (ta-assume:ta +.u)
+    %diff   (ta-accept:ta +.u)
+  ==
+::
 ::
 ::  when we get the timer: poll filter
 ++  wake-poll
@@ -475,6 +534,15 @@
   ~&  [%waking-for-poll ost.bol now.bol]
   ::TODO  maybe we need a way to get rid of double timers if they ever occur?
   ta-save:ta-poll-filter:ta
+::
+++  sigh-tang
+  |=  [w=wire t=tang]
+  ^-  (quip move _+>)
+  ~&  [%failed-sigh w]
+  ~&  (turn t (cury wash [0 80]))
+  ::TODO  actually do error handling, be sure to continue the thing the request
+  ::      was trying to do.
+  [~ +>.$]
 ::
 ::  when we get a new filter: read it, kick timer
 ::  when we get log or poll results: apply them
