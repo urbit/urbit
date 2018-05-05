@@ -2,13 +2,13 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
 =<  ride
-=>  %143  =>
+=>  %142  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.143  ~  ~                                        ::
+~%  %k.142  ~  ~                                        ::  
 |%
-++  hoon-version  +
+++  hoon-version  142
 --  =>
 ~%  %one  +  ~
 :>  #  %base
@@ -18,6 +18,7 @@
 :>  #  %math
 :>    unsigned arithmetic
 +|
+++  foo-142  !!
 ++  add
   ~/  %add
   :>  unsigned addition
@@ -523,6 +524,7 @@
   ::
 ~%  %two  +  ~
 |%
+++  foo-142  !!
 ::                                                      ::
 ::::  2a: unit logic                                    ::
   ::                                                    ::
@@ -2028,6 +2030,7 @@
   ::                                                    ::
 ~%  %tri  +  ~
 |%
+++  foo-142  !!
 ::
 ::::  3a: signed and modular ints                       ::
   ::                                                    ::
@@ -3742,6 +3745,7 @@
 ::
 ::::  4a: exotic bases
   ::
+++  foo-142  !!
 ++  po                                                  ::  phonetic base
   ~/  %po
   =+  :-  ^=  sis                                       ::  prefix syllables
@@ -6107,6 +6111,7 @@
 ::
 ::::  5aa: new partial nock interpreter
   ::
+++  foo-142  !!
 ++  musk  !.                                            ::  nock with block set
   |%  
   ++  abet
