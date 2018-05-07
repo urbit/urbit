@@ -5,7 +5,7 @@
 :-  %noun
 =+  tester:tester
 |^
-=-  ((slog (flop -)) ~)
+=-  ((slog -) ~)
 ^-  tang
 ;:  weld
   test-is-schematic-live
@@ -102,11 +102,12 @@
   =/  ford  (ford-turbo now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
   ::
   %-  expect-eq  !>
-  :-  %+  unify-jugs:ford
-        `(jug @tas @ud)`(my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 ~)]])
-      `(jug @tas @ud)`(my ~[[%b (sy 5 6 ~)] [%c (sy 7 8 ~)]])
+  :-  ^-  (jug @tas @ud)
+      (my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 5 6 ~)] [%c (sy 7 8 ~)]])
   ::
-  `(jug @tas @ud)`(my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 5 6 ~)] [%c (sy 7 8 ~)]])
+  %+  unify-jugs:ford
+    `(jug @tas @ud)`(my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 ~)]])
+  `(jug @tas @ud)`(my ~[[%b (sy 5 6 ~)] [%c (sy 7 8 ~)]])
 ::
 ++  test-resource-wire-encoding
   ~&  %test-resource-wire-encoding
@@ -115,21 +116,21 @@
   ::
   ;:  welp
     %-  expect-eq  !>
-    :-  `path`(resource-to-path:ford [%c care=%x bel=[[~nul %desk] /foo/bar]])
+    :_  `path`(resource-to-path:ford [%c care=%x [[~nul %desk] /foo/bar]])
     /cx/~nul/desk/0/bar/foo
   ::
     %-  expect-eq  !>
-    :-  `resource:ford`[%c care=%x bel=[[~nul %desk] /foo/bar]]
+    :_  `resource:ford`[%c care=%x [[~nul %desk] /foo/bar]]
     (need (path-to-resource:ford /cx/~nul/desk/0/bar/foo))
   ::
     %-  expect-eq  !>
-    :-  ^-  path
-      (resource-to-path:ford [%g care=%x bel=[[~nul %desk] /foo/bar]])
+    :_  ^-  path
+      (resource-to-path:ford [%g care=%x [[~nul %desk] /foo/bar]])
     /gx/~nul/desk/0/bar/foo
   ::
     %-  expect-eq  !>
-    :-  ^-  resource:ford
-      [%g care=%x bel=[[~nul %desk] /foo/bar]]
+    :_  ^-  resource:ford
+      [%g care=%x [[~nul %desk] /foo/bar]]
     (need (path-to-resource:ford /gx/~nul/desk/0/bar/foo))
   ==
 ::
@@ -476,7 +477,7 @@
   ::
   =/  results2=tang
     %-  expect-eq  !>
-    :-  results:(~(got by state-by-ship.+>+<.ford) ~nul)
+    :_  results:(~(got by state-by-ship.+>+<.ford) ~nul)
     %-  my  :~
       :-  [~1234.5.6 [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]]
       [%value ~1234.5.6 %success %scry %noun !>(42)]
@@ -1186,15 +1187,15 @@
           ::    Types can't be compared using simple equality, so normalize the
           ::    type to check the rest of the move.
           ::
-          :-  i.moves(&8 *type)
+          :_  i.moves(&8 *type)
           :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
               [%success [%ride *type 5]]
           ==
         ::  make sure the returned type nests
         ::
         %-  expect-eq  !>
-        :-  (~(nest ut &8:i.moves) | -:!>(*@))
-        &
+        :-  &
+        (~(nest ut &8:i.moves) | -:!>(*@))
     ==
   ::
   =^  results2  ford
@@ -1248,14 +1249,14 @@
           ::    Types can't be compared using simple equality, so normalize the
           ::    type to check the rest of the move.
           ::
-          :-  i.moves(&8 *type)
+          :_  i.moves(&8 *type)
           :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
               [%success [%ride *type 42]]
           ==
         ::
         %-  expect-eq  !>
-        :-  (~(nest ut &8:i.moves) | -:!>(*@))
-        &
+        :-  &
+        (~(nest ut &8:i.moves) | -:!>(*@))
     ==
   ::
   =^  results2  ford
@@ -1305,7 +1306,7 @@
         %-  expect-eq  !>
         ::  compare the move to the expected move, omitting check on stack trace
         ::
-        :-  i.moves(|7 ~)
+        :_  i.moves(|7 ~)
         :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
             [%error [leaf+"ford: %ride failed:" ~]]
     ==  ==
@@ -1380,15 +1381,15 @@
           ::    Types can't be compared using simple equality, so normalize the
           ::    type to check the rest of the move.
           ::
-          :-  i.moves(&8 *type)
+          :_  i.moves(&8 *type)
           :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete
               [%success [%ride *type 42]]
           ==
         ::  make sure the types nest
         ::
         %-  expect-eq  !>
-        :-  (~(nest ut &8:i.moves) | -:!>(*@))
-        &
+        :-  &
+        (~(nest ut &8:i.moves) | -:!>(*@))
     ==
   ::
   =^  results3  ford
@@ -1541,7 +1542,7 @@
             contents="post-a-contents"
           ==
         %-  expect-eq  !>
-        :-  i.t.moves
+        :_  i.t.moves
         :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
             %c  %warp  [~nul ~nul]  %desk
             `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
@@ -2310,7 +2311,7 @@
             contents="post-a-contents"
           ==
         %-  expect-eq  !>
-        :-  i.t.moves
+        :_  i.t.moves
         :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
             %c  %warp  [~nul ~nul]  %desk
             `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
@@ -2364,7 +2365,9 @@
         |=  moves=(list move:ford-turbo)
         ^-  tang
         ::
+        ::  ~|  %didnt-get-two-moves
         ?>  ?=([^ ^ ~] moves)
+        ::
         %-  check-post-made  :*
           move=i.moves
           duct=~[/post-a]
@@ -2429,34 +2432,34 @@
   ::
   ;:  welp
     %-  expect-eq  !>
-    [duct.move duct]
+    [duct duct.move]
   ::
     %-  expect-eq  !>
-    [date.p.card.move date]
+    [date date.p.card.move]
   ::
     %-  expect-eq  !>
-    :-  head.result(p.q.cage *^type)
+    :_  head.result(p.q.cage *^type)
     [%success %scry %noun *^type [title=title contents=contents]]
   ::
     %-  expect-eq  !>
-    :-  (~(nest ut p.q.cage.head.result) | type)
-    &
+    :-  &
+    (~(nest ut p.q.cage.head.result) | type)
   ::
     %-  expect-eq  !>
-    :-  head.tail.result(p.vase *^type)
-    [%success %ride *^type 'post-a']
+    :-  [%success %ride *^type 'post-a']
+    head.tail.result(p.vase *^type)
   ::
     %-  expect-eq  !>
-    :-  (~(nest ut p.vase.head.tail.result) | -:!>(''))
-    &
+    :-  &
+    (~(nest ut p.vase.head.tail.result) | -:!>(''))
   ::
     %-  expect-eq  !>
-    :-  tail.tail.result(p.vase *^type)
-    [%success %ride *^type 'post-b']
+    :-  [%success %ride *^type 'post-b']
+    tail.tail.result(p.vase *^type)
   ::
     %-  expect-eq  !>
-    :-  (~(nest ut p.vase.tail.tail.result) | -:!>(''))
-    &
+    :-  &
+    (~(nest ut p.vase.tail.tail.result) | -:!>(''))
   ==
 ::
 ::  +scry-with-results
@@ -2539,8 +2542,8 @@
   ::
   =/  output=tang
     %-  expect-eq  !>
-    :-  moves
-    expected-moves
+    :-  expected-moves
+    moves
   ::
   [output ford]
 ::
@@ -2560,8 +2563,8 @@
   ::
   =/  output=tang
     %-  expect-eq  !>
-    :-  moves
-    expected-moves
+    :-  expected-moves
+    moves
   ::
   [output ford]
 ::  +test-ford-call-with-comparator
@@ -2614,6 +2617,6 @@
   |=  [ford=_(ford-turbo) ship=@p]
   ^-  tang
   %-  expect-eq  !>
-  :-  state-by-ship.+>+<.ford
-  (my [ship *ford-state:ford-turbo]~)
+  :-  (my [ship *ford-state:ford-turbo]~)
+  state-by-ship.+>+<.ford
 --
