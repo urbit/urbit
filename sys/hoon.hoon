@@ -9288,7 +9288,7 @@
     ?-    -.yep
       %&  %=  $
             rot  t.rot
-            sut  p:(fine %& q.p.yep) 
+            sut  p:(fine %& p.yep) 
           ==
       %|  ?-  -.p.yep
             %&  |
@@ -9305,14 +9305,14 @@
         ++  pony                                        ::  raw match
                   $@  ~                                 ::  void
                   %+  each                              ::  natural/abnormal
-                    (pair %fish palo)                   ::  arm or leg
+                    palo                                ::  arm or leg
                   %+  each                              ::  abnormal
                     @ud                                 ::  unmatched
                   (pair what (pair type nock))          ::  synthetic
         --
     ^-  pony
     ?~  hyp
-      [%& %fish ~ %& sut]
+      [%& ~ %& sut]
     =+  mor=$(hyp t.hyp)
     ?-    -.mor
         %|
@@ -9324,18 +9324,18 @@
       ==
     ::
         %&
-      =.  sut  (felt q.q.p.mor)
+      =.  sut  (felt q.p.mor)
       =>  :_  +
           :*  axe=`axis`1
-              lon=p.q.p.mor
+              lon=p.p.mor
               heg=?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
           ==
       ?:  ?=(%& -.heg)
-        [%& %fish [`p.heg lon] %& (peek way p.heg)]
+        [%& [`p.heg lon] %& (peek way p.heg)]
       =|  gil/(set type)
       =<  $
       |%  ++  here  ?:  =(0 p.heg)
-                      [%& %fish [~ `axe lon] %& sut]
+                      [%& [~ `axe lon] %& sut]
                     [%| %& (dec p.heg)]
           ++  lose  [%| %& p.heg]
           ++  stop  ?~(q.heg here lose)
@@ -9356,15 +9356,15 @@
                         *what
                       [(fork p.q.p.p.hax p.q.p.p.yor ~) q.q.p.p.hax]
                     ?>  ?=(%& -.yor)
+                    ?>  =(p.p.hax p.p.yor)
+                    ?:  &(?=(%& -.q.p.hax) ?=(%& -.q.p.yor))
+                      :+  %&  p.p.hax
+                      [%& (fork p.q.p.hax p.q.p.yor ~)]
+                    ?>  &(?=(%| -.q.p.hax) ?=(%| -.q.p.yor))
                     ?>  =(p.q.p.hax p.q.p.yor)
-                    ?:  &(?=(%& -.q.q.p.hax) ?=(%& -.q.q.p.yor))
-                      :^  %&  %fish  p.q.p.hax
-                      [%& (fork p.q.q.p.hax p.q.q.p.yor ~)]
-                    ?>  &(?=(%| -.q.q.p.hax) ?=(%| -.q.q.p.yor))
-                    ?>  =(p.q.q.p.hax p.q.q.p.yor)
-                    =+  wal=(~(uni in q.q.q.p.hax) q.q.q.p.yor)
-                    :^  %&  %fish  p.q.p.hax
-                    [%| p.q.q.p.hax wal]
+                    =+  wal=(~(uni in q.q.p.hax) q.q.p.yor)
+                    :+  %&  p.p.hax
+                    [%| p.q.p.hax wal]
           ++  $
             ^-  pony
             ?-    sut
@@ -9386,8 +9386,7 @@
                   ?~  zem  [~ p.heg]
                   ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
               ?^  zem
-                :^    %&  
-                    %fish
+                :+  %&  
                   [`axe lon]
                 [%| (peg 2 p.u.zem) [[sut(p.q %gold) q.q.u.zem] ~ ~]]
               =+  pec=(peel way p.q.sut)
@@ -9414,7 +9413,7 @@
                   $(sut q.sut, lon [~ lon], p.heg +(p.heg))
                 =+  tor=(fund way u.q.u.tyr)
                 ?-  -.tor
-                  %&  [%& %fish (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
+                  %&  [%& (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
                   %|  [%| %| p.u.tyr p.p.tor (comb [%0 axe] q.p.tor)]
                 ==
               ++  next
@@ -9428,7 +9427,7 @@
                   $(q.zot t.q.zot, p.heg p.p.fid)
                 =+  ^-  vat/(pair type nock)
                     ?-    -.fid
-                      %&  (fine %& q.p.fid)
+                      %&  (fine %& p.fid)
                       %|  (fine %| q.p.p.fid)
                     ==
                 [%| %| *what p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
@@ -9456,7 +9455,7 @@
     ~_  (show [%c %find] %l hyp)
     =-  ?@  -  !!
         ?-    -<
-          %&  [%& q.p.-]
+          %&  [%& p.-]
           %|  ?-  -.p.-
                 %|  [%| q.p.p.-]
                 %&  !!
