@@ -638,6 +638,7 @@
 --
 ::
 ::  sys/ford/hoon
+::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
 |=  pit=vase
 ::
@@ -2452,7 +2453,7 @@
             %pact  !!
             %path  !!
             %plan  !!
-            %reef  !!
+            %reef  reef
             %ride  (ride [formula subject]:schematic.build)
             %same  (same schematic.schematic.build)
             %slit  (slit [gate sample]:schematic.build)
@@ -2529,6 +2530,10 @@
         $(choices t.choices)
       ::
       [build [%build-result %success %alts u.result] accessed-builds &]
+    ::
+    ++  reef
+      ^-  build-receipt
+      [build [%build-result %success %reef pit] ~ |]
     ::
     ++  ride
       |=  [formula=hoon =schematic]

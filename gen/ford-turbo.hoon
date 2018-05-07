@@ -5,7 +5,8 @@
 :-  %noun
 =+  tester:tester
 ::
-=/  ford-gate  (ford-turbo pit=!>(.))
+=/  test-pit=vase  !>(.)
+=/  ford-gate  (ford-turbo test-pit)
 ::
 |^
 =-  ((slog -) ~)
@@ -49,6 +50,7 @@
   test-cache-reclamation-live-rebuild
   test-cache-reclamation-live-promote
   test-five-oh-cache-reclamation
+  test-reef
 ==
 ++  test-is-schematic-live
   ~&  %test-is-schematic-live
@@ -2551,6 +2553,32 @@
     results4
     results5
     results6
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-reef
+  ~&  %test-reef
+  ::
+  =/  ford  *ford-gate
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      ^=  call-args
+        :*  duct=~[/reef]  type=~  %make  ~nul
+            [%pin ~1234.5.6 [%reef ~]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/reef]  %give  %made  ~1234.5.6  %complete
+                %success  %pin  ~1234.5.6  %success  %reef  test-pit
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
     (expect-ford-empty ford ~nul)
   ==
 ::
