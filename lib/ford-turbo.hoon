@@ -639,9 +639,7 @@
 ::
 ::  sys/ford/hoon
 ::
-::  when ford becomes a real vane, it'll start from a vase
-::
-::  |=  pit=vase
+|=  pit=vase
 ::
 =,  ford-api
 ::  ford internal data structures
