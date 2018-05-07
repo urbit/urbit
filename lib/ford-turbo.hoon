@@ -785,7 +785,7 @@
       ==
       ::  blocks: map from +resource to all builds waiting for its retrieval
       ::
-      blocks=(jug resource build)
+      blocks=(jug scry-request build)
       ::  next-builds: builds to perform in the next iteration
       ::
       next-builds=(set build)
@@ -957,9 +957,9 @@
               ::  builds: builds that :build blocked on
               ::
               builds=(list build)
-              ::  scry-blocked: resource that :build blocked on
+              ::  scry-blocked: namespace request that :build blocked on
               ::
-              scry-blocked=(unit resource)
+              scry-blocked=(unit scry-request)
           ==
       ==
       ::  sub-builds: subbuilds of :build
@@ -1035,16 +1035,13 @@
     $(vals t.vals, a (~(put ju a) key i.vals))
   ::
   $(tapped t.tapped)
-::  +resource-to-path: encode a +resource in a +wire
+::  +scry-request-to-path: encode a +scry-request in a +wire
 ::
-::    If :resource is live, create a +beam from :rail.resource
-::    by using revision 0 as the +case and encode that.
-::
-++  resource-to-path
-  |=  =resource
+++  scry-request-to-path
+  |=  =scry-request
   ^-  path
-  =/  =term  (cat 3 [vane care]:resource)
-  [term (en-beam (extract-beam resource date=~))]
+  =/  =term  (cat 3 [vane care]:scry-request)
+  [term (en-beam beam.scry-request)]
 ::  +path-to-resource: decode a +resource from a +wire
 ::
 ++  path-to-resource
@@ -1367,7 +1364,7 @@
   ::    If a value is `~`, the requested resource is not available.
   ::    Otherwise, the value will contain a +cage.
   ::
-  =|  scry-results=(map resource (unit cage))
+  =|  scry-results=(map scry-request (unit cage))
   ::  the +per-event gate; each event will have a different sample
   ::
   ::    Not a `|_` because of the `=/`s at the beginning.
@@ -1469,7 +1466,7 @@
   ::  +unblock: continue builds that had blocked on :resource
   ::
   ++  unblock
-    |=  [=resource scry-result=(unit cage)]
+    |=  [=scry-request scry-result=(unit cage)]
     ^-  [(list move) ford-state]
     ::
     =<  finalize
@@ -1487,10 +1484,10 @@
     ::    blocked on the resource, so the information is guaranteed
     ::    to be used during this event before it goes out of scope.
     ::
-    =.  scry-results  (~(put by scry-results) resource scry-result)
+    =.  scry-results  (~(put by scry-results) scry-request scry-result)
     ::  find all the :blocked-builds to continue
     ::
-    =/  blocked-builds  (~(get ju blocks.state) resource)
+    =/  blocked-builds  (~(get ju blocks.state) scry-request)
     ::
     (execute-loop blocked-builds)
   ::  +cancel: cancel a build
@@ -2317,7 +2314,7 @@
         |=  $:  =build
                 $:  %blocks
                     blocks=(list build)
-                    scry-blocked=(unit resource)
+                    scry-blocked=(unit scry-request)
                 ==
                 sub-builds=(list build)
             ==
@@ -2326,41 +2323,34 @@
         ::
         =?    moves
             ?=(^ scry-blocked)
-          ::
-          =*  resource  u.scry-blocked
           ::  TODO: handle other vanes
           ::
-          ?>  ?=(%c vane.resource)
+          ?>  ?=(%c vane.u.scry-blocked)
           ::
-          [(clay-request-for-resource date.build resource) moves]
+          [(clay-request-for-scry-request date.build u.scry-blocked) moves]
         ::  register resource block in :blocks.state
         ::
         =?    blocks.state
             ?=(^ scry-blocked)
-          ::
-          ?>  ?=(%scry -.schematic.build)
-          =*  resource  resource.schematic.build
-          ::
-          (~(put ju blocks.state) resource build)
+          (~(put ju blocks.state) u.scry-blocked build)
         ::  register blocks on sub-builds in :blocked-builds.state
         ::
         =.  state  (register-sub-build-blocks build blocks)
         ::
         ..execute
-      ::  +clay-request-for-resource: new move to request blocked resource
+      ::  +clay-request-for-scry-request: new move to request blocked resource
       ::
-      ++  clay-request-for-resource
-        |=  [date=@da =resource]
+      ++  clay-request-for-scry-request
+        |=  [date=@da =scry-request]
         ^-  move
         ::
         =/  =wire
-          (welp /(scot %p our)/resource (resource-to-path resource))
+          (welp /(scot %p our)/scry-request (scry-request-to-path scry-request))
         ::
         =/  =note
-          =/  =disc  (extract-disc resource)
-          =,  rail.resource
+          =/  =disc  [p q]:beam.scry-request
           :*  %c  %warp  sock=[our their=ship.disc]  desk.disc
-              `[%sing care.resource case=[%da date] (flop spur)]
+              `[%sing care.scry-request case=[%da date] (flop s.beam.scry-request)]
           ==
         ::
         [duct=~ [%pass wire note]]
@@ -2470,9 +2460,9 @@
             %reef  !!
             %ride  (ride [formula subject]:schematic.build)
             %same  (same schematic.schematic.build)
-            %scry  (scry resource.schematic.build)
-            %slim  (slim [subject-type formula]:schematic.build)
             %slit  (slit [gate sample]:schematic.build)
+            %slim  (slim [subject-type formula]:schematic.build)
+            %scry  (scry resource.schematic.build)
             %vale  !!
             %volt  !!
         ==
@@ -2661,36 +2651,38 @@
       ::  construct a full +beam to make the scry request
       ::
       =/  =beam  (extract-beam resource `date.build)
+      ::
+      =/  =scry-request  [vane.resource care.resource beam]
       ::  perform scry operation if we don't already know the result
       ::
-      ::    Look up :resource in :scry-results.per-event to avoid
+      ::    Look up :scry-request in :scry-results.per-event to avoid
       ::    rerunning a previously blocked +scry.
       ::
       =/  scry-response
-        ?:  (~(has by scry-results) resource)
-          (~(get by scry-results) resource)
+        ?:  (~(has by scry-results) scry-request)
+          (~(get by scry-results) scry-request)
         (^scry [%143 %noun] ~ `@tas`(cat 3 [vane care]:resource) beam)
       ::  scry blocked
       ::
       ?~  scry-response
-        ::  :build blocked on :resource
+        ::  :build blocked on :scry-request
         ::
         ::    Enqueue a request +move to fetch the blocked resource.
         ::    Link :block and :build in :blocks.state so we know
         ::    which build to rerun in a later event when we +unblock
         ::    on that +resource.
         ::
-        =/  already-blocked=?  (~(has by blocks.state) resource)
-        ::  store :resource in persistent state
+        =/  already-blocked=?  (~(has by blocks.state) scry-request)
+        ::  store :scry-request in persistent state
         ::
-        =.  blocks.state  (~(put ju blocks.state) resource build)
+        =.  blocks.state  (~(put ju blocks.state) scry-request build)
         ::
         ?:  already-blocked
           ::  this resource was already blocked, so don't duplicate move
           ::
           [build [%blocks ~ ~] accessed-builds |]
         ::
-        [build [%blocks ~ `resource] accessed-builds |]
+        [build [%blocks ~ `scry-request] accessed-builds |]
       ::  scry failed
       ::
       ?~  u.scry-response
@@ -3161,9 +3153,11 @@
         ::
         ?=(%scry -.schematic.build)
       ::
-      =*  resource  resource.schematic.build
+      =/  =scry-request
+        =,  resource.schematic.build
+        [vane care `beam`[[ship.disc.rail desk.disc.rail [%da date.build]] spur.rail]]
       ::
-      (~(del ju blocks.state) resource build)
+      (~(del ju blocks.state) scry-request build)
     ::  check if :build depends on a live clay +resource
     ::
     =/  has-live-resource  ?=([%scry %c *] schematic.build)
@@ -3387,16 +3381,16 @@
       (rebuild [ship desk case.sign] care-paths.sign)
     ::  %resource: response to a request for a +resource
     ::
-    ?.  =(%resource i.t.wire)
+    ?.  =(%scry-request i.t.wire)
       ::
       ~|(unknown-take+i.t.wire !!)
     ::
     ?>  ?=([%c %writ *] sign)
-    ::  resource: the +resource we had previously blocked on
+    ::  scry-request: the +scry-request we had previously blocked on
     ::
-    =/  =resource
-      ~|  [%bad-resource wire]
-      (need (path-to-resource t.t.wire))
+    =/  =scry-request
+      ~|  [%bad-scry-request wire]
+      (need (path-to-scry-request t.t.wire))
     ::  scry-result: parse a (unit cage) from :sign
     ::
     ::    If the result is `~`, the requested resource was not available.
@@ -3408,7 +3402,7 @@
     ::  unblock the builds that had blocked on :resource
     ::
     =*  unblock  unblock:(per-event event-args)
-    (unblock resource scry-result)
+    (unblock scry-request scry-result)
   ::
   =.  state-by-ship  (~(put by state-by-ship) our ship-state)
   ::

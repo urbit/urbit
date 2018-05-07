@@ -116,22 +116,22 @@
   ::
   ;:  welp
     %-  expect-eq  !>
-    :_  `path`(resource-to-path:ford [%c care=%x [[~nul %desk] /foo/bar]])
-    /cx/~nul/desk/0/bar/foo
+    :_  `path`(scry-request-to-path:ford [%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]])
+    /cx/~nul/desk/~1234.5.6/bar/foo
   ::
     %-  expect-eq  !>
-    :_  `resource:ford`[%c care=%x [[~nul %desk] /foo/bar]]
-    (need (path-to-resource:ford /cx/~nul/desk/0/bar/foo))
+    :_  `scry-request:ford`[%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
+    (need (path-to-scry-request:ford /cx/~nul/desk/~1234.5.6/bar/foo))
   ::
     %-  expect-eq  !>
     :_  ^-  path
-      (resource-to-path:ford [%g care=%x [[~nul %desk] /foo/bar]])
-    /gx/~nul/desk/0/bar/foo
+      (scry-request-to-path:ford [%g care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]])
+    /gx/~nul/desk/~1234.5.6/bar/foo
   ::
     %-  expect-eq  !>
-    :_  ^-  resource:ford
-      [%g care=%x [[~nul %desk] /foo/bar]]
-    (need (path-to-resource:ford /gx/~nul/desk/0/bar/foo))
+    :_  ^-  scry-request:ford
+      [%g care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
+    (need (path-to-scry-request:ford /gx/~nul/desk/~1234.5.6/bar/foo))
   ==
 ::
 ++  test-literal
@@ -282,7 +282,7 @@
       ::
       ^=  moves
         :~  :*  duct=~  %pass
-                wire=/~nul/resource/cx/~nul/desk/0/foo/bar
+                wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
                 %c  %warp  [~nul ~nul]  %desk
                 ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
     ==  ==  ==
@@ -295,7 +295,7 @@
       ::  when clay responds, send a %made
       ::
       ^=  take-args
-        :*  wire=/~nul/resource/cx/~nul/desk/0/foo/bar  duct=~
+        :*  wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~
             ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
             [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
         ==
@@ -533,7 +533,7 @@
       ::
       ^=  moves
         :~  :*  duct=~  %pass
-                wire=/~nul/resource/cx/~nul/desk/0/foo/bar
+                wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
                 %c  %warp  [~nul ~nul]  %desk
                 ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
             ==
@@ -568,7 +568,7 @@
       scry=scry-42
       ::
       ^=  take-args
-        :*  wire=/~nul/resource/cx/~nul/desk/0/foo/bar  duct=~
+        :*  wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~
             ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
             [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
         ==
@@ -623,7 +623,7 @@
       ::
       ^=  moves
         :~  :*  duct=~  %pass
-                wire=/~nul/resource/cx/~nul/desk/0/foo/bar
+                wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
                 %c  %warp  [~nul ~nul]  %desk
                 ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
             ==
@@ -654,7 +654,7 @@
       scry=scry-is-forbidden
       ::
       ^=  take-args
-        :*  wire=/~nul/resource/cx/~nul/desk/0/foo/bar  duct=~
+        :*  wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~
             ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
             [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
         ==
@@ -1349,7 +1349,7 @@
       ::
       ^=  moves
         :~  :*  duct=~  %pass
-                wire=/~nul/resource/cx/~nul/desk/0/foo/bar
+                wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
                 %c  %warp  [~nul ~nul]  %desk
                 ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
     ==  ==  ==
@@ -1361,7 +1361,7 @@
       scry=scry-blocked
       ::
       ^=  call-args
-        :*  wire=/~nul/resource/cx/~nul/desk/0/foo/bar  duct=~
+        :*  wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~
             ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
             [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
         ==
