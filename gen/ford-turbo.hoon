@@ -2444,11 +2444,73 @@
         |=  moves=(list move:ford-turbo)
         ^-  tang
         ::
-        ::  ~|  %didnt-get-two-moves
-        ?>  ?=([^ ^ ~] moves)
+        =+  length=(lent moves)
+        ::  deal with mug ordering
+        ::
+        ::    This test depends on the mugs of types stored in ford, which is
+        ::    dependent on the parse tree of this file. There are two valid
+        ::    responses, one where we send a spurious move about %post-b
+        ::    because it was the entry which was evicted from the cache and one
+        ::    where we don't because it wasn't. Check both cases.
+        ::
+        ?:  =(length 2)
+          ::  the simple case where we don't send a spurious post-b %made
+          ::
+          ?>  ?=([^ ^ ~] moves)
+          ::
+          %-  check-post-made  :*
+            move=i.moves
+            duct=~[/post-a]
+            type=scry-type
+            date=~1234.5.9
+            title='post-a'
+            contents="post-a-contents-changed"
+          ==
+        :: the complex case
+        ::
+        ::   Not only do we send a spurious %made, we don't have a set order
+        ::   that these events happen in, so check both ways.
+        ::
+        ?>  ?=([^ ^ ^ ~] moves)
+        ::
+        =/  post-a-first=tang
+          %+  welp
+            %-  check-post-made  :*
+              move=i.moves
+              duct=~[/post-a]
+              type=scry-type
+              date=~1234.5.9
+              title='post-a'
+              contents="post-a-contents-changed"
+            ==
+          %-  check-post-made  :*
+            move=i.t.moves
+            duct=~[/post-b]
+            type=scry-type
+            date=~1234.5.9
+            title='post-b'
+            contents="post-b-contents"
+          ==
+        ::  if we got a ~ for post-a-first, everything is fine
+        ::
+        ?~  post-a-first
+          ~
+        ::  otherwise, its either post-b first or an error.
+        ::
+        ::    Either way, return post-b first check.
+        ::
+        %+  welp
+          %-  check-post-made  :*
+            move=i.moves
+            duct=~[/post-b]
+            type=scry-type
+            date=~1234.5.9
+            title='post-b'
+            contents="post-b"
+          ==
         ::
         %-  check-post-made  :*
-          move=i.moves
+          move=i.t.moves
           duct=~[/post-a]
           type=scry-type
           date=~1234.5.9
