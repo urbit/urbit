@@ -20,6 +20,9 @@
   test-scry-clay-block
   test-scry-clay-live
   test-scry-clay-live-again
+  test-pinned-in-past
+  test-pinned-in-future
+  test-pinned-in-pin
   test-pinned-in-live
   test-live-build-that-blocks
   test-live-and-once
@@ -445,6 +448,77 @@
     results2
     results3
     results4
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-pinned-in-past
+  ~&  %test-pinned-in-past
+  ::
+  =/  ford  *ford-turbo
+  =/  schematic  [%pin ~1234.5.5 [%$ %noun !>(42)]]
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/pin] type=~ %make ~nul schematic]
+      ::
+      ^=  expected-moves
+        :~  :*  duct=~[/pin]  %give  %made  ~1234.5.5  %complete
+                %success  %pin  ~1234.5.5  %success  %$  %noun  !>(42)
+    ==  ==  ==
+  results1
+::
+++  test-pinned-in-future
+  ~&  %test-pinned-in-future
+  ::
+  =/  ford  *ford-turbo
+  =/  schematic  [%pin ~1234.5.7 [%$ %noun !>(42)]]
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/pin] type=~ %make ~nul schematic]
+      ::
+      ^=  expected-moves
+        :~  :*  duct=~[/pin]  %give  %made  ~1234.5.7  %complete
+                %success  %pin  ~1234.5.7  %success  %$  %noun  !>(42)
+    ==  ==  ==
+  results1
+::
+++  test-pinned-in-pin
+  ~&  %test-pinned-in-pin
+  ::
+  =/  ford  *ford-turbo
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-succeed ~1234.5.8 [%noun !>(42)])
+      ::
+      ^=  call-args
+        :*  duct=~[/pinned-in-future]  type=~  %make  ~nul
+            %pin  ~1234.5.7
+            %pin  ~1234.5.8
+            [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/pinned-in-future]
+                %give  %made  ~1234.5.8  %complete
+                %success  %pin  ~1234.5.7
+                %success  %pin  ~1234.5.8
+                [%success %scry %noun !>(42)]
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
     (expect-ford-empty ford ~nul)
   ==
 ::
@@ -2271,6 +2345,11 @@
     ::
       :-  [%cx [[~nul %desk %da ~1234.5.9] /a/posts]]
       [%noun scry-type [title='post-a' contents="post-a-contents-changed"]]
+    ::
+      ::  unchanged, but might be requested if cache entry gets wiped
+      ::
+      :-  [%cx [[~nul %desk %da ~1234.5.9] /b/posts]]
+      [%noun scry-type [title='post-b' contents="post-b-contents"]]
     ==
   ::
   =/  scry  (scry-with-results scry-results)

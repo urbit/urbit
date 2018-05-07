@@ -1643,15 +1643,12 @@
       ::  +gather-build: looks at a single candidate build
       ::
       ::    This gate inspects a single build. It might move it to :next-builds,
-      ::    or promote it using an old build. It also might add this builds
+      ::    or promote it using an old build. It also might add this build's
       ::    sub-builds to :candidate-builds.
       ::
       ++  gather-build
         |=  =build
         ^+  ..execute
-        ::  normalize :date.build for a %pin schematic
-        ::
-        =?  date.build  ?=(%pin -.schematic.build)  date.schematic.build
         ::  if we already have a result for this build, don't rerun the build
         ::
         =^  current-result  results.state  (access-cache build)
@@ -2476,12 +2473,14 @@
       |=  [head=schematic tail=schematic]
       ^-  build-receipt
       ::
-      =^  head-result  accessed-builds  (depend-on head)
-      =^  tail-result  accessed-builds  (depend-on tail)
+      =/  head-build=^build  [date.build head]
+      =/  tail-build=^build  [date.build tail]
+      =^  head-result  accessed-builds  (depend-on head-build)
+      =^  tail-result  accessed-builds  (depend-on tail-build)
       ::
       =|  blocks=(list ^build)
-      =?  blocks  ?=(~ head-result)  [[date.build head] blocks]
-      =?  blocks  ?=(~ tail-result)  [[date.build tail] blocks]
+      =?  blocks  ?=(~ head-result)  [head-build blocks]
+      =?  blocks  ?=(~ tail-result)  [tail-build blocks]
       ::  if either build blocked, we're not done
       ::
       ?^  blocks
@@ -2502,11 +2501,14 @@
     ++  pin
       |=  [date=@da =schematic]
       ^-  build-receipt
+      ::  pinned-sub: sub-build with the %pin date as formal date
       ::
-      =^  result  accessed-builds  (depend-on schematic)
+      =/  pinned-sub=^build  [date schematic]
+      ::
+      =^  result  accessed-builds  (depend-on pinned-sub)
       ::
       ?~  result
-        [build [%blocks [date schematic]~ ~] accessed-builds |]
+        [build [%blocks ~[pinned-sub] ~] accessed-builds |]
       [build [%build-result %success %pin date u.result] accessed-builds |]
     ::
     ++  alts
@@ -2519,10 +2521,11 @@
             accessed-builds
             &
         ==
+      =/  choice=^build  [date.build i.choices]
       ::
-      =^  result  accessed-builds  (depend-on i.choices)
+      =^  result  accessed-builds  (depend-on choice)
       ?~  result
-        [build [%blocks [date.build i.choices]~ ~] accessed-builds &]
+        [build [%blocks ~[choice] ~] accessed-builds &]
       ::
       ?:  ?=([%error *] u.result)
         $(choices t.choices)
@@ -2533,14 +2536,14 @@
       |=  [formula=hoon =schematic]
       ^-  build-receipt
       ::
-      =^  result  accessed-builds  (depend-on schematic)
+      =^  result  accessed-builds  (depend-on [date.build schematic])
       ?~  result
         [build [%blocks [date.build schematic]~ ~] accessed-builds |]
       ::
       =*  subject  u.result
       =*  subject-cage  (result-to-cage subject)
       =/  slim-schematic=^schematic  [%slim p.q.subject-cage formula]
-      =^  slim-result  accessed-builds  (depend-on slim-schematic)
+      =^  slim-result  accessed-builds  (depend-on [date.build slim-schematic])
       ?~  slim-result
         [build [%blocks [date.build slim-schematic]~ ~] accessed-builds |]
       ::
@@ -2619,7 +2622,7 @@
           %+  roll  blocks
           |=  [block=^build accumulator=_accessed-builds]
           =.  accessed-builds  accumulator
-          +:(depend-on schematic.block)
+          +:(depend-on [date.block schematic.block])
         ::
         ::  TODO: Here we are passing a single ~ for :scry-blocked. Should we
         ::  be passing one or multiple resource back instead? Maybe not? Are
@@ -2636,7 +2639,7 @@
       |=  =schematic
       ^-  build-receipt
       ::
-      =^  result  accessed-builds  (depend-on schematic)
+      =^  result  accessed-builds  (depend-on [date.build schematic])
       ::
       ?~  result
         [build [%blocks [date.build schematic]~ ~] accessed-builds |]
@@ -2736,17 +2739,16 @@
     ::+|  utilities
     ::
     ++  depend-on
-      |=  kid=schematic
+      |=  kid=^build
       ^-  [(unit build-result) _accessed-builds]
-      =/  sub-build=^build  [date.build kid]
       ::
-      =.  accessed-builds  [sub-build accessed-builds]
+      =.  accessed-builds  [kid accessed-builds]
       ::  +access-cache will mutate :results.state
       ::
       ::    It's okay to ignore this because the accessed-builds get gathered
       ::    and merged during the +reduce step.
       ::
-      =/  maybe-cache-line  -:(access-cache sub-build)
+      =/  maybe-cache-line  -:(access-cache kid)
       ?~  maybe-cache-line
         [~ accessed-builds]
       ::
