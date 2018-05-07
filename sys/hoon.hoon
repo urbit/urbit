@@ -1,3 +1,4 @@
+!:
 ::                                                      ::  
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
@@ -9304,14 +9305,14 @@
         ++  pony                                        ::  raw match
                   $@  ~                                 ::  void
                   %+  each                              ::  natural/abnormal
-                    (pair what palo)                    ::  arm or leg
+                    (pair %fish palo)                   ::  arm or leg
                   %+  each                              ::  abnormal
                     @ud                                 ::  unmatched
                   (pair what (pair type nock))          ::  synthetic
         --
     ^-  pony
     ?~  hyp
-      [%& ~ ~ %& sut]
+      [%& %fish ~ %& sut]
     =+  mor=$(hyp t.hyp)
     ?-    -.mor
         %|
@@ -9330,13 +9331,12 @@
               heg=?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
           ==
       ?:  ?=(%& -.heg)
-        [%& ~ [`p.heg lon] %& (peek way p.heg)]
+        [%& %fish [`p.heg lon] %& (peek way p.heg)]
       =|  gil/(set type)
       =<  $
       |%  ++  here  ?:  =(0 p.heg)
-                      [%& ~ [~ `axe lon] %& sut]
+                      [%& %fish [~ `axe lon] %& sut]
                     [%| %& (dec p.heg)]
-          ++  join  |=({a/what b/what} ?~(a b a))
           ++  lose  [%| %& p.heg]
           ++  stop  ?~(q.heg here lose)
           ++  twin  |=  {hax/pony yor/pony}
@@ -9353,17 +9353,17 @@
                           ==
                       :^    %|
                           %|
-                        (join p.p.p.hax p.p.p.yor)
+                        *what
                       [(fork p.q.p.p.hax p.q.p.p.yor ~) q.q.p.p.hax]
                     ?>  ?=(%& -.yor)
                     ?>  =(p.q.p.hax p.q.p.yor)
                     ?:  &(?=(%& -.q.q.p.hax) ?=(%& -.q.q.p.yor))
-                      :^  %&  (join p.p.hax p.p.yor)  p.q.p.hax
+                      :^  %&  %fish  p.q.p.hax
                       [%& (fork p.q.q.p.hax p.q.q.p.yor ~)]
                     ?>  &(?=(%| -.q.q.p.hax) ?=(%| -.q.q.p.yor))
                     ?>  =(p.q.q.p.hax p.q.q.p.yor)
                     =+  wal=(~(uni in q.q.q.p.hax) q.q.q.p.yor)
-                    :^  %&  ~  p.q.p.hax
+                    :^  %&  %fish  p.q.p.hax
                     [%| p.q.q.p.hax wal]
           ++  $
             ^-  pony
@@ -9387,7 +9387,7 @@
                   ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
               ?^  zem
                 :^    %&  
-                    p.q.u.zem
+                    %fish
                   [`axe lon]
                 [%| (peg 2 p.u.zem) [[sut(p.q %gold) q.q.u.zem] ~ ~]]
               =+  pec=(peel way p.q.sut)
@@ -9414,7 +9414,7 @@
                   $(sut q.sut, lon [~ lon], p.heg +(p.heg))
                 =+  tor=(fund way u.q.u.tyr)
                 ?-  -.tor
-                  %&  [%& ~ (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
+                  %&  [%& %fish (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
                   %|  [%| %| p.u.tyr p.p.tor (comb [%0 axe] q.p.tor)]
                 ==
               ++  next
@@ -9426,12 +9426,12 @@
                 ?~  fid  ~
                 ?:  ?=({%| %& *} fid)
                   $(q.zot t.q.zot, p.heg p.p.fid)
-                =+  ^-  {wat/what vat/(pair type nock)}
+                =+  ^-  vat/(pair type nock)
                     ?-    -.fid
-                      %&  [p.p.fid (fine %& q.p.fid)]
-                      %|  [p.p.p.fid (fine %| q.p.p.fid)]
+                      %&  (fine %& q.p.fid)
+                      %|  (fine %| q.p.p.fid)
                     ==
-                [%| %| wat p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
+                [%| %| *what p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
               --
             ::
                 {$fork *}
