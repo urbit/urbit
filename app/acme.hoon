@@ -116,7 +116,7 @@
     =/  b  (lent a)
     ?:  (lte b 127)
       [b ~]
-    [(con 0x80 (met 3 b)) (rip 3 b)]
+    [(con 0x80 (met 3 b)) (flop (rip 3 b))]
   ::
   ++  decode
     %+  cook  |*(a=* `spec:asn1`a)
@@ -137,7 +137,7 @@
       ;~(pfix (just `@`48) till)
     ==
   ::
-  ++  till                                                ::  length-prefixed bytes
+  ++  till                                                ::  len-prefixed bytes
     |=  tub/nail
     ^-  (like (list @D))
     ?~  q.tub
@@ -147,7 +147,7 @@
       =/  faz  (end 0 7 fuz)
       ?:  =(0 (cut 0 [7 1] fuz))
         [0 faz]
-      [faz (rep 3 (scag faz t.q.tub))]
+      [faz (rep 3 (flop (scag faz t.q.tub)))]
     ?:  ?&  !=(0 nex)
             !=(nex (met 3 len))
         ==
