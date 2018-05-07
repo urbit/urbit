@@ -76,14 +76,12 @@
 ::
 ++  update
   $%  [%full ships=fleet dns=dnses heard=events]
-      [%diff dis=(list diff-constitution)]
+      [%diff [block=@ud log=@ud] dis=(list diff-constitution)]
   ==
 ::
-::TODO  maybe just send the event logs over instead?
 ++  diff-constitution
   $%  [%hull who=@p dif=diff-hull]
       [%dns ind=@ud new=@t]
-      [%heard block=@ud log=@ud]  ::TODO  why is this separate from the changes?
   ==
 ::
 ++  diff-hull

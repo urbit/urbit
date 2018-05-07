@@ -46,7 +46,7 @@
 ::
 ++  ta
   |_  $:  moves=(list move)                             ::  side-effects
-          diffs=(list diff-constitution)
+          diffs=(jar [@ud @ud] diff-constitution)       ::  changes per event
           reqs=(list (pair (unit @t) request))          ::  rpc requests
           wir=wire                                      ::  wire for reqs
       ==
@@ -61,14 +61,17 @@
       =-  [ost.bol -]~
       %+  rpc-request:ca  wir
       a+(turn (flop reqs) request-to-json)
-    ?:  =(0 (lent diffs))  ~  ::TODO  this is a tmi workaround
-    =.  diffs  (flop diffs)
+    ^-  (list move)
+    %-  zing
+    %+  turn  ~(tap by diffs)
+    |=  [cause=[@ud @ud] dis=(list diff-constitution)]
+    =.  dis  (flop dis)
     ^-  (list move)
     %+  murn  ~(tap by sup.bol)
     |=  [b=bone s=ship p=path]
     ^-  (unit move)
     ?.  ?=([%state *] p)  ~
-    `[b (updates:ca diffs)]
+    `[b (updates:ca cause dis)]
   ::
   ++  ta-move
     |=  mov=move
@@ -92,12 +95,14 @@
     `[b %diff %constitution-update upd]
   ::
   ++  ta-change
-    |=  dif=diff-constitution
-    (da(diffs [dif diffs]) [dif]~)
+    |=  [cause=[@ud @ud] dif=diff-constitution]
+    (da(diffs (~(add ja diffs) cause dif)) cause [dif]~)
   ::
   ++  ta-changes
-    |=  dis=(list diff-constitution)
-    (da(diffs (weld (flop dis) diffs)) dis)
+    |=  [cause=[@ud @ud] dis=(list diff-constitution)]
+    =-  (da(diffs -) cause dis)
+    %+  ~(put by diffs)  cause
+    (weld (flop dis) (~(get ja diffs) cause))
   ::
   ++  ta-request
     |=  [id=(unit @t) req=request]
@@ -185,9 +190,12 @@
     (ta-to-all(ships s, dns d, heard h) %full s d h)
   ::
   ++  ta-accept
-    |=  dis=(list diff-constitution)
+    |=  [cause=[@ud @ud] dis=(list diff-constitution)]
+    ?:  &(!=([0 0] cause) (~(has in heard) cause))
+      ~&  %ta-accept-ignoring-duplicate-event
+      +>.$
     ~&  [%ta-accept (lent dis)]
-    (ta-changes dis)
+    (ta-changes cause dis)
   ::
   ::
   ++  ta-take-filter
@@ -234,26 +242,22 @@
     ?:  (~(has in heard) block-number.place log-index.place)
       ~&  %ignoring-duplicate-event
       +>
-    =.  +>.$
-      %+  ta-change  %heard
-      [block-number.place log-index.place]
+    =+  cuz=[block-number.place log-index.place]
     ::
     ?:  =(event.log changed-dns:ships-events)
       =+  ^-  [pri=tape sec=tape ter=tape]
         (decode-results data.log ~[%string %string %string])
       =?  +>.$  !=(pri.dns (crip pri))
-        (ta-change %dns 0 (crip pri))
+        (ta-change cuz %dns 0 (crip pri))
       =?  +>.$  !=(sec.dns (crip sec))
-        (ta-change %dns 1 (crip sec))
+        (ta-change cuz %dns 1 (crip sec))
       =?  +>.$  !=(ter.dns (crip ter))
-        (ta-change %dns 2 (crip ter))
+        (ta-change cuz %dns 2 (crip ter))
       +>.$
     ::
     =+  dis=(event-log-to-hull-diffs log)
-    |-  ^+  +>.^$
-    ?~  dis  +>.^$
-    =.  +>.^$  (ta-change %hull i.dis)
-    $(dis t.dis)
+    ?~  dis  +>.$
+    (ta-change cuz %hull i.dis)
   ::
   ::
   ++  ta-take-read-results
@@ -304,7 +308,7 @@
           ~&  [%completely-missing who.cal]
           ?.  save  +>.$
           ~&  [%storing-chain-version-of who.cal]
-          (ta-change %hull who.cal %full hul)
+          (ta-change [0 0] %hull who.cal %full hul)
         ::
         =*  huv  state.u.have
         ?:  =(huv hul)  +>.$
@@ -345,7 +349,7 @@
         ~&  %$
         ?.  save  +>.$
         ~&  [%storing-chain-version-of who.cal]
-        (ta-change %hull who.cal %full hul)
+        (ta-change [0 0] %hull who.cal %full hul)
       ::
       =.  checking  (~(del by checking) who.cal)
       (ta-read-ships kis)
@@ -357,31 +361,32 @@
         ?:  =(pri.dns dom)  +>.$
         ~&  [%primary-dns-differs pri.dns dom]
         ?.  save  +>.$
-        (ta-change %dns 0 dom)
+        (ta-change [0 0] %dns 0 dom)
       ?:  =(1 ind.cal)
         ?:  =(sec.dns dom)  +>.$
         ~&  [%secondary-dns-differs sec.dns dom]
         ?.  save  +>.$
-        (ta-change %dns 1 dom)
+        (ta-change [0 0] %dns 1 dom)
       ?:  =(2 ind.cal)
         ?:  =(ter.dns dom)  +>.$
         ~&  [%tertiary-dns-differs ter.dns dom]
         ?.  save  +>.$
-        (ta-change %dns 2 dom)
+        (ta-change [0 0] %dns 2 dom)
       !!
     ==
   ::
   ::
   ++  da
-    |=  dis=(list diff-constitution)
+    |=  [[block=@ud log=@ud] dis=(list diff-constitution)]
     ^+  +>
+    =.  heard  (~(put in heard) block log)
+    =.  latest-block  (max latest-block block)
     |^  ?~  dis  +>.^$
         =.  ..da
           =*  dif  i.dis
           ?-  -.dif
             %hull   (da-hull +.dif)
             %dns    (da-dns +.dif)
-            %heard  (da-heard +.dif)
           ==
         $(dis t.dis)
     ::
@@ -460,9 +465,9 @@
     [%full ships dns heard]
   ::
   ++  updates
-    |=  dis=(list diff-constitution)
+    |=  [cause=[@ud @ud] dis=(list diff-constitution)]
     ^-  card
-    [%diff %constitution-update %diff dis]
+    [%diff %constitution-update %diff cause dis]
   --
 ::
 ++  hull-from-eth
