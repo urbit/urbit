@@ -29,6 +29,7 @@
   :~  'https://mail.google.com'
       'https://www.googleapis.com/auth/plus.me'
       'https://www.googleapis.com/auth/userinfo.email'
+      'https://www.googleapis.com/auth/ndev.clouddns.readwrite'
   ==
 ::
 ++  exchange-url  'https://www.googleapis.com/oauth2/v4/token'
