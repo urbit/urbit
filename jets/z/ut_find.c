@@ -106,7 +106,7 @@
     if ( 0 == p_heg ) {
       return u3nq
         (c3y,
-         u3_nul,
+         c3__fish,
          u3nt(u3_nul,
               u3nc(u3_nul, u3k(axe)),
               u3k(lon)),
@@ -118,17 +118,6 @@
     }
   }
 
-  static u3_noun
-  _find_join(u3_noun a,
-             u3_noun b)
-  {
-    if ( c3y == u3r_sing(a, b) ) {
-      return u3k(a);
-    } else {
-      return u3kb_weld(u3k(a), u3nc(c3_s2('|', '|'), u3k(b)));
-    }
-  }
-              
   static u3_noun
   _find_buck_lose(u3_noun van,
                   u3_noun sut,
@@ -234,7 +223,6 @@
           u3_noun u_zem = u3t(zem);
           u3_noun pu_zem = u3h(u_zem);
           u3_noun qu_zem = u3t(u_zem);
-          u3_noun pqu_zem = u3h(qu_zem);
           u3_noun qqu_zem = u3t(qu_zem);
           u3_noun mut;
           u3_noun pro;
@@ -248,7 +236,7 @@
 
           pro = u3nq
             (c3y,
-             u3k(pqu_zem),
+             c3__fish,
              u3nc(u3nc(u3_nul, u3k(axe)), u3k(lon)),
              u3nt(c3n,
                   u3qc_peg(2, pu_zem),
@@ -313,8 +301,6 @@
         else {
           u3_noun pp_hax = u3t(p_hax);              //  {span nock}
           u3_noun pp_yor = u3t(p_yor);              //  {span nock}
-          u3_noun ppp_hax = u3h(pp_hax);            //  wain
-          u3_noun ppp_yor = u3h(pp_yor);            //  wain
           u3_noun qpp_hax = u3t(pp_hax);
           u3_noun qpp_yor = u3t(pp_yor);
           u3_noun pqpp_hax = u3h(qpp_hax);            //  span
@@ -327,7 +313,7 @@
           }
           return u3nq(c3n,
                       c3n,
-                      _find_join(ppp_hax, ppp_yor),
+                      u3_nul, // fish
                       u3nc(
                         u3kf_fork(u3nt(u3k(pqpp_hax), u3k(pqpp_yor), u3_nul)),
                         u3k(qqpp_hax)));
@@ -341,8 +327,6 @@
       else {
         u3_noun p_hax = u3t(hax);                     //  {wain vein opal}
         u3_noun p_yor = u3t(yor);                     //  {wain vein opal}
-        u3_noun pp_hax = u3h(p_hax);                  //  wain
-        u3_noun pp_yor = u3h(p_yor);                  //  wain
         u3_noun qp_hax = u3t(p_hax);                  //  {vein opal}
         u3_noun qp_yor = u3t(p_yor);                  //  {vein opal}
         u3_noun pqp_hax = u3h(qp_hax);                //  vein
@@ -363,7 +347,7 @@
 
               return 
                 u3nq(c3y,
-                     _find_join(pp_hax, pp_yor),
+                     c3__fish,
                      u3k(pqp_hax),
                      u3nc(c3y, u3kf_fork
                        (u3nt(u3k(pqqp_hax), u3k(pqqp_yor), u3_nul))));
@@ -382,7 +366,7 @@
             } else {
               return 
                 u3nq(c3y, 
-                     u3_nul,
+                     c3__fish,
                      u3k(pqp_hax),
                      u3nt(c3n, u3k(pqqp_hax), u3qdi_uni(qqqp_hax, qqqp_yor)));
             }
@@ -508,13 +492,10 @@
         u3_noun ret;
         u3_noun dog = u3nc(0, u3k(axe));  //  nock
         u3_noun cob = u3qz_comb(dog, q_tiv);
-        u3_noun wan;
 
         if ( c3y == u3h(fid) ) {
-          wan = u3k(u3h(u3t(fid)));
           tor = u3nc(c3y, u3k(u3t(u3t(fid))));
         } else {
-          wan = u3k(u3h(u3t(u3t(fid))));
           tor = u3nc(c3n, u3k(u3t(u3t(u3t(fid)))));
         }
         u3z(fid);
@@ -525,7 +506,7 @@
         ret = u3nq
           (c3n, 
            c3n, 
-           wan,
+           u3_nul,    // fish
            u3nc(u3k(u3h(vat)), u3qz_comb(cob, u3t(vat))));
 
         u3z(vat);
@@ -605,7 +586,7 @@
                 u3nt(u3_nul, u3nc(u3_nul, u3k(axe)), u3k(lon));
               u3_noun ret;
  
-              ret = u3nq(c3y, u3_nul, u3qb_weld(pp_tor, nol), u3k(qp_tor));
+              ret = u3nq(c3y, c3__fish, u3qb_weld(pp_tor, nol), u3k(qp_tor));
               u3z(nol);
               u3z(tor); 
               u3z(tyr);
@@ -752,7 +733,7 @@
 
         ret = u3nq
           (c3y,
-           u3_nul,
+           c3__fish,
            u3nc(u3nc(u3_nul, u3k(p_heg)), u3k(lon)),
            u3nc(c3y, u3qzu_peek(van, ref, way, p_heg)));
 
@@ -780,7 +761,7 @@
              u3_noun hyp)
   {
     if ( u3_nul == hyp ) {
-      return _pony_sane(u3nq(c3y, u3_nul, u3_nul, u3nc(c3y, u3k(sut))));
+      return _pony_sane(u3nq(c3y, c3__fish, u3_nul, u3nc(c3y, u3k(sut))));
     }
     else {
       u3_noun i_hyp = u3h(hyp);
