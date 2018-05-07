@@ -95,9 +95,9 @@
   ++  lem                                             ::  element bytes
     ^-  (list @)
     ?-  pec
-      [%int *]  ?:  (lte p.pec 127)     :: XX unsigned only!
-                  [p.pec ~]
-                [0 (rip 3 p.pec)]
+      [%int *]  =/  a  (flop (rip 3 p.pec))     :: XX unsigned only!
+                ?~  a  [0 ~]
+                ?:((lte i.a 127) a [0 a])
       ::
       [%oct *]  (rip 3 p.pec)
       [%nul *]  ~
@@ -122,9 +122,14 @@
     %+  cook  |*(a=* `spec:asn1`a)
     ;~  pose
       %+  stag  %int
-      %+  boss  256
-      %+  cook
-        |=(a=(list @) ?:(?=([@ @ *] a) t.a a))
+      %+  bass  256
+      %+  sear
+        |=  a=(list @)
+        ^-  (unit (list @))
+        ?~  a  ~
+        ?:  ?=([@ ~] a)  `a
+        ?.  =(0 i.a)  `a
+        ?.((gth i.t.a 127) ~ `t.a)
       ;~(pfix (just `@`2) till)
       ::
       (stag %oct (boss 256 ;~(pfix (just `@`4) till)))
