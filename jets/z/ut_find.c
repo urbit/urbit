@@ -297,24 +297,21 @@
           return u3m_error("find-fork-b");
         }
         else {
-          u3_noun pp_hax = u3t(p_hax);              //  {wain span nock}
-          u3_noun pp_yor = u3t(p_yor);              //  {wain span nock}
-          u3_noun qpp_hax = u3t(pp_hax);
-          u3_noun qpp_yor = u3t(pp_yor);
-          u3_noun pqpp_hax = u3h(qpp_hax);            //  span
-          u3_noun pqpp_yor = u3h(qpp_yor);            //  span
-          u3_noun qqpp_hax = u3t(qpp_hax);            //  nock
-          u3_noun qqpp_yor = u3t(qpp_yor);            //  nock
+          u3_noun pp_hax = u3t(p_hax);              //  {span nock}
+          u3_noun pp_yor = u3t(p_yor);              //  {span nock}
+          u3_noun ppp_hax = u3h(pp_hax);            //  span
+          u3_noun ppp_yor = u3h(pp_yor);            //  span
+          u3_noun qpp_hax = u3t(pp_hax);            //  nock
+          u3_noun qpp_yor = u3t(pp_yor);            //  nock
 
-          if ( c3n == u3r_sing(qqpp_hax, qqpp_yor) ) {
+          if ( c3n == u3r_sing(qpp_hax, qpp_yor) ) {
             return u3m_error("find-fork-c");
           }
-          return u3nq(c3n,
+          return u3nt(c3n,
                       c3n,
-                      u3_nul,
                       u3nc(
-                        u3kf_fork(u3nt(u3k(pqpp_hax), u3k(pqpp_yor), u3_nul)),
-                        u3k(qqpp_hax)));
+                        u3kf_fork(u3nt(u3k(ppp_hax), u3k(ppp_yor), u3_nul)),
+                        u3k(qpp_hax)));
         }
       }
     }
@@ -490,17 +487,16 @@
         if ( c3y == u3h(fid) ) {
           tor = u3nc(c3y, u3k(u3t(fid)));
         } else {
-          tor = u3nc(c3n, u3k(u3t(u3t(u3t(fid)))));
+          tor = u3nc(c3n, u3k(u3t(u3t(fid))));
         }
         u3z(fid);
 
         vat = u3qzu_fine(van, sut, tor);
         u3z(tor);
 
-        ret = u3nq
+        ret = u3nt
           (c3n, 
            c3n, 
-           u3_nul,    // fish
            u3nc(u3k(u3h(vat)), u3qz_comb(cob, u3t(vat))));
 
         u3z(vat);
@@ -554,7 +550,6 @@
         }
         else {
           u3_noun u_tyr = u3t(tyr);       //  (pair wain (unit twig))
-          u3_noun pu_tyr = u3h(u_tyr);
           u3_noun qu_tyr = u3t(u_tyr);
 
           if ( u3_nul == qu_tyr ) {
@@ -593,9 +588,8 @@
               u3_noun dog = u3nc(0, u3k(axe));    //  nock
               u3_noun ret;
 
-              ret = u3nq(c3n, 
+              ret = u3nt(c3n, 
                          c3n, 
-                         u3k(pu_tyr),
                          u3nc(u3k(pp_tor), u3qz_comb(dog, qp_tor)));
               u3z(dog);
               u3z(tor); 
@@ -769,18 +763,15 @@
           return mor;
         } 
         else {
-          u3_noun pp_mor = u3t(p_mor);      //  {wain span nock}
-          u3_noun ppp_mor = u3h(pp_mor);
-          u3_noun qpp_mor = u3t(pp_mor);
-          u3_noun pqpp_mor = u3h(qpp_mor);    //  span
-          u3_noun qqpp_mor = u3t(qpp_mor);    //  nock
+          u3_noun pp_mor = u3t(p_mor);      //  {span nock}
+          u3_noun ppp_mor = u3h(pp_mor);    //  span
+          u3_noun qpp_mor = u3t(pp_mor);    //  nock
           u3_noun gen = u3nt(c3__wing, u3k(i_hyp), u3_nul);
-          u3_noun fex = u3qfu_mint(van, pqpp_mor, c3__noun, gen);
-          u3_noun ret = u3nq(c3n, 
+          u3_noun fex = u3qfu_mint(van, ppp_mor, c3__noun, gen);
+          u3_noun ret = u3nt(c3n, 
                              c3n,
-                             u3k(ppp_mor),
                              u3nc(u3k(u3h(fex)),
-                                  u3qf_comb(qqpp_mor, u3t(fex))));
+                                  u3qf_comb(qpp_mor, u3t(fex))));
           u3z(fex);
           u3z(gen);
           u3z(mor);
