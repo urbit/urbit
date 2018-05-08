@@ -766,7 +766,7 @@
         $get-inner
           %^  exec-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)  -.q.u.mez
           ::
-          =/  ext  %urb-elem  ::XX in message?
+          =/  ext  r.u.mez
           =/  fig/coin  (fcgi ~ *cred)  ::STUB fcgi params for /$
           [%bake ext fig q.u.mez]
       ::
@@ -783,12 +783,15 @@
             (fail 500 dep p.q.u.mez)
           ::
               %&
+            =/  res/(cask)  p.q.u.mez
             =/  dep  0v0  ::XX remote dependency?
             =/  bek  -.top  ::XX where is wrapper-renderer beak stored exactly
+            :: XX store request mark
+            =/  ext  (end 3 (sub (met 3 p.res) (met 3 '-elem')) p.res) :: %x-urb-elem -> %x-urb
             %^  exec-live  ha+(en-beam bek ~)  (norm-beak bek)
-            :+  %cast  %urb  ::XX hardcoded
-            :+  %call  [%core (norm-beak bek) /[%urb-wrap]/ren]
-            [[%$ deps+!>(dep)] [%vale p.q.u.mez]]
+            :+  %cast  ext
+            :+  %call  [%core (norm-beak bek) /wrap/[ext]/ren]
+            [[%$ deps+!>(dep)] [%vale res]]
           ==
       ==
     ::
@@ -1369,18 +1372,17 @@
           $away  [%& %html logout-page:xml]
           ?($beam $spur)
         =^  payload  mef  process-payload
-        =+  ext=(fall p.pok %urb)
+        =+  ext=(fall p.pok %x-urb)
         =+  bem=?-(-.hem $beam p.hem, $spur [-.top (weld p.hem s.top)])
         ~|  bad-beam+q.bem
         ?<  =([~ 0] (sky [151 %noun] %cw (en-beam bem(+ ~, r [%da now]))))
-        ?.  ::=<  &  ::TEST
-            ::=(our p.bem) ::TODO also if it is?
-            ?=(^ p.pok)  ::  fetch local css etc
-          =.  ext  %urb-elem ::XX
+        ?:  ::!=(our p.bem) ::TODO also if it is?
+            =('x-' (end 3 2 ext))
+          =.  ext  (cat 3 ext '-elem')
           =.  -.bem  (norm-beak -.bem)
           =/  han  (sham hen)
           =.  pox  (~(put by pox) han hen)
-          [%| (ames-gram p.bem [%get-inner ~] han bem)]
+          [%| (ames-gram p.bem [%get-inner ~] han bem ext)]
         =+  wir=`whir`[%ha (en-beam -.bem ~)]
         =.  wir  ?+(mef !! $get wir, $head [%he wir])
         =.  r.bem  ?+(r.bem r.bem {$ud $0} da+now)
