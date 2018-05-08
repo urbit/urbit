@@ -8,6 +8,9 @@
 ::
 =,  clay
 ::
+=/  test-pit=vase  !>(.)
+=/  ford-gate  (ford-turbo test-pit)
+::
 |%
 ++  move  (pair bone card)
 ++  card
@@ -15,7 +18,7 @@
   ==
 --
 ::
-|_  {bol/bowl:gall turbo/_(ford-turbo)}
+|_  {bol/bowl:gall turbo/_(ford-gate)}
 ::  +prep: clear the state on each reload
 ::
 ++  prep  _`.
@@ -68,12 +71,12 @@
 ::    arvo. Change them so they're in gall format.
 ::
 ++  convert-moves
-  |=  vane-moves=(list move:ford-turbo)
+  |=  vane-moves=(list move:ford-gate)
   ^-  [(list move) _+>.$]
   ::
   =/  gall-moves=(list move)
     %+  murn  vane-moves
-    |=  [=duct card=(wind note:ford-turbo gift:able:ford-api:ford-turbo)]
+    |=  [=duct card=(wind note:ford-gate gift:able:ford-api:ford-gate)]
     ^-  (unit move)
     ::
     ?+    -.card  !!
@@ -104,4 +107,3 @@
   ~&  [%scrying-for term beam]
   ~
 --
-
