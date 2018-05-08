@@ -638,10 +638,9 @@
 --
 ::
 ::  sys/ford/hoon
+::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
-::  when ford becomes a real vane, it'll start from a vase
-::
-::  |=  pit=vase
+|=  pit=vase
 ::
 =,  ford-api
 ::  ford internal data structures
@@ -785,7 +784,7 @@
       ==
       ::  blocks: map from +resource to all builds waiting for its retrieval
       ::
-      blocks=(jug resource build)
+      blocks=(jug scry-request build)
       ::  next-builds: builds to perform in the next iteration
       ::
       next-builds=(set build)
@@ -957,9 +956,9 @@
               ::  builds: builds that :build blocked on
               ::
               builds=(list build)
-              ::  scry-blocked: resource that :build blocked on
+              ::  scry-blocked: namespace request that :build blocked on
               ::
-              scry-blocked=(unit resource)
+              scry-blocked=(unit scry-request)
           ==
       ==
       ::  sub-builds: subbuilds of :build
@@ -1035,16 +1034,13 @@
     $(vals t.vals, a (~(put ju a) key i.vals))
   ::
   $(tapped t.tapped)
-::  +resource-to-path: encode a +resource in a +wire
+::  +scry-request-to-path: encode a +scry-request in a +wire
 ::
-::    If :resource is live, create a +beam from :rail.resource
-::    by using revision 0 as the +case and encode that.
-::
-++  resource-to-path
-  |=  =resource
+++  scry-request-to-path
+  |=  =scry-request
   ^-  path
-  =/  =term  (cat 3 [vane care]:resource)
-  [term (en-beam (extract-beam resource date=~))]
+  =/  =term  (cat 3 [vane care]:scry-request)
+  [term (en-beam beam.scry-request)]
 ::  +path-to-resource: decode a +resource from a +wire
 ::
 ++  path-to-resource
@@ -1367,7 +1363,7 @@
   ::    If a value is `~`, the requested resource is not available.
   ::    Otherwise, the value will contain a +cage.
   ::
-  =|  scry-results=(map resource (unit cage))
+  =|  scry-results=(map scry-request (unit cage))
   ::  the +per-event gate; each event will have a different sample
   ::
   ::    Not a `|_` because of the `=/`s at the beginning.
@@ -1473,7 +1469,7 @@
   ::  +unblock: continue builds that had blocked on :resource
   ::
   ++  unblock
-    |=  [=resource scry-result=(unit cage)]
+    |=  [=scry-request scry-result=(unit cage)]
     ^-  [(list move) ford-state]
     ::
     =<  finalize
@@ -1491,10 +1487,10 @@
     ::    blocked on the resource, so the information is guaranteed
     ::    to be used during this event before it goes out of scope.
     ::
-    =.  scry-results  (~(put by scry-results) resource scry-result)
+    =.  scry-results  (~(put by scry-results) scry-request scry-result)
     ::  find all the :blocked-builds to continue
     ::
-    =/  blocked-builds  (~(get ju blocks.state) resource)
+    =/  blocked-builds  (~(get ju blocks.state) scry-request)
     ::
     (execute-loop blocked-builds)
   ::  +cancel: cancel a build
@@ -1650,15 +1646,12 @@
       ::  +gather-build: looks at a single candidate build
       ::
       ::    This gate inspects a single build. It might move it to :next-builds,
-      ::    or promote it using an old build. It also might add this builds
+      ::    or promote it using an old build. It also might add this build's
       ::    sub-builds to :candidate-builds.
       ::
       ++  gather-build
         |=  =build
         ^+  ..execute
-        ::  normalize :date.build for a %pin schematic
-        ::
-        =?  date.build  ?=(%pin -.schematic.build)  date.schematic.build
         ::  if we already have a result for this build, don't rerun the build
         ::
         =^  current-result  results.state  (access-cache build)
@@ -2323,7 +2316,7 @@
         |=  $:  =build
                 $:  %blocks
                     blocks=(list build)
-                    scry-blocked=(unit resource)
+                    scry-blocked=(unit scry-request)
                 ==
                 sub-builds=(list build)
             ==
@@ -2332,41 +2325,34 @@
         ::
         =?    moves
             ?=(^ scry-blocked)
-          ::
-          =*  resource  u.scry-blocked
           ::  TODO: handle other vanes
           ::
-          ?>  ?=(%c vane.resource)
+          ?>  ?=(%c vane.u.scry-blocked)
           ::
-          [(clay-request-for-resource date.build resource) moves]
+          [(clay-request-for-scry-request date.build u.scry-blocked) moves]
         ::  register resource block in :blocks.state
         ::
         =?    blocks.state
             ?=(^ scry-blocked)
-          ::
-          ?>  ?=(%scry -.schematic.build)
-          =*  resource  resource.schematic.build
-          ::
-          (~(put ju blocks.state) resource build)
+          (~(put ju blocks.state) u.scry-blocked build)
         ::  register blocks on sub-builds in :blocked-builds.state
         ::
         =.  state  (register-sub-build-blocks build blocks)
         ::
         ..execute
-      ::  +clay-request-for-resource: new move to request blocked resource
+      ::  +clay-request-for-scry-request: new move to request blocked resource
       ::
-      ++  clay-request-for-resource
-        |=  [date=@da =resource]
+      ++  clay-request-for-scry-request
+        |=  [date=@da =scry-request]
         ^-  move
         ::
         =/  =wire
-          (welp /(scot %p our)/resource (resource-to-path resource))
+          (welp /(scot %p our)/scry-request (scry-request-to-path scry-request))
         ::
         =/  =note
-          =/  =disc  (extract-disc resource)
-          =,  rail.resource
+          =/  =disc  [p q]:beam.scry-request
           :*  %c  %warp  sock=[our their=ship.disc]  desk.disc
-              `[%sing care.resource case=[%da date] (flop spur)]
+              `[%sing care.scry-request case=[%da date] (flop s.beam.scry-request)]
           ==
         ::
         [duct=~ [%pass wire note]]
@@ -2462,7 +2448,7 @@
             %alts  (alts choices.schematic.build)
             %bake  !!
             %bunt  !!
-            %call  !!
+            %call  (call [gate sample]:schematic.build)
             %cast  !!
             %core  !!
             %diff  !!
@@ -2474,10 +2460,10 @@
             %pact  !!
             %path  !!
             %plan  !!
-            %reef  !!
+            %reef  reef
             %ride  (ride [formula subject]:schematic.build)
             %same  (same schematic.schematic.build)
-            %slit  !!
+            %slit  (slit [gate sample]:schematic.build)
             %slim  (slim [subject-type formula]:schematic.build)
             %scry  (scry resource.schematic.build)
             %vale  !!
@@ -2493,12 +2479,14 @@
       |=  [head=schematic tail=schematic]
       ^-  build-receipt
       ::
-      =^  head-result  accessed-builds  (depend-on head)
-      =^  tail-result  accessed-builds  (depend-on tail)
+      =/  head-build=^build  [date.build head]
+      =/  tail-build=^build  [date.build tail]
+      =^  head-result  accessed-builds  (depend-on head-build)
+      =^  tail-result  accessed-builds  (depend-on tail-build)
       ::
       =|  blocks=(list ^build)
-      =?  blocks  ?=(~ head-result)  [[date.build head] blocks]
-      =?  blocks  ?=(~ tail-result)  [[date.build tail] blocks]
+      =?  blocks  ?=(~ head-result)  [head-build blocks]
+      =?  blocks  ?=(~ tail-result)  [tail-build blocks]
       ::  if either build blocked, we're not done
       ::
       ?^  blocks
@@ -2519,11 +2507,14 @@
     ++  pin
       |=  [date=@da =schematic]
       ^-  build-receipt
+      ::  pinned-sub: sub-build with the %pin date as formal date
       ::
-      =^  result  accessed-builds  (depend-on schematic)
+      =/  pinned-sub=^build  [date schematic]
+      ::
+      =^  result  accessed-builds  (depend-on pinned-sub)
       ::
       ?~  result
-        [build [%blocks [date schematic]~ ~] accessed-builds |]
+        [build [%blocks ~[pinned-sub] ~] accessed-builds |]
       [build [%build-result %success %pin date u.result] accessed-builds |]
     ::
     ++  alts
@@ -2536,28 +2527,92 @@
             accessed-builds
             &
         ==
+      =/  choice=^build  [date.build i.choices]
       ::
-      =^  result  accessed-builds  (depend-on i.choices)
+      =^  result  accessed-builds  (depend-on choice)
       ?~  result
-        [build [%blocks [date.build i.choices]~ ~] accessed-builds &]
+        [build [%blocks ~[choice] ~] accessed-builds &]
       ::
       ?:  ?=([%error *] u.result)
         $(choices t.choices)
       ::
       [build [%build-result %success %alts u.result] accessed-builds &]
     ::
+    ++  call
+      |=  [gate=schematic sample=schematic]
+      ^-  build-receipt
+      ::
+      =/  gate-build=^build  [date.build gate]
+      =^  gate-result    accessed-builds  (depend-on gate-build)
+      ::
+      =/  sample-build=^build  [date.build sample]
+      =^  sample-result  accessed-builds  (depend-on sample-build)
+      ::
+      =|  blocks=(list ^build)
+      =?  blocks  ?=(~ gate-result)    [[date.build gate] blocks]
+      =?  blocks  ?=(~ sample-result)  [[date.build sample] blocks]
+      ?^  blocks
+        ::
+        [build [%blocks blocks ~] accessed-builds |]
+      ::
+      ?<  ?=(~ gate-result)
+      ?<  ?=(~ sample-result)
+      ::
+      =/  gate-vase=vase    q:(result-to-cage u.gate-result)
+      =/  sample-vase=vase  q:(result-to-cage u.sample-result)
+      ::
+      ::  run %slit to get the resulting type of calculating the gate
+      ::
+      =/  slit-schematic=schematic  [%slit gate-vase sample-vase]
+      =/  slit-build=^build  [date.build slit-schematic]
+      =^  slit-result  accessed-builds  (depend-on slit-build)
+      ?~  slit-result
+        [build [%blocks [date.build slit-schematic]~ ~] accessed-builds |]
+      ::
+      ::  TODO: Emit error on slit failure
+      ::
+      ?>  ?=([%success %slit *] u.slit-result)
+      ::
+      ::  How much duplication is there going to be here between +call and
+      ::  +ride? Right now, we're just !! on scrys, but for reals we want it to
+      ::  do the same handling.
+      ?>  &(?=(^ q.gate-vase) ?=(^ +.q.gate-vase))
+      =/  val
+        (mong [q.gate-vase q.sample-vase] intercepted-scry)
+      ::
+      ?-    -.val
+          %0
+        :*  build
+            [%build-result %success %call [type.u.slit-result p.val]]
+            accessed-builds
+            |
+        ==
+      ::
+          %1
+        =/  blocked-paths=(list path)  ((hard (list path)) p.val)
+        (blocked-paths-to-receipt %call blocked-paths)
+      ::
+          %2
+        =/  message=tang  [[%leaf "ford: %call failed:"] p.val]
+        [build [%build-result %error message] accessed-builds |]
+      ==
+    ::
+    ++  reef
+      ^-  build-receipt
+      [build [%build-result %success %reef pit] ~ |]
+    ::
     ++  ride
       |=  [formula=hoon =schematic]
       ^-  build-receipt
       ::
-      =^  result  accessed-builds  (depend-on schematic)
+      =^  result  accessed-builds  (depend-on [date.build schematic])
       ?~  result
         [build [%blocks [date.build schematic]~ ~] accessed-builds |]
       ::
       =*  subject  u.result
       =*  subject-cage  (result-to-cage subject)
       =/  slim-schematic=^schematic  [%slim p.q.subject-cage formula]
-      =^  slim-result  accessed-builds  (depend-on slim-schematic)
+      =^  slim-result  accessed-builds  (depend-on [date.build slim-schematic])
       ?~  slim-result
         [build [%blocks [date.build slim-schematic]~ ~] accessed-builds |]
       ::
@@ -2585,64 +2640,7 @@
       ::
           %1
         =/  blocked-paths=(list path)  ((hard (list path)) p.val)
-        ::
-        =/  blocks-or-failures=(list (each ^build tank))
-          %+  turn  blocked-paths
-          |=  =path
-          ::
-          =/  scry-request=(unit scry-request)  (path-to-scry-request path)
-          ?~  scry-request
-            [%| [%leaf "ford: %slim: invalid scry path: {<path>}"]]
-          ::
-          =*  case  r.beam.u.scry-request
-          ::
-          ?.  ?=(%da -.case)
-            [%| [%leaf "ford: %slim: invalid case in scry path: {<path>}"]]
-          ::
-          =/  date=@da  p.case
-          ::
-          =/  resource=(unit resource)  (path-to-resource path)
-          ?~  resource
-            :-  %|
-            [%leaf "ford: %slim: invalid resource in scry path: {<path>}"]
-          ::
-          =/  sub-schematic=^schematic  [%pin date %scry u.resource]
-          ::
-          [%& `^build`[date sub-schematic]]
-        ::
-        =/  failed=tang
-          %+  murn  blocks-or-failures
-          |=  block=(each ^build tank)
-          ^-  (unit tank)
-          ?-  -.block
-            %&  ~
-            %|  `p.block
-          ==
-        ::
-        ?^  failed
-          ::  some failed
-          ::
-          [build [%build-result %error failed] accessed-builds |]
-        ::  no failures
-        ::
-        =/  blocks=(list ^build)
-          %+  turn  blocks-or-failures
-          |=  block=(each ^build tank)
-          ?>  ?=(%& -.block)
-          ::
-          p.block
-        ::
-        =.  accessed-builds
-          %+  roll  blocks
-          |=  [block=^build accumulator=_accessed-builds]
-          =.  accessed-builds  accumulator
-          +:(depend-on schematic.block)
-        ::
-        ::  TODO: Here we are passing a single ~ for :scry-blocked. Should we
-        ::  be passing one or multiple resource back instead? Maybe not? Are
-        ::  we building blocking schematics, which they themselves will scry?
-        ::
-        [build [%blocks blocks ~] accessed-builds |]
+        (blocked-paths-to-receipt %ride blocked-paths)
       ::
           %2
         =/  message=tang  [[%leaf "ford: %ride failed:"] p.val]
@@ -2653,7 +2651,7 @@
       |=  =schematic
       ^-  build-receipt
       ::
-      =^  result  accessed-builds  (depend-on schematic)
+      =^  result  accessed-builds  (depend-on [date.build schematic])
       ::
       ?~  result
         [build [%blocks [date.build schematic]~ ~] accessed-builds |]
@@ -2668,29 +2666,31 @@
       ::  construct a full +beam to make the scry request
       ::
       =/  =beam  (extract-beam resource `date.build)
+      ::
+      =/  =scry-request  [vane.resource care.resource beam]
       ::  perform scry operation if we don't already know the result
       ::
-      ::    Look up :resource in :scry-results.per-event to avoid
+      ::    Look up :scry-request in :scry-results.per-event to avoid
       ::    rerunning a previously blocked +scry.
       ::
       =/  scry-response
-        ?:  (~(has by scry-results) resource)
-          (~(get by scry-results) resource)
+        ?:  (~(has by scry-results) scry-request)
+          (~(get by scry-results) scry-request)
         (^scry [%143 %noun] ~ `@tas`(cat 3 [vane care]:resource) beam)
       ::  scry blocked
       ::
       ?~  scry-response
-        ::  :build blocked on :resource
+        ::  :build blocked on :scry-request
         ::
         ::    Enqueue a request +move to fetch the blocked resource.
         ::    Link :block and :build in :blocks.state so we know
         ::    which build to rerun in a later event when we +unblock
         ::    on that +resource.
         ::
-        =/  already-blocked=?  (~(has by blocks.state) resource)
-        ::  store :resource in persistent state
+        =/  already-blocked=?  (~(has by blocks.state) scry-request)
+        ::  store :scry-request in persistent state
         ::
-        =.  blocks.state  (~(put ju blocks.state) resource build)
+        =.  blocks.state  (~(put ju blocks.state) scry-request build)
         ::
         ?:  already-blocked
           ::  this resource was already blocked, so don't duplicate move
@@ -2698,7 +2698,7 @@
           ~&  [%already-blocked resource]
           [build [%blocks ~ ~] accessed-builds |]
         ::
-        [build [%blocks ~ `resource] accessed-builds |]
+        [build [%blocks ~ `scry-request] accessed-builds |]
       ::  scry failed
       ::
       ?~  u.scry-response
@@ -2725,22 +2725,43 @@
           accessed-builds
           |
       ==
+    ::
+    ++  slit
+      |=  [gate=vase sample=vase]
+      ^-  build-receipt
+      ::
+      =/  product=(each type tang)
+        (mule |.((^slit p.gate p.sample)))
+      ::
+      :*  build
+          ?-  -.product
+            %|  :*  %build-result   %error
+                    :*  (~(dunk ut p.sample) %have)
+                        (~(dunk ut (~(peek ut p.gate) %free 6)) %want)
+                        leaf+"%slit failed: "
+                        p.product
+                    ==
+                ==
+            %&  [%build-result %success %slit p.product]
+          ==
+          accessed-builds
+          |
+      ==
     ::  |utilities:make: helper arms
     ::
     ::+|  utilities
     ::
     ++  depend-on
-      |=  kid=schematic
+      |=  kid=^build
       ^-  [(unit build-result) _accessed-builds]
-      =/  sub-build=^build  [date.build kid]
       ::
-      =.  accessed-builds  [sub-build accessed-builds]
+      =.  accessed-builds  [kid accessed-builds]
       ::  +access-cache will mutate :results.state
       ::
       ::    It's okay to ignore this because the accessed-builds get gathered
       ::    and merged during the +reduce step.
       ::
-      =/  maybe-cache-line  -:(access-cache sub-build)
+      =/  maybe-cache-line  -:(access-cache kid)
       ?~  maybe-cache-line
         [~ accessed-builds]
       ::
@@ -2749,6 +2770,73 @@
         [~ accessed-builds]
       ::
       [`build-result.cache-line accessed-builds]
+    ::  +blocked-paths-to-receipt: handle the %2 case for mock
+    ::
+    ::    Multiple schematics handle +toon instances. This handles the %2 case
+    ::    for a +toon and transforms it into a +build-receipt so we depend on
+    ::    the blocked paths correctly.
+    ::
+    ++  blocked-paths-to-receipt
+      |=  [name=term blocked-paths=(list path)]
+      ^-  build-receipt
+      ::
+      =/  blocks-or-failures=(list (each ^build tank))
+        %+  turn  blocked-paths
+        |=  =path
+        ::
+        =/  scry-request=(unit scry-request)  (path-to-scry-request path)
+        ?~  scry-request
+          [%| [%leaf "ford: {<name>}: invalid scry path: {<path>}"]]
+        ::
+        =*  case  r.beam.u.scry-request
+        ::
+        ?.  ?=(%da -.case)
+          [%| [%leaf "ford: {<name>}: invalid case in scry path: {<path>}"]]
+        ::
+        =/  date=@da  p.case
+        ::
+        =/  resource=(unit resource)  (path-to-resource path)
+        ?~  resource
+          :-  %|
+          [%leaf "ford: {<name>}: invalid resource in scry path: {<path>}"]
+        ::
+        =/  sub-schematic=^schematic  [%pin date %scry u.resource]
+        ::
+        [%& `^build`[date sub-schematic]]
+      ::
+      =/  failed=tang
+        %+  murn  blocks-or-failures
+        |=  block=(each ^build tank)
+        ^-  (unit tank)
+        ?-  -.block
+          %&  ~
+          %|  `p.block
+        ==
+      ::
+      ?^  failed
+        ::  some failed
+        ::
+        [build [%build-result %error failed] accessed-builds |]
+      ::  no failures
+      ::
+      =/  blocks=(list ^build)
+        %+  turn  blocks-or-failures
+        |=  block=(each ^build tank)
+        ?>  ?=(%& -.block)
+        ::
+        p.block
+      ::
+      =.  accessed-builds
+        %+  roll  blocks
+        |=  [block=^build accumulator=_accessed-builds]
+        =.  accessed-builds  accumulator
+        +:(depend-on [date.block schematic.block])
+      ::
+      ::  TODO: Here we are passing a single ~ for :scry-blocked. Should we
+      ::  be passing one or multiple resource back instead? Maybe not? Are
+      ::  we building blocking schematics, which they themselves will scry?
+      ::
+      [build [%blocks blocks ~] accessed-builds |]
     --
   ::  |utilities:per-event: helper arms
   ::
@@ -3147,9 +3235,11 @@
         ::
         ?=(%scry -.schematic.build)
       ::
-      =*  resource  resource.schematic.build
+      =/  =scry-request
+        =,  resource.schematic.build
+        [vane care `beam`[[ship.disc.rail desk.disc.rail [%da date.build]] spur.rail]]
       ::
-      (~(del ju blocks.state) resource build)
+      (~(del ju blocks.state) scry-request build)
     ::  check if :build depends on a live clay +resource
     ::
     =/  has-live-resource  ?=([%scry %c *] schematic.build)
@@ -3373,16 +3463,16 @@
       (rebuild [ship desk case.sign] care-paths.sign)
     ::  %resource: response to a request for a +resource
     ::
-    ?.  =(%resource i.t.wire)
+    ?.  =(%scry-request i.t.wire)
       ::
       ~|(unknown-take+i.t.wire !!)
     ::
     ?>  ?=([%c %writ *] sign)
-    ::  resource: the +resource we had previously blocked on
+    ::  scry-request: the +scry-request we had previously blocked on
     ::
-    =/  =resource
-      ~|  [%bad-resource wire]
-      (need (path-to-resource t.t.wire))
+    =/  =scry-request
+      ~|  [%bad-scry-request wire]
+      (need (path-to-scry-request t.t.wire))
     ::  scry-result: parse a (unit cage) from :sign
     ::
     ::    If the result is `~`, the requested resource was not available.
@@ -3394,7 +3484,7 @@
     ::  unblock the builds that had blocked on :resource
     ::
     =*  unblock  unblock:(per-event event-args)
-    (unblock resource scry-result)
+    (unblock scry-request scry-result)
   ::
   =.  state-by-ship  (~(put by state-by-ship) our ship-state)
   ::
