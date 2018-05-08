@@ -519,11 +519,11 @@
           ;:  weld
             test-base64
             test-asn1
-            testrsakey
-            testrsa
+            test-rsakey
+            test-rsa
             test-rsapem
             test-rs256
-            testjwkthumbprint
+            test-jwkthumbprint
             :: testjws
           ==
       ?~(out abet ((slog out) abet))
@@ -582,7 +582,7 @@
         [seq (scan ~(ren asn1 seq) decode:asn1)]
     ==
   ::
-  ++  testrsakey
+  ++  test-rsakey
     =/  primes=(list @)
       :~    2    3    5    7   11   13   17   19   23   29   31   37   41   43
            47   53   59   61   67   71   73   79   83   89   97  101  103  107
@@ -649,6 +649,7 @@
     --
   ::
   ++  test-rsapem
+    ::  ex from https://stackoverflow.com/a/19855935
     =/  k1=key:rsa  [`@ux`17 `@ux`11 `@ux`187 `@ux`7 `@ux`23]
     =/  kpem1=wain
       :~  '-----BEGIN RSA PRIVATE KEY-----'
@@ -662,12 +663,14 @@
           e=`@ux`65.537
           d=`@ux`3.298.243.342.098.580.397
       ==
+    :: openssl genrsa -out private.pem 64
     =/  kpem2=wain
       :~  '-----BEGIN RSA PRIVATE KEY-----'
           'MEACAQACCQDhXGw1Gc5agQIDAQABAggtxbbYRJVDrQIFAPbHkCsCBQDpx/4DAgUA'
           '23X55QIFAIpPROsCBQC56nYF'
           '-----END RSA PRIVATE KEY-----'
       ==
+    :: openssl genrsa -out private.pem 2048
     =/  kpem3=wain
       :~  '-----BEGIN RSA PRIVATE KEY-----'
           'MIIEowIBAAKCAQEA2jJp8dgAKy5cSzDE4D+aUbKZsQoMhIWI2IFlE+AO0GCBMig5'
@@ -697,8 +700,6 @@
           'zqVTrhnY+TemcScSx5O6f32aDfOUWWCzmw/gzvJxUYlJqjqd7dlT'
           '-----END RSA PRIVATE KEY-----'
       ==
-    =/  kder3=@ux
-      (need (de:base64 (rap 3 (swag [1 (sub (lent kpem3) 2)] kpem3))))
     =/  k3=key:rsa
       (need (ring:de:pem:rsa kpem3))
     ;:  weld
@@ -712,11 +713,9 @@
         [k2 (need (ring:de:pem:rsa kpem2))]
       %-  expect-eq  !>
         [kpem3 (ring:en:pem:rsa k3)]
-      %-  expect-eq  !>
-        [kder3 (ring:en:der:rsa k3)]
     ==
   ::
-  ++  testrsa
+  ++  test-rsa
     =/  k1=key:rsa
       =/  p  `@ux`61
       =/  q  `@ux`53
@@ -727,6 +726,7 @@
     ::
     =/  k2=key:rsa  [`@ux`11 `@ux`13 `@ux`143 `@ux`7 `@ux`103]
     ::
+    :: ex from http://doctrina.org/How-RSA-Works-With-Examples.html
     =/  k3=key:rsa
       =/  p
     12.131.072.439.211.271.897.323.671.531.612.440.428.472.427.633.701.410.
@@ -769,6 +769,7 @@
     ==
   ::
   ++  test-rs256
+    ::  ex from https://stackoverflow.com/a/41448118
     =/  k1=key:rsa
       :*  0xf7ef.37e6.7fa6.685a.c178.8b01.cf38.da20.ca4b.de5d.8b01.a71b.d28c.
             65b4.09c3.6e4d
@@ -787,6 +788,10 @@
       0x575c.8a41.09ed.6ea2.a708.6338.d150.a5bb.8205.142e.7785.47b5.0cc6.0198.
         6807.0243.bf49.de7c.6039.0160.e392.faca.18f4.a05d.3a7a.88a4.de86.dd99.
         f030.eb4a.a755.d7ce
+    =/  emsa1
+      0x1.ffff.ffff.ffff.ffff.ffff.0030.3130.0d06.0960.8648.0165.0304.0201.0500.
+          0420.9184.abd2.bb31.8731.d717.e972.0572.40ea.e26c.ca20.2a8d.35db.e9d2.
+          176f.5268.86a0
     =/  kpem2=wain
       :~  '-----BEGIN RSA PRIVATE KEY-----'
           'MIIEowIBAAKCAQEA2jJp8dgAKy5cSzDE4D+aUbKZsQoMhIWI2IFlE+AO0GCBMig5'
@@ -846,6 +851,8 @@
       %-  expect-eq  !>
         [& (~(verify rs256 k1) exp1 inp1)]
       %-  expect-eq  !>
+        [emsa1 `@ux`(~(emsa rs256 k1) inp1)]
+      %-  expect-eq  !>
         [& (~(verify rs256 k2) sig inp2)] 
       %-  expect-eq  !>
         [exp2 sig]
@@ -855,7 +862,8 @@
         [exp2b64 (en:base64 (swp 3 sig))]
     ==
   ::
-  ++  testjwkthumbprint
+  ++  test-jwkthumbprint
+    :: rfc7638 section 3.1
     =/  n
       :~  '0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2'
           'aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCi'
@@ -875,7 +883,7 @@
       :-  'NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs'
       (thumbprint k)
   ::
-  ++  testjws
+  ++  test-jws
     ^-  wall
     =/  pt=@t
       %+  rap  3
