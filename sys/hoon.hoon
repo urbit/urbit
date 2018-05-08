@@ -9294,7 +9294,7 @@
             %&  |
             %|  %=  $
                   rot  t.rot
-                  sut  p:(fine %| q.p.p.yep)
+                  sut  p:(fine %| p.p.yep)
                 ==
     ==    ==
   ::
@@ -9308,7 +9308,7 @@
                     palo                                ::  arm or leg
                   %+  each                              ::  abnormal
                     @ud                                 ::  unmatched
-                  (pair what (pair type nock))          ::  synthetic
+                  (pair type nock)                      ::  synthetic
         --
     ^-  pony
     ?~  hyp
@@ -9319,8 +9319,8 @@
       ?-    -.p.mor
           %&  mor
           %|
-        =+  fex=(mint(sut p.q.p.p.mor) %noun [%wing i.hyp ~])
-        [%| %| p.p.p.mor p.fex (comb q.q.p.p.mor q.fex)]
+        =+  fex=(mint(sut p.p.p.mor) %noun [%wing i.hyp ~])
+        [%| %| p.fex (comb q.p.p.mor q.fex)]
       ==
     ::
         %&
@@ -9349,12 +9349,11 @@
                       ?>  ?&  ?=(%| -.yor)
                               ?=(%| -.p.hax)
                               ?=(%| -.p.yor)
-                              =(q.q.p.p.hax q.q.p.p.yor)
+                              =(q.p.p.hax q.p.p.yor)
                           ==
-                      :^    %|
-                          %|
-                        *what
-                      [(fork p.q.p.p.hax p.q.p.p.yor ~) q.q.p.p.hax]
+                      :+  %|
+                        %|
+                      [(fork p.p.p.hax p.p.p.yor ~) q.p.p.hax]
                     ?>  ?=(%& -.yor)
                     ?>  =(p.p.hax p.p.yor)
                     ?:  &(?=(%& -.q.p.hax) ?=(%& -.q.p.yor))
@@ -9414,7 +9413,7 @@
                 =+  tor=(fund way u.q.u.tyr)
                 ?-  -.tor
                   %&  [%& (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
-                  %|  [%| %| p.u.tyr p.p.tor (comb [%0 axe] q.p.tor)]
+                  %|  [%| %| p.p.tor (comb [%0 axe] q.p.tor)]
                 ==
               ++  next
                 |-  ^-  pony
@@ -9428,9 +9427,9 @@
                 =+  ^-  vat/(pair type nock)
                     ?-    -.fid
                       %&  (fine %& p.fid)
-                      %|  (fine %| q.p.p.fid)
+                      %|  (fine %| p.p.fid)
                     ==
-                [%| %| *what p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
+                [%| %| p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
               --
             ::
                 {$fork *}
@@ -9457,7 +9456,7 @@
         ?-    -<
           %&  [%& p.-]
           %|  ?-  -.p.-
-                %|  [%| q.p.p.-]
+                %|  [%| p.p.-]
                 %&  !!
         ==    ==
     (fond way hyp)
