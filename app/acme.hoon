@@ -529,21 +529,21 @@
       ?~(out abet ((slog out) abet))
   ::
   ++  test-base64
-    =/  jon  '{"iss":"joe","exp":1300819380,"http://example.com/is_root":true}'
     ;:  weld
       %-  expect-eq  !>
-        :-  'AQAB'
-        (en-base64url 65.537)
+        ['AQAB' (en-base64url 65.537)]
       %-  expect-eq  !>
-        :-  65.537
-        (need (de-base64url 'AQAB'))
-      :: expected value includes newlines
-      :: %-  expect-eq  !>
-      ::   ~&  (en-base64:mimes:html jon)
-      ::   :-  %+  weld
-      ::         "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQo"
-      ::       "gImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ"
-      ::   (en-base64url jon)
+        [65.537 (need (de-base64url 'AQAB'))]
+      :: echo "hello" | base64
+      %-  expect-eq  !>
+        ['aGVsbG8K' (en:base64 'hello\0a')]
+      %-  expect-eq  !>
+        ['hello\0a' (need (de:base64 'aGVsbG8K'))]
+      :: echo -n -e "\x01\x01\x02\x03" | base64
+      %-  expect-eq  !>
+        ['AQECAw==' (en:base64 (swp 3 0x101.0203))]
+      %-  expect-eq  !>
+        [0x302.0101 (need (de:base64 'AQECAw=='))]
     ==
   ::
   ++  test-asn1
