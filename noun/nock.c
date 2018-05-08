@@ -896,6 +896,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
           sit_u->axe   = u3k(u3t(op));
           sit_u->pog_p = 0;
           sit_u->bat   = u3_none;
+          sit_u->bas   = u3_none;
           sit_u->loc   = u3_none;
           sit_u->lab   = u3_none;
           sit_u->jet_o = c3n;

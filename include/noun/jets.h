@@ -18,9 +18,12 @@
 +=  activation  $:  hot-index=@ud
                     drivers=(map axis @ud)
                     label=path
-                    jit=*
+                    jit=* :: FIXME: should probably be (map battery *)
+                          :: since there can be multiple batteries per location
                 ==
 ::
++=  bash        mug=@  :: later, noun-flavored sha256
++=  hot         (map bash registry)
 +=  cold        (map battery=^ registry)
 +=  warm        (map location activation)
 #endif
@@ -42,24 +45,34 @@
         struct _u3j_core* cop_u;               //  containing core
       } u3j_harm;
 
+    /* u3j_hood: hook description.
+     */
+      typedef struct _u3j_hood {
+        c3_c*             nam_c;               //  hook name
+        c3_l              axe_l;               //  hook axis (XX: direct)
+      } u3j_hood;
+
     /* u3j_core: driver definition.
     */
       typedef struct _u3j_core {
         c3_c*             cos_c;        //  control string
+        c3_l              axe_l;        //  axis to parent
         struct _u3j_harm* arm_u;        //  blank-terminated static list
         struct _u3j_core* dev_u;        //  blank-terminated static list
+        c3_c**            bas_u;        //  blank-terminated static list
+        struct _u3j_hood* huc_u;        //  blank-terminated static list
         struct _u3j_core* par_u;        //  dynamic parent pointer 
-        c3_l              axe_l;        //  axis to parent
         c3_l              jax_l;        //  index in global dashboard
       } u3j_core;
 
     /* u3e_dash, u3_Dash, u3D: jet dashboard singleton
     */
       typedef struct _u3e_dash {
-        u3j_core* dev_u;              //  null-terminated static list
-        c3_l      len_l;              //  dynamic array length
-        c3_l      all_l;              //  allocated length
-        u3j_core* ray_u;              //  dynamic array by axis
+        u3j_core*     dev_u;            //  null-terminated static list
+        c3_l          len_l;            //  dynamic array length
+        c3_l          all_l;            //  allocated length
+        u3j_core*     ray_u;            //  dynamic array by axis
+        u3p(u3h_root) hot_p;            //  driver info by pasted hash
       } u3j_dash;
 
     /* u3j_fist: a single step in a fine check.
@@ -92,6 +105,7 @@
         u3p(struct _u3n_prog) pog_p;  //  program for formula
         u3_noun       axe;            //  axis
         u3_weak       bat;            //  battery (for verification)
+        u3_weak       bas;            //  hash of battery (for hot find)
         u3_weak       loc;            //  location (for reaming)
         c3_o          jet_o;          //  have jet driver?
         c3_o          fon_o;          //  site owns fink?
