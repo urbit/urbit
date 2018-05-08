@@ -512,10 +512,11 @@
   |^  =/  out=tang
           ;:  weld
             test-base64
+            test-asn1
             testrsakey
             testrsa
-            test-asn1
             test-rsapem
+            test-rs256
             testjwkthumbprint
             :: testjws
           ==
@@ -537,6 +538,42 @@
       ::         "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQo"
       ::       "gImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ"
       ::   (en-base64url jon)
+    ==
+  ::
+  ++  test-asn1
+    =/  nul=spec:asn1  [%nul ~]
+    =/  int=spec:asn1  [%int 187]
+    =/  obj=spec:asn1  [%obj sha-256:obj:asn1]
+    =/  oct=spec:asn1  [%oct (shax 'hello\0a')]
+    =/  seq=spec:asn1  [%seq [%seq obj nul ~] oct ~]
+    ;:  weld
+      %-  expect-eq  !>
+        :-  [0x5 0x0 ~]
+        ~(ren asn1 nul)
+      %-  expect-eq  !>
+        [nul (scan ~(ren asn1 nul) decode:asn1)]
+      %-  expect-eq  !>
+        :-  [0x2 0x2 0x0 0xbb ~]
+        ~(ren asn1 int)
+      %-  expect-eq  !>
+        [int (scan ~(ren asn1 int) decode:asn1)]
+      %-  expect-eq  !>
+        :-  [0x6 0x9 0x60 0x86 0x48 0x1 0x65 0x3 0x4 0x2 0x1 ~]
+        ~(ren asn1 obj)
+      %-  expect-eq  !>
+        [obj (scan ~(ren asn1 obj) decode:asn1)]
+      %-  expect-eq  !>
+        :-    0x420.5891.b5b5.22d5.df08.6d0f.f0b1.10fb.
+          d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
+        `@ux`(swp 3 (rep 3 ~(ren asn1 oct)))
+      %-  expect-eq  !>
+        [oct (scan ~(ren asn1 oct) decode:asn1)]
+      %-  expect-eq  !>
+        :-  0x30.3130.0d06.0960.8648.0165.0304.0201.0500.0420.5891.b5b5.22d5.
+            df08.6d0f.f0b1.10fb.d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
+        `@ux`(swp 3 (rep 3 ~(ren asn1 seq)))
+      %-  expect-eq  !>
+        [seq (scan ~(ren asn1 seq) decode:asn1)]
     ==
   ::
   ++  testrsakey
@@ -606,17 +643,71 @@
     --
   ::
   ++  test-rsapem
-    =/  k=key:rsa  [`@ux`17 `@ux`11 `@ux`187 `@ux`7 `@ux`23]
-    =/  exp=wain
+    =/  k1=key:rsa  [`@ux`17 `@ux`11 `@ux`187 `@ux`7 `@ux`23]
+    =/  kpem1=wain
       :~  '-----BEGIN RSA PRIVATE KEY-----'
           'MBwCAQACAgC7AgEHAgEXAgERAgELAgEHAgEDAgEO'
           '-----END RSA PRIVATE KEY-----'
       ==
+    =/  k2=key:rsa
+      :*  p=`@ux`4.140.273.707
+          q=`@ux`3.922.198.019
+          n=`@ux`16.238.973.331.713.186.433
+          e=`@ux`65.537
+          d=`@ux`3.298.243.342.098.580.397
+      ==
+    =/  kpem2=wain
+      :~  '-----BEGIN RSA PRIVATE KEY-----'
+          'MEACAQACCQDhXGw1Gc5agQIDAQABAggtxbbYRJVDrQIFAPbHkCsCBQDpx/4DAgUA'
+          '23X55QIFAIpPROsCBQC56nYF'
+          '-----END RSA PRIVATE KEY-----'
+      ==
+    =/  kpem3=wain
+      :~  '-----BEGIN RSA PRIVATE KEY-----'
+          'MIIEowIBAAKCAQEA2jJp8dgAKy5cSzDE4D+aUbKZsQoMhIWI2IFlE+AO0GCBMig5'
+          'qxx2IIAPVIcSi5fjOLtTHnuIZYw+s06qeb8QIKRvkZaIwnA3Lz5UUrxgh96sezdX'
+          'CCSG7FndIFskcT+zG00JL+fPRdlPjt1Vg2b3kneo5aAKMIPyOTzcY590UTc+luQ3'
+          'HhgSiNF3n5YQh24d3kS2YOUoSXQ13+YRljxNfBgXbV+C7/gO8mFxpkafhmgkIGNe'
+          'WlqT9oAIRa+gOx13uPAg+Jb/8lPV9bGaFqGvxvBMp3xUASlzYHiDntcB5MiOPRW6'
+          'BoIGI5qDFSYRZBky9crE7WAYgqtPtg21zvxwFwIDAQABAoIBAH0q7GGisj4TIziy'
+          '6k1lzwXMuaO4iwO+gokIeU5UessIgTSfpK1G73CnZaPstDPF1r/lncHfxZfTQuij'
+          'WOHsO7kt+x5+R0ebDd0ZGVA45fsrPrCUR2XRZmDRECuOfTJGA13G7F1B0kJUbfIb'
+          'gAGYIK8x236WNyIrntk804SGpTgstCsZ51rK5GL6diZVQbeU806oP1Zhx/ye//NR'
+          'mS5G0iil//H41pV5WGomOX0mq9/HYBZqCncqzLki6FFdmXykjz8snvXUR40S8B+a'
+          '0F/LN+549PSe2dp9h0Hx4HCJOsL9CyCQimqqqE8KPQ4BUz8q3+Mhx1xEyaxIlNH9'
+          'ECgo1CECgYEA+mi7vQRzstYJerbhCtaeFrOR/n8Dft7FyFN+5IV7H2omy6gf0zr1'
+          'GWjmph5R0sMPgL8uVRGANUrkuZZuCr35iY6zQpdCFB4D9t+zbTvTmrxt2oVaE16/'
+          'dIJ6b8cHzR2QrEh8uw5/rEKzWBCHNS8FvXHPvXvnacTZ5LZRK0ssshECgYEA3xGQ'
+          'nDlmRwyVto/1DQMLnjIMazQ719qtCO/pf4BHeqcDYnIwYb5zLBj2nPV8D9pqM1pG'
+          'OVuOgcC9IimrbHeeGwp1iSTH4AvxDIj6Iyrmbz2db3lGdHVk9xLvTiYzn2KK2sYx'
+          'mFl3DRBFutFQ2YxddqHbE3Ds96Y/uRXhqj7I16cCgYEA1AVNwHM+i1OS3yZtUUH6'
+          'xPnySWu9x/RTvpSDwnYKk8TLaHDH0Y//6y3Y7RqK6Utjmv1E+54/0d/B3imyrsG/'
+          'wWrj+SQdPO9VJ/is8XZQapnU4cs7Q19b+AhqJq58un2n+1e81J0oGPC47X3BHZTc'
+          '5VSyMpvwiqu0WmTMQT37cCECgYACMEbt8XY6bjotz13FIemERNNwXdPUe1XFR61P'
+          'ze9lmavj1GD7JIY2wYvx4Eq2URtHo7QarfZI+Z4hbq065DWN6F1c2hqH7TYRPGrP'
+          '24TlRIJ97H+vdtNlxS7J4oARKUNZgCZOa1pKq4UznwgfCkyEdHQUzb/VcjEf3MIZ'
+          'DIKl8wKBgBrsIjiDvpkfnpmQ7fehEJIi+V4SGskLxFH3ZTvngFFoYry3dL5gQ6mF'
+          'sDfrn4igIcEy6bMpJQ3lbwStyzcWZLMJgdI23FTlPXTEG7PclZSuxBpQpvg3MiVO'
+          'zqVTrhnY+TemcScSx5O6f32aDfOUWWCzmw/gzvJxUYlJqjqd7dlT'
+          '-----END RSA PRIVATE KEY-----'
+      ==
+    =/  kder3=@ux
+      (need (de:base64 (rap 3 (swag [1 (sub (lent kpem3) 2)] kpem3))))
+    =/  k3=key:rsa
+      (need (ring:de:pem:rsa kpem3))
     ;:  weld
       %-  expect-eq  !>
-        [exp (ring:en:pem:rsa k)]
+        [kpem1 (ring:en:pem:rsa k1)]
       %-  expect-eq  !>
-        [k (need (ring:de:pem:rsa exp))]
+        [k1 (need (ring:de:pem:rsa kpem1))]
+      %-  expect-eq  !>
+        [kpem2 (ring:en:pem:rsa k2)]
+      %-  expect-eq  !>
+        [k2 (need (ring:de:pem:rsa kpem2))]
+      %-  expect-eq  !>
+        [kpem3 (ring:en:pem:rsa k3)]
+      %-  expect-eq  !>
+        [kder3 (ring:en:der:rsa k3)]
     ==
   ::
   ++  testrsa
@@ -671,41 +762,8 @@
         [m3 (de:rsa c3 k3)]
     ==
   ::
-  ++  test-asn1
-    =/  nul=spec:asn1  [%nul ~]
-    =/  int=spec:asn1  [%int 187]
-    =/  obj=spec:asn1  [%obj sha-256:obj:asn1]
-    =/  oct=spec:asn1  [%oct (shax 'hello\0a')]
-    =/  seq=spec:asn1  [%seq [%seq obj nul ~] oct ~]
-    ;:  weld
-      %-  expect-eq  !>
-        :-  [0x5 0x0 ~]
-        ~(ren asn1 nul)
-      %-  expect-eq  !>
-        [nul (scan ~(ren asn1 nul) decode:asn1)]
-      %-  expect-eq  !>
-        :-  [0x2 0x2 0x0 0xbb ~]
-        ~(ren asn1 int)
-      %-  expect-eq  !>
-        [int (scan ~(ren asn1 int) decode:asn1)]
-      %-  expect-eq  !>
-        :-  [0x6 0x9 0x60 0x86 0x48 0x1 0x65 0x3 0x4 0x2 0x1 ~]
-        ~(ren asn1 obj)
-      %-  expect-eq  !>
-        [obj (scan ~(ren asn1 obj) decode:asn1)]
-      %-  expect-eq  !>
-        :-    0x420.5891.b5b5.22d5.df08.6d0f.f0b1.10fb.
-          d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
-        `@ux`(swp 3 (rep 3 ~(ren asn1 oct)))
-      %-  expect-eq  !>
-        [oct (scan ~(ren asn1 oct) decode:asn1)]
-      %-  expect-eq  !>
-        :-  0x30.3130.0d06.0960.8648.0165.0304.0201.0500.0420.5891.b5b5.22d5.
-            df08.6d0f.f0b1.10fb.d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
-        `@ux`(swp 3 (rep 3 ~(ren asn1 seq)))
-      %-  expect-eq  !>
-        [seq (scan ~(ren asn1 seq) decode:asn1)]
-    ==
+  ++  test-rs256
+    ~
   ::
   ++  testjwkthumbprint
     =/  n
