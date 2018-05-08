@@ -2452,7 +2452,7 @@
             %mute  !!
             %pact  !!
             %path  !!
-            %plan  !!
+            %plan  (plan [source-path query-string scaffold]:schematic.build)
             %reef  reef
             %ride  (ride [formula subject]:schematic.build)
             %same  (same schematic.schematic.build)
@@ -2589,6 +2589,42 @@
         =/  message=tang  [[%leaf "ford: %call failed:"] p.val]
         [build [%build-result %error message] accessed-builds |]
       ==
+    ::
+    ++  plan
+      |=  [source-path=rail query-string=coin =scaffold]
+      ^-  build-receipt
+      ::  TODO: support cranes
+      ::  TODO: support query-string
+      ::  TODO: support source-path
+      ::  TODO: support indirect hoons
+      ::
+      =/  hoon-stack=(list hoon)
+        %+  turn  sources.scaffold
+        |=  =brick  ?>(?=(%direct -.brick) source.brick)
+      ::  combine hoons into one: =~(hoon1 hoon2 ...)
+      ::  TODO: why flop?
+      ::
+      =/  combined-hoon=hoon  [%tssg (flop hoon-stack)]
+      ::  compile :combined-hoon against the kernel subject
+      ::
+      =/  compile=^build  [date.build [%ride combined-hoon [%reef ~]]]
+      ::
+      =^  compiled  accessed-builds  (depend-on compile)
+      ::  compilation blocked; produce block on sub-build
+      ::
+      ?~  compiled
+        [build [%blocks ~[compile] ~] accessed-builds |]
+      ::  compilation failed; error out
+      ::
+      ?:  ?=(%error -.u.compiled)
+        =/  message=tang
+          [[%leaf "%plan failed: "] message.u.compiled]
+        ::
+        [build [%build-result %error message] accessed-builds |]
+      ::  compilation succeeded: produce resulting :vase
+      ::
+      =/  =vase  q:(result-to-cage u.compiled)
+      [build [%build-result %success %plan vase] accessed-builds |]
     ::
     ++  reef
       ^-  build-receipt
