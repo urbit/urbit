@@ -34,6 +34,10 @@
   test-live-three-deep
   test-live-triangle
   test-live-and-pinned-triangle
+  test-call
+  test-call-scry-succeed
+  test-call-scry-fail
+  test-call-scry-block
   test-slim
   test-slit
   test-slit-error
@@ -1090,6 +1094,246 @@
     (expect-ford-empty ford ~nul)
   ==
 ::
+++  test-call
+  ~&  %test-call
+  =/  ford  *ford-gate
+  ::
+  =/  sample-schematic=schematic:ford  [%$ %noun !>(5)]
+  =/  gate-schematic=schematic:ford  [%$ %noun !>(|=(a=@ud +(a)))]
+  =/  call-schematic=schematic:ford  [%call gate-schematic sample-schematic]
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/call] type=~ %make ~nul call-schematic]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %call *] i.moves)
+        ::
+        =/  result=vase  |7:i.moves
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          [6 q.result]
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.result) | -:!>(*@ud))
+    ==
+  ::
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/call] type=~ %kill ~nul]
+      ::
+      moves=~
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-call-scry-succeed
+  ~&  %test-call-scry-succeed
+  ::
+  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
+  =/  ford  *ford-gate
+  ::
+  =/  sample-schematic=schematic:ford  [%$ %noun !>(24)]
+  =/  gate-schematic=schematic:ford
+    [%$ %noun !>(|=(a=@ud .^(@ud %cx /~nul/desk/~1234.5.6/foo/bar)))]
+  =/  call-schematic=schematic:ford  [%call gate-schematic sample-schematic]
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry-42
+      ::
+      call-args=[duct=~[/call] type=~ %make ~nul call-schematic]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %call *] i.moves)
+        ::
+        =/  result=vase  |7:i.moves
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          [42 q.result]
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.result) | -:!>(*@ud))
+    ==
+  ::
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/call] type=~ %kill ~nul]
+      ::
+      moves=~
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford ~nul)
+  ==
+++  test-call-scry-fail
+  ~&  %test-call-scry-fail
+  ::
+  =/  scry-failed  (scry-fail ~1234.5.6)
+  =/  ford  *ford-gate
+  ::
+  =/  sample-schematic=schematic:ford  [%$ %noun !>(24)]
+  =/  gate-schematic=schematic:ford
+    [%$ %noun !>(|=(a=@ud .^(@ud %cx /~nul/desk/~1234.5.6/foo/bar)))]
+  =/  call-schematic=schematic:ford  [%call gate-schematic sample-schematic]
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry-failed
+      ::
+      call-args=[duct=~[/dead] type=~ %make ~nul call-schematic]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %error *] i.moves)
+        ::
+        %-  expect-eq  !>
+        ::  compare the move to the expected move, omitting check on stack trace
+        ::
+        :_  i.moves(|7 ~)
+        :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+            [%error [leaf+"ford: %call failed:" ~]]
+    ==  ==
+  ::
+  =^  results2  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/dead] type=~ %kill ~nul]
+      ::
+      moves=~
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford ~nul)
+  ==
+::
+::
+++  test-call-scry-block
+  ~&  %test-call-scry-block
+  ::
+  =/  scry-blocked  (scry-block ~1234.5.6)
+  =/  ford  *ford-gate
+  ::
+  =/  sample-schematic=schematic:ford  [%$ %noun !>(24)]
+  =/  gate-schematic=schematic:ford
+    [%$ %noun !>(|=(a=@ud .^(@ud %cx /~nul/desk/~1234.5.6/foo/bar)))]
+  =/  call-schematic=schematic:ford  [%call gate-schematic sample-schematic]
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-blocked
+      ::
+      call-args=[duct=~[/live] type=~ %make ~nul call-schematic]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass
+                wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
+                %c  %warp  [~nul ~nul]  %desk
+                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
+    ==  ==  ==
+  ::
+  =^  results2  ford
+    %-  test-ford-take-with-comparator  :*
+      ford
+      now=~1234.5.7
+      scry=scry-blocked
+      ::
+      ^=  call-args
+        :*  wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
+            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %call *] i.moves)
+        ::
+        %+  welp
+          %-  expect-eq  !>
+          ::  compare the move to the expected move, omitting vase type checking
+          ::
+          ::    Types can't be compared using simple equality, so normalize the
+          ::    type to check the rest of the move.
+          ::
+          :_  i.moves(&8 *type)
+          :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete
+              [%success [%call *type 42]]
+          ==
+        ::  make sure the types nest
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut &8:i.moves) | -:!>(*@))
+    ==
+  ::
+  =^  results3  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/live] type=~ %kill ~nul]
+      moves=~
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    (expect-ford-empty ford ~nul)
+  ==
+::
 ++  test-slim
   ~&  %test-slim
   ::
@@ -1155,8 +1399,8 @@
         =/  expected-type=type  -:!>([*tape *@ud])
         =/  actual-type=type    |7:i.moves
         %-  expect-eq  !>
-        :-  (~(nest ut actual-type) | expected-type)
-        &
+        :-  &
+        (~(nest ut actual-type) | expected-type)
     ==
   ::
   =^  results2  ford

@@ -2441,7 +2441,7 @@
             %alts  (alts choices.schematic.build)
             %bake  !!
             %bunt  !!
-            %call  !!
+            %call  (call [gate sample]:schematic.build)
             %cast  !!
             %core  !!
             %diff  !!
@@ -2531,6 +2531,65 @@
       ::
       [build [%build-result %success %alts u.result] accessed-builds &]
     ::
+    ++  call
+      |=  [gate=schematic sample=schematic]
+      ^-  build-receipt
+      ::
+      =/  gate-build=^build  [date.build gate]
+      =^  gate-result    accessed-builds  (depend-on gate-build)
+      ::
+      =/  sample-build=^build  [date.build sample]
+      =^  sample-result  accessed-builds  (depend-on sample-build)
+      ::
+      =|  blocks=(list ^build)
+      =?  blocks  ?=(~ gate-result)    [[date.build gate] blocks]
+      =?  blocks  ?=(~ sample-result)  [[date.build sample] blocks]
+      ?^  blocks
+        ::
+        [build [%blocks blocks ~] accessed-builds |]
+      ::
+      ?<  ?=(~ gate-result)
+      ?<  ?=(~ sample-result)
+      ::
+      =/  gate-vase=vase    q:(result-to-cage u.gate-result)
+      =/  sample-vase=vase  q:(result-to-cage u.sample-result)
+      ::
+      ::  run %slit to get the resulting type of calculating the gate
+      ::
+      =/  slit-schematic=schematic  [%slit gate-vase sample-vase]
+      =/  slit-build=^build  [date.build slit-schematic]
+      =^  slit-result  accessed-builds  (depend-on slit-build)
+      ?~  slit-result
+        [build [%blocks [date.build slit-schematic]~ ~] accessed-builds |]
+      ::
+      ::  TODO: Emit error on slit failure
+      ::
+      ?>  ?=([%success %slit *] u.slit-result)
+      ::
+      ::  How much duplication is there going to be here between +call and
+      ::  +ride? Right now, we're just !! on scrys, but for reals we want it to
+      ::  do the same handling.
+      ?>  &(?=(^ q.gate-vase) ?=(^ +.q.gate-vase))
+      =/  val
+        (mong [q.gate-vase q.sample-vase] intercepted-scry)
+      ::
+      ?-    -.val
+          %0
+        :*  build
+            [%build-result %success %call [type.u.slit-result p.val]]
+            accessed-builds
+            |
+        ==
+      ::
+          %1
+        =/  blocked-paths=(list path)  ((hard (list path)) p.val)
+        (blocked-paths-to-receipt %call blocked-paths)
+      ::
+          %2
+        =/  message=tang  [[%leaf "ford: %call failed:"] p.val]
+        [build [%build-result %error message] accessed-builds |]
+      ==
+    ::
     ++  reef
       ^-  build-receipt
       [build [%build-result %success %reef pit] ~ |]
@@ -2574,64 +2633,7 @@
       ::
           %1
         =/  blocked-paths=(list path)  ((hard (list path)) p.val)
-        ::
-        =/  blocks-or-failures=(list (each ^build tank))
-          %+  turn  blocked-paths
-          |=  =path
-          ::
-          =/  scry-request=(unit scry-request)  (path-to-scry-request path)
-          ?~  scry-request
-            [%| [%leaf "ford: %slim: invalid scry path: {<path>}"]]
-          ::
-          =*  case  r.beam.u.scry-request
-          ::
-          ?.  ?=(%da -.case)
-            [%| [%leaf "ford: %slim: invalid case in scry path: {<path>}"]]
-          ::
-          =/  date=@da  p.case
-          ::
-          =/  resource=(unit resource)  (path-to-resource path)
-          ?~  resource
-            :-  %|
-            [%leaf "ford: %slim: invalid resource in scry path: {<path>}"]
-          ::
-          =/  sub-schematic=^schematic  [%pin date %scry u.resource]
-          ::
-          [%& `^build`[date sub-schematic]]
-        ::
-        =/  failed=tang
-          %+  murn  blocks-or-failures
-          |=  block=(each ^build tank)
-          ^-  (unit tank)
-          ?-  -.block
-            %&  ~
-            %|  `p.block
-          ==
-        ::
-        ?^  failed
-          ::  some failed
-          ::
-          [build [%build-result %error failed] accessed-builds |]
-        ::  no failures
-        ::
-        =/  blocks=(list ^build)
-          %+  turn  blocks-or-failures
-          |=  block=(each ^build tank)
-          ?>  ?=(%& -.block)
-          ::
-          p.block
-        ::
-        =.  accessed-builds
-          %+  roll  blocks
-          |=  [block=^build accumulator=_accessed-builds]
-          =.  accessed-builds  accumulator
-          +:(depend-on [date.block schematic.block])
-        ::
-        ::  TODO: Here we are passing a single ~ for :scry-blocked. Should we
-        ::  be passing one or multiple resource back instead? Maybe not? Are
-        ::  we building blocking schematics, which they themselves will scry?
-        ::
-        [build [%blocks blocks ~] accessed-builds |]
+        (blocked-paths-to-receipt %ride blocked-paths)
       ::
           %2
         =/  message=tang  [[%leaf "ford: %ride failed:"] p.val]
@@ -2760,6 +2762,73 @@
         [~ accessed-builds]
       ::
       [`build-result.cache-line accessed-builds]
+    ::  +blocked-paths-to-receipt: handle the %2 case for mock
+    ::
+    ::    Multiple schematics handle +toon instances. This handles the %2 case
+    ::    for a +toon and transforms it into a +build-receipt so we depend on
+    ::    the blocked paths correctly.
+    ::
+    ++  blocked-paths-to-receipt
+      |=  [name=term blocked-paths=(list path)]
+      ^-  build-receipt
+      ::
+      =/  blocks-or-failures=(list (each ^build tank))
+        %+  turn  blocked-paths
+        |=  =path
+        ::
+        =/  scry-request=(unit scry-request)  (path-to-scry-request path)
+        ?~  scry-request
+          [%| [%leaf "ford: {<name>}: invalid scry path: {<path>}"]]
+        ::
+        =*  case  r.beam.u.scry-request
+        ::
+        ?.  ?=(%da -.case)
+          [%| [%leaf "ford: {<name>}: invalid case in scry path: {<path>}"]]
+        ::
+        =/  date=@da  p.case
+        ::
+        =/  resource=(unit resource)  (path-to-resource path)
+        ?~  resource
+          :-  %|
+          [%leaf "ford: {<name>}: invalid resource in scry path: {<path>}"]
+        ::
+        =/  sub-schematic=^schematic  [%pin date %scry u.resource]
+        ::
+        [%& `^build`[date sub-schematic]]
+      ::
+      =/  failed=tang
+        %+  murn  blocks-or-failures
+        |=  block=(each ^build tank)
+        ^-  (unit tank)
+        ?-  -.block
+          %&  ~
+          %|  `p.block
+        ==
+      ::
+      ?^  failed
+        ::  some failed
+        ::
+        [build [%build-result %error failed] accessed-builds |]
+      ::  no failures
+      ::
+      =/  blocks=(list ^build)
+        %+  turn  blocks-or-failures
+        |=  block=(each ^build tank)
+        ?>  ?=(%& -.block)
+        ::
+        p.block
+      ::
+      =.  accessed-builds
+        %+  roll  blocks
+        |=  [block=^build accumulator=_accessed-builds]
+        =.  accessed-builds  accumulator
+        +:(depend-on [date.block schematic.block])
+      ::
+      ::  TODO: Here we are passing a single ~ for :scry-blocked. Should we
+      ::  be passing one or multiple resource back instead? Maybe not? Are
+      ::  we building blocking schematics, which they themselves will scry?
+      ::
+      [build [%blocks blocks ~] accessed-builds |]
     --
   ::  |utilities:per-event: helper arms
   ::
