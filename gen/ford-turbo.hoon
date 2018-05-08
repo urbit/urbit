@@ -24,6 +24,7 @@
   test-scry-clay-block
   test-scry-clay-live
   test-scry-clay-live-again
+  test-scry-clay-same-path
   test-pinned-in-past
   test-pinned-in-future
   test-pinned-in-pin
@@ -451,6 +452,98 @@
         :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
                 %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    (expect-ford-empty ford ~nul)
+  ==
+::  tests multiple subscriptions on the same resource at different times
+::
+::    We can depend on the same paths but at different times. Make sure we can
+::    block on /~nul/desk/~1234.5.7/... and /~nul/desk/~1234.5.8/... at the
+::    same time.
+::
+++  test-scry-clay-same-path
+  ~&  %test-scry-clay-same-path
+  ::
+  =/  scry-type=type  [%atom %tas ~]
+  ::
+  =/  blocks=(set @da)  (sy ~1234.5.7 ~1234.5.8 ~)
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  scry-schematic=schematic:ford
+    [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
+  =/  autocons=schematic:ford
+    [[%pin ~1234.5.7 scry-schematic] [%pin ~1234.5.8 scry-schematic]]
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-blocks blocks)
+      ::
+      call-args=[duct=~[/first] type=~ %make ~nul autocons]
+      ::
+      ^=  expected-moves
+        :~  :*  duct=~  %pass
+                wire=/~nul/scry-request/cx/~nul/desk/~1234.5.7/foo/bar
+                %c  %warp  [~nul ~nul]  %desk
+                `[%sing %x [%da ~1234.5.7] /foo/bar]
+            ==
+            :*  duct=~  %pass
+                wire=/~nul/scry-request/cx/~nul/desk/~1234.5.8/foo/bar
+                %c  %warp  [~nul ~nul]  %desk
+                `[%sing %x [%da ~1234.5.8] /foo/bar]
+    ==  ==  ==
+  ::
+  =^  results2  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.7
+      scry=(scry-blocks blocks)
+      ::
+      ^=  take-args
+        :*  wire=/~nul/scry-request/cx/~nul/desk/~1234.5.7/foo/bar  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
+            [%c %writ ~ [%x [%da ~1234.5.7] %desk] /bar/foo %noun scry-type %seven]
+        ==
+      ::
+      expected-moves=~
+    ==
+  ::
+  =^  results3  ford
+    %-  test-ford-take  :*
+      ford
+      now=~1234.5.8
+      scry=(scry-blocks blocks)
+      ::
+      ^=  take-args
+        :*  wire=/~nul/scry-request/cx/~nul/desk/~1234.5.8/foo/bar  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
+            [%c %writ ~ [%x [%da ~1234.5.8] %desk] /bar/foo %noun scry-type %eight]
+        ==
+      ::
+      ^=  expected-moves
+        ^-  (list move:ford-gate)
+        :~  :*  duct=~[/first]  %give  %made  ~1234.5.6  %complete  %success
+                [%success %pin ~1234.5.7 %success %scry %noun scry-type %seven]
+                [%success %pin ~1234.5.8 %success %scry %noun scry-type %eight]
+    ==  ==  ==
+  ::
+  =^  results4  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.9
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/first] type=~ %kill ~nul]
+      ::
+      moves=~
+    ==
   ::
   ;:  weld
     results1
@@ -1683,7 +1776,7 @@
       now=~1234.5.7
       scry=scry-blocked
       ::
-      ^=  call-args
+      ^=  take-args
         :*  wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~
             ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type  ::  ^-  sign:ford
             [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
@@ -2931,6 +3024,18 @@
   ~|  scry-block+[beam+beam term+term]
   ?>  =(term %cx)
   ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ::
+  ~
+::
+++  scry-blocks
+  |=  dates=(set @da)  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ~|  scry-block+[beam+beam term+term]
+  ?>  =(term %cx)
+  ?>  ?=([%da @da] r.beam)
+  ?>  (~(has in dates) p.r.beam)
   ::
   ~
 ::  +scry-is-forbidden: makes sure ford does not attempt to scry
