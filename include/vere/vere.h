@@ -36,11 +36,20 @@
         c3_y             hun_y[0];
       } u3_hbod;
 
+    /* u3_rsat: http request state.
+    */
+      typedef enum {
+        u3_rsat_init = 0,                   //  initialized
+        u3_rsat_plan = 1,                   //  planned
+        u3_rsat_ripe = 2                    //  responded
+      } u3_rsat;
+
     /* u3_hreq: incoming http request.
     */
       typedef struct _u3_hreq {
         h2o_req_t*       rec_u;             //  h2o request
         c3_w             seq_l;             //  sequence within connection
+        u3_rsat          sat_e;             //  request state
         struct _u3_hcon* hon_u;             //  connection backlink
         struct _u3_hreq* nex_u;             //  next in connection's list
       } u3_hreq;
