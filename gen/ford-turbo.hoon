@@ -56,6 +56,7 @@
   test-cache-reclamation-live-promote
   test-five-oh-cache-reclamation
   test-reef
+  test-plan-direct-hoon
 ==
 ++  test-is-schematic-live
   ~&  %test-is-schematic-live
@@ -2913,6 +2914,59 @@
         :~  :*  duct=~[/reef]  %give  %made  ~1234.5.6  %complete
                 %success  %pin  ~1234.5.6  %success  %reef  test-pit
     ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-plan-direct-hoon
+  ~&  %test-plan-direct-hoon
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  =hoon  (ream '`@tas`%constant')
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      ^=  call-args
+        :*  duct=~[/plan]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            %plan
+            source-path=[[~nul %desk] /bar/foo]
+            query-string=`coin`[%$ *dime]
+            zuse-version=309
+            structures=~
+            libraries=~
+            cranes=~
+            sources=[%direct hoon]~
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made *] i.moves)
+        =/  result  result.p.card.i.moves
+        ?>  ?=(%complete -.result)
+        ?>  ?=([%success %pin @da %success %plan *] +.result)
+        ::
+        =/  =vase  |5:+.result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  &
+          (~(nest ut p.vase) | -:!>(*@tas))
+        ::
+        %-  expect-eq  !>
+        [%constant q.vase]
+    ==
   ::
   ;:  weld
     results1
