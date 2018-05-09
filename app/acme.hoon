@@ -182,7 +182,7 @@
     =/  d=@ux  (~(inv fo (elcm (dec p) (dec q))) e)
     [p q n e d]
   ::
-  ++  der
+  ++  der                                             ::  pkcs1
     |%
     ++  en
       |%
@@ -213,7 +213,7 @@
         =/  b  (rush a decode:asn1)
         ?~  b  ~
         ?.  ?=([%seq *] u.b)  ~
-        ?.  ?=  $:  [%int *]
+        ?.  ?=  $:  [%int %0]
                     [%int *]
                     [%int *]
                     [%int *]
@@ -232,7 +232,7 @@
       --
     --
   ::
-  ++  pem
+  ++  pem                                             ::  pkcs1
     |%
     ++  en
       |%
