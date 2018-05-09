@@ -22,9 +22,9 @@
 ::  +prep: clear the state on each reload
 ::
 ++  prep  _`.
-::  +poke-atom: invoke with `:ford-turbo &atom 0`
+::  +poke-noun: invoke with `:ford-turbo &atom 0`
 ::
-++  poke-atom
+++  poke-noun
   |=  a/*
   ^-  [(list move) _+>.$]
   ::
