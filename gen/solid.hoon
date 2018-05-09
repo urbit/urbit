@@ -62,6 +62,7 @@
         [%g /vane/gall]
         [%e /vane/eyre]
         [%f /vane/ford]
+        [%j /vane/jael]
     ==
 |-  ^+  all
 ?~  vay  all
