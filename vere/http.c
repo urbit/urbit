@@ -232,6 +232,7 @@ _http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
 {
   u3_hreq* req_u = c3_malloc(sizeof(*req_u));
   req_u->rec_u = rec_u;
+  req_u->sat_e = u3_rsat_init;
   _http_req_link(hon_u, req_u);
 
   return req_u;
@@ -263,6 +264,9 @@ _http_req_kill(u3_hreq* req_u)
 static void
 _http_req_dispatch(u3_hreq* req_u, u3_noun req)
 {
+  c3_assert(u3_rsat_init == req_u->sat_e);
+  req_u->sat_e = u3_rsat_plan;
+
   u3_noun pox = _http_req_to_duct(req_u);
   u3_noun typ = _(req_u->hon_u->htp_u->lop) ? c3__chis : c3__this;
 
@@ -295,6 +299,16 @@ _http_hgen_dispose(void* ptr_v)
 static void
 _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
 {
+  // XX ideally
+  //c3_assert(u3_rsat_plan == req_u->sat_e);
+
+  if ( u3_rsat_plan != req_u->sat_e ) {
+    //uL(fprintf(uH, "duplicate response\n"));
+    return;
+  }
+
+  req_u->sat_e = u3_rsat_ripe;
+
   h2o_req_t* rec_u = req_u->rec_u;
 
   rec_u->res.status = sas;

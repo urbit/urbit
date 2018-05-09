@@ -56,7 +56,7 @@ are included as git submodules. To build urbit from source, perform the followin
 To configure project, enter the build directory and enter
 `meson configure`. Without any arguments this command will display available
 options. For example, to compile debug build of urbit, use
-`meson configure -Ddebug=true`.
+`meson configure -Dbuildtype=debug`.
 To set the prefix for installation use
 `meson configure -Dprefix=/usr`, and so on.
 
