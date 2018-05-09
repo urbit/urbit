@@ -44,7 +44,20 @@
   |=  {pax/path sup/spur hed/@t txt/@t}
   ^-  (quip move _+>)
   :_  +>
-  ?:  =(txt '')  ~
+  ::
+  :: Does txt actually have content, or is it blank?
+  ::
+  =/  txt-blank=?
+    ?~  (rust (trip txt) spac:de-json:html)
+      %|
+    %&
+  ::
+  :: If txt is blank then return no moves.
+  ::
+  ?:  txt-blank  ~
+  ::
+  :: Otherwise, post the content.
+  ::
   :~  %-  act
       :+  %phrase  [[our.bol %fora-posts] ~ ~]
       :_  ~
@@ -68,7 +81,20 @@
   |=  {pax/path sup/spur txt/@t}
   ^-  (quip move _+>)
   :_  +>
-  ?:  =(txt '')  ~
+  ::
+  :: Does txt actually have content, or is it blank?
+  ::
+  =/  txt-blank=?
+    ?~  (rust (trip txt) spac:de-json:html)
+      %|
+    %&
+  ::
+  :: If txt is blank then return no moves.
+  ::
+  ?:  txt-blank  ~
+  ::
+  :: Otherwise, post the content.
+  ::
   :~  ^-  move
       %-  act
       :+  %phrase  [[our.bol %fora-comments] ~ ~]
