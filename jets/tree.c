@@ -233,8 +233,12 @@ static u3j_core _143_pen_d[] =
       };
 
   static u3j_harm _143_qua__comp_fun_a[] = {{".2", u3we_comp_fun}, {}};
+    static c3_c* _143_qua__comp_fun_ha[] = {
+      "5a71faf5",
+      0,
+    };
     static u3j_core _143_qua__comp_d[] =
-      { { "fun", 7, _143_qua__comp_fun_a },
+      { { "fun", 7, _143_qua__comp_fun_a, 0, _143_qua__comp_fun_ha },
         {}
       };
 
@@ -332,6 +336,10 @@ static c3_c* _143_qua__cold_ha[] = {
   "7881e709",
   0,
 };
+static c3_c* _143_qua__comp_ha[] = {
+  "ff1d7ca",
+  0,
+};
 static c3_c* _143_qua__easy_ha[] = {
   "7c0caf1b",
   0,
@@ -367,7 +375,7 @@ static u3j_core _143_qua_d[] =
 
     { "bend", 7, 0, _143_qua__bend_d },
     { "cold", 7, 0, _143_qua__cold_d, _143_qua__cold_ha },
-    { "comp", 7, 0, _143_qua__comp_d },
+    { "comp", 7, 0, _143_qua__comp_d, _143_qua__comp_ha },
     { "cook", 7, 0, _143_qua__cook_d },
     { "easy", 7, 0, _143_qua__easy_d, _143_qua__easy_ha },
     { "glue", 7, 0, _143_qua__glue_d },
