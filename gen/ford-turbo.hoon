@@ -39,6 +39,7 @@
   test-call-scry-succeed
   test-call-scry-fail
   test-call-scry-block
+  test-call-scry-varries
   test-slim
   test-slit
   test-slit-error
@@ -1420,6 +1421,140 @@
       call-args=[duct=~[/live] type=~ %kill ~nul]
       moves=~
     ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    (expect-ford-empty ford ~nul)
+  ==
+::  +test-call-scry-varries: call with an argument which varies
+::
+::    This test reads the sample for a %call schematic from clay. This sample
+::    is a date. Inside of the gate called, we scry on a path based on the
+::    passed in sample date.
+::
+++  test-call-scry-varries
+  ~&  %test-call-scry-varries
+  ::
+  =/  date-type=type  [%atom %da ~]
+  =/  term-type=type   [%atom %tas ~]
+  ::
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %desk %da ~1234.5.6] /timer]]
+      [%noun date-type ~1234.5.6]
+    ::
+      :-  [%cx [[~nul %desk %da ~1234.5.6] /result]]
+      [%noun term-type %first]
+    ::
+      :-  [%cx [[~nul %desk %da ~1234.5.7] /timer]]
+      [%noun date-type ~1234.5.7]
+    ::
+      :-  [%cx [[~nul %desk %da ~1234.5.7] /result]]
+      [%noun term-type %second]
+    ==
+  ::
+  =/  scry  (scry-with-results scry-results)
+  =/  ford  *ford-gate
+  ::
+  =/  sample-schematic=schematic:ford
+    [%scry [%c care=%x bel=[[~nul %desk] /timer]]]
+  =/  gate-schematic=schematic:ford
+    [%$ %noun !>(|=(a=@da .^(@tas %cx /~nul/desk/(scot %da a)/result)))]
+  =/  call-schematic=schematic:ford  [%call gate-schematic sample-schematic]
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry
+      ::
+      ^=  call-args
+        [duct=~[/call] type=~ %make ~nul call-schematic]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?>  =(2 (lent moves))
+        ?>  ?=([^ ^ ~] moves)
+        ?>  ?=([* %give %made @da %complete %success %call *] i.moves)
+        ::  compare the move to the expected move, omitting vase type checking
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :_  i.moves(&8 *type)
+          :*  duct=~[/call]  %give  %made  ~1234.5.6  %complete  %success
+              %call  *type  %first
+          ==
+        ::  make sure the types nest
+        %+  weld
+          %-  expect-eq  !>
+          :-  &
+          (~(nest ut &8:i.moves) | -:!>(*@tas))
+        ::  make sure the other move is a subscription
+        ::
+        %-  expect-eq  !>
+        :_  i.t.moves
+        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+            %c  %warp  [~nul ~nul]  %desk
+            `[%mult [%da ~1234.5.6] (sy [%x /timer] ~)]
+    ==  ==
+  ::
+  =^  results2  ford
+    %-  test-ford-take-with-comparator  :*
+      ford
+      now=~1234.5.7
+      scry=scry
+      ::
+      ^=  call-args
+        :*  wire=/~nul/clay-sub/~nul/desk  duct=~
+            ^=  wrapped-sign  ^-  (hypo sign:ford)  :-  *type
+            [%c %wris [%da ~1234.5.7] (sy [%x /timer]~)]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?>  =(2 (lent moves))
+        ?>  ?=([^ ^ ~] moves)
+        ?>  ?=([* %give %made @da %complete %success %call *] i.moves)
+        ::  compare the move to the expected move, omitting vase type checking
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :_  i.moves(&8 *type)
+          :*  duct=~[/call]  %give  %made  ~1234.5.7  %complete  %success
+              %call  *type  %second
+          ==
+        ::  make sure the types nest
+        %+  weld
+          %-  expect-eq  !>
+          :-  &
+          (~(nest ut &8:i.moves) | -:!>(*@tas))
+        ::  make sure the other move is a subscription
+        ::
+        %-  expect-eq  !>
+        :_  i.t.moves
+        :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+            %c  %warp  [~nul ~nul]  %desk
+            `[%mult [%da ~1234.5.7] (sy [%x /timer] ~)]
+    ==  ==
+  ::
+  =^  results3  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/call] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk  ~
+    ==  ==  ==
   ::
   ;:  weld
     results1
