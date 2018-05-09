@@ -52,7 +52,7 @@
             det/channel                                 ::  channel state
         ==                                              ::
       $=  rel                                           ::  neighborhood
-        $:  dad/_our                                    ::  parent
+        $:  dad/ship                                    ::  parent
             cod/farm                                    ::  dependencies
             pyr/(set ship)                              ::  peers
             kyz/(set ship)                              ::  children
@@ -605,11 +605,11 @@
           ?~(les ~ `[nut les])
     ::                                                  ::  ++table:dif:ry
     ++  table                                           ::  diff map
-      |*  {nut/@tas new/(map) old/(map)}
-      ^-  (pair (unit rite) (unit rite))
-      =/  ped  (~(dep by old) new)
-      :-  ?~(p.ped ~ `[nut p.ped])
-          ?~(q.ped ~ `[nut q.ped])
+      |*  {nut/@tas new/(map) old/(map)}  !!
+      :: ^-  (pair (unit rite) (unit rite))
+      :: =/  ped  (~(dep by old) new)
+      :: :-  ?~(p.ped ~ `[nut p.ped])
+      ::     ?~(q.ped ~ `[nut q.ped])
     --  ::dif
   ::                                                    ::  ++sub:ry
   ++  sub                                               ::  l - r
@@ -663,11 +663,11 @@
       (~(uni in old) new)
     ::                                                  ::  ++table:uni:ry
     ++  table                                           ::  union map
-      |*  {new/(map) old/(map)}
-      ^+  new
-      %-  (~(uno by old) new)
-      |=  (trel _p.-<.new _q.->.new _q.->.new)
-      ?>(=(q r) r)
+      |*  {new/(map) old/(map)}  !!
+      :: ^+  new
+      :: %-  (~(uno by old) new)
+      :: |=  (trel _p.-<.new _q.->.new _q.->.new)
+      :: ?>(=(q r) r)
     --  ::uni
   --  ::ry
 ::                                                      ::  ++up
@@ -782,7 +782,7 @@
       [%apple (~(run by p.rys) |=(@ (mug +<)))]
     ::
         $final
-      [%final (~(run by p.rys) |=(@ (mug +<)))]
+      [%final (mug p.rys)]
     ::
         $login
       [%login ~]
@@ -915,40 +915,49 @@
     ::    {$burn p/ship q/safe}
     ::
         $burn
-      (cure abet:abet:(deal:(burb our) p.tac [~ q.tac]))
+      %+  cure  our.tac
+      abet:abet:(deal:(burb our.tac) p.tac [~ q.tac])
     ::
     ::  remote update
     ::    {$hail p/ship q/remote}
     ::
         $hail
-      (cure abet:abet:(hail:(burb p.tac) our q.tac))
+      %+  cure  our.tac
+      abet:abet:(hail:(burb p.tac) our.tac q.tac)
     ::
     ::  initialize vane
     ::    {$init p/code q/arms}
     ::
         $init
-      (cure abet:abet:(make:(burb our) now.sys eny.sys p.tac q.tac))
+      %+  cure  our.tac
+      abet:(make:(burb our.tac) our.tac now.sys eny.sys p.tac q.tac)
     ::
     ::  create promises
     ::    {$mint p/ship q/safe}
     ::
         $mint
-      (cure abet:abet:(deal:(burb our) p.tac [q.tac ~]))
+      %+  cure  our.tac
+      abet:abet:(deal:(burb our.tac) p.tac [q.tac ~])
 
     ::
     ::  move promises
     ::    {$move p/ship q/ship r/safe}
     ::
         $move
-      =.  +>  (cure abet:abet:(deal:(burb our) p.tac [~ r.tac]))
-      =.  +>  (cure abet:abet:(deal:(burb our) q.tac [r.tac ~]))
+      =.  +>
+        %+  cure  our.tac
+        abet:abet:(deal:(burb our.tac) p.tac [~ r.tac])
+      =.  +>
+        %+  cure  our.tac
+        abet:abet:(deal:(burb our.tac) q.tac [r.tac ~])
       +>
     ::
     ::  public-key update
     ::    {$meet p/(unit (unit ship)) q/farm}
     ::
         $meet
-      (cure abet:(~(meet ur urb) p.tac q.tac))
+      %+  cure  our.tac
+      abet:(~(meet ur urb) p.tac q.tac)
     ::
     ::  cancel all trackers from duct
     ::    {$nuke $~}
@@ -967,25 +976,26 @@
     ::    {$next p/bull}
     ::
         $next
-      (cure abet:abet:(next:(burb our) eny.sys p.tac))
+      %+  cure  our.tac
+      abet:abet:(next:(burb our.tac) eny.sys p.tac)
     ::
     ::  open secure channel
     ::    {$veil p/ship}
     ::
         $veil
-      (curd abet:(~(veil ~(feed su urb sub) hen) p.tac))
+      (curd abet:(~(veil ~(feed su our.tac urb sub) hen) p.tac))
     ::
     ::  watch private keys
     ::    {$vein $~}
     ::
         $vein
-      (curd abet:~(vein ~(feed su urb sub) hen))
+      (curd abet:~(vein ~(feed su our.tac urb sub) hen))
     ::
     ::  monitor assets
     ::    {$vest $~}
     ::
         $vest
-      (curd abet:~(vest ~(feed su urb sub) hen))
+      (curd abet:~(vest ~(feed su our.tac urb sub) hen))
     ::
     ::  monitor all
     ::    {$vine $~}
@@ -1005,13 +1015,15 @@
       ::    {$hail p/safe}
       ::
           $hail
-        (cure abet:abet:(hail:(burb p.tac) our [%| p.mes]))
+        %+  cure  our.tac
+        abet:abet:(hail:(burb p.tac) our.tac [%| p.mes])
       ::
       ::  share certificates
       ::    {$meet p/farm}
       ::
           $meet
-        (cure abet:(~(meet ur urb) ``p.tac p.mes))
+        %+  cure  our.tac
+        abet:(~(meet ur urb) ``p.tac p.mes)
       ==
     ==
   ::                                                    ::  ++curd:of
@@ -1020,9 +1032,9 @@
     +>(sub sub, moz (weld (flop moz) ^moz))
   ::                                                    ::  ++cure:of
   ++  cure                                              ::  absolute edits
-    |=  {hab/(list change) urb/state-absolute}
+    |=  {our/ship hab/(list change) urb/state-absolute}
     ^+  +>
-    (curd(urb urb) abet:(~(apex su urb sub) hab))
+    (curd(urb urb) abet:(~(apex su our urb sub) hab))
   --
 ::                                                      ::  ++su
 ::::                    ## relative^heavy               ::  subjective engine
@@ -1043,15 +1055,16 @@
       ::  ++form:su generates the actual report data.
       ::
   =|  moz/(list move)
-  =|  $:  state-absolute
+  =|  $:  our/ship
+          state-absolute
           state-relative
       ==
   ::  moz: moves in reverse order
   ::  urb: absolute urbit state
   ::  sub: relative urbit state
   ::
-  =*  urb  -<
-  =*  sub  ->
+  =*  urb  ->-
+  =*  sub  ->+
   |%
   ::                                                    ::  ++abet:su
   ++  abet                                              ::  resolve
@@ -1510,6 +1523,7 @@
             ::  gen: bootstrap ticket
             ::  nym: self-description
             ::
+            our/ship  ::TODO  "absolutely verboten"
             now/@da
             eny/@e 
             gen/@pG
@@ -1887,52 +1901,6 @@
         new(syg (~(put by syg.new) dad [p.pev val]))
   --  --
     --
-++  neon
-  |=  our/ship
-  ^-  (vane task gift sign note state state)
-  =|  lex/state
-  |%
-  ++  load  |=(state +>)
-  ++  stay  lex
-  ++  plow
-    =|  $:  now/@da
-            eny/@e
-            sky/roof
-        ==
-    |%
-    ++  doze  ~
-    ++  peek
-      |=  $:  lyc/(unit (set ship))
-              car/term
-              bem/beam
-          ==
-      ^-  (unit (unit (cask vase)))
-      ::
-      ::  XX: needs review
-      ::
-      ?.  &(=(p.bem our) =(r.bem `case`[%da now]))  ~
-      %-  some
-      ?.  =(%$ car)  ~
-      %+  bind  (~(scry of [now eny] lex) q.bem s.bem)
-      |=(a/gilt [-.a (slot 3 (spec !>(a)))])
-    ::
-    ++  spin
-      =|  $:  hen/duct
-              moz/(list (pair duct (wind note gift)))
-          ==
-      |%
-      ++  call  
-        |=  tac/task
-        ^+  +>
-        =^  did  lex  abet:(~(call of [now eny] lex) hen tac)
-        +>.$(moz (weld moz did))
-      ::
-      ++  take  
-        |=  {tea/wire hin/sign}
-        +>
-      --
-    --
-  --
 --
 ::                                                      ::::
 ::::                    #  vane                         ::  interface

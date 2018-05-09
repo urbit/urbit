@@ -984,19 +984,19 @@
       action                                            ::  change
     ::
     +=  task                                            ::  in request ->$
-      $%  [%burn p=ship q=safe]                         ::  destroy rights
-          [%hail p=ship q=remote]                       ::  remote update
-          [%init p=@pG q=arms]                          ::  initialize urbit
-          [%meet p=(unit (unit ship)) q=farm]           ::  integrate pki from
-          [%mint p=ship q=safe]                         ::  create rights
-          [%move p=ship q=ship r=safe]                  ::  transfer from=to
-          [%next p=bull]                                ::  update private key
+      $%  [%burn our=ship p=ship q=safe]                ::  destroy rights
+          [%hail our=ship p=ship q=remote]              ::  remote update
+          [%init our=ship p=@pG q=arms]                 ::  initialize urbit
+          [%meet our=ship p=(unit (unit ship)) q=farm]  ::  integrate pki from
+          [%mint our=ship p=ship q=safe]                ::  create rights
+          [%move our=ship p=ship q=ship r=safe]         ::  transfer from=to
+          [%next our=ship p=bull]                       ::  update private key
           [%nuke ~]                                     ::  cancel tracker from
-          [%veil p=ship]                                ::  view secret channel
-          [%vein ~]                                     ::  view signing keys
-          [%vest ~]                                     ::  view public balance
+          [%veil our=ship p=ship]                       ::  view secret channel
+          [%vein our=ship]                              ::  view signing keys
+          [%vest our=ship]                              ::  view public balance
           [%vine ~]                                     ::  view secret history
-          [%west p=ship q=path r=*]                     ::  remote request
+          [%west our=ship p=ship q=path r=*]            ::  remote request
       ==                                                ::
     ++  gilt  gilt:womb
     --
