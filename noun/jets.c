@@ -51,13 +51,13 @@ _cj_core_loc(u3_noun pel, u3j_core* cop_u)
     for ( i_w = 0; 0 != cop_u->huc_u[i_w].nam_c; ++i_w ) {
       huc = u3kdb_put(huc,
           u3i_string(cop_u->huc_u[i_w].nam_c),
-          cop_u->huc_u[i_w].axe_l);
+          u3nq(9, cop_u->huc_u[i_w].axe_l, 0, 1));
     }
   }
 
   pat = ( 0 == cop_u->axe_l )
       ? u3nt(c3y, c3y, pel)
-      : ( (3 == cop_u->axe_l) && (c3y == u3h(pel)) )
+      : ( (3 == cop_u->axe_l) && (c3y == u3h(u3h(pel))) )
       ? u3nt(c3y, c3n, pel)
       : u3nt(c3n, cop_u->axe_l, pel);
 
@@ -70,7 +70,7 @@ static u3_noun
 _cj_hash(c3_c* has_c)
 {
   c3_l mug;
-  sscanf(has_c, "%d", &mug);
+  sscanf(has_c, "%x", &mug);
   return mug;
 }
 
@@ -177,8 +177,9 @@ _cj_install(u3j_core* ray_u, c3_w jax_l, u3_noun pel, u3_noun lab, u3j_core* dev
         c3_w j_w;
         for ( j_w = 0; 0 != kid_u->bas_u[j_w]; j_w++ ) {
           u3_noun key = _cj_hash(kid_u->bas_u[j_w]),
-                  reg = _cj_gust(u3h_get(u3D.hot_p, key),
-                                 kid_u->axe_l, u3k(pel), u3k(loc));
+                  hot = u3h_get(u3D.hot_p, key),
+                  old = ( u3_none == hot ) ? u3_none : u3k(u3h(hot)),
+                  reg = _cj_gust(old, kid_u->axe_l, u3k(pel), u3k(loc));
           u3h_put(u3D.hot_p, key,
               u3nq(reg, jax_l, u3k(u3t(u3t(loc))), u3k(bal)));
           u3z(key);
@@ -681,7 +682,7 @@ u3j_boot(void)
   memset(u3D.ray_u, 0, (u3D.all_l * sizeof(u3j_core)));
 
   u3D.hot_p = u3h_new();
-  jax_l = _cj_install(u3D.ray_u, 1, (c3_l) (long long) u3D.ray_u[0].par_u, u3_nul, u3D.dev_u);
+  jax_l = _cj_install(u3D.ray_u, 1, (c3_l) (long long) u3D.dev_u[0].par_u, u3_nul, u3D.dev_u);
   fprintf(stderr, "boot: installed %d jets\n", jax_l);
 }
 
@@ -1594,22 +1595,24 @@ _cj_mine(u3_noun cey, u3_noun cor)
   u3h_put(u3R->jed.war_p, loc, act); // see note in _cj_spot
 
   {
-    u3_noun bas = _cj_bash(bat);
-    u3_noun hot = u3h_get(u3D.hot_p, bas);
+    u3_noun bas = _cj_bash(bat),
+            hot = u3h_get(u3D.hot_p, bas);
     c3_o  hav_o = c3n;
 
     if ( u3_none == hot ) {
       u3m_p("unregistered battery", bal);
     }
     else {
-      u3_noun hol = _cj_reg_find(hot, cor);
+      u3_noun her = u3h(hot),
+              hol = _cj_reg_find(her, cor);
       if ( hol != u3_none ) {
         if ( c3n == u3r_sing(loc, hol) ) {
-          u3m_p("bogus hot location", hol);
+          u3m_p("bogus hot loc", hol);
           u3m_p("registered as", loc);
         }
         else {
           hav_o = c3y;
+          fprintf(stderr, "dev mode match: %x\r\n", bas);
         }
       }
       u3z(hol);
@@ -1652,14 +1655,17 @@ _cj_mile(u3_noun clu, u3_noun cor)
     u3z(cor);
   }
   else {
-    loc = _cj_spot(cor, u3_none);
-    if ( u3_none == loc ) {
-      loc = _cj_moan(clu, cor);
-    }
-    else {
-      u3z(clu);
-      u3z(cor);
-    }
+    loc = _cj_moan(clu, cor);
+    // don't early terminate for located cores,
+    // that's handled at rites (fine checks)
+    //loc = _cj_spot(cor, u3_none);
+    //if ( u3_none == loc ) {
+    //  loc = _cj_moan(clu, cor);
+    //}
+    //else {
+    //  u3z(clu);
+    //  u3z(cor);
+    //}
   }
   return loc;
 }
@@ -1669,9 +1675,11 @@ _cj_mile(u3_noun clu, u3_noun cor)
 void
 u3j_mine(u3_noun clu, u3_noun cor)
 {
-  // TODO: bail early unless developer mode is set
   u3t_on(glu_o);
   if ( (c3n == u3du(cor)) || (c3y == _cj_scan(cor)) ) {
+    // this path (not called by bytecode interpreter) will not
+    // verify (as u3j_rite_mine does) that hot registration
+    // matches hinted registration.
     u3z(clu);
     u3z(cor);
   }
@@ -1689,7 +1697,6 @@ u3j_mine(u3_noun clu, u3_noun cor)
 void
 u3j_rite_mine(u3j_rite* rit_u, u3_noun clu, u3_noun cor)
 {
-  // TODO: bail early unless developer mode is set
   c3_t non_t;
   u3t_on(glu_o);
 

@@ -21,9 +21,14 @@
                     jit=* :: FIXME: should probably be (map battery *)
                           :: since there can be multiple batteries per location
                 ==
-::
++=  hot-info    $:  reg=registry
+                    hot-index=@ud
+                    drivers=(map axis @ud)
+                    label=path
+                ==
 +=  bash        mug=@  :: later, noun-flavored sha256
-+=  hot         (map bash registry)
+::
++=  hot         (map bash hot-info)
 +=  cold        (map battery=^ registry)
 +=  warm        (map location activation)
 #endif
