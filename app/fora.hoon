@@ -44,6 +44,7 @@
   |=  {pax/path sup/spur hed/@t txt/@t}
   ^-  (quip move _+>)
   :_  +>
+  ?:  =(txt '')  ~
   :~  %-  act
       :+  %phrase  [[our.bol %fora-posts] ~ ~]
       :_  ~
@@ -67,6 +68,7 @@
   |=  {pax/path sup/spur txt/@t}
   ^-  (quip move _+>)
   :_  +>
+  ?:  =(txt '')  ~
   :~  ^-  move
       %-  act
       :+  %phrase  [[our.bol %fora-comments] ~ ~]
