@@ -1126,7 +1126,7 @@
       $%  {$apple p/(map site @)}                       ::  web api key
           {$block $~}                                   ::  banned
           {$email p/(set @t)}                           ::  email addresses
-          {$final p/@pG}                                ::  recognize by ticket
+          {$final p/(map ship @pG)}                     ::  ticketed ships
           {$fungi p/(map term @ud)}                     ::  fungibles
           {$guest $~}                                   ::  refugee visa
           {$hotel p/(map dorm pile)}                    ::  reserved block

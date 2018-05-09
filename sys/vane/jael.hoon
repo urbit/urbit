@@ -605,11 +605,12 @@
           ?~(les ~ `[nut les])
     ::                                                  ::  ++table:dif:ry
     ++  table                                           ::  diff map
-      |*  {nut/@tas new/(map) old/(map)}  !!
-      :: ^-  (pair (unit rite) (unit rite))
-      :: =/  ped  (~(dep by old) new)
-      :: :-  ?~(p.ped ~ `[nut p.ped])
-      ::     ?~(q.ped ~ `[nut q.ped])
+      |*  {nut/@tas new/(map) old/(map)}
+      ::TODO  (~(dep by old) new)
+      =/  mor  (~(dif by new) old)
+      =/  les  (~(dif by old) new)
+      :-  ?~(mor ~ `[nut mor])
+          ?~(les ~ `[nut les])
     --  ::dif
   ::                                                    ::  ++sub:ry
   ++  sub                                               ::  l - r
@@ -663,11 +664,11 @@
       (~(uni in old) new)
     ::                                                  ::  ++table:uni:ry
     ++  table                                           ::  union map
-      |*  {new/(map) old/(map)}  !!
-      :: ^+  new
-      :: %-  (~(uno by old) new)
-      :: |=  (trel _p.-<.new _q.->.new _q.->.new)
-      :: ?>(=(q r) r)
+      |*  {new/(map) old/(map)}
+      ^+  new
+      %-  (~(uno by old) new)
+      |=  (trel _p.-<.new _q.->.new _q.->.new)
+      ?>(=(q r) r)
     --  ::uni
   --  ::ry
 ::                                                      ::  ++up
@@ -782,7 +783,7 @@
       [%apple (~(run by p.rys) |=(@ (mug +<)))]
     ::
         $final
-      [%final (mug p.rys)]
+      [%final (~(run by p.rys) |=(@ (mug +<)))]
     ::
         $login
       [%login ~]
@@ -1929,7 +1930,7 @@
       ==
   =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task) p.q.hic)))
   ^-  {p/(list move) q/_..^$}
-  =^  did  lex  abet:~(call of [now eny] lex)
+  =^  did  lex  abet:(~(call of [now eny] lex) hen q.hic)
   [did ..^$]
 ::                                                      ::  ++doze
 ++  doze                                                ::  await
