@@ -349,16 +349,36 @@
   --
 ::
 ++  jwk
-  |_  k=key:rsa
-  ++  pass
-    ^-  json
-    :-  %o  %-  my  :~
-      kty+s+'RSA'
-      n+s+(en-base64url n.k)
-      e+s+(en-base64url e.k)
-    ==
-  ++  ring  !!
+  |%
+  ++  en
+    |%
+    ++  pass
+      |=  k=key:rsa
+      ^-  json
+      :-  %o  %-  my  :~
+        kty+s+'RSA'
+        n+s+(en-base64url (swp 3 n.k))
+        e+s+(en-base64url (swp 3 e.k))
+      ==
+    ++  ring  !!
+    --
+  ++  de
+    |%
+    ++  pass
+      =,  dejs-soft:format
+      %+  ci
+        |=  a=[kty=@t n=(unit @) e=(unit @)]
+        ^-  (unit [n=@ux e=@ux])  :: XX RSA pubkey model
+        (both (bind n.a (cury swp 3)) (bind e.a (cury swp 3)))
+      %-  ot  :~
+        kty+(su (jest 'RSA'))
+        n+(cu de-base64url so)
+        e+(cu de-base64url so)
+      ==
+    ++  ring  !!
+    --
   --
+::
 ++  thumbprint
   |=  jon=json
   :: XX restrict keys to canonical set
@@ -432,7 +452,7 @@
       ?^  kid
         kid+s+u.kid
       ?>  ?=(^ key)
-      jwk+~(pass jwk u.key) 
+      jwk+(pass:en:jwk u.key)
     ==
   %-  (corl as-octt:mimes:html en-json:html)
   ^-  json
@@ -523,7 +543,7 @@
             test-rsa
             test-rsapem
             test-rs256
-            test-jwkthumbprint
+            test-jwk
             :: testjws
           ==
       ?~(out abet ((slog out) abet))
@@ -862,7 +882,7 @@
         [exp2b64 (en:base64 (swp 3 sig))]
     ==
   ::
-  ++  test-jwkthumbprint
+  ++  test-jwk
     :: rfc7638 section 3.1
     =/  n
       :~  '0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2'
@@ -872,16 +892,21 @@
           '91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_x'
           'BniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw'
       ==
-    =/  k=json
+    =/  jk=json
       :-  %o  %-  my  :~
         e+s+'AQAB'
         kty+s+'RSA'
         n+s+(rap 3 n)
       ==
-    ::
-    %-  expect-eq  !>
-      :-  'NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs'
-      (thumbprint k)
+    =/  k  (need (pass:de:jwk jk))
+    ;:  weld
+      %-  expect-eq  !>
+        :-  jk
+        (pass:en:jwk [0x0 0x0 n.k e.k 0x0])
+      %-  expect-eq  !>
+        :-  'NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs'
+        (thumbprint jk)
+    ==
   ::
   ++  test-jws
     ^-  wall
