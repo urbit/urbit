@@ -968,12 +968,6 @@
       ::    component linkages and cache access times.
       ::
       sub-builds=(list build)
-      ::  clear-sub-builds: replace previous sub-builds with :sub-builds
-      ::
-      ::    Some schematics will completely rerun their resource registration,
-      ::    but others will need to add to their previous resources.
-      ::
-      clear-sub-builds=?
   ==
 ::  +vane: short names for vanes
 ::
@@ -1983,11 +1977,6 @@
             ==
           ::
           (do-live-scry-accounting build.made resource.schematic.build.made)
-        ::  clear the components
-        ::
-        =?    ..execute
-            clear-sub-builds.made
-          (unlink-sub-builds build.made)
         ::  process :sub-builds.made
         ::
         =.  state  (track-sub-builds build.made sub-builds.made)
@@ -2075,7 +2064,6 @@
                     =build-result
                 ==
                 sub-builds=(list build)
-                clear-sub-builds=?
             ==
         ^+  ..execute
         ::
@@ -2280,6 +2268,10 @@
           ::
           %-  ~(uni in listeners)
           (fall (~(get by listeners.state) build) ~)
+        ::  remove the orphaned build from provisional builds
+        ::
+        =.  provisional-components.state
+          (~(del by-build-dag provisional-components.state) build sub-build)
         ::  orphaned-listeners: the clients we actually have to remove
         ::
         ::    The clients that are actually orphaned are the ones which are
@@ -2290,16 +2282,16 @@
           (~(dif in provisional-client-listeners) all-other-client-listeners)
         ::  remove orphaned listeners from :sub-build
         ::
+        ::    We need to do this after we've removed :sub-build from
+        ::    :provisional-components.state because otherwise that provisional
+        ::    client link will prevent the listener from being removed.
+        ::
         =.  state
           %+  roll  ~(tap in orphaned-listeners)
           |=  [=listener accumulator=_state]
           =.  state  accumulator
           ::
           (remove-listener-from-build listener sub-build)
-        ::  remove the orphaned build from provisional builds
-        ::
-        =.  provisional-components.state
-          (~(del by-build-dag provisional-components.state) build sub-build)
         ::
         (cleanup sub-build)
       ::
@@ -2488,18 +2480,18 @@
       ::
       ?^  blocks
         ::
-        [build [%blocks blocks ~] accessed-builds |]
+        [build [%blocks blocks ~] accessed-builds]
       ::
       ?<  ?=(~ head-result)
       ?<  ?=(~ tail-result)
       ::
-      =-  [build [%build-result -] accessed-builds |]
+      =-  [build [%build-result -] accessed-builds]
       `build-result`[%success u.head-result u.tail-result]
     ::
     ++  literal
       |=  =cage
       ^-  build-receipt
-      [build [%build-result %success %$ cage] accessed-builds |]
+      [build [%build-result %success %$ cage] accessed-builds]
     ::
     ++  pin
       |=  [date=@da =schematic]
@@ -2511,8 +2503,8 @@
       =^  result  accessed-builds  (depend-on pinned-sub)
       ::
       ?~  result
-        [build [%blocks ~[pinned-sub] ~] accessed-builds |]
-      [build [%build-result %success %pin date u.result] accessed-builds |]
+        [build [%blocks ~[pinned-sub] ~] accessed-builds]
+      [build [%build-result %success %pin date u.result] accessed-builds]
     ::
     ++  alts
       |=  choices=(list schematic)
@@ -2522,18 +2514,17 @@
         :*  build
             [%build-result %error [leaf+"%alts: all options failed"]~]
             accessed-builds
-            &
         ==
       =/  choice=^build  [date.build i.choices]
       ::
       =^  result  accessed-builds  (depend-on choice)
       ?~  result
-        [build [%blocks ~[choice] ~] accessed-builds &]
+        [build [%blocks ~[choice] ~] accessed-builds]
       ::
       ?:  ?=([%error *] u.result)
         $(choices t.choices)
       ::
-      [build [%build-result %success %alts u.result] accessed-builds &]
+      [build [%build-result %success %alts u.result] accessed-builds]
     ::
     ++  call
       |=  [gate=schematic sample=schematic]
@@ -2550,7 +2541,7 @@
       =?  blocks  ?=(~ sample-result)  [[date.build sample] blocks]
       ?^  blocks
         ::
-        [build [%blocks blocks ~] accessed-builds |]
+        [build [%blocks blocks ~] accessed-builds]
       ::
       ?<  ?=(~ gate-result)
       ?<  ?=(~ sample-result)
@@ -2564,7 +2555,7 @@
       =/  slit-build=^build  [date.build slit-schematic]
       =^  slit-result  accessed-builds  (depend-on slit-build)
       ?~  slit-result
-        [build [%blocks [date.build slit-schematic]~ ~] accessed-builds |]
+        [build [%blocks [date.build slit-schematic]~ ~] accessed-builds]
       ::
       ::  TODO: Emit error on slit failure
       ::
@@ -2582,7 +2573,6 @@
         :*  build
             [%build-result %success %call [type.u.slit-result p.val]]
             accessed-builds
-            |
         ==
       ::
           %1
@@ -2591,7 +2581,7 @@
       ::
           %2
         =/  message=tang  [[%leaf "ford: %call failed:"] p.val]
-        [build [%build-result %error message] accessed-builds |]
+        [build [%build-result %error message] accessed-builds]
       ==
     ::
     ++  plan
@@ -2617,22 +2607,22 @@
       ::  compilation blocked; produce block on sub-build
       ::
       ?~  compiled
-        [build [%blocks ~[compile] ~] accessed-builds |]
+        [build [%blocks ~[compile] ~] accessed-builds]
       ::  compilation failed; error out
       ::
       ?:  ?=(%error -.u.compiled)
         =/  message=tang
           [[%leaf "%plan failed: "] message.u.compiled]
         ::
-        [build [%build-result %error message] accessed-builds |]
+        [build [%build-result %error message] accessed-builds]
       ::  compilation succeeded: produce resulting :vase
       ::
       =/  =vase  q:(result-to-cage u.compiled)
-      [build [%build-result %success %plan vase] accessed-builds |]
+      [build [%build-result %success %plan vase] accessed-builds]
     ::
     ++  reef
       ^-  build-receipt
-      [build [%build-result %success %reef pit] ~ |]
+      [build [%build-result %success %reef pit] ~]
     ::
     ++  ride
       |=  [formula=hoon =schematic]
@@ -2640,20 +2630,19 @@
       ::
       =^  result  accessed-builds  (depend-on [date.build schematic])
       ?~  result
-        [build [%blocks [date.build schematic]~ ~] accessed-builds |]
+        [build [%blocks [date.build schematic]~ ~] accessed-builds]
       ::
       =*  subject  u.result
       =*  subject-cage  (result-to-cage subject)
       =/  slim-schematic=^schematic  [%slim p.q.subject-cage formula]
       =^  slim-result  accessed-builds  (depend-on [date.build slim-schematic])
       ?~  slim-result
-        [build [%blocks [date.build slim-schematic]~ ~] accessed-builds |]
+        [build [%blocks [date.build slim-schematic]~ ~] accessed-builds]
       ::
       ?:  ?=(%error -.u.slim-result)
         :*  build
             [%build-result %error [%leaf "%ride: "] message.u.slim-result]
             accessed-builds
-            |
         ==
       ::
       ?>  ?=([%success %slim *] u.slim-result)
@@ -2668,7 +2657,6 @@
         :*  build
             [%build-result %success %ride [type.u.slim-result p.val]]
             accessed-builds
-            |
         ==
       ::
           %1
@@ -2677,7 +2665,7 @@
       ::
           %2
         =/  message=tang  [[%leaf "ford: %ride failed:"] p.val]
-        [build [%build-result %error message] accessed-builds |]
+        [build [%build-result %error message] accessed-builds]
       ==
     ::
     ++  same
@@ -2687,8 +2675,8 @@
       =^  result  accessed-builds  (depend-on [date.build schematic])
       ::
       ?~  result
-        [build [%blocks [date.build schematic]~ ~] accessed-builds |]
-      [build [%build-result %success %same u.result] accessed-builds |]
+        [build [%blocks [date.build schematic]~ ~] accessed-builds]
+      [build [%build-result %success %same u.result] accessed-builds]
     ::
     ++  scry
       ::  TODO: All accesses to :state which matter happens in this function;
@@ -2728,9 +2716,9 @@
         ?:  already-blocked
           ::  this resource was already blocked, so don't duplicate move
           ::
-          [build [%blocks ~ ~] accessed-builds |]
+          [build [%blocks ~ ~] accessed-builds]
         ::
-        [build [%blocks ~ `scry-request] accessed-builds |]
+        [build [%blocks ~ `scry-request] accessed-builds]
       ::  scry failed
       ::
       ?~  u.scry-response
@@ -2738,13 +2726,14 @@
           :~  leaf+"scry failed for"
               leaf+"%c{(trip care.resource)} {<(en-beam beam)>}"
           ==
-        [build [%build-result %error error] accessed-builds |]
+        [build [%build-result %error error] accessed-builds]
       ::  scry succeeded
       ::
-      [build [%build-result %success %scry u.u.scry-response] accessed-builds |]
+      [build [%build-result %success %scry u.u.scry-response] accessed-builds]
     ::
     ++  slim
       |=  [subject-type=type formula=hoon]
+      ^-  build-receipt
       ::
       =/  compiled=(each (pair type nock) tang)
         (mule |.((~(mint ut subject-type) [%noun formula])))
@@ -2755,7 +2744,6 @@
             %&  [%build-result %success %slim p.compiled]
           ==
           accessed-builds
-          |
       ==
     ::
     ++  slit
@@ -2777,7 +2765,6 @@
             %&  [%build-result %success %slit p.product]
           ==
           accessed-builds
-          |
       ==
     ::  |utilities:make: helper arms
     ::
@@ -2848,7 +2835,7 @@
       ?^  failed
         ::  some failed
         ::
-        [build [%build-result %error failed] accessed-builds |]
+        [build [%build-result %error failed] accessed-builds]
       ::  no failures
       ::
       =/  blocks=(list ^build)
@@ -2868,7 +2855,7 @@
       ::  be passing one or multiple resource back instead? Maybe not? Are
       ::  we building blocking schematics, which they themselves will scry?
       ::
-      [build [%blocks blocks ~] accessed-builds |]
+      [build [%blocks blocks ~] accessed-builds]
     --
   ::  |utilities:per-event: helper arms
   ::
