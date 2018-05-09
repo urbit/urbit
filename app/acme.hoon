@@ -360,22 +360,57 @@
         n+s+(en-base64url (swp 3 n.k))
         e+s+(en-base64url (swp 3 e.k))
       ==
-    ++  ring  !!
+    ++  ring
+      |=  k=key:rsa
+      ^-  json
+      :-  %o  %-  my  :~
+        kty+s+'RSA'
+        p+s+(en-base64url (swp 3 p.k))
+        q+s+(en-base64url (swp 3 q.k))
+        n+s+(en-base64url (swp 3 n.k))
+        e+s+(en-base64url (swp 3 e.k))
+        d+s+(en-base64url (swp 3 d.k))
+      ==
     --
   ++  de
     |%
     ++  pass
       =,  dejs-soft:format
       %+  ci
-        |=  a=[kty=@t n=(unit @) e=(unit @)]
+        |=  [kty=@t n=(unit @) e=(unit @)]
         ^-  (unit [n=@ux e=@ux])  :: XX RSA pubkey model
-        (both (bind n.a (cury swp 3)) (bind e.a (cury swp 3)))
+        (both (bind n (cury swp 3)) (bind e (cury swp 3)))
       %-  ot  :~
         kty+(su (jest 'RSA'))
         n+(cu de-base64url so)
         e+(cu de-base64url so)
       ==
-    ++  ring  !!
+    ++  ring
+      =,  dejs-soft:format
+      %+  ci
+        |=  $:  kty=@t
+                p=(unit @)
+                q=(unit @)
+                n=(unit @)
+                e=(unit @)
+                d=(unit @)
+            ==
+        ^-  (unit key:rsa)
+        ;:  both
+          (bind p (cury swp 3))
+          (bind q (cury swp 3))
+          (bind n (cury swp 3))
+          (bind e (cury swp 3))
+          (bind d (cury swp 3))
+        ==
+      %-  ot  :~
+        kty+(su (jest 'RSA'))
+        p+(cu de-base64url so)
+        q+(cu de-base64url so)
+        n+(cu de-base64url so)
+        e+(cu de-base64url so)
+        d+(cu de-base64url so)
+      ==
     --
   --
 ::
@@ -383,6 +418,12 @@
   |=  jon=json
   :: XX restrict keys to canonical set
   (en-base64url (shax `@`(crip `tape`(en-json-sort aor jon))))
+::
+++  eor                                               ::  explicit order
+  |=  [com=$-([@ @] ?) lit=(list)]
+  |=  [a=* b=*]
+  ^-  ?
+  (fall (bind (both (find ~[a] lit) (find ~[b] lit)) com) |)
 ::
 ++  from-json
   =,  dejs:format
@@ -441,6 +482,7 @@
 ++  jws-body
   |=  [url=purl bod=json]
   ^-  octs
+  ?>  ?=(^ key)
   =*  enc  (corl en-base64url (corl crip (cury en-json-sort aor)))
   =/  payload=cord  (enc bod)
   =/  protect=cord
@@ -451,7 +493,6 @@
       url+s+(crip (en-purl:html url))
       ?^  kid
         kid+s+u.kid
-      ?>  ?=(^ key)
       jwk+(pass:en:jwk u.key)
     ==
   %-  (corl as-octt:mimes:html en-json:html)
@@ -461,9 +502,8 @@
     payload+s+payload
     :+  %signature  %s
     %-  en-base64url
-    ?>  ?=(^ key)
-    %-  ~(sign rs256 u.key)
-    (rap 3 ~[protect '.' payload])
+    %+  swp  3
+    (~(sign rs256 u.key) (rap 3 ~[protect '.' payload]))
   == 
 ::  
 ++  request
@@ -544,7 +584,7 @@
             test-rsapem
             test-rs256
             test-jwk
-            :: testjws
+            test-jws
           ==
       ?~(out abet ((slog out) abet))
   ::
@@ -894,9 +934,9 @@
       ==
     =/  jk=json
       :-  %o  %-  my  :~
-        e+s+'AQAB'
         kty+s+'RSA'
         n+s+(rap 3 n)
+        e+s+'AQAB'
       ==
     =/  k  (need (pass:de:jwk jk))
     ;:  weld
@@ -909,6 +949,7 @@
     ==
   ::
   ++  test-jws
+    ::  rfc7515 appendix 2
     ^-  wall
     =/  pt=@t
       %+  rap  3
@@ -940,68 +981,38 @@
           'CBr6XCLQUShb1juUO1ZdiYoFaFQT5Tw8bGUl_x_jTj3ccPDVZFD9pIuhLh'
           'BOneufuBiB4cS98l2SR_RQyGWSeWjnczT0QU91p1DhOVRuOopznQ'
       ==
-    =/  p  :: (de-base64url pt)
-           0x4719.f070.d9b2.3fe7.d5a0.f842.57b6.e083.80c1.9484.ea75.faa7.
-        f286.556d.c1dd.11e7.5009.d5dc.22ef.6d8e.05c6.739a.dca0.2876.e6a2.
-        fb09.713c.f634.c9d4.254f.2e3f.3f7c.d001.d06b.13e4.2928.1a2a.3714.
-        f079.59b3.6c17.a82b.2676.54f7.b5c4.f92e.907e.1a31.b7dd.f078.0748.
-        fe1f.d1a9.a674.b772.b8a0.6dbb.a40a.4d46.545d.65a6.48eb.10c4.1ce0
-    =/  q  :: (de-base64url qt)
-           0xd759.513f.1303.9270.e3da.f3ba.5e78.5e2a.0781.12d4.7512.b5e5.
-        d4e5.2f09.cdc3.595e.ed12.b1c8.5782.db78.fa40.704e.7e50.1ebf.979a.
-        036c.ebad.ae0f.30f6.0f99.072d.de38.eda5.ab0b.fb78.60c5.bc7b.5256.
-        a72c.b68c.c001.1eb0.a7c5.9909.60fc.645a.a97a.a042.1bc6.297e.b4a6.
-        927a.dcee.dfc7.e93a.5f5d.1499.c1f3.b12c.53f4.32b6.9509.7ec4.03b9
-    =/  n  :: (de-base64url nt)
-           :: (mul p q)
-                0xa1e9.e5ca.5654.e021.9e6f.606f.4d03.073c.3639.9375.cf2e.
-        0c59.84ad.67ab.fcd8.189a.d887.7f8f.7240.c317.9d8b.9a8d.35f8.0af5.
-        1657.2c87.86b6.1f49.1922.39f2.ebd3.821b.641f.2a70.96a3.827a.6f6f.
-        5c66.838b.6350.3031.55d7.9a6c.9ceb.3a78.a49a.6047.b6c6.10c1.64ed.
-        e844.f992.0375.c1a5.f85e.0f2c.2c85.055b.c7c4.de9a.cfb9.d49d.9774.
-        485a.4ade.fa27.6dfe.e22c.34c8.38fb.bf8d.b301.f768.c6a0.ec8e.67a3.
-        bdd2.bd6e.df9b.6ebc.9603.134f.9462.bf55.0f2c.d380.42ea.4b59.6977.
-        85e4.4f91.ec2f.2584.77b8.19d0.ed53.3f33.c13c.8969.4bdc.9a08.8f8a.
-        fbb0.56f9.2974.7ce6.1177.dd63.eab6.c597.34d9.8be3.36a1.90cc.2516.
-        fc77.24f0.e129.be7d.922b.3663.6265.2d8d.ce65.b4c9.e3e2.0a16.f8a1
-    =/  d  :: (de-base64url dt)
-                0x9d73.8a3a.6e54.39e1.50a7.754f.41f4.3473.e768.7992.65c8.
-        50f4.4792.5df2.bdc4.e181.18b8.9feb.9d4e.102e.a18b.a4fd.5064.d5f0.
-        70dc.3d4e.e31f.ff25.656c.3c3c.e513.5468.058a.895d.563b.943b.d65b.
-        2851.d022.5cfa.1a08.13d6.841e.de5e.2f64.539d.3b06.2534.1f47.46ff.
-        558a.7246.07a8.f880.0beb.a961.498f.2c51.fa81.755e.fd0c.7df5.377e.
-        92e3.ac92.cced.4a9b.3bc7.5db5.4134.714b.4df1.2564.5fde.9f4e.2d98.
-        5605.a3e1.bba0.4045.95b2.d927.51a1.c644.06b4.5327.56ea.3bc6.6f21.
-        797f.8b2e.abe3.5e02.a0ce.d5d8.255a.c1d8.ee13.521f.6797.377d.2fc8.
-        280b.9b43.c6bf.03e5.88ec.bdd3.2c2f.cf3f.1e40.3c96.7ca5.0b9d.0f59.
-        627b.7049.e964.1d75.611d.1f57.0045.6c52.7ec3.2b0a.cd69.a471.ae12
-    =/  e  `@ux`65.537
-    =/  k=key:rsa  [p q n e d]
+    =/  jk=json
+      :-  %o  %-  my  :~
+        kty+s+'RSA'
+        n+s+nt
+        e+s+'AQAB'
+        d+s+dt
+        p+s+pt
+        q+s+qt
+      ==
+    =/  k=key:rsa  (need (ring:de:jwk jk))
     =/  hed=json  o+(my alg+s+'RS256' ~)
+    =/  hedt=@t  'eyJhbGciOiJSUzI1NiJ9'
     =/  lod=json
       :-  %o  %-  my  :~
         iss+s+'joe'
         exp+n+'1300819380'
         ['http://example.com/is_root' %b &]
       ==
-    =/  lod-order
-      =/  keys=(list @t)  ['iss' 'exp' 'http://example.com/is_root' ~]
-      |=  [a=* b=*]
-      =/  fa  (find ~[a] keys)
-      =/  fb  (find ~[b] keys)
-      ?~  fa  |
-      ?~  fb  |
-      (lte u.fa u.fb)
-    =/  inp=@t
-      :: %+  swp  3
-      %-  crip
-      ;:  weld
-        "eyJhbGciOiJSUzI1NiJ9"
-        "."
-        "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQo"
-        "gImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ"
+    =/  lodt=@t
+      %+  rap  3
+      :~  'eyJpc3MiOiJqb2UiLCJleHAiOjEzMDA4MTkzODAsImh0dHA'
+          '6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ'
       ==
-    =/  exp=@t
+    ::  rfc example includes whitespace in json serialization
+    =/  lodt-ws=@t
+      %+  rap  3
+      :~  'eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQo'
+          'gImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ'
+      ==
+    =/  inp-ws=@t
+      (rap 3 [hedt '.' lodt-ws ~])
+    =/  exp-ws=@t
       %+  rap  3
       :~  'cC4hiUPoj9Eetdgtv3hF80EGrhuB__dzERat0XF9g2VtQgr9PJbu3XOiZj5RZmh7'
           'AAuHIm4Bh-0Qc_lF5YKt_O8W2Fp5jujGbds9uJdbF9CUAr7t1dnZcAcQjbKBYNX4'
@@ -1010,43 +1021,24 @@
           'hJ1phCnvWh6IeYI2w9QOYEUipUTI8np6LbgGY9Fs98rqVt5AXLIhWkWywlVmtVrB'
           'p0igcN_IoypGlUPQGe77Rw'
       ==
+    =/  lod-order=(list @t)  ['iss' 'exp' 'http://example.com/is_root' ~]
     ;:  weld
       %-  expect-eq  !>
-        :-  'eyJhbGciOiJSUzI1NiJ9'
+        [jk (ring:en:jwk k)]
+      %-  expect-eq  !>
+        [n.k `@ux`(mul p.k q.k)]
+      %-  expect-eq  !>
+        [d.k `@ux`(~(inv fo (elcm:rsa (dec p.k) (dec q.k))) e.k)]
+      %-  expect-eq  !>
+        :-  hedt
         (en-base64url (crip (en-json-sort aor hed)))
       %-  expect-eq  !>
-        [pt p=(en-base64url p)]
+        :-  lodt
+        (en-base64url (crip (en-json-sort (eor lte lod-order) lod)))
       %-  expect-eq  !>
-        [p p=(de-base64url pt)]
-      %-  expect-eq  !>
-        [qt q=(en-base64url q)]
-      %-  expect-eq  !>
-        [nt n=(en-base64url n)]
-      %-  expect-eq  !>
-        [dt d=(en-base64url d)]
-      %-  expect-eq  !>
-        [`@ux`n check-math=`n=@ux`(mul p q)]
-      %-  expect-eq  !>
-        [`@ux`d check-math=`d=@ux`(~(inv fo (elcm:rsa (dec p) (dec q))) e)]
-      %-  expect-eq  !>
-        :-  exp
-        =/  sig  (~(sign rs256 k) inp)
-        :: ~&  inp+(rip 3 (swp 3 inp))
-        :: ~&  :*  [pt (de-base64url pt) (en-base64url (de-base64url pt))]
-        ::         [qt (de-base64url qt) (en-base64url (de-base64url qt))]
-        ::         [nt (de-base64url nt) (en-base64url (de-base64url nt))]
-        ::         [dt (de-base64url dt) (en-base64url (de-base64url dt))]
-        ::     ==
-        :: ~&  ~(pass jwk k)
-        `@ux`sig
-        :: (en-base64url sig)
-      :: expected value has newlines
-      :: %-  expect-eq  !>
-      ::   :-  %+  weld
-      ::         "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQo"
-      ::       "gImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ"
-      ::   (en-base64url (crip (en-json-sort lod-order lod)))
+        :-  exp-ws
+        (en-base64url (swp 3 (~(sign rs256 k) inp-ws)))
     ==
-    --
+  --
 --
 
