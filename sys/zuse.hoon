@@ -441,6 +441,7 @@
         {$tas p/@tas}                                   ::  label
         {$ud p/@ud}                                     ::  number
     ==                                                  ::
+  ++  cass  {ud/@ud da/@da}                             ::  cases for revision
   ++  coop  (unit ares)                                 ::  e2e ack
   ++  crew  (set ship)                                  ::  permissions group
   ++  dict  {src/path rul/rule}                         ::  effective permission
