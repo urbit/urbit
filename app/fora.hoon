@@ -45,18 +45,11 @@
   ^-  (quip move _+>)
   :_  +>
   ::
-  :: Does txt actually have content, or is it blank?
+  ::  if txt is blank then return no moves.
   ::
-  =/  txt-blank=?
-    ?~  (rust (trip txt) spac:de-json:html)
-      %|
-    %&
+  ?:  ?=(^ (rush txt spac:de-json:html))  ~
   ::
-  :: If txt is blank then return no moves.
-  ::
-  ?:  txt-blank  ~
-  ::
-  :: Otherwise, post the content.
+  ::  otherwise, post the content.
   ::
   :~  %-  act
       :+  %phrase  [[our.bol %fora-posts] ~ ~]
@@ -82,18 +75,11 @@
   ^-  (quip move _+>)
   :_  +>
   ::
-  :: Does txt actually have content, or is it blank?
+  ::  if txt is blank then return no moves.
   ::
-  =/  txt-blank=?
-    ?~  (rust (trip txt) spac:de-json:html)
-      %|
-    %&
+  ?:  ?=(^ (rush txt spac:de-json:html))  ~
   ::
-  :: If txt is blank then return no moves.
-  ::
-  ?:  txt-blank  ~
-  ::
-  :: Otherwise, post the content.
+  ::  otherwise, post the content.
   ::
   :~  ^-  move
       %-  act
