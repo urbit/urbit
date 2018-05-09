@@ -1994,11 +1994,9 @@
         ::
         ?-    -.result.made
             %build-result
-          ~&  [%build-result build-result.result.made]
           (apply-build-result made)
         ::
             %blocks
-          ~&  [%blocks (turn builds.result.made build-to-tape) scry-blocked.result.made]
           (apply-blocks build.made result.made sub-builds.made)
         ==
       ::  +do-live-scry-accounting: updates tracking for a live %scry build
@@ -2432,7 +2430,6 @@
   ++  make
     |=  =build
     ^-  build-receipt
-    ~&  [%make (build-to-tape build)]
     ::  accessed-builds: builds accessed/depended on during this run.
     ::
     =|  accessed-builds=(list ^build)
@@ -2731,7 +2728,6 @@
         ?:  already-blocked
           ::  this resource was already blocked, so don't duplicate move
           ::
-          ~&  [%already-blocked resource]
           [build [%blocks ~ ~] accessed-builds |]
         ::
         [build [%blocks ~ `scry-request] accessed-builds |]
