@@ -2632,7 +2632,7 @@
         [build [%build-result %success %dude u.attempt-result] accessed-builds]
       ::
       =/  message=tang  [$:error message.u.attempt-result]
-      [build [%build-result %success %dude %error message] accessed-builds]
+      [build [%build-result %error message] accessed-builds]
     ::
     ++  path-impl
       |=  [=disc prefix=@tas raw-path=@tas]

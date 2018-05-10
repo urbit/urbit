@@ -1638,8 +1638,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/once]  %give  %made  ~1234.5.6  %complete
-                %success  %pin  ~1234.5.6
-                %success  %dude  %error
+                %success  %pin  ~1234.5.6  %error
                 :~  leaf+"%in-the-error-message"
                     leaf+"scry failed for"
                     leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
