@@ -2475,7 +2475,7 @@
             %cast  !!
             %core  !!
             %diff  !!
-            %dude  !!
+            %dude  (dude [error attempt]:schematic.build)
             %hood  !!
             %join  !!
             %mash  !!
@@ -2486,9 +2486,9 @@
             %reef  reef
             %ride  (ride [formula subject]:schematic.build)
             %same  (same schematic.schematic.build)
-            %slit  (slit [gate sample]:schematic.build)
-            %slim  (slim [subject-type formula]:schematic.build)
             %scry  (scry resource.schematic.build)
+            %slim  (slim [subject-type formula]:schematic.build)
+            %slit  (slit [gate sample]:schematic.build)
             %vale  !!
             %volt  !!
         ==
@@ -2617,6 +2617,22 @@
         =/  message=tang  [[%leaf "ford: %call failed:"] p.val]
         [build [%build-result %error message] accessed-builds]
       ==
+    ::
+    ++  dude
+      |=  [error=(trap tank) attempt=schematic]
+      ^-  build-receipt
+      ::
+      =/  attempt-build=^build  [date.build attempt]
+      =^  attempt-result  accessed-builds  (depend-on attempt-build)
+      ?~  attempt-result
+        ::
+        [build [%blocks ~[[date.build attempt]] ~] accessed-builds]
+      ::
+      ?.  ?=([%error *] u.attempt-result)
+        [build [%build-result %success %dude u.attempt-result] accessed-builds]
+      ::
+      =/  message=tang  [$:error message.u.attempt-result]
+      [build [%build-result %success %dude %error message] accessed-builds]
     ::
     ++  path-impl
       |=  [=disc prefix=@tas raw-path=@tas]

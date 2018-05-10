@@ -41,6 +41,8 @@
   test-call-scry-fail
   test-call-scry-block
   test-call-scry-varies
+  test-dude
+  test-dude-error
   test-slim
   test-slit
   test-slit-error
@@ -1579,6 +1581,72 @@
     results1
     results2
     results3
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-dude
+  ~&  %test-dude
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  schematic=schematic:ford
+    :*  %pin  ~1234.5.6
+        %dude  |.(>%test-no-error<)
+        [%scry [%c care=%x bel=[[~nul %desk] /bar/foo]]]
+    ==
+  ::
+  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-42
+      ::
+      call-args=[duct=~[/once] type=~ %make ~nul schematic]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/once]  %give  %made  ~1234.5.6  %complete  %success
+                [%pin ~1234.5.6 %success %dude %success [%scry %noun !>(42)]]
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-dude-error
+  ~&  %test-dude-error
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  schematic=schematic:ford
+    :*  %pin  ~1234.5.6
+        %dude  |.(>%in-the-error-message<)
+        [%scry [%c care=%x bel=[[~nul %desk] /bar/foo]]]
+    ==
+  ::
+  =/  scry-42  (scry-fail ~1234.5.6)
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry-42
+      ::
+      call-args=[duct=~[/once] type=~ %make ~nul schematic]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/once]  %give  %made  ~1234.5.6  %complete
+                %success  %pin  ~1234.5.6
+                %success  %dude  %error
+                :~  leaf+"%in-the-error-message"
+                    leaf+"scry failed for"
+                    leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
+    ==  ==  ==  ==
+  ::
+  ;:  weld
+    results1
     (expect-ford-empty ford ~nul)
   ==
 ::
