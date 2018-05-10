@@ -39,7 +39,7 @@
   test-call-scry-succeed
   test-call-scry-fail
   test-call-scry-block
-  test-call-scry-varries
+  test-call-scry-varies
   test-slim
   test-slit
   test-slit-error
@@ -1428,14 +1428,14 @@
     results3
     (expect-ford-empty ford ~nul)
   ==
-::  +test-call-scry-varries: call with an argument which varies
+::  +test-call-scry-varies: call with an argument which varies
 ::
 ::    This test reads the sample for a %call schematic from clay. This sample
 ::    is a date. Inside of the gate called, we scry on a path based on the
 ::    passed in sample date.
 ::
-++  test-call-scry-varries
-  ~&  %test-call-scry-varries
+++  test-call-scry-varies
+  ~&  %test-call-scry-varies
   ::
   =/  date-type=type  [%atom %da ~]
   =/  term-type=type   [%atom %tas ~]
