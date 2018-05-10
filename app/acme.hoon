@@ -63,10 +63,10 @@
 ++  asn1                                              ::  at least, a little
   =>  |%
       +=  spec
-        $%  [%int p=@]
-            [%oct p=@]
+        $%  [%int p=@u]
+            [%oct p=@ux]
             [%nul ~]
-            [%obj p=@]
+            [%obj p=@ux]
             [%seq p=(list spec)]
         ==
       ::
