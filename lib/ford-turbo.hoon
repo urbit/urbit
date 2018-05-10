@@ -718,7 +718,9 @@
           $:  %wris
               ::  case: case of the new files
               ::
-              =case
+              ::    %wris can only return dates to us.
+              ::
+              case=[%da p=@da]
               ::  care-paths: the +care:clay and +path of each file
               ::
               care-paths=(set [care=care:clay =path])
@@ -1427,17 +1429,14 @@
   ::  +rebuild: rebuild any live builds based on +resource updates
   ::
   ++  rebuild
-    |=  [=beak care-paths=(set [care=care:clay =path])]
+    |=  [ship=@p desk=@tas case=[%da p=@da] care-paths=(set [care=care:clay =path])]
     ^-  [(list move) ford-state]
     ::
     =<  finalize
     ::
+    =/  date=@da  p.case
     ::
-    =/  date=@da
-      ?:  ?=(%da -.r.beak)
-        p.r.beak
-      da:.^(cass:clay %cw /(scot %p p.beak)/[q.beak]/(scot %da now))
-    =/  =disc  [p.beak q.beak]
+    =/  =disc  [ship desk]
     ::  delete the now-dead clay subscription
     ::
     =.  clay-subscriptions.state  (~(del in clay-subscriptions.state) disc)
@@ -3479,7 +3478,7 @@
       =+  [ship desk]=(raid:wired t.t.wire ~[%p %tas])
       ::
       =*  rebuild  rebuild:(per-event event-args)
-      (rebuild [ship desk case.sign] care-paths.sign)
+      (rebuild ship desk case.sign care-paths.sign)
     ::  %resource: response to a request for a +resource
     ::
     ?.  =(%scry-request i.t.wire)

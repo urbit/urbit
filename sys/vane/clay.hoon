@@ -598,7 +598,20 @@
     |=  {hen/duct das/(set mood)}
     ^+  +>
     ?>  ?=(^ das)
-    =-  (emit hen %give %wris q.n.das -)
+    ::  translate the case to a date
+    ::
+    =/  cas=[%da p=@da]
+      ::  if the case is already a date, use it.
+      ::
+      ?:  ?=([%da *] q.n.das)
+        q.n.das
+      ::  translate other cases to dates
+      ::
+      =/  aey  (case-to-aeon:ze q.n.das)
+      ?~  aey  [%da `@da`0]
+      ?:  =(0 u.aey)  [%da `@da`0]
+      [%da t:(aeon-to-yaki:ze u.aey)]
+    =-  (emit hen %give %wris cas -)
     (~(run in `(set mood)`das) |=(m/mood [p.m r.m]))
   ::
   ::  Give next step in a subscription.

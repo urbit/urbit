@@ -40,7 +40,7 @@
 ::  clay response to a %multi
 ::
 ++  wris
-  |=  {way/wire p/case q/(set (pair care path))}
+  |=  {way/wire p/[%da @da] q/(set (pair care path))}
   ^-  [(list move) _+>.$]
   ~&  [%wris way p q]
   ::

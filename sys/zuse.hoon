@@ -394,7 +394,7 @@
           {$rule red/dict wit/dict}                     ::  node r+w permissions
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
-          {$wris p/case p/(set (pair care path))}       ::  many changes
+          {$wris p/{$da p/@da} q/(set (pair care path))}  ::  many changes
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$boat $~}                                    ::  pier rebooted
