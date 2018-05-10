@@ -651,6 +651,18 @@ static c3_c* _143_tri_ha[] = {
   "6cc318e2",
   0,
 };
+static c3_c* _143_two_met_ha[] = {
+  "51509f40",
+  0,
+};
+static c3_c* _143_two_rsh_ha[] = {
+  "7c0c8df2",
+  0,
+};
+static c3_c* _143_two_bex_ha[] = {
+  "6c223bad",
+  0,
+};
 static u3j_core _143_two_d[] =
   { { "tri", 3, 0, _143_tri_d, _143_tri_ha },
     { "flop", 7, _143_two_flop_a },
@@ -672,7 +684,7 @@ static u3j_core _143_two_d[] =
     { "turn", 7, _143_two_turn_a },
     { "weld", 7, _143_two_weld_a },
 
-    { "bex", 7, _143_two_bex_a },
+    { "bex", 7, _143_two_bex_a, 0, _143_two_bex_ha },
     { "cat", 7, _143_two_cat_a },
     { "can", 7, _143_two_can_a },
     { "cap", 7, _143_two_cap_a },
@@ -689,14 +701,14 @@ static u3j_core _143_two_d[] =
     { "lsh", 7, _143_two_lsh_a },
     { "mas", 7, _143_two_mas_a },
     { "mat", 7, _143_two_mat_a },
-    { "met", 7, _143_two_met_a },
+    { "met", 7, _143_two_met_a, 0, _143_two_met_ha },
     { "mix", 7, _143_two_mix_a },
     { "mug", 7, _143_two_mug_a },
     { "muk", 7, _143_two_muk_a },
     { "rap", 7, _143_two_rap_a },
     { "rep", 7, _143_two_rep_a },
     { "rip", 7, _143_two_rip_a },
-    { "rsh", 7, _143_two_rsh_a },
+    { "rsh", 7, _143_two_rsh_a, 0, _143_two_rsh_ha },
     { "rub", 7, _143_two_rub_a },
     { "peg", 7, _143_two_peg_a },
     { "pow", 7, _143_two_pow_a },
@@ -732,18 +744,38 @@ static c3_c* _143_two_ha[] = {
   "613c4d6d",
   0,
 };
+static c3_c* _143_one_div_ha[] = {
+  "3457adb3",
+  0,
+};
+static c3_c* _143_one_mul_ha[] = {
+  "679b5099",
+  0,
+};
+static c3_c* _143_one_dec_ha[] = {
+  "ce60540",
+  0,
+};
+static c3_c* _143_one_add_ha[] = {
+  "68a25eb6",
+  0,
+};
+static c3_c* _143_one_lth_ha[] = {
+  "ef85ae3",
+  0,
+};
 static u3j_core _143_one_d[] =
   { { "two", 3, 0, _143_two_d, _143_two_ha },
-    { "add", 7, _143_one_add_a },
-    { "dec", 7, _143_one_dec_a },
-    { "div", 7, _143_one_div_a },
+    { "add", 7, _143_one_add_a, 0, _143_one_add_ha },
+    { "dec", 7, _143_one_dec_a, 0, _143_one_dec_ha },
+    { "div", 7, _143_one_div_a, 0, _143_one_div_ha },
     { "dvr", 7, _143_one_dvr_a },
     { "gte", 7, _143_one_gte_a },
     { "gth", 7, _143_one_gth_a },
     { "lte", 7, _143_one_lte_a },
-    { "lth", 7, _143_one_lth_a },
+    { "lth", 7, _143_one_lth_a, 0, _143_one_lth_ha },
     { "mod", 7, _143_one_mod_a },
-    { "mul", 7, _143_one_mul_a },
+    { "mul", 7, _143_one_mul_a, 0, _143_one_mul_ha },
     { "sub", 7, _143_one_sub_a },
 
     { "cap", 7, _143_one_cap_a },
