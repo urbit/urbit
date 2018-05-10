@@ -319,20 +319,21 @@
         ==
         ::  %path: resolve a path with `-`s to a path with `/`s
         ::
-        ::    Resolve +file-path to a path containing a file, replacing
+        ::    Resolve +raw-path to a path containing a file, replacing
         ::    any `-`s in the path with `/`s if no file exists at the
         ::    original path. Produces an error if multiple files match,
         ::    e.g. a/b/c and a/b-c, or a/b/c and a-b/c.
         ::
-        ::    TODO verify current implementation
-        ::
         $:  %path
-            ::  disc the +disc within which to resolve :file-path
+            ::  disc: the +disc forming the base of the path to be resolved
             ::
-            location=disc
-            ::  file-path: the path to resolve
+            =disc
+            ::  prefix: path prefix under which to resolve :raw-path, e.g. lib
             ::
-            file-path=@tas
+            prefix=@tas
+            ::  raw-path: the file path to be resolved
+            ::
+            raw-path=@tas
         ==
         ::  %plan: build a hoon program from a preprocessed source file
         ::
@@ -979,6 +980,40 @@
 --
 =,  format
 |%
+::  +tear: split a +term into segments delimited by `-`
+::
+++  tear
+  |=  a=term
+  ^-  (list term)
+  ::  sym-no-heps: a parser for terms with no heps and a leading letter
+  ::
+  =/  sym-no-heps  (cook crip ;~(plug low (star ;~(pose low nud))))
+  ::
+  (fall (rush a (most hep sym-no-heps)) /[a])
+::  +segments: TODO rename
+::
+++  segments
+  |=  path-part=@tas
+  ^-  (list path)
+  ::
+  =/  join  |=([a=@tas b=@tas] (crip "{(trip a)}-{(trip b)}"))
+  ::
+  =/  torn=(list @tas)  (tear path-part)
+  ::
+  |-  ^-  (list (list @tas))
+  ::
+  ?<  ?=(~ torn)
+  ::
+  ?:  ?=([@ ~] torn)
+    ~[torn]
+  ::
+  %-  zing
+  %+  turn  $(torn t.torn)
+  |=  s=(list @tas)
+  ^-  (list (list @tas))
+  ::
+  ?>  ?=(^ s)
+  ~[[i.torn s] [(join i.torn i.s) t.s]]
 ::  +build-to-tape: convert :build to a printable format
 ::
 ++  build-to-tape
@@ -2446,7 +2481,7 @@
             %mash  !!
             %mute  !!
             %pact  !!
-            %path  !!
+            %path  (path-impl [disc prefix raw-path]:schematic.build)
             %plan  (plan [source-path query-string scaffold]:schematic.build)
             %reef  reef
             %ride  (ride [formula subject]:schematic.build)
@@ -2582,6 +2617,101 @@
         =/  message=tang  [[%leaf "ford: %call failed:"] p.val]
         [build [%build-result %error message] accessed-builds]
       ==
+    ::
+    ++  path-impl
+      |=  [=disc prefix=@tas raw-path=@tas]
+      ^-  build-receipt
+      ::  possible-spurs: flopped paths to which :raw-path could resolve
+      ::
+      =/  possible-spurs=(list spur)  (turn (segments raw-path) flop)
+      ::  sub-builds: scry builds to check each path in :possible-paths
+      ::
+      =/  sub-builds=(list ^build)
+        %+  turn  possible-spurs
+        |=  possible-spur=spur
+        ^-  ^build
+        ::  full-spur: wrap :possible-spur with :prefix and /hoon suffix
+        ::
+        =/  full-spur=spur  :(welp /hoon possible-spur /[prefix])
+        ::
+        [date.build [%scry %c %x `rail`[disc full-spur]]]
+      ::  results: accumulator for results of sub-builds
+      ::
+      =|  results=(list [kid=^build result=(unit build-result)])
+      ::  depend on all the sub-builds and collect their results
+      ::
+      =/  subs-results
+        |-  ^+  [results accessed-builds]
+        ?~  sub-builds  [results accessed-builds]
+        ::
+        =/  kid=^build  i.sub-builds
+        ::
+        =^  result  accessed-builds  (depend-on kid)
+        =.  results  [[kid result] results]
+        ::
+        $(sub-builds t.sub-builds)
+      ::  apply mutations from depending on sub-builds
+      ::
+      =:  results          -.subs-results
+          accessed-builds  +.subs-results
+      ==
+      ::  split :results into completed :mades and incomplete :blocks
+      ::
+      =+  split-results=(skid results |=([* r=(unit build-result)] ?=(^ r)))
+      ::
+      =/  mades=_results   -.split-results
+      =/  blocks=_results  +.split-results
+      ::  if any builds blocked, produce them all in %blocks
+      ::
+      ?^  blocks
+        [build [%blocks (turn `_results`blocks head) ~] accessed-builds]
+      ::  matches: builds that completed with a successful result
+      ::
+      =/  matches=_results
+        %+  skim  mades
+        |=  [* r=(unit build-result)]
+        ::
+        ?=([~ %success *] r)
+      ::  if no matches, error out
+      ::
+      ?~  matches
+        =/  =beam
+          [[ship.disc desk.disc [%da date.build]] /hoon/[raw-path]/[prefix]]
+        ::
+        =/  message=tang  [%leaf "%path: no matches for {<(en-beam beam)>}"]~
+        ::
+        [build [%build-result %error message] accessed-builds]
+      ::  if exactly one path matches, succeed with the matching path
+      ::
+      ?:  ?=([* ~] matches)
+        =*  kid  kid.i.matches
+        ?>  ?=(%scry -.schematic.kid)
+        ::
+        :*  build
+            [%build-result %success %path rail.resource.schematic.kid]
+            accessed-builds
+        ==
+      ::  multiple paths matched; error out
+      ::
+      =/  message=tang
+        :-  [%leaf "multiple matches for %path: "]
+        ::  tmi; cast :matches back to +list
+        ::
+        %+  roll  `_results`matches
+        |=  [[kid=^build result=(unit build-result)] message=tang]
+        ^-  tang
+        ::
+        ?>  ?=(%scry -.schematic.kid)
+        ::  beam: reconstruct request from :kid's schematic and date
+        ::
+        =/  =beam
+          :*  [ship.disc desk.disc [%da date.kid]]
+              spur.rail.resource.schematic.kid
+          ==
+        ::
+        [[%leaf "{<(en-beam beam)>}"] message]
+      ::
+      [build [%build-result %error message] accessed-builds]
     ::
     ++  plan
       |=  [source-path=rail query-string=coin =scaffold]
