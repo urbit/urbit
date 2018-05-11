@@ -17,7 +17,8 @@
   test-date-from-schematic
   test-unify-jugs
   test-resource-wire-encoding
-  test-parse-scaffold-basic
+  test-parse-scaffold-direct
+  test-parse-scaffold-indirect
   test-parse-scaffold-sur-lib
   test-parse-scaffold-zuse-version
   test-literal
@@ -174,8 +175,8 @@
     (need (path-to-scry-request:ford /gx/~nul/desk/~1234.5.6/bar/foo))
   ==
 ::
-++  test-parse-scaffold-basic
-  ~&  %test-parse-scaffold-basic
+++  test-parse-scaffold-direct
+  ~&  %test-parse-scaffold-direct
   ::
   %-  expect-eq  !>
   :-  :-  [1 19]
@@ -190,6 +191,28 @@
   %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
     [1 1]
   "!.  |=(a=@ud +(a))"
+::
+++  test-parse-scaffold-indirect
+  ~&  %test-parse-scaffold-indirect
+  ::
+  =/  parsed
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+      [1 1]
+    """
+    //  /%/child/hoon
+    """
+  ?~  q.parsed
+    [%leaf "failed to parse at {<p.parsed>}"]~
+  %-  expect-eq  !>
+  :_  p.u.q.parsed
+  :*  zuse-version=309
+      structures=~
+      libraries=~
+      cranes=~
+      ^=  sources
+        :~  :*  %indirect
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+  ==    ==  ==
 ::
 ++  test-parse-scaffold-sur-lib
   ~&  %test-parse-scaffold-sur-lib

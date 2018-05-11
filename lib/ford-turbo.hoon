@@ -1399,7 +1399,7 @@
       %+  ifix  [gay gay]
       ;~  plug
       ::
-        ::  parses the zuse version, eg "/?  400"
+        ::  parses the zuse version, eg "/?  309"
         ;~  pose
           (ifix [;~(plug fas wut gap) gap] dem)
           (easy zuse)
@@ -1422,11 +1422,19 @@
       ::
         (most gap brick)
       ==
+  ::  +beam: parses a hood path and converts it to a beam
+  ::
+  ++  beam
+    %+  sear  de-beam
+    ;~  pfix
+      fas
+      (sear plex (stag %clsg poor)):hoon-parser
+    ==
   ::  +brick: parses a +^brick, a direct or indirect piece of hoon code
   ::
   ++  brick
     ;~  pose
-      ::  %indirect
+      (stag %indirect ;~(pfix fas fas gap beam))
       (stag %direct tall:hoon-parser)
     ==
   ::  +cable: parses a +^cable, a reference to something on the filesystem
