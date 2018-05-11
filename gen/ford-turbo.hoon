@@ -43,6 +43,7 @@
   test-call-scry-varies
   test-dude
   test-dude-error
+  test-hood
   test-slim
   test-slit
   test-slit-error
@@ -1648,6 +1649,43 @@
     results1
     (expect-ford-empty ford ~nul)
   ==
+::
+++  test-hood
+  ~&  %test-hood
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  scry-type=type  [%atom %tas ~]
+  =/  scry
+    %-  scry-with-results
+    ^-  (map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %desk %da ~1234.5.6] /hoon/bar/foo]]
+      :*  %noun  scry-type
+          '|=(a=@ud +(a))'
+      ==
+    ==
+  ::
+  =/  schematic=schematic:ford  [%hood [[~nul %desk] /hoon/bar/foo]]
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=scry
+      ::
+      call-args=[duct=~[/hood] type=~ %make ~nul schematic]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/hood]  %give  %made  ~1234.5.6  %complete  %success  %hood
+                [309 ~ ~ ~ [%direct (ream '|=(a=@ud +(a))')]~]
+            ==
+            :*  duct=~  %pass  /~nul/clay-sub/~nul/desk
+                %c  %warp  [~nul ~nul]  %desk
+                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar/hoon] ~)]
+    ==  ==  ==
+  ::
+  results1
 ::
 ++  test-slim
   ~&  %test-slim

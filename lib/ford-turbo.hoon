@@ -2476,7 +2476,7 @@
             %core  !!
             %diff  !!
             %dude  (dude [error attempt]:schematic.build)
-            %hood  !!
+            %hood  (hood source-path.schematic.build)
             %join  !!
             %mash  !!
             %mute  !!
@@ -2633,6 +2633,34 @@
       ::
       =/  message=tang  [$:error message.u.attempt-result]
       [build [%build-result %error message] accessed-builds]
+    ::
+    ++  hood
+      |=  source-path=rail
+      ^-  build-receipt
+      ::
+      =/  scry-build=^build  [date.build [%scry [%c %x source-path]]]
+      =^  scry-result  accessed-builds  (depend-on scry-build)
+      ?~  scry-result
+        ::
+        [build [%blocks ~[scry-build] ~] accessed-builds]
+      ::  TODO: need to normalize how we handle %error.
+      ::
+      ::    Do we just put %error or do we always wrap it in %success
+      ::    %this-schematic? How does that interact with %pin?
+      ::
+      ?:  ?=([%error *] u.scry-result)
+        [build [%build-result u.scry-result] accessed-builds]
+      =+  result=(result-to-cage u.scry-result)
+      ::
+      ::  TODO: parse as ford-hoon, now plain hoon
+      ::
+      ::    ford has its own parser, +fair, which parses cranes in addition to
+      ::    normal hoon. eventually, we want to use that but for now, we'll
+      ::    just get normal hoon working.
+      ::
+      =/  =scaffold
+        [309 ~ ~ ~ [%direct (ream ((hard @) q.q.result))]~]
+      [build [%build-result %success %hood scaffold] accessed-builds]
     ::
     ++  path-impl
       |=  [=disc prefix=@tas raw-path=@tas]
