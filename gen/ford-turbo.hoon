@@ -19,6 +19,7 @@
   test-resource-wire-encoding
   test-parse-scaffold-basic
   test-parse-scaffold-sur-lib
+  test-parse-scaffold-zuse-version
   test-literal
   test-autocons-same
   test-autocons-different
@@ -214,6 +215,32 @@
         :~  :*  %direct
                 %dbug
                 [/~nul/desk/~1234.5.6/bar/foo [3 1] [4 8]]
+                (ream '|=(a a)')
+  ==    ==  ==
+::
+++  test-parse-scaffold-zuse-version
+  ~&  %test-parse-scaffold-zuse-version
+  ::
+  =/  parsed
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+      [1 1]
+    """
+    /?  400
+    !.
+    |=(a a)
+    """
+  ?~  q.parsed
+    [%leaf "failed to parse at {<p.parsed>}"]~
+  %-  expect-eq  !>
+  :_  p.u.q.parsed
+  :*  zuse-version=400
+      structures=~
+      libraries=~
+      cranes=~
+      ^=  sources
+        :~  :*  %direct
+                %dbug
+                [/~nul/desk/~1234.5.6/bar/foo [2 1] [3 8]]
                 (ream '|=(a a)')
   ==    ==  ==
 ::

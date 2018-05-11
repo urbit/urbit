@@ -1399,8 +1399,11 @@
       %+  ifix  [gay gay]
       ;~  plug
       ::
-        ::  todo: implement /?
-        (easy zuse)
+        ::  parses the zuse version, eg "/?  400"
+        ;~  pose
+          (ifix [;~(plug fas wut gap) gap] dem)
+          (easy zuse)
+        ==
       ::
         ::  pareses the structures, eg "/-  types"
         ;~  pose
