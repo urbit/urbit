@@ -64,6 +64,7 @@
   =>  |%
       +=  spec
         $%  [%int p=@u]
+            [%bit p=@ux]
             [%oct p=@ux]
             [%nul ~]
             [%obj p=@ux]
@@ -72,7 +73,8 @@
       ::
       ++  obj                                         ::  constants (rfc4055)
         |%                                            ::
-        ++  sha-256  0x1.0204.0365.0148.8660          :: 2.16.840.1.101.3.4.2.1
+        ++  sha-256      0x1.0204.0365.0148.8660      :: 2.16.840.1.101.3.4.2.1
+        ++  rsa          0x1.0101.0df7.8648.862a      :: 1.2.840.113549.1.1.1
         --
       --
   ::
@@ -86,6 +88,7 @@
     ^-  @
     ?-  pec
       [%int *]   2
+      [%bit *]   3
       [%oct *]   4
       [%nul *]   5
       [%obj *]   6
@@ -99,6 +102,7 @@
                 ?~  a  [0 ~]
                 ?:((lte i.a 127) a [0 a])
       ::
+      [%bit *]  [0 (rip 3 p.pec)]  :: XX padding
       [%oct *]  (rip 3 p.pec)
       [%nul *]  ~
       [%obj *]  (rip 3 p.pec)
@@ -132,6 +136,7 @@
         ?.((gth i.t.a 127) ~ `t.a)
       ;~(pfix (just `@`2) till)
       ::
+      (stag %bit (boss 256 (cook tail ;~(pfix (just `@`3) till)))) :: XX test
       (stag %oct (boss 256 ;~(pfix (just `@`4) till)))
       (stag %nul (cold ~ ;~(plug (just `@`5) (just `@`0))))
       (stag %obj (boss 256 ;~(pfix (just `@`6) till)))
@@ -301,6 +306,61 @@
     =((emsa m) (en:rsa s k))
   --
 ::
+++  pkcs8                          :: XX other key types?
+  |%
+  ++  der
+    |%
+    ++  en
+      |%
+      ++  pass
+        |=  k=key:rsa
+        ^-  @ux
+        =;  pec
+          (rep 3 ~(ren asn1 pec))
+        :~  %seq
+          [%seq [[%obj rsa:obj:asn1] [%nul ~] ~]]
+          :-  %bit
+          =;  pec
+            (rep 3 ~(ren asn1 pec))
+          [%seq [[%int n.k] [%int e.k] ~]]
+        ==
+      ::
+      ++  ring  !!
+      --
+    ::
+    ++  de
+      |%
+      ++  pass  !!
+      ::
+      ++  ring  !!
+      --
+    --
+  ::
+  ++  pem
+    |%
+    ++  en
+      |%
+      ++  pass
+        |=  k=key:rsa
+        ^-  wain
+        :-  '-----BEGIN PUBLIC KEY-----'
+        =/  a  (en:base64 (pass:en:der k))
+        |-  ^-  wain
+        ?~  a
+          ['-----END PUBLIC KEY-----' ~]
+        [(end 3 64 a) $(a (rsh 3 64 a))]
+      ::
+      ++  ring  !!
+      --
+    ::
+    ++  de
+      |%
+      ++  pass  !!
+      ::
+      ++  ring  !!
+      --
+    --
+  --
 ++  en-json-sort                                      ::  print json
   |^  |=([sor=$-(^ ?) val=json] (apex val sor ""))
   ::                                                  ::  ++apex:en-json:html
@@ -582,6 +642,7 @@
             test-rsakey
             test-rsa
             test-rsapem
+            test-rsa-pkcs8
             test-rs256
             test-jwk
             test-jws
@@ -774,6 +835,52 @@
       %-  expect-eq  !>
         [kpem3 (ring:en:pem:rsa k3)]
     ==
+  ::
+  ++  test-rsa-pkcs8
+    =/  kpem=wain
+      :~  '-----BEGIN RSA PRIVATE KEY-----'
+          'MIIEowIBAAKCAQEA2jJp8dgAKy5cSzDE4D+aUbKZsQoMhIWI2IFlE+AO0GCBMig5'
+          'qxx2IIAPVIcSi5fjOLtTHnuIZYw+s06qeb8QIKRvkZaIwnA3Lz5UUrxgh96sezdX'
+          'CCSG7FndIFskcT+zG00JL+fPRdlPjt1Vg2b3kneo5aAKMIPyOTzcY590UTc+luQ3'
+          'HhgSiNF3n5YQh24d3kS2YOUoSXQ13+YRljxNfBgXbV+C7/gO8mFxpkafhmgkIGNe'
+          'WlqT9oAIRa+gOx13uPAg+Jb/8lPV9bGaFqGvxvBMp3xUASlzYHiDntcB5MiOPRW6'
+          'BoIGI5qDFSYRZBky9crE7WAYgqtPtg21zvxwFwIDAQABAoIBAH0q7GGisj4TIziy'
+          '6k1lzwXMuaO4iwO+gokIeU5UessIgTSfpK1G73CnZaPstDPF1r/lncHfxZfTQuij'
+          'WOHsO7kt+x5+R0ebDd0ZGVA45fsrPrCUR2XRZmDRECuOfTJGA13G7F1B0kJUbfIb'
+          'gAGYIK8x236WNyIrntk804SGpTgstCsZ51rK5GL6diZVQbeU806oP1Zhx/ye//NR'
+          'mS5G0iil//H41pV5WGomOX0mq9/HYBZqCncqzLki6FFdmXykjz8snvXUR40S8B+a'
+          '0F/LN+549PSe2dp9h0Hx4HCJOsL9CyCQimqqqE8KPQ4BUz8q3+Mhx1xEyaxIlNH9'
+          'ECgo1CECgYEA+mi7vQRzstYJerbhCtaeFrOR/n8Dft7FyFN+5IV7H2omy6gf0zr1'
+          'GWjmph5R0sMPgL8uVRGANUrkuZZuCr35iY6zQpdCFB4D9t+zbTvTmrxt2oVaE16/'
+          'dIJ6b8cHzR2QrEh8uw5/rEKzWBCHNS8FvXHPvXvnacTZ5LZRK0ssshECgYEA3xGQ'
+          'nDlmRwyVto/1DQMLnjIMazQ719qtCO/pf4BHeqcDYnIwYb5zLBj2nPV8D9pqM1pG'
+          'OVuOgcC9IimrbHeeGwp1iSTH4AvxDIj6Iyrmbz2db3lGdHVk9xLvTiYzn2KK2sYx'
+          'mFl3DRBFutFQ2YxddqHbE3Ds96Y/uRXhqj7I16cCgYEA1AVNwHM+i1OS3yZtUUH6'
+          'xPnySWu9x/RTvpSDwnYKk8TLaHDH0Y//6y3Y7RqK6Utjmv1E+54/0d/B3imyrsG/'
+          'wWrj+SQdPO9VJ/is8XZQapnU4cs7Q19b+AhqJq58un2n+1e81J0oGPC47X3BHZTc'
+          '5VSyMpvwiqu0WmTMQT37cCECgYACMEbt8XY6bjotz13FIemERNNwXdPUe1XFR61P'
+          'ze9lmavj1GD7JIY2wYvx4Eq2URtHo7QarfZI+Z4hbq065DWN6F1c2hqH7TYRPGrP'
+          '24TlRIJ97H+vdtNlxS7J4oARKUNZgCZOa1pKq4UznwgfCkyEdHQUzb/VcjEf3MIZ'
+          'DIKl8wKBgBrsIjiDvpkfnpmQ7fehEJIi+V4SGskLxFH3ZTvngFFoYry3dL5gQ6mF'
+          'sDfrn4igIcEy6bMpJQ3lbwStyzcWZLMJgdI23FTlPXTEG7PclZSuxBpQpvg3MiVO'
+          'zqVTrhnY+TemcScSx5O6f32aDfOUWWCzmw/gzvJxUYlJqjqd7dlT'
+          '-----END RSA PRIVATE KEY-----'
+      ==
+    =/  pub=wain
+      :~  '-----BEGIN PUBLIC KEY-----'
+          'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2jJp8dgAKy5cSzDE4D+a'
+          'UbKZsQoMhIWI2IFlE+AO0GCBMig5qxx2IIAPVIcSi5fjOLtTHnuIZYw+s06qeb8Q'
+          'IKRvkZaIwnA3Lz5UUrxgh96sezdXCCSG7FndIFskcT+zG00JL+fPRdlPjt1Vg2b3'
+          'kneo5aAKMIPyOTzcY590UTc+luQ3HhgSiNF3n5YQh24d3kS2YOUoSXQ13+YRljxN'
+          'fBgXbV+C7/gO8mFxpkafhmgkIGNeWlqT9oAIRa+gOx13uPAg+Jb/8lPV9bGaFqGv'
+          'xvBMp3xUASlzYHiDntcB5MiOPRW6BoIGI5qDFSYRZBky9crE7WAYgqtPtg21zvxw'
+          'FwIDAQAB'
+          '-----END PUBLIC KEY-----'
+      ==
+    =/  k=key:rsa
+      (need (ring:de:pem:rsa kpem))
+    %-  expect-eq  !>
+      [pub (pass:en:pem:pkcs8 k)]
   ::
   ++  test-rsa
     =/  k1=key:rsa
