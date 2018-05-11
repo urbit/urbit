@@ -69,12 +69,19 @@
             [%nul ~]
             [%obj p=@ux]
             [%seq p=(list spec)]
+            [%set p=(list spec)]                  :: XX actual set
+            [%con p=[p=? q=@udC] q=(list @)]      :: XX manual
         ==
       ::
-      ++  obj                                         ::  constants (rfc4055)
-        |%                                            ::
+      ++  obj                                         :: oid constants
+        |%                                            ::   rfc4055
         ++  sha-256      0x1.0204.0365.0148.8660      :: 2.16.840.1.101.3.4.2.1
         ++  rsa          0x1.0101.0df7.8648.862a      :: 1.2.840.113549.1.1.1
+        ++  rsa-sha-256  0xb.0101.0df7.8648.862a      :: 1.2.840.113549.1.1.11
+                                                      ::   rfc2985
+        ++  csr-ext      0xe.0901.0df7.8648.862a      :: 1.2.840.113549.1.9.14
+                                                      ::   rfc3280
+        ++  sub-alt      0x11.1d55                    :: 2.5.29.17
         --
       --
   ::
@@ -93,6 +100,8 @@
       [%nul *]   5
       [%obj *]   6
       [%seq *]  48    :: (con 0x20 16)
+      [%set *]  49    :: (con 0x20 17)
+      [%con *]  :(con q.p.pec 0x80 ?:(p.p.pec 0 0x20))
     ==
   ::
   ++  lem                                             ::  element bytes
@@ -102,7 +111,7 @@
                 ?~  a  [0 ~]
                 ?:((lte i.a 127) a [0 a])
       ::
-      [%bit *]  [0 (rip 3 p.pec)]  :: XX padding
+      [%bit *]  [0 (rip 3 p.pec)]               :: XX padding
       [%oct *]  (rip 3 p.pec)
       [%nul *]  ~
       [%obj *]  (rip 3 p.pec)
@@ -110,8 +119,16 @@
       [%seq *]  %-  zing
                 |-  ^-  (list (list @))
                 ?~  p.pec  ~
-                :-  ren:.(pec i.p.pec)
+                :-  ren(pec i.p.pec)
                 $(p.pec t.p.pec)
+      ::
+      [%set *]  %-  zing                        :: XX tap/sort
+                |-  ^-  (list (list @))
+                ?~  p.pec  ~
+                :-  ren(pec i.p.pec)
+                $(p.pec t.p.pec)
+      ::
+      [%con *]  q.pec
     ==
   ::
   ++  len                                             ::  length bytes
@@ -145,6 +162,24 @@
       %+  sear
         |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
       ;~(pfix (just `@`48) till)
+      ::
+      %+  stag  %set
+      %+  sear
+        |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
+      ;~(pfix (just `@`49) till)
+      ::
+      %+  stag  %con
+      ;~  plug
+        %+  sear
+          |=  a=@
+          ^-  (unit [? @udC])
+          ?.  =(1 (cut 0 [7 1] a))  ~
+          :+  ~
+            =(1 (cut 0 [5 1] a))
+          (dis 0x1f a)
+        next
+        till
+      ==
     ==
   ::
   ++  till                                                ::  len-prefixed bytes
@@ -361,6 +396,74 @@
       --
     --
   --
+::
+++  pkcs10                         :: XX other key types?
+  |%
+  ++  der
+    |%
+    ++  en
+      |=  [k=key:rsa hot=(list (list @t))]
+      ^-  @ux
+      =;  pec
+        (rep 3 ~(ren asn1 pec))
+      =/  cer=spec:asn1
+        :~  %seq
+          [%int 0]
+          [%seq ~]
+          :: XX deduplicate with +pass:en:der:pkcs8
+          :~  %seq
+            [%seq [[%obj rsa:obj:asn1] [%nul ~] ~]]
+            :-  %bit
+            =;  pec
+              (rep 3 ~(ren asn1 pec))
+            [%seq [[%int n.k] [%int e.k] ~]]
+          ==
+          :+  %con  [| 0]
+          =-  ~(ren asn1 -)
+          :~  %seq
+            [%obj csr-ext:obj:asn1]
+            :~  %set
+              :~  %seq
+                :~  %seq
+                  [%obj sub-alt:obj:asn1]
+                  :-  %oct
+                  =;  pec
+                    (rep 3 ~(ren asn1 pec))
+                  :-  %seq
+                  %+  turn  hot
+                  |=(h=(list @t) [%con [& 2] (rip 3 (need (en-host h)))])
+                ==
+              ==
+            ==
+          ==
+        ==
+      ::
+      ^-  spec:asn1
+      :~  %seq
+        cer
+        [%seq [[%obj rsa-sha-256:obj:asn1] [%nul ~] ~]]
+        [%bit (swp 3 (~(sign rs256 k) (rep 3 ~(ren asn1 cer))))]
+      ==
+    ::
+    ++  de  !!
+    --
+  ::
+  ++  pem
+    |%
+    ++  en
+      |=  [k=key:rsa hot=(list (list @t))]
+      ^-  wain
+      :-  '-----BEGIN CERTIFICATE REQUEST-----'
+      =/  a  (en:base64 (en:der k hot))
+      |-  ^-  wain
+      ?~  a
+        ['-----END CERTIFICATE REQUEST-----' ~]
+      [(end 3 64 a) $(a (rsh 3 64 a))]
+    ::
+    ++  de  !!
+    --
+  --
+::
 ++  en-json-sort                                      ::  print json
   |^  |=([sor=$-(^ ?) val=json] (apex val sor ""))
   ::                                                  ::  ++apex:en-json:html
@@ -484,6 +587,17 @@
   |=  [a=* b=*]
   ^-  ?
   (fall (bind (both (find ~[a] lit) (find ~[b] lit)) com) |)
+::
+++  en-host
+  |=  hot=(list @t)
+  ^-  (unit @t)
+  =|  out=(list @t)
+  ?~  hot  ~
+  :-  ~
+  |-  ^-  @t
+  ?~  t.hot
+    (rap 3 [i.hot out])
+  $(out ['.' i.hot out], hot t.hot)
 ::
 ++  from-json
   =,  dejs:format
@@ -646,6 +760,7 @@
             test-rs256
             test-jwk
             test-jws
+            test-csr
           ==
       ?~(out abet ((slog out) abet))
   ::
@@ -1146,6 +1261,63 @@
         :-  exp-ws
         (en-base64url (swp 3 (~(sign rs256 k) inp-ws)))
     ==
+  ::
+  ++  test-csr
+    =/  kpem=wain
+      :~  '-----BEGIN RSA PRIVATE KEY-----'
+          'MIIEowIBAAKCAQEA2jJp8dgAKy5cSzDE4D+aUbKZsQoMhIWI2IFlE+AO0GCBMig5'
+          'qxx2IIAPVIcSi5fjOLtTHnuIZYw+s06qeb8QIKRvkZaIwnA3Lz5UUrxgh96sezdX'
+          'CCSG7FndIFskcT+zG00JL+fPRdlPjt1Vg2b3kneo5aAKMIPyOTzcY590UTc+luQ3'
+          'HhgSiNF3n5YQh24d3kS2YOUoSXQ13+YRljxNfBgXbV+C7/gO8mFxpkafhmgkIGNe'
+          'WlqT9oAIRa+gOx13uPAg+Jb/8lPV9bGaFqGvxvBMp3xUASlzYHiDntcB5MiOPRW6'
+          'BoIGI5qDFSYRZBky9crE7WAYgqtPtg21zvxwFwIDAQABAoIBAH0q7GGisj4TIziy'
+          '6k1lzwXMuaO4iwO+gokIeU5UessIgTSfpK1G73CnZaPstDPF1r/lncHfxZfTQuij'
+          'WOHsO7kt+x5+R0ebDd0ZGVA45fsrPrCUR2XRZmDRECuOfTJGA13G7F1B0kJUbfIb'
+          'gAGYIK8x236WNyIrntk804SGpTgstCsZ51rK5GL6diZVQbeU806oP1Zhx/ye//NR'
+          'mS5G0iil//H41pV5WGomOX0mq9/HYBZqCncqzLki6FFdmXykjz8snvXUR40S8B+a'
+          '0F/LN+549PSe2dp9h0Hx4HCJOsL9CyCQimqqqE8KPQ4BUz8q3+Mhx1xEyaxIlNH9'
+          'ECgo1CECgYEA+mi7vQRzstYJerbhCtaeFrOR/n8Dft7FyFN+5IV7H2omy6gf0zr1'
+          'GWjmph5R0sMPgL8uVRGANUrkuZZuCr35iY6zQpdCFB4D9t+zbTvTmrxt2oVaE16/'
+          'dIJ6b8cHzR2QrEh8uw5/rEKzWBCHNS8FvXHPvXvnacTZ5LZRK0ssshECgYEA3xGQ'
+          'nDlmRwyVto/1DQMLnjIMazQ719qtCO/pf4BHeqcDYnIwYb5zLBj2nPV8D9pqM1pG'
+          'OVuOgcC9IimrbHeeGwp1iSTH4AvxDIj6Iyrmbz2db3lGdHVk9xLvTiYzn2KK2sYx'
+          'mFl3DRBFutFQ2YxddqHbE3Ds96Y/uRXhqj7I16cCgYEA1AVNwHM+i1OS3yZtUUH6'
+          'xPnySWu9x/RTvpSDwnYKk8TLaHDH0Y//6y3Y7RqK6Utjmv1E+54/0d/B3imyrsG/'
+          'wWrj+SQdPO9VJ/is8XZQapnU4cs7Q19b+AhqJq58un2n+1e81J0oGPC47X3BHZTc'
+          '5VSyMpvwiqu0WmTMQT37cCECgYACMEbt8XY6bjotz13FIemERNNwXdPUe1XFR61P'
+          'ze9lmavj1GD7JIY2wYvx4Eq2URtHo7QarfZI+Z4hbq065DWN6F1c2hqH7TYRPGrP'
+          '24TlRIJ97H+vdtNlxS7J4oARKUNZgCZOa1pKq4UznwgfCkyEdHQUzb/VcjEf3MIZ'
+          'DIKl8wKBgBrsIjiDvpkfnpmQ7fehEJIi+V4SGskLxFH3ZTvngFFoYry3dL5gQ6mF'
+          'sDfrn4igIcEy6bMpJQ3lbwStyzcWZLMJgdI23FTlPXTEG7PclZSuxBpQpvg3MiVO'
+          'zqVTrhnY+TemcScSx5O6f32aDfOUWWCzmw/gzvJxUYlJqjqd7dlT'
+          '-----END RSA PRIVATE KEY-----'
+      ==
+    =/  k=key:rsa
+      (need (ring:de:pem:rsa kpem))
+    ::  generated with openssl, certbot style
+    =/  csr-pem=wain
+      :~  '-----BEGIN CERTIFICATE REQUEST-----'
+          'MIICezCCAWMCAQAwADCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANoy'
+          'afHYACsuXEswxOA/mlGymbEKDISFiNiBZRPgDtBggTIoOascdiCAD1SHEouX4zi7'
+          'Ux57iGWMPrNOqnm/ECCkb5GWiMJwNy8+VFK8YIferHs3VwgkhuxZ3SBbJHE/sxtN'
+          'CS/nz0XZT47dVYNm95J3qOWgCjCD8jk83GOfdFE3PpbkNx4YEojRd5+WEIduHd5E'
+          'tmDlKEl0Nd/mEZY8TXwYF21fgu/4DvJhcaZGn4ZoJCBjXlpak/aACEWvoDsdd7jw'
+          'IPiW//JT1fWxmhahr8bwTKd8VAEpc2B4g57XAeTIjj0VugaCBiOagxUmEWQZMvXK'
+          'xO1gGIKrT7YNtc78cBcCAwEAAaA2MDQGCSqGSIb3DQEJDjEnMCUwIwYDVR0RBBww'
+          'GoINem9kLnVyYml0Lm9yZ4IJem9kLnVyYml0MA0GCSqGSIb3DQEBCwUAA4IBAQCu'
+          'HdUqIlW8w7G7l3YxXfb0fn1HxD7zHf3QpNqDYZuDq958OhJNXYJ9EjiHBBEW5ySg'
+          'e7vyaaWh6UcVIu/RYFGbyVupNVbp4aS4U1LEEiqMQ6vQQnlSt7hVMi04bhf6X6jd'
+          'kkTJIB5OlmNh5z/mjvlIOyOCeitK5IMrStsUPE5F8OynMuzmBKq318LiwImO41Fu'
+          'S1M6rgPnvoZeqShLxnJduMcu7awHQ0tn2FmjwBpU713/tmNjtCLYYoBxsHM2ptxd'
+          'G3zcMSCDZ/CLXWoktkULdWNDED8meCKWQJxYuHjxY4JPIzIVdVN50xRcZEV7Z80l'
+          'bPcFaE8op3e2hIxzqi1t'
+          '-----END CERTIFICATE REQUEST-----'
+      ==
+    =/  hot1  /org/urbit/zod
+    =/  hot2  /urbit/zod
+    %-  expect-eq  !>
+      :-  csr-pem
+      (en:pem:pkcs10 k [hot1 hot2 ~])
   --
 --
 
