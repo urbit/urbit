@@ -1689,8 +1689,13 @@
       =*  wyl  `will`[[1 cet] ~ ~]
       =*  hec  `farm`[[rex wyl] ~ ~]
       =.  +>.$  (deal rex [[ryt ~ ~] ~])
-      =.  ..ex  (meet [~ ~] hec)
-      +>.$
+      ::TODO  modifying outer core in non-abet arm is pretty bad style here...
+      =.  ..ex  (meet:abet [~ ~] hec)
+      ::
+      ::  because the above =. changed outer core state,
+      ::  we need to make shy and rug up-to-date again.
+      ::
+      able
     ::                                                  ::  grow:ex:ur
     ++  grow                                            ::  merge wills
       |=  $:  ::  vie: data source
@@ -1722,14 +1727,14 @@
           ::  lub: merged deed
           ::
           =+  [hub lub]=[p q]:(grow-mate p.i.wap q.i.wap pre)
-          ?~  t.wap  ..grow
-          ?>  =(p.i.t.wap +(p.i.wap))
-          %=  $
-            wap  t.wap
-            pre  `dat.lub
-            rug  (~(put by rug) p.i.wap lub)
+          =:  pre  `dat.lub
+              rug  ~&  [%grow-puts p.i.wap new=lub old=(~(get by rug) p.i.wap)]
+                   (~(put by rug) p.i.wap lub)
             hab  (weld (flop hub) hab)
           ==
+          ?~  t.wap  ..grow
+          ?>  =(p.i.t.wap +(p.i.wap))
+          $(wap t.wap)
       ::                                                ::  grow-lick/ex:ur
       ++  grow-lick                                     ::  check signature
         |=  {pub/pass ash/@ val/@}
@@ -1897,7 +1902,8 @@
         ::  pev: life and ring of parent
         ::  val: new signature
         ::
-        =/  pev  (leak dad)
+        ::TODO  are we good to use new here? only num matters it seems.
+        =/  pev  (leak:abet(rug (~(put by rug) num new)) dad)
         =*  val  (sign:as:(nol:nu:crub q.pev) *@ ash)
         new(syg (~(put by syg.new) dad [p.pev val]))
   --  --
