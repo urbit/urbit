@@ -141,6 +141,7 @@
   ::
   ++  decode
     %+  cook  |*(a=* `spec:asn1`a)
+    :: ^-  $-(nail (like spec:asn1))
     ;~  pose
       %+  stag  %int
       %+  bass  256
@@ -678,8 +679,8 @@
     %-  en-base64url
     %+  swp  3
     (~(sign rs256 u.key) (rap 3 ~[protect '.' payload]))
-  == 
-::  
+  ==
+::
 ++  request
   |=  [wir=wire url=purl bod=(unit json)]
   =/  lod
@@ -753,7 +754,7 @@
           ;:  weld
             test-base64
             test-asn1
-            test-rsakey
+            :: test-rsakey
             test-rsa
             test-rsapem
             test-rsa-pkcs8
@@ -1135,7 +1136,7 @@
       %-  expect-eq  !>
         [emsa1 `@ux`(~(emsa rs256 k1) inp1)]
       %-  expect-eq  !>
-        [& (~(verify rs256 k2) sig inp2)] 
+        [& (~(verify rs256 k2) sig inp2)]
       %-  expect-eq  !>
         [exp2 sig]
       :: save kpem2 to private.pem
@@ -1172,7 +1173,6 @@
   ::
   ++  test-jws
     ::  rfc7515 appendix 2
-    ^-  wall
     =/  pt=@t
       %+  rap  3
       :~  '4BzEEOtIpmVdVEZNCqS7baC4crd0pqnRH_5IB3jw3bcxGn6QLvnEtfdUdi'
