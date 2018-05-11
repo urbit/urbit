@@ -287,7 +287,7 @@
     :: non-deterministic for now
     :: 0vhu.gp79o.hi7at.smp8u.g5hhr.u3rff.st8ms.q4dc2.hv5ls.tp5cp.10qds.
     ::      h9bpt.vlmm7.lh375.f6u9n.krqv8.5jcml.cujkr.v1uqv.cjhe5.nplta
-  |^  =/  out=wall 
+  |^  =/  out=tang
           ;:  weld
             testen-base64url
             testrsakey
@@ -295,8 +295,7 @@
             testjwkthumbprint
             testjws
           ==
-      ?~  out  abet
-      ((slog (turn `wall`out |=(a=tape leaf+a))) abet)
+      ?~(out abet ((slog out) abet))
   ::
   ++  testen-base64url
     =/  jon  '{"iss":"joe","exp":1300819380,"http://example.com/is_root":true}'
@@ -341,7 +340,7 @@
       =/  d  (~(inv fo (elcm:rsa (dec p) (dec q))) e)
       (key:rsa [p q n e d])
     ::
-    |^  ^-  wall
+    |^  ^-  tang
         ;:  weld
             (check-primes k1)
             (check-primes k2)
@@ -350,19 +349,28 @@
       =,  number
       |=  k=key:rsa
       %+  roll  primes
-      |=  [p=@ a=wall]
+      |=  [p=@ a=tang]
       ?^  a  a
       ?:  =(0 (mod n.k p))
-        :~  "n.key (prime? {(scow %f (pram n.k))}) divisible by {(scow %ud p)}:"
-            "{(scow %ux n.k)}"
+        :~  leaf+"{(scow %ux n.k)}"
+            :-  %leaf
+            %+  weld
+              "n.key (prime? {(scow %f (pram n.k))})"
+            " divisible by {(scow %ud p)}:"
         ==
       ?:  =(0 (mod p.k p))
-        :~  "p.key (prime? {(scow %f (pram p.k))}) divisible by {(scow %ud p)}:"
-            "{(scow %ux p.k)}"
+        :~  leaf+"{(scow %ux p.k)}"
+            :-  %leaf
+            %+  weld
+              "p.key (prime? {(scow %f (pram p.k))})"
+            " divisible by {(scow %ud p)}:"
         ==
       ?:  =(0 (mod q.k p))
-        :~  "q.key (prime? {(scow %f (pram q.k))}) divisible by {(scow %ud p)}:"
-            "{(scow %ux q.k)}"
+        :~  leaf+"{(scow %ux q.k)}"
+            :-  %leaf
+            %+  weld
+              "q.key (prime? {(scow %f (pram q.k))})"
+            " divisible by {(scow %ud p)}:"
         ==
       ~
     --
