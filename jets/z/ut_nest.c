@@ -118,19 +118,19 @@
              u3_noun gil)
   {
     u3_noun p_sut, q_sut, p_ref, q_ref;
-    u3_noun pq_sut, qq_sut, rq_sut, sq_sut;
-    u3_noun pq_ref, qq_ref, rq_ref, sq_ref;
-    u3_noun psq_sut, qsq_sut, psq_ref, qsq_ref;
+    u3_noun pq_sut, qq_sut, rq_sut;
+    u3_noun pq_ref, qq_ref, rq_ref;
+    u3_noun prq_sut, qrq_sut, prq_ref, qrq_ref;
     u3_noun ret;
 
     u3x_trel(sut, 0, &p_sut, &q_sut);
     u3x_trel(ref, 0, &p_ref, &q_ref);
 
-    u3x_qual(q_sut, &pq_sut, &qq_sut, &rq_sut, &sq_sut);
-    u3x_qual(q_ref, &pq_ref, &qq_ref, &rq_ref, &sq_ref);
+    u3x_trel(q_sut, &pq_sut, &qq_sut, &rq_sut);
+    u3x_trel(q_ref, &pq_ref, &qq_ref, &rq_ref);
 
-    u3x_cell(sq_sut, &psq_sut, &qsq_sut);
-    u3x_cell(sq_ref, &psq_ref, &qsq_ref);
+    u3x_cell(rq_sut, &prq_sut, &qrq_sut);
+    u3x_cell(rq_ref, &prq_ref, &qrq_ref);
 
     if ( c3y == u3r_sing(q_sut, q_ref) ) {
       return _nest_dext(van, p_sut, tel, p_ref, u3_nul, u3_nul, gil);
@@ -171,7 +171,7 @@
                              u3nc(c3__gold,
                                   u3k(u3t(q_ref))));
 
-          ret = _nest_dope(van, tus, tel, fer, qsq_sut, qsq_ref, zoc);
+          ret = _nest_dope(van, tus, tel, fer, qrq_sut, qrq_ref, zoc);
           u3z(fer);
           u3z(tus);
           u3z(zoc);

@@ -196,17 +196,17 @@
                   u3_noun lon,
                   u3_noun gil)
   {
-    u3_noun p_sut, q_sut, pq_sut, qq_sut, rq_sut, sq_sut, psq_sut, qsq_sut;
+    u3_noun p_sut, q_sut, pq_sut, qq_sut, rq_sut, prq_sut, qrq_sut;
 
     u3x_cell(u3t(sut), &p_sut, &q_sut);
-    u3x_qual(q_sut, &pq_sut, &qq_sut, &rq_sut, &sq_sut);
-    u3x_cell(sq_sut, &psq_sut, &qsq_sut);
+    u3x_trel(q_sut, &pq_sut, &qq_sut, &rq_sut);
+    u3x_cell(rq_sut, &prq_sut, &qrq_sut);
     {
       if ( u3_nul == q_heg ) {
         return _find_buck_here(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
       else {
-        u3_noun zem = u3qz_loot(u3t(q_heg), qsq_sut);
+        u3_noun zem = u3qz_loot(u3t(q_heg), qrq_sut);
 
         if ( (u3_nul != zem) && (0 != p_heg) ) {
           u3_noun ped;
@@ -228,10 +228,9 @@
 
           mut = u3nt(c3__core,
                      u3k(p_sut),
-                     u3nq(c3__gold,
+                     u3nt(c3__gold,
                           u3k(qq_sut),
-                          u3k(rq_sut),
-                          u3k(sq_sut)));
+                          u3k(rq_sut)));
 
           pro = u3nt
             (c3y,
@@ -520,10 +519,8 @@
                   u3_noun gil)
   {
     u3_noun p_sut, q_sut;
-    u3_noun pp_sut, qp_sut;
 
     u3x_cell(u3t(sut), &p_sut, &q_sut);
-    u3x_cell(p_sut, &pp_sut, &qp_sut);
 
     if ( u3_nul == q_heg ) {
       return _find_buck_here(van, q_sut, way, p_heg, q_heg, axe, lon, gil);
@@ -531,8 +528,8 @@
     else {
       u3_noun uq_heg = u3t(q_heg);          //  term
 
-      if ( c3y == u3ud(qp_sut) ) {
-        if ( c3y == u3r_sing(qp_sut, uq_heg) ) {
+      if ( c3y == u3ud(p_sut) ) {
+        if ( c3y == u3r_sing(p_sut, uq_heg) ) {
           return _find_buck_here(van, q_sut, way, p_heg, q_heg, axe, lon, gil);
         } 
         else {
@@ -540,13 +537,13 @@
         }
       }
       else {
-        u3_noun pqp_sut = u3h(qp_sut);        //  (map term {wain (unit twig)})
-        u3_noun qqp_sut = u3t(qp_sut);        //  (list (pair type nock))
-        u3_noun tyr = u3qdb_get(pqp_sut, uq_heg);  //  (unit {wain (unit twig)})
+        u3_noun pp_sut = u3h(p_sut);        //  (map term {wain (unit twig)})
+        u3_noun qp_sut = u3t(p_sut);        //  (list (pair type nock))
+        u3_noun tyr = u3qdb_get(pp_sut, uq_heg);  //  (unit {wain (unit twig)})
 
         if ( u3_nul == tyr ) {
           return _find_buck_face_next
-            (van, sut, q_sut, qqp_sut, way, p_heg, q_heg, axe, lon, gil);
+            (van, sut, q_sut, qp_sut, way, p_heg, q_heg, axe, lon, gil);
         }
         else {
           u3_noun u_tyr = u3t(tyr);       //  (pair wain (unit twig))
