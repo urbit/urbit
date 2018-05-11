@@ -17,6 +17,8 @@
   test-date-from-schematic
   test-unify-jugs
   test-resource-wire-encoding
+  test-parse-scaffold-basic
+  test-parse-scaffold-sur-lib
   test-literal
   test-autocons-same
   test-autocons-different
@@ -170,6 +172,50 @@
       [%g care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
     (need (path-to-scry-request:ford /gx/~nul/desk/~1234.5.6/bar/foo))
   ==
+::
+++  test-parse-scaffold-basic
+  ~&  %test-parse-scaffold-basic
+  ::
+  %-  expect-eq  !>
+  :-  :-  [1 19]
+      :-  ~
+      :_  [[1 19] ""]
+      :*  %309  ~  ~  ~
+        :*  %direct  %dbug  [/~nul/desk/~1234.5.6/bar/foo [[1 1] [1 19]]]
+            (ream '!.  |=(a=@ud +(a))')
+        ==
+        ~
+      ==
+  %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    [1 1]
+  "!.  |=(a=@ud +(a))"
+::
+++  test-parse-scaffold-sur-lib
+  ~&  %test-parse-scaffold-sur-lib
+  ::
+  =/  parsed
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+      [1 1]
+    """
+    /-  struct
+    /+  library, *thing
+    !.
+    |=(a a)
+    """
+  ?~  q.parsed
+    [%leaf "failed to parse at {<p.parsed>}"]~
+  %-  expect-eq  !>
+  :_  p.u.q.parsed
+  :*  zuse-version=309
+      structures=~[[%.n %struct ~]]
+      libraries=~[[%.n %library ~] [%.y %thing ~]]
+      cranes=~
+      ^=  sources
+        :~  :*  %direct
+                %dbug
+                [/~nul/desk/~1234.5.6/bar/foo [3 1] [4 8]]
+                (ream '|=(a a)')
+  ==    ==  ==
 ::
 ++  test-literal
   ~&  %test-literal

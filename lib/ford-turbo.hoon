@@ -457,9 +457,12 @@
   ::  +cable: a reference to something on the filesystem
   ::
   +=  cable
-    $:  ::  expand-namespace: expose internal faces to subject
+    $:  ::  expose-internal-symbols: expose internal faces to subject
         ::
-        expand-namespace=?
+        ::    If %.y, we don't wrap a face around this hoon when we put it in
+        ::    the subject, which exposes its internal symbols.
+        ::
+        expose-internal-symbols=?
         ::  file-path: location in clay
         ::
         file-path=term
@@ -1379,6 +1382,66 @@
         |=  [kid=^build clients=_client-builds.dag]
         (~(del ju clients) kid build)
       ==
+  --
+::  +parse-scaffold: produces a parser for a hoon file with +crane instances
+::
+::    Ford parses a superset of hoon which contains additional runes to
+::    represent +crane s. This parses to a +scaffold.
+::
+::    src-beam: +beam of the source file we're parsing
+++  parse-scaffold
+  |=  src-beam=beam
+  ::
+  =/  hoon-parser  (vang & (en-beam src-beam))
+  |^  ::
+      %+  cook  |=(a=scaffold a)
+      ::
+      %+  ifix  [gay gay]
+      ;~  plug
+      ::
+        ::  todo: implement /?
+        (easy zuse)
+      ::
+        ::  pareses the structures, eg "/-  types"
+        ;~  pose
+          (ifix [;~(plug fas hep gap) gap] (most ;~(plug com gaw) cable))
+          (easy ~)
+        ==
+      ::
+        ::  parses the libraries, eg "/+  lib1, lib2"
+        ;~  pose
+          (ifix [;~(plug fas lus gap) gap] (most ;~(plug com gaw) cable))
+          (easy ~)
+        ==
+      ::
+        ::  todo: the rest of the horns
+        (easy ~)
+      ::
+        (most gap brick)
+      ==
+  ::  +brick: parses a +^brick, a direct or indirect piece of hoon code
+  ::
+  ++  brick
+    ;~  pose
+      ::  %indirect
+      (stag %direct tall:hoon-parser)
+    ==
+  ::  +cable: parses a +^cable, a reference to something on the filesystem
+  ::
+  ++  cable
+    %+  cook  |=(a=^cable a)
+    ;~  pose
+      (stag %& ;~(pfix tar local-or-remote-reference))
+      (stag %| local-or-remote-reference)
+    ==
+  ::  +local-or-remote-reference: the type used in +cable
+  ::
+  ++  local-or-remote-reference
+    ;~  plug
+      sym
+      ::  todo: ignoring :remote-location syntax for now as it is weird.
+      (easy ~)
+    ==
   --
 ::  +per-event: per-event core
 ::
