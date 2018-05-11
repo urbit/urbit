@@ -5692,8 +5692,7 @@
           ==                                            ::
 +=  coil  $:  p/?($gold $iron $lead $zinc)              ::  core type
               q/type                                    ::  built with
-              r/chap                                    ::  docs
-              s/{p/seminoun q/(map @ tomb)}             ::  arms
+              r/{p/seminoun q/(map @ tomb)}             ::  arms
           ==                                            ::
 +=  foot  $%  {$ash p/hoon}                             ::  dry arm, geometric
               {$elm p/hoon}                             ::  wet arm, generic
@@ -5787,7 +5786,7 @@
 +=  toga                                                ::  face control
           $@  p/term                                    ::  two togas
           $%  {$0 ~}                                    ::  no toga
-              {$1 p/(pair what term) q/toga}            ::  deep toga
+              {$1 p/term q/toga}                        ::  deep toga
               {$2 p/toga q/toga}                        ::  cell toga
           ==                                            ::
 +=  tomb  (pair chap (map term (pair what foot)))       ::  core chapter
@@ -5833,7 +5832,7 @@
     {$rock p/term q/*}                                  ::  fixed constant
     {$sand p/term q/*}                                  ::  unfixed constant
     {$tell p/(list hoon)}                               ::  render as tape
-    {$tune p/(pair what $@(term tune))}                 ::  minimal face
+    {$tune p/$@(term tune)}                             ::  minimal face
     {$wing p/wing}                                      ::  take wing
     {$yell p/(list hoon)}                               ::  render as tank
     {$xray p/manx:hoot}                                 ::  ;foo; templating
@@ -5843,7 +5842,7 @@
   ::                                            ::::::  cores
     {$brcb p/chap q/spec r/alas s/(map @ tomb)}         ::  |_
     {$brcl p/chap q/hoon r/hoon}                        ::  |:
-    {$brcn p/chap q/(map @ tomb)}                       ::  |%
+    {$brcn p/(map @ tomb)}                              ::  |%
     {$brdt p/chap q/hoon}                               ::  |.
     {$brkt p/chap q/hoon r/(map @ tomb)}                ::  |^
     {$brhp p/chap q/hoon}                               ::  |-
@@ -5974,7 +5973,7 @@
           $%  {$atom p/term q/(unit @)}                 ::  atom / constant
               {$cell p/type q/type}                     ::  ordered pair
               {$core p/type q/coil}                     ::  object
-              {$face p/{p/what q/$@(term tune)} q/type} ::  namespace
+              {$face p/$@(term tune) q/type}            ::  namespace
               {$fork p/(set type)}                      ::  union
               {$hint p/(pair type note) q/type}         ::  annotation
               {$hold p/type q/hoon}                     ::  lazy evaluation
@@ -6527,7 +6526,7 @@
 ::
 ++  face                                                ::  make %face type
   ~/  %face
-  |=  {giz/{what $@(term tune)} der/type}
+  |=  {giz/$@(term tune) der/type}
   ^-  type
   ?:  =(%void der)
     %void
@@ -6695,7 +6694,7 @@
 ++  robo
   |=  togi
   ^-  toga
-  ?@(+< +< [%1 [`p.+< q.+<] %0 ~])
+  ?@(+< +< [%1 q.+< %0 ~])
 ::
 ++  look
   ~/  %look
@@ -7143,7 +7142,7 @@
         ^-  (list (pair term hoon))
         %-  zing
         ^-  (list (list (pair term hoon)))
-        %+  turn  ~(tap by q.s.battery)
+        %+  turn  ~(tap by q.r.battery)
         |=  [term =tomb]
         ^-  (list (pair term hoon))
         %+  turn  ~(tap by q.tomb)
@@ -7176,13 +7175,13 @@
       |=  $:  ::  decor: decoration 
               ::  content: decorated content
               ::
-              decor=(pair what $@(term tune))
+              decor=$@(term tune)
               content=type
           ==
       ^-  [spec _+>]
       =^  body  +>.$  main(sut content)
       :_  +>.$
-      ?@  q.decor  [%bcts q.decor body]
+      ?@  decor  [%bcts decor body]
       ::  discard aliases, etc
       ::
       body
@@ -7313,7 +7312,7 @@
         ==
     ^-  hoon
     :+  %tsgr  example:clear(mod payload)
-    :+  %brcn  *chap
+    :-  %brcn
     =-  [[0 [~ ~] -] ~ ~]
     %-  ~(gas by *(map term (pair what foot)))
     ^-  (list (trel term what foot))
@@ -7969,7 +7968,7 @@
           $leaf   runk
           $brcb   ((doof -.gen +>.gen) p.gen)
           $brcl   ((doof -.gen +>.gen) p.gen)
-          $brcn   ((doof -.gen +>.gen) p.gen)
+          ::  $brcn   ((doof -.gen +>.gen) p.gen)
           $brdt   ((doof -.gen +>.gen) p.gen)
           $brkt   ((doof -.gen +>.gen) p.gen)
           $brhp   ((doof -.gen +>.gen) p.gen)
@@ -8043,31 +8042,12 @@
       ++  toni
         |=  gyt/togi
         ^-  {togi whit}
-        ?@  gyt
-          =^  wat  wit  (grif gyt ~)
-          ?~  wat  [gyt wit]
-          [[u.wat gyt] wit]
-        =^  wat  wit  (grif q.gyt `p.gyt)
-        ?~  wat
-          [q.gyt wit]
-        [[u.wat q.gyt] wit]
+        [gyt *whit]
       ::
       ++  tong
         |=  got/toga
         ^-  {toga whit}
-        ?@  got
-          =^  wat  wit  (grif got ~)
-          ?~  wat  [got wit]
-          [[%1 [wat got] [%0 ~]] wit]
-        ?-  -.got
-          $0  [got wit]
-          $1  =^  wat  wit  (grif q.p.got p.p.got)
-              =^  sub  wit  $(got q.got)
-              [[%1 [wat q.p.got] sub] wit]
-          $2  =^  one  wit  $(got p.got)
-              =^  two  wit  $(got q.got)
-              [[%2 one two] wit]
-        ==
+        [got *whit]
       --
     ::
     ++  graf
@@ -8166,7 +8146,7 @@
         {$note *}  q.gen
     ::
         {$brcb *}  :+  %tsls  [%bcdt q.gen]
-                   :+  %brcn  p.gen
+                   :-  %brcn
                    %-  ~(run by s.gen)
                    |=  tom/tomb
                    ^+  tom
@@ -8180,11 +8160,11 @@
                    ?~  r.gen  p.q.a
                    [%tstr [~ p.i.r.gen] q.i.r.gen $(r.gen t.r.gen)]
         {$brcl *}  [%tsls q.gen [%brdt p.gen r.gen]]
-        {$brdt *}  :+  %brcn  p.gen
+        {$brdt *}  :-  %brcn
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
         {$brkt *}  :+  %tsgr 
-                      :+  %brcn  p.gen
+                      :-  %brcn
                       =+  one=(~(got by r.gen) 0)
                       %+  ~(put by r.gen)  0
                       one(q (~(put by q.one) %$ [~ [%ash q.gen]]))
@@ -8192,7 +8172,7 @@
         {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen q.gen]]
         {$brsg *}  [%ktbr [%brts p.gen q.gen r.gen]]
         {$brtr *}  :+  %tsls  [%bcdt q.gen]
-                   :+  %brcn  p.gen
+                   :-  %brcn
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
         {$brts *}  :^  %brcb  p.gen  q.gen
@@ -8302,7 +8282,7 @@
         $marl  =-  [%cndt [p.i.p.gen $(p.gen t.p.gen)] -]
                ^-  hoon
                :+  %tsbr  [%base %cell]
-               :+  %brcn  *chap
+               :-  %brcn
                ^-  (map @ tomb)
                =-  [[0 [~ ~] -] ~ ~]
                ^-  (map term (pair what foot))
@@ -8528,7 +8508,7 @@
         $yell  (lead -.gen %.(+.gen moar))
         $brcb  (lead -.gen %.(+.gen (quad noop stir exps arms)))
         $brcl  (lead -.gen %.(+.gen (twin noop dubs)))
-        $brcn  (lead -.gen %.(+.gen (twin noop arms)))
+        $brcn  (lead -.gen %.(+.gen arms))
         $brdt  (lead -.gen %.(+.gen (twin noop expr)))
         $brkt  (lead -.gen %.(+.gen (trio noop expr arms)))
         $brhp  (lead -.gen %.(+.gen (twin noop expr)))
@@ -8744,9 +8724,9 @@
       (twin noop twef)
     ::
     ++  tung
-      |=  bud/{p/what q/$@(term tune)}
-      ?@  q.bud  [bud vit]
-      (lead p.bud %.(q.bud (twin (raid (twin noop twee)) (moto expr))))
+      |=  bud/$@(term tune)
+      ?@  bud  [bud vit]
+      %.(bud (twin (raid (twin noop twee)) (moto expr)))
     ::
     ++  twee
       |=  bud/(unit hoon)
@@ -8857,7 +8837,7 @@
       {$atom *}  ?~(q.sut [full/[~ ~ ~] ~] [full/~ u.q.sut])
       {$cell *}  (combine:musk $(sut p.sut) $(sut q.sut))
       {$core *}  %+  combine:musk 
-                   p.s.q.sut
+                   p.r.q.sut
                  $(sut p.sut) 
       {$face *}  $(sut repo)
       {$fork *}  [full/[~ ~ ~] ~]
@@ -8879,10 +8859,9 @@
                    burp(sut p.sut)
                  :*  p.q.sut
                      burp(sut q.q.sut)
-                     r.q.sut
-                     :_  q.s.q.sut
-                     ?:  ?=([[%full ~] *] p.s.q.sut)
-                       p.s.q.sut
+                     :_  q.r.q.sut
+                     ?:  ?=([[%full ~] *] p.r.q.sut)
+                       p.r.q.sut
                      [[%full ~ ~ ~] ~]
                   ==
       [%face *]  [%face p.sut burp(sut q.sut)]
@@ -8895,18 +8874,18 @@
     ~/  %busk
     |=  gen/hoon
     ^-  type
-    [%face [~ ~ [gen ~]] sut]
+    [%face [~ [gen ~]] sut]
   ::
   ++  buss
     ~/  %buss
     |=  {{wat/what cog/term} gen/hoon}
     ^-  type
-    [%face [wat [[cog ~ ~ gen] ~ ~] ~] sut]
+    [%face [[[cog ~ ~ gen] ~ ~] ~] sut]
   ::
   ++  conk
     |=  got/toga
     ^-  type
-    ?@  got  [%face [~ got] sut]
+    ?@  got  [%face got sut]
     ?-  -.got
       $0  sut
       $1  [%face p.got $(got q.got)]
@@ -9381,7 +9360,7 @@
                 {$core *}
               ?~  q.heg  here
               =^  zem  p.heg
-                  =+  zem=(loot u.q.heg q.s.q.sut)
+                  =+  zem=(loot u.q.heg q.r.q.sut)
                   ?~  zem  [~ p.heg]
                   ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
               ?^  zem
@@ -9398,7 +9377,7 @@
             ::
                 {$face *}
               ?:  ?=(~ q.heg)  here(sut q.sut)
-              =*  zot  q.p.sut
+              =*  zot  p.sut
               ?@  zot
                 ?:(=(u.q.heg zot) here(sut q.sut) lose)
               =<  main
@@ -9598,7 +9577,7 @@
   ++  laze
     ::  produce lazy core generator for static execution
     ::
-    |=  [wad=chap dom=(map @ tomb)]
+    |=  [dom=(map @ tomb)]
     ::  only one layer of fabrication analysis
     ::
     =.  fab  &
@@ -9615,7 +9594,7 @@
       ^-  (unit noun)
       %+  bind  (~(get by tal) axe)
       |=  fut/foot
-      %.(fut hemp(sut (core sut %gold sut wad [[%lazy 1 ..^$] ~] dom)))
+      %.(fut hemp(sut (core sut %gold sut [[%lazy 1 ..^$] ~] dom)))
     ::
     %-  ~(gas by *(map @ud foot))
     =|  yeb/(list (pair @ud foot))
@@ -9717,10 +9696,10 @@
   ++  mile
     ::  mull all chapters and feet in a core
     ::
-    |=  [dox=type mel=vair wad=chap dom=(map @ tomb)]
+    |=  [dox=type mel=vair dom=(map @ tomb)]
     ^-  (pair type type)
-    =+  yet=(core sut %gold sut wad (laze wad dom) dom)
-    =+  hum=(core dox %gold dox wad (laze wad dom) dom)
+    =+  yet=(core sut %gold sut (laze dom) dom)
+    =+  hum=(core dox %gold dox (laze dom) dom)
     =+  %+  balk(sut yet)
           hum
         dom
@@ -9729,12 +9708,12 @@
   ++  mine
     ::  mint all chapters and feet in a core
     ::
-    |=  [mel/vair wad/chap dom/(map @ tomb)]
+    |=  [mel/vair dom/(map @ tomb)]
     ^-  (pair type nock)
     =-  :_  [%1 dez]
-        (core sut mel sut wad [[%full ~] dez] dom)
+        (core sut mel sut [[%full ~] dez] dom)
     ^=  dez
-    =.  sut  (core sut %gold sut wad (laze wad dom) dom)
+    =.  sut  (core sut %gold sut (laze dom) dom)
     |-  ^-  ?(~ ^)
     ?:  ?=(~ dom)
       ~
@@ -9775,7 +9754,7 @@
       [(nice (cell p.hed p.tal)) (cons q.hed q.tal)]
     ::
         {$ktcn *}  $(fab |, gen p.gen)
-        {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
+        {$brcn *}  (grow %gold [%$ 1] p.gen)
     ::
         {$cnts *}  (~(mint et p.gen q.gen) gol)
     ::
@@ -9898,10 +9877,10 @@
       typ
     ::
     ++  grow
-      |=  {mel/vair ruf/hoon wad/chap dom/(map @ tomb)}
+      |=  {mel/vair ruf/hoon dom/(map @ tomb)}
       ^-  {p/type q/nock}
       =+  dan=^$(gen ruf, gol %noun)
-      =+  pul=(mine mel wad dom)
+      =+  pul=(mine mel dom)
       [(nice p.pul) (cons q.pul q.dan)]
     --
   ::
@@ -9934,7 +9913,7 @@
       [(nice (cell p.hed p.tal)) (cell q.hed q.tal)]
     ::
         {$ktcn *}  $(fab |, gen p.gen)
-        {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
+        {$brcn *}  (grow %gold [%$ 1] p.gen)
         {$cnts *}  (~(mull et p.gen q.gen) gol dox)
         {$dtkt *}  =+($(gen q.gen, gol %noun) $(gen [%bcdt p.gen]))
         {$dtls *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
@@ -10063,12 +10042,12 @@
       typ
     ::
     ++  grow
-      |=  {mel/vair ruf/hoon wad/chap dom/(map @ tomb)}
+      |=  {mel/vair ruf/hoon dom/(map @ tomb)}
       ::  make al 
       ~_  leaf+"mull-grow"
       ^-  {p/type q/type}
       =+  dan=^$(gen ruf, gol %noun)
-      =+  yaz=(mile(sut p.dan) q.dan mel wad dom)
+      =+  yaz=(mile(sut p.dan) q.dan mel dom)
       [(nice p.yaz) q.yaz]
     --
   ++  meet  |=(ref/type &((nest | ref) (nest(sut ref) | sut)))
@@ -10188,7 +10167,7 @@
                        dext(sut q.q.ref, ref p.ref)
                        (deem(sut q.q.sut, ref q.q.ref) p.q.sut p.q.ref)
                        ?|  (~(has in gil) [sut ref])
-                           %.  [q.s.q.sut q.s.q.ref]
+                           %.  [q.r.q.sut q.r.q.ref]
                            %=  deep
                              gil  (~(put in gil) [sut ref])
                              sut  sut(p q.q.sut, p.q %gold)
@@ -10282,7 +10261,7 @@
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
       {$ktcn *}  $(fab |, gen p.gen)
-      {$brcn *}  (core sut %gold sut p.gen *seminoun q.gen)
+      {$brcn *}  (core sut %gold sut *seminoun p.gen)
       {$cnts *}  ~(play et p.gen q.gen)
       {$dtkt *}  $(gen [%bcdt p.gen])
       {$dtls *}  [%atom %$ ~]
@@ -10445,7 +10424,7 @@
           {$face *}
         ::  push face on subject stack, and descend
         ::
-        dext(hos [q.p.sut hos], sut q.sut)
+        dext(hos [p.sut hos], sut q.sut)
       ::
           {$hint *}
         ::  work through hint
@@ -10495,7 +10474,7 @@
       ::
       |-  ^-  type
       ?~  lov  sut
-      $(lov t.lov, sut (face [~ i.lov] sut))
+      $(lov t.lov, sut (face i.lov sut))
     ::                                                  ::
     ++  sint                                            ::  reduce by reference
       |=  $:  ::  hod: expand holds
@@ -10516,7 +10495,7 @@
         ::
         %=  $
           ref  q.ref
-          wec  (~(run in wec) |=((list tool) [q.p.ref +<]))
+          wec  (~(run in wec) |=((list tool) [p.ref +<]))
         ==
       ::
           {$fork *}  
@@ -11037,11 +11016,11 @@
       %^  cat  3
         %~  rent  co
         :+  %$  %ud
-        %-  ~(rep by (~(run by q.s.q.sut) |=(tomb ~(wyt by q))))
+        %-  ~(rep by (~(run by q.r.q.sut) |=(tomb ~(wyt by q))))
         |=([[@ a=@u] b=@u] (add a b))
       %^  cat  3
         ?-(p.q.sut $gold '.', $iron '|', $lead '?', $zinc '&')
-      =+  gum=(mug q.s.q.sut)
+      =+  gum=(mug q.r.q.sut)
       %+  can  3
       :~  [1 (add 'a' (mod gum 26))]
           [1 (add 'a' (mod (div gum 26) 26))]
@@ -11053,7 +11032,7 @@
     ::
         {$face *}
       =+  yad=$(sut q.sut)
-      ?^(q.p.sut yad [p.yad [%face q.p.sut q.yad]])
+      ?^(p.sut yad [p.yad [%face p.sut q.yad]])
     ::
         {$fork *}
       =+  yed=~(tap in p.sut)
@@ -11162,10 +11141,10 @@
       {$hint *}  $(typ ~(repo ut typ))
       {$core *}
     |-  ^-  ?
-    ?~  q.s.q.typ  |
-    ?|  (~(has by q.q.n.q.s.q.typ) cog)
-        $(q.s.q.typ l.q.s.q.typ)
-        $(q.s.q.typ r.q.s.q.typ)
+    ?~  q.r.q.typ  |
+    ?|  (~(has by q.q.n.q.r.q.typ) cog)
+        $(q.r.q.typ l.q.r.q.typ)
+        $(q.r.q.typ r.q.r.q.typ)
     ==
   ==
 ::
@@ -11176,7 +11155,7 @@
       {$hold *}  $(typ ~(repo ut typ))
       {$core *}
     %-  zing
-    %+  turn  ~(tap by q.s.q.typ)
+    %+  turn  ~(tap by q.r.q.typ)
       |=  {* b/tomb}
     %+  turn  ~(tap by q.b)
       |=  {a/term *}
@@ -12737,7 +12716,7 @@
               %-  stew
               ^.  stet  ^.  limo
               :~  ['_' (runo cab %brcb [~ ~] exqr)]
-                  ['%' (runo cen %brcn [~ ~] expe)]
+                  ['%' (rune cen %brcn expe)]
                   [':' (runo col %brcl [~ ~] expb)]
                   ['.' (runo dot %brdt [~ ~] expa)]
                   ['-' (runo hep %brhp [~ ~] expa)]
@@ -13411,7 +13390,12 @@
 ++  ride                                                ::  end-to-end compiler
   |=  {typ/type txt/@}
   ^-  (pair type nock)
-  (~(mint ut typ) %noun (ream txt))
+  ~&  %ride-parsing
+  =/  gen  (ream txt)
+  ~&  %ride-compiling
+  =-  ~&  %ride-compiled
+      -
+  (~(mint ut typ) %noun gen)
 ::
 ::::  5e: caching compiler
   ::

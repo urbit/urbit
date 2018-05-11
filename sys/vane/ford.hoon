@@ -1889,12 +1889,12 @@
         :+  %tsgr
           ?:  =(~ rop)  
             [%$ 1] 
-          :+  %brcn  [~ ~]
+          :-  %brcn
           =-  [[0 [~ ~] -] ~ ~]
           (~(run by rop) |=({^ a/hoon} [~ %ash a]))
         ?:  =(~ bil) 
           [%$ 1] 
-        :+  %brcn  [~ ~]
+        :-  %brcn
         =-  [[0 [~ ~] -] ~ ~]
         (~(run by bil) |=({^ a/hoon} [~ %ash a]))
       ::
@@ -1990,7 +1990,7 @@
           %+  tug:bo  $(hon q.hon)
           %-  with:bo
           |=  {mar/mark vax/vase}
-          [mar [%face [~ p.hon] p.vax] q.vax]
+          [mar [%face p.hon p.vax] q.vax]
         ::
             $fsdt
           %+  tug:bo
@@ -2172,7 +2172,7 @@
           |:  $:{cof/cafe mav/(map term (pair what foot)) sel/_..wilt}
           ?~  mav
             (err:bo cof [%leaf "source missing: {<(en-beam p.hop)>}"]~)
-          (new:bo cof sel(boy [[%brcn [~ ~] [[0 [~ ~] mav] ~ ~]] boy]))
+          (new:bo cof sel(boy [[%brcn [[0 [~ ~] mav] ~ ~]] boy]))
         ==
       --
     ::
