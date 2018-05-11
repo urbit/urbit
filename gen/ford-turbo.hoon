@@ -3269,6 +3269,42 @@
     (expect-ford-empty ford ~nul)
   ==
 ::
+++  test-core
+  ~&  %test-core
+  ::
+  =/  ford  *ford-gate
+  =/  hoon-vase=vase  !>((ream '`@tas`%constant'))
+  ::
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %desk %da ~1234.5.6] /hoon/foo-bar/lib]]
+      [%hoon hoon-vase]
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%core source-path=`rail:ford-gate`[[~nul %desk] /hoon/foo-bar/lib]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete
+                %success  %pin  ~1234.5.6
+                %success  %core  hoon-vase
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+
+::
 ::  |utilities: helper arms
 ::
 ::+|  utilities

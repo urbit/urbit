@@ -2473,7 +2473,7 @@
             %bunt  !!
             %call  (call [gate sample]:schematic.build)
             %cast  !!
-            %core  !!
+            %core  (core source-path.schematic.build)
             %diff  !!
             %dude  (dude [error attempt]:schematic.build)
             %hood  (hood source-path.schematic.build)
@@ -2617,6 +2617,42 @@
         =/  message=tang  [[%leaf "ford: %call failed:"] p.val]
         [build [%build-result %error message] accessed-builds]
       ==
+    ::
+    ++  core
+      |=  source-path=rail
+      ^-  build-receipt
+      ::  convert file at :source-path to a +scaffold
+      ::
+      =/  hood-build=^build  [date.build [%hood source-path]]
+      ::
+      =^  hood-result  accessed-builds  (depend-on hood-build)
+      ?~  hood-result
+        [build [%blocks [hood-build]~ ~] accessed-builds]
+      ::
+      ?:  ?=(%error -.u.hood-result)
+        =/  message=tang
+          [[%leaf "%core failed: "] message.u.hood-result]
+        ::
+        [build [%build-result %error message] accessed-builds]
+      ::  build the +scaffold into a program
+      ::
+      ?>  ?=([%success %hood *] u.hood-result)
+      ::
+      =/  plan-build=^build
+        [date.build [%plan source-path `coin`[%many ~] scaffold.u.hood-result]]
+      ::
+      =^  plan-result  accessed-builds  (depend-on plan-build)
+      ?~  plan-result
+        [build [%blocks [plan-build]~ ~] accessed-builds]
+      ::
+      ?:  ?=(%error -.u.plan-result)
+        =/  message=tang
+          [[%leaf "%core failed: "] message.u.plan-result]
+        ::
+        [build [%build-result %error message] accessed-builds]
+      ::
+      ?>  ?=([%success %plan *] u.plan-result)
+      [build [%build-result %success %core vase.u.plan-result] accessed-builds]
     ::
     ++  dude
       |=  [error=(trap tank) attempt=schematic]
