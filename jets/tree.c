@@ -169,6 +169,51 @@ static u3j_core _143_hex_d[] =
     };
 #endif
 
+static c3_c* _143_pen__ut_ha[] = {
+  "c2cda56",
+  0,
+};
+static u3j_hood _143_pen__ut_ho[] = {
+  { "fan",  28, c3n },
+  { "rib",  58, c3n },
+  { "vet", 118, c3n },
+  { "fab", 119, c3n },
+
+  { "blow",   49131 },
+  { "burn",    3051 },
+  { "busk", 0x5ff57 },
+  { "buss",      94 },
+  { "crop",       4 },
+  { "duck",   48087 },
+  { "dune",    1524 },
+  { "dunk",     763 },
+  { "epla",   12283 },
+  { "emin",    5998 },
+  { "emul",      86 },
+  { "felt",   24046 },
+  { "fine",    3004 },
+  { "fire",     700 },
+  { "fish",    1498 },
+  { "fond",      92 },
+  { "fund",    1402 },
+  { "funk", 0x1757c, c3y, 31 },
+  { "fuse",    1534 },
+  { "gain",     748 },
+  { "lose",      22 },
+  { "mint", 0x17fd4 },
+  { "moot",    2807 },
+  { "mull",   11995 },
+  { "nest",     380 },
+  { "peel",    5999 },
+  { "play",   12022 },
+  { "peek",    5996 },
+  { "repo",    3050 },
+  { "rest",     382 },
+  { "tack",     351 },
+  { "toss",   24042 },
+  { "wrap",    6143 },
+  {},
+};
 static u3j_core _143_pen_d[] =
   { { "hex", 0, 0, _143_hex_d },
 
@@ -189,8 +234,7 @@ static u3j_core _143_pen_d[] =
 
     // { "ap", _143_pen__ap_a },
     // { "al", _143_pen__al_a },
-    { "ut", 15, _143_pen__ut_a, _143_pen__ut_d },
-
+    { "ut", 15, _143_pen__ut_a, _143_pen__ut_d, _143_pen__ut_ha, _143_pen__ut_ho },
     {}
   };
 
@@ -654,6 +698,10 @@ static u3j_core _143_tri_d[] =
     static u3j_harm _143_two__in_tap_a[] = {{".2", u3wdi_tap}, {}};
     static u3j_harm _143_two__in_wyt_a[] = {{".2", u3wdi_wyt}, {}};
     static u3j_harm _143_two__in_uni_a[] = {{".2", u3wdi_uni}, {}};
+    static c3_c* _143_two__in_uni_ha[] = {
+      "26e34913",
+      0,
+    };
   static u3j_core _143_two__in_d[] =
     { { "bif", 7, _143_two__in_bif_a },
       { "dif", 7, _143_two__in_dif_a },
@@ -664,7 +712,7 @@ static u3j_core _143_tri_d[] =
       { "put", 7, _143_two__in_put_a },
       { "tap", 7, _143_two__in_tap_a },
       { "wyt", 7, _143_two__in_wyt_a },
-      { "uni", 7, _143_two__in_uni_a },
+      { "uni", 7, _143_two__in_uni_a, 0, _143_two__in_uni_ha },
       {}
     };
 
@@ -707,6 +755,14 @@ static c3_c* _143_two_met_ha[] = {
   "51509f40",
   0,
 };
+static c3_c* _143_two_mix_ha[] = {
+  "76bbeb8a",
+  0,
+};
+static c3_c* _143_two_rap_ha[] = {
+  "7a6875bb",
+  0,
+};
 static c3_c* _143_two_lsh_ha[] = {
   "41b3a4c7",
   0,
@@ -715,12 +771,20 @@ static c3_c* _143_two_rsh_ha[] = {
   "7c0c8df2",
   0,
 };
+static c3_c* _143_two_rip_ha[] = {
+  "54970200",
+  0,
+};
 static c3_c* _143_two_vor_ha[] = {
   "2b05b267",
   0,
 };
 static c3_c* _143_two_bex_ha[] = {
   "6c223bad",
+  0,
+};
+static c3_c* _143_two_end_ha[] = {
+  "3fb28e44",
   0,
 };
 static c3_c* _143_two_lent_ha[] = {
@@ -733,6 +797,10 @@ static c3_c* _143_two_roll_ha[] = {
 };
 static c3_c* _143_two__by_ha[] = {
   "76d3df01",
+  0,
+};
+static c3_c* _143_two__in_ha[] = {
+  "51074d19",
   0,
 };
 static u3j_core _143_two_d[] =
@@ -766,7 +834,7 @@ static u3j_core _143_two_d[] =
     { "dis", 7, _143_two_dis_a },
     { "dor", 7, _143_two_dor_a },
     { "dvr", 7, _143_two_dvr_a },
-    { "end", 7, _143_two_end_a },
+    { "end", 7, _143_two_end_a, 0, _143_two_end_ha },
     { "gor", 7, _143_two_gor_a },
     { "hor", 7, _143_two_hor_a },
     { "jam", 7, _143_two_jam_a },
@@ -774,12 +842,12 @@ static u3j_core _143_two_d[] =
     { "mas", 7, _143_two_mas_a },
     { "mat", 7, _143_two_mat_a },
     { "met", 7, _143_two_met_a, 0, _143_two_met_ha },
-    { "mix", 7, _143_two_mix_a },
+    { "mix", 7, _143_two_mix_a, 0, _143_two_mix_ha },
     { "mug", 7, _143_two_mug_a },
     { "muk", 7, _143_two_muk_a },
-    { "rap", 7, _143_two_rap_a },
+    { "rap", 7, _143_two_rap_a, 0, _143_two_rap_ha },
     { "rep", 7, _143_two_rep_a },
-    { "rip", 7, _143_two_rip_a },
+    { "rip", 7, _143_two_rip_a, 0, _143_two_rip_ha },
     { "rsh", 7, _143_two_rsh_a, 0, _143_two_rsh_ha },
     { "rub", 7, _143_two_rub_a },
     { "peg", 7, _143_two_peg_a },
@@ -789,7 +857,7 @@ static u3j_core _143_two_d[] =
     { "xeb", 7, _143_two_xeb_a },
 
     { "by", 7, 0, _143_two__by_d, _143_two__by_ha },
-    { "in", 7, 0, _143_two__in_d },
+    { "in", 7, 0, _143_two__in_d, _143_two__in_ha },
     {},
   };
 
@@ -824,6 +892,10 @@ static c3_c* _143_one_mul_ha[] = {
   "679b5099",
   0,
 };
+static c3_c* _143_one_sub_ha[] = {
+  "5e25e8d4",
+  0,
+};
 static c3_c* _143_one_dec_ha[] = {
   "ce60540",
   0,
@@ -848,7 +920,7 @@ static u3j_core _143_one_d[] =
     { "lth", 7, _143_one_lth_a, 0, _143_one_lth_ha },
     { "mod", 7, _143_one_mod_a },
     { "mul", 7, _143_one_mul_a, 0, _143_one_mul_ha },
-    { "sub", 7, _143_one_sub_a },
+    { "sub", 7, _143_one_sub_a, 0, _143_one_sub_ha },
 
     { "cap", 7, _143_one_cap_a },
     { "mas", 7, _143_one_mas_a },

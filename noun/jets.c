@@ -49,9 +49,12 @@ _cj_core_loc(u3_noun pel, u3j_core* cop_u)
 
   if ( cop_u->huc_u ) {
     for ( i_w = 0; 0 != cop_u->huc_u[i_w].nam_c; ++i_w ) {
-      huc = u3kdb_put(huc,
-          u3i_string(cop_u->huc_u[i_w].nam_c),
-          u3nq(9, cop_u->huc_u[i_w].axe_l, 0, 1));
+      u3j_hood* huc_u = &(cop_u->huc_u[i_w]);
+      u3_noun   fol   = ( c3n == huc_u->kic_o )
+                      ? u3nc(0, huc_u->axe_l)
+                      : u3nt(9, huc_u->axe_l, u3nc(0,
+                            (0 == huc_u->sax_l) ? 1 : huc_u->sax_l));
+      huc = u3kdb_put(huc, u3i_string(huc_u->nam_c), fol);
     }
   }
 

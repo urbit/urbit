@@ -55,6 +55,8 @@
       typedef struct _u3j_hood {
         c3_c*             nam_c;               //  hook name
         c3_l              axe_l;               //  hook axis (XX: direct)
+        c3_o              kic_o;               //  hook is kick (vs. fragment)
+        c3_l              sax_l;               //  hook subject axis (XX: direct)
       } u3j_hood;
 
     /* u3j_core: driver definition.
