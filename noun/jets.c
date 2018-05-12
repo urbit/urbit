@@ -265,9 +265,10 @@ _cj_install(u3j_core* ray_u, c3_w jax_l, u3_noun pel, u3_noun lab, u3j_core* dev
                   old = ( u3_none == hot ) ? u3_none : u3k(u3h(hot)),
                   reg = _cj_gust(old, kid_u->axe_l, u3k(pel), u3k(loc)),
                   huc = u3t(u3t(loc)),
-                  hap = _cj_warm_hump(jax_l, huc);
+                  hap = _cj_warm_hump(jax_l, huc),
+                  toh = u3nq(reg, jax_l, hap, u3k(bal));
 
-          u3h_put(u3D.hot_p, key, u3nq(reg, jax_l, hap, u3k(bal)));
+          u3h_put(u3D.hot_p, key, toh);
           u3z(key);
         }
       }
@@ -481,7 +482,7 @@ _cj_jit(c3_l jax_l, u3_noun bat)
   return u3_nul;
 }
 
-/* _cj_loc_axe(): axis-within-core from location (0 for root)
+/* _cj_loc_axe(): axis-within-core from location (0 for root). RETAIN.
  */
 static u3_noun
 _cj_loc_axe(u3_noun loc)
@@ -492,7 +493,7 @@ _cj_loc_axe(u3_noun loc)
     : (c3y == u3h(u3t(pat))) ? 0 : 3;
 }
 
-/* _cj_loc_pel(): parent location (or root noun, if root) of loc
+/* _cj_loc_pel(): parent location (or root noun, if root) of loc. RETAIN.
  */
 static u3_noun
 _cj_loc_pel(u3_noun loc)
@@ -1568,24 +1569,19 @@ u3j_gate_lose(u3j_site* sit_u)
   }
 }
 
-/* _cj_mine(): declare a core and produce location. RETAIN.
-*/
+/* _cj_minx(): produce location of core from fsck'd clue. RETAIN.
+ */
 static u3_weak
-_cj_mine(u3_noun cey, u3_noun cor)
+_cj_minx(u3_noun cey, u3_noun cor)
 {
-  c3_l par_l, jax_l;
-  u3_noun bat = u3h(cor),
-          pel, hap, reg, loc, bal, act, nam, axe, huc;
-
+  u3_noun nam, axe, huc;
   u3x_trel(cey, &nam, &axe, &huc);
+
   if ( 0 == axe ) {
-    pel   = u3k(u3t(cor));
-    loc   = u3nt(u3nt(c3y, c3y, u3k(pel)), u3k(nam), u3k(huc));
-    bal   = u3nc(u3k(nam), u3_nul);
-    par_l = 0;
+    return u3nt(u3nt(c3y, c3y, u3k(u3t(cor))), u3k(nam), u3k(huc));
   }
   else {
-    u3_weak par, pac;
+    u3_weak par, pel;
     u3_noun pat;
 
     par = u3r_at(axe, cor);
@@ -1601,28 +1597,71 @@ _cj_mine(u3_noun cey, u3_noun cor)
                       axe);
       return u3_none;
     }
-    pac = _cj_find_warm(pel);
-    c3_assert(u3_none != pac);
-    par_l = u3h(pac);
-    bal   = u3nc(u3k(nam), u3k(u3h(u3t(u3t(pac)))));
-    u3z(pac);
     pat = ( ( 3 == axe ) && (c3y == u3h(u3h(pel))) )
-        ? u3nt(c3y, c3n, u3k(pel))
-        : u3nt(c3n, u3k(axe), u3k(pel));
-    loc = u3nt(pat, u3k(nam), u3k(huc));
+        ? u3nt(c3y, c3n, pel)
+        : u3nt(c3n, u3k(axe), pel);
+    return u3nt(pat, u3k(nam), u3k(huc));
   }
-  reg   = _cj_gust(_cj_find_cold(bat), u3k(axe), pel, u3k(loc));
-  jax_l = _cj_hot_mean(par_l, nam);
-#if 1
-  u3m_p("new jet", bal);
-  fprintf(stderr, "  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
-#endif
-  hap   = _cj_warm_hump(jax_l, huc);
-  act   = u3nq(jax_l, hap, bal, _cj_jit(jax_l, bat));
-  u3h_put(u3R->jed.cod_p, bat, reg);
-  u3h_put(u3R->jed.war_p, loc, act); // see note in _cj_spot
+}
 
-  /*
+static void
+_cj_print_tas(FILE* fh, u3_noun tas)
+{
+  c3_w  met_w = u3r_met(3, tas);
+  c3_c* str_c = alloca(met_w + 1);
+  u3r_bytes(0, met_w, (c3_y*)str_c, tas);
+  str_c[met_w] = 0;
+  fprintf(fh, "/%s", str_c);
+}
+
+/* _cj_mine(): declare a core and produce location. RETAIN.
+*/
+static u3_weak
+_cj_mine(u3_noun cey, u3_noun cor)
+{
+  u3_weak loc = _cj_minx(cey, cor);
+  if ( u3_none != loc ) {
+    c3_l par_l, jax_l;
+    u3_noun pel = _cj_loc_pel(loc),
+            axe = _cj_loc_axe(loc),
+            bat = u3h(cor),
+            nam = u3h(u3t(loc)),
+            reg = _cj_gust(_cj_find_cold(bat), u3k(axe), u3k(pel), u3k(loc)),
+            hap, bal, act;
+    if ( 0 == axe ) {
+      par_l = 0;
+      bal   = u3nc(u3k(nam), u3_nul);
+    }
+    else {
+      u3_weak pac = _cj_find_warm(pel);
+      c3_assert(u3_none != pac);
+      par_l = u3h(pac);
+      bal   = u3nc(u3k(nam), u3k(u3h(u3t(u3t(pac)))));
+      u3z(pac);
+    }
+    jax_l = _cj_hot_mean(par_l, nam);
+#if 0
+    u3m_p("new jet", bal);
+    fprintf(stderr, "  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
+#endif
+    if ( jax_l ) {
+      u3_noun i = bal;
+      fprintf(stderr, "hot jet: ");
+      while ( i != u3_nul ) {
+        _cj_print_tas(stderr, u3h(i));
+        i = u3t(i);
+      }
+      fprintf(stderr, "\r\n  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
+    }
+    hap   = _cj_warm_hump(jax_l, u3t(u3t(loc)));
+    act   = u3nq(jax_l, hap, bal, _cj_jit(jax_l, bat));
+    u3h_put(u3R->jed.cod_p, bat, reg);
+    u3h_put(u3R->jed.war_p, loc, act); // see note in _cj_spot
+    u3z(pel); u3z(axe);
+  }
+
+  return loc;
+#if 0
   {
     u3_noun bas = _cj_bash(bat),
             hot = u3h_get(u3D.hot_p, bas);
@@ -1644,12 +1683,10 @@ _cj_mine(u3_noun cey, u3_noun cor)
     }
     u3z(bas);
   }
-  */
-
-  return loc;
+#endif
 }
 
-static u3_weak
+static void
 _cj_audit(u3_noun loc, u3_noun cey, u3_noun cor)
 {
   u3_noun pat, nam, huc, cax, can, cuc, pax;
@@ -1662,16 +1699,13 @@ _cj_audit(u3_noun loc, u3_noun cey, u3_noun cor)
   if ( (c3n == u3r_sing(nam, can)) ||
        (c3n == u3r_sing(pax, cax)) ||
        (c3n == u3r_sing(huc, cuc)) ) {
-    u3_noun bog = loc;
-    loc = _cj_mine(cey, cor);
-    u3m_p("bogus location", bog);
-    u3m_p("registered new", loc);
-    u3z(bog);
+    u3_noun mix = _cj_minx(cey, cor);
+    u3m_p("bad audit", loc);
+    u3m_p("hint says", mix);
+    u3z(mix);
   }
 
   u3z(pax);
-
-  return loc;
 }
 
 /* _cj_mile(): register core for jets, returning location.
@@ -1692,7 +1726,7 @@ _cj_mile(u3_noun clu, u3_noun cor)
         loc = _cj_mine(cey, cor);
       }
       else {
-        loc = _cj_audit(loc, cey, cor);
+        _cj_audit(loc, cey, cor);
       }
       u3z(cey);
     }
