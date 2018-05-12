@@ -1758,77 +1758,15 @@ _cj_warm_reap(u3_noun kev)
   u3z(loc);
 }
 
-/* _cj_uni_jun(): merge junior map into senior map.
- *                sem is TRANSFERRED.
- *                jum is RETAINED.
- */
-static u3_noun
-_cj_uni_jun(u3_noun sem, u3_noun jum)
-{
-  if ( u3_nul == jum ) {
-    return sem;
-  }
-  else {
-    u3_noun n, l, r;
-    u3x_trel(jum, &n, &l, &r);
-    sem = _cj_uni_jun(sem, l);
-    sem = _cj_uni_jun(sem, r);
-    return u3kdb_put(sem, u3a_take(u3h(n)), u3a_take(u3t(n)));
-  }
-}
-
-/* _cj_remarry(): merge parent lists.
- *                sel is TRANSFERRED.
- *                jul is RETAINED.
- */
-static u3_noun
-_cj_remarry(u3_noun sel, u3_noun jul)
-{
-  if ( u3_nul == sel ) {
-    return u3a_take(jul);
-  }
-  else if ( u3_nul == jul ) {
-    return sel;
-  }
-  else {
-    u3_noun sap = u3h(sel),
-            jup = u3h(jul),
-            sax = u3h(sap),
-            jux = u3h(jup);
-    if ( c3y == u3r_sing(sax, jux) ) {
-      u3_noun lol = _cj_uni_jun(u3k(u3t(sap)), u3t(jup)),
-              par = u3nc(u3k(u3h(sap)), lol),
-              nex = _cj_remarry(u3k(u3t(sel)), u3t(jul)),
-              pro = u3nc(par, nex);
-      u3z(sel);
-      return pro;
-    }
-    else if ( c3y == u3qa_lth(sax, jux) ) {
-      u3_noun nex = _cj_remarry(u3k(u3t(sel)), jul),
-              pro = u3nc(u3k(sap), nex);
-      u3z(sel);
-      return pro;
-    }
-    else {
-      return u3nc(u3a_take(jup), _cj_remarry(sel, u3t(jul)));
-    }
-  }
-}
-
 /* _cj_cold_reap(): reap cold dashboard entries.
  */
 static void
 _cj_cold_reap(u3_noun kev)
 {
-  u3_noun jur = u3t(kev);
   u3_noun bat = u3a_take(u3h(kev));
-  u3_weak ser = _cj_find_cold(bat);
-  u3_noun reg = ( u3_none == ser )
-              ? u3a_take(jur)
-              : u3nc(_cj_uni_jun(u3k(u3h(ser)), u3h(jur)),
-                     _cj_remarry(u3k(u3t(ser)), u3t(jur)));
+  u3_noun reg = u3a_take(u3t(kev));
   u3h_put(u3R->jed.cod_p, bat, reg);
-  u3z(ser); u3z(bat);
+  u3z(bat);
 }
 
 /* _cj_hank_reap(): reap hook resolutions.
