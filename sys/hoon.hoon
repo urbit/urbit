@@ -5840,16 +5840,16 @@
     {$bcdt p/spec}                                      ::  example
     {$bccm p/spec}                                      ::  factory
   ::                                            ::::::  cores
-    {$brcb p/chap q/spec r/alas s/(map @ tomb)}         ::  |_
-    {$brcl p/chap q/hoon r/hoon}                        ::  |:
+    {$brcb p/spec q/alas r/(map @ tomb)}                ::  |_
+    {$brcl p/hoon q/hoon}                               ::  |:
     {$brcn p/(map @ tomb)}                              ::  |%
-    {$brdt p/chap q/hoon}                               ::  |.
-    {$brkt p/chap q/hoon r/(map @ tomb)}                ::  |^
-    {$brhp p/chap q/hoon}                               ::  |-
-    {$brsg p/chap q/spec r/hoon}                        ::  |~
-    {$brtr p/chap q/spec r/hoon}                        ::  |*
-    {$brts p/chap q/spec r/hoon}                        ::  |=
-    {$brwt p/chap q/hoon}                               ::  |?
+    {$brdt p/hoon}                                      ::  |.
+    {$brkt p/hoon q/(map @ tomb)}                       ::  |^
+    {$brhp p/hoon}                                      ::  |-
+    {$brsg p/spec q/hoon}                               ::  |~
+    {$brtr p/spec q/hoon}                               ::  |*
+    {$brts p/spec q/hoon}                               ::  |=
+    {$brwt p/hoon}                                      ::  |?
   ::                                            ::::::  tuples
     {$clcb p/hoon q/hoon}                               ::  :_ [q p]
     {$clkt p/hoon q/hoon r/hoon s/hoon}                 ::  :^ [p q r s]
@@ -7293,7 +7293,7 @@
     :-  %ktbr
     ::  make an actual gate
     ::
-    :^  %brcl  [~ ~]
+    :+  %brcl
       [%$ 2]
     [%$ 15]  
   ::
@@ -7549,7 +7549,7 @@
       ==
     ::  else build a gate
     ::
-    :^  %brcl  ~^~
+    :+  %brcl
       [%ktsg spore]
     ~(relative analyze:(descend 7) 6)
   ::
@@ -7728,7 +7728,7 @@
         ::
         ::  apply semantically 
         ::
-        :^  %brkt  *chap
+        :+  %brkt
           relative(mod p.mod, dom (peg 3 dom))
         =-  [[0 [~ ~] -] ~ ~]
         %-  ~(gas by *(map term (pair what foot)))
@@ -7966,16 +7966,16 @@
         ?+  -.gen  flam
           $base   runk
           $leaf   runk
-          $brcb   ((doof -.gen +>.gen) p.gen)
-          $brcl   ((doof -.gen +>.gen) p.gen)
+          ::  $brcb   ((doof -.gen +>.gen) p.gen)
+          ::  $brcl   ((doof -.gen +>.gen) p.gen)
           ::  $brcn   ((doof -.gen +>.gen) p.gen)
-          $brdt   ((doof -.gen +>.gen) p.gen)
-          $brkt   ((doof -.gen +>.gen) p.gen)
-          $brhp   ((doof -.gen +>.gen) p.gen)
-          $brsg   ((doof -.gen +>.gen) p.gen)
-          $brtr   ((doof -.gen +>.gen) p.gen)
-          $brts   ((doof -.gen +>.gen) p.gen)
-          $brwt   ((doof -.gen +>.gen) p.gen)
+          ::  $brdt   ((doof -.gen +>.gen) p.gen)
+          ::  $brkt   ((doof -.gen +>.gen) p.gen)
+          ::  $brhp   ((doof -.gen +>.gen) p.gen)
+          ::  $brsg   ((doof -.gen +>.gen) p.gen)
+          ::  $brtr   ((doof -.gen +>.gen) p.gen)
+          ::  $brts   ((doof -.gen +>.gen) p.gen)
+          ::  $brwt   ((doof -.gen +>.gen) p.gen)
         ==
       ::
       ::  resolve variable issues
@@ -8105,10 +8105,10 @@
         {$eror *}  ~|(p.gen !!)
     ::
         {$knit *}                                       ::
-      :+  %tsgr  [%ktts %v %$ 1]                         ::  =>  v=.
-      :+  %brhp  [~ ~]                                  ::  |-
+      :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
+      :-  %brhp                                         ::  |-
       :+  %ktls                                         ::  ^+
-        :+  %brhp  [~ ~]                                ::  |-
+        :-  %brhp                                       ::  |-
         :^    %wtcl                                       ::  ?:
             [%bust %flag]                               ::  ?
           [%bust %null]                                 ::  ~
@@ -8129,7 +8129,7 @@
             [%tsgr [%limb %v] p.i.p.gen]                 ::  =>(v {p.i.p.gen})
         [%ktts %b res]                                  ::  b={res}
       ^-  hoon                                          ::
-      :+  %brhp  [~ ~]                                  ::  |-
+      :-  %brhp                                         ::  |-
       :^    %wtvt                                       ::  ?@
           [%a ~]                                        ::  a
         [%limb %b]                                      ::  b
@@ -8145,9 +8145,9 @@
         {$yell *}  [%cncl [%limb %cain] [%zpgr [%cltr p.gen]] ~]
         {$note *}  q.gen
     ::
-        {$brcb *}  :+  %tsls  [%bcdt q.gen]
+        {$brcb *}  :+  %tsls  [%bcdt p.gen]
                    :-  %brcn
-                   %-  ~(run by s.gen)
+                   %-  ~(run by r.gen)
                    |=  tom/tomb
                    ^+  tom
                    :-  p.tom
@@ -8157,28 +8157,28 @@
                    :-  p.a
                    =-  ?:(?=({$ash *} q.a) [-.q.a -] [-.q.a -])
                    |-  ^-  hoon
-                   ?~  r.gen  p.q.a
-                   [%tstr [~ p.i.r.gen] q.i.r.gen $(r.gen t.r.gen)]
-        {$brcl *}  [%tsls q.gen [%brdt p.gen r.gen]]
+                   ?~  q.gen  p.q.a
+                   [%tstr [~ p.i.q.gen] q.i.q.gen $(q.gen t.q.gen)]
+        {$brcl *}  [%tsls p.gen [%brdt q.gen]]
         {$brdt *}  :-  %brcn
                    =-  [[0 [~ ~] -] ~ ~]
-                   (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
+                   (~(put by *(map term (pair what foot))) %$ ~ [%ash p.gen])
         {$brkt *}  :+  %tsgr 
                       :-  %brcn
-                      =+  one=(~(got by r.gen) 0)
-                      %+  ~(put by r.gen)  0
-                      one(q (~(put by q.one) %$ [~ [%ash q.gen]]))
+                      =+  one=(~(got by q.gen) 0)
+                      %+  ~(put by q.gen)  0
+                      one(q (~(put by q.one) %$ [~ [%ash p.gen]]))
                    [%limb %$]
-        {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen q.gen]]
-        {$brsg *}  [%ktbr [%brts p.gen q.gen r.gen]]
-        {$brtr *}  :+  %tsls  [%bcdt q.gen]
+        {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen]]
+        {$brsg *}  [%ktbr [%brts p.gen q.gen]]
+        {$brtr *}  :+  %tsls  [%bcdt p.gen]
                    :-  %brcn
                    =-  [[0 [~ ~] -] ~ ~]
-                   (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
-        {$brts *}  :^  %brcb  p.gen  q.gen
+                   (~(put by *(map term (pair what foot))) %$ ~ [%elm q.gen])
+        {$brts *}  :+  %brcb  p.gen
                    =-  [~ [[0 [~ ~] -] ~ ~]]
-                   (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
-        {$brwt *}  [%ktwt %brdt p.gen q.gen]
+                   (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
+        {$brwt *}  [%ktwt %brdt p.gen]
     ::
         {$clkt *}  [p.gen q.gen r.gen s.gen]
         {$clls *}  [p.gen q.gen r.gen]
@@ -8237,10 +8237,10 @@
         :-  %mean
         =+  fek=~(feck ap p.gen)
         ?^  fek  [%rock %tas u.fek]
-        [%brdt [~ ~] [%cncl [%limb %cain] [%zpgr [%tsgr [%$ 3] p.gen]] ~]]
+        [%brdt [%cncl [%limb %cain] [%zpgr [%tsgr [%$ 3] p.gen]] ~]]
       q.gen
     ::
-        {$sgcb *}  [%sggr [%mean [%brdt [~ ~] p.gen]] q.gen]
+        {$sgcb *}  [%sggr [%mean [%brdt p.gen]] q.gen]
         {$sgcn *}
       :+  %sggl
         :-  %fast
@@ -8328,7 +8328,7 @@
           :+  %tsgl                                     ::
             [%wing [%| 0 ~] [%& 6] ~]                   ::
           [%limb %b]                                    ::
-        :+  %brdt  [~ ~]                                ::  |.
+        :-  %brdt                                       ::  |.
         :^    %cnls                                     ::  %+
             [%tsgr [%limb %v] p.gen]                    ::      =>(v {p.gen})
           [%cncl [%limb %b] [%limb %c] ~]               ::    (b c)
@@ -8506,16 +8506,16 @@
         $tune  (lead -.gen %.(+.gen tung))
         $wing  (lead -.gen %.(+.gen noop))
         $yell  (lead -.gen %.(+.gen moar))
-        $brcb  (lead -.gen %.(+.gen (quad noop stir exps arms)))
-        $brcl  (lead -.gen %.(+.gen (twin noop dubs)))
+        $brcb  (lead -.gen %.(+.gen (trio stir exps arms)))
+        $brcl  (lead -.gen %.(+.gen dubs))
         $brcn  (lead -.gen %.(+.gen arms))
-        $brdt  (lead -.gen %.(+.gen (twin noop expr)))
-        $brkt  (lead -.gen %.(+.gen (trio noop expr arms)))
-        $brhp  (lead -.gen %.(+.gen (twin noop expr)))
-        $brsg  (lead -.gen %.(+.gen (trio noop stir expr)))
-        $brtr  (lead -.gen %.(+.gen (trio noop stir expr)))
-        $brts  (lead -.gen %.(+.gen (trio noop stir expr)))
-        $brwt  (lead -.gen %.(+.gen (twin noop expr)))
+        $brdt  (lead -.gen %.(+.gen expr))
+        $brkt  (lead -.gen %.(+.gen (twin expr arms)))
+        $brhp  (lead -.gen %.(+.gen expr))
+        $brsg  (lead -.gen %.(+.gen (twin stir expr)))
+        $brtr  (lead -.gen %.(+.gen (twin stir expr)))
+        $brts  (lead -.gen %.(+.gen (twin stir expr)))
+        $brwt  (lead -.gen %.(+.gen expr))
         $clcb  (lead -.gen %.(+.gen dubs))
         $clkt  (lead -.gen %.(+.gen (quad expr expr expr expr)))
         $clhp  (lead -.gen %.(+.gen dubs))
@@ -12715,16 +12715,16 @@
             ;~  pfix  bar
               %-  stew
               ^.  stet  ^.  limo
-              :~  ['_' (runo cab %brcb [~ ~] exqr)]
+              :~  ['_' (rune cab %brcb exqr)]
                   ['%' (rune cen %brcn expe)]
-                  [':' (runo col %brcl [~ ~] expb)]
-                  ['.' (runo dot %brdt [~ ~] expa)]
-                  ['-' (runo hep %brhp [~ ~] expa)]
-                  ['^' (runo ket %brkt [~ ~] expx)]
-                  ['~' (runo sig %brsg [~ ~] exqc)]
-                  ['*' (runo tar %brtr [~ ~] exqc)]
-                  ['=' (runo tis %brts [~ ~] exqc)]
-                  ['?' (runo wut %brwt [~ ~] expa)]
+                  [':' (rune col %brcl expb)]
+                  ['.' (rune dot %brdt expa)]
+                  ['-' (rune hep %brhp expa)]
+                  ['^' (rune ket %brkt expx)]
+                  ['~' (rune sig %brsg exqc)]
+                  ['*' (rune tar %brtr exqc)]
+                  ['=' (rune tis %brts exqc)]
+                  ['?' (rune wut %brwt expa)]
               ==
             ==
           :-  '$'
@@ -12939,7 +12939,7 @@
                 d
                 %ash
                 ^-  hoon
-                :^  %brtr  *chap
+                :+  %brtr
                   ^-  spec
                   :-  %bccl 
                   =-  ?>(?=(^ -) -)
