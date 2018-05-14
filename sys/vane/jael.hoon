@@ -404,12 +404,12 @@
     ==
   ::
   ++  gas                                               ::  ++gas:py
-    |=  b/(list ship)  ^-  pile                         ::  insert list
+    |=  b/(list @)  ^-  pile                            ::  insert list
     ?~  b  a
     $(b t.b, a (put i.b))
   ::                                                    ::  ++gud:py
   ++  gud                                               ::  validate
-    =|  {bot/(unit ship) top/(unit ship)}
+    =|  {bot/(unit @) top/(unit @)}
     |-  ^-  ?
     ?~  a  &
     ?&  (lte p.n.a q.n.a)
@@ -444,7 +444,7 @@
     [n.b ~ ~]
   ::                                                    ::  ++put:py
   ++  put                                               ::  insert
-    |=  b/ship  ^-  pile
+    |=  b/@  ^-  pile
     (uni [b b] ~ ~)
   ::                                                    ::  ++sub:py
   ++  sub                                               ::  subtract
@@ -465,12 +465,12 @@
       $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
     %-  uni(a $(b r.b, a [[+(q.n.b) q.n.a] ~ ~]))
     $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
-  ::
-  ++  tap
-    =|  out/(list (pair ship ship))
+  ::                                                    ::  ++tap:py
+  ++  tap                                               ::  into full list
+    =|  out/(list @)
     |-  ^+  out
     ?~  a  out
-    $(a l.a, out [n.a $(a r.a)])
+    $(a l.a, out (welp (gulf n.a) $(a r.a)))
   ::                                                    ::  ++uni:py
   ++  uni                                               ::  merge two piles
     |=  b/pile
