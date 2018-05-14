@@ -1406,12 +1406,12 @@
   +-  uni                                               ::  union
     ~/  %uni
     |*  b=_a
-      ?:  =(a b)  a
-      |-  ^+  a
-      ?~  b
-        a
-      ?~  a
-        b
+    ?:  =(a b)  a
+    |-  ^+  a
+    ?~  b
+      a
+    ?~  a
+      b
     =>  ?.((vor n.a n.b) . .(a b, b a))
         ?:  =(n.b n.a)
           [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
