@@ -1,7 +1,7 @@
 /+  ford-turbo, tester
 ::
 :-  %say
-|=  [[now=@da eny=@ =beak] ~ ~]
+|=  [[now=@da eny=@ bek=beak] ~ ~]
 :-  %noun
 =+  tester:tester
 ::
@@ -69,7 +69,8 @@
   test-cache-reclamation-live-rebuild
   test-cache-reclamation-live-promote
   test-five-oh-cache-reclamation
-  test-reef
+::  test-reef
+  test-reef-short-circuit
   test-path
   test-plan-direct-hoon
 ==
@@ -162,22 +163,25 @@
   ::
   ;:  welp
     %-  expect-eq  !>
-    :_  `path`(scry-request-to-path:ford [%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]])
-    /cx/~nul/desk/~1234.5.6/bar/foo
+    :-  /cx/~nul/desk/~1234.5.6/bar/foo
+    ^-  path
+    %-  scry-request-to-path:ford
+    [%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
   ::
     %-  expect-eq  !>
-    :_  `scry-request:ford`[%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
-    (need (path-to-scry-request:ford /cx/~nul/desk/~1234.5.6/bar/foo))
+    :-  (need (path-to-scry-request:ford /cx/~nul/desk/~1234.5.6/bar/foo))
+    `scry-request:ford`[%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
   ::
     %-  expect-eq  !>
-    :_  ^-  path
-      (scry-request-to-path:ford [%g care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]])
-    /gx/~nul/desk/~1234.5.6/bar/foo
+    :-  /gx/~nul/desk/~1234.5.6/bar/foo
+    ^-  path
+    %-  scry-request-to-path:ford
+    [%g care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
   ::
     %-  expect-eq  !>
-    :_  ^-  scry-request:ford
-      [%g care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
-    (need (path-to-scry-request:ford /gx/~nul/desk/~1234.5.6/bar/foo))
+    :-  (need (path-to-scry-request:ford /gx/~nul/desk/~1234.5.6/bar/foo))
+    ^-  scry-request:ford
+    [%g care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
   ==
 ::
 ++  test-parse-scaffold-direct
@@ -3409,27 +3413,132 @@
   ~&  %test-reef
   ::
   =/  ford  *ford-gate
+  =/  hoon-beam-path=path  (en-beam:format [bek /hoon/hoon/sys])
+  =/  hoon-txt=@t  .^(@t %cx hoon-beam-path)
+  =/  hoon-parsed=hoon  (rain hoon-beam-path hoon-txt)
+  ~&  %parsed-hoon
+  ::
+  =/  arvo-beam-path=path  (en-beam:format [bek /hoon/arvo/sys])
+  =/  arvo-txt=@t  .^(@t %cx arvo-beam-path)
+  =/  arvo-parsed=hoon  (rain arvo-beam-path arvo-txt)
+  ~&  %parsed-arvo
+  ::
+  =/  zuse-beam-path=path  (en-beam:format [bek /hoon/zuse/sys])
+  =/  zuse-txt=@t  .^(@t %cx zuse-beam-path)
+  =/  zuse-parsed=hoon  (rain zuse-beam-path zuse-txt)
+  ~&  %parsed-zuse
+  ::
+  =/  pit=vase  !>(~)
+  =/  hoon-compiled=vase  (slap pit hoon-parsed)
+  ~&  %hoon-compiled
+  =/  arvo-compiled=vase  (slap hoon-compiled arvo-parsed)
+  ~&  %arvo-compiled
+  =/  zuse-compiled=vase  (slap arvo-compiled zuse-parsed)
+  ~&  %zuse-compiled
+  ::
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %base %da ~1234.5.6] /hoon/hoon/sys]]
+      [%noun !>(hoon-txt)]
+    ::
+      :-  [%cx [[~nul %base %da ~1234.5.6] /hoon/arvo/sys]]
+      [%noun !>(arvo-txt)]
+    ::
+      :-  [%cx [[~nul %base %da ~1234.5.6] /hoon/zuse/sys]]
+      [%noun !>(zuse-txt)]
+    ==
   ::
   =^  results1  ford
-    %-  test-ford-call  :*
+    %-  test-ford-call-with-comparator  :*
       ford
       now=~1234.5.6
-      scry=scry-is-forbidden
+      scry=(scry-with-results scry-results)
       ::
       ^=  call-args
         :*  duct=~[/reef]  type=~  %make  ~nul
-            [%pin ~1234.5.6 [%reef ~]]
+            [%pin ~1234.5.6 [%reef [~nul %base]]]
         ==
       ::
-      ^=  moves
-        :~  :*  duct=~[/reef]  %give  %made  ~1234.5.6  %complete
-                %success  %pin  ~1234.5.6  %success  %reef  test-pit
-    ==  ==  ==
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made *] i.moves)
+        =/  result  result.p.card.i.moves
+        ?>  ?=(%complete -.result)
+        ?>  ?=([%success %pin @da %success %reef *] +.result)
+        ::
+        =/  kernel=vase  |5:+.result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  (en-beam:format *beam)
+          q:(slym (slap (slap kernel [%limb %format]) [%limb %en-beam]) *beam)
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (slab %format p.kernel)
+    ==
   ::
   ;:  weld
     results1
     (expect-ford-empty ford ~nul)
   ==
+::
+++  test-reef-short-circuit
+  ~&  %test-reef-short-circuit
+  ::
+  =/  ford  *ford-gate
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      ^=  scry
+        |=  [* * =term =beam]
+        ^-  (unit (unit cage))
+        ::
+        ~|  [term=term beam=beam]
+        ?>  =(%cw term)
+        ?>  =([[~nul %home [%da ~1234.5.6]] /hoon/hoon/sys] beam)
+        ::
+        ``[%cass !>(`cass:clay`[ud=1 da=~1234.5.6])]
+      ::
+      ^=  call-args
+        :*  duct=~[/reef]  type=~  %make  ~nul
+            [%pin ~1234.5.6 [%reef [~nul %home]]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made *] i.moves)
+        =/  result  result.p.card.i.moves
+        ?>  ?=(%complete -.result)
+        ?>  ?=([%success %pin @da %success %reef *] +.result)
+        ::
+        =/  kernel=vase  |5:+.result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  (en-beam:format *beam)
+          q:(slym (slap (slap kernel [%limb %format]) [%limb %en-beam]) *beam)
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (slab %format p.kernel)
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+ 
 ::
 ++  test-path
   ~&  %test-path
@@ -3485,7 +3594,7 @@
         :*  duct=~[/plan]  type=~  %make  ~nul
             %pin  ~1234.5.6
             %plan
-            source-path=[[~nul %desk] /bar/foo]
+            source-path=[[~nul %home] /bar/foo]
             query-string=`coin`[%$ *dime]
             zuse-version=309
             structures=~
@@ -3529,7 +3638,7 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /hoon/foo-bar/lib]]
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo-bar/lib]]
       [%hoon hoon-vase]
     ==
   ::
@@ -3542,7 +3651,7 @@
       ^=  call-args
         :*  duct=~[/path]  type=~  %make  ~nul
             %pin  ~1234.5.6
-            [%core source-path=`rail:ford-gate`[[~nul %desk] /hoon/foo-bar/lib]]
+            [%core source-path=`rail:ford-gate`[[~nul %home] /hoon/foo-bar/lib]]
         ==
       ::
       ^=  moves

@@ -350,7 +350,11 @@
         ==
         ::  %reef: produce a hoon+zuse kernel. used internally for caching
         ::
-        [%reef ~]
+        $:  %reef
+            ::  disc: location of sys/hoon/hoon and sys/zuse/hoon
+            ::
+            =disc
+        ==
         ::  %ride: eval hoon as formula with result of a schematic as subject
         ::
         $:  %ride
@@ -2618,7 +2622,7 @@
             %pact  !!
             %path  (path-impl [disc prefix raw-path]:schematic.build)
             %plan  (plan [source-path query-string scaffold]:schematic.build)
-            %reef  reef
+            %reef  (reef disc.schematic.build)
             %ride  (ride [formula subject]:schematic.build)
             %same  (same schematic.schematic.build)
             %scry  (scry resource.schematic.build)
@@ -2945,7 +2949,8 @@
       =/  combined-hoon=hoon  [%tssg (flop hoon-stack)]
       ::  compile :combined-hoon against the kernel subject
       ::
-      =/  compile=^build  [date.build [%ride combined-hoon [%reef ~]]]
+      =/  compile=^build
+        [date.build [%ride combined-hoon [%reef disc.source-path]]]
       ::
       =^  compiled  accessed-builds  (depend-on compile)
       ::  compilation blocked; produce block on sub-build
@@ -2965,8 +2970,106 @@
       [build [%build-result %success %plan vase] accessed-builds]
     ::
     ++  reef
+      |=  =disc
       ^-  build-receipt
-      [build [%build-result %success %reef pit] ~]
+      ::  short-circuit to :pit if asked for current %home desk
+      ::
+      ::    This avoids needing to recompile the kernel if we're asked
+      ::    for the kernel we're already running. Note that this fails
+      ::    referential transparency if |autoload is turned off.
+      ::
+      ?:  ?&  =(disc [our %home])
+              ::  is :date.build the latest commit on the %home desk?
+              ::
+              ?|  =(now date.build)
+                  ::
+                  =/  =beam  [[our %home [%da date.build]] /hoon/hoon/sys]
+                  ::
+                  .=  (^scry [%143 %noun] ~ %cw beam)
+                  (^scry [%143 %noun] ~ %cw beam(r [%da now]))
+          ==  ==
+        ::
+        [build [%build-result %success %reef pit] accessed-builds]
+      ::
+      =/  hoon-scry
+        [date.build [%scry %c %x [disc /hoon/hoon/sys]]]
+      ::
+      =^  hoon-scry-result  accessed-builds  (depend-on hoon-scry)
+      ::
+      =/  arvo-scry
+        [date.build [%scry %c %x [disc /hoon/arvo/sys]]]
+      ::
+      =^  arvo-scry-result  accessed-builds  (depend-on arvo-scry)
+      ::
+      =/  zuse-scry
+        [date.build [%scry %c %x [disc /hoon/zuse/sys]]]
+      ::
+      =^  zuse-scry-result  accessed-builds  (depend-on zuse-scry)
+      ::
+      =|  blocks=(list ^build)
+      =?  blocks  ?=(~ hoon-scry-result)  [hoon-scry blocks]
+      =?  blocks  ?=(~ arvo-scry-result)  [arvo-scry blocks]
+      =?  blocks  ?=(~ zuse-scry-result)  [zuse-scry blocks]
+      ::
+      ?^  blocks
+        [build [%blocks blocks ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %scry *] hoon-scry-result)
+        ?>  ?=([~ %error *] hoon-scry-result)
+        =/  message=tang
+          [[%leaf "%reef failed: "] message.u.hoon-scry-result]
+        ::
+        [build [%build-result %error message] accessed-builds]
+      ::
+      ?.  ?=([~ %success %scry *] arvo-scry-result)
+        ?>  ?=([~ %error *] arvo-scry-result)
+        =/  message=tang
+          [[%leaf "%reef failed: "] message.u.arvo-scry-result]
+        ::
+        [build [%build-result %error message] accessed-builds]
+      ::
+      ?.  ?=([~ %success %scry *] zuse-scry-result)
+        ?>  ?=([~ %error *] zuse-scry-result)
+        =/  message=tang
+          [[%leaf "%reef failed: "] message.u.zuse-scry-result]
+        ::
+        [build [%build-result %error message] accessed-builds]
+      ::  omit case from path to prevent cache misses
+      ::
+      =/  hoon-path=path
+        /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/hoon/sys
+      =/  hoon-hoon=hoon  (rain hoon-path ;;(@t q.q.cage.u.hoon-scry-result))
+      ::
+      =/  arvo-path=path
+        /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/arvo/sys
+      =/  arvo-hoon=hoon  (rain arvo-path ;;(@t q.q.cage.u.arvo-scry-result))
+      ::
+      =/  zuse-path=path
+        /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/zuse/sys
+      =/  zuse-hoon=hoon  (rain zuse-path ;;(@t q.q.cage.u.zuse-scry-result))
+      ::
+      =/  zuse-build=^build
+        :*  date.build
+            %ride  zuse-hoon
+            %ride  arvo-hoon
+            %ride  hoon-hoon
+            [%$ %noun !>(~)]
+        ==
+      ::
+      =^  zuse-build-result  accessed-builds  (depend-on zuse-build)
+      ?~  zuse-build-result
+        [build [%blocks [zuse-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %ride *] zuse-build-result)
+        ?>  ?=([~ %error *] zuse-build-result)
+        =/  message=tang
+          [[%leaf "%reef failed: "] message.u.zuse-build-result]
+        ::
+        [build [%build-result %error message] accessed-builds]
+      ::
+      :+  build
+        [%build-result %success %reef vase.u.zuse-build-result]
+      accessed-builds
     ::
     ++  ride
       |=  [formula=hoon =schematic]
