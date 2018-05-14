@@ -1654,7 +1654,7 @@ _cj_mine(u3_noun cey, u3_noun cor)
         _cj_print_tas(stderr, u3h(i));
         i = u3t(i);
       }
-      fprintf(stderr, "\r\n  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
+      fprintf(stderr, "\r\n  bat %x, axe %d, jax %d\r\n", u3r_mug(bat), axe, jax_l);
     }
     hap   = _cj_warm_hump(jax_l, u3t(u3t(loc)));
     act   = u3nq(jax_l, hap, bal, _cj_jit(jax_l, bat));
