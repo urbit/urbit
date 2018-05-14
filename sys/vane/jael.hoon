@@ -1095,7 +1095,7 @@
       =/  ruc  (~(get by car) who)
       =/  rec
         ?~  ruc
-           [`yen/(set duct)`[hen ~ ~] det=(veil:form who)]
+           [yen=`(set duct)`[hen ~ ~] det=(veil:form who)]
          u.ruc(yen (~(put in yen.u.ruc) hen))
       %_  ..feed
         moz  [[hen %give %veil det.rec] moz]
@@ -1646,7 +1646,7 @@
       ::  par: promises by rex, to rex
       ::  jel: %jewel rights
       ::
-      =/  lyf  `life`?~(rug 1 (need ~(current we rug)))
+      =/  lyf  `life`(fall ~(current we rug) 1)
       =*  par  (~(got by shy) rex)
       =/  jel  `rite`(need (~(expose up par) %jewel))
       ?>  ?=($jewel -.jel)
@@ -1669,7 +1669,6 @@
       ::  hec: initial will as farm
       ::
       =/  lyf/(unit life)  ~(current we rug)
-      ~&  next+lyf
       =/  lif/life  +((fall lyf 0))
       =/  loy  (pit:nu:crub 512 eny)
       =/  rig  sec:ex:loy
@@ -1678,7 +1677,7 @@
       =/  cet/cert  [[doc pub] ~]
       =.  syg.cet
         ?~  lyf  syg.cet
-        =/  ash  (sham %urbit rex u.lyf dat.cet)  :: move maybe
+        =/  ash  (sham %urbit rex u.lyf dat.cet)  ::TODO  move maybe
         [[rex u.lyf (sign:as:loy *@ ash)] ~ ~]
       =/  wyl/will  [[lif cet] ~ ~]
       =.  +>.$  (deal rex [[ryt ~ ~] ~])
@@ -1715,9 +1714,8 @@
           ::
           =+  [hub lub]=[p q]:(grow-mate p.i.wap q.i.wap pre)
           =:  pre  `dat.lub
-              rug  ~&  [%grow-puts p.i.wap new=lub old=(~(get by rug) p.i.wap)]
-                   (~(put by rug) p.i.wap lub)
-            hab  (weld (flop hub) hab)
+              rug  (~(put by rug) p.i.wap lub)
+              hab  (weld (flop hub) hab)
           ==
           ?~  t.wap  ..grow
           ?>  =(p.i.t.wap +(p.i.wap))

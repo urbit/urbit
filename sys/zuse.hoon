@@ -4969,6 +4969,7 @@
       gift:able:eyre
       gift:able:ford
       gift:able:gall
+      gift:able:jael
   ==
 ++  task-arvo                                           ::  in request ->$
   $%  task:able:ames
@@ -4978,6 +4979,7 @@
       task:able:eyre
       task:able:ford
       task:able:gall
+      task:able:jael
   ==
 ++  note-arvo                                           ::  out request $->
   $%  {$a task:able:ames}
@@ -4987,6 +4989,7 @@
       {$e task:able:eyre}
       {$f task:able:ford}
       {$g task:able:gall}
+      {$j task:able:jael}
       {@tas $meta vase}
   ==
 ++  sign-arvo                                           ::  in result $<-
