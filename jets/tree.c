@@ -552,113 +552,323 @@ static u3j_core _143_qua_d[] =
 /* layer three
 */
     static u3j_harm _143_tri__cofl__drg_a[] = {{".2", u3wef_drg}, {}};
+    static c3_c* _143_tri__cofl__drg_ha[] = {
+      "6bc6a27f",
+      0,
+    };
     static u3j_harm _143_tri__cofl__lug_a[] = {{".2", u3wef_lug}, {}};
+    static c3_c* _143_tri__cofl__lug_ha[] = {
+      "6a832f4a",
+      0,
+    };
+
+  static c3_c* _143_tri__cofl_ha[] = {
+    "40faaf3d",
+    0,
+  };
   static u3j_core _143_tri__cofl_d[] =
-    { { "drg", 7, _143_tri__cofl__drg_a },
-      { "lug", 7, _143_tri__cofl__lug_a },
+    { { "drg", 7, _143_tri__cofl__drg_a, 0, _143_tri__cofl__drg_ha },
+      { "lug", 7, _143_tri__cofl__lug_a, 0, _143_tri__cofl__lug_ha },
       {}
     };
 
     static u3j_harm _143_tri__rd_add_a[] = {{".2", u3wer_add}, {}};
+    static c3_c* _143_tri__rd_add_ha[] = {
+      "7048f323",
+      0,
+    };
     static u3j_harm _143_tri__rd_sub_a[] = {{".2", u3wer_sub}, {}};
+    static c3_c* _143_tri__rd_sub_ha[] = {
+      "1ad8be65",
+      0,
+    };
     static u3j_harm _143_tri__rd_mul_a[] = {{".2", u3wer_mul}, {}};
+    static c3_c* _143_tri__rd_mul_ha[] = {
+      "3e41a14c",
+      0,
+    };
     static u3j_harm _143_tri__rd_div_a[] = {{".2", u3wer_div}, {}};
+    static c3_c* _143_tri__rd_div_ha[] = {
+      "3de7319",
+      0,
+    };
     static u3j_harm _143_tri__rd_sqt_a[] = {{".2", u3wer_sqt}, {}};
+    static c3_c* _143_tri__rd_sqt_ha[] = {
+      "18702e43",
+      0,
+    };
     static u3j_harm _143_tri__rd_fma_a[] = {{".2", u3wer_fma}, {}};
+    static c3_c* _143_tri__rd_fma_ha[] = {
+      "53a45898",
+      0,
+    };
     static u3j_harm _143_tri__rd_lth_a[] = {{".2", u3wer_lth}, {}};
+    static c3_c* _143_tri__rd_lth_ha[] = {
+      "36d33edb",
+      0,
+    };
     static u3j_harm _143_tri__rd_lte_a[] = {{".2", u3wer_lte}, {}};
+    static c3_c* _143_tri__rd_lte_ha[] = {
+      "491cde75",
+      0,
+    };
     static u3j_harm _143_tri__rd_equ_a[] = {{".2", u3wer_equ}, {}};
+    static c3_c* _143_tri__rd_equ_ha[] = {
+      "78a6abee",
+      0,
+    };
     static u3j_harm _143_tri__rd_gte_a[] = {{".2", u3wer_gte}, {}};
+    static c3_c* _143_tri__rd_gte_ha[] = {
+      "126a123a",
+      0,
+    };
     static u3j_harm _143_tri__rd_gth_a[] = {{".2", u3wer_gth}, {}};
+    static c3_c* _143_tri__rd_gth_ha[] = {
+      "715df27e",
+      0,
+    };
+
+  static c3_c* _143_tri__rd_ha[] = {
+    "4ffd8caa",
+    0,
+  };
   static u3j_core _143_tri__rd_d[] =
-    { { "add", 7, _143_tri__rd_add_a },
-      { "sub", 7, _143_tri__rd_sub_a },
-      { "mul", 7, _143_tri__rd_mul_a },
-      { "div", 7, _143_tri__rd_div_a },
-      { "sqt", 7, _143_tri__rd_sqt_a },
-      { "fma", 7, _143_tri__rd_fma_a },
-      { "lth", 7, _143_tri__rd_lth_a },
-      { "lte", 7, _143_tri__rd_lte_a },
-      { "equ", 7, _143_tri__rd_equ_a },
-      { "gte", 7, _143_tri__rd_gte_a },
-      { "gth", 7, _143_tri__rd_gth_a },
+    { { "add", 7, _143_tri__rd_add_a, 0, _143_tri__rd_add_ha },
+      { "sub", 7, _143_tri__rd_sub_a, 0, _143_tri__rd_sub_ha },
+      { "mul", 7, _143_tri__rd_mul_a, 0, _143_tri__rd_mul_ha },
+      { "div", 7, _143_tri__rd_div_a, 0, _143_tri__rd_div_ha },
+      { "sqt", 7, _143_tri__rd_sqt_a, 0, _143_tri__rd_sqt_ha },
+      { "fma", 7, _143_tri__rd_fma_a, 0, _143_tri__rd_fma_ha },
+      { "lth", 7, _143_tri__rd_lth_a, 0, _143_tri__rd_lth_ha },
+      { "lte", 7, _143_tri__rd_lte_a, 0, _143_tri__rd_lte_ha },
+      { "equ", 7, _143_tri__rd_equ_a, 0, _143_tri__rd_equ_ha },
+      { "gte", 7, _143_tri__rd_gte_a, 0, _143_tri__rd_gte_ha },
+      { "gth", 7, _143_tri__rd_gth_a, 0, _143_tri__rd_gth_ha },
       {}
     };
+
     static u3j_harm _143_tri__rs_add_a[] = {{".2", u3wet_add}, {}};
+    static c3_c* _143_tri__rs_add_ha[] = {
+      "5caecd3f",
+      0,
+    };
     static u3j_harm _143_tri__rs_sub_a[] = {{".2", u3wet_sub}, {}};
+    static c3_c* _143_tri__rs_sub_ha[] = {
+      "173e6bad",
+      0,
+    };
     static u3j_harm _143_tri__rs_mul_a[] = {{".2", u3wet_mul}, {}};
+    static c3_c* _143_tri__rs_mul_ha[] = {
+      "415d9955",
+      0,
+    };
     static u3j_harm _143_tri__rs_div_a[] = {{".2", u3wet_div}, {}};
+    static c3_c* _143_tri__rs_div_ha[] = {
+      "3329bdd5",
+      0,
+    };
     static u3j_harm _143_tri__rs_sqt_a[] = {{".2", u3wet_sqt}, {}};
+    static c3_c* _143_tri__rs_sqt_ha[] = {
+      "49532826",
+      0,
+    };
     static u3j_harm _143_tri__rs_fma_a[] = {{".2", u3wet_fma}, {}};
+    static c3_c* _143_tri__rs_fma_ha[] = {
+      "49982fc4",
+      0,
+    };
     static u3j_harm _143_tri__rs_lth_a[] = {{".2", u3wet_lth}, {}};
+    static c3_c* _143_tri__rs_lth_ha[] = {
+      "66b83fc2",
+      0,
+    };
     static u3j_harm _143_tri__rs_lte_a[] = {{".2", u3wet_lte}, {}};
+    static c3_c* _143_tri__rs_lte_ha[] = {
+      "1b9b2138",
+      0,
+    };
     static u3j_harm _143_tri__rs_equ_a[] = {{".2", u3wet_equ}, {}};
+    static c3_c* _143_tri__rs_equ_ha[] = {
+      "7c8d7e92",
+      0,
+    };
     static u3j_harm _143_tri__rs_gte_a[] = {{".2", u3wet_gte}, {}};
+    static c3_c* _143_tri__rs_gte_ha[] = {
+      "108efdb2",
+      0,
+    };
     static u3j_harm _143_tri__rs_gth_a[] = {{".2", u3wet_gth}, {}};
+    static c3_c* _143_tri__rs_gth_ha[] = {
+      "234b18f2",
+      0,
+    };
+
+  static c3_c* _143_tri__rs_ha[] = {
+    "17be2d00",
+    0,
+  };
   static u3j_core _143_tri__rs_d[] =
-    { { "add", 7, _143_tri__rs_add_a },
-      { "sub", 7, _143_tri__rs_sub_a },
-      { "mul", 7, _143_tri__rs_mul_a },
-      { "div", 7, _143_tri__rs_div_a },
-      { "sqt", 7, _143_tri__rs_sqt_a },
-      { "fma", 7, _143_tri__rs_fma_a },
-      { "lth", 7, _143_tri__rs_lth_a },
-      { "lte", 7, _143_tri__rs_lte_a },
-      { "equ", 7, _143_tri__rs_equ_a },
-      { "gte", 7, _143_tri__rs_gte_a },
-      { "gth", 7, _143_tri__rs_gth_a },
+    { { "add", 7, _143_tri__rs_add_a, 0, _143_tri__rs_add_ha },
+      { "sub", 7, _143_tri__rs_sub_a, 0, _143_tri__rs_sub_ha },
+      { "mul", 7, _143_tri__rs_mul_a, 0, _143_tri__rs_mul_ha },
+      { "div", 7, _143_tri__rs_div_a, 0, _143_tri__rs_div_ha },
+      { "sqt", 7, _143_tri__rs_sqt_a, 0, _143_tri__rs_sqt_ha },
+      { "fma", 7, _143_tri__rs_fma_a, 0, _143_tri__rs_fma_ha },
+      { "lth", 7, _143_tri__rs_lth_a, 0, _143_tri__rs_lth_ha },
+      { "lte", 7, _143_tri__rs_lte_a, 0, _143_tri__rs_lte_ha },
+      { "equ", 7, _143_tri__rs_equ_a, 0, _143_tri__rs_equ_ha },
+      { "gte", 7, _143_tri__rs_gte_a, 0, _143_tri__rs_gte_ha },
+      { "gth", 7, _143_tri__rs_gth_a, 0, _143_tri__rs_gth_ha },
       {}
     };
 
     static u3j_harm _143_tri__rq_add_a[] = {{".2", u3weq_add}, {}};
+    static c3_c* _143_tri__rq_add_ha[] = {
+      "4e9ad2ff",
+      0,
+    };
     static u3j_harm _143_tri__rq_sub_a[] = {{".2", u3weq_sub}, {}};
+    static c3_c* _143_tri__rq_sub_ha[] = {
+      "790f27d0",
+      0,
+    };
     static u3j_harm _143_tri__rq_mul_a[] = {{".2", u3weq_mul}, {}};
+    static c3_c* _143_tri__rq_mul_ha[] = {
+      "2736c015",
+      0,
+    };
     static u3j_harm _143_tri__rq_div_a[] = {{".2", u3weq_div}, {}};
+    static c3_c* _143_tri__rq_div_ha[] = {
+      "3e712c94",
+      0,
+    };
     static u3j_harm _143_tri__rq_sqt_a[] = {{".2", u3weq_sqt}, {}};
+    static c3_c* _143_tri__rq_sqt_ha[] = {
+      "3ab76743",
+      0,
+    };
     static u3j_harm _143_tri__rq_fma_a[] = {{".2", u3weq_fma}, {}};
+    static c3_c* _143_tri__rq_fma_ha[] = {
+      "43a1789d",
+      0,
+    };
     static u3j_harm _143_tri__rq_lth_a[] = {{".2", u3weq_lth}, {}};
+    static c3_c* _143_tri__rq_lth_ha[] = {
+      "496728a7",
+      0,
+    };
     static u3j_harm _143_tri__rq_lte_a[] = {{".2", u3weq_lte}, {}};
+    static c3_c* _143_tri__rq_lte_ha[] = {
+      "69e67508",
+      0,
+    };
     static u3j_harm _143_tri__rq_equ_a[] = {{".2", u3weq_equ}, {}};
+    static c3_c* _143_tri__rq_equ_ha[] = {
+      "10df371e",
+      0,
+    };
     static u3j_harm _143_tri__rq_gte_a[] = {{".2", u3weq_gte}, {}};
+    static c3_c* _143_tri__rq_gte_ha[] = {
+      "2d2bc726",
+      0,
+    };
     static u3j_harm _143_tri__rq_gth_a[] = {{".2", u3weq_gth}, {}};
+    static c3_c* _143_tri__rq_gth_ha[] = {
+      "409446ea",
+      0,
+    };
+
+  static c3_c* _143_tri__rq_ha[] = {
+    "70532c78",
+    0,
+  };
   static u3j_core _143_tri__rq_d[] =
-    { { "add", 7, _143_tri__rq_add_a },
-      { "sub", 7, _143_tri__rq_sub_a },
-      { "mul", 7, _143_tri__rq_mul_a },
-      { "div", 7, _143_tri__rq_div_a },
-      { "sqt", 7, _143_tri__rq_sqt_a },
-      { "fma", 7, _143_tri__rq_fma_a },
-      { "lth", 7, _143_tri__rq_lth_a },
-      { "lte", 7, _143_tri__rq_lte_a },
-      { "equ", 7, _143_tri__rq_equ_a },
-      { "gte", 7, _143_tri__rq_gte_a },
-      { "gth", 7, _143_tri__rq_gth_a },
+    { { "add", 7, _143_tri__rq_add_a, 0, _143_tri__rq_add_ha },
+      { "sub", 7, _143_tri__rq_sub_a, 0, _143_tri__rq_sub_ha },
+      { "mul", 7, _143_tri__rq_mul_a, 0, _143_tri__rq_mul_ha },
+      { "div", 7, _143_tri__rq_div_a, 0, _143_tri__rq_div_ha },
+      { "sqt", 7, _143_tri__rq_sqt_a, 0, _143_tri__rq_sqt_ha },
+      { "fma", 7, _143_tri__rq_fma_a, 0, _143_tri__rq_fma_ha },
+      { "lth", 7, _143_tri__rq_lth_a, 0, _143_tri__rq_lth_ha },
+      { "lte", 7, _143_tri__rq_lte_a, 0, _143_tri__rq_lte_ha },
+      { "equ", 7, _143_tri__rq_equ_a, 0, _143_tri__rq_equ_ha },
+      { "gte", 7, _143_tri__rq_gte_a, 0, _143_tri__rq_gte_ha },
+      { "gth", 7, _143_tri__rq_gth_a, 0, _143_tri__rq_gth_ha },
       {}
     };
 
     static u3j_harm _143_tri__rh_add_a[] = {{".2", u3wes_add}, {}};
+    static c3_c* _143_tri__rh_add_ha[] = {
+      "3ca2bbf6",
+      0,
+    };
     static u3j_harm _143_tri__rh_sub_a[] = {{".2", u3wes_sub}, {}};
+    static c3_c* _143_tri__rh_sub_ha[] = {
+      "6873f5b9",
+      0,
+    };
     static u3j_harm _143_tri__rh_mul_a[] = {{".2", u3wes_mul}, {}};
+    static c3_c* _143_tri__rh_mul_ha[] = {
+      "26ac0f6c",
+      0,
+    };
     static u3j_harm _143_tri__rh_div_a[] = {{".2", u3wes_div}, {}};
+    static c3_c* _143_tri__rh_div_ha[] = {
+      "284818ec",
+      0,
+    };
     static u3j_harm _143_tri__rh_sqt_a[] = {{".2", u3wes_sqt}, {}};
+    static c3_c* _143_tri__rh_sqt_ha[] = {
+      "50a508d3",
+      0,
+    };
     static u3j_harm _143_tri__rh_fma_a[] = {{".2", u3wes_fma}, {}};
+    static c3_c* _143_tri__rh_fma_ha[] = {
+      "6ee2c6f8",
+      0,
+    };
     static u3j_harm _143_tri__rh_lth_a[] = {{".2", u3wes_lth}, {}};
+    static c3_c* _143_tri__rh_lth_ha[] = {
+      "95c5f8a",
+      0,
+    };
     static u3j_harm _143_tri__rh_lte_a[] = {{".2", u3wes_lte}, {}};
+    static c3_c* _143_tri__rh_lte_ha[] = {
+      "5671246d",
+      0,
+    };
     static u3j_harm _143_tri__rh_equ_a[] = {{".2", u3wes_equ}, {}};
+    static c3_c* _143_tri__rh_equ_ha[] = {
+      "55ba38f6",
+      0,
+    };
     static u3j_harm _143_tri__rh_gte_a[] = {{".2", u3wes_gte}, {}};
+    static c3_c* _143_tri__rh_gte_ha[] = {
+      "7ca6938e",
+      0,
+    };
     static u3j_harm _143_tri__rh_gth_a[] = {{".2", u3wes_gth}, {}};
+    static c3_c* _143_tri__rh_gth_ha[] = {
+      "5df9d6aa",
+      0,
+    };
+
+  static c3_c* _143_tri__rh_ha[] = {
+    "240f9e45",
+    0,
+  };
   static u3j_core _143_tri__rh_d[] =
-    { { "add", 7, _143_tri__rh_add_a },
-      { "sub", 7, _143_tri__rh_sub_a },
-      { "mul", 7, _143_tri__rh_mul_a },
-      { "div", 7, _143_tri__rh_div_a },
-      { "sqt", 7, _143_tri__rh_sqt_a },
-      { "fma", 7, _143_tri__rh_fma_a },
-      { "lth", 7, _143_tri__rh_lth_a },
-      { "lte", 7, _143_tri__rh_lte_a },
-      { "equ", 7, _143_tri__rh_equ_a },
-      { "gte", 7, _143_tri__rh_gte_a },
-      { "gth", 7, _143_tri__rh_gth_a },
+    { { "add", 7, _143_tri__rh_add_a, 0, _143_tri__rh_add_ha },
+      { "sub", 7, _143_tri__rh_sub_a, 0, _143_tri__rh_sub_ha },
+      { "mul", 7, _143_tri__rh_mul_a, 0, _143_tri__rh_mul_ha },
+      { "div", 7, _143_tri__rh_div_a, 0, _143_tri__rh_div_ha },
+      { "sqt", 7, _143_tri__rh_sqt_a, 0, _143_tri__rh_sqt_ha },
+      { "fma", 7, _143_tri__rh_fma_a, 0, _143_tri__rh_fma_ha },
+      { "lth", 7, _143_tri__rh_lth_a, 0, _143_tri__rh_lth_ha },
+      { "lte", 7, _143_tri__rh_lte_a, 0, _143_tri__rh_lte_ha },
+      { "equ", 7, _143_tri__rh_equ_a, 0, _143_tri__rh_equ_ha },
+      { "gte", 7, _143_tri__rh_gte_a, 0, _143_tri__rh_gte_ha },
+      { "gth", 7, _143_tri__rh_gth_a, 0, _143_tri__rh_gth_ha },
       {}
     };
 
@@ -705,13 +915,14 @@ static c3_c* _143_tri_ha[] = {
   0,
 };
 static u3j_core _143_tri_d[] =
-  { { "qua", 3, 0, _143_qua_d, _143_qua_ha, _143_qua_ho },
-    { "cofl", 7, 0, _143_tri__cofl_d },
-    { "rd", 7, 0, _143_tri__rd_d },
-    { "rs", 7, 0, _143_tri__rs_d },
-    { "rq", 7, 0, _143_tri__rq_d },
-    { "rh", 7, 0, _143_tri__rh_d },
-    { "og", 7, 0, _143_tri__og_d, _143_tri__og_ha },
+  { { "qua",  3, 0, _143_qua_d, _143_qua_ha, _143_qua_ho },
+    { "cofl", 7, 0, _143_tri__cofl_d, _143_tri__cofl_ha },
+    { "rd",   7, 0, _143_tri__rd_d, _143_tri__rd_ha },
+    { "rs",   7, 0, _143_tri__rs_d, _143_tri__rs_ha },
+    { "rq",   7, 0, _143_tri__rq_d, _143_tri__rq_ha },
+    { "rh",   7, 0, _143_tri__rh_d, _143_tri__rh_ha },
+    { "og",   7, 0, _143_tri__og_d, _143_tri__og_ha },
+
     { "shax", 7, _143_tri_shax_a, 0, _143_tri_shax_ha },
     { "shay", 7, _143_tri_shay_a, 0, _143_tri_shay_ha },
 //    { "shas", 7, _143_tri_shas_a, 0, _143_tri_shas_ha },
