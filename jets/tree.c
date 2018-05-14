@@ -705,19 +705,57 @@ static u3j_core _143_tri_d[] =
     0,
   };
   static u3j_harm _143_two_levy_a[] = {{".2", u3wb_levy, c3y}, {}};
+  static c3_c* _143_two_levy_ha[] = {
+    "35460246",
+    0,
+  };
   static u3j_harm _143_two_lien_a[] = {{".2", u3wb_lien, c3y}, {}};
+  static c3_c* _143_two_lien_ha[] = {
+    "26fe83d7",
+    0,
+  };
   static u3j_harm _143_two_murn_a[] = {{".2", u3wb_murn, c3y}, {}};
+  static c3_c* _143_two_murn_ha[] = {
+    "7267235b",
+    0,
+  };
+/* XX: no hint
   static u3j_harm _143_two_need_a[] = {{".2", u3wb_need, c3y}, {}};
+  static c3_c* _143_two_need_ha[] = {
+    "",
+    0,
+  };
+*/
   static u3j_harm _143_two_reap_a[] = {{".2", u3wb_reap, c3y}, {}};
+  static c3_c* _143_two_reap_ha[] = {
+    "1808a81d",
+    0,
+  };
   static u3j_harm _143_two_reel_a[] = {{".2", u3wb_reel, c3y}, {}};
+  static c3_c* _143_two_reel_ha[] = {
+    "660c4ee9",
+    0,
+  };
   static u3j_harm _143_two_roll_a[] = {{".2", u3wb_roll, c3y}, {}};
   static c3_c* _143_two_roll_ha[] = {
     "3c16e592",
     0,
   };
   static u3j_harm _143_two_skid_a[] = {{".2", u3wb_skid, c3y}, {}};
+  static c3_c* _143_two_skid_ha[] = {
+    "3dc45cc",
+    0,
+  };
   static u3j_harm _143_two_skim_a[] = {{".2", u3wb_skim, c3y}, {}};
+  static c3_c* _143_two_skim_ha[] = {
+    "36892702",
+    0,
+  };
   static u3j_harm _143_two_skip_a[] = {{".2", u3wb_skip, c3y}, {}};
+  static c3_c* _143_two_skip_ha[] = {
+    "580714ad",
+    0,
+  };
   static u3j_harm _143_two_scag_a[] = {{".2", u3wb_scag, c3y}, {}};
   static c3_c* _143_two_scag_ha[] = {
     "6d492573",
@@ -729,6 +767,10 @@ static u3j_core _143_tri_d[] =
     0,
   };
   static u3j_harm _143_two_snag_a[] = {{".2", u3wb_snag, c3y}, {}};
+  static c3_c* _143_two_snag_ha[] = {
+    "da6440d",
+    0,
+  };
   // static u3j_harm _143_two_sort_a[] = {{".2", u3wb_sort, c3y}, {}};
   static u3j_harm _143_two_turn_a[] = {{".2", u3wb_turn, c3y}, {}};
   static c3_c* _143_two_turn_ha[] = {
@@ -747,19 +789,50 @@ static u3j_core _143_tri_d[] =
     0,
   };
   static u3j_harm _143_two_can_a[] = {{".2", u3wc_can, c3y}, {}};
+  static c3_c* _143_two_can_ha[] = {
+    "6039dee0",
+    0,
+  };
   static u3j_harm _143_two_cat_a[] = {{".2", u3wc_cat, c3y}, {}};
+  static c3_c* _143_two_cat_ha[] = {
+    "408a97e8",
+    0,
+  };
   static u3j_harm _143_two_con_a[] = {{".2", u3wc_con, c3y}, {}};
+  static c3_c* _143_two_con_ha[] = {
+    "49ff881",
+    0,
+  };
   static u3j_harm _143_two_cut_a[] = {{".2", u3wc_cut, c3y}, {}};
+  static c3_c* _143_two_cut_ha[] = {
+    "2c8d7897",
+    0,
+  };
   static u3j_harm _143_two_dis_a[] = {{".2", u3wc_dis, c3y}, {}};
+  static c3_c* _143_two_dis_ha[] = {
+    "135fb298",
+    0,
+  };
   static u3j_harm _143_two_dor_a[] = {{".2", u3wc_dor, c3y}, {}};
-  static u3j_harm _143_two_dvr_a[] = {{".2", u3wc_dvr, c3y}, {}};
+  static c3_c* _143_two_dor_ha[] = {
+    "5c0d99f7",
+    0,
+  };
   static u3j_harm _143_two_end_a[] = {{".2", u3wc_end, c3y}, {}};
   static c3_c* _143_two_end_ha[] = {
     "3fb28e44",
     0,
   };
   static u3j_harm _143_two_gor_a[] = {{".2", u3wc_gor, c3y}, {}};
+  static c3_c* _143_two_gor_ha[] = {
+    "17eba2b9",
+    0,
+  };
   static u3j_harm _143_two_hor_a[] = {{".2", u3wc_hor, c3y}, {}};
+  static c3_c* _143_two_hor_ha[] = {
+    "4a7e5d16",
+    0,
+  };
   static u3j_harm _143_two_lsh_a[] = {{".2", u3wc_lsh, c3y}, {}};
   static c3_c* _143_two_lsh_ha[] = {
     "41b3a4c7",
@@ -776,14 +849,30 @@ static u3j_core _143_tri_d[] =
     0,
   };
   static u3j_harm _143_two_mug_a[] = {{".2", u3wc_mug, c3y}, {}};
+  static c3_c* _143_two_mug_ha[] = {
+    "11404a2",
+    0,
+  };
   static u3j_harm _143_two_muk_a[] = {{".2", u3wc_muk, c3y}, {}};
+  static c3_c* _143_two_muk_ha[] = {
+    "482e58af",
+    0,
+  };
   static u3j_harm _143_two_pow_a[] = {{".2", u3wc_pow, c3y}, {}};
+  static c3_c* _143_two_pow_ha[] = {
+    "4a70ddfe",
+    0,
+  };
   static u3j_harm _143_two_rap_a[] = {{".2", u3wc_rap, c3y}, {}};
   static c3_c* _143_two_rap_ha[] = {
     "7a6875bb",
     0,
   };
   static u3j_harm _143_two_rep_a[] = {{".2", u3wc_rep, c3y}, {}};
+  static c3_c* _143_two_rep_ha[] = {
+    "53e80eb3",
+    0,
+  };
   static u3j_harm _143_two_rip_a[] = {{".2", u3wc_rip, c3y}, {}};
   static c3_c* _143_two_rip_ha[] = {
     "54970200",
@@ -795,12 +884,20 @@ static u3j_core _143_tri_d[] =
     0,
   };
   static u3j_harm _143_two_sqt_a[] = {{".2", u3wc_sqt, c3y}, {}};
+  static c3_c* _143_two_sqt_ha[] = {
+    "50929e0b",
+    0,
+  };
   static u3j_harm _143_two_vor_a[] = {{".2", u3wc_vor, c3y}, {}};
   static c3_c* _143_two_vor_ha[] = {
     "2b05b267",
     0,
   };
   static u3j_harm _143_two_xeb_a[] = {{".2", u3wc_xeb, c3y}, {}};
+  static c3_c* _143_two_xeb_ha[] = {
+    "5e2bcea8",
+    0,
+  };
 
 
 
@@ -885,9 +982,25 @@ static u3j_core _143_tri_d[] =
     };
 
   static u3j_harm _143_two_cue_a[] = {{".2", u3we_cue}, {}};
+  static c3_c* _143_two_cue_ha[] = {
+    "6f20da6b",
+    0,
+  };
   static u3j_harm _143_two_jam_a[] = {{".2", u3we_jam}, {}};
+  static c3_c* _143_two_jam_ha[] = {
+    "4103997f",
+    0,
+  };
   static u3j_harm _143_two_mat_a[] = {{".2", u3we_mat}, {}};
+  static c3_c* _143_two_mat_ha[] = {
+    "1a2c351b",
+    0,
+  };
   static u3j_harm _143_two_rub_a[] = {{".2", u3we_rub}, {}};
+  static c3_c* _143_two_rub_ha[] = {
+    "56b1242e",
+    0,
+  };
 
 static c3_c* _143_two_ha[] = {
   "613c4d6d",
@@ -897,51 +1010,50 @@ static u3j_core _143_two_d[] =
   { { "tri", 3, 0, _143_tri_d, _143_tri_ha },
     { "flop", 7, _143_two_flop_a, 0, _143_two_flop_ha },
     { "lent", 7, _143_two_lent_a, 0, _143_two_lent_ha },
-    { "levy", 7, _143_two_levy_a },
-    { "lien", 7, _143_two_lien_a },
-    { "murn", 7, _143_two_murn_a },
-    { "need", 7, _143_two_need_a },
-    { "reap", 7, _143_two_reap_a },
-    { "reel", 7, _143_two_reel_a },
+    { "levy", 7, _143_two_levy_a, 0, _143_two_levy_ha },
+    { "lien", 7, _143_two_lien_a, 0, _143_two_lien_ha },
+    { "murn", 7, _143_two_murn_a, 0, _143_two_murn_ha },
+//    { "need", 7, _143_two_need_a, 0, _143_two_need_ha },
+    { "reap", 7, _143_two_reap_a, 0, _143_two_reap_ha },
+    { "reel", 7, _143_two_reel_a, 0, _143_two_reel_ha },
     { "roll", 7, _143_two_roll_a, 0, _143_two_roll_ha },
-    { "skid", 7, _143_two_skid_a },
-    { "skim", 7, _143_two_skim_a },
-    { "skip", 7, _143_two_skip_a },
+    { "skid", 7, _143_two_skid_a, 0, _143_two_skid_ha },
+    { "skim", 7, _143_two_skim_a, 0, _143_two_skim_ha },
+    { "skip", 7, _143_two_skip_a, 0, _143_two_skip_ha },
     { "scag", 7, _143_two_scag_a, 0, _143_two_scag_ha },
     { "slag", 7, _143_two_slag_a, 0, _143_two_slag_ha },
-    { "snag", 7, _143_two_snag_a },
+    { "snag", 7, _143_two_snag_a, 0, _143_two_snag_ha },
 //  { "sort", 7, _143_two_sort_a },
     { "turn", 7, _143_two_turn_a, 0, _143_two_turn_ha },
     { "weld", 7, _143_two_weld_a, 0, _143_two_weld_ha },
 
     { "bex", 7, _143_two_bex_a, 0, _143_two_bex_ha },
-    { "cat", 7, _143_two_cat_a },
-    { "can", 7, _143_two_can_a },
-    { "con", 7, _143_two_con_a },
-    { "cue", 7, _143_two_cue_a },
-    { "cut", 7, _143_two_cut_a },
-    { "dis", 7, _143_two_dis_a },
-    { "dor", 7, _143_two_dor_a },
-    { "dvr", 7, _143_two_dvr_a },
+    { "cat", 7, _143_two_cat_a, 0, _143_two_cat_ha },
+    { "can", 7, _143_two_can_a, 0, _143_two_can_ha },
+    { "con", 7, _143_two_con_a, 0, _143_two_con_ha },
+    { "cue", 7, _143_two_cue_a, 0, _143_two_cue_ha },
+    { "cut", 7, _143_two_cut_a, 0, _143_two_cut_ha },
+    { "dis", 7, _143_two_dis_a, 0, _143_two_dis_ha },
+    { "dor", 7, _143_two_dor_a, 0, _143_two_dor_ha },
     { "end", 7, _143_two_end_a, 0, _143_two_end_ha },
-    { "gor", 7, _143_two_gor_a },
-    { "hor", 7, _143_two_hor_a },
-    { "jam", 7, _143_two_jam_a },
+    { "gor", 7, _143_two_gor_a, 0, _143_two_gor_ha },
+    { "hor", 7, _143_two_hor_a, 0, _143_two_hor_ha },
+    { "jam", 7, _143_two_jam_a, 0, _143_two_jam_ha },
     { "lsh", 7, _143_two_lsh_a, 0, _143_two_lsh_ha },
-    { "mat", 7, _143_two_mat_a },
+    { "mat", 7, _143_two_mat_a, 0, _143_two_mat_ha },
     { "met", 7, _143_two_met_a, 0, _143_two_met_ha },
     { "mix", 7, _143_two_mix_a, 0, _143_two_mix_ha },
-    { "mug", 7, _143_two_mug_a },
-    { "muk", 7, _143_two_muk_a },
+    { "mug", 7, _143_two_mug_a, 0, _143_two_mug_ha },
+    { "muk", 7, _143_two_muk_a, 0, _143_two_muk_ha },
     { "rap", 7, _143_two_rap_a, 0, _143_two_rap_ha },
-    { "rep", 7, _143_two_rep_a },
+    { "rep", 7, _143_two_rep_a, 0, _143_two_rep_ha },
     { "rip", 7, _143_two_rip_a, 0, _143_two_rip_ha },
     { "rsh", 7, _143_two_rsh_a, 0, _143_two_rsh_ha },
-    { "rub", 7, _143_two_rub_a },
-    { "pow", 7, _143_two_pow_a },
-    { "sqt", 7, _143_two_sqt_a },
+    { "rub", 7, _143_two_rub_a, 0, _143_two_rub_ha },
+    { "pow", 7, _143_two_pow_a, 0, _143_two_pow_ha },
+    { "sqt", 7, _143_two_sqt_a, 0, _143_two_sqt_ha },
     { "vor", 7, _143_two_vor_a, 0, _143_two_vor_ha },
-    { "xeb", 7, _143_two_xeb_a },
+    { "xeb", 7, _143_two_xeb_a, 0, _143_two_xeb_ha },
 
     { "by", 7, 0, _143_two__by_d, _143_two__by_ha },
     { "in", 7, 0, _143_two__in_d, _143_two__in_ha },
@@ -967,7 +1079,15 @@ static u3j_core _143_two_d[] =
     0,
   };
   static u3j_harm _143_one_dvr_a[] = {{".2", u3wc_dvr, c3y}, {}};
+  static c3_c* _143_one_dvr_ha[] = {
+    "20cdcad0",
+    0,
+  };
   static u3j_harm _143_one_gte_a[] = {{".2", u3wa_gte, c3y}, {}};
+  static c3_c* _143_one_gte_ha[] = {
+    "8542678",
+    0,
+  };
   static u3j_harm _143_one_gth_a[] = {{".2", u3wa_gth, c3y}, {}};
   static c3_c* _143_one_gth_ha[] = {
     "7555a49a",
@@ -984,6 +1104,10 @@ static u3j_core _143_two_d[] =
     0,
   };
   static u3j_harm _143_one_mod_a[] = {{".2", u3wa_mod, c3y}, {}};
+  static c3_c* _143_one_mod_ha[] = {
+    "1ccddd83",
+    0,
+  };
   static u3j_harm _143_one_mul_a[] = {{".2", u3wa_mul, c3y}, {}};
   static c3_c* _143_one_mul_ha[] = {
     "679b5099",
@@ -1019,12 +1143,12 @@ static u3j_core _143_one_d[] =
     { "add", 7, _143_one_add_a, 0, _143_one_add_ha },
     { "dec", 7, _143_one_dec_a, 0, _143_one_dec_ha },
     { "div", 7, _143_one_div_a, 0, _143_one_div_ha },
-    { "dvr", 7, _143_one_dvr_a },
-    { "gte", 7, _143_one_gte_a },
+    { "dvr", 7, _143_one_dvr_a, 0, _143_one_dvr_ha },
+    { "gte", 7, _143_one_gte_a, 0, _143_one_gte_ha },
     { "gth", 7, _143_one_gth_a, 0, _143_one_gth_ha },
     { "lte", 7, _143_one_lte_a, 0, _143_one_lte_ha },
     { "lth", 7, _143_one_lth_a, 0, _143_one_lth_ha },
-    { "mod", 7, _143_one_mod_a },
+    { "mod", 7, _143_one_mod_a, 0, _143_one_mod_ha },
     { "mul", 7, _143_one_mul_a, 0, _143_one_mul_ha },
     { "sub", 7, _143_one_sub_a, 0, _143_one_sub_ha },
 
