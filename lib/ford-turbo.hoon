@@ -1418,7 +1418,7 @@
         ==
       ::
         ::  todo: the rest of the horns
-        (easy ~)
+        (star ;~(sfix crane gap))
       ::
         (most gap brick)
       ==
@@ -1445,6 +1445,67 @@
       (stag %& ;~(pfix tar local-or-remote-reference))
       (stag %| local-or-remote-reference)
     ==
+  ::  +crane: all runes that start with / which aren't /?, /-, /+ or //.
+  ::
+  ++  crane
+    =<  apex
+    ::  whether we allow tall form
+    =|  allow-tall-form=?
+    ::
+    |%
+    ++  apex
+      %+  knee  *^crane  |.  ~+
+      ;~  pfix  fas
+        ;~  pose
+          ::  `/~`  hoon literal
+          (stag %fssg ;~(pfix sig hoon))
+          ::  `/$`  process query string
+          (stag %fsbc ;~(pfix buc hoon))
+          ::  `/|`  first of many options that succeeds
+          (stag %fsbr ;~(pfix bar parse-alts))
+          ::  `/=`  wrap a face around a crane
+          (stag %fsts ;~(pfix tis parse-face))
+          ::  `/.`  null terminated list
+          (stag %fsdt ;~(pfix dot parse-list))
+        ==
+      ==
+    ::  +parse-alts
+    ::
+    ++  parse-alts
+      %+  wide-or-tall
+        (ifix [pel per] (most ace subcrane))
+      ;~(sfix (star subcrane) gap duz)
+    ::  +parse-face: parse a face around a subcrane
+    ::
+    ++  parse-face
+      %+  wide-or-tall
+        ;~(plug sym ;~(pfix tis subcrane))
+      ;~(pfix gap ;~(plug sym subcrane))
+    ::  +parse-list: parse a null terminated list of cranes
+    ::
+    ++  parse-list
+      %+  wide-or-tall
+        fail
+      ;~(sfix (star subcrane) gap duz)
+    ::  +crane: parses a subcrane
+    ::
+    ++  subcrane
+      %+  wide-or-tall
+        apex(allow-tall-form |)
+      ;~(pfix gap apex)
+    ::  +wide-or-tall: parses tall form hoon if :allow-tall-form is %.y
+    ::
+    ++  wide-or-tall
+      |*  [wide=rule tall=rule]
+      ?.  allow-tall-form  wide
+      ;~(pose wide tall)
+    ::  +hoon: parses hoon
+    ::
+    ++  hoon
+      %+  wide-or-tall
+        (ifix [sel ser] (stag %cltr (most ace wide:hoon-parser)))
+      ;~(pfix gap tall:hoon-parser)
+    --
   ::  +local-or-remote-reference: the type used in +cable
   ::
   ++  local-or-remote-reference
