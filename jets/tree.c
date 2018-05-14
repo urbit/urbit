@@ -111,22 +111,50 @@ static u3j_core _143_hex_d[] =
     0,
   };
   static u3j_harm _143_pen_comb_a[] = {{".2", u3wf_comb}, {}};
+  static c3_c* _143_pen_comb_ha[] = {
+    "1fe51547",
+    0,
+  };
   static u3j_harm _143_pen_cons_a[] = {{".2", u3wf_cons}, {}};
+  static c3_c* _143_pen_cons_ha[] = {
+    "2e91771e",
+    0,
+  };
   static u3j_harm _143_pen_core_a[] = {{".2", u3wf_core}, {}};
   static c3_c* _143_pen_core_ha[] = {
     "5c37f17b",
     0,
   };
   static u3j_harm _143_pen_help_a[] = {{".2", u3wf_help}, {}};
+  static c3_c* _143_pen_help_ha[] = {
+    "3df833f",
+    0,
+  };
   static u3j_harm _143_pen_face_a[] = {{".2", u3wf_face}, {}};
   static c3_c* _143_pen_face_ha[] = {
     "742c24f0",
     0,
   };
   static u3j_harm _143_pen_fitz_a[] = {{".2", u3wf_fitz}, {}};
+  static c3_c* _143_pen_fitz_ha[] = {
+    "464c37aa",
+    0,
+  };
   static u3j_harm _143_pen_flan_a[] = {{".2", u3wf_flan}, {}};
+  static c3_c* _143_pen_flan_ha[] = {
+    "19b65692",
+    0,
+  };
   static u3j_harm _143_pen_flip_a[] = {{".2", u3wf_flip}, {}};
+  static c3_c* _143_pen_flip_ha[] = {
+    "2da932",
+    0,
+  };
   static u3j_harm _143_pen_flor_a[] = {{".2", u3wf_flor}, {}};
+  static c3_c* _143_pen_flor_ha[] = {
+    "53d48f74",
+    0,
+  };
   static u3j_harm _143_pen_fork_a[] = {{".2", u3wf_fork}, {}};
   static c3_c* _143_pen_fork_ha[] = {
     "6c3239f5",
@@ -139,11 +167,23 @@ static u3j_core _143_hex_d[] =
     0,
   };
   static u3j_harm _143_pen_look_a[] = {{".2", u3wf_look}, {}};
+  static c3_c* _143_pen_look_ha[] = {
+    "1a7dc705",
+    0,
+  };
   static u3j_harm _143_pen_loot_a[] = {{".2", u3wf_loot}, {}};
+  static c3_c* _143_pen_loot_ha[] = {
+    "13234213",
+    0,
+  };
 
-    static u3j_harm _143_pen__ut_burn_a[] = {{".2", u3wfu_burn}, {}};
-    static u3j_harm _143_pen__ut_conk_a[] = {{".2", u3wfu_conk}, {}};
+    //static u3j_harm _143_pen__ut_burn_a[] = {{".2", u3wfu_burn}, {}};
+    //static u3j_harm _143_pen__ut_conk_a[] = {{".2", u3wfu_conk}, {}};
     static u3j_harm _143_pen__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
+    static c3_c* _143_pen__ut_crop_ha[] = {
+      "1b098a6e",
+      0,
+    };
     // static u3j_harm _143_pen__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
     static u3j_harm _143_pen__ut_fond_a[] = {{".2", u3wfu_fond}, {}};
     static c3_c* _143_pen__ut_fond_ha[] = {
@@ -151,13 +191,25 @@ static u3j_core _143_hex_d[] =
       0,
     };
     static u3j_harm _143_pen__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
+    static c3_c* _143_pen__ut_fish_ha[] = {
+      "4027d168",
+      0,
+    };
     static u3j_harm _143_pen__ut_fuse_a[] = {{".2", u3wfu_fuse}, {}};
+    static c3_c* _143_pen__ut_fuse_ha[] = {
+      "6f74b82e",
+      0,
+    };
     static u3j_harm _143_pen__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
     static c3_c* _143_pen__ut_mint_ha[] = {
       "48723fb5",
       0,
     };
     static u3j_harm _143_pen__ut_mull_a[] = {{".2", u3wfu_mull}, {}};
+    static c3_c* _143_pen__ut_mull_ha[] = {
+      "1d7c97bc",
+      0,
+    };
     static u3j_harm _143_pen__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
     static c3_c* _143_pen__ut_nest_ha[] = {
       "4512a8f4",
@@ -174,12 +226,20 @@ static u3j_core _143_hex_d[] =
       0,
     };
     static u3j_harm _143_pen__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
+    static c3_c* _143_pen__ut_rest_ha[] = {
+      "6e47044e",
+      0,
+    };
     static u3j_harm _143_pen__ut_toss_a[] = {{".2", u3wfu_toss}, {}};
     static c3_c* _143_pen__ut_toss_ha[] = {
       "54362dd",
       0,
     };
     static u3j_harm _143_pen__ut_wrap_a[] = {{".2", u3wfu_wrap}, {}};
+    static c3_c* _143_pen__ut_wrap_ha[] = {
+      "f15623c",
+      0,
+    };
 
   static c3_c* _143_pen__ut_ha[] = {
     "c2cda56",
@@ -228,21 +288,21 @@ static u3j_core _143_hex_d[] =
   };
   static u3j_core _143_pen__ut_d[] =
     { 
-      { "burn", 7, _143_pen__ut_burn_a },
-      { "conk", 7, _143_pen__ut_conk_a },
-      { "crop", 7, _143_pen__ut_crop_a },
+  //    { "burn", 7, _143_pen__ut_burn_a },
+  //    { "conk", 7, _143_pen__ut_conk_a },
+      { "crop", 7, _143_pen__ut_crop_a, 0, _143_pen__ut_crop_ha },
       { "fond", 7, _143_pen__ut_fond_a, 0, _143_pen__ut_fond_ha },
     //  { "fire", 7, _143_pen__ut_fire_a },
-      { "fish", 7, _143_pen__ut_fish_a },
-      { "fuse", 7, _143_pen__ut_fuse_a },
+      { "fish", 7, _143_pen__ut_fish_a, 0, _143_pen__ut_fish_ha },
+      { "fuse", 7, _143_pen__ut_fuse_a, 0, _143_pen__ut_fuse_ha },
       { "mint", 7, _143_pen__ut_mint_a, 0, _143_pen__ut_mint_ha },
-      { "mull", 7, _143_pen__ut_mull_a },
+      { "mull", 7, _143_pen__ut_mull_a, 0, _143_pen__ut_mull_ha },
       { "nest", 7, _143_pen__ut_nest_a, 0, _143_pen__ut_nest_ha },
       { "peek", 7, _143_pen__ut_peek_a, 0, _143_pen__ut_peek_ha },
       { "play", 7, _143_pen__ut_play_a, 0, _143_pen__ut_play_ha },
-      { "rest", 7, _143_pen__ut_rest_a },
+      { "rest", 7, _143_pen__ut_rest_a, 0, _143_pen__ut_rest_ha },
       { "toss", 7, _143_pen__ut_toss_a, 0, _143_pen__ut_toss_ha },
-      { "wrap", 7, _143_pen__ut_wrap_a },
+      { "wrap", 7, _143_pen__ut_wrap_a, 0, _143_pen__ut_wrap_ha },
       {}
     };
   static u3j_harm _143_pen__ut_a[] = 
@@ -279,19 +339,19 @@ static u3j_core _143_pen_d[] =
   { { "hex", 3, 0, _143_hex_d, _143_hex_ha },
 
     { "cell", 7, _143_pen_cell_a, 0, _143_pen_cell_ha },
-    { "comb", 7, _143_pen_comb_a },
-    { "cons", 7, _143_pen_cons_a },
+    { "comb", 7, _143_pen_comb_a, 0, _143_pen_comb_ha },
+    { "cons", 7, _143_pen_cons_a, 0, _143_pen_cons_ha },
     { "core", 7, _143_pen_core_a, 0, _143_pen_core_ha },
     { "face", 7, _143_pen_face_a, 0, _143_pen_face_ha },
-    { "fitz", 7, _143_pen_fitz_a },
-    { "flan", 7, _143_pen_flan_a },
-    { "flip", 7, _143_pen_flip_a },
-    { "flor", 7, _143_pen_flor_a },
+    { "fitz", 7, _143_pen_fitz_a, 0, _143_pen_fitz_ha },
+    { "flan", 7, _143_pen_flan_a, 0, _143_pen_flan_ha },
+    { "flip", 7, _143_pen_flip_a, 0, _143_pen_flip_ha },
+    { "flor", 7, _143_pen_flor_a, 0, _143_pen_flor_ha },
     { "fork", 7, _143_pen_fork_a, 0, _143_pen_fork_ha },
-    { "help", 7, _143_pen_help_a },
+    { "help", 7, _143_pen_help_a, 0, _143_pen_help_ha },
     { "hike", 7, _143_pen_hike_a, 0, _143_pen_hike_ha },
-    { "look", 7, _143_pen_look_a },
-    { "loot", 7, _143_pen_loot_a },
+    { "look", 7, _143_pen_look_a, 0, _143_pen_look_ha },
+    { "loot", 7, _143_pen_loot_a, 0, _143_pen_loot_ha },
 
     // { "ap", _143_pen__ap_a },
     // { "al", _143_pen__al_a },
@@ -308,14 +368,35 @@ static u3j_core _143_pen_d[] =
   };
 
   static u3j_harm _143_qua__po_ind_a[] = {{".2", u3wcp_ind}, {}};
+  static c3_c* _143_qua__po_ind_ha[] = {
+    "45bf22f6",
+    0,
+  };
   static u3j_harm _143_qua__po_ins_a[] = {{".2", u3wcp_ins}, {}};
+  static c3_c* _143_qua__po_ins_ha[] = {
+    "2c82c596",
+    0,
+  };
   static u3j_harm _143_qua__po_tod_a[] = {{".2", u3wcp_tod}, {}};
+  static c3_c* _143_qua__po_tod_ha[] = {
+    "692b7953",
+    0,
+  };
   static u3j_harm _143_qua__po_tos_a[] = {{".2", u3wcp_tos}, {}};
+  static c3_c* _143_qua__po_tos_ha[] = {
+    "473d8e66",
+    0,
+  };
+
+    static c3_c* _143_qua__po_ha[] = {
+      "19535663",
+      0,
+    };
     static u3j_core _143_qua__po_d[] =
-      { { "ind", 7, _143_qua__po_ind_a },
-        { "ins", 7, _143_qua__po_ins_a },
-        { "tod", 7, _143_qua__po_tod_a },
-        { "tos", 7, _143_qua__po_tos_a },
+      { { "ind", 7, _143_qua__po_ind_a, 0, _143_qua__po_ind_ha },
+        { "ins", 7, _143_qua__po_ins_a, 0, _143_qua__po_ins_ha },
+        { "tod", 7, _143_qua__po_tod_a, 0, _143_qua__po_tod_ha },
+        { "tos", 7, _143_qua__po_tos_a, 0, _143_qua__po_tos_ha },
         {}
       };
 
@@ -390,8 +471,16 @@ static u3j_core _143_pen_d[] =
       };
 
   static u3j_harm _143_qua__glue_fun_a[] = {{".2", u3we_glue_fun}, {}};
+    static c3_c* _143_qua__glue_ha[] = {
+      "7bf23949",
+      0,
+    };
+    static c3_c* _143_qua__glue_fun_ha[] = {
+      "7d709001",
+      0,
+    };
     static u3j_core _143_qua__glue_d[] =
-      { { "fun", 7, _143_qua__glue_fun_a },
+      { { "fun", 7, _143_qua__glue_fun_a, 0, _143_qua__glue_fun_ha },
         {}
       };
 
@@ -493,7 +582,7 @@ static u3j_core _143_pen_d[] =
         {}
       };
 
-  static u3j_harm _143_qua_pfix_a[] = {{".2", u3we_pfix}, {}};
+  // static u3j_harm _143_qua_pfix_a[] = {{".2", u3we_pfix}, {}};
   static u3j_harm _143_qua_plug_a[] = {{".2", u3we_plug}, {}};
   static c3_c* _143_qua__plug_ha[] = {
     "11b6a2f8",
@@ -504,10 +593,18 @@ static u3j_core _143_pen_d[] =
     "6fb235ed",
     0,
   };
-  static u3j_harm _143_qua_sfix_a[] = {{".2", u3we_sfix}, {}};
+  //static u3j_harm _143_qua_sfix_a[] = {{".2", u3we_sfix}, {}};
 
   static u3j_harm _143_qua_mink_a[] = {{".2", u3we_mink}, {}};
+  static c3_c* _143_qua_mink_ha[] = {
+    "43ee7fca",
+    0,
+  };
   static u3j_harm _143_qua_mule_a[] = {{".2", u3we_mule}, {}};
+  static c3_c* _143_qua_mule_ha[] = {
+    "49cb9b2d",
+    0,
+  };
 
 static c3_c* _143_qua_ha[] = {
   "7f2af46e",
@@ -521,7 +618,7 @@ static u3j_hood _143_qua_ho[] = {
 static u3j_core _143_qua_d[] =
   { { "pen", 3, 0, _143_pen_d, _143_pen_ha, _143_pen_ho },
 
-    { "po", 7, 0, _143_qua__po_d },
+    { "po", 7, 0, _143_qua__po_d, _143_qua__po_ha },
 
     { "trip", 7, _143_qua_trip_a, 0, _143_qua_trip_ha },
 
@@ -530,7 +627,7 @@ static u3j_core _143_qua_d[] =
     { "comp", 7, 0, _143_qua__comp_d, _143_qua__comp_ha },
     { "cook", 7, 0, _143_qua__cook_d, _143_qua__cook_ha },
     { "easy", 7, 0, _143_qua__easy_d, _143_qua__easy_ha },
-    { "glue", 7, 0, _143_qua__glue_d },
+    { "glue", 7, 0, _143_qua__glue_d, _143_qua__glue_ha },
     { "here", 7, 0, _143_qua__here_d, _143_qua__here_ha },
     { "just", 7, 0, _143_qua__just_d, _143_qua__just_ha },
     { "mask", 7, 0, _143_qua__mask_d, _143_qua__mask_ha },
@@ -539,13 +636,13 @@ static u3j_core _143_qua_d[] =
     { "stew", 7, 0, _143_qua__stew_d, _143_qua__stew_ha },
     { "stir", 7, 0, _143_qua__stir_d, _143_qua__stir_ha },
 
-    { "pfix", 7, _143_qua_pfix_a },
+    // { "pfix", 7, _143_qua_pfix_a },
     { "plug", 7, _143_qua_plug_a, 0, _143_qua__plug_ha },
     { "pose", 7, _143_qua_pose_a, 0, _143_qua__pose_ha },
-    { "sfix", 7, _143_qua_sfix_a },
+    // { "sfix", 7, _143_qua_sfix_a },
 
-    { "mink", 7, _143_qua_mink_a },
-    { "mule", 7, _143_qua_mule_a },
+    { "mink", 7, _143_qua_mink_a, 0, _143_qua_mink_ha },
+    { "mule", 7, _143_qua_mule_a, 0, _143_qua_mule_ha },
     {}
   };
 
