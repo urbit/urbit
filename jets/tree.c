@@ -3,89 +3,211 @@
 #include "all.h"
 
   static u3j_harm _143_hex_aes_ecba_en_a[] = {{".2", u3wea_ecba_en}, {}};
+  static c3_c* _143_hex_aes_ecba_en_ha[] = {
+    "7622dfdb",
+    0,
+  };
   static u3j_harm _143_hex_aes_ecba_de_a[] = {{".2", u3wea_ecba_de}, {}};
+  static c3_c* _143_hex_aes_ecba_de_ha[] = {
+    "35592db7",
+    0,
+  };
   static u3j_harm _143_hex_aes_ecbb_en_a[] = {{".2", u3wea_ecbb_en}, {}};
+  static c3_c* _143_hex_aes_ecbb_en_ha[] = {
+    "2f1dbee2",
+    0,
+  };
   static u3j_harm _143_hex_aes_ecbb_de_a[] = {{".2", u3wea_ecbb_de}, {}};
+  static c3_c* _143_hex_aes_ecbb_de_ha[] = {
+    "5211dc92",
+    0,
+  };
   static u3j_harm _143_hex_aes_ecbc_en_a[] = {{".2", u3wea_ecbc_en}, {}};
+  static c3_c* _143_hex_aes_ecbc_en_ha[] = {
+    "70caa183",
+    0,
+  };
   static u3j_harm _143_hex_aes_ecbc_de_a[] = {{".2", u3wea_ecbc_de}, {}};
+  static c3_c* _143_hex_aes_ecbc_de_ha[] = {
+    "3433e46b",
+    0,
+  };
 
   static u3j_harm _143_hex_aes_cbca_en_a[] = {{".2", u3wea_cbca_en}, {}};
+  static c3_c* _143_hex_aes_cbca_en_ha[] = {
+    "69ac3685",
+    0,
+  };
   static u3j_harm _143_hex_aes_cbca_de_a[] = {{".2", u3wea_cbca_de}, {}};
+  static c3_c* _143_hex_aes_cbca_de_ha[] = {
+    "2057b875",
+    0,
+  };
   static u3j_harm _143_hex_aes_cbcb_en_a[] = {{".2", u3wea_cbcb_en}, {}};
+  static c3_c* _143_hex_aes_cbcb_en_ha[] = {
+    "1f286963",
+    0,
+  };
   static u3j_harm _143_hex_aes_cbcb_de_a[] = {{".2", u3wea_cbcb_de}, {}};
+  static c3_c* _143_hex_aes_cbcb_de_ha[] = {
+    "654074e5",
+    0,
+  };
   static u3j_harm _143_hex_aes_cbcc_en_a[] = {{".2", u3wea_cbcc_en}, {}};
+  static c3_c* _143_hex_aes_cbcc_en_ha[] = {
+    "503ec5ac",
+    0,
+  };
   static u3j_harm _143_hex_aes_cbcc_de_a[] = {{".2", u3wea_cbcc_de}, {}};
+  static c3_c* _143_hex_aes_cbcc_de_ha[] = {
+    "f67b27f",
+    0,
+  };
 
+  static c3_c* _143_hex_aes_ecba_ha[] = {
+    "30bd6d60",
+    0,
+  };
   static u3j_core _143_hex_aes_ecba_d[] =
-    { { "en", 7, _143_hex_aes_ecba_en_a },
-      { "de", 7, _143_hex_aes_ecba_de_a },
+    { { "en", 7, _143_hex_aes_ecba_en_a, 0, _143_hex_aes_ecba_en_ha },
+      { "de", 7, _143_hex_aes_ecba_de_a, 0, _143_hex_aes_ecba_de_ha },
       {}
     };
 
+  static c3_c* _143_hex_aes_ecbb_ha[] = {
+    "121ef659",
+    0,
+  };
   static u3j_core _143_hex_aes_ecbb_d[] =
-    { { "en", 7, _143_hex_aes_ecbb_en_a },
-      { "de", 7, _143_hex_aes_ecbb_de_a },
+    { { "en", 7, _143_hex_aes_ecbb_en_a, 0, _143_hex_aes_ecbb_en_ha },
+      { "de", 7, _143_hex_aes_ecbb_de_a, 0, _143_hex_aes_ecbb_de_ha },
       {}
     };
 
+  static c3_c* _143_hex_aes_ecbc_ha[] = {
+    "572e5931",
+    0,
+  };
   static u3j_core _143_hex_aes_ecbc_d[] =
-    { { "en", 7, _143_hex_aes_ecbc_en_a },
-      { "de", 7, _143_hex_aes_ecbc_de_a },
+    { { "en", 7, _143_hex_aes_ecbc_en_a, 0, _143_hex_aes_ecbc_en_ha },
+      { "de", 7, _143_hex_aes_ecbc_de_a, 0, _143_hex_aes_ecbc_de_ha },
       {}
     };
 
+  static c3_c* _143_hex_aes_cbca_ha[] = {
+    "12d2f4d8",
+    0,
+  };
   static u3j_core _143_hex_aes_cbca_d[] =
-    { { "en", 7, _143_hex_aes_cbca_en_a },
-      { "de", 7, _143_hex_aes_cbca_de_a },
+    { { "en", 7, _143_hex_aes_cbca_en_a, 0, _143_hex_aes_cbca_en_ha },
+      { "de", 7, _143_hex_aes_cbca_de_a, 0, _143_hex_aes_cbca_de_ha },
       {}
     };
 
+  static c3_c* _143_hex_aes_cbcb_ha[] = {
+    "30361963",
+    0,
+  };
   static u3j_core _143_hex_aes_cbcb_d[] =
-    { { "en", 7, _143_hex_aes_cbcb_en_a },
-      { "de", 7, _143_hex_aes_cbcb_de_a },
+    { { "en", 7, _143_hex_aes_cbcb_en_a, 0, _143_hex_aes_cbcb_en_ha },
+      { "de", 7, _143_hex_aes_cbcb_de_a, 0, _143_hex_aes_cbcb_de_ha },
       {}
     };
 
+  static c3_c* _143_hex_aes_cbcc_ha[] = {
+    "3e4cfab8",
+    0,
+  };
   static u3j_core _143_hex_aes_cbcc_d[] =
-    { { "en", 7, _143_hex_aes_cbcc_en_a },
-      { "de", 7, _143_hex_aes_cbcc_de_a },
+    { { "en", 7, _143_hex_aes_cbcc_en_a, 0, _143_hex_aes_cbcc_en_ha },
+      { "de", 7, _143_hex_aes_cbcc_de_a, 0, _143_hex_aes_cbcc_de_ha },
       {}
     };
 
+  static c3_c* _143_hex_aes_ha[] = {
+    "385d228e",
+    0,
+  };
   static u3j_core _143_hex_aes_d[] =
-    { { "ecba", 7, 0, _143_hex_aes_ecba_d },
-      { "ecbb", 7, 0, _143_hex_aes_ecbb_d },
-      { "ecbc", 7, 0, _143_hex_aes_ecbc_d },
-      { "cbca", 7, 0, _143_hex_aes_cbca_d },
-      { "cbcb", 7, 0, _143_hex_aes_cbcb_d },
-      { "cbcc", 7, 0, _143_hex_aes_cbcc_d },
+    { { "ecba", 7, 0, _143_hex_aes_ecba_d, _143_hex_aes_ecba_ha },
+      { "ecbb", 7, 0, _143_hex_aes_ecbb_d, _143_hex_aes_ecbb_ha },
+      { "ecbc", 7, 0, _143_hex_aes_ecbc_d, _143_hex_aes_ecbc_ha },
+      { "cbca", 7, 0, _143_hex_aes_cbca_d, _143_hex_aes_cbca_ha },
+      { "cbcb", 7, 0, _143_hex_aes_cbcb_d, _143_hex_aes_cbcb_ha },
+      { "cbcc", 7, 0, _143_hex_aes_cbcc_d, _143_hex_aes_cbcc_ha },
       {}
     };
 
   static u3j_harm _143_hex_down_mark_a[] = {{".2", u3wg_down, c3y}, {}};
+    static c3_c* _143_hex_down_mark_ha[] = {
+      "2a57366e",
+      0,
+    };
+
+    static c3_c* _143_hex_down_ha[] = {
+      "7b4e149a",
+      0,
+    };
     static u3j_core _143_hex_down_d[] =
-      { { "mark", 7, _143_hex_down_mark_a },
+      { { "mark", 7, _143_hex_down_mark_a, 0, _143_hex_down_mark_ha },
         {}
       };
 
   static u3j_harm _143_hex_lore_a[] = {{".2", u3we_lore}, {}};
+  static c3_c* _143_hex_lore_ha[] = {
+    "71d2c115",
+    0,
+  };
   static u3j_harm _143_hex_loss_a[] = {{".2", u3we_loss}, {}};
+  static c3_c* _143_hex_loss_ha[] = {
+    "1fc16691",
+    0,
+  };
   static u3j_harm _143_hex_lune_a[] = {{".2", u3we_lune}, {}};
+  static c3_c* _143_hex_lune_ha[] = {
+    "12455182",
+    0,
+  };
 
   static u3j_harm _143_hex_coed__ed_puck_a[] = {{".2", u3wee_puck}, {}};
+  static c3_c* _143_hex_coed__ed_puck_ha[] = {
+    "2ed1b9e8",
+    0,
+  };
   static u3j_harm _143_hex_coed__ed_sign_a[] = {{".2", u3wee_sign}, {}};
+  static c3_c* _143_hex_coed__ed_sign_ha[] = {
+    "d0277fd",
+    0,
+  };
   static u3j_harm _143_hex_coed__ed_veri_a[] = {{".2", u3wee_veri}, {}};
+  static c3_c* _143_hex_coed__ed_veri_ha[] = {
+    "5c991b1",
+    0,
+  };
   static u3j_harm _143_hex_coed__ed_shar_a[] = {{".2", u3wee_shar}, {}};
+  static c3_c* _143_hex_coed__ed_shar_ha[] = {
+    "78a7b7cc",
+    0,
+  };
 
+  static c3_c* _143_hex_coed__ed_ha[] = {
+    "46800d16",
+    0,
+  };
   static u3j_core _143_hex_coed__ed_d[] =
-    { { "sign", 7, _143_hex_coed__ed_sign_a },
-      { "puck", 7, _143_hex_coed__ed_puck_a },
-      { "veri", 7, _143_hex_coed__ed_veri_a },
-      { "shar", 7, _143_hex_coed__ed_shar_a },
+    { { "sign", 7, _143_hex_coed__ed_sign_a, 0, _143_hex_coed__ed_sign_ha },
+      { "puck", 7, _143_hex_coed__ed_puck_a, 0, _143_hex_coed__ed_puck_ha },
+      { "veri", 7, _143_hex_coed__ed_veri_a, 0, _143_hex_coed__ed_veri_ha },
+      { "shar", 7, _143_hex_coed__ed_shar_a, 0, _143_hex_coed__ed_shar_ha },
       {}
     };
+
+static c3_c* _143_hex_coed_ha[] = {
+  "7f0356e",
+  0,
+};
 static u3j_core _143_hex_coed_d[] =
-  { { "ed", 3, 0, _143_hex_coed__ed_d },
+  { { "ed", 3, 0, _143_hex_coed__ed_d, _143_hex_coed__ed_ha },
     {}
   };
 
@@ -94,12 +216,14 @@ static c3_c* _143_hex_ha[] = {
   0,
 };
 static u3j_core _143_hex_d[] =
-  { { "down", 31337, 0, _143_hex_down_d },
-    { "lore", 7, _143_hex_lore_a },
-    { "loss", 7, _143_hex_loss_a },
-    { "lune", 7, _143_hex_lune_a },
-    { "coed", 31337, 0, _143_hex_coed_d },
-    { "aes", 31337, 0, _143_hex_aes_d },
+  { { "down", 8063, 0, _143_hex_down_d, _143_hex_down_ha },
+
+    { "lore",   63, _143_hex_lore_a, 0, _143_hex_lore_ha },
+    { "loss",   63, _143_hex_loss_a, 0, _143_hex_loss_ha },
+    { "lune",  127, _143_hex_lune_a, 0, _143_hex_lune_ha },
+
+    { "coed",   63, 0, _143_hex_coed_d, _143_hex_coed_ha },
+    { "aes",    31, 0, _143_hex_aes_d, _143_hex_aes_ha },
     {}
   };
 
