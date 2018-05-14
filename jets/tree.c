@@ -112,7 +112,16 @@ static u3j_core _143_hex_d[] =
   static u3j_harm _143_pen_flip_a[] = {{".2", u3wf_flip}, {}};
   static u3j_harm _143_pen_flor_a[] = {{".2", u3wf_flor}, {}};
   static u3j_harm _143_pen_fork_a[] = {{".2", u3wf_fork}, {}};
+  static c3_c* _143_pen_fork_ha[] = {
+    "6c3239f5",
+    0,
+  };
+
   static u3j_harm _143_pen_hike_a[] = {{".2", u3wf_hike}, {}};
+  static c3_c* _143_pen_hike_ha[] = {
+    "65731f61",
+    0,
+  };
   static u3j_harm _143_pen_look_a[] = {{".2", u3wf_look}, {}};
   static u3j_harm _143_pen_loot_a[] = {{".2", u3wf_loot}, {}};
 
@@ -134,6 +143,10 @@ static u3j_core _143_hex_d[] =
     };
     static u3j_harm _143_pen__ut_mull_a[] = {{".2", u3wfu_mull}, {}};
     static u3j_harm _143_pen__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
+    static c3_c* _143_pen__ut_nest_ha[] = {
+      "4512a8f4",
+      0,
+    };
     static u3j_harm _143_pen__ut_peek_a[] = {{".2", u3wfu_peek}, {}};
     static u3j_harm _143_pen__ut_play_a[] = {{".2", u3wfu_play}, {}};
     static u3j_harm _143_pen__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
@@ -196,7 +209,7 @@ static u3j_core _143_hex_d[] =
       { "fuse", 7, _143_pen__ut_fuse_a },
       { "mint", 7, _143_pen__ut_mint_a, 0, _143_pen__ut_mint_ha },
       { "mull", 7, _143_pen__ut_mull_a },
-      { "nest", 7, _143_pen__ut_nest_a },
+      { "nest", 7, _143_pen__ut_nest_a, 0, _143_pen__ut_nest_ha },
       { "peek", 7, _143_pen__ut_peek_a },
       { "play", 7, _143_pen__ut_play_a },
       { "rest", 7, _143_pen__ut_rest_a },
@@ -246,9 +259,9 @@ static u3j_core _143_pen_d[] =
     { "flan", 7, _143_pen_flan_a },
     { "flip", 7, _143_pen_flip_a },
     { "flor", 7, _143_pen_flor_a },
-    { "fork", 7, _143_pen_fork_a },
+    { "fork", 7, _143_pen_fork_a, 0, _143_pen_fork_ha },
     { "help", 7, _143_pen_help_a },
-    { "hike", 7, _143_pen_hike_a },
+    { "hike", 7, _143_pen_hike_a, 0, _143_pen_hike_ha },
     { "look", 7, _143_pen_look_a },
     { "loot", 7, _143_pen_loot_a },
 
@@ -682,6 +695,10 @@ static u3j_core _143_tri_d[] =
   static u3j_harm _143_two_snag_a[] = {{".2", u3wb_snag, c3y}, {}};
   // static u3j_harm _143_two_sort_a[] = {{".2", u3wb_sort, c3y}, {}};
   static u3j_harm _143_two_turn_a[] = {{".2", u3wb_turn, c3y}, {}};
+  static c3_c* _143_two_turn_ha[] = {
+    "6edb42",
+    0,
+  };
   static u3j_harm _143_two_weld_a[] = {{".2", u3wb_weld, c3y}, {}};
 
   static u3j_harm _143_two_bex_a[] = {{".2", u3wc_bex, c3y}, {}};
@@ -844,7 +861,7 @@ static u3j_core _143_two_d[] =
     { "slag", 7, _143_two_slag_a },
     { "snag", 7, _143_two_snag_a },
 //  { "sort", 7, _143_two_sort_a },
-    { "turn", 7, _143_two_turn_a },
+    { "turn", 7, _143_two_turn_a, 0, _143_two_turn_ha },
     { "weld", 7, _143_two_weld_a },
 
     { "bex", 7, _143_two_bex_a, 0, _143_two_bex_ha },
@@ -905,6 +922,10 @@ static u3j_core _143_two_d[] =
   static u3j_harm _143_one_gte_a[] = {{".2", u3wa_gte, c3y}, {}};
   static u3j_harm _143_one_gth_a[] = {{".2", u3wa_gth, c3y}, {}};
   static u3j_harm _143_one_lte_a[] = {{".2", u3wa_lte, c3y}, {}};
+  static c3_c* _143_one_lte_ha[] = {
+    "6fc5ac17",
+    0,
+  };
   static u3j_harm _143_one_lth_a[] = {{".2", u3wa_lth, c3y}, {}};
   static c3_c* _143_one_lth_ha[] = {
     "ef85ae3",
@@ -942,7 +963,7 @@ static u3j_core _143_one_d[] =
     { "dvr", 7, _143_one_dvr_a },
     { "gte", 7, _143_one_gte_a },
     { "gth", 7, _143_one_gth_a },
-    { "lte", 7, _143_one_lte_a },
+    { "lte", 7, _143_one_lte_a, 0, _143_one_lte_ha },
     { "lth", 7, _143_one_lth_a, 0, _143_one_lth_ha },
     { "mod", 7, _143_one_mod_a },
     { "mul", 7, _143_one_mul_a, 0, _143_one_mul_ha },
