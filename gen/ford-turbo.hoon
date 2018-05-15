@@ -1056,14 +1056,20 @@
     [[%pin ~1234.5.7 scry-schematic] [%pin ~1234.5.8 scry-schematic]]
   ::
   =^  results1  ford
-    %-  test-ford-call  :*
+    %-  test-ford-call-with-comparator  :*
       ford
       now=~1234.5.6
       scry=(scry-blocks blocks)
       ::
       call-args=[duct=~[/first] type=~ %make ~nul autocons]
       ::
-      ^=  expected-moves
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        %-  expect-eq  !>
+        :-  (sy moves)
+        %-  sy
         :~  :*  duct=~  %pass
                 wire=/~nul/scry-request/cx/~nul/desk/~1234.5.7/foo/bar
                 %c  %warp  [~nul ~nul]  %desk
