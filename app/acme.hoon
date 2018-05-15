@@ -626,6 +626,16 @@
     :~  ['authorizations' (ar json-purl)]
         ['finalize' json-purl]
         ['expires' so] :: XX (su iso-8601)
+        ['status' so]
+    ==
+  ::
+  ++  final-order
+    %-  ot
+    :~  ['authorizations' (ar json-purl)]
+        ['finalize' json-purl]
+        ['expires' so] :: XX (su iso-8601)
+        ['status' so]
+        ['certificate' json-purl]
     ==
   ::
   ++  auth
@@ -645,8 +655,15 @@
     :~  ['identifier' (cu iden (ot type+so value+(su thos:de-purl:html) ~))]
         ['status' so]
         ['expires' so] :: XX (su iso-8601)
-        :-  'challenges'
-        (cu trial (ar (ot type+so status+so url+json-purl token+so ~)))
+        ['challenges' (cu trial (ar challenge))]
+    ==
+  ::
+  ++  challenge
+    %-  ot
+    :~  ['type' so]
+        ['status' so]
+        ['url' json-purl]
+        ['token' so]
     ==
   ::
   ++  error
@@ -672,8 +689,7 @@
       rev/purl                                          ::  revokeCert
       rek/purl                                          ::  keyChange
   ==                                                    ::
-+=  acct                                                ::  account
-  [key=key:rsa reg=(unit [wen=@t kid=@t])]              ::  XX wen=@da
++=  acct  [key=key:rsa reg=(unit [wen=@t kid=@t])]      ::  account XX wen=@da
 +=  turf  (list @t)                                     ::  domain
 +=  trial                                               ::  challenge
   $%  [%http cal=purl tok=@t sas=?(%recv %pend %auth)]  ::    http-only
@@ -684,11 +700,10 @@
   ==                                                    ::
 +=  order                                               ::  certificate order
   $%  [%0 dom=(list turf)]                              ::    initialized
-      [%1 dom=(list turf) exp=@t fin=purl aut=(map @ud auth)] :: XX exp=@da
-      [%2 dom=(list turf) exp=@t fin=purl csr=@ux]      ::    cert requested
+      [%1 dom=(list turf) exp=@t der=purl fin=purl aut=(map @ud auth)] :: XX exp=@da
+      [%2 dom=(list turf) exp=@t der=purl fin=purl key=key:rsa csr=@ux]      ::    cert requested
   ==                                                    ::
-+=  config                                              ::  finalized config
-  [key=key:rsa exp=@da cer=@ux]                         ::
++=  config  [key=key:rsa exp=@da cer=wain]              ::  finalized config
 +=  history                                             ::  isn't over
   $:  act=(list acct)                                   ::
       der=(list order)                                  ::
@@ -716,6 +731,10 @@
   |=  car=card
   ~&  [%emit car]
   this(mov [[ost.bow car] mov])
+::
+++  emil
+  |=  rac=(list card)
+  q:(spin rac this |=([a=card b=_this] [~ (emit:b a)]))
 ::
 ++  abet
   [(flop mov) this(mov ~)]
@@ -749,38 +768,38 @@
 ::
 ++  request
   |=  [wir=wire url=purl bod=(unit json)]
+  ^-  card
   =/  lod
     ?~  bod
       [%get ~ ~]
     =/  hed  (my content-type+['application/jose+json' ~] ~)
     [%post hed `(jws-body url u.bod)]
-  (emit [%hiss wir [~ ~] %httr %hiss url lod])
+  [%hiss wir [~ ~] %httr %hiss url lod]
 ::
 ++  directory
-  (request /acme/dir/(scot %p our.bow) bas ~)
+  (emit (request /acme/dir/(scot %p our.bow) bas ~))
 ::
 ++  nonce
   |=  nex=wire
   ^+  this
   ?>  |(?=(~ nex) ?=([%next *] nex))
-  (request (weld `wire`/acme/non nex) non.dir ~)
+  (emit (request (weld `wire`/acme/non nex) non.dir ~))
 ::
 ++  register
-  %^  request(reg.act ~)  /acme/reg/(scot %p our.bow)
+  %-  emit(reg.act ~)
+  %^  request  /acme/reg/(scot %p our.bow)
     reg.dir
   `[%o (my [['termsOfServiceAgreed' b+&] ~])]
 ::
 ++  order
   ^+  this
-  =<  q
-  %^    spin
-      (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %0 *] a)))
-    this
-  |=  [[i=@ud der=^order] b=_this]
+  %-  emil
+  %+  turn
+    (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %0 *] a)))
+  |=  [i=@ud der=^order]
+  ^-  card
   ?>  ?=([%0 *] der)
-  :-  ~
-  ^+  b
-  %^  request:b  /acme/der/(scot %ud i)
+  %^  request  /acme/der/(scot %ud i)
     der.dir
   :-  ~
   ^-  json
@@ -794,6 +813,7 @@
 ::
 ++  authorize
   ^+  this
+  %-  emil
   =/  aut=(list (trel @ud @ud purl))
     %-  zing
     %+  turn
@@ -805,16 +825,14 @@
     |=  [i=@ud aut=auth]
     ?>  ?=([%0 *] aut)
     [i ider aut.aut]
-  =<  q
-  %^    spin
-      aut
-    this
-  |=  [[i=@ud ider=@ud aut=purl] b=_this]
-  ^+  [~ b]
-  [~ (request:b /acme/aut/(scot %ud i)/der/(scot %ud ider) aut ~)]
+  %+  turn  aut
+  |=  [i=@ud ider=@ud aut=purl]
+  ^-  card
+  (request /acme/aut/(scot %ud i)/der/(scot %ud ider) aut ~)
 ::
 ++  challenge
   ^+  this
+  %-  emil
   =/  cal=(list (trel @ud @ud trial))
     %-  zing
     %+  turn
@@ -826,26 +844,54 @@
     |=  [i=@ud aut=auth]
     ?>  ?=([%1 *] aut)
     [i ider cal.aut]
-  =<  q
-  %^    spin
-      cal
-    this
-  |=  [[i=@ud ider=@ud cal=trial] b=_this]
-  =/  mim
-    :-  /text/plain
-    %-  as-octs:mimes:html
-    (rap 3 [tok.cal '.' (thumbprint (pass:en:jwk key.act)) ~])
-  =.  b  %-  emit:b
-         :+  %well
-           /acme/wel/(scot %ud i)/der/(scot %ud ider)
-         [/acme-challenge/[tok.cal] `mim]
-  =.  sas.cal  %pend
-  ::  save cal to aut.der
-  :-  ~
-  %^    request:b
-      /acme/cal/(scot %ud i)/der/(scot %ud ider)
-    cal.cal
-  `[%o ~]
+  %-  zing
+  %+  turn  cal
+  |=  [i=@ud ider=@ud cal=trial]
+  ^-  (list card)
+  :~  :^    %well
+          /acme/wel/(scot %ud i)/der/(scot %ud ider)
+        /acme-challenge/[tok.cal]
+      :+  ~
+        /text/plain
+      %-  as-octs:mimes:html
+      (rap 3 [tok.cal '.' (thumbprint (pass:en:jwk key.act)) ~])
+      ::
+      %^    request
+          /acme/cal/(scot %ud i)/der/(scot %ud ider)
+        cal.cal
+      `[%o ~]
+  ==
+::
+++  finalize
+  ^+  this
+  %-  emil
+  =/  csr=(list (trel @ud purl @ux))
+    %+  turn
+      (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %2 *] a)))
+    |=  [i=@ud der=^order]
+    ?>  ?=([%2 *] der)
+    [i fin.der csr.der]
+  %+  turn  csr
+  |=  [i=@ud fin=purl csr=@ux]
+  ^-  card
+  %^    request
+      /acme/fin/(scot %ud i)
+    fin
+  `[%o (my csr+s+(en-base64url csr) ~)]
+::
+++  poll-order
+  ^+  this
+  %-  emil
+  =/  url=(list (pair @ud purl))
+    %+  turn
+      (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %2 *] a)))
+    |=  [i=@ud der=^order]
+    ?>  ?=([%2 *] der)
+    [i der.der]
+  %+  turn  url
+  |=  [i=@ud der=purl]
+  ^-  card
+  (request /acme/por/(scot %ud i) der ~)
 ::
 ++  poke-noun
   |=  a=*
@@ -856,6 +902,8 @@
     %order  abet:order
     %auth   abet:authorize
     %trial  abet:challenge
+    %final  abet:finalize
+    %poll   abet:poll-order
     %test   test
   ==
 ::
@@ -876,8 +924,9 @@
           ~
         /next/[i.t.wir]
       abet:(nonce nex)
+    :: XX challenge is not pending
+    :: XX order can't be finalized
     [~ this]
-    ::  challenge is not pending
   ?+  i.t.wir  !!
       %dir
     =<  abet:(nonce ~)
@@ -909,11 +958,14 @@
     =/  i=@ud  (slav %ud (head t.t.wir))
     =/  rod=^order  (~(got by der) i)
     ?>  ?=([%0 *] rod)
-    =/  bod=[aut=(list purl) fin=purl exp=@t]
+    =/  loc=@t
+      q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
+    =/  url=purl  (need (de-purl:html loc))
+    =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t]
       (order:grab (need (de-json:html q:(need r.rep))))
     =/  aut  %-  ~(gas by *(map @ud auth))
              (spun aut.bod |=([a=purl b=@ud] [[b %0 a] +(b)]))
-    =/  dor=^order  [%1 dom.rod exp.bod fin.bod aut]
+    =/  dor=^order  [%1 dom.rod exp.bod url fin.bod aut]
     this(der (~(put by der) i dor))
   ::
       %aut
@@ -934,24 +986,100 @@
     this(der (~(put by der) ider rod))
   ::
       %cal
-    abet:this  :: XX del .well-known, make csr, poll order
+    =<  abet:finalize
+    ?>  ?=([@ %der @ *] t.t.wir)
+    =/  i  (slav %ud i.t.t.wir)
+    =/  ider  (slav %ud i.t.t.t.t.wir)
+    =/  rod=^order  (~(got by der) ider)
+    ?>  ?=([%1 *] rod)
+    =/  aut=auth  (~(got by aut.rod) i)
+    ?>  ?=([%1 *] aut)
+    =/  bod=[typ=@t sas=@t url=purl tok=@t]
+      (challenge:grab (need (de-json:html q:(need r.rep))))
+    ?>  ?=(%pending sas.bod)
+    =.  sas.cal.aut  %pend
+    =.  rod  rod(aut (~(put by aut.rod) i aut))
+    =.  der  (~(put by der) ider rod)
+    =/  fin=(list (pair @ud ^order))
+      %+  skim
+        ~(tap by der)
+      |=  a=[@ud ^order]
+      ?&  ?=([@ %1 *] a)
+          %+  levy
+            ~(tap by aut.a)
+          |=  [i=@ud aut=auth]
+          ?&  ?=([%1 *] aut)
+              ?=(%pend sas.cal.aut)
+      ==  ==
+    %=  this
+      der  %-  ~(gas by der)
+           %+  turn  fin
+           |=  [i=@ud der=^order]
+           ^+  [i der]
+           ?>  ?=([%1 *] der)
+           =/  k=key:rsa  rekey  :: XX reuse
+           =/  csr=@ux  (en:der:pkcs10 k dom.der)
+           [i %2 dom.der exp.der der.der fin.der k csr]
+      :: XX save pending authz somewhere instead of just dropping them
+    ==
+  ::
+      %fin
+    =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t]
+      (order:grab (need (de-json:html q:(need r.rep))))
+    :: XX check status? (i don't think failures get here)
+    abet:poll-order
+  ::
+      %por
+    =/  i=@ud  (slav %ud (head t.t.wir))
+    =/  raw=json
+      (need (de-json:html q:(need r.rep)))
+    =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t]
+      (order:grab raw)
+    ?+  sas.bod
+        ~&(poll-order-status+sas.bod abet)
+      %invalid     abet          :: XX check authz, retry order?
+      %pending     abet:poll-order
+      %processing  abet:poll-order
+      %valid       =<  abet
+                   =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t cer=purl]
+                     (final-order:grab raw)  :: XX json reparser unit
+                   %-  emit                  :: XX accept hed
+                   (request /acme/cer/(scot %ud i) cer.bod ~)
+                   :: XX del .well-known
+    ==
+  ::
+      %cer    :: XX send configuration to eyre
+    =<  abet
+    =/  i=@ud  (slav %ud (head t.t.wir))
+    =/  rod=^order  (~(got by der) i)
+    =/  cer=wain
+      (to-wain:format q:(need r.rep))
+    ?>  ?=([%2 *] rod)
+    %=  this
+      liv      (~(put by liv) dom.rod [key.rod *@da cer]) :: XX exp when?
+      der      (~(del by der) i)
+      der.hit  [rod der.hit]
+    ==
   ==
 ::
+:: ++  prep  _[~ this]
 ++  prep
   |=  old=(unit acme)
   ?~  old
     abet:init
   [~ this(+<+ u.old)]
 ::
+++  rekey                             :: XX do something about this
+  =|  i=@
+  |-  ^-  key:rsa
+  =/  k  (new-key:rsa 2.048 eny.bow)
+  =/  m  (met 0 n.k)
+  ?:  =(0 (mod m 8))  k
+  ~&  [%key iter=i width=m]
+  $(i +(i), eny.bow +(eny.bow))
+::
 ++  init
-  =/  key=key:rsa
-    =|  i=@
-    |-  ^-  key:rsa
-    =/  k  (new-key:rsa 2.048 eny.bow)
-    =/  m  (met 0 n.k)
-    ?:  =(0 (mod m 8))  k
-    ~&  [%init i m]
-    $(i +(i), eny.bow +(eny.bow))
+  =/  key=key:rsa  rekey
   =/  dom=turf  /org/urbit/(crip +:(scow %p our.bow))
   =/  dor=^order  [%0 [dom ~]]
   =/  url
