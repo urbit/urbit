@@ -2213,7 +2213,7 @@
     %-  my  :~
       :-  [%cx [[~nul %desk %da ~1234.5.6] /hoon/bar/foo]]
       :*  %noun  scry-type
-          '|=(a=@ud +(a))'
+          '!.  |=(a=@ud +(a))'
       ==
     ==
   ::
@@ -2229,8 +2229,16 @@
       ::
       ^=  moves
         :~  :*  duct=~[/hood]  %give  %made  ~1234.5.6  %complete  %success  %hood
-                [309 ~ ~ ~ [%direct (ream '|=(a=@ud +(a))')]~]
-            ==
+                :*  zuse-version=309
+                    structures=~
+                    libraries=~
+                    cranes=~
+                    ^=  sources
+                      :~  :*  %direct
+                              %dbug
+                              [/~nul/desk/0/foo/bar/hoon [1 1] [1 19]]
+                              (ream '|=(a=@ud +(a))')
+            ==  ==    ==  ==
             :*  duct=~  %pass  /~nul/clay-sub/~nul/desk
                 %c  %warp  [~nul ~nul]  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar/hoon] ~)]

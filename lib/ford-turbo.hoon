@@ -2890,17 +2890,29 @@
       ::
       ?:  ?=([%error *] u.scry-result)
         [build [%build-result u.scry-result] accessed-builds]
-      =+  result=(result-to-cage u.scry-result)
+      =+  as-cage=(result-to-cage u.scry-result)
+      ::  hoon files must be atoms to parse
       ::
-      ::  TODO: parse as ford-hoon, now plain hoon
+      ?.  ?=(@ q.q.as-cage)
+        :*  build
+            [%build-result %error [%leaf "ford: %hood: file not an atom"]~]
+            accessed-builds
+        ==
       ::
-      ::    ford has its own parser, +fair, which parses cranes in addition to
-      ::    normal hoon. eventually, we want to use that but for now, we'll
-      ::    just get normal hoon working.
+      =*  src-beam  [[ship.disc desk.disc [%ud 0]] spur]:source-path
+      =/  parsed
+        ((full (parse-scaffold src-beam)) [1 1] (trip q.q.as-cage))
       ::
-      =/  =scaffold
-        [309 ~ ~ ~ [%direct (ream ((hard @) q.q.result))]~]
-      [build [%build-result %success %hood scaffold] accessed-builds]
+      ?~  q.parsed
+        :*  build
+            :*  %build-result
+                %error
+                [%leaf "syntax error: {<p.p.parsed>} {<q.p.parsed>}"]~
+            ==
+            accessed-builds
+        ==
+      ::
+      [build [%build-result %success %hood p.u.q.parsed] accessed-builds]
     ::
     ++  path-impl
       |=  [=disc prefix=@tas raw-path=@tas]
