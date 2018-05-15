@@ -89,6 +89,7 @@
       dom/(set (list @t))                               ::  domain names
       fig/http-config                                   ::  config
       por/{clr/@ud sek/(unit @ud)}                      ::  live ports
+      wel/wank                                          ::  .well-known
       gub/@t                                            ::  random identity
       hov/(unit ship)                                   ::  master for remote
       top/beam                                          ::  ford serve prefix
@@ -176,6 +177,9 @@
       {$html p/manx}                                    ::  successful page
       {$htme p/manx}                                    ::  authentication fail
   ==
+::
+++  wank                                                ::  .well-known ankh
+  {p/(unit mime) q/(map @ta wank)}
 --                                                      ::
 |%
 ++  eat-headers
@@ -225,6 +229,25 @@
   ^-  wall
   (zing (turn tan |=(a/tank (wash 0^wid a))))
 ::
+++  yank                                                ::  get .well-known
+  |=  [wel=wank pat=path]
+  ^-  (unit mime)
+  ?~  pat  p.wel
+  =/  wan  (~(get by q.wel) i.pat)
+  ?~  wan  ~
+  $(wel u.wan, pat t.pat)
+::
+++  dank                                                ::  put/del .well-known
+  |=  [wel=wank pat=path mim=(unit mime)]
+  ^-  wank
+  ?~  pat  wel(p mim)
+  =/  wan  (~(get by q.wel) i.pat)
+  ?:  &(?=(~ wan) ?=(~ mim))
+    wel
+  :-  p.wel
+  %+  ~(put by q.wel)
+    i.pat
+  $(wel ?~(wan *wank u.wan), pat t.pat)
 ::
 ++  add-cookies
   |=  {cug/(list @t) hit/httr}  ^-  httr
@@ -782,6 +805,9 @@
         (del-deps:$(p.lid t.p.lid) i.p.lid %& hen)
       ==
     ::
+        $well
+      +>.$(wel (dank wel p.kyz q.kyz))
+    ::
         $went
       ::  this won't happen until we send responses.
       !!
@@ -1270,6 +1296,11 @@
           :~  'User-agent: *'
               'Disallow: '
           ==
+        ::
+            {@tas $'.well-known' ^}  ::  XX file extension?
+          =/  mim  (yank wel (tail q.pok))
+          ?~  mim  ~
+          `(resp 200 p.u.mim q.q.u.mim)
         ==
       ::
       ++  is-spur  |(?~(q.pok & ((sane %ta) i.q.pok)))
