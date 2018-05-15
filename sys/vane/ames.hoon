@@ -4,7 +4,7 @@
   =>  =~
 ::  structures
 =,  ames
-=+  protocol-version=0
+=+  protocol-version=5
 |%
 +=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
 --
@@ -113,6 +113,7 @@
   ++  zeno                                              ::  imperial keyprint
     |=  zar=@pD
     ^-  @uvH  ^-  @
+    ?:  [testnet=&]  fig:ex:(pit:nu:crub:crypto 512 0w0)  :: imperator nihilim
     %+  snag  zar
     ^-  (list @uw)
     :~  0wN.ymbEn.wyNdE.RFNRb.SnEQH   ::    0, ~zod, urbit.org
@@ -475,7 +476,7 @@
         ++  pode                                        ::    pode:lax:as:go
           |=  now=@da                                   ::  timeout route
           ^+  +>
-          ?:  (lth her 256)  +>(lun.wod.dur [~ %if ~2000.1.1 0 (mix her .0.0.1.0)])
+          ?:  (lth her 256)  +>
           +>(lun.wod.dur ~)
         ::
         ++  kuch                                        ::    kuch:lax:as:go
