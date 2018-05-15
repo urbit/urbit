@@ -197,9 +197,11 @@
                   u3_noun gil)
   {
     u3_noun p_sut, q_sut, pq_sut, qq_sut, rq_sut, prq_sut, qrq_sut;
+    u3_noun ppq_sut, qpq_sut, rpq_sut;
 
     u3x_cell(u3t(sut), &p_sut, &q_sut);
     u3x_trel(q_sut, &pq_sut, &qq_sut, &rq_sut);
+    u3x_trel(pq_sut, &ppq_sut, &qpq_sut, &rpq_sut);
     u3x_cell(rq_sut, &prq_sut, &qrq_sut);
     {
       if ( u3_nul == q_heg ) {
@@ -228,7 +230,7 @@
 
           mut = u3nt(c3__core,
                      u3k(p_sut),
-                     u3nt(c3__gold,
+                     u3nt(u3nt(u3k(ppq_sut), u3k(qpq_sut), c3__gold),
                           u3k(qq_sut),
                           u3k(rq_sut)));
 
@@ -243,7 +245,7 @@
           return pro;
         }
         else {
-          u3_noun pec = u3qzu_peel(van, sut, way, pq_sut);
+          u3_noun pec = u3qzu_peel(van, sut, way, rpq_sut);
           u3_noun pro;
 
           if ( c3n == u3h(pec) ) {

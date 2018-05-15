@@ -121,6 +121,8 @@
     u3_noun pq_sut, qq_sut, rq_sut;
     u3_noun pq_ref, qq_ref, rq_ref;
     u3_noun prq_sut, qrq_sut, prq_ref, qrq_ref;
+    u3_noun ppq_sut, qpq_sut, rpq_sut; 
+    u3_noun ppq_ref, qpq_ref, rpq_ref; 
     u3_noun ret;
 
     u3x_trel(sut, 0, &p_sut, &q_sut);
@@ -128,6 +130,9 @@
 
     u3x_trel(q_sut, &pq_sut, &qq_sut, &rq_sut);
     u3x_trel(q_ref, &pq_ref, &qq_ref, &rq_ref);
+ 
+    u3x_trel(pq_sut, &ppq_sut, &qpq_sut, &rpq_sut);
+    u3x_trel(pq_ref, &ppq_ref, &qpq_ref, &rpq_ref);
 
     u3x_cell(rq_sut, &prq_sut, &qrq_sut);
     u3x_cell(rq_ref, &prq_ref, &qrq_ref);
@@ -145,9 +150,9 @@
       return c3n;
     }
     else {
-      if ( (pq_sut != pq_ref) && 
-           (c3__lead != pq_sut) &&
-           (c3__gold != pq_ref) ) 
+      if ( (rpq_sut != rpq_ref) && 
+           (c3__lead != rpq_sut) &&
+           (c3__gold != rpq_ref) ) 
       {
         return c3n;
       }
@@ -163,12 +168,12 @@
           u3_noun zoc = u3qdi_put(gil, hud);
           u3_noun tus = u3nt(c3__core,
                              u3k(qq_sut),
-                             u3nc(c3__gold,
+                             u3nc(u3nt(u3k(ppq_sut), u3k(qpq_sut), c3__gold),
                                   u3k(u3t(q_sut))));
 
           u3_noun fer = u3nt(c3__core,
                              u3k(qq_ref),
-                             u3nc(c3__gold,
+                             u3nc(u3nt(u3k(ppq_ref), u3k(qpq_ref), c3__gold),
                                   u3k(u3t(q_ref))));
 
           ret = _nest_dope(van, tus, tel, fer, qrq_sut, qrq_ref, zoc);
@@ -181,7 +186,7 @@
             return c3n;
           }
           else {
-            switch ( pq_sut ) {
+            switch ( rpq_sut ) {
               default: return u3m_bail(c3__fail);
 
               case c3__gold: {

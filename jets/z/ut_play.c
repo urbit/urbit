@@ -187,7 +187,7 @@
     u3_noun dan = _play_in(van, sut, ruf);
 
     return _play_core(dan,
-                      u3nt(u3k(mel),
+                      u3nt(u3nt(u3_nul, c3__dry, u3k(mel)),
                            u3k(dan),
                            u3nc(u3nc(u3nc(c3__full, u3_nul), u3_nul),
                                 u3k(dom))));

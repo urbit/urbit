@@ -33,17 +33,21 @@
       case c3__core: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun pq_sut, qq_sut, rq_sut;
+        u3_noun ppq_sut, qpq_sut, rpq_sut;
 
         if ( c3n == u3r_trel(q_sut, &pq_sut, &qq_sut, &rq_sut) ) {
           return u3m_bail(c3__fail);
         }
-        else if ( c3__gold != pq_sut ) {
+        if ( c3n == u3r_trel(pq_sut, &ppq_sut, &qpq_sut, &rpq_sut) ) {
+          return u3m_bail(c3__fail);
+        }
+        else if ( c3__gold != rpq_sut ) {
           return u3m_error("wrap-gold");
         }
         else {
           return u3nt(c3__core,
                       u3k(p_sut),
-                      u3nt(u3k(yoz),
+                      u3nt(u3nt(u3k(ppq_sut), u3k(qpq_sut), u3k(yoz)),
                            u3k(qq_sut),
                            u3k(rq_sut)));
         }
