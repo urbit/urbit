@@ -5690,8 +5690,8 @@
               {ven/term pro/term kel/@}                 ::  vendor and product
               {ven/term pro/term ver/@ kel/@}           ::  all of the above
           ==                                            ::
-+=  coil  $:  p/?($gold $iron $lead $zinc)              ::  core type
-              q/type                                    ::  built with
++=  coil  $:  p/{p/(unit term) q/?(%wet %dry) r/vair}   ::  name, poly, variance
+              q/type                                    ::  context
               r/{p/seminoun q/(map @ tomb)}             ::  arms
           ==                                            ::
 +=  foot  $%  {$ash p/hoon}                             ::  dry arm, geometric
@@ -5707,7 +5707,6 @@
           ==                                            ::
             ::  XX more and better sanity
             ::
-+=  metl  ?($gold $iron $zinc $lead)                    ::  core variance
 +=  null  ~                                             ::  null, nil, etc
 +=  onyx  (list (pair type foot))                       ::  arm activation
 +=  opal                                                ::  limb match
@@ -7162,7 +7161,7 @@
       ::
       =*  arm-map  (~(gas by *(map term spec)) arm-specs)
       :_  +>.$
-      ?-  p.battery
+      ?-  r.p.battery
         %lead  [%bczp payload-spec arm-map]
         %gold  [%bcdt payload-spec arm-map]
         %zinc  [%bctc payload-spec arm-map]
@@ -9366,8 +9365,8 @@
               ?^  zem
                 :+  %&  
                   [`axe lon]
-                [%| (peg 2 p.u.zem) [[sut(p.q %gold) q.q.u.zem] ~ ~]]
-              =+  pec=(peel way p.q.sut)
+                [%| (peg 2 p.u.zem) [[sut(r.p.q %gold) q.q.u.zem] ~ ~]]
+              =+  pec=(peel way r.p.q.sut)
               ?.  sam.pec  lose
               ?:  con.pec  $(sut p.sut, axe (peg axe 3))
               $(sut (peek(sut p.sut) way 2), axe (peg axe 6))
@@ -9594,7 +9593,7 @@
       ^-  (unit noun)
       %+  bind  (~(get by tal) axe)
       |=  fut/foot
-      %.(fut hemp(sut (core sut %gold sut [[%lazy 1 ..^$] ~] dom)))
+      %.(fut hemp(sut (core sut [~ %dry %gold] sut [[%lazy 1 ..^$] ~] dom)))
     ::
     %-  ~(gas by *(map @ud foot))
     =|  yeb/(list (pair @ud foot))
@@ -9698,8 +9697,8 @@
     ::
     |=  [dox=type mel=vair dom=(map @ tomb)]
     ^-  (pair type type)
-    =+  yet=(core sut %gold sut (laze dom) dom)
-    =+  hum=(core dox %gold dox (laze dom) dom)
+    =+  yet=(core sut [~ %dry %gold] sut (laze dom) dom)
+    =+  hum=(core dox [~ %dry %gold] dox (laze dom) dom)
     =+  %+  balk(sut yet)
           hum
         dom
@@ -9711,9 +9710,9 @@
     |=  [mel/vair dom/(map @ tomb)]
     ^-  (pair type nock)
     =-  :_  [%1 dez]
-        (core sut mel sut [[%full ~] dez] dom)
+        (core sut [~ %dry mel] sut [[%full ~] dez] dom)
     ^=  dez
-    =.  sut  (core sut %gold sut (laze dom) dom)
+    =.  sut  (core sut [~ %dry %gold] sut (laze dom) dom)
     |-  ^-  ?(~ ^)
     ?:  ?=(~ dom)
       ~
@@ -10165,13 +10164,13 @@
                    ?:  =(q.sut q.ref)  dext(sut p.sut, ref p.ref)
                    ?&  meet(sut q.q.sut, ref p.sut)
                        dext(sut q.q.ref, ref p.ref)
-                       (deem(sut q.q.sut, ref q.q.ref) p.q.sut p.q.ref)
+                       (deem(sut q.q.sut, ref q.q.ref) r.p.q.sut r.p.q.ref)
                        ?|  (~(has in gil) [sut ref])
                            %.  [q.r.q.sut q.r.q.ref]
                            %=  deep
                              gil  (~(put in gil) [sut ref])
-                             sut  sut(p q.q.sut, p.q %gold)
-                             ref  ref(p q.q.ref, p.q %gold)
+                             sut  sut(p q.q.sut, r.p.q %gold)
+                             ref  ref(p q.q.ref, r.p.q %gold)
                        ==  ==
                    ==
         {$face *}  dext(sut q.sut)
@@ -10221,7 +10220,7 @@
         {$cell *}   ?:(=(2 now) ^$(sut p.sut, axe lat) ^$(sut q.sut, axe lat))
         {$core *}
       ?.  =(3 now)  %noun
-      =+  pec=(peel way p.q.sut)
+      =+  pec=(peel way r.p.q.sut)
       %=    ^$
           axe  lat
           sut
@@ -10261,7 +10260,7 @@
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
       {$ktcn *}  $(fab |, gen p.gen)
-      {$brcn *}  (core sut %gold sut *seminoun p.gen)
+      {$brcn *}  (core sut [~ %dry %gold] sut *seminoun p.gen)
       {$cnts *}  ~(play et p.gen q.gen)
       {$dtkt *}  $(gen [%bcdt p.gen])
       {$dtls *}  [%atom %$ ~]
@@ -10618,7 +10617,7 @@
     ^-  type
     ?+  sut  sut
       {$cell *}  (cell $(sut p.sut) $(sut q.sut))
-      {$core *}  ?>(|(=(%gold p.q.sut) =(%lead yoz)) sut(p.q yoz))
+      {$core *}  ?>(|(=(%gold r.p.q.sut) =(%lead yoz)) sut(r.p.q yoz))
       {$face *}  (face p.sut $(sut q.sut))
       {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
       {$hint *}  (hint p.sut $(sut q.sut))
@@ -11019,7 +11018,7 @@
         %-  ~(rep by (~(run by q.r.q.sut) |=(tomb ~(wyt by q))))
         |=([[@ a=@u] b=@u] (add a b))
       %^  cat  3
-        ?-(p.q.sut $gold '.', $iron '|', $lead '?', $zinc '&')
+        ?-(r.p.q.sut $gold '.', $iron '|', $lead '?', $zinc '&')
       =+  gum=(mug q.r.q.sut)
       %+  can  3
       :~  [1 (add 'a' (mod gum 26))]
