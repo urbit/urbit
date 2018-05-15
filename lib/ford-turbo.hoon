@@ -2674,34 +2674,37 @@
     =|  accessed-builds=(list ^build)
     ::  dispatch based on the kind of +schematic in :build
     ::
-    |^  ?-    -.schematic.build
+    ::
+    |^  =,  schematic.build
         ::
-            ^  (autocons [head tail]:schematic.build)
+        ?-    -.schematic.build
         ::
-            %$  (literal literal.schematic.build)
+            ^  (make-autocons [head tail])
         ::
-            %pin   (pin [date schematic]:schematic.build)
-            %alts  (alts choices.schematic.build)
+            %$  (make-literal literal)
+        ::
+            %pin   (make-pin date schematic)
+            %alts  (make-alts choices)
             %bake  !!
             %bunt  !!
-            %call  (call [gate sample]:schematic.build)
+            %call  (make-call gate sample)
             %cast  !!
-            %core  (core source-path.schematic.build)
+            %core  (make-core source-path)
             %diff  !!
-            %dude  (dude [error attempt]:schematic.build)
-            %hood  (hood source-path.schematic.build)
+            %dude  (make-dude error attempt)
+            %hood  (make-hood source-path)
             %join  !!
             %mash  !!
             %mute  !!
             %pact  !!
-            %path  (path-impl [disc prefix raw-path]:schematic.build)
-            %plan  (plan [source-path query-string scaffold]:schematic.build)
-            %reef  (reef disc.schematic.build)
-            %ride  (ride [formula subject]:schematic.build)
-            %same  (same schematic.schematic.build)
-            %scry  (scry resource.schematic.build)
-            %slim  (slim [subject-type formula]:schematic.build)
-            %slit  (slit [gate sample]:schematic.build)
+            %path  (make-path disc prefix raw-path)
+            %plan  (make-plan source-path query-string scaffold)
+            %reef  (make-reef disc)
+            %ride  (make-ride formula subject)
+            %same  (make-same schematic)
+            %scry  (make-scry resource)
+            %slim  (make-slim subject-type formula)
+            %slit  (make-slit gate sample)
             %vale  !!
             %volt  !!
         ==
@@ -2711,7 +2714,7 @@
     ::
     ::  +|  schematic-handlers
     ::
-    ++  autocons
+    ++  make-autocons
       |=  [head=schematic tail=schematic]
       ^-  build-receipt
       ::
@@ -2735,12 +2738,12 @@
       =-  [build [%build-result -] accessed-builds]
       `build-result`[%success u.head-result u.tail-result]
     ::
-    ++  literal
+    ++  make-literal
       |=  =cage
       ^-  build-receipt
       [build [%build-result %success %$ cage] accessed-builds]
     ::
-    ++  pin
+    ++  make-pin
       |=  [date=@da =schematic]
       ^-  build-receipt
       ::  pinned-sub: sub-build with the %pin date as formal date
@@ -2753,7 +2756,7 @@
         [build [%blocks ~[pinned-sub] ~] accessed-builds]
       [build [%build-result %success %pin date u.result] accessed-builds]
     ::
-    ++  alts
+    ++  make-alts
       |=  choices=(list schematic)
       ^-  build-receipt
       ::
@@ -2773,7 +2776,7 @@
       ::
       [build [%build-result %success %alts u.result] accessed-builds]
     ::
-    ++  call
+    ++  make-call
       |=  [gate=schematic sample=schematic]
       ^-  build-receipt
       ::
@@ -2831,7 +2834,7 @@
         [build [%build-result %error message] accessed-builds]
       ==
     ::
-    ++  core
+    ++  make-core
       |=  source-path=rail
       ^-  build-receipt
       ::  convert file at :source-path to a +scaffold
@@ -2867,7 +2870,7 @@
       ?>  ?=([%success %plan *] u.plan-result)
       [build [%build-result %success %core vase.u.plan-result] accessed-builds]
     ::
-    ++  dude
+    ++  make-dude
       |=  [error=(trap tank) attempt=schematic]
       ^-  build-receipt
       ::
@@ -2883,7 +2886,7 @@
       =/  message=tang  [$:error message.u.attempt-result]
       [build [%build-result %error message] accessed-builds]
     ::
-    ++  hood
+    ++  make-hood
       |=  source-path=rail
       ^-  build-receipt
       ::
@@ -2923,8 +2926,8 @@
       ::
       [build [%build-result %success %hood p.u.q.parsed] accessed-builds]
     ::
-    ++  path-impl
-      |=  [=disc prefix=@tas raw-path=@tas]
+    ++  make-path
+      |=  [disc=^disc prefix=@tas raw-path=@tas]
       ^-  build-receipt
       ::  possible-spurs: flopped paths to which :raw-path could resolve
       ::
@@ -3018,7 +3021,7 @@
       ::
       [build [%build-result %error message] accessed-builds]
     ::
-    ++  plan
+    ++  make-plan
       |=  [source-path=rail query-string=coin =scaffold]
       ^-  build-receipt
       ::  TODO: support cranes
@@ -3055,7 +3058,7 @@
       =/  =vase  q:(result-to-cage u.compiled)
       [build [%build-result %success %plan vase] accessed-builds]
     ::
-    ++  reef
+    ++  make-reef
       |=  =disc
       ^-  build-receipt
       ::  short-circuit to :pit if asked for current %home desk
@@ -3071,8 +3074,8 @@
                   ::
                   =/  =beam  [[our %home [%da date.build]] /hoon/hoon/sys]
                   ::
-                  .=  (^scry [%143 %noun] ~ %cw beam)
-                  (^scry [%143 %noun] ~ %cw beam(r [%da now]))
+                  .=  (scry [%143 %noun] ~ %cw beam)
+                  (scry [%143 %noun] ~ %cw beam(r [%da now]))
           ==  ==
         ::
         [build [%build-result %success %reef pit] accessed-builds]
@@ -3157,7 +3160,7 @@
         [%build-result %success %reef vase.u.zuse-build-result]
       accessed-builds
     ::
-    ++  ride
+    ++  make-ride
       |=  [formula=hoon =schematic]
       ^-  build-receipt
       ::
@@ -3201,7 +3204,7 @@
         [build [%build-result %error message] accessed-builds]
       ==
     ::
-    ++  same
+    ++  make-same
       |=  =schematic
       ^-  build-receipt
       ::
@@ -3211,7 +3214,7 @@
         [build [%blocks [date.build schematic]~ ~] accessed-builds]
       [build [%build-result %success %same u.result] accessed-builds]
     ::
-    ++  scry
+    ++  make-scry
       ::  TODO: All accesses to :state which matter happens in this function;
       ::  those calculations need to be lifted out of +make into +execute.
       ::
@@ -3230,7 +3233,7 @@
       =/  scry-response
         ?:  (~(has by scry-results) scry-request)
           (~(get by scry-results) scry-request)
-        (^scry [%143 %noun] ~ `@tas`(cat 3 [vane care]:resource) beam)
+        (scry [%143 %noun] ~ `@tas`(cat 3 [vane care]:resource) beam)
       ::  scry blocked
       ::
       ?~  scry-response
@@ -3264,7 +3267,7 @@
       ::
       [build [%build-result %success %scry u.u.scry-response] accessed-builds]
     ::
-    ++  slim
+    ++  make-slim
       |=  [subject-type=type formula=hoon]
       ^-  build-receipt
       ::
@@ -3279,12 +3282,12 @@
           accessed-builds
       ==
     ::
-    ++  slit
+    ++  make-slit
       |=  [gate=vase sample=vase]
       ^-  build-receipt
       ::
       =/  product=(each type tang)
-        (mule |.((^slit p.gate p.sample)))
+        (mule |.((slit p.gate p.sample)))
       ::
       :*  build
           ?-  -.product
