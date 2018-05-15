@@ -1471,9 +1471,27 @@
           (stag %fsts ;~(pfix tis parse-face))
           ::  `/.`  null terminated list
           (stag %fsdt ;~(pfix dot parse-list))
+          ::  `/,`  switch by path
+          (stag %fscm ;~(pfix com parse-switch))
+          ::  `/%`  propagate extra arguments into renderers
+          (stag %fscn ;~(pfix cen subcrane))
+          ::  `/&`  pass through a series of mark
+          (stag %fspm ;~(pfix pam parse-pipe))
+          ::  `/_`  run a crane on each file in the current directory
+          (stag %fscb ;~(pfix cab subcrane))
+          ::  `/;`  passes date through a gate
+          (stag %fssm ;~(pfix sem parse-gate))
+          ::  `/:`  evaluate at path
+          (stag %fscl ;~(pfix col parse-at-path))
+          ::  `/^` cast
+          (stag %fskt ;~(pfix ket parse-cast))
+          ::  `/!mark/ evaluate as hoon, then pass through mark
+          (stag %fszp ;~(pfix zap ;~(sfix sym fas)))
+          ::  `/mark/` passes current path through :mark
+          (stag %fszy ;~(sfix sym fas))
         ==
       ==
-    ::  +parse-alts
+    ::  +parse-alts: parse a set of alternatives
     ::
     ++  parse-alts
       %+  wide-or-tall
@@ -1491,6 +1509,38 @@
       %+  wide-or-tall
         fail
       ;~(sfix (star subcrane) gap duz)
+    ::  +parse-switch: parses a list of [path crane]
+    ::
+    ++  parse-switch
+      %+  wide-or-tall
+        fail
+      =-  ;~(sfix (star -) gap duz)
+      ;~(pfix gap fas ;~(plug static-path subcrane))
+    ::  +parse-pipe: parses a pipe of mark conversions
+    ::
+    ++  parse-pipe
+      %+  wide-or-tall
+        ;~(plug (plus ;~(sfix sym pam)) subcrane)
+      =+  (cook |=(a=term [a ~]) sym)
+      ;~(pfix gap ;~(plug - subcrane))
+    ::  +parse-gate: parses a gate applied to a crane
+    ::
+    ++  parse-gate
+      %+  wide-or-tall
+        ;~(plug ;~(sfix wide:hoon-parser sem) subcrane)
+      ;~(pfix gap ;~(plug tall:hoon-parser subcrane))
+    ::  +parse-at-path: parses a late bound bath
+    ::
+    ++  parse-at-path
+      %+  wide-or-tall
+        ;~(plug ;~(sfix late-bound-path col) subcrane)
+      ;~(pfix gap ;~(plug late-bound-path subcrane))
+    ::  +parse-cast: parses a mold and then the subcrane to apply that mold to
+    ::
+    ++  parse-cast
+      %+  wide-or-tall
+        ;~(plug ;~(sfix wide:hoon-parser ket) subcrane)
+      ;~(pfix gap ;~(plug tall:hoon-parser subcrane))
     ::  +crane: parses a subcrane
     ::
     ++  subcrane
@@ -1503,7 +1553,7 @@
       |*  [wide=rule tall=rule]
       ?.  allow-tall-form  wide
       ;~(pose wide tall)
-    ::  +hoon: parses hoon
+    ::  +hoon: parses hoon as an argument to a crane
     ::
     ++  hoon
       %+  wide-or-tall
@@ -1517,6 +1567,21 @@
       sym
       ::  todo: ignoring :remote-location syntax for now as it is weird.
       (easy ~)
+    ==
+  ::  +static-path: parses a path
+  ::
+  ++  static-path
+    (sear plex (stag %clsg (more fas hasp))):hoon-parser
+  ::  +late-bound-path: a path whose time varies
+  ::
+  ++  late-bound-path
+    ;~  pfix  fas
+      %+  cook  |=(a/truss a)
+      =>  hoon-parser
+      ;~  plug
+        (stag ~ gash)
+        ;~(pose (stag ~ ;~(pfix cen porc)) (easy ~))
+      ==
     ==
   --
 ::  +per-event: per-event core
