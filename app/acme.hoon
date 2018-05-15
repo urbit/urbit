@@ -432,7 +432,7 @@
                     (rep 3 ~(ren asn1 pec))
                   :-  %seq
                   %+  turn  hot
-                  |=(h=(list @t) [%con [& 2] (rip 3 (need (en-host h)))])
+                  |=(h=(list @t) [%con [& 2] (rip 3 (en-host h))])
                 ==
               ==
             ==
@@ -591,58 +591,124 @@
 ::
 ++  en-host
   |=  hot=(list @t)
-  ^-  (unit @t)
+  ^-  @t
   =|  out=(list @t)
-  ?~  hot  ~
-  :-  ~
+  ?>  ?=(^ hot)
   |-  ^-  @t
   ?~  t.hot
     (rap 3 [i.hot out])
   $(out ['.' i.hot out], hot t.hot)
 ::
-++  from-json
+++  grab
   =,  dejs:format
-  =/  json-purl  (su auri:de-purl:html)
-  %-  ot
-  :~  ['newAccount' json-purl]
-      ['newNonce' json-purl]
-      ['newOrder' json-purl]
-      ['revokeCert' json-purl]
-      ['keyChange' json-purl]
-  ==
+  |%
+  ++  json-purl  (su auri:de-purl:html)
+  ::
+  ++  directory
+    %-  ot
+    :~  ['newAccount' json-purl]
+        ['newNonce' json-purl]
+        ['newOrder' json-purl]
+        ['revokeCert' json-purl]
+        ['keyChange' json-purl]
+    ==
+  ::
+  ++  acct
+    %-  ot
+    :~  ['id' no]
+        ['createdAt' so] :: XX (su iso-8601)
+        ['status' so]
+        :: ignore key, contact, initialIp
+    ==
+  ::
+  ++  order
+    %-  ot
+    :~  ['authorizations' (ar json-purl)]
+        ['finalize' json-purl]
+        ['expires' so] :: XX (su iso-8601)
+    ==
+  ::
+  ++  auth
+    =>  |%
+        ++  iden
+          |=  [typ=@t hot=host]
+          ?>(&(?=(%dns typ) ?=([%& *] hot)) p.hot)
+        ::
+        ++  trial
+          |=  a=(list [typ=@t sas=@t url=purl tok=@t])
+          ^+  ?>(?=(^ a) i.a)
+          =/  b
+            (skim a |=([typ=@t *] ?=(%http-01 typ)))
+          ?>(?=(^ b) i.b)
+        --
+    %-  ot
+    :~  ['identifier' (cu iden (ot type+so value+(su thos:de-purl:html) ~))]
+        ['status' so]
+        ['expires' so] :: XX (su iso-8601)
+        :-  'challenges'
+        (cu trial (ar (ot type+so status+so url+json-purl token+so ~)))
+    ==
+  ::
+  ++  error
+    %-  ot
+    :~  ['type' so]
+        ['detail' so]
+    ==
+  --
 --
 ::
 ::::  acme state
 ::
 |%
-+=  move  [bone card]
-+=  card  $%  [%hiss wire [~ ~] %httr %hiss hiss:eyre]
-          ==
-::
-+=  nonce  @t
-::
++=  move  [bone card]                                   ::
++=  card                                                ::
+  $%  [%hiss wire [~ ~] %httr %hiss hiss:eyre]          ::
+      [%well wire path (unit mime)]                     ::
+  ==                                                    ::
 +=  directory                                           ::  ACME v2
   $:  reg/purl                                          ::  newAccount
       non/purl                                          ::  newNonce
       der/purl                                          ::  newOrder
       rev/purl                                          ::  revokeCert
       rek/purl                                          ::  keyChange
-  ==
-::
-+=  state
-  $:  dir=directory
-      non=nonce
-      kid=(unit @t)
-      key=(unit key:rsa)
-  ==
---
+  ==                                                    ::
++=  acct                                                ::  account
+  [key=key:rsa reg=(unit [wen=@t kid=@t])]              ::  XX wen=@da
++=  turf  (list @t)                                     ::  domain
++=  trial                                               ::  challenge
+  $%  [%http cal=purl tok=@t sas=?(%recv %pend %auth)]  ::    http-only
+  ==                                                    ::
++=  auth                                                ::  authorization
+  $%  [%0 aut=purl]                                     ::    received
+      [%1 aut=purl dom=turf cal=trial]                  ::    in-progress
+  ==                                                    ::
++=  order                                               ::  certificate order
+  $%  [%0 dom=(list turf)]                              ::    initialized
+      [%1 dom=(list turf) exp=@t fin=purl aut=(map @ud auth)] :: XX exp=@da
+      [%2 dom=(list turf) exp=@t fin=purl csr=@ux]      ::    cert requested
+  ==                                                    ::
++=  config                                              ::  finalized config
+  [key=key:rsa exp=@da cer=@ux]                         ::
++=  history                                             ::  isn't over
+  $:  act=(list acct)                                   ::
+      der=(list order)                                  ::
+      fig=(list (pair (list turf) config))              ::
+  ==                                                    ::
++=  acme                                                ::
+  $:  bas=purl                                          ::  service base url
+      dir=directory                                     ::  service urls
+      act=acct                                          ::  service account
+      non=@t                                            ::  nonce from last
+      der=(map @ud order)                               ::  active orders
+      liv=(map (list turf) config)                      ::  active config
+      hit=history                                       ::  a foreign country
+  ==                                                    ::
+--                                                      ::
 ::
 ::::  acme app
 ::
-=/  url=tape  "https://acme-staging-v02.api.letsencrypt.org/directory"
-=/  bas=purl  (scan url auri:de-purl:html)
 =|  mov=(list move)
-|_  [bow=bowl:gall state]
+|_  [bow=bowl:gall acme]
 ::
 ++  this  .               :: XX #712
 ::
@@ -657,7 +723,7 @@
 ++  jws-body
   |=  [url=purl bod=json]
   ^-  octs
-  ?>  ?=(^ key)
+  :: ?>  ?=(^ key.act)
   =*  enc  (corl en-base64url (corl crip (cury en-json-sort aor)))
   =/  payload=cord  (enc bod)
   =/  protect=cord
@@ -666,9 +732,9 @@
       alg+s+'RS256'
       nonce+s+non
       url+s+(crip (en-purl:html url))
-      ?^  kid
-        kid+s+u.kid
-      jwk+(pass:en:jwk u.key)
+      ?^  reg.act
+        kid+s+kid.u.reg.act
+      jwk+(pass:en:jwk key.act)
     ==
   %-  (corl as-octt:mimes:html en-json:html)
   ^-  json
@@ -678,7 +744,7 @@
     :+  %signature  %s
     %-  en-base64url
     %+  swp  3
-    (~(sign rs256 u.key) (rap 3 ~[protect '.' payload]))
+    (~(sign rs256 key.act) (rap 3 ~[protect '.' payload]))
   ==
 ::
 ++  request
@@ -690,38 +756,107 @@
     [%post hed `(jws-body url u.bod)]
   (emit [%hiss wir [~ ~] %httr %hiss url lod])
 ::
-++  initialize
-  =?  key  ?=(~ key)  `(new-key:rsa 2.048 eny.bow)
-  (request /acme/init/(scot %p our.bow) bas ~)
+++  directory
+  (request /acme/dir/(scot %p our.bow) bas ~)
 ::
 ++  nonce
-  (request /acme/non/(scot %p our.bow) non.dir ~)
+  |=  nex=wire
+  ^+  this
+  ?>  |(?=(~ nex) ?=([%next *] nex))
+  (request (weld `wire`/acme/non nex) non.dir ~)
 ::
 ++  register
-  %^  request  /acme/reg/(scot %p our.bow)
+  %^  request(reg.act ~)  /acme/reg/(scot %p our.bow)
     reg.dir
   `[%o (my [['termsOfServiceAgreed' b+&] ~])]
 ::
-++  authorize
-  :+  request
-    der.dir ::aut.dir
+++  order
+  ^+  this
+  =<  q
+  %^    spin
+      (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %0 *] a)))
+    this
+  |=  [[i=@ud der=^order] b=_this]
+  ?>  ?=([%0 *] der)
+  :-  ~
+  ^+  b
+  %^  request:b  /acme/der/(scot %ud i)
+    der.dir
+  :-  ~
   ^-  json
   :-  %o  %-  my  :~
-    resource+s+'new-authz'
-    :-  %identifier
-    :-  %o  %-  my  :~
-      type+s+'dns'
-      value+s+(crip (welp +:(scow %p our.bow) ".urbit.org"))
-    ==
+    :-  %identifiers
+    :-  %a
+    %+  turn
+      dom.der
+    |=(a=turf [%o (my type+s+'dns' value+s+(en-host a) ~)])
   ==
+::
+++  authorize
+  ^+  this
+  =/  aut=(list (trel @ud @ud purl))
+    %-  zing
+    %+  turn
+      (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %1 *] a)))
+    |=  [ider=@ud der=^order]
+    ?>  ?=([%1 *] der)
+    %+  turn
+      ~(tap by aut.der)
+    |=  [i=@ud aut=auth]
+    ?>  ?=([%0 *] aut)
+    [i ider aut.aut]
+  =<  q
+  %^    spin
+      aut
+    this
+  |=  [[i=@ud ider=@ud aut=purl] b=_this]
+  ^+  [~ b]
+  [~ (request:b /acme/aut/(scot %ud i)/der/(scot %ud ider) aut ~)]
+::
+++  challenge
+  ^+  this
+  =/  cal=(list (trel @ud @ud trial))
+    %-  zing
+    %+  turn
+      (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %1 *] a)))
+    |=  [ider=@ud der=^order]
+    ?>  ?=([%1 *] der)
+    %+  turn
+      ~(tap by aut.der)
+    |=  [i=@ud aut=auth]
+    ?>  ?=([%1 *] aut)
+    [i ider cal.aut]
+  =<  q
+  %^    spin
+      cal
+    this
+  |=  [[i=@ud ider=@ud cal=trial] b=_this]
+  =/  mim
+    :-  /text/plain
+    %-  as-octs:mimes:html
+    (rap 3 [tok.cal '.' (thumbprint (pass:en:jwk key.act)) ~])
+  =.  b  %-  emit:b
+         :+  %well
+           /acme/wel/(scot %ud i)/der/(scot %ud ider)
+         [/acme-challenge/[tok.cal] `mim]
+  =.  sas.cal  %pend
+  ::  save cal to aut.der
+  :-  ~
+  %^    request:b
+      /acme/cal/(scot %ud i)/der/(scot %ud ider)
+    cal.cal
+  `[%o ~]
 ::
 ++  poke-noun
   |=  a=*
   ^-  (quip move _this)
   ?+  a  ~&  +<+.this
          [~ this]
-    %init  abet:initialize
-    %test  test
+    %init   abet:init
+    %order  abet:order
+    %auth   abet:authorize
+    %trial  abet:challenge
+    %test   test
   ==
 ::
 ++  sigh-httr
@@ -729,20 +864,99 @@
   ^-  (quip move _this)
   ~&  [wir rep]
   ?>  ?=([%acme ^] wir)
+  =/  ron  (skim q.rep |=((pair @t @t) ?=(%replay-nonce p)))
+  =?  non  ?=(^ ron)  q.i.ron
   ?.  ?=(%2 (div p.rep 100))
     ~&  %lack-of-success
-    [~ +>]
+    =/  bod=[typ=@t det=@t]
+      (error:grab (need (de-json:html q:(need r.rep))))
+    ?:  =('urn:ietf:params:acme:error:badNonce' typ.bod)
+      =/  nex=wire
+        ?.  ?=(?(%der %aut %cal) i.t.wir)
+          ~
+        /next/[i.t.wir]
+      abet:(nonce nex)
+    [~ this]
+    ::  challenge is not pending
   ?+  i.t.wir  !!
-      %init
-    =<  abet:nonce
-    this(dir (from-json (need (de-json:html q:(need r.rep)))))
-      ::
+      %dir
+    =<  abet:(nonce ~)
+    =/  bod=^directory
+      (directory:grab (need (de-json:html q:(need r.rep))))
+    this(dir bod)
+  ::
       %non
-    =<  abet:register
-    this(non q:(head (skim q.rep |=((pair @t @t) ?=(%replay-nonce p)))))
+    =<  abet
+    ?.  ?=([%next ^] t.t.wir)
+      register
+    ?+  i.t.t.t.wir  this
+      %der  order
+      %aut  authorize
+      %cal  challenge
+    ==
+  ::
+      %reg
+    =<  abet:order
+    =/  bod=[id=@t wen=@t sas=@t]  :: XX @da
+      (acct:grab (need (de-json:html q:(need r.rep))))
+    =/  loc=@t
+      q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
+    ?>  ?=(%valid sas.bod)
+    this(reg.act `[wen.bod loc])
+  ::
+      %der
+    =<  abet:authorize
+    =/  i=@ud  (slav %ud (head t.t.wir))
+    =/  rod=^order  (~(got by der) i)
+    ?>  ?=([%0 *] rod)
+    =/  bod=[aut=(list purl) fin=purl exp=@t]
+      (order:grab (need (de-json:html q:(need r.rep))))
+    =/  aut  %-  ~(gas by *(map @ud auth))
+             (spun aut.bod |=([a=purl b=@ud] [[b %0 a] +(b)]))
+    =/  dor=^order  [%1 dom.rod exp.bod fin.bod aut]
+    this(der (~(put by der) i dor))
+  ::
+      %aut
+    =<  abet:challenge
+    ?>  ?=([@ %der @ *] t.t.wir)
+    =/  i  (slav %ud i.t.t.wir)
+    =/  ider  (slav %ud i.t.t.t.t.wir)
+    =/  rod=^order  (~(got by der) ider)
+    ?>  ?=([%1 *] rod)
+    =/  aut=auth  (~(got by aut.rod) i)
+    ?>  ?=([%0 *] aut)
+    =/  bod=[dom=turf sas=@t exp=@t cal=[typ=@t sas=@t url=purl tok=@t]]
+      (auth:grab (need (de-json:html q:(need r.rep))))
+    =/  cal=trial
+      [%http url.cal.bod tok.cal.bod %recv] :: XX parse tok?
+    =/  tau=auth  [%1 aut.aut dom.bod cal]
+    =.  rod  rod(aut (~(put by aut.rod) i tau))
+    this(der (~(put by der) ider rod))
+  ::
+      %cal
+    abet:this  :: XX del .well-known, make csr, poll order
   ==
 ::
-++  prep  _[~ this]
+++  prep
+  |=  old=(unit acme)
+  ?~  old
+    abet:init
+  [~ this(+<+ u.old)]
+::
+++  init
+  =/  key=key:rsa
+    =|  i=@
+    |-  ^-  key:rsa
+    =/  k  (new-key:rsa 2.048 eny.bow)
+    =/  m  (met 0 n.k)
+    ?:  =(0 (mod m 8))  k
+    ~&  [%init i m]
+    $(i +(i), eny.bow +(eny.bow))
+  =/  dom=turf  /org/urbit/(crip +:(scow %p our.bow))
+  =/  dor=^order  [%0 [dom ~]]
+  =/  url
+    (de-purl:html 'https://acme-staging-v02.api.letsencrypt.org/directory')
+  directory(bas (need url), act `acct`[key ~], der [[0 dor] ~ ~])
 ::
 ++  test
   =,  tester:tester
