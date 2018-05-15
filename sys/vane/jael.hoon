@@ -22,6 +22,10 @@
 =,  title
 =,  crypto
 =,  jael
+=,  ethe
+=,  constitution:ethe
+=,  ethereum
+=,  constitution:ethereum
 ::                                                      ::::
 ::::                    # models                        ::  data structures
   ::                                                    ::::
@@ -44,6 +48,7 @@
       yen/(set duct)                                    ::  raw observers
       urb/state-absolute                                ::  all absolute state
       sub/state-relative                                ::  all relative state
+      eth=state-ethereum                                ::  eth-specific state
   ==                                                    ::
 ++  state-relative                                      ::  urbit metadata
   $:  $=  car                                           ::  secure channels
@@ -70,10 +75,18 @@
   $:  pug/farm                                          ::  keys
       pry/(map ship (map ship safe))                    ::  promises
   ==                                                    ::
+++  state-ethereum                                      ::  known ethereum
+  $:  listeners=(set duct)                              ::  subscribers
+      heard=events                                      ::  processed events
+      latest-block=@ud                                  ::  last heard block
+      filter-id=@ud                                     ::  current filter
+      checking=(map @p hull)                            ::  verifying
+  ==                                                    ::
 ::                                                      ::
 ++  message                                             ::  p2p message
   $%  {$hail p/safe}                                    ::  reset rights
       {$meet p/farm}                                    ::  propagate pki
+      [%vent p=update]                                  ::  ethereum changes
   ==                                                    ::
 ++  card                                                ::  i/o action
   (wind note gift)                                      ::
@@ -922,6 +935,12 @@
       %+  cure  our.tac
       abet:(make:(burb our.tac) our.tac now.sys eny.sys p.tac q.tac)
     ::
+    ::  set ethereum source
+    ::    [%look p=(each ship purl)]
+    ::
+        %look
+      !!  ::TODO
+    ::
     ::  create promises
     ::    {$mint p/ship q/safe}
     ::
@@ -1014,6 +1033,12 @@
           $meet
         %+  cure  our.tac
         abet:(~(meet ur urb) ``p.tac p.mes)
+      ::
+      ::  ethereum changes
+      ::    [%vent p=update:constitution:ethereum]
+      ::
+          %vent
+        !!  ::TODO  accept changes into state
       ==
     ==
   ::                                                    ::  ++curd:of
@@ -1895,6 +1920,69 @@
         new(syg (~(put by syg.new) dad [p.pev val]))
   --  --
     --
+::                                                      ::  ++et
+::::                    ## ethereum^heavy               ::  ethereum engine
+  ::                                                    ::::
+++  et
+      ::  the ++et core handles ethereum-based state
+      ::  and all network requests necessary to
+      ::  maintain it.
+      ::
+      ::TODO  more words
+  =|  moves=(list move)
+  =|  changes=(jar [@ud @ud] diff-constitution)
+  =|  requests=(jar wire (pair (unit @t) request))
+  |_  $:  cuz=wire
+          state-ethereum
+      ==
+  +*  eth  +<+
+  ::
+  ++  abet
+    ^-  [(list move) state-ethereum]
+    =-  [(weld - (flop moves)) `state-ethereum`eth]
+    %+  weld
+      ^-  (list move)
+      %+  turn  ~(tap by requests)
+      |=  [w=wire r=(list (pair (unit @t) request))]
+      ^-  move
+      :^  *duct  %pass  w
+      %-  make-hiss
+      a+(turn (flop r) request-to-json)
+    ^-  (list move)
+    %-  zing
+    %+  turn  ~(tap by changes)
+    |=  [cause=[@ud @ud] dis=(list diff-constitution)]
+    =.  dis  (flop dis)
+    ^-  (list move)
+    %+  turn  ~(tap in listeners)
+    |=  d=duct
+    ^-  move
+    :+  d  %give
+    ^-  gift
+    ~!  *gift:able
+    ~!  *gift
+    [%vent %diff cause dis]
+  ::
+  ++  make-hiss
+    |=  j=json
+    ^-  note:able
+    :^  %e  %hiss  ~
+    :-  %json-rpc-response
+    :-  %hiss
+    =+  (need (de-purl:html 'http://localhost:8545'))
+    (json-request -(p.p |) j)
+  ::
+  ++  sigh
+    |=  [mar=mark res=vase]
+    ^+  +>
+    ?+  mar  !!
+        %json-rpc-response
+      =+  rpc=((hard response:rpc:jstd) q.res)
+      ~&  rpc
+      !!  ::TODO
+    ==
+  ::
+  --
 --
 ::                                                      ::::
 ::::                    #  vane                         ::  interface
@@ -1925,16 +2013,6 @@
   ^-  {p/(list move) q/_..^$}
   =^  did  lex  abet:(~(call of [now eny] lex) hen q.hic)
   [did ..^$]
-::                                                      ::  ++doze
-++  doze                                                ::  await
-  |=  $:  ::  now: current time
-          ::  hen: cause (XX why we need this?)
-          ::
-          now/@da
-          hen/duct
-      ==
-  ^-  (unit @da)
-  ~
 ::                                                      ::  ++load
 ++  load                                                ::  upgrade
   |=  $:  ::  old: previous state
@@ -1978,8 +2056,14 @@
           ::
           tea/wire
           hen/duct
-          hin/(hypo sign-arvo)
+          hin/(hypo sign)
       ==
   ^-  {p/(list move) q/_..^$}
-  [~ ..^$]
+  =*  req  q.hin
+  ?+  req  [~ ..^$]
+      [%e %sigh *]
+    ~&  [%got-sigh p.p.req]
+    =^  moz  eth.lex  abet:(~(sigh et tea eth.lex) p.req)
+    [moz ..^$]
+  ==
 --

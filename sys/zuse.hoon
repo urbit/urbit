@@ -64,6 +64,286 @@
   (cask vase)                                           ::  marked cargo
 ++  sack  {p/ship q/ship}                               ::  incoming [our his]
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
+::                                                      ::
+::::                      ++jstd                        ::  json standards structures
+  ::                                                    ::::
+++  jstd
+  |%
+  ++  rpc
+    |%
+    ++  response  ::TODO  id and jsonrpc fields?
+      $%  [%result id=@t res=json]
+          [%error id=@t code=@t message=@t]  ::TODO  data?
+          [%batch bas=(list response)]
+      ==
+    --
+  --
+::                                                      ::
+::::                      ++eth                         ::  ethereum structures
+  ::                                                    ::::
+++  ethe
+  |%
+  ::
+  ::  ethereum types. integer bitsizes ignored.
+  ++  etyp
+    $?  ::  static
+        %address  %bool
+        %int      %uint
+        %real     %ureal
+        [%bytes-n n=@ud]
+        ::  dynamic
+        :: [%array-n t=etyp n=@ud]
+        :: [%array t=etyp]
+        %bytes    %string
+    ==
+  ::
+  ::  ethereum-style typed data. integer bitsizes ignored.
+  ++  data
+    $%  [%address p=address]
+        [%string p=tape]
+        [%bool p=?]
+        [%int p=@sd]
+        [%uint p=@ud]
+        [%real p=@rs]
+        [%ureal p=@urs]
+        [%array-n p=(list data)]
+        [%array p=(list data)]
+        [%bytes-n p=octs]  ::TODO  just @, because context knowns length?
+        [%bytes p=octs]
+    ==
+  ::
+  ::  ethereum address, 20 bytes.
+  ++  address  @ux
+  ::
+  ::  ethereum json rpc api
+  ::
+  ::  supported requests.
+  ++  request
+    $%  [%eth-block-number ~]
+        [%eth-call cal=call deb=block]
+        $:  %eth-new-filter
+            fro=(unit block)
+            tob=(unit block)
+            adr=(list address)
+            top=(list octs)
+        ==
+        [%eth-get-filter-logs fid=@ud]
+        [%eth-get-filter-changes fid=@ud]
+    ==
+  ::
+  ::TODO
+  ++  response
+    $%  ::TODO
+        [%eth-new-filter fid=@ud]
+        [%eth-get-filter-logs los=(list event-log)]
+        [%eth-got-filter-changes los=(list event-log)]
+    ==
+  ::
+  ++  event-log
+    $:  ::  null for pending logs
+        $=  mined  %-  unit
+        $:  log-index=@ud
+            transaction-index=@ud
+            transaction-hash=@ux
+            block-number=@ud
+            block-hash=@ux
+        ==
+      ::
+        address=@ux
+        data=@t
+        event=@ux
+        topics=(list @t)
+    ==
+  ::
+  ::  data for eth_call.
+  ++  call
+    $:  from=(unit address)
+        to=address
+        gas=(unit @ud)
+        gas-price=(unit @ud)
+        value=(unit @ud)
+        data=tape
+    ==
+  ::
+  ::  minimum data needed to construct a read call
+  ++  proto-read-request
+    $:  id=(unit @t)
+        to=address
+        call-data
+    ==
+  ::
+  ::  raw call data
+  ++  call-data
+    $:  function=@t
+        arguments=(list data)
+    ==
+  ::
+  ::  block to operate on.
+  ++  block
+    $%  [%number n=@ud]
+        [%label l=?(%earliest %latest %pending)]
+    ==
+  ::
+  ::
+  ++  constitution
+    |%
+    ++  hull
+      $:  owner=address
+          encryption-key=@
+          authentication-key=@
+          key-revision=@ud
+          spawn-count=@ud
+          spawned=(set @p)
+          sponsor=@p
+          escape=(unit @p)
+          spawn-proxy=address
+          transfer-proxy=address
+      ==
+    ::
+    ++  complete-ship
+      $:  state=hull
+          history=(list diff-hull)  ::TODO  maybe block/event nr?  ::  newest first
+          keys=(map @ud (pair @ @))
+      ==
+    ::
+    ++  fleet  (map @p complete-ship)
+    ::
+    +=  dnses  [pri=@t sec=@t ter=@t]
+    ::
+    ++  events  (set (pair @ud @ud))
+    ::
+    ++  eth-type
+      |%
+      ++  hull
+        :~  %address        ::  owner
+            %bool           ::  active
+            [%bytes-n 32]   ::  encryptionKey
+            [%bytes-n 32]   ::  authenticationKey
+            %uint           ::  keyRevisionNumber
+            %uint           ::  spawnCount
+            %uint           ::  sponsor
+            %bool           ::  escapeRequested
+            %uint           ::  escapeRequestedTo
+            %address        ::  spawnProxy
+            %address        ::  transferProxy
+        ==
+      --
+    ::
+    ++  eth-noun
+      |%
+      ++  hull
+        $:  owner=address
+            active=?
+            encryption-key=octs
+            authentication-key=octs
+            key-revision=@ud
+            spawn-count=@ud
+            sponsor=@ud
+            escape-requested=?
+            escape-to=@ud
+            spawn-proxy=address
+            transfer-proxy=address
+        ==
+      --
+    ::
+    ++  function
+      |%
+      ++  ships
+        $%  [%ships who=@p]
+            [%get-spawned who=@p]
+            [%dns-domains ind=@ud]
+        ==
+      --
+    ::
+    ::  #  diffs
+    ::
+    ++  update
+      $%  [%full ships=fleet dns=dnses heard=events]
+          [%diff [block=@ud log=@ud] dis=(list diff-constitution)]
+      ==
+    ::
+    ++  diff-constitution
+      $%  [%hull who=@p dif=diff-hull]
+          [%dns ind=@ud new=@t]
+      ==
+    ::
+    ++  diff-hull
+      $%  [%full new=hull]
+          [%owner new=address]
+          [%spawned who=@p]
+          [%keys enc=@ aut=@ rev=@ud]
+          [%sponsor new=@p]
+          [%escape new=(unit @p)]
+          [%spawn-proxy new=address]
+          [%transfer-proxy new=address]
+      ==
+    ::
+    ::  #  constants
+    ::
+    ::  contract addresses
+    ++  contracts
+      |%
+      ++  ships
+        0xe083.4579.269e.ac6b.eca2.
+          882a.6a21.f6fb.0b1d.7196
+      --
+    ::
+    ::  hashes of ship event signatures
+    ++  ships-events
+      |%
+      ::
+      ::  Transferred(uint32,address)
+      ++  transferred
+        0x9014.bd16.807a.ce11.f497.2993.3667.4031.
+          8029.4d9f.0e4f.42a1.5be6.0d26.5369.171c
+      ::
+      ::  Activated(uint32,address)
+      ++  activated
+         0xe5a.2849.1af6.e9a4.a694.b3a0.fa1a.7ff7.
+          3b8a.a7ce.fbf5.0808.a81c.d89e.dfeb.a20d
+      ::
+      ::  EscapeRequested(uint32,uint32)
+      ++  escape-requested
+        0xb4d4.850b.8f21.8218.141c.5665.cba3.79e5.
+          3e9b.b015.b51e.8d93.4be7.0210.aead.874a
+      ::
+      ::  EscapeCanceled(uint32)
+      ++  escape-canceled
+        0x68f7.f1dc.6784.a962.1f80.dcbd.3e7f.ef93.
+          f77c.9228.d5c5.3dc7.a56f.10e1.c445.705a
+      ::
+      ::  EscapeAccepted(uint32,uint32)
+      ++  escape-accepted
+        0x7e44.7c9b.1bda.4b17.4b07.96e1.00bf.7f34.
+          ebf3.6dbb.7fe6.6549.0b1b.fce6.246a.9da5
+      ::
+      ::  ChangedKeys(uint32,bytes32,bytes32,uint32)
+      ++  changed-keys
+        0x6a39.f4e0.c935.b557.860d.3df3.9f1f.cb6b.
+          d63c.5a23.2d9e.fc28.5388.2994.f60c.708a
+      ::
+      ::  BrokeContinuity(uint32,uint32)
+      ++  broke-continuity
+        0x2929.4799.f1c2.1a37.ef83.8e15.f79d.d91b.
+          cee2.df99.d63c.d1c1.8ac9.68b1.2951.4e6e
+      ::
+      ::  ChangedSpawnProxy(uint32,address)
+      ++  changed-spawn-proxy
+        0x9027.36af.7b3c.efe1.0d9e.840a.ed0d.687e.
+          35c8.4095.122b.2505.1a20.ead8.866f.006d
+      ::
+      ::  ChangedTransferProxy(uint32,address)
+      ++  changed-transfer-proxy
+        0xcfe3.69b7.197e.7f0c.f067.93ae.2472.a9b1.
+          3583.fecb.ed2f.78df.a14d.1f10.796b.847c
+      ::
+      ::  ChangedDns(string,string,string)
+      ++  changed-dns
+        0xfafd.04ad.e1da.ae2e.1fdb.0fc1.cc6a.899f.
+          d424.063e.d5c9.2120.e67e.0730.53b9.4898
+      --
+    --  ::  constitution
+  --  ::  ethereum
 ::                                                      ::::
 ::::                      ++ames                          ::  (1a) network
   ::                                                    ::::
@@ -962,13 +1242,16 @@
           {$vest p/tally}                               ::  balance update
           {$vein p/life q/(map life ring)}              ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
+          [%vent p=update:constitution:ethe]            ::  ethereum changes
       ==                                                ::
     ++  growth                                          ::  unit of learning
       $%  {$sign p/mind q/@}                            ::  add/update signature
           {$step p/cert}                                ::  add whole deed
       ==                                                ::
     ++  note                                            ::  out request $->
+      =,  eyre
       $%  {$b $wait p/@da}                              ::  wait until
+          [%e %hiss p=(unit user) q=mark %hiss r=hiss]  ::  outbound user req
           {$x $mess p/ship q/path r/*}                  ::  send message
       ==                                                ::
     ++  remote                                          ::  remote notification
@@ -977,6 +1260,7 @@
     ::                                                  ::
     ++  sign                                            ::  in result $<-
       $%  {$b $wake $~}                                 ::  wakeup
+          [%e %sigh p=cage]                             ::  marked http response
           {$x $rest p/coop}                             ::  message result
       ==                                                ::
     ++  tally                                           ::  balance update
@@ -987,6 +1271,7 @@
       $%  [%burn our=ship p=ship q=safe]                ::  destroy rights
           [%hail our=ship p=ship q=remote]              ::  remote update
           [%init our=ship p=@pG q=arms]                 ::  initialize urbit
+          [%look p=(each ship purl:eyre)]               ::  set ethereum source
           [%meet our=ship p=(unit (unit ship)) q=farm]  ::  integrate pki from
           [%mint our=ship p=ship q=safe]                ::  create rights
           [%move our=ship p=ship q=ship r=safe]         ::  transfer from=to
@@ -5016,5 +5301,543 @@
       {$this p/? q/clip:eyre r/httq:eyre}               ::  eyre: in request
       {$thud $~}                                        ::  eyre: in cancel
       {$wake $~}                                        ::  behn: wakeup
-  == 
+  ==
+::                                                      ::
+::::                      ++ethereum                    ::  (2eth) ethereum
+  ::                                                    ::::
+++  ethereum
+  !:
+  =,  mimes:html
+  =,  ethe
+  |%
+  ::  making calls to nodes
+  ::
+  ::  see also the json rpc api spec:
+  ::  https://ethereum.gitbooks.io/frontier-guide/content/rpc.html
+  ::
+  ++  json-request
+    =,  eyre
+    |=  [url=purl jon=json]
+    ^-  hiss
+    :^  url  %post
+      %-  ~(gas in *math)
+      ~['Content-Type'^['application/json']~]
+    (some (as-octt (en-json:html jon)))
+  ::
+  ++  batch-read-request
+    |=  req=(list proto-read-request)
+    ^-  json
+    a+(turn req read-request)
+  ::
+  ++  read-request
+    |=  proto-read-request
+    ^-  json
+    %+  request-to-json  id
+    :+  %eth-call
+      ^-  call
+      [~ to ~ ~ ~ `tape`(encode-call function arguments)]
+    [%label %latest]
+  ::
+  ++  request-to-json
+    =,  enjs:format
+    |=  [riq=(unit @t) req=request]
+    ^-  json
+    %-  pairs
+    =;  r=[met=@t pas=(list json)]
+      :*  jsonrpc+s+'2.0'
+          method+s+met.r
+          params+a+pas.r
+          ::TODO  would just jamming the req noun for id be a bad idea?
+          ?~  riq  ~
+          [id+s+u.riq]~
+      ==
+    ?-  -.req
+        %eth-block-number
+      ['eth_blockNumber' ~]
+    ::
+        %eth-call
+      :-  'eth_call'
+      :~  (eth-call-to-json cal.req)
+          (block-to-json deb.req)
+      ==
+    ::
+        %eth-new-filter
+      :-  'eth_newFilter'
+      :_  ~
+      :-  %o  %-  ~(gas by *(map @t json))
+      =-  (murn - same)
+      ^-  (list (unit (pair @t json)))
+      :~  ?~  fro.req  ~
+          `['fromBlock' (block-to-json u.fro.req)]
+        ::
+          ?~  tob.req  ~
+          `['toBlock' (block-to-json u.tob.req)]
+        ::
+          ::TODO  fucking tmi
+          ?:  =(0 (lent adr.req))  ~
+          :+  ~  'address'
+          ?:  =(1 (lent adr.req))  (tape (address-to-hex (snag 0 adr.req)))
+          :-  %a
+          (turn adr.req (cork address-to-hex tape))
+        ::
+          ?~  top.req  ~
+          :^  ~  'topics'  %a
+          (turn `(list octs)`top.req :(cork render-hex-bytes prefix-hex tape))
+      ==
+    ::
+        %eth-get-filter-logs
+      ['eth_getFilterLogs' (tape (num-to-hex fid.req)) ~]
+    ::
+        %eth-get-filter-changes
+      ['eth_getFilterChanges' (tape (num-to-hex fid.req)) ~]
+    ==
+  ::
+  ++  eth-call-to-json
+    =,  enjs:format
+    |=  cal=call
+    ^-  json
+    :-  %o  %-  ~(gas by *(map @t json))
+    =-  (murn - same)
+    ^-  (list (unit (pair @t json)))
+    :~  ?~  from.cal  ~
+        `['from' (tape (address-to-hex u.from.cal))]
+      ::
+        `['to' (tape (address-to-hex to.cal))]
+      ::
+        ?~  gas.cal  ~
+        `['gas' (tape (num-to-hex u.gas.cal))]
+      ::
+        ?~  gas-price.cal  ~
+        `['gasPrice' (tape (num-to-hex u.gas-price.cal))]
+      ::
+        ?~  value.cal  ~
+        `['value' (tape (num-to-hex u.value.cal))]
+      ::
+        ?~  data.cal  ~
+        `['data' (tape data.cal)]
+    ==
+  ::
+  ++  block-to-json
+    |=  dob=block
+    ^-  json
+    ?-  -.dob
+      %number   s+(crip '0' 'x' ((x-co:co 1) n.dob))
+      %label    s+l.dob
+    ==
+  ::
+  ++  num-to-hex
+    |=  n=@ud
+    ^-  tape
+    %-  prefix-hex
+    (render-hex-bytes (as-octs n))
+  ::
+  ++  address-to-hex
+    |=  a=address
+    ^-  tape
+    %-  prefix-hex
+    (render-hex-bytes 20 `@`a)
+  ::
+  ++  prefix-hex
+    |=  a=tape
+    ^-  tape
+    ['0' 'x' a]
+  ::
+  ::  parsing responses from nodes
+  ::
+  ++  parse-eth-new-filter-res
+    |=  j=json
+    ^-  @ud
+    ?>  ?=(%s -.j)
+    (hex-to-num p.j)
+  ::
+  ++  parse-event-logs
+    (ar:dejs:format parse-event-log)
+  ::
+  ++  parse-event-log
+    =,  dejs:format
+    |=  log=json
+    ^-  event-log
+    =-  ((ot -) log)
+    :~  =-  ['logIndex'^(cu - (mu so))]
+        |=  li=(unit @t)
+        ?~  li  ~
+        =-  `((ot -) log)  ::TODO  not sure if elegant or hacky.
+        :~  'logIndex'^(cu hex-to-num so)
+            'transactionIndex'^(cu hex-to-num so)
+            'transactionHash'^(cu hex-to-num so)
+            'blockNumber'^(cu hex-to-num so)
+            'blockHash'^(cu hex-to-num so)
+        ==
+      ::
+        address+(cu hex-to-num so)
+        data+so
+      ::
+        ::TODO  doesn't account for the anonymous event case, which has no hash.
+        =-  topics+(cu - (ar so))
+        |=  r=(list @t)
+        ?>  ?=([@t *] r)
+        [(hex-to-num i.r) t.r]
+    ==
+  ::
+  ++  hex-to-num
+    |=  a=@t
+    (rash (rsh 3 2 a) hex)
+  ::
+  ::  decoding
+  ::
+  ::  for details on encoding, see below.
+  ::
+  ++  decode-results
+    :>  rex:  string of hex bytes with leading 0x.
+    |*  [rex=@t tys=(list etyp)]
+    (decode-arguments (rsh 3 2 rex) tys)
+  ::
+  ++  decode-arguments
+    |*  [res=@t tys=(list etyp)]
+    =|  win=@ud
+    =/  wos=(list @t)  (rip 9 res)
+    =<  (decode-from 0 tys)
+    |%
+    ++  decode-from
+      |*  [win=@ud tys=(list etyp)]
+      ?~  tys  !!
+      =-  ?~  t.tys  dat
+          [dat $(win nin, tys t.tys)]
+      (decode-one win ~[i.tys])
+    ::
+    ++  decode-one
+      ::NOTE  we take (list etyp) even though we only operate on
+      ::      a single etyp as a workaround for urbit/arvo#673
+      |*  [win=@ud tys=(list etyp)]
+      =-  [nin dat]=-  ::NOTE  ^= regular form broken
+      ?~  tys  !!
+      =*  typ  i.tys
+      =+  wor=(snag win wos)
+      ?+  typ
+        ~|  [%unsupported-type typ]
+        !!
+      ::
+          ?(%address %bool %uint)  ::  %int %real %ureal
+        :-  +(win)
+        ?-  typ
+          %address  `@ux`(rash wor hex)
+          %uint     `@ud`(rash wor hex)
+          %bool     =(1 (rash wor hex))
+        ==
+      ::
+          %string
+        =+  $(tys ~[%bytes])
+        ~!  -
+        [nin (trip (swp 3 q.dat))]
+      ::
+          %bytes
+        :-  +(win)
+        ::  find the word index of the actual data.
+        =/  lic=@ud  (div (rash wor hex) 32)
+        ::  learn the bytelength of the data.
+        =/  len=@ud  (rash (snag lic wos) hex)
+        (decode-bytes-n +(lic) len)
+      ::
+          [%bytes-n *]
+        :-  (add win +((div (dec n.typ) 32)))
+        (decode-bytes-n win n.typ)
+      ::
+          [%array *]
+        :-  +(win)
+        ::  find the word index of the actual data.
+        =.  win  (div (rash wor hex) 32)
+        ::  read the elements from their location.
+        %-  tail
+        %^  decode-array-n  ~[t.typ]  +(win)
+        (rash (snag win wos) hex)
+      ::
+          [%array-n *]
+        (decode-array-n ~[t.typ] win n.typ)
+      ==
+    ::
+    ++  decode-bytes-n
+      |=  [fro=@ud bys=@ud]
+      ^-  octs
+      ::  parse {bys} bytes from {fro}.
+      =-  [bys (rash - hex)]
+      %^  end  3  (mul 2 bys)
+      %+  can  9
+      %+  turn
+        (swag [fro +((div (dec bys) 32))] wos)
+      |=(a=@t [1 a])
+    ::
+    ++  decode-array-n
+      ::NOTE  we take (list etyp) even though we only operate on
+      ::      a single etyp as a workaround for urbit/arvo#673
+      =|  res=(list)
+      ~&  %watch-out--arrays-without-typeinfo
+      |*  [tys=(list etyp) fro=@ud len=@ud]
+      ^-  [@ud (list)]
+      ?~  tys  !!
+      ?:  =(len 0)  [fro (flop `(list)`res)]
+      =+  (decode-one fro ~[i.tys])  ::  [nin=@ud dat=*]
+      $(res ^+(res [dat res]), fro nin, len (dec len))
+    --
+  ::
+  ::  encoding
+  ::
+  ::  ABI spec used for reference:
+  ::  https://ethereum.gitbooks.io/frontier-guide/content/abi.html
+  ::
+  ++  encode-call
+    |=  call-data
+    ^-  tape
+    ::TODO  should this check to see if the data matches the function signature?
+    =-  :(weld "0x" - (encode-args arguments))
+    %+  scag  8
+    (render-hex-bytes 32 (keccak-256:keccak:crypto (as-octs function)))
+  ::
+  ++  encode-args
+    :>  encode list of arguments.
+    ::
+    |=  das=(list data)
+    ^-  tape
+    (encode-data [%array-n das])
+  ::
+  ++  encode-data
+    :>  encode typed data into ABI bytestring.
+    ::
+    |=  dat=data
+    ^-  tape
+    ?+  -.dat
+      ~|  [%unsupported-type -.dat]
+      !!
+    ::
+        %array-n
+      ::  enc(X) = head(X[0]) ... head(X[k-1]) tail(X[0]) ... tail(X[k-1])
+      ::  where head and tail are defined for X[i] being of a static type as
+      ::  head(X[i]) = enc(X[i]) and tail(X[i]) = "" (the empty string), or as
+      ::  head(X[i]) = enc(len(head(X[0])..head(X[k-1]) tail(X[0])..tail(X[i-1])))
+      ::  and tail(X[i]) = enc(X[i]) otherwise.
+      ::
+      ::  so: if it's a static type, data goes in the head. if it's a dynamic
+      ::  type, a reference goes into the head and data goes into the tail.
+      ::
+      ::  in the head, we first put a placeholder where references need to go.
+      =+  hol=(reap 64 'x')
+      =/  hes=(list tape)
+        %+  turn  p.dat
+        |=  d=data
+        ?.  (is-dynamic-type d)  ^$(dat d)
+        hol
+      =/  tas=(list tape)
+        %+  turn  p.dat
+        |=  d=data
+        ?.  (is-dynamic-type d)  ""
+        ^$(dat d)
+      ::  once we know the head and tail, we can fill in the references in head.
+      =-  (weld nes `tape`(zing tas))
+      ^-  [@ud nes=tape]
+      =+  led=(lent (zing hes))
+      %+  roll  hes
+      |=  [t=tape i=@ud nes=tape]
+      :-  +(i)
+      ::  if no reference needed, just put the data.
+      ?.  =(t hol)  (weld nes t)
+      ::  calculate byte offset of data we need to reference.
+      =/  ofs/@ud
+        =-  (div - 2)       ::  two hex digits per byte.
+        %+  add  led        ::  count head, and
+        %-  lent  %-  zing  ::  count all tail data
+        (scag i tas)        ::  preceding ours.
+      =+  ref=^$(dat [%uint ofs])
+      ::  shouldn't hit this unless we're sending over 2gb of data?
+      ~|  [%weird-ref-lent (lent ref)]
+      ?>  =((lent ref) (lent hol))
+      (weld nes ref)
+    ::
+        %array  ::  where X has k elements (k is assumed to be of type uint256):
+      ::  enc(X) = enc(k) enc([X[1], ..., X[k]])
+      ::  i.e. it is encoded as if it were an array of static size k, prefixed
+      ::  with the number of elements.
+      %+  weld  $(dat [%uint (lent p.dat)])
+      $(dat [%array-n p.dat])
+    ::
+        %bytes-n
+      ::  enc(X) is the sequence of bytes in X padded with zero-bytes to a length
+      ::  of 32.
+      ::  Note that for any X, len(enc(X)) is a multiple of 32.
+      (pad-to-multiple (render-hex-bytes p.dat) 64 %right)
+    ::
+        %bytes  ::  of length k (which is assumed to be of type uint256)
+      ::  enc(X) = enc(k) pad_right(X), i.e. the number of bytes is encoded as a
+      ::  uint256 followed by the actual value of X as a byte sequence, followed
+      ::  by the minimum number of zero-bytes such that len(enc(X)) is a multiple
+      ::  of 32.
+      %+  weld  $(dat [%uint p.p.dat])
+      $(dat [%bytes-n p.dat])
+    ::
+        %string
+      ::  enc(X) = enc(enc_utf8(X)), i.e. X is utf-8 encoded and this value is
+      ::  interpreted as of bytes type and encoded further. Note that the length
+      ::  used in this subsequent encoding is the number of bytes of the utf-8
+      ::  encoded string, not its number of characters.
+      $(dat [%bytes (lent p.dat) (swp 3 (crip p.dat))])
+    ::
+        %uint
+      ::  enc(X) is the big-endian encoding of X, padded on the higher-order
+      ::  (left) side with zero-bytes such that the length is a multiple of 32
+      ::  bytes.
+      (pad-to-multiple (render-hex-bytes (as-octs p.dat)) 64 %left)
+    ::
+        %bool
+      ::  as in the uint8 case, where 1 is used for true and 0 for false
+      $(dat [%uint ?:(p.dat 1 0)])
+    ::
+        %address
+      ::  as in the uint160 case
+      $(dat [%uint `@ud`p.dat])
+    ==
+  ::
+  ++  is-dynamic-type
+    |=  a=data
+    ?.  ?=(%array-n -.a)
+      ?=(?(%string %bytes %array) -.a)
+    &(!=((lent p.a) 0) (lien p.a is-dynamic-type))
+  ::
+  ::
+  ++  render-hex-bytes
+    :>  atom to string of hex bytes without 0x prefix and dots.
+    |=  a=octs
+    ^-  tape
+    ((x-co:co (mul 2 p.a)) q.a)
+  ::
+  ++  pad-to-multiple
+    |=  [wat=tape mof=@ud wer=?(%left %right)]
+    =+  len=(lent wat)
+    =+  tad=(reap (sub mof (mod len mof)) '0')
+    %-  weld
+    ?:(?=(%left wer) [tad wat] [wat tad])
+  ::
+  ::
+  ++  constitutionts
+    =,  constitution:ethe
+    |%
+    ::
+    ++  event-log-to-hull-diffs
+      =,  ethe
+      =,  ships-events
+      |=  log=event-log
+      ^-  (list (pair ship diff-hull))
+      ~?  ?=(~ mined.log)  %processing-unmined-event
+      ::
+      ?:  =(event.log transferred)
+        =+  ^-  [who=@ wer=address]  ::TODO  should we make @p work here?
+            (decode-results data.log ~[%uint %address])
+        [who %owner wer]~
+      ::
+      ?:  =(event.log activated)
+        =+  ^-  [who=@ wer=address]
+            (decode-results data.log ~[%uint %address])
+        :*  ^-  (pair ship diff-hull)
+            :+  who  %full
+            %*(. *hull owner wer, sponsor (sein:title who))
+          ::
+            ?:  =(%czar (clan:title who))  ~
+            :_  ~
+            ^-  (pair ship diff-hull)
+            [(sein:title who) %spawned who]
+        ==
+      ::
+      ?:  =(event.log escape-requested)
+        =+  ^-  [who=@ wer=@]
+            (decode-results data.log ~[%uint %uint])
+        [who %escape `wer]~
+      ::
+      ?:  =(event.log escape-canceled)
+        =/  who=@  (decode-results data.log ~[%uint])
+        [who %escape ~]~
+      ::
+      ?:  =(event.log escape-accepted)
+        =+  ^-  [who=@ wer=@]
+            (decode-results data.log ~[%uint %uint])
+        [who %sponsor wer]~
+      ::
+      ?:  =(event.log changed-keys)
+        =+  ^-  [who=@ enc=octs aut=octs rev=@ud]
+            %+  decode-results  data.log
+            ~[%uint [%bytes-n 32] [%bytes-n 32] %uint]
+        ?>  &(=(p.enc 32) =(p.aut 32))  ::  sanity
+        [who %keys q.enc q.aut rev]~
+      ::
+      ?:  =(event.log changed-spawn-proxy)
+        =+  ^-  [who=@ sox=address]
+            (decode-results data.log ~[%uint %address])
+        [who %spawn-proxy sox]~
+      ::
+      ?:  =(event.log changed-transfer-proxy)
+        =+  ^-  [who=@ tox=address]
+            (decode-results data.log ~[%uint %address])
+        [who %transfer-proxy tox]~
+      ::
+      ::NOTE  0x8be0...57e0 is Owneable's OwnershipTransferred(address,address).
+      ::      changed-dns is handled separately since it doesn't affect hulls.
+      ~&  [%unimplemented-event event.log]
+      ~
+    ::
+    ++  apply-hull-diff
+      |=  [hul=hull dif=diff-hull]
+      ^-  hull
+      ?-  -.dif
+        %full     new.dif
+        %owner    hul(owner new.dif)
+        %spawned  =+  (~(put in spawned.hul) who.dif)
+                  hul(spawn-count +(spawn-count.hul), spawned -)
+        %keys     %_  hul
+                    encryption-key      enc.dif
+                    authentication-key  aut.dif
+                    key-revision        rev.dif
+                  ==
+        %sponsor  hul(sponsor new.dif, escape ~)
+        %escape   hul(escape new.dif)
+        %spawn-proxy      hul(spawn-proxy new.dif)
+        %transfer-proxy   hul(transfer-proxy new.dif)
+      ==
+    ::
+    ++  parse-id
+      |=  id=@t
+      ^-  ships:function
+      |^
+        ~|  id
+        %+  rash  id
+        ;~  pose
+          (function %ships 'ships' shipname)
+          (function %get-spawned 'getSpawned' shipname)
+          (function %dns-domains 'dnsDomains' dem:ag)
+        ==
+      ::
+      ++  function
+        |*  [tag=@tas fun=@t rul=rule]
+        ;~(plug (cold tag (jest fun)) (ifix [lit rit] rul))
+      ::
+      ++  shipname
+        ;~(pfix sig fed:ag)
+      --
+    ::
+    ++  function-to-call
+      |%
+      ++  ships
+        |=  cal=ships:function
+        ^-  [id=@t dat=call-data]
+        ?-  -.cal
+            %ships
+          :-  (crip "ships({(scow %p who.cal)})")
+          ['ships(uint32)' ~[uint+`@`who.cal]]
+        ::
+            %get-spawned
+          :-  (crip "getSpawned({(scow %p who.cal)})")
+          ['getSpawned(uint32)' ~[uint+`@`who.cal]]
+        ::
+            %dns-domains
+          :-  (crip "dnsDomains({(scow %ud ind.cal)})")
+          ['dnsDomains(uint256)' ~[uint+ind.cal]]
+        ==
+      --
+    --
+  --
 --  ::
