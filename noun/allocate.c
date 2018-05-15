@@ -370,15 +370,12 @@ u3a_reflux(void)
 void
 u3a_reclaim(void)
 {
-  c3_w old_w;
-
   if ( (0 == u3R->cax.har_p) ||
        (0 == u3to(u3h_root, u3R->cax.har_p)->use_w) ) 
   {
     fprintf(stderr, "allocate: reclaim: memo cache: empty\r\n");
     u3m_bail(c3__meme);
   }
-  old_w = u3a_open(u3R) + u3R->all.fre_w;
 
 #if 1 
   fprintf(stderr, "allocate: reclaim: half of %d entries\r\n", 
