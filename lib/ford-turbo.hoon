@@ -2761,10 +2761,8 @@
       ^-  build-receipt
       ::
       ?~  choices
-        :*  build
-            [%build-result %error [leaf+"%alts: all options failed"]~]
-            accessed-builds
-        ==
+        (return-error [leaf+"%alts: all options failed"]~)
+      ::
       =/  choice=^build  [date.build i.choices]
       ::
       =^  result  accessed-builds  (depend-on choice)
@@ -2807,9 +2805,8 @@
       ?~  slit-result
         [build [%blocks [date.build slit-schematic]~ ~] accessed-builds]
       ::
-      ::  TODO: Emit error on slit failure
-      ::
-      ?>  ?=([%success %slit *] u.slit-result)
+      ?.  ?=([~ %success %slit *] slit-result)
+        (wrap-error slit-result)
       ::
       ::  How much duplication is there going to be here between +call and
       ::  +ride? Right now, we're just !! on scrys, but for reals we want it to
@@ -2830,8 +2827,7 @@
         (blocked-paths-to-receipt %call blocked-paths)
       ::
           %2
-        =/  message=tang  [[%leaf "ford: %call failed:"] p.val]
-        [build [%build-result %error message] accessed-builds]
+        (return-error [[%leaf "ford: %call failed:"] p.val])
       ==
     ::
     ++  make-core
@@ -2846,10 +2842,7 @@
         [build [%blocks [hood-build]~ ~] accessed-builds]
       ::
       ?:  ?=(%error -.u.hood-result)
-        =/  message=tang
-          [[%leaf "%core failed: "] message.u.hood-result]
-        ::
-        [build [%build-result %error message] accessed-builds]
+        (wrap-error hood-result)
       ::  build the +scaffold into a program
       ::
       ?>  ?=([%success %hood *] u.hood-result)
@@ -2862,10 +2855,7 @@
         [build [%blocks [plan-build]~ ~] accessed-builds]
       ::
       ?:  ?=(%error -.u.plan-result)
-        =/  message=tang
-          [[%leaf "%core failed: "] message.u.plan-result]
-        ::
-        [build [%build-result %error message] accessed-builds]
+        (wrap-error plan-result)
       ::
       ?>  ?=([%success %plan *] u.plan-result)
       [build [%build-result %success %core vase.u.plan-result] accessed-builds]
@@ -2883,8 +2873,7 @@
       ?.  ?=([%error *] u.attempt-result)
         [build [%build-result %success %dude u.attempt-result] accessed-builds]
       ::
-      =/  message=tang  [$:error message.u.attempt-result]
-      [build [%build-result %error message] accessed-builds]
+      (return-error [$:error message.u.attempt-result])
     ::
     ++  make-hood
       |=  source-path=rail
@@ -2895,34 +2884,21 @@
       ?~  scry-result
         ::
         [build [%blocks ~[scry-build] ~] accessed-builds]
-      ::  TODO: need to normalize how we handle %error.
       ::
-      ::    Do we just put %error or do we always wrap it in %success
-      ::    %this-schematic? How does that interact with %pin?
-      ::
-      ?:  ?=([%error *] u.scry-result)
-        [build [%build-result u.scry-result] accessed-builds]
+      ?:  ?=([~ %error *] scry-result)
+        (wrap-error scry-result)
       =+  as-cage=(result-to-cage u.scry-result)
       ::  hoon files must be atoms to parse
       ::
       ?.  ?=(@ q.q.as-cage)
-        :*  build
-            [%build-result %error [%leaf "ford: %hood: file not an atom"]~]
-            accessed-builds
-        ==
+        (return-error [%leaf "ford: %hood: file not an atom"]~)
       ::
       =*  src-beam  [[ship.disc desk.disc [%ud 0]] spur]:source-path
       =/  parsed
         ((full (parse-scaffold src-beam)) [1 1] (trip q.q.as-cage))
       ::
       ?~  q.parsed
-        :*  build
-            :*  %build-result
-                %error
-                [%leaf "syntax error: {<p.p.parsed>} {<q.p.parsed>}"]~
-            ==
-            accessed-builds
-        ==
+        (return-error [%leaf "syntax error: {<p.p.parsed>} {<q.p.parsed>}"]~)
       ::
       [build [%build-result %success %hood p.u.q.parsed] accessed-builds]
     ::
@@ -2986,9 +2962,7 @@
         =/  =beam
           [[ship.disc desk.disc [%da date.build]] /hoon/[raw-path]/[prefix]]
         ::
-        =/  message=tang  [%leaf "%path: no matches for {<(en-beam beam)>}"]~
-        ::
-        [build [%build-result %error message] accessed-builds]
+        (return-error [%leaf "%path: no matches for {<(en-beam beam)>}"]~)
       ::  if exactly one path matches, succeed with the matching path
       ::
       ?:  ?=([* ~] matches)
@@ -3001,25 +2975,24 @@
         ==
       ::  multiple paths matched; error out
       ::
-      =/  message=tang
-        :-  [%leaf "multiple matches for %path: "]
-        ::  tmi; cast :matches back to +list
-        ::
-        %+  roll  `_results`matches
-        |=  [[kid=^build result=(unit build-result)] message=tang]
-        ^-  tang
-        ::
-        ?>  ?=(%scry -.schematic.kid)
-        ::  beam: reconstruct request from :kid's schematic and date
-        ::
-        =/  =beam
-          :*  [ship.disc desk.disc [%da date.kid]]
-              spur.rail.resource.schematic.kid
-          ==
-        ::
-        [[%leaf "{<(en-beam beam)>}"] message]
+      %-  return-error
       ::
-      [build [%build-result %error message] accessed-builds]
+      :-  [%leaf "multiple matches for %path: "]
+      ::  tmi; cast :matches back to +list
+      ::
+      %+  roll  `_results`matches
+      |=  [[kid=^build result=(unit build-result)] message=tang]
+      ^-  tang
+      ::
+      ?>  ?=(%scry -.schematic.kid)
+      ::  beam: reconstruct request from :kid's schematic and date
+      ::
+      =/  =beam
+        :*  [ship.disc desk.disc [%da date.kid]]
+            spur.rail.resource.schematic.kid
+        ==
+      ::
+      [[%leaf "{<(en-beam beam)>}"] message]
     ::
     ++  make-plan
       |=  [source-path=rail query-string=coin =scaffold]
@@ -3048,11 +3021,8 @@
         [build [%blocks ~[compile] ~] accessed-builds]
       ::  compilation failed; error out
       ::
-      ?:  ?=(%error -.u.compiled)
-        =/  message=tang
-          [[%leaf "%plan failed: "] message.u.compiled]
-        ::
-        [build [%build-result %error message] accessed-builds]
+      ?:  ?=([~ %error *] compiled)
+        (wrap-error compiled)
       ::  compilation succeeded: produce resulting :vase
       ::
       =/  =vase  q:(result-to-cage u.compiled)
@@ -3104,25 +3074,13 @@
         [build [%blocks blocks ~] accessed-builds]
       ::
       ?.  ?=([~ %success %scry *] hoon-scry-result)
-        ?>  ?=([~ %error *] hoon-scry-result)
-        =/  message=tang
-          [[%leaf "%reef failed: "] message.u.hoon-scry-result]
-        ::
-        [build [%build-result %error message] accessed-builds]
+        (wrap-error hoon-scry-result)
       ::
       ?.  ?=([~ %success %scry *] arvo-scry-result)
-        ?>  ?=([~ %error *] arvo-scry-result)
-        =/  message=tang
-          [[%leaf "%reef failed: "] message.u.arvo-scry-result]
-        ::
-        [build [%build-result %error message] accessed-builds]
+        (wrap-error arvo-scry-result)
       ::
       ?.  ?=([~ %success %scry *] zuse-scry-result)
-        ?>  ?=([~ %error *] zuse-scry-result)
-        =/  message=tang
-          [[%leaf "%reef failed: "] message.u.zuse-scry-result]
-        ::
-        [build [%build-result %error message] accessed-builds]
+        (wrap-error zuse-scry-result)
       ::  omit case from path to prevent cache misses
       ::
       =/  hoon-path=path
@@ -3150,11 +3108,7 @@
         [build [%blocks [zuse-build]~ ~] accessed-builds]
       ::
       ?.  ?=([~ %success %ride *] zuse-build-result)
-        ?>  ?=([~ %error *] zuse-build-result)
-        =/  message=tang
-          [[%leaf "%reef failed: "] message.u.zuse-build-result]
-        ::
-        [build [%build-result %error message] accessed-builds]
+        (wrap-error zuse-build-result)
       ::
       :+  build
         [%build-result %success %reef vase.u.zuse-build-result]
@@ -3175,13 +3129,8 @@
       ?~  slim-result
         [build [%blocks [date.build slim-schematic]~ ~] accessed-builds]
       ::
-      ?:  ?=(%error -.u.slim-result)
-        :*  build
-            [%build-result %error [%leaf "%ride: "] message.u.slim-result]
-            accessed-builds
-        ==
-      ::
-      ?>  ?=([%success %slim *] u.slim-result)
+      ?.  ?=([~ %success %slim *] slim-result)
+        (wrap-error slim-result)
       ::
       =/  val
         (mock [q.q.subject-cage nock.u.slim-result] intercepted-scry)
@@ -3200,8 +3149,7 @@
         (blocked-paths-to-receipt %ride blocked-paths)
       ::
           %2
-        =/  message=tang  [[%leaf "ford: %ride failed:"] p.val]
-        [build [%build-result %error message] accessed-builds]
+        (return-error [[%leaf "ford: %ride failed:"] p.val])
       ==
     ::
     ++  make-same
@@ -3258,11 +3206,10 @@
       ::  scry failed
       ::
       ?~  u.scry-response
-        =/  error=tang
-          :~  leaf+"scry failed for"
-              leaf+"%c{(trip care.resource)} {<(en-beam beam)>}"
-          ==
-        [build [%build-result %error error] accessed-builds]
+        %-  return-error
+        :~  leaf+"scry failed for"
+            leaf+"%c{(trip care.resource)} {<(en-beam beam)>}"
+        ==
       ::  scry succeeded
       ::
       [build [%build-result %success %scry u.u.scry-response] accessed-builds]
@@ -3305,6 +3252,23 @@
     ::  |utilities:make: helper arms
     ::
     ::+|  utilities
+    ::  +wrap-error: wrap an error message around a failed sub-build
+    ::
+    ++  wrap-error
+      |=  result=(unit build-result)
+      ^-  build-receipt
+      ::
+      ?>  ?=([~ %error *] result)
+      =/  message=tang
+        [[%leaf "ford: {<-.schematic.build>} failed: "] message.u.result]
+      ::
+      [build [%build-result %error message] accessed-builds]
+    ::  +return-error: returns a specific failure message
+    ::
+    ++  return-error
+      |=  =tang
+      ^-  build-receipt
+      [build [%build-result %error tang] accessed-builds]
     ::
     ++  depend-on
       |=  kid=^build
