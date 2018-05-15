@@ -1684,10 +1684,10 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /bar/foo]]
+      :-  [%cx [[~nul %home %da ~1234.5.6] /bar/foo]]
       [%noun scry-type %it-does-in-fact-matter]
     ::
-      :-  [%cx [[~nul %desk %da ~1234.5.7] /bar/foo]]
+      :-  [%cx [[~nul %home %da ~1234.5.7] /bar/foo]]
       [%noun scry-type %it-does-in-fact-matter]
     ==
   ::
@@ -1695,7 +1695,7 @@
   =/  ford  *ford-gate
   ::
   =/  formula=hoon  (ream '`@tas`%constant')
-  =/  subject-schematic=schematic:ford  [%scry %c %x [~nul %desk] /bar/foo]
+  =/  subject-schematic=schematic:ford  [%scry %c %x [~nul %home] /bar/foo]
   ::
   =/  ride-type=type  [%atom %tas ~]
   =/  ride=schematic:ford  [%ride formula subject-schematic]
@@ -1717,6 +1717,7 @@
                 [%success [%ride ride-type %constant]]
                 [%success [%scry %noun scry-type %it-does-in-fact-matter]]
     ==  ==  ==
+  ~&  %results1
   ::
   =^  results2  ford
     %-  test-ford-call  :*
@@ -1731,8 +1732,8 @@
                 [%success [%ride ride-type %constant]]
                 [%success [%scry %noun scry-type %it-does-in-fact-matter]]
             ==
-            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-                %c  %warp  [~nul ~nul]  %desk
+            :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/home
+                %c  %warp  [~nul ~nul]  %home
                 `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
@@ -1756,8 +1757,8 @@
       call-args=[duct=~[/autocons] type=~ %kill ~nul]
       ::
       ^=  moves
-        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/desk
-                %c  %warp  [~nul ~nul]  %desk  ~
+        :~  :*  duct=~  %pass  wire=/~nul/clay-sub/~nul/home
+                %c  %warp  [~nul ~nul]  %home  ~
     ==  ==  ==
   ::
   ;:  weld

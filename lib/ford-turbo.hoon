@@ -2197,6 +2197,21 @@
     ++  reduce
       |=  build-receipts=(list build-receipt)
       ^+  ..execute
+      ::  sort :build-receipts so blocks are processed before completions
+      ::
+      ::    It's possible for a build to block on a sub-build that was run
+      ::    in the same batch. If that's the case, make sure we register
+      ::    that the build blocked on the sub-build before registering the
+      ::    completion of the sub-build. This way, when we do register the
+      ::    completion of the sub-build, we will know which builds are blocked
+      ::    on the sub-build, so we can enqueue those blocked clients to be
+      ::    rerun.
+      ::
+      =.  build-receipts
+        %+  sort  build-receipts
+        |=  [a=build-receipt b=build-receipt]
+        ^-  ?
+        ?=(%blocks -.result.a)
       ::
       |^  ^+  ..execute
           ?~  build-receipts  ..execute
@@ -2596,15 +2611,9 @@
         ::
         %+  roll  blocks
         |=  [block=^build state=_state]
-        ::  deal with block already being unblocked
+        ::  we must run +apply-build-receipt on :build.made before :block
         ::
-        ::    If :block was run in the same batch as :build.made, and we've
-        ::    already processed its result, then :build.made has already
-        ::    been unblocked. Don't reblock ourselves since nothing will
-        ::    unblock us.
-        ::
-        ?:  (~(has by results.state) block)
-          state
+        ?<  (~(has by results.state) block)
         ::
         %_    state
             blocked-builds
