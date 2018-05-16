@@ -1991,7 +1991,7 @@
     :^  %e  %hiss  ~
     :+  %json-rpc-response  %hiss
     =+  (need (de-purl:html 'http://localhost:8545'))
-    (json-request -(p.p |) jon)
+    !>  (json-request -(p.p |) jon)
   ::
   ++  update-to-all
     |=  upd=update

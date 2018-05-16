@@ -1251,7 +1251,7 @@
     ++  note                                            ::  out request $->
       =,  eyre
       $%  {$b $wait p/@da}                              ::  wait until
-          [%e %hiss p=(unit user) q=mark %hiss r=hiss]  ::  outbound user req
+          [%e %hiss p=(unit user) q=mark r=cage]        ::  outbound user req
           {$x $mess p/ship q/path r/*}                  ::  send message
       ==                                                ::
     ++  remote                                          ::  remote notification
