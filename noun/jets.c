@@ -1102,6 +1102,21 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
   }
 }
 
+/* _cj_sink(): kick by nock.
+ */
+static u3_noun
+_cj_sink(u3_noun cor, u3_noun axe)
+{
+  u3_weak fol = u3r_at(axe, cor);
+  if ( u3_none == fol ) {
+    return u3m_bail(c3__exit);
+  }
+  else {
+    u3z(axe);
+    return u3n_nock_on(cor, u3k(fol));
+  }
+}
+
 /* u3j_kick(): new kick.
 **
 ** `axe` is RETAINED by the caller; `cor` is RETAINED iff there 
@@ -1139,7 +1154,7 @@ u3j_kick(u3_noun cor, u3_noun axe)
           }
           u3z(act);
           if ( _(pof_o) ) {
-            u3_noun pro = u3n_nock_on(cor, u3nq(9, u3k(axe), 0, 1));
+            u3_noun pro = _cj_sink(cor, u3k(axe));
 
             u3t_flee();
             return pro;
@@ -1165,7 +1180,7 @@ u3j_kick(u3_noun cor, u3_noun axe)
  
         if ( u3_none == pro ) {
           if ( _(pof_o) ) {
-            pro = u3n_nock_on(cor, u3nq(9, u3k(axe), 0, 1));
+            pro = _cj_sink(cor, u3k(axe));
 
             u3t_flee();
             return pro;
@@ -1507,13 +1522,7 @@ u3j_kink(u3_noun cor, u3_noun axe)
     return pro;
   }
   else {
-    u3_weak fol = u3r_at(axe, cor);
-    if ( u3_none == fol ) {
-      return u3m_bail(c3__exit);
-    }
-    else {
-      return u3n_nock_on(cor, u3k(fol));
-    }
+    return _cj_sink(cor, axe);
   }
 }
 
