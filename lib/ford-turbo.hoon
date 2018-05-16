@@ -461,18 +461,12 @@
   ::  +cable: a reference to something on the filesystem
   ::
   +=  cable
-    $:  ::  expose-internal-symbols: expose internal faces to subject
+    $:  ::  face: the face to wrap around the imported file
         ::
-        ::    If %.y, we don't wrap a face around this hoon when we put it in
-        ::    the subject, which exposes its internal symbols.
-        ::
-        expose-internal-symbols=?
+        face=(unit term)
         ::  file-path: location in clay
         ::
         file-path=term
-        ::  remote-location: if not `~`, remote location of file
-        ::
-        remote-location=(unit (pair case ship))
     ==
   ::  +brick: hoon code, either directly specified or referencing clay
   ::
@@ -1443,11 +1437,18 @@
     ==
   ::  +cable: parses a +^cable, a reference to something on the filesystem
   ::
+  ::    This parses:
+  ::
+  ::      `library`       ->  wraps `library` around the library `library`
+  ::      `face=library`  ->  wraps `face` around the library `library`
+  ::      `*library`      ->  exposes `library` directly to the subject
+  ::
   ++  cable
     %+  cook  |=(a=^cable a)
     ;~  pose
-      (stag %& ;~(pfix tar local-or-remote-reference))
-      (stag %| local-or-remote-reference)
+      (stag ~ ;~(pfix tar sym))
+      (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
+      (cook |=(a=term [`a a]) sym)
     ==
   ::  +crane: all runes that start with / which aren't /?, /-, /+ or //.
   ::
@@ -1560,14 +1561,6 @@
         (ifix [sel ser] (stag %cltr (most ace wide:hoon-parser)))
       ;~(pfix gap tall:hoon-parser)
     --
-  ::  +local-or-remote-reference: the type used in +cable
-  ::
-  ++  local-or-remote-reference
-    ;~  plug
-      sym
-      ::  todo: ignoring :remote-location syntax for now as it is weird.
-      (easy ~)
-    ==
   ::  +static-path: parses a path
   ::
   ++  static-path

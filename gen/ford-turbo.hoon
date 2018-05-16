@@ -239,7 +239,7 @@
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
       [1 1]
     """
-    /-  struct
+    /-  struct, face=other
     /+  library, *thing
     !.
     |=(a a)
@@ -249,8 +249,8 @@
   %-  expect-eq  !>
   :_  p.u.q.parsed
   :*  zuse-version=309
-      structures=~[[%.n %struct ~]]
-      libraries=~[[%.n %library ~] [%.y %thing ~]]
+      structures=~[[`%struct %struct] [`%face %other]]
+      libraries=~[[`%library %library] [~ %thing]]
       cranes=~
       ^=  sources
         :~  :*  %direct
@@ -1717,7 +1717,6 @@
                 [%success [%ride ride-type %constant]]
                 [%success [%scry %noun scry-type %it-does-in-fact-matter]]
     ==  ==  ==
-  ~&  %results1
   ::
   =^  results2  ford
     %-  test-ford-call  :*
