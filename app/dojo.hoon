@@ -642,124 +642,126 @@
       ++  find-item-in-type
         |=  {topics/(list term) sut/type}
         ^-  (unit item)
-        ?~  topics
-          ::  we have no more search path. return the rest as an overview
-          (build-inspectable-recursively sut)
-        ?-  sut
-            {$atom *}  ~
-        ::
-            {$cell *}
-          =+  lhs=$(sut p.sut)
-          ?~  lhs
-            $(sut q.sut)
-          lhs
-        ::
-            {$core *}
-          =+  core-docs=r.q.sut
-          ?~  p.core-docs
-            ::  todo: this core has no toplevel documentation. it might have
-            ::  an arm though. check that next.
-            $(sut p.sut)
-          ?:  !=(i.topics u.p.core-docs)
-            ::  the current topic isn't the toplevel core topic.
-            =+  arm=(find-arm-in-coil i.topics q.sut)
-            ?~  arm
-              ::  the current topic is neither the name of the core or an arm
-              ::  on the core.
-              $(sut p.sut)
-            `[%arm (trip i.topics) p.u.arm q.u.arm p.sut]
-          ?~  t.topics
-            ::  we matched the core name and have no further search terms.
-            =*  compiled-against  (build-inspectable-recursively p.sut)
-            `[%core (trip i.topics) q.core-docs p.sut q.sut compiled-against]
-          ::  search the core for chapters.
-          =/  tombs/(list (pair @ tomb))  ~(tap by q.s.q.sut)
-          |-
-          ^-  (unit item)
-          ?~  tombs
-            ~
-          ?~  p.p.q.i.tombs
-            ::  this has no chapter name.
-            $(tombs t.tombs)
-          ?:  !=(i.t.topics u.p.p.q.i.tombs)
-            ::  this isn't the topic.
-            $(tombs t.tombs)
-          `[%chapter (trip i.t.topics) q.p.q.i.tombs sut q.sut p.i.tombs]
-        ::
-            {$face *}
-          ?.  ?=(term q.p.sut)
-            ::  todo: is there something we could do if we have a tune?
-            ~
-          ?.  =(i.topics q.p.sut)
-            ::  this face has a name, but it's not the name we're looking for.
-            ~
-          ?~  t.topics
-            `[%face (trip q.p.sut) p.p.sut (build-inspectable-recursively q.sut)]
-          (find-item-in-type t.topics q.sut)
-        ::
-            {$fork *}
-          =/  types/(list type)  ~(tap in p.sut)
-          |-
-          ?~  types
-            ~
-          =+  res=(find-item-in-type topics i.types)
-          ?~  res
-            $(types t.types)
-          res
-        ::
-          ::  {$help *}
-          ::  while we found a raw help, it's associated on the wrong side of a
-          ::  set of topics. Walk through it instead of showing it.
-          ::  (find-item-in-type t.topics q.sut)
-        ::
-            {$hint *}
-          $(sut q.sut)
-        ::
-            {$hold *}  $(sut (~(play ut p.sut) q.sut))
-            $noun      ~
-            $void      ~
-        ==
+        ~
+::      ?~  topics
+::        ::  we have no more search path. return the rest as an overview
+::        (build-inspectable-recursively sut)
+::      ?-  sut
+::          {$atom *}  ~
+::      ::
+::          {$cell *}
+::        =+  lhs=$(sut p.sut)
+::        ?~  lhs
+::          $(sut q.sut)
+::        lhs
+::      ::
+::          {$core *}
+::        =+  core-docs=r.q.sut
+::        ?~  p.core-docs
+::          ::  todo: this core has no toplevel documentation. it might have
+::          ::  an arm though. check that next.
+::          $(sut p.sut)
+::        ?:  !=(i.topics u.p.core-docs)
+::          ::  the current topic isn't the toplevel core topic.
+::          =+  arm=(find-arm-in-coil i.topics q.sut)
+::          ?~  arm
+::            ::  the current topic is neither the name of the core or an arm
+::            ::  on the core.
+::            $(sut p.sut)
+::          `[%arm (trip i.topics) p.u.arm q.u.arm p.sut]
+::        ?~  t.topics
+::          ::  we matched the core name and have no further search terms.
+::          =*  compiled-against  (build-inspectable-recursively p.sut)
+::          `[%core (trip i.topics) q.core-docs p.sut q.sut compiled-against]
+::        ::  search the core for chapters.
+::        =/  tombs/(list (pair @ tomb))  ~(tap by q.s.q.sut)
+::        |-
+::        ^-  (unit item)
+::        ?~  tombs
+::          ~
+::        ?~  p.p.q.i.tombs
+::          ::  this has no chapter name.
+::          $(tombs t.tombs)
+::        ?:  !=(i.t.topics u.p.p.q.i.tombs)
+::          ::  this isn't the topic.
+::          $(tombs t.tombs)
+::        `[%chapter (trip i.t.topics) q.p.q.i.tombs sut q.sut p.i.tombs]
+::      ::
+::          {$face *}
+::        ?.  ?=(term q.p.sut)
+::          ::  todo: is there something we could do if we have a tune?
+::          ~
+::        ?.  =(i.topics q.p.sut)
+::          ::  this face has a name, but it's not the name we're looking for.
+::          ~
+::        ?~  t.topics
+::          `[%face (trip q.p.sut) p.p.sut (build-inspectable-recursively q.sut)]
+::        (find-item-in-type t.topics q.sut)
+::      ::
+::          {$fork *}
+::        =/  types/(list type)  ~(tap in p.sut)
+::        |-
+::        ?~  types
+::          ~
+::        =+  res=(find-item-in-type topics i.types)
+::        ?~  res
+::          $(types t.types)
+::        res
+::      ::
+::        ::  {$help *}
+::        ::  while we found a raw help, it's associated on the wrong side of a
+::        ::  set of topics. Walk through it instead of showing it.
+::        ::  (find-item-in-type t.topics q.sut)
+::      ::
+::          {$hint *}
+::        $(sut q.sut)
+::      ::
+::          {$hold *}  $(sut (~(play ut p.sut) q.sut))
+::          $noun      ~
+::          $void      ~
+::      ==
       ::
       :>  changes a {type} into an {item}.
       ++  build-inspectable-recursively
         |=  sut/type
         ^-  (unit item)
-        ?-  sut
-        ::
-            {$atom *}  ~
-        ::
-            {$cell *}
-          %+  join-items
-            (build-inspectable-recursively p.sut)
-            (build-inspectable-recursively q.sut)
-        ::
-            {$core *}
-          =*  name  (fall p.r.q.sut '')
-          =*  compiled-against  (build-inspectable-recursively p.sut)
-          `[%core (trip name) q.r.q.sut p.sut q.sut compiled-against]
-        ::
-            {$face *}
-          ?.  ?=(term q.p.sut)
-            ::  todo: can we do anything here if this face doesn't have a term?
-            ~
-          =*  compiled-against  (build-inspectable-recursively q.sut)
-          `[%face (trip q.p.sut) p.p.sut compiled-against]
-        ::
-            {$fork *}
-          =*  types  ~(tap in p.sut)
-          =*  items  (turn types build-inspectable-recursively)
-          (roll items join-items)
-        ::
-          ::  {$help *}
-          ::  =*  rest-type  (build-inspectable-recursively q.sut)
-          ::  ?>  ?=($docs -.p.sut)
-          ::  `[%view [%header `+.p.sut (item-as-overview rest-type)]~]
-        ::
-            {$hint *}  $(sut q.sut)
-            {$hold *}  $(sut (~(play ut p.sut) q.sut))
-            $noun      ~
-            $void      ~
-        ==
+        ~
+::      ?-  sut
+::      ::
+::          {$atom *}  ~
+::      ::
+::          {$cell *}
+::        %+  join-items
+::          (build-inspectable-recursively p.sut)
+::          (build-inspectable-recursively q.sut)
+::      ::
+::          {$core *}
+::        =*  name  (fall p.r.q.sut '')
+::        =*  compiled-against  (build-inspectable-recursively p.sut)
+::        `[%core (trip name) q.r.q.sut p.sut q.sut compiled-against]
+::      ::
+::          {$face *}
+::        ?.  ?=(term q.p.sut)
+::          ::  todo: can we do anything here if this face doesn't have a term?
+::          ~
+::        =*  compiled-against  (build-inspectable-recursively q.sut)
+::        `[%face (trip q.p.sut) p.p.sut compiled-against]
+::      ::
+::          {$fork *}
+::        =*  types  ~(tap in p.sut)
+::        =*  items  (turn types build-inspectable-recursively)
+::        (roll items join-items)
+::      ::
+::        ::  {$help *}
+::        ::  =*  rest-type  (build-inspectable-recursively q.sut)
+::        ::  ?>  ?=($docs -.p.sut)
+::        ::  `[%view [%header `+.p.sut (item-as-overview rest-type)]~]
+::      ::
+::          {$hint *}  $(sut q.sut)
+::          {$hold *}  $(sut (~(play ut p.sut) q.sut))
+::          $noun      ~
+::          $void      ~
+::      ==
       ::
       :>  combines two {(unit item)} together
       ++  join-items
@@ -811,14 +813,15 @@
       ++  find-arm-in-coil
         |=  {arm-name/term con/coil}
         ^-  (unit (pair what foot))
-        =/  tombs  ~(tap by q.s.con)
-        |-
-        ?~  tombs
-          ~
-        =+  item=(~(get by q.q.i.tombs) arm-name)
-        ?~  item
-          $(tombs t.tombs)
-        [~ u.item]
+        ~
+::      =/  tombs  ~(tap by q.s.con)
+::      |-
+::      ?~  tombs
+::        ~
+::      =+  item=(~(get by q.q.i.tombs) arm-name)
+::      ?~  item
+::        $(tombs t.tombs)
+::      [~ u.item]
       ::
       :>    returns an overview for a core's arms and chapters.
       :>
@@ -827,31 +830,33 @@
       ++  arm-and-chapter-overviews
         |=  {sut/type con/coil core-name/tape}
         ^-  {overview overview}
-        =|  arm-docs/overview                           :<  documented arms
-        =|  chapter-docs/overview                       :<  documented chapters
-        =/  tombs  ~(tap by q.s.con)
-        |-
-        ?~  tombs
-          [(sort-overview arm-docs) (sort-overview chapter-docs)]
-        =*  current  q.i.tombs
-        ?~  p.p.current
-          ::  this chapter has no name. add all the foot documentation
-          ::  to arm-docs.
-          =.  arm-docs  (weld arm-docs (arms-as-overview q.current sut))
-          $(tombs t.tombs)
-        ::  this chapter has a name. add it to the list of chapters
-        =.  chapter-docs
-          %+  weld  chapter-docs
-          ^-  overview
-          [%item :(weld (trip u.p.p.current) ":" core-name) q.p.current]~
-        $(tombs t.tombs)
-      ::
-      :>    returns an overview of the arms in a spedific chapter.
+        [*overview *overview]
+::      =|  arm-docs/overview                           :<  documented arms
+::      =|  chapter-docs/overview                       :<  documented chapters
+::      =/  tombs  ~(tap by q.s.con)
+::      |-
+::      ?~  tombs
+::        [(sort-overview arm-docs) (sort-overview chapter-docs)]
+::      =*  current  q.i.tombs
+::      ?~  p.p.current
+::        ::  this chapter has no name. add all the foot documentation
+::        ::  to arm-docs.
+::        =.  arm-docs  (weld arm-docs (arms-as-overview q.current sut))
+::        $(tombs t.tombs)
+::      ::  this chapter has a name. add it to the list of chapters
+::      =.  chapter-docs
+::        %+  weld  chapter-docs
+::        ^-  overview
+::        [%item :(weld (trip u.p.p.current) ":" core-name) q.p.current]~
+::      $(tombs t.tombs)
+::    ::
+::    :>    returns an overview of the arms in a spedific chapter.
       ++  arms-in-chapter
         |=  {sut/type con/coil chapter-id/@}
         ^-  overview
-        =*  chapter-tomb  (~(got by q.s.con) chapter-id)
-        (sort-overview (arms-as-overview q.chapter-tomb sut))
+        *overview
+        ::  =*  chapter-tomb  (~(got by q.s.con) chapter-id)
+        ::  (sort-overview (arms-as-overview q.chapter-tomb sut))
       ::
       :>  sort the items.
       ++  sort-overview
@@ -897,26 +902,27 @@
       ++  print-core
         |:  $:{core-name/tape docs/what sut/type con/coil uit/(unit item)}
         ^-  tang
-        =+  [arms chapters]=(arm-and-chapter-overviews sut con core-name)
-        ;:  weld
-          (print-header (trip (fall p.r.con '')) q.r.con)
-        ::
-        ::  todo: figure out how to display the default arm, which should
-        ::  be rendered separately.
-        ::
-          ?~  arms
-            ~
-          (print-overview [%header `['arms:' ~] arms]~)
-        ::
-          ?~  chapters
-            ~
-          (print-overview [%header `['chapters:' ~] chapters]~)
-        ::
-          =+  compiled=(item-as-overview uit)
-          ?~  compiled
-            ~
-          (print-overview [%header `['compiled against:' ~] compiled]~)
-        ==
+        *tang
+::      =+  [arms chapters]=(arm-and-chapter-overviews sut con core-name)
+::      ;:  weld
+::        (print-header (trip (fall p.r.con '')) q.r.con)
+::      ::
+::      ::  todo: figure out how to display the default arm, which should
+::      ::  be rendered separately.
+::      ::
+::        ?~  arms
+::          ~
+::        (print-overview [%header `['arms:' ~] arms]~)
+::      ::
+::        ?~  chapters
+::          ~
+::        (print-overview [%header `['chapters:' ~] chapters]~)
+::      ::
+::        =+  compiled=(item-as-overview uit)
+::        ?~  compiled
+::          ~
+::        (print-overview [%header `['compiled against:' ~] compiled]~)
+::      ==
       ::
       :>    figures out which {what}s to use.
       :>
@@ -927,22 +933,23 @@
         |=  {arm-doc/what f/foot sut/type}
         :>  the computed arm documentation and the product documentation.
         ^-  {what what}
-        =+  foot-type=(~(play ut sut) p.f)
-        =/  raw-product/what  (what-from-type foot-type)  
-        =/  product-product/what
-          ?.  ?=({$core *} foot-type)
-            ~
-          =*  inner-type  (~(play ut foot-type) [%limb %$])
-          (what-from-type inner-type)
-        :-
-          ?~  arm-doc
-            ?~  raw-product
-              product-product
-            raw-product
-          arm-doc
-        ?~  arm-doc
-          product-product
-        raw-product
+        [*what *what]
+::      =+  foot-type=(~(play ut sut) p.f)
+::      =/  raw-product/what  (what-from-type foot-type)  
+::      =/  product-product/what
+::        ?.  ?=({$core *} foot-type)
+::          ~
+::        =*  inner-type  (~(play ut foot-type) [%limb %$])
+::        (what-from-type inner-type)
+::      :-
+::        ?~  arm-doc
+::          ?~  raw-product
+::            product-product
+::          raw-product
+::        arm-doc
+::      ?~  arm-doc
+::        product-product
+::      raw-product
       ::
       :>    renders the documentation for a single arm in a core.
       ++  print-arm
@@ -1137,25 +1144,26 @@
     ::
     ++  dy-show-type-noun
       |=  a/type  ^-  tank
-      =-  >[-]<
-      |-  ^-  $?  $%  {$atom @tas (unit @)}
-                      {$cell _$ _$}
-                      {$cube * _$}
-                      {$face {what $@(term tune)} _$}
-                      {$fork (set _$)}
-                      {$hold _$ hoon}
-                  ==
-                  wain                :: "<|core|>"
-                  $?($noun $void)
-              ==
-      ?+  a  a
-        {?($cube $face) ^}  a(q $(a q.a))
-        {$cell ^}  a(p $(a p.a), q $(a q.a))
-        {$fork *}  a(p (silt (turn ~(tap in p.a) |=(b/type ^$(a b)))))
-        {$hint *}  !!
-        {$core ^}  `wain`/core
-        {$hold *}  a(p $(a p.a))
-      ==
+      *tank
+::    =-  >[-]<
+::    |-  ^-  $?  $%  {$atom @tas (unit @)}
+::                    {$cell _$ _$}
+::                    {$cube * _$}
+::                    {$face {what $@(term tune)} _$}
+::                    {$fork (set _$)}
+::                    {$hold _$ hoon}
+::                ==
+::                wain                :: "<|core|>"
+::                $?($noun $void)
+::            ==
+::    ?+  a  a
+::    ::  {?($cube $face) ^}  a(q $(a q.a))
+::      {$cell ^}  a(p $(a p.a), q $(a q.a))
+::      {$fork *}  a(p (silt (turn ~(tap in p.a) |=(b/type ^$(a b)))))
+::      {$hint *}  !!
+::      {$core ^}  `wain`/core
+::      {$hold *}  a(p $(a p.a))
+::    ==
     ::
     ::  XX needs filter
     ::
@@ -1267,7 +1275,7 @@
       %+  sloop
         %-  ~(rep by var)
         |=  {{a/term @ b/vase} c/vase}  ^-  vase
-        (sloop b(p face+[[~ a] p.b]) c)
+        (sloop b(p face+[a p.b]) c)
       !>([our=our now=now eny=eny]:hid)
     ::
     ++  dy-made-dial                                    ::  dialog product
@@ -1605,7 +1613,7 @@
             :+  %as  `mark`(cat 3 api.sink.com '-poke')
             :-  1
             :+  %do
-              :^  %brtr  [~ ~]  [%base %noun]
+              :+  %brtr  [%base %noun]
               :^  %clls  [%rock %tas %post]
                 [%rock %$ endpoint.sink.com]
               [%cnts ~[[%.y 6]] ~]

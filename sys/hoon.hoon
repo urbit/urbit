@@ -1,4 +1,3 @@
-!:
 ::                                                      ::  
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
@@ -5690,10 +5689,11 @@
               {ven/term pro/term kel/@}                 ::  vendor and product
               {ven/term pro/term ver/@ kel/@}           ::  all of the above
           ==                                            ::
-+=  coil  $:  p/{p/(unit term) q/?(%wet %dry) r/vair}   ::  name, poly, variance
++=  coil  $:  p/{p/(unit term) q/poly r/vair}           ::  name, wet/dry, vary
               q/type                                    ::  context
-              r/{p/seminoun q/(map @ tomb)}             ::  arms
+              r/{p/seminoun q/(map @ tome)}             ::  arms
           ==                                            ::
++=  poly  ?(%wet %dry)                                  ::  polarity
 +=  foot  $%  {$ash p/hoon}                             ::  dry arm, geometric
               {$elm p/hoon}                             ::  wet arm, generic
           ==                                            ::
@@ -5788,7 +5788,7 @@
               {$1 p/term q/toga}                        ::  deep toga
               {$2 p/toga q/toga}                        ::  cell toga
           ==                                            ::
-+=  tomb  (pair chap (map term (pair what foot)))       ::  core chapter
++=  tome  (map term (pair what foot))                   ::  core chapter
 +=  tope                                                ::  topographic type
   $@  $?  %&                                            ::  cell or atom
           %|                                            ::  atom
@@ -5839,11 +5839,11 @@
     {$bcdt p/spec}                                      ::  example
     {$bccm p/spec}                                      ::  factory
   ::                                            ::::::  cores
-    {$brcb p/spec q/alas r/(map @ tomb)}                ::  |_
+    {$brcb p/spec q/alas r/(map @ tome)}                ::  |_
     {$brcl p/hoon q/hoon}                               ::  |:
-    {$brcn p/(map @ tomb)}                              ::  |%
+    {$brcn p/(map @ tome)}                              ::  |%
     {$brdt p/hoon}                                      ::  |.
-    {$brkt p/hoon q/(map @ tomb)}                       ::  |^
+    {$brkt p/hoon q/(map @ tome)}                       ::  |^
     {$brhp p/hoon}                                      ::  |-
     {$brsg p/spec q/hoon}                               ::  |~
     {$brtr p/spec q/hoon}                               ::  |*
@@ -6730,30 +6730,35 @@
 ::
 ++  loot
   ~/  %loot
-  |=  {cog/term dom/(map @ tomb)}
+  |=  {cog/term dom/(map @ tome)}
   =+  axe=1
+::  =-  ?~  -  ~
+::      ~|  %loot-poly-mismatch
+::      ?-  -.q.q.-
+::        %ash
+::
   |-  ^-  (unit {p/axis q/(pair what foot)})
   ?-  dom
       ~  ~
   ::
       {* ~ ~}
-    %+  bind  (look cog q.q.n.dom) 
+    %+  bind  (look cog q.n.dom) 
     |=((pair axis (pair what foot)) [(peg axe p) q])
   ::
       {* ~ *}
-    =+  yep=(look cog q.q.n.dom)
+    =+  yep=(look cog q.n.dom)
     ?^  yep
       [~ (peg (peg axe 2) p.u.yep) q.u.yep]
     $(axe (peg axe 3), dom r.dom)
   ::
       {* * ~}
-    =+  yep=(look cog q.q.n.dom)
+    =+  yep=(look cog q.n.dom)
     ?^  yep
       [~ (peg (peg axe 2) p.u.yep) q.u.yep]
     $(axe (peg axe 3), dom l.dom)
   ::
       {* * *}
-    =+  yep=(look cog q.q.n.dom)
+    =+  yep=(look cog q.n.dom)
     ?^  yep
       [~ (peg (peg axe 2) p.u.yep) q.u.yep]
     =+  pey=$(axe (peg axe 6), dom l.dom)
@@ -7142,9 +7147,9 @@
         %-  zing
         ^-  (list (list (pair term hoon)))
         %+  turn  ~(tap by q.r.battery)
-        |=  [term =tomb]
+        |=  [term =tome]
         ^-  (list (pair term hoon))
-        %+  turn  ~(tap by q.tomb)
+        %+  turn  ~(tap by tome)
         |=  [=term =what =foot]
         ^-  (pair @tas hoon)
         [term p.foot]
@@ -7312,7 +7317,7 @@
     ^-  hoon
     :+  %tsgr  example:clear(mod payload)
     :-  %brcn
-    =-  [[0 [~ ~] -] ~ ~]
+    =-  [[0 -] ~ ~]
     %-  ~(gas by *(map term (pair what foot)))
     ^-  (list (trel term what foot))
     %+  turn
@@ -7729,7 +7734,7 @@
         ::
         :+  %brkt
           relative(mod p.mod, dom (peg 3 dom))
-        =-  [[0 [~ ~] -] ~ ~]
+        =-  [[0 -] ~ ~]
         %-  ~(gas by *(map term (pair what foot)))
         ^-  (list (trel term what foot))
         %+  turn
@@ -8147,10 +8152,9 @@
         {$brcb *}  :+  %tsls  [%bcdt p.gen]
                    :-  %brcn
                    %-  ~(run by r.gen)
-                   |=  tom/tomb
+                   |=  tom/tome
                    ^+  tom
-                   :-  p.tom
-                   %-  ~(run by q.tom)
+                   %-  ~(run by tom)
                    |=  a/(pair what foot)
                    ^+  a
                    :-  p.a
@@ -8160,22 +8164,22 @@
                    [%tstr [~ p.i.q.gen] q.i.q.gen $(q.gen t.q.gen)]
         {$brcl *}  [%tsls p.gen [%brdt q.gen]]
         {$brdt *}  :-  %brcn
-                   =-  [[0 [~ ~] -] ~ ~]
+                   =-  [[0 -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash p.gen])
         {$brkt *}  :+  %tsgr 
                       :-  %brcn
                       =+  one=(~(got by q.gen) 0)
                       %+  ~(put by q.gen)  0
-                      one(q (~(put by q.one) %$ [~ [%ash p.gen]]))
+                      (~(put by one) %$ [~ [%ash p.gen]])
                    [%limb %$]
         {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen]]
         {$brsg *}  [%ktbr [%brts p.gen q.gen]]
         {$brtr *}  :+  %tsls  [%bcdt p.gen]
                    :-  %brcn
-                   =-  [[0 [~ ~] -] ~ ~]
+                   =-  [[0 -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm q.gen])
         {$brts *}  :+  %brcb  p.gen
-                   =-  [~ [[0 [~ ~] -] ~ ~]]
+                   =-  [~ [[0 -] ~ ~]]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
         {$brwt *}  [%ktwt %brdt p.gen]
     ::
@@ -8282,8 +8286,8 @@
                ^-  hoon
                :+  %tsbr  [%base %cell]
                :-  %brcn
-               ^-  (map @ tomb)
-               =-  [[0 [~ ~] -] ~ ~]
+               ^-  (map @ tome)
+               =-  [[0 -] ~ ~]
                ^-  (map term (pair what foot))
                :_  [~ ~]
                =+  sug=[[%& 12] ~]
@@ -8596,7 +8600,7 @@
         $zpzp  (lead -.gen %.(+.gen noop))
       ==
     ++  arms
-      (raid (twin noop (raid (twin noop heel))))
+      (raid (raid (twin noop heel)))
     ::
     ++  bark 
       |=  wof/woof
@@ -9576,7 +9580,7 @@
   ++  laze
     ::  produce lazy core generator for static execution
     ::
-    |=  [dom=(map @ tomb)]
+    |=  [dom=(map @ tome)]
     ::  only one layer of fabrication analysis
     ::
     =.  fab  &
@@ -9600,16 +9604,16 @@
     =+  axe=1
     |^  ?-  dom
           ~        yeb
-          [* ~ ~]  (chapter q.q.n.dom)
+          [* ~ ~]  (chapter q.n.dom)
           [* * ~]  %=  $
                      dom  l.dom
                      axe  (peg axe 3)
-                     yeb  (chapter(axe (peg axe 2)) q.q.n.dom)
+                     yeb  (chapter(axe (peg axe 2)) q.n.dom)
                    ==
           [* ~ *]  %=  $
                      dom  r.dom
                      axe  (peg axe 3) 
-                     yeb  (chapter(axe (peg axe 2)) q.q.n.dom)
+                     yeb  (chapter(axe (peg axe 2)) q.n.dom)
                    ==
           [* * *]  %=  $
                      dom  r.dom
@@ -9617,7 +9621,7 @@
                      yeb  %=  $
                             dom  l.dom
                             axe  (peg axe 6)
-                            yeb  (chapter(axe (peg axe 2)) q.q.n.dom)
+                            yeb  (chapter(axe (peg axe 2)) q.n.dom)
         ==         ==     ==
     ++  chapter
       |=  dab/(map term (pair what foot))
@@ -9680,11 +9684,11 @@
     ==
   ::
   ++  balk
-    |=  [dox/type dom/(map @ tomb)]
+    |=  [dox/type dom/(map @ tome)]
     ^-  *
     ?:  ?=(~ dom)
       ~
-    =+  dov=(bake dox q.q.n.dom)
+    =+  dov=(bake dox q.n.dom)
     ?-    dom
       {* ~ ~}   dov
       {* ~ *}   [dov $(dom r.dom)]
@@ -9695,7 +9699,7 @@
   ++  mile
     ::  mull all chapters and feet in a core
     ::
-    |=  [dox=type mel=vair dom=(map @ tomb)]
+    |=  [dox=type mel=vair dom=(map @ tome)]
     ^-  (pair type type)
     =+  yet=(core sut [~ %dry %gold] sut (laze dom) dom)
     =+  hum=(core dox [~ %dry %gold] dox (laze dom) dom)
@@ -9707,7 +9711,7 @@
   ++  mine
     ::  mint all chapters and feet in a core
     ::
-    |=  [mel/vair dom/(map @ tomb)]
+    |=  [mel/vair dom/(map @ tome)]
     ^-  (pair type nock)
     =-  :_  [%1 dez]
         (core sut [~ %dry mel] sut [[%full ~] dez] dom)
@@ -9717,7 +9721,7 @@
     ?:  ?=(~ dom)
       ~
     =/  dov/?(~ ^)
-      =/  dab/(map term (pair what foot))  q.q.n.dom
+      =/  dab/(map term (pair what foot))  q.n.dom
       |-  ^-  ?(~ ^)
       ?:  ?=(~ dab)
         ~
@@ -9876,7 +9880,7 @@
       typ
     ::
     ++  grow
-      |=  {mel/vair ruf/hoon dom/(map @ tomb)}
+      |=  {mel/vair ruf/hoon dom/(map @ tome)}
       ^-  {p/type q/nock}
       =+  dan=^$(gen ruf, gol %noun)
       =+  pul=(mine mel dom)
@@ -10041,7 +10045,7 @@
       typ
     ::
     ++  grow
-      |=  {mel/vair ruf/hoon dom/(map @ tomb)}
+      |=  {mel/vair ruf/hoon dom/(map @ tome)}
       ::  make al 
       ~_  leaf+"mull-grow"
       ^-  {p/type q/type}
@@ -10116,8 +10120,8 @@
       dext(sut (peek vay 2), ref (peek(sut ref) vay 2))
     ::
     ++  deep
-      |=  $:  dom/(map @ tomb)
-              vim/(map @ tomb)
+      |=  $:  dom/(map @ tome)
+              vim/(map @ tome)
           ==
       ^-  ?
       ?:  ?=(~ dom)  =(vim ~)
@@ -10126,7 +10130,7 @@
           $(dom l.dom, vim l.vim)
           $(dom r.dom, vim r.vim)
       ::
-          =+  [dab hem]=[q.q.n.dom q.q.n.vim]
+          =+  [dab hem]=[q.n.dom q.n.vim]
           |-  ^-  ?
           ?:  ?=(~ dab)  =(hem ~)
           ?:  ?=(~ hem)  |
@@ -11015,7 +11019,7 @@
       %^  cat  3
         %~  rent  co
         :+  %$  %ud
-        %-  ~(rep by (~(run by q.r.q.sut) |=(tomb ~(wyt by q))))
+        %-  ~(rep by (~(run by q.r.q.sut) |=(tome ~(wyt by +<))))
         |=([[@ a=@u] b=@u] (add a b))
       %^  cat  3
         ?-(r.p.q.sut $gold '.', $iron '|', $lead '?', $zinc '&')
@@ -11141,7 +11145,7 @@
       {$core *}
     |-  ^-  ?
     ?~  q.r.q.typ  |
-    ?|  (~(has by q.q.n.q.r.q.typ) cog)
+    ?|  (~(has by q.n.q.r.q.typ) cog)
         $(q.r.q.typ l.q.r.q.typ)
         $(q.r.q.typ r.q.r.q.typ)
     ==
@@ -11155,8 +11159,8 @@
       {$core *}
     %-  zing
     %+  turn  ~(tap by q.r.q.typ)
-      |=  {* b/tomb}
-    %+  turn  ~(tap by q.b)
+      |=  {* b/tome}
+    %+  turn  ~(tap by b)
       |=  {a/term *}
     a
   ==
@@ -12989,11 +12993,11 @@
     ++  wisp                                            ::  core tail
       ?.  tol  fail
       %+  cook
-        |=  a=(list (pair whit (map term [what foot])))  ^-  (map @ tomb)
+        |=  a=(list (pair whit (map term [what foot])))  ^-  (map @ tome)
         =<  tos
         %+  roll  a
         |=  $:  [wit=whit wap=(map term (pair what foot))]
-                [all=(map term *) num=@ tos=(map @ tomb)]
+                [all=(map term *) num=@ tos=(map @ tome)]
             ==
         =.  wap
           %-  ~(urn by wap)
@@ -13002,7 +13006,7 @@
           +.b(p.r [%eror "duplicate arm {<p.b>}"])
         ::
         =.  all  (~(uni by all) `(map term *)`wap)
-        [all +(num) (~(put by tos) num [[lab boy]:wit wap])]
+        [all +(num) (~(put by tos) num wap)]
       ::
       ;~  pose
         dun
@@ -13110,11 +13114,11 @@
     ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three hoons
     ++  expx  |.  ;~  gunk  loaf                        ::  hoon and core tail
                     %+  sear                            ::
-                      |=  a/(map @ tomb)                ::
-                      ^-  (unit (map @ tomb))           ::
+                      |=  a/(map @ tome)                ::
+                      ^-  (unit (map @ tome))           ::
                       =+  fir=(~(got by a) 0)           ::
-                      ?:  (~(has by q.fir) %$)          ::  %$ in first chapter
-                         ~                              ::
+                      ?:  (~(has by fir) %$)            ::  %$ in first chapter
+                        ~                               ::
                       [~ u=a]                           ::
                     wisp                                ::
                   ==                                    ::
