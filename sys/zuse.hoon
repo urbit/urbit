@@ -86,14 +86,14 @@
   ::
   ::  ethereum types. integer bitsizes ignored.
   ++  etyp
-    $?  ::  static
+    $%  ::  static
         %address  %bool
         %int      %uint
         %real     %ureal
         [%bytes-n n=@ud]
         ::  dynamic
-        :: [%array-n t=etyp n=@ud]
-        :: [%array t=etyp]
+        [%array-n t=etyp n=@ud]
+        [%array t=etyp]
         %bytes    %string
     ==
   ::
@@ -5715,9 +5715,35 @@
     ?:(?=(%left wer) [tad wat] [wat tad])
   ::
   ::
-  ++  constitutionts
+  ++  constitution
     =,  constitution:ethe
     |%
+    ::
+    ++  hull-from-eth
+      |=  hull:eth-noun
+      ^-  hull
+      :*  owner
+        ::
+          ?>  =(32 p.encryption-key)
+          `@`q.encryption-key
+        ::
+          ?>  =(32 p.authentication-key)
+          `@`q.authentication-key
+        ::
+          key-revision
+        ::
+          spawn-count
+        ::
+          ~
+        ::
+          `@p`sponsor
+        ::
+          ?.  escape-requested  ~
+          ``@p`escape-to
+        ::
+          spawn-proxy
+          transfer-proxy
+      ==
     ::
     ++  event-log-to-hull-diffs
       =,  ethe
