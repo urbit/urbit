@@ -207,7 +207,11 @@
 ::
 ++  rsa                                                 ::  unpadded!
   |%
-  +=  key  [p=@ux q=@ux n=@ux e=@ux d=@ux]
+  +=  key
+    $:  pub=[n=@ux e=@ux]
+        sek=(unit [d=@ux p=@ux q=@ux])
+    ==
+  ::
   ++  elcm
     |=  [a=@ b=@]
     (div (mul a b) d:(egcd a b))
@@ -221,7 +225,7 @@
     =/  q=@ux  (ramp:number diw [3 5 ~] +(eny))
     =/  n=@ux  (mul p q)
     =/  d=@ux  (~(inv fo (elcm (dec p) (dec q))) e)
-    [p q n e d]
+    [[n e] `[d p q]]
   ::
   ++  der                                             ::  pkcs1
     |%
@@ -231,18 +235,20 @@
       ++  ring
         |=  k=key
         ^-  @ux
+        ~|  %rsa-need-ring
+        ?>  ?=(^ sek.k)
         =;  pec
           (rep 3 ~(ren asn1 pec))
         :~  %seq
             [%int 0]
-            [%int n.k]
-            [%int e.k]
-            [%int d.k]
-            [%int p.k]
-            [%int q.k]
-            [%int (mod d.k (dec p.k))]
-            [%int (mod d.k (dec q.k))]
-            [%int (~(inv fo p.k) q.k)]
+            [%int n.pub.k]
+            [%int e.pub.k]
+            [%int d.u.sek.k]
+            [%int p.u.sek.k]
+            [%int q.u.sek.k]
+            [%int (mod d.u.sek.k (dec p.u.sek.k))]
+            [%int (mod d.u.sek.k (dec q.u.sek.k))]
+            [%int (~(inv fo p.u.sek.k) q.u.sek.k)]
         ==
       --
     ++  de
@@ -269,7 +275,7 @@
         =*  d  p.i.t.t.t.p.u.b
         =*  p  p.i.t.t.t.t.p.u.b
         =*  q  p.i.t.t.t.t.t.p.u.b
-        `[p q n e d]
+        `[[n e] `[d p q]]
       --
     --
   ::
@@ -307,21 +313,23 @@
   ++  en
     |=  [m=@ k=key]
     ~|  %rsa-len
-    ?>  (lte (met 0 m) (met 0 n.k))
-    (~(exp fo n.k) e.k m)
+    ?>  (lte (met 0 m) (met 0 n.pub.k))
+    (~(exp fo n.pub.k) e.pub.k m)
   ::
   ++  de
     |=  [m=@ k=key]
     :: XX assert rsa-len here too?
-    =/  fu  (fu:number p.k q.k)
-    (out.fu (exp.fu d.k (sit.fu m)))
+    ~|  %rsa-need-ring
+    ?>  ?=(^ sek.k)
+    =/  fu  (fu:number p.u.sek.k q.u.sek.k)
+    (out.fu (exp.fu d.u.sek.k (sit.fu m)))
   --
 ::
 ++  rs256
   |_  k=key:rsa
   ++  emsa        :: EMSA-PKCS1-v1_5
     |=  m=@
-    =/  emlen  (met 3 n.k)
+    =/  emlen  (met 3 n.pub.k)
     =/  pec=spec:asn1
       :~  %seq
           [%seq [%obj sha-256:obj:asn1] [%nul ~] ~]
@@ -358,7 +366,7 @@
           :-  %bit
           =;  pec
             (rep 3 ~(ren asn1 pec))
-          [%seq [[%int n.k] [%int e.k] ~]]
+          [%seq [[%int n.pub.k] [%int e.pub.k] ~]]
         ==
       ::
       ++  ring  !!
@@ -417,7 +425,7 @@
             :-  %bit
             =;  pec
               (rep 3 ~(ren asn1 pec))
-            [%seq [[%int n.k] [%int e.k] ~]]
+            [%seq [[%int n.pub.k] [%int e.pub.k] ~]]
           ==
           :+  %con  [| 0]
           =-  ~(ren asn1 -)
@@ -521,19 +529,21 @@
       ^-  json
       :-  %o  %-  my  :~
         kty+s+'RSA'
-        n+s+(en-base64url (swp 3 n.k))
-        e+s+(en-base64url (swp 3 e.k))
+        n+s+(en-base64url (swp 3 n.pub.k))
+        e+s+(en-base64url (swp 3 e.pub.k))
       ==
     ++  ring
       |=  k=key:rsa
       ^-  json
+      ~|  %rsa-need-ring
+      ?>  ?=(^ sek.k)
       :-  %o  %-  my  :~
         kty+s+'RSA'
-        p+s+(en-base64url (swp 3 p.k))
-        q+s+(en-base64url (swp 3 q.k))
-        n+s+(en-base64url (swp 3 n.k))
-        e+s+(en-base64url (swp 3 e.k))
-        d+s+(en-base64url (swp 3 d.k))
+        n+s+(en-base64url (swp 3 n.pub.k))
+        e+s+(en-base64url (swp 3 e.pub.k))
+        d+s+(en-base64url (swp 3 d.u.sek.k))
+        p+s+(en-base64url (swp 3 p.u.sek.k))
+        q+s+(en-base64url (swp 3 q.u.sek.k))
       ==
     --
   ++  de
@@ -542,8 +552,10 @@
       =,  dejs-soft:format
       %+  ci
         |=  [kty=@t n=(unit @) e=(unit @)]
-        ^-  (unit [n=@ux e=@ux])  :: XX RSA pubkey model
-        (both (bind n (cury swp 3)) (bind e (cury swp 3)))
+        ^-  (unit key:rsa)
+        =/  swp  (cury swp 3)
+        =/  pub  (both (bind n swp) (bind e swp))
+        ?~(pub ~ `[u.pub ~])
       %-  ot  :~
         kty+(su (jest 'RSA'))
         n+(cu de-base64url so)
@@ -553,27 +565,24 @@
       =,  dejs-soft:format
       %+  ci
         |=  $:  kty=@t
-                p=(unit @)
-                q=(unit @)
                 n=(unit @)
                 e=(unit @)
                 d=(unit @)
+                p=(unit @)
+                q=(unit @)
             ==
         ^-  (unit key:rsa)
-        ;:  both
-          (bind p (cury swp 3))
-          (bind q (cury swp 3))
-          (bind n (cury swp 3))
-          (bind e (cury swp 3))
-          (bind d (cury swp 3))
-        ==
+        =/  swp  (cury swp 3)
+        =/  pub  (both (bind n swp) (bind e swp))
+        =/  sek  :(both (bind d swp) (bind p swp) (bind q swp))
+        ?:(|(?=(~ pub) ?=(~ sek)) ~ `[u.pub sek])
       %-  ot  :~
         kty+(su (jest 'RSA'))
-        p+(cu de-base64url so)
-        q+(cu de-base64url so)
         n+(cu de-base64url so)
         e+(cu de-base64url so)
         d+(cu de-base64url so)
+        p+(cu de-base64url so)
+        q+(cu de-base64url so)
       ==
     --
   --
@@ -1073,7 +1082,7 @@
   =|  i=@
   |-  ^-  key:rsa
   =/  k  (new-key:rsa 2.048 eny.bow)
-  =/  m  (met 0 n.k)
+  =/  m  (met 0 n.pub.k)
   ?:  =(0 (mod m 8))  k
   ~&  [%key iter=i width=m]
   $(i +(i), eny.bow +(eny.bow))
@@ -1096,7 +1105,7 @@
           ;:  weld
             test-base64
             test-asn1
-            :: test-rsakey
+            test-rsakey
             test-rsa
             test-rsapem
             test-rsa-pkcs8
@@ -1190,7 +1199,7 @@
       =/  n  (mul p q)
       =/  e  0x1.0001
       =/  d  (~(inv fo (elcm:rsa (dec p) (dec q))) e)
-      [p q n e d]
+      [[n e] `[d p q]]
     ::
     |^  ^-  tang
         ;:  weld
@@ -1200,28 +1209,29 @@
     ++  check-primes
       =,  number
       |=  k=key:rsa
+      ?>  ?=(^ sek.k)
       %+  roll  primes
       |=  [p=@ a=tang]
       ?^  a  a
-      ?:  =(0 (mod n.k p))
-        :~  leaf+"{(scow %ux n.k)}"
+      ?:  =(0 (mod n.pub.k p))
+        :~  leaf+"{(scow %ux n.pub.k)}"
             :-  %leaf
             %+  weld
-              "n.key (prime? {(scow %f (pram n.k))})"
+              "n.pub.key (prime? {(scow %f (pram n.pub.k))})"
             " divisible by {(scow %ud p)}:"
         ==
-      ?:  =(0 (mod p.k p))
-        :~  leaf+"{(scow %ux p.k)}"
+      ?:  =(0 (mod p.u.sek.k p))
+        :~  leaf+"{(scow %ux p.u.sek.k)}"
             :-  %leaf
             %+  weld
-              "p.key (prime? {(scow %f (pram p.k))})"
+              "p.u.sek.key (prime? {(scow %f (pram p.u.sek.k))})"
             " divisible by {(scow %ud p)}:"
         ==
-      ?:  =(0 (mod q.k p))
-        :~  leaf+"{(scow %ux q.k)}"
+      ?:  =(0 (mod q.u.sek.k p))
+        :~  leaf+"{(scow %ux q.u.sek.k)}"
             :-  %leaf
             %+  weld
-              "q.key (prime? {(scow %f (pram q.k))})"
+              "q.u.sek.key (prime? {(scow %f (pram q.u.sek.k))})"
             " divisible by {(scow %ud p)}:"
         ==
       ~
@@ -1229,18 +1239,20 @@
   ::
   ++  test-rsapem
     ::  ex from https://stackoverflow.com/a/19855935
-    =/  k1=key:rsa  [`@ux`17 `@ux`11 `@ux`187 `@ux`7 `@ux`23]
+    =/  k1=key:rsa
+      :-  [`@ux`187 `@ux`7]
+      [~ `@ux`23 `@ux`17 `@ux`11]
     =/  kpem1=wain
       :~  '-----BEGIN RSA PRIVATE KEY-----'
           'MBwCAQACAgC7AgEHAgEXAgERAgELAgEHAgEDAgEO'
           '-----END RSA PRIVATE KEY-----'
       ==
     =/  k2=key:rsa
-      :*  p=`@ux`4.140.273.707
-          q=`@ux`3.922.198.019
-          n=`@ux`16.238.973.331.713.186.433
-          e=`@ux`65.537
+      :*  [n=`@ux`16.238.973.331.713.186.433 e=`@ux`65.537]
+          ~
           d=`@ux`3.298.243.342.098.580.397
+          p=`@ux`4.140.273.707
+          q=`@ux`3.922.198.019
       ==
     :: openssl genrsa -out private.pem 64
     =/  kpem2=wain
@@ -1347,9 +1359,11 @@
       =/  e  `@ux`17
       =/  n  (mul p q)
       =/  d  (~(inv fo (elcm:rsa (dec p) (dec q))) e)
-      [p q n e d]
+      [[n e] `[d p q]]
     ::
-    =/  k2=key:rsa  [`@ux`11 `@ux`13 `@ux`143 `@ux`7 `@ux`103]
+    =/  k2=key:rsa
+      :-  [`@ux`143 `@ux`7]
+      [~ `@ux`103 `@ux`11 `@ux`13]
     ::
     :: ex from http://doctrina.org/How-RSA-Works-With-Examples.html
     =/  k3=key:rsa
@@ -1364,7 +1378,7 @@
       =/  n  (mul p q)
       =/  e  65.537
       =/  d  (~(inv fo (elcm:rsa (dec p) (dec q))) e)
-      [`@ux`p `@ux`q `@ux`n `@ux`e `@ux`d]
+      [[`@ux`n `@ux`e] `[`@ux`d `@ux`p `@ux`q]]
     =/  m3  (swp 3 'attack at dawn')
     =/  c3
       35.052.111.338.673.026.690.212.423.937.053.328.511.880.760.811.579.981.
@@ -1374,9 +1388,10 @@
          820.596.886.440.377.536.082.465.681.750.074.417.459.151.485.407.445.
          862.511.023.472.235.560.823.053.497.791.518.928.820.272.257.787.786
     ::
+    ?>  ?=(^ sek.k1)
     ;:  weld
       %-  expect-eq  !>
-        [413 d.k1]
+        [413 d.u.sek.k1]
       %-  expect-eq  !>
         [2.790 (en:rsa 65 k1)]
       %-  expect-eq  !>
@@ -1396,17 +1411,18 @@
   ++  test-rs256
     ::  ex from https://stackoverflow.com/a/41448118
     =/  k1=key:rsa
-      :*  0xf7ef.37e6.7fa6.685a.c178.8b01.cf38.da20.ca4b.de5d.8b01.a71b.d28c.
-            65b4.09c3.6e4d
-          0xc882.5760.3fb8.a5e2.5e9d.db55.3a73.b647.a3ec.a6e9.abc6.c440.dbc7.
-            05f8.2ed4.da6b
-          0xc231.1fc5.fa31.d333.a409.bb4c.e95b.20d2.1cfc.e375.3871.7256.53a2.
+      :*  :-  n=0xc231.1fc5.fa31.d333.a409.bb4c.e95b.20d2.1cfc.e375.3871.7256.53a2.
             8425.af6d.e97d.f202.0b23.633f.458d.f12a.6362.7121.bff4.e23c.e578.
             7e07.7898.0578.61d1.ae60.ac2f
-          0x1.0001
-           0xd91.6719.eb10.3e24.768a.a386.8d2b.6bd0.a26b.dcec.9cc3.f86c.25ad.
+          e=0x1.0001
+          ~
+          d=0xd91.6719.eb10.3e24.768a.a386.8d2b.6bd0.a26b.dcec.9cc3.f86c.25ad.
             ce33.dfdc.fb1a.4d50.3e07.3d7f.f5fd.748e.43f8.df02.a60e.d730.5314.
             3e59.1e70.8df7.2c27.93e2.2b69
+          p=0xf7ef.37e6.7fa6.685a.c178.8b01.cf38.da20.ca4b.de5d.8b01.a71b.d28c.
+            65b4.09c3.6e4d
+          q=0xc882.5760.3fb8.a5e2.5e9d.db55.3a73.b647.a3ec.a6e9.abc6.c440.dbc7.
+            05f8.2ed4.da6b
       ==
     =/  inp1  0x302.0101
     =/  exp1
@@ -1507,7 +1523,7 @@
     ;:  weld
       %-  expect-eq  !>
         :-  jk
-        (pass:en:jwk [0x0 0x0 n.k e.k 0x0])
+        (pass:en:jwk k)
       %-  expect-eq  !>
         :-  'NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs'
         (thumbprint jk)
@@ -1586,13 +1602,15 @@
           'p0igcN_IoypGlUPQGe77Rw'
       ==
     =/  lod-order=(list @t)  ['iss' 'exp' 'http://example.com/is_root' ~]
+    ?>  ?=(^ sek.k)
     ;:  weld
       %-  expect-eq  !>
         [jk (ring:en:jwk k)]
       %-  expect-eq  !>
-        [n.k `@ux`(mul p.k q.k)]
+        [n.pub.k `@ux`(mul p.u.sek.k q.u.sek.k)]
       %-  expect-eq  !>
-        [d.k `@ux`(~(inv fo (elcm:rsa (dec p.k) (dec q.k))) e.k)]
+        :-  d.u.sek.k
+        `@ux`(~(inv fo (elcm:rsa (dec p.u.sek.k) (dec q.u.sek.k))) e.pub.k)
       %-  expect-eq  !>
         :-  hedt
         (en-base64url (crip (en-json-sort aor hed)))
