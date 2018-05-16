@@ -128,6 +128,7 @@
         } all;
 
         struct {                              //  jet dashboard
+          u3p(u3h_root) hot_p;                //  hot state (home road only)
           u3p(u3h_root) war_p;                //  warm state
           u3p(u3h_root) cod_p;                //  cold state
           u3p(u3h_root) han_p;                //  hank cache

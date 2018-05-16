@@ -1671,7 +1671,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
 
   /* Initialize the jet system.
   */
-  u3j_boot();
+  u3j_boot(nuu_o);
 
   /* Install or reactivate the kernel.
   */

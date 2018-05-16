@@ -258,6 +258,7 @@ static c3_w
 _cj_install(u3j_core* ray_u, c3_w jax_l, u3_noun pel, u3_noun lab, u3j_core* dev_u)
 {
   c3_w i_w;
+  c3_assert(u3R == &(u3H->rod_u));
 
   if ( dev_u ) {
     for ( i_w = 0; 0 != dev_u[i_w].cos_c; i_w++ ) {
@@ -272,14 +273,14 @@ _cj_install(u3j_core* ray_u, c3_w jax_l, u3_noun pel, u3_noun lab, u3j_core* dev
         c3_w j_w;
         for ( j_w = 0; 0 != kid_u->bas_u[j_w]; j_w++ ) {
           u3_noun key = _cj_hash(kid_u->bas_u[j_w]),
-                  hot = u3h_get(u3D.hot_p, key),
+                  hot = u3h_get(u3R->jed.hot_p, key),
                   old = ( u3_none == hot ) ? u3_none : u3k(u3h(hot)),
                   reg = _cj_gust(old, kid_u->axe_l, u3k(pel), u3k(loc)),
                   huc = u3t(u3t(loc)),
                   hap = _cj_warm_hump(jax_l, huc),
                   toh = u3nq(reg, jax_l, hap, u3k(bal));
 
-          u3h_put(u3D.hot_p, key, toh);
+          u3h_put(u3R->jed.hot_p, key, toh);
           u3z(key); u3z(hot);
         }
       }
@@ -532,7 +533,7 @@ _cj_spot_hot(u3_noun cor, u3_weak bas, u3_noun* loc)
   u3_noun bat = u3h(cor);
   u3_noun has = ( u3_none == bas ) ? _cj_bash(bat) : u3k(bas);
   u3_weak act = u3_none,
-          hot = u3h_get(u3D.hot_p, has);
+          hot = u3h_get(u3H->rod_u.jed.hot_p, has);
   if ( u3_none != hot ) {
     u3_noun reg, jax, hap, bal;
     c3_l    jax_l;
@@ -711,9 +712,10 @@ _cj_hot_mean(c3_l par_l, u3_noun nam)
 /* u3j_boot(): initialize jet system.
 */
 void
-u3j_boot(void)
+u3j_boot(c3_o nuu_o)
 {
   c3_w jax_l;
+  c3_assert(u3R == &(u3H->rod_u));
 
   u3D.len_l =_cj_count(0, u3D.dev_u);
   u3D.all_l = (2 * u3D.len_l) + 1024;     //  horrid heuristic
@@ -721,7 +723,10 @@ u3j_boot(void)
   u3D.ray_u = (u3j_core*) malloc(u3D.all_l * sizeof(u3j_core));
   memset(u3D.ray_u, 0, (u3D.all_l * sizeof(u3j_core)));
 
-  u3D.hot_p = u3h_new();
+  if ( c3n == nuu_o ) {
+    u3h_free(u3R->jed.hot_p);
+  }
+  u3R->jed.hot_p = u3h_new();
   jax_l = _cj_install(u3D.ray_u, 1, (c3_l) (long long) u3D.dev_u[0].par_u, u3_nul, u3D.dev_u);
   fprintf(stderr, "boot: installed %d jets\n", jax_l);
 }
@@ -1529,18 +1534,23 @@ u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
   sit_u->bat   = cor; // a lie, this isn't really the battery!
   sit_u->pog_p = _cj_prog(u3h(cor));
   if ( u3_none != (loc = sit_u->loc = _cj_spot(cor, sit_u->bas)) ) {
-    u3_noun pax = u3h(u3t(loc)),
+    u3_noun pax = _cj_loc_axe(loc),
             pay = u3qc_cap(pax),
             pam = u3qc_mas(pax);
-    if ( pam < 4 || 3 != pay || 3 != u3qc_cap(pam) ) {
-      // parent axis includes sample :(
+    if ( 3 != pay || 2 == pam || (3 != pam && 3 != u3qc_cap(pam)) ) {
+      fprintf(stderr, "u3j_gate_prep(): parent axis includes sample\r\n");
+      u3m_p("axis", pax);
+      u3_weak act = _cj_find_warm(loc);
+      c3_assert( u3_none != act );
       sit_u->jet_o = c3n;
+      sit_u->lab = u3k(u3h(u3t(u3t(act))));
+      u3z(act);
     }
     else {
       sit_u->jet_o = _cj_nail(loc, 2,
         &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u));
     }
-    u3z(pam);
+    u3z(pam); u3z(pax);
   }
   u3t_off(glu_o);
 }
@@ -1957,9 +1967,9 @@ void
 u3j_ream(void)
 {
   u3_noun rel = u3_nul;
+  c3_assert(u3R == &(u3H->rod_u));
   u3h_free(u3R->jed.war_p);
   u3R->jed.war_p = u3h_new();
-  c3_assert(u3R == &(u3H->rod_u));
   u3h_walk_with(u3R->jed.cod_p, _cj_warm_tap, &rel);
   _cj_ream(rel);
   u3z(rel);
@@ -2074,7 +2084,7 @@ u3j_mark(void)
   tot_w += u3h_mark(u3R->jed.han_p);
   u3h_walk_with(u3R->jed.han_p, _cj_mark_hank, &tot_w);
   if ( u3R == &(u3H->rod_u) ) {
-    tot_w += u3h_mark(u3D.hot_p);
+    tot_w += u3h_mark(u3R->jed.hot_p);
   }
   return tot_w;
 }
@@ -2102,7 +2112,7 @@ u3j_free(void)
   u3h_free(u3R->jed.cod_p);
   u3h_free(u3R->jed.han_p);
   if ( u3R == &(u3H->rod_u) ) {
-    u3h_free(u3D.hot_p);
+    u3h_free(u3R->jed.hot_p);
   }
 }
 

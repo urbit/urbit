@@ -79,7 +79,6 @@
         c3_l          len_l;            //  dynamic array length
         c3_l          all_l;            //  allocated length
         u3j_core*     ray_u;            //  dynamic array by axis
-        u3p(u3h_root) hot_p;            //  driver info by pasted hash
       } u3j_dash;
 
     /* u3j_fist: a single step in a fine check.
@@ -134,7 +133,7 @@
       /* u3j_boot(): initialize jet system.
       */
         void
-        u3j_boot(void);
+        u3j_boot(c3_o nuu_o);
 
       /* u3j_clear(): clear jet table to re-register.
       */

@@ -1737,7 +1737,7 @@ u3a_sweep(void)
                   box_u->use_w);
           u3a_print_memory("leak (minimum)", box_u->siz_w);
           // fprintf(stderr, "\r\n\r\n");
-          // u3m_p("leak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
+           u3m_p("leak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
           // fprintf(stderr, "\r\n\r\n");
           leq_w += box_u->siz_w;
         }
