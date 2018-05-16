@@ -37,7 +37,7 @@ _cj_count(u3j_core* par_u, u3j_core* dev_u)
   return 1 + len_l;
 }
 
-/* _cj_core_loc(): location noun from u3j_core. pel is TRANSFERRED.
+/* _cj_core_loc(): location noun from u3j_core.
  */
 static u3_noun
 _cj_core_loc(u3_noun pel, u3j_core* cop_u)
@@ -77,7 +77,7 @@ _cj_hash(c3_c* has_c)
   return mug;
 }
 
-/* _cj_bash(): battery hash.
+/* _cj_bash(): battery hash. RETAIN.
  */
 static u3_noun
 _cj_bash(u3_noun bat)
@@ -86,55 +86,66 @@ _cj_bash(u3_noun bat)
 }
 
 /* _cj_mine_par_old(): register hooks and parent location within existing
- *                     axis in ancestor list or u3_none. RETAIN.
+ *                     axis in ancestor list or u3_none.
  */
 static u3_weak
 _cj_mine_par_old(u3_noun lan, u3_noun axe, u3_noun pel, u3_noun loc)
 {
   u3_noun par;
+  u3_weak pro;
+
   if ( u3_nul == lan ) {
-    return u3_none;
+    pro = u3_none;
+    u3z(axe); u3z(pel); u3z(loc);
   }
   else if ( c3y == u3r_sing(axe, u3h(par = u3h(lan))) ) {
-    u3_noun lol = u3qdb_put(u3t(par), pel, loc),
-            rap = u3nc(u3k(axe), lol);
-    return u3nc(rap, u3k(u3t(lan)));
+    u3_noun lol = u3kdb_put(u3k(u3t(par)), pel, loc),
+            rap = u3nc(axe, lol);
+    pro = u3nc(rap, u3k(u3t(lan)));
   }
   else {
-    u3_weak nex = _cj_mine_par_old(u3t(lan), axe, pel, loc);
+    u3_weak nex = _cj_mine_par_old(u3k(u3t(lan)), axe, pel, loc);
     if ( u3_none == nex ) {
-      return u3_none;
+      pro = u3_none;
     }
     else {
-      return u3nc(u3k(par), nex);
+      pro = u3nc(u3k(par), nex);
     }
   }
+
+  u3z(lan);
+  return pro;
 }
 
-/* _cj_mine_par_new(): insert ancestor within lan at sorted index. RETAIN.
+/* _cj_mine_par_new(): insert ancestor within lan at sorted index.
  */
 static u3_noun
 _cj_mine_par_new(u3_noun lan, u3_noun axe, u3_noun pel, u3_noun loc)
 {
-  u3_noun par;
+  u3_weak pro;
+
   if ( (u3_nul == lan) || (c3y == u3qa_lth(axe, u3h(u3h(lan)))) ) {
-    par = u3nc(u3k(axe), u3qdb_put(u3_nul, pel, loc));
-    return u3nc(par, u3k(lan));
+    u3_noun par = u3nc(axe, u3kdb_put(u3_nul, pel, loc));
+    pro = u3nc(par, lan);
   }
   else {
-    return u3nc(u3k(u3h(lan)),
-                _cj_mine_par_new(u3t(lan), axe, pel, loc));
+    pro = u3nc(u3k(u3h(lan)),
+                _cj_mine_par_new(u3k(u3t(lan)), axe, pel, loc));
+    u3z(lan);
   }
+
+  return pro;
 }
 
-/* _cj_mine_par(): register a location as an ancestor in a list of ancestors.
- *                 RETAIN.
+/* _cj_mine_par(): register a location as an ancestor
+ *                 in a list of ancestors.
  */
 static u3_noun
 _cj_mine_par(u3_noun lan, u3_noun axe, u3_noun pel, u3_noun loc)
 {
-  u3_weak old = _cj_mine_par_old(lan, axe, pel, loc);
+  u3_weak old = _cj_mine_par_old(u3k(lan), u3k(axe), u3k(pel), u3k(loc));
   if ( u3_none != old ) {
+    u3z(lan); u3z(axe); u3z(pel); u3z(loc);
     return old;
   }
   else {
@@ -143,7 +154,8 @@ _cj_mine_par(u3_noun lan, u3_noun axe, u3_noun pel, u3_noun loc)
 }
 
 
-/* _cj_gust(): add location to registry. TRANSFER. */
+/* _cj_gust(): add location to registry.
+*/
 static u3_noun
 _cj_gust(u3_weak reg, u3_noun axe, u3_noun pel, u3_noun loc)
 {
@@ -153,13 +165,10 @@ _cj_gust(u3_weak reg, u3_noun axe, u3_noun pel, u3_noun loc)
   }
 
   ger = ( 0 == axe )
-      ? u3nc(u3qdb_put(u3h(reg), pel, loc), u3k(u3t(reg)))
-      : u3nc(u3k(u3h(reg)), _cj_mine_par(u3t(reg), axe, pel, loc));
+      ? u3nc(u3kdb_put(u3k(u3h(reg)), pel, loc), u3k(u3t(reg)))
+      : u3nc(u3k(u3h(reg)), _cj_mine_par(u3k(u3t(reg)), axe, pel, loc));
 
   u3z(reg);
-  u3z(pel);
-  u3z(loc);
-  u3z(axe);
   return ger;
 }
 
@@ -242,7 +251,6 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
   }
   return hap;
 }
-
 
 /* _cj_install(): install dashboard entries.
 */
@@ -439,7 +447,7 @@ _cj_find_warm(u3_noun loc)
 
 static u3_weak _cj_spot(u3_noun cor, u3_weak bas);
 
-/* _cj_reg_find(): locate core within registry.
+/* _cj_reg_find(): locate core within registry. RETAIN.
  */
 static u3_weak
 _cj_reg_find(u3_noun reg, u3_noun cor)
@@ -516,7 +524,7 @@ _cj_spot_cold(u3_noun cor, u3_noun* reg)
 
 /* _cj_spot_hot(): try to locate core by hot dashboard. if found,
  *                 the activation (warm state) is returned and the
- *                 location is produced at *loc.
+ *                 location is produced at *loc. RETAIN.
  */
 static u3_weak
 _cj_spot_hot(u3_noun cor, u3_weak bas, u3_noun* loc)
@@ -568,7 +576,7 @@ _cj_spot(u3_noun cor, u3_weak bas)
 }
 
 /* _cj_cast(): create a u3j_fink that can be used to efficiently verify
- *             that another core is located where this one is.
+ *             that another core is located where this one is. RETAIN.
  */
 static u3p(u3j_fink)
 _cj_cast(u3_noun cor, u3_noun loc)
@@ -606,7 +614,7 @@ _cj_cast(u3_noun cor, u3_noun loc)
   return u3of(u3j_fink, fin_u);
 }
 
-/* _cj_fine(): check that a core matches a u3j_fink
+/* _cj_fine(): check that a core matches a u3j_fink. RETAIN.
  */
 static c3_o
 _cj_fine(u3_noun cor, u3p(u3j_fink) fin_p)
