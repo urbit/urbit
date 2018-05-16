@@ -47,7 +47,7 @@
                     ; {(trip t)}
                   ==
                   ;div.h3.mt-0
-                    ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}"): {(trip tit.info.top.topi)}
+                    ;a(href "{(trip -.s.bem.gas)}/{(trip t)}"): {(trip tit.info.top.topi)}
                   ==
                   ;div.who.text-mono.text-600
                     ; {(trip (scot %p who.info.top.topi))}
@@ -64,14 +64,14 @@
                   ; {(trip t)}
                 ==
                 ;div.h2.mt-0
-                  ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}") 
+                  ;a(href "{(trip -.s.bem.gas)}/{(trip t)}") 
                   {(trip tit.info.top.topi)}
                   ==
                 ==
                 ;*  ?:  =(tit.info.top.topi '')
                       ;=
                         ;div.snippet
-                          ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}") 
+                          ;a(href "{(trip -.s.bem.gas)}/{(trip t)}") 
                           *{tal.snip.topi}
                           ==
                         ==
@@ -85,7 +85,7 @@
             ;li.notes.mb-8
               ;div.da.text-mono(urb-component "Elapsed", urb-timestring "{(esoo:colls mod.info.top.topi)}");
               ;div.h3.mt-0.text-mono.note-uuid
-                ;a(href "/~~/collections/{(trip -.s.bem.gas)}/{(trip t)}"): {(trip t)}
+                ;a(href "{(trip -.s.bem.gas)}/{(trip t)}"): {(trip t)}
               ==
               ;div.snippet
                 ;div.h3

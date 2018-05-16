@@ -13,7 +13,7 @@
 ;div.post
   ;div.topic-info.mb-4
     ;div.row.coll-title
-      ;a(href "/~~/collections/{(trip +<:s.bem.gas)}")
+      ;a(href "../{(trip +<:s.bem.gas)}")
         {(trip desc:(need config))} /
       ==
     ==
@@ -28,7 +28,7 @@
     ==
     ;*  ?:  (authed:colls gas)
           ;=
-            ;a(href "/~~/collections/{(trip +<:s.bem.gas)}/{(trip -:s.bem.gas)}.collections-edit")
+            ;a(href "../{(trip -:s.bem.gas)}.collections-edit")
               ;button#edit-btn.btn.btn-primary.mb-4
                 ; Edit →
               ==
@@ -56,7 +56,7 @@
                     ;div.da.text-mono.ml-12(urb-component "Elapsed", urb-timestring "{(esoo:colls mod.d)}");
                     ;div.com.ml-12.mb-6
                       ;div.who.text-mono
-                        ;a(href "")
+                        ;a(href "/~~/pages/nutalk/profile")
                           {(trip (scot %p who.d))}
                         ==
                       ==
