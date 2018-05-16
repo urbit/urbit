@@ -1525,9 +1525,10 @@ u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
     return;
   }
   sit_u->axe   = 2;
+  sit_u->bas   = _cj_bash(u3h(cor));
   sit_u->bat   = cor; // a lie, this isn't really the battery!
   sit_u->pog_p = _cj_prog(u3h(cor));
-  if ( u3_none != (loc = sit_u->loc = _cj_spot(cor, u3_none)) ) {
+  if ( u3_none != (loc = sit_u->loc = _cj_spot(cor, sit_u->bas)) ) {
     u3_noun pax = u3h(u3t(loc)),
             pay = u3qc_cap(pax),
             pam = u3qc_mas(pax);
@@ -1574,6 +1575,7 @@ void
 u3j_gate_lose(u3j_site* sit_u)
 {
   u3z(sit_u->bat);
+  u3z(sit_u->bas);
   if ( u3_none != sit_u->loc ) {
     u3z(sit_u->loc);
     u3z(sit_u->lab);
