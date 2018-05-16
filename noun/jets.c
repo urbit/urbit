@@ -272,15 +272,15 @@ _cj_install(u3j_core* ray_u, c3_w jax_l, u3_noun pel, u3_noun lab, u3j_core* dev
                   toh = u3nq(reg, jax_l, hap, u3k(bal));
 
           u3h_put(u3D.hot_p, key, toh);
-          u3z(key);
+          u3z(key); u3z(hot);
         }
       }
 
       jax_l = _cj_install(ray_u, ++jax_l, loc, bal, kid_u->dev_u);
     }
-    u3z(pel);
-    u3z(lab);
   }
+  u3z(pel);
+  u3z(lab);
   return jax_l;
 }
 
@@ -1981,6 +1981,9 @@ u3j_site_lose(u3j_site* sit_u)
   if ( u3_none != sit_u->bat ) {
     u3z(sit_u->bat);
   }
+  if ( u3_none != sit_u->bas ) {
+    u3z(sit_u->bas);
+  }
   if ( u3_none != sit_u->loc ) {
     u3z(sit_u->loc);
     u3z(sit_u->lab);
@@ -2023,6 +2026,9 @@ u3j_site_mark(u3j_site* sit_u)
   if ( u3_none != sit_u->bat ) {
     tot_w += u3a_mark_noun(sit_u->bat);
   }
+  if ( u3_none != sit_u->bas ) {
+    tot_w += u3a_mark_noun(sit_u->bas);
+  }
   if ( u3_none != sit_u->loc ) {
     tot_w += u3a_mark_noun(sit_u->loc);
     tot_w += u3a_mark_noun(sit_u->lab);
@@ -2057,6 +2063,9 @@ u3j_mark(void)
   tot_w += u3h_mark(u3R->jed.cod_p);
   tot_w += u3h_mark(u3R->jed.han_p);
   u3h_walk_with(u3R->jed.han_p, _cj_mark_hank, &tot_w);
+  if ( u3R == &(u3H->rod_u) ) {
+    tot_w += u3h_mark(u3D.hot_p);
+  }
   return tot_w;
 }
 
@@ -2082,5 +2091,8 @@ u3j_free(void)
   u3h_free(u3R->jed.war_p);
   u3h_free(u3R->jed.cod_p);
   u3h_free(u3R->jed.han_p);
+  if ( u3R == &(u3H->rod_u) ) {
+    u3h_free(u3D.hot_p);
+  }
 }
 
