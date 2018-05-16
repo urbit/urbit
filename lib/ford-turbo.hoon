@@ -55,10 +55,10 @@
               $=  result
               $%  ::  %complete: contains the result of the completed build
                   ::
-                  [%complete build-result]
+                  [%complete =build-result]
                   ::  %incomplete: couldn't finish build; contains error message
                   ::
-                  [%incomplete tang]
+                  [%incomplete =tang]
       ==  ==  ==
     --
   ::  +disc: a desk on a ship; can be used as a beak that varies with time
@@ -2995,31 +2995,180 @@
       ::  TODO: support source-path
       ::  TODO: support indirect hoons
       ::
-      =/  hoon-stack=(list hoon)
-        %+  turn  sources.scaffold
-        |=  =brick  ?>(?=(%direct -.brick) source.brick)
-      ::  combine hoons into one: =~(hoon1 hoon2 ...)
-      ::  TODO: why flop?
+      ::  blocks: accumulator for blocked sub-builds
       ::
-      =/  combined-hoon=hoon  [%tssg (flop hoon-stack)]
-      ::  compile :combined-hoon against the kernel subject
+      =|  blocks=(list ^build)
+      ::  error-message: accumulator for failed sub-builds
       ::
-      =/  compile=^build
-        [date.build [%ride combined-hoon [%reef disc.source-path]]]
+      =|  error-message=tang
       ::
-      =^  compiled  accessed-builds  (depend-on compile)
-      ::  compilation blocked; produce block on sub-build
+      |^  ::  imports: structure and library +cables, with %sur/%lib prefixes
+          ::
+          =/  imports=(list [prefix=?(%sur %lib) =cable])
+            %+  welp
+              (turn structures.scaffold |=(cable [%sur +<]))
+            (turn libraries.scaffold |=(cable [%lib +<]))
+          ::  path-builds: %path sub-builds to resolve import paths
+          ::
+          =/  path-builds  (gather-path-builds imports)
+          ::
+          =^  path-results  ..$  (resolve-builds path-builds)
+          ?^  blocks
+            [build [%blocks blocks ~] accessed-builds]
+          ::
+          ?^  error-message
+            (return-error error-message)
+          ::  tmi; remove type specializations
+          ::
+          =>  .(blocks *(list ^build), error-message *tang)
+          ::  core-builds: %core sub-builds to produce library vases
+          ::
+          =/  core-builds  (gather-core-builds path-results)
+          ::
+          =^  core-results  ..$  (resolve-builds core-builds)
+          ?^  blocks
+            [build [%blocks blocks ~] accessed-builds]
+          ::
+          ?^  error-message
+            (return-error error-message)
+          ::  reef-build: %reef build to produce standard library
+          ::
+          =/  reef-build=^build  [date.build [%reef disc.source-path]]
+          ::
+          =^  reef-result  accessed-builds  (depend-on reef-build)
+          ?~  reef-result
+            [build [%blocks [reef-build]~ ~] accessed-builds]
+          ::
+          ?.  ?=([~ %success %reef *] reef-result)
+            (wrap-error reef-result)
+          ::  subject: tuple of imports and standard library
+          ::
+          =/  subject=vase
+            (link-imports imports vase.u.reef-result core-results)
+          ::  combined-hoon: source hoons condensed into a single +hoon
+          ::
+          =/  combined-hoon=hoon  (stack-sources sources.scaffold)
+          ::  compile :combined-hoon against :subject
+          ::
+          =/  compile=^build
+            [date.build [%ride combined-hoon [%$ %noun subject]]]
+          ::
+          =^  compiled  accessed-builds  (depend-on compile)
+          ::  compilation blocked; produce block on sub-build
+          ::
+          ?~  compiled
+            [build [%blocks ~[compile] ~] accessed-builds]
+          ::  compilation failed; error out
+          ::
+          ?.  ?=([~ %success %ride *] compiled)
+            (wrap-error compiled)
+          ::  compilation succeeded: produce resulting +vase
+          ::
+          [build [%build-result %success %plan vase.u.compiled] accessed-builds]
+      ::  +gather-path-builds: produce %path builds to resolve import paths
       ::
-      ?~  compiled
-        [build [%blocks ~[compile] ~] accessed-builds]
-      ::  compilation failed; error out
+      ++  gather-path-builds
+        |=  imports=(list [prefix=?(%sur %lib) =cable])
+        ^-  (list ^build)
+        ::
+        %+  turn  imports
+        |=  [prefix=?(%sur %lib) =cable]
+        ^-  ^build
+        [date.build [%path disc.source-path prefix file-path.cable]]
+      ::  +resolve-builds: run a list of builds and collect results
       ::
-      ?:  ?=([~ %error *] compiled)
-        (wrap-error compiled)
-      ::  compilation succeeded: produce resulting :vase
+      ::    If a build blocks, put its +tang in :error-message and stop.
+      ::    All builds that block get put in :blocks. Results of
+      ::    successful builds are produced in :results.
       ::
-      =/  =vase  q:(result-to-cage u.compiled)
-      [build [%build-result %success %plan vase] accessed-builds]
+      ++  resolve-builds
+        =|  results=(list build-result)
+        |=  builds=(list ^build)
+        ^+  [results ..^$]
+        ::
+        ?~  builds
+          [results ..^$]
+        ::
+        =^  result  accessed-builds  (depend-on i.builds)
+        ?~  result
+          =.  blocks  [i.builds blocks]
+          $(builds t.builds)
+        ::
+        ?.  ?=(%success -.u.result)
+          =.  error-message  [[%leaf "%plan failed: "] message.u.result]
+          [results ..^$]
+        ::
+        =.  results  [u.result results]
+        $(builds t.builds)
+      ::  +gather-core-builds: produce %core builds from resolved paths
+      ::
+      ++  gather-core-builds
+        |=  path-results=(list build-result)
+        ^-  (list ^build)
+        %+  turn  path-results
+        |=  result=build-result
+        ^-  ^build
+        ::
+        ?>  ?=([%success %path *] result)
+        ::
+        [date.build [%core rail.result]]
+      ::  +link-imports: link libraries and structures with standard library
+      ::
+      ::    Prepends each library vase onto the standard library vase.
+      ::    Wraps a face around each library to prevent namespace leakage
+      ::    unless imported as *lib-name.
+      ::
+      ++  link-imports
+        |=  $:  imports=(list [?(%lib %sur) =cable])
+                reef=vase
+                core-results=(list build-result)
+            ==
+        ^-  vase
+        ::
+        =/  subject=vase  reef
+        ::
+        =/  core-vases=(list vase)
+          %+  turn  core-results
+          |=  result=build-result
+          ^-  vase
+          ?>  ?=([%success %core *] result)
+          vase.result
+        ::  link structures and libraries into a subject for compilation
+        ::
+        |-  ^+  subject
+        ?~  core-vases  subject
+        ?<  ?=(~ imports)
+        ::  cons this vase onto the head of the subject
+        ::
+        =.  subject
+          %-  slop  :_  subject
+          ::  check if the programmer named the library
+          ::
+          ?~  face.cable.i.imports
+            ::  no face assigned to this library, so use vase as-is
+            ::
+            i.core-vases
+          ::  use the library name as a face to prevent namespace leakage
+          ::
+          ^-  vase
+          [[%face face.cable.i.imports p.i.core-vases] q.i.core-vases]
+        ::
+        $(core-vases t.core-vases, imports t.imports)
+      ::  +stack-sources: combine bricks into one +hoon: =~(hoon1 hoon2 ...)
+      ::
+      ++  stack-sources
+        |=  sources=(list brick)
+        ^-  hoon
+        ::  TODO why flop?
+        ::
+        =-  [%tssg (flop -)]
+        %+  turn  sources
+        |=  =brick
+        ^-  hoon
+        ::
+        ?>  ?=(%direct -.brick)
+        source.brick
+      --
     ::
     ++  make-reef
       |=  =disc

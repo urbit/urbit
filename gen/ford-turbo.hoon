@@ -78,10 +78,12 @@
   test-cache-reclamation-live-rebuild
   test-cache-reclamation-live-promote
   test-five-oh-cache-reclamation
-::  test-reef
+::  test-reef  ::  very slow
   test-reef-short-circuit
   test-path
   test-plan-direct-hoon
+  test-core
+  test-core-linker
 ==
 ++  test-tear
   ~&  %test-tear
@@ -3943,12 +3945,14 @@
   ~&  %test-core
   ::
   =/  ford  *ford-gate
-  =/  hoon-vase=vase  !>((ream '`@tas`%constant'))
+  ::
+  =/  hoon-src  '`@tas`%constant'
+  =/  hoon-src-type=type  [%atom %$ ~]
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo-bar/lib]]
-      [%hoon hoon-vase]
+      [%hoon hoon-src-type hoon-src]
     ==
   ::
   =^  results1  ford
@@ -3966,14 +3970,93 @@
       ^=  moves
         :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete
                 %success  %pin  ~1234.5.6
-                %success  %core  hoon-vase
+                %success  %core  [%atom %tas ~]  %constant
     ==  ==  ==
   ::
   ;:  weld
     results1
     (expect-ford-empty ford ~nul)
   ==
-
+::
+++  test-core-linker
+  ~&  %test-core-linker
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data/sur]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |%
+      +=  data-type
+        [msg=tape count=@ud]
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data/lib]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /-  data
+      |%
+      ++  do
+        |=  [a=data-type:data b=data-type:data]
+        ^-  data-type:data
+        [(weld msg.a msg.b) (add count.a count.b)]
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /-  *data
+      /+  combiner=data
+      (do:combiner `data-type`["one" 1] `data-type`["two" 2])
+      '''
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%core source-path=`rail:ford-gate`[[~nul %home] /hoon/program/gen]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %core *] build-result.pin-result)
+        ::
+        =/  =vase  vase.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  ["onetwo" 3]
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>(["onetwo" 3]))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
 ::
 ::  |utilities: helper arms
 ::
@@ -3989,7 +4072,7 @@
   ^-  tang
   ::
   ?>  ?=([* %give %made @da %complete %success ^ *] move)
-  =/  result  result.p.card.move
+  =/  result  build-result.result.p.card.move
   ?>  ?=([%success %scry %noun type-a=* @tas *] head.result)
   ?>  ?=([%success ^ *] tail.result)
   ?>  ?=([%success %ride type-title-a=* %post-a] head.tail.result)
