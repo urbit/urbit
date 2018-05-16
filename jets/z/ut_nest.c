@@ -89,7 +89,7 @@
     } else {
       u3_noun n_dom, l_dom, r_dom;
       u3_noun n_vim, l_vim, r_vim;
-      u3_noun pn_vim, pqn_vim, qqn_vim, pn_dom, pqn_dom, qqn_dom;
+      u3_noun pn_vim, qn_vim, pn_dom, qn_dom;
 
       u3x_trel(dom, &n_dom, &l_dom, &r_dom);
       u3x_trel(vim, &n_vim, &l_vim, &r_vim);
@@ -99,13 +99,13 @@
       {
         return c3n;
       }
-      u3x_trel(n_dom, &pn_dom, &pqn_dom, &qqn_dom);
-      u3x_trel(n_vim, &pn_vim, &pqn_vim, &qqn_vim);
+      u3x_cell(n_dom, &pn_dom, &qn_dom);
+      u3x_cell(n_vim, &pn_vim, &qn_vim);
 
       if ( c3n == u3r_sing(pn_dom, pn_vim) ) {
         return c3n;
       } else {
-        return _nest_deep(van, sut, tel, ref, qqn_dom, qqn_vim, gil);
+        return _nest_deep(van, sut, tel, ref, qn_dom, qn_vim, gil);
       }
     }
   }
