@@ -1,4 +1,5 @@
 ::  /app/collection/hoon
+::
 /-  hall, *collections
 /+  hall, rekey, colls
 /=  cols   /:  /===/web/collections  /collections/
@@ -300,7 +301,10 @@
     ::  update config in hall.
     =/  nam  (circle-for col)
     %-  ta-hall-actions  :~
+::       ?:  =(desc.new desc.u.old)  ~
       [%depict nam desc.new]
+    ::
+::       ?:  =(visi.new visi.u.old)  ~
       [%public visi.new our.bol nam]
     ::
 ::       (hall-permit nam & (~(dif in mems.new) mems.u.old))
@@ -345,13 +349,12 @@
   ++  ta-hall-configure
     |=  [nam=term cof=config]  ^+  +>
     ^+  +>
-    %-  ta-hall-actions
-      %+  welp
-        (hall-invite nam mems.cof)
-      :~  [%create nam desc.cof ?:(publ.cof %journal %village)]
-          ?.(visi.cof ~ [%public & our.bol nam])
-          (hall-permit nam & mems.cof)
-      ==
+    %-  ta-hall-actions  :~
+      [%create nam desc.cof ?:(publ.cof %journal %village)]
+      ?.(visi.cof ~ [%public & our.bol nam])
+      [%source %inbox & (sy `source:hall`[our.bol nam]~ ~)]
+      (hall-permit nam & mems.cof)
+    ==
   ::
   ::
   ++  ta-hall-notify
@@ -384,16 +387,6 @@
   ?~  sis  ~
   [%permit nam inv sis]
 ::
-::  hall no longer automatically invites on permit
-::  send invites manuall
-++  hall-invite
-  |=  [nam=term sis=(set ship)]
-  ^-  (list action:hall)
-  %+  turn
-    ~(tap in sis)
-  |=  a/ship
-  :: TODO
-  [%phrase [[a %inbox] ~ ~] [[%inv & [our.bol nam]] ~]]
 ::
 ++  circle-for
   |=(col/time (pack %collection (dray /[%da] col)))
