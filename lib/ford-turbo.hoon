@@ -3050,7 +3050,7 @@
           =>  .(blocks *(list ^build), error-message *tang)
           ::  iterate over each crane
           ::
-          =^  crane-result  ..$  (run-cranes subject cranes.scaffold)
+          =^  crane-result  ..$  (compose-cranes subject cranes.scaffold)
           ?:  ?=(%error -.crane-result)
             (return-error message.crane-result)
           ?:  ?=(%block -.crane-result)
@@ -3076,51 +3076,66 @@
           ::  compilation succeeded: produce resulting +vase
           ::
           [build [%build-result %success %plan vase.u.compiled] accessed-builds]
+      ::  +compose-cranes: runs each crane and composes the results
       ::
+      ::    For each crane in :cranes, runs it and composes its result into a
+      ::    new subject, which is returned if there are no errors or blocks.
       ::
-      ++  run-cranes
+      ++  compose-cranes
         |=  [subject=vase cranes=(list crane)]
         ^-  $:  $%  [%subject subject=vase]
                     [%block builds=(list ^build)]
                     [%error message=tang]
                 ==
-                _..^$
+                _..compose-cranes
             ==
         ::
         ?~  cranes
-          [[%subject subject] ..^$]
+          [[%subject subject] ..compose-cranes]
         ::
-        =^  result  ..^$  (lift-crane subject i.cranes)
-        ?+    -.result  [result ..^$]
+        =^  result  ..compose-cranes  (run-crane subject i.cranes)
+        ?+    -.result  [result ..compose-cranes]
         ::
             %subject
           $(cranes t.cranes, subject (slop subject.result subject))
         ==
+      ::  +run-crane: runs an individual :crane against :subject
       ::
-      ::
-      ++  lift-crane
+      ++  run-crane
         |=  [subject=vase =crane]
-        ^-  run-cranes
+        ^-  compose-cranes
         ::
-        ?+    -.crane  !!
-            %fssg
+        |^  ?+  -.crane  !!
+              %fssg  (run-fssg +.crane)
+              %fsts  (run-fsts +.crane)
+            ==
+        ::  +run-fssg: runs the `/~` rune
+        ::
+        ++  run-fssg
+          |=  =hoon
+          ^-  compose-cranes
+          ::
           =/  ride-build=^build
-            [date.build [%ride hoon.crane [%$ %noun subject]]]
+            [date.build [%ride hoon [%$ %noun subject]]]
           =^  ride-result  accessed-builds  (depend-on ride-build)
           ?~  ride-result
-            [[%block [ride-build]~] ..^$]
+            [[%block [ride-build]~] ..run-crane]
           ?:  ?=([~ %error *] ride-result)
-            [[%error [leaf+"/~ failed: " message.u.ride-result]] ..^$]
+            [[%error [leaf+"/~ failed: " message.u.ride-result]] ..run-crane]
           ?>  ?=([~ %success %ride *] ride-result)
-          [[%subject vase.u.ride-result] ..^$]
+          [[%subject vase.u.ride-result] ..run-crane]
+        ::  +run-fsts: runs the `/=` rune
         ::
-            %fsts
-          =^  child  ..^$  (lift-crane subject crane.crane)
+        ++  run-fsts
+          |=  [face=term sub-crane=^crane]
+          ^-  compose-cranes
+          ::
+          =^  child  ..run-crane  (run-crane subject sub-crane)
           ?.  ?=([%subject *] child)
-            [child ..^$]
-          :_  ..^$
-          [%subject [[%face [~ face.crane] p.subject.child] q.subject.child]]
-        ==
+            [child ..run-crane]
+          :_  ..run-crane
+          [%subject [[%face [~ face] p.subject.child] q.subject.child]]
+        --
       ::  +gather-path-builds: produce %path builds to resolve import paths
       ::
       ++  gather-path-builds
