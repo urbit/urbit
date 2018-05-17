@@ -802,6 +802,8 @@
 ::
 ++  order
   ^+  this
+  ?~  reg.act
+    this          :: XX pending registration assumed
   %-  emil
   %+  turn
     (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %0 *] a)))
@@ -901,20 +903,6 @@
   |=  [i=@ud der=purl]
   ^-  card
   (request /acme/por/(scot %ud i) der ~)
-::
-++  poke-noun
-  |=  a=*
-  ^-  (quip move _this)
-  ?+  a  ~&  +<+.this
-         [~ this]
-    %init   abet:init
-    %order  abet:order
-    %auth   abet:authorize
-    %trial  abet:challenge
-    %final  abet:finalize
-    %poll   abet:poll-order
-    %test   test
-  ==
 ::
 ++  sigh-httr
   |=  [wir=wire rep=httr:eyre]
@@ -1071,6 +1059,24 @@
     ==
   ==
 ::
+++  poke-noun
+  |=  a=*
+  ^-  (quip move _this)
+  ?+  a  ~&  +<+.this
+         [~ this]
+    %init   abet:init
+    %order  abet:order
+    %auth   abet:authorize
+    %trial  abet:challenge
+    %final  abet:finalize
+    %poll   abet:poll-order
+    %our    abet:(add-order /org/urbit/(crip +:(scow %p our.bow)) ~)
+    %test   test
+  ==
+::
+++  poke-path
+  |=(a=path (add-order a ~))
+::
 :: ++  prep  _[~ this]
 ++  prep
   |=  old=(unit acme)
@@ -1088,12 +1094,16 @@
   $(i +(i), eny.bow +(eny.bow))
 ::
 ++  init
-  =/  key=key:rsa  rekey
-  =/  dom=turf  /org/urbit/(crip +:(scow %p our.bow))
-  =/  dor=^order  [%0 [dom ~]]
   =/  url
-    (de-purl:html 'https://acme-staging-v02.api.letsencrypt.org/directory')
-  directory(bas (need url), act `acct`[key ~], der [[0 dor] ~ ~])
+    'https://acme-staging-v02.api.letsencrypt.org/directory'
+  directory(bas (need (de-purl:html url)), act [rekey ~])
+  :: XX wait for DNS binding confirmation?
+  :: (add-order /org/urbit/(crip +:(scow %p our.bow)) ~)
+::
+++  add-order
+  |=  dom=(list turf)
+  ^+  this
+  order(der (~(put by der) ~(wyt by der) [%0 dom]))
 ::
 ++  test
   =,  tester:tester
