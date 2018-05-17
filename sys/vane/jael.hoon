@@ -936,7 +936,9 @@
     ::    {$init p/code q/arms}
     ::
         $init
-      %+  cure  our.tac
+      =^  mos  eth.lex
+        abet:(~(init et /init now.sys eth.lex) our.tac)
+      %+  cure(moz (weld moz (flop mos)))  our.tac
       abet:(make:(burb our.tac) our.tac now.sys eny.sys p.tac q.tac)
     ::
     ::  set ethereum source
@@ -2085,10 +2087,11 @@
   ::
   ::
   ++  init
-    ::TODO  our or source as sample
-    ::TODO  set polling time in config
-    =+  bos=(sein:title ~zod)
-    ?.  =(~zod bos)
+    |=  our=ship
+    ::TODO  ship or node as sample?
+    ::TODO  set default polling time in config
+    =+  bos=(sein:title our)
+    ?.  =(our bos)
       ::TODO  set bos as source in config
       (put-move (subscribe-to bos))
     ::TODO  set localhost as source in config
@@ -2127,6 +2130,8 @@
     ~&  [%accept (lent dis)]
     (make-changes cause dis)
   ::
+  ::
+  ++  wake  poll-filter
   ::
   ++  sigh
     |=  [mar=mark res=vase]
@@ -2167,7 +2172,7 @@
         +>
       ~&  %filter-timed-out--recreating
       new-filter
-    =.  +>  wait-poll
+    =.  +>  wait-poll  ::TODO  don't if there's already a timer?
     ?>  ?=(%a -.res.rep)
     =*  changes  p.res.rep
     ~&  [%filter-changes (lent changes)]
@@ -2459,6 +2464,10 @@
       [%e %sigh *]
     ~&  [%got-sigh p.p.req]
     =^  moz  eth.lex  abet:(~(sigh et tea now eth.lex) p.req)
+    [moz ..^$]
+  ::
+      [%b %wake ~]
+    =^  moz  eth.lex  abet:~(wake et tea now eth.lex)
     [moz ..^$]
   ==
 --
