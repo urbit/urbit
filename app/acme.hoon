@@ -227,89 +227,6 @@
     =/  d=@ux  (~(inv fo (elcm (dec p) (dec q))) e)
     [[n e] `[d p q]]
   ::
-  ++  der                                             ::  pkcs1
-    |%
-    ++  en
-      |%
-      ++  pass  !!
-      ++  ring
-        |=  k=key
-        ^-  @ux
-        ~|  %rsa-need-ring
-        ?>  ?=(^ sek.k)
-        =;  pec
-          (rep 3 ~(ren asn1 pec))
-        :~  %seq
-            [%int 0]
-            [%int n.pub.k]
-            [%int e.pub.k]
-            [%int d.u.sek.k]
-            [%int p.u.sek.k]
-            [%int q.u.sek.k]
-            [%int (mod d.u.sek.k (dec p.u.sek.k))]
-            [%int (mod d.u.sek.k (dec q.u.sek.k))]
-            [%int (~(inv fo p.u.sek.k) q.u.sek.k)]
-        ==
-      --
-    ++  de
-      |%
-      ++  pass  !!
-      ++  ring
-        |=  a=@
-        ^-  (unit key)
-        =/  b  (rush a decode:asn1)
-        ?~  b  ~
-        ?.  ?=([%seq *] u.b)  ~
-        ?.  ?=  $:  [%int %0]
-                    [%int *]
-                    [%int *]
-                    [%int *]
-                    [%int *]
-                    [%int *]
-                    *
-                ==
-            p.u.b
-          ~
-        =*  n  p.i.t.p.u.b
-        =*  e  p.i.t.t.p.u.b
-        =*  d  p.i.t.t.t.p.u.b
-        =*  p  p.i.t.t.t.t.p.u.b
-        =*  q  p.i.t.t.t.t.t.p.u.b
-        `[[n e] `[d p q]]
-      --
-    --
-  ::
-  ++  pem                                             ::  pkcs1
-    |%
-    ++  en
-      |%
-      ++  pass  !!
-      ++  ring
-        |=  k=key
-        ^-  wain
-        :-  '-----BEGIN RSA PRIVATE KEY-----'
-        =/  a  (en:base64 (ring:en:der k))
-        |-  ^-  wain
-        ?~  a
-          ['-----END RSA PRIVATE KEY-----' ~]
-        [(end 3 64 a) $(a (rsh 3 64 a))]
-      --
-    ++  de
-      |%
-      ++  pass  !!
-      ++  ring
-        |=  mep=wain
-        ^-  (unit key)
-        =/  a  (sub (lent mep) 2)
-        ?~  mep  ~
-        ?.  =('-----BEGIN RSA PRIVATE KEY-----' i.mep)  ~
-        ?.  =('-----END RSA PRIVATE KEY-----' (snag a t.mep))  ~
-        =/  b  (de:base64 (rap 3 (scag a t.mep)))
-        ?~  b  ~
-        (ring:de:der u.b)
-      --
-    --
-  ::
   ++  en
     |=  [m=@ k=key]
     ~|  %rsa-len
@@ -350,33 +267,99 @@
     =((emsa m) (en:rsa s k))
   --
 ::
-++  pkcs8                          :: XX other key types?
+++  pem                                                 ::  rfc7468
   |%
+  ++  en
+    |=  [lab=@t der=@ux]
+    ^-  wain
+    :: XX validate label?
+    :-  (rap 3 ['-----BEGIN ' lab '-----' ~])
+    =/  a  (en:base64 der)
+    |-  ^-  wain
+    ?~  a
+      [(rap 3 ['-----END ' lab '-----' ~]) ~]
+    [(end 3 64 a) $(a (rsh 3 64 a))]
+  ::
+  ++  de
+    |=  [lab=@t mep=wain]
+    ^-  (unit @ux)
+    =/  a  (sub (lent mep) 2)
+    ?~  mep  ~
+    :: XX validate label?
+    ?.  =((rap 3 ['-----BEGIN ' lab '-----' ~]) i.mep)  ~
+    ?.  =((rap 3 ['-----END ' lab '-----' ~]) (snag a t.mep))  ~
+    (de:base64 (rap 3 (scag a t.mep)))
+  --
+::
+++  pkcs1                                               ::  rfc3447
+  |%
+  ++  spec
+    |%
+    ++  pass
+      |=  k=key:rsa
+      ^-  spec:asn1
+      [%seq [%int n.pub.k] [%int e.pub.k] ~]
+    ::
+    ++  ring
+      |=  k=key:rsa
+      ^-  spec:asn1
+      ~|  %rsa-need-ring
+      ?>  ?=(^ sek.k)
+      :~  %seq
+          [%int 0]
+          [%int n.pub.k]
+          [%int e.pub.k]
+          [%int d.u.sek.k]
+          [%int p.u.sek.k]
+          [%int q.u.sek.k]
+          [%int (mod d.u.sek.k (dec p.u.sek.k))]
+          [%int (mod d.u.sek.k (dec q.u.sek.k))]
+          [%int (~(inv fo p.u.sek.k) q.u.sek.k)]
+      ==
+    --
+  ::
   ++  der
     |%
     ++  en
       |%
-      ++  pass
-        |=  k=key:rsa
-        ^-  @ux
-        =;  pec
-          (rep 3 ~(ren asn1 pec))
-        :~  %seq
-          [%seq [[%obj rsa:obj:asn1] [%nul ~] ~]]
-          :-  %bit
-          =;  pec
-            (rep 3 ~(ren asn1 pec))
-          [%seq [[%int n.pub.k] [%int e.pub.k] ~]]
-        ==
-      ::
-      ++  ring  !!
+      ++  pass  |=(k=key:rsa `@ux`(rep 3 ~(ren asn1 (pass:spec k))))
+      ++  ring  |=(k=key:rsa `@ux`(rep 3 ~(ren asn1 (ring:spec k))))
       --
-    ::
     ++  de
       |%
-      ++  pass  !!
+      ++  pass
+        |=  a=@
+        ^-  (unit key:rsa)
+        =/  b  (rush a decode:asn1)
+        ?~  b  ~
+        ?.  ?=([%seq [%int *] [%int *] ~] u.b)
+          ~
+        =*  n  p.i.p.u.b
+        =*  e  p.i.t.p.u.b
+        `[[n e] ~]
       ::
-      ++  ring  !!
+      ++  ring
+        |=  a=@
+        ^-  (unit key:rsa)
+        =/  b  (rush a decode:asn1)
+        ?~  b  ~
+        ?.  ?=([%seq *] u.b)  ~
+        ?.  ?=  $:  [%int %0]
+                    [%int *]
+                    [%int *]
+                    [%int *]
+                    [%int *]
+                    [%int *]
+                    *
+                ==
+            p.u.b
+          ~
+        =*  n  p.i.t.p.u.b
+        =*  e  p.i.t.t.p.u.b
+        =*  d  p.i.t.t.t.p.u.b
+        =*  p  p.i.t.t.t.t.p.u.b
+        =*  q  p.i.t.t.t.t.t.p.u.b
+        `[[n e] `[d p q]]
       --
     --
   ::
@@ -384,92 +367,128 @@
     |%
     ++  en
       |%
-      ++  pass
-        |=  k=key:rsa
-        ^-  wain
-        :-  '-----BEGIN PUBLIC KEY-----'
-        =/  a  (en:base64 (pass:en:der k))
-        |-  ^-  wain
-        ?~  a
-          ['-----END PUBLIC KEY-----' ~]
-        [(end 3 64 a) $(a (rsh 3 64 a))]
-      ::
-      ++  ring  !!
+      ++  pass  |=(k=key:rsa (en:^pem 'RSA PUBLIC KEY' (pass:en:der k)))
+      ++  ring  |=(k=key:rsa (en:^pem 'RSA PRIVATE KEY' (ring:en:der k)))
       --
-    ::
     ++  de
       |%
-      ++  pass  !!
-      ::
-      ++  ring  !!
+      ++  pass  |=(mep=wain (biff (de:^pem 'RSA PUBLIC KEY' mep) pass:de:der))
+      ++  ring  |=(mep=wain (biff (de:^pem 'RSA PRIVATE KEY' mep) ring:de:der))
       --
     --
   --
 ::
-++  pkcs10                         :: XX other key types?
-  |%
+++  pkcs8                                               ::  rfc5208
+  |%                                         :: XX handle other key types?
+  ++  spec
+    |%
+    ++  pass
+      |=  k=key:rsa
+      ^-  spec:asn1
+      :~  %seq
+          [%seq [[%obj rsa:obj:asn1] [%nul ~] ~]]
+          [%bit (pass:en:der:pkcs1 k)]
+      ==
+    ::
+    ++  ring  !!
+    --
+  ::
   ++  der
     |%
     ++  en
-      |=  [k=key:rsa hot=(list (list @t))]
-      ^-  @ux
-      =;  pec
-        (rep 3 ~(ren asn1 pec))
-      =/  cer=spec:asn1
-        :~  %seq
-          [%int 0]
-          [%seq ~]
-          :: XX deduplicate with +pass:en:der:pkcs8
-          :~  %seq
-            [%seq [[%obj rsa:obj:asn1] [%nul ~] ~]]
-            :-  %bit
-            =;  pec
-              (rep 3 ~(ren asn1 pec))
-            [%seq [[%int n.pub.k] [%int e.pub.k] ~]]
-          ==
-          :+  %con  [| 0]
-          =-  ~(ren asn1 -)
-          :~  %seq
-            [%obj csr-ext:obj:asn1]
-            :~  %set
-              :~  %seq
-                :~  %seq
-                  [%obj sub-alt:obj:asn1]
-                  :-  %oct
-                  =;  pec
-                    (rep 3 ~(ren asn1 pec))
-                  :-  %seq
-                  %+  turn  hot
-                  |=(h=(list @t) [%con [& 2] (rip 3 (en-host h))])
-                ==
-              ==
-            ==
-          ==
-        ==
-      ::
-      ^-  spec:asn1
-      :~  %seq
-        cer
-        [%seq [[%obj rsa-sha-256:obj:asn1] [%nul ~] ~]]
-        [%bit (swp 3 (~(sign rs256 k) (rep 3 ~(ren asn1 cer))))]
-      ==
+      |%
+      ++  pass  |=(k=key:rsa `@ux`(rep 3 ~(ren asn1 (pass:spec k))))
+      ++  ring  !! ::|=(k=key:rsa `@ux`(rep 3 ~(ren asn1 (ring:spec k))))
+      --
     ::
-    ++  de  !!
+    ++  de
+      |%
+      ++  pass
+        |=  a=@
+        ^-  (unit key:rsa)
+        =/  b  (rush a decode:asn1)
+        ?~  b  ~
+        ?.  ?=([%seq [%seq *] [%bit *] ~] u.b)
+          ~
+        ?.  ?&  ?=([[%obj *] [%nul ~] ~] p.i.p.u.b)
+                =(rsa:obj:asn1 p.i.p.i.p.u.b)
+            ==
+          ~
+        (pass:de:der:pkcs1 p.i.t.p.u.b)
+      ::
+      ++  ring  !!
+      --
     --
   ::
   ++  pem
     |%
     ++  en
-      |=  [k=key:rsa hot=(list (list @t))]
-      ^-  wain
-      :-  '-----BEGIN CERTIFICATE REQUEST-----'
-      =/  a  (en:base64 (en:der k hot))
-      |-  ^-  wain
-      ?~  a
-        ['-----END CERTIFICATE REQUEST-----' ~]
-      [(end 3 64 a) $(a (rsh 3 64 a))]
+      |%
+      ++  pass  |=(k=key:rsa (en:^pem 'PUBLIC KEY' (pass:en:der k)))
+      ++  ring  !! ::|=(k=key:rsa (en:^pem 'PUBLIC KEY' (ring:en:der k)))
+      --
     ::
+    ++  de
+      |%
+      ++  pass  |=(mep=wain (biff (de:^pem 'PUBLIC KEY' mep) pass:de:der))
+      ++  ring  !! ::|=(mep=wain (biff (de:^pem 'PRIVATE KEY' mep) ring:de:der))
+      --
+    --
+  --
+::
+++  pkcs10                                              :: rfc2986 
+  =>  |%
+      +=  csr  [key=key:rsa hot=(list (list @t))]    :: XX other key types?
+      --
+  |%
+  ++  spec
+    |%
+    ++  host
+      |=  hot=(list (list @t))
+      ^-  spec:asn1
+      :-  %seq
+      %+  turn  hot
+      |=(h=(list @t) [%con [& 2] (rip 3 (en-host h))])
+    ::
+    ++  cert  :: XX rename
+      |=  csr
+      ^-  spec:asn1
+      :~  %seq
+          [%int 0]
+          [%seq ~]
+          (pass:spec:pkcs8 key)
+          :+  %con  [| 0]
+          =-  ~(ren asn1 -)
+          :~  %seq
+              [%obj csr-ext:obj:asn1]
+              :~  %set
+                  :~  %seq
+                      :~  %seq
+                          [%obj sub-alt:obj:asn1]
+                          [%oct (rep 3 ~(ren asn1 (host hot)))]
+      ==  ==  ==  ==  ==
+    ::
+    ++  sign
+      |=  csr
+      ^-  spec:asn1
+      =/  cer  (cert key hot)
+      :~  %seq
+          cer
+          [%seq [[%obj rsa-sha-256:obj:asn1] [%nul ~] ~]]
+          [%bit (swp 3 (~(sign rs256 key) (rep 3 ~(ren asn1 cer))))]
+      ==
+    --
+  ::
+  ++  der
+    |%
+    ++  en  |=(a=csr `@ux`(rep 3 ~(ren asn1 (sign:spec a))))
     ++  de  !!
+    --
+  ::
+  ++  pem
+    |%
+    ++  en  |=(a=csr (en:^pem 'CERTIFICATE REQUEST' (en:der a)))
+    ++  de  !! :: |=(mep=wain (biff (de:^pem 'CERTIFICATE REQUEST' mep) de:der))
     --
   --
 ::
@@ -1301,19 +1320,35 @@
           'zqVTrhnY+TemcScSx5O6f32aDfOUWWCzmw/gzvJxUYlJqjqd7dlT'
           '-----END RSA PRIVATE KEY-----'
       ==
+    =/  kpem3-pub=wain
+      :~  '-----BEGIN RSA PUBLIC KEY-----'
+          'MIIBCgKCAQEA2jJp8dgAKy5cSzDE4D+aUbKZsQoMhIWI2IFlE+AO0GCBMig5qxx2'
+          'IIAPVIcSi5fjOLtTHnuIZYw+s06qeb8QIKRvkZaIwnA3Lz5UUrxgh96sezdXCCSG'
+          '7FndIFskcT+zG00JL+fPRdlPjt1Vg2b3kneo5aAKMIPyOTzcY590UTc+luQ3HhgS'
+          'iNF3n5YQh24d3kS2YOUoSXQ13+YRljxNfBgXbV+C7/gO8mFxpkafhmgkIGNeWlqT'
+          '9oAIRa+gOx13uPAg+Jb/8lPV9bGaFqGvxvBMp3xUASlzYHiDntcB5MiOPRW6BoIG'
+          'I5qDFSYRZBky9crE7WAYgqtPtg21zvxwFwIDAQAB'
+          '-----END RSA PUBLIC KEY-----'
+      ==
     =/  k3=key:rsa
-      (need (ring:de:pem:rsa kpem3))
+      (need (ring:de:pem:pkcs1 kpem3))
+    =/  k3-pub=key:rsa
+      (need (pass:de:pem:pkcs1 kpem3-pub))
     ;:  weld
       %-  expect-eq  !>
-        [kpem1 (ring:en:pem:rsa k1)]
+        [kpem1 (ring:en:pem:pkcs1 k1)]
       %-  expect-eq  !>
-        [k1 (need (ring:de:pem:rsa kpem1))]
+        [k1 (need (ring:de:pem:pkcs1 kpem1))]
       %-  expect-eq  !>
-        [kpem2 (ring:en:pem:rsa k2)]
+        [kpem2 (ring:en:pem:pkcs1 k2)]
       %-  expect-eq  !>
-        [k2 (need (ring:de:pem:rsa kpem2))]
+        [k2 (need (ring:de:pem:pkcs1 kpem2))]
       %-  expect-eq  !>
-        [kpem3 (ring:en:pem:rsa k3)]
+        [kpem3 (ring:en:pem:pkcs1 k3)]
+      %-  expect-eq  !>
+        [kpem3-pub (pass:en:pem:pkcs1 k3)]
+      %-  expect-eq  !>
+        [k3-pub [pub.k3 ~]]
     ==
   ::
   ++  test-rsa-pkcs8
@@ -1358,7 +1393,7 @@
           '-----END PUBLIC KEY-----'
       ==
     =/  k=key:rsa
-      (need (ring:de:pem:rsa kpem))
+      (need (ring:de:pem:pkcs1 kpem))
     %-  expect-eq  !>
       [pub (pass:en:pem:pkcs8 k)]
   ::
@@ -1473,7 +1508,7 @@
           '-----END RSA PRIVATE KEY-----'
       ==
     =/  k2=key:rsa
-      (need (ring:de:pem:rsa kpem2))
+      (need (ring:de:pem:pkcs1 kpem2))
     =/  inp2=cord  'hello\0a'
     =/  exp2=@ux
       0x2920.bba3.cb38.bca6.3768.6345.c95e.0717.81bf.6c61.4006.6070.a7b5.e609.
@@ -1663,7 +1698,7 @@
           '-----END RSA PRIVATE KEY-----'
       ==
     =/  k=key:rsa
-      (need (ring:de:pem:rsa kpem))
+      (need (ring:de:pem:pkcs1 kpem))
     ::  generated with openssl, certbot style
     =/  csr-pem=wain
       :~  '-----BEGIN CERTIFICATE REQUEST-----'
