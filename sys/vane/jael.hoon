@@ -1982,7 +1982,7 @@
   ++  wrap-note
     |=  [wir=wire not=note:able]
     ^-  move
-    [*duct %pass wir not]
+    [[/ ~ ~] %pass wir not]
   ::
   ++  rpc-hiss
     |=  [wir=wire jon=json]
