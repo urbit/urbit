@@ -156,45 +156,37 @@
       %+  cook  |*(a=* `spec:asn1`a)
       :: ^-  $-(nail (like spec:asn1))
       ;~  pose
-        %+  stag  %int
-        %+  bass  256
-        %+  sear
-          |=  a=(list @)
-          ^-  (unit (list @))
-          ?~  a  ~
-          ?:  ?=([@ ~] a)  `a
-          ?.  =(0 i.a)  `a
-          ?.((gth i.t.a 127) ~ `t.a)
-        ;~(pfix (just `@`2) till)
-        ::
-        (stag %bit (boss 256 (cook tail ;~(pfix (just `@`3) till)))) :: XX test
-        (stag %oct (boss 256 ;~(pfix (just `@`4) till)))
-        (stag %nul (cold ~ ;~(plug (just `@`5) (just `@`0))))
-        (stag %obj (boss 256 ;~(pfix (just `@`6) till)))
-        ::
-        %+  stag  %seq
-        %+  sear
-          |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
-        ;~(pfix (just `@`48) till)
-        ::
-        %+  stag  %set
-        %+  sear
-          |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
-        ;~(pfix (just `@`49) till)
-        ::
-        %+  stag  %con
-        ;~  plug
-          %+  sear
-            |=  a=@
-            ^-  (unit [? @udC])
-            ?.  =(1 (cut 0 [7 1] a))  ~
-            :+  ~
-              =(1 (cut 0 [5 1] a))
-            (dis 0x1f a)
-          next
-          till
-        ==
+        (stag %int (bass 256 (sear int ;~(pfix (tag 2) till))))
+        (stag %bit (boss 256 (cook tail ;~(pfix (tag 3) till)))) :: XX test
+        (stag %oct (boss 256 ;~(pfix (tag 4) till)))
+        (stag %nul (cold ~ ;~(plug (tag 5) (tag 0))))
+        (stag %obj (boss 256 ;~(pfix (tag 6) till)))
+        (stag %seq (sear recur ;~(pfix (tag 48) till)))
+        (stag %set (sear recur ;~(pfix (tag 49) till)))
+        (stag %con ;~(plug (sear context next) till))
       ==
+    ::
+    ++  tag                                             :: tag byte
+      |=(a=@ (just a))
+    ::
+    ++  int                                             :: @u big endian
+      |=  a=(list @)
+      ^-  (unit (list @))
+      ?~  a  ~
+      ?:  ?=([@ ~] a)  `a
+      ?.  =(0 i.a)  `a
+      ?.((gth i.t.a 127) ~ `t.a)
+    ::
+    ++  recur
+      |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
+    ::
+    ++  context                                         :: context-specific tag
+      |=  a=@
+      ^-  (unit [? @udC])
+      ?.  =(1 (cut 0 [7 1] a))  ~
+      :+  ~
+        =(1 (cut 0 [5 1] a))
+      (dis 0x1f a)
     ::
     ++  till                                            ::  len-prefixed bytes
       |=  tub/nail
