@@ -1978,6 +1978,10 @@
     |=  [wir=wire id=(unit @t) req=request]
     %_(+> requests (~(add ja requests) wir id req))
   ::
+  ++  put-individual-request
+    |=  [wir=wire id=(unit @t) req=request]
+    (put-move (rpc-hiss wir (request-to-json id req)))
+  ::
   ::
   ++  wrap-note
     |=  [wir=wire not=note:able]
@@ -2036,7 +2040,7 @@
   ::
   ::
   ++  new-filter
-    %-  put-request
+    %-  put-individual-request
     :+  /filter/new  `'new filter'
     :*  %eth-new-filter
         `[%number +(latest-block)]  ::TODO  or Ships origin block when 0
@@ -2047,13 +2051,13 @@
     ==
   ::
   ++  read-filter
-    %-  put-request
-    :+  /filter  `'filter logs'
+    %-  put-individual-request
+    :+  /filter/logs  `'filter logs'
     [%eth-get-filter-logs filter-id]
   ::
   ++  poll-filter
-    %-  put-request
-    :+  /filter  `'poll filter'
+    %-  put-individual-request
+    :+  /filter/changes  `'poll filter'
     [%eth-get-filter-changes filter-id]
   ::
   ++  wait-poll
@@ -2109,14 +2113,22 @@
   ++  sigh
     |=  [mar=mark res=vase]
     ^+  +>
-    ?+  mar  !!
-        %json-rpc-response
-      =+  rpc=((hard response:rpc:jstd) q.res)
-      ~&  rpc
-      !!  ::TODO
+    ?>  ?=(%json-rpc-response mar)
+    ~|  res
+    =+  rep=((hard response:rpc:jstd) q.res)
+    ~&  rpc+rep
+    ?+  cuz  !!
+        [%filter %new *]
+      (take-new-filter rep)
+    ::
+        [%filter *]
+      (take-filter-results rep)
+    ::
+        [%read @ta *]
+      (take-read-results rep ?=(%reset i.t.cuz))
     ==
   ::
-  ++  take-filter
+  ++  take-new-filter
     |=  rep=response:rpc:jstd
     ^+  +>
     ~|  rep
