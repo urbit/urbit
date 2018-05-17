@@ -89,7 +89,8 @@
 ++  message                                             ::  p2p message
   $%  {$hail p/safe}                                    ::  reset rights
       {$meet p/farm}                                    ::  propagate pki
-      [%vent p=update]                                  ::  ethereum changes
+      [%nuke ~]                                         ::  cancel trackers
+      [%vent ~]                                         ::  view ethereum state
   ==                                                    ::
 ++  card                                                ::  i/o action
   (wind note:able gift)                                 ::
@@ -982,6 +983,7 @@
         car.sub      %-  ~(run by car.sub)
                      |=  {yen/(set duct) det/channel}
                      [(~(del in yen) hen) det]
+        listeners.eth  (~(del in listeners.eth) hen)
       ==
     ::
     ::  extend our certificate with a new private key
@@ -1002,6 +1004,14 @@
     ::
         $vein
       (curd abet:~(vein ~(feed su our.tac urb sub) hen))
+    ::
+    ::  watch ethereum state
+    ::    [%vent ~]
+    ::
+        %vent
+      =^  mos  eth.lex
+        abet:(~(vent-to et /vent now.sys eth.lex) hen)
+      +>.$(moz (weld moz (flop mos)))
     ::
     ::  monitor assets
     ::    {$vest $~}
@@ -1037,11 +1047,17 @@
         %+  cure  our.tac
         abet:(~(meet ur urb) ``p.tac p.mes)
       ::
-      ::  ethereum changes
-      ::    [%vent p=update:constitution:ethereum]
+      ::  cancel trackers
+      ::    [%nuke ~]
+      ::
+          %nuke
+        $(tac mes)
+      ::
+      ::  view ethereum state
+      ::    [%vent ~]
       ::
           %vent
-        !!  ::TODO  accept changes into state
+        $(tac mes)
       ==
     ==
   ::                                                    ::  ++curd:of
@@ -1986,7 +2002,7 @@
   ++  wrap-note
     |=  [wir=wire not=note:able]
     ^-  move
-    [[/ ~ ~] %pass wir not]
+    [[/jael/eth ~ ~] %pass wir not]
   ::
   ++  rpc-hiss
     |=  [wir=wire jon=json]
@@ -2006,11 +2022,13 @@
   ::
   ++  subscribe-to
     |=  who=@p
-    !!  ::TODO  jael subscribe
+    %+  wrap-note  /vent/(scot %p who)
+    [%x %mess who /j %vent ~]
   ::
   ++  unsubscribe-from
     |=  who=@p
-    !!  ::TODO  jael unsubscribe
+    %+  wrap-note  /vent/(scot %p who)
+    [%x %mess who /j %nuke ~]
   ::
   ::
   ++  read
@@ -2083,7 +2101,7 @@
     (read-ships wir (gulf ~zod ~nec))  ::TODO  ~fes
   ::
   ::
-  ++  accept-listener
+  ++  vent-to
     |=  duc=duct
     %-  put-move(listeners (~(put in listeners) duc))
     [duc %give %vent %full ships dns heard]
