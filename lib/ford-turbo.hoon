@@ -3045,6 +3045,17 @@
           ::
           =/  subject=vase
             (link-imports imports vase.u.reef-result core-results)
+          ::  tmi; remove type specializations
+          ::
+          =>  .(blocks *(list ^build), error-message *tang)
+          ::  iterate over each crane
+          ::
+          =^  crane-result  ..$  (run-cranes subject cranes.scaffold)
+          ?:  ?=(%error -.crane-result)
+            (return-error message.crane-result)
+          ?:  ?=(%block -.crane-result)
+            [build [%blocks builds.crane-result ~] accessed-builds]
+          =.  subject  subject.crane-result
           ::  combined-hoon: source hoons condensed into a single +hoon
           ::
           =/  combined-hoon=hoon  (stack-sources sources.scaffold)
@@ -3065,6 +3076,51 @@
           ::  compilation succeeded: produce resulting +vase
           ::
           [build [%build-result %success %plan vase.u.compiled] accessed-builds]
+      ::
+      ::
+      ++  run-cranes
+        |=  [subject=vase cranes=(list crane)]
+        ^-  $:  $%  [%subject subject=vase]
+                    [%block builds=(list ^build)]
+                    [%error message=tang]
+                ==
+                _..^$
+            ==
+        ::
+        ?~  cranes
+          [[%subject subject] ..^$]
+        ::
+        =^  result  ..^$  (lift-crane subject i.cranes)
+        ?+    -.result  [result ..^$]
+        ::
+            %subject
+          $(cranes t.cranes, subject (slop subject.result subject))
+        ==
+      ::
+      ::
+      ++  lift-crane
+        |=  [subject=vase =crane]
+        ^-  run-cranes
+        ::
+        ?+    -.crane  !!
+            %fssg
+          =/  ride-build=^build
+            [date.build [%ride hoon.crane [%$ %noun subject]]]
+          =^  ride-result  accessed-builds  (depend-on ride-build)
+          ?~  ride-result
+            [[%block [ride-build]~] ..^$]
+          ?:  ?=([~ %error *] ride-result)
+            [[%error [leaf+"/~ failed: " message.u.ride-result]] ..^$]
+          ?>  ?=([~ %success %ride *] ride-result)
+          [[%subject vase.u.ride-result] ..^$]
+        ::
+            %fsts
+          =^  child  ..^$  (lift-crane subject crane.crane)
+          ?.  ?=([%subject *] child)
+            [child ..^$]
+          :_  ..^$
+          [%subject [[%face [~ face.crane] p.subject.child] q.subject.child]]
+        ==
       ::  +gather-path-builds: produce %path builds to resolve import paths
       ::
       ++  gather-path-builds
