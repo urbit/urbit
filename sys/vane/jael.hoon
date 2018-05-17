@@ -2111,6 +2111,7 @@
   ::
   ++  hear-vent
     |=  upd=update
+    ^+  +>
     ?-  -.upd
       %full   (assume +.upd)
       %diff   (accept +.upd)
@@ -2118,12 +2119,15 @@
   ::
   ++  assume
     |=  [s=fleet d=dnses h=events]
+    ^+  +>
     ?:  &(=(s ships) =(d dns) =(h heard))  +>
     ~&  [%assume ~(wyt by s) ~(wyt in h)]
+    %-  put-moves
     (update-to-all(ships s, dns d, heard h) %full s d h)
   ::
   ++  accept
     |=  [cause=[@ud @ud] dis=(list diff-constitution)]
+    ^+  +>
     ?:  &(!=([0 0] cause) (~(has in heard) cause))
       ~&  %accept-ignoring-duplicate-event
       +>.$
@@ -2468,6 +2472,11 @@
   ::
       [%b %wake ~]
     =^  moz  eth.lex  abet:~(wake et tea now eth.lex)
+    [moz ..^$]
+  ::
+      [%j %vent *]
+    ~&  %got-vent
+    =^  moz  eth.lex  abet:(~(hear-vent et tea now eth.lex) p.req)
     [moz ..^$]
   ==
 --
