@@ -539,7 +539,7 @@
     ==
   --
 ::
-++  jwk
+++  jwk                                                 :: rfc7517
   |%
   ++  en
     |%
@@ -604,12 +604,47 @@
         q+(cu de-base64url so)
       ==
     --
+  ::
+  ++  thumb                                             :: rfc7638
+    |%
+    ++  ring  !!
+    ++  pass
+      |=  k=key:rsa
+      (en-base64url (shax (crip (en-json-sort aor (pass:en k)))))
+    --
   --
 ::
-++  thumbprint
-  |=  jon=json
-  :: XX restrict keys to canonical set
-  (en-base64url (shax `@`(crip `tape`(en-json-sort aor jon))))
+++  jws                                                 :: rfc7515
+  |%
+  ++  sign
+    |=  [k=key:rsa pro=json lod=json]
+    |^  ^-  json
+        =.  pro  header
+        =/  protect=cord  (encode pro)
+        =/  payload=cord  (encode lod)
+        :-  %o  %-  my  :~
+          protected+s+protect
+          payload+s+payload
+          signature+s+(sign protect payload)
+        ==
+    ::
+    ++  header
+      ?>  ?=([%o *] pro)
+      ^-  json
+      [%o (~(put by p.pro) %alg s+'RS256')]
+    ::
+    ++  encode
+      |=  jon=json
+      (en-base64url (crip (en-json-sort aor jon)))
+    ::
+    ++  sign
+      |=  [protect=cord payload=cord]
+      %-  en-base64url
+      (swp 3 (~(sign rs256 k) (rap 3 ~[protect '.' payload])))
+    --
+  ::
+  ++  verify  !!
+  --
 ::
 ++  eor                                               ::  explicit order
   |=  [com=$-([@ @] ?) lit=(list)]
@@ -767,42 +802,29 @@
 ++  abet
   [(flop mov) this(mov ~)]
 ::
-++  jws-body
-  |=  [url=purl bod=json]
-  ^-  octs
-  :: ?>  ?=(^ key.act)
-  =*  enc  (corl en-base64url (corl crip (cury en-json-sort aor)))
-  =/  payload=cord  (enc bod)
-  =/  protect=cord
-    %-  enc
+++  request
+  |=  [wir=wire url=purl bod=(unit json)]
+  |^  ^-  card
+      [%hiss wir [~ ~] %httr %hiss url moth]
+  ::
+  ++  moth
+    ?~  bod
+      [%get ~ ~]
+    [%post (my content-type+['application/jose+json' ~] ~) `body]
+  ::
+  ++  body
+    ?>  ?=(^ bod)
+    ^-  octs
+    =;  pro=json
+      (as-octt:mimes:html (en-json:html (sign:jws key.act pro u.bod)))
     :-  %o  %-  my  :~
-      alg+s+'RS256'
       nonce+s+non
       url+s+(crip (en-purl:html url))
       ?^  reg.act
         kid+s+kid.u.reg.act
       jwk+(pass:en:jwk key.act)
     ==
-  %-  (corl as-octt:mimes:html en-json:html)
-  ^-  json
-  :-  %o  %-  my  :~
-    protected+s+protect
-    payload+s+payload
-    :+  %signature  %s
-    %-  en-base64url
-    %+  swp  3
-    (~(sign rs256 key.act) (rap 3 ~[protect '.' payload]))
-  ==
-::
-++  request
-  |=  [wir=wire url=purl bod=(unit json)]
-  ^-  card
-  =/  lod
-    ?~  bod
-      [%get ~ ~]
-    =/  hed  (my content-type+['application/jose+json' ~] ~)
-    [%post hed `(jws-body url u.bod)]
-  [%hiss wir [~ ~] %httr %hiss url lod]
+  --
 ::
 ++  directory
   (emit (request /acme/dir/(scot %p our.bow) bas ~))
@@ -884,7 +906,7 @@
       :+  ~
         /text/plain
       %-  as-octs:mimes:html
-      (rap 3 [tok.cal '.' (thumbprint (pass:en:jwk key.act)) ~])
+      (rap 3 [tok.cal '.' (pass:thumb:jwk key.act) ~])
       ::
       %^    request
           /acme/cal/(scot %ud i)/der/(scot %ud ider)
@@ -1571,7 +1593,7 @@
         (pass:en:jwk k)
       %-  expect-eq  !>
         :-  'NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs'
-        (thumbprint jk)
+        (pass:thumb:jwk k)
     ==
   ::
   ++  test-jws
