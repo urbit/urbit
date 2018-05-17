@@ -3113,6 +3113,7 @@
               %fssg  (run-fssg +.crane)
               %fsts  (run-fsts +.crane)
               %fsdt  (run-fsdt +.crane)
+              %fssm  (run-fssm +.crane)
               %fskt  (run-fskt +.crane)
             ==
         ::  +run-fssg: runs the `/~` rune
@@ -3192,6 +3193,26 @@
             (slop subject.i.list-results $(list-results t.list-results))
           ::
           [[%subject final-result] ..run-crane]
+        ::  +run-fssm: runs the `/;` rune
+        ::
+        ++  run-fssm
+          |=  [=hoon sub-crane=^crane]
+          ^-  compose-cranes
+          ::
+          =^  child  ..run-crane  (run-crane subject sub-crane)
+          ?.  ?=([%subject *] child)
+            [child ..run-crane]
+          ::
+          =/  call-build=^build
+            [date.build [%call [%ride hoon [%$ %noun subject]] [%$ %noun subject.child]]]
+          =^  call-result  accessed-builds  (depend-on call-build)
+          ?~  call-result
+            [[%block [call-build]~] ..run-crane]
+          ?:  ?=([~ %error *] call-result)
+            [[%error [leaf+"/; failed: " message.u.call-result]] ..run-crane]
+          ?>  ?=([~ %success %call *] call-result)
+          ::
+          [[%subject vase.u.call-result] ..run-crane]
         ::  +run-fskt: runs the `/^` rune
         ::
         ++  run-fskt
