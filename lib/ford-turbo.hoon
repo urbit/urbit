@@ -3076,6 +3076,13 @@
           ::  compilation succeeded: produce resulting +vase
           ::
           [build [%build-result %success %plan vase.u.compiled] accessed-builds]
+      ::  +compose-result: the result of a single composition
+      ::
+      +=  compose-result
+        $%  [%subject subject=vase]
+            [%block builds=(list ^build)]
+            [%error message=tang]
+        ==
       ::  +compose-cranes: runs each crane and composes the results
       ::
       ::    For each crane in :cranes, runs it and composes its result into a
@@ -3083,10 +3090,7 @@
       ::
       ++  compose-cranes
         |=  [subject=vase cranes=(list crane)]
-        ^-  $:  $%  [%subject subject=vase]
-                    [%block builds=(list ^build)]
-                    [%error message=tang]
-                ==
+        ^-  $:  compose-result
                 _..compose-cranes
             ==
         ::
@@ -3108,6 +3112,8 @@
         |^  ?+  -.crane  !!
               %fssg  (run-fssg +.crane)
               %fsts  (run-fsts +.crane)
+              %fsdt  (run-fsdt +.crane)
+              %fskt  (run-fskt +.crane)
             ==
         ::  +run-fssg: runs the `/~` rune
         ::
@@ -3135,6 +3141,79 @@
             [child ..run-crane]
           :_  ..run-crane
           [%subject [[%face [~ face] p.subject.child] q.subject.child]]
+        ::  +run-fsdt: runs the `/.` rune
+        ::
+        ++  run-fsdt
+          |=  sub-cranes=(list ^crane)
+          ^-  compose-cranes
+          ::
+          =^  list-results  ..run-crane
+            %+  roll  sub-cranes
+            |=  $:  sub-crane=^crane
+                    accumulator=[(list compose-result) _..run-crane]
+                ==
+            =.  ..run-crane  +.accumulator
+            =^  result  ..run-crane  (run-crane subject sub-crane)
+            [[result -.accumulator] ..run-crane]
+          ::  if any sub-cranes error, return the first error
+          ::
+          =/  error-list=(list compose-result)
+            %+  skim  list-results
+            |=  =compose-result
+            =(%error -.compose-result)
+          ::
+          ?^  error-list
+            [i.error-list ..run-crane]
+          ::  if any sub-cranes block, return all blocks
+          ::
+          =/  block-list=(list ^build)
+            =|  block-list=(list ^build)
+            |-
+            ^+  block-list
+            ?~  list-results
+              block-list
+            ?.  ?=(%block -.i.list-results)
+              $(list-results t.list-results)
+            =.  block-list  (weld builds.i.list-results block-list)
+            $(list-results t.list-results)
+          ::
+          ?^  block-list
+            [[%block block-list] ..run-crane]
+          ::  concatenate all the results together with null termination
+          ::
+          =.  list-results  (flop list-results)
+          ::
+          =/  final-result=vase
+            |-
+            ^-  vase
+            ?~  list-results
+              [[%atom %n `~] 0]
+            ?>  ?=(%subject -.i.list-results)
+            (slop subject.i.list-results $(list-results t.list-results))
+          ::
+          [[%subject final-result] ..run-crane]
+        ::  +run-fskt: runs the `/^` rune
+        ::
+        ++  run-fskt
+          |=  [mold=hoon sub-crane=^crane]
+          ^-  compose-cranes
+          ::
+          =^  child  ..run-crane  (run-crane subject sub-crane)
+          ?.  ?=([%subject *] child)
+            [child ..run-crane]
+          ::
+          =/  bunt-build=^build
+            [date.build [%ride [%bunt mold] [%$ %noun subject]]]
+          =^  bunt-result  accessed-builds  (depend-on bunt-build)
+          ?~  bunt-result
+            [[%block [bunt-build]~] ..run-crane]
+          ?:  ?=([~ %error *] bunt-result)
+            [[%error [leaf+"/^ failed: " message.u.bunt-result]] ..run-crane]
+          ?>  ?=([~ %success %ride *] bunt-result)
+          ::
+          ?.  (~(nest ut p.vase.u.bunt-result) | p.subject.child)
+            [[%error [leaf+"/^ failed: nest-fail"]~] ..run-crane]
+          [[%subject [p.vase.u.bunt-result q.subject.child]] ..run-crane]
         --
       ::  +gather-path-builds: produce %path builds to resolve import paths
       ::
