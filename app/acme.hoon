@@ -60,149 +60,163 @@
 ++  de-base64url
   ~(de base64 | &)
 ::
-++  asn1                                              ::  at least, a little
-  =>  |%
-      +=  spec
-        $%  [%int p=@u]
-            [%bit p=@ux]
-            [%oct p=@ux]
-            [%nul ~]
-            [%obj p=@ux]
-            [%seq p=(list spec)]
-            [%set p=(list spec)]                  :: XX actual set
-            [%con p=[p=? q=@udC] q=(list @)]      :: XX manual
+++  asn1                                                :: types and constants
+  |%
+  +=  spec
+    $%  [%int p=@u]                                     :: unsigned
+        [%bit p=@ux]                                    :: pad yerself
+        [%oct p=@ux]                                    ::
+        [%nul ~]                                        ::
+        [%obj p=@ux]                                    :: pack yerself
+        [%seq p=(list spec)]                            ::
+        [%set p=(list spec)]                            :: sort yerself
+        $:  %con                                        :: construct yerself
+            p=[p=? q=@udC]                              ::   [primitive? tag]
+            q=(list @)                                  ::   bytes
+    ==  ==
+  ::
+  ++  obj                                         :: oid constants
+    |%                                            ::   rfc4055
+    ++  sha-256      0x1.0204.0365.0148.8660      :: 2.16.840.1.101.3.4.2.1
+    ++  rsa          0x1.0101.0df7.8648.862a      :: 1.2.840.113549.1.1.1
+    ++  rsa-sha-256  0xb.0101.0df7.8648.862a      :: 1.2.840.113549.1.1.11
+                                                  ::   rfc2985
+    ++  csr-ext      0xe.0901.0df7.8648.862a      :: 1.2.840.113549.1.9.14
+                                                  ::   rfc3280
+    ++  sub-alt      0x11.1d55                    :: 2.5.29.17
+    --
+  --
+::
+++  der
+  |%
+  ++  en                                                :: +en:der
+    =<  |=(a=spec:asn1 `@ux`(rep 3 ~(ren raw a)))
+    |%
+    ++  raw                                             ::  bytes
+      |_  pec=spec:asn1
+      ++  ren                                           ::  tlv
+        ^-  (list @)
+        =/  a  lem
+        [tag (weld (len a) a)]
+      ::
+      ++  tag                                           ::  type tag
+        ^-  @
+        ?-  pec
+          [%int *]   2
+          [%bit *]   3
+          [%oct *]   4
+          [%nul *]   5
+          [%obj *]   6
+          [%seq *]  48    :: (con 0x20 16)
+          [%set *]  49    :: (con 0x20 17)
+          [%con *]  :(con q.p.pec 0x80 ?:(p.p.pec 0 0x20))
         ==
       ::
-      ++  obj                                         :: oid constants
-        |%                                            ::   rfc4055
-        ++  sha-256      0x1.0204.0365.0148.8660      :: 2.16.840.1.101.3.4.2.1
-        ++  rsa          0x1.0101.0df7.8648.862a      :: 1.2.840.113549.1.1.1
-        ++  rsa-sha-256  0xb.0101.0df7.8648.862a      :: 1.2.840.113549.1.1.11
-                                                      ::   rfc2985
-        ++  csr-ext      0xe.0901.0df7.8648.862a      :: 1.2.840.113549.1.9.14
-                                                      ::   rfc3280
-        ++  sub-alt      0x11.1d55                    :: 2.5.29.17
-        --
-      --
-  ::
-  |_  pec=spec
-  ++  ren                                             ::  bytes
-    ^-  (list @)
-    =/  a  lem
-    [tag (weld (len a) a)]
-  ::
-  ++  tag                                             ::  type tag
-    ^-  @
-    ?-  pec
-      [%int *]   2
-      [%bit *]   3
-      [%oct *]   4
-      [%nul *]   5
-      [%obj *]   6
-      [%seq *]  48    :: (con 0x20 16)
-      [%set *]  49    :: (con 0x20 17)
-      [%con *]  :(con q.p.pec 0x80 ?:(p.p.pec 0 0x20))
-    ==
-  ::
-  ++  lem                                             ::  element bytes
-    ^-  (list @)
-    ?-  pec
-      [%int *]  =/  a  (flop (rip 3 p.pec))     :: XX unsigned only!
-                ?~  a  [0 ~]
-                ?:((lte i.a 127) a [0 a])
+      ++  lem                                           ::  element bytes
+        ^-  (list @)
+        ?-  pec
+          [%int *]  =/  a  (flop (rip 3 p.pec))
+                    ?~  a  [0 ~]
+                    ?:((lte i.a 127) a [0 a])
+          ::
+          [%bit *]  [0 (rip 3 p.pec)]            :: XX padding
+          [%oct *]  (rip 3 p.pec)
+          [%nul *]  ~
+          [%obj *]  (rip 3 p.pec)
+          ::
+          [%seq *]  %-  zing
+                    |-  ^-  (list (list @))
+                    ?~  p.pec  ~
+                    :-  ren(pec i.p.pec)
+                    $(p.pec t.p.pec)
+          ::
+          [%set *]  %-  zing                     :: XX tap/sort
+                    |-  ^-  (list (list @))
+                    ?~  p.pec  ~
+                    :-  ren(pec i.p.pec)
+                    $(p.pec t.p.pec)
+          ::
+          [%con *]  q.pec
+        ==
       ::
-      [%bit *]  [0 (rip 3 p.pec)]               :: XX padding
-      [%oct *]  (rip 3 p.pec)
-      [%nul *]  ~
-      [%obj *]  (rip 3 p.pec)
-      ::
-      [%seq *]  %-  zing
-                |-  ^-  (list (list @))
-                ?~  p.pec  ~
-                :-  ren(pec i.p.pec)
-                $(p.pec t.p.pec)
-      ::
-      [%set *]  %-  zing                        :: XX tap/sort
-                |-  ^-  (list (list @))
-                ?~  p.pec  ~
-                :-  ren(pec i.p.pec)
-                $(p.pec t.p.pec)
-      ::
-      [%con *]  q.pec
-    ==
-  ::
-  ++  len                                             ::  length bytes
-    |=  a=(list @)
-    ^-  (list @)
-    =/  b  (lent a)
-    ?:  (lte b 127)
-      [b ~]
-    [(con 0x80 (met 3 b)) (flop (rip 3 b))]
-  ::
-  ++  decode
-    %+  cook  |*(a=* `spec:asn1`a)
-    :: ^-  $-(nail (like spec:asn1))
-    ;~  pose
-      %+  stag  %int
-      %+  bass  256
-      %+  sear
+      ++  len                                           ::  length bytes
         |=  a=(list @)
-        ^-  (unit (list @))
-        ?~  a  ~
-        ?:  ?=([@ ~] a)  `a
-        ?.  =(0 i.a)  `a
-        ?.((gth i.t.a 127) ~ `t.a)
-      ;~(pfix (just `@`2) till)
-      ::
-      (stag %bit (boss 256 (cook tail ;~(pfix (just `@`3) till)))) :: XX test
-      (stag %oct (boss 256 ;~(pfix (just `@`4) till)))
-      (stag %nul (cold ~ ;~(plug (just `@`5) (just `@`0))))
-      (stag %obj (boss 256 ;~(pfix (just `@`6) till)))
-      ::
-      %+  stag  %seq
-      %+  sear
-        |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
-      ;~(pfix (just `@`48) till)
-      ::
-      %+  stag  %set
-      %+  sear
-        |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
-      ;~(pfix (just `@`49) till)
-      ::
-      %+  stag  %con
-      ;~  plug
-        %+  sear
-          |=  a=@
-          ^-  (unit [? @udC])
-          ?.  =(1 (cut 0 [7 1] a))  ~
-          :+  ~
-            =(1 (cut 0 [5 1] a))
-          (dis 0x1f a)
-        next
-        till
-      ==
-    ==
+        ^-  (list @)
+        =/  b  (lent a)
+        ?:  (lte b 127)
+          [b ~]
+        [(con 0x80 (met 3 b)) (flop (rip 3 b))]
+      --
+    --
   ::
-  ++  till                                                ::  len-prefixed bytes
-    |=  tub/nail
-    ^-  (like (list @D))
-    ?~  q.tub
-      (fail tub)
-    =*  fuz  i.q.tub
-    =+  ^-  [nex=@ len=@]
-      =/  faz  (end 0 7 fuz)
-      ?:  =(0 (cut 0 [7 1] fuz))
-        [0 faz]
-      [faz (rep 3 (flop (scag faz t.q.tub)))]
-    ?:  ?&  !=(0 nex)
-            !=(nex (met 3 len))
+  ++  de                                                :: +de:der
+    =<  |=(a=@ `(unit spec:asn1)`(rush a decode))
+    |%
+    ++  decode                          :: XX rename
+      %+  cook  |*(a=* `spec:asn1`a)
+      :: ^-  $-(nail (like spec:asn1))
+      ;~  pose
+        %+  stag  %int
+        %+  bass  256
+        %+  sear
+          |=  a=(list @)
+          ^-  (unit (list @))
+          ?~  a  ~
+          ?:  ?=([@ ~] a)  `a
+          ?.  =(0 i.a)  `a
+          ?.((gth i.t.a 127) ~ `t.a)
+        ;~(pfix (just `@`2) till)
+        ::
+        (stag %bit (boss 256 (cook tail ;~(pfix (just `@`3) till)))) :: XX test
+        (stag %oct (boss 256 ;~(pfix (just `@`4) till)))
+        (stag %nul (cold ~ ;~(plug (just `@`5) (just `@`0))))
+        (stag %obj (boss 256 ;~(pfix (just `@`6) till)))
+        ::
+        %+  stag  %seq
+        %+  sear
+          |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
+        ;~(pfix (just `@`48) till)
+        ::
+        %+  stag  %set
+        %+  sear
+          |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
+        ;~(pfix (just `@`49) till)
+        ::
+        %+  stag  %con
+        ;~  plug
+          %+  sear
+            |=  a=@
+            ^-  (unit [? @udC])
+            ?.  =(1 (cut 0 [7 1] a))  ~
+            :+  ~
+              =(1 (cut 0 [5 1] a))
+            (dis 0x1f a)
+          next
+          till
         ==
-      (fail tub)
-    =/  zuf  (swag [nex len] t.q.tub)
-    ?.  =(len (lent zuf))
-      (fail tub)
-    =/  zaf  [p.p.tub (add +(nex) q.p.tub)]
-    [zaf `[zuf zaf (slag (add nex len) t.q.tub)]]
+      ==
+    ::
+    ++  till                                            ::  len-prefixed bytes
+      |=  tub/nail
+      ^-  (like (list @D))
+      ?~  q.tub
+        (fail tub)
+      =*  fuz  i.q.tub
+      =+  ^-  [nex=@ len=@]
+        =/  faz  (end 0 7 fuz)
+        ?:  =(0 (cut 0 [7 1] fuz))
+          [0 faz]
+        [faz (rep 3 (flop (scag faz t.q.tub)))]
+      ?:  ?&  !=(0 nex)
+              !=(nex (met 3 len))
+          ==
+        (fail tub)
+      =/  zuf  (swag [nex len] t.q.tub)
+      ?.  =(len (lent zuf))
+        (fail tub)
+      =/  zaf  [p.p.tub (add +(nex) q.p.tub)]
+      [zaf `[zuf zaf (slag (add nex len) t.q.tub)]]
+    --
   --
 ::
 ++  rsa                                                 ::  unpadded!
@@ -252,7 +266,7 @@
           [%seq [%obj sha-256:obj:asn1] [%nul ~] ~]
           [%oct (shax m)]
       ==
-    =/  t=(list @)  ~(ren asn1 pec)
+    =/  t=(list @)  ~(ren raw:en:der pec)
     =/  tlen  (lent t)
     ?:  (lth emlen (add 11 tlen))
       ~|(%emsa-too-short !!)
@@ -322,15 +336,15 @@
     |%
     ++  en
       |%
-      ++  pass  |=(k=key:rsa `@ux`(rep 3 ~(ren asn1 (pass:spec k))))
-      ++  ring  |=(k=key:rsa `@ux`(rep 3 ~(ren asn1 (ring:spec k))))
+      ++  pass  |=(k=key:rsa `@ux`(en:^der (pass:spec k)))
+      ++  ring  |=(k=key:rsa `@ux`(en:^der (ring:spec k)))
       --
     ++  de
       |%
       ++  pass
         |=  a=@
         ^-  (unit key:rsa)
-        =/  b  (rush a decode:asn1)
+        =/  b  (de:^der a)
         ?~  b  ~
         ?.  ?=([%seq [%int *] [%int *] ~] u.b)
           ~
@@ -341,7 +355,7 @@
       ++  ring
         |=  a=@
         ^-  (unit key:rsa)
-        =/  b  (rush a decode:asn1)
+        =/  b  (de:^der a)
         ?~  b  ~
         ?.  ?=([%seq *] u.b)  ~
         ?.  ?=  $:  [%int %0]
@@ -397,8 +411,8 @@
     |%
     ++  en
       |%
-      ++  pass  |=(k=key:rsa `@ux`(rep 3 ~(ren asn1 (pass:spec k))))
-      ++  ring  !! ::|=(k=key:rsa `@ux`(rep 3 ~(ren asn1 (ring:spec k))))
+      ++  pass  |=(k=key:rsa `@ux`(en:^der (pass:spec k)))
+      ++  ring  !! ::|=(k=key:rsa `@ux`(en:^der (ring:spec k)))
       --
     ::
     ++  de
@@ -406,7 +420,7 @@
       ++  pass
         |=  a=@
         ^-  (unit key:rsa)
-        =/  b  (rush a decode:asn1)
+        =/  b  (de:^der a)
         ?~  b  ~
         ?.  ?=([%seq [%seq *] [%bit *] ~] u.b)
           ~
@@ -458,14 +472,14 @@
           [%seq ~]
           (pass:spec:pkcs8 key)
           :+  %con  [| 0]
-          =-  ~(ren asn1 -)
+          =-  ~(ren raw:en:^der -)
           :~  %seq
               [%obj csr-ext:obj:asn1]
               :~  %set
                   :~  %seq
                       :~  %seq
                           [%obj sub-alt:obj:asn1]
-                          [%oct (rep 3 ~(ren asn1 (host hot)))]
+                          [%oct (en:^der (host hot))]
       ==  ==  ==  ==  ==
     ::
     ++  sign
@@ -475,13 +489,13 @@
       :~  %seq
           cer
           [%seq [[%obj rsa-sha-256:obj:asn1] [%nul ~] ~]]
-          [%bit (swp 3 (~(sign rs256 key) (rep 3 ~(ren asn1 cer))))]
+          [%bit (swp 3 (~(sign rs256 key) (en:^der cer)))]
       ==
     --
   ::
   ++  der
     |%
-    ++  en  |=(a=csr `@ux`(rep 3 ~(ren asn1 (sign:spec a))))
+    ++  en  |=(a=csr `@ux`(en:^der (sign:spec a)))
     ++  de  !!
     --
   ::
@@ -769,7 +783,7 @@
 +=  config  [key=key:rsa exp=@da cer=wain]              ::  finalized config
 +=  history                                             ::  isn't over
   $:  act=(list acct)                                   ::
-      der=(list order)                                  ::
+      rod=(list order)                                  ::
       fig=(list (pair (list turf) config))              ::
   ==                                                    ::
 +=  acme                                                ::
@@ -777,7 +791,7 @@
       dir=directory                                     ::  service urls
       act=acct                                          ::  service account
       non=@t                                            ::  nonce from last
-      der=(map @ud order)                               ::  active orders
+      rod=(map @ud order)                               ::  active orders
       liv=(map (list turf) config)                      ::  active config
       hit=history                                       ::  a foreign country
   ==                                                    ::
@@ -847,10 +861,10 @@
     this          :: XX pending registration assumed
   %-  emil
   %+  turn
-    (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %0 *] a)))
-  |=  [i=@ud der=^order]
+    (skim ~(tap by rod) |=(a=[@ud ^order] ?=([@ %0 *] a)))
+  |=  [i=@ud rod=^order]
   ^-  card
-  ?>  ?=([%0 *] der)
+  ?>  ?=([%0 *] rod)
   %^  request  /acme/der/(scot %ud i)
     der.dir
   :-  ~
@@ -859,7 +873,7 @@
     :-  %identifiers
     :-  %a
     %+  turn
-      dom.der
+      dom.rod
     |=(a=turf [%o (my type+s+'dns' value+s+(en-host a) ~)])
   ==
 ::
@@ -869,11 +883,11 @@
   =/  aut=(list (trel @ud @ud purl))
     %-  zing
     %+  turn
-      (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %1 *] a)))
-    |=  [ider=@ud der=^order]
-    ?>  ?=([%1 *] der)
+      (skim ~(tap by rod) |=(a=[@ud ^order] ?=([@ %1 *] a)))
+    |=  [ider=@ud rod=^order]
+    ?>  ?=([%1 *] rod)
     %+  turn
-      ~(tap by aut.der)
+      ~(tap by aut.rod)
     |=  [i=@ud aut=auth]
     ?>  ?=([%0 *] aut)
     [i ider aut.aut]
@@ -888,11 +902,11 @@
   =/  cal=(list (trel @ud @ud trial))
     %-  zing
     %+  turn
-      (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %1 *] a)))
-    |=  [ider=@ud der=^order]
-    ?>  ?=([%1 *] der)
+      (skim ~(tap by rod) |=(a=[@ud ^order] ?=([@ %1 *] a)))
+    |=  [ider=@ud rod=^order]
+    ?>  ?=([%1 *] rod)
     %+  turn
-      ~(tap by aut.der)
+      ~(tap by aut.rod)
     |=  [i=@ud aut=auth]
     ?>  ?=([%1 *] aut)
     [i ider cal.aut]
@@ -919,10 +933,10 @@
   %-  emil
   =/  csr=(list (trel @ud purl @ux))
     %+  turn
-      (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %2 *] a)))
-    |=  [i=@ud der=^order]
-    ?>  ?=([%2 *] der)
-    [i fin.der csr.der]
+      (skim ~(tap by rod) |=(a=[@ud ^order] ?=([@ %2 *] a)))
+    |=  [i=@ud rod=^order]
+    ?>  ?=([%2 *] rod)
+    [i fin.rod csr.rod]
   %+  turn  csr
   |=  [i=@ud fin=purl csr=@ux]
   ^-  card
@@ -936,10 +950,10 @@
   %-  emil
   =/  url=(list (pair @ud purl))
     %+  turn
-      (skim ~(tap by der) |=(a=[@ud ^order] ?=([@ %2 *] a)))
-    |=  [i=@ud der=^order]
-    ?>  ?=([%2 *] der)
-    [i der.der]
+      (skim ~(tap by rod) |=(a=[@ud ^order] ?=([@ %2 *] a)))
+    |=  [i=@ud rod=^order]
+    ?>  ?=([%2 *] rod)
+    [i der.rod]
   %+  turn  url
   |=  [i=@ud der=purl]
   ^-  card
@@ -994,8 +1008,8 @@
       %der
     =<  abet:authorize
     =/  i=@ud  (slav %ud (head t.t.wir))
-    =/  rod=^order  (~(got by der) i)
-    ?>  ?=([%0 *] rod)
+    =/  der=^order  (~(got by rod) i)
+    ?>  ?=([%0 *] der)
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
     =/  url=purl  (need (de-purl:html loc))
@@ -1003,44 +1017,44 @@
       (order:grab (need (de-json:html q:(need r.rep))))
     =/  aut  %-  ~(gas by *(map @ud auth))
              (spun aut.bod |=([a=purl b=@ud] [[b %0 a] +(b)]))
-    =/  dor=^order  [%1 dom.rod exp.bod url fin.bod aut]
-    this(der (~(put by der) i dor))
+    =/  dor=^order  [%1 dom.der exp.bod url fin.bod aut]
+    this(rod (~(put by rod) i dor))
   ::
       %aut
     =<  abet:challenge
     ?>  ?=([@ %der @ *] t.t.wir)
     =/  i  (slav %ud i.t.t.wir)
     =/  ider  (slav %ud i.t.t.t.t.wir)
-    =/  rod=^order  (~(got by der) ider)
-    ?>  ?=([%1 *] rod)
-    =/  aut=auth  (~(got by aut.rod) i)
+    =/  der=^order  (~(got by rod) ider)
+    ?>  ?=([%1 *] der)
+    =/  aut=auth  (~(got by aut.der) i)
     ?>  ?=([%0 *] aut)
     =/  bod=[dom=turf sas=@t exp=@t cal=[typ=@t sas=@t url=purl tok=@t]]
       (auth:grab (need (de-json:html q:(need r.rep))))
     =/  cal=trial
       [%http url.cal.bod tok.cal.bod %recv] :: XX parse tok?
     =/  tau=auth  [%1 aut.aut dom.bod cal]
-    =.  rod  rod(aut (~(put by aut.rod) i tau))
-    this(der (~(put by der) ider rod))
+    =.  der  der(aut (~(put by aut.der) i tau))
+    this(rod (~(put by rod) ider der))
   ::
       %cal
     =<  abet:finalize
     ?>  ?=([@ %der @ *] t.t.wir)
     =/  i  (slav %ud i.t.t.wir)
     =/  ider  (slav %ud i.t.t.t.t.wir)
-    =/  rod=^order  (~(got by der) ider)
-    ?>  ?=([%1 *] rod)
-    =/  aut=auth  (~(got by aut.rod) i)
+    =/  der=^order  (~(got by rod) ider)
+    ?>  ?=([%1 *] der)
+    =/  aut=auth  (~(got by aut.der) i)
     ?>  ?=([%1 *] aut)
     =/  bod=[typ=@t sas=@t url=purl tok=@t]
       (challenge:grab (need (de-json:html q:(need r.rep))))
     ?>  ?=(%pending sas.bod)
     =.  sas.cal.aut  %pend
-    =.  rod  rod(aut (~(put by aut.rod) i aut))
-    =.  der  (~(put by der) ider rod)
+    =.  der  der(aut (~(put by aut.der) i aut))
+    =.  rod  (~(put by rod) ider der)
     =/  fin=(list (pair @ud ^order))
       %+  skim
-        ~(tap by der)
+        ~(tap by rod)
       |=  a=[@ud ^order]
       ?&  ?=([@ %1 *] a)
           %+  levy
@@ -1050,7 +1064,7 @@
               ?=(%pend sas.cal.aut)
       ==  ==
     %=  this
-      der  %-  ~(gas by der)
+      rod  %-  ~(gas by rod)
            %+  turn  fin
            |=  [i=@ud der=^order]
            ^+  [i der]
@@ -1089,14 +1103,14 @@
       %cer    :: XX send configuration to eyre
     =<  abet
     =/  i=@ud  (slav %ud (head t.t.wir))
-    =/  rod=^order  (~(got by der) i)
+    =/  der=^order  (~(got by rod) i)
     =/  cer=wain
       (to-wain:format q:(need r.rep))
-    ?>  ?=([%2 *] rod)
+    ?>  ?=([%2 *] der)
     %=  this
-      liv      (~(put by liv) dom.rod [key.rod *@da cer]) :: XX exp when?
-      der      (~(del by der) i)
-      der.hit  [rod der.hit]
+      liv      (~(put by liv) dom.der [key.der *@da cer]) :: XX exp when?
+      rod      (~(del by rod) i)
+      rod.hit  [der rod.hit]
     ==
   ==
 ::
@@ -1144,7 +1158,7 @@
 ++  add-order
   |=  dom=(list turf)
   ^+  this
-  order(der (~(put by der) ~(wyt by der) [%0 dom]))
+  order(rod (~(put by rod) ~(wyt by rod) [%0 dom]))
 ::
 ++  test
   =,  tester:tester
@@ -1194,31 +1208,31 @@
     ;:  weld
       %-  expect-eq  !>
         :-  [0x5 0x0 ~]
-        ~(ren asn1 nul)
+        ~(ren raw:en:der nul)
       %-  expect-eq  !>
-        [nul (scan ~(ren asn1 nul) decode:asn1)]
+        [nul (scan ~(ren raw:en:der nul) decode:de:der)]
       %-  expect-eq  !>
         :-  [0x2 0x2 0x0 0xbb ~]
-        ~(ren asn1 int)
+        ~(ren raw:en:der int)
       %-  expect-eq  !>
-        [int (scan ~(ren asn1 int) decode:asn1)]
+        [int (scan ~(ren raw:en:der int) decode:de:der)]
       %-  expect-eq  !>
         :-  [0x6 0x9 0x60 0x86 0x48 0x1 0x65 0x3 0x4 0x2 0x1 ~]
-        ~(ren asn1 obj)
+        ~(ren raw:en:der obj)
       %-  expect-eq  !>
-        [obj (scan ~(ren asn1 obj) decode:asn1)]
+        [obj (scan ~(ren raw:en:der obj) decode:de:der)]
       %-  expect-eq  !>
         :-    0x420.5891.b5b5.22d5.df08.6d0f.f0b1.10fb.
           d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
-        `@ux`(swp 3 (rep 3 ~(ren asn1 oct)))
+        `@ux`(swp 3 (en:der oct))
       %-  expect-eq  !>
-        [oct (scan ~(ren asn1 oct) decode:asn1)]
+        [oct (scan ~(ren raw:en:der oct) decode:de:der)]
       %-  expect-eq  !>
         :-  0x30.3130.0d06.0960.8648.0165.0304.0201.0500.0420.5891.b5b5.22d5.
             df08.6d0f.f0b1.10fb.d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
-        `@ux`(swp 3 (rep 3 ~(ren asn1 seq)))
+        `@ux`(swp 3 (en:der seq))
       %-  expect-eq  !>
-        [seq (scan ~(ren asn1 seq) decode:asn1)]
+        [seq (scan ~(ren raw:en:der seq) decode:de:der)]
     ==
   ::
   ++  test-rsakey
