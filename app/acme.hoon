@@ -1208,8 +1208,8 @@
     'https://acme-staging-v02.api.letsencrypt.org/directory'
   %=  directory
     bas  (need (de-purl:html url))
-    act  [(rekey (shas %act eny.bow)) ~]
-    cey  (rekey (shas %act eny.bow))
+    act  [(rekey eny.bow) ~]
+    cey  (rekey (mix eny.bow (shaz now.bow)))
   ==
   :: XX wait for DNS binding confirmation?
   :: (add-order /org/urbit/(crip +:(scow %p our.bow)) ~)
