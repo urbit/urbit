@@ -90,6 +90,7 @@
   test-core-fssm
   test-core-fsbr
   test-core-fsbr-out-of-options
+  test-bunt
 ==
 ++  test-tear
   ~&  %test-tear
@@ -4381,6 +4382,65 @@
                 :~  [%leaf "ford: %core failed: "]
                     [%leaf "/| failed: out of options"]
     ==  ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-bunt
+  ~&  %test-bunt
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src=@ta
+    '''
+    |_  cell=^
+    ++  grab
+      |%
+      ++  noun  ^
+      --
+    --
+    '''
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      [%hoon !>(hoon-src)]
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%bunt [~nul %home] %foo]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %bunt *] build-result.pin-result)
+        ::
+        =/  =vase  q.cage.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  [0 0]
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>(*^))
+    ==
   ::
   ;:  weld
     results1
