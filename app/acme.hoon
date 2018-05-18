@@ -853,14 +853,14 @@
     reg.dir
   `[%o (my [['termsOfServiceAgreed' b+&] ~])]
 ::
-++  order
+++  new-order
   ^+  this
   ?~  reg.act
     this          :: XX pending registration assumed
   %-  emil
   %+  turn
-    (skim ~(tap by rod) |=(a=[@ud ^order] ?=([@ %0 *] a)))
-  |=  [i=@ud rod=^order]
+    (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %0 *] a)))
+  |=  [i=@ud rod=order]
   ^-  card
   ?>  ?=([%0 *] rod)
   %^  request  /acme/der/(scot %ud i)
@@ -881,8 +881,8 @@
   =/  aut=(list (trel @ud @ud purl))
     %-  zing
     %+  turn
-      (skim ~(tap by rod) |=(a=[@ud ^order] ?=([@ %1 *] a)))
-    |=  [ider=@ud rod=^order]
+      (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %1 *] a)))
+    |=  [ider=@ud rod=order]
     ?>  ?=([%1 *] rod)
     %+  turn
       ~(tap by aut.rod)
@@ -894,45 +894,80 @@
   ^-  card
   (request /acme/aut/(scot %ud i)/der/(scot %ud ider) aut ~)
 ::
-++  challenge
+++  save-challenge
   ^+  this
   %-  emil
   =/  cal=(list (trel @ud @ud trial))
     %-  zing
     %+  turn
-      (skim ~(tap by rod) |=(a=[@ud ^order] ?=([@ %1 *] a)))
-    |=  [ider=@ud rod=^order]
+      (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %1 *] a)))
+    |=  [ider=@ud rod=order]
     ?>  ?=([%1 *] rod)
     %+  turn
       ~(tap by aut.rod)
     |=  [i=@ud aut=auth]
     ?>  ?=([%1 *] aut)
     [i ider cal.aut]
-  %-  zing
   %+  turn  cal
   |=  [i=@ud ider=@ud cal=trial]
-  ^-  (list card)
-  :~  :^    %well
-          /acme/wel/(scot %ud i)/der/(scot %ud ider)
-        /acme-challenge/[tok.cal]
-      :+  ~
-        /text/plain
-      %-  as-octs:mimes:html
-      (rap 3 [tok.cal '.' (pass:thumb:jwk key.act) ~])
-      ::
-      %^    request
-          /acme/cal/(scot %ud i)/der/(scot %ud ider)
-        cal.cal
-      `[%o ~]
-  ==
+  ^-  card
+  :^    %well
+      /acme/wel/(scot %ud i)/der/(scot %ud ider)
+    /acme-challenge/[tok.cal]
+  :+  ~
+    /text/plain
+  %-  as-octs:mimes:html
+  (rap 3 [tok.cal '.' (pass:thumb:jwk key.act) ~])
 ::
-++  finalize
+++  test-challenge
+  ^+  this
+  %-  emil
+  =/  cal=(list [@ud @ud turf trial])
+    %-  zing
+    %+  turn
+      (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %1 *] a)))
+    |=  [ider=@ud rod=order]
+    ?>  ?=([%1 *] rod)
+    %+  turn
+      ~(tap by aut.rod)
+    |=  [i=@ud aut=auth]
+    ?>  ?=([%1 *] aut)
+    [i ider dom.aut cal.aut]
+  %+  turn  cal
+  |=  [i=@ud ider=@ud dom=turf cal=trial]
+  ^-  card
+  =/  wir=wire  /acme/tcal/(scot %ud i)/der/(scot %ud ider)
+  =/  pat=path  /'.well-known'/acme-challenge/[tok.cal]
+  =/  pul=purl  [[| ~ [%& dom]] [~ pat] ~]
+  (request wir pul ~)
+::
+++  finalize-challenge
+  ^+  this
+  %-  emil
+  =/  cal=(list (trel @ud @ud purl))
+    %-  zing
+    %+  turn
+      (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %1 *] a)))
+    |=  [ider=@ud rod=order]
+    ?>  ?=([%1 *] rod)
+    %+  turn
+      ~(tap by aut.rod)
+    |=  [i=@ud aut=auth]
+    ?>  ?=([%1 *] aut)
+    [i ider cal.cal.aut]
+  %+  turn  cal
+  |=  [i=@ud ider=@ud cal=purl]
+  ^-  card
+  =/  wir=wire  /acme/cal/(scot %ud i)/der/(scot %ud ider)
+  (request wir cal `[%o ~])
+::
+++  finalize-order
   ^+  this
   %-  emil
   =/  csr=(list (trel @ud purl @ux))
     %+  turn
-      (skim ~(tap by rod) |=(a=[@ud ^order] ?=([@ %2 *] a)))
-    |=  [i=@ud rod=^order]
+      (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %2 *] a)))
+    |=  [i=@ud rod=order]
     ?>  ?=([%2 *] rod)
     [i fin.rod csr.rod]
   %+  turn  csr
@@ -948,8 +983,8 @@
   %-  emil
   =/  url=(list (pair @ud purl))
     %+  turn
-      (skim ~(tap by rod) |=(a=[@ud ^order] ?=([@ %2 *] a)))
-    |=  [i=@ud rod=^order]
+      (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %2 *] a)))
+    |=  [i=@ud rod=order]
     ?>  ?=([%2 *] rod)
     [i der.rod]
   %+  turn  url
@@ -966,6 +1001,8 @@
   =?  non  ?=(^ ron)  q.i.ron
   ?.  ?=(%2 (div p.rep 100))
     ~&  %lack-of-success
+    ?:  ?=(%tcal i.t.wir)
+      abet:test-challenge  :: XX sleep?
     =/  bod=[typ=@t det=@t]
       (error:grab (need (de-json:html q:(need r.rep))))
     ?:  =('urn:ietf:params:acme:error:badNonce' typ.bod)
@@ -989,13 +1026,13 @@
     ?.  ?=([%next ^] t.t.wir)
       register
     ?+  i.t.t.t.wir  this
-      %der  order
+      %der  new-order
       %aut  authorize
-      %cal  challenge
+      %cal  finalize-challenge
     ==
   ::
       %reg
-    =<  abet:order
+    =<  abet:new-order
     =/  bod=[id=@t wen=@t sas=@t]  :: XX @da
       (acct:grab (need (de-json:html q:(need r.rep))))
     =/  loc=@t
@@ -1006,7 +1043,7 @@
       %der
     =<  abet:authorize
     =/  i=@ud  (slav %ud (head t.t.wir))
-    =/  der=^order  (~(got by rod) i)
+    =/  der=order  (~(got by rod) i)
     ?>  ?=([%0 *] der)
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
@@ -1015,15 +1052,15 @@
       (order:grab (need (de-json:html q:(need r.rep))))
     =/  aut  %-  ~(gas by *(map @ud auth))
              (spun aut.bod |=([a=purl b=@ud] [[b %0 a] +(b)]))
-    =/  dor=^order  [%1 dom.der exp.bod url fin.bod aut]
+    =/  dor=order  [%1 dom.der exp.bod url fin.bod aut]
     this(rod (~(put by rod) i dor))
   ::
       %aut
-    =<  abet:challenge
+    =<  abet:test-challenge:save-challenge
     ?>  ?=([@ %der @ *] t.t.wir)
     =/  i  (slav %ud i.t.t.wir)
     =/  ider  (slav %ud i.t.t.t.t.wir)
-    =/  der=^order  (~(got by rod) ider)
+    =/  der=order  (~(got by rod) ider)
     ?>  ?=([%1 *] der)
     =/  aut=auth  (~(got by aut.der) i)
     ?>  ?=([%0 *] aut)
@@ -1035,12 +1072,16 @@
     =.  der  der(aut (~(put by aut.der) i tau))
     this(rod (~(put by rod) ider der))
   ::
+      %tcal
+    :: XX check content type and response body
+    abet:finalize-challenge
+  ::
       %cal
-    =<  abet:finalize
+    =<  abet:finalize-order
     ?>  ?=([@ %der @ *] t.t.wir)
     =/  i  (slav %ud i.t.t.wir)
     =/  ider  (slav %ud i.t.t.t.t.wir)
-    =/  der=^order  (~(got by rod) ider)
+    =/  der=order  (~(got by rod) ider)
     ?>  ?=([%1 *] der)
     =/  aut=auth  (~(got by aut.der) i)
     ?>  ?=([%1 *] aut)
@@ -1050,10 +1091,10 @@
     =.  sas.cal.aut  %pend
     =.  der  der(aut (~(put by aut.der) i aut))
     =.  rod  (~(put by rod) ider der)
-    =/  fin=(list (pair @ud ^order))
+    =/  fin=(list (pair @ud order))
       %+  skim
         ~(tap by rod)
-      |=  a=[@ud ^order]
+      |=  a=[@ud order]
       ?&  ?=([@ %1 *] a)
           %+  levy
             ~(tap by aut.a)
@@ -1064,7 +1105,7 @@
     %=  this
       rod  %-  ~(gas by rod)
            %+  turn  fin
-           |=  [i=@ud der=^order]
+           |=  [i=@ud der=order]
            ^+  [i der]
            ?>  ?=([%1 *] der)
            =/  k=key:rsa  rekey  :: XX reuse
@@ -1101,7 +1142,7 @@
       %cer    :: XX send configuration to eyre
     =<  abet
     =/  i=@ud  (slav %ud (head t.t.wir))
-    =/  der=^order  (~(got by rod) i)
+    =/  der=order  (~(got by rod) i)
     =/  cer=wain
       (to-wain:format q:(need r.rep))
     ?>  ?=([%2 *] der)
@@ -1118,17 +1159,17 @@
   ?+  a  ~&  +<+.this
          [~ this]
     %init   abet:init
-    %order  abet:order
+    %order  abet:new-order
     %auth   abet:authorize
-    %trial  abet:challenge
-    %final  abet:finalize
+    %trial  abet:test-challenge
+    %final  abet:finalize-order
     %poll   abet:poll-order
     %our    abet:(add-order /org/urbit/(crip +:(scow %p our.bow)) ~)
     %test   test
   ==
 ::
 ++  poke-path
-  |=(a=path (add-order a ~))
+  |=(a=path abet:(add-order a ~))
 ::
 :: ++  prep  _[~ this]
 ++  prep
@@ -1156,7 +1197,7 @@
 ++  add-order
   |=  dom=(list turf)
   ^+  this
-  order(rod (~(put by rod) ~(wyt by rod) [%0 dom]))
+  new-order(rod (~(put by rod) ~(wyt by rod) [%0 dom]))
 ::
 ++  test
   =,  tester:tester
