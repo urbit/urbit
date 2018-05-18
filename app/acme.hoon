@@ -704,11 +704,15 @@
         ['status' so]
     ==
   ::
+  ++  finalizing-order
+    %-  ot
+    :~  ['expires' so] :: XX (su iso-8601)
+        ['status' so]
+    ==
+  ::
   ++  final-order
     %-  ot
-    :~  ['authorizations' (ar json-purl)]
-        ['finalize' json-purl]
-        ['expires' so] :: XX (su iso-8601)
+    :~  ['expires' so] :: XX (su iso-8601)
         ['status' so]
         ['certificate' json-purl]
     ==
@@ -1124,6 +1128,7 @@
   ::
       %fin
     :: XX rep body missing authorizations
+    :: XX finalizing-order
     :: =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t]
     ::   (order:grab (need (de-json:html q:(need r.rep))))
     :: XX check status? (i don't think failures get here)
@@ -1133,15 +1138,15 @@
     =/  i=@ud  (slav %ud (head t.t.wir))
     =/  raw=json
       (need (de-json:html q:(need r.rep)))
-    =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t]
-      (order:grab raw)
+    =/  bod=[exp=@t sas=@t]
+      (finalizing-order:grab raw)
     ?+  sas.bod
         ~&(poll-order-status+sas.bod abet)
       %invalid     abet          :: XX check authz, retry order?
       %pending     abet:poll-order
       %processing  abet:poll-order
       %valid       =<  abet
-                   =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t cer=purl]
+                   =/  bod=[exp=@t sas=@t cer=purl]
                      (final-order:grab raw)  :: XX json reparser unit
                    %-  emit                  :: XX accept hed
                    (request /acme/cer/(scot %ud i) cer.bod ~)
