@@ -790,6 +790,7 @@
       act=acct                                          ::  service account
       non=@t                                            ::  nonce from last
       rod=(map @ud order)                               ::  active orders
+      cey=key:rsa                                       ::  cert key
       liv=(map (list turf) config)                      ::  active config
       hit=history                                       ::  a foreign country
   ==                                                    ::
@@ -1113,9 +1114,9 @@
            |=  [i=@ud der=order]
            ^+  [i der]
            ?>  ?=([%1 *] der)
-           =/  k=key:rsa  rekey  :: XX reuse
-           =/  csr=@ux  (en:der:pkcs10 k dom.der)
-           [i %2 dom.der exp.der der.der fin.der k csr]
+           :: =/  k=key:rsa  rekey  :: XX reuse
+           =/  csr=@ux  (en:der:pkcs10 cey dom.der)
+           [i %2 dom.der exp.der der.der fin.der cey csr]
       :: XX save pending authz somewhere instead of just dropping them
     ==
   ::
@@ -1196,7 +1197,7 @@
 ++  init
   =/  url
     'https://acme-staging-v02.api.letsencrypt.org/directory'
-  directory(bas (need (de-purl:html url)), act [rekey ~])
+  directory(bas (need (de-purl:html url)), act [rekey ~], cey rekey)
   :: XX wait for DNS binding confirmation?
   :: (add-order /org/urbit/(crip +:(scow %p our.bow)) ~)
 ::
