@@ -338,9 +338,19 @@
         ::  %plan: build a hoon program from a preprocessed source file
         ::
         $:  %plan
-            ::  source-path: the clay path of the hoon source file
+            ::  path-to-render: the clay path of a file being rendered
             ::
-            source-path=rail
+            ::    TODO: Once we've really implemented this, write the
+            ::    documentation. (This is the path that starts out as the path
+            ::    of the hoon source which generated the scaffold, but can be
+            ::    changed with `/:`.)
+            ::
+            ::    TODO: We may need to keep the original source-path for
+            ::    resolving the disc in +gather-path-builds because we don't
+            ::    want to prevent `/: /other-ship/other-desk/=/` from changing
+            ::    where we load hoon renderers from.
+            ::
+            path-to-render=rail
             ::  query-string: the query string of the http request
             ::
             query-string=coin
@@ -1569,7 +1579,7 @@
   ::
   ++  late-bound-path
     ;~  pfix  fas
-      %+  cook  |=(a/truss a)
+      %+  cook  |=(a=truss a)
       =>  hoon-parser
       ;~  plug
         (stag ~ gash)
@@ -2691,7 +2701,7 @@
             %mute  !!
             %pact  !!
             %path  (make-path disc prefix raw-path)
-            %plan  (make-plan source-path query-string scaffold)
+            %plan  (make-plan path-to-render query-string scaffold)
             %reef  (make-reef disc)
             %ride  (make-ride formula subject)
             %same  (make-same schematic)
@@ -2988,7 +2998,7 @@
       [[%leaf "{<(en-beam beam)>}"] message]
     ::
     ++  make-plan
-      |=  [source-path=rail query-string=coin =scaffold]
+      |=  [path-to-render=rail query-string=coin =scaffold]
       ^-  build-receipt
       ::  TODO: support cranes
       ::  TODO: support query-string
@@ -3033,7 +3043,7 @@
             (return-error error-message)
           ::  reef-build: %reef build to produce standard library
           ::
-          =/  reef-build=^build  [date.build [%reef disc.source-path]]
+          =/  reef-build=^build  [date.build [%reef disc.path-to-render]]
           ::
           =^  reef-result  accessed-builds  (depend-on reef-build)
           ?~  reef-result
@@ -3115,7 +3125,9 @@
               %fsts  (run-fsts +.crane)
               %fsdt  (run-fsdt +.crane)
               %fssm  (run-fssm +.crane)
+              %fscl  (run-fscl +.crane)
               %fskt  (run-fskt +.crane)
+              %fszp  (run-fszp +.crane)
             ==
         ::  +run-fssg: runs the `/~` rune
         ::
@@ -3227,6 +3239,13 @@
           ?>  ?=([~ %success %call *] call-result)
           ::
           [[%subject vase.u.call-result] ..run-crane]
+        ::  +run-fscl: runs the `/:` rune
+        ::
+        ++  run-fscl
+          |=  [path=truss sub-crane=^crane]
+          ^-  compose-cranes
+          ::
+          !!
         ::  +run-fskt: runs the `/^` rune
         ::
         ++  run-fskt
@@ -3249,6 +3268,34 @@
           ?.  (~(nest ut p.vase.u.bunt-result) | p.subject.child)
             [[%error [leaf+"/^ failed: nest-fail"]~] ..run-crane]
           [[%subject [p.vase.u.bunt-result q.subject.child]] ..run-crane]
+        ::  +run-fszp: runs the `/!mark/` "rune"
+        ::
+        ++  run-fszp
+          |=  =mark
+          ^-  compose-cranes
+          ::  TODO: We'll need to allow other marks in time.
+          ::
+          ?>  =(%noun mark)
+          ::
+          =/  hood-build=^build  [date.build [%hood path-to-render]]
+          =^  hood-result  accessed-builds  (depend-on hood-build)
+          ?~  hood-result
+            [[%block [hood-build]~] ..run-crane]
+          ?:  ?=([~ %error *] hood-result)
+            [[%error [leaf+"/! failed: " message.u.hood-result]] ..run-crane]
+          ?>  ?=([~ %success %hood *] hood-result)
+          ::
+          =/  plan-build=^build
+            :-  date.build
+            [%plan path-to-render query-string scaffold.u.hood-result]
+          =^  plan-result  accessed-builds  (depend-on plan-build)
+          ?~  plan-result
+            [[%block [plan-build]~] ..run-crane]
+          ?:  ?=([~ %error *] plan-result)
+            [[%error [leaf+"/! failed: " message.u.plan-result]] ..run-crane]
+          ?>  ?=([~ %success %plan *] plan-result)
+          ::
+          [[%subject vase.u.plan-result] ..run-crane]
         --
       ::  +gather-path-builds: produce %path builds to resolve import paths
       ::
@@ -3259,7 +3306,7 @@
         %+  turn  imports
         |=  [prefix=?(%sur %lib) =cable]
         ^-  ^build
-        [date.build [%path disc.source-path prefix file-path.cable]]
+        [date.build [%path disc.path-to-render prefix file-path.cable]]
       ::  +resolve-builds: run a list of builds and collect results
       ::
       ::    If a build blocks, put its +tang in :error-message and stop.

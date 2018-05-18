@@ -90,6 +90,7 @@
   test-core-fssm
   test-core-fsbr
   test-core-fsbr-out-of-options
+  test-plan-fszp-as-noun
 ==
 ++  test-tear
   ~&  %test-tear
@@ -4386,6 +4387,76 @@
     results1
     (expect-ford-empty ford ~nul)
   ==
+::
+++  test-plan-fszp-as-noun
+  ~&  %test-plan-fszp-as-noun
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /=  data  /!noun/
+      data
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/other/lib]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [1 2 3 ~]
+      '''
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            :*  %plan  [[~nul %home] /hoon/other/lib]  *coin
+                :*  zuse-version=309
+                    structures=~
+                    libraries=~
+                    cranes=[%fsts %data [%fszp %noun]]~
+                    sources=[%direct %wing [%data]~]~
+        ==  ==  ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %plan *] build-result.pin-result)
+        ::
+        =/  =vase  vase.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  [1 2 3 ~]
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>([1 2 3 ~]))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+
+
 ::
 ::  |utilities: helper arms
 ::
