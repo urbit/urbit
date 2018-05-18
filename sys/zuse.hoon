@@ -1252,7 +1252,7 @@
       =,  eyre
       $%  {$b $wait p/@da}                              ::  wait until
           [%e %hiss p=(unit user) q=mark r=cage]        ::  outbound user req
-          {$x $mess p/ship q/path r/*}                  ::  send message
+          [%a %want p=sock q=path r=*]                  ::  send message
       ==                                                ::
     ++  remote                                          ::  remote notification
       %+  each  safe                                    ::  &/addition
@@ -1261,7 +1261,8 @@
     ++  sign                                            ::  in result $<-
       $%  {$b $wake $~}                                 ::  wakeup
           [%e %sigh p=cage]                             ::  marked http response
-          {$x $rest p/coop}                             ::  message result
+          [%j %vent p=update:constitution:ethe]         ::  ethereum changes
+          [%a %woot p=ship q=coop]                      ::  message result
       ==                                                ::
     ++  tally                                           ::  balance update
       %+  each  balance                                 ::  complete
@@ -1282,7 +1283,7 @@
           [%vent ~]                                     ::  view ethereum state
           [%vest our=ship]                              ::  view public balance
           [%vine ~]                                     ::  view secret history
-          [%west our=ship p=ship q=path r=*]            ::  remote request
+          [%west p=sack q=path r=*]                     ::  remote request
       ==                                                ::
     ++  gilt  gilt:womb
     --

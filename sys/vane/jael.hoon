@@ -1039,15 +1039,15 @@
       ::    {$hail p/safe}
       ::
           $hail
-        %+  cure  our.tac
-        abet:abet:(hail:(burb p.tac) our.tac [%| p.mes])
+        %+  cure  p.p.tac
+        abet:abet:(hail:(burb q.p.tac) p.p.tac [%| p.mes])
       ::
       ::  share certificates
       ::    {$meet p/farm}
       ::
           $meet
-        %+  cure  our.tac
-        abet:(~(meet ur urb) ``p.tac p.mes)
+        %+  cure  p.p.tac
+        abet:(~(meet ur urb) ``q.p.tac p.mes)
       ::
       ::  cancel trackers
       ::    [%nuke ~]
@@ -2023,14 +2023,14 @@
     [d %give %vent upd]
   ::
   ++  subscribe-to
-    |=  who=@p
+    |=  [our=ship who=ship]
     %+  wrap-note  /vent/(scot %p who)
-    [%x %mess who /j %vent ~]
+    [%a %want [our who] /j/vent `*`[%vent ~]]
   ::
   ++  unsubscribe-from
-    |=  who=@p
+    |=  [our=ship who=ship]
     %+  wrap-note  /vent/(scot %p who)
-    [%x %mess who /j %nuke ~]
+    [%a %want [our who] /j/vent `*`[%nuke ~]]
   ::
   ::
   ++  read
@@ -2093,7 +2093,7 @@
     =+  bos=(sein:title our)
     ?.  =(our bos)
       ::TODO  set bos as source in config
-      (put-move (subscribe-to bos))
+      (put-move (subscribe-to our bos))
     ::TODO  set localhost as source in config
     new-filter
   ::
@@ -2464,7 +2464,14 @@
       ==
   ^-  {p/(list move) q/_..^$}
   =*  req  q.hin
-  ?+  req  [~ ..^$]
+  ?-  req
+      [%a %woot *]
+    ?~  q.req  ~&(%coop-fine [~ ..^$])
+    ?~  u.q.req  ~&(%ares-fine [~ ..^$])
+    ~&  [%woot-bad p.u.u.q.req]
+    ~_  q.u.u.q.req
+    [~ ..^$]
+  ::
       [%e %sigh *]
     ~&  [%got-sigh p.p.req]
     =^  moz  eth.lex  abet:(~(sigh et tea now eth.lex) p.req)
