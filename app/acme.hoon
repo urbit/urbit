@@ -1031,6 +1031,7 @@
       %der  new-order
       %aut  authorize
       %cal  finalize-challenge
+      %fin  finalize-order
     ==
   ::
       %reg
