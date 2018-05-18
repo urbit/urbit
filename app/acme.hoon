@@ -844,8 +844,8 @@
 ++  nonce
   |=  nex=wire
   ^+  this
-  ?>  |(?=(~ nex) ?=([%next *] nex))
-  (emit (request (weld `wire`/acme/non nex) non.dir ~))
+  ?>  ?=([%next *] nex)
+  (emit (request (weld `wire`/acme/non `wire`nex) non.dir ~))
 ::
 ++  register
   %-  emit(reg.act ~)
@@ -1006,17 +1006,15 @@
     =/  bod=[typ=@t det=@t]
       (error:grab (need (de-json:html q:(need r.rep))))
     ?:  =('urn:ietf:params:acme:error:badNonce' typ.bod)
-      =/  nex=wire
-        ?.  ?=(?(%der %aut %cal) i.t.wir)
-          ~
-        /next/[i.t.wir]
-      abet:(nonce nex)
+      ?.  ?=(?(%reg %der %aut %cal %fin) i.t.wir)
+        ~&(unrecoverable-bad-nonce+wir abet:this)
+      abet:(nonce /next/[i.t.wir])
     :: XX challenge is not pending
     :: XX order can't be finalized
-    [~ this]
+    abet:this
   ?+  i.t.wir  !!
       %dir
-    =<  abet:(nonce ~)
+    =<  abet:(nonce /next/reg)
     =/  bod=^directory
       (directory:grab (need (de-json:html q:(need r.rep))))
     this(dir bod)
@@ -1024,8 +1022,10 @@
       %non
     =<  abet
     ?.  ?=([%next ^] t.t.wir)
-      register
-    ?+  i.t.t.t.wir  this
+      ~&(unrecognized-nonce-wire+wir this)
+    =*  nex  i.t.t.t.wir
+    ?+  nex  ~&(unknown-nonce-next+nex this)
+      %reg  register
       %der  new-order
       %aut  authorize
       %cal  finalize-challenge
@@ -1197,7 +1197,12 @@
 ++  add-order
   |=  dom=(list turf)
   ^+  this
-  new-order(rod (~(put by rod) ~(wyt by rod) [%0 dom]))
+  :: XX temporarily force one at a time
+  :: new-order(rod (~(put by rod) ~(wyt by rod) [%0 dom]))
+  %=  new-order
+    rod.hit  (weld ~(val by rod) rod.hit)
+    rod      (~(put by ^+(rod ~)) ~(wyt by rod) [%0 dom])
+  ==
 ::
 ++  test
   =,  tester:tester
