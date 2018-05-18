@@ -3111,6 +3111,7 @@
         ::
         |^  ?+  -.crane  !!
               %fssg  (run-fssg +.crane)
+              %fsbr  (run-fsbr +.crane)
               %fsts  (run-fsts +.crane)
               %fsdt  (run-fsdt +.crane)
               %fssm  (run-fssm +.crane)
@@ -3131,6 +3132,19 @@
             [[%error [leaf+"/~ failed: " message.u.ride-result]] ..run-crane]
           ?>  ?=([~ %success %ride *] ride-result)
           [[%subject vase.u.ride-result] ..run-crane]
+        ::  +run-fsbr: runes the `/|` rune
+        ::
+        ++  run-fsbr
+          |=  choices=(list ^crane)
+          ^-  compose-cranes
+          ::
+          ?~  choices
+            [[%error [leaf+"/| failed: out of options"]~] ..run-crane]
+          ::
+          =^  child  ..run-crane  (run-crane subject i.choices)
+          ?.  ?=([%error *] child)
+            [child ..run-crane]
+          $(choices t.choices)
         ::  +run-fsts: runs the `/=` rune
         ::
         ++  run-fsts

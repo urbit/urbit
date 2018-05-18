@@ -88,6 +88,8 @@
   test-core-fsdt-fskt
   test-core-fskt-nest-fail
   test-core-fssm
+  test-core-fsbr
+  test-core-fsbr-out-of-options
 ==
 ++  test-tear
   ~&  %test-tear
@@ -4272,6 +4274,113 @@
         :-  &
         (~(nest ut p.vase) | -:!>([5 5 ~]))
     ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-core-fsbr
+  ~&  %test-core-fsbr
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /=  data  /|  /^  (list @u)
+                    /~  5
+                ::
+                    /^  (list @u)
+                    /~  [6 6 ~]
+                ==
+      data
+      '''
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%core source-path=`rail:ford-gate`[[~nul %home] /hoon/program/gen]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %core *] build-result.pin-result)
+        ::
+        =/  =vase  vase.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  [6 6 ~]
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>([6 6 ~]))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-core-fsbr-out-of-options
+  ~&  %test-core-fsbr-out-of-options
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /=  data  /|  /^  (list @u)
+                    /~  5
+                ::
+                    /^  @u
+                    /~  [6 6 ~]
+                ==
+      data
+      '''
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%core source-path=`rail:ford-gate`[[~nul %home] /hoon/program/gen]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %success
+                %pin  ~1234.5.6  %error
+                :~  [%leaf "ford: %core failed: "]
+                    [%leaf "/| failed: out of options"]
+    ==  ==  ==  ==
   ::
   ;:  weld
     results1
