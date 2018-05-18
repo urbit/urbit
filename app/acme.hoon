@@ -4,8 +4,8 @@
 ::::  libraries
 ::
 |%                                                      ::  +base64
-++  base64                                              ::  rfc4648
-  =+  [pad=& url=|]                                     ::  [pad? url-safe?]
+++  base64                                              ::  [pad? url-safe?]
+  =+  [pad=& url=|]                                     ::
   |%                                                    ::  +en:base64
   ++  en                                                ::  encode base64
     |=  tig=@
@@ -1012,6 +1012,7 @@
     :: XX challenge is not pending
     :: XX order can't be finalized
     abet:this
+  ~|  sigh-fail+rep
   ?+  i.t.wir  !!
       %dir
     =<  abet:(nonce /next/reg)
@@ -1033,12 +1034,16 @@
   ::
       %reg
     =<  abet:new-order
-    =/  bod=[id=@t wen=@t sas=@t]  :: XX @da
-      (acct:grab (need (de-json:html q:(need r.rep))))
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
-    ?>  ?=(%valid sas.bod)
-    this(reg.act `[wen.bod loc])
+    =/  wen=@t              :: XX @da
+      ?~  r.rep
+        (scot %da now.bow)
+      =/  bod=[id=@t wen=@t sas=@t]
+        (acct:grab (need (de-json:html q.u.r.rep)))
+      ?>  ?=(%valid sas.bod)
+      wen.bod
+    this(reg.act `[wen loc])
   ::
       %der
     =<  abet:authorize
@@ -1159,6 +1164,7 @@
   ?+  a  ~&  +<+.this
          [~ this]
     %init   abet:init
+    %reg    abet:register
     %order  abet:new-order
     %auth   abet:authorize
     %trial  abet:test-challenge
@@ -1169,7 +1175,7 @@
   ==
 ::
 ++  poke-path
-  |=(a=path abet:(add-order a ~))
+  |=(a=path abet:new-order:(add-order a ~))
 ::
 :: ++  prep  _[~ this]
 ++  prep
