@@ -1091,9 +1091,10 @@
     ?>  ?=([%1 *] der)
     =/  aut=auth  (~(got by aut.der) i)
     ?>  ?=([%1 *] aut)
-    =/  bod=[typ=@t sas=@t url=purl tok=@t]
-      (challenge:grab (need (de-json:html q:(need r.rep))))
-    ?>  ?=(%pending sas.bod)
+    :: XX 204 assuming pending?
+    :: =/  bod=[typ=@t sas=@t url=purl tok=@t]
+    ::   (challenge:grab (need (de-json:html q:(need r.rep))))
+    :: ?>  ?=(%pending sas.bod)
     =.  sas.cal.aut  %pend
     =.  der  der(aut (~(put by aut.der) i aut))
     =.  rod  (~(put by rod) ider der)
@@ -1121,8 +1122,9 @@
     ==
   ::
       %fin
-    =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t]
-      (order:grab (need (de-json:html q:(need r.rep))))
+    :: XX rep body missing authorizations
+    :: =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t]
+    ::   (order:grab (need (de-json:html q:(need r.rep))))
     :: XX check status? (i don't think failures get here)
     abet:poll-order
   ::
