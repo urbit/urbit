@@ -2689,7 +2689,7 @@
             %pin   (make-pin date schematic)
             %alts  (make-alts choices)
             %bake  !!
-            %bunt  !!
+            %bunt  (make-bunt disc mark)
             %call  (make-call gate sample)
             %cast  !!
             %core  (make-core source-path)
@@ -2776,6 +2776,41 @@
         $(choices t.choices)
       ::
       [build [%build-result %success %alts u.result] accessed-builds]
+    ::
+    ++  make-bunt
+      |=  [=disc mark=term]
+      ^-  build-receipt
+      ::  resolve path of the mark definition file
+      ::
+      =/  path-build=^build  [date.build [%path disc %mar mark]]
+      ::
+      =^  path-result  accessed-builds  (depend-on path-build)
+      ?~  path-result
+        [build [%blocks [path-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %path *] path-result)
+        (wrap-error path-result)
+      ::  build the mark core from source
+      ::
+      =/  core-build=^build  [date.build [%core rail.u.path-result]]
+      ::
+      =^  core-result  accessed-builds  (depend-on core-build)
+      ?~  core-result
+        [build [%blocks [core-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %core *] core-result)
+        (wrap-error core-result)
+      ::  extract the sample from the mark core
+      ::
+      =/  mark-vase=vase    vase.u.core-result
+      ~|  %mark-vase
+      =+  [sample-type=p sample-value=q]:(slot 6 mark-vase)
+      ::  if sample is wrapped in a face, unwrap it
+      ::
+      =?  sample-type  ?=(%face -.sample-type)  q.sample-type
+      ::
+      =/  =cage  [mark sample-type sample-value]
+      [build [%build-result %success %bunt cage] accessed-builds]
     ::
     ++  make-call
       |=  [gate=schematic sample=schematic]
