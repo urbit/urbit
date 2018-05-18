@@ -1189,18 +1189,23 @@
   [~ this(+<+ u.old)]
 ::
 ++  rekey                             :: XX do something about this
+  |=  eny=@
   =|  i=@
   |-  ^-  key:rsa
-  =/  k  (new-key:rsa 2.048 eny.bow)
+  =/  k  (new-key:rsa 2.048 eny)
   =/  m  (met 0 n.pub.k)
   ?:  =(0 (mod m 8))  k
   ~&  [%key iter=i width=m]
-  $(i +(i), eny.bow +(eny.bow))
+  $(i +(i), eny +(eny))
 ::
 ++  init
   =/  url
     'https://acme-staging-v02.api.letsencrypt.org/directory'
-  directory(bas (need (de-purl:html url)), act [rekey ~], cey rekey)
+  %=  directory
+    bas  (need (de-purl:html url))
+    act  [(rekey (shas %act eny.bow)) ~]
+    cey  (rekey (shas %act eny.bow))
+  ==
   :: XX wait for DNS binding confirmation?
   :: (add-order /org/urbit/(crip +:(scow %p our.bow)) ~)
 ::
