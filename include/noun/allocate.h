@@ -16,7 +16,11 @@
 
     /* u3a_page: number of bits in word-addressed page.  12 == 16Kbyte page.
     */
+#ifdef __PPC64__
+#     define u3a_page   16
+#else
 #     define u3a_page   12
+#endif
 
     /* u3a_pages: number of pages in memory.
     */
