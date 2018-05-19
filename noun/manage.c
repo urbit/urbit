@@ -413,7 +413,7 @@ _pave_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 {
   c3_w*    rut_w = mem_w;
   c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = ((mem_w + len_w) - siz_w);
+  c3_w*    mat_w = ((mem_w + len_w) - (4 * siz_w));
   c3_w*    cap_w = mat_w;
   u3_road* rod_u = (void*) mat_w;
 
