@@ -624,6 +624,8 @@ static u3j_core _143_two_d[] =
 
     { "by", 0, _143_two__by_d },
     { "in", 0, _143_two__in_d },
+
+    {}
   };
 
 
