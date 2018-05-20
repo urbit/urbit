@@ -234,6 +234,17 @@
                           u3k(qq_sut),
                           u3k(rq_sut)));
 
+#if 1
+          if ( qpq_sut == c3__wet ) {
+            if ( u3h(qqu_zem) != c3__elm ) {
+              return u3m_error("wet-elm-mismatch");
+            }
+          } else if ( qpq_sut == c3__dry ) {
+            if ( u3h(qqu_zem) != c3__ash) {
+              return u3m_error("dry-ash-mismatch");
+            }
+          } else u3m_bail(c3__fail);
+#endif
           pro = u3nt
             (c3y,
              u3nc(u3nc(u3_nul, u3k(axe)), u3k(lon)),

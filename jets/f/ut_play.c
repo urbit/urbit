@@ -454,12 +454,12 @@
         return _play_cnts(van, sut, p_gen, q_gen);
       }
 
-      case c3__brcn: p_gen = u3t(gen);
+      case c3__brcn: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun ruf = u3nc(u3_nul, 1);
         u3_noun ret = _play_grow
-          (van, sut, c3__gold, u3_nul, c3__dry, ruf, p_gen);
+                        (van, sut, c3__gold, p_gen, c3__dry, ruf, q_gen);
 
         u3z(ruf);
         return ret;

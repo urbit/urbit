@@ -70,6 +70,7 @@
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_hook(von, "mile");
 
+    // fprintf(stderr, "mile\r\n");
     return u3n_kick_on(u3i_molt(gat, 
                                 u3x_sam_2,
                                 u3k(dox),
@@ -620,13 +621,13 @@
         return _mull_cnts(van, sut, gol, dox, p_gen, q_gen);
       }
 
-      case c3__brcn: p_gen = u3t(gen);
+      case c3__brcn: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
         u3_noun ruf = u3nc(u3_nul, 1);
 
         ret = _mull_grow
-          (van, sut, gol, dox, c3__gold, u3_nul, c3__dry, ruf, p_gen);
+          (van, sut, gol, dox, c3__gold, p_gen, c3__dry, ruf, q_gen);
         u3z(ruf);
 
         return ret;
