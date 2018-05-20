@@ -1,14 +1,15 @@
+!:
 ::                                                      ::  
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
 =<  ride
-=>  %142  =>
+=>  %141  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.142  ~  ~                                        ::  
+~%  %k.141  ~  ~                                        ::  
 |%
-++  hoon-version  142
+++  hoon-version  141
 --  =>
 ~%  %one  +  ~
 :>  #  %base
@@ -18,7 +19,7 @@
 :>  #  %math
 :>    unsigned arithmetic
 +|
-++  foo-142  !!
+++  foo-141  !!
 ++  add
   ~/  %add
   :>  unsigned addition
@@ -524,7 +525,7 @@
   ::
 ~%  %two  +  ~
 |%
-++  foo-142  !!
+++  foo-141  !!
 ::                                                      ::
 ::::  2a: unit logic                                    ::
   ::                                                    ::
@@ -2030,7 +2031,7 @@
   ::                                                    ::
 ~%  %tri  +  ~
 |%
-++  foo-142  !!
+++  foo-141  !!
 ::
 ::::  3a: signed and modular ints                       ::
   ::                                                    ::
@@ -3745,7 +3746,7 @@
 ::
 ::::  4a: exotic bases
   ::
-++  foo-142  !!
+++  foo-141  !!
 ++  po                                                  ::  phonetic base
   ~/  %po
   =+  :-  ^=  sis                                       ::  prefix syllables
@@ -5841,13 +5842,14 @@
   ::                                            ::::::  cores
     {$brcb p/spec q/alas r/(map @ tome)}                ::  |_
     {$brcl p/hoon q/hoon}                               ::  |:
-    {$brcn p/(map @ tome)}                              ::  |%
+    {$brcn p/(unit term) q/(map @ tome)}                ::  |%
     {$brdt p/hoon}                                      ::  |.
     {$brkt p/hoon q/(map @ tome)}                       ::  |^
     {$brhp p/hoon}                                      ::  |-
     {$brsg p/spec q/hoon}                               ::  |~
     {$brtr p/spec q/hoon}                               ::  |*
     {$brts p/spec q/hoon}                               ::  |=
+    {$brvt p/(unit term) q/(map @ tome)}                ::  |@
     {$brwt p/hoon}                                      ::  |?
   ::                                            ::::::  tuples
     {$clcb p/hoon q/hoon}                               ::  :_ [q p]
@@ -6110,7 +6112,7 @@
 ::
 ::::  5aa: new partial nock interpreter
   ::
-++  foo-142  !!
+++  foo-141  !!
 ++  musk  !.                                            ::  nock with block set
   |%  
   ++  abet
@@ -7316,7 +7318,7 @@
         ==
     ^-  hoon
     :+  %tsgr  example:clear(mod payload)
-    :-  %brcn
+    :+  %brcn  ~
     =-  [[0 -] ~ ~]
     %-  ~(gas by *(map term (pair what foot)))
     ^-  (list (trel term what foot))
@@ -8150,7 +8152,7 @@
         {$note *}  q.gen
     ::
         {$brcb *}  :+  %tsls  [%bcdt p.gen]
-                   :-  %brcn
+                   :+  %brcn  ~
                    %-  ~(run by r.gen)
                    |=  tom/tome
                    ^+  tom
@@ -8163,11 +8165,11 @@
                    ?~  q.gen  p.q.a
                    [%tstr [~ p.i.q.gen] q.i.q.gen $(q.gen t.q.gen)]
         {$brcl *}  [%tsls p.gen [%brdt q.gen]]
-        {$brdt *}  :-  %brcn
+        {$brdt *}  :+  %brcn  ~
                    =-  [[0 -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash p.gen])
         {$brkt *}  :+  %tsgr 
-                      :-  %brcn
+                      :+  %brcn  ~
                       =+  one=(~(got by q.gen) 0)
                       %+  ~(put by q.gen)  0
                       (~(put by one) %$ [~ [%ash p.gen]])
@@ -8175,7 +8177,7 @@
         {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen]]
         {$brsg *}  [%ktbr [%brts p.gen q.gen]]
         {$brtr *}  :+  %tsls  [%bcdt p.gen]
-                   :-  %brcn
+                   :+  %brcn  ~
                    =-  [[0 -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm q.gen])
         {$brts *}  :+  %brcb  p.gen
@@ -8285,7 +8287,7 @@
         $marl  =-  [%cndt [p.i.p.gen $(p.gen t.p.gen)] -]
                ^-  hoon
                :+  %tsbr  [%base %cell]
-               :-  %brcn
+               :+  %brcn  ~
                ^-  (map @ tome)
                =-  [[0 -] ~ ~]
                ^-  (map term (pair what foot))
@@ -8511,7 +8513,8 @@
         $yell  (lead -.gen %.(+.gen moar))
         $brcb  (lead -.gen %.(+.gen (trio stir exps arms)))
         $brcl  (lead -.gen %.(+.gen dubs))
-        $brcn  (lead -.gen %.(+.gen arms))
+        $brcn  (lead -.gen %.(+.gen (twin noop arms)))
+        $brvt  (lead -.gen %.(+.gen (twin noop arms)))
         $brdt  (lead -.gen %.(+.gen expr))
         $brkt  (lead -.gen %.(+.gen (twin expr arms)))
         $brhp  (lead -.gen %.(+.gen expr))
@@ -9699,10 +9702,10 @@
   ++  mile
     ::  mull all chapters and feet in a core
     ::
-    |=  [dox=type mel=vair dom=(map @ tome)]
+    |=  [dox=type mel=vair nym=(unit term) hud=poly dom=(map @ tome)]
     ^-  (pair type type)
-    =+  yet=(core sut [~ %dry %gold] sut (laze dom) dom)
-    =+  hum=(core dox [~ %dry %gold] dox (laze dom) dom)
+    =+  yet=(core sut [nym hud %gold] sut (laze dom) dom)
+    =+  hum=(core dox [nym hud %gold] dox (laze dom) dom)
     =+  %+  balk(sut yet)
           hum
         dom
@@ -9711,12 +9714,12 @@
   ++  mine
     ::  mint all chapters and feet in a core
     ::
-    |=  [mel/vair dom/(map @ tome)]
+    |=  [mel/vair nym/(unit term) hud/poly dom/(map @ tome)]
     ^-  (pair type nock)
     =-  :_  [%1 dez]
-        (core sut [~ %dry mel] sut [[%full ~] dez] dom)
+        (core sut [nym hud mel] sut [[%full ~] dez] dom)
     ^=  dez
-    =.  sut  (core sut [~ %dry %gold] sut (laze dom) dom)
+    =.  sut  (core sut [nym hud %gold] sut (laze dom) dom)
     |-  ^-  ?(~ ^)
     ?:  ?=(~ dom)
       ~
@@ -9757,7 +9760,8 @@
       [(nice (cell p.hed p.tal)) (cons q.hed q.tal)]
     ::
         {$ktcn *}  $(fab |, gen p.gen)
-        {$brcn *}  (grow %gold [%$ 1] p.gen)
+        {$brcn *}  (grow %gold p.gen %dry [%$ 1] q.gen)
+        {$brvt *}  (grow %gold p.gen %wet [%$ 1] q.gen)
     ::
         {$cnts *}  (~(mint et p.gen q.gen) gol)
     ::
@@ -9880,10 +9884,10 @@
       typ
     ::
     ++  grow
-      |=  {mel/vair ruf/hoon dom/(map @ tome)}
+      |=  {mel/vair nym/(unit term) hud/poly ruf/hoon dom/(map @ tome)}
       ^-  {p/type q/nock}
       =+  dan=^$(gen ruf, gol %noun)
-      =+  pul=(mine mel dom)
+      =+  pul=(mine mel nym hud dom)
       [(nice p.pul) (cons q.pul q.dan)]
     --
   ::
@@ -9916,7 +9920,8 @@
       [(nice (cell p.hed p.tal)) (cell q.hed q.tal)]
     ::
         {$ktcn *}  $(fab |, gen p.gen)
-        {$brcn *}  (grow %gold [%$ 1] p.gen)
+        {$brcn *}  (grow %gold p.gen %dry [%$ 1] q.gen)
+        {$brvt *}  (grow %gold p.gen %wet [%$ 1] q.gen)
         {$cnts *}  (~(mull et p.gen q.gen) gol dox)
         {$dtkt *}  =+($(gen q.gen, gol %noun) $(gen [%bcdt p.gen]))
         {$dtls *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
@@ -10045,12 +10050,12 @@
       typ
     ::
     ++  grow
-      |=  {mel/vair ruf/hoon dom/(map @ tome)}
+      |=  {mel/vair nym/(unit term) hud/poly ruf/hoon dom/(map @ tome)}
       ::  make al 
       ~_  leaf+"mull-grow"
       ^-  {p/type q/type}
       =+  dan=^$(gen ruf, gol %noun)
-      =+  yaz=(mile(sut p.dan) q.dan mel dom)
+      =+  yaz=(mile(sut p.dan) q.dan mel nym hud dom)
       [(nice p.yaz) q.yaz]
     --
   ++  meet  |=(ref/type &((nest | ref) (nest(sut ref) | sut)))
@@ -10264,7 +10269,8 @@
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
       {$ktcn *}  $(fab |, gen p.gen)
-      {$brcn *}  (core sut [~ %dry %gold] sut *seminoun p.gen)
+      {$brcn *}  (core sut [p.gen %dry %gold] sut *seminoun q.gen)
+      {$brvt *}  (core sut [p.gen %wet %gold] sut *seminoun q.gen)
       {$cnts *}  ~(play et p.gen q.gen)
       {$dtkt *}  $(gen [%bcdt p.gen])
       {$dtls *}  [%atom %$ ~]
@@ -12719,7 +12725,8 @@
               %-  stew
               ^.  stet  ^.  limo
               :~  ['_' (rune cab %brcb exqr)]
-                  ['%' (rune cen %brcn expe)]
+                  ['%' (runo cen %brcn ~ expe)]
+                  ['@' (runo vat %brvt ~ expe)]
                   [':' (rune col %brcl expb)]
                   ['.' (rune dot %brdt expa)]
                   ['-' (rune hep %brhp expa)]
