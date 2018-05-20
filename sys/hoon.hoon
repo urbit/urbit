@@ -8177,7 +8177,7 @@
         {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen]]
         {$brsg *}  [%ktbr [%brts p.gen q.gen]]
         {$brtr *}  :+  %tsls  [%bcdt p.gen]
-                   :+  %brcn  ~
+                   :+  %brvt  ~
                    =-  [[0 -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm q.gen])
         {$brts *}  :+  %brcb  p.gen
@@ -9372,7 +9372,12 @@
               ?^  zem
                 :+  %&  
                   [`axe lon]
-                [%| (peg 2 p.u.zem) [[sut(r.p.q %gold) q.q.u.zem] ~ ~]]
+                =/  zut  ^-  foot
+                         ?-  q.p.q.sut 
+                           %wet  [%elm +.q.q.u.zem]
+                           %dry  [%ash +.q.q.u.zem]
+                         ==
+                [%| (peg 2 p.u.zem) [[sut(r.p.q %gold) zut] ~ ~]]
               =+  pec=(peel way r.p.q.sut)
               ?.  sam.pec  lose
               ?:  con.pec  $(sut p.sut, axe (peg axe 3))
