@@ -5789,7 +5789,7 @@
               {$1 p/term q/toga}                        ::  deep toga
               {$2 p/toga q/toga}                        ::  cell toga
           ==                                            ::
-+=  tome  (map term (pair what foot))                   ::  core chapter
++=  tome  (map term hoon)                               ::  core chapter
 +=  tope                                                ::  topographic type
   $@  $?  %&                                            ::  cell or atom
           %|                                            ::  atom
@@ -7149,12 +7149,8 @@
         %-  zing
         ^-  (list (list (pair term hoon)))
         %+  turn  ~(tap by q.r.battery)
-        |=  [term =tome]
-        ^-  (list (pair term hoon))
-        %+  turn  ~(tap by tome)
-        |=  [=term =what =foot]
-        ^-  (pair @tas hoon)
-        [term p.foot]
+        |=  [@ =tome]
+        ~(tap by tome)
       ::  arm-specs: all arms in the core, as specs
       ::
       =^  arm-specs  +>.$
@@ -8154,35 +8150,30 @@
         {$brcb *}  :+  %tsls  [%bcdt p.gen]
                    :+  %brcn  ~
                    %-  ~(run by r.gen)
-                   |=  tom/tome
-                   ^+  tom
-                   %-  ~(run by tom)
-                   |=  a/(pair what foot)
-                   ^+  a
-                   :-  p.a
-                   =-  ?:(?=({$ash *} q.a) [-.q.a -] [-.q.a -])
-                   |-  ^-  hoon
-                   ?~  q.gen  p.q.a
+                   |=  =tome
+                   %-  ~(run by tome)
+                   |=  =hoon
+                   ?~  q.gen  hoon
                    [%tstr [~ p.i.q.gen] q.i.q.gen $(q.gen t.q.gen)]
         {$brcl *}  [%tsls p.gen [%brdt q.gen]]
         {$brdt *}  :+  %brcn  ~
                    =-  [[0 -] ~ ~]
-                   (~(put by *(map term (pair what foot))) %$ ~ [%ash p.gen])
+                   (~(put by *(map term hoon)) %$ p.gen)
         {$brkt *}  :+  %tsgr 
                       :+  %brcn  ~
                       =+  one=(~(got by q.gen) 0)
                       %+  ~(put by q.gen)  0
-                      (~(put by one) %$ [~ [%ash p.gen]])
+                      (~(put by one) %$ p.gen)
                    [%limb %$]
         {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen]]
         {$brsg *}  [%ktbr [%brts p.gen q.gen]]
         {$brtr *}  :+  %tsls  [%bcdt p.gen]
                    :+  %brvt  ~
                    =-  [[0 -] ~ ~]
-                   (~(put by *(map term (pair what foot))) %$ ~ [%elm q.gen])
+                   (~(put by *(map term hoon)) %$ q.gen)
         {$brts *}  :+  %brcb  p.gen
                    =-  [~ [[0 -] ~ ~]]
-                   (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
+                   (~(put by *(map term hoon)) %$ q.gen)
         {$brwt *}  [%ktwt %brdt p.gen]
     ::
         {$clkt *}  [p.gen q.gen r.gen s.gen]
@@ -9374,8 +9365,8 @@
                   [`axe lon]
                 =/  zut  ^-  foot
                          ?-  q.p.q.sut 
-                           %wet  [%elm +.q.q.u.zem]
-                           %dry  [%ash +.q.q.u.zem]
+                           %wet  [%elm q.q.u.zem]
+                           %dry  [%ash q.q.u.zem]
                          ==
                 [%| (peg 2 p.u.zem) [[sut(r.p.q %gold) zut] ~ ~]]
               =+  pec=(peel way r.p.q.sut)
@@ -9675,13 +9666,13 @@
     ?:(=(neg gen) sut $(gen neg))
   ::
   ++  bake
-    |=  [dox/type dab/(map term (pair what foot))]
+    |=  [dox/type hud/poly dab/(map term hoon)]
     ^-  *
     ?:  ?=(~ dab)
       ~
     =+  ^=  dov
-        ?-  -.q.q.n.dab
-          $ash  (mull %noun dox p.q.q.n.dab)
+        ?-  hud
+          $ash  (mull %noun dox q.n.dab)
           $elm  ~
         ==
     ?-  dab
@@ -9692,7 +9683,7 @@
     ==
   ::
   ++  balk
-    |=  [dox/type dom/(map @ tome)]
+    |=  [dox/type hud/poly dom/(map @ tome)]
     ^-  *
     ?:  ?=(~ dom)
       ~
@@ -9711,7 +9702,7 @@
     ^-  (pair type type)
     =+  yet=(core sut [nym hud %gold] sut (laze dom) dom)
     =+  hum=(core dox [nym hud %gold] dox (laze dom) dom)
-    =+  %+  balk(sut yet)
+    =+  %+  balk(sut hud yet)
           hum
         dom
     [yet hum]
@@ -12900,10 +12891,10 @@
       ==
     ::
     ++  boog  !:                                         ::  core arms
-      %+  knee  [p=*term q=*(pair what foot)]  |.  ~+
+      %+  knee  [p=*term q=*hoon]  |.  ~+
       %+  cook
         |=  {a/whit b/term c/whit d/foot}
-        [b ~ d]
+        [b `hoon`+.d]
 ::      =+  e=(glom a c)
 ::      =?  boy.e  =(~ boy.e)
 ::        |-(?+(-.p.d ~ $dbug $(p.d q.p.d), %docs `p.p.d))
@@ -12985,11 +12976,11 @@
     ::
     ++  whap                                            ::  chapter
       %+  cook
-        |=  a=(list (trel term what foot))
+        |=  a=(list (pair term hoon))
         %+  roll  a
-        |=  [b=(trel term what foot) c=(map term [what foot])]
+        |=  [b=(pair term hoon) c=(map term hoon)]
         ^+  c
-        =?  p.r.b  (~(has by c) p.b)  [%eror "duplicate arm {<p.b>}"]
+        =?  q.b  (~(has by c) p.b)  [%eror "duplicate arm {<p.b>}"]
         (~(put by c) b)
       (most muck boog)
     ::
@@ -13005,17 +12996,18 @@
     ++  wisp                                            ::  core tail
       ?.  tol  fail
       %+  cook
-        |=  a=(list (pair whit (map term [what foot])))  ^-  (map @ tome)
+        |=  a=(list (map term hoon))
+        ^-  (map @ tome)
         =<  tos
         %+  roll  a
-        |=  $:  [wit=whit wap=(map term (pair what foot))]
+        |=  $:  wap=(map term hoon)
                 [all=(map term *) num=@ tos=(map @ tome)]
             ==
         =.  wap
           %-  ~(urn by wap)
-          |=  b=(trel term what foot)  ^+  +.b
+          |=  b=(pair term hoon)  ^+  +.b
           ?.  (~(has by all) p.b)  +.b
-          +.b(p.r [%eror "duplicate arm {<p.b>}"])
+          [%eror "duplicate arm {<p.b>}"]
         ::
         =.  all  (~(uni by all) `(map term *)`wap)
         [all +(num) (~(put by tos) num wap)]
@@ -13024,8 +13016,8 @@
         dun
         ;~  sfix
           ;~  pose
-            (most muck ;~(plug apex:docs ;~(pfix (jest '+|') gap whap)))
-            ;~(plug (stag *whit whap) (easy ~))
+            (most muck ;~(pfix (jest '+|') gap whap))
+            ;~(plug whap (easy ~))
           ==
           gap
           dun

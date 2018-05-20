@@ -1891,12 +1891,12 @@
             [%$ 1] 
           :+  %brcn  ~
           =-  [[0 -] ~ ~]
-          (~(run by rop) |=({^ a/hoon} [~ %ash a]))
+          (~(run by rop) |=({^ a/hoon} a))
         ?:  =(~ bil) 
           [%$ 1] 
         :+  %brcn  ~
         =-  [[0 -] ~ ~]
-        (~(run by bil) |=({^ a/hoon} [~ %ash a]))
+        (~(run by bil) |=({^ a/hoon} a))
       ::
       ++  abut                                          ::  generate
         |=  {cof/cafe hyd/hood}                         ::  TODO: $ and |^
@@ -2152,12 +2152,12 @@
             (with:bo |:(sel=..wilt sel(boy [[%tssg boy.sel] boy])))
           =+  [all=(lark (slat %tas) arc) sel=..wilt]
           %+  tug:bo
-            |-  ^-  (bolt (pair (map term (pair what foot)) _..wilt))
+            |-  ^-  (bolt (pair (map term hoon) _..wilt))
             ?~  all  (new:bo cof ~ ..wilt)
             %+  tug:bo  $(all l.all)
-            |:  $:{cof/cafe lef/(map term (pair what foot)) sel/_..wilt}
+            |:  $:{cof/cafe lef/(map term hoon) sel/_..wilt}
             %+  tug:bo  ^$(all r.all, cof cof, sel sel)
-            |:  $:{cof/cafe rig/(map term (pair what foot)) sel/_..wilt}
+            |:  $:{cof/cafe rig/(map term hoon) sel/_..wilt}
             %+  tug:bo
               %=    ^^^^$
                   cof      cof
@@ -2167,8 +2167,8 @@
             |:  $:{cof/cafe sel/_..wilt}
             %+  new:bo  cof
             :_  sel
-            ^-  (map term (pair what foot))
-            [[p.n.all [~ %ash [%tssg boy.sel]]] lef rig]
+            ^-  (map term hoon)
+            [[p.n.all [%tssg boy.sel]] lef rig]
           |:  $:{cof/cafe mav/(map term (pair what foot)) sel/_..wilt}
           ?~  mav
             (err:bo cof [%leaf "source missing: {<(en-beam p.hop)>}"]~)
