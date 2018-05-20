@@ -8,6 +8,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+!:
 |%
 ++  foil                                                ::  ship allocation map
   |*  a=mold                                             ::  entry mold
@@ -195,8 +196,7 @@
   [min=1 ctr=1 und=~ ove=~ max=(dec (bex (bex a))) box=~]
 ::
 ++  fo
-  =|  (foil $@(~ *))
-  |@
+  |_  (foil $@(~ *))
   +-  nth                                             ::  index
     |=  a/@u  ^-  (pair (unit @u) @u)
     ?:  (lth a ~(wyt in und))
@@ -207,32 +207,6 @@
     ?:  =(ctr +(max))  [~ a]
     ?:  =(0 a)  [(some ctr) a]
     $(a (dec a), +<.nth new)
-  ::
-  +-  fin  +<                                         ::  abet
-  +-  new                                             ::  alloc
-    ?:  =(ctr +(max))  +<
-    =.  ctr  +(ctr)
-    ?.  (~(has in ove) ctr)  +<
-    new(ove (~(del in ove) ctr))
-  ::
-  +-  get                                             ::  nullable
-    |=  a/@p  ^+  ?~(box ~ q.n.box)
-    (fall (~(get by box) (neis a)) ~)
-  ::
-  +-  put
-    |*  {a/@u b/*}  ^+  fin           ::  b/_(~(got by box))
-    ~|  put+[a fin]
-    ?>  (fit a)
-    =;  adj  adj(box (~(put by box) a b))
-    ?:  (~(has in box) a)  fin
-    ?:  =(ctr a)  new
-    ?:  (lth a ctr)
-      ?.  (~(has in und) a)  fin
-      fin(und (~(del in und) a))
-    ?.  =(a ctr:new)    :: heuristic
-      fin(ove (~(put in ove) a))
-    =+  n=new(+< new)
-    n(und (~(put in und.n) ctr))
   ::
   +-  fit  |=(a/@u &((lte min a) (lte a max)))        ::  in range
   +-  gud                                             ::  invariant
@@ -251,6 +225,34 @@
           ?:((~(has by box) min) 1 0)
         ==
     ==
+  ::
+  +-  fin  +<                                         ::  abet
+  ::
+  +-  get                                             ::  nullable
+    |=  a/@p  ^+  ?~(box ~ q.n.box)
+    (fall (~(get by box) (neis a)) ~)
+  ::
+  +-  put
+    |*  {a/@u b/*}  ^+  fin           ::  b/_(~(got by box))
+    ~|  put+[a fin]
+    ::  ?>  (fit a)
+    =;  adj  adj(box (~(put by box) a b))
+    ?:  (~(has in box) a)  fin
+    ?:  =(ctr a)  new
+    ?:  (lth a ctr)
+      ?.  (~(has in und) a)  fin
+      fin(und (~(del in und) a))
+    ?.  =(a ctr:new)    :: heuristic
+      fin(ove (~(put in ove) a))
+    =+  n=new(+< new)
+    n(und (~(put in und.n) ctr))
+  ::
+  +-  new                                             ::  alloc
+    |-  ^+  +>-
+    ?:  =(ctr +(max))  +>-
+    =.  ctr  +(ctr)
+    ?.  (~(has in ove) ctr)  +>-
+    $(ove (~(del in ove) ctr))
   --
 --
 ::                                                    ::  ::
