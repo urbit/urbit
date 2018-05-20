@@ -64,14 +64,14 @@
   ++  heads  |*(a/(pole) ?~(a a [-<.a (heads +.a)]))
   ++  fork-clams
     =+  $:{a/(pair _{term *} (pole _{term *}))}
-    |%  +-  $
+    |@  +-  $
           ?~  q.a  p.a
           ?(p.a (fork-clams q.a))
     --
   ::
   ++  normalize
     =+  $:{a/_{@ *}}
-    |%  +-  $
+    |@  +-  $
           |=  b/*
           ^+  [?@(- . .)]:(a b)
           (a b)

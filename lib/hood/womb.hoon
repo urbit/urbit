@@ -195,8 +195,9 @@
   [min=1 ctr=1 und=~ ove=~ max=(dec (bex (bex a))) box=~]
 ::
 ++  fo
-  |_  (foil $@(~ *))
-  ++  nth                                             ::  index
+  =|  (foil $@(~ *))
+  |@
+  +-  nth                                             ::  index
     |=  a/@u  ^-  (pair (unit @u) @u)
     ?:  (lth a ~(wyt in und))
       =+  out=(snag a (sort ~(tap in und) lth))
@@ -208,7 +209,7 @@
     $(a (dec a), +<.nth new)
   ::
   +-  fin  +<                                         ::  abet
-  ++  new                                             ::  alloc
+  +-  new                                             ::  alloc
     ?:  =(ctr +(max))  +<
     =.  ctr  +(ctr)
     ?.  (~(has in ove) ctr)  +<
@@ -233,8 +234,8 @@
     =+  n=new(+< new)
     n(und (~(put in und.n) ctr))
   ::
-  ++  fit  |=(a/@u &((lte min a) (lte a max)))        ::  in range
-  ++  gud                                             ::  invariant
+  +-  fit  |=(a/@u &((lte min a) (lte a max)))        ::  in range
+  +-  gud                                             ::  invariant
     ?&  (fit(max +(max)) ctr)
         (~(all in und) fit(max ctr))
         (~(all in ove) fit(min ctr))

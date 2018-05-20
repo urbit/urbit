@@ -43,7 +43,7 @@
       {$1 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::  extract specific
       =+  hed=$:hood-head
-      |%  +-  $
+      |@  +-  $
             |:  paw=$:hood-part
             ?-  hed
               $drum  ?>(?=($drum -.paw) `part:hood-drum`paw)
@@ -56,7 +56,7 @@
     ++  hood-head  _-:$:hood-part                       ::  initialize state
     ++  hood-make                                       ::
       =+  $:{our/@p hed/hood-head}                      ::
-      |%  +-  $
+      |@  +-  $
             ?-  hed 
               $drum  (make:hood-drum our)
               $helm  *part:hood-helm
@@ -87,7 +87,7 @@
     ==                                                  ::
 ++  able                                                ::  find+make part
   =+  hed=$:hood-head
-  |%  +-  $
+  |@  +-  $
         =+  rep=(~(get by lac) hed)
         =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
         ((hood-good hed) par)
@@ -95,7 +95,7 @@
 ::
 ++  ably                                                ::  save part
   =+  $:{(list) hood-part}
-  |%  +-  $
+  |@  +-  $
         [(flop +<-) %_(+> lac (~(put by lac) +<+< +<+))]
   --
 ::                                                      ::  ::
