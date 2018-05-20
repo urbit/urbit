@@ -1709,7 +1709,7 @@
   =>  ~(. he moz ses)
   =-  [wrap=- +]
   =+  he-arm=he-type
-  |%  +-  $
+  |@  +-  $
         |:  +<.he-arm  
         ^-  (quip move _..he)
         he-abet:(he-arm +<)

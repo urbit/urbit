@@ -767,7 +767,7 @@
   ++  multi-homo
     |*  a=(list (list))
     ^+  =<  $
-      |%  +-  $  ?:(*? ~ [i=(homo (snag 0 a)) t=$])
+      |@  +-  $  ?:(*? ~ [i=(homo (snag 0 a)) t=$])
       --
     a
   ::

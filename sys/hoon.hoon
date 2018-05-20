@@ -242,19 +242,19 @@
   |*  {a/$-(* *) b/$-(* *)}
   =<  +:|.((a (b)))      ::  type check
   =+  c=+<.b
-  |%  +-  $  (a (b c))
+  |@  +-  $  (a (b c))
   --
 ::
 ++  cury                                                ::  curry left
   |*  {a/$-(^ *) b/*}
   =+  c=+<+.a
-  |%  +-  $  (a b c)
+  |@  +-  $  (a b c)
   --
 ::
 ++  curr                                                ::  curry right
   |*  {a/$-(^ *) c/*}
   =+  b=+<+.a
-  |%  +-  $  (a b c)
+  |@  +-  $  (a b c)
   --
 ::
 ++  fore  |*(a/$-(* *) |*(b/$-(* *) (pair a b)))        ::  pair before
@@ -654,7 +654,7 @@
 ++  homo                                                ::  homogenize
   |*  a/(list)
   ^+  =<  $
-    |%  +-  $  ?:(*? ~ [i=(snag 0 a) t=$])
+    |@  +-  $  ?:(*? ~ [i=(snag 0 a) t=$])
     --
   a
 ::
@@ -686,7 +686,7 @@
 ++  limo                                                ::  listify
   |*  a/*
   ^+  =<  $
-    |%  +-  $  ?~(a ~ ?:(*? [i=-.a t=$] $(a +.a)))
+    |@  +-  $  ?~(a ~ ?:(*? [i=-.a t=$] $(a +.a)))
     --
   a
 ::
@@ -834,7 +834,7 @@
 ::
 ++  welp                                                ::  faceless weld
   =|  {* *}
-  |%
+  |@
   +-  $
     ?~  +<-
       +<-(. +<+)
@@ -843,7 +843,7 @@
 ::
 ++  zing                                                ::  promote
   =|  *
-  |%
+  |@
   +-  $
     ?~  +<
       +<
@@ -1231,7 +1231,8 @@
   ::
 ++  in                                                  ::  set engine
   ~/  %in
-  |_  a/(tree)  :: (set)
+  =|  a/(tree)  :: (set)
+  |@
   +-  all                                               ::  logical AND
     ~/  %all
     |*  b/$-(* ?)
@@ -1296,7 +1297,7 @@
   +-  dif                                               ::  difference
     ~/  %dif
     =+  b=a
-    |%  
+    |@
     +-  $
       |-  ^+  a
       ?~  b
@@ -1346,7 +1347,7 @@
   +-  int                                               ::  intersection
     ~/  %int
     =+  b=a
-    |%  
+    |@
     +-  $
       |-  ^+  a
       ?~  b
@@ -1409,7 +1410,7 @@
   +-  uni                                               ::  union
     ~/  %uni
     =+  b=a
-    |%  
+    |@
     +-  $
       ?:  =(a b)  a
       |-  ^+  a
@@ -1444,7 +1445,7 @@
   ~/  %by
   =|  a/(tree (pair))  ::  (map)
   =*  node  ?>(?=(^ a) n.a)
-  |%
+  |@
   +-  all                                               ::  logical AND
     ~/  %all
     |*  b/$-(* ?)
@@ -1501,7 +1502,7 @@
   +-  dif                                               ::  difference
     ~/  %dif
     =+  b=a
-    |%
+    |@
     +-  $
       |-  ^+  a
       ?~  b
@@ -1572,7 +1573,7 @@
   +-  int                                               ::  intersection
     ~/  %int
     =+  b=a
-    |%
+    |@
     +-  $
       |-  ^+  a
       ?~  b
@@ -1660,7 +1661,7 @@
   +-  uni                                               ::  union, merge
     ~/  %uni
     =+  b=a
-    |%
+    |@
     +-  $
       |-  ^+  a
       ?~  b
@@ -1682,7 +1683,7 @@
   ::
   +-  uno                                               ::  general union
     =+  b=a
-    |%
+    |@
     +-  $
       |*  meg/$-({* * *} *)
       |-  ^+  a
@@ -1733,7 +1734,8 @@
   ::                                                    ::
   ::
 ++  ja                                                  ::  jar engine
-  |_  a/(tree (pair * (list)))  ::  (jar)
+  =|  a/(tree (pair * (list)))  ::  (jar)
+  |@
   +-  get                                               ::  gets list by key
     |*  b/*
     =+  c=(~(get by a) b)
@@ -1745,7 +1747,8 @@
     (~(put by a) b [c d])
   --
 ++  ju                                                  ::  jug engine
-  |_  a/(tree (pair * (tree)))  ::  (jug)
+  =|  a/(tree (pair * (tree)))  ::  (jug)
+  |@
   +-  del                                               ::  del key-set pair
     |*  {b/* c/*}
     ^+  a
@@ -1784,7 +1787,8 @@
   ::                                                    ::
   ::
 ++  to                                                  ::  queue engine
-  |_  a/(tree)  ::  (qeu)
+  =|  a/(tree)  ::  (qeu)
+  |@
   +-  bal
     |-  ^+  a
     ?~  a  ~
@@ -1886,7 +1890,7 @@
   ++  le                                                  ::  construct list
     |*  a/(list)
     ^+  =<  $
-      |%  +-  $  ?:(*? ~ [i=(snag 0 a) t=$])
+      |@  +-  $  ?:(*? ~ [i=(snag 0 a) t=$])
       --
     a
   ::                                                      ::
@@ -3714,7 +3718,7 @@
               {$2 p/(list tank)}                        ::  stack trace
           ==                                            ::
 ++  wonk  =+  veq=$:edge                                ::  product from edge
-          |%  +-  $  ?~(q.veq !! p.u.q.veq)             ::
+          |@  +-  $  ?~(q.veq !! p.u.q.veq)             ::
           --                                            ::
 --  =>
 ::                                                      ::
@@ -4415,7 +4419,7 @@
 ++  bend                                                ::  conditional comp
   ~/  %bend
   =+  raq=|*({a/* b/*} [~ u=[a b]])
-  |%
+  |@
   +-  $
     ~/  %fun
     |*  {vex/edge sab/rule}
@@ -4434,7 +4438,7 @@
 ++  comp
   ~/  %comp
   =+  raq=|*({a/* b/*} [a b])                           ::  arbitrary compose
-  |%
+  |@
   +-  $
     ~/  %fun
     |*  {vex/edge sab/rule}
@@ -4563,7 +4567,7 @@
 ++  here                                                ::  place-based apply
   ~/  %here
   =+  [hez=|=({a/pint b/*} [a b]) sef=*rule]
-  |%
+  |@
   +-  $
     ~/  %fun
     |=  tub/nail
@@ -4624,7 +4628,7 @@
 ::
 ++  knee                                                ::  callbacks
   =|  {gar/* sef/_|.(*rule)}
-  |%  +-  $
+  |@  +-  $
         |=  tub/nail
         ^-  (like _gar)
         ((sef) tub)
@@ -5650,7 +5654,7 @@
 ++  mule                                                ::  typed virtual
   ~/  %mule
   =+  taq=|.(**)
-  |%  +-  $
+  |@  +-  $
         =+  mud=(mute taq)
         ?-  -.mud
           %&  [%& p=$:taq]
@@ -8634,7 +8638,7 @@
     ::
     ++  lead
       =+  [sem=@tas out=[** $:life]]
-      |%  +-  $
+      |@  +-  $
             [[sem -.out] +.out]
       --
     ::
@@ -8648,7 +8652,7 @@
       =+  =<  $
           $:  etc/_^|(|:(** $:{* life}))
           ==
-      |%  +-  $
+      |@  +-  $
             |*  bud/*
             ^+  [bud vit]
             ?:  =(~ bud)  [bud vit]
@@ -8675,7 +8679,7 @@
               tri/_^|(|:(** $:{* life}))
               qua/_^|(|:(** $:{* life}))
           ==
-      |%  +-  $
+      |@  +-  $
             |*  bud/*
             =^  yal  vit  (one -.bud)
             =^  ves  vit  (two +<.bud)
@@ -8688,7 +8692,7 @@
       =+  =<  $
           $:  etc/_^|(|:(** $:{* life}))
           ==
-      |%  +-  $
+      |@  +-  $
             |*  bud/*
             ^+  [bud vit]
             ?:  =(~ bud)  [bud vit]
@@ -8707,7 +8711,7 @@
               two/_^|(|:(** $:{* life}))
               tri/_^|(|:(** $:{* life}))
           ==
-      |%  +-  $
+      |@  +-  $
             |*  bud/*
             =^  yal  vit  (one -.bud)
             =^  ves  vit  (two +<.bud)
@@ -8749,7 +8753,7 @@
           $:  one/_^|(|:(** $:{* life}))
               two/_^|(|:(** $:{* life}))
           ==
-      |%  +-  $
+      |@  +-  $
             |*  bud/*
             =^  yal  vit  (one -.bud)
             =^  ves  vit  (two +.bud)
@@ -9088,7 +9092,7 @@
       --
     ++  def
       =+  deft:arc
-      |%  +-  $
+      |@  +-  $
       =>  +<
       |%
       ++  pord  |*(* (form +< *nock))                   ::  wrap mint formula
@@ -9145,7 +9149,7 @@
     ::
     ++  bin
       =+  deft:lib
-      |%  +-  $
+      |@  +-  $
       =>  +<
       |%
       ++  rame
@@ -9164,7 +9168,7 @@
       ++  eclo  (ecco gelp)
       ++  ecco
         =+  rame
-        |%  +-  $
+        |@  +-  $
         =>  +<
         |:  $:{rum/clom rig/(list (pair wing hoon))}
         ^-  foat
@@ -9179,7 +9183,7 @@
   ::
   ++  oc
     =+  inc=(bin:ad)
-    |%  +-  $
+    |@  +-  $
     =>  inc
     |%
     ++  echo
@@ -13029,20 +13033,20 @@
     ::
     ++  toad                                            ::  untrap parser exp
       =+  har=expa
-      |%  +-  $
+      |@  +-  $
             =+  dur=(ifix [lit rit] $:har(tol |))
             ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
       --
     ::
     ++  rune                                            ::  build rune
       =+  [dif=*rule tuq=** har=expa]
-      |%  +-  $
+      |@  +-  $
             ;~(pfix dif (stag tuq (toad har)))
       --
     ::
     ++  runo                                            ::  rune plus
       =+  [dif=*rule hil=** tuq=** har=expa]
-      |%  +-  $
+      |@  +-  $
             ;~(pfix dif (stag hil (stag tuq (toad har))))
       --
     ::
