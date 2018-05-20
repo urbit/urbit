@@ -22,8 +22,8 @@
         return u3m_bail(c3__fail);
       }
       else {
-        u3_noun qqn_dom = u3t(u3t(n_dom));
-        u3_noun yep = u3qf_look(cog, qqn_dom);
+        u3_noun qn_dom = u3t(n_dom);
+        u3_noun yep = u3qf_look(cog, qn_dom);
 
         if ( (u3_nul == l_dom) && (u3_nul == r_dom) ) {
           if ( u3_nul == yep ) {

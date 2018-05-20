@@ -13,6 +13,19 @@
     if ( (c3__void == pac) ) {
       return c3__void;
     } else {
+      {
+        u3_noun p_con, q_con, r_con, hr_con, tr_con;
+
+        u3r_trel(con, &p_con, &q_con, &r_con);
+        u3r_cell(r_con, &hr_con, &tr_con);
+        if ( (c3y == u3du(hr_con)) &&
+             (u3_nul == u3h(hr_con)) &&
+             (u3_nul == u3t(hr_con)) )
+        {
+          fprintf(stderr, "old core\r\n");
+          abort();
+        }
+      }
       return u3nt(c3__core, u3k(pac), u3k(con));
     }
   }

@@ -19,7 +19,9 @@
 
       u3r_trel(dab, &n_dab, &l_dab, &r_dab);
       if ( c3n == u3du(n_dab) ) {
-        return u3m_bail(c3__fail);
+        // return u3m_bail(c3__fail);
+        fprintf(stderr, "bad look\r\n");
+        return u3m_bail(c3__exit) ;
       }
       else {
         u3_noun pn_dab = u3h(n_dab);

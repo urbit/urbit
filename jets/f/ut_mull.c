@@ -63,7 +63,8 @@
              u3_noun sut,
              u3_noun dox,
              u3_noun mel,
-             u3_noun wad,
+             u3_noun nym,
+             u3_noun hud,
              u3_noun dom)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
@@ -75,8 +76,10 @@
                                 u3x_sam_6,
                                 u3k(mel), 
                                 u3x_sam_14,
-                                u3k(wad),
-                                u3x_sam_15,
+                                u3k(nym),
+                                u3x_sam_30,
+                                u3k(hud),
+                                u3x_sam_31,
                                 u3k(dom),
                                 0));
   }
@@ -116,14 +119,15 @@
              u3_noun gol,
              u3_noun dox,
              u3_atom mel,
+             u3_noun nym,
+             u3_noun hud,
              u3_noun ruf,
-             u3_noun wan,
              u3_noun dom)
   {
     u3_noun dan = _mull_in(van, sut, c3__noun, dox, ruf);
     u3_noun p_dan = u3h(dan);
     u3_noun q_dan = u3t(dan);
-    u3_noun yaz   = _mull_mile(van, p_dan, q_dan, mel, wan, dom);
+    u3_noun yaz   = _mull_mile(van, p_dan, q_dan, mel, nym, hud, dom);
     u3_noun p_yaz = u3h(yaz);
     u3_noun q_yaz = u3t(yaz);
     u3_noun ret = u3nc(_mull_nice(van, gol, u3k(p_yaz)), u3k(q_yaz));
@@ -616,12 +620,25 @@
         return _mull_cnts(van, sut, gol, dox, p_gen, q_gen);
       }
 
-      case c3__brcn: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__brcn: p_gen = u3t(gen);
       _mull_used();
       {
         u3_noun ruf = u3nc(u3_nul, 1);
 
-        ret = _mull_grow(van, sut, gol, dox, c3__gold, ruf, p_gen, q_gen);
+        ret = _mull_grow
+          (van, sut, gol, dox, c3__gold, u3_nul, c3__dry, ruf, p_gen);
+        u3z(ruf);
+
+        return ret;
+      }
+
+      case c3__brvt: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _mull_used();
+      {
+        u3_noun ruf = u3nc(u3_nul, 1);
+
+        ret = _mull_grow
+          (van, sut, gol, dox, c3__gold, p_gen, c3__wet, ruf, q_gen);
         u3z(ruf);
 
         return ret;
