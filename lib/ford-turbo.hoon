@@ -345,11 +345,6 @@
             ::    of the hoon source which generated the scaffold, but can be
             ::    changed with `/:`.)
             ::
-            ::    TODO: We may need to keep the original source-path for
-            ::    resolving the disc in +gather-path-builds because we don't
-            ::    want to prevent `/: /other-ship/other-desk/=/` from changing
-            ::    where we load hoon renderers from.
-            ::
             path-to-render=rail
             ::  query-string: the query string of the http request
             ::
@@ -452,7 +447,10 @@
   ::    built and combined into one final product.
   ::
   +=  scaffold
-    $:  ::  zuse-version: the kelvin version of the standard library
+    $:  ::  source-disc: the ship/desk this scaffold was parsed from
+        ::
+        source-disc=disc
+        ::  zuse-version: the kelvin version of the standard library
         ::
         zuse-version=@ud
         ::  structures: files from %/sur which are included
@@ -1402,7 +1400,10 @@
   ::
   =/  hoon-parser  (vang & (en-beam src-beam))
   |^  ::
-      %+  cook  |=(a=scaffold a)
+      %+  cook
+        |=  a=[@ud (list ^cable) (list ^cable) (list ^crane) (list ^brick)]
+        ^-  scaffold
+        [[p q]:src-beam a]
       ::
       %+  ifix  [gay gay]
       ;~  plug
@@ -3035,9 +3036,7 @@
     ++  make-plan
       |=  [path-to-render=rail query-string=coin =scaffold]
       ^-  build-receipt
-      ::  TODO: support cranes
       ::  TODO: support query-string
-      ::  TODO: support source-path
       ::  TODO: support indirect hoons
       ::
       ::  blocks: accumulator for blocked sub-builds
@@ -3341,7 +3340,7 @@
         %+  turn  imports
         |=  [prefix=?(%sur %lib) =cable]
         ^-  ^build
-        [date.build [%path disc.path-to-render prefix file-path.cable]]
+        [date.build [%path source-disc.scaffold prefix file-path.cable]]
       ::  +resolve-builds: run a list of builds and collect results
       ::
       ::    If a build blocks, put its +tang in :error-message and stop.

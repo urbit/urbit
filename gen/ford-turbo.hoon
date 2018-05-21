@@ -210,11 +210,17 @@
   :-  :-  [1 19]
       :-  ~
       :_  [[1 19] ""]
-      :*  %309  ~  ~  ~
-        :*  %direct  %dbug  [/~nul/desk/~1234.5.6/bar/foo [[1 1] [1 19]]]
-            (ream '!.  |=(a=@ud +(a))')
-        ==
-        ~
+      ^-  scaffold:ford-gate
+      :*  source-disc=[~nul %desk]
+          zuse-version=%309
+          structures=~
+          libraries=~
+          cranes=~
+          ^=  sources
+            :*  %direct  %dbug  [/~nul/desk/~1234.5.6/bar/foo [[1 1] [1 19]]]
+                (ream '!.  |=(a=@ud +(a))')
+            ==
+          ~
       ==
   %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
     [1 1]
@@ -233,7 +239,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       cranes=~
@@ -258,7 +265,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~[[`%struct %struct] [`%face %other]]
       libraries=~[[`%library %library] [~ %thing]]
       cranes=~
@@ -284,7 +292,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=400
+  :*  source-disc=[~nul %desk]
+      zuse-version=400
       structures=~
       libraries=~
       cranes=~
@@ -310,7 +319,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -341,7 +351,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -373,7 +384,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -405,7 +417,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -434,7 +447,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -472,7 +486,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -506,7 +521,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -533,7 +549,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -562,7 +579,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -589,7 +607,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -625,7 +644,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -656,7 +676,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -694,7 +715,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -720,7 +742,8 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  zuse-version=309
+  :*  source-disc=[~nul %desk]
+      zuse-version=309
       structures=~
       libraries=~
       ^=  crane
@@ -2245,7 +2268,8 @@
       ::
       ^=  moves
         :~  :*  duct=~[/hood]  %give  %made  ~1234.5.6  %complete  %success  %hood
-                :*  zuse-version=309
+                :*  source-disc=[~nul %desk]
+                    zuse-version=309
                     structures=~
                     libraries=~
                     cranes=~
@@ -3915,6 +3939,7 @@
             %plan
             source-path=[[~nul %home] /bar/foo]
             query-string=`coin`[%$ *dime]
+            source-disc=[~nul %desk]
             zuse-version=309
             structures=~
             libraries=~
@@ -4423,7 +4448,8 @@
         :*  duct=~[/path]  type=~  %make  ~nul
             %pin  ~1234.5.6
             :*  %plan  [[~nul %home] /hoon/other/lib]  *coin
-                :*  zuse-version=309
+                :*  source-disc=[~nul %desk]
+                    zuse-version=309
                     structures=~
                     libraries=~
                     cranes=[%fsts %data [%fszp %noun]]~
