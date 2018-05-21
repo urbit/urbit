@@ -1184,7 +1184,7 @@
   ==
 ::
 ++  poke-path
-  |=(a=path abet:new-order:(add-order a ~))
+  |=(a=path abet:(add-order a ~))
 ::
 :: ++  prep  _[~ this]
 ++  prep
