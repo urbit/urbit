@@ -1238,7 +1238,8 @@
           pub/will                                      ::  their public keys
        ==                                               ::
     ++  gift                                            ::  out result <-$
-      $%  {$veil p/channel}                             ::  secure channel
+      $%  [%mack p=(unit tang)]                         ::  message n/ack
+          {$veil p/channel}                             ::  secure channel
           {$vest p/tally}                               ::  balance update
           {$vein p/life q/(map life ring)}              ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
@@ -1253,6 +1254,7 @@
       $%  {$b $wait p/@da}                              ::  wait until
           [%e %hiss p=(unit user) q=mark r=cage]        ::  outbound user req
           [%a %want p=sock q=path r=*]                  ::  send message
+          [%j %vent-result p=update:constitution:ethe]  ::  tmp workaround
       ==                                                ::
     ++  remote                                          ::  remote notification
       %+  each  safe                                    ::  &/addition
@@ -1281,6 +1283,7 @@
           [%veil our=ship p=ship]                       ::  view secret channel
           [%vein our=ship]                              ::  view signing keys
           [%vent ~]                                     ::  view ethereum state
+          [%vent-result p=update:constitution:ethe]     ::  tmp workaround
           [%vest our=ship]                              ::  view public balance
           [%vine ~]                                     ::  view secret history
           [%west p=sack q=path r=*]                     ::  remote request

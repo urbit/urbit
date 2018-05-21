@@ -91,6 +91,7 @@
       {$meet p/farm}                                    ::  propagate pki
       [%nuke ~]                                         ::  cancel trackers
       [%vent ~]                                         ::  view ethereum state
+      [%vent-result p=update:constitution:ethe]         ::  tmp workaround
   ==                                                    ::
 ++  card                                                ::  i/o action
   (wind note:able gift)                                 ::
@@ -1013,6 +1014,13 @@
         %vent
       =^  mos  eth.lex
         abet:(~(vent-to et /vent now.sys eth.lex) hen)
+      =.  mos  [[hen %give %mack ~] mos]
+      +>.$(moz (weld moz (flop mos)))
+    ::
+        %vent-result
+      =^  mos  eth.lex
+        abet:(~(hear-vent et /vent-result now.sys eth.lex) p.tac)
+      =.  mos  [[hen %give %mack ~] mos]
       +>.$(moz (weld moz (flop mos)))
     ::
     ::  monitor assets
@@ -1031,7 +1039,6 @@
     ::    {$west p/ship q/path r/*}
     ::
         $west
-      ?>  =(~ q.tac)
       =+  mes=((hard message) r.tac)
       ?-    -.mes
       ::
@@ -1059,6 +1066,10 @@
       ::    [%vent ~]
       ::
           %vent
+        $(tac mes)
+      ::
+      ::
+          %vent-result
         $(tac mes)
       ==
     ==
@@ -2004,7 +2015,7 @@
   ++  wrap-note
     |=  [wir=wire not=note:able]
     ^-  move
-    [[/jael/eth ~ ~] %pass wir not]
+    [[/jael/eth-logic ~ ~] %pass wir not]
   ::
   ++  rpc-hiss
     |=  [wir=wire jon=json]
@@ -2020,7 +2031,13 @@
     ^-  (list move)
     %+  turn  ~(tap in listeners)
     |=  d=duct
-    [d %give %vent upd]
+    :: [d %give %vent upd]
+    ::NOTE  we do a %pass instead of a %give because ames is bad
+    ?>  ?=([[%a @ @ *] *] d)
+    =+  our=(slav %p i.t.i.d)
+    =+  who=(slav %p i.t.t.i.d)
+    %+  wrap-note  /vent-result
+    [%a %want [our who] /j/vent-result %vent-result upd]
   ::
   ++  subscribe-to
     |=  [our=ship who=ship]
@@ -2106,8 +2123,16 @@
   ::
   ++  vent-to
     |=  duc=duct
+    ::TODO  check if we already know duc
     %-  put-move(listeners (~(put in listeners) duc))
-    [duc %give %vent %full ships dns heard]
+    ~&  [%venting-to duc]
+    :: [duc %give %vent %full ships dns heard]
+    ::NOTE  we do a %pass instead of a %give because ames is bad
+    ?>  ?=([[%a @ @ *] *] duc)
+    =+  our=(slav %p i.t.i.duc)
+    =+  who=(slav %p i.t.t.i.duc)
+    %+  wrap-note  /vent-result
+    [%a %want [our who] /j/vent-result %vent-result %full ships dns heard]
   ::
   ++  hear-vent
     |=  upd=update
@@ -2122,8 +2147,8 @@
     ^+  +>
     ?:  &(=(s ships) =(d dns) =(h heard))  +>
     ~&  [%assume ~(wyt by s) ~(wyt in h)]
-    %-  put-moves
-    (update-to-all(ships s, dns d, heard h) %full s d h)
+    %-  put-moves(ships s, dns d, heard h)
+    (update-to-all %full s d h)
   ::
   ++  accept
     |=  [cause=[@ud @ud] dis=(list diff-constitution)]
@@ -2411,9 +2436,9 @@
           ::  hic: event data
           ::
           hen/duct
-          hic/(hypo (hobo task))
+          hic/(hypo (hobo task:able))
       ==
-  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task) p.q.hic)))
+  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task:able) p.q.hic)))
   ^-  {p/(list move) q/_..^$}
   =^  did  lex  abet:(~(call of [now eny] lex) hen q.hic)
   [did ..^$]
