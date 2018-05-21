@@ -96,6 +96,8 @@
   test-core-fscm
   test-bunt
   test-volt
+  test-vale
+  test-vale-error
 ==
 ++  test-tear
   :-  `tank`leaf+"test-tear"
@@ -4802,6 +4804,114 @@
         :-  &
         (~(nest ut p.vase) | -:!>(*^))
     ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-vale
+  :-  `tank`leaf+"test-vale"
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src=@ta
+    '''
+    |_  cell=^
+    ++  grab
+      |%
+      ++  noun  ^
+      --
+    --
+    '''
+  ::
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      [%hoon !>(hoon-src)]
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%vale [~nul %home] %foo [12 13]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %vale *] build-result.pin-result)
+        ::
+        =/  =vase  q.cage.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  [12 13]
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>(*^))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-vale-error
+  :-  `tank`leaf+"test-vale-error"
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src=@ta
+    '''
+    |_  cell=^
+    ++  grab
+      |%
+      ++  noun  ^
+      --
+    --
+    '''
+  ::
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      [%hoon !>(hoon-src)]
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%vale [~nul %home] %foo 42]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %success
+                %pin  ~1234.5.6  %error
+                :-  %leaf
+                %+  weld
+                  "ford: %vale failed: invalid input for mark: "
+                "/~nul/home/~1234.5.6/mar/foo/hoon"
+                ~
+    ==  ==  ==
   ::
   ;:  weld
     results1

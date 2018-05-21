@@ -2709,7 +2709,7 @@
             %scry  (make-scry resource)
             %slim  (make-slim subject-type formula)
             %slit  (make-slit gate sample)
-            %vale  !!
+            %vale  (make-vale disc mark input)
             %volt  (make-volt disc mark input)
         ==
     ::  |schematic-handlers:make: implementation of the schematics
@@ -3705,6 +3705,72 @@
         [%success %volt [mark p.q.cage.u.bunt-result input]]
       ::
       [build [%build-result build-result] accessed-builds]
+    ::
+    ++  make-vale
+      ::  TODO: better docs
+      ::
+      |=  [=disc mark=term input=*]
+      ^-  build-receipt
+      ::  don't validate for the %noun mark
+      ::
+      ?:  =(%noun mark)
+        =/  =build-result  [%success %vale [%noun %noun input]]
+        ::
+        [build [%build-result build-result] accessed-builds]
+      ::
+      =/  path-build  [date.build [%path disc %mar mark]]
+      ::
+      =^  path-result  accessed-builds  (depend-on path-build)
+      ?~  path-result
+        [build [%blocks [path-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %path *] path-result)
+        (wrap-error path-result)
+      ::
+      =/  bunt-build=^build  [date.build [%bunt disc mark]]
+      ::
+      =^  bunt-result  accessed-builds  (depend-on bunt-build)
+      ?~  bunt-result
+        [build [%blocks [bunt-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %bunt *] bunt-result)
+        (wrap-error bunt-result)
+      ::
+      =/  mark-sample=vase  q.cage.u.bunt-result
+      ::
+      =/  call-build=^build
+        :^    date.build
+            %call
+          ^=  gate
+          :*  %ride
+              ::  (ream 'noun:grab')
+              formula=`hoon`[%tsgl [%wing ~[%noun]] [%wing ~[%grab]]]
+              subject=`schematic`[%core rail.u.path-result]
+          ==
+        sample=[%$ %noun %noun input]
+      ::
+      =^  call-result  accessed-builds  (depend-on call-build)
+      ?~  call-result
+        [build [%blocks [call-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %call *] call-result)
+        (wrap-error call-result)
+      ::
+      =/  product=vase  vase.u.call-result
+      ::  TODO: why do we check nesting here?
+      ::
+      ?>  (~(nest ut p.mark-sample) | p.product)
+      ::  check mold idempotence; if different, nest fail
+      ::
+      ?:  =(q.product input)
+        =/  =build-result
+          [%success %vale [mark p.mark-sample q.product]]
+        ::
+        [build [%build-result build-result] accessed-builds]
+      ::
+      %-  return-error
+      =/  =beam  [[ship.disc desk.disc %da date.build] spur.rail.u.path-result]
+      [leaf+"ford: %vale failed: invalid input for mark: {<(en-beam beam)>}"]~
     ::  |utilities:make: helper arms
     ::
     ::+|  utilities
