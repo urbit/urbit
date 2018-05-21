@@ -306,12 +306,30 @@ softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfl
 libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
 libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
 
+profiler_deps = []
+if get_option('profile')
+
+  if(legacy_meson)
+    profiler_dep = find_library('profiler')
+  else
+    profiler_dep = meson.get_compiler('c').find_library('profiler')
+  endif
+
+  # Ubuntu sets library pruning by default. Ugh.
+  if osdet == 'linux'
+    os_link_flags = os_link_flags + ['-Wl,--no-as-needed']
+  endif
+
+  profiler_deps = profiler_deps + [profiler_dep]
+endif
+
 executable('urbit',
 sources : sources,
 include_directories : incdir,
 c_args : os_c_flags,
 link_args: os_link_flags,
-dependencies: [openssl_dep,
+dependencies: profiler_deps +
+              [openssl_dep,
                curl_dep,
                libuv_dep,
                libh2o_dep,
