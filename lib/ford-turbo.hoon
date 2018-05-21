@@ -3155,6 +3155,7 @@
         ::
         |^  ?+  -.crane  !!
               %fssg  (run-fssg +.crane)
+              %fsbc  (run-fsbc +.crane)
               %fsbr  (run-fsbr +.crane)
               %fsts  (run-fsts +.crane)
               %fscm  (run-fscm +.crane)
@@ -3179,6 +3180,38 @@
             [[%error [leaf+"/~ failed: " message.u.ride-result]] ..run-crane]
           ?>  ?=([~ %success %ride *] ride-result)
           [[%subject vase.u.ride-result] ..run-crane]
+        ::  +run-fsbc: runes the `/$` rune
+        ::
+        ++  run-fsbc
+          |=  =hoon
+          ^-  compose-cranes
+          ::
+          =/  query-compile-build=^build
+            [date.build [%ride ((jock |) query-string) [%$ %noun !>(~)]]]
+          =^  query-compile-result  accessed-builds  (depend-on query-compile-build)
+          ?~  query-compile-result
+            [[%block [query-compile-build]~] ..run-crane]
+          ?:  ?=([~ %error *] query-compile-result)
+            [[%error [leaf+"/; failed: " message.u.query-compile-result]] ..run-crane]
+          ?>  ?=([~ %success %ride *] query-compile-result)
+          ::  TODO: if we had a slop build type, everything could be crammed
+          ::  into one sub-build.
+          ::
+          =/  =beam
+            =,  path-to-render
+            [[ship.disc desk.disc [%da date.build]] spur]
+          =+  arguments=(slop !>(beam) vase.u.query-compile-result)
+          ::
+          =/  call-build=^build
+            [date.build [%call [%ride hoon [%$ %noun subject]] [%$ %noun arguments]]]
+          =^  call-result  accessed-builds  (depend-on call-build)
+          ?~  call-result
+            [[%block [call-build]~] ..run-crane]
+          ?:  ?=([~ %error *] call-result)
+            [[%error [leaf+"/; failed: " message.u.call-result]] ..run-crane]
+          ?>  ?=([~ %success %call *] call-result)
+          ::
+          [[%subject vase.u.call-result] ..run-crane]
         ::  +run-fsbr: runes the `/|` rune
         ::
         ++  run-fsbr
