@@ -92,6 +92,7 @@
   test-core-fsbr
   test-core-fsbr-out-of-options
   test-plan-fszp-as-noun
+  test-core-fscl-fszp
   test-bunt
 ==
 ++  test-tear
@@ -212,18 +213,18 @@
       :-  ~
       :_  [[1 19] ""]
       ^-  scaffold:ford-gate
-      :*  source-disc=[~nul %desk]
+      :*  source-rail=[[~nul %desk] /bar/foo]
           zuse-version=%309
           structures=~
           libraries=~
           cranes=~
           ^=  sources
-            :*  %direct  %dbug  [/~nul/desk/~1234.5.6/bar/foo [[1 1] [1 19]]]
+            :*  %direct  %dbug  [/~nul/desk/~1234.5.6/foo/bar [[1 1] [1 19]]]
                 (ream '!.  |=(a=@ud +(a))')
             ==
           ~
       ==
-  %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+  %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
     [1 1]
   "!.  |=(a=@ud +(a))"
 ::
@@ -231,7 +232,7 @@
   ~&  %test-parse-scaffold-indirect
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     //  /%/child/hoon
@@ -240,21 +241,21 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
       cranes=~
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-parse-scaffold-sur-lib
   ~&  %test-parse-scaffold-sur-lib
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /-  struct, face=other
@@ -266,7 +267,7 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~[[`%struct %struct] [`%face %other]]
       libraries=~[[`%library %library] [~ %thing]]
@@ -274,7 +275,7 @@
       ^=  sources
         :~  :*  %direct
                 %dbug
-                [/~nul/desk/~1234.5.6/bar/foo [3 1] [4 8]]
+                [/~nul/desk/~1234.5.6/foo/bar [3 1] [4 8]]
                 (ream '|=(a a)')
   ==    ==  ==
 ::
@@ -282,7 +283,7 @@
   ~&  %test-parse-scaffold-zuse-version
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /?  400
@@ -293,7 +294,7 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=400
       structures=~
       libraries=~
@@ -301,7 +302,7 @@
       ^=  sources
         :~  :*  %direct
                 %dbug
-                [/~nul/desk/~1234.5.6/bar/foo [2 1] [3 8]]
+                [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
                 (ream '|=(a a)')
   ==    ==  ==
 ::
@@ -309,7 +310,7 @@
   ~&  %test-parse-scaffold-crane-fssg
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /~  !.  [a=1 b=3]
@@ -320,20 +321,20 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
       ^=  crane
         :~  :*  %fssg
                 %dbug
-                [/~nul/desk/~1234.5.6/bar/foo [1 5] [1 18]]
+                [/~nul/desk/~1234.5.6/foo/bar [1 5] [1 18]]
                 (ream '[a=1 b=3]')
         ==  ==
       ^=  sources
         :~  :*  %direct
                 %dbug
-                [/~nul/desk/~1234.5.6/bar/foo [2 1] [3 8]]
+                [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
                 (ream '|=(a b)')
   ==    ==  ==
 ::
@@ -341,7 +342,7 @@
   ~&  %test-parse-scaffold-crane-fsbc
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /$  !.  |=(a a)
@@ -352,20 +353,20 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
       ^=  crane
         :~  :*  %fsbc
                 %dbug
-                [/~nul/desk/~1234.5.6/bar/foo [1 5] [1 16]]
+                [/~nul/desk/~1234.5.6/foo/bar [1 5] [1 16]]
                 (ream '|=(a a)')
         ==  ==
       ^=  sources
         :~  :*  %direct
                 %dbug
-                [/~nul/desk/~1234.5.6/bar/foo [2 1] [3 8]]
+                [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
                 (ream '|=(a b)')
   ==    ==  ==
 ::
@@ -373,7 +374,7 @@
   ~&  %test-parse-scaffold-crane-fsbr
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /|  /~  ~
@@ -385,30 +386,30 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
       ^=  crane
         :~  :*  %fsbr
                 :~  :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/bar/foo [1 9] [1 10]]
+                        [/~nul/desk/~1234.5.6/foo/bar [1 9] [1 10]]
                         [%bust %null]
                     ==
                     :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/bar/foo [2 9] [2 10]]
+                        [/~nul/desk/~1234.5.6/foo/bar [2 9] [2 10]]
                         [%bust %null]
         ==  ==  ==  ==
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-parse-scaffold-crane-fsts
   ~&  %test-parse-scaffold-crane-fsts
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /=  a  /~  ~
@@ -418,25 +419,25 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
       ^=  crane
         :~  :*  %fsts  %a
-                %fssg  %dbug  [/~nul/desk/~1234.5.6/bar/foo [1 12] [1 13]]
+                %fssg  %dbug  [/~nul/desk/~1234.5.6/foo/bar [1 12] [1 13]]
                 [%bust %null]
         ==  ==
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-parse-scaffold-crane-fsdt
   ~&  %test-parse-scaffold-crane-fsdt
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /.  /~  !.  a=5
@@ -448,30 +449,30 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
       ^=  crane
         :~  :*  %fsdt
                 :~  :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/bar/foo [1 9] [1 16]]
+                        [/~nul/desk/~1234.5.6/foo/bar [1 9] [1 16]]
                         (ream 'a=5')
                     ==
                     :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/bar/foo [2 9] [2 16]]
+                        [/~nul/desk/~1234.5.6/foo/bar [2 9] [2 16]]
                         (ream 'b=6')
         ==  ==  ==  ==
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-parse-scaffold-crane-fscm
   ~&  %test-parse-scaffold-crane-fscm
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /,
@@ -487,7 +488,7 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
@@ -495,24 +496,24 @@
         :~  :*  %fscm
                 :~  :-  /path/to/a
                     :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/bar/foo [3 7] [3 14]]
+                        [/~nul/desk/~1234.5.6/foo/bar [3 7] [3 14]]
                         (ream 'a=5')
                     ==
                     :-  /path/to/b
                     :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/bar/foo [6 7] [6 14]]
+                        [/~nul/desk/~1234.5.6/foo/bar [6 7] [6 14]]
                         (ream 'b=6')
         ==  ==  ==  ==
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-parse-scaffold-crane-fscn
   ~&  %test-parse-scaffold-crane-fscn
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /%  /$  !.  |=(a a)
@@ -522,25 +523,25 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
       ^=  crane
         :~  :*  %fscn  %fsbc  %dbug
-                [/~nul/desk/~1234.5.6/bar/foo [1 9] [1 20]]
+                [/~nul/desk/~1234.5.6/foo/bar [1 9] [1 20]]
                 (ream '|=(a a)')
         ==  ==
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-parse-scaffold-crane-fspm
   ~&  %test-parse-scaffold-crane-fspm
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /=  data  /&  mark  /~  !.  a=1
@@ -550,7 +551,7 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
@@ -558,19 +559,19 @@
         :~  :*  %fsts  %data
                 %fspm  [%mark ~]
                 %fssg  %dbug
-                [/~nul/desk/~1234.5.6/bar/foo [1 25] [1 32]]
+                [/~nul/desk/~1234.5.6/foo/bar [1 25] [1 32]]
                 (ream 'a=1')
         ==  ==
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-parse-scaffold-crane-fscb
   ~&  %test-parse-scaffold-crane-fscb
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /_  /mark/
@@ -580,7 +581,7 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
@@ -589,14 +590,14 @@
         ==  ==
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-parse-scaffold-crane-fssm
   ~&  %test-parse-scaffold-crane-fssm
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /=  data
@@ -608,7 +609,7 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
@@ -616,24 +617,24 @@
         :~  :*  %fsts  %data
                 %fssm
                 :*  %dbug
-                    [/~nul/desk/~1234.5.6/bar/foo [2 7] [2 24]]
+                    [/~nul/desk/~1234.5.6/foo/bar [2 7] [2 24]]
                     (ream '|=(a=@u +(a))')
                 ==
                 %fssg
                 :*  %dbug
-                    [/~nul/desk/~1234.5.6/bar/foo [3 7] [3 12]]
+                    [/~nul/desk/~1234.5.6/foo/bar [3 7] [3 12]]
                     (ream '5')
         ==  ==  ==
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-parse-scaffold-crane-fscl
   ~&  %test-parse-scaffold-crane-fscl
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /=  tests
@@ -645,7 +646,7 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
@@ -656,14 +657,14 @@
         ==  ==
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-parse-scaffold-crane-fskt
   ~&  %test-parse-scaffold-crane-fskt
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /=  data
@@ -677,7 +678,7 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
@@ -685,28 +686,28 @@
         :~  :*  %fsts  %data
                 %fskt
                 :*  %dbug
-                    [/~nul/desk/~1234.5.6/bar/foo [2 7] [2 21]]
+                    [/~nul/desk/~1234.5.6/foo/bar [2 7] [2 21]]
                     (ream '(list @ud)')
                 ==
                 %fsdt
                 :~  :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/bar/foo [3 11] [3 16]]
+                        [/~nul/desk/~1234.5.6/foo/bar [3 11] [3 16]]
                         (ream '1')
                     ==
                     :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/bar/foo [4 11] [4 16]]
+                        [/~nul/desk/~1234.5.6/foo/bar [4 11] [4 16]]
                         (ream '2')
         ==  ==  ==  ==
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-parse-scaffold-crane-fszp
   ~&  %test-parse-scaffold-crane-fszp
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /=  data  /!mark/
@@ -716,7 +717,7 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
@@ -726,14 +727,14 @@
         ==  ==
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-parse-scaffold-crane-fszy
   ~&  %test-parse-scaffold-crane-fszy
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /foo/bar]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /=  data  /mark/
@@ -743,7 +744,7 @@
     [%leaf "failed to parse at {<p.parsed>}"]~
   %-  expect-eq  !>
   :_  p.u.q.parsed
-  :*  source-disc=[~nul %desk]
+  :*  source-rail=[[~nul %desk] /bar/foo]
       zuse-version=309
       structures=~
       libraries=~
@@ -753,7 +754,7 @@
         ==  ==
       ^=  sources
         :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/foo/bar]
+                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
   ==    ==  ==
 ::
 ++  test-literal
@@ -2269,7 +2270,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/hood]  %give  %made  ~1234.5.6  %complete  %success  %hood
-                :*  source-disc=[~nul %desk]
+                :*  source-rail=[[~nul %desk] /hoon/bar/foo]
                     zuse-version=309
                     structures=~
                     libraries=~
@@ -3940,7 +3941,7 @@
             %plan
             source-path=[[~nul %home] /bar/foo]
             query-string=`coin`[%$ *dime]
-            source-disc=[~nul %desk]
+            source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
             libraries=~
@@ -4513,7 +4514,7 @@
         :*  duct=~[/path]  type=~  %make  ~nul
             %pin  ~1234.5.6
             :*  %plan  [[~nul %home] /hoon/other/lib]  *coin
-                :*  source-disc=[~nul %desk]
+                :*  source-rail=[[~nul %desk] /bar/foo]
                     zuse-version=309
                     structures=~
                     libraries=~
@@ -4530,6 +4531,71 @@
         =/  result  result.p.card.i.moves
         =/  pin-result  build-result.result
         ?>  ?=([%success %plan *] build-result.pin-result)
+        ::
+        =/  =vase  vase.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  [1 2 3 ~]
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>([1 2 3 ~]))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-core-fscl-fszp
+  ~&  %test-core-fscl-fszp
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /=  data  /:  /===/data/hoon
+                /!noun/
+      data
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [1 2 3 ~]
+      '''
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%core source-path=`rail:ford-gate`[[~nul %home] /hoon/program/gen]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %core *] build-result.pin-result)
         ::
         =/  =vase  vase.build-result.pin-result
         ::

@@ -447,9 +447,9 @@
   ::    built and combined into one final product.
   ::
   +=  scaffold
-    $:  ::  source-disc: the ship/desk this scaffold was parsed from
+    $:  ::  source-rail: the file this scaffold was parsed from
         ::
-        source-disc=disc
+        source-rail=rail
         ::  zuse-version: the kelvin version of the standard library
         ::
         zuse-version=@ud
@@ -1403,7 +1403,7 @@
       %+  cook
         |=  a=[@ud (list ^cable) (list ^cable) (list ^crane) (list ^brick)]
         ^-  scaffold
-        [[p q]:src-beam a]
+        [[[p q] s]:src-beam a]
       ::
       %+  ifix  [gay gay]
       ;~  plug
@@ -3276,10 +3276,26 @@
         ::  +run-fscl: runs the `/:` rune
         ::
         ++  run-fscl
-          |=  [path=truss sub-crane=^crane]
+          |=  [=truss sub-crane=^crane]
           ^-  compose-cranes
           ::
-          !!
+          =/  =beam
+            =,  source-rail.scaffold
+            [[ship.disc desk.disc [%ud 0]] spur]
+          =/  hoon-parser  (vang & (en-beam beam))
+          ::
+          =+  tuz=(posh:hoon-parser truss)
+          ?~  tuz
+            [[%error [leaf+"/: failed: bad tusk: {<truss>}"]~] ..run-crane]
+          =+  pax=(plex:hoon-parser %clsg u.tuz)
+          ?~  pax
+            [[%error [leaf+"/: failed: bad path: {<u.tuz>}"]~] ..run-crane]
+          =+  bem=(de-beam u.pax)
+          ?~  bem
+            [[%error [leaf+"/: failed: bad beam: {<u.pax>}"]~] ..run-crane]
+          ::
+          =.  path-to-render  [[p q] s]:u.bem
+          (run-crane subject sub-crane)
         ::  +run-fskt: runs the `/^` rune
         ::
         ++  run-fskt
@@ -3340,7 +3356,7 @@
         %+  turn  imports
         |=  [prefix=?(%sur %lib) =cable]
         ^-  ^build
-        [date.build [%path source-disc.scaffold prefix file-path.cable]]
+        [date.build [%path disc.source-rail.scaffold prefix file-path.cable]]
       ::  +resolve-builds: run a list of builds and collect results
       ::
       ::    If a build blocks, put its +tang in :error-message and stop.
