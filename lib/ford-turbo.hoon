@@ -3157,6 +3157,7 @@
               %fssg  (run-fssg +.crane)
               %fsbr  (run-fsbr +.crane)
               %fsts  (run-fsts +.crane)
+              %fscm  (run-fscm +.crane)
               %fsdt  (run-fsdt +.crane)
               %fssm  (run-fssm +.crane)
               %fscl  (run-fscl +.crane)
@@ -3202,6 +3203,20 @@
             [child ..run-crane]
           :_  ..run-crane
           [%subject [[%face [~ face] p.subject.child] q.subject.child]]
+        ::  +run-fscm: runs the `/,` rune
+        ::
+        ++  run-fscm
+          |=  cases=(list [=spur crane=^crane])
+          ^-  compose-cranes
+          ::
+          ?~  cases
+            [[%error [leaf+"/, failed: no match"]~] ..run-crane]
+          ::
+          ?.  .=  spur.i.cases
+              (scag (lent spur.i.cases) (flop spur.path-to-render))
+            $(cases t.cases)
+          ::
+          (run-crane subject crane.i.cases)
         ::  +run-fsdt: runs the `/.` rune
         ::
         ++  run-fsdt

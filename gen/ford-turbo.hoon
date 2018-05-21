@@ -93,6 +93,7 @@
   test-core-fsbr-out-of-options
   test-plan-fszp-as-noun
   test-core-fscl-fszp
+  test-core-fscm
   test-bunt
 ==
 ++  test-tear
@@ -4573,6 +4574,77 @@
       :-  hoon-src-type
       '''
       [1 2 3 ~]
+      '''
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%core source-path=`rail:ford-gate`[[~nul %home] /hoon/program/gen]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %core *] build-result.pin-result)
+        ::
+        =/  =vase  vase.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  [1 2 3 ~]
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>([1 2 3 ~]))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-core-fscm
+  :-  `tank`leaf+"test-core-fscm"
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /=  data  /:  /===/data/hoon
+                /!noun/
+      data
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /,    /other/hoon
+         /~  a=[3 2 1 ~]
+      ::
+            /data/hoon
+         /~  a=[1 2 3 ~]
+      ==
+      a
       '''
     ==
   ::
