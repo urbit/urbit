@@ -2710,7 +2710,7 @@
             %slim  (make-slim subject-type formula)
             %slit  (make-slit gate sample)
             %vale  !!
-            %volt  !!
+            %volt  (make-volt disc mark input)
         ==
     ::  |schematic-handlers:make: implementation of the schematics
     ::
@@ -3687,6 +3687,24 @@
           ==
           accessed-builds
       ==
+    ::
+    ++  make-volt
+      |=  [=disc mark=term input=*]
+      ^-  build-receipt
+      ::
+      =/  bunt-build=^build  [date.build [%bunt disc mark]]
+      ::
+      =^  bunt-result  accessed-builds  (depend-on bunt-build)
+      ?~  bunt-result
+        [build [%blocks [bunt-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %bunt *] bunt-result)
+        (wrap-error bunt-result)
+      ::
+      =/  =build-result
+        [%success %volt [mark p.q.cage.u.bunt-result input]]
+      ::
+      [build [%build-result build-result] accessed-builds]
     ::  |utilities:make: helper arms
     ::
     ::+|  utilities

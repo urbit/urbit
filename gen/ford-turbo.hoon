@@ -95,6 +95,7 @@
   test-core-fscl-fszp
   test-core-fscm
   test-bunt
+  test-volt
 ==
 ++  test-tear
   :-  `tank`leaf+"test-tear"
@@ -4735,6 +4736,66 @@
         %+  weld
           %-  expect-eq  !>
           :-  [0 0]
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>(*^))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-volt
+  :-  `tank`leaf+"test-volt"
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src=@ta
+    '''
+    |_  cell=^
+    ++  grab
+      |%
+      ++  noun  ^
+      --
+    --
+    '''
+  ::
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      [%hoon !>(hoon-src)]
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%volt [~nul %home] %foo [12 13]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %volt *] build-result.pin-result)
+        ::
+        =/  =vase  q.cage.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  [12 13]
           q.vase
         ::
         %-  expect-eq  !>
