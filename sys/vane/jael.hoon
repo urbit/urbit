@@ -1981,7 +1981,11 @@
       a+(turn (flop r) request-to-json)
     ^-  (list move)
     %-  zing
-    %+  turn  ~(tap by changes)
+    %+  turn
+      %+  sort  ~(tap by changes)
+      ::  sort by block number, then by event log number
+      |=  [[[b1=@ud l1=@ud] *] [[b2=@ud l2=@ud] *]]
+      ?.(=(b1 b2) (lth b1 b2) (lth l1 l2))
     |=  [cause=[@ud @ud] dis=(list diff-constitution)]
     (update-to-all %diff cause (flop dis))
   ::
