@@ -3425,9 +3425,8 @@
       ++  stack-sources
         |=  sources=(list brick)
         ^-  hoon
-        ::  TODO why flop?
         ::
-        =-  [%tssg (flop -)]
+        =-  [%tssg -]
         %+  turn  sources
         |=  =brick
         ^-  hoon
