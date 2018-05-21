@@ -1,5 +1,5 @@
 !:
-::                                                      ::  
+::                                                      ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
 =<  ride
@@ -6699,9 +6699,9 @@
 ::
 ++  look
   ~/  %look
-  |=  {cog/term dab/(map term (pair what foot))}
+  |=  {cog/term dab/(map term hoon)}
   =+  axe=1
-  |-  ^-  (unit {p/axis q/(pair what foot)})
+  |-  ^-  (unit {p/axis q/hoon})
   ?-  dab
       ~  ~
   ::
@@ -6739,13 +6739,13 @@
 ::      ?-  -.q.q.-
 ::        %ash
 ::
-  |-  ^-  (unit {p/axis q/(pair what foot)})
+  |-  ^-  (unit {p/axis q/hoon})
   ?-  dom
       ~  ~
   ::
       {* ~ ~}
     %+  bind  (look cog q.n.dom) 
-    |=((pair axis (pair what foot)) [(peg axe p) q])
+    |=((pair axis hoon) [(peg axe p) q])
   ::
       {* ~ *}
     =+  yep=(look cog q.n.dom)
@@ -7316,8 +7316,7 @@
     :+  %tsgr  example:clear(mod payload)
     :+  %brcn  ~
     =-  [[0 -] ~ ~]
-    %-  ~(gas by *(map term (pair what foot)))
-    ^-  (list (trel term what foot))
+    %-  ~(gas by *(map term hoon))
     %+  turn
       ~(tap by arms)
     |=  [=term =spec]
@@ -7326,7 +7325,7 @@
     ::  hygienic -- we leave them in context, to support
     ::  maximum programmer flexibility
     ::
-    [term *what %ash example:clear(mod spec)]
+    [term example:clear(mod spec)]
   ::
   ++  home  
     ::  express a hoon against the original subject
@@ -7733,12 +7732,12 @@
         :+  %brkt
           relative(mod p.mod, dom (peg 3 dom))
         =-  [[0 -] ~ ~]
-        %-  ~(gas by *(map term (pair what foot)))
-        ^-  (list (trel term what foot))
+        %-  ~(gas by *(map term hoon))
+        ^-  (list (pair term hoon))
         %+  turn
           ~(tap by q.mod)
         |=  [=term =spec]
-        [term *what %ash relative(mod spec, dom (peg 3 dom))]
+        [term relative(mod spec, dom (peg 3 dom))]
       ::
       ::  normalize, $&
       ::
@@ -8278,13 +8277,13 @@
         $marl  =-  [%cndt [p.i.p.gen $(p.gen t.p.gen)] -]
                ^-  hoon
                :+  %tsbr  [%base %cell]
-               :+  %brcn  ~
+               :+  %brvt  ~
                ^-  (map @ tome)
                =-  [[0 -] ~ ~]
-               ^-  (map term (pair what foot))
+               ^-  (map term hoon)
                :_  [~ ~]
                =+  sug=[[%& 12] ~]
-               :^  %$  ~  %elm
+               :-  %$
                :^  %wtsg  sug
                  [%cnts sug [[[[%& 1] ~] [%$ 13]] ~]]
                [%cnts sug [[[[%& 3] ~] [%cnts [%$ ~] [[sug [%$ 25]] ~]]] ~]]
@@ -8594,7 +8593,7 @@
         $zpzp  (lead -.gen %.(+.gen noop))
       ==
     ++  arms
-      (raid (raid (twin noop heel)))
+      (raid (raid expr))
     ::
     ++  bark 
       |=  wof/woof
@@ -8615,13 +8614,6 @@
         [out vit]
       =^  nex  vit  ^^$(gen q.i.p)
       $(p t.p, out [[p.i.p nex] out])
-    ::
-    ++  heel
-      |=  bud/foot
-      ?-  -.bud
-        $ash  =^(nex vit ^$(gen p.bud) [[%ash nex] vit])
-        $elm  =^(nex vit ^$(gen p.bud) [[%elm nex] vit])
-      ==
     ::
     ++  lead
       =+  [sem=@tas out=[** $:life]]
@@ -9365,8 +9357,8 @@
                   [`axe lon]
                 =/  zut  ^-  foot
                          ?-  q.p.q.sut 
-                           %wet  [%elm q.q.u.zem]
-                           %dry  [%ash q.q.u.zem]
+                           %wet  [%elm q.u.zem]
+                           %dry  [%ash q.u.zem]
                          ==
                 [%| (peg 2 p.u.zem) [[sut(r.p.q %gold) zut] ~ ~]]
               =+  pec=(peel way r.p.q.sut)
@@ -9568,18 +9560,18 @@
   ++  hemp
     ::  generate formula from foot
     ::
-    |=  fut/foot
+    |=  [hud/poly gen/hoon]
     ^-  nock
     ~+
-    ?-  -.fut
-      $ash  q:(mint %noun p.fut)
-      $elm  q:(mint(vet |) %noun p.fut)
+    ?-  hud
+      $dry  q:(mint %noun gen)
+      $wet  q:(mint(vet |) %noun gen)
     ==
   ::
   ++  laze
     ::  produce lazy core generator for static execution
     ::
-    |=  [dom=(map @ tome)]
+    |=  [nym=(unit term) hud=poly dom=(map @ tome)]
     ::  only one layer of fabrication analysis
     ::
     =.  fab  &
@@ -9587,7 +9579,7 @@
     ^-  seminoun
     ::  tal: map from battery axis to foot
     ::
-    =;  tal/(map @ud foot)
+    =;  tal/(map @ud hoon)
       ::  produce lazy battery
       ::
       :_  ~
@@ -9595,11 +9587,12 @@
       |=  axe/@ud
       ^-  (unit noun)
       %+  bind  (~(get by tal) axe)
-      |=  fut/foot
-      %.(fut hemp(sut (core sut [~ %dry %gold] sut [[%lazy 1 ..^$] ~] dom)))
+      |=  gen/hoon
+      %.  [hud gen]
+      hemp(sut (core sut [nym hud %gold] sut [[%lazy 1 ..^$] ~] dom))
     ::
-    %-  ~(gas by *(map @ud foot))
-    =|  yeb/(list (pair @ud foot))
+    %-  ~(gas by *(map @ud hoon))
+    =|  yeb/(list (pair @ud hoon))
     =+  axe=1
     |^  ?-  dom
           ~        yeb
@@ -9623,20 +9616,20 @@
                             yeb  (chapter(axe (peg axe 2)) q.n.dom)
         ==         ==     ==
     ++  chapter
-      |=  dab/(map term (pair what foot))
+      |=  dab/(map term hoon)
       ^+  yeb
       ?-  dab
         ~        yeb
-        [* ~ ~]  [[axe q.q.n.dab] yeb]
+        [* ~ ~]  [[axe q.n.dab] yeb]
         [* * ~]  %=  $
                    dab  l.dab
                    axe  (peg axe 3)
-                   yeb  [[(peg axe 2) q.q.n.dab] yeb]
+                   yeb  [[(peg axe 2) q.n.dab] yeb]
                  ==
         [* ~ *]  %=  $
                    dab  r.dab
                    axe  (peg axe 3)
-                   yeb  [[(peg axe 2) q.q.n.dab] yeb]
+                   yeb  [[(peg axe 2) q.n.dab] yeb]
                  ==
         [* * *]  %=  $
                    dab  r.dab
@@ -9644,7 +9637,7 @@
                    yeb  %=  $
                           dab  l.dab
                           axe  (peg axe 6)
-                          yeb  [[(peg axe 2) q.q.n.dab] yeb]
+                          yeb  [[(peg axe 2) q.n.dab] yeb]
       ==         ==     ==
     --
   ::
@@ -9671,9 +9664,11 @@
     ?:  ?=(~ dab)
       ~
     =+  ^=  dov
+        ::  this seems wrong but it's actually right
+        ::
         ?-  hud
-          $ash  (mull %noun dox q.n.dab)
-          $elm  ~
+          $dry  (mull %noun dox q.n.dab)
+          $wet  ~
         ==
     ?-  dab
       {* ~ ~}  dov
@@ -9687,7 +9682,7 @@
     ^-  *
     ?:  ?=(~ dom)
       ~
-    =+  dov=(bake dox q.n.dom)
+    =+  dov=(bake dox hud q.n.dom)
     ?-    dom
       {* ~ ~}   dov
       {* ~ *}   [dov $(dom r.dom)]
@@ -9700,11 +9695,9 @@
     ::
     |=  [dox=type mel=vair nym=(unit term) hud=poly dom=(map @ tome)]
     ^-  (pair type type)
-    =+  yet=(core sut [nym hud %gold] sut (laze dom) dom)
-    =+  hum=(core dox [nym hud %gold] dox (laze dom) dom)
-    =+  %+  balk(sut hud yet)
-          hum
-        dom
+    =+  yet=(core sut [nym hud %gold] sut (laze nym hud dom) dom)
+    =+  hum=(core dox [nym hud %gold] dox (laze nym hud dom) dom)
+    =+  (balk(sut yet) hum hud dom)
     [yet hum]
   ::
   ++  mine
@@ -9715,16 +9708,16 @@
     =-  :_  [%1 dez]
         (core sut [nym hud mel] sut [[%full ~] dez] dom)
     ^=  dez
-    =.  sut  (core sut [nym hud %gold] sut (laze dom) dom)
+    =.  sut  (core sut [nym hud %gold] sut (laze nym hud dom) dom)
     |-  ^-  ?(~ ^)
     ?:  ?=(~ dom)
       ~
     =/  dov/?(~ ^)
-      =/  dab/(map term (pair what foot))  q.n.dom
+      =/  dab/(map term hoon)  q.n.dom
       |-  ^-  ?(~ ^)
       ?:  ?=(~ dab)
         ~
-      =+  vad=(hemp q.q.n.dab)
+      =+  vad=(hemp hud q.n.dab)
       ?-    dab
         {* ~ ~}   vad
         {* ~ *}   [vad $(dab r.dab)]
@@ -10138,13 +10131,10 @@
           ?&  =(p.n.dab p.n.hem)
               $(dab l.dab, hem l.hem)
               $(dab r.dab, hem r.hem)
-              ?-  -.q.q.n.dab
-                $elm  =(q.q.n.dab q.q.n.hem)
-                $ash  ?&  ?=($ash -.q.q.n.hem)
-                          %=  dext
-                            sut  (play p.q.q.n.dab)
-                            ref  (play(sut ref) p.q.q.n.hem)
-      ==  ==  ==      ==  ==
+              %=  dext
+                sut  (play q.n.dab)
+                ref  (play(sut ref) q.n.hem)
+      ==  ==  ==
     ::
     ++  dext
       ^-  ?
@@ -10167,9 +10157,11 @@
                    ==
         {$core *}  ?.  ?=({$core *} ref)  sint
                    ?:  =(q.sut q.ref)  dext(sut p.sut, ref p.ref)
-                   ?&  meet(sut q.q.sut, ref p.sut)
+                   ?&  =(q.p.q.sut q.p.q.ref)
+                       meet(sut q.q.sut, ref p.sut)
                        dext(sut q.q.ref, ref p.ref)
                        (deem(sut q.q.sut, ref q.q.ref) r.p.q.sut r.p.q.ref)
+                       ?:  =(%wet q.p.q.sut)  =(q.r.q.sut q.r.q.ref)
                        ?|  (~(has in gil) [sut ref])
                            %.  [q.r.q.sut q.r.q.ref]
                            %=  deep
