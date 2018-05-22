@@ -192,6 +192,7 @@
           encryption-key=@
           authentication-key=@
           key-revision=@ud
+          continuity-number=@ud
           spawn-count=@ud
           spawned=(set @p)
           sponsor=@p
@@ -220,6 +221,7 @@
             [%bytes-n 32]   ::  encryptionKey
             [%bytes-n 32]   ::  authenticationKey
             %uint           ::  keyRevisionNumber
+            %uint           ::  continuityNumber
             %uint           ::  spawnCount
             %uint           ::  sponsor
             %bool           ::  escapeRequested
@@ -237,6 +239,7 @@
             encryption-key=octs
             authentication-key=octs
             key-revision=@ud
+            continuity-number=@ud
             spawn-count=@ud
             sponsor=@ud
             escape-requested=?
@@ -272,6 +275,7 @@
           [%owner new=address]
           [%spawned who=@p]
           [%keys enc=@ aut=@ rev=@ud]
+          [%continuity new=@ud]
           [%sponsor new=@p]
           [%escape new=(unit @p)]
           [%spawn-proxy new=address]
@@ -5737,6 +5741,8 @@
         ::
           key-revision
         ::
+          continuity-number
+        ::
           spawn-count
         ::
           ~
@@ -5796,6 +5802,11 @@
         ?>  &(=(p.enc 32) =(p.aut 32))  ::  sanity
         [who %keys q.enc q.aut rev]~
       ::
+      ?:  =(event.log broke-continuity)
+        =+  ^-  [who=@ num=@]
+            (decode-results data.log ~[%uint %uint])
+        [who %continuity num]~
+      ::
       ?:  =(event.log changed-spawn-proxy)
         =+  ^-  [who=@ sox=address]
             (decode-results data.log ~[%uint %address])
@@ -5815,17 +5826,18 @@
       |=  [hul=hull dif=diff-hull]
       ^-  hull
       ?-  -.dif
-        %full     new.dif
-        %owner    hul(owner new.dif)
-        %spawned  =+  (~(put in spawned.hul) who.dif)
-                  hul(spawn-count +(spawn-count.hul), spawned -)
-        %keys     %_  hul
-                    encryption-key      enc.dif
-                    authentication-key  aut.dif
-                    key-revision        rev.dif
-                  ==
-        %sponsor  hul(sponsor new.dif, escape ~)
-        %escape   hul(escape new.dif)
+        %full             new.dif
+        %owner            hul(owner new.dif)
+        %spawned          =+  (~(put in spawned.hul) who.dif)
+                          hul(spawn-count +(spawn-count.hul), spawned -)
+        %keys             %_  hul
+                            encryption-key      enc.dif
+                            authentication-key  aut.dif
+                            key-revision        rev.dif
+                          ==
+        %continuity       hul(continuity-number new.dif)
+        %sponsor          hul(sponsor new.dif, escape ~)
+        %escape           hul(escape new.dif)
         %spawn-proxy      hul(spawn-proxy new.dif)
         %transfer-proxy   hul(transfer-proxy new.dif)
       ==

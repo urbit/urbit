@@ -2315,6 +2315,9 @@
         ~?  !=(key-revision.huv key-revision.hul)
           :-  %key-revision-differs
           [key-revision.huv key-revision.hul]
+        ~?  !=(continuity-number.huv continuity-number.hul)
+          :-  %continuity-number-differs
+          [continuity-number.huv continuity-number.hul]
         ~?  !=(spawn-count.huv spawn-count.hul)
           :-  %spawn-count-differs
           [spawn-count.huv spawn-count.hul]
