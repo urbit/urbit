@@ -189,8 +189,8 @@
     |%
     ++  hull
       $:  owner=address
-          encryption-key=@
-          authentication-key=@
+          encryption-key=pass
+          authentication-key=pass
           key-revision=@ud
           continuity-number=@ud
           spawn-count=@ud
@@ -5734,10 +5734,10 @@
       :*  owner
         ::
           ?>  =(32 p.encryption-key)
-          `@`q.encryption-key
+          `pass`q.encryption-key
         ::
           ?>  =(32 p.authentication-key)
-          `@`q.authentication-key
+          `pass`q.authentication-key
         ::
           key-revision
         ::
