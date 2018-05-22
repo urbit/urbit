@@ -95,6 +95,7 @@
   test-core-fscl-fszp
   test-core-fscm
   test-plan-fsbc
+  test-core-fscb
   test-bunt
   test-volt
   test-vale
@@ -2499,7 +2500,7 @@
   ==
 ::
 ++  test-ride-scry-succeed
-  ~&  %test-ride-scry-succeed
+  :-  `tank`leaf+"test-ride-scry-succeed"
   ::
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
   =/  ford  *ford-gate
@@ -4520,7 +4521,7 @@
       ^=  call-args
         :*  duct=~[/path]  type=~  %make  ~nul
             %pin  ~1234.5.6
-            :*  %plan  [[~nul %home] /hoon/other/lib]  *coin
+            :*  %plan  [[~nul %home] /other/lib]  *coin
                 :*  source-rail=[[~nul %desk] /bar/foo]
                     zuse-version=309
                     structures=~
@@ -4568,7 +4569,7 @@
       :-  %hoon
       :-  hoon-src-type
       '''
-      /=  data  /:  /===/data/hoon
+      /=  data  /:  /===/data
                 /!noun/
       data
       '''
@@ -4633,7 +4634,7 @@
       :-  %hoon
       :-  hoon-src-type
       '''
-      /=  data  /:  /===/data/hoon
+      /=  data  /:  /===/data
                 /!noun/
       data
       '''
@@ -4642,10 +4643,10 @@
       :-  %hoon
       :-  hoon-src-type
       '''
-      /,    /other/hoon
+      /,    /other
          /~  a=[3 2 1 ~]
       ::
-            /data/hoon
+            /data
          /~  a=[1 2 3 ~]
       ==
       a
@@ -4720,7 +4721,7 @@
       ^=  call-args
         :*  duct=~[/path]  type=~  %make  ~nul
             %pin  ~1234.5.6
-            :*  %plan  [[~nul %home] /hoon/other/lib]
+            :*  %plan  [[~nul %home] /other/lib]
                 [%many [%blob *cred:eyre] [%$ [%t %key]] [%$ [%t %value]] [%$ %n ~] ~]
                 :*  source-rail=[[~nul %home] /hoon/other/lib]
                     zuse-version=309
@@ -4744,12 +4745,111 @@
         ::
         %+  weld
           %-  expect-eq  !>
-          :-  [[[~nul %home [%da ~1234.5.6]] /hoon/other/lib] %value]
+          :-  [[[~nul %home [%da ~1234.5.6]] /other/lib] %value]
           q.vase
         ::
         %-  expect-eq  !>
         :-  &
         (~(nest ut p.vase) | -:!>([*beam *@tas]))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-core-fscb
+  :-  `tank`leaf+"test-core-fscb"
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  arch-type=type  -:!>(*arch)
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /=  data  /:  /===/data
+                /_  /!noun/
+      data
+      '''
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /data]]
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.one ~] [~.two ~] [~.hoon ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /one/data]]
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.hoon ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /two/data]]
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.hoon ~]])
+    ::
+      ::  this "hoon" file should be filtered out
+      ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/data]]
+      :-  %arch
+      :-  arch-type
+      :-  fil=[~ u=0v6]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/one/data]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      1
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/two/data]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      2
+      '''
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%core source-path=`rail:ford-gate`[[~nul %home] /hoon/program/gen]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %core *] build-result.pin-result)
+        ::
+        =/  =vase  vase.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  (my [[%one 1] [%two 2] ~])
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>(*[[@ta @ud] [[@ta @ud] ~ ~] ~]))
     ==
   ::
   ;:  weld

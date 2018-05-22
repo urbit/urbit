@@ -3159,6 +3159,7 @@
               %fsbr  (run-fsbr +.crane)
               %fsts  (run-fsts +.crane)
               %fscm  (run-fscm +.crane)
+              %fscb  (run-fscb +.crane)
               %fsdt  (run-fsdt +.crane)
               %fssm  (run-fssm +.crane)
               %fscl  (run-fscl +.crane)
@@ -3250,6 +3251,169 @@
             $(cases t.cases)
           ::
           (run-crane subject crane.i.cases)
+        ::  +run-fscb: runs the `/_` rune
+        ::
+        ++  run-fscb
+          |=  sub-crane=^crane
+          ^-  compose-cranes
+          ::  perform a scry to get the contents of +path-to-render
+          ::
+          =/  toplevel-build=^build
+            [date.build [%scry [%c %y path-to-render]]]
+          ::
+          =^  toplevel-result  accessed-builds  (depend-on toplevel-build)
+          ?~  toplevel-result
+            [[%block ~[toplevel-build]] ..run-crane]
+          ::
+          ?:  ?=([~ %error *] toplevel-result)
+            [[%error [leaf+"/_ failed: " message.u.toplevel-result]] ..run-crane]
+          ?>  ?=([~ %success %scry *] toplevel-result)
+          ::
+          =/  toplevel-arch=arch  ;;(arch q.q.cage.u.toplevel-result)
+          ::  sub-path: each possible sub-directory to check
+          ::
+          =/  sub-paths=(list @ta)
+            (turn ~(tap by dir.toplevel-arch) head)
+          ::  for each directory in :toplevel-arch, issue a sub-build
+          ::
+          =/  sub-builds=(list ^build)
+            %+  turn  sub-paths
+            |=  sub=@ta
+            ^-  ^build
+            [date.build [%scry [%c %y path-to-render(spur [sub spur.path-to-render])]]]
+          ::  results: accumulator for results of sub-builds
+          ::
+          =|  results=(list [kid=^build sub-path=@ta results=(unit build-result)])
+          ::  resolve all the :sub-builds
+          ::
+          ::    TODO: It feels like this running sub build and filtering
+          ::    results could be generalized.
+          ::
+          =/  subs-results
+            |-  ^+  [results accessed-builds]
+            ?~  sub-builds  [results accessed-builds]
+            ?>  ?=(^ sub-paths)
+            ::
+            =/  kid=^build  i.sub-builds
+            =/  sub-path=@ta  i.sub-paths
+            ::
+            =^  result  accessed-builds  (depend-on kid)
+            =.  results  [[kid sub-path result] results]
+            ::
+            $(sub-builds t.sub-builds, sub-paths t.sub-paths)
+          ::  apply mutations from depending on sub-builds
+          ::
+          =:  results          -.subs-results
+              accessed-builds  +.subs-results
+          ==
+          ::  split :results into completed :mades and incomplete :blocks
+          ::
+          =+  split-results=(skid results |=([* * r=(unit build-result)] ?=(^ r)))
+          ::
+          =/  mades=_results   -.split-results
+          =/  blocks=_results  +.split-results
+          ::  if any builds blocked, produce them all in %blocks
+          ::
+          ?^  blocks
+            [[%block (turn `_results`blocks head)] ..run-crane]
+          ::  find the first error and return it if exists
+          ::
+          =/  errors=_results
+            %+  skim  results
+            |=  [* * r=(unit build-result)]
+            ?=([~ %error *] r)
+          ?^  errors
+            ?>  ?=([~ %error *] results.i.errors)
+            [[%error message.u.results.i.errors] ..run-crane]
+          ::  get a list of valid sub-paths
+          ::
+          ::    :results is now a list of the :build-result of %cy on each path
+          ::    in :toplevel-arch. What we want is to now filter this list so
+          ::    that we filter files out.
+          ::
+          =/  sub-paths=(list [=rail sub-path=@ta])
+            %+  murn  results
+            |=  [build=^build sub-path=@ta result=(unit build-result)]
+            ^-  (unit [rail @ta])
+            ::
+            ?>  ?=([@da %scry %c %y *] build)
+            ?>  ?=([~ %success %scry *] result)
+            =/  =arch  ;;(arch q.q.cage.u.result)
+            ::
+            ?~  dir.arch
+              ~
+            `[rail.resource.schematic.build sub-path]
+          ::  keep track of the original value so we can reset it
+          ::
+          =/  old-path-to-render  path-to-render
+          ::  apply each of the filtered :sub-paths to the :sub-crane.
+          ::
+          =^  crane-results  ..run-crane
+            %+  roll  sub-paths
+            |=  $:  [=rail sub-path=@ta]
+                    accumulator=[(list [sub-path=@ta =compose-result]) _..run-crane]
+                ==
+            =.  ..run-crane  +.accumulator
+            =.  path-to-render  rail
+            =^  result  ..run-crane  (run-crane subject sub-crane)
+            [[[sub-path result] -.accumulator] ..run-crane]
+          ::  set :path-to-render back
+          ::
+          =.  path-to-render  old-path-to-render
+          ::  if any sub-cranes error, return the first error
+          ::
+          =/  error-list=(list [@ta =compose-result])
+            %+  skim  crane-results
+            |=  [@ta =compose-result]
+            =(%error -.compose-result)
+          ::
+          ?^  error-list
+            [compose-result.i.error-list ..run-crane]
+          ::  if any sub-cranes block, return all blocks
+          ::
+          =/  block-list=(list ^build)
+            =|  block-list=(list ^build)
+            |-
+            ^+  block-list
+            ?~  crane-results
+              block-list
+            ?.  ?=(%block -.compose-result.i.crane-results)
+              $(crane-results t.crane-results)
+            =.  block-list
+              (weld builds.compose-result.i.crane-results block-list)
+            $(crane-results t.crane-results)
+          ::
+          ?^  block-list
+            [[%block block-list] ..run-crane]
+          ::  put the data in map order
+          ::
+          =/  result-map=(map @ta vase)
+            %-  my
+            %+  turn  crane-results
+            |=  [path=@ta =compose-result]
+            ^-  (pair @ta vase)
+            ::
+            ?>  ?=([%subject *] compose-result)
+            [path subject.compose-result]
+          ::  convert the map into a flat format for return
+          ::
+          ::    This step flattens the values out of the map for return. Let's
+          ::    say we're doing a /_ over a directory of files that just have a
+          ::    single @ud in them. We want the return value of /_ to have the
+          ::    nest in (map @ta @ud) instead of returning a (map @ta vase).
+          ::
+          =/  as-vase=vase
+            |-
+            ^-  vase
+            ::
+            ?~  result-map
+              [[%atom %n `0] 0]
+            ::
+            %+  slop
+              (slop [[%atom %ta ~] p.n.result-map] q.n.result-map)
+            (slop $(result-map l.result-map) $(result-map r.result-map))
+          ::
+          [[%subject as-vase] ..run-crane]
         ::  +run-fsdt: runs the `/.` rune
         ::
         ++  run-fsdt
@@ -3375,7 +3539,11 @@
           ::
           ?>  =(%noun mark)
           ::
-          =/  hood-build=^build  [date.build [%hood path-to-render]]
+          =/  hoon-path=rail
+            =,  path-to-render
+            [disc [%hoon spur]]
+          ::
+          =/  hood-build=^build  [date.build [%hood hoon-path]]
           =^  hood-result  accessed-builds  (depend-on hood-build)
           ?~  hood-result
             [[%block [hood-build]~] ..run-crane]
