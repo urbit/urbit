@@ -1222,36 +1222,18 @@
       (map ship safe)                                   ::  assets
     ::                                                  ::
     ++  change                                          ::  urbit change
-      $%  $:  $fact                                     ::  certificate change
-              rex/ship                                  ::  owner
-              vie/(unit (unit ship))                    ::  made/heard from
-              lyf/life                                  ::  deed added/modified
-              gan/growth                                ::  info gained
-          ==                                            ::
+      $%  ::TODO  $ethe ?
           $:  $rite                                     ::  rights change
               rex/ship                                  ::  issuer
               pal/ship                                  ::  issued to
               del/bump                                  ::  change
       ==  ==                                            ::
-    ::                                                  ::
-    ++  channel                                         ::  secure channel
-      $:  out/(unit (pair hand bill))                   ::  outbound key
-          inn/(map hand bill)                           ::  inbound keys
-          cur/(unit life)                               ::  their version
-          sax/(list ship)                               ::  their ancestry
-          pub/will                                      ::  their public keys
-       ==                                               ::
     ++  gift                                            ::  out result <-$
       $%  [%mack p=(unit tang)]                         ::  message n/ack
-          {$veil p/channel}                             ::  secure channel
           {$vest p/tally}                               ::  balance update
           {$vein p/life q/(map life ring)}              ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
           [%vent p=update:constitution:ethe]            ::  ethereum changes
-      ==                                                ::
-    ++  growth                                          ::  unit of learning
-      $%  {$sign p/mind q/@}                            ::  add/update signature
-          {$step p/cert}                                ::  add whole deed
       ==                                                ::
     ++  note                                            ::  out request $->
       =,  eyre
@@ -1277,14 +1259,11 @@
     +=  task                                            ::  in request ->$
       $%  [%burn our=ship p=ship q=safe]                ::  destroy rights
           [%hail our=ship p=ship q=remote]              ::  remote update
-          [%init our=ship p=@pG q=arms]                 ::  initialize urbit
+          [%init our=ship]                              ::  initialize urbit
           [%look p=(each ship purl:eyre)]               ::  set ethereum source
-          [%meet our=ship p=(unit (unit ship)) q=farm]  ::  integrate pki from
           [%mint our=ship p=ship q=safe]                ::  create rights
           [%move our=ship p=ship q=ship r=safe]         ::  transfer from=to
-          [%next our=ship p=bull]                       ::  update private key
           [%nuke ~]                                     ::  cancel tracker from
-          [%veil our=ship p=ship]                       ::  view secret channel
           [%vein our=ship]                              ::  view signing keys
           [%vent ~]                                     ::  view ethereum state
           [%vent-result p=update:constitution:ethe]     ::  tmp workaround
@@ -1332,6 +1311,7 @@
     ::                                                  ::::
   ++  pki  ^?
     |%
+    ::TODO  update to fit constitution-style keys
     ::  the urbit meta-certificate (++will) is a sequence
     ::  of certificates (++cert).  each cert in a will
     ::  revokes and replaces the previous cert.  the
@@ -1344,35 +1324,11 @@
     ::  bit is set, the new life of this ship may have
     ::  lost information that the old life had.
     ::
-    ++  arms  (map chip (pair @ta @t))                  ::  stated identity
-    ++  bull                                            ::  cert metadata
-      $:  dad/ship                                      ::  parent
-          dob/?                                         ::  & clean, | dirty
-          nym/arms                                      ::  identity strings
-      ==                                                ::
-    ++  cert  (tale deed)                               ::  signed deed
-    ++  chip                                            ::  standard identity
-      $?  $giv                                          ::  given name
-          $sur                                          ::  surname
-          $had                                          ::  fictitious name
-          $mid                                          ::  middle name
-      ==                                                ::
-    ++  deed                                            ::  certificate deed
-      $:  doc/bull                                      ::  metadata
-          pub/pass                                      ::  public key
-      ==                                                ::
-    ++  farm  (map ship will)                           ::  pki dump set
     ++  hand  @uvH                                      ::  128-bit hash
     ++  life  @ud                                       ::  ship version
     ++  mind  {who/ship lyf/life}                       ::  key identifier
     ++  name  (pair @ta @t)                             ::  ascii / unicode
     ++  oath  @                                         ::  signature
-    ++  tale                                            ::  urbit-signed *
-      |*  typ/mold                                      ::  payload mold
-      $:  dat/typ                                       ::  data
-          syg/(map ship (pair life oath))               ::  signatures
-      ==                                                ::
-    ++  will  (map life cert)                           ::  meta-certificate
     --  ::  pki
   ::                                                    ::
   ::::                  ++rights:jael                   ::  (1h3) claims
@@ -1470,7 +1426,6 @@
           $:  $j                                        ::  to %jael
               $%  {$line p/ship q/@da r/code}           ::
                   {$link p/ship q/@da r/code}           ::
-                  {$meet p/farm:pki:jael}               ::
                   {$veil p/ship}                        ::
                   {$west p/ship q/path r/*}             ::  to %gall
       ==  ==  ==                                        ::

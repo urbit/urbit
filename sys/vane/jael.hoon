@@ -54,13 +54,6 @@
   $:  $=  car                                           ::  secure channels
         %+  map  ship                                   ::  partner
         $:  yen/(set duct)                              ::  trackers
-            det/channel                                 ::  channel state
-        ==                                              ::
-      $=  rel                                           ::  neighborhood
-        $:  dad/ship                                    ::  parent
-            cod/farm                                    ::  dependencies
-            pyr/(set ship)                              ::  peers
-            kyz/(set ship)                              ::  children
         ==                                              ::
       $=  bal                                           ::  balance sheet
         $:  yen/(set duct)                              ::  trackers
@@ -72,8 +65,7 @@
         ==                                              ::
   ==                                                    ::
 ++  state-absolute                                      ::  absolute urbit
-  $:  pug/farm                                          ::  keys
-      pry/(map ship (map ship safe))                    ::  promises
+  $:  pry/(map ship (map ship safe))                    ::  promises
   ==                                                    ::
 ++  state-ethereum                                      ::  known ethereum
   $:  ships=fleet                                       ::  ship states
@@ -88,7 +80,6 @@
 ::                                                      ::
 ++  message                                             ::  p2p message
   $%  {$hail p/safe}                                    ::  reset rights
-      {$meet p/farm}                                    ::  propagate pki
       [%nuke ~]                                         ::  cancel trackers
       [%vent ~]                                         ::  view ethereum state
       [%vent-result p=update:constitution:ethe]         ::  tmp workaround
@@ -825,32 +816,6 @@
     ^-  safe
     (splice(pig (remove les.del)) mor.del)
   --
-::                                                      ::  ++we
-::::                    ## will^light                   ::  will functions
-  ::                                                    ::::
-++  we
-  |_  pub/will
-  ::                                                    ::  ++collate:we
-  ++  collate                                           ::  sort by version
-    |=  ord/$-({{life cert} {life cert}} ?)
-    ^-  (list (pair life cert))
-    (sort ~(tap by pub) ord)
-  ::                                                    ::  ++current:we
-  ++  current                                           ::  current number
-    ^-  (unit life)
-    (bind instant |=((pair life cert) p))
-  ::                                                    ::  ++forward:we
-  ++  forward                                           ::  sort oldest first
-    (collate |=({a/{life *} b/{life *}} (lth -.a -.b)))
-  ::                                                    ::  ++instant:we
-  ++  instant                                           ::  current cert
-    ^-  (unit (pair life cert))
-    =+  reverse
-    ?~(- ~ `i)
-  ::                                                    ::  ++reverse:we
-  ++  reverse                                           ::  sort latest first
-    (collate |=({a/{life *} b/{life *}} (gth -.a -.b)))
-  --
 --
 ::                                                      ::::
 ::::                    #  heavy                        ::  heavy engines
@@ -934,13 +899,14 @@
       abet:abet:(hail:(burb p.tac) our.tac q.tac)
     ::
     ::  initialize vane
-    ::    {$init p/code q/arms}
+    ::    [%init our=ship]
     ::
         $init
       =^  mos  eth.lex
         abet:(~(init et /init now.sys eth.lex) our.tac)
-      %+  cure(moz (weld moz (flop mos)))  our.tac
-      abet:(make:(burb our.tac) our.tac now.sys eny.sys p.tac q.tac)
+      +>.$(moz (weld moz (flop mos)))
+      :: %+  cure(moz (weld moz (flop mos)))  our.tac
+      :: abet:(make:(burb our.tac) our.tac now.sys eny.sys p.tac q.tac)
     ::
     ::  set ethereum source
     ::    [%look p=(each ship purl)]
@@ -954,7 +920,7 @@
         $mint
       %+  cure  our.tac
       abet:abet:(deal:(burb our.tac) p.tac [q.tac ~])
-
+    ::
     ::
     ::  move promises
     ::    {$move p/ship q/ship r/safe}
@@ -968,13 +934,6 @@
         abet:abet:(deal:(burb our.tac) q.tac [r.tac ~])
       +>
     ::
-    ::  public-key update
-    ::    {$meet p/(unit (unit ship)) q/farm}
-    ::
-        $meet
-      %+  cure  our.tac
-      abet:(~(meet ur urb) p.tac q.tac)
-    ::
     ::  cancel all trackers from duct
     ::    {$nuke $~}
     ::
@@ -984,23 +943,10 @@
         yen.bal.sub  (~(del in yen.bal.sub) hen)
         yen.own.sub  (~(del in yen.own.sub) hen)
         car.sub      %-  ~(run by car.sub)
-                     |=  {yen/(set duct) det/channel}
-                     [(~(del in yen) hen) det]
+                     |=  yen=(set duct)
+                     (~(del in yen) hen)
         listeners.eth  (~(del in listeners.eth) hen)
       ==
-    ::
-    ::  extend our certificate with a new private key
-    ::    {$next p/bull}
-    ::
-        $next
-      %+  cure  our.tac
-      abet:abet:(next:(burb our.tac) eny.sys p.tac)
-    ::
-    ::  open secure channel
-    ::    {$veil p/ship}
-    ::
-        $veil
-      (curd abet:(~(veil ~(feed su our.tac urb sub) hen) p.tac))
     ::
     ::  watch private keys
     ::    {$vein $~}
@@ -1048,13 +994,6 @@
           $hail
         %+  cure  p.p.tac
         abet:abet:(hail:(burb q.p.tac) p.p.tac [%| p.mes])
-      ::
-      ::  share certificates
-      ::    {$meet p/farm}
-      ::
-          $meet
-        %+  cure  p.p.tac
-        abet:(~(meet ur urb) ``q.p.tac p.mes)
       ::
       ::  cancel trackers
       ::    [%nuke ~]
@@ -1126,7 +1065,6 @@
         +>
       ?-  -.i.hab
         $rite  (paid +.i.hab)
-        $fact  (said +.i.hab)
       ==
     ==
   ::                                                    ::  ++exec:su
@@ -1141,23 +1079,6 @@
     |_  ::  hen: subscription source
         ::
         hen/duct
-    ::                                                  ::  ++veil:feed:su
-    ++  veil                                            ::  secure channel
-      |=  who/ship
-      ^+  ..feed
-      ::
-      ::  send initial pki sync as needed
-      ::
-      =.  ..feed  (open hen who)
-      =/  ruc  (~(get by car) who)
-      =/  rec
-        ?~  ruc
-           [yen=`(set duct)`[hen ~ ~] det=(veil:form who)]
-         u.ruc(yen (~(put in yen.u.ruc) hen))
-      %_  ..feed
-        moz  [[hen %give %veil det.rec] moz]
-        car  (~(put by car) who rec)
-      ==
     ::                                                  ::  ++vein:feed:su
     ++  vein                                            ::  private keys
       %_  ..feed
@@ -1174,21 +1095,6 @@
   ::                                                    ::  ++feel:su
   ++  feel                                              ::  update tracker
     |%
-    ::                                                  ::  ++veal:feel:su
-    ++  veal                                            ::  kick subfarm
-      ^+  ..feel
-      =/  cod  veal:form
-      ?:(=(cod.rel cod) ..feel ..feel(cod.rel cod))
-    ::                                                  ::  ++veil:feel:su
-    ++  veil                                            ::  kick secure channel
-      |=  who/ship
-      ^+  ..feel
-      =/  ruc  (~(get by car) who)
-      ?~  ruc  ..feel
-      =/  det  (veil:form who)
-      ?:  =(det det.u.ruc)  ..feel
-      =.  car  (~(put by car) who [yen.u.ruc det])
-      (exec yen.u.ruc [%give %veil det])
     ::                                                  ::  ++vein:feel:su
     ++  vein                                            ::  kick private keys
       ^+  ..feel
@@ -1210,123 +1116,14 @@
       ?.  ?=(%| -.q.hug)  ..feel
       =*  pig  (~(lawn ur urb) our p.hug)
       %_    ..feel
-          moz  :_  moz
-        [*duct %pass /vest/(scot %p p.hug) %x %mess p.hug /j %hail pig]
-      ==
-    --
-  ::                                                    ::  ++fire:su
-  ++  fire                                              ::  propagate keys
-    |_  hec/farm
-    ++  home                                            ::  ++home:su
-      |=  who/ship                                      ::  to ship
-      %_    ..fire
           moz
         :_  moz
-        [*duct %pass /meet/(scot %p who) %x %mess who /j [%meet hec]]
+        [*duct %pass /vest/(scot %p p.hug) %a %want [our p.hug] /j %hail pig]
       ==
-    ::                                                  ::  ++flow:su
-    ++  flow                                            ::  to set of ships
-      |=  tar/(set ship)
-      =+  rot=~(tap in (~(del in tar) our))
-      |-  ^+  ..fire
-      ?~  rot  ..fire
-      $(rot t.rot, ..fire (home i.rot))
-    ::                                                  ::  ++spam:su
-    ++  spam                                            ::  to list of sets
-      |=  {via/(unit ship) jax/(list (set ship))}
-      ^+  ..fire
-      =-  (flow ?~(via - (~(del in -) u.via)))
-      |-  ^-  (set ship)
-      ?~(jax ~ (~(uni in i.jax) $(jax t.jax)))
     --
   ::                                                    ::  ++form:su
   ++  form                                              ::  generate reports
     |%
-    ::                                                  ::  ++veal:form:su
-    ++  veal                                            ::  public dependencies
-      =|  sea/(set ship)
-      =|  out/farm
-      =/  mor  `(set ship)`[our ~ ~]
-      |-  ^-  farm
-      ?:  =(~ mor)  out
-      ::
-      ::  nex: all wills to add
-      ::
-      =/  nex
-        =/  rom  ~(tap in mor)
-        |-  ^-  farm
-        ?~  rom  ~
-        %+  ~(put by $(rom t.rom))
-          i.rom
-        (~(got by pug.urb) i.rom)
-      ::
-      ::  wit: all new ships in these wills
-      ::
-      =.  sea  (~(uni in sea) mor)
-      =/  wit
-        =|  wit/(set ship)
-        =/  fem  ~(tap by nex)
-        |-  ^+  wit
-        ?~  fem  wit
-        =.  wit  $(fem t.fem)
-        =/  naw  ~(tap by q.i.fem)
-        |-  ^+   wit
-        ?~  naw  wit
-        =.  wit  $(naw t.naw)
-        =*  dad  dad.doc.dat.q.i.naw
-        ?:  (~(has in sea) dad)  wit
-        (~(put in wit) dad)
-      ::
-      ::  repeat, flushing output
-      ::
-      $(mor wit, out (~(uni by out) nex))
-    ::                                                  ::  ++veil:form:su
-    ++  veil                                            ::  channel report
-      |=  who/ship
-      ^-  channel
-      ::
-      ::  pub: will of who
-      ::  exp: promises from our to who
-      ::  imp: promises from who to our
-      ::  out: symmetric key from our to who
-      ::  inn: symmetric keys from who to our
-      ::
-      =/  pub
-        ^-  will
-        =-  ?~(- ~ u.-)
-        (~(get by pug.urb) who)
-      ::
-      =/  exp
-        ^-  safe
-        =-  ?~(- ~ u.-)
-        (~(get by (~(got by pry.urb) our)) who)
-      ::
-      =/  imp
-        ^-  safe
-        =-  ?~(- ~ u.-)
-        %.  our
-        ~(get by (fall (~(get by pry.urb) who) *(map ship safe)))
-      ::
-      =*  out
-        ^-  (unit (pair hand bill))
-        =+  (~(expose up exp) %urban)
-        ?~  -  ~
-        ?>  ?=($urban -.u.-)
-        =*  pam  p.u.-
-        ?~  pam  ~
-        ::  arbitrarily select root node of the map
-        ::
-        `n.pam
-      ::
-      =*  inn
-          =+  (~(expose up imp) %urban)
-          ^-  (map hand bill)
-          ?~  -  ~
-          ?>  ?=($urban -.u.-)
-          p.u.-
-      ::
-      ^-  channel
-      [out inn ~(current we pub) (~(dads ur urb) who) pub]
     ::                                                  ::  ++vein:form:su
     ++  vein                                            ::  private key report
       ^-  (pair life (map life ring))
@@ -1361,28 +1158,6 @@
       ::
       (~(gas by *(map ship safe)) veg)
     --
-  ::                                                    ::  ++open:su
-  ++  open                                              ::  make secure channel
-    |=  $:  hen/duct
-            who/ship
-        ==
-    ^+  +>
-    ::
-    ::  a one-time operation to create a secure channel
-    ::
-    ?:  (~(has by car) who)  +>
-    ::
-    ::  initial propagation: ourself and dependencies, plus
-    ::  all capital ships if meeting a child.
-    ::
-    =*  hec  ^-  farm
-      ?.  (~(has in kyz.rel) who)  cod.rel
-      =-  (~(uni by cod.rel) -)
-      %-  ~(gas by *farm)
-      %+  skim  ~(tap by pug.urb)
-      |=({who/ship *} (lth who 65.536))
-    ::
-    (~(home fire hec) who)
   ::                                                    ::  ++paid:su
   ++  paid                                              ::  track asset change
     |=  $:  ::  rex: promise from
@@ -1415,7 +1190,8 @@
       ::  track secure channels
       ::
       ?.  bur  +>
-      (veil:feel pal)
+      ::TODO  ???
+      !!  :: (veil:feel pal)
     ::
     ::  track private keys
     ::
@@ -1425,93 +1201,8 @@
     ::  track changes in secure channels
     ::
     ?.  bur  +>
-    (veil:feel rex)
-  ::                                                    ::  ++said:su
-  ++  said                                              ::  track cert change
-    |=  $:  ::  rex: ship whose will has changed
-            ::  vie: change authorized by
-            ::  lyf: modified/created version
-            ::  gan: modification
-            ::
-            rex/ship
-            vie/(unit (unit ship))
-            lyf/life
-            gan/growth
-        ==
-    ::  lip: this change as its own farm
-    ::
-    =/  lip  ^-  farm
-      =-  [[rex -] ~ ~]
-      ^-  will
-      =-  [[lyf -] ~ ~]
-      ^-  cert
-      ?-    -.gan
-      ::
-      ::  add a new certificate to this will
-      ::    {$step p/cert}
-      ::
-          $step  p.gan
-      ::
-      ::  add a new signature to this certificate
-      ::    {$sign p/mind q/@}
-      ::
-          $sign
-        :-  dat:(~(got by (~(got by pug.urb) rex)) lyf)
-        =-  [- ~ ~]
-        [who.p.gan lyf.p.gan q.gan]
-      ==
-    ::
-    ::  if our subfarm may have changed, reset it
-    ::
-    =?  +>.$  |(=(our rex) (~(has by cod.rel) rex))
-      veal:feel
-    ::
-    ::  if a new deed, reset parent
-    ::
-    =?  dad.rel  &(=(our rex) ?=($step -.gan))
-      dad.doc.dat.p.gan
-    ::
-    ::  kick secure channels
-    ::
-    =.  +>.$  (veil:feel rex)
-    ::
-    ::  if we signed a will for someone else, send it home
-    ::
-    ?:  &(=([~ ~] vie) !=(our rex))
-      (~(home fire lip) rex)
-    ::
-    ::  if first certificate, add to neighbor lists
-    ::
-    =?  +>.$  &(?=($step -.gan) =(1 lyf))
-      =?  kyz.rel  =(our dad.doc.dat.p.gan)
-        (~(put in kyz.rel) rex)
-      =?  pyr.rel  =((clan rex) (clan our))
-        (~(put in pyr.rel) rex)
-      +>.$
-    ::
-    ::  propagate new data as appropriate
-    ::
-    %+  ~(spam fire lip)
-      ?~(vie ~ ?~(u.vie ~ `u.u.vie))
-    ^-  (list (set ship))
-    ::
-    ::  if our will has changed, send to parents and kids;
-    ::  if a new deed has been added, also to pals
-    ::
-    ?:  =(our rex)
-      :*  [dad.rel ~ ~]
-          kyz.rel
-          ?.(=(%step -.gan) ~ [pyr.rel ~])
-      ==
-    ::
-    ::  forward star and galaxy updates to parents and kids
-    ::
-    ?.  (lth rex 65.536)
-      ~
-    :*  [dad.rel ~ ~]
-        kyz.rel
-        ~
-    ==
+    ::TODO  ???
+    !!  :: (veil:feel rex)
   --
 ::                                                      ::  ++ur
 ::::                    ## absolute^heavy               ::  objective engine
@@ -1534,126 +1225,22 @@
   ::                                                    ::  ++abet:ur
   ++  abet                                              ::  resolve
     [(flop hab) `state-absolute`urb]
-  ::                                                    ::  ++boss:ur
-  ++  boss                                              ::  parent
-    |=  who/ship
-    ^-  ship
-    -:(dads who)
-  ::
-  ++  dads                                              ::  ++dads:ur
-    |=  who/ship                                        ::  lineage
-    ^-  (list ship)
-    =/  ryg  (~(get by pug) who)
-    ?~  ryg  (saxo who)
-    =/  dad  dad.doc.dat.q:(need ~(instant we u.ryg))
-    [who ?:(=(who dad) ~ $(who dad))]
-  ::
-  ++  lawn                                              ::  ++lawn:ur
-    |=  {rex/ship pal/ship}                             ::  debts, rex to pal
+  ::                                                    ::  ++lawn:ur
+  ++  lawn                                              ::  debts, rex to pal
+    |=  {rex/ship pal/ship}
     ^-  safe
     (lawn:~(able ex rex) pal)
-  ::                                                    ::  ++leak:ur
-  ++  leak                                              ::  private key
-    |=  rex/ship
-    ^-  (pair life ring)
-    =/  lyn  lean:~(able ex rex)
-    [p.lyn (~(got by q.lyn) p.lyn)]
   ::                                                    ::  ++lean:ur
   ++  lean                                              ::  private keys
     |=  rex/ship
     ^-  (pair life (map life ring))
     lean:~(able ex rex)
-  ::                                                    ::  ++make:ur
-  ++  make                                              ::  initialize urbit
-    |=  $:  ::  now: date
-            ::  eny: entropy
-            ::  gen: bootstrap ticket
-            ::  nym: self-description
-            ::
-            our/ship  ::TODO  "absolutely verboten"
-            now/@da
-            eny/@e
-            gen/@pG
-            nym/arms
-        ==
-    ^+  +>
-    ::  key: generated key
-    ::  bul: initial bull
-    ::
-    =/  key  (ypt:scr (mix our %jael-make) gen)
-    =*  doc  `bull`[(sein our) & nym]
-    ::
-    ::  register generator as login secret
-    ::
-    =.  +>.$  abet:(deal:~(able ex our) our [[[%login [gen ~ ~]] ~ ~] ~])
-    ::
-    ::  initialize hierarchical property
-    ::
-    =.  +>.$
-      =-  abet:(deal:~(able ex our) our - ~)
-      ^-  safe
-      %-  intern:up
-      ^-  (list rite)
-      =/  mir  (clan our)
-      ?+    mir  ~
-          $czar
-        :~  [%fungi [%usr 255] ~ ~]
-            [%hotel [[our 3] [1 255] ~ ~] ~ ~]
-        ==
-          $king
-        :~  [%fungi [%upl 65.535] ~ ~]
-            [%hotel [[our 4] [1 65.535] ~ ~] ~ ~]
-        ==
-          $duke
-        :~  [%hotel [[our 5] [1 0xffff.ffff] ~ ~] ~ ~]
-        ==
-      ==
-    ::
-    ::  create initial communication secrets
-    ::
-    ?:  (lth our 256)
-      ::
-      ::  create galaxy with generator as seed
-      ::
-      abet:(next:~(able ex our) key doc)
-    ::
-    ::  had: key handle
-    ::  ryt: initial right
-    ::
-    =/  key  (ypt:scr (mix our %jael-make) gen)
-    =*  had  (shaf %hand key)
-    =*  ryt  `rite`[%urban [had (add ~m1 now) key] ~ ~]
-    ::
-    ::  register initial symmetric key from ticket
-    ::
-    =.  +>.$  abet:(hail:~(able ex (sein our)) our %& [ryt ~ ~])
-    ::
-    ::  create initial private key and certificate
-    ::
-    abet:(next:~(able ex our) (mix eny key) doc)
-  ::                                                    ::  ++meet:ur
-  ++  meet                                              ::  calculate merge
-    |=  $:  ::  vie: authenticated source
-            ::  cod: transmitted certificates
-            ::
-            vie/(unit (unit ship))
-            cod/farm
-        ==
-    ^+  +>
-    =+  lec=~(tap by cod)
-    |-  ^+  ..meet
-    ?~  lec  ..meet
-    %=  $
-      lec     t.lec
-      ..meet  abet:(grow:~(able ex p.i.lec) vie cod q.i.lec)
-    ==
   ::                                                    ::  ++ex:ur
   ++  ex                                                ::  server engine
     ::  shy: private state
     ::  rug: domestic will
     ::
     =|  $:  shy/(map ship safe)
-            rug/will
         ==
     =|  ::  rex: server ship
         ::
@@ -1663,13 +1250,11 @@
     ++  abet                                            ::  resolve
       %_  ..ex
         pry  (~(put by pry) rex shy)
-        pug  (~(put by pug) rex rug)
       ==
     ::                                                  ::  ++able:ex:ur
     ++  able                                            ::  initialize
       %_  .
         shy  (fall (~(get by pry) rex) *(map ship safe))
-        rug  (fall (~(get by pug) rex) *will)
       ==
     ::                                                  ::  ++deal:ex:ur
     ++  deal                                            ::  alter rights
@@ -1703,255 +1288,19 @@
       ::  par: promises by rex, to rex
       ::  jel: %jewel rights
       ::
-      =/  lyf  `life`(fall ~(current we rug) 1)
-      =*  par  (~(got by shy) rex)
-      =/  jel  `rite`(need (~(expose up par) %jewel))
-      ?>  ?=($jewel -.jel)
-      [lyf p.jel]
+      :: =/  lyf  `life`(fall ~(current we rug) 1)
+      :: =*  par  (~(got by shy) rex)
+      :: =/  jel  `rite`(need (~(expose up par) %jewel))
+      :: ?>  ?=($jewel -.jel)
+      :: [lyf p.jel]
+      [0 ~]  ::TODO
     ::                                                  ::  ++lawn:ex:ur
     ++  lawn                                            ::  liabilities to pal
       |=  pal/ship
       ^-  safe
       =-(?~(- ~ u.-) (~(get by shy) pal))
-    ::                                                  ::  ++next:ex:ur
-    ++  next                                            ::  advance private key
-      |=  {eny/@e doc/bull}
-      ^+  +>
-      ::  loy: live keypair
-      ::  rig: private key
-      ::  ryt: private key as right
-      ::  pub: public key
-      ::  cet: unsigned certificate
-      ::  wyl: initial will
-      ::  hec: initial will as farm
-      ::
-      =/  lyf/(unit life)  ~(current we rug)
-      =/  lif/life  +((fall lyf 0))
-      =/  loy  (pit:nu:crub 512 eny)
-      =/  rig  sec:ex:loy
-      =/  ryt/rite  [%jewel [lif rig] ~ ~]
-      =*  pub  pub:ex:loy
-      =/  cet/cert  [[doc pub] ~]
-      =.  syg.cet
-        ?~  lyf  syg.cet
-        =/  ash  (sham %urbit rex u.lyf dat.cet)  ::TODO  move maybe
-        [[rex u.lyf (sign:as:loy *@ ash)] ~ ~]
-      =/  wyl/will  [[lif cet] ~ ~]
-      =.  +>.$  (deal rex [[ryt ~ ~] ~])
-      (grow ``rex *farm wyl)
-    ::                                                  ::  grow:ex:ur
-    ++  grow                                            ::  merge wills
-      |=  $:  ::  vie: data source
-              ::  cod: merge context
-              ::  gur: input will
-              ::
-              vie/(unit (unit ship))
-              cod/farm
-              gur/will
-          ==
-      ?:  |(=(~ gur) =(gur rug))  ..grow
-      |^  ^+  ..grow
-          ::
-          ::  wap: ascending list of new certs
-          ::  pre: previous deed
-          ::
-          =/  wap  ~(forward we gur)
-          ?~  wap  ..grow
-          =/  pre
-            ^-  (unit deed)
-            ?~  (dec p.i.wap)  ~
-            `dat:(~(got by rug) (dec p.i.wap))
-          ::
-          ::  merge each life
-          ::
-          |-  ^+  ..grow
-          ::
-          ::  hub: changes
-          ::  lub: merged deed
-          ::
-          =+  [hub lub]=[p q]:(grow-mate p.i.wap q.i.wap pre)
-          =:  pre  `dat.lub
-              rug  (~(put by rug) p.i.wap lub)
-              hab  (weld (flop hub) hab)
-          ==
-          ?~  t.wap  ..grow
-          ?>  =(p.i.t.wap +(p.i.wap))
-          $(wap t.wap)
-      ::                                                ::  grow-lick/ex:ur
-      ++  grow-lick                                     ::  check signature
-        |=  {pub/pass ash/@ val/@}
-        ^-  ?
-        =+  ver=(sure:as:(com:nu:crub pub) *code:ames val)
-        ?~  ver  |
-        =(ash u.ver)
-      ::                                                ::  grow-like/ex:ur
-      ++  grow-like                                     ::  verify signature
-        |=  {myn/mind ash/@ val/@}
-        ^-  ?
-        =:  ..able  able(rex who.myn)
-            gur     (fall (~(get by cod) who.myn) *will)
-          ==
-        (grow-lick (grow-look lyf.myn) ash val)
-      ::                                                ::  grow-look/ex:ur
-      ++  grow-look                                     ::  load public key
-        |=  lyf/life
-        ^-  @
-        ::
-        ::  cascade search over old and new, new first
-        ::
-        |^  %-  (bond |.((need grow-look-find)))
-            grow-look-find(rug gur)
-        ::                                              ::  grow-look-find:ex:ur
-        ++  grow-look-find                              ::
-          ^-  (unit @)
-          ::
-          ::  crash if this life is revoked
-          ::
-          ?<  (~(has by rug) +(lyf))
-          %+  biff  (~(get by rug) lyf)
-          |=(cert `pub.dat)
-        --
-      ::                                                ::  grow-mate/ex:ur
-      ++  grow-mate                                     ::  merge lives
-        |=  $:  ::  num: life we're merging
-                ::  new: new deed
-                ::  pre: previous deed
-                ::  eld: old deed
-                ::
-                num/@ud
-                new/cert
-                pre/(unit deed)
-            ==
-        =+  :*  eld=`(unit cert)`(~(get by rug) num)
-            ==
-        ^-  (pair (list change) cert)
-        ::
-        ::  enforce artificial scarcity in lives
-        ::
-        ?>  (lte num 9)
-        ::
-        ::  if no new information, do nothing
-        ::
-        ?:  |(=(eld `new))
-          ?>  ?=(^ eld)
-          [~ u.eld]
-        ::
-        ::  ash: hash of deed content
-        ::  def: our default parent
-        ::  dad: our declared parent
-        ::  mir: our rank
-        ::
-        =/  ash  (sham %urbit rex num dat.new)
-        =/  def  (sein rex)
-        =*  dad  dad.doc.dat.new
-        =/  mir  (clan rex)
-        ?>  ?:  |(=(num 1) =(%earl mir) =(%pawn mir))
-              ::
-              ::  first parent must be default;
-              ::  comets and moons may not migrate
-              ::
-              =(def dad)
-            ::
-            ::  all others may migrate to parent of same rank
-            ::
-            =((clan def) (clan dad))
-        ::
-        ::  if we have an old deed at this life, merge new signatures
-        ::
-        ?:  ?=(^ eld)
-          ::
-          ::  deed data must be identical
-          ::
-          ?>  =(dat.new dat.u.eld)
-          ::
-          ::  sow: all new signatures
-          ::
-          =+  sow=`(list (trel ship life @))`~(tap by syg.new)
-          |-  ^-  (pair (list change) cert)
-          ?~  sow  [~ u.eld]
-          ::
-          ::  mor: all further edits
-          ::  och: old signature for this signer
-          ::
-          =+  mor=$(sow t.sow)
-          =+  och=(~(get by syg.q.mor) p.i.sow)
-          ::
-          ::  ignore obsolete/equivalent signature
-          ::
-          ?.  |(?=($~ och) (gth q.i.sow p.u.och))
-            mor
-          ::
-          ::  verify and merge added signature
-          ::
-          ?>  (grow-like [p q]:i.sow ash r.i.sow)
-          :_  q.mor(syg (~(put by syg.q.mor) p.i.sow [q r]:i.sow))
-          :_  p.mor
-          `change`[%fact rex vie num `growth`[%sign [[p q] r]:i.sow]]
-        ::
-        ::  non-initial deeds must be signed by previous
-        ::
-        ?>  ?|  ?=($~ pre)
-                =+  laz=(~(got by syg.new) rex)
-                ?>  =(p.laz (dec num))
-                (grow-lick pub.u.pre ash q.laz)
-            ==
-        ::
-        ::  initial fingerprint for galaxy is hardcoded
-        ::
-        ?>  ?|  !=(%czar mir)
-                !=(~ pre)
-                ~|  [%czar (shaf %zeno pub.dat.new) (zeno rex)]
-                =((shaf %zeno pub.dat.new) (zeno rex))
-            ==
-        ::
-        ::  check the parent has signed, if necessary
-        ::
-        ?>  ?|  ::
-                ::  no parent signature for existing, non-moon urbits
-                ::
-                ?&  ?=(^ pre)
-                    =(dad.doc.u.pre dad)
-                    !=(%earl mir)
-                ==
-                ::
-                ::  no parent signature for initial galaxy
-                ::
-                ?&  =(%czar mir)
-                    =(~ pre)
-                ==
-                ::
-                ::  the deed is homemade or sent by owner
-                ::
-                &(?=(^ vie) |(?=($~ u.vie) =(u.u.vie rex)))
-                ::
-                ::  check valid parent signature
-                ::
-                =+  par=(~(got by syg.new) dad)
-                (grow-like [dad p.par] ash q.par)
-            ==
-        =-  [[%fact rex p.- num %step q.-]~ q.-]
-        ^-  (pair (unit (unit ship)) cert)
-        ::
-        ::  the new deed is complete; report it
-        ::
-        ?:  (~(has by syg.new) dad)
-          [vie new]
-        ::
-        ::  the new deed needs a parent signature; try to add it
-        ::
-        :-  [~ ~]
-        ::
-        ::  pev: life and ring of parent
-        ::  val: new signature
-        ::
-        ?.  =(rex dad)
-          ~|(%unimplemented !!)
-        =/  pev  lean
-        =/  key  (~(got by q.pev) p.pev)
-        =*  val  (sign:as:(nol:nu:crub key) *@ ash)
-        new(syg (~(put by syg.new) dad [p.pev val]))
-  --  --
     --
+  --
 ::                                                      ::  ++et
 ::::                    ## ethereum^heavy               ::  ethereum engine
   ::                                                    ::::
