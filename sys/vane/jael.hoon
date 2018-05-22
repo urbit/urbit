@@ -1980,14 +1980,15 @@
       %+  rpc-hiss  w
       a+(turn (flop r) request-to-json)
     ^-  (list move)
-    %-  zing
-    %+  turn
-      %+  sort  ~(tap by changes)
-      ::  sort by block number, then by event log number
-      |=  [[[b1=@ud l1=@ud] *] [[b2=@ud l2=@ud] *]]
-      ?.(=(b1 b2) (lth b1 b2) (lth l1 l2))
-    |=  [cause=[@ud @ud] dis=(list diff-constitution)]
-    (update-to-all %diff cause (flop dis))
+    ?:  =(0 ~(wyt by changes))  ~
+    %+  update-to-all  %difs
+    %+  sort  ~(tap by changes)
+    ::  sort by block number, then by event log number,
+    ::TODO  then by diff priority.
+    |=  [[[b1=@ud l1=@ud] *] [[b2=@ud l2=@ud] *]]
+    ?.  =(b1 b2)  (lth b1 b2)
+    ?.  =(l1 l2)  (lth l1 l2)
+    &
   ::
   ++  put-move
     |=  mov=move
@@ -2143,7 +2144,12 @@
     ^+  +>
     ?-  -.upd
       %full   (assume +.upd)
-      %diff   (accept +.upd)
+      ::
+        %difs
+      |-
+      ?~  dis.upd  +>.^$
+      =.  +>.^$  (accept i.dis.upd)
+      $(dis.upd t.dis.upd)
     ==
   ::
   ++  assume

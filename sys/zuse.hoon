@@ -262,7 +262,7 @@
     ::
     ++  update
       $%  [%full ships=fleet dns=dnses heard=events]
-          [%diff [block=@ud log=@ud] dis=(list diff-constitution)]
+          [%difs dis=(list (pair [block=@ud log=@ud] (list diff-constitution)))]
       ==
     ::
     ++  diff-constitution
