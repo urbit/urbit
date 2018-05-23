@@ -3423,19 +3423,19 @@
           =>  .(blocks *(list ^build), error-message *tang)
           ::  iterate over each crane
           ::
-          =^  crane-result  ..$  (compose-cranes subject cranes.scaffold)
+          =^  crane-result  ..$
+            (compose-cranes [%noun subject] cranes.scaffold)
           ?:  ?=(%error -.crane-result)
             (return-error message.crane-result)
           ?:  ?=(%block -.crane-result)
             [build [%blocks builds.crane-result ~] accessed-builds]
-          =.  subject  subject.crane-result
           ::  combined-hoon: source hoons condensed into a single +hoon
           ::
           =/  combined-hoon=hoon  (stack-sources sources.scaffold)
           ::  compile :combined-hoon against :subject
           ::
           =/  compile=^build
-            [date.build [%ride combined-hoon [%$ %noun subject]]]
+            [date.build [%ride combined-hoon [%$ subject.crane-result]]]
           ::
           =^  compiled  accessed-builds  (depend-on compile)
           ::  compilation blocked; produce block on sub-build
@@ -3452,7 +3452,7 @@
       ::  +compose-result: the result of a single composition
       ::
       +=  compose-result
-        $%  [%subject subject=vase]
+        $%  [%subject subject=cage]
             [%block builds=(list ^build)]
             [%error message=tang]
         ==
@@ -3462,7 +3462,7 @@
       ::    new subject, which is returned if there are no errors or blocks.
       ::
       ++  compose-cranes
-        |=  [subject=vase cranes=(list crane)]
+        |=  [subject=cage cranes=(list crane)]
         ^-  $:  compose-result
                 _..compose-cranes
             ==
@@ -3474,12 +3474,12 @@
         ?+    -.result  [result ..compose-cranes]
         ::
             %subject
-          $(cranes t.cranes, subject (slop subject.result subject))
+          $(cranes t.cranes, subject [%noun (slop q.subject.result q.subject)])
         ==
       ::  +run-crane: runs an individual :crane against :subject
       ::
       ++  run-crane
-        |=  [subject=vase =crane]
+        |=  [subject=cage =crane]
         ^-  compose-cranes
         ::
         |^  ?+  -.crane  !!
@@ -3503,14 +3503,14 @@
           ^-  compose-cranes
           ::
           =/  ride-build=^build
-            [date.build [%ride hoon [%$ %noun subject]]]
+            [date.build [%ride hoon [%$ subject]]]
           =^  ride-result  accessed-builds  (depend-on ride-build)
           ?~  ride-result
             [[%block [ride-build]~] ..run-crane]
           ?:  ?=([~ %error *] ride-result)
             [[%error [leaf+"/~ failed: " message.u.ride-result]] ..run-crane]
           ?>  ?=([~ %success %ride *] ride-result)
-          [[%subject vase.u.ride-result] ..run-crane]
+          [[%subject %noun vase.u.ride-result] ..run-crane]
         ::  +run-fsbc: runes the `/$` rune
         ::
         ++  run-fsbc
@@ -3534,7 +3534,7 @@
           =+  arguments=(slop !>(beam) vase.u.query-compile-result)
           ::
           =/  call-build=^build
-            [date.build [%call [%ride hoon [%$ %noun subject]] [%$ %noun arguments]]]
+            [date.build [%call [%ride hoon [%$ subject]] [%$ %noun arguments]]]
           =^  call-result  accessed-builds  (depend-on call-build)
           ?~  call-result
             [[%block [call-build]~] ..run-crane]
@@ -3542,7 +3542,7 @@
             [[%error [leaf+"/; failed: " message.u.call-result]] ..run-crane]
           ?>  ?=([~ %success %call *] call-result)
           ::
-          [[%subject vase.u.call-result] ..run-crane]
+          [[%subject %noun vase.u.call-result] ..run-crane]
         ::  +run-fsbr: runes the `/|` rune
         ::
         ++  run-fsbr
@@ -3566,7 +3566,10 @@
           ?.  ?=([%subject *] child)
             [child ..run-crane]
           :_  ..run-crane
-          [%subject [[%face [~ face] p.subject.child] q.subject.child]]
+          :*  %subject
+              p.subject.child
+              [[%face [~ face] p.q.subject.child] q.q.subject.child]
+          ==
         ::  +run-fscm: runs the `/,` rune
         ::
         ++  run-fscm
@@ -3599,7 +3602,7 @@
               ::  TODO: If we were keeping track of the mark across runes, this
               ::  wouldn't have %noun here. This is case where it might matter.
               ::
-              [%$ %noun subject.child]
+              [%$ subject.child]
             [%cast disc.source-rail.scaffold i.marks $(marks t.marks)]
           =^  cast-result  accessed-builds  (depend-on cast-build)
           ?~  cast-result
@@ -3609,7 +3612,7 @@
             [[%error [leaf+"/& failed: " message.u.cast-result]] ..run-crane]
           ?>  ?=([~ %success %cast *] cast-result)
           ::
-          [[%subject q.cage.u.cast-result] ..run-crane]
+          [[%subject cage.u.cast-result] ..run-crane]
         ::  +run-fscb: runs the `/_` rune
         ::
         ++  run-fscb
@@ -3753,7 +3756,7 @@
             ^-  (pair @ta vase)
             ::
             ?>  ?=([%subject *] compose-result)
-            [path subject.compose-result]
+            [path q.subject.compose-result]
           ::  convert the map into a flat format for return
           ::
           ::    This step flattens the values out of the map for return. Let's
@@ -3772,7 +3775,7 @@
               (slop [[%atom %ta ~] p.n.result-map] q.n.result-map)
             (slop $(result-map l.result-map) $(result-map r.result-map))
           ::
-          [[%subject as-vase] ..run-crane]
+          [[%subject %noun as-vase] ..run-crane]
         ::  +run-fsdt: runs the `/.` rune
         ::
         ++  run-fsdt
@@ -3821,9 +3824,9 @@
             ?~  list-results
               [[%atom %n `~] 0]
             ?>  ?=(%subject -.i.list-results)
-            (slop subject.i.list-results $(list-results t.list-results))
+            (slop q.subject.i.list-results $(list-results t.list-results))
           ::
-          [[%subject final-result] ..run-crane]
+          [[%subject %noun final-result] ..run-crane]
         ::  +run-fssm: runs the `/;` rune
         ::
         ++  run-fssm
@@ -3835,7 +3838,7 @@
             [child ..run-crane]
           ::
           =/  call-build=^build
-            [date.build [%call [%ride hoon [%$ %noun subject]] [%$ %noun subject.child]]]
+            [date.build [%call [%ride hoon [%$ subject]] [%$ subject.child]]]
           =^  call-result  accessed-builds  (depend-on call-build)
           ?~  call-result
             [[%block [call-build]~] ..run-crane]
@@ -3843,7 +3846,7 @@
             [[%error [leaf+"/; failed: " message.u.call-result]] ..run-crane]
           ?>  ?=([~ %success %call *] call-result)
           ::
-          [[%subject vase.u.call-result] ..run-crane]
+          [[%subject %noun vase.u.call-result] ..run-crane]
         ::  +run-fscl: runs the `/:` rune
         ::
         ++  run-fscl
@@ -3878,7 +3881,7 @@
             [child ..run-crane]
           ::
           =/  bunt-build=^build
-            [date.build [%ride [%bunt mold] [%$ %noun subject]]]
+            [date.build [%ride [%bunt mold] [%$ subject]]]
           =^  bunt-result  accessed-builds  (depend-on bunt-build)
           ?~  bunt-result
             [[%block [bunt-build]~] ..run-crane]
@@ -3886,9 +3889,9 @@
             [[%error [leaf+"/^ failed: " message.u.bunt-result]] ..run-crane]
           ?>  ?=([~ %success %ride *] bunt-result)
           ::
-          ?.  (~(nest ut p.vase.u.bunt-result) | p.subject.child)
+          ?.  (~(nest ut p.vase.u.bunt-result) | p.q.subject.child)
             [[%error [leaf+"/^ failed: nest-fail"]~] ..run-crane]
-          [[%subject [p.vase.u.bunt-result q.subject.child]] ..run-crane]
+          [[%subject %noun [p.vase.u.bunt-result q.q.subject.child]] ..run-crane]
         ::  +run-fszp: runs the `/!mark/` "rune"
         ::
         ++  run-fszp
@@ -3923,7 +3926,7 @@
           ::    product type
           ::
           ?:  =(%noun mark)
-            [[%subject vase.u.plan-result] ..run-crane]
+            [[%subject %noun vase.u.plan-result] ..run-crane]
           ::
           =/  vale-build=^build
             :-  date.build
@@ -3934,10 +3937,8 @@
           ?:  ?=([~ %error *] vale-result)
             [[%error [leaf+"/! failed: " message.u.vale-result]] ..run-crane]
           ?>  ?=([~ %success %vale *] vale-result)
-          ::  TODO: Right now, we're converting to a mark, but then stripping
-          ::  the mark off the front. This is almost certainly wrong long term.
           ::
-          [[%subject q.cage.u.vale-result] ..run-crane]
+          [[%subject cage.u.vale-result] ..run-crane]
         --
       ::  +gather-path-builds: produce %path builds to resolve import paths
       ::
