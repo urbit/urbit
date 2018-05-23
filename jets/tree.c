@@ -1130,6 +1130,10 @@ static u3j_core _143_qua_d[] =
     "63ea0b00",
     0,
   };
+  static u3j_harm _143_tri_shux_a[] = {{".2", u3we_shux}, {}};
+  static c3_c* _143_tri_shux_ha[] = {
+    0,
+  };
 
 static c3_c* _143_tri_ha[] = {
   "6cc318e2",
@@ -1148,6 +1152,7 @@ static u3j_core _143_tri_d[] =
     { "shay", 7, _143_tri_shay_a, 0, _143_tri_shay_ha },
 //    { "shas", 7, _143_tri_shas_a, 0, _143_tri_shas_ha },
     { "shal", 7, _143_tri_shal_a, 0, _143_tri_shal_ha },
+    { "shux", 7, _143_tri_shux_a, 0, _143_tri_shux_ha },
     {}
   };
 
@@ -1317,7 +1322,7 @@ static u3j_core _143_tri_d[] =
     "482e58af",
     0,
   };
-  static u3j_harm _143_two_mux_a[] = {{".2", u3wc_mux, c3n}, {}};
+  static u3j_harm _143_two_mux_a[] = {{".2", u3wc_mux, c3y}, {}};
   static c3_c* _143_two_mux_ha[] = {
     0,
   };

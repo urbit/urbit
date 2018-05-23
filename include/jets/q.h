@@ -133,6 +133,7 @@
     u3_noun u3qe_shay(u3_atom, u3_atom);
     u3_noun u3qe_shas(u3_atom, u3_atom);
     u3_noun u3qe_shal(u3_atom, u3_atom);
+    u3_noun u3qe_shux(u3_atom);
 
     u3_noun u3qeo_raw(u3_atom, u3_atom);
 
