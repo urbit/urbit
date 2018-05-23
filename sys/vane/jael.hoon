@@ -79,7 +79,7 @@
   ==                                                    ::
 ::                                                      ::
 ++  message                                             ::  p2p message
-  $%  {$hail p/safe}                                    ::  reset rights
+  $%  [%hail p=remote]                                  ::  reset rights
       [%nuke ~]                                         ::  cancel trackers
       [%vent ~]                                         ::  view ethereum state
       [%vent-result p=update:constitution:ethe]         ::  tmp workaround
@@ -896,7 +896,7 @@
     ::
         $hail
       %+  cure  our.tac
-      abet:abet:(hail:(burb p.tac) our.tac q.tac)
+      abet:abet:(hail:(burb our.tac) p.tac q.tac)
     ::
     ::  initialize vane
     ::    [%init our=ship]
@@ -989,11 +989,11 @@
       ?-    -.mes
       ::
       ::  reset remote rights
-      ::    {$hail p/safe}
+      ::    [%hail p=remote]
       ::
-          $hail
+          %hail
         %+  cure  p.p.tac
-        abet:abet:(hail:(burb q.p.tac) p.p.tac [%| p.mes])
+        abet:abet:(hail:(burb p.p.tac) q.p.tac p.mes)
       ::
       ::  cancel trackers
       ::    [%nuke ~]
@@ -1118,7 +1118,11 @@
       %_    ..feel
           moz
         :_  moz
-        [*duct %pass /vest/(scot %p p.hug) %a %want [our p.hug] /j %hail pig]
+        :^  *duct  %pass  /vest/(scot %p p.hug)
+        :+  %a  %want
+        :+  [our p.hug]  /j
+        ^-  message
+        [%hail |+pig]
       ==
     --
   ::                                                    ::  ++form:su
