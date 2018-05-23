@@ -100,6 +100,7 @@
   test-volt
   test-vale
   test-vale-error
+  test-mute
 ==
 ++  test-tear
   :-  `tank`leaf+"test-tear"
@@ -5078,6 +5079,61 @@
                 "/~nul/home/~1234.5.6/mar/foo/hoon"
                 ~
     ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-mute
+  :-  `tank`leaf+"test-mute"
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  atom-type=type  [%atom %$ ~]
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            %mute  subject=[%$ %foo !>([a=42 b=[43 c=44]])]
+            ^=  mutations  ^-  (list [wing schematic:ford])
+            :~
+              [~[%a] [%$ %noun atom-type 2]]
+              [~[%c %b] [%$ %noun atom-type 4]]
+        ==  ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %mute *] build-result.pin-result)
+        ::
+        =/  mark=term  p.cage.build-result.pin-result
+        =/  =vase      q.cage.build-result.pin-result
+        ::
+        ;:  welp
+          %-  expect-eq  !>
+          :-  %foo
+          mark
+        ::
+          %-  expect-eq  !>
+          :-  [2 43 4]
+          q.vase
+        ::
+          %-  expect-eq  !>
+          :-  &
+          (~(nest ut p.vase) | -:!>([2 43 4]))
+    ==  ==
   ::
   ;:  weld
     results1

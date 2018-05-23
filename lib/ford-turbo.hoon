@@ -2699,7 +2699,7 @@
             %hood  (make-hood source-path)
             %join  !!
             %mash  !!
-            %mute  !!
+            %mute  (make-mute subject mutations)
             %pact  !!
             %path  (make-path disc prefix raw-path)
             %plan  (make-plan path-to-render query-string scaffold)
@@ -2940,6 +2940,139 @@
         (return-error [%leaf "syntax error: {<p.p.parsed>} {<q.p.parsed>}"]~)
       ::
       [build [%build-result %success %hood p.u.q.parsed] accessed-builds]
+    ::
+    ++  make-mute
+      |=  [subject=schematic mutations=(list [=wing =schematic])]
+      ^-  build-receipt
+      ::  run the subject build to produce the noun to be mutated
+      ::
+      =/  subject-build=^build  [date.build subject]
+      =^  subject-result  accessed-builds  (depend-on subject-build)
+      ?~  subject-result
+        [build [%blocks [subject-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success *] subject-result)
+        (wrap-error subject-result)
+      ::
+      =/  subject-cage=cage  (result-to-cage u.subject-result)
+      ::
+      =/  subject-vase=vase  q.subject-cage
+      ::  run the mutants as sub-builds
+      ::
+      =^  results-raw  accessed-builds
+        %+  roll  mutations
+        |=  $:  [=wing =schematic]
+                $=  accumulator
+                $:  results=(list [wing ^build (unit build-result)])
+                    accessed-builds=_accessed-builds
+            ==  ==
+        ^+  accumulator
+        ::
+        =.  accessed-builds  accessed-builds.accumulator
+        ::
+        =/  sub-build=^build  [date.build schematic]
+        ::
+        =^  result  accessed-builds.accumulator  (depend-on sub-build)
+        =.  results.accumulator  [[wing sub-build result] results.accumulator]
+        ::
+        accumulator
+      ::  help out the type system
+      ::
+      =/  results=(list [wing ^build (unit build-result)])  results-raw
+      ::  check for errors
+      ::
+      =/  error=tang
+        %-  zing  ^-  (list tang)
+        %+  murn  results
+        |=  [* * result=(unit build-result)]
+        ^-  (unit tang)
+        ?.  ?=([~ %error *] result)
+          ~
+        `message.u.result
+      ::  only produce the first error, as is tradition
+      ::
+      ?^  error
+        =.  error  [leaf+"ford: %mute failed: " error]
+        [build [%build-result %error error] accessed-builds]
+      ::  if any sub-builds blocked, produce all blocked sub-builds
+      ::
+      =/  blocks=(list ^build)
+        %+  murn  `(list [wing ^build (unit build-result)])`results
+        |=  [* sub=^build result=(unit build-result)]
+        ^-  (unit ^build)
+        ?^  result
+          ~
+        `sub
+      ::
+      ?^  blocks
+        [build [%blocks blocks ~] accessed-builds]
+      ::  all builds succeeded; retrieve vases from results
+      ::
+      =/  successes=(list [=wing =vase])
+        %+  turn  results
+        |=  [=wing * result=(unit build-result)]
+        ^-  [^wing vase]
+        ::
+        ?>  ?=([~ %success *] result)
+        ::
+        [wing q:(result-to-cage u.result)]
+      ::  create and run a +build to apply all mutations in order
+      ::
+      =/  ride-build=^build
+        :-  date.build
+        :+  %ride
+          ::  formula: a `%_` +hoon that applies a list of mutations
+          ::
+          ::    The hoon ends up looking like:
+          ::    ```
+          ::    %_  +2
+          ::      wing-1  +6
+          ::      wing-2  +14
+          ::      ...
+          ::    ==
+          ::    ```
+          ::
+          ^=  formula
+          ^-  hoon
+          :+  %cncb  [%& 2]~
+          =/  axis  3
+          ::
+          |-  ^-  (list [wing hoon])
+          ?~  successes  ~
+          ::
+          :-  [wing.i.successes [%$ (peg axis 2)]]
+          $(successes t.successes, axis (peg axis 3))
+        ::  subject: list of :subject-vase and mutations, as literal schematic
+        ::
+        ::    The subject ends up as a vase of something like this:
+        ::    ```
+        ::    :~  original-subject
+        ::        mutant-1
+        ::        mutant-2
+        ::        ...
+        ::    ==
+        ::    ```
+        ::
+        ^=  subject  ^-  schematic
+        :+  %$  %noun
+        ^-  vase
+        %+  slop  subject-vase
+        |-  ^-  vase
+        ?~  successes  [[%atom %n ~] ~]
+        ::
+        (slop vase.i.successes $(successes t.successes))
+      ::
+      =^  ride-result  accessed-builds  (depend-on ride-build)
+      ?~  ride-result
+        [build [%blocks [ride-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %ride *] ride-result)
+        (wrap-error ride-result)
+      ::
+      =/  =build-result
+        [%success %mute p.subject-cage vase.u.ride-result]
+      ::
+      [build [%build-result build-result] accessed-builds]
     ::
     ++  make-path
       |=  [disc=^disc prefix=@tas raw-path=@tas]
