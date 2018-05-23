@@ -92,6 +92,7 @@
   test-core-fsbr
   test-core-fsbr-out-of-options
   test-plan-fszp-as-noun
+  test-core-fszp-as-mark
   test-core-fscl-fszp
   test-core-fscm
   test-plan-fsbc
@@ -4553,6 +4554,83 @@
         %-  expect-eq  !>
         :-  &
         (~(nest ut p.vase) | -:!>([1 2 3 ~]))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-core-fszp-as-mark
+  :-  `tank`leaf+"test-core-fszp-as-mark"
+  ::
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /=  data  /:  /===/lib/other
+                /!somemark/
+      data
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/somemark/mar]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |_  [word=tape num=@]
+      ++  grab
+        |%
+        +=  noun  [tape @]
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/other/lib]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      ["five" 5]
+      '''
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            %core  [[~nul %home] /hoon/program/gen]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %core *] build-result.pin-result)
+        ::
+        =/  =vase  vase.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  ["five" 5]
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>(["five" 5]))
     ==
   ::
   ;:  weld

@@ -3819,9 +3819,6 @@
         ++  run-fszp
           |=  =mark
           ^-  compose-cranes
-          ::  TODO: We'll need to allow other marks in time.
-          ::
-          ?>  =(%noun mark)
           ::
           =/  hoon-path=rail
             =,  path-to-render
@@ -3844,8 +3841,28 @@
           ?:  ?=([~ %error *] plan-result)
             [[%error [leaf+"/! failed: " message.u.plan-result]] ..run-crane]
           ?>  ?=([~ %success %plan *] plan-result)
+          ::  if :mark is %noun, don't perform mark translation; just return
           ::
-          [[%subject vase.u.plan-result] ..run-crane]
+          ::    If we were to verify the product type with %noun, this would
+          ::    cast to *, which would overwrite :vase.u.plan-result's actual
+          ::    product type
+          ::
+          ?:  =(%noun mark)
+            [[%subject vase.u.plan-result] ..run-crane]
+          ::
+          =/  vale-build=^build
+            :-  date.build
+            [%vale disc.source-rail.scaffold mark q.vase.u.plan-result]
+          =^  vale-result  accessed-builds  (depend-on vale-build)
+          ?~  vale-result
+            [[%block [vale-build]~] ..run-crane]
+          ?:  ?=([~ %error *] vale-result)
+            [[%error [leaf+"/! failed: " message.u.vale-result]] ..run-crane]
+          ?>  ?=([~ %success %vale *] vale-result)
+          ::  TODO: Right now, we're converting to a mark, but then stripping
+          ::  the mark off the front. This is almost certainly wrong long term.
+          ::
+          [[%subject q.cage.u.vale-result] ..run-crane]
         --
       ::  +gather-path-builds: produce %path builds to resolve import paths
       ::
