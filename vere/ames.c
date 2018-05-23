@@ -22,6 +22,18 @@
 #include "all.h"
 #include "vere/vere.h"
 
+/* u3_pact: ames packet struct.
+*/
+typedef struct {
+  uv_udp_send_t snd_u;
+  c3_y*         buf_y;
+  c3_w          len_w;
+  c3_s          por_s;
+  c3_w          pip_w;
+  c3_y          imp_y;
+  c3_c*         dns_c;
+} u3_pact;
+
 /* _ames_alloc(): libuv buffer allocator.
 */
 static void
@@ -43,90 +55,200 @@ _ames_free(void* ptr_v)
   free(ptr_v);
 }
 
-/* _ames_czar(): quasi-static route to emperor.
+/* _ames_pact_free(): free packet struct.
 */
-static c3_w
-_ames_czar(c3_y imp_y, c3_s* por_s, c3_c* bos_c)
+static void
+_ames_pact_free(u3_pact* pac_u)
+{
+  free(pac_u->buf_y);
+  free(pac_u->dns_c);
+  free(pac_u);
+}
+
+/* _ames_send_cb(): send callback.
+*/
+static void
+_ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
+{
+  u3_pact* pac_u = (u3_pact*)req_u;
+
+#if 0
+  if ( 0 != sas_i ) {
+    uL(fprintf(uH, "ames: send_cb: %s\n", uv_strerror(sas_i)));
+  }
+#endif
+
+  _ames_pact_free(pac_u);
+}
+
+/* _ames_send(): send buffer to address on port.
+*/
+static void
+_ames_send(u3_pact* pac_u)
 {
   u3_ames* sam_u = &u3_Host.sam_u;
 
+  if ( !pac_u->buf_y ) {
+    _ames_pact_free(pac_u);
+    return;
+  }
+
+  struct sockaddr_in add_u;
+
+  memset(&add_u, 0, sizeof(add_u));
+  add_u.sin_family = AF_INET;
+  add_u.sin_addr.s_addr = htonl(pac_u->pip_w);
+  add_u.sin_port = htons(pac_u->por_s);
+
+  uv_buf_t buf_u = uv_buf_init((c3_c*)pac_u->buf_y, pac_u->len_w);
+
+  c3_i sas_i;
+
+  if ( 0 != (sas_i = uv_udp_send(&pac_u->snd_u,
+                                 &sam_u->wax_u,
+                                 &buf_u, 1,
+                                 (const struct sockaddr*)&add_u,
+                                 _ames_send_cb)) ) {
+    uL(fprintf(uH, "ames: send: %s\n", uv_strerror(sas_i)));
+  }
+}
+
+/* _ames_czar_port(): udp port for galaxy.
+*/
+static c3_s
+_ames_czar_port(c3_y imp_y)
+{
   if ( c3n == u3_Host.ops_u.net ) {
-    *por_s = 31337 + imp_y;
-    return 0x7f000001;
+    return 31337 + imp_y;
   }
   else {
-    time_t now = time(0);
-    *por_s = 13337 + imp_y;
+    return 13337 + imp_y;
+  }
+}
 
-    if ( 0xffffffff == sam_u->imp_w[imp_y]
-      && (now - sam_u -> imp_t[imp_y]) < 300 ) {
-      return 0;
+/* _ames_czar_gone(): galaxy address resolution failed.
+*/
+static void
+_ames_czar_gone(u3_pact* pac_u, time_t now)
+{
+  u3_ames* sam_u = &u3_Host.sam_u;
+
+  uL(fprintf(uH, "ames: czar at %s: not found (b)\n", pac_u->dns_c));
+  if ( (0 == sam_u->imp_w[pac_u->imp_y]) ||
+       (0xffffffff == sam_u->imp_w[pac_u->imp_y]) ) {
+    sam_u->imp_w[pac_u->imp_y] = 0xffffffff;
+  } /* else keep existing ip for 5 more minutes */
+  sam_u->imp_t[pac_u->imp_y] = now;
+
+  _ames_pact_free(pac_u);
+}
+
+/* _ames_czar_cb(): galaxy address resolution callback.
+*/
+static void
+_ames_czar_cb(uv_getaddrinfo_t* adr_u,
+                    c3_i              sas_i,
+                    struct addrinfo*  aif_u)
+{
+  u3_ames* sam_u = &u3_Host.sam_u;
+  u3_pact* pac_u = (u3_pact*)adr_u->data;
+  time_t     now = time(0);
+
+  struct addrinfo* rai_u = aif_u;
+
+  while ( 1 ) {
+    if ( !rai_u ) {
+      _ames_czar_gone(pac_u, now);
+      break;
     }
-    else if ( 0 == sam_u->imp_w[imp_y]
-           || (now - sam_u->imp_t[imp_y]) > 300 ) { /* 5 minute TTL */
-      u3_noun nam   = u3dc("scot", 'p', imp_y);
-      c3_c*   nam_c = u3r_string(nam);
-      c3_c    dns_c[256];
 
-      snprintf(dns_c, 256, "%s.%s", nam_c + 1, bos_c);
-      // uL(fprintf(uH, "czar %s, dns %s\n", nam_c, dns_c));
+    if ( (AF_INET == rai_u->ai_family) ) {
+      struct sockaddr_in* add_u = (struct sockaddr_in *)rai_u->ai_addr;
+      c3_w old_w = sam_u->imp_w[pac_u->imp_y];
 
-      free(nam_c);
-      u3z(nam);
+      sam_u->imp_w[pac_u->imp_y] = ntohl(add_u->sin_addr.s_addr);
+      sam_u->imp_t[pac_u->imp_y] = now;
 
-      {
-        struct addrinfo* air_u;
-
-        if ( 0 != getaddrinfo(dns_c, 0, 0, &air_u) ) {
-          uL(fprintf(uH, "ames: czar at %s: not found (a)\n", dns_c));
-          if ( sam_u->imp_w[imp_y] == 0
-            || sam_u->imp_w[imp_y] == 0xffffffff ) {
-            sam_u->imp_w[imp_y] = 0xffffffff;
-          } /* else keep existing ip for 5 more minutes */
-          sam_u->imp_t[imp_y] = now;
-          return 0;
-        }
-
-        {
-          struct addrinfo* rai_u = air_u;
-
-          while ( 1 ) {
-            if ( !rai_u ) {
-              uL(fprintf(uH, "ames: czar at %s: not found (b)\n", dns_c));
-              if ( sam_u->imp_w[imp_y] == 0
-                || sam_u->imp_w[imp_y] == 0xffffffff ) {
-                sam_u->imp_w[imp_y] = 0xffffffff;
-              } /* else keep existing ip for 5 more minutes */
-              sam_u->imp_t[imp_y] = now;
-              return 0;
-            }
-            if ( (AF_INET == rai_u->ai_family) ) {
-              struct sockaddr_in* add_u = (struct sockaddr_in *)rai_u->ai_addr;
-              c3_w old_w = sam_u->imp_w[imp_y];
-
-              sam_u->imp_w[imp_y] = ntohl(add_u->sin_addr.s_addr);
-              sam_u->imp_t[imp_y] = now;
 #if 1
-              if ( sam_u->imp_w[imp_y] != old_w
-                && sam_u->imp_w[imp_y] != 0xffffffff ) {
-                u3_noun wad = u3i_words(1, &sam_u->imp_w[imp_y]);
-                u3_noun nam = u3dc("scot", c3__if, wad);
-                c3_c*   nam_c = u3r_string(nam);
+      if ( sam_u->imp_w[pac_u->imp_y] != old_w
+        && sam_u->imp_w[pac_u->imp_y] != 0xffffffff ) {
+        u3_noun wad = u3i_words(1, &sam_u->imp_w[pac_u->imp_y]);
+        u3_noun nam = u3dc("scot", c3__if, wad);
+        c3_c*   nam_c = u3r_string(nam);
 
-                uL(fprintf(uH, "ames: czar %s: ip %s\n", dns_c, nam_c));
+        uL(fprintf(uH, "ames: czar %s: ip %s\n", pac_u->dns_c, nam_c));
 
-                free(nam_c); u3z(nam);
-              }
+        free(nam_c); u3z(nam);
+      }
 #endif
-              break;
-            }
-            rai_u = rai_u->ai_next;
-          }
-        }
-        freeaddrinfo(air_u);
+
+      _ames_send(pac_u);
+      break;
+    }
+
+    rai_u = rai_u->ai_next;
+  }
+
+  free(adr_u);
+  uv_freeaddrinfo(aif_u);
+}
+
+
+/* _ames_czar(): galaxy address resolution.
+*/
+static void
+_ames_czar(u3_pact* pac_u, c3_c* bos_c)
+{
+  u3_ames* sam_u = &u3_Host.sam_u;
+
+  pac_u->por_s = _ames_czar_port(pac_u->imp_y);
+
+  if ( c3n == u3_Host.ops_u.net ) {
+    pac_u->pip_w = 0x7f000001;
+    _ames_send(pac_u);
+    return;
+  }
+
+  time_t now = time(0);
+
+  // backoff
+  if ( (0xffffffff == sam_u->imp_w[pac_u->imp_y]) &&
+       (now - sam_u->imp_t[pac_u->imp_y]) < 300 ) {
+    _ames_pact_free(pac_u);
+    return;
+  }
+
+  if ( (0 == sam_u->imp_w[pac_u->imp_y]) ||
+       (now - sam_u->imp_t[pac_u->imp_y]) > 300 ) { /* 5 minute TTL */
+    u3_noun  nam = u3dc("scot", 'p', pac_u->imp_y);
+    c3_c*  nam_c = u3r_string(nam);
+    pac_u->dns_c = c3_malloc(1 + strlen(bos_c) + 1 + strlen(nam_c));
+
+    snprintf(pac_u->dns_c, 256, "%s.%s", nam_c + 1, bos_c);
+    // uL(fprintf(uH, "czar %s, dns %s\n", nam_c, pac_u->dns_c));
+
+    free(nam_c);
+    u3z(nam);
+
+    {
+      uv_getaddrinfo_t* adr_u = c3_malloc(sizeof(*adr_u));
+      adr_u->data = pac_u;
+
+      c3_i sas_i;
+
+      if ( 0 != (sas_i = uv_getaddrinfo(u3L, adr_u,
+                                        _ames_czar_cb,
+                                        pac_u->dns_c, 0, 0)) ) {
+        uL(fprintf(uH, "ames: %s\n", uv_strerror(sas_i)));
+        _ames_czar_gone(pac_u, now);
+        return;
       }
     }
-    return sam_u->imp_w[imp_y];
+  }
+  else {
+    pac_u->pip_w = sam_u->imp_w[pac_u->imp_y];
+    _ames_send(pac_u);
+    return;
   }
 }
 
@@ -158,30 +280,6 @@ _ames_lane_ip(u3_noun lan, c3_s* por_s, c3_w* pip_w)
   return c3n;
 }
 
-/* An unusual lameness in libuv.
-*/
-  typedef struct {
-    uv_udp_send_t snd_u;
-    c3_y*         buf_y;
-  } _u3_udp_send_t;
-
-/* _ames_send_cb(): send callback.
-*/
-static void
-_ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
-{
-  _u3_udp_send_t* ruq_u = (void*)req_u;
-
-#if 0
-  if ( 0 != sas_i ) {
-    uL(fprintf(uH, "ames: send_cb: %s\n", uv_strerror(uv_last_error(u3L))));
-  }
-#endif
-  // fprintf(stderr, "ames: tx\r\n");
-  free(ruq_u->buf_y);
-  free(ruq_u);
-}
-
 void
 u3_ames_ef_bake(void)
 {
@@ -195,58 +293,41 @@ u3_ames_ef_bake(void)
 void
 u3_ames_ef_send(u3_noun lan, u3_noun pac)
 {
-  u3_ames* sam_u = &u3_Host.sam_u;
-  c3_s     por_s;
-  c3_w     pip_w;
-
   if ( u3_Host.ops_u.fuz_w && ((rand() % 100) < u3_Host.ops_u.fuz_w) ) {
     u3z(lan); u3z(pac);
     return;
   }
 
-  if ( c3y == _ames_lane_ip(lan, &por_s, &pip_w) ) {
-    c3_w     len_w = u3r_met(3, pac);
-    c3_y*    buf_y = c3_malloc(len_w);
+  u3_pact* pac_u = c3_calloc(sizeof(*pac_u));
 
-    u3r_bytes(0, len_w, buf_y, pac);
+  if ( c3y == _ames_lane_ip(lan, &pac_u->por_s, &pac_u->pip_w) ) {
+    pac_u->len_w = u3r_met(3, pac);
+    pac_u->buf_y = c3_malloc(pac_u->len_w);
 
-    if ( 0 == pip_w ) {
-      pip_w = 0x7f000001;
-      por_s = u3_Host.sam_u.por_s;
+    u3r_bytes(0, pac_u->len_w, pac_u->buf_y, pac);
+
+    if ( 0 == pac_u->pip_w ) {
+      pac_u->pip_w = 0x7f000001;
+      pac_u->por_s = u3_Host.sam_u.por_s;
     }
-    {
-      struct sockaddr_in add_u;
 
-      if ( (0 == (pip_w >> 16)) && (1 == (pip_w >> 8)) ) {
-        c3_y imp_y = (pip_w & 0xff);
+    if ( (0 == (pac_u->pip_w >> 16)) && (1 == (pac_u->pip_w >> 8)) ) {
+      pac_u->imp_y = (pac_u->pip_w & 0xff);
 
-        pip_w = _ames_czar(imp_y, &por_s, u3_Host.ops_u.dns_c);
-      }
-
-      if ( (0 != pip_w) &&
-           ( (c3y == u3_Host.ops_u.net) || (0x7f000001 == pip_w) ) ) {
-        uv_buf_t        buf_u = uv_buf_init((c3_c*)buf_y, len_w);
-        _u3_udp_send_t* ruq_u = c3_malloc(sizeof(_u3_udp_send_t));
-
-        ruq_u->buf_y = buf_y;
-
-        memset(&add_u, 0, sizeof(add_u));
-        add_u.sin_family = AF_INET;
-        add_u.sin_addr.s_addr = htonl(pip_w);
-        add_u.sin_port = htons(por_s);
-
-        int ret;
-        if ( 0 != (ret = uv_udp_send(&ruq_u->snd_u,
-                                     &sam_u->wax_u,
-                                     &buf_u, 1,
-                                     (const struct sockaddr*) & add_u, // IS THIS RIGHT ?!?!?
-                                     _ames_send_cb)) ) {
-          uL(fprintf(uH, "ames: send: %s\n", uv_strerror(ret)));
-        }
-        // fprintf(stderr, "ames: send\r\n");
-      }
+      _ames_czar(pac_u, u3_Host.ops_u.dns_c);
+    }
+    else if ( (c3y == u3_Host.ops_u.net) || (0x7f000001 == pac_u->pip_w) ) {
+      _ames_send(pac_u);
+    }
+    else {
+      // networking disabled
+      _ames_pact_free(pac_u);
     }
   }
+  else {
+    _ames_pact_free(pac_u);
+  }
+
   u3z(lan); u3z(pac);
 }
 
@@ -325,8 +406,8 @@ u3_ames_io_init()
       exit(1);
     }
     num_y = u3r_byte(0, u3t(num));
+    por_s = _ames_czar_port(num_y);
 
-    _ames_czar(num_y, &por_s, u3_Host.ops_u.dns_c);
     if ( c3y == u3_Host.ops_u.net ) {
       uL(fprintf(uH, "ames: czar: %s on %d\n", u3_Host.ops_u.imp_c, por_s));
     }
