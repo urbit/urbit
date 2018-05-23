@@ -104,6 +104,8 @@
   test-cast
   test-cast-grow
   test-mute
+  test-bake-renderer
+  test-bake-mark
 ==
 ++  test-tear
   :-  `tank`leaf+"test-tear"
@@ -5374,6 +5376,156 @@
           :-  &
           (~(nest ut p.vase) | -:!>([2 43 4]))
     ==  ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-bake-renderer
+  :-  `tank`leaf+"test-bake-renderer"
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/ren]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /=  data  /!noun/
+      data
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [1 2 3 ~]
+      '''
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%bake %foo *coin `rail:ford-gate`[[~nul %home] /data]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %bake *] build-result.pin-result)
+        ::
+        =/  =cage  cage.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  %noun
+          p.cage
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  [1 2 3 ~]
+          q.q.cage
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.q.cage) | -:!>([1 2 3 ~]))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-bake-mark
+  :-  `tank`leaf+"test-bake-mark"
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  ::
+  =/  hoon-src=@ta
+    '''
+    |_  cell=^
+    ++  grab
+      |%
+      ++  noun  ^
+      --
+    --
+    '''
+  =/  scry-results=(map [term beam] (unit cage))
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      hoon-src
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/ren]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [12 13]
+      '''
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results-and-failures scry-results)
+      ::
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            [%bake %foo *coin `rail:ford-gate`[[~nul %home] /hoon/data]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %bake *] build-result.pin-result)
+        ::
+        =/  =cage  cage.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  %foo
+          p.cage
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  [12 13]
+          q.q.cage
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.q.cage) | -:!>([12 13]))
+    ==
   ::
   ;:  weld
     results1

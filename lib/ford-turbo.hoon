@@ -2689,7 +2689,7 @@
         ::
             %pin   (make-pin date schematic)
             %alts  (make-alts choices)
-            %bake  !!
+            %bake  (make-bake renderer query-string path-to-render)
             %bunt  (make-bunt disc mark)
             %call  (make-call gate sample)
             %cast  (make-cast disc mark input)
@@ -2777,6 +2777,62 @@
         $(choices t.choices)
       ::
       [build [%build-result %success %alts u.result] accessed-builds]
+    ::
+    ++  make-bake
+      |=  [renderer=term query-string=coin path-to-render=rail]
+      ^-  build-receipt
+      ::
+      =/  path-build=^build
+        [date.build [%path disc.path-to-render %ren renderer]]
+      ::
+      =^  path-result  accessed-builds  (depend-on path-build)
+      ?~  path-result
+        [build [%blocks [path-build]~ ~] accessed-builds]
+      ::  if no renderer at :renderer path, try a mark instead
+      ::
+      ?.  ?=([~ %success %path *] path-result)
+        ::
+        =/  mark-build=^build
+          :-  date.build
+          [%cast disc.path-to-render renderer [%core path-to-render]]
+        ::
+        =^  mark-build-result  accessed-builds  (depend-on mark-build)
+        ?~  mark-build-result
+          [build [%blocks [mark-build]~ ~] accessed-builds]
+        ::
+        ?.  ?=([~ %success %cast *] mark-build-result)
+          (wrap-error mark-build-result)
+        ::
+        =/  =build-result
+          [%success %bake cage.u.mark-build-result]
+        ::
+        [build [%build-result build-result] accessed-builds]
+      ::  build a +scaffold from the renderer source
+      ::
+      =/  hood-build=^build  [date.build [%hood rail.u.path-result]]
+      ::
+      =^  hood-result  accessed-builds  (depend-on hood-build)
+      ?~  hood-result
+        [build [%blocks [hood-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %hood *] hood-result)
+        (wrap-error hood-result)
+      ::  link the renderer, passing through :path-to-render and :query-string
+      ::
+      =/  plan-build=^build
+        [date.build [%plan path-to-render query-string scaffold.u.hood-result]]
+      ::
+      =^  plan-result  accessed-builds  (depend-on plan-build)
+      ?~  plan-result
+        [build [%blocks [plan-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %plan *] plan-result)
+        (wrap-error plan-result)
+      ::
+      =/  =build-result
+        [%success %bake %noun vase.u.plan-result]
+      ::
+      [build [%build-result build-result] accessed-builds]
     ::
     ++  make-bunt
       |=  [=disc mark=term]
