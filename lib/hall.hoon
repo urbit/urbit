@@ -246,7 +246,7 @@
   ::
   ++  or
     =+  typ=$:|-($@(@tas {@tas $}))  
-    |%  +-  $
+    |@  +-  $
           |=  con/coin
           ::^-  _(snag *@ (turn (limo typ) |*(a/@tas [a (odo:raid:wired a)])))
           ?>  ?=($$ -.con)
