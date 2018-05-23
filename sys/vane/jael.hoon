@@ -771,10 +771,10 @@
     ^-  rite
     ?+    -.rys  rys
         $apple
-      [%apple (~(run by p.rys) |=(@ (mug +<)))]
+      [%apple (~(run by p.rys) |=(@ (shax +<)))]
     ::
         $final
-      [%final (~(run by p.rys) |=(@ (mug +<)))]
+      [%final (~(run by p.rys) |=(@ (shax +<)))]
     ::
         $login
       [%login ~]
@@ -786,15 +786,15 @@
       (~(run by +<) |=(@t (fil 3 (met 3 +<) '*')))
     ::
         $jewel
-      [%jewel (~(run by p.rys) |=(@ (mug +<)))]
+      [%jewel (~(run by p.rys) |=(@ (shax +<)))]
     ::
         $token
       :-  %token
       %-  ~(run by p.rys)
-      |=((map @ta @) (~(run by +<) |=(@ (mug +<))))
+      |=((map @ta @) (~(run by +<) |=(@ (shax +<))))
     ::
         $urban
-      [%urban (~(run by p.rys) |=({@da code:ames} [+<- (mug +<+)]))]
+      [%urban (~(run by p.rys) |=({@da code:ames} [+<- (shax +<+)]))]
     ==
   ::                                                    ::  ++remove:up
   ++  remove                                            ::  pig minus gob
