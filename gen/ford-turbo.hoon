@@ -96,6 +96,7 @@
   test-core-fscm
   test-plan-fsbc
   test-core-fscb
+  test-core-fspm
   test-bunt
   test-volt
   test-vale
@@ -4537,7 +4538,6 @@
 ++  test-core-fszp-as-mark
   :-  `tank`leaf+"test-core-fszp-as-mark"
   ::
-  ::
   =/  ford  *ford-gate
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
@@ -4904,6 +4904,86 @@
         %-  expect-eq  !>
         :-  &
         (~(nest ut p.vase) | -:!>(*[[@ta @ud] [[@ta @ud] ~ ~] ~]))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
+::
+++  test-core-fspm
+  :-  `tank`leaf+"test-core-fspm"
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  scry-results=(map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /=  data  /&second&first&/~["four" 5 "six"]
+      data
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/first/mar]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |_  [word=tape num=@]
+      ++  grab
+        |%
+        ++  noun  |=([a=tape b=@ c=tape] [a b])
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/second/mar]]
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |_  num=@
+      ++  grab
+        |%
+        ++  first  |=([a=tape b=@] b)
+        --
+      --
+      '''
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            %core  [[~nul %home] /hoon/program/gen]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %core *] build-result.pin-result)
+        ::
+        =/  =vase  vase.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  5
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>(5))
     ==
   ::
   ;:  weld

@@ -3488,6 +3488,7 @@
               %fsbr  (run-fsbr +.crane)
               %fsts  (run-fsts +.crane)
               %fscm  (run-fscm +.crane)
+              %fspm  (run-fspm +.crane)
               %fscb  (run-fscb +.crane)
               %fsdt  (run-fsdt +.crane)
               %fssm  (run-fssm +.crane)
@@ -3580,6 +3581,35 @@
             $(cases t.cases)
           ::
           (run-crane subject crane.i.cases)
+        ::  +run-fspm: runs the `/&` rune
+        ::
+        ++  run-fspm
+          |=  [marks=(list mark) sub-crane=^crane]
+          ^-  compose-cranes
+          ::
+          =^  child  ..run-crane  (run-crane subject sub-crane)
+          ?.  ?=([%subject *] child)
+            [child ..run-crane]
+          ::
+          =/  cast-build=^build
+            :-  date.build
+            |-
+            ^-  schematic
+            ?~  marks
+              ::  TODO: If we were keeping track of the mark across runes, this
+              ::  wouldn't have %noun here. This is case where it might matter.
+              ::
+              [%$ %noun subject.child]
+            [%cast disc.source-rail.scaffold i.marks $(marks t.marks)]
+          =^  cast-result  accessed-builds  (depend-on cast-build)
+          ?~  cast-result
+            [[%block [cast-build]~] ..run-crane]
+          ::
+          ?:  ?=([~ %error *] cast-result)
+            [[%error [leaf+"/& failed: " message.u.cast-result]] ..run-crane]
+          ?>  ?=([~ %success %cast *] cast-result)
+          ::
+          [[%subject q.cage.u.cast-result] ..run-crane]
         ::  +run-fscb: runs the `/_` rune
         ::
         ++  run-fscb
