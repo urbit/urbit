@@ -1677,7 +1677,7 @@
       ::     ?+  -.kas  `term`-.kas
       ::       ^  %cell:bo
       ::       $bake  [-.kas p.kas (en-beam r.kas) ~(rent co (abbrev q.kas))]
-      ::       $core  [-.kas (en-beam p.kas)]
+      ::       $corp  [-.kas (en-beam p.kas)]
       ::     ==
       :: ~?  !=(%$ pre)  [dyv `term`(cat 3 %make (fil 3 dyv ' ')) pre]
       :: =-  ~?  !=(%$ pre)  [dyv `term`(cat 3 %made (fil 3 dyv ' ')) pre]  -
@@ -1757,12 +1757,12 @@
           (run-marks cof i.wuy t.wuy q.cay)
         (with:bo |=(vax/vase [%& p.kas vax]))
       ::
-          $core
+          $corp
         %+  admit:bo  |.(leaf+"ford: core {<(en-beam p.kas)>}")
         ::  code runtime behaviour is frequently affected by marks
         ::  TODO: track this more formally
         %+  add-dep:bo  [%beam [bek /mar] %z]
-        (tug:bo (load-core cof p.kas) (with:bo |=(a/vase [%& %core a])))
+        (tug:bo (load-core cof p.kas) (with:bo |=(a/vase [%& %corp a])))
       ::
           $diff
         %+  admit:bo

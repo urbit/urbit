@@ -12,46 +12,46 @@
 ++  hoon-version  141
 --  =>
 ~%  %one  +  ~
-:>  #  %base
-:>
-:>    basic mathematical operations
+::  #  %base
+::
+::    basic mathematical operations
 |%
-:>  #  %math
-:>    unsigned arithmetic
+::  #  %math
+::    unsigned arithmetic
 +|
 ++  foo-141  !!
 ++  add
   ~/  %add
-  :>  unsigned addition
-  :>
-  :>  a: augend
-  :>  b: addend
+  ::  unsigned addition
+  ::
+  ::  a: augend
+  ::  b: addend
   |=  [a=@ b=@]
-  :>  sum
+  ::  sum
   ^-  @
   ?:  =(0 a)  b
   $(a (dec a), b +(b))
 ::
 ++  dec
   ~/  %dec
-  :>  unsigned decrement by one.
+  ::  unsigned decrement by one.
   |=  a=@
   ~_  leaf+"decrement-underflow"
   ?<  =(0 a)
   =+  b=0
-  :>  decremented integer
+  ::  decremented integer
   |-  ^-  @
   ?:  =(a +(b))  b
   $(b +(b))
 ::
 ++  div
   ~/  %div
-  :>  unsigned divide
-  :>
-  :>  a: dividend
-  :>  b: divisor
+  ::  unsigned divide
+  ::
+  ::  a: dividend
+  ::  b: divisor
   |:  [a=`@`1 b=`@`1]
-  :>  quotient
+  ::  quotient
   ^-  @
   ~_  leaf+"divide-by-zero"
   ?<  =(0 b)
@@ -62,62 +62,62 @@
 ::
 ++  dvr
   ~/  %dvr
-  :>  unsigned divide with remainder
-  :>
-  :>  a: dividend
-  :>  b: divisor
+  ::  unsigned divide with remainder
+  ::
+  ::  a: dividend
+  ::  b: divisor
   |=  [a=@ b=@]
-  :>  p: quotient
-  :>  q: remainder
+  ::  p: quotient
+  ::  q: remainder
   ^-  [p=@ q=@]
   [(div a b) (mod a b)]
 ::
 ++  gte
   ~/  %gte
-  :>    unsigned greater than or equals
-  :>
-  :>  returns whether {a >= b}.
-  :>
-  :>  a: left hand operand (todo: name)
-  :>  b: right hand operand
+  ::    unsigned greater than or equals
+  ::
+  ::  returns whether {a >= b}.
+  ::
+  ::  a: left hand operand (todo: name)
+  ::  b: right hand operand
   |=  [a=@ b=@]
-  :>  greater than or equal to?
+  ::  greater than or equal to?
   ^-  ?
   !(lth a b)
 ::
 ++  gth
   ~/  %gth
-  :>    unsigned greater than
-  :>
-  :>  returns whether {a > b}
-  :>
-  :>  a: left hand operand (todo: name)
-  :>  b: right hand operand
+  ::    unsigned greater than
+  ::
+  ::  returns whether {a > b}
+  ::
+  ::  a: left hand operand (todo: name)
+  ::  b: right hand operand
   |=  [a=@ b=@]
-  :>  greater than?
+  ::  greater than?
   ^-  ?
   !(lte a b)
 ::
 ++  lte
   ~/  %lte
-  :>    unsigned less than or equals
-  :>
-  :>  returns whether {a >= b}.
-  :>
-  :>  a: left hand operand (todo: name)
-  :>  b: right hand operand
+  ::    unsigned less than or equals
+  ::
+  ::  returns whether {a >= b}.
+  ::
+  ::  a: left hand operand (todo: name)
+  ::  b: right hand operand
   |=  [a=@ b=@]
-  :>  less than or equal to?
+  ::  less than or equal to?
   |(=(a b) (lth a b))
 ::
 ++  lth
   ~/  %lth
-  :>    unsigned less than
-  :>
-  :>  a: left hand operand (todo: name)
-  :>  b: right hand operand
+  ::    unsigned less than
+  ::
+  ::  a: left hand operand (todo: name)
+  ::  b: right hand operand
   |=  [a=@ b=@]
-  :>  less than?
+  ::  less than?
   ^-  ?
   ?&  !=(a b)
       |-
@@ -128,42 +128,42 @@
 ::
 ++  max
   ~/  %max
-  :>  unsigned maximum
+  ::  unsigned maximum
   |=  [a=@ b=@]
-  :>  the maximum
+  ::  the maximum
   ^-  @
   ?:  (gth a b)  a
   b
 ::
 ++  min
   ~/  %min
-  :>  unsigned minimum
+  ::  unsigned minimum
   |=  [a=@ b=@]
-  :>  the minimum
+  ::  the minimum
   ^-  @
   ?:  (lth a b)  a
   b
 ::
 ++  mod
   ~/  %mod
-  :>  unsigned modulus
-  :>
-  :>  a: dividend
-  :>  b: divisor
+  ::  unsigned modulus
+  ::
+  ::  a: dividend
+  ::  b: divisor
   |:  [a=`@`1 b=`@`1]
-  :>  the remainder
+  ::  the remainder
   ^-  @
   ?<  =(0 b)
   (sub a (mul b (div a b)))
 ::
 ++  mul
   ~/  %mul
-  :>  unsigned multiplication
-  :>
-  :>  a: multiplicand
-  :>  b: multiplier
+  ::  unsigned multiplication
+  ::
+  ::  a: multiplicand
+  ::  b: multiplier
   |:  [a=`@`1 b=`@`1]
-  :>  product
+  ::  product
   ^-  @
   =+  c=0
   |-
@@ -172,27 +172,27 @@
 ::
 ++  sub
   ~/  %sub
-  :>  unsigned subtraction
-  :>
-  :>  a: minuend
-  :>  b: subtrahend
+  ::  unsigned subtraction
+  ::
+  ::  a: minuend
+  ::  b: subtrahend
   |=  [a=@ b=@]
   ~_  leaf+"subtract-underflow"
-  :>  difference
+  ::  difference
   ^-  @
   ?:  =(0 b)  a
   $(a (dec a), b (dec b))
 ::
-:>  #  %tree
-:>
-:>    tree addressing
+::  #  %tree
+::
+::    tree addressing
 +|
 ++  cap
   ~/  %cap
-  :>    tree head
-  :>
-  :>  tests whether an `a` is in the head or tail of a noun. produces %2 if it
-  :>  is within the head, or %3 if it is within the tail.
+  ::    tree head
+  ::
+  ::  tests whether an `a` is in the head or tail of a noun. produces %2 if it
+  ::  is within the head, or %3 if it is within the tail.
   |=  a=@
   ^-  ?($2 $3)
   ?-  a
@@ -204,10 +204,10 @@
 ::
 ++  mas
   ~/  %mas
-  :>    axis within head/tail
-  :>
-  :>  computes the axis of `a` within either the head or tail of a noun
-  :>  (depends whether `a` lies within the the head or tail).
+  ::    axis within head/tail
+  ::
+  ::  computes the axis of `a` within either the head or tail of a noun
+  ::  (depends whether `a` lies within the the head or tail).
   |=  a=@
   ^-  @
   ?-  a
@@ -219,12 +219,12 @@
 ::
 ++  peg
   ~/  %peg
-  :>    axis within axis
-  :>
-  :>  computes the axis of {b} within axis {a}.
+  ::    axis within axis
+  ::
+  ::  computes the axis of {b} within axis {a}.
   |=  [a=@ b=@]
   ?<  =(0 a)
-  :>  a composed axis
+  ::  a composed axis
   ^-  @
   ?-  b
     $1  a
@@ -277,127 +277,127 @@
 ++  tail  |*(^ ,:+<+)                                   ::  get tail
 ++  test  |=(^ =(+<- +<+))                              ::  equality
 ::
-:>  #  %containers
-:>
-:>    the most basic of data types
+::  #  %containers
+::
+::    the most basic of data types
 +|
 ++  bloq
-  :>    blocksize
-  :>
-  :>  a blocksize is the power of 2 size of an atom. ie, 3 is a byte as 2^3 is
-  :>  8 bits.
+  ::    blocksize
+  ::
+  ::  a blocksize is the power of 2 size of an atom. ie, 3 is a byte as 2^3 is
+  ::  8 bits.
   @
 ::
 +*  each  [this that]
-  :>    either {a} or {b}, defaulting to {a}.
-  :>
-  :>  mold generator: produces a discriminated fork between two types,
-  :>  defaulting to {a}.
-  :>
+  ::    either {a} or {b}, defaulting to {a}.
+  ::
+  ::  mold generator: produces a discriminated fork between two types,
+  ::  defaulting to {a}.
+  ::
   $%  [%| p=that]
       [%& p=this]
   ==
 ::
 ++  gate
-  :>    function
-  :>
-  :>  a core with one arm, `$`--the empty name--which transforms a sample noun
-  :>  into a product noun. If used dryly as a type, the subject must have a
-  :>  sample type of `*`.
+  ::    function
+  ::
+  ::  a core with one arm, `$`--the empty name--which transforms a sample noun
+  ::  into a product noun. If used dryly as a type, the subject must have a
+  ::  sample type of `*`.
   $-(* *)
 ::
 +*  list  [item]
-  :>    null-terminated list
-  :>
-  :>  mold generator: produces a mold of a null-terminated list of the
-  :>  homogeneous type {a}.
-  :>
+  ::    null-terminated list
+  ::
+  ::  mold generator: produces a mold of a null-terminated list of the
+  ::  homogeneous type {a}.
+  ::
   $@(~ [i=item t=(list item)])
 ::
 +*  lone  [item]
-  :>    single item tuple
-  :>
-  :>  mold generator: puts the face of `p` on the passed in mold.
-  :>
+  ::    single item tuple
+  ::
+  ::  mold generator: puts the face of `p` on the passed in mold.
+  ::
   p=item
 ::
 +*  lest  [item]
-  :>    null-terminated non-empty list
-  :>
-  :>  mold generator: produces a mold of a null-terminated list of the
-  :>  homogeneous type {a} with at least one element.
+  ::    null-terminated non-empty list
+  ::
+  ::  mold generator: produces a mold of a null-terminated list of the
+  ::  homogeneous type {a} with at least one element.
   [i/item t/(list item)]
 ::
 ++  mold
-  :>    normalizing gate
-  :>
-  :>  a gate that accepts any noun, and validates its shape, producing the
-  :>  input if it fits or a default value if it doesn't.
-  :>
-  :>  examples: * @ud ,[p=time q=?(%a %b)]
+  ::    normalizing gate
+  ::
+  ::  a gate that accepts any noun, and validates its shape, producing the
+  ::  input if it fits or a default value if it doesn't.
+  ::
+  ::  examples: * @ud ,[p=time q=?(%a %b)]
   _|~(* +<)
 ::
 +*  pair  [head tail]
-  :>    dual tuple
-  :>
-  :>  mold generator: produces a tuple of the two types passed in.
-  :>
-  :>  a: first type, labeled {p}
-  :>  b: second type, labeled {q}
-  :>
+  ::    dual tuple
+  ::
+  ::  mold generator: produces a tuple of the two types passed in.
+  ::
+  ::  a: first type, labeled {p}
+  ::  b: second type, labeled {q}
+  ::
   [p=head q=tail]
 ::
 +*  pole  [item]
-  :>    faceless list
-  :>
-  :>  like ++list, but without the faces {i} and {t}.
-  :>
+  ::    faceless list
+  ::
+  ::  like ++list, but without the faces {i} and {t}.
+  ::
   $@(~ [item (pole item)])
 ::
 +*  qual  [first second third fourth]
-  :>    quadruple tuple
-  :>
-  :>  mold generator: produces a tuple of the four types passed in.
-  :>
+  ::    quadruple tuple
+  ::
+  ::  mold generator: produces a tuple of the four types passed in.
+  ::
   [p=first q=second r=third s=fourth]
 ::
 +*  quip  [item state]
-  :>    pair of list of first and second
-  :>
-  :>  a common pattern in hoon code is to return a ++list of changes, along with
-  :>  a new state.
-  :>
-  :>  a: type of list item
-  :>  b: type of returned state
-  :>
+  ::    pair of list of first and second
+  ::
+  ::  a common pattern in hoon code is to return a ++list of changes, along with
+  ::  a new state.
+  ::
+  ::  a: type of list item
+  ::  b: type of returned state
+  ::
   [(list item) state]
 ::
 +*  trap  [product]
-  :>    a core with one arm `$`
-  :>
+  ::    a core with one arm `$`
+  ::
   _|?($:product)
 ::
 +*  tree  [node]
-  :>    tree mold generator
-  :>
-  :>  a `++tree` can be empty, or contain a node of a type and
-  :>  left/right sub `++tree` of the same type. pretty-printed with `{}`.
-  :>
+  ::    tree mold generator
+  ::
+  ::  a `++tree` can be empty, or contain a node of a type and
+  ::  left/right sub `++tree` of the same type. pretty-printed with `{}`.
+  ::
   $@(~ [n=node l=(tree node) r=(tree node)])
 ::
 +*  trel  [first second third]
-  :>    triple tuple
-  :>
-  :>  mold generator: produces a tuple of the three types passed in.
-  :>
+  ::    triple tuple
+  ::
+  ::  mold generator: produces a tuple of the three types passed in.
+  ::
   [p=first q=second r=third]
 ::
 +*  unit  [item]
-  :>    maybe
-  :>
-  :>  mold generator: either `~` or `[~ u=a]` where `a` is the
-  :>  type that was passed in.
-  :>
+  ::    maybe
+  ::
+  ::  mold generator: either `~` or `[~ u=a]` where `a` is the
+  ::  type that was passed in.
+  ::
   $@(~ [~ u=item])
 ::
 ::                                                      ::
@@ -788,29 +788,29 @@
   ^+  t.a
   [i.a $(a (skim t.a |:(c=i.a !(b c i.a))))]
 ::
-++  spin                                                :>  stateful turn
-  :>
-  :>  a: list
-  :>  b: state
-  :>  c: gate from list-item and state to product and new state
+++  spin                                                ::  stateful turn
+  ::
+  ::  a: list
+  ::  b: state
+  ::  c: gate from list-item and state to product and new state
   ~/  %spin
   |*  [a=(list) b=* c=_|=(^ [** +<+])]
   =>  .(c `$-([_?>(?=(^ a) i.a) _b] [* _b])`c)
   =/  acc=(list _-:(c))  ~
-  :>  transformed list and updated state
+  ::  transformed list and updated state
   |-  ^-  (pair _acc _b)
   ?~  a
     [(flop acc) b]
   =^  res  b  (c i.a b)
   $(acc [res acc], a t.a)
 ::
-++  spun                                                :>  internal spin
-  :>
-  :>  a: list
-  :>  b: gate from list-item and state to product and new state
+++  spun                                                ::  internal spin
+  ::
+  ::  a: list
+  ::  b: gate from list-item and state to product and new state
   ~/  %spun
   |*  [a=(list) b=_|=(^ [** +<+])]
-  :>  transformed list
+  ::  transformed list
   p:(spin a +<+.b b)
 ::
 ++  swag                                                ::  slice
@@ -4320,7 +4320,7 @@
           {s/$o c/*}
         %=    $
             vem
-          :-  [%m '%h:<[%d %d].[%d %d]>']
+          :-  [%m '%h::[%d %d].[%d %d]>']
           [-.c.vem +<-.c.vem +<+.c.vem +>-.c.vem +>+.c.vem ~]
         ==
       ::
@@ -5719,7 +5719,7 @@
 +=  plot                                                ::  output analysis
           $~  [%base %noun]                             ::
           $%  [%base p=base]                            ::  base type
-              [%core p=plot q=@udF r=(set term)]        ::  core with arms, mug
+              [%corp p=plot q=@udF r=(set term)]        ::  core with arms, mug
               [%leaf p=@tas]                            ::  constant
               [%loop p=@ud]                             ::  repetition point
               [%list p=plot]                            ::  i-t list
@@ -5973,7 +5973,7 @@
               ==                                        ::
           $%  {$atom p/term q/(unit @)}                 ::  atom / constant
               {$cell p/type q/type}                     ::  ordered pair
-              {$core p/type q/coil}                     ::  object
+              {$corp p/type q/coil}                     ::  object
               {$face p/$@(term tune) q/type}            ::  namespace
               {$fork p/(set type)}                      ::  union
               {$hint p/(pair type note) q/type}         ::  annotation
@@ -6512,11 +6512,11 @@
   ^-  type
   ?:(=(%void hed) %void ?:(=(%void tal) %void [%cell hed tal]))
 ::
-++  core                                                ::  make %core type
-  ~/  %core
+++  core                                                ::  make %corp type
+  ~/  %corp
   |=  {pac/type con/coil}
   ^-  type
-  ?:(=(%void pac) %void [%core pac con])
+  ?:(=(%void pac) %void [%corp pac con])
 ::
 ++  hint
   |=  {p/(pair type note) q/type}
@@ -7048,7 +7048,7 @@
       ::
         [%atom *]  (atom p.sut q.sut)
         [%cell *]  (cell p.sut q.sut)
-        [%core *]  (core p.sut q.sut)
+        [%corp *]  (core p.sut q.sut)
         [%face *]  (face p.sut q.sut)
         [%hint *]  !!
         [%fork *]  (fork p.sut)
@@ -7129,7 +7129,7 @@
         [%bccl head +.tail]
       [%bccl head tail ~]
     ::
-    ::  +core: convert a %core to a spec
+    ::  +core: convert a %corp to a spec
     ::
     ++  core
       |=  $:  ::  payload: data 
@@ -7158,7 +7158,7 @@
         ?~  arms  [~ +>.^$]
         =^  mor  +>.^$  $(arms t.arms)
         =^  les  +>.^$  
-          main(sut [%hold [%core payload battery] q.i.arms])
+          main(sut [%hold [%corp payload battery] q.i.arms])
         [[[p.i.arms les] mor] +>.^$]
       ::  arm-map: all arms in the core, as a a spec map
       ::
@@ -8825,7 +8825,7 @@
       $void      [full/[~ ~ ~] ~]
       {$atom *}  ?~(q.sut [full/[~ ~ ~] ~] [full/~ u.q.sut])
       {$cell *}  (combine:musk $(sut p.sut) $(sut q.sut))
-      {$core *}  %+  combine:musk 
+      {$corp *}  %+  combine:musk 
                    p.r.q.sut
                  $(sut p.sut) 
       {$face *}  $(sut repo)
@@ -8844,7 +8844,7 @@
     ~=  sut
     ?+  sut      sut
       [%cell *]  [%cell burp(sut p.sut) burp(sut q.sut)]
-      [%core *]  :+  %core
+      [%corp *]  :+  %corp
                    burp(sut p.sut)
                  :*  p.q.sut
                      burp(sut q.q.sut)
@@ -8915,7 +8915,7 @@
                      (cell p.sut dext(sut q.sut, ref q.ref))
         ==
       ::
-          {$core *}  ?:(?=(?({$atom *} {$cell *}) ref) sut sint)
+          {$corp *}  ?:(?=(?({$atom *} {$cell *}) ref) sut sint)
           {$face *}  (face p.sut dext(sut q.sut))
           {$fork *}  (fork (turn ~(tap in p.sut) |=(type dext(sut +<))))
           {$hint *}  (hint p.sut dext(sut q.sut))
@@ -8928,7 +8928,7 @@
     ++  sint
       ^-  type
       ?+    ref    !!
-        {$core *}  sut
+        {$corp *}  sut
         {$face *}  dext(ref repo(sut ref))
         {$fork *}  =+  yed=~(tap in p.ref)
                    |-  ^-  type
@@ -9346,7 +9346,7 @@
                 taf
               $(axe (peg axe 3), p.heg p.p.taf, sut q.sut)
             ::
-                {$core *}
+                {$corp *}
               ?~  q.heg  here
               =^  zem  p.heg
                   =+  zem=(loot u.q.heg q.r.q.sut)
@@ -9465,10 +9465,10 @@
       hag.$
     |=  {p/type q/foot}
     :-  %hold
-    ?.  ?=({$core *} p)
+    ?.  ?=({$corp *} p)
       ~_  (dunk %fire-type)
       ~>(%mean.[%leaf "fire-core"] !!)
-    =+  dox=[%core q.q.p q.p]
+    =+  dox=[%corp q.q.p q.p]
     ?:  ?=($ash -.q)
       ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-dry)
       ?>  ?|(!vet (nest(sut q.q.p) & p.p))
@@ -9499,7 +9499,7 @@
         [%3 %0 axe]
       (flan $(sut p.sut, axe (peg axe 2)) $(sut q.sut, axe (peg axe 3)))
     ::
-        {$core *}   ~>(%mean.[%leaf "fish-core"] !!)
+        {$corp *}   ~>(%mean.[%leaf "fish-core"] !!)
         {$face *}   $(sut q.sut)
         {$fork *}   =+  yed=~(tap in p.sut)
                     |-  ^-  nock
@@ -9539,7 +9539,7 @@
         *           $(sut ref, ref sut)
       ==
     ::
-        {$core *}  $(sut repo)
+        {$corp *}  $(sut repo)
         {$face *}  (face p.sut $(sut q.sut))
         {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         {$hint *}  (hint p.sut $(sut q.sut))
@@ -9563,6 +9563,7 @@
     |=  [hud/poly gen/hoon]
     ^-  nock
     ~+
+    =+  %hemp-141
     ?-  hud
       $dry  q:(mint %noun gen)
       $wet  q:(mint(vet |) %noun gen)
@@ -9577,6 +9578,7 @@
     =.  fab  &
     ~+
     ^-  seminoun
+    =+  %hemp-141
     ::  tal: map from battery axis to foot
     ::
     =;  tal/(map @ud hoon)
@@ -9886,7 +9888,7 @@
     ?-  sut
       {$atom *}  |
       {$cell *}  |($(sut p.sut) $(sut q.sut))
-      {$core *}  $(sut p.sut)
+      {$corp *}  $(sut p.sut)
       {$face *}  $(sut q.sut)
       {$fork *}  (lien ~(tap in p.sut) |=(type ^$(sut +<)))
       {$hint *}  $(sut q.sut)
@@ -10070,7 +10072,7 @@
         $noun      (nest(sut %void) | ref)
         {$atom *}  sint
         {$cell *}  sint
-        {$core *}  sint(sut [%cell %noun %noun])
+        {$corp *}  sint(sut [%cell %noun %noun])
         {$fork *}  %+  levy  ~(tap in p.sut)
                    |=(type dext(sut +<))
         {$face *}  dext(sut q.sut) 
@@ -10155,7 +10157,7 @@
                    ?&  dext(sut p.sut, ref p.ref, seg ~, reg ~)
                        dext(sut q.sut, ref q.ref, seg ~, reg ~)
                    ==
-        {$core *}  ?.  ?=({$core *} ref)  sint
+        {$corp *}  ?.  ?=({$corp *} ref)  sint
                    ?:  =(q.sut q.ref)  dext(sut p.sut, ref p.ref)
                    ?&  =(q.p.q.sut q.p.q.ref)
                        meet(sut q.q.sut, ref p.sut)
@@ -10171,7 +10173,7 @@
                        ==  ==
                    ==
         {$face *}  dext(sut q.sut)
-        {$fork *}  ?.  ?=(?({$atom *} $noun {$cell *} {$core *}) ref)  sint
+        {$fork *}  ?.  ?=(?({$atom *} $noun {$cell *} {$corp *}) ref)  sint
                    (lien ~(tap in p.sut) |=(type dext(tel |, sut +<)))
         {$hint *}  dext(sut q.sut)
         {$hold *}  ?:  (~(has in seg) sut)  |
@@ -10190,7 +10192,7 @@
         $void       &
         {$atom *}   |
         {$cell *}   |
-        {$core *}   dext(ref repo(sut ref))
+        {$corp *}   dext(ref repo(sut ref))
         {$face *}   dext(ref q.ref)
         {$fork *}   (levy ~(tap in p.ref) |=(type dext(ref +<)))
         {$hint *}   dext(ref q.ref)
@@ -10215,7 +10217,7 @@
     ?-    sut
         {$atom *}   %void
         {$cell *}   ?:(=(2 now) ^$(sut p.sut, axe lat) ^$(sut q.sut, axe lat))
-        {$core *}
+        {$corp *}
       ?.  =(3 now)  %noun
       =+  pec=(peel way r.p.q.sut)
       %=    ^$
@@ -10386,13 +10388,13 @@
       ::  check for trivial cases
       ::
       ?:  ?|  =(sut ref) 
-              ?=(?($noun $void {?($atom $core) *}) ref)
+              ?=(?($noun $void {?($atom $corp) *}) ref)
           ==
         done
       ::  ~_  (dunk 'redo: dext: sut')
       ::  ~_  (dunk(sut ref) 'redo: dext: ref')  
       ?-    sut
-          ?($noun $void {?($atom $core) *})
+          ?($noun $void {?($atom $corp) *})
         ::  reduce reference and reassemble leaf
         ::
         done:(sint &)
@@ -10525,7 +10527,7 @@
   ++  repo
     ^-  type
     ?-  sut
-      {$core *}   [%cell %noun p.sut]
+      {$corp *}   [%cell %noun p.sut]
       {$face *}   q.sut
       {$hint *}   q.sut
       {$hold *}   (rest [[p.sut q.sut] ~])
@@ -10572,7 +10574,7 @@
       {$cell *}  ?:  =(2 now)
                    (cell $(sut p.sut, u.i.vit lat) q.sut)
                   (cell p.sut $(sut q.sut, u.i.vit lat))
-      {$core *}  ?:  =(2 now)
+      {$corp *}  ?:  =(2 now)
                    $(sut repo)
                  (core $(sut p.sut, u.i.vit lat) q.sut)
       {$face *}  (face p.sut $(sut q.sut))
@@ -10615,7 +10617,7 @@
     ^-  type
     ?+  sut  sut
       {$cell *}  (cell $(sut p.sut) $(sut q.sut))
-      {$core *}  ?>(|(=(%gold r.p.q.sut) =(%lead yoz)) sut(r.p.q yoz))
+      {$corp *}  ?>(|(=(%gold r.p.q.sut) =(%lead yoz)) sut(r.p.q yoz))
       {$face *}  (face p.sut $(sut q.sut))
       {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
       {$hint *}  (hint p.sut $(sut q.sut))
@@ -10635,7 +10637,7 @@
                         $yarn                           ::
                     ==                                  ::
                 $%  {$mato p/term}                      ::
-                    {$core p/(list @ta) q/wine}         ::
+                    {$corp p/(list @ta) q/wine}         ::
                     {$face p/term q/wine}               ::
                     {$list p/term q/wine}               ::
                     {$pear p/term q/@}                  ::
@@ -10688,7 +10690,7 @@
           $wall      :_(gid [%leaf '*' '\'' '\'' ~])
           $yarn      :_(gid [%leaf '"' '"' ~])
           {$mato *}  :_(gid [%leaf '@' (trip p.q.ham)])
-          {$core *}
+          {$corp *}
         =^  cox  gid  $(q.ham q.q.ham)
         :_  gid
         :+  %rose
@@ -10810,7 +10812,7 @@
         $tas  ['%' ?.(=(0 lum) (rip 3 lum) ['$' ~])]
       ==
     ::
-        {$core *}
+        {$corp *}
       ::  XX  needs rethinking for core metal
       ::  ?.  ?=(^ lum)  ~
       ::  =>  .(lum `*`lum)
@@ -11000,14 +11002,14 @@
       :-  %plot
       ?:(?=({$plot *} q.yon) [q.hin p.q.yon] [q.hin q.yon ~])
     ::
-        {$core *}
+        {$corp *}
       =+  yad=$(sut p.sut)
       :-  p.yad
       =+  ^=  doy  ^-  {p/(list @ta) q/wine}
-          ?:  ?=({$core *} q.yad)
+          ?:  ?=({$corp *} q.yad)
             [p.q.yad q.q.yad]
           [~ q.yad]
-      :-  %core
+      :-  %corp
       :_  q.doy
       :_  p.doy
       %^  cat  3
@@ -11136,7 +11138,7 @@
   ?+  typ  |
       {$hold *}  $(typ ~(repo ut typ))
       {$hint *}  $(typ ~(repo ut typ))
-      {$core *}
+      {$corp *}
     |-  ^-  ?
     ?~  q.r.q.typ  |
     ?|  (~(has by q.n.q.r.q.typ) cog)
@@ -11150,7 +11152,7 @@
   ^-  (list term)
   ?+    typ  ~
       {$hold *}  $(typ ~(repo ut typ))
-      {$core *}
+      {$corp *}
     %-  zing
     %+  turn  ~(tap by q.r.q.typ)
       |=  {* b/tome}
@@ -11275,7 +11277,7 @@
     ::
     ++  body
       ;~  pose
-        ;~  plug                                        :: can duplicate :>
+        ;~  plug                                        :: can duplicate ::
           (into ;~(pfix (punt ;~(plug null col gar step)) line))
           (easy ~)
         ==
@@ -11299,9 +11301,9 @@
     ::
     ::
     ::  step: indent
-    ::  into: :> and indent to end of line, consuming following space.
-    ::  indo: :> to end of line, consuming following space.
-    ::  exit: :< to end of line, not consuming following space.
+    ::  into: :: and indent to end of line, consuming following space.
+    ::  indo: :: to end of line, consuming following space.
+    ::  exit: :: to end of line, not consuming following space.
     ::
     ++  step  ;~(plug ace ace)
     ++  into  |*(bod/rule (indo ;~(pfix step bod)))
@@ -13389,10 +13391,10 @@
 ++  ride                                                ::  end-to-end compiler
   |=  {typ/type txt/@}
   ^-  (pair type nock)
-  ~&  %ride-parsing
+  ~>  %slog.[0 leaf/"ride-parsing"]
   =/  gen  (ream txt)
-  ~&  %ride-compiling
-  =-  ~&  %ride-compiled
+  ~>  %slog.[0 leaf/"ride-compiling"]
+  =-  ~>  %slog.[0 leaf/"ride-compiled"]
       -
   (~(mint ut typ) %noun gen)
 ::
