@@ -569,15 +569,6 @@
             ::
             cases=(list (pair spur crane))
         ==
-        $:  ::  %fscn: `/%` propagate extra arguments into renderers
-            ::
-            ::    `/%` will forward extra arguments (usually from Eyre) on to
-            ::    any renderer in :crane. Without this, renderers that use `/$`
-            ::    to read the extra arguments will crash.
-            ::
-            %fscn
-            =crane
-        ==
         $:  ::  %fspm: `/&` pass through a series of marks
             ::
             ::    `/&` passes a crane through multiple marks, right-to-left.
@@ -1485,8 +1476,6 @@
           (stag %fsdt ;~(pfix dot parse-list))
           ::  `/,`  switch by path
           (stag %fscm ;~(pfix com parse-switch))
-          ::  `/%`  propagate extra arguments into renderers
-          (stag %fscn ;~(pfix cen subcrane))
           ::  `/&`  pass through a series of mark
           (stag %fspm ;~(pfix pam parse-pipe))
           ::  `/_`  run a crane on each file in the current directory

@@ -27,7 +27,6 @@
   test-parse-scaffold-crane-fsts
   test-parse-scaffold-crane-fsdt
   test-parse-scaffold-crane-fscm
-  test-parse-scaffold-crane-fscn
   test-parse-scaffold-crane-fspm
   test-parse-scaffold-crane-fscb
   test-parse-scaffold-crane-fssm
@@ -516,34 +515,6 @@
                         [/~nul/desk/~1234.5.6/foo/bar [6 7] [6 14]]
                         (ream 'b=6')
         ==  ==  ==  ==
-      ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
-::
-++  test-parse-scaffold-crane-fscn
-  :-  `tank`leaf+"test-parse-scaffold-crane-fscn"
-  ::
-  =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-      [1 1]
-    """
-    /%  /$  !.  |=(a a)
-    //  /%/child/hoon
-    """
-  ?~  q.parsed
-    [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fscn  %fsbc  %dbug
-                [/~nul/desk/~1234.5.6/foo/bar [1 9] [1 20]]
-                (ream '|=(a a)')
-        ==  ==
       ^=  sources
         :~  :*  %indirect
                 [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
