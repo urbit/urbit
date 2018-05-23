@@ -1317,6 +1317,10 @@ static u3j_core _143_tri_d[] =
     "482e58af",
     0,
   };
+  static u3j_harm _143_two_mux_a[] = {{".2", u3wc_mux, c3n}, {}};
+  static c3_c* _143_two_mux_ha[] = {
+    0,
+  };
   static u3j_harm _143_two_pow_a[] = {{".2", u3wc_pow, c3y}, {}};
   static c3_c* _143_two_pow_ha[] = {
     "4a70ddfe",
@@ -1543,6 +1547,7 @@ static u3j_core _143_two_d[] =
     { "met", 7, _143_two_met_a, 0, _143_two_met_ha },
     { "mix", 7, _143_two_mix_a, 0, _143_two_mix_ha },
     { "mug", 7, _143_two_mug_a, 0, _143_two_mug_ha },
+    { "mux", 7, _143_two_mux_a, 0, _143_two_mux_ha },
     { "muk", 59, _143_two_muk_a, 0, _143_two_muk_ha },
     { "rap", 7, _143_two_rap_a, 0, _143_two_rap_ha },
     { "rep", 7, _143_two_rep_a, 0, _143_two_rep_ha },

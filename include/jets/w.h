@@ -59,6 +59,7 @@
     u3_noun u3wc_met(u3_noun);
     u3_noun u3wc_mix(u3_noun);
     u3_noun u3wc_mug(u3_noun);
+    u3_noun u3wc_mux(u3_noun);
     u3_noun u3wc_muk(u3_noun);
     u3_noun u3wc_peg(u3_noun);
     u3_noun u3wc_pow(u3_noun);
