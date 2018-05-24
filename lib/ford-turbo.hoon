@@ -3482,7 +3482,7 @@
         |=  [subject=cage =crane]
         ^-  compose-cranes
         ::
-        |^  ?+  -.crane  !!
+        |^  ?-  -.crane
               %fssg  (run-fssg +.crane)
               %fsbc  (run-fsbc +.crane)
               %fsbr  (run-fsbr +.crane)
@@ -3495,6 +3495,7 @@
               %fscl  (run-fscl +.crane)
               %fskt  (run-fskt +.crane)
               %fszp  (run-fszp +.crane)
+              %fszy  (run-fszy +.crane)
             ==
         ::  +run-fssg: runs the `/~` rune
         ::
@@ -3939,6 +3940,23 @@
           ?>  ?=([~ %success %vale *] vale-result)
           ::
           [[%subject cage.u.vale-result] ..run-crane]
+        ::  +run-fszy: runs the `/mark/` "rune"
+        ::
+        ++  run-fszy
+          |=  =mark
+          ^-  compose-cranes
+          ::
+          =/  bake-build=^build
+            :-  date.build
+            [%bake mark query-string path-to-render]
+          =^  bake-result  accessed-builds  (depend-on bake-build)
+          ?~  bake-result
+            [[%block [bake-build]~] ..run-crane]
+          ?:  ?=([~ %error *] bake-result)
+            [[%error [leaf+"/mark/ failed: " message.u.bake-result]] ..run-crane]
+          ?>  ?=([~ %success %bake *] bake-result)
+          ::
+          [[%subject cage.u.bake-result] ..run-crane]
         --
       ::  +gather-path-builds: produce %path builds to resolve import paths
       ::
