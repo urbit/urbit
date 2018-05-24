@@ -5583,33 +5583,51 @@
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   ::
-  =/  hoon-src=@ta
+  =/  bar-mark-src=@ta
     '''
-    |_  cell=^
+    |_  sample=[@ @]
     ++  grab
       |%
-      ++  noun  ^
+      +=  noun  [@ @]
       --
     --
     '''
+  ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
-      :-  ~
-      :-  %hoon
-      :-  hoon-src-type
-      hoon-src
+      :^  ~  %hoon  hoon-src-type
+      '''
+      |_  cell=^
+      ++  grab
+        |%
+        ++  bar  ^
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
+      :^  ~  %hoon  hoon-src-type
+      '''
+      |_  sample=[@ @]
+      ++  grab
+        |%
+        +=  noun  [@ @]
+        --
+      --
+      '''
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/ren]]
       ~
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data]]
-      :-  ~
-      :-  %hoon
-      :-  hoon-src-type
-      '''
-      [12 13]
-      '''
+      :-  [%cx [[~nul %home %da ~1234.5.6] /bar/data]]
+      `[%bar !>([12 13])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /data]]
+      `[%arch !>(`arch`[fil=~ dir=(my [%bar ~]~)])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /bar/data]]
+      `[%arch !>(`arch`[fil=`*@uv dir=~])]
     ==
   ::
   =^  results1  ford
@@ -5622,7 +5640,7 @@
       ^=  call-args
         :*  duct=~[/path]  type=~  %make  ~nul
             %pin  ~1234.5.6
-            [%bake %foo *coin `rail:ford-gate`[[~nul %home] /hoon/data]]
+            [%bake %foo *coin `rail:ford-gate`[[~nul %home] /data]]
         ==
       ::
       ^=  comparator

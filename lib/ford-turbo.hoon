@@ -2770,6 +2770,7 @@
     ++  make-bake
       |=  [renderer=term query-string=coin path-to-render=rail]
       ^-  build-receipt
+      ::  path-build: find the file path for the renderer source
       ::
       =/  path-build=^build
         [date.build [%path disc.path-to-render %ren renderer]]
@@ -2777,49 +2778,163 @@
       =^  path-result  accessed-builds  (depend-on path-build)
       ?~  path-result
         [build [%blocks [path-build]~ ~] accessed-builds]
-      ::  if no renderer at :renderer path, try a mark instead
+      ::  if there's a renderer called :renderer, use it on :path-to-render
       ::
-      ?.  ?=([~ %success %path *] path-result)
+      ?:  ?=([~ %success %path *] path-result)
+        ::  build a +scaffold from the renderer source
         ::
-        =/  mark-build=^build
+        =/  hood-build=^build  [date.build [%hood rail.u.path-result]]
+        ::
+        =^  hood-result  accessed-builds  (depend-on hood-build)
+        ?~  hood-result
+          [build [%blocks [hood-build]~ ~] accessed-builds]
+        ::
+        ?.  ?=([~ %success %hood *] hood-result)
+          (wrap-error hood-result)
+        ::  link the renderer, passing through :path-to-render and :query-string
+        ::
+        =/  plan-build=^build
           :-  date.build
-          [%cast disc.path-to-render renderer [%core path-to-render]]
+          [%plan path-to-render query-string scaffold.u.hood-result]
         ::
-        =^  mark-build-result  accessed-builds  (depend-on mark-build)
-        ?~  mark-build-result
-          [build [%blocks [mark-build]~ ~] accessed-builds]
+        =^  plan-result  accessed-builds  (depend-on plan-build)
+        ?~  plan-result
+          [build [%blocks [plan-build]~ ~] accessed-builds]
         ::
-        ?.  ?=([~ %success %cast *] mark-build-result)
-          (wrap-error mark-build-result)
+        ?.  ?=([~ %success %plan *] plan-result)
+          (wrap-error plan-result)
         ::
         =/  =build-result
-          [%success %bake cage.u.mark-build-result]
+          [%success %bake %noun vase.u.plan-result]
         ::
         [build [%build-result build-result] accessed-builds]
-      ::  build a +scaffold from the renderer source
+      ::  no renderer, try mark; retrieve directory listing of :path-to-render
       ::
-      =/  hood-build=^build  [date.build [%hood rail.u.path-result]]
+      ::    There might be multiple files of different marks stored at
+      ::    :path-to-render. Retrieve the directory listing for
+      ::    :path-to-render, then check which of the path segments in
+      ::    that directory are files (not just folders), then for each
+      ::    file try to %cast its mark to the desired mark (:renderer).
       ::
-      =^  hood-result  accessed-builds  (depend-on hood-build)
-      ?~  hood-result
-        [build [%blocks [hood-build]~ ~] accessed-builds]
+      ::    Start by retrieving the directory listing, using :toplevel-build.
       ::
-      ?.  ?=([~ %success %hood *] hood-result)
-        (wrap-error hood-result)
-      ::  link the renderer, passing through :path-to-render and :query-string
+      =/  toplevel-build=^build
+        [date.build [%scry %c %y path-to-render]]
       ::
-      =/  plan-build=^build
-        [date.build [%plan path-to-render query-string scaffold.u.hood-result]]
+      =^  toplevel-result  accessed-builds  (depend-on toplevel-build)
+      ?~  toplevel-result
+        [build [%blocks [toplevel-build]~ ~] accessed-builds]
       ::
-      =^  plan-result  accessed-builds  (depend-on plan-build)
-      ?~  plan-result
-        [build [%blocks [plan-build]~ ~] accessed-builds]
+      ?.  ?=([~ %success %scry *] toplevel-result)
+        (wrap-error toplevel-result)
       ::
-      ?.  ?=([~ %success %plan *] plan-result)
-        (wrap-error plan-result)
+      =/  toplevel-arch=arch  ;;(arch q.q.cage.u.toplevel-result)
+      ::  find the :sub-path-segments that could be files
+      ::
+      ::    Filter out path segments that aren't a +term,
+      ::    since those aren't valid marks and therefore can't
+      ::    be the last segment of a filepath in Clay.
+      ::
+      =/  sub-path-segments=(list @ta)
+        (skim (turn ~(tap by dir.toplevel-arch) head) (sane %tas))
+      ::  create :sub-builds to check which :sub-path-segments are files
+      ::
+      =/  sub-builds=(list ^build)
+        %+  turn  sub-path-segments
+        |=  sub=@ta
+        ^-  ^build
+        :-  date.build
+        [%scry %c %y path-to-render(spur [sub spur.path-to-render])]
+      ::
+      =|  $=  results
+        (list [kid=^build sub-path=@ta result=(unit build-result)])
+      ::  run :sub-builds
+      ::
+      =/  subs-results
+        |-  ^+  [results accessed-builds]
+        ?~  sub-builds  [results accessed-builds]
+        ?>  ?=(^ sub-path-segments)
+        ::
+        =/  kid=^build    i.sub-builds
+        =/  sub-path=@ta  i.sub-path-segments
+        ::
+        =^  result  accessed-builds  (depend-on kid)
+        =.  results  [[kid sub-path result] results]
+        ::
+        $(sub-builds t.sub-builds, sub-path-segments t.sub-path-segments)
+      ::  apply mutations from depending on :sub-builds
+      ::
+      =:  results          -.subs-results
+          accessed-builds  +.subs-results
+      ==
+      ::  split :results into completed :mades and incomplete :blocks
+      ::
+      =/  split-results
+        (skid results |=([* * r=(unit build-result)] ?=(^ r)))
+      ::
+      =/  mades=_results   -.split-results
+      =/  blocks=_results  +.split-results
+      ::  if any builds blocked, produce them all as %blocks
+      ::
+      ?^  blocks
+        [build [%blocks (turn `_results`blocks head) ~] accessed-builds]
+      ::  check for errors
+      ::
+      =/  errors=_results
+        %+  skim  results
+        |=  [* * r=(unit build-result)]
+        ?=([~ %error *] r)
+      ::  if any errored, produce the first error, as is tradition
+      ::
+      ?^  errors
+        ?>  ?=([~ %error *] result.i.errors)
+        =/  =build-result
+          [%error message.u.result.i.errors]
+        ::
+        [build [%build-result build-result] accessed-builds]
+      ::  marks: list of the marks of the files at :path-to-render
+      ::
+      =/  marks=(list @tas)
+        %+  murn  results
+        |=  [kid=^build sub-path=@ta result=(unit build-result)]
+        ^-  (unit @tas)
+        ::
+        ?>  ?=([@da %scry %c %y *] kid)
+        ?>  ?=([~ %success %scry *] result)
+        ::
+        =/  =arch  ;;(arch q.q.cage.u.result)
+        ::  if it's a directory, not a file, we can't load it
+        ::
+        ?~  fil.arch
+          ~
+        [~ `@tas`sub-path]
+      ::  sort marks in alphabetical order
+      ::
+      =.  marks  (sort marks lte)
+      ::  try to convert files to the destination mark, in order
+      ::
+      =/  alts-build=^build
+        ::
+        :+  date.build  %alts
+        ^=  choices  ^-  (list schematic)
+        ::
+        %+  turn  marks
+        |=  mark=term
+        ^-  schematic
+        ::
+        =/  file=rail  path-to-render(spur [mark spur.path-to-render])
+        ::
+        [%cast disc.file renderer [%scry %c %x file]]
+      ::
+      =^  alts-result  accessed-builds  (depend-on alts-build)
+      ?~  alts-result
+        [build [%blocks [alts-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %alts *] alts-result)
+        (wrap-error alts-result)
       ::
       =/  =build-result
-        [%success %bake %noun vase.u.plan-result]
+        [%success %bake (result-to-cage u.alts-result)]
       ::
       [build [%build-result build-result] accessed-builds]
     ::
