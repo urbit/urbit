@@ -717,7 +717,7 @@
       _mint_used();
       {
 
-        c3_m    fun_m = 144 + c3__blow;
+        c3_m    fun_m = 141 + c3__blow;
         u3_noun vrf   = u3r_at(u3qfu_van_vrf, van);
         u3_noun pro   = u3z_find_4(fun_m, vrf, sut, gol, p_gen);
 
@@ -856,7 +856,7 @@
              u3_noun gol,
              u3_noun gen)
   {
-    c3_m    fun_m = 144 + c3__mint;
+    c3_m    fun_m = 141 + c3__mint;
     u3_noun vrf   = u3r_at(u3qfu_van_vrf, van);
     u3_noun pro   = u3z_find_4(fun_m, vrf, sut, gol, gen);
 

@@ -202,7 +202,7 @@
              u3_noun way,
              u3_noun axe)
   {
-    c3_m    fun_m = 144 + c3__peek + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 141 + c3__peek + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, axe);
 
     if ( u3_none != pro ) {

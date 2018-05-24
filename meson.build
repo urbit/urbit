@@ -287,7 +287,7 @@ if osdet == 'linux'
 elif osdet == 'darwin'
   conf_data.set('U3_OS_osx', true)
 
-  os_c_flags = os_c_flags + ['-bind_at_load']
+  #  os_c_flags = os_c_flags + ['-bind_at_load']
   #  os_link_flags = ['-framework CoreServices', '-framework CoreFoundation']
   if(legacy_meson)
     ncurses_dep = find_library('ncurses')

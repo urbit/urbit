@@ -257,7 +257,7 @@
              u3_noun sut,
              u3_noun ref)
   {
-    c3_m    fun_m = 144 + c3__crop + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 141 + c3__crop + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_2(fun_m, sut, ref);
 
     if ( u3_none != pro ) {

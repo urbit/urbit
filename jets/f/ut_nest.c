@@ -28,7 +28,7 @@
     } else {
       u3_noun n_dab, l_dab, r_dab;
       u3_noun n_hem, l_hem, r_hem;
-      u3_noun pn_hem, pqn_hem, qqn_hem, pn_dab, pqn_dab, qqn_dab;
+      u3_noun pn_hem, qn_hem, pn_dab, qn_dab;
 
       u3x_trel(dab, &n_dab, &l_dab, &r_dab);
       u3x_trel(hem, &n_hem, &l_hem, &r_hem);
@@ -38,37 +38,21 @@
       {
         return c3n;
       }
-      u3x_trel(n_dab, &pn_dab, &pqn_dab, &qqn_dab);
-      u3x_trel(n_hem, &pn_hem, &pqn_hem, &qqn_hem);
+      u3x_cell(n_dab, &pn_dab, &qn_dab);
+      u3x_cell(n_hem, &pn_hem, &qn_hem);
 
       if ( c3n == u3r_sing(pn_dab, pn_hem) ) {
         return c3n;
-      } else {
-        if ( (c3n == u3du(qqn_dab)) || (c3n == u3du(qqn_hem)) ) {
-          return u3m_bail(c3__fail);
-        }
-        else switch ( u3h(qqn_dab) ) {
-          default: return u3m_bail(c3__exit);
-          case c3__ash: {
-            if ( c3__ash != u3h(qqn_hem) ) {
-              return c3n;
-            } else {
-              u3_noun qqqn_dab = u3t(qqn_dab);
-              u3_noun qqqn_hem = u3t(qqn_hem);
-              u3_noun vis = u3qfu_play(van, sut, qqqn_dab);
-              u3_noun lon = u3qfu_play(van, ref, qqqn_hem);
- 
-              u3_noun ret = _nest_dext(van, vis, tel, lon, u3_nul, u3_nul, gil);
+      } 
+      else {
+        u3_noun vis = u3qfu_play(van, sut, qn_dab);
+        u3_noun lon = u3qfu_play(van, ref, qn_hem);
 
-              u3z(vis);
-              u3z(lon);
-              return ret;
-            }
-          }
-          case c3__elm: {
-            return u3r_sing(qqn_dab, qqn_hem);
-          }
-        }
+        u3_noun ret = _nest_dext(van, vis, tel, lon, u3_nul, u3_nul, gil);
+
+        u3z(vis);
+        u3z(lon);
+        return ret;
       }
     }
   }
@@ -90,6 +74,7 @@
       u3_noun n_dom, l_dom, r_dom;
       u3_noun n_vim, l_vim, r_vim;
       u3_noun pn_vim, qn_vim, pn_dom, qn_dom;
+      u3_noun pqn_vim, qqn_vim, pqn_dom, qqn_dom;
 
       u3x_trel(dom, &n_dom, &l_dom, &r_dom);
       u3x_trel(vim, &n_vim, &l_vim, &r_vim);
@@ -102,10 +87,13 @@
       u3x_cell(n_dom, &pn_dom, &qn_dom);
       u3x_cell(n_vim, &pn_vim, &qn_vim);
 
+      u3x_cell(qn_dom, &pqn_dom, &qqn_dom);
+      u3x_cell(qn_vim, &pqn_vim, &qqn_vim);
+
       if ( c3n == u3r_sing(pn_dom, pn_vim) ) {
         return c3n;
       } else {
-        return _nest_deep(van, sut, tel, ref, qn_dom, qn_vim, gil);
+        return _nest_deep(van, sut, tel, ref, qqn_dom, qqn_vim, gil);
       }
     }
   }
@@ -140,6 +128,9 @@
     if ( c3y == u3r_sing(q_sut, q_ref) ) {
       return _nest_dext(van, p_sut, tel, p_ref, u3_nul, u3_nul, gil);
     }
+    else if ( c3n == u3r_sing(qpq_sut, qpq_ref) ) {
+      return c3n;
+    }
     else if ( (c3n == _nest_dext
                         (van, qq_sut, tel, p_sut, u3_nul, u3_nul, gil)) ||
               (c3n == _nest_dext
@@ -155,6 +146,12 @@
            (c3__gold != rpq_ref) ) 
       {
         return c3n;
+      }
+      else if ( c3__wet == qpq_sut ) {
+        return u3r_sing(qrq_sut, qrq_ref);
+      }
+      else if ( c3y == u3r_sing(qrq_sut, qrq_ref) ) {
+        return c3y;
       }
       else {
         u3_noun hud = u3nc(u3k(sut), u3k(ref));
@@ -400,7 +397,7 @@
     }
 
     {
-      c3_m    fun_m = 144 + c3__nest + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+      c3_m    fun_m = 141 + c3__nest + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
       u3_noun pro   = u3z_find_2(fun_m, sut, ref);
 
       if ( u3_none != pro ) {
@@ -545,7 +542,7 @@
              u3_noun ref)
   {
 #if 1
-    c3_m    fun_m = 144 + c3__nest;
+    c3_m    fun_m = 141 + c3__nest;
     u3_noun vrf   = u3r_at(u3qfu_van_vrf, van);
     u3_noun pro   = u3z_find_4(fun_m, vrf, sut, tel, ref);
 

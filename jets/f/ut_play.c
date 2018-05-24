@@ -608,7 +608,7 @@
              u3_noun gen)
   {
 #if 1
-    c3_m    fun_m = 144 + c3__play;
+    c3_m    fun_m = 141 + c3__play;
     u3_noun vrf   = u3r_at(u3qfu_van_vrf, van);
     u3_noun pro   = u3z_find_3(fun_m, vrf, sut, gen);
 

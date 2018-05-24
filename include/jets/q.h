@@ -297,6 +297,8 @@
     u3_noun u3qzp_open(u3_noun, u3_noun, u3_noun);
     u3_noun u3qzp_rake(u3_noun);
 
+    void u3qf_test(const c3_c*, u3_noun);
+
 #   define u3qzu_van_fan  28
 #   define u3qzu_van_rib  58
 #   define u3qzu_van_vrf  59

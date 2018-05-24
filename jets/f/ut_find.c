@@ -224,7 +224,7 @@
           u3_noun u_zem = u3t(zem);
           u3_noun pu_zem = u3h(u_zem);
           u3_noun qu_zem = u3t(u_zem);
-          u3_noun qqu_zem = u3t(qu_zem);
+          u3_noun zut;
           u3_noun mut;
           u3_noun pro;
 
@@ -236,21 +236,20 @@
 
 #if 1
           if ( qpq_sut == c3__wet ) {
-            if ( u3h(qqu_zem) != c3__elm ) {
-              return u3m_error("wet-elm-mismatch");
-            }
-          } else if ( qpq_sut == c3__dry ) {
-            if ( u3h(qqu_zem) != c3__ash) {
-              return u3m_error("dry-ash-mismatch");
-            }
-          } else u3m_bail(c3__fail);
+            zut = u3nc(c3__elm, u3k(qu_zem));
+          } 
+          else if ( qpq_sut == c3__dry ) {
+            zut = u3nc(c3__ash, u3k(qu_zem));
+          } 
+          else u3m_bail(c3__fail);
 #endif
+          
           pro = u3nt
             (c3y,
              u3nc(u3nc(u3_nul, u3k(axe)), u3k(lon)),
              u3nt(c3n,
                   u3qc_peg(2, pu_zem),
-                  u3nt(u3nc(mut, u3k(qqu_zem)), u3_nul, u3_nul)));
+                  u3nt(u3nc(mut, zut), u3_nul, u3_nul)));
           
           u3z(zem);
           return pro;
@@ -552,17 +551,16 @@
       else {
         u3_noun pp_sut = u3h(p_sut);        //  (map term {wain (unit twig)})
         u3_noun qp_sut = u3t(p_sut);        //  (list (pair type nock))
-        u3_noun tyr = u3qdb_get(pp_sut, uq_heg);  //  (unit {wain (unit twig)})
+        u3_noun tyr = u3qdb_get(pp_sut, uq_heg);  //  (unit (unit twig))
 
         if ( u3_nul == tyr ) {
           return _find_buck_face_next
             (van, sut, q_sut, qp_sut, way, p_heg, q_heg, axe, lon, gil);
         }
         else {
-          u3_noun u_tyr = u3t(tyr);       //  (pair wain (unit twig))
-          u3_noun qu_tyr = u3t(u_tyr);
+          u3_noun u_tyr = u3t(tyr);       //  (unit twig)
 
-          if ( u3_nul == qu_tyr ) {
+          if ( u3_nul == u_tyr ) {
             u3_noun nol = u3nc(u3_nul, u3k(lon));
             u3_noun dep = u3qa_inc(p_heg);
             u3_noun ret = _find_buck
@@ -574,8 +572,8 @@
             return ret;
           }
           else {
-            u3_noun uqu_tyr = u3t(qu_tyr);
-            u3_noun tor = u3qfu_fund(van, sut, way, uqu_tyr);
+            u3_noun uu_tyr = u3t(u_tyr);
+            u3_noun tor = u3qfu_fund(van, sut, way, uu_tyr);
 
             if ( c3y == u3h(tor) ) {
               u3_noun p_tor = u3t(tor);      //  (pair vein opal)
@@ -728,6 +726,11 @@
       if ( c3y == u3h(heg) ) {
         u3_noun p_heg = u3t(heg);         //  axis
 
+        if ( c3n == u3ud(p_heg) ) {
+          u3m_p("weird p_heg", p_heg);
+          return u3m_bail(c3__fail);
+        }
+
         ret = u3nt
           (c3y,
            u3nc(u3nc(u3_nul, u3k(p_heg)), u3k(lon)),
@@ -874,7 +877,7 @@
              u3_noun way,
              u3_noun hyp)
   {
-    c3_m    fun_m = 144 + c3__find + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 141 + c3__find + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, hyp);
 
     if ( u3_none != pro ) {
@@ -912,7 +915,7 @@
              u3_noun way,
              u3_noun hyp)
   {
-    c3_m    fun_m = 144 + c3__fond + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 141 + c3__fond + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, hyp);
 
     if ( u3_none != pro ) {

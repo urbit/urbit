@@ -240,6 +240,7 @@
 #   define c3__cook   c3_s4('c','o','o','k')
 #   define c3__cool   c3_s4('c','o','o','l')
 #   define c3__core   c3_s4('c','o','r','e')
+#   define c3__corp   c3_s4('c','o','r','p')
 #   define c3__corm   c3_s4('c','o','r','m')
 #   define c3__cow    c3_s3('c','o','w')
 #   define c3__cpu    c3_s3('c','p','u')

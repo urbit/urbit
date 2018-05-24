@@ -511,6 +511,7 @@
                             u3qdb_put(q_gen, u3_blip, diz)),
                        u3nc(c3__cnzy, u3_blip));
 
+    c3_assert(0);
     u3z(diz);
     return ret;
   }
