@@ -456,7 +456,7 @@
       ^-  spec:asn1
       :-  %seq
       %+  turn  hot
-      |=(h=(list @t) [%con [& 2] (rip 3 (en-host h))])
+      |=(h=(list @t) [%con [& 2] (rip 3 (join '.' h))])
     ::                                                  ::  +cert:spec:pkcs10
     ++  cert                                            ::  cert request info
       |=  csr                                           ::  XX rename
@@ -661,16 +661,16 @@
   |=  [a=* b=*]
   ^-  ?
   (fall (bind (both (find ~[a] lit) (find ~[b] lit)) com) |)
-::                                                    ::  +en-host
-++  en-host                                           ::  rendor host
-  |=  hot=(list @t)
+::                                                    ::  +join
+++  join                                              ::  join cords w/ sep
+  |=  [sep=@t hot=(list @t)]
   ^-  @t
   =|  out=(list @t)
   ?>  ?=(^ hot)
   |-  ^-  @t
   ?~  t.hot
     (rap 3 [i.hot out])
-  $(out ['.' i.hot out], hot t.hot)
+  $(out [sep i.hot out], hot t.hot)
 ::
 :::: acme api response json reparsers
 ::
@@ -877,7 +877,7 @@
     :-  %a
     %+  turn
       dom.rod
-    |=(a=turf [%o (my type+s+'dns' value+s+(en-host a) ~)])
+    |=(a=turf [%o (my type+s+'dns' value+s+(join '.' a) ~)])
   ==
 ::
 ++  authorize
