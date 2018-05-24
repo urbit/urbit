@@ -8,7 +8,7 @@
 |%
 ::
 ++  test-runner
-  :>  run all tests in {a} with a filter.
+  ::  run all tests in {a} with a filter.
   =|  pax=path
   |=  [filter=path [defer=? eny=@uvJ] a=tests:tester]
   ^-  tang
@@ -31,7 +31,7 @@
   ==
 ::
 ++  run-test
-  :>  executes an individual test.
+  ::  executes an individual test.
   |=  [pax=path eny=@uvJ test=$-(@uvJ (list tank))]
   ^-  tang
   =+  name=(spud (flop pax))
@@ -58,7 +58,7 @@
   ==
 ::
 ++  match-filter
-  :>  checks to see if {name} matches the head of {filter}.
+  ::  checks to see if {name} matches the head of {filter}.
   |=  [filter=path name=term]
   ^-  [? path]
   ?~  filter

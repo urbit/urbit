@@ -6,10 +6,10 @@
 ::
 |_  act/action:hall
 ::
-++  grab                                                ::>  convert from
+++  grab                                                :::  convert from
   |%
-  ++  noun  action:hall                                 ::<  from %noun
-  ++  json                                              ::>  from %json
+  ++  noun  action:hall                                 :::  from %noun
+  ++  json                                              :::  from %json
     =>  [. dejs:hall-json]  ::TODO  =,
     =,  dejs-soft:format
     |=  a/json
@@ -37,13 +37,13 @@
     ==
   --
 ::
-++  grow                                                ::>  convert to
+++  grow                                                :::  convert to
   |%
-  ++  json                                              ::>  to %json
+  ++  json                                              :::  to %json
     =>  [. enjs:hall-json]  ::TODO  =,
     =,  enjs:format
     %+  frond  -.act
-    ::>  only %convey has just a single piece of data.
+    :::  only %convey has just a single piece of data.
     ?:  ?=($convey -.act)  a+(turn tos.act thot)
     %-  pairs
     ?-  -.act

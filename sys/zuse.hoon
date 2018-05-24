@@ -35,9 +35,9 @@
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
 |%
-:>  #  %misc
-:>
-:>  miscellaneous systems types
+::  #  %misc
+::
+::  miscellaneous systems types
 +|
 ++  ares  (unit {p/term q/(list tank)})                 ::  possible error
 ++  coop  (unit ares)                                   ::  possible error
@@ -2966,12 +2966,12 @@
     ::  core
     ::
     ++  hash
-      :>  per:  permutation function with configurable width.
-      :>  pad:  padding function.
-      :>  rat:  bitrate, size in bits of blocks to operate on.
-      :>  cap:  capacity, bits of sponge padding.
-      :>  out:  length of desired output, in bits.
-      :>  inp:  input to hash.
+      ::  per:  permutation function with configurable width.
+      ::  pad:  padding function.
+      ::  rat:  bitrate, size in bits of blocks to operate on.
+      ::  cap:  capacity, bits of sponge padding.
+      ::  out:  length of desired output, in bits.
+      ::  inp:  input to hash.
       |=  $:  per=$-(@ud $-(@ @))
               pad=$-([octs @ud] octs)
               rat=@ud
@@ -2992,7 +2992,7 @@
     ::      be done is updating the way this padding
     ::      function works. (and also "octs" -> "bits")
     ++  multirate-padding
-      :>  dsb:  domain separation byte, reverse bit order.
+      ::  dsb:  domain separation byte, reverse bit order.
       |=  dsb=@ux
       ?>  (lte dsb 0xff)
       |=  [inp=octs mut=@ud]
@@ -3007,12 +3007,12 @@
       (cat 3 (con (lsh 3 pal dsb) 0x80) q.inp)
     ::
     ++  sponge
-      :>  sponge construction
+      ::  sponge construction
       ::
-      :>  preperm:  permutation function with configurable width.
-      :>  padding:  padding function.
-      :>  bitrate:  size of blocks to operate on.
-      :>  capacity:  sponge padding.
+      ::  preperm:  permutation function with configurable width.
+      ::  padding:  padding function.
+      ::  bitrate:  size of blocks to operate on.
+      ::  capacity:  sponge padding.
       |=  $:  preperm=$-(@ud $-(@ @))
               padding=$-([octs @ud] octs)
               bitrate=@ud
@@ -3067,7 +3067,7 @@
         $(res res, state (permute state))
       ::
       ++  bytes-to-lanes
-        :>  flip byte order in blocks of 8 bytes.
+        ::  flip byte order in blocks of 8 bytes.
         |=  a=@
         %+  can  6
         %+  turn  (rip 6 a)
@@ -3076,7 +3076,7 @@
         (lsh 3 (sub 8 (met 3 b)) (swp 3 b))
       ::
       ++  lanes-to-bytes
-        :>  unflip byte order in blocks of 8 bytes.
+        ::  unflip byte order in blocks of 8 bytes.
         |=  a=@
         %+  can  6
         %+  turn
@@ -3091,7 +3091,7 @@
       --
     ::
     ++  keccak-f
-      :>  keccak permutation function
+      ::  keccak permutation function
       |=  [width=@ud]
       ::  assert valid blockwidth.
       ?>  =-  (~(has in -) width)
@@ -3174,13 +3174,13 @@
         $(round +(round))
       ::
       ++  get-lane
-        :>  get the lane with coordinates
+        ::  get the lane with coordinates
         |=  [x=@ud y=@ud a=@]
         =+  i=(add x (mul size y))
         (get-word i lanes a)
       ::
       ++  get-word
-        :>  get word {n} from atom {a} of {m} words.
+        ::  get word {n} from atom {a} of {m} words.
         |=  [n=@ud m=@ud a=@]
         (cut lane-bloq [(sub m +((mod n m))) 1] a)
       ::

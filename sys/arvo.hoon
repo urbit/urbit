@@ -607,7 +607,7 @@
   =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
   ^=  res  %-  mule  |.
   ?:  =(%$ lal.fav)
-    ::  ~&  [%tang pax.fav `@p`(mug txt.fav)]
+    ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
     +>.^$(bud vax)
@@ -615,14 +615,14 @@
       q.niz
     |-  ^+  q.niz
     ?~  q.niz
-      ::  ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
       =+  vin=(vint lal.fav vil bud pax.fav txt.fav)
       ?~  vin
         q.niz
       [[lal.fav q.sew:u.vin] q.niz]
     ?.  =(lal.fav p.i.q.niz)
       [i.q.niz $(q.niz t.q.niz)]
-      ::  ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
     :_  t.q.niz
     :-  p.i.q.niz
     q.sew:(ruck:(vent lal.fav vil bud [p.niz q.i.q.niz]) pax.fav txt.fav)

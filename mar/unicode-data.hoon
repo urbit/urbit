@@ -4,7 +4,7 @@
 ::
 |_  all/(list line:unicode-data)
 ++  grab
-  :>  converts from mark to unicode-data.
+  ::  converts from mark to unicode-data.
   |%
   ++  mime  |=([* a=octs] (txt (to-wain q.a)))     ::  XX mark translation
   ++  txt
@@ -16,7 +16,7 @@
         ?~  b  ~
         `(rash b line)
     ::
-    :>  parses a single character information line of the unicode data file.
+    ::  parses a single character information line of the unicode data file.
     ++  line
       ;~  (glue sem)
         hex                       :: code/@c        codepoint in hex format
@@ -40,18 +40,18 @@
         (punt hex)       :: title/(unit @c)   titlecase mapping codepoint
       ==
     ::
-    :>  parses a single name or comment string.
+    ::  parses a single name or comment string.
     ++  name-string
       %+  cook
         |=(a=tape a)
       (star ;~(less sem prn))
     ::
-    :>  parses a unicode general category abbreviation to symbol
+    ::  parses a unicode general category abbreviation to symbol
     ++  general-category
       %+  sear  (soft general:unicode-data)
       :(cook crip cass ;~(plug hig low (easy ~)))
     ::
-    :>  parses a bidirectional category abbreviation to symbol.
+    ::  parses a bidirectional category abbreviation to symbol.
     ++  bidi-category
       %+  sear  (soft bidi:unicode-data)
       :(cook crip cass (star hig))

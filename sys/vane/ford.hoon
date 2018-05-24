@@ -2,6 +2,7 @@
 ::  ::  %ford, new execution control
 !?  143
 ::::
+!:
 |=  pit=vase
 =,  ford
 =,  format
@@ -151,10 +152,10 @@
     $(liz t.liz, a (put k i.liz))
   ::
   ++  downstream-dents
-    :>    obtain all dents that depend on any of the dents in the sample.
-    :>
-    :>  traverses the nozzle. product does not include the supplied dents
-    :>  themselves.
+    ::    obtain all dents that depend on any of the dents in the sample.
+    ::
+    ::  traverses the nozzle. product does not include the supplied dents
+    ::  themselves.
     |=  des=(set dent)  ^-  (set dent)
     %-  ~(rep in des)
     |=  [den=dent dos=(set dent)]  ^+  des
@@ -163,10 +164,10 @@
     (~(uni in dos) ^$(des (~(get ju sup.a) den)))
   ::
   ++  upstream-dents
-    :>    obtain all dents upon which any of the dents in the sample depend.
-    :>
-    :>  traverses the nozzle, gathering all direct and indirect dependencies.
-    :>  dents in the sample may also appear in the product.
+    ::    obtain all dents upon which any of the dents in the sample depend.
+    ::
+    ::  traverses the nozzle, gathering all direct and indirect dependencies.
+    ::  dents in the sample may also appear in the product.
     |=  arg=(set dent)  ^-  (set dent)
     =/  des  arg
     |-  ^-  (set dent)
@@ -176,7 +177,7 @@
     (~(uni in dos) ^$(des (~(get ju sub.a) den)))
   ::
   ++  beam-dents-in-dir
-    :>  find all %beam dents inside the folder {bem} with care {ren}.
+    ::  find all %beam dents inside the folder {bem} with care {ren}.
     |=  folder=[%beam bem=beam ren=care:clay]
     ^-  (set dent)
     ?>  =(%z ren.folder)                                ::  only %z supported
@@ -198,9 +199,9 @@
   --
 ::
 ++  pin-dephash
-  :>    compute the hash of a set of dents and store it in a deps.
-  :>
-  :>  produces a pair of the hash and mutated deps.
+  ::    compute the hash of a set of dents and store it in a deps.
+  ::
+  ::  produces a pair of the hash and mutated deps.
   |=  [sep=(set dent) deh=deps]
   ^+  [*@uvH deh]
   ?:  =(~ sep)  [0v0 deh]
@@ -721,7 +722,7 @@
     ==
   ::
   ++  dent-has-subscribers
-    :>  does the dent or any dent that depends on it have subscribers?
+    ::  does the dent or any dent that depends on it have subscribers?
     |=  den/dent
     ^-  ?
     ?|  (~(any in (~(get ju bak.deh.bay) den)) ~(has by sup.bay))
@@ -834,7 +835,7 @@
       (~(uni in hashes) (~(get ju bak.deh.bay) den))
     --
   ::
-  :>  #  TODO name this chapter
+  ::  #  TODO name this chapter
   +|
   ::
   ++  dents-to-rebuild
@@ -845,7 +846,7 @@
     [new downstreams]
   ::
   ++  on-update
-    :>  {bem} is at the old revision, {bek} is at the new revision.
+    ::  {bem} is at the old revision, {bek} is at the new revision.
     |=  [new=(set dent) downstreams=(set dent) bek=beak]
     ^+  [*(set dent) this]
     =/  todo  ~(tap in downstreams)
@@ -855,15 +856,15 @@
     [changed (promote-unchanged unchanged bek)]
   ::
   ++  rebuild  ::  !.  ::  TODO reinstate
-    :>    rebuild all builds whose dependencies have a new %clay revision.
-    :>
-    :>  {todo} is the set of dents that need to be built at the new beak {bek}.
-    :>  produces a pair of the unchanged builds (which should be promoted)
-    :>  and the mutated ++za core.
-    :>
-    :>  tries to avoid rebuilding by using results of builds performed at
-    :>  the previous %clay revision, if they exist and their dependencies
-    :>  haven't changed.
+    ::    rebuild all builds whose dependencies have a new %clay revision.
+    ::
+    ::  {todo} is the set of dents that need to be built at the new beak {bek}.
+    ::  produces a pair of the unchanged builds (which should be promoted)
+    ::  and the mutated ++za core.
+    ::
+    ::  tries to avoid rebuilding by using results of builds performed at
+    ::  the previous %clay revision, if they exist and their dependencies
+    ::  haven't changed.
     =|  unchanged/(set dent)
     |=  {bek/beak new/(set dent) todo/(list dent)}
     ^+  [[new unchanged] this]
@@ -967,7 +968,7 @@
     ==
   ::
   ++  move-to
-    :>  replace any beaks in dent with {bek}, curried.
+    ::  replace any beaks in dent with {bek}, curried.
     |=  bek=beak
     |=  den=dent  ^+  den
     =?  den  ?=(%boil -.den)  den(-.bom bek)
@@ -1058,7 +1059,7 @@
         [%f %exec our ~ bek %cast ((hard mark) -.s.bem) %$ cag]
       ::
       ++  take-made                                     ::  %g scry translated
-        :>  %gall scry response, mark-translated by %ford
+        ::  %gall scry response, mark-translated by %ford
         |=  {{van/vane ren/care:clay bem/beam} dep/@uvH gag/gage}  ::  XX  depends?
         ^+  ..zo
         ?>  ?=($g van)
@@ -1085,7 +1086,7 @@
     ::
     ::+|
     ::
-    ::> Exec proper
+    ::: Exec proper
     ::
     ++  tabl-run                                        ::  apply to all elems
       |=  fun/(burg cage gage)
@@ -1677,7 +1678,7 @@
       ::     ?+  -.kas  `term`-.kas
       ::       ^  %cell:bo
       ::       $bake  [-.kas p.kas (en-beam r.kas) ~(rent co (abbrev q.kas))]
-      ::       $corp  [-.kas (en-beam p.kas)]
+      ::       $core  [-.kas (en-beam p.kas)]
       ::     ==
       :: ~?  !=(%$ pre)  [dyv `term`(cat 3 %make (fil 3 dyv ' ')) pre]
       :: =-  ~?  !=(%$ pre)  [dyv `term`(cat 3 %made (fil 3 dyv ' ')) pre]  -
@@ -1757,12 +1758,12 @@
           (run-marks cof i.wuy t.wuy q.cay)
         (with:bo |=(vax/vase [%& p.kas vax]))
       ::
-          $corp
+          $core
         %+  admit:bo  |.(leaf+"ford: core {<(en-beam p.kas)>}")
         ::  code runtime behaviour is frequently affected by marks
         ::  TODO: track this more formally
         %+  add-dep:bo  [%beam [bek /mar] %z]
-        (tug:bo (load-core cof p.kas) (with:bo |=(a/vase [%& %corp a])))
+        (tug:bo (load-core cof p.kas) (with:bo |=(a/vase [%& %core a])))
       ::
           $diff
         %+  admit:bo
@@ -1890,12 +1891,12 @@
           ?:  =(~ rop)  
             [%$ 1] 
           :+  %brcn  ~
-          =-  [[0 -] ~ ~]
+          =-  [[0 ~ -] ~ ~]
           (~(run by rop) |=({^ a/hoon} a))
         ?:  =(~ bil) 
           [%$ 1] 
         :+  %brcn  ~
-        =-  [[0 -] ~ ~]
+        =-  [[0 ~ -] ~ ~]
         (~(run by bil) |=({^ a/hoon} a))
       ::
       ++  abut                                          ::  generate
@@ -2169,10 +2170,10 @@
             :_  sel
             ^-  (map term hoon)
             [[p.n.all [%tssg boy.sel]] lef rig]
-          |:  $:{cof/cafe mav/(map term (pair what foot)) sel/_..wilt}
+          |:  $:{cof/cafe mav/(map term hoon) sel/_..wilt}
           ?~  mav
             (err:bo cof [%leaf "source missing: {<(en-beam p.hop)>}"]~)
-          (new:bo cof sel(boy [[%brcn ~ [[0 mav] ~ ~]] boy]))
+          (new:bo cof sel(boy [[%brcn ~ [[0 ~ mav] ~ ~]] boy]))
         ==
       --
     ::
