@@ -51,11 +51,7 @@
       eth=state-ethereum                                ::  eth-specific state
   ==                                                    ::
 ++  state-relative                                      ::  urbit metadata
-  $:  $=  car                                           ::  secure channels
-        %+  map  ship                                   ::  partner
-        $:  yen/(set duct)                              ::  trackers
-        ==                                              ::
-      $=  bal                                           ::  balance sheet
+  $:  $=  bal                                           ::  balance sheet
         $:  yen/(set duct)                              ::  trackers
         ==                                              ::
       $=  own                                           ::  vault
@@ -942,9 +938,6 @@
         yen          (~(del in yen) hen)
         yen.bal.sub  (~(del in yen.bal.sub) hen)
         yen.own.sub  (~(del in yen.own.sub) hen)
-        car.sub      %-  ~(run by car.sub)
-                     |=  yen=(set duct)
-                     (~(del in yen) hen)
         listeners.eth  (~(del in listeners.eth) hen)
       ==
     ::
@@ -1029,9 +1022,7 @@
       ::  the ++su core handles all derived state,
       ::  subscriptions, and actions.
       ::
-      ::  ++feed:su registers subscriptions, and also
-      ::  drives certificate propagation when a %veil
-      ::  (secure channel) subscription is created.
+      ::  ++feed:su registers subscriptions.
       ::
       ::  ++feel:su checks if a ++change should notify
       ::  any subscribers.
@@ -1167,16 +1158,12 @@
     |=  $:  ::  rex: promise from
             ::  pal: promise to
             ::  del: change to existing
-            ::  bur: changes to symmetric keys
             ::
             rex/ship
             pal/ship
             del/bump
         ==
     ^+  +>
-    =*  bur  ?|  (~(exists up mor.del) %urban)
-                 (~(exists up les.del) %urban)
-             ==
     ::  ignore empty delta; keep secrets out of metadata
     ::
     ?:  =([~ ~] del)  +>
@@ -1189,24 +1176,12 @@
       ::
       ::  track liabilities
       ::
-      =.  +>  (vest:feel pal %& del)
-      ::
-      ::  track secure channels
-      ::
-      ?.  bur  +>
-      ::TODO  ???
-      !!  :: (veil:feel pal)
+      (vest:feel pal %& del)
     ::
     ::  track private keys
     ::
-    =?  +>  (~(exists up mor.del) %jewel)
-      vein:feel
-    ::
-    ::  track changes in secure channels
-    ::
-    ?.  bur  +>
-    ::TODO  ???
-    !!  :: (veil:feel rex)
+    ?.  (~(exists up mor.del) %jewel)  +>
+    vein:feel
   --
 ::                                                      ::  ++ur
 ::::                    ## absolute^heavy               ::  objective engine
