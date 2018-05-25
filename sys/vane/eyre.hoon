@@ -149,7 +149,8 @@
       {$poll p/{i/@uvH t/(list @uvH)}}
       {$spur p/spur}
       {$subs p/?($put $delt) q/{dock $json wire path}}
-      {$view p/ixor q/{$~ u/@ud}}
+      ::{$view p/ixor q/{$~ u/@ud}}
+      {$view p/ixor q/{$~ u/@ud} r/(unit @dr)}
   ==
 ::
 ++  perk-auth                                           ::  parsed auth
@@ -1283,9 +1284,15 @@
           (turn dep |=({a/@tas $~} (slav %uv a)))
         ::
             $of
-          :+  %view  ?>(?=({@ $~} but) i.but)
-          ?>  ?=({{$poll @} $~} quy)     ::  XX eventsource
+          :^  %view  
+          ?>  ?=({@ $~} but)
+          i.but
+          ?>  ?=({{$poll @} *} quy)     ::  XX eventsource
           [~ (rash q.i.quy dem)]
+          ?:  ?=({{$t @} $~} +.quy)
+            =/  s  (rash q.i.t.quy dem)
+            `(yule [0 0 0 s ~])
+          ~
         ::
             $to
           =+  ^-  dir/{p/ship q/term r/mark}
@@ -1434,7 +1441,7 @@
       ::
           $view
         ~|  lost-ixor+p.hem
-        [%| ((teba poll:(ire-ix p.hem)) u.q.hem)]
+        [%| ((teba poll:(ire-ix p.hem)) u.q.hem r.hem)]
       ==
     ::
     ++  process-auth
@@ -1788,12 +1795,15 @@
     ::
     ++  pop-duct  =^(ned med ~(get to med) abet(hen ned))
     ++  poll
-      |=  a/@u  ^+  ..ix
+      |=  [a/@u t=(unit @dr)]
+      ^+  ..ix
       =<  abet
       =.  ..poll  refresh
       ?:  =(a p.eve)
         =.  ..poll  poll-rest
-        =.  era  (add ~s30 now)
+        =.  era  
+          ?~  t  (add ~s30 now)
+          (add u.t now)
         =.  lyv  (~(put by lyv) hen [%poll ire])
         pass-wait(ude [~ hen &])
       ?:  (gth a p.eve)  ~|(seq-high+cur=p.eve !!)
