@@ -1,13 +1,20 @@
 /+  tester
 =,  eyre
 ::
-::::  libraries
+::::  %zuse additions
 ::
-|%                                                      ::  +base64
-++  base64                                              ::  [pad? url-safe?]
-  =+  [pad=& url=|]                                     ::
-  |%                                                    ::  +en:base64
-  ++  en                                                ::  encode base64
+|%
+::  |base64: flexible base64 encoding for little-endian atoms
+::
+++  base64
+  ::  pad: include padding when encoding, require when decoding
+  ::  url: use url-safe characters '-' for '+' and '_' for '/'
+  ::
+  =+  [pad=& url=|]
+  |%
+  ::  +en:base64: encode atom to base64 cord
+  ::
+  ++  en
     |=  tig=@
     ^-  cord
     =/  poc  (~(dif fo 3) 0 (met 3 tig))
@@ -30,11 +37,13 @@
         (cut 3 [(cut 0 [18 6] d) 1] cha)
         $(pad (rsh 3 3 pad))
     ==
-  ::                                                    ::  +de:base64
-  ++  de                                                ::  decode base64
+  ::  +de:base64: decode base64 cord to (unit @)
+  ::
+  ++  de
     |=  a=cord
     ^-  (unit @)
     %+  rush  a
+    :: XX refactor and expose parser combinator
     %+  cook  (cury swp 3)
     %+  bass  64
     %+  cook  welp
@@ -53,29 +62,72 @@
       (cold (reap b %0) (easy ~))
     ==
   --
+::  +en-base64url: url-safe base64 encoding, without padding
 ::
-++  en-base64url                                        ::  padding omitted
-  ~(en base64 | &)                                      ::  per rfc7515
+++  en-base64url
+  ~(en base64 | &)
+::  +de-base64url: url-safe base64 decoding, without padding
 ::
 ++  de-base64url
   ~(de base64 | &)
 ::
+::::  %/lib/pkcs
+::
+::  |asn1: small selection of types and constants for ASN.1
+::
+::  a minimal representation of some basic ASN.1 types,
+::  created to support PKCS keys, digests, and cert requests
+::
 ++  asn1
-  |%                                                    ::  +spec:asn1
-  +=  spec                                              ::
-    $%  [%int p=@u]                                     ::  unsigned
-        [%bit p=@ux]                                    ::  pad yerself
-        [%oct p=@ux]                                    ::
-        [%nul ~]                                        ::
-        [%obj p=@ux]                                    ::  pack yerself
-        [%seq p=(list spec)]                            ::
-        [%set p=(list spec)]                            ::  sort yerself
+  |%
+  ::  +spec:asn1: minimal representations of basic ASN.1 types
+  +=  spec
+    $%  ::  %int: arbitrary-sized, unsigned integers
+        ::
+        ::  unsigned integers, represented as having a positive sign.
+        ::  negative integers would be two's complement in DER,
+        ::  but we don't need them.
+        ::
+        [%int p=@u]
+        ::  %bit: very minimal support for bit strings
+        ::
+        ::  specifically, values must already be padded and byte-aligned.
+        ::  note that leading zeros are significant in ASN.1 bit strings,
+        ::  so atomic encoding would be insufficient for complete support.
+        ::
+        [%bit p=@ux]
+        ::  %oct: octets in little-endian byte order
+        ::
+        [%oct p=@ux]
+        ::  %nul: fully supported!
+        ::
+        [%nul ~]
+        ::  %obj: object identifiers, pre-packed
+        ::
+        ::  object identifiers are technically a sequence of integers,
+        ::  represented here in their already-encoded form.
+        ::
+        [%obj p=@ux]
+        ::  %seq: a list of specs
+        ::
+        [%seq p=(list spec)]
+        ::  %set: a logical set of specs
+        ::
+        ::  implemented here as a list for the sake of simplicity.
+        ::  encodings must dedupe and sort the list appropriately
+        ::
+        [%set p=(list spec)]
+        ::  %con: context-specific
+        ::
+        ::  here be dragons
+        ::
         $:  %con                                        ::  construct yerself
             p=[p=? q=@udC]                              ::    [primitive? tag]
             q=(list @)                                  ::    bytes
     ==  ==
-  ::                                                    ::  +obj:asn1
-  ++  obj                                               ::  oid constants
+  ::  |obj:asn1: constant object ids, pre-encoded
+  ::
+  ++  obj
     |%                                                ::    rfc4055
     ++  sha-256      0x1.0204.0365.0148.8660          ::  2.16.840.1.101.3.4.2.1
     ++  rsa          0x1.0101.0df7.8648.862a          ::  1.2.840.113549.1.1.1
@@ -86,10 +138,13 @@
     ++  sub-alt      0x11.1d55                        ::  2.5.29.17
     --
   --
-::                                                      ::  +der
-++  der                                                 ::  DER ASN.1
-  |%                                                    ::  +en:der
-  ++  en                                                ::  encode to atom
+::  |der: distinguished encoding rules for ASN.1
+::
+++  der
+  |%
+  ::  +en:der: encode +spec:asn1 to atom
+  ::
+  ++  en
     =<  |=(a=spec:asn1 `@ux`(rep 3 ~(ren raw a)))
     |%                                                  ::  +raw:en:der
     ++  raw                                             ::  encode to bytes
@@ -149,12 +204,15 @@
         [(con 0x80 (met 3 b)) (flop (rip 3 b))]
       --
     --
-  ::                                                    ::  +de:der
-  ++  de                                                ::  decode to spec
+  ::  +de:der: decode atom to +spec:asn1
+  ::
+  ++  de
     =<  |=(a=@ `(unit spec:asn1)`(rush a decode))
-    |%                                                  ::  +decode:de:der
-    ++  decode                                          ::  DER parser
-      %+  cook  |*(a=* `spec:asn1`a)                    ::  XX rename
+    |%
+    ::  +decode:de:der: DER parser combinator XX rename
+    ::
+    ++  decode
+      %+  cook  |*(a=* `spec:asn1`a)   ::  XX fix
       :: ^-  $-(nail (like spec:asn1))
       ;~  pose
         (stag %int (bass 256 (sear int ;~(pfix (tag 2) till))))
@@ -166,30 +224,37 @@
         (stag %set (sear recur ;~(pfix (tag 49) till)))
         (stag %con ;~(plug (sear context next) till))
       ==
-    ::                                                  ::  +tag:de:der
-    ++  tag                                             ::  tag byte
+    ::  +tag:de:der: parse tag byte
+    ::
+    ++  tag
       |=(a=@ (just a))
-    ::                                                  ::  +int:de:der
-    ++  int                                             ::  @u big-endian
+    ::  +int:de:der: sear unsigned big-endian bytes
+    ::
+    ++  int
       |=  a=(list @)
       ^-  (unit (list @))
       ?~  a  ~
       ?:  ?=([@ ~] a)  `a
       ?.  =(0 i.a)  `a
       ?.((gth i.t.a 127) ~ `t.a)
+    ::  +recur:de:der: parse bytes for a list of +spec:asn1
     ::
     ++  recur
       |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
-    ::                                                  ::  +context:de:der
-    ++  context                                         ::  context-specific tag
+    ::  +context:de:der: decode context-specific tag byte
+    ::
+    ++  context
       |=  a=@
       ^-  (unit [? @udC])
       ?.  =(1 (cut 0 [7 1] a))  ~
       :+  ~
         =(1 (cut 0 [5 1] a))
       (dis 0x1f a)
-    ::                                                  ::  +till:de:der
-    ++  till                                            ::  len-prefixed bytes
+    ::  +till:de:der: parser combinator for len-prefixed bytes
+    ::
+    ::  advance until
+    ::
+    ++  till
       |=  tub/nail
       ^-  (like (list @D))
       ?~  q.tub
@@ -211,19 +276,28 @@
       [zaf `[zuf zaf (slag (add nex len) t.q.tub)]]
     --
   --
-::                                                      ::  +rsa
-++  rsa                                                 ::  textbook RSA
-  |%                                                    ::  unpadded!
+::  |rsa: primitive, textbook RSA
+::
+::  unpadded, unsafe, unsuitable for encryption!
+::
+++  rsa
+  |%
+  ::  +key:rsa: rsa public or private key
+  ::
   +=  key
-    $:  pub=[n=@ux e=@ux]
+    $:  ::  pub:  public parameters (n=modulus, e=pub-exponent)
+        pub=[n=@ux e=@ux]
+        ::  sek:  secret parameters (d=private-exponent, p/q=primes)
         sek=(unit [d=@ux p=@ux q=@ux])
     ==
-  ::                                                    ::  +elcm:rsa
-  ++  elcm                                              ::  carmichael totient
+  ::  +elcm:rsa: carmichael totient
+  ::
+  ++  elcm
     |=  [a=@ b=@]
     (div (mul a b) d:(egcd a b))
-  ::                                                    ::  +new-key:rsa
-  ++  new-key                                           ::
+  ::  +new-key:rsa
+  ::
+  ++  new-key
     =/  e  `@ux`65.537
     |=  [wid=@ eny=@]
     ^-  key
@@ -233,13 +307,19 @@
     =/  n=@ux  (mul p q)
     =/  d=@ux  (~(inv fo (elcm (dec p) (dec q))) e)
     [[n e] `[d p q]]
-  ::                                                    ::  +en:rsa
-  ++  en                                                ::  unpadded RSA encrypt
+  ::  +en:rsa: primitive RSA encryption
+  ::
+  ::  ciphertext = message^e (mod n)
+  ::
+  ++  en
     |=  [m=@ k=key]
     ~|  %rsa-len
     ?>  (lte (met 0 m) (met 0 n.pub.k))
     (~(exp fo n.pub.k) e.pub.k m)
-  ::                                                    ::  +de:rsa
+  ::  +de:rsa: primitive RSA decryption
+  ::
+  ::  message = ciphertext^d (mod e)
+  ::
   ++  de                                                ::  unpadded RSA decrypt
     |=  [m=@ k=key]
     :: XX assert rsa-len here too?
@@ -248,11 +328,15 @@
     =/  fu  (fu:number p.u.sek.k q.u.sek.k)
     (out.fu (exp.fu d.u.sek.k (sit.fu m)))
   --
-::                                                      ::  +rs256
-++  rs256                                               ::  RSA sha-256 digest
+::  +rs256: RSA signatures over a sha-256 digest
+::
+++  rs256
   |_  k=key:rsa
-  ::                                                    ::  +emsa:rs256
-  ++  emsa                                              ::  EMSA-PKCS1-v1_5
+  ::  +emsa:rs256: message digest
+  ::
+  ::  padded, DER encoded sha-256 hash (EMSA-PKCS1-v1_5)
+  ::
+  ++  emsa
     |=  m=@
     =/  emlen  (met 3 n.pub.k)
     =/  pec=spec:asn1
@@ -267,17 +351,31 @@
     =/  ps  (reap (sub emlen (add 3 tlen)) 0xff)
     %+  rep  3
     (flop (weld [0x0 0x1 ps] [0x0 t]))  :: note: big-endian
-  ::                                                    ::  +sign:rs256
-  ++  sign  |=(m=@ (de:rsa (emsa m) k))                 ::
-  ::                                                    ::  +verify:rs256
-  ++  verify                                            ::
+  ::  +sign:rs256: sign message
+  ::
+  ::  an RSA signature is the primitive decryption of the message hash
+  ::
+  ++  sign
+    |=(m=@ (de:rsa (emsa m) k))
+  ::  +verify:rs256: verify signature
+  ::
+  ::  RSA signature verification confirms that the primitive encryption
+  ::  of the signature matches the message hash
+  ::
+  ++  verify
     |=  [s=@ m=@]
     =((emsa m) (en:rsa s k))
   --
-::                                                      ::  +pem
-++  pem                                                 ::  rfc7468
-  |%                                                    ::  +en:pem
-  ++  en                                                ::  PEM encode
+::  |pem: generic PEM implementation (rfc7468)
+::
+::  PEM is the base64 encoding of DER encoded data, with BEGIN and
+::  END labels indicating some type.
+::
+++  pem
+  |%
+  ::  +en:pem: PEM encode
+  ::
+  ++  en
     |=  [lab=@t der=@ux]
     ^-  wain
     :: XX validate label?
@@ -287,8 +385,9 @@
     ?~  a
       [(rap 3 ['-----END ' lab '-----' ~]) ~]
     [(end 3 64 a) $(a (rsh 3 64 a))]
-  ::                                                     ::  +de:pem
-  ++  de                                                 ::  PEM decode
+  ::  +de:pem: PEM decode
+  ::
+  ++  de
     |=  [lab=@t mep=wain]
     ^-  (unit @ux)
     =/  a  (sub (lent mep) 2)
@@ -298,18 +397,24 @@
     ?.  =((rap 3 ['-----END ' lab '-----' ~]) (snag a t.mep))  ~
     (de:base64 (rap 3 (scag a t.mep)))
   --
-::                                                      ::  +pkcs1
-++  pkcs1                                               ::  RSA asym crypto
-  |%                                                    ::  rfc3447
+::  |pkcs1: RSA asymmetric cryptography (rfc3447)
+::
+++  pkcs1
+  |%
+  ::  |spec:pkcs1: ASN.1 specs for RSA keys
+  ::
   ++  spec
     |%
-    ++  pass                                            ::  +pass:spec:pkcs1
-      |=  k=key:rsa                                     ::  public key ASN.1
+    ::  +pass:spec:pkcs1: public key ASN.1
+    ::
+    ++  pass
+      |=  k=key:rsa
       ^-  spec:asn1
       [%seq [%int n.pub.k] [%int e.pub.k] ~]
+    ::  +ring:spec:pkcs1: private key ASN.1
     ::
-    ++  ring                                            ::  +ring:spec:pkcs1
-      |=  k=key:rsa                                     ::  private key ASN.1
+    ++  ring
+      |=  k=key:rsa
       ^-  spec:asn1
       ~|  %rsa-need-ring
       ?>  ?=(^ sek.k)
@@ -325,16 +430,27 @@
           [%int (~(inv fo p.u.sek.k) q.u.sek.k)]
       ==
     --
-  ::                                                    ::  +der:pkcs1
-  ++  der                                               ::
-    |%                                                  ::  +en:der:pkcs1
-    ++  en                                              ::
+  ::  |der:pkcs1: DER for RSA keys
+  ::
+  ++  der
+    |%
+    ::  |en:der:pkcs1: DER encoding for RSA keys
+    ::
+    ++  en
       |%
+      ::  +pass:en:der:pkcs1: DER encode public key
+      ::
       ++  pass  |=(k=key:rsa `@ux`(en:^der (pass:spec k)))
+      ::  +ring:en:der:pkcs1: DER encode private key
+      ::
       ++  ring  |=(k=key:rsa `@ux`(en:^der (ring:spec k)))
       --
-    ++  de                                              ::  +de:der:pkcs1
+    ::  |de:der:pkcs1: DER decoding for RSA keys
+    ::
+    ++  de
       |%
+      ::  +pass:de:der:pkcs1: DER decode public key
+      ::
       ++  pass
         |=  a=@
         ^-  (unit key:rsa)
@@ -345,6 +461,7 @@
         =*  n  p.i.p.u.b
         =*  e  p.i.t.p.u.b
         `[[n e] ~]
+      ::  +ring:de:der:pkcs1: DER decode private key
       ::
       ++  ring
         |=  a=@
@@ -370,47 +487,80 @@
         `[[n e] `[d p q]]
       --
     --
+  ::  |pem:pkcs1: PEM for RSA keys
   ::
   ++  pem
     |%
-    ++  en                                              ::  +en:pem:pkcs1
+    ::  |en:pem:pkcs1: PEM encoding for RSA keys
+    ::
+    ++  en
       |%
+      ::  +pass:en:pem:pkcs1: PEM encode public key
+      ::
       ++  pass  |=(k=key:rsa (en:^pem 'RSA PUBLIC KEY' (pass:en:der k)))
+      ::  +ring:en:pem:pkcs1: PEM encode private key
+      ::
       ++  ring  |=(k=key:rsa (en:^pem 'RSA PRIVATE KEY' (ring:en:der k)))
       --
-    ++  de                                              ::  +de:pem:pkcs1
+    ::  |de:pem:pkcs1: PEM decoding for RSA keys
+    ::
+    ++  de
       |%
+      ::  +pass:de:pem:pkcs1: PEM decode public key
+      ::
       ++  pass  |=(mep=wain (biff (de:^pem 'RSA PUBLIC KEY' mep) pass:de:der))
+      ::  +ring:de:pem:pkcs1: PEM decode private key
+      ::
       ++  ring  |=(mep=wain (biff (de:^pem 'RSA PRIVATE KEY' mep) ring:de:der))
       --
     --
   --
-::                                                      ::  +pkcs8
-++  pkcs8                                               ::  asym crypto
-  |%                                                    ::  rfc5208
+::  |pkcs8: asymmetric cryptography (rfc5208)
+::
+::  only implemented for RSA keys
+::
+++  pkcs8
+  |%
+  ::  |spec:pkcs8: ASN.1 specs for asymmetric keys
+  ::
   ++  spec
-    |%                                                  ::  +pass:spec:pkcs8
-    ++  pass                                            ::  public key
+    |%
+    ::  +pass:spec:pkcs8: public key ASN.1
+    ::
+    ++  pass
       |=  k=key:rsa
       ^-  spec:asn1
       :~  %seq
           [%seq [[%obj rsa:obj:asn1] [%nul ~] ~]]
           [%bit (pass:en:der:pkcs1 k)]
       ==
+    ::  +ring:spec:pkcs8: private key ASN.1
     ::
     ++  ring  !!
     --
-  ::                                                    ::  +der:pkcs8
-  ++  der                                               ::
-    |%                                                  ::  +en:der:pkcs8
-    ++  en                                              ::
+  ::  |der:pkcs8: DER for asymmetric keys
+  ::
+  ++  der
+    |%
+    ::  |en:der:pkcs8: DER encoding for asymmetric keys
+    ::
+    ++  en
       |%
-      ++  pass  |=(k=key:rsa `@ux`(en:^der (pass:spec k)))
-      ++  ring  !! ::|=(k=key:rsa `@ux`(en:^der (ring:spec k)))
+      ::  +pass:en:der:pkcs8: DER encode public key
+      ::
+      ++  pass
+        |=(k=key:rsa `@ux`(en:^der (pass:spec k)))
+      ::  +ring:en:der:pkcs8: DER encode private key
+      ::
+      ++  ring  !!
+        :: |=(k=key:rsa `@ux`(en:^der (ring:spec k)))
       --
-    ::                                                  ::  +de:der:pkcs8
-    ++  de                                              ::
+    ::  |de:der:pkcs8: DER encoding for asymmetric keys
+    ::
+    ++  de
       |%
+      ::  +pass:de:der:pkcs8: DER decode public key
+      ::
       ++  pass
         |=  a=@
         ^-  (unit key:rsa)
@@ -423,43 +573,69 @@
             ==
           ~
         (pass:de:der:pkcs1 p.i.t.p.u.b)
+      ::  +ring:de:der:pkcs8: DER decode private key
       ::
       ++  ring  !!
       --
     --
-  ::                                                    ::  +pem:pkcs8
-  ++  pem                                               ::
-    |%                                                  ::  +en:pem:pkcs8
-    ++  en                                              ::
+  ::  |pem:pkcs8: PEM for asymmetric keys
+  ::
+  ++  pem
+    |%
+    ::  |en:pem:pkcs8: PEM encoding for asymmetric keys
+    ::
+    ++  en
       |%
-      ++  pass  |=(k=key:rsa (en:^pem 'PUBLIC KEY' (pass:en:der k)))
-      ++  ring  !! ::|=(k=key:rsa (en:^pem 'PUBLIC KEY' (ring:en:der k)))
+      ::  +pass:en:pem:pkcs8: PEM encode public key
+      ::
+      ++  pass
+        |=(k=key:rsa (en:^pem 'PUBLIC KEY' (pass:en:der k)))
+      ::  +ring:en:pem:pkcs8: PEM encode private key
+      ::
+      ++  ring  !!
+        :: |=(k=key:rsa (en:^pem 'PUBLIC KEY' (ring:en:der k)))
       --
-    ::                                                  ::  +de:pem:pkcs8
-    ++  de                                              ::
+    ::  |de:pem:pkcs8: PEM decoding for asymmetric keys
+    ::
+    ++  de
       |%
-      ++  pass  |=(mep=wain (biff (de:^pem 'PUBLIC KEY' mep) pass:de:der))
-      ++  ring  !! ::|=(mep=wain (biff (de:^pem 'PRIVATE KEY' mep) ring:de:der))
+      ::  +pass:de:pem:pkcs8: PEM decode public key
+      ::
+      ++  pass
+        |=(mep=wain (biff (de:^pem 'PUBLIC KEY' mep) pass:de:der))
+      ::  +ring:de:pem:pkcs8: PEM decode private key
+      ::
+      ++  ring  !!
+        :: |=(mep=wain (biff (de:^pem 'PRIVATE KEY' mep) ring:de:der))
       --
     --
   --
-::                                                      ::  +pkcs10
-++  pkcs10                                              ::  certificate request
-  =>  |%                                                ::  rfc2986
+::  |pkcs10: certificate signing requests (rfc2986)
+::
+::  only implemented for RSA keys with subject-alternate names
+::
+++  pkcs10
+  =>  |%
+      ::  +csr:  certificate request
+      ::
       +=  csr  [key=key:rsa hot=(list (list @t))]
       --
   |%
+  ::  |spec:pkcs10: ASN.1 specs for certificate signing requests
   ++  spec
-    |%                                                  ::  +host:spec:pkcs10
-    ++  host                                            ::  subject-alt names
+    |%
+    ::  +host:spec:pkcs10: subject-alternate-names
+    ::
+    ++  host
       |=  hot=(list (list @t))
       ^-  spec:asn1
       :-  %seq
       %+  turn  hot
       |=(h=(list @t) [%con [& 2] (rip 3 (join '.' h))])
-    ::                                                  ::  +cert:spec:pkcs10
-    ++  cert                                            ::  cert request info
-      |=  csr                                           ::  XX rename
+    ::  +cert:spec:pkcs10: certificate request info
+    ::
+    ++  cert              ::  XX rename
+      |=  csr
       ^-  spec:asn1
       :~  %seq
           [%int 0]
@@ -475,8 +651,9 @@
                           [%obj sub-alt:obj:asn1]
                           [%oct (en:^der (host hot))]
       ==  ==  ==  ==  ==
-    ::                                                  ::  +sign:spec:pkcs10
-    ++  sign                                            ::  signed request
+    ::  +sign:spec:pkcs10: signed certificate request
+    ::
+    ++  sign
       |=  csr
       ^-  spec:asn1
       =/  cer  (cert key hot)
@@ -486,22 +663,38 @@
           [%bit (swp 3 (~(sign rs256 key) (en:^der cer)))]  :: big-endian
       ==
     --
-  ::                                                    ::  +der:pkcs10
+  ::  |der:pkcs10: DER for certificate signing requests
+  ::
   ++  der
     |%
-    ++  en  |=(a=csr `@ux`(en:^der (sign:spec a)))
+    ::  +en:der:pkcs10: DER encode certificate signing request
+    ::
+    ++  en
+      |=(a=csr `@ux`(en:^der (sign:spec a)))
+    ::  +de:der:pkcs10: DER decode certificate signing request
+    ::
     ++  de  !!
     --
-  ::                                                    ::  +pem:pkcs10
+  ::  |pem:pkcs10: PEM for certificate signing requests
+  ::
   ++  pem
     |%
-    ++  en  |=(a=csr (en:^pem 'CERTIFICATE REQUEST' (en:der a)))
-    ++  de  !! :: |=(mep=wain (biff (de:^pem 'CERTIFICATE REQUEST' mep) de:der))
+    ::  +en:pem:pkcs10: PEM encode certificate signing request
+    ::
+    ++  en
+      |=(a=csr (en:^pem 'CERTIFICATE REQUEST' (en:der a)))
+    ::  +de:pem:pkcs10: PEM decode certificate signing request
+    ::
+    ++  de  !!
+      :: |=(mep=wain (biff (de:^pem 'CERTIFICATE REQUEST' mep) de:der))
     --
   --
-::                                                    ::  +en-json-sort
-++  en-json-sort                                      ::  json w/ sorted keys
-  |^  |=([sor=$-(^ ?) val=json] (apex val sor ""))    ::  XX rename
+::  +en-json-sort: json encoding with sorted object keys
+::
+::  to be included in %zuse, with sorting optional?
+::
+++  en-json-sort                                 ::  XX rename
+  |^  |=([sor=$-(^ ?) val=json] (apex val sor ""))
   ::                                                  ::  ++apex:en-json:html
   ++  apex
     =,  en-json:html
@@ -546,12 +739,22 @@
       ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
     ==
   --
-::                                                      ::  +jwk
-++  jwk                                                 ::  json web keys
-  |%                                                    ::  rfc7517
+::
+::  %/lib/jose
+::
+::  |jwk: json representations of cryptographic keys (rfc7517)
+::
+::  only RSA for now
+::
+++  jwk
+  |%
+  ::  |en:jwk: encoding of json cryptographic keys
+  ::
   ++  en
-    |%                                                  ::  +pass:en:jwk
-    ++  pass                                            ::  encode public key
+    |%
+    ::  +pass:en:jwk: json encode public key
+    ::
+    ++  pass
       |=  k=key:rsa
       ^-  json
       :-  %o  %-  my  :~
@@ -559,8 +762,9 @@
         n+s+(en-base64url (swp 3 n.pub.k))      :: note: big-endian
         e+s+(en-base64url (swp 3 e.pub.k))
       ==
-    ::                                                  ::  +ring:en:jwk
-    ++  ring                                            ::  encode private key
+    ::  +ring:en:jwk: json encode private key
+    ::
+    ++  ring
       |=  k=key:rsa
       ^-  json
       ~|  %rsa-need-ring
@@ -574,8 +778,12 @@
         q+s+(en-base64url (swp 3 q.u.sek.k))
       ==
     --
+  ::  |de:jwk: decoding of json cryptographic keys
+  ::
   ++  de
-    |%                                                  ::  +pass:de:jwk
+    |%
+    ::  +pass:de:jwk: decode json public key
+    ::
     ++  pass                                            ::  decode public key
       =,  dejs-soft:format
       %+  ci
@@ -589,8 +797,9 @@
         n+(cu de-base64url so)
         e+(cu de-base64url so)
       ==
-    ::                                                  ::  +ring:de:jwk
-    ++  ring                                            ::  decode private key
+    ::  +ring:de:jwk: decode json private key
+    ::
+    ++  ring
       =,  dejs-soft:format
       %+  ci
         |=  $:  kty=@t
@@ -614,20 +823,30 @@
         q+(cu de-base64url so)
       ==
     --
-  ::                                                    ::  +thumb:jwk
-  ++  thumb                                             ::  thumbprint
-    |%                                                  ::  rfc7638
-    ++  ring  !!
+  ::  |thumb:jwk: "thumbprint" json-encoded key (rfc7638)
+  ::
+  ++  thumb
+    |%
+    ::  +pass:thumb:jwk: thumbprint json-encoded public key
+    ::
     ++  pass
       |=  k=key:rsa
       (en-base64url (shax (crip (en-json-sort aor (pass:en k)))))
+    ::  +ring:thumb:jwk: thumbprint json-encoded private key
+    ::
+    ++  ring  !!
     --
   --
-::                                                      ::  +jws
-++  jws                                                 ::  json web signature
-  |%                                                    ::  rfc7515
-  ++  sign                                              ::  +sign:jws
-    |=  [k=key:rsa pro=json lod=json]                   ::  flattened signature
+::  |jws: json web signatures (rfc7515)
+::
+::  flattened signature only
+::
+++  jws
+  |%
+  ::  +sign:jws: sign json value
+  ::
+  ++  sign
+    |=  [k=key:rsa pro=json lod=json]
     |^  ^-  json
         =.  pro  header
         =/  protect=cord  (encode pro)
@@ -637,32 +856,45 @@
           payload+s+payload
           signature+s+(sign protect payload)
         ==
+    ::  +header:sign:jws: set signature algorithm in header
     ::
     ++  header
       ?>  ?=([%o *] pro)
       ^-  json
       [%o (~(put by p.pro) %alg s+'RS256')]
+    ::  +encode:sign:jws: encode json for signing
+    ::
+    ::  alphabetically sort object keys, url-safe base64 encode
+    ::  the serialized json
     ::
     ++  encode
       |=  jon=json
       (en-base64url (crip (en-json-sort aor jon)))
+    ::  +sign:sign:jws: compute signature
+    ::
+    ::  url-safe base64 encode in big-endian byte order
     ::
     ++  sign
       |=  [protect=cord payload=cord]
       %-  en-base64url
       (swp 3 (~(sign rs256 k) (rap 3 ~[protect '.' payload])))
     --
+  ::  +verify:jws: verify signature
   ::
   ++  verify  !!
   --
-::                                                    ::  +eor
-++  eor                                               ::  explicit order
+::  +eor: explicit sort order comparator
+::
+::  lookup :a and :b in :lit, pass their indices to :com
+::
+++  eor
   |=  [com=$-([@ @] ?) lit=(list)]
   |=  [a=* b=*]
   ^-  ?
   (fall (bind (both (find ~[a] lit) (find ~[b] lit)) com) |)
-::                                                    ::  +join
-++  join                                              ::  join cords w/ sep
+::  +join: join list of cords with separator
+::
+++  join
   |=  [sep=@t hot=(list @t)]
   ^-  @t
   =|  out=(list @t)
