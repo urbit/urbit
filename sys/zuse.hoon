@@ -1237,7 +1237,8 @@
       ==                                                ::
     ++  note                                            ::  out request $->
       =,  eyre
-      $%  {$b $wait p/@da}                              ::  wait until
+      $%  [%b %rest p=@da]                              ::  cancel timer
+          [%b %wait p=@da]                              ::  wait until
           [%e %hiss p=(unit user) q=mark r=cage]        ::  outbound user req
           [%a %want p=sock q=path r=*]                  ::  send message
           [%j %vent-result p=update:constitution:ethe]  ::  tmp workaround
@@ -1260,7 +1261,7 @@
       $%  [%burn our=ship p=ship q=safe]                ::  destroy rights
           [%hail our=ship p=ship q=remote]              ::  remote update
           [%init our=ship]                              ::  initialize urbit
-          [%look p=(each ship purl:eyre)]               ::  set ethereum source
+          [%look our=ship src=(each ship purl:eyre)]    ::  set ethereum source
           [%mint our=ship p=ship q=safe]                ::  create rights
           [%move our=ship p=ship q=ship r=safe]         ::  transfer from=to
           [%nuke ~]                                     ::  cancel tracker from

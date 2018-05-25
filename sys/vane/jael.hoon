@@ -68,10 +68,15 @@
       dns=dnses                                         ::  dns states
     ::                                                  ::  meta
       listeners=(set duct)                              ::  subscribers
+      source=(each ship node-src)                       ::  learning from
       heard=events                                      ::  processed events
       latest-block=@ud                                  ::  last heard block
-      filter-id=@ud                                     ::  current filter
       checking=(map @p hull)                            ::  verifying
+  ==                                                    ::
+++  node-src                                            ::  ethereum node comms
+  $:  node=purl:eyre                                    ::  node url
+      filter-id=@ud                                     ::  current filter
+      poll-timer=@da                                    ::  next filter poll
   ==                                                    ::
 ::                                                      ::
 ++  message                                             ::  p2p message
@@ -631,7 +636,9 @@
     ::    [%look p=(each ship purl)]
     ::
         %look
-      !!  ::TODO
+      =^  mos  eth.lex
+        abet:(~(look et /init now.sys eth.lex) our.tac src.tac)
+      +>.$(moz (weld moz (flop mos)))
     ::
     ::  create promises
     ::    {$mint p/ship q/safe}
@@ -725,6 +732,8 @@
       ::
       ::
           %vent-result
+        ?.  &(-.source.eth =(q.p.tac p.source.eth))
+          +>.$
         $(tac mes)
       ==
     ==
@@ -1079,8 +1088,8 @@
     %+  wrap-note  wir
     :^  %e  %hiss  ~
     :+  %json-rpc-response  %hiss
-    =+  (need (de-purl:html 'http://localhost:8545'))
-    !>  (json-request -(p.p |) jon)
+    ?>  ?=(%| -.source)
+    !>  (json-request node.p.source jon)
   ::
   ++  update-to-all
     |=  upd=update
@@ -1095,15 +1104,19 @@
     %+  wrap-note  /vent-result
     [%a %want [our who] /j/vent-result %vent-result upd]
   ::
-  ++  subscribe-to
+  ::
+  ++  listen-to-ship
     |=  [our=ship who=ship]
+    %-  put-move(source &+who)
     %+  wrap-note  /vent/(scot %p who)
     [%a %want [our who] /j/vent `*`[%vent ~]]
   ::
-  ++  unsubscribe-from
-    |=  [our=ship who=ship]
-    %+  wrap-note  /vent/(scot %p who)
-    [%a %want [our who] /j/vent `*`[%nuke ~]]
+  ++  unsubscribe-from-source
+    |=  our=ship
+    %-  put-move
+    ?>  ?=(%& -.source)
+    %+  wrap-note  /vent/(scot %p p.source)
+    [%a %want [our p.source] /j/vent `*`[%nuke ~]]
   ::
   ::
   ++  read
@@ -1132,6 +1145,10 @@
     $(inx t.inx)
   ::
   ::
+  ++  listen-to-node
+    |=  url=purl:eyre
+    new-filter(source |+%*(. *node-src node url))
+  ::
   ++  new-filter
     %-  put-individual-request
     :+  /filter/new  `'new filter'
@@ -1144,31 +1161,51 @@
     ==
   ::
   ++  read-filter
+    ?>  ?=(%| -.source)
     %-  put-individual-request
     :+  /filter/logs  `'filter logs'
-    [%eth-get-filter-logs filter-id]
+    [%eth-get-filter-logs filter-id.p.source]
   ::
   ++  poll-filter
+    ?>  ?=(%| -.source)
     %-  put-individual-request
     :+  /filter/changes  `'poll filter'
-    [%eth-get-filter-changes filter-id]
+    [%eth-get-filter-changes filter-id.p.source]
   ::
   ++  wait-poll
-    %-  put-move
-    %+  wrap-note  /poll
-    [%b %wait (add now ~m4)]
+    ?>  ?=(%| -.source)
+    =+  wen=(add now ~m4)
+    %-  put-move(poll-timer.p.source wen)
+    (wrap-note /poll %b %wait wen)
+  ::
+  ++  cancel-wait-poll
+    ?>  ?=(%| -.source)
+    %-  put-move(poll-timer.p.source *@da)
+    %+  wrap-note  /poll/cancel
+    [%b %rest poll-timer.p.source]
   ::
   ::
   ++  init
     |=  our=ship
+    ^+  +>
     ::TODO  ship or node as sample?
     ::TODO  set default polling time in config
     =+  bos=(sein:title our)
     ?.  =(our bos)
-      ::TODO  set bos as source in config
-      (put-move (subscribe-to our bos))
-    ::TODO  set localhost as source in config
-    new-filter
+      (listen-to-ship our bos)
+    =+  (need (de-purl:html 'http://localhost:8545'))
+    (listen-to-node -(p.p |))
+  ::
+  ++  look
+    |=  [our=ship src=(each ship purl:eyre)]
+    ^+  +>
+    =.  +>
+      ?:  ?=(%| -.src)
+        cancel-wait-poll
+      (unsubscribe-from-source our)
+    ?:  ?=(%| -.src)
+      (listen-to-node p.src)
+    (listen-to-ship our p.src)
   ::
   ++  run-check
     |=  save=?
@@ -1226,6 +1263,7 @@
   ++  sigh
     |=  [mar=mark res=vase]
     ^+  +>
+    ?:  ?=(%& -.source)  +>
     ?>  ?=(%json-rpc-response mar)
     ~|  res
     =+  rep=((hard response:rpc:jstd) q.res)
@@ -1249,7 +1287,8 @@
     ?:  ?=(%error -.rep)
       ~&  [%filter-error--retrying message.rep]
       new-filter
-    =-  read-filter(filter-id -)
+    ?>  ?=(%| -.source)
+    =-  read-filter(filter-id.p.source -)
     (parse-eth-new-filter-res res.rep)
   ::
   ++  take-filter-results
@@ -1262,7 +1301,11 @@
         +>
       ~&  %filter-timed-out--recreating
       new-filter
-    =.  +>  wait-poll  ::TODO  don't if there's already a timer?
+    ::  kick polling timer, only if it hasn't already been.
+    =?  +>  ?&  ?=(%| -.source)
+                (gth now poll-timer.p.source)
+            ==
+      wait-poll
     ?>  ?=(%a -.res.rep)
     =*  changes  p.res.rep
     ~&  [%filter-changes (lent changes)]
