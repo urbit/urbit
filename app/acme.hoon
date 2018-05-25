@@ -80,7 +80,17 @@
 ::
 ++  asn1
   |%
+  ::  +bespoke:asn1: context-specific, generic ASN.1 tag type
+  ::
+  ::  note that explicit implies constructed (ie, bit 5 is set in DER)
+  ::
+  +=  bespoke
+    ::  imp: & is implicit, | is explicit
+    ::  tag: 5 bits for the custom tag number
+    ::
+    [imp=? tag=@ud]
   ::  +spec:asn1: minimal representations of basic ASN.1 types
+  ::
   +=  spec
     $%  ::  %int: arbitrary-sized, unsigned integers
         ::
@@ -88,17 +98,17 @@
         ::  negative integers would be two's complement in DER,
         ::  but we don't need them.
         ::
-        [%int p=@u]
+        [%int int=@u]
         ::  %bit: very minimal support for bit strings
         ::
         ::  specifically, values must already be padded and byte-aligned.
         ::  note that leading zeros are significant in ASN.1 bit strings,
         ::  so atomic encoding would be insufficient for complete support.
         ::
-        [%bit p=@ux]
+        [%bit bit=@ux]
         ::  %oct: octets in little-endian byte order
         ::
-        [%oct p=@ux]
+        [%oct oct=@ux]
         ::  %nul: fully supported!
         ::
         [%nul ~]
@@ -107,24 +117,24 @@
         ::  object identifiers are technically a sequence of integers,
         ::  represented here in their already-encoded form.
         ::
-        [%obj p=@ux]
+        [%obj obj=@ux]
         ::  %seq: a list of specs
         ::
-        [%seq p=(list spec)]
+        [%seq seq=(list spec)]
         ::  %set: a logical set of specs
         ::
         ::  implemented here as a list for the sake of simplicity.
-        ::  encodings must dedupe and sort the list appropriately
+        ::  must be already deduplicated and sorted!
         ::
-        [%set p=(list spec)]
+        [%set set=(list spec)]
         ::  %con: context-specific
         ::
-        ::  here be dragons
+        ::  general supported for context-specific tags.
+        ::  bes: custom tag number, implicit or explicit
+        ::  con: already-encoded bytes
         ::
-        $:  %con                                        ::  construct yerself
-            p=[p=? q=@udC]                              ::    [primitive? tag]
-            q=(list @)                                  ::    bytes
-    ==  ==
+        [%con bes=bespoke con=(list @D)]
+    ==
   ::  |obj:asn1: constant object ids, pre-encoded
   ::
   ++  obj
@@ -140,64 +150,85 @@
   --
 ::  |der: distinguished encoding rules for ASN.1
 ::
+::  DER is a tag-length-value binary encoding for ASN.1, designed
+::  so that there is only one (distinguished) valid encoding for an
+::  instance of a type.
+::
 ++  der
   |%
   ::  +en:der: encode +spec:asn1 to atom
   ::
   ++  en
     =<  |=(a=spec:asn1 `@ux`(rep 3 ~(ren raw a)))
-    |%                                                  ::  +raw:en:der
-    ++  raw                                             ::  encode to bytes
+    |%
+    ::  +raw:en:der: door for encoding +spec:asn1 to list of bytes
+    ::
+    ++  raw
       |_  pec=spec:asn1
-      ::                                                ::  +ren:raw:en:der
-      ++  ren                                           ::  tag-length-value
-        ^-  (list @)
+      ::  +ren:raw:en:der: render +spec:asn1 to tag-length-value bytes
+      ::
+      ++  ren
+        ^-  (list @D)
         =/  a  lem
         [tag (weld (len a) a)]
-      ::                                                ::  +tag:raw:en:der
-      ++  tag                                           ::  type tag
-        ^-  @
+      ::  +tag:raw:en:der: tag byte
+      ::
+      ++  tag
+        ^-  @D
         ?-  pec
           [%int *]   2
           [%bit *]   3
           [%oct *]   4
           [%nul *]   5
           [%obj *]   6
-          [%seq *]  48    :: (con 0x20 16)
-          [%set *]  49    :: (con 0x20 17)
-          [%con *]  :(con q.p.pec 0x80 ?:(p.p.pec 0 0x20))
+          [%seq *]  48              :: constructed: (con 0x20 16)
+          [%set *]  49              :: constructed: (con 0x20 17)
+          [%con *]  ;:  con
+                      0x80                    :: context-specifc
+                      ?:(imp.bes.pec 0 0x20)  :: implicit?
+                      (dis 0x1f tag.bes.pec)  :: 5 bits of custom tag
+                    ==
         ==
-      ::                                                ::  +lem:raw:en:der
-      ++  lem                                           ::  element bytes
-        ^-  (list @)
+      ::  +lem:raw:en:der: element bytes
+      ::
+      ++  lem
+        ^-  (list @D)
         ?-  pec
-          [%int *]  =/  a  (flop (rip 3 p.pec))   :: note: big-endian
+          ::  unsigned only, interpreted as positive-signed and
+          ::  rendered in big-endian byte order. negative-signed would
+          ::  be two's complement
+          ::
+          [%int *]  =/  a  (flop (rip 3 int.pec))
                     ?~  a  [0 ~]
                     ?:((lte i.a 127) a [0 a])
+          ::  presumed to be already padded to a byte boundary
           ::
-          [%bit *]  [0 (rip 3 p.pec)]            :: XX padding
-          [%oct *]  (rip 3 p.pec)
+          [%bit *]  [0 (rip 3 bit.pec)]
+          [%oct *]  (rip 3 oct.pec)
           [%nul *]  ~
-          [%obj *]  (rip 3 p.pec)
+          [%obj *]  (rip 3 obj.pec)
           ::
           [%seq *]  %-  zing
                     |-  ^-  (list (list @))
-                    ?~  p.pec  ~
-                    :-  ren(pec i.p.pec)
-                    $(p.pec t.p.pec)
+                    ?~  seq.pec  ~
+                    :-  ren(pec i.seq.pec)
+                    $(seq.pec t.seq.pec)
+          ::  presumed to be already deduplicated and sorted
           ::
-          [%set *]  %-  zing                     :: XX tap/sort
+          [%set *]  %-  zing
                     |-  ^-  (list (list @))
-                    ?~  p.pec  ~
-                    :-  ren(pec i.p.pec)
-                    $(p.pec t.p.pec)
+                    ?~  set.pec  ~
+                    :-  ren(pec i.set.pec)
+                    $(set.pec t.set.pec)
+          ::  already constructed
           ::
-          [%con *]  q.pec
+          [%con *]  con.pec
         ==
-      ::                                                ::  +len:raw:en:der
-      ++  len                                           ::  length bytes
-        |=  a=(list @)
-        ^-  (list @)
+      ::  +len:raw:en:der: length bytes
+      ::
+      ++  len
+        |=  a=(list @D)
+        ^-  (list @D)
         =/  b  (lent a)
         ?:  (lte b 127)
           [b ~]                :: note: big-endian
@@ -207,11 +238,11 @@
   ::  +de:der: decode atom to +spec:asn1
   ::
   ++  de
-    =<  |=(a=@ `(unit spec:asn1)`(rush a decode))
+    =<  |=(a=@ `(unit spec:asn1)`(rush a parse))
     |%
-    ::  +decode:de:der: DER parser combinator XX rename
+    ::  +parse:de:der: DER parser combinator
     ::
-    ++  decode
+    ++  parse
       %+  cook  |*(a=* `spec:asn1`a)   ::  XX fix
       :: ^-  $-(nail (like spec:asn1))
       ;~  pose
@@ -227,12 +258,12 @@
     ::  +tag:de:der: parse tag byte
     ::
     ++  tag
-      |=(a=@ (just a))
+      |=(a=@D (just a))
     ::  +int:de:der: sear unsigned big-endian bytes
     ::
     ++  int
-      |=  a=(list @)
-      ^-  (unit (list @))
+      |=  a=(list @D)
+      ^-  (unit (list @D))
       ?~  a  ~
       ?:  ?=([@ ~] a)  `a
       ?.  =(0 i.a)  `a
@@ -240,12 +271,12 @@
     ::  +recur:de:der: parse bytes for a list of +spec:asn1
     ::
     ++  recur
-      |=(a=(list @) (rust a (star decode))) :: XX plus? curr?
+      |=(a=(list @) (rust a (star parse)))
     ::  +context:de:der: decode context-specific tag byte
     ::
     ++  context
-      |=  a=@
-      ^-  (unit [? @udC])
+      |=  a=@D
+      ^-  (unit bespoke:asn1)
       ?.  =(1 (cut 0 [7 1] a))  ~
       :+  ~
         =(1 (cut 0 [5 1] a))
@@ -259,8 +290,12 @@
       ^-  (like (list @D))
       ?~  q.tub
         (fail tub)
+      ::  fuz: first byte - length, or length of the length
       =*  fuz  i.q.tub
+      ::  nex: offset of value bytes from fuz
+      ::  len: length of value bytes
       =+  ^-  [nex=@ len=@]
+        ::  faz: meaningful bits in fuz
         =/  faz  (end 0 7 fuz)
         ?:  =(0 (cut 0 [7 1] fuz))
           [0 faz]
@@ -269,9 +304,11 @@
               !=(nex (met 3 len))
           ==
         (fail tub)
+      ::  zuf: value bytes
       =/  zuf  (swag [nex len] t.q.tub)
       ?.  =(len (lent zuf))
         (fail tub)
+      ::  zaf:  product nail
       =/  zaf  [p.p.tub (add +(nex) q.p.tub)]
       [zaf `[zuf zaf (slag (add nex len) t.q.tub)]]
     --
@@ -405,30 +442,72 @@
   ::
   ++  spec
     |%
-    ::  +pass:spec:pkcs1: public key ASN.1
+    ::  |en:spec:pkcs1: ASN.1 encoding for RSA keys
     ::
-    ++  pass
-      |=  k=key:rsa
-      ^-  spec:asn1
-      [%seq [%int n.pub.k] [%int e.pub.k] ~]
-    ::  +ring:spec:pkcs1: private key ASN.1
+    ++  en
+      |%
+      ::  +pass:en:spec:pkcs1: encode public key to ASN.1
+      ::
+      ++  pass
+        |=  k=key:rsa
+        ^-  spec:asn1
+        [%seq [%int n.pub.k] [%int e.pub.k] ~]
+      ::  +ring:en:spec:pkcs1: encode private key to ASN.1
+      ::
+      ++  ring
+        |=  k=key:rsa
+        ^-  spec:asn1
+        ~|  %rsa-need-ring
+        ?>  ?=(^ sek.k)
+        :~  %seq
+            [%int 0]
+            [%int n.pub.k]
+            [%int e.pub.k]
+            [%int d.u.sek.k]
+            [%int p.u.sek.k]
+            [%int q.u.sek.k]
+            [%int (mod d.u.sek.k (dec p.u.sek.k))]
+            [%int (mod d.u.sek.k (dec q.u.sek.k))]
+            [%int (~(inv fo p.u.sek.k) q.u.sek.k)]
+        ==
+      --
+    ::  |de:spec:pkcs1: ASN.1 decoding for RSA keys
     ::
-    ++  ring
-      |=  k=key:rsa
-      ^-  spec:asn1
-      ~|  %rsa-need-ring
-      ?>  ?=(^ sek.k)
-      :~  %seq
-          [%int 0]
-          [%int n.pub.k]
-          [%int e.pub.k]
-          [%int d.u.sek.k]
-          [%int p.u.sek.k]
-          [%int q.u.sek.k]
-          [%int (mod d.u.sek.k (dec p.u.sek.k))]
-          [%int (mod d.u.sek.k (dec q.u.sek.k))]
-          [%int (~(inv fo p.u.sek.k) q.u.sek.k)]
-      ==
+    ++  de
+      |%
+      ::  +pass:de:spec:pkcs1: decode ASN.1 public key
+      ::
+      ++  pass
+        |=  a=spec:asn1
+        ^-  (unit key:rsa)
+        ?.  ?=([%seq [%int *] [%int *] ~] a)
+          ~
+        =*  n  int.i.seq.a
+        =*  e  int.i.t.seq.a
+        `[[n e] ~]
+      ::  +ring:de:spec:pkcs1: decode ASN.1 private key
+      ::
+      ++  ring
+        |=  a=spec:asn1
+        ^-  (unit key:rsa)
+        ?.  ?=([%seq *] a)  ~
+        ?.  ?=  $:  [%int %0]
+                    [%int *]
+                    [%int *]
+                    [%int *]
+                    [%int *]
+                    [%int *]
+                    *
+                ==
+            seq.a
+          ~
+        =*  n  int.i.t.seq.a
+        =*  e  int.i.t.t.seq.a
+        =*  d  int.i.t.t.t.seq.a
+        =*  p  int.i.t.t.t.t.seq.a
+        =*  q  int.i.t.t.t.t.t.seq.a
+        `[[n e] `[d p q]]
+      --
     --
   ::  |der:pkcs1: DER for RSA keys
   ::
@@ -440,10 +519,10 @@
       |%
       ::  +pass:en:der:pkcs1: DER encode public key
       ::
-      ++  pass  |=(k=key:rsa `@ux`(en:^der (pass:spec k)))
+      ++  pass  |=(k=key:rsa `@ux`(en:^der (pass:en:spec k)))
       ::  +ring:en:der:pkcs1: DER encode private key
       ::
-      ++  ring  |=(k=key:rsa `@ux`(en:^der (ring:spec k)))
+      ++  ring  |=(k=key:rsa `@ux`(en:^der (ring:en:spec k)))
       --
     ::  |de:der:pkcs1: DER decoding for RSA keys
     ::
@@ -454,37 +533,13 @@
       ++  pass
         |=  a=@
         ^-  (unit key:rsa)
-        =/  b  (de:^der a)
-        ?~  b  ~
-        ?.  ?=([%seq [%int *] [%int *] ~] u.b)
-          ~
-        =*  n  p.i.p.u.b
-        =*  e  p.i.t.p.u.b
-        `[[n e] ~]
+        (biff (de:^der a) pass:de:spec)
       ::  +ring:de:der:pkcs1: DER decode private key
       ::
       ++  ring
         |=  a=@
         ^-  (unit key:rsa)
-        =/  b  (de:^der a)
-        ?~  b  ~
-        ?.  ?=([%seq *] u.b)  ~
-        ?.  ?=  $:  [%int %0]
-                    [%int *]
-                    [%int *]
-                    [%int *]
-                    [%int *]
-                    [%int *]
-                    *
-                ==
-            p.u.b
-          ~
-        =*  n  p.i.t.p.u.b
-        =*  e  p.i.t.t.p.u.b
-        =*  d  p.i.t.t.t.p.u.b
-        =*  p  p.i.t.t.t.t.p.u.b
-        =*  q  p.i.t.t.t.t.t.p.u.b
-        `[[n e] `[d p q]]
+        (biff (de:^der a) ring:de:spec)
       --
     --
   ::  |pem:pkcs1: PEM for RSA keys
@@ -568,11 +623,11 @@
         ?~  b  ~
         ?.  ?=([%seq [%seq *] [%bit *] ~] u.b)
           ~
-        ?.  ?&  ?=([[%obj *] [%nul ~] ~] p.i.p.u.b)
-                =(rsa:obj:asn1 p.i.p.i.p.u.b)
+        ?.  ?&  ?=([[%obj *] [%nul ~] ~] seq.i.seq.u.b)
+                =(rsa:obj:asn1 obj.i.seq.i.seq.u.b)
             ==
           ~
-        (pass:de:der:pkcs1 p.i.t.p.u.b)
+        (pass:de:der:pkcs1 bit.i.t.seq.u.b)
       ::  +ring:de:der:pkcs8: DER decode private key
       ::
       ++  ring  !!
@@ -616,52 +671,64 @@
 ::
 ++  pkcs10
   =>  |%
-      ::  +csr:  certificate request
+      ::  +csr:pkcs10: certificate request
       ::
       +=  csr  [key=key:rsa hot=(list (list @t))]
       --
   |%
   ::  |spec:pkcs10: ASN.1 specs for certificate signing requests
+  ::
   ++  spec
     |%
-    ::  +host:spec:pkcs10: subject-alternate-names
+    ::  |en:spec:pkcs10: ASN.1 encoding for certificate signing requests
     ::
-    ++  host
-      |=  hot=(list (list @t))
-      ^-  spec:asn1
-      :-  %seq
-      %+  turn  hot
-      |=(h=(list @t) [%con [& 2] (rip 3 (join '.' h))])
-    ::  +cert:spec:pkcs10: certificate request info
-    ::
-    ++  cert              ::  XX rename
-      |=  csr
-      ^-  spec:asn1
-      :~  %seq
-          [%int 0]
-          [%seq ~]
-          (pass:spec:pkcs8 key)
-          :+  %con  [| 0]
-          =-  ~(ren raw:en:^der -)
+    ++  en
+      |%
+      ::  +req:en:spec:pkcs10: signed certificate request
+      ::
+      ++  req
+        |=  csr
+        ^-  spec:asn1
+        |^  =/  dat=spec:asn1  (info key hot)
+            :~  %seq
+                dat
+                [%seq [[%obj rsa-sha-256:obj:asn1] [%nul ~] ~]]
+                :: big-endian signature bytes
+                [%bit (swp 3 (~(sign rs256 key) (en:^der dat)))]
+            ==
+        ::  +info:req:en:spec:pkcs10: certificate request info
+        ::
+        ++  info
+          |=  csr
+          ^-  spec:asn1
           :~  %seq
-              [%obj csr-ext:obj:asn1]
-              :~  %set
-                  :~  %seq
+              [%int 0]
+              [%seq ~]
+              (pass:spec:pkcs8 key)
+              :+  %con  [| 0]
+              =-  ~(ren raw:en:^der -)
+              :~  %seq
+                  [%obj csr-ext:obj:asn1]
+                  :~  %set
                       :~  %seq
-                          [%obj sub-alt:obj:asn1]
-                          [%oct (en:^der (host hot))]
-      ==  ==  ==  ==  ==
-    ::  +sign:spec:pkcs10: signed certificate request
-    ::
-    ++  sign
-      |=  csr
-      ^-  spec:asn1
-      =/  cer  (cert key hot)
-      :~  %seq
-          cer
-          [%seq [[%obj rsa-sha-256:obj:asn1] [%nul ~] ~]]
-          [%bit (swp 3 (~(sign rs256 key) (en:^der cer)))]  :: big-endian
-      ==
+                          :~  %seq
+                              [%obj sub-alt:obj:asn1]
+                              [%oct (en:^der (san hot))]
+          ==  ==  ==  ==  ==
+        ::  +san:req:en:spec:pkcs10: subject-alternate-names
+        ::
+        ++  san
+          |=  hot=(list (list @t))
+          ^-  spec:asn1
+          :-  %seq
+          %+  turn  hot
+          :: implicit, context-specific tag #2 (IA5String)
+          :: XX sanitize string?
+          |=(h=(list @t) [%con [& 2] (rip 3 (join '.' h))])
+        --
+      --
+    ::  |de:spec:pkcs10: ASN.1 decoding for certificate signing requests
+    ++  de  !!
     --
   ::  |der:pkcs10: DER for certificate signing requests
   ::
@@ -670,7 +737,7 @@
     ::  +en:der:pkcs10: DER encode certificate signing request
     ::
     ++  en
-      |=(a=csr `@ux`(en:^der (sign:spec a)))
+      |=(a=csr `@ux`(en:^der (req:en:spec a)))
     ::  +de:der:pkcs10: DER decode certificate signing request
     ::
     ++  de  !!
@@ -1506,29 +1573,29 @@
         :-  [0x5 0x0 ~]
         ~(ren raw:en:der nul)
       %-  expect-eq  !>
-        [nul (scan ~(ren raw:en:der nul) decode:de:der)]
+        [nul (scan ~(ren raw:en:der nul) parse:de:der)]
       %-  expect-eq  !>
         :-  [0x2 0x2 0x0 0xbb ~]
         ~(ren raw:en:der int)
       %-  expect-eq  !>
-        [int (scan ~(ren raw:en:der int) decode:de:der)]
+        [int (scan ~(ren raw:en:der int) parse:de:der)]
       %-  expect-eq  !>
         :-  [0x6 0x9 0x60 0x86 0x48 0x1 0x65 0x3 0x4 0x2 0x1 ~]
         ~(ren raw:en:der obj)
       %-  expect-eq  !>
-        [obj (scan ~(ren raw:en:der obj) decode:de:der)]
+        [obj (scan ~(ren raw:en:der obj) parse:de:der)]
       %-  expect-eq  !>
         :-    0x420.5891.b5b5.22d5.df08.6d0f.f0b1.10fb.
           d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
         `@ux`(swp 3 (en:der oct))
       %-  expect-eq  !>
-        [oct (scan ~(ren raw:en:der oct) decode:de:der)]
+        [oct (scan ~(ren raw:en:der oct) parse:de:der)]
       %-  expect-eq  !>
         :-  0x30.3130.0d06.0960.8648.0165.0304.0201.0500.0420.5891.b5b5.22d5.
             df08.6d0f.f0b1.10fb.d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
         `@ux`(swp 3 (en:der seq))
       %-  expect-eq  !>
-        [seq (scan ~(ren raw:en:der seq) decode:de:der)]
+        [seq (scan ~(ren raw:en:der seq) parse:de:der)]
     ==
   ::
   ++  test-rsakey
