@@ -1198,11 +1198,11 @@ u3j_hook(u3_noun     cor,
 /* _cj_prog(): stop tracing glu and find a nock program
  */
 static u3p(u3n_prog)
-_cj_prog(u3_noun fol)
+_cj_prog(u3_weak loc, u3_noun fol)
 {
   u3p(u3n_prog) pog_p;
   u3t_off(glu_o);
-  pog_p = u3n_find(fol);
+  pog_p = u3n_find(loc, fol);
   u3t_on(glu_o);
   return pog_p;
 }
@@ -1307,10 +1307,10 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
       sit_u->fon_o = c3y;
       if ( 0 == (sit_u->axe = _cj_axis(fol)) ) {
         sit_u->jet_o = c3n;
-        sit_u->pog_p = _cj_prog(fol);
+        sit_u->pog_p = _cj_prog(loc, fol);
       }
       else {
-        han_u->sit_u.pog_p = _cj_prog(u3r_at(sit_u->axe, cor));
+        han_u->sit_u.pog_p = _cj_prog(loc, u3r_at(sit_u->axe, cor));
         han_u->sit_u.jet_o = _cj_nail(loc, sit_u->axe,
             &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u));
       }
@@ -1582,13 +1582,13 @@ u3j_site_ream(u3j_site* sit_u)
 /* _cj_site_lock(): ensure site has a valid program pointer
  */
 static void
-_cj_site_lock(u3_noun cor, u3j_site* sit_u)
+_cj_site_lock(u3_noun loc, u3_noun cor, u3j_site* sit_u)
 {
   if ( (u3_none != sit_u->bat) &&
        (c3y == u3r_sing(sit_u->bat, u3h(cor))) ) {
     return;
   }
-  sit_u->pog_p = _cj_prog(u3r_at(sit_u->axe, cor));
+  sit_u->pog_p = _cj_prog(loc, u3r_at(sit_u->axe, cor));
   if ( u3_none != sit_u->bat ) {
     u3z(sit_u->bat);
   }
@@ -1611,7 +1611,7 @@ _cj_burn(u3p(u3n_prog) pog_p, u3_noun cor)
 **                      (no validity checks).
 */
 static u3_weak
-_cj_site_kick_hot(u3_noun cor, u3j_site* sit_u)
+_cj_site_kick_hot(u3_noun loc, u3_noun cor, u3j_site* sit_u)
 {
   u3_weak pro = u3_none;
   c3_o jet_o  = sit_u->jet_o;
@@ -1626,7 +1626,7 @@ _cj_site_kick_hot(u3_noun cor, u3j_site* sit_u)
       u3t_on(glu_o);
     }
     if ( u3_none == pro ) {
-      _cj_site_lock(cor, sit_u);
+      _cj_site_lock(loc, cor, sit_u);
     }
   }
   else {
@@ -1637,7 +1637,7 @@ _cj_site_kick_hot(u3_noun cor, u3j_site* sit_u)
       u3t_on(glu_o);
     }
     if ( u3_none == pro ) {
-      _cj_site_lock(cor, sit_u);
+      _cj_site_lock(loc, cor, sit_u);
       pro = _cj_burn(sit_u->pog_p, cor);
     }
     if ( c3y == pof_o ) {
@@ -1660,7 +1660,7 @@ _cj_site_kick(u3_noun cor, u3j_site* sit_u)
     if ( c3y == _cj_fine(cor, sit_u->fin_p) ) {
       loc = sit_u->loc;
       if ( c3y == sit_u->jet_o ) {
-        pro = _cj_site_kick_hot(cor, sit_u);
+        pro = _cj_site_kick_hot(loc, cor, sit_u);
       }
     }
   }
@@ -1690,7 +1690,7 @@ _cj_site_kick(u3_noun cor, u3j_site* sit_u)
         (sit_u->jet_o = _cj_nail(loc, sit_u->axe,
             &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u))) )
       {
-        pro = _cj_site_kick_hot(cor, sit_u);
+        pro = _cj_site_kick_hot(loc, cor, sit_u);
       }
       else {
         pro = u3_none;
@@ -1707,7 +1707,7 @@ _cj_site_kick(u3_noun cor, u3j_site* sit_u)
   }
 
   if ( u3_none == pro ) {
-    _cj_site_lock(cor, sit_u);
+    _cj_site_lock(loc, cor, sit_u);
   }
 
   return pro;
@@ -1785,8 +1785,9 @@ u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
   sit_u->axe   = 2;
   sit_u->bas   = _cj_bash(u3h(cor));
   sit_u->bat   = cor; // a lie, this isn't really the battery!
-  sit_u->pog_p = _cj_prog(u3h(cor));
-  if ( u3_none != (loc = sit_u->loc = _cj_spot(cor, sit_u->bas)) ) {
+  sit_u->loc   = loc = _cj_spot(cor, sit_u->bas);
+  sit_u->pog_p = _cj_prog(loc, u3h(cor));
+  if ( u3_none != loc ) {
     u3_noun pax = _cj_loc_axe(loc),
             pay = u3qc_cap(pax),
             pam = u3qc_mas(pax);
@@ -1823,7 +1824,7 @@ u3j_gate_slam(u3j_site* sit_u, u3_noun sam)
              sam,
              u3k(u3t(u3t(sit_u->bat))));
   if ( (u3_none != sit_u->loc) && (c3y == sit_u->jet_o) ) {
-    pro = _cj_site_kick_hot(cor, sit_u);
+    pro = _cj_site_kick_hot(sit_u->loc, cor, sit_u);
   }
   if ( u3_none == pro ) {
     pro = _cj_burn(sit_u->pog_p, cor);

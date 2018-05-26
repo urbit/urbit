@@ -1442,17 +1442,21 @@ _n_bite(u3_noun fol) {
 /* _n_find(): return prog for given formula. fol is RETAINED.
  */
 static u3n_prog*
-_n_find(u3_noun fol)
+_n_find(u3_weak key, u3_noun fol)
 {
-  u3_weak pog = u3h_git(u3R->byc.har_p, fol);
+  key = (u3_none == key)
+      ? u3k(fol)
+      : u3nc(u3k(key), u3k(fol));
+  u3_weak pog = u3h_git(u3R->byc.har_p, key);
   if ( u3_none != pog ) {
+    u3z(key);
     return u3to(u3n_prog, pog);
   }
   else if ( u3R != &u3H->rod_u ) {
     u3a_road* rod_u = u3R;
     while ( rod_u->par_p ) {
       rod_u = u3to(u3a_road, rod_u->par_p);
-      pog   = u3h_git(rod_u->byc.har_p, fol);
+      pog   = u3h_git(rod_u->byc.har_p, key);
       if ( u3_none != pog ) {
         c3_w i_w;
         u3n_prog* old = _n_prog_old(u3to(u3n_prog, pog)); 
@@ -1466,7 +1470,8 @@ _n_find(u3_noun fol)
           sit_u->pog_p = 0;
           sit_u->fon_o = c3n;
         }
-        u3h_put(u3R->byc.har_p, fol, u3a_outa(old));
+        u3h_put(u3R->byc.har_p, key, u3a_outa(old));
+        u3z(key);
         return old;
       }
     }
@@ -1474,19 +1479,21 @@ _n_find(u3_noun fol)
 
   {
     u3n_prog* gop = _n_bite(fol);
-    u3h_put(u3R->byc.har_p, fol, u3a_outa(gop));
+    u3h_put(u3R->byc.har_p, key, u3a_outa(gop));
+    u3z(key);
     return gop;
   }
 }
 
-/* u3n_find(): return prog for given formula. RETAIN.
+/* u3n_find(): return prog for given formula,
+ *             split by key (can be u3_none). RETAIN.
  */
 u3p(u3n_prog)
-u3n_find(u3_noun fol)
+u3n_find(u3_weak key, u3_noun fol)
 {
   u3p(u3n_prog) pog_p;
   u3t_on(noc_o);
-  pog_p = u3of(u3n_prog, _n_find(fol));
+  pog_p = u3of(u3n_prog, _n_find(key, fol));
   u3t_off(noc_o);
   return pog_p;
 }
@@ -1793,7 +1800,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       fam->pog_u = pog_u;
       _n_push(mov, off, x);
     nock_out:
-      pog_u = _n_find(o);
+      pog_u = _n_find(u3_none, o);
       pog   = pog_u->byc_u.ops_y;
       ip_w  = 0;
 #ifdef U3_CPU_DEBUG
@@ -2189,7 +2196,7 @@ u3n_burn(u3p(u3n_prog) pog_p, u3_noun bus)
 static u3_noun
 _n_burn_on(u3_noun bus, u3_noun fol)
 {
-  u3n_prog* pog_u = _n_find(fol);
+  u3n_prog* pog_u = _n_find(u3_none, fol);
 
   u3z(fol);
   return _n_burn_out(bus, pog_u);
