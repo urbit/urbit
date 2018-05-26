@@ -26,10 +26,10 @@
                     drivers=(map axis @ud)
                     label=path
                 ==
-+=  bash        mug=@  :: later, noun-flavored sha256
++=  bash        @  :: battery hash (sha-256 based)
 ::
 +=  hot         (map bash hot-info)
-+=  cold        (map battery=^ registry)
++=  cold        (map battery=^ (pair bash registry))
 +=  warm        (map location activation)
 #endif
 
