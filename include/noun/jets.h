@@ -193,7 +193,7 @@
       /* u3j_reap(): promote jet state.  RETAINS.
       */
         void
-        u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p, u3p(u3h_root) han_p);
+        u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p, u3p(u3h_root) han_p, u3p(u3h_root) bas_p);
 
       /* u3j_rite_mine(): mine cor with clu, using u3j_rite for caching
       */

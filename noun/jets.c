@@ -3,6 +3,12 @@
 */
 #include "all.h"
 
+#if defined(U3_OS_osx)
+#include <CommonCrypto/CommonDigest.h>
+#else
+#include <openssl/sha.h>
+#endif
+
 /**  Data structures.
 **/
 
@@ -77,13 +83,251 @@ _cj_hash(c3_c* has_c)
   return mug;
 }
 
+typedef struct {
+#if defined(U3_OS_osx)
+  CC_SHA256_CTX ctx_h;
+#else
+  SHA256_CTX ctx_h;
+#endif
+  c3_s inx_s;
+  c3_y buf_y[65536];
+} _cj_sha;
+
+static void
+_cj_digest_update(_cj_sha* sha_u, c3_y* byt_y, c3_w len_w)
+{
+#if defined(U3_OS_osx)
+  CC_SHA256_Update(&(sha_u->ctx_h), &byt_y, len_w);
+#else
+  SHA256_Update(&(sha_u->ctx_h), &byt_y, len_w);
+#endif
+}
+
+static void
+_cj_digest_flush(_cj_sha* sha_u)
+{
+  if ( sha_u->inx_s ) {
+    _cj_digest_update(sha_u, sha_u->buf_y, sha_u->inx_s);
+    sha_u->inx_s = 0;
+  }
+}
+
+static void
+_cj_digest_write(_cj_sha* sha_u, u3_atom a)
+{
+  c3_w met_w = u3r_met(3, a),
+       law_w = u3r_met(3, met_w);
+
+  if ( (law_w + met_w) > 65536 ) {
+    c3_y* big_y = u3a_malloc(met_w);
+    u3r_bytes(0, met_w, big_y, a);
+    _cj_digest_flush(sha_u);
+    _cj_digest_update(sha_u, big_y, met_w);
+    u3a_free(big_y);
+  }
+  else {
+    if ( (sha_u->inx_s + met_w + law_w ) > 65536 ) {
+      _cj_digest_flush(sha_u);
+    }
+    u3r_bytes(0, law_w, sha_u->buf_y + sha_u->inx_s, law_w);
+    sha_u->inx_s += (c3_s) law_w;
+    u3r_bytes(0, met_w, sha_u->buf_y + sha_u->inx_s, a);
+    sha_u->inx_s += (c3_s) met_w;
+  }
+}
+
+u3_noun
+_cj_digest_final(_cj_sha* sha_u)
+{
+  c3_y dig_y[32];
+#if defined(U3_OS_osx)
+  CC_SHA256_Final(dig_y, &(sha_u->ctx_h));
+#else
+  SHA256_Final(dig_y, &(sha_u->ctx_h));
+#endif
+  return u3i_bytes(32, dig_y);
+}
+
+static void
+_cj_digest_init(_cj_sha* sha_u)
+{
+#if defined(U3_OS_osx)
+  CC_SHA256_Init(&(sha_u->ctx_h));
+#else
+  SHA256_Init(&(sha_u->ctx_h));
+#endif
+}
+
+u3_noun
+_cj_digest(u3_noun a)
+{
+  u3_noun *don, *top;
+  c3_y    wis_y = c3_wiseof(u3_noun);
+  c3_o    nor_o = u3a_is_north(u3R);
+  c3_ys   mov = (c3y == nor_o) ? -wis_y : wis_y;
+  c3_ys   off = (c3y == nor_o) ? 0 : -wis_y;
+
+  u3p(u3h_root) har_p = u3h_new();
+  c3_w    inx_w = 0;
+  c3_l    pre_l;
+  _cj_sha sha_u;
+
+  _cj_digest_init(&sha_u);
+  don = u3to(u3_noun, u3R->cap_p + off);
+  u3R->cap_p += mov;
+  top = u3to(u3_noun, u3R->cap_p + off);
+  *top = a;
+
+  while ( top != don ) {
+    a     = *top;
+    pre_l = u3h_git(har_p, a);
+    if ( u3_none != pre_l ) {
+      _cj_digest_write(&sha_u, 2);
+      _cj_digest_write(&sha_u, pre_l);
+      u3R->cap_p -= mov;
+      top = u3to(u3_noun, u3R->cap_p + off);
+    }
+    else {
+      u3h_put(har_p, a, inx_w++);
+      c3_assert( c3y == u3a_is_cat(inx_w) );
+      if ( c3y == u3du(a) ) {
+        _cj_digest_write(&sha_u, 1);
+        *top = u3h(a);
+        u3R->cap_p += mov;
+        top = u3to(u3_noun, u3R->cap_p + off);
+        *top = u3t(a);
+      }
+      else {
+        _cj_digest_write(&sha_u, 0);
+        _cj_digest_write(&sha_u, a);
+        u3R->cap_p -= mov;
+        top = u3to(u3_noun, u3R->cap_p + off);
+      }
+    }
+  }
+  
+  u3h_free(har_p);
+  _cj_digest_flush(&sha_u);
+  return _cj_digest_final(&sha_u);
+}
+
 /* _cj_bash(): battery hash. RETAIN.
  */
 static u3_noun
 _cj_bash(u3_noun bat)
 {
-  return u3r_mug(bat);
+  u3_weak pro;
+  u3a_road* rod_u = u3R;
+  while ( 1 ) {
+    pro = u3h_get(rod_u->jed.bas_p, bat);
+
+    if ( u3_none != pro ) {
+      break;
+    }
+
+    if ( rod_u->par_p ) {
+      rod_u = u3to(u3_road, rod_u->par_p);
+    }
+    else {
+      /*
+      u3_noun jan = u3qe_jam(bat);
+      pro = u3qe_shax(jan);
+      u3z(jan);
+      */
+      fprintf(stderr, "-%x", bat);
+      pro = _cj_digest(bat);
+      fprintf(stderr, "-+");
+      u3h_put(u3R->jed.bas_p, bat, u3k(pro));
+      break;
+    }
+  }
+  return pro;
 }
+
+/*
+
+  //u3_noun pro = u3qe_shux(bat);
+  u3_noun jan = u3qe_jam(bat);
+  u3_noun pro = u3qe_shax(jan);
+  u3z(jan);
+
+  *
+  u3_noun a, pro, *top, *don;
+
+  c3_w    met_w;
+
+  c3_y    wis_y = c3_wiseof(u3_noun);
+  c3_o    nor_o = u3a_is_north(u3R);
+  c3_ys   mov = (c3y == nor_o) ? -wis_y : wis_y;
+  c3_ys   off = (c3y == nor_o) ? 0 : -wis_y;
+
+  c3_y    cel_y = 1;
+  c3_y    buf_y[1024];
+  c3_w    siz_w = 1024;
+  c3_y*   byt_y = buf_y;
+  c3_o    all_o = c3n;
+
+
+#if defined(U3_OS_osx)
+  CC_SHA256_CTX ctx_h;
+  CC_SHA256_Init(&ctx_h);
+#else
+  SHA256_CTX ctx_h;
+  SHA256_Init(&ctx_h);
+#endif
+
+  don = u3to(u3_noun, u3R->cap_p + off);
+  u3R->cap_p += mov;
+  top = u3to(u3_noun, u3R->cap_p + off);
+
+  while ( top != don ) {
+    a = *top;
+    if ( c3y == u3du(a) ) {
+      *top = u3h(a);
+      u3R->cap_p += mov;
+      top = u3to(u3_noun, u3R->cap_p + off);
+      *top = u3t(a);
+#if defined(U3_OS_osx)
+      CC_SHA256_Update(&ctx_h, &cel_y, 1);
+#else
+      SHA256_Update(&ctx_h, &cel_y, 1);
+#endif
+    }
+    else {
+      top = u3to(u3_noun, (u3R->cap_p -= mov) + off);
+      met_w = u3r_met(3, a);
+      if ( met_w > siz_w ) {
+        if ( c3y == all_o ) {
+          u3a_free(byt_y);
+        }
+        else {
+          all_o = c3y;
+        }
+        byt_y = u3a_malloc(met_w);
+        siz_w = met_w;
+      }
+      u3r_bytes(0, met_w, byt_y, a);
+#if defined(U3_OS_osx)
+      CC_SHA256_Update(&ctx_h, &byt_y, met_w);
+#else
+      SHA256_Update(&ctx_h, &byt_y, met_w);
+#endif
+    }
+  }
+
+  if ( c3y == all_o ) {
+    u3a_free(byt_y);
+  }
+
+#if defined(U3_OS_osx)
+  CC_SHA256_Final(buf_y, &ctx_h);
+#else
+  SHA256_Final(buf_y, &ctx_h);
+#endif
+  pro = u3i_bytes(32, buf_y);
+  return pro;
+}
+*/
 
 /* _cj_mine_par_old(): register hooks and parent location within existing
  *                     axis in ancestor list or u3_none.
@@ -1678,12 +1922,16 @@ _cj_mine(u3_noun cey, u3_noun cor)
 #endif
     if ( jax_l ) {
       u3_noun i = bal;
+      u3_noun bas;
       fprintf(stderr, "hot jet: ");
       while ( i != u3_nul ) {
         _cj_print_tas(stderr, u3h(i));
         i = u3t(i);
       }
-      fprintf(stderr, "\r\n  bat %x, axe %d, jax %d\r\n", u3r_mug(bat), axe, jax_l);
+      fprintf(stderr, "\r\n  axe %d, jax %d\r\n", axe, jax_l);
+      bas = _cj_bash(bat);
+      u3m_p("bash", bas);
+      u3z(bas);
     }
     hap   = _cj_warm_hump(jax_l, u3t(u3t(loc)));
     act   = u3nq(jax_l, hap, bal, _cj_jit(jax_l, bat));
@@ -1835,6 +2083,17 @@ _cj_cold_reap(u3_noun kev)
   u3z(bat);
 }
 
+/* _cj_bash_reap(): reap battery hashes.
+ */
+static void
+_cj_bash_reap(u3_noun kev)
+{
+  u3_noun key = u3a_take(u3h(kev)),
+          val = u3a_take(u3t(kev));
+  u3h_put(u3R->jed.bas_p, key, val);
+  u3z(key);
+}
+
 /* _cj_hank_reap(): reap hook resolutions.
  */
 static void
@@ -1870,11 +2129,12 @@ _cj_hank_reap(u3_noun kev)
 /* u3j_reap(): promote jet state.
 */
 void
-u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p, u3p(u3h_root) han_p)
+u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p, u3p(u3h_root) han_p, u3p(u3h_root) bas_p)
 {
   u3h_walk(cod_p, _cj_cold_reap);
   u3h_walk(war_p, _cj_warm_reap);
   u3h_walk(han_p, _cj_hank_reap);
+  u3h_walk(bas_p, _cj_bash_reap);
 }
 
 /* _cj_ream(): ream list of battery registry pairs. RETAIN.
@@ -2091,6 +2351,7 @@ u3j_mark(void)
   tot_w += u3h_mark(u3R->jed.war_p);
   tot_w += u3h_mark(u3R->jed.cod_p);
   tot_w += u3h_mark(u3R->jed.han_p);
+  tot_w += u3h_mark(u3R->jed.bas_p);
   u3h_walk_with(u3R->jed.han_p, _cj_mark_hank, &tot_w);
   if ( u3R == &(u3H->rod_u) ) {
     tot_w += u3h_mark(u3R->jed.hot_p);
@@ -2120,6 +2381,7 @@ u3j_free(void)
   u3h_free(u3R->jed.war_p);
   u3h_free(u3R->jed.cod_p);
   u3h_free(u3R->jed.han_p);
+  u3h_free(u3R->jed.bas_p);
   if ( u3R == &(u3H->rod_u) ) {
     u3h_free(u3R->jed.hot_p);
   }

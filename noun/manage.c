@@ -461,6 +461,7 @@ _pave_parts(void)
   u3R->jed.war_p = u3h_new();
   u3R->jed.cod_p = u3h_new();
   u3R->jed.han_p = u3h_new();
+  u3R->jed.bas_p = u3h_new();
   u3R->byc.har_p = u3h_new();
 }
 
@@ -799,13 +800,14 @@ u3m_love(u3_noun pro)
     u3p(u3h_root) cod_p = u3R->jed.cod_p;
     u3p(u3h_root) war_p = u3R->jed.war_p;
     u3p(u3h_root) han_p = u3R->jed.han_p;
+    u3p(u3h_root) bas_p = u3R->jed.bas_p;
     u3p(u3h_root) byc_p = u3R->byc.har_p;
 
     u3m_fall();
 
     pro = u3a_take(pro);
 
-    u3j_reap(cod_p, war_p, han_p);
+    u3j_reap(cod_p, war_p, han_p, bas_p);
     u3n_reap(byc_p);
 
     u3R->cap_p = u3R->ear_p;

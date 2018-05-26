@@ -132,6 +132,7 @@
           u3p(u3h_root) war_p;                //  warm state
           u3p(u3h_root) cod_p;                //  cold state
           u3p(u3h_root) han_p;                //  hank cache
+          u3p(u3h_root) bas_p;                //  battery hashes
         } jed;
 
         struct {                              // bytecode state
