@@ -1563,7 +1563,7 @@
         %+  admit:bo  |.(leaf+"ford: grow {<for>} to {<too>}")
         %+  tug:bo  (keel cof pro [[%& 6]~ vax]~)
         |=  {cof/cafe pox/vase}
-        (wrapped-slap cof pox [%tsgr [%limb %grow] [%limb too]])
+        (wrapped-slap cof pox [%tsbn [%limb %grow] [%limb too]])
       %+  tug:bo  (fang cof too)
       ~%  %grab  translate-mark-jet  ~
       |=  {cof/cafe pro/vase}
@@ -1886,7 +1886,7 @@
       |%
       ++  able                                          ::  assemble preamble
         ^-  hoon
-        :+  %tsgr
+        :+  %tsbn
           ?:  =(~ rop)  
             [%$ 1] 
           :+  %brcn  ~

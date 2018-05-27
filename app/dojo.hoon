@@ -1367,7 +1367,7 @@
     ++  dy-hoon-mark                                    ::  XX architect
       =+  ^=  ope
           |=  gen/hoon  ^-  hoon
-          ?:  ?=(?($sggl $sggr) -.gen)
+          ?:  ?=(?($sgld $sgbn) -.gen)
             $(gen q.gen)
           =+  ~(open ap gen)
           ?.(=(gen -) $(gen -) gen)
