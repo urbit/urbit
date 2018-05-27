@@ -2683,7 +2683,7 @@
             %call  (make-call gate sample)
             %cast  (make-cast disc mark input)
             %core  (make-core source-path)
-            %diff  !!
+            %diff  (make-diff disc start end)
             %dude  (make-dude error attempt)
             %hood  (make-hood source-path)
             %join  !!
@@ -3209,6 +3209,155 @@
       ::
       ?>  ?=([%success %plan *] u.plan-result)
       [build [%build-result %success %core vase.u.plan-result] accessed-builds]
+    ::
+    ++  make-diff
+      |=  [=disc start=schematic end=schematic]
+      ^-  build-receipt
+      ::  run both input schematics as an autocons build
+      ::
+      =/  sub-build=^build  [date.build [start end]]
+      ::
+      =^  sub-result  accessed-builds  (depend-on sub-build)
+      ?~  sub-result
+        [build [%blocks [sub-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success ^ ^] sub-result)
+        (wrap-error sub-result)
+      ?.  ?=([%success *] head.u.sub-result)
+        (wrap-error `head.u.sub-result)
+      ?.  ?=([%success *] tail.u.sub-result)
+        (wrap-error `tail.u.sub-result)
+      ::
+      =/  start-cage=cage  (result-to-cage head.u.sub-result)
+      =/  end-cage=cage    (result-to-cage tail.u.sub-result)
+      ::  if the marks aren't the same, we can't diff them
+      ::
+      ?.  =(p.start-cage p.end-cage)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %diff failed: mark mismatch: %{<p.start-cage>} / %{<p.end-cage>}"
+      ::  if the values are the same, the diff is null
+      ::
+      ?:  =(q.q.start-cage q.q.end-cage)
+        =/  =build-result
+          [%success %diff [%null [%atom %n ~] ~]]
+        ::
+        [build [%build-result build-result] accessed-builds]
+      ::
+      =/  mark-path-build=^build  [date.build [%path disc %mar p.start-cage]]
+      ::
+      =^  mark-path-result  accessed-builds  (depend-on mark-path-build)
+      ?~  mark-path-result
+        [build [%blocks [mark-path-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %path *] mark-path-result)
+        (wrap-error mark-path-result)
+      ::
+      =/  mark-build=^build  [date.build [%core rail.u.mark-path-result]]
+      ::
+      =^  mark-result  accessed-builds  (depend-on mark-build)
+      ?~  mark-result
+        [build [%blocks [mark-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %core *] mark-result)
+        (wrap-error mark-result)
+      ::
+      ?.  (slab %grad p.vase.u.mark-result)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %diff failed: %{<p.start-cage>} mark has no +grad arm"
+      ::
+      =/  grad-build=^build
+        [date.build [%ride [%limb %grad] [%$ %noun vase.u.mark-result]]]
+      ::
+      =^  grad-result  accessed-builds  (depend-on grad-build)
+      ?~  grad-result
+        [build [%blocks [grad-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %ride *] grad-result)
+        (wrap-error grad-result)
+      ::  if +grad produced a @tas, convert to that mark and diff those
+      ::
+      ?@  q.vase.u.grad-result
+        =/  mark=(unit @tas)  ((sand %tas) q.vase.u.grad-result)
+        ?~  mark
+          %-  return-error  :_  ~  :-  %leaf
+          "ford: %diff failed: %{<p.start-cage>} mark has invalid +grad arm"
+        ::
+        =/  diff-build=^build
+          :-  date.build
+          :^    %diff
+              disc
+            [%cast disc u.mark [%$ start-cage]]
+          [%cast disc u.mark [%$ end-cage]]
+        ::
+        =^  diff-result  accessed-builds  (depend-on diff-build)
+        ?~  diff-result
+          [build [%blocks [diff-build]~ ~] accessed-builds]
+        ::
+        ?.  ?=([~ %success %diff *] diff-result)
+          (wrap-error diff-result)
+        ::
+        =/  =build-result
+          [%success %diff cage.u.diff-result]
+        ::
+        [build [%build-result build-result] accessed-builds]
+      ::  +grad produced a cell, which should be a core with a +form arm
+      ::
+      ?.  (slab %form p.vase.u.grad-result)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %diff failed: %{<p.start-cage>} mark has no +form:grab arm"
+      ~&  sloe+(sloe p.vase.u.grad-result)
+      ::  the +grab core should also contain a +diff arm
+      ::
+      ?.  (slab %diff p.vase.u.grad-result)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %diff failed: %{<p.start-cage>} mark has no +diff:grab arm"
+      ::
+      =/  diff-build=^build
+        :-  date.build
+        :+  %call
+          ::
+          ^=  gate
+          :+  %ride
+            ::
+            formula=`hoon`[%tsgl [%wing ~[%diff]] [%wing ~[%grad]]]
+          ::
+          ^=  subject
+          :+  %mute
+            ::
+            subject=`schematic`[%$ %noun vase.u.mark-result]
+          ::
+          ^=  mutations
+          ^-  (list [wing schematic])
+          [[%& 6]~ [%$ start-cage]]~
+        ::
+        sample=`schematic`[%$ end-cage]
+      ::
+      =^  diff-result  accessed-builds  (depend-on diff-build)
+      ?~  diff-result
+        [build [%blocks [diff-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %call *] diff-result)
+        (wrap-error diff-result)
+      ::
+      =/  form-build=^build
+        [date.build [%ride [%limb %form] [%$ %noun vase.u.grad-result]]]
+      ::
+      =^  form-result  accessed-builds  (depend-on form-build)
+      ?~  form-result
+        [build [%blocks [form-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %ride *] form-result)
+        (wrap-error form-result)
+      ::
+      =/  mark=(unit @tas)  ((soft @tas) q.vase.u.form-result)
+      ?~  mark
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %diff failed: invalid +form result: {(text vase.u.form-result)}"
+      ::
+      =/  =build-result
+        [%success %diff [u.mark vase.u.diff-result]]
+      ::
+      [build [%build-result build-result] accessed-builds]
     ::
     ++  make-dude
       |=  [error=(trap tank) attempt=schematic]
