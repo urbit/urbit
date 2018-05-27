@@ -1057,7 +1057,7 @@
     ++  abet  ..handle
     ++  done  .
     ++  teba  =+  a=$-(* _..handle) 
-              |@  +-  $
+              |@  ++  $
                     |*(b/* %_(done ..handle (a b)))
               --
     ++  del-deps  (teba ^del-deps)
@@ -1617,7 +1617,7 @@
       ..ix(wix (~(del by wix) ire))
     ::
     ++  teba  =+  a=$-(* _..ix) 
-              |@  +-  $
+              |@  ++  $
                     |*(b/* %_(done ..ix (a b)))
               --
     ++  give-json  (teba ^give-json)
@@ -1798,7 +1798,7 @@
     ::  XX block reqs until correct core checked in?
     ++  warn  |=(a/tang ((slog (flop a)) abet))
     ++  with  =+  $:{a/vase b/$-(vase abet)} 
-              |@  +-  $  |=(c/vase (b (slam a c)))  --
+              |@  ++  $  |=(c/vase (b (slam a c)))  --
     ++  root-beak  `beak`[our %home da+now]
     ::
     ::  Main

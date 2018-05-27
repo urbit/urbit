@@ -2050,7 +2050,7 @@
             $fskt
           %+  tug:bo  $(hon q.hon)
           |=  {cof/cafe mar/mark vax/vase}
-          %+  tug:bo  (wrapped-slap cof bax [%bcdt %bcmc p.hon])
+          %+  tug:bo  (wrapped-slap cof bax [%kttr %bsmc p.hon])
           |=  {cof/cafe tug/vase}
           ?.  (~(nest ut p.tug) | p.vax)
             (err:bo cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)

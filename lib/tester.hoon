@@ -82,7 +82,7 @@
   ::  #
   ::    gates for quick check style tests.
   +|
-  +-  check
+  ++  check
     |*  [generator=$-(@uvJ *) test=$-(* ?)]
     |-  ^-  tang
     ?:  (gth current-iteration check-iterations)

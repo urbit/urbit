@@ -138,8 +138,6 @@
 ::  #
 ::    engines for our imaginary hello, world app.
 ::
-::  note that ++say-goodbye is the correct notation, even though
-::  it's a {+-} arm.
 |%
 ++  say-hello                                           ::  say hi to someone
   ::  friendly welcome message
@@ -158,7 +156,7 @@
 ::        %hello
 ::      %world
 ::
-+-  say-goodbye                                         ::
+++  say-goodbye                                         ::
   ::  describe product of function
   ::
   |=  ::  txt: departing friend

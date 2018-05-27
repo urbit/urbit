@@ -1642,7 +1642,7 @@
             $get-api
           :*  %ex
               %dtkt
-              [%bcmc [%wing ~[%json]]]
+              [%bsmc [%wing ~[%json]]]
               :*  %clsg
                   [%rock %tas %gx]
                   [%sand %ta (scot %p our.hid)]
@@ -1709,7 +1709,7 @@
   =>  ~(. he moz ses)
   =-  [wrap=- +]
   =+  he-arm=he-type
-  |@  +-  $
+  |@  ++  $
         |:  +<.he-arm  
         ^-  (quip move _..he)
         he-abet:(he-arm +<)
