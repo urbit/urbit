@@ -31,7 +31,7 @@ _box_count(c3_ws siz_ws) { }
 static c3_w
 _box_slot(c3_w siz_w)
 {
-  if ( siz_w < 8 ) {
+  if ( siz_w < u3a_minimum ) {
     return 0;
   }
   else {

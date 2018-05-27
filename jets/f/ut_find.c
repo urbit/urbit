@@ -236,10 +236,10 @@
 
 #if 1
           if ( qpq_sut == c3__wet ) {
-            zut = u3nc(c3__elm, u3k(qu_zem));
+            zut = u3nc(c3__wet, u3k(qu_zem));
           } 
           else if ( qpq_sut == c3__dry ) {
-            zut = u3nc(c3__ash, u3k(qu_zem));
+            zut = u3nc(c3__dry, u3k(qu_zem));
           } 
           else u3m_bail(c3__fail);
 #endif
