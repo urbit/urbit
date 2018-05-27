@@ -94,7 +94,7 @@
         }
       }
       else {
-        c3_assert(c3__wet == u3h(gat)) || c3__elm == u3h(gat));
+        c3_assert(c3__wet == u3h(gat));
 #if 0
         u3_noun dun = u3qfu_dunq(van, "wild", typ);
         u3_noun niz = u3qfu_dunq(van, "tame", dox);

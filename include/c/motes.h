@@ -1117,6 +1117,7 @@
 #   define c3__trop   c3_s4('t','r','o','p')
 #   define c3__trup   c3_s4('t','r','u','p')
 #   define c3__try    c3_s3('t','r','y')
+#   define c3__tsbn   c3_s4('t','s','b','n')
 #   define c3__tsbr   c3_s4('t','s','b','r')
 #   define c3__tscl   c3_s4('t','s','c','l')
 #   define c3__tscm   c3_s4('t','s','c','m')

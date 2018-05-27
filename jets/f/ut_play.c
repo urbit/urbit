@@ -418,7 +418,7 @@
         return _play_x(van, sut, p_gen);
       }
 
-      case c3__tsgr: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__tsbn: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);
@@ -493,7 +493,7 @@
         return ret;
       }
 
-      case c3__sggr: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__sgbn: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_x(van, sut, q_gen);
