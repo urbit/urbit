@@ -306,10 +306,17 @@ softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfl
 libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
 libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
 
+opt_flags = []
+if get_option('debug')
+  opt_flags = ['-g']
+else
+  opt_flags = ['-O3']
+endif
+
 executable('urbit',
 sources : sources,
 include_directories : incdir,
-c_args : os_c_flags,
+c_args : opt_flags + os_c_flags,
 link_args: os_link_flags,
 dependencies: [openssl_dep,
                curl_dep,
