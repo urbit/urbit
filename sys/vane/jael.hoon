@@ -48,7 +48,7 @@
       yen/(set duct)                                    ::  raw observers
       urb/state-absolute                                ::  all absolute state
       sub/state-relative                                ::  all relative state
-      eth=state-ethereum                                ::  eth-specific state
+      etn=state-eth-node                                ::  eth connection state
   ==                                                    ::
 ++  state-relative                                      ::  urbit metadata
   $:  $=  bal                                           ::  balance sheet
@@ -59,19 +59,22 @@
             lyf/life                                    ::  version
             jaw/(map life ring)                         ::  private keys
         ==                                              ::
+      $=  eth                                           ::  ethereum (vent)
+        $:  yen=(set duct)                              ::  trackers
+            dns=dnses                                   ::  on-chain dns state
+            hul=(map ship hull)                         ::  on-chain ship state
+            ::TODO  do we want (map ship diff-hull) too?
+            kyz=(map ship (map life (pair pass pass)))  ::  public key versions
+        ==                                              ::
   ==                                                    ::
 ++  state-absolute                                      ::  absolute urbit
   $:  pry/(map ship (map ship safe))                    ::  promises
+      eve=block:able                                    ::  on-chain events
   ==                                                    ::
-++  state-ethereum                                      ::  known ethereum
-  $:  ships=fleet                                       ::  ship states
-      dns=dnses                                         ::  dns states
-    ::                                                  ::  meta
-      listeners=(set duct)                              ::  subscribers
-      source=(each ship node-src)                       ::  learning from
-      heard=events                                      ::  processed events
+++  state-eth-node                                      ::  node config + meta
+  $:  source=(each ship node-src)                       ::  learning from
+      heard=(set event-id)                              ::  processed events
       latest-block=@ud                                  ::  last heard block
-      checking=(map @p hull)                            ::  verifying
   ==                                                    ::
 ++  node-src                                            ::  ethereum node comms
   $:  node=purl:eyre                                    ::  node url
@@ -333,7 +336,6 @@
       |*  {nut/@tas old/(map) new/(map)}
       ^-  (unit rite)
       =;  mor  ?~(mor ~ `[nut mor])
-      ~!  [old new]
       (sub-by new old |*({a/* b/*} a))
     --  ::dif
   ::                                                    ::  ++sum:ry
@@ -540,6 +542,24 @@
     ^-  safe
     (splice(pig (remove les.del)) mor.del)
   --
+::                                                      ::  ++ez
+::::                    ## ethereum^light               ::  wallet algebra
+  ::                                                    ::::
+++  ez
+  ::  simple ethereum-related utility arms.
+  ::
+  |%
+  ++  order-events
+    |=  loz=(list (pair event-id (list diff-constitution)))
+    ^+  loz
+    %+  sort  loz
+    ::  sort by block number, then by event log number,
+    ::TODO  then by diff priority.
+    |=  [[[b1=@ud l1=@ud] *] [[b2=@ud l2=@ud] *]]
+    ?.  =(b1 b2)  (lth b1 b2)
+    ?.  =(l1 l2)  (lth l1 l2)
+    &
+  --
 --
 ::                                                      ::::
 ::::                    #  heavy                        ::  heavy engines
@@ -626,19 +646,15 @@
     ::    [%init our=ship]
     ::
         $init
-      =^  mos  eth.lex
-        abet:(~(init et /init now.sys eth.lex) our.tac)
-      +>.$(moz (weld moz (flop mos)))
-      :: %+  cure(moz (weld moz (flop mos)))  our.tac
-      :: abet:(make:(burb our.tac) our.tac now.sys eny.sys p.tac q.tac)
+      %+  cute  our.tac  =<  abet
+      ~(init et our.tac now.sys eth.sub etn.lex)
     ::
     ::  set ethereum source
     ::    [%look p=(each ship purl)]
     ::
         %look
-      =^  mos  eth.lex
-        abet:(~(look et /init now.sys eth.lex) our.tac src.tac)
-      +>.$(moz (weld moz (flop mos)))
+      %+  cute  our.tac  =<  abet
+      (~(look et our.tac now.sys eth.sub etn.lex) src.tac)
     ::
     ::  create promises
     ::    {$mint p/ship q/safe}
@@ -668,35 +684,27 @@
         yen          (~(del in yen) hen)
         yen.bal.sub  (~(del in yen.bal.sub) hen)
         yen.own.sub  (~(del in yen.own.sub) hen)
-        listeners.eth  (~(del in listeners.eth) hen)
+        yen.eth.sub  (~(del in yen.eth.sub) hen)
       ==
     ::
     ::  watch private keys
     ::    {$vein $~}
     ::
         $vein
-      (curd abet:~(vein ~(feed su our.tac urb sub) hen))
+      (curd abet:~(vein ~(feed su our.tac urb sub etn) hen))
     ::
     ::  watch ethereum state
     ::    [%vent ~]
     ::
         %vent
-      =^  mos  eth.lex
-        abet:(~(vent-to et /vent now.sys eth.lex) hen)
-      =.  mos  [[hen %give %mack ~] mos]
-      +>.$(moz (weld moz (flop mos)))
-    ::
-        %vent-result
-      =^  mos  eth.lex
-        abet:(~(hear-vent et /vent-result now.sys eth.lex) p.tac)
-      =.  mos  [[hen %give %mack ~] mos]
-      +>.$(moz (weld moz (flop mos)))
+      =.  moz  [[hen %give %mack ~] moz]
+      (curd abet:~(vent ~(feed su our.tac urb sub etn) hen))
     ::
     ::  monitor assets
     ::    {$vest $~}
     ::
         $vest
-      (curd abet:~(vest ~(feed su our.tac urb sub) hen))
+      (curd abet:~(vest ~(feed su our.tac urb sub etn) hen))
     ::
     ::  monitor all
     ::    {$vine $~}
@@ -728,14 +736,45 @@
       ::    [%vent ~]
       ::
           %vent
-        $(tac mes)
+        $(tac [%vent p.p.tac])
       ::
       ::
           %vent-result
-        ?.  &(-.source.eth =(q.p.tac p.source.eth))
+        ::  ignore if not from currently configured source.
+        ?.  &(-.source.etn =(q.p.tac p.source.etn))
           +>.$
-        $(tac mes)
+        =.  moz  [[hen %give %mack ~] moz]
+        %+  cute  p.p.tac  =<  abet
+        (~(hear-vent et p.p.tac now.sys eth.sub etn.lex) p.mes)
       ==
+    ==
+  ::
+  ++  take
+    |=  [tea=wire hen=duct hin=sign]
+    ^+  +>
+    ?>  ?=([@ *] tea)
+    =+  our=(slav %p i.tea)
+    =*  wir  t.tea
+    ?-  hin
+        [%a %woot *]
+      ?~  q.hin  ~&(%coop-fine +>.$)
+      ?~  u.q.hin  ~&(%ares-fine +>.$)
+      ~&  [%woot-bad p.u.u.q.hin]
+      ~_  q.u.u.q.hin
+      ::TODO  fail:et
+      +>.$
+    ::
+        [%e %sigh *]
+      %+  cute  our  =<  abet
+      (~(sigh et our now.sys eth.sub etn.lex) wir p.hin)
+    ::
+        [%b %wake ~]
+      %+  cute  our  =<  abet
+      ~(wake et our now.sys eth.sub etn.lex)
+    ::
+        [%j %vent *]
+      %+  cute  our  =<  abet
+      (~(hear-vent et our now.sys eth.sub etn.lex) p.hin)
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
@@ -745,7 +784,17 @@
   ++  cure                                              ::  absolute edits
     |=  {our/ship hab/(list change) urb/state-absolute}
     ^+  +>
-    (curd(urb urb) abet:(~(apex su our urb sub) hab))
+    (curd(urb urb) abet:(~(apex su our urb sub etn) hab))
+  ::                                                    ::  ++cute:of
+  ++  cute                                              ::  ethereum changes
+    |=  $:  our=ship
+            mos=(list move)
+            evs=block:able
+            net=state-eth-node
+        ==
+    ^+  +>
+    %-  cure(etn net, moz (weld (flop mos) moz))
+    [our abet:(link:(burb our) evs)]
   --
 ::                                                      ::  ++su
 ::::                    ## relative^heavy               ::  subjective engine
@@ -764,19 +813,23 @@
       ::  ++form:su generates the actual report data.
       ::
   =|  moz/(list move)
+  =|  evs=block:able
   =|  $:  our/ship
           state-absolute
           state-relative
+          state-eth-node
       ==
   ::  moz: moves in reverse order
   ::  urb: absolute urbit state
   ::  sub: relative urbit state
   ::
   =*  urb  ->-
-  =*  sub  ->+
+  =*  sub  ->+<
+  =*  etn  ->+>
   |%
   ::                                                    ::  ++abet:su
   ++  abet                                              ::  resolve
+    =>  (exec yen.eth [%give %vent |+evs])
     [(flop moz) sub]
   ::                                                    ::  ++apex:su
   ++  apex                                              ::  apply changes
@@ -787,7 +840,8 @@
         hab  t.hab
         +>
       ?-  -.i.hab
-        $rite  (paid +.i.hab)
+        %ethe  (file p.can.i.hab)
+        %rite  (paid +.i.hab)
       ==
     ==
   ::                                                    ::  ++exec:su
@@ -813,6 +867,12 @@
       %_  ..feed
         moz      [[hen %give %vest %& vest:form] moz]
         yen.bal  (~(put in yen.bal) hen)
+      ==
+    ::
+    ++  vent
+      %_  ..feed
+        moz      [[hen %give %vent vent:form] moz]
+        yen.eth  (~(put in yen.eth) hen)
       ==
     --
   ::                                                    ::  ++feel:su
@@ -847,6 +907,10 @@
         ^-  message
         [%hail |+pig]
       ==
+    ::
+    ++  vent
+      |=  evs=block:able
+      (exec yen.eth [%give %vent %| evs])
     --
   ::                                                    ::  ++form:su
   ++  form                                              ::  generate reports
@@ -884,6 +948,10 @@
         ?~(q.i.fub - [[p.i.fub ~(redact up u.q.i.fub)] -])
       ::
       (~(gas by *(map ship safe)) veg)
+    ::
+    ++  vent
+      ^-  chain
+      &+eve
     --
   ::                                                    ::  ++paid:su
   ++  paid                                              ::  track asset change
@@ -914,6 +982,71 @@
     ::
     ?.  (~(exists up mor.del) %jewel)  +>
     vein:feel
+  ::
+  ++  file
+    |=  evs=block:able
+    ^+  +>
+    =?  +>  !=(0 ~(wyt by evs))  (vent:feel evs)
+    =+  vez=(order-events:ez ~(tap by evs))
+    |^  ?~  vez  ..file
+        $(vez t.vez, ..file (file-event i.vez))
+    ::
+    ++  file-event
+      |=  [wer=event-id dis=(list diff-constitution)]
+      ^+  ..file
+      ?:  (~(has in heard) wer)
+        ~&  %ignoring-already-heard-event
+        ..file
+      =.  evs  (~(put by evs) wer dis)
+      =.  heard  (~(put in heard) wer)
+      =.  latest-block  (max latest-block block.wer)
+      |-
+      ?~  dis  ..file
+      =.  ..file
+        =*  dif  i.dis
+        ?-  -.dif
+          %hull   (file-hull +.dif)
+          %dns    (file-dns +.dif)
+        ==
+      $(dis t.dis)
+    ::
+    ++  file-hull
+      |=  [who=@p dif=diff-hull]
+      =-  ::TODO  =; with just the type
+        %_  ..file
+          hul.eth   (~(put by hul.eth) who hel)
+          kyz.eth   (~(put by kyz.eth) who kez)
+        ==
+      ~!  hul.eth
+      ^-  [hel=hull kez=(map life (pair pass pass))]
+      ::  if new, first dif must be %full
+      ?>  |((~(has by hul.eth) who) ?=(%full -.dif))
+      :-  =-  (apply-hull-diff - dif)
+          (fall (~(get by hul.eth) who) *hull)
+      =+  koz=(fall (~(get by kyz.eth) who) *(map life (pair pass pass)))
+      ?+  -.dif  koz
+          %keys
+        ::  catch key changes, store them in the key map
+        ~?  &((gth rev.dif 0) !(~(has by koz) (dec rev.dif)))
+          [%missing-previous-key-rev who (dec rev.dif)]
+        (~(put by koz) rev.dif enc.dif aut.dif)
+      ::
+          %full
+        ::  for full, store the new keys in case we don't have them yet
+        =,  new.dif
+        ~?  &((gth key-revision 0) !(~(has by koz) (dec key-revision)))
+          [%missing-previous-key-rev who (dec key-revision)]
+        %+  ~(put by koz)  key-revision
+        [encryption-key authentication-key]
+      ==
+    ::
+    ++  file-dns
+      |=  [ind=@ud new=@t]
+      ?:  =(0 ind)  ..file(pri.dns.eth new)
+      ?:  =(1 ind)  ..file(sec.dns.eth new)
+      ?:  =(2 ind)  ..file(ter.dns.eth new)
+      !!
+    --
   --
 ::                                                      ::  ++ur
 ::::                    ## absolute^heavy               ::  objective engine
@@ -936,6 +1069,13 @@
   ::                                                    ::  ++abet:ur
   ++  abet                                              ::  resolve
     [(flop hab) `state-absolute`urb]
+  ::
+  ++  link
+    |=  evs=block:able
+    %_  +>
+      hab   [[%ethe |+evs] hab]
+      eve   (~(uni by eve) evs)
+    ==
   ::                                                    ::  ++lawn:ur
   ++  lawn                                              ::  debts, rex to pal
     |=  {rex/ship pal/ship}
@@ -1022,33 +1162,17 @@
       ::
       ::TODO  more words
   =|  moves=(list move)
-  =|  changes=(jar [@ud @ud] diff-constitution)
-  =|  requests=(jar wire (pair (unit @t) request))
-  |_  $:  cuz=wire
+  =|  changes=block:able
+  |_  $:  our=ship
           now=@da
-          state-ethereum
+          eth=_eth:*state-relative
+          state-eth-node
       ==
-  +*  eth  +<+>
+  +*  etn  +<+>+
   ::
   ++  abet
-    ^-  [(list move) state-ethereum]
-    =-  [(weld - (flop moves)) eth]
-    %+  weld
-      ^-  (list move)
-      %+  turn  ~(tap by requests)
-      |=  [w=wire r=(list (pair (unit @t) request))]
-      %+  rpc-hiss  w
-      a+(turn (flop r) request-to-json)
-    ^-  (list move)
-    ?:  =(0 ~(wyt by changes))  ~
-    %+  update-to-all  %difs
-    %+  sort  ~(tap by changes)
-    ::  sort by block number, then by event log number,
-    ::TODO  then by diff priority.
-    |=  [[[b1=@ud l1=@ud] *] [[b2=@ud l2=@ud] *]]
-    ?.  =(b1 b2)  (lth b1 b2)
-    ?.  =(l1 l2)  (lth l1 l2)
-    &
+    ^-  [(list move) block:able state-eth-node]
+    [(flop moves) changes etn]
   ::
   ++  put-move
     |=  mov=move
@@ -1058,23 +1182,18 @@
     |=  mos=(list move)
     %_(+> moves (weld (flop mos) moves))
   ::
-  ++  make-change
-    |=  [cause=[@ud @ud] dif=diff-constitution]
-    (da(changes (~(add ja changes) cause dif)) cause [dif]~)
-  ::
-  ++  make-changes
-    |=  [cause=[@ud @ud] dis=(list diff-constitution)]
-    =-  (da(changes -) cause dis)
-    %+  ~(put by changes)  cause
-    (weld (flop dis) (~(get ja changes) cause))
-  ::
   ++  put-request
     |=  [wir=wire id=(unit @t) req=request]
-    %_(+> requests (~(add ja requests) wir id req))
-  ::
-  ++  put-individual-request
-    |=  [wir=wire id=(unit @t) req=request]
     (put-move (rpc-hiss wir (request-to-json id req)))
+  ::
+  ++  make-change
+    |=  [cause=event-id dif=diff-constitution]
+    +>(changes (~(add ja changes) cause dif))
+  ::
+  ++  make-changes
+    |=  [cause=event-id dis=(list diff-constitution)]
+    =-  +>.$(changes (~(put by changes) cause -))
+    (weld (flop dis) (~(get ja changes) cause))
   ::
   ::
   ++  wrap-note
@@ -1091,10 +1210,13 @@
     ?>  ?=(%| -.source)
     !>  (json-request node.p.source jon)
   ::
+  ::TODO  this is the only place in ++et that does subscription updates,
+  ::      and it probably shouldn't.
   ++  update-to-all
     |=  upd=update
+    %-  put-moves
     ^-  (list move)
-    %+  turn  ~(tap in listeners)
+    %+  turn  ~(tap in yen.eth)
     |=  d=duct
     :: [d %give %vent upd]
     ::NOTE  we do a %pass instead of a %give because ames is bad
@@ -1102,55 +1224,31 @@
     =+  our=(slav %p i.t.i.d)
     =+  who=(slav %p i.t.t.i.d)
     %+  wrap-note  /vent-result
-    [%a %want [our who] /j/vent-result %vent-result upd]
+    [%a %want [our who] /j/(scot %p our)/vent-result %vent-result upd]
   ::
   ::
   ++  listen-to-ship
     |=  [our=ship who=ship]
     %-  put-move(source &+who)
     %+  wrap-note  /vent/(scot %p who)
-    [%a %want [our who] /j/vent `*`[%vent ~]]
+    [%a %want [our who] /j/(scot %p our)/vent `*`[%vent ~]]
   ::
   ++  unsubscribe-from-source
     |=  our=ship
     %-  put-move
     ?>  ?=(%& -.source)
     %+  wrap-note  /vent/(scot %p p.source)
-    [%a %want [our p.source] /j/vent `*`[%nuke ~]]
-  ::
-  ::
-  ++  read
-    |=  [wir=wire cal=ships:function]
-    =+  (ships:function-to-call cal)
-    %^  put-request  wir  `id
-    :+  %eth-call
-      [~ ships:contracts ~ ~ ~ (encode-call dat)]
-    ::NOTE  we can't make read calls to not the latest block. however,
-    ::      you risk getting data that filter polling hasn't yet seen,
-    ::      so probably poll the filter before doing any important reads.
-    [%label %latest]
-  ::
-  ++  read-ships
-    |=  [wir=wire who=(list @p)]
-    ?~  who  +>
-    =.  +>  (read wir %ships i.who)
-    $(who t.who)
-  ::
-  ++  read-dns
-    |=  wir=wire
-    =+  inx=(gulf 0 2)
-    |-
-    ?~  inx  +>.^$
-    =.  +>.^$  (read wir %dns-domains i.inx)
-    $(inx t.inx)
-  ::
+    ::TODO  should we maybe have a %nuke-vent,
+    ::      or do we have a unique duct here?
+    [%a %want [our p.source] /j/(scot %p our)/vent `*`[%nuke ~]]
   ::
   ++  listen-to-node
     |=  url=purl:eyre
     new-filter(source |+%*(. *node-src node url))
   ::
+  ::
   ++  new-filter
-    %-  put-individual-request
+    %-  put-request
     :+  /filter/new  `'new filter'
     :*  %eth-new-filter
         `[%number +(latest-block)]  ::TODO  or Ships origin block when 0
@@ -1162,26 +1260,28 @@
   ::
   ++  read-filter
     ?>  ?=(%| -.source)
-    %-  put-individual-request
+    %-  put-request
     :+  /filter/logs  `'filter logs'
     [%eth-get-filter-logs filter-id.p.source]
   ::
   ++  poll-filter
     ?>  ?=(%| -.source)
-    %-  put-individual-request
+    %-  put-request
     :+  /filter/changes  `'poll filter'
     [%eth-get-filter-changes filter-id.p.source]
   ::
   ++  wait-poll
     ?>  ?=(%| -.source)
     =+  wen=(add now ~m4)
+    ::TODO  maybe also put a %rest for the old timer, just in case?
+    ::      but I think the check in take-filter-result suffices.
     %-  put-move(poll-timer.p.source wen)
-    (wrap-note /poll %b %wait wen)
+    (wrap-note /(scot %p our)/poll %b %wait wen)
   ::
   ++  cancel-wait-poll
     ?>  ?=(%| -.source)
     %-  put-move(poll-timer.p.source *@da)
-    %+  wrap-note  /poll/cancel
+    %+  wrap-note  /(scot %p our)/poll/cancel
     [%b %rest poll-timer.p.source]
   ::
   ::
@@ -1197,7 +1297,7 @@
     (listen-to-node -(p.p |))
   ::
   ++  look
-    |=  [our=ship src=(each ship purl:eyre)]
+    |=  src=(each ship purl:eyre)
     ^+  +>
     =.  +>
       ?:  ?=(%| -.src)
@@ -1207,25 +1307,6 @@
       (listen-to-node p.src)
     (listen-to-ship our p.src)
   ::
-  ++  run-check
-    |=  save=?
-    =+  wir=(weld /read ?:(save /reset /verify))
-    =.  +>.$  (read-dns wir)
-    (read-ships wir (gulf ~zod ~nec))  ::TODO  ~fes
-  ::
-  ::
-  ++  vent-to
-    |=  duc=duct
-    ::TODO  check if we already know duc
-    %-  put-move(listeners (~(put in listeners) duc))
-    ~&  [%venting-to duc]
-    :: [duc %give %vent %full ships dns heard]
-    ::NOTE  we do a %pass instead of a %give because ames is bad
-    ?>  ?=([[%a @ @ *] *] duc)
-    =+  our=(slav %p i.t.i.duc)
-    =+  who=(slav %p i.t.t.i.duc)
-    %+  wrap-note  /vent-result
-    [%a %want [our who] /j/vent-result %vent-result %full ships dns heard]
   ::
   ++  hear-vent
     |=  upd=update
@@ -1241,17 +1322,19 @@
     ==
   ::
   ++  assume
-    |=  [s=fleet d=dnses h=events]
+    ::TODO  keys
+    |=  [s=(map ship hull) d=dnses h=events]
     ^+  +>
-    ?:  &(=(s ships) =(d dns) =(h heard))  +>
+    ?:  &(=(s hul.eth) =(d dns.eth) =(h heard))
+      ~&  %ignoring-identical-full
+      +>
     ~&  [%assume ~(wyt by s) ~(wyt in h)]
-    %-  put-moves(ships s, dns d, heard h)
-    (update-to-all %full s d h)
+    (update-to-all [%full s d h])
   ::
   ++  accept
-    |=  [cause=[@ud @ud] dis=(list diff-constitution)]
+    |=  [cause=event-id dis=(list diff-constitution)]
     ^+  +>
-    ?:  &(!=([0 0] cause) (~(has in heard) cause))
+    ?:  (~(has in heard) cause)
       ~&  %accept-ignoring-duplicate-event
       +>.$
     ~&  [%accept (lent dis)]
@@ -1261,22 +1344,23 @@
   ++  wake  poll-filter
   ::
   ++  sigh
-    |=  [mar=mark res=vase]
+    |=  [cuz=wire mar=mark res=vase]
     ^+  +>
     ?:  ?=(%& -.source)  +>
+    ?:  ?=(%tang mar)
+      ::TODO  proper error handling
+      ~&  %yikes
+      ~_  q.res
+      +>
     ?>  ?=(%json-rpc-response mar)
     ~|  res
     =+  rep=((hard response:rpc:jstd) q.res)
-    ~&  rpc+rep
-    ?+  cuz  !!
+    ?+  cuz  ~|([%weird-sigh-wire cuz] !!)
         [%filter %new *]
       (take-new-filter rep)
     ::
         [%filter *]
       (take-filter-results rep)
-    ::
-        [%read @ta *]
-      (take-read-results rep ?=(%reset i.t.cuz))
     ==
   ::
   ++  take-new-filter
@@ -1334,11 +1418,11 @@
     ?:  =(event.log changed-dns:ships-events)
       =+  ^-  [pri=tape sec=tape ter=tape]
         (decode-results data.log ~[%string %string %string])
-      =?  +>.$  !=(pri.dns (crip pri))
+      =?  +>.$  !=(pri.dns.eth (crip pri))
         (make-change cuz %dns 0 (crip pri))
-      =?  +>.$  !=(sec.dns (crip sec))
+      =?  +>.$  !=(sec.dns.eth (crip sec))
         (make-change cuz %dns 1 (crip sec))
-      =?  +>.$  !=(ter.dns (crip ter))
+      =?  +>.$  !=(ter.dns.eth (crip ter))
         (make-change cuz %dns 2 (crip ter))
       +>.$
     ::
@@ -1346,178 +1430,6 @@
     ?~  dis  +>.$
     (make-change cuz %hull i.dis)
   ::
-  ::
-  ++  take-read-results
-    |=  [rep=response:rpc:jstd save=?]
-    ^+  +>
-    ?>  ?=(%batch -.rep)
-    |-  ^+  +>.^$
-    ?~  bas.rep  +>.^$
-    =.  +>.^$
-      (take-read-result i.bas.rep save)
-    $(bas.rep t.bas.rep)
-  ::
-  ::NOTE  yes, this is awful
-  ++  take-read-result
-    |=  [rep=response:rpc:jstd save=?]
-    ^+  +>
-    ?<  ?=(%batch -.rep)
-    ?:  ?=(%error -.rep)
-      ~&  [%unhandled-read-error id.rep message.rep]
-      +>
-    =/  cal=ships:function  (parse-id id.rep)
-    =+  wir=(weld /read ?:(save /reset /verify))
-    ::TODO  think about a better way to structure the comparison code below
-    ?-  -.cal  ::  ~&([%unhandled-read-result -.cal] +>.$)
-        %ships
-      ?>  ?=(%s -.res.rep)
-      =/  hul=hull:eth-noun
-        ~|  [id.rep p.res.rep]
-        (decode-results p.res.rep hull:eth-type)
-      ::  ignore inactive ships
-      ?.  active.hul  +>.$
-      ::  we store the read data for now, and only compare with state once we
-      ::  have completed it by learning the spawned ships.
-      =.  checking  (~(put by checking) who.cal (hull-from-eth hul))
-      (read wir %get-spawned who.cal)
-    ::
-        %get-spawned
-      ?>  ?=(%s -.res.rep)
-      =+  hul=(~(got by checking) who.cal)
-      =/  kis=(list @p)
-        ::TODO  can we let this be if we're cool with just @ ?
-        %-  (list @p)  ::NOTE  because arrays are still typeless
-        (decode-results p.res.rep [%array %uint]~)
-      =.  hul  hul(spawned (~(gas in *(set @p)) kis))
-      ::
-      =+  have=(~(get by ships) who.cal)
-      =.  +>.$
-        ?~  have
-          ~&  [%completely-missing who.cal]
-          ?.  save  +>.$
-          ~&  [%storing-chain-version-of who.cal]
-          (make-change [0 0] %hull who.cal %full hul)
-        ::
-        =*  huv  state.u.have
-        ?:  =(huv hul)  +>.$
-        ~&  [%differs-from-chain-version who.cal]
-        ~&  [%what %have %chain]
-        ::TODO  can we maybe re-use some ++redo code to simplify this?
-        ~?  !=(owner.huv owner.hul)
-          :-  %owner-differs
-          [owner.huv owner.hul]
-        ~?  !=(encryption-key.huv encryption-key.hul)
-          :-  %encryption-key-differs
-          [encryption-key.huv encryption-key.hul]
-        ~?  !=(authentication-key.huv authentication-key.hul)
-          :-  %authentication-key-differs
-          [authentication-key.huv authentication-key.hul]
-        ~?  !=(key-revision.huv key-revision.hul)
-          :-  %key-revision-differs
-          [key-revision.huv key-revision.hul]
-        ~?  !=(continuity-number.huv continuity-number.hul)
-          :-  %continuity-number-differs
-          [continuity-number.huv continuity-number.hul]
-        ~?  !=(spawn-count.huv spawn-count.hul)
-          :-  %spawn-count-differs
-          [spawn-count.huv spawn-count.hul]
-        ~?  !=(spawned.huv spawned.hul)
-          :-  %spawned-differs
-          [spawned.huv spawned.hul]
-        ~?  !=(sponsor.huv sponsor.hul)
-          :-  %sponsor-differs
-          [sponsor.huv sponsor.hul]
-        ~?  !=(escape.huv escape.hul)
-          :-  %escape-differs
-          [escape.huv escape.hul]
-        ~?  !=(spawn-proxy.huv spawn-proxy.hul)
-          :-  %spawn-proxy-differs
-          [spawn-proxy.huv spawn-proxy.hul]
-        ~?  !=(transfer-proxy.huv transfer-proxy.hul)
-          :-  %transfer-proxy-differs
-          [transfer-proxy.huv transfer-proxy.hul]
-        ::
-        ~&  %$
-        ?.  save  +>.$
-        ~&  [%storing-chain-version-of who.cal]
-        (make-change [0 0] %hull who.cal %full hul)
-      ::
-      =.  checking  (~(del by checking) who.cal)
-      (read-ships wir kis)
-    ::
-        %dns-domains
-      ?>  ?=(%s -.res.rep)
-      =+  dom=(crip (decode-results p.res.rep ~[%string]))
-      ?:  =(0 ind.cal)
-        ?:  =(pri.dns dom)  +>.$
-        ~&  [%primary-dns-differs pri.dns dom]
-        ?.  save  +>.$
-        (make-change [0 0] %dns 0 dom)
-      ?:  =(1 ind.cal)
-        ?:  =(sec.dns dom)  +>.$
-        ~&  [%secondary-dns-differs sec.dns dom]
-        ?.  save  +>.$
-        (make-change [0 0] %dns 1 dom)
-      ?:  =(2 ind.cal)
-        ?:  =(ter.dns dom)  +>.$
-        ~&  [%tertiary-dns-differs ter.dns dom]
-        ?.  save  +>.$
-        (make-change [0 0] %dns 2 dom)
-      !!
-    ==
-  ::
-  ::
-  ++  da
-    |=  [[block=@ud log=@ud] dis=(list diff-constitution)]
-    ^+  +>
-    =.  heard  (~(put in heard) block log)
-    =.  latest-block  (max latest-block block)
-    |^  ?~  dis  +>.^$
-        =.  ..da
-          =*  dif  i.dis
-          ?-  -.dif
-            %hull   (da-hull +.dif)
-            %dns    (da-dns +.dif)
-          ==
-        $(dis t.dis)
-    ::
-    ++  da-hull
-      |=  [who=@p dif=diff-hull]
-      =-  ..da(ships -)
-      ::  if new, first dif must be %full
-      ?>  |((~(has by ships) who) ?=(%full -.dif))
-      =+  old=(fall (~(get by ships) who) *complete-ship)
-      ::  catch key changes, store them in the key map
-      =?  keys.old  ?=(%keys -.dif)
-        ~?  &((gth rev.dif 0) !(~(has by keys.old) (dec rev.dif)))
-          [%missing-previous-key-rev who (dec rev.dif)]
-        (~(put by keys.old) rev.dif enc.dif aut.dif)
-      ::  for full, store the new keys in case we don't have them yet
-      =?  keys.old  ?=(%full -.dif)
-        =,  new.dif
-        ~?  &((gth key-revision 0) !(~(has by keys.old) (dec key-revision)))
-          [%missing-previous-key-rev who (dec key-revision)]
-        %+  ~(put by keys.old)  key-revision
-        [encryption-key authentication-key]
-      =.  state.old     (apply-hull-diff state.old dif)
-      =.  history.old   [dif history.old]
-      ::  apply dif to ship state
-      (~(put by ships) who old)
-    ::
-    ++  da-dns
-      |=  [ind=@ud new=@t]
-      ?:  =(0 ind)  ..da(pri.dns new)
-      ?:  =(1 ind)  ..da(sec.dns new)
-      ?:  =(2 ind)  ..da(ter.dns new)
-      !!
-    ::
-    ++  da-heard
-      |=  [block=@ud log=@ud]
-      =-  ..da(heard har, latest-block las)
-      ^-  [har=(set (pair @ud @ud)) las=@ud]
-      :-  (~(put in heard) block log)
-      (max latest-block block)
-    --
   --
 --
 ::                                                      ::::
@@ -1595,27 +1507,6 @@
           hin/(hypo sign)
       ==
   ^-  {p/(list move) q/_..^$}
-  =*  req  q.hin
-  ?-  req
-      [%a %woot *]
-    ?~  q.req  ~&(%coop-fine [~ ..^$])
-    ?~  u.q.req  ~&(%ares-fine [~ ..^$])
-    ~&  [%woot-bad p.u.u.q.req]
-    ~_  q.u.u.q.req
-    [~ ..^$]
-  ::
-      [%e %sigh *]
-    ~&  [%got-sigh p.p.req]
-    =^  moz  eth.lex  abet:(~(sigh et tea now eth.lex) p.req)
-    [moz ..^$]
-  ::
-      [%b %wake ~]
-    =^  moz  eth.lex  abet:~(wake et tea now eth.lex)
-    [moz ..^$]
-  ::
-      [%j %vent *]
-    ~&  %got-vent
-    =^  moz  eth.lex  abet:(~(hear-vent et tea now eth.lex) p.req)
-    [moz ..^$]
-  ==
+  =^  did  lex  abet:(~(take of [now eny] lex) tea hen q.hin)
+  [did ..^$]
 --

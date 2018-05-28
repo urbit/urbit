@@ -155,6 +155,9 @@
         topics=(list @t)
     ==
   ::
+  ::  alternative event location.
+  +=  event-id  [block=@ud log=@ud]
+  ::
   ::  data for eth_call.
   ++  call
     $:  from=(unit address)
@@ -211,7 +214,7 @@
     ::
     +=  dnses  [pri=@t sec=@t ter=@t]
     ::
-    ++  events  (set (pair @ud @ud))
+    ++  events  (set event-id)
     ::
     ++  eth-type
       |%
@@ -261,8 +264,8 @@
     ::  #  diffs
     ::
     ++  update
-      $%  [%full ships=fleet dns=dnses heard=events]
-          [%difs dis=(list (pair [block=@ud log=@ud] (list diff-constitution)))]
+      $%  [%full ships=(map ship hull) dns=dnses heard=events]  ::TODO  keys
+          [%difs dis=(list (pair event-id (list diff-constitution)))]
       ==
     ::
     ++  diff-constitution
@@ -1211,6 +1214,9 @@
     ::  %jael only talks to %ames and %behn.  we send messages
     ::  through %ames and use %behn timers.
     ::
+    ++  block                                           ::  on-chain changes
+      %+  map  event-id:ethe                            ::  per event log
+      (list diff-constitution:constitution:ethe)        ::  one or more changes
     ++  action                                          ::  balance change
       %+  pair  ship                                    ::  partner
       %+  each  bump                                    ::  &/liability change
@@ -1221,9 +1227,12 @@
         (map ship safe)                                 ::  liabilities
       (map ship safe)                                   ::  assets
     ::                                                  ::
+    ++  chain                                           ::  batch of changes
+      %+  each  block                                   ::  & all events
+      block                                             ::  | new events
     ++  change                                          ::  urbit change
-      $%  ::TODO  $ethe ?
-          $:  $rite                                     ::  rights change
+      $%  [%ethe can=chain]                             ::  on-chain change
+          $:  %rite                                     ::  rights change
               rex/ship                                  ::  issuer
               pal/ship                                  ::  issued to
               del/bump                                  ::  change
@@ -1233,7 +1242,7 @@
           {$vest p/tally}                               ::  balance update
           {$vein p/life q/(map life ring)}              ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
-          [%vent p=update:constitution:ethe]            ::  ethereum changes
+          [%vent p=chain]                               ::  ethereum changes
       ==                                                ::
     ++  note                                            ::  out request $->
       =,  eyre
@@ -1266,8 +1275,7 @@
           [%move our=ship p=ship q=ship r=safe]         ::  transfer from=to
           [%nuke ~]                                     ::  cancel tracker from
           [%vein our=ship]                              ::  view signing keys
-          [%vent ~]                                     ::  view ethereum state
-          [%vent-result p=update:constitution:ethe]     ::  tmp workaround
+          [%vent our=ship]                              ::  view ethereum state
           [%vest our=ship]                              ::  view public balance
           [%vine ~]                                     ::  view secret history
           [%west p=sack q=path r=*]                     ::  remote request
