@@ -75,14 +75,14 @@
 ::
 ::  |asn1: small selection of types and constants for ASN.1
 ::
-::  a minimal representation of some basic ASN.1 types,
-::  created to support PKCS keys, digests, and cert requests
+::    A minimal representation of some basic ASN.1 types,
+::    created to support PKCS keys, digests, and cert requests.
 ::
 ++  asn1
   |%
   ::  +bespoke:asn1: context-specific, generic ASN.1 tag type
   ::
-  ::  note that explicit implies constructed (ie, bit 5 is set in DER)
+  ::    Note that *explicit* implies *constructed* (ie, bit 5 is set in DER).
   ::
   +=  bespoke
     ::  imp: & is implicit, | is explicit
@@ -94,16 +94,16 @@
   +=  spec
     $%  ::  %int: arbitrary-sized, unsigned integers
         ::
-        ::  unsigned integers, represented as having a positive sign.
-        ::  negative integers would be two's complement in DER,
-        ::  but we don't need them.
+        ::    Unsigned integers, represented as having a positive sign.
+        ::    Negative integers would be two's complement in DER,
+        ::    but we don't need them.
         ::
         [%int int=@u]
         ::  %bit: very minimal support for bit strings
         ::
-        ::  specifically, values must already be padded and byte-aligned.
-        ::  note that leading zeros are significant in ASN.1 bit strings,
-        ::  so atomic encoding would be insufficient for complete support.
+        ::    Specifically, values must already be padded and byte-aligned.
+        ::    Note that leading zeros are significant in ASN.1 bit strings,
+        ::    so atomic encoding would be insufficient for complete support.
         ::
         [%bit bit=@ux]
         ::  %oct: octets in little-endian byte order
@@ -114,8 +114,8 @@
         [%nul ~]
         ::  %obj: object identifiers, pre-packed
         ::
-        ::  object identifiers are technically a sequence of integers,
-        ::  represented here in their already-encoded form.
+        ::    Object identifiers are technically a sequence of integers,
+        ::    represented here in their already-encoded form.
         ::
         [%obj obj=@ux]
         ::  %seq: a list of specs
@@ -123,15 +123,15 @@
         [%seq seq=(list spec)]
         ::  %set: a logical set of specs
         ::
-        ::  implemented here as a list for the sake of simplicity.
-        ::  must be already deduplicated and sorted!
+        ::    Implemented here as a list for the sake of simplicity.
+        ::    must be already deduplicated and sorted!
         ::
         [%set set=(list spec)]
         ::  %con: context-specific
         ::
-        ::  general supported for context-specific tags.
-        ::  bes: custom tag number, implicit or explicit
-        ::  con: already-encoded bytes
+        ::    General support for context-specific tags.
+        ::    bes: custom tag number, implicit or explicit
+        ::    con: already-encoded bytes
         ::
         [%con bes=bespoke con=(list @D)]
     ==
@@ -150,9 +150,9 @@
   --
 ::  |der: distinguished encoding rules for ASN.1
 ::
-::  DER is a tag-length-value binary encoding for ASN.1, designed
-::  so that there is only one (distinguished) valid encoding for an
-::  instance of a type.
+::    DER is a tag-length-value binary encoding for ASN.1, designed
+::    so that there is only one (distinguished) valid encoding for an
+::    instance of a type.
 ::
 ++  der
   |%
@@ -291,11 +291,14 @@
       ?~  q.tub
         (fail tub)
       ::  fuz: first byte - length, or length of the length
+      ::
       =*  fuz  i.q.tub
       ::  nex: offset of value bytes from fuz
       ::  len: length of value bytes
+      ::
       =+  ^-  [nex=@ len=@]
         ::  faz: meaningful bits in fuz
+        ::
         =/  faz  (end 0 7 fuz)
         ?:  =(0 (cut 0 [7 1] fuz))
           [0 faz]
@@ -305,17 +308,19 @@
           ==
         (fail tub)
       ::  zuf: value bytes
+      ::
       =/  zuf  (swag [nex len] t.q.tub)
       ?.  =(len (lent zuf))
         (fail tub)
       ::  zaf:  product nail
+      ::
       =/  zaf  [p.p.tub (add +(nex) q.p.tub)]
       [zaf `[zuf zaf (slag (add nex len) t.q.tub)]]
     --
   --
 ::  |rsa: primitive, textbook RSA
 ::
-::  unpadded, unsafe, unsuitable for encryption!
+::    Unpadded, unsafe, unsuitable for encryption!
 ::
 ++  rsa
   |%
@@ -323,8 +328,10 @@
   ::
   +=  key
     $:  ::  pub:  public parameters (n=modulus, e=pub-exponent)
+        ::
         pub=[n=@ux e=@ux]
         ::  sek:  secret parameters (d=private-exponent, p/q=primes)
+        ::
         sek=(unit [d=@ux p=@ux q=@ux])
     ==
   ::  +elcm:rsa: carmichael totient
@@ -332,7 +339,7 @@
   ++  elcm
     |=  [a=@ b=@]
     (div (mul a b) d:(egcd a b))
-  ::  +new-key:rsa
+  ::  +new-key:rsa: write somethingXXX
   ::
   ++  new-key
     =/  e  `@ux`65.537
@@ -346,7 +353,7 @@
     [[n e] `[d p q]]
   ::  +en:rsa: primitive RSA encryption
   ::
-  ::  ciphertext = message^e (mod n)
+  ::    ciphertext = message^e (mod n)
   ::
   ++  en
     |=  [m=@ k=key]
@@ -355,7 +362,7 @@
     (~(exp fo n.pub.k) e.pub.k m)
   ::  +de:rsa: primitive RSA decryption
   ::
-  ::  message = ciphertext^d (mod e)
+  ::    message = ciphertext^d (mod e)
   ::
   ++  de
     |=  [m=@ k=key]
@@ -371,7 +378,7 @@
   |_  k=key:rsa
   ::  +emsa:rs256: message digest
   ::
-  ::  padded, DER encoded sha-256 hash (EMSA-PKCS1-v1_5)
+  ::    Padded, DER encoded sha-256 hash (EMSA-PKCS1-v1_5).
   ::
   ++  emsa
     |=  m=@
@@ -390,14 +397,14 @@
     (flop (weld [0x0 0x1 ps] [0x0 t]))  :: note: big-endian
   ::  +sign:rs256: sign message
   ::
-  ::  an RSA signature is the primitive decryption of the message hash
+  ::    An RSA signature is the primitive decryption of the message hash.
   ::
   ++  sign
     |=(m=@ (de:rsa (emsa m) k))
   ::  +verify:rs256: verify signature
   ::
-  ::  RSA signature verification confirms that the primitive encryption
-  ::  of the signature matches the message hash
+  ::    RSA signature verification confirms that the primitive encryption
+  ::    of the signature matches the message hash.
   ::
   ++  verify
     |=  [s=@ m=@]
@@ -405,8 +412,8 @@
   --
 ::  |pem: generic PEM implementation (rfc7468)
 ::
-::  PEM is the base64 encoding of DER encoded data, with BEGIN and
-::  END labels indicating some type.
+::    PEM is the base64 encoding of DER encoded data, with BEGIN and
+::    END labels indicating some type.
 ::
 ++  pem
   |%
@@ -511,7 +518,7 @@
     --
   ::  |der:pkcs1: DER encoding for RSA keys
   ::
-  ::  en(coding) and de(coding) for public (pass) and private (ring) keys
+  ::    En(coding) and de(coding) for public (pass) and private (ring) keys.
   ::
   ++  der
     |%
@@ -528,7 +535,7 @@
     --
   ::  |pem:pkcs1: PEM encoding for RSA keys
   ::
-  ::  en(coding) and de(coding) for public (pass) and private (ring) keys
+  ::    En(coding) and de(coding) for public (pass) and private (ring) keys.
   ::
   ++  pem
     |%
@@ -546,7 +553,7 @@
   --
 ::  |pkcs8: asymmetric cryptography (rfc5208)
 ::
-::  only implemented for RSA keys
+::    RSA-only for now.
 ::
 ++  pkcs8
   |%
@@ -592,8 +599,8 @@
     --
   ::  |der:pkcs8: DER encoding for asymmetric keys
   ::
-  ::  en(coding) and de(coding) for public (pass) and private (ring) keys
-  ::  RSA-only for now
+  ::    En(coding) and de(coding) for public (pass) and private (ring) keys.
+  ::    RSA-only for now.
   ::
   ++  der
     |%
@@ -610,8 +617,8 @@
     --
   ::  |pem:pkcs8: PEM encoding for asymmetric keys
   ::
-  ::  en(coding) and de(coding) for public (pass) and private (ring) keys
-  ::  RSA-only for now
+  ::    En(coding) and de(coding) for public (pass) and private (ring) keys.
+  ::    RSA-only for now.
   ::
   ++  pem
     |%
@@ -629,7 +636,7 @@
   --
 ::  |pkcs10: certificate signing requests (rfc2986)
 ::
-::  only implemented for RSA keys with subject-alternate names
+::    Only implemented for RSA keys with subject-alternate names.
 ::
 ++  pkcs10
   =>  |%
@@ -663,8 +670,10 @@
             [%int 0]
             [%seq ~]
             (pass:en:spec:pkcs8 key)
-            :+  %con  [| 0]
-            =-  ~(ren raw:en:^der -)
+            :+  %con
+              `bespoke:asn1`[| 0]
+            %~  ren
+              raw:en:^der
             :~  %seq
                 [%obj csr-ext:obj:asn1]
                 :~  %set
@@ -682,7 +691,7 @@
         %+  turn  hot
         :: implicit, context-specific tag #2 (IA5String)
         :: XX sanitize string?
-        |=(h=(list @t) [%con [& 2] (rip 3 (join '.' h))])
+        |=(h=(list @t) [%con `bespoke:asn1`[& 2] (rip 3 (join '.' h))])
       --
     ::  |de:spec:pkcs10: ASN.1 decoding for certificate signing requests
     ++  de  !!
@@ -704,7 +713,7 @@
   --
 ::  +en-json-sort: json encoding with sorted object keys
 ::
-::  to be included in %zuse, with sorting optional?
+::    to be included in %zuse, with sorting optional?
 ::
 ++  en-json-sort                                 ::  XX rename
   |^  |=([sor=$-(^ ?) val=json] (apex val sor ""))
@@ -757,8 +766,8 @@
 ::
 ::  |jwk: json representations of cryptographic keys (rfc7517)
 ::
-::  url-safe base64 encoding of key parameters in big-endian byte order
-::  RSA-only for now
+::    Url-safe base64 encoding of key parameters in big-endian byte order.
+::    RSA-only for now
 ::
 ++  jwk
   |%
@@ -853,7 +862,7 @@
   --
 ::  |jws: json web signatures (rfc7515)
 ::
-::  flattened signature only
+::    Note: flattened signature form only.
 ::
 ++  jws
   |%
@@ -878,15 +887,15 @@
       [%o (~(put by p.pro) %alg s+'RS256')]
     ::  +encode:sign:jws: encode json for signing
     ::
-    ::  alphabetically sort object keys, url-safe base64 encode
-    ::  the serialized json
+    ::    Alphabetically sort object keys, url-safe base64 encode
+    ::    the serialized json.
     ::
     ++  encode
       |=  jon=json
       (en-base64url (crip (en-json-sort aor jon)))
     ::  +sign:sign:jws: compute signature
     ::
-    ::  url-safe base64 encode in big-endian byte order
+    ::    Url-safe base64 encode in big-endian byte order.
     ::
     ++  sign
       |=  [protect=cord payload=cord]
@@ -899,7 +908,7 @@
   --
 ::  +eor: explicit sort order comparator
 ::
-::  lookup :a and :b in :lit, pass their indices to :com
+::    Lookup :a and :b in :lit, and pass their indices to :com.
 ::
 ++  eor
   |=  [com=$-([@ @] ?) lit=(list)]
