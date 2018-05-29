@@ -55,9 +55,10 @@
         $:  yen/(set duct)                              ::  trackers
         ==                                              ::
       $=  own                                           ::  vault
+      ::TODO  never updated?
         $:  yen/(set duct)                              ::  trackers
             lyf/life                                    ::  version
-            jaw/(map life ring)                         ::  private keys
+            jaw/(map life ring)  ::TODO  pair of rings? ::  private keys
         ==                                              ::
       $=  eth                                           ::  ethereum (vent)
         $:  yen=(set duct)                              ::  trackers

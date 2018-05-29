@@ -1194,6 +1194,7 @@
   ++  able  ^?
     =,  pki
     =,  rights
+    ::TODO  =,  eth:jael
     |%
     ::  %jael has two general kinds of task: changes
     ::  and change subscriptions.
@@ -1273,6 +1274,7 @@
           [%look our=ship src=(each ship purl:eyre)]    ::  set ethereum source
           [%mint our=ship p=ship q=safe]                ::  create rights
           [%move our=ship p=ship q=ship r=safe]         ::  transfer from=to
+          ::TODO  %next for generating/putting new private key
           [%nuke ~]                                     ::  cancel tracker from
           [%vein our=ship]                              ::  view signing keys
           [%vent our=ship]                              ::  view ethereum state
