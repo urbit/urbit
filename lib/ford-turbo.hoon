@@ -304,12 +304,9 @@
         ::  %pact: patch a marked noun by applying a diff
         ::
         $:  %pact
-            ::  disc where in clay to load the mark from
+            ::  disc where in clay to load marks from
             ::
             =disc
-            ::  mark: name of mark to use in diff; also file path in mar/
-            ::
-            mark=term
             ::  start: schematic producing a noun to be patched
             ::
             start=schematic
@@ -2689,7 +2686,7 @@
             %join  !!
             %mash  !!
             %mute  (make-mute subject mutations)
-            %pact  !!
+            %pact  (make-pact disc start diff)
             %path  (make-path disc prefix raw-path)
             %plan  (make-plan path-to-render query-string scaffold)
             %reef  (make-reef disc)
@@ -3530,6 +3527,146 @@
       ::
       =/  =build-result
         [%success %mute p.subject-cage vase.u.ride-result]
+      ::
+      [build [%build-result build-result] accessed-builds]
+    ::
+    ++  make-pact
+      |=  [disc=^disc start=schematic end=schematic]
+      ^-  build-receipt
+      ::
+      =/  initial-build=^build  [date.build start end]
+      ::
+      =^  initial-result  accessed-builds  (depend-on initial-build)
+      ?~  initial-result
+        [build [%blocks [initial-build]~ ~] accessed-builds]
+      ::
+      ?>  ?=([~ %success ^ ^] initial-result)
+      =/  start-result=build-result  head.u.initial-result
+      =/  end-result=build-result    tail.u.initial-result
+      ::
+      ?.  ?=(%success -.start-result)
+        (wrap-error `start-result)
+      ?.  ?=(%success -.end-result)
+        (wrap-error `end-result)
+      ::
+      =/  start-cage=cage  (result-to-cage start-result)
+      =/  end-cage=cage    (result-to-cage end-result)
+      ::
+      =/  start-mark=term  p.start-cage
+      =/  end-mark=term    p.end-cage
+      ::
+      =/  mark-path-build=^build  [date.build [%path disc %mar start-mark]]
+      ::
+      =^  mark-path-result  accessed-builds
+        (depend-on mark-path-build)
+      ::
+      ?~  mark-path-result
+        [build [%blocks [mark-path-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %path *] mark-path-result)
+        (wrap-error mark-path-result)
+      ::
+      =/  mark-build=^build  [date.build [%core rail.u.mark-path-result]]
+      ::
+      =^  mark-result  accessed-builds  (depend-on mark-build)
+      ?~  mark-result
+        [build [%blocks [mark-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %core *] mark-result)
+        (wrap-error mark-result)
+      ::
+      =/  mark-vase=vase  vase.u.mark-result
+      ::
+      ?.  (slab %grad p.mark-vase)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %pact failed: %{<start-mark>} mark has no +grad arm"
+      ::
+      =/  grad-build=^build
+        [date.build [%ride [%limb %grad] [%$ %noun mark-vase]]]
+      ::
+      =^  grad-result  accessed-builds  (depend-on grad-build)
+      ?~  grad-result
+        [build [%blocks [grad-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %ride *] grad-result)
+        (wrap-error grad-result)
+      ::
+      =/  grad-vase=vase  vase.u.grad-result
+      ::
+      ?@  q.grad-vase
+        =/  pact-mark=(unit term)  ((sand %tas) q.grad-vase)
+        ?~  pact-mark
+          %-  return-error  :_  ~  :-  %leaf
+          "ford: %pact failed: %{<start-mark>} mark invalid +grad"
+        ::
+        =/  cast-build=^build
+          :-  date.build
+          :^  %cast  disc  start-mark
+          [%pact disc [%cast disc u.pact-mark [%$ start-cage]] [%$ end-cage]]
+        ::
+        =^  cast-result  accessed-builds  (depend-on cast-build)
+        ?~  cast-result
+          [build [%blocks [cast-build]~ ~] accessed-builds]
+        ::
+        ?.  ?=([~ %success %cast *] cast-result)
+          (wrap-error cast-result)
+        ::
+        =/  =build-result
+          [%success %pact cage.u.cast-result]
+        ::
+        [build [%build-result build-result] accessed-builds]
+      ::
+      ?.  (slab %form p.grad-vase)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %pact failed: no +form:grad in %{<start-mark>} mark"
+      ::
+      =/  form-build=^build
+        [date.build [%ride [%limb %form] [%$ %noun grad-vase]]]
+      ::
+      =^  form-result  accessed-builds  (depend-on form-build)
+      ?~  form-result
+        [build [%blocks [form-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %ride *] form-result)
+        (wrap-error form-result)
+      ::
+      =/  form-mark=(unit @tas)  ((soft @tas) q.vase.u.form-result)
+      ?~  form-mark
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %pact failed: %{<start-mark>} mark invalid +form:grad"
+      ::
+      ?.  =(u.form-mark end-mark)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %pact failed: %{<start-mark>} mark invalid +form:grad"
+      ::
+      ?.  (slab %pact p.grad-vase)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %pact failed: no +pact:grad in %{<start-mark>} mark"
+      ::
+      =/  pact-build=^build
+        :-  date.build
+        :+  %call
+          ^-  schematic
+          :+  %ride
+            [%tsgl [%limb %pact] [%limb %grad]]
+          ^-  schematic
+          :+  %mute
+            ^-  schematic
+            [%$ %noun mark-vase]
+          ^-  (list [wing schematic])
+          [[%& 6]~ [%$ start-cage]]~
+        ^-  schematic
+        [%$ end-cage]
+      ::
+      =^  pact-result  accessed-builds  (depend-on pact-build)
+      ?~  pact-result
+        [build [%blocks [pact-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %call *] pact-result)
+        (wrap-error pact-result)
+      ::
+      =/  =build-result
+        [%success %pact start-mark vase.u.pact-result]
       ::
       [build [%build-result build-result] accessed-builds]
     ::
