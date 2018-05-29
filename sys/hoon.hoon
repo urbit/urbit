@@ -8016,12 +8016,14 @@
         {$brdt *}  :+  %brcn  ~
                    =-  [[%$ ~ -] ~ ~]
                    (~(put by *(map term hoon)) %$ p.gen)
-        {$brkt *}  :+  %tsbn 
-                      :+  %brcn  ~
-                      =+  one=(~(got by q.gen) `@tas`'0') 
-                      %+  ~(put by q.gen)  %$
-                      [p.one (~(put by q.one) %$ p.gen)]
-                   [%limb %$]
+        {$brkt *}  :+  %tsld  [%limb %$]
+                   :+  %brcn  ~
+                   =+  zil=(~(get by q.gen) %$) 
+                   ?~  zil  
+                     %+  ~(put by q.gen)  %$
+                     [*what [[%$ p.gen] ~ ~]]
+                   %+  ~(put by q.gen)  %$
+                   [p.u.zil (~(put by q.u.zil) %$ p.gen)]
         {$brhp *}  [%tsld [%limb %$] [%brdt p.gen]]
         {$brsg *}  [%ktbr [%brts p.gen q.gen]]
         {$brtr *}  :+  %tsls  [%kttr p.gen]
@@ -12818,19 +12820,20 @@
         ==
       ==
     ::
-    ++  whap                                            ::  chapter
+    ++  whap  !:                                        ::  chapter
       %+  cook
         |=  a=(list (pair term hoon))
-        %+  roll  a
-        |=  [b=(pair term hoon) c=(map term hoon)]
-        ^+  c
-        =?  q.b  (~(has by c) p.b)  [%eror "duplicate arm {<p.b>}"]
-        (~(put by c) b)
+        |-  ^-  (map term hoon)
+        ?~  a  ~
+        =+  $(a t.a)
+        %+  ~(put by -)  
+          p.i.a
+        ?:  (~(has by -) p.i.a)
+          [%eror (weld "duplicate arm: +" (trip p.i.a))]
+        q.i.a 
       (most muck boog)
     ::
     ++  whip                                            ::  chapter declare
-      %+  cook
-        |=([a=term b=(map term hoon)] b)
       ;~  plug
         (ifix [cen gap] sym)
         whap
@@ -12845,31 +12848,34 @@
         (easy ~)
       ==
     ::
-    ++  wisp                                            ::  core tail
+    ++  wisp  !:                                        ::  core tail
       ?.  tol  fail
       %+  cook
-        |=  a=(list (map term hoon))
+        |=  a=(list (pair term (map term hoon)))
         ^-  (map term tome)
-        =<  tos
-        %+  roll  a
-        |=  $:  wap=(map term hoon)
-                [all=(map term *) num=@ tos=(map term tome)]
-            ==
-        =.  wap
-          %-  ~(urn by wap)
+        =<  p
+        |-  ^-  (pair (map term tome) (map term hoon))
+        ?~  a  [~ ~]
+        =/  mor  $(a t.a)
+        =.  q.i.a
+          %-  ~(urn by q.i.a)
           |=  b=(pair term hoon)  ^+  +.b
-          ?.  (~(has by all) p.b)  +.b
-          [%eror "duplicate arm {<p.b>}"]
-        ::
-        =.  all  (~(uni by all) `(map term *)`wap)
-        [all +(num) (~(put by tos) (scot %ud num) [~ wap])]
+          ?.  (~(has by q.mor) p.b)  +.b
+          [%eror (weld "duplicate arm: +" (trip p.b))]
+        :_  (~(uni by q.mor) q.i.a)
+        %+  ~(put by p.mor)
+          p.i.a
+        :-  *what
+        ?.  (~(has by p.mor) p.i.a)
+          q.i.a
+        [[%$ [%eror (weld "duplicate chapter: |" (trip p.i.a))]] ~ ~]
       ::
       ;~  pose
         dun
         ;~  sfix
           ;~  pose
-            (most muck ;~(pfix (jest '+|') gap whip))
-            ;~(plug whap (easy ~))
+            (most muck ;~(pfix (jest '+|') ;~(pfix gap whip)))
+            ;~(plug (stag %$ whap) (easy ~))
           ==
           gap
           dun
@@ -12968,16 +12974,7 @@
     ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, hoon, hoons
     ++  expv  |.((butt rick))                           ::  just changes
     ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three hoons
-    ++  expx  |.  ;~  gunk  loaf                        ::  hoon and core tail
-                    %+  sear                            ::
-                      |=  a/(map term tome)             ::
-                      ^-  (unit (map term tome))        ::
-                      =+  fir=(~(got by a) `@tas`'0')   ::
-                      ?:  (~(has by q.fir) %$)          ::  %$ in first chapter
-                        ~                               ::  
-                      [~ u=a]                           ::
-                    wisp                                ::
-                  ==                                    ::
+    ++  expx  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
     ++  expy  |.(;~(gunk ropa loaf loaf))               ::  wings and two hoons
     ++  expz  |.(loaf(bug &))                           ::  hoon with tracing
     ::    spec contents
