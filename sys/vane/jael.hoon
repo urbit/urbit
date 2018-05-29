@@ -1321,7 +1321,7 @@
     |=  src=(each ship purl:eyre)
     ^+  +>
     =.  +>
-      ?:  ?=(%| -.src)
+      ?:  ?=(%| -.source)
         cancel-wait-poll
       (unsubscribe-from-source our)
     ?:  ?=(%| -.src)
