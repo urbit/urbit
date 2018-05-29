@@ -12832,7 +12832,7 @@
       %+  cook
         |=([a=term b=(map term hoon)] b)
       ;~  plug
-        ;~(pose (ifix [cen gap] sym) (easy %$))
+        (ifix [cen gap] sym)
         whap
       ==
     ::

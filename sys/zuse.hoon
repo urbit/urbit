@@ -35,9 +35,8 @@
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
 |%
-::  #  %misc
+::  |misc: miscellaneous systems types
 ::
-::  miscellaneous systems types
 +|  %misc
 ++  ares  (unit {p/term q/(list tank)})                 ::  possible error
 ++  coop  (unit ares)                                   ::  possible error

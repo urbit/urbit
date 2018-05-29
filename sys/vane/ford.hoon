@@ -625,7 +625,7 @@
           bay/baby                                      ::  all owned state
       ==                                                ::
   |%
-  +|
+  +|  %one
   ++  this  .
   ++  abet                                              ::  resolve
     ^-  {(list move) baby}
@@ -835,7 +835,7 @@
     --
   ::
   ::  #  TODO name this chapter
-  +|
+  +|  %two
   ::
   ++  dents-to-rebuild
     |=  [bem=beam ren=care:clay]
