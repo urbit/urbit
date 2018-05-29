@@ -17,7 +17,7 @@
       ::  #  %case-nodes
       ::  #
       ::    transforms raw unicode data into sequential case nodes.
-      +|
+      +|  %case-nodes
       ++  build-case-nodes
         ::  raw list of unicode data lines to a compact list of chardata
         |=  a=(list line:unicode-data)
@@ -185,7 +185,7 @@
       ::  #  %tree-building
       ::  #
       ::    builds a binary search tree out of the list
-      +|
+      +|  %tree-building
       ++  build-tree
         |=  a=(list case-node:unicode-data)
         ^-  case-tree:unicode-data

@@ -3,7 +3,7 @@
 ::  testing utilities
 |%
 ::  #  %models
-+|
++|  %models
 +=  tests
   ::    a hierarchical structure of tests
   ::
@@ -17,7 +17,7 @@
 ::
 ::  #  %generate
 ::    utilities for generating ++tests from files and directories.
-+|
++|  %generate
 ++  merge-base-and-recur
   ::    combine the current file and subdirectory.
   ::
@@ -81,7 +81,7 @@
   ::  #  %check
   ::  #
   ::    gates for quick check style tests.
-  +|
+  +|  %check
   ++  check
     |*  [generator=$-(@uvJ *) test=$-(* ?)]
     |-  ^-  tang
@@ -134,7 +134,7 @@
   ::  #  %test
   ::  #
   ::    test expectation functions
-  +|
+  +|  %test
   ::  todo: unit testing libraries have a lot more to them than just eq.
   ++  expect-eq
     |=  a=vase
@@ -149,7 +149,7 @@
   ::  #  %formatting
   ::  #
   ::    test result presentation
-  +|
+  +|  %formatting
   ++  category
     |=  [a=tape b=tang]  ^-  tang
     ?:  =(~ b)  ~  :: test OK

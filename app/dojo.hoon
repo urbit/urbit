@@ -578,7 +578,7 @@
             [%leaf "Could not find help"]~
           (flop (print-item u.to-display))
       ::  #  %models
-      +|
+      +|  %models
       ::
       ::    an overview of all named things in the type.
       ::
@@ -633,7 +633,7 @@
       ::  #  %searching
       ::  #
       ::    functions which find what to print
-      +|
+      +|  %searching
       ::    returns the item to print while searching through {topic}.
       ::
       ::  this gate is called recursively to find the path {topic} in the type
@@ -886,7 +886,7 @@
       ::  #  %printing
       ::  #
       ::    functions which display output of various types.
-      +|
+      +|  %printing
       ++  print-item
         |:  itm=$:item
         ^-  tang

@@ -1,7 +1,7 @@
 |%
 ::  #  %unicode-data
 ::    types to represent UnicdoeData.txt.
-+|
++|  %unicode-data
 ++  line
   ::    an individual codepoint definition
   ::
@@ -120,7 +120,7 @@
 ::  #  %case-map
 ::  #
 ::    types to represent fast lookups of case data
-+|
++|  %case-map
 ++  case-offset
   ::  case offsets can be in either direction
   $%  ::  add {a} to get the new character

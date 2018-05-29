@@ -117,7 +117,7 @@
 ::
 ::  #  %transition
 ::    prep transition
-+|
++|  %transition
 ::
 ++  prep
   ::  adapts state
@@ -195,7 +195,7 @@
 ::  #  %utility
 ::  #
 ::    small utility functions.
-+|
++|  %utility
 ::
 ++  self
   (true-self our.bol)
@@ -292,7 +292,7 @@
 ::  #  %engines
 ::  #
 ::    main cores.
-+|
++|  %engines
 ::
 ++  ta
   ::    per transaction
@@ -311,7 +311,7 @@
       moves/(list move)
   ::
   ::  #  %resolve
-  +|
+  +|  %resolve
   ::
   ++  ta-done
     ::    resolve core
@@ -346,7 +346,7 @@
   ::  #  %emitters
   ::  #
   ::    arms that create outward changes.
-  +|
+  +|  %emitters
   ::
   ++  ta-emil
     ::    emit move list
@@ -367,7 +367,7 @@
   ::  #  %interaction-events
   ::  #
   ::    arms that apply events we received.
-  +|
+  +|  %interaction-events
   ::
   ++  ta-init
     ::  subscribes to our hall.
@@ -503,7 +503,7 @@
   ::  #  %messages
   ::  #
   ::    storing and updating messages.
-  +|
+  +|  %messages
   ::
   ++  ta-unpack
     ::    open envelopes
@@ -566,7 +566,7 @@
   ::  #  %console
   ::  #
   ::    arms for shell functionality.
-  +|
+  +|  %console
   ::
   ++  ta-console
     ::  initialize the shell of this client.
@@ -598,7 +598,7 @@
         ==
     ::
     ::  #  %resolve
-    +|
+    +|  %resolve
     ::
     ++  sh-done
       ::  stores changes to the cli.
@@ -610,7 +610,7 @@
     ::  #  %emitters
     ::  #
     ::    arms that create outward changes.
-    +|
+    +|  %emitters
     ::
     ++  sh-fact
       ::  adds a console effect to ++ta's moves.
@@ -639,7 +639,7 @@
     ::  #  %cli-interaction
     ::  #
     ::    processing user input as it happens.
-    +|
+    +|  %cli-interaction
     ::
     ++  sh-sole
       ::  applies sole action.
@@ -1032,7 +1032,7 @@
     ::  #  %user-action
     ::  #
     ::    processing user actions.
-    +|
+    +|  %user-action
     ::
     ++  sh-work
       ::    do work
@@ -1049,7 +1049,7 @@
       ::  #
       ::  #  %helpers
       ::  #
-      +|
+      +|  %helpers
       ::
       ++  work
         ::  call correct worker
@@ -1167,7 +1167,7 @@
       ::  #
       ::  #  %circle-management
       ::  #
-      +|
+      +|  %circle-management
       ::
       ++  join
         ::    %join
@@ -1271,7 +1271,7 @@
       ::  #
       ::  #  %personal-metadata
       ::  #
-      +|
+      +|  %personal-metadata
       ::
       ++  attend
         ::  sets our presence to {pec} for {aud}.
@@ -1290,7 +1290,7 @@
       ::  #
       ::  #  %messaging
       ::  #
-      +|
+      +|  %messaging
       ::
       ++  say
         ::  sends message.
@@ -1342,7 +1342,7 @@
       ::  #
       ::  #  %displaying-info
       ::  #
-      +|
+      +|  %displaying-info
       ::
       ++  who
         ::    %who
@@ -1453,7 +1453,7 @@
       ::  #
       ::  #  %ui-settings
       ::  #
-      +|
+      +|  %ui-settings
       ::
       ++  bind
         ::    %bind
@@ -1568,7 +1568,7 @@
       ::  #
       ::  #  %miscellaneous
       ::  #
-      +|
+      +|  %miscellaneous
       ::
       ++  public
         ::    show/hide membership
@@ -1649,7 +1649,7 @@
     ::  #  %differs
     ::  #
     ::    arms that calculate differences between datasets.
-    +|
+    +|  %differs
     ::
     ++  sh-group-diff
       ::    group diff parts
@@ -1773,7 +1773,7 @@
     ::  #  %printers
     ::  #
     ::    arms for printing data to the cli.
-    +|
+    +|  %printers
     ::
     ++  sh-lame
       ::    send error
@@ -1968,7 +1968,7 @@
 ::  #  %renderers
 ::  #
 ::    rendering cores.
-+|
++|  %renderers
 ::
 ++  cr
   ::    circle renderer
@@ -2441,7 +2441,7 @@
 ::  #
 ::  #  %events
 ::  #
-+|
++|  %events
 ::
 ++  quit-server-client
   |=  wir/wire

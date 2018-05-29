@@ -11,7 +11,7 @@
 ::  #  %wrappers
 ::  #
 ::    wrapper molds, for semantic clarity.
-+|
++|  %wrappers
 ::
 ::TODO  rename
 ++  name  term                                          ::  circle name
@@ -22,7 +22,7 @@
 ::  #  %query-models
 ::  #
 ::    models relating to queries, their results and updates.
-+|
++|  %query-models
 ::
 ++  query                                               ::  query paths
   $%  {$client ~}                                      ::  shared ui state
@@ -133,7 +133,7 @@
 ::  #  %client-communication
 ::  #
 ::    hall interfaces for clients.
-+|
++|  %client-communication
 ::
 ++  action                                              ::  user action
   $%  ::  circle configuration                          ::
@@ -162,7 +162,7 @@
 ::  #  %hall-communication
 ::  #
 ::    structures for communicating between halls.
-+|
++|  %hall-communication
 ::
 ++  command                                             ::  effect on story
   $%  {$publish tos/(list thought)}                     ::  deliver
@@ -174,7 +174,7 @@
 ::  #  %circles
 ::  #
 ::    messaging targets and their metadata.
-+|
++|  %circles
 ::
 ++  circle     {hos/ship nom/name}                      ::  native target
 ::  circle configurations.                              ::
@@ -219,7 +219,7 @@
 ::  #  %message-data
 ::  #
 ::    structures for containing main message data.
-+|
++|  %message-data
 ::
 ::TODO  some structure for extra message state
 ::      local (to clients): delivery state, read flags
@@ -251,7 +251,7 @@
 ::  #  %message-metadata
 ::  #
 ::    structures for containing message metadata.
-+|
++|  %message-metadata
 ::
 ++  serial     @uvH                                     ::  unique identifier
 ++  audience   (set circle)                             ::  destinations

@@ -17,7 +17,7 @@
 |%
 ::  #  %math
 ::    unsigned arithmetic
-+|
++|  %math
 ++  foo-141  !!
 ++  add
   ~/  %add
@@ -185,7 +185,7 @@
 ::  #  %tree
 ::
 ::    tree addressing
-+|
++|  %tree
 ++  cap
   ~/  %cap
   ::    tree head
@@ -279,7 +279,7 @@
 ::  #  %containers
 ::
 ::    the most basic of data types
-+|
++|  %containers
 ++  bloq
   ::    blocksize
   ::
@@ -8328,7 +8328,7 @@
             visit-expression=$-([=hoon =state] (unit [=hoon =state]))
             visit-structure=$-([=spec =state] (unit [=spec =state]))
         ==
-    +|
+    +|  %public
     ::
     ::  +expression: visit expression
     ::
@@ -8483,7 +8483,7 @@
         %bswt  (love spec (twin stud (moto stud)))
         %bszp  (love spec (twin stud (raid stud)))
       ==
-    +|
+    +|  %private
     ::
     ::  older code is here
     ::
@@ -12828,6 +12828,14 @@
         (~(put by c) b)
       (most muck boog)
     ::
+    ++  whip                                            ::  chapter declare
+      %+  cook
+        |=([a=term b=(map term hoon)] b)
+      ;~  plug
+        ;~(pose (ifix [cen gap] sym) (easy %$))
+        whap
+      ==
+    ::
     ++  wasp                                            ::  $brcb aliases
       ;~  pose  
         %+  ifix
@@ -12860,7 +12868,7 @@
         dun
         ;~  sfix
           ;~  pose
-            (most muck ;~(pfix (jest '+|') gap whap))
+            (most muck ;~(pfix (jest '+|') gap whip))
             ;~(plug whap (easy ~))
           ==
           gap

@@ -175,7 +175,7 @@
   |%
   ::  #  %basic
   ::    basic list manipulation
-  +|
+  +|  %basic
   ::
   ++  head
     ::  returns the first item in the list, which must be non-empty.
@@ -229,7 +229,7 @@
   ::
   ::  #  %transformations
   ::    functions which change a list into another list
-  +|
+  +|  %transformations
   ::
   ++  map
     ::  applies a gate to each item in the list.
@@ -311,7 +311,7 @@
   ::
   ::  #  %folds
   ::    functions which reduce a list to a value
-  +|
+  +|  %folds
   ::
   ++  foldl
     ::    left associative fold
@@ -368,7 +368,7 @@
   ::
   ::  #  %building
   ::    functions which build lists
-  +|
+  +|  %building
   ++  scanl
     ::  returns a list of successive reduced values from the left.
     |*  [a=(list) b=* c=$-({* *} *)]
@@ -453,7 +453,7 @@
   ::
   ::  #  %sublists
   ::    functions which return a portion of the list
-  +|
+  +|  %sublists
   ::
   ++  take
     ::  returns the first {a} elements of {b}.
@@ -586,7 +586,7 @@
   ::
   ::  #  %predicates
   ::    functions which compare lists
-  +|
+  +|  %predicates
   ::
   ++  is-prefix-of
     ::  returns %.y if the first list is a prefix of the second.
@@ -686,7 +686,7 @@
   ::
   ::  #  %indexing
   ::    finding indices in lists
-  +|
+  +|  %indexing
   ::
   ++  elem-index
     ::  returns {maybe} the first occurrence of {a} occur in list {b}.
@@ -773,7 +773,7 @@
   ::
   ::  #  %set
   ::    set operations on lists
-  +|
+  +|  %set
   ++  unique
     ::    removes duplicates elements from {a}
     ::
@@ -859,7 +859,7 @@
   |%
   ::  #  %query
   ::    looks up values in the dict.
-  +|
+  +|  %query
   ++  empty
     ::  is the dict empty?
     |*  a=(dict)
@@ -905,7 +905,7 @@
   ::  lookupLT.
   ::
   ::  #  %insertion
-  +|
+  +|  %insertion
   ++  put
     ::    inserts a new key/value pair, replacing the current value if it exists.
     ::
@@ -1002,7 +1002,7 @@
     [-.rec [n.d [n.a l.a l.d] r.d]]
   ::
   ::  #  %delete-update
-  +|
+  +|  %delete-update
   ::
   ++  delete
     ::  deletes entry at {key}.
@@ -1093,7 +1093,7 @@
     [n.d [n.a l.a l.d] r.d]
   ::
   ::  #  %combine
-  +|
+  +|  %combine
   ::
   ++  union
     ::  returns the union of {a} and {b}, preferring the value from {a} if dupe
@@ -1178,7 +1178,7 @@
 ::    ::  ++intersection-with-key
   ::
   ::  #  %traversal
-  +|
+  +|  %traversal
   ::
   ++  map
     ::  applies {fun} to each value in {a}.
@@ -1297,7 +1297,7 @@
     ?&((b p.n.a q.n.a) $(a l.a) $(a r.a))
   ::
   ::  #  %conversion
-  +|
+  +|  %conversion
   ++  elems
     ::  return all values in the dict.
     |*  a=(dict)
@@ -1325,7 +1325,7 @@
     [[n.a (fun n.a)] $(a l.a) $(a r.a)]
   ::
   ::  #  %lists
-  +|
+  +|  %lists
   ::
   ++  to-list
     ::  creates a list of pairs from the tree.
@@ -1358,7 +1358,7 @@
   ::  on them probably don't make sense. i'm skipping them for now.
   ::
   ::  #  %filters
-  +|
+  +|  %filters
   ++  filter
     ::  filters a dict of all values that satisfy {fun}.
     |*  [a=(dict) fun=$-(* ?)]
@@ -1480,7 +1480,7 @@
   ::
   ::  #  %impl
   ::    implementation details
-  +|
+  +|  %impl
   ++  pop-top
     ::  removes the head of the tree and rebalances the tree below.
     |*  a=(dict)
