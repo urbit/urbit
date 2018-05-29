@@ -3531,10 +3531,11 @@
       [build [%build-result build-result] accessed-builds]
     ::
     ++  make-pact
-      |=  [disc=^disc start=schematic end=schematic]
+      |=  [disc=^disc start=schematic diff=schematic]
       ^-  build-receipt
+      ::  first, build the inputs
       ::
-      =/  initial-build=^build  [date.build start end]
+      =/  initial-build=^build  [date.build start diff]
       ::
       =^  initial-result  accessed-builds  (depend-on initial-build)
       ?~  initial-result
@@ -3542,18 +3543,19 @@
       ::
       ?>  ?=([~ %success ^ ^] initial-result)
       =/  start-result=build-result  head.u.initial-result
-      =/  end-result=build-result    tail.u.initial-result
+      =/  diff-result=build-result    tail.u.initial-result
       ::
       ?.  ?=(%success -.start-result)
         (wrap-error `start-result)
-      ?.  ?=(%success -.end-result)
-        (wrap-error `end-result)
+      ?.  ?=(%success -.diff-result)
+        (wrap-error `diff-result)
       ::
       =/  start-cage=cage  (result-to-cage start-result)
-      =/  end-cage=cage    (result-to-cage end-result)
+      =/  diff-cage=cage    (result-to-cage diff-result)
       ::
       =/  start-mark=term  p.start-cage
-      =/  end-mark=term    p.end-cage
+      =/  diff-mark=term    p.diff-cage
+      ::  load the starting mark from the filesystem
       ::
       =/  mark-path-build=^build  [date.build [%path disc %mar start-mark]]
       ::
@@ -3576,6 +3578,7 @@
         (wrap-error mark-result)
       ::
       =/  mark-vase=vase  vase.u.mark-result
+      ::  fire the +grad arm of the mark core
       ::
       ?.  (slab %grad p.mark-vase)
         %-  return-error  :_  ~  :-  %leaf
@@ -3592,17 +3595,35 @@
         (wrap-error grad-result)
       ::
       =/  grad-vase=vase  vase.u.grad-result
+      ::  +grad can produce a term or a core
+      ::
+      ::    If a mark's +grad arm produces a mark (as a +term),
+      ::    it means we should use that mark's machinery to run %pact.
+      ::    In this way, a mark can delegate its patching machinery to
+      ::    another mark.
+      ::
+      ::    First we cast :start-cage to the +grad mark, then we run
+      ::    a new %pact build on the result of that, which will use the
+      ::    +grad mark's +grad arm. Finally we cast the %pact result back to
+      ::    :start-mark, since we're trying to produce a patched version of
+      ::    the initial marked value (:start-cage).
       ::
       ?@  q.grad-vase
-        =/  pact-mark=(unit term)  ((sand %tas) q.grad-vase)
-        ?~  pact-mark
+        ::  if +grad produced a term, make sure it's a valid mark
+        ::
+        =/  grad-mark=(unit term)  ((sand %tas) q.grad-vase)
+        ?~  grad-mark
           %-  return-error  :_  ~  :-  %leaf
           "ford: %pact failed: %{<start-mark>} mark invalid +grad"
+        ::  cast :start-cage to :grad-mark, %pact that, then cast back to start
         ::
         =/  cast-build=^build
           :-  date.build
           :^  %cast  disc  start-mark
-          [%pact disc [%cast disc u.pact-mark [%$ start-cage]] [%$ end-cage]]
+          :^  %pact  disc
+            :^  %cast  disc  u.grad-mark
+            [%$ start-cage]
+          [%$ diff-cage]
         ::
         =^  cast-result  accessed-builds  (depend-on cast-build)
         ?~  cast-result
@@ -3615,10 +3636,25 @@
           [%success %pact cage.u.cast-result]
         ::
         [build [%build-result build-result] accessed-builds]
+      ::  +grad produced a core; make sure it has a +form arm
+      ::
+      ::    +grad can produce a core containing +pact and +form
+      ::    arms. +form:grad, which produces a mark (as a term), is used
+      ::    to verify that the diff is of the correct mark.
+      ::
+      ::    +pact:grad produces a gate that gets slammed with the diff
+      ::    as its sample and produces a mutant version of :start-cage
+      ::    by applying the diff.
       ::
       ?.  (slab %form p.grad-vase)
         %-  return-error  :_  ~  :-  %leaf
         "ford: %pact failed: no +form:grad in %{<start-mark>} mark"
+      ::  we also need a +pact arm in the +grad core
+      ::
+      ?.  (slab %pact p.grad-vase)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %pact failed: no +pact:grad in %{<start-mark>} mark"
+      ::  fire the +form arm in the core produced by +grad
       ::
       =/  form-build=^build
         [date.build [%ride [%limb %form] [%$ %noun grad-vase]]]
@@ -3629,19 +3665,18 @@
       ::
       ?.  ?=([~ %success %ride *] form-result)
         (wrap-error form-result)
+      ::  +form:grad should produce a mark
       ::
       =/  form-mark=(unit @tas)  ((soft @tas) q.vase.u.form-result)
       ?~  form-mark
         %-  return-error  :_  ~  :-  %leaf
         "ford: %pact failed: %{<start-mark>} mark invalid +form:grad"
+      ::  mark produced by +form:grad needs to match the mark of the diff
       ::
-      ?.  =(u.form-mark end-mark)
+      ?.  =(u.form-mark diff-mark)
         %-  return-error  :_  ~  :-  %leaf
         "ford: %pact failed: %{<start-mark>} mark invalid +form:grad"
-      ::
-      ?.  (slab %pact p.grad-vase)
-        %-  return-error  :_  ~  :-  %leaf
-        "ford: %pact failed: no +pact:grad in %{<start-mark>} mark"
+      ::  call +pact:grad on the diff
       ::
       =/  pact-build=^build
         :-  date.build
@@ -3656,7 +3691,7 @@
           ^-  (list [wing schematic])
           [[%& 6]~ [%$ start-cage]]~
         ^-  schematic
-        [%$ end-cage]
+        [%$ diff-cage]
       ::
       =^  pact-result  accessed-builds  (depend-on pact-build)
       ?~  pact-result
