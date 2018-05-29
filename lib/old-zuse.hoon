@@ -19,7 +19,7 @@
 ++  unt         unt:chrono:userlib                      ::  UGT to UTC time
 ++  yu          yu:chrono:userlib                       ::  UTC format constants
 ++  moon        en-mite:mimes:html                      ::  mime type to text
-++  perk        perk.is                                 ::  parse cube fork 
+++  perk        perk.is                                 ::  parse cube fork
 ++  poja        de-json:html                            ::  parse JSON
 ++  pojo        en-json:html                            ::  print json
 ++  poxo        en-xml:html                             ::  node to tape
@@ -62,7 +62,7 @@
 ++  gnow        gnow:title                              ::  display gcos
 ++  pale        pale:pubsub:userlib                     ::  filter peers
 ++  prix        prix:pubsub:userlib                     ::  filter gate
-++  prey        prey:pubsub:userlib                     ::  prefix 
+++  prey        prey:pubsub:userlib                     ::  prefix
 ++  hunt        !!                                      ::  YY in hoon with dif abi
 ++  mole        !!                                      ::  XX deprecated
 ++  myle        !!                                      ::  XX deprecated
@@ -107,7 +107,6 @@
 ++  corn        !!                                      ::  XX depreacted
 ++  cred        cred:eyre                               ::  credential
 ++  deco        deco                                    ::  text decoration
-++  deed        deed:pki:jael                           ::  sig stage fake?
 ++  dome        dome:clay                               ::  project state
 ++  dore        dore:ames                               ::  foreign contact
 ++  dove        dove:ames                               ::  count hash 13-blocks
@@ -214,7 +213,7 @@
 ++  tako        tako:clay                               ::  yaki ref
 ++  tick        tick:ames                               ::  process id
 ++  tint        tint                                    ::  text color
-++  toro        toro:clay                               ::  general change 
+++  toro        toro:clay                               ::  general change
 ++  town        town:ames                               ::  all security state
 ++  tube        !!                                      ::  canonical path
 ++  tutu        !!                                      ::  XX deprecated
@@ -224,7 +223,6 @@
 ++  whom        whom:ames                               ::  year+govt+id
 ++  woof        !!                                      ::  XX deprecated
 ++  wund        wund:ames                               ::  mace in action
-++  will        will:pki:jael                           ::  certificate
 ++  zuse        ^zuse                                   ::  hoon+zuse kelvin
 ++  kiss-ames   task:able:ames                          ::  in request ->$
 ++  gift-ames   gift:able:ames                          ::  out result <-$
