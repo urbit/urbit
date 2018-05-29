@@ -3410,6 +3410,10 @@
       ::
       ?.  ?=([~ %success [%success ^ ^] %success %path *] initial-result)
         (wrap-error initial-result)
+      ?.  ?=([%success *] head.head.u.initial-result)
+        (wrap-error `head.head.u.initial-result)
+      ?.  ?=([%success *] tail.head.u.initial-result)
+        (wrap-error `tail.head.u.initial-result)
       ::
       =/  first-cage=cage   (result-to-cage head.head.u.initial-result)
       =/  second-cage=cage  (result-to-cage tail.head.u.initial-result)
