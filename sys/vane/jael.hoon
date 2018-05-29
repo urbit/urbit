@@ -86,7 +86,7 @@
   $%  [%hail p=remote]                                  ::  reset rights
       [%nuke ~]                                         ::  cancel trackers
       [%vent ~]                                         ::  view ethereum state
-      [%vent-result p=update:constitution:ethe]         ::  tmp workaround
+      [%vent-result p=chain]                            ::  tmp workaround
   ==                                                    ::
 ++  card                                                ::  i/o action
   (wind note:able gift)                                 ::
@@ -789,12 +789,12 @@
   ++  cute                                              ::  ethereum changes
     |=  $:  our=ship
             mos=(list move)
-            evs=block:able
+            ven=chain
             net=state-eth-node
         ==
     ^+  +>
     %-  cure(etn net, moz (weld (flop mos) moz))
-    [our abet:(link:(burb our) evs)]
+    [our abet:(link:(burb our) ven)]
   --
 ::                                                      ::  ++su
 ::::                    ## relative^heavy               ::  subjective engine
@@ -829,7 +829,10 @@
   |%
   ::                                                    ::  ++abet:su
   ++  abet                                              ::  resolve
-    =>  (exec yen.eth [%give %vent |+evs])
+    ::TODO  we really want to just send the %give, but ames is being a pain.
+    :: =>  (exec yen.eth [%give %vent |+evs])
+    =>  ?~  evs  .
+        (vent-pass yen.eth |+evs)
     [(flop moz) sub]
   ::                                                    ::  ++apex:su
   ++  apex                                              ::  apply changes
@@ -840,7 +843,7 @@
         hab  t.hab
         +>
       ?-  -.i.hab
-        %ethe  (file p.can.i.hab)
+        %ethe  (file can.i.hab)
         %rite  (paid +.i.hab)
       ==
     ==
@@ -851,6 +854,21 @@
     |-  ^+  ..exec
     ?~  noy  ..exec
     $(noy t.noy, moz [[i.noy cad] moz])
+  ::
+  ++  vent-pass
+    |=  [yen=(set duct) res=chain]
+    =+  yez=~(tap in yen)
+    |-  ^+  ..vent-pass
+    ?~  yez  ..vent-pass
+    =*  d  i.yez
+    ?>  ?=([[%a @ @ *] *] d)
+    =+  our=(slav %p i.t.i.d)
+    =+  who=(slav %p i.t.t.i.d)
+    %+  exec  [d ~ ~]
+    :+  %pass
+      /(scot %p our)/vent-result
+    ^-  note:able
+    [%a %want [our who] /j/(scot %p our)/vent-result %vent-result res]
   ::                                                    ::  ++feed:su
   ++  feed                                              ::  subscribe to view
     |_  ::  hen: subscription source
@@ -870,8 +888,10 @@
       ==
     ::
     ++  vent
-      %_  ..feed
-        moz      [[hen %give %vent vent:form] moz]
+      %.  [[hen ~ ~] &+eve]
+      %_  vent-pass
+      :: %_  ..feed  ::TODO  see ++abet
+        :: moz      [[hen %give %vent vent:form] moz]
         yen.eth  (~(put in yen.eth) hen)
       ==
     --
@@ -909,8 +929,11 @@
       ==
     ::
     ++  vent
-      |=  evs=block:able
-      (exec yen.eth [%give %vent %| evs])
+      |=  can=chain
+      ^+  ..feel
+      ::TODO  see ++abet
+      :: (exec yen.eth [%give %vent can])
+      (vent-pass yen.eth can)
     --
   ::                                                    ::  ++form:su
   ++  form                                              ::  generate reports
@@ -984,9 +1007,13 @@
     vein:feel
   ::
   ++  file
-    |=  evs=block:able
+    |=  [new=? evs=block:able]
     ^+  +>
-    =?  +>  !=(0 ~(wyt by evs))  (vent:feel evs)
+    =?  +>  new
+      +>(dns.eth *dnses, hul.eth ~, kyz.eth ~)
+    =?  +>  |(new !=(0 ~(wyt by evs)))
+      %-  vent:feel
+      ?:(new &+evs |+evs)
     =+  vez=(order-events:ez ~(tap by evs))
     |^  ?~  vez  ..file
         $(vez t.vez, ..file (file-event i.vez))
@@ -1071,10 +1098,11 @@
     [(flop hab) `state-absolute`urb]
   ::
   ++  link
-    |=  evs=block:able
+    |=  ven=chain
     %_  +>
-      hab   [[%ethe |+evs] hab]
-      eve   (~(uni by eve) evs)
+      hab   [[%ethe ven] hab]
+      eve   ?:  ?=(%& -.ven)  p.ven
+            (~(uni by eve) p.ven)
     ==
   ::                                                    ::  ++lawn:ur
   ++  lawn                                              ::  debts, rex to pal
@@ -1162,6 +1190,7 @@
       ::
       ::TODO  more words
   =|  moves=(list move)
+  =+  reset=|
   =|  changes=block:able
   |_  $:  our=ship
           now=@da
@@ -1171,8 +1200,8 @@
   +*  etn  +<+>+
   ::
   ++  abet
-    ^-  [(list move) block:able state-eth-node]
-    [(flop moves) changes etn]
+    ^-  [(list move) chain state-eth-node]
+    [(flop moves) ?:(reset &+changes |+changes) etn]
   ::
   ++  put-move
     |=  mov=move
@@ -1209,22 +1238,6 @@
     :+  %json-rpc-response  %hiss
     ?>  ?=(%| -.source)
     !>  (json-request node.p.source jon)
-  ::
-  ::TODO  this is the only place in ++et that does subscription updates,
-  ::      and it probably shouldn't.
-  ++  update-to-all
-    |=  upd=update
-    %-  put-moves
-    ^-  (list move)
-    %+  turn  ~(tap in yen.eth)
-    |=  d=duct
-    :: [d %give %vent upd]
-    ::NOTE  we do a %pass instead of a %give because ames is bad
-    ?>  ?=([[%a @ @ *] *] d)
-    =+  our=(slav %p i.t.i.d)
-    =+  who=(slav %p i.t.t.i.d)
-    %+  wrap-note  /vent-result
-    [%a %want [our who] /j/(scot %p our)/vent-result %vent-result upd]
   ::
   ::
   ++  listen-to-ship
@@ -1309,29 +1322,32 @@
   ::
   ::
   ++  hear-vent
-    |=  upd=update
+    |=  can=chain
     ^+  +>
-    ?-  -.upd
-      %full   (assume +.upd)
+    ?-  -.can
+      %&   (assume p.can)
       ::
-        %difs
+        %|
+      =+  dis=~(tap by p.can)
       |-
-      ?~  dis.upd  +>.^$
-      =.  +>.^$  (accept i.dis.upd)
-      $(dis.upd t.dis.upd)
+      ?~  dis  +>.^$
+      =.  +>.^$  (accept i.dis)
+      $(dis t.dis)
     ==
   ::
   ++  assume
-    ::TODO  keys
-    |=  [s=(map ship hull) d=dnses h=events]
+    |=  evs=block:able
     ^+  +>
-    ?:  &(=(s hul.eth) =(d dns.eth) =(h heard))
-      ~&  %ignoring-identical-full
-      +>
-    ~&  [%assume ~(wyt by s) ~(wyt in h)]
-    (update-to-all [%full s d h])
+    %.  |+evs
+    %_  hear-vent
+      heard         ~
+      latest-block  0
+      reset         &
+    ==
   ::
   ++  accept
+    ::TODO  should probably refactor with dif:by so it can take
+    ::      full ++chains.
     |=  [cause=event-id dis=(list diff-constitution)]
     ^+  +>
     ?:  (~(has in heard) cause)

@@ -1250,7 +1250,7 @@
           [%b %wait p=@da]                              ::  wait until
           [%e %hiss p=(unit user) q=mark r=cage]        ::  outbound user req
           [%a %want p=sock q=path r=*]                  ::  send message
-          [%j %vent-result p=update:constitution:ethe]  ::  tmp workaround
+          [%j %vent-result p=chain]                     ::  tmp workaround
       ==                                                ::
     ++  remote                                          ::  remote notification
       %+  each  safe                                    ::  &/addition
@@ -1259,7 +1259,7 @@
     ++  sign                                            ::  in result $<-
       $%  {$b $wake $~}                                 ::  wakeup
           [%e %sigh p=cage]                             ::  marked http response
-          [%j %vent p=update:constitution:ethe]         ::  ethereum changes
+          [%j %vent p=chain]                            ::  ethereum changes
           [%a %woot p=ship q=coop]                      ::  message result
       ==                                                ::
     ++  tally                                           ::  balance update
