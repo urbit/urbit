@@ -1199,7 +1199,7 @@
   ++  wrap-note
     |=  [wir=wire not=note:able]
     ^-  move
-    [[/jael/eth-logic ~ ~] %pass wir not]
+    [[/jael/eth-logic ~ ~] %pass (weld /(scot %p our) wir) not]
   ::
   ++  rpc-hiss
     |=  [wir=wire jon=json]
@@ -1276,12 +1276,12 @@
     ::TODO  maybe also put a %rest for the old timer, just in case?
     ::      but I think the check in take-filter-result suffices.
     %-  put-move(poll-timer.p.source wen)
-    (wrap-note /(scot %p our)/poll %b %wait wen)
+    (wrap-note /poll %b %wait wen)
   ::
   ++  cancel-wait-poll
     ?>  ?=(%| -.source)
     %-  put-move(poll-timer.p.source *@da)
-    %+  wrap-note  /(scot %p our)/poll/cancel
+    %+  wrap-note  /poll/cancel
     [%b %rest poll-timer.p.source]
   ::
   ::
