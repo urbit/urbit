@@ -110,6 +110,7 @@
   test-diff
   test-diff-form
   test-pact
+  test-pact-mark
 ==
 ++  test-tear
   :-  `tank`leaf+"test-tear"
@@ -5926,7 +5927,124 @@
     (expect-ford-empty ford ~nul)
   ==
 ::
-::
+++  test-pact-mark
+  :-  `tank`leaf+"test-pact-mark"
+  ::
+  =/  ford  *ford-gate
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  ::
+  =/  scry-results=(map [term beam] (unit cage))
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      :^  ~  %hoon  hoon-src-type
+      '''
+      |_  txt=wain
+      ++  grab
+        |%
+        ++  noun  wain
+        --
+      ++  grad
+        |%
+        ++  form  %txt-diff
+        ++  diff
+          |=  other-txt=wain
+          ^-  (urge:clay cord)
+          =,  differ
+          (lusk txt other-txt (loss txt other-txt))
+        ++  pact
+          |=  diff=(urge:clay cord)
+          ^-  wain
+          =,  differ
+          (lurk txt diff)
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      :^  ~  %hoon  hoon-src-type
+      '''
+      |_  foo=@t
+      ++  grab
+        |%
+        ++  noun  @t
+        ++  txt   of-wain:format
+        --
+      ++  grow
+        |%
+        ++  txt  (to-wain:format foo)
+        --
+      ++  grad  %txt
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
+      :^  ~  %hoon  hoon-src-type
+      '''
+      |_  txt-diff=(urge:clay cord)
+      ++  grab
+        |%
+        ++  noun  (urge:clay cord)
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
+      ~
+    ==
+  ::
+  =^  results1  ford
+    %-  test-ford-call-with-comparator  :*
+      ford
+      now=~1234.5.6
+      scry=(scry-with-results-and-failures scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %make  ~nul
+            %pin  ~1234.5.6
+            :^  %pact  [~nul %home]
+              :+  %$  %foo  !>
+              '''
+              a
+              b
+              '''
+            [%$ %txt-diff !>(~[[%& 1] [%| ~[%b] ~[%d]]])]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        =/  result  result.p.card.i.moves
+        =/  pin-result  build-result.result
+        ?>  ?=([%success %pact *] build-result.pin-result)
+        ::
+        =/  =cage  cage.build-result.pin-result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  %foo
+          p.cage
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  '''
+              a
+              d
+              '''
+          q.q.cage
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.q.cage) | -:!>(''))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford ~nul)
+  ==
 ::  |utilities: helper arms
 ::
 ::+|  utilities
