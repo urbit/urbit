@@ -284,12 +284,12 @@
             ::  mark: name of mark used in diffs; also file path in mar/
             ::
             mark=term
-            ::  first: schematic producing first diff
+            ::  first: marked schematic producing first diff
             ::
-            first=schematic
-            ::  second: schematic producing second diff
+            first=[=disc mark=term =schematic]
+            ::  second: marked schematic producing second diff
             ::
-            second=schematic
+            second=[=disc mark=term =schematic]
         ==
         ::  %mute: mutate a noun by replacing its wings with new values
         ::
@@ -1142,7 +1142,7 @@
       %dude  ~[attempt.schematic]
       %hood  ~
       %join  ~[first.schematic second.schematic]
-      %mash  ~[first.schematic second.schematic]
+      %mash  ~[schematic.first.schematic schematic.second.schematic]
       %mute  [subject.schematic (turn mutations.schematic tail)]
       %pact  ~[start.schematic diff.schematic]
       %path  ~
@@ -2684,7 +2684,7 @@
             %dude  (make-dude error attempt)
             %hood  (make-hood source-path)
             %join  (make-join disc mark first second)
-            %mash  !!
+            %mash  (make-mash disc mark first second)
             %mute  (make-mute subject mutations)
             %pact  (make-pact disc start diff)
             %path  (make-path disc prefix raw-path)
@@ -3525,6 +3525,154 @@
         ?@  q.vase.u.diff-result
           [%null vase.u.diff-result]
         [u.form-mark (slot 3 vase.u.diff-result)]
+      ::
+      [build [%build-result build-result] accessed-builds]
+    ::
+    ++  make-mash
+      |=  $:  disc=^disc
+              mark=term
+              first=[disc=^disc mark=term =schematic]
+              second=[disc=^disc mark=term =schematic]
+          ==
+      ^-  build-receipt
+      ::
+      =/  initial-build=^build
+        [date.build [schematic.first schematic.second] [%path disc %mar mark]]
+      ::
+      =^  initial-result  accessed-builds  (depend-on initial-build)
+      ?~  initial-result
+        [build [%blocks [initial-build]~ ~] accessed-builds]
+      ::  TODO: duplicate logic with +make-join
+      ::
+      ?.  ?=([~ %success [%success ^ ^] %success %path *] initial-result)
+        (wrap-error initial-result)
+      ?.  ?=([%success *] head.head.u.initial-result)
+        (wrap-error `head.head.u.initial-result)
+      ?.  ?=([%success *] tail.head.u.initial-result)
+        (wrap-error `tail.head.u.initial-result)
+      ::
+      =/  first-cage=cage   (result-to-cage head.head.u.initial-result)
+      =/  second-cage=cage  (result-to-cage tail.head.u.initial-result)
+      =/  mark-path=rail    rail.tail.u.initial-result
+      ::  TODO: duplicate logic with +make-pact and others
+      ::
+      =/  mark-build=^build  [date.build [%core mark-path]]
+      ::
+      =^  mark-result  accessed-builds  (depend-on mark-build)
+      ?~  mark-result
+        [build [%blocks [mark-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %core *] mark-result)
+        (wrap-error mark-result)
+      ::
+      =/  mark-vase=vase  vase.u.mark-result
+      ::
+      ?.  (slab %grad p.mark-vase)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %mash failed: %{<mark>} mark has no +grad arm"
+      ::
+      =/  grad-build=^build
+        [date.build [%ride [%limb %grad] [%$ %noun mark-vase]]]
+      ::
+      =^  grad-result  accessed-builds  (depend-on grad-build)
+      ?~  grad-result
+        [build [%blocks [grad-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %ride *] grad-result)
+        (wrap-error grad-result)
+      ::
+      =/  grad-vase=vase  vase.u.grad-result
+      ::  if +grad produced a mark, delegate %mash behavior to that mark
+      ::
+      ?@  q.grad-vase
+        ::  if +grad produced a term, make sure it's a valid mark
+        ::
+        =/  grad-mark=(unit term)  ((sand %tas) q.grad-vase)
+        ?~  grad-mark
+          %-  return-error  :_  ~  :-  %leaf
+          "ford: %mash failed: %{<mark>} mark invalid +grad"
+        ::
+        =/  mash-build=^build
+          :-  date.build
+          :-  %mash
+          :^  disc  u.grad-mark
+            [disc.first mark.first [%$ first-cage]]
+          [disc.second mark.second [%$ second-cage]]
+        ::
+        =^  mash-result  accessed-builds  (depend-on mash-build)
+        ?~  mash-result
+          [build [%blocks [mash-build]~ ~] accessed-builds]
+        ::
+        ?.  ?=([~ %success %mash *] mash-result)
+          (wrap-error mash-result)
+        ::
+        =/  =build-result
+          [%success %mash cage.u.mash-result]
+        ::
+        [build [%build-result build-result] accessed-builds]
+      ::
+      ?.  (slab %form p.grad-vase)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %mash failed: %{<mark>} mark has no +form:grad"
+      ::
+      ?.  (slab %mash p.grad-vase)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %mash failed: %{<mark>} mark has no +mash:grad"
+      ::
+      =/  form-build=^build
+        [date.build [%ride [%limb %form] [%$ %noun grad-vase]]]
+      ::
+      =^  form-result  accessed-builds  (depend-on form-build)
+      ?~  form-result
+        [build [%blocks [form-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %ride *] form-result)
+        (wrap-error form-result)
+      ::
+      =/  form-mark=(unit term)  ((soft @tas) q.vase.u.form-result)
+      ?~  form-mark
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %mash failed: %{<mark>} mark invalid +form:grad"
+      ::
+      ?.  &(=(u.form-mark p.first-cage) =(u.form-mark p.second-cage))
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %mash failed: mark mismatch"
+      ::
+      ?:  =(q.q.first-cage q.q.second-cage)
+        =/  =build-result
+          [%success %mash [%null [%atom %n ~] ~]]
+        ::
+        [build [%build-result build-result] accessed-builds]
+      ::  call the +mash:grad gate on two [ship desk diff] triples
+      ::
+      =/  mash-build=^build
+        :-  date.build
+        :+  %call
+          :+  %ride
+            [%limb %mash]
+          [%$ %noun grad-vase]
+        :+  %$  %noun
+        %+  slop
+          ;:  slop
+            [[%atom %p ~] ship.disc.first]
+            [[%atom %tas ~] desk.disc.first]
+            q.first-cage
+          ==
+        ;:  slop
+          [[%atom %p ~] ship.disc.second]
+          [[%atom %tas ~] desk.disc.second]
+          q.second-cage
+        ==
+      ::
+      =^  mash-result  accessed-builds  (depend-on mash-build)
+      ?~  mash-result
+        [build [%blocks [mash-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %call *] mash-result)
+        (wrap-error mash-result)
+      ::
+      =/  =build-result
+        [%success %mash [u.form-mark vase.u.mash-result]]
       ::
       [build [%build-result build-result] accessed-builds]
     ::
