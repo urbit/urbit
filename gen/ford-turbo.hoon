@@ -5716,7 +5716,6 @@
         ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
         =/  result  result.p.card.i.moves
         =/  pin-result  build-result.result
-        ~&  build-result.pin-result
         ?>  ?=([%success %diff *] build-result.pin-result)
         ::
         =/  =cage  cage.build-result.pin-result
@@ -5791,7 +5790,6 @@
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
       ::
-      ::
       ^=  call-args
         :*  duct=~[/path]  type=~  %make  ~nul
             %pin  ~1234.5.6
@@ -5808,7 +5806,6 @@
         ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
         =/  result  result.p.card.i.moves
         =/  pin-result  build-result.result
-        ~&  build-result.pin-result
         ?>  ?=([%success %diff *] build-result.pin-result)
         ::
         =/  =cage  cage.build-result.pin-result

@@ -3305,7 +3305,6 @@
       ?.  (slab %form p.vase.u.grad-result)
         %-  return-error  :_  ~  :-  %leaf
         "ford: %diff failed: %{<p.start-cage>} mark has no +form:grab arm"
-      ~&  sloe+(sloe p.vase.u.grad-result)
       ::  the +grab core should also contain a +diff arm
       ::
       ?.  (slab %diff p.vase.u.grad-result)
