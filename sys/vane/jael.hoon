@@ -647,7 +647,7 @@
     ::
         $init
       %+  cute  our.tac  =<  abet
-      ~(init et our.tac now.sys eth.sub etn.lex)
+      (~(init et our.tac now.sys eth.sub etn.lex) our.tac)
     ::
     ::  set ethereum source
     ::    [%look p=(each ship purl)]
