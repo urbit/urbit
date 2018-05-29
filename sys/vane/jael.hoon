@@ -717,14 +717,16 @@
     ::
         $west
       =+  mes=((hard message) r.tac)
+      =*  our  p.p.tac
+      =*  dem  q.p.tac
       ?-    -.mes
       ::
       ::  reset remote rights
       ::    [%hail p=remote]
       ::
           %hail
-        %+  cure  p.p.tac
-        abet:abet:(hail:(burb p.p.tac) q.p.tac p.mes)
+        %+  cure  our
+        abet:abet:(hail:(burb our) dem p.mes)
       ::
       ::  cancel trackers
       ::    [%nuke ~]
@@ -736,16 +738,17 @@
       ::    [%vent ~]
       ::
           %vent
-        $(tac [%vent p.p.tac])
+        ~&  %west-vent
+        $(tac [%vent our])
       ::
       ::
           %vent-result
         ::  ignore if not from currently configured source.
-        ?.  &(-.source.etn =(q.p.tac p.source.etn))
+        ?.  &(-.source.etn =(dem p.source.etn))
           +>.$
         =.  moz  [[hen %give %mack ~] moz]
-        %+  cute  p.p.tac  =<  abet
-        (~(hear-vent et p.p.tac now.sys eth.sub etn.lex) p.mes)
+        %+  cute  our  =<  abet
+        (~(hear-vent et our now.sys eth.sub etn.lex) p.mes)
       ==
     ==
   ::
@@ -1150,9 +1153,12 @@
       |=  {pal/ship rem/remote}                         ::  report rights
       ^+  +>
       =/  gob  (fall (~(get by shy) pal) *safe)
+      ::  yer: pair of change and updated safe.
       =/  yer  ^-  (pair bump safe)
         ?-  -.rem
+          ::  change: add rem. result: old + rem.
           %&  [[p.rem ~] (~(splice up gob) p.rem)]
+          ::  change: difference. result: rem.
           %|  [(~(differ up gob) p.rem) p.rem]
         ==
       %_  +>.$
@@ -1163,16 +1169,18 @@
     ++  lean                                            ::  private keys
       ^-  (pair life (map life ring))
       ::
-      ::  lyf: latest life of
       ::  par: promises by rex, to rex
       ::  jel: %jewel rights
+      ::  lyf: latest life of
       ::
-      :: =/  lyf  `life`(fall ~(current we rug) 1)
-      :: =*  par  (~(got by shy) rex)
-      :: =/  jel  `rite`(need (~(expose up par) %jewel))
-      :: ?>  ?=($jewel -.jel)
-      :: [lyf p.jel]
-      [0 ~]  ::TODO
+      =*  par  (~(got by shy) rex)
+      =/  jel=rite  (need (~(expose up par) %jewel))
+      ?>  ?=($jewel -.jel)
+      =;  lyf=life
+        [lyf p.jel]
+      %+  roll  ~(tap in ~(key by p.jel))
+      |=  [liv=life max=life]
+      ?:((gth liv max) liv max)
     ::                                                  ::  ++lawn:ex:ur
     ++  lawn                                            ::  liabilities to pal
       |=  pal/ship
@@ -1283,11 +1291,11 @@
     :+  /filter/changes  `'poll filter'
     [%eth-get-filter-changes filter-id.p.source]
   ::
+  ::NOTE  doesn't check for existing timer.
+  ::      normal usage shouldn't cause double timers.
   ++  wait-poll
     ?>  ?=(%| -.source)
     =+  wen=(add now ~m4)
-    ::TODO  maybe also put a %rest for the old timer, just in case?
-    ::      but I think the check in take-filter-result suffices.
     %-  put-move(poll-timer.p.source wen)
     (wrap-note /poll %b %wait wen)
   ::
@@ -1302,7 +1310,6 @@
     |=  our=ship
     ^+  +>
     ::TODO  ship or node as sample?
-    ::TODO  set default polling time in config
     =+  bos=(sein:title our)
     ?.  =(our bos)
       (listen-to-ship our bos)
@@ -1346,14 +1353,11 @@
     ==
   ::
   ++  accept
-    ::TODO  should probably refactor with dif:by so it can take
-    ::      full ++chains.
     |=  [cause=event-id dis=(list diff-constitution)]
     ^+  +>
     ?:  (~(has in heard) cause)
       ~&  %accept-ignoring-duplicate-event
       +>.$
-    ~&  [%accept (lent dis)]
     (make-changes cause dis)
   ::
   ::
@@ -1421,11 +1425,12 @@
     ?~  mined.log
       ~&  %ignoring-unmined-event
       +>
+    =*  place  u.mined.log
     ::
     ::TODO  if the block number is less than latest, that means we got
     ::      events out of order somehow and should probably reset.
+    ?>  (gth block-number.place latest-block)
     ::
-    =*  place  u.mined.log
     ?:  (~(has in heard) block-number.place log-index.place)
       ~&  %ignoring-duplicate-event
       +>
@@ -1473,9 +1478,11 @@
           hen/duct
           hic/(hypo (hobo task:able))
       ==
-  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task:able) p.q.hic)))
   ^-  {p/(list move) q/_..^$}
-  =^  did  lex  abet:(~(call of [now eny] lex) hen q.hic)
+  =^  did  lex
+    =-  abet:(~(call of [now eny] lex) hen -)
+    ?.  ?=($soft -.q.hic)  q.hic
+    ((hard task:able) p.q.hic)
   [did ..^$]
 ::                                                      ::  ++load
 ++  load                                                ::  upgrade
