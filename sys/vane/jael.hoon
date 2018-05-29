@@ -51,11 +51,11 @@
       etn=state-eth-node                                ::  eth connection state
   ==                                                    ::
 ++  state-relative                                      ::  urbit metadata
-  $:  $=  bal                                           ::  balance sheet
+  $:  $=  bal                                           ::  balance sheet (vest)
         $:  yen/(set duct)                              ::  trackers
         ==                                              ::
-      $=  own                                           ::  vault
       ::TODO  never updated?
+      $=  own                                           ::  vault (vein)
         $:  yen/(set duct)                              ::  trackers
             lyf/life                                    ::  version
             jaw/(map life ring)  ::TODO  pair of rings? ::  private keys
@@ -550,6 +550,9 @@
   ::  simple ethereum-related utility arms.
   ::
   |%
+  ::
+  ::  +order-events: sort changes by block and log numbers
+  ::
   ++  order-events
     |=  loz=(list (pair event-id (list diff-constitution)))
     ^+  loz
@@ -581,6 +584,11 @@
   ::  a general pattern here is that we use the ++ur core
   ::  to generate absolute effects (++change), then invoke
   ::  ++su to calculate the derived effect of these changes.
+  ::
+  ::  for ethereum-related events, this is preceded by
+  ::  invocation of ++et, which produces ethereum-level
+  ::  changes (++chain). these get turned into absolute
+  ::  effects by ++cute.
   ::
   ::  arvo issues: should be merged with the top-level
   ::  vane interface when that gets cleaned up a bit.
@@ -1193,51 +1201,73 @@
 ::::                    ## ethereum^heavy               ::  ethereum engine
   ::                                                    ::::
 ++  et
-      ::  the ++et core handles ethereum-based state
-      ::  and all network requests necessary to
-      ::  maintain it.
       ::
-      ::TODO  more words
+  ::  the ++et core handles all logic necessary to maintain the
+  ::  absolute record of on-chain state changes, "events".
+  ::
+  ::  we either subscribe to a parent ship's existing record, or
+  ::  communicate directly with an ethereum node.
+  ::
+  ::  moves: effects; either behn timers, subscriptions,
+  ::         or ethereum node rpc requests.
+  ::  reset: whether the found changes assume a fresh state.
+  ::  changes: on-chain changes heard from our source.
+  ::
   =|  moves=(list move)
   =+  reset=|
   =|  changes=block:able
   |_  $:  our=ship
           now=@da
+          ::TODO  it seems this is only still used to check for dns changes,
+          ::      which isn't that important. probably squash those into a
+          ::      single diff with a (trel) just so we can remove this here.
           eth=_eth:*state-relative
           state-eth-node
       ==
   +*  etn  +<+>+
   ::
+  ::  +|  outward
+  ::
+  ::  +abet: produce results
+  ::
   ++  abet
     ^-  [(list move) chain state-eth-node]
     [(flop moves) ?:(reset &+changes |+changes) etn]
+  ::
+  ::  +put-move: store side-effect
   ::
   ++  put-move
     |=  mov=move
     %_(+> moves [mov moves])
   ::
-  ++  put-moves
-    |=  mos=(list move)
-    %_(+> moves (weld (flop mos) moves))
+  ::  +put-request: store rpc request to ethereum node
   ::
   ++  put-request
     |=  [wir=wire id=(unit @t) req=request]
     (put-move (rpc-hiss wir (request-to-json id req)))
   ::
-  ++  make-change
+  ::  +put-change: store change made by event
+  ::
+  ++  put-change
     |=  [cause=event-id dif=diff-constitution]
     +>(changes (~(add ja changes) cause dif))
   ::
-  ++  make-changes
+  ++  put-changes
     |=  [cause=event-id dis=(list diff-constitution)]
     =-  +>.$(changes (~(put by changes) cause -))
     (weld (flop dis) (~(get ja changes) cause))
   ::
+  ::  +|  move-generation
+  ::
+  ::  +wrap-note: %pass a note using a made-up duct
   ::
   ++  wrap-note
     |=  [wir=wire not=note:able]
     ^-  move
-    [[/jael/eth-logic ~ ~] %pass (weld /(scot %p our) wir) not]
+    :-  [/jael/eth-logic ~ ~]
+    [%pass (weld /(scot %p our) wir) not]
+  ::
+  ::  +rpc-hiss: make an http request to our ethereum rpc source
   ::
   ++  rpc-hiss
     |=  [wir=wire jon=json]
@@ -1248,12 +1278,17 @@
     ?>  ?=(%| -.source)
     !>  (json-request node.p.source jon)
   ::
+  ::  +|  source-operations
+  ::
+  ::  +listen-to-ship: depend on who for ethereum events
   ::
   ++  listen-to-ship
     |=  [our=ship who=ship]
     %-  put-move(source &+who)
     %+  wrap-note  /vent/(scot %p who)
     [%a %want [our who] /j/(scot %p our)/vent `*`[%vent ~]]
+  ::
+  ::  +unsubscribe-from-source: stop listening to current source ship
   ::
   ++  unsubscribe-from-source
     |=  our=ship
@@ -1268,6 +1303,12 @@
     |=  url=purl:eyre
     new-filter(source |+%*(. *node-src node url))
   ::
+  ::  +|  filter-operations
+  ::
+  ::  +new-filter: request a new polling filter
+  ::
+  ::    Listens only to the Ships state contract, and only from
+  ::    the last-heard block onward.
   ::
   ++  new-filter
     %-  put-request
@@ -1280,11 +1321,15 @@
         ~
     ==
   ::
+  ::  +read-filter: get all events the filter captures
+  ::
   ++  read-filter
     ?>  ?=(%| -.source)
     %-  put-request
     :+  /filter/logs  `'filter logs'
     [%eth-get-filter-logs filter-id.p.source]
+  ::
+  ::  +poll-filter: get all new events since the last poll (or filter creation)
   ::
   ++  poll-filter
     ?>  ?=(%| -.source)
@@ -1292,13 +1337,19 @@
     :+  /filter/changes  `'poll filter'
     [%eth-get-filter-changes filter-id.p.source]
   ::
-  ::NOTE  doesn't check for existing timer.
-  ::      normal usage shouldn't cause double timers.
+  ::  +wait-poll: remind us to poll in four minutes
+  ::
+  ::    Four minutes because Ethereum RPC filters time out after five.
+  ::    We don't check for an existing timer or clear an old one here,
+  ::    sane flows shouldn't see this being called superfluously.
+  ::
   ++  wait-poll
     ?>  ?=(%| -.source)
     =+  wen=(add now ~m4)
     %-  put-move(poll-timer.p.source wen)
     (wrap-note /poll %b %wait wen)
+  ::
+  ::  +cancel-wait-poll: remove poll reminder
   ::
   ++  cancel-wait-poll
     ?>  ?=(%| -.source)
@@ -1306,6 +1357,12 @@
     %+  wrap-note  /poll/cancel
     [%b %rest poll-timer.p.source]
   ::
+  ::  +|  configuration
+  ::
+  ::  +init: initialize with default ethereum connection
+  ::
+  ::    for galaxies, we default to a localhost geth node.
+  ::    for stars and under, we default to the parent ship.
   ::
   ++  init
     |=  our=ship
@@ -1316,6 +1373,8 @@
       (listen-to-ship our bos)
     =+  (need (de-purl:html 'http://localhost:8545'))
     (listen-to-node -(p.p |))
+  ::
+  ::  +look: configure the source of ethereum state
   ::
   ++  look
     |=  src=(each ship purl:eyre)
@@ -1328,6 +1387,9 @@
       (listen-to-node p.src)
     (listen-to-ship our p.src)
   ::
+  ::  +|  subscription-results
+  ::
+  ::  +hear-vent: process incoming events
   ::
   ++  hear-vent
     |=  can=chain
@@ -1343,6 +1405,8 @@
       $(dis t.dis)
     ==
   ::
+  ::  +assume: clear state and process events
+  ::
   ++  assume
     |=  evs=block:able
     ^+  +>
@@ -1353,16 +1417,23 @@
       reset         &
     ==
   ::
+  ::  +accept: process single event
+  ::
   ++  accept
     |=  [cause=event-id dis=(list diff-constitution)]
     ^+  +>
     ?:  (~(has in heard) cause)
       ~&  %accept-ignoring-duplicate-event
       +>.$
-    (make-changes cause dis)
+    (put-changes cause dis)
   ::
+  ::  +|  filter-results
+  ::
+  ::  +wake: kick polling
   ::
   ++  wake  poll-filter
+  ::
+  ::  +sigh: parse rpc response and process it
   ::
   ++  sigh
     |=  [cuz=wire mar=mark res=vase]
@@ -1384,6 +1455,8 @@
       (take-filter-results rep)
     ==
   ::
+  ::  +take-new-filter: store filter-id and read it
+  ::
   ++  take-new-filter
     |=  rep=response:rpc:jstd
     ^+  +>
@@ -1395,6 +1468,8 @@
     ?>  ?=(%| -.source)
     =-  read-filter(filter-id.p.source -)
     (parse-eth-new-filter-res res.rep)
+  ::
+  ::  +take-filter-results: parse results into event-logs and process them
   ::
   ++  take-filter-results
     |=  rep=response:rpc:jstd
@@ -1420,6 +1495,8 @@
       (take-event-log (parse-event-log i.changes))
     $(changes t.changes)
   ::
+  ::  +take-event-log: obtain changes from event-log
+  ::
   ++  take-event-log
     |=  log=event-log
     ^+  +>
@@ -1441,16 +1518,16 @@
       =+  ^-  [pri=tape sec=tape ter=tape]
         (decode-results data.log ~[%string %string %string])
       =?  +>.$  !=(pri.dns.eth (crip pri))
-        (make-change cuz %dns 0 (crip pri))
+        (put-change cuz %dns 0 (crip pri))
       =?  +>.$  !=(sec.dns.eth (crip sec))
-        (make-change cuz %dns 1 (crip sec))
+        (put-change cuz %dns 1 (crip sec))
       =?  +>.$  !=(ter.dns.eth (crip ter))
-        (make-change cuz %dns 2 (crip ter))
+        (put-change cuz %dns 2 (crip ter))
       +>.$
     ::
     =+  dis=(event-log-to-hull-diffs log)
     ?~  dis  +>.$
-    (make-change cuz %hull i.dis)
+    (put-change cuz %hull i.dis)
   ::
   --
 --
