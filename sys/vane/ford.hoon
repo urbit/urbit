@@ -1890,12 +1890,12 @@
           ?:  =(~ rop)  
             [%$ 1] 
           :+  %brcn  ~
-          =-  [[0 ~ -] ~ ~]
+          =-  [[%$ ~ -] ~ ~]
           (~(run by rop) |=({^ a/hoon} a))
         ?:  =(~ bil) 
           [%$ 1] 
         :+  %brcn  ~
-        =-  [[0 ~ -] ~ ~]
+        =-  [[%$ ~ -] ~ ~]
         (~(run by bil) |=({^ a/hoon} a))
       ::
       ++  abut                                          ::  generate
@@ -2172,7 +2172,7 @@
           |:  $:{cof/cafe mav/(map term hoon) sel/_..wilt}
           ?~  mav
             (err:bo cof [%leaf "source missing: {<(en-beam p.hop)>}"]~)
-          (new:bo cof sel(boy [[%brcn ~ [[0 ~ mav] ~ ~]] boy]))
+          (new:bo cof sel(boy [[%brcn ~ [[%$ ~ mav] ~ ~]] boy]))
         ==
       --
     ::

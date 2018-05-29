@@ -13,7 +13,7 @@
 =,  clay
 =>  |%
 ++  aeon  @ud                                           ::  version number
-++  axle  $%([%0 ruf=raft])
++=  axle  [%0 ruf=raft]
 ::
 ::  Recursive structure of a desk's data.
 ::
@@ -3594,7 +3594,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  $1                                            ::  vane version
+    $:  $0                                            ::  vane version
         ruf/raft                                      ::  revision tree
     ==                                                ::
 |=  {now/@da eny/@ ski/sley}                          ::  activate
@@ -3853,8 +3853,10 @@
   ^-  (unit @da)
   ~
 ::
-++  load                                                ::  trivial
+++  load  !:                                               ::  trivial 
   |=  old/axle
+  ~!  [%ruf ruf]
+  ~!  [%ruf-old ruf.old]
   ..^$(ruf ruf.old)
 ::
 ++  scry                                              ::  inspect
@@ -3886,7 +3888,7 @@
   ?:  ?=(%& -.u.u.-)  ``p.u.u.-
   ~
 ::
-++  stay  [%1 ruf]
+++  stay  [%0 ruf]
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]

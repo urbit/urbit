@@ -125,7 +125,7 @@
   ::                                                    ::
 =,  gall
 =+  foo=*monkey
-|_  $:  hid/bowl                                       ::  system state
+|_  $:  hid/bowl                                        ::  system state
         house                                           ::  program state
     ==                                                  ::
 ++  he                                                  ::  per session
