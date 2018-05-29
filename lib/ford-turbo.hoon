@@ -2683,7 +2683,7 @@
             %diff  (make-diff disc start end)
             %dude  (make-dude error attempt)
             %hood  (make-hood source-path)
-            %join  !!
+            %join  (make-join disc mark first second)
             %mash  !!
             %mute  (make-mute subject mutations)
             %pact  (make-pact disc start diff)
@@ -3396,6 +3396,133 @@
         (return-error [%leaf "syntax error: {<p.p.parsed>} {<q.p.parsed>}"]~)
       ::
       [build [%build-result %success %hood p.u.q.parsed] accessed-builds]
+    ::
+    ++  make-join
+      |=  [disc=^disc mark=term first=schematic second=schematic]
+      ^-  build-receipt
+      ::
+      =/  initial-build=^build
+        [date.build [first second] [%path disc %mar mark]]
+      ::
+      =^  initial-result  accessed-builds  (depend-on initial-build)
+      ?~  initial-result
+        [build [%blocks [initial-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success [%success ^ ^] %success %path *] initial-result)
+        (wrap-error initial-result)
+      ::
+      =/  first-cage=cage   (result-to-cage head.head.u.initial-result)
+      =/  second-cage=cage  (result-to-cage tail.head.u.initial-result)
+      =/  mark-path=rail    rail.tail.u.initial-result
+      ::  TODO: duplicate logic with +make-pact and others
+      ::
+      =/  mark-build=^build  [date.build [%core mark-path]]
+      ::
+      =^  mark-result  accessed-builds  (depend-on mark-build)
+      ?~  mark-result
+        [build [%blocks [mark-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %core *] mark-result)
+        (wrap-error mark-result)
+      ::
+      =/  mark-vase=vase  vase.u.mark-result
+      ::
+      ?.  (slab %grad p.mark-vase)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %join failed: %{<mark>} mark has no +grad arm"
+      ::
+      =/  grad-build=^build
+        [date.build [%ride [%limb %grad] [%$ %noun mark-vase]]]
+      ::
+      =^  grad-result  accessed-builds  (depend-on grad-build)
+      ?~  grad-result
+        [build [%blocks [grad-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %ride *] grad-result)
+        (wrap-error grad-result)
+      ::
+      =/  grad-vase=vase  vase.u.grad-result
+      ::  if +grad produced a mark, delegate %join behavior to that mark
+      ::
+      ?@  q.grad-vase
+        ::  if +grad produced a term, make sure it's a valid mark
+        ::
+        =/  grad-mark=(unit term)  ((sand %tas) q.grad-vase)
+        ?~  grad-mark
+          %-  return-error  :_  ~  :-  %leaf
+          "ford: %pact failed: %{<mark>} mark invalid +grad"
+        ::
+        =/  join-build=^build
+          [date.build [%join disc mark [%$ first-cage] [%$ second-cage]]]
+        ::
+        =^  join-result  accessed-builds  (depend-on join-build)
+        ?~  join-result
+          [build [%blocks [join-build]~ ~] accessed-builds]
+        ::
+        ?.  ?=([~ %success %join *] join-result)
+          (wrap-error join-result)
+        ::
+        [build [%build-result u.join-result] accessed-builds]
+      ::  make sure the +grad core has a +form arm
+      ::
+      ?.  (slab %form p.grad-vase)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %join failed: no +form:grad in %{<mark>} mark"
+      ::  make sure the +grad core has a +join arm
+      ::
+      ?.  (slab %join p.grad-vase)
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %join failed: no +join:grad in %{<mark>} mark"
+      ::  fire the +form:grad arm, which should produce a mark
+      ::
+      =/  form-build=^build
+        [date.build [%ride [%limb %form] [%$ %noun grad-vase]]]
+      ::
+      =^  form-result  accessed-builds  (depend-on form-build)
+      ?~  form-result
+        [build [%blocks [form-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %ride *] form-result)
+        (wrap-error form-result)
+      ::
+      =/  form-mark=(unit term)  ((soft @tas) q.vase.u.form-result)
+      ?~  form-mark
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %join failed: %{<mark>} mark invalid +form:grad"
+      ::  the mark produced by +form:grad should match both diffs
+      ::
+      ?.  &(=(u.form-mark p.first-cage) =(u.form-mark p.second-cage))
+        %-  return-error  :_  ~  :-  %leaf
+        "ford: %join failed: mark mismatch"
+      ::  if the diffs are identical, just produce the first
+      ::
+      ?:  =(q.q.first-cage q.q.second-cage)
+        [build [%build-result %success %join first-cage] accessed-builds]
+      ::  call the +join:grad gate on the two diffs
+      ::
+      =/  diff-build=^build
+        :-  date.build
+        :+  %call
+          :+  %ride
+            [%limb %join]
+          [%$ %noun grad-vase]
+        [%$ %noun (slop q.first-cage q.second-cage)]
+      ::
+      =^  diff-result  accessed-builds  (depend-on diff-build)
+      ?~  diff-result
+        [build [%blocks [diff-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %call *] diff-result)
+        (wrap-error diff-result)
+      ::  the result was a unit; if `~`, use %null mark; otherwise grab tail
+      ::
+      =/  =build-result
+        :+  %success  %join
+        ?@  q.vase.u.diff-result
+          [%null vase.u.diff-result]
+        [u.form-mark (slot 3 vase.u.diff-result)]
+      ::
+      [build [%build-result build-result] accessed-builds]
     ::
     ++  make-mute
       |=  [subject=schematic mutations=(list [=wing =schematic])]
