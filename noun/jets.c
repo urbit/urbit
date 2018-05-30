@@ -971,7 +971,7 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
       u3_weak pro, ame;
 
       ham_u->ice = c3y;
-      pro = ham_u->fun_f(u3k(cor));
+      pro = ham_u->fun_f(cor);
       ham_u->ice = c3n;
 
 #ifdef U3_MEMORY_DEBUG
