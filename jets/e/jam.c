@@ -14,11 +14,6 @@ typedef struct {
   c3_w* wor_w;
 } _jam_buf;
 
-typedef struct {
-  c3_y    sat_y;
-  u3_noun a;
-} _jam_frame;
-
 static void
 _jam_buf_grow(_jam_buf* buf_u, c3_w mor_w)
 {
@@ -76,96 +71,71 @@ _jam_buf_top(u3_noun a)
 {
   u3p(u3h_root) har_p = u3h_new();
   c3_o          nor_o = u3a_is_north(u3R);
-  c3_y          wis_y = c3_wiseof(_jam_frame);
+  c3_y          wis_y = c3_wiseof(u3_noun);
   c3_ys         mov   = ( c3y == nor_o ? -wis_y : wis_y );
   c3_ys         off   = ( c3y == nor_o ? 0 : -wis_y );
-  _jam_frame*   fam, *don = u3to(_jam_frame, u3R->cap_p + off);
+  u3_noun*      top, *don = u3to(u3_noun, u3R->cap_p + off);
   _jam_buf      buf_u;
   u3_weak       c;
   c3_o          cel_o;
-  c3_w          a_w, c_w, wor_w, len_w, *sal_w;
+  c3_w*         sal_w, len_w;
 
   buf_u.a_w   = 14930352;  // fib(36) # of bits starting in wor_w
   buf_u.b_w   = 9227465;   // fib(35)
-  wor_w       = (buf_u.a_w>>5);
-  if ( (wor_w<<5) != buf_u.a_w ) {
-    ++wor_w;
+  len_w       = buf_u.a_w >> 5;
+  if ( (len_w << 5) != buf_u.a_w ) {
+    ++len_w;
   }
-  buf_u.wor_w = u3a_calloc(wor_w, sizeof(c3_w));
+  buf_u.wor_w = u3a_calloc(len_w, sizeof(c3_w));
   buf_u.bit_w = 0;
 
   u3R->cap_p += mov;
-  fam         = u3to(_jam_frame, u3R->cap_p + off);
-  fam->a      = a;
-  fam->sat_y  = JAM_NONE;
+  top         = u3to(u3_noun, u3R->cap_p + off);
+  *top        = a;
 
-  while ( fam != don ) {
-    switch ( fam->sat_y ) {
-      case JAM_NONE:
-        a     = fam->a;
-        cel_o = u3du(a);
-        c     = u3h_git(har_p, a);
-        if ( u3_none != c ) {
-          c_w = u3r_met(0, c);
-          if ( c3y == cel_o ) {
-              _jam_buf_chop(&buf_u, 2, 3);
-              _jam_buf_atom(&buf_u, c);
-          }
-          else {
-            a_w = u3r_met(0, a);
-            if ( a_w <= c_w ) {
-              _jam_buf_chop(&buf_u, 1, 0);
-              _jam_buf_atom(&buf_u, a);
-            }
-            else {
-              _jam_buf_chop(&buf_u, 2, 3);
-              _jam_buf_atom(&buf_u, c);
-            }
-          }
-          u3R->cap_p -= mov;
-          fam = u3to(_jam_frame, u3R->cap_p + off);
+  while ( top != don ) {
+    a     = *top;
+    cel_o = u3du(a);
+    c     = u3h_git(har_p, a);
+    if ( u3_none != c ) {
+      if ( c3y == cel_o ) {
+          _jam_buf_chop(&buf_u, 2, 3);
+          _jam_buf_atom(&buf_u, c);
+      }
+      else {
+        if ( u3r_met(0, a) <= u3r_met(0, c) ) {
+          _jam_buf_chop(&buf_u, 1, 0);
+          _jam_buf_atom(&buf_u, a);
         }
         else {
-          u3h_put(har_p, a, buf_u.bit_w);
-          if ( c3n == cel_o ) {
-            _jam_buf_chop(&buf_u, 1, 0);
-            _jam_buf_atom(&buf_u, a);
-            u3R->cap_p -= mov;
-            fam = u3to(_jam_frame, u3R->cap_p + off);
-          }
-          else {
-            fam->sat_y = JAM_HEAD;
-
-            u3R->cap_p += mov;
-            fam = u3to(_jam_frame, u3R->cap_p + off);
-            fam->sat_y = JAM_NONE;
-            fam->a     = u3h(a);
-
-            _jam_buf_chop(&buf_u, 2, 1);
-          }
+          _jam_buf_chop(&buf_u, 2, 3);
+          _jam_buf_atom(&buf_u, c);
         }
-        break;
-
-      case JAM_HEAD:
-        a          = fam->a;
-        fam->sat_y = JAM_TAIL;
-
-        u3R->cap_p += mov;
-        fam        = u3to(_jam_frame, u3R->cap_p + off);
-        fam->sat_y = JAM_NONE;
-        fam->a     = u3t(a);
-        break;
-
-      case JAM_TAIL:
+      }
+      u3R->cap_p -= mov;
+      top = u3to(u3_noun, u3R->cap_p + off);
+    }
+    else {
+      u3h_put(har_p, a, buf_u.bit_w);
+      if ( c3n == cel_o ) {
+        _jam_buf_chop(&buf_u, 1, 0);
+        _jam_buf_atom(&buf_u, a);
         u3R->cap_p -= mov;
-        fam = u3to(_jam_frame, u3R->cap_p + off);
-        break;
+        top = u3to(u3_noun, u3R->cap_p + off);
+      }
+      else {
+        _jam_buf_chop(&buf_u, 2, 1);
+        *top         = u3t(a);
+
+        u3R->cap_p  += mov;
+        top          = u3to(u3_noun, u3R->cap_p + off);
+        *top         = u3h(a);
+      }
     }
   }
 
-
-  len_w = (buf_u.bit_w>>5);
-  if ( (len_w<<5) != buf_u.bit_w ) {
+  len_w = buf_u.bit_w >> 5;
+  if ( (len_w << 5) != buf_u.bit_w ) {
     ++len_w;
   }
   sal_w = u3a_slab(len_w);
