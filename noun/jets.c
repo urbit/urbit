@@ -78,19 +78,35 @@ _cj_core_loc(u3_noun pel, u3j_core* cop_u)
 static u3_noun
 _cj_hash(c3_c* has_c)
 {
-  c3_l mug;
-  sscanf(has_c, "%x", &mug);
-  return mug;
+  c3_w i_w, len_w = strlen(has_c);
+  if ( 64 != len_w ) {
+    fprintf(stderr, "bash not 64 characters: %s\r\n", has_c);
+    c3_assert(0);
+  }
+  c3_assert( 64 == len_w );
+  c3_y dig_y[32];
+  for ( i_w = 0; i_w < 64; ) {
+    c3_y hi_y  = has_c[i_w++],
+         lo_y  = has_c[i_w++],
+         hid_y = hi_y >= 'a' ? (hi_y - 'a') + 10 : hi_y - '0',
+         lod_y = lo_y >= 'a' ? (lo_y - 'a') + 10 : lo_y - '0';
+    dig_y[32-(i_w>>1)] = hid_y << 4 | lod_y;
+  }
+  u3_noun pro = u3i_bytes(32, dig_y);
+  //fprintf(stderr, "has_c: %s\r\n", has_c);
+  //u3m_p("pro", pro);
+  return pro;
 }
 
+/*
 typedef struct {
 #if defined(U3_OS_osx)
   CC_SHA256_CTX ctx_h;
 #else
   SHA256_CTX ctx_h;
 #endif
-  c3_s inx_s;
-  c3_y buf_y[65536];
+  c3_w len_w;
+  c3_w buf_w[65536];
 } _cj_sha;
 
 static void
@@ -107,8 +123,8 @@ static void
 _cj_digest_flush(_cj_sha* sha_u)
 {
   if ( sha_u->inx_s ) {
-    _cj_digest_update(sha_u, sha_u->buf_y, sha_u->inx_s);
-    sha_u->inx_s = 0;
+    _cj_digest_update(sha_u, sha_u->buf_w, sha_u->inx_s);
+    sha_u->len_w = 0;
   }
 }
 
@@ -118,21 +134,29 @@ _cj_digest_write(_cj_sha* sha_u, u3_atom a)
   c3_w met_w = u3r_met(3, a),
        law_w = u3r_met(3, met_w);
 
-  if ( (law_w + met_w) > 65536 ) {
-    c3_y* big_y = u3a_malloc(met_w);
-    u3r_bytes(0, met_w, big_y, a);
-    _cj_digest_flush(sha_u);
-    _cj_digest_update(sha_u, big_y, met_w);
-    u3a_free(big_y);
-  }
-  else {
-    if ( (sha_u->inx_s + met_w + law_w ) > 65536 ) {
+  if ( 0 == law_w ) {
+    if ( sha_u->inx_s == 65535 ) {
       _cj_digest_flush(sha_u);
     }
-    u3r_bytes(0, law_w, sha_u->buf_y + sha_u->inx_s, law_w);
-    sha_u->inx_s += (c3_s) law_w;
-    u3r_bytes(0, met_w, sha_u->buf_y + sha_u->inx_s, a);
-    sha_u->inx_s += (c3_s) met_w;
+    sha_u->buf_y[sha_u->inx_s++] = 0;
+  }
+  else {
+    if ( (law_w + met_w) > 65536 ) {
+      c3_y* big_y = u3a_malloc(met_w);
+      u3r_bytes(0, met_w, big_y, a);
+      _cj_digest_flush(sha_u);
+      _cj_digest_update(sha_u, big_y, met_w);
+      u3a_free(big_y);
+    }
+    else {
+      if ( (sha_u->inx_s + met_w + law_w ) > 65536 ) {
+        _cj_digest_flush(sha_u);
+      }
+      u3r_bytes(0, law_w, sha_u->buf_y + sha_u->inx_s, law_w);
+      sha_u->inx_s += (c3_s) law_w;
+      u3r_bytes(0, met_w, sha_u->buf_y + sha_u->inx_s, a);
+      sha_u->inx_s += (c3_s) met_w;
+    }
   }
 }
 
@@ -147,6 +171,7 @@ _cj_digest_final(_cj_sha* sha_u)
 #endif
   return u3i_bytes(32, dig_y);
 }
+
 
 static void
 _cj_digest_init(_cj_sha* sha_u)
@@ -210,6 +235,7 @@ _cj_digest(u3_noun a)
   _cj_digest_flush(&sha_u);
   return _cj_digest_final(&sha_u);
 }
+*/
 
 /* _cj_bash(): battery hash. RETAIN.
  */
@@ -229,8 +255,11 @@ _cj_bash(u3_noun bat)
       rod_u = u3to(u3_road, rod_u->par_p);
     }
     else {
-      pro = _cj_digest(bat);
+      u3_noun jan = u3qe_jam(bat);
+      pro = u3qe_shax(jan);
+      //pro = u3qe_sham(bat);
       u3h_put(u3R->jed.bas_p, bat, u3k(pro));
+      u3z(jan);
       break;
     }
   }
@@ -737,7 +766,7 @@ _cj_spot(u3_noun cor, u3_weak* bas)
     u3_weak act = _cj_spot_hot(cor, *bas, &loc);
     if ( u3_none != act ) {
       reg = _cj_gust(reg, _cj_loc_axe(loc), _cj_loc_pel(loc), u3k(loc));
-      u3h_put(u3R->jed.cod_p, u3h(cor), u3k(reg));
+      u3h_put(u3R->jed.cod_p, u3h(cor), u3nc(u3k(*bas), u3k(reg)));
       /* caution: could overwrites old value, debug batteries etc.
       **          old value contains old _cj_jit (from different
       **          battery). if we change jit to (map battery *),
@@ -951,7 +980,6 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
       strncpy(soc_c, cop_u->cos_c, 5);
       soc_c[5] = 0;
       cod_w = u3i_string(soc_c);
-
       cod_w = u3a_lush(cod_w);
     }
 #endif
@@ -1862,15 +1890,20 @@ _cj_mine(u3_noun cey, u3_noun cor, u3_noun bas)
     fprintf(stderr, "  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
 #endif
     if ( jax_l ) {
+      c3_y dig_y[32];
+      c3_w i_w;
       u3_noun i = bal;
       fprintf(stderr, "hot jet: ");
       while ( i != u3_nul ) {
         _cj_print_tas(stderr, u3h(i));
         i = u3t(i);
       }
-      fprintf(stderr, "\r\n  ");
-      u3m_p("bash", bas);
-      fprintf(stderr, "  axe %d, jax %d\r\n", axe, jax_l);
+      fprintf(stderr, "\r\n  axe %d, jax %d,\r\n  bash ", axe, jax_l);
+      u3r_bytes(0, 32, dig_y, bas);
+      for ( i_w = 32; i_w > 0; ) {
+        fprintf(stderr, "%02x", dig_y[--i_w]);
+      }
+      fprintf(stderr, "\r\n");
     }
     hap   = _cj_warm_hump(jax_l, u3t(u3t(loc)));
     act   = u3nq(jax_l, hap, bal, _cj_jit(jax_l, bat));
