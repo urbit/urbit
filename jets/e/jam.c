@@ -3,10 +3,6 @@
 */
 #include "all.h"
 
-#define JAM_NONE 0
-#define JAM_HEAD 1
-#define JAM_TAIL 2
-
 typedef struct {
   c3_w  a_w;
   c3_w  b_w;
@@ -80,8 +76,8 @@ _jam_buf_top(u3_noun a)
   c3_o          cel_o;
   c3_w*         sal_w, len_w;
 
-  buf_u.a_w   = 14930352;  // fib(36) # of bits starting in wor_w
-  buf_u.b_w   = 9227465;   // fib(35)
+  buf_u.a_w   = 144;  // fib(12) is small enough to be reasonably fast to allocate.
+  buf_u.b_w   = 89;   // fib(11) is needed to get fib(13).
   len_w       = buf_u.a_w >> 5;
   if ( (len_w << 5) != buf_u.a_w ) {
     ++len_w;
@@ -139,7 +135,7 @@ _jam_buf_top(u3_noun a)
     ++len_w;
   }
   sal_w = u3a_slab(len_w);
-  memcpy(sal_w, buf_u.wor_w, len_w<<2);
+  memcpy(sal_w, buf_u.wor_w, len_w*sizeof(c3_w));
   u3a_free(buf_u.wor_w);
   u3h_free(har_p);
   return u3a_mint(sal_w, len_w);
