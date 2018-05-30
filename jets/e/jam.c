@@ -138,7 +138,7 @@ _jam_buf_top(u3_noun a)
   memcpy(sal_w, buf_u.wor_w, len_w*sizeof(c3_w));
   u3a_free(buf_u.wor_w);
   u3h_free(har_p);
-  return u3a_mint(sal_w, len_w);
+  return u3a_moot(sal_w);
 }
 
 /* functions
