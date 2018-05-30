@@ -1026,7 +1026,7 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
       }
       else {
 
-#if 0
+#if 1
         fprintf(stderr, "test: %s %s\r\n",
                cop_u->cos_c,
                (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c);
@@ -2111,7 +2111,7 @@ u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p, u3p(u3h_root) han_p, u3p(u3h_
   u3h_walk(bas_p, _cj_bash_reap);
 }
 
-/* _cj_ream(): ream list of battery registry pairs. RETAIN.
+/* _cj_ream(): ream list of battery [bash registry] pairs. RETAIN.
  */
 static void
 _cj_ream(u3_noun all)
@@ -2124,7 +2124,7 @@ _cj_ream(u3_noun all)
   for ( i = all, lop = u3_nul; i != u3_nul; i = u3t(i) ) {
     kev = u3h(i);
     bat = u3h(kev);
-    reg = u3t(kev);
+    reg = u3t(u3t(kev));
     rut = u3h(reg);
 
     // register roots
