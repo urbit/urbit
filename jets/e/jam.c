@@ -85,8 +85,8 @@ _jam_buf_top(u3_noun a)
   c3_o          cel_o;
   c3_w          a_w, c_w, wor_w, len_w, *sal_w;
 
-  buf_u.a_w   = 10946;  // fib(21) # of bits starting in wor_w
-  buf_u.b_w   = 6765;   // fib(20) roughly 1K, a good start
+  buf_u.a_w   = 14930352;  // fib(36) # of bits starting in wor_w
+  buf_u.b_w   = 9227465;   // fib(35)
   wor_w       = (buf_u.a_w>>5);
   if ( (wor_w<<5) != buf_u.a_w ) {
     ++wor_w;
