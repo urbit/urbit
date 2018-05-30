@@ -5677,7 +5677,7 @@
 ::
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task:able)]
-  ^-  [(list move) _this]
+  ^-  [(list move) _ford-gate]
   ::  unwrap :task from :wrapped-task
   ::
   =/  task=task:able
@@ -5704,7 +5704,7 @@
    =^  moves  ship-state  (start-build schematic.task)
    =.  state-by-ship  (~(put by state-by-ship) our.task ship-state)
    ::
-   [moves this]
+   [moves ford-gate]
   ::
       ::  %kill: cancel a %make
       ::
@@ -5715,7 +5715,7 @@
     =^  moves  ship-state  cancel:(per-event event-args)
     =.  state-by-ship  (~(put by state-by-ship) our.task ship-state)
     ::
-    [moves this]
+    [moves ford-gate]
   ::
       ::  %wipe: wipe the cache, clearing half the entries
       ::
@@ -5730,7 +5730,7 @@
       ::
       (~(put by accumulator) ship (wipe state))
     ::
-    [~ this]
+    [~ ford-gate]
   ::
       %wegh  !!
   ==
@@ -5786,7 +5786,7 @@
 ::
 ++  take
   |=  [=wire =duct wrapped-sign=(hypo sign)]
-  ^-  [(list move) _this]
+  ^-  [(list move) _ford-gate]
   ::  unwrap :sign from :wrapped-sign
   ::
   ::    TODO: verify wrapped-sign isn't an evil vase?
@@ -5839,12 +5839,12 @@
   ::
   =.  state-by-ship  (~(put by state-by-ship) our ship-state)
   ::
-  [moves this]
+  [moves ford-gate]
 ::  %utilities
 ::
 ::+|
 ::
-++  this  .
+++  ford-gate  ..$
 ::  +find-or-create-ship-state: find or create a ford-state for a @p
 ::
 ::    Accesses and modifies :state-by-ship.
