@@ -1,3 +1,4 @@
+!:
 ::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
 |=  pit=vase
@@ -5026,7 +5027,7 @@
 ::
 ::::  vane core
   ::
-=|  axle
+=|  ax=axle
 |=  [now=@da eny=@ scry=sley]
 ::  allow jets to be registered within this core
 ::
@@ -5060,11 +5061,11 @@
    ::    :moves and a mutant :ship-state. We update our :state-by-ship map
    ::    with the new :ship-state and produce it along with :moves.
    ::
-   =^  ship-state  state-by-ship  (find-or-create-ship-state our.task)
+   =^  ship-state  state-by-ship.ax  (find-or-create-ship-state our.task)
    =*  event-args  [[our.task duct now scry] ship-state]
    =*  start-build  start-build:(per-event event-args)
    =^  moves  ship-state  (start-build schematic.task)
-   =.  state-by-ship  (~(put by state-by-ship) our.task ship-state)
+   =.  state-by-ship.ax  (~(put by state-by-ship.ax) our.task ship-state)
    ::
    [moves ford-gate]
   ::
@@ -5072,10 +5073,10 @@
       ::
       %kill
     ::
-    =/  ship-state  ~|(our+our.task (~(got by state-by-ship) our.task))
+    =/  ship-state  ~|(our+our.task (~(got by state-by-ship.ax) our.task))
     =*  event-args  [[our.task duct now scry] ship-state]
     =^  moves  ship-state  cancel:(per-event event-args)
-    =.  state-by-ship  (~(put by state-by-ship) our.task ship-state)
+    =.  state-by-ship.ax  (~(put by state-by-ship.ax) our.task ship-state)
     ::
     [moves ford-gate]
   ::
@@ -5083,10 +5084,10 @@
       ::
       %wipe
     ::
-    =/  ship-states=(list [@p ford-state])  ~(tap by state-by-ship)
+    =/  ship-states=(list [@p ford-state])  ~(tap by state-by-ship.ax)
     ::  wipe each ship in the state separately
     ::
-    =.  state-by-ship
+    =.  state-by-ship.ax
       %+  roll  ship-states
       |=  [[ship=@p state=ford-state] accumulator=(map @p ford-state)]
       ::
@@ -5162,7 +5163,7 @@
   ::  we know :our is already in :state-by-ship because we sent this request
   ::
   =/  our=@p  (slav %p i.wire)
-  =/  ship-state  ~|(our+our (~(got by state-by-ship) our))
+  =/  ship-state  ~|(our+our (~(got by state-by-ship.ax) our))
   =*  event-args  [[our duct now scry] ship-state]
   ::  %clay-sub: response to a clay %mult subscription
   ::
@@ -5199,9 +5200,25 @@
     =*  unblock  unblock:(per-event event-args)
     (unblock scry-request scry-result)
   ::
-  =.  state-by-ship  (~(put by state-by-ship) our ship-state)
+  =.  state-by-ship.ax  (~(put by state-by-ship.ax) our ship-state)
   ::
   [moves ford-gate]
+::  +load: migrate old state to new state (called on vane reload)
+::
+++  load
+  |=  old=axle
+  ^+  ..^$
+  ::
+  ~!  %loading
+  ..^$(ax old)
+::  +stay: produce current state
+::
+++  stay  `axle`ax
+::  +scry: request a path in the urbit namespace
+::
+++  scry
+  |=  *
+  [~ ~]
 ::  %utilities
 ::
 ::+|
@@ -5213,12 +5230,12 @@
 ::
 ++  find-or-create-ship-state
   |=  our=@p
-  ^-  [ford-state _state-by-ship]
+  ^-  [ford-state _state-by-ship.ax]
   ::
-  =/  existing  (~(get by state-by-ship) our)
+  =/  existing  (~(get by state-by-ship.ax) our)
   ?^  existing
-    [u.existing state-by-ship]
+    [u.existing state-by-ship.ax]
   ::
   =|  new-state=ford-state
-  [new-state (~(put by state-by-ship) our new-state)]
+  [new-state (~(put by state-by-ship.ax) our new-state)]
 --
