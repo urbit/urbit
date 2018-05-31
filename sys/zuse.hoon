@@ -270,7 +270,7 @@
     ::
     ++  diff-constitution
       $%  [%hull who=@p dif=diff-hull]
-          [%dns ind=@ud new=@t]
+          [%dns pri=@t sec=@t ter=@t]
       ==
     ::
     ++  diff-hull

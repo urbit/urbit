@@ -656,14 +656,14 @@
     ::
         $init
       %+  cute  our.tac  =<  abet
-      (~(init et our.tac now.sys eth.sub etn.lex) our.tac)
+      (~(init et our.tac now.sys etn.lex) our.tac)
     ::
     ::  set ethereum source
     ::    [%look p=(each ship purl)]
     ::
         %look
       %+  cute  our.tac  =<  abet
-      (~(look et our.tac now.sys eth.sub etn.lex) src.tac)
+      (~(look et our.tac now.sys etn.lex) src.tac)
     ::
     ::  create promises
     ::    {$mint p/ship q/safe}
@@ -757,7 +757,7 @@
           +>.$
         =.  moz  [[hen %give %mack ~] moz]
         %+  cute  our  =<  abet
-        (~(hear-vent et our now.sys eth.sub etn.lex) p.mes)
+        (~(hear-vent et our now.sys etn.lex) p.mes)
       ==
     ==
   ::
@@ -778,15 +778,15 @@
     ::
         [%e %sigh *]
       %+  cute  our  =<  abet
-      (~(sigh et our now.sys eth.sub etn.lex) wir p.hin)
+      (~(sigh et our now.sys etn.lex) wir p.hin)
     ::
         [%b %wake ~]
       %+  cute  our  =<  abet
-      ~(wake et our now.sys eth.sub etn.lex)
+      ~(wake et our now.sys etn.lex)
     ::
         [%j %vent *]
       %+  cute  our  =<  abet
-      (~(hear-vent et our now.sys eth.sub etn.lex) p.hin)
+      (~(hear-vent et our now.sys etn.lex) p.hin)
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
@@ -1080,11 +1080,8 @@
       ==
     ::
     ++  file-dns
-      |=  [ind=@ud new=@t]
-      ?:  =(0 ind)  ..file(pri.dns.eth new)
-      ?:  =(1 ind)  ..file(sec.dns.eth new)
-      ?:  =(2 ind)  ..file(ter.dns.eth new)
-      !!
+      |=  dns=dnses
+      ..file(dns.eth dns)
     --
   --
 ::                                                      ::  ++ur
@@ -1218,13 +1215,9 @@
   =|  changes=block:able
   |_  $:  our=ship
           now=@da
-          ::TODO  it seems this is only still used to check for dns changes,
-          ::      which isn't that important. probably squash those into a
-          ::      single diff with a (trel) just so we can remove this here.
-          eth=_eth:*state-relative
           state-eth-node
       ==
-  +*  etn  +<+>+
+  +*  etn  +<+>
   ::
   ::  +|  outward
   ::
@@ -1516,14 +1509,10 @@
     ::
     ?:  =(event.log changed-dns:ships-events)
       =+  ^-  [pri=tape sec=tape ter=tape]
-        (decode-results data.log ~[%string %string %string])
-      =?  +>.$  !=(pri.dns.eth (crip pri))
-        (put-change cuz %dns 0 (crip pri))
-      =?  +>.$  !=(sec.dns.eth (crip sec))
-        (put-change cuz %dns 1 (crip sec))
-      =?  +>.$  !=(ter.dns.eth (crip ter))
-        (put-change cuz %dns 2 (crip ter))
-      +>.$
+        %+  decode-results  data.log
+        ~[%string %string %string]
+      %+  put-change  cuz
+      [%dns (crip pri) (crip sec) (crip ter)]
     ::
     =+  dis=(event-log-to-hull-diffs log)
     ?~  dis  +>.$
