@@ -54,7 +54,6 @@
   $:  $=  bal                                           ::  balance sheet (vest)
         $:  yen/(set duct)                              ::  trackers
         ==                                              ::
-      ::TODO  never updated?
       $=  own                                           ::  vault (vein)
         $:  yen/(set duct)                              ::  trackers
             lyf/life                                    ::  version
@@ -65,6 +64,7 @@
             kyz=(map ship (map life (pair pass pass)))  ::  public key versions
         ==                                              ::
       $=  eth                                           ::  ethereum (vent)
+        ::TODO  the subscribers here never hear dns or hul...
         $:  yen=(set duct)                              ::  trackers
             dns=dnses                                   ::  on-chain dns state
             hul=(map ship hull)                         ::  on-chain ship state
@@ -89,7 +89,7 @@
 ++  message                                             ::  p2p message
   $%  [%hail p=remote]                                  ::  reset rights
       [%nuke ~]                                         ::  cancel trackers
-      [%vent ~]                                         ::  view ethereum state
+      [%vent ~]                                         ::  view ethereum events
       [%vent-result p=chain]                            ::  tmp workaround
   ==                                                    ::
 ++  card                                                ::  i/o action
@@ -712,7 +712,7 @@
         $vein
       (curd abet:~(vein ~(feed su our.tac urb sub etn) hen))
     ::
-    ::  watch ethereum state
+    ::  watch ethereum events
     ::    [%vent ~]
     ::
         %vent
@@ -753,7 +753,7 @@
           %nuke
         $(tac mes)
       ::
-      ::  view ethereum state
+      ::  view ethereum events
       ::    [%vent ~]
       ::
           %vent
@@ -921,7 +921,7 @@
       %.  [[hen ~ ~] &+eve]
       %_  vent-pass
       :: %_  ..feed  ::TODO  see ++abet
-        :: moz      [[hen %give %vent vent:form] moz]
+        :: moz      [[hen %give %vent &+eve] moz]
         yen.eth  (~(put in yen.eth) hen)
       ==
     --
@@ -1026,10 +1026,6 @@
         ?~(q.i.fub - [[p.i.fub ~(redact up u.q.i.fub)] -])
       ::
       (~(gas by *(map ship safe)) veg)
-    ::
-    ++  vent
-      ^-  chain
-      &+eve
     --
   ::                                                    ::  ++paid:su
   ++  paid                                              ::  track asset change
@@ -1242,7 +1238,7 @@
 ::::                    ## ethereum^heavy               ::  ethereum engine
   ::                                                    ::::
 ++  et
-      ::
+  ::
   ::  the ++et core handles all logic necessary to maintain the
   ::  absolute record of on-chain state changes, "events".
   ::
@@ -1411,7 +1407,7 @@
     =+  (need (de-purl:html 'http://localhost:8545'))
     (listen-to-node -(p.p |))
   ::
-  ::  +look: configure the source of ethereum state
+  ::  +look: configure the source of ethereum events
   ::
   ++  look
     |=  src=(each ship purl:eyre)
@@ -1560,6 +1556,7 @@
     ::
     =+  dis=(event-log-to-hull-diffs log)
     ?~  dis  +>.$
+    ::TODO  this should iterate, but we'll probably change this soon anyway.
     (put-change cuz %hull i.dis)
   ::
   --

@@ -1279,7 +1279,7 @@
           [%nuke ~]                                     ::  cancel tracker from
           [%pubs our=ship who=ship]                     ::  view public keys
           [%vein our=ship]                              ::  view signing keys
-          [%vent our=ship]                              ::  view ethereum state
+          [%vent our=ship]                              ::  view ethereum events
           [%vest our=ship]                              ::  view public balance
           [%vine ~]                                     ::  view secret history
           [%west p=sack q=path r=*]                     ::  remote request
