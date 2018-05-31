@@ -1240,6 +1240,7 @@
       ==  ==                                            ::
     ++  gift                                            ::  out result <-$
       $%  [%mack p=(unit tang)]                         ::  message n/ack
+          [%pubs p=(map life (pair pass pass))]         ::  public keys
           {$vest p/tally}                               ::  balance update
           {$vein p/life q/(map life ring)}              ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
@@ -1276,6 +1277,7 @@
           [%move our=ship p=ship q=ship r=safe]         ::  transfer from=to
           ::TODO  %next for generating/putting new private key
           [%nuke ~]                                     ::  cancel tracker from
+          [%pubs our=ship who=ship]                     ::  view public keys
           [%vein our=ship]                              ::  view signing keys
           [%vent our=ship]                              ::  view ethereum state
           [%vest our=ship]                              ::  view public balance

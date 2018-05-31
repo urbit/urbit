@@ -60,12 +60,15 @@
             lyf/life                                    ::  version
             jaw/(map life ring)  ::TODO  pair of rings? ::  private keys
         ==                                              ::
+      $=  puk                                           ::  public keys (pubs)
+        $:  yen=(jug ship duct)                         ::  trackers
+            kyz=(map ship (map life (pair pass pass)))  ::  public key versions
+        ==                                              ::
       $=  eth                                           ::  ethereum (vent)
         $:  yen=(set duct)                              ::  trackers
             dns=dnses                                   ::  on-chain dns state
             hul=(map ship hull)                         ::  on-chain ship state
             ::TODO  do we want (map ship diff-hull) too?
-            kyz=(map ship (map life (pair pass pass)))  ::  public key versions
         ==                                              ::
   ==                                                    ::
 ++  state-absolute                                      ::  absolute urbit
@@ -696,6 +699,13 @@
         yen.eth.sub  (~(del in yen.eth.sub) hen)
       ==
     ::
+    ::  watch public keys
+    ::    [%pubs our=ship who=ship]
+    ::
+        %pubs
+      %-  curd  =<  abet
+      (~(pubs ~(feed su our.tac urb sub etn) hen) who.tac)
+    ::
     ::  watch private keys
     ::    {$vein $~}
     ::
@@ -886,6 +896,14 @@
     |_  ::  hen: subscription source
         ::
         hen/duct
+    ::
+    ++  pubs
+      |=  who=ship
+      %_  ..feed
+        moz      =-  [[hen %give %pubs -] moz]
+                 (fall (~(get by kyz.puk) who) ~)
+        yen.puk  (~(put ju yen.puk) who hen)
+      ==
     ::                                                  ::  ++vein:feed:su
     ++  vein                                            ::  private keys
       %_  ..feed
@@ -910,6 +928,31 @@
   ::                                                    ::  ++feel:su
   ++  feel                                              ::  update tracker
     |%
+    ::                                                  ::  ++pubs:feel:su
+    ++  pubs                                            ::  kick public keys
+      |=  kez=(map ship (map life (pair pass pass)))
+      =/  kes  ~(tap by kez)
+      ::
+      ::  process change for each ship separately
+      ::
+      |-  ^+  ..feel
+      ?~  kes  ..feel
+      =;  fel  $(kes t.kes, ..feel fel)
+      =*  who  p.i.kes
+      =*  kyn  q.i.kes
+      ::
+      ::  build new public key store
+      ::
+      =+  %+  ~(put by kyz.puk)  who
+          =-  (~(uni by -) kyn)
+          (fall (~(get by kyz.puk) who) ~)
+      ::
+      ::  update public key store and notify subscribers
+      ::  of the change
+      ::
+      %+  exec(kyz.puk -)
+        (~(get ju yen.puk) who)
+      [%give %pubs kyn]
     ::                                                  ::  ++vein:feel:su
     ++  vein                                            ::  kick private keys
       ^+  ..feel
@@ -1019,10 +1062,13 @@
     vein:feel
   ::
   ++  file
+    ::TODO  whenever we add subscriptions for data,
+    ::      outsource the updating of relevant state
+    ::      to a ++feel arm.
     |=  [new=? evs=block:able]
     ^+  +>
     =?  +>  new
-      +>(dns.eth *dnses, hul.eth ~, kyz.eth ~)
+      +>(dns.eth *dnses, hul.eth ~, kyz.puk ~)
     =?  +>  |(new !=(0 ~(wyt by evs)))
       %-  vent:feel
       ?:(new &+evs |+evs)
@@ -1052,9 +1098,13 @@
     ++  file-hull
       |=  [who=@p dif=diff-hull]
       =-  ::TODO  =; with just the type
-        %_  ..file
+        ::TODO  some day we want to make sure we process all events
+        ::      before calling pubs:feel (with a more complete map,
+        ::      rather than multiple incomplete ones)
+        %.  [[who kez] ~ ~]
+        =<  pubs
+        %_  feel
           hul.eth   (~(put by hul.eth) who hel)
-          kyz.eth   (~(put by kyz.eth) who kez)
         ==
       ~!  hul.eth
       ^-  [hel=hull kez=(map life (pair pass pass))]
@@ -1062,21 +1112,15 @@
       ?>  |((~(has by hul.eth) who) ?=(%full -.dif))
       :-  =-  (apply-hull-diff - dif)
           (fall (~(get by hul.eth) who) *hull)
-      =+  koz=(fall (~(get by kyz.eth) who) *(map life (pair pass pass)))
-      ?+  -.dif  koz
+      ?+  -.dif  ~
           %keys
         ::  catch key changes, store them in the key map
-        ~?  &((gth rev.dif 0) !(~(has by koz) (dec rev.dif)))
-          [%missing-previous-key-rev who (dec rev.dif)]
-        (~(put by koz) rev.dif enc.dif aut.dif)
+        [[rev.dif [enc.dif aut.dif]] ~ ~]
       ::
           %full
         ::  for full, store the new keys in case we don't have them yet
         =,  new.dif
-        ~?  &((gth key-revision 0) !(~(has by koz) (dec key-revision)))
-          [%missing-previous-key-rev who (dec key-revision)]
-        %+  ~(put by koz)  key-revision
-        [encryption-key authentication-key]
+        [[key-revision [encryption-key authentication-key]] ~ ~]
       ==
     ::
     ++  file-dns
