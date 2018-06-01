@@ -1150,7 +1150,22 @@ _proxy_sock_new(u3_proxy_listener* lis_u)
     memset(&lop_u, 0, sizeof(lop_u));
     lop_u.sin_family = AF_INET;
     lop_u.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-    lop_u.sin_port = htons(u3_Host.htp_u->por_w); //XX get correct server
+
+    // get the appropriate loopback port
+    {
+      c3_s por_s = 0;
+      u3_http* htp_u;
+
+      for ( htp_u = u3_Host.htp_u; (0 != htp_u); htp_u = htp_u->nex_u ) {
+        if ( c3n == htp_u->lop && lis_u->sec == htp_u->sec ) {
+          por_s = htp_u->por_w;
+        }
+      }
+
+      c3_assert( 0 != por_s );
+
+      lop_u.sin_port = htons(por_s);
+    }
 
     uv_tcp_init(u3L, &con_u->upt_u);
     uv_tcp_connect(&con_u->upc_u, &con_u->upt_u, (const struct sockaddr*)&lop_u, _proxy_lopc_connect_cb);
@@ -1182,12 +1197,6 @@ _proxy_sock_listen_cb(uv_stream_t* sev_u, c3_i sas_i)
     _proxy_sock_new(lis_u);
   }
 }
-
-// proxy listener
-// proxy connection list
-// proxy loopback connection list
-// proxy upstream listener list
-// proxy upstream connection list
 
 
 static void
