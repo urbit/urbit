@@ -4991,7 +4991,7 @@
 ::::  vane core
   ::
 =|  ax=axle
-|=  [now=@da eny=@ scry=sley]
+|=  [now=@da eny=@ scry-gate=sley]
 ::  allow jets to be registered within this core
 ::
 ~%  %ford-d  ..is  ~  ::  XX  why the '-d'?
@@ -5025,7 +5025,7 @@
    ::    with the new :ship-state and produce it along with :moves.
    ::
    =^  ship-state  state-by-ship.ax  (find-or-create-ship-state our.task)
-   =*  event-args  [[our.task duct now scry] ship-state]
+   =*  event-args  [[our.task duct now scry-gate] ship-state]
    =*  start-build  start-build:(per-event event-args)
    =^  moves  ship-state  (start-build schematic.task)
    =.  state-by-ship.ax  (~(put by state-by-ship.ax) our.task ship-state)
@@ -5037,7 +5037,7 @@
       %kill
     ::
     =/  ship-state  ~|(our+our.task (~(got by state-by-ship.ax) our.task))
-    =*  event-args  [[our.task duct now scry] ship-state]
+    =*  event-args  [[our.task duct now scry-gate] ship-state]
     =^  moves  ship-state  cancel:(per-event event-args)
     =.  state-by-ship.ax  (~(put by state-by-ship.ax) our.task ship-state)
     ::
@@ -5127,7 +5127,7 @@
   ::
   =/  our=@p  (slav %p i.wire)
   =/  ship-state  ~|(our+our (~(got by state-by-ship.ax) our))
-  =*  event-args  [[our duct now scry] ship-state]
+  =*  event-args  [[our duct now scry-gate] ship-state]
   ::  %clay-sub: response to a clay %mult subscription
   ::
   =^  moves  ship-state
