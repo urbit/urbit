@@ -1428,6 +1428,11 @@
       |=  {fit/? for/mark}
       |=  {cof/cafe sam/vase}
       ^-  (bolt vase)
+      ::  don't verify the product type when using the %noun mark, since
+      ::  that would cast to *, which would prevent the product from
+      ::  being used as a gate or other typed structure.
+      ?:  =(for %noun)  (new:bo cof sam)
+      ::
       %+  admit:bo  |.(leaf+"ford: check {<[for bek `@p`(mug q.sam)]>}")
       %+  tug:bo  (fang cof for)
       |=  {cof/cafe tux/vase}
