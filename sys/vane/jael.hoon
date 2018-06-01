@@ -73,7 +73,7 @@
   ==                                                    ::
 ++  state-absolute                                      ::  absolute urbit
   $:  pry/(map ship (map ship safe))                    ::  promises
-      eve=block:able                                    ::  on-chain events
+      eve=logs                                          ::  on-chain events
   ==                                                    ::
 ++  state-eth-node                                      ::  node config + meta
   $:  source=(each ship node-src)                       ::  learning from
@@ -835,7 +835,7 @@
       ::  ++form:su generates the actual report data.
       ::
   =|  moz/(list move)
-  =|  evs=block:able
+  =|  evs=logs
   =|  $:  our/ship
           state-absolute
           state-relative
@@ -1061,7 +1061,7 @@
     ::TODO  whenever we add subscriptions for data,
     ::      outsource the updating of relevant state
     ::      to a ++feel arm.
-    |=  [new=? evs=block:able]
+    |=  [new=? evs=logs]
     ^+  +>
     =?  +>  new
       +>(dns.eth *dnses, hul.eth ~, kyz.puk ~)
@@ -1266,7 +1266,7 @@
   ::
   =|  moves=(list move)
   =+  reset=|
-  =|  changes=block:able
+  =|  changes=logs
   |_  $:  our=ship
           now=@da
           state-eth-node
@@ -1451,7 +1451,7 @@
   ::  +assume: clear state and process events
   ::
   ++  assume
-    |=  evs=block:able
+    |=  evs=logs
     ^+  +>
     %.  |+evs
     %_  hear-vent

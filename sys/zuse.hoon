@@ -1220,7 +1220,7 @@
     ::  %jael only talks to %ames and %behn.  we send messages
     ::  through %ames and use %behn timers.
     ::
-    ++  block                                           ::  on-chain changes
+    ++  logs                                            ::  on-chain changes
       %+  map  event-id:ethe                            ::  per event log
       diff-constitution:constitution:ethe               ::  the change
     ++  action                                          ::  balance change
@@ -1234,8 +1234,8 @@
       (map ship safe)                                   ::  assets
     ::                                                  ::
     ++  chain                                           ::  batch of changes
-      %+  each  block                                   ::  & all events
-      block                                             ::  | new events
+      %+  each  logs                                    ::  & all events
+      logs                                              ::  | new events
     ++  change                                          ::  urbit change
       $%  [%ethe can=chain]                             ::  on-chain change
           $:  %rite                                     ::  rights change
