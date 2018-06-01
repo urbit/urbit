@@ -869,7 +869,7 @@
       ::
       ^=  moves
         :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
-                %success  %pin  ~1234.5.6  %error
+                %error
                 :~  leaf+"scry failed for"
                     leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
     ==  ==  ==  ==
@@ -2209,7 +2209,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/once]  %give  %made  ~1234.5.6  %complete
-                %success  %pin  ~1234.5.6  %error
+                %error
                 :~  leaf+"%in-the-error-message"
                     leaf+"scry failed for"
                     leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
@@ -4246,8 +4246,7 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %success
-                %pin  ~1234.5.6  %error
+        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %error
                 :~  [%leaf "ford: %core failed: "]
                     [%leaf "/^ failed: nest-fail"]
     ==  ==  ==  ==
@@ -4404,8 +4403,7 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %success
-                %pin  ~1234.5.6  %error
+        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %error
                 :~  [%leaf "ford: %core failed: "]
                     [%leaf "/| failed: out of options"]
     ==  ==  ==  ==
@@ -5207,8 +5205,7 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %success
-                %pin  ~1234.5.6  %error
+        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %error
                 :-  %leaf
                 %+  weld
                   "ford: %vale failed: invalid input for mark: "

@@ -1378,7 +1378,7 @@
       ^-  [path schematic:ford-api]
       ?-  -.bil
         $ge  (dy-silk-config (dy-cage p.p.p.bil) q.p.bil)
-        $dv  [/hand [%core [he-disc (flop p.bil)]]]
+        $dv  [/hand [%core [he-disc (weld /hoon (flop p.bil))]]]
         $ex  [/hand (dy-mare p.bil)]
         $sa  [/hand [%bunt he-disc p.bil]]
         $as  [/hand [%cast he-disc p.bil [%$ (dy-cage p.q.bil)]]]

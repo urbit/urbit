@@ -2070,6 +2070,10 @@
       ::
       ?~  result
         [build [%blocks ~[pinned-sub] ~] accessed-builds]
+      ::
+      ?:  ?=([%error *] u.result)
+        [build [%build-result %error message.u.result] accessed-builds]
+      ::
       [build [%build-result %success %pin date u.result] accessed-builds]
     ::
     ++  make-alts
