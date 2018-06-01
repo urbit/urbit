@@ -1497,6 +1497,41 @@
             %fszy
             =mark
     ==  ==
+  ::  +result-to-cage: extract a +cage from a +build-result
+  ::
+  ++  result-to-cage
+    |=  result=build-result
+    ^-  cage
+    ?:  ?=(%error -.result)
+      [%tang !>(message.result)]
+    ?-    -.+.result
+        ^      [%noun (slop q:$(result head.result) q:$(result tail.result))]
+        %$     cage.result
+        %pin   $(result build-result.result)
+        %alts  $(result build-result.result)
+        %bake  cage.result
+        %bunt  cage.result
+        %call  [%noun vase.result]
+        %cast  cage.result
+        %core  [%noun vase.result]
+        %diff  cage.result
+        %dude  $(result build-result.result)
+        %hood  [%noun !>(scaffold.result)]
+        %join  cage.result
+        %mash  cage.result
+        %mute  cage.result
+        %pact  cage.result
+        %path  [%noun !>(rail.result)]
+        %plan  [%noun vase.result]
+        %reef  [%noun vase.result]
+        %ride  [%noun vase.result]
+        %same  $(result build-result.result)
+        %scry  cage.result
+        %slim  [%noun !>([type nock]:result)]
+        %slit  [%noun !>(type.result)]
+        %vale  cage.result
+        %volt  cage.result
+    ==
   --
 ::                                                      ::::
 ::::                    ++gall                            ::  (1g) extensions
@@ -5692,6 +5727,7 @@
       gift:able:eyre
       gift:able:ford
       gift:able:gall
+      gift:able:ford-api
   ==
 ++  task-arvo                                           ::  in request ->$
   $?  task:able:ames
@@ -5701,6 +5737,7 @@
       task:able:eyre
       task:able:ford
       task:able:gall
+      task:able:ford-api
   ==
 ++  note-arvo                                           ::  out request $->
   $?  {@tas $meta vase}
@@ -5711,6 +5748,7 @@
       {$e task:able:eyre}
       {$f task:able:ford}
       {$g task:able:gall}
+      {$t task:able:ford-api}
   ==  ==
 ++  sign-arvo                                           ::  in result $<-
   $%  {$a gift:able:ames}
@@ -5721,6 +5759,7 @@
       {$f gift:able:ford}
       {$g gift:able:gall}
       {$j gift:able:jael}
+      {$t gift:able:ford-api}
   ==
 ::
 ++  unix-task                                           ::  input from unix

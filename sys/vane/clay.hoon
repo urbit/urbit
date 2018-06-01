@@ -337,7 +337,7 @@
       $:  $f                                            ::
   $%  {$exec p/@p q/(unit {beak silk:ford})}                 ::
   ==  ==                                                ::
-      $:  $t                                            ::
+      $:  $b                                            ::
   $%  {$wait p/@da}                                     ::
       {$rest p/@da}                                     ::
   ==  ==  ==                                            ::
@@ -355,7 +355,7 @@
               $:  $f                                    ::
           $%  {$made p/@uvH q/gage:ford}                ::
           ==  ==                                        ::
-              $:  $t                                    ::
+              $:  $b                                    ::
           $%  {$wake $~}                                ::  timer activate
           ==  ==                                        ::
               $:  @tas                                  ::  by any
@@ -571,13 +571,13 @@
   ::
   ++  bait
     |=  {hen/duct tym/@da}
-    (emit hen %pass /tyme %t %wait tym)
+    (emit hen %pass /tyme %b %wait tym)
   ::
   ::  Cancel timer.
   ::
   ++  best
     |=  {hen/duct tym/@da}
-    (emit hen %pass /tyme %t %rest tym)
+    (emit hen %pass /tyme %b %rest tym)
   ::
   ::  Give subscription result.
   ::

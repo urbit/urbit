@@ -519,43 +519,6 @@
       %vale  ~
       %volt  ~
   ==
-::  +result-to-cage
-::
-::    Maybe we should return vases instead of cages.
-::
-++  result-to-cage
-  |=  result=build-result
-  ^-  cage
-  ?:  ?=(%error -.result)
-    [%tang !>(message.result)]
-  ?-    -.+.result
-      ^      [%noun (slop q:$(result head.result) q:$(result tail.result))]
-      %$     cage.result
-      %pin   $(result build-result.result)
-      %alts  $(result build-result.result)
-      %bake  cage.result
-      %bunt  cage.result
-      %call  [%noun vase.result]
-      %cast  cage.result
-      %core  [%noun vase.result]
-      %diff  cage.result
-      %dude  $(result build-result.result)
-      %hood  [%noun !>(scaffold.result)]
-      %join  cage.result
-      %mash  cage.result
-      %mute  cage.result
-      %pact  cage.result
-      %path  [%noun !>(rail.result)]
-      %plan  [%noun vase.result]
-      %reef  [%noun vase.result]
-      %ride  [%noun vase.result]
-      %same  $(result build-result.result)
-      %scry  cage.result
-      %slim  [%noun !>([type nock]:result)]
-      %slit  [%noun !>(type.result)]
-      %vale  cage.result
-      %volt  cage.result
-  ==
 ::  +date-from-schematic: finds the latest pin date from this schematic tree.
 ::
 ++  date-from-schematic

@@ -767,6 +767,7 @@
       ?@  +.q.vax  :_(+>.$ [%| (ap-suck "move: invalid move (card)")])
       =+  hun=(~(get by r.zam) -.q.vax)
       ?.  &((~(has by r.zam) -.q.vax) !=(0 -.q.vax))
+        ~&  [q-vax+q.vax has-by-r-zam+(~(has by r.zam) -.q.vax)]
         :_(+>.$ [%| (ap-suck "move: invalid card (bone {<-.q.vax>})")])
       =^  pec  vel  (~(spot wa vel) 3 vax)
       =^  cav  vel  (~(slot wa vel) 3 pec)
@@ -1217,6 +1218,8 @@
         $flog  `%d
         $drop  `%c
         $info  `%c
+        %kill  `%t
+        %make  `%t
         $merg  `%c
         $mont  `%c
         $nuke  `%a
