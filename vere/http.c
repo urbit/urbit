@@ -809,6 +809,8 @@ u3_http_ef_thou(c3_l     sev_l,
   u3z(rep);
 }
 
+static void _proxy_sock_start(void);
+
 /* u3_http_io_init(): initialize http I/O.
 */
 void
@@ -872,6 +874,8 @@ u3_http_io_init()
   }
 
   u3_Host.tls_u = _http_init_tls();
+
+  _proxy_sock_start();
 }
 
 /* u3_http_io_talk(): start http I/O.
@@ -902,4 +906,221 @@ u3_http_io_exit(void)
 {
   // XX shutdown servers cleanly
   _http_release_ports_file(u3_Host.dir_c);
+}
+
+static void
+_proxy_alloc(uv_handle_t* had_u,
+            size_t len_i,
+            uv_buf_t* buf
+            )
+{
+  void* ptr_v = c3_malloc(len_i);
+  *buf = uv_buf_init(ptr_v, len_i);
+}
+
+typedef struct _u3_proxy_writ {
+  uv_write_t       wri_u;
+  c3_y*            buf_y;
+} u3_proxy_writ;
+
+// add server and data fields
+typedef struct _u3_proxy_conn {
+  uv_tcp_t         client;
+  uv_tcp_t         upt_u;
+  uv_connect_t     upc_u;
+} u3_proxy_conn;
+
+static void
+_proxy_write_cb(uv_write_t* wri_u, c3_i sas_i)
+{
+  u3_proxy_writ* ruq_u = (u3_proxy_writ*)wri_u;
+
+  if ( 0 != sas_i ) {
+    uL(fprintf(uH, "proxy: write: %s\n", uv_strerror(sas_i)));
+    // close and free ruq_u->wri_u.data
+  }
+  free(ruq_u->buf_y);
+}
+
+static void
+_proxy_sock_read_client_cb(uv_stream_t* tcp_u,
+                           ssize_t      siz_w,
+                           const uv_buf_t *     buf_u)
+{
+  u3_proxy_conn* con_u = tcp_u->data;
+
+  if ( siz_w == UV_EOF ) {
+    uv_close((uv_handle_t*)tcp_u, 0); // XX
+  } else if ( 0 > siz_w ) {
+    uv_close((uv_handle_t*)tcp_u, 0); // XX
+  }
+  else {
+     u3_proxy_writ* ruq_u = c3_malloc(sizeof(*ruq_u));
+     ruq_u->wri_u.data = con_u;
+     ruq_u->buf_y = (c3_y*)buf_u->base;
+
+    if ( 0 != uv_write(&ruq_u->wri_u,
+                       (uv_stream_t*)&(con_u->upt_u),
+                       buf_u, 1,
+                       _proxy_write_cb) ) {
+      uv_close((uv_handle_t*)tcp_u, 0); // XX
+    }
+  }
+
+  // if ( buf_u->base ) {
+  //   free(buf_u->base);
+  // }
+}
+
+static void
+_proxy_sock_read_upstream_cb(uv_stream_t* tcp_u,
+                             ssize_t      siz_w,
+                             const uv_buf_t *     buf_u)
+{
+  u3_proxy_conn* con_u = tcp_u->data;
+
+  if ( UV_EOF == siz_w ) {
+    uv_close((uv_handle_t*)tcp_u, 0); // XX
+  } else if ( 0 > siz_w ) {
+    uv_close((uv_handle_t*)tcp_u, 0); // XX
+  }
+  else {
+    u3_proxy_writ* ruq_u = c3_malloc(sizeof(*ruq_u));
+     ruq_u->wri_u.data = con_u;
+     ruq_u->buf_y = (c3_y*)buf_u->base;
+
+    if ( 0 != uv_write(&ruq_u->wri_u,
+                       (uv_stream_t*)&(con_u->client),
+                       buf_u, 1,
+                       _proxy_write_cb) ) {
+      uv_close((uv_handle_t*)tcp_u, 0); // XX
+    }
+  }
+
+  // if ( buf_u->base ) {
+  //   free(buf_u->base);
+  // }
+}
+
+static void
+_proxy_lopc_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
+{
+  u3_proxy_conn* con_u = upc_u->data;
+
+  if ( 0 != sas_i ) {
+    uL(fprintf(uH, "proxy: connect: %s\n", uv_strerror(sas_i)));
+    // close and free con_u
+  }
+
+  uv_read_start((uv_stream_t*)&con_u->client, _proxy_alloc, _proxy_sock_read_client_cb);
+  uv_read_start((uv_stream_t*)&con_u->upt_u, _proxy_alloc, _proxy_sock_read_upstream_cb);
+}
+
+static void
+_proxy_sock_new(uv_stream_t* str_u)
+{
+  u3_proxy_conn* con_u = c3_malloc(sizeof(*con_u));
+
+  con_u->client.data = con_u;
+  con_u->upt_u.data = con_u;
+  con_u->upc_u.data = con_u;
+
+  // XX cast and capture str_u
+
+  uv_tcp_init(u3L, &con_u->client);
+
+  c3_w ret_w;
+  ret_w = uv_accept(str_u, (uv_stream_t*)&con_u->client);
+  if ( UV_EOF == ret_w ) {
+    uL(fprintf(uH, "proxy: accept: ERROR\n"));
+
+    // XX fix
+    uv_close((uv_handle_t*)&con_u->client, free);
+  }
+  else {
+    struct sockaddr_in lop_u; 
+ 
+    memset(&lop_u, 0, sizeof(lop_u));
+    lop_u.sin_family = AF_INET;
+    lop_u.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    lop_u.sin_port = htons(u3_Host.htp_u->por_w); //XX get correct server
+
+    uv_tcp_init(u3L, &con_u->upt_u);
+    uv_tcp_connect(&con_u->upc_u, &con_u->upt_u, (const struct sockaddr*)&lop_u, _proxy_lopc_connect_cb);
+
+    // uv_read_start((uv_stream_t*)client, _proxy_alloc, _proxy_sock_read_cb);
+    //XX parse for HOST or SNI
+
+    // IF US
+      // open loopback and write
+      // set it up to keep writing
+    // IF CHILD
+      // bind new socket
+      // send a move to %eyre on child, specifying socket (assume star.urbit.org?)
+      // save buffer
+      // on accept, write_start
+    // OTHERWISE, CLOSE
+  }
+}
+
+
+static void
+_proxy_sock_listen_cb(uv_stream_t* str_u, c3_i sas_i)
+{
+  if ( 0 != sas_i ) {
+    uL(fprintf(uH, "proxy: listen_cb: %s\n", uv_strerror(sas_i)));
+  }
+  else {
+    _proxy_sock_new(str_u);
+  }
+}
+
+// proxy listener
+// proxy connection list
+// proxy loopback connection list
+// proxy upstream listener list
+// proxy upstream connection list
+
+
+static void
+_proxy_sock_start(void)
+{
+  struct sockaddr_in add_u;
+
+  // XX free somewhere
+  uv_tcp_t* server = c3_malloc(sizeof(*server));
+
+  uv_tcp_init(u3L, server);
+
+  memset(&add_u, 0, sizeof(add_u));
+  add_u.sin_family = AF_INET;
+  add_u.sin_addr.s_addr = INADDR_ANY;
+  // add_u.sin_port = htons(9090);
+
+  c3_i sas_i;
+
+  sas_i = uv_tcp_bind(server, (const struct sockaddr*)&add_u, 0);
+
+  if ( 0 != sas_i ||
+       0 != (sas_i = uv_listen((uv_stream_t*)server,
+                                 TCP_BACKLOG, _proxy_sock_listen_cb)) ) {
+    if ( UV_EADDRINUSE == sas_i ) {
+      //wat do
+      uL(fprintf(uH, "proxy: listen: %s\n", uv_strerror(sas_i)));
+      return;
+    }
+  }
+
+  {
+    struct sockaddr_in add_u;
+    c3_i len_i = sizeof(add_u);
+
+    memset(&add_u, 0, sizeof(add_u));
+
+    if ( 0 != (sas_i = uv_tcp_getsockname(server, (struct sockaddr*)&add_u, &len_i)) ) {
+      uL(fprintf(uH, "proxy: sockname: %s\n", uv_strerror(sas_i)));
+    } else {
+      uL(fprintf(uH, "proxy: listen: %d\n", ntohs(add_u.sin_port)));
+    }
+  }
 }
