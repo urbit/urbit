@@ -5003,7 +5003,7 @@
 ::
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task:able)]
-  ^-  [(list move) _ford-gate]
+  ^-  [p=(list move) q=_ford-gate]
   ::  unwrap :task from :wrapped-task
   ::
   =/  task=task:able
@@ -5112,7 +5112,7 @@
 ::
 ++  take
   |=  [=wire =duct wrapped-sign=(hypo sign)]
-  ^-  [(list move) _ford-gate]
+  ^-  [p=(list move) q=_ford-gate]
   ::  unwrap :sign from :wrapped-sign
   ::
   ::    TODO: verify wrapped-sign isn't an evil vase?

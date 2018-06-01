@@ -1472,12 +1472,10 @@
     ==       ==  
   ::
   ++  he-abet                                           ::  resolve
-    ~&  he-abet-moz+moz
     [(flop moz) %_(+> hoc (~(put by hoc) ost.hid +<+))]
   ::
   ++  he-abut                                           ::  discard
     =>  he-stop
-    ~&  he-abut-moz+moz
     [(flop moz) %_(+> hoc (~(del by hoc) ost.hid))]
   ::
   ++  he-disc  [p q]:he-beam
@@ -1759,7 +1757,8 @@
 ::
 ++  prep
   |=  old=*
-  ..prep
+  ^-  [(list move) _..prep]
+  [~ ..prep]
 
 ::  =+  session-4==+(*session _-(lib *(list), sur *(list)))
 ::  =+  session-1==+(*session-4 _-(poy *(unit)))
@@ -1788,7 +1787,6 @@
   |*  he-arm/_he-type
   |=  _+<.he-arm  
   ^-  (quip move _..he)
-  =-  ~&(arm-session-moz+-< -)
   he-abet:(he-arm +<)
 ::
 ++  peer-sole
@@ -1824,6 +1822,5 @@
   |=  {pax/path}
   ^-  (quip move _+>)
   =^  moz  +>  ~(he-abut he ~ (~(got by hoc) ost.hid))
-  ~&  pull-moz+moz
   [moz +>.$(hoc (~(del by hoc) ost.hid))]
 --
