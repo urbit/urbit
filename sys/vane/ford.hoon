@@ -8,9 +8,9 @@
 =>  =~
 ::  structures
 |%
-+=  heel  path                                          ::  functional ending
-+=  move  [p=duct q=(wind note gift:able)]              ::  local move
-+=  note                                                ::  out request $->
++$  heel  path                                          ::  functional ending
++$  move  [p=duct q=(wind note gift:able)]              ::  local move
++$  note                                                ::  out request $->
           $%  $:  %c                                    ::  to %clay
           $%  [%warp p=sock q=riff:clay]                ::
           ==  ==                                        ::
@@ -20,7 +20,7 @@
               $:  %g                                    ::  to %gall
           $%  [%deal p=sock q=cush:gall]                ::
           ==  ==  ==                                    ::
-+=  sign                                                ::  in result $<-
++$  sign                                                ::  in result $<-
           $%  $:  %c                                    ::  by %clay
           $%  [%writ p=riot:clay]                       ::
           ==  ==                                        ::
@@ -32,11 +32,11 @@
           ==  ==  ==                                    ::
 --                                                      ::
 |%                                                      ::  structures
-+=  axle                                                ::  all %ford state
++$  axle                                                ::  all %ford state
   $:  %3                                                ::  version for update
       pol=(map ship baby)                               ::
   ==                                                    ::
-+=  baby                                                ::  state by ship
++$  baby                                                ::  state by ship
   $:  tad=[p=@ud q=(map @ud task)]                      ::  tasks by number
       dym=(map duct @ud)                                ::  duct to task number
       gaf=nozzle                                        ::  product to part
@@ -45,7 +45,7 @@
       sup=(jug @uvH duct)                               ::  hash listeners
       out=(set [beam care:clay])                        ::  listening beams
   ==                                                    ::
-+=  deps                                                ::
++$  deps                                                ::
   $:  def=(map @uvH (set dent))                         ::  hash obligations
       bak=(jug dent @uvH)                               ::  update to hash
   ==                                                    ::
@@ -64,7 +64,7 @@
   |*  [a=mold b=mold]                                   ::  from and to
   $-([c=cafe d=a] (bolt b))                             ::
 ::                                                      ::
-+=  cafe                                                ::  live cache
++$  cafe                                                ::  live cache
   $~  [~ ~ [~ ~] [~ ~]]
   $:  p=(set calx)                                      ::  used
       q=(map * calx)                                    ::  cache
@@ -72,10 +72,10 @@
       s=nozzle                                          ::  product to part
   ==                                                    ::
 ::                                                      ::
-+=  calm                                                ::  cache metadata
++$  calm                                                ::  cache metadata
   $:  dep=(set dent)                                    ::  dependencies
   ==                                                    ::
-+=  calx                                                ::  concrete cache line
++$  calx                                                ::  concrete cache line
   $%  [%hood p=calm q=(pair beam cage) r=hood]          ::  parse
       [%boil p=calm q=(trel coin beam beam) r=vase]     ::  execute
       [%load p=calm q=(pair mark beam) r=(unit vase)]   ::  load
@@ -85,23 +85,23 @@
       [%slap p=calm q=[p=vase q=hoon] r=vase]           ::  compute
       [%slam p=calm q=[p=vase q=vase] r=vase]           ::  compute
   ==                                                    ::
-+=  nozzle                                              ::  bidirectional deps
++$  nozzle                                              ::  bidirectional deps
   $:  sub=(jug dent dent)                               ::  subcomponents
       sup=(jug dent dent)                               ::  downstream builds
   ==
-+=  dent                                                ::  individual dep
++$  dent                                                ::  individual dep
   $%  [%beam bem=beam ren=care:clay]
       [%boil bem=beam bom=beam arg=coin]
       [%load bem=beam mar=mark]
   ==
-+=  task                                                ::  problem in progress
++$  task                                                ::  problem in progress
   $:  nah=duct                                          ::  cause
       [bek=beak kas=silk]                               ::  problem
       keg=(map (pair term beam) cage)                   ::  block results
       kig=(set (trel vane care:clay beam))              ::  blocks
   ==                                                    ::
-+=  gagl  (list (pair gage gage))                       ::
-+=  vane  ?(%a %b %c %d %e %f %g)                       ::
++$  gagl  (list (pair gage gage))                       ::
++$  vane  ?(%a %b %c %d %e %f %g)                       ::
 --                                                      ::
 |%                                                      ::  caching
 ++  ca                                                  ::

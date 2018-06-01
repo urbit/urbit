@@ -8,8 +8,8 @@
 =*  as-octs  as-octs:mimes:html
 =,  space:userlib
 |%
-+=  part  {$write $0 pith}           :: no state
-+=  pith  ~
++$  part  {$write $0 pith}           :: no state
++$  pith  ~
 --
 ::
 ::::

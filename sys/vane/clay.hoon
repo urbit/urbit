@@ -13,7 +13,7 @@
 =,  clay
 =>  |%
 ++  aeon  @ud                                           ::  version number
-+=  axle  [%0 ruf=raft]
++$  axle  [%0 ruf=raft]
 ::
 ::  Recursive structure of a desk's data.
 ::
@@ -294,7 +294,7 @@
 ::
 ::  Foreign desk data.
 ::
-+=  rung  rus/(map desk rede)                           ::  neighbor desks
++$  rung  rus/(map desk rede)                           ::  neighbor desks
 ::
 ::  Hash of a commit, for lookup in the object store (hut.ran)
 ::

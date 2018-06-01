@@ -4,14 +4,14 @@
 |%
 ::  #  %models
 +|  %models
-+=  tests
++$  tests
   ::    a hierarchical structure of tests
   ::
   ::  a recursive association list mapping a part of a path
   ::  to either a test trap or a sublist of the same type.
   (list instance)
 ::
-+=  instance
++$  instance
   ::  a mapping between a term and part of a test tree.
   (pair term (each $-(@uvJ (list tank)) tests))
 ::

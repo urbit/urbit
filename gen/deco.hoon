@@ -97,18 +97,18 @@
     ::
     ::    models (molds) are functions that normalize nouns.
     ::
-    ::  arms producing molds are introduced with {+=}.  the
+    ::  arms producing molds are introduced with {+$}.  the
     ::  compiler will copy the arm decoration onto its product
     +|
-    +=  spot  [p=@ q=@]                                 ::  a coordinate
-    +=  tops                                            ::  also a coordinate
+    +$  spot  [p=@ q=@]                                 ::  a coordinate
+    +$  tops                                            ::  also a coordinate
       [p=@ q=@]
-    +=  goof                                            ::  a simple tuple
+    +$  goof                                            ::  a simple tuple
       $:  foo=@                                         ::  something mysterious
           bar=@                                         ::  go here for drink
           moo=(binary-tree juice)                       ::  cows do this
       ==
-    +=  juice                                           ::  fruity beverage
+    +$  juice                                           ::  fruity beverage
       $%  [%plum p=@]                                   ::  fresh prune
           [%pear p=@ q=@]                               ::  good for cider
           [%acai p=@]                                   ::  aztec superfood

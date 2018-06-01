@@ -20,11 +20,11 @@
 ++  hood-module
   ::  each hood module follows this general shape
   =>  |%
-      +=  part  [%module %0 pith]
-      +=  pith  ~
+      +$  part  [%module %0 pith]
+      +$  pith  ~
       ::
-      +=  move  [bone card]
-      +=  card  $%  [%fake ~]
+      +$  move  [bone card]
+      +$  card  $%  [%fake ~]
                 ==
       --
   |=  [bowl:gall own=part]

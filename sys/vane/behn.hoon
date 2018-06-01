@@ -15,8 +15,8 @@
 ++  broq  |*  {a/_* b/_*}                               ::  brodal skew qeu
           (list (sqeu a b))                             ::
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
-+=  note  ~                                             ::  out request $->
-+=  sign  ~                                             ::  in result $<-
++$  note  ~                                             ::  out request $->
++$  sign  ~                                             ::  in result $<-
 ++  clok  (broq @da duct)                               ::  stored timers
 ++  coke  $~  [%0 ~ ~]
           $:  $0                                        ::  all state

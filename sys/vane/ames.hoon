@@ -6,7 +6,7 @@
 =,  ames
 =+  protocol-version=0
 |%
-+=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
++$  move  [p=duct q=(wind note:able gift:able)]         ::  local move
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aA, identity logic           ::

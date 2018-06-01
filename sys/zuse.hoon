@@ -610,7 +610,7 @@
     ::                                                  ::::
   ++  able  ^?
     |%
-    +=  gift                                            ::  out result <-$
+    +$  gift                                            ::  out result <-$
       $%  [%mass p=mass]                                ::  memory usage
           [%mack p=(unit tang)]                         ::  message ack
           [%sigh p=cage]                                ::  marked http response
@@ -620,7 +620,7 @@
           [%vega p=path q=path]                         ::  drop-through
           [%velo p=@t q=@t]                             ::  drop-through
       ==                                                ::
-    +=  task                                            ::  in request ->$
+    +$  task                                            ::  in request ->$
       $%  [%born ~]                                     ::  new unix process
           [%crud p=@tas q=(list tank)]                  ::  XX rethink
           [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
@@ -660,7 +660,7 @@
         ced/cred                                        ::  client credentials
         bem/beam                                        ::  original path
     ==                                                  ::
-  +=  gram                                              ::  inter-ship message
+  +$  gram                                              ::  inter-ship message
     $%  [[%lon ~] p=hole]                               ::  login request
         [[%aut ~] p=hole]                               ::  login reply
         [[%hat ~] p=hole q=hart]                        ::  login redirect
@@ -982,7 +982,7 @@
       %+  each  balance                                 ::  complete
       action                                            ::  change
     ::
-    +=  task                                            ::  in request ->$
+    +$  task                                            ::  in request ->$
       $%  [%burn p=ship q=safe]                         ::  destroy rights
           [%hail p=ship q=remote]                       ::  remote update
           [%init p=@pG q=arms]                          ::  initialize urbit
