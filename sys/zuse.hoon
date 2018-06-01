@@ -265,7 +265,7 @@
     ::
     ++  update
       $%  [%full ships=(map ship hull) dns=dnses heard=events]  ::TODO  keys
-          [%difs dis=(list (pair event-id (list diff-constitution)))]
+          [%difs dis=(list (pair event-id diff-constitution))]
       ==
     ::
     ++  diff-constitution
@@ -308,6 +308,11 @@
       ++  activated
          0xe5a.2849.1af6.e9a4.a694.b3a0.fa1a.7ff7.
           3b8a.a7ce.fbf5.0808.a81c.d89e.dfeb.a20d
+      ::
+      ::  Spawned(uint32,uint32)
+      ++  spawned
+        0xb2d3.a6e7.a339.f5c8.ff96.265e.2f03.a010.
+          a854.1070.f374.4a24.7090.9644.1508.1546
       ::
       ::  EscapeRequested(uint32,uint32)
       ++  escape-requested
@@ -1217,7 +1222,7 @@
     ::
     ++  block                                           ::  on-chain changes
       %+  map  event-id:ethe                            ::  per event log
-      (list diff-constitution:constitution:ethe)        ::  one or more changes
+      diff-constitution:constitution:ethe               ::  the change
     ++  action                                          ::  balance change
       %+  pair  ship                                    ::  partner
       %+  each  bump                                    ::  &/liability change
@@ -5724,66 +5729,64 @@
           transfer-proxy
       ==
     ::
-    ++  event-log-to-hull-diffs
+    ++  event-log-to-hull-diff
       =,  ethe
       =,  ships-events
       |=  log=event-log
-      ^-  (list (pair ship diff-hull))
+      ^-  (unit (pair ship diff-hull))
       ~?  ?=(~ mined.log)  %processing-unmined-event
       ::
       ?:  =(event.log transferred)
         =+  ^-  [who=@ wer=address]  ::TODO  should we make @p work here?
             (decode-results data.log ~[%uint %address])
-        [who %owner wer]~
+        `[who %owner wer]
       ::
       ?:  =(event.log activated)
         =+  ^-  [who=@ wer=address]
             (decode-results data.log ~[%uint %address])
-        :*  ^-  (pair ship diff-hull)
-            :+  who  %full
-            %*(. *hull owner wer, sponsor (sein:title who))
-          ::
-            ?:  =(%czar (clan:title who))  ~
-            :_  ~
-            ^-  (pair ship diff-hull)
-            [(sein:title who) %spawned who]
-        ==
+        :^  ~  who  %full
+        %*(. *hull owner wer, sponsor (sein:title who))
+      ::
+      ?:  =(event.log spawned)
+        =+  ^-  [pre=@ who=@]
+            (decode-results data.log ~[%uint %uint])
+        `[pre %spawned who]
       ::
       ?:  =(event.log escape-requested)
         =+  ^-  [who=@ wer=@]
             (decode-results data.log ~[%uint %uint])
-        [who %escape `wer]~
+        `[who %escape `wer]
       ::
       ?:  =(event.log escape-canceled)
         =/  who=@  (decode-results data.log ~[%uint])
-        [who %escape ~]~
+        `[who %escape ~]
       ::
       ?:  =(event.log escape-accepted)
         =+  ^-  [who=@ wer=@]
             (decode-results data.log ~[%uint %uint])
-        [who %sponsor wer]~
+        `[who %sponsor wer]
       ::
       ?:  =(event.log changed-keys)
         =+  ^-  [who=@ enc=octs aut=octs rev=@ud]
             %+  decode-results  data.log
             ~[%uint [%bytes-n 32] [%bytes-n 32] %uint]
         ?>  &(=(p.enc 32) =(p.aut 32))  ::  sanity
-        [who %keys q.enc q.aut rev]~
+        `[who %keys q.enc q.aut rev]
       ::
       ?:  =(event.log broke-continuity)
         =+  ^-  [who=@ num=@]
             (decode-results data.log ~[%uint %uint])
-        [who %continuity num]~
+        `[who %continuity num]
       ::
       ?:  =(event.log changed-spawn-proxy)
         =+  ^-  [who=@ sox=address]
             (decode-results data.log ~[%uint %address])
-        [who %spawn-proxy sox]~
+        `[who %spawn-proxy sox]
       ::
       ?:  =(event.log changed-transfer-proxy)
         =+  ^-  [who=@ tox=address]
             (decode-results data.log ~[%uint %address])
-        [who %transfer-proxy tox]~
+        `[who %transfer-proxy tox]
       ::
       ::NOTE  0x8be0...57e0 is Owneable's OwnershipTransferred(address,address).
       ::      changed-dns is handled separately since it doesn't affect hulls.

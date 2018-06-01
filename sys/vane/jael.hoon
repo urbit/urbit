@@ -557,7 +557,7 @@
   ::  +order-events: sort changes by block and log numbers
   ::
   ++  order-events
-    |=  loz=(list (pair event-id (list diff-constitution)))
+    |=  loz=(list (pair event-id diff-constitution))
     ^+  loz
     %+  sort  loz
     ::  sort by block number, then by event log number,
@@ -1068,55 +1068,69 @@
     =?  +>  |(new !=(0 ~(wyt by evs)))
       %-  vent:feel
       ?:(new &+evs |+evs)
+    ::
     =+  vez=(order-events:ez ~(tap by evs))
-    |^  ?~  vez  ..file
-        $(vez t.vez, ..file (file-event i.vez))
+    =|  kyz=(map ship (map life (pair pass pass)))
+    |^  ?~  vez  (pubs:feel kyz)
+        =^  kyn  ..file  (file-event i.vez)
+        $(vez t.vez, kyz kyn)
+    ::
+    ++  file-keys
+      |=  [who=ship rev=life pub=(pair pass pass)]
+      ^+  kyz
+      =-  (~(put by kyz) who -)
+      =-  (~(put by -) rev pub)
+      (fall (~(get by kyz) who) ~)
     ::
     ++  file-event
-      |=  [wer=event-id dis=(list diff-constitution)]
-      ^+  ..file
+      |=  [wer=event-id dif=diff-constitution]
+      ^+  [kyz ..file]
       ?:  (~(has in heard) wer)
         ~&  %ignoring-already-heard-event
-        ..file
-      =.  evs  (~(put by evs) wer dis)
-      =.  heard  (~(put in heard) wer)
-      =.  latest-block  (max latest-block block.wer)
-      |-
-      ?~  dis  ..file
-      =.  ..file
-        =*  dif  i.dis
-        ?-  -.dif
-          %hull   (file-hull +.dif)
-          %dns    (file-dns +.dif)
-        ==
-      $(dis t.dis)
+        [kyz ..file]
+      ::
+      ::  sanity check, should never fail if we operate correctly
+      ::
+      ?>  (gte block.wer latest-block)
+      =:  evs           (~(put by evs) wer dif)
+          heard         (~(put in heard) wer)
+          latest-block  (max latest-block block.wer)
+      ==
+      ?-  -.dif
+        %hull   (file-hull +.dif)
+        %dns    [kyz (file-dns +.dif)]
+      ==
     ::
     ++  file-hull
-      |=  [who=@p dif=diff-hull]
+      |=  [who=ship dif=diff-hull]
+      ^+  [kyz ..file]
       =-  ::TODO  =; with just the type
-        ::TODO  some day we want to make sure we process all events
-        ::      before calling pubs:feel (with a more complete map,
-        ::      rather than multiple incomplete ones)
-        %.  [[who kez] ~ ~]
-        =<  pubs
-        %_  feel
-          hul.eth   (~(put by hul.eth) who hel)
-        ==
-      ~!  hul.eth
-      ^-  [hel=hull kez=(map life (pair pass pass))]
-      ::  if new, first dif must be %full
-      ?>  |((~(has by hul.eth) who) ?=(%full -.dif))
-      :-  =-  (apply-hull-diff - dif)
-          (fall (~(get by hul.eth) who) *hull)
-      ?+  -.dif  ~
-          %keys
-        ::  catch key changes, store them in the key map
-        [[rev.dif [enc.dif aut.dif]] ~ ~]
+        :-  ?~  kez  kyz
+            (file-keys who u.kez)
+        ..file(hul.eth (~(put by hul.eth) who hel))
+      ^-  [hel=hull kez=(unit (pair life (pair pass pass)))]
+      =+  hul=(fall (~(get by hul.eth) who) *hull)
       ::
-          %full
-        ::  for full, store the new keys in case we don't have them yet
-        =,  new.dif
-        [[key-revision [encryption-key authentication-key]] ~ ~]
+      ::  if new, first dif must be %full
+      ::
+      ?>  |((~(has by hul.eth) who) ?=(%full -.dif))
+      ::
+      ::  sanity checks, should never fail if we operate correctly
+      ::
+      ?>  ?+  -.dif  &
+            %spawned      !(~(has in spawned.hul) who.dif)
+            %keys         =(rev.dif +(key-revision.hul))
+            %continuity   =(new.dif +(continuity-number.hul))
+          ==
+      ::
+      ::  apply hull changes, catch key changes
+      ::
+      :-  (apply-hull-diff hul dif)
+      ?+  -.dif  ~
+        %keys   `[rev.dif enc.dif aut.dif]
+        %full   =>  new.dif  ::TODO  do we want/need to do a diff-check here?
+                :+  ~  key-revision
+                [encryption-key authentication-key]
       ==
     ::
     ++  file-dns
@@ -1283,12 +1297,8 @@
   ::
   ++  put-change
     |=  [cause=event-id dif=diff-constitution]
-    +>(changes (~(add ja changes) cause dif))
-  ::
-  ++  put-changes
-    |=  [cause=event-id dis=(list diff-constitution)]
-    =-  +>.$(changes (~(put by changes) cause -))
-    (weld (flop dis) (~(get ja changes) cause))
+    ?<  (~(has by changes) cause)  ::  one diff per event
+    +>(changes (~(put by changes) cause dif))
   ::
   ::  +|  move-generation
   ::
@@ -1431,11 +1441,11 @@
       %&   (assume p.can)
       ::
         %|
-      =+  dis=~(tap by p.can)
+      =+  evs=~(tap by p.can)
       |-
-      ?~  dis  +>.^$
-      =.  +>.^$  (accept i.dis)
-      $(dis t.dis)
+      ?~  evs  +>.^$
+      =.  +>.^$  (accept i.evs)
+      $(evs t.evs)
     ==
   ::
   ::  +assume: clear state and process events
@@ -1453,12 +1463,12 @@
   ::  +accept: process single event
   ::
   ++  accept
-    |=  [cause=event-id dis=(list diff-constitution)]
+    |=  [cause=event-id dif=diff-constitution]
     ^+  +>
     ?:  (~(has in heard) cause)
       ~&  %accept-ignoring-duplicate-event
       +>.$
-    (put-changes cause dis)
+    (put-change cause dif)
   ::
   ::  +|  filter-results
   ::
@@ -1554,10 +1564,9 @@
       %+  put-change  cuz
       [%dns (crip pri) (crip sec) (crip ter)]
     ::
-    =+  dis=(event-log-to-hull-diffs log)
-    ?~  dis  +>.$
-    ::TODO  this should iterate, but we'll probably change this soon anyway.
-    (put-change cuz %hull i.dis)
+    =+  dif=(event-log-to-hull-diff log)
+    ?~  dif  +>.$
+    (put-change cuz %hull u.dif)
   ::
   --
 --
