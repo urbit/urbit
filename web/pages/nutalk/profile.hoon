@@ -1,7 +1,7 @@
 /-  collections
 /+  colls
 /=  gas  /$  fuel:html
-/=  all-colls  /:  /===/web/collections  
+/=  all-colls  /:  /===/web/collections
             /^  (map knot collection:collections)  /_  /collections-collection/
 |%
   :: is this collection on the profile?
@@ -37,7 +37,7 @@
         |=  [t=knot col=collection:collections]
         ;li.profile.mb-8
           ;div.h1.mt-0
-            ;a(href "/~~/{(trip t)}") 
+            ;a(href "/~~/{(trip t)}")
             ; {(trip desc.conf.col)}
             ==
           ==

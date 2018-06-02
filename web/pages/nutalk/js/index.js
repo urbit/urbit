@@ -10144,7 +10144,7 @@ var containsNode$1 = Object.freeze({
 	__moduleExports: containsNode_1
 });
 
-var React$1 = ( react$1 && react ) || react$1;
+var _react = ( react$1 && react ) || react$1;
 
 var require$$3 = ( ExecutionEnvironment$1 && ExecutionEnvironment_1 ) || ExecutionEnvironment$1;
 
@@ -10157,7 +10157,7 @@ var require$$8 = ( shallowEqual$1 && shallowEqual_1 ) || shallowEqual$1;
 var require$$9 = ( containsNode$1 && containsNode_1 ) || containsNode$1;
 
 'use strict';
-function D$1(a){for(var b=arguments.length-1,c="Minified React error #"+a+"; visit http://facebook.github.io/react/docs/error-decoder.html?invariant\x3d"+a,d=0;d<b;d++)c+="\x26args[]\x3d"+encodeURIComponent(arguments[d+1]);b=Error(c+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.");b.name="Invariant Violation";b.framesToPop=1;throw b;}React$1?void 0:D$1("227");
+function D$1(a){for(var b=arguments.length-1,c="Minified React error #"+a+"; visit http://facebook.github.io/react/docs/error-decoder.html?invariant\x3d"+a,d=0;d<b;d++)c+="\x26args[]\x3d"+encodeURIComponent(arguments[d+1]);b=Error(c+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.");b.name="Invariant Violation";b.framesToPop=1;throw b;}_react?void 0:D$1("227");
 function ka(a,b,c,d,e,f,h,g,k){this._hasCaughtError=!1;this._caughtError=null;var v=Array.prototype.slice.call(arguments,3);try{b.apply(c,v);}catch(l){this._caughtError=l,this._hasCaughtError=!0;}}
 var E$1={_caughtError:null,_hasCaughtError:!1,_rethrowError:null,_hasRethrowError:!1,invokeGuardedCallback:function(a,b,c,d,e,f,h,g,k){ka.apply(E$1,arguments);},invokeGuardedCallbackAndCatchFirstError:function(a,b,c,d,e,f,h,g,k){E$1.invokeGuardedCallback.apply(this,arguments);if(E$1.hasCaughtError()){var v=E$1.clearCaughtError();E$1._hasRethrowError||(E$1._hasRethrowError=!0,E$1._rethrowError=v);}},rethrowCaughtError:function(){return ma.apply(E$1,arguments)},hasCaughtError:function(){return E$1._hasCaughtError},clearCaughtError:function(){if(E$1._hasCaughtError){var a=
 E$1._caughtError;E$1._caughtError=null;E$1._hasCaughtError=!1;return a}D$1("198");}};function ma(){if(E$1._hasRethrowError){var a=E$1._rethrowError;E$1._rethrowError=null;E$1._hasRethrowError=!1;throw a;}}var na=null; var oa={};
@@ -10202,7 +10202,7 @@ var ec={color:!0,date:!0,datetime:!0,"datetime-local":!0,email:!0,month:!0,numbe
 function hc(a,b){if(!require$$3.canUseDOM||b&&!("addEventListener"in document))return!1;a="on"+a;b=a in document;b||(b=document.createElement("div"),b.setAttribute(a,"return;"),b="function"===typeof b[a]);return b}function ic(a){var b=a.type;return(a=a.nodeName)&&"input"===a.toLowerCase()&&("checkbox"===b||"radio"===b)}
 function jc(a){var b=ic(a)?"checked":"value",c=Object.getOwnPropertyDescriptor(a.constructor.prototype,b),d=""+a[b];if(!a.hasOwnProperty(b)&&"function"===typeof c.get&&"function"===typeof c.set)return Object.defineProperty(a,b,{configurable:!0,get:function(){return c.get.call(this)},set:function(a){d=""+a;c.set.call(this,a);}}),Object.defineProperty(a,b,{enumerable:c.enumerable}),{getValue:function(){return d},setValue:function(a){d=""+a;},stopTracking:function(){a._valueTracker=null;delete a[b];}}}
 function kc(a){a._valueTracker||(a._valueTracker=jc(a));}function lc(a){if(!a)return!1;var b=a._valueTracker;if(!b)return!0;var c=b.getValue();var d="";a&&(d=ic(a)?a.checked?"true":"false":a.value);a=d;return a!==c?(b.setValue(a),!0):!1}
-var mc=React$1.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner;
+var mc=_react.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner;
 var O$1="function"===typeof Symbol&&Symbol["for"];
 var nc=O$1?Symbol["for"]("react.element"):60103;
 var oc=O$1?Symbol["for"]("react.call"):60104;
@@ -10389,7 +10389,7 @@ default:return a.child.stateNode}},findHostInstance:c,findHostInstanceWithNoPort
 function pf(a,b,c){var d=3<arguments.length&&void 0!==arguments[3]?arguments[3]:null;return{$$typeof:qc,key:null==d?null:""+d,children:a,containerInfo:b,implementation:c}}var qf="object"===typeof performance&&"function"===typeof performance.now; var rf=void 0;rf=qf?function(){return performance.now()}:function(){return Date.now()};var sf=void 0; var tf=void 0;
 if(require$$3.canUseDOM)if("function"!==typeof requestIdleCallback||"function"!==typeof cancelIdleCallback){var uf=null,vf=!1,wf=-1,xf=!1,yf=0,zf=33,Af=33,Bf=void 0;Bf=qf?{didTimeout:!1,timeRemaining:function(){var a=yf-performance.now();return 0<a?a:0}}:{didTimeout:!1,timeRemaining:function(){var a=yf-Date.now();return 0<a?a:0}};var Cf="__reactIdleCallback$"+Math.random().toString(36).slice(2);window.addEventListener("message",function(a){if(a.source===window&&a.data===Cf){vf=!1;a=rf();if(0>=yf-a)if(-1!==
 wf&&wf<=a)Bf.didTimeout=!0;else{xf||(xf=!0,requestAnimationFrame(Df));return}else Bf.didTimeout=!1;wf=-1;a=uf;uf=null;null!==a&&a(Bf);}},!1);var Df=function(a){xf=!1;var b=a-yf+Af;b<Af&&zf<Af?(8>b&&(b=8),Af=b<zf?zf:b):zf=b;yf=a+Af;vf||(vf=!0,window.postMessage(Cf,"*"));};sf=function(a,b){uf=a;null!=b&&"number"===typeof b.timeout&&(wf=rf()+b.timeout);xf||(xf=!0,requestAnimationFrame(Df));return 0};tf=function(){uf=null;vf=!1;wf=-1;};}else sf=window.requestIdleCallback,tf=window.cancelIdleCallback;else sf=
-function(a){return setTimeout(function(){a({timeRemaining:function(){return Infinity},didTimeout:!1});})},tf=function(a){clearTimeout(a);};function Ef(a){var b="";React$1.Children.forEach(a,function(a){null==a||"string"!==typeof a&&"number"!==typeof a||(b+=a);});return b}function Ff(a,b){a=require$$4({children:void 0},b);if(b=Ef(b.children))a.children=b;return a}
+function(a){return setTimeout(function(){a({timeRemaining:function(){return Infinity},didTimeout:!1});})},tf=function(a){clearTimeout(a);};function Ef(a){var b="";_react.Children.forEach(a,function(a){null==a||"string"!==typeof a&&"number"!==typeof a||(b+=a);});return b}function Ff(a,b){a=require$$4({children:void 0},b);if(b=Ef(b.children))a.children=b;return a}
 function Gf(a,b,c,d){a=a.options;if(b){b={};for(var e=0;e<c.length;e++)b["$"+c[e]]=!0;for(c=0;c<a.length;c++)e=b.hasOwnProperty("$"+a[c].value),a[c].selected!==e&&(a[c].selected=e),e&&d&&(a[c].defaultSelected=!0);}else{c=""+c;b=null;for(e=0;e<a.length;e++){if(a[e].value===c){a[e].selected=!0;d&&(a[e].defaultSelected=!0);return}null!==b||a[e].disabled||(b=a[e]);}null!==b&&(b.selected=!0);}}
 function Hf(a,b){var c=b.value;a._wrapperState={initialValue:null!=c?c:b.defaultValue,wasMultiple:!!b.multiple};}function If(a,b){null!=b.dangerouslySetInnerHTML?D$1("91"):void 0;return require$$4({},b,{value:void 0,defaultValue:void 0,children:""+a._wrapperState.initialValue})}function Jf(a,b){var c=b.value;null==c&&(c=b.defaultValue,b=b.children,null!=b&&(null!=c?D$1("92"):void 0,Array.isArray(b)&&(1>=b.length?void 0:D$1("93"),b=b[0]),c=""+b),null==c&&(c=""));a._wrapperState={initialValue:""+c};}
 function Kf(a,b){var c=b.value;null!=c&&(c=""+c,c!==a.value&&(a.value=c),null==b.defaultValue&&(a.defaultValue=c));null!=b.defaultValue&&(a.defaultValue=b.defaultValue);}function Lf(a){var b=a.textContent;b===a._wrapperState.initialValue&&(a.value=b);}var Mf={html:"http://www.w3.org/1999/xhtml",mathml:"http://www.w3.org/1998/Math/MathML",svg:"http://www.w3.org/2000/svg"};
@@ -10615,7 +10615,7 @@ var reactDom_development = createCommonjsModule(function (module) {
   (function() {
 'use strict';
 
-var React = React$1;
+var React = _react;
 var invariant = invariant$3;
 var warning = warning$3;
 var ExecutionEnvironment = require$$3;
@@ -27240,108 +27240,6 @@ var reactDom = createCommonjsModule(function (module) {
   module.exports = require$$1$7;
 }
 });
-
-var secToString = function secToString(secs) {
-  if (secs <= 0) {
-    return 'Completed';
-  }
-
-  secs = Math.floor(secs);
-  var min = 60;
-  var hour = 60 * min;
-  var day = 24 * hour;
-  var week = 7 * day;
-  var year = 52 * week;
-
-  var fy = function fy(s) {
-    if (s < year) {
-      return ['', s];
-    } else {
-      return [Math.floor(s / year) + 'y', s % year];
-    }
-  };
-
-  var fw = function fw(tup) {
-    var str = tup[0];
-    var sec = tup[1];
-
-    if (sec < week) {
-      return [str, sec];
-    } else {
-      return [str + ' ' + Math.floor(sec / week) + 'w', sec % week];
-    }
-  };
-
-  var fd = function fd(tup) {
-    var str = tup[0];
-    var sec = tup[1];
-
-    if (sec < day) {
-      return [str, sec];
-    } else {
-      return [str + ' ' + Math.floor(sec / day) + 'd', sec % day];
-    }
-  };
-
-  var fh = function fh(tup) {
-    var str = tup[0];
-    var sec = tup[1];
-
-    if (sec < hour) {
-      return [str, sec];
-    } else {
-      return [str + ' ' + Math.floor(sec / hour) + 'h', sec % hour];
-    }
-  };
-
-  var fm = function fm(tup) {
-    var str = tup[0];
-    var sec = tup[1];
-
-    if (sec < min) {
-      return [str, sec];
-    } else {
-      return [str + ' ' + Math.floor(sec / min) + 'm', sec % min];
-    }
-  };
-
-  var fs = function fs(tup) {
-    var str = tup[0];
-    var sec = tup[1];
-    return str + ' ' + sec + 's';
-  };
-
-  return fs(fm(fh(fd(fw(fy(secs)))))).trim();
-};
-
-var Elapsed =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(Elapsed, _Component);
-
-  function Elapsed(props) {
-    _classCallCheck(this, Elapsed);
-
-    return _possibleConstructorReturn(this, (Elapsed.__proto__ || Object.getPrototypeOf(Elapsed)).call(this, props)); // console.log('elapsed props...', props);
-  }
-
-  _createClass(Elapsed, [{
-    key: "renderTime",
-    value: function renderTime() {
-      var serverTime = new Date(this.props.timestring);
-      var clientTime = new Date(); // local
-
-      return secToString((clientTime - serverTime) / 1000).split(' ')[0];
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      return react.createElement("div", null, "-", this.renderTime());
-    }
-  }]);
-
-  return Elapsed;
-}(react_1);
 
 var lodash = createCommonjsModule(function (module, exports) {
 /**
@@ -44428,6 +44326,247 @@ var lodash = createCommonjsModule(function (module, exports) {
 }.call(commonjsGlobal));
 });
 
+var INBOX_MESSAGE_COUNT = 30; // TODO: This being a class is an error, since UrbitReducer doesn't hold state. Export these as individual functions or bundle them some other way.
+
+/**
+  storeMessages ==
+
+  store: {
+    messages: {
+      inboxMessages: [{num: 1244, msg: "Hey friends"}, {num: 1244, msg: "Hiya ~ravmel"}]
+      stations: {
+        ~ravmel-rodpyl/friendclub: [{num: 1244, msg: "Hey friends"}, {num: 1244, msg: "Hiya ~ravmel"}]
+        ~ravmel-rodpyl/members: [{num: 1244, msg: "Hey friends"}, {num: 1244, msg: "Hiya ~ravmel"}]
+      }
+    }
+  }
+**/
+
+var MessagesReducer =
+/*#__PURE__*/
+function () {
+  function MessagesReducer() {
+    _classCallCheck(this, MessagesReducer);
+  }
+
+  _createClass(MessagesReducer, [{
+    key: "reduce",
+    value: function reduce(reports, storeMessages) {
+      var _this = this;
+
+      reports.forEach(function (rep) {
+        switch (rep.type) {
+          case "circle.nes":
+            _this.processMessages(rep.data, storeMessages);
+
+            break;
+
+          case "circle.gram":
+            _this.processMessages([rep.data], storeMessages);
+
+            break;
+
+          case "circle.config.dif.remove":
+            delete storeMessages[rep.data.cir];
+            break;
+        }
+      });
+    }
+  }, {
+    key: "processMessages",
+    value: function processMessages(messages, storeMessages) {
+      this.storeStationMessages(messages, storeMessages);
+      this.storeInboxMessages(messages, storeMessages);
+    }
+  }, {
+    key: "storeStationMessages",
+    value: function storeStationMessages(messages, storeMessages) {
+      messages.forEach(function (message) {
+        var msg = message.gam;
+        msg.aud.forEach(function (aud) {
+          var station = storeMessages.stations[aud];
+
+          if (!station) {
+            storeMessages.stations[aud] = [msg];
+          } else if (station.findIndex(function (o) {
+            return o.uid === msg.uid;
+          }) === -1) {
+            var newest = true;
+
+            for (var i = 0; i < station.length; i++) {
+              if (msg.wen < station[i].wen) {
+                station.splice(i, 0, msg);
+                newest = false;
+                break;
+              }
+            }
+
+            if (newest) station.push(msg); // Print messages by date, for debugging:
+            // for (let msg of station.messages) {
+            //   console.log(`msg ${msg.uid}: ${msg.wen}`);
+            // }
+          }
+        });
+      });
+    }
+  }, {
+    key: "storeInboxMessages",
+    value: function storeInboxMessages(messages, storeMessages) {
+      var msgGams = messages.map(function (m) {
+        return m.gam;
+      }); // grab the gam
+
+      var ret = storeMessages.inboxMessages.slice() // make a shallow copy
+      .concat(msgGams) // add new messages
+      .uniq('uid') // dedupe
+      .sort(function (a, b) {
+        return b.wen - a.wen;
+      }) // sort by date
+      .slice(0, INBOX_MESSAGE_COUNT); // grab the first 30 or so
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = ret[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _msg = _step.value;
+          console.log("msg ".concat(_msg.uid, ": ").concat(_msg.wen));
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      storeMessages.inboxMessages = ret;
+    }
+  }]);
+
+  return MessagesReducer;
+}();
+
+var ConfigsReducer =
+/*#__PURE__*/
+function () {
+  function ConfigsReducer() {
+    _classCallCheck(this, ConfigsReducer);
+  }
+
+  _createClass(ConfigsReducer, [{
+    key: "reduce",
+    value: function reduce(reports, storeConfigs) {
+      var _this2 = this;
+
+      reports.forEach(function (rep) {
+        var stationName;
+        var stations = {};
+
+        switch (rep.type) {
+          case "circle.cos.loc":
+            stationName = "~".concat(rep.from.ship, "/").concat(rep.from.path.split("/")[2]);
+            stations[stationName] = rep.data;
+
+            _this2.storeConfigs(stations, storeConfigs);
+
+            break;
+
+          case "circle.cos.rem":
+            _this2.storeConfigs(rep.data, storeConfigs);
+
+            break;
+
+          case "circle.pes.loc":
+            stationName = "~".concat(rep.from.ship, "/").concat(rep.from.path.split("/")[2]);
+
+            _this2.updateConfig({
+              pes: rep.data
+            }, storeConfigs[stationName]);
+
+            break;
+
+          case "circle.config.dif.source":
+            stationName = "~".concat(rep.from.ship, "/").concat(rep.from.path.split("/")[2]);
+
+            _this2.updateConfig(rep.data, storeConfigs[stationName]);
+
+            break;
+
+          case "circle.config.dif.full":
+            stationName = rep.data.src[0]; // TODO:  API weirdness; we have to get name of new station from new station config's src property. Should maybe return a dict.
+
+            stations[stationName] = rep.data;
+
+            _this2.storeConfigs(stations, storeConfigs);
+
+            break;
+
+          case "circle.config.dif.permit":
+            // TODO:  This is very wonky, should be fixed with API discussion
+            stationName = rep.data.cir;
+
+            _this2.updateConfig(rep.data.dif.permit, storeConfigs[stationName]);
+
+            break;
+
+          case "circle.config.dif.remove":
+            delete storeConfigs[rep.data.cir];
+            break;
+        }
+      });
+    }
+  }, {
+    key: "storeConfigs",
+    value: function storeConfigs(configs, _storeConfigs) {
+      Object.keys(configs).forEach(function (cos) {
+        _storeConfigs[cos] = _storeConfigs[cos] || {};
+        Object.assign(_storeConfigs[cos], configs[cos]);
+      });
+    }
+  }, {
+    key: "updateConfig",
+    value: function updateConfig(data, station) {
+      if (!station) return;
+
+      if (data.src) {
+        if (data.add) {
+          station.src.push(data.src);
+        } else {
+          station.src = station.src.filter(function (val) {
+            return val !== data.src;
+          });
+        }
+      }
+
+      if (data.sis) {
+        if (data.add) {
+          station.con.sis = station.con.sis.concat(data.sis);
+        } else {
+          station.con.sis = station.con.sis.filter(function (val) {
+            return !data.sis.includes(val);
+          });
+        }
+      }
+
+      if (data.pes) {
+        station.pes = station.pes || {};
+        Object.assign(station.pes, data.pes);
+      }
+    }
+  }]);
+
+  return ConfigsReducer;
+}();
+
 function getQueryParams() {
   if (window.location.search !== "") {
     return JSON.parse('{"' + decodeURI(window.location.search.substr(1).replace(/&/g, "\",\"").replace(/=/g, "\":\"")) + '"}');
@@ -44435,19 +44574,7 @@ function getQueryParams() {
     return {};
   }
 }
-function uuid() {
-  var str = "0v";
-  str += Math.ceil(Math.random() * 8) + ".";
 
-  for (var i = 0; i < 5; i++) {
-    var _str = Math.ceil(Math.random() * 10000000).toString(32);
-
-    _str = ("00000" + _str).substr(-5, 5);
-    str += _str + ".";
-  }
-
-  return str.slice(0, -1);
-}
 function parseCollCircle(st) {
   var collMeta = /(.*)\/collection_~(~[a-z,\.,0-9]*)(:?_~)?(:?~.*)?/.exec(st);
   var r; // console.log('regex', collMeta);
@@ -44558,7 +44685,9 @@ function getStationDetails(station) {
       ret.stationURL = "/~~/collections/".concat(collParts.coll);
       ret.stationTitle = config.cap;
       ret.postURL = "/~~/collections/".concat(collParts.coll, "/").concat(collParts.top);
-      ret.postTitle = "what does the =, rune do?";
+      ret.postID = collParts.top;
+      ret.postTitle = null; // TODO: Should be able to determine this from the station metadata alone.
+
       break;
   }
 
@@ -44569,9 +44698,15 @@ function getMessageContent(msg, stationDetails) {
 
   switch (stationDetails.type) {
     case "inbox":
-      if (lodash.has(msg, 'sep.app')) {
+      if (lodash.has(msg, 'sep.app.sep.fat')) {
         ret.type = "app";
         ret.content = msg.sep.app.sep.fat.sep.lin.msg;
+      } else if (lodash.has(msg, 'sep.url')) {
+        ret.type = "url";
+        ret.content = msg.sep.url;
+      } else if (lodash.has(msg, 'sep.app.sep.lin')) {
+        ret.type = "app";
+        ret.content = msg.sep.app.sep.lin.msg;
       } else if (lodash.has(msg, 'sep.inv')) {
         ret.type = "inv";
         ret.content = "invite to ".concat(msg.sep.inv.cir, "...");
@@ -44579,13 +44714,26 @@ function getMessageContent(msg, stationDetails) {
       }
 
       break;
+    // do these need to be all separate?
 
     case "chat":
-      ret.content = msg.sep.lin.msg;
+      if (lodash.has(msg, 'sep.url')) {
+        ret.type = "url";
+        ret.content = msg.sep.url;
+      } else {
+        ret.content = msg.sep.lin.msg;
+      }
+
       break;
 
     case "dm":
-      ret.content = msg.sep.lin.msg;
+      if (lodash.has(msg, 'sep.url')) {
+        ret.type = "url";
+        ret.content = msg.sep.url;
+      } else {
+        ret.content = msg.sep.lin.msg;
+      }
+
       break;
 
     case "text":
@@ -44603,6 +44751,13047 @@ function getMessageContent(msg, stationDetails) {
 
   return ret;
 }
+
+var UrbitApi =
+/*#__PURE__*/
+function () {
+  function UrbitApi() {
+    _classCallCheck(this, UrbitApi);
+  }
+
+  _createClass(UrbitApi, [{
+    key: "setAuthTokens",
+    value: function setAuthTokens(authTokens) {
+      this.authTokens = authTokens;
+    } // keep default bind to hall, since its bind procedure more complex for now AA
+
+  }, {
+    key: "bind",
+    value: function bind(path, method) {
+      var ship = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.authTokens.ship;
+      var appl = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "hall";
+      console.log('binding to ...', appl);
+      var params = {
+        appl: appl,
+        mark: "json",
+        oryx: this.authTokens.oryx,
+        ship: ship,
+        path: path,
+        wire: path
+      };
+      fetch("/~/is/~".concat(ship, "/").concat(appl).concat(path, ".json?").concat(method), {
+        credentials: "same-origin",
+        method: "POST",
+        body: JSON.stringify(params)
+      });
+    }
+  }, {
+    key: "hall",
+    value: function hall(data, transition) {
+      this.action("hall", "hall-action", data, transition);
+    }
+  }, {
+    key: "coll",
+    value: function coll(data, transition) {
+      this.action("collections", "collections-action", data, transition);
+    }
+  }, {
+    key: "action",
+    value: function action(appl, mark, data, transition) {
+      var params = {
+        appl: appl,
+        mark: mark,
+        oryx: this.authTokens.oryx,
+        ship: this.authTokens.ship,
+        wire: "/",
+        xyro: data
+      };
+      fetch("/~/to/".concat(appl, "/").concat(mark), {
+        credentials: "same-origin",
+        method: "POST",
+        body: JSON.stringify(params)
+      });
+    }
+    /*
+      Special actions
+    */
+
+  }, {
+    key: "permit",
+    value: function permit(nom, aud, message) {
+      this.hall({
+        permit: {
+          nom: nom,
+          sis: aud,
+          inv: true
+        }
+      });
+
+      if (message) {
+        var audInboxes = aud.map(function (aud) {
+          return "~".concat(aud, "/inbox");
+        });
+        var inviteMessage = {
+          aud: audInboxes,
+          ses: [{
+            inv: {
+              inv: true,
+              cir: "~".concat(this.authTokens.ship, "/").concat(nom)
+            }
+          }]
+        };
+        this.hall({
+          phrase: inviteMessage
+        });
+      }
+    }
+  }]);
+
+  return UrbitApi;
+}();
+
+var api$1 = new UrbitApi();
+window.api = api$1;
+
+var Reports = {
+  'circle.gram': {
+    execute: function execute(rep) {
+      if (this.pending) {
+        this.pending.forEach(function (item) {
+          switch (item.type) {
+            case "transition":
+              window.router.transitionTo(item.data.target);
+              break;
+          }
+        });
+      }
+
+      this.pending = [];
+    }
+  },
+  // messages
+  'circle.nes': {},
+  // messages
+  'circle.pes.loc': {},
+  'circle.pes.rem': {},
+  'circle.cos.loc': {},
+  // configs
+  'circle.cos.rem': {},
+  // configs
+  'circle.config.dif.full': {
+    execute: function execute(rep) {
+      if (this.pending) {
+        this.pending.forEach(function (item) {
+          switch (item.type) {
+            case "transition":
+              window.router.transitionTo(item.data.target);
+              break;
+
+            case "permit":
+              api$1.permit(item.data.nom, item.data.aud, item.data.message);
+              break;
+
+            case "subscribe-dm":
+              var dmHost = item.data.nom.split("/")[0].substr(1);
+              api$1.hall({
+                source: {
+                  nom: item.data.nom,
+                  sub: true,
+                  srs: item.data.srs
+                }
+              });
+              break;
+          }
+        });
+      }
+
+      this.pending = [];
+    }
+  },
+  'circle.config.dif.source': {
+    execute: function execute(rep) {
+      if (this.pending) {
+        this.pending.forEach(function (item) {
+          switch (item.type) {
+            case "transition":
+              window.router.transitionTo(item.data.target);
+              break;
+          }
+        });
+      }
+
+      this.pending = [];
+    }
+  },
+  'circle.config.dif.permit': {
+    include: "circle.config"
+  },
+  'circle.config.dif.remove': {
+    include: "circle.config"
+  },
+  'circles': {
+    execute: function execute(rep) {
+      if (this.pending) {
+        this.pending.forEach(function (item) {
+          switch (item.type) {
+            case "subscribe-inbox":
+              var cir = item.data && item.data.cir ? item.data.cir : "~".concat(api$1.authTokens.ship, "/").concat(rep.data.cir);
+              api$1.hall({
+                source: {
+                  nom: "inbox",
+                  sub: true,
+                  srs: [cir]
+                }
+              });
+              break;
+          }
+        });
+        this.pending = [];
+      }
+    }
+  }
+};
+window.reports = Reports;
+
+var UrbitWarehouse =
+/*#__PURE__*/
+function () {
+  function UrbitWarehouse(updateFunc) {
+    _classCallCheck(this, UrbitWarehouse);
+
+    this.store = {
+      messages: {
+        inboxMessages: [],
+        stations: {}
+      },
+      configs: {}
+    };
+    this.updateFunc = updateFunc;
+    this.messagesReducer = new MessagesReducer();
+    this.configsReducer = new ConfigsReducer();
+  }
+
+  _createClass(UrbitWarehouse, [{
+    key: "storeReports",
+    value: function storeReports(reports) {
+      this.messagesReducer.reduce(reports, this.store.messages);
+      this.configsReducer.reduce(reports, this.store.configs);
+      console.log('full store = ', this.store);
+      this.processPending(reports);
+      this.updateFunc();
+    }
+  }, {
+    key: "processPending",
+    value: function processPending(reports) {
+      reports.forEach(function (rep) {
+        var type = Reports[rep.type];
+
+        if (type && type.execute) {
+          type.execute(rep);
+        }
+      });
+    }
+  }, {
+    key: "pushPending",
+    value: function pushPending(key, data) {
+      Reports[key].pending = (Reports[key].pending || []).concat(data);
+    }
+  }]);
+
+  return UrbitWarehouse;
+}();
+
+var mousetrap = createCommonjsModule(function (module) {
+/*global define:false */
+/**
+ * Copyright 2012-2017 Craig Campbell
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Mousetrap is a simple keyboard shortcut library for Javascript with
+ * no external dependencies
+ *
+ * @version 1.6.1
+ * @url craig.is/killing/mice
+ */
+(function(window, document, undefined) {
+
+    // Check if mousetrap is used inside browser, if not, return
+    if (!window) {
+        return;
+    }
+
+    /**
+     * mapping of special keycodes to their corresponding keys
+     *
+     * everything in this dictionary cannot use keypress events
+     * so it has to be here to map to the correct keycodes for
+     * keyup/keydown events
+     *
+     * @type {Object}
+     */
+    var _MAP = {
+        8: 'backspace',
+        9: 'tab',
+        13: 'enter',
+        16: 'shift',
+        17: 'ctrl',
+        18: 'alt',
+        20: 'capslock',
+        27: 'esc',
+        32: 'space',
+        33: 'pageup',
+        34: 'pagedown',
+        35: 'end',
+        36: 'home',
+        37: 'left',
+        38: 'up',
+        39: 'right',
+        40: 'down',
+        45: 'ins',
+        46: 'del',
+        91: 'meta',
+        93: 'meta',
+        224: 'meta'
+    };
+
+    /**
+     * mapping for special characters so they can support
+     *
+     * this dictionary is only used incase you want to bind a
+     * keyup or keydown event to one of these keys
+     *
+     * @type {Object}
+     */
+    var _KEYCODE_MAP = {
+        106: '*',
+        107: '+',
+        109: '-',
+        110: '.',
+        111 : '/',
+        186: ';',
+        187: '=',
+        188: ',',
+        189: '-',
+        190: '.',
+        191: '/',
+        192: '`',
+        219: '[',
+        220: '\\',
+        221: ']',
+        222: '\''
+    };
+
+    /**
+     * this is a mapping of keys that require shift on a US keypad
+     * back to the non shift equivelents
+     *
+     * this is so you can use keyup events with these keys
+     *
+     * note that this will only work reliably on US keyboards
+     *
+     * @type {Object}
+     */
+    var _SHIFT_MAP = {
+        '~': '`',
+        '!': '1',
+        '@': '2',
+        '#': '3',
+        '$': '4',
+        '%': '5',
+        '^': '6',
+        '&': '7',
+        '*': '8',
+        '(': '9',
+        ')': '0',
+        '_': '-',
+        '+': '=',
+        ':': ';',
+        '\"': '\'',
+        '<': ',',
+        '>': '.',
+        '?': '/',
+        '|': '\\'
+    };
+
+    /**
+     * this is a list of special strings you can use to map
+     * to modifier keys when you specify your keyboard shortcuts
+     *
+     * @type {Object}
+     */
+    var _SPECIAL_ALIASES = {
+        'option': 'alt',
+        'command': 'meta',
+        'return': 'enter',
+        'escape': 'esc',
+        'plus': '+',
+        'mod': /Mac|iPod|iPhone|iPad/.test(navigator.platform) ? 'meta' : 'ctrl'
+    };
+
+    /**
+     * variable to store the flipped version of _MAP from above
+     * needed to check if we should use keypress or not when no action
+     * is specified
+     *
+     * @type {Object|undefined}
+     */
+    var _REVERSE_MAP;
+
+    /**
+     * loop through the f keys, f1 to f19 and add them to the map
+     * programatically
+     */
+    for (var i = 1; i < 20; ++i) {
+        _MAP[111 + i] = 'f' + i;
+    }
+
+    /**
+     * loop through to map numbers on the numeric keypad
+     */
+    for (i = 0; i <= 9; ++i) {
+
+        // This needs to use a string cause otherwise since 0 is falsey
+        // mousetrap will never fire for numpad 0 pressed as part of a keydown
+        // event.
+        //
+        // @see https://github.com/ccampbell/mousetrap/pull/258
+        _MAP[i + 96] = i.toString();
+    }
+
+    /**
+     * cross browser add event method
+     *
+     * @param {Element|HTMLDocument} object
+     * @param {string} type
+     * @param {Function} callback
+     * @returns void
+     */
+    function _addEvent(object, type, callback) {
+        if (object.addEventListener) {
+            object.addEventListener(type, callback, false);
+            return;
+        }
+
+        object.attachEvent('on' + type, callback);
+    }
+
+    /**
+     * takes the event and returns the key character
+     *
+     * @param {Event} e
+     * @return {string}
+     */
+    function _characterFromEvent(e) {
+
+        // for keypress events we should return the character as is
+        if (e.type == 'keypress') {
+            var character = String.fromCharCode(e.which);
+
+            // if the shift key is not pressed then it is safe to assume
+            // that we want the character to be lowercase.  this means if
+            // you accidentally have caps lock on then your key bindings
+            // will continue to work
+            //
+            // the only side effect that might not be desired is if you
+            // bind something like 'A' cause you want to trigger an
+            // event when capital A is pressed caps lock will no longer
+            // trigger the event.  shift+a will though.
+            if (!e.shiftKey) {
+                character = character.toLowerCase();
+            }
+
+            return character;
+        }
+
+        // for non keypress events the special maps are needed
+        if (_MAP[e.which]) {
+            return _MAP[e.which];
+        }
+
+        if (_KEYCODE_MAP[e.which]) {
+            return _KEYCODE_MAP[e.which];
+        }
+
+        // if it is not in the special map
+
+        // with keydown and keyup events the character seems to always
+        // come in as an uppercase character whether you are pressing shift
+        // or not.  we should make sure it is always lowercase for comparisons
+        return String.fromCharCode(e.which).toLowerCase();
+    }
+
+    /**
+     * checks if two arrays are equal
+     *
+     * @param {Array} modifiers1
+     * @param {Array} modifiers2
+     * @returns {boolean}
+     */
+    function _modifiersMatch(modifiers1, modifiers2) {
+        return modifiers1.sort().join(',') === modifiers2.sort().join(',');
+    }
+
+    /**
+     * takes a key event and figures out what the modifiers are
+     *
+     * @param {Event} e
+     * @returns {Array}
+     */
+    function _eventModifiers(e) {
+        var modifiers = [];
+
+        if (e.shiftKey) {
+            modifiers.push('shift');
+        }
+
+        if (e.altKey) {
+            modifiers.push('alt');
+        }
+
+        if (e.ctrlKey) {
+            modifiers.push('ctrl');
+        }
+
+        if (e.metaKey) {
+            modifiers.push('meta');
+        }
+
+        return modifiers;
+    }
+
+    /**
+     * prevents default for this event
+     *
+     * @param {Event} e
+     * @returns void
+     */
+    function _preventDefault(e) {
+        if (e.preventDefault) {
+            e.preventDefault();
+            return;
+        }
+
+        e.returnValue = false;
+    }
+
+    /**
+     * stops propogation for this event
+     *
+     * @param {Event} e
+     * @returns void
+     */
+    function _stopPropagation(e) {
+        if (e.stopPropagation) {
+            e.stopPropagation();
+            return;
+        }
+
+        e.cancelBubble = true;
+    }
+
+    /**
+     * determines if the keycode specified is a modifier key or not
+     *
+     * @param {string} key
+     * @returns {boolean}
+     */
+    function _isModifier(key) {
+        return key == 'shift' || key == 'ctrl' || key == 'alt' || key == 'meta';
+    }
+
+    /**
+     * reverses the map lookup so that we can look for specific keys
+     * to see what can and can't use keypress
+     *
+     * @return {Object}
+     */
+    function _getReverseMap() {
+        if (!_REVERSE_MAP) {
+            _REVERSE_MAP = {};
+            for (var key in _MAP) {
+
+                // pull out the numeric keypad from here cause keypress should
+                // be able to detect the keys from the character
+                if (key > 95 && key < 112) {
+                    continue;
+                }
+
+                if (_MAP.hasOwnProperty(key)) {
+                    _REVERSE_MAP[_MAP[key]] = key;
+                }
+            }
+        }
+        return _REVERSE_MAP;
+    }
+
+    /**
+     * picks the best action based on the key combination
+     *
+     * @param {string} key - character for key
+     * @param {Array} modifiers
+     * @param {string=} action passed in
+     */
+    function _pickBestAction(key, modifiers, action) {
+
+        // if no action was picked in we should try to pick the one
+        // that we think would work best for this key
+        if (!action) {
+            action = _getReverseMap()[key] ? 'keydown' : 'keypress';
+        }
+
+        // modifier keys don't work as expected with keypress,
+        // switch to keydown
+        if (action == 'keypress' && modifiers.length) {
+            action = 'keydown';
+        }
+
+        return action;
+    }
+
+    /**
+     * Converts from a string key combination to an array
+     *
+     * @param  {string} combination like "command+shift+l"
+     * @return {Array}
+     */
+    function _keysFromString(combination) {
+        if (combination === '+') {
+            return ['+'];
+        }
+
+        combination = combination.replace(/\+{2}/g, '+plus');
+        return combination.split('+');
+    }
+
+    /**
+     * Gets info for a specific key combination
+     *
+     * @param  {string} combination key combination ("command+s" or "a" or "*")
+     * @param  {string=} action
+     * @returns {Object}
+     */
+    function _getKeyInfo(combination, action) {
+        var keys;
+        var key;
+        var i;
+        var modifiers = [];
+
+        // take the keys from this pattern and figure out what the actual
+        // pattern is all about
+        keys = _keysFromString(combination);
+
+        for (i = 0; i < keys.length; ++i) {
+            key = keys[i];
+
+            // normalize key names
+            if (_SPECIAL_ALIASES[key]) {
+                key = _SPECIAL_ALIASES[key];
+            }
+
+            // if this is not a keypress event then we should
+            // be smart about using shift keys
+            // this will only work for US keyboards however
+            if (action && action != 'keypress' && _SHIFT_MAP[key]) {
+                key = _SHIFT_MAP[key];
+                modifiers.push('shift');
+            }
+
+            // if this key is a modifier then add it to the list of modifiers
+            if (_isModifier(key)) {
+                modifiers.push(key);
+            }
+        }
+
+        // depending on what the key combination is
+        // we will try to pick the best event for it
+        action = _pickBestAction(key, modifiers, action);
+
+        return {
+            key: key,
+            modifiers: modifiers,
+            action: action
+        };
+    }
+
+    function _belongsTo(element, ancestor) {
+        if (element === null || element === document) {
+            return false;
+        }
+
+        if (element === ancestor) {
+            return true;
+        }
+
+        return _belongsTo(element.parentNode, ancestor);
+    }
+
+    function Mousetrap(targetElement) {
+        var self = this;
+
+        targetElement = targetElement || document;
+
+        if (!(self instanceof Mousetrap)) {
+            return new Mousetrap(targetElement);
+        }
+
+        /**
+         * element to attach key events to
+         *
+         * @type {Element}
+         */
+        self.target = targetElement;
+
+        /**
+         * a list of all the callbacks setup via Mousetrap.bind()
+         *
+         * @type {Object}
+         */
+        self._callbacks = {};
+
+        /**
+         * direct map of string combinations to callbacks used for trigger()
+         *
+         * @type {Object}
+         */
+        self._directMap = {};
+
+        /**
+         * keeps track of what level each sequence is at since multiple
+         * sequences can start out with the same sequence
+         *
+         * @type {Object}
+         */
+        var _sequenceLevels = {};
+
+        /**
+         * variable to store the setTimeout call
+         *
+         * @type {null|number}
+         */
+        var _resetTimer;
+
+        /**
+         * temporary state where we will ignore the next keyup
+         *
+         * @type {boolean|string}
+         */
+        var _ignoreNextKeyup = false;
+
+        /**
+         * temporary state where we will ignore the next keypress
+         *
+         * @type {boolean}
+         */
+        var _ignoreNextKeypress = false;
+
+        /**
+         * are we currently inside of a sequence?
+         * type of action ("keyup" or "keydown" or "keypress") or false
+         *
+         * @type {boolean|string}
+         */
+        var _nextExpectedAction = false;
+
+        /**
+         * resets all sequence counters except for the ones passed in
+         *
+         * @param {Object} doNotReset
+         * @returns void
+         */
+        function _resetSequences(doNotReset) {
+            doNotReset = doNotReset || {};
+
+            var activeSequences = false,
+                key;
+
+            for (key in _sequenceLevels) {
+                if (doNotReset[key]) {
+                    activeSequences = true;
+                    continue;
+                }
+                _sequenceLevels[key] = 0;
+            }
+
+            if (!activeSequences) {
+                _nextExpectedAction = false;
+            }
+        }
+
+        /**
+         * finds all callbacks that match based on the keycode, modifiers,
+         * and action
+         *
+         * @param {string} character
+         * @param {Array} modifiers
+         * @param {Event|Object} e
+         * @param {string=} sequenceName - name of the sequence we are looking for
+         * @param {string=} combination
+         * @param {number=} level
+         * @returns {Array}
+         */
+        function _getMatches(character, modifiers, e, sequenceName, combination, level) {
+            var i;
+            var callback;
+            var matches = [];
+            var action = e.type;
+
+            // if there are no events related to this keycode
+            if (!self._callbacks[character]) {
+                return [];
+            }
+
+            // if a modifier key is coming up on its own we should allow it
+            if (action == 'keyup' && _isModifier(character)) {
+                modifiers = [character];
+            }
+
+            // loop through all callbacks for the key that was pressed
+            // and see if any of them match
+            for (i = 0; i < self._callbacks[character].length; ++i) {
+                callback = self._callbacks[character][i];
+
+                // if a sequence name is not specified, but this is a sequence at
+                // the wrong level then move onto the next match
+                if (!sequenceName && callback.seq && _sequenceLevels[callback.seq] != callback.level) {
+                    continue;
+                }
+
+                // if the action we are looking for doesn't match the action we got
+                // then we should keep going
+                if (action != callback.action) {
+                    continue;
+                }
+
+                // if this is a keypress event and the meta key and control key
+                // are not pressed that means that we need to only look at the
+                // character, otherwise check the modifiers as well
+                //
+                // chrome will not fire a keypress if meta or control is down
+                // safari will fire a keypress if meta or meta+shift is down
+                // firefox will fire a keypress if meta or control is down
+                if ((action == 'keypress' && !e.metaKey && !e.ctrlKey) || _modifiersMatch(modifiers, callback.modifiers)) {
+
+                    // when you bind a combination or sequence a second time it
+                    // should overwrite the first one.  if a sequenceName or
+                    // combination is specified in this call it does just that
+                    //
+                    // @todo make deleting its own method?
+                    var deleteCombo = !sequenceName && callback.combo == combination;
+                    var deleteSequence = sequenceName && callback.seq == sequenceName && callback.level == level;
+                    if (deleteCombo || deleteSequence) {
+                        self._callbacks[character].splice(i, 1);
+                    }
+
+                    matches.push(callback);
+                }
+            }
+
+            return matches;
+        }
+
+        /**
+         * actually calls the callback function
+         *
+         * if your callback function returns false this will use the jquery
+         * convention - prevent default and stop propogation on the event
+         *
+         * @param {Function} callback
+         * @param {Event} e
+         * @returns void
+         */
+        function _fireCallback(callback, e, combo, sequence) {
+
+            // if this event should not happen stop here
+            if (self.stopCallback(e, e.target || e.srcElement, combo, sequence)) {
+                return;
+            }
+
+            if (callback(e, combo) === false) {
+                _preventDefault(e);
+                _stopPropagation(e);
+            }
+        }
+
+        /**
+         * handles a character key event
+         *
+         * @param {string} character
+         * @param {Array} modifiers
+         * @param {Event} e
+         * @returns void
+         */
+        self._handleKey = function(character, modifiers, e) {
+            var callbacks = _getMatches(character, modifiers, e);
+            var i;
+            var doNotReset = {};
+            var maxLevel = 0;
+            var processedSequenceCallback = false;
+
+            // Calculate the maxLevel for sequences so we can only execute the longest callback sequence
+            for (i = 0; i < callbacks.length; ++i) {
+                if (callbacks[i].seq) {
+                    maxLevel = Math.max(maxLevel, callbacks[i].level);
+                }
+            }
+
+            // loop through matching callbacks for this key event
+            for (i = 0; i < callbacks.length; ++i) {
+
+                // fire for all sequence callbacks
+                // this is because if for example you have multiple sequences
+                // bound such as "g i" and "g t" they both need to fire the
+                // callback for matching g cause otherwise you can only ever
+                // match the first one
+                if (callbacks[i].seq) {
+
+                    // only fire callbacks for the maxLevel to prevent
+                    // subsequences from also firing
+                    //
+                    // for example 'a option b' should not cause 'option b' to fire
+                    // even though 'option b' is part of the other sequence
+                    //
+                    // any sequences that do not match here will be discarded
+                    // below by the _resetSequences call
+                    if (callbacks[i].level != maxLevel) {
+                        continue;
+                    }
+
+                    processedSequenceCallback = true;
+
+                    // keep a list of which sequences were matches for later
+                    doNotReset[callbacks[i].seq] = 1;
+                    _fireCallback(callbacks[i].callback, e, callbacks[i].combo, callbacks[i].seq);
+                    continue;
+                }
+
+                // if there were no sequence matches but we are still here
+                // that means this is a regular match so we should fire that
+                if (!processedSequenceCallback) {
+                    _fireCallback(callbacks[i].callback, e, callbacks[i].combo);
+                }
+            }
+
+            // if the key you pressed matches the type of sequence without
+            // being a modifier (ie "keyup" or "keypress") then we should
+            // reset all sequences that were not matched by this event
+            //
+            // this is so, for example, if you have the sequence "h a t" and you
+            // type "h e a r t" it does not match.  in this case the "e" will
+            // cause the sequence to reset
+            //
+            // modifier keys are ignored because you can have a sequence
+            // that contains modifiers such as "enter ctrl+space" and in most
+            // cases the modifier key will be pressed before the next key
+            //
+            // also if you have a sequence such as "ctrl+b a" then pressing the
+            // "b" key will trigger a "keypress" and a "keydown"
+            //
+            // the "keydown" is expected when there is a modifier, but the
+            // "keypress" ends up matching the _nextExpectedAction since it occurs
+            // after and that causes the sequence to reset
+            //
+            // we ignore keypresses in a sequence that directly follow a keydown
+            // for the same character
+            var ignoreThisKeypress = e.type == 'keypress' && _ignoreNextKeypress;
+            if (e.type == _nextExpectedAction && !_isModifier(character) && !ignoreThisKeypress) {
+                _resetSequences(doNotReset);
+            }
+
+            _ignoreNextKeypress = processedSequenceCallback && e.type == 'keydown';
+        };
+
+        /**
+         * handles a keydown event
+         *
+         * @param {Event} e
+         * @returns void
+         */
+        function _handleKeyEvent(e) {
+
+            // normalize e.which for key events
+            // @see http://stackoverflow.com/questions/4285627/javascript-keycode-vs-charcode-utter-confusion
+            if (typeof e.which !== 'number') {
+                e.which = e.keyCode;
+            }
+
+            var character = _characterFromEvent(e);
+
+            // no character found then stop
+            if (!character) {
+                return;
+            }
+
+            // need to use === for the character check because the character can be 0
+            if (e.type == 'keyup' && _ignoreNextKeyup === character) {
+                _ignoreNextKeyup = false;
+                return;
+            }
+
+            self.handleKey(character, _eventModifiers(e), e);
+        }
+
+        /**
+         * called to set a 1 second timeout on the specified sequence
+         *
+         * this is so after each key press in the sequence you have 1 second
+         * to press the next key before you have to start over
+         *
+         * @returns void
+         */
+        function _resetSequenceTimer() {
+            clearTimeout(_resetTimer);
+            _resetTimer = setTimeout(_resetSequences, 1000);
+        }
+
+        /**
+         * binds a key sequence to an event
+         *
+         * @param {string} combo - combo specified in bind call
+         * @param {Array} keys
+         * @param {Function} callback
+         * @param {string=} action
+         * @returns void
+         */
+        function _bindSequence(combo, keys, callback, action) {
+
+            // start off by adding a sequence level record for this combination
+            // and setting the level to 0
+            _sequenceLevels[combo] = 0;
+
+            /**
+             * callback to increase the sequence level for this sequence and reset
+             * all other sequences that were active
+             *
+             * @param {string} nextAction
+             * @returns {Function}
+             */
+            function _increaseSequence(nextAction) {
+                return function() {
+                    _nextExpectedAction = nextAction;
+                    ++_sequenceLevels[combo];
+                    _resetSequenceTimer();
+                };
+            }
+
+            /**
+             * wraps the specified callback inside of another function in order
+             * to reset all sequence counters as soon as this sequence is done
+             *
+             * @param {Event} e
+             * @returns void
+             */
+            function _callbackAndReset(e) {
+                _fireCallback(callback, e, combo);
+
+                // we should ignore the next key up if the action is key down
+                // or keypress.  this is so if you finish a sequence and
+                // release the key the final key will not trigger a keyup
+                if (action !== 'keyup') {
+                    _ignoreNextKeyup = _characterFromEvent(e);
+                }
+
+                // weird race condition if a sequence ends with the key
+                // another sequence begins with
+                setTimeout(_resetSequences, 10);
+            }
+
+            // loop through keys one at a time and bind the appropriate callback
+            // function.  for any key leading up to the final one it should
+            // increase the sequence. after the final, it should reset all sequences
+            //
+            // if an action is specified in the original bind call then that will
+            // be used throughout.  otherwise we will pass the action that the
+            // next key in the sequence should match.  this allows a sequence
+            // to mix and match keypress and keydown events depending on which
+            // ones are better suited to the key provided
+            for (var i = 0; i < keys.length; ++i) {
+                var isFinal = i + 1 === keys.length;
+                var wrappedCallback = isFinal ? _callbackAndReset : _increaseSequence(action || _getKeyInfo(keys[i + 1]).action);
+                _bindSingle(keys[i], wrappedCallback, action, combo, i);
+            }
+        }
+
+        /**
+         * binds a single keyboard combination
+         *
+         * @param {string} combination
+         * @param {Function} callback
+         * @param {string=} action
+         * @param {string=} sequenceName - name of sequence if part of sequence
+         * @param {number=} level - what part of the sequence the command is
+         * @returns void
+         */
+        function _bindSingle(combination, callback, action, sequenceName, level) {
+
+            // store a direct mapped reference for use with Mousetrap.trigger
+            self._directMap[combination + ':' + action] = callback;
+
+            // make sure multiple spaces in a row become a single space
+            combination = combination.replace(/\s+/g, ' ');
+
+            var sequence = combination.split(' ');
+            var info;
+
+            // if this pattern is a sequence of keys then run through this method
+            // to reprocess each pattern one key at a time
+            if (sequence.length > 1) {
+                _bindSequence(combination, sequence, callback, action);
+                return;
+            }
+
+            info = _getKeyInfo(combination, action);
+
+            // make sure to initialize array if this is the first time
+            // a callback is added for this key
+            self._callbacks[info.key] = self._callbacks[info.key] || [];
+
+            // remove an existing match if there is one
+            _getMatches(info.key, info.modifiers, {type: info.action}, sequenceName, combination, level);
+
+            // add this call back to the array
+            // if it is a sequence put it at the beginning
+            // if not put it at the end
+            //
+            // this is important because the way these are processed expects
+            // the sequence ones to come first
+            self._callbacks[info.key][sequenceName ? 'unshift' : 'push']({
+                callback: callback,
+                modifiers: info.modifiers,
+                action: info.action,
+                seq: sequenceName,
+                level: level,
+                combo: combination
+            });
+        }
+
+        /**
+         * binds multiple combinations to the same callback
+         *
+         * @param {Array} combinations
+         * @param {Function} callback
+         * @param {string|undefined} action
+         * @returns void
+         */
+        self._bindMultiple = function(combinations, callback, action) {
+            for (var i = 0; i < combinations.length; ++i) {
+                _bindSingle(combinations[i], callback, action);
+            }
+        };
+
+        // start!
+        _addEvent(targetElement, 'keypress', _handleKeyEvent);
+        _addEvent(targetElement, 'keydown', _handleKeyEvent);
+        _addEvent(targetElement, 'keyup', _handleKeyEvent);
+    }
+
+    /**
+     * binds an event to mousetrap
+     *
+     * can be a single key, a combination of keys separated with +,
+     * an array of keys, or a sequence of keys separated by spaces
+     *
+     * be sure to list the modifier keys first to make sure that the
+     * correct key ends up getting bound (the last key in the pattern)
+     *
+     * @param {string|Array} keys
+     * @param {Function} callback
+     * @param {string=} action - 'keypress', 'keydown', or 'keyup'
+     * @returns void
+     */
+    Mousetrap.prototype.bind = function(keys, callback, action) {
+        var self = this;
+        keys = keys instanceof Array ? keys : [keys];
+        self._bindMultiple.call(self, keys, callback, action);
+        return self;
+    };
+
+    /**
+     * unbinds an event to mousetrap
+     *
+     * the unbinding sets the callback function of the specified key combo
+     * to an empty function and deletes the corresponding key in the
+     * _directMap dict.
+     *
+     * TODO: actually remove this from the _callbacks dictionary instead
+     * of binding an empty function
+     *
+     * the keycombo+action has to be exactly the same as
+     * it was defined in the bind method
+     *
+     * @param {string|Array} keys
+     * @param {string} action
+     * @returns void
+     */
+    Mousetrap.prototype.unbind = function(keys, action) {
+        var self = this;
+        return self.bind.call(self, keys, function() {}, action);
+    };
+
+    /**
+     * triggers an event that has already been bound
+     *
+     * @param {string} keys
+     * @param {string=} action
+     * @returns void
+     */
+    Mousetrap.prototype.trigger = function(keys, action) {
+        var self = this;
+        if (self._directMap[keys + ':' + action]) {
+            self._directMap[keys + ':' + action]({}, keys);
+        }
+        return self;
+    };
+
+    /**
+     * resets the library back to its initial state.  this is useful
+     * if you want to clear out the current keyboard shortcuts and bind
+     * new ones - for example if you switch to another page
+     *
+     * @returns void
+     */
+    Mousetrap.prototype.reset = function() {
+        var self = this;
+        self._callbacks = {};
+        self._directMap = {};
+        return self;
+    };
+
+    /**
+     * should we stop this event before firing off callbacks
+     *
+     * @param {Event} e
+     * @param {Element} element
+     * @return {boolean}
+     */
+    Mousetrap.prototype.stopCallback = function(e, element) {
+        var self = this;
+
+        // if the element has the class "mousetrap" then no need to stop
+        if ((' ' + element.className + ' ').indexOf(' mousetrap ') > -1) {
+            return false;
+        }
+
+        if (_belongsTo(element, self.target)) {
+            return false;
+        }
+
+        // stop for input, select, and textarea
+        return element.tagName == 'INPUT' || element.tagName == 'SELECT' || element.tagName == 'TEXTAREA' || element.isContentEditable;
+    };
+
+    /**
+     * exposes _handleKey publicly so it can be overwritten by extensions
+     */
+    Mousetrap.prototype.handleKey = function() {
+        var self = this;
+        return self._handleKey.apply(self, arguments);
+    };
+
+    /**
+     * allow custom key mappings
+     */
+    Mousetrap.addKeycodes = function(object) {
+        for (var key in object) {
+            if (object.hasOwnProperty(key)) {
+                _MAP[key] = object[key];
+            }
+        }
+        _REVERSE_MAP = null;
+    };
+
+    /**
+     * Init the global mousetrap functions
+     *
+     * This method is needed to allow the global mousetrap functions to work
+     * now that mousetrap is a constructor function.
+     */
+    Mousetrap.init = function() {
+        var documentMousetrap = Mousetrap(document);
+        for (var method in documentMousetrap) {
+            if (method.charAt(0) !== '_') {
+                Mousetrap[method] = (function(method) {
+                    return function() {
+                        return documentMousetrap[method].apply(documentMousetrap, arguments);
+                    };
+                } (method));
+            }
+        }
+    };
+
+    Mousetrap.init();
+
+    // expose mousetrap to the global object
+    window.Mousetrap = Mousetrap;
+
+    // expose as a common js module
+    if ('object' !== 'undefined' && module.exports) {
+        module.exports = Mousetrap;
+    }
+
+    // expose mousetrap as an AMD module
+    if (typeof undefined === 'function' && undefined.amd) {
+        undefined(function() {
+            return Mousetrap;
+        });
+    }
+}) (typeof window !== 'undefined' ? window : null, typeof  window !== 'undefined' ? document : null);
+});
+
+var UrbitOperator =
+/*#__PURE__*/
+function () {
+  function UrbitOperator(warehouse) {
+    _classCallCheck(this, UrbitOperator);
+
+    this.seqn = 1;
+    this.warehouse = warehouse;
+    this.runPoll();
+    this.bindInbox();
+    this.bindShortcuts();
+  }
+
+  _createClass(UrbitOperator, [{
+    key: "bindShortcuts",
+    value: function bindShortcuts() {
+      mousetrap.bind(["command+k"], function () {
+        var menuActive = window.location.href.includes("menu");
+
+        if (menuActive) {
+          window.history.back();
+        } else {
+          window.router.transitionTo('/~~/pages/nutalk/menu');
+        }
+      });
+    }
+  }, {
+    key: "bindInbox",
+    value: function bindInbox() {
+      // inbox local + remote configs, remote presences
+      api$1.bind("/circle/inbox/config/group-r/0", "PUT"); // inbox messages
+
+      api$1.bind("/circle/inbox/grams/-50", "PUT"); // owner's circles
+
+      api$1.bind("/circles/~".concat(api$1.authTokens.ship), "PUT"); // parses client-specific info (ship nicknames, glyphs, etc)
+      // this.bind("/client", "PUT");
+      // public membership
+      // this.bind("/public", "PUT");
+      // bind to collections
+      // this.bind("/", "PUT", "collections");
+      // delete subscriptions when you're done with them, like...
+      // this.bind("/circle/inbox/grams/0", "DELETE");
+    }
+  }, {
+    key: "runPoll",
+    value: function runPoll() {
+      var _this = this;
+
+      console.log('fetching... ', this.seqn);
+      fetch("/~/of/".concat(api$1.authTokens.ixor, "?poll=").concat(this.seqn), {
+        credentials: "same-origin"
+      }).then(function (res) {
+        return res.json();
+      }).then(function (data) {
+        if (data.beat) {
+          console.log('beat');
+
+          _this.runPoll();
+        } else {
+          console.log("new server data: ", data);
+
+          if (data.data) {
+            var hallReports = _this.extractReports(data);
+          }
+
+          _this.seqn++;
+
+          _this.runPoll();
+        }
+      });
+    }
+  }, {
+    key: "extractReports",
+    value: function extractReports(serverData) {
+      var reports = [];
+      var reportTypes = Object.keys(Reports);
+      var json = serverData.data.json;
+      reportTypes.forEach(function (type) {
+        var reportData = lodash.get(json, type, null);
+
+        if (!lodash.isEmpty(reportData)) {
+          // TODO: Awful, ugly hack. Maybe fix this with API discussion.
+          if (Reports[type].include) {
+            reportData = lodash.get(json, Reports[type].include, null);
+          }
+
+          reports.push({
+            type: type,
+            data: reportData,
+            from: serverData.from
+          });
+        }
+      });
+      reports.forEach(function (rep) {
+        return console.log('new report: ', rep);
+      });
+      this.warehouse.storeReports(reports);
+    }
+  }]);
+
+  return UrbitOperator;
+}();
+
+var IconBlog =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(IconBlog, _Component);
+
+  function IconBlog() {
+    _classCallCheck(this, IconBlog);
+
+    return _possibleConstructorReturn(this, (IconBlog.__proto__ || Object.getPrototypeOf(IconBlog)).apply(this, arguments));
+  }
+
+  _createClass(IconBlog, [{
+    key: "render",
+    value: function render() {
+      return react.createElement("svg", {
+        width: "18px",
+        height: "18px",
+        viewBox: "0 0 18 18",
+        version: "1.1"
+      }, react.createElement("title", null, "Blog Icon"), react.createElement("desc", null, "Created with Sketch."), react.createElement("defs", null), react.createElement("g", {
+        id: "Symbols",
+        stroke: "none",
+        strokeWidth: "1",
+        fill: "none",
+        fillRule: "evenodd"
+      }, react.createElement("g", {
+        id: "Blog-Icon",
+        transform: "translate(-7.000000, -7.000000)"
+      }, react.createElement("g", {
+        id: "Group-4"
+      }, react.createElement("rect", {
+        id: "Rectangle-4",
+        x: "0",
+        y: "0",
+        width: "32",
+        height: "32"
+      }), react.createElement("rect", {
+        id: "Rectangle-path",
+        fill: "#FFFFFF",
+        fillRule: "nonzero",
+        x: "7",
+        y: "7",
+        width: "18",
+        height: "18",
+        rx: "1"
+      }), react.createElement("path", {
+        d: "M25,8 C25,7.447693 24.5522,7 24,7 L8,7 C7.447754,7 7,7.447693 7,8 L7,24 C7,24.5523 7.447754,25 8,25 L24,25 C24.5522,25 25,24.5523 25,24 L25,8 Z M22,12 L10,12 L10,14 L22,14 L22,12 Z M10,15 L22,15 L22,17 L10,17 L10,15 Z M19,18 L10,18 L10,20 L19,20 L19,18 Z",
+        id: "Shape",
+        fill: "#0A7960"
+      })))));
+    }
+  }]);
+
+  return IconBlog;
+}(react_1);
+
+var Header =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Header, _Component);
+
+  function Header(props) {
+    var _this;
+
+    _classCallCheck(this, Header);
+
+    _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this, props));
+    _this.toggleSubscribe = _this.toggleSubscribe.bind(_this);
+    return _this;
+  }
+
+  _createClass(Header, [{
+    key: "stationName",
+    value: function stationName() {
+      return "".concat(this.props.data.ship, "/collection_~").concat(this.props.data.id);
+    }
+  }, {
+    key: "isSubscribed",
+    value: function isSubscribed() {
+      var inbox = this.props.store.configs["~".concat(api$1.authTokens.ship, "/inbox")];
+      if (!inbox) return false;
+      return inbox.src.includes(this.stationName());
+    }
+  }, {
+    key: "toggleSubscribe",
+    value: function toggleSubscribe() {
+      var subscribed = this.isSubscribed();
+      api$1.hall({
+        source: {
+          nom: "inbox",
+          sub: !subscribed,
+          srs: [this.stationName()]
+        }
+      });
+    }
+  }, {
+    key: "getContent",
+    value: function getContent() {
+      var subscribeButton = this.isSubscribed() ? react.createElement("button", {
+        type: "button",
+        onClick: this.toggleSubscribe,
+        className: "btn btn-sm btn-secondary"
+      }, "Unsubscribe") : react.createElement("button", {
+        type: "button",
+        onClick: this.toggleSubscribe,
+        className: "btn btn-sm btn-primary"
+      }, "Subscribe");
+
+      switch (this.props.type) {
+        case "collection-index":
+          var collectionURL = "../".concat(this.props.data.id);
+          return react.createElement("div", {
+            className: "flex space-between"
+          }, react.createElement("div", {
+            className: "flex align-center"
+          }, react.createElement("a", {
+            href: "/~~/pages/nutalk/menu",
+            className: "mr-22"
+          }, react.createElement("div", {
+            className: "panini"
+          })), react.createElement("div", {
+            className: "mr-8"
+          }, react.createElement(IconBlog, null)), react.createElement("h3", null, react.createElement("a", {
+            href: collectionURL
+          }, this.props.data.title))), react.createElement("div", {
+            className: "flex align-center"
+          }, react.createElement("a", {
+            href: "/~~/details",
+            className: "header-link mr-6"
+          }, "Details"), subscribeButton));
+          break;
+
+        default:
+          return react.createElement("div", {
+            className: "flex"
+          }, react.createElement("div", {
+            className: "flex align-center"
+          }, react.createElement("a", {
+            href: "/~~/pages/nutalk/menu",
+            className: "mr-22"
+          }, react.createElement("div", {
+            className: "panini"
+          })), react.createElement("div", {
+            className: "mr-8"
+          }, react.createElement("div", {
+            style: {
+              width: "18px",
+              height: "18px"
+            }
+          })), react.createElement("h3", null, "Inbox")));
+          break;
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return react.createElement("div", {
+        className: "header-container"
+      }, react.createElement("div", {
+        className: "container"
+      }, react.createElement("div", {
+        className: "row"
+      }, react.createElement("div", {
+        className: "col-sm-12"
+      }, this.getContent()))));
+    }
+  }]);
+
+  return Header;
+}(react_1);
+
+function _isPlaceholder(a) {
+       return a != null && typeof a === 'object' && a['@@functional/placeholder'] === true;
+}
+var _isPlaceholder_1 = _isPlaceholder;
+
+
+
+var _isPlaceholder$1 = Object.freeze({
+	default: _isPlaceholder_1,
+	__moduleExports: _isPlaceholder_1
+});
+
+var _isPlaceholder$2 = ( _isPlaceholder$1 && _isPlaceholder_1 ) || _isPlaceholder$1;
+
+function _curry1(fn) {
+  return function f1(a) {
+    if (arguments.length === 0 || _isPlaceholder$2(a)) {
+      return f1;
+    } else {
+      return fn.apply(this, arguments);
+    }
+  };
+}
+var _curry1_1 = _curry1;
+
+
+
+var _curry1$1 = Object.freeze({
+	default: _curry1_1,
+	__moduleExports: _curry1_1
+});
+
+var _curry1$2 = ( _curry1$1 && _curry1_1 ) || _curry1$1;
+
+function _curry2(fn) {
+  return function f2(a, b) {
+    switch (arguments.length) {
+      case 0:
+        return f2;
+      case 1:
+        return _isPlaceholder$2(a) ? f2 : _curry1$2(function (_b) {
+          return fn(a, _b);
+        });
+      default:
+        return _isPlaceholder$2(a) && _isPlaceholder$2(b) ? f2 : _isPlaceholder$2(a) ? _curry1$2(function (_a) {
+          return fn(_a, b);
+        }) : _isPlaceholder$2(b) ? _curry1$2(function (_b) {
+          return fn(a, _b);
+        }) : fn(a, b);
+    }
+  };
+}
+var _curry2_1 = _curry2;
+
+
+
+var _curry2$1 = Object.freeze({
+	default: _curry2_1,
+	__moduleExports: _curry2_1
+});
+
+/**
+ * Tests whether or not an object is an array.
+ *
+ * @private
+ * @param {*} val The object to test.
+ * @return {Boolean} `true` if `val` is an array, `false` otherwise.
+ * @example
+ *
+ *      _isArray([]); //=> true
+ *      _isArray(null); //=> false
+ *      _isArray({}); //=> false
+ */
+var _isArray$3 = Array.isArray || function _isArray(val) {
+  return val != null && val.length >= 0 && Object.prototype.toString.call(val) === '[object Array]';
+};
+
+
+
+var _isArray$5 = Object.freeze({
+	default: _isArray$3,
+	__moduleExports: _isArray$3
+});
+
+function _isTransformer(obj) {
+  return typeof obj['@@transducer/step'] === 'function';
+}
+var _isTransformer_1 = _isTransformer;
+
+
+
+var _isTransformer$1 = Object.freeze({
+	default: _isTransformer_1,
+	__moduleExports: _isTransformer_1
+});
+
+var _isArray$6 = ( _isArray$5 && _isArray$3 ) || _isArray$5;
+
+var _isTransformer$2 = ( _isTransformer$1 && _isTransformer_1 ) || _isTransformer$1;
+
+function _dispatchable(methodNames, xf, fn) {
+  return function () {
+    if (arguments.length === 0) {
+      return fn();
+    }
+    var args = Array.prototype.slice.call(arguments, 0);
+    var obj = args.pop();
+    if (!_isArray$6(obj)) {
+      var idx = 0;
+      while (idx < methodNames.length) {
+        if (typeof obj[methodNames[idx]] === 'function') {
+          return obj[methodNames[idx]].apply(obj, args);
+        }
+        idx += 1;
+      }
+      if (_isTransformer$2(obj)) {
+        var transducer = xf.apply(null, args);
+        return transducer(obj);
+      }
+    }
+    return fn.apply(this, arguments);
+  };
+}
+var _dispatchable_1 = _dispatchable;
+
+
+
+var _dispatchable$1 = Object.freeze({
+	default: _dispatchable_1,
+	__moduleExports: _dispatchable_1
+});
+
+function _reduced(x) {
+  return x && x['@@transducer/reduced'] ? x : {
+    '@@transducer/value': x,
+    '@@transducer/reduced': true
+  };
+}
+var _reduced_1 = _reduced;
+
+
+
+var _reduced$1 = Object.freeze({
+	default: _reduced_1,
+	__moduleExports: _reduced_1
+});
+
+var _xfBase = {
+  init: function () {
+    return this.xf['@@transducer/init']();
+  },
+  result: function (result) {
+    return this.xf['@@transducer/result'](result);
+  }
+};
+
+
+
+var _xfBase$2 = Object.freeze({
+	default: _xfBase,
+	__moduleExports: _xfBase
+});
+
+var _curry2$2 = ( _curry2$1 && _curry2_1 ) || _curry2$1;
+
+var _reduced$2 = ( _reduced$1 && _reduced_1 ) || _reduced$1;
+
+var _xfBase$3 = ( _xfBase$2 && _xfBase ) || _xfBase$2;
+
+var XFind = /*#__PURE__*/function () {
+
+  function XFind(f, xf) {
+    this.xf = xf;
+    this.f = f;
+    this.found = false;
+  }
+  XFind.prototype['@@transducer/init'] = _xfBase$3.init;
+  XFind.prototype['@@transducer/result'] = function (result) {
+    if (!this.found) {
+      result = this.xf['@@transducer/step'](result, void 0);
+    }
+    return this.xf['@@transducer/result'](result);
+  };
+  XFind.prototype['@@transducer/step'] = function (result, input) {
+    if (this.f(input)) {
+      this.found = true;
+      result = _reduced$2(this.xf['@@transducer/step'](result, input));
+    }
+    return result;
+  };
+
+  return XFind;
+}();
+
+var _xfind = /*#__PURE__*/_curry2$2(function _xfind(f, xf) {
+  return new XFind(f, xf);
+});
+var _xfind_1 = _xfind;
+
+
+
+var _xfind$1 = Object.freeze({
+	default: _xfind_1,
+	__moduleExports: _xfind_1
+});
+
+var _dispatchable$2 = ( _dispatchable$1 && _dispatchable_1 ) || _dispatchable$1;
+
+var _xfind$2 = ( _xfind$1 && _xfind_1 ) || _xfind$1;
+
+var find = /*#__PURE__*/_curry2$2( /*#__PURE__*/_dispatchable$2(['find'], _xfind$2, function find(fn, list) {
+  var idx = 0;
+  var len = list.length;
+  while (idx < len) {
+    if (fn(list[idx])) {
+      return list[idx];
+    }
+    idx += 1;
+  }
+}));
+var find_1 = find;
+
+
+
+var find$1 = Object.freeze({
+	default: find_1,
+	__moduleExports: find_1
+});
+
+function _complement(f) {
+  return function () {
+    return !f.apply(this, arguments);
+  };
+}
+var _complement_1 = _complement;
+
+
+
+var _complement$1 = Object.freeze({
+	default: _complement_1,
+	__moduleExports: _complement_1
+});
+
+function _filter(fn, list) {
+  var idx = 0;
+  var len = list.length;
+  var result = [];
+
+  while (idx < len) {
+    if (fn(list[idx])) {
+      result[result.length] = list[idx];
+    }
+    idx += 1;
+  }
+  return result;
+}
+var _filter_1 = _filter;
+
+
+
+var _filter$1 = Object.freeze({
+	default: _filter_1,
+	__moduleExports: _filter_1
+});
+
+function _isObject$3(x) {
+  return Object.prototype.toString.call(x) === '[object Object]';
+}
+var _isObject_1 = _isObject$3;
+
+
+
+var _isObject$4 = Object.freeze({
+	default: _isObject_1,
+	__moduleExports: _isObject_1
+});
+
+function _isString(x) {
+  return Object.prototype.toString.call(x) === '[object String]';
+}
+var _isString_1 = _isString;
+
+
+
+var _isString$1 = Object.freeze({
+	default: _isString_1,
+	__moduleExports: _isString_1
+});
+
+var _isString$2 = ( _isString$1 && _isString_1 ) || _isString$1;
+
+var _isArrayLike = /*#__PURE__*/_curry1$2(function isArrayLike(x) {
+  if (_isArray$6(x)) {
+    return true;
+  }
+  if (!x) {
+    return false;
+  }
+  if (typeof x !== 'object') {
+    return false;
+  }
+  if (_isString$2(x)) {
+    return false;
+  }
+  if (x.nodeType === 1) {
+    return !!x.length;
+  }
+  if (x.length === 0) {
+    return true;
+  }
+  if (x.length > 0) {
+    return x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
+  }
+  return false;
+});
+var _isArrayLike_1 = _isArrayLike;
+
+
+
+var _isArrayLike$1 = Object.freeze({
+	default: _isArrayLike_1,
+	__moduleExports: _isArrayLike_1
+});
+
+var XWrap = /*#__PURE__*/function () {
+  function XWrap(fn) {
+    this.f = fn;
+  }
+  XWrap.prototype['@@transducer/init'] = function () {
+    throw new Error('init not implemented on XWrap');
+  };
+  XWrap.prototype['@@transducer/result'] = function (acc) {
+    return acc;
+  };
+  XWrap.prototype['@@transducer/step'] = function (acc, x) {
+    return this.f(acc, x);
+  };
+
+  return XWrap;
+}();
+
+function _xwrap(fn) {
+  return new XWrap(fn);
+}
+var _xwrap_1 = _xwrap;
+
+
+
+var _xwrap$1 = Object.freeze({
+	default: _xwrap_1,
+	__moduleExports: _xwrap_1
+});
+
+function _arity(n, fn) {
+  /* eslint-disable no-unused-vars */
+  switch (n) {
+    case 0:
+      return function () {
+        return fn.apply(this, arguments);
+      };
+    case 1:
+      return function (a0) {
+        return fn.apply(this, arguments);
+      };
+    case 2:
+      return function (a0, a1) {
+        return fn.apply(this, arguments);
+      };
+    case 3:
+      return function (a0, a1, a2) {
+        return fn.apply(this, arguments);
+      };
+    case 4:
+      return function (a0, a1, a2, a3) {
+        return fn.apply(this, arguments);
+      };
+    case 5:
+      return function (a0, a1, a2, a3, a4) {
+        return fn.apply(this, arguments);
+      };
+    case 6:
+      return function (a0, a1, a2, a3, a4, a5) {
+        return fn.apply(this, arguments);
+      };
+    case 7:
+      return function (a0, a1, a2, a3, a4, a5, a6) {
+        return fn.apply(this, arguments);
+      };
+    case 8:
+      return function (a0, a1, a2, a3, a4, a5, a6, a7) {
+        return fn.apply(this, arguments);
+      };
+    case 9:
+      return function (a0, a1, a2, a3, a4, a5, a6, a7, a8) {
+        return fn.apply(this, arguments);
+      };
+    case 10:
+      return function (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
+        return fn.apply(this, arguments);
+      };
+    default:
+      throw new Error('First argument to _arity must be a non-negative integer no greater than ten');
+  }
+}
+var _arity_1 = _arity;
+
+
+
+var _arity$1 = Object.freeze({
+	default: _arity_1,
+	__moduleExports: _arity_1
+});
+
+var _arity$2 = ( _arity$1 && _arity_1 ) || _arity$1;
+
+var bind$1 = /*#__PURE__*/_curry2$2(function bind(fn, thisObj) {
+  return _arity$2(fn.length, function () {
+    return fn.apply(thisObj, arguments);
+  });
+});
+var bind_1 = bind$1;
+
+
+
+var bind$2 = Object.freeze({
+	default: bind_1,
+	__moduleExports: bind_1
+});
+
+var _isArrayLike$2 = ( _isArrayLike$1 && _isArrayLike_1 ) || _isArrayLike$1;
+
+var _xwrap$2 = ( _xwrap$1 && _xwrap_1 ) || _xwrap$1;
+
+var bind$3 = ( bind$2 && bind_1 ) || bind$2;
+
+function _arrayReduce$3(xf, acc, list) {
+  var idx = 0;
+  var len = list.length;
+  while (idx < len) {
+    acc = xf['@@transducer/step'](acc, list[idx]);
+    if (acc && acc['@@transducer/reduced']) {
+      acc = acc['@@transducer/value'];
+      break;
+    }
+    idx += 1;
+  }
+  return xf['@@transducer/result'](acc);
+}
+
+function _iterableReduce(xf, acc, iter) {
+  var step = iter.next();
+  while (!step.done) {
+    acc = xf['@@transducer/step'](acc, step.value);
+    if (acc && acc['@@transducer/reduced']) {
+      acc = acc['@@transducer/value'];
+      break;
+    }
+    step = iter.next();
+  }
+  return xf['@@transducer/result'](acc);
+}
+
+function _methodReduce(xf, acc, obj, methodName) {
+  return xf['@@transducer/result'](obj[methodName](bind$3(xf['@@transducer/step'], xf), acc));
+}
+
+var symIterator = typeof Symbol !== 'undefined' ? Symbol.iterator : '@@iterator';
+
+function _reduce(fn, acc, list) {
+  if (typeof fn === 'function') {
+    fn = _xwrap$2(fn);
+  }
+  if (_isArrayLike$2(list)) {
+    return _arrayReduce$3(fn, acc, list);
+  }
+  if (typeof list['fantasy-land/reduce'] === 'function') {
+    return _methodReduce(fn, acc, list, 'fantasy-land/reduce');
+  }
+  if (list[symIterator] != null) {
+    return _iterableReduce(fn, acc, list[symIterator]());
+  }
+  if (typeof list.next === 'function') {
+    return _iterableReduce(fn, acc, list);
+  }
+  if (typeof list.reduce === 'function') {
+    return _methodReduce(fn, acc, list, 'reduce');
+  }
+
+  throw new TypeError('reduce: list must be array or iterable');
+}
+var _reduce_1 = _reduce;
+
+
+
+var _reduce$1 = Object.freeze({
+	default: _reduce_1,
+	__moduleExports: _reduce_1
+});
+
+var XFilter = /*#__PURE__*/function () {
+
+  function XFilter(f, xf) {
+    this.xf = xf;
+    this.f = f;
+  }
+  XFilter.prototype['@@transducer/init'] = _xfBase$3.init;
+  XFilter.prototype['@@transducer/result'] = _xfBase$3.result;
+  XFilter.prototype['@@transducer/step'] = function (result, input) {
+    return this.f(input) ? this.xf['@@transducer/step'](result, input) : result;
+  };
+
+  return XFilter;
+}();
+
+var _xfilter = /*#__PURE__*/_curry2$2(function _xfilter(f, xf) {
+  return new XFilter(f, xf);
+});
+var _xfilter_1 = _xfilter;
+
+
+
+var _xfilter$1 = Object.freeze({
+	default: _xfilter_1,
+	__moduleExports: _xfilter_1
+});
+
+function _has$3(prop, obj) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+var _has_1 = _has$3;
+
+
+
+var _has$4 = Object.freeze({
+	default: _has_1,
+	__moduleExports: _has_1
+});
+
+var _has$5 = ( _has$4 && _has_1 ) || _has$4;
+
+var toString$2 = Object.prototype.toString;
+var _isArguments = function () {
+  return toString$2.call(arguments) === '[object Arguments]' ? function _isArguments(x) {
+    return toString$2.call(x) === '[object Arguments]';
+  } : function _isArguments(x) {
+    return _has$5('callee', x);
+  };
+};
+
+var _isArguments_1 = _isArguments;
+
+
+
+var _isArguments$1 = Object.freeze({
+	default: _isArguments_1,
+	__moduleExports: _isArguments_1
+});
+
+var _isArguments$2 = ( _isArguments$1 && _isArguments_1 ) || _isArguments$1;
+
+var hasEnumBug = ! /*#__PURE__*/{ toString: null }.propertyIsEnumerable('toString');
+var nonEnumerableProps = ['constructor', 'valueOf', 'isPrototypeOf', 'toString', 'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
+// Safari bug
+var hasArgsEnumBug = /*#__PURE__*/function () {
+  'use strict';
+
+  return arguments.propertyIsEnumerable('length');
+}();
+
+var contains = function contains(list, item) {
+  var idx = 0;
+  while (idx < list.length) {
+    if (list[idx] === item) {
+      return true;
+    }
+    idx += 1;
+  }
+  return false;
+};
+
+/**
+ * Returns a list containing the names of all the enumerable own properties of
+ * the supplied object.
+ * Note that the order of the output array is not guaranteed to be consistent
+ * across different JS platforms.
+ *
+ * @func
+ * @memberOf R
+ * @since v0.1.0
+ * @category Object
+ * @sig {k: v} -> [k]
+ * @param {Object} obj The object to extract properties from
+ * @return {Array} An array of the object's own properties.
+ * @see R.keysIn, R.values
+ * @example
+ *
+ *      R.keys({a: 1, b: 2, c: 3}); //=> ['a', 'b', 'c']
+ */
+var _keys = typeof Object.keys === 'function' && !hasArgsEnumBug ? function keys(obj) {
+  return Object(obj) !== obj ? [] : Object.keys(obj);
+} : function keys(obj) {
+  if (Object(obj) !== obj) {
+    return [];
+  }
+  var prop, nIdx;
+  var ks = [];
+  var checkArgsLength = hasArgsEnumBug && _isArguments$2(obj);
+  for (prop in obj) {
+    if (_has$5(prop, obj) && (!checkArgsLength || prop !== 'length')) {
+      ks[ks.length] = prop;
+    }
+  }
+  if (hasEnumBug) {
+    nIdx = nonEnumerableProps.length - 1;
+    while (nIdx >= 0) {
+      prop = nonEnumerableProps[nIdx];
+      if (_has$5(prop, obj) && !contains(ks, prop)) {
+        ks[ks.length] = prop;
+      }
+      nIdx -= 1;
+    }
+  }
+  return ks;
+};
+var keys$2 = /*#__PURE__*/_curry1$2(_keys);
+var keys_1 = keys$2;
+
+
+
+var keys$3 = Object.freeze({
+	default: keys_1,
+	__moduleExports: keys_1
+});
+
+var _filter$2 = ( _filter$1 && _filter_1 ) || _filter$1;
+
+var _isObject$5 = ( _isObject$4 && _isObject_1 ) || _isObject$4;
+
+var _reduce$2 = ( _reduce$1 && _reduce_1 ) || _reduce$1;
+
+var _xfilter$2 = ( _xfilter$1 && _xfilter_1 ) || _xfilter$1;
+
+var keys$4 = ( keys$3 && keys_1 ) || keys$3;
+
+var filter = /*#__PURE__*/_curry2$2( /*#__PURE__*/_dispatchable$2(['filter'], _xfilter$2, function (pred, filterable) {
+  return _isObject$5(filterable) ? _reduce$2(function (acc, key) {
+    if (pred(filterable[key])) {
+      acc[key] = filterable[key];
+    }
+    return acc;
+  }, {}, keys$4(filterable)) :
+  // else
+  _filter$2(pred, filterable);
+}));
+var filter_1 = filter;
+
+
+
+var filter$1 = Object.freeze({
+	default: filter_1,
+	__moduleExports: filter_1
+});
+
+var _complement$2 = ( _complement$1 && _complement_1 ) || _complement$1;
+
+var filter$2 = ( filter$1 && filter_1 ) || filter$1;
+
+var reject = /*#__PURE__*/_curry2$2(function reject(pred, filterable) {
+  return filter$2(_complement$2(pred), filterable);
+});
+var reject_1 = reject;
+
+
+
+var reject$1 = Object.freeze({
+	default: reject_1,
+	__moduleExports: reject_1
+});
+
+/**
+ * Private `concat` function to merge two array-like objects.
+ *
+ * @private
+ * @param {Array|Arguments} [set1=[]] An array-like object.
+ * @param {Array|Arguments} [set2=[]] An array-like object.
+ * @return {Array} A new, merged array.
+ * @example
+ *
+ *      _concat([4, 5, 6], [1, 2, 3]); //=> [4, 5, 6, 1, 2, 3]
+ */
+function _concat(set1, set2) {
+  set1 = set1 || [];
+  set2 = set2 || [];
+  var idx;
+  var len1 = set1.length;
+  var len2 = set2.length;
+  var result = [];
+
+  idx = 0;
+  while (idx < len1) {
+    result[result.length] = set1[idx];
+    idx += 1;
+  }
+  idx = 0;
+  while (idx < len2) {
+    result[result.length] = set2[idx];
+    idx += 1;
+  }
+  return result;
+}
+var _concat_1 = _concat;
+
+
+
+var _concat$1 = Object.freeze({
+	default: _concat_1,
+	__moduleExports: _concat_1
+});
+
+function _curryN(length, received, fn) {
+  return function () {
+    var combined = [];
+    var argsIdx = 0;
+    var left = length;
+    var combinedIdx = 0;
+    while (combinedIdx < received.length || argsIdx < arguments.length) {
+      var result;
+      if (combinedIdx < received.length && (!_isPlaceholder$2(received[combinedIdx]) || argsIdx >= arguments.length)) {
+        result = received[combinedIdx];
+      } else {
+        result = arguments[argsIdx];
+        argsIdx += 1;
+      }
+      combined[combinedIdx] = result;
+      if (!_isPlaceholder$2(result)) {
+        left -= 1;
+      }
+      combinedIdx += 1;
+    }
+    return left <= 0 ? fn.apply(this, combined) : _arity$2(left, _curryN(length, combined, fn));
+  };
+}
+var _curryN_1 = _curryN;
+
+
+
+var _curryN$1 = Object.freeze({
+	default: _curryN_1,
+	__moduleExports: _curryN_1
+});
+
+var _curryN$2 = ( _curryN$1 && _curryN_1 ) || _curryN$1;
+
+var curryN = /*#__PURE__*/_curry2$2(function curryN(length, fn) {
+  if (length === 1) {
+    return _curry1$2(fn);
+  }
+  return _arity$2(length, _curryN$2(length, [], fn));
+});
+var curryN_1 = curryN;
+
+
+
+var curryN$1 = Object.freeze({
+	default: curryN_1,
+	__moduleExports: curryN_1
+});
+
+var _concat$2 = ( _concat$1 && _concat_1 ) || _concat$1;
+
+var curryN$2 = ( curryN$1 && curryN_1 ) || curryN$1;
+
+var addIndex = /*#__PURE__*/_curry1$2(function addIndex(fn) {
+  return curryN$2(fn.length, function () {
+    var idx = 0;
+    var origFn = arguments[0];
+    var list = arguments[arguments.length - 1];
+    var args = Array.prototype.slice.call(arguments, 0);
+    args[0] = function () {
+      var result = origFn.apply(this, _concat$2(arguments, [idx, list]));
+      idx += 1;
+      return result;
+    };
+    return fn.apply(this, args);
+  });
+});
+var addIndex_1 = addIndex;
+
+
+
+var addIndex$1 = Object.freeze({
+	default: addIndex_1,
+	__moduleExports: addIndex_1
+});
+
+function _map(fn, functor) {
+  var idx = 0;
+  var len = functor.length;
+  var result = Array(len);
+  while (idx < len) {
+    result[idx] = fn(functor[idx]);
+    idx += 1;
+  }
+  return result;
+}
+var _map_1 = _map;
+
+
+
+var _map$1 = Object.freeze({
+	default: _map_1,
+	__moduleExports: _map_1
+});
+
+var XMap = /*#__PURE__*/function () {
+
+  function XMap(f, xf) {
+    this.xf = xf;
+    this.f = f;
+  }
+  XMap.prototype['@@transducer/init'] = _xfBase$3.init;
+  XMap.prototype['@@transducer/result'] = _xfBase$3.result;
+  XMap.prototype['@@transducer/step'] = function (result, input) {
+    return this.xf['@@transducer/step'](result, this.f(input));
+  };
+
+  return XMap;
+}();
+
+var _xmap = /*#__PURE__*/_curry2$2(function _xmap(f, xf) {
+  return new XMap(f, xf);
+});
+var _xmap_1 = _xmap;
+
+
+
+var _xmap$1 = Object.freeze({
+	default: _xmap_1,
+	__moduleExports: _xmap_1
+});
+
+var _map$2 = ( _map$1 && _map_1 ) || _map$1;
+
+var _xmap$2 = ( _xmap$1 && _xmap_1 ) || _xmap$1;
+
+var map = /*#__PURE__*/_curry2$2( /*#__PURE__*/_dispatchable$2(['fantasy-land/map', 'map'], _xmap$2, function map(fn, functor) {
+  switch (Object.prototype.toString.call(functor)) {
+    case '[object Function]':
+      return curryN$2(functor.length, function () {
+        return fn.call(this, functor.apply(this, arguments));
+      });
+    case '[object Object]':
+      return _reduce$2(function (acc, key) {
+        acc[key] = fn(functor[key]);
+        return acc;
+      }, {}, keys$4(functor));
+    default:
+      return _map$2(fn, functor);
+  }
+}));
+var map_1 = map;
+
+
+
+var map$1 = Object.freeze({
+	default: map_1,
+	__moduleExports: map_1
+});
+
+var decode = {
+	"0": 65533,
+	"128": 8364,
+	"130": 8218,
+	"131": 402,
+	"132": 8222,
+	"133": 8230,
+	"134": 8224,
+	"135": 8225,
+	"136": 710,
+	"137": 8240,
+	"138": 352,
+	"139": 8249,
+	"140": 338,
+	"142": 381,
+	"145": 8216,
+	"146": 8217,
+	"147": 8220,
+	"148": 8221,
+	"149": 8226,
+	"150": 8211,
+	"151": 8212,
+	"152": 732,
+	"153": 8482,
+	"154": 353,
+	"155": 8250,
+	"156": 339,
+	"158": 382,
+	"159": 376
+};
+
+var decode$1 = Object.freeze({
+	default: decode
+});
+
+var decodeMap = ( decode$1 && decode ) || decode$1;
+
+var decode_codepoint = decodeCodePoint;
+
+// modified version of https://github.com/mathiasbynens/he/blob/master/src/he.js#L94-L119
+function decodeCodePoint(codePoint){
+
+	if((codePoint >= 0xD800 && codePoint <= 0xDFFF) || codePoint > 0x10FFFF){
+		return "\uFFFD";
+	}
+
+	if(codePoint in decodeMap){
+		codePoint = decodeMap[codePoint];
+	}
+
+	var output = "";
+
+	if(codePoint > 0xFFFF){
+		codePoint -= 0x10000;
+		output += String.fromCharCode(codePoint >>> 10 & 0x3FF | 0xD800);
+		codePoint = 0xDC00 | codePoint & 0x3FF;
+	}
+
+	output += String.fromCharCode(codePoint);
+	return output;
+}
+
+
+
+var decode_codepoint$2 = Object.freeze({
+	default: decode_codepoint,
+	__moduleExports: decode_codepoint
+});
+
+var Aacute = "Á";
+var aacute = "á";
+var Abreve = "Ă";
+var abreve = "ă";
+var ac$1 = "∾";
+var acd = "∿";
+var acE = "∾̳";
+var Acirc = "Â";
+var acirc = "â";
+var acute = "´";
+var Acy = "А";
+var acy = "а";
+var AElig = "Æ";
+var aelig = "æ";
+var af$1 = "⁡";
+var Afr = "𝔄";
+var afr = "𝔞";
+var Agrave = "À";
+var agrave = "à";
+var alefsym = "ℵ";
+var aleph = "ℵ";
+var Alpha = "Α";
+var alpha = "α";
+var Amacr = "Ā";
+var amacr = "ā";
+var amalg = "⨿";
+var amp = "&";
+var AMP = "&";
+var andand = "⩕";
+var And = "⩓";
+var and = "∧";
+var andd = "⩜";
+var andslope = "⩘";
+var andv = "⩚";
+var ang = "∠";
+var ange = "⦤";
+var angle = "∠";
+var angmsdaa = "⦨";
+var angmsdab = "⦩";
+var angmsdac = "⦪";
+var angmsdad = "⦫";
+var angmsdae = "⦬";
+var angmsdaf = "⦭";
+var angmsdag = "⦮";
+var angmsdah = "⦯";
+var angmsd = "∡";
+var angrt = "∟";
+var angrtvb = "⊾";
+var angrtvbd = "⦝";
+var angsph = "∢";
+var angst = "Å";
+var angzarr = "⍼";
+var Aogon = "Ą";
+var aogon = "ą";
+var Aopf = "𝔸";
+var aopf = "𝕒";
+var apacir = "⩯";
+var ap = "≈";
+var apE = "⩰";
+var ape = "≊";
+var apid = "≋";
+var apos = "'";
+var ApplyFunction = "⁡";
+var approx = "≈";
+var approxeq = "≊";
+var Aring = "Å";
+var aring = "å";
+var Ascr = "𝒜";
+var ascr = "𝒶";
+var Assign = "≔";
+var ast = "*";
+var asymp = "≈";
+var asympeq = "≍";
+var Atilde = "Ã";
+var atilde = "ã";
+var Auml = "Ä";
+var auml = "ä";
+var awconint = "∳";
+var awint = "⨑";
+var backcong = "≌";
+var backepsilon = "϶";
+var backprime = "‵";
+var backsim = "∽";
+var backsimeq = "⋍";
+var Backslash = "∖";
+var Barv = "⫧";
+var barvee = "⊽";
+var barwed = "⌅";
+var Barwed = "⌆";
+var barwedge = "⌅";
+var bbrk = "⎵";
+var bbrktbrk = "⎶";
+var bcong = "≌";
+var Bcy = "Б";
+var bcy = "б";
+var bdquo = "„";
+var becaus = "∵";
+var because = "∵";
+var Because = "∵";
+var bemptyv = "⦰";
+var bepsi = "϶";
+var bernou = "ℬ";
+var Bernoullis = "ℬ";
+var Beta = "Β";
+var beta = "β";
+var beth = "ℶ";
+var between = "≬";
+var Bfr = "𝔅";
+var bfr = "𝔟";
+var bigcap = "⋂";
+var bigcirc = "◯";
+var bigcup = "⋃";
+var bigodot = "⨀";
+var bigoplus = "⨁";
+var bigotimes = "⨂";
+var bigsqcup = "⨆";
+var bigstar = "★";
+var bigtriangledown = "▽";
+var bigtriangleup = "△";
+var biguplus = "⨄";
+var bigvee = "⋁";
+var bigwedge = "⋀";
+var bkarow = "⤍";
+var blacklozenge = "⧫";
+var blacksquare = "▪";
+var blacktriangle = "▴";
+var blacktriangledown = "▾";
+var blacktriangleleft = "◂";
+var blacktriangleright = "▸";
+var blank = "␣";
+var blk12 = "▒";
+var blk14 = "░";
+var blk34 = "▓";
+var block = "█";
+var bne = "=⃥";
+var bnequiv = "≡⃥";
+var bNot = "⫭";
+var bnot = "⌐";
+var Bopf = "𝔹";
+var bopf = "𝕓";
+var bot = "⊥";
+var bottom = "⊥";
+var bowtie = "⋈";
+var boxbox = "⧉";
+var boxdl = "┐";
+var boxdL = "╕";
+var boxDl = "╖";
+var boxDL = "╗";
+var boxdr = "┌";
+var boxdR = "╒";
+var boxDr = "╓";
+var boxDR = "╔";
+var boxh = "─";
+var boxH = "═";
+var boxhd = "┬";
+var boxHd = "╤";
+var boxhD = "╥";
+var boxHD = "╦";
+var boxhu = "┴";
+var boxHu = "╧";
+var boxhU = "╨";
+var boxHU = "╩";
+var boxminus = "⊟";
+var boxplus = "⊞";
+var boxtimes = "⊠";
+var boxul = "┘";
+var boxuL = "╛";
+var boxUl = "╜";
+var boxUL = "╝";
+var boxur = "└";
+var boxuR = "╘";
+var boxUr = "╙";
+var boxUR = "╚";
+var boxv = "│";
+var boxV = "║";
+var boxvh = "┼";
+var boxvH = "╪";
+var boxVh = "╫";
+var boxVH = "╬";
+var boxvl = "┤";
+var boxvL = "╡";
+var boxVl = "╢";
+var boxVL = "╣";
+var boxvr = "├";
+var boxvR = "╞";
+var boxVr = "╟";
+var boxVR = "╠";
+var bprime = "‵";
+var breve = "˘";
+var Breve = "˘";
+var brvbar = "¦";
+var bscr = "𝒷";
+var Bscr = "ℬ";
+var bsemi = "⁏";
+var bsim = "∽";
+var bsime = "⋍";
+var bsolb = "⧅";
+var bsol = "\\";
+var bsolhsub = "⟈";
+var bull = "•";
+var bullet = "•";
+var bump = "≎";
+var bumpE = "⪮";
+var bumpe = "≏";
+var Bumpeq = "≎";
+var bumpeq = "≏";
+var Cacute = "Ć";
+var cacute = "ć";
+var capand = "⩄";
+var capbrcup = "⩉";
+var capcap = "⩋";
+var cap = "∩";
+var Cap = "⋒";
+var capcup = "⩇";
+var capdot = "⩀";
+var CapitalDifferentialD = "ⅅ";
+var caps = "∩︀";
+var caret = "⁁";
+var caron = "ˇ";
+var Cayleys = "ℭ";
+var ccaps = "⩍";
+var Ccaron = "Č";
+var ccaron = "č";
+var Ccedil = "Ç";
+var ccedil = "ç";
+var Ccirc = "Ĉ";
+var ccirc = "ĉ";
+var Cconint = "∰";
+var ccups = "⩌";
+var ccupssm = "⩐";
+var Cdot = "Ċ";
+var cdot = "ċ";
+var cedil = "¸";
+var Cedilla = "¸";
+var cemptyv = "⦲";
+var cent = "¢";
+var centerdot = "·";
+var CenterDot = "·";
+var cfr = "𝔠";
+var Cfr = "ℭ";
+var CHcy = "Ч";
+var chcy = "ч";
+var check$1 = "✓";
+var checkmark = "✓";
+var Chi = "Χ";
+var chi = "χ";
+var circ = "ˆ";
+var circeq = "≗";
+var circlearrowleft = "↺";
+var circlearrowright = "↻";
+var circledast = "⊛";
+var circledcirc = "⊚";
+var circleddash = "⊝";
+var CircleDot = "⊙";
+var circledR = "®";
+var circledS = "Ⓢ";
+var CircleMinus = "⊖";
+var CirclePlus = "⊕";
+var CircleTimes = "⊗";
+var cir = "○";
+var cirE = "⧃";
+var cire = "≗";
+var cirfnint = "⨐";
+var cirmid = "⫯";
+var cirscir = "⧂";
+var ClockwiseContourIntegral = "∲";
+var CloseCurlyDoubleQuote = "”";
+var CloseCurlyQuote = "’";
+var clubs = "♣";
+var clubsuit = "♣";
+var colon = ":";
+var Colon = "∷";
+var Colone = "⩴";
+var colone = "≔";
+var coloneq = "≔";
+var comma = ",";
+var commat = "@";
+var comp = "∁";
+var compfn = "∘";
+var complement = "∁";
+var complexes = "ℂ";
+var cong = "≅";
+var congdot = "⩭";
+var Congruent = "≡";
+var conint = "∮";
+var Conint = "∯";
+var ContourIntegral = "∮";
+var copf = "𝕔";
+var Copf = "ℂ";
+var coprod = "∐";
+var Coproduct = "∐";
+var copy = "©";
+var COPY = "©";
+var copysr = "℗";
+var CounterClockwiseContourIntegral = "∳";
+var crarr = "↵";
+var cross = "✗";
+var Cross = "⨯";
+var Cscr = "𝒞";
+var cscr = "𝒸";
+var csub = "⫏";
+var csube = "⫑";
+var csup = "⫐";
+var csupe = "⫒";
+var ctdot = "⋯";
+var cudarrl = "⤸";
+var cudarrr = "⤵";
+var cuepr = "⋞";
+var cuesc = "⋟";
+var cularr = "↶";
+var cularrp = "⤽";
+var cupbrcap = "⩈";
+var cupcap = "⩆";
+var CupCap = "≍";
+var cup = "∪";
+var Cup = "⋓";
+var cupcup = "⩊";
+var cupdot = "⊍";
+var cupor = "⩅";
+var cups = "∪︀";
+var curarr = "↷";
+var curarrm = "⤼";
+var curlyeqprec = "⋞";
+var curlyeqsucc = "⋟";
+var curlyvee = "⋎";
+var curlywedge = "⋏";
+var curren = "¤";
+var curvearrowleft = "↶";
+var curvearrowright = "↷";
+var cuvee = "⋎";
+var cuwed = "⋏";
+var cwconint = "∲";
+var cwint = "∱";
+var cylcty = "⌭";
+var dagger = "†";
+var Dagger = "‡";
+var daleth = "ℸ";
+var darr = "↓";
+var Darr = "↡";
+var dArr = "⇓";
+var dash = "‐";
+var Dashv = "⫤";
+var dashv = "⊣";
+var dbkarow = "⤏";
+var dblac = "˝";
+var Dcaron = "Ď";
+var dcaron = "ď";
+var Dcy = "Д";
+var dcy = "д";
+var ddagger = "‡";
+var ddarr = "⇊";
+var DD = "ⅅ";
+var dd$1 = "ⅆ";
+var DDotrahd = "⤑";
+var ddotseq = "⩷";
+var deg = "°";
+var Del = "∇";
+var Delta = "Δ";
+var delta = "δ";
+var demptyv = "⦱";
+var dfisht = "⥿";
+var Dfr = "𝔇";
+var dfr = "𝔡";
+var dHar = "⥥";
+var dharl = "⇃";
+var dharr = "⇂";
+var DiacriticalAcute = "´";
+var DiacriticalDot = "˙";
+var DiacriticalDoubleAcute = "˝";
+var DiacriticalGrave = "`";
+var DiacriticalTilde = "˜";
+var diam = "⋄";
+var diamond = "⋄";
+var Diamond = "⋄";
+var diamondsuit = "♦";
+var diams = "♦";
+var die = "¨";
+var DifferentialD = "ⅆ";
+var digamma = "ϝ";
+var disin = "⋲";
+var div = "÷";
+var divide$1 = "÷";
+var divideontimes = "⋇";
+var divonx = "⋇";
+var DJcy = "Ђ";
+var djcy = "ђ";
+var dlcorn = "⌞";
+var dlcrop = "⌍";
+var dollar = "$";
+var Dopf = "𝔻";
+var dopf = "𝕕";
+var Dot = "¨";
+var dot = "˙";
+var DotDot = "⃜";
+var doteq = "≐";
+var doteqdot = "≑";
+var DotEqual = "≐";
+var dotminus = "∸";
+var dotplus = "∔";
+var dotsquare = "⊡";
+var doublebarwedge = "⌆";
+var DoubleContourIntegral = "∯";
+var DoubleDot = "¨";
+var DoubleDownArrow = "⇓";
+var DoubleLeftArrow = "⇐";
+var DoubleLeftRightArrow = "⇔";
+var DoubleLeftTee = "⫤";
+var DoubleLongLeftArrow = "⟸";
+var DoubleLongLeftRightArrow = "⟺";
+var DoubleLongRightArrow = "⟹";
+var DoubleRightArrow = "⇒";
+var DoubleRightTee = "⊨";
+var DoubleUpArrow = "⇑";
+var DoubleUpDownArrow = "⇕";
+var DoubleVerticalBar = "∥";
+var DownArrowBar = "⤓";
+var downarrow = "↓";
+var DownArrow = "↓";
+var Downarrow = "⇓";
+var DownArrowUpArrow = "⇵";
+var DownBreve = "̑";
+var downdownarrows = "⇊";
+var downharpoonleft = "⇃";
+var downharpoonright = "⇂";
+var DownLeftRightVector = "⥐";
+var DownLeftTeeVector = "⥞";
+var DownLeftVectorBar = "⥖";
+var DownLeftVector = "↽";
+var DownRightTeeVector = "⥟";
+var DownRightVectorBar = "⥗";
+var DownRightVector = "⇁";
+var DownTeeArrow = "↧";
+var DownTee = "⊤";
+var drbkarow = "⤐";
+var drcorn = "⌟";
+var drcrop = "⌌";
+var Dscr = "𝒟";
+var dscr = "𝒹";
+var DScy = "Ѕ";
+var dscy = "ѕ";
+var dsol = "⧶";
+var Dstrok = "Đ";
+var dstrok = "đ";
+var dtdot = "⋱";
+var dtri = "▿";
+var dtrif = "▾";
+var duarr = "⇵";
+var duhar = "⥯";
+var dwangle = "⦦";
+var DZcy = "Џ";
+var dzcy = "џ";
+var dzigrarr = "⟿";
+var Eacute = "É";
+var eacute = "é";
+var easter = "⩮";
+var Ecaron = "Ě";
+var ecaron = "ě";
+var Ecirc = "Ê";
+var ecirc = "ê";
+var ecir = "≖";
+var ecolon = "≕";
+var Ecy = "Э";
+var ecy = "э";
+var eDDot = "⩷";
+var Edot = "Ė";
+var edot = "ė";
+var eDot = "≑";
+var ee$1 = "ⅇ";
+var efDot = "≒";
+var Efr = "𝔈";
+var efr = "𝔢";
+var eg$1 = "⪚";
+var Egrave = "È";
+var egrave = "è";
+var egs = "⪖";
+var egsdot = "⪘";
+var el = "⪙";
+var Element = "∈";
+var elinters = "⏧";
+var ell = "ℓ";
+var els = "⪕";
+var elsdot = "⪗";
+var Emacr = "Ē";
+var emacr = "ē";
+var empty$1 = "∅";
+var emptyset = "∅";
+var EmptySmallSquare = "◻";
+var emptyv = "∅";
+var EmptyVerySmallSquare = "▫";
+var emsp13 = " ";
+var emsp14 = " ";
+var emsp = " ";
+var ENG = "Ŋ";
+var eng = "ŋ";
+var ensp = " ";
+var Eogon = "Ę";
+var eogon = "ę";
+var Eopf = "𝔼";
+var eopf = "𝕖";
+var epar = "⋕";
+var eparsl = "⧣";
+var eplus = "⩱";
+var epsi = "ε";
+var Epsilon = "Ε";
+var epsilon = "ε";
+var epsiv = "ϵ";
+var eqcirc = "≖";
+var eqcolon = "≕";
+var eqsim = "≂";
+var eqslantgtr = "⪖";
+var eqslantless = "⪕";
+var Equal = "⩵";
+var equals = "=";
+var EqualTilde = "≂";
+var equest = "≟";
+var Equilibrium = "⇌";
+var equiv = "≡";
+var equivDD = "⩸";
+var eqvparsl = "⧥";
+var erarr = "⥱";
+var erDot = "≓";
+var escr = "ℯ";
+var Escr = "ℰ";
+var esdot = "≐";
+var Esim = "⩳";
+var esim = "≂";
+var Eta = "Η";
+var eta = "η";
+var ETH = "Ð";
+var eth = "ð";
+var Euml = "Ë";
+var euml = "ë";
+var euro = "€";
+var excl = "!";
+var exist = "∃";
+var Exists = "∃";
+var expectation = "ℰ";
+var exponentiale = "ⅇ";
+var ExponentialE = "ⅇ";
+var fallingdotseq = "≒";
+var Fcy = "Ф";
+var fcy = "ф";
+var female = "♀";
+var ffilig = "ﬃ";
+var fflig = "ﬀ";
+var ffllig = "ﬄ";
+var Ffr = "𝔉";
+var ffr = "𝔣";
+var filig = "ﬁ";
+var FilledSmallSquare = "◼";
+var FilledVerySmallSquare = "▪";
+var fjlig = "fj";
+var flat = "♭";
+var fllig = "ﬂ";
+var fltns = "▱";
+var fnof = "ƒ";
+var Fopf = "𝔽";
+var fopf = "𝕗";
+var forall = "∀";
+var ForAll = "∀";
+var fork = "⋔";
+var forkv = "⫙";
+var Fouriertrf = "ℱ";
+var fpartint = "⨍";
+var frac12 = "½";
+var frac13 = "⅓";
+var frac14 = "¼";
+var frac15 = "⅕";
+var frac16 = "⅙";
+var frac18 = "⅛";
+var frac23 = "⅔";
+var frac25 = "⅖";
+var frac34 = "¾";
+var frac35 = "⅗";
+var frac38 = "⅜";
+var frac45 = "⅘";
+var frac56 = "⅚";
+var frac58 = "⅝";
+var frac78 = "⅞";
+var frasl = "⁄";
+var frown = "⌢";
+var fscr = "𝒻";
+var Fscr = "ℱ";
+var gacute = "ǵ";
+var Gamma = "Γ";
+var gamma = "γ";
+var Gammad = "Ϝ";
+var gammad = "ϝ";
+var gap = "⪆";
+var Gbreve = "Ğ";
+var gbreve = "ğ";
+var Gcedil = "Ģ";
+var Gcirc = "Ĝ";
+var gcirc = "ĝ";
+var Gcy = "Г";
+var gcy = "г";
+var Gdot = "Ġ";
+var gdot = "ġ";
+var ge$1 = "≥";
+var gE = "≧";
+var gEl = "⪌";
+var gel = "⋛";
+var geq = "≥";
+var geqq = "≧";
+var geqslant = "⩾";
+var gescc = "⪩";
+var ges = "⩾";
+var gesdot = "⪀";
+var gesdoto = "⪂";
+var gesdotol = "⪄";
+var gesl = "⋛︀";
+var gesles = "⪔";
+var Gfr = "𝔊";
+var gfr = "𝔤";
+var gg = "≫";
+var Gg$1 = "⋙";
+var ggg = "⋙";
+var gimel = "ℷ";
+var GJcy = "Ѓ";
+var gjcy = "ѓ";
+var gla = "⪥";
+var gl = "≷";
+var glE = "⪒";
+var glj = "⪤";
+var gnap = "⪊";
+var gnapprox = "⪊";
+var gne = "⪈";
+var gnE = "≩";
+var gneq = "⪈";
+var gneqq = "≩";
+var gnsim = "⋧";
+var Gopf = "𝔾";
+var gopf = "𝕘";
+var grave = "`";
+var GreaterEqual = "≥";
+var GreaterEqualLess = "⋛";
+var GreaterFullEqual = "≧";
+var GreaterGreater = "⪢";
+var GreaterLess = "≷";
+var GreaterSlantEqual = "⩾";
+var GreaterTilde = "≳";
+var Gscr = "𝒢";
+var gscr = "ℊ";
+var gsim = "≳";
+var gsime = "⪎";
+var gsiml = "⪐";
+var gtcc = "⪧";
+var gtcir = "⩺";
+var gt = ">";
+var GT = ">";
+var Gt = "≫";
+var gtdot = "⋗";
+var gtlPar = "⦕";
+var gtquest = "⩼";
+var gtrapprox = "⪆";
+var gtrarr = "⥸";
+var gtrdot = "⋗";
+var gtreqless = "⋛";
+var gtreqqless = "⪌";
+var gtrless = "≷";
+var gtrsim = "≳";
+var gvertneqq = "≩︀";
+var gvnE = "≩︀";
+var Hacek = "ˇ";
+var hairsp = " ";
+var half = "½";
+var hamilt = "ℋ";
+var HARDcy = "Ъ";
+var hardcy = "ъ";
+var harrcir = "⥈";
+var harr = "↔";
+var hArr = "⇔";
+var harrw = "↭";
+var Hat = "^";
+var hbar = "ℏ";
+var Hcirc = "Ĥ";
+var hcirc = "ĥ";
+var hearts = "♥";
+var heartsuit = "♥";
+var hellip = "…";
+var hercon = "⊹";
+var hfr = "𝔥";
+var Hfr = "ℌ";
+var HilbertSpace = "ℋ";
+var hksearow = "⤥";
+var hkswarow = "⤦";
+var hoarr = "⇿";
+var homtht = "∻";
+var hookleftarrow = "↩";
+var hookrightarrow = "↪";
+var hopf = "𝕙";
+var Hopf = "ℍ";
+var horbar = "―";
+var HorizontalLine = "─";
+var hscr = "𝒽";
+var Hscr = "ℋ";
+var hslash = "ℏ";
+var Hstrok = "Ħ";
+var hstrok = "ħ";
+var HumpDownHump = "≎";
+var HumpEqual = "≏";
+var hybull = "⁃";
+var hyphen = "‐";
+var Iacute = "Í";
+var iacute = "í";
+var ic$1 = "⁣";
+var Icirc = "Î";
+var icirc = "î";
+var Icy = "И";
+var icy = "и";
+var Idot = "İ";
+var IEcy = "Е";
+var iecy = "е";
+var iexcl = "¡";
+var iff = "⇔";
+var ifr = "𝔦";
+var Ifr = "ℑ";
+var Igrave = "Ì";
+var igrave = "ì";
+var ii = "ⅈ";
+var iiiint = "⨌";
+var iiint = "∭";
+var iinfin = "⧜";
+var iiota = "℩";
+var IJlig = "Ĳ";
+var ijlig = "ĳ";
+var Imacr = "Ī";
+var imacr = "ī";
+var image = "ℑ";
+var ImaginaryI = "ⅈ";
+var imagline = "ℐ";
+var imagpart = "ℑ";
+var imath = "ı";
+var Im = "ℑ";
+var imof = "⊷";
+var imped = "Ƶ";
+var Implies = "⇒";
+var incare = "℅";
+var infin = "∞";
+var infintie = "⧝";
+var inodot = "ı";
+var intcal = "⊺";
+var int = "∫";
+var Int = "∬";
+var integers = "ℤ";
+var Integral = "∫";
+var intercal = "⊺";
+var Intersection = "⋂";
+var intlarhk = "⨗";
+var intprod = "⨼";
+var InvisibleComma = "⁣";
+var InvisibleTimes = "⁢";
+var IOcy = "Ё";
+var iocy = "ё";
+var Iogon = "Į";
+var iogon = "į";
+var Iopf = "𝕀";
+var iopf = "𝕚";
+var Iota = "Ι";
+var iota = "ι";
+var iprod = "⨼";
+var iquest = "¿";
+var iscr = "𝒾";
+var Iscr = "ℐ";
+var isin = "∈";
+var isindot = "⋵";
+var isinE = "⋹";
+var isins = "⋴";
+var isinsv = "⋳";
+var isinv = "∈";
+var it = "⁢";
+var Itilde = "Ĩ";
+var itilde = "ĩ";
+var Iukcy = "І";
+var iukcy = "і";
+var Iuml = "Ï";
+var iuml = "ï";
+var Jcirc = "Ĵ";
+var jcirc = "ĵ";
+var Jcy = "Й";
+var jcy = "й";
+var Jfr = "𝔍";
+var jfr = "𝔧";
+var jmath = "ȷ";
+var Jopf = "𝕁";
+var jopf = "𝕛";
+var Jscr = "𝒥";
+var jscr = "𝒿";
+var Jsercy = "Ј";
+var jsercy = "ј";
+var Jukcy = "Є";
+var jukcy = "є";
+var Kappa = "Κ";
+var kappa = "κ";
+var kappav = "ϰ";
+var Kcedil = "Ķ";
+var kcedil = "ķ";
+var Kcy = "К";
+var kcy = "к";
+var Kfr = "𝔎";
+var kfr = "𝔨";
+var kgreen = "ĸ";
+var KHcy = "Х";
+var khcy = "х";
+var KJcy = "Ќ";
+var kjcy = "ќ";
+var Kopf = "𝕂";
+var kopf = "𝕜";
+var Kscr = "𝒦";
+var kscr = "𝓀";
+var lAarr = "⇚";
+var Lacute = "Ĺ";
+var lacute = "ĺ";
+var laemptyv = "⦴";
+var lagran = "ℒ";
+var Lambda = "Λ";
+var lambda = "λ";
+var lang = "⟨";
+var Lang = "⟪";
+var langd = "⦑";
+var langle = "⟨";
+var lap = "⪅";
+var Laplacetrf = "ℒ";
+var laquo = "«";
+var larrb = "⇤";
+var larrbfs = "⤟";
+var larr = "←";
+var Larr = "↞";
+var lArr = "⇐";
+var larrfs = "⤝";
+var larrhk = "↩";
+var larrlp = "↫";
+var larrpl = "⤹";
+var larrsim = "⥳";
+var larrtl = "↢";
+var latail = "⤙";
+var lAtail = "⤛";
+var lat = "⪫";
+var late = "⪭";
+var lates = "⪭︀";
+var lbarr = "⤌";
+var lBarr = "⤎";
+var lbbrk = "❲";
+var lbrace = "{";
+var lbrack = "[";
+var lbrke = "⦋";
+var lbrksld = "⦏";
+var lbrkslu = "⦍";
+var Lcaron = "Ľ";
+var lcaron = "ľ";
+var Lcedil = "Ļ";
+var lcedil = "ļ";
+var lceil = "⌈";
+var lcub = "{";
+var Lcy = "Л";
+var lcy = "л";
+var ldca = "⤶";
+var ldquo = "“";
+var ldquor = "„";
+var ldrdhar = "⥧";
+var ldrushar = "⥋";
+var ldsh = "↲";
+var le$1 = "≤";
+var lE = "≦";
+var LeftAngleBracket = "⟨";
+var LeftArrowBar = "⇤";
+var leftarrow = "←";
+var LeftArrow = "←";
+var Leftarrow = "⇐";
+var LeftArrowRightArrow = "⇆";
+var leftarrowtail = "↢";
+var LeftCeiling = "⌈";
+var LeftDoubleBracket = "⟦";
+var LeftDownTeeVector = "⥡";
+var LeftDownVectorBar = "⥙";
+var LeftDownVector = "⇃";
+var LeftFloor = "⌊";
+var leftharpoondown = "↽";
+var leftharpoonup = "↼";
+var leftleftarrows = "⇇";
+var leftrightarrow = "↔";
+var LeftRightArrow = "↔";
+var Leftrightarrow = "⇔";
+var leftrightarrows = "⇆";
+var leftrightharpoons = "⇋";
+var leftrightsquigarrow = "↭";
+var LeftRightVector = "⥎";
+var LeftTeeArrow = "↤";
+var LeftTee = "⊣";
+var LeftTeeVector = "⥚";
+var leftthreetimes = "⋋";
+var LeftTriangleBar = "⧏";
+var LeftTriangle = "⊲";
+var LeftTriangleEqual = "⊴";
+var LeftUpDownVector = "⥑";
+var LeftUpTeeVector = "⥠";
+var LeftUpVectorBar = "⥘";
+var LeftUpVector = "↿";
+var LeftVectorBar = "⥒";
+var LeftVector = "↼";
+var lEg = "⪋";
+var leg = "⋚";
+var leq = "≤";
+var leqq = "≦";
+var leqslant = "⩽";
+var lescc = "⪨";
+var les = "⩽";
+var lesdot = "⩿";
+var lesdoto = "⪁";
+var lesdotor = "⪃";
+var lesg = "⋚︀";
+var lesges = "⪓";
+var lessapprox = "⪅";
+var lessdot = "⋖";
+var lesseqgtr = "⋚";
+var lesseqqgtr = "⪋";
+var LessEqualGreater = "⋚";
+var LessFullEqual = "≦";
+var LessGreater = "≶";
+var lessgtr = "≶";
+var LessLess = "⪡";
+var lesssim = "≲";
+var LessSlantEqual = "⩽";
+var LessTilde = "≲";
+var lfisht = "⥼";
+var lfloor = "⌊";
+var Lfr = "𝔏";
+var lfr = "𝔩";
+var lg = "≶";
+var lgE = "⪑";
+var lHar = "⥢";
+var lhard = "↽";
+var lharu = "↼";
+var lharul = "⥪";
+var lhblk = "▄";
+var LJcy = "Љ";
+var ljcy = "љ";
+var llarr = "⇇";
+var ll = "≪";
+var Ll = "⋘";
+var llcorner = "⌞";
+var Lleftarrow = "⇚";
+var llhard = "⥫";
+var lltri = "◺";
+var Lmidot = "Ŀ";
+var lmidot = "ŀ";
+var lmoustache = "⎰";
+var lmoust = "⎰";
+var lnap = "⪉";
+var lnapprox = "⪉";
+var lne = "⪇";
+var lnE = "≨";
+var lneq = "⪇";
+var lneqq = "≨";
+var lnsim = "⋦";
+var loang = "⟬";
+var loarr = "⇽";
+var lobrk = "⟦";
+var longleftarrow = "⟵";
+var LongLeftArrow = "⟵";
+var Longleftarrow = "⟸";
+var longleftrightarrow = "⟷";
+var LongLeftRightArrow = "⟷";
+var Longleftrightarrow = "⟺";
+var longmapsto = "⟼";
+var longrightarrow = "⟶";
+var LongRightArrow = "⟶";
+var Longrightarrow = "⟹";
+var looparrowleft = "↫";
+var looparrowright = "↬";
+var lopar = "⦅";
+var Lopf = "𝕃";
+var lopf = "𝕝";
+var loplus = "⨭";
+var lotimes = "⨴";
+var lowast = "∗";
+var lowbar = "_";
+var LowerLeftArrow = "↙";
+var LowerRightArrow = "↘";
+var loz = "◊";
+var lozenge = "◊";
+var lozf = "⧫";
+var lpar = "(";
+var lparlt = "⦓";
+var lrarr = "⇆";
+var lrcorner = "⌟";
+var lrhar = "⇋";
+var lrhard = "⥭";
+var lrm = "‎";
+var lrtri = "⊿";
+var lsaquo = "‹";
+var lscr = "𝓁";
+var Lscr = "ℒ";
+var lsh = "↰";
+var Lsh = "↰";
+var lsim = "≲";
+var lsime = "⪍";
+var lsimg = "⪏";
+var lsqb = "[";
+var lsquo = "‘";
+var lsquor = "‚";
+var Lstrok = "Ł";
+var lstrok = "ł";
+var ltcc = "⪦";
+var ltcir = "⩹";
+var lt = "<";
+var LT = "<";
+var Lt = "≪";
+var ltdot = "⋖";
+var lthree = "⋋";
+var ltimes = "⋉";
+var ltlarr = "⥶";
+var ltquest = "⩻";
+var ltri = "◃";
+var ltrie = "⊴";
+var ltrif = "◂";
+var ltrPar = "⦖";
+var lurdshar = "⥊";
+var luruhar = "⥦";
+var lvertneqq = "≨︀";
+var lvnE = "≨︀";
+var macr = "¯";
+var male = "♂";
+var malt = "✠";
+var maltese = "✠";
+var map$2 = "↦";
+var mapsto = "↦";
+var mapstodown = "↧";
+var mapstoleft = "↤";
+var mapstoup = "↥";
+var marker = "▮";
+var mcomma = "⨩";
+var Mcy = "М";
+var mcy = "м";
+var mdash = "—";
+var mDDot = "∺";
+var measuredangle = "∡";
+var MediumSpace = " ";
+var Mellintrf = "ℳ";
+var Mfr = "𝔐";
+var mfr = "𝔪";
+var mho = "℧";
+var micro = "µ";
+var midast = "*";
+var midcir = "⫰";
+var mid = "∣";
+var middot = "·";
+var minusb = "⊟";
+var minus = "−";
+var minusd = "∸";
+var minusdu = "⨪";
+var MinusPlus = "∓";
+var mlcp = "⫛";
+var mldr = "…";
+var mnplus = "∓";
+var models = "⊧";
+var Mopf = "𝕄";
+var mopf = "𝕞";
+var mp = "∓";
+var mscr = "𝓂";
+var Mscr = "ℳ";
+var mstpos = "∾";
+var Mu = "Μ";
+var mu = "μ";
+var multimap = "⊸";
+var mumap = "⊸";
+var nabla = "∇";
+var Nacute = "Ń";
+var nacute = "ń";
+var nang = "∠⃒";
+var nap = "≉";
+var napE = "⩰̸";
+var napid = "≋̸";
+var napos = "ŉ";
+var napprox = "≉";
+var natural = "♮";
+var naturals = "ℕ";
+var natur = "♮";
+var nbsp = " ";
+var nbump = "≎̸";
+var nbumpe = "≏̸";
+var ncap = "⩃";
+var Ncaron = "Ň";
+var ncaron = "ň";
+var Ncedil = "Ņ";
+var ncedil = "ņ";
+var ncong = "≇";
+var ncongdot = "⩭̸";
+var ncup = "⩂";
+var Ncy = "Н";
+var ncy = "н";
+var ndash = "–";
+var nearhk = "⤤";
+var nearr = "↗";
+var neArr = "⇗";
+var nearrow = "↗";
+var ne$1 = "≠";
+var nedot = "≐̸";
+var NegativeMediumSpace = "​";
+var NegativeThickSpace = "​";
+var NegativeThinSpace = "​";
+var NegativeVeryThinSpace = "​";
+var nequiv = "≢";
+var nesear = "⤨";
+var nesim = "≂̸";
+var NestedGreaterGreater = "≫";
+var NestedLessLess = "≪";
+var NewLine = "\n";
+var nexist = "∄";
+var nexists = "∄";
+var Nfr = "𝔑";
+var nfr = "𝔫";
+var ngE = "≧̸";
+var nge = "≱";
+var ngeq = "≱";
+var ngeqq = "≧̸";
+var ngeqslant = "⩾̸";
+var nges = "⩾̸";
+var nGg = "⋙̸";
+var ngsim = "≵";
+var nGt = "≫⃒";
+var ngt = "≯";
+var ngtr = "≯";
+var nGtv = "≫̸";
+var nharr = "↮";
+var nhArr = "⇎";
+var nhpar = "⫲";
+var ni = "∋";
+var nis = "⋼";
+var nisd = "⋺";
+var niv = "∋";
+var NJcy = "Њ";
+var njcy = "њ";
+var nlarr = "↚";
+var nlArr = "⇍";
+var nldr = "‥";
+var nlE = "≦̸";
+var nle = "≰";
+var nleftarrow = "↚";
+var nLeftarrow = "⇍";
+var nleftrightarrow = "↮";
+var nLeftrightarrow = "⇎";
+var nleq = "≰";
+var nleqq = "≦̸";
+var nleqslant = "⩽̸";
+var nles = "⩽̸";
+var nless = "≮";
+var nLl = "⋘̸";
+var nlsim = "≴";
+var nLt = "≪⃒";
+var nlt = "≮";
+var nltri = "⋪";
+var nltrie = "⋬";
+var nLtv = "≪̸";
+var nmid = "∤";
+var NoBreak = "⁠";
+var NonBreakingSpace = " ";
+var nopf = "𝕟";
+var Nopf = "ℕ";
+var Not = "⫬";
+var not = "¬";
+var NotCongruent = "≢";
+var NotCupCap = "≭";
+var NotDoubleVerticalBar = "∦";
+var NotElement = "∉";
+var NotEqual = "≠";
+var NotEqualTilde = "≂̸";
+var NotExists = "∄";
+var NotGreater = "≯";
+var NotGreaterEqual = "≱";
+var NotGreaterFullEqual = "≧̸";
+var NotGreaterGreater = "≫̸";
+var NotGreaterLess = "≹";
+var NotGreaterSlantEqual = "⩾̸";
+var NotGreaterTilde = "≵";
+var NotHumpDownHump = "≎̸";
+var NotHumpEqual = "≏̸";
+var notin = "∉";
+var notindot = "⋵̸";
+var notinE = "⋹̸";
+var notinva = "∉";
+var notinvb = "⋷";
+var notinvc = "⋶";
+var NotLeftTriangleBar = "⧏̸";
+var NotLeftTriangle = "⋪";
+var NotLeftTriangleEqual = "⋬";
+var NotLess = "≮";
+var NotLessEqual = "≰";
+var NotLessGreater = "≸";
+var NotLessLess = "≪̸";
+var NotLessSlantEqual = "⩽̸";
+var NotLessTilde = "≴";
+var NotNestedGreaterGreater = "⪢̸";
+var NotNestedLessLess = "⪡̸";
+var notni = "∌";
+var notniva = "∌";
+var notnivb = "⋾";
+var notnivc = "⋽";
+var NotPrecedes = "⊀";
+var NotPrecedesEqual = "⪯̸";
+var NotPrecedesSlantEqual = "⋠";
+var NotReverseElement = "∌";
+var NotRightTriangleBar = "⧐̸";
+var NotRightTriangle = "⋫";
+var NotRightTriangleEqual = "⋭";
+var NotSquareSubset = "⊏̸";
+var NotSquareSubsetEqual = "⋢";
+var NotSquareSuperset = "⊐̸";
+var NotSquareSupersetEqual = "⋣";
+var NotSubset = "⊂⃒";
+var NotSubsetEqual = "⊈";
+var NotSucceeds = "⊁";
+var NotSucceedsEqual = "⪰̸";
+var NotSucceedsSlantEqual = "⋡";
+var NotSucceedsTilde = "≿̸";
+var NotSuperset = "⊃⃒";
+var NotSupersetEqual = "⊉";
+var NotTilde = "≁";
+var NotTildeEqual = "≄";
+var NotTildeFullEqual = "≇";
+var NotTildeTilde = "≉";
+var NotVerticalBar = "∤";
+var nparallel = "∦";
+var npar = "∦";
+var nparsl = "⫽⃥";
+var npart = "∂̸";
+var npolint = "⨔";
+var npr = "⊀";
+var nprcue = "⋠";
+var nprec = "⊀";
+var npreceq = "⪯̸";
+var npre = "⪯̸";
+var nrarrc = "⤳̸";
+var nrarr = "↛";
+var nrArr = "⇏";
+var nrarrw = "↝̸";
+var nrightarrow = "↛";
+var nRightarrow = "⇏";
+var nrtri = "⋫";
+var nrtrie = "⋭";
+var nsc = "⊁";
+var nsccue = "⋡";
+var nsce = "⪰̸";
+var Nscr = "𝒩";
+var nscr = "𝓃";
+var nshortmid = "∤";
+var nshortparallel = "∦";
+var nsim = "≁";
+var nsime = "≄";
+var nsimeq = "≄";
+var nsmid = "∤";
+var nspar = "∦";
+var nsqsube = "⋢";
+var nsqsupe = "⋣";
+var nsub = "⊄";
+var nsubE = "⫅̸";
+var nsube = "⊈";
+var nsubset = "⊂⃒";
+var nsubseteq = "⊈";
+var nsubseteqq = "⫅̸";
+var nsucc = "⊁";
+var nsucceq = "⪰̸";
+var nsup = "⊅";
+var nsupE = "⫆̸";
+var nsupe = "⊉";
+var nsupset = "⊃⃒";
+var nsupseteq = "⊉";
+var nsupseteqq = "⫆̸";
+var ntgl = "≹";
+var Ntilde = "Ñ";
+var ntilde = "ñ";
+var ntlg = "≸";
+var ntriangleleft = "⋪";
+var ntrianglelefteq = "⋬";
+var ntriangleright = "⋫";
+var ntrianglerighteq = "⋭";
+var Nu = "Ν";
+var nu = "ν";
+var num = "#";
+var numero = "№";
+var numsp = " ";
+var nvap = "≍⃒";
+var nvdash = "⊬";
+var nvDash = "⊭";
+var nVdash = "⊮";
+var nVDash = "⊯";
+var nvge = "≥⃒";
+var nvgt = ">⃒";
+var nvHarr = "⤄";
+var nvinfin = "⧞";
+var nvlArr = "⤂";
+var nvle = "≤⃒";
+var nvlt = "<⃒";
+var nvltrie = "⊴⃒";
+var nvrArr = "⤃";
+var nvrtrie = "⊵⃒";
+var nvsim = "∼⃒";
+var nwarhk = "⤣";
+var nwarr = "↖";
+var nwArr = "⇖";
+var nwarrow = "↖";
+var nwnear = "⤧";
+var Oacute = "Ó";
+var oacute = "ó";
+var oast = "⊛";
+var Ocirc = "Ô";
+var ocirc = "ô";
+var ocir = "⊚";
+var Ocy = "О";
+var ocy = "о";
+var odash = "⊝";
+var Odblac = "Ő";
+var odblac = "ő";
+var odiv = "⨸";
+var odot = "⊙";
+var odsold = "⦼";
+var OElig = "Œ";
+var oelig = "œ";
+var ofcir = "⦿";
+var Ofr = "𝔒";
+var ofr = "𝔬";
+var ogon = "˛";
+var Ograve = "Ò";
+var ograve = "ò";
+var ogt = "⧁";
+var ohbar = "⦵";
+var ohm = "Ω";
+var oint = "∮";
+var olarr = "↺";
+var olcir = "⦾";
+var olcross = "⦻";
+var oline = "‾";
+var olt = "⧀";
+var Omacr = "Ō";
+var omacr = "ō";
+var Omega = "Ω";
+var omega = "ω";
+var Omicron = "Ο";
+var omicron = "ο";
+var omid = "⦶";
+var ominus = "⊖";
+var Oopf = "𝕆";
+var oopf = "𝕠";
+var opar = "⦷";
+var OpenCurlyDoubleQuote = "“";
+var OpenCurlyQuote = "‘";
+var operp = "⦹";
+var oplus = "⊕";
+var orarr = "↻";
+var Or = "⩔";
+var or = "∨";
+var ord = "⩝";
+var order = "ℴ";
+var orderof = "ℴ";
+var ordf = "ª";
+var ordm = "º";
+var origof = "⊶";
+var oror = "⩖";
+var orslope = "⩗";
+var orv = "⩛";
+var oS = "Ⓢ";
+var Oscr = "𝒪";
+var oscr = "ℴ";
+var Oslash = "Ø";
+var oslash = "ø";
+var osol = "⊘";
+var Otilde = "Õ";
+var otilde = "õ";
+var otimesas = "⨶";
+var Otimes = "⨷";
+var otimes = "⊗";
+var Ouml = "Ö";
+var ouml = "ö";
+var ovbar = "⌽";
+var OverBar = "‾";
+var OverBrace = "⏞";
+var OverBracket = "⎴";
+var OverParenthesis = "⏜";
+var para = "¶";
+var parallel = "∥";
+var par = "∥";
+var parsim = "⫳";
+var parsl = "⫽";
+var part = "∂";
+var PartialD = "∂";
+var Pcy = "П";
+var pcy = "п";
+var percnt = "%";
+var period = ".";
+var permil = "‰";
+var perp = "⊥";
+var pertenk = "‱";
+var Pfr = "𝔓";
+var pfr = "𝔭";
+var Phi = "Φ";
+var phi = "φ";
+var phiv = "ϕ";
+var phmmat = "ℳ";
+var phone = "☎";
+var Pi = "Π";
+var pi = "π";
+var pitchfork = "⋔";
+var piv = "ϖ";
+var planck = "ℏ";
+var planckh = "ℎ";
+var plankv = "ℏ";
+var plusacir = "⨣";
+var plusb = "⊞";
+var pluscir = "⨢";
+var plus = "+";
+var plusdo = "∔";
+var plusdu = "⨥";
+var pluse = "⩲";
+var PlusMinus = "±";
+var plusmn = "±";
+var plussim = "⨦";
+var plustwo = "⨧";
+var pm = "±";
+var Poincareplane = "ℌ";
+var pointint = "⨕";
+var popf = "𝕡";
+var Popf = "ℙ";
+var pound = "£";
+var prap = "⪷";
+var Pr = "⪻";
+var pr = "≺";
+var prcue = "≼";
+var precapprox = "⪷";
+var prec = "≺";
+var preccurlyeq = "≼";
+var Precedes = "≺";
+var PrecedesEqual = "⪯";
+var PrecedesSlantEqual = "≼";
+var PrecedesTilde = "≾";
+var preceq = "⪯";
+var precnapprox = "⪹";
+var precneqq = "⪵";
+var precnsim = "⋨";
+var pre = "⪯";
+var prE = "⪳";
+var precsim = "≾";
+var prime = "′";
+var Prime = "″";
+var primes = "ℙ";
+var prnap = "⪹";
+var prnE = "⪵";
+var prnsim = "⋨";
+var prod = "∏";
+var Product = "∏";
+var profalar = "⌮";
+var profline = "⌒";
+var profsurf = "⌓";
+var prop = "∝";
+var Proportional = "∝";
+var Proportion = "∷";
+var propto = "∝";
+var prsim = "≾";
+var prurel = "⊰";
+var Pscr = "𝒫";
+var pscr = "𝓅";
+var Psi = "Ψ";
+var psi = "ψ";
+var puncsp = " ";
+var Qfr = "𝔔";
+var qfr = "𝔮";
+var qint = "⨌";
+var qopf = "𝕢";
+var Qopf = "ℚ";
+var qprime = "⁗";
+var Qscr = "𝒬";
+var qscr = "𝓆";
+var quaternions = "ℍ";
+var quatint = "⨖";
+var quest = "?";
+var questeq = "≟";
+var quot$1 = "\"";
+var QUOT = "\"";
+var rAarr = "⇛";
+var race = "∽̱";
+var Racute = "Ŕ";
+var racute = "ŕ";
+var radic = "√";
+var raemptyv = "⦳";
+var rang = "⟩";
+var Rang = "⟫";
+var rangd = "⦒";
+var range = "⦥";
+var rangle = "⟩";
+var raquo = "»";
+var rarrap = "⥵";
+var rarrb = "⇥";
+var rarrbfs = "⤠";
+var rarrc = "⤳";
+var rarr = "→";
+var Rarr = "↠";
+var rArr = "⇒";
+var rarrfs = "⤞";
+var rarrhk = "↪";
+var rarrlp = "↬";
+var rarrpl = "⥅";
+var rarrsim = "⥴";
+var Rarrtl = "⤖";
+var rarrtl = "↣";
+var rarrw = "↝";
+var ratail = "⤚";
+var rAtail = "⤜";
+var ratio = "∶";
+var rationals = "ℚ";
+var rbarr = "⤍";
+var rBarr = "⤏";
+var RBarr = "⤐";
+var rbbrk = "❳";
+var rbrace = "}";
+var rbrack = "]";
+var rbrke = "⦌";
+var rbrksld = "⦎";
+var rbrkslu = "⦐";
+var Rcaron = "Ř";
+var rcaron = "ř";
+var Rcedil = "Ŗ";
+var rcedil = "ŗ";
+var rceil = "⌉";
+var rcub = "}";
+var Rcy = "Р";
+var rcy = "р";
+var rdca = "⤷";
+var rdldhar = "⥩";
+var rdquo = "”";
+var rdquor = "”";
+var rdsh = "↳";
+var real = "ℜ";
+var realine = "ℛ";
+var realpart = "ℜ";
+var reals = "ℝ";
+var Re$1 = "ℜ";
+var rect = "▭";
+var reg = "®";
+var REG = "®";
+var ReverseElement = "∋";
+var ReverseEquilibrium = "⇋";
+var ReverseUpEquilibrium = "⥯";
+var rfisht = "⥽";
+var rfloor = "⌋";
+var rfr = "𝔯";
+var Rfr = "ℜ";
+var rHar = "⥤";
+var rhard = "⇁";
+var rharu = "⇀";
+var rharul = "⥬";
+var Rho = "Ρ";
+var rho = "ρ";
+var rhov = "ϱ";
+var RightAngleBracket = "⟩";
+var RightArrowBar = "⇥";
+var rightarrow = "→";
+var RightArrow = "→";
+var Rightarrow = "⇒";
+var RightArrowLeftArrow = "⇄";
+var rightarrowtail = "↣";
+var RightCeiling = "⌉";
+var RightDoubleBracket = "⟧";
+var RightDownTeeVector = "⥝";
+var RightDownVectorBar = "⥕";
+var RightDownVector = "⇂";
+var RightFloor = "⌋";
+var rightharpoondown = "⇁";
+var rightharpoonup = "⇀";
+var rightleftarrows = "⇄";
+var rightleftharpoons = "⇌";
+var rightrightarrows = "⇉";
+var rightsquigarrow = "↝";
+var RightTeeArrow = "↦";
+var RightTee = "⊢";
+var RightTeeVector = "⥛";
+var rightthreetimes = "⋌";
+var RightTriangleBar = "⧐";
+var RightTriangle = "⊳";
+var RightTriangleEqual = "⊵";
+var RightUpDownVector = "⥏";
+var RightUpTeeVector = "⥜";
+var RightUpVectorBar = "⥔";
+var RightUpVector = "↾";
+var RightVectorBar = "⥓";
+var RightVector = "⇀";
+var ring = "˚";
+var risingdotseq = "≓";
+var rlarr = "⇄";
+var rlhar = "⇌";
+var rlm = "‏";
+var rmoustache = "⎱";
+var rmoust = "⎱";
+var rnmid = "⫮";
+var roang = "⟭";
+var roarr = "⇾";
+var robrk = "⟧";
+var ropar = "⦆";
+var ropf = "𝕣";
+var Ropf = "ℝ";
+var roplus = "⨮";
+var rotimes = "⨵";
+var RoundImplies = "⥰";
+var rpar = ")";
+var rpargt = "⦔";
+var rppolint = "⨒";
+var rrarr = "⇉";
+var Rrightarrow = "⇛";
+var rsaquo = "›";
+var rscr = "𝓇";
+var Rscr = "ℛ";
+var rsh = "↱";
+var Rsh = "↱";
+var rsqb = "]";
+var rsquo = "’";
+var rsquor = "’";
+var rthree = "⋌";
+var rtimes = "⋊";
+var rtri = "▹";
+var rtrie = "⊵";
+var rtrif = "▸";
+var rtriltri = "⧎";
+var RuleDelayed = "⧴";
+var ruluhar = "⥨";
+var rx = "℞";
+var Sacute = "Ś";
+var sacute = "ś";
+var sbquo = "‚";
+var scap = "⪸";
+var Scaron = "Š";
+var scaron = "š";
+var Sc$1 = "⪼";
+var sc$1 = "≻";
+var sccue = "≽";
+var sce = "⪰";
+var scE = "⪴";
+var Scedil = "Ş";
+var scedil = "ş";
+var Scirc = "Ŝ";
+var scirc = "ŝ";
+var scnap = "⪺";
+var scnE = "⪶";
+var scnsim = "⋩";
+var scpolint = "⨓";
+var scsim = "≿";
+var Scy = "С";
+var scy = "с";
+var sdotb = "⊡";
+var sdot = "⋅";
+var sdote = "⩦";
+var searhk = "⤥";
+var searr = "↘";
+var seArr = "⇘";
+var searrow = "↘";
+var sect = "§";
+var semi = ";";
+var seswar = "⤩";
+var setminus = "∖";
+var setmn = "∖";
+var sext = "✶";
+var Sfr = "𝔖";
+var sfr = "𝔰";
+var sfrown = "⌢";
+var sharp = "♯";
+var SHCHcy = "Щ";
+var shchcy = "щ";
+var SHcy = "Ш";
+var shcy = "ш";
+var ShortDownArrow = "↓";
+var ShortLeftArrow = "←";
+var shortmid = "∣";
+var shortparallel = "∥";
+var ShortRightArrow = "→";
+var ShortUpArrow = "↑";
+var shy = "­";
+var Sigma = "Σ";
+var sigma = "σ";
+var sigmaf = "ς";
+var sigmav = "ς";
+var sim = "∼";
+var simdot = "⩪";
+var sime = "≃";
+var simeq = "≃";
+var simg = "⪞";
+var simgE = "⪠";
+var siml = "⪝";
+var simlE = "⪟";
+var simne = "≆";
+var simplus = "⨤";
+var simrarr = "⥲";
+var slarr = "←";
+var SmallCircle = "∘";
+var smallsetminus = "∖";
+var smashp = "⨳";
+var smeparsl = "⧤";
+var smid = "∣";
+var smile = "⌣";
+var smt = "⪪";
+var smte = "⪬";
+var smtes = "⪬︀";
+var SOFTcy = "Ь";
+var softcy = "ь";
+var solbar = "⌿";
+var solb = "⧄";
+var sol = "/";
+var Sopf = "𝕊";
+var sopf = "𝕤";
+var spades = "♠";
+var spadesuit = "♠";
+var spar = "∥";
+var sqcap = "⊓";
+var sqcaps = "⊓︀";
+var sqcup = "⊔";
+var sqcups = "⊔︀";
+var Sqrt = "√";
+var sqsub = "⊏";
+var sqsube = "⊑";
+var sqsubset = "⊏";
+var sqsubseteq = "⊑";
+var sqsup = "⊐";
+var sqsupe = "⊒";
+var sqsupset = "⊐";
+var sqsupseteq = "⊒";
+var square = "□";
+var Square = "□";
+var SquareIntersection = "⊓";
+var SquareSubset = "⊏";
+var SquareSubsetEqual = "⊑";
+var SquareSuperset = "⊐";
+var SquareSupersetEqual = "⊒";
+var SquareUnion = "⊔";
+var squarf = "▪";
+var squ = "□";
+var squf = "▪";
+var srarr = "→";
+var Sscr = "𝒮";
+var sscr = "𝓈";
+var ssetmn = "∖";
+var ssmile = "⌣";
+var sstarf = "⋆";
+var Star = "⋆";
+var star = "☆";
+var starf = "★";
+var straightepsilon = "ϵ";
+var straightphi = "ϕ";
+var strns = "¯";
+var sub = "⊂";
+var Sub = "⋐";
+var subdot = "⪽";
+var subE = "⫅";
+var sube = "⊆";
+var subedot = "⫃";
+var submult = "⫁";
+var subnE = "⫋";
+var subne = "⊊";
+var subplus = "⪿";
+var subrarr = "⥹";
+var subset = "⊂";
+var Subset = "⋐";
+var subseteq = "⊆";
+var subseteqq = "⫅";
+var SubsetEqual = "⊆";
+var subsetneq = "⊊";
+var subsetneqq = "⫋";
+var subsim = "⫇";
+var subsub = "⫕";
+var subsup = "⫓";
+var succapprox = "⪸";
+var succ = "≻";
+var succcurlyeq = "≽";
+var Succeeds = "≻";
+var SucceedsEqual = "⪰";
+var SucceedsSlantEqual = "≽";
+var SucceedsTilde = "≿";
+var succeq = "⪰";
+var succnapprox = "⪺";
+var succneqq = "⪶";
+var succnsim = "⋩";
+var succsim = "≿";
+var SuchThat = "∋";
+var sum = "∑";
+var Sum = "∑";
+var sung = "♪";
+var sup1 = "¹";
+var sup2 = "²";
+var sup3 = "³";
+var sup = "⊃";
+var Sup = "⋑";
+var supdot = "⪾";
+var supdsub = "⫘";
+var supE = "⫆";
+var supe = "⊇";
+var supedot = "⫄";
+var Superset = "⊃";
+var SupersetEqual = "⊇";
+var suphsol = "⟉";
+var suphsub = "⫗";
+var suplarr = "⥻";
+var supmult = "⫂";
+var supnE = "⫌";
+var supne = "⊋";
+var supplus = "⫀";
+var supset = "⊃";
+var Supset = "⋑";
+var supseteq = "⊇";
+var supseteqq = "⫆";
+var supsetneq = "⊋";
+var supsetneqq = "⫌";
+var supsim = "⫈";
+var supsub = "⫔";
+var supsup = "⫖";
+var swarhk = "⤦";
+var swarr = "↙";
+var swArr = "⇙";
+var swarrow = "↙";
+var swnwar = "⤪";
+var szlig = "ß";
+var Tab = "\t";
+var target = "⌖";
+var Tau = "Τ";
+var tau = "τ";
+var tbrk = "⎴";
+var Tcaron = "Ť";
+var tcaron = "ť";
+var Tcedil = "Ţ";
+var tcedil = "ţ";
+var Tcy = "Т";
+var tcy = "т";
+var tdot = "⃛";
+var telrec = "⌕";
+var Tfr = "𝔗";
+var tfr = "𝔱";
+var there4 = "∴";
+var therefore = "∴";
+var Therefore = "∴";
+var Theta = "Θ";
+var theta = "θ";
+var thetasym = "ϑ";
+var thetav = "ϑ";
+var thickapprox = "≈";
+var thicksim = "∼";
+var ThickSpace = "  ";
+var ThinSpace = " ";
+var thinsp = " ";
+var thkap = "≈";
+var thksim = "∼";
+var THORN = "Þ";
+var thorn = "þ";
+var tilde = "˜";
+var Tilde = "∼";
+var TildeEqual = "≃";
+var TildeFullEqual = "≅";
+var TildeTilde = "≈";
+var timesbar = "⨱";
+var timesb = "⊠";
+var times = "×";
+var timesd = "⨰";
+var tint = "∭";
+var toea = "⤨";
+var topbot = "⌶";
+var topcir = "⫱";
+var top = "⊤";
+var Topf = "𝕋";
+var topf = "𝕥";
+var topfork = "⫚";
+var tosa = "⤩";
+var tprime = "‴";
+var trade = "™";
+var TRADE = "™";
+var triangle = "▵";
+var triangledown = "▿";
+var triangleleft = "◃";
+var trianglelefteq = "⊴";
+var triangleq = "≜";
+var triangleright = "▹";
+var trianglerighteq = "⊵";
+var tridot = "◬";
+var trie = "≜";
+var triminus = "⨺";
+var TripleDot = "⃛";
+var triplus = "⨹";
+var trisb = "⧍";
+var tritime = "⨻";
+var trpezium = "⏢";
+var Tscr = "𝒯";
+var tscr = "𝓉";
+var TScy = "Ц";
+var tscy = "ц";
+var TSHcy = "Ћ";
+var tshcy = "ћ";
+var Tstrok = "Ŧ";
+var tstrok = "ŧ";
+var twixt = "≬";
+var twoheadleftarrow = "↞";
+var twoheadrightarrow = "↠";
+var Uacute = "Ú";
+var uacute = "ú";
+var uarr = "↑";
+var Uarr = "↟";
+var uArr = "⇑";
+var Uarrocir = "⥉";
+var Ubrcy = "Ў";
+var ubrcy = "ў";
+var Ubreve = "Ŭ";
+var ubreve = "ŭ";
+var Ucirc = "Û";
+var ucirc = "û";
+var Ucy = "У";
+var ucy = "у";
+var udarr = "⇅";
+var Udblac = "Ű";
+var udblac = "ű";
+var udhar = "⥮";
+var ufisht = "⥾";
+var Ufr = "𝔘";
+var ufr = "𝔲";
+var Ugrave = "Ù";
+var ugrave = "ù";
+var uHar = "⥣";
+var uharl = "↿";
+var uharr = "↾";
+var uhblk = "▀";
+var ulcorn = "⌜";
+var ulcorner = "⌜";
+var ulcrop = "⌏";
+var ultri = "◸";
+var Umacr = "Ū";
+var umacr = "ū";
+var uml = "¨";
+var UnderBar = "_";
+var UnderBrace = "⏟";
+var UnderBracket = "⎵";
+var UnderParenthesis = "⏝";
+var Union = "⋃";
+var UnionPlus = "⊎";
+var Uogon = "Ų";
+var uogon = "ų";
+var Uopf = "𝕌";
+var uopf = "𝕦";
+var UpArrowBar = "⤒";
+var uparrow = "↑";
+var UpArrow = "↑";
+var Uparrow = "⇑";
+var UpArrowDownArrow = "⇅";
+var updownarrow = "↕";
+var UpDownArrow = "↕";
+var Updownarrow = "⇕";
+var UpEquilibrium = "⥮";
+var upharpoonleft = "↿";
+var upharpoonright = "↾";
+var uplus = "⊎";
+var UpperLeftArrow = "↖";
+var UpperRightArrow = "↗";
+var upsi = "υ";
+var Upsi = "ϒ";
+var upsih = "ϒ";
+var Upsilon = "Υ";
+var upsilon = "υ";
+var UpTeeArrow = "↥";
+var UpTee = "⊥";
+var upuparrows = "⇈";
+var urcorn = "⌝";
+var urcorner = "⌝";
+var urcrop = "⌎";
+var Uring = "Ů";
+var uring = "ů";
+var urtri = "◹";
+var Uscr = "𝒰";
+var uscr = "𝓊";
+var utdot = "⋰";
+var Utilde = "Ũ";
+var utilde = "ũ";
+var utri = "▵";
+var utrif = "▴";
+var uuarr = "⇈";
+var Uuml = "Ü";
+var uuml = "ü";
+var uwangle = "⦧";
+var vangrt = "⦜";
+var varepsilon = "ϵ";
+var varkappa = "ϰ";
+var varnothing = "∅";
+var varphi = "ϕ";
+var varpi = "ϖ";
+var varpropto = "∝";
+var varr = "↕";
+var vArr = "⇕";
+var varrho = "ϱ";
+var varsigma = "ς";
+var varsubsetneq = "⊊︀";
+var varsubsetneqq = "⫋︀";
+var varsupsetneq = "⊋︀";
+var varsupsetneqq = "⫌︀";
+var vartheta = "ϑ";
+var vartriangleleft = "⊲";
+var vartriangleright = "⊳";
+var vBar = "⫨";
+var Vbar = "⫫";
+var vBarv = "⫩";
+var Vcy = "В";
+var vcy = "в";
+var vdash = "⊢";
+var vDash = "⊨";
+var Vdash = "⊩";
+var VDash = "⊫";
+var Vdashl = "⫦";
+var veebar = "⊻";
+var vee = "∨";
+var Vee = "⋁";
+var veeeq = "≚";
+var vellip = "⋮";
+var verbar = "|";
+var Verbar = "‖";
+var vert = "|";
+var Vert = "‖";
+var VerticalBar = "∣";
+var VerticalLine = "|";
+var VerticalSeparator = "❘";
+var VerticalTilde = "≀";
+var VeryThinSpace = " ";
+var Vfr = "𝔙";
+var vfr = "𝔳";
+var vltri = "⊲";
+var vnsub = "⊂⃒";
+var vnsup = "⊃⃒";
+var Vopf = "𝕍";
+var vopf = "𝕧";
+var vprop = "∝";
+var vrtri = "⊳";
+var Vscr = "𝒱";
+var vscr = "𝓋";
+var vsubnE = "⫋︀";
+var vsubne = "⊊︀";
+var vsupnE = "⫌︀";
+var vsupne = "⊋︀";
+var Vvdash = "⊪";
+var vzigzag = "⦚";
+var Wcirc = "Ŵ";
+var wcirc = "ŵ";
+var wedbar = "⩟";
+var wedge = "∧";
+var Wedge = "⋀";
+var wedgeq = "≙";
+var weierp = "℘";
+var Wfr = "𝔚";
+var wfr = "𝔴";
+var Wopf = "𝕎";
+var wopf = "𝕨";
+var wp = "℘";
+var wr = "≀";
+var wreath = "≀";
+var Wscr = "𝒲";
+var wscr = "𝓌";
+var xcap = "⋂";
+var xcirc = "◯";
+var xcup = "⋃";
+var xdtri = "▽";
+var Xfr = "𝔛";
+var xfr = "𝔵";
+var xharr = "⟷";
+var xhArr = "⟺";
+var Xi = "Ξ";
+var xi = "ξ";
+var xlarr = "⟵";
+var xlArr = "⟸";
+var xmap = "⟼";
+var xnis = "⋻";
+var xodot = "⨀";
+var Xopf = "𝕏";
+var xopf = "𝕩";
+var xoplus = "⨁";
+var xotime = "⨂";
+var xrarr = "⟶";
+var xrArr = "⟹";
+var Xscr = "𝒳";
+var xscr = "𝓍";
+var xsqcup = "⨆";
+var xuplus = "⨄";
+var xutri = "△";
+var xvee = "⋁";
+var xwedge = "⋀";
+var Yacute = "Ý";
+var yacute = "ý";
+var YAcy = "Я";
+var yacy = "я";
+var Ycirc = "Ŷ";
+var ycirc = "ŷ";
+var Ycy = "Ы";
+var ycy = "ы";
+var yen = "¥";
+var Yfr = "𝔜";
+var yfr = "𝔶";
+var YIcy = "Ї";
+var yicy = "ї";
+var Yopf = "𝕐";
+var yopf = "𝕪";
+var Yscr = "𝒴";
+var yscr = "𝓎";
+var YUcy = "Ю";
+var yucy = "ю";
+var yuml = "ÿ";
+var Yuml = "Ÿ";
+var Zacute = "Ź";
+var zacute = "ź";
+var Zcaron = "Ž";
+var zcaron = "ž";
+var Zcy = "З";
+var zcy = "з";
+var Zdot = "Ż";
+var zdot = "ż";
+var zeetrf = "ℨ";
+var ZeroWidthSpace = "​";
+var Zeta = "Ζ";
+var zeta = "ζ";
+var zfr = "𝔷";
+var Zfr = "ℨ";
+var ZHcy = "Ж";
+var zhcy = "ж";
+var zigrarr = "⇝";
+var zopf = "𝕫";
+var Zopf = "ℤ";
+var Zscr = "𝒵";
+var zscr = "𝓏";
+var zwj = "‍";
+var zwnj = "‌";
+var entities = {
+	Aacute: Aacute,
+	aacute: aacute,
+	Abreve: Abreve,
+	abreve: abreve,
+	ac: ac$1,
+	acd: acd,
+	acE: acE,
+	Acirc: Acirc,
+	acirc: acirc,
+	acute: acute,
+	Acy: Acy,
+	acy: acy,
+	AElig: AElig,
+	aelig: aelig,
+	af: af$1,
+	Afr: Afr,
+	afr: afr,
+	Agrave: Agrave,
+	agrave: agrave,
+	alefsym: alefsym,
+	aleph: aleph,
+	Alpha: Alpha,
+	alpha: alpha,
+	Amacr: Amacr,
+	amacr: amacr,
+	amalg: amalg,
+	amp: amp,
+	AMP: AMP,
+	andand: andand,
+	And: And,
+	and: and,
+	andd: andd,
+	andslope: andslope,
+	andv: andv,
+	ang: ang,
+	ange: ange,
+	angle: angle,
+	angmsdaa: angmsdaa,
+	angmsdab: angmsdab,
+	angmsdac: angmsdac,
+	angmsdad: angmsdad,
+	angmsdae: angmsdae,
+	angmsdaf: angmsdaf,
+	angmsdag: angmsdag,
+	angmsdah: angmsdah,
+	angmsd: angmsd,
+	angrt: angrt,
+	angrtvb: angrtvb,
+	angrtvbd: angrtvbd,
+	angsph: angsph,
+	angst: angst,
+	angzarr: angzarr,
+	Aogon: Aogon,
+	aogon: aogon,
+	Aopf: Aopf,
+	aopf: aopf,
+	apacir: apacir,
+	ap: ap,
+	apE: apE,
+	ape: ape,
+	apid: apid,
+	apos: apos,
+	ApplyFunction: ApplyFunction,
+	approx: approx,
+	approxeq: approxeq,
+	Aring: Aring,
+	aring: aring,
+	Ascr: Ascr,
+	ascr: ascr,
+	Assign: Assign,
+	ast: ast,
+	asymp: asymp,
+	asympeq: asympeq,
+	Atilde: Atilde,
+	atilde: atilde,
+	Auml: Auml,
+	auml: auml,
+	awconint: awconint,
+	awint: awint,
+	backcong: backcong,
+	backepsilon: backepsilon,
+	backprime: backprime,
+	backsim: backsim,
+	backsimeq: backsimeq,
+	Backslash: Backslash,
+	Barv: Barv,
+	barvee: barvee,
+	barwed: barwed,
+	Barwed: Barwed,
+	barwedge: barwedge,
+	bbrk: bbrk,
+	bbrktbrk: bbrktbrk,
+	bcong: bcong,
+	Bcy: Bcy,
+	bcy: bcy,
+	bdquo: bdquo,
+	becaus: becaus,
+	because: because,
+	Because: Because,
+	bemptyv: bemptyv,
+	bepsi: bepsi,
+	bernou: bernou,
+	Bernoullis: Bernoullis,
+	Beta: Beta,
+	beta: beta,
+	beth: beth,
+	between: between,
+	Bfr: Bfr,
+	bfr: bfr,
+	bigcap: bigcap,
+	bigcirc: bigcirc,
+	bigcup: bigcup,
+	bigodot: bigodot,
+	bigoplus: bigoplus,
+	bigotimes: bigotimes,
+	bigsqcup: bigsqcup,
+	bigstar: bigstar,
+	bigtriangledown: bigtriangledown,
+	bigtriangleup: bigtriangleup,
+	biguplus: biguplus,
+	bigvee: bigvee,
+	bigwedge: bigwedge,
+	bkarow: bkarow,
+	blacklozenge: blacklozenge,
+	blacksquare: blacksquare,
+	blacktriangle: blacktriangle,
+	blacktriangledown: blacktriangledown,
+	blacktriangleleft: blacktriangleleft,
+	blacktriangleright: blacktriangleright,
+	blank: blank,
+	blk12: blk12,
+	blk14: blk14,
+	blk34: blk34,
+	block: block,
+	bne: bne,
+	bnequiv: bnequiv,
+	bNot: bNot,
+	bnot: bnot,
+	Bopf: Bopf,
+	bopf: bopf,
+	bot: bot,
+	bottom: bottom,
+	bowtie: bowtie,
+	boxbox: boxbox,
+	boxdl: boxdl,
+	boxdL: boxdL,
+	boxDl: boxDl,
+	boxDL: boxDL,
+	boxdr: boxdr,
+	boxdR: boxdR,
+	boxDr: boxDr,
+	boxDR: boxDR,
+	boxh: boxh,
+	boxH: boxH,
+	boxhd: boxhd,
+	boxHd: boxHd,
+	boxhD: boxhD,
+	boxHD: boxHD,
+	boxhu: boxhu,
+	boxHu: boxHu,
+	boxhU: boxhU,
+	boxHU: boxHU,
+	boxminus: boxminus,
+	boxplus: boxplus,
+	boxtimes: boxtimes,
+	boxul: boxul,
+	boxuL: boxuL,
+	boxUl: boxUl,
+	boxUL: boxUL,
+	boxur: boxur,
+	boxuR: boxuR,
+	boxUr: boxUr,
+	boxUR: boxUR,
+	boxv: boxv,
+	boxV: boxV,
+	boxvh: boxvh,
+	boxvH: boxvH,
+	boxVh: boxVh,
+	boxVH: boxVH,
+	boxvl: boxvl,
+	boxvL: boxvL,
+	boxVl: boxVl,
+	boxVL: boxVL,
+	boxvr: boxvr,
+	boxvR: boxvR,
+	boxVr: boxVr,
+	boxVR: boxVR,
+	bprime: bprime,
+	breve: breve,
+	Breve: Breve,
+	brvbar: brvbar,
+	bscr: bscr,
+	Bscr: Bscr,
+	bsemi: bsemi,
+	bsim: bsim,
+	bsime: bsime,
+	bsolb: bsolb,
+	bsol: bsol,
+	bsolhsub: bsolhsub,
+	bull: bull,
+	bullet: bullet,
+	bump: bump,
+	bumpE: bumpE,
+	bumpe: bumpe,
+	Bumpeq: Bumpeq,
+	bumpeq: bumpeq,
+	Cacute: Cacute,
+	cacute: cacute,
+	capand: capand,
+	capbrcup: capbrcup,
+	capcap: capcap,
+	cap: cap,
+	Cap: Cap,
+	capcup: capcup,
+	capdot: capdot,
+	CapitalDifferentialD: CapitalDifferentialD,
+	caps: caps,
+	caret: caret,
+	caron: caron,
+	Cayleys: Cayleys,
+	ccaps: ccaps,
+	Ccaron: Ccaron,
+	ccaron: ccaron,
+	Ccedil: Ccedil,
+	ccedil: ccedil,
+	Ccirc: Ccirc,
+	ccirc: ccirc,
+	Cconint: Cconint,
+	ccups: ccups,
+	ccupssm: ccupssm,
+	Cdot: Cdot,
+	cdot: cdot,
+	cedil: cedil,
+	Cedilla: Cedilla,
+	cemptyv: cemptyv,
+	cent: cent,
+	centerdot: centerdot,
+	CenterDot: CenterDot,
+	cfr: cfr,
+	Cfr: Cfr,
+	CHcy: CHcy,
+	chcy: chcy,
+	check: check$1,
+	checkmark: checkmark,
+	Chi: Chi,
+	chi: chi,
+	circ: circ,
+	circeq: circeq,
+	circlearrowleft: circlearrowleft,
+	circlearrowright: circlearrowright,
+	circledast: circledast,
+	circledcirc: circledcirc,
+	circleddash: circleddash,
+	CircleDot: CircleDot,
+	circledR: circledR,
+	circledS: circledS,
+	CircleMinus: CircleMinus,
+	CirclePlus: CirclePlus,
+	CircleTimes: CircleTimes,
+	cir: cir,
+	cirE: cirE,
+	cire: cire,
+	cirfnint: cirfnint,
+	cirmid: cirmid,
+	cirscir: cirscir,
+	ClockwiseContourIntegral: ClockwiseContourIntegral,
+	CloseCurlyDoubleQuote: CloseCurlyDoubleQuote,
+	CloseCurlyQuote: CloseCurlyQuote,
+	clubs: clubs,
+	clubsuit: clubsuit,
+	colon: colon,
+	Colon: Colon,
+	Colone: Colone,
+	colone: colone,
+	coloneq: coloneq,
+	comma: comma,
+	commat: commat,
+	comp: comp,
+	compfn: compfn,
+	complement: complement,
+	complexes: complexes,
+	cong: cong,
+	congdot: congdot,
+	Congruent: Congruent,
+	conint: conint,
+	Conint: Conint,
+	ContourIntegral: ContourIntegral,
+	copf: copf,
+	Copf: Copf,
+	coprod: coprod,
+	Coproduct: Coproduct,
+	copy: copy,
+	COPY: COPY,
+	copysr: copysr,
+	CounterClockwiseContourIntegral: CounterClockwiseContourIntegral,
+	crarr: crarr,
+	cross: cross,
+	Cross: Cross,
+	Cscr: Cscr,
+	cscr: cscr,
+	csub: csub,
+	csube: csube,
+	csup: csup,
+	csupe: csupe,
+	ctdot: ctdot,
+	cudarrl: cudarrl,
+	cudarrr: cudarrr,
+	cuepr: cuepr,
+	cuesc: cuesc,
+	cularr: cularr,
+	cularrp: cularrp,
+	cupbrcap: cupbrcap,
+	cupcap: cupcap,
+	CupCap: CupCap,
+	cup: cup,
+	Cup: Cup,
+	cupcup: cupcup,
+	cupdot: cupdot,
+	cupor: cupor,
+	cups: cups,
+	curarr: curarr,
+	curarrm: curarrm,
+	curlyeqprec: curlyeqprec,
+	curlyeqsucc: curlyeqsucc,
+	curlyvee: curlyvee,
+	curlywedge: curlywedge,
+	curren: curren,
+	curvearrowleft: curvearrowleft,
+	curvearrowright: curvearrowright,
+	cuvee: cuvee,
+	cuwed: cuwed,
+	cwconint: cwconint,
+	cwint: cwint,
+	cylcty: cylcty,
+	dagger: dagger,
+	Dagger: Dagger,
+	daleth: daleth,
+	darr: darr,
+	Darr: Darr,
+	dArr: dArr,
+	dash: dash,
+	Dashv: Dashv,
+	dashv: dashv,
+	dbkarow: dbkarow,
+	dblac: dblac,
+	Dcaron: Dcaron,
+	dcaron: dcaron,
+	Dcy: Dcy,
+	dcy: dcy,
+	ddagger: ddagger,
+	ddarr: ddarr,
+	DD: DD,
+	dd: dd$1,
+	DDotrahd: DDotrahd,
+	ddotseq: ddotseq,
+	deg: deg,
+	Del: Del,
+	Delta: Delta,
+	delta: delta,
+	demptyv: demptyv,
+	dfisht: dfisht,
+	Dfr: Dfr,
+	dfr: dfr,
+	dHar: dHar,
+	dharl: dharl,
+	dharr: dharr,
+	DiacriticalAcute: DiacriticalAcute,
+	DiacriticalDot: DiacriticalDot,
+	DiacriticalDoubleAcute: DiacriticalDoubleAcute,
+	DiacriticalGrave: DiacriticalGrave,
+	DiacriticalTilde: DiacriticalTilde,
+	diam: diam,
+	diamond: diamond,
+	Diamond: Diamond,
+	diamondsuit: diamondsuit,
+	diams: diams,
+	die: die,
+	DifferentialD: DifferentialD,
+	digamma: digamma,
+	disin: disin,
+	div: div,
+	divide: divide$1,
+	divideontimes: divideontimes,
+	divonx: divonx,
+	DJcy: DJcy,
+	djcy: djcy,
+	dlcorn: dlcorn,
+	dlcrop: dlcrop,
+	dollar: dollar,
+	Dopf: Dopf,
+	dopf: dopf,
+	Dot: Dot,
+	dot: dot,
+	DotDot: DotDot,
+	doteq: doteq,
+	doteqdot: doteqdot,
+	DotEqual: DotEqual,
+	dotminus: dotminus,
+	dotplus: dotplus,
+	dotsquare: dotsquare,
+	doublebarwedge: doublebarwedge,
+	DoubleContourIntegral: DoubleContourIntegral,
+	DoubleDot: DoubleDot,
+	DoubleDownArrow: DoubleDownArrow,
+	DoubleLeftArrow: DoubleLeftArrow,
+	DoubleLeftRightArrow: DoubleLeftRightArrow,
+	DoubleLeftTee: DoubleLeftTee,
+	DoubleLongLeftArrow: DoubleLongLeftArrow,
+	DoubleLongLeftRightArrow: DoubleLongLeftRightArrow,
+	DoubleLongRightArrow: DoubleLongRightArrow,
+	DoubleRightArrow: DoubleRightArrow,
+	DoubleRightTee: DoubleRightTee,
+	DoubleUpArrow: DoubleUpArrow,
+	DoubleUpDownArrow: DoubleUpDownArrow,
+	DoubleVerticalBar: DoubleVerticalBar,
+	DownArrowBar: DownArrowBar,
+	downarrow: downarrow,
+	DownArrow: DownArrow,
+	Downarrow: Downarrow,
+	DownArrowUpArrow: DownArrowUpArrow,
+	DownBreve: DownBreve,
+	downdownarrows: downdownarrows,
+	downharpoonleft: downharpoonleft,
+	downharpoonright: downharpoonright,
+	DownLeftRightVector: DownLeftRightVector,
+	DownLeftTeeVector: DownLeftTeeVector,
+	DownLeftVectorBar: DownLeftVectorBar,
+	DownLeftVector: DownLeftVector,
+	DownRightTeeVector: DownRightTeeVector,
+	DownRightVectorBar: DownRightVectorBar,
+	DownRightVector: DownRightVector,
+	DownTeeArrow: DownTeeArrow,
+	DownTee: DownTee,
+	drbkarow: drbkarow,
+	drcorn: drcorn,
+	drcrop: drcrop,
+	Dscr: Dscr,
+	dscr: dscr,
+	DScy: DScy,
+	dscy: dscy,
+	dsol: dsol,
+	Dstrok: Dstrok,
+	dstrok: dstrok,
+	dtdot: dtdot,
+	dtri: dtri,
+	dtrif: dtrif,
+	duarr: duarr,
+	duhar: duhar,
+	dwangle: dwangle,
+	DZcy: DZcy,
+	dzcy: dzcy,
+	dzigrarr: dzigrarr,
+	Eacute: Eacute,
+	eacute: eacute,
+	easter: easter,
+	Ecaron: Ecaron,
+	ecaron: ecaron,
+	Ecirc: Ecirc,
+	ecirc: ecirc,
+	ecir: ecir,
+	ecolon: ecolon,
+	Ecy: Ecy,
+	ecy: ecy,
+	eDDot: eDDot,
+	Edot: Edot,
+	edot: edot,
+	eDot: eDot,
+	ee: ee$1,
+	efDot: efDot,
+	Efr: Efr,
+	efr: efr,
+	eg: eg$1,
+	Egrave: Egrave,
+	egrave: egrave,
+	egs: egs,
+	egsdot: egsdot,
+	el: el,
+	Element: Element,
+	elinters: elinters,
+	ell: ell,
+	els: els,
+	elsdot: elsdot,
+	Emacr: Emacr,
+	emacr: emacr,
+	empty: empty$1,
+	emptyset: emptyset,
+	EmptySmallSquare: EmptySmallSquare,
+	emptyv: emptyv,
+	EmptyVerySmallSquare: EmptyVerySmallSquare,
+	emsp13: emsp13,
+	emsp14: emsp14,
+	emsp: emsp,
+	ENG: ENG,
+	eng: eng,
+	ensp: ensp,
+	Eogon: Eogon,
+	eogon: eogon,
+	Eopf: Eopf,
+	eopf: eopf,
+	epar: epar,
+	eparsl: eparsl,
+	eplus: eplus,
+	epsi: epsi,
+	Epsilon: Epsilon,
+	epsilon: epsilon,
+	epsiv: epsiv,
+	eqcirc: eqcirc,
+	eqcolon: eqcolon,
+	eqsim: eqsim,
+	eqslantgtr: eqslantgtr,
+	eqslantless: eqslantless,
+	Equal: Equal,
+	equals: equals,
+	EqualTilde: EqualTilde,
+	equest: equest,
+	Equilibrium: Equilibrium,
+	equiv: equiv,
+	equivDD: equivDD,
+	eqvparsl: eqvparsl,
+	erarr: erarr,
+	erDot: erDot,
+	escr: escr,
+	Escr: Escr,
+	esdot: esdot,
+	Esim: Esim,
+	esim: esim,
+	Eta: Eta,
+	eta: eta,
+	ETH: ETH,
+	eth: eth,
+	Euml: Euml,
+	euml: euml,
+	euro: euro,
+	excl: excl,
+	exist: exist,
+	Exists: Exists,
+	expectation: expectation,
+	exponentiale: exponentiale,
+	ExponentialE: ExponentialE,
+	fallingdotseq: fallingdotseq,
+	Fcy: Fcy,
+	fcy: fcy,
+	female: female,
+	ffilig: ffilig,
+	fflig: fflig,
+	ffllig: ffllig,
+	Ffr: Ffr,
+	ffr: ffr,
+	filig: filig,
+	FilledSmallSquare: FilledSmallSquare,
+	FilledVerySmallSquare: FilledVerySmallSquare,
+	fjlig: fjlig,
+	flat: flat,
+	fllig: fllig,
+	fltns: fltns,
+	fnof: fnof,
+	Fopf: Fopf,
+	fopf: fopf,
+	forall: forall,
+	ForAll: ForAll,
+	fork: fork,
+	forkv: forkv,
+	Fouriertrf: Fouriertrf,
+	fpartint: fpartint,
+	frac12: frac12,
+	frac13: frac13,
+	frac14: frac14,
+	frac15: frac15,
+	frac16: frac16,
+	frac18: frac18,
+	frac23: frac23,
+	frac25: frac25,
+	frac34: frac34,
+	frac35: frac35,
+	frac38: frac38,
+	frac45: frac45,
+	frac56: frac56,
+	frac58: frac58,
+	frac78: frac78,
+	frasl: frasl,
+	frown: frown,
+	fscr: fscr,
+	Fscr: Fscr,
+	gacute: gacute,
+	Gamma: Gamma,
+	gamma: gamma,
+	Gammad: Gammad,
+	gammad: gammad,
+	gap: gap,
+	Gbreve: Gbreve,
+	gbreve: gbreve,
+	Gcedil: Gcedil,
+	Gcirc: Gcirc,
+	gcirc: gcirc,
+	Gcy: Gcy,
+	gcy: gcy,
+	Gdot: Gdot,
+	gdot: gdot,
+	ge: ge$1,
+	gE: gE,
+	gEl: gEl,
+	gel: gel,
+	geq: geq,
+	geqq: geqq,
+	geqslant: geqslant,
+	gescc: gescc,
+	ges: ges,
+	gesdot: gesdot,
+	gesdoto: gesdoto,
+	gesdotol: gesdotol,
+	gesl: gesl,
+	gesles: gesles,
+	Gfr: Gfr,
+	gfr: gfr,
+	gg: gg,
+	Gg: Gg$1,
+	ggg: ggg,
+	gimel: gimel,
+	GJcy: GJcy,
+	gjcy: gjcy,
+	gla: gla,
+	gl: gl,
+	glE: glE,
+	glj: glj,
+	gnap: gnap,
+	gnapprox: gnapprox,
+	gne: gne,
+	gnE: gnE,
+	gneq: gneq,
+	gneqq: gneqq,
+	gnsim: gnsim,
+	Gopf: Gopf,
+	gopf: gopf,
+	grave: grave,
+	GreaterEqual: GreaterEqual,
+	GreaterEqualLess: GreaterEqualLess,
+	GreaterFullEqual: GreaterFullEqual,
+	GreaterGreater: GreaterGreater,
+	GreaterLess: GreaterLess,
+	GreaterSlantEqual: GreaterSlantEqual,
+	GreaterTilde: GreaterTilde,
+	Gscr: Gscr,
+	gscr: gscr,
+	gsim: gsim,
+	gsime: gsime,
+	gsiml: gsiml,
+	gtcc: gtcc,
+	gtcir: gtcir,
+	gt: gt,
+	GT: GT,
+	Gt: Gt,
+	gtdot: gtdot,
+	gtlPar: gtlPar,
+	gtquest: gtquest,
+	gtrapprox: gtrapprox,
+	gtrarr: gtrarr,
+	gtrdot: gtrdot,
+	gtreqless: gtreqless,
+	gtreqqless: gtreqqless,
+	gtrless: gtrless,
+	gtrsim: gtrsim,
+	gvertneqq: gvertneqq,
+	gvnE: gvnE,
+	Hacek: Hacek,
+	hairsp: hairsp,
+	half: half,
+	hamilt: hamilt,
+	HARDcy: HARDcy,
+	hardcy: hardcy,
+	harrcir: harrcir,
+	harr: harr,
+	hArr: hArr,
+	harrw: harrw,
+	Hat: Hat,
+	hbar: hbar,
+	Hcirc: Hcirc,
+	hcirc: hcirc,
+	hearts: hearts,
+	heartsuit: heartsuit,
+	hellip: hellip,
+	hercon: hercon,
+	hfr: hfr,
+	Hfr: Hfr,
+	HilbertSpace: HilbertSpace,
+	hksearow: hksearow,
+	hkswarow: hkswarow,
+	hoarr: hoarr,
+	homtht: homtht,
+	hookleftarrow: hookleftarrow,
+	hookrightarrow: hookrightarrow,
+	hopf: hopf,
+	Hopf: Hopf,
+	horbar: horbar,
+	HorizontalLine: HorizontalLine,
+	hscr: hscr,
+	Hscr: Hscr,
+	hslash: hslash,
+	Hstrok: Hstrok,
+	hstrok: hstrok,
+	HumpDownHump: HumpDownHump,
+	HumpEqual: HumpEqual,
+	hybull: hybull,
+	hyphen: hyphen,
+	Iacute: Iacute,
+	iacute: iacute,
+	ic: ic$1,
+	Icirc: Icirc,
+	icirc: icirc,
+	Icy: Icy,
+	icy: icy,
+	Idot: Idot,
+	IEcy: IEcy,
+	iecy: iecy,
+	iexcl: iexcl,
+	iff: iff,
+	ifr: ifr,
+	Ifr: Ifr,
+	Igrave: Igrave,
+	igrave: igrave,
+	ii: ii,
+	iiiint: iiiint,
+	iiint: iiint,
+	iinfin: iinfin,
+	iiota: iiota,
+	IJlig: IJlig,
+	ijlig: ijlig,
+	Imacr: Imacr,
+	imacr: imacr,
+	image: image,
+	ImaginaryI: ImaginaryI,
+	imagline: imagline,
+	imagpart: imagpart,
+	imath: imath,
+	Im: Im,
+	imof: imof,
+	imped: imped,
+	Implies: Implies,
+	incare: incare,
+	infin: infin,
+	infintie: infintie,
+	inodot: inodot,
+	intcal: intcal,
+	int: int,
+	Int: Int,
+	integers: integers,
+	Integral: Integral,
+	intercal: intercal,
+	Intersection: Intersection,
+	intlarhk: intlarhk,
+	intprod: intprod,
+	InvisibleComma: InvisibleComma,
+	InvisibleTimes: InvisibleTimes,
+	IOcy: IOcy,
+	iocy: iocy,
+	Iogon: Iogon,
+	iogon: iogon,
+	Iopf: Iopf,
+	iopf: iopf,
+	Iota: Iota,
+	iota: iota,
+	iprod: iprod,
+	iquest: iquest,
+	iscr: iscr,
+	Iscr: Iscr,
+	isin: isin,
+	isindot: isindot,
+	isinE: isinE,
+	isins: isins,
+	isinsv: isinsv,
+	isinv: isinv,
+	it: it,
+	Itilde: Itilde,
+	itilde: itilde,
+	Iukcy: Iukcy,
+	iukcy: iukcy,
+	Iuml: Iuml,
+	iuml: iuml,
+	Jcirc: Jcirc,
+	jcirc: jcirc,
+	Jcy: Jcy,
+	jcy: jcy,
+	Jfr: Jfr,
+	jfr: jfr,
+	jmath: jmath,
+	Jopf: Jopf,
+	jopf: jopf,
+	Jscr: Jscr,
+	jscr: jscr,
+	Jsercy: Jsercy,
+	jsercy: jsercy,
+	Jukcy: Jukcy,
+	jukcy: jukcy,
+	Kappa: Kappa,
+	kappa: kappa,
+	kappav: kappav,
+	Kcedil: Kcedil,
+	kcedil: kcedil,
+	Kcy: Kcy,
+	kcy: kcy,
+	Kfr: Kfr,
+	kfr: kfr,
+	kgreen: kgreen,
+	KHcy: KHcy,
+	khcy: khcy,
+	KJcy: KJcy,
+	kjcy: kjcy,
+	Kopf: Kopf,
+	kopf: kopf,
+	Kscr: Kscr,
+	kscr: kscr,
+	lAarr: lAarr,
+	Lacute: Lacute,
+	lacute: lacute,
+	laemptyv: laemptyv,
+	lagran: lagran,
+	Lambda: Lambda,
+	lambda: lambda,
+	lang: lang,
+	Lang: Lang,
+	langd: langd,
+	langle: langle,
+	lap: lap,
+	Laplacetrf: Laplacetrf,
+	laquo: laquo,
+	larrb: larrb,
+	larrbfs: larrbfs,
+	larr: larr,
+	Larr: Larr,
+	lArr: lArr,
+	larrfs: larrfs,
+	larrhk: larrhk,
+	larrlp: larrlp,
+	larrpl: larrpl,
+	larrsim: larrsim,
+	larrtl: larrtl,
+	latail: latail,
+	lAtail: lAtail,
+	lat: lat,
+	late: late,
+	lates: lates,
+	lbarr: lbarr,
+	lBarr: lBarr,
+	lbbrk: lbbrk,
+	lbrace: lbrace,
+	lbrack: lbrack,
+	lbrke: lbrke,
+	lbrksld: lbrksld,
+	lbrkslu: lbrkslu,
+	Lcaron: Lcaron,
+	lcaron: lcaron,
+	Lcedil: Lcedil,
+	lcedil: lcedil,
+	lceil: lceil,
+	lcub: lcub,
+	Lcy: Lcy,
+	lcy: lcy,
+	ldca: ldca,
+	ldquo: ldquo,
+	ldquor: ldquor,
+	ldrdhar: ldrdhar,
+	ldrushar: ldrushar,
+	ldsh: ldsh,
+	le: le$1,
+	lE: lE,
+	LeftAngleBracket: LeftAngleBracket,
+	LeftArrowBar: LeftArrowBar,
+	leftarrow: leftarrow,
+	LeftArrow: LeftArrow,
+	Leftarrow: Leftarrow,
+	LeftArrowRightArrow: LeftArrowRightArrow,
+	leftarrowtail: leftarrowtail,
+	LeftCeiling: LeftCeiling,
+	LeftDoubleBracket: LeftDoubleBracket,
+	LeftDownTeeVector: LeftDownTeeVector,
+	LeftDownVectorBar: LeftDownVectorBar,
+	LeftDownVector: LeftDownVector,
+	LeftFloor: LeftFloor,
+	leftharpoondown: leftharpoondown,
+	leftharpoonup: leftharpoonup,
+	leftleftarrows: leftleftarrows,
+	leftrightarrow: leftrightarrow,
+	LeftRightArrow: LeftRightArrow,
+	Leftrightarrow: Leftrightarrow,
+	leftrightarrows: leftrightarrows,
+	leftrightharpoons: leftrightharpoons,
+	leftrightsquigarrow: leftrightsquigarrow,
+	LeftRightVector: LeftRightVector,
+	LeftTeeArrow: LeftTeeArrow,
+	LeftTee: LeftTee,
+	LeftTeeVector: LeftTeeVector,
+	leftthreetimes: leftthreetimes,
+	LeftTriangleBar: LeftTriangleBar,
+	LeftTriangle: LeftTriangle,
+	LeftTriangleEqual: LeftTriangleEqual,
+	LeftUpDownVector: LeftUpDownVector,
+	LeftUpTeeVector: LeftUpTeeVector,
+	LeftUpVectorBar: LeftUpVectorBar,
+	LeftUpVector: LeftUpVector,
+	LeftVectorBar: LeftVectorBar,
+	LeftVector: LeftVector,
+	lEg: lEg,
+	leg: leg,
+	leq: leq,
+	leqq: leqq,
+	leqslant: leqslant,
+	lescc: lescc,
+	les: les,
+	lesdot: lesdot,
+	lesdoto: lesdoto,
+	lesdotor: lesdotor,
+	lesg: lesg,
+	lesges: lesges,
+	lessapprox: lessapprox,
+	lessdot: lessdot,
+	lesseqgtr: lesseqgtr,
+	lesseqqgtr: lesseqqgtr,
+	LessEqualGreater: LessEqualGreater,
+	LessFullEqual: LessFullEqual,
+	LessGreater: LessGreater,
+	lessgtr: lessgtr,
+	LessLess: LessLess,
+	lesssim: lesssim,
+	LessSlantEqual: LessSlantEqual,
+	LessTilde: LessTilde,
+	lfisht: lfisht,
+	lfloor: lfloor,
+	Lfr: Lfr,
+	lfr: lfr,
+	lg: lg,
+	lgE: lgE,
+	lHar: lHar,
+	lhard: lhard,
+	lharu: lharu,
+	lharul: lharul,
+	lhblk: lhblk,
+	LJcy: LJcy,
+	ljcy: ljcy,
+	llarr: llarr,
+	ll: ll,
+	Ll: Ll,
+	llcorner: llcorner,
+	Lleftarrow: Lleftarrow,
+	llhard: llhard,
+	lltri: lltri,
+	Lmidot: Lmidot,
+	lmidot: lmidot,
+	lmoustache: lmoustache,
+	lmoust: lmoust,
+	lnap: lnap,
+	lnapprox: lnapprox,
+	lne: lne,
+	lnE: lnE,
+	lneq: lneq,
+	lneqq: lneqq,
+	lnsim: lnsim,
+	loang: loang,
+	loarr: loarr,
+	lobrk: lobrk,
+	longleftarrow: longleftarrow,
+	LongLeftArrow: LongLeftArrow,
+	Longleftarrow: Longleftarrow,
+	longleftrightarrow: longleftrightarrow,
+	LongLeftRightArrow: LongLeftRightArrow,
+	Longleftrightarrow: Longleftrightarrow,
+	longmapsto: longmapsto,
+	longrightarrow: longrightarrow,
+	LongRightArrow: LongRightArrow,
+	Longrightarrow: Longrightarrow,
+	looparrowleft: looparrowleft,
+	looparrowright: looparrowright,
+	lopar: lopar,
+	Lopf: Lopf,
+	lopf: lopf,
+	loplus: loplus,
+	lotimes: lotimes,
+	lowast: lowast,
+	lowbar: lowbar,
+	LowerLeftArrow: LowerLeftArrow,
+	LowerRightArrow: LowerRightArrow,
+	loz: loz,
+	lozenge: lozenge,
+	lozf: lozf,
+	lpar: lpar,
+	lparlt: lparlt,
+	lrarr: lrarr,
+	lrcorner: lrcorner,
+	lrhar: lrhar,
+	lrhard: lrhard,
+	lrm: lrm,
+	lrtri: lrtri,
+	lsaquo: lsaquo,
+	lscr: lscr,
+	Lscr: Lscr,
+	lsh: lsh,
+	Lsh: Lsh,
+	lsim: lsim,
+	lsime: lsime,
+	lsimg: lsimg,
+	lsqb: lsqb,
+	lsquo: lsquo,
+	lsquor: lsquor,
+	Lstrok: Lstrok,
+	lstrok: lstrok,
+	ltcc: ltcc,
+	ltcir: ltcir,
+	lt: lt,
+	LT: LT,
+	Lt: Lt,
+	ltdot: ltdot,
+	lthree: lthree,
+	ltimes: ltimes,
+	ltlarr: ltlarr,
+	ltquest: ltquest,
+	ltri: ltri,
+	ltrie: ltrie,
+	ltrif: ltrif,
+	ltrPar: ltrPar,
+	lurdshar: lurdshar,
+	luruhar: luruhar,
+	lvertneqq: lvertneqq,
+	lvnE: lvnE,
+	macr: macr,
+	male: male,
+	malt: malt,
+	maltese: maltese,
+	map: map$2,
+	mapsto: mapsto,
+	mapstodown: mapstodown,
+	mapstoleft: mapstoleft,
+	mapstoup: mapstoup,
+	marker: marker,
+	mcomma: mcomma,
+	Mcy: Mcy,
+	mcy: mcy,
+	mdash: mdash,
+	mDDot: mDDot,
+	measuredangle: measuredangle,
+	MediumSpace: MediumSpace,
+	Mellintrf: Mellintrf,
+	Mfr: Mfr,
+	mfr: mfr,
+	mho: mho,
+	micro: micro,
+	midast: midast,
+	midcir: midcir,
+	mid: mid,
+	middot: middot,
+	minusb: minusb,
+	minus: minus,
+	minusd: minusd,
+	minusdu: minusdu,
+	MinusPlus: MinusPlus,
+	mlcp: mlcp,
+	mldr: mldr,
+	mnplus: mnplus,
+	models: models,
+	Mopf: Mopf,
+	mopf: mopf,
+	mp: mp,
+	mscr: mscr,
+	Mscr: Mscr,
+	mstpos: mstpos,
+	Mu: Mu,
+	mu: mu,
+	multimap: multimap,
+	mumap: mumap,
+	nabla: nabla,
+	Nacute: Nacute,
+	nacute: nacute,
+	nang: nang,
+	nap: nap,
+	napE: napE,
+	napid: napid,
+	napos: napos,
+	napprox: napprox,
+	natural: natural,
+	naturals: naturals,
+	natur: natur,
+	nbsp: nbsp,
+	nbump: nbump,
+	nbumpe: nbumpe,
+	ncap: ncap,
+	Ncaron: Ncaron,
+	ncaron: ncaron,
+	Ncedil: Ncedil,
+	ncedil: ncedil,
+	ncong: ncong,
+	ncongdot: ncongdot,
+	ncup: ncup,
+	Ncy: Ncy,
+	ncy: ncy,
+	ndash: ndash,
+	nearhk: nearhk,
+	nearr: nearr,
+	neArr: neArr,
+	nearrow: nearrow,
+	ne: ne$1,
+	nedot: nedot,
+	NegativeMediumSpace: NegativeMediumSpace,
+	NegativeThickSpace: NegativeThickSpace,
+	NegativeThinSpace: NegativeThinSpace,
+	NegativeVeryThinSpace: NegativeVeryThinSpace,
+	nequiv: nequiv,
+	nesear: nesear,
+	nesim: nesim,
+	NestedGreaterGreater: NestedGreaterGreater,
+	NestedLessLess: NestedLessLess,
+	NewLine: NewLine,
+	nexist: nexist,
+	nexists: nexists,
+	Nfr: Nfr,
+	nfr: nfr,
+	ngE: ngE,
+	nge: nge,
+	ngeq: ngeq,
+	ngeqq: ngeqq,
+	ngeqslant: ngeqslant,
+	nges: nges,
+	nGg: nGg,
+	ngsim: ngsim,
+	nGt: nGt,
+	ngt: ngt,
+	ngtr: ngtr,
+	nGtv: nGtv,
+	nharr: nharr,
+	nhArr: nhArr,
+	nhpar: nhpar,
+	ni: ni,
+	nis: nis,
+	nisd: nisd,
+	niv: niv,
+	NJcy: NJcy,
+	njcy: njcy,
+	nlarr: nlarr,
+	nlArr: nlArr,
+	nldr: nldr,
+	nlE: nlE,
+	nle: nle,
+	nleftarrow: nleftarrow,
+	nLeftarrow: nLeftarrow,
+	nleftrightarrow: nleftrightarrow,
+	nLeftrightarrow: nLeftrightarrow,
+	nleq: nleq,
+	nleqq: nleqq,
+	nleqslant: nleqslant,
+	nles: nles,
+	nless: nless,
+	nLl: nLl,
+	nlsim: nlsim,
+	nLt: nLt,
+	nlt: nlt,
+	nltri: nltri,
+	nltrie: nltrie,
+	nLtv: nLtv,
+	nmid: nmid,
+	NoBreak: NoBreak,
+	NonBreakingSpace: NonBreakingSpace,
+	nopf: nopf,
+	Nopf: Nopf,
+	Not: Not,
+	not: not,
+	NotCongruent: NotCongruent,
+	NotCupCap: NotCupCap,
+	NotDoubleVerticalBar: NotDoubleVerticalBar,
+	NotElement: NotElement,
+	NotEqual: NotEqual,
+	NotEqualTilde: NotEqualTilde,
+	NotExists: NotExists,
+	NotGreater: NotGreater,
+	NotGreaterEqual: NotGreaterEqual,
+	NotGreaterFullEqual: NotGreaterFullEqual,
+	NotGreaterGreater: NotGreaterGreater,
+	NotGreaterLess: NotGreaterLess,
+	NotGreaterSlantEqual: NotGreaterSlantEqual,
+	NotGreaterTilde: NotGreaterTilde,
+	NotHumpDownHump: NotHumpDownHump,
+	NotHumpEqual: NotHumpEqual,
+	notin: notin,
+	notindot: notindot,
+	notinE: notinE,
+	notinva: notinva,
+	notinvb: notinvb,
+	notinvc: notinvc,
+	NotLeftTriangleBar: NotLeftTriangleBar,
+	NotLeftTriangle: NotLeftTriangle,
+	NotLeftTriangleEqual: NotLeftTriangleEqual,
+	NotLess: NotLess,
+	NotLessEqual: NotLessEqual,
+	NotLessGreater: NotLessGreater,
+	NotLessLess: NotLessLess,
+	NotLessSlantEqual: NotLessSlantEqual,
+	NotLessTilde: NotLessTilde,
+	NotNestedGreaterGreater: NotNestedGreaterGreater,
+	NotNestedLessLess: NotNestedLessLess,
+	notni: notni,
+	notniva: notniva,
+	notnivb: notnivb,
+	notnivc: notnivc,
+	NotPrecedes: NotPrecedes,
+	NotPrecedesEqual: NotPrecedesEqual,
+	NotPrecedesSlantEqual: NotPrecedesSlantEqual,
+	NotReverseElement: NotReverseElement,
+	NotRightTriangleBar: NotRightTriangleBar,
+	NotRightTriangle: NotRightTriangle,
+	NotRightTriangleEqual: NotRightTriangleEqual,
+	NotSquareSubset: NotSquareSubset,
+	NotSquareSubsetEqual: NotSquareSubsetEqual,
+	NotSquareSuperset: NotSquareSuperset,
+	NotSquareSupersetEqual: NotSquareSupersetEqual,
+	NotSubset: NotSubset,
+	NotSubsetEqual: NotSubsetEqual,
+	NotSucceeds: NotSucceeds,
+	NotSucceedsEqual: NotSucceedsEqual,
+	NotSucceedsSlantEqual: NotSucceedsSlantEqual,
+	NotSucceedsTilde: NotSucceedsTilde,
+	NotSuperset: NotSuperset,
+	NotSupersetEqual: NotSupersetEqual,
+	NotTilde: NotTilde,
+	NotTildeEqual: NotTildeEqual,
+	NotTildeFullEqual: NotTildeFullEqual,
+	NotTildeTilde: NotTildeTilde,
+	NotVerticalBar: NotVerticalBar,
+	nparallel: nparallel,
+	npar: npar,
+	nparsl: nparsl,
+	npart: npart,
+	npolint: npolint,
+	npr: npr,
+	nprcue: nprcue,
+	nprec: nprec,
+	npreceq: npreceq,
+	npre: npre,
+	nrarrc: nrarrc,
+	nrarr: nrarr,
+	nrArr: nrArr,
+	nrarrw: nrarrw,
+	nrightarrow: nrightarrow,
+	nRightarrow: nRightarrow,
+	nrtri: nrtri,
+	nrtrie: nrtrie,
+	nsc: nsc,
+	nsccue: nsccue,
+	nsce: nsce,
+	Nscr: Nscr,
+	nscr: nscr,
+	nshortmid: nshortmid,
+	nshortparallel: nshortparallel,
+	nsim: nsim,
+	nsime: nsime,
+	nsimeq: nsimeq,
+	nsmid: nsmid,
+	nspar: nspar,
+	nsqsube: nsqsube,
+	nsqsupe: nsqsupe,
+	nsub: nsub,
+	nsubE: nsubE,
+	nsube: nsube,
+	nsubset: nsubset,
+	nsubseteq: nsubseteq,
+	nsubseteqq: nsubseteqq,
+	nsucc: nsucc,
+	nsucceq: nsucceq,
+	nsup: nsup,
+	nsupE: nsupE,
+	nsupe: nsupe,
+	nsupset: nsupset,
+	nsupseteq: nsupseteq,
+	nsupseteqq: nsupseteqq,
+	ntgl: ntgl,
+	Ntilde: Ntilde,
+	ntilde: ntilde,
+	ntlg: ntlg,
+	ntriangleleft: ntriangleleft,
+	ntrianglelefteq: ntrianglelefteq,
+	ntriangleright: ntriangleright,
+	ntrianglerighteq: ntrianglerighteq,
+	Nu: Nu,
+	nu: nu,
+	num: num,
+	numero: numero,
+	numsp: numsp,
+	nvap: nvap,
+	nvdash: nvdash,
+	nvDash: nvDash,
+	nVdash: nVdash,
+	nVDash: nVDash,
+	nvge: nvge,
+	nvgt: nvgt,
+	nvHarr: nvHarr,
+	nvinfin: nvinfin,
+	nvlArr: nvlArr,
+	nvle: nvle,
+	nvlt: nvlt,
+	nvltrie: nvltrie,
+	nvrArr: nvrArr,
+	nvrtrie: nvrtrie,
+	nvsim: nvsim,
+	nwarhk: nwarhk,
+	nwarr: nwarr,
+	nwArr: nwArr,
+	nwarrow: nwarrow,
+	nwnear: nwnear,
+	Oacute: Oacute,
+	oacute: oacute,
+	oast: oast,
+	Ocirc: Ocirc,
+	ocirc: ocirc,
+	ocir: ocir,
+	Ocy: Ocy,
+	ocy: ocy,
+	odash: odash,
+	Odblac: Odblac,
+	odblac: odblac,
+	odiv: odiv,
+	odot: odot,
+	odsold: odsold,
+	OElig: OElig,
+	oelig: oelig,
+	ofcir: ofcir,
+	Ofr: Ofr,
+	ofr: ofr,
+	ogon: ogon,
+	Ograve: Ograve,
+	ograve: ograve,
+	ogt: ogt,
+	ohbar: ohbar,
+	ohm: ohm,
+	oint: oint,
+	olarr: olarr,
+	olcir: olcir,
+	olcross: olcross,
+	oline: oline,
+	olt: olt,
+	Omacr: Omacr,
+	omacr: omacr,
+	Omega: Omega,
+	omega: omega,
+	Omicron: Omicron,
+	omicron: omicron,
+	omid: omid,
+	ominus: ominus,
+	Oopf: Oopf,
+	oopf: oopf,
+	opar: opar,
+	OpenCurlyDoubleQuote: OpenCurlyDoubleQuote,
+	OpenCurlyQuote: OpenCurlyQuote,
+	operp: operp,
+	oplus: oplus,
+	orarr: orarr,
+	Or: Or,
+	or: or,
+	ord: ord,
+	order: order,
+	orderof: orderof,
+	ordf: ordf,
+	ordm: ordm,
+	origof: origof,
+	oror: oror,
+	orslope: orslope,
+	orv: orv,
+	oS: oS,
+	Oscr: Oscr,
+	oscr: oscr,
+	Oslash: Oslash,
+	oslash: oslash,
+	osol: osol,
+	Otilde: Otilde,
+	otilde: otilde,
+	otimesas: otimesas,
+	Otimes: Otimes,
+	otimes: otimes,
+	Ouml: Ouml,
+	ouml: ouml,
+	ovbar: ovbar,
+	OverBar: OverBar,
+	OverBrace: OverBrace,
+	OverBracket: OverBracket,
+	OverParenthesis: OverParenthesis,
+	para: para,
+	parallel: parallel,
+	par: par,
+	parsim: parsim,
+	parsl: parsl,
+	part: part,
+	PartialD: PartialD,
+	Pcy: Pcy,
+	pcy: pcy,
+	percnt: percnt,
+	period: period,
+	permil: permil,
+	perp: perp,
+	pertenk: pertenk,
+	Pfr: Pfr,
+	pfr: pfr,
+	Phi: Phi,
+	phi: phi,
+	phiv: phiv,
+	phmmat: phmmat,
+	phone: phone,
+	Pi: Pi,
+	pi: pi,
+	pitchfork: pitchfork,
+	piv: piv,
+	planck: planck,
+	planckh: planckh,
+	plankv: plankv,
+	plusacir: plusacir,
+	plusb: plusb,
+	pluscir: pluscir,
+	plus: plus,
+	plusdo: plusdo,
+	plusdu: plusdu,
+	pluse: pluse,
+	PlusMinus: PlusMinus,
+	plusmn: plusmn,
+	plussim: plussim,
+	plustwo: plustwo,
+	pm: pm,
+	Poincareplane: Poincareplane,
+	pointint: pointint,
+	popf: popf,
+	Popf: Popf,
+	pound: pound,
+	prap: prap,
+	Pr: Pr,
+	pr: pr,
+	prcue: prcue,
+	precapprox: precapprox,
+	prec: prec,
+	preccurlyeq: preccurlyeq,
+	Precedes: Precedes,
+	PrecedesEqual: PrecedesEqual,
+	PrecedesSlantEqual: PrecedesSlantEqual,
+	PrecedesTilde: PrecedesTilde,
+	preceq: preceq,
+	precnapprox: precnapprox,
+	precneqq: precneqq,
+	precnsim: precnsim,
+	pre: pre,
+	prE: prE,
+	precsim: precsim,
+	prime: prime,
+	Prime: Prime,
+	primes: primes,
+	prnap: prnap,
+	prnE: prnE,
+	prnsim: prnsim,
+	prod: prod,
+	Product: Product,
+	profalar: profalar,
+	profline: profline,
+	profsurf: profsurf,
+	prop: prop,
+	Proportional: Proportional,
+	Proportion: Proportion,
+	propto: propto,
+	prsim: prsim,
+	prurel: prurel,
+	Pscr: Pscr,
+	pscr: pscr,
+	Psi: Psi,
+	psi: psi,
+	puncsp: puncsp,
+	Qfr: Qfr,
+	qfr: qfr,
+	qint: qint,
+	qopf: qopf,
+	Qopf: Qopf,
+	qprime: qprime,
+	Qscr: Qscr,
+	qscr: qscr,
+	quaternions: quaternions,
+	quatint: quatint,
+	quest: quest,
+	questeq: questeq,
+	quot: quot$1,
+	QUOT: QUOT,
+	rAarr: rAarr,
+	race: race,
+	Racute: Racute,
+	racute: racute,
+	radic: radic,
+	raemptyv: raemptyv,
+	rang: rang,
+	Rang: Rang,
+	rangd: rangd,
+	range: range,
+	rangle: rangle,
+	raquo: raquo,
+	rarrap: rarrap,
+	rarrb: rarrb,
+	rarrbfs: rarrbfs,
+	rarrc: rarrc,
+	rarr: rarr,
+	Rarr: Rarr,
+	rArr: rArr,
+	rarrfs: rarrfs,
+	rarrhk: rarrhk,
+	rarrlp: rarrlp,
+	rarrpl: rarrpl,
+	rarrsim: rarrsim,
+	Rarrtl: Rarrtl,
+	rarrtl: rarrtl,
+	rarrw: rarrw,
+	ratail: ratail,
+	rAtail: rAtail,
+	ratio: ratio,
+	rationals: rationals,
+	rbarr: rbarr,
+	rBarr: rBarr,
+	RBarr: RBarr,
+	rbbrk: rbbrk,
+	rbrace: rbrace,
+	rbrack: rbrack,
+	rbrke: rbrke,
+	rbrksld: rbrksld,
+	rbrkslu: rbrkslu,
+	Rcaron: Rcaron,
+	rcaron: rcaron,
+	Rcedil: Rcedil,
+	rcedil: rcedil,
+	rceil: rceil,
+	rcub: rcub,
+	Rcy: Rcy,
+	rcy: rcy,
+	rdca: rdca,
+	rdldhar: rdldhar,
+	rdquo: rdquo,
+	rdquor: rdquor,
+	rdsh: rdsh,
+	real: real,
+	realine: realine,
+	realpart: realpart,
+	reals: reals,
+	Re: Re$1,
+	rect: rect,
+	reg: reg,
+	REG: REG,
+	ReverseElement: ReverseElement,
+	ReverseEquilibrium: ReverseEquilibrium,
+	ReverseUpEquilibrium: ReverseUpEquilibrium,
+	rfisht: rfisht,
+	rfloor: rfloor,
+	rfr: rfr,
+	Rfr: Rfr,
+	rHar: rHar,
+	rhard: rhard,
+	rharu: rharu,
+	rharul: rharul,
+	Rho: Rho,
+	rho: rho,
+	rhov: rhov,
+	RightAngleBracket: RightAngleBracket,
+	RightArrowBar: RightArrowBar,
+	rightarrow: rightarrow,
+	RightArrow: RightArrow,
+	Rightarrow: Rightarrow,
+	RightArrowLeftArrow: RightArrowLeftArrow,
+	rightarrowtail: rightarrowtail,
+	RightCeiling: RightCeiling,
+	RightDoubleBracket: RightDoubleBracket,
+	RightDownTeeVector: RightDownTeeVector,
+	RightDownVectorBar: RightDownVectorBar,
+	RightDownVector: RightDownVector,
+	RightFloor: RightFloor,
+	rightharpoondown: rightharpoondown,
+	rightharpoonup: rightharpoonup,
+	rightleftarrows: rightleftarrows,
+	rightleftharpoons: rightleftharpoons,
+	rightrightarrows: rightrightarrows,
+	rightsquigarrow: rightsquigarrow,
+	RightTeeArrow: RightTeeArrow,
+	RightTee: RightTee,
+	RightTeeVector: RightTeeVector,
+	rightthreetimes: rightthreetimes,
+	RightTriangleBar: RightTriangleBar,
+	RightTriangle: RightTriangle,
+	RightTriangleEqual: RightTriangleEqual,
+	RightUpDownVector: RightUpDownVector,
+	RightUpTeeVector: RightUpTeeVector,
+	RightUpVectorBar: RightUpVectorBar,
+	RightUpVector: RightUpVector,
+	RightVectorBar: RightVectorBar,
+	RightVector: RightVector,
+	ring: ring,
+	risingdotseq: risingdotseq,
+	rlarr: rlarr,
+	rlhar: rlhar,
+	rlm: rlm,
+	rmoustache: rmoustache,
+	rmoust: rmoust,
+	rnmid: rnmid,
+	roang: roang,
+	roarr: roarr,
+	robrk: robrk,
+	ropar: ropar,
+	ropf: ropf,
+	Ropf: Ropf,
+	roplus: roplus,
+	rotimes: rotimes,
+	RoundImplies: RoundImplies,
+	rpar: rpar,
+	rpargt: rpargt,
+	rppolint: rppolint,
+	rrarr: rrarr,
+	Rrightarrow: Rrightarrow,
+	rsaquo: rsaquo,
+	rscr: rscr,
+	Rscr: Rscr,
+	rsh: rsh,
+	Rsh: Rsh,
+	rsqb: rsqb,
+	rsquo: rsquo,
+	rsquor: rsquor,
+	rthree: rthree,
+	rtimes: rtimes,
+	rtri: rtri,
+	rtrie: rtrie,
+	rtrif: rtrif,
+	rtriltri: rtriltri,
+	RuleDelayed: RuleDelayed,
+	ruluhar: ruluhar,
+	rx: rx,
+	Sacute: Sacute,
+	sacute: sacute,
+	sbquo: sbquo,
+	scap: scap,
+	Scaron: Scaron,
+	scaron: scaron,
+	Sc: Sc$1,
+	sc: sc$1,
+	sccue: sccue,
+	sce: sce,
+	scE: scE,
+	Scedil: Scedil,
+	scedil: scedil,
+	Scirc: Scirc,
+	scirc: scirc,
+	scnap: scnap,
+	scnE: scnE,
+	scnsim: scnsim,
+	scpolint: scpolint,
+	scsim: scsim,
+	Scy: Scy,
+	scy: scy,
+	sdotb: sdotb,
+	sdot: sdot,
+	sdote: sdote,
+	searhk: searhk,
+	searr: searr,
+	seArr: seArr,
+	searrow: searrow,
+	sect: sect,
+	semi: semi,
+	seswar: seswar,
+	setminus: setminus,
+	setmn: setmn,
+	sext: sext,
+	Sfr: Sfr,
+	sfr: sfr,
+	sfrown: sfrown,
+	sharp: sharp,
+	SHCHcy: SHCHcy,
+	shchcy: shchcy,
+	SHcy: SHcy,
+	shcy: shcy,
+	ShortDownArrow: ShortDownArrow,
+	ShortLeftArrow: ShortLeftArrow,
+	shortmid: shortmid,
+	shortparallel: shortparallel,
+	ShortRightArrow: ShortRightArrow,
+	ShortUpArrow: ShortUpArrow,
+	shy: shy,
+	Sigma: Sigma,
+	sigma: sigma,
+	sigmaf: sigmaf,
+	sigmav: sigmav,
+	sim: sim,
+	simdot: simdot,
+	sime: sime,
+	simeq: simeq,
+	simg: simg,
+	simgE: simgE,
+	siml: siml,
+	simlE: simlE,
+	simne: simne,
+	simplus: simplus,
+	simrarr: simrarr,
+	slarr: slarr,
+	SmallCircle: SmallCircle,
+	smallsetminus: smallsetminus,
+	smashp: smashp,
+	smeparsl: smeparsl,
+	smid: smid,
+	smile: smile,
+	smt: smt,
+	smte: smte,
+	smtes: smtes,
+	SOFTcy: SOFTcy,
+	softcy: softcy,
+	solbar: solbar,
+	solb: solb,
+	sol: sol,
+	Sopf: Sopf,
+	sopf: sopf,
+	spades: spades,
+	spadesuit: spadesuit,
+	spar: spar,
+	sqcap: sqcap,
+	sqcaps: sqcaps,
+	sqcup: sqcup,
+	sqcups: sqcups,
+	Sqrt: Sqrt,
+	sqsub: sqsub,
+	sqsube: sqsube,
+	sqsubset: sqsubset,
+	sqsubseteq: sqsubseteq,
+	sqsup: sqsup,
+	sqsupe: sqsupe,
+	sqsupset: sqsupset,
+	sqsupseteq: sqsupseteq,
+	square: square,
+	Square: Square,
+	SquareIntersection: SquareIntersection,
+	SquareSubset: SquareSubset,
+	SquareSubsetEqual: SquareSubsetEqual,
+	SquareSuperset: SquareSuperset,
+	SquareSupersetEqual: SquareSupersetEqual,
+	SquareUnion: SquareUnion,
+	squarf: squarf,
+	squ: squ,
+	squf: squf,
+	srarr: srarr,
+	Sscr: Sscr,
+	sscr: sscr,
+	ssetmn: ssetmn,
+	ssmile: ssmile,
+	sstarf: sstarf,
+	Star: Star,
+	star: star,
+	starf: starf,
+	straightepsilon: straightepsilon,
+	straightphi: straightphi,
+	strns: strns,
+	sub: sub,
+	Sub: Sub,
+	subdot: subdot,
+	subE: subE,
+	sube: sube,
+	subedot: subedot,
+	submult: submult,
+	subnE: subnE,
+	subne: subne,
+	subplus: subplus,
+	subrarr: subrarr,
+	subset: subset,
+	Subset: Subset,
+	subseteq: subseteq,
+	subseteqq: subseteqq,
+	SubsetEqual: SubsetEqual,
+	subsetneq: subsetneq,
+	subsetneqq: subsetneqq,
+	subsim: subsim,
+	subsub: subsub,
+	subsup: subsup,
+	succapprox: succapprox,
+	succ: succ,
+	succcurlyeq: succcurlyeq,
+	Succeeds: Succeeds,
+	SucceedsEqual: SucceedsEqual,
+	SucceedsSlantEqual: SucceedsSlantEqual,
+	SucceedsTilde: SucceedsTilde,
+	succeq: succeq,
+	succnapprox: succnapprox,
+	succneqq: succneqq,
+	succnsim: succnsim,
+	succsim: succsim,
+	SuchThat: SuchThat,
+	sum: sum,
+	Sum: Sum,
+	sung: sung,
+	sup1: sup1,
+	sup2: sup2,
+	sup3: sup3,
+	sup: sup,
+	Sup: Sup,
+	supdot: supdot,
+	supdsub: supdsub,
+	supE: supE,
+	supe: supe,
+	supedot: supedot,
+	Superset: Superset,
+	SupersetEqual: SupersetEqual,
+	suphsol: suphsol,
+	suphsub: suphsub,
+	suplarr: suplarr,
+	supmult: supmult,
+	supnE: supnE,
+	supne: supne,
+	supplus: supplus,
+	supset: supset,
+	Supset: Supset,
+	supseteq: supseteq,
+	supseteqq: supseteqq,
+	supsetneq: supsetneq,
+	supsetneqq: supsetneqq,
+	supsim: supsim,
+	supsub: supsub,
+	supsup: supsup,
+	swarhk: swarhk,
+	swarr: swarr,
+	swArr: swArr,
+	swarrow: swarrow,
+	swnwar: swnwar,
+	szlig: szlig,
+	Tab: Tab,
+	target: target,
+	Tau: Tau,
+	tau: tau,
+	tbrk: tbrk,
+	Tcaron: Tcaron,
+	tcaron: tcaron,
+	Tcedil: Tcedil,
+	tcedil: tcedil,
+	Tcy: Tcy,
+	tcy: tcy,
+	tdot: tdot,
+	telrec: telrec,
+	Tfr: Tfr,
+	tfr: tfr,
+	there4: there4,
+	therefore: therefore,
+	Therefore: Therefore,
+	Theta: Theta,
+	theta: theta,
+	thetasym: thetasym,
+	thetav: thetav,
+	thickapprox: thickapprox,
+	thicksim: thicksim,
+	ThickSpace: ThickSpace,
+	ThinSpace: ThinSpace,
+	thinsp: thinsp,
+	thkap: thkap,
+	thksim: thksim,
+	THORN: THORN,
+	thorn: thorn,
+	tilde: tilde,
+	Tilde: Tilde,
+	TildeEqual: TildeEqual,
+	TildeFullEqual: TildeFullEqual,
+	TildeTilde: TildeTilde,
+	timesbar: timesbar,
+	timesb: timesb,
+	times: times,
+	timesd: timesd,
+	tint: tint,
+	toea: toea,
+	topbot: topbot,
+	topcir: topcir,
+	top: top,
+	Topf: Topf,
+	topf: topf,
+	topfork: topfork,
+	tosa: tosa,
+	tprime: tprime,
+	trade: trade,
+	TRADE: TRADE,
+	triangle: triangle,
+	triangledown: triangledown,
+	triangleleft: triangleleft,
+	trianglelefteq: trianglelefteq,
+	triangleq: triangleq,
+	triangleright: triangleright,
+	trianglerighteq: trianglerighteq,
+	tridot: tridot,
+	trie: trie,
+	triminus: triminus,
+	TripleDot: TripleDot,
+	triplus: triplus,
+	trisb: trisb,
+	tritime: tritime,
+	trpezium: trpezium,
+	Tscr: Tscr,
+	tscr: tscr,
+	TScy: TScy,
+	tscy: tscy,
+	TSHcy: TSHcy,
+	tshcy: tshcy,
+	Tstrok: Tstrok,
+	tstrok: tstrok,
+	twixt: twixt,
+	twoheadleftarrow: twoheadleftarrow,
+	twoheadrightarrow: twoheadrightarrow,
+	Uacute: Uacute,
+	uacute: uacute,
+	uarr: uarr,
+	Uarr: Uarr,
+	uArr: uArr,
+	Uarrocir: Uarrocir,
+	Ubrcy: Ubrcy,
+	ubrcy: ubrcy,
+	Ubreve: Ubreve,
+	ubreve: ubreve,
+	Ucirc: Ucirc,
+	ucirc: ucirc,
+	Ucy: Ucy,
+	ucy: ucy,
+	udarr: udarr,
+	Udblac: Udblac,
+	udblac: udblac,
+	udhar: udhar,
+	ufisht: ufisht,
+	Ufr: Ufr,
+	ufr: ufr,
+	Ugrave: Ugrave,
+	ugrave: ugrave,
+	uHar: uHar,
+	uharl: uharl,
+	uharr: uharr,
+	uhblk: uhblk,
+	ulcorn: ulcorn,
+	ulcorner: ulcorner,
+	ulcrop: ulcrop,
+	ultri: ultri,
+	Umacr: Umacr,
+	umacr: umacr,
+	uml: uml,
+	UnderBar: UnderBar,
+	UnderBrace: UnderBrace,
+	UnderBracket: UnderBracket,
+	UnderParenthesis: UnderParenthesis,
+	Union: Union,
+	UnionPlus: UnionPlus,
+	Uogon: Uogon,
+	uogon: uogon,
+	Uopf: Uopf,
+	uopf: uopf,
+	UpArrowBar: UpArrowBar,
+	uparrow: uparrow,
+	UpArrow: UpArrow,
+	Uparrow: Uparrow,
+	UpArrowDownArrow: UpArrowDownArrow,
+	updownarrow: updownarrow,
+	UpDownArrow: UpDownArrow,
+	Updownarrow: Updownarrow,
+	UpEquilibrium: UpEquilibrium,
+	upharpoonleft: upharpoonleft,
+	upharpoonright: upharpoonright,
+	uplus: uplus,
+	UpperLeftArrow: UpperLeftArrow,
+	UpperRightArrow: UpperRightArrow,
+	upsi: upsi,
+	Upsi: Upsi,
+	upsih: upsih,
+	Upsilon: Upsilon,
+	upsilon: upsilon,
+	UpTeeArrow: UpTeeArrow,
+	UpTee: UpTee,
+	upuparrows: upuparrows,
+	urcorn: urcorn,
+	urcorner: urcorner,
+	urcrop: urcrop,
+	Uring: Uring,
+	uring: uring,
+	urtri: urtri,
+	Uscr: Uscr,
+	uscr: uscr,
+	utdot: utdot,
+	Utilde: Utilde,
+	utilde: utilde,
+	utri: utri,
+	utrif: utrif,
+	uuarr: uuarr,
+	Uuml: Uuml,
+	uuml: uuml,
+	uwangle: uwangle,
+	vangrt: vangrt,
+	varepsilon: varepsilon,
+	varkappa: varkappa,
+	varnothing: varnothing,
+	varphi: varphi,
+	varpi: varpi,
+	varpropto: varpropto,
+	varr: varr,
+	vArr: vArr,
+	varrho: varrho,
+	varsigma: varsigma,
+	varsubsetneq: varsubsetneq,
+	varsubsetneqq: varsubsetneqq,
+	varsupsetneq: varsupsetneq,
+	varsupsetneqq: varsupsetneqq,
+	vartheta: vartheta,
+	vartriangleleft: vartriangleleft,
+	vartriangleright: vartriangleright,
+	vBar: vBar,
+	Vbar: Vbar,
+	vBarv: vBarv,
+	Vcy: Vcy,
+	vcy: vcy,
+	vdash: vdash,
+	vDash: vDash,
+	Vdash: Vdash,
+	VDash: VDash,
+	Vdashl: Vdashl,
+	veebar: veebar,
+	vee: vee,
+	Vee: Vee,
+	veeeq: veeeq,
+	vellip: vellip,
+	verbar: verbar,
+	Verbar: Verbar,
+	vert: vert,
+	Vert: Vert,
+	VerticalBar: VerticalBar,
+	VerticalLine: VerticalLine,
+	VerticalSeparator: VerticalSeparator,
+	VerticalTilde: VerticalTilde,
+	VeryThinSpace: VeryThinSpace,
+	Vfr: Vfr,
+	vfr: vfr,
+	vltri: vltri,
+	vnsub: vnsub,
+	vnsup: vnsup,
+	Vopf: Vopf,
+	vopf: vopf,
+	vprop: vprop,
+	vrtri: vrtri,
+	Vscr: Vscr,
+	vscr: vscr,
+	vsubnE: vsubnE,
+	vsubne: vsubne,
+	vsupnE: vsupnE,
+	vsupne: vsupne,
+	Vvdash: Vvdash,
+	vzigzag: vzigzag,
+	Wcirc: Wcirc,
+	wcirc: wcirc,
+	wedbar: wedbar,
+	wedge: wedge,
+	Wedge: Wedge,
+	wedgeq: wedgeq,
+	weierp: weierp,
+	Wfr: Wfr,
+	wfr: wfr,
+	Wopf: Wopf,
+	wopf: wopf,
+	wp: wp,
+	wr: wr,
+	wreath: wreath,
+	Wscr: Wscr,
+	wscr: wscr,
+	xcap: xcap,
+	xcirc: xcirc,
+	xcup: xcup,
+	xdtri: xdtri,
+	Xfr: Xfr,
+	xfr: xfr,
+	xharr: xharr,
+	xhArr: xhArr,
+	Xi: Xi,
+	xi: xi,
+	xlarr: xlarr,
+	xlArr: xlArr,
+	xmap: xmap,
+	xnis: xnis,
+	xodot: xodot,
+	Xopf: Xopf,
+	xopf: xopf,
+	xoplus: xoplus,
+	xotime: xotime,
+	xrarr: xrarr,
+	xrArr: xrArr,
+	Xscr: Xscr,
+	xscr: xscr,
+	xsqcup: xsqcup,
+	xuplus: xuplus,
+	xutri: xutri,
+	xvee: xvee,
+	xwedge: xwedge,
+	Yacute: Yacute,
+	yacute: yacute,
+	YAcy: YAcy,
+	yacy: yacy,
+	Ycirc: Ycirc,
+	ycirc: ycirc,
+	Ycy: Ycy,
+	ycy: ycy,
+	yen: yen,
+	Yfr: Yfr,
+	yfr: yfr,
+	YIcy: YIcy,
+	yicy: yicy,
+	Yopf: Yopf,
+	yopf: yopf,
+	Yscr: Yscr,
+	yscr: yscr,
+	YUcy: YUcy,
+	yucy: yucy,
+	yuml: yuml,
+	Yuml: Yuml,
+	Zacute: Zacute,
+	zacute: zacute,
+	Zcaron: Zcaron,
+	zcaron: zcaron,
+	Zcy: Zcy,
+	zcy: zcy,
+	Zdot: Zdot,
+	zdot: zdot,
+	zeetrf: zeetrf,
+	ZeroWidthSpace: ZeroWidthSpace,
+	Zeta: Zeta,
+	zeta: zeta,
+	zfr: zfr,
+	Zfr: Zfr,
+	ZHcy: ZHcy,
+	zhcy: zhcy,
+	zigrarr: zigrarr,
+	zopf: zopf,
+	Zopf: Zopf,
+	Zscr: Zscr,
+	zscr: zscr,
+	zwj: zwj,
+	zwnj: zwnj,
+	"in": "∈",
+	"Map": "⤅"
+};
+
+var entities$1 = Object.freeze({
+	Aacute: Aacute,
+	aacute: aacute,
+	Abreve: Abreve,
+	abreve: abreve,
+	ac: ac$1,
+	acd: acd,
+	acE: acE,
+	Acirc: Acirc,
+	acirc: acirc,
+	acute: acute,
+	Acy: Acy,
+	acy: acy,
+	AElig: AElig,
+	aelig: aelig,
+	af: af$1,
+	Afr: Afr,
+	afr: afr,
+	Agrave: Agrave,
+	agrave: agrave,
+	alefsym: alefsym,
+	aleph: aleph,
+	Alpha: Alpha,
+	alpha: alpha,
+	Amacr: Amacr,
+	amacr: amacr,
+	amalg: amalg,
+	amp: amp,
+	AMP: AMP,
+	andand: andand,
+	And: And,
+	and: and,
+	andd: andd,
+	andslope: andslope,
+	andv: andv,
+	ang: ang,
+	ange: ange,
+	angle: angle,
+	angmsdaa: angmsdaa,
+	angmsdab: angmsdab,
+	angmsdac: angmsdac,
+	angmsdad: angmsdad,
+	angmsdae: angmsdae,
+	angmsdaf: angmsdaf,
+	angmsdag: angmsdag,
+	angmsdah: angmsdah,
+	angmsd: angmsd,
+	angrt: angrt,
+	angrtvb: angrtvb,
+	angrtvbd: angrtvbd,
+	angsph: angsph,
+	angst: angst,
+	angzarr: angzarr,
+	Aogon: Aogon,
+	aogon: aogon,
+	Aopf: Aopf,
+	aopf: aopf,
+	apacir: apacir,
+	ap: ap,
+	apE: apE,
+	ape: ape,
+	apid: apid,
+	apos: apos,
+	ApplyFunction: ApplyFunction,
+	approx: approx,
+	approxeq: approxeq,
+	Aring: Aring,
+	aring: aring,
+	Ascr: Ascr,
+	ascr: ascr,
+	Assign: Assign,
+	ast: ast,
+	asymp: asymp,
+	asympeq: asympeq,
+	Atilde: Atilde,
+	atilde: atilde,
+	Auml: Auml,
+	auml: auml,
+	awconint: awconint,
+	awint: awint,
+	backcong: backcong,
+	backepsilon: backepsilon,
+	backprime: backprime,
+	backsim: backsim,
+	backsimeq: backsimeq,
+	Backslash: Backslash,
+	Barv: Barv,
+	barvee: barvee,
+	barwed: barwed,
+	Barwed: Barwed,
+	barwedge: barwedge,
+	bbrk: bbrk,
+	bbrktbrk: bbrktbrk,
+	bcong: bcong,
+	Bcy: Bcy,
+	bcy: bcy,
+	bdquo: bdquo,
+	becaus: becaus,
+	because: because,
+	Because: Because,
+	bemptyv: bemptyv,
+	bepsi: bepsi,
+	bernou: bernou,
+	Bernoullis: Bernoullis,
+	Beta: Beta,
+	beta: beta,
+	beth: beth,
+	between: between,
+	Bfr: Bfr,
+	bfr: bfr,
+	bigcap: bigcap,
+	bigcirc: bigcirc,
+	bigcup: bigcup,
+	bigodot: bigodot,
+	bigoplus: bigoplus,
+	bigotimes: bigotimes,
+	bigsqcup: bigsqcup,
+	bigstar: bigstar,
+	bigtriangledown: bigtriangledown,
+	bigtriangleup: bigtriangleup,
+	biguplus: biguplus,
+	bigvee: bigvee,
+	bigwedge: bigwedge,
+	bkarow: bkarow,
+	blacklozenge: blacklozenge,
+	blacksquare: blacksquare,
+	blacktriangle: blacktriangle,
+	blacktriangledown: blacktriangledown,
+	blacktriangleleft: blacktriangleleft,
+	blacktriangleright: blacktriangleright,
+	blank: blank,
+	blk12: blk12,
+	blk14: blk14,
+	blk34: blk34,
+	block: block,
+	bne: bne,
+	bnequiv: bnequiv,
+	bNot: bNot,
+	bnot: bnot,
+	Bopf: Bopf,
+	bopf: bopf,
+	bot: bot,
+	bottom: bottom,
+	bowtie: bowtie,
+	boxbox: boxbox,
+	boxdl: boxdl,
+	boxdL: boxdL,
+	boxDl: boxDl,
+	boxDL: boxDL,
+	boxdr: boxdr,
+	boxdR: boxdR,
+	boxDr: boxDr,
+	boxDR: boxDR,
+	boxh: boxh,
+	boxH: boxH,
+	boxhd: boxhd,
+	boxHd: boxHd,
+	boxhD: boxhD,
+	boxHD: boxHD,
+	boxhu: boxhu,
+	boxHu: boxHu,
+	boxhU: boxhU,
+	boxHU: boxHU,
+	boxminus: boxminus,
+	boxplus: boxplus,
+	boxtimes: boxtimes,
+	boxul: boxul,
+	boxuL: boxuL,
+	boxUl: boxUl,
+	boxUL: boxUL,
+	boxur: boxur,
+	boxuR: boxuR,
+	boxUr: boxUr,
+	boxUR: boxUR,
+	boxv: boxv,
+	boxV: boxV,
+	boxvh: boxvh,
+	boxvH: boxvH,
+	boxVh: boxVh,
+	boxVH: boxVH,
+	boxvl: boxvl,
+	boxvL: boxvL,
+	boxVl: boxVl,
+	boxVL: boxVL,
+	boxvr: boxvr,
+	boxvR: boxvR,
+	boxVr: boxVr,
+	boxVR: boxVR,
+	bprime: bprime,
+	breve: breve,
+	Breve: Breve,
+	brvbar: brvbar,
+	bscr: bscr,
+	Bscr: Bscr,
+	bsemi: bsemi,
+	bsim: bsim,
+	bsime: bsime,
+	bsolb: bsolb,
+	bsol: bsol,
+	bsolhsub: bsolhsub,
+	bull: bull,
+	bullet: bullet,
+	bump: bump,
+	bumpE: bumpE,
+	bumpe: bumpe,
+	Bumpeq: Bumpeq,
+	bumpeq: bumpeq,
+	Cacute: Cacute,
+	cacute: cacute,
+	capand: capand,
+	capbrcup: capbrcup,
+	capcap: capcap,
+	cap: cap,
+	Cap: Cap,
+	capcup: capcup,
+	capdot: capdot,
+	CapitalDifferentialD: CapitalDifferentialD,
+	caps: caps,
+	caret: caret,
+	caron: caron,
+	Cayleys: Cayleys,
+	ccaps: ccaps,
+	Ccaron: Ccaron,
+	ccaron: ccaron,
+	Ccedil: Ccedil,
+	ccedil: ccedil,
+	Ccirc: Ccirc,
+	ccirc: ccirc,
+	Cconint: Cconint,
+	ccups: ccups,
+	ccupssm: ccupssm,
+	Cdot: Cdot,
+	cdot: cdot,
+	cedil: cedil,
+	Cedilla: Cedilla,
+	cemptyv: cemptyv,
+	cent: cent,
+	centerdot: centerdot,
+	CenterDot: CenterDot,
+	cfr: cfr,
+	Cfr: Cfr,
+	CHcy: CHcy,
+	chcy: chcy,
+	check: check$1,
+	checkmark: checkmark,
+	Chi: Chi,
+	chi: chi,
+	circ: circ,
+	circeq: circeq,
+	circlearrowleft: circlearrowleft,
+	circlearrowright: circlearrowright,
+	circledast: circledast,
+	circledcirc: circledcirc,
+	circleddash: circleddash,
+	CircleDot: CircleDot,
+	circledR: circledR,
+	circledS: circledS,
+	CircleMinus: CircleMinus,
+	CirclePlus: CirclePlus,
+	CircleTimes: CircleTimes,
+	cir: cir,
+	cirE: cirE,
+	cire: cire,
+	cirfnint: cirfnint,
+	cirmid: cirmid,
+	cirscir: cirscir,
+	ClockwiseContourIntegral: ClockwiseContourIntegral,
+	CloseCurlyDoubleQuote: CloseCurlyDoubleQuote,
+	CloseCurlyQuote: CloseCurlyQuote,
+	clubs: clubs,
+	clubsuit: clubsuit,
+	colon: colon,
+	Colon: Colon,
+	Colone: Colone,
+	colone: colone,
+	coloneq: coloneq,
+	comma: comma,
+	commat: commat,
+	comp: comp,
+	compfn: compfn,
+	complement: complement,
+	complexes: complexes,
+	cong: cong,
+	congdot: congdot,
+	Congruent: Congruent,
+	conint: conint,
+	Conint: Conint,
+	ContourIntegral: ContourIntegral,
+	copf: copf,
+	Copf: Copf,
+	coprod: coprod,
+	Coproduct: Coproduct,
+	copy: copy,
+	COPY: COPY,
+	copysr: copysr,
+	CounterClockwiseContourIntegral: CounterClockwiseContourIntegral,
+	crarr: crarr,
+	cross: cross,
+	Cross: Cross,
+	Cscr: Cscr,
+	cscr: cscr,
+	csub: csub,
+	csube: csube,
+	csup: csup,
+	csupe: csupe,
+	ctdot: ctdot,
+	cudarrl: cudarrl,
+	cudarrr: cudarrr,
+	cuepr: cuepr,
+	cuesc: cuesc,
+	cularr: cularr,
+	cularrp: cularrp,
+	cupbrcap: cupbrcap,
+	cupcap: cupcap,
+	CupCap: CupCap,
+	cup: cup,
+	Cup: Cup,
+	cupcup: cupcup,
+	cupdot: cupdot,
+	cupor: cupor,
+	cups: cups,
+	curarr: curarr,
+	curarrm: curarrm,
+	curlyeqprec: curlyeqprec,
+	curlyeqsucc: curlyeqsucc,
+	curlyvee: curlyvee,
+	curlywedge: curlywedge,
+	curren: curren,
+	curvearrowleft: curvearrowleft,
+	curvearrowright: curvearrowright,
+	cuvee: cuvee,
+	cuwed: cuwed,
+	cwconint: cwconint,
+	cwint: cwint,
+	cylcty: cylcty,
+	dagger: dagger,
+	Dagger: Dagger,
+	daleth: daleth,
+	darr: darr,
+	Darr: Darr,
+	dArr: dArr,
+	dash: dash,
+	Dashv: Dashv,
+	dashv: dashv,
+	dbkarow: dbkarow,
+	dblac: dblac,
+	Dcaron: Dcaron,
+	dcaron: dcaron,
+	Dcy: Dcy,
+	dcy: dcy,
+	ddagger: ddagger,
+	ddarr: ddarr,
+	DD: DD,
+	dd: dd$1,
+	DDotrahd: DDotrahd,
+	ddotseq: ddotseq,
+	deg: deg,
+	Del: Del,
+	Delta: Delta,
+	delta: delta,
+	demptyv: demptyv,
+	dfisht: dfisht,
+	Dfr: Dfr,
+	dfr: dfr,
+	dHar: dHar,
+	dharl: dharl,
+	dharr: dharr,
+	DiacriticalAcute: DiacriticalAcute,
+	DiacriticalDot: DiacriticalDot,
+	DiacriticalDoubleAcute: DiacriticalDoubleAcute,
+	DiacriticalGrave: DiacriticalGrave,
+	DiacriticalTilde: DiacriticalTilde,
+	diam: diam,
+	diamond: diamond,
+	Diamond: Diamond,
+	diamondsuit: diamondsuit,
+	diams: diams,
+	die: die,
+	DifferentialD: DifferentialD,
+	digamma: digamma,
+	disin: disin,
+	div: div,
+	divide: divide$1,
+	divideontimes: divideontimes,
+	divonx: divonx,
+	DJcy: DJcy,
+	djcy: djcy,
+	dlcorn: dlcorn,
+	dlcrop: dlcrop,
+	dollar: dollar,
+	Dopf: Dopf,
+	dopf: dopf,
+	Dot: Dot,
+	dot: dot,
+	DotDot: DotDot,
+	doteq: doteq,
+	doteqdot: doteqdot,
+	DotEqual: DotEqual,
+	dotminus: dotminus,
+	dotplus: dotplus,
+	dotsquare: dotsquare,
+	doublebarwedge: doublebarwedge,
+	DoubleContourIntegral: DoubleContourIntegral,
+	DoubleDot: DoubleDot,
+	DoubleDownArrow: DoubleDownArrow,
+	DoubleLeftArrow: DoubleLeftArrow,
+	DoubleLeftRightArrow: DoubleLeftRightArrow,
+	DoubleLeftTee: DoubleLeftTee,
+	DoubleLongLeftArrow: DoubleLongLeftArrow,
+	DoubleLongLeftRightArrow: DoubleLongLeftRightArrow,
+	DoubleLongRightArrow: DoubleLongRightArrow,
+	DoubleRightArrow: DoubleRightArrow,
+	DoubleRightTee: DoubleRightTee,
+	DoubleUpArrow: DoubleUpArrow,
+	DoubleUpDownArrow: DoubleUpDownArrow,
+	DoubleVerticalBar: DoubleVerticalBar,
+	DownArrowBar: DownArrowBar,
+	downarrow: downarrow,
+	DownArrow: DownArrow,
+	Downarrow: Downarrow,
+	DownArrowUpArrow: DownArrowUpArrow,
+	DownBreve: DownBreve,
+	downdownarrows: downdownarrows,
+	downharpoonleft: downharpoonleft,
+	downharpoonright: downharpoonright,
+	DownLeftRightVector: DownLeftRightVector,
+	DownLeftTeeVector: DownLeftTeeVector,
+	DownLeftVectorBar: DownLeftVectorBar,
+	DownLeftVector: DownLeftVector,
+	DownRightTeeVector: DownRightTeeVector,
+	DownRightVectorBar: DownRightVectorBar,
+	DownRightVector: DownRightVector,
+	DownTeeArrow: DownTeeArrow,
+	DownTee: DownTee,
+	drbkarow: drbkarow,
+	drcorn: drcorn,
+	drcrop: drcrop,
+	Dscr: Dscr,
+	dscr: dscr,
+	DScy: DScy,
+	dscy: dscy,
+	dsol: dsol,
+	Dstrok: Dstrok,
+	dstrok: dstrok,
+	dtdot: dtdot,
+	dtri: dtri,
+	dtrif: dtrif,
+	duarr: duarr,
+	duhar: duhar,
+	dwangle: dwangle,
+	DZcy: DZcy,
+	dzcy: dzcy,
+	dzigrarr: dzigrarr,
+	Eacute: Eacute,
+	eacute: eacute,
+	easter: easter,
+	Ecaron: Ecaron,
+	ecaron: ecaron,
+	Ecirc: Ecirc,
+	ecirc: ecirc,
+	ecir: ecir,
+	ecolon: ecolon,
+	Ecy: Ecy,
+	ecy: ecy,
+	eDDot: eDDot,
+	Edot: Edot,
+	edot: edot,
+	eDot: eDot,
+	ee: ee$1,
+	efDot: efDot,
+	Efr: Efr,
+	efr: efr,
+	eg: eg$1,
+	Egrave: Egrave,
+	egrave: egrave,
+	egs: egs,
+	egsdot: egsdot,
+	el: el,
+	Element: Element,
+	elinters: elinters,
+	ell: ell,
+	els: els,
+	elsdot: elsdot,
+	Emacr: Emacr,
+	emacr: emacr,
+	empty: empty$1,
+	emptyset: emptyset,
+	EmptySmallSquare: EmptySmallSquare,
+	emptyv: emptyv,
+	EmptyVerySmallSquare: EmptyVerySmallSquare,
+	emsp13: emsp13,
+	emsp14: emsp14,
+	emsp: emsp,
+	ENG: ENG,
+	eng: eng,
+	ensp: ensp,
+	Eogon: Eogon,
+	eogon: eogon,
+	Eopf: Eopf,
+	eopf: eopf,
+	epar: epar,
+	eparsl: eparsl,
+	eplus: eplus,
+	epsi: epsi,
+	Epsilon: Epsilon,
+	epsilon: epsilon,
+	epsiv: epsiv,
+	eqcirc: eqcirc,
+	eqcolon: eqcolon,
+	eqsim: eqsim,
+	eqslantgtr: eqslantgtr,
+	eqslantless: eqslantless,
+	Equal: Equal,
+	equals: equals,
+	EqualTilde: EqualTilde,
+	equest: equest,
+	Equilibrium: Equilibrium,
+	equiv: equiv,
+	equivDD: equivDD,
+	eqvparsl: eqvparsl,
+	erarr: erarr,
+	erDot: erDot,
+	escr: escr,
+	Escr: Escr,
+	esdot: esdot,
+	Esim: Esim,
+	esim: esim,
+	Eta: Eta,
+	eta: eta,
+	ETH: ETH,
+	eth: eth,
+	Euml: Euml,
+	euml: euml,
+	euro: euro,
+	excl: excl,
+	exist: exist,
+	Exists: Exists,
+	expectation: expectation,
+	exponentiale: exponentiale,
+	ExponentialE: ExponentialE,
+	fallingdotseq: fallingdotseq,
+	Fcy: Fcy,
+	fcy: fcy,
+	female: female,
+	ffilig: ffilig,
+	fflig: fflig,
+	ffllig: ffllig,
+	Ffr: Ffr,
+	ffr: ffr,
+	filig: filig,
+	FilledSmallSquare: FilledSmallSquare,
+	FilledVerySmallSquare: FilledVerySmallSquare,
+	fjlig: fjlig,
+	flat: flat,
+	fllig: fllig,
+	fltns: fltns,
+	fnof: fnof,
+	Fopf: Fopf,
+	fopf: fopf,
+	forall: forall,
+	ForAll: ForAll,
+	fork: fork,
+	forkv: forkv,
+	Fouriertrf: Fouriertrf,
+	fpartint: fpartint,
+	frac12: frac12,
+	frac13: frac13,
+	frac14: frac14,
+	frac15: frac15,
+	frac16: frac16,
+	frac18: frac18,
+	frac23: frac23,
+	frac25: frac25,
+	frac34: frac34,
+	frac35: frac35,
+	frac38: frac38,
+	frac45: frac45,
+	frac56: frac56,
+	frac58: frac58,
+	frac78: frac78,
+	frasl: frasl,
+	frown: frown,
+	fscr: fscr,
+	Fscr: Fscr,
+	gacute: gacute,
+	Gamma: Gamma,
+	gamma: gamma,
+	Gammad: Gammad,
+	gammad: gammad,
+	gap: gap,
+	Gbreve: Gbreve,
+	gbreve: gbreve,
+	Gcedil: Gcedil,
+	Gcirc: Gcirc,
+	gcirc: gcirc,
+	Gcy: Gcy,
+	gcy: gcy,
+	Gdot: Gdot,
+	gdot: gdot,
+	ge: ge$1,
+	gE: gE,
+	gEl: gEl,
+	gel: gel,
+	geq: geq,
+	geqq: geqq,
+	geqslant: geqslant,
+	gescc: gescc,
+	ges: ges,
+	gesdot: gesdot,
+	gesdoto: gesdoto,
+	gesdotol: gesdotol,
+	gesl: gesl,
+	gesles: gesles,
+	Gfr: Gfr,
+	gfr: gfr,
+	gg: gg,
+	Gg: Gg$1,
+	ggg: ggg,
+	gimel: gimel,
+	GJcy: GJcy,
+	gjcy: gjcy,
+	gla: gla,
+	gl: gl,
+	glE: glE,
+	glj: glj,
+	gnap: gnap,
+	gnapprox: gnapprox,
+	gne: gne,
+	gnE: gnE,
+	gneq: gneq,
+	gneqq: gneqq,
+	gnsim: gnsim,
+	Gopf: Gopf,
+	gopf: gopf,
+	grave: grave,
+	GreaterEqual: GreaterEqual,
+	GreaterEqualLess: GreaterEqualLess,
+	GreaterFullEqual: GreaterFullEqual,
+	GreaterGreater: GreaterGreater,
+	GreaterLess: GreaterLess,
+	GreaterSlantEqual: GreaterSlantEqual,
+	GreaterTilde: GreaterTilde,
+	Gscr: Gscr,
+	gscr: gscr,
+	gsim: gsim,
+	gsime: gsime,
+	gsiml: gsiml,
+	gtcc: gtcc,
+	gtcir: gtcir,
+	gt: gt,
+	GT: GT,
+	Gt: Gt,
+	gtdot: gtdot,
+	gtlPar: gtlPar,
+	gtquest: gtquest,
+	gtrapprox: gtrapprox,
+	gtrarr: gtrarr,
+	gtrdot: gtrdot,
+	gtreqless: gtreqless,
+	gtreqqless: gtreqqless,
+	gtrless: gtrless,
+	gtrsim: gtrsim,
+	gvertneqq: gvertneqq,
+	gvnE: gvnE,
+	Hacek: Hacek,
+	hairsp: hairsp,
+	half: half,
+	hamilt: hamilt,
+	HARDcy: HARDcy,
+	hardcy: hardcy,
+	harrcir: harrcir,
+	harr: harr,
+	hArr: hArr,
+	harrw: harrw,
+	Hat: Hat,
+	hbar: hbar,
+	Hcirc: Hcirc,
+	hcirc: hcirc,
+	hearts: hearts,
+	heartsuit: heartsuit,
+	hellip: hellip,
+	hercon: hercon,
+	hfr: hfr,
+	Hfr: Hfr,
+	HilbertSpace: HilbertSpace,
+	hksearow: hksearow,
+	hkswarow: hkswarow,
+	hoarr: hoarr,
+	homtht: homtht,
+	hookleftarrow: hookleftarrow,
+	hookrightarrow: hookrightarrow,
+	hopf: hopf,
+	Hopf: Hopf,
+	horbar: horbar,
+	HorizontalLine: HorizontalLine,
+	hscr: hscr,
+	Hscr: Hscr,
+	hslash: hslash,
+	Hstrok: Hstrok,
+	hstrok: hstrok,
+	HumpDownHump: HumpDownHump,
+	HumpEqual: HumpEqual,
+	hybull: hybull,
+	hyphen: hyphen,
+	Iacute: Iacute,
+	iacute: iacute,
+	ic: ic$1,
+	Icirc: Icirc,
+	icirc: icirc,
+	Icy: Icy,
+	icy: icy,
+	Idot: Idot,
+	IEcy: IEcy,
+	iecy: iecy,
+	iexcl: iexcl,
+	iff: iff,
+	ifr: ifr,
+	Ifr: Ifr,
+	Igrave: Igrave,
+	igrave: igrave,
+	ii: ii,
+	iiiint: iiiint,
+	iiint: iiint,
+	iinfin: iinfin,
+	iiota: iiota,
+	IJlig: IJlig,
+	ijlig: ijlig,
+	Imacr: Imacr,
+	imacr: imacr,
+	image: image,
+	ImaginaryI: ImaginaryI,
+	imagline: imagline,
+	imagpart: imagpart,
+	imath: imath,
+	Im: Im,
+	imof: imof,
+	imped: imped,
+	Implies: Implies,
+	incare: incare,
+	infin: infin,
+	infintie: infintie,
+	inodot: inodot,
+	intcal: intcal,
+	int: int,
+	Int: Int,
+	integers: integers,
+	Integral: Integral,
+	intercal: intercal,
+	Intersection: Intersection,
+	intlarhk: intlarhk,
+	intprod: intprod,
+	InvisibleComma: InvisibleComma,
+	InvisibleTimes: InvisibleTimes,
+	IOcy: IOcy,
+	iocy: iocy,
+	Iogon: Iogon,
+	iogon: iogon,
+	Iopf: Iopf,
+	iopf: iopf,
+	Iota: Iota,
+	iota: iota,
+	iprod: iprod,
+	iquest: iquest,
+	iscr: iscr,
+	Iscr: Iscr,
+	isin: isin,
+	isindot: isindot,
+	isinE: isinE,
+	isins: isins,
+	isinsv: isinsv,
+	isinv: isinv,
+	it: it,
+	Itilde: Itilde,
+	itilde: itilde,
+	Iukcy: Iukcy,
+	iukcy: iukcy,
+	Iuml: Iuml,
+	iuml: iuml,
+	Jcirc: Jcirc,
+	jcirc: jcirc,
+	Jcy: Jcy,
+	jcy: jcy,
+	Jfr: Jfr,
+	jfr: jfr,
+	jmath: jmath,
+	Jopf: Jopf,
+	jopf: jopf,
+	Jscr: Jscr,
+	jscr: jscr,
+	Jsercy: Jsercy,
+	jsercy: jsercy,
+	Jukcy: Jukcy,
+	jukcy: jukcy,
+	Kappa: Kappa,
+	kappa: kappa,
+	kappav: kappav,
+	Kcedil: Kcedil,
+	kcedil: kcedil,
+	Kcy: Kcy,
+	kcy: kcy,
+	Kfr: Kfr,
+	kfr: kfr,
+	kgreen: kgreen,
+	KHcy: KHcy,
+	khcy: khcy,
+	KJcy: KJcy,
+	kjcy: kjcy,
+	Kopf: Kopf,
+	kopf: kopf,
+	Kscr: Kscr,
+	kscr: kscr,
+	lAarr: lAarr,
+	Lacute: Lacute,
+	lacute: lacute,
+	laemptyv: laemptyv,
+	lagran: lagran,
+	Lambda: Lambda,
+	lambda: lambda,
+	lang: lang,
+	Lang: Lang,
+	langd: langd,
+	langle: langle,
+	lap: lap,
+	Laplacetrf: Laplacetrf,
+	laquo: laquo,
+	larrb: larrb,
+	larrbfs: larrbfs,
+	larr: larr,
+	Larr: Larr,
+	lArr: lArr,
+	larrfs: larrfs,
+	larrhk: larrhk,
+	larrlp: larrlp,
+	larrpl: larrpl,
+	larrsim: larrsim,
+	larrtl: larrtl,
+	latail: latail,
+	lAtail: lAtail,
+	lat: lat,
+	late: late,
+	lates: lates,
+	lbarr: lbarr,
+	lBarr: lBarr,
+	lbbrk: lbbrk,
+	lbrace: lbrace,
+	lbrack: lbrack,
+	lbrke: lbrke,
+	lbrksld: lbrksld,
+	lbrkslu: lbrkslu,
+	Lcaron: Lcaron,
+	lcaron: lcaron,
+	Lcedil: Lcedil,
+	lcedil: lcedil,
+	lceil: lceil,
+	lcub: lcub,
+	Lcy: Lcy,
+	lcy: lcy,
+	ldca: ldca,
+	ldquo: ldquo,
+	ldquor: ldquor,
+	ldrdhar: ldrdhar,
+	ldrushar: ldrushar,
+	ldsh: ldsh,
+	le: le$1,
+	lE: lE,
+	LeftAngleBracket: LeftAngleBracket,
+	LeftArrowBar: LeftArrowBar,
+	leftarrow: leftarrow,
+	LeftArrow: LeftArrow,
+	Leftarrow: Leftarrow,
+	LeftArrowRightArrow: LeftArrowRightArrow,
+	leftarrowtail: leftarrowtail,
+	LeftCeiling: LeftCeiling,
+	LeftDoubleBracket: LeftDoubleBracket,
+	LeftDownTeeVector: LeftDownTeeVector,
+	LeftDownVectorBar: LeftDownVectorBar,
+	LeftDownVector: LeftDownVector,
+	LeftFloor: LeftFloor,
+	leftharpoondown: leftharpoondown,
+	leftharpoonup: leftharpoonup,
+	leftleftarrows: leftleftarrows,
+	leftrightarrow: leftrightarrow,
+	LeftRightArrow: LeftRightArrow,
+	Leftrightarrow: Leftrightarrow,
+	leftrightarrows: leftrightarrows,
+	leftrightharpoons: leftrightharpoons,
+	leftrightsquigarrow: leftrightsquigarrow,
+	LeftRightVector: LeftRightVector,
+	LeftTeeArrow: LeftTeeArrow,
+	LeftTee: LeftTee,
+	LeftTeeVector: LeftTeeVector,
+	leftthreetimes: leftthreetimes,
+	LeftTriangleBar: LeftTriangleBar,
+	LeftTriangle: LeftTriangle,
+	LeftTriangleEqual: LeftTriangleEqual,
+	LeftUpDownVector: LeftUpDownVector,
+	LeftUpTeeVector: LeftUpTeeVector,
+	LeftUpVectorBar: LeftUpVectorBar,
+	LeftUpVector: LeftUpVector,
+	LeftVectorBar: LeftVectorBar,
+	LeftVector: LeftVector,
+	lEg: lEg,
+	leg: leg,
+	leq: leq,
+	leqq: leqq,
+	leqslant: leqslant,
+	lescc: lescc,
+	les: les,
+	lesdot: lesdot,
+	lesdoto: lesdoto,
+	lesdotor: lesdotor,
+	lesg: lesg,
+	lesges: lesges,
+	lessapprox: lessapprox,
+	lessdot: lessdot,
+	lesseqgtr: lesseqgtr,
+	lesseqqgtr: lesseqqgtr,
+	LessEqualGreater: LessEqualGreater,
+	LessFullEqual: LessFullEqual,
+	LessGreater: LessGreater,
+	lessgtr: lessgtr,
+	LessLess: LessLess,
+	lesssim: lesssim,
+	LessSlantEqual: LessSlantEqual,
+	LessTilde: LessTilde,
+	lfisht: lfisht,
+	lfloor: lfloor,
+	Lfr: Lfr,
+	lfr: lfr,
+	lg: lg,
+	lgE: lgE,
+	lHar: lHar,
+	lhard: lhard,
+	lharu: lharu,
+	lharul: lharul,
+	lhblk: lhblk,
+	LJcy: LJcy,
+	ljcy: ljcy,
+	llarr: llarr,
+	ll: ll,
+	Ll: Ll,
+	llcorner: llcorner,
+	Lleftarrow: Lleftarrow,
+	llhard: llhard,
+	lltri: lltri,
+	Lmidot: Lmidot,
+	lmidot: lmidot,
+	lmoustache: lmoustache,
+	lmoust: lmoust,
+	lnap: lnap,
+	lnapprox: lnapprox,
+	lne: lne,
+	lnE: lnE,
+	lneq: lneq,
+	lneqq: lneqq,
+	lnsim: lnsim,
+	loang: loang,
+	loarr: loarr,
+	lobrk: lobrk,
+	longleftarrow: longleftarrow,
+	LongLeftArrow: LongLeftArrow,
+	Longleftarrow: Longleftarrow,
+	longleftrightarrow: longleftrightarrow,
+	LongLeftRightArrow: LongLeftRightArrow,
+	Longleftrightarrow: Longleftrightarrow,
+	longmapsto: longmapsto,
+	longrightarrow: longrightarrow,
+	LongRightArrow: LongRightArrow,
+	Longrightarrow: Longrightarrow,
+	looparrowleft: looparrowleft,
+	looparrowright: looparrowright,
+	lopar: lopar,
+	Lopf: Lopf,
+	lopf: lopf,
+	loplus: loplus,
+	lotimes: lotimes,
+	lowast: lowast,
+	lowbar: lowbar,
+	LowerLeftArrow: LowerLeftArrow,
+	LowerRightArrow: LowerRightArrow,
+	loz: loz,
+	lozenge: lozenge,
+	lozf: lozf,
+	lpar: lpar,
+	lparlt: lparlt,
+	lrarr: lrarr,
+	lrcorner: lrcorner,
+	lrhar: lrhar,
+	lrhard: lrhard,
+	lrm: lrm,
+	lrtri: lrtri,
+	lsaquo: lsaquo,
+	lscr: lscr,
+	Lscr: Lscr,
+	lsh: lsh,
+	Lsh: Lsh,
+	lsim: lsim,
+	lsime: lsime,
+	lsimg: lsimg,
+	lsqb: lsqb,
+	lsquo: lsquo,
+	lsquor: lsquor,
+	Lstrok: Lstrok,
+	lstrok: lstrok,
+	ltcc: ltcc,
+	ltcir: ltcir,
+	lt: lt,
+	LT: LT,
+	Lt: Lt,
+	ltdot: ltdot,
+	lthree: lthree,
+	ltimes: ltimes,
+	ltlarr: ltlarr,
+	ltquest: ltquest,
+	ltri: ltri,
+	ltrie: ltrie,
+	ltrif: ltrif,
+	ltrPar: ltrPar,
+	lurdshar: lurdshar,
+	luruhar: luruhar,
+	lvertneqq: lvertneqq,
+	lvnE: lvnE,
+	macr: macr,
+	male: male,
+	malt: malt,
+	maltese: maltese,
+	map: map$2,
+	mapsto: mapsto,
+	mapstodown: mapstodown,
+	mapstoleft: mapstoleft,
+	mapstoup: mapstoup,
+	marker: marker,
+	mcomma: mcomma,
+	Mcy: Mcy,
+	mcy: mcy,
+	mdash: mdash,
+	mDDot: mDDot,
+	measuredangle: measuredangle,
+	MediumSpace: MediumSpace,
+	Mellintrf: Mellintrf,
+	Mfr: Mfr,
+	mfr: mfr,
+	mho: mho,
+	micro: micro,
+	midast: midast,
+	midcir: midcir,
+	mid: mid,
+	middot: middot,
+	minusb: minusb,
+	minus: minus,
+	minusd: minusd,
+	minusdu: minusdu,
+	MinusPlus: MinusPlus,
+	mlcp: mlcp,
+	mldr: mldr,
+	mnplus: mnplus,
+	models: models,
+	Mopf: Mopf,
+	mopf: mopf,
+	mp: mp,
+	mscr: mscr,
+	Mscr: Mscr,
+	mstpos: mstpos,
+	Mu: Mu,
+	mu: mu,
+	multimap: multimap,
+	mumap: mumap,
+	nabla: nabla,
+	Nacute: Nacute,
+	nacute: nacute,
+	nang: nang,
+	nap: nap,
+	napE: napE,
+	napid: napid,
+	napos: napos,
+	napprox: napprox,
+	natural: natural,
+	naturals: naturals,
+	natur: natur,
+	nbsp: nbsp,
+	nbump: nbump,
+	nbumpe: nbumpe,
+	ncap: ncap,
+	Ncaron: Ncaron,
+	ncaron: ncaron,
+	Ncedil: Ncedil,
+	ncedil: ncedil,
+	ncong: ncong,
+	ncongdot: ncongdot,
+	ncup: ncup,
+	Ncy: Ncy,
+	ncy: ncy,
+	ndash: ndash,
+	nearhk: nearhk,
+	nearr: nearr,
+	neArr: neArr,
+	nearrow: nearrow,
+	ne: ne$1,
+	nedot: nedot,
+	NegativeMediumSpace: NegativeMediumSpace,
+	NegativeThickSpace: NegativeThickSpace,
+	NegativeThinSpace: NegativeThinSpace,
+	NegativeVeryThinSpace: NegativeVeryThinSpace,
+	nequiv: nequiv,
+	nesear: nesear,
+	nesim: nesim,
+	NestedGreaterGreater: NestedGreaterGreater,
+	NestedLessLess: NestedLessLess,
+	NewLine: NewLine,
+	nexist: nexist,
+	nexists: nexists,
+	Nfr: Nfr,
+	nfr: nfr,
+	ngE: ngE,
+	nge: nge,
+	ngeq: ngeq,
+	ngeqq: ngeqq,
+	ngeqslant: ngeqslant,
+	nges: nges,
+	nGg: nGg,
+	ngsim: ngsim,
+	nGt: nGt,
+	ngt: ngt,
+	ngtr: ngtr,
+	nGtv: nGtv,
+	nharr: nharr,
+	nhArr: nhArr,
+	nhpar: nhpar,
+	ni: ni,
+	nis: nis,
+	nisd: nisd,
+	niv: niv,
+	NJcy: NJcy,
+	njcy: njcy,
+	nlarr: nlarr,
+	nlArr: nlArr,
+	nldr: nldr,
+	nlE: nlE,
+	nle: nle,
+	nleftarrow: nleftarrow,
+	nLeftarrow: nLeftarrow,
+	nleftrightarrow: nleftrightarrow,
+	nLeftrightarrow: nLeftrightarrow,
+	nleq: nleq,
+	nleqq: nleqq,
+	nleqslant: nleqslant,
+	nles: nles,
+	nless: nless,
+	nLl: nLl,
+	nlsim: nlsim,
+	nLt: nLt,
+	nlt: nlt,
+	nltri: nltri,
+	nltrie: nltrie,
+	nLtv: nLtv,
+	nmid: nmid,
+	NoBreak: NoBreak,
+	NonBreakingSpace: NonBreakingSpace,
+	nopf: nopf,
+	Nopf: Nopf,
+	Not: Not,
+	not: not,
+	NotCongruent: NotCongruent,
+	NotCupCap: NotCupCap,
+	NotDoubleVerticalBar: NotDoubleVerticalBar,
+	NotElement: NotElement,
+	NotEqual: NotEqual,
+	NotEqualTilde: NotEqualTilde,
+	NotExists: NotExists,
+	NotGreater: NotGreater,
+	NotGreaterEqual: NotGreaterEqual,
+	NotGreaterFullEqual: NotGreaterFullEqual,
+	NotGreaterGreater: NotGreaterGreater,
+	NotGreaterLess: NotGreaterLess,
+	NotGreaterSlantEqual: NotGreaterSlantEqual,
+	NotGreaterTilde: NotGreaterTilde,
+	NotHumpDownHump: NotHumpDownHump,
+	NotHumpEqual: NotHumpEqual,
+	notin: notin,
+	notindot: notindot,
+	notinE: notinE,
+	notinva: notinva,
+	notinvb: notinvb,
+	notinvc: notinvc,
+	NotLeftTriangleBar: NotLeftTriangleBar,
+	NotLeftTriangle: NotLeftTriangle,
+	NotLeftTriangleEqual: NotLeftTriangleEqual,
+	NotLess: NotLess,
+	NotLessEqual: NotLessEqual,
+	NotLessGreater: NotLessGreater,
+	NotLessLess: NotLessLess,
+	NotLessSlantEqual: NotLessSlantEqual,
+	NotLessTilde: NotLessTilde,
+	NotNestedGreaterGreater: NotNestedGreaterGreater,
+	NotNestedLessLess: NotNestedLessLess,
+	notni: notni,
+	notniva: notniva,
+	notnivb: notnivb,
+	notnivc: notnivc,
+	NotPrecedes: NotPrecedes,
+	NotPrecedesEqual: NotPrecedesEqual,
+	NotPrecedesSlantEqual: NotPrecedesSlantEqual,
+	NotReverseElement: NotReverseElement,
+	NotRightTriangleBar: NotRightTriangleBar,
+	NotRightTriangle: NotRightTriangle,
+	NotRightTriangleEqual: NotRightTriangleEqual,
+	NotSquareSubset: NotSquareSubset,
+	NotSquareSubsetEqual: NotSquareSubsetEqual,
+	NotSquareSuperset: NotSquareSuperset,
+	NotSquareSupersetEqual: NotSquareSupersetEqual,
+	NotSubset: NotSubset,
+	NotSubsetEqual: NotSubsetEqual,
+	NotSucceeds: NotSucceeds,
+	NotSucceedsEqual: NotSucceedsEqual,
+	NotSucceedsSlantEqual: NotSucceedsSlantEqual,
+	NotSucceedsTilde: NotSucceedsTilde,
+	NotSuperset: NotSuperset,
+	NotSupersetEqual: NotSupersetEqual,
+	NotTilde: NotTilde,
+	NotTildeEqual: NotTildeEqual,
+	NotTildeFullEqual: NotTildeFullEqual,
+	NotTildeTilde: NotTildeTilde,
+	NotVerticalBar: NotVerticalBar,
+	nparallel: nparallel,
+	npar: npar,
+	nparsl: nparsl,
+	npart: npart,
+	npolint: npolint,
+	npr: npr,
+	nprcue: nprcue,
+	nprec: nprec,
+	npreceq: npreceq,
+	npre: npre,
+	nrarrc: nrarrc,
+	nrarr: nrarr,
+	nrArr: nrArr,
+	nrarrw: nrarrw,
+	nrightarrow: nrightarrow,
+	nRightarrow: nRightarrow,
+	nrtri: nrtri,
+	nrtrie: nrtrie,
+	nsc: nsc,
+	nsccue: nsccue,
+	nsce: nsce,
+	Nscr: Nscr,
+	nscr: nscr,
+	nshortmid: nshortmid,
+	nshortparallel: nshortparallel,
+	nsim: nsim,
+	nsime: nsime,
+	nsimeq: nsimeq,
+	nsmid: nsmid,
+	nspar: nspar,
+	nsqsube: nsqsube,
+	nsqsupe: nsqsupe,
+	nsub: nsub,
+	nsubE: nsubE,
+	nsube: nsube,
+	nsubset: nsubset,
+	nsubseteq: nsubseteq,
+	nsubseteqq: nsubseteqq,
+	nsucc: nsucc,
+	nsucceq: nsucceq,
+	nsup: nsup,
+	nsupE: nsupE,
+	nsupe: nsupe,
+	nsupset: nsupset,
+	nsupseteq: nsupseteq,
+	nsupseteqq: nsupseteqq,
+	ntgl: ntgl,
+	Ntilde: Ntilde,
+	ntilde: ntilde,
+	ntlg: ntlg,
+	ntriangleleft: ntriangleleft,
+	ntrianglelefteq: ntrianglelefteq,
+	ntriangleright: ntriangleright,
+	ntrianglerighteq: ntrianglerighteq,
+	Nu: Nu,
+	nu: nu,
+	num: num,
+	numero: numero,
+	numsp: numsp,
+	nvap: nvap,
+	nvdash: nvdash,
+	nvDash: nvDash,
+	nVdash: nVdash,
+	nVDash: nVDash,
+	nvge: nvge,
+	nvgt: nvgt,
+	nvHarr: nvHarr,
+	nvinfin: nvinfin,
+	nvlArr: nvlArr,
+	nvle: nvle,
+	nvlt: nvlt,
+	nvltrie: nvltrie,
+	nvrArr: nvrArr,
+	nvrtrie: nvrtrie,
+	nvsim: nvsim,
+	nwarhk: nwarhk,
+	nwarr: nwarr,
+	nwArr: nwArr,
+	nwarrow: nwarrow,
+	nwnear: nwnear,
+	Oacute: Oacute,
+	oacute: oacute,
+	oast: oast,
+	Ocirc: Ocirc,
+	ocirc: ocirc,
+	ocir: ocir,
+	Ocy: Ocy,
+	ocy: ocy,
+	odash: odash,
+	Odblac: Odblac,
+	odblac: odblac,
+	odiv: odiv,
+	odot: odot,
+	odsold: odsold,
+	OElig: OElig,
+	oelig: oelig,
+	ofcir: ofcir,
+	Ofr: Ofr,
+	ofr: ofr,
+	ogon: ogon,
+	Ograve: Ograve,
+	ograve: ograve,
+	ogt: ogt,
+	ohbar: ohbar,
+	ohm: ohm,
+	oint: oint,
+	olarr: olarr,
+	olcir: olcir,
+	olcross: olcross,
+	oline: oline,
+	olt: olt,
+	Omacr: Omacr,
+	omacr: omacr,
+	Omega: Omega,
+	omega: omega,
+	Omicron: Omicron,
+	omicron: omicron,
+	omid: omid,
+	ominus: ominus,
+	Oopf: Oopf,
+	oopf: oopf,
+	opar: opar,
+	OpenCurlyDoubleQuote: OpenCurlyDoubleQuote,
+	OpenCurlyQuote: OpenCurlyQuote,
+	operp: operp,
+	oplus: oplus,
+	orarr: orarr,
+	Or: Or,
+	or: or,
+	ord: ord,
+	order: order,
+	orderof: orderof,
+	ordf: ordf,
+	ordm: ordm,
+	origof: origof,
+	oror: oror,
+	orslope: orslope,
+	orv: orv,
+	oS: oS,
+	Oscr: Oscr,
+	oscr: oscr,
+	Oslash: Oslash,
+	oslash: oslash,
+	osol: osol,
+	Otilde: Otilde,
+	otilde: otilde,
+	otimesas: otimesas,
+	Otimes: Otimes,
+	otimes: otimes,
+	Ouml: Ouml,
+	ouml: ouml,
+	ovbar: ovbar,
+	OverBar: OverBar,
+	OverBrace: OverBrace,
+	OverBracket: OverBracket,
+	OverParenthesis: OverParenthesis,
+	para: para,
+	parallel: parallel,
+	par: par,
+	parsim: parsim,
+	parsl: parsl,
+	part: part,
+	PartialD: PartialD,
+	Pcy: Pcy,
+	pcy: pcy,
+	percnt: percnt,
+	period: period,
+	permil: permil,
+	perp: perp,
+	pertenk: pertenk,
+	Pfr: Pfr,
+	pfr: pfr,
+	Phi: Phi,
+	phi: phi,
+	phiv: phiv,
+	phmmat: phmmat,
+	phone: phone,
+	Pi: Pi,
+	pi: pi,
+	pitchfork: pitchfork,
+	piv: piv,
+	planck: planck,
+	planckh: planckh,
+	plankv: plankv,
+	plusacir: plusacir,
+	plusb: plusb,
+	pluscir: pluscir,
+	plus: plus,
+	plusdo: plusdo,
+	plusdu: plusdu,
+	pluse: pluse,
+	PlusMinus: PlusMinus,
+	plusmn: plusmn,
+	plussim: plussim,
+	plustwo: plustwo,
+	pm: pm,
+	Poincareplane: Poincareplane,
+	pointint: pointint,
+	popf: popf,
+	Popf: Popf,
+	pound: pound,
+	prap: prap,
+	Pr: Pr,
+	pr: pr,
+	prcue: prcue,
+	precapprox: precapprox,
+	prec: prec,
+	preccurlyeq: preccurlyeq,
+	Precedes: Precedes,
+	PrecedesEqual: PrecedesEqual,
+	PrecedesSlantEqual: PrecedesSlantEqual,
+	PrecedesTilde: PrecedesTilde,
+	preceq: preceq,
+	precnapprox: precnapprox,
+	precneqq: precneqq,
+	precnsim: precnsim,
+	pre: pre,
+	prE: prE,
+	precsim: precsim,
+	prime: prime,
+	Prime: Prime,
+	primes: primes,
+	prnap: prnap,
+	prnE: prnE,
+	prnsim: prnsim,
+	prod: prod,
+	Product: Product,
+	profalar: profalar,
+	profline: profline,
+	profsurf: profsurf,
+	prop: prop,
+	Proportional: Proportional,
+	Proportion: Proportion,
+	propto: propto,
+	prsim: prsim,
+	prurel: prurel,
+	Pscr: Pscr,
+	pscr: pscr,
+	Psi: Psi,
+	psi: psi,
+	puncsp: puncsp,
+	Qfr: Qfr,
+	qfr: qfr,
+	qint: qint,
+	qopf: qopf,
+	Qopf: Qopf,
+	qprime: qprime,
+	Qscr: Qscr,
+	qscr: qscr,
+	quaternions: quaternions,
+	quatint: quatint,
+	quest: quest,
+	questeq: questeq,
+	quot: quot$1,
+	QUOT: QUOT,
+	rAarr: rAarr,
+	race: race,
+	Racute: Racute,
+	racute: racute,
+	radic: radic,
+	raemptyv: raemptyv,
+	rang: rang,
+	Rang: Rang,
+	rangd: rangd,
+	range: range,
+	rangle: rangle,
+	raquo: raquo,
+	rarrap: rarrap,
+	rarrb: rarrb,
+	rarrbfs: rarrbfs,
+	rarrc: rarrc,
+	rarr: rarr,
+	Rarr: Rarr,
+	rArr: rArr,
+	rarrfs: rarrfs,
+	rarrhk: rarrhk,
+	rarrlp: rarrlp,
+	rarrpl: rarrpl,
+	rarrsim: rarrsim,
+	Rarrtl: Rarrtl,
+	rarrtl: rarrtl,
+	rarrw: rarrw,
+	ratail: ratail,
+	rAtail: rAtail,
+	ratio: ratio,
+	rationals: rationals,
+	rbarr: rbarr,
+	rBarr: rBarr,
+	RBarr: RBarr,
+	rbbrk: rbbrk,
+	rbrace: rbrace,
+	rbrack: rbrack,
+	rbrke: rbrke,
+	rbrksld: rbrksld,
+	rbrkslu: rbrkslu,
+	Rcaron: Rcaron,
+	rcaron: rcaron,
+	Rcedil: Rcedil,
+	rcedil: rcedil,
+	rceil: rceil,
+	rcub: rcub,
+	Rcy: Rcy,
+	rcy: rcy,
+	rdca: rdca,
+	rdldhar: rdldhar,
+	rdquo: rdquo,
+	rdquor: rdquor,
+	rdsh: rdsh,
+	real: real,
+	realine: realine,
+	realpart: realpart,
+	reals: reals,
+	Re: Re$1,
+	rect: rect,
+	reg: reg,
+	REG: REG,
+	ReverseElement: ReverseElement,
+	ReverseEquilibrium: ReverseEquilibrium,
+	ReverseUpEquilibrium: ReverseUpEquilibrium,
+	rfisht: rfisht,
+	rfloor: rfloor,
+	rfr: rfr,
+	Rfr: Rfr,
+	rHar: rHar,
+	rhard: rhard,
+	rharu: rharu,
+	rharul: rharul,
+	Rho: Rho,
+	rho: rho,
+	rhov: rhov,
+	RightAngleBracket: RightAngleBracket,
+	RightArrowBar: RightArrowBar,
+	rightarrow: rightarrow,
+	RightArrow: RightArrow,
+	Rightarrow: Rightarrow,
+	RightArrowLeftArrow: RightArrowLeftArrow,
+	rightarrowtail: rightarrowtail,
+	RightCeiling: RightCeiling,
+	RightDoubleBracket: RightDoubleBracket,
+	RightDownTeeVector: RightDownTeeVector,
+	RightDownVectorBar: RightDownVectorBar,
+	RightDownVector: RightDownVector,
+	RightFloor: RightFloor,
+	rightharpoondown: rightharpoondown,
+	rightharpoonup: rightharpoonup,
+	rightleftarrows: rightleftarrows,
+	rightleftharpoons: rightleftharpoons,
+	rightrightarrows: rightrightarrows,
+	rightsquigarrow: rightsquigarrow,
+	RightTeeArrow: RightTeeArrow,
+	RightTee: RightTee,
+	RightTeeVector: RightTeeVector,
+	rightthreetimes: rightthreetimes,
+	RightTriangleBar: RightTriangleBar,
+	RightTriangle: RightTriangle,
+	RightTriangleEqual: RightTriangleEqual,
+	RightUpDownVector: RightUpDownVector,
+	RightUpTeeVector: RightUpTeeVector,
+	RightUpVectorBar: RightUpVectorBar,
+	RightUpVector: RightUpVector,
+	RightVectorBar: RightVectorBar,
+	RightVector: RightVector,
+	ring: ring,
+	risingdotseq: risingdotseq,
+	rlarr: rlarr,
+	rlhar: rlhar,
+	rlm: rlm,
+	rmoustache: rmoustache,
+	rmoust: rmoust,
+	rnmid: rnmid,
+	roang: roang,
+	roarr: roarr,
+	robrk: robrk,
+	ropar: ropar,
+	ropf: ropf,
+	Ropf: Ropf,
+	roplus: roplus,
+	rotimes: rotimes,
+	RoundImplies: RoundImplies,
+	rpar: rpar,
+	rpargt: rpargt,
+	rppolint: rppolint,
+	rrarr: rrarr,
+	Rrightarrow: Rrightarrow,
+	rsaquo: rsaquo,
+	rscr: rscr,
+	Rscr: Rscr,
+	rsh: rsh,
+	Rsh: Rsh,
+	rsqb: rsqb,
+	rsquo: rsquo,
+	rsquor: rsquor,
+	rthree: rthree,
+	rtimes: rtimes,
+	rtri: rtri,
+	rtrie: rtrie,
+	rtrif: rtrif,
+	rtriltri: rtriltri,
+	RuleDelayed: RuleDelayed,
+	ruluhar: ruluhar,
+	rx: rx,
+	Sacute: Sacute,
+	sacute: sacute,
+	sbquo: sbquo,
+	scap: scap,
+	Scaron: Scaron,
+	scaron: scaron,
+	Sc: Sc$1,
+	sc: sc$1,
+	sccue: sccue,
+	sce: sce,
+	scE: scE,
+	Scedil: Scedil,
+	scedil: scedil,
+	Scirc: Scirc,
+	scirc: scirc,
+	scnap: scnap,
+	scnE: scnE,
+	scnsim: scnsim,
+	scpolint: scpolint,
+	scsim: scsim,
+	Scy: Scy,
+	scy: scy,
+	sdotb: sdotb,
+	sdot: sdot,
+	sdote: sdote,
+	searhk: searhk,
+	searr: searr,
+	seArr: seArr,
+	searrow: searrow,
+	sect: sect,
+	semi: semi,
+	seswar: seswar,
+	setminus: setminus,
+	setmn: setmn,
+	sext: sext,
+	Sfr: Sfr,
+	sfr: sfr,
+	sfrown: sfrown,
+	sharp: sharp,
+	SHCHcy: SHCHcy,
+	shchcy: shchcy,
+	SHcy: SHcy,
+	shcy: shcy,
+	ShortDownArrow: ShortDownArrow,
+	ShortLeftArrow: ShortLeftArrow,
+	shortmid: shortmid,
+	shortparallel: shortparallel,
+	ShortRightArrow: ShortRightArrow,
+	ShortUpArrow: ShortUpArrow,
+	shy: shy,
+	Sigma: Sigma,
+	sigma: sigma,
+	sigmaf: sigmaf,
+	sigmav: sigmav,
+	sim: sim,
+	simdot: simdot,
+	sime: sime,
+	simeq: simeq,
+	simg: simg,
+	simgE: simgE,
+	siml: siml,
+	simlE: simlE,
+	simne: simne,
+	simplus: simplus,
+	simrarr: simrarr,
+	slarr: slarr,
+	SmallCircle: SmallCircle,
+	smallsetminus: smallsetminus,
+	smashp: smashp,
+	smeparsl: smeparsl,
+	smid: smid,
+	smile: smile,
+	smt: smt,
+	smte: smte,
+	smtes: smtes,
+	SOFTcy: SOFTcy,
+	softcy: softcy,
+	solbar: solbar,
+	solb: solb,
+	sol: sol,
+	Sopf: Sopf,
+	sopf: sopf,
+	spades: spades,
+	spadesuit: spadesuit,
+	spar: spar,
+	sqcap: sqcap,
+	sqcaps: sqcaps,
+	sqcup: sqcup,
+	sqcups: sqcups,
+	Sqrt: Sqrt,
+	sqsub: sqsub,
+	sqsube: sqsube,
+	sqsubset: sqsubset,
+	sqsubseteq: sqsubseteq,
+	sqsup: sqsup,
+	sqsupe: sqsupe,
+	sqsupset: sqsupset,
+	sqsupseteq: sqsupseteq,
+	square: square,
+	Square: Square,
+	SquareIntersection: SquareIntersection,
+	SquareSubset: SquareSubset,
+	SquareSubsetEqual: SquareSubsetEqual,
+	SquareSuperset: SquareSuperset,
+	SquareSupersetEqual: SquareSupersetEqual,
+	SquareUnion: SquareUnion,
+	squarf: squarf,
+	squ: squ,
+	squf: squf,
+	srarr: srarr,
+	Sscr: Sscr,
+	sscr: sscr,
+	ssetmn: ssetmn,
+	ssmile: ssmile,
+	sstarf: sstarf,
+	Star: Star,
+	star: star,
+	starf: starf,
+	straightepsilon: straightepsilon,
+	straightphi: straightphi,
+	strns: strns,
+	sub: sub,
+	Sub: Sub,
+	subdot: subdot,
+	subE: subE,
+	sube: sube,
+	subedot: subedot,
+	submult: submult,
+	subnE: subnE,
+	subne: subne,
+	subplus: subplus,
+	subrarr: subrarr,
+	subset: subset,
+	Subset: Subset,
+	subseteq: subseteq,
+	subseteqq: subseteqq,
+	SubsetEqual: SubsetEqual,
+	subsetneq: subsetneq,
+	subsetneqq: subsetneqq,
+	subsim: subsim,
+	subsub: subsub,
+	subsup: subsup,
+	succapprox: succapprox,
+	succ: succ,
+	succcurlyeq: succcurlyeq,
+	Succeeds: Succeeds,
+	SucceedsEqual: SucceedsEqual,
+	SucceedsSlantEqual: SucceedsSlantEqual,
+	SucceedsTilde: SucceedsTilde,
+	succeq: succeq,
+	succnapprox: succnapprox,
+	succneqq: succneqq,
+	succnsim: succnsim,
+	succsim: succsim,
+	SuchThat: SuchThat,
+	sum: sum,
+	Sum: Sum,
+	sung: sung,
+	sup1: sup1,
+	sup2: sup2,
+	sup3: sup3,
+	sup: sup,
+	Sup: Sup,
+	supdot: supdot,
+	supdsub: supdsub,
+	supE: supE,
+	supe: supe,
+	supedot: supedot,
+	Superset: Superset,
+	SupersetEqual: SupersetEqual,
+	suphsol: suphsol,
+	suphsub: suphsub,
+	suplarr: suplarr,
+	supmult: supmult,
+	supnE: supnE,
+	supne: supne,
+	supplus: supplus,
+	supset: supset,
+	Supset: Supset,
+	supseteq: supseteq,
+	supseteqq: supseteqq,
+	supsetneq: supsetneq,
+	supsetneqq: supsetneqq,
+	supsim: supsim,
+	supsub: supsub,
+	supsup: supsup,
+	swarhk: swarhk,
+	swarr: swarr,
+	swArr: swArr,
+	swarrow: swarrow,
+	swnwar: swnwar,
+	szlig: szlig,
+	Tab: Tab,
+	target: target,
+	Tau: Tau,
+	tau: tau,
+	tbrk: tbrk,
+	Tcaron: Tcaron,
+	tcaron: tcaron,
+	Tcedil: Tcedil,
+	tcedil: tcedil,
+	Tcy: Tcy,
+	tcy: tcy,
+	tdot: tdot,
+	telrec: telrec,
+	Tfr: Tfr,
+	tfr: tfr,
+	there4: there4,
+	therefore: therefore,
+	Therefore: Therefore,
+	Theta: Theta,
+	theta: theta,
+	thetasym: thetasym,
+	thetav: thetav,
+	thickapprox: thickapprox,
+	thicksim: thicksim,
+	ThickSpace: ThickSpace,
+	ThinSpace: ThinSpace,
+	thinsp: thinsp,
+	thkap: thkap,
+	thksim: thksim,
+	THORN: THORN,
+	thorn: thorn,
+	tilde: tilde,
+	Tilde: Tilde,
+	TildeEqual: TildeEqual,
+	TildeFullEqual: TildeFullEqual,
+	TildeTilde: TildeTilde,
+	timesbar: timesbar,
+	timesb: timesb,
+	times: times,
+	timesd: timesd,
+	tint: tint,
+	toea: toea,
+	topbot: topbot,
+	topcir: topcir,
+	top: top,
+	Topf: Topf,
+	topf: topf,
+	topfork: topfork,
+	tosa: tosa,
+	tprime: tprime,
+	trade: trade,
+	TRADE: TRADE,
+	triangle: triangle,
+	triangledown: triangledown,
+	triangleleft: triangleleft,
+	trianglelefteq: trianglelefteq,
+	triangleq: triangleq,
+	triangleright: triangleright,
+	trianglerighteq: trianglerighteq,
+	tridot: tridot,
+	trie: trie,
+	triminus: triminus,
+	TripleDot: TripleDot,
+	triplus: triplus,
+	trisb: trisb,
+	tritime: tritime,
+	trpezium: trpezium,
+	Tscr: Tscr,
+	tscr: tscr,
+	TScy: TScy,
+	tscy: tscy,
+	TSHcy: TSHcy,
+	tshcy: tshcy,
+	Tstrok: Tstrok,
+	tstrok: tstrok,
+	twixt: twixt,
+	twoheadleftarrow: twoheadleftarrow,
+	twoheadrightarrow: twoheadrightarrow,
+	Uacute: Uacute,
+	uacute: uacute,
+	uarr: uarr,
+	Uarr: Uarr,
+	uArr: uArr,
+	Uarrocir: Uarrocir,
+	Ubrcy: Ubrcy,
+	ubrcy: ubrcy,
+	Ubreve: Ubreve,
+	ubreve: ubreve,
+	Ucirc: Ucirc,
+	ucirc: ucirc,
+	Ucy: Ucy,
+	ucy: ucy,
+	udarr: udarr,
+	Udblac: Udblac,
+	udblac: udblac,
+	udhar: udhar,
+	ufisht: ufisht,
+	Ufr: Ufr,
+	ufr: ufr,
+	Ugrave: Ugrave,
+	ugrave: ugrave,
+	uHar: uHar,
+	uharl: uharl,
+	uharr: uharr,
+	uhblk: uhblk,
+	ulcorn: ulcorn,
+	ulcorner: ulcorner,
+	ulcrop: ulcrop,
+	ultri: ultri,
+	Umacr: Umacr,
+	umacr: umacr,
+	uml: uml,
+	UnderBar: UnderBar,
+	UnderBrace: UnderBrace,
+	UnderBracket: UnderBracket,
+	UnderParenthesis: UnderParenthesis,
+	Union: Union,
+	UnionPlus: UnionPlus,
+	Uogon: Uogon,
+	uogon: uogon,
+	Uopf: Uopf,
+	uopf: uopf,
+	UpArrowBar: UpArrowBar,
+	uparrow: uparrow,
+	UpArrow: UpArrow,
+	Uparrow: Uparrow,
+	UpArrowDownArrow: UpArrowDownArrow,
+	updownarrow: updownarrow,
+	UpDownArrow: UpDownArrow,
+	Updownarrow: Updownarrow,
+	UpEquilibrium: UpEquilibrium,
+	upharpoonleft: upharpoonleft,
+	upharpoonright: upharpoonright,
+	uplus: uplus,
+	UpperLeftArrow: UpperLeftArrow,
+	UpperRightArrow: UpperRightArrow,
+	upsi: upsi,
+	Upsi: Upsi,
+	upsih: upsih,
+	Upsilon: Upsilon,
+	upsilon: upsilon,
+	UpTeeArrow: UpTeeArrow,
+	UpTee: UpTee,
+	upuparrows: upuparrows,
+	urcorn: urcorn,
+	urcorner: urcorner,
+	urcrop: urcrop,
+	Uring: Uring,
+	uring: uring,
+	urtri: urtri,
+	Uscr: Uscr,
+	uscr: uscr,
+	utdot: utdot,
+	Utilde: Utilde,
+	utilde: utilde,
+	utri: utri,
+	utrif: utrif,
+	uuarr: uuarr,
+	Uuml: Uuml,
+	uuml: uuml,
+	uwangle: uwangle,
+	vangrt: vangrt,
+	varepsilon: varepsilon,
+	varkappa: varkappa,
+	varnothing: varnothing,
+	varphi: varphi,
+	varpi: varpi,
+	varpropto: varpropto,
+	varr: varr,
+	vArr: vArr,
+	varrho: varrho,
+	varsigma: varsigma,
+	varsubsetneq: varsubsetneq,
+	varsubsetneqq: varsubsetneqq,
+	varsupsetneq: varsupsetneq,
+	varsupsetneqq: varsupsetneqq,
+	vartheta: vartheta,
+	vartriangleleft: vartriangleleft,
+	vartriangleright: vartriangleright,
+	vBar: vBar,
+	Vbar: Vbar,
+	vBarv: vBarv,
+	Vcy: Vcy,
+	vcy: vcy,
+	vdash: vdash,
+	vDash: vDash,
+	Vdash: Vdash,
+	VDash: VDash,
+	Vdashl: Vdashl,
+	veebar: veebar,
+	vee: vee,
+	Vee: Vee,
+	veeeq: veeeq,
+	vellip: vellip,
+	verbar: verbar,
+	Verbar: Verbar,
+	vert: vert,
+	Vert: Vert,
+	VerticalBar: VerticalBar,
+	VerticalLine: VerticalLine,
+	VerticalSeparator: VerticalSeparator,
+	VerticalTilde: VerticalTilde,
+	VeryThinSpace: VeryThinSpace,
+	Vfr: Vfr,
+	vfr: vfr,
+	vltri: vltri,
+	vnsub: vnsub,
+	vnsup: vnsup,
+	Vopf: Vopf,
+	vopf: vopf,
+	vprop: vprop,
+	vrtri: vrtri,
+	Vscr: Vscr,
+	vscr: vscr,
+	vsubnE: vsubnE,
+	vsubne: vsubne,
+	vsupnE: vsupnE,
+	vsupne: vsupne,
+	Vvdash: Vvdash,
+	vzigzag: vzigzag,
+	Wcirc: Wcirc,
+	wcirc: wcirc,
+	wedbar: wedbar,
+	wedge: wedge,
+	Wedge: Wedge,
+	wedgeq: wedgeq,
+	weierp: weierp,
+	Wfr: Wfr,
+	wfr: wfr,
+	Wopf: Wopf,
+	wopf: wopf,
+	wp: wp,
+	wr: wr,
+	wreath: wreath,
+	Wscr: Wscr,
+	wscr: wscr,
+	xcap: xcap,
+	xcirc: xcirc,
+	xcup: xcup,
+	xdtri: xdtri,
+	Xfr: Xfr,
+	xfr: xfr,
+	xharr: xharr,
+	xhArr: xhArr,
+	Xi: Xi,
+	xi: xi,
+	xlarr: xlarr,
+	xlArr: xlArr,
+	xmap: xmap,
+	xnis: xnis,
+	xodot: xodot,
+	Xopf: Xopf,
+	xopf: xopf,
+	xoplus: xoplus,
+	xotime: xotime,
+	xrarr: xrarr,
+	xrArr: xrArr,
+	Xscr: Xscr,
+	xscr: xscr,
+	xsqcup: xsqcup,
+	xuplus: xuplus,
+	xutri: xutri,
+	xvee: xvee,
+	xwedge: xwedge,
+	Yacute: Yacute,
+	yacute: yacute,
+	YAcy: YAcy,
+	yacy: yacy,
+	Ycirc: Ycirc,
+	ycirc: ycirc,
+	Ycy: Ycy,
+	ycy: ycy,
+	yen: yen,
+	Yfr: Yfr,
+	yfr: yfr,
+	YIcy: YIcy,
+	yicy: yicy,
+	Yopf: Yopf,
+	yopf: yopf,
+	Yscr: Yscr,
+	yscr: yscr,
+	YUcy: YUcy,
+	yucy: yucy,
+	yuml: yuml,
+	Yuml: Yuml,
+	Zacute: Zacute,
+	zacute: zacute,
+	Zcaron: Zcaron,
+	zcaron: zcaron,
+	Zcy: Zcy,
+	zcy: zcy,
+	Zdot: Zdot,
+	zdot: zdot,
+	zeetrf: zeetrf,
+	ZeroWidthSpace: ZeroWidthSpace,
+	Zeta: Zeta,
+	zeta: zeta,
+	zfr: zfr,
+	Zfr: Zfr,
+	ZHcy: ZHcy,
+	zhcy: zhcy,
+	zigrarr: zigrarr,
+	zopf: zopf,
+	Zopf: Zopf,
+	Zscr: Zscr,
+	zscr: zscr,
+	zwj: zwj,
+	zwnj: zwnj,
+	default: entities
+});
+
+var Aacute$1 = "Á";
+var aacute$1 = "á";
+var Acirc$1 = "Â";
+var acirc$1 = "â";
+var acute$1 = "´";
+var AElig$1 = "Æ";
+var aelig$1 = "æ";
+var Agrave$1 = "À";
+var agrave$1 = "à";
+var amp$1 = "&";
+var AMP$1 = "&";
+var Aring$1 = "Å";
+var aring$1 = "å";
+var Atilde$1 = "Ã";
+var atilde$1 = "ã";
+var Auml$1 = "Ä";
+var auml$1 = "ä";
+var brvbar$1 = "¦";
+var Ccedil$1 = "Ç";
+var ccedil$1 = "ç";
+var cedil$1 = "¸";
+var cent$1 = "¢";
+var copy$1 = "©";
+var COPY$1 = "©";
+var curren$1 = "¤";
+var deg$1 = "°";
+var divide$2 = "÷";
+var Eacute$1 = "É";
+var eacute$1 = "é";
+var Ecirc$1 = "Ê";
+var ecirc$1 = "ê";
+var Egrave$1 = "È";
+var egrave$1 = "è";
+var ETH$1 = "Ð";
+var eth$1 = "ð";
+var Euml$1 = "Ë";
+var euml$1 = "ë";
+var frac12$1 = "½";
+var frac14$1 = "¼";
+var frac34$1 = "¾";
+var gt$1 = ">";
+var GT$1 = ">";
+var Iacute$1 = "Í";
+var iacute$1 = "í";
+var Icirc$1 = "Î";
+var icirc$1 = "î";
+var iexcl$1 = "¡";
+var Igrave$1 = "Ì";
+var igrave$1 = "ì";
+var iquest$1 = "¿";
+var Iuml$1 = "Ï";
+var iuml$1 = "ï";
+var laquo$1 = "«";
+var lt$1 = "<";
+var LT$1 = "<";
+var macr$1 = "¯";
+var micro$1 = "µ";
+var middot$1 = "·";
+var nbsp$1 = " ";
+var not$1 = "¬";
+var Ntilde$1 = "Ñ";
+var ntilde$1 = "ñ";
+var Oacute$1 = "Ó";
+var oacute$1 = "ó";
+var Ocirc$1 = "Ô";
+var ocirc$1 = "ô";
+var Ograve$1 = "Ò";
+var ograve$1 = "ò";
+var ordf$1 = "ª";
+var ordm$1 = "º";
+var Oslash$1 = "Ø";
+var oslash$1 = "ø";
+var Otilde$1 = "Õ";
+var otilde$1 = "õ";
+var Ouml$1 = "Ö";
+var ouml$1 = "ö";
+var para$1 = "¶";
+var plusmn$1 = "±";
+var pound$1 = "£";
+var quot$2 = "\"";
+var QUOT$1 = "\"";
+var raquo$1 = "»";
+var reg$1 = "®";
+var REG$1 = "®";
+var sect$1 = "§";
+var shy$1 = "­";
+var sup1$1 = "¹";
+var sup2$1 = "²";
+var sup3$1 = "³";
+var szlig$1 = "ß";
+var THORN$1 = "Þ";
+var thorn$1 = "þ";
+var times$1 = "×";
+var Uacute$1 = "Ú";
+var uacute$1 = "ú";
+var Ucirc$1 = "Û";
+var ucirc$1 = "û";
+var Ugrave$1 = "Ù";
+var ugrave$1 = "ù";
+var uml$1 = "¨";
+var Uuml$1 = "Ü";
+var uuml$1 = "ü";
+var Yacute$1 = "Ý";
+var yacute$1 = "ý";
+var yen$1 = "¥";
+var yuml$1 = "ÿ";
+var legacy = {
+	Aacute: Aacute$1,
+	aacute: aacute$1,
+	Acirc: Acirc$1,
+	acirc: acirc$1,
+	acute: acute$1,
+	AElig: AElig$1,
+	aelig: aelig$1,
+	Agrave: Agrave$1,
+	agrave: agrave$1,
+	amp: amp$1,
+	AMP: AMP$1,
+	Aring: Aring$1,
+	aring: aring$1,
+	Atilde: Atilde$1,
+	atilde: atilde$1,
+	Auml: Auml$1,
+	auml: auml$1,
+	brvbar: brvbar$1,
+	Ccedil: Ccedil$1,
+	ccedil: ccedil$1,
+	cedil: cedil$1,
+	cent: cent$1,
+	copy: copy$1,
+	COPY: COPY$1,
+	curren: curren$1,
+	deg: deg$1,
+	divide: divide$2,
+	Eacute: Eacute$1,
+	eacute: eacute$1,
+	Ecirc: Ecirc$1,
+	ecirc: ecirc$1,
+	Egrave: Egrave$1,
+	egrave: egrave$1,
+	ETH: ETH$1,
+	eth: eth$1,
+	Euml: Euml$1,
+	euml: euml$1,
+	frac12: frac12$1,
+	frac14: frac14$1,
+	frac34: frac34$1,
+	gt: gt$1,
+	GT: GT$1,
+	Iacute: Iacute$1,
+	iacute: iacute$1,
+	Icirc: Icirc$1,
+	icirc: icirc$1,
+	iexcl: iexcl$1,
+	Igrave: Igrave$1,
+	igrave: igrave$1,
+	iquest: iquest$1,
+	Iuml: Iuml$1,
+	iuml: iuml$1,
+	laquo: laquo$1,
+	lt: lt$1,
+	LT: LT$1,
+	macr: macr$1,
+	micro: micro$1,
+	middot: middot$1,
+	nbsp: nbsp$1,
+	not: not$1,
+	Ntilde: Ntilde$1,
+	ntilde: ntilde$1,
+	Oacute: Oacute$1,
+	oacute: oacute$1,
+	Ocirc: Ocirc$1,
+	ocirc: ocirc$1,
+	Ograve: Ograve$1,
+	ograve: ograve$1,
+	ordf: ordf$1,
+	ordm: ordm$1,
+	Oslash: Oslash$1,
+	oslash: oslash$1,
+	Otilde: Otilde$1,
+	otilde: otilde$1,
+	Ouml: Ouml$1,
+	ouml: ouml$1,
+	para: para$1,
+	plusmn: plusmn$1,
+	pound: pound$1,
+	quot: quot$2,
+	QUOT: QUOT$1,
+	raquo: raquo$1,
+	reg: reg$1,
+	REG: REG$1,
+	sect: sect$1,
+	shy: shy$1,
+	sup1: sup1$1,
+	sup2: sup2$1,
+	sup3: sup3$1,
+	szlig: szlig$1,
+	THORN: THORN$1,
+	thorn: thorn$1,
+	times: times$1,
+	Uacute: Uacute$1,
+	uacute: uacute$1,
+	Ucirc: Ucirc$1,
+	ucirc: ucirc$1,
+	Ugrave: Ugrave$1,
+	ugrave: ugrave$1,
+	uml: uml$1,
+	Uuml: Uuml$1,
+	uuml: uuml$1,
+	Yacute: Yacute$1,
+	yacute: yacute$1,
+	yen: yen$1,
+	yuml: yuml$1
+};
+
+var legacy$1 = Object.freeze({
+	Aacute: Aacute$1,
+	aacute: aacute$1,
+	Acirc: Acirc$1,
+	acirc: acirc$1,
+	acute: acute$1,
+	AElig: AElig$1,
+	aelig: aelig$1,
+	Agrave: Agrave$1,
+	agrave: agrave$1,
+	amp: amp$1,
+	AMP: AMP$1,
+	Aring: Aring$1,
+	aring: aring$1,
+	Atilde: Atilde$1,
+	atilde: atilde$1,
+	Auml: Auml$1,
+	auml: auml$1,
+	brvbar: brvbar$1,
+	Ccedil: Ccedil$1,
+	ccedil: ccedil$1,
+	cedil: cedil$1,
+	cent: cent$1,
+	copy: copy$1,
+	COPY: COPY$1,
+	curren: curren$1,
+	deg: deg$1,
+	divide: divide$2,
+	Eacute: Eacute$1,
+	eacute: eacute$1,
+	Ecirc: Ecirc$1,
+	ecirc: ecirc$1,
+	Egrave: Egrave$1,
+	egrave: egrave$1,
+	ETH: ETH$1,
+	eth: eth$1,
+	Euml: Euml$1,
+	euml: euml$1,
+	frac12: frac12$1,
+	frac14: frac14$1,
+	frac34: frac34$1,
+	gt: gt$1,
+	GT: GT$1,
+	Iacute: Iacute$1,
+	iacute: iacute$1,
+	Icirc: Icirc$1,
+	icirc: icirc$1,
+	iexcl: iexcl$1,
+	Igrave: Igrave$1,
+	igrave: igrave$1,
+	iquest: iquest$1,
+	Iuml: Iuml$1,
+	iuml: iuml$1,
+	laquo: laquo$1,
+	lt: lt$1,
+	LT: LT$1,
+	macr: macr$1,
+	micro: micro$1,
+	middot: middot$1,
+	nbsp: nbsp$1,
+	not: not$1,
+	Ntilde: Ntilde$1,
+	ntilde: ntilde$1,
+	Oacute: Oacute$1,
+	oacute: oacute$1,
+	Ocirc: Ocirc$1,
+	ocirc: ocirc$1,
+	Ograve: Ograve$1,
+	ograve: ograve$1,
+	ordf: ordf$1,
+	ordm: ordm$1,
+	Oslash: Oslash$1,
+	oslash: oslash$1,
+	Otilde: Otilde$1,
+	otilde: otilde$1,
+	Ouml: Ouml$1,
+	ouml: ouml$1,
+	para: para$1,
+	plusmn: plusmn$1,
+	pound: pound$1,
+	quot: quot$2,
+	QUOT: QUOT$1,
+	raquo: raquo$1,
+	reg: reg$1,
+	REG: REG$1,
+	sect: sect$1,
+	shy: shy$1,
+	sup1: sup1$1,
+	sup2: sup2$1,
+	sup3: sup3$1,
+	szlig: szlig$1,
+	THORN: THORN$1,
+	thorn: thorn$1,
+	times: times$1,
+	Uacute: Uacute$1,
+	uacute: uacute$1,
+	Ucirc: Ucirc$1,
+	ucirc: ucirc$1,
+	Ugrave: Ugrave$1,
+	ugrave: ugrave$1,
+	uml: uml$1,
+	Uuml: Uuml$1,
+	uuml: uuml$1,
+	Yacute: Yacute$1,
+	yacute: yacute$1,
+	yen: yen$1,
+	yuml: yuml$1,
+	default: legacy
+});
+
+var amp$2 = "&";
+var apos$1 = "'";
+var gt$2 = ">";
+var lt$2 = "<";
+var quot$3 = "\"";
+var xml = {
+	amp: amp$2,
+	apos: apos$1,
+	gt: gt$2,
+	lt: lt$2,
+	quot: quot$3
+};
+
+var xml$1 = Object.freeze({
+	amp: amp$2,
+	apos: apos$1,
+	gt: gt$2,
+	lt: lt$2,
+	quot: quot$3,
+	default: xml
+});
+
+var decodeCodePoint$1 = ( decode_codepoint$2 && decode_codepoint ) || decode_codepoint$2;
+
+var entityMap = ( entities$1 && entities ) || entities$1;
+
+var legacyMap = ( legacy$1 && legacy ) || legacy$1;
+
+var xmlMap = ( xml$1 && xml ) || xml$1;
+
+var Tokenizer_1 = Tokenizer$1;
+
+var i$3 = 0;
+var TEXT                      = i$3++;
+var BEFORE_TAG_NAME           = i$3++;
+var IN_TAG_NAME               = i$3++;
+var IN_SELF_CLOSING_TAG       = i$3++;
+var BEFORE_CLOSING_TAG_NAME   = i$3++;
+var IN_CLOSING_TAG_NAME       = i$3++;
+var AFTER_CLOSING_TAG_NAME    = i$3++;
+var BEFORE_ATTRIBUTE_NAME     = i$3++;
+var IN_ATTRIBUTE_NAME         = i$3++;
+var AFTER_ATTRIBUTE_NAME      = i$3++;
+var BEFORE_ATTRIBUTE_VALUE    = i$3++;
+var IN_ATTRIBUTE_VALUE_DQ     = i$3++;
+var IN_ATTRIBUTE_VALUE_SQ     = i$3++;
+var IN_ATTRIBUTE_VALUE_NQ     = i$3++;
+var BEFORE_DECLARATION        = i$3++;
+var IN_DECLARATION            = i$3++;
+var IN_PROCESSING_INSTRUCTION = i$3++;
+var BEFORE_COMMENT            = i$3++;
+var IN_COMMENT                = i$3++;
+var AFTER_COMMENT_1           = i$3++;
+var AFTER_COMMENT_2           = i$3++;
+var BEFORE_CDATA_1            = i$3++;
+var BEFORE_CDATA_2            = i$3++;
+var BEFORE_CDATA_3            = i$3++;
+var BEFORE_CDATA_4            = i$3++;
+var BEFORE_CDATA_5            = i$3++;
+var BEFORE_CDATA_6            = i$3++;
+var IN_CDATA                  = i$3++;
+var AFTER_CDATA_1             = i$3++;
+var AFTER_CDATA_2             = i$3++;
+var BEFORE_SPECIAL            = i$3++;
+var BEFORE_SPECIAL_END        = i$3++;
+var BEFORE_SCRIPT_1           = i$3++;
+var BEFORE_SCRIPT_2           = i$3++;
+var BEFORE_SCRIPT_3           = i$3++;
+var BEFORE_SCRIPT_4           = i$3++;
+var BEFORE_SCRIPT_5           = i$3++;
+var AFTER_SCRIPT_1            = i$3++;
+var AFTER_SCRIPT_2            = i$3++;
+var AFTER_SCRIPT_3            = i$3++;
+var AFTER_SCRIPT_4            = i$3++;
+var AFTER_SCRIPT_5            = i$3++;
+var BEFORE_STYLE_1            = i$3++;
+var BEFORE_STYLE_2            = i$3++;
+var BEFORE_STYLE_3            = i$3++;
+var BEFORE_STYLE_4            = i$3++;
+var AFTER_STYLE_1             = i$3++;
+var AFTER_STYLE_2             = i$3++;
+var AFTER_STYLE_3             = i$3++;
+var AFTER_STYLE_4             = i$3++;
+var BEFORE_ENTITY             = i$3++;
+var BEFORE_NUMERIC_ENTITY     = i$3++;
+var IN_NAMED_ENTITY           = i$3++;
+var IN_NUMERIC_ENTITY         = i$3++;
+var IN_HEX_ENTITY             = i$3++;
+var j$2 = 0;
+var SPECIAL_NONE              = j$2++;
+var SPECIAL_SCRIPT            = j$2++;
+var SPECIAL_STYLE             = j$2++;
+
+function whitespace(c){
+	return c === " " || c === "\n" || c === "\t" || c === "\f" || c === "\r";
+}
+
+function characterState(char, SUCCESS){
+	return function(c){
+		if(c === char) this._state = SUCCESS;
+	};
+}
+
+function ifElseState(upper, SUCCESS, FAILURE){
+	var lower = upper.toLowerCase();
+
+	if(upper === lower){
+		return function(c){
+			if(c === lower){
+				this._state = SUCCESS;
+			} else {
+				this._state = FAILURE;
+				this._index--;
+			}
+		};
+	} else {
+		return function(c){
+			if(c === lower || c === upper){
+				this._state = SUCCESS;
+			} else {
+				this._state = FAILURE;
+				this._index--;
+			}
+		};
+	}
+}
+
+function consumeSpecialNameChar(upper, NEXT_STATE){
+	var lower = upper.toLowerCase();
+
+	return function(c){
+		if(c === lower || c === upper){
+			this._state = NEXT_STATE;
+		} else {
+			this._state = IN_TAG_NAME;
+			this._index--; //consume the token again
+		}
+	};
+}
+
+function Tokenizer$1(options, cbs){
+	this._state = TEXT;
+	this._buffer = "";
+	this._sectionStart = 0;
+	this._index = 0;
+	this._bufferOffset = 0; //chars removed from _buffer
+	this._baseState = TEXT;
+	this._special = SPECIAL_NONE;
+	this._cbs = cbs;
+	this._running = true;
+	this._ended = false;
+	this._xmlMode = !!(options && options.xmlMode);
+	this._decodeEntities = !!(options && options.decodeEntities);
+}
+
+Tokenizer$1.prototype._stateText = function(c){
+	if(c === "<"){
+		if(this._index > this._sectionStart){
+			this._cbs.ontext(this._getSection());
+		}
+		this._state = BEFORE_TAG_NAME;
+		this._sectionStart = this._index;
+	} else if(this._decodeEntities && this._special === SPECIAL_NONE && c === "&"){
+		if(this._index > this._sectionStart){
+			this._cbs.ontext(this._getSection());
+		}
+		this._baseState = TEXT;
+		this._state = BEFORE_ENTITY;
+		this._sectionStart = this._index;
+	}
+};
+
+Tokenizer$1.prototype._stateBeforeTagName = function(c){
+	if(c === "/"){
+		this._state = BEFORE_CLOSING_TAG_NAME;
+	} else if(c === "<"){
+		this._cbs.ontext(this._getSection());
+		this._sectionStart = this._index;
+	} else if(c === ">" || this._special !== SPECIAL_NONE || whitespace(c)) {
+		this._state = TEXT;
+	} else if(c === "!"){
+		this._state = BEFORE_DECLARATION;
+		this._sectionStart = this._index + 1;
+	} else if(c === "?"){
+		this._state = IN_PROCESSING_INSTRUCTION;
+		this._sectionStart = this._index + 1;
+	} else {
+		this._state = (!this._xmlMode && (c === "s" || c === "S")) ?
+						BEFORE_SPECIAL : IN_TAG_NAME;
+		this._sectionStart = this._index;
+	}
+};
+
+Tokenizer$1.prototype._stateInTagName = function(c){
+	if(c === "/" || c === ">" || whitespace(c)){
+		this._emitToken("onopentagname");
+		this._state = BEFORE_ATTRIBUTE_NAME;
+		this._index--;
+	}
+};
+
+Tokenizer$1.prototype._stateBeforeCloseingTagName = function(c){
+	if(whitespace(c));
+	else if(c === ">"){
+		this._state = TEXT;
+	} else if(this._special !== SPECIAL_NONE){
+		if(c === "s" || c === "S"){
+			this._state = BEFORE_SPECIAL_END;
+		} else {
+			this._state = TEXT;
+			this._index--;
+		}
+	} else {
+		this._state = IN_CLOSING_TAG_NAME;
+		this._sectionStart = this._index;
+	}
+};
+
+Tokenizer$1.prototype._stateInCloseingTagName = function(c){
+	if(c === ">" || whitespace(c)){
+		this._emitToken("onclosetag");
+		this._state = AFTER_CLOSING_TAG_NAME;
+		this._index--;
+	}
+};
+
+Tokenizer$1.prototype._stateAfterCloseingTagName = function(c){
+	//skip everything until ">"
+	if(c === ">"){
+		this._state = TEXT;
+		this._sectionStart = this._index + 1;
+	}
+};
+
+Tokenizer$1.prototype._stateBeforeAttributeName = function(c){
+	if(c === ">"){
+		this._cbs.onopentagend();
+		this._state = TEXT;
+		this._sectionStart = this._index + 1;
+	} else if(c === "/"){
+		this._state = IN_SELF_CLOSING_TAG;
+	} else if(!whitespace(c)){
+		this._state = IN_ATTRIBUTE_NAME;
+		this._sectionStart = this._index;
+	}
+};
+
+Tokenizer$1.prototype._stateInSelfClosingTag = function(c){
+	if(c === ">"){
+		this._cbs.onselfclosingtag();
+		this._state = TEXT;
+		this._sectionStart = this._index + 1;
+	} else if(!whitespace(c)){
+		this._state = BEFORE_ATTRIBUTE_NAME;
+		this._index--;
+	}
+};
+
+Tokenizer$1.prototype._stateInAttributeName = function(c){
+	if(c === "=" || c === "/" || c === ">" || whitespace(c)){
+		this._cbs.onattribname(this._getSection());
+		this._sectionStart = -1;
+		this._state = AFTER_ATTRIBUTE_NAME;
+		this._index--;
+	}
+};
+
+Tokenizer$1.prototype._stateAfterAttributeName = function(c){
+	if(c === "="){
+		this._state = BEFORE_ATTRIBUTE_VALUE;
+	} else if(c === "/" || c === ">"){
+		this._cbs.onattribend();
+		this._state = BEFORE_ATTRIBUTE_NAME;
+		this._index--;
+	} else if(!whitespace(c)){
+		this._cbs.onattribend();
+		this._state = IN_ATTRIBUTE_NAME;
+		this._sectionStart = this._index;
+	}
+};
+
+Tokenizer$1.prototype._stateBeforeAttributeValue = function(c){
+	if(c === "\""){
+		this._state = IN_ATTRIBUTE_VALUE_DQ;
+		this._sectionStart = this._index + 1;
+	} else if(c === "'"){
+		this._state = IN_ATTRIBUTE_VALUE_SQ;
+		this._sectionStart = this._index + 1;
+	} else if(!whitespace(c)){
+		this._state = IN_ATTRIBUTE_VALUE_NQ;
+		this._sectionStart = this._index;
+		this._index--; //reconsume token
+	}
+};
+
+Tokenizer$1.prototype._stateInAttributeValueDoubleQuotes = function(c){
+	if(c === "\""){
+		this._emitToken("onattribdata");
+		this._cbs.onattribend();
+		this._state = BEFORE_ATTRIBUTE_NAME;
+	} else if(this._decodeEntities && c === "&"){
+		this._emitToken("onattribdata");
+		this._baseState = this._state;
+		this._state = BEFORE_ENTITY;
+		this._sectionStart = this._index;
+	}
+};
+
+Tokenizer$1.prototype._stateInAttributeValueSingleQuotes = function(c){
+	if(c === "'"){
+		this._emitToken("onattribdata");
+		this._cbs.onattribend();
+		this._state = BEFORE_ATTRIBUTE_NAME;
+	} else if(this._decodeEntities && c === "&"){
+		this._emitToken("onattribdata");
+		this._baseState = this._state;
+		this._state = BEFORE_ENTITY;
+		this._sectionStart = this._index;
+	}
+};
+
+Tokenizer$1.prototype._stateInAttributeValueNoQuotes = function(c){
+	if(whitespace(c) || c === ">"){
+		this._emitToken("onattribdata");
+		this._cbs.onattribend();
+		this._state = BEFORE_ATTRIBUTE_NAME;
+		this._index--;
+	} else if(this._decodeEntities && c === "&"){
+		this._emitToken("onattribdata");
+		this._baseState = this._state;
+		this._state = BEFORE_ENTITY;
+		this._sectionStart = this._index;
+	}
+};
+
+Tokenizer$1.prototype._stateBeforeDeclaration = function(c){
+	this._state = c === "[" ? BEFORE_CDATA_1 :
+					c === "-" ? BEFORE_COMMENT :
+						IN_DECLARATION;
+};
+
+Tokenizer$1.prototype._stateInDeclaration = function(c){
+	if(c === ">"){
+		this._cbs.ondeclaration(this._getSection());
+		this._state = TEXT;
+		this._sectionStart = this._index + 1;
+	}
+};
+
+Tokenizer$1.prototype._stateInProcessingInstruction = function(c){
+	if(c === ">"){
+		this._cbs.onprocessinginstruction(this._getSection());
+		this._state = TEXT;
+		this._sectionStart = this._index + 1;
+	}
+};
+
+Tokenizer$1.prototype._stateBeforeComment = function(c){
+	if(c === "-"){
+		this._state = IN_COMMENT;
+		this._sectionStart = this._index + 1;
+	} else {
+		this._state = IN_DECLARATION;
+	}
+};
+
+Tokenizer$1.prototype._stateInComment = function(c){
+	if(c === "-") this._state = AFTER_COMMENT_1;
+};
+
+Tokenizer$1.prototype._stateAfterComment1 = function(c){
+	if(c === "-"){
+		this._state = AFTER_COMMENT_2;
+	} else {
+		this._state = IN_COMMENT;
+	}
+};
+
+Tokenizer$1.prototype._stateAfterComment2 = function(c){
+	if(c === ">"){
+		//remove 2 trailing chars
+		this._cbs.oncomment(this._buffer.substring(this._sectionStart, this._index - 2));
+		this._state = TEXT;
+		this._sectionStart = this._index + 1;
+	} else if(c !== "-"){
+		this._state = IN_COMMENT;
+	}
+	// else: stay in AFTER_COMMENT_2 (`--->`)
+};
+
+Tokenizer$1.prototype._stateBeforeCdata1 = ifElseState("C", BEFORE_CDATA_2, IN_DECLARATION);
+Tokenizer$1.prototype._stateBeforeCdata2 = ifElseState("D", BEFORE_CDATA_3, IN_DECLARATION);
+Tokenizer$1.prototype._stateBeforeCdata3 = ifElseState("A", BEFORE_CDATA_4, IN_DECLARATION);
+Tokenizer$1.prototype._stateBeforeCdata4 = ifElseState("T", BEFORE_CDATA_5, IN_DECLARATION);
+Tokenizer$1.prototype._stateBeforeCdata5 = ifElseState("A", BEFORE_CDATA_6, IN_DECLARATION);
+
+Tokenizer$1.prototype._stateBeforeCdata6 = function(c){
+	if(c === "["){
+		this._state = IN_CDATA;
+		this._sectionStart = this._index + 1;
+	} else {
+		this._state = IN_DECLARATION;
+		this._index--;
+	}
+};
+
+Tokenizer$1.prototype._stateInCdata = function(c){
+	if(c === "]") this._state = AFTER_CDATA_1;
+};
+
+Tokenizer$1.prototype._stateAfterCdata1 = characterState("]", AFTER_CDATA_2);
+
+Tokenizer$1.prototype._stateAfterCdata2 = function(c){
+	if(c === ">"){
+		//remove 2 trailing chars
+		this._cbs.oncdata(this._buffer.substring(this._sectionStart, this._index - 2));
+		this._state = TEXT;
+		this._sectionStart = this._index + 1;
+	} else if(c !== "]") {
+		this._state = IN_CDATA;
+	}
+	//else: stay in AFTER_CDATA_2 (`]]]>`)
+};
+
+Tokenizer$1.prototype._stateBeforeSpecial = function(c){
+	if(c === "c" || c === "C"){
+		this._state = BEFORE_SCRIPT_1;
+	} else if(c === "t" || c === "T"){
+		this._state = BEFORE_STYLE_1;
+	} else {
+		this._state = IN_TAG_NAME;
+		this._index--; //consume the token again
+	}
+};
+
+Tokenizer$1.prototype._stateBeforeSpecialEnd = function(c){
+	if(this._special === SPECIAL_SCRIPT && (c === "c" || c === "C")){
+		this._state = AFTER_SCRIPT_1;
+	} else if(this._special === SPECIAL_STYLE && (c === "t" || c === "T")){
+		this._state = AFTER_STYLE_1;
+	}
+	else this._state = TEXT;
+};
+
+Tokenizer$1.prototype._stateBeforeScript1 = consumeSpecialNameChar("R", BEFORE_SCRIPT_2);
+Tokenizer$1.prototype._stateBeforeScript2 = consumeSpecialNameChar("I", BEFORE_SCRIPT_3);
+Tokenizer$1.prototype._stateBeforeScript3 = consumeSpecialNameChar("P", BEFORE_SCRIPT_4);
+Tokenizer$1.prototype._stateBeforeScript4 = consumeSpecialNameChar("T", BEFORE_SCRIPT_5);
+
+Tokenizer$1.prototype._stateBeforeScript5 = function(c){
+	if(c === "/" || c === ">" || whitespace(c)){
+		this._special = SPECIAL_SCRIPT;
+	}
+	this._state = IN_TAG_NAME;
+	this._index--; //consume the token again
+};
+
+Tokenizer$1.prototype._stateAfterScript1 = ifElseState("R", AFTER_SCRIPT_2, TEXT);
+Tokenizer$1.prototype._stateAfterScript2 = ifElseState("I", AFTER_SCRIPT_3, TEXT);
+Tokenizer$1.prototype._stateAfterScript3 = ifElseState("P", AFTER_SCRIPT_4, TEXT);
+Tokenizer$1.prototype._stateAfterScript4 = ifElseState("T", AFTER_SCRIPT_5, TEXT);
+
+Tokenizer$1.prototype._stateAfterScript5 = function(c){
+	if(c === ">" || whitespace(c)){
+		this._special = SPECIAL_NONE;
+		this._state = IN_CLOSING_TAG_NAME;
+		this._sectionStart = this._index - 6;
+		this._index--; //reconsume the token
+	}
+	else this._state = TEXT;
+};
+
+Tokenizer$1.prototype._stateBeforeStyle1 = consumeSpecialNameChar("Y", BEFORE_STYLE_2);
+Tokenizer$1.prototype._stateBeforeStyle2 = consumeSpecialNameChar("L", BEFORE_STYLE_3);
+Tokenizer$1.prototype._stateBeforeStyle3 = consumeSpecialNameChar("E", BEFORE_STYLE_4);
+
+Tokenizer$1.prototype._stateBeforeStyle4 = function(c){
+	if(c === "/" || c === ">" || whitespace(c)){
+		this._special = SPECIAL_STYLE;
+	}
+	this._state = IN_TAG_NAME;
+	this._index--; //consume the token again
+};
+
+Tokenizer$1.prototype._stateAfterStyle1 = ifElseState("Y", AFTER_STYLE_2, TEXT);
+Tokenizer$1.prototype._stateAfterStyle2 = ifElseState("L", AFTER_STYLE_3, TEXT);
+Tokenizer$1.prototype._stateAfterStyle3 = ifElseState("E", AFTER_STYLE_4, TEXT);
+
+Tokenizer$1.prototype._stateAfterStyle4 = function(c){
+	if(c === ">" || whitespace(c)){
+		this._special = SPECIAL_NONE;
+		this._state = IN_CLOSING_TAG_NAME;
+		this._sectionStart = this._index - 5;
+		this._index--; //reconsume the token
+	}
+	else this._state = TEXT;
+};
+
+Tokenizer$1.prototype._stateBeforeEntity = ifElseState("#", BEFORE_NUMERIC_ENTITY, IN_NAMED_ENTITY);
+Tokenizer$1.prototype._stateBeforeNumericEntity = ifElseState("X", IN_HEX_ENTITY, IN_NUMERIC_ENTITY);
+
+//for entities terminated with a semicolon
+Tokenizer$1.prototype._parseNamedEntityStrict = function(){
+	//offset = 1
+	if(this._sectionStart + 1 < this._index){
+		var entity = this._buffer.substring(this._sectionStart + 1, this._index),
+		    map = this._xmlMode ? xmlMap : entityMap;
+
+		if(map.hasOwnProperty(entity)){
+			this._emitPartial(map[entity]);
+			this._sectionStart = this._index + 1;
+		}
+	}
+};
+
+
+//parses legacy entities (without trailing semicolon)
+Tokenizer$1.prototype._parseLegacyEntity = function(){
+	var start = this._sectionStart + 1,
+	    limit = this._index - start;
+
+	if(limit > 6) limit = 6; //the max length of legacy entities is 6
+
+	while(limit >= 2){ //the min length of legacy entities is 2
+		var entity = this._buffer.substr(start, limit);
+
+		if(legacyMap.hasOwnProperty(entity)){
+			this._emitPartial(legacyMap[entity]);
+			this._sectionStart += limit + 1;
+			return;
+		} else {
+			limit--;
+		}
+	}
+};
+
+Tokenizer$1.prototype._stateInNamedEntity = function(c){
+	if(c === ";"){
+		this._parseNamedEntityStrict();
+		if(this._sectionStart + 1 < this._index && !this._xmlMode){
+			this._parseLegacyEntity();
+		}
+		this._state = this._baseState;
+	} else if((c < "a" || c > "z") && (c < "A" || c > "Z") && (c < "0" || c > "9")){
+		if(this._xmlMode);
+		else if(this._sectionStart + 1 === this._index);
+		else if(this._baseState !== TEXT){
+			if(c !== "="){
+				this._parseNamedEntityStrict();
+			}
+		} else {
+			this._parseLegacyEntity();
+		}
+
+		this._state = this._baseState;
+		this._index--;
+	}
+};
+
+Tokenizer$1.prototype._decodeNumericEntity = function(offset, base){
+	var sectionStart = this._sectionStart + offset;
+
+	if(sectionStart !== this._index){
+		//parse entity
+		var entity = this._buffer.substring(sectionStart, this._index);
+		var parsed = parseInt(entity, base);
+
+		this._emitPartial(decodeCodePoint$1(parsed));
+		this._sectionStart = this._index;
+	} else {
+		this._sectionStart--;
+	}
+
+	this._state = this._baseState;
+};
+
+Tokenizer$1.prototype._stateInNumericEntity = function(c){
+	if(c === ";"){
+		this._decodeNumericEntity(2, 10);
+		this._sectionStart++;
+	} else if(c < "0" || c > "9"){
+		if(!this._xmlMode){
+			this._decodeNumericEntity(2, 10);
+		} else {
+			this._state = this._baseState;
+		}
+		this._index--;
+	}
+};
+
+Tokenizer$1.prototype._stateInHexEntity = function(c){
+	if(c === ";"){
+		this._decodeNumericEntity(3, 16);
+		this._sectionStart++;
+	} else if((c < "a" || c > "f") && (c < "A" || c > "F") && (c < "0" || c > "9")){
+		if(!this._xmlMode){
+			this._decodeNumericEntity(3, 16);
+		} else {
+			this._state = this._baseState;
+		}
+		this._index--;
+	}
+};
+
+Tokenizer$1.prototype._cleanup = function (){
+	if(this._sectionStart < 0){
+		this._buffer = "";
+		this._bufferOffset += this._index;
+		this._index = 0;
+	} else if(this._running){
+		if(this._state === TEXT){
+			if(this._sectionStart !== this._index){
+				this._cbs.ontext(this._buffer.substr(this._sectionStart));
+			}
+			this._buffer = "";
+			this._bufferOffset += this._index;
+			this._index = 0;
+		} else if(this._sectionStart === this._index){
+			//the section just started
+			this._buffer = "";
+			this._bufferOffset += this._index;
+			this._index = 0;
+		} else {
+			//remove everything unnecessary
+			this._buffer = this._buffer.substr(this._sectionStart);
+			this._index -= this._sectionStart;
+			this._bufferOffset += this._sectionStart;
+		}
+
+		this._sectionStart = 0;
+	}
+};
+
+//TODO make events conditional
+Tokenizer$1.prototype.write = function(chunk){
+	if(this._ended) this._cbs.onerror(Error(".write() after done!"));
+
+	this._buffer += chunk;
+	this._parse();
+};
+
+Tokenizer$1.prototype._parse = function(){
+	while(this._index < this._buffer.length && this._running){
+		var c = this._buffer.charAt(this._index);
+		if(this._state === TEXT) {
+			this._stateText(c);
+		} else if(this._state === BEFORE_TAG_NAME){
+			this._stateBeforeTagName(c);
+		} else if(this._state === IN_TAG_NAME) {
+			this._stateInTagName(c);
+		} else if(this._state === BEFORE_CLOSING_TAG_NAME){
+			this._stateBeforeCloseingTagName(c);
+		} else if(this._state === IN_CLOSING_TAG_NAME){
+			this._stateInCloseingTagName(c);
+		} else if(this._state === AFTER_CLOSING_TAG_NAME){
+			this._stateAfterCloseingTagName(c);
+		} else if(this._state === IN_SELF_CLOSING_TAG){
+			this._stateInSelfClosingTag(c);
+		}
+
+		/*
+		*	attributes
+		*/
+		else if(this._state === BEFORE_ATTRIBUTE_NAME){
+			this._stateBeforeAttributeName(c);
+		} else if(this._state === IN_ATTRIBUTE_NAME){
+			this._stateInAttributeName(c);
+		} else if(this._state === AFTER_ATTRIBUTE_NAME){
+			this._stateAfterAttributeName(c);
+		} else if(this._state === BEFORE_ATTRIBUTE_VALUE){
+			this._stateBeforeAttributeValue(c);
+		} else if(this._state === IN_ATTRIBUTE_VALUE_DQ){
+			this._stateInAttributeValueDoubleQuotes(c);
+		} else if(this._state === IN_ATTRIBUTE_VALUE_SQ){
+			this._stateInAttributeValueSingleQuotes(c);
+		} else if(this._state === IN_ATTRIBUTE_VALUE_NQ){
+			this._stateInAttributeValueNoQuotes(c);
+		}
+
+		/*
+		*	declarations
+		*/
+		else if(this._state === BEFORE_DECLARATION){
+			this._stateBeforeDeclaration(c);
+		} else if(this._state === IN_DECLARATION){
+			this._stateInDeclaration(c);
+		}
+
+		/*
+		*	processing instructions
+		*/
+		else if(this._state === IN_PROCESSING_INSTRUCTION){
+			this._stateInProcessingInstruction(c);
+		}
+
+		/*
+		*	comments
+		*/
+		else if(this._state === BEFORE_COMMENT){
+			this._stateBeforeComment(c);
+		} else if(this._state === IN_COMMENT){
+			this._stateInComment(c);
+		} else if(this._state === AFTER_COMMENT_1){
+			this._stateAfterComment1(c);
+		} else if(this._state === AFTER_COMMENT_2){
+			this._stateAfterComment2(c);
+		}
+
+		/*
+		*	cdata
+		*/
+		else if(this._state === BEFORE_CDATA_1){
+			this._stateBeforeCdata1(c);
+		} else if(this._state === BEFORE_CDATA_2){
+			this._stateBeforeCdata2(c);
+		} else if(this._state === BEFORE_CDATA_3){
+			this._stateBeforeCdata3(c);
+		} else if(this._state === BEFORE_CDATA_4){
+			this._stateBeforeCdata4(c);
+		} else if(this._state === BEFORE_CDATA_5){
+			this._stateBeforeCdata5(c);
+		} else if(this._state === BEFORE_CDATA_6){
+			this._stateBeforeCdata6(c);
+		} else if(this._state === IN_CDATA){
+			this._stateInCdata(c);
+		} else if(this._state === AFTER_CDATA_1){
+			this._stateAfterCdata1(c);
+		} else if(this._state === AFTER_CDATA_2){
+			this._stateAfterCdata2(c);
+		}
+
+		/*
+		* special tags
+		*/
+		else if(this._state === BEFORE_SPECIAL){
+			this._stateBeforeSpecial(c);
+		} else if(this._state === BEFORE_SPECIAL_END){
+			this._stateBeforeSpecialEnd(c);
+		}
+
+		/*
+		* script
+		*/
+		else if(this._state === BEFORE_SCRIPT_1){
+			this._stateBeforeScript1(c);
+		} else if(this._state === BEFORE_SCRIPT_2){
+			this._stateBeforeScript2(c);
+		} else if(this._state === BEFORE_SCRIPT_3){
+			this._stateBeforeScript3(c);
+		} else if(this._state === BEFORE_SCRIPT_4){
+			this._stateBeforeScript4(c);
+		} else if(this._state === BEFORE_SCRIPT_5){
+			this._stateBeforeScript5(c);
+		}
+
+		else if(this._state === AFTER_SCRIPT_1){
+			this._stateAfterScript1(c);
+		} else if(this._state === AFTER_SCRIPT_2){
+			this._stateAfterScript2(c);
+		} else if(this._state === AFTER_SCRIPT_3){
+			this._stateAfterScript3(c);
+		} else if(this._state === AFTER_SCRIPT_4){
+			this._stateAfterScript4(c);
+		} else if(this._state === AFTER_SCRIPT_5){
+			this._stateAfterScript5(c);
+		}
+
+		/*
+		* style
+		*/
+		else if(this._state === BEFORE_STYLE_1){
+			this._stateBeforeStyle1(c);
+		} else if(this._state === BEFORE_STYLE_2){
+			this._stateBeforeStyle2(c);
+		} else if(this._state === BEFORE_STYLE_3){
+			this._stateBeforeStyle3(c);
+		} else if(this._state === BEFORE_STYLE_4){
+			this._stateBeforeStyle4(c);
+		}
+
+		else if(this._state === AFTER_STYLE_1){
+			this._stateAfterStyle1(c);
+		} else if(this._state === AFTER_STYLE_2){
+			this._stateAfterStyle2(c);
+		} else if(this._state === AFTER_STYLE_3){
+			this._stateAfterStyle3(c);
+		} else if(this._state === AFTER_STYLE_4){
+			this._stateAfterStyle4(c);
+		}
+
+		/*
+		* entities
+		*/
+		else if(this._state === BEFORE_ENTITY){
+			this._stateBeforeEntity(c);
+		} else if(this._state === BEFORE_NUMERIC_ENTITY){
+			this._stateBeforeNumericEntity(c);
+		} else if(this._state === IN_NAMED_ENTITY){
+			this._stateInNamedEntity(c);
+		} else if(this._state === IN_NUMERIC_ENTITY){
+			this._stateInNumericEntity(c);
+		} else if(this._state === IN_HEX_ENTITY){
+			this._stateInHexEntity(c);
+		}
+
+		else {
+			this._cbs.onerror(Error("unknown _state"), this._state);
+		}
+
+		this._index++;
+	}
+
+	this._cleanup();
+};
+
+Tokenizer$1.prototype.pause = function(){
+	this._running = false;
+};
+Tokenizer$1.prototype.resume = function(){
+	this._running = true;
+
+	if(this._index < this._buffer.length){
+		this._parse();
+	}
+	if(this._ended){
+		this._finish();
+	}
+};
+
+Tokenizer$1.prototype.end = function(chunk){
+	if(this._ended) this._cbs.onerror(Error(".end() after done!"));
+	if(chunk) this.write(chunk);
+
+	this._ended = true;
+
+	if(this._running) this._finish();
+};
+
+Tokenizer$1.prototype._finish = function(){
+	//if there is remaining data, emit it in a reasonable way
+	if(this._sectionStart < this._index){
+		this._handleTrailingData();
+	}
+
+	this._cbs.onend();
+};
+
+Tokenizer$1.prototype._handleTrailingData = function(){
+	var data = this._buffer.substr(this._sectionStart);
+
+	if(this._state === IN_CDATA || this._state === AFTER_CDATA_1 || this._state === AFTER_CDATA_2){
+		this._cbs.oncdata(data);
+	} else if(this._state === IN_COMMENT || this._state === AFTER_COMMENT_1 || this._state === AFTER_COMMENT_2){
+		this._cbs.oncomment(data);
+	} else if(this._state === IN_NAMED_ENTITY && !this._xmlMode){
+		this._parseLegacyEntity();
+		if(this._sectionStart < this._index){
+			this._state = this._baseState;
+			this._handleTrailingData();
+		}
+	} else if(this._state === IN_NUMERIC_ENTITY && !this._xmlMode){
+		this._decodeNumericEntity(2, 10);
+		if(this._sectionStart < this._index){
+			this._state = this._baseState;
+			this._handleTrailingData();
+		}
+	} else if(this._state === IN_HEX_ENTITY && !this._xmlMode){
+		this._decodeNumericEntity(3, 16);
+		if(this._sectionStart < this._index){
+			this._state = this._baseState;
+			this._handleTrailingData();
+		}
+	} else if(
+		this._state !== IN_TAG_NAME &&
+		this._state !== BEFORE_ATTRIBUTE_NAME &&
+		this._state !== BEFORE_ATTRIBUTE_VALUE &&
+		this._state !== AFTER_ATTRIBUTE_NAME &&
+		this._state !== IN_ATTRIBUTE_NAME &&
+		this._state !== IN_ATTRIBUTE_VALUE_SQ &&
+		this._state !== IN_ATTRIBUTE_VALUE_DQ &&
+		this._state !== IN_ATTRIBUTE_VALUE_NQ &&
+		this._state !== IN_CLOSING_TAG_NAME
+	){
+		this._cbs.ontext(data);
+	}
+	//else, ignore remaining data
+	//TODO add a way to remove current tag
+};
+
+Tokenizer$1.prototype.reset = function(){
+	Tokenizer$1.call(this, {xmlMode: this._xmlMode, decodeEntities: this._decodeEntities}, this._cbs);
+};
+
+Tokenizer$1.prototype.getAbsoluteIndex = function(){
+	return this._bufferOffset + this._index;
+};
+
+Tokenizer$1.prototype._getSection = function(){
+	return this._buffer.substring(this._sectionStart, this._index);
+};
+
+Tokenizer$1.prototype._emitToken = function(name){
+	this._cbs[name](this._getSection());
+	this._sectionStart = -1;
+};
+
+Tokenizer$1.prototype._emitPartial = function(value){
+	if(this._baseState !== TEXT){
+		this._cbs.onattribdata(value); //TODO implement the new event
+	} else {
+		this._cbs.ontext(value);
+	}
+};
+
+
+
+var Tokenizer$2 = Object.freeze({
+	default: Tokenizer_1,
+	__moduleExports: Tokenizer_1
+});
+
+// shim for using process in browser
+// based off https://github.com/defunctzombie/node-process/blob/master/browser.js
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+var cachedSetTimeout = defaultSetTimout;
+var cachedClearTimeout = defaultClearTimeout;
+if (typeof global.setTimeout === 'function') {
+    cachedSetTimeout = setTimeout;
+}
+if (typeof global.clearTimeout === 'function') {
+    cachedClearTimeout = clearTimeout;
+}
+
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue$1 = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue$1 = currentQueue.concat(queue$1);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue$1.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue$1.length;
+    while(len) {
+        currentQueue = queue$1;
+        queue$1 = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue$1.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+function nextTick(fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue$1.push(new Item(fun, args));
+    if (queue$1.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+}
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+var title = 'browser';
+var platform = 'browser';
+var browser = true;
+var env = {};
+var argv = [];
+var version = ''; // empty string to avoid regexp issues
+var versions = {};
+var release = {};
+var config = {};
+
+function noop() {}
+
+var on = noop;
+var addListener = noop;
+var once = noop;
+var off = noop;
+var removeListener = noop;
+var removeAllListeners = noop;
+var emit = noop;
+
+function binding(name) {
+    throw new Error('process.binding is not supported');
+}
+
+function cwd () { return '/' }
+function chdir (dir) {
+    throw new Error('process.chdir is not supported');
+}
+function umask() { return 0; }
+
+// from https://github.com/kumavis/browser-process-hrtime/blob/master/index.js
+var performance$1 = global.performance || {};
+var performanceNow =
+  performance$1.now        ||
+  performance$1.mozNow     ||
+  performance$1.msNow      ||
+  performance$1.oNow       ||
+  performance$1.webkitNow  ||
+  function(){ return (new Date()).getTime() };
+
+// generate timestamp or delta
+// see http://nodejs.org/api/process.html#process_process_hrtime
+function hrtime(previousTimestamp){
+  var clocktime = performanceNow.call(performance$1)*1e-3;
+  var seconds = Math.floor(clocktime);
+  var nanoseconds = Math.floor((clocktime%1)*1e9);
+  if (previousTimestamp) {
+    seconds = seconds - previousTimestamp[0];
+    nanoseconds = nanoseconds - previousTimestamp[1];
+    if (nanoseconds<0) {
+      seconds--;
+      nanoseconds += 1e9;
+    }
+  }
+  return [seconds,nanoseconds]
+}
+
+var startTime = new Date();
+function uptime() {
+  var currentTime = new Date();
+  var dif = currentTime - startTime;
+  return dif / 1000;
+}
+
+var process$5 = {
+  nextTick: nextTick,
+  title: title,
+  browser: browser,
+  env: env,
+  argv: argv,
+  version: version,
+  versions: versions,
+  on: on,
+  addListener: addListener,
+  once: once,
+  off: off,
+  removeListener: removeListener,
+  removeAllListeners: removeAllListeners,
+  emit: emit,
+  binding: binding,
+  cwd: cwd,
+  chdir: chdir,
+  umask: umask,
+  hrtime: hrtime,
+  platform: platform,
+  release: release,
+  config: config,
+  uptime: uptime
+};
+
+var inherits$3;
+if (typeof Object.create === 'function'){
+  inherits$3 = function inherits(ctor, superCtor) {
+    // implementation from standard node.js 'util' module
+    ctor.super_ = superCtor;
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  inherits$3 = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor;
+    var TempCtor = function () {};
+    TempCtor.prototype = superCtor.prototype;
+    ctor.prototype = new TempCtor();
+    ctor.prototype.constructor = ctor;
+  };
+}
+var inherits$4 = inherits$3;
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+var formatRegExp = /%[sdj%]/g;
+function format(f) {
+  if (!isString(f)) {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j':
+        try {
+          return JSON.stringify(args[i++]);
+        } catch (_) {
+          return '[Circular]';
+        }
+      default:
+        return x;
+    }
+  });
+  for (var x = args[i]; i < len; x = args[++i]) {
+    if (isNull(x) || !isObject$1(x)) {
+      str += ' ' + x;
+    } else {
+      str += ' ' + inspect(x);
+    }
+  }
+  return str;
+}
+
+
+// Mark that a method should not be used.
+// Returns a modified function which warns once by default.
+// If --no-deprecation is set, then it is a no-op.
+function deprecate(fn, msg) {
+  // Allow for deprecating things in the process of starting up.
+  if (isUndefined(global.process)) {
+    return function() {
+      return deprecate(fn, msg).apply(this, arguments);
+    };
+  }
+
+  if (process$5.noDeprecation === true) {
+    return fn;
+  }
+
+  var warned = false;
+  function deprecated() {
+    if (!warned) {
+      if (process$5.throwDeprecation) {
+        throw new Error(msg);
+      } else if (process$5.traceDeprecation) {
+        console.trace(msg);
+      } else {
+        console.error(msg);
+      }
+      warned = true;
+    }
+    return fn.apply(this, arguments);
+  }
+
+  return deprecated;
+}
+
+
+var debugs = {};
+var debugEnviron;
+function debuglog(set) {
+  if (isUndefined(debugEnviron))
+    debugEnviron = process$5.env.NODE_DEBUG || '';
+  set = set.toUpperCase();
+  if (!debugs[set]) {
+    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+      var pid = 0;
+      debugs[set] = function() {
+        var msg = format.apply(null, arguments);
+        console.error('%s %d: %s', set, pid, msg);
+      };
+    } else {
+      debugs[set] = function() {};
+    }
+  }
+  return debugs[set];
+}
+
+
+/**
+ * Echos the value of a value. Trys to print the value out
+ * in the best way possible given the different types.
+ *
+ * @param {Object} obj The object to print out.
+ * @param {Object} opts Optional options object that alters the output.
+ */
+/* legacy: obj, showHidden, depth, colors*/
+function inspect(obj, opts) {
+  // default options
+  var ctx = {
+    seen: [],
+    stylize: stylizeNoColor
+  };
+  // legacy...
+  if (arguments.length >= 3) ctx.depth = arguments[2];
+  if (arguments.length >= 4) ctx.colors = arguments[3];
+  if (isBoolean(opts)) {
+    // legacy...
+    ctx.showHidden = opts;
+  } else if (opts) {
+    // got an "options" object
+    _extend(ctx, opts);
+  }
+  // set default options
+  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+  if (isUndefined(ctx.depth)) ctx.depth = 2;
+  if (isUndefined(ctx.colors)) ctx.colors = false;
+  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+  if (ctx.colors) ctx.stylize = stylizeWithColor;
+  return formatValue(ctx, obj, ctx.depth);
+}
+
+// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+inspect.colors = {
+  'bold' : [1, 22],
+  'italic' : [3, 23],
+  'underline' : [4, 24],
+  'inverse' : [7, 27],
+  'white' : [37, 39],
+  'grey' : [90, 39],
+  'black' : [30, 39],
+  'blue' : [34, 39],
+  'cyan' : [36, 39],
+  'green' : [32, 39],
+  'magenta' : [35, 39],
+  'red' : [31, 39],
+  'yellow' : [33, 39]
+};
+
+// Don't use 'blue' not visible on cmd.exe
+inspect.styles = {
+  'special': 'cyan',
+  'number': 'yellow',
+  'boolean': 'yellow',
+  'undefined': 'grey',
+  'null': 'bold',
+  'string': 'green',
+  'date': 'magenta',
+  // "name": intentionally not styling
+  'regexp': 'red'
+};
+
+
+function stylizeWithColor(str, styleType) {
+  var style = inspect.styles[styleType];
+
+  if (style) {
+    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
+           '\u001b[' + inspect.colors[style][1] + 'm';
+  } else {
+    return str;
+  }
+}
+
+
+function stylizeNoColor(str, styleType) {
+  return str;
+}
+
+
+function arrayToHash(array) {
+  var hash = {};
+
+  array.forEach(function(val, idx) {
+    hash[val] = true;
+  });
+
+  return hash;
+}
+
+
+function formatValue(ctx, value, recurseTimes) {
+  // Provide a hook for user-specified inspect functions.
+  // Check that value is an object with an inspect function on it
+  if (ctx.customInspect &&
+      value &&
+      isFunction(value.inspect) &&
+      // Filter out the util module, it's inspect function is special
+      value.inspect !== inspect &&
+      // Also filter out any prototype objects using the circular check.
+      !(value.constructor && value.constructor.prototype === value)) {
+    var ret = value.inspect(recurseTimes, ctx);
+    if (!isString(ret)) {
+      ret = formatValue(ctx, ret, recurseTimes);
+    }
+    return ret;
+  }
+
+  // Primitive types cannot have properties
+  var primitive = formatPrimitive(ctx, value);
+  if (primitive) {
+    return primitive;
+  }
+
+  // Look up the keys of the object.
+  var keys = Object.keys(value);
+  var visibleKeys = arrayToHash(keys);
+
+  if (ctx.showHidden) {
+    keys = Object.getOwnPropertyNames(value);
+  }
+
+  // IE doesn't make error fields non-enumerable
+  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
+  if (isError(value)
+      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+    return formatError(value);
+  }
+
+  // Some type of object without properties can be shortcutted.
+  if (keys.length === 0) {
+    if (isFunction(value)) {
+      var name = value.name ? ': ' + value.name : '';
+      return ctx.stylize('[Function' + name + ']', 'special');
+    }
+    if (isRegExp$1(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    }
+    if (isDate(value)) {
+      return ctx.stylize(Date.prototype.toString.call(value), 'date');
+    }
+    if (isError(value)) {
+      return formatError(value);
+    }
+  }
+
+  var base = '', array = false, braces = ['{', '}'];
+
+  // Make Array say that they are Array
+  if (isArray$1(value)) {
+    array = true;
+    braces = ['[', ']'];
+  }
+
+  // Make functions say that they are functions
+  if (isFunction(value)) {
+    var n = value.name ? ': ' + value.name : '';
+    base = ' [Function' + n + ']';
+  }
+
+  // Make RegExps say that they are RegExps
+  if (isRegExp$1(value)) {
+    base = ' ' + RegExp.prototype.toString.call(value);
+  }
+
+  // Make dates with properties first say the date
+  if (isDate(value)) {
+    base = ' ' + Date.prototype.toUTCString.call(value);
+  }
+
+  // Make error with message first say the error
+  if (isError(value)) {
+    base = ' ' + formatError(value);
+  }
+
+  if (keys.length === 0 && (!array || value.length == 0)) {
+    return braces[0] + base + braces[1];
+  }
+
+  if (recurseTimes < 0) {
+    if (isRegExp$1(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    } else {
+      return ctx.stylize('[Object]', 'special');
+    }
+  }
+
+  ctx.seen.push(value);
+
+  var output;
+  if (array) {
+    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
+  } else {
+    output = keys.map(function(key) {
+      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
+    });
+  }
+
+  ctx.seen.pop();
+
+  return reduceToSingleString(output, base, braces);
+}
+
+
+function formatPrimitive(ctx, value) {
+  if (isUndefined(value))
+    return ctx.stylize('undefined', 'undefined');
+  if (isString(value)) {
+    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                             .replace(/'/g, "\\'")
+                                             .replace(/\\"/g, '"') + '\'';
+    return ctx.stylize(simple, 'string');
+  }
+  if (isNumber(value))
+    return ctx.stylize('' + value, 'number');
+  if (isBoolean(value))
+    return ctx.stylize('' + value, 'boolean');
+  // For some reason typeof null is "object", so special case here.
+  if (isNull(value))
+    return ctx.stylize('null', 'null');
+}
+
+
+function formatError(value) {
+  return '[' + Error.prototype.toString.call(value) + ']';
+}
+
+
+function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
+  var output = [];
+  for (var i = 0, l = value.length; i < l; ++i) {
+    if (hasOwnProperty$4(value, String(i))) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          String(i), true));
+    } else {
+      output.push('');
+    }
+  }
+  keys.forEach(function(key) {
+    if (!key.match(/^\d+$/)) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          key, true));
+    }
+  });
+  return output;
+}
+
+
+function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
+  var name, str, desc;
+  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
+  if (desc.get) {
+    if (desc.set) {
+      str = ctx.stylize('[Getter/Setter]', 'special');
+    } else {
+      str = ctx.stylize('[Getter]', 'special');
+    }
+  } else {
+    if (desc.set) {
+      str = ctx.stylize('[Setter]', 'special');
+    }
+  }
+  if (!hasOwnProperty$4(visibleKeys, key)) {
+    name = '[' + key + ']';
+  }
+  if (!str) {
+    if (ctx.seen.indexOf(desc.value) < 0) {
+      if (isNull(recurseTimes)) {
+        str = formatValue(ctx, desc.value, null);
+      } else {
+        str = formatValue(ctx, desc.value, recurseTimes - 1);
+      }
+      if (str.indexOf('\n') > -1) {
+        if (array) {
+          str = str.split('\n').map(function(line) {
+            return '  ' + line;
+          }).join('\n').substr(2);
+        } else {
+          str = '\n' + str.split('\n').map(function(line) {
+            return '   ' + line;
+          }).join('\n');
+        }
+      }
+    } else {
+      str = ctx.stylize('[Circular]', 'special');
+    }
+  }
+  if (isUndefined(name)) {
+    if (array && key.match(/^\d+$/)) {
+      return str;
+    }
+    name = JSON.stringify('' + key);
+    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+      name = name.substr(1, name.length - 2);
+      name = ctx.stylize(name, 'name');
+    } else {
+      name = name.replace(/'/g, "\\'")
+                 .replace(/\\"/g, '"')
+                 .replace(/(^"|"$)/g, "'");
+      name = ctx.stylize(name, 'string');
+    }
+  }
+
+  return name + ': ' + str;
+}
+
+
+function reduceToSingleString(output, base, braces) {
+  var numLinesEst = 0;
+  var length = output.reduce(function(prev, cur) {
+    numLinesEst++;
+    if (cur.indexOf('\n') >= 0) numLinesEst++;
+    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
+  }, 0);
+
+  if (length > 60) {
+    return braces[0] +
+           (base === '' ? '' : base + '\n ') +
+           ' ' +
+           output.join(',\n  ') +
+           ' ' +
+           braces[1];
+  }
+
+  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+}
+
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+function isArray$1(ar) {
+  return Array.isArray(ar);
+}
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+
+function isNull(arg) {
+  return arg === null;
+}
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+
+function isSymbol$1(arg) {
+  return typeof arg === 'symbol';
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+function isRegExp$1(re) {
+  return isObject$1(re) && objectToString(re) === '[object RegExp]';
+}
+
+function isObject$1(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isDate(d) {
+  return isObject$1(d) && objectToString(d) === '[object Date]';
+}
+
+function isError(e) {
+  return isObject$1(e) &&
+      (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+
+function isBuffer(maybeBuf) {
+  return Buffer.isBuffer(maybeBuf);
+}
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+
+// log is just a thin wrapper to console.log that prepends a timestamp
+function log$1() {
+  console.log('%s - %s', timestamp(), format.apply(null, arguments));
+}
+
+
+/**
+ * Inherit the prototype methods from one constructor into another.
+ *
+ * The Function.prototype.inherits from lang.js rewritten as a standalone
+ * function (not on Function.prototype). NOTE: If this file is to be loaded
+ * during bootstrapping this function needs to be rewritten using some native
+ * functions as prototype setup using normal JavaScript does not work as
+ * expected during bootstrapping (see mirror.js in r114903).
+ *
+ * @param {function} ctor Constructor function which needs to inherit the
+ *     prototype.
+ * @param {function} superCtor Constructor function to inherit prototype from.
+ */
+function _extend(origin, add) {
+  // Don't do anything if add isn't an object
+  if (!add || !isObject$1(add)) return origin;
+
+  var keys = Object.keys(add);
+  var i = keys.length;
+  while (i--) {
+    origin[keys[i]] = add[keys[i]];
+  }
+  return origin;
+}
+
+function hasOwnProperty$4(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+var util$1 = {
+  inherits: inherits$4,
+  _extend: _extend,
+  log: log$1,
+  isBuffer: isBuffer,
+  isPrimitive: isPrimitive,
+  isFunction: isFunction,
+  isError: isError,
+  isDate: isDate,
+  isObject: isObject$1,
+  isRegExp: isRegExp$1,
+  isUndefined: isUndefined,
+  isSymbol: isSymbol$1,
+  isString: isString,
+  isNumber: isNumber,
+  isNullOrUndefined: isNullOrUndefined,
+  isNull: isNull,
+  isBoolean: isBoolean,
+  isArray: isArray$1,
+  inspect: inspect,
+  deprecate: deprecate,
+  format: format,
+  debuglog: debuglog
+};
+
+
+var util$2 = Object.freeze({
+	format: format,
+	deprecate: deprecate,
+	debuglog: debuglog,
+	inspect: inspect,
+	isArray: isArray$1,
+	isBoolean: isBoolean,
+	isNull: isNull,
+	isNullOrUndefined: isNullOrUndefined,
+	isNumber: isNumber,
+	isString: isString,
+	isSymbol: isSymbol$1,
+	isUndefined: isUndefined,
+	isRegExp: isRegExp$1,
+	isObject: isObject$1,
+	isDate: isDate,
+	isError: isError,
+	isFunction: isFunction,
+	isPrimitive: isPrimitive,
+	isBuffer: isBuffer,
+	log: log$1,
+	inherits: inherits$4,
+	_extend: _extend,
+	default: util$1
+});
+
+var inherits_browser = createCommonjsModule(function (module) {
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor;
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor;
+    var TempCtor = function () {};
+    TempCtor.prototype = superCtor.prototype;
+    ctor.prototype = new TempCtor();
+    ctor.prototype.constructor = ctor;
+  };
+}
+});
+
+
+
+var inherits_browser$2 = Object.freeze({
+	default: inherits_browser,
+	__moduleExports: inherits_browser
+});
+
+var require$$0$31 = ( util$2 && util$1 ) || util$2;
+
+var require$$1$8 = ( inherits_browser$2 && inherits_browser ) || inherits_browser$2;
+
+var inherits = createCommonjsModule(function (module) {
+try {
+  var util = require$$0$31;
+  if (typeof util.inherits !== 'function') throw '';
+  module.exports = util.inherits;
+} catch (e) {
+  module.exports = require$$1$8;
+}
+});
+
+
+
+var inherits$2 = Object.freeze({
+	default: inherits,
+	__moduleExports: inherits
+});
+
+'use strict';
+
+var domain;
+
+// This constructor is used to store event handlers. Instantiating this is
+// faster than explicitly calling `Object.create(null)` to get a "clean" empty
+// object (tested with v8 v4.9).
+function EventHandlers() {}
+EventHandlers.prototype = Object.create(null);
+
+function EventEmitter() {
+  EventEmitter.init.call(this);
+}
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.usingDomains = false;
+
+EventEmitter.prototype.domain = undefined;
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+EventEmitter.init = function() {
+  this.domain = null;
+  if (EventEmitter.usingDomains) {
+    // if there is an active domain, then attach to it.
+    if (domain.active && !(this instanceof domain.Domain)) {
+      this.domain = domain.active;
+    }
+  }
+
+  if (!this._events || this._events === Object.getPrototypeOf(this)._events) {
+    this._events = new EventHandlers();
+    this._eventsCount = 0;
+  }
+
+  this._maxListeners = this._maxListeners || undefined;
+};
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
+  if (typeof n !== 'number' || n < 0 || isNaN(n))
+    throw new TypeError('"n" argument must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+function $getMaxListeners(that) {
+  if (that._maxListeners === undefined)
+    return EventEmitter.defaultMaxListeners;
+  return that._maxListeners;
+}
+
+EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
+  return $getMaxListeners(this);
+};
+
+// These standalone emit* functions are used to optimize calling of event
+// handlers for fast cases because emit() itself often has a variable number of
+// arguments and can be deoptimized because of that. These functions always have
+// the same number of arguments and thus do not get deoptimized, so the code
+// inside them can execute faster.
+function emitNone(handler, isFn, self) {
+  if (isFn)
+    handler.call(self);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].call(self);
+  }
+}
+function emitOne(handler, isFn, self, arg1) {
+  if (isFn)
+    handler.call(self, arg1);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].call(self, arg1);
+  }
+}
+function emitTwo(handler, isFn, self, arg1, arg2) {
+  if (isFn)
+    handler.call(self, arg1, arg2);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].call(self, arg1, arg2);
+  }
+}
+function emitThree(handler, isFn, self, arg1, arg2, arg3) {
+  if (isFn)
+    handler.call(self, arg1, arg2, arg3);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].call(self, arg1, arg2, arg3);
+  }
+}
+
+function emitMany(handler, isFn, self, args) {
+  if (isFn)
+    handler.apply(self, args);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].apply(self, args);
+  }
+}
+
+EventEmitter.prototype.emit = function emit(type) {
+  var er, handler, len, args, i, events, domain;
+  var needDomainExit = false;
+  var doError = (type === 'error');
+
+  events = this._events;
+  if (events)
+    doError = (doError && events.error == null);
+  else if (!doError)
+    return false;
+
+  domain = this.domain;
+
+  // If there is no 'error' event listener then throw.
+  if (doError) {
+    er = arguments[1];
+    if (domain) {
+      if (!er)
+        er = new Error('Uncaught, unspecified "error" event');
+      er.domainEmitter = this;
+      er.domain = domain;
+      er.domainThrown = false;
+      domain.emit('error', er);
+    } else if (er instanceof Error) {
+      throw er; // Unhandled 'error' event
+    } else {
+      // At least give some kind of context to the user
+      var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+      err.context = er;
+      throw err;
+    }
+    return false;
+  }
+
+  handler = events[type];
+
+  if (!handler)
+    return false;
+
+  var isFn = typeof handler === 'function';
+  len = arguments.length;
+  switch (len) {
+    // fast cases
+    case 1:
+      emitNone(handler, isFn, this);
+      break;
+    case 2:
+      emitOne(handler, isFn, this, arguments[1]);
+      break;
+    case 3:
+      emitTwo(handler, isFn, this, arguments[1], arguments[2]);
+      break;
+    case 4:
+      emitThree(handler, isFn, this, arguments[1], arguments[2], arguments[3]);
+      break;
+    // slower
+    default:
+      args = new Array(len - 1);
+      for (i = 1; i < len; i++)
+        args[i - 1] = arguments[i];
+      emitMany(handler, isFn, this, args);
+  }
+
+  if (needDomainExit)
+    domain.exit();
+
+  return true;
+};
+
+function _addListener(target, type, listener, prepend) {
+  var m;
+  var events;
+  var existing;
+
+  if (typeof listener !== 'function')
+    throw new TypeError('"listener" argument must be a function');
+
+  events = target._events;
+  if (!events) {
+    events = target._events = new EventHandlers();
+    target._eventsCount = 0;
+  } else {
+    // To avoid recursion in the case that type === "newListener"! Before
+    // adding it to the listeners, first emit "newListener".
+    if (events.newListener) {
+      target.emit('newListener', type,
+                  listener.listener ? listener.listener : listener);
+
+      // Re-assign `events` because a newListener handler could have caused the
+      // this._events to be assigned to a new object
+      events = target._events;
+    }
+    existing = events[type];
+  }
+
+  if (!existing) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    existing = events[type] = listener;
+    ++target._eventsCount;
+  } else {
+    if (typeof existing === 'function') {
+      // Adding the second element, need to change to array.
+      existing = events[type] = prepend ? [listener, existing] :
+                                          [existing, listener];
+    } else {
+      // If we've already got an array, just append.
+      if (prepend) {
+        existing.unshift(listener);
+      } else {
+        existing.push(listener);
+      }
+    }
+
+    // Check for listener leak
+    if (!existing.warned) {
+      m = $getMaxListeners(target);
+      if (m && m > 0 && existing.length > m) {
+        existing.warned = true;
+        var w = new Error('Possible EventEmitter memory leak detected. ' +
+                            existing.length + ' ' + type + ' listeners added. ' +
+                            'Use emitter.setMaxListeners() to increase limit');
+        w.name = 'MaxListenersExceededWarning';
+        w.emitter = target;
+        w.type = type;
+        w.count = existing.length;
+        emitWarning(w);
+      }
+    }
+  }
+
+  return target;
+}
+function emitWarning(e) {
+  typeof console.warn === 'function' ? console.warn(e) : console.log(e);
+}
+EventEmitter.prototype.addListener = function addListener(type, listener) {
+  return _addListener(this, type, listener, false);
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.prependListener =
+    function prependListener(type, listener) {
+      return _addListener(this, type, listener, true);
+    };
+
+function _onceWrap(target, type, listener) {
+  var fired = false;
+  function g() {
+    target.removeListener(type, g);
+    if (!fired) {
+      fired = true;
+      listener.apply(target, arguments);
+    }
+  }
+  g.listener = listener;
+  return g;
+}
+
+EventEmitter.prototype.once = function once(type, listener) {
+  if (typeof listener !== 'function')
+    throw new TypeError('"listener" argument must be a function');
+  this.on(type, _onceWrap(this, type, listener));
+  return this;
+};
+
+EventEmitter.prototype.prependOnceListener =
+    function prependOnceListener(type, listener) {
+      if (typeof listener !== 'function')
+        throw new TypeError('"listener" argument must be a function');
+      this.prependListener(type, _onceWrap(this, type, listener));
+      return this;
+    };
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener =
+    function removeListener(type, listener) {
+      var list, events, position, i, originalListener;
+
+      if (typeof listener !== 'function')
+        throw new TypeError('"listener" argument must be a function');
+
+      events = this._events;
+      if (!events)
+        return this;
+
+      list = events[type];
+      if (!list)
+        return this;
+
+      if (list === listener || (list.listener && list.listener === listener)) {
+        if (--this._eventsCount === 0)
+          this._events = new EventHandlers();
+        else {
+          delete events[type];
+          if (events.removeListener)
+            this.emit('removeListener', type, list.listener || listener);
+        }
+      } else if (typeof list !== 'function') {
+        position = -1;
+
+        for (i = list.length; i-- > 0;) {
+          if (list[i] === listener ||
+              (list[i].listener && list[i].listener === listener)) {
+            originalListener = list[i].listener;
+            position = i;
+            break;
+          }
+        }
+
+        if (position < 0)
+          return this;
+
+        if (list.length === 1) {
+          list[0] = undefined;
+          if (--this._eventsCount === 0) {
+            this._events = new EventHandlers();
+            return this;
+          } else {
+            delete events[type];
+          }
+        } else {
+          spliceOne(list, position);
+        }
+
+        if (events.removeListener)
+          this.emit('removeListener', type, originalListener || listener);
+      }
+
+      return this;
+    };
+
+EventEmitter.prototype.removeAllListeners =
+    function removeAllListeners(type) {
+      var listeners, events;
+
+      events = this._events;
+      if (!events)
+        return this;
+
+      // not listening for removeListener, no need to emit
+      if (!events.removeListener) {
+        if (arguments.length === 0) {
+          this._events = new EventHandlers();
+          this._eventsCount = 0;
+        } else if (events[type]) {
+          if (--this._eventsCount === 0)
+            this._events = new EventHandlers();
+          else
+            delete events[type];
+        }
+        return this;
+      }
+
+      // emit removeListener for all listeners on all events
+      if (arguments.length === 0) {
+        var keys = Object.keys(events);
+        for (var i = 0, key; i < keys.length; ++i) {
+          key = keys[i];
+          if (key === 'removeListener') continue;
+          this.removeAllListeners(key);
+        }
+        this.removeAllListeners('removeListener');
+        this._events = new EventHandlers();
+        this._eventsCount = 0;
+        return this;
+      }
+
+      listeners = events[type];
+
+      if (typeof listeners === 'function') {
+        this.removeListener(type, listeners);
+      } else if (listeners) {
+        // LIFO order
+        do {
+          this.removeListener(type, listeners[listeners.length - 1]);
+        } while (listeners[0]);
+      }
+
+      return this;
+    };
+
+EventEmitter.prototype.listeners = function listeners(type) {
+  var evlistener;
+  var ret;
+  var events = this._events;
+
+  if (!events)
+    ret = [];
+  else {
+    evlistener = events[type];
+    if (!evlistener)
+      ret = [];
+    else if (typeof evlistener === 'function')
+      ret = [evlistener.listener || evlistener];
+    else
+      ret = unwrapListeners(evlistener);
+  }
+
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  if (typeof emitter.listenerCount === 'function') {
+    return emitter.listenerCount(type);
+  } else {
+    return listenerCount.call(emitter, type);
+  }
+};
+
+EventEmitter.prototype.listenerCount = listenerCount;
+function listenerCount(type) {
+  var events = this._events;
+
+  if (events) {
+    var evlistener = events[type];
+
+    if (typeof evlistener === 'function') {
+      return 1;
+    } else if (evlistener) {
+      return evlistener.length;
+    }
+  }
+
+  return 0;
+}
+
+EventEmitter.prototype.eventNames = function eventNames() {
+  return this._eventsCount > 0 ? Reflect.ownKeys(this._events) : [];
+};
+
+// About 1.5x faster than the two-arg version of Array#splice().
+function spliceOne(list, index) {
+  for (var i = index, k = i + 1, n = list.length; k < n; i += 1, k += 1)
+    list[i] = list[k];
+  list.pop();
+}
+
+function arrayClone(arr, i) {
+  var copy = new Array(i);
+  while (i--)
+    copy[i] = arr[i];
+  return copy;
+}
+
+function unwrapListeners(arr) {
+  var ret = new Array(arr.length);
+  for (var i = 0; i < ret.length; ++i) {
+    ret[i] = arr[i].listener || arr[i];
+  }
+  return ret;
+}
+
+
+var events = Object.freeze({
+	default: EventEmitter,
+	EventEmitter: EventEmitter
+});
+
+var require$$0$32 = ( Tokenizer$2 && Tokenizer_1 ) || Tokenizer$2;
+
+var require$$1$9 = ( inherits$2 && inherits ) || inherits$2;
+
+var require$$2$5 = ( events && EventEmitter ) || events;
+
+var Tokenizer = require$$0$32;
+
+/*
+	Options:
+
+	xmlMode: Disables the special behavior for script/style tags (false by default)
+	lowerCaseAttributeNames: call .toLowerCase for each attribute name (true if xmlMode is `false`)
+	lowerCaseTags: call .toLowerCase for each tag name (true if xmlMode is `false`)
+*/
+
+/*
+	Callbacks:
+
+	oncdataend,
+	oncdatastart,
+	onclosetag,
+	oncomment,
+	oncommentend,
+	onerror,
+	onopentag,
+	onprocessinginstruction,
+	onreset,
+	ontext
+*/
+
+var formTags = {
+	input: true,
+	option: true,
+	optgroup: true,
+	select: true,
+	button: true,
+	datalist: true,
+	textarea: true
+};
+
+var openImpliesClose = {
+	tr      : { tr:true, th:true, td:true },
+	th      : { th:true },
+	td      : { thead:true, th:true, td:true },
+	body    : { head:true, link:true, script:true },
+	li      : { li:true },
+	p       : { p:true },
+	h1      : { p:true },
+	h2      : { p:true },
+	h3      : { p:true },
+	h4      : { p:true },
+	h5      : { p:true },
+	h6      : { p:true },
+	select  : formTags,
+	input   : formTags,
+	output  : formTags,
+	button  : formTags,
+	datalist: formTags,
+	textarea: formTags,
+	option  : { option:true },
+	optgroup: { optgroup:true }
+};
+
+var voidElements = {
+	__proto__: null,
+	area: true,
+	base: true,
+	basefont: true,
+	br: true,
+	col: true,
+	command: true,
+	embed: true,
+	frame: true,
+	hr: true,
+	img: true,
+	input: true,
+	isindex: true,
+	keygen: true,
+	link: true,
+	meta: true,
+	param: true,
+	source: true,
+	track: true,
+	wbr: true,
+
+	//common self closing svg elements
+	path: true,
+	circle: true,
+	ellipse: true,
+	line: true,
+	rect: true,
+	use: true,
+	stop: true,
+	polyline: true,
+	polygon: true
+};
+
+var re_nameEnd = /\s|\//;
+
+function Parser(cbs, options){
+	this._options = options || {};
+	this._cbs = cbs || {};
+
+	this._tagname = "";
+	this._attribname = "";
+	this._attribvalue = "";
+	this._attribs = null;
+	this._stack = [];
+
+	this.startIndex = 0;
+	this.endIndex = null;
+
+	this._lowerCaseTagNames = "lowerCaseTags" in this._options ?
+									!!this._options.lowerCaseTags :
+									!this._options.xmlMode;
+	this._lowerCaseAttributeNames = "lowerCaseAttributeNames" in this._options ?
+									!!this._options.lowerCaseAttributeNames :
+									!this._options.xmlMode;
+
+	if(this._options.Tokenizer) {
+		Tokenizer = this._options.Tokenizer;
+	}
+	this._tokenizer = new Tokenizer(this._options, this);
+
+	if(this._cbs.onparserinit) this._cbs.onparserinit(this);
+}
+
+require$$1$9(Parser, require$$2$5.EventEmitter);
+
+Parser.prototype._updatePosition = function(initialOffset){
+	if(this.endIndex === null){
+		if(this._tokenizer._sectionStart <= initialOffset){
+			this.startIndex = 0;
+		} else {
+			this.startIndex = this._tokenizer._sectionStart - initialOffset;
+		}
+	}
+	else this.startIndex = this.endIndex + 1;
+	this.endIndex = this._tokenizer.getAbsoluteIndex();
+};
+
+//Tokenizer event handlers
+Parser.prototype.ontext = function(data){
+	this._updatePosition(1);
+	this.endIndex--;
+
+	if(this._cbs.ontext) this._cbs.ontext(data);
+};
+
+Parser.prototype.onopentagname = function(name){
+	if(this._lowerCaseTagNames){
+		name = name.toLowerCase();
+	}
+
+	this._tagname = name;
+
+	if(!this._options.xmlMode && name in openImpliesClose) {
+		for(
+			var el;
+			(el = this._stack[this._stack.length - 1]) in openImpliesClose[name];
+			this.onclosetag(el)
+		);
+	}
+
+	if(this._options.xmlMode || !(name in voidElements)){
+		this._stack.push(name);
+	}
+
+	if(this._cbs.onopentagname) this._cbs.onopentagname(name);
+	if(this._cbs.onopentag) this._attribs = {};
+};
+
+Parser.prototype.onopentagend = function(){
+	this._updatePosition(1);
+
+	if(this._attribs){
+		if(this._cbs.onopentag) this._cbs.onopentag(this._tagname, this._attribs);
+		this._attribs = null;
+	}
+
+	if(!this._options.xmlMode && this._cbs.onclosetag && this._tagname in voidElements){
+		this._cbs.onclosetag(this._tagname);
+	}
+
+	this._tagname = "";
+};
+
+Parser.prototype.onclosetag = function(name){
+	this._updatePosition(1);
+
+	if(this._lowerCaseTagNames){
+		name = name.toLowerCase();
+	}
+
+	if(this._stack.length && (!(name in voidElements) || this._options.xmlMode)){
+		var pos = this._stack.lastIndexOf(name);
+		if(pos !== -1){
+			if(this._cbs.onclosetag){
+				pos = this._stack.length - pos;
+				while(pos--) this._cbs.onclosetag(this._stack.pop());
+			}
+			else this._stack.length = pos;
+		} else if(name === "p" && !this._options.xmlMode){
+			this.onopentagname(name);
+			this._closeCurrentTag();
+		}
+	} else if(!this._options.xmlMode && (name === "br" || name === "p")){
+		this.onopentagname(name);
+		this._closeCurrentTag();
+	}
+};
+
+Parser.prototype.onselfclosingtag = function(){
+	if(this._options.xmlMode || this._options.recognizeSelfClosing){
+		this._closeCurrentTag();
+	} else {
+		this.onopentagend();
+	}
+};
+
+Parser.prototype._closeCurrentTag = function(){
+	var name = this._tagname;
+
+	this.onopentagend();
+
+	//self-closing tags will be on the top of the stack
+	//(cheaper check than in onclosetag)
+	if(this._stack[this._stack.length - 1] === name){
+		if(this._cbs.onclosetag){
+			this._cbs.onclosetag(name);
+		}
+		this._stack.pop();
+	}
+};
+
+Parser.prototype.onattribname = function(name){
+	if(this._lowerCaseAttributeNames){
+		name = name.toLowerCase();
+	}
+	this._attribname = name;
+};
+
+Parser.prototype.onattribdata = function(value){
+	this._attribvalue += value;
+};
+
+Parser.prototype.onattribend = function(){
+	if(this._cbs.onattribute) this._cbs.onattribute(this._attribname, this._attribvalue);
+	if(
+		this._attribs &&
+		!Object.prototype.hasOwnProperty.call(this._attribs, this._attribname)
+	){
+		this._attribs[this._attribname] = this._attribvalue;
+	}
+	this._attribname = "";
+	this._attribvalue = "";
+};
+
+Parser.prototype._getInstructionName = function(value){
+	var idx = value.search(re_nameEnd),
+	    name = idx < 0 ? value : value.substr(0, idx);
+
+	if(this._lowerCaseTagNames){
+		name = name.toLowerCase();
+	}
+
+	return name;
+};
+
+Parser.prototype.ondeclaration = function(value){
+	if(this._cbs.onprocessinginstruction){
+		var name = this._getInstructionName(value);
+		this._cbs.onprocessinginstruction("!" + name, "!" + value);
+	}
+};
+
+Parser.prototype.onprocessinginstruction = function(value){
+	if(this._cbs.onprocessinginstruction){
+		var name = this._getInstructionName(value);
+		this._cbs.onprocessinginstruction("?" + name, "?" + value);
+	}
+};
+
+Parser.prototype.oncomment = function(value){
+	this._updatePosition(4);
+
+	if(this._cbs.oncomment) this._cbs.oncomment(value);
+	if(this._cbs.oncommentend) this._cbs.oncommentend();
+};
+
+Parser.prototype.oncdata = function(value){
+	this._updatePosition(1);
+
+	if(this._options.xmlMode || this._options.recognizeCDATA){
+		if(this._cbs.oncdatastart) this._cbs.oncdatastart();
+		if(this._cbs.ontext) this._cbs.ontext(value);
+		if(this._cbs.oncdataend) this._cbs.oncdataend();
+	} else {
+		this.oncomment("[CDATA[" + value + "]]");
+	}
+};
+
+Parser.prototype.onerror = function(err){
+	if(this._cbs.onerror) this._cbs.onerror(err);
+};
+
+Parser.prototype.onend = function(){
+	if(this._cbs.onclosetag){
+		for(
+			var i = this._stack.length;
+			i > 0;
+			this._cbs.onclosetag(this._stack[--i])
+		);
+	}
+	if(this._cbs.onend) this._cbs.onend();
+};
+
+
+//Resets the parser to a blank state, ready to parse a new HTML document
+Parser.prototype.reset = function(){
+	if(this._cbs.onreset) this._cbs.onreset();
+	this._tokenizer.reset();
+
+	this._tagname = "";
+	this._attribname = "";
+	this._attribs = null;
+	this._stack = [];
+
+	if(this._cbs.onparserinit) this._cbs.onparserinit(this);
+};
+
+//Parses a complete HTML document and pushes it to the handler
+Parser.prototype.parseComplete = function(data){
+	this.reset();
+	this.end(data);
+};
+
+Parser.prototype.write = function(chunk){
+	this._tokenizer.write(chunk);
+};
+
+Parser.prototype.end = function(chunk){
+	this._tokenizer.end(chunk);
+};
+
+Parser.prototype.pause = function(){
+	this._tokenizer.pause();
+};
+
+Parser.prototype.resume = function(){
+	this._tokenizer.resume();
+};
+
+//alias for backwards compat
+Parser.prototype.parseChunk = Parser.prototype.write;
+Parser.prototype.done = Parser.prototype.end;
+
+var Parser_1 = Parser;
+
+
+
+var Parser$1 = Object.freeze({
+	default: Parser_1,
+	__moduleExports: Parser_1
+});
+
+//Types of elements found in the DOM
+var domelementtype = {
+	Text: "text", //Text
+	Directive: "directive", //<? ... ?>
+	Comment: "comment", //<!-- ... -->
+	Script: "script", //<script> tags
+	Style: "style", //<style> tags
+	Tag: "tag", //Any tag
+	CDATA: "cdata", //<![CDATA[ ... ]]>
+	Doctype: "doctype",
+
+	isTag: function(elem){
+		return elem.type === "tag" || elem.type === "script" || elem.type === "style";
+	}
+};
+
+
+
+var domelementtype$2 = Object.freeze({
+	default: domelementtype,
+	__moduleExports: domelementtype
+});
+
+var node = createCommonjsModule(function (module) {
+// This object will be used as the prototype for Nodes when creating a
+// DOM-Level-1-compliant structure.
+var NodePrototype = module.exports = {
+	get firstChild() {
+		var children = this.children;
+		return children && children[0] || null;
+	},
+	get lastChild() {
+		var children = this.children;
+		return children && children[children.length - 1] || null;
+	},
+	get nodeType() {
+		return nodeTypes[this.type] || nodeTypes.element;
+	}
+};
+
+var domLvl1 = {
+	tagName: "name",
+	childNodes: "children",
+	parentNode: "parent",
+	previousSibling: "prev",
+	nextSibling: "next",
+	nodeValue: "data"
+};
+
+var nodeTypes = {
+	element: 1,
+	text: 3,
+	cdata: 4,
+	comment: 8
+};
+
+Object.keys(domLvl1).forEach(function(key) {
+	var shorthand = domLvl1[key];
+	Object.defineProperty(NodePrototype, key, {
+		get: function() {
+			return this[shorthand] || null;
+		},
+		set: function(val) {
+			this[shorthand] = val;
+			return val;
+		}
+	});
+});
+});
+
+var node_1 = node.firstChild;
+var node_2 = node.lastChild;
+var node_3 = node.nodeType;
+
+
+var node$2 = Object.freeze({
+	default: node,
+	__moduleExports: node,
+	firstChild: node_1,
+	lastChild: node_2,
+	nodeType: node_3
+});
+
+var NodePrototype = ( node$2 && node ) || node$2;
+
+var element = createCommonjsModule(function (module) {
+// DOM-Level-1-compliant structure
+
+var ElementPrototype = module.exports = Object.create(NodePrototype);
+
+var domLvl1 = {
+	tagName: "name"
+};
+
+Object.keys(domLvl1).forEach(function(key) {
+	var shorthand = domLvl1[key];
+	Object.defineProperty(ElementPrototype, key, {
+		get: function() {
+			return this[shorthand] || null;
+		},
+		set: function(val) {
+			this[shorthand] = val;
+			return val;
+		}
+	});
+});
+});
+
+
+
+var element$2 = Object.freeze({
+	default: element,
+	__moduleExports: element
+});
+
+var ElementType = ( domelementtype$2 && domelementtype ) || domelementtype$2;
+
+var ElementPrototype = ( element$2 && element ) || element$2;
+
+var re_whitespace = /\s+/g;
+
+
+
+function DomHandler(callback, options, elementCB){
+	if(typeof callback === "object"){
+		elementCB = options;
+		options = callback;
+		callback = null;
+	} else if(typeof options === "function"){
+		elementCB = options;
+		options = defaultOpts;
+	}
+	this._callback = callback;
+	this._options = options || defaultOpts;
+	this._elementCB = elementCB;
+	this.dom = [];
+	this._done = false;
+	this._tagStack = [];
+	this._parser = this._parser || null;
+}
+
+//default options
+var defaultOpts = {
+	normalizeWhitespace: false, //Replace all whitespace with single spaces
+	withStartIndices: false, //Add startIndex properties to nodes
+	withEndIndices: false, //Add endIndex properties to nodes
+};
+
+DomHandler.prototype.onparserinit = function(parser){
+	this._parser = parser;
+};
+
+//Resets the handler back to starting state
+DomHandler.prototype.onreset = function(){
+	DomHandler.call(this, this._callback, this._options, this._elementCB);
+};
+
+//Signals the handler that parsing is done
+DomHandler.prototype.onend = function(){
+	if(this._done) return;
+	this._done = true;
+	this._parser = null;
+	this._handleCallback(null);
+};
+
+DomHandler.prototype._handleCallback =
+DomHandler.prototype.onerror = function(error){
+	if(typeof this._callback === "function"){
+		this._callback(error, this.dom);
+	} else {
+		if(error) throw error;
+	}
+};
+
+DomHandler.prototype.onclosetag = function(){
+	//if(this._tagStack.pop().name !== name) this._handleCallback(Error("Tagname didn't match!"));
+	
+	var elem = this._tagStack.pop();
+
+	if(this._options.withEndIndices){
+		elem.endIndex = this._parser.endIndex;
+	}
+
+	if(this._elementCB) this._elementCB(elem);
+};
+
+DomHandler.prototype._createDomElement = function(properties){
+	if (!this._options.withDomLvl1) return properties;
+
+	var element;
+	if (properties.type === "tag") {
+		element = Object.create(ElementPrototype);
+	} else {
+		element = Object.create(NodePrototype);
+	}
+
+	for (var key in properties) {
+		if (properties.hasOwnProperty(key)) {
+			element[key] = properties[key];
+		}
+	}
+
+	return element;
+};
+
+DomHandler.prototype._addDomElement = function(element){
+	var parent = this._tagStack[this._tagStack.length - 1];
+	var siblings = parent ? parent.children : this.dom;
+	var previousSibling = siblings[siblings.length - 1];
+
+	element.next = null;
+
+	if(this._options.withStartIndices){
+		element.startIndex = this._parser.startIndex;
+	}
+	if(this._options.withEndIndices){
+		element.endIndex = this._parser.endIndex;
+	}
+
+	if(previousSibling){
+		element.prev = previousSibling;
+		previousSibling.next = element;
+	} else {
+		element.prev = null;
+	}
+
+	siblings.push(element);
+	element.parent = parent || null;
+};
+
+DomHandler.prototype.onopentag = function(name, attribs){
+	var properties = {
+		type: name === "script" ? ElementType.Script : name === "style" ? ElementType.Style : ElementType.Tag,
+		name: name,
+		attribs: attribs,
+		children: []
+	};
+
+	var element = this._createDomElement(properties);
+
+	this._addDomElement(element);
+
+	this._tagStack.push(element);
+};
+
+DomHandler.prototype.ontext = function(data){
+	//the ignoreWhitespace is officially dropped, but for now,
+	//it's an alias for normalizeWhitespace
+	var normalize = this._options.normalizeWhitespace || this._options.ignoreWhitespace;
+
+	var lastTag;
+
+	if(!this._tagStack.length && this.dom.length && (lastTag = this.dom[this.dom.length-1]).type === ElementType.Text){
+		if(normalize){
+			lastTag.data = (lastTag.data + data).replace(re_whitespace, " ");
+		} else {
+			lastTag.data += data;
+		}
+	} else {
+		if(
+			this._tagStack.length &&
+			(lastTag = this._tagStack[this._tagStack.length - 1]) &&
+			(lastTag = lastTag.children[lastTag.children.length - 1]) &&
+			lastTag.type === ElementType.Text
+		){
+			if(normalize){
+				lastTag.data = (lastTag.data + data).replace(re_whitespace, " ");
+			} else {
+				lastTag.data += data;
+			}
+		} else {
+			if(normalize){
+				data = data.replace(re_whitespace, " ");
+			}
+
+			var element = this._createDomElement({
+				data: data,
+				type: ElementType.Text
+			});
+
+			this._addDomElement(element);
+		}
+	}
+};
+
+DomHandler.prototype.oncomment = function(data){
+	var lastTag = this._tagStack[this._tagStack.length - 1];
+
+	if(lastTag && lastTag.type === ElementType.Comment){
+		lastTag.data += data;
+		return;
+	}
+
+	var properties = {
+		data: data,
+		type: ElementType.Comment
+	};
+
+	var element = this._createDomElement(properties);
+
+	this._addDomElement(element);
+	this._tagStack.push(element);
+};
+
+DomHandler.prototype.oncdatastart = function(){
+	var properties = {
+		children: [{
+			data: "",
+			type: ElementType.Text
+		}],
+		type: ElementType.CDATA
+	};
+
+	var element = this._createDomElement(properties);
+
+	this._addDomElement(element);
+	this._tagStack.push(element);
+};
+
+DomHandler.prototype.oncommentend = DomHandler.prototype.oncdataend = function(){
+	this._tagStack.pop();
+};
+
+DomHandler.prototype.onprocessinginstruction = function(name, data){
+	var element = this._createDomElement({
+		name: name,
+		data: data,
+		type: ElementType.Directive
+	});
+
+	this._addDomElement(element);
+};
+
+var domhandler = DomHandler;
+
+
+
+var domhandler$2 = Object.freeze({
+	default: domhandler,
+	__moduleExports: domhandler
+});
+
+'use strict';
+function shouldProcessEveryNode(node) {
+  return true;
+}
+
+var shouldProcessNodeDefinitions = {
+  shouldProcessEveryNode: shouldProcessEveryNode,
+};
+
+
+
+var shouldProcessNodeDefinitions$2 = Object.freeze({
+	default: shouldProcessNodeDefinitions,
+	__moduleExports: shouldProcessNodeDefinitions
+});
+
+/**
+ * Ensure some object is a coerced to a string
+ **/
+var makeString = function makeString(object) {
+  if (object == null) return '';
+  return '' + object;
+};
+
+
+
+var makeString$2 = Object.freeze({
+	default: makeString,
+	__moduleExports: makeString
+});
+
+var makeString$3 = ( makeString$2 && makeString ) || makeString$2;
+
+var escapeRegExp = function escapeRegExp(str) {
+  return makeString$3(str).replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
+};
+
+
+
+var escapeRegExp$2 = Object.freeze({
+	default: escapeRegExp,
+	__moduleExports: escapeRegExp
+});
+
+var escapeRegExp$3 = ( escapeRegExp$2 && escapeRegExp ) || escapeRegExp$2;
+
+var defaultToWhiteSpace = function defaultToWhiteSpace(characters) {
+  if (characters == null)
+    return '\\s';
+  else if (characters.source)
+    return characters.source;
+  else
+    return '[' + escapeRegExp$3(characters) + ']';
+};
+
+
+
+var defaultToWhiteSpace$2 = Object.freeze({
+	default: defaultToWhiteSpace,
+	__moduleExports: defaultToWhiteSpace
+});
+
+var defaultToWhiteSpace$3 = ( defaultToWhiteSpace$2 && defaultToWhiteSpace ) || defaultToWhiteSpace$2;
+
+var nativeTrim = String.prototype.trim;
+
+var trim$1 = function trim(str, characters) {
+  str = makeString$3(str);
+  if (!characters && nativeTrim) return nativeTrim.call(str);
+  characters = defaultToWhiteSpace$3(characters);
+  return str.replace(new RegExp('^' + characters + '+|' + characters + '+$', 'g'), '');
+};
+
+
+
+var trim$3 = Object.freeze({
+	default: trim$1,
+	__moduleExports: trim$1
+});
+
+var decapitalize = function decapitalize(str) {
+  str = makeString$3(str);
+  return str.charAt(0).toLowerCase() + str.slice(1);
+};
+
+
+
+var decapitalize$2 = Object.freeze({
+	default: decapitalize,
+	__moduleExports: decapitalize
+});
+
+var trim$4 = ( trim$3 && trim$1 ) || trim$3;
+
+var decap = ( decapitalize$2 && decapitalize ) || decapitalize$2;
+
+var camelize$6 = function camelize(str, decapitalize) {
+  str = trim$4(str).replace(/[-_\s]+(.)?/g, function(match, c) {
+    return c ? c.toUpperCase() : "";
+  });
+
+  if (decapitalize === true) {
+    return decap(str);
+  } else {
+    return str;
+  }
+};
+
+
+
+var camelize$8 = Object.freeze({
+	default: camelize$6,
+	__moduleExports: camelize$6
+});
+
+var forEach = function forEach(arr, fn) {
+  for (var i = 0; i < arr.length; i++) {
+    fn(i, arr[i]);
+  }
+};
+
+
+
+var forEach$2 = Object.freeze({
+	default: forEach,
+	__moduleExports: forEach
+});
+
+var forEach$3 = ( forEach$2 && forEach ) || forEach$2;
+
+var map$3 = function map(arr, fn) {
+  var newArr = [];
+
+  forEach$3(arr, function(key, item) {
+    newArr.push(fn(key, item));
+  });
+
+  return newArr;
+};
+
+
+
+var map$5 = Object.freeze({
+	default: map$3,
+	__moduleExports: map$3
+});
+
+var map$6 = ( map$5 && map$3 ) || map$5;
+
+var merge = function merge(args, curryArgs) {
+  var mergedArgs = [];
+
+  mergedArgs = map$6(curryArgs, function(key, item) {
+    if (typeof item === 'undefined') {
+      return args.shift();
+    } else {
+      return item;
+    }
+  });
+
+  return mergedArgs.concat(args);
+};
+
+
+
+var merge$2 = Object.freeze({
+	default: merge,
+	__moduleExports: merge
+});
+
+var countDefinedItems = function(args) {
+  var count = 0;
+
+  forEach$3(args, function(key, item) {
+    if (typeof item !== 'undefined') {
+      count = count + 1;
+    }
+  });
+
+  return count;
+};
+
+
+
+var countDefinedItems$2 = Object.freeze({
+	default: countDefinedItems,
+	__moduleExports: countDefinedItems
+});
+
+var merge$3 = ( merge$2 && merge ) || merge$2;
+
+var countDefinedItems$3 = ( countDefinedItems$2 && countDefinedItems ) || countDefinedItems$2;
+
+var slice$1 = Array.prototype.slice;
+var __;
+
+
+function curry(fn, length, curryArgs) {
+  return function() {
+    var args = slice$1.call(arguments),
+      concatArgs = curryArgs.concat(args),
+      mergedArgs = [];
+
+    if (length <= countDefinedItems$3(concatArgs)) {
+      mergedArgs = merge$3(args, curryArgs);
+      return fn.apply(null, mergedArgs);
+    } else {
+      if (length >= concatArgs.length) {
+        return curry(fn, length, concatArgs);
+      } else {
+        return curry(fn, length, merge$3(args, curryArgs));
+      }
+    }
+  };
+}
+
+var chickencurry = function(fn) {
+  var args = slice$1.call(arguments, 1);
+
+  return curry(fn, fn.length, args);
+};
+
+var n = function(fn, length) {
+  var args = slice$1.call(arguments, 2);
+
+  return curry(fn, length, args);
+};
+
+var ___1 = __;
+
+chickencurry.n = n;
+chickencurry.__ = ___1;
+
+var chickencurry$2 = Object.freeze({
+	default: chickencurry,
+	__moduleExports: chickencurry,
+	n: n,
+	__: ___1
+});
+
+var _camelize = ( camelize$8 && camelize$6 ) || camelize$8;
+
+var _curry = ( chickencurry$2 && chickencurry ) || chickencurry$2;
+
+var camelize$3 = _curry(function camelize(str) {
+  return _camelize(str, true);
+});
+
+
+
+var camelize$5 = Object.freeze({
+	default: camelize$3,
+	__moduleExports: camelize$3
+});
+
+var toPairs = /*#__PURE__*/_curry1$2(function toPairs(obj) {
+  var pairs = [];
+  for (var prop in obj) {
+    if (_has$5(prop, obj)) {
+      pairs[pairs.length] = [prop, obj[prop]];
+    }
+  }
+  return pairs;
+});
+var toPairs_1 = toPairs;
+
+
+
+var toPairs$1 = Object.freeze({
+	default: toPairs_1,
+	__moduleExports: toPairs_1
+});
+
+function _curry3(fn) {
+  return function f3(a, b, c) {
+    switch (arguments.length) {
+      case 0:
+        return f3;
+      case 1:
+        return _isPlaceholder$2(a) ? f3 : _curry2$2(function (_b, _c) {
+          return fn(a, _b, _c);
+        });
+      case 2:
+        return _isPlaceholder$2(a) && _isPlaceholder$2(b) ? f3 : _isPlaceholder$2(a) ? _curry2$2(function (_a, _c) {
+          return fn(_a, b, _c);
+        }) : _isPlaceholder$2(b) ? _curry2$2(function (_b, _c) {
+          return fn(a, _b, _c);
+        }) : _curry1$2(function (_c) {
+          return fn(a, b, _c);
+        });
+      default:
+        return _isPlaceholder$2(a) && _isPlaceholder$2(b) && _isPlaceholder$2(c) ? f3 : _isPlaceholder$2(a) && _isPlaceholder$2(b) ? _curry2$2(function (_a, _b) {
+          return fn(_a, _b, c);
+        }) : _isPlaceholder$2(a) && _isPlaceholder$2(c) ? _curry2$2(function (_a, _c) {
+          return fn(_a, b, _c);
+        }) : _isPlaceholder$2(b) && _isPlaceholder$2(c) ? _curry2$2(function (_b, _c) {
+          return fn(a, _b, _c);
+        }) : _isPlaceholder$2(a) ? _curry1$2(function (_a) {
+          return fn(_a, b, c);
+        }) : _isPlaceholder$2(b) ? _curry1$2(function (_b) {
+          return fn(a, _b, c);
+        }) : _isPlaceholder$2(c) ? _curry1$2(function (_c) {
+          return fn(a, b, _c);
+        }) : fn(a, b, c);
+    }
+  };
+}
+var _curry3_1 = _curry3;
+
+
+
+var _curry3$1 = Object.freeze({
+	default: _curry3_1,
+	__moduleExports: _curry3_1
+});
+
+var _curry3$2 = ( _curry3$1 && _curry3_1 ) || _curry3$1;
+
+var reduce = /*#__PURE__*/_curry3$2(_reduce$2);
+var reduce_1 = reduce;
+
+
+
+var reduce$1 = Object.freeze({
+	default: reduce_1,
+	__moduleExports: reduce_1
+});
+
+// These are all sourced from https://facebook.github.io/react/docs/tags-and-attributes.html -
+// all attributes regardless of whether they have a different case to their HTML equivalents are
+// listed to reduce the chance of human error and make it easier to just copy-paste the new list if
+// it changes.
+'use strict';
+var HTML_ATTRIBUTES = [
+  'accept', 'acceptCharset', 'accessKey', 'action', 'allowFullScreen', 'allowTransparency',
+  'alt', 'async', 'autoComplete', 'autoFocus', 'autoPlay', 'capture', 'cellPadding',
+  'cellSpacing', 'challenge', 'charSet', 'checked', 'cite', 'classID', 'className',
+  'colSpan', 'cols', 'content', 'contentEditable', 'contextMenu', 'controls', 'coords',
+  'crossOrigin', 'data', 'dateTime', 'default', 'defer', 'dir', 'disabled', 'download',
+  'draggable', 'encType', 'form', 'formAction', 'formEncType', 'formMethod', 'formNoValidate',
+  'formTarget', 'frameBorder', 'headers', 'height', 'hidden', 'high', 'href', 'hrefLang',
+  'htmlFor', 'httpEquiv', 'icon', 'id', 'inputMode', 'integrity', 'is', 'keyParams', 'keyType',
+  'kind', 'label', 'lang', 'list', 'loop', 'low', 'manifest', 'marginHeight', 'marginWidth',
+  'max', 'maxLength', 'media', 'mediaGroup', 'method', 'min', 'minLength', 'multiple', 'muted',
+  'name', 'noValidate', 'nonce', 'open', 'optimum', 'pattern', 'placeholder', 'poster',
+  'preload', 'profile', 'radioGroup', 'readOnly', 'rel', 'required', 'reversed', 'role',
+  'rowSpan', 'rows', 'sandbox', 'scope', 'scoped', 'scrolling', 'seamless', 'selected',
+  'shape', 'size', 'sizes', 'span', 'spellCheck', 'src', 'srcDoc', 'srcLang', 'srcSet', 'start',
+  'step', 'style', 'summary', 'tabIndex', 'target', 'title', 'type', 'useMap', 'value', 'width',
+  'wmode', 'wrap',
+];
+
+var NON_STANDARD_ATTRIBUTES = [
+  'autoCapitalize', 'autoCorrect', 'color', 'itemProp', 'itemScope', 'itemType', 'itemRef',
+  'itemID', 'security', 'unselectable', 'results', 'autoSave',
+];
+
+var SVG_ATTRIBUTES = [
+  'accentHeight', 'accumulate', 'additive', 'alignmentBaseline', 'allowReorder', 'alphabetic',
+  'amplitude', 'arabicForm', 'ascent', 'attributeName', 'attributeType', 'autoReverse', 'azimuth',
+  'baseFrequency', 'baseProfile', 'baselineShift', 'bbox', 'begin', 'bias', 'by', 'calcMode',
+  'capHeight', 'clip', 'clipPath', 'clipPathUnits', 'clipRule', 'colorInterpolation',
+  'colorInterpolationFilters', 'colorProfile', 'colorRendering', 'contentScriptType',
+  'contentStyleType', 'cursor', 'cx', 'cy', 'd', 'decelerate', 'descent', 'diffuseConstant',
+  'direction', 'display', 'divisor', 'dominantBaseline', 'dur', 'dx', 'dy', 'edgeMode',
+  'elevation', 'enableBackground', 'end', 'exponent', 'externalResourcesRequired', 'fill',
+  'fillOpacity', 'fillRule', 'filter', 'filterRes', 'filterUnits', 'floodColor', 'floodOpacity',
+  'focusable', 'fontFamily', 'fontSize', 'fontSizeAdjust', 'fontStretch', 'fontStyle',
+  'fontVariant', 'fontWeight', 'format', 'from', 'fx', 'fy', 'g1', 'g2', 'glyphName',
+  'glyphOrientationHorizontal', 'glyphOrientationVertical', 'glyphRef',
+  'gradientTransform', 'gradientUnits', 'hanging', 'horizAdvX', 'horizOriginX', 'ideographic',
+  'imageRendering', 'in', 'in2', 'intercept', 'k', 'k1', 'k2', 'k3', 'k4', 'kernelMatrix',
+  'kernelUnitLength', 'kerning', 'keyPoints', 'keySplines', 'keyTimes', 'lengthAdjust',
+  'letterSpacing', 'lightingColor', 'limitingConeAngle', 'local', 'markerEnd', 'markerHeight',
+  'markerMid', 'markerStart', 'markerUnits', 'markerWidth', 'mask', 'maskContentUnits',
+  'maskUnits', 'mathematical', 'mode', 'numOctaves', 'offset', 'opacity', 'operator', 'order',
+  'orient', 'orientation', 'origin', 'overflow', 'overlinePosition', 'overlineThickness',
+  'paintOrder', 'panose1', 'pathLength', 'patternContentUnits', 'patternTransform',
+  'patternUnits', 'pointerEvents', 'points', 'pointsAtX', 'pointsAtY', 'pointsAtZ',
+  'preserveAlpha', 'preserveAspectRatio', 'primitiveUnits', 'r', 'radius', 'refX', 'refY',
+  'renderingIntent', 'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures',
+  'restart', 'result', 'rotate', 'rx', 'ry', 'scale', 'seed', 'shapeRendering', 'slope',
+  'spacing', 'specularConstant', 'specularExponent', 'speed', 'spreadMethod', 'startOffset',
+  'stdDeviation', 'stemh', 'stemv', 'stitchTiles', 'stopColor', 'stopOpacity',
+  'strikethroughPosition', 'strikethroughThickness', 'string', 'stroke', 'strokeDasharray',
+  'strokeDashoffset', 'strokeLinecap', 'strokeLinejoin', 'strokeMiterlimit', 'strokeOpacity',
+  'strokeWidth', 'surfaceScale', 'systemLanguage', 'tableValues', 'targetX', 'targetY',
+  'textAnchor', 'textDecoration', 'textLength', 'textRendering', 'to', 'transform', 'u1',
+  'u2', 'underlinePosition', 'underlineThickness', 'unicode', 'unicodeBidi', 'unicodeRange',
+  'unitsPerEm', 'vAlphabetic', 'vHanging', 'vIdeographic', 'vMathematical', 'values',
+  'vectorEffect', 'version', 'vertAdvY', 'vertOriginX', 'vertOriginY', 'viewBox',
+  'viewTarget', 'visibility', 'widths', 'wordSpacing', 'writingMode', 'x', 'x1', 'x2',
+  'xChannelSelector', 'xHeight', 'xlinkActuate', 'xlinkArcrole', 'xlinkHref', 'xlinkRole',
+  'xlinkShow', 'xlinkTitle', 'xlinkType', 'xmlns', 'xmlnsXlink', 'xmlBase', 'xmlLang',
+  'xmlSpace', 'y', 'y1', 'y2', 'yChannelSelector', 'z', 'zoomAndPan',
+];
+
+var camelCaseMap = HTML_ATTRIBUTES
+  .concat(NON_STANDARD_ATTRIBUTES)
+  .concat(SVG_ATTRIBUTES)
+  .reduce(function (soFar, attr) {
+    var lower = attr.toLowerCase();
+    if (lower !== attr) {
+      soFar[lower] = attr;
+    }
+    return soFar;
+  }, {});
+
+var camelCaseAttributeNames = camelCaseMap;
+
+
+
+var camelCaseAttributeNames$2 = Object.freeze({
+	default: camelCaseAttributeNames,
+	__moduleExports: camelCaseAttributeNames
+});
+
+var camelize$9 = ( camelize$5 && camelize$3 ) || camelize$5;
+
+var toPairs$2 = ( toPairs$1 && toPairs_1 ) || toPairs$1;
+
+var reduce$2 = ( reduce$1 && reduce_1 ) || reduce$1;
+
+var camelCaseAttrMap = ( camelCaseAttributeNames$2 && camelCaseAttributeNames ) || camelCaseAttributeNames$2;
+
+'use strict';
+
+
+
+
+
+
+function createStyleJsonFromString(styleString) {
+  styleString = styleString || '';
+  var styles = styleString.split(/;(?!base64)/);
+  var singleStyle, key, value, jsonStyles = {};
+  for (var i = 0; i < styles.length; ++i) {
+    singleStyle = styles[i].split(':');
+    if (singleStyle.length > 2) {
+      singleStyle[1] = singleStyle.slice(1).join(':');
+    }
+
+    key = singleStyle[0];
+    value = singleStyle[1];
+    if (typeof value === 'string'){
+      value = value.trim();
+    }
+
+    if (key != null && value != null && key.length > 0 && value.length > 0) {
+      jsonStyles[camelize$9(key)] = value;
+    }
+  }
+  return jsonStyles;
+}
+
+function createElement(node, index, data, children) {
+  var elementProps = {
+    key: index,
+  };
+  if (node.attribs) {
+    elementProps = reduce$2(function(result, keyAndValue) {
+      var key = keyAndValue[0];
+      var value = keyAndValue[1];
+      key = camelCaseAttrMap[key.replace(/[-:]/, '')] || key;
+      if (key === 'style') {
+        value = createStyleJsonFromString(value);
+      } else if (key === 'class') {
+        key = 'className';
+      } else if (key === 'for') {
+        key = 'htmlFor';
+      }
+      if (typeof value === 'string') {
+        value = value;
+      }
+      result[key] = value || key;
+      return result;
+    }, elementProps, toPairs$2(node.attribs));
+  }
+
+  children = children || [];
+  var allChildren = data != null ? [data,].concat(children) : children;
+  return _react.createElement.apply(
+    null, [node.name, elementProps,].concat(allChildren)
+  );
+}
+
+var utils = {
+  createElement: createElement,
+};
+
+
+
+var utils$2 = Object.freeze({
+	default: utils,
+	__moduleExports: utils
+});
+
+var utils$3 = ( utils$2 && utils ) || utils$2;
+
+'use strict';
+
+
+// eslint-disable-next-line max-len
+// https://github.com/facebook/react/blob/15.0-stable/src/renderers/dom/shared/ReactDOMComponent.js#L457
+var voidElementTags = [
+  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param',
+  'source', 'track', 'wbr', 'menuitem', 'textarea',
+];
+
+function ProcessNodeDefinitions() {
+  function processDefaultNode(node, children, index) {
+    if (node.type === 'text') {
+      return node.data;
+    } else if (node.type === 'comment') {
+      // FIXME: The following doesn't work as the generated HTML results in
+      // "&lt;!--  This is a comment  --&gt;"
+      // return '<!-- ' + node.data + ' -->';
+      return false;
+    }
+
+    if (voidElementTags.indexOf(node.name) > -1) {
+      return utils$3.createElement(node, index);
+    } else {
+      return utils$3.createElement(node, index, node.data, children);
+    }
+  }
+
+  return {
+    processDefaultNode: processDefaultNode,
+  };
+}
+
+var processNodeDefinitions = ProcessNodeDefinitions;
+
+
+
+var processNodeDefinitions$2 = Object.freeze({
+	default: processNodeDefinitions,
+	__moduleExports: processNodeDefinitions
+});
+
+var ShouldProcessNodeDefinitions = ( shouldProcessNodeDefinitions$2 && shouldProcessNodeDefinitions ) || shouldProcessNodeDefinitions$2;
+
+var ProcessNodeDefinitions$1 = ( processNodeDefinitions$2 && processNodeDefinitions ) || processNodeDefinitions$2;
+
+'use strict';
+
+
+
+function ProcessingInstructions() {
+  var processNodeDefinitions = new ProcessNodeDefinitions$1();
+
+  return {
+    defaultProcessingInstructions: [{
+      shouldProcessNode: ShouldProcessNodeDefinitions.shouldProcessEveryNode,
+      processNode: processNodeDefinitions.processDefaultNode,
+    },],
+  };
+}
+
+var processingInstructions = ProcessingInstructions;
+
+
+
+var processingInstructions$2 = Object.freeze({
+	default: processingInstructions,
+	__moduleExports: processingInstructions
+});
+
+'use strict';
+function alwaysValid() {
+  return true;
+}
+
+var isValidNodeDefinitions = {
+  alwaysValid: alwaysValid,
+};
+
+
+
+var isValidNodeDefinitions$2 = Object.freeze({
+	default: isValidNodeDefinitions,
+	__moduleExports: isValidNodeDefinitions
+});
+
+var find$2 = ( find$1 && find_1 ) || find$1;
+
+var reject$2 = ( reject$1 && reject_1 ) || reject$1;
+
+var addIndex$2 = ( addIndex$1 && addIndex_1 ) || addIndex$1;
+
+var map$7 = ( map$1 && map_1 ) || map$1;
+
+var HtmlParser = ( Parser$1 && Parser_1 ) || Parser$1;
+
+var DomHandler$1 = ( domhandler$2 && domhandler ) || domhandler$2;
+
+var ProcessingInstructions$1 = ( processingInstructions$2 && processingInstructions ) || processingInstructions$2;
+
+var IsValidNodeDefinitions = ( isValidNodeDefinitions$2 && isValidNodeDefinitions ) || isValidNodeDefinitions$2;
+
+'use strict';
+
+
+
+
+
+
+
+
+
+
+function Html2ReactParser(options) {
+  function parseHtmlToTree(html) {
+    options = options || {};
+    options.decodeEntities = true;
+    var handler = new DomHandler$1();
+    var parser = new HtmlParser(handler, options);
+    parser.parseComplete(html);
+    return handler.dom.filter(function (element) {
+      return element.type !== 'directive';
+    });
+  }
+
+  function traverseDom(node, isValidNode, processingInstructions, index) {
+    if (isValidNode(node)) {
+      var processingInstruction = find$2(function (processingInstruction) {
+        return processingInstruction.shouldProcessNode(node);
+      }, processingInstructions);
+      if (processingInstruction != null) {
+        var children = reject$2(function (x) {return x == null || x === false;},
+          addIndex$2(map$7)(function (child, i) {
+            return traverseDom(child, isValidNode, processingInstructions, i);
+          }, node.children || []));
+
+        if (processingInstruction.replaceChildren) {
+          return utils$3.createElement(node, index, node.data, [
+            processingInstruction.processNode(node, children, index),
+          ]);
+        }
+
+        return processingInstruction.processNode(node, children, index);
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  function parseWithInstructions(html, isValidNode, processingInstructions) {
+    var domTree = parseHtmlToTree(html);
+
+    var list = domTree.map(function (domTreeItem, index) {
+      return traverseDom(domTreeItem, isValidNode, processingInstructions, index);
+    });
+    return list.length <= 1 ? list[0] : list;
+  }
+
+  function parse(html) {
+    var processingInstructions = new ProcessingInstructions$1();
+    return parseWithInstructions(html,
+      IsValidNodeDefinitions.alwaysValid,
+      processingInstructions.defaultProcessingInstructions);
+  }
+
+  return {
+    parse: parse,
+    parseWithInstructions: parseWithInstructions,
+  };
+}
+
+var parser = Html2ReactParser;
+
+
+
+var parser$2 = Object.freeze({
+	default: parser,
+	__moduleExports: parser
+});
+
+var parser$3 = ( parser$2 && parser ) || parser$2;
+
+'use strict';
+
+
+
+
+
+
+var htmlToReact = {
+  Parser: parser$3,
+  ProcessingInstructions: ProcessingInstructions$1,
+  IsValidNodeDefinitions: IsValidNodeDefinitions,
+  ProcessNodeDefinitions: ProcessNodeDefinitions$1,
+};
+
+var secToString = function secToString(secs) {
+  if (secs <= 0) {
+    return 'Completed';
+  }
+
+  secs = Math.floor(secs);
+  var min = 60;
+  var hour = 60 * min;
+  var day = 24 * hour;
+  var week = 7 * day;
+  var year = 52 * week;
+
+  var fy = function fy(s) {
+    if (s < year) {
+      return ['', s];
+    } else {
+      return [Math.floor(s / year) + 'y', s % year];
+    }
+  };
+
+  var fw = function fw(tup) {
+    var str = tup[0];
+    var sec = tup[1];
+
+    if (sec < week) {
+      return [str, sec];
+    } else {
+      return [str + ' ' + Math.floor(sec / week) + 'w', sec % week];
+    }
+  };
+
+  var fd = function fd(tup) {
+    var str = tup[0];
+    var sec = tup[1];
+
+    if (sec < day) {
+      return [str, sec];
+    } else {
+      return [str + ' ' + Math.floor(sec / day) + 'd', sec % day];
+    }
+  };
+
+  var fh = function fh(tup) {
+    var str = tup[0];
+    var sec = tup[1];
+
+    if (sec < hour) {
+      return [str, sec];
+    } else {
+      return [str + ' ' + Math.floor(sec / hour) + 'h', sec % hour];
+    }
+  };
+
+  var fm = function fm(tup) {
+    var str = tup[0];
+    var sec = tup[1];
+
+    if (sec < min) {
+      return [str, sec];
+    } else {
+      return [str + ' ' + Math.floor(sec / min) + 'm', sec % min];
+    }
+  };
+
+  var fs = function fs(tup) {
+    var str = tup[0];
+    var sec = tup[1];
+    return str + ' ' + sec + 's';
+  };
+
+  return fs(fm(fh(fd(fw(fy(secs)))))).trim();
+};
+
+var Elapsed =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Elapsed, _Component);
+
+  function Elapsed(props) {
+    _classCallCheck(this, Elapsed);
+
+    return _possibleConstructorReturn(this, (Elapsed.__proto__ || Object.getPrototypeOf(Elapsed)).call(this, props)); // console.log('elapsed props...', props);
+  }
+
+  _createClass(Elapsed, [{
+    key: "renderTime",
+    value: function renderTime() {
+      var serverTime = new Date(this.props.timestring);
+      var clientTime = new Date(); // local
+
+      return secToString((clientTime - serverTime) / 1000).split(' ')[0];
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return react.createElement("span", null, "-", this.renderTime());
+    }
+  }]);
+
+  return Elapsed;
+}(react_1);
 
 var Icon =
 /*#__PURE__*/
@@ -44678,7 +57867,8 @@ function (_Component) {
     };
     _this.acceptInvite = _this.acceptInvite.bind(_this);
     return _this;
-  }
+  } //
+
 
   _createClass(InboxPage, [{
     key: "createDMStation",
@@ -44782,6 +57972,16 @@ function (_Component) {
         }, "Yes"), react.createElement("span", {
           className: "btn btn-secondary"
         }, "No"));
+      } else if (messageDetails.type === "url") {
+        if (/(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF)$/.exec(messageDetails.content)) {
+          return react.createElement("img", {
+            src: messageDetails.content
+          });
+        } else {
+          return react.createElement("a", {
+            href: messageDetails.content
+          }, messageDetails.content);
+        }
       } else {
         return messageDetails.content;
       }
@@ -44825,6 +58025,23 @@ function (_Component) {
         }, _this3.buildMessageContent(messageDetails))));
       });
       return messageRows;
+    } // TODO:  This function is super bunk. Post circles should (probably) have post title in the post config.
+
+  }, {
+    key: "findPostTitleFromMessage",
+    value: function findPostTitleFromMessage(postID) {
+      var inbox = this.props.store.messages.inboxMessages;
+      var result = null;
+
+      for (var i = 0; i < inbox.length; i++) {
+        inbox[i].aud.forEach(function (aud) {
+          if (aud.includes(postID)) {
+            result = inbox[i].sep.fat.sep.lin.msg.split("|")[1];
+          }
+        });
+      }
+
+      return result;
     }
   }, {
     key: "buildSections",
@@ -44840,12 +58057,19 @@ function (_Component) {
         }, "~", section.details.host), react.createElement("span", {
           className: "ml-2 mr-2"
         }, "/"));
-        var postDisplay = section.details.type !== "text-topic" ? null : react.createElement("span", null, react.createElement("span", {
-          className: "ml-2 mr-2"
-        }, "/"), react.createElement("a", {
-          href: section.details.postURL,
-          className: "text-600 underline"
-        }, "~", section.details.postTitle));
+        var postDisplay = null;
+
+        if (section.details.type === "text-topic") {
+          var postTitle = _this4.findPostTitleFromMessage(section.details.postID);
+
+          postDisplay = react.createElement("span", null, react.createElement("span", {
+            className: "ml-2 mr-2"
+          }, "/"), react.createElement("a", {
+            href: section.details.postURL,
+            className: "text-700 underline"
+          }, postTitle));
+        }
+
         return react.createElement("div", {
           className: "mt-9 mb-4",
           key: i
@@ -44860,7 +58084,7 @@ function (_Component) {
           className: "col-sm-10"
         }, hostDisplay, react.createElement("a", {
           href: section.details.stationURL,
-          className: "text-700 text-mono underline"
+          className: "text-700 underline"
         }, section.details.stationTitle), postDisplay)), sectionContent);
       });
     }
@@ -44933,20 +58157,6 @@ function (_Component) {
   }
 
   _createClass(ListPage, [{
-    key: "buildHeader",
-    value: function buildHeader() {
-      var numString = calculateStations(this.props.store.configs);
-      return react.createElement("div", null, react.createElement("b", null, "List \u2014"), react.createElement("span", {
-        className: "ml-4"
-      }, numString));
-    }
-  }, {
-    key: "componentDidUpdate",
-    value: function componentDidUpdate() {
-      var header = this.buildHeader();
-      this.props.setHeader(header);
-    }
-  }, {
     key: "buildChatStations",
     value: function buildChatStations() {
       return Object.arrayify(this.props.store.configs).filter(function (item) {
@@ -45128,7 +58338,7 @@ object-assign
 'use strict';
 /* eslint-disable no-unused-vars */
 var getOwnPropertySymbols$2 = Object.getOwnPropertySymbols;
-var hasOwnProperty$4 = Object.prototype.hasOwnProperty;
+var hasOwnProperty$5 = Object.prototype.hasOwnProperty;
 var propIsEnumerable$2 = Object.prototype.propertyIsEnumerable;
 
 function toObject$3(val) {
@@ -45192,7 +58402,7 @@ var objectAssign$6 = shouldUseNative$2() ? Object.assign : function (target, sou
 		from = Object(arguments[s]);
 
 		for (var key in from) {
-			if (hasOwnProperty$4.call(from, key)) {
+			if (hasOwnProperty$5.call(from, key)) {
 				to[key] = from[key];
 			}
 		}
@@ -45764,7 +58974,7 @@ var factoryWithTypeCheckers$2 = Object.freeze({
 
 'use strict';
 
-var require$$0$31 = ( factoryWithTypeCheckers$2 && factoryWithTypeCheckers ) || factoryWithTypeCheckers$2;
+var require$$0$33 = ( factoryWithTypeCheckers$2 && factoryWithTypeCheckers ) || factoryWithTypeCheckers$2;
 
 var propTypes = createCommonjsModule(function (module) {
 /**
@@ -45789,7 +58999,7 @@ var propTypes = createCommonjsModule(function (module) {
   // By explicitly using `prop-types` you are opting into new development behavior.
   // http://fb.me/prop-types-in-prod
   var throwOnDirectAccess = true;
-  module.exports = require$$0$31(isValidElement, throwOnDirectAccess);
+  module.exports = require$$0$33(isValidElement, throwOnDirectAccess);
 }
 });
 
@@ -45866,7 +59076,7 @@ function isAbsolute(pathname) {
 }
 
 // About 1.5x faster than the two-arg version of Array#splice()
-function spliceOne(list, index) {
+function spliceOne$1(list, index) {
   for (var i = index, k = i + 1, n = list.length; k < n; i += 1, k += 1) {
     list[i] = list[k];
   }
@@ -45909,12 +59119,12 @@ function resolvePathname(to) {
     var part = fromParts[i];
 
     if (part === '.') {
-      spliceOne(fromParts, i);
+      spliceOne$1(fromParts, i);
     } else if (part === '..') {
-      spliceOne(fromParts, i);
+      spliceOne$1(fromParts, i);
       up++;
     } else if (up) {
-      spliceOne(fromParts, i);
+      spliceOne$1(fromParts, i);
       up--;
     }
   }
@@ -48497,7 +61707,7 @@ var staticHandler = function staticHandler(methodName) {
   };
 };
 
-var noop = function noop() {};
+var noop$1 = function noop() {};
 
 /**
  * The public top-level API for a "static" <Router>, so-called because it
@@ -48537,9 +61747,9 @@ var StaticRouter$1 = function (_React$Component) {
       context.location = addBasename(basename, createLocation$1(location));
       context.url = createURL(context.location);
     }, _this.handleListen = function () {
-      return noop;
+      return noop$1;
     }, _this.handleBlock = function () {
-      return noop;
+      return noop$1;
     }, _temp), _possibleConstructorReturn$9(_this, _ret);
   }
 
@@ -53296,7 +66506,7 @@ return hooks;
 })));
 });
 
-var performanceNow = createCommonjsModule(function (module) {
+var performanceNow$1 = createCommonjsModule(function (module) {
 // Generated by CoffeeScript 1.12.2
 (function() {
   var getNanoSeconds, hrtime, loadTime, moduleLoadTime, nodeLoadTime, upTime;
@@ -53337,12 +66547,12 @@ var performanceNow = createCommonjsModule(function (module) {
 
 
 
-var performanceNow$2 = Object.freeze({
-	default: performanceNow,
-	__moduleExports: performanceNow
+var performanceNow$3 = Object.freeze({
+	default: performanceNow$1,
+	__moduleExports: performanceNow$1
 });
 
-var now = ( performanceNow$2 && performanceNow ) || performanceNow$2;
+var now = ( performanceNow$3 && performanceNow$1 ) || performanceNow$3;
 
 var root = typeof window === 'undefined' ? commonjsGlobal : window;
 var vendors = ['moz', 'webkit'];
@@ -53350,30 +66560,30 @@ var suffix = 'AnimationFrame';
 var raf = root['request' + suffix];
 var caf = root['cancel' + suffix] || root['cancelRequest' + suffix];
 
-for(var i$3 = 0; !raf && i$3 < vendors.length; i$3++) {
-  raf = root[vendors[i$3] + 'Request' + suffix];
-  caf = root[vendors[i$3] + 'Cancel' + suffix]
-      || root[vendors[i$3] + 'CancelRequest' + suffix];
+for(var i$4 = 0; !raf && i$4 < vendors.length; i$4++) {
+  raf = root[vendors[i$4] + 'Request' + suffix];
+  caf = root[vendors[i$4] + 'Cancel' + suffix]
+      || root[vendors[i$4] + 'CancelRequest' + suffix];
 }
 
 // Some versions of FF have rAF but not cAF
 if(!raf || !caf) {
   var last = 0
     , id$3 = 0
-    , queue$1 = []
+    , queue$2 = []
     , frameDuration = 1000 / 60;
 
   raf = function(callback) {
-    if(queue$1.length === 0) {
+    if(queue$2.length === 0) {
       var _now = now()
         , next = Math.max(0, frameDuration - (_now - last));
       last = next + _now;
       setTimeout(function() {
-        var cp = queue$1.slice(0);
+        var cp = queue$2.slice(0);
         // Clear queue here to prevent
         // callbacks from appending listeners
         // to the current frame's queue
-        queue$1.length = 0;
+        queue$2.length = 0;
         for(var i = 0; i < cp.length; i++) {
           if(!cp[i].cancelled) {
             try{
@@ -53385,7 +66595,7 @@ if(!raf || !caf) {
         }
       }, Math.round(next));
     }
-    queue$1.push({
+    queue$2.push({
       handle: ++id$3,
       callback: callback,
       cancelled: false
@@ -53394,9 +66604,9 @@ if(!raf || !caf) {
   };
 
   caf = function(handle) {
-    for(var i = 0; i < queue$1.length; i++) {
-      if(queue$1[i].handle === handle) {
-        queue$1[i].cancelled = true;
+    for(var i = 0; i < queue$2.length; i++) {
+      if(queue$2[i].handle === handle) {
+        queue$2[i].cancelled = true;
       }
     }
   };
@@ -53429,16 +66639,16 @@ var raf$1 = Object.freeze({
 	polyfill: polyfill
 });
 
-var div = null;
+var div$1 = null;
 var prefixes = [ 'Webkit', 'Moz', 'O', 'ms' ];
 
 var prefixStyle = function prefixStyle (prop) {
   // re-use a dummy div
-  if (!div) {
-    div = document.createElement('div');
+  if (!div$1) {
+    div$1 = document.createElement('div');
   }
 
-  var style = div.style;
+  var style = div$1.style;
 
   // prop exists without prefix
   if (prop in style) {
@@ -53726,11 +66936,11 @@ function isString(maybe) {
 }
 });
 
-var isString = unwrapExports(isString_1);
+var isString$1 = unwrapExports(isString_1);
 
 
-var isString$1 = Object.freeze({
-	default: isString,
+var isString$2 = Object.freeze({
+	default: isString$1,
 	__moduleExports: isString_1
 });
 
@@ -53976,7 +67186,7 @@ exports.renderThumbVerticalDefault = renderThumbVerticalDefault;
 
 
 
-var _react2 = _interopRequireDefault(React$1);
+var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -54061,7 +67271,7 @@ var _raf2 = ( raf$1 && raf_1 ) || raf$1;
 
 var _propTypes = ( propTypes$1 && propTypes ) || propTypes$1;
 
-var _isString = ( isString$1 && isString ) || isString$1;
+var _isString$3 = ( isString$2 && isString$1 ) || isString$2;
 
 var _getScrollbarWidth = ( getScrollbarWidth$1 && getScrollbarWidth ) || getScrollbarWidth$1;
 
@@ -54102,7 +67312,7 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 
 
-var _isString2 = _interopRequireDefault(_isString);
+var _isString2 = _interopRequireDefault(_isString$3);
 
 
 
@@ -54804,24 +68014,24 @@ var Scrollbars = function (_Component) {
                 display: 'none'
             });
 
-            return (0, React$1.createElement)(tagName, _extends({}, props, { style: containerStyle, ref: function ref(_ref3) {
+            return (0, _react.createElement)(tagName, _extends({}, props, { style: containerStyle, ref: function ref(_ref3) {
                     _this7.container = _ref3;
-                } }), [(0, React$1.cloneElement)(renderView({ style: viewStyle }), { key: 'view', ref: function ref(_ref4) {
+                } }), [(0, _react.cloneElement)(renderView({ style: viewStyle }), { key: 'view', ref: function ref(_ref4) {
                     _this7.view = _ref4;
-                } }, children), (0, React$1.cloneElement)(renderTrackHorizontal({ style: trackHorizontalStyle }), { key: 'trackHorizontal', ref: function ref(_ref5) {
+                } }, children), (0, _react.cloneElement)(renderTrackHorizontal({ style: trackHorizontalStyle }), { key: 'trackHorizontal', ref: function ref(_ref5) {
                     _this7.trackHorizontal = _ref5;
-                } }, (0, React$1.cloneElement)(renderThumbHorizontal({ style: _styles.thumbHorizontalStyleDefault }), { ref: function ref(_ref6) {
+                } }, (0, _react.cloneElement)(renderThumbHorizontal({ style: _styles.thumbHorizontalStyleDefault }), { ref: function ref(_ref6) {
                     _this7.thumbHorizontal = _ref6;
-                } })), (0, React$1.cloneElement)(renderTrackVertical({ style: trackVerticalStyle }), { key: 'trackVertical', ref: function ref(_ref7) {
+                } })), (0, _react.cloneElement)(renderTrackVertical({ style: trackVerticalStyle }), { key: 'trackVertical', ref: function ref(_ref7) {
                     _this7.trackVertical = _ref7;
-                } }, (0, React$1.cloneElement)(renderThumbVertical({ style: _styles.thumbVerticalStyleDefault }), { ref: function ref(_ref8) {
+                } }, (0, _react.cloneElement)(renderThumbVertical({ style: _styles.thumbVerticalStyleDefault }), { ref: function ref(_ref8) {
                     _this7.thumbVertical = _ref8;
                 } }))]);
         }
     }]);
 
     return Scrollbars;
-}(React$1.Component);
+}(_react.Component);
 
 exports["default"] = Scrollbars;
 
@@ -54902,109 +68112,6 @@ exports.Scrollbars = _Scrollbars2["default"];
 unwrapExports(lib$2);
 var lib_1 = lib$2.Scrollbars;
 
-var UrbitApi =
-/*#__PURE__*/
-function () {
-  function UrbitApi() {
-    _classCallCheck(this, UrbitApi);
-  }
-
-  _createClass(UrbitApi, [{
-    key: "setAuthTokens",
-    value: function setAuthTokens(authTokens) {
-      this.authTokens = authTokens;
-    } // keep default bind to hall, since its bind procedure more complex for now AA
-
-  }, {
-    key: "bind",
-    value: function bind(path, method) {
-      var appl = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "hall";
-      console.log('binding to ...', appl);
-      var params = {
-        appl: appl,
-        mark: "json",
-        oryx: this.authTokens.oryx,
-        ship: this.authTokens.ship,
-        path: path,
-        wire: path
-      };
-      fetch("/~/is/~".concat(this.authTokens.user, "/").concat(appl).concat(path, ".json?").concat(method), {
-        credentials: "same-origin",
-        method: "POST",
-        body: JSON.stringify(params)
-      });
-    }
-  }, {
-    key: "hall",
-    value: function hall(data, transition) {
-      this.action("hall", "hall-action", data, transition);
-    }
-  }, {
-    key: "coll",
-    value: function coll(data, transition) {
-      this.action("collections", "collections-action", data, transition);
-    }
-  }, {
-    key: "action",
-    value: function action(appl, mark, data, transition) {
-      var params = {
-        appl: appl,
-        mark: mark,
-        oryx: this.authTokens.oryx,
-        ship: this.authTokens.ship,
-        wire: "/",
-        xyro: data
-      };
-      fetch("/~/to/".concat(appl, "/").concat(mark), {
-        credentials: "same-origin",
-        method: "POST",
-        body: JSON.stringify(params)
-      });
-    }
-    /*
-      Special actions
-    */
-
-  }, {
-    key: "permit",
-    value: function permit(nom, aud, message) {
-      this.hall({
-        permit: {
-          nom: nom,
-          sis: aud,
-          inv: true
-        }
-      });
-
-      if (message) {
-        var audInboxes = aud.map(function (aud) {
-          return "~".concat(aud, "/inbox");
-        });
-        var inviteMessage = {
-          uid: uuid(),
-          aud: audInboxes,
-          aut: this.authTokens.ship,
-          wen: Date.now(),
-          sep: {
-            inv: {
-              inv: true,
-              cir: "~".concat(this.authTokens.ship, "/").concat(nom)
-            }
-          }
-        };
-        this.hall({
-          convey: [inviteMessage]
-        });
-      }
-    }
-  }]);
-
-  return UrbitApi;
-}();
-
-var api = new UrbitApi();
-window.api = api;
-
 var ChatPage =
 /*#__PURE__*/
 function (_Component) {
@@ -55042,13 +68149,13 @@ function (_Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       var path = "/circle/inbox/".concat(this.state.station, "/grams/-20");
-      api.bind(path, "PUT");
+      api$1.bind(path, "PUT");
     }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
       var path = "/circle/inbox/".concat(this.state.station, "/grams/-20");
-      api.bind(path, "DELETE");
+      api$1.bind(path, "DELETE");
     }
   }, {
     key: "componentDidUpdate",
@@ -55071,7 +68178,7 @@ function (_Component) {
     value: function requestChatBatch() {
       var newNumMessages = this.state.numMessages + 50;
       var path = "/circle/inbox/".concat(this.state.station, "/grams/-").concat(newNumMessages, "/-").concat(this.state.numMessages);
-      api.bind(path, "PUT");
+      api$1.bind(path, "PUT");
     }
   }, {
     key: "onScrollStop",
@@ -55118,19 +68225,16 @@ function (_Component) {
       }
 
       var message = {
-        uid: uuid(),
         aud: aud,
-        aut: api.authTokens.ship,
-        wen: Date.now(),
-        sep: {
+        ses: [{
           lin: {
             msg: this.state.message,
             pat: false
           }
-        }
+        }]
       };
       this.props.api.hall({
-        convey: [message]
+        phrase: message
       });
       this.setState({
         message: ""
@@ -55265,6 +68369,26 @@ function (_Component) {
             className: "chat-sep",
             key: msg.date
           }, msg.date);
+        } else if (lodash.has(msg, 'sep.url')) {
+          if (/(jpg|img|png|tiff|gif|jpeg|JPG|IMG|PNG|TIFF)$/.exec(msg.sep.url)) {
+            return react.createElement("img", {
+              style: {
+                width: "100%"
+              },
+              src: msg.sep.url
+            });
+          } else {
+            return react.createElement("div", {
+              key: msg.uid,
+              className: "row ".concat(appClass)
+            }, react.createElement("div", {
+              className: "col-sm-2 text-mono"
+            }, autLabel), react.createElement("div", {
+              className: "col-sm-8 url"
+            }, react.createElement("a", {
+              href: msg.sep.url
+            }, msg.sep.url)));
+          }
         } else {
           return react.createElement("div", {
             key: msg.uid,
@@ -55306,7 +68430,7 @@ function (_Component) {
         className: "chat-input row mt-6"
       }, react.createElement("div", {
         className: "col-sm-2 text-700"
-      }, "~", api.authTokens.ship), react.createElement("div", {
+      }, "~", api$1.authTokens.ship), react.createElement("div", {
         className: "col-sm-8"
       }, react.createElement("form", {
         onSubmit: this.messageSubmit
@@ -55932,10 +69056,10 @@ function write (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 }
 
-var toString$2 = {}.toString;
+var toString$3 = {}.toString;
 
-var isArray$1 = Array.isArray || function (arr) {
-  return toString$2.call(arr) == '[object Array]';
+var isArray$2 = Array.isArray || function (arr) {
+  return toString$3.call(arr) == '[object Array]';
 };
 
 /*!
@@ -56216,7 +69340,7 @@ function fromObject (that, obj) {
       return fromArrayLike(that, obj)
     }
 
-    if (obj.type === 'Buffer' && isArray$1(obj.data)) {
+    if (obj.type === 'Buffer' && isArray$2(obj.data)) {
       return fromArrayLike(that, obj.data)
     }
   }
@@ -56240,7 +69364,7 @@ function SlowBuffer (length) {
   }
   return Buffer$1.alloc(+length)
 }
-Buffer$1.isBuffer = isBuffer;
+Buffer$1.isBuffer = isBuffer$1;
 function internalIsBuffer (b) {
   return !!(b != null && b._isBuffer)
 }
@@ -56288,7 +69412,7 @@ Buffer$1.isEncoding = function isEncoding (encoding) {
 };
 
 Buffer$1.concat = function concat (list, length) {
-  if (!isArray$1(list)) {
+  if (!isArray$2(list)) {
     throw new TypeError('"list" argument must be an Array of Buffers')
   }
 
@@ -57706,7 +70830,7 @@ function isnan (val) {
 // the following is from is-buffer, also by Feross Aboukhadijeh and with same lisence
 // The _isBuffer check is for Safari 5-7 support, because it's missing
 // Object.prototype.constructor. Remove this eventually
-function isBuffer(obj) {
+function isBuffer$1(obj) {
   return obj != null && (!!obj._isBuffer || isFastBuffer(obj) || isSlowBuffer(obj))
 }
 
@@ -57725,10 +70849,10 @@ var bufferEs6 = Object.freeze({
 	kMaxLength: _kMaxLength,
 	Buffer: Buffer$1,
 	SlowBuffer: SlowBuffer,
-	isBuffer: isBuffer
+	isBuffer: isBuffer$1
 });
 
-var require$$0$32 = ( bufferEs6 && undefined ) || bufferEs6;
+var require$$0$34 = ( bufferEs6 && undefined ) || bufferEs6;
 
 var bn$1 = createCommonjsModule(function (module) {
 (function (module, exports) {
@@ -57783,7 +70907,7 @@ var bn$1 = createCommonjsModule(function (module) {
 
   var Buffer;
   try {
-    Buffer = require$$0$32.Buffer;
+    Buffer = require$$0$34.Buffer;
   } catch (e) {
   }
 
@@ -61989,6 +75113,72 @@ function (_Component) {
   return Subscribe;
 }(react_1);
 
+var IconComment =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(IconComment, _Component);
+
+  function IconComment() {
+    _classCallCheck(this, IconComment);
+
+    return _possibleConstructorReturn(this, (IconComment.__proto__ || Object.getPrototypeOf(IconComment)).apply(this, arguments));
+  }
+
+  _createClass(IconComment, [{
+    key: "render",
+    value: function render() {
+      return react.createElement("svg", {
+        width: "13px",
+        height: "13px",
+        viewBox: "0 0 13 13",
+        version: "1.1"
+      }, react.createElement("g", {
+        id: "Blog",
+        stroke: "none",
+        strokeWidth: "1",
+        fill: "none",
+        fillRule: "evenodd"
+      }, react.createElement("g", {
+        id: "Blog---Individual-Post-View---Comments",
+        transform: "translate(-339.000000, -404.000000)",
+        fill: "#B3B3B3",
+        fillRule: "nonzero"
+      }, react.createElement("g", {
+        id: "Comments",
+        transform: "translate(288.000000, 402.000000)"
+      }, react.createElement("path", {
+        d: "M62.3090067,10.3631291 L63.4957265,14.8312842 L59.1444205,13.6126964 C58.4475489,13.9114848 57.6827125,14.0765027 56.8803419,14.0765027 C53.6327173,14.0765027 51,11.373087 51,8.03825137 C51,4.70341571 53.6327173,2 56.8803419,2 C60.1279665,2 62.7606838,4.70341571 62.7606838,8.03825137 C62.7606838,8.86216869 62.5999813,9.6475438 62.3090067,10.3631291 Z",
+        id: "Combined-Shape"
+      })))));
+    }
+  }]);
+
+  return IconComment;
+}(react_1);
+
+var AvatarSample1 =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(AvatarSample1, _Component);
+
+  function AvatarSample1() {
+    _classCallCheck(this, AvatarSample1);
+
+    return _possibleConstructorReturn(this, (AvatarSample1.__proto__ || Object.getPrototypeOf(AvatarSample1)).apply(this, arguments));
+  }
+
+  _createClass(AvatarSample1, [{
+    key: "render",
+    value: function render() {
+      return react.createElement("img", {
+        src: "data:image/png;base64,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"
+      });
+    }
+  }]);
+
+  return AvatarSample1;
+}(react_1);
+
 var ComponentMap = {
   "ChatPage": {
     comp: ChatPage
@@ -62019,12916 +75209,92 @@ var ComponentMap = {
   },
   "Elapsed": {
     comp: Elapsed
+  },
+  "IconComment": {
+    comp: IconComment
+  },
+  "AvatarSample1": {
+    comp: AvatarSample1
   }
 };
 
-var INBOX_MESSAGE_COUNT = 30; // TODO: This being a class is an error, since UrbitReducer doesn't hold state. Export these as individual functions or bundle them some other way.
-
-/**
-  storeMessages ==
-
-  store: {
-    messages: {
-      inboxMessages: [{num: 1244, msg: "Hey friends"}, {num: 1244, msg: "Hiya ~ravmel"}]
-      stations: {
-        ~ravmel-rodpyl/friendclub: [{num: 1244, msg: "Hey friends"}, {num: 1244, msg: "Hiya ~ravmel"}]
-        ~ravmel-rodpyl/members: [{num: 1244, msg: "Hey friends"}, {num: 1244, msg: "Hiya ~ravmel"}]
-      }
-    }
-  }
-**/
-
-var MessagesReducer =
+var Root =
 /*#__PURE__*/
-function () {
-  function MessagesReducer() {
-    _classCallCheck(this, MessagesReducer);
+function (_Component) {
+  _inherits(Root, _Component);
+
+  function Root(props) {
+    var _this;
+
+    _classCallCheck(this, Root);
+
+    _this = _possibleConstructorReturn(this, (Root.__proto__ || Object.getPrototypeOf(Root)).call(this, props)); // Required to convert arbitrary HTML into React elements
+
+    _this.htmlParser = htmlToReact.Parser();
+    _this.htmlParserNodeDefinitions = new htmlToReact.ProcessNodeDefinitions(react);
+    return _this;
   }
 
-  _createClass(MessagesReducer, [{
-    key: "reduce",
-    value: function reduce(reports, storeMessages) {
-      var _this = this;
-
-      reports.forEach(function (rep) {
-        switch (rep.type) {
-          case "circle.nes":
-            _this.processMessages(rep.data, storeMessages);
-
-            break;
-
-          case "circle.gram":
-            _this.processMessages([rep.data], storeMessages);
-
-            break;
-
-          case "circle.config.dif.remove":
-            delete storeMessages[rep.data.cir];
-            break;
-        }
-      });
-    }
-  }, {
-    key: "processMessages",
-    value: function processMessages(messages, storeMessages) {
-      this.storeStationMessages(messages, storeMessages);
-      this.storeInboxMessages(messages, storeMessages);
-    }
-  }, {
-    key: "storeStationMessages",
-    value: function storeStationMessages(messages, storeMessages) {
-      messages.forEach(function (message) {
-        var msg = message.gam;
-        msg.aud.forEach(function (aud) {
-          var station = storeMessages.stations[aud];
-
-          if (!station) {
-            storeMessages.stations[aud] = [msg];
-          } else if (station.findIndex(function (o) {
-            return o.uid === msg.uid;
-          }) === -1) {
-            var newest = true;
-
-            for (var i = 0; i < station.length; i++) {
-              if (msg.wen < station[i].wen) {
-                station.splice(i, 0, msg);
-                newest = false;
-                break;
-              }
-            }
-
-            if (newest) station.push(msg); // Print messages by date, for debugging:
-            // for (let msg of station.messages) {
-            //   console.log(`msg ${msg.uid}: ${msg.wen}`);
-            // }
-          }
-        });
-      });
-    }
-  }, {
-    key: "storeInboxMessages",
-    value: function storeInboxMessages(messages, storeMessages) {
-      var msgGams = messages.map(function (m) {
-        return m.gam;
-      }); // grab the gam
-
-      var ret = storeMessages.inboxMessages.slice() // make a shallow copy
-      .concat(msgGams) // add new messages
-      .uniq('uid') // dedupe
-      .sort(function (a, b) {
-        return b.wen - a.wen;
-      }) // sort by date
-      .slice(0, INBOX_MESSAGE_COUNT); // grab the first 30 or so
-
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = ret[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _msg = _step.value;
-          console.log("msg ".concat(_msg.uid, ": ").concat(_msg.wen));
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      storeMessages.inboxMessages = ret;
-    }
-  }]);
-
-  return MessagesReducer;
-}();
-
-var ConfigsReducer =
-/*#__PURE__*/
-function () {
-  function ConfigsReducer() {
-    _classCallCheck(this, ConfigsReducer);
-  }
-
-  _createClass(ConfigsReducer, [{
-    key: "reduce",
-    value: function reduce(reports, storeConfigs) {
+  _createClass(Root, [{
+    key: "reactify",
+    value: function reactify() {
       var _this2 = this;
 
-      reports.forEach(function (rep) {
-        var stationName;
-        var stations = {};
+      var instructions = [{
+        replaceChildren: true,
+        shouldProcessNode: function shouldProcessNode(node) {
+          return node.attribs && !!node.attribs['urb-component'];
+        },
+        processNode: function processNode(node) {
+          var componentName = node.attribs['urb-component'];
+          var propsObj = {};
+          Object.keys(node.attribs).filter(function (key) {
+            return key.indexOf('urb-') !== -1 && key !== "urb-component";
+          }).forEach(function (key) {
+            var keyName = key.substr(4); // "urb-timestamp" => "timestamp"
 
-        switch (rep.type) {
-          case "circle.cos.loc":
-            stationName = "~".concat(rep.from.ship, "/").concat(rep.from.path.split("/")[2]);
-            stations[stationName] = rep.data;
-
-            _this2.storeConfigs(stations, storeConfigs);
-
-            break;
-
-          case "circle.cos.rem":
-            _this2.storeConfigs(rep.data, storeConfigs);
-
-            break;
-
-          case "circle.pes.loc":
-            stationName = "~".concat(rep.from.ship, "/").concat(rep.from.path.split("/")[2]);
-
-            _this2.updateConfig({
-              pes: rep.data
-            }, storeConfigs[stationName]);
-
-            break;
-
-          case "circle.config.dif.source":
-            stationName = "~".concat(rep.from.ship, "/").concat(rep.from.path.split("/")[2]);
-
-            _this2.updateConfig(rep.data, storeConfigs[stationName]);
-
-            break;
-
-          case "circle.config.dif.full":
-            stationName = rep.data.src[0]; // TODO:  API weirdness; we have to get name of new station from new station config's src property. Should maybe return a dict.
-
-            stations[stationName] = rep.data;
-
-            _this2.storeConfigs(stations, storeConfigs);
-
-            break;
-
-          case "circle.config.dif.permit":
-            // TODO:  This is very wonky, should be fixed with API discussion
-            stationName = rep.data.cir;
-
-            _this2.updateConfig(rep.data.dif.permit, storeConfigs[stationName]);
-
-            break;
-
-          case "circle.config.dif.remove":
-            delete storeConfigs[rep.data.cir];
-            break;
+            propsObj[keyName] = node.attribs[key];
+          });
+          return react.createElement(ComponentMap[componentName].comp, Object.assign({
+            api: api,
+            store: _this2.props.store,
+            pushPending: _this2.props.pushPending,
+            queryParams: _this2.props.queryParams
+          }, propsObj));
         }
-      });
+      }, {
+        shouldProcessNode: function shouldProcessNode() {
+          return true;
+        },
+        processNode: this.htmlParserNodeDefinitions.processDefaultNode
+      }];
+      return this.htmlParser.parseWithInstructions(this.props.scaffold, function () {
+        return true;
+      }, instructions);
     }
   }, {
-    key: "storeConfigs",
-    value: function storeConfigs(configs, _storeConfigs) {
-      Object.keys(configs).forEach(function (cos) {
-        _storeConfigs[cos] = _storeConfigs[cos] || {};
-        Object.assign(_storeConfigs[cos], configs[cos]);
-      });
-    }
-  }, {
-    key: "updateConfig",
-    value: function updateConfig(data, station) {
-      if (!station) return;
-
-      if (data.src) {
-        if (data.add) {
-          station.src.push(data.src);
-        } else {
-          station.src = station.src.filter(function (val) {
-            return val !== data.src;
-          });
-        }
-      }
-
-      if (data.sis) {
-        if (data.add) {
-          station.con.sis = station.con.sis.concat(data.sis);
-        } else {
-          station.con.sis = station.con.sis.filter(function (val) {
-            return !data.sis.includes(val);
-          });
-        }
-      }
-
-      if (data.pes) {
-        station.pes = station.pes || {};
-        Object.assign(station.pes, data.pes);
-      }
+    key: "render",
+    value: function render() {
+      var parser = new DOMParser();
+      var tempDOM = parser.parseFromString(this.props.scaffold, "text/xml");
+      var headerQuery = tempDOM.querySelectorAll('[name="urb-header"]');
+      var header = headerQuery.length > 0 ? headerQuery[0].getAttribute('value') : "default";
+      var headerData = {
+        title: headerQuery.length > 0 ? headerQuery[0].getAttribute('title') : null,
+        id: headerQuery.length > 0 ? headerQuery[0].getAttribute('id') : null,
+        ship: headerQuery.length > 0 ? headerQuery[0].getAttribute('ship') : null
+      };
+      var children = this.reactify();
+      return react.createElement("div", null, react.createElement(Header, {
+        type: header,
+        data: headerData,
+        store: this.props.store
+      }), children);
     }
   }]);
 
-  return ConfigsReducer;
-}();
-
-var Reports = {
-  'circle.gram': {
-    execute: function execute(rep) {
-      if (this.pending) {
-        this.pending.forEach(function (item) {
-          switch (item.type) {
-            case "transition":
-              window.router.transitionTo(item.data.target);
-              break;
-          }
-        });
-      }
-
-      this.pending = [];
-    }
-  },
-  // messages
-  'circle.nes': {},
-  // messages
-  'circle.pes.loc': {},
-  'circle.pes.rem': {},
-  'circle.cos.loc': {},
-  // configs
-  'circle.cos.rem': {},
-  // configs
-  'circle.config.dif.full': {
-    execute: function execute(rep) {
-      if (this.pending) {
-        this.pending.forEach(function (item) {
-          switch (item.type) {
-            case "transition":
-              window.router.transitionTo(item.data.target);
-              break;
-
-            case "permit":
-              api.permit(item.data.nom, item.data.aud, item.data.message);
-              break;
-
-            case "subscribe-dm":
-              var dmHost = item.data.nom.split("/")[0].substr(1);
-              api.hall({
-                source: {
-                  nom: item.data.nom,
-                  sub: true,
-                  srs: item.data.srs
-                }
-              });
-              break;
-          }
-        });
-      }
-
-      this.pending = [];
-    }
-  },
-  'circle.config.dif.source': {
-    execute: function execute(rep) {
-      if (this.pending) {
-        this.pending.forEach(function (item) {
-          switch (item.type) {
-            case "transition":
-              window.router.transitionTo(item.data.target);
-              break;
-          }
-        });
-      }
-
-      this.pending = [];
-    }
-  },
-  'circle.config.dif.permit': {
-    include: "circle.config"
-  },
-  'circle.config.dif.remove': {
-    include: "circle.config"
-  },
-  'circles': {
-    execute: function execute(rep) {
-      if (this.pending) {
-        this.pending.forEach(function (item) {
-          switch (item.type) {
-            case "subscribe-inbox":
-              var cir = item.data && item.data.cir ? item.data.cir : "~".concat(api.authTokens.ship, "/").concat(rep.data.cir);
-              api.hall({
-                source: {
-                  nom: "inbox",
-                  sub: true,
-                  srs: [cir]
-                }
-              });
-              break;
-          }
-        });
-        this.pending = [];
-      }
-    }
-  }
-};
-window.reports = Reports;
-
-var UrbitWarehouse =
-/*#__PURE__*/
-function () {
-  function UrbitWarehouse(updateFunc) {
-    _classCallCheck(this, UrbitWarehouse);
-
-    this.store = {
-      messages: {
-        inboxMessages: [],
-        stations: {}
-      },
-      configs: {}
-    };
-    this.updateFunc = updateFunc;
-    this.messagesReducer = new MessagesReducer();
-    this.configsReducer = new ConfigsReducer();
-  }
-
-  _createClass(UrbitWarehouse, [{
-    key: "storeReports",
-    value: function storeReports(reports) {
-      this.messagesReducer.reduce(reports, this.store.messages);
-      this.configsReducer.reduce(reports, this.store.configs);
-      console.log('full store = ', this.store);
-      this.processPending(reports);
-      this.updateFunc();
-    }
-  }, {
-    key: "processPending",
-    value: function processPending(reports) {
-      reports.forEach(function (rep) {
-        var type = Reports[rep.type];
-
-        if (type && type.execute) {
-          type.execute(rep);
-        }
-      });
-    }
-  }, {
-    key: "pushPending",
-    value: function pushPending(key, data) {
-      Reports[key].pending = (Reports[key].pending || []).concat(data);
-    }
-  }]);
-
-  return UrbitWarehouse;
-}();
-
-var mousetrap = createCommonjsModule(function (module) {
-/*global define:false */
-/**
- * Copyright 2012-2017 Craig Campbell
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * Mousetrap is a simple keyboard shortcut library for Javascript with
- * no external dependencies
- *
- * @version 1.6.1
- * @url craig.is/killing/mice
- */
-(function(window, document, undefined) {
-
-    // Check if mousetrap is used inside browser, if not, return
-    if (!window) {
-        return;
-    }
-
-    /**
-     * mapping of special keycodes to their corresponding keys
-     *
-     * everything in this dictionary cannot use keypress events
-     * so it has to be here to map to the correct keycodes for
-     * keyup/keydown events
-     *
-     * @type {Object}
-     */
-    var _MAP = {
-        8: 'backspace',
-        9: 'tab',
-        13: 'enter',
-        16: 'shift',
-        17: 'ctrl',
-        18: 'alt',
-        20: 'capslock',
-        27: 'esc',
-        32: 'space',
-        33: 'pageup',
-        34: 'pagedown',
-        35: 'end',
-        36: 'home',
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down',
-        45: 'ins',
-        46: 'del',
-        91: 'meta',
-        93: 'meta',
-        224: 'meta'
-    };
-
-    /**
-     * mapping for special characters so they can support
-     *
-     * this dictionary is only used incase you want to bind a
-     * keyup or keydown event to one of these keys
-     *
-     * @type {Object}
-     */
-    var _KEYCODE_MAP = {
-        106: '*',
-        107: '+',
-        109: '-',
-        110: '.',
-        111 : '/',
-        186: ';',
-        187: '=',
-        188: ',',
-        189: '-',
-        190: '.',
-        191: '/',
-        192: '`',
-        219: '[',
-        220: '\\',
-        221: ']',
-        222: '\''
-    };
-
-    /**
-     * this is a mapping of keys that require shift on a US keypad
-     * back to the non shift equivelents
-     *
-     * this is so you can use keyup events with these keys
-     *
-     * note that this will only work reliably on US keyboards
-     *
-     * @type {Object}
-     */
-    var _SHIFT_MAP = {
-        '~': '`',
-        '!': '1',
-        '@': '2',
-        '#': '3',
-        '$': '4',
-        '%': '5',
-        '^': '6',
-        '&': '7',
-        '*': '8',
-        '(': '9',
-        ')': '0',
-        '_': '-',
-        '+': '=',
-        ':': ';',
-        '\"': '\'',
-        '<': ',',
-        '>': '.',
-        '?': '/',
-        '|': '\\'
-    };
-
-    /**
-     * this is a list of special strings you can use to map
-     * to modifier keys when you specify your keyboard shortcuts
-     *
-     * @type {Object}
-     */
-    var _SPECIAL_ALIASES = {
-        'option': 'alt',
-        'command': 'meta',
-        'return': 'enter',
-        'escape': 'esc',
-        'plus': '+',
-        'mod': /Mac|iPod|iPhone|iPad/.test(navigator.platform) ? 'meta' : 'ctrl'
-    };
-
-    /**
-     * variable to store the flipped version of _MAP from above
-     * needed to check if we should use keypress or not when no action
-     * is specified
-     *
-     * @type {Object|undefined}
-     */
-    var _REVERSE_MAP;
-
-    /**
-     * loop through the f keys, f1 to f19 and add them to the map
-     * programatically
-     */
-    for (var i = 1; i < 20; ++i) {
-        _MAP[111 + i] = 'f' + i;
-    }
-
-    /**
-     * loop through to map numbers on the numeric keypad
-     */
-    for (i = 0; i <= 9; ++i) {
-
-        // This needs to use a string cause otherwise since 0 is falsey
-        // mousetrap will never fire for numpad 0 pressed as part of a keydown
-        // event.
-        //
-        // @see https://github.com/ccampbell/mousetrap/pull/258
-        _MAP[i + 96] = i.toString();
-    }
-
-    /**
-     * cross browser add event method
-     *
-     * @param {Element|HTMLDocument} object
-     * @param {string} type
-     * @param {Function} callback
-     * @returns void
-     */
-    function _addEvent(object, type, callback) {
-        if (object.addEventListener) {
-            object.addEventListener(type, callback, false);
-            return;
-        }
-
-        object.attachEvent('on' + type, callback);
-    }
-
-    /**
-     * takes the event and returns the key character
-     *
-     * @param {Event} e
-     * @return {string}
-     */
-    function _characterFromEvent(e) {
-
-        // for keypress events we should return the character as is
-        if (e.type == 'keypress') {
-            var character = String.fromCharCode(e.which);
-
-            // if the shift key is not pressed then it is safe to assume
-            // that we want the character to be lowercase.  this means if
-            // you accidentally have caps lock on then your key bindings
-            // will continue to work
-            //
-            // the only side effect that might not be desired is if you
-            // bind something like 'A' cause you want to trigger an
-            // event when capital A is pressed caps lock will no longer
-            // trigger the event.  shift+a will though.
-            if (!e.shiftKey) {
-                character = character.toLowerCase();
-            }
-
-            return character;
-        }
-
-        // for non keypress events the special maps are needed
-        if (_MAP[e.which]) {
-            return _MAP[e.which];
-        }
-
-        if (_KEYCODE_MAP[e.which]) {
-            return _KEYCODE_MAP[e.which];
-        }
-
-        // if it is not in the special map
-
-        // with keydown and keyup events the character seems to always
-        // come in as an uppercase character whether you are pressing shift
-        // or not.  we should make sure it is always lowercase for comparisons
-        return String.fromCharCode(e.which).toLowerCase();
-    }
-
-    /**
-     * checks if two arrays are equal
-     *
-     * @param {Array} modifiers1
-     * @param {Array} modifiers2
-     * @returns {boolean}
-     */
-    function _modifiersMatch(modifiers1, modifiers2) {
-        return modifiers1.sort().join(',') === modifiers2.sort().join(',');
-    }
-
-    /**
-     * takes a key event and figures out what the modifiers are
-     *
-     * @param {Event} e
-     * @returns {Array}
-     */
-    function _eventModifiers(e) {
-        var modifiers = [];
-
-        if (e.shiftKey) {
-            modifiers.push('shift');
-        }
-
-        if (e.altKey) {
-            modifiers.push('alt');
-        }
-
-        if (e.ctrlKey) {
-            modifiers.push('ctrl');
-        }
-
-        if (e.metaKey) {
-            modifiers.push('meta');
-        }
-
-        return modifiers;
-    }
-
-    /**
-     * prevents default for this event
-     *
-     * @param {Event} e
-     * @returns void
-     */
-    function _preventDefault(e) {
-        if (e.preventDefault) {
-            e.preventDefault();
-            return;
-        }
-
-        e.returnValue = false;
-    }
-
-    /**
-     * stops propogation for this event
-     *
-     * @param {Event} e
-     * @returns void
-     */
-    function _stopPropagation(e) {
-        if (e.stopPropagation) {
-            e.stopPropagation();
-            return;
-        }
-
-        e.cancelBubble = true;
-    }
-
-    /**
-     * determines if the keycode specified is a modifier key or not
-     *
-     * @param {string} key
-     * @returns {boolean}
-     */
-    function _isModifier(key) {
-        return key == 'shift' || key == 'ctrl' || key == 'alt' || key == 'meta';
-    }
-
-    /**
-     * reverses the map lookup so that we can look for specific keys
-     * to see what can and can't use keypress
-     *
-     * @return {Object}
-     */
-    function _getReverseMap() {
-        if (!_REVERSE_MAP) {
-            _REVERSE_MAP = {};
-            for (var key in _MAP) {
-
-                // pull out the numeric keypad from here cause keypress should
-                // be able to detect the keys from the character
-                if (key > 95 && key < 112) {
-                    continue;
-                }
-
-                if (_MAP.hasOwnProperty(key)) {
-                    _REVERSE_MAP[_MAP[key]] = key;
-                }
-            }
-        }
-        return _REVERSE_MAP;
-    }
-
-    /**
-     * picks the best action based on the key combination
-     *
-     * @param {string} key - character for key
-     * @param {Array} modifiers
-     * @param {string=} action passed in
-     */
-    function _pickBestAction(key, modifiers, action) {
-
-        // if no action was picked in we should try to pick the one
-        // that we think would work best for this key
-        if (!action) {
-            action = _getReverseMap()[key] ? 'keydown' : 'keypress';
-        }
-
-        // modifier keys don't work as expected with keypress,
-        // switch to keydown
-        if (action == 'keypress' && modifiers.length) {
-            action = 'keydown';
-        }
-
-        return action;
-    }
-
-    /**
-     * Converts from a string key combination to an array
-     *
-     * @param  {string} combination like "command+shift+l"
-     * @return {Array}
-     */
-    function _keysFromString(combination) {
-        if (combination === '+') {
-            return ['+'];
-        }
-
-        combination = combination.replace(/\+{2}/g, '+plus');
-        return combination.split('+');
-    }
-
-    /**
-     * Gets info for a specific key combination
-     *
-     * @param  {string} combination key combination ("command+s" or "a" or "*")
-     * @param  {string=} action
-     * @returns {Object}
-     */
-    function _getKeyInfo(combination, action) {
-        var keys;
-        var key;
-        var i;
-        var modifiers = [];
-
-        // take the keys from this pattern and figure out what the actual
-        // pattern is all about
-        keys = _keysFromString(combination);
-
-        for (i = 0; i < keys.length; ++i) {
-            key = keys[i];
-
-            // normalize key names
-            if (_SPECIAL_ALIASES[key]) {
-                key = _SPECIAL_ALIASES[key];
-            }
-
-            // if this is not a keypress event then we should
-            // be smart about using shift keys
-            // this will only work for US keyboards however
-            if (action && action != 'keypress' && _SHIFT_MAP[key]) {
-                key = _SHIFT_MAP[key];
-                modifiers.push('shift');
-            }
-
-            // if this key is a modifier then add it to the list of modifiers
-            if (_isModifier(key)) {
-                modifiers.push(key);
-            }
-        }
-
-        // depending on what the key combination is
-        // we will try to pick the best event for it
-        action = _pickBestAction(key, modifiers, action);
-
-        return {
-            key: key,
-            modifiers: modifiers,
-            action: action
-        };
-    }
-
-    function _belongsTo(element, ancestor) {
-        if (element === null || element === document) {
-            return false;
-        }
-
-        if (element === ancestor) {
-            return true;
-        }
-
-        return _belongsTo(element.parentNode, ancestor);
-    }
-
-    function Mousetrap(targetElement) {
-        var self = this;
-
-        targetElement = targetElement || document;
-
-        if (!(self instanceof Mousetrap)) {
-            return new Mousetrap(targetElement);
-        }
-
-        /**
-         * element to attach key events to
-         *
-         * @type {Element}
-         */
-        self.target = targetElement;
-
-        /**
-         * a list of all the callbacks setup via Mousetrap.bind()
-         *
-         * @type {Object}
-         */
-        self._callbacks = {};
-
-        /**
-         * direct map of string combinations to callbacks used for trigger()
-         *
-         * @type {Object}
-         */
-        self._directMap = {};
-
-        /**
-         * keeps track of what level each sequence is at since multiple
-         * sequences can start out with the same sequence
-         *
-         * @type {Object}
-         */
-        var _sequenceLevels = {};
-
-        /**
-         * variable to store the setTimeout call
-         *
-         * @type {null|number}
-         */
-        var _resetTimer;
-
-        /**
-         * temporary state where we will ignore the next keyup
-         *
-         * @type {boolean|string}
-         */
-        var _ignoreNextKeyup = false;
-
-        /**
-         * temporary state where we will ignore the next keypress
-         *
-         * @type {boolean}
-         */
-        var _ignoreNextKeypress = false;
-
-        /**
-         * are we currently inside of a sequence?
-         * type of action ("keyup" or "keydown" or "keypress") or false
-         *
-         * @type {boolean|string}
-         */
-        var _nextExpectedAction = false;
-
-        /**
-         * resets all sequence counters except for the ones passed in
-         *
-         * @param {Object} doNotReset
-         * @returns void
-         */
-        function _resetSequences(doNotReset) {
-            doNotReset = doNotReset || {};
-
-            var activeSequences = false,
-                key;
-
-            for (key in _sequenceLevels) {
-                if (doNotReset[key]) {
-                    activeSequences = true;
-                    continue;
-                }
-                _sequenceLevels[key] = 0;
-            }
-
-            if (!activeSequences) {
-                _nextExpectedAction = false;
-            }
-        }
-
-        /**
-         * finds all callbacks that match based on the keycode, modifiers,
-         * and action
-         *
-         * @param {string} character
-         * @param {Array} modifiers
-         * @param {Event|Object} e
-         * @param {string=} sequenceName - name of the sequence we are looking for
-         * @param {string=} combination
-         * @param {number=} level
-         * @returns {Array}
-         */
-        function _getMatches(character, modifiers, e, sequenceName, combination, level) {
-            var i;
-            var callback;
-            var matches = [];
-            var action = e.type;
-
-            // if there are no events related to this keycode
-            if (!self._callbacks[character]) {
-                return [];
-            }
-
-            // if a modifier key is coming up on its own we should allow it
-            if (action == 'keyup' && _isModifier(character)) {
-                modifiers = [character];
-            }
-
-            // loop through all callbacks for the key that was pressed
-            // and see if any of them match
-            for (i = 0; i < self._callbacks[character].length; ++i) {
-                callback = self._callbacks[character][i];
-
-                // if a sequence name is not specified, but this is a sequence at
-                // the wrong level then move onto the next match
-                if (!sequenceName && callback.seq && _sequenceLevels[callback.seq] != callback.level) {
-                    continue;
-                }
-
-                // if the action we are looking for doesn't match the action we got
-                // then we should keep going
-                if (action != callback.action) {
-                    continue;
-                }
-
-                // if this is a keypress event and the meta key and control key
-                // are not pressed that means that we need to only look at the
-                // character, otherwise check the modifiers as well
-                //
-                // chrome will not fire a keypress if meta or control is down
-                // safari will fire a keypress if meta or meta+shift is down
-                // firefox will fire a keypress if meta or control is down
-                if ((action == 'keypress' && !e.metaKey && !e.ctrlKey) || _modifiersMatch(modifiers, callback.modifiers)) {
-
-                    // when you bind a combination or sequence a second time it
-                    // should overwrite the first one.  if a sequenceName or
-                    // combination is specified in this call it does just that
-                    //
-                    // @todo make deleting its own method?
-                    var deleteCombo = !sequenceName && callback.combo == combination;
-                    var deleteSequence = sequenceName && callback.seq == sequenceName && callback.level == level;
-                    if (deleteCombo || deleteSequence) {
-                        self._callbacks[character].splice(i, 1);
-                    }
-
-                    matches.push(callback);
-                }
-            }
-
-            return matches;
-        }
-
-        /**
-         * actually calls the callback function
-         *
-         * if your callback function returns false this will use the jquery
-         * convention - prevent default and stop propogation on the event
-         *
-         * @param {Function} callback
-         * @param {Event} e
-         * @returns void
-         */
-        function _fireCallback(callback, e, combo, sequence) {
-
-            // if this event should not happen stop here
-            if (self.stopCallback(e, e.target || e.srcElement, combo, sequence)) {
-                return;
-            }
-
-            if (callback(e, combo) === false) {
-                _preventDefault(e);
-                _stopPropagation(e);
-            }
-        }
-
-        /**
-         * handles a character key event
-         *
-         * @param {string} character
-         * @param {Array} modifiers
-         * @param {Event} e
-         * @returns void
-         */
-        self._handleKey = function(character, modifiers, e) {
-            var callbacks = _getMatches(character, modifiers, e);
-            var i;
-            var doNotReset = {};
-            var maxLevel = 0;
-            var processedSequenceCallback = false;
-
-            // Calculate the maxLevel for sequences so we can only execute the longest callback sequence
-            for (i = 0; i < callbacks.length; ++i) {
-                if (callbacks[i].seq) {
-                    maxLevel = Math.max(maxLevel, callbacks[i].level);
-                }
-            }
-
-            // loop through matching callbacks for this key event
-            for (i = 0; i < callbacks.length; ++i) {
-
-                // fire for all sequence callbacks
-                // this is because if for example you have multiple sequences
-                // bound such as "g i" and "g t" they both need to fire the
-                // callback for matching g cause otherwise you can only ever
-                // match the first one
-                if (callbacks[i].seq) {
-
-                    // only fire callbacks for the maxLevel to prevent
-                    // subsequences from also firing
-                    //
-                    // for example 'a option b' should not cause 'option b' to fire
-                    // even though 'option b' is part of the other sequence
-                    //
-                    // any sequences that do not match here will be discarded
-                    // below by the _resetSequences call
-                    if (callbacks[i].level != maxLevel) {
-                        continue;
-                    }
-
-                    processedSequenceCallback = true;
-
-                    // keep a list of which sequences were matches for later
-                    doNotReset[callbacks[i].seq] = 1;
-                    _fireCallback(callbacks[i].callback, e, callbacks[i].combo, callbacks[i].seq);
-                    continue;
-                }
-
-                // if there were no sequence matches but we are still here
-                // that means this is a regular match so we should fire that
-                if (!processedSequenceCallback) {
-                    _fireCallback(callbacks[i].callback, e, callbacks[i].combo);
-                }
-            }
-
-            // if the key you pressed matches the type of sequence without
-            // being a modifier (ie "keyup" or "keypress") then we should
-            // reset all sequences that were not matched by this event
-            //
-            // this is so, for example, if you have the sequence "h a t" and you
-            // type "h e a r t" it does not match.  in this case the "e" will
-            // cause the sequence to reset
-            //
-            // modifier keys are ignored because you can have a sequence
-            // that contains modifiers such as "enter ctrl+space" and in most
-            // cases the modifier key will be pressed before the next key
-            //
-            // also if you have a sequence such as "ctrl+b a" then pressing the
-            // "b" key will trigger a "keypress" and a "keydown"
-            //
-            // the "keydown" is expected when there is a modifier, but the
-            // "keypress" ends up matching the _nextExpectedAction since it occurs
-            // after and that causes the sequence to reset
-            //
-            // we ignore keypresses in a sequence that directly follow a keydown
-            // for the same character
-            var ignoreThisKeypress = e.type == 'keypress' && _ignoreNextKeypress;
-            if (e.type == _nextExpectedAction && !_isModifier(character) && !ignoreThisKeypress) {
-                _resetSequences(doNotReset);
-            }
-
-            _ignoreNextKeypress = processedSequenceCallback && e.type == 'keydown';
-        };
-
-        /**
-         * handles a keydown event
-         *
-         * @param {Event} e
-         * @returns void
-         */
-        function _handleKeyEvent(e) {
-
-            // normalize e.which for key events
-            // @see http://stackoverflow.com/questions/4285627/javascript-keycode-vs-charcode-utter-confusion
-            if (typeof e.which !== 'number') {
-                e.which = e.keyCode;
-            }
-
-            var character = _characterFromEvent(e);
-
-            // no character found then stop
-            if (!character) {
-                return;
-            }
-
-            // need to use === for the character check because the character can be 0
-            if (e.type == 'keyup' && _ignoreNextKeyup === character) {
-                _ignoreNextKeyup = false;
-                return;
-            }
-
-            self.handleKey(character, _eventModifiers(e), e);
-        }
-
-        /**
-         * called to set a 1 second timeout on the specified sequence
-         *
-         * this is so after each key press in the sequence you have 1 second
-         * to press the next key before you have to start over
-         *
-         * @returns void
-         */
-        function _resetSequenceTimer() {
-            clearTimeout(_resetTimer);
-            _resetTimer = setTimeout(_resetSequences, 1000);
-        }
-
-        /**
-         * binds a key sequence to an event
-         *
-         * @param {string} combo - combo specified in bind call
-         * @param {Array} keys
-         * @param {Function} callback
-         * @param {string=} action
-         * @returns void
-         */
-        function _bindSequence(combo, keys, callback, action) {
-
-            // start off by adding a sequence level record for this combination
-            // and setting the level to 0
-            _sequenceLevels[combo] = 0;
-
-            /**
-             * callback to increase the sequence level for this sequence and reset
-             * all other sequences that were active
-             *
-             * @param {string} nextAction
-             * @returns {Function}
-             */
-            function _increaseSequence(nextAction) {
-                return function() {
-                    _nextExpectedAction = nextAction;
-                    ++_sequenceLevels[combo];
-                    _resetSequenceTimer();
-                };
-            }
-
-            /**
-             * wraps the specified callback inside of another function in order
-             * to reset all sequence counters as soon as this sequence is done
-             *
-             * @param {Event} e
-             * @returns void
-             */
-            function _callbackAndReset(e) {
-                _fireCallback(callback, e, combo);
-
-                // we should ignore the next key up if the action is key down
-                // or keypress.  this is so if you finish a sequence and
-                // release the key the final key will not trigger a keyup
-                if (action !== 'keyup') {
-                    _ignoreNextKeyup = _characterFromEvent(e);
-                }
-
-                // weird race condition if a sequence ends with the key
-                // another sequence begins with
-                setTimeout(_resetSequences, 10);
-            }
-
-            // loop through keys one at a time and bind the appropriate callback
-            // function.  for any key leading up to the final one it should
-            // increase the sequence. after the final, it should reset all sequences
-            //
-            // if an action is specified in the original bind call then that will
-            // be used throughout.  otherwise we will pass the action that the
-            // next key in the sequence should match.  this allows a sequence
-            // to mix and match keypress and keydown events depending on which
-            // ones are better suited to the key provided
-            for (var i = 0; i < keys.length; ++i) {
-                var isFinal = i + 1 === keys.length;
-                var wrappedCallback = isFinal ? _callbackAndReset : _increaseSequence(action || _getKeyInfo(keys[i + 1]).action);
-                _bindSingle(keys[i], wrappedCallback, action, combo, i);
-            }
-        }
-
-        /**
-         * binds a single keyboard combination
-         *
-         * @param {string} combination
-         * @param {Function} callback
-         * @param {string=} action
-         * @param {string=} sequenceName - name of sequence if part of sequence
-         * @param {number=} level - what part of the sequence the command is
-         * @returns void
-         */
-        function _bindSingle(combination, callback, action, sequenceName, level) {
-
-            // store a direct mapped reference for use with Mousetrap.trigger
-            self._directMap[combination + ':' + action] = callback;
-
-            // make sure multiple spaces in a row become a single space
-            combination = combination.replace(/\s+/g, ' ');
-
-            var sequence = combination.split(' ');
-            var info;
-
-            // if this pattern is a sequence of keys then run through this method
-            // to reprocess each pattern one key at a time
-            if (sequence.length > 1) {
-                _bindSequence(combination, sequence, callback, action);
-                return;
-            }
-
-            info = _getKeyInfo(combination, action);
-
-            // make sure to initialize array if this is the first time
-            // a callback is added for this key
-            self._callbacks[info.key] = self._callbacks[info.key] || [];
-
-            // remove an existing match if there is one
-            _getMatches(info.key, info.modifiers, {type: info.action}, sequenceName, combination, level);
-
-            // add this call back to the array
-            // if it is a sequence put it at the beginning
-            // if not put it at the end
-            //
-            // this is important because the way these are processed expects
-            // the sequence ones to come first
-            self._callbacks[info.key][sequenceName ? 'unshift' : 'push']({
-                callback: callback,
-                modifiers: info.modifiers,
-                action: info.action,
-                seq: sequenceName,
-                level: level,
-                combo: combination
-            });
-        }
-
-        /**
-         * binds multiple combinations to the same callback
-         *
-         * @param {Array} combinations
-         * @param {Function} callback
-         * @param {string|undefined} action
-         * @returns void
-         */
-        self._bindMultiple = function(combinations, callback, action) {
-            for (var i = 0; i < combinations.length; ++i) {
-                _bindSingle(combinations[i], callback, action);
-            }
-        };
-
-        // start!
-        _addEvent(targetElement, 'keypress', _handleKeyEvent);
-        _addEvent(targetElement, 'keydown', _handleKeyEvent);
-        _addEvent(targetElement, 'keyup', _handleKeyEvent);
-    }
-
-    /**
-     * binds an event to mousetrap
-     *
-     * can be a single key, a combination of keys separated with +,
-     * an array of keys, or a sequence of keys separated by spaces
-     *
-     * be sure to list the modifier keys first to make sure that the
-     * correct key ends up getting bound (the last key in the pattern)
-     *
-     * @param {string|Array} keys
-     * @param {Function} callback
-     * @param {string=} action - 'keypress', 'keydown', or 'keyup'
-     * @returns void
-     */
-    Mousetrap.prototype.bind = function(keys, callback, action) {
-        var self = this;
-        keys = keys instanceof Array ? keys : [keys];
-        self._bindMultiple.call(self, keys, callback, action);
-        return self;
-    };
-
-    /**
-     * unbinds an event to mousetrap
-     *
-     * the unbinding sets the callback function of the specified key combo
-     * to an empty function and deletes the corresponding key in the
-     * _directMap dict.
-     *
-     * TODO: actually remove this from the _callbacks dictionary instead
-     * of binding an empty function
-     *
-     * the keycombo+action has to be exactly the same as
-     * it was defined in the bind method
-     *
-     * @param {string|Array} keys
-     * @param {string} action
-     * @returns void
-     */
-    Mousetrap.prototype.unbind = function(keys, action) {
-        var self = this;
-        return self.bind.call(self, keys, function() {}, action);
-    };
-
-    /**
-     * triggers an event that has already been bound
-     *
-     * @param {string} keys
-     * @param {string=} action
-     * @returns void
-     */
-    Mousetrap.prototype.trigger = function(keys, action) {
-        var self = this;
-        if (self._directMap[keys + ':' + action]) {
-            self._directMap[keys + ':' + action]({}, keys);
-        }
-        return self;
-    };
-
-    /**
-     * resets the library back to its initial state.  this is useful
-     * if you want to clear out the current keyboard shortcuts and bind
-     * new ones - for example if you switch to another page
-     *
-     * @returns void
-     */
-    Mousetrap.prototype.reset = function() {
-        var self = this;
-        self._callbacks = {};
-        self._directMap = {};
-        return self;
-    };
-
-    /**
-     * should we stop this event before firing off callbacks
-     *
-     * @param {Event} e
-     * @param {Element} element
-     * @return {boolean}
-     */
-    Mousetrap.prototype.stopCallback = function(e, element) {
-        var self = this;
-
-        // if the element has the class "mousetrap" then no need to stop
-        if ((' ' + element.className + ' ').indexOf(' mousetrap ') > -1) {
-            return false;
-        }
-
-        if (_belongsTo(element, self.target)) {
-            return false;
-        }
-
-        // stop for input, select, and textarea
-        return element.tagName == 'INPUT' || element.tagName == 'SELECT' || element.tagName == 'TEXTAREA' || element.isContentEditable;
-    };
-
-    /**
-     * exposes _handleKey publicly so it can be overwritten by extensions
-     */
-    Mousetrap.prototype.handleKey = function() {
-        var self = this;
-        return self._handleKey.apply(self, arguments);
-    };
-
-    /**
-     * allow custom key mappings
-     */
-    Mousetrap.addKeycodes = function(object) {
-        for (var key in object) {
-            if (object.hasOwnProperty(key)) {
-                _MAP[key] = object[key];
-            }
-        }
-        _REVERSE_MAP = null;
-    };
-
-    /**
-     * Init the global mousetrap functions
-     *
-     * This method is needed to allow the global mousetrap functions to work
-     * now that mousetrap is a constructor function.
-     */
-    Mousetrap.init = function() {
-        var documentMousetrap = Mousetrap(document);
-        for (var method in documentMousetrap) {
-            if (method.charAt(0) !== '_') {
-                Mousetrap[method] = (function(method) {
-                    return function() {
-                        return documentMousetrap[method].apply(documentMousetrap, arguments);
-                    };
-                } (method));
-            }
-        }
-    };
-
-    Mousetrap.init();
-
-    // expose mousetrap to the global object
-    window.Mousetrap = Mousetrap;
-
-    // expose as a common js module
-    if ('object' !== 'undefined' && module.exports) {
-        module.exports = Mousetrap;
-    }
-
-    // expose mousetrap as an AMD module
-    if (typeof undefined === 'function' && undefined.amd) {
-        undefined(function() {
-            return Mousetrap;
-        });
-    }
-}) (typeof window !== 'undefined' ? window : null, typeof  window !== 'undefined' ? document : null);
-});
-
-var UrbitOperator =
-/*#__PURE__*/
-function () {
-  function UrbitOperator(warehouse) {
-    _classCallCheck(this, UrbitOperator);
-
-    this.seqn = 1;
-    this.warehouse = warehouse;
-    this.runPoll();
-    this.bindInbox();
-    this.bindShortcuts();
-  }
-
-  _createClass(UrbitOperator, [{
-    key: "bindShortcuts",
-    value: function bindShortcuts() {
-      mousetrap.bind(["command+k"], function () {
-        var menuActive = window.location.href.includes("menu");
-
-        if (menuActive) {
-          window.history.back();
-        } else {
-          window.router.transitionTo('/~~/pages/nutalk/menu');
-        }
-      });
-    }
-  }, {
-    key: "bindInbox",
-    value: function bindInbox() {
-      // inbox local + remote configs, remote presences
-      api.bind("/circle/inbox/config/group-r/0", "PUT"); // inbox messages
-
-      api.bind("/circle/inbox/grams/-50", "PUT"); // owner's circles
-
-      api.bind("/circles/~".concat(api.authTokens.ship), "PUT"); // parses client-specific info (ship nicknames, glyphs, etc)
-      // this.bind("/client", "PUT");
-      // public membership
-      // this.bind("/public", "PUT");
-      // bind to collections
-      // this.bind("/", "PUT", "collections");
-      // delete subscriptions when you're done with them, like...
-      // this.bind("/circle/inbox/grams/0", "DELETE");
-    }
-  }, {
-    key: "runPoll",
-    value: function runPoll() {
-      var _this = this;
-
-      console.log('fetching... ', this.seqn);
-      fetch("/~/of/".concat(api.authTokens.ixor, "?poll=").concat(this.seqn), {
-        credentials: "same-origin"
-      }).then(function (res) {
-        return res.json();
-      }).then(function (data) {
-        if (data.beat) {
-          console.log('beat');
-
-          _this.runPoll();
-        } else {
-          console.log("new server data: ", data);
-
-          if (data.data) {
-            var hallReports = _this.extractReports(data);
-          }
-
-          _this.seqn++;
-
-          _this.runPoll();
-        }
-      });
-    }
-  }, {
-    key: "extractReports",
-    value: function extractReports(serverData) {
-      var reports = [];
-      var reportTypes = Object.keys(Reports);
-      var json = serverData.data.json;
-      reportTypes.forEach(function (type) {
-        var reportData = lodash.get(json, type, null);
-
-        if (!lodash.isEmpty(reportData)) {
-          // TODO: Awful, ugly hack. Maybe fix this with API discussion.
-          if (Reports[type].include) {
-            reportData = lodash.get(json, Reports[type].include, null);
-          }
-
-          reports.push({
-            type: type,
-            data: reportData,
-            from: serverData.from
-          });
-        }
-      });
-      reports.forEach(function (rep) {
-        return console.log('new report: ', rep);
-      });
-      this.warehouse.storeReports(reports);
-    }
-  }]);
-
-  return UrbitOperator;
-}();
-
-function _isPlaceholder(a) {
-       return a != null && typeof a === 'object' && a['@@functional/placeholder'] === true;
-}
-var _isPlaceholder_1 = _isPlaceholder;
-
-
-
-var _isPlaceholder$1 = Object.freeze({
-	default: _isPlaceholder_1,
-	__moduleExports: _isPlaceholder_1
-});
-
-var _isPlaceholder$2 = ( _isPlaceholder$1 && _isPlaceholder_1 ) || _isPlaceholder$1;
-
-function _curry1(fn) {
-  return function f1(a) {
-    if (arguments.length === 0 || _isPlaceholder$2(a)) {
-      return f1;
-    } else {
-      return fn.apply(this, arguments);
-    }
-  };
-}
-var _curry1_1 = _curry1;
-
-
-
-var _curry1$1 = Object.freeze({
-	default: _curry1_1,
-	__moduleExports: _curry1_1
-});
-
-var _curry1$2 = ( _curry1$1 && _curry1_1 ) || _curry1$1;
-
-function _curry2(fn) {
-  return function f2(a, b) {
-    switch (arguments.length) {
-      case 0:
-        return f2;
-      case 1:
-        return _isPlaceholder$2(a) ? f2 : _curry1$2(function (_b) {
-          return fn(a, _b);
-        });
-      default:
-        return _isPlaceholder$2(a) && _isPlaceholder$2(b) ? f2 : _isPlaceholder$2(a) ? _curry1$2(function (_a) {
-          return fn(_a, b);
-        }) : _isPlaceholder$2(b) ? _curry1$2(function (_b) {
-          return fn(a, _b);
-        }) : fn(a, b);
-    }
-  };
-}
-var _curry2_1 = _curry2;
-
-
-
-var _curry2$1 = Object.freeze({
-	default: _curry2_1,
-	__moduleExports: _curry2_1
-});
-
-/**
- * Tests whether or not an object is an array.
- *
- * @private
- * @param {*} val The object to test.
- * @return {Boolean} `true` if `val` is an array, `false` otherwise.
- * @example
- *
- *      _isArray([]); //=> true
- *      _isArray(null); //=> false
- *      _isArray({}); //=> false
- */
-var _isArray$3 = Array.isArray || function _isArray(val) {
-  return val != null && val.length >= 0 && Object.prototype.toString.call(val) === '[object Array]';
-};
-
-
-
-var _isArray$5 = Object.freeze({
-	default: _isArray$3,
-	__moduleExports: _isArray$3
-});
-
-function _isTransformer(obj) {
-  return typeof obj['@@transducer/step'] === 'function';
-}
-var _isTransformer_1 = _isTransformer;
-
-
-
-var _isTransformer$1 = Object.freeze({
-	default: _isTransformer_1,
-	__moduleExports: _isTransformer_1
-});
-
-var _isArray$6 = ( _isArray$5 && _isArray$3 ) || _isArray$5;
-
-var _isTransformer$2 = ( _isTransformer$1 && _isTransformer_1 ) || _isTransformer$1;
-
-function _dispatchable(methodNames, xf, fn) {
-  return function () {
-    if (arguments.length === 0) {
-      return fn();
-    }
-    var args = Array.prototype.slice.call(arguments, 0);
-    var obj = args.pop();
-    if (!_isArray$6(obj)) {
-      var idx = 0;
-      while (idx < methodNames.length) {
-        if (typeof obj[methodNames[idx]] === 'function') {
-          return obj[methodNames[idx]].apply(obj, args);
-        }
-        idx += 1;
-      }
-      if (_isTransformer$2(obj)) {
-        var transducer = xf.apply(null, args);
-        return transducer(obj);
-      }
-    }
-    return fn.apply(this, arguments);
-  };
-}
-var _dispatchable_1 = _dispatchable;
-
-
-
-var _dispatchable$1 = Object.freeze({
-	default: _dispatchable_1,
-	__moduleExports: _dispatchable_1
-});
-
-function _reduced(x) {
-  return x && x['@@transducer/reduced'] ? x : {
-    '@@transducer/value': x,
-    '@@transducer/reduced': true
-  };
-}
-var _reduced_1 = _reduced;
-
-
-
-var _reduced$1 = Object.freeze({
-	default: _reduced_1,
-	__moduleExports: _reduced_1
-});
-
-var _xfBase = {
-  init: function () {
-    return this.xf['@@transducer/init']();
-  },
-  result: function (result) {
-    return this.xf['@@transducer/result'](result);
-  }
-};
-
-
-
-var _xfBase$2 = Object.freeze({
-	default: _xfBase,
-	__moduleExports: _xfBase
-});
-
-var _curry2$2 = ( _curry2$1 && _curry2_1 ) || _curry2$1;
-
-var _reduced$2 = ( _reduced$1 && _reduced_1 ) || _reduced$1;
-
-var _xfBase$3 = ( _xfBase$2 && _xfBase ) || _xfBase$2;
-
-var XFind = /*#__PURE__*/function () {
-
-  function XFind(f, xf) {
-    this.xf = xf;
-    this.f = f;
-    this.found = false;
-  }
-  XFind.prototype['@@transducer/init'] = _xfBase$3.init;
-  XFind.prototype['@@transducer/result'] = function (result) {
-    if (!this.found) {
-      result = this.xf['@@transducer/step'](result, void 0);
-    }
-    return this.xf['@@transducer/result'](result);
-  };
-  XFind.prototype['@@transducer/step'] = function (result, input) {
-    if (this.f(input)) {
-      this.found = true;
-      result = _reduced$2(this.xf['@@transducer/step'](result, input));
-    }
-    return result;
-  };
-
-  return XFind;
-}();
-
-var _xfind = /*#__PURE__*/_curry2$2(function _xfind(f, xf) {
-  return new XFind(f, xf);
-});
-var _xfind_1 = _xfind;
-
-
-
-var _xfind$1 = Object.freeze({
-	default: _xfind_1,
-	__moduleExports: _xfind_1
-});
-
-var _dispatchable$2 = ( _dispatchable$1 && _dispatchable_1 ) || _dispatchable$1;
-
-var _xfind$2 = ( _xfind$1 && _xfind_1 ) || _xfind$1;
-
-var find = /*#__PURE__*/_curry2$2( /*#__PURE__*/_dispatchable$2(['find'], _xfind$2, function find(fn, list) {
-  var idx = 0;
-  var len = list.length;
-  while (idx < len) {
-    if (fn(list[idx])) {
-      return list[idx];
-    }
-    idx += 1;
-  }
-}));
-var find_1 = find;
-
-
-
-var find$1 = Object.freeze({
-	default: find_1,
-	__moduleExports: find_1
-});
-
-function _complement(f) {
-  return function () {
-    return !f.apply(this, arguments);
-  };
-}
-var _complement_1 = _complement;
-
-
-
-var _complement$1 = Object.freeze({
-	default: _complement_1,
-	__moduleExports: _complement_1
-});
-
-function _filter(fn, list) {
-  var idx = 0;
-  var len = list.length;
-  var result = [];
-
-  while (idx < len) {
-    if (fn(list[idx])) {
-      result[result.length] = list[idx];
-    }
-    idx += 1;
-  }
-  return result;
-}
-var _filter_1 = _filter;
-
-
-
-var _filter$1 = Object.freeze({
-	default: _filter_1,
-	__moduleExports: _filter_1
-});
-
-function _isObject$3(x) {
-  return Object.prototype.toString.call(x) === '[object Object]';
-}
-var _isObject_1 = _isObject$3;
-
-
-
-var _isObject$4 = Object.freeze({
-	default: _isObject_1,
-	__moduleExports: _isObject_1
-});
-
-function _isString$1(x) {
-  return Object.prototype.toString.call(x) === '[object String]';
-}
-var _isString_1 = _isString$1;
-
-
-
-var _isString$2 = Object.freeze({
-	default: _isString_1,
-	__moduleExports: _isString_1
-});
-
-var _isString$3 = ( _isString$2 && _isString_1 ) || _isString$2;
-
-var _isArrayLike = /*#__PURE__*/_curry1$2(function isArrayLike(x) {
-  if (_isArray$6(x)) {
-    return true;
-  }
-  if (!x) {
-    return false;
-  }
-  if (typeof x !== 'object') {
-    return false;
-  }
-  if (_isString$3(x)) {
-    return false;
-  }
-  if (x.nodeType === 1) {
-    return !!x.length;
-  }
-  if (x.length === 0) {
-    return true;
-  }
-  if (x.length > 0) {
-    return x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
-  }
-  return false;
-});
-var _isArrayLike_1 = _isArrayLike;
-
-
-
-var _isArrayLike$1 = Object.freeze({
-	default: _isArrayLike_1,
-	__moduleExports: _isArrayLike_1
-});
-
-var XWrap = /*#__PURE__*/function () {
-  function XWrap(fn) {
-    this.f = fn;
-  }
-  XWrap.prototype['@@transducer/init'] = function () {
-    throw new Error('init not implemented on XWrap');
-  };
-  XWrap.prototype['@@transducer/result'] = function (acc) {
-    return acc;
-  };
-  XWrap.prototype['@@transducer/step'] = function (acc, x) {
-    return this.f(acc, x);
-  };
-
-  return XWrap;
-}();
-
-function _xwrap(fn) {
-  return new XWrap(fn);
-}
-var _xwrap_1 = _xwrap;
-
-
-
-var _xwrap$1 = Object.freeze({
-	default: _xwrap_1,
-	__moduleExports: _xwrap_1
-});
-
-function _arity(n, fn) {
-  /* eslint-disable no-unused-vars */
-  switch (n) {
-    case 0:
-      return function () {
-        return fn.apply(this, arguments);
-      };
-    case 1:
-      return function (a0) {
-        return fn.apply(this, arguments);
-      };
-    case 2:
-      return function (a0, a1) {
-        return fn.apply(this, arguments);
-      };
-    case 3:
-      return function (a0, a1, a2) {
-        return fn.apply(this, arguments);
-      };
-    case 4:
-      return function (a0, a1, a2, a3) {
-        return fn.apply(this, arguments);
-      };
-    case 5:
-      return function (a0, a1, a2, a3, a4) {
-        return fn.apply(this, arguments);
-      };
-    case 6:
-      return function (a0, a1, a2, a3, a4, a5) {
-        return fn.apply(this, arguments);
-      };
-    case 7:
-      return function (a0, a1, a2, a3, a4, a5, a6) {
-        return fn.apply(this, arguments);
-      };
-    case 8:
-      return function (a0, a1, a2, a3, a4, a5, a6, a7) {
-        return fn.apply(this, arguments);
-      };
-    case 9:
-      return function (a0, a1, a2, a3, a4, a5, a6, a7, a8) {
-        return fn.apply(this, arguments);
-      };
-    case 10:
-      return function (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
-        return fn.apply(this, arguments);
-      };
-    default:
-      throw new Error('First argument to _arity must be a non-negative integer no greater than ten');
-  }
-}
-var _arity_1 = _arity;
-
-
-
-var _arity$1 = Object.freeze({
-	default: _arity_1,
-	__moduleExports: _arity_1
-});
-
-var _arity$2 = ( _arity$1 && _arity_1 ) || _arity$1;
-
-var bind$1 = /*#__PURE__*/_curry2$2(function bind(fn, thisObj) {
-  return _arity$2(fn.length, function () {
-    return fn.apply(thisObj, arguments);
-  });
-});
-var bind_1 = bind$1;
-
-
-
-var bind$2 = Object.freeze({
-	default: bind_1,
-	__moduleExports: bind_1
-});
-
-var _isArrayLike$2 = ( _isArrayLike$1 && _isArrayLike_1 ) || _isArrayLike$1;
-
-var _xwrap$2 = ( _xwrap$1 && _xwrap_1 ) || _xwrap$1;
-
-var bind$3 = ( bind$2 && bind_1 ) || bind$2;
-
-function _arrayReduce$3(xf, acc, list) {
-  var idx = 0;
-  var len = list.length;
-  while (idx < len) {
-    acc = xf['@@transducer/step'](acc, list[idx]);
-    if (acc && acc['@@transducer/reduced']) {
-      acc = acc['@@transducer/value'];
-      break;
-    }
-    idx += 1;
-  }
-  return xf['@@transducer/result'](acc);
-}
-
-function _iterableReduce(xf, acc, iter) {
-  var step = iter.next();
-  while (!step.done) {
-    acc = xf['@@transducer/step'](acc, step.value);
-    if (acc && acc['@@transducer/reduced']) {
-      acc = acc['@@transducer/value'];
-      break;
-    }
-    step = iter.next();
-  }
-  return xf['@@transducer/result'](acc);
-}
-
-function _methodReduce(xf, acc, obj, methodName) {
-  return xf['@@transducer/result'](obj[methodName](bind$3(xf['@@transducer/step'], xf), acc));
-}
-
-var symIterator = typeof Symbol !== 'undefined' ? Symbol.iterator : '@@iterator';
-
-function _reduce(fn, acc, list) {
-  if (typeof fn === 'function') {
-    fn = _xwrap$2(fn);
-  }
-  if (_isArrayLike$2(list)) {
-    return _arrayReduce$3(fn, acc, list);
-  }
-  if (typeof list['fantasy-land/reduce'] === 'function') {
-    return _methodReduce(fn, acc, list, 'fantasy-land/reduce');
-  }
-  if (list[symIterator] != null) {
-    return _iterableReduce(fn, acc, list[symIterator]());
-  }
-  if (typeof list.next === 'function') {
-    return _iterableReduce(fn, acc, list);
-  }
-  if (typeof list.reduce === 'function') {
-    return _methodReduce(fn, acc, list, 'reduce');
-  }
-
-  throw new TypeError('reduce: list must be array or iterable');
-}
-var _reduce_1 = _reduce;
-
-
-
-var _reduce$1 = Object.freeze({
-	default: _reduce_1,
-	__moduleExports: _reduce_1
-});
-
-var XFilter = /*#__PURE__*/function () {
-
-  function XFilter(f, xf) {
-    this.xf = xf;
-    this.f = f;
-  }
-  XFilter.prototype['@@transducer/init'] = _xfBase$3.init;
-  XFilter.prototype['@@transducer/result'] = _xfBase$3.result;
-  XFilter.prototype['@@transducer/step'] = function (result, input) {
-    return this.f(input) ? this.xf['@@transducer/step'](result, input) : result;
-  };
-
-  return XFilter;
-}();
-
-var _xfilter = /*#__PURE__*/_curry2$2(function _xfilter(f, xf) {
-  return new XFilter(f, xf);
-});
-var _xfilter_1 = _xfilter;
-
-
-
-var _xfilter$1 = Object.freeze({
-	default: _xfilter_1,
-	__moduleExports: _xfilter_1
-});
-
-function _has$3(prop, obj) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
-}
-var _has_1 = _has$3;
-
-
-
-var _has$4 = Object.freeze({
-	default: _has_1,
-	__moduleExports: _has_1
-});
-
-var _has$5 = ( _has$4 && _has_1 ) || _has$4;
-
-var toString$3 = Object.prototype.toString;
-var _isArguments = function () {
-  return toString$3.call(arguments) === '[object Arguments]' ? function _isArguments(x) {
-    return toString$3.call(x) === '[object Arguments]';
-  } : function _isArguments(x) {
-    return _has$5('callee', x);
-  };
-};
-
-var _isArguments_1 = _isArguments;
-
-
-
-var _isArguments$1 = Object.freeze({
-	default: _isArguments_1,
-	__moduleExports: _isArguments_1
-});
-
-var _isArguments$2 = ( _isArguments$1 && _isArguments_1 ) || _isArguments$1;
-
-var hasEnumBug = ! /*#__PURE__*/{ toString: null }.propertyIsEnumerable('toString');
-var nonEnumerableProps = ['constructor', 'valueOf', 'isPrototypeOf', 'toString', 'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
-// Safari bug
-var hasArgsEnumBug = /*#__PURE__*/function () {
-  'use strict';
-
-  return arguments.propertyIsEnumerable('length');
-}();
-
-var contains = function contains(list, item) {
-  var idx = 0;
-  while (idx < list.length) {
-    if (list[idx] === item) {
-      return true;
-    }
-    idx += 1;
-  }
-  return false;
-};
-
-/**
- * Returns a list containing the names of all the enumerable own properties of
- * the supplied object.
- * Note that the order of the output array is not guaranteed to be consistent
- * across different JS platforms.
- *
- * @func
- * @memberOf R
- * @since v0.1.0
- * @category Object
- * @sig {k: v} -> [k]
- * @param {Object} obj The object to extract properties from
- * @return {Array} An array of the object's own properties.
- * @see R.keysIn, R.values
- * @example
- *
- *      R.keys({a: 1, b: 2, c: 3}); //=> ['a', 'b', 'c']
- */
-var _keys = typeof Object.keys === 'function' && !hasArgsEnumBug ? function keys(obj) {
-  return Object(obj) !== obj ? [] : Object.keys(obj);
-} : function keys(obj) {
-  if (Object(obj) !== obj) {
-    return [];
-  }
-  var prop, nIdx;
-  var ks = [];
-  var checkArgsLength = hasArgsEnumBug && _isArguments$2(obj);
-  for (prop in obj) {
-    if (_has$5(prop, obj) && (!checkArgsLength || prop !== 'length')) {
-      ks[ks.length] = prop;
-    }
-  }
-  if (hasEnumBug) {
-    nIdx = nonEnumerableProps.length - 1;
-    while (nIdx >= 0) {
-      prop = nonEnumerableProps[nIdx];
-      if (_has$5(prop, obj) && !contains(ks, prop)) {
-        ks[ks.length] = prop;
-      }
-      nIdx -= 1;
-    }
-  }
-  return ks;
-};
-var keys$2 = /*#__PURE__*/_curry1$2(_keys);
-var keys_1 = keys$2;
-
-
-
-var keys$3 = Object.freeze({
-	default: keys_1,
-	__moduleExports: keys_1
-});
-
-var _filter$2 = ( _filter$1 && _filter_1 ) || _filter$1;
-
-var _isObject$5 = ( _isObject$4 && _isObject_1 ) || _isObject$4;
-
-var _reduce$2 = ( _reduce$1 && _reduce_1 ) || _reduce$1;
-
-var _xfilter$2 = ( _xfilter$1 && _xfilter_1 ) || _xfilter$1;
-
-var keys$4 = ( keys$3 && keys_1 ) || keys$3;
-
-var filter = /*#__PURE__*/_curry2$2( /*#__PURE__*/_dispatchable$2(['filter'], _xfilter$2, function (pred, filterable) {
-  return _isObject$5(filterable) ? _reduce$2(function (acc, key) {
-    if (pred(filterable[key])) {
-      acc[key] = filterable[key];
-    }
-    return acc;
-  }, {}, keys$4(filterable)) :
-  // else
-  _filter$2(pred, filterable);
-}));
-var filter_1 = filter;
-
-
-
-var filter$1 = Object.freeze({
-	default: filter_1,
-	__moduleExports: filter_1
-});
-
-var _complement$2 = ( _complement$1 && _complement_1 ) || _complement$1;
-
-var filter$2 = ( filter$1 && filter_1 ) || filter$1;
-
-var reject = /*#__PURE__*/_curry2$2(function reject(pred, filterable) {
-  return filter$2(_complement$2(pred), filterable);
-});
-var reject_1 = reject;
-
-
-
-var reject$1 = Object.freeze({
-	default: reject_1,
-	__moduleExports: reject_1
-});
-
-/**
- * Private `concat` function to merge two array-like objects.
- *
- * @private
- * @param {Array|Arguments} [set1=[]] An array-like object.
- * @param {Array|Arguments} [set2=[]] An array-like object.
- * @return {Array} A new, merged array.
- * @example
- *
- *      _concat([4, 5, 6], [1, 2, 3]); //=> [4, 5, 6, 1, 2, 3]
- */
-function _concat(set1, set2) {
-  set1 = set1 || [];
-  set2 = set2 || [];
-  var idx;
-  var len1 = set1.length;
-  var len2 = set2.length;
-  var result = [];
-
-  idx = 0;
-  while (idx < len1) {
-    result[result.length] = set1[idx];
-    idx += 1;
-  }
-  idx = 0;
-  while (idx < len2) {
-    result[result.length] = set2[idx];
-    idx += 1;
-  }
-  return result;
-}
-var _concat_1 = _concat;
-
-
-
-var _concat$1 = Object.freeze({
-	default: _concat_1,
-	__moduleExports: _concat_1
-});
-
-function _curryN(length, received, fn) {
-  return function () {
-    var combined = [];
-    var argsIdx = 0;
-    var left = length;
-    var combinedIdx = 0;
-    while (combinedIdx < received.length || argsIdx < arguments.length) {
-      var result;
-      if (combinedIdx < received.length && (!_isPlaceholder$2(received[combinedIdx]) || argsIdx >= arguments.length)) {
-        result = received[combinedIdx];
-      } else {
-        result = arguments[argsIdx];
-        argsIdx += 1;
-      }
-      combined[combinedIdx] = result;
-      if (!_isPlaceholder$2(result)) {
-        left -= 1;
-      }
-      combinedIdx += 1;
-    }
-    return left <= 0 ? fn.apply(this, combined) : _arity$2(left, _curryN(length, combined, fn));
-  };
-}
-var _curryN_1 = _curryN;
-
-
-
-var _curryN$1 = Object.freeze({
-	default: _curryN_1,
-	__moduleExports: _curryN_1
-});
-
-var _curryN$2 = ( _curryN$1 && _curryN_1 ) || _curryN$1;
-
-var curryN = /*#__PURE__*/_curry2$2(function curryN(length, fn) {
-  if (length === 1) {
-    return _curry1$2(fn);
-  }
-  return _arity$2(length, _curryN$2(length, [], fn));
-});
-var curryN_1 = curryN;
-
-
-
-var curryN$1 = Object.freeze({
-	default: curryN_1,
-	__moduleExports: curryN_1
-});
-
-var _concat$2 = ( _concat$1 && _concat_1 ) || _concat$1;
-
-var curryN$2 = ( curryN$1 && curryN_1 ) || curryN$1;
-
-var addIndex = /*#__PURE__*/_curry1$2(function addIndex(fn) {
-  return curryN$2(fn.length, function () {
-    var idx = 0;
-    var origFn = arguments[0];
-    var list = arguments[arguments.length - 1];
-    var args = Array.prototype.slice.call(arguments, 0);
-    args[0] = function () {
-      var result = origFn.apply(this, _concat$2(arguments, [idx, list]));
-      idx += 1;
-      return result;
-    };
-    return fn.apply(this, args);
-  });
-});
-var addIndex_1 = addIndex;
-
-
-
-var addIndex$1 = Object.freeze({
-	default: addIndex_1,
-	__moduleExports: addIndex_1
-});
-
-function _map(fn, functor) {
-  var idx = 0;
-  var len = functor.length;
-  var result = Array(len);
-  while (idx < len) {
-    result[idx] = fn(functor[idx]);
-    idx += 1;
-  }
-  return result;
-}
-var _map_1 = _map;
-
-
-
-var _map$1 = Object.freeze({
-	default: _map_1,
-	__moduleExports: _map_1
-});
-
-var XMap = /*#__PURE__*/function () {
-
-  function XMap(f, xf) {
-    this.xf = xf;
-    this.f = f;
-  }
-  XMap.prototype['@@transducer/init'] = _xfBase$3.init;
-  XMap.prototype['@@transducer/result'] = _xfBase$3.result;
-  XMap.prototype['@@transducer/step'] = function (result, input) {
-    return this.xf['@@transducer/step'](result, this.f(input));
-  };
-
-  return XMap;
-}();
-
-var _xmap = /*#__PURE__*/_curry2$2(function _xmap(f, xf) {
-  return new XMap(f, xf);
-});
-var _xmap_1 = _xmap;
-
-
-
-var _xmap$1 = Object.freeze({
-	default: _xmap_1,
-	__moduleExports: _xmap_1
-});
-
-var _map$2 = ( _map$1 && _map_1 ) || _map$1;
-
-var _xmap$2 = ( _xmap$1 && _xmap_1 ) || _xmap$1;
-
-var map = /*#__PURE__*/_curry2$2( /*#__PURE__*/_dispatchable$2(['fantasy-land/map', 'map'], _xmap$2, function map(fn, functor) {
-  switch (Object.prototype.toString.call(functor)) {
-    case '[object Function]':
-      return curryN$2(functor.length, function () {
-        return fn.call(this, functor.apply(this, arguments));
-      });
-    case '[object Object]':
-      return _reduce$2(function (acc, key) {
-        acc[key] = fn(functor[key]);
-        return acc;
-      }, {}, keys$4(functor));
-    default:
-      return _map$2(fn, functor);
-  }
-}));
-var map_1 = map;
-
-
-
-var map$1 = Object.freeze({
-	default: map_1,
-	__moduleExports: map_1
-});
-
-var decode = {
-	"0": 65533,
-	"128": 8364,
-	"130": 8218,
-	"131": 402,
-	"132": 8222,
-	"133": 8230,
-	"134": 8224,
-	"135": 8225,
-	"136": 710,
-	"137": 8240,
-	"138": 352,
-	"139": 8249,
-	"140": 338,
-	"142": 381,
-	"145": 8216,
-	"146": 8217,
-	"147": 8220,
-	"148": 8221,
-	"149": 8226,
-	"150": 8211,
-	"151": 8212,
-	"152": 732,
-	"153": 8482,
-	"154": 353,
-	"155": 8250,
-	"156": 339,
-	"158": 382,
-	"159": 376
-};
-
-var decode$1 = Object.freeze({
-	default: decode
-});
-
-var decodeMap = ( decode$1 && decode ) || decode$1;
-
-var decode_codepoint = decodeCodePoint;
-
-// modified version of https://github.com/mathiasbynens/he/blob/master/src/he.js#L94-L119
-function decodeCodePoint(codePoint){
-
-	if((codePoint >= 0xD800 && codePoint <= 0xDFFF) || codePoint > 0x10FFFF){
-		return "\uFFFD";
-	}
-
-	if(codePoint in decodeMap){
-		codePoint = decodeMap[codePoint];
-	}
-
-	var output = "";
-
-	if(codePoint > 0xFFFF){
-		codePoint -= 0x10000;
-		output += String.fromCharCode(codePoint >>> 10 & 0x3FF | 0xD800);
-		codePoint = 0xDC00 | codePoint & 0x3FF;
-	}
-
-	output += String.fromCharCode(codePoint);
-	return output;
-}
-
-
-
-var decode_codepoint$2 = Object.freeze({
-	default: decode_codepoint,
-	__moduleExports: decode_codepoint
-});
-
-var Aacute = "Á";
-var aacute = "á";
-var Abreve = "Ă";
-var abreve = "ă";
-var ac$1 = "∾";
-var acd = "∿";
-var acE = "∾̳";
-var Acirc = "Â";
-var acirc = "â";
-var acute = "´";
-var Acy = "А";
-var acy = "а";
-var AElig = "Æ";
-var aelig = "æ";
-var af$1 = "⁡";
-var Afr = "𝔄";
-var afr = "𝔞";
-var Agrave = "À";
-var agrave = "à";
-var alefsym = "ℵ";
-var aleph = "ℵ";
-var Alpha = "Α";
-var alpha = "α";
-var Amacr = "Ā";
-var amacr = "ā";
-var amalg = "⨿";
-var amp = "&";
-var AMP = "&";
-var andand = "⩕";
-var And = "⩓";
-var and = "∧";
-var andd = "⩜";
-var andslope = "⩘";
-var andv = "⩚";
-var ang = "∠";
-var ange = "⦤";
-var angle = "∠";
-var angmsdaa = "⦨";
-var angmsdab = "⦩";
-var angmsdac = "⦪";
-var angmsdad = "⦫";
-var angmsdae = "⦬";
-var angmsdaf = "⦭";
-var angmsdag = "⦮";
-var angmsdah = "⦯";
-var angmsd = "∡";
-var angrt = "∟";
-var angrtvb = "⊾";
-var angrtvbd = "⦝";
-var angsph = "∢";
-var angst = "Å";
-var angzarr = "⍼";
-var Aogon = "Ą";
-var aogon = "ą";
-var Aopf = "𝔸";
-var aopf = "𝕒";
-var apacir = "⩯";
-var ap = "≈";
-var apE = "⩰";
-var ape = "≊";
-var apid = "≋";
-var apos = "'";
-var ApplyFunction = "⁡";
-var approx = "≈";
-var approxeq = "≊";
-var Aring = "Å";
-var aring = "å";
-var Ascr = "𝒜";
-var ascr = "𝒶";
-var Assign = "≔";
-var ast = "*";
-var asymp = "≈";
-var asympeq = "≍";
-var Atilde = "Ã";
-var atilde = "ã";
-var Auml = "Ä";
-var auml = "ä";
-var awconint = "∳";
-var awint = "⨑";
-var backcong = "≌";
-var backepsilon = "϶";
-var backprime = "‵";
-var backsim = "∽";
-var backsimeq = "⋍";
-var Backslash = "∖";
-var Barv = "⫧";
-var barvee = "⊽";
-var barwed = "⌅";
-var Barwed = "⌆";
-var barwedge = "⌅";
-var bbrk = "⎵";
-var bbrktbrk = "⎶";
-var bcong = "≌";
-var Bcy = "Б";
-var bcy = "б";
-var bdquo = "„";
-var becaus = "∵";
-var because = "∵";
-var Because = "∵";
-var bemptyv = "⦰";
-var bepsi = "϶";
-var bernou = "ℬ";
-var Bernoullis = "ℬ";
-var Beta = "Β";
-var beta = "β";
-var beth = "ℶ";
-var between = "≬";
-var Bfr = "𝔅";
-var bfr = "𝔟";
-var bigcap = "⋂";
-var bigcirc = "◯";
-var bigcup = "⋃";
-var bigodot = "⨀";
-var bigoplus = "⨁";
-var bigotimes = "⨂";
-var bigsqcup = "⨆";
-var bigstar = "★";
-var bigtriangledown = "▽";
-var bigtriangleup = "△";
-var biguplus = "⨄";
-var bigvee = "⋁";
-var bigwedge = "⋀";
-var bkarow = "⤍";
-var blacklozenge = "⧫";
-var blacksquare = "▪";
-var blacktriangle = "▴";
-var blacktriangledown = "▾";
-var blacktriangleleft = "◂";
-var blacktriangleright = "▸";
-var blank = "␣";
-var blk12 = "▒";
-var blk14 = "░";
-var blk34 = "▓";
-var block = "█";
-var bne = "=⃥";
-var bnequiv = "≡⃥";
-var bNot = "⫭";
-var bnot = "⌐";
-var Bopf = "𝔹";
-var bopf = "𝕓";
-var bot = "⊥";
-var bottom = "⊥";
-var bowtie = "⋈";
-var boxbox = "⧉";
-var boxdl = "┐";
-var boxdL = "╕";
-var boxDl = "╖";
-var boxDL = "╗";
-var boxdr = "┌";
-var boxdR = "╒";
-var boxDr = "╓";
-var boxDR = "╔";
-var boxh = "─";
-var boxH = "═";
-var boxhd = "┬";
-var boxHd = "╤";
-var boxhD = "╥";
-var boxHD = "╦";
-var boxhu = "┴";
-var boxHu = "╧";
-var boxhU = "╨";
-var boxHU = "╩";
-var boxminus = "⊟";
-var boxplus = "⊞";
-var boxtimes = "⊠";
-var boxul = "┘";
-var boxuL = "╛";
-var boxUl = "╜";
-var boxUL = "╝";
-var boxur = "└";
-var boxuR = "╘";
-var boxUr = "╙";
-var boxUR = "╚";
-var boxv = "│";
-var boxV = "║";
-var boxvh = "┼";
-var boxvH = "╪";
-var boxVh = "╫";
-var boxVH = "╬";
-var boxvl = "┤";
-var boxvL = "╡";
-var boxVl = "╢";
-var boxVL = "╣";
-var boxvr = "├";
-var boxvR = "╞";
-var boxVr = "╟";
-var boxVR = "╠";
-var bprime = "‵";
-var breve = "˘";
-var Breve = "˘";
-var brvbar = "¦";
-var bscr = "𝒷";
-var Bscr = "ℬ";
-var bsemi = "⁏";
-var bsim = "∽";
-var bsime = "⋍";
-var bsolb = "⧅";
-var bsol = "\\";
-var bsolhsub = "⟈";
-var bull = "•";
-var bullet = "•";
-var bump = "≎";
-var bumpE = "⪮";
-var bumpe = "≏";
-var Bumpeq = "≎";
-var bumpeq = "≏";
-var Cacute = "Ć";
-var cacute = "ć";
-var capand = "⩄";
-var capbrcup = "⩉";
-var capcap = "⩋";
-var cap = "∩";
-var Cap = "⋒";
-var capcup = "⩇";
-var capdot = "⩀";
-var CapitalDifferentialD = "ⅅ";
-var caps = "∩︀";
-var caret = "⁁";
-var caron = "ˇ";
-var Cayleys = "ℭ";
-var ccaps = "⩍";
-var Ccaron = "Č";
-var ccaron = "č";
-var Ccedil = "Ç";
-var ccedil = "ç";
-var Ccirc = "Ĉ";
-var ccirc = "ĉ";
-var Cconint = "∰";
-var ccups = "⩌";
-var ccupssm = "⩐";
-var Cdot = "Ċ";
-var cdot = "ċ";
-var cedil = "¸";
-var Cedilla = "¸";
-var cemptyv = "⦲";
-var cent = "¢";
-var centerdot = "·";
-var CenterDot = "·";
-var cfr = "𝔠";
-var Cfr = "ℭ";
-var CHcy = "Ч";
-var chcy = "ч";
-var check$1 = "✓";
-var checkmark = "✓";
-var Chi = "Χ";
-var chi = "χ";
-var circ = "ˆ";
-var circeq = "≗";
-var circlearrowleft = "↺";
-var circlearrowright = "↻";
-var circledast = "⊛";
-var circledcirc = "⊚";
-var circleddash = "⊝";
-var CircleDot = "⊙";
-var circledR = "®";
-var circledS = "Ⓢ";
-var CircleMinus = "⊖";
-var CirclePlus = "⊕";
-var CircleTimes = "⊗";
-var cir = "○";
-var cirE = "⧃";
-var cire = "≗";
-var cirfnint = "⨐";
-var cirmid = "⫯";
-var cirscir = "⧂";
-var ClockwiseContourIntegral = "∲";
-var CloseCurlyDoubleQuote = "”";
-var CloseCurlyQuote = "’";
-var clubs = "♣";
-var clubsuit = "♣";
-var colon = ":";
-var Colon = "∷";
-var Colone = "⩴";
-var colone = "≔";
-var coloneq = "≔";
-var comma = ",";
-var commat = "@";
-var comp = "∁";
-var compfn = "∘";
-var complement = "∁";
-var complexes = "ℂ";
-var cong = "≅";
-var congdot = "⩭";
-var Congruent = "≡";
-var conint = "∮";
-var Conint = "∯";
-var ContourIntegral = "∮";
-var copf = "𝕔";
-var Copf = "ℂ";
-var coprod = "∐";
-var Coproduct = "∐";
-var copy = "©";
-var COPY = "©";
-var copysr = "℗";
-var CounterClockwiseContourIntegral = "∳";
-var crarr = "↵";
-var cross = "✗";
-var Cross = "⨯";
-var Cscr = "𝒞";
-var cscr = "𝒸";
-var csub = "⫏";
-var csube = "⫑";
-var csup = "⫐";
-var csupe = "⫒";
-var ctdot = "⋯";
-var cudarrl = "⤸";
-var cudarrr = "⤵";
-var cuepr = "⋞";
-var cuesc = "⋟";
-var cularr = "↶";
-var cularrp = "⤽";
-var cupbrcap = "⩈";
-var cupcap = "⩆";
-var CupCap = "≍";
-var cup = "∪";
-var Cup = "⋓";
-var cupcup = "⩊";
-var cupdot = "⊍";
-var cupor = "⩅";
-var cups = "∪︀";
-var curarr = "↷";
-var curarrm = "⤼";
-var curlyeqprec = "⋞";
-var curlyeqsucc = "⋟";
-var curlyvee = "⋎";
-var curlywedge = "⋏";
-var curren = "¤";
-var curvearrowleft = "↶";
-var curvearrowright = "↷";
-var cuvee = "⋎";
-var cuwed = "⋏";
-var cwconint = "∲";
-var cwint = "∱";
-var cylcty = "⌭";
-var dagger = "†";
-var Dagger = "‡";
-var daleth = "ℸ";
-var darr = "↓";
-var Darr = "↡";
-var dArr = "⇓";
-var dash = "‐";
-var Dashv = "⫤";
-var dashv = "⊣";
-var dbkarow = "⤏";
-var dblac = "˝";
-var Dcaron = "Ď";
-var dcaron = "ď";
-var Dcy = "Д";
-var dcy = "д";
-var ddagger = "‡";
-var ddarr = "⇊";
-var DD = "ⅅ";
-var dd$1 = "ⅆ";
-var DDotrahd = "⤑";
-var ddotseq = "⩷";
-var deg = "°";
-var Del = "∇";
-var Delta = "Δ";
-var delta = "δ";
-var demptyv = "⦱";
-var dfisht = "⥿";
-var Dfr = "𝔇";
-var dfr = "𝔡";
-var dHar = "⥥";
-var dharl = "⇃";
-var dharr = "⇂";
-var DiacriticalAcute = "´";
-var DiacriticalDot = "˙";
-var DiacriticalDoubleAcute = "˝";
-var DiacriticalGrave = "`";
-var DiacriticalTilde = "˜";
-var diam = "⋄";
-var diamond = "⋄";
-var Diamond = "⋄";
-var diamondsuit = "♦";
-var diams = "♦";
-var die = "¨";
-var DifferentialD = "ⅆ";
-var digamma = "ϝ";
-var disin = "⋲";
-var div$1 = "÷";
-var divide$1 = "÷";
-var divideontimes = "⋇";
-var divonx = "⋇";
-var DJcy = "Ђ";
-var djcy = "ђ";
-var dlcorn = "⌞";
-var dlcrop = "⌍";
-var dollar = "$";
-var Dopf = "𝔻";
-var dopf = "𝕕";
-var Dot = "¨";
-var dot = "˙";
-var DotDot = "⃜";
-var doteq = "≐";
-var doteqdot = "≑";
-var DotEqual = "≐";
-var dotminus = "∸";
-var dotplus = "∔";
-var dotsquare = "⊡";
-var doublebarwedge = "⌆";
-var DoubleContourIntegral = "∯";
-var DoubleDot = "¨";
-var DoubleDownArrow = "⇓";
-var DoubleLeftArrow = "⇐";
-var DoubleLeftRightArrow = "⇔";
-var DoubleLeftTee = "⫤";
-var DoubleLongLeftArrow = "⟸";
-var DoubleLongLeftRightArrow = "⟺";
-var DoubleLongRightArrow = "⟹";
-var DoubleRightArrow = "⇒";
-var DoubleRightTee = "⊨";
-var DoubleUpArrow = "⇑";
-var DoubleUpDownArrow = "⇕";
-var DoubleVerticalBar = "∥";
-var DownArrowBar = "⤓";
-var downarrow = "↓";
-var DownArrow = "↓";
-var Downarrow = "⇓";
-var DownArrowUpArrow = "⇵";
-var DownBreve = "̑";
-var downdownarrows = "⇊";
-var downharpoonleft = "⇃";
-var downharpoonright = "⇂";
-var DownLeftRightVector = "⥐";
-var DownLeftTeeVector = "⥞";
-var DownLeftVectorBar = "⥖";
-var DownLeftVector = "↽";
-var DownRightTeeVector = "⥟";
-var DownRightVectorBar = "⥗";
-var DownRightVector = "⇁";
-var DownTeeArrow = "↧";
-var DownTee = "⊤";
-var drbkarow = "⤐";
-var drcorn = "⌟";
-var drcrop = "⌌";
-var Dscr = "𝒟";
-var dscr = "𝒹";
-var DScy = "Ѕ";
-var dscy = "ѕ";
-var dsol = "⧶";
-var Dstrok = "Đ";
-var dstrok = "đ";
-var dtdot = "⋱";
-var dtri = "▿";
-var dtrif = "▾";
-var duarr = "⇵";
-var duhar = "⥯";
-var dwangle = "⦦";
-var DZcy = "Џ";
-var dzcy = "џ";
-var dzigrarr = "⟿";
-var Eacute = "É";
-var eacute = "é";
-var easter = "⩮";
-var Ecaron = "Ě";
-var ecaron = "ě";
-var Ecirc = "Ê";
-var ecirc = "ê";
-var ecir = "≖";
-var ecolon = "≕";
-var Ecy = "Э";
-var ecy = "э";
-var eDDot = "⩷";
-var Edot = "Ė";
-var edot = "ė";
-var eDot = "≑";
-var ee$1 = "ⅇ";
-var efDot = "≒";
-var Efr = "𝔈";
-var efr = "𝔢";
-var eg$1 = "⪚";
-var Egrave = "È";
-var egrave = "è";
-var egs = "⪖";
-var egsdot = "⪘";
-var el = "⪙";
-var Element = "∈";
-var elinters = "⏧";
-var ell = "ℓ";
-var els = "⪕";
-var elsdot = "⪗";
-var Emacr = "Ē";
-var emacr = "ē";
-var empty$1 = "∅";
-var emptyset = "∅";
-var EmptySmallSquare = "◻";
-var emptyv = "∅";
-var EmptyVerySmallSquare = "▫";
-var emsp13 = " ";
-var emsp14 = " ";
-var emsp = " ";
-var ENG = "Ŋ";
-var eng = "ŋ";
-var ensp = " ";
-var Eogon = "Ę";
-var eogon = "ę";
-var Eopf = "𝔼";
-var eopf = "𝕖";
-var epar = "⋕";
-var eparsl = "⧣";
-var eplus = "⩱";
-var epsi = "ε";
-var Epsilon = "Ε";
-var epsilon = "ε";
-var epsiv = "ϵ";
-var eqcirc = "≖";
-var eqcolon = "≕";
-var eqsim = "≂";
-var eqslantgtr = "⪖";
-var eqslantless = "⪕";
-var Equal = "⩵";
-var equals = "=";
-var EqualTilde = "≂";
-var equest = "≟";
-var Equilibrium = "⇌";
-var equiv = "≡";
-var equivDD = "⩸";
-var eqvparsl = "⧥";
-var erarr = "⥱";
-var erDot = "≓";
-var escr = "ℯ";
-var Escr = "ℰ";
-var esdot = "≐";
-var Esim = "⩳";
-var esim = "≂";
-var Eta = "Η";
-var eta = "η";
-var ETH = "Ð";
-var eth = "ð";
-var Euml = "Ë";
-var euml = "ë";
-var euro = "€";
-var excl = "!";
-var exist = "∃";
-var Exists = "∃";
-var expectation = "ℰ";
-var exponentiale = "ⅇ";
-var ExponentialE = "ⅇ";
-var fallingdotseq = "≒";
-var Fcy = "Ф";
-var fcy = "ф";
-var female = "♀";
-var ffilig = "ﬃ";
-var fflig = "ﬀ";
-var ffllig = "ﬄ";
-var Ffr = "𝔉";
-var ffr = "𝔣";
-var filig = "ﬁ";
-var FilledSmallSquare = "◼";
-var FilledVerySmallSquare = "▪";
-var fjlig = "fj";
-var flat = "♭";
-var fllig = "ﬂ";
-var fltns = "▱";
-var fnof = "ƒ";
-var Fopf = "𝔽";
-var fopf = "𝕗";
-var forall = "∀";
-var ForAll = "∀";
-var fork = "⋔";
-var forkv = "⫙";
-var Fouriertrf = "ℱ";
-var fpartint = "⨍";
-var frac12 = "½";
-var frac13 = "⅓";
-var frac14 = "¼";
-var frac15 = "⅕";
-var frac16 = "⅙";
-var frac18 = "⅛";
-var frac23 = "⅔";
-var frac25 = "⅖";
-var frac34 = "¾";
-var frac35 = "⅗";
-var frac38 = "⅜";
-var frac45 = "⅘";
-var frac56 = "⅚";
-var frac58 = "⅝";
-var frac78 = "⅞";
-var frasl = "⁄";
-var frown = "⌢";
-var fscr = "𝒻";
-var Fscr = "ℱ";
-var gacute = "ǵ";
-var Gamma = "Γ";
-var gamma = "γ";
-var Gammad = "Ϝ";
-var gammad = "ϝ";
-var gap = "⪆";
-var Gbreve = "Ğ";
-var gbreve = "ğ";
-var Gcedil = "Ģ";
-var Gcirc = "Ĝ";
-var gcirc = "ĝ";
-var Gcy = "Г";
-var gcy = "г";
-var Gdot = "Ġ";
-var gdot = "ġ";
-var ge$1 = "≥";
-var gE = "≧";
-var gEl = "⪌";
-var gel = "⋛";
-var geq = "≥";
-var geqq = "≧";
-var geqslant = "⩾";
-var gescc = "⪩";
-var ges = "⩾";
-var gesdot = "⪀";
-var gesdoto = "⪂";
-var gesdotol = "⪄";
-var gesl = "⋛︀";
-var gesles = "⪔";
-var Gfr = "𝔊";
-var gfr = "𝔤";
-var gg = "≫";
-var Gg$1 = "⋙";
-var ggg = "⋙";
-var gimel = "ℷ";
-var GJcy = "Ѓ";
-var gjcy = "ѓ";
-var gla = "⪥";
-var gl = "≷";
-var glE = "⪒";
-var glj = "⪤";
-var gnap = "⪊";
-var gnapprox = "⪊";
-var gne = "⪈";
-var gnE = "≩";
-var gneq = "⪈";
-var gneqq = "≩";
-var gnsim = "⋧";
-var Gopf = "𝔾";
-var gopf = "𝕘";
-var grave = "`";
-var GreaterEqual = "≥";
-var GreaterEqualLess = "⋛";
-var GreaterFullEqual = "≧";
-var GreaterGreater = "⪢";
-var GreaterLess = "≷";
-var GreaterSlantEqual = "⩾";
-var GreaterTilde = "≳";
-var Gscr = "𝒢";
-var gscr = "ℊ";
-var gsim = "≳";
-var gsime = "⪎";
-var gsiml = "⪐";
-var gtcc = "⪧";
-var gtcir = "⩺";
-var gt = ">";
-var GT = ">";
-var Gt = "≫";
-var gtdot = "⋗";
-var gtlPar = "⦕";
-var gtquest = "⩼";
-var gtrapprox = "⪆";
-var gtrarr = "⥸";
-var gtrdot = "⋗";
-var gtreqless = "⋛";
-var gtreqqless = "⪌";
-var gtrless = "≷";
-var gtrsim = "≳";
-var gvertneqq = "≩︀";
-var gvnE = "≩︀";
-var Hacek = "ˇ";
-var hairsp = " ";
-var half = "½";
-var hamilt = "ℋ";
-var HARDcy = "Ъ";
-var hardcy = "ъ";
-var harrcir = "⥈";
-var harr = "↔";
-var hArr = "⇔";
-var harrw = "↭";
-var Hat = "^";
-var hbar = "ℏ";
-var Hcirc = "Ĥ";
-var hcirc = "ĥ";
-var hearts = "♥";
-var heartsuit = "♥";
-var hellip = "…";
-var hercon = "⊹";
-var hfr = "𝔥";
-var Hfr = "ℌ";
-var HilbertSpace = "ℋ";
-var hksearow = "⤥";
-var hkswarow = "⤦";
-var hoarr = "⇿";
-var homtht = "∻";
-var hookleftarrow = "↩";
-var hookrightarrow = "↪";
-var hopf = "𝕙";
-var Hopf = "ℍ";
-var horbar = "―";
-var HorizontalLine = "─";
-var hscr = "𝒽";
-var Hscr = "ℋ";
-var hslash = "ℏ";
-var Hstrok = "Ħ";
-var hstrok = "ħ";
-var HumpDownHump = "≎";
-var HumpEqual = "≏";
-var hybull = "⁃";
-var hyphen = "‐";
-var Iacute = "Í";
-var iacute = "í";
-var ic$1 = "⁣";
-var Icirc = "Î";
-var icirc = "î";
-var Icy = "И";
-var icy = "и";
-var Idot = "İ";
-var IEcy = "Е";
-var iecy = "е";
-var iexcl = "¡";
-var iff = "⇔";
-var ifr = "𝔦";
-var Ifr = "ℑ";
-var Igrave = "Ì";
-var igrave = "ì";
-var ii = "ⅈ";
-var iiiint = "⨌";
-var iiint = "∭";
-var iinfin = "⧜";
-var iiota = "℩";
-var IJlig = "Ĳ";
-var ijlig = "ĳ";
-var Imacr = "Ī";
-var imacr = "ī";
-var image = "ℑ";
-var ImaginaryI = "ⅈ";
-var imagline = "ℐ";
-var imagpart = "ℑ";
-var imath = "ı";
-var Im = "ℑ";
-var imof = "⊷";
-var imped = "Ƶ";
-var Implies = "⇒";
-var incare = "℅";
-var infin = "∞";
-var infintie = "⧝";
-var inodot = "ı";
-var intcal = "⊺";
-var int = "∫";
-var Int = "∬";
-var integers = "ℤ";
-var Integral = "∫";
-var intercal = "⊺";
-var Intersection = "⋂";
-var intlarhk = "⨗";
-var intprod = "⨼";
-var InvisibleComma = "⁣";
-var InvisibleTimes = "⁢";
-var IOcy = "Ё";
-var iocy = "ё";
-var Iogon = "Į";
-var iogon = "į";
-var Iopf = "𝕀";
-var iopf = "𝕚";
-var Iota = "Ι";
-var iota = "ι";
-var iprod = "⨼";
-var iquest = "¿";
-var iscr = "𝒾";
-var Iscr = "ℐ";
-var isin = "∈";
-var isindot = "⋵";
-var isinE = "⋹";
-var isins = "⋴";
-var isinsv = "⋳";
-var isinv = "∈";
-var it = "⁢";
-var Itilde = "Ĩ";
-var itilde = "ĩ";
-var Iukcy = "І";
-var iukcy = "і";
-var Iuml = "Ï";
-var iuml = "ï";
-var Jcirc = "Ĵ";
-var jcirc = "ĵ";
-var Jcy = "Й";
-var jcy = "й";
-var Jfr = "𝔍";
-var jfr = "𝔧";
-var jmath = "ȷ";
-var Jopf = "𝕁";
-var jopf = "𝕛";
-var Jscr = "𝒥";
-var jscr = "𝒿";
-var Jsercy = "Ј";
-var jsercy = "ј";
-var Jukcy = "Є";
-var jukcy = "є";
-var Kappa = "Κ";
-var kappa = "κ";
-var kappav = "ϰ";
-var Kcedil = "Ķ";
-var kcedil = "ķ";
-var Kcy = "К";
-var kcy = "к";
-var Kfr = "𝔎";
-var kfr = "𝔨";
-var kgreen = "ĸ";
-var KHcy = "Х";
-var khcy = "х";
-var KJcy = "Ќ";
-var kjcy = "ќ";
-var Kopf = "𝕂";
-var kopf = "𝕜";
-var Kscr = "𝒦";
-var kscr = "𝓀";
-var lAarr = "⇚";
-var Lacute = "Ĺ";
-var lacute = "ĺ";
-var laemptyv = "⦴";
-var lagran = "ℒ";
-var Lambda = "Λ";
-var lambda = "λ";
-var lang = "⟨";
-var Lang = "⟪";
-var langd = "⦑";
-var langle = "⟨";
-var lap = "⪅";
-var Laplacetrf = "ℒ";
-var laquo = "«";
-var larrb = "⇤";
-var larrbfs = "⤟";
-var larr = "←";
-var Larr = "↞";
-var lArr = "⇐";
-var larrfs = "⤝";
-var larrhk = "↩";
-var larrlp = "↫";
-var larrpl = "⤹";
-var larrsim = "⥳";
-var larrtl = "↢";
-var latail = "⤙";
-var lAtail = "⤛";
-var lat = "⪫";
-var late = "⪭";
-var lates = "⪭︀";
-var lbarr = "⤌";
-var lBarr = "⤎";
-var lbbrk = "❲";
-var lbrace = "{";
-var lbrack = "[";
-var lbrke = "⦋";
-var lbrksld = "⦏";
-var lbrkslu = "⦍";
-var Lcaron = "Ľ";
-var lcaron = "ľ";
-var Lcedil = "Ļ";
-var lcedil = "ļ";
-var lceil = "⌈";
-var lcub = "{";
-var Lcy = "Л";
-var lcy = "л";
-var ldca = "⤶";
-var ldquo = "“";
-var ldquor = "„";
-var ldrdhar = "⥧";
-var ldrushar = "⥋";
-var ldsh = "↲";
-var le$1 = "≤";
-var lE = "≦";
-var LeftAngleBracket = "⟨";
-var LeftArrowBar = "⇤";
-var leftarrow = "←";
-var LeftArrow = "←";
-var Leftarrow = "⇐";
-var LeftArrowRightArrow = "⇆";
-var leftarrowtail = "↢";
-var LeftCeiling = "⌈";
-var LeftDoubleBracket = "⟦";
-var LeftDownTeeVector = "⥡";
-var LeftDownVectorBar = "⥙";
-var LeftDownVector = "⇃";
-var LeftFloor = "⌊";
-var leftharpoondown = "↽";
-var leftharpoonup = "↼";
-var leftleftarrows = "⇇";
-var leftrightarrow = "↔";
-var LeftRightArrow = "↔";
-var Leftrightarrow = "⇔";
-var leftrightarrows = "⇆";
-var leftrightharpoons = "⇋";
-var leftrightsquigarrow = "↭";
-var LeftRightVector = "⥎";
-var LeftTeeArrow = "↤";
-var LeftTee = "⊣";
-var LeftTeeVector = "⥚";
-var leftthreetimes = "⋋";
-var LeftTriangleBar = "⧏";
-var LeftTriangle = "⊲";
-var LeftTriangleEqual = "⊴";
-var LeftUpDownVector = "⥑";
-var LeftUpTeeVector = "⥠";
-var LeftUpVectorBar = "⥘";
-var LeftUpVector = "↿";
-var LeftVectorBar = "⥒";
-var LeftVector = "↼";
-var lEg = "⪋";
-var leg = "⋚";
-var leq = "≤";
-var leqq = "≦";
-var leqslant = "⩽";
-var lescc = "⪨";
-var les = "⩽";
-var lesdot = "⩿";
-var lesdoto = "⪁";
-var lesdotor = "⪃";
-var lesg = "⋚︀";
-var lesges = "⪓";
-var lessapprox = "⪅";
-var lessdot = "⋖";
-var lesseqgtr = "⋚";
-var lesseqqgtr = "⪋";
-var LessEqualGreater = "⋚";
-var LessFullEqual = "≦";
-var LessGreater = "≶";
-var lessgtr = "≶";
-var LessLess = "⪡";
-var lesssim = "≲";
-var LessSlantEqual = "⩽";
-var LessTilde = "≲";
-var lfisht = "⥼";
-var lfloor = "⌊";
-var Lfr = "𝔏";
-var lfr = "𝔩";
-var lg = "≶";
-var lgE = "⪑";
-var lHar = "⥢";
-var lhard = "↽";
-var lharu = "↼";
-var lharul = "⥪";
-var lhblk = "▄";
-var LJcy = "Љ";
-var ljcy = "љ";
-var llarr = "⇇";
-var ll = "≪";
-var Ll = "⋘";
-var llcorner = "⌞";
-var Lleftarrow = "⇚";
-var llhard = "⥫";
-var lltri = "◺";
-var Lmidot = "Ŀ";
-var lmidot = "ŀ";
-var lmoustache = "⎰";
-var lmoust = "⎰";
-var lnap = "⪉";
-var lnapprox = "⪉";
-var lne = "⪇";
-var lnE = "≨";
-var lneq = "⪇";
-var lneqq = "≨";
-var lnsim = "⋦";
-var loang = "⟬";
-var loarr = "⇽";
-var lobrk = "⟦";
-var longleftarrow = "⟵";
-var LongLeftArrow = "⟵";
-var Longleftarrow = "⟸";
-var longleftrightarrow = "⟷";
-var LongLeftRightArrow = "⟷";
-var Longleftrightarrow = "⟺";
-var longmapsto = "⟼";
-var longrightarrow = "⟶";
-var LongRightArrow = "⟶";
-var Longrightarrow = "⟹";
-var looparrowleft = "↫";
-var looparrowright = "↬";
-var lopar = "⦅";
-var Lopf = "𝕃";
-var lopf = "𝕝";
-var loplus = "⨭";
-var lotimes = "⨴";
-var lowast = "∗";
-var lowbar = "_";
-var LowerLeftArrow = "↙";
-var LowerRightArrow = "↘";
-var loz = "◊";
-var lozenge = "◊";
-var lozf = "⧫";
-var lpar = "(";
-var lparlt = "⦓";
-var lrarr = "⇆";
-var lrcorner = "⌟";
-var lrhar = "⇋";
-var lrhard = "⥭";
-var lrm = "‎";
-var lrtri = "⊿";
-var lsaquo = "‹";
-var lscr = "𝓁";
-var Lscr = "ℒ";
-var lsh = "↰";
-var Lsh = "↰";
-var lsim = "≲";
-var lsime = "⪍";
-var lsimg = "⪏";
-var lsqb = "[";
-var lsquo = "‘";
-var lsquor = "‚";
-var Lstrok = "Ł";
-var lstrok = "ł";
-var ltcc = "⪦";
-var ltcir = "⩹";
-var lt = "<";
-var LT = "<";
-var Lt = "≪";
-var ltdot = "⋖";
-var lthree = "⋋";
-var ltimes = "⋉";
-var ltlarr = "⥶";
-var ltquest = "⩻";
-var ltri = "◃";
-var ltrie = "⊴";
-var ltrif = "◂";
-var ltrPar = "⦖";
-var lurdshar = "⥊";
-var luruhar = "⥦";
-var lvertneqq = "≨︀";
-var lvnE = "≨︀";
-var macr = "¯";
-var male = "♂";
-var malt = "✠";
-var maltese = "✠";
-var map$2 = "↦";
-var mapsto = "↦";
-var mapstodown = "↧";
-var mapstoleft = "↤";
-var mapstoup = "↥";
-var marker = "▮";
-var mcomma = "⨩";
-var Mcy = "М";
-var mcy = "м";
-var mdash = "—";
-var mDDot = "∺";
-var measuredangle = "∡";
-var MediumSpace = " ";
-var Mellintrf = "ℳ";
-var Mfr = "𝔐";
-var mfr = "𝔪";
-var mho = "℧";
-var micro = "µ";
-var midast = "*";
-var midcir = "⫰";
-var mid = "∣";
-var middot = "·";
-var minusb = "⊟";
-var minus = "−";
-var minusd = "∸";
-var minusdu = "⨪";
-var MinusPlus = "∓";
-var mlcp = "⫛";
-var mldr = "…";
-var mnplus = "∓";
-var models = "⊧";
-var Mopf = "𝕄";
-var mopf = "𝕞";
-var mp = "∓";
-var mscr = "𝓂";
-var Mscr = "ℳ";
-var mstpos = "∾";
-var Mu = "Μ";
-var mu = "μ";
-var multimap = "⊸";
-var mumap = "⊸";
-var nabla = "∇";
-var Nacute = "Ń";
-var nacute = "ń";
-var nang = "∠⃒";
-var nap = "≉";
-var napE = "⩰̸";
-var napid = "≋̸";
-var napos = "ŉ";
-var napprox = "≉";
-var natural = "♮";
-var naturals = "ℕ";
-var natur = "♮";
-var nbsp = " ";
-var nbump = "≎̸";
-var nbumpe = "≏̸";
-var ncap = "⩃";
-var Ncaron = "Ň";
-var ncaron = "ň";
-var Ncedil = "Ņ";
-var ncedil = "ņ";
-var ncong = "≇";
-var ncongdot = "⩭̸";
-var ncup = "⩂";
-var Ncy = "Н";
-var ncy = "н";
-var ndash = "–";
-var nearhk = "⤤";
-var nearr = "↗";
-var neArr = "⇗";
-var nearrow = "↗";
-var ne$1 = "≠";
-var nedot = "≐̸";
-var NegativeMediumSpace = "​";
-var NegativeThickSpace = "​";
-var NegativeThinSpace = "​";
-var NegativeVeryThinSpace = "​";
-var nequiv = "≢";
-var nesear = "⤨";
-var nesim = "≂̸";
-var NestedGreaterGreater = "≫";
-var NestedLessLess = "≪";
-var NewLine = "\n";
-var nexist = "∄";
-var nexists = "∄";
-var Nfr = "𝔑";
-var nfr = "𝔫";
-var ngE = "≧̸";
-var nge = "≱";
-var ngeq = "≱";
-var ngeqq = "≧̸";
-var ngeqslant = "⩾̸";
-var nges = "⩾̸";
-var nGg = "⋙̸";
-var ngsim = "≵";
-var nGt = "≫⃒";
-var ngt = "≯";
-var ngtr = "≯";
-var nGtv = "≫̸";
-var nharr = "↮";
-var nhArr = "⇎";
-var nhpar = "⫲";
-var ni = "∋";
-var nis = "⋼";
-var nisd = "⋺";
-var niv = "∋";
-var NJcy = "Њ";
-var njcy = "њ";
-var nlarr = "↚";
-var nlArr = "⇍";
-var nldr = "‥";
-var nlE = "≦̸";
-var nle = "≰";
-var nleftarrow = "↚";
-var nLeftarrow = "⇍";
-var nleftrightarrow = "↮";
-var nLeftrightarrow = "⇎";
-var nleq = "≰";
-var nleqq = "≦̸";
-var nleqslant = "⩽̸";
-var nles = "⩽̸";
-var nless = "≮";
-var nLl = "⋘̸";
-var nlsim = "≴";
-var nLt = "≪⃒";
-var nlt = "≮";
-var nltri = "⋪";
-var nltrie = "⋬";
-var nLtv = "≪̸";
-var nmid = "∤";
-var NoBreak = "⁠";
-var NonBreakingSpace = " ";
-var nopf = "𝕟";
-var Nopf = "ℕ";
-var Not = "⫬";
-var not = "¬";
-var NotCongruent = "≢";
-var NotCupCap = "≭";
-var NotDoubleVerticalBar = "∦";
-var NotElement = "∉";
-var NotEqual = "≠";
-var NotEqualTilde = "≂̸";
-var NotExists = "∄";
-var NotGreater = "≯";
-var NotGreaterEqual = "≱";
-var NotGreaterFullEqual = "≧̸";
-var NotGreaterGreater = "≫̸";
-var NotGreaterLess = "≹";
-var NotGreaterSlantEqual = "⩾̸";
-var NotGreaterTilde = "≵";
-var NotHumpDownHump = "≎̸";
-var NotHumpEqual = "≏̸";
-var notin = "∉";
-var notindot = "⋵̸";
-var notinE = "⋹̸";
-var notinva = "∉";
-var notinvb = "⋷";
-var notinvc = "⋶";
-var NotLeftTriangleBar = "⧏̸";
-var NotLeftTriangle = "⋪";
-var NotLeftTriangleEqual = "⋬";
-var NotLess = "≮";
-var NotLessEqual = "≰";
-var NotLessGreater = "≸";
-var NotLessLess = "≪̸";
-var NotLessSlantEqual = "⩽̸";
-var NotLessTilde = "≴";
-var NotNestedGreaterGreater = "⪢̸";
-var NotNestedLessLess = "⪡̸";
-var notni = "∌";
-var notniva = "∌";
-var notnivb = "⋾";
-var notnivc = "⋽";
-var NotPrecedes = "⊀";
-var NotPrecedesEqual = "⪯̸";
-var NotPrecedesSlantEqual = "⋠";
-var NotReverseElement = "∌";
-var NotRightTriangleBar = "⧐̸";
-var NotRightTriangle = "⋫";
-var NotRightTriangleEqual = "⋭";
-var NotSquareSubset = "⊏̸";
-var NotSquareSubsetEqual = "⋢";
-var NotSquareSuperset = "⊐̸";
-var NotSquareSupersetEqual = "⋣";
-var NotSubset = "⊂⃒";
-var NotSubsetEqual = "⊈";
-var NotSucceeds = "⊁";
-var NotSucceedsEqual = "⪰̸";
-var NotSucceedsSlantEqual = "⋡";
-var NotSucceedsTilde = "≿̸";
-var NotSuperset = "⊃⃒";
-var NotSupersetEqual = "⊉";
-var NotTilde = "≁";
-var NotTildeEqual = "≄";
-var NotTildeFullEqual = "≇";
-var NotTildeTilde = "≉";
-var NotVerticalBar = "∤";
-var nparallel = "∦";
-var npar = "∦";
-var nparsl = "⫽⃥";
-var npart = "∂̸";
-var npolint = "⨔";
-var npr = "⊀";
-var nprcue = "⋠";
-var nprec = "⊀";
-var npreceq = "⪯̸";
-var npre = "⪯̸";
-var nrarrc = "⤳̸";
-var nrarr = "↛";
-var nrArr = "⇏";
-var nrarrw = "↝̸";
-var nrightarrow = "↛";
-var nRightarrow = "⇏";
-var nrtri = "⋫";
-var nrtrie = "⋭";
-var nsc = "⊁";
-var nsccue = "⋡";
-var nsce = "⪰̸";
-var Nscr = "𝒩";
-var nscr = "𝓃";
-var nshortmid = "∤";
-var nshortparallel = "∦";
-var nsim = "≁";
-var nsime = "≄";
-var nsimeq = "≄";
-var nsmid = "∤";
-var nspar = "∦";
-var nsqsube = "⋢";
-var nsqsupe = "⋣";
-var nsub = "⊄";
-var nsubE = "⫅̸";
-var nsube = "⊈";
-var nsubset = "⊂⃒";
-var nsubseteq = "⊈";
-var nsubseteqq = "⫅̸";
-var nsucc = "⊁";
-var nsucceq = "⪰̸";
-var nsup = "⊅";
-var nsupE = "⫆̸";
-var nsupe = "⊉";
-var nsupset = "⊃⃒";
-var nsupseteq = "⊉";
-var nsupseteqq = "⫆̸";
-var ntgl = "≹";
-var Ntilde = "Ñ";
-var ntilde = "ñ";
-var ntlg = "≸";
-var ntriangleleft = "⋪";
-var ntrianglelefteq = "⋬";
-var ntriangleright = "⋫";
-var ntrianglerighteq = "⋭";
-var Nu = "Ν";
-var nu = "ν";
-var num = "#";
-var numero = "№";
-var numsp = " ";
-var nvap = "≍⃒";
-var nvdash = "⊬";
-var nvDash = "⊭";
-var nVdash = "⊮";
-var nVDash = "⊯";
-var nvge = "≥⃒";
-var nvgt = ">⃒";
-var nvHarr = "⤄";
-var nvinfin = "⧞";
-var nvlArr = "⤂";
-var nvle = "≤⃒";
-var nvlt = "<⃒";
-var nvltrie = "⊴⃒";
-var nvrArr = "⤃";
-var nvrtrie = "⊵⃒";
-var nvsim = "∼⃒";
-var nwarhk = "⤣";
-var nwarr = "↖";
-var nwArr = "⇖";
-var nwarrow = "↖";
-var nwnear = "⤧";
-var Oacute = "Ó";
-var oacute = "ó";
-var oast = "⊛";
-var Ocirc = "Ô";
-var ocirc = "ô";
-var ocir = "⊚";
-var Ocy = "О";
-var ocy = "о";
-var odash = "⊝";
-var Odblac = "Ő";
-var odblac = "ő";
-var odiv = "⨸";
-var odot = "⊙";
-var odsold = "⦼";
-var OElig = "Œ";
-var oelig = "œ";
-var ofcir = "⦿";
-var Ofr = "𝔒";
-var ofr = "𝔬";
-var ogon = "˛";
-var Ograve = "Ò";
-var ograve = "ò";
-var ogt = "⧁";
-var ohbar = "⦵";
-var ohm = "Ω";
-var oint = "∮";
-var olarr = "↺";
-var olcir = "⦾";
-var olcross = "⦻";
-var oline = "‾";
-var olt = "⧀";
-var Omacr = "Ō";
-var omacr = "ō";
-var Omega = "Ω";
-var omega = "ω";
-var Omicron = "Ο";
-var omicron = "ο";
-var omid = "⦶";
-var ominus = "⊖";
-var Oopf = "𝕆";
-var oopf = "𝕠";
-var opar = "⦷";
-var OpenCurlyDoubleQuote = "“";
-var OpenCurlyQuote = "‘";
-var operp = "⦹";
-var oplus = "⊕";
-var orarr = "↻";
-var Or = "⩔";
-var or = "∨";
-var ord = "⩝";
-var order = "ℴ";
-var orderof = "ℴ";
-var ordf = "ª";
-var ordm = "º";
-var origof = "⊶";
-var oror = "⩖";
-var orslope = "⩗";
-var orv = "⩛";
-var oS = "Ⓢ";
-var Oscr = "𝒪";
-var oscr = "ℴ";
-var Oslash = "Ø";
-var oslash = "ø";
-var osol = "⊘";
-var Otilde = "Õ";
-var otilde = "õ";
-var otimesas = "⨶";
-var Otimes = "⨷";
-var otimes = "⊗";
-var Ouml = "Ö";
-var ouml = "ö";
-var ovbar = "⌽";
-var OverBar = "‾";
-var OverBrace = "⏞";
-var OverBracket = "⎴";
-var OverParenthesis = "⏜";
-var para = "¶";
-var parallel = "∥";
-var par = "∥";
-var parsim = "⫳";
-var parsl = "⫽";
-var part = "∂";
-var PartialD = "∂";
-var Pcy = "П";
-var pcy = "п";
-var percnt = "%";
-var period = ".";
-var permil = "‰";
-var perp = "⊥";
-var pertenk = "‱";
-var Pfr = "𝔓";
-var pfr = "𝔭";
-var Phi = "Φ";
-var phi = "φ";
-var phiv = "ϕ";
-var phmmat = "ℳ";
-var phone = "☎";
-var Pi = "Π";
-var pi = "π";
-var pitchfork = "⋔";
-var piv = "ϖ";
-var planck = "ℏ";
-var planckh = "ℎ";
-var plankv = "ℏ";
-var plusacir = "⨣";
-var plusb = "⊞";
-var pluscir = "⨢";
-var plus = "+";
-var plusdo = "∔";
-var plusdu = "⨥";
-var pluse = "⩲";
-var PlusMinus = "±";
-var plusmn = "±";
-var plussim = "⨦";
-var plustwo = "⨧";
-var pm = "±";
-var Poincareplane = "ℌ";
-var pointint = "⨕";
-var popf = "𝕡";
-var Popf = "ℙ";
-var pound = "£";
-var prap = "⪷";
-var Pr = "⪻";
-var pr = "≺";
-var prcue = "≼";
-var precapprox = "⪷";
-var prec = "≺";
-var preccurlyeq = "≼";
-var Precedes = "≺";
-var PrecedesEqual = "⪯";
-var PrecedesSlantEqual = "≼";
-var PrecedesTilde = "≾";
-var preceq = "⪯";
-var precnapprox = "⪹";
-var precneqq = "⪵";
-var precnsim = "⋨";
-var pre = "⪯";
-var prE = "⪳";
-var precsim = "≾";
-var prime = "′";
-var Prime = "″";
-var primes = "ℙ";
-var prnap = "⪹";
-var prnE = "⪵";
-var prnsim = "⋨";
-var prod = "∏";
-var Product = "∏";
-var profalar = "⌮";
-var profline = "⌒";
-var profsurf = "⌓";
-var prop = "∝";
-var Proportional = "∝";
-var Proportion = "∷";
-var propto = "∝";
-var prsim = "≾";
-var prurel = "⊰";
-var Pscr = "𝒫";
-var pscr = "𝓅";
-var Psi = "Ψ";
-var psi = "ψ";
-var puncsp = " ";
-var Qfr = "𝔔";
-var qfr = "𝔮";
-var qint = "⨌";
-var qopf = "𝕢";
-var Qopf = "ℚ";
-var qprime = "⁗";
-var Qscr = "𝒬";
-var qscr = "𝓆";
-var quaternions = "ℍ";
-var quatint = "⨖";
-var quest = "?";
-var questeq = "≟";
-var quot$1 = "\"";
-var QUOT = "\"";
-var rAarr = "⇛";
-var race = "∽̱";
-var Racute = "Ŕ";
-var racute = "ŕ";
-var radic = "√";
-var raemptyv = "⦳";
-var rang = "⟩";
-var Rang = "⟫";
-var rangd = "⦒";
-var range = "⦥";
-var rangle = "⟩";
-var raquo = "»";
-var rarrap = "⥵";
-var rarrb = "⇥";
-var rarrbfs = "⤠";
-var rarrc = "⤳";
-var rarr = "→";
-var Rarr = "↠";
-var rArr = "⇒";
-var rarrfs = "⤞";
-var rarrhk = "↪";
-var rarrlp = "↬";
-var rarrpl = "⥅";
-var rarrsim = "⥴";
-var Rarrtl = "⤖";
-var rarrtl = "↣";
-var rarrw = "↝";
-var ratail = "⤚";
-var rAtail = "⤜";
-var ratio = "∶";
-var rationals = "ℚ";
-var rbarr = "⤍";
-var rBarr = "⤏";
-var RBarr = "⤐";
-var rbbrk = "❳";
-var rbrace = "}";
-var rbrack = "]";
-var rbrke = "⦌";
-var rbrksld = "⦎";
-var rbrkslu = "⦐";
-var Rcaron = "Ř";
-var rcaron = "ř";
-var Rcedil = "Ŗ";
-var rcedil = "ŗ";
-var rceil = "⌉";
-var rcub = "}";
-var Rcy = "Р";
-var rcy = "р";
-var rdca = "⤷";
-var rdldhar = "⥩";
-var rdquo = "”";
-var rdquor = "”";
-var rdsh = "↳";
-var real = "ℜ";
-var realine = "ℛ";
-var realpart = "ℜ";
-var reals = "ℝ";
-var Re$1 = "ℜ";
-var rect = "▭";
-var reg = "®";
-var REG = "®";
-var ReverseElement = "∋";
-var ReverseEquilibrium = "⇋";
-var ReverseUpEquilibrium = "⥯";
-var rfisht = "⥽";
-var rfloor = "⌋";
-var rfr = "𝔯";
-var Rfr = "ℜ";
-var rHar = "⥤";
-var rhard = "⇁";
-var rharu = "⇀";
-var rharul = "⥬";
-var Rho = "Ρ";
-var rho = "ρ";
-var rhov = "ϱ";
-var RightAngleBracket = "⟩";
-var RightArrowBar = "⇥";
-var rightarrow = "→";
-var RightArrow = "→";
-var Rightarrow = "⇒";
-var RightArrowLeftArrow = "⇄";
-var rightarrowtail = "↣";
-var RightCeiling = "⌉";
-var RightDoubleBracket = "⟧";
-var RightDownTeeVector = "⥝";
-var RightDownVectorBar = "⥕";
-var RightDownVector = "⇂";
-var RightFloor = "⌋";
-var rightharpoondown = "⇁";
-var rightharpoonup = "⇀";
-var rightleftarrows = "⇄";
-var rightleftharpoons = "⇌";
-var rightrightarrows = "⇉";
-var rightsquigarrow = "↝";
-var RightTeeArrow = "↦";
-var RightTee = "⊢";
-var RightTeeVector = "⥛";
-var rightthreetimes = "⋌";
-var RightTriangleBar = "⧐";
-var RightTriangle = "⊳";
-var RightTriangleEqual = "⊵";
-var RightUpDownVector = "⥏";
-var RightUpTeeVector = "⥜";
-var RightUpVectorBar = "⥔";
-var RightUpVector = "↾";
-var RightVectorBar = "⥓";
-var RightVector = "⇀";
-var ring = "˚";
-var risingdotseq = "≓";
-var rlarr = "⇄";
-var rlhar = "⇌";
-var rlm = "‏";
-var rmoustache = "⎱";
-var rmoust = "⎱";
-var rnmid = "⫮";
-var roang = "⟭";
-var roarr = "⇾";
-var robrk = "⟧";
-var ropar = "⦆";
-var ropf = "𝕣";
-var Ropf = "ℝ";
-var roplus = "⨮";
-var rotimes = "⨵";
-var RoundImplies = "⥰";
-var rpar = ")";
-var rpargt = "⦔";
-var rppolint = "⨒";
-var rrarr = "⇉";
-var Rrightarrow = "⇛";
-var rsaquo = "›";
-var rscr = "𝓇";
-var Rscr = "ℛ";
-var rsh = "↱";
-var Rsh = "↱";
-var rsqb = "]";
-var rsquo = "’";
-var rsquor = "’";
-var rthree = "⋌";
-var rtimes = "⋊";
-var rtri = "▹";
-var rtrie = "⊵";
-var rtrif = "▸";
-var rtriltri = "⧎";
-var RuleDelayed = "⧴";
-var ruluhar = "⥨";
-var rx = "℞";
-var Sacute = "Ś";
-var sacute = "ś";
-var sbquo = "‚";
-var scap = "⪸";
-var Scaron = "Š";
-var scaron = "š";
-var Sc$1 = "⪼";
-var sc$1 = "≻";
-var sccue = "≽";
-var sce = "⪰";
-var scE = "⪴";
-var Scedil = "Ş";
-var scedil = "ş";
-var Scirc = "Ŝ";
-var scirc = "ŝ";
-var scnap = "⪺";
-var scnE = "⪶";
-var scnsim = "⋩";
-var scpolint = "⨓";
-var scsim = "≿";
-var Scy = "С";
-var scy = "с";
-var sdotb = "⊡";
-var sdot = "⋅";
-var sdote = "⩦";
-var searhk = "⤥";
-var searr = "↘";
-var seArr = "⇘";
-var searrow = "↘";
-var sect = "§";
-var semi = ";";
-var seswar = "⤩";
-var setminus = "∖";
-var setmn = "∖";
-var sext = "✶";
-var Sfr = "𝔖";
-var sfr = "𝔰";
-var sfrown = "⌢";
-var sharp = "♯";
-var SHCHcy = "Щ";
-var shchcy = "щ";
-var SHcy = "Ш";
-var shcy = "ш";
-var ShortDownArrow = "↓";
-var ShortLeftArrow = "←";
-var shortmid = "∣";
-var shortparallel = "∥";
-var ShortRightArrow = "→";
-var ShortUpArrow = "↑";
-var shy = "­";
-var Sigma = "Σ";
-var sigma = "σ";
-var sigmaf = "ς";
-var sigmav = "ς";
-var sim = "∼";
-var simdot = "⩪";
-var sime = "≃";
-var simeq = "≃";
-var simg = "⪞";
-var simgE = "⪠";
-var siml = "⪝";
-var simlE = "⪟";
-var simne = "≆";
-var simplus = "⨤";
-var simrarr = "⥲";
-var slarr = "←";
-var SmallCircle = "∘";
-var smallsetminus = "∖";
-var smashp = "⨳";
-var smeparsl = "⧤";
-var smid = "∣";
-var smile = "⌣";
-var smt = "⪪";
-var smte = "⪬";
-var smtes = "⪬︀";
-var SOFTcy = "Ь";
-var softcy = "ь";
-var solbar = "⌿";
-var solb = "⧄";
-var sol = "/";
-var Sopf = "𝕊";
-var sopf = "𝕤";
-var spades = "♠";
-var spadesuit = "♠";
-var spar = "∥";
-var sqcap = "⊓";
-var sqcaps = "⊓︀";
-var sqcup = "⊔";
-var sqcups = "⊔︀";
-var Sqrt = "√";
-var sqsub = "⊏";
-var sqsube = "⊑";
-var sqsubset = "⊏";
-var sqsubseteq = "⊑";
-var sqsup = "⊐";
-var sqsupe = "⊒";
-var sqsupset = "⊐";
-var sqsupseteq = "⊒";
-var square = "□";
-var Square = "□";
-var SquareIntersection = "⊓";
-var SquareSubset = "⊏";
-var SquareSubsetEqual = "⊑";
-var SquareSuperset = "⊐";
-var SquareSupersetEqual = "⊒";
-var SquareUnion = "⊔";
-var squarf = "▪";
-var squ = "□";
-var squf = "▪";
-var srarr = "→";
-var Sscr = "𝒮";
-var sscr = "𝓈";
-var ssetmn = "∖";
-var ssmile = "⌣";
-var sstarf = "⋆";
-var Star = "⋆";
-var star = "☆";
-var starf = "★";
-var straightepsilon = "ϵ";
-var straightphi = "ϕ";
-var strns = "¯";
-var sub = "⊂";
-var Sub = "⋐";
-var subdot = "⪽";
-var subE = "⫅";
-var sube = "⊆";
-var subedot = "⫃";
-var submult = "⫁";
-var subnE = "⫋";
-var subne = "⊊";
-var subplus = "⪿";
-var subrarr = "⥹";
-var subset = "⊂";
-var Subset = "⋐";
-var subseteq = "⊆";
-var subseteqq = "⫅";
-var SubsetEqual = "⊆";
-var subsetneq = "⊊";
-var subsetneqq = "⫋";
-var subsim = "⫇";
-var subsub = "⫕";
-var subsup = "⫓";
-var succapprox = "⪸";
-var succ = "≻";
-var succcurlyeq = "≽";
-var Succeeds = "≻";
-var SucceedsEqual = "⪰";
-var SucceedsSlantEqual = "≽";
-var SucceedsTilde = "≿";
-var succeq = "⪰";
-var succnapprox = "⪺";
-var succneqq = "⪶";
-var succnsim = "⋩";
-var succsim = "≿";
-var SuchThat = "∋";
-var sum = "∑";
-var Sum = "∑";
-var sung = "♪";
-var sup1 = "¹";
-var sup2 = "²";
-var sup3 = "³";
-var sup = "⊃";
-var Sup = "⋑";
-var supdot = "⪾";
-var supdsub = "⫘";
-var supE = "⫆";
-var supe = "⊇";
-var supedot = "⫄";
-var Superset = "⊃";
-var SupersetEqual = "⊇";
-var suphsol = "⟉";
-var suphsub = "⫗";
-var suplarr = "⥻";
-var supmult = "⫂";
-var supnE = "⫌";
-var supne = "⊋";
-var supplus = "⫀";
-var supset = "⊃";
-var Supset = "⋑";
-var supseteq = "⊇";
-var supseteqq = "⫆";
-var supsetneq = "⊋";
-var supsetneqq = "⫌";
-var supsim = "⫈";
-var supsub = "⫔";
-var supsup = "⫖";
-var swarhk = "⤦";
-var swarr = "↙";
-var swArr = "⇙";
-var swarrow = "↙";
-var swnwar = "⤪";
-var szlig = "ß";
-var Tab = "\t";
-var target = "⌖";
-var Tau = "Τ";
-var tau = "τ";
-var tbrk = "⎴";
-var Tcaron = "Ť";
-var tcaron = "ť";
-var Tcedil = "Ţ";
-var tcedil = "ţ";
-var Tcy = "Т";
-var tcy = "т";
-var tdot = "⃛";
-var telrec = "⌕";
-var Tfr = "𝔗";
-var tfr = "𝔱";
-var there4 = "∴";
-var therefore = "∴";
-var Therefore = "∴";
-var Theta = "Θ";
-var theta = "θ";
-var thetasym = "ϑ";
-var thetav = "ϑ";
-var thickapprox = "≈";
-var thicksim = "∼";
-var ThickSpace = "  ";
-var ThinSpace = " ";
-var thinsp = " ";
-var thkap = "≈";
-var thksim = "∼";
-var THORN = "Þ";
-var thorn = "þ";
-var tilde = "˜";
-var Tilde = "∼";
-var TildeEqual = "≃";
-var TildeFullEqual = "≅";
-var TildeTilde = "≈";
-var timesbar = "⨱";
-var timesb = "⊠";
-var times = "×";
-var timesd = "⨰";
-var tint = "∭";
-var toea = "⤨";
-var topbot = "⌶";
-var topcir = "⫱";
-var top = "⊤";
-var Topf = "𝕋";
-var topf = "𝕥";
-var topfork = "⫚";
-var tosa = "⤩";
-var tprime = "‴";
-var trade = "™";
-var TRADE = "™";
-var triangle = "▵";
-var triangledown = "▿";
-var triangleleft = "◃";
-var trianglelefteq = "⊴";
-var triangleq = "≜";
-var triangleright = "▹";
-var trianglerighteq = "⊵";
-var tridot = "◬";
-var trie = "≜";
-var triminus = "⨺";
-var TripleDot = "⃛";
-var triplus = "⨹";
-var trisb = "⧍";
-var tritime = "⨻";
-var trpezium = "⏢";
-var Tscr = "𝒯";
-var tscr = "𝓉";
-var TScy = "Ц";
-var tscy = "ц";
-var TSHcy = "Ћ";
-var tshcy = "ћ";
-var Tstrok = "Ŧ";
-var tstrok = "ŧ";
-var twixt = "≬";
-var twoheadleftarrow = "↞";
-var twoheadrightarrow = "↠";
-var Uacute = "Ú";
-var uacute = "ú";
-var uarr = "↑";
-var Uarr = "↟";
-var uArr = "⇑";
-var Uarrocir = "⥉";
-var Ubrcy = "Ў";
-var ubrcy = "ў";
-var Ubreve = "Ŭ";
-var ubreve = "ŭ";
-var Ucirc = "Û";
-var ucirc = "û";
-var Ucy = "У";
-var ucy = "у";
-var udarr = "⇅";
-var Udblac = "Ű";
-var udblac = "ű";
-var udhar = "⥮";
-var ufisht = "⥾";
-var Ufr = "𝔘";
-var ufr = "𝔲";
-var Ugrave = "Ù";
-var ugrave = "ù";
-var uHar = "⥣";
-var uharl = "↿";
-var uharr = "↾";
-var uhblk = "▀";
-var ulcorn = "⌜";
-var ulcorner = "⌜";
-var ulcrop = "⌏";
-var ultri = "◸";
-var Umacr = "Ū";
-var umacr = "ū";
-var uml = "¨";
-var UnderBar = "_";
-var UnderBrace = "⏟";
-var UnderBracket = "⎵";
-var UnderParenthesis = "⏝";
-var Union = "⋃";
-var UnionPlus = "⊎";
-var Uogon = "Ų";
-var uogon = "ų";
-var Uopf = "𝕌";
-var uopf = "𝕦";
-var UpArrowBar = "⤒";
-var uparrow = "↑";
-var UpArrow = "↑";
-var Uparrow = "⇑";
-var UpArrowDownArrow = "⇅";
-var updownarrow = "↕";
-var UpDownArrow = "↕";
-var Updownarrow = "⇕";
-var UpEquilibrium = "⥮";
-var upharpoonleft = "↿";
-var upharpoonright = "↾";
-var uplus = "⊎";
-var UpperLeftArrow = "↖";
-var UpperRightArrow = "↗";
-var upsi = "υ";
-var Upsi = "ϒ";
-var upsih = "ϒ";
-var Upsilon = "Υ";
-var upsilon = "υ";
-var UpTeeArrow = "↥";
-var UpTee = "⊥";
-var upuparrows = "⇈";
-var urcorn = "⌝";
-var urcorner = "⌝";
-var urcrop = "⌎";
-var Uring = "Ů";
-var uring = "ů";
-var urtri = "◹";
-var Uscr = "𝒰";
-var uscr = "𝓊";
-var utdot = "⋰";
-var Utilde = "Ũ";
-var utilde = "ũ";
-var utri = "▵";
-var utrif = "▴";
-var uuarr = "⇈";
-var Uuml = "Ü";
-var uuml = "ü";
-var uwangle = "⦧";
-var vangrt = "⦜";
-var varepsilon = "ϵ";
-var varkappa = "ϰ";
-var varnothing = "∅";
-var varphi = "ϕ";
-var varpi = "ϖ";
-var varpropto = "∝";
-var varr = "↕";
-var vArr = "⇕";
-var varrho = "ϱ";
-var varsigma = "ς";
-var varsubsetneq = "⊊︀";
-var varsubsetneqq = "⫋︀";
-var varsupsetneq = "⊋︀";
-var varsupsetneqq = "⫌︀";
-var vartheta = "ϑ";
-var vartriangleleft = "⊲";
-var vartriangleright = "⊳";
-var vBar = "⫨";
-var Vbar = "⫫";
-var vBarv = "⫩";
-var Vcy = "В";
-var vcy = "в";
-var vdash = "⊢";
-var vDash = "⊨";
-var Vdash = "⊩";
-var VDash = "⊫";
-var Vdashl = "⫦";
-var veebar = "⊻";
-var vee = "∨";
-var Vee = "⋁";
-var veeeq = "≚";
-var vellip = "⋮";
-var verbar = "|";
-var Verbar = "‖";
-var vert = "|";
-var Vert = "‖";
-var VerticalBar = "∣";
-var VerticalLine = "|";
-var VerticalSeparator = "❘";
-var VerticalTilde = "≀";
-var VeryThinSpace = " ";
-var Vfr = "𝔙";
-var vfr = "𝔳";
-var vltri = "⊲";
-var vnsub = "⊂⃒";
-var vnsup = "⊃⃒";
-var Vopf = "𝕍";
-var vopf = "𝕧";
-var vprop = "∝";
-var vrtri = "⊳";
-var Vscr = "𝒱";
-var vscr = "𝓋";
-var vsubnE = "⫋︀";
-var vsubne = "⊊︀";
-var vsupnE = "⫌︀";
-var vsupne = "⊋︀";
-var Vvdash = "⊪";
-var vzigzag = "⦚";
-var Wcirc = "Ŵ";
-var wcirc = "ŵ";
-var wedbar = "⩟";
-var wedge = "∧";
-var Wedge = "⋀";
-var wedgeq = "≙";
-var weierp = "℘";
-var Wfr = "𝔚";
-var wfr = "𝔴";
-var Wopf = "𝕎";
-var wopf = "𝕨";
-var wp = "℘";
-var wr = "≀";
-var wreath = "≀";
-var Wscr = "𝒲";
-var wscr = "𝓌";
-var xcap = "⋂";
-var xcirc = "◯";
-var xcup = "⋃";
-var xdtri = "▽";
-var Xfr = "𝔛";
-var xfr = "𝔵";
-var xharr = "⟷";
-var xhArr = "⟺";
-var Xi = "Ξ";
-var xi = "ξ";
-var xlarr = "⟵";
-var xlArr = "⟸";
-var xmap = "⟼";
-var xnis = "⋻";
-var xodot = "⨀";
-var Xopf = "𝕏";
-var xopf = "𝕩";
-var xoplus = "⨁";
-var xotime = "⨂";
-var xrarr = "⟶";
-var xrArr = "⟹";
-var Xscr = "𝒳";
-var xscr = "𝓍";
-var xsqcup = "⨆";
-var xuplus = "⨄";
-var xutri = "△";
-var xvee = "⋁";
-var xwedge = "⋀";
-var Yacute = "Ý";
-var yacute = "ý";
-var YAcy = "Я";
-var yacy = "я";
-var Ycirc = "Ŷ";
-var ycirc = "ŷ";
-var Ycy = "Ы";
-var ycy = "ы";
-var yen = "¥";
-var Yfr = "𝔜";
-var yfr = "𝔶";
-var YIcy = "Ї";
-var yicy = "ї";
-var Yopf = "𝕐";
-var yopf = "𝕪";
-var Yscr = "𝒴";
-var yscr = "𝓎";
-var YUcy = "Ю";
-var yucy = "ю";
-var yuml = "ÿ";
-var Yuml = "Ÿ";
-var Zacute = "Ź";
-var zacute = "ź";
-var Zcaron = "Ž";
-var zcaron = "ž";
-var Zcy = "З";
-var zcy = "з";
-var Zdot = "Ż";
-var zdot = "ż";
-var zeetrf = "ℨ";
-var ZeroWidthSpace = "​";
-var Zeta = "Ζ";
-var zeta = "ζ";
-var zfr = "𝔷";
-var Zfr = "ℨ";
-var ZHcy = "Ж";
-var zhcy = "ж";
-var zigrarr = "⇝";
-var zopf = "𝕫";
-var Zopf = "ℤ";
-var Zscr = "𝒵";
-var zscr = "𝓏";
-var zwj = "‍";
-var zwnj = "‌";
-var entities = {
-	Aacute: Aacute,
-	aacute: aacute,
-	Abreve: Abreve,
-	abreve: abreve,
-	ac: ac$1,
-	acd: acd,
-	acE: acE,
-	Acirc: Acirc,
-	acirc: acirc,
-	acute: acute,
-	Acy: Acy,
-	acy: acy,
-	AElig: AElig,
-	aelig: aelig,
-	af: af$1,
-	Afr: Afr,
-	afr: afr,
-	Agrave: Agrave,
-	agrave: agrave,
-	alefsym: alefsym,
-	aleph: aleph,
-	Alpha: Alpha,
-	alpha: alpha,
-	Amacr: Amacr,
-	amacr: amacr,
-	amalg: amalg,
-	amp: amp,
-	AMP: AMP,
-	andand: andand,
-	And: And,
-	and: and,
-	andd: andd,
-	andslope: andslope,
-	andv: andv,
-	ang: ang,
-	ange: ange,
-	angle: angle,
-	angmsdaa: angmsdaa,
-	angmsdab: angmsdab,
-	angmsdac: angmsdac,
-	angmsdad: angmsdad,
-	angmsdae: angmsdae,
-	angmsdaf: angmsdaf,
-	angmsdag: angmsdag,
-	angmsdah: angmsdah,
-	angmsd: angmsd,
-	angrt: angrt,
-	angrtvb: angrtvb,
-	angrtvbd: angrtvbd,
-	angsph: angsph,
-	angst: angst,
-	angzarr: angzarr,
-	Aogon: Aogon,
-	aogon: aogon,
-	Aopf: Aopf,
-	aopf: aopf,
-	apacir: apacir,
-	ap: ap,
-	apE: apE,
-	ape: ape,
-	apid: apid,
-	apos: apos,
-	ApplyFunction: ApplyFunction,
-	approx: approx,
-	approxeq: approxeq,
-	Aring: Aring,
-	aring: aring,
-	Ascr: Ascr,
-	ascr: ascr,
-	Assign: Assign,
-	ast: ast,
-	asymp: asymp,
-	asympeq: asympeq,
-	Atilde: Atilde,
-	atilde: atilde,
-	Auml: Auml,
-	auml: auml,
-	awconint: awconint,
-	awint: awint,
-	backcong: backcong,
-	backepsilon: backepsilon,
-	backprime: backprime,
-	backsim: backsim,
-	backsimeq: backsimeq,
-	Backslash: Backslash,
-	Barv: Barv,
-	barvee: barvee,
-	barwed: barwed,
-	Barwed: Barwed,
-	barwedge: barwedge,
-	bbrk: bbrk,
-	bbrktbrk: bbrktbrk,
-	bcong: bcong,
-	Bcy: Bcy,
-	bcy: bcy,
-	bdquo: bdquo,
-	becaus: becaus,
-	because: because,
-	Because: Because,
-	bemptyv: bemptyv,
-	bepsi: bepsi,
-	bernou: bernou,
-	Bernoullis: Bernoullis,
-	Beta: Beta,
-	beta: beta,
-	beth: beth,
-	between: between,
-	Bfr: Bfr,
-	bfr: bfr,
-	bigcap: bigcap,
-	bigcirc: bigcirc,
-	bigcup: bigcup,
-	bigodot: bigodot,
-	bigoplus: bigoplus,
-	bigotimes: bigotimes,
-	bigsqcup: bigsqcup,
-	bigstar: bigstar,
-	bigtriangledown: bigtriangledown,
-	bigtriangleup: bigtriangleup,
-	biguplus: biguplus,
-	bigvee: bigvee,
-	bigwedge: bigwedge,
-	bkarow: bkarow,
-	blacklozenge: blacklozenge,
-	blacksquare: blacksquare,
-	blacktriangle: blacktriangle,
-	blacktriangledown: blacktriangledown,
-	blacktriangleleft: blacktriangleleft,
-	blacktriangleright: blacktriangleright,
-	blank: blank,
-	blk12: blk12,
-	blk14: blk14,
-	blk34: blk34,
-	block: block,
-	bne: bne,
-	bnequiv: bnequiv,
-	bNot: bNot,
-	bnot: bnot,
-	Bopf: Bopf,
-	bopf: bopf,
-	bot: bot,
-	bottom: bottom,
-	bowtie: bowtie,
-	boxbox: boxbox,
-	boxdl: boxdl,
-	boxdL: boxdL,
-	boxDl: boxDl,
-	boxDL: boxDL,
-	boxdr: boxdr,
-	boxdR: boxdR,
-	boxDr: boxDr,
-	boxDR: boxDR,
-	boxh: boxh,
-	boxH: boxH,
-	boxhd: boxhd,
-	boxHd: boxHd,
-	boxhD: boxhD,
-	boxHD: boxHD,
-	boxhu: boxhu,
-	boxHu: boxHu,
-	boxhU: boxhU,
-	boxHU: boxHU,
-	boxminus: boxminus,
-	boxplus: boxplus,
-	boxtimes: boxtimes,
-	boxul: boxul,
-	boxuL: boxuL,
-	boxUl: boxUl,
-	boxUL: boxUL,
-	boxur: boxur,
-	boxuR: boxuR,
-	boxUr: boxUr,
-	boxUR: boxUR,
-	boxv: boxv,
-	boxV: boxV,
-	boxvh: boxvh,
-	boxvH: boxvH,
-	boxVh: boxVh,
-	boxVH: boxVH,
-	boxvl: boxvl,
-	boxvL: boxvL,
-	boxVl: boxVl,
-	boxVL: boxVL,
-	boxvr: boxvr,
-	boxvR: boxvR,
-	boxVr: boxVr,
-	boxVR: boxVR,
-	bprime: bprime,
-	breve: breve,
-	Breve: Breve,
-	brvbar: brvbar,
-	bscr: bscr,
-	Bscr: Bscr,
-	bsemi: bsemi,
-	bsim: bsim,
-	bsime: bsime,
-	bsolb: bsolb,
-	bsol: bsol,
-	bsolhsub: bsolhsub,
-	bull: bull,
-	bullet: bullet,
-	bump: bump,
-	bumpE: bumpE,
-	bumpe: bumpe,
-	Bumpeq: Bumpeq,
-	bumpeq: bumpeq,
-	Cacute: Cacute,
-	cacute: cacute,
-	capand: capand,
-	capbrcup: capbrcup,
-	capcap: capcap,
-	cap: cap,
-	Cap: Cap,
-	capcup: capcup,
-	capdot: capdot,
-	CapitalDifferentialD: CapitalDifferentialD,
-	caps: caps,
-	caret: caret,
-	caron: caron,
-	Cayleys: Cayleys,
-	ccaps: ccaps,
-	Ccaron: Ccaron,
-	ccaron: ccaron,
-	Ccedil: Ccedil,
-	ccedil: ccedil,
-	Ccirc: Ccirc,
-	ccirc: ccirc,
-	Cconint: Cconint,
-	ccups: ccups,
-	ccupssm: ccupssm,
-	Cdot: Cdot,
-	cdot: cdot,
-	cedil: cedil,
-	Cedilla: Cedilla,
-	cemptyv: cemptyv,
-	cent: cent,
-	centerdot: centerdot,
-	CenterDot: CenterDot,
-	cfr: cfr,
-	Cfr: Cfr,
-	CHcy: CHcy,
-	chcy: chcy,
-	check: check$1,
-	checkmark: checkmark,
-	Chi: Chi,
-	chi: chi,
-	circ: circ,
-	circeq: circeq,
-	circlearrowleft: circlearrowleft,
-	circlearrowright: circlearrowright,
-	circledast: circledast,
-	circledcirc: circledcirc,
-	circleddash: circleddash,
-	CircleDot: CircleDot,
-	circledR: circledR,
-	circledS: circledS,
-	CircleMinus: CircleMinus,
-	CirclePlus: CirclePlus,
-	CircleTimes: CircleTimes,
-	cir: cir,
-	cirE: cirE,
-	cire: cire,
-	cirfnint: cirfnint,
-	cirmid: cirmid,
-	cirscir: cirscir,
-	ClockwiseContourIntegral: ClockwiseContourIntegral,
-	CloseCurlyDoubleQuote: CloseCurlyDoubleQuote,
-	CloseCurlyQuote: CloseCurlyQuote,
-	clubs: clubs,
-	clubsuit: clubsuit,
-	colon: colon,
-	Colon: Colon,
-	Colone: Colone,
-	colone: colone,
-	coloneq: coloneq,
-	comma: comma,
-	commat: commat,
-	comp: comp,
-	compfn: compfn,
-	complement: complement,
-	complexes: complexes,
-	cong: cong,
-	congdot: congdot,
-	Congruent: Congruent,
-	conint: conint,
-	Conint: Conint,
-	ContourIntegral: ContourIntegral,
-	copf: copf,
-	Copf: Copf,
-	coprod: coprod,
-	Coproduct: Coproduct,
-	copy: copy,
-	COPY: COPY,
-	copysr: copysr,
-	CounterClockwiseContourIntegral: CounterClockwiseContourIntegral,
-	crarr: crarr,
-	cross: cross,
-	Cross: Cross,
-	Cscr: Cscr,
-	cscr: cscr,
-	csub: csub,
-	csube: csube,
-	csup: csup,
-	csupe: csupe,
-	ctdot: ctdot,
-	cudarrl: cudarrl,
-	cudarrr: cudarrr,
-	cuepr: cuepr,
-	cuesc: cuesc,
-	cularr: cularr,
-	cularrp: cularrp,
-	cupbrcap: cupbrcap,
-	cupcap: cupcap,
-	CupCap: CupCap,
-	cup: cup,
-	Cup: Cup,
-	cupcup: cupcup,
-	cupdot: cupdot,
-	cupor: cupor,
-	cups: cups,
-	curarr: curarr,
-	curarrm: curarrm,
-	curlyeqprec: curlyeqprec,
-	curlyeqsucc: curlyeqsucc,
-	curlyvee: curlyvee,
-	curlywedge: curlywedge,
-	curren: curren,
-	curvearrowleft: curvearrowleft,
-	curvearrowright: curvearrowright,
-	cuvee: cuvee,
-	cuwed: cuwed,
-	cwconint: cwconint,
-	cwint: cwint,
-	cylcty: cylcty,
-	dagger: dagger,
-	Dagger: Dagger,
-	daleth: daleth,
-	darr: darr,
-	Darr: Darr,
-	dArr: dArr,
-	dash: dash,
-	Dashv: Dashv,
-	dashv: dashv,
-	dbkarow: dbkarow,
-	dblac: dblac,
-	Dcaron: Dcaron,
-	dcaron: dcaron,
-	Dcy: Dcy,
-	dcy: dcy,
-	ddagger: ddagger,
-	ddarr: ddarr,
-	DD: DD,
-	dd: dd$1,
-	DDotrahd: DDotrahd,
-	ddotseq: ddotseq,
-	deg: deg,
-	Del: Del,
-	Delta: Delta,
-	delta: delta,
-	demptyv: demptyv,
-	dfisht: dfisht,
-	Dfr: Dfr,
-	dfr: dfr,
-	dHar: dHar,
-	dharl: dharl,
-	dharr: dharr,
-	DiacriticalAcute: DiacriticalAcute,
-	DiacriticalDot: DiacriticalDot,
-	DiacriticalDoubleAcute: DiacriticalDoubleAcute,
-	DiacriticalGrave: DiacriticalGrave,
-	DiacriticalTilde: DiacriticalTilde,
-	diam: diam,
-	diamond: diamond,
-	Diamond: Diamond,
-	diamondsuit: diamondsuit,
-	diams: diams,
-	die: die,
-	DifferentialD: DifferentialD,
-	digamma: digamma,
-	disin: disin,
-	div: div$1,
-	divide: divide$1,
-	divideontimes: divideontimes,
-	divonx: divonx,
-	DJcy: DJcy,
-	djcy: djcy,
-	dlcorn: dlcorn,
-	dlcrop: dlcrop,
-	dollar: dollar,
-	Dopf: Dopf,
-	dopf: dopf,
-	Dot: Dot,
-	dot: dot,
-	DotDot: DotDot,
-	doteq: doteq,
-	doteqdot: doteqdot,
-	DotEqual: DotEqual,
-	dotminus: dotminus,
-	dotplus: dotplus,
-	dotsquare: dotsquare,
-	doublebarwedge: doublebarwedge,
-	DoubleContourIntegral: DoubleContourIntegral,
-	DoubleDot: DoubleDot,
-	DoubleDownArrow: DoubleDownArrow,
-	DoubleLeftArrow: DoubleLeftArrow,
-	DoubleLeftRightArrow: DoubleLeftRightArrow,
-	DoubleLeftTee: DoubleLeftTee,
-	DoubleLongLeftArrow: DoubleLongLeftArrow,
-	DoubleLongLeftRightArrow: DoubleLongLeftRightArrow,
-	DoubleLongRightArrow: DoubleLongRightArrow,
-	DoubleRightArrow: DoubleRightArrow,
-	DoubleRightTee: DoubleRightTee,
-	DoubleUpArrow: DoubleUpArrow,
-	DoubleUpDownArrow: DoubleUpDownArrow,
-	DoubleVerticalBar: DoubleVerticalBar,
-	DownArrowBar: DownArrowBar,
-	downarrow: downarrow,
-	DownArrow: DownArrow,
-	Downarrow: Downarrow,
-	DownArrowUpArrow: DownArrowUpArrow,
-	DownBreve: DownBreve,
-	downdownarrows: downdownarrows,
-	downharpoonleft: downharpoonleft,
-	downharpoonright: downharpoonright,
-	DownLeftRightVector: DownLeftRightVector,
-	DownLeftTeeVector: DownLeftTeeVector,
-	DownLeftVectorBar: DownLeftVectorBar,
-	DownLeftVector: DownLeftVector,
-	DownRightTeeVector: DownRightTeeVector,
-	DownRightVectorBar: DownRightVectorBar,
-	DownRightVector: DownRightVector,
-	DownTeeArrow: DownTeeArrow,
-	DownTee: DownTee,
-	drbkarow: drbkarow,
-	drcorn: drcorn,
-	drcrop: drcrop,
-	Dscr: Dscr,
-	dscr: dscr,
-	DScy: DScy,
-	dscy: dscy,
-	dsol: dsol,
-	Dstrok: Dstrok,
-	dstrok: dstrok,
-	dtdot: dtdot,
-	dtri: dtri,
-	dtrif: dtrif,
-	duarr: duarr,
-	duhar: duhar,
-	dwangle: dwangle,
-	DZcy: DZcy,
-	dzcy: dzcy,
-	dzigrarr: dzigrarr,
-	Eacute: Eacute,
-	eacute: eacute,
-	easter: easter,
-	Ecaron: Ecaron,
-	ecaron: ecaron,
-	Ecirc: Ecirc,
-	ecirc: ecirc,
-	ecir: ecir,
-	ecolon: ecolon,
-	Ecy: Ecy,
-	ecy: ecy,
-	eDDot: eDDot,
-	Edot: Edot,
-	edot: edot,
-	eDot: eDot,
-	ee: ee$1,
-	efDot: efDot,
-	Efr: Efr,
-	efr: efr,
-	eg: eg$1,
-	Egrave: Egrave,
-	egrave: egrave,
-	egs: egs,
-	egsdot: egsdot,
-	el: el,
-	Element: Element,
-	elinters: elinters,
-	ell: ell,
-	els: els,
-	elsdot: elsdot,
-	Emacr: Emacr,
-	emacr: emacr,
-	empty: empty$1,
-	emptyset: emptyset,
-	EmptySmallSquare: EmptySmallSquare,
-	emptyv: emptyv,
-	EmptyVerySmallSquare: EmptyVerySmallSquare,
-	emsp13: emsp13,
-	emsp14: emsp14,
-	emsp: emsp,
-	ENG: ENG,
-	eng: eng,
-	ensp: ensp,
-	Eogon: Eogon,
-	eogon: eogon,
-	Eopf: Eopf,
-	eopf: eopf,
-	epar: epar,
-	eparsl: eparsl,
-	eplus: eplus,
-	epsi: epsi,
-	Epsilon: Epsilon,
-	epsilon: epsilon,
-	epsiv: epsiv,
-	eqcirc: eqcirc,
-	eqcolon: eqcolon,
-	eqsim: eqsim,
-	eqslantgtr: eqslantgtr,
-	eqslantless: eqslantless,
-	Equal: Equal,
-	equals: equals,
-	EqualTilde: EqualTilde,
-	equest: equest,
-	Equilibrium: Equilibrium,
-	equiv: equiv,
-	equivDD: equivDD,
-	eqvparsl: eqvparsl,
-	erarr: erarr,
-	erDot: erDot,
-	escr: escr,
-	Escr: Escr,
-	esdot: esdot,
-	Esim: Esim,
-	esim: esim,
-	Eta: Eta,
-	eta: eta,
-	ETH: ETH,
-	eth: eth,
-	Euml: Euml,
-	euml: euml,
-	euro: euro,
-	excl: excl,
-	exist: exist,
-	Exists: Exists,
-	expectation: expectation,
-	exponentiale: exponentiale,
-	ExponentialE: ExponentialE,
-	fallingdotseq: fallingdotseq,
-	Fcy: Fcy,
-	fcy: fcy,
-	female: female,
-	ffilig: ffilig,
-	fflig: fflig,
-	ffllig: ffllig,
-	Ffr: Ffr,
-	ffr: ffr,
-	filig: filig,
-	FilledSmallSquare: FilledSmallSquare,
-	FilledVerySmallSquare: FilledVerySmallSquare,
-	fjlig: fjlig,
-	flat: flat,
-	fllig: fllig,
-	fltns: fltns,
-	fnof: fnof,
-	Fopf: Fopf,
-	fopf: fopf,
-	forall: forall,
-	ForAll: ForAll,
-	fork: fork,
-	forkv: forkv,
-	Fouriertrf: Fouriertrf,
-	fpartint: fpartint,
-	frac12: frac12,
-	frac13: frac13,
-	frac14: frac14,
-	frac15: frac15,
-	frac16: frac16,
-	frac18: frac18,
-	frac23: frac23,
-	frac25: frac25,
-	frac34: frac34,
-	frac35: frac35,
-	frac38: frac38,
-	frac45: frac45,
-	frac56: frac56,
-	frac58: frac58,
-	frac78: frac78,
-	frasl: frasl,
-	frown: frown,
-	fscr: fscr,
-	Fscr: Fscr,
-	gacute: gacute,
-	Gamma: Gamma,
-	gamma: gamma,
-	Gammad: Gammad,
-	gammad: gammad,
-	gap: gap,
-	Gbreve: Gbreve,
-	gbreve: gbreve,
-	Gcedil: Gcedil,
-	Gcirc: Gcirc,
-	gcirc: gcirc,
-	Gcy: Gcy,
-	gcy: gcy,
-	Gdot: Gdot,
-	gdot: gdot,
-	ge: ge$1,
-	gE: gE,
-	gEl: gEl,
-	gel: gel,
-	geq: geq,
-	geqq: geqq,
-	geqslant: geqslant,
-	gescc: gescc,
-	ges: ges,
-	gesdot: gesdot,
-	gesdoto: gesdoto,
-	gesdotol: gesdotol,
-	gesl: gesl,
-	gesles: gesles,
-	Gfr: Gfr,
-	gfr: gfr,
-	gg: gg,
-	Gg: Gg$1,
-	ggg: ggg,
-	gimel: gimel,
-	GJcy: GJcy,
-	gjcy: gjcy,
-	gla: gla,
-	gl: gl,
-	glE: glE,
-	glj: glj,
-	gnap: gnap,
-	gnapprox: gnapprox,
-	gne: gne,
-	gnE: gnE,
-	gneq: gneq,
-	gneqq: gneqq,
-	gnsim: gnsim,
-	Gopf: Gopf,
-	gopf: gopf,
-	grave: grave,
-	GreaterEqual: GreaterEqual,
-	GreaterEqualLess: GreaterEqualLess,
-	GreaterFullEqual: GreaterFullEqual,
-	GreaterGreater: GreaterGreater,
-	GreaterLess: GreaterLess,
-	GreaterSlantEqual: GreaterSlantEqual,
-	GreaterTilde: GreaterTilde,
-	Gscr: Gscr,
-	gscr: gscr,
-	gsim: gsim,
-	gsime: gsime,
-	gsiml: gsiml,
-	gtcc: gtcc,
-	gtcir: gtcir,
-	gt: gt,
-	GT: GT,
-	Gt: Gt,
-	gtdot: gtdot,
-	gtlPar: gtlPar,
-	gtquest: gtquest,
-	gtrapprox: gtrapprox,
-	gtrarr: gtrarr,
-	gtrdot: gtrdot,
-	gtreqless: gtreqless,
-	gtreqqless: gtreqqless,
-	gtrless: gtrless,
-	gtrsim: gtrsim,
-	gvertneqq: gvertneqq,
-	gvnE: gvnE,
-	Hacek: Hacek,
-	hairsp: hairsp,
-	half: half,
-	hamilt: hamilt,
-	HARDcy: HARDcy,
-	hardcy: hardcy,
-	harrcir: harrcir,
-	harr: harr,
-	hArr: hArr,
-	harrw: harrw,
-	Hat: Hat,
-	hbar: hbar,
-	Hcirc: Hcirc,
-	hcirc: hcirc,
-	hearts: hearts,
-	heartsuit: heartsuit,
-	hellip: hellip,
-	hercon: hercon,
-	hfr: hfr,
-	Hfr: Hfr,
-	HilbertSpace: HilbertSpace,
-	hksearow: hksearow,
-	hkswarow: hkswarow,
-	hoarr: hoarr,
-	homtht: homtht,
-	hookleftarrow: hookleftarrow,
-	hookrightarrow: hookrightarrow,
-	hopf: hopf,
-	Hopf: Hopf,
-	horbar: horbar,
-	HorizontalLine: HorizontalLine,
-	hscr: hscr,
-	Hscr: Hscr,
-	hslash: hslash,
-	Hstrok: Hstrok,
-	hstrok: hstrok,
-	HumpDownHump: HumpDownHump,
-	HumpEqual: HumpEqual,
-	hybull: hybull,
-	hyphen: hyphen,
-	Iacute: Iacute,
-	iacute: iacute,
-	ic: ic$1,
-	Icirc: Icirc,
-	icirc: icirc,
-	Icy: Icy,
-	icy: icy,
-	Idot: Idot,
-	IEcy: IEcy,
-	iecy: iecy,
-	iexcl: iexcl,
-	iff: iff,
-	ifr: ifr,
-	Ifr: Ifr,
-	Igrave: Igrave,
-	igrave: igrave,
-	ii: ii,
-	iiiint: iiiint,
-	iiint: iiint,
-	iinfin: iinfin,
-	iiota: iiota,
-	IJlig: IJlig,
-	ijlig: ijlig,
-	Imacr: Imacr,
-	imacr: imacr,
-	image: image,
-	ImaginaryI: ImaginaryI,
-	imagline: imagline,
-	imagpart: imagpart,
-	imath: imath,
-	Im: Im,
-	imof: imof,
-	imped: imped,
-	Implies: Implies,
-	incare: incare,
-	infin: infin,
-	infintie: infintie,
-	inodot: inodot,
-	intcal: intcal,
-	int: int,
-	Int: Int,
-	integers: integers,
-	Integral: Integral,
-	intercal: intercal,
-	Intersection: Intersection,
-	intlarhk: intlarhk,
-	intprod: intprod,
-	InvisibleComma: InvisibleComma,
-	InvisibleTimes: InvisibleTimes,
-	IOcy: IOcy,
-	iocy: iocy,
-	Iogon: Iogon,
-	iogon: iogon,
-	Iopf: Iopf,
-	iopf: iopf,
-	Iota: Iota,
-	iota: iota,
-	iprod: iprod,
-	iquest: iquest,
-	iscr: iscr,
-	Iscr: Iscr,
-	isin: isin,
-	isindot: isindot,
-	isinE: isinE,
-	isins: isins,
-	isinsv: isinsv,
-	isinv: isinv,
-	it: it,
-	Itilde: Itilde,
-	itilde: itilde,
-	Iukcy: Iukcy,
-	iukcy: iukcy,
-	Iuml: Iuml,
-	iuml: iuml,
-	Jcirc: Jcirc,
-	jcirc: jcirc,
-	Jcy: Jcy,
-	jcy: jcy,
-	Jfr: Jfr,
-	jfr: jfr,
-	jmath: jmath,
-	Jopf: Jopf,
-	jopf: jopf,
-	Jscr: Jscr,
-	jscr: jscr,
-	Jsercy: Jsercy,
-	jsercy: jsercy,
-	Jukcy: Jukcy,
-	jukcy: jukcy,
-	Kappa: Kappa,
-	kappa: kappa,
-	kappav: kappav,
-	Kcedil: Kcedil,
-	kcedil: kcedil,
-	Kcy: Kcy,
-	kcy: kcy,
-	Kfr: Kfr,
-	kfr: kfr,
-	kgreen: kgreen,
-	KHcy: KHcy,
-	khcy: khcy,
-	KJcy: KJcy,
-	kjcy: kjcy,
-	Kopf: Kopf,
-	kopf: kopf,
-	Kscr: Kscr,
-	kscr: kscr,
-	lAarr: lAarr,
-	Lacute: Lacute,
-	lacute: lacute,
-	laemptyv: laemptyv,
-	lagran: lagran,
-	Lambda: Lambda,
-	lambda: lambda,
-	lang: lang,
-	Lang: Lang,
-	langd: langd,
-	langle: langle,
-	lap: lap,
-	Laplacetrf: Laplacetrf,
-	laquo: laquo,
-	larrb: larrb,
-	larrbfs: larrbfs,
-	larr: larr,
-	Larr: Larr,
-	lArr: lArr,
-	larrfs: larrfs,
-	larrhk: larrhk,
-	larrlp: larrlp,
-	larrpl: larrpl,
-	larrsim: larrsim,
-	larrtl: larrtl,
-	latail: latail,
-	lAtail: lAtail,
-	lat: lat,
-	late: late,
-	lates: lates,
-	lbarr: lbarr,
-	lBarr: lBarr,
-	lbbrk: lbbrk,
-	lbrace: lbrace,
-	lbrack: lbrack,
-	lbrke: lbrke,
-	lbrksld: lbrksld,
-	lbrkslu: lbrkslu,
-	Lcaron: Lcaron,
-	lcaron: lcaron,
-	Lcedil: Lcedil,
-	lcedil: lcedil,
-	lceil: lceil,
-	lcub: lcub,
-	Lcy: Lcy,
-	lcy: lcy,
-	ldca: ldca,
-	ldquo: ldquo,
-	ldquor: ldquor,
-	ldrdhar: ldrdhar,
-	ldrushar: ldrushar,
-	ldsh: ldsh,
-	le: le$1,
-	lE: lE,
-	LeftAngleBracket: LeftAngleBracket,
-	LeftArrowBar: LeftArrowBar,
-	leftarrow: leftarrow,
-	LeftArrow: LeftArrow,
-	Leftarrow: Leftarrow,
-	LeftArrowRightArrow: LeftArrowRightArrow,
-	leftarrowtail: leftarrowtail,
-	LeftCeiling: LeftCeiling,
-	LeftDoubleBracket: LeftDoubleBracket,
-	LeftDownTeeVector: LeftDownTeeVector,
-	LeftDownVectorBar: LeftDownVectorBar,
-	LeftDownVector: LeftDownVector,
-	LeftFloor: LeftFloor,
-	leftharpoondown: leftharpoondown,
-	leftharpoonup: leftharpoonup,
-	leftleftarrows: leftleftarrows,
-	leftrightarrow: leftrightarrow,
-	LeftRightArrow: LeftRightArrow,
-	Leftrightarrow: Leftrightarrow,
-	leftrightarrows: leftrightarrows,
-	leftrightharpoons: leftrightharpoons,
-	leftrightsquigarrow: leftrightsquigarrow,
-	LeftRightVector: LeftRightVector,
-	LeftTeeArrow: LeftTeeArrow,
-	LeftTee: LeftTee,
-	LeftTeeVector: LeftTeeVector,
-	leftthreetimes: leftthreetimes,
-	LeftTriangleBar: LeftTriangleBar,
-	LeftTriangle: LeftTriangle,
-	LeftTriangleEqual: LeftTriangleEqual,
-	LeftUpDownVector: LeftUpDownVector,
-	LeftUpTeeVector: LeftUpTeeVector,
-	LeftUpVectorBar: LeftUpVectorBar,
-	LeftUpVector: LeftUpVector,
-	LeftVectorBar: LeftVectorBar,
-	LeftVector: LeftVector,
-	lEg: lEg,
-	leg: leg,
-	leq: leq,
-	leqq: leqq,
-	leqslant: leqslant,
-	lescc: lescc,
-	les: les,
-	lesdot: lesdot,
-	lesdoto: lesdoto,
-	lesdotor: lesdotor,
-	lesg: lesg,
-	lesges: lesges,
-	lessapprox: lessapprox,
-	lessdot: lessdot,
-	lesseqgtr: lesseqgtr,
-	lesseqqgtr: lesseqqgtr,
-	LessEqualGreater: LessEqualGreater,
-	LessFullEqual: LessFullEqual,
-	LessGreater: LessGreater,
-	lessgtr: lessgtr,
-	LessLess: LessLess,
-	lesssim: lesssim,
-	LessSlantEqual: LessSlantEqual,
-	LessTilde: LessTilde,
-	lfisht: lfisht,
-	lfloor: lfloor,
-	Lfr: Lfr,
-	lfr: lfr,
-	lg: lg,
-	lgE: lgE,
-	lHar: lHar,
-	lhard: lhard,
-	lharu: lharu,
-	lharul: lharul,
-	lhblk: lhblk,
-	LJcy: LJcy,
-	ljcy: ljcy,
-	llarr: llarr,
-	ll: ll,
-	Ll: Ll,
-	llcorner: llcorner,
-	Lleftarrow: Lleftarrow,
-	llhard: llhard,
-	lltri: lltri,
-	Lmidot: Lmidot,
-	lmidot: lmidot,
-	lmoustache: lmoustache,
-	lmoust: lmoust,
-	lnap: lnap,
-	lnapprox: lnapprox,
-	lne: lne,
-	lnE: lnE,
-	lneq: lneq,
-	lneqq: lneqq,
-	lnsim: lnsim,
-	loang: loang,
-	loarr: loarr,
-	lobrk: lobrk,
-	longleftarrow: longleftarrow,
-	LongLeftArrow: LongLeftArrow,
-	Longleftarrow: Longleftarrow,
-	longleftrightarrow: longleftrightarrow,
-	LongLeftRightArrow: LongLeftRightArrow,
-	Longleftrightarrow: Longleftrightarrow,
-	longmapsto: longmapsto,
-	longrightarrow: longrightarrow,
-	LongRightArrow: LongRightArrow,
-	Longrightarrow: Longrightarrow,
-	looparrowleft: looparrowleft,
-	looparrowright: looparrowright,
-	lopar: lopar,
-	Lopf: Lopf,
-	lopf: lopf,
-	loplus: loplus,
-	lotimes: lotimes,
-	lowast: lowast,
-	lowbar: lowbar,
-	LowerLeftArrow: LowerLeftArrow,
-	LowerRightArrow: LowerRightArrow,
-	loz: loz,
-	lozenge: lozenge,
-	lozf: lozf,
-	lpar: lpar,
-	lparlt: lparlt,
-	lrarr: lrarr,
-	lrcorner: lrcorner,
-	lrhar: lrhar,
-	lrhard: lrhard,
-	lrm: lrm,
-	lrtri: lrtri,
-	lsaquo: lsaquo,
-	lscr: lscr,
-	Lscr: Lscr,
-	lsh: lsh,
-	Lsh: Lsh,
-	lsim: lsim,
-	lsime: lsime,
-	lsimg: lsimg,
-	lsqb: lsqb,
-	lsquo: lsquo,
-	lsquor: lsquor,
-	Lstrok: Lstrok,
-	lstrok: lstrok,
-	ltcc: ltcc,
-	ltcir: ltcir,
-	lt: lt,
-	LT: LT,
-	Lt: Lt,
-	ltdot: ltdot,
-	lthree: lthree,
-	ltimes: ltimes,
-	ltlarr: ltlarr,
-	ltquest: ltquest,
-	ltri: ltri,
-	ltrie: ltrie,
-	ltrif: ltrif,
-	ltrPar: ltrPar,
-	lurdshar: lurdshar,
-	luruhar: luruhar,
-	lvertneqq: lvertneqq,
-	lvnE: lvnE,
-	macr: macr,
-	male: male,
-	malt: malt,
-	maltese: maltese,
-	map: map$2,
-	mapsto: mapsto,
-	mapstodown: mapstodown,
-	mapstoleft: mapstoleft,
-	mapstoup: mapstoup,
-	marker: marker,
-	mcomma: mcomma,
-	Mcy: Mcy,
-	mcy: mcy,
-	mdash: mdash,
-	mDDot: mDDot,
-	measuredangle: measuredangle,
-	MediumSpace: MediumSpace,
-	Mellintrf: Mellintrf,
-	Mfr: Mfr,
-	mfr: mfr,
-	mho: mho,
-	micro: micro,
-	midast: midast,
-	midcir: midcir,
-	mid: mid,
-	middot: middot,
-	minusb: minusb,
-	minus: minus,
-	minusd: minusd,
-	minusdu: minusdu,
-	MinusPlus: MinusPlus,
-	mlcp: mlcp,
-	mldr: mldr,
-	mnplus: mnplus,
-	models: models,
-	Mopf: Mopf,
-	mopf: mopf,
-	mp: mp,
-	mscr: mscr,
-	Mscr: Mscr,
-	mstpos: mstpos,
-	Mu: Mu,
-	mu: mu,
-	multimap: multimap,
-	mumap: mumap,
-	nabla: nabla,
-	Nacute: Nacute,
-	nacute: nacute,
-	nang: nang,
-	nap: nap,
-	napE: napE,
-	napid: napid,
-	napos: napos,
-	napprox: napprox,
-	natural: natural,
-	naturals: naturals,
-	natur: natur,
-	nbsp: nbsp,
-	nbump: nbump,
-	nbumpe: nbumpe,
-	ncap: ncap,
-	Ncaron: Ncaron,
-	ncaron: ncaron,
-	Ncedil: Ncedil,
-	ncedil: ncedil,
-	ncong: ncong,
-	ncongdot: ncongdot,
-	ncup: ncup,
-	Ncy: Ncy,
-	ncy: ncy,
-	ndash: ndash,
-	nearhk: nearhk,
-	nearr: nearr,
-	neArr: neArr,
-	nearrow: nearrow,
-	ne: ne$1,
-	nedot: nedot,
-	NegativeMediumSpace: NegativeMediumSpace,
-	NegativeThickSpace: NegativeThickSpace,
-	NegativeThinSpace: NegativeThinSpace,
-	NegativeVeryThinSpace: NegativeVeryThinSpace,
-	nequiv: nequiv,
-	nesear: nesear,
-	nesim: nesim,
-	NestedGreaterGreater: NestedGreaterGreater,
-	NestedLessLess: NestedLessLess,
-	NewLine: NewLine,
-	nexist: nexist,
-	nexists: nexists,
-	Nfr: Nfr,
-	nfr: nfr,
-	ngE: ngE,
-	nge: nge,
-	ngeq: ngeq,
-	ngeqq: ngeqq,
-	ngeqslant: ngeqslant,
-	nges: nges,
-	nGg: nGg,
-	ngsim: ngsim,
-	nGt: nGt,
-	ngt: ngt,
-	ngtr: ngtr,
-	nGtv: nGtv,
-	nharr: nharr,
-	nhArr: nhArr,
-	nhpar: nhpar,
-	ni: ni,
-	nis: nis,
-	nisd: nisd,
-	niv: niv,
-	NJcy: NJcy,
-	njcy: njcy,
-	nlarr: nlarr,
-	nlArr: nlArr,
-	nldr: nldr,
-	nlE: nlE,
-	nle: nle,
-	nleftarrow: nleftarrow,
-	nLeftarrow: nLeftarrow,
-	nleftrightarrow: nleftrightarrow,
-	nLeftrightarrow: nLeftrightarrow,
-	nleq: nleq,
-	nleqq: nleqq,
-	nleqslant: nleqslant,
-	nles: nles,
-	nless: nless,
-	nLl: nLl,
-	nlsim: nlsim,
-	nLt: nLt,
-	nlt: nlt,
-	nltri: nltri,
-	nltrie: nltrie,
-	nLtv: nLtv,
-	nmid: nmid,
-	NoBreak: NoBreak,
-	NonBreakingSpace: NonBreakingSpace,
-	nopf: nopf,
-	Nopf: Nopf,
-	Not: Not,
-	not: not,
-	NotCongruent: NotCongruent,
-	NotCupCap: NotCupCap,
-	NotDoubleVerticalBar: NotDoubleVerticalBar,
-	NotElement: NotElement,
-	NotEqual: NotEqual,
-	NotEqualTilde: NotEqualTilde,
-	NotExists: NotExists,
-	NotGreater: NotGreater,
-	NotGreaterEqual: NotGreaterEqual,
-	NotGreaterFullEqual: NotGreaterFullEqual,
-	NotGreaterGreater: NotGreaterGreater,
-	NotGreaterLess: NotGreaterLess,
-	NotGreaterSlantEqual: NotGreaterSlantEqual,
-	NotGreaterTilde: NotGreaterTilde,
-	NotHumpDownHump: NotHumpDownHump,
-	NotHumpEqual: NotHumpEqual,
-	notin: notin,
-	notindot: notindot,
-	notinE: notinE,
-	notinva: notinva,
-	notinvb: notinvb,
-	notinvc: notinvc,
-	NotLeftTriangleBar: NotLeftTriangleBar,
-	NotLeftTriangle: NotLeftTriangle,
-	NotLeftTriangleEqual: NotLeftTriangleEqual,
-	NotLess: NotLess,
-	NotLessEqual: NotLessEqual,
-	NotLessGreater: NotLessGreater,
-	NotLessLess: NotLessLess,
-	NotLessSlantEqual: NotLessSlantEqual,
-	NotLessTilde: NotLessTilde,
-	NotNestedGreaterGreater: NotNestedGreaterGreater,
-	NotNestedLessLess: NotNestedLessLess,
-	notni: notni,
-	notniva: notniva,
-	notnivb: notnivb,
-	notnivc: notnivc,
-	NotPrecedes: NotPrecedes,
-	NotPrecedesEqual: NotPrecedesEqual,
-	NotPrecedesSlantEqual: NotPrecedesSlantEqual,
-	NotReverseElement: NotReverseElement,
-	NotRightTriangleBar: NotRightTriangleBar,
-	NotRightTriangle: NotRightTriangle,
-	NotRightTriangleEqual: NotRightTriangleEqual,
-	NotSquareSubset: NotSquareSubset,
-	NotSquareSubsetEqual: NotSquareSubsetEqual,
-	NotSquareSuperset: NotSquareSuperset,
-	NotSquareSupersetEqual: NotSquareSupersetEqual,
-	NotSubset: NotSubset,
-	NotSubsetEqual: NotSubsetEqual,
-	NotSucceeds: NotSucceeds,
-	NotSucceedsEqual: NotSucceedsEqual,
-	NotSucceedsSlantEqual: NotSucceedsSlantEqual,
-	NotSucceedsTilde: NotSucceedsTilde,
-	NotSuperset: NotSuperset,
-	NotSupersetEqual: NotSupersetEqual,
-	NotTilde: NotTilde,
-	NotTildeEqual: NotTildeEqual,
-	NotTildeFullEqual: NotTildeFullEqual,
-	NotTildeTilde: NotTildeTilde,
-	NotVerticalBar: NotVerticalBar,
-	nparallel: nparallel,
-	npar: npar,
-	nparsl: nparsl,
-	npart: npart,
-	npolint: npolint,
-	npr: npr,
-	nprcue: nprcue,
-	nprec: nprec,
-	npreceq: npreceq,
-	npre: npre,
-	nrarrc: nrarrc,
-	nrarr: nrarr,
-	nrArr: nrArr,
-	nrarrw: nrarrw,
-	nrightarrow: nrightarrow,
-	nRightarrow: nRightarrow,
-	nrtri: nrtri,
-	nrtrie: nrtrie,
-	nsc: nsc,
-	nsccue: nsccue,
-	nsce: nsce,
-	Nscr: Nscr,
-	nscr: nscr,
-	nshortmid: nshortmid,
-	nshortparallel: nshortparallel,
-	nsim: nsim,
-	nsime: nsime,
-	nsimeq: nsimeq,
-	nsmid: nsmid,
-	nspar: nspar,
-	nsqsube: nsqsube,
-	nsqsupe: nsqsupe,
-	nsub: nsub,
-	nsubE: nsubE,
-	nsube: nsube,
-	nsubset: nsubset,
-	nsubseteq: nsubseteq,
-	nsubseteqq: nsubseteqq,
-	nsucc: nsucc,
-	nsucceq: nsucceq,
-	nsup: nsup,
-	nsupE: nsupE,
-	nsupe: nsupe,
-	nsupset: nsupset,
-	nsupseteq: nsupseteq,
-	nsupseteqq: nsupseteqq,
-	ntgl: ntgl,
-	Ntilde: Ntilde,
-	ntilde: ntilde,
-	ntlg: ntlg,
-	ntriangleleft: ntriangleleft,
-	ntrianglelefteq: ntrianglelefteq,
-	ntriangleright: ntriangleright,
-	ntrianglerighteq: ntrianglerighteq,
-	Nu: Nu,
-	nu: nu,
-	num: num,
-	numero: numero,
-	numsp: numsp,
-	nvap: nvap,
-	nvdash: nvdash,
-	nvDash: nvDash,
-	nVdash: nVdash,
-	nVDash: nVDash,
-	nvge: nvge,
-	nvgt: nvgt,
-	nvHarr: nvHarr,
-	nvinfin: nvinfin,
-	nvlArr: nvlArr,
-	nvle: nvle,
-	nvlt: nvlt,
-	nvltrie: nvltrie,
-	nvrArr: nvrArr,
-	nvrtrie: nvrtrie,
-	nvsim: nvsim,
-	nwarhk: nwarhk,
-	nwarr: nwarr,
-	nwArr: nwArr,
-	nwarrow: nwarrow,
-	nwnear: nwnear,
-	Oacute: Oacute,
-	oacute: oacute,
-	oast: oast,
-	Ocirc: Ocirc,
-	ocirc: ocirc,
-	ocir: ocir,
-	Ocy: Ocy,
-	ocy: ocy,
-	odash: odash,
-	Odblac: Odblac,
-	odblac: odblac,
-	odiv: odiv,
-	odot: odot,
-	odsold: odsold,
-	OElig: OElig,
-	oelig: oelig,
-	ofcir: ofcir,
-	Ofr: Ofr,
-	ofr: ofr,
-	ogon: ogon,
-	Ograve: Ograve,
-	ograve: ograve,
-	ogt: ogt,
-	ohbar: ohbar,
-	ohm: ohm,
-	oint: oint,
-	olarr: olarr,
-	olcir: olcir,
-	olcross: olcross,
-	oline: oline,
-	olt: olt,
-	Omacr: Omacr,
-	omacr: omacr,
-	Omega: Omega,
-	omega: omega,
-	Omicron: Omicron,
-	omicron: omicron,
-	omid: omid,
-	ominus: ominus,
-	Oopf: Oopf,
-	oopf: oopf,
-	opar: opar,
-	OpenCurlyDoubleQuote: OpenCurlyDoubleQuote,
-	OpenCurlyQuote: OpenCurlyQuote,
-	operp: operp,
-	oplus: oplus,
-	orarr: orarr,
-	Or: Or,
-	or: or,
-	ord: ord,
-	order: order,
-	orderof: orderof,
-	ordf: ordf,
-	ordm: ordm,
-	origof: origof,
-	oror: oror,
-	orslope: orslope,
-	orv: orv,
-	oS: oS,
-	Oscr: Oscr,
-	oscr: oscr,
-	Oslash: Oslash,
-	oslash: oslash,
-	osol: osol,
-	Otilde: Otilde,
-	otilde: otilde,
-	otimesas: otimesas,
-	Otimes: Otimes,
-	otimes: otimes,
-	Ouml: Ouml,
-	ouml: ouml,
-	ovbar: ovbar,
-	OverBar: OverBar,
-	OverBrace: OverBrace,
-	OverBracket: OverBracket,
-	OverParenthesis: OverParenthesis,
-	para: para,
-	parallel: parallel,
-	par: par,
-	parsim: parsim,
-	parsl: parsl,
-	part: part,
-	PartialD: PartialD,
-	Pcy: Pcy,
-	pcy: pcy,
-	percnt: percnt,
-	period: period,
-	permil: permil,
-	perp: perp,
-	pertenk: pertenk,
-	Pfr: Pfr,
-	pfr: pfr,
-	Phi: Phi,
-	phi: phi,
-	phiv: phiv,
-	phmmat: phmmat,
-	phone: phone,
-	Pi: Pi,
-	pi: pi,
-	pitchfork: pitchfork,
-	piv: piv,
-	planck: planck,
-	planckh: planckh,
-	plankv: plankv,
-	plusacir: plusacir,
-	plusb: plusb,
-	pluscir: pluscir,
-	plus: plus,
-	plusdo: plusdo,
-	plusdu: plusdu,
-	pluse: pluse,
-	PlusMinus: PlusMinus,
-	plusmn: plusmn,
-	plussim: plussim,
-	plustwo: plustwo,
-	pm: pm,
-	Poincareplane: Poincareplane,
-	pointint: pointint,
-	popf: popf,
-	Popf: Popf,
-	pound: pound,
-	prap: prap,
-	Pr: Pr,
-	pr: pr,
-	prcue: prcue,
-	precapprox: precapprox,
-	prec: prec,
-	preccurlyeq: preccurlyeq,
-	Precedes: Precedes,
-	PrecedesEqual: PrecedesEqual,
-	PrecedesSlantEqual: PrecedesSlantEqual,
-	PrecedesTilde: PrecedesTilde,
-	preceq: preceq,
-	precnapprox: precnapprox,
-	precneqq: precneqq,
-	precnsim: precnsim,
-	pre: pre,
-	prE: prE,
-	precsim: precsim,
-	prime: prime,
-	Prime: Prime,
-	primes: primes,
-	prnap: prnap,
-	prnE: prnE,
-	prnsim: prnsim,
-	prod: prod,
-	Product: Product,
-	profalar: profalar,
-	profline: profline,
-	profsurf: profsurf,
-	prop: prop,
-	Proportional: Proportional,
-	Proportion: Proportion,
-	propto: propto,
-	prsim: prsim,
-	prurel: prurel,
-	Pscr: Pscr,
-	pscr: pscr,
-	Psi: Psi,
-	psi: psi,
-	puncsp: puncsp,
-	Qfr: Qfr,
-	qfr: qfr,
-	qint: qint,
-	qopf: qopf,
-	Qopf: Qopf,
-	qprime: qprime,
-	Qscr: Qscr,
-	qscr: qscr,
-	quaternions: quaternions,
-	quatint: quatint,
-	quest: quest,
-	questeq: questeq,
-	quot: quot$1,
-	QUOT: QUOT,
-	rAarr: rAarr,
-	race: race,
-	Racute: Racute,
-	racute: racute,
-	radic: radic,
-	raemptyv: raemptyv,
-	rang: rang,
-	Rang: Rang,
-	rangd: rangd,
-	range: range,
-	rangle: rangle,
-	raquo: raquo,
-	rarrap: rarrap,
-	rarrb: rarrb,
-	rarrbfs: rarrbfs,
-	rarrc: rarrc,
-	rarr: rarr,
-	Rarr: Rarr,
-	rArr: rArr,
-	rarrfs: rarrfs,
-	rarrhk: rarrhk,
-	rarrlp: rarrlp,
-	rarrpl: rarrpl,
-	rarrsim: rarrsim,
-	Rarrtl: Rarrtl,
-	rarrtl: rarrtl,
-	rarrw: rarrw,
-	ratail: ratail,
-	rAtail: rAtail,
-	ratio: ratio,
-	rationals: rationals,
-	rbarr: rbarr,
-	rBarr: rBarr,
-	RBarr: RBarr,
-	rbbrk: rbbrk,
-	rbrace: rbrace,
-	rbrack: rbrack,
-	rbrke: rbrke,
-	rbrksld: rbrksld,
-	rbrkslu: rbrkslu,
-	Rcaron: Rcaron,
-	rcaron: rcaron,
-	Rcedil: Rcedil,
-	rcedil: rcedil,
-	rceil: rceil,
-	rcub: rcub,
-	Rcy: Rcy,
-	rcy: rcy,
-	rdca: rdca,
-	rdldhar: rdldhar,
-	rdquo: rdquo,
-	rdquor: rdquor,
-	rdsh: rdsh,
-	real: real,
-	realine: realine,
-	realpart: realpart,
-	reals: reals,
-	Re: Re$1,
-	rect: rect,
-	reg: reg,
-	REG: REG,
-	ReverseElement: ReverseElement,
-	ReverseEquilibrium: ReverseEquilibrium,
-	ReverseUpEquilibrium: ReverseUpEquilibrium,
-	rfisht: rfisht,
-	rfloor: rfloor,
-	rfr: rfr,
-	Rfr: Rfr,
-	rHar: rHar,
-	rhard: rhard,
-	rharu: rharu,
-	rharul: rharul,
-	Rho: Rho,
-	rho: rho,
-	rhov: rhov,
-	RightAngleBracket: RightAngleBracket,
-	RightArrowBar: RightArrowBar,
-	rightarrow: rightarrow,
-	RightArrow: RightArrow,
-	Rightarrow: Rightarrow,
-	RightArrowLeftArrow: RightArrowLeftArrow,
-	rightarrowtail: rightarrowtail,
-	RightCeiling: RightCeiling,
-	RightDoubleBracket: RightDoubleBracket,
-	RightDownTeeVector: RightDownTeeVector,
-	RightDownVectorBar: RightDownVectorBar,
-	RightDownVector: RightDownVector,
-	RightFloor: RightFloor,
-	rightharpoondown: rightharpoondown,
-	rightharpoonup: rightharpoonup,
-	rightleftarrows: rightleftarrows,
-	rightleftharpoons: rightleftharpoons,
-	rightrightarrows: rightrightarrows,
-	rightsquigarrow: rightsquigarrow,
-	RightTeeArrow: RightTeeArrow,
-	RightTee: RightTee,
-	RightTeeVector: RightTeeVector,
-	rightthreetimes: rightthreetimes,
-	RightTriangleBar: RightTriangleBar,
-	RightTriangle: RightTriangle,
-	RightTriangleEqual: RightTriangleEqual,
-	RightUpDownVector: RightUpDownVector,
-	RightUpTeeVector: RightUpTeeVector,
-	RightUpVectorBar: RightUpVectorBar,
-	RightUpVector: RightUpVector,
-	RightVectorBar: RightVectorBar,
-	RightVector: RightVector,
-	ring: ring,
-	risingdotseq: risingdotseq,
-	rlarr: rlarr,
-	rlhar: rlhar,
-	rlm: rlm,
-	rmoustache: rmoustache,
-	rmoust: rmoust,
-	rnmid: rnmid,
-	roang: roang,
-	roarr: roarr,
-	robrk: robrk,
-	ropar: ropar,
-	ropf: ropf,
-	Ropf: Ropf,
-	roplus: roplus,
-	rotimes: rotimes,
-	RoundImplies: RoundImplies,
-	rpar: rpar,
-	rpargt: rpargt,
-	rppolint: rppolint,
-	rrarr: rrarr,
-	Rrightarrow: Rrightarrow,
-	rsaquo: rsaquo,
-	rscr: rscr,
-	Rscr: Rscr,
-	rsh: rsh,
-	Rsh: Rsh,
-	rsqb: rsqb,
-	rsquo: rsquo,
-	rsquor: rsquor,
-	rthree: rthree,
-	rtimes: rtimes,
-	rtri: rtri,
-	rtrie: rtrie,
-	rtrif: rtrif,
-	rtriltri: rtriltri,
-	RuleDelayed: RuleDelayed,
-	ruluhar: ruluhar,
-	rx: rx,
-	Sacute: Sacute,
-	sacute: sacute,
-	sbquo: sbquo,
-	scap: scap,
-	Scaron: Scaron,
-	scaron: scaron,
-	Sc: Sc$1,
-	sc: sc$1,
-	sccue: sccue,
-	sce: sce,
-	scE: scE,
-	Scedil: Scedil,
-	scedil: scedil,
-	Scirc: Scirc,
-	scirc: scirc,
-	scnap: scnap,
-	scnE: scnE,
-	scnsim: scnsim,
-	scpolint: scpolint,
-	scsim: scsim,
-	Scy: Scy,
-	scy: scy,
-	sdotb: sdotb,
-	sdot: sdot,
-	sdote: sdote,
-	searhk: searhk,
-	searr: searr,
-	seArr: seArr,
-	searrow: searrow,
-	sect: sect,
-	semi: semi,
-	seswar: seswar,
-	setminus: setminus,
-	setmn: setmn,
-	sext: sext,
-	Sfr: Sfr,
-	sfr: sfr,
-	sfrown: sfrown,
-	sharp: sharp,
-	SHCHcy: SHCHcy,
-	shchcy: shchcy,
-	SHcy: SHcy,
-	shcy: shcy,
-	ShortDownArrow: ShortDownArrow,
-	ShortLeftArrow: ShortLeftArrow,
-	shortmid: shortmid,
-	shortparallel: shortparallel,
-	ShortRightArrow: ShortRightArrow,
-	ShortUpArrow: ShortUpArrow,
-	shy: shy,
-	Sigma: Sigma,
-	sigma: sigma,
-	sigmaf: sigmaf,
-	sigmav: sigmav,
-	sim: sim,
-	simdot: simdot,
-	sime: sime,
-	simeq: simeq,
-	simg: simg,
-	simgE: simgE,
-	siml: siml,
-	simlE: simlE,
-	simne: simne,
-	simplus: simplus,
-	simrarr: simrarr,
-	slarr: slarr,
-	SmallCircle: SmallCircle,
-	smallsetminus: smallsetminus,
-	smashp: smashp,
-	smeparsl: smeparsl,
-	smid: smid,
-	smile: smile,
-	smt: smt,
-	smte: smte,
-	smtes: smtes,
-	SOFTcy: SOFTcy,
-	softcy: softcy,
-	solbar: solbar,
-	solb: solb,
-	sol: sol,
-	Sopf: Sopf,
-	sopf: sopf,
-	spades: spades,
-	spadesuit: spadesuit,
-	spar: spar,
-	sqcap: sqcap,
-	sqcaps: sqcaps,
-	sqcup: sqcup,
-	sqcups: sqcups,
-	Sqrt: Sqrt,
-	sqsub: sqsub,
-	sqsube: sqsube,
-	sqsubset: sqsubset,
-	sqsubseteq: sqsubseteq,
-	sqsup: sqsup,
-	sqsupe: sqsupe,
-	sqsupset: sqsupset,
-	sqsupseteq: sqsupseteq,
-	square: square,
-	Square: Square,
-	SquareIntersection: SquareIntersection,
-	SquareSubset: SquareSubset,
-	SquareSubsetEqual: SquareSubsetEqual,
-	SquareSuperset: SquareSuperset,
-	SquareSupersetEqual: SquareSupersetEqual,
-	SquareUnion: SquareUnion,
-	squarf: squarf,
-	squ: squ,
-	squf: squf,
-	srarr: srarr,
-	Sscr: Sscr,
-	sscr: sscr,
-	ssetmn: ssetmn,
-	ssmile: ssmile,
-	sstarf: sstarf,
-	Star: Star,
-	star: star,
-	starf: starf,
-	straightepsilon: straightepsilon,
-	straightphi: straightphi,
-	strns: strns,
-	sub: sub,
-	Sub: Sub,
-	subdot: subdot,
-	subE: subE,
-	sube: sube,
-	subedot: subedot,
-	submult: submult,
-	subnE: subnE,
-	subne: subne,
-	subplus: subplus,
-	subrarr: subrarr,
-	subset: subset,
-	Subset: Subset,
-	subseteq: subseteq,
-	subseteqq: subseteqq,
-	SubsetEqual: SubsetEqual,
-	subsetneq: subsetneq,
-	subsetneqq: subsetneqq,
-	subsim: subsim,
-	subsub: subsub,
-	subsup: subsup,
-	succapprox: succapprox,
-	succ: succ,
-	succcurlyeq: succcurlyeq,
-	Succeeds: Succeeds,
-	SucceedsEqual: SucceedsEqual,
-	SucceedsSlantEqual: SucceedsSlantEqual,
-	SucceedsTilde: SucceedsTilde,
-	succeq: succeq,
-	succnapprox: succnapprox,
-	succneqq: succneqq,
-	succnsim: succnsim,
-	succsim: succsim,
-	SuchThat: SuchThat,
-	sum: sum,
-	Sum: Sum,
-	sung: sung,
-	sup1: sup1,
-	sup2: sup2,
-	sup3: sup3,
-	sup: sup,
-	Sup: Sup,
-	supdot: supdot,
-	supdsub: supdsub,
-	supE: supE,
-	supe: supe,
-	supedot: supedot,
-	Superset: Superset,
-	SupersetEqual: SupersetEqual,
-	suphsol: suphsol,
-	suphsub: suphsub,
-	suplarr: suplarr,
-	supmult: supmult,
-	supnE: supnE,
-	supne: supne,
-	supplus: supplus,
-	supset: supset,
-	Supset: Supset,
-	supseteq: supseteq,
-	supseteqq: supseteqq,
-	supsetneq: supsetneq,
-	supsetneqq: supsetneqq,
-	supsim: supsim,
-	supsub: supsub,
-	supsup: supsup,
-	swarhk: swarhk,
-	swarr: swarr,
-	swArr: swArr,
-	swarrow: swarrow,
-	swnwar: swnwar,
-	szlig: szlig,
-	Tab: Tab,
-	target: target,
-	Tau: Tau,
-	tau: tau,
-	tbrk: tbrk,
-	Tcaron: Tcaron,
-	tcaron: tcaron,
-	Tcedil: Tcedil,
-	tcedil: tcedil,
-	Tcy: Tcy,
-	tcy: tcy,
-	tdot: tdot,
-	telrec: telrec,
-	Tfr: Tfr,
-	tfr: tfr,
-	there4: there4,
-	therefore: therefore,
-	Therefore: Therefore,
-	Theta: Theta,
-	theta: theta,
-	thetasym: thetasym,
-	thetav: thetav,
-	thickapprox: thickapprox,
-	thicksim: thicksim,
-	ThickSpace: ThickSpace,
-	ThinSpace: ThinSpace,
-	thinsp: thinsp,
-	thkap: thkap,
-	thksim: thksim,
-	THORN: THORN,
-	thorn: thorn,
-	tilde: tilde,
-	Tilde: Tilde,
-	TildeEqual: TildeEqual,
-	TildeFullEqual: TildeFullEqual,
-	TildeTilde: TildeTilde,
-	timesbar: timesbar,
-	timesb: timesb,
-	times: times,
-	timesd: timesd,
-	tint: tint,
-	toea: toea,
-	topbot: topbot,
-	topcir: topcir,
-	top: top,
-	Topf: Topf,
-	topf: topf,
-	topfork: topfork,
-	tosa: tosa,
-	tprime: tprime,
-	trade: trade,
-	TRADE: TRADE,
-	triangle: triangle,
-	triangledown: triangledown,
-	triangleleft: triangleleft,
-	trianglelefteq: trianglelefteq,
-	triangleq: triangleq,
-	triangleright: triangleright,
-	trianglerighteq: trianglerighteq,
-	tridot: tridot,
-	trie: trie,
-	triminus: triminus,
-	TripleDot: TripleDot,
-	triplus: triplus,
-	trisb: trisb,
-	tritime: tritime,
-	trpezium: trpezium,
-	Tscr: Tscr,
-	tscr: tscr,
-	TScy: TScy,
-	tscy: tscy,
-	TSHcy: TSHcy,
-	tshcy: tshcy,
-	Tstrok: Tstrok,
-	tstrok: tstrok,
-	twixt: twixt,
-	twoheadleftarrow: twoheadleftarrow,
-	twoheadrightarrow: twoheadrightarrow,
-	Uacute: Uacute,
-	uacute: uacute,
-	uarr: uarr,
-	Uarr: Uarr,
-	uArr: uArr,
-	Uarrocir: Uarrocir,
-	Ubrcy: Ubrcy,
-	ubrcy: ubrcy,
-	Ubreve: Ubreve,
-	ubreve: ubreve,
-	Ucirc: Ucirc,
-	ucirc: ucirc,
-	Ucy: Ucy,
-	ucy: ucy,
-	udarr: udarr,
-	Udblac: Udblac,
-	udblac: udblac,
-	udhar: udhar,
-	ufisht: ufisht,
-	Ufr: Ufr,
-	ufr: ufr,
-	Ugrave: Ugrave,
-	ugrave: ugrave,
-	uHar: uHar,
-	uharl: uharl,
-	uharr: uharr,
-	uhblk: uhblk,
-	ulcorn: ulcorn,
-	ulcorner: ulcorner,
-	ulcrop: ulcrop,
-	ultri: ultri,
-	Umacr: Umacr,
-	umacr: umacr,
-	uml: uml,
-	UnderBar: UnderBar,
-	UnderBrace: UnderBrace,
-	UnderBracket: UnderBracket,
-	UnderParenthesis: UnderParenthesis,
-	Union: Union,
-	UnionPlus: UnionPlus,
-	Uogon: Uogon,
-	uogon: uogon,
-	Uopf: Uopf,
-	uopf: uopf,
-	UpArrowBar: UpArrowBar,
-	uparrow: uparrow,
-	UpArrow: UpArrow,
-	Uparrow: Uparrow,
-	UpArrowDownArrow: UpArrowDownArrow,
-	updownarrow: updownarrow,
-	UpDownArrow: UpDownArrow,
-	Updownarrow: Updownarrow,
-	UpEquilibrium: UpEquilibrium,
-	upharpoonleft: upharpoonleft,
-	upharpoonright: upharpoonright,
-	uplus: uplus,
-	UpperLeftArrow: UpperLeftArrow,
-	UpperRightArrow: UpperRightArrow,
-	upsi: upsi,
-	Upsi: Upsi,
-	upsih: upsih,
-	Upsilon: Upsilon,
-	upsilon: upsilon,
-	UpTeeArrow: UpTeeArrow,
-	UpTee: UpTee,
-	upuparrows: upuparrows,
-	urcorn: urcorn,
-	urcorner: urcorner,
-	urcrop: urcrop,
-	Uring: Uring,
-	uring: uring,
-	urtri: urtri,
-	Uscr: Uscr,
-	uscr: uscr,
-	utdot: utdot,
-	Utilde: Utilde,
-	utilde: utilde,
-	utri: utri,
-	utrif: utrif,
-	uuarr: uuarr,
-	Uuml: Uuml,
-	uuml: uuml,
-	uwangle: uwangle,
-	vangrt: vangrt,
-	varepsilon: varepsilon,
-	varkappa: varkappa,
-	varnothing: varnothing,
-	varphi: varphi,
-	varpi: varpi,
-	varpropto: varpropto,
-	varr: varr,
-	vArr: vArr,
-	varrho: varrho,
-	varsigma: varsigma,
-	varsubsetneq: varsubsetneq,
-	varsubsetneqq: varsubsetneqq,
-	varsupsetneq: varsupsetneq,
-	varsupsetneqq: varsupsetneqq,
-	vartheta: vartheta,
-	vartriangleleft: vartriangleleft,
-	vartriangleright: vartriangleright,
-	vBar: vBar,
-	Vbar: Vbar,
-	vBarv: vBarv,
-	Vcy: Vcy,
-	vcy: vcy,
-	vdash: vdash,
-	vDash: vDash,
-	Vdash: Vdash,
-	VDash: VDash,
-	Vdashl: Vdashl,
-	veebar: veebar,
-	vee: vee,
-	Vee: Vee,
-	veeeq: veeeq,
-	vellip: vellip,
-	verbar: verbar,
-	Verbar: Verbar,
-	vert: vert,
-	Vert: Vert,
-	VerticalBar: VerticalBar,
-	VerticalLine: VerticalLine,
-	VerticalSeparator: VerticalSeparator,
-	VerticalTilde: VerticalTilde,
-	VeryThinSpace: VeryThinSpace,
-	Vfr: Vfr,
-	vfr: vfr,
-	vltri: vltri,
-	vnsub: vnsub,
-	vnsup: vnsup,
-	Vopf: Vopf,
-	vopf: vopf,
-	vprop: vprop,
-	vrtri: vrtri,
-	Vscr: Vscr,
-	vscr: vscr,
-	vsubnE: vsubnE,
-	vsubne: vsubne,
-	vsupnE: vsupnE,
-	vsupne: vsupne,
-	Vvdash: Vvdash,
-	vzigzag: vzigzag,
-	Wcirc: Wcirc,
-	wcirc: wcirc,
-	wedbar: wedbar,
-	wedge: wedge,
-	Wedge: Wedge,
-	wedgeq: wedgeq,
-	weierp: weierp,
-	Wfr: Wfr,
-	wfr: wfr,
-	Wopf: Wopf,
-	wopf: wopf,
-	wp: wp,
-	wr: wr,
-	wreath: wreath,
-	Wscr: Wscr,
-	wscr: wscr,
-	xcap: xcap,
-	xcirc: xcirc,
-	xcup: xcup,
-	xdtri: xdtri,
-	Xfr: Xfr,
-	xfr: xfr,
-	xharr: xharr,
-	xhArr: xhArr,
-	Xi: Xi,
-	xi: xi,
-	xlarr: xlarr,
-	xlArr: xlArr,
-	xmap: xmap,
-	xnis: xnis,
-	xodot: xodot,
-	Xopf: Xopf,
-	xopf: xopf,
-	xoplus: xoplus,
-	xotime: xotime,
-	xrarr: xrarr,
-	xrArr: xrArr,
-	Xscr: Xscr,
-	xscr: xscr,
-	xsqcup: xsqcup,
-	xuplus: xuplus,
-	xutri: xutri,
-	xvee: xvee,
-	xwedge: xwedge,
-	Yacute: Yacute,
-	yacute: yacute,
-	YAcy: YAcy,
-	yacy: yacy,
-	Ycirc: Ycirc,
-	ycirc: ycirc,
-	Ycy: Ycy,
-	ycy: ycy,
-	yen: yen,
-	Yfr: Yfr,
-	yfr: yfr,
-	YIcy: YIcy,
-	yicy: yicy,
-	Yopf: Yopf,
-	yopf: yopf,
-	Yscr: Yscr,
-	yscr: yscr,
-	YUcy: YUcy,
-	yucy: yucy,
-	yuml: yuml,
-	Yuml: Yuml,
-	Zacute: Zacute,
-	zacute: zacute,
-	Zcaron: Zcaron,
-	zcaron: zcaron,
-	Zcy: Zcy,
-	zcy: zcy,
-	Zdot: Zdot,
-	zdot: zdot,
-	zeetrf: zeetrf,
-	ZeroWidthSpace: ZeroWidthSpace,
-	Zeta: Zeta,
-	zeta: zeta,
-	zfr: zfr,
-	Zfr: Zfr,
-	ZHcy: ZHcy,
-	zhcy: zhcy,
-	zigrarr: zigrarr,
-	zopf: zopf,
-	Zopf: Zopf,
-	Zscr: Zscr,
-	zscr: zscr,
-	zwj: zwj,
-	zwnj: zwnj,
-	"in": "∈",
-	"Map": "⤅"
-};
-
-var entities$1 = Object.freeze({
-	Aacute: Aacute,
-	aacute: aacute,
-	Abreve: Abreve,
-	abreve: abreve,
-	ac: ac$1,
-	acd: acd,
-	acE: acE,
-	Acirc: Acirc,
-	acirc: acirc,
-	acute: acute,
-	Acy: Acy,
-	acy: acy,
-	AElig: AElig,
-	aelig: aelig,
-	af: af$1,
-	Afr: Afr,
-	afr: afr,
-	Agrave: Agrave,
-	agrave: agrave,
-	alefsym: alefsym,
-	aleph: aleph,
-	Alpha: Alpha,
-	alpha: alpha,
-	Amacr: Amacr,
-	amacr: amacr,
-	amalg: amalg,
-	amp: amp,
-	AMP: AMP,
-	andand: andand,
-	And: And,
-	and: and,
-	andd: andd,
-	andslope: andslope,
-	andv: andv,
-	ang: ang,
-	ange: ange,
-	angle: angle,
-	angmsdaa: angmsdaa,
-	angmsdab: angmsdab,
-	angmsdac: angmsdac,
-	angmsdad: angmsdad,
-	angmsdae: angmsdae,
-	angmsdaf: angmsdaf,
-	angmsdag: angmsdag,
-	angmsdah: angmsdah,
-	angmsd: angmsd,
-	angrt: angrt,
-	angrtvb: angrtvb,
-	angrtvbd: angrtvbd,
-	angsph: angsph,
-	angst: angst,
-	angzarr: angzarr,
-	Aogon: Aogon,
-	aogon: aogon,
-	Aopf: Aopf,
-	aopf: aopf,
-	apacir: apacir,
-	ap: ap,
-	apE: apE,
-	ape: ape,
-	apid: apid,
-	apos: apos,
-	ApplyFunction: ApplyFunction,
-	approx: approx,
-	approxeq: approxeq,
-	Aring: Aring,
-	aring: aring,
-	Ascr: Ascr,
-	ascr: ascr,
-	Assign: Assign,
-	ast: ast,
-	asymp: asymp,
-	asympeq: asympeq,
-	Atilde: Atilde,
-	atilde: atilde,
-	Auml: Auml,
-	auml: auml,
-	awconint: awconint,
-	awint: awint,
-	backcong: backcong,
-	backepsilon: backepsilon,
-	backprime: backprime,
-	backsim: backsim,
-	backsimeq: backsimeq,
-	Backslash: Backslash,
-	Barv: Barv,
-	barvee: barvee,
-	barwed: barwed,
-	Barwed: Barwed,
-	barwedge: barwedge,
-	bbrk: bbrk,
-	bbrktbrk: bbrktbrk,
-	bcong: bcong,
-	Bcy: Bcy,
-	bcy: bcy,
-	bdquo: bdquo,
-	becaus: becaus,
-	because: because,
-	Because: Because,
-	bemptyv: bemptyv,
-	bepsi: bepsi,
-	bernou: bernou,
-	Bernoullis: Bernoullis,
-	Beta: Beta,
-	beta: beta,
-	beth: beth,
-	between: between,
-	Bfr: Bfr,
-	bfr: bfr,
-	bigcap: bigcap,
-	bigcirc: bigcirc,
-	bigcup: bigcup,
-	bigodot: bigodot,
-	bigoplus: bigoplus,
-	bigotimes: bigotimes,
-	bigsqcup: bigsqcup,
-	bigstar: bigstar,
-	bigtriangledown: bigtriangledown,
-	bigtriangleup: bigtriangleup,
-	biguplus: biguplus,
-	bigvee: bigvee,
-	bigwedge: bigwedge,
-	bkarow: bkarow,
-	blacklozenge: blacklozenge,
-	blacksquare: blacksquare,
-	blacktriangle: blacktriangle,
-	blacktriangledown: blacktriangledown,
-	blacktriangleleft: blacktriangleleft,
-	blacktriangleright: blacktriangleright,
-	blank: blank,
-	blk12: blk12,
-	blk14: blk14,
-	blk34: blk34,
-	block: block,
-	bne: bne,
-	bnequiv: bnequiv,
-	bNot: bNot,
-	bnot: bnot,
-	Bopf: Bopf,
-	bopf: bopf,
-	bot: bot,
-	bottom: bottom,
-	bowtie: bowtie,
-	boxbox: boxbox,
-	boxdl: boxdl,
-	boxdL: boxdL,
-	boxDl: boxDl,
-	boxDL: boxDL,
-	boxdr: boxdr,
-	boxdR: boxdR,
-	boxDr: boxDr,
-	boxDR: boxDR,
-	boxh: boxh,
-	boxH: boxH,
-	boxhd: boxhd,
-	boxHd: boxHd,
-	boxhD: boxhD,
-	boxHD: boxHD,
-	boxhu: boxhu,
-	boxHu: boxHu,
-	boxhU: boxhU,
-	boxHU: boxHU,
-	boxminus: boxminus,
-	boxplus: boxplus,
-	boxtimes: boxtimes,
-	boxul: boxul,
-	boxuL: boxuL,
-	boxUl: boxUl,
-	boxUL: boxUL,
-	boxur: boxur,
-	boxuR: boxuR,
-	boxUr: boxUr,
-	boxUR: boxUR,
-	boxv: boxv,
-	boxV: boxV,
-	boxvh: boxvh,
-	boxvH: boxvH,
-	boxVh: boxVh,
-	boxVH: boxVH,
-	boxvl: boxvl,
-	boxvL: boxvL,
-	boxVl: boxVl,
-	boxVL: boxVL,
-	boxvr: boxvr,
-	boxvR: boxvR,
-	boxVr: boxVr,
-	boxVR: boxVR,
-	bprime: bprime,
-	breve: breve,
-	Breve: Breve,
-	brvbar: brvbar,
-	bscr: bscr,
-	Bscr: Bscr,
-	bsemi: bsemi,
-	bsim: bsim,
-	bsime: bsime,
-	bsolb: bsolb,
-	bsol: bsol,
-	bsolhsub: bsolhsub,
-	bull: bull,
-	bullet: bullet,
-	bump: bump,
-	bumpE: bumpE,
-	bumpe: bumpe,
-	Bumpeq: Bumpeq,
-	bumpeq: bumpeq,
-	Cacute: Cacute,
-	cacute: cacute,
-	capand: capand,
-	capbrcup: capbrcup,
-	capcap: capcap,
-	cap: cap,
-	Cap: Cap,
-	capcup: capcup,
-	capdot: capdot,
-	CapitalDifferentialD: CapitalDifferentialD,
-	caps: caps,
-	caret: caret,
-	caron: caron,
-	Cayleys: Cayleys,
-	ccaps: ccaps,
-	Ccaron: Ccaron,
-	ccaron: ccaron,
-	Ccedil: Ccedil,
-	ccedil: ccedil,
-	Ccirc: Ccirc,
-	ccirc: ccirc,
-	Cconint: Cconint,
-	ccups: ccups,
-	ccupssm: ccupssm,
-	Cdot: Cdot,
-	cdot: cdot,
-	cedil: cedil,
-	Cedilla: Cedilla,
-	cemptyv: cemptyv,
-	cent: cent,
-	centerdot: centerdot,
-	CenterDot: CenterDot,
-	cfr: cfr,
-	Cfr: Cfr,
-	CHcy: CHcy,
-	chcy: chcy,
-	check: check$1,
-	checkmark: checkmark,
-	Chi: Chi,
-	chi: chi,
-	circ: circ,
-	circeq: circeq,
-	circlearrowleft: circlearrowleft,
-	circlearrowright: circlearrowright,
-	circledast: circledast,
-	circledcirc: circledcirc,
-	circleddash: circleddash,
-	CircleDot: CircleDot,
-	circledR: circledR,
-	circledS: circledS,
-	CircleMinus: CircleMinus,
-	CirclePlus: CirclePlus,
-	CircleTimes: CircleTimes,
-	cir: cir,
-	cirE: cirE,
-	cire: cire,
-	cirfnint: cirfnint,
-	cirmid: cirmid,
-	cirscir: cirscir,
-	ClockwiseContourIntegral: ClockwiseContourIntegral,
-	CloseCurlyDoubleQuote: CloseCurlyDoubleQuote,
-	CloseCurlyQuote: CloseCurlyQuote,
-	clubs: clubs,
-	clubsuit: clubsuit,
-	colon: colon,
-	Colon: Colon,
-	Colone: Colone,
-	colone: colone,
-	coloneq: coloneq,
-	comma: comma,
-	commat: commat,
-	comp: comp,
-	compfn: compfn,
-	complement: complement,
-	complexes: complexes,
-	cong: cong,
-	congdot: congdot,
-	Congruent: Congruent,
-	conint: conint,
-	Conint: Conint,
-	ContourIntegral: ContourIntegral,
-	copf: copf,
-	Copf: Copf,
-	coprod: coprod,
-	Coproduct: Coproduct,
-	copy: copy,
-	COPY: COPY,
-	copysr: copysr,
-	CounterClockwiseContourIntegral: CounterClockwiseContourIntegral,
-	crarr: crarr,
-	cross: cross,
-	Cross: Cross,
-	Cscr: Cscr,
-	cscr: cscr,
-	csub: csub,
-	csube: csube,
-	csup: csup,
-	csupe: csupe,
-	ctdot: ctdot,
-	cudarrl: cudarrl,
-	cudarrr: cudarrr,
-	cuepr: cuepr,
-	cuesc: cuesc,
-	cularr: cularr,
-	cularrp: cularrp,
-	cupbrcap: cupbrcap,
-	cupcap: cupcap,
-	CupCap: CupCap,
-	cup: cup,
-	Cup: Cup,
-	cupcup: cupcup,
-	cupdot: cupdot,
-	cupor: cupor,
-	cups: cups,
-	curarr: curarr,
-	curarrm: curarrm,
-	curlyeqprec: curlyeqprec,
-	curlyeqsucc: curlyeqsucc,
-	curlyvee: curlyvee,
-	curlywedge: curlywedge,
-	curren: curren,
-	curvearrowleft: curvearrowleft,
-	curvearrowright: curvearrowright,
-	cuvee: cuvee,
-	cuwed: cuwed,
-	cwconint: cwconint,
-	cwint: cwint,
-	cylcty: cylcty,
-	dagger: dagger,
-	Dagger: Dagger,
-	daleth: daleth,
-	darr: darr,
-	Darr: Darr,
-	dArr: dArr,
-	dash: dash,
-	Dashv: Dashv,
-	dashv: dashv,
-	dbkarow: dbkarow,
-	dblac: dblac,
-	Dcaron: Dcaron,
-	dcaron: dcaron,
-	Dcy: Dcy,
-	dcy: dcy,
-	ddagger: ddagger,
-	ddarr: ddarr,
-	DD: DD,
-	dd: dd$1,
-	DDotrahd: DDotrahd,
-	ddotseq: ddotseq,
-	deg: deg,
-	Del: Del,
-	Delta: Delta,
-	delta: delta,
-	demptyv: demptyv,
-	dfisht: dfisht,
-	Dfr: Dfr,
-	dfr: dfr,
-	dHar: dHar,
-	dharl: dharl,
-	dharr: dharr,
-	DiacriticalAcute: DiacriticalAcute,
-	DiacriticalDot: DiacriticalDot,
-	DiacriticalDoubleAcute: DiacriticalDoubleAcute,
-	DiacriticalGrave: DiacriticalGrave,
-	DiacriticalTilde: DiacriticalTilde,
-	diam: diam,
-	diamond: diamond,
-	Diamond: Diamond,
-	diamondsuit: diamondsuit,
-	diams: diams,
-	die: die,
-	DifferentialD: DifferentialD,
-	digamma: digamma,
-	disin: disin,
-	div: div$1,
-	divide: divide$1,
-	divideontimes: divideontimes,
-	divonx: divonx,
-	DJcy: DJcy,
-	djcy: djcy,
-	dlcorn: dlcorn,
-	dlcrop: dlcrop,
-	dollar: dollar,
-	Dopf: Dopf,
-	dopf: dopf,
-	Dot: Dot,
-	dot: dot,
-	DotDot: DotDot,
-	doteq: doteq,
-	doteqdot: doteqdot,
-	DotEqual: DotEqual,
-	dotminus: dotminus,
-	dotplus: dotplus,
-	dotsquare: dotsquare,
-	doublebarwedge: doublebarwedge,
-	DoubleContourIntegral: DoubleContourIntegral,
-	DoubleDot: DoubleDot,
-	DoubleDownArrow: DoubleDownArrow,
-	DoubleLeftArrow: DoubleLeftArrow,
-	DoubleLeftRightArrow: DoubleLeftRightArrow,
-	DoubleLeftTee: DoubleLeftTee,
-	DoubleLongLeftArrow: DoubleLongLeftArrow,
-	DoubleLongLeftRightArrow: DoubleLongLeftRightArrow,
-	DoubleLongRightArrow: DoubleLongRightArrow,
-	DoubleRightArrow: DoubleRightArrow,
-	DoubleRightTee: DoubleRightTee,
-	DoubleUpArrow: DoubleUpArrow,
-	DoubleUpDownArrow: DoubleUpDownArrow,
-	DoubleVerticalBar: DoubleVerticalBar,
-	DownArrowBar: DownArrowBar,
-	downarrow: downarrow,
-	DownArrow: DownArrow,
-	Downarrow: Downarrow,
-	DownArrowUpArrow: DownArrowUpArrow,
-	DownBreve: DownBreve,
-	downdownarrows: downdownarrows,
-	downharpoonleft: downharpoonleft,
-	downharpoonright: downharpoonright,
-	DownLeftRightVector: DownLeftRightVector,
-	DownLeftTeeVector: DownLeftTeeVector,
-	DownLeftVectorBar: DownLeftVectorBar,
-	DownLeftVector: DownLeftVector,
-	DownRightTeeVector: DownRightTeeVector,
-	DownRightVectorBar: DownRightVectorBar,
-	DownRightVector: DownRightVector,
-	DownTeeArrow: DownTeeArrow,
-	DownTee: DownTee,
-	drbkarow: drbkarow,
-	drcorn: drcorn,
-	drcrop: drcrop,
-	Dscr: Dscr,
-	dscr: dscr,
-	DScy: DScy,
-	dscy: dscy,
-	dsol: dsol,
-	Dstrok: Dstrok,
-	dstrok: dstrok,
-	dtdot: dtdot,
-	dtri: dtri,
-	dtrif: dtrif,
-	duarr: duarr,
-	duhar: duhar,
-	dwangle: dwangle,
-	DZcy: DZcy,
-	dzcy: dzcy,
-	dzigrarr: dzigrarr,
-	Eacute: Eacute,
-	eacute: eacute,
-	easter: easter,
-	Ecaron: Ecaron,
-	ecaron: ecaron,
-	Ecirc: Ecirc,
-	ecirc: ecirc,
-	ecir: ecir,
-	ecolon: ecolon,
-	Ecy: Ecy,
-	ecy: ecy,
-	eDDot: eDDot,
-	Edot: Edot,
-	edot: edot,
-	eDot: eDot,
-	ee: ee$1,
-	efDot: efDot,
-	Efr: Efr,
-	efr: efr,
-	eg: eg$1,
-	Egrave: Egrave,
-	egrave: egrave,
-	egs: egs,
-	egsdot: egsdot,
-	el: el,
-	Element: Element,
-	elinters: elinters,
-	ell: ell,
-	els: els,
-	elsdot: elsdot,
-	Emacr: Emacr,
-	emacr: emacr,
-	empty: empty$1,
-	emptyset: emptyset,
-	EmptySmallSquare: EmptySmallSquare,
-	emptyv: emptyv,
-	EmptyVerySmallSquare: EmptyVerySmallSquare,
-	emsp13: emsp13,
-	emsp14: emsp14,
-	emsp: emsp,
-	ENG: ENG,
-	eng: eng,
-	ensp: ensp,
-	Eogon: Eogon,
-	eogon: eogon,
-	Eopf: Eopf,
-	eopf: eopf,
-	epar: epar,
-	eparsl: eparsl,
-	eplus: eplus,
-	epsi: epsi,
-	Epsilon: Epsilon,
-	epsilon: epsilon,
-	epsiv: epsiv,
-	eqcirc: eqcirc,
-	eqcolon: eqcolon,
-	eqsim: eqsim,
-	eqslantgtr: eqslantgtr,
-	eqslantless: eqslantless,
-	Equal: Equal,
-	equals: equals,
-	EqualTilde: EqualTilde,
-	equest: equest,
-	Equilibrium: Equilibrium,
-	equiv: equiv,
-	equivDD: equivDD,
-	eqvparsl: eqvparsl,
-	erarr: erarr,
-	erDot: erDot,
-	escr: escr,
-	Escr: Escr,
-	esdot: esdot,
-	Esim: Esim,
-	esim: esim,
-	Eta: Eta,
-	eta: eta,
-	ETH: ETH,
-	eth: eth,
-	Euml: Euml,
-	euml: euml,
-	euro: euro,
-	excl: excl,
-	exist: exist,
-	Exists: Exists,
-	expectation: expectation,
-	exponentiale: exponentiale,
-	ExponentialE: ExponentialE,
-	fallingdotseq: fallingdotseq,
-	Fcy: Fcy,
-	fcy: fcy,
-	female: female,
-	ffilig: ffilig,
-	fflig: fflig,
-	ffllig: ffllig,
-	Ffr: Ffr,
-	ffr: ffr,
-	filig: filig,
-	FilledSmallSquare: FilledSmallSquare,
-	FilledVerySmallSquare: FilledVerySmallSquare,
-	fjlig: fjlig,
-	flat: flat,
-	fllig: fllig,
-	fltns: fltns,
-	fnof: fnof,
-	Fopf: Fopf,
-	fopf: fopf,
-	forall: forall,
-	ForAll: ForAll,
-	fork: fork,
-	forkv: forkv,
-	Fouriertrf: Fouriertrf,
-	fpartint: fpartint,
-	frac12: frac12,
-	frac13: frac13,
-	frac14: frac14,
-	frac15: frac15,
-	frac16: frac16,
-	frac18: frac18,
-	frac23: frac23,
-	frac25: frac25,
-	frac34: frac34,
-	frac35: frac35,
-	frac38: frac38,
-	frac45: frac45,
-	frac56: frac56,
-	frac58: frac58,
-	frac78: frac78,
-	frasl: frasl,
-	frown: frown,
-	fscr: fscr,
-	Fscr: Fscr,
-	gacute: gacute,
-	Gamma: Gamma,
-	gamma: gamma,
-	Gammad: Gammad,
-	gammad: gammad,
-	gap: gap,
-	Gbreve: Gbreve,
-	gbreve: gbreve,
-	Gcedil: Gcedil,
-	Gcirc: Gcirc,
-	gcirc: gcirc,
-	Gcy: Gcy,
-	gcy: gcy,
-	Gdot: Gdot,
-	gdot: gdot,
-	ge: ge$1,
-	gE: gE,
-	gEl: gEl,
-	gel: gel,
-	geq: geq,
-	geqq: geqq,
-	geqslant: geqslant,
-	gescc: gescc,
-	ges: ges,
-	gesdot: gesdot,
-	gesdoto: gesdoto,
-	gesdotol: gesdotol,
-	gesl: gesl,
-	gesles: gesles,
-	Gfr: Gfr,
-	gfr: gfr,
-	gg: gg,
-	Gg: Gg$1,
-	ggg: ggg,
-	gimel: gimel,
-	GJcy: GJcy,
-	gjcy: gjcy,
-	gla: gla,
-	gl: gl,
-	glE: glE,
-	glj: glj,
-	gnap: gnap,
-	gnapprox: gnapprox,
-	gne: gne,
-	gnE: gnE,
-	gneq: gneq,
-	gneqq: gneqq,
-	gnsim: gnsim,
-	Gopf: Gopf,
-	gopf: gopf,
-	grave: grave,
-	GreaterEqual: GreaterEqual,
-	GreaterEqualLess: GreaterEqualLess,
-	GreaterFullEqual: GreaterFullEqual,
-	GreaterGreater: GreaterGreater,
-	GreaterLess: GreaterLess,
-	GreaterSlantEqual: GreaterSlantEqual,
-	GreaterTilde: GreaterTilde,
-	Gscr: Gscr,
-	gscr: gscr,
-	gsim: gsim,
-	gsime: gsime,
-	gsiml: gsiml,
-	gtcc: gtcc,
-	gtcir: gtcir,
-	gt: gt,
-	GT: GT,
-	Gt: Gt,
-	gtdot: gtdot,
-	gtlPar: gtlPar,
-	gtquest: gtquest,
-	gtrapprox: gtrapprox,
-	gtrarr: gtrarr,
-	gtrdot: gtrdot,
-	gtreqless: gtreqless,
-	gtreqqless: gtreqqless,
-	gtrless: gtrless,
-	gtrsim: gtrsim,
-	gvertneqq: gvertneqq,
-	gvnE: gvnE,
-	Hacek: Hacek,
-	hairsp: hairsp,
-	half: half,
-	hamilt: hamilt,
-	HARDcy: HARDcy,
-	hardcy: hardcy,
-	harrcir: harrcir,
-	harr: harr,
-	hArr: hArr,
-	harrw: harrw,
-	Hat: Hat,
-	hbar: hbar,
-	Hcirc: Hcirc,
-	hcirc: hcirc,
-	hearts: hearts,
-	heartsuit: heartsuit,
-	hellip: hellip,
-	hercon: hercon,
-	hfr: hfr,
-	Hfr: Hfr,
-	HilbertSpace: HilbertSpace,
-	hksearow: hksearow,
-	hkswarow: hkswarow,
-	hoarr: hoarr,
-	homtht: homtht,
-	hookleftarrow: hookleftarrow,
-	hookrightarrow: hookrightarrow,
-	hopf: hopf,
-	Hopf: Hopf,
-	horbar: horbar,
-	HorizontalLine: HorizontalLine,
-	hscr: hscr,
-	Hscr: Hscr,
-	hslash: hslash,
-	Hstrok: Hstrok,
-	hstrok: hstrok,
-	HumpDownHump: HumpDownHump,
-	HumpEqual: HumpEqual,
-	hybull: hybull,
-	hyphen: hyphen,
-	Iacute: Iacute,
-	iacute: iacute,
-	ic: ic$1,
-	Icirc: Icirc,
-	icirc: icirc,
-	Icy: Icy,
-	icy: icy,
-	Idot: Idot,
-	IEcy: IEcy,
-	iecy: iecy,
-	iexcl: iexcl,
-	iff: iff,
-	ifr: ifr,
-	Ifr: Ifr,
-	Igrave: Igrave,
-	igrave: igrave,
-	ii: ii,
-	iiiint: iiiint,
-	iiint: iiint,
-	iinfin: iinfin,
-	iiota: iiota,
-	IJlig: IJlig,
-	ijlig: ijlig,
-	Imacr: Imacr,
-	imacr: imacr,
-	image: image,
-	ImaginaryI: ImaginaryI,
-	imagline: imagline,
-	imagpart: imagpart,
-	imath: imath,
-	Im: Im,
-	imof: imof,
-	imped: imped,
-	Implies: Implies,
-	incare: incare,
-	infin: infin,
-	infintie: infintie,
-	inodot: inodot,
-	intcal: intcal,
-	int: int,
-	Int: Int,
-	integers: integers,
-	Integral: Integral,
-	intercal: intercal,
-	Intersection: Intersection,
-	intlarhk: intlarhk,
-	intprod: intprod,
-	InvisibleComma: InvisibleComma,
-	InvisibleTimes: InvisibleTimes,
-	IOcy: IOcy,
-	iocy: iocy,
-	Iogon: Iogon,
-	iogon: iogon,
-	Iopf: Iopf,
-	iopf: iopf,
-	Iota: Iota,
-	iota: iota,
-	iprod: iprod,
-	iquest: iquest,
-	iscr: iscr,
-	Iscr: Iscr,
-	isin: isin,
-	isindot: isindot,
-	isinE: isinE,
-	isins: isins,
-	isinsv: isinsv,
-	isinv: isinv,
-	it: it,
-	Itilde: Itilde,
-	itilde: itilde,
-	Iukcy: Iukcy,
-	iukcy: iukcy,
-	Iuml: Iuml,
-	iuml: iuml,
-	Jcirc: Jcirc,
-	jcirc: jcirc,
-	Jcy: Jcy,
-	jcy: jcy,
-	Jfr: Jfr,
-	jfr: jfr,
-	jmath: jmath,
-	Jopf: Jopf,
-	jopf: jopf,
-	Jscr: Jscr,
-	jscr: jscr,
-	Jsercy: Jsercy,
-	jsercy: jsercy,
-	Jukcy: Jukcy,
-	jukcy: jukcy,
-	Kappa: Kappa,
-	kappa: kappa,
-	kappav: kappav,
-	Kcedil: Kcedil,
-	kcedil: kcedil,
-	Kcy: Kcy,
-	kcy: kcy,
-	Kfr: Kfr,
-	kfr: kfr,
-	kgreen: kgreen,
-	KHcy: KHcy,
-	khcy: khcy,
-	KJcy: KJcy,
-	kjcy: kjcy,
-	Kopf: Kopf,
-	kopf: kopf,
-	Kscr: Kscr,
-	kscr: kscr,
-	lAarr: lAarr,
-	Lacute: Lacute,
-	lacute: lacute,
-	laemptyv: laemptyv,
-	lagran: lagran,
-	Lambda: Lambda,
-	lambda: lambda,
-	lang: lang,
-	Lang: Lang,
-	langd: langd,
-	langle: langle,
-	lap: lap,
-	Laplacetrf: Laplacetrf,
-	laquo: laquo,
-	larrb: larrb,
-	larrbfs: larrbfs,
-	larr: larr,
-	Larr: Larr,
-	lArr: lArr,
-	larrfs: larrfs,
-	larrhk: larrhk,
-	larrlp: larrlp,
-	larrpl: larrpl,
-	larrsim: larrsim,
-	larrtl: larrtl,
-	latail: latail,
-	lAtail: lAtail,
-	lat: lat,
-	late: late,
-	lates: lates,
-	lbarr: lbarr,
-	lBarr: lBarr,
-	lbbrk: lbbrk,
-	lbrace: lbrace,
-	lbrack: lbrack,
-	lbrke: lbrke,
-	lbrksld: lbrksld,
-	lbrkslu: lbrkslu,
-	Lcaron: Lcaron,
-	lcaron: lcaron,
-	Lcedil: Lcedil,
-	lcedil: lcedil,
-	lceil: lceil,
-	lcub: lcub,
-	Lcy: Lcy,
-	lcy: lcy,
-	ldca: ldca,
-	ldquo: ldquo,
-	ldquor: ldquor,
-	ldrdhar: ldrdhar,
-	ldrushar: ldrushar,
-	ldsh: ldsh,
-	le: le$1,
-	lE: lE,
-	LeftAngleBracket: LeftAngleBracket,
-	LeftArrowBar: LeftArrowBar,
-	leftarrow: leftarrow,
-	LeftArrow: LeftArrow,
-	Leftarrow: Leftarrow,
-	LeftArrowRightArrow: LeftArrowRightArrow,
-	leftarrowtail: leftarrowtail,
-	LeftCeiling: LeftCeiling,
-	LeftDoubleBracket: LeftDoubleBracket,
-	LeftDownTeeVector: LeftDownTeeVector,
-	LeftDownVectorBar: LeftDownVectorBar,
-	LeftDownVector: LeftDownVector,
-	LeftFloor: LeftFloor,
-	leftharpoondown: leftharpoondown,
-	leftharpoonup: leftharpoonup,
-	leftleftarrows: leftleftarrows,
-	leftrightarrow: leftrightarrow,
-	LeftRightArrow: LeftRightArrow,
-	Leftrightarrow: Leftrightarrow,
-	leftrightarrows: leftrightarrows,
-	leftrightharpoons: leftrightharpoons,
-	leftrightsquigarrow: leftrightsquigarrow,
-	LeftRightVector: LeftRightVector,
-	LeftTeeArrow: LeftTeeArrow,
-	LeftTee: LeftTee,
-	LeftTeeVector: LeftTeeVector,
-	leftthreetimes: leftthreetimes,
-	LeftTriangleBar: LeftTriangleBar,
-	LeftTriangle: LeftTriangle,
-	LeftTriangleEqual: LeftTriangleEqual,
-	LeftUpDownVector: LeftUpDownVector,
-	LeftUpTeeVector: LeftUpTeeVector,
-	LeftUpVectorBar: LeftUpVectorBar,
-	LeftUpVector: LeftUpVector,
-	LeftVectorBar: LeftVectorBar,
-	LeftVector: LeftVector,
-	lEg: lEg,
-	leg: leg,
-	leq: leq,
-	leqq: leqq,
-	leqslant: leqslant,
-	lescc: lescc,
-	les: les,
-	lesdot: lesdot,
-	lesdoto: lesdoto,
-	lesdotor: lesdotor,
-	lesg: lesg,
-	lesges: lesges,
-	lessapprox: lessapprox,
-	lessdot: lessdot,
-	lesseqgtr: lesseqgtr,
-	lesseqqgtr: lesseqqgtr,
-	LessEqualGreater: LessEqualGreater,
-	LessFullEqual: LessFullEqual,
-	LessGreater: LessGreater,
-	lessgtr: lessgtr,
-	LessLess: LessLess,
-	lesssim: lesssim,
-	LessSlantEqual: LessSlantEqual,
-	LessTilde: LessTilde,
-	lfisht: lfisht,
-	lfloor: lfloor,
-	Lfr: Lfr,
-	lfr: lfr,
-	lg: lg,
-	lgE: lgE,
-	lHar: lHar,
-	lhard: lhard,
-	lharu: lharu,
-	lharul: lharul,
-	lhblk: lhblk,
-	LJcy: LJcy,
-	ljcy: ljcy,
-	llarr: llarr,
-	ll: ll,
-	Ll: Ll,
-	llcorner: llcorner,
-	Lleftarrow: Lleftarrow,
-	llhard: llhard,
-	lltri: lltri,
-	Lmidot: Lmidot,
-	lmidot: lmidot,
-	lmoustache: lmoustache,
-	lmoust: lmoust,
-	lnap: lnap,
-	lnapprox: lnapprox,
-	lne: lne,
-	lnE: lnE,
-	lneq: lneq,
-	lneqq: lneqq,
-	lnsim: lnsim,
-	loang: loang,
-	loarr: loarr,
-	lobrk: lobrk,
-	longleftarrow: longleftarrow,
-	LongLeftArrow: LongLeftArrow,
-	Longleftarrow: Longleftarrow,
-	longleftrightarrow: longleftrightarrow,
-	LongLeftRightArrow: LongLeftRightArrow,
-	Longleftrightarrow: Longleftrightarrow,
-	longmapsto: longmapsto,
-	longrightarrow: longrightarrow,
-	LongRightArrow: LongRightArrow,
-	Longrightarrow: Longrightarrow,
-	looparrowleft: looparrowleft,
-	looparrowright: looparrowright,
-	lopar: lopar,
-	Lopf: Lopf,
-	lopf: lopf,
-	loplus: loplus,
-	lotimes: lotimes,
-	lowast: lowast,
-	lowbar: lowbar,
-	LowerLeftArrow: LowerLeftArrow,
-	LowerRightArrow: LowerRightArrow,
-	loz: loz,
-	lozenge: lozenge,
-	lozf: lozf,
-	lpar: lpar,
-	lparlt: lparlt,
-	lrarr: lrarr,
-	lrcorner: lrcorner,
-	lrhar: lrhar,
-	lrhard: lrhard,
-	lrm: lrm,
-	lrtri: lrtri,
-	lsaquo: lsaquo,
-	lscr: lscr,
-	Lscr: Lscr,
-	lsh: lsh,
-	Lsh: Lsh,
-	lsim: lsim,
-	lsime: lsime,
-	lsimg: lsimg,
-	lsqb: lsqb,
-	lsquo: lsquo,
-	lsquor: lsquor,
-	Lstrok: Lstrok,
-	lstrok: lstrok,
-	ltcc: ltcc,
-	ltcir: ltcir,
-	lt: lt,
-	LT: LT,
-	Lt: Lt,
-	ltdot: ltdot,
-	lthree: lthree,
-	ltimes: ltimes,
-	ltlarr: ltlarr,
-	ltquest: ltquest,
-	ltri: ltri,
-	ltrie: ltrie,
-	ltrif: ltrif,
-	ltrPar: ltrPar,
-	lurdshar: lurdshar,
-	luruhar: luruhar,
-	lvertneqq: lvertneqq,
-	lvnE: lvnE,
-	macr: macr,
-	male: male,
-	malt: malt,
-	maltese: maltese,
-	map: map$2,
-	mapsto: mapsto,
-	mapstodown: mapstodown,
-	mapstoleft: mapstoleft,
-	mapstoup: mapstoup,
-	marker: marker,
-	mcomma: mcomma,
-	Mcy: Mcy,
-	mcy: mcy,
-	mdash: mdash,
-	mDDot: mDDot,
-	measuredangle: measuredangle,
-	MediumSpace: MediumSpace,
-	Mellintrf: Mellintrf,
-	Mfr: Mfr,
-	mfr: mfr,
-	mho: mho,
-	micro: micro,
-	midast: midast,
-	midcir: midcir,
-	mid: mid,
-	middot: middot,
-	minusb: minusb,
-	minus: minus,
-	minusd: minusd,
-	minusdu: minusdu,
-	MinusPlus: MinusPlus,
-	mlcp: mlcp,
-	mldr: mldr,
-	mnplus: mnplus,
-	models: models,
-	Mopf: Mopf,
-	mopf: mopf,
-	mp: mp,
-	mscr: mscr,
-	Mscr: Mscr,
-	mstpos: mstpos,
-	Mu: Mu,
-	mu: mu,
-	multimap: multimap,
-	mumap: mumap,
-	nabla: nabla,
-	Nacute: Nacute,
-	nacute: nacute,
-	nang: nang,
-	nap: nap,
-	napE: napE,
-	napid: napid,
-	napos: napos,
-	napprox: napprox,
-	natural: natural,
-	naturals: naturals,
-	natur: natur,
-	nbsp: nbsp,
-	nbump: nbump,
-	nbumpe: nbumpe,
-	ncap: ncap,
-	Ncaron: Ncaron,
-	ncaron: ncaron,
-	Ncedil: Ncedil,
-	ncedil: ncedil,
-	ncong: ncong,
-	ncongdot: ncongdot,
-	ncup: ncup,
-	Ncy: Ncy,
-	ncy: ncy,
-	ndash: ndash,
-	nearhk: nearhk,
-	nearr: nearr,
-	neArr: neArr,
-	nearrow: nearrow,
-	ne: ne$1,
-	nedot: nedot,
-	NegativeMediumSpace: NegativeMediumSpace,
-	NegativeThickSpace: NegativeThickSpace,
-	NegativeThinSpace: NegativeThinSpace,
-	NegativeVeryThinSpace: NegativeVeryThinSpace,
-	nequiv: nequiv,
-	nesear: nesear,
-	nesim: nesim,
-	NestedGreaterGreater: NestedGreaterGreater,
-	NestedLessLess: NestedLessLess,
-	NewLine: NewLine,
-	nexist: nexist,
-	nexists: nexists,
-	Nfr: Nfr,
-	nfr: nfr,
-	ngE: ngE,
-	nge: nge,
-	ngeq: ngeq,
-	ngeqq: ngeqq,
-	ngeqslant: ngeqslant,
-	nges: nges,
-	nGg: nGg,
-	ngsim: ngsim,
-	nGt: nGt,
-	ngt: ngt,
-	ngtr: ngtr,
-	nGtv: nGtv,
-	nharr: nharr,
-	nhArr: nhArr,
-	nhpar: nhpar,
-	ni: ni,
-	nis: nis,
-	nisd: nisd,
-	niv: niv,
-	NJcy: NJcy,
-	njcy: njcy,
-	nlarr: nlarr,
-	nlArr: nlArr,
-	nldr: nldr,
-	nlE: nlE,
-	nle: nle,
-	nleftarrow: nleftarrow,
-	nLeftarrow: nLeftarrow,
-	nleftrightarrow: nleftrightarrow,
-	nLeftrightarrow: nLeftrightarrow,
-	nleq: nleq,
-	nleqq: nleqq,
-	nleqslant: nleqslant,
-	nles: nles,
-	nless: nless,
-	nLl: nLl,
-	nlsim: nlsim,
-	nLt: nLt,
-	nlt: nlt,
-	nltri: nltri,
-	nltrie: nltrie,
-	nLtv: nLtv,
-	nmid: nmid,
-	NoBreak: NoBreak,
-	NonBreakingSpace: NonBreakingSpace,
-	nopf: nopf,
-	Nopf: Nopf,
-	Not: Not,
-	not: not,
-	NotCongruent: NotCongruent,
-	NotCupCap: NotCupCap,
-	NotDoubleVerticalBar: NotDoubleVerticalBar,
-	NotElement: NotElement,
-	NotEqual: NotEqual,
-	NotEqualTilde: NotEqualTilde,
-	NotExists: NotExists,
-	NotGreater: NotGreater,
-	NotGreaterEqual: NotGreaterEqual,
-	NotGreaterFullEqual: NotGreaterFullEqual,
-	NotGreaterGreater: NotGreaterGreater,
-	NotGreaterLess: NotGreaterLess,
-	NotGreaterSlantEqual: NotGreaterSlantEqual,
-	NotGreaterTilde: NotGreaterTilde,
-	NotHumpDownHump: NotHumpDownHump,
-	NotHumpEqual: NotHumpEqual,
-	notin: notin,
-	notindot: notindot,
-	notinE: notinE,
-	notinva: notinva,
-	notinvb: notinvb,
-	notinvc: notinvc,
-	NotLeftTriangleBar: NotLeftTriangleBar,
-	NotLeftTriangle: NotLeftTriangle,
-	NotLeftTriangleEqual: NotLeftTriangleEqual,
-	NotLess: NotLess,
-	NotLessEqual: NotLessEqual,
-	NotLessGreater: NotLessGreater,
-	NotLessLess: NotLessLess,
-	NotLessSlantEqual: NotLessSlantEqual,
-	NotLessTilde: NotLessTilde,
-	NotNestedGreaterGreater: NotNestedGreaterGreater,
-	NotNestedLessLess: NotNestedLessLess,
-	notni: notni,
-	notniva: notniva,
-	notnivb: notnivb,
-	notnivc: notnivc,
-	NotPrecedes: NotPrecedes,
-	NotPrecedesEqual: NotPrecedesEqual,
-	NotPrecedesSlantEqual: NotPrecedesSlantEqual,
-	NotReverseElement: NotReverseElement,
-	NotRightTriangleBar: NotRightTriangleBar,
-	NotRightTriangle: NotRightTriangle,
-	NotRightTriangleEqual: NotRightTriangleEqual,
-	NotSquareSubset: NotSquareSubset,
-	NotSquareSubsetEqual: NotSquareSubsetEqual,
-	NotSquareSuperset: NotSquareSuperset,
-	NotSquareSupersetEqual: NotSquareSupersetEqual,
-	NotSubset: NotSubset,
-	NotSubsetEqual: NotSubsetEqual,
-	NotSucceeds: NotSucceeds,
-	NotSucceedsEqual: NotSucceedsEqual,
-	NotSucceedsSlantEqual: NotSucceedsSlantEqual,
-	NotSucceedsTilde: NotSucceedsTilde,
-	NotSuperset: NotSuperset,
-	NotSupersetEqual: NotSupersetEqual,
-	NotTilde: NotTilde,
-	NotTildeEqual: NotTildeEqual,
-	NotTildeFullEqual: NotTildeFullEqual,
-	NotTildeTilde: NotTildeTilde,
-	NotVerticalBar: NotVerticalBar,
-	nparallel: nparallel,
-	npar: npar,
-	nparsl: nparsl,
-	npart: npart,
-	npolint: npolint,
-	npr: npr,
-	nprcue: nprcue,
-	nprec: nprec,
-	npreceq: npreceq,
-	npre: npre,
-	nrarrc: nrarrc,
-	nrarr: nrarr,
-	nrArr: nrArr,
-	nrarrw: nrarrw,
-	nrightarrow: nrightarrow,
-	nRightarrow: nRightarrow,
-	nrtri: nrtri,
-	nrtrie: nrtrie,
-	nsc: nsc,
-	nsccue: nsccue,
-	nsce: nsce,
-	Nscr: Nscr,
-	nscr: nscr,
-	nshortmid: nshortmid,
-	nshortparallel: nshortparallel,
-	nsim: nsim,
-	nsime: nsime,
-	nsimeq: nsimeq,
-	nsmid: nsmid,
-	nspar: nspar,
-	nsqsube: nsqsube,
-	nsqsupe: nsqsupe,
-	nsub: nsub,
-	nsubE: nsubE,
-	nsube: nsube,
-	nsubset: nsubset,
-	nsubseteq: nsubseteq,
-	nsubseteqq: nsubseteqq,
-	nsucc: nsucc,
-	nsucceq: nsucceq,
-	nsup: nsup,
-	nsupE: nsupE,
-	nsupe: nsupe,
-	nsupset: nsupset,
-	nsupseteq: nsupseteq,
-	nsupseteqq: nsupseteqq,
-	ntgl: ntgl,
-	Ntilde: Ntilde,
-	ntilde: ntilde,
-	ntlg: ntlg,
-	ntriangleleft: ntriangleleft,
-	ntrianglelefteq: ntrianglelefteq,
-	ntriangleright: ntriangleright,
-	ntrianglerighteq: ntrianglerighteq,
-	Nu: Nu,
-	nu: nu,
-	num: num,
-	numero: numero,
-	numsp: numsp,
-	nvap: nvap,
-	nvdash: nvdash,
-	nvDash: nvDash,
-	nVdash: nVdash,
-	nVDash: nVDash,
-	nvge: nvge,
-	nvgt: nvgt,
-	nvHarr: nvHarr,
-	nvinfin: nvinfin,
-	nvlArr: nvlArr,
-	nvle: nvle,
-	nvlt: nvlt,
-	nvltrie: nvltrie,
-	nvrArr: nvrArr,
-	nvrtrie: nvrtrie,
-	nvsim: nvsim,
-	nwarhk: nwarhk,
-	nwarr: nwarr,
-	nwArr: nwArr,
-	nwarrow: nwarrow,
-	nwnear: nwnear,
-	Oacute: Oacute,
-	oacute: oacute,
-	oast: oast,
-	Ocirc: Ocirc,
-	ocirc: ocirc,
-	ocir: ocir,
-	Ocy: Ocy,
-	ocy: ocy,
-	odash: odash,
-	Odblac: Odblac,
-	odblac: odblac,
-	odiv: odiv,
-	odot: odot,
-	odsold: odsold,
-	OElig: OElig,
-	oelig: oelig,
-	ofcir: ofcir,
-	Ofr: Ofr,
-	ofr: ofr,
-	ogon: ogon,
-	Ograve: Ograve,
-	ograve: ograve,
-	ogt: ogt,
-	ohbar: ohbar,
-	ohm: ohm,
-	oint: oint,
-	olarr: olarr,
-	olcir: olcir,
-	olcross: olcross,
-	oline: oline,
-	olt: olt,
-	Omacr: Omacr,
-	omacr: omacr,
-	Omega: Omega,
-	omega: omega,
-	Omicron: Omicron,
-	omicron: omicron,
-	omid: omid,
-	ominus: ominus,
-	Oopf: Oopf,
-	oopf: oopf,
-	opar: opar,
-	OpenCurlyDoubleQuote: OpenCurlyDoubleQuote,
-	OpenCurlyQuote: OpenCurlyQuote,
-	operp: operp,
-	oplus: oplus,
-	orarr: orarr,
-	Or: Or,
-	or: or,
-	ord: ord,
-	order: order,
-	orderof: orderof,
-	ordf: ordf,
-	ordm: ordm,
-	origof: origof,
-	oror: oror,
-	orslope: orslope,
-	orv: orv,
-	oS: oS,
-	Oscr: Oscr,
-	oscr: oscr,
-	Oslash: Oslash,
-	oslash: oslash,
-	osol: osol,
-	Otilde: Otilde,
-	otilde: otilde,
-	otimesas: otimesas,
-	Otimes: Otimes,
-	otimes: otimes,
-	Ouml: Ouml,
-	ouml: ouml,
-	ovbar: ovbar,
-	OverBar: OverBar,
-	OverBrace: OverBrace,
-	OverBracket: OverBracket,
-	OverParenthesis: OverParenthesis,
-	para: para,
-	parallel: parallel,
-	par: par,
-	parsim: parsim,
-	parsl: parsl,
-	part: part,
-	PartialD: PartialD,
-	Pcy: Pcy,
-	pcy: pcy,
-	percnt: percnt,
-	period: period,
-	permil: permil,
-	perp: perp,
-	pertenk: pertenk,
-	Pfr: Pfr,
-	pfr: pfr,
-	Phi: Phi,
-	phi: phi,
-	phiv: phiv,
-	phmmat: phmmat,
-	phone: phone,
-	Pi: Pi,
-	pi: pi,
-	pitchfork: pitchfork,
-	piv: piv,
-	planck: planck,
-	planckh: planckh,
-	plankv: plankv,
-	plusacir: plusacir,
-	plusb: plusb,
-	pluscir: pluscir,
-	plus: plus,
-	plusdo: plusdo,
-	plusdu: plusdu,
-	pluse: pluse,
-	PlusMinus: PlusMinus,
-	plusmn: plusmn,
-	plussim: plussim,
-	plustwo: plustwo,
-	pm: pm,
-	Poincareplane: Poincareplane,
-	pointint: pointint,
-	popf: popf,
-	Popf: Popf,
-	pound: pound,
-	prap: prap,
-	Pr: Pr,
-	pr: pr,
-	prcue: prcue,
-	precapprox: precapprox,
-	prec: prec,
-	preccurlyeq: preccurlyeq,
-	Precedes: Precedes,
-	PrecedesEqual: PrecedesEqual,
-	PrecedesSlantEqual: PrecedesSlantEqual,
-	PrecedesTilde: PrecedesTilde,
-	preceq: preceq,
-	precnapprox: precnapprox,
-	precneqq: precneqq,
-	precnsim: precnsim,
-	pre: pre,
-	prE: prE,
-	precsim: precsim,
-	prime: prime,
-	Prime: Prime,
-	primes: primes,
-	prnap: prnap,
-	prnE: prnE,
-	prnsim: prnsim,
-	prod: prod,
-	Product: Product,
-	profalar: profalar,
-	profline: profline,
-	profsurf: profsurf,
-	prop: prop,
-	Proportional: Proportional,
-	Proportion: Proportion,
-	propto: propto,
-	prsim: prsim,
-	prurel: prurel,
-	Pscr: Pscr,
-	pscr: pscr,
-	Psi: Psi,
-	psi: psi,
-	puncsp: puncsp,
-	Qfr: Qfr,
-	qfr: qfr,
-	qint: qint,
-	qopf: qopf,
-	Qopf: Qopf,
-	qprime: qprime,
-	Qscr: Qscr,
-	qscr: qscr,
-	quaternions: quaternions,
-	quatint: quatint,
-	quest: quest,
-	questeq: questeq,
-	quot: quot$1,
-	QUOT: QUOT,
-	rAarr: rAarr,
-	race: race,
-	Racute: Racute,
-	racute: racute,
-	radic: radic,
-	raemptyv: raemptyv,
-	rang: rang,
-	Rang: Rang,
-	rangd: rangd,
-	range: range,
-	rangle: rangle,
-	raquo: raquo,
-	rarrap: rarrap,
-	rarrb: rarrb,
-	rarrbfs: rarrbfs,
-	rarrc: rarrc,
-	rarr: rarr,
-	Rarr: Rarr,
-	rArr: rArr,
-	rarrfs: rarrfs,
-	rarrhk: rarrhk,
-	rarrlp: rarrlp,
-	rarrpl: rarrpl,
-	rarrsim: rarrsim,
-	Rarrtl: Rarrtl,
-	rarrtl: rarrtl,
-	rarrw: rarrw,
-	ratail: ratail,
-	rAtail: rAtail,
-	ratio: ratio,
-	rationals: rationals,
-	rbarr: rbarr,
-	rBarr: rBarr,
-	RBarr: RBarr,
-	rbbrk: rbbrk,
-	rbrace: rbrace,
-	rbrack: rbrack,
-	rbrke: rbrke,
-	rbrksld: rbrksld,
-	rbrkslu: rbrkslu,
-	Rcaron: Rcaron,
-	rcaron: rcaron,
-	Rcedil: Rcedil,
-	rcedil: rcedil,
-	rceil: rceil,
-	rcub: rcub,
-	Rcy: Rcy,
-	rcy: rcy,
-	rdca: rdca,
-	rdldhar: rdldhar,
-	rdquo: rdquo,
-	rdquor: rdquor,
-	rdsh: rdsh,
-	real: real,
-	realine: realine,
-	realpart: realpart,
-	reals: reals,
-	Re: Re$1,
-	rect: rect,
-	reg: reg,
-	REG: REG,
-	ReverseElement: ReverseElement,
-	ReverseEquilibrium: ReverseEquilibrium,
-	ReverseUpEquilibrium: ReverseUpEquilibrium,
-	rfisht: rfisht,
-	rfloor: rfloor,
-	rfr: rfr,
-	Rfr: Rfr,
-	rHar: rHar,
-	rhard: rhard,
-	rharu: rharu,
-	rharul: rharul,
-	Rho: Rho,
-	rho: rho,
-	rhov: rhov,
-	RightAngleBracket: RightAngleBracket,
-	RightArrowBar: RightArrowBar,
-	rightarrow: rightarrow,
-	RightArrow: RightArrow,
-	Rightarrow: Rightarrow,
-	RightArrowLeftArrow: RightArrowLeftArrow,
-	rightarrowtail: rightarrowtail,
-	RightCeiling: RightCeiling,
-	RightDoubleBracket: RightDoubleBracket,
-	RightDownTeeVector: RightDownTeeVector,
-	RightDownVectorBar: RightDownVectorBar,
-	RightDownVector: RightDownVector,
-	RightFloor: RightFloor,
-	rightharpoondown: rightharpoondown,
-	rightharpoonup: rightharpoonup,
-	rightleftarrows: rightleftarrows,
-	rightleftharpoons: rightleftharpoons,
-	rightrightarrows: rightrightarrows,
-	rightsquigarrow: rightsquigarrow,
-	RightTeeArrow: RightTeeArrow,
-	RightTee: RightTee,
-	RightTeeVector: RightTeeVector,
-	rightthreetimes: rightthreetimes,
-	RightTriangleBar: RightTriangleBar,
-	RightTriangle: RightTriangle,
-	RightTriangleEqual: RightTriangleEqual,
-	RightUpDownVector: RightUpDownVector,
-	RightUpTeeVector: RightUpTeeVector,
-	RightUpVectorBar: RightUpVectorBar,
-	RightUpVector: RightUpVector,
-	RightVectorBar: RightVectorBar,
-	RightVector: RightVector,
-	ring: ring,
-	risingdotseq: risingdotseq,
-	rlarr: rlarr,
-	rlhar: rlhar,
-	rlm: rlm,
-	rmoustache: rmoustache,
-	rmoust: rmoust,
-	rnmid: rnmid,
-	roang: roang,
-	roarr: roarr,
-	robrk: robrk,
-	ropar: ropar,
-	ropf: ropf,
-	Ropf: Ropf,
-	roplus: roplus,
-	rotimes: rotimes,
-	RoundImplies: RoundImplies,
-	rpar: rpar,
-	rpargt: rpargt,
-	rppolint: rppolint,
-	rrarr: rrarr,
-	Rrightarrow: Rrightarrow,
-	rsaquo: rsaquo,
-	rscr: rscr,
-	Rscr: Rscr,
-	rsh: rsh,
-	Rsh: Rsh,
-	rsqb: rsqb,
-	rsquo: rsquo,
-	rsquor: rsquor,
-	rthree: rthree,
-	rtimes: rtimes,
-	rtri: rtri,
-	rtrie: rtrie,
-	rtrif: rtrif,
-	rtriltri: rtriltri,
-	RuleDelayed: RuleDelayed,
-	ruluhar: ruluhar,
-	rx: rx,
-	Sacute: Sacute,
-	sacute: sacute,
-	sbquo: sbquo,
-	scap: scap,
-	Scaron: Scaron,
-	scaron: scaron,
-	Sc: Sc$1,
-	sc: sc$1,
-	sccue: sccue,
-	sce: sce,
-	scE: scE,
-	Scedil: Scedil,
-	scedil: scedil,
-	Scirc: Scirc,
-	scirc: scirc,
-	scnap: scnap,
-	scnE: scnE,
-	scnsim: scnsim,
-	scpolint: scpolint,
-	scsim: scsim,
-	Scy: Scy,
-	scy: scy,
-	sdotb: sdotb,
-	sdot: sdot,
-	sdote: sdote,
-	searhk: searhk,
-	searr: searr,
-	seArr: seArr,
-	searrow: searrow,
-	sect: sect,
-	semi: semi,
-	seswar: seswar,
-	setminus: setminus,
-	setmn: setmn,
-	sext: sext,
-	Sfr: Sfr,
-	sfr: sfr,
-	sfrown: sfrown,
-	sharp: sharp,
-	SHCHcy: SHCHcy,
-	shchcy: shchcy,
-	SHcy: SHcy,
-	shcy: shcy,
-	ShortDownArrow: ShortDownArrow,
-	ShortLeftArrow: ShortLeftArrow,
-	shortmid: shortmid,
-	shortparallel: shortparallel,
-	ShortRightArrow: ShortRightArrow,
-	ShortUpArrow: ShortUpArrow,
-	shy: shy,
-	Sigma: Sigma,
-	sigma: sigma,
-	sigmaf: sigmaf,
-	sigmav: sigmav,
-	sim: sim,
-	simdot: simdot,
-	sime: sime,
-	simeq: simeq,
-	simg: simg,
-	simgE: simgE,
-	siml: siml,
-	simlE: simlE,
-	simne: simne,
-	simplus: simplus,
-	simrarr: simrarr,
-	slarr: slarr,
-	SmallCircle: SmallCircle,
-	smallsetminus: smallsetminus,
-	smashp: smashp,
-	smeparsl: smeparsl,
-	smid: smid,
-	smile: smile,
-	smt: smt,
-	smte: smte,
-	smtes: smtes,
-	SOFTcy: SOFTcy,
-	softcy: softcy,
-	solbar: solbar,
-	solb: solb,
-	sol: sol,
-	Sopf: Sopf,
-	sopf: sopf,
-	spades: spades,
-	spadesuit: spadesuit,
-	spar: spar,
-	sqcap: sqcap,
-	sqcaps: sqcaps,
-	sqcup: sqcup,
-	sqcups: sqcups,
-	Sqrt: Sqrt,
-	sqsub: sqsub,
-	sqsube: sqsube,
-	sqsubset: sqsubset,
-	sqsubseteq: sqsubseteq,
-	sqsup: sqsup,
-	sqsupe: sqsupe,
-	sqsupset: sqsupset,
-	sqsupseteq: sqsupseteq,
-	square: square,
-	Square: Square,
-	SquareIntersection: SquareIntersection,
-	SquareSubset: SquareSubset,
-	SquareSubsetEqual: SquareSubsetEqual,
-	SquareSuperset: SquareSuperset,
-	SquareSupersetEqual: SquareSupersetEqual,
-	SquareUnion: SquareUnion,
-	squarf: squarf,
-	squ: squ,
-	squf: squf,
-	srarr: srarr,
-	Sscr: Sscr,
-	sscr: sscr,
-	ssetmn: ssetmn,
-	ssmile: ssmile,
-	sstarf: sstarf,
-	Star: Star,
-	star: star,
-	starf: starf,
-	straightepsilon: straightepsilon,
-	straightphi: straightphi,
-	strns: strns,
-	sub: sub,
-	Sub: Sub,
-	subdot: subdot,
-	subE: subE,
-	sube: sube,
-	subedot: subedot,
-	submult: submult,
-	subnE: subnE,
-	subne: subne,
-	subplus: subplus,
-	subrarr: subrarr,
-	subset: subset,
-	Subset: Subset,
-	subseteq: subseteq,
-	subseteqq: subseteqq,
-	SubsetEqual: SubsetEqual,
-	subsetneq: subsetneq,
-	subsetneqq: subsetneqq,
-	subsim: subsim,
-	subsub: subsub,
-	subsup: subsup,
-	succapprox: succapprox,
-	succ: succ,
-	succcurlyeq: succcurlyeq,
-	Succeeds: Succeeds,
-	SucceedsEqual: SucceedsEqual,
-	SucceedsSlantEqual: SucceedsSlantEqual,
-	SucceedsTilde: SucceedsTilde,
-	succeq: succeq,
-	succnapprox: succnapprox,
-	succneqq: succneqq,
-	succnsim: succnsim,
-	succsim: succsim,
-	SuchThat: SuchThat,
-	sum: sum,
-	Sum: Sum,
-	sung: sung,
-	sup1: sup1,
-	sup2: sup2,
-	sup3: sup3,
-	sup: sup,
-	Sup: Sup,
-	supdot: supdot,
-	supdsub: supdsub,
-	supE: supE,
-	supe: supe,
-	supedot: supedot,
-	Superset: Superset,
-	SupersetEqual: SupersetEqual,
-	suphsol: suphsol,
-	suphsub: suphsub,
-	suplarr: suplarr,
-	supmult: supmult,
-	supnE: supnE,
-	supne: supne,
-	supplus: supplus,
-	supset: supset,
-	Supset: Supset,
-	supseteq: supseteq,
-	supseteqq: supseteqq,
-	supsetneq: supsetneq,
-	supsetneqq: supsetneqq,
-	supsim: supsim,
-	supsub: supsub,
-	supsup: supsup,
-	swarhk: swarhk,
-	swarr: swarr,
-	swArr: swArr,
-	swarrow: swarrow,
-	swnwar: swnwar,
-	szlig: szlig,
-	Tab: Tab,
-	target: target,
-	Tau: Tau,
-	tau: tau,
-	tbrk: tbrk,
-	Tcaron: Tcaron,
-	tcaron: tcaron,
-	Tcedil: Tcedil,
-	tcedil: tcedil,
-	Tcy: Tcy,
-	tcy: tcy,
-	tdot: tdot,
-	telrec: telrec,
-	Tfr: Tfr,
-	tfr: tfr,
-	there4: there4,
-	therefore: therefore,
-	Therefore: Therefore,
-	Theta: Theta,
-	theta: theta,
-	thetasym: thetasym,
-	thetav: thetav,
-	thickapprox: thickapprox,
-	thicksim: thicksim,
-	ThickSpace: ThickSpace,
-	ThinSpace: ThinSpace,
-	thinsp: thinsp,
-	thkap: thkap,
-	thksim: thksim,
-	THORN: THORN,
-	thorn: thorn,
-	tilde: tilde,
-	Tilde: Tilde,
-	TildeEqual: TildeEqual,
-	TildeFullEqual: TildeFullEqual,
-	TildeTilde: TildeTilde,
-	timesbar: timesbar,
-	timesb: timesb,
-	times: times,
-	timesd: timesd,
-	tint: tint,
-	toea: toea,
-	topbot: topbot,
-	topcir: topcir,
-	top: top,
-	Topf: Topf,
-	topf: topf,
-	topfork: topfork,
-	tosa: tosa,
-	tprime: tprime,
-	trade: trade,
-	TRADE: TRADE,
-	triangle: triangle,
-	triangledown: triangledown,
-	triangleleft: triangleleft,
-	trianglelefteq: trianglelefteq,
-	triangleq: triangleq,
-	triangleright: triangleright,
-	trianglerighteq: trianglerighteq,
-	tridot: tridot,
-	trie: trie,
-	triminus: triminus,
-	TripleDot: TripleDot,
-	triplus: triplus,
-	trisb: trisb,
-	tritime: tritime,
-	trpezium: trpezium,
-	Tscr: Tscr,
-	tscr: tscr,
-	TScy: TScy,
-	tscy: tscy,
-	TSHcy: TSHcy,
-	tshcy: tshcy,
-	Tstrok: Tstrok,
-	tstrok: tstrok,
-	twixt: twixt,
-	twoheadleftarrow: twoheadleftarrow,
-	twoheadrightarrow: twoheadrightarrow,
-	Uacute: Uacute,
-	uacute: uacute,
-	uarr: uarr,
-	Uarr: Uarr,
-	uArr: uArr,
-	Uarrocir: Uarrocir,
-	Ubrcy: Ubrcy,
-	ubrcy: ubrcy,
-	Ubreve: Ubreve,
-	ubreve: ubreve,
-	Ucirc: Ucirc,
-	ucirc: ucirc,
-	Ucy: Ucy,
-	ucy: ucy,
-	udarr: udarr,
-	Udblac: Udblac,
-	udblac: udblac,
-	udhar: udhar,
-	ufisht: ufisht,
-	Ufr: Ufr,
-	ufr: ufr,
-	Ugrave: Ugrave,
-	ugrave: ugrave,
-	uHar: uHar,
-	uharl: uharl,
-	uharr: uharr,
-	uhblk: uhblk,
-	ulcorn: ulcorn,
-	ulcorner: ulcorner,
-	ulcrop: ulcrop,
-	ultri: ultri,
-	Umacr: Umacr,
-	umacr: umacr,
-	uml: uml,
-	UnderBar: UnderBar,
-	UnderBrace: UnderBrace,
-	UnderBracket: UnderBracket,
-	UnderParenthesis: UnderParenthesis,
-	Union: Union,
-	UnionPlus: UnionPlus,
-	Uogon: Uogon,
-	uogon: uogon,
-	Uopf: Uopf,
-	uopf: uopf,
-	UpArrowBar: UpArrowBar,
-	uparrow: uparrow,
-	UpArrow: UpArrow,
-	Uparrow: Uparrow,
-	UpArrowDownArrow: UpArrowDownArrow,
-	updownarrow: updownarrow,
-	UpDownArrow: UpDownArrow,
-	Updownarrow: Updownarrow,
-	UpEquilibrium: UpEquilibrium,
-	upharpoonleft: upharpoonleft,
-	upharpoonright: upharpoonright,
-	uplus: uplus,
-	UpperLeftArrow: UpperLeftArrow,
-	UpperRightArrow: UpperRightArrow,
-	upsi: upsi,
-	Upsi: Upsi,
-	upsih: upsih,
-	Upsilon: Upsilon,
-	upsilon: upsilon,
-	UpTeeArrow: UpTeeArrow,
-	UpTee: UpTee,
-	upuparrows: upuparrows,
-	urcorn: urcorn,
-	urcorner: urcorner,
-	urcrop: urcrop,
-	Uring: Uring,
-	uring: uring,
-	urtri: urtri,
-	Uscr: Uscr,
-	uscr: uscr,
-	utdot: utdot,
-	Utilde: Utilde,
-	utilde: utilde,
-	utri: utri,
-	utrif: utrif,
-	uuarr: uuarr,
-	Uuml: Uuml,
-	uuml: uuml,
-	uwangle: uwangle,
-	vangrt: vangrt,
-	varepsilon: varepsilon,
-	varkappa: varkappa,
-	varnothing: varnothing,
-	varphi: varphi,
-	varpi: varpi,
-	varpropto: varpropto,
-	varr: varr,
-	vArr: vArr,
-	varrho: varrho,
-	varsigma: varsigma,
-	varsubsetneq: varsubsetneq,
-	varsubsetneqq: varsubsetneqq,
-	varsupsetneq: varsupsetneq,
-	varsupsetneqq: varsupsetneqq,
-	vartheta: vartheta,
-	vartriangleleft: vartriangleleft,
-	vartriangleright: vartriangleright,
-	vBar: vBar,
-	Vbar: Vbar,
-	vBarv: vBarv,
-	Vcy: Vcy,
-	vcy: vcy,
-	vdash: vdash,
-	vDash: vDash,
-	Vdash: Vdash,
-	VDash: VDash,
-	Vdashl: Vdashl,
-	veebar: veebar,
-	vee: vee,
-	Vee: Vee,
-	veeeq: veeeq,
-	vellip: vellip,
-	verbar: verbar,
-	Verbar: Verbar,
-	vert: vert,
-	Vert: Vert,
-	VerticalBar: VerticalBar,
-	VerticalLine: VerticalLine,
-	VerticalSeparator: VerticalSeparator,
-	VerticalTilde: VerticalTilde,
-	VeryThinSpace: VeryThinSpace,
-	Vfr: Vfr,
-	vfr: vfr,
-	vltri: vltri,
-	vnsub: vnsub,
-	vnsup: vnsup,
-	Vopf: Vopf,
-	vopf: vopf,
-	vprop: vprop,
-	vrtri: vrtri,
-	Vscr: Vscr,
-	vscr: vscr,
-	vsubnE: vsubnE,
-	vsubne: vsubne,
-	vsupnE: vsupnE,
-	vsupne: vsupne,
-	Vvdash: Vvdash,
-	vzigzag: vzigzag,
-	Wcirc: Wcirc,
-	wcirc: wcirc,
-	wedbar: wedbar,
-	wedge: wedge,
-	Wedge: Wedge,
-	wedgeq: wedgeq,
-	weierp: weierp,
-	Wfr: Wfr,
-	wfr: wfr,
-	Wopf: Wopf,
-	wopf: wopf,
-	wp: wp,
-	wr: wr,
-	wreath: wreath,
-	Wscr: Wscr,
-	wscr: wscr,
-	xcap: xcap,
-	xcirc: xcirc,
-	xcup: xcup,
-	xdtri: xdtri,
-	Xfr: Xfr,
-	xfr: xfr,
-	xharr: xharr,
-	xhArr: xhArr,
-	Xi: Xi,
-	xi: xi,
-	xlarr: xlarr,
-	xlArr: xlArr,
-	xmap: xmap,
-	xnis: xnis,
-	xodot: xodot,
-	Xopf: Xopf,
-	xopf: xopf,
-	xoplus: xoplus,
-	xotime: xotime,
-	xrarr: xrarr,
-	xrArr: xrArr,
-	Xscr: Xscr,
-	xscr: xscr,
-	xsqcup: xsqcup,
-	xuplus: xuplus,
-	xutri: xutri,
-	xvee: xvee,
-	xwedge: xwedge,
-	Yacute: Yacute,
-	yacute: yacute,
-	YAcy: YAcy,
-	yacy: yacy,
-	Ycirc: Ycirc,
-	ycirc: ycirc,
-	Ycy: Ycy,
-	ycy: ycy,
-	yen: yen,
-	Yfr: Yfr,
-	yfr: yfr,
-	YIcy: YIcy,
-	yicy: yicy,
-	Yopf: Yopf,
-	yopf: yopf,
-	Yscr: Yscr,
-	yscr: yscr,
-	YUcy: YUcy,
-	yucy: yucy,
-	yuml: yuml,
-	Yuml: Yuml,
-	Zacute: Zacute,
-	zacute: zacute,
-	Zcaron: Zcaron,
-	zcaron: zcaron,
-	Zcy: Zcy,
-	zcy: zcy,
-	Zdot: Zdot,
-	zdot: zdot,
-	zeetrf: zeetrf,
-	ZeroWidthSpace: ZeroWidthSpace,
-	Zeta: Zeta,
-	zeta: zeta,
-	zfr: zfr,
-	Zfr: Zfr,
-	ZHcy: ZHcy,
-	zhcy: zhcy,
-	zigrarr: zigrarr,
-	zopf: zopf,
-	Zopf: Zopf,
-	Zscr: Zscr,
-	zscr: zscr,
-	zwj: zwj,
-	zwnj: zwnj,
-	default: entities
-});
-
-var Aacute$1 = "Á";
-var aacute$1 = "á";
-var Acirc$1 = "Â";
-var acirc$1 = "â";
-var acute$1 = "´";
-var AElig$1 = "Æ";
-var aelig$1 = "æ";
-var Agrave$1 = "À";
-var agrave$1 = "à";
-var amp$1 = "&";
-var AMP$1 = "&";
-var Aring$1 = "Å";
-var aring$1 = "å";
-var Atilde$1 = "Ã";
-var atilde$1 = "ã";
-var Auml$1 = "Ä";
-var auml$1 = "ä";
-var brvbar$1 = "¦";
-var Ccedil$1 = "Ç";
-var ccedil$1 = "ç";
-var cedil$1 = "¸";
-var cent$1 = "¢";
-var copy$1 = "©";
-var COPY$1 = "©";
-var curren$1 = "¤";
-var deg$1 = "°";
-var divide$2 = "÷";
-var Eacute$1 = "É";
-var eacute$1 = "é";
-var Ecirc$1 = "Ê";
-var ecirc$1 = "ê";
-var Egrave$1 = "È";
-var egrave$1 = "è";
-var ETH$1 = "Ð";
-var eth$1 = "ð";
-var Euml$1 = "Ë";
-var euml$1 = "ë";
-var frac12$1 = "½";
-var frac14$1 = "¼";
-var frac34$1 = "¾";
-var gt$1 = ">";
-var GT$1 = ">";
-var Iacute$1 = "Í";
-var iacute$1 = "í";
-var Icirc$1 = "Î";
-var icirc$1 = "î";
-var iexcl$1 = "¡";
-var Igrave$1 = "Ì";
-var igrave$1 = "ì";
-var iquest$1 = "¿";
-var Iuml$1 = "Ï";
-var iuml$1 = "ï";
-var laquo$1 = "«";
-var lt$1 = "<";
-var LT$1 = "<";
-var macr$1 = "¯";
-var micro$1 = "µ";
-var middot$1 = "·";
-var nbsp$1 = " ";
-var not$1 = "¬";
-var Ntilde$1 = "Ñ";
-var ntilde$1 = "ñ";
-var Oacute$1 = "Ó";
-var oacute$1 = "ó";
-var Ocirc$1 = "Ô";
-var ocirc$1 = "ô";
-var Ograve$1 = "Ò";
-var ograve$1 = "ò";
-var ordf$1 = "ª";
-var ordm$1 = "º";
-var Oslash$1 = "Ø";
-var oslash$1 = "ø";
-var Otilde$1 = "Õ";
-var otilde$1 = "õ";
-var Ouml$1 = "Ö";
-var ouml$1 = "ö";
-var para$1 = "¶";
-var plusmn$1 = "±";
-var pound$1 = "£";
-var quot$2 = "\"";
-var QUOT$1 = "\"";
-var raquo$1 = "»";
-var reg$1 = "®";
-var REG$1 = "®";
-var sect$1 = "§";
-var shy$1 = "­";
-var sup1$1 = "¹";
-var sup2$1 = "²";
-var sup3$1 = "³";
-var szlig$1 = "ß";
-var THORN$1 = "Þ";
-var thorn$1 = "þ";
-var times$1 = "×";
-var Uacute$1 = "Ú";
-var uacute$1 = "ú";
-var Ucirc$1 = "Û";
-var ucirc$1 = "û";
-var Ugrave$1 = "Ù";
-var ugrave$1 = "ù";
-var uml$1 = "¨";
-var Uuml$1 = "Ü";
-var uuml$1 = "ü";
-var Yacute$1 = "Ý";
-var yacute$1 = "ý";
-var yen$1 = "¥";
-var yuml$1 = "ÿ";
-var legacy = {
-	Aacute: Aacute$1,
-	aacute: aacute$1,
-	Acirc: Acirc$1,
-	acirc: acirc$1,
-	acute: acute$1,
-	AElig: AElig$1,
-	aelig: aelig$1,
-	Agrave: Agrave$1,
-	agrave: agrave$1,
-	amp: amp$1,
-	AMP: AMP$1,
-	Aring: Aring$1,
-	aring: aring$1,
-	Atilde: Atilde$1,
-	atilde: atilde$1,
-	Auml: Auml$1,
-	auml: auml$1,
-	brvbar: brvbar$1,
-	Ccedil: Ccedil$1,
-	ccedil: ccedil$1,
-	cedil: cedil$1,
-	cent: cent$1,
-	copy: copy$1,
-	COPY: COPY$1,
-	curren: curren$1,
-	deg: deg$1,
-	divide: divide$2,
-	Eacute: Eacute$1,
-	eacute: eacute$1,
-	Ecirc: Ecirc$1,
-	ecirc: ecirc$1,
-	Egrave: Egrave$1,
-	egrave: egrave$1,
-	ETH: ETH$1,
-	eth: eth$1,
-	Euml: Euml$1,
-	euml: euml$1,
-	frac12: frac12$1,
-	frac14: frac14$1,
-	frac34: frac34$1,
-	gt: gt$1,
-	GT: GT$1,
-	Iacute: Iacute$1,
-	iacute: iacute$1,
-	Icirc: Icirc$1,
-	icirc: icirc$1,
-	iexcl: iexcl$1,
-	Igrave: Igrave$1,
-	igrave: igrave$1,
-	iquest: iquest$1,
-	Iuml: Iuml$1,
-	iuml: iuml$1,
-	laquo: laquo$1,
-	lt: lt$1,
-	LT: LT$1,
-	macr: macr$1,
-	micro: micro$1,
-	middot: middot$1,
-	nbsp: nbsp$1,
-	not: not$1,
-	Ntilde: Ntilde$1,
-	ntilde: ntilde$1,
-	Oacute: Oacute$1,
-	oacute: oacute$1,
-	Ocirc: Ocirc$1,
-	ocirc: ocirc$1,
-	Ograve: Ograve$1,
-	ograve: ograve$1,
-	ordf: ordf$1,
-	ordm: ordm$1,
-	Oslash: Oslash$1,
-	oslash: oslash$1,
-	Otilde: Otilde$1,
-	otilde: otilde$1,
-	Ouml: Ouml$1,
-	ouml: ouml$1,
-	para: para$1,
-	plusmn: plusmn$1,
-	pound: pound$1,
-	quot: quot$2,
-	QUOT: QUOT$1,
-	raquo: raquo$1,
-	reg: reg$1,
-	REG: REG$1,
-	sect: sect$1,
-	shy: shy$1,
-	sup1: sup1$1,
-	sup2: sup2$1,
-	sup3: sup3$1,
-	szlig: szlig$1,
-	THORN: THORN$1,
-	thorn: thorn$1,
-	times: times$1,
-	Uacute: Uacute$1,
-	uacute: uacute$1,
-	Ucirc: Ucirc$1,
-	ucirc: ucirc$1,
-	Ugrave: Ugrave$1,
-	ugrave: ugrave$1,
-	uml: uml$1,
-	Uuml: Uuml$1,
-	uuml: uuml$1,
-	Yacute: Yacute$1,
-	yacute: yacute$1,
-	yen: yen$1,
-	yuml: yuml$1
-};
-
-var legacy$1 = Object.freeze({
-	Aacute: Aacute$1,
-	aacute: aacute$1,
-	Acirc: Acirc$1,
-	acirc: acirc$1,
-	acute: acute$1,
-	AElig: AElig$1,
-	aelig: aelig$1,
-	Agrave: Agrave$1,
-	agrave: agrave$1,
-	amp: amp$1,
-	AMP: AMP$1,
-	Aring: Aring$1,
-	aring: aring$1,
-	Atilde: Atilde$1,
-	atilde: atilde$1,
-	Auml: Auml$1,
-	auml: auml$1,
-	brvbar: brvbar$1,
-	Ccedil: Ccedil$1,
-	ccedil: ccedil$1,
-	cedil: cedil$1,
-	cent: cent$1,
-	copy: copy$1,
-	COPY: COPY$1,
-	curren: curren$1,
-	deg: deg$1,
-	divide: divide$2,
-	Eacute: Eacute$1,
-	eacute: eacute$1,
-	Ecirc: Ecirc$1,
-	ecirc: ecirc$1,
-	Egrave: Egrave$1,
-	egrave: egrave$1,
-	ETH: ETH$1,
-	eth: eth$1,
-	Euml: Euml$1,
-	euml: euml$1,
-	frac12: frac12$1,
-	frac14: frac14$1,
-	frac34: frac34$1,
-	gt: gt$1,
-	GT: GT$1,
-	Iacute: Iacute$1,
-	iacute: iacute$1,
-	Icirc: Icirc$1,
-	icirc: icirc$1,
-	iexcl: iexcl$1,
-	Igrave: Igrave$1,
-	igrave: igrave$1,
-	iquest: iquest$1,
-	Iuml: Iuml$1,
-	iuml: iuml$1,
-	laquo: laquo$1,
-	lt: lt$1,
-	LT: LT$1,
-	macr: macr$1,
-	micro: micro$1,
-	middot: middot$1,
-	nbsp: nbsp$1,
-	not: not$1,
-	Ntilde: Ntilde$1,
-	ntilde: ntilde$1,
-	Oacute: Oacute$1,
-	oacute: oacute$1,
-	Ocirc: Ocirc$1,
-	ocirc: ocirc$1,
-	Ograve: Ograve$1,
-	ograve: ograve$1,
-	ordf: ordf$1,
-	ordm: ordm$1,
-	Oslash: Oslash$1,
-	oslash: oslash$1,
-	Otilde: Otilde$1,
-	otilde: otilde$1,
-	Ouml: Ouml$1,
-	ouml: ouml$1,
-	para: para$1,
-	plusmn: plusmn$1,
-	pound: pound$1,
-	quot: quot$2,
-	QUOT: QUOT$1,
-	raquo: raquo$1,
-	reg: reg$1,
-	REG: REG$1,
-	sect: sect$1,
-	shy: shy$1,
-	sup1: sup1$1,
-	sup2: sup2$1,
-	sup3: sup3$1,
-	szlig: szlig$1,
-	THORN: THORN$1,
-	thorn: thorn$1,
-	times: times$1,
-	Uacute: Uacute$1,
-	uacute: uacute$1,
-	Ucirc: Ucirc$1,
-	ucirc: ucirc$1,
-	Ugrave: Ugrave$1,
-	ugrave: ugrave$1,
-	uml: uml$1,
-	Uuml: Uuml$1,
-	uuml: uuml$1,
-	Yacute: Yacute$1,
-	yacute: yacute$1,
-	yen: yen$1,
-	yuml: yuml$1,
-	default: legacy
-});
-
-var amp$2 = "&";
-var apos$1 = "'";
-var gt$2 = ">";
-var lt$2 = "<";
-var quot$3 = "\"";
-var xml = {
-	amp: amp$2,
-	apos: apos$1,
-	gt: gt$2,
-	lt: lt$2,
-	quot: quot$3
-};
-
-var xml$1 = Object.freeze({
-	amp: amp$2,
-	apos: apos$1,
-	gt: gt$2,
-	lt: lt$2,
-	quot: quot$3,
-	default: xml
-});
-
-var decodeCodePoint$1 = ( decode_codepoint$2 && decode_codepoint ) || decode_codepoint$2;
-
-var entityMap = ( entities$1 && entities ) || entities$1;
-
-var legacyMap = ( legacy$1 && legacy ) || legacy$1;
-
-var xmlMap = ( xml$1 && xml ) || xml$1;
-
-var Tokenizer_1 = Tokenizer$1;
-
-var i$4 = 0;
-var TEXT                      = i$4++;
-var BEFORE_TAG_NAME           = i$4++;
-var IN_TAG_NAME               = i$4++;
-var IN_SELF_CLOSING_TAG       = i$4++;
-var BEFORE_CLOSING_TAG_NAME   = i$4++;
-var IN_CLOSING_TAG_NAME       = i$4++;
-var AFTER_CLOSING_TAG_NAME    = i$4++;
-var BEFORE_ATTRIBUTE_NAME     = i$4++;
-var IN_ATTRIBUTE_NAME         = i$4++;
-var AFTER_ATTRIBUTE_NAME      = i$4++;
-var BEFORE_ATTRIBUTE_VALUE    = i$4++;
-var IN_ATTRIBUTE_VALUE_DQ     = i$4++;
-var IN_ATTRIBUTE_VALUE_SQ     = i$4++;
-var IN_ATTRIBUTE_VALUE_NQ     = i$4++;
-var BEFORE_DECLARATION        = i$4++;
-var IN_DECLARATION            = i$4++;
-var IN_PROCESSING_INSTRUCTION = i$4++;
-var BEFORE_COMMENT            = i$4++;
-var IN_COMMENT                = i$4++;
-var AFTER_COMMENT_1           = i$4++;
-var AFTER_COMMENT_2           = i$4++;
-var BEFORE_CDATA_1            = i$4++;
-var BEFORE_CDATA_2            = i$4++;
-var BEFORE_CDATA_3            = i$4++;
-var BEFORE_CDATA_4            = i$4++;
-var BEFORE_CDATA_5            = i$4++;
-var BEFORE_CDATA_6            = i$4++;
-var IN_CDATA                  = i$4++;
-var AFTER_CDATA_1             = i$4++;
-var AFTER_CDATA_2             = i$4++;
-var BEFORE_SPECIAL            = i$4++;
-var BEFORE_SPECIAL_END        = i$4++;
-var BEFORE_SCRIPT_1           = i$4++;
-var BEFORE_SCRIPT_2           = i$4++;
-var BEFORE_SCRIPT_3           = i$4++;
-var BEFORE_SCRIPT_4           = i$4++;
-var BEFORE_SCRIPT_5           = i$4++;
-var AFTER_SCRIPT_1            = i$4++;
-var AFTER_SCRIPT_2            = i$4++;
-var AFTER_SCRIPT_3            = i$4++;
-var AFTER_SCRIPT_4            = i$4++;
-var AFTER_SCRIPT_5            = i$4++;
-var BEFORE_STYLE_1            = i$4++;
-var BEFORE_STYLE_2            = i$4++;
-var BEFORE_STYLE_3            = i$4++;
-var BEFORE_STYLE_4            = i$4++;
-var AFTER_STYLE_1             = i$4++;
-var AFTER_STYLE_2             = i$4++;
-var AFTER_STYLE_3             = i$4++;
-var AFTER_STYLE_4             = i$4++;
-var BEFORE_ENTITY             = i$4++;
-var BEFORE_NUMERIC_ENTITY     = i$4++;
-var IN_NAMED_ENTITY           = i$4++;
-var IN_NUMERIC_ENTITY         = i$4++;
-var IN_HEX_ENTITY             = i$4++;
-var j$2 = 0;
-var SPECIAL_NONE              = j$2++;
-var SPECIAL_SCRIPT            = j$2++;
-var SPECIAL_STYLE             = j$2++;
-
-function whitespace(c){
-	return c === " " || c === "\n" || c === "\t" || c === "\f" || c === "\r";
-}
-
-function characterState(char, SUCCESS){
-	return function(c){
-		if(c === char) this._state = SUCCESS;
-	};
-}
-
-function ifElseState(upper, SUCCESS, FAILURE){
-	var lower = upper.toLowerCase();
-
-	if(upper === lower){
-		return function(c){
-			if(c === lower){
-				this._state = SUCCESS;
-			} else {
-				this._state = FAILURE;
-				this._index--;
-			}
-		};
-	} else {
-		return function(c){
-			if(c === lower || c === upper){
-				this._state = SUCCESS;
-			} else {
-				this._state = FAILURE;
-				this._index--;
-			}
-		};
-	}
-}
-
-function consumeSpecialNameChar(upper, NEXT_STATE){
-	var lower = upper.toLowerCase();
-
-	return function(c){
-		if(c === lower || c === upper){
-			this._state = NEXT_STATE;
-		} else {
-			this._state = IN_TAG_NAME;
-			this._index--; //consume the token again
-		}
-	};
-}
-
-function Tokenizer$1(options, cbs){
-	this._state = TEXT;
-	this._buffer = "";
-	this._sectionStart = 0;
-	this._index = 0;
-	this._bufferOffset = 0; //chars removed from _buffer
-	this._baseState = TEXT;
-	this._special = SPECIAL_NONE;
-	this._cbs = cbs;
-	this._running = true;
-	this._ended = false;
-	this._xmlMode = !!(options && options.xmlMode);
-	this._decodeEntities = !!(options && options.decodeEntities);
-}
-
-Tokenizer$1.prototype._stateText = function(c){
-	if(c === "<"){
-		if(this._index > this._sectionStart){
-			this._cbs.ontext(this._getSection());
-		}
-		this._state = BEFORE_TAG_NAME;
-		this._sectionStart = this._index;
-	} else if(this._decodeEntities && this._special === SPECIAL_NONE && c === "&"){
-		if(this._index > this._sectionStart){
-			this._cbs.ontext(this._getSection());
-		}
-		this._baseState = TEXT;
-		this._state = BEFORE_ENTITY;
-		this._sectionStart = this._index;
-	}
-};
-
-Tokenizer$1.prototype._stateBeforeTagName = function(c){
-	if(c === "/"){
-		this._state = BEFORE_CLOSING_TAG_NAME;
-	} else if(c === "<"){
-		this._cbs.ontext(this._getSection());
-		this._sectionStart = this._index;
-	} else if(c === ">" || this._special !== SPECIAL_NONE || whitespace(c)) {
-		this._state = TEXT;
-	} else if(c === "!"){
-		this._state = BEFORE_DECLARATION;
-		this._sectionStart = this._index + 1;
-	} else if(c === "?"){
-		this._state = IN_PROCESSING_INSTRUCTION;
-		this._sectionStart = this._index + 1;
-	} else {
-		this._state = (!this._xmlMode && (c === "s" || c === "S")) ?
-						BEFORE_SPECIAL : IN_TAG_NAME;
-		this._sectionStart = this._index;
-	}
-};
-
-Tokenizer$1.prototype._stateInTagName = function(c){
-	if(c === "/" || c === ">" || whitespace(c)){
-		this._emitToken("onopentagname");
-		this._state = BEFORE_ATTRIBUTE_NAME;
-		this._index--;
-	}
-};
-
-Tokenizer$1.prototype._stateBeforeCloseingTagName = function(c){
-	if(whitespace(c));
-	else if(c === ">"){
-		this._state = TEXT;
-	} else if(this._special !== SPECIAL_NONE){
-		if(c === "s" || c === "S"){
-			this._state = BEFORE_SPECIAL_END;
-		} else {
-			this._state = TEXT;
-			this._index--;
-		}
-	} else {
-		this._state = IN_CLOSING_TAG_NAME;
-		this._sectionStart = this._index;
-	}
-};
-
-Tokenizer$1.prototype._stateInCloseingTagName = function(c){
-	if(c === ">" || whitespace(c)){
-		this._emitToken("onclosetag");
-		this._state = AFTER_CLOSING_TAG_NAME;
-		this._index--;
-	}
-};
-
-Tokenizer$1.prototype._stateAfterCloseingTagName = function(c){
-	//skip everything until ">"
-	if(c === ">"){
-		this._state = TEXT;
-		this._sectionStart = this._index + 1;
-	}
-};
-
-Tokenizer$1.prototype._stateBeforeAttributeName = function(c){
-	if(c === ">"){
-		this._cbs.onopentagend();
-		this._state = TEXT;
-		this._sectionStart = this._index + 1;
-	} else if(c === "/"){
-		this._state = IN_SELF_CLOSING_TAG;
-	} else if(!whitespace(c)){
-		this._state = IN_ATTRIBUTE_NAME;
-		this._sectionStart = this._index;
-	}
-};
-
-Tokenizer$1.prototype._stateInSelfClosingTag = function(c){
-	if(c === ">"){
-		this._cbs.onselfclosingtag();
-		this._state = TEXT;
-		this._sectionStart = this._index + 1;
-	} else if(!whitespace(c)){
-		this._state = BEFORE_ATTRIBUTE_NAME;
-		this._index--;
-	}
-};
-
-Tokenizer$1.prototype._stateInAttributeName = function(c){
-	if(c === "=" || c === "/" || c === ">" || whitespace(c)){
-		this._cbs.onattribname(this._getSection());
-		this._sectionStart = -1;
-		this._state = AFTER_ATTRIBUTE_NAME;
-		this._index--;
-	}
-};
-
-Tokenizer$1.prototype._stateAfterAttributeName = function(c){
-	if(c === "="){
-		this._state = BEFORE_ATTRIBUTE_VALUE;
-	} else if(c === "/" || c === ">"){
-		this._cbs.onattribend();
-		this._state = BEFORE_ATTRIBUTE_NAME;
-		this._index--;
-	} else if(!whitespace(c)){
-		this._cbs.onattribend();
-		this._state = IN_ATTRIBUTE_NAME;
-		this._sectionStart = this._index;
-	}
-};
-
-Tokenizer$1.prototype._stateBeforeAttributeValue = function(c){
-	if(c === "\""){
-		this._state = IN_ATTRIBUTE_VALUE_DQ;
-		this._sectionStart = this._index + 1;
-	} else if(c === "'"){
-		this._state = IN_ATTRIBUTE_VALUE_SQ;
-		this._sectionStart = this._index + 1;
-	} else if(!whitespace(c)){
-		this._state = IN_ATTRIBUTE_VALUE_NQ;
-		this._sectionStart = this._index;
-		this._index--; //reconsume token
-	}
-};
-
-Tokenizer$1.prototype._stateInAttributeValueDoubleQuotes = function(c){
-	if(c === "\""){
-		this._emitToken("onattribdata");
-		this._cbs.onattribend();
-		this._state = BEFORE_ATTRIBUTE_NAME;
-	} else if(this._decodeEntities && c === "&"){
-		this._emitToken("onattribdata");
-		this._baseState = this._state;
-		this._state = BEFORE_ENTITY;
-		this._sectionStart = this._index;
-	}
-};
-
-Tokenizer$1.prototype._stateInAttributeValueSingleQuotes = function(c){
-	if(c === "'"){
-		this._emitToken("onattribdata");
-		this._cbs.onattribend();
-		this._state = BEFORE_ATTRIBUTE_NAME;
-	} else if(this._decodeEntities && c === "&"){
-		this._emitToken("onattribdata");
-		this._baseState = this._state;
-		this._state = BEFORE_ENTITY;
-		this._sectionStart = this._index;
-	}
-};
-
-Tokenizer$1.prototype._stateInAttributeValueNoQuotes = function(c){
-	if(whitespace(c) || c === ">"){
-		this._emitToken("onattribdata");
-		this._cbs.onattribend();
-		this._state = BEFORE_ATTRIBUTE_NAME;
-		this._index--;
-	} else if(this._decodeEntities && c === "&"){
-		this._emitToken("onattribdata");
-		this._baseState = this._state;
-		this._state = BEFORE_ENTITY;
-		this._sectionStart = this._index;
-	}
-};
-
-Tokenizer$1.prototype._stateBeforeDeclaration = function(c){
-	this._state = c === "[" ? BEFORE_CDATA_1 :
-					c === "-" ? BEFORE_COMMENT :
-						IN_DECLARATION;
-};
-
-Tokenizer$1.prototype._stateInDeclaration = function(c){
-	if(c === ">"){
-		this._cbs.ondeclaration(this._getSection());
-		this._state = TEXT;
-		this._sectionStart = this._index + 1;
-	}
-};
-
-Tokenizer$1.prototype._stateInProcessingInstruction = function(c){
-	if(c === ">"){
-		this._cbs.onprocessinginstruction(this._getSection());
-		this._state = TEXT;
-		this._sectionStart = this._index + 1;
-	}
-};
-
-Tokenizer$1.prototype._stateBeforeComment = function(c){
-	if(c === "-"){
-		this._state = IN_COMMENT;
-		this._sectionStart = this._index + 1;
-	} else {
-		this._state = IN_DECLARATION;
-	}
-};
-
-Tokenizer$1.prototype._stateInComment = function(c){
-	if(c === "-") this._state = AFTER_COMMENT_1;
-};
-
-Tokenizer$1.prototype._stateAfterComment1 = function(c){
-	if(c === "-"){
-		this._state = AFTER_COMMENT_2;
-	} else {
-		this._state = IN_COMMENT;
-	}
-};
-
-Tokenizer$1.prototype._stateAfterComment2 = function(c){
-	if(c === ">"){
-		//remove 2 trailing chars
-		this._cbs.oncomment(this._buffer.substring(this._sectionStart, this._index - 2));
-		this._state = TEXT;
-		this._sectionStart = this._index + 1;
-	} else if(c !== "-"){
-		this._state = IN_COMMENT;
-	}
-	// else: stay in AFTER_COMMENT_2 (`--->`)
-};
-
-Tokenizer$1.prototype._stateBeforeCdata1 = ifElseState("C", BEFORE_CDATA_2, IN_DECLARATION);
-Tokenizer$1.prototype._stateBeforeCdata2 = ifElseState("D", BEFORE_CDATA_3, IN_DECLARATION);
-Tokenizer$1.prototype._stateBeforeCdata3 = ifElseState("A", BEFORE_CDATA_4, IN_DECLARATION);
-Tokenizer$1.prototype._stateBeforeCdata4 = ifElseState("T", BEFORE_CDATA_5, IN_DECLARATION);
-Tokenizer$1.prototype._stateBeforeCdata5 = ifElseState("A", BEFORE_CDATA_6, IN_DECLARATION);
-
-Tokenizer$1.prototype._stateBeforeCdata6 = function(c){
-	if(c === "["){
-		this._state = IN_CDATA;
-		this._sectionStart = this._index + 1;
-	} else {
-		this._state = IN_DECLARATION;
-		this._index--;
-	}
-};
-
-Tokenizer$1.prototype._stateInCdata = function(c){
-	if(c === "]") this._state = AFTER_CDATA_1;
-};
-
-Tokenizer$1.prototype._stateAfterCdata1 = characterState("]", AFTER_CDATA_2);
-
-Tokenizer$1.prototype._stateAfterCdata2 = function(c){
-	if(c === ">"){
-		//remove 2 trailing chars
-		this._cbs.oncdata(this._buffer.substring(this._sectionStart, this._index - 2));
-		this._state = TEXT;
-		this._sectionStart = this._index + 1;
-	} else if(c !== "]") {
-		this._state = IN_CDATA;
-	}
-	//else: stay in AFTER_CDATA_2 (`]]]>`)
-};
-
-Tokenizer$1.prototype._stateBeforeSpecial = function(c){
-	if(c === "c" || c === "C"){
-		this._state = BEFORE_SCRIPT_1;
-	} else if(c === "t" || c === "T"){
-		this._state = BEFORE_STYLE_1;
-	} else {
-		this._state = IN_TAG_NAME;
-		this._index--; //consume the token again
-	}
-};
-
-Tokenizer$1.prototype._stateBeforeSpecialEnd = function(c){
-	if(this._special === SPECIAL_SCRIPT && (c === "c" || c === "C")){
-		this._state = AFTER_SCRIPT_1;
-	} else if(this._special === SPECIAL_STYLE && (c === "t" || c === "T")){
-		this._state = AFTER_STYLE_1;
-	}
-	else this._state = TEXT;
-};
-
-Tokenizer$1.prototype._stateBeforeScript1 = consumeSpecialNameChar("R", BEFORE_SCRIPT_2);
-Tokenizer$1.prototype._stateBeforeScript2 = consumeSpecialNameChar("I", BEFORE_SCRIPT_3);
-Tokenizer$1.prototype._stateBeforeScript3 = consumeSpecialNameChar("P", BEFORE_SCRIPT_4);
-Tokenizer$1.prototype._stateBeforeScript4 = consumeSpecialNameChar("T", BEFORE_SCRIPT_5);
-
-Tokenizer$1.prototype._stateBeforeScript5 = function(c){
-	if(c === "/" || c === ">" || whitespace(c)){
-		this._special = SPECIAL_SCRIPT;
-	}
-	this._state = IN_TAG_NAME;
-	this._index--; //consume the token again
-};
-
-Tokenizer$1.prototype._stateAfterScript1 = ifElseState("R", AFTER_SCRIPT_2, TEXT);
-Tokenizer$1.prototype._stateAfterScript2 = ifElseState("I", AFTER_SCRIPT_3, TEXT);
-Tokenizer$1.prototype._stateAfterScript3 = ifElseState("P", AFTER_SCRIPT_4, TEXT);
-Tokenizer$1.prototype._stateAfterScript4 = ifElseState("T", AFTER_SCRIPT_5, TEXT);
-
-Tokenizer$1.prototype._stateAfterScript5 = function(c){
-	if(c === ">" || whitespace(c)){
-		this._special = SPECIAL_NONE;
-		this._state = IN_CLOSING_TAG_NAME;
-		this._sectionStart = this._index - 6;
-		this._index--; //reconsume the token
-	}
-	else this._state = TEXT;
-};
-
-Tokenizer$1.prototype._stateBeforeStyle1 = consumeSpecialNameChar("Y", BEFORE_STYLE_2);
-Tokenizer$1.prototype._stateBeforeStyle2 = consumeSpecialNameChar("L", BEFORE_STYLE_3);
-Tokenizer$1.prototype._stateBeforeStyle3 = consumeSpecialNameChar("E", BEFORE_STYLE_4);
-
-Tokenizer$1.prototype._stateBeforeStyle4 = function(c){
-	if(c === "/" || c === ">" || whitespace(c)){
-		this._special = SPECIAL_STYLE;
-	}
-	this._state = IN_TAG_NAME;
-	this._index--; //consume the token again
-};
-
-Tokenizer$1.prototype._stateAfterStyle1 = ifElseState("Y", AFTER_STYLE_2, TEXT);
-Tokenizer$1.prototype._stateAfterStyle2 = ifElseState("L", AFTER_STYLE_3, TEXT);
-Tokenizer$1.prototype._stateAfterStyle3 = ifElseState("E", AFTER_STYLE_4, TEXT);
-
-Tokenizer$1.prototype._stateAfterStyle4 = function(c){
-	if(c === ">" || whitespace(c)){
-		this._special = SPECIAL_NONE;
-		this._state = IN_CLOSING_TAG_NAME;
-		this._sectionStart = this._index - 5;
-		this._index--; //reconsume the token
-	}
-	else this._state = TEXT;
-};
-
-Tokenizer$1.prototype._stateBeforeEntity = ifElseState("#", BEFORE_NUMERIC_ENTITY, IN_NAMED_ENTITY);
-Tokenizer$1.prototype._stateBeforeNumericEntity = ifElseState("X", IN_HEX_ENTITY, IN_NUMERIC_ENTITY);
-
-//for entities terminated with a semicolon
-Tokenizer$1.prototype._parseNamedEntityStrict = function(){
-	//offset = 1
-	if(this._sectionStart + 1 < this._index){
-		var entity = this._buffer.substring(this._sectionStart + 1, this._index),
-		    map = this._xmlMode ? xmlMap : entityMap;
-
-		if(map.hasOwnProperty(entity)){
-			this._emitPartial(map[entity]);
-			this._sectionStart = this._index + 1;
-		}
-	}
-};
-
-
-//parses legacy entities (without trailing semicolon)
-Tokenizer$1.prototype._parseLegacyEntity = function(){
-	var start = this._sectionStart + 1,
-	    limit = this._index - start;
-
-	if(limit > 6) limit = 6; //the max length of legacy entities is 6
-
-	while(limit >= 2){ //the min length of legacy entities is 2
-		var entity = this._buffer.substr(start, limit);
-
-		if(legacyMap.hasOwnProperty(entity)){
-			this._emitPartial(legacyMap[entity]);
-			this._sectionStart += limit + 1;
-			return;
-		} else {
-			limit--;
-		}
-	}
-};
-
-Tokenizer$1.prototype._stateInNamedEntity = function(c){
-	if(c === ";"){
-		this._parseNamedEntityStrict();
-		if(this._sectionStart + 1 < this._index && !this._xmlMode){
-			this._parseLegacyEntity();
-		}
-		this._state = this._baseState;
-	} else if((c < "a" || c > "z") && (c < "A" || c > "Z") && (c < "0" || c > "9")){
-		if(this._xmlMode);
-		else if(this._sectionStart + 1 === this._index);
-		else if(this._baseState !== TEXT){
-			if(c !== "="){
-				this._parseNamedEntityStrict();
-			}
-		} else {
-			this._parseLegacyEntity();
-		}
-
-		this._state = this._baseState;
-		this._index--;
-	}
-};
-
-Tokenizer$1.prototype._decodeNumericEntity = function(offset, base){
-	var sectionStart = this._sectionStart + offset;
-
-	if(sectionStart !== this._index){
-		//parse entity
-		var entity = this._buffer.substring(sectionStart, this._index);
-		var parsed = parseInt(entity, base);
-
-		this._emitPartial(decodeCodePoint$1(parsed));
-		this._sectionStart = this._index;
-	} else {
-		this._sectionStart--;
-	}
-
-	this._state = this._baseState;
-};
-
-Tokenizer$1.prototype._stateInNumericEntity = function(c){
-	if(c === ";"){
-		this._decodeNumericEntity(2, 10);
-		this._sectionStart++;
-	} else if(c < "0" || c > "9"){
-		if(!this._xmlMode){
-			this._decodeNumericEntity(2, 10);
-		} else {
-			this._state = this._baseState;
-		}
-		this._index--;
-	}
-};
-
-Tokenizer$1.prototype._stateInHexEntity = function(c){
-	if(c === ";"){
-		this._decodeNumericEntity(3, 16);
-		this._sectionStart++;
-	} else if((c < "a" || c > "f") && (c < "A" || c > "F") && (c < "0" || c > "9")){
-		if(!this._xmlMode){
-			this._decodeNumericEntity(3, 16);
-		} else {
-			this._state = this._baseState;
-		}
-		this._index--;
-	}
-};
-
-Tokenizer$1.prototype._cleanup = function (){
-	if(this._sectionStart < 0){
-		this._buffer = "";
-		this._bufferOffset += this._index;
-		this._index = 0;
-	} else if(this._running){
-		if(this._state === TEXT){
-			if(this._sectionStart !== this._index){
-				this._cbs.ontext(this._buffer.substr(this._sectionStart));
-			}
-			this._buffer = "";
-			this._bufferOffset += this._index;
-			this._index = 0;
-		} else if(this._sectionStart === this._index){
-			//the section just started
-			this._buffer = "";
-			this._bufferOffset += this._index;
-			this._index = 0;
-		} else {
-			//remove everything unnecessary
-			this._buffer = this._buffer.substr(this._sectionStart);
-			this._index -= this._sectionStart;
-			this._bufferOffset += this._sectionStart;
-		}
-
-		this._sectionStart = 0;
-	}
-};
-
-//TODO make events conditional
-Tokenizer$1.prototype.write = function(chunk){
-	if(this._ended) this._cbs.onerror(Error(".write() after done!"));
-
-	this._buffer += chunk;
-	this._parse();
-};
-
-Tokenizer$1.prototype._parse = function(){
-	while(this._index < this._buffer.length && this._running){
-		var c = this._buffer.charAt(this._index);
-		if(this._state === TEXT) {
-			this._stateText(c);
-		} else if(this._state === BEFORE_TAG_NAME){
-			this._stateBeforeTagName(c);
-		} else if(this._state === IN_TAG_NAME) {
-			this._stateInTagName(c);
-		} else if(this._state === BEFORE_CLOSING_TAG_NAME){
-			this._stateBeforeCloseingTagName(c);
-		} else if(this._state === IN_CLOSING_TAG_NAME){
-			this._stateInCloseingTagName(c);
-		} else if(this._state === AFTER_CLOSING_TAG_NAME){
-			this._stateAfterCloseingTagName(c);
-		} else if(this._state === IN_SELF_CLOSING_TAG){
-			this._stateInSelfClosingTag(c);
-		}
-
-		/*
-		*	attributes
-		*/
-		else if(this._state === BEFORE_ATTRIBUTE_NAME){
-			this._stateBeforeAttributeName(c);
-		} else if(this._state === IN_ATTRIBUTE_NAME){
-			this._stateInAttributeName(c);
-		} else if(this._state === AFTER_ATTRIBUTE_NAME){
-			this._stateAfterAttributeName(c);
-		} else if(this._state === BEFORE_ATTRIBUTE_VALUE){
-			this._stateBeforeAttributeValue(c);
-		} else if(this._state === IN_ATTRIBUTE_VALUE_DQ){
-			this._stateInAttributeValueDoubleQuotes(c);
-		} else if(this._state === IN_ATTRIBUTE_VALUE_SQ){
-			this._stateInAttributeValueSingleQuotes(c);
-		} else if(this._state === IN_ATTRIBUTE_VALUE_NQ){
-			this._stateInAttributeValueNoQuotes(c);
-		}
-
-		/*
-		*	declarations
-		*/
-		else if(this._state === BEFORE_DECLARATION){
-			this._stateBeforeDeclaration(c);
-		} else if(this._state === IN_DECLARATION){
-			this._stateInDeclaration(c);
-		}
-
-		/*
-		*	processing instructions
-		*/
-		else if(this._state === IN_PROCESSING_INSTRUCTION){
-			this._stateInProcessingInstruction(c);
-		}
-
-		/*
-		*	comments
-		*/
-		else if(this._state === BEFORE_COMMENT){
-			this._stateBeforeComment(c);
-		} else if(this._state === IN_COMMENT){
-			this._stateInComment(c);
-		} else if(this._state === AFTER_COMMENT_1){
-			this._stateAfterComment1(c);
-		} else if(this._state === AFTER_COMMENT_2){
-			this._stateAfterComment2(c);
-		}
-
-		/*
-		*	cdata
-		*/
-		else if(this._state === BEFORE_CDATA_1){
-			this._stateBeforeCdata1(c);
-		} else if(this._state === BEFORE_CDATA_2){
-			this._stateBeforeCdata2(c);
-		} else if(this._state === BEFORE_CDATA_3){
-			this._stateBeforeCdata3(c);
-		} else if(this._state === BEFORE_CDATA_4){
-			this._stateBeforeCdata4(c);
-		} else if(this._state === BEFORE_CDATA_5){
-			this._stateBeforeCdata5(c);
-		} else if(this._state === BEFORE_CDATA_6){
-			this._stateBeforeCdata6(c);
-		} else if(this._state === IN_CDATA){
-			this._stateInCdata(c);
-		} else if(this._state === AFTER_CDATA_1){
-			this._stateAfterCdata1(c);
-		} else if(this._state === AFTER_CDATA_2){
-			this._stateAfterCdata2(c);
-		}
-
-		/*
-		* special tags
-		*/
-		else if(this._state === BEFORE_SPECIAL){
-			this._stateBeforeSpecial(c);
-		} else if(this._state === BEFORE_SPECIAL_END){
-			this._stateBeforeSpecialEnd(c);
-		}
-
-		/*
-		* script
-		*/
-		else if(this._state === BEFORE_SCRIPT_1){
-			this._stateBeforeScript1(c);
-		} else if(this._state === BEFORE_SCRIPT_2){
-			this._stateBeforeScript2(c);
-		} else if(this._state === BEFORE_SCRIPT_3){
-			this._stateBeforeScript3(c);
-		} else if(this._state === BEFORE_SCRIPT_4){
-			this._stateBeforeScript4(c);
-		} else if(this._state === BEFORE_SCRIPT_5){
-			this._stateBeforeScript5(c);
-		}
-
-		else if(this._state === AFTER_SCRIPT_1){
-			this._stateAfterScript1(c);
-		} else if(this._state === AFTER_SCRIPT_2){
-			this._stateAfterScript2(c);
-		} else if(this._state === AFTER_SCRIPT_3){
-			this._stateAfterScript3(c);
-		} else if(this._state === AFTER_SCRIPT_4){
-			this._stateAfterScript4(c);
-		} else if(this._state === AFTER_SCRIPT_5){
-			this._stateAfterScript5(c);
-		}
-
-		/*
-		* style
-		*/
-		else if(this._state === BEFORE_STYLE_1){
-			this._stateBeforeStyle1(c);
-		} else if(this._state === BEFORE_STYLE_2){
-			this._stateBeforeStyle2(c);
-		} else if(this._state === BEFORE_STYLE_3){
-			this._stateBeforeStyle3(c);
-		} else if(this._state === BEFORE_STYLE_4){
-			this._stateBeforeStyle4(c);
-		}
-
-		else if(this._state === AFTER_STYLE_1){
-			this._stateAfterStyle1(c);
-		} else if(this._state === AFTER_STYLE_2){
-			this._stateAfterStyle2(c);
-		} else if(this._state === AFTER_STYLE_3){
-			this._stateAfterStyle3(c);
-		} else if(this._state === AFTER_STYLE_4){
-			this._stateAfterStyle4(c);
-		}
-
-		/*
-		* entities
-		*/
-		else if(this._state === BEFORE_ENTITY){
-			this._stateBeforeEntity(c);
-		} else if(this._state === BEFORE_NUMERIC_ENTITY){
-			this._stateBeforeNumericEntity(c);
-		} else if(this._state === IN_NAMED_ENTITY){
-			this._stateInNamedEntity(c);
-		} else if(this._state === IN_NUMERIC_ENTITY){
-			this._stateInNumericEntity(c);
-		} else if(this._state === IN_HEX_ENTITY){
-			this._stateInHexEntity(c);
-		}
-
-		else {
-			this._cbs.onerror(Error("unknown _state"), this._state);
-		}
-
-		this._index++;
-	}
-
-	this._cleanup();
-};
-
-Tokenizer$1.prototype.pause = function(){
-	this._running = false;
-};
-Tokenizer$1.prototype.resume = function(){
-	this._running = true;
-
-	if(this._index < this._buffer.length){
-		this._parse();
-	}
-	if(this._ended){
-		this._finish();
-	}
-};
-
-Tokenizer$1.prototype.end = function(chunk){
-	if(this._ended) this._cbs.onerror(Error(".end() after done!"));
-	if(chunk) this.write(chunk);
-
-	this._ended = true;
-
-	if(this._running) this._finish();
-};
-
-Tokenizer$1.prototype._finish = function(){
-	//if there is remaining data, emit it in a reasonable way
-	if(this._sectionStart < this._index){
-		this._handleTrailingData();
-	}
-
-	this._cbs.onend();
-};
-
-Tokenizer$1.prototype._handleTrailingData = function(){
-	var data = this._buffer.substr(this._sectionStart);
-
-	if(this._state === IN_CDATA || this._state === AFTER_CDATA_1 || this._state === AFTER_CDATA_2){
-		this._cbs.oncdata(data);
-	} else if(this._state === IN_COMMENT || this._state === AFTER_COMMENT_1 || this._state === AFTER_COMMENT_2){
-		this._cbs.oncomment(data);
-	} else if(this._state === IN_NAMED_ENTITY && !this._xmlMode){
-		this._parseLegacyEntity();
-		if(this._sectionStart < this._index){
-			this._state = this._baseState;
-			this._handleTrailingData();
-		}
-	} else if(this._state === IN_NUMERIC_ENTITY && !this._xmlMode){
-		this._decodeNumericEntity(2, 10);
-		if(this._sectionStart < this._index){
-			this._state = this._baseState;
-			this._handleTrailingData();
-		}
-	} else if(this._state === IN_HEX_ENTITY && !this._xmlMode){
-		this._decodeNumericEntity(3, 16);
-		if(this._sectionStart < this._index){
-			this._state = this._baseState;
-			this._handleTrailingData();
-		}
-	} else if(
-		this._state !== IN_TAG_NAME &&
-		this._state !== BEFORE_ATTRIBUTE_NAME &&
-		this._state !== BEFORE_ATTRIBUTE_VALUE &&
-		this._state !== AFTER_ATTRIBUTE_NAME &&
-		this._state !== IN_ATTRIBUTE_NAME &&
-		this._state !== IN_ATTRIBUTE_VALUE_SQ &&
-		this._state !== IN_ATTRIBUTE_VALUE_DQ &&
-		this._state !== IN_ATTRIBUTE_VALUE_NQ &&
-		this._state !== IN_CLOSING_TAG_NAME
-	){
-		this._cbs.ontext(data);
-	}
-	//else, ignore remaining data
-	//TODO add a way to remove current tag
-};
-
-Tokenizer$1.prototype.reset = function(){
-	Tokenizer$1.call(this, {xmlMode: this._xmlMode, decodeEntities: this._decodeEntities}, this._cbs);
-};
-
-Tokenizer$1.prototype.getAbsoluteIndex = function(){
-	return this._bufferOffset + this._index;
-};
-
-Tokenizer$1.prototype._getSection = function(){
-	return this._buffer.substring(this._sectionStart, this._index);
-};
-
-Tokenizer$1.prototype._emitToken = function(name){
-	this._cbs[name](this._getSection());
-	this._sectionStart = -1;
-};
-
-Tokenizer$1.prototype._emitPartial = function(value){
-	if(this._baseState !== TEXT){
-		this._cbs.onattribdata(value); //TODO implement the new event
-	} else {
-		this._cbs.ontext(value);
-	}
-};
-
-
-
-var Tokenizer$2 = Object.freeze({
-	default: Tokenizer_1,
-	__moduleExports: Tokenizer_1
-});
-
-// shim for using process in browser
-// based off https://github.com/defunctzombie/node-process/blob/master/browser.js
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-var cachedSetTimeout = defaultSetTimout;
-var cachedClearTimeout = defaultClearTimeout;
-if (typeof global.setTimeout === 'function') {
-    cachedSetTimeout = setTimeout;
-}
-if (typeof global.clearTimeout === 'function') {
-    cachedClearTimeout = clearTimeout;
-}
-
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue$2 = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue$2 = currentQueue.concat(queue$2);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue$2.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue$2.length;
-    while(len) {
-        currentQueue = queue$2;
-        queue$2 = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue$2.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-function nextTick(fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue$2.push(new Item(fun, args));
-    if (queue$2.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-}
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-var title = 'browser';
-var platform = 'browser';
-var browser = true;
-var env = {};
-var argv = [];
-var version = ''; // empty string to avoid regexp issues
-var versions = {};
-var release = {};
-var config = {};
-
-function noop$1() {}
-
-var on = noop$1;
-var addListener = noop$1;
-var once = noop$1;
-var off = noop$1;
-var removeListener = noop$1;
-var removeAllListeners = noop$1;
-var emit = noop$1;
-
-function binding(name) {
-    throw new Error('process.binding is not supported');
-}
-
-function cwd () { return '/' }
-function chdir (dir) {
-    throw new Error('process.chdir is not supported');
-}
-function umask() { return 0; }
-
-// from https://github.com/kumavis/browser-process-hrtime/blob/master/index.js
-var performance$1 = global.performance || {};
-var performanceNow$3 =
-  performance$1.now        ||
-  performance$1.mozNow     ||
-  performance$1.msNow      ||
-  performance$1.oNow       ||
-  performance$1.webkitNow  ||
-  function(){ return (new Date()).getTime() };
-
-// generate timestamp or delta
-// see http://nodejs.org/api/process.html#process_process_hrtime
-function hrtime(previousTimestamp){
-  var clocktime = performanceNow$3.call(performance$1)*1e-3;
-  var seconds = Math.floor(clocktime);
-  var nanoseconds = Math.floor((clocktime%1)*1e9);
-  if (previousTimestamp) {
-    seconds = seconds - previousTimestamp[0];
-    nanoseconds = nanoseconds - previousTimestamp[1];
-    if (nanoseconds<0) {
-      seconds--;
-      nanoseconds += 1e9;
-    }
-  }
-  return [seconds,nanoseconds]
-}
-
-var startTime = new Date();
-function uptime() {
-  var currentTime = new Date();
-  var dif = currentTime - startTime;
-  return dif / 1000;
-}
-
-var process$5 = {
-  nextTick: nextTick,
-  title: title,
-  browser: browser,
-  env: env,
-  argv: argv,
-  version: version,
-  versions: versions,
-  on: on,
-  addListener: addListener,
-  once: once,
-  off: off,
-  removeListener: removeListener,
-  removeAllListeners: removeAllListeners,
-  emit: emit,
-  binding: binding,
-  cwd: cwd,
-  chdir: chdir,
-  umask: umask,
-  hrtime: hrtime,
-  platform: platform,
-  release: release,
-  config: config,
-  uptime: uptime
-};
-
-var inherits$3;
-if (typeof Object.create === 'function'){
-  inherits$3 = function inherits(ctor, superCtor) {
-    // implementation from standard node.js 'util' module
-    ctor.super_ = superCtor;
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  inherits$3 = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor;
-    var TempCtor = function () {};
-    TempCtor.prototype = superCtor.prototype;
-    ctor.prototype = new TempCtor();
-    ctor.prototype.constructor = ctor;
-  };
-}
-var inherits$4 = inherits$3;
-
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-var formatRegExp = /%[sdj%]/g;
-function format(f) {
-  if (!isString$2(f)) {
-    var objects = [];
-    for (var i = 0; i < arguments.length; i++) {
-      objects.push(inspect(arguments[i]));
-    }
-    return objects.join(' ');
-  }
-
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  var str = String(f).replace(formatRegExp, function(x) {
-    if (x === '%%') return '%';
-    if (i >= len) return x;
-    switch (x) {
-      case '%s': return String(args[i++]);
-      case '%d': return Number(args[i++]);
-      case '%j':
-        try {
-          return JSON.stringify(args[i++]);
-        } catch (_) {
-          return '[Circular]';
-        }
-      default:
-        return x;
-    }
-  });
-  for (var x = args[i]; i < len; x = args[++i]) {
-    if (isNull(x) || !isObject$1(x)) {
-      str += ' ' + x;
-    } else {
-      str += ' ' + inspect(x);
-    }
-  }
-  return str;
-}
-
-
-// Mark that a method should not be used.
-// Returns a modified function which warns once by default.
-// If --no-deprecation is set, then it is a no-op.
-function deprecate(fn, msg) {
-  // Allow for deprecating things in the process of starting up.
-  if (isUndefined(global.process)) {
-    return function() {
-      return deprecate(fn, msg).apply(this, arguments);
-    };
-  }
-
-  if (process$5.noDeprecation === true) {
-    return fn;
-  }
-
-  var warned = false;
-  function deprecated() {
-    if (!warned) {
-      if (process$5.throwDeprecation) {
-        throw new Error(msg);
-      } else if (process$5.traceDeprecation) {
-        console.trace(msg);
-      } else {
-        console.error(msg);
-      }
-      warned = true;
-    }
-    return fn.apply(this, arguments);
-  }
-
-  return deprecated;
-}
-
-
-var debugs = {};
-var debugEnviron;
-function debuglog(set) {
-  if (isUndefined(debugEnviron))
-    debugEnviron = process$5.env.NODE_DEBUG || '';
-  set = set.toUpperCase();
-  if (!debugs[set]) {
-    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
-      var pid = 0;
-      debugs[set] = function() {
-        var msg = format.apply(null, arguments);
-        console.error('%s %d: %s', set, pid, msg);
-      };
-    } else {
-      debugs[set] = function() {};
-    }
-  }
-  return debugs[set];
-}
-
-
-/**
- * Echos the value of a value. Trys to print the value out
- * in the best way possible given the different types.
- *
- * @param {Object} obj The object to print out.
- * @param {Object} opts Optional options object that alters the output.
- */
-/* legacy: obj, showHidden, depth, colors*/
-function inspect(obj, opts) {
-  // default options
-  var ctx = {
-    seen: [],
-    stylize: stylizeNoColor
-  };
-  // legacy...
-  if (arguments.length >= 3) ctx.depth = arguments[2];
-  if (arguments.length >= 4) ctx.colors = arguments[3];
-  if (isBoolean(opts)) {
-    // legacy...
-    ctx.showHidden = opts;
-  } else if (opts) {
-    // got an "options" object
-    _extend(ctx, opts);
-  }
-  // set default options
-  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
-  if (isUndefined(ctx.depth)) ctx.depth = 2;
-  if (isUndefined(ctx.colors)) ctx.colors = false;
-  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
-  if (ctx.colors) ctx.stylize = stylizeWithColor;
-  return formatValue(ctx, obj, ctx.depth);
-}
-
-// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
-inspect.colors = {
-  'bold' : [1, 22],
-  'italic' : [3, 23],
-  'underline' : [4, 24],
-  'inverse' : [7, 27],
-  'white' : [37, 39],
-  'grey' : [90, 39],
-  'black' : [30, 39],
-  'blue' : [34, 39],
-  'cyan' : [36, 39],
-  'green' : [32, 39],
-  'magenta' : [35, 39],
-  'red' : [31, 39],
-  'yellow' : [33, 39]
-};
-
-// Don't use 'blue' not visible on cmd.exe
-inspect.styles = {
-  'special': 'cyan',
-  'number': 'yellow',
-  'boolean': 'yellow',
-  'undefined': 'grey',
-  'null': 'bold',
-  'string': 'green',
-  'date': 'magenta',
-  // "name": intentionally not styling
-  'regexp': 'red'
-};
-
-
-function stylizeWithColor(str, styleType) {
-  var style = inspect.styles[styleType];
-
-  if (style) {
-    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
-           '\u001b[' + inspect.colors[style][1] + 'm';
-  } else {
-    return str;
-  }
-}
-
-
-function stylizeNoColor(str, styleType) {
-  return str;
-}
-
-
-function arrayToHash(array) {
-  var hash = {};
-
-  array.forEach(function(val, idx) {
-    hash[val] = true;
-  });
-
-  return hash;
-}
-
-
-function formatValue(ctx, value, recurseTimes) {
-  // Provide a hook for user-specified inspect functions.
-  // Check that value is an object with an inspect function on it
-  if (ctx.customInspect &&
-      value &&
-      isFunction(value.inspect) &&
-      // Filter out the util module, it's inspect function is special
-      value.inspect !== inspect &&
-      // Also filter out any prototype objects using the circular check.
-      !(value.constructor && value.constructor.prototype === value)) {
-    var ret = value.inspect(recurseTimes, ctx);
-    if (!isString$2(ret)) {
-      ret = formatValue(ctx, ret, recurseTimes);
-    }
-    return ret;
-  }
-
-  // Primitive types cannot have properties
-  var primitive = formatPrimitive(ctx, value);
-  if (primitive) {
-    return primitive;
-  }
-
-  // Look up the keys of the object.
-  var keys = Object.keys(value);
-  var visibleKeys = arrayToHash(keys);
-
-  if (ctx.showHidden) {
-    keys = Object.getOwnPropertyNames(value);
-  }
-
-  // IE doesn't make error fields non-enumerable
-  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
-  if (isError(value)
-      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
-    return formatError(value);
-  }
-
-  // Some type of object without properties can be shortcutted.
-  if (keys.length === 0) {
-    if (isFunction(value)) {
-      var name = value.name ? ': ' + value.name : '';
-      return ctx.stylize('[Function' + name + ']', 'special');
-    }
-    if (isRegExp$1(value)) {
-      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
-    }
-    if (isDate(value)) {
-      return ctx.stylize(Date.prototype.toString.call(value), 'date');
-    }
-    if (isError(value)) {
-      return formatError(value);
-    }
-  }
-
-  var base = '', array = false, braces = ['{', '}'];
-
-  // Make Array say that they are Array
-  if (isArray$2(value)) {
-    array = true;
-    braces = ['[', ']'];
-  }
-
-  // Make functions say that they are functions
-  if (isFunction(value)) {
-    var n = value.name ? ': ' + value.name : '';
-    base = ' [Function' + n + ']';
-  }
-
-  // Make RegExps say that they are RegExps
-  if (isRegExp$1(value)) {
-    base = ' ' + RegExp.prototype.toString.call(value);
-  }
-
-  // Make dates with properties first say the date
-  if (isDate(value)) {
-    base = ' ' + Date.prototype.toUTCString.call(value);
-  }
-
-  // Make error with message first say the error
-  if (isError(value)) {
-    base = ' ' + formatError(value);
-  }
-
-  if (keys.length === 0 && (!array || value.length == 0)) {
-    return braces[0] + base + braces[1];
-  }
-
-  if (recurseTimes < 0) {
-    if (isRegExp$1(value)) {
-      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
-    } else {
-      return ctx.stylize('[Object]', 'special');
-    }
-  }
-
-  ctx.seen.push(value);
-
-  var output;
-  if (array) {
-    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
-  } else {
-    output = keys.map(function(key) {
-      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
-    });
-  }
-
-  ctx.seen.pop();
-
-  return reduceToSingleString(output, base, braces);
-}
-
-
-function formatPrimitive(ctx, value) {
-  if (isUndefined(value))
-    return ctx.stylize('undefined', 'undefined');
-  if (isString$2(value)) {
-    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-                                             .replace(/'/g, "\\'")
-                                             .replace(/\\"/g, '"') + '\'';
-    return ctx.stylize(simple, 'string');
-  }
-  if (isNumber(value))
-    return ctx.stylize('' + value, 'number');
-  if (isBoolean(value))
-    return ctx.stylize('' + value, 'boolean');
-  // For some reason typeof null is "object", so special case here.
-  if (isNull(value))
-    return ctx.stylize('null', 'null');
-}
-
-
-function formatError(value) {
-  return '[' + Error.prototype.toString.call(value) + ']';
-}
-
-
-function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
-  var output = [];
-  for (var i = 0, l = value.length; i < l; ++i) {
-    if (hasOwnProperty$5(value, String(i))) {
-      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-          String(i), true));
-    } else {
-      output.push('');
-    }
-  }
-  keys.forEach(function(key) {
-    if (!key.match(/^\d+$/)) {
-      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-          key, true));
-    }
-  });
-  return output;
-}
-
-
-function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
-  var name, str, desc;
-  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
-  if (desc.get) {
-    if (desc.set) {
-      str = ctx.stylize('[Getter/Setter]', 'special');
-    } else {
-      str = ctx.stylize('[Getter]', 'special');
-    }
-  } else {
-    if (desc.set) {
-      str = ctx.stylize('[Setter]', 'special');
-    }
-  }
-  if (!hasOwnProperty$5(visibleKeys, key)) {
-    name = '[' + key + ']';
-  }
-  if (!str) {
-    if (ctx.seen.indexOf(desc.value) < 0) {
-      if (isNull(recurseTimes)) {
-        str = formatValue(ctx, desc.value, null);
-      } else {
-        str = formatValue(ctx, desc.value, recurseTimes - 1);
-      }
-      if (str.indexOf('\n') > -1) {
-        if (array) {
-          str = str.split('\n').map(function(line) {
-            return '  ' + line;
-          }).join('\n').substr(2);
-        } else {
-          str = '\n' + str.split('\n').map(function(line) {
-            return '   ' + line;
-          }).join('\n');
-        }
-      }
-    } else {
-      str = ctx.stylize('[Circular]', 'special');
-    }
-  }
-  if (isUndefined(name)) {
-    if (array && key.match(/^\d+$/)) {
-      return str;
-    }
-    name = JSON.stringify('' + key);
-    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
-      name = name.substr(1, name.length - 2);
-      name = ctx.stylize(name, 'name');
-    } else {
-      name = name.replace(/'/g, "\\'")
-                 .replace(/\\"/g, '"')
-                 .replace(/(^"|"$)/g, "'");
-      name = ctx.stylize(name, 'string');
-    }
-  }
-
-  return name + ': ' + str;
-}
-
-
-function reduceToSingleString(output, base, braces) {
-  var numLinesEst = 0;
-  var length = output.reduce(function(prev, cur) {
-    numLinesEst++;
-    if (cur.indexOf('\n') >= 0) numLinesEst++;
-    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
-  }, 0);
-
-  if (length > 60) {
-    return braces[0] +
-           (base === '' ? '' : base + '\n ') +
-           ' ' +
-           output.join(',\n  ') +
-           ' ' +
-           braces[1];
-  }
-
-  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
-}
-
-
-// NOTE: These type checking functions intentionally don't use `instanceof`
-// because it is fragile and can be easily faked with `Object.create()`.
-function isArray$2(ar) {
-  return Array.isArray(ar);
-}
-
-function isBoolean(arg) {
-  return typeof arg === 'boolean';
-}
-
-function isNull(arg) {
-  return arg === null;
-}
-
-function isNullOrUndefined(arg) {
-  return arg == null;
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isString$2(arg) {
-  return typeof arg === 'string';
-}
-
-function isSymbol$1(arg) {
-  return typeof arg === 'symbol';
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-function isRegExp$1(re) {
-  return isObject$1(re) && objectToString(re) === '[object RegExp]';
-}
-
-function isObject$1(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isDate(d) {
-  return isObject$1(d) && objectToString(d) === '[object Date]';
-}
-
-function isError(e) {
-  return isObject$1(e) &&
-      (objectToString(e) === '[object Error]' || e instanceof Error);
-}
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isPrimitive(arg) {
-  return arg === null ||
-         typeof arg === 'boolean' ||
-         typeof arg === 'number' ||
-         typeof arg === 'string' ||
-         typeof arg === 'symbol' ||  // ES6 symbol
-         typeof arg === 'undefined';
-}
-
-function isBuffer$1(maybeBuf) {
-  return Buffer.isBuffer(maybeBuf);
-}
-
-function objectToString(o) {
-  return Object.prototype.toString.call(o);
-}
-
-
-function pad(n) {
-  return n < 10 ? '0' + n.toString(10) : n.toString(10);
-}
-
-
-var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-              'Oct', 'Nov', 'Dec'];
-
-// 26 Feb 16:19:34
-function timestamp() {
-  var d = new Date();
-  var time = [pad(d.getHours()),
-              pad(d.getMinutes()),
-              pad(d.getSeconds())].join(':');
-  return [d.getDate(), months[d.getMonth()], time].join(' ');
-}
-
-
-// log is just a thin wrapper to console.log that prepends a timestamp
-function log$1() {
-  console.log('%s - %s', timestamp(), format.apply(null, arguments));
-}
-
-
-/**
- * Inherit the prototype methods from one constructor into another.
- *
- * The Function.prototype.inherits from lang.js rewritten as a standalone
- * function (not on Function.prototype). NOTE: If this file is to be loaded
- * during bootstrapping this function needs to be rewritten using some native
- * functions as prototype setup using normal JavaScript does not work as
- * expected during bootstrapping (see mirror.js in r114903).
- *
- * @param {function} ctor Constructor function which needs to inherit the
- *     prototype.
- * @param {function} superCtor Constructor function to inherit prototype from.
- */
-function _extend(origin, add) {
-  // Don't do anything if add isn't an object
-  if (!add || !isObject$1(add)) return origin;
-
-  var keys = Object.keys(add);
-  var i = keys.length;
-  while (i--) {
-    origin[keys[i]] = add[keys[i]];
-  }
-  return origin;
-}
-
-function hasOwnProperty$5(obj, prop) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
-}
-
-var util$1 = {
-  inherits: inherits$4,
-  _extend: _extend,
-  log: log$1,
-  isBuffer: isBuffer$1,
-  isPrimitive: isPrimitive,
-  isFunction: isFunction,
-  isError: isError,
-  isDate: isDate,
-  isObject: isObject$1,
-  isRegExp: isRegExp$1,
-  isUndefined: isUndefined,
-  isSymbol: isSymbol$1,
-  isString: isString$2,
-  isNumber: isNumber,
-  isNullOrUndefined: isNullOrUndefined,
-  isNull: isNull,
-  isBoolean: isBoolean,
-  isArray: isArray$2,
-  inspect: inspect,
-  deprecate: deprecate,
-  format: format,
-  debuglog: debuglog
-};
-
-
-var util$2 = Object.freeze({
-	format: format,
-	deprecate: deprecate,
-	debuglog: debuglog,
-	inspect: inspect,
-	isArray: isArray$2,
-	isBoolean: isBoolean,
-	isNull: isNull,
-	isNullOrUndefined: isNullOrUndefined,
-	isNumber: isNumber,
-	isString: isString$2,
-	isSymbol: isSymbol$1,
-	isUndefined: isUndefined,
-	isRegExp: isRegExp$1,
-	isObject: isObject$1,
-	isDate: isDate,
-	isError: isError,
-	isFunction: isFunction,
-	isPrimitive: isPrimitive,
-	isBuffer: isBuffer$1,
-	log: log$1,
-	inherits: inherits$4,
-	_extend: _extend,
-	default: util$1
-});
-
-var inherits_browser = createCommonjsModule(function (module) {
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor;
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor;
-    var TempCtor = function () {};
-    TempCtor.prototype = superCtor.prototype;
-    ctor.prototype = new TempCtor();
-    ctor.prototype.constructor = ctor;
-  };
-}
-});
-
-
-
-var inherits_browser$2 = Object.freeze({
-	default: inherits_browser,
-	__moduleExports: inherits_browser
-});
-
-var require$$0$33 = ( util$2 && util$1 ) || util$2;
-
-var require$$1$8 = ( inherits_browser$2 && inherits_browser ) || inherits_browser$2;
-
-var inherits = createCommonjsModule(function (module) {
-try {
-  var util = require$$0$33;
-  if (typeof util.inherits !== 'function') throw '';
-  module.exports = util.inherits;
-} catch (e) {
-  module.exports = require$$1$8;
-}
-});
-
-
-
-var inherits$2 = Object.freeze({
-	default: inherits,
-	__moduleExports: inherits
-});
-
-'use strict';
-
-var domain;
-
-// This constructor is used to store event handlers. Instantiating this is
-// faster than explicitly calling `Object.create(null)` to get a "clean" empty
-// object (tested with v8 v4.9).
-function EventHandlers() {}
-EventHandlers.prototype = Object.create(null);
-
-function EventEmitter() {
-  EventEmitter.init.call(this);
-}
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.usingDomains = false;
-
-EventEmitter.prototype.domain = undefined;
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-EventEmitter.init = function() {
-  this.domain = null;
-  if (EventEmitter.usingDomains) {
-    // if there is an active domain, then attach to it.
-    if (domain.active && !(this instanceof domain.Domain)) {
-      this.domain = domain.active;
-    }
-  }
-
-  if (!this._events || this._events === Object.getPrototypeOf(this)._events) {
-    this._events = new EventHandlers();
-    this._eventsCount = 0;
-  }
-
-  this._maxListeners = this._maxListeners || undefined;
-};
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
-  if (typeof n !== 'number' || n < 0 || isNaN(n))
-    throw new TypeError('"n" argument must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-function $getMaxListeners(that) {
-  if (that._maxListeners === undefined)
-    return EventEmitter.defaultMaxListeners;
-  return that._maxListeners;
-}
-
-EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
-  return $getMaxListeners(this);
-};
-
-// These standalone emit* functions are used to optimize calling of event
-// handlers for fast cases because emit() itself often has a variable number of
-// arguments and can be deoptimized because of that. These functions always have
-// the same number of arguments and thus do not get deoptimized, so the code
-// inside them can execute faster.
-function emitNone(handler, isFn, self) {
-  if (isFn)
-    handler.call(self);
-  else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      listeners[i].call(self);
-  }
-}
-function emitOne(handler, isFn, self, arg1) {
-  if (isFn)
-    handler.call(self, arg1);
-  else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      listeners[i].call(self, arg1);
-  }
-}
-function emitTwo(handler, isFn, self, arg1, arg2) {
-  if (isFn)
-    handler.call(self, arg1, arg2);
-  else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      listeners[i].call(self, arg1, arg2);
-  }
-}
-function emitThree(handler, isFn, self, arg1, arg2, arg3) {
-  if (isFn)
-    handler.call(self, arg1, arg2, arg3);
-  else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      listeners[i].call(self, arg1, arg2, arg3);
-  }
-}
-
-function emitMany(handler, isFn, self, args) {
-  if (isFn)
-    handler.apply(self, args);
-  else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      listeners[i].apply(self, args);
-  }
-}
-
-EventEmitter.prototype.emit = function emit(type) {
-  var er, handler, len, args, i, events, domain;
-  var needDomainExit = false;
-  var doError = (type === 'error');
-
-  events = this._events;
-  if (events)
-    doError = (doError && events.error == null);
-  else if (!doError)
-    return false;
-
-  domain = this.domain;
-
-  // If there is no 'error' event listener then throw.
-  if (doError) {
-    er = arguments[1];
-    if (domain) {
-      if (!er)
-        er = new Error('Uncaught, unspecified "error" event');
-      er.domainEmitter = this;
-      er.domain = domain;
-      er.domainThrown = false;
-      domain.emit('error', er);
-    } else if (er instanceof Error) {
-      throw er; // Unhandled 'error' event
-    } else {
-      // At least give some kind of context to the user
-      var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
-      err.context = er;
-      throw err;
-    }
-    return false;
-  }
-
-  handler = events[type];
-
-  if (!handler)
-    return false;
-
-  var isFn = typeof handler === 'function';
-  len = arguments.length;
-  switch (len) {
-    // fast cases
-    case 1:
-      emitNone(handler, isFn, this);
-      break;
-    case 2:
-      emitOne(handler, isFn, this, arguments[1]);
-      break;
-    case 3:
-      emitTwo(handler, isFn, this, arguments[1], arguments[2]);
-      break;
-    case 4:
-      emitThree(handler, isFn, this, arguments[1], arguments[2], arguments[3]);
-      break;
-    // slower
-    default:
-      args = new Array(len - 1);
-      for (i = 1; i < len; i++)
-        args[i - 1] = arguments[i];
-      emitMany(handler, isFn, this, args);
-  }
-
-  if (needDomainExit)
-    domain.exit();
-
-  return true;
-};
-
-function _addListener(target, type, listener, prepend) {
-  var m;
-  var events;
-  var existing;
-
-  if (typeof listener !== 'function')
-    throw new TypeError('"listener" argument must be a function');
-
-  events = target._events;
-  if (!events) {
-    events = target._events = new EventHandlers();
-    target._eventsCount = 0;
-  } else {
-    // To avoid recursion in the case that type === "newListener"! Before
-    // adding it to the listeners, first emit "newListener".
-    if (events.newListener) {
-      target.emit('newListener', type,
-                  listener.listener ? listener.listener : listener);
-
-      // Re-assign `events` because a newListener handler could have caused the
-      // this._events to be assigned to a new object
-      events = target._events;
-    }
-    existing = events[type];
-  }
-
-  if (!existing) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    existing = events[type] = listener;
-    ++target._eventsCount;
-  } else {
-    if (typeof existing === 'function') {
-      // Adding the second element, need to change to array.
-      existing = events[type] = prepend ? [listener, existing] :
-                                          [existing, listener];
-    } else {
-      // If we've already got an array, just append.
-      if (prepend) {
-        existing.unshift(listener);
-      } else {
-        existing.push(listener);
-      }
-    }
-
-    // Check for listener leak
-    if (!existing.warned) {
-      m = $getMaxListeners(target);
-      if (m && m > 0 && existing.length > m) {
-        existing.warned = true;
-        var w = new Error('Possible EventEmitter memory leak detected. ' +
-                            existing.length + ' ' + type + ' listeners added. ' +
-                            'Use emitter.setMaxListeners() to increase limit');
-        w.name = 'MaxListenersExceededWarning';
-        w.emitter = target;
-        w.type = type;
-        w.count = existing.length;
-        emitWarning(w);
-      }
-    }
-  }
-
-  return target;
-}
-function emitWarning(e) {
-  typeof console.warn === 'function' ? console.warn(e) : console.log(e);
-}
-EventEmitter.prototype.addListener = function addListener(type, listener) {
-  return _addListener(this, type, listener, false);
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.prependListener =
-    function prependListener(type, listener) {
-      return _addListener(this, type, listener, true);
-    };
-
-function _onceWrap(target, type, listener) {
-  var fired = false;
-  function g() {
-    target.removeListener(type, g);
-    if (!fired) {
-      fired = true;
-      listener.apply(target, arguments);
-    }
-  }
-  g.listener = listener;
-  return g;
-}
-
-EventEmitter.prototype.once = function once(type, listener) {
-  if (typeof listener !== 'function')
-    throw new TypeError('"listener" argument must be a function');
-  this.on(type, _onceWrap(this, type, listener));
-  return this;
-};
-
-EventEmitter.prototype.prependOnceListener =
-    function prependOnceListener(type, listener) {
-      if (typeof listener !== 'function')
-        throw new TypeError('"listener" argument must be a function');
-      this.prependListener(type, _onceWrap(this, type, listener));
-      return this;
-    };
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener =
-    function removeListener(type, listener) {
-      var list, events, position, i, originalListener;
-
-      if (typeof listener !== 'function')
-        throw new TypeError('"listener" argument must be a function');
-
-      events = this._events;
-      if (!events)
-        return this;
-
-      list = events[type];
-      if (!list)
-        return this;
-
-      if (list === listener || (list.listener && list.listener === listener)) {
-        if (--this._eventsCount === 0)
-          this._events = new EventHandlers();
-        else {
-          delete events[type];
-          if (events.removeListener)
-            this.emit('removeListener', type, list.listener || listener);
-        }
-      } else if (typeof list !== 'function') {
-        position = -1;
-
-        for (i = list.length; i-- > 0;) {
-          if (list[i] === listener ||
-              (list[i].listener && list[i].listener === listener)) {
-            originalListener = list[i].listener;
-            position = i;
-            break;
-          }
-        }
-
-        if (position < 0)
-          return this;
-
-        if (list.length === 1) {
-          list[0] = undefined;
-          if (--this._eventsCount === 0) {
-            this._events = new EventHandlers();
-            return this;
-          } else {
-            delete events[type];
-          }
-        } else {
-          spliceOne$1(list, position);
-        }
-
-        if (events.removeListener)
-          this.emit('removeListener', type, originalListener || listener);
-      }
-
-      return this;
-    };
-
-EventEmitter.prototype.removeAllListeners =
-    function removeAllListeners(type) {
-      var listeners, events;
-
-      events = this._events;
-      if (!events)
-        return this;
-
-      // not listening for removeListener, no need to emit
-      if (!events.removeListener) {
-        if (arguments.length === 0) {
-          this._events = new EventHandlers();
-          this._eventsCount = 0;
-        } else if (events[type]) {
-          if (--this._eventsCount === 0)
-            this._events = new EventHandlers();
-          else
-            delete events[type];
-        }
-        return this;
-      }
-
-      // emit removeListener for all listeners on all events
-      if (arguments.length === 0) {
-        var keys = Object.keys(events);
-        for (var i = 0, key; i < keys.length; ++i) {
-          key = keys[i];
-          if (key === 'removeListener') continue;
-          this.removeAllListeners(key);
-        }
-        this.removeAllListeners('removeListener');
-        this._events = new EventHandlers();
-        this._eventsCount = 0;
-        return this;
-      }
-
-      listeners = events[type];
-
-      if (typeof listeners === 'function') {
-        this.removeListener(type, listeners);
-      } else if (listeners) {
-        // LIFO order
-        do {
-          this.removeListener(type, listeners[listeners.length - 1]);
-        } while (listeners[0]);
-      }
-
-      return this;
-    };
-
-EventEmitter.prototype.listeners = function listeners(type) {
-  var evlistener;
-  var ret;
-  var events = this._events;
-
-  if (!events)
-    ret = [];
-  else {
-    evlistener = events[type];
-    if (!evlistener)
-      ret = [];
-    else if (typeof evlistener === 'function')
-      ret = [evlistener.listener || evlistener];
-    else
-      ret = unwrapListeners(evlistener);
-  }
-
-  return ret;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  if (typeof emitter.listenerCount === 'function') {
-    return emitter.listenerCount(type);
-  } else {
-    return listenerCount.call(emitter, type);
-  }
-};
-
-EventEmitter.prototype.listenerCount = listenerCount;
-function listenerCount(type) {
-  var events = this._events;
-
-  if (events) {
-    var evlistener = events[type];
-
-    if (typeof evlistener === 'function') {
-      return 1;
-    } else if (evlistener) {
-      return evlistener.length;
-    }
-  }
-
-  return 0;
-}
-
-EventEmitter.prototype.eventNames = function eventNames() {
-  return this._eventsCount > 0 ? Reflect.ownKeys(this._events) : [];
-};
-
-// About 1.5x faster than the two-arg version of Array#splice().
-function spliceOne$1(list, index) {
-  for (var i = index, k = i + 1, n = list.length; k < n; i += 1, k += 1)
-    list[i] = list[k];
-  list.pop();
-}
-
-function arrayClone(arr, i) {
-  var copy = new Array(i);
-  while (i--)
-    copy[i] = arr[i];
-  return copy;
-}
-
-function unwrapListeners(arr) {
-  var ret = new Array(arr.length);
-  for (var i = 0; i < ret.length; ++i) {
-    ret[i] = arr[i].listener || arr[i];
-  }
-  return ret;
-}
-
-
-var events = Object.freeze({
-	default: EventEmitter,
-	EventEmitter: EventEmitter
-});
-
-var require$$0$34 = ( Tokenizer$2 && Tokenizer_1 ) || Tokenizer$2;
-
-var require$$1$9 = ( inherits$2 && inherits ) || inherits$2;
-
-var require$$2$5 = ( events && EventEmitter ) || events;
-
-var Tokenizer = require$$0$34;
-
-/*
-	Options:
-
-	xmlMode: Disables the special behavior for script/style tags (false by default)
-	lowerCaseAttributeNames: call .toLowerCase for each attribute name (true if xmlMode is `false`)
-	lowerCaseTags: call .toLowerCase for each tag name (true if xmlMode is `false`)
-*/
-
-/*
-	Callbacks:
-
-	oncdataend,
-	oncdatastart,
-	onclosetag,
-	oncomment,
-	oncommentend,
-	onerror,
-	onopentag,
-	onprocessinginstruction,
-	onreset,
-	ontext
-*/
-
-var formTags = {
-	input: true,
-	option: true,
-	optgroup: true,
-	select: true,
-	button: true,
-	datalist: true,
-	textarea: true
-};
-
-var openImpliesClose = {
-	tr      : { tr:true, th:true, td:true },
-	th      : { th:true },
-	td      : { thead:true, th:true, td:true },
-	body    : { head:true, link:true, script:true },
-	li      : { li:true },
-	p       : { p:true },
-	h1      : { p:true },
-	h2      : { p:true },
-	h3      : { p:true },
-	h4      : { p:true },
-	h5      : { p:true },
-	h6      : { p:true },
-	select  : formTags,
-	input   : formTags,
-	output  : formTags,
-	button  : formTags,
-	datalist: formTags,
-	textarea: formTags,
-	option  : { option:true },
-	optgroup: { optgroup:true }
-};
-
-var voidElements = {
-	__proto__: null,
-	area: true,
-	base: true,
-	basefont: true,
-	br: true,
-	col: true,
-	command: true,
-	embed: true,
-	frame: true,
-	hr: true,
-	img: true,
-	input: true,
-	isindex: true,
-	keygen: true,
-	link: true,
-	meta: true,
-	param: true,
-	source: true,
-	track: true,
-	wbr: true,
-
-	//common self closing svg elements
-	path: true,
-	circle: true,
-	ellipse: true,
-	line: true,
-	rect: true,
-	use: true,
-	stop: true,
-	polyline: true,
-	polygon: true
-};
-
-var re_nameEnd = /\s|\//;
-
-function Parser(cbs, options){
-	this._options = options || {};
-	this._cbs = cbs || {};
-
-	this._tagname = "";
-	this._attribname = "";
-	this._attribvalue = "";
-	this._attribs = null;
-	this._stack = [];
-
-	this.startIndex = 0;
-	this.endIndex = null;
-
-	this._lowerCaseTagNames = "lowerCaseTags" in this._options ?
-									!!this._options.lowerCaseTags :
-									!this._options.xmlMode;
-	this._lowerCaseAttributeNames = "lowerCaseAttributeNames" in this._options ?
-									!!this._options.lowerCaseAttributeNames :
-									!this._options.xmlMode;
-
-	if(this._options.Tokenizer) {
-		Tokenizer = this._options.Tokenizer;
-	}
-	this._tokenizer = new Tokenizer(this._options, this);
-
-	if(this._cbs.onparserinit) this._cbs.onparserinit(this);
-}
-
-require$$1$9(Parser, require$$2$5.EventEmitter);
-
-Parser.prototype._updatePosition = function(initialOffset){
-	if(this.endIndex === null){
-		if(this._tokenizer._sectionStart <= initialOffset){
-			this.startIndex = 0;
-		} else {
-			this.startIndex = this._tokenizer._sectionStart - initialOffset;
-		}
-	}
-	else this.startIndex = this.endIndex + 1;
-	this.endIndex = this._tokenizer.getAbsoluteIndex();
-};
-
-//Tokenizer event handlers
-Parser.prototype.ontext = function(data){
-	this._updatePosition(1);
-	this.endIndex--;
-
-	if(this._cbs.ontext) this._cbs.ontext(data);
-};
-
-Parser.prototype.onopentagname = function(name){
-	if(this._lowerCaseTagNames){
-		name = name.toLowerCase();
-	}
-
-	this._tagname = name;
-
-	if(!this._options.xmlMode && name in openImpliesClose) {
-		for(
-			var el;
-			(el = this._stack[this._stack.length - 1]) in openImpliesClose[name];
-			this.onclosetag(el)
-		);
-	}
-
-	if(this._options.xmlMode || !(name in voidElements)){
-		this._stack.push(name);
-	}
-
-	if(this._cbs.onopentagname) this._cbs.onopentagname(name);
-	if(this._cbs.onopentag) this._attribs = {};
-};
-
-Parser.prototype.onopentagend = function(){
-	this._updatePosition(1);
-
-	if(this._attribs){
-		if(this._cbs.onopentag) this._cbs.onopentag(this._tagname, this._attribs);
-		this._attribs = null;
-	}
-
-	if(!this._options.xmlMode && this._cbs.onclosetag && this._tagname in voidElements){
-		this._cbs.onclosetag(this._tagname);
-	}
-
-	this._tagname = "";
-};
-
-Parser.prototype.onclosetag = function(name){
-	this._updatePosition(1);
-
-	if(this._lowerCaseTagNames){
-		name = name.toLowerCase();
-	}
-
-	if(this._stack.length && (!(name in voidElements) || this._options.xmlMode)){
-		var pos = this._stack.lastIndexOf(name);
-		if(pos !== -1){
-			if(this._cbs.onclosetag){
-				pos = this._stack.length - pos;
-				while(pos--) this._cbs.onclosetag(this._stack.pop());
-			}
-			else this._stack.length = pos;
-		} else if(name === "p" && !this._options.xmlMode){
-			this.onopentagname(name);
-			this._closeCurrentTag();
-		}
-	} else if(!this._options.xmlMode && (name === "br" || name === "p")){
-		this.onopentagname(name);
-		this._closeCurrentTag();
-	}
-};
-
-Parser.prototype.onselfclosingtag = function(){
-	if(this._options.xmlMode || this._options.recognizeSelfClosing){
-		this._closeCurrentTag();
-	} else {
-		this.onopentagend();
-	}
-};
-
-Parser.prototype._closeCurrentTag = function(){
-	var name = this._tagname;
-
-	this.onopentagend();
-
-	//self-closing tags will be on the top of the stack
-	//(cheaper check than in onclosetag)
-	if(this._stack[this._stack.length - 1] === name){
-		if(this._cbs.onclosetag){
-			this._cbs.onclosetag(name);
-		}
-		this._stack.pop();
-	}
-};
-
-Parser.prototype.onattribname = function(name){
-	if(this._lowerCaseAttributeNames){
-		name = name.toLowerCase();
-	}
-	this._attribname = name;
-};
-
-Parser.prototype.onattribdata = function(value){
-	this._attribvalue += value;
-};
-
-Parser.prototype.onattribend = function(){
-	if(this._cbs.onattribute) this._cbs.onattribute(this._attribname, this._attribvalue);
-	if(
-		this._attribs &&
-		!Object.prototype.hasOwnProperty.call(this._attribs, this._attribname)
-	){
-		this._attribs[this._attribname] = this._attribvalue;
-	}
-	this._attribname = "";
-	this._attribvalue = "";
-};
-
-Parser.prototype._getInstructionName = function(value){
-	var idx = value.search(re_nameEnd),
-	    name = idx < 0 ? value : value.substr(0, idx);
-
-	if(this._lowerCaseTagNames){
-		name = name.toLowerCase();
-	}
-
-	return name;
-};
-
-Parser.prototype.ondeclaration = function(value){
-	if(this._cbs.onprocessinginstruction){
-		var name = this._getInstructionName(value);
-		this._cbs.onprocessinginstruction("!" + name, "!" + value);
-	}
-};
-
-Parser.prototype.onprocessinginstruction = function(value){
-	if(this._cbs.onprocessinginstruction){
-		var name = this._getInstructionName(value);
-		this._cbs.onprocessinginstruction("?" + name, "?" + value);
-	}
-};
-
-Parser.prototype.oncomment = function(value){
-	this._updatePosition(4);
-
-	if(this._cbs.oncomment) this._cbs.oncomment(value);
-	if(this._cbs.oncommentend) this._cbs.oncommentend();
-};
-
-Parser.prototype.oncdata = function(value){
-	this._updatePosition(1);
-
-	if(this._options.xmlMode || this._options.recognizeCDATA){
-		if(this._cbs.oncdatastart) this._cbs.oncdatastart();
-		if(this._cbs.ontext) this._cbs.ontext(value);
-		if(this._cbs.oncdataend) this._cbs.oncdataend();
-	} else {
-		this.oncomment("[CDATA[" + value + "]]");
-	}
-};
-
-Parser.prototype.onerror = function(err){
-	if(this._cbs.onerror) this._cbs.onerror(err);
-};
-
-Parser.prototype.onend = function(){
-	if(this._cbs.onclosetag){
-		for(
-			var i = this._stack.length;
-			i > 0;
-			this._cbs.onclosetag(this._stack[--i])
-		);
-	}
-	if(this._cbs.onend) this._cbs.onend();
-};
-
-
-//Resets the parser to a blank state, ready to parse a new HTML document
-Parser.prototype.reset = function(){
-	if(this._cbs.onreset) this._cbs.onreset();
-	this._tokenizer.reset();
-
-	this._tagname = "";
-	this._attribname = "";
-	this._attribs = null;
-	this._stack = [];
-
-	if(this._cbs.onparserinit) this._cbs.onparserinit(this);
-};
-
-//Parses a complete HTML document and pushes it to the handler
-Parser.prototype.parseComplete = function(data){
-	this.reset();
-	this.end(data);
-};
-
-Parser.prototype.write = function(chunk){
-	this._tokenizer.write(chunk);
-};
-
-Parser.prototype.end = function(chunk){
-	this._tokenizer.end(chunk);
-};
-
-Parser.prototype.pause = function(){
-	this._tokenizer.pause();
-};
-
-Parser.prototype.resume = function(){
-	this._tokenizer.resume();
-};
-
-//alias for backwards compat
-Parser.prototype.parseChunk = Parser.prototype.write;
-Parser.prototype.done = Parser.prototype.end;
-
-var Parser_1 = Parser;
-
-
-
-var Parser$1 = Object.freeze({
-	default: Parser_1,
-	__moduleExports: Parser_1
-});
-
-//Types of elements found in the DOM
-var domelementtype = {
-	Text: "text", //Text
-	Directive: "directive", //<? ... ?>
-	Comment: "comment", //<!-- ... -->
-	Script: "script", //<script> tags
-	Style: "style", //<style> tags
-	Tag: "tag", //Any tag
-	CDATA: "cdata", //<![CDATA[ ... ]]>
-	Doctype: "doctype",
-
-	isTag: function(elem){
-		return elem.type === "tag" || elem.type === "script" || elem.type === "style";
-	}
-};
-
-
-
-var domelementtype$2 = Object.freeze({
-	default: domelementtype,
-	__moduleExports: domelementtype
-});
-
-var node = createCommonjsModule(function (module) {
-// This object will be used as the prototype for Nodes when creating a
-// DOM-Level-1-compliant structure.
-var NodePrototype = module.exports = {
-	get firstChild() {
-		var children = this.children;
-		return children && children[0] || null;
-	},
-	get lastChild() {
-		var children = this.children;
-		return children && children[children.length - 1] || null;
-	},
-	get nodeType() {
-		return nodeTypes[this.type] || nodeTypes.element;
-	}
-};
-
-var domLvl1 = {
-	tagName: "name",
-	childNodes: "children",
-	parentNode: "parent",
-	previousSibling: "prev",
-	nextSibling: "next",
-	nodeValue: "data"
-};
-
-var nodeTypes = {
-	element: 1,
-	text: 3,
-	cdata: 4,
-	comment: 8
-};
-
-Object.keys(domLvl1).forEach(function(key) {
-	var shorthand = domLvl1[key];
-	Object.defineProperty(NodePrototype, key, {
-		get: function() {
-			return this[shorthand] || null;
-		},
-		set: function(val) {
-			this[shorthand] = val;
-			return val;
-		}
-	});
-});
-});
-
-var node_1 = node.firstChild;
-var node_2 = node.lastChild;
-var node_3 = node.nodeType;
-
-
-var node$2 = Object.freeze({
-	default: node,
-	__moduleExports: node,
-	firstChild: node_1,
-	lastChild: node_2,
-	nodeType: node_3
-});
-
-var NodePrototype = ( node$2 && node ) || node$2;
-
-var element = createCommonjsModule(function (module) {
-// DOM-Level-1-compliant structure
-
-var ElementPrototype = module.exports = Object.create(NodePrototype);
-
-var domLvl1 = {
-	tagName: "name"
-};
-
-Object.keys(domLvl1).forEach(function(key) {
-	var shorthand = domLvl1[key];
-	Object.defineProperty(ElementPrototype, key, {
-		get: function() {
-			return this[shorthand] || null;
-		},
-		set: function(val) {
-			this[shorthand] = val;
-			return val;
-		}
-	});
-});
-});
-
-
-
-var element$2 = Object.freeze({
-	default: element,
-	__moduleExports: element
-});
-
-var ElementType = ( domelementtype$2 && domelementtype ) || domelementtype$2;
-
-var ElementPrototype = ( element$2 && element ) || element$2;
-
-var re_whitespace = /\s+/g;
-
-
-
-function DomHandler(callback, options, elementCB){
-	if(typeof callback === "object"){
-		elementCB = options;
-		options = callback;
-		callback = null;
-	} else if(typeof options === "function"){
-		elementCB = options;
-		options = defaultOpts;
-	}
-	this._callback = callback;
-	this._options = options || defaultOpts;
-	this._elementCB = elementCB;
-	this.dom = [];
-	this._done = false;
-	this._tagStack = [];
-	this._parser = this._parser || null;
-}
-
-//default options
-var defaultOpts = {
-	normalizeWhitespace: false, //Replace all whitespace with single spaces
-	withStartIndices: false, //Add startIndex properties to nodes
-	withEndIndices: false, //Add endIndex properties to nodes
-};
-
-DomHandler.prototype.onparserinit = function(parser){
-	this._parser = parser;
-};
-
-//Resets the handler back to starting state
-DomHandler.prototype.onreset = function(){
-	DomHandler.call(this, this._callback, this._options, this._elementCB);
-};
-
-//Signals the handler that parsing is done
-DomHandler.prototype.onend = function(){
-	if(this._done) return;
-	this._done = true;
-	this._parser = null;
-	this._handleCallback(null);
-};
-
-DomHandler.prototype._handleCallback =
-DomHandler.prototype.onerror = function(error){
-	if(typeof this._callback === "function"){
-		this._callback(error, this.dom);
-	} else {
-		if(error) throw error;
-	}
-};
-
-DomHandler.prototype.onclosetag = function(){
-	//if(this._tagStack.pop().name !== name) this._handleCallback(Error("Tagname didn't match!"));
-	
-	var elem = this._tagStack.pop();
-
-	if(this._options.withEndIndices){
-		elem.endIndex = this._parser.endIndex;
-	}
-
-	if(this._elementCB) this._elementCB(elem);
-};
-
-DomHandler.prototype._createDomElement = function(properties){
-	if (!this._options.withDomLvl1) return properties;
-
-	var element;
-	if (properties.type === "tag") {
-		element = Object.create(ElementPrototype);
-	} else {
-		element = Object.create(NodePrototype);
-	}
-
-	for (var key in properties) {
-		if (properties.hasOwnProperty(key)) {
-			element[key] = properties[key];
-		}
-	}
-
-	return element;
-};
-
-DomHandler.prototype._addDomElement = function(element){
-	var parent = this._tagStack[this._tagStack.length - 1];
-	var siblings = parent ? parent.children : this.dom;
-	var previousSibling = siblings[siblings.length - 1];
-
-	element.next = null;
-
-	if(this._options.withStartIndices){
-		element.startIndex = this._parser.startIndex;
-	}
-	if(this._options.withEndIndices){
-		element.endIndex = this._parser.endIndex;
-	}
-
-	if(previousSibling){
-		element.prev = previousSibling;
-		previousSibling.next = element;
-	} else {
-		element.prev = null;
-	}
-
-	siblings.push(element);
-	element.parent = parent || null;
-};
-
-DomHandler.prototype.onopentag = function(name, attribs){
-	var properties = {
-		type: name === "script" ? ElementType.Script : name === "style" ? ElementType.Style : ElementType.Tag,
-		name: name,
-		attribs: attribs,
-		children: []
-	};
-
-	var element = this._createDomElement(properties);
-
-	this._addDomElement(element);
-
-	this._tagStack.push(element);
-};
-
-DomHandler.prototype.ontext = function(data){
-	//the ignoreWhitespace is officially dropped, but for now,
-	//it's an alias for normalizeWhitespace
-	var normalize = this._options.normalizeWhitespace || this._options.ignoreWhitespace;
-
-	var lastTag;
-
-	if(!this._tagStack.length && this.dom.length && (lastTag = this.dom[this.dom.length-1]).type === ElementType.Text){
-		if(normalize){
-			lastTag.data = (lastTag.data + data).replace(re_whitespace, " ");
-		} else {
-			lastTag.data += data;
-		}
-	} else {
-		if(
-			this._tagStack.length &&
-			(lastTag = this._tagStack[this._tagStack.length - 1]) &&
-			(lastTag = lastTag.children[lastTag.children.length - 1]) &&
-			lastTag.type === ElementType.Text
-		){
-			if(normalize){
-				lastTag.data = (lastTag.data + data).replace(re_whitespace, " ");
-			} else {
-				lastTag.data += data;
-			}
-		} else {
-			if(normalize){
-				data = data.replace(re_whitespace, " ");
-			}
-
-			var element = this._createDomElement({
-				data: data,
-				type: ElementType.Text
-			});
-
-			this._addDomElement(element);
-		}
-	}
-};
-
-DomHandler.prototype.oncomment = function(data){
-	var lastTag = this._tagStack[this._tagStack.length - 1];
-
-	if(lastTag && lastTag.type === ElementType.Comment){
-		lastTag.data += data;
-		return;
-	}
-
-	var properties = {
-		data: data,
-		type: ElementType.Comment
-	};
-
-	var element = this._createDomElement(properties);
-
-	this._addDomElement(element);
-	this._tagStack.push(element);
-};
-
-DomHandler.prototype.oncdatastart = function(){
-	var properties = {
-		children: [{
-			data: "",
-			type: ElementType.Text
-		}],
-		type: ElementType.CDATA
-	};
-
-	var element = this._createDomElement(properties);
-
-	this._addDomElement(element);
-	this._tagStack.push(element);
-};
-
-DomHandler.prototype.oncommentend = DomHandler.prototype.oncdataend = function(){
-	this._tagStack.pop();
-};
-
-DomHandler.prototype.onprocessinginstruction = function(name, data){
-	var element = this._createDomElement({
-		name: name,
-		data: data,
-		type: ElementType.Directive
-	});
-
-	this._addDomElement(element);
-};
-
-var domhandler = DomHandler;
-
-
-
-var domhandler$2 = Object.freeze({
-	default: domhandler,
-	__moduleExports: domhandler
-});
-
-'use strict';
-function shouldProcessEveryNode(node) {
-  return true;
-}
-
-var shouldProcessNodeDefinitions = {
-  shouldProcessEveryNode: shouldProcessEveryNode,
-};
-
-
-
-var shouldProcessNodeDefinitions$2 = Object.freeze({
-	default: shouldProcessNodeDefinitions,
-	__moduleExports: shouldProcessNodeDefinitions
-});
-
-/**
- * Ensure some object is a coerced to a string
- **/
-var makeString = function makeString(object) {
-  if (object == null) return '';
-  return '' + object;
-};
-
-
-
-var makeString$2 = Object.freeze({
-	default: makeString,
-	__moduleExports: makeString
-});
-
-var makeString$3 = ( makeString$2 && makeString ) || makeString$2;
-
-var escapeRegExp = function escapeRegExp(str) {
-  return makeString$3(str).replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
-};
-
-
-
-var escapeRegExp$2 = Object.freeze({
-	default: escapeRegExp,
-	__moduleExports: escapeRegExp
-});
-
-var escapeRegExp$3 = ( escapeRegExp$2 && escapeRegExp ) || escapeRegExp$2;
-
-var defaultToWhiteSpace = function defaultToWhiteSpace(characters) {
-  if (characters == null)
-    return '\\s';
-  else if (characters.source)
-    return characters.source;
-  else
-    return '[' + escapeRegExp$3(characters) + ']';
-};
-
-
-
-var defaultToWhiteSpace$2 = Object.freeze({
-	default: defaultToWhiteSpace,
-	__moduleExports: defaultToWhiteSpace
-});
-
-var defaultToWhiteSpace$3 = ( defaultToWhiteSpace$2 && defaultToWhiteSpace ) || defaultToWhiteSpace$2;
-
-var nativeTrim = String.prototype.trim;
-
-var trim$1 = function trim(str, characters) {
-  str = makeString$3(str);
-  if (!characters && nativeTrim) return nativeTrim.call(str);
-  characters = defaultToWhiteSpace$3(characters);
-  return str.replace(new RegExp('^' + characters + '+|' + characters + '+$', 'g'), '');
-};
-
-
-
-var trim$3 = Object.freeze({
-	default: trim$1,
-	__moduleExports: trim$1
-});
-
-var decapitalize = function decapitalize(str) {
-  str = makeString$3(str);
-  return str.charAt(0).toLowerCase() + str.slice(1);
-};
-
-
-
-var decapitalize$2 = Object.freeze({
-	default: decapitalize,
-	__moduleExports: decapitalize
-});
-
-var trim$4 = ( trim$3 && trim$1 ) || trim$3;
-
-var decap = ( decapitalize$2 && decapitalize ) || decapitalize$2;
-
-var camelize$6 = function camelize(str, decapitalize) {
-  str = trim$4(str).replace(/[-_\s]+(.)?/g, function(match, c) {
-    return c ? c.toUpperCase() : "";
-  });
-
-  if (decapitalize === true) {
-    return decap(str);
-  } else {
-    return str;
-  }
-};
-
-
-
-var camelize$8 = Object.freeze({
-	default: camelize$6,
-	__moduleExports: camelize$6
-});
-
-var forEach = function forEach(arr, fn) {
-  for (var i = 0; i < arr.length; i++) {
-    fn(i, arr[i]);
-  }
-};
-
-
-
-var forEach$2 = Object.freeze({
-	default: forEach,
-	__moduleExports: forEach
-});
-
-var forEach$3 = ( forEach$2 && forEach ) || forEach$2;
-
-var map$3 = function map(arr, fn) {
-  var newArr = [];
-
-  forEach$3(arr, function(key, item) {
-    newArr.push(fn(key, item));
-  });
-
-  return newArr;
-};
-
-
-
-var map$5 = Object.freeze({
-	default: map$3,
-	__moduleExports: map$3
-});
-
-var map$6 = ( map$5 && map$3 ) || map$5;
-
-var merge = function merge(args, curryArgs) {
-  var mergedArgs = [];
-
-  mergedArgs = map$6(curryArgs, function(key, item) {
-    if (typeof item === 'undefined') {
-      return args.shift();
-    } else {
-      return item;
-    }
-  });
-
-  return mergedArgs.concat(args);
-};
-
-
-
-var merge$2 = Object.freeze({
-	default: merge,
-	__moduleExports: merge
-});
-
-var countDefinedItems = function(args) {
-  var count = 0;
-
-  forEach$3(args, function(key, item) {
-    if (typeof item !== 'undefined') {
-      count = count + 1;
-    }
-  });
-
-  return count;
-};
-
-
-
-var countDefinedItems$2 = Object.freeze({
-	default: countDefinedItems,
-	__moduleExports: countDefinedItems
-});
-
-var merge$3 = ( merge$2 && merge ) || merge$2;
-
-var countDefinedItems$3 = ( countDefinedItems$2 && countDefinedItems ) || countDefinedItems$2;
-
-var slice$1 = Array.prototype.slice;
-var __;
-
-
-function curry(fn, length, curryArgs) {
-  return function() {
-    var args = slice$1.call(arguments),
-      concatArgs = curryArgs.concat(args),
-      mergedArgs = [];
-
-    if (length <= countDefinedItems$3(concatArgs)) {
-      mergedArgs = merge$3(args, curryArgs);
-      return fn.apply(null, mergedArgs);
-    } else {
-      if (length >= concatArgs.length) {
-        return curry(fn, length, concatArgs);
-      } else {
-        return curry(fn, length, merge$3(args, curryArgs));
-      }
-    }
-  };
-}
-
-var chickencurry = function(fn) {
-  var args = slice$1.call(arguments, 1);
-
-  return curry(fn, fn.length, args);
-};
-
-var n = function(fn, length) {
-  var args = slice$1.call(arguments, 2);
-
-  return curry(fn, length, args);
-};
-
-var ___1 = __;
-
-chickencurry.n = n;
-chickencurry.__ = ___1;
-
-var chickencurry$2 = Object.freeze({
-	default: chickencurry,
-	__moduleExports: chickencurry,
-	n: n,
-	__: ___1
-});
-
-var _camelize = ( camelize$8 && camelize$6 ) || camelize$8;
-
-var _curry = ( chickencurry$2 && chickencurry ) || chickencurry$2;
-
-var camelize$3 = _curry(function camelize(str) {
-  return _camelize(str, true);
-});
-
-
-
-var camelize$5 = Object.freeze({
-	default: camelize$3,
-	__moduleExports: camelize$3
-});
-
-var toPairs = /*#__PURE__*/_curry1$2(function toPairs(obj) {
-  var pairs = [];
-  for (var prop in obj) {
-    if (_has$5(prop, obj)) {
-      pairs[pairs.length] = [prop, obj[prop]];
-    }
-  }
-  return pairs;
-});
-var toPairs_1 = toPairs;
-
-
-
-var toPairs$1 = Object.freeze({
-	default: toPairs_1,
-	__moduleExports: toPairs_1
-});
-
-function _curry3(fn) {
-  return function f3(a, b, c) {
-    switch (arguments.length) {
-      case 0:
-        return f3;
-      case 1:
-        return _isPlaceholder$2(a) ? f3 : _curry2$2(function (_b, _c) {
-          return fn(a, _b, _c);
-        });
-      case 2:
-        return _isPlaceholder$2(a) && _isPlaceholder$2(b) ? f3 : _isPlaceholder$2(a) ? _curry2$2(function (_a, _c) {
-          return fn(_a, b, _c);
-        }) : _isPlaceholder$2(b) ? _curry2$2(function (_b, _c) {
-          return fn(a, _b, _c);
-        }) : _curry1$2(function (_c) {
-          return fn(a, b, _c);
-        });
-      default:
-        return _isPlaceholder$2(a) && _isPlaceholder$2(b) && _isPlaceholder$2(c) ? f3 : _isPlaceholder$2(a) && _isPlaceholder$2(b) ? _curry2$2(function (_a, _b) {
-          return fn(_a, _b, c);
-        }) : _isPlaceholder$2(a) && _isPlaceholder$2(c) ? _curry2$2(function (_a, _c) {
-          return fn(_a, b, _c);
-        }) : _isPlaceholder$2(b) && _isPlaceholder$2(c) ? _curry2$2(function (_b, _c) {
-          return fn(a, _b, _c);
-        }) : _isPlaceholder$2(a) ? _curry1$2(function (_a) {
-          return fn(_a, b, c);
-        }) : _isPlaceholder$2(b) ? _curry1$2(function (_b) {
-          return fn(a, _b, c);
-        }) : _isPlaceholder$2(c) ? _curry1$2(function (_c) {
-          return fn(a, b, _c);
-        }) : fn(a, b, c);
-    }
-  };
-}
-var _curry3_1 = _curry3;
-
-
-
-var _curry3$1 = Object.freeze({
-	default: _curry3_1,
-	__moduleExports: _curry3_1
-});
-
-var _curry3$2 = ( _curry3$1 && _curry3_1 ) || _curry3$1;
-
-var reduce = /*#__PURE__*/_curry3$2(_reduce$2);
-var reduce_1 = reduce;
-
-
-
-var reduce$1 = Object.freeze({
-	default: reduce_1,
-	__moduleExports: reduce_1
-});
-
-// These are all sourced from https://facebook.github.io/react/docs/tags-and-attributes.html -
-// all attributes regardless of whether they have a different case to their HTML equivalents are
-// listed to reduce the chance of human error and make it easier to just copy-paste the new list if
-// it changes.
-'use strict';
-var HTML_ATTRIBUTES = [
-  'accept', 'acceptCharset', 'accessKey', 'action', 'allowFullScreen', 'allowTransparency',
-  'alt', 'async', 'autoComplete', 'autoFocus', 'autoPlay', 'capture', 'cellPadding',
-  'cellSpacing', 'challenge', 'charSet', 'checked', 'cite', 'classID', 'className',
-  'colSpan', 'cols', 'content', 'contentEditable', 'contextMenu', 'controls', 'coords',
-  'crossOrigin', 'data', 'dateTime', 'default', 'defer', 'dir', 'disabled', 'download',
-  'draggable', 'encType', 'form', 'formAction', 'formEncType', 'formMethod', 'formNoValidate',
-  'formTarget', 'frameBorder', 'headers', 'height', 'hidden', 'high', 'href', 'hrefLang',
-  'htmlFor', 'httpEquiv', 'icon', 'id', 'inputMode', 'integrity', 'is', 'keyParams', 'keyType',
-  'kind', 'label', 'lang', 'list', 'loop', 'low', 'manifest', 'marginHeight', 'marginWidth',
-  'max', 'maxLength', 'media', 'mediaGroup', 'method', 'min', 'minLength', 'multiple', 'muted',
-  'name', 'noValidate', 'nonce', 'open', 'optimum', 'pattern', 'placeholder', 'poster',
-  'preload', 'profile', 'radioGroup', 'readOnly', 'rel', 'required', 'reversed', 'role',
-  'rowSpan', 'rows', 'sandbox', 'scope', 'scoped', 'scrolling', 'seamless', 'selected',
-  'shape', 'size', 'sizes', 'span', 'spellCheck', 'src', 'srcDoc', 'srcLang', 'srcSet', 'start',
-  'step', 'style', 'summary', 'tabIndex', 'target', 'title', 'type', 'useMap', 'value', 'width',
-  'wmode', 'wrap',
-];
-
-var NON_STANDARD_ATTRIBUTES = [
-  'autoCapitalize', 'autoCorrect', 'color', 'itemProp', 'itemScope', 'itemType', 'itemRef',
-  'itemID', 'security', 'unselectable', 'results', 'autoSave',
-];
-
-var SVG_ATTRIBUTES = [
-  'accentHeight', 'accumulate', 'additive', 'alignmentBaseline', 'allowReorder', 'alphabetic',
-  'amplitude', 'arabicForm', 'ascent', 'attributeName', 'attributeType', 'autoReverse', 'azimuth',
-  'baseFrequency', 'baseProfile', 'baselineShift', 'bbox', 'begin', 'bias', 'by', 'calcMode',
-  'capHeight', 'clip', 'clipPath', 'clipPathUnits', 'clipRule', 'colorInterpolation',
-  'colorInterpolationFilters', 'colorProfile', 'colorRendering', 'contentScriptType',
-  'contentStyleType', 'cursor', 'cx', 'cy', 'd', 'decelerate', 'descent', 'diffuseConstant',
-  'direction', 'display', 'divisor', 'dominantBaseline', 'dur', 'dx', 'dy', 'edgeMode',
-  'elevation', 'enableBackground', 'end', 'exponent', 'externalResourcesRequired', 'fill',
-  'fillOpacity', 'fillRule', 'filter', 'filterRes', 'filterUnits', 'floodColor', 'floodOpacity',
-  'focusable', 'fontFamily', 'fontSize', 'fontSizeAdjust', 'fontStretch', 'fontStyle',
-  'fontVariant', 'fontWeight', 'format', 'from', 'fx', 'fy', 'g1', 'g2', 'glyphName',
-  'glyphOrientationHorizontal', 'glyphOrientationVertical', 'glyphRef',
-  'gradientTransform', 'gradientUnits', 'hanging', 'horizAdvX', 'horizOriginX', 'ideographic',
-  'imageRendering', 'in', 'in2', 'intercept', 'k', 'k1', 'k2', 'k3', 'k4', 'kernelMatrix',
-  'kernelUnitLength', 'kerning', 'keyPoints', 'keySplines', 'keyTimes', 'lengthAdjust',
-  'letterSpacing', 'lightingColor', 'limitingConeAngle', 'local', 'markerEnd', 'markerHeight',
-  'markerMid', 'markerStart', 'markerUnits', 'markerWidth', 'mask', 'maskContentUnits',
-  'maskUnits', 'mathematical', 'mode', 'numOctaves', 'offset', 'opacity', 'operator', 'order',
-  'orient', 'orientation', 'origin', 'overflow', 'overlinePosition', 'overlineThickness',
-  'paintOrder', 'panose1', 'pathLength', 'patternContentUnits', 'patternTransform',
-  'patternUnits', 'pointerEvents', 'points', 'pointsAtX', 'pointsAtY', 'pointsAtZ',
-  'preserveAlpha', 'preserveAspectRatio', 'primitiveUnits', 'r', 'radius', 'refX', 'refY',
-  'renderingIntent', 'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures',
-  'restart', 'result', 'rotate', 'rx', 'ry', 'scale', 'seed', 'shapeRendering', 'slope',
-  'spacing', 'specularConstant', 'specularExponent', 'speed', 'spreadMethod', 'startOffset',
-  'stdDeviation', 'stemh', 'stemv', 'stitchTiles', 'stopColor', 'stopOpacity',
-  'strikethroughPosition', 'strikethroughThickness', 'string', 'stroke', 'strokeDasharray',
-  'strokeDashoffset', 'strokeLinecap', 'strokeLinejoin', 'strokeMiterlimit', 'strokeOpacity',
-  'strokeWidth', 'surfaceScale', 'systemLanguage', 'tableValues', 'targetX', 'targetY',
-  'textAnchor', 'textDecoration', 'textLength', 'textRendering', 'to', 'transform', 'u1',
-  'u2', 'underlinePosition', 'underlineThickness', 'unicode', 'unicodeBidi', 'unicodeRange',
-  'unitsPerEm', 'vAlphabetic', 'vHanging', 'vIdeographic', 'vMathematical', 'values',
-  'vectorEffect', 'version', 'vertAdvY', 'vertOriginX', 'vertOriginY', 'viewBox',
-  'viewTarget', 'visibility', 'widths', 'wordSpacing', 'writingMode', 'x', 'x1', 'x2',
-  'xChannelSelector', 'xHeight', 'xlinkActuate', 'xlinkArcrole', 'xlinkHref', 'xlinkRole',
-  'xlinkShow', 'xlinkTitle', 'xlinkType', 'xmlns', 'xmlnsXlink', 'xmlBase', 'xmlLang',
-  'xmlSpace', 'y', 'y1', 'y2', 'yChannelSelector', 'z', 'zoomAndPan',
-];
-
-var camelCaseMap = HTML_ATTRIBUTES
-  .concat(NON_STANDARD_ATTRIBUTES)
-  .concat(SVG_ATTRIBUTES)
-  .reduce(function (soFar, attr) {
-    var lower = attr.toLowerCase();
-    if (lower !== attr) {
-      soFar[lower] = attr;
-    }
-    return soFar;
-  }, {});
-
-var camelCaseAttributeNames = camelCaseMap;
-
-
-
-var camelCaseAttributeNames$2 = Object.freeze({
-	default: camelCaseAttributeNames,
-	__moduleExports: camelCaseAttributeNames
-});
-
-var camelize$9 = ( camelize$5 && camelize$3 ) || camelize$5;
-
-var toPairs$2 = ( toPairs$1 && toPairs_1 ) || toPairs$1;
-
-var reduce$2 = ( reduce$1 && reduce_1 ) || reduce$1;
-
-var camelCaseAttrMap = ( camelCaseAttributeNames$2 && camelCaseAttributeNames ) || camelCaseAttributeNames$2;
-
-'use strict';
-
-
-
-
-
-
-function createStyleJsonFromString(styleString) {
-  styleString = styleString || '';
-  var styles = styleString.split(/;(?!base64)/);
-  var singleStyle, key, value, jsonStyles = {};
-  for (var i = 0; i < styles.length; ++i) {
-    singleStyle = styles[i].split(':');
-    if (singleStyle.length > 2) {
-      singleStyle[1] = singleStyle.slice(1).join(':');
-    }
-
-    key = singleStyle[0];
-    value = singleStyle[1];
-    if (typeof value === 'string'){
-      value = value.trim();
-    }
-
-    if (key != null && value != null && key.length > 0 && value.length > 0) {
-      jsonStyles[camelize$9(key)] = value;
-    }
-  }
-  return jsonStyles;
-}
-
-function createElement(node, index, data, children) {
-  var elementProps = {
-    key: index,
-  };
-  if (node.attribs) {
-    elementProps = reduce$2(function(result, keyAndValue) {
-      var key = keyAndValue[0];
-      var value = keyAndValue[1];
-      key = camelCaseAttrMap[key.replace(/[-:]/, '')] || key;
-      if (key === 'style') {
-        value = createStyleJsonFromString(value);
-      } else if (key === 'class') {
-        key = 'className';
-      } else if (key === 'for') {
-        key = 'htmlFor';
-      }
-      if (typeof value === 'string') {
-        value = value;
-      }
-      result[key] = value || key;
-      return result;
-    }, elementProps, toPairs$2(node.attribs));
-  }
-
-  children = children || [];
-  var allChildren = data != null ? [data,].concat(children) : children;
-  return React$1.createElement.apply(
-    null, [node.name, elementProps,].concat(allChildren)
-  );
-}
-
-var utils = {
-  createElement: createElement,
-};
-
-
-
-var utils$2 = Object.freeze({
-	default: utils,
-	__moduleExports: utils
-});
-
-var utils$3 = ( utils$2 && utils ) || utils$2;
-
-'use strict';
-
-
-// eslint-disable-next-line max-len
-// https://github.com/facebook/react/blob/15.0-stable/src/renderers/dom/shared/ReactDOMComponent.js#L457
-var voidElementTags = [
-  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param',
-  'source', 'track', 'wbr', 'menuitem', 'textarea',
-];
-
-function ProcessNodeDefinitions() {
-  function processDefaultNode(node, children, index) {
-    if (node.type === 'text') {
-      return node.data;
-    } else if (node.type === 'comment') {
-      // FIXME: The following doesn't work as the generated HTML results in
-      // "&lt;!--  This is a comment  --&gt;"
-      // return '<!-- ' + node.data + ' -->';
-      return false;
-    }
-
-    if (voidElementTags.indexOf(node.name) > -1) {
-      return utils$3.createElement(node, index);
-    } else {
-      return utils$3.createElement(node, index, node.data, children);
-    }
-  }
-
-  return {
-    processDefaultNode: processDefaultNode,
-  };
-}
-
-var processNodeDefinitions = ProcessNodeDefinitions;
-
-
-
-var processNodeDefinitions$2 = Object.freeze({
-	default: processNodeDefinitions,
-	__moduleExports: processNodeDefinitions
-});
-
-var ShouldProcessNodeDefinitions = ( shouldProcessNodeDefinitions$2 && shouldProcessNodeDefinitions ) || shouldProcessNodeDefinitions$2;
-
-var ProcessNodeDefinitions$1 = ( processNodeDefinitions$2 && processNodeDefinitions ) || processNodeDefinitions$2;
-
-'use strict';
-
-
-
-function ProcessingInstructions() {
-  var processNodeDefinitions = new ProcessNodeDefinitions$1();
-
-  return {
-    defaultProcessingInstructions: [{
-      shouldProcessNode: ShouldProcessNodeDefinitions.shouldProcessEveryNode,
-      processNode: processNodeDefinitions.processDefaultNode,
-    },],
-  };
-}
-
-var processingInstructions = ProcessingInstructions;
-
-
-
-var processingInstructions$2 = Object.freeze({
-	default: processingInstructions,
-	__moduleExports: processingInstructions
-});
-
-'use strict';
-function alwaysValid() {
-  return true;
-}
-
-var isValidNodeDefinitions = {
-  alwaysValid: alwaysValid,
-};
-
-
-
-var isValidNodeDefinitions$2 = Object.freeze({
-	default: isValidNodeDefinitions,
-	__moduleExports: isValidNodeDefinitions
-});
-
-var find$2 = ( find$1 && find_1 ) || find$1;
-
-var reject$2 = ( reject$1 && reject_1 ) || reject$1;
-
-var addIndex$2 = ( addIndex$1 && addIndex_1 ) || addIndex$1;
-
-var map$7 = ( map$1 && map_1 ) || map$1;
-
-var HtmlParser = ( Parser$1 && Parser_1 ) || Parser$1;
-
-var DomHandler$1 = ( domhandler$2 && domhandler ) || domhandler$2;
-
-var ProcessingInstructions$1 = ( processingInstructions$2 && processingInstructions ) || processingInstructions$2;
-
-var IsValidNodeDefinitions = ( isValidNodeDefinitions$2 && isValidNodeDefinitions ) || isValidNodeDefinitions$2;
-
-'use strict';
-
-
-
-
-
-
-
-
-
-
-function Html2ReactParser(options) {
-  function parseHtmlToTree(html) {
-    options = options || {};
-    options.decodeEntities = true;
-    var handler = new DomHandler$1();
-    var parser = new HtmlParser(handler, options);
-    parser.parseComplete(html);
-    return handler.dom.filter(function (element) {
-      return element.type !== 'directive';
-    });
-  }
-
-  function traverseDom(node, isValidNode, processingInstructions, index) {
-    if (isValidNode(node)) {
-      var processingInstruction = find$2(function (processingInstruction) {
-        return processingInstruction.shouldProcessNode(node);
-      }, processingInstructions);
-      if (processingInstruction != null) {
-        var children = reject$2(function (x) {return x == null || x === false;},
-          addIndex$2(map$7)(function (child, i) {
-            return traverseDom(child, isValidNode, processingInstructions, i);
-          }, node.children || []));
-
-        if (processingInstruction.replaceChildren) {
-          return utils$3.createElement(node, index, node.data, [
-            processingInstruction.processNode(node, children, index),
-          ]);
-        }
-
-        return processingInstruction.processNode(node, children, index);
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
-  function parseWithInstructions(html, isValidNode, processingInstructions) {
-    var domTree = parseHtmlToTree(html);
-
-    var list = domTree.map(function (domTreeItem, index) {
-      return traverseDom(domTreeItem, isValidNode, processingInstructions, index);
-    });
-    return list.length <= 1 ? list[0] : list;
-  }
-
-  function parse(html) {
-    var processingInstructions = new ProcessingInstructions$1();
-    return parseWithInstructions(html,
-      IsValidNodeDefinitions.alwaysValid,
-      processingInstructions.defaultProcessingInstructions);
-  }
-
-  return {
-    parse: parse,
-    parseWithInstructions: parseWithInstructions,
-  };
-}
-
-var parser = Html2ReactParser;
-
-
-
-var parser$2 = Object.freeze({
-	default: parser,
-	__moduleExports: parser
-});
-
-var parser$3 = ( parser$2 && parser ) || parser$2;
-
-'use strict';
-
-
-
-
-
-
-var htmlToReact = {
-  Parser: parser$3,
-  ProcessingInstructions: ProcessingInstructions$1,
-  IsValidNodeDefinitions: IsValidNodeDefinitions,
-  ProcessNodeDefinitions: ProcessNodeDefinitions$1,
-};
+  return Root;
+}(react_1);
 
 var UrbitRouter =
 /*#__PURE__*/
@@ -74940,6 +75306,7 @@ function () {
     this.domRoot = "#root";
     this.warehouse = new UrbitWarehouse(this.renderRoot.bind(this));
     this.operator = new UrbitOperator(this.warehouse);
+    window.warehouse = this.warehouse;
     this.scaffold = document.querySelectorAll("#root")[0].innerHTML;
     this.renderRoot();
     this.registerAnchorListeners();
@@ -74949,32 +75316,13 @@ function () {
   _createClass(UrbitRouter, [{
     key: "renderRoot",
     value: function renderRoot() {
-      this.setHeader(null);
-      var rootComponent = react.createElement(RootComponent, {
+      var rootComponent = react.createElement(Root, {
         store: this.warehouse.store,
         pushPending: this.warehouse.pushPending,
         queryParams: getQueryParams(),
-        setHeader: this.setHeader,
         scaffold: this.scaffold
       });
       reactDom.render(rootComponent, document.querySelectorAll("#root")[0]);
-    }
-  }, {
-    key: "setHeader",
-    value: function setHeader(headerElem) {
-      if (!headerElem) {
-        headerElem = react.createElement("div", {
-          className: "flex align-center"
-        }, react.createElement("h3", {
-          className: "underline text-gray"
-        }, react.createElement("a", {
-          href: "/~~/pages/nutalk"
-        }, "Inbox")), react.createElement("span", {
-          className: "ml-15"
-        }, react.createElement("i", null, "\"Try using cmd+k to open the menu\"")));
-      }
-
-      reactDom.render(headerElem, document.querySelectorAll("[urb-component-header]")[0]);
     }
   }, {
     key: "linkType",
@@ -75061,72 +75409,6 @@ function () {
   return UrbitRouter;
 }();
 
-var RootComponent =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(RootComponent, _Component);
-
-  function RootComponent(props) {
-    var _this4;
-
-    _classCallCheck(this, RootComponent);
-
-    _this4 = _possibleConstructorReturn(this, (RootComponent.__proto__ || Object.getPrototypeOf(RootComponent)).call(this, props)); // Required to convert arbitrary HTML into React elements
-
-    _this4.htmlParser = htmlToReact.Parser();
-    _this4.htmlParserNodeDefinitions = new htmlToReact.ProcessNodeDefinitions(react);
-    return _this4;
-  }
-
-  _createClass(RootComponent, [{
-    key: "reactify",
-    value: function reactify() {
-      var _this5 = this;
-
-      var instructions = [{
-        replaceChildren: true,
-        shouldProcessNode: function shouldProcessNode(node) {
-          return node.attribs && !!node.attribs['urb-component'];
-        },
-        processNode: function processNode(node) {
-          var componentName = node.attribs['urb-component'];
-          var propsObj = {};
-          Object.keys(node.attribs).filter(function (key) {
-            return key.indexOf('urb-') !== -1 && key !== "urb-component";
-          }).forEach(function (key) {
-            var keyName = key.substr(4); // "urb-timestamp" => "timestamp"
-
-            propsObj[keyName] = node.attribs[key];
-          });
-          return react.createElement(ComponentMap[componentName].comp, Object.assign({
-            api: api,
-            store: _this5.props.store,
-            pushPending: _this5.props.pushPending,
-            queryParams: _this5.props.queryParams,
-            setHeader: _this5.props.setHeader
-          }, propsObj));
-        }
-      }, {
-        shouldProcessNode: function shouldProcessNode() {
-          return true;
-        },
-        processNode: this.htmlParserNodeDefinitions.processDefaultNode
-      }];
-      return this.htmlParser.parseWithInstructions(this.props.scaffold, function () {
-        return true;
-      }, instructions);
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var children = this.reactify();
-      return react.createElement("div", null, children);
-    }
-  }]);
-
-  return RootComponent;
-}(react_1);
-
 console.log('app running');
 /*
   Common variables:
@@ -75141,7 +75423,7 @@ fetch('/~/auth.json', {
 }).then(function (res) {
   return res.json();
 }).then(function (authTokens) {
-  api.setAuthTokens(authTokens);
+  api$1.setAuthTokens(authTokens);
   window.router = new UrbitRouter();
 });
 
