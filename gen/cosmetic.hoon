@@ -14,6 +14,8 @@
     =/  plum=plum  (spec-to-plum spec)
     ~(tall plume plum)    
 |%
+::  highly unsatisfactory temporary converter
+::
 ++  cosmetic
   =|  ::  coat: contextual metadata
       ::
@@ -54,7 +56,7 @@
     ?:  =(~ pairs.load)  spec
     ::  otherwise, insert hygienic recursion
     ::
-    :+  %bcbc  spec
+    :+  %bsbs  spec
     %-  ~(gas by *(map term ^spec))
     %+  turn
       ~(tap by pairs.load)
@@ -156,16 +158,16 @@
     ++  rely
       |=  [=type =note]
       ^-  (unit [spec _load])
-      ?+  -.note  ~
-        $army  `[`spec`[%like [[p.note ~] ~]] load]
-        $navy  =-  `[[%make [%limb p.note] -<] ->]
-               |-  ^-  [(list spec) _load]
-               ?~  q.note  [~ load]
-               =^  more  load  $(q.note t.q.note)
-               =/  part  (~(play ut type) [%tsgl [%limb %$] [%wing i.q.note]])
-               =^  spec  load  entry(sut part)
-               [[spec more] load]
-      ==
+      ?.  ?=(%made -.note)  ~
+      ?~  q.note
+        `[`spec`[%like [[p.note ~] ~]] load]
+      =-  `[[%make [%limb p.note] -<] ->]
+      |-  ^-  [(list spec) _load]
+      ?~  u.q.note  [~ load]
+      =^  more  load  $(u.q.note t.u.q.note)
+      =/  part  (~(play ut type) [%tsld [%limb %$] [%wing i.u.q.note]])
+      =^  spec  load  entry(sut part)
+      [[spec more] load]
     ::
     ::  +atom: convert atomic type to spec
     ::
@@ -205,11 +207,11 @@
       =^  head  load  main(sut left)
       =^  tail  load  main(sut rite)
       :_  load
-      ::  %bccl: raw tuple
+      ::  %bscl: raw tuple
       ::
-      ?:  ?=(%bccl -.tail)
-        [%bccl head +.tail]
-      [%bccl head tail ~]
+      ?:  ?=(%bscl -.tail)
+        [%bscl head +.tail]
+      [%bscl head tail ~]
     ::
     ::  +core: convert a %core to a spec
     ::
@@ -230,13 +232,9 @@
         ^-  (list (pair term hoon))
         %-  zing
         ^-  (list (list (pair term hoon)))
-        %+  turn  ~(tap by q.s.battery)
-        |=  [term =tomb]
-        ^-  (list (pair term hoon))
-        %+  turn  ~(tap by q.tomb)
-        |=  [=term =what =foot]
-        ^-  (pair @tas hoon)
-        [term p.foot]
+        %+  turn  ~(tap by q.r.battery)
+        |=  [term =tome]
+        ~(tap by q.tome)
       ::  arm-specs: all arms in the core, as specs
       ::
       =^  arm-specs  load
@@ -250,11 +248,11 @@
       ::
       =*  arm-map  (~(gas by *(map term spec)) arm-specs)
       :_  load
-      ?-  p.battery
-        %lead  [%bczp payload-spec arm-map]
-        %gold  [%bcdt payload-spec arm-map]
-        %zinc  [%bctc payload-spec arm-map]
-        %iron  [%bcnt payload-spec arm-map]
+      ?-  r.p.battery
+        %lead  [%bszp payload-spec arm-map]
+        %gold  [%bsdt payload-spec arm-map]
+        %zinc  [%bstc payload-spec arm-map]
+        %iron  [%bsnt payload-spec arm-map]
       ==
     ::
     ::  +face: convert a %face to a +spec
@@ -263,13 +261,13 @@
       |=  $:  ::  decor: decoration 
               ::  content: decorated content
               ::
-              decor=(pair what $@(term tune))
+              decor=$@(term tune)
               content=type
           ==
       ^-  [spec _load]
       =^  body  load  main(sut content)
       :_  load
-      ?@  q.decor  [%bcts q.decor body]
+      ?@  decor  [%bsts decor body]
       ::  discard aliases, etc
       ::
       body
@@ -291,7 +289,7 @@
         =^  les  load  main(sut i.type-list)
         [[les mor] load]
       ?<  ?=(~ specs)
-      :_(load [%bcwt specs])
+      :_(load [%bswt specs])
     --
   ::
   ::  +explore:cosmetic: convert :sut to an inspection pattern (+plot).
@@ -690,33 +688,33 @@
              ?:  =(- 3)  '%^'
              ?:  =(- 2)  '%+'  '%-'
            [(hoon-to-plum p.spec) (turn q.spec ..$)]
-    %bcbc  (core-to-plum '$$' p.spec q.spec)
-    %bcbr  &/[(fixed '$|') $(spec p.spec) (hoon-to-plum q.spec) ~]
-    %bccb  (hoon-to-plum p.spec)
-    %bccl  :+  %&
+    %bsbs  (core-to-plum '$$' p.spec q.spec)
+    %bsbr  &/[(fixed '$|') $(spec p.spec) (hoon-to-plum q.spec) ~]
+    %bscb  (hoon-to-plum p.spec)
+    %bscl  :+  %&
              [`[' ' `['[' ']']] `['$:' `['' '==']]]
            (turn `(list ^spec)`+.spec ..$)
-    %bccn  &/[(varying '$%' '==') (turn `(list ^spec)`+.spec ..$)]
-    %bcdt  (core-to-plum '$.' p.spec q.spec)
-    %bcgl  &/[(fixed '$<') $(spec p.spec) $(spec q.spec) ~]
-    %bcgr  &/[(fixed '$>') $(spec p.spec) $(spec q.spec) ~]
-    %bchp  &/[(fixed '$-') $(spec p.spec) $(spec q.spec) ~]
-    %bckt  &/[(fixed '$-') $(spec p.spec) $(spec q.spec) ~]
-    %bcls  &/[(fixed '$+') (standard p.spec) $(spec q.spec) ~]
-    %bcnt  (core-to-plum '$/' p.spec q.spec)
-    %bcmc  &/[(fixed '$;') (hoon-to-plum p.spec) ~]
-    %bcpd  &/[(fixed '$&') $(spec p.spec) (hoon-to-plum q.spec) ~]
-    %bcsg  &/[(fixed '$~') (hoon-to-plum p.spec) $(spec q.spec) ~]
-    %bctc  (core-to-plum '$`' p.spec q.spec)
-    %bcts  :+  %&
+    %bscn  &/[(varying '$%' '==') (turn `(list ^spec)`+.spec ..$)]
+    %bsdt  (core-to-plum '$.' p.spec q.spec)
+    %bsld  &/[(fixed '$<') $(spec p.spec) $(spec q.spec) ~]
+    %bsbn  &/[(fixed '$>') $(spec p.spec) $(spec q.spec) ~]
+    %bshp  &/[(fixed '$-') $(spec p.spec) $(spec q.spec) ~]
+    %bskt  &/[(fixed '$-') $(spec p.spec) $(spec q.spec) ~]
+    %bsls  &/[(fixed '$+') (standard p.spec) $(spec q.spec) ~]
+    %bsnt  (core-to-plum '$/' p.spec q.spec)
+    %bsmc  &/[(fixed '$;') (hoon-to-plum p.spec) ~]
+    %bspd  &/[(fixed '$&') $(spec p.spec) (hoon-to-plum q.spec) ~]
+    %bssg  &/[(fixed '$~') (hoon-to-plum p.spec) $(spec q.spec) ~]
+    %bstc  (core-to-plum '$`' p.spec q.spec)
+    %bsts  :+  %&
              [`['=' ~] `['$=' ~]]
-           :~  ?@(p.spec p.spec q.p.spec)
+           :~  p.spec
                $(spec q.spec)
            ==
-    %bcvt  &/[(fixed '$@') $(spec p.spec) $(spec q.spec) ~]
-    %bcwt  :+  %&
+    %bsvt  &/[(fixed '$@') $(spec p.spec) $(spec q.spec) ~]
+    %bswt  :+  %&
               [`[' ' `['?(' ')']] `['$?' `['' '==']]]
            (turn `(list ^spec)`+.spec ..$)
-    %bczp  (core-to-plum '$.' p.spec q.spec)
+    %bszp  (core-to-plum '$.' p.spec q.spec)
   ==
 --
