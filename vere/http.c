@@ -17,6 +17,8 @@
 #include "all.h"
 #include "vere/vere.h"
 
+#include <picohttpparser.h>
+
 static const c3_i TCP_BACKLOG = 16;
 
 /* _http_vec_to_meth(): convert h2o_iovec_t to meth
@@ -1084,6 +1086,63 @@ _proxy_write_cb(uv_write_t* wri_u, c3_i sas_i)
   _proxy_writ_free(ruq_u);
 }
 
+static c3_c*
+_proxy_parse_host(const uv_buf_t* buf_u)
+{
+  c3_c* hot_c = 0;
+
+  struct phr_header hed_u[H2O_MAX_HEADERS];
+  size_t hed_t = H2O_MAX_HEADERS;
+
+  {
+    size_t len_t = buf_u->len < H2O_MAX_REQLEN ? buf_u->len : H2O_MAX_REQLEN;
+    // XX slowloris?
+    c3_i las_i = 0;
+    c3_i ret_i;
+
+    // unused
+    c3_i        ver_i;
+    const c3_c* met_c;
+    size_t      met_t;
+    const c3_c* pat_c;
+    size_t      pat_t;
+
+    ret_i = phr_parse_request(buf_u->base, len_t, &met_c, &met_t,
+                              &pat_c, &pat_t, &ver_i, hed_u, &hed_t, las_i);
+
+    if ( -1 == ret_i ) {
+      // parse error
+      // XX log error? close connection?
+      return hot_c;
+    }
+    else if ( -2 == ret_i ) {
+      // incomplete
+      // XX await next buffer?
+    }
+  }
+
+  const h2o_token_t* tok_t;
+  size_t i;
+
+  for ( i = 0; i < hed_t; i++ ) {
+    h2o_strtolower((c3_c*)hed_u[i].name, hed_u[i].name_len);
+
+    if ( 0 != (tok_t = h2o_lookup_token(hed_u[i].name, hed_u[i].name_len)) ) {
+      if ( tok_t->is_init_header_special && H2O_TOKEN_HOST == tok_t ) {
+
+        hot_c = c3_malloc(1 + hed_u[i].value_len);
+        hot_c[hed_u[i].value_len] = 0;
+        memcpy(hot_c, hed_u[i].value, hed_u[i].value_len);
+
+        uL(fprintf(uH, "proxy: host: %s\n", hot_c));
+        break;
+      }
+    }
+  }
+
+  return hot_c;
+}
+
 static void
 _proxy_sock_read_downstream_cb(uv_stream_t* don_u,
                                ssize_t      siz_w,
@@ -1095,6 +1154,8 @@ _proxy_sock_read_downstream_cb(uv_stream_t* don_u,
     _proxy_conn_close(con_u);
   }
   else {
+    _proxy_parse_host(buf_u);
+
     u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)buf_u->base);
 
     c3_i sas_i;
