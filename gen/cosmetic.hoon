@@ -565,7 +565,7 @@
           :(weld text.this stop text.next)
     ==
   --
-::  highly unsatisfactory temporary converter
+::  highly unsatisfactory temporary tank printer
 ::
 ++  plum-to-tank
   |=  =plum

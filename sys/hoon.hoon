@@ -5706,6 +5706,7 @@
 +$  foot  $%  {$dry p/hoon}                             ::  dry arm, geometric
               {$wet p/hoon}                             ::  wet arm, generic
           ==                                            ::
+
 +$  link                                                ::  lexical segment
           $%  [%chat p/term]                            ::  |chapter
               [%cont p/aura q/atom]                     ::  %constant
@@ -5736,7 +5737,7 @@
               [%loop p=@ud]                             ::  repetition point
               [%list p=plot]                            ::  i-t list
               [%many p=(list plot)]                     ::  tuple
-              [%mark p=stud q=plot]                     ::  public format
+              [%mark p=stud q=plot]                     ::  famous format
               [%name p=term q=plot]                     ::  name attached
               [%pair p=plot q=plot]                     ::  pq cell
               [%path ~]                                 ::  with @ta segments
@@ -6805,7 +6806,7 @@
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
   ++  wtts  |=(mod/spec (gray [%wtts (teal mod) puce]))
   --
-::  highly unsatisfactory temporary converter
+::  type-to-spec
 ::
 ++  cosmetic
   =|  ::  coat: contextual metadata
@@ -7214,10 +7215,6 @@
             ?~  prelude   i.blocks
             :_  t.i.blocks
             :-  0
-            ~|  [%indent indent]
-            ~|  [%prelude prelude]
-            ~|  [%kids list.plum]
-            ~|  [%blocks blocks]
             %+  weld  prelude
             (runt [(sub indent.i.i.blocks (lent prelude)) ' '] text.i.i.blocks)
           ::
@@ -7356,7 +7353,7 @@
           :(weld text.this stop text.next)
     ==
   --
-::  highly unsatisfactory temporary converter
+::  highly unsatisfactory temporary tank printer
 ::
 ++  plum-to-tank
   |=  =plum
@@ -8315,7 +8312,7 @@
                    =+  zil=(~(get by q.gen) %$) 
                    ?~  zil  
                      %+  ~(put by q.gen)  %$
-                     [~ [[%$ p.gen] ~ ~]]
+                     [*what [[%$ p.gen] ~ ~]]
                    %+  ~(put by q.gen)  %$
                    [p.u.zil (~(put by q.u.zil) %$ p.gen)]
         {$brhp *}  [%tsld [%limb %$] [%brdt p.gen]]
@@ -8610,310 +8607,6 @@
     ?.  ?=({@ ~} wig)
       ~>(%mean.[%leaf "rusk-hoon"] !!)
     i.wig
-  ::
-  ::  +work: visiting traverse
-  ::
-  ++  work
-    |*  ::  state: traversal state
-        ::
-        state=mold
-    |=  $:  ::  visit-expression: expression processor
-            ::  visit-structure: structure processor
-            :: 
-            visit-expression=$-([=hoon =state] (unit [=hoon =state]))
-            visit-structure=$-([=spec =state] (unit [=spec =state]))
-        ==
-    |_  =state
-    +|  %public
-    ::
-    ::  +expression: visit expression
-    ::
-    ++  expression
-      |=  =hoon
-      ^-  [=^hoon =^state]
-      =+  (visit-expression hoon state)
-      ?~  -  ->
-      ?-  -.hoon
-        %$     (love hoon noop)
-        %base  (love hoon noop)
-        %bust  (love hoon noop)
-        %dbug  (love hoon nexp)
-        %hand  (love hoon noop)
-        %knit  (love hoon (moto bark))
-        %leaf  (love hoon noop)
-        %limb  (love hoon noop)
-        %lost  (love hoon expr)
-        %rock  (love hoon noop)
-        %sand  (love hoon noop)
-        %tell  (love hoon moar)
-        %tune  (love hoon tung)
-        %wing  (love hoon noop)
-        %yell  (love hoon moar)
-        %brcb  (love hoon (trio wood exps arms))
-        %brcl  (love hoon dubs)
-        %brcn  (love hoon (twin noop arms))
-        %brvt  (love hoon (twin noop arms))
-        %brdt  (love hoon expr)
-        %brkt  (love hoon (twin expr arms))
-        %brhp  (love hoon expr)
-        %brsg  (love hoon (twin wood expr))
-        %brtr  (love hoon (twin wood expr))
-        %brts  (love hoon (twin wood expr))
-        %brwt  (love hoon expr)
-        %clcb  (love hoon dubs)
-        %clkt  (love hoon (quad expr expr expr expr))
-        %clhp  (love hoon dubs)
-        %clls  (love hoon trey)
-        %clsg  (love hoon moar)
-        %cltr  (love hoon moar)
-        %cncb  (love hoon (twin noop moan))
-        %cndt  (love hoon dubs)
-        %cnhp  (love hoon dubs)
-        %cncl  (love hoon (twin expr moar))
-        %cntr  (love hoon (trio noop expr moan))
-        %cnkt  (love hoon (quad expr expr expr expr))
-        %cnls  (love hoon trey)
-        %cnsg  (love hoon (trio noop expr moar))
-        %cnts  (love hoon (twin noop moan))
-        %dtkt  (love hoon (twin wood expr))
-        %dtls  (love hoon expr)
-        %dttr  (love hoon dubs)
-        %dtts  (love hoon dubs)
-        %dtwt  (love hoon expr)
-        %ktbr  (love hoon expr)
-        %ktcl  (love hoon wood)
-        %ktcn  (love hoon expr)
-        %ktdt  (love hoon dubs)
-        %ktls  (love hoon dubs)
-        %kthp  (love hoon (twin wood expr))
-        %ktpd  (love hoon expr)
-        %ktsg  (love hoon expr)
-        %kttr  (love hoon wood)
-        %ktts  (love hoon nexp)
-        %ktwt  (love hoon expr)
-        %sgbr  (love hoon dubs)
-        %sgcb  (love hoon dubs)
-        %sgcn  (love hoon (quad noop expr moan expr))
-        %sgnt  (love hoon nexp)
-        %sgld  (love hoon (twin toad expr))
-        %sgbn  (love hoon (twin toad expr))
-        %sgbs  (love hoon nexp)
-        %sgls  (love hoon nexp)
-        %sgpd  (love hoon trip)
-        %sgts  (love hoon dubs)
-        %sgwt  (love hoon (quad noop expr expr expr))
-        %sgzp  (love hoon dubs)
-        %mccl  (love hoon (twin expr moar))
-        %mcnt  (love hoon expr)
-        %mcsg  (love hoon (twin expr moar))
-        %mcmc  (love hoon dubs)
-        %tsbr  (love hoon (twin wood expr))
-        %tscl  (love hoon (twin moan expr))
-        %tsnt  (love hoon (trio torp expr expr))
-        %tsmc  (love hoon (trio torp expr expr))
-        %tsdt  (love hoon trip)
-        %tswt  (love hoon (quad noop expr expr expr))
-        %tsld  (love hoon dubs)
-        %tshp  (love hoon dubs)
-        %tsbn  (love hoon dubs)
-        %tskt  (love hoon (quad torp noop expr expr))
-        %tsls  (love hoon dubs)
-        %tssg  (love hoon moar)
-        %tstr  (love hoon trip)
-        %tscm  (love hoon dubs)
-        %wtbr  (love hoon moar)
-        %wthp  (love hoon (twin noop (moto (twin wood expr))))
-        %wtcl  (love hoon trey)
-        %wtdt  (love hoon trey)
-        %wtkt  (love hoon trip)
-        %wtld  (love hoon dubs)
-        %wtbn  (love hoon dubs)
-        %wtls  (love hoon (trio noop expr (moto (twin wood expr))))
-        %wtpd  (love hoon moar)
-        %wtvt  (love hoon trip)
-        %wtsg  (love hoon trip)
-        %wtts  (love hoon (twin wood noop))
-        %wtzp  (love hoon expr)
-        %zpcm  (love hoon dubs)
-        %zpbn  (love hoon expr)
-        %zpmc  (love hoon dubs)
-        %zpts  (love hoon expr)
-        %zpwt  (love hoon nexp)
-        %zpzp  (love hoon noop)
-      ==
-    ::
-    ::  +structure: visit structure
-    ::
-    ++  structure
-      |=  =spec
-      ^-  [=^spec =^state]
-      =+  (visit-structure spec state)
-      ?~  -  ->
-      ?-  -.spec
-        %base  (love spec noop)
-        %dbug  (love spec (twin noop wood))
-        %leaf  (love spec noop)
-        %like  (love spec noop)
-        %loop  (love spec noop)
-        %made  (love spec (twin noop wood))
-        %make  (love spec (twin expr (moto wood)))
-        %name  (love spec (twin noop wood))
-      ::
-        %bsbn  (love spec (twin wood wood))
-        %bsbs  (love spec (twin wood (raid wood)))
-        %bsbr  (love spec (twin wood expr))
-        %bscl  (love spec (twin wood (moto wood)))
-        %bscn  (love spec (twin wood (moto wood)))
-        %bsdt  (love spec (twin wood (raid wood)))
-        %bshp  (love spec (twin wood wood))
-        %bskt  (love spec (twin wood wood))
-        %bsls  (love spec (twin noop wood))
-        %bsnt  (love spec (twin wood (raid wood)))
-        %bsmc  (love spec expr)
-        %bspd  (love spec (twin wood expr))
-        %bssg  (love spec (twin expr wood))
-        %bstc  (love spec (twin wood (raid wood)))
-        %bsts  (love spec (twin noop wood))
-        %bsvt  (love spec (twin wood wood))
-        %bswt  (love spec (twin wood (moto wood)))
-        %bszp  (love spec (twin wood (raid wood)))
-      ==
-    +|  %private
-    ::
-    ::  older code is here
-    ::
-    ++  arms
-      (raid (twin noop (raid expr)))
-    ::
-    ++  bark 
-      |=  wof/woof
-      ?-(wof @ [wof state], ^ (love `p.wof expr))
-    ::
-    ++  dubs
-      (twin expr expr)
-    ::
-    ++  expr
-      |=  p/hoon
-      (expression p)
-    ::
-    ++  wood
-      |=  p/spec
-      (structure p)
-    ::
-    ++  exps
-      |=  p/(list (pair term hoon))
-      =|  out/(list (pair term hoon))
-      |-  ^+  [out state]
-      ?~  p
-        [out state]
-      =^  nex  state  (expression q.i.p)
-      $(p t.p, out [[p.i.p nex] out])
-    ::
-    ++  love
-      |*  [[sem=@tas bud=*] fun=$-(* *)]
-      =+  (fun bud)
-      [[sem -<] ->]
-    ::
-    ++  moan
-      (moto nexp)
-    ::
-    ++  moar
-      (moto expr)
-    ::
-    ++  moto
-      |*  etc=$-(* [* ^state])
-      |*  bud/*
-      |-  ^+  [bud state]
-      ?:  =(~ bud)  [bud state]
-      =^  heb  state  (etc -.bud)
-      =^  mor  state  $(bud +.bud)
-      [[heb mor] state]
-    ::
-    ++  nexp
-      (twin noop expr)
-    ::
-    ++  nude
-      (twin noop wood)
-    ::
-    ++  noop
-      |*  bud/*
-      [bud state]
-    ::
-    ++  quad
-      |*  $:  one=$-(* [* ^state])
-              two=$-(* [* ^state])
-              tri=$-(* [* ^state])
-              qua=$-(* [* ^state])
-          ==
-      |*  bud/*
-      =^  yal  state  (one -.bud)
-      =^  ves  state  (two +<.bud)
-      =^  jot  state  (tri +>-.bud)
-      =^  wip  state  (qua +>+.bud)
-      [[yal ves jot wip] state]
-    ::
-    ++  raid
-      |*  etc=$-(* [* ^state])
-      |*  bud/*
-      |-  ^+  [bud state]
-      ?:  =(~ bud)  [bud state]
-      =^  lef  state  $(bud +<.bud)
-      =^  ryt  state  $(bud +>.bud)
-      =^  top  state  (etc ->.bud)
-      [[[-<.bud top] lef ryt] state]
-    ::
-    ++  trey
-      (trio expr expr expr)
-    ::
-    ++  trio
-      |*  $:  one=$-(* [* ^state])
-              two=$-(* [* ^state])
-              tri=$-(* [* ^state])
-          ==
-      |*  bud/*
-      =^  yal  state  (one -.bud)
-      =^  ves  state  (two +<.bud)
-      =^  jot  state  (tri +>.bud)
-      [[yal ves jot] state]
-    ::
-    ++  trip
-      (trio noop expr expr)
-    ::
-    ++  toad
-      |=  bud/$@(term {p/term q/hoon})
-      ?@  bud  [bud state]
-      (love bud expr)
-    ::
-    ++  tora
-      (twin noop twee)
-    ::
-    ++  torp
-      (twin noop twef)
-    ::
-    ++  tung
-      |=  bud/$@(term tune)
-      ?@  bud  [bud state]
-      %.(bud (twin (raid twee) (moto expr)))
-    ::
-    ++  twee
-      |=  bud/(unit hoon)
-      ?~  bud  [~ state]
-      (love [~ u.bud] expr)
-    ::
-    ++  twef
-      |=  bud/(unit spec)
-      ?~  bud  [~ state]
-      (love [~ u.bud] wood)
-    ::
-    ++  twin
-      |*  $:  one=$-(* [* ^state])
-              two=$-(* [* ^state])
-          ==
-      |*  bud/*
-      =^  yal  state  (one -.bud)
-      =^  ves  state  (two +.bud)
-      [[yal ves] state]
-    --
   --
 ::
 ::::  5c: compiler backend and prettyprinter
@@ -11250,15 +10943,15 @@
 ::
 ++  skol                                                ::  $-(type tank) for ~!
   |=  typ/type  ^-  tank
-  =/  pec  ~(structure cosmetic typ)
-  ~&  [%spec pec]
-  =/  lum  (spec-to-plum pec)
-  ~&  [%plum lum]
-  =/  tax  (plum-to-tank lum)
-  ~&  [%tank tax]
-  tax
+  ::  =/  pec  ~(structure cosmetic typ)
+  ::  ~&  [%spec pec]
+  ::  =/  lum  (spec-to-plum pec)
+  ::  ~&  [%plum lum]
+  ::  =/  tax  (plum-to-tank lum)
+  ::  ~&  [%tank tax]
+  ::  tax
   ::  (plum-to-tank `plum`(spec-to-plum `spec`~(structure cosmetic typ)))
-  ::  ~(duck ut typ)
+  ~(duck ut typ)
 ::
 ++  slam                                                ::  slam a gate
   |=  {gat/vase sam/vase}  ^-  vase
@@ -12627,8 +12320,6 @@
         ==
       :-  ['a' 'z']
         ;~  pose
-          ::  XX net is deprecated
-          ::
           (stag %bsts ;~(plug sym ;~(pfix ;~(pose net tis) wyde)))
           (stag %like (most col rope))
         ==
@@ -13068,7 +12759,10 @@
     ++  boog  !:                                         ::  core arms
       %+  knee  [p=*term q=*hoon]  |.  ~+
       ;~  pose
-        ;~  pfix  (jest '++') 
+        ;~  pfix  ;~  pose 
+                    (jest '++') 
+                    (jest '+-')   ::  XX deprecated
+                  ==
           ;~  plug
             ;~(pfix gap ;~(pose (cold %$ bus) sym))
             ;~(pfix gap loaf)
@@ -13078,7 +12772,7 @@
         %+  cook
           |=  {b/term d/spec} 
           [b [%ktcl [%name b d]]]
-        ;~  pfix  (jest '+$')
+        ;~  pfix  ;~(pose (jest '+=') (jest '+$')) 
           ;~  plug
             ;~(pfix gap sym)
             ;~(pfix gap loan)
