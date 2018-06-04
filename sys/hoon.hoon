@@ -1,4 +1,4 @@
-::                                                      ::  
+::                                                      ::   
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
 =<  ride
@@ -420,25 +420,25 @@
 +$  deco  ?($bl $br $un $~)                             ::  text decoration
 +$  date  {{a/? y/@ud} m/@ud t/tarp}                    ::  parsed date
 +$  knot  @ta                                           ::  ASCII text
-++  noun  *                                             ::  any noun
-++  path  (list knot)                                   ::  like unix path
-++  stud                                                ::  standard name
-          $@  @tas                                      ::  auth=urbit
++$  noun  *                                             ::  any noun
++$  path  (list knot)                                   ::  like unix path
++$  stud                                                ::  standard name
+          $@  mark=@tas                                 ::  auth=urbit
           $:  auth=@tas                                 ::  standards authority
               type=path                                 ::  standard label
           ==                                            ::
-++  stub  (list (pair stye (list @c)))                  ::  styled unicode
-++  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
-++  styl                                                ::  cascading style
++$  stub  (list (pair stye (list @c)))                  ::  styled unicode
++$  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
++$  styl                                                ::  cascading style
           %+  pair  (unit deco)                         ::
           (pair (unit tint) (unit tint))                ::
 ::                                                      ::
-++  styx  (list $@(@t (pair styl styx)))                ::  styled text
-++  tile  ::  XX: ?@(knot (pair styl knot))
++$  styx  (list $@(@t (pair styl styx)))                ::  styled text
++$  tile  ::  XX: ?@(knot (pair styl knot))
           ::
           cord
-++  tint  ?($r $g $b $c $m $y $k $w $~)                 ::  text color
-++  plum                                                ::  text output noun
++$  tint  ?($r $g $b $c $m $y $k $w $~)                 ::  text color
++$  plum                                                ::  text output noun
   $@  cord
   $%  ::  %|: wrappable paragraph without linebreaks
       ::  %&: decorated list
@@ -5706,15 +5706,14 @@
 +$  foot  $%  {$dry p/hoon}                             ::  dry arm, geometric
               {$wet p/hoon}                             ::  wet arm, generic
           ==                                            ::
-
 +$  link                                                ::  lexical segment
           $%  [%chat p/term]                            ::  |chapter
-              [%cont p/aura q/atom]                     ::  %constant
+              [%cone p/aura q/atom]                     ::  %constant
               [%frag p/term]                            ::  .leg
-              [%func p/term]                            ::  +arm
-          ==
-+$  body  (pair cord (list sect))                       ::  
-+$  help  (pair (list link) body)                       ::  documentation 
+              [%funk p/term]                            ::  +arm
+          ==                                            ::
++$  body  [summary=cord details=(list sect)]            ::  
++$  help  [links=(list link) =body]                     ::  documentation 
 +$  limb  $@  term                                      ::  wing element
           $%  {%& p/axis}                               ::  by geometry
               {%| p/@ud q/(unit term)}                  ::  by name
@@ -5822,7 +5821,7 @@
       $:  ?($tape $manx $marl $call) 
           p/hoon
       ==
-  --                                                ::
+  --                                                    ::
 +$  hoon                                                ::
   $~  [%zpzp ~]
   $^  {p/hoon q/hoon}                                   ::
@@ -5970,7 +5969,7 @@
               {$0 p/@}                                  ::  axis select
           ==                                            ::
 +$  note                                                ::  type annotation
-          $%  {$like p/help}                            ::  documentation
+          $%  {$help help}                              ::  documentation
               {$know p/stud}                            ::  global standard
               {$made p/term q/(unit (list wing))}       ::  structure
           ==                                            ::
@@ -8234,7 +8233,7 @@
     |-  ^-  toga
     ?-  gen
       {$cnts {@ ~} ~}  i.p.gen
-      {$limb @}          p.gen
+      {$limb @}        p.gen
       {$wing {@ ~}}     i.p.gen
       {$dbug *}          $(gen q.gen)
       {@ *}              =+(neg=open ?:(=(gen neg) [%0 ~] $(gen neg)))
@@ -8251,7 +8250,7 @@
         {$bust *}  ~(example ax fab %base p.gen)
         {$ktcl *}  ~(factory ax fab p.gen)
         {$dbug *}   q.gen
-        {$eror *}  ~|(p.gen !!)
+        {$eror *}  ~>(%slog.[0 leaf/p.gen] !!)
     ::
         {$knit *}                                       ::
       :+  %tsbn  [%ktts %v %$ 1]                        ::  =>  v=.
