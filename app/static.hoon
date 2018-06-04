@@ -1,6 +1,21 @@
 ::
 ::::  /hoon/static/app
   ::
+::
+::  XX  REVIEW: should this be a generator?
+::  - it makes sense, since it doesnt need to store state between calls, its just producing a result
+::  - but we can't pass arbitrary run-time arguments to ford runes.... yet
+::    and we need that to specify the input file
+::  - but we could have a special fixed directory to place our input files, so that we don't
+::    have to pass the location as an argument at runtime
+::  - but then could you have multiple separate static builds?
+::  - let it take all files in a directory, build them as html
+::    spider the links, then keep a map from all top-level files a set of their connected files
+::  - then let the generator args specify which top-level file to write out and where to write it
+::  - how do we know what a top-level file is? or can we treat all files as top levels files
+::    mapped to their corresponding subset of linked files?
+::
+::
 /?  309
 /-  static
 |%
@@ -23,23 +38,19 @@
 ::  +find-links: takes a manx and returns a list of all href and src links in it
 ::
 ++  find-links
-  |=  html-content=tape
+  |=  max=manx
   ^-  (list tape)
-  =/  src-loc   (fand "src" html-content) 
-  =/  href-loc  (fand "href" html-content)
-  =/  src
-  %+  turn  src-loc
-  |=  loc=@
-  ^-  tape
-  =/  src-pre  (slag (add loc 5) html-content)
-  (scag (need (find "\"" src-pre)) src-pre)
-  =/  href
-  %+  turn  href-loc
-  |=  loc=@
-  ^-  tape
-  =/  href-pre  (slag (add loc 6) html-content)
-  (scag (need (find "\"" href-pre)) href-pre)
-  (weld src href)
+  %+  weld
+  ::
+  %+  roll  a.g.max
+  |=  [[n=mane v=tape] out=(list tape)]
+  ?:  ?=(?(%href %src) n)
+    [v out]
+  out
+  ::
+  %+  roll  c.max
+  |=  [m=manx out=(list tape)]
+  (weld out (find-links m))
 ::
 +=  relative
   $%  [%root wir=wire ext=mark]
@@ -49,7 +60,7 @@
 ::
 ++  parse-relative
   |=  pax=tape
-::  ^-  (unit relative)
+  ^-  (unit relative)
   %+  scan  pax
   %+  cook
   |=  a=^
@@ -83,7 +94,7 @@
     ;~  pose 
       (cold %html (jest '.html')) 
       (cold %md (jest '.md')) 
-::      (cold %umd (jest '.umd')) 
+      (cold %umd (jest '.umd')) 
       (cold %hoon (jest '.hoon')) 
       (cold %js (jest '.js')) 
       (cold %css (jest '.css')) 
@@ -121,19 +132,14 @@
 ::
 ++  this  .
 ::
+::  +prep: we don't need no state
+::
 ++  prep
   |=  old=(unit)
   :-  ~
   this(sta *state)
 ::
-++  poke-noun
-  |=  a=*
-  ^-  (quip move _this)
-  =/  b  ((hard tape) a)
-  ~&  (parse-relative b)
-  [~ this]
-::
-::  +poke-static-action
+::  +poke-static-action: send build request to ford and wait for result
 ::
 ++  poke-static-action
   |=  act=action:static
@@ -142,7 +148,6 @@
     %build
   ?>  !?=(~ s.in.act)
   =.  s.out.act  [-.s.in.act s.out.act]
-  ~&  in+[(flop s.in.act) ext.act]
   =/  sil  (find-file in.act ext.act)
   =/  wir=wire  /build/(scot %p (sham [in.act out.act]))
   =/  car  [%exec wir our.bol `[-.in.act sil]]
@@ -152,8 +157,8 @@
     ==
   ==
 ::
-::  +find-file: checks for file at .md .html .js .css and .hoon extensions
-::              returns which silk we should send to ford (%bake or %file)
+::  +find-file: checks for file at %umd, %md, %html, %js, %css, and %hoon extensions
+::              returns a silk to send to ford
 ::
 ++  find-file
   |=  [loc=beam ext=mark]
@@ -163,10 +168,11 @@
   =/  try-exts=(list @tas)
     :~  %hoon
         %md
-::        %umd
+        %umd
         %html
     ==
-  ::  if ext is null then try the extensions defined above
+  ::  if ext is unspecified then try the extensions defined in try-exts
+  ::
   =/  normed-ext=@tas
   ?:  =(%$ ext)
     |-
@@ -178,21 +184,27 @@
       $(try-exts t.try-exts)
     i.try-exts
   ::  otherwise just try the extension given
+  ::
   =/  pax  (weld (en-beam:format loc) [ext ~])
   =/  ark  .^(arch %cy pax)
   ?~  fil.ark
     ~_  leaf+"Error: Non-existent file: {<pax>}"  !!
   ext
+  ::  form silk for the given mark
   ::
   ?:  ?=(%hoon normed-ext)
-    [%bake %hymn *coin loc]      :: XX TODO: cast to html?
+    [%bake %hymn *coin loc]
   ?:  ?=(%md normed-ext)
-    [%cast %hymn [%cast %down [%file loc(s [ext s.loc])]]]    :: XX TODO: cast to html?
-  ?:  ?=(?(%html %js %css) normed-ext)
-    [%file loc(s [ext s.loc])]
+    [%cast %elem [%cast %down [%file loc(s [normed-ext s.loc])]]]
+  ?:  ?=(%umd normed-ext)
+    [%cast %elem [%file loc(s [normed-ext s.loc])]]
+  ?:  ?=(%html normed-ext)
+    [%cast %hymn [%file loc(s [normed-ext s.loc])]]
+  ?:  ?=(?(%js %css) normed-ext)
+    [%file loc(s [normed-ext s.loc])]
   ~_  leaf+"Error: Unsupported filetype: {<normed-ext>}"  !!
 ::
-::  +coup
+::  +coup: handle errors
 ::
 ++  coup
   |=  [wir=wire err=(unit tang)]
@@ -206,31 +218,42 @@
 ++  made
   |=  [wir=path hash=@uvJ gag=gage:ford]
   ^-  (quip move _this)
-  ~&  -.gag
+  ::  if ford build failed, print out error and crash
+  ::  otherwise, assert we got single result, not a table
+  ::
+  ?:  ?=(%| -.gag)
+    ~_  p.gag  !!
   ?>  ?=(%& -.gag)
+  ::  retrieve the build in/out beams  
+  ::
   =/  bem=[in=beam out=beam]  (need (~(get by waiting.sta) wir))
   ?>  &(!?=(~ s.in.bem) !?=(~ s.out.bem))
   ::
   =/  file-contents   q.q.p.gag
   =/  file-type=mark  p.p.gag
-  ::  
+  ::  finish by removing build from waiting list
+  ::  and adding it to our finished list, to prevent infinite build loops
+  ::
   :_  %=  this
-        waiting.sta  (~(del by waiting.sta) wir)
+        waiting.sta   (~(del by waiting.sta) wir)
         finished.sta  (~(put in finished.sta) in.bem)
       ==
   ::
   ^-  (list move)
-  ?.  =(%hymn file-type)
+  ::  if js or css, pass it through without processing it
+  ::
+  ?.  ?=(?(%hymn %elem) file-type)
+    ?>  ?=(?(%js %css) file-type)
     =.  s.out.bem  [file-type s.out.bem]
     :_  ~
     :*  ost.bol  %info  /write  our.bol
         (foal:space:userlib (en-beam:format out.bem) [file-type !>(file-contents)])
     ==
-  ::  get all links from html
+  ::  get all links from manx
   ::
-  =/  file-contents=tape  (en-xml:html ((hard manx) q.q.p.gag))
+  =/  file-contents=manx  ((hard manx) q.q.p.gag)
   =/  links=(list tape)  (find-links file-contents)
-  ::  process list of links into new static-action's
+  ::  process list of links into list of static-action
   ::
   =/  new-actions=(list move)
   %+  roll  links
@@ -245,20 +268,15 @@
     output
   :_  output
   [ost.bol %poke /act [our.bol dap.bol] %static-action [%build loc.new-in loc.new-out ext.new-in]]
-  ::  write html file to new clay path
+  ::  write html output file to clay
   ::
   =.  s.out.bem  [%html s.out.bem]
-  ~&  out+(flop s.out.bem)
+  ~&  (flop s.out.bem)
   :_  new-actions
   :*  ost.bol  %info  /write  our.bol
-      (foal:space:userlib (en-beam:format out.bem) [%html !>((crip file-contents))])
+      (foal:space:userlib (en-beam:format out.bem) [%html !>((crip (en-xml:html file-contents)))])
   ==
 --
-
-
-
-
-
 
 
 
