@@ -1,4 +1,3 @@
-!:
 ::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
 |=  pit=vase
@@ -4532,7 +4531,6 @@
     ^-  (unit (unit (cask)))
     ?>  ?=([@ *] ref)
     =/  hoon-version=@ud  -.ref
-    =/  =type  ((hard type) +.ref)
     ::
     ~|  hoon-version=hoon-version
     ?>  ?=(?(%143 %151) hoon-version)
@@ -4574,7 +4572,7 @@
     =/  local-cage=cage  (result-to-cage build-result.u.local-result)
     ::  if :local-result does not nest in :type, produce an error
     ::
-    ?.  -:(nets:wa type `^type`p.q.local-cage)
+    ?.  -:(nets:wa +.ref `type`p.q.local-cage)
       [~ ~]
     ::
     [~ ~ `(cask)`local-cage]
