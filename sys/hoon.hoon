@@ -650,7 +650,7 @@
   :>  c: gate from list-item and state to product and new state
   ~/  %spin
   |*  [a=(list) b=* c=_|=(^ [** +<+])]
-  =>  .(c `$-([_?>(?=(^ a) i.a) _b] [* _b])`c)
+  =>  .(c `$-([_?>(?=(^ a) i.a) _b] [_-:(c) _b])`c)
   =/  acc=(list _-:(c))  ~
   :>  transformed list and updated state
   |-  ^-  (pair _acc _b)
@@ -4118,8 +4118,42 @@
       (weld ram(tac i.q.tac) ?~(t.q.tac voz (weld p.p.tac voz)))
     ==
   ::
+  ++  ug                                                ::  horrible hack
+    |%
+    ++  ace                                             ::  strip ctrl chars
+      |=  a=tape
+      ^-  tape
+      ?~  a  ~
+      ?:  |((lth i.a 32) =(127 `@`i.a))
+        $(a t.a)
+      [i.a $(a t.a)]
+    ::
+    ++  act                                             ::  pretend tapes
+      |=  tac=tank
+      ^-  tank
+      ?-  -.tac
+        %leaf  [%leaf (hew p.tac)]
+        %palm  :+  %palm
+                 [(hew p.p.tac) (hew q.p.tac) (hew r.p.tac) (hew s.p.tac)]
+               (turn q.tac act)
+        %rose  :+  %rose
+                 [(hew p.p.tac) (hew q.p.tac) (hew r.p.tac)]
+               (turn q.tac act)
+      ==
+    ::
+    ++  fix                                             ::  restore tapes
+      |=  wol=wall
+      %+  turn  wol
+      |=(a=tape (tufa `(list @c)``(list @)`a))
+    ::
+    ++  hew                                             ::  pretend tape
+      |=(a=tape `tape``(list @)`(tuba (ace a)))
+    --
+  ::
   ++  win
     |=  {tab/@ edg/@}
+    =.  tac  (act:ug tac)
+    %-  fix:ug
     =+  lug=`wall`~
     |^  |-  ^-  wall
         ?-    -.tac
