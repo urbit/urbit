@@ -47,10 +47,10 @@
       u3n_nock_on(u3_noun bus, u3_noun fol);
 
     /* u3n_find(): return prog for given formula,
-     *             split by key (can be u3_none). RETAIN.
+     *             split by key (u3_nul for none). RETAIN.
      */
       u3p(u3n_prog)
-      u3n_find(u3_weak key, u3_noun fol);
+      u3n_find(u3_noun key, u3_noun fol);
 
     /* u3n_burn(): execute u3n_prog with bus as subject.
      */

@@ -1439,14 +1439,13 @@ _n_bite(u3_noun fol) {
   return _n_prog_from_ops(ops);
 }
 
-/* _n_find(): return prog for given formula. fol is RETAINED.
+/* _n_find(): return prog for given formula with prefix (u3_nul for none).
+ *            RETAIN.
  */
 static u3n_prog*
-_n_find(u3_weak key, u3_noun fol)
+_n_find(u3_noun pre, u3_noun fol)
 {
-  key = (u3_none == key)
-      ? u3k(fol)
-      : u3nc(u3k(key), u3k(fol));
+  u3_noun key = u3nc(u3k(pre), u3k(fol));
   u3_weak pog = u3h_git(u3R->byc.har_p, key);
   if ( u3_none != pog ) {
     u3z(key);
@@ -1486,10 +1485,10 @@ _n_find(u3_weak key, u3_noun fol)
 }
 
 /* u3n_find(): return prog for given formula,
- *             split by key (can be u3_none). RETAIN.
+ *             split by key (u3_nul for no key). RETAIN.
  */
 u3p(u3n_prog)
-u3n_find(u3_weak key, u3_noun fol)
+u3n_find(u3_noun key, u3_noun fol)
 {
   u3p(u3n_prog) pog_p;
   u3t_on(noc_o);
@@ -1800,7 +1799,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       fam->pog_u = pog_u;
       _n_push(mov, off, x);
     nock_out:
-      pog_u = _n_find(u3_none, o);
+      pog_u = _n_find(u3_nul, o);
       pog   = pog_u->byc_u.ops_y;
       ip_w  = 0;
 #ifdef U3_CPU_DEBUG
@@ -2196,7 +2195,7 @@ u3n_burn(u3p(u3n_prog) pog_p, u3_noun bus)
 static u3_noun
 _n_burn_on(u3_noun bus, u3_noun fol)
 {
-  u3n_prog* pog_u = _n_find(u3_none, fol);
+  u3n_prog* pog_u = _n_find(u3_nul, fol);
 
   u3z(fol);
   return _n_burn_out(bus, pog_u);

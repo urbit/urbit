@@ -3,12 +3,6 @@
 */
 #include "all.h"
 
-#if defined(U3_OS_osx)
-#include <CommonCrypto/CommonDigest.h>
-#else
-#include <openssl/sha.h>
-#endif
-
 /**  Data structures.
 **/
 
@@ -93,149 +87,8 @@ _cj_hash(c3_c* has_c)
     dig_y[32-(i_w>>1)] = hid_y << 4 | lod_y;
   }
   u3_noun pro = u3i_bytes(32, dig_y);
-  //fprintf(stderr, "has_c: %s\r\n", has_c);
-  //u3m_p("pro", pro);
   return pro;
 }
-
-/*
-typedef struct {
-#if defined(U3_OS_osx)
-  CC_SHA256_CTX ctx_h;
-#else
-  SHA256_CTX ctx_h;
-#endif
-  c3_w len_w;
-  c3_w buf_w[65536];
-} _cj_sha;
-
-static void
-_cj_digest_update(_cj_sha* sha_u, c3_y* byt_y, c3_w len_w)
-{
-#if defined(U3_OS_osx)
-  CC_SHA256_Update(&(sha_u->ctx_h), &byt_y, len_w);
-#else
-  SHA256_Update(&(sha_u->ctx_h), &byt_y, len_w);
-#endif
-}
-
-static void
-_cj_digest_flush(_cj_sha* sha_u)
-{
-  if ( sha_u->inx_s ) {
-    _cj_digest_update(sha_u, sha_u->buf_w, sha_u->inx_s);
-    sha_u->len_w = 0;
-  }
-}
-
-static void
-_cj_digest_write(_cj_sha* sha_u, u3_atom a)
-{
-  c3_w met_w = u3r_met(3, a),
-       law_w = u3r_met(3, met_w);
-
-  if ( 0 == law_w ) {
-    if ( sha_u->inx_s == 65535 ) {
-      _cj_digest_flush(sha_u);
-    }
-    sha_u->buf_y[sha_u->inx_s++] = 0;
-  }
-  else {
-    if ( (law_w + met_w) > 65536 ) {
-      c3_y* big_y = u3a_malloc(met_w);
-      u3r_bytes(0, met_w, big_y, a);
-      _cj_digest_flush(sha_u);
-      _cj_digest_update(sha_u, big_y, met_w);
-      u3a_free(big_y);
-    }
-    else {
-      if ( (sha_u->inx_s + met_w + law_w ) > 65536 ) {
-        _cj_digest_flush(sha_u);
-      }
-      u3r_bytes(0, law_w, sha_u->buf_y + sha_u->inx_s, law_w);
-      sha_u->inx_s += (c3_s) law_w;
-      u3r_bytes(0, met_w, sha_u->buf_y + sha_u->inx_s, a);
-      sha_u->inx_s += (c3_s) met_w;
-    }
-  }
-}
-
-u3_noun
-_cj_digest_final(_cj_sha* sha_u)
-{
-  c3_y dig_y[32];
-#if defined(U3_OS_osx)
-  CC_SHA256_Final(dig_y, &(sha_u->ctx_h));
-#else
-  SHA256_Final(dig_y, &(sha_u->ctx_h));
-#endif
-  return u3i_bytes(32, dig_y);
-}
-
-
-static void
-_cj_digest_init(_cj_sha* sha_u)
-{
-#if defined(U3_OS_osx)
-  CC_SHA256_Init(&(sha_u->ctx_h));
-#else
-  SHA256_Init(&(sha_u->ctx_h));
-#endif
-}
-
-u3_noun
-_cj_digest(u3_noun a)
-{
-  u3_noun *don, *top;
-  c3_y    wis_y = c3_wiseof(u3_noun);
-  c3_o    nor_o = u3a_is_north(u3R);
-  c3_ys   mov = (c3y == nor_o) ? -wis_y : wis_y;
-  c3_ys   off = (c3y == nor_o) ? 0 : -wis_y;
-
-  u3p(u3h_root) har_p = u3h_new();
-  c3_w    inx_w = 0;
-  c3_l    pre_l;
-  _cj_sha sha_u;
-
-  _cj_digest_init(&sha_u);
-  don = u3to(u3_noun, u3R->cap_p + off);
-  u3R->cap_p += mov;
-  top = u3to(u3_noun, u3R->cap_p + off);
-  *top = a;
-
-  while ( top != don ) {
-    a     = *top;
-    pre_l = u3h_git(har_p, a);
-    if ( u3_none != pre_l ) {
-      _cj_digest_write(&sha_u, 2);
-      _cj_digest_write(&sha_u, pre_l);
-      u3R->cap_p -= mov;
-      top = u3to(u3_noun, u3R->cap_p + off);
-    }
-    else {
-      u3h_put(har_p, a, inx_w++);
-      c3_assert( c3y == u3a_is_cat(inx_w) );
-      if ( c3y == u3du(a) ) {
-        _cj_digest_write(&sha_u, 1);
-        *top = u3h(a);
-        u3R->cap_p += mov;
-        top = u3to(u3_noun, u3R->cap_p + off);
-        *top = u3t(a);
-      }
-      else {
-        _cj_digest_write(&sha_u, 0);
-        _cj_digest_write(&sha_u, a);
-        u3R->cap_p -= mov;
-        top = u3to(u3_noun, u3R->cap_p + off);
-      }
-    }
-  }
-  
-  u3h_free(har_p);
-  _cj_digest_flush(&sha_u);
-  return _cj_digest_final(&sha_u);
-}
-*/
 
 /* _cj_bash(): battery hash. RETAIN.
  */
@@ -257,7 +110,6 @@ _cj_bash(u3_noun bat)
     else {
       u3_noun jan = u3qe_jam(bat);
       pro = u3qe_shax(jan);
-      //pro = u3qe_sham(bat);
       u3h_put(u3R->jed.bas_p, bat, u3k(pro));
       u3z(jan);
       break;
@@ -1165,7 +1017,7 @@ _cj_prog(u3_weak loc, u3_noun fol)
 {
   u3p(u3n_prog) pog_p;
   u3t_off(glu_o);
-  pog_p = u3n_find(loc, fol);
+  pog_p = u3n_find((loc == u3_none ? u3_nul : loc), fol);
   u3t_on(glu_o);
   return pog_p;
 }
@@ -1977,12 +1829,14 @@ _cj_mile(u3_noun clu, u3_noun cor)
       loc = _cj_spot(cor, &bas);
       if ( u3_none == loc ) {
         loc = _cj_mine(cey, cor, bas);
-        u3z(bas);
       }
       else {
         _cj_audit(loc, cey, cor);
       }
       u3z(cey);
+      if ( u3_none != bas ) {
+        u3z(bas);
+      }
     }
     u3z(cor);
   }
