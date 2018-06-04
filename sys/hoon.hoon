@@ -5780,7 +5780,7 @@
               {$bspd p/spec q/hoon}                     ::  $&, repair
               {$bssg p/hoon q/spec}                     ::  $~, default
               {$bstc p/spec q/(map term spec)}          ::  $`, read-only core
-              {$bsts p/term q/spec}                     ::  $=, name
+              {$bsts p/toga q/spec}                     ::  $=, name
               {$bsvt p/spec q/spec}                     ::  $@, atom pick
               {$bswt p/{i/spec t/(list spec)}}          ::  $?, full pick
               {$bszp p/spec q/(map term spec)}          ::  $!, opaque core
@@ -5950,7 +5950,7 @@
     {$zpwt p/$@(p/@ {p/@ q/@}) q/hoon}                  ::  !?
     {$zpzp ~}                                           ::  !!
   ==                                                    ::
-+$  sofa  (pair term (unit spec))
++$  sofa  (pair toga (unit spec))                       ::
 +$  tyre  (list {p/term q/hoon})                        ::
 +$  tyke  (list (unit hoon))                            ::
 ::                                                      ::::::  virtual nock
@@ -7446,6 +7446,14 @@
     p.hoon
   %hooon
 ::
+++  toga-to-plum
+  |=  =toga
+  ^-  plum
+  ?@  toga  toga
+  ::  XX fill this in please
+  ::
+  %toooga
+::
 ++  spec-to-plum
   |=  =spec
   ^-  plum
@@ -7495,7 +7503,7 @@
     %bstc  (core-to-plum '$`' p.spec q.spec)
     %bsts  :+  %&
              [`['=' ~] `['$=' ~]]
-           :~  p.spec
+           :~  (toga-to-plum p.spec)
                $(spec q.spec)
            ==
     %bsvt  &/[(fixed '$@') $(spec p.spec) $(spec q.spec) ~]
