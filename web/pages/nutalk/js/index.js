@@ -44630,14 +44630,15 @@ function getStationDetails(station) {
   var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var usership = arguments.length > 2 ? arguments[2] : undefined;
   var ret = {
-    type: "none",
+    type: "chat",
     host: station.split("/")[0].substr(1),
     cir: station.split("/")[1],
     hostProfileURL: station.split("/")[0].substr(1) == usership ? '/~~/pages/nutalk/profile' : "/~~/~".concat(station.split("/")[0].substr(1), "/==/web/pages/nutalk/profile") // TODO: Implement actual foreign profile URL
 
   };
   if (station.includes("inbox")) ret.type = "inbox";
-  if (isDMStation(station)) ret.type = "dm";
+  if (isDMStation(station)) ret.type = "dm"; // this doesn't make any sense, since other clients use cap as a description
+
   if (config && config.cap === "chat") ret.type = "chat";
   var collParts = parseCollCircle(station);
 
@@ -44737,8 +44738,23 @@ function getMessageContent(msg, stationDetails) {
       break;
 
     case "text":
-      var metadata = msg.sep.fat.sep.lin.msg.split("|");
-      ret.content = msg.sep.fat.tac.text.substr(0, 500);
+      console.log('msg', msg);
+      var metadata = ['foo', 'bar'];
+
+      try {
+        var _metadata = msg.sep.fat.sep.lin.msg.split("|");
+      } catch (e) {
+        console.log('error', e);
+        
+      } //
+
+
+      try {
+        ret.content = msg.sep.fat.tac.text.substr(0, 500);
+      } catch (e) {
+        ret.content = 'foobar';
+      }
+
       ret.postId = metadata[0];
       ret.postTitle = metadata[1] || ret.content.substr(0, 20);
       ret.postURL = "".concat(stationDetails.stationURL, "/").concat(metadata[0]);
@@ -46278,7 +46294,7 @@ function (_Component) {
           }, this.props.data.title))), react.createElement("div", {
             className: "flex align-center"
           }, react.createElement("a", {
-            href: "/~~/details",
+            href: "/~~/pages/nutalk/collection/post?coll=".concat(this.props.data.id),
             className: "header-link mr-6"
           }, "Details"), subscribeButton));
           break;
@@ -57965,12 +57981,14 @@ function (_Component) {
       if (messageDetails.type === "text") {
         return this.buildPostTitle(messageDetails);
       } else if (messageDetails.type === "inv") {
-        return react.createElement("div", null, messageDetails.content, react.createElement("span", {
-          className: "btn btn-primary",
+        return react.createElement("div", {
+          className: "invite"
+        }, messageDetails.content, react.createElement("button", {
+          className: "btn btn-primary accept",
           onClick: this.acceptInvite,
           "data-station": messageDetails.station
-        }, "Yes"), react.createElement("span", {
-          className: "btn btn-secondary"
+        }, "Yes"), react.createElement("button", {
+          className: "btn btn-secondary decline"
         }, "No"));
       } else if (messageDetails.type === "url") {
         if (/(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF)$/.exec(messageDetails.content)) {
@@ -57992,6 +58010,7 @@ function (_Component) {
       var _this3 = this;
 
       var lastAut = "";
+      console.log("section builder", section);
       var messageRows = section.msgs.map(function (msg, i) {
         var messageDetails = getMessageContent(msg, section.details);
         var rowAuthor = null;
@@ -58049,6 +58068,8 @@ function (_Component) {
       var _this4 = this;
 
       return sections.map(function (section, i) {
+        console.log('section', section);
+
         var sectionContent = _this4.buildSectionContent(section);
 
         var hostDisplay = section.details.type === "dm" ? null : react.createElement("span", null, react.createElement("a", {
@@ -58107,6 +58128,7 @@ function (_Component) {
     key: "getSectionData",
     value: function getSectionData() {
       var inbox = this.props.store.messages.inboxMessages;
+      console.log('inbox', inbox);
       var lastStationName = [];
       var sections = [];
       var stationIndex = -1;
@@ -58157,10 +58179,20 @@ function (_Component) {
   }
 
   _createClass(ListPage, [{
+    key: "isChat",
+    value: function isChat(i) {
+      console.log('item', i);
+      var s = getStationDetails(i, {}, this.props.api.authTokens.ship);
+      return s.type == "chat";
+    } //
+
+  }, {
     key: "buildChatStations",
     value: function buildChatStations() {
+      var _this = this;
+
       return Object.arrayify(this.props.store.configs).filter(function (item) {
-        return item.value.cap === "chat";
+        return _this.isChat(item.key);
       }).map(function (item) {
         var expandedStationName = item.key.split("/");
         return react.createElement("div", {
@@ -58180,13 +58212,13 @@ function (_Component) {
   }, {
     key: "buildDMStations",
     value: function buildDMStations() {
-      var _this = this;
+      var _this2 = this;
 
       return Object.arrayify(this.props.store.configs).filter(function (item) {
         return isDMStation(item.key);
       }).map(function (item) {
         var title = item.value.con.sis.filter(function (mem) {
-          return mem !== _this.props.api.authTokens.ship;
+          return mem !== _this2.props.api.authTokens.ship;
         }).map(function (mem) {
           return "~".concat(mem);
         }).join(", ");
@@ -58203,13 +58235,13 @@ function (_Component) {
   }, {
     key: "buildTextStations",
     value: function buildTextStations() {
-      var _this2 = this;
+      var _this3 = this;
 
       return Object.arrayify(this.props.store.configs).filter(function (item) {
         return item.key.includes("collection");
       }).map(function (item) {
         console.log('item', item);
-        var deets = getStationDetails(item.key, item.value, _this2.props.api.authTokens.ship);
+        var deets = getStationDetails(item.key, item.value, _this3.props.api.authTokens.ship);
         var expandedStationName = ["".concat(item.key.split("/")[0]), "".concat(item.value.cap)]; // go from "~tappyl-dabwex/collection_~~2018.4.19..22.58.12..4c19"
         // to      "~2018.4.19..22.58.12..4c19"
         //let targetPath = item.key.split("/")[1].substr(12);
