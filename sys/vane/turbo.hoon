@@ -1,3 +1,4 @@
+!:
 ::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
 |=  pit=vase
@@ -5060,7 +5061,27 @@
     ::
     [~ ford-gate]
   ::
-      %wegh  !!
+      %wegh
+    :_  ford-gate
+    :_  ~
+    :^  duct  %give  %mass
+    ^-  mass
+    :-  %turbo
+    :-  %|
+    %+  turn  ~(tap by state-by-ship.ax)     :: XX single-home
+    |=  {our/@ ford-state}  ^-  mass
+    :+  (scot %p our)  %|
+    ::  TODO: Other vanes don't reveal everything. Which parts should we report?
+    :~  [%results [%& results]]
+        [%builds [%& builds]]
+        :+  %components  %|
+        :~  [%normal [%& components]]
+            [%provisional [%& provisional-components]]
+        ==
+        [%rebuilds [%& rebuilds]]
+        [%blocks [%& blocks]]
+        [%builds-by-listener [%& builds-by-listener]]
+    ==
   ==
 ::  +wipe: wipe half a +ford-state's cache, in LRU (least recently used) order
 ::

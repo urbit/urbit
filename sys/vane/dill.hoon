@@ -20,6 +20,7 @@
           e/(unit mass)                                 ::
           f/(unit mass)                                 ::
           g/(unit mass)                                 ::
+          t/(unit mass)                                 ::
       ==                                                ::
   ==                                                    ::
 ++  axon                                                ::  dill per duct
@@ -59,7 +60,7 @@
       {$deal p/sock q/cush:gall}                       ::
   ==                                                    ::
 ++  note                                                ::  out request $->
-  $?  {?($a $b $c $e $f $g) $wegh $~}                   ::
+  $?  {?($a $b $c $e $f $g $t) $wegh $~}                ::
   $%  {$a note-ames}                                    ::
       {$c note-clay}                                    ::
       {$d note-dill}                                    ::
@@ -84,7 +85,7 @@
       {$unto p/cuft:gall}                               ::
   ==                                                    ::
 ++  sign                                                ::  in result $<-
-  $?  {?($a $b $c $e $f $g) $mass p/mass}               ::
+  $?  {?($a $b $c $e $f $g $t) $mass p/mass}            ::
   $%  {$a sign-ames}                                    ::
       {$c sign-clay}                                    ::
       {$d sign-dill}                                    ::
@@ -259,6 +260,7 @@
               [hen %pass /heft/eyre %e %wegh ~]
               [hen %pass /heft/ford %f %wegh ~]
               [hen %pass /heft/gall %g %wegh ~]
+              [hen %pass /heft/turbo %t %wegh ~]
               moz
           ==
         ==
@@ -362,7 +364,7 @@
         |=  sih/sign
         ^+  +>
         ?-    sih
-            {?($a $b $c $e $f $g) $mass *}
+            {?($a $b $c $e $f $g $t) $mass *}
           (wegt -.sih p.sih)
         ::
             {$a $nice *}
@@ -420,7 +422,7 @@
         ==
       ::
       ++  wegt
-        |=  {lal/?($a $b $c $e $f $g) mas/mass}
+        |=  {lal/?($a $b $c $e $f $g $t) mas/mass}
         ^+  +>
         =.  hef.all
           ?-  lal
@@ -430,6 +432,7 @@
             $e  ~?(?=(^ e.hef.all) %double-mass-e hef.all(e `mas))
             $f  ~?(?=(^ f.hef.all) %double-mass-f hef.all(f `mas))
             $g  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
+            $t  ~?(?=(^ t.hef.all) %double-mass-t hef.all(t `mas))
           ==
         ?.  ?&  ?=(^ a.hef.all)
                 ?=(^ b.hef.all)
@@ -437,12 +440,13 @@
                 ?=(^ e.hef.all)
                 ?=(^ f.hef.all)
                 ?=(^ g.hef.all)
+                ?=(^ t.hef.all)
             ==
           +>.$
-        %+  done(hef.all [~ ~ ~ ~ ~ ~])
+        %+  done(hef.all [~ ~ ~ ~ ~ ~ ~])
           %mass
         =>  [hef.all d=wegh]
-        [%vanes %| ~[u.a u.c d u.e u.f u.g u.b]]
+        [%vanes %| ~[u.a u.c d u.e u.f u.g u.b u.t]]
       --
     ::
     ++  ax                                              ::  make ++as
