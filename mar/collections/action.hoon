@@ -16,13 +16,17 @@
     =,  dejs:format
 ::     %+  cu  |=(action +<)
     =<  action
+    ::(action a)
     |%
     ++  action
+      |=  a/json
+      ^-  action
+      %.  a
       %-  of  :~
         create+create
         delete+(ot col+(se %da) ~)
-        submit+(ot col+(se %da) tit+so wat+wain ~)
-        comment+(ot col+(se %da) top+(se %da) com+null-or-da wat+wain ~)
+        submit+submit
+        comment+comment
         resubmit+(ot col+(se %da) top+(se %da) tit+so wat+wain ~)
         delete-topic+(ot col+(se %da) top+(se %da) ~)
         delete-comment+(ot col+(se %da) top+(se %da) com+(se %da) ~)
@@ -33,11 +37,30 @@
       %+  cu  |=(a=coin ?+(a !! [%$ ^] p.a))
       (su nuck:so.hoon)
     ::
+    ++  submit
+      |=  a=json
+      ^-  [coll-full @t wain]
+      =/  host  
+        %.  a
+        (ot:dejs-soft:format hos+(se-soft %p) ~)
+      =+  ^-  [col=@da tit=@t wat=wain]
+          %.  a
+          (ot col+(se %da) tit+so wat+wain ~)
+      [[host col] tit wat]
+    :: 
+    ++  comment
+      |=  a=json
+      =/  host
+      %.  a
+      (ot:dejs-soft:format hos+(se-soft %p) ~)
+      =+  ^-  [col=@da top=@da com=?(~ @da) wat=wain]
+          %.  a
+          (ot col+(se %da) top+(se %da) com+null-or-da wat+wain ~)
+      [[host col] top com wat]
     ++  create
 ::       (ot wat+(cu (hard kind) so) des+so pub+bo vis+bo ses+(as (se %p)) ~)
       |=  a=json
       ~|  a
-      ::=+  ^-  [wat=kind des=cord pub=? vis=? ses=(set @p)]
       =+  ^-  [desc=cord publ=? visi=? comm=? xeno=? ses=(set @p)]
           %.  a
           :: change this to accept an array of @p
@@ -66,5 +89,13 @@
         |=  b=cord  ^-  (odo:raid a)
         (slav a b)
       so
+    ++  se-soft                                                ::  string as aura
+      =,  wired
+      |*  a=term
+      %+  cu
+        |=  b=(unit cord)  ^-  (unit (odo:raid a))
+        ?~  b  ~
+        `(slav a (need b))
+      so:dejs-soft:format
 --  --
 --

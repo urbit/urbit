@@ -37,6 +37,7 @@
     ++  move  (pair bone card)                          ::  all actions
     ++  poke                                            ::
       $%  {$hall-action action:hall}                    ::
+          {$collections-action action:api}              ::
       ==                                                ::
     ++  card                                            ::
       $%  {$info wire ship term nori:clay}              ::
@@ -75,8 +76,8 @@
   ?~  a  
     (ta-create:ta ['a description' publ=& visi=& comm=& xeno=& ~])
   ?@  a
-    (ta-submit:ta a 'a topic' ~['with contents'])
-  (ta-comment:ta p.a q.a now-id ~['a comment' 'yo'])
+    (ta-submit:ta [`our.bol a] 'a topic' ~['with contents'])
+  (ta-comment:ta [`our.bol p.a] q.a now-id ~['a comment' 'yo'])
 ::
 ++  writ
   |=  {wir/wire rit/riot:clay}
@@ -87,6 +88,14 @@
   ::      or /web/collections/[col] for each collection and then
   ::      /web/collections/[col]/[top] for each topic as they get created.
 ::
+++  is-us
+  |=  a/coll-full
+  ^-  ?
+  ?~  host.a
+    &
+  =(u.host.a our.bol)
+::
+::  need to figure out a more nuanced way to do this for cross-ship
 ++  ignore-action
   |=  act=action:api  ^-  ?
   ?-    -.act
@@ -106,9 +115,10 @@
 ++  poke-collections-action
   |=  act=action:api
   ^-  (quip move _+>)      
-  ?:  (ignore-action act)
-    [~ +>]
+  ::?:  (ignore-action act)
+  ::  [~ +>]
   =<  ta-done
+  ::
   ?-  -.act
     $create   (ta-create:ta +.act)
     $submit   (ta-submit:ta +.act)
@@ -148,28 +158,52 @@
     (ta-write /config now-id %collections-config !>(cof))
   ::
   ++  ta-submit
-    |=  {col/time tit/cord wat/wain}
-    =/  top/topic  [tit src.bol wat]
-    (ta-write /topic [col now-id] %collections-topic !>(top))
+    |=  {colful/coll-full tit/cord wat/wain}
+    ::  if host is null or we are host
+    ?:  |(=((need host.colful) our.bol) ?=($~ host.colful))
+      =/  top/topic  [tit src.bol wat]
+      (ta-write /topic [col.colful now-id] %collections-topic !>(top))
+    %-  ta-emit
+    :-  ost.bol
+    :^    %poke
+        /foreign-submit
+      [(need host.colful) %collections]
+    [%collections-action [%submit colful tit wat]]
   ::
   ++  ta-resubmit
-    |=  {col/time wen/@da tit/cord wat/wain}
-    ?:  (new-topic col wen)  ta-this  ::REVIEW error?
-    =/  top/topic  [tit src.bol wat]
-    (ta-write /topic [col wen] %collections-topic !>(top))
+    |=  {colful/coll-full wen/@da tit/cord wat/wain}
+    ?:  (new-topic col.colful wen)  ta-this  ::REVIEW error?
+    ?:  |(=((need host.colful) our.bol) ?=($~ host.colful))
+      =/  top/topic  [tit src.bol wat]
+      (ta-write /topic [col.colful wen] %collections-topic !>(top))
+    %-  ta-emit
+    :-  ost.bol
+    :^    %poke
+        /foreign-resubmit
+      [(need host.colful) %collections]
+    [%collections-action [%resubmit colful wen tit wat]]
+  ::
   ::
   ++  ta-comment
-    |=  {col/time top/@da com/?(~ @da) wat/wain}
+    |=  {colful/coll-full top/@da com/?(~ @da) wat/wain}
     ^+  +>
+    ::  if not for our ship, then proxy
+    ?:  ?!(|(=((need host.colful) our.bol) ?=($~ host.colful)))
+      %-  ta-emit
+      :-  ost.bol
+      :^    %poke
+          /foreign-comment
+        [(need host.colful) %collections]
+      [%collections-action [%comment colful top com wat]]
     ?~  com  $(com now-id)  :: new comment
     =;  res/$@(~ _+>.$)  ?^(res res +>.$)
-    %+  biff  (ta-get-topic col top)
+    %+  biff  (ta-get-topic col.colful top)
     |=  [^ cos=(map @da {@da comment}) ~]
     =/  old/{@da comment}
       (fall (~(get by cos) com) [now-id src.bol wat])
     ?.  =(who.old src.bol)  ..ta-comment  ::REVIEW error?
     %^  ta-write  /comment
-      [col top com]
+      [col.colful top com]
     [%collections-comment !>(`comment`+.old(wat wat))]
   ::
   ++  ta-get-topic
@@ -185,24 +219,40 @@
     (~(get by cos) com)
   ::
   ++  ta-delete
-    |=  col/time
+    |=  colful/coll-full
     ^+  +>
-    =+  (~(get by cols) col)
+    ::  if not for our ship, then proxy
+    ?:  |(=((need host.colful) our.bol) ?=($~ host.colful))
+      %-  ta-emit
+      :-  ost.bol
+      :^    %poke
+          /foreign-delete
+        [(need host.colful) %collections]
+      [%collections-action [%delete colful]]
+    =+  (~(get by cols) col.colful)
     ?~  -  ta-this  ::REVIEW error?
-    =.  ta-this  (ta-remove /config col %collections-config)
-    =/  cyc  (circle-for col)
+    =.  ta-this  (ta-remove /config col.colful %collections-config)
+    =/  cyc  (circle-for col.colful)
     =.  ta-this  (ta-hall-action %delete cyc `'Collection deleted')
     =/  tops=(list [top=@da topicful])  ~(tap by tops.u)
     |-  ^+  ta-this
     ?~  tops  ta-this
     =.  ta-this  $(tops t.tops)
-    (ta-delete-topic-inf 'Collection deleted' col i.tops)
+    (ta-delete-topic-inf 'Collection deleted' col.colful i.tops)
   ::
   ++  ta-delete-topic
-    |=  {col/time top/@da}  ^+  ta-this
-    =+  (ta-get-topic col top)
+    |=  {colful/coll-full top/@da}  ^+  ta-this
+    ::  if not for our ship, then proxy
+    ?:  |(=((need host.colful) our.bol) ?=($~ host.colful))
+      %-  ta-emit
+      :-  ost.bol
+      :^    %poke
+          /foreign-delete-topic
+        [(need host.colful) %collections]
+      [%collections-action [%delete-topic colful top]]
+    =+  (ta-get-topic col.colful top)
     ?~  -  ta-this  ::REVIEW error?
-    (ta-delete-topic-inf 'Topic deleted' col top u)
+    (ta-delete-topic-inf 'Topic deleted' col.colful top u)
   ::
   ++  ta-delete-topic-inf  ::REVIEW name
     |=  {inf/@t col/time top/@da tof/topicful}
@@ -216,10 +266,18 @@
     (ta-remove /comment [col top com.i.coms] %collections-comment)
   ::
   ++  ta-delete-comment
-    |=  {col/time top/@da com/@da}  ^+  +>
-    =+  (ta-get-comment col top com)
+    |=  {colful/coll-full top/@da com/@da}  ^+  +>
+    ::  if not for our ship, then proxy
+    ?:  |(=((need host.colful) our.bol) ?=($~ host.colful))
+      %-  ta-emit
+      :-  ost.bol
+      :^    %poke
+          /foreign-delete-comment
+        [(need host.colful) %collections]
+      [%collections-action [%delete-comment colful top com]]
+    =+  (ta-get-comment col.colful top com)
     ?~  -  ta-this  ::REVIEW error?
-    (ta-remove /comment [col top com] %collections-comment)
+    (ta-remove /comment [col.colful top com] %collections-comment)
   ::
   ::  %writing-files
   ::
