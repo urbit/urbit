@@ -193,7 +193,8 @@
   ::  form silk for the given mark
   ::
   ?:  ?=(%hoon normed-ext)
-    [%bake %hymn *coin loc]
+::    [%cast %hymn [%bake %noun *coin loc]]
+    [%cast %hymn [%ride [%cnts p=~[[%.y p=1]] q=~] [%core loc]]]
   ?:  ?=(%md normed-ext)
     [%cast %elem [%cast %down [%file loc(s [normed-ext s.loc])]]]
   ?:  ?=(%umd normed-ext)
