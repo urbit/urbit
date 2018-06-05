@@ -1486,9 +1486,9 @@ _proxy_dest(u3_proxy_conn* con_u)
 
   uL(fprintf(uH, "proxy: domain: %s\n", dom_c));
 
-  // XX get from -H
   // XX check EOS or port to prevent length extension
-  if ( 0 != strncmp(dom_c, ".urbit.org", strlen(".urbit.org")) ) {
+  if ( 0 != strncmp(dom_c + 1, u3_Host.ops_u.dns_c,
+                    strlen(u3_Host.ops_u.dns_c)) ) {
     free(hot_c);
     return u3_nul;
   }
@@ -1743,10 +1743,10 @@ proxy_ef_something(u3_noun blah)
   u3_proxy_client* cli_u = 0; //_proxy_client_new(u3_atom sip, c3_s por_s, c3_o sec)
 
   c3_c* sip_c = u3r_string(u3dc("scot", 'p', u3k(cli_u->sip)));
-  // XX use -H
-  c3_w len_w = strlen(sip_c) + strlen(".urbit.org");
-  cli_u->hot_c = c3_malloc(len_w);
-  snprintf(cli_u->hot_c, len_w - 1, "%s.urbit.org", sip_c + 1); // inc to skip '~'
+
+  // inc to skip '~'
+  cli_u->hot_c = c3_malloc(1 + strlen(sip_c) + strlen(u3_Host.ops_u.dns_c));
+  snprintf(cli_u->hot_c, 256, "%s.%s", sip_c + 1, u3_Host.ops_u.dns_c);
 
   free(sip_c);
 
