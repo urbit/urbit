@@ -1161,17 +1161,27 @@ _proxy_sock_read_downstream_cb(uv_stream_t* don_u,
     _proxy_conn_close(con_u);
   }
   else {
-    u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)buf_u->base);
+    uv_buf_t fub_u;
+
+    fub_u.len = siz_w;
+    fub_u.base = c3_malloc(siz_w);
+    memcpy(fub_u.base, buf_u->base, siz_w);
+
+    u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)fub_u.base);
 
     c3_i sas_i;
     if ( 0 != (sas_i = uv_write(&ruq_u->wri_u,
                                 (uv_stream_t*)con_u->upt_u,
-                                buf_u, 1,
+                                &fub_u, 1,
                                 _proxy_write_cb)) ) {
       uL(fprintf(uH, "proxy: read downstream: %s\n", uv_strerror(sas_i)));
       _proxy_conn_close(con_u);
       _proxy_writ_free(ruq_u);
     }
+  }
+
+  if ( 0 != buf_u->base ) {
+    free(buf_u->base);
   }
 }
 
@@ -1188,17 +1198,27 @@ _proxy_sock_read_upstream_cb(uv_stream_t* upt_u,
     _proxy_conn_close(con_u);
   }
   else {
-    u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)buf_u->base);
+    uv_buf_t fub_u;
+
+    fub_u.len = siz_w;
+    fub_u.base = c3_malloc(siz_w);
+    memcpy(fub_u.base, buf_u->base, siz_w);
+
+    u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)fub_u.base);
 
     c3_i sas_i;
     if ( 0 != (sas_i = uv_write(&ruq_u->wri_u,
                                 (uv_stream_t*)&(con_u->don_u),
-                                buf_u, 1,
+                                &fub_u, 1,
                                 _proxy_write_cb)) ) {
       uL(fprintf(uH, "proxy: read upstream: %s\n", uv_strerror(sas_i)));
       _proxy_conn_close(con_u);
       _proxy_writ_free(ruq_u);
     }
+  }
+
+  if ( 0 != buf_u->base ) {
+    free(buf_u->base);
   }
 }
 
@@ -1536,8 +1556,11 @@ _proxy_read_dest_cb(uv_stream_t* don_u,
   else {
     uL(fprintf(uH, "proxy: peek yep\n"));
 
-    // XX suport multiple
-    con_u->buf_u = uv_buf_init(buf_u->base, buf_u->len);
+    // XX suport multiple buffers
+
+    con_u->buf_u.len = siz_w;
+    con_u->buf_u.base = c3_malloc(siz_w);
+    memcpy(con_u->buf_u.base, buf_u->base, siz_w);
 
     u3_noun sip = _proxy_dest(con_u);
 
@@ -1573,6 +1596,10 @@ _proxy_read_dest_cb(uv_stream_t* don_u,
     }
 
     u3z(sip);
+  }
+
+  if ( 0 != buf_u->base ) {
+    free(buf_u->base);
   }
 }
 
