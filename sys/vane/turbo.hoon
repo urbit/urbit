@@ -1,4 +1,3 @@
-!:
 ::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
 |=  pit=vase
@@ -39,9 +38,9 @@
       ::  %f: to ford itself
       ::
       $:  %f
-      ::  %make: perform a build
+      ::  %build: perform a build
       ::
-      $%  $:  %make
+      $%  $:  %build
               ::  schematic: the schematic to build
               ::
               =schematic
@@ -398,12 +397,27 @@
     %-  enclose
     ;:(welp $(build [date head.schematic]) " " $(build [date tail.schematic]))
   ::
+      %core
+    :(welp "[core " (spud (en-beam (rail-to-beam source-path.schematic))) "]")
+  ::
+      %hood
+    :(welp "[hood " (spud (en-beam (rail-to-beam source-path.schematic))) "]")
+  ::
+      %plan
+    :(welp "[plan " (spud (en-beam (rail-to-beam path-to-render.schematic))) "]")
+  ::
       %scry
     (spud (en-beam (extract-beam resource.schematic ~)))
   ::
     ::    %slim
     ::  "slim {<subject-type.schematic>} {<formula.schematic>}"
   ==
+::  +rail-to-beam
+::
+++  rail-to-beam
+  |=  =rail
+  ^-  beam
+  [[ship.disc.rail desk.disc.rail [%ud 0]] spur.rail]
 ::  +unify-jugs: make a new jug, unifying sets for all keys
 ::
 ++  unify-jugs
@@ -1915,7 +1929,7 @@
               `[%sing care.scry-request case=[%da date] (flop s.beam.scry-request)]
           ==
         ::
-        [duct=~ [%pass wire note]]
+        [duct [%pass wire note]]
       ::  +register-sub-build-blocks: book-keeping on blocked builds
       ::
       ::    When we receive a %blocks +build-receipt, we need to register that
@@ -1986,6 +2000,7 @@
   ++  make
     |=  =build
     ^-  build-receipt
+    ~&  [%turbo-make (build-to-tape build)]
     ::  accessed-builds: builds accessed/depended on during this run.
     ::
     =|  accessed-builds=(list ^build)
@@ -4871,7 +4886,7 @@
         ::
         =.  moves  :_  moves
           ^-  move
-          [duct=~ [%pass wire=(clay-sub-wire disc) note]]
+          [duct [%pass wire=(clay-sub-wire disc) note]]
         ::
         =.  clay-subscriptions.state  (~(del in clay-subscriptions.state) disc)
         ::
@@ -4921,7 +4936,7 @@
     ::
     =.  moves  :_  moves
       ^-  move
-      [duct=~ [%pass wire=(clay-sub-wire disc) note]]
+      [duct [%pass wire=(clay-sub-wire disc) note]]
     ::
     =.  clay-subscriptions.state  (~(put in clay-subscriptions.state) disc)
     ::
@@ -5068,9 +5083,9 @@
     ((hard task:able) p.wrapped-task)
   ::
   ?-    -.task
-      ::  %make: request to perform a build
+      ::  %build: request to perform a build
       ::
-      %make
+      %build
    ::  perform the build indicated by :task
    ::
    ::    First, we find or create the :ship-state for :our.task,
@@ -5088,7 +5103,7 @@
    ::
    [moves ford-gate]
   ::
-      ::  %kill: cancel a %make
+      ::  %kill: cancel a %build
       ::
       %kill
     ::

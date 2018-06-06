@@ -13,14 +13,15 @@
 ::  since that's the only thing the client ever
 ::  subscribes to.
 ::
-/-    hall, sole                                        ::  structures
-/+    hall, sole                                        ::  libraries
+/-    hall-sur=hall, sole-sur=sole                      ::  structures
+/+    hall-lib=hall, sole-lib=sole                      ::  libraries
 /=    seed  /~  !>(.)
 ::
 ::::
   ::
-=,  hall
-=,  sole
+=,  hall-sur
+=,  sole-sur
+=,  hall-lib
 =>  :>  #
     :>  #  %arch
     :>  #
@@ -572,8 +573,12 @@
     :>  initialize the shell of this client.
     ::
     ^+  .
-    =/  she/shell
-      %*(. *shell id ost.bol, active (sy incir ~), width 80)
+    =|  she/shell
+    =.  id.she  ost.bol
+    ::  XXX: +sy should be smarter than this
+    =/  circle-list=(list circle)  [incir ~]
+    =.  active.she  (sy circle-list)
+    =.  width.she  80
     sh-done:~(sh-prod sh she)
   ::
   ++  ta-sole
@@ -660,7 +665,7 @@
       ::
       |=  cal/sole-change
       ^+  +>
-      =^  inv  say.she  (~(transceive sole say.she) cal)
+      =^  inv  say.she  (~(transceive sole-lib say.she) cal)
       =+  fix=(sh-sane inv buf.say.she)
       ?~  lit.fix
         +>.$
@@ -1000,7 +1005,7 @@
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
-          (~(transmit sole say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
+          (~(transmit sole-lib say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
       (sh-fact [%mor [%det lic] ?~(err ~ [%err u.err]~)])
     ::
     ++  sh-obey
@@ -1022,7 +1027,7 @@
       =+  buf=buf.say.she
       =?  ..sh-obey  &(?=({$';' *} buf) !?=($reply -.u.jub))
         (sh-note (tufa `(list @)`buf))
-      =^  cal  say.she  (~(transmit sole say.she) [%set ~])
+      =^  cal  say.she  (~(transmit sole-lib say.she) [%set ~])
       %+  sh-fact  %mor
       :~  [%nex ~]
           [%det cal]

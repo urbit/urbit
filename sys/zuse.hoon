@@ -879,9 +879,9 @@
     ::  +task:able:ford: requests to ford
     ::
     +=  task
-      $%  ::  %make: perform a build, either live or once
+      $%  ::  %build: perform a build, either live or once
           ::
-          $:  %make
+          $:  %build
               ::  our: who our ship is (remove after cc-release)
               ::
               our=@p
@@ -889,7 +889,7 @@
               ::
               =schematic
           ==
-          ::  %kill: stop a build; send on same duct as original %make request
+          ::  %kill: stop a build; send on same duct as original %build request
           ::
           $:  %kill
               ::  our: who our ship is (remove after cc-release)s
@@ -909,7 +909,7 @@
       $%  ::  %mass: memory usage; response to %wegh +task
           ::
           [%mass p=mass]
-          ::  %made: build result; response to %make +task
+          ::  %made: build result; response to %build +task
           ::
           $:  %made
               ::  date: formal date of the build
@@ -917,15 +917,19 @@
               date=@da
               ::  result: result of the build; either complete build, or error
               ::
-              $=  result
-              $%  ::  %complete: contains the result of the completed build
-                  ::
-                  [%complete =build-result]
-                  ::  %incomplete: couldn't finish build; contains error message
-                  ::
-                  [%incomplete =tang]
-      ==  ==  ==
+              result=made-result
+      ==  ==
     --
+  ::  +made-result: the main payload for a %made +gift
+  ::
+  +=  made-result
+    $%  ::  %complete: contains the result of the completed build
+        ::
+        [%complete =build-result]
+        ::  %incomplete: couldn't finish build; contains error message
+        ::
+        [%incomplete =tang]
+    ==
   ::  +disc: a desk on a ship; can be used as a beak that varies with time
   ::
   +=  disc  [=ship =desk]

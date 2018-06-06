@@ -131,7 +131,7 @@
   ::
   ++  mo-conf                                           ::  configure
     |=  {dap/dude lum/culm}
-    (mo-boot dap ?:((~(has by bum) dap) %old %new) p.p.lum q.p.lum da+now)
+    (mo-boot dap p.p.lum q.p.lum da+now)
   ::
   ++  mo-pass                                           ::  standard pass
     |=  {pax/path noh/note-arvo}
@@ -147,30 +147,42 @@
     =+  bol=(slew 12 vax)
     ?~  bol  |
     (~(nest ut p.u.bol) %| -:!>(*bowl))
+  ::  +mo-recieve-core: receives an app core built by ford-turbo
   ::
-  ++  mo-boom                                           ::  complete new boot
-    |=  {dap/dude byk/beak dep/@uvH gux/gage:ford}
+  ++  mo-recieve-core
+    |=  [dap=dude byk=beak made-result=made-result:ford-api]
     ^+  +>
-    ?-    -.gux
-        $tabl  ~|(%made-tabl !!)
-        $|
-      =.  +>  (mo-bold byk dap dep)
-      =.  +>  (mo-give %onto %| p.gux)
-      +>
-        $&
-      ?>  ?=(@ p.p.gux)
-      ?.  (mo-okay q.p.gux)
-        (mo-give %onto %| [%leaf "{<dap>}: bogus core"]~)
-      =.  +>  (mo-bold byk dap dep)
-      =.  +>  (mo-born dap byk q.p.gux)
-      =+  old=+>.$
-      =+  wag=(ap-prop:(ap-abed:ap dap [%high [~ our]]) ~)
-      ?^  -.wag
-        =.  +>.$  old
-        (mo-give %onto %| u.-.wag)
-      =.  +>.$  ap-abet:+.wag
-      (mo-give:(mo-claw dap) %onto %& dap %boot now)
-    ==
+    ::
+    ?:  ?=([%incomplete *] made-result)
+      (mo-give %onto %| tang.made-result)
+    ::
+    =/  build-result  build-result.made-result
+    ::
+    ?:  ?=([%error *] build-result)
+      (mo-give %onto %| message.build-result)
+    ::
+    =/  result-cage=cage  (result-to-cage:ford-api build-result)
+    ::
+    =/  app-data=(unit seat)  (~(get by bum) dap)
+    ?^  app-data
+      ::  update the path
+      ::
+      =.  bum  (~(put by bum) dap u.app-data(byk byk))
+      ::  magic update string from +mo-boon, "complete old boot"
+      ::
+      ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.result-cage)
+    ::  first install of the app
+    ::
+    ?.  (mo-okay q.result-cage)
+      (mo-give %onto %| [%leaf "{<dap>}: bogus core"]~)
+    =.  +>.$  (mo-born dap byk q.result-cage)
+    =+  old=+>.$
+    =+  wag=(ap-prop:(ap-abed:ap dap [%high [~ our]]) ~)
+    ?^  -.wag
+      =.  +>.$  old
+      (mo-give %onto %| u.-.wag)
+    =.  +>.$  ap-abet:+.wag
+    (mo-give:(mo-claw dap) %onto %& dap %boot now)
   ::
   ++  mo-born                                           ::  new seat
     |=  {dap/dude byk/beak hav/vase}
@@ -187,36 +199,14 @@
         r.zam  [[0 [~ ~]] ~ ~]
       ==
     ==
-  ::
-  ++  mo-boon                                           ::  complete old boot
-    |=  {dap/dude byk/beak dep/@uvH gux/gage:ford}
-    ^+  +>
-    =+  sut=(~(get by bum) dap)
-    ?~  sut
-      ~&  [%gall-old-boon dap]
-      +>.$
-    =.  bum  (~(put by bum) dap u.sut(byk byk))
-    =.  +>.$  (mo-bold byk dap dep)
-    ?-  -.gux
-      $tabl  ~|(%made-tabl !!)
-      $|     (mo-give %onto %| p.gux)
-      $&     ?>  ?=(@ p.p.gux)
-             ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.p.gux)
-    ==
-  ::
-  ++  mo-bold                                           ::  wait for dep
-    |=  {byk/beak dap/dude dep/@uvH}
-    ^+  +>
-    %+  mo-pass  [%sys %dep (scot %p p.byk) q.byk dap ~] 
-    [%f %wasp our dep &] 
+  ::  +mo-boot: sends an %exec to ford.
   ::
   ++  mo-boot                                           ::  create ship
-    |=  {dap/dude how/?($new $old) byk/beak}
+    |=  {dap/dude byk/beak}
     ^+  +>
-    ::  ~&  [%mo-boot dap how byk]
-    %+  mo-pass  [%sys how dap (scot %p p.byk) q.byk (scot r.byk) ~]
+    %+  mo-pass  [%sys %core dap (scot %p p.byk) q.byk (scot r.byk) ~]
     ^-  note-arvo
-    [%f %exec our `[byk %core [byk [dap %app ~]]]]
+    [%t %build our [%core [[p q]:byk [%hoon dap %app ~]]]]
   ::
   ++  mo-away                                           ::  foreign request
     |=  {him/ship caz/cush}                             ::  
@@ -315,34 +305,25 @@
     |=  {pax/path sih/sign-arvo}
     ^+  +>
     ?+    -.pax  !!
-        $dep                                            ::  update
-      ?>  ?=({$f $news *} sih)
-      ?>  ?=({@ @ @ $~} t.pax)
-      %^  mo-boot  i.t.t.t.pax
-        ?:((~(has by bum) i.t.t.t.pax) %old %new)
-      [(slav %p i.t.pax) i.t.t.pax [%da now]]
-    ::
-        $new
-      ?>  ?=({$f $made *} sih)
+        $core
+      ?>  ?=([%t %made *] sih)
       ?>  ?=({@ @ @ @ $~} t.pax)
-      (mo-boom i.t.pax (mo-chew t.t.pax) +>.sih)
+      (mo-recieve-core i.t.pax (mo-chew t.t.pax) result.sih)
     ::
-        $old                                            ::  reload old
-      ?>  ?=({$f $made *} sih)
-      ?>  ?=({@ @ @ @ $~} t.pax)
-      (mo-boon i.t.pax (mo-chew t.t.pax) +>.sih)
-    ::
-        $pel                                            ::  translated peer
+        %pel                                            ::  translated peer
       ?>  ?=({@ $~} t.pax)
       =+  mar=i.t.pax
-      ?>  ?=({$f $made *} sih)
-      ?-  -.q.+.sih
-        $tabl  ~|(%made-tabl !!)
-        $&    (mo-give %unto %diff p.q.+>.sih)
-        $|     =.  p.q.+>.sih  (turn p.q.+>.sih |=(a/tank rose+[~ "! " ~]^[a]~))
-              ~>  %slog.`%*(. >[%wh %y]< +> [>%mo-cyst-fail< (flop p.q.+>.sih)])
-              (mo-give %unto %quit ~)   ::  XX better errors pls
-      ==
+      ?>  ?=([%t %made *] sih)
+      ::
+      ?:  ?=([%incomplete *] result.sih)
+        (mo-give %unto %coup `tang.result.sih)
+      ::
+      =/  build-result  build-result.result.sih
+      ::
+      ?:  ?=([%error *] build-result)
+        (mo-give %unto %coup `message.build-result)
+      ::
+      (mo-give %unto %diff (result-to-cage:ford-api build-result))
     ::
         $red                                            ::  diff ack
       ?>  ?=({@ @ @ $~} t.pax)
@@ -360,19 +341,28 @@
       =.  +>.$  (mo-pass [%sys pax] %g %deal [him our] dap %pull ~)
       (mo-pass [%sys pax] %a %want [our him] [%g %gh dap ~] [num %x ~])
     ::
-        $rep                                            ::  reverse request
+        %rep                                            ::  reverse request
       ?>  ?=({@ @ @ $~} t.pax)
-      ?>  ?=({$f $made *} sih)
+      ?>  ?=([%t %made *] sih)
       =+  :*  him=(slav %p i.t.pax)
               dap=i.t.t.pax
               num=(slav %ud i.t.t.t.pax)
           ==
-      ?-  -.q.+>.sih
-        $tabl  ~|(%made-tabl !!)
-        $|     (mo-give %mack `p.q.+>.sih)                  ::  XX should crash
-        $&     =.  +>.$  (mo-give %mack ~)             ::  XX pump should ack
-               (mo-give(hen (mo-ball him num)) %unto %diff `cage`p.q.+>.sih)
-      ==
+      ::
+      ?:  ?=([%incomplete *] result.sih)
+        ::  "XX should crash"
+        (mo-give %mack `tang.result.sih)
+      ::
+      =/  build-result  build-result.result.sih
+      ::
+      ?:  ?=([%error *] build-result)
+        ::  "XX should crash"
+        (mo-give %mack `message.build-result)
+      ::
+      ::  "XX pump should ack"
+      =.  +>.$  (mo-give %mack ~)
+      =*  result-cage  (result-to-cage:ford-api build-result)
+      (mo-give(hen (mo-ball him num)) %unto %diff result-cage)
     ::
         $req                                            ::  inbound request
       ?>  ?=({@ @ @ $~} t.pax)
@@ -398,15 +388,21 @@
         $reap  (mo-give %mack p.cuf)
       ==
     ::
-        $val                                            ::  inbound validate
+        %val                                            ::  inbound validate
       ?>  ?=({@ @ $~} t.pax)
       =+  [him=(slav %p i.t.pax) dap=i.t.t.pax]
-      ?>  ?=({$f $made *} sih)
-      ?-  -.q.+>.sih
-        $tabl  !!
-        $|     (mo-give %unto %coup `p.q.+>.sih)        ::  XX invalid, crash
-        $&     (mo-clip dap `prey`[%high ~ him] %poke p.q.sih)
-      ==
+      ?>  ?=([%t %made *] sih)
+      ::
+      ?:  ?=([%incomplete *] result.sih)
+        (mo-give %unto %coup `tang.result.sih)
+      ::
+      =/  build-result  build-result.result.sih
+      ::
+      ?:  ?=([%error *] build-result)
+        (mo-give %unto %coup `message.build-result)
+      ::
+      =*  result-cage  (result-to-cage:ford-api build-result)
+      (mo-clip dap `prey`[%high ~ him] [%poke result-cage])
     ::
         $way                                            ::  outbound request
       ?>  ?=({$a $woot *} sih)
@@ -472,11 +468,14 @@
     ?:  ?=($puff -.cub)
       %+  mo-pass
         [%sys %val (scot %p q.q.pry) dap ~]
-      [%f %exec our ~ (mo-beak dap) %vale +.cub]
+      [%t %build our [%pin now [%vale [p q]:(mo-beak dap) +.cub]]]
     ?:  ?=($punk -.cub)
       %+  mo-pass
         [%sys %val (scot %p q.q.pry) dap ~]
-      [%f %exec our ~ (mo-beak dap) %cast p.cub %$ q.cub]
+      :*  %t  %build  our
+          ^-  schematic:ford-api
+          [%pin now [%cast [p q]:(mo-beak dap) p.cub [%$ q.cub]]]
+      ==
     ?:  ?=($peer-not -.cub)
       (mo-give %unto %reap (some p.cub))
     ap-abet:(ap-club:(ap-abed:ap dap pry) cub)
@@ -511,7 +510,7 @@
         $d
       %+  mo-pass
         [%sys %rep (scot %p him) dap (scot %ud num) ~]
-      [%f %exec our ~ (mo-beak dap) %vale p.ron q.ron]
+      [%t %build our [%pin now [%vale [p q]:(mo-beak dap) p.ron q.ron]]]
     ::
         $x  =.  +>  (mo-give %mack ~)                  ::  XX should crash
             (mo-give(hen (mo-ball him num)) %unto %quit ~)
@@ -589,7 +588,7 @@
         ?:  =(mar p.cay)  [%give %unto p.q.cov]
         :+  %pass
           [%sys %pel dap ~]
-        [%f %exec our ~ (mo-beak dap) %cast mar %$ cay]
+        [%t %build our [%pin now [%cast [p q]:(mo-beak dap) mar [%$ cay]]]]
       ::
           $pass
         :+  %pass  `path`[%use dap p.q.cov]
@@ -1219,7 +1218,7 @@
         $drop  `%c
         $info  `%c
         %kill  `%t
-        %make  `%t
+        %build  `%t
         $merg  `%c
         $mont  `%c
         $nuke  `%a

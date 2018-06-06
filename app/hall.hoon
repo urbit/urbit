@@ -8,18 +8,23 @@
 ::      lists of moons (or just ships in general?) that we define as "standalone"
 ::      so that the "convert to true identity" doesn't happen for them.
 ::
-/-    hall                                              ::  structures
-/+    hall, hall-legacy                                 ::  libraries
+/-    hall-sur=hall                                     ::  structures
+/+    hall-lib=hall, hall-legacy                        ::  libraries
 /=    seed  /~  !>(.)
-/=    filter-gram
-      /^  $-({telegram:hall bowl:gall} telegram:hall)
-      /|  /:  /%/filter  /!noun/
-          /~  |=({t/telegram:hall bowl:gall} t)
-      ==
+
+
+::  TODO: Figure out why this doesn't work:
+::
+::  /=    filter-gram
+::        /^  $-({telegram:hall bowl:gall} telegram:hall)
+::        /|  /:  /%/filter  /!noun/
+::            /~  |=({t/telegram:hall bowl:gall} t)
+::        ==
 ::
 ::::
   ::
-=,  hall
+=,  hall-sur
+=,  hall-lib
 =>  :>  #
     :>  #  %arch
     :>  #
@@ -578,7 +583,7 @@
       =-  (ta-think & our.bol tos)
       |-  ^-  tos/(list thought)
       ?~  ses  ~
-      =^  sir  eny.bol  ~(uniq hall bol)
+      =^  sir  eny.bol  ~(uniq hall-lib bol)
       :_  $(ses t.ses)
       [sir aud [now.bol i.ses]]
     ::
@@ -1494,7 +1499,9 @@
       ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
       =.  sep.gam  (so-sane sep.gam)
-      =.  gam  (filter-gram gam bol)
+      ::TODO  figure out why +filter-gram doesnt work in turd-turbo.
+      ::
+      ::=.  gam  (filter-gram gam bol)
       ::  if we already have it, ignore.
       =+  old=(~(get by known) uid.gam)
       ?.  &(?=(^ old) =(gam (snag u.old grams)))
@@ -2618,12 +2625,14 @@
     $group        %_  $  pax  t.pax
                     wat.qer   %-  ~(uni in wat.qer)
                               ^+  wat.qer
-                              (sy %group-l %group-r ~)
+                              =/  dat=(list circle-data)  [%group-l %group-r ~]
+                              (sy dat)
                   ==
     $config       %_  $  pax  t.pax
                     wat.qer   %-  ~(uni in wat.qer)
                               ^+  wat.qer
-                              (sy %config-l %config-r ~)
+                              =/  dat=(list circle-data)  [%config-l %config-r ~]
+                              (sy dat)
                   ==
   ==
 ::

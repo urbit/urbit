@@ -108,14 +108,14 @@
               mark 
               {$hiss hiss:eyre}
           ==
-          [%make wire @p schematic:ford-api]
+          [%build wire @p schematic:ford-api]
           [%kill wire @p]
           {$deal wire sock term club}                   ::
           {$info wire @p toro:clay}                     ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  sign                                            ::
-      $%  ::  %made: build result; response to %make +task
+      $%  ::  %made: build result; response to %build +task
           ::
           $:  %made
               ::  date: formal date of the build
@@ -345,7 +345,7 @@
       ?>  ?=($~ pux)
       ::  pin all builds to :now.hid so they don't get cached forever
       ::
-      (he-card(poy `+>+<(pux `way)) %make way our.hid %pin now.hid schematic)
+      (he-card(poy `+>+<(pux `way)) %build way our.hid %pin now.hid schematic)
     ::
     ++  dy-eyre                                         ::  send work to eyre
       |=  {way/wire usr/(unit knot) req/hiss:eyre}
