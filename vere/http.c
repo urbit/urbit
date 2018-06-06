@@ -1311,11 +1311,12 @@ _proxy_reverse_listen_cb(uv_stream_t* tcp_u, c3_i sas_i)
   else {
     uv_tcp_t* upt_u = c3_malloc(sizeof(*upt_u));
 
+    upt_u->data = rev_u->con_u;
     rev_u->con_u->upt_u = upt_u;
 
     uv_tcp_init(u3L, upt_u);
 
-      if ( 0 != (sas_i = uv_accept((uv_stream_t*)&rev_u->tcp_u, (uv_stream_t*)upt_u)) ) {
+    if ( 0 != (sas_i = uv_accept((uv_stream_t*)&rev_u->tcp_u, (uv_stream_t*)upt_u)) ) {
       uL(fprintf(uH, "proxy: accept: %s\n", uv_strerror(sas_i)));
 
       _proxy_conn_close(rev_u->con_u);
@@ -1386,12 +1387,14 @@ _proxy_reverse_start(u3_proxy_conn* con_u, u3_noun sip)
 
     uL(fprintf(uH, "proxy: listen: %d\n", rev_u->por_s));
 
-    // // XX confirm duct
-    // u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
-    //                    u3nc(u3k(u3A->sen), u3_nul));
+    // XX confirm duct
+    u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
+                       u3nc(u3k(u3A->sen), u3_nul));
 
-    // // [%prox who=@p por=@ud]
-    // u3v_plan(pax, u3nt(c3__prox, sip, u3i_words(1, rev_u->por_s)));
+    // [%wise p=@p q=@ud r=?]
+    u3v_plan(pax, u3nq(c3__wise, u3k(sip),
+                                 u3i_words(1, (c3_w*)&rev_u->por_s),
+                                 u3k(con_u->sec)));
   }
 }
 
@@ -1735,12 +1738,21 @@ _proxy_reverse_resolve(u3_proxy_client* cli_u)
   }
 }
 
-/* proxy_ef_something(): placeholder for reverse proxy request notification effect
+/* u3_http_ef_that(): reverse proxy request notification effect
 */
 void
-proxy_ef_something(u3_noun blah)
+u3_http_ef_that(u3_noun sip, u3_noun por, u3_noun sec)
 {
-  u3_proxy_client* cli_u = 0; //_proxy_client_new(u3_atom sip, c3_s por_s, c3_o sec)
+  uL(fprintf(uH, "proxy: ef that\n"));
+
+  // XX test types
+  u3_proxy_client* cli_u = _proxy_client_new((u3_atom)sip, (c3_s)por, (c3_o)sec);
+
+  if ( c3n == u3_Host.ops_u.net ) {
+    cli_u->ipf_w = INADDR_LOOPBACK;
+    _proxy_reverse_connect(cli_u);
+    return;
+  }
 
   c3_c* sip_c = u3r_string(u3dc("scot", 'p', u3k(cli_u->sip)));
 

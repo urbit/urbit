@@ -971,6 +971,13 @@
 
     /**  HTTP server.
     **/
+      /* u3_http_ef_that: send %that effect to http.
+      */
+        void
+        u3_http_ef_that(u3_noun sip,
+                        u3_noun por,
+                        u3_noun sec);
+
       /* u3_http_ef_thou(): send %thou effect to http.
       */
         void
