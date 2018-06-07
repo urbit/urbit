@@ -18,6 +18,7 @@
 #include "vere/vere.h"
 
 #include <picohttpparser.h>
+// #include <tls.h>
 
 static const c3_i TCP_BACKLOG = 16;
 
@@ -1473,6 +1474,21 @@ _proxy_parse_host(const uv_buf_t* buf_u, c3_c** hot_c)
   return u3_pars_good;
 }
 
+/* _proxy_parse_sni(): parse clienthello buffer for SNI
+*/
+static u3_proxy_pars
+_proxy_parse_sni(const uv_buf_t* buf_u, c3_c** hot_c)
+{
+  c3_i sas_i = 0; //tls_protocol->parse_packet(buf_u->base, buf_u->len, hot_c);
+
+  if ( 0 > sas_i ) {
+    // XX -2 good *hot_c = 0;
+    return ( -1 == sas_i ) ? u3_pars_moar : u3_pars_fail;
+  }
+
+  return u3_pars_good;
+}
+
 /* _proxy_parse_ship(): determine destination for proxied request
 */
 static u3_noun
@@ -1604,8 +1620,7 @@ _proxy_peek_cb(uv_stream_t* don_u,
     if ( c3n == con_u->sec ) {
       sat_e = _proxy_parse_host(&con_u->buf_u, &hot_c);
     } else {
-      // sat_e = _proxy_parse_sni(&con_u->buf_u, &hot_c);
-      sat_e = u3_pars_good;
+      sat_e = _proxy_parse_sni(&con_u->buf_u, &hot_c);
     }
 
     switch ( sat_e ) {
