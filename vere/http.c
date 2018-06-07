@@ -1161,11 +1161,7 @@ _proxy_sock_read_downstream_cb(uv_stream_t* don_u,
     _proxy_conn_close(con_u);
   }
   else {
-    uv_buf_t fub_u;
-
-    fub_u.len = siz_w;
-    fub_u.base = c3_malloc(siz_w);
-    memcpy(fub_u.base, buf_u->base, siz_w);
+    uv_buf_t fub_u = uv_buf_init(buf_u->base, siz_w);
 
     u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)fub_u.base);
 
@@ -1178,10 +1174,6 @@ _proxy_sock_read_downstream_cb(uv_stream_t* don_u,
       _proxy_conn_close(con_u);
       _proxy_writ_free(ruq_u);
     }
-  }
-
-  if ( 0 != buf_u->base ) {
-    free(buf_u->base);
   }
 }
 
@@ -1198,11 +1190,7 @@ _proxy_sock_read_upstream_cb(uv_stream_t* upt_u,
     _proxy_conn_close(con_u);
   }
   else {
-    uv_buf_t fub_u;
-
-    fub_u.len = siz_w;
-    fub_u.base = c3_malloc(siz_w);
-    memcpy(fub_u.base, buf_u->base, siz_w);
+    uv_buf_t fub_u = uv_buf_init(buf_u->base, siz_w);
 
     u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)fub_u.base);
 
@@ -1215,10 +1203,6 @@ _proxy_sock_read_upstream_cb(uv_stream_t* upt_u,
       _proxy_conn_close(con_u);
       _proxy_writ_free(ruq_u);
     }
-  }
-
-  if ( 0 != buf_u->base ) {
-    free(buf_u->base);
   }
 }
 
