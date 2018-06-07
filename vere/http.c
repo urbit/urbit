@@ -920,6 +920,12 @@ u3_http_io_exit(void)
 
 // XX rename all of these
 
+typedef enum {
+  u3_pars_good = 0,                   //  success
+  u3_pars_fail = 1,                   //  failure
+  u3_pars_moar = 2                    //  incomplete
+} u3_proxy_pars;
+
 /* u3_proxy_writ: struct for uv_write lifecycle management.
 */
 typedef struct _u3_proxy_writ {
@@ -1414,20 +1420,13 @@ _proxy_reverse_start(u3_proxy_conn* con_u, u3_noun sip)
 
 /* _proxy_parse_host(): parse plaintext buffer for Host header
 */
-static c3_c*
-_proxy_parse_host(const uv_buf_t* buf_u)
+static u3_proxy_pars
+_proxy_parse_host(const uv_buf_t* buf_u, c3_c** hot_c)
 {
-  c3_c* hot_c = 0;
-
   struct phr_header hed_u[H2O_MAX_HEADERS];
   size_t hed_t = H2O_MAX_HEADERS;
 
   {
-    size_t len_t = buf_u->len < H2O_MAX_REQLEN ? buf_u->len : H2O_MAX_REQLEN;
-    // XX slowloris?
-    c3_i las_i = 0;
-    c3_i ret_i;
-
     // unused
     c3_i        ver_i;
     const c3_c* met_c;
@@ -1435,17 +1434,17 @@ _proxy_parse_host(const uv_buf_t* buf_u)
     const c3_c* pat_c;
     size_t      pat_t;
 
-    ret_i = phr_parse_request(buf_u->base, len_t, &met_c, &met_t,
+    size_t len_t = buf_u->len < H2O_MAX_REQLEN ? buf_u->len : H2O_MAX_REQLEN;
+    // XX slowloris?
+    c3_i las_i = 0;
+    c3_i sas_i;
+
+    sas_i = phr_parse_request(buf_u->base, len_t, &met_c, &met_t,
                               &pat_c, &pat_t, &ver_i, hed_u, &hed_t, las_i);
 
-    if ( -1 == ret_i ) {
-      // parse error
-      // XX log error? close connection?
-      return hot_c;
-    }
-    else if ( -2 == ret_i ) {
-      // incomplete
-      // XX await next buffer?
+    switch ( sas_i ) {
+      case -1: return u3_pars_fail;
+      case -2: return u3_pars_moar;
     }
   }
 
@@ -1459,35 +1458,26 @@ _proxy_parse_host(const uv_buf_t* buf_u)
     if ( 0 != (tok_t = h2o_lookup_token(hed_u[i].name, hed_u[i].name_len)) ) {
       if ( tok_t->is_init_header_special && H2O_TOKEN_HOST == tok_t ) {
 
-        hot_c = c3_malloc(1 + hed_u[i].value_len);
-        hot_c[hed_u[i].value_len] = 0;
-        memcpy(hot_c, hed_u[i].value, hed_u[i].value_len);
+        *hot_c = c3_malloc(1 + hed_u[i].value_len);
+        // XX cores???
+        // *hot_c[hed_u[i].value_len] = 0;
+        // XX skip port if present
+        memcpy(*hot_c, hed_u[i].value, hed_u[i].value_len);
         break;
       }
     }
   }
 
-  return hot_c;
+  return u3_pars_good;
 }
 
-/* _proxy_dest(): determine destination for proxied request
+/* _proxy_parse_ship(): determine destination for proxied request
 */
 static u3_noun
-_proxy_dest(u3_proxy_conn* con_u)
+_proxy_parse_ship(c3_c* hot_c)
 {
-  c3_c* hot_c;
   c3_c* dom_c;
 
-  c3_assert( 0 != con_u->buf_u.base );
-
-  if ( c3n == con_u->sec ) {
-    hot_c = _proxy_parse_host(&con_u->buf_u);
-  } else {
-    // XX - SNI
-    hot_c = 0;
-  }
-
-  // XX signal close connection on parse failure?
   if ( 0 == hot_c ) {
     return u3_nul;
   }
@@ -1529,6 +1519,45 @@ _proxy_dest(u3_proxy_conn* con_u)
   }
 }
 
+/* _proxy_dest(): proxy to destination
+*/
+static void
+_proxy_dest(u3_proxy_conn* con_u, u3_noun sip)
+{
+  uL(fprintf(uH, "proxy: sip\n"));
+
+  if ( u3_nul == sip ) {
+    uL(fprintf(uH, "proxy: sip nul\n"));
+    _proxy_lopc(con_u);
+  }
+  else {
+    u3_noun hip = u3k(u3t(sip));
+    u3_noun own = u3A->own;
+    c3_o our = c3n;
+
+    while ( u3_nul != own ) {
+      if ( c3y == u3r_sing(hip, u3h(own)) ) {
+        our = c3y;
+        break;
+      }
+      own = u3t(own);
+    }
+
+    if ( c3y == our ) {
+      uL(fprintf(uH, "proxy: sip us\n"));
+      _proxy_lopc(con_u);
+    }
+    else {
+      // XX check if (sein:title sip) == our
+      // XX check will
+      uL(fprintf(uH, "proxy: sip them\n"));
+      _proxy_reverse_start(con_u, hip);
+    }
+  }
+
+  u3z(sip);
+}
+
 /* _proxy_read_dest_cb(): read callback for peeking at proxied request
 */
 static void
@@ -1556,40 +1585,32 @@ _proxy_read_dest_cb(uv_stream_t* don_u,
     con_u->buf_u.base = c3_malloc(siz_w);
     memcpy(con_u->buf_u.base, buf_u->base, siz_w);
 
-    u3_noun sip = _proxy_dest(con_u);
+    u3_proxy_pars sat_e;
+    c3_c* hot_c = 0;
 
-    uL(fprintf(uH, "proxy: sip\n"));
-
-    if ( u3_nul == sip ) {
-      uL(fprintf(uH, "proxy: sip nul\n"));
-      _proxy_lopc(con_u);
-    }
-    else {
-      u3_noun hip = u3k(u3t(sip));
-      u3_noun own = u3A->own;
-      c3_o our = c3n;
-
-      while ( u3_nul != own ) {
-        if ( c3y == u3r_sing(hip, u3h(own)) ) {
-          our = c3y;
-          break;
-        }
-        own = u3t(own);
-      }
-
-      if ( c3y == our ) {
-        uL(fprintf(uH, "proxy: sip us\n"));
-        _proxy_lopc(con_u);
-      }
-      else {
-        // XX check if (sein:title sip) == our
-        // XX check will
-        uL(fprintf(uH, "proxy: sip them\n"));
-        _proxy_reverse_start(con_u, hip);
-      }
+    if ( c3n == con_u->sec ) {
+      sat_e = _proxy_parse_host(&con_u->buf_u, &hot_c);
+    } else {
+      // sat_e = _proxy_parse_sni(&con_u->buf_u, &hot_c);
+      sat_e = u3_pars_good;
     }
 
-    u3z(sip);
+    switch ( sat_e ) {
+      case u3_pars_fail: {
+        uL(fprintf(uH, "proxy: peek fail\n"));
+        // _proxy_conn_close(con_u);
+      }
+
+      case u3_pars_moar: {
+        uL(fprintf(uH, "proxy: peek moar\n"));
+        // XX keep listening/parsing
+      }
+
+      case u3_pars_good: {
+        u3_noun sip = _proxy_parse_ship(hot_c);
+        _proxy_dest(con_u, sip);
+      }
+    }
   }
 
   if ( 0 != buf_u->base ) {
