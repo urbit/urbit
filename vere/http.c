@@ -1172,6 +1172,7 @@ _proxy_sock_read_downstream_cb(uv_stream_t* don_u,
   u3_proxy_conn* con_u = don_u->data;
 
   if ( (UV_EOF == siz_w) || (0 > siz_w) ) {
+    uL(fprintf(uH, "proxy: close downstream: %s\n", uv_strerror(siz_w)));
     _proxy_conn_close(con_u);
   }
   else {
@@ -1201,6 +1202,7 @@ _proxy_sock_read_upstream_cb(uv_stream_t* upt_u,
   u3_proxy_conn* con_u = upt_u->data;
 
   if ( (UV_EOF == siz_w) || (0 > siz_w) ) {
+    uL(fprintf(uH, "proxy: close upstream: %s\n", uv_strerror(siz_w)));
     _proxy_conn_close(con_u);
   }
   else {
@@ -1592,6 +1594,7 @@ _proxy_peek_cb(uv_stream_t* don_u,
 
   uL(fprintf(uH, "proxy: peek cb\n"));
 
+  // XX check EOF first
   uv_read_stop(don_u);
 
   if ( (UV_EOF == siz_w) || (0 > siz_w) ) {
@@ -1864,6 +1867,7 @@ u3_http_ef_that(u3_noun sip, u3_noun por, u3_noun sec)
 
   // inc to skip '~'
   cli_u->hot_c = c3_malloc(1 + strlen(sip_c) + strlen(u3_Host.ops_u.dns_c));
+  // XX len_w
   snprintf(cli_u->hot_c, 256, "%s.%s", sip_c + 1, u3_Host.ops_u.dns_c);
 
   free(sip_c);
