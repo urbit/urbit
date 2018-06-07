@@ -880,9 +880,6 @@ u3_http_io_init()
   }
 
   u3_Host.tls_u = _http_init_tls();
-
-  _proxy_sock_start(_proxy_listener_new(9090, c3n));
-  // _proxy_sock_start(_proxy_listener_new(9443, c3y));
 }
 
 /* u3_http_io_talk(): start http I/O.
@@ -897,6 +894,9 @@ u3_http_io_talk()
   }
 
   _http_write_ports_file(u3_Host.dir_c);
+
+  _proxy_sock_start(_proxy_listener_new(80, c3n));
+  _proxy_sock_start(_proxy_listener_new(443, c3y));
 }
 
 /* u3_http_io_poll(): poll kernel for http I/O.
@@ -1702,20 +1702,43 @@ _proxy_sock_start(u3_proxy_listener* lis_u)
   memset(&add_u, 0, sizeof(add_u));
   add_u.sin_family = AF_INET;
   add_u.sin_addr.s_addr = INADDR_ANY;
-  add_u.sin_port = htons(lis_u->por_s);
 
-  c3_i sas_i;
+  /*  Try ascending ports.
+  */
+  while ( 1 ) {
+    c3_i sas_i;
 
-  sas_i = uv_tcp_bind(&lis_u->sev_u, (const struct sockaddr*)&add_u, 0);
+    add_u.sin_port = htons(lis_u->por_s);
+    sas_i = uv_tcp_bind(&lis_u->sev_u, (const struct sockaddr*)&add_u, 0);
 
-  if ( 0 != sas_i ||
-       0 != (sas_i = uv_listen((uv_stream_t*)&lis_u->sev_u,
-                               TCP_BACKLOG, _proxy_sock_listen_cb)) ) {
-    if ( UV_EADDRINUSE == sas_i ) {
+    if ( 0 != sas_i ||
+         0 != (sas_i = uv_listen((uv_stream_t*)&lis_u->sev_u,
+                                 TCP_BACKLOG, _proxy_sock_listen_cb)) ) {
+      if ( UV_EADDRINUSE == sas_i ) {
+        lis_u->por_s++;
+        continue;
+      }
+      else if ( UV_EACCES == sas_i ) {
+        if ( (c3y == lis_u->sec) && (443 == lis_u->por_s) ) {
+          lis_u->por_s = 9443;
+          continue;
+        }
+        else if ( (c3n == lis_u->sec) && (80 == lis_u->por_s) ) {
+          lis_u->por_s = 9090;
+          continue;
+        }
+      }
+
       uL(fprintf(uH, "proxy: listen: %s\n", uv_strerror(sas_i)));
       //wat do
       _proxy_listener_free(lis_u);
+      return;
     }
+
+    uL(fprintf(uH, "proxy: live (%s) on %d\n",
+                   (c3y == lis_u->sec) ? "secure" : "insecure",
+                   lis_u->por_s));
+    break;
   }
 }
 
