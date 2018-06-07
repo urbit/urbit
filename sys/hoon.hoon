@@ -5712,8 +5712,8 @@
               [%frag p/term]                            ::  .leg
               [%funk p/term]                            ::  +arm
           ==                                            ::
-+$  body  [summary=cord details=(list sect)]            ::  
-+$  help  [links=(list link) =body]                     ::  documentation 
++$  crib  [summary=cord details=(list sect)]            ::  
++$  help  [links=(list link) =crib]                     ::  documentation 
 +$  limb  $@  term                                      ::  wing element
           $%  {%& p/axis}                               ::  by geometry
               {%| p/@ud q/(unit term)}                  ::  by name
@@ -5798,6 +5798,15 @@
           $%  {$0 ~}                                    ::  no toga
               {$1 p/term q/toga}                        ::  deep toga
               {$2 p/toga q/toga}                        ::  cell toga
+          ==                                            ::
++$  rind                                                ::  resurface
+          $@  =term                                     ::  name/~[term %none]
+          $%  [%cell =rind =rind]                       ::  pair
+              [%help =help =rind]                       ::  description
+              [%name =term =rind]                       ::  label
+              [%none ~]                                 ::  no added rind
+              [%spec =spec]                             ::  type
+              [%wash depth=@ud]                         ::  strip face
           ==                                            ::
 +$  tome  (pair what (map term hoon))                   ::  core chapter
 +$  tope                                                ::  topographic type
@@ -5887,6 +5896,7 @@
     {$ktdt p/hoon q/hoon}                               ::  ^.  self-cast
     {$ktls p/hoon q/hoon}                               ::  ^+  expression cast
     {$kthp p/spec q/hoon}                               ::  ^-  structure cast
+    {$kthx p/rind q/hoon}                               ::  ^#  new toga
     {$ktpd p/hoon}                                      ::  ^&  covariant
     {$ktsg p/hoon}                                      ::  ^~  constant
     {$ktts p/toga q/hoon}                               ::  ^=  label
@@ -5969,7 +5979,7 @@
               {$0 p/@}                                  ::  axis select
           ==                                            ::
 +$  note                                                ::  type annotation
-          $%  {$help help}                              ::  documentation
+          $%  {$help p/help}                            ::  documentation
               {$know p/stud}                            ::  global standard
               {$made p/term q/(unit (list wing))}       ::  structure
           ==                                            ::
@@ -7621,7 +7631,7 @@
   ++  home  
     ::  express a hoon against the original subject
     ::
-    |=  gen/hoon 
+    |=  gen/hoon
     ^-  hoon 
     =+  ^-  wing 
         ?:  =(1 dom)
@@ -8223,30 +8233,81 @@
 ::  =+  hav=half
 ::  ?~  hav  [[[[%| 0 ~] [%& axe] ~] gen] air]
 ::  $(gen p.u.hav, axe (peg axe 2), air $(gen q.u.hav, axe (peg axe 3)))
+::
+  ++  half
+    |-  ^-  (unit (pair hoon hoon))
+    ?+  gen  ~
+      {^ *}       `[p.gen q.gen]
+      {$dbug *}   $(gen q.gen)
+      {$clcb *}   `[q.gen p.gen]
+      {$clhp *}   `[p.gen q.gen]
+      {$clkt *}   `[p.gen %clls q.gen r.gen s.gen]
+      {$clsg *}   ?~(p.gen ~ `[i.p.gen %clsg t.p.gen])
+      {$cltr *}   ?~  p.gen  ~
+                  ?~(t.p.gen $(gen i.p.gen) `[i.p.gen %cltr t.p.gen])
+    ==
+  ::  +reto: temporary toga on rind
+  ::
+  ++  reto
+    |=  [=toga =rind]
+    ^-  (unit ^rind)
+    ?@(toga `[%name toga rind] ~)
 ::::
-::++  half
-::  |-  ^-  (unit (pair hoon hoon))
-::  ?+  gen  ~
-::    {^ *}       `[p.gen q.gen]
-::    {$dbug *}   $(gen q.gen)
-::    {$clcb *}   `[q.gen p.gen]
-::    {$clhp *}   `[p.gen q.gen]
-::    {$clkt *}   `[p.gen %clls q.gen r.gen s.gen]
-::    {$clsg *}   ?~(p.gen ~ `[i.p.gen %clsg t.p.gen])
-::    {$cltr *}   ?~  p.gen  ~
-::                ?~(t.p.gen $(gen i.p.gen) `[i.p.gen %cltr t.p.gen])
-::  ==
-::::
+  ::  +hind: hoon to rind
+  ::
+  ++  hind
+    |-  ^-  (unit rind)
+    ?+    gen
+      =+(open ?:(=(- gen) ~ $(gen -)))
+    ::
+        [^ *]
+      =+  [$(gen p.gen) $(gen q.gen)]
+      ?~(-< ~ ?~(-> ~ `[%cell -<+ ->+]))
+    ::
+        [%base %noun]
+      `[%none ~]
+    ::
+        [%cnts [@ ~] ~]  
+      `i.p.gen
+    ::
+        [%limb @]        
+      `p.gen
+    ::
+        [%note [%help *] *]
+      (bind $(gen q.gen) |=(=rind [%help p.p.gen rind])) 
+    ::
+        [%wing *]
+      ?:  ?=([@ ~] p.gen)
+        `i.p.gen
+      =/  depth  0
+      |-  ^-  (unit rind)
+      ?~  p.gen  `[%wash depth]
+      ?.  =([%| 0 ~] i.p.gen)  ~
+      $(p.gen t.p.gen)
+    ::
+        [%ktts *]
+      (biff $(gen q.gen) |=(=rind (reto p.gen rind)))
+    ::
+        [%kttr *]
+      `[%spec p.gen]
+    ::
+        [%kthx *]
+      %+  biff  $(gen q.gen) 
+      |=  =rind 
+      ?@  p.gen  `[%name p.gen rind]
+      ?.  ?=([%name @ [%none ~]] p.gen)  ~
+      `[%name term.p.gen rind]
+    ==
   ++  hock
     |-  ^-  toga
     ?-  gen
       {$cnts {@ ~} ~}  i.p.gen
       {$limb @}        p.gen
-      {$wing {@ ~}}     i.p.gen
-      {$dbug *}          $(gen q.gen)
-      {@ *}              =+(neg=open ?:(=(gen neg) [%0 ~] $(gen neg)))
-      {^ *}              =+  toe=[$(gen p.gen) $(gen q.gen)]
-                         ?:(=(toe [[%0 ~] [%0 ~]]) [%0 ~] [%2 toe])
+      {$wing {@ ~}}    i.p.gen
+      {$dbug *}        $(gen q.gen)
+      {@ *}            =+(neg=open ?:(=(gen neg) [%0 ~] $(gen neg)))
+      {^ *}            =+  toe=[$(gen p.gen) $(gen q.gen)]
+                       ?:(=(toe [[%0 ~] [%0 ~]]) [%0 ~] [%2 toe])
     ==
   ::
   ++  open
@@ -8385,6 +8446,43 @@
     ::
         {$ktdt *}  [%ktls [%cncl p.gen q.gen ~] q.gen]
         {$kthp *}  [%ktls ~(example ax fab p.gen) q.gen]
+        {$kthx *}
+      |-  ^-  hoon
+      ?-    p.gen
+          @
+        [%tsld [%tune p.gen] q.gen]
+      ::
+          [%cell *]
+        =+  haf=~(half ap q.gen)
+        ?^  haf
+          :-  $(p.gen rind.p.gen, q.gen p.u.haf)
+          $(p.gen ^rind.p.gen, q.gen q.u.haf)
+        :+  %tsls
+          q.gen
+        :-  $(p.gen rind.p.gen, q.gen [%$ 4])
+        $(p.gen ^rind.p.gen, q.gen [%$ 5])
+      ::
+          [%help *]
+        [%note [%help help.p.gen] $(p.gen rind.p.gen)] 
+      ::
+          [%name *]
+        [%tsld [%tune term.p.gen] $(p.gen rind.p.gen)]
+      ::
+          [%none ~]
+        q.gen
+      ::
+          [%spec *]
+        [%kthp spec.p.gen q.gen]
+      ::
+          [%wash *]
+        :+  %tsld
+          :-  %wing 
+          |-  ^-  wing
+          ?:  =(0 depth.p.gen)  ~
+          [[%| 0 ~] $(depth.p.gen (dec depth.p.gen))]
+        q.gen
+      ==
+    ::
         {$sgbr *}
       :+  %sgbn
         :-  %mean
@@ -10161,9 +10259,9 @@
       {$note *}  (hint [sut p.gen] $(gen q.gen))
       {$sgzp *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       {$sgbn *}  $(gen q.gen)
-      {$tsbn *}   $(gen q.gen, sut $(gen p.gen))
-      {$tstr *}   $(gen r.gen, sut (buss p.gen q.gen))
-      {$wtcl *}    =+  [fex=(gain p.gen) wux=(lose p.gen)]
+      {$tsbn *}  $(gen q.gen, sut $(gen p.gen))
+      {$tstr *}  $(gen r.gen, sut (buss p.gen q.gen))
+      {$wtcl *}  =+  [fex=(gain p.gen) wux=(lose p.gen)]
                  %-  fork  :~
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
                    ?:(=(%void wux) %void $(sut wux, gen r.gen))
@@ -12436,7 +12534,20 @@
           ==
         ==
       :-  '='
-        (stag %dtts ;~(pfix tis (ifix [lit rit] ;~(glam wide wide))))
+        ;~  pfix  tis
+          ;~  pose
+            (stag %dtts (ifix [lit rit] ;~(glam wide wide)))
+          ::
+            %+  sear
+              ::  mainly used for +rind formation
+              ::
+              |=  =spec 
+              ^-  (unit hoon)
+              %+  bind  ~(autoname ax & spec) 
+              |=(=term `hoon`[%ktts term %kttr spec])
+            wyde
+          ==
+        ==
       :-  '?'
         ;~  pose
           %+  stag  %ktcl
