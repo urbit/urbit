@@ -1309,8 +1309,14 @@ _proxy_lopc(u3_proxy_conn* con_u)
   uv_connect_t* upc_u = c3_malloc(sizeof(*upc_u));
   upc_u->data = upt_u;
 
-  // XX check return?
-  uv_tcp_connect(upc_u, upt_u, (const struct sockaddr*)&lop_u, _proxy_lopc_connect_cb);
+  c3_i sas_i;
+
+  if ( 0 != (sas_i = uv_tcp_connect(upc_u, upt_u,
+                                    (const struct sockaddr*)&lop_u,
+                                    _proxy_lopc_connect_cb)) ) {
+      uL(fprintf(uH, "proxy: loopback: %s\n", uv_strerror(sas_i)));
+      _proxy_conn_close(con_u);
+  }
 }
 
 /* _proxy_reverse_listen_cb(): accept connection on ship-specific listener
@@ -1710,10 +1716,14 @@ _proxy_reverse_connect(u3_proxy_client* cli_u)
   uv_connect_t* upc_u = c3_malloc(sizeof(*upc_u));
   upc_u->data = con_u;
 
-  // XX check return?
-  uv_tcp_connect(upc_u, &con_u->don_u,
-                 (const struct sockaddr*)&add_u,
-                 _proxy_reverse_connect_cb);
+  c3_i sas_i;
+
+  if ( 0 != (sas_i = uv_tcp_connect(upc_u, &con_u->don_u,
+                                    (const struct sockaddr*)&add_u,
+                                    _proxy_reverse_connect_cb)) ) {
+      uL(fprintf(uH, "proxy: reverse: %s\n", uv_strerror(sas_i)));
+      _proxy_conn_close(con_u);
+  }
 }
 
 /* _proxy_reverse_resolve(): IP address resolution callback
