@@ -811,7 +811,10 @@ u3_http_ef_thou(c3_l     sev_l,
   u3z(rep);
 }
 
-static void _proxy_sock_start(void);
+typedef struct _u3_proxy_listener u3_proxy_listener;
+
+static u3_proxy_listener* _proxy_listener_new(c3_s por_s, c3_o sec);
+static void _proxy_sock_start(u3_proxy_listener* lis_u);
 
 /* u3_http_io_init(): initialize http I/O.
 */
@@ -877,7 +880,8 @@ u3_http_io_init()
 
   u3_Host.tls_u = _http_init_tls();
 
-  _proxy_sock_start();
+  _proxy_sock_start(_proxy_listener_new(9090, c3n));
+  // _proxy_sock_start(_proxy_listener_new(9443, c3y));
 }
 
 /* u3_http_io_talk(): start http I/O.
@@ -1632,10 +1636,8 @@ _proxy_sock_listen_cb(uv_stream_t* sev_u, c3_i sas_i)
 /* _proxy_sock_start(): start proxy listener
 */
 static void
-_proxy_sock_start(void)
+_proxy_sock_start(u3_proxy_listener* lis_u)
 {
-  u3_proxy_listener* lis_u = _proxy_listener_new(9090, c3n);
-
   uv_tcp_init(u3L, &lis_u->sev_u);
 
   struct sockaddr_in add_u;
