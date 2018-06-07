@@ -1222,13 +1222,15 @@ static void
 _proxy_fire(u3_proxy_conn* con_u)
 {
   if ( 0 != con_u->buf_u.base ) {
-    // XX free it later ...
-    u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, 0);
+    uv_buf_t fub_u = con_u->buf_u;
+    con_u->buf_u = uv_buf_init(0, 0);
+
+    u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)fub_u.base);
 
     c3_i sas_i;
     if ( 0 != (sas_i = uv_write(&ruq_u->wri_u,
                                 (uv_stream_t*)con_u->upt_u,
-                                &con_u->buf_u, 1,
+                                &fub_u, 1,
                                 _proxy_write_cb)) ) {
       uL(fprintf(uH, "proxy: write pending: %s\n", uv_strerror(sas_i)));
       // XX wat do
@@ -1558,12 +1560,14 @@ _proxy_dest(u3_proxy_conn* con_u, u3_noun sip)
   u3z(sip);
 }
 
-/* _proxy_read_dest_cb(): read callback for peeking at proxied request
+static void _proxy_peek(u3_proxy_conn* con_u);
+
+/* _proxy_peek_cb(): read callback for peeking at proxied request
 */
 static void
-_proxy_read_dest_cb(uv_stream_t* don_u,
-                    ssize_t      siz_w,
-                    const uv_buf_t *     buf_u)
+_proxy_peek_cb(uv_stream_t* don_u,
+               ssize_t      siz_w,
+               const uv_buf_t *     buf_u)
 {
   u3_proxy_conn* con_u = don_u->data;
 
@@ -1579,11 +1583,20 @@ _proxy_read_dest_cb(uv_stream_t* don_u,
   else {
     uL(fprintf(uH, "proxy: peek yep\n"));
 
-    // XX suport multiple buffers
+    if ( 0 == con_u->buf_u.base ) {
+      void* ptr_v = c3_malloc(siz_w);
+      memcpy(ptr_v, buf_u->base, siz_w);
+      con_u->buf_u = uv_buf_init(ptr_v, siz_w);
+    }
+    else {
+      c3_w len_w = siz_w + con_u->buf_u.len;
+      // XX c3_realloc
+      void* ptr_v = realloc(con_u->buf_u.base, len_w);
+      memcpy(ptr_v + con_u->buf_u.len, buf_u->base, siz_w);
+      con_u->buf_u = uv_buf_init(ptr_v, len_w);
 
-    con_u->buf_u.len = siz_w;
-    con_u->buf_u.base = c3_malloc(siz_w);
-    memcpy(con_u->buf_u.base, buf_u->base, siz_w);
+      free(buf_u->base);
+    }
 
     u3_proxy_pars sat_e;
     c3_c* hot_c = 0;
@@ -1598,12 +1611,12 @@ _proxy_read_dest_cb(uv_stream_t* don_u,
     switch ( sat_e ) {
       case u3_pars_fail: {
         uL(fprintf(uH, "proxy: peek fail\n"));
-        // _proxy_conn_close(con_u);
+        _proxy_conn_close(con_u);
       }
 
       case u3_pars_moar: {
         uL(fprintf(uH, "proxy: peek moar\n"));
-        // XX keep listening/parsing
+        _proxy_peek(con_u);
       }
 
       case u3_pars_good: {
@@ -1616,6 +1629,15 @@ _proxy_read_dest_cb(uv_stream_t* don_u,
   if ( 0 != buf_u->base ) {
     free(buf_u->base);
   }
+}
+
+/* _proxy_peek(): peek at proxied request for destination
+*/
+static void
+_proxy_peek(u3_proxy_conn* con_u)
+{
+  uv_read_start((uv_stream_t*)&con_u->don_u,
+                _proxy_alloc, _proxy_peek_cb);
 }
 
 /* _proxy_sock_new(): accept new proxied request
@@ -1634,8 +1656,7 @@ _proxy_sock_new(u3_proxy_listener* lis_u)
     _proxy_conn_close(con_u);
   }
   else {
-    uv_read_start((uv_stream_t*)&con_u->don_u,
-                  _proxy_alloc, _proxy_read_dest_cb);
+    _proxy_peek(con_u);
   }
 }
 
