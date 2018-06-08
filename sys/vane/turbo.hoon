@@ -194,7 +194,7 @@
       latest-by-disc=(map disc @da)
       ::  clay-subscriptions: ducts we'll use to cancel existing clay requests
       ::
-      clay-subscriptions=(set disc)
+      clay-subscriptions=(map disc duct)
       ::  resource-updates: all clay updates we need to know about
       ::
       ::    resource-updates stores all Clay changes at dates that
@@ -1009,7 +1009,7 @@
     =/  =disc  [ship desk]
     ::  delete the now-dead clay subscription
     ::
-    =.  clay-subscriptions.state  (~(del in clay-subscriptions.state) disc)
+    =.  clay-subscriptions.state  (~(del by clay-subscriptions.state) disc)
     ::
     =/  resources=(list resource)
       %+  turn  ~(tap in care-paths)
@@ -4872,27 +4872,25 @@
     ::
     =/  resources=(set resource)
       (fall (~(get by resources-by-disc.state) disc) ~)
+    ::  subscription-duct: if any, the duct that previously made a subscription
+    ::
+    =/  subscription-duct
+      (~(get by original-clay-subscriptions) disc)
     ::  if no resources on :disc, don't make a new clay subscription
     ::
     ?~  resources
-      ::  cancel clay subscriptions when we don't have any resources left
+      ::  no resources, no subscriptions, no action.
       ::
-      ?:  (~(has in original-clay-subscriptions) disc)
-        =+  [their desk]=disc
-        =/  =note
-          :^  %c  %warp  sock=[our their]
-          ^-  riff:clay
-          [desk ~]
-        ::
-        =.  moves  :_  moves
-          ^-  move
-          [duct [%pass wire=(clay-sub-wire disc) note]]
-        ::
-        =.  clay-subscriptions.state  (~(del in clay-subscriptions.state) disc)
-        ::
-        =.  latest-by-disc.state  (~(del by latest-by-disc.state) disc)
-        ::
+      ?~  subscription-duct
         $(discs t.discs)
+      ::  cancel any clay subscriptions since we don't have any resources left
+      ::
+      =.  moves  :_  moves
+        (clay-cancel-subscription-move u.subscription-duct disc)
+      ::
+      =.  clay-subscriptions.state  (~(del by clay-subscriptions.state) disc)
+      ::
+      =.  latest-by-disc.state  (~(del by latest-by-disc.state) disc)
       ::
       $(discs t.discs)
     ::  prevent thrashing; don't unsubscribe then immediately resubscribe
@@ -4902,43 +4900,26 @@
     ::    canceling and then resubscribing might cause the foreign ship
     ::    to send the response twice, which would be extra network traffic.
     ::
-    ?:  ?&  (~(has in original-clay-subscriptions) disc)
+    ?:  ?&  (~(has by original-clay-subscriptions) disc)
         ::
-            (~(has in clay-subscriptions.state) disc)
+            (~(has by clay-subscriptions.state) disc)
         ::
             .=  (~(get by original-resources-by-disc) disc)
             (~(get by resources-by-disc.state) disc)
         ==
       ::
       $(discs t.discs)
-    ::  request-contents: the set of [care path]s to subscribe to in clay
+    ::  if we had a previous subscription on a different duct, send a cancel.
     ::
-    =/  request-contents=(set [care:clay path])
-      %-  sy  ^-  (list [care:clay path])
-      %+  murn  ~(tap in `(set resource)`resources)
-      |=  =resource  ^-  (unit [care:clay path])
-      ::
-      ?.  ?=(%c -.resource)  ~
-      ::
-      `[care.resource (flop spur.rail.resource)]
-    ::  if :request-contents is `~`, this code is incorrect
-    ::
-    ?<  ?=(~ request-contents)
-    ::  their: requestee +ship
-    ::
-    =+  [their desk]=disc
-    =/  latest-date  (~(got by latest-by-disc.state) disc)
-    ::
-    =/  =note
-      :^  %c  %warp  sock=[our their]
-      ^-  riff:clay
-      [desk `[%mult case=[%da latest-date] request-contents]]
+    =?  moves  &(?=(^ subscription-duct) !=(duct u.subscription-duct))
+      :_  moves
+      (clay-cancel-subscription-move u.subscription-duct disc)
+    ::  send a new clay request using the current duct
     ::
     =.  moves  :_  moves
-      ^-  move
-      [duct [%pass wire=(clay-sub-wire disc) note]]
+      (clay-add-subscription-move disc resources)
     ::
-    =.  clay-subscriptions.state  (~(put in clay-subscriptions.state) disc)
+    =.  clay-subscriptions.state  (~(put by clay-subscriptions.state) disc duct)
     ::
     $(discs t.discs)
   ::  +cleanup: try to clean up a build and its sub-builds
@@ -5051,6 +5032,49 @@
     =+  [their desk]=disc
     ::
     /(scot %p our)/clay-sub/(scot %p their)/[desk]
+  ::  +clay-add-subscription-move: subscribes to :resources
+  ::
+  ++  clay-add-subscription-move
+    |=  [=disc resources=(set resource)]
+    ^-  move
+    ::  request-contents: the set of [care path]s to subscribe to in clay
+    ::
+    =/  request-contents=(set [care:clay path])
+      %-  sy  ^-  (list [care:clay path])
+      %+  murn  ~(tap in `(set resource)`resources)
+      |=  =resource  ^-  (unit [care:clay path])
+      ::
+      ?.  ?=(%c -.resource)  ~
+      ::
+      `[care.resource (flop spur.rail.resource)]
+    ::  if :request-contents is `~`, this code is incorrect
+    ::
+    ?<  ?=(~ request-contents)
+    ::  their: requestee +ship
+    ::
+    =+  [their desk]=disc
+    =/  latest-date  (~(got by latest-by-disc.state) disc)
+    ::
+    =/  =note
+      :^  %c  %warp  sock=[our their]
+      ^-  riff:clay
+      [desk `[%mult case=[%da latest-date] request-contents]]
+    ::
+    [duct [%pass wire=(clay-sub-wire disc) note]]
+
+  ::  +clay-cancel-subscription-move: builds a cancel move
+  ::
+  ++  clay-cancel-subscription-move
+    |=  [old-duct=^duct =disc]
+    ^-  move
+    ::
+    =+  [their desk]=disc
+    =/  =note
+      :^  %c  %warp  sock=[our their]
+      ^-  riff:clay
+      [desk ~]
+    ::
+    [old-duct [%pass wire=(clay-sub-wire disc) note]]
   --
 --
 ::
