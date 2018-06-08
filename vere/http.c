@@ -989,8 +989,11 @@ _proxy_alloc(uv_handle_t* had_u,
              size_t len_i,
              uv_buf_t* buf)
 {
-  void* ptr_v = c3_malloc(len_i);
-  *buf = uv_buf_init(ptr_v, len_i);
+  // len_i is always 64k, so we're ignoring it
+  // using fixed size 4K buffer for
+  // XX consider h2o_buffer_t, a pool, or something XX
+  void* ptr_v = c3_malloc(4096);
+  *buf = uv_buf_init(ptr_v, 4096);
 }
 
 /* _proxy_write_free(): free uv_write struct and linked buffer
