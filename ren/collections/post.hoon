@@ -9,11 +9,10 @@
 /=  metawcom  /^  topicful:collections  /collections-topic-full/
 =/  config  (~(get by configs) +<:s.bem.gas)
 =,  old-zuse
-::
 ^-  manx
 ;div.container
   ;div.row
-    ;input(type "hidden", name "urb-header", value "collection-index", title "{(trip desc:(need config))}", id "{(trip +<:s.bem.gas)}", ship "{(scow %p p.bem.gas)}");
+    ;input(type "hidden", name "urb-header", value "collection", title "{(trip desc:(need config))}", id "{(trip +<:s.bem.gas)}", postid "{(trip -:s.bem.gas)}", ship "{(scow %p p.bem.gas)}", station "{(scow %p p.bem.gas)}/collection_~{(trip +<:s.bem.gas)}");
     ;div.col-sm-10.col-sm-offset-2
       ;div.post.collection-post-page
         ;div.row.collection-date
@@ -25,17 +24,6 @@
           ;div.row.tit.mt-6.collection-title
             ;h3: {(trip tit.info.metawcom)}
           ==
-          ;*  ?:  (authed:colls gas)
-                ;=
-                  ;a(href ".collections-edit")
-                    ;button#edit-btn.btn.btn-primary.mb-4
-                      ; Edit →
-                    ==
-                  ==
-                ==
-              ;=
-                ;div;
-              ==
           ;div.row.content.mb-18.mt-6
             ;div: +{content}
           ==
@@ -68,7 +56,7 @@
                         ;span.collection-date: {(esoo:colls mod.d)}
                       ==
                 ==
-                ;div(urb-component "CommentCreate", urb-coll "{(trip +<:s.bem.gas)}", urb-top "{(trip -:s.bem.gas)}");
+                ;div(urb-component "CommentCreate", urb-coll "{(trip +<:s.bem.gas)}", urb-top "{(trip -:s.bem.gas)}", urb-ship "{(scow %p p.bem.gas)}");
               ==
             ==
           ~
