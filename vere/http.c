@@ -1779,8 +1779,10 @@ _proxy_reverse_connect(u3_proxy_client* cli_u)
   if ( 0 != (sas_i = uv_tcp_connect(upc_u, &con_u->don_u,
                                     (const struct sockaddr*)&add_u,
                                     _proxy_reverse_connect_cb)) ) {
-      uL(fprintf(uH, "proxy: reverse: %s\n", uv_strerror(sas_i)));
+      uL(fprintf(uH, "proxy: reverse connect: %s\n", uv_strerror(sas_i)));
       _proxy_conn_close(con_u);
+      _proxy_client_free(cli_u);
+      free(upc_u);
   }
 }
 
@@ -1801,7 +1803,6 @@ _proxy_reverse_client_resolve_cb(uv_getaddrinfo_t* adr_u,
     // XX traverse struct a la _ames_czar_cb
     cli_u->ipf_w = ntohl(((struct sockaddr_in *)aif_u->ai_addr)->sin_addr.s_addr);
     _proxy_reverse_connect(cli_u);
-    // xx free cli_u where?
   }
 
   free(adr_u);
