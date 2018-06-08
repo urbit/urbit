@@ -1,5 +1,5 @@
-urbit (0.5-1) unstable; urgency=medium
+urbit (0.6-0) unstable; urgency=high
 
-  * hoon %143; new boot sequence; %jael support
+  * Memory-allocation bug fix in _box_slot in Vere. Breaking change.
 
- -- Ted Blackman <ted@tlon.io>  Thu, 12 Oct 2017 17:11:53 -0700
+ -- Keaton Dunsford <keaton@tlon.io>  Fri, 8 Jun 2018 14:31:08 -0700
