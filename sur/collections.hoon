@@ -5,6 +5,8 @@
       tops/(map @da topicful)                       ::
       $~                                            ::  /.  compatibility
   ==                                                ::
+++  coll-full
+  {host/(unit @p) col/time}
 ++  topicful                                        ::
   $:  info/{mod/@da topic}                          ::
       coms/(map @da {mod/@da comment})              ::
@@ -47,14 +49,14 @@
             xeno/?                                    ::  others can post
             ses/(set ship)                            ::  black/whitelist
         ==                                            ::
-        {$submit col/time tit/cord wat/wain}          ::  submit a post/note
-        {$resubmit col/time top/@da tit/cord wat/wain} ::  edit a post/note
-        {$comment col/time top/@da com/?(~ @da) wat/wain} ::  submit a comment
-        {$delete col/time}                            ::  delete a collection
+        {$submit col/coll-full tit/cord wat/wain}
+        {$resubmit col/coll-full top/@da tit/cord wat/wain} ::  edit a post/note
+        {$comment col/coll-full top/@da com/?(~ @da) wat/wain} ::  submit a comment
+        {$delete col/coll-full}                            ::  delete a collection
         ::
         ::REVIEW names? nest collection/topic/comment actions?
-        {$delete-topic col/time top/@da}              ::  delete a collection
-        {$delete-comment col/time top/@da com/@da}    ::  delete a collection
+        {$delete-topic col/coll-full top/@da}              ::  delete a collection
+        {$delete-comment col/coll-full top/@da com/@da}    ::  delete a collection
     ==                                                ::
   --
 --
