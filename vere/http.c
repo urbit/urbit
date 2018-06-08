@@ -815,7 +815,7 @@ u3_http_ef_thou(c3_l     sev_l,
 typedef struct _u3_proxy_listener u3_proxy_listener;
 
 static u3_proxy_listener* _proxy_listener_new(c3_s por_s, c3_o sec);
-static void _proxy_sock_start(u3_proxy_listener* lis_u);
+static u3_proxy_listener* _proxy_sock_start(u3_proxy_listener* lis_u);
 
 /* u3_http_io_init(): initialize http I/O.
 */
@@ -1683,7 +1683,7 @@ _proxy_sock_listen_cb(uv_stream_t* sev_u, c3_i sas_i)
 
 /* _proxy_sock_start(): start proxy listener
 */
-static void
+static u3_proxy_listener*
 _proxy_sock_start(u3_proxy_listener* lis_u)
 {
   uv_tcp_init(u3L, &lis_u->sev_u);
@@ -1705,31 +1705,29 @@ _proxy_sock_start(u3_proxy_listener* lis_u)
     if ( 0 != sas_i ||
          0 != (sas_i = uv_listen((uv_stream_t*)&lis_u->sev_u,
                                  TCP_BACKLOG, _proxy_sock_listen_cb)) ) {
-      if ( UV_EADDRINUSE == sas_i ) {
-        lis_u->por_s++;
-        continue;
-      }
-      else if ( UV_EACCES == sas_i ) {
+      if ( (UV_EADDRINUSE == sas_i) || (UV_EACCES == sas_i) ) {
         if ( (c3y == lis_u->sec) && (443 == lis_u->por_s) ) {
           lis_u->por_s = 9443;
-          continue;
         }
         else if ( (c3n == lis_u->sec) && (80 == lis_u->por_s) ) {
-          lis_u->por_s = 9090;
-          continue;
+          lis_u->por_s = 9080;
         }
+        else {
+          lis_u->por_s++;
+        }
+
+        continue;
       }
 
       uL(fprintf(uH, "proxy: listen: %s\n", uv_strerror(sas_i)));
-      //wat do
       _proxy_listener_free(lis_u);
-      return;
+      return 0;
     }
 
     uL(fprintf(uH, "proxy: live (%s) on %d\n",
                    (c3y == lis_u->sec) ? "secure" : "insecure",
                    lis_u->por_s));
-    break;
+    return lis_u;
   }
 }
 
