@@ -1145,7 +1145,7 @@ _proxy_listener_new(c3_s por_s, c3_o sec)
   return lis_u;
 }
 
-/* _proxy_write_cb: general callback for proxy uv_write
+/* _proxy_write_cb(): general callback for proxy uv_write
 */
 static void
 _proxy_write_cb(uv_write_t* wri_u, c3_i sas_i)
@@ -1162,6 +1162,24 @@ _proxy_write_cb(uv_write_t* wri_u, c3_i sas_i)
   _proxy_writ_free(ruq_u);
 }
 
+/* _proxy_write(): write buffer to proxy stream
+*/
+static c3_i
+_proxy_write(u3_proxy_conn* con_u, uv_stream_t* str_u, uv_buf_t buf_u)
+{
+  u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)buf_u.base);
+
+  c3_i sas_i;
+  if ( 0 != (sas_i = uv_write(&ruq_u->wri_u, str_u,
+                              &buf_u, 1, _proxy_write_cb)) ) {
+    uL(fprintf(uH, "proxy: write: %s\n", uv_strerror(sas_i)));
+    _proxy_conn_close(con_u);
+    _proxy_writ_free(ruq_u);
+  }
+
+  return sas_i;
+}
+
 /* _proxy_sock_read_downstream_cb(): read from downstream, writing to upstream
 */
 static void
@@ -1171,24 +1189,15 @@ _proxy_sock_read_downstream_cb(uv_stream_t* don_u,
 {
   u3_proxy_conn* con_u = don_u->data;
 
-  if ( (UV_EOF == siz_w) || (0 > siz_w) ) {
-    uL(fprintf(uH, "proxy: close downstream: %s\n", uv_strerror(siz_w)));
+  if ( 0 > siz_w ) {
+    if ( UV_EOF != siz_w ) {
+      uL(fprintf(uH, "proxy: read downstream: %s\n", uv_strerror(siz_w)));
+    }
     _proxy_conn_close(con_u);
   }
   else {
-    uv_buf_t fub_u = uv_buf_init(buf_u->base, siz_w);
-
-    u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)fub_u.base);
-
-    c3_i sas_i;
-    if ( 0 != (sas_i = uv_write(&ruq_u->wri_u,
-                                (uv_stream_t*)con_u->upt_u,
-                                &fub_u, 1,
-                                _proxy_write_cb)) ) {
-      uL(fprintf(uH, "proxy: read downstream: %s\n", uv_strerror(sas_i)));
-      _proxy_conn_close(con_u);
-      _proxy_writ_free(ruq_u);
-    }
+    _proxy_write(con_u, (uv_stream_t*)con_u->upt_u,
+                 uv_buf_init(buf_u->base, siz_w));
   }
 }
 
@@ -1201,24 +1210,15 @@ _proxy_sock_read_upstream_cb(uv_stream_t* upt_u,
 {
   u3_proxy_conn* con_u = upt_u->data;
 
-  if ( (UV_EOF == siz_w) || (0 > siz_w) ) {
-    uL(fprintf(uH, "proxy: close upstream: %s\n", uv_strerror(siz_w)));
+  if ( 0 > siz_w ) {
+    if ( UV_EOF != siz_w ) {
+      uL(fprintf(uH, "proxy: read upstream: %s\n", uv_strerror(siz_w)));
+    }
     _proxy_conn_close(con_u);
   }
   else {
-    uv_buf_t fub_u = uv_buf_init(buf_u->base, siz_w);
-
-    u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)fub_u.base);
-
-    c3_i sas_i;
-    if ( 0 != (sas_i = uv_write(&ruq_u->wri_u,
-                                (uv_stream_t*)&(con_u->don_u),
-                                &fub_u, 1,
-                                _proxy_write_cb)) ) {
-      uL(fprintf(uH, "proxy: read upstream: %s\n", uv_strerror(sas_i)));
-      _proxy_conn_close(con_u);
-      _proxy_writ_free(ruq_u);
-    }
+    _proxy_write(con_u, (uv_stream_t*)&(con_u->don_u),
+                 uv_buf_init(buf_u->base, siz_w));
   }
 }
 
@@ -1231,18 +1231,7 @@ _proxy_fire(u3_proxy_conn* con_u)
     uv_buf_t fub_u = con_u->buf_u;
     con_u->buf_u = uv_buf_init(0, 0);
 
-    u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)fub_u.base);
-
-    c3_i sas_i;
-    if ( 0 != (sas_i = uv_write(&ruq_u->wri_u,
-                                (uv_stream_t*)con_u->upt_u,
-                                &fub_u, 1,
-                                _proxy_write_cb)) ) {
-      uL(fprintf(uH, "proxy: write pending: %s\n", uv_strerror(sas_i)));
-      // XX wat do
-      _proxy_conn_close(con_u);
-      _proxy_writ_free(ruq_u);
-
+    if ( 0 != _proxy_write(con_u, (uv_stream_t*)con_u->upt_u, fub_u) ) {
       return;
     }
   }
@@ -1303,6 +1292,7 @@ _proxy_lopc(u3_proxy_conn* con_u)
       }
     }
 
+    // XX fix this by refactoring proxy setup
     c3_assert( 0 != por_s );
 
     lop_u.sin_port = htons(por_s);
@@ -1592,18 +1582,14 @@ _proxy_peek_cb(uv_stream_t* don_u,
 {
   u3_proxy_conn* con_u = don_u->data;
 
-  uL(fprintf(uH, "proxy: peek cb\n"));
-
-  // XX check EOF first
-  uv_read_stop(don_u);
-
-  if ( (UV_EOF == siz_w) || (0 > siz_w) ) {
-    uL(fprintf(uH, "proxy: peek nope\n"));
-    // XX wat do?
+  if ( 0 > siz_w ) {
+    if ( UV_EOF != siz_w ) {
+      uL(fprintf(uH, "proxy: peek: %s\n", uv_strerror(siz_w)));
+    }
     _proxy_conn_close(con_u);
   }
   else {
-    uL(fprintf(uH, "proxy: peek yep\n"));
+    uv_read_stop(don_u);
 
     if ( 0 == con_u->buf_u.base ) {
       void* ptr_v = c3_malloc(siz_w);
