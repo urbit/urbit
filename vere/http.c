@@ -1353,8 +1353,6 @@ _proxy_reverse_listen_cb(uv_stream_t* tcp_u, c3_i sas_i)
 static void
 _proxy_reverse_start(u3_proxy_conn* con_u, u3_noun sip)
 {
-  uL(fprintf(uH, "proxy: rev\n"));
-
   // XX free somewhere
   u3_proxy_reverse* rev_u = _proxy_reverse_new(con_u, sip);
 
@@ -1400,19 +1398,17 @@ _proxy_reverse_start(u3_proxy_conn* con_u, u3_noun sip)
     _proxy_conn_close(con_u);
     uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_reverse_free);
 
-  } else {
+  }
+  else {
     rev_u->por_s = ntohs(add_u.sin_port);
-
-    uL(fprintf(uH, "proxy: listen: %d\n", rev_u->por_s));
 
     // XX confirm duct
     u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
                        u3nc(u3k(u3A->sen), u3_nul));
-
-    // [%wise p=@p q=@ud r=?]
-    u3v_plan(pax, u3nq(c3__wise, u3k(sip),
+    u3_noun wis = u3nq(c3__wise, u3k(sip),
                                  u3i_words(1, (c3_w*)&rev_u->por_s),
-                                 u3k(con_u->sec)));
+                                 u3k(con_u->sec));
+    u3v_plan(pax, wis);
   }
 }
 
@@ -1489,33 +1485,26 @@ _proxy_parse_sni(const uv_buf_t* buf_u, c3_c** hot_c)
 static u3_noun
 _proxy_parse_ship(c3_c* hot_c)
 {
+  u3_noun sip = u3_nul;
   c3_c* dom_c;
 
   if ( 0 == hot_c ) {
-    return u3_nul;
+    return sip;
   }
-
-  uL(fprintf(uH, "proxy: host: %s\n", hot_c));
 
   dom_c = strchr(hot_c, '.');
 
   if ( 0 == dom_c ) {
-    free(hot_c);
-    return u3_nul;
+    return sip;
   }
-
-  uL(fprintf(uH, "proxy: domain: %s\n", dom_c));
 
   // XX check EOS or port to prevent length extension
   if ( 0 != strncmp(dom_c + 1, u3_Host.ops_u.dns_c,
                     strlen(u3_Host.ops_u.dns_c)) ) {
-    free(hot_c);
-    return u3_nul;
+    return sip;
   }
 
   {
-    u3_noun sip;
-
     c3_w dif_w = dom_c - hot_c;
     c3_c* sip_c = c3_malloc(2 + dif_w);
     strncpy(sip_c + 1, hot_c, dif_w);
@@ -1523,11 +1512,8 @@ _proxy_parse_ship(c3_c* hot_c)
     sip_c[1 + dif_w] = 0;
 
     sip = u3dc("slaw", 'p', u3i_string(sip_c));
-
-    uL(fprintf(uH, "proxy: parsed\n"));
-
     free(sip_c);
-    free(hot_c);
+
     return sip;
   }
 }
@@ -1537,10 +1523,7 @@ _proxy_parse_ship(c3_c* hot_c)
 static void
 _proxy_dest(u3_proxy_conn* con_u, u3_noun sip)
 {
-  uL(fprintf(uH, "proxy: sip\n"));
-
   if ( u3_nul == sip ) {
-    uL(fprintf(uH, "proxy: sip nul\n"));
     _proxy_lopc(con_u);
   }
   else {
@@ -1557,13 +1540,11 @@ _proxy_dest(u3_proxy_conn* con_u, u3_noun sip)
     }
 
     if ( c3y == our ) {
-      uL(fprintf(uH, "proxy: sip us\n"));
       _proxy_lopc(con_u);
     }
     else {
       // XX check if (sein:title sip) == our
       // XX check will
-      uL(fprintf(uH, "proxy: sip them\n"));
       _proxy_reverse_start(con_u, hip);
     }
   }
@@ -1571,14 +1552,53 @@ _proxy_dest(u3_proxy_conn* con_u, u3_noun sip)
   u3z(sip);
 }
 
-static void _proxy_peek(u3_proxy_conn* con_u);
+static void _proxy_peek_read(u3_proxy_conn* con_u);
 
-/* _proxy_peek_cb(): read callback for peeking at proxied request
+/* _proxy_peek(): peek at proxied request for destination
 */
 static void
-_proxy_peek_cb(uv_stream_t* don_u,
-               ssize_t      siz_w,
-               const uv_buf_t *     buf_u)
+_proxy_peek(u3_proxy_conn* con_u)
+{
+  c3_c* hot_c = 0;
+
+  u3_proxy_pars sat_e = ( c3y == con_u->sec ) ?
+                        _proxy_parse_sni(&con_u->buf_u, &hot_c) :
+                        _proxy_parse_host(&con_u->buf_u, &hot_c);
+
+  switch ( sat_e ) {
+    default: c3_assert(0);
+
+    case u3_pars_fail: {
+      uL(fprintf(uH, "proxy: peek fail\n"));
+      _proxy_conn_close(con_u);
+      break;
+    }
+
+    case u3_pars_moar: {
+      uL(fprintf(uH, "proxy: peek moar\n"));
+      // XX count retries, fail after some n
+      _proxy_peek_read(con_u);
+      break;
+    }
+
+    case u3_pars_good: {
+      u3_noun sip = _proxy_parse_ship(hot_c);
+      _proxy_dest(con_u, sip);
+      break;
+    }
+  }
+
+  if ( 0 !=  hot_c ) {
+    free(hot_c);
+  }
+}
+
+/* _proxy_peek_read_cb(): read callback for peeking at proxied request
+*/
+static void
+_proxy_peek_read_cb(uv_stream_t* don_u,
+                    ssize_t      siz_w,
+                    const uv_buf_t* buf_u)
 {
   u3_proxy_conn* con_u = don_u->data;
 
@@ -1591,60 +1611,36 @@ _proxy_peek_cb(uv_stream_t* don_u,
   else {
     uv_read_stop(don_u);
 
+    u3_lo_open();
+
     if ( 0 == con_u->buf_u.base ) {
-      void* ptr_v = c3_malloc(siz_w);
-      memcpy(ptr_v, buf_u->base, siz_w);
-      con_u->buf_u = uv_buf_init(ptr_v, siz_w);
+      con_u->buf_u = uv_buf_init(buf_u->base, siz_w);
     }
     else {
       c3_w len_w = siz_w + con_u->buf_u.len;
       // XX c3_realloc
       void* ptr_v = realloc(con_u->buf_u.base, len_w);
+      c3_assert( 0 != ptr_v );
+
       memcpy(ptr_v + con_u->buf_u.len, buf_u->base, siz_w);
       con_u->buf_u = uv_buf_init(ptr_v, len_w);
 
       free(buf_u->base);
     }
 
-    u3_proxy_pars sat_e;
-    c3_c* hot_c = 0;
+    _proxy_peek(con_u);
 
-    if ( c3n == con_u->sec ) {
-      sat_e = _proxy_parse_host(&con_u->buf_u, &hot_c);
-    } else {
-      sat_e = _proxy_parse_sni(&con_u->buf_u, &hot_c);
-    }
-
-    switch ( sat_e ) {
-      case u3_pars_fail: {
-        uL(fprintf(uH, "proxy: peek fail\n"));
-        _proxy_conn_close(con_u);
-      }
-
-      case u3_pars_moar: {
-        uL(fprintf(uH, "proxy: peek moar\n"));
-        _proxy_peek(con_u);
-      }
-
-      case u3_pars_good: {
-        u3_noun sip = _proxy_parse_ship(hot_c);
-        _proxy_dest(con_u, sip);
-      }
-    }
-  }
-
-  if ( 0 != buf_u->base ) {
-    free(buf_u->base);
+    u3_lo_shut(c3y);
   }
 }
 
-/* _proxy_peek(): peek at proxied request for destination
+/* _proxy_peek_read(): start read  to peek at proxied request
 */
 static void
-_proxy_peek(u3_proxy_conn* con_u)
+_proxy_peek_read(u3_proxy_conn* con_u)
 {
   uv_read_start((uv_stream_t*)&con_u->don_u,
-                _proxy_alloc, _proxy_peek_cb);
+                _proxy_alloc, _proxy_peek_read_cb);
 }
 
 /* _proxy_sock_new(): accept new proxied request
@@ -1663,7 +1659,7 @@ _proxy_sock_new(u3_proxy_listener* lis_u)
     _proxy_conn_close(con_u);
   }
   else {
-    _proxy_peek(con_u);
+    _proxy_peek_read(con_u);
   }
 }
 
