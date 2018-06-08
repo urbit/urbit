@@ -1247,20 +1247,17 @@ _proxy_fire(u3_proxy_conn* con_u)
 static void
 _proxy_lopc_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
 {
-  uL(fprintf(uH, "proxy: lopc cb\n"));
-  uv_tcp_t* upt_u = upc_u->data;
-
-  u3_proxy_conn* con_u = upt_u->data;
-  con_u->upt_u = upt_u;
-
-  free(upc_u);
+  u3_proxy_conn* con_u = upc_u->data;
 
   if ( 0 != sas_i ) {
     uL(fprintf(uH, "proxy: connect: %s\n", uv_strerror(sas_i)));
     _proxy_conn_close(con_u);
   }
+  else {
+    _proxy_fire(con_u);
+  }
 
-  _proxy_fire(con_u);
+  free(upc_u);
 }
 
 /* _proxy_lopc(): connect to loopback for local proxying
@@ -1270,7 +1267,7 @@ _proxy_lopc(u3_proxy_conn* con_u)
 {
   uv_tcp_t* upt_u = c3_malloc(sizeof(*upt_u));
 
-  // not yet linked in reverse
+  con_u->upt_u = upt_u;
   upt_u->data = con_u;
 
   uv_tcp_init(u3L, upt_u);
@@ -1299,15 +1296,16 @@ _proxy_lopc(u3_proxy_conn* con_u)
   }
 
   uv_connect_t* upc_u = c3_malloc(sizeof(*upc_u));
-  upc_u->data = upt_u;
+  upc_u->data = con_u;
 
   c3_i sas_i;
 
   if ( 0 != (sas_i = uv_tcp_connect(upc_u, upt_u,
                                     (const struct sockaddr*)&lop_u,
                                     _proxy_lopc_connect_cb)) ) {
-      uL(fprintf(uH, "proxy: loopback: %s\n", uv_strerror(sas_i)));
-      _proxy_conn_close(con_u);
+    uL(fprintf(uH, "proxy: loopback: %s\n", uv_strerror(sas_i)));
+    free(upc_u);
+    _proxy_conn_close(con_u);
   }
 }
 
