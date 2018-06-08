@@ -1465,12 +1465,19 @@ _proxy_parse_host(const uv_buf_t* buf_u, c3_c** hot_c)
 
     if ( 0 != (tok_t = h2o_lookup_token(hed_u[i].name, hed_u[i].name_len)) ) {
       if ( tok_t->is_init_header_special && H2O_TOKEN_HOST == tok_t ) {
+        c3_c* val_c;
+        c3_c* por_c;
 
-        *hot_c = c3_malloc(1 + hed_u[i].value_len);
-        // XX cores???
-        // *hot_c[hed_u[i].value_len] = 0;
-        // XX skip port if present
-        memcpy(*hot_c, hed_u[i].value, hed_u[i].value_len);
+        val_c = c3_malloc(1 + hed_u[i].value_len);
+        val_c[hed_u[i].value_len] = 0;
+        memcpy(val_c, hed_u[i].value, hed_u[i].value_len);
+
+        // 'truncate' by replacing port separator ':' with 0
+        if ( 0 != (por_c = strchr(val_c, ':')) ) {
+          por_c[0] = 0;
+        }
+
+        *hot_c = val_c;
         break;
       }
     }
