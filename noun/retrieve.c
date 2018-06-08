@@ -155,6 +155,7 @@ u3r_at(u3_atom a, u3_noun b)
     }
   }
 
+__attribute__((no_sanitize("address")))
 c3_o
 u3r_mean(u3_noun som,
         ...)
