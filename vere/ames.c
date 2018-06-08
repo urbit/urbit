@@ -30,8 +30,11 @@ _ames_alloc(uv_handle_t* had_u,
             uv_buf_t* buf
             )
 {
-  void* ptr_v = c3_malloc(len_i);
-  *buf = uv_buf_init(ptr_v, len_i);
+  //  we allocate 2K, which gives us plenty of space
+  //  for a single ames packet (max size 1060 bytes)
+  //
+  void* ptr_v = c3_malloc(2048);
+  *buf = uv_buf_init(ptr_v, 2048);
 }
 
 /* _ames_free(): contrasting free.
