@@ -1522,14 +1522,15 @@ _proxy_parse_ship(c3_c* hot_c)
     return sip;
   }
 
-  // XX check EOS or port to prevent length extension
-  if ( 0 != strncmp(dom_c + 1, u3_Host.ops_u.dns_c,
-                    strlen(u3_Host.ops_u.dns_c)) ) {
+  c3_w dif_w = dom_c - hot_c;
+  c3_w dns_w = strlen(u3_Host.ops_u.dns_c);
+
+  if ( (dns_w != strlen(hot_c) - (dif_w + 1)) ||
+       (0 != strncmp(dom_c + 1, u3_Host.ops_u.dns_c, dns_w)) ) {
     return sip;
   }
 
   {
-    c3_w dif_w = dom_c - hot_c;
     c3_c* sip_c = c3_malloc(2 + dif_w);
     strncpy(sip_c + 1, hot_c, dif_w);
     sip_c[0] = '~';
