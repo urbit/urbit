@@ -1473,8 +1473,11 @@ _proxy_parse_sni(const uv_buf_t* buf_u, c3_c** hot_c)
   c3_i sas_i = 0; //tls_protocol->parse_packet(buf_u->base, buf_u->len, hot_c);
 
   if ( 0 > sas_i ) {
-    // XX -2 good *hot_c = 0;
-    return ( -1 == sas_i ) ? u3_pars_moar : u3_pars_fail;
+    switch ( sas_i ) {
+      case -1: return u3_pars_moar;
+      case -2: return u3_pars_good;  // SNI not present
+      default: return u3_pars_fail;
+    }
   }
 
   return u3_pars_good;
