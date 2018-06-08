@@ -16,20 +16,16 @@
     =,  dejs:format
 ::     %+  cu  |=(action +<)
     =<  action
-    ::(action a)
     |%
     ++  action
-      |=  a/json
-      ^-  action
-      %.  a
       %-  of  :~
         create+create
-        delete+(ot col+(se %da) ~)
+        delete+delete
         submit+submit
         comment+comment
-        resubmit+(ot col+(se %da) top+(se %da) tit+so wat+wain ~)
-        delete-topic+(ot col+(se %da) top+(se %da) ~)
-        delete-comment+(ot col+(se %da) top+(se %da) com+(se %da) ~)
+        resubmit+resubmit
+        delete-topic+delete-topic
+        delete-comment+delete-comment
       ==
     ::
     ++  null-or-da
@@ -37,6 +33,30 @@
       %+  cu  |=(a=coin ?+(a !! [%$ ^] p.a))
       (su nuck:so.hoon)
     ::
+    ++  resubmit
+      |=  a=json
+      =+  ^-  [col=@da top=@da tit=@t wat=wain]
+          %.  a
+          (ot col+(se %da) top+(se %da) tit+so wat+wain ~)
+      [[~ col] top tit wat]
+    ++  delete-topic
+      |=  a=json
+      =+  ^-  [col=@da top=@da]
+          %.  a
+          (ot col+(se %da) top+(se %da) ~)
+      [[~ col] top]
+    ++  delete-comment
+      |=  a=json
+      =+  ^-  [col=@da top=@da com=@da]
+          %.  a
+          (ot col+(se %da) top+(se %da) com+(se %da) ~)
+      [[~ col] top com]
+    ++  delete
+      |=  a=json
+      =+  ^-  col=@da
+          %.  a
+          (ot col+(se %da) ~)
+      [[~ col]]
     ++  submit
       |=  a=json
       ^-  [coll-full @t wain]
