@@ -1738,16 +1738,19 @@ _proxy_reverse_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
 {
   u3_proxy_conn* con_u = upc_u->data;
 
-  free(upc_u);
-
   if ( 0 != sas_i ) {
     uL(fprintf(uH, "proxy: reverse connect: %s\n", uv_strerror(sas_i)));
     _proxy_conn_close(con_u);
 
-    // XX free reverse stuff
+    // XX free reverse stuff (need link to cli_u)
+    // _proxy_client_free(cli_u);
+  }
+  else {
+    _proxy_lopc(con_u);
   }
 
-  _proxy_lopc(con_u);
+
+  free(upc_u);
 }
 
 /* _proxy_reverse_connect(): connect as client to reverse proxy listener
