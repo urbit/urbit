@@ -1378,7 +1378,6 @@ _proxy_reverse_listen_cb(uv_stream_t* tcp_u, c3_i sas_i)
 static void
 _proxy_reverse_start(u3_proxy_conn* con_u, u3_noun sip)
 {
-  // XX free somewhere
   u3_proxy_reverse* rev_u = _proxy_reverse_new(con_u, sip);
 
   struct sockaddr_in add_u;
@@ -1386,9 +1385,7 @@ _proxy_reverse_start(u3_proxy_conn* con_u, u3_noun sip)
   memset(&add_u, 0, sizeof(add_u));
   add_u.sin_family = AF_INET;
   add_u.sin_addr.s_addr = INADDR_ANY;
-
-  // first available
-  add_u.sin_port = 0;
+  add_u.sin_port = 0;  // first available
 
   uv_tcp_init(u3L, &rev_u->tcp_u);
 
@@ -1399,15 +1396,10 @@ _proxy_reverse_start(u3_proxy_conn* con_u, u3_noun sip)
   if ( 0 != sas_i ||
        0 != (sas_i = uv_listen((uv_stream_t*)&rev_u->tcp_u,
                                TCP_BACKLOG, _proxy_reverse_listen_cb)) ) {
-    if ( UV_EADDRINUSE == sas_i ) {
-      uL(fprintf(uH, "proxy: listen: %s\n", uv_strerror(sas_i)));
-
-      //XX wat do
-      _proxy_conn_close(con_u);
-      uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_reverse_free);
-
-      return;
-    }
+    uL(fprintf(uH, "proxy: listen: %s\n", uv_strerror(sas_i)));
+    uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_reverse_free);
+    _proxy_conn_close(con_u);
+    return;
   }
 
   c3_i len_i = sizeof(add_u);
@@ -1418,11 +1410,8 @@ _proxy_reverse_start(u3_proxy_conn* con_u, u3_noun sip)
                                         (struct sockaddr*)&add_u,
                                         &len_i)) ) {
     uL(fprintf(uH, "proxy: sockname: %s\n", uv_strerror(sas_i)));
-
-    // XX wat do
-    _proxy_conn_close(con_u);
     uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_reverse_free);
-
+    _proxy_conn_close(con_u);
   }
   else {
     rev_u->por_s = ntohs(add_u.sin_port);
