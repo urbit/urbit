@@ -1316,15 +1316,11 @@ _proxy_lopc(u3_proxy_conn* con_u)
 static void
 _proxy_reverse_listen_cb(uv_stream_t* tcp_u, c3_i sas_i)
 {
-  uL(fprintf(uH, "proxy: rev cb\n"));
   u3_proxy_reverse* rev_u = (u3_proxy_reverse*)tcp_u;
 
   if ( 0 != sas_i ) {
     uL(fprintf(uH, "proxy: listen_cb: %s\n", uv_strerror(sas_i)));
-
-    //XX wat do
     _proxy_conn_close(rev_u->con_u);
-    uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_reverse_free);
   }
   else {
     uv_tcp_t* upt_u = c3_malloc(sizeof(*upt_u));
@@ -1336,16 +1332,15 @@ _proxy_reverse_listen_cb(uv_stream_t* tcp_u, c3_i sas_i)
 
     if ( 0 != (sas_i = uv_accept((uv_stream_t*)&rev_u->tcp_u, (uv_stream_t*)upt_u)) ) {
       uL(fprintf(uH, "proxy: accept: %s\n", uv_strerror(sas_i)));
-
       _proxy_conn_close(rev_u->con_u);
-      uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_reverse_free);
     }
     else {
       _proxy_fire(rev_u->con_u);
-      // XX always close here?
-      uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_reverse_free);
     }
   }
+
+  // XX find some way to reuse
+  uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_reverse_free);
 }
 
 /* _proxy_reverse_start(): setup ship-specific listener
