@@ -959,15 +959,15 @@ typedef struct _u3_proxy_client {
   // XX link connection?
 } u3_proxy_client;
 
-/* u3_proxy_reverse: ship-specific proxy listener
+/* u3_ward: reverse, reverse TCP proxy (ship-specific listener)
 */
-typedef struct _u3_proxy_reverse {
-  uv_tcp_t         tcp_u;
+typedef struct _u3_ward {
+  uv_tcp_t         tcp_u;             //  listener handle
   u3_atom          sip;               //  reverse proxy for ship
-  c3_s             por_s;
-  struct _u3_proxy_conn* con_u;
-  struct _u3_proxy_reverse* nex_u;
-} u3_proxy_reverse;
+  c3_s             por_s;             //  listening on port
+  struct _u3_proxy_conn*   con_u;             //  initiating connection
+  struct _u3_ward* nex_u;             //  next in lists
+} u3_ward;
 
 /* u3_prox: reverse TCP proxy server
 */
@@ -976,7 +976,7 @@ typedef struct _u3_prox {
   c3_s             por_s;             // listening on port
   c3_o             sec;               //  yes == https
   struct _u3_proxy_conn*   con_u;             // active connection list
-  struct _u3_proxy_reverse* rev_u;            // active reverse listeners
+  struct _u3_ward* rev_u;             // active reverse listeners
   struct _u3_prox* nex_u;             // next listener
 } u3_prox;
 
@@ -1088,34 +1088,6 @@ _proxy_conn_new(u3_proxy_type typ_e, void* src_u)
   // XX link to global state
 
   return con_u;
-}
-
-/* _proxy_reverse_free(): free reverse proxy listener
-*/
-static void
-_proxy_reverse_free(u3_proxy_reverse* rev_u)
-{
-  u3z(rev_u->sip);
-  free(rev_u);
-  // XX free buffers
-  // XX detach from listener
-}
-
-/* _proxy_reverse_new(): allocate reverse proxy listener
-*/
-static u3_proxy_reverse*
-_proxy_reverse_new(u3_proxy_conn* con_u, u3_atom sip)
-{
-  u3_proxy_reverse* rev_u = c3_malloc(sizeof(*rev_u));
-  rev_u->tcp_u.data = rev_u;
-  rev_u->con_u = con_u;
-  rev_u->sip = sip;
-  rev_u->por_s = 0; // set after opened
-  rev_u->nex_u = 0;
-
-  // XX link to global state
-
-  return rev_u;
 }
 
 /* _proxy_write_cb(): free uv_write_t and linked buffer.
@@ -1283,88 +1255,130 @@ _proxy_loop_connect(u3_proxy_conn* con_u)
   }
 }
 
-/* _proxy_reverse_listen_cb(): accept connection on ship-specific listener
+/* _proxy_ward_free(): free reverse proxy listener
 */
 static void
-_proxy_reverse_listen_cb(uv_stream_t* tcp_u, c3_i sas_i)
+_proxy_ward_free(u3_ward* rev_u)
 {
-  u3_proxy_reverse* rev_u = (u3_proxy_reverse*)tcp_u;
+  u3z(rev_u->sip);
+  free(rev_u);
+  // XX free buffers
+  // XX detach from listener
+}
+
+/* _proxy_ward_close(): close ward (ship-specific listener)
+*/
+static void
+_proxy_ward_close(u3_ward* rev_u)
+{
+  uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_ward_free);
+}
+
+/* _proxy_ward_new(): allocate reverse proxy listener
+*/
+static u3_ward*
+_proxy_ward_new(u3_proxy_conn* con_u, u3_atom sip)
+{
+  u3_ward* rev_u = c3_malloc(sizeof(*rev_u));
+  rev_u->tcp_u.data = rev_u;
+  rev_u->con_u = con_u;
+  rev_u->sip = sip;
+  rev_u->por_s = 0; // set after opened
+  rev_u->nex_u = 0;
+
+  // XX link to global state
+
+  return rev_u;
+}
+
+/* _proxy_ward_accept(): accept new connection on ward
+*/
+static void
+_proxy_ward_accept(u3_ward* rev_u)
+{
+  uv_tcp_t* upt_u = c3_malloc(sizeof(*upt_u));
+
+  upt_u->data = rev_u->con_u;
+  rev_u->con_u->upt_u = upt_u;
+
+  uv_tcp_init(u3L, upt_u);
+
+  c3_i sas_i;
+
+  if ( 0 != (sas_i = uv_accept((uv_stream_t*)&rev_u->tcp_u,
+                               (uv_stream_t*)upt_u)) ) {
+    uL(fprintf(uH, "proxy: accept: %s\n", uv_strerror(sas_i)));
+    _proxy_conn_close(rev_u->con_u);
+  }
+  else {
+    _proxy_fire(rev_u->con_u);
+  }
+}
+
+/* _proxy_ward_listen_cb(): listen callback for ward
+*/
+static void
+_proxy_ward_listen_cb(uv_stream_t* tcp_u, c3_i sas_i)
+{
+  u3_ward* rev_u = (u3_ward*)tcp_u;
 
   if ( 0 != sas_i ) {
     uL(fprintf(uH, "proxy: listen_cb: %s\n", uv_strerror(sas_i)));
     _proxy_conn_close(rev_u->con_u);
   }
   else {
-    uv_tcp_t* upt_u = c3_malloc(sizeof(*upt_u));
-
-    upt_u->data = rev_u->con_u;
-    rev_u->con_u->upt_u = upt_u;
-
-    uv_tcp_init(u3L, upt_u);
-
-    if ( 0 != (sas_i = uv_accept((uv_stream_t*)&rev_u->tcp_u, (uv_stream_t*)upt_u)) ) {
-      uL(fprintf(uH, "proxy: accept: %s\n", uv_strerror(sas_i)));
-      _proxy_conn_close(rev_u->con_u);
-    }
-    else {
-      _proxy_fire(rev_u->con_u);
-    }
+    _proxy_ward_accept(rev_u);
   }
 
-  // XX find some way to reuse
-  uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_reverse_free);
+  // ward listener is always closed
+  _proxy_ward_close(rev_u);
 }
 
-/* _proxy_reverse_start(): setup ship-specific listener
+/* _proxy_ward_plan(): notify ship of new ward
 */
 static void
-_proxy_reverse_start(u3_proxy_conn* con_u, u3_noun sip)
+_proxy_ward_plan(u3_ward* rev_u)
 {
-  u3_proxy_reverse* rev_u = _proxy_reverse_new(con_u, sip);
+  // XX confirm duct
+  u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
+                     u3nc(u3k(u3A->sen), u3_nul));
+  u3_noun wis = u3nq(c3__wise, u3k(rev_u->sip),
+                               rev_u->por_s,
+                               u3k(rev_u->con_u->sec));
+  u3v_plan(pax, wis);
+}
+
+/* _proxy_ward_start(): start ward (ship-specific listener).
+*/
+static void
+_proxy_ward_start(u3_proxy_conn* con_u, u3_noun sip)
+{
+  u3_ward* rev_u = _proxy_ward_new(con_u, sip);
+
+  uv_tcp_init(u3L, &rev_u->tcp_u);
 
   struct sockaddr_in add_u;
-
-  memset(&add_u, 0, sizeof(add_u));
+  c3_i add_i = sizeof(add_u);
+  memset(&add_u, 0, add_i);
   add_u.sin_family = AF_INET;
   add_u.sin_addr.s_addr = INADDR_ANY;
   add_u.sin_port = 0;  // first available
 
-  uv_tcp_init(u3L, &rev_u->tcp_u);
-
   c3_i sas_i;
 
-  sas_i = uv_tcp_bind(&rev_u->tcp_u, (const struct sockaddr*)&add_u, 0);
-
-  if ( 0 != sas_i ||
+  if ( 0 != (sas_i = uv_tcp_bind(&rev_u->tcp_u,
+                                 (const struct sockaddr*)&add_u, 0)) ||
        0 != (sas_i = uv_listen((uv_stream_t*)&rev_u->tcp_u,
-                               TCP_BACKLOG, _proxy_reverse_listen_cb)) ) {
-    uL(fprintf(uH, "proxy: listen: %s\n", uv_strerror(sas_i)));
-    uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_reverse_free);
-    _proxy_conn_close(con_u);
-    return;
-  }
-
-  c3_i len_i = sizeof(add_u);
-
-  memset(&add_u, 0, sizeof(add_u));
-
-  if ( 0 != (sas_i = uv_tcp_getsockname(&rev_u->tcp_u,
-                                        (struct sockaddr*)&add_u,
-                                        &len_i)) ) {
-    uL(fprintf(uH, "proxy: sockname: %s\n", uv_strerror(sas_i)));
-    uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_reverse_free);
+                               TCP_BACKLOG, _proxy_ward_listen_cb)) ||
+       0 != (sas_i = uv_tcp_getsockname(&rev_u->tcp_u,
+                                        (struct sockaddr*)&add_u, &add_i))) {
+    uL(fprintf(uH, "proxy: ward: %s\n", uv_strerror(sas_i)));
+    _proxy_ward_close(rev_u);
     _proxy_conn_close(con_u);
   }
   else {
     rev_u->por_s = ntohs(add_u.sin_port);
-
-    // XX confirm duct
-    u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
-                       u3nc(u3k(u3A->sen), u3_nul));
-    u3_noun wis = u3nq(c3__wise, u3k(sip),
-                                 u3i_words(1, (c3_w*)&rev_u->por_s),
-                                 u3k(con_u->sec));
-    u3v_plan(pax, wis);
+    _proxy_ward_plan(rev_u);
   }
 }
 
@@ -1512,7 +1526,7 @@ _proxy_dest(u3_proxy_conn* con_u, u3_noun sip)
     else {
       // XX check if (sein:title sip) == our
       // XX check will
-      _proxy_reverse_start(con_u, hip);
+      _proxy_ward_start(con_u, hip);
     }
   }
 
