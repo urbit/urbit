@@ -1855,9 +1855,13 @@ _proxy_reverse_resolve(u3_proxy_client* cli_u)
 void
 u3_http_ef_that(u3_noun sip, u3_noun por, u3_noun sec)
 {
-  uL(fprintf(uH, "proxy: ef that\n"));
+  if( c3n == u3ud(sip) ||
+      c3n == u3a_is_cat(por) ||
+      !( c3y == sec || c3n == sec ) ) {
+    u3z(sip); u3z(por); u3z(sec);
+    return;
+  }
 
-  // XX test types
   u3_proxy_client* cli_u = _proxy_client_new((u3_atom)sip, (c3_s)por, (c3_o)sec);
 
   if ( c3n == u3_Host.ops_u.net ) {
@@ -1867,11 +1871,10 @@ u3_http_ef_that(u3_noun sip, u3_noun por, u3_noun sec)
   }
 
   c3_c* sip_c = u3r_string(u3dc("scot", 'p', u3k(cli_u->sip)));
-
-  // inc to skip '~'
-  cli_u->hot_c = c3_malloc(1 + strlen(sip_c) + strlen(u3_Host.ops_u.dns_c));
-  // XX len_w
-  snprintf(cli_u->hot_c, 256, "%s.%s", sip_c + 1, u3_Host.ops_u.dns_c);
+  c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.ops_u.dns_c);
+  cli_u->hot_c = c3_malloc(len_w);
+  // incremented to skip '~'
+  snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, u3_Host.ops_u.dns_c);
 
   free(sip_c);
 
