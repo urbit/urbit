@@ -963,6 +963,7 @@ typedef struct _u3_proxy_client {
 */
 typedef struct _u3_ward {
   uv_tcp_t         tcp_u;             //  listener handle
+  uv_timer_t       tim_u;             //  expiration timer
   u3_atom          sip;               //  reverse proxy for ship
   c3_s             por_s;             //  listening on port
   struct _u3_proxy_conn*   con_u;             //  initiating connection
@@ -1271,6 +1272,7 @@ _proxy_ward_free(u3_ward* rev_u)
 static void
 _proxy_ward_close(u3_ward* rev_u)
 {
+  uv_timer_stop((uv_timer_t*)&rev_u->tim_u);
   uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_ward_free);
 }
 
@@ -1281,6 +1283,7 @@ _proxy_ward_new(u3_proxy_conn* con_u, u3_atom sip)
 {
   u3_ward* rev_u = c3_malloc(sizeof(*rev_u));
   rev_u->tcp_u.data = rev_u;
+  rev_u->tim_u.data = rev_u;
   rev_u->con_u = con_u;
   rev_u->sip = sip;
   rev_u->por_s = 0; // set after opened
@@ -1334,6 +1337,19 @@ _proxy_ward_listen_cb(uv_stream_t* tcp_u, c3_i sas_i)
   _proxy_ward_close(rev_u);
 }
 
+/* _proxy_ward_timer_cb(): expiration timer for ward
+*/
+static void
+_proxy_ward_timer_cb(uv_timer_t* tim_u)
+{
+  u3_ward* rev_u = tim_u->data;
+
+  if ( 0 != rev_u ) {
+    uL(fprintf(uH, "proxy: ward expired: %d\n", rev_u->por_s));
+    _proxy_ward_close(rev_u);
+  }
+}
+
 /* _proxy_ward_plan(): notify ship of new ward
 */
 static void
@@ -1379,6 +1395,11 @@ _proxy_ward_start(u3_proxy_conn* con_u, u3_noun sip)
   else {
     rev_u->por_s = ntohs(add_u.sin_port);
     _proxy_ward_plan(rev_u);
+
+    uv_timer_init(u3L, &rev_u->tim_u);
+
+    // XX how long?
+    uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 30 * 1000, 0);
   }
 }
 
