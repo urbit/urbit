@@ -927,13 +927,6 @@ typedef enum {
   u3_pars_moar = 2                    //  incomplete
 } u3_proxy_pars;
 
-/* u3_proxy_writ: struct for uv_write lifecycle management.
-*/
-typedef struct _u3_proxy_writ {
-  uv_write_t       wri_u;
-  c3_y*            buf_y;
-} u3_proxy_writ;
-
 typedef enum {
   u3_proxy_forward = 0,               //  connected to us
   u3_proxy_backward = 1               //  we connected to XX rename
@@ -1003,30 +996,6 @@ _proxy_alloc(uv_handle_t* had_u,
   // XX consider h2o_buffer_t, a pool, or something XX
   void* ptr_v = c3_malloc(4096);
   *buf = uv_buf_init(ptr_v, 4096);
-}
-
-/* _proxy_write_free(): free uv_write struct and linked buffer
-*/
-static void
-_proxy_writ_free(u3_proxy_writ* ruq_u)
-{
-  if ( 0 != ruq_u->buf_y ) {
-    free(ruq_u->buf_y);
-  }
-
-  free(ruq_u);
-}
-
-/* _proxy_writ_new(): allocate uv_write struct and link buffer
-*/
-static u3_proxy_writ*
-_proxy_writ_new(u3_proxy_conn* con_u, c3_y* buf_y)
-{
-  u3_proxy_writ* ruq_u = c3_malloc(sizeof(*ruq_u));
-  ruq_u->wri_u.data = con_u;
-  ruq_u->buf_y = buf_y;
-
-  return ruq_u;
 }
 
 /* _proxy_client_free(): free proxy client
@@ -1177,21 +1146,20 @@ _proxy_listener_new(c3_s por_s, c3_o sec)
   return lis_u;
 }
 
-/* _proxy_write_cb(): general callback for proxy uv_write
+/* _proxy_write_cb(): free uv_write_t and linked buffer.
 */
 static void
 _proxy_write_cb(uv_write_t* wri_u, c3_i sas_i)
 {
-  u3_proxy_writ* ruq_u = (u3_proxy_writ*)wri_u;
-  // u3_proxy_conn* con_u = ruq_u->wri_u.data;
-
   if ( 0 != sas_i ) {
     uL(fprintf(uH, "proxy: write: %s\n", uv_strerror(sas_i)));
-    // periodically cores, already closing, broken pipe
-    // _proxy_conn_close(con_u);
   }
 
-  _proxy_writ_free(ruq_u);
+  if ( 0 != wri_u->data ) {
+    free(wri_u->data);
+  }
+
+  free(wri_u);
 }
 
 /* _proxy_write(): write buffer to proxy stream
@@ -1199,25 +1167,24 @@ _proxy_write_cb(uv_write_t* wri_u, c3_i sas_i)
 static c3_i
 _proxy_write(u3_proxy_conn* con_u, uv_stream_t* str_u, uv_buf_t buf_u)
 {
-  u3_proxy_writ* ruq_u = _proxy_writ_new(con_u, (c3_y*)buf_u.base);
+  uv_write_t* wri_u = c3_malloc(sizeof(*wri_u));
+  wri_u->data = buf_u.base;
 
   c3_i sas_i;
-  if ( 0 != (sas_i = uv_write(&ruq_u->wri_u, str_u,
-                              &buf_u, 1, _proxy_write_cb)) ) {
-    uL(fprintf(uH, "proxy: write: %s\n", uv_strerror(sas_i)));
+  if ( 0 != (sas_i = uv_write(wri_u, str_u, &buf_u, 1, _proxy_write_cb)) ) {
     _proxy_conn_close(con_u);
-    _proxy_writ_free(ruq_u);
+    _proxy_write_cb(wri_u, sas_i);
   }
 
   return sas_i;
 }
 
-/* _proxy_sock_read_downstream_cb(): read from downstream, writing to upstream
+/* _proxy_read_downstream_cb(): read from downstream, write upstream.
 */
 static void
-_proxy_sock_read_downstream_cb(uv_stream_t* don_u,
-                               ssize_t      siz_w,
-                               const uv_buf_t *     buf_u)
+_proxy_read_downstream_cb(uv_stream_t* don_u,
+                          ssize_t      siz_w,
+                          const uv_buf_t* buf_u)
 {
   u3_proxy_conn* con_u = don_u->data;
 
@@ -1233,12 +1200,12 @@ _proxy_sock_read_downstream_cb(uv_stream_t* don_u,
   }
 }
 
-/* _proxy_sock_read_upstream_cb(): read from upstream, writing to downstream
+/* _proxy_read_upstream_cb(): read from upstream, write downstream.
 */
 static void
-_proxy_sock_read_upstream_cb(uv_stream_t* upt_u,
-                             ssize_t      siz_w,
-                             const uv_buf_t *     buf_u)
+_proxy_read_upstream_cb(uv_stream_t* upt_u,
+                        ssize_t      siz_w,
+                        const uv_buf_t* buf_u)
 {
   u3_proxy_conn* con_u = upt_u->data;
 
@@ -1254,7 +1221,7 @@ _proxy_sock_read_upstream_cb(uv_stream_t* upt_u,
   }
 }
 
-/* _proxy_fire(): send pending buf upstream, setup mutual read/write
+/* _proxy_fire(): send pending buffer upstream, setup full duplex.
 */
 static void
 _proxy_fire(u3_proxy_conn* con_u)
@@ -1270,14 +1237,17 @@ _proxy_fire(u3_proxy_conn* con_u)
 
   // XX set cooldown timers to close these?
 
-  uv_read_start((uv_stream_t*)&con_u->don_u, _proxy_alloc, _proxy_sock_read_downstream_cb);
-  uv_read_start((uv_stream_t*)con_u->upt_u, _proxy_alloc, _proxy_sock_read_upstream_cb);
+  uv_read_start((uv_stream_t*)&con_u->don_u,
+                _proxy_alloc, _proxy_read_downstream_cb);
+
+  uv_read_start((uv_stream_t*)con_u->upt_u,
+                _proxy_alloc, _proxy_read_upstream_cb);
 }
 
-/* _proxy_lopc_connect_cb(): callback for loopback proxy connect
+/* _proxy_loop_connect_cb(): callback for loopback proxy connect.
 */
 static void
-_proxy_lopc_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
+_proxy_loop_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
 {
   u3_proxy_conn* con_u = upc_u->data;
 
@@ -1292,10 +1262,10 @@ _proxy_lopc_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
   free(upc_u);
 }
 
-/* _proxy_lopc(): connect to loopback for local proxying
+/* _proxy_loop_connect(): connect to loopback.
 */
 static void
-_proxy_lopc(u3_proxy_conn* con_u)
+_proxy_loop_connect(u3_proxy_conn* con_u)
 {
   uv_tcp_t* upt_u = c3_malloc(sizeof(*upt_u));
 
@@ -1334,7 +1304,7 @@ _proxy_lopc(u3_proxy_conn* con_u)
 
   if ( 0 != (sas_i = uv_tcp_connect(upc_u, upt_u,
                                     (const struct sockaddr*)&lop_u,
-                                    _proxy_lopc_connect_cb)) ) {
+                                    _proxy_loop_connect_cb)) ) {
     uL(fprintf(uH, "proxy: loopback: %s\n", uv_strerror(sas_i)));
     free(upc_u);
     _proxy_conn_close(con_u);
@@ -1549,7 +1519,7 @@ static void
 _proxy_dest(u3_proxy_conn* con_u, u3_noun sip)
 {
   if ( u3_nul == sip ) {
-    _proxy_lopc(con_u);
+    _proxy_loop_connect(con_u);
   }
   else {
     u3_noun hip = u3k(u3t(sip));
@@ -1565,7 +1535,7 @@ _proxy_dest(u3_proxy_conn* con_u, u3_noun sip)
     }
 
     if ( c3y == our ) {
-      _proxy_lopc(con_u);
+      _proxy_loop_connect(con_u);
     }
     else {
       // XX check if (sein:title sip) == our
@@ -1765,7 +1735,7 @@ _proxy_reverse_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
     _proxy_conn_close(con_u);
   }
   else {
-    _proxy_lopc(con_u);
+    _proxy_loop_connect(con_u);
   }
 
 
