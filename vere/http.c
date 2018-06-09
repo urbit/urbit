@@ -928,24 +928,24 @@ typedef enum {
 } u3_proxy_pars;
 
 typedef enum {
-  u3_proxy_forward = 0,               //  connected to us
-  u3_proxy_backward = 1               //  we connected to XX rename
+  u3_ptyp_prox = 0,                   //  connected to us
+  u3_ptyp_ward = 1                    //  we connected back to
 } u3_proxy_type;
 
-/* u3_proxy_conn: established proxy connection
+/* u3_pcon: established proxy connection
 */
-typedef struct _u3_proxy_conn {
+typedef struct _u3_pcon {
   uv_tcp_t         don_u;             //  downstream handle
-  uv_tcp_t*        upt_u;             //  upstream handle XX union of local connect and reverse listener?
-  uv_buf_t         buf_u;             //  pending buffer XX support multiple
+  uv_tcp_t*        upt_u;             //  upstream handle
+  uv_buf_t         buf_u;             //  pending buffer
   c3_o             sec;               //  yes == https
-  u3_proxy_type    typ_e;
-  union {
-    struct _u3_warc* cli_u;           // typ_e == backward
-    struct _u3_prox* lis_u;           // typ_e == forward
-  } src_u;
-  struct _u3_proxy_conn*   nex_u;
-} u3_proxy_conn;
+  u3_proxy_type    typ_e;             //  tagged
+  union {                             //  union
+    struct _u3_warc* cli_u;           //  typ_e == ward
+    struct _u3_prox* lis_u;           //  typ_e == prox
+  } src_u;                            //  connection source
+  struct _u3_pcon*   nex_u;           //  next in lists
+} u3_pcon;
 
 /* u3_warc: server connecting back to u3_ward as client
 */
@@ -965,7 +965,7 @@ typedef struct _u3_ward {
   uv_timer_t       tim_u;             //  expiration timer
   u3_atom          sip;               //  reverse proxy for ship
   c3_s             por_s;             //  listening on port
-  struct _u3_proxy_conn*   con_u;             //  initiating connection
+  struct _u3_pcon* con_u;             //  initiating connection
   struct _u3_ward* nex_u;             //  next in lists
 } u3_ward;
 
@@ -975,7 +975,7 @@ typedef struct _u3_prox {
   uv_tcp_t         sev_u;             //  server handle
   c3_s             por_s;             //  listening on port
   c3_o             sec;               //  yes == https
-  struct _u3_proxy_conn*   con_u;             // active connection list
+  struct _u3_pcon* con_u;             //  active connection list
   struct _u3_ward* rev_u;             //  active reverse listeners
   struct _u3_prox* nex_u;             //  next listener
 } u3_prox;
@@ -1026,13 +1026,13 @@ _proxy_warc_new(u3_atom sip, c3_s por_s, c3_o sec)
 /* _proxy_conn_free(): free proxy connection
 */
 static void
-_proxy_conn_free(u3_proxy_conn* con_u)
+_proxy_conn_free(u3_pcon* con_u)
 {
   if ( 0 != con_u->buf_u.base ) {
     free(con_u->buf_u.base);
   }
 
-  if ( u3_proxy_backward == con_u->typ_e ) {
+  if ( u3_ptyp_ward == con_u->typ_e ) {
     _proxy_warc_free(con_u->src_u.cli_u);
   }
 
@@ -1044,7 +1044,7 @@ _proxy_conn_free(u3_proxy_conn* con_u)
 /* _proxy_conn_close(): close both sides of proxy connection
 */
 static void
-_proxy_conn_close(u3_proxy_conn* con_u)
+_proxy_conn_close(u3_pcon* con_u)
 {
   if ( 0 != con_u->upt_u ) {
     uv_close((uv_handle_t*)con_u->upt_u, (uv_close_cb)free);
@@ -1055,10 +1055,10 @@ _proxy_conn_close(u3_proxy_conn* con_u)
 
 /* _proxy_conn_new(): allocate proxy connection
 */
-static u3_proxy_conn*
+static u3_pcon*
 _proxy_conn_new(u3_proxy_type typ_e, void* src_u)
 {
-  u3_proxy_conn* con_u = c3_malloc(sizeof(*con_u));
+  u3_pcon* con_u = c3_malloc(sizeof(*con_u));
   con_u->upt_u = 0;
   con_u->buf_u = uv_buf_init(0, 0);
   con_u->nex_u = 0;
@@ -1066,7 +1066,7 @@ _proxy_conn_new(u3_proxy_type typ_e, void* src_u)
   switch ( typ_e ) {
     default: c3_assert(0);
 
-    case u3_proxy_forward: {
+    case u3_ptyp_prox: {
       u3_prox* lis_u = (u3_prox*)src_u;
       con_u->typ_e = typ_e;
       con_u->src_u.lis_u = lis_u;
@@ -1074,7 +1074,7 @@ _proxy_conn_new(u3_proxy_type typ_e, void* src_u)
       break;
     }
 
-    case u3_proxy_backward: {
+    case u3_ptyp_ward: {
       u3_warc* cli_u = (u3_warc*)src_u;
       con_u->typ_e = typ_e;
       con_u->src_u.cli_u = cli_u;
@@ -1109,7 +1109,7 @@ _proxy_write_cb(uv_write_t* wri_u, c3_i sas_i)
 /* _proxy_write(): write buffer to proxy stream
 */
 static c3_i
-_proxy_write(u3_proxy_conn* con_u, uv_stream_t* str_u, uv_buf_t buf_u)
+_proxy_write(u3_pcon* con_u, uv_stream_t* str_u, uv_buf_t buf_u)
 {
   uv_write_t* wri_u = c3_malloc(sizeof(*wri_u));
   wri_u->data = buf_u.base;
@@ -1130,7 +1130,7 @@ _proxy_read_downstream_cb(uv_stream_t* don_u,
                           ssize_t      siz_w,
                           const uv_buf_t* buf_u)
 {
-  u3_proxy_conn* con_u = don_u->data;
+  u3_pcon* con_u = don_u->data;
 
   if ( 0 > siz_w ) {
     if ( UV_EOF != siz_w ) {
@@ -1151,7 +1151,7 @@ _proxy_read_upstream_cb(uv_stream_t* upt_u,
                         ssize_t      siz_w,
                         const uv_buf_t* buf_u)
 {
-  u3_proxy_conn* con_u = upt_u->data;
+  u3_pcon* con_u = upt_u->data;
 
   if ( 0 > siz_w ) {
     if ( UV_EOF != siz_w ) {
@@ -1168,7 +1168,7 @@ _proxy_read_upstream_cb(uv_stream_t* upt_u,
 /* _proxy_fire(): send pending buffer upstream, setup full duplex.
 */
 static void
-_proxy_fire(u3_proxy_conn* con_u)
+_proxy_fire(u3_pcon* con_u)
 {
   if ( 0 != con_u->buf_u.base ) {
     uv_buf_t fub_u = con_u->buf_u;
@@ -1193,7 +1193,7 @@ _proxy_fire(u3_proxy_conn* con_u)
 static void
 _proxy_loop_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
 {
-  u3_proxy_conn* con_u = upc_u->data;
+  u3_pcon* con_u = upc_u->data;
 
   if ( 0 != sas_i ) {
     uL(fprintf(uH, "proxy: connect: %s\n", uv_strerror(sas_i)));
@@ -1209,7 +1209,7 @@ _proxy_loop_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
 /* _proxy_loop_connect(): connect to loopback.
 */
 static void
-_proxy_loop_connect(u3_proxy_conn* con_u)
+_proxy_loop_connect(u3_pcon* con_u)
 {
   uv_tcp_t* upt_u = c3_malloc(sizeof(*upt_u));
 
@@ -1278,7 +1278,7 @@ _proxy_ward_close(u3_ward* rev_u)
 /* _proxy_ward_new(): allocate reverse proxy listener
 */
 static u3_ward*
-_proxy_ward_new(u3_proxy_conn* con_u, u3_atom sip)
+_proxy_ward_new(u3_pcon* con_u, u3_atom sip)
 {
   u3_ward* rev_u = c3_malloc(sizeof(*rev_u));
   rev_u->tcp_u.data = rev_u;
@@ -1366,7 +1366,7 @@ _proxy_ward_plan(u3_ward* rev_u)
 /* _proxy_ward_start(): start ward (ship-specific listener).
 */
 static void
-_proxy_ward_start(u3_proxy_conn* con_u, u3_noun sip)
+_proxy_ward_start(u3_pcon* con_u, u3_noun sip)
 {
   u3_ward* rev_u = _proxy_ward_new(con_u, sip);
 
@@ -1407,7 +1407,7 @@ _proxy_ward_start(u3_proxy_conn* con_u, u3_noun sip)
 static void
 _proxy_ward_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
 {
-  u3_proxy_conn* con_u = upc_u->data;
+  u3_pcon* con_u = upc_u->data;
 
   if ( 0 != sas_i ) {
     uL(fprintf(uH, "proxy: ward connect: %s\n", uv_strerror(sas_i)));
@@ -1425,7 +1425,7 @@ _proxy_ward_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
 static void
 _proxy_ward_connect(u3_warc* cli_u)
 {
-  u3_proxy_conn* con_u = _proxy_conn_new(u3_proxy_backward, cli_u);
+  u3_pcon* con_u = _proxy_conn_new(u3_ptyp_ward, cli_u);
 
   uv_tcp_init(u3L, &con_u->don_u);
 
@@ -1629,7 +1629,7 @@ _proxy_parse_ship(c3_c* hot_c)
 /* _proxy_dest(): proxy to destination
 */
 static void
-_proxy_dest(u3_proxy_conn* con_u, u3_noun sip)
+_proxy_dest(u3_pcon* con_u, u3_noun sip)
 {
   if ( u3_nul == sip ) {
     _proxy_loop_connect(con_u);
@@ -1660,12 +1660,12 @@ _proxy_dest(u3_proxy_conn* con_u, u3_noun sip)
   u3z(sip);
 }
 
-static void _proxy_peek_read(u3_proxy_conn* con_u);
+static void _proxy_peek_read(u3_pcon* con_u);
 
 /* _proxy_peek(): peek at proxied request for destination
 */
 static void
-_proxy_peek(u3_proxy_conn* con_u)
+_proxy_peek(u3_pcon* con_u)
 {
   c3_c* hot_c = 0;
 
@@ -1708,7 +1708,7 @@ _proxy_peek_read_cb(uv_stream_t* don_u,
                     ssize_t      siz_w,
                     const uv_buf_t* buf_u)
 {
-  u3_proxy_conn* con_u = don_u->data;
+  u3_pcon* con_u = don_u->data;
 
   if ( 0 > siz_w ) {
     if ( UV_EOF != siz_w ) {
@@ -1745,7 +1745,7 @@ _proxy_peek_read_cb(uv_stream_t* don_u,
 /* _proxy_peek_read(): start read  to peek at proxied request
 */
 static void
-_proxy_peek_read(u3_proxy_conn* con_u)
+_proxy_peek_read(u3_pcon* con_u)
 {
   uv_read_start((uv_stream_t*)&con_u->don_u,
                 _proxy_alloc, _proxy_peek_read_cb);
@@ -1784,7 +1784,7 @@ _proxy_serv_new(c3_s por_s, c3_o sec)
 static void
 _proxy_serv_accept(u3_prox* lis_u)
 {
-  u3_proxy_conn* con_u = _proxy_conn_new(u3_proxy_forward, lis_u);
+  u3_pcon* con_u = _proxy_conn_new(u3_ptyp_prox, lis_u);
 
   uv_tcp_init(u3L, &con_u->don_u);
 
