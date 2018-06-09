@@ -812,10 +812,10 @@ u3_http_ef_thou(c3_l     sev_l,
   u3z(rep);
 }
 
-typedef struct _u3_proxy_listener u3_proxy_listener;
+typedef struct _u3_prox u3_prox;
 
-static u3_proxy_listener* _proxy_listener_new(c3_s por_s, c3_o sec);
-static u3_proxy_listener* _proxy_sock_start(u3_proxy_listener* lis_u);
+static u3_prox* _proxy_serv_new(c3_s por_s, c3_o sec);
+static u3_prox* _proxy_serv_start(u3_prox* lis_u);
 
 /* u3_http_io_init(): initialize http I/O.
 */
@@ -895,8 +895,8 @@ u3_http_io_talk()
 
   _http_write_ports_file(u3_Host.dir_c);
 
-  _proxy_sock_start(_proxy_listener_new(80, c3n));
-  _proxy_sock_start(_proxy_listener_new(443, c3y));
+  _proxy_serv_start(_proxy_serv_new(80, c3n));
+  _proxy_serv_start(_proxy_serv_new(443, c3y));
 }
 
 /* u3_http_io_poll(): poll kernel for http I/O.
@@ -942,7 +942,7 @@ typedef struct _u3_proxy_conn {
   u3_proxy_type    typ_e;
   union {
     struct _u3_proxy_client* cli_u;   // typ_e == backward
-    struct _u3_proxy_listener* lis_u; // typ_e == forward
+    struct _u3_prox* lis_u; // typ_e == forward
   } src_u;
   struct _u3_proxy_conn*   nex_u;
 } u3_proxy_conn;
@@ -969,16 +969,16 @@ typedef struct _u3_proxy_reverse {
   struct _u3_proxy_reverse* nex_u;
 } u3_proxy_reverse;
 
-/* u3_proxy_listener: general proxy listener
+/* u3_prox: reverse TCP proxy server
 */
-typedef struct _u3_proxy_listener {
+typedef struct _u3_prox {
   uv_tcp_t         sev_u;             // server handle
-  c3_s             por_s;
+  c3_s             por_s;             // listening on port
   c3_o             sec;               //  yes == https
   struct _u3_proxy_conn*   con_u;             // active connection list
   struct _u3_proxy_reverse* rev_u;            // active reverse listeners
-  struct u3_proxy_listener* nex_u;           // next listener
-} u3_proxy_listener;
+  struct _u3_prox* nex_u;             // next listener
+} u3_prox;
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -1067,7 +1067,7 @@ _proxy_conn_new(u3_proxy_type typ_e, void* src_u)
     default: c3_assert(0);
 
     case u3_proxy_forward: {
-      u3_proxy_listener* lis_u = (u3_proxy_listener*)src_u;
+      u3_prox* lis_u = (u3_prox*)src_u;
       con_u->typ_e = typ_e;
       con_u->src_u.lis_u = lis_u;
       con_u->sec = lis_u->sec;
@@ -1116,34 +1116,6 @@ _proxy_reverse_new(u3_proxy_conn* con_u, u3_atom sip)
   // XX link to global state
 
   return rev_u;
-}
-
-/* _proxy_listener_free(): free proxy listener
-*/
-static void
-_proxy_listener_free(u3_proxy_listener* lis_u)
-{
-  free(lis_u);
-  // XX close and free connections
-  // XX close and free reverse listeners
-  // XX detach from global state
-}
-
-/* _proxy_listener_new(): allocate proxy listener
-*/
-static u3_proxy_listener*
-_proxy_listener_new(c3_s por_s, c3_o sec)
-{
-  u3_proxy_listener* lis_u = c3_malloc(sizeof(*lis_u));
-  lis_u->sev_u.data = lis_u;
-  lis_u->por_s = por_s;
-  lis_u->sec = sec;
-  lis_u->con_u = 0;
-  lis_u->rev_u = 0;
-  lis_u->nex_u = 0;
-  // XX link to global state
-
-  return lis_u;
 }
 
 /* _proxy_write_cb(): free uv_write_t and linked buffer.
@@ -1638,10 +1610,38 @@ _proxy_peek_read(u3_proxy_conn* con_u)
                 _proxy_alloc, _proxy_peek_read_cb);
 }
 
-/* _proxy_sock_new(): accept new proxied request
+/* _proxy_serv_free(): free proxy listener
 */
 static void
-_proxy_sock_new(u3_proxy_listener* lis_u)
+_proxy_serv_free(u3_prox* lis_u)
+{
+  free(lis_u);
+  // XX close and free connections
+  // XX close and free reverse listeners
+  // XX detach from global state
+}
+
+/* _proxy_serv_new(): allocate proxy listener
+*/
+static u3_prox*
+_proxy_serv_new(c3_s por_s, c3_o sec)
+{
+  u3_prox* lis_u = c3_malloc(sizeof(*lis_u));
+  lis_u->sev_u.data = lis_u;
+  lis_u->por_s = por_s;
+  lis_u->sec = sec;
+  lis_u->con_u = 0;
+  lis_u->rev_u = 0;
+  lis_u->nex_u = 0;
+  // XX link to global state
+
+  return lis_u;
+}
+
+/* _proxy_serv_accept(): accept new connection.
+*/
+static void
+_proxy_serv_accept(u3_prox* lis_u)
 {
   u3_proxy_conn* con_u = _proxy_conn_new(u3_proxy_forward, lis_u);
 
@@ -1658,25 +1658,25 @@ _proxy_sock_new(u3_proxy_listener* lis_u)
   }
 }
 
-/* _proxy_sock_listen_cb(): listen callback for proxy listener
+/* _proxy_serv_listen_cb(): listen callback for proxy server.
 */
 static void
-_proxy_sock_listen_cb(uv_stream_t* sev_u, c3_i sas_i)
+_proxy_serv_listen_cb(uv_stream_t* sev_u, c3_i sas_i)
 {
-  u3_proxy_listener* lis_u = (u3_proxy_listener*)sev_u;
+  u3_prox* lis_u = (u3_prox*)sev_u;
 
   if ( 0 != sas_i ) {
     uL(fprintf(uH, "proxy: listen_cb: %s\n", uv_strerror(sas_i)));
   }
   else {
-    _proxy_sock_new(lis_u);
+    _proxy_serv_accept(lis_u);
   }
 }
 
-/* _proxy_sock_start(): start proxy listener
+/* _proxy_serv_start(): start reverse TCP proxy server.
 */
-static u3_proxy_listener*
-_proxy_sock_start(u3_proxy_listener* lis_u)
+static u3_prox*
+_proxy_serv_start(u3_prox* lis_u)
 {
   uv_tcp_init(u3L, &lis_u->sev_u);
 
@@ -1692,11 +1692,11 @@ _proxy_sock_start(u3_proxy_listener* lis_u)
     c3_i sas_i;
 
     add_u.sin_port = htons(lis_u->por_s);
-    sas_i = uv_tcp_bind(&lis_u->sev_u, (const struct sockaddr*)&add_u, 0);
 
-    if ( 0 != sas_i ||
+    if ( 0 != (sas_i = uv_tcp_bind(&lis_u->sev_u,
+                                   (const struct sockaddr*)&add_u, 0)) ||
          0 != (sas_i = uv_listen((uv_stream_t*)&lis_u->sev_u,
-                                 TCP_BACKLOG, _proxy_sock_listen_cb)) ) {
+                                 TCP_BACKLOG, _proxy_serv_listen_cb)) ) {
       if ( (UV_EADDRINUSE == sas_i) || (UV_EACCES == sas_i) ) {
         if ( (c3y == lis_u->sec) && (443 == lis_u->por_s) ) {
           lis_u->por_s = 9443;
@@ -1712,7 +1712,7 @@ _proxy_sock_start(u3_proxy_listener* lis_u)
       }
 
       uL(fprintf(uH, "proxy: listen: %s\n", uv_strerror(sas_i)));
-      _proxy_listener_free(lis_u);
+      _proxy_serv_free(lis_u);
       return 0;
     }
 
