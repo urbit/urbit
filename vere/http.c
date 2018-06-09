@@ -941,23 +941,22 @@ typedef struct _u3_proxy_conn {
   c3_o             sec;               //  yes == https
   u3_proxy_type    typ_e;
   union {
-    struct _u3_proxy_client* cli_u;   // typ_e == backward
-    struct _u3_prox* lis_u; // typ_e == forward
+    struct _u3_warc* cli_u;           // typ_e == backward
+    struct _u3_prox* lis_u;           // typ_e == forward
   } src_u;
   struct _u3_proxy_conn*   nex_u;
 } u3_proxy_conn;
 
-/* u3_proxy_client: ship-specific proxy client
+/* u3_warc: server connecting back to u3_ward as client
 */
-typedef struct _u3_proxy_client {
+typedef struct _u3_warc {
   c3_w             ipf_w;
   c3_s             por_s;
   c3_o             sec;
   u3_atom          sip;
   c3_c*            hot_c;
-  struct _u3_proxy_client* nex_u;
-  // XX link connection?
-} u3_proxy_client;
+  struct _u3_warc* nex_u;
+} u3_warc;
 
 /* u3_ward: reverse, reverse TCP proxy (ship-specific listener)
 */
@@ -999,21 +998,21 @@ _proxy_alloc(uv_handle_t* had_u,
   *buf = uv_buf_init(ptr_v, 4096);
 }
 
-/* _proxy_client_free(): free proxy client
+/* _proxy_warc_free(): free ward client
 */
 static void
-_proxy_client_free(u3_proxy_client* cli_u)
+_proxy_warc_free(u3_warc* cli_u)
 {
   free(cli_u);
-  // XX detach from glboal state
+  // XX detach from global state
 }
 
-/* _proxy_client_new(): allocate ship-specific proxy client
+/* _proxy_warc_new(): allocate ship-specific proxy client
 */
-static u3_proxy_client*
-_proxy_client_new(u3_atom sip, c3_s por_s, c3_o sec)
+static u3_warc*
+_proxy_warc_new(u3_atom sip, c3_s por_s, c3_o sec)
 {
-  u3_proxy_client* cli_u = c3_malloc(sizeof(*cli_u));
+  u3_warc* cli_u = c3_malloc(sizeof(*cli_u));
   cli_u->sip = sip;
   cli_u->sec = sec;
   cli_u->por_s = por_s; // set after opened
@@ -1034,7 +1033,7 @@ _proxy_conn_free(u3_proxy_conn* con_u)
   }
 
   if ( u3_proxy_backward == con_u->typ_e ) {
-    _proxy_client_free(con_u->src_u.cli_u);
+    _proxy_warc_free(con_u->src_u.cli_u);
   }
 
   free(con_u);
@@ -1076,7 +1075,7 @@ _proxy_conn_new(u3_proxy_type typ_e, void* src_u)
     }
 
     case u3_proxy_backward: {
-      u3_proxy_client* cli_u = (u3_proxy_client*)src_u;
+      u3_warc* cli_u = (u3_warc*)src_u;
       con_u->typ_e = typ_e;
       con_u->src_u.cli_u = cli_u;
       con_u->sec = cli_u->sec;
@@ -1400,6 +1399,113 @@ _proxy_ward_start(u3_proxy_conn* con_u, u3_noun sip)
 
     // XX how long?
     uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 30 * 1000, 0);
+  }
+}
+
+/* _proxy_ward_connect_cb(): ward connection callback
+*/
+static void
+_proxy_ward_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
+{
+  u3_proxy_conn* con_u = upc_u->data;
+
+  if ( 0 != sas_i ) {
+    uL(fprintf(uH, "proxy: ward connect: %s\n", uv_strerror(sas_i)));
+    _proxy_conn_close(con_u);
+  }
+  else {
+    _proxy_loop_connect(con_u);
+  }
+
+  free(upc_u);
+}
+
+/* _proxy_ward_connect(): connect to remote ward
+*/
+static void
+_proxy_ward_connect(u3_warc* cli_u)
+{
+  u3_proxy_conn* con_u = _proxy_conn_new(u3_proxy_backward, cli_u);
+
+  uv_tcp_init(u3L, &con_u->don_u);
+
+  if ( 0 == cli_u->hot_c ) {
+    c3_c* sip_c = u3r_string(u3dc("scot", 'p', u3k(cli_u->sip)));
+    c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.ops_u.dns_c);
+    cli_u->hot_c = c3_malloc(len_w);
+    // incremented to skip '~'
+    snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, u3_Host.ops_u.dns_c);
+
+    free(sip_c);
+  }
+
+  struct sockaddr_in add_u;
+
+  memset(&add_u, 0, sizeof(add_u));
+  add_u.sin_family = AF_INET;
+  add_u.sin_addr.s_addr = htonl(cli_u->ipf_w);
+  add_u.sin_port = htons(cli_u->por_s);
+
+  uv_connect_t* upc_u = c3_malloc(sizeof(*upc_u));
+  upc_u->data = con_u;
+
+  c3_i sas_i;
+
+  if ( 0 != (sas_i = uv_tcp_connect(upc_u, &con_u->don_u,
+                                    (const struct sockaddr*)&add_u,
+                                    _proxy_ward_connect_cb)) ) {
+      uL(fprintf(uH, "proxy: ward connect: %s\n", uv_strerror(sas_i)));
+      free(upc_u);
+      _proxy_conn_close(con_u);
+  }
+}
+
+/* _proxy_ward_resolve_cb(): ward IP address resolution callback
+*/
+static void
+_proxy_ward_resolve_cb(uv_getaddrinfo_t* adr_u,
+                       c3_i              sas_i,
+                       struct addrinfo*  aif_u)
+{
+  u3_warc* cli_u = adr_u->data;
+
+  if ( 0 != sas_i ) {
+    uL(fprintf(uH, "proxy: ward: resolve: %s\n", uv_strerror(sas_i)));
+    _proxy_warc_free(cli_u);
+  }
+  else {
+    // XX traverse struct a la _ames_czar_cb
+    cli_u->ipf_w = ntohl(((struct sockaddr_in *)aif_u->ai_addr)->sin_addr.s_addr);
+    _proxy_ward_connect(cli_u);
+  }
+
+  free(adr_u);
+  uv_freeaddrinfo(aif_u);
+}
+
+/* _proxy_reverse_resolve(): resolve IP address of remote ward
+*/
+static void
+_proxy_ward_resolve(u3_warc* cli_u)
+{
+  uv_getaddrinfo_t* adr_u = c3_malloc(sizeof(*adr_u));
+  adr_u->data = cli_u;
+
+  struct addrinfo hin_u;
+  memset(&hin_u, 0, sizeof(struct addrinfo));
+
+  hin_u.ai_family = PF_INET;
+  hin_u.ai_socktype = SOCK_STREAM;
+  hin_u.ai_protocol = IPPROTO_TCP;
+
+  // XX set port?
+
+  c3_i sas_i;
+
+  if ( 0 != (sas_i = uv_getaddrinfo(u3L, adr_u, _proxy_ward_resolve_cb,
+                                         cli_u->hot_c, 0, &hin_u)) ) {
+    uL(fprintf(uH, "proxy: ward: resolve: %s\n", uv_strerror(sas_i)));
+    _proxy_warc_free(cli_u);
   }
 }
 
@@ -1758,104 +1864,7 @@ _proxy_serv_start(u3_prox* lis_u)
   }
 }
 
-/* _proxy_reverse_connect_cb(): connection callback for client of reverse proxy listener
-*/
-static void
-_proxy_reverse_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
-{
-  u3_proxy_conn* con_u = upc_u->data;
-
-  if ( 0 != sas_i ) {
-    uL(fprintf(uH, "proxy: reverse connect: %s\n", uv_strerror(sas_i)));
-    _proxy_conn_close(con_u);
-  }
-  else {
-    _proxy_loop_connect(con_u);
-  }
-
-
-  free(upc_u);
-}
-
-/* _proxy_reverse_connect(): connect as client to reverse proxy listener
-*/
-static void
-_proxy_reverse_connect(u3_proxy_client* cli_u)
-{
-  u3_proxy_conn* con_u = _proxy_conn_new(u3_proxy_backward, cli_u);
-
-  uv_tcp_init(u3L, &con_u->don_u);
-
-  struct sockaddr_in add_u;
-
-  memset(&add_u, 0, sizeof(add_u));
-  add_u.sin_family = AF_INET;
-  add_u.sin_addr.s_addr = htonl(cli_u->ipf_w);
-  add_u.sin_port = htons(cli_u->por_s);
-
-  uv_connect_t* upc_u = c3_malloc(sizeof(*upc_u));
-  upc_u->data = con_u;
-
-  c3_i sas_i;
-
-  if ( 0 != (sas_i = uv_tcp_connect(upc_u, &con_u->don_u,
-                                    (const struct sockaddr*)&add_u,
-                                    _proxy_reverse_connect_cb)) ) {
-      uL(fprintf(uH, "proxy: reverse connect: %s\n", uv_strerror(sas_i)));
-      free(upc_u);
-      _proxy_conn_close(con_u);
-  }
-}
-
-/* _proxy_reverse_resolve(): IP address resolution callback
-*/
-static void
-_proxy_reverse_client_resolve_cb(uv_getaddrinfo_t* adr_u,
-                                 c3_i              sas_i,
-                                 struct addrinfo*  aif_u)
-{
-  u3_proxy_client* cli_u = adr_u->data;
-
-  if ( 0 != sas_i ) {
-    uL(fprintf(uH, "proxy: reverse resolve: %s\n", uv_strerror(sas_i)));
-    _proxy_client_free(cli_u);
-  }
-  else {
-    // XX traverse struct a la _ames_czar_cb
-    cli_u->ipf_w = ntohl(((struct sockaddr_in *)aif_u->ai_addr)->sin_addr.s_addr);
-    _proxy_reverse_connect(cli_u);
-  }
-
-  free(adr_u);
-  uv_freeaddrinfo(aif_u);
-}
-
-/* _proxy_reverse_resolve(): resolve IP address of reverse proxy listener
-*/
-static void
-_proxy_reverse_resolve(u3_proxy_client* cli_u)
-{
-  uv_getaddrinfo_t* adr_u = c3_malloc(sizeof(*adr_u));
-  adr_u->data = cli_u;
-
-  struct addrinfo hin_u;
-  memset(&hin_u, 0, sizeof(struct addrinfo));
-
-  hin_u.ai_family = PF_INET;
-  hin_u.ai_socktype = SOCK_STREAM;
-  hin_u.ai_protocol = IPPROTO_TCP;
-
-  // XX set port?
-
-  c3_i sas_i;
-
-  if ( 0 != (sas_i = uv_getaddrinfo(u3L, adr_u, _proxy_reverse_client_resolve_cb,
-                                         cli_u->hot_c, 0, &hin_u)) ) {
-    _proxy_client_free(cli_u);
-  }
-}
-
-/* u3_http_ef_that(): reverse proxy request notification effect
+/* u3_http_ef_that(): reverse proxy requested connection notification.
 */
 void
 u3_http_ef_that(u3_noun sip, u3_noun por, u3_noun sec)
@@ -1867,21 +1876,13 @@ u3_http_ef_that(u3_noun sip, u3_noun por, u3_noun sec)
     return;
   }
 
-  u3_proxy_client* cli_u = _proxy_client_new((u3_atom)sip, (c3_s)por, (c3_o)sec);
+  u3_warc* cli_u = _proxy_warc_new((u3_atom)sip, (c3_s)por, (c3_o)sec);
 
   if ( c3n == u3_Host.ops_u.net ) {
     cli_u->ipf_w = INADDR_LOOPBACK;
-    _proxy_reverse_connect(cli_u);
+    _proxy_ward_connect(cli_u);
     return;
   }
 
-  c3_c* sip_c = u3r_string(u3dc("scot", 'p', u3k(cli_u->sip)));
-  c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.ops_u.dns_c);
-  cli_u->hot_c = c3_malloc(len_w);
-  // incremented to skip '~'
-  snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, u3_Host.ops_u.dns_c);
-
-  free(sip_c);
-
-  _proxy_reverse_resolve(cli_u);
+  _proxy_ward_resolve(cli_u);
 }
