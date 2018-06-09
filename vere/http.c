@@ -972,12 +972,12 @@ typedef struct _u3_ward {
 /* u3_prox: reverse TCP proxy server
 */
 typedef struct _u3_prox {
-  uv_tcp_t         sev_u;             // server handle
-  c3_s             por_s;             // listening on port
+  uv_tcp_t         sev_u;             //  server handle
+  c3_s             por_s;             //  listening on port
   c3_o             sec;               //  yes == https
   struct _u3_proxy_conn*   con_u;             // active connection list
-  struct _u3_ward* rev_u;             // active reverse listeners
-  struct _u3_prox* nex_u;             // next listener
+  struct _u3_ward* rev_u;             //  active reverse listeners
+  struct _u3_prox* nex_u;             //  next listener
 } u3_prox;
 
 ///////////////////////////////////////////////////////////////////////////////
