@@ -526,6 +526,23 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define SLIB 70
 #define SLIS 71
 #define SAVE 72
+// nock 12
+#define MUTH 73
+#define KUTH 74
+#define MUTT 75
+#define KUTT 76
+#define MUSM 77
+#define KUSM 78
+#define MUCS 79
+#define KUCS 80
+#define MUTB 81
+#define MUTS 82
+#define MITB 83
+#define MITS 84
+#define KUTB 85
+#define KUTS 86
+#define KITB 87
+#define KITS 88
 
 /* _n_arg(): return the size (in bytes) of an opcode's argument
  */
@@ -538,6 +555,7 @@ _n_arg(c3_y cod_y)
     case SAMB: case SANB: case SBIP: case SBIN:
     case SLIB: case SKIB: case KICB: case TICB:
     case BUSH: case BAST: case BALT:
+    case KITB: case MITB:
       return sizeof(c3_y);
 
     case FASK: case FASL: case FISL: case FISK:
@@ -545,6 +563,7 @@ _n_arg(c3_y cod_y)
     case SAMS: case SANS: case SIPS: case SINS:
     case SLIS: case SKIS: case KICS: case TICS:
     case SUSH: case SAST: case SALT: 
+    case KITS: case MITS:
       return sizeof(c3_s);
 
     case SWIP: case SWIN:
@@ -657,6 +676,7 @@ _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
         
         case BUSH: case FIBK: case FIBL:
         case SANB: case LIBL: case LIBK:
+        case KITB: case MITB:
           a_w = (*lit_w)++;
           if ( a_w <= 0xFF ) {
             siz_y[i_w] = 2;
@@ -885,6 +905,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         case FIBK: case FIBL: 
         case LIBK: case LIBL:
         case BUSH: case SANB:
+        case KITB: case MITB:
           _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
           pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
           break;
@@ -992,6 +1013,10 @@ static char* opcode_names[] = {
   "balt", "salt",
   "skib", "skis", "slib", "slis",
   "save",
+  "muth", "kuth", "mutt", "kutt",
+  "musm", "kusm", "mucs", "kucs",
+  "mutb", "muts", "mitb", "mits",
+  "kutb", "kuts", "kitb", "kits",
 };
 #endif
 
@@ -1289,6 +1314,42 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       ++tot_w; _n_emit(ops, (c3y == los_o) ? WILS : WISH);
       break;
 
+    case 12: {
+      u3_noun axe, nef;
+      u3x_cell(arg, &hed, &tel);
+      u3x_cell(hed, &axe, &nef);
+      tot_w += _n_comp(ops, tel, c3n, c3n);
+      ++tot_w; _n_emit(ops, SWAP);
+      tot_w += _n_comp(ops, nef, c3n, c3n);
+
+      ++tot_w;
+      switch ( axe ) {
+        case 2:
+          _n_emit(ops, (c3y == los_o) ? MUTH : KUTH);
+          break;
+
+        case 3:
+          _n_emit(ops, (c3y == los_o) ? MUTT : KUTT);
+          break;
+
+        case u3x_sam:
+          _n_emit(ops, (c3y == los_o) ? MUSM : KUSM);
+          break;
+
+        case u3x_con_sam:
+          _n_emit(ops, (c3y == los_o) ? MUCS : KUCS);
+          break;
+
+        default:
+          op_y = (c3y == los_o)
+               ? (axe <= 0xFF) ? MUTB : (axe <= 0xFFFF) ? MUTS : MITB  // overflows to MITL
+               : (axe <= 0xFF) ? KUTB : (axe <= 0xFFFF) ? KUTS : KITB; // overflows to KITS
+          _n_emit(ops, u3nc(op_y, axe));
+          break;
+      }
+      break;
+    }
+
     default:
       u3m_bail(c3__exit);
       return 0;
@@ -1533,6 +1594,26 @@ _n_kale(u3_noun a)
   return a;
 }
 
+
+/* _n_edit(): PRODUCE a modified big with its axe axis
+ *            changed to som. axe is RETAINED.
+ */
+static u3_noun
+_n_edit(u3_noun big, u3_noun axe, u3_noun som)
+{
+  if ( c3y == u3a_is_cat(axe) ) {
+    return u3i_molt(big, axe, som, 0);
+  }
+  else {
+    u3_noun mor = u3qc_mas(axe);
+    u3_noun pro = ( 2 == u3qc_cap(axe) )
+                ? u3nc(_n_edit(u3k(u3h(big)), mor, som), u3k(u3t(big)))
+                : u3nc(u3k(u3h(big)), _n_edit(u3k(u3t(big)), mor, som));
+    u3z(mor);
+    return pro;
+  }
+}
+
 typedef struct {
   u3n_prog* pog_u;
   c3_w     ip_w;
@@ -1573,6 +1654,10 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     &&do_balt, &&do_salt,
     &&do_skib, &&do_skis, &&do_slib, &&do_slis,
     &&do_save,
+    &&do_muth, &&do_kuth, &&do_mutt, &&do_kutt,
+    &&do_musm, &&do_kusm, &&do_mucs, &&do_kucs,
+    &&do_mutb, &&do_muts, &&do_mitb, &&do_mits,
+    &&do_kutb, &&do_kuts, &&do_kitb, &&do_kits,
   };
 
   u3j_site* sit_u;
@@ -2157,6 +2242,104 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       }
       *top = x;
       u3z(o);
+      BURN();
+
+    do_kuth:
+      x    = _n_pep(mov, off);
+      top  = _n_swap(mov, off);
+      goto muth_in;
+    do_muth:
+      x    = _n_pep(mov, off);
+      _n_toss(mov, off);
+      top  = _n_peek(off);
+    muth_in:
+      o    = *top;
+      *top = u3nc(x, u3k(u3t(o)));
+      u3z(o);
+      BURN();
+
+    do_kutt:
+      x    = _n_pep(mov, off);
+      top  = _n_swap(mov, off);
+      goto mutt_in;
+    do_mutt:
+      x    = _n_pep(mov, off);
+      _n_toss(mov, off);
+      top  = _n_peek(off);
+    mutt_in:
+      o    = *top;
+      *top = u3nc(u3k(u3h(o)), x);
+      u3z(o);
+      BURN();
+
+    do_kusm:
+      x    = _n_pep(mov, off);
+      top  = _n_swap(mov, off);
+      goto musm_in;
+    do_musm:
+      x    = _n_pep(mov, off);
+      _n_toss(mov, off);
+      top  = _n_peek(off);
+    musm_in:
+      o    = *top;
+      *top = u3nt(u3k(u3h(o)), x, u3k(u3t(u3t(o))));
+      u3z(o);
+      BURN();
+
+    do_kucs:
+      x    = _n_pep(mov, off);
+      top  = _n_swap(mov, off);
+      goto mucs_in;
+    do_mucs:
+      x    = _n_pep(mov, off);
+      _n_toss(mov, off);
+      top  = _n_peek(off);
+    mucs_in:
+      o    = *top;
+      *top = u3nc(u3k(u3h(o)),
+          u3nt(u3k(u3h(u3t(o))), x, u3k(u3t(u3t(u3t(o))))));
+      u3z(o);
+      BURN();
+
+    do_kitb:
+      x = pog_u->lit_u.non[pog[ip_w++]];
+      goto kut_in;
+
+    do_kits:
+      x = pog_u->lit_u.non[_n_resh(pog, &ip_w)];
+      goto kut_in;
+
+    do_kuts:
+      x = _n_resh(pog, &ip_w);
+      goto kut_in;
+
+    do_kutb:
+      x = pog[ip_w++];
+    kut_in:
+      o   = _n_pep(mov, off);
+      top = _n_swap(mov, off);
+      goto edit_in;
+
+    do_mitb:
+      x = pog_u->lit_u.non[pog[ip_w++]];
+      goto mut_in;
+
+    do_mits:
+      x = pog_u->lit_u.non[_n_resh(pog, &ip_w)];
+      goto mut_in;
+
+    do_muts:
+      x = _n_resh(pog, &ip_w);
+      goto mut_in;
+
+    do_mutb:
+      x = pog[ip_w++];
+    mut_in:
+      o = _n_pep(mov, off);
+      _n_toss(mov, off);
+      top = _n_peek(off);
+    edit_in:
+      *top = _n_edit(*top, x, o);
       BURN();
   }
 }
