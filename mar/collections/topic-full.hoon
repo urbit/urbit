@@ -1,9 +1,19 @@
 ::  /mar/collections/topic-full/hoon
 ::
 /-  *collections
-/+  time-to-id
+/+  time-to-id, down-jet, elem-to-react-json
 ::TODO factor out as lib/easy-form?
 |%
+++  wat-json
+  |=  t/@t
+  ^-  json
+  =*  rj  elem-to-react-json
+  =/  el
+  ;div
+    *{(print:down-jet (mark:down-jet t))}
+  ==
+  (rj el)
+::
 ++  form-edit
   |=  [tit=cord who=@p wat=tape]
   ;form(onsubmit "return easy_form.submit(this)")
@@ -107,12 +117,14 @@
       ;h2: Post comment:
       ;+  form-comment-post
     ==
+  ::
   ++  json
     =,  enjs:format
     %-  pairs
     :~  title+[%s tit.info.top]
         who+[%s (scot %p who.info.top)]
-        what+[%s (of-wain:format wat.info.top)]
+        ::what+[%s (of-wain:format wat.info.top)]
+        what+(wat-json (of-wain:format wat.info.top))
         :-  %comments
         :-  %a
         %+  turn
@@ -120,7 +132,8 @@
         |=  [a=@da b=[c=@da d=comment]]
         %-  pairs
         :~  who+[%s (scot %p who.d.b)]
-            what+[%s (of-wain:format wat.d.b)]
+            ::what+[%s (of-wain:format wat.d.b)]
+            what+(wat-json (of-wain:format wat.d.b))
             id+[%s (scot %da a)]
             modified+[%s (scot %da c.b)]
         ==
