@@ -1399,15 +1399,23 @@ u3j_site_ream(u3j_site* sit_u)
 static void
 _cj_site_lock(u3_noun loc, u3_noun cor, u3j_site* sit_u)
 {
+  u3_weak fol;
   if ( (u3_none != sit_u->bat) &&
        (c3y == u3r_sing(sit_u->bat, u3h(cor))) ) {
     return;
   }
-  sit_u->pog_p = _cj_prog(loc, u3r_at(sit_u->axe, cor));
-  if ( u3_none != sit_u->bat ) {
-    u3z(sit_u->bat);
+
+  fol = u3r_at(sit_u->axe, cor);
+  if ( u3_none == fol ) {
+    u3m_bail(c3__exit);
   }
-  sit_u->bat = u3k(u3h(cor));
+  else {
+    sit_u->pog_p = _cj_prog(loc, fol);
+    if ( u3_none != sit_u->bat ) {
+      u3z(sit_u->bat);
+    }
+    sit_u->bat = u3k(u3h(cor));
+  }
 }
 
 /* _cj_burn(): stop tracing glu and call a nock program

@@ -543,6 +543,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define KUTS 86
 #define KITB 87
 #define KITS 88
+#define LAST 89
 
 /* _n_arg(): return the size (in bytes) of an opcode's argument
  */
@@ -555,7 +556,7 @@ _n_arg(c3_y cod_y)
     case SAMB: case SANB: case SBIP: case SBIN:
     case SLIB: case SKIB: case KICB: case TICB:
     case BUSH: case BAST: case BALT:
-    case KITB: case MITB:
+    case MUTB: case KUTB: case MITB: case KITB:
       return sizeof(c3_y);
 
     case FASK: case FASL: case FISL: case FISK:
@@ -563,14 +564,14 @@ _n_arg(c3_y cod_y)
     case SAMS: case SANS: case SIPS: case SINS:
     case SLIS: case SKIS: case KICS: case TICS:
     case SUSH: case SAST: case SALT: 
-    case KITS: case MITS:
+    case MUTS: case KUTS: case MITS: case KITS:
       return sizeof(c3_s);
 
     case SWIP: case SWIN:
       return sizeof(c3_l);
 
     default:
-      c3_assert( cod_y <= SAVE );
+      c3_assert( cod_y < LAST );
       return 0;
   }
 }
@@ -874,6 +875,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         /* 8-bit direct args */
         case FABK: case FABL:
         case LITB: case LILB: 
+        case MUTB: case KUTB:
         case SAMB: 
           buf_y[i_w--] = (c3_y) u3t(op);
           buf_y[i_w]   = (c3_y) cod;
@@ -882,6 +884,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         /* 16-bit direct args */
         case FASK: case FASL:
         case LILS: case LITS:
+        case MUTS: case KUTS:
         case SAMS: case SIPS: case SINS: {
           c3_s off_s   = u3t(op);
           buf_y[i_w--] = (c3_y) (off_s >> 8);
@@ -1342,9 +1345,9 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
 
         default:
           op_y = (c3y == los_o)
-               ? (axe <= 0xFF) ? MUTB : (axe <= 0xFFFF) ? MUTS : MITB  // overflows to MITL
+               ? (axe <= 0xFF) ? MUTB : (axe <= 0xFFFF) ? MUTS : MITB  // overflows to MITS
                : (axe <= 0xFF) ? KUTB : (axe <= 0xFFFF) ? KUTS : KITB; // overflows to KITS
-          _n_emit(ops, u3nc(op_y, axe));
+          _n_emit(ops, u3nc(op_y, u3k(axe)));
           break;
       }
       break;
