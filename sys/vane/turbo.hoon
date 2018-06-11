@@ -1769,15 +1769,7 @@
         ^+  state
         ::
         =/  clients-to-rebuild=(list ^build)
-          %+  turn
-            %+  weld
-              (~(get-clients by-build-dag components.state) previous-build)
-            ::
-            =/  older-build  (~(get by old.rebuilds.state) previous-build)
-            ?~  older-build
-              ~
-            ::
-            (~(get-clients by-build-dag components.state) u.older-build)
+          %+  turn  (find-old-clients previous-build)
           ::
           |=  old-client=^build
           old-client(date date.build)
@@ -1796,6 +1788,22 @@
             builds
           (~(put by-builds builds.state) client)
         ==
+      ::  +find-old-clients: find all previous clients of :build
+      ::
+      ::    Walks :old.rebuilds.state recursively to find all previous clients
+      ::    of :build that produced the same result.
+      ::
+      ++  find-old-clients
+        |=  =build
+        ^-  (list ^build)
+        ::
+        %+  weld
+          (~(get-clients by-build-dag components.state) build)
+        ::
+        =/  older-build  (~(get by old.rebuilds.state) build)
+        ?~  older-build
+          ~
+        $(build u.older-build)
       ::  +unlink-used-provisional-builds:
       ::
       ::    The first step in provisional build cleanup is to remove
@@ -4909,7 +4917,11 @@
         ==
       ::
       $(discs t.discs)
-    ::  if we had a previous subscription on a different duct, send a cancel.
+    ::  if we had a previous subscription on a different duct, send a cancel
+    ::
+    ::    Clay effectively has a (map duct subscription). We need to explicitly
+    ::    cancel the old subscription only if the ducts differ, as otherwise
+    ::    the new subscription will replace the old one.
     ::
     =?  moves  &(?=(^ subscription-duct) !=(duct u.subscription-duct))
       :_  moves

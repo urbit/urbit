@@ -119,6 +119,7 @@
   test-join
   test-list
   test-mash
+  test-multi-core-same-dependency
 ==
 ++  test-tear
   :-  `tank`leaf+"test-tear"
@@ -6143,6 +6144,600 @@
     results1
     (expect-ford-empty ford-gate ~nul)
   ==
+::  tests multiple cores depending on a rich dependency tree
+::
+::    Test why multiple app cores don't receive dependencies
+::
+++  test-multi-core-same-dependency
+  :-  `tank`leaf+"test-multi-core-same-dependency"
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  ::
+  =/  scry-results=(map [term beam] (unit cage))
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/gh/app]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /?  314
+      /-  gh, plan-acct
+      /+  gh-parse, connector
+      ::
+      (add sur-gh-two:gh lib-connector-val:connector)
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/gh/sur]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [sur-gh-one=1 sur-gh-two=2 sur-gh-three=3]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/plan-acct/sur]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/acct/plan/sur]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [sur-plan-acct=1 sur-plan-acct=2]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/lib/old/lib]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/old-lib/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [old-lib-val=10 ~]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/parse/gh/lib]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/gh-parse/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /-  gh
+      /+  old-lib
+      =,  old-lib
+      [lib-gh-parse-val=(add old-lib-val sur-gh-three:gh) ~]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/connector/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /-  gh
+      /+  old-lib
+      =,  old-lib
+      [lib-connector-val=(add old-lib-val sur-gh-one:gh) ~]
+      '''
+    ==
+  ::
+  =^  results1  ford-gate
+    %-  test-ford-call-with-comparator  :*
+      ford-gate
+      now=~1234.5.6
+      scry=(scry-with-results-and-failures scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/gh]  type=~  %build  ~nul
+            %core  [[~nul %home] /hoon/gh/app]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(2 (lent moves))
+        ?>  ?=([^ ^ ~] moves)
+        ?>  ?=([* %give %made @da %complete %success %core *] i.moves)
+        ::
+        =/  =vase  vase.build-result.result.p.card.i.moves
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  13
+          q.vase
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  &
+          (~(nest ut p.vase) | -:!>(13))
+        ::
+        =/  files=(set [%x path])
+          %-  sy  :~
+            [%x /lib/old-lib/hoon]
+            [%x /sur/gh/hoon]
+            [%x /sur/plan-acct/hoon]
+            [%x /sur/plan/acct/hoon]
+            [%x /lib/old/lib/hoon]
+            [%x /app/gh/hoon]
+            [%x /lib/gh/parse/hoon]
+            [%x /lib/gh-parse/hoon]
+            [%x /lib/connector/hoon]
+          ==
+        ::
+        %-  expect-eq  !>
+        :_  i.t.moves
+        ^-  move:ford-gate
+        :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home
+            %c  %warp  [~nul ~nul]  %home
+            `[%mult [%da ~1234.5.6] files]
+        ==
+    ==
+  ::  add a gh2 app which is the same as gh; move dates forward
+  ::
+  ::    gh2 is the same except for adding one instead of two.
+  =.  scry-results
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/gh/app]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /?  314
+      /-  gh, plan-acct
+      /+  gh-parse, connector
+      ::
+      (add sur-gh-two:gh lib-connector-val:connector)
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/gh2/app]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /?  314
+      /-  gh, plan-acct
+      /+  gh-parse, connector
+      ::
+      (add sur-gh-one:gh lib-connector-val:connector)
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/gh/sur]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [sur-gh-one=1 sur-gh-two=2 sur-gh-three=3]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/plan-acct/sur]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/acct/plan/sur]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [sur-plan-acct=1 sur-plan-acct=2]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/lib/old/lib]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/old-lib/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [old-lib-val=10 ~]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/parse/gh/lib]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/gh-parse/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /-  gh
+      /+  old-lib
+      =,  old-lib
+      [lib-gh-parse-val=(add old-lib-val sur-gh-three:gh) ~]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/connector/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /-  gh
+      /+  old-lib
+      =,  old-lib
+      [lib-connector-val=(add old-lib-val sur-gh-one:gh) ~]
+      '''
+    ==
+  ::
+  =^  results2  ford-gate
+    %-  test-ford-call-with-comparator  :*
+      ford-gate
+      now=~1234.5.7
+      scry=(scry-with-results-and-failures scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/gh2]  type=~  %build  ~nul
+            %core  [[~nul %home] /hoon/gh2/app]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(3 (lent moves))
+        ?>  ?=([^ ^ ^ ~] moves)
+        ?>  ?=([* %give %made @da %complete %success %core *] i.moves)
+        ::
+        =/  =vase  vase.build-result.result.p.card.i.moves
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  12
+          q.vase
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  &
+          (~(nest ut p.vase) | -:!>(12))
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :_  i.t.moves
+          ^-  move:ford-gate
+          :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home
+            %c  %warp  [~nul ~nul]  %home  ~
+          ==
+        ::
+        =/  files=(set [%x path])
+          %-  sy  :~
+            [%x /lib/old-lib/hoon]
+            [%x /sur/gh/hoon]
+            [%x /sur/plan-acct/hoon]
+            [%x /sur/plan/acct/hoon]
+            [%x /lib/old/lib/hoon]
+            [%x /app/gh/hoon]
+            [%x /app/gh2/hoon]
+            [%x /lib/gh/parse/hoon]
+            [%x /lib/gh-parse/hoon]
+            [%x /lib/connector/hoon]
+          ==
+        ::
+        %-  expect-eq  !>
+        :_  i.t.t.moves
+        ^-  move:ford-gate
+        :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home
+            %c  %warp  [~nul ~nul]  %home
+            `[%mult [%da ~1234.5.7] files]
+        ==
+    ==
+  ::
+  ::  add a gh3 app which is the same as gh; move dates forward
+  ::
+  ::    gh3 is the same except for adding zero instead of two.
+  =.  scry-results
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/gh/app]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /?  314
+      /-  gh, plan-acct
+      /+  gh-parse, connector
+      ::
+      (add sur-gh-two:gh lib-connector-val:connector)
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/gh2/app]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /?  314
+      /-  gh, plan-acct
+      /+  gh-parse, connector
+      ::
+      (add sur-gh-one:gh lib-connector-val:connector)
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/gh3/app]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /?  314
+      /-  gh, plan-acct
+      /+  gh-parse, connector
+      ::
+      (add 0 lib-connector-val:connector)
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/gh/sur]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [sur-gh-one=1 sur-gh-two=2 sur-gh-three=3]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/plan-acct/sur]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/acct/plan/sur]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [sur-plan-acct=1 sur-plan-acct=2]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/lib/old/lib]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/old-lib/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [old-lib-val=10 ~]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/parse/gh/lib]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/gh-parse/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /-  gh
+      /+  old-lib
+      =,  old-lib
+      [lib-gh-parse-val=(add old-lib-val sur-gh-three:gh) ~]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/connector/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /-  gh
+      /+  old-lib
+      =,  old-lib
+      [lib-connector-val=(add old-lib-val sur-gh-one:gh) ~]
+      '''
+    ==
+  ::
+  =^  results3  ford-gate
+    %-  test-ford-call-with-comparator  :*
+      ford-gate
+      now=~1234.5.8
+      scry=(scry-with-results-and-failures scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/gh3]  type=~  %build  ~nul
+            %core  [[~nul %home] /hoon/gh3/app]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(3 (lent moves))
+        ?>  ?=([^ ^ ^ ~] moves)
+        ?>  ?=([* %give %made @da %complete %success %core *] i.moves)
+        ::
+        =/  =vase  vase.build-result.result.p.card.i.moves
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  11
+          q.vase
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  &
+          (~(nest ut p.vase) | -:!>(11))
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :_  i.t.moves
+          ^-  move:ford-gate
+          :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home
+            %c  %warp  [~nul ~nul]  %home  ~
+          ==
+        ::
+        =/  files=(set [%x path])
+          %-  sy  :~
+            [%x /lib/old-lib/hoon]
+            [%x /sur/gh/hoon]
+            [%x /sur/plan-acct/hoon]
+            [%x /sur/plan/acct/hoon]
+            [%x /lib/old/lib/hoon]
+            [%x /app/gh/hoon]
+            [%x /app/gh2/hoon]
+            [%x /app/gh3/hoon]
+            [%x /lib/gh/parse/hoon]
+            [%x /lib/gh-parse/hoon]
+            [%x /lib/connector/hoon]
+          ==
+        ::
+        %-  expect-eq  !>
+        :_  i.t.t.moves
+        ^-  move:ford-gate
+        :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home
+            %c  %warp  [~nul ~nul]  %home
+            `[%mult [%da ~1234.5.8] files]
+        ==
+    ==
+  ::
+  ::  change the implementation of /lib/connector/hoon
+  ::
+  =.  scry-results
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.9] /hoon/gh/app]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /?  314
+      /-  gh, plan-acct
+      /+  gh-parse, connector
+      ::
+      (add sur-gh-two:gh lib-connector-val:connector)
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.9] /hoon/gh2/app]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /?  314
+      /-  gh, plan-acct
+      /+  gh-parse, connector
+      ::
+      (add sur-gh-one:gh lib-connector-val:connector)
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.9] /hoon/gh3/app]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /?  314
+      /-  gh, plan-acct
+      /+  gh-parse, connector
+      ::
+      (add 0 lib-connector-val:connector)
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.9] /hoon/gh/sur]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [sur-gh-one=1 sur-gh-two=2 sur-gh-three=3]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.9] /hoon/plan-acct/sur]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.9] /hoon/acct/plan/sur]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [sur-plan-acct=1 sur-plan-acct=2]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.9] /hoon/lib/old/lib]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.9] /hoon/old-lib/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      [old-lib-val=10 ~]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.9] /hoon/parse/gh/lib]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.9] /hoon/gh-parse/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /-  gh
+      /+  old-lib
+      =,  old-lib
+      [lib-gh-parse-val=(add old-lib-val sur-gh-three:gh) ~]
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.9] /hoon/connector/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /-  gh
+      /+  old-lib
+      =,  old-lib
+      [lib-connector-val=(add old-lib-val 5) ~]
+      '''
+    ==
+  ::
+  =^  results4  ford-gate
+    %-  test-ford-take-with-comparator  :*
+      ford-gate
+      now=~1234.5.9
+      scry=(scry-with-results-and-failures scry-results)
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/home  duct=~[/gh3]
+            ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
+            [%c %wris [%da ~1234.5.9] (sy [%x /lib/connector/hoon]~)]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(4 (lent moves))
+        ?>  ?=([^ ^ ^ ^ ~] moves)
+        ?>  ?=([* %give %made @da %complete %success %core *] i.moves)
+        ?>  ?=([* %give %made @da %complete %success %core *] i.t.moves)
+        ?>  ?=([* %give %made @da %complete %success %core *] i.t.t.moves)
+        ::
+        =/  =vase  vase.build-result.result.p.card.i.moves
+        ::
+        =/  files=(set [%x path])
+          %-  sy  :~
+            [%x /lib/old-lib/hoon]
+            [%x /sur/gh/hoon]
+            [%x /sur/plan-acct/hoon]
+            [%x /sur/plan/acct/hoon]
+            [%x /lib/old/lib/hoon]
+            [%x /app/gh/hoon]
+            [%x /app/gh2/hoon]
+            [%x /app/gh3/hoon]
+            [%x /lib/gh/parse/hoon]
+            [%x /lib/gh-parse/hoon]
+            [%x /lib/connector/hoon]
+          ==
+        ::
+        ;:  weld
+          (expect-eq !>([~[/gh3] duct.i.moves]))
+          (compare-vase !>(15) vase.build-result.result.p.card.i.moves)
+        ::
+          (expect-eq !>([~[/gh2] duct.i.t.moves]))
+          (compare-vase !>(16) vase.build-result.result.p.card.i.t.moves)
+        ::
+          (expect-eq !>([~[/gh] duct.i.t.t.moves]))
+          (compare-vase !>(17) vase.build-result.result.p.card.i.t.t.moves)
+        ::
+          %-  expect-eq  !>
+          :_  i.t.t.t.moves
+          ^-  move:ford-gate
+          :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home
+              %c  %warp  [~nul ~nul]  %home
+              `[%mult [%da ~1234.5.9] files]
+          ==
+    ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+  ==
 ::  |utilities: helper arms
 ::
 ::+|  utilities
@@ -6194,6 +6789,19 @@
     :-  &
     (~(nest ut p.vase.tail.tail.result) | -:!>(''))
   ==
+::  +compare-vase: compares the value of a vase and ensure that the types nest
+::
+++  compare-vase
+  |=  [expected=vase actual=vase]
+  ^-  tang
+  %+  weld
+    %-  expect-eq  !>
+    :-  q.expected
+    q.actual
+  ::
+  %-  expect-eq  !>
+  :-  &
+  (~(nest ut p.actual) | p.expected)
 ::
 ::  +scry-with-results
 ++  scry-with-results
