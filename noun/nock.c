@@ -533,17 +533,15 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define KUTT 76
 #define MUSM 77
 #define KUSM 78
-#define MUCS 79
-#define KUCS 80
-#define MUTB 81
-#define MUTS 82
-#define MITB 83
-#define MITS 84
-#define KUTB 85
-#define KUTS 86
-#define KITB 87
-#define KITS 88
-#define LAST 89
+#define MUTB 79
+#define MUTS 80
+#define MITB 81
+#define MITS 82
+#define KUTB 83
+#define KUTS 84
+#define KITB 85
+#define KITS 86
+#define LAST 87
 
 /* _n_arg(): return the size (in bytes) of an opcode's argument
  */
@@ -1017,7 +1015,7 @@ static char* opcode_names[] = {
   "skib", "skis", "slib", "slis",
   "save",
   "muth", "kuth", "mutt", "kutt",
-  "musm", "kusm", "mucs", "kucs",
+  "musm", "kusm",
   "mutb", "muts", "mitb", "mits",
   "kutb", "kuts", "kitb", "kits",
 };
@@ -1339,10 +1337,6 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
           _n_emit(ops, (c3y == los_o) ? MUSM : KUSM);
           break;
 
-        case u3x_con_sam:
-          _n_emit(ops, (c3y == los_o) ? MUCS : KUCS);
-          break;
-
         default:
           op_y = (c3y == los_o)
                ? (axe <= 0xFF) ? MUTB : (axe <= 0xFFFF) ? MUTS : MITB  // overflows to MITS
@@ -1658,7 +1652,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     &&do_skib, &&do_skis, &&do_slib, &&do_slis,
     &&do_save,
     &&do_muth, &&do_kuth, &&do_mutt, &&do_kutt,
-    &&do_musm, &&do_kusm, &&do_mucs, &&do_kucs,
+    &&do_musm, &&do_kusm,
     &&do_mutb, &&do_muts, &&do_mitb, &&do_mits,
     &&do_kutb, &&do_kuts, &&do_kitb, &&do_kits,
   };
@@ -2286,21 +2280,6 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     musm_in:
       o    = *top;
       *top = u3nt(u3k(u3h(o)), x, u3k(u3t(u3t(o))));
-      u3z(o);
-      BURN();
-
-    do_kucs:
-      x    = _n_pep(mov, off);
-      top  = _n_swap(mov, off);
-      goto mucs_in;
-    do_mucs:
-      x    = _n_pep(mov, off);
-      _n_toss(mov, off);
-      top  = _n_peek(off);
-    mucs_in:
-      o    = *top;
-      *top = u3nc(u3k(u3h(o)),
-          u3nt(u3k(u3h(u3t(o))), x, u3k(u3t(u3t(u3t(o))))));
       u3z(o);
       BURN();
 

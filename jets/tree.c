@@ -285,11 +285,13 @@ static u3j_core _143_hex_d[] =
     0,
   };
 
+/* hike disabled while implementing edit
   static u3j_harm _143_pen_hike_a[] = {{".2", u3wf_hike}, {}};
   static c3_c* _143_pen_hike_ha[] = {
     "7503dc65fe3164b3e95f81b51afd64ab615e26516b60df95241244e2b793d024",
     0,
   };
+*/
   static u3j_harm _143_pen_look_a[] = {{".2", u3wf_look}, {}};
   static c3_c* _143_pen_look_ha[] = {
     "04349d58bcb1317eba57eed8011c27a3ef7c3332c6595e45307a2d06bfc0e8d0",
@@ -473,7 +475,7 @@ static u3j_core _143_pen_d[] =
     { "flor", 7, _143_pen_flor_a, 0, _143_pen_flor_ha },
     { "fork", 7, _143_pen_fork_a, 0, _143_pen_fork_ha },
     { "help", 7, _143_pen_help_a, 0, _143_pen_help_ha },
-    { "hike", 7, _143_pen_hike_a, 0, _143_pen_hike_ha },
+//    { "hike", 7, _143_pen_hike_a, 0, _143_pen_hike_ha },
     { "look", 7, _143_pen_look_a, 0, _143_pen_look_ha },
     { "loot", 7, _143_pen_loot_a, 0, _143_pen_loot_ha },
 
