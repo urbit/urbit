@@ -57,9 +57,17 @@ _jam_buf_chop(_jam_buf* buf_u, c3_w met_w, u3_noun a)
 static void
 _jam_buf_atom(_jam_buf* buf_u, u3_noun a)
 {
-  u3_noun mat = u3qe_mat(a);
-  _jam_buf_chop(buf_u, u3h(mat), u3t(mat));
-  u3z(mat);
+  if ( 0 == a ) {
+    _jam_buf_chop(buf_u, 1, 1);
+  }
+  else {
+    c3_w b_w   = u3r_met(0, a),
+         c_w   = u3r_met(0, b_w);
+    c3_assert(c_w <= 32);
+    _jam_buf_chop(buf_u, c_w+1, 1 << c_w);
+    _jam_buf_chop(buf_u, c_w-1, b_w & ((1 << (c_w-1)) - 1));
+    _jam_buf_chop(buf_u, b_w, a);
+  }
 }
 
 static u3_noun
