@@ -977,6 +977,7 @@
                 [%dude =build-result]
                 [%hood =scaffold]
                 [%join =cage]
+                [%list results=(list build-result)]
                 [%mash =cage]
                 [%mute =cage]
                 [%pact =cage]
@@ -1139,6 +1140,13 @@
             ::  second: schematic producing second diff
             ::
             second=schematic
+        ==
+        ::  %list: performs a list of schematics, returns a list of +builds-results
+        ::
+        $:  %list
+            ::  schematics: list of builds to perform
+            ::
+            schematics=(list schematic)
         ==
         ::  %mash: force a merge, annotating any conflicts
         ::
@@ -1518,6 +1526,7 @@
         %dude  $(result build-result.result)
         %hood  [%noun !>(scaffold.result)]
         %join  cage.result
+        %list  [%noun -:!>(*(list cage)) (turn results.result result-to-cage)]
         %mash  cage.result
         %mute  cage.result
         %pact  cage.result

@@ -117,6 +117,7 @@
   test-pact
   test-pact-mark
   test-join
+  test-list
   test-mash
 ==
 ++  test-tear
@@ -6013,6 +6014,39 @@
         :-  &
         (~(nest ut p.q.cage) | -:!>(*(urge:clay cord)))
     ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
+++  test-list
+  :-  `tank`leaf+"test-list"
+  ::
+  =/  ud-type=type  [%atom %ud ~]
+  ::
+  =^  results1  ford-gate
+    %-  test-ford-call  :*
+      ford-gate
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      ^=  call-args
+        :*  duct=~[/count]  type=~  %build  ~nul
+            %pin  ~1234.5.6  %list
+            :~  [%$ %noun ud-type 1]
+                [%$ %noun ud-type 2]
+                [%$ %noun ud-type 3]
+        ==  ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/count]  %give  %made  ~1234.5.6  %complete
+                %success  %pin  ~1234.5.6
+                %success  %list
+                :~  [%success %$ %noun ud-type 1]
+                    [%success %$ %noun ud-type 2]
+                    [%success %$ %noun ud-type 3]
+    ==  ==  ==  ==
   ::
   ;:  weld
     results1

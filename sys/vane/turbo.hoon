@@ -505,6 +505,7 @@
       %dude  ~[attempt.schematic]
       %hood  ~
       %join  ~[first.schematic second.schematic]
+      %list  schematics.schematic
       %mash  ~[schematic.first.schematic schematic.second.schematic]
       %mute  [subject.schematic (turn mutations.schematic tail)]
       %pact  ~[start.schematic diff.schematic]
@@ -2010,6 +2011,7 @@
             %dude  (make-dude error attempt)
             %hood  (make-hood source-path)
             %join  (make-join disc mark first second)
+            %list  (make-list schematics)
             %mash  (make-mash disc mark first second)
             %mute  (make-mute subject mutations)
             %pact  (make-pact disc start diff)
@@ -2856,6 +2858,57 @@
           [%null vase.u.diff-result]
         [u.form-mark (slot 3 vase.u.diff-result)]
       ::
+      [build [%build-result build-result] accessed-builds]
+    ::
+    ++  make-list
+      |=  schematics=(list schematic)
+      ^-  build-receipt
+      ::  depend on builds of each schematic
+      ::
+      =^  results-raw  accessed-builds
+        %+  roll  schematics
+        |=  $:  =schematic
+                $=  accumulator
+                $:  results=(list [^build (unit build-result)])
+                    accessed-builds=_accessed-builds
+            ==  ==
+        ^+  accumulator
+        ::
+        =.  accessed-builds  accessed-builds.accumulator
+        ::
+        =/  sub-build=^build  [date.build schematic]
+        ::
+        =^  result  accessed-builds.accumulator  (depend-on sub-build)
+        =.  results.accumulator  [[sub-build result] results.accumulator]
+        ::
+        accumulator
+      ::  help out the type system
+      ::
+      =/  results=(list [^build (unit build-result)])  results-raw
+      ::  if any sub-builds blocked, produce all blocked sub-builds
+      ::
+      =/  blocks=(list ^build)
+        %+  murn  results
+        |=  [sub=^build result=(unit build-result)]
+        ^-  (unit ^build)
+        ?^  result
+          ~
+        `sub
+      ::
+      ?^  blocks
+        [build [%blocks blocks ~] accessed-builds]
+      ::  return all builds
+      ::
+      =/  =build-result
+        :+  %success  %list
+        ::  the roll above implicitly flopped the results
+        ::
+        %-  flop
+        %+  turn  results
+        |=  [* result=(unit build-result)]
+        ^-  build-result
+        ?>  ?=(^ result)
+        u.result
       [build [%build-result build-result] accessed-builds]
     ::
     ++  make-mash
