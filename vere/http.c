@@ -18,7 +18,7 @@
 #include "vere/vere.h"
 
 #include <picohttpparser.h>
-// #include <tls.h>
+#include <tls.h>
 
 static const c3_i TCP_BACKLOG = 16;
 
@@ -1574,7 +1574,8 @@ _proxy_parse_host(const uv_buf_t* buf_u, c3_c** hot_c)
 static u3_proxy_pars
 _proxy_parse_sni(const uv_buf_t* buf_u, c3_c** hot_c)
 {
-  c3_i sas_i = 0; //tls_protocol->parse_packet(buf_u->base, buf_u->len, hot_c);
+  c3_i sas_i = parse_tls_header((const uint8_t*)buf_u->base,
+                                buf_u->len, hot_c);
 
   if ( 0 > sas_i ) {
     switch ( sas_i ) {

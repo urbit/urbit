@@ -306,6 +306,8 @@ softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfl
 libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
 libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
 
+libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
+
 executable('urbit',
 sources : sources,
 include_directories : incdir,
@@ -321,5 +323,6 @@ dependencies: [openssl_dep,
                urbitscrypt_dep,
                ed25519_dep,
                murmur3_dep,
-               softfloat3_dep] + os_deps,
+               softfloat3_dep,
+               libsni_dep] + os_deps,
 install: true)
