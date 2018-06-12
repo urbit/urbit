@@ -1607,6 +1607,7 @@ _n_edit(u3_noun big, u3_noun axe, u3_noun som)
                 ? u3nc(_n_edit(u3k(u3h(big)), mor, som), u3k(u3t(big)))
                 : u3nc(u3k(u3h(big)), _n_edit(u3k(u3t(big)), mor, som));
     u3z(mor);
+    u3z(big);
     return pro;
   }
 }
