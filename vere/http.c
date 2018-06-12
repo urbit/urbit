@@ -20,6 +20,21 @@
 #include <picohttpparser.h>
 #include <tls.h>
 
+typedef struct _u3_h2o_serv {
+  h2o_globalconf_t fig_u;             //  h2o global config
+  h2o_context_t    ctx_u;             //  h2o ctx
+  h2o_accept_ctx_t cep_u;             //  h2o accept ctx
+  h2o_hostconf_t*  hos_u;             //  h2o host config
+  h2o_handler_t*   han_u;             //  h2o request handler
+} u3_h2o_serv;
+
+typedef struct _u3_prox u3_prox;
+
+static void _proxy_serv_free(u3_prox* lis_u);
+static void _proxy_serv_close(u3_prox* lis_u);
+static u3_prox* _proxy_serv_new(c3_s por_s, c3_o sec);
+static u3_prox* _proxy_serv_start(u3_prox* lis_u);
+
 static const c3_i TCP_BACKLOG = 16;
 
 /* _http_vec_to_meth(): convert h2o_iovec_t to meth
@@ -396,6 +411,8 @@ struct h2o_con_wrap {                 //  see private st_h2o_http1_conn_t
 static c3_i
 _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
 {
+  // XX u3_lo_open();
+
   u3_weak req = _http_rec_to_httq(rec_u);
 
   if ( u3_none == req ) {
@@ -416,6 +433,8 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     u3_hreq* req_u = _http_req_new(hon_u, rec_u);
     _http_req_dispatch(req_u, req);
   }
+
+  // XX u3_lo_shut(c3y);
 
   return 0;
 }
@@ -473,15 +492,6 @@ _http_conn_unlink(u3_hcon* hon_u)
   }
 }
 
-/* _http_conn_free_early(): free http connection on failure.
-*/
-static void
-_http_conn_free_early(uv_handle_t* han_t)
-{
-  u3_hcon* hon_u = (u3_hcon*)han_t;
-  free(hon_u);
-}
-
 /* _http_conn_free(): free http connection on close.
 */
 static void
@@ -495,6 +505,7 @@ _http_conn_free(uv_handle_t* han_t)
 
     _http_req_kill(req_u);
     _http_req_free(req_u);
+    // XX close/free h2o_req_t
     hon_u->req_u = nex_u;
   }
 
@@ -502,49 +513,29 @@ _http_conn_free(uv_handle_t* han_t)
   free(hon_u);
 }
 
-/* _http_conn_new(): create and accept http connection.
+/* _http_conn_close(): close http connection.
 */
 static void
+_http_conn_close(u3_hcon* hon_u)
+{
+  h2o_socket_close(hon_u->sok_u);
+}
+
+/* _http_conn_new(): create and accept http connection.
+*/
+static u3_hcon*
 _http_conn_new(u3_http* htp_u)
 {
-  // TODO where?
-  // u3_lo_open();
-
   u3_hcon* hon_u = c3_malloc(sizeof(*hon_u));
   hon_u->seq_l = 1;
+  hon_u->ipf_w = 0;
   hon_u->req_u = 0;
-
-  uv_tcp_init(u3L, &hon_u->wax_u);
-
-  c3_i sas_i;
-
-  if ( 0 != (sas_i = uv_accept((uv_stream_t*)&htp_u->wax_u,
-                               (uv_stream_t*)&hon_u->wax_u)) ) {
-    if ( (u3C.wag_w & u3o_verbose) ) {
-      uL(fprintf(uH, "http: accept: %s\n", uv_strerror(sas_i)));
-    }
-
-    uv_close((uv_handle_t*)&hon_u->wax_u,
-             (uv_close_cb)_http_conn_free_early);
-    return;
-  }
+  hon_u->sok_u = 0;
+  hon_u->con_u = 0;
 
   _http_conn_link(htp_u, hon_u);
 
-  hon_u->sok_u = h2o_uv_socket_create((uv_stream_t*)&hon_u->wax_u,
-                                      (uv_close_cb)_http_conn_free);
-  h2o_accept(htp_u->cep_u, hon_u->sok_u);
-
-  // capture h2o connection (XX fragile)
-  hon_u->con_u = (h2o_conn_t*)hon_u->sok_u->data;
-
-  struct sockaddr_in adr_u;
-  h2o_socket_getpeername(hon_u->sok_u, (struct sockaddr*)&adr_u);
-  hon_u->ipf_w = ( adr_u.sin_family != AF_INET ) ?
-                 0 : ntohl(adr_u.sin_addr.s_addr);
-
-  // TODO where?
-  // u3_lo_shut(c3y);
+  return hon_u;
 }
 
 /* _http_serv_find(): find http server by sequence.
@@ -565,7 +556,137 @@ _http_serv_find(c3_l sev_l)
   return 0;
 }
 
-// XX serv link/unlink/free/new
+/* _http_serv_link(): link http server to global state.
+*/
+static void
+_http_serv_link(u3_http* htp_u)
+{
+  // XX link elsewhere initially, relink on start?
+
+  if ( 0 != u3_Host.htp_u ) {
+    htp_u->sev_l = 1 + u3_Host.htp_u->sev_l;
+  }
+  else {
+    htp_u->sev_l = u3A->sev_l;
+  }
+
+  htp_u->nex_u = u3_Host.htp_u;
+  u3_Host.htp_u = htp_u;
+}
+
+/* _http_serv_unlink(): remove http server from global state.
+*/
+static void
+_http_serv_unlink(u3_http* htp_u)
+{
+  // XX link elsewhere initially, relink on start?
+
+  if ( u3_Host.htp_u == htp_u ) {
+    u3_Host.htp_u = htp_u->nex_u;
+  }
+  else {
+    u3_http* pre_u = u3_Host.htp_u;
+
+    //  XX glories of linear search
+    //
+    while ( pre_u ) {
+      if ( pre_u->nex_u == htp_u ) {
+        pre_u->nex_u = htp_u->nex_u;
+      }
+      else pre_u = pre_u->nex_u;
+    }
+  }
+}
+
+/* _http_serv_free(): free http server.
+*/
+static void
+_http_serv_free(u3_http* htp_u)
+{
+  _http_serv_unlink(htp_u);
+
+  while ( 0 != htp_u->hon_u ) {
+    _http_conn_close(htp_u->hon_u);
+    htp_u->hon_u = htp_u->hon_u->nex_u;
+  }
+
+  if ( 0 != htp_u->h2o_u ) {
+    h2o_config_dispose(&((u3_h2o_serv*)htp_u->h2o_u)->fig_u);
+    free(htp_u->h2o_u);
+  }
+
+  if ( 0 != htp_u->rox_u ) {
+    _proxy_serv_close(htp_u->rox_u);
+  }
+
+  free(htp_u);
+}
+
+/* _http_serv_close(): close http server.
+*/
+static void
+_http_serv_close(u3_http* htp_u)
+{
+  uv_close((uv_handle_t*)&htp_u->wax_u,
+           (uv_close_cb)_http_serv_free);
+}
+
+/* _http_serv_new(): create new http server.
+*/
+static u3_http*
+_http_serv_new(c3_s por_s, c3_o sec, c3_o lop)
+{
+  u3_http* htp_u = c3_malloc(sizeof(*htp_u));
+
+  htp_u->coq_l = 1;
+  htp_u->por_s = por_s;
+  htp_u->sec = sec;
+  htp_u->lop = lop;
+  htp_u->h2o_u = 0;
+  htp_u->rox_u = 0;
+  htp_u->hon_u = 0;
+  htp_u->nex_u = 0;
+
+  _http_serv_link(htp_u);
+
+  return htp_u;
+}
+
+/* _http_serv_accept(): accept new http connection.
+*/
+static void
+_http_serv_accept(u3_http* htp_u)
+{
+  u3_hcon* hon_u = _http_conn_new(htp_u);
+
+  uv_tcp_init(u3L, &hon_u->wax_u);
+
+  c3_i sas_i;
+
+  if ( 0 != (sas_i = uv_accept((uv_stream_t*)&htp_u->wax_u,
+                               (uv_stream_t*)&hon_u->wax_u)) ) {
+    if ( (u3C.wag_w & u3o_verbose) ) {
+      uL(fprintf(uH, "http: accept: %s\n", uv_strerror(sas_i)));
+    }
+
+    uv_close((uv_handle_t*)&hon_u->wax_u,
+             (uv_close_cb)_http_conn_free);
+    return;
+  }
+
+  hon_u->sok_u = h2o_uv_socket_create((uv_stream_t*)&hon_u->wax_u,
+                                      (uv_close_cb)_http_conn_free);
+
+  h2o_accept(&((u3_h2o_serv*)htp_u->h2o_u)->cep_u, hon_u->sok_u);
+
+  // capture h2o connection (XX fragile)
+  hon_u->con_u = (h2o_conn_t*)hon_u->sok_u->data;
+
+  struct sockaddr_in adr_u;
+  h2o_socket_getpeername(hon_u->sok_u, (struct sockaddr*)&adr_u);
+  hon_u->ipf_w = ( adr_u.sin_family != AF_INET ) ?
+                 0 : ntohl(adr_u.sin_addr.s_addr);
+}
 
 /* _http_serv_listen_cb(): uv_connection_cb for uv_listen
 */
@@ -578,40 +699,48 @@ _http_serv_listen_cb(uv_stream_t* str_u, c3_i sas_i)
     uL(fprintf(uH, "http: listen_cb: %s\n", uv_strerror(sas_i)));
   }
   else {
-    _http_conn_new(htp_u);
+    _http_serv_accept(htp_u);
   }
 }
 
 /* _http_serv_init_h2o(): initialize h2o ctx and handlers for server.
 */
-static void
-_http_serv_init_h2o(u3_http* htp_u)
+static u3_h2o_serv*
+_http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
 {
-  htp_u->fig_u = c3_calloc(sizeof(*htp_u->fig_u));
-  h2o_config_init(htp_u->fig_u);
-  htp_u->fig_u->server_name = h2o_iovec_init(
-                                H2O_STRLIT("urbit/vere-" URBIT_VERSION));
+  u3_h2o_serv* h2o_u = c3_calloc(sizeof(*h2o_u));
 
-  // XX use u3_Host.ops_u.nam_c? Or ship.urbit.org? Multiple hosts?
-  // see https://github.com/urbit/urbit/issues/914
-  htp_u->hos_u = h2o_config_register_host(htp_u->fig_u,
+  h2o_config_init(&h2o_u->fig_u);
+  h2o_u->fig_u.server_name = h2o_iovec_init(
+                               H2O_STRLIT("urbit/vere-" URBIT_VERSION));
+
+  // XX default pending vhost/custom-domain design
+  // XX revisit the effect of specifying the port
+  h2o_u->hos_u = h2o_config_register_host(&h2o_u->fig_u,
                                           h2o_iovec_init(H2O_STRLIT("default")),
-                                          htp_u->por_w);
+                                          65535);
 
-  htp_u->ctx_u = c3_calloc(sizeof(*htp_u->ctx_u));
-  htp_u->cep_u = c3_calloc(sizeof(*htp_u->cep_u));
-  htp_u->cep_u->ctx = (h2o_context_t*)htp_u->ctx_u;
-  htp_u->cep_u->hosts = htp_u->fig_u->hosts;
+  h2o_u->cep_u.ctx = (h2o_context_t*)&h2o_u->ctx_u;
+  h2o_u->cep_u.hosts = h2o_u->fig_u.hosts;
+  h2o_u->cep_u.ssl_ctx = tls_u;
 
-  if ( c3y == htp_u->sec ) {
-    htp_u->cep_u->ssl_ctx = u3_Host.tls_u;
+  h2o_u->han_u = h2o_create_handler(&h2o_u->hos_u->fallback_path,
+                                    sizeof(*h2o_u->han_u));
+  if ( c3y == red ) {
+    // XX redirect handler
+    h2o_u->han_u->on_req = _http_rec_accept;
+  }
+  else {
+    h2o_u->han_u->on_req = _http_rec_accept;
   }
 
-  htp_u->han_u = h2o_create_handler(&htp_u->hos_u->fallback_path,
-                                    sizeof(*htp_u->han_u));
-  htp_u->han_u->on_req = _http_rec_accept;
+  if ( c3y == log ) {
+    // XX enable access log
+  }
 
-  h2o_context_init(htp_u->ctx_u, u3L, htp_u->fig_u);
+  h2o_context_init(&h2o_u->ctx_u, u3L, &h2o_u->fig_u);
+
+  return h2o_u;
 }
 
 /* _http_serv_start(): start http server.
@@ -621,20 +750,11 @@ _http_serv_start(u3_http* htp_u)
 {
   struct sockaddr_in adr_u;
   memset(&adr_u, 0, sizeof(adr_u));
+
   adr_u.sin_family = AF_INET;
-
-  if ( c3y == htp_u->lop ) {
-    inet_pton(AF_INET, "127.0.0.1", &adr_u.sin_addr);
-  }
-  else {
-    adr_u.sin_addr.s_addr = INADDR_ANY;
-  }
-
-  if ( c3y == htp_u->sec && 0 == u3_Host.tls_u ) {
-    uL(fprintf(uH, "http: secure server not started: .urb/tls/ not found\n"));
-    htp_u->por_w = 0;
-    return;
-  }
+  adr_u.sin_addr.s_addr = ( c3y == htp_u->lop ) ?
+                          htonl(INADDR_LOOPBACK) :
+                          INADDR_ANY;
 
   uv_tcp_init(u3L, &htp_u->wax_u);
 
@@ -643,28 +763,56 @@ _http_serv_start(u3_http* htp_u)
   while ( 1 ) {
     c3_i sas_i;
 
-    adr_u.sin_port = htons(htp_u->por_w);
-    sas_i = uv_tcp_bind(&htp_u->wax_u, (const struct sockaddr*)&adr_u, 0);
+    adr_u.sin_port = htons(htp_u->por_s);
 
-    if ( 0 != sas_i ||
+    if ( 0 != (sas_i = uv_tcp_bind(&htp_u->wax_u,
+                                   (const struct sockaddr*)&adr_u, 0)) ||
          0 != (sas_i = uv_listen((uv_stream_t*)&htp_u->wax_u,
                                  TCP_BACKLOG, _http_serv_listen_cb)) ) {
-      if ( UV_EADDRINUSE == sas_i ) {
-        htp_u->por_w++;
+      if ( (UV_EADDRINUSE == sas_i) || (UV_EACCES == sas_i) ) {
+        if ( (c3y == htp_u->sec) && (443 == htp_u->por_s) ) {
+          htp_u->por_s = 8443;
+        }
+        else if ( (c3n == htp_u->sec) && (80 == htp_u->por_s) ) {
+          htp_u->por_s = 8080;
+        }
+        else {
+          htp_u->por_s++;
+        }
+
         continue;
       }
 
       uL(fprintf(uH, "http: listen: %s\n", uv_strerror(sas_i)));
-      htp_u->por_w = 0;
+      _http_serv_free(htp_u);
+
+      if ( 0 != htp_u->rox_u ) {
+        _proxy_serv_free(htp_u->rox_u);
+      }
       return;
     }
 
-    _http_serv_init_h2o(htp_u);
+    // XX this is weird
+    if ( 0 != htp_u->rox_u ) {
+      htp_u->rox_u = _proxy_serv_start(htp_u->rox_u);
+    }
 
-    uL(fprintf(uH, "http: live (%s, %s) on %d\n",
+    if ( 0 != htp_u->rox_u ) {
+      uL(fprintf(uH, "http: live (%s, %s) on %d (proxied on %d)\n",
                    (c3y == htp_u->sec) ? "secure" : "insecure",
                    (c3y == htp_u->lop) ? "loopback" : "public",
-                   htp_u->por_w));
+                   htp_u->por_s,
+                   // XX move structs to vere,h
+                   //((u3_prox*)htp_u->rox_u)->por_s));
+                   5)); 
+    }
+    else {
+      uL(fprintf(uH, "http: live (%s, %s) on %d\n",
+                   (c3y == htp_u->sec) ? "secure" : "insecure",
+                   (c3y == htp_u->lop) ? "loopback" : "public",
+                   htp_u->por_s));
+    }
+
     break;
   }
 }
@@ -732,8 +880,8 @@ _http_write_ports_file(c3_c *pax_c)
   u3a_free(paf_c);
 
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
-    if ( 0 < htp_u->por_w ) {
-      dprintf(por_i, "%u %s %s\n", htp_u->por_w,
+    if ( 0 < htp_u->por_s ) {
+      dprintf(por_i, "%u %s %s\n", htp_u->por_s,
                      (c3y == htp_u->sec) ? "secure" : "insecure",
                      (c3y == htp_u->lop) ? "loopback" : "public");
     }
@@ -812,74 +960,75 @@ u3_http_ef_thou(c3_l     sev_l,
   u3z(rep);
 }
 
-typedef struct _u3_prox u3_prox;
+void
+u3_http_ef_form(u3_noun fig)
+{
+  // flag that servers are coming down
+  // stop accepting connections
+  // check on request done / connection close
+  // investigate h2o_context_request_shutdown
 
-static u3_prox* _proxy_serv_new(c3_s por_s, c3_o sec);
-static u3_prox* _proxy_serv_start(u3_prox* lis_u);
+  u3_http* htp_u;
+  c3_s por_s;
+
+  for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
+    _http_serv_close(htp_u);
+  }
+
+  // XX am i supposed to cell test every axis?
+  u3_noun sec = u3h(fig);
+  u3_noun lob = u3t(fig);
+  u3_noun pro = u3h(lob);
+  u3_noun log = u3h(u3t(lob));
+  u3_noun red = u3t(u3t(lob));
+
+  //  HTTPS server.
+  // if ( u3_nul != sec ) {
+    // XX unpack/parse sec
+    // u3_noun key = u3h(u3t(sec));
+    // u3_noun cer = u3t(u3t(sec));
+    // SSL_CTX* tls_u = _http_init_tls(key, cer);
+    SSL_CTX* tls_u = _http_init_tls();
+
+    if ( 0 != tls_u ) {
+      por_s = ( c3y == pro ) ? 8443 : 443;
+      htp_u = _http_serv_new(por_s, c3y, c3n);
+      htp_u->h2o_u = _http_serv_init_h2o(tls_u, log, red);
+
+      if ( c3y == pro ) {
+        htp_u->rox_u = _proxy_serv_new(443, c3y);
+      }
+    }
+  // }
+
+  //  HTTP server.
+  {
+    por_s = ( c3y == pro ) ? 8080 : 80;
+    htp_u = _http_serv_new(por_s, c3n, c3n);
+    htp_u->h2o_u = _http_serv_init_h2o(0, log, red);
+
+    if ( c3y == pro ) {
+      htp_u->rox_u = _proxy_serv_new(80, c3n);
+    }
+  }
+
+  //  Loopback server.
+  {
+    por_s = 12321;
+    htp_u = _http_serv_new(por_s, c3n, c3y);
+    htp_u->h2o_u = _http_serv_init_h2o(0, log, red);
+    // never proxied
+  }
+
+  u3z(fig);
+}
 
 /* u3_http_io_init(): initialize http I/O.
 */
 void
 u3_http_io_init()
 {
-  //  Lens port
-  {
-    u3_http *htp_u = c3_malloc(sizeof(*htp_u));
-
-    htp_u->sev_l = u3A->sev_l + 2;
-    htp_u->coq_l = 1;
-    htp_u->por_w = 12321;
-    htp_u->sec = c3n;
-    htp_u->lop = c3y;
-
-    htp_u->cep_u = 0;
-    htp_u->hos_u = 0;
-    htp_u->hon_u = 0;
-    htp_u->nex_u = 0;
-
-    htp_u->nex_u = u3_Host.htp_u;
-    u3_Host.htp_u = htp_u;
-  }
-
-  //  Secure port.
-  {
-    u3_http *htp_u = c3_malloc(sizeof(*htp_u));
-
-    htp_u->sev_l = u3A->sev_l + 1;
-    htp_u->coq_l = 1;
-    htp_u->por_w = 8443;
-    htp_u->sec = c3y;
-    htp_u->lop = c3n;
-
-    htp_u->cep_u = 0;
-    htp_u->hos_u = 0;
-    htp_u->hon_u = 0;
-    htp_u->nex_u = 0;
-
-    htp_u->nex_u = u3_Host.htp_u;
-    u3_Host.htp_u = htp_u;
-  }
-
-   // Insecure port.
-  {
-    u3_http* htp_u = c3_malloc(sizeof(*htp_u));
-
-    htp_u->sev_l = u3A->sev_l;
-    htp_u->coq_l = 1;
-    htp_u->por_w = 8080;
-    htp_u->sec = c3n;
-    htp_u->lop = c3n;
-
-    htp_u->cep_u = 0;
-    htp_u->hos_u = 0;
-    htp_u->hon_u = 0;
-    htp_u->nex_u = 0;
-
-    htp_u->nex_u = u3_Host.htp_u;
-    u3_Host.htp_u = htp_u;
-  }
-
-  u3_Host.tls_u = _http_init_tls();
+  u3_http_ef_form(u3nq(u3_nul, c3y, c3y, c3y));
 }
 
 /* u3_http_io_talk(): start http I/O.
@@ -894,9 +1043,6 @@ u3_http_io_talk()
   }
 
   _http_write_ports_file(u3_Host.dir_c);
-
-  _proxy_serv_start(_proxy_serv_new(80, c3n));
-  _proxy_serv_start(_proxy_serv_new(443, c3y));
 }
 
 /* u3_http_io_poll(): poll kernel for http I/O.
@@ -1231,7 +1377,7 @@ _proxy_loop_connect(u3_pcon* con_u)
 
     for ( htp_u = u3_Host.htp_u; (0 != htp_u); htp_u = htp_u->nex_u ) {
       if ( c3n == htp_u->lop && con_u->sec == htp_u->sec ) {
-        por_s = htp_u->por_w;
+        por_s = htp_u->por_s;
       }
     }
 
@@ -1763,6 +1909,14 @@ _proxy_serv_free(u3_prox* lis_u)
   // XX detach from global state
 }
 
+/* _proxy_serv_close(): close proxy listener
+*/
+static void
+_proxy_serv_close(u3_prox* lis_u)
+{
+  uv_close((uv_handle_t*)&lis_u->sev_u, (uv_close_cb)_proxy_serv_free);
+}
+
 /* _proxy_serv_new(): allocate proxy listener
 */
 static u3_prox*
@@ -1858,9 +2012,6 @@ _proxy_serv_start(u3_prox* lis_u)
       return 0;
     }
 
-    uL(fprintf(uH, "proxy: live (%s) on %d\n",
-                   (c3y == lis_u->sec) ? "secure" : "insecure",
-                   lis_u->por_s));
     return lis_u;
   }
 }

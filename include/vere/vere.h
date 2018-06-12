@@ -72,14 +72,11 @@
     */
       typedef struct _u3_http {
         uv_tcp_t         wax_u;             //  server stream handler
-        h2o_globalconf_t* fig_u;            //  h2o global config
-        h2o_context_t*   ctx_u;             //  h2o ctx
-        h2o_accept_ctx_t* cep_u;            //  h2o accept ctx (wat for?)
-        h2o_hostconf_t*  hos_u;             //  h2o host config
-        h2o_handler_t*   han_u;             //  h2o request handler
+        void*            h2o_u;             //  libh2o configuration
+        void*            rox_u;             //  maybe proxied
         c3_w             sev_l;             //  server number
         c3_w             coq_l;             //  next connection number
-        c3_w             por_w;             //  running port
+        c3_s             por_s;             //  running port
         c3_o             sec;               //  logically secure
         c3_o             lop;               //  loopback-only
         struct _u3_hcon* hon_u;             //  connection list
