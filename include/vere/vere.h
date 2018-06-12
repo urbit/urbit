@@ -1033,6 +1033,11 @@
 
     /**  HTTP server.
     **/
+      /* u3_http_ef_form: send %from effect to http.
+      */
+        void
+        u3_http_ef_form(u3_noun fig);
+
       /* u3_http_ef_that: send %that effect to http.
       */
         void

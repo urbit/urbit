@@ -136,6 +136,14 @@ _reck_kick_http(u3_noun  pox,
   else switch ( u3h(fav) ) {
     default: u3z(pox); u3z(fav); return c3n;
 
+    case c3__form: p_fav = u3t(fav);
+    {
+      u3_http_ef_form(u3k(p_fav));
+
+      u3z(pox); u3z(fav);
+      return c3y;
+    }
+
     case c3__that: p_fav = u3h(u3t(fav)); q_fav = u3h(u3t(u3t(fav)));
     {
       u3_noun r_fav = u3t(u3t(u3t(fav)));

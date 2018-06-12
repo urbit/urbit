@@ -1123,8 +1123,6 @@ u3_http_ef_thou(c3_l     sev_l,
 static void
 _http_serv_start_all(void)
 {
-  uL(fprintf(uH, "_http_serv_start_all\n"));
-
   // serv_close has already been called, but they
   // might not have been freed or unlinked yet
   u3_Host.htp_u = 0;
@@ -1198,12 +1196,14 @@ _http_serv_start_all(void)
   _http_write_ports_file(u3_Host.dir_c);
 }
 
+/* _http_serv_restart_cb(): force shutdown, then start servers.
+*/
 static void
 _http_serv_restart_cb(uv_timer_t* tim_u)
 {
   u3_http* htp_u;
 
-  // XX printf
+  uL(fprintf(uH, "http: force shutdown\n"));
 
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
     _http_serv_close_hard(htp_u);
@@ -1217,10 +1217,11 @@ _http_serv_restart_cb(uv_timer_t* tim_u)
   }
 }
 
+/* _http_serv_restart(): gracefully shutdown, then start servers.
+*/
 static void
 _http_serv_restart(void)
 {
-  uL(fprintf(uH, "_http_serv_restart\n"));
   u3_http* htp_u;
 
   if ( 0 == u3_Host.htp_u ) {
@@ -1244,6 +1245,9 @@ _http_serv_restart(void)
   _http_release_ports_file(u3_Host.dir_c);
 }
 
+
+/* u3_http_ef_form(): apply configuration, restart servers.
+*/
 void
 u3_http_ef_form(u3_noun fig)
 {
@@ -1254,14 +1258,6 @@ u3_http_ef_form(u3_noun fig)
   _http_serv_restart();
 }
 
-static void
-_http_serv_test_restart_cb(uv_timer_t* tim_u)
-{
-  uL(fprintf(uH, "_http_serv_test_restart_cb\n"));
-  _http_serv_restart();
-  free(tim_u);
-}
-
 /* u3_http_io_init(): initialize http I/O.
 */
 void
@@ -1269,11 +1265,6 @@ u3_http_io_init(void)
 {
   // XX avoid u3_noun foo; u3z(foo); is this necessary?
   u3_Host.fig_u.fig = u3_none;
-
-  uv_timer_t* tim_u = c3_malloc(sizeof(*tim_u));
-
-  uv_timer_init(u3L, tim_u);
-  uv_timer_start(tim_u, _http_serv_test_restart_cb, 60 * 1000, 0);
 }
 
 /* u3_http_io_talk(): start http I/O.
@@ -1281,8 +1272,6 @@ u3_http_io_init(void)
 void
 u3_http_io_talk(void)
 {
-  // XX remove this once %form is actually wired up
-  u3_http_ef_form(u3nq(u3_nul, c3y, c3y, c3y));
 }
 
 /* u3_http_io_poll(): poll kernel for http I/O.
