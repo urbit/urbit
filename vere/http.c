@@ -33,6 +33,10 @@ static void _proxy_serv_close(u3_prox* lis_u);
 static u3_prox* _proxy_serv_new(u3_http* htp_u, c3_s por_s, c3_o sec);
 static u3_prox* _proxy_serv_start(u3_prox* lis_u);
 
+static void _http_conn_close(u3_hcon* hon_u);
+static void _http_serv_close_hard(u3_http* htp_u);
+static void _http_serv_start_all(void);
+
 static const c3_i TCP_BACKLOG = 16;
 
 /* _http_vec_to_meth(): convert h2o_iovec_t to meth
@@ -237,7 +241,15 @@ _http_req_unlink(u3_hreq* req_u)
 static void
 _http_req_free(u3_hreq* req_u)
 {
+  u3_hcon* hon_u = req_u->hon_u;
+  u3_http* htp_u = hon_u->htp_u;
+
   _http_req_unlink(req_u);
+
+  if ( (c3n == htp_u->liv) && (0 == hon_u->req_u) ) {
+    _http_conn_close(hon_u);
+  }
+
   free(req_u);
 }
 
@@ -496,6 +508,7 @@ static void
 _http_conn_free(uv_handle_t* han_t)
 {
   u3_hcon* hon_u = (u3_hcon*)han_t;
+  u3_http* htp_u = hon_u->htp_u;
 
   while ( 0 != hon_u->req_u ) {
     u3_hreq* req_u = hon_u->req_u;
@@ -508,6 +521,11 @@ _http_conn_free(uv_handle_t* han_t)
   }
 
   _http_conn_unlink(hon_u);
+
+  if ( (c3n == htp_u->liv) && (0 == htp_u->hon_u) ) {
+    _http_serv_close_hard(htp_u);
+  }
+
   free(hon_u);
 }
 
@@ -601,6 +619,8 @@ _http_serv_unlink(u3_http* htp_u)
 static void
 _http_serv_free(u3_http* htp_u)
 {
+  uL(fprintf(uH, "_http_serv_free\n"));
+
   _http_serv_unlink(htp_u);
 
   while ( 0 != htp_u->hon_u ) {
@@ -611,22 +631,59 @@ _http_serv_free(u3_http* htp_u)
   if ( 0 != htp_u->h2o_u ) {
     h2o_config_dispose(&((u3_h2o_serv*)htp_u->h2o_u)->fig_u);
     free(htp_u->h2o_u);
+    htp_u->h2o_u = 0;
   }
 
   if ( 0 != htp_u->rox_u ) {
     _proxy_serv_close(htp_u->rox_u);
+    htp_u->rox_u = 0;
+  }
+
+  // XX groace
+  if ( (c3n == htp_u->liv) && (0 == u3_Host.htp_u) ) {
+    _http_serv_start_all();
   }
 
   free(htp_u);
 }
 
-/* _http_serv_close(): close http server.
+/* _http_serv_close_hard(): close http server.
 */
 static void
-_http_serv_close(u3_http* htp_u)
+_http_serv_close_hard(u3_http* htp_u)
 {
+  uL(fprintf(uH, "_http_serv_close_hard\n"));
   uv_close((uv_handle_t*)&htp_u->wax_u,
            (uv_close_cb)_http_serv_free);
+}
+
+/* _http_serv_close_soft(): close http server gracefully.
+*/
+static void
+_http_serv_close_soft(u3_http* htp_u)
+{
+  uL(fprintf(uH, "_http_serv_close_soft\n"));
+  u3_h2o_serv* h2o_u = htp_u->h2o_u;
+  h2o_context_request_shutdown(&h2o_u->ctx_u);
+
+  htp_u->liv = c3n;
+
+  u3_hcon* hon_u = htp_u->hon_u;
+
+  while ( 0 != hon_u ) {
+    u3_hcon* nex_u = hon_u->nex_u;
+
+    if ( 0 == hon_u->req_u ) {
+      _http_conn_close(hon_u);
+    }
+
+    hon_u = nex_u;
+  }
+
+  if ( 0 != htp_u->rox_u ) {
+    _proxy_serv_close(htp_u->rox_u);
+    htp_u->rox_u = 0;
+  }
 }
 
 /* _http_serv_new(): create new http server.
@@ -640,6 +697,7 @@ _http_serv_new(c3_s por_s, c3_o sec, c3_o lop)
   htp_u->por_s = por_s;
   htp_u->sec = sec;
   htp_u->lop = lop;
+  htp_u->liv = c3y;
   htp_u->h2o_u = 0;
   htp_u->rox_u = 0;
   htp_u->hon_u = 0;
@@ -655,6 +713,10 @@ _http_serv_new(c3_s por_s, c3_o sec, c3_o lop)
 static void
 _http_serv_accept(u3_http* htp_u)
 {
+  if ( c3n == htp_u->liv ) {
+    return;
+  }
+
   u3_hcon* hon_u = _http_conn_new(htp_u);
 
   uv_tcp_init(u3L, &hon_u->wax_u);
@@ -956,22 +1018,28 @@ u3_http_ef_thou(c3_l     sev_l,
   u3z(rep);
 }
 
-void
-u3_http_ef_form(u3_noun fig)
+static void
+_http_serv_start_all(void)
 {
-  // flag that servers are coming down
-  // stop accepting connections
-  // check on request done / connection close
-  // investigate h2o_context_request_shutdown
+  uL(fprintf(uH, "_http_serv_start_all\n"));
+
+  uL(fprintf(uH, "true %d\n", 0 == 0));
+  uL(fprintf(uH, "no existing servers %d\n", 0 == u3_Host.htp_u));
+
+  u3_Host.htp_u = 0;
+
+  if ( 0 != u3_Host.fig_u.tim_u ) {
+    uv_timer_stop(u3_Host.fig_u.tim_u);
+    free(u3_Host.fig_u.tim_u);
+    u3_Host.fig_u.tim_u = 0;
+  }
 
   u3_http* htp_u;
   c3_s por_s;
 
-  for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
-    _http_serv_close(htp_u);
-  }
+  u3_noun fig = u3_Host.fig_u.fig;
 
-  // XX am i supposed to cell test every axis?
+  // XX validate / test axes?
   u3_noun sec = u3h(fig);
   u3_noun lob = u3t(fig);
   u3_noun pro = u3h(lob);
@@ -980,9 +1048,10 @@ u3_http_ef_form(u3_noun fig)
 
   //  HTTPS server.
   // if ( u3_nul != sec ) {
-    // XX unpack/parse sec
+    // // XX unpack/parse sec
     // u3_noun key = u3h(u3t(sec));
     // u3_noun cer = u3t(u3t(sec));
+    // // XX stash at u3_Host.fig_u.tls_u
     // SSL_CTX* tls_u = _http_init_tls(key, cer);
     SSL_CTX* tls_u = _http_init_tls();
 
@@ -1016,29 +1085,95 @@ u3_http_ef_form(u3_noun fig)
     // never proxied
   }
 
-  u3z(fig);
-}
-
-/* u3_http_io_init(): initialize http I/O.
-*/
-void
-u3_http_io_init()
-{
-  u3_http_ef_form(u3nq(u3_nul, c3y, c3y, c3y));
-}
-
-/* u3_http_io_talk(): start http I/O.
-*/
-void
-u3_http_io_talk()
-{
-  u3_http* htp_u;
-
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
     _http_serv_start(htp_u);
   }
 
   _http_write_ports_file(u3_Host.dir_c);
+}
+
+static void
+_http_serv_restart_cb(uv_timer_t* tim_u)
+{
+  u3_http* htp_u;
+
+  // XX printf
+
+  for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
+    _http_serv_close_hard(htp_u);
+  }
+
+  _http_serv_start_all();
+
+  free(tim_u);
+}
+
+static void
+_http_serv_restart(void)
+{
+  uL(fprintf(uH, "_http_serv_restart\n"));
+  u3_http* htp_u;
+
+  if ( 0 == u3_Host.htp_u ) {
+    _http_serv_start_all();
+    return;
+  }
+
+  uL(fprintf(uH, "http: restarting servers to apply configuration\n"));
+
+  for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
+    // flag that servers are coming down
+    // stop accepting connections
+    _http_serv_close_soft(htp_u);
+  }
+
+  u3_Host.fig_u.tim_u = c3_malloc(sizeof(uv_timer_t));
+
+  uv_timer_init(u3L, u3_Host.fig_u.tim_u);
+  uv_timer_start(u3_Host.fig_u.tim_u, _http_serv_restart_cb, 0, 0);
+
+  _http_release_ports_file(u3_Host.dir_c);
+}
+
+void
+u3_http_ef_form(u3_noun fig)
+{
+  // XX validate now?
+  u3z(u3_Host.fig_u.fig);
+  u3_Host.fig_u.fig = fig;
+
+  _http_serv_restart();
+}
+
+static void
+_http_serv_test_restart_cb(uv_timer_t* tim_u)
+{
+  uL(fprintf(uH, "_http_serv_test_restart_cb\n"));
+  _http_serv_restart();
+  free(tim_u);
+}
+
+/* u3_http_io_init(): initialize http I/O.
+*/
+void
+u3_http_io_init(void)
+{
+  // XX avoid u3_noun foo; u3z(foo); is this necessary?
+  u3_Host.fig_u.fig = u3_none;
+
+  uv_timer_t* tim_u = c3_malloc(sizeof(*tim_u));
+
+  uv_timer_init(u3L, tim_u);
+  uv_timer_start(tim_u, _http_serv_test_restart_cb, 60 * 1000, 0);
+}
+
+/* u3_http_io_talk(): start http I/O.
+*/
+void
+u3_http_io_talk(void)
+{
+  // XX remove this once %form is actually wired up
+  u3_http_ef_form(u3nq(u3_nul, c3y, c3y, c3y));
 }
 
 /* u3_http_io_poll(): poll kernel for http I/O.
@@ -1053,7 +1188,15 @@ u3_http_io_poll(void)
 void
 u3_http_io_exit(void)
 {
-  // XX shutdown servers cleanly
+  // Note: nothing in this codepath can print to uH!
+  // it will seriously mess up your terminal
+
+  // u3_http* htp_u;
+
+  // for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
+  //   _http_serv_close_hard(htp_u);
+  // }
+
   _http_release_ports_file(u3_Host.dir_c);
 }
 

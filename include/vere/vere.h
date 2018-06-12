@@ -78,9 +78,17 @@
         c3_s             por_s;             //  running port
         c3_o             sec;               //  logically secure
         c3_o             lop;               //  loopback-only
+        c3_o             liv;               //  c3n == shutting down
         struct _u3_hcon* hon_u;             //  connection list
         struct _u3_http* nex_u;             //  next in list
       } u3_http;
+
+    /* u3_hfig: general http configuration
+    */
+      typedef struct _u3_hfig {
+        u3_noun          fig;               //  config from %eyre
+        uv_timer_t*      tim_u;             //  hard restart timer
+      } u3_hfig;
 
     /* u3_proxy_type: proxy connection downstream type
     */
@@ -580,6 +588,7 @@
         c3_c*      dir_c;                   //  pier path (no trailing /)
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
+        u3_hfig    fig_u;                   //  http configuration
         u3_http*   htp_u;                   //  http servers
         u3_cttp    ctp_u;                   //  http clients
         u3_utel    tel_u;                   //  telnet listener
