@@ -1193,6 +1193,29 @@ _http_serv_start_all(void)
     _http_serv_start(htp_u);
   }
 
+  //  send listening ports to %eyre
+  {
+    u3_noun pax = u3nq(u3_blip, c3__http, u3k(u3A->sen), u3_nul);
+    u3_noun sec = u3_nul;
+    u3_noun non = u3_none;
+
+    for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
+      if ( c3n == htp_u->lop ) {
+        if ( c3y == htp_u->sec ) {
+          sec = u3nc(u3_nul, htp_u->por_s);
+        }
+        else {
+          non = htp_u->por_s;
+        }
+      }
+    }
+
+    c3_assert( u3_none != non );
+
+    // XX open/shut?
+    u3v_plan(pax, u3nt(c3__live, non, sec));
+  }
+
   _http_write_ports_file(u3_Host.dir_c);
 }
 
