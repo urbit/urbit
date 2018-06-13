@@ -1166,7 +1166,7 @@ _http_serv_start_all(void)
       htp_u = _http_serv_new(por_s, c3y, c3n);
       htp_u->h2o_u = _http_serv_init_h2o(u3_Host.tls_u, log, red);
 
-      if ( c3y == pro ) {
+      if ( (c3y == pro) || (c3y == u3_Host.ops_u.fak) ) {
         htp_u->rox_u = _proxy_serv_new(htp_u, 443, c3y);
       }
     }
@@ -1178,7 +1178,7 @@ _http_serv_start_all(void)
     htp_u = _http_serv_new(por_s, c3n, c3n);
     htp_u->h2o_u = _http_serv_init_h2o(0, log, red);
 
-    if ( c3y == pro ) {
+    if ( (c3y == pro) || (c3y == u3_Host.ops_u.fak) ) {
       htp_u->rox_u = _proxy_serv_new(htp_u, 80, c3n);
     }
   }
