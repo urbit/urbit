@@ -1105,7 +1105,10 @@ _http_serv_restart_cb(uv_timer_t* tim_u)
 
   _http_serv_start_all();
 
-  free(tim_u);
+  if ( 0 != u3_Host.fig_u.tim_u) {
+    free(u3_Host.fig_u.tim_u);
+    u3_Host.fig_u.tim_u = 0;
+  }
 }
 
 static void
