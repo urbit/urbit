@@ -13,6 +13,7 @@
 #include <uv.h>
 #include <errno.h>
 #include <openssl/ssl.h>
+ #include <openssl/err.h>
 #include <h2o.h>
 #include "all.h"
 #include "vere/vere.h"
@@ -875,10 +876,70 @@ _http_serv_start(u3_http* htp_u)
   }
 }
 
+//XX deduplicate these with cttp
+
+/* _cttp_mcut_char(): measure/cut character.
+*/
+static c3_w
+_cttp_mcut_char(c3_c* buf_c, c3_w len_w, c3_c chr_c)
+{
+  if ( buf_c ) {
+    buf_c[len_w] = chr_c;
+  }
+  return len_w + 1;
+}
+
+/* _cttp_mcut_cord(): measure/cut cord.
+*/
+static c3_w
+_cttp_mcut_cord(c3_c* buf_c, c3_w len_w, u3_noun san)
+{
+  c3_w ten_w = u3r_met(3, san);
+
+  if ( buf_c ) {
+    u3r_bytes(0, ten_w, (c3_y *)(buf_c + len_w), san);
+  }
+  u3z(san);
+  return (len_w + ten_w);
+}
+
+/* _cttp_mcut_path(): measure/cut cord list.
+*/
+static c3_w
+_cttp_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u3_noun pax)
+{
+  u3_noun axp = pax;
+
+  while ( u3_nul != axp ) {
+    u3_noun h_axp = u3h(axp);
+
+    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(h_axp));
+    axp = u3t(axp);
+
+    if ( u3_nul != axp ) {
+      len_w = _cttp_mcut_char(buf_c, len_w, sep_c);
+    }
+  }
+  u3z(pax);
+  return len_w;
+}
+
+static uv_buf_t
+_http_wain_to_buf(u3_noun wan)
+{
+  c3_w len_w = _cttp_mcut_path(0, 0, (c3_c)10, u3k(wan));
+  c3_c* buf_c = c3_malloc(1 + len_w);
+
+  _cttp_mcut_path(buf_c, 0, (c3_c)10, wan);
+  buf_c[len_w] = 0;
+
+  return uv_buf_init(buf_c, len_w);
+}
+
 /* _http_init_tls: initialize OpenSSL context
 */
 static SSL_CTX*
-_http_init_tls()
+_http_init_tls(u3_noun key, u3_noun cer)
 {
   // XX require 1.1.0 and use TLS_server_method()
   SSL_CTX* tls_u = SSL_CTX_new(SSLv23_server_method());
@@ -895,26 +956,67 @@ _http_init_tls()
                           "ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:"
                           "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
 
-  c3_c pub_c[2048];
-  c3_c pir_c[2048];
-  c3_i ret_i;
+  {
+    uv_buf_t key_u = _http_wain_to_buf(u3k(key));
+    BIO* bio_u = BIO_new_mem_buf(key_u.base, key_u.len);
+    // XX PKCS8 PEM_read_bio_PrivateKey
+    RSA* rsa_u = PEM_read_bio_RSAPrivateKey(bio_u, 0, 0, 0);
 
-  ret_i = snprintf(pub_c, 2048, "%s/.urb/tls/certificate.pem", u3_Host.dir_c);
-  c3_assert(ret_i < 2048);
-  ret_i = snprintf(pir_c, 2048, "%s/.urb/tls/private.pem", u3_Host.dir_c);
-  c3_assert(ret_i < 2048);
+    BIO_free(bio_u);
+    free(key_u.base);
 
-  // TODO: SSL_CTX_use_certificate_chain_file ?
-  if (SSL_CTX_use_certificate_file(tls_u, pub_c, SSL_FILETYPE_PEM) <= 0) {
-    uL(fprintf(uH, "https: failed to load certificate\n"));
-    // c3_assert(0);
-    return 0;
+    if( (0 == rsa_u) ||
+        (0 == SSL_CTX_use_RSAPrivateKey(tls_u, rsa_u)) ) {
+      uL(fprintf(uH, "http: load private key failed:\n"));
+      ERR_print_errors_fp(uH);
+      uL(1);
+
+      if ( 0 != rsa_u ) {
+        RSA_free(rsa_u);
+      }
+
+      SSL_CTX_free(tls_u);
+      return 0;
+    }
   }
 
-  if (SSL_CTX_use_PrivateKey_file(tls_u, pir_c, SSL_FILETYPE_PEM) <= 0 ) {
-    uL(fprintf(uH, "https: failed to load private key\n"));
-    // c3_assert(0);
-    return 0;
+  {
+    uv_buf_t cer_u = _http_wain_to_buf(u3k(cer));
+    BIO* bio_u = BIO_new_mem_buf(cer_u.base, cer_u.len);
+    X509* xer_u = PEM_read_bio_X509_AUX(bio_u, 0, 0, 0);
+
+    if ( (0 == xer_u) ||
+         (0 == SSL_CTX_use_certificate(tls_u, xer_u)) ) {
+      uL(fprintf(uH, "http: load certificate failed:\n"));
+      ERR_print_errors_fp(uH);
+      uL(1);
+
+      BIO_free(bio_u);
+      free(cer_u.base);
+
+      if ( 0 != xer_u ) {
+        X509_free(xer_u);
+      }
+
+      SSL_CTX_free(tls_u);
+
+      return 0;
+    }
+
+    // freed on success too
+    X509_free(xer_u);
+
+    // XX require 1.02 or newer
+    // SSL_CTX_clear_chain_certs(tls_u);
+
+    // get any additional CA certs, ignoring errors
+    while ( 0 != (xer_u = PEM_read_bio_X509(bio_u, 0, 0, 0)) ) {
+      // XX require 1.0.2 or newer and use SSL_CTX_add0_chain_cert
+      SSL_CTX_add_extra_chain_cert(tls_u, xer_u);
+    }
+
+    BIO_free(bio_u);
+    free(cer_u.base);
   }
 
   return tls_u;
@@ -1023,15 +1125,21 @@ _http_serv_start_all(void)
 {
   uL(fprintf(uH, "_http_serv_start_all\n"));
 
-  uL(fprintf(uH, "true %d\n", 0 == 0));
-  uL(fprintf(uH, "no existing servers %d\n", 0 == u3_Host.htp_u));
-
+  // serv_close has already been called, but they
+  // might not have been freed or unlinked yet
   u3_Host.htp_u = 0;
 
   if ( 0 != u3_Host.fig_u.tim_u ) {
     uv_timer_stop(u3_Host.fig_u.tim_u);
     free(u3_Host.fig_u.tim_u);
     u3_Host.fig_u.tim_u = 0;
+  }
+
+  // this may be shared across servers, so
+  // there's no good place for it to go
+  if ( 0 != u3_Host.tls_u ) {
+    SSL_CTX_free(u3_Host.tls_u);
+    u3_Host.tls_u = 0;
   }
 
   u3_http* htp_u;
@@ -1047,24 +1155,22 @@ _http_serv_start_all(void)
   u3_noun red = u3t(u3t(lob));
 
   //  HTTPS server.
-  // if ( u3_nul != sec ) {
-    // // XX unpack/parse sec
-    // u3_noun key = u3h(u3t(sec));
-    // u3_noun cer = u3t(u3t(sec));
-    // // XX stash at u3_Host.fig_u.tls_u
-    // SSL_CTX* tls_u = _http_init_tls(key, cer);
-    SSL_CTX* tls_u = _http_init_tls();
+  if ( u3_nul != sec ) {
+    // XX validate / test axes?
+    u3_noun key = u3h(u3t(sec));
+    u3_noun cer = u3t(u3t(sec));
+    u3_Host.tls_u = _http_init_tls(key, cer);
 
-    if ( 0 != tls_u ) {
+    if ( 0 != u3_Host.tls_u ) {
       por_s = ( c3y == pro ) ? 8443 : 443;
       htp_u = _http_serv_new(por_s, c3y, c3n);
-      htp_u->h2o_u = _http_serv_init_h2o(tls_u, log, red);
+      htp_u->h2o_u = _http_serv_init_h2o(u3_Host.tls_u, log, red);
 
       if ( c3y == pro ) {
         htp_u->rox_u = _proxy_serv_new(htp_u, 443, c3y);
       }
     }
-  // }
+  }
 
   //  HTTP server.
   {
