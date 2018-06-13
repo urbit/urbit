@@ -21,7 +21,13 @@
       $:  say/sole-share                                ::  command-line state
           dir/beam                                      ::  active path
           poy/(unit dojo-project)                       ::  working
-          {lib/(list hoof:ford) sur/(list hoof:ford)}   ::  lib+sur
+          $:  ::  sur: structure imports
+              ::
+              sur=(list cable:ford-api)
+              ::  lib: library imports
+              ::
+              lib=(list cable:ford-api)
+          ==
           var/(map term cage)                           ::  variable state
           old/(set term)                                ::  used TLVs
           buf/tape                                      ::  multiline buffer
@@ -102,13 +108,29 @@
               mark 
               {$hiss hiss:eyre}
           ==
-          {$exec wire @p (unit {beak silk:ford})}      ::
+          [%build wire @p schematic:ford-api]
+          [%kill wire @p]
           {$deal wire sock term club}                   ::
-          {$info wire @p toro:clay}                    ::
+          {$info wire @p toro:clay}                     ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  sign                                            ::
-      $%  {$made p/@uvH q/gage:ford}                   ::
+      $%  ::  %made: build result; response to %build +task
+          ::
+          $:  %made
+              ::  date: formal date of the build
+              ::
+              date=@da
+              ::  result: result of the build; either complete build, or error
+              ::
+              $=  result
+              $%  ::  %complete: contains the result of the completed build
+                  ::
+                  [%complete build-result=build-result:ford-api]
+                  ::  %incomplete: couldn't finish build; contains error message
+                  ::
+                  [%incomplete =tang]
+          ==  ==
           {$unto p/cuft:gall}                          ::  
       ==                                                ::
     --                                                  ::
@@ -169,8 +191,8 @@
       ::
         ;~  pfix  fas 
           ;~  pose
-            (dp-variable (cold %sur hep) ;~(pfix gap dp-hooves))
-            (dp-variable (cold %lib lus) ;~(pfix gap dp-hooves))
+            (dp-variable (cold %sur hep) ;~(pfix gap parse-cables))
+            (dp-variable (cold %lib lus) ;~(pfix gap parse-cables))
           ==
         ==
       ::
@@ -198,18 +220,40 @@
         ;~(plug (cold %http hep) (stag %put dp-iden-url))
         (stag %show (cook $?($1 $2 $3) (cook lent (stun [1 3] wut))))
       ==
-    ++  dp-hooves                                       ::  hoof list
-      :(stag 0 %ex %clsg (most ;~(plug com gaw) dp-hoof))
     ::
-    ++  dp-hoof                                         ::  ++ford-hoof hoon
-      ;~  plug
-        :(stag %sand %f ;~(pose (cold %| tar) (easy %&)))
-        :(stag %sand %tas sym)
-        %-  dp-hoon-punt
-        ;~  (glue fas) 
-          ;~(pfix fas (sear dp-case-hoon nuck:so))
-          (stag %sand ;~(plug (cold %p sig) fed:ag))
-        ==
+    ++  parse-cables
+      %+  cook
+        |=  cables=(list cable:ford-api)
+        :+  0  %ex
+        ^-  hoon
+        ::
+        :-  %clsg
+        %+  turn  cables
+        |=  cable=cable:ford-api
+        ^-  hoon
+        ::
+        :+  %clhp
+          ?~  face.cable
+            [%rock %n ~]
+          [%clhp [%rock %n ~] [%sand %tas u.face.cable]]
+        [%sand %tas file-path.cable]
+      (most ;~(plug com gaw) parse-cable)
+    ::  +cable: parses a +^cable, a reference to something on the filesystem
+    ::
+    ::    This parses:
+    ::
+    ::      `library`       ->  wraps `library` around the library `library`
+    ::      `face=library`  ->  wraps `face` around the library `library`
+    ::      `*library`      ->  exposes `library` directly to the subject
+    ::
+    ::    NOTE: This is a verbatim duplicate of Ford's cable parsing
+    ::
+    ++  parse-cable
+      %+  cook  |=(a=cable:ford-api a)
+      ;~  pose
+        (stag ~ ;~(pfix tar sym))
+        (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
+        (cook |=(a=term [`a a]) sym)
       ==
     ::
     ++  dp-hoon-punt                                   ::  hoon of unit
@@ -294,10 +338,12 @@
     ++  dy-abet  +>(poy `+<)                            ::  resolve
     ++  dy-amok  +>(poy ~)                              ::  terminate
     ++  dy-ford                                         ::  send work to ford
-      |=  {way/wire kas/silk:ford}
+      |=  [way=wire schematic=schematic:ford-api]
       ^+  +>+>
       ?>  ?=($~ pux)
-      (he-card(poy `+>+<(pux `way)) %exec way our.hid `[he-beak kas])
+      ::  pin all builds to :now.hid so they don't get cached forever
+      ::
+      (he-card(poy `+>+<(pux `way)) %build way our.hid %pin now.hid schematic)
     ::
     ++  dy-eyre                                         ::  send work to eyre
       |=  {way/wire usr/(unit knot) req/hiss:eyre}
@@ -310,12 +356,12 @@
       =.  poy  ~
       ?~  pux  +>
       %.  [%txt "! cancel {<u.pux>}"]
-      he-diff:(he-card %exec u.pux our.hid ~)
+      he-diff:(he-card [%kill u.pux our.hid])
     ::
     ++  dy-slam                                         ::  call by ford
       |=  {way/wire gat/vase sam/vase}
       ^+  +>+>
-      (dy-ford way `silk:ford`[%call [%$ %noun gat] [%$ %noun sam]])
+      (dy-ford way `schematic:ford-api`[%call [%$ %noun gat] [%$ %noun sam]])
     ::
     ++  dy-errd                                         ::  reject change, abet
       |=  {rev/(unit sole-edit) err/@u}
@@ -479,10 +525,16 @@
             $now  ~|(%time-is-immutable !!)
             $our  ~|(%self-is-immutable !!)
             $lib
-          .(lib ((dy-cast (list hoof:ford) !>(*(list hoof:ford))) q.cay))
+          %_    .
+              lib
+            ((dy-cast (list cable:ford-api) !>(*(list cable:ford-api))) q.cay)
+          ==
         ::
             $sur
-          .(sur ((dy-cast (list hoof:ford) !>(*(list hoof:ford))) q.cay))
+          %_    .
+              sur
+            ((dy-cast (list cable:ford-api) !>(*(list cable:ford-api))) q.cay)
+          ==
         ::
             $dir  =+  ^=  pax  ^-  path
                       =+  pax=((dy-cast path !>(*path)) q.cay)
@@ -1195,24 +1247,26 @@
     ++  dy-vase       |=(num/@ud q:(dy-cage num))       ::  known vase
     ++  dy-silk-vase  |=(vax/vase [%$ %noun vax])       ::  vase to silk
     ++  dy-silk-sources                                 ::  arglist to silk
-      |=  src/(list dojo-source)  ^-  silk:ford
-      %-  dy-silk-vase
+      |=  src/(list dojo-source)
+      ^-  schematic:ford-api
+      ::
+      :+  %$  %noun
       |-
       ?~  src  !>(~)
       (slop (dy-vase p.i.src) $(src t.src))
     ::
     ++  dy-silk-config                                  ::  configure
       |=  {cay/cage cig/dojo-config}
-      ^-  {wire silk:ford}
+      ^-  [wire schematic:ford-api]
       ?.  (~(nest ut [%cell [%atom %$ ~] %noun]) | p.q.cay)
-        ::  
+        ::
         ::  naked gate
         ::
-        ?.  &(?=({* $~} p.cig) ?=($~ q.cig))     
+        ?.  &(?=({* $~} p.cig) ?=($~ q.cig))
           ~|(%one-argument !!)
         :-  /noun
-        :+  %call  (dy-silk-vase q.cay)
-        (dy-silk-vase (dy-vase p.i.p.cig)) 
+        :+  %call  [%$ %noun q.cay]
+        [%$ %noun (dy-vase p.i.p.cig)]
       ::
       ::  normal generator
       ::
@@ -1222,15 +1276,16 @@
             $get  /scar
           ==
       =+  gat=(slot 3 q.cay)
-      :+  %call  (dy-silk-vase gat)
-      :+  (dy-silk-vase !>([now=now.hid eny=eny.hid bec=he-beak]))
+      :+  %call  [%$ %noun gat]
+      :+  [%$ %noun !>([now=now.hid eny=eny.hid bec=he-beak])]
         (dy-silk-sources p.cig)
-      :+  %mute  (dy-silk-vase (fall (slew 27 gat) !>(~)))
+      :+  %mute  [%$ %noun (fall (slew 27 gat) !>(~))]
+      ^-  (list [wing schematic:ford-api])
       %+  turn  ~(tap by q.cig)
       |=  {a/term b/(unit dojo-source)}
-      ^-  (pair wing silk:ford)
+      ^-  [wing schematic:ford-api]
       :-  [a ~]
-      %-  dy-silk-vase
+      :+  %$  %noun
       ?~(b !>([~ ~]) (dy-vase p.u.b))
     ::
     ++  dy-hoon-head                                    ::  dynamic state
@@ -1318,17 +1373,16 @@
       ?:  ?=($ur -.bil)
         (dy-eyre /hand p.bil [q.bil %get ~ ~])
       %-  dy-ford
-      ^-  (pair path silk:ford)
+      ^-  [path schematic:ford-api]
       ?-  -.bil
         $ge  (dy-silk-config (dy-cage p.p.p.bil) q.p.bil)
-        $dv  [/hand [%core he-beak (flop p.bil)]]
+        $dv  [/hand [%core [he-disc (weld /hoon (flop p.bil))]]]
         $ex  [/hand (dy-mare p.bil)]
-        $sa  [/hand [%bunt p.bil]]
-        $as  [/hand [%cast p.bil [%$ (dy-cage p.q.bil)]]]
+        $sa  [/hand [%bunt he-disc p.bil]]
+        $as  [/hand [%cast he-disc p.bil [%$ (dy-cage p.q.bil)]]]
         $do  [/hand [%call (dy-mare p.bil) [%$ (dy-cage p.q.bil)]]]
         $tu  :-  /hand
-             :-  %$
-             :-  %noun
+             :+  %$  %noun
              |-  ^-  vase
              ?~  p.bil  !!
              =+  hed=(dy-vase p.i.p.bil)
@@ -1365,12 +1419,13 @@
     ::
     ++  dy-mare                                         ::  build expression
       |=  gen/hoon
-      ^-  silk:ford
+      ^-  schematic:ford-api
       =+  too=(dy-hoon-mark gen)
-      =-  ?~(too - [%cast u.too -])
+      =-  ?~(too - [%cast he-disc u.too -])
       :+  %ride  gen
       :-  [%$ dy-hoon-head]
-      [%plan he-beam blob+** [zuse sur lib ~ ~]]
+      :^  %plan  he-rail  `coin`blob+**
+      `scaffold:ford-api`[he-rail zuse sur lib ~ ~]
     ::
     ++  dy-step                                         ::  advance project
       |=  nex/@ud
@@ -1421,7 +1476,9 @@
     =>  he-stop
     [(flop moz) %_(+> hoc (~(del by hoc) ost.hid))]
   ::
-  ++  he-beak  -:he-beam
+  ++  he-disc  [p q]:he-beam
+  ++  he-beak  [p q r]:he-beam
+  ++  he-rail  [[p q] s]:he-beam
   ++  he-beam                                           ::  logical beam
     ^-  beam
     ?.  =(ud+0 r.dir)  dir
@@ -1484,24 +1541,38 @@
     [& %$ (weld he-prow ?~(buf "> " "< "))]
   ::
   ++  he-made                                           ::  result from ford
-    |=  {way/wire dep/@uvH reg/gage:ford}
+    |=  $:  way=wire
+            date=@da
+            $=  result
+            $%  [%complete build-result=build-result:ford-api]
+                [%incomplete =tang]
+        ==  ==
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
-    ?-  -.reg
-      $&  %.  p.reg
-          =+  dye=~(. dy u.poy(pux ~))
-          ?+  way  !!
-            {$hand $~}  dy-hand:dye
-            {$dial $~}  dy-made-dial:dye
-            {$gent $~}  dy-made-gent:dye
-            {$noun $~}  dy-made-noun:dye
-            {$scar $~}  dy-made-scar:dye
-            {$edit $~}  dy-made-edit:dye
-          ==
-      $|  (he-diff(poy ~) %tan p.reg)
-      $tabl  !!
-    ==
+    ?-    -.result
+        %incomplete
+      (he-diff(poy ~) %tan tang.result)
+    ::
+        %complete
+      ?-    -.build-result.result
+          ::
+          %success
+        ::
+        %.  (result-to-cage:ford-api build-result.result)
+        =+  dye=~(. dy u.poy(pux ~))
+        ?+  way  !!
+          {$hand $~}  dy-hand:dye
+          {$dial $~}  dy-made-dial:dye
+          {$gent $~}  dy-made-gent:dye
+          {$noun $~}  dy-made-noun:dye
+          {$scar $~}  dy-made-scar:dye
+          {$edit $~}  dy-made-edit:dye
+        ==
+      ::
+          %error
+        (he-diff(poy ~) %tan message.build-result.result)
+    ==  ==
   ::
   ++  he-sigh                                           ::  result from eyre
     |=  {way/wire hit/httr:eyre}
