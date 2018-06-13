@@ -636,7 +636,14 @@
     =.  our  ?~(hov our u.hov)  ::  XX
     =.  p.top  our              ::  XX necessary?
     ?-    -.kyz
-        $born  +>.$(ged hen)                            ::  register external
+        $born
+      %=  +>.$
+        ged  hen                                        ::  register external
+        mow  :_(mow [hen [%give %form [~ ?=(%king our) & &]]])
+      ==
+    ::
+        $live  +>.$             :: XX save ports
+    ::
         $serv
       =<  ~&([%serving (en-beam top)] .)
       ?^(p.kyz +>.$(top p.kyz) +>.$(q.top p.kyz))
