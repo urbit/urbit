@@ -88,6 +88,8 @@
       typedef struct _u3_hfig {
         u3_noun          fig;               //  config from %eyre
         uv_timer_t*      tim_u;             //  hard restart timer
+        struct _u3_warc* cli_u;             //  rev proxy client
+        struct _u3_pcon* con_u;             //  cli_u connections
       } u3_hfig;
 
     /* u3_proxy_type: proxy connection downstream type
@@ -109,19 +111,21 @@
           struct _u3_warc* cli_u;           //  typ_e == ward
           struct _u3_prox* lis_u;           //  typ_e == prox
         } src_u;                            //  connection source
-        struct _u3_pcon*   nex_u;           //  next in lists
+        struct _u3_pcon* nex_u;             //  next in list
+        struct _u3_pcon* pre_u;             //  previous in list
       } u3_pcon;
 
     /* u3_warc: server connecting back to u3_ward as client
     */
       typedef struct _u3_warc {
-        c3_w             ipf_w;
-        c3_s             por_s;
-        c3_o             sec;
-        u3_atom          sip;
-        c3_c*            hot_c;
+        c3_w             ipf_w;             //  ward ip
+        c3_s             por_s;             //  ward port
+        c3_o             sec;               //  secure connection
+        u3_atom          sip;               //  ward ship
+        c3_c*            hot_c;             //  ward hostname
         struct _u3_http* htp_u;             //  local server backlink
-        struct _u3_warc* nex_u;
+        struct _u3_warc* nex_u;             //  next in list
+        struct _u3_warc* pre_u;             //  previous in list
       } u3_warc;
 
     /* u3_ward: reverse, reverse TCP proxy (ship-specific listener)
@@ -132,7 +136,8 @@
         u3_atom          sip;               //  reverse proxy for ship
         c3_s             por_s;             //  listening on port
         struct _u3_pcon* con_u;             //  initiating connection
-        struct _u3_ward* nex_u;             //  next in lists
+        struct _u3_ward* nex_u;             //  next in list
+        struct _u3_ward* pre_u;             //  previous in list
       } u3_ward;
 
     /* u3_prox: reverse TCP proxy server
@@ -144,7 +149,6 @@
         struct _u3_http* htp_u;             //  local server backlink
         struct _u3_pcon* con_u;             //  active connection list
         struct _u3_ward* rev_u;             //  active reverse listeners
-        struct _u3_prox* nex_u;             //  next listener
       } u3_prox;
 
     /* u3_csat: client connection state.

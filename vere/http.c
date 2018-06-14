@@ -788,7 +788,7 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
   h2o_u->han_u = h2o_create_handler(&h2o_u->hos_u->fallback_path,
                                     sizeof(*h2o_u->han_u));
   if ( c3y == red ) {
-    // XX redirect handler
+    // XX h2o_redirect_register
     h2o_u->han_u->on_req = _http_rec_accept;
   }
   else {
@@ -798,6 +798,8 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
   if ( c3y == log ) {
     // XX enable access log
   }
+
+  // XX h2o_compress_register
 
   h2o_context_init(&h2o_u->ctx_u, u3L, &h2o_u->fig_u);
 
@@ -1288,6 +1290,9 @@ u3_http_io_init(void)
 {
   // XX avoid u3_noun foo; u3z(foo); is this necessary?
   u3_Host.fig_u.fig = u3_none;
+
+  u3_Host.fig_u.cli_u = 0;
+  u3_Host.fig_u.con_u = 0;
 }
 
 /* u3_http_io_talk(): start http I/O.
@@ -1318,6 +1323,8 @@ u3_http_io_exit(void)
   //   _http_serv_close_hard(htp_u);
   // }
 
+  // XX close u3_Host.fig_u.cli_u and con_u
+
   _http_release_ports_file(u3_Host.dir_c);
 }
 
@@ -1345,13 +1352,47 @@ _proxy_alloc(uv_handle_t* had_u,
   *buf = uv_buf_init(ptr_v, 4096);
 }
 
+/* _proxy_warc_link(): link warc to global state.
+*/
+static void
+_proxy_warc_link(u3_warc* cli_u)
+{
+  cli_u->nex_u = u3_Host.fig_u.cli_u;
+
+  if ( 0 != cli_u->nex_u ) {
+    cli_u->nex_u->pre_u = cli_u;
+  }
+  u3_Host.fig_u.cli_u = cli_u;
+}
+
+/* _proxy_warc_unlink(): unlink warc from global state.
+*/
+static void
+_proxy_warc_unlink(u3_warc* cli_u)
+{
+  if ( 0 != cli_u->pre_u ) {
+    cli_u->pre_u->nex_u = cli_u->nex_u;
+
+    if ( 0 != cli_u->nex_u ) {
+      cli_u->nex_u->pre_u = cli_u->pre_u;
+    }
+  }
+  else {
+    u3_Host.fig_u.cli_u = cli_u->nex_u;
+
+    if ( 0 != cli_u->nex_u ) {
+      cli_u->nex_u->pre_u = 0;
+    }
+  }
+}
+
 /* _proxy_warc_free(): free ward client
 */
 static void
 _proxy_warc_free(u3_warc* cli_u)
 {
+  _proxy_warc_unlink(cli_u);
   free(cli_u);
-  // XX detach from global state
 }
 
 /* _proxy_warc_new(): allocate ship-specific proxy client
@@ -1365,10 +1406,80 @@ _proxy_warc_new(u3_http* htp_u, u3_atom sip, c3_s por_s, c3_o sec)
   cli_u->htp_u = htp_u;
   cli_u->por_s = por_s; // set after opened
   cli_u->nex_u = 0;
+  cli_u->pre_u = 0;
 
-  // XX link to global state
+  _proxy_warc_link(cli_u);
 
   return cli_u;
+}
+
+/* _proxy_conn_link(): link con to listener or global state.
+*/
+static void
+_proxy_conn_link(u3_pcon* con_u)
+{
+  switch ( con_u->typ_e ) {
+    default: c3_assert(0);
+
+    case u3_ptyp_ward: {
+      con_u->nex_u = u3_Host.fig_u.con_u;
+
+      if ( 0 != con_u->nex_u ) {
+        con_u->nex_u->pre_u = con_u;
+      }
+      u3_Host.fig_u.con_u = con_u;
+      break;
+    }
+
+    case u3_ptyp_prox: {
+      u3_prox* lis_u = con_u->src_u.lis_u;
+      con_u->nex_u = lis_u->con_u;
+
+      if ( 0 != con_u->nex_u ) {
+        con_u->nex_u->pre_u = con_u;
+      }
+      lis_u->con_u = con_u;
+      break;
+    }
+  }
+}
+
+/* _proxy_conn_unlink(): unlink con from listener or global state.
+*/
+static void
+_proxy_conn_unlink(u3_pcon* con_u)
+{
+  if ( 0 != con_u->pre_u ) {
+    con_u->pre_u->nex_u = con_u->nex_u;
+
+    if ( 0 != con_u->nex_u ) {
+      con_u->nex_u->pre_u = con_u->pre_u;
+    }
+  }
+  else {
+    switch ( con_u->typ_e ) {
+      default: c3_assert(0);
+
+      case u3_ptyp_ward: {
+        u3_Host.fig_u.con_u = con_u->nex_u;
+
+        if ( 0 != con_u->nex_u ) {
+          con_u->nex_u->pre_u = 0;
+        }
+        break;
+      }
+
+      case u3_ptyp_prox: {
+        u3_prox* lis_u = con_u->src_u.lis_u;
+        lis_u->con_u = con_u->nex_u;
+
+        if ( 0 != con_u->nex_u ) {
+          con_u->nex_u->pre_u = 0;
+        }
+        break;
+      }
+    }
+  }
 }
 
 /* _proxy_conn_free(): free proxy connection
@@ -1384,9 +1495,9 @@ _proxy_conn_free(u3_pcon* con_u)
     _proxy_warc_free(con_u->src_u.cli_u);
   }
 
-  free(con_u);
+  _proxy_conn_unlink(con_u);
 
-  // XX detach from listener
+  free(con_u);
 }
 
 /* _proxy_conn_close(): close both sides of proxy connection
@@ -1410,6 +1521,7 @@ _proxy_conn_new(u3_proxy_type typ_e, void* src_u)
   con_u->upt_u = 0;
   con_u->buf_u = uv_buf_init(0, 0);
   con_u->nex_u = 0;
+  con_u->pre_u = 0;
 
   switch ( typ_e ) {
     default: c3_assert(0);
@@ -1433,7 +1545,7 @@ _proxy_conn_new(u3_proxy_type typ_e, void* src_u)
 
   con_u->don_u.data = con_u;
 
-  // XX link to global state
+  _proxy_conn_link(con_u);
 
   return con_u;
 }
@@ -1610,15 +1722,56 @@ _proxy_loop_connect(u3_pcon* con_u)
   }
 }
 
+/* _proxy_ward_link(): link ward to listener.
+*/
+static void
+_proxy_ward_link(u3_pcon* con_u, u3_ward* rev_u)
+{
+  // XX link also to con_u as upstream?
+  c3_assert( u3_ptyp_prox == con_u->typ_e );
+
+  u3_prox* lis_u = con_u->src_u.lis_u;
+
+  rev_u->nex_u = lis_u->rev_u;
+
+  if ( 0 != rev_u->nex_u ) {
+    rev_u->nex_u->pre_u = rev_u;
+  }
+  lis_u->rev_u = rev_u;
+}
+
+/* _proxy_ward_unlink(): unlink ward from listener.
+*/
+static void
+_proxy_ward_unlink(u3_ward* rev_u)
+{
+  if ( 0 != rev_u->pre_u ) {
+    rev_u->pre_u->nex_u = rev_u->nex_u;
+
+    if ( 0 != rev_u->nex_u ) {
+      rev_u->nex_u->pre_u = rev_u->pre_u;
+    }
+  }
+  else {
+    c3_assert( u3_ptyp_prox == rev_u->con_u->typ_e );
+
+    u3_prox* lis_u = rev_u->con_u->src_u.lis_u;
+    lis_u->rev_u = rev_u->nex_u;
+
+    if ( 0 != rev_u->nex_u ) {
+      rev_u->nex_u->pre_u = 0;
+    }
+  }
+}
+
 /* _proxy_ward_free(): free reverse proxy listener
 */
 static void
 _proxy_ward_free(u3_ward* rev_u)
 {
   u3z(rev_u->sip);
+  _proxy_ward_unlink(rev_u);
   free(rev_u);
-  // XX free buffers
-  // XX detach from listener
 }
 
 /* _proxy_ward_close(): close ward (ship-specific listener)
@@ -1642,8 +1795,9 @@ _proxy_ward_new(u3_pcon* con_u, u3_atom sip)
   rev_u->sip = sip;
   rev_u->por_s = 0; // set after opened
   rev_u->nex_u = 0;
+  rev_u->pre_u = 0;
 
-  // XX link to global state
+  _proxy_ward_link(con_u, rev_u);
 
   return rev_u;
 }
@@ -2112,10 +2266,23 @@ _proxy_peek_read(u3_pcon* con_u)
 static void
 _proxy_serv_free(u3_prox* lis_u)
 {
+  u3_pcon* con_u = lis_u->con_u;
+
+  while ( con_u ) {
+    _proxy_conn_close(con_u);
+    con_u = con_u->nex_u;
+  }
+
+  u3_ward* rev_u = lis_u->rev_u;
+
+  while ( rev_u ) {
+    _proxy_ward_close(rev_u);
+    rev_u = rev_u->nex_u;
+  }
+
+  // not unlinked here, owned directly by htp_u
+
   free(lis_u);
-  // XX close and free connections
-  // XX close and free reverse listeners
-  // XX detach from global state
 }
 
 /* _proxy_serv_close(): close proxy listener
@@ -2138,8 +2305,8 @@ _proxy_serv_new(u3_http* htp_u, c3_s por_s, c3_o sec)
   lis_u->htp_u = htp_u;
   lis_u->con_u = 0;
   lis_u->rev_u = 0;
-  lis_u->nex_u = 0;
-  // XX link to global state
+
+  // not linked here, owned directly by htp_u
 
   return lis_u;
 }
