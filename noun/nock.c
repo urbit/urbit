@@ -1603,6 +1603,9 @@ _n_edit(u3_noun big, u3_noun axe, u3_noun som)
   }
   else {
     u3_noun mor = u3qc_mas(axe);
+    if ( c3n == u3du(big) ) {
+      u3m_bail(c3__exit);
+    }
     u3_noun pro = ( 2 == u3qc_cap(axe) )
                 ? u3nc(_n_edit(u3k(u3h(big)), mor, som), u3k(u3t(big)))
                 : u3nc(u3k(u3h(big)), _n_edit(u3k(u3t(big)), mor, som));
