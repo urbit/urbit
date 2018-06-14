@@ -246,10 +246,11 @@
   ?.  ?=(?(%hymn %elem) file-type)
     ?>  ?=(?(%js %css) file-type)
     =.  s.out.bem  [file-type s.out.bem]
+    =/  pax  (en-beam:format out.bem)
+    ?>  ?=(@t file-contents)
+    =/  fol  (foal:space:userlib pax [file-type !>(file-contents)])
     :_  ~
-    :*  ost.bol  %info  /write  our.bol
-        (foal:space:userlib (en-beam:format out.bem) [file-type !>(file-contents)])
-    ==
+    [ost.bol %info /write our.bol fol]
   ::  get all links from manx
   ::
   =/  file-contents=manx  ((hard manx) q.q.p.gag)
@@ -273,10 +274,10 @@
   ::
   =.  s.out.bem  [%html s.out.bem]
   ~&  (flop s.out.bem)
+  =/  pax  (en-beam:format out.bem)
+  =/  fol  (foal:space:userlib pax [%html !>((crip (en-xml:html file-contents)))])
   :_  new-actions
-  :*  ost.bol  %info  /write  our.bol
-      (foal:space:userlib (en-beam:format out.bem) [%html !>((crip (en-xml:html file-contents)))])
-  ==
+  [ost.bol %info /write our.bol fol]
 --
 
 
