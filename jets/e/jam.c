@@ -40,7 +40,7 @@ _jam_buf_grow(_jam_buf* buf_u, c3_w mor_w)
       ++new_w;
     }
 
-    buf_u->wor_w = u3a_realloc(buf_u->wor_w, new_w * sizeof(c3_w));
+    buf_u->wor_w = u3a_wealloc(buf_u->wor_w, new_w);
     memset(buf_u->wor_w + old_w, 0, (new_w - old_w) * sizeof(c3_w));
   }
 }
@@ -70,91 +70,99 @@ _jam_buf_atom(_jam_buf* buf_u, u3_noun a)
   }
 }
 
-static u3_noun
-_jam_buf_top(u3_noun a)
-{
-  u3p(u3h_root) har_p = u3h_new();
-  c3_o          nor_o = u3a_is_north(u3R);
-  c3_y          wis_y = c3_wiseof(u3_noun);
-  c3_ys         mov   = ( c3y == nor_o ? -wis_y : wis_y );
-  c3_ys         off   = ( c3y == nor_o ? 0 : -wis_y );
-  u3_noun*      top, *don = u3to(u3_noun, u3R->cap_p + off);
-  _jam_buf      buf_u;
-  u3_weak       c;
-  c3_o          cel_o;
-  c3_w*         sal_w, len_w;
+/* functions
+*/
+  /* u3qe_jam_buf(): jam without atom allocation. returns
+   *                 atom-suitable words, and *bit_w will
+   *                 have the length (in bits). return should
+   *                 be freed with u3a_wfree().
+   */
+  c3_w*
+  u3qe_jam_buf(u3_noun a, c3_w* bit_w)
+  {
+    u3p(u3h_root) har_p = u3h_new();
+    c3_o          nor_o = u3a_is_north(u3R);
+    c3_y          wis_y = c3_wiseof(u3_noun);
+    c3_ys         mov   = ( c3y == nor_o ? -wis_y : wis_y );
+    c3_ys         off   = ( c3y == nor_o ? 0 : -wis_y );
+    u3_noun*      top, *don = u3to(u3_noun, u3R->cap_p + off);
+    u3_weak       c;
+    c3_o          cel_o;
+    c3_w          len_w;
+    _jam_buf      buf_u;
 
-  buf_u.a_w   = 144;  // fib(12) is small enough to be reasonably fast to allocate.
-  buf_u.b_w   = 89;   // fib(11) is needed to get fib(13).
-  len_w       = buf_u.a_w >> 5;
-  if ( (len_w << 5) != buf_u.a_w ) {
-    ++len_w;
-  }
-  buf_u.wor_w = u3a_calloc(len_w, sizeof(c3_w));
-  buf_u.bit_w = 0;
+    buf_u.a_w   = 144;  // fib(12) is small enough to be reasonably fast to allocate.
+    buf_u.b_w   = 89;   // fib(11) is needed to get fib(13).
+    len_w       = buf_u.a_w >> 5;
+    if ( (len_w << 5) != buf_u.a_w ) {
+      ++len_w;
+    }
+    buf_u.wor_w = u3a_walloc(len_w);
+    buf_u.bit_w = 0;
+    memset(buf_u.wor_w, 0, len_w * sizeof(c3_w));
 
-  u3R->cap_p += mov;
-  top         = u3to(u3_noun, u3R->cap_p + off);
-  *top        = a;
+    u3R->cap_p += mov;
+    top         = u3to(u3_noun, u3R->cap_p + off);
+    *top        = a;
 
-  while ( top != don ) {
-    a     = *top;
-    cel_o = u3du(a);
-    c     = u3h_git(har_p, a);
-    if ( u3_none != c ) {
-      if ( c3y == cel_o ) {
-          _jam_buf_chop(&buf_u, 2, 3);
-          _jam_buf_atom(&buf_u, c);
-      }
-      else {
-        if ( u3r_met(0, a) <= u3r_met(0, c) ) {
-          _jam_buf_chop(&buf_u, 1, 0);
-          _jam_buf_atom(&buf_u, a);
+    while ( top != don ) {
+      a     = *top;
+      cel_o = u3du(a);
+      c     = u3h_git(har_p, a);
+      if ( u3_none != c ) {
+        if ( c3y == cel_o ) {
+            _jam_buf_chop(&buf_u, 2, 3);
+            _jam_buf_atom(&buf_u, c);
         }
         else {
-          _jam_buf_chop(&buf_u, 2, 3);
-          _jam_buf_atom(&buf_u, c);
+          if ( u3r_met(0, a) <= u3r_met(0, c) ) {
+            _jam_buf_chop(&buf_u, 1, 0);
+            _jam_buf_atom(&buf_u, a);
+          }
+          else {
+            _jam_buf_chop(&buf_u, 2, 3);
+            _jam_buf_atom(&buf_u, c);
+          }
         }
-      }
-      u3R->cap_p -= mov;
-      top = u3to(u3_noun, u3R->cap_p + off);
-    }
-    else {
-      u3h_put(har_p, a, buf_u.bit_w);
-      if ( c3n == cel_o ) {
-        _jam_buf_chop(&buf_u, 1, 0);
-        _jam_buf_atom(&buf_u, a);
         u3R->cap_p -= mov;
         top = u3to(u3_noun, u3R->cap_p + off);
       }
       else {
-        _jam_buf_chop(&buf_u, 2, 1);
-        *top         = u3t(a);
+        u3h_put(har_p, a, buf_u.bit_w);
+        if ( c3n == cel_o ) {
+          _jam_buf_chop(&buf_u, 1, 0);
+          _jam_buf_atom(&buf_u, a);
+          u3R->cap_p -= mov;
+          top = u3to(u3_noun, u3R->cap_p + off);
+        }
+        else {
+          _jam_buf_chop(&buf_u, 2, 1);
+          *top         = u3t(a);
 
-        u3R->cap_p  += mov;
-        top          = u3to(u3_noun, u3R->cap_p + off);
-        *top         = u3h(a);
+          u3R->cap_p  += mov;
+          top          = u3to(u3_noun, u3R->cap_p + off);
+          *top         = u3h(a);
+        }
       }
     }
-  }
 
-  len_w = buf_u.bit_w >> 5;
-  if ( (len_w << 5) != buf_u.bit_w ) {
-    ++len_w;
+    *bit_w = buf_u.bit_w;
+    u3h_free(har_p);
+    return buf_u.wor_w;
   }
-  sal_w = u3a_slab(len_w);
-  memcpy(sal_w, buf_u.wor_w, len_w*sizeof(c3_w));
-  u3a_free(buf_u.wor_w);
-  u3h_free(har_p);
-  return u3a_moot(sal_w);
-}
-
-/* functions
-*/
   u3_noun
   u3qe_jam(u3_atom a)
   {
-    return _jam_buf_top(a);
+    c3_w  bit_w, *sal_w;
+    c3_w* wor_w = u3qe_jam_buf(a, &bit_w);
+    c3_w  len_w = bit_w >> 5;
+    if ( (len_w << 5) != bit_w ) {
+      ++len_w;
+    }
+    sal_w = u3a_slab(len_w);
+    memcpy(sal_w, wor_w, len_w*sizeof(c3_w));
+    u3a_wfree(wor_w);
+    return u3a_moot(sal_w);
   }
   u3_noun
   u3we_jam(u3_noun cor)
