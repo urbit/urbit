@@ -3,6 +3,12 @@
 */
 #include "all.h"
 
+#if defined(U3_OS_osx)
+#include <CommonCrypto/CommonDigest.h>
+#else
+#include <openssl/sha.h>
+#endif
+
 /**  Data structures.
 **/
 
@@ -90,6 +96,9 @@ _cj_hash(c3_c* has_c)
   return pro;
 }
 
+// in the jam jet file
+c3_w* u3qe_jam_buf(u3_noun, c3_w* bit_w);
+
 /* _cj_bash(): battery hash. RETAIN.
  */
 static u3_noun
@@ -108,10 +117,34 @@ _cj_bash(u3_noun bat)
       rod_u = u3to(u3_road, rod_u->par_p);
     }
     else {
-      u3_noun jan = u3qe_jam(bat);
-      pro = u3qe_shax(jan);
+      c3_w    bit_w, met_w;
+      c3_w*   wor_w;
+      c3_y*   fat_y;
+      c3_y    dig_y[32];
+      
+      wor_w = u3qe_jam_buf(bat, &bit_w);
+      met_w = bit_w >> 3;
+      if ( bit_w != met_w << 3 ) {
+        ++met_w;
+      }
+      // assume little-endian
+      fat_y = (c3_y*) wor_w;
+#if defined(U3_OS_osx)
+      CC_SHA256_CTX ctx_h;
+
+      CC_SHA256_Init(&ctx_h);
+      CC_SHA256_Update(&ctx_h, fat_y, met_w);
+      CC_SHA256_Final(dig_y, &ctx_h);
+#else
+      SHA256_CTX ctx_h;
+
+      SHA256_Init(&ctx_h);
+      SHA256_Update(&ctx_h, fat_y, met_w);
+      SHA256_Final(dig_y, &ctx_h);
+#endif
+      pro = u3i_bytes(32, dig_y);
       u3h_put(u3R->jed.bas_p, bat, u3k(pro));
-      u3z(jan);
+      u3a_wfree(wor_w);
       break;
     }
   }
