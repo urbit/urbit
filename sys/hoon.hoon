@@ -12784,7 +12784,7 @@
                   ['+' (rune lus %ktls expb)]
                   ['&' (rune pad %ktpd expa)]
                   ['~' (rune sig %ktsg expa)]
-                  ['=' (rune tis %ktts expg)]
+                  ['=' (rune tis %kthx expj)]
                   ['#' (rune hax %kthx expj)]
                   ['?' (rune wut %ktwt expa)]
                   ['%' (rune cen %ktcn expa)]
@@ -13015,7 +13015,10 @@
     ++  hank  (most muck loaf)                          ::  gapped hoons
     ++  hunk  (most muck loan)                          ::  gapped specs
     ++  lore  %+  sear
-                |=(=hoon ~(hind ap hoon))
+                |=  =hoon 
+                =+  ~(hind ap hoon)
+                ~?  =(~ -)  [%bad-lore hoon]
+                -
               loaf
     ++  loaf  ?:(tol tall wide)                         ::  tall/wide hoon
     ++  loan  ?:(tol till wyde)                         ::  tall/wide spec
@@ -13067,7 +13070,7 @@
     ++  expg  |.(;~(gunk sym loaf))                     ::  term and hoon
     ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [spec hoon]s
     ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more hoons
-    ++  expj  |.((butt ;~(gunk lore loaf)))             ::  rind and hoon
+    ++  expj  |.(;~(gunk lore loaf))                    ::  rind and hoon
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two hoons
     ++  expl  |.(;~(gunk sym loaf loaf))                ::  term, two hoons
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [spec hoon]s
