@@ -61,12 +61,12 @@
 ++  parse-relative
   |=  pax=tape
   ^-  (unit relative)
-  %+  scan  pax
+  %+  rust  pax
   %+  cook
   |=  a=^
   ?:  ?=([%up @] -.a)
-    ((soft relative) [%up ->.a +.a])
-  ((soft relative) a)
+    ((hard relative) [%up ->.a +.a])
+  ((hard relative) a)
   ;~  plug
   ::
     ;~  pose  
@@ -81,8 +81,6 @@
     ::
       (cold [%up 1] (easy ~))
     ==
-  ::
-    
   ::
     %+  cook
     |=  a=(list coin)
