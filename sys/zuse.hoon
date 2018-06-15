@@ -1545,6 +1545,16 @@
         %vale  cage.result
         %volt  cage.result
     ==
+  ::  +result-as-error: extracts a tang out of a made-result
+  ::
+  ++  made-result-as-error
+    |=  result=made-result
+    ^-  tang
+    ?:  ?=([%incomplete *] result)
+      tang.result
+    ?:  ?=([%complete %error *] result)
+      message.build-result.result
+    ~
   --
 ::                                                      ::::
 ::::                    ++gall                            ::  (1g) extensions
