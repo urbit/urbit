@@ -12785,6 +12785,7 @@
                   ['&' (rune pad %ktpd expa)]
                   ['~' (rune sig %ktsg expa)]
                   ['=' (rune tis %ktts expg)]
+                  ['#' (rune hax %kthx expj)]
                   ['?' (rune wut %ktwt expa)]
                   ['%' (rune cen %ktcn expa)]
                   ['*' (rune tar %kttr exqa)]
@@ -13013,6 +13014,9 @@
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
     ++  hank  (most muck loaf)                          ::  gapped hoons
     ++  hunk  (most muck loan)                          ::  gapped specs
+    ++  lore  %+  sear
+                |=(=hoon ~(hind ap hoon))
+              loaf
     ++  loaf  ?:(tol tall wide)                         ::  tall/wide hoon
     ++  loan  ?:(tol till wyde)                         ::  tall/wide spec
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
@@ -13063,6 +13067,7 @@
     ++  expg  |.(;~(gunk sym loaf))                     ::  term and hoon
     ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [spec hoon]s
     ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more hoons
+    ++  expj  |.((butt ;~(gunk lore loaf)))             ::  rind and hoon
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two hoons
     ++  expl  |.(;~(gunk sym loaf loaf))                ::  term, two hoons
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [spec hoon]s
@@ -13185,8 +13190,8 @@
       $col  ?:(=([%base %flag] ros) ~ [~ %tsld ros p.vil])
       $lit  (bind ~(reek ap ros) |=(hyp/wing [%cnts hyp p.vil]))
       $ket  [~ ros p.vil]
-      $tis  =+  tog=~(hock ap ros)
-            ?:(=([%0 ~] tog) ~ [~ %ktts tog p.vil])
+      $tis  =+  rud=~(hind ap ros)
+            ?~(rud ~ `[%kthx u.rud p.vil])
     ==
   ::
   ++  long

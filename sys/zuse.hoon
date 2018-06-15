@@ -3383,7 +3383,7 @@
       ?-    wil                                         :: mint-vain on empty
           :: {wit/* t/*}
           {* t/*}
-        =>  .(wil [wit ~]=wil)
+        =>  .(wil [wit *]=wil)
         ?~  t.wil  ?^(t.jol !! (wit.wil i.jol))
         [(wit.wil i.jol) ((at-raw t.wil) t.jol)]
       ==
@@ -3437,7 +3437,7 @@
       ?-    wer                                         :: mint-vain on empty
           :: {{key/@t wit/*} t/*}
           {{key/@t *} t/*}
-        =>  .(wer [[~ wit] ~]=wer)
+        =>  .(wer [[* wit] *]=wer)
         ?:  =(key.wer p.n.p.jon)
           [key.wer ~|(key+key.wer (wit.wer q.n.p.jon))]
         ?~  t.wer  ~|(bad-key+p.n.p.jon !!)
@@ -3456,7 +3456,7 @@
       ?-    wer                                         :: mint-vain on empty
           :: {{key/@t wit/*} t/*}
           {{key/@t *} t/*}
-        =>  .(wer [[~ wit] ~]=wer)
+        =>  .(wer [[* wit] *]=wer)
         =/  ten  ~|(key+key.wer (wit.wer (~(got by jom) key.wer)))
         ?~(t.wer ten [ten ((ot-raw t.wer) jom)])
       ==

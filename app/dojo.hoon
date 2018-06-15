@@ -1319,7 +1319,7 @@
           %|
         =>  .(vax (slap vax !,(*hoon ?>(?=(%| -) .))))  :: XX working sped  #72
         =+  typ={%| (unit knot) hiss:eyre *}
-        =+  [~ usr hiz ~]=((dy-cast typ !>($:typ)) vax)
+        =+  [* usr hiz *]=((dy-cast typ !>($:typ)) vax)
         =.  ..dy  (he-diff %tan leaf+"< {(en-purl:html p.hiz)}" ~)
         (dy-eyre(pro `(slap (slot 15 vax) limb+%r)) /scar usr hiz)
       ==
