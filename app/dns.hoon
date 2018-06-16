@@ -3,8 +3,8 @@
 ::
 |%
 +=  move  (pair bone card)
-+=  poke  $%  [%dns-bind ship target]
-              [%dns-bound ship ship turf]
++=  poke  $%  [%dns-bind for=ship him=ship target]
+              [%dns-bond for=ship him=ship turf]
           ==
 +=  card  $%  [%tend wire ~]
               [%poke wire dock poke]
@@ -59,6 +59,7 @@
   $:  wen=@da
       wer=(unit @if)
       bon=?
+      tar=target
   ==
 :: +state: complete app state
 ::
@@ -92,13 +93,18 @@
   abet:(init:bind aut)
 ::
 ++  poke-dns-bind                                     ::  bind or forward
-  |=  [him=ship tar=target]
+  |=  [for=ship him=ship tar=target]
   ^-  (quip move _this)
   ~&  [%bind src=src.bow him=him tar=tar]
-  ?:  ?=(^ nem)
-    :: XX bind & forward?
+  =^  zom=(list move)  ..this
+  ^-  (quip move _this)
+    abet:(~(forward tell him ~) tar)
+  ?~  nem
+    [zom this]
+  :: XX =^ nest-fail
+  =/  zam=(quip move _this)
     abet:(~(create bind u.nem) him tar)
-  abet:(~(forward tell him ~) tar)
+  [(weld zom -.zam) +.zam]
 ::
 :: ++  coup-dns-bind                                     ::  retry?
 ::   |=  [wir=wire saw=(unit tang)]
@@ -112,14 +118,22 @@
 ::     *  ~&(coup-dns-bind+wir [~ this])
 ::   ==
 ::
-++  poke-dns-bound                                    ::  confirm or forward
-  |=  [him=ship for=ship dom=turf]
+++  poke-dns-bond                                    ::  confirm or forward
+  |=  [for=ship him=ship dom=turf]
   ^-  (quip move _this)
+  ?<  =(for him)
   ~&  [%bound +<]
-  ?.  =(our.bow for)
-    abet:(backward:tell him for dom)
-  =<  abet
-  (~(bake tell [him (~(get by per) him)]) dom)
+  ?:  =(our.bow him)
+    :: XX notify eyre/hood/acme etc
+    ~&  [%bound-us dom]
+    :-  ~
+    this(dom (~(put in ^dom) dom))
+  ?:  =(our.bow for)
+    ~&  [%bound-him him dom]
+    =<  abet
+    (~(bake tell [him (~(get by per) him)]) dom)
+  ~&  [%strange-bond +<]
+  [~ this]
 ::
 ++  rove                                              ::  hear lane change
   |=  [wir=wire p=ship q=lane:ames]
@@ -152,6 +166,11 @@
     ^-  (quip move _^this)
     [(flop moz) ^this(nem `nam)]
   ::
+  ++  emit
+    |=  a=card
+    ^+  this
+    this(moz [[ost.bow a] moz])
+  ::
   ++  init
     |=  aut=authority
     ::  XX confirm credentials
@@ -160,7 +179,13 @@
   ::
   ++  create
     |=  [him=ship tar=target]
-    this :: XX
+    =|  for=@p :: XX
+    %-  emit
+    :*  %poke
+        /foward/bound/(scot %p him)/for/(scot %p for)
+        [for %dns]
+        [%dns-bond him for *turf]
+    ==
   ::
   ++  confirm
     |=  him=ship
@@ -193,16 +218,25 @@
   ++  rove                                            ::  hear
     |=  lan=lane:ames
     ^+  this
-    =/  ip=(unit @if)
+    =/  adr=(unit @if)
       ?.(?=([%if *] lan) ~ `r.lan)
-    =.  rel  `[now.bow ip |]
-    %-  emit
-    :*  %poke
-        /bind/(scot %p him)/for/(scot %p our.bow)
-        [(sein:title our.bow) %dns]
-        %dns-bind
-        [him ?~(ip [%indirect our.bow] [%direct %if u.ip])]
-    ==
+    =/  tar=target
+      ?:  ?|  ?=(~ adr)
+              ?=(%duke (clan:title him))
+          ==
+        [%indirect our.bow]
+      [%direct %if u.adr]
+    =/  ler=relay
+      [now.bow adr | tar]
+    ?.  ?|  ?=(~ rel)
+            !=(tar tar.u.rel)
+        ==
+      this
+    :: we may be an authority, so we poke ourselves
+    =/  wir=wire
+      /bind/(scot %p him)/for/(scot %p our.bow)
+    %-  emit(rel `ler)
+    [%poke wir [our.bow %dns] %dns-bind our.bow him tar]
   ::
   ++  bake                                            ::  bound
     |=  dom=turf
@@ -224,21 +258,9 @@
         %czar  ~zod
         *      (sein:title our.bow)
       ==
-    %-  emit
-    :*  %poke
-        /foward/bind/(scot %p him)/for/(scot %p src.bow)
-        [to %dns]
-        [%dns-bind him tar]
-    ==
-  ::
-  ++  backward                                        ::  relay binding ack
-    |=  [him=ship for=ship dom=turf]
-    ^+  this
-    %-  emit
-    :*  %poke
-        /foward/bound/(scot %p him)/for/(scot %p for)
-        [for %dns]
-        [%dns-bound him for dom]
-    ==
+    =/  wir=wire
+      /forward/bind/(scot %p him)/for/(scot %p src.bow)
+    %-  emit  :: XX for
+    [%poke wir [to %dns] %dns-bind src.bow him tar]
   --
 --
