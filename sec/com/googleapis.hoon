@@ -30,6 +30,7 @@
       'https://www.googleapis.com/auth/plus.me'
       'https://www.googleapis.com/auth/userinfo.email'
       'https://www.googleapis.com/auth/ndev.clouddns.readwrite'
+      'https://www.googleapis.com/auth/cloud-platform.read-only'
   ==
 ::
 ++  exchange-url  'https://www.googleapis.com/oauth2/v4/token'

@@ -8,22 +8,24 @@
           ==
 +=  card  $%  [%tend wire ~]
               [%poke wire dock poke]
+              [%hiss wire [~ ~] %httr %hiss hiss:eyre]
           ==
 :: +turf: a domain, TLD first
 ::
 +=  turf  (list @t)
 :: +authority: responsibility for a DNS zone
 ::
+:: +provider: DNS service provider
++=  provider
+  $%  [%gcloud project=@ta zone=@ta]
+  ==
 +=  authority
   $:  :: dom: authority over a domain
       ::
       dom=turf
-      :: zon: DNS zone name
-      ::
-      zon=@t
       :: pro: DNS provider (gcloud only for now)
       ::
-      pro=%gcloud
+      pro=provider
   ==
 :: +target: a ship is bound to a ...
 ::
@@ -73,7 +75,10 @@
       :: nem: authoritative state
       ::
       nem=(unit nameserver)
-  ==     
+  ==
+::
+++  gcloud
+  (need (de-purl:html 'https://www.googleapis.com/dns/v1/projects'))
 --
 ::
 |_  [bow=bowl:gall state]
@@ -82,8 +87,37 @@
 ++  poke-noun
   |=  a=*
   ::^-  (quip move _this)
+  ?:  ?=(%aut a)
+    :_  this  :_  ~
+    :*  ost.bow
+        %poke
+        /foo
+        [our.bow dap.bow]
+        %dns-authority
+        [/org/urbit/dyndns %gcloud %tonal-griffin-853 %dyndns]
+    ==
   ~&  +<+:this
   [~ this]
+::
+++  sigh-httr
+  |=  [wir=wire rep=httr:eyre]
+  ?-  wir
+      [%authority %confirm ~]
+    ?~  nem
+      ~&  [%strange-authority wire=wir response=rep]
+      [~ this]
+    ?.  =(200 p.rep)
+      ~&  [%authority-confirm-fail rep]
+      [~ this(nem ~)]
+    :: XX anything to do here? parse body?
+    :: abet:(~(confirm bind u.nem) httr
+    ~&  %authority-confirmed
+    [~ this]
+  ::
+      *
+    ~&  +<
+    [~ this]
+  ==
 ::
 ++  poke-dns-authority                                ::  configure
   |=  aut=authority
@@ -146,6 +180,7 @@
   =<  abet
   (~(rove tell [p (~(get by per) p)]) q)
 ::
+:: ++  prep  _[~ this]
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
@@ -173,9 +208,14 @@
   ::
   ++  init
     |=  aut=authority
-    ::  XX confirm credentials
-    ::  XX confirm zone
-    this(nam [aut ~ ~])
+    :: ?>  ?=(%gcloud pro.aut)
+    =/  wir=wire  /authority/confirm
+    =/  url=purl:eyre  gcloud
+    =.  q.q.url
+      (weld q.q.url /[project.pro.aut]/['managedZones']/[zone.pro.aut])
+    ~&  url
+    %-  emit(nam [aut ~ ~])
+    [%hiss wir [~ ~] %httr %hiss url %get ~ ~]
   ::
   ++  create
     |=  [him=ship tar=target]
