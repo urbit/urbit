@@ -150,7 +150,6 @@ jets_f_src = [
 jets_f_ut_src =  [
 'jets/f/ut.c',
 'jets/f/ut_buss.c',
-'jets/f/ut_conk.c',
 'jets/f/ut_crop.c',
 'jets/f/ut_find.c',
 'jets/f/ut_fire.c',
@@ -192,7 +191,6 @@ jets_z_src = [
 jets_z_ut_src =  [
 'jets/z/ut.c',
 'jets/z/ut_buss.c',
-'jets/z/ut_conk.c',
 'jets/z/ut_crop.c',
 'jets/z/ut_find.c',
 'jets/z/ut_fire.c',

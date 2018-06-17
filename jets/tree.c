@@ -115,7 +115,6 @@ static u3j_core _141_hex_d[] =
   static u3j_harm _141_pen_look_a[] = {{".2", u3wf_look}, {}};
   static u3j_harm _141_pen_loot_a[] = {{".2", u3wf_loot}, {}};
 
-    static u3j_harm _141_pen__ut_conk_a[] = {{".2", u3wfu_conk}, {}};
     static u3j_harm _141_pen__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
     // static u3j_harm _141_pen__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
     static u3j_harm _141_pen__ut_fond_a[] = {{".2", u3wfu_fond}, {}};
@@ -131,7 +130,6 @@ static u3j_core _141_hex_d[] =
     static u3j_harm _141_pen__ut_wrap_a[] = {{".2", u3wfu_wrap}, {}};
   static u3j_core _141_pen__ut_d[] =
     { 
-      { "conk", _141_pen__ut_conk_a },
       { "crop", _141_pen__ut_crop_a },
       { "fond", _141_pen__ut_fond_a },
     //  { "fire", _141_pen__ut_fire_a },
@@ -778,7 +776,6 @@ static u3j_core _142_hex_d[] =
   static u3j_harm _142_pen_look_a[] = {{".2", u3wz_look}, {}};
   static u3j_harm _142_pen_loot_a[] = {{".2", u3wz_loot}, {}};
 
-    static u3j_harm _142_pen__ut_conk_a[] = {{".2", u3wzu_conk}, {}};
     static u3j_harm _142_pen__ut_crop_a[] = {{".2", u3wzu_crop}, {}};
     // static u3j_harm _142_pen__ut_fire_a[] = {{".2", u3wzu_fire}, {}};
     static u3j_harm _142_pen__ut_fond_a[] = {{".2", u3wzu_fond}, {}};
@@ -794,7 +791,6 @@ static u3j_core _142_hex_d[] =
     static u3j_harm _142_pen__ut_wrap_a[] = {{".2", u3wzu_wrap}, {}};
   static u3j_core _142_pen__ut_d[] =
     { 
-      { "conk", _142_pen__ut_conk_a },
       { "crop", _142_pen__ut_crop_a },
       { "fond", _142_pen__ut_fond_a },
     //  { "fire", _142_pen__ut_fire_a },

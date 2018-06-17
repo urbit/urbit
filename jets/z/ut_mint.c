@@ -548,18 +548,6 @@
         return ret;
       }
 
-      case c3__ktts: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _mint_used();
-      {
-        u3_noun vat = _mint_in(van, sut, gol, q_gen);
-
-        ret = u3nc(u3qzu_conk(van, u3h(vat), p_gen),
-                   u3k(u3t(vat)));
-
-        u3z(vat);
-        return ret;
-      }
-
       case c3__tune: p_gen = u3t(gen);
       _mint_used();
       {

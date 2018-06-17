@@ -388,16 +388,6 @@
         return ret;
       }
 
-      case c3__ktts: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        u3_noun boc = _play_x(van, sut, q_gen);
-        u3_noun ret = u3qzu_conk(van, boc, p_gen);
-
-        u3z(boc);
-        return ret;
-      }
-
       case c3__tune: p_gen = u3t(gen);
       _play_used();
       {
