@@ -871,11 +871,13 @@
   ::
   ++  cancel-request                                    ::  release request
     ^+  .
-    =^  wos/(list wove)  qyx
+    ::  =^  wos/(list wove)  qyx
+    =^  wos  qyx
       :_  (~(run by qyx) |=(a/(set duct) (~(del in a) hen)))
       %-  ~(rep by qyx)
       |=  {{a/wove b/(set duct)} c/(list wove)}
       ?.((~(has in b) hen) c [a c])
+    =>  .(wos `(list wove)`wos)
     ?~  ref
       =>  .(ref `(unit rind)`ref)     ::  XX TMI
       ?:  =(~ wos)  +                                        ::  XX handle?

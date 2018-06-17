@@ -5780,7 +5780,7 @@
               {$bspd p/spec q/hoon}                     ::  $&, repair
               {$bssg p/hoon q/spec}                     ::  $~, default
               {$bstc p/spec q/(map term spec)}          ::  $`, read-only core
-              {$bsts p/toga q/spec}                     ::  $=, name
+              {$bsts p/skin q/spec}                     ::  $=, name
               {$bsvt p/spec q/spec}                     ::  $@, atom pick
               {$bswt p/{i/spec t/(list spec)}}          ::  $?, full pick
               {$bszp p/spec q/(map term spec)}          ::  $!, opaque core
@@ -5793,18 +5793,12 @@
           $%  {%& p/(unit term) q/wing}                 ::  simple wing
               {%| p/(unit term) q/hoon}                 ::  named wing
           ==                                            ::
-+$  toga                                                ::  face control
-          $@  p/term                                    ::  two togas
-          $%  {$0 ~}                                    ::  no toga
-              {$1 p/term q/toga}                        ::  deep toga
-              {$2 p/toga q/toga}                        ::  cell toga
-          ==                                            ::
-+$  rind                                                ::  resurface
++$  skin                                                ::  resurface
           $@  =term                                     ::  name/~[term %none]
-          $%  [%cell =rind =rind]                       ::  pair
-              [%help =help =rind]                       ::  description
-              [%name =term =rind]                       ::  label
-              [%none ~]                                 ::  no added rind
+          $%  [%cell =skin =skin]                       ::  pair
+              [%help =help =skin]                       ::  description
+              [%name =term =skin]                       ::  label
+              [%none ~]                                 ::  no added skin
               [%spec =spec]                             ::  type
               [%wash depth=@ud]                         ::  strip face
           ==                                            ::
@@ -5896,10 +5890,9 @@
     {$ktdt p/hoon q/hoon}                               ::  ^.  self-cast
     {$ktls p/hoon q/hoon}                               ::  ^+  expression cast
     {$kthp p/spec q/hoon}                               ::  ^-  structure cast
-    {$kthx p/rind q/hoon}                               ::  ^#  new toga
     {$ktpd p/hoon}                                      ::  ^&  covariant
     {$ktsg p/hoon}                                      ::  ^~  constant
-    {$ktts p/toga q/hoon}                               ::  ^=  label
+    {$ktts p/skin q/hoon}                               ::  ^=  label
     {$ktwt p/hoon}                                      ::  ^?  bivariant
     {$kttr p/spec}                                      ::  ^*  example
     {$ktcl p/spec}                                      ::  ^:  filter
@@ -5925,14 +5918,14 @@
   ::                                            ::::::  compositions
     {$tsbr p/spec q/hoon}                               ::  =|  push bunt
     {$tscl p/(list (pair wing hoon)) q/hoon}            ::  =:  q w/ p changes
-    {$tsnt p/sofa q/hoon r/hoon}                        ::  =/  typed variable
-    {$tsmc p/sofa q/hoon r/hoon}                        ::  =;  =/(q p r)
+    {$tsnt p/skin q/hoon r/hoon}                        ::  =/  typed variable
+    {$tsmc p/skin q/hoon r/hoon}                        ::  =;  =/(q p r)
     {$tsdt p/wing q/hoon r/hoon}                        ::  =.  r with p as q
     {$tswt p/wing q/hoon r/hoon s/hoon}                 ::  =?  conditional =.
     {$tsld p/hoon q/hoon}                               ::  =<  =>(q p)
     {$tshp p/hoon q/hoon}                               ::  =-  =+(q p)
     {$tsbn p/hoon q/hoon}                               ::  =>  q w/subject p
-    {$tskt p/sofa q/wing r/hoon s/hoon}                 ::  =^  state machine
+    {$tskt p/skin q/wing r/hoon s/hoon}                 ::  =^  state machine
     {$tsls p/hoon q/hoon}                               ::  =+  q w/[p subject]
     {$tssg p/(list hoon)}                               ::  =~  hoon stack
     {$tstr p/term q/hoon r/hoon}                        ::  =*  r w/alias p/q
@@ -5960,7 +5953,7 @@
     {$zpwt p/$@(p/@ {p/@ q/@}) q/hoon}                  ::  !?
     {$zpzp ~}                                           ::  !!
   ==                                                    ::
-+$  sofa  (pair toga (unit spec))                       ::
++$  sofa  (pair skin (unit spec))                       ::
 +$  tyre  (list {p/term q/hoon})                        ::
 +$  tyke  (list (unit hoon))                            ::
 ::                                                      ::::::  virtual nock
@@ -7456,10 +7449,10 @@
     p.hoon
   %hooon
 ::
-++  toga-to-plum
-  |=  =toga
+++  skin-to-plum
+  |=  =skin
   ^-  plum
-  ?@  toga  toga
+  ?@  skin  skin
   ::  XX fill this in please
   ::
   %toooga
@@ -7513,7 +7506,7 @@
     %bstc  (core-to-plum '$`' p.spec q.spec)
     %bsts  :+  %&
              [`['=' ~] `['$=' ~]]
-           :~  (toga-to-plum p.spec)
+           :~  (skin-to-plum p.spec)
                $(spec q.spec)
            ==
     %bsvt  &/[(fixed '$@') $(spec p.spec) $(spec q.spec) ~]
@@ -8189,19 +8182,11 @@
   ~%    %ap
       +>+
     ==
-      %etch  etch
       %open  open
       %rake  rake
     ==
   =+  fab=`?`&
   |_  gen/hoon
-  ++  etch
-    ~_  leaf+"etch"
-    |-  ^-  term
-    ?:  ?=({$ktts *} gen)
-      ?>(?=(@ p.gen) p.gen)
-    =+  voq=~(open ap gen)
-    ?<(=(gen voq) $(gen voq))
   ::
   ++  name
     |-  ^-  (unit term)
@@ -8246,17 +8231,11 @@
       {$cltr *}   ?~  p.gen  ~
                   ?~(t.p.gen $(gen i.p.gen) `[i.p.gen %cltr t.p.gen])
     ==
-  ::  +reto: temporary toga on rind
-  ::
-  ++  reto
-    |=  [=toga =rind]
-    ^-  (unit ^rind)
-    ?@(toga `[%name toga rind] ~)
 ::::
-  ::  +hind: hoon to rind
+  ::  +hind: hoon to skin
   ::
   ++  hind
-    |-  ^-  (unit rind)
+    |-  ^-  (unit skin)
     ?+    gen
       =+(open ?:(=(- gen) ~ $(gen -)))
     ::
@@ -8274,40 +8253,26 @@
       `p.gen
     ::
         [%note [%help *] *]
-      (bind $(gen q.gen) |=(=rind [%help p.p.gen rind])) 
+      (bind $(gen q.gen) |=(=skin [%help p.p.gen skin])) 
     ::
         [%wing *]
       ?:  ?=([@ ~] p.gen)
         `i.p.gen
       =/  depth  0
-      |-  ^-  (unit rind)
+      |-  ^-  (unit skin)
       ?~  p.gen  `[%wash depth]
       ?.  =([%| 0 ~] i.p.gen)  ~
       $(p.gen t.p.gen)
     ::
-        [%ktts *]
-      (biff $(gen q.gen) |=(=rind (reto p.gen rind)))
-    ::
         [%kttr *]
       `[%spec p.gen]
     ::
-        [%kthx *]
+        [%ktts *]
       %+  biff  $(gen q.gen) 
-      |=  =rind 
-      ?@  p.gen  `[%name p.gen rind]
+      |=  =skin 
+      ?@  p.gen  `[%name p.gen skin]
       ?.  ?=([%name @ [%none ~]] p.gen)  ~
-      `[%name term.p.gen rind]
-    ==
-  ++  hock
-    |-  ^-  toga
-    ?-  gen
-      {$cnts {@ ~} ~}  i.p.gen
-      {$limb @}        p.gen
-      {$wing {@ ~}}    i.p.gen
-      {$dbug *}        $(gen q.gen)
-      {@ *}            =+(neg=open ?:(=(gen neg) [%0 ~] $(gen neg)))
-      {^ *}            =+  toe=[$(gen p.gen) $(gen q.gen)]
-                       ?:(=(toe [[%0 ~] [%0 ~]]) [%0 ~] [%2 toe])
+      `[%name term.p.gen skin]
     ==
   ::
   ++  open
@@ -8446,7 +8411,7 @@
     ::
         {$ktdt *}  [%ktls [%cncl p.gen q.gen ~] q.gen]
         {$kthp *}  [%ktls ~(example ax fab p.gen) q.gen]
-        {$kthx *}
+        {$ktts *}
       |-  ^-  hoon
       ?-    p.gen
           @
@@ -8455,18 +8420,18 @@
           [%cell *]
         =+  haf=~(half ap q.gen)
         ?^  haf
-          :-  $(p.gen rind.p.gen, q.gen p.u.haf)
-          $(p.gen ^rind.p.gen, q.gen q.u.haf)
+          :-  $(p.gen skin.p.gen, q.gen p.u.haf)
+          $(p.gen ^skin.p.gen, q.gen q.u.haf)
         :+  %tsls
           q.gen
-        :-  $(p.gen rind.p.gen, q.gen [%$ 4])
-        $(p.gen ^rind.p.gen, q.gen [%$ 5])
+        :-  $(p.gen skin.p.gen, q.gen [%$ 4])
+        $(p.gen ^skin.p.gen, q.gen [%$ 5])
       ::
           [%help *]
-        [%note [%help help.p.gen] $(p.gen rind.p.gen)] 
+        [%note [%help help.p.gen] $(p.gen skin.p.gen)] 
       ::
           [%name *]
-        [%tsld [%tune term.p.gen] $(p.gen rind.p.gen)]
+        [%tsld [%tune term.p.gen] $(p.gen skin.p.gen)]
       ::
           [%none ~]
         q.gen
@@ -8607,9 +8572,7 @@
       [%tsbn [%cncb [[%& 1] ~] p.gen] q.gen]
     ::
         {$tsnt *}
-      ?~  q.p.gen
-        [%tsls [%ktts p.p.gen q.gen] r.gen]
-      [%tsls [%kthp [%bsts p.p.gen u.q.p.gen] q.gen] r.gen]
+      [%tsls [%ktts p.gen q.gen] r.gen]
     ::
         {$tsmc *}  [%tsnt p.gen r.gen q.gen]
         {$tsdt *}
@@ -8622,14 +8585,9 @@
       :+  %tsbn  [%ktts %v %$ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsbn [%limb %v] r.gen]        ::  =+  a==>(v \r.gen)
       :^  %tsdt  wuy  [%tsld [%$ 3] [%limb %a]]
-      :+  %tsbn  :-  ?~  q.p.gen
-                       :+  %ktts  p.p.gen
-                       [%tsld [%$ 2] [%limb %a]]
-                     :+  %kthp
-                        :+  %bsts  p.p.gen
-                        [%over [%| 0 `%v]~ u.q.p.gen]
-                     [%tsld [%$ 2] [%limb %a]] 
-                [%limb %v]
+      :+  %tsbn  :-  :+  %ktts  p.gen
+                     [%tsld [%$ 2] [%limb %a]]
+                 [%limb %v]
       s.gen
     ::
         {$tsld *}  [%tsbn q.gen p.gen]
@@ -8843,19 +8801,6 @@
     |=  {cog/term gen/hoon}
     ^-  type
     [%face [[[cog ~ gen] ~ ~] ~] sut]
-  ::
-  ++  conk
-    |=  got/toga
-    ^-  type
-    ?@  got  [%face got sut]
-    ?-  -.got
-      $0  sut
-      $1  [%face p.got $(got q.got)]
-      $2  ?>  |(!vet (nest(sut [%cell %noun %noun]) & sut))
-          :+  %cell
-            $(got p.got, sut (peek %both 2))
-          $(got q.got, sut (peek %both 3))
-    ==
   ::
   ++  crop
     ~/  %crop
@@ -9753,7 +9698,6 @@
     ::
         {$ktpd *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) q.vat])
         {$ktsg *}  (blow gol p.gen)
-        {$ktts *}  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
         {$tune *}  [(face p.gen sut) [%0 %1]]
         {$ktwt *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
     ::
@@ -9909,9 +9853,6 @@
     ::
         {$ktpd *}
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) (wrap(sut q.vat) %zinc)])
-    ::
-        {$ktts *}
-      =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) (conk(sut q.vat) p.gen)])
     ::
         {$tune *}
       [(face p.gen sut) (face p.gen dox)]
@@ -10254,7 +10195,6 @@
       {$ktls *}  $(gen p.gen)
       {$ktpd *}  (wrap(sut $(gen p.gen)) %zinc)
       {$ktsg *}  $(gen p.gen)
-      {$ktts *}  (conk(sut $(gen q.gen)) p.gen)
       {$ktwt *}  (wrap(sut $(gen p.gen)) %lead)
       {$note *}  (hint [sut p.gen] $(gen q.gen))
       {$sgzp *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
@@ -11901,9 +11841,14 @@
         ?~  saw
           ::
           ::  break section
-          =^  a/{tape fin/(unit _err)}  +<.$  read-line
-          ?^  fin.a
-            ..$(err u.fin.a)
+          ::  =^  a/{tape fin/(unit _err)}  +<.$  read-line
+          ::  ?^  fin.a
+          ::    ..$(err u.fin.a)
+          ::  =>(close-par line)
+          ::  XX temporarily hosed for =^ fix
+          =^  a  +<.$  read-line
+          ?^  +.a
+            ..$(err u.+.a)
           =>(close-par line)
         ::
         ::  line is not blank
@@ -11973,11 +11918,14 @@
           ..$(err `[p.loc col.saw])
         ::
         ::  accept line and maybe continue
-        =^  a/{lin/tape fin/(unit _err)}  +<.$  read-line
-        =.  par  par(q.u [lin.a q.u.par])
-        ?^  fin.a  ..$(err u.fin.a)
+        ::  =^  a/{lin/tape fin/(unit _err)}  +<.$  read-line
+        ::  =.  par  par(q.u [lin.a q.u.par])
+        ::  ?^  fin.a  ..$(err u.fin.a)
+        ::  line
+        =^  a  +<.$  read-line
+        =.  par  par(q.u [-.a q.u.par])
+        ?^  +.a  ..$(err u.+.a)
         line
-        ::
       ++  parse-block                                   ::  execute parser
         |=  fel/$-(nail (like tarp))  ^+  +>
         =/  vex/(like tarp)  (fel loc txt)
@@ -12539,7 +12487,7 @@
             (stag %dtts (ifix [lit rit] ;~(glam wide wide)))
           ::
             %+  sear
-              ::  mainly used for +rind formation
+              ::  mainly used for +skin formation
               ::
               |=  =spec 
               ^-  (unit hoon)
@@ -12784,8 +12732,7 @@
                   ['+' (rune lus %ktls expb)]
                   ['&' (rune pad %ktpd expa)]
                   ['~' (rune sig %ktsg expa)]
-                  ['=' (rune tis %kthx expj)]
-                  ['#' (rune hax %kthx expj)]
+                  ['=' (rune tis %ktts expj)]
                   ['?' (rune wut %ktwt expa)]
                   ['%' (rune cen %ktcn expa)]
                   ['*' (rune tar %kttr exqa)]
@@ -13070,7 +13017,7 @@
     ++  expg  |.(;~(gunk sym loaf))                     ::  term and hoon
     ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [spec hoon]s
     ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more hoons
-    ++  expj  |.(;~(gunk lore loaf))                    ::  rind and hoon
+    ++  expj  |.(;~(gunk lore loaf))                    ::  skin and hoon
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two hoons
     ++  expl  |.(;~(gunk sym loaf loaf))                ::  term, two hoons
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [spec hoon]s
@@ -13194,7 +13141,7 @@
       $lit  (bind ~(reek ap ros) |=(hyp/wing [%cnts hyp p.vil]))
       $ket  [~ ros p.vil]
       $tis  =+  rud=~(hind ap ros)
-            ?~(rud ~ `[%kthx u.rud p.vil])
+            ?~(rud ~ `[%ktts u.rud p.vil])
     ==
   ::
   ++  long
@@ -13245,7 +13192,14 @@
       ==
     ==
   ::
-  ++  wise  ;~(plug sym (punt ;~(pfix ;~(pose net tis) wyde)))
+  ++  wise  
+    %+  cook
+      |=  [=term =(unit spec)]
+      ^-  skin
+      ?~  unit
+        term
+      [%name term %spec u.unit]
+    ;~(plug sym (punt ;~(pfix ;~(pose net tis) wyde)))
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
     |.(~+((wart ;~(pose expression:(norm &) long lute apex:(sail &)))))
