@@ -1,9 +1,9 @@
 /-  collections
 /+  rekey
-/^  topicful:collections
-  /.  /@  /collections-topic/
-      /=  comt
-    /;  (rekey %da)
-    /_  /@  /collections-comment/
-  ==
--.-
+/=  info  /@  /collections-topic/
+/=  coms
+  /;  (rekey %da)
+  /:  /%/comment
+  /_  /@  /collections-comment/
+^-  topicful:collections
+[info coms]

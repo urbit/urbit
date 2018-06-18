@@ -32,18 +32,37 @@
   =+  fel=(most cab (sear wick urt:ab))
   |=(a/knot `(unit {p/term q/path})`(rush a fel))
 ::
+++  ships-to-whoms
+  |=  a=(set ship)
+  ^-  (set whom:clay)
+  %-  (hard (set whom:clay))
+  %-  ~(run in a)
+  |=  b=@p
+  [& b]
+::
+++  whoms-to-ships 
+  |=  a=(set whom:clay)
+  ^-  (set ship)
+  %-  (hard (set ship))
+  %-  ~(rep in a)
+  |=  [b=whom:clay out=(set ship)]
+  :: no we don't support permissions groups because we can't scry them
+  ?:  -.b
+    ?>  ?=(@p +.b)
+    (~(put in out) +.b)
+  out
+::
 --
 =>  |%
     ++  move  (pair bone card)                          ::  all actions
     ++  poke                                            ::
       $%  {$hall-action action:hall}                    ::
+          {$collections-action action:api}              ::
       ==                                                ::
     ++  card                                            ::
       $%  {$info wire ship term nori:clay}              ::
           {$poke wire dock poke}                        ::
-          {$pull wire dock $~}                          ::
-          {$warp wire sock riff:clay}                   ::
-          {$quit $~}                                    ::
+          {$perm wire ship desk path rite:clay}         ::
       ==                                                ::
     --
 ::
@@ -67,16 +86,45 @@
   ::  HACK "sanitized" now for id use, can't get mistaken for file with extension in url
   `@da`(sub now.bol (div (dis now.bol ~s0..fffe) 2))
 ::
+++  base-path  (en-beam:format byk.bol(r da+upd) /collections/web)
+::
+++  full-path
+  |=  $@(col=time [col=time $@(top=@da [top=@da com=@da])])
+  ^-  path
+  %+  weld  base-path
+  ?-  +<
+    @        (dray /[%da] col)
+    {@ @}    (dray /[%da]/[%tas]/[%da] col %post top)
+    {@ @ @}  (dray /[%da]/[%tas]/[%da]/[%tas]/[%da] col %post top %comment com) 
+  ==
+::
 ++  poke-noun
-  |=  a=$@(?(~ @da) [p=@da q=@da])
+  |=  [who=@p wat=$?(~ $@(@da [@da @da]))]
   ^-  (quip move _+>)
-  ~&  %poked
-  =<  ta-done
-  ?~  a  
-    (ta-create:ta ['a description' publ=& visi=& comm=& xeno=& ~])
-  ?@  a
-    (ta-submit:ta a 'a topic' ~['with contents'])
-  (ta-comment:ta p.a q.a now-id ~['a comment' 'yo'])
+  :_  +>
+  :~
+  :*  ost.bol  %poke  /noun  
+      [our.bol dap.bol]
+      %collections-action
+      ?~  wat
+        =|  con=config
+        =/  rul=rule:clay
+          [%black (ships-to-whoms (sy ~[~bus ~zod ~marzod]))]
+        [%create con(desc (scot %uv eny.bol), write-post rul, write-reply rul)]
+      ?@  wat
+        [%submit who wat (scot %uv eny.bol) ~['this' 'is' 'a' 'post' 'from' (scot %p our.bol)]]
+      [%comment who -.wat +.wat ~ ~['this' 'is' 'a' 'comment' 'from' (scot %p our.bol)]]
+    ==
+  ==
+::
+::  +mack: acknowledgement for permissions
+::
+++  mack
+  |=  [wir=wire err=(unit tang)]
+  ^-  (quip move _+>)
+  ?~  err
+    [~ +>]
+  (mean u.err)
 ::
 ++  writ
   |=  {wir/wire rit/riot:clay}
@@ -87,37 +135,57 @@
   ::      or /web/collections/[col] for each collection and then
   ::      /web/collections/[col]/[top] for each topic as they get created.
 ::
-++  ignore-action
-  |=  act=action:api  ^-  ?
-  ?-    -.act
-      ?($create $delete $delete-topic $delete-comment $resubmit)
-    ?:  (team:title our.bol src.bol)  |
-    ~|([%unauthorized -.act src.bol] !!)  :: what about the authors?
-  ::
-      ?($submit $comment)
-    =/  col  (~(get by cols) col.act)
-    ?~  col  &
-    ?:  (team:title our.bol src.bol)  |  ::REVIEW this is implicit yes?
-    ?:  publ.conf.u.col
-      (~(has in mems.conf.u.col) src.bol)  :: not on blacklist
-    !(~(has in mems.conf.u.col) src.bol)   :: is on whitelist
-  ==
-::
-++  poke-collections-action
+++  check-permissions
   |=  act=action:api
-  ^-  (quip move _+>)      
-  ?:  (ignore-action act)
+  ^-  ?
+  ?>  !=(our.bol src.bol)
+  ?>  !?=(?(%create %change-config) -.act)
+  =/  pax
+    ?+  -.act  !!
+      $submit          (weld (full-path col.act) /post)
+      $resubmit        (full-path col.act top.act)
+      $comment         (weld (full-path col.act top.act) /comment)
+      $delete          (full-path col.act)
+      $delete-topic    (full-path col.act top.act)
+      $delete-comment  (full-path col.act top.act com.act)
+    ==
+  =/  perms=[read=dict:clay writ=dict:clay]  .^([dict:clay dict:clay] %cp pax)
+  =/  in-list=?  (~(has in (whoms-to-ships who.rul.writ.perms)) src.bol)
+  ?:  =(%white mod.rul.writ.perms)
+    in-list
+  !in-list
+::
+++  poke-collections-action :: Review: should we fail silently or loudly for some of these?
+  |=  act=action:api
+  ^-  (quip move _+>)
+  ?:  =(our.bol src.bol)
+    ?:  ?=(?(%create %change-config) -.act)
+      :: these can only be for us - no host field
+      ta-done:(ta-collections-action:ta act)
+    ?:  =(our.bol host.act)
+      :: from us and to us
+      :: no need to check permissions
+      ta-done:(ta-collections-action:ta act)
+    :: from us but not to us
+    :: forward poke
+    :_  +>
+    :_  ~
+    :*  ost.bol  %poke  /foreign-poke
+        [host.act %collections]
+        [%collections-action act]
+    ==
+  ?:  ?=(?(%create %change-config) -.act)
+    :: we don't allow other people to create or modify our configurations
     [~ +>]
-  =<  ta-done
-  ?-  -.act
-    $create   (ta-create:ta +.act)
-    $submit   (ta-submit:ta +.act)
-    $resubmit  (ta-resubmit:ta +.act)
-    $comment  (ta-comment:ta +.act)
-    $delete   (ta-delete:ta +.act)
-    $delete-topic   (ta-delete-topic:ta +.act)
-    $delete-comment   (ta-delete-comment:ta +.act)
-  ==
+  ?:  =(our.bol host.act)
+    :: not from us but to us
+    :: check permissions
+    ?:  (check-permissions act)
+      ta-done:(ta-collections-action:ta act)
+    [~ +>]
+  :: not from us and not to us
+  :: should never happen, crash
+  [~ +>]
 ::
 ++  ta
   |_  moves/(list move)
@@ -125,6 +193,18 @@
   ++  ta-done  [(flop moves) +>]
   ++  ta-emit  |=(mov/move %_(+> moves [mov moves]))
   ++  ta-emil  |=(mos/(list move) %_(+> moves (welp (flop mos) moves)))
+  ++  ta-collections-action
+    |=  act=action:api
+    ?-  -.act
+      $create          (ta-create +.act)
+      $change-config   !!  :::(ta-create +.act)
+      $submit          (ta-submit +.act)
+      $resubmit        (ta-resubmit +.act)
+      $comment         (ta-comment +.act)
+      $delete          (ta-delete +.act)
+      $delete-topic    (ta-delete-topic +.act)
+      $delete-comment  (ta-delete-comment +.act)
+    ==
   ++  ta-hall-action
     |=  act=action:hall
     %-  ta-emit
@@ -144,27 +224,30 @@
     ::|=  {wat/kind:api cof/config}
     |=  cof/config
     ^+  +>
-    ::XX unhandled kind
-    (ta-write /config now-id %collections-config !>(cof))
+    =/  pax  (full-path now-id)
+    =/  latest-pax  (weld pax /latest/hoon)
+    =.  ta-this  (ta-write /config now-id %collections-config !>(cof))
+    %-  ta-emit
+    [ost.bol %info latest-pax our.bol (foal latest-pax [%hoon !>(latest-post:colls)])]
   ::
   ++  ta-submit
-    |=  {col/time tit/cord wat/wain}
+    |=  {host/@p col/@da tit/cord wat/wain}
     =/  top/topic  [tit src.bol wat]
     (ta-write /topic [col now-id] %collections-topic !>(top))
   ::
   ++  ta-resubmit
-    |=  {col/time wen/@da tit/cord wat/wain}
+    |=  {host/@p col/@da wen/@da tit/cord wat/wain}
     ?:  (new-topic col wen)  ta-this  ::REVIEW error?
     =/  top/topic  [tit src.bol wat]
     (ta-write /topic [col wen] %collections-topic !>(top))
   ::
   ++  ta-comment
-    |=  {col/time top/@da com/?(~ @da) wat/wain}
+    |=  {host/@p col/@da top/@da com/?(~ @da) wat/wain}
     ^+  +>
     ?~  com  $(com now-id)  :: new comment
     =;  res/$@(~ _+>.$)  ?^(res res +>.$)
     %+  biff  (ta-get-topic col top)
-    |=  [^ cos=(map @da {@da comment}) ~]
+    |=  [^ cos=(map @da {@da comment})]
     =/  old/{@da comment}
       (fall (~(get by cos) com) [now-id src.bol wat])
     ?.  =(who.old src.bol)  ..ta-comment  ::REVIEW error?
@@ -175,17 +258,17 @@
   ++  ta-get-topic
     |=  {col/time top/@da}  ^-  (unit topicful)
     %+  biff  (~(get by cols) col)
-    |=  [^ tos=(map @da topicful) ~]
+    |=  [^ tos=(map @da topicful)]
     (~(get by tos) top)
   ::
   ++  ta-get-comment
     |=  {col/time top/@da com/@da}  ^-  (unit [@da comment])
     %+  biff  (ta-get-topic col top)
-    |=  [^ cos=(map @da {@da comment}) ~]
+    |=  [^ cos=(map @da {@da comment})]
     (~(get by cos) com)
   ::
   ++  ta-delete
-    |=  col/time
+    |=  [host/@p col/@da]
     ^+  +>
     =+  (~(get by cols) col)
     ?~  -  ta-this  ::REVIEW error?
@@ -199,7 +282,7 @@
     (ta-delete-topic-inf 'Collection deleted' col i.tops)
   ::
   ++  ta-delete-topic
-    |=  {col/time top/@da}  ^+  ta-this
+    |=  {host/@p col/@da top/@da}  ^+  ta-this
     =+  (ta-get-topic col top)
     ?~  -  ta-this  ::REVIEW error?
     (ta-delete-topic-inf 'Topic deleted' col top u)
@@ -216,48 +299,48 @@
     (ta-remove /comment [col top com.i.coms] %collections-comment)
   ::
   ++  ta-delete-comment
-    |=  {col/time top/@da com/@da}  ^+  +>
+    |=  {host/@p col/@da top/@da com/@da}  ^+  +>
     =+  (ta-get-comment col top com)
     ?~  -  ta-this  ::REVIEW error?
     (ta-remove /comment [col top com] %collections-comment)
   ::
-  ::  %writing-files
+  ::  permissions
   ::
-  ++  ta-full-path
-    |=  $@(col=time [col=time $@(top=@da [top=@da com=@da])])
-    %+  weld  base-path
-    ?-  +<
-      @        (weld (dray /[%da] col) /collections-config)
-      {@ @}    (weld (dray /[%da]/[%da] col top) /collections-topic)
-      {@ @ @}  (weld (dray /[%da]/[%da]/[%da] col top com) /collections-comment)
-    ==
+  ++  ta-set-permissions  ::  TODO: add /post, /comments
+    |=  $:  rit=rite:clay
+            loc=$@(col=@da [col=@da $@(top=@da [top=@da com=@da])])
+        ==
+    =/  pax  (full-path loc)
+    =.  pax  (slag 3 pax)
+    =.  pax
+      ?@  loc  (weld pax /post)
+      (weld pax /comment)
+    %-  ta-emit
+    [ost.bol %perm (weld /perms pax) our.bol q.byk.bol pax rit]
+  ::
+  ::  %writing-files
   ::
   ++  ta-write
     |=  [wir=[term ~] loc=?(@ {@ @} {@ @ @}) cay=cage]  ^+  +>
-    =/  pax  (ta-full-path loc)
-    ::  if the wire is /config, we make a latest.hoon
-    %-  ta-emil  
-    ?:  =(wir /config)
-      =/  latest-pax
-      %+  weld
-        %+  scag
-          %-  dec
-          %-  lent
-          pax
-        pax
-      /latest/hoon
-      :~  :-  ost.bol
-          [%info (weld wir pax) our.bol (foal pax cay)]
-          :-  ost.bol
-          [%info latest-pax our.bol (foal latest-pax [%hoon !>(latest-post:colls)])]
+    =/  pax  (full-path loc)
+    =.  pax
+      ?-  loc
+        @        (weld pax /collections-config)
+        [@ @]    (weld pax /collections-topic)
+        [@ @ @]  (weld pax /collections-comment)
       ==
-    :_  ~
-    :-  ost.bol
-    [%info (weld wir pax) our.bol (foal pax cay)]
+    %-  ta-emit
+    [ost.bol %info (weld wir pax) our.bol (foal pax cay)]
   ::
   ++  ta-remove
     |=  [wir=[term ~] loc=?(@ {@ @} {@ @ @}) mar=mark]  ^+  +>
-    =/  pax  (ta-full-path loc)
+    =/  pax  (full-path loc)
+    =.  pax
+      ?-  loc
+        @        (weld pax /collections-config)
+        [@ @]    (weld pax /collections-topic)
+        [@ @ @]  (weld pax /collections-comment)
+      ==
     ?>  =(mar -:(flop pax))
     %+  ta-emit  ost.bol
     [%info (weld wir pax) our.bol (fray pax)]
@@ -273,14 +356,14 @@
     =.  ta-done  $(cos t.cos)
     =+  `[col=@da collection]`i.cos
     =?  ta-this  (gth mod.conf upd)
-      (ta-change-config col conf)
+      (ta-change-config col +.conf)
     =/  tos  ~(tap by tops)
     |-  ^+  ta-this
     ?~  tos  ta-this
     =.  ta-done  $(tos t.tos)
     =+  `[top=@da topicful]`i.tos
     =?  ta-this  (gth mod.info upd)
-      (ta-change-topic col top info)
+      (ta-change-topic col top +.info +.conf)
     =/  mos  ~(tap by coms)
     |-  ^+  ta-this
     ?~  mos  ta-this
@@ -291,34 +374,39 @@
     ta-this
   ::
   ++  ta-change-config
-    |=  {col/time @da new/config}
+    |=  {col/@da conf/config}
     ^+  +>
     ::
     ::  if we don't have it yet, add to hall.
+    =.  ta-this
     =/  old  !(new-config col)  ::TODO keep old configs in state
     ?.  old
-      (ta-hall-create col new)
+      (ta-hall-create col conf)
     ::  update config in hall.
     =/  nam  (circle-for col)
     %-  ta-hall-actions  :~
 ::       ?:  =(desc.new desc.u.old)  ~
-      [%depict nam desc.new]
+      [%depict nam desc.conf]
     ::
 ::       ?:  =(visi.new visi.u.old)  ~
-      [%public visi.new our.bol nam]
+      [%public visi.conf our.bol nam]
     ::
 ::       (hall-permit nam & (~(dif in mems.new) mems.u.old))
 ::       (hall-permit nam | (~(dif in mems.u.old) mems.new))
     ==
+    =/  rit=rite:clay  [%rw `read.conf `write-post.conf]
+    (ta-set-permissions rit col)
   ::
   ++  ta-change-topic
-    |=  {col/time wen/@da @da top/topic}
+    |=  {col/time wen/@da top/topic conf/config}
     ^+  +>
-    =/  new  (new-topic col wen)
-    =?  +>.$  new
+    =/  new=?  (new-topic col wen)
+    =?  ta-this  new
       =/  cos  (~(got by cols) col)
       (ta-hall-create-topic col wen +.conf.cos)
-    (ta-hall-notify col wen ~ new wat.top)
+    =.  ta-this  (ta-hall-notify col wen ~ new wat.top)
+    =/  rit=rite:clay  [%rw `read.conf `write-reply.conf]
+    (ta-set-permissions rit col wen)
   ::
   ++  ta-change-comment
     |=  {col/time top/@da wen/@da @da com/comment}
@@ -350,10 +438,14 @@
     |=  [nam=term cof=config]  ^+  +>
     ^+  +>
     %-  ta-hall-actions  :~
-      [%create nam desc.cof ?:(publ.cof %journal %village)]
+    ::
+      [%create nam desc.cof %journal]
+    ::
       ?.(visi.cof ~ [%public & our.bol nam])
+    ::
       [%source %inbox & (sy `source:hall`[our.bol nam]~ ~)]
-      (hall-permit nam & mems.cof)
+    ::
+::      (hall-permit nam & mems.cof)
     ==
   ::
   ::
@@ -394,7 +486,6 @@
 ++  circle-for-topic
   |=({col/time top/time} (pack %collection (dray /[%da]/[%da] col top)))
 ::
-++  base-path  (en-beam:format byk.bol(r da+upd) /collections/web)
 ::
 ++  new-config
   |=  col/time
