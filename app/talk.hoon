@@ -78,6 +78,7 @@
           {$banish name (set ship)}                     :<  deny permission
           {$source name (map circle range)}             :<  add source
           {$unsource name (map circle range)}           :<  remove source
+          {$read name @ud}                              :<  set read count
           ::  personal metadata                         ::
           {$attend audience (unit presence)}            :<  set our presence
           {$name audience human}                        :<  set our name
@@ -161,10 +162,15 @@
     ++  prep-config
       |=  cof/config-0
       ^-  config
-      %=  cof
-          src
+      =.  src.cof
         %-  ~(gas in *(set source))
         (murn ~(tap in src.cof) prep-source)
+      :*  src.cof
+          cap.cof
+          tag.cof
+          fit.cof
+          con.cof
+          0
       ==
     ::
     ++  prep-source
@@ -828,6 +834,8 @@
         ::
         ::  circle management
         ::
+          ;~((glue ace) (perk %read ~) cire dem:ag)
+        ::
           ;~((glue ace) (perk %join ~) sorz)
         ::
           ;~((glue ace) (perk %leave ~) cirs)
@@ -1065,6 +1073,7 @@
           $banish  (permit | +.job)
           $source  (source & +.job)
           $unsource  (source | +.job)
+          $read  (read +.job)
           ::  personal metadata
           $attend  (attend +.job)
           $name    (set-name +.job)
@@ -1267,6 +1276,15 @@
         |=  {sub/? nom/name pos/(map circle range)}
         ^+  ..sh-work
         (sh-act %source nom sub pos)
+      ::
+      ++  read
+        :>    %read
+        :>
+        :>  set {red} for {nom}
+        ::
+        |=  {nom/name red/@ud}
+        ^+  ..sh-work
+        (sh-act %read nom red)
       ::
       :>  #
       :>  #  %personal-metadata
@@ -1911,6 +1929,9 @@
       ::
           $caption
         "cap: {(trip cap.dif)}"
+      ::
+          $read
+        "red: {(scow %ud red.dif)}"
       ::
           $filter
         ;:  weld
