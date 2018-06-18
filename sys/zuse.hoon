@@ -444,7 +444,7 @@
   ++  cass  {ud/@ud da/@da}                             ::  cases for revision
   ++  coop  (unit ares)                                 ::  e2e ack
   ++  crew  (set ship)                                  ::  permissions group
-  ++  dict  {src/path rul/rule}                         ::  effective permission
+  ++  dict  {src/path rul/real}                         ::  effective permission
   ++  dome                                              ::  project state
     $:  ank/ankh                                        ::  state
         let/@ud                                         ::  top id
@@ -508,6 +508,7 @@
         {$mult p/mool}                                  ::  next version of any
         {$many p/? q/moat}                              ::  track range
     ==                                                  ::
+  ++  real  {mod/?($black $white) who/(set ship)}       ::  resolved permissions
   ++  regs  (map path rule)                             ::  rules for paths
   ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
   ++  rite                                              ::  new permissions

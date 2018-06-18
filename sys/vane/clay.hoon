@@ -2370,10 +2370,19 @@
       (read-p-in pax pew.red)
     ::
     ++  read-p-in
+      !:
       |=  {pax/path pes/regs}
       ^-  dict
-      =+  rul=(~(get by pes) pax)
-      ?^  rul  [pax u.rul]
+      =/  rul=(unit rule)  (~(get by pes) pax)
+      ?^  rul
+        :+  pax  mod.u.rul
+        %-  ~(rep in who.u.rul)
+        |=  {w/whom out/(set @p)}
+        ?:  ?=([$& @p] w)
+          (~(put in out) +.w)
+        =/  cru=(unit (set @p))  (~(get by cez.ruf) +.w)
+        ?~  cru  out
+        (~(uni in out) u.cru)
       ?~  pax  [/ %white ~]
       $(pax (scag (dec (lent pax)) `path`pax))
     ::
@@ -2407,14 +2416,12 @@
     ++  allowed-by
       |=  {who/ship pax/path pes/regs}
       ^-  ?
-      =+  rul=rul:(read-p-in pax pes)
-      =-  ?:(?=($black mod.rul) !- -)
-      %-  ~(rep in who.rul)
-      |=  {w/whom h/_|}
-      ?:  h  &
-      ?:  ?=($& -.w)  =(p.w who)
-      (~(has in (fall (~(get by cez) p.w) ~)) who)
-    ::
+      =/  rul=real  rul:(read-p-in pax pes)
+      =/  in-list=?  (~(has in who.rul) who)
+      ?:  =(%black mod.rul)
+        !in-list
+      in-list
+    ::  ::
     ::  Checks for existence of a node at an aeon.
     ::
     ::  This checks for existence of content at the node, and does *not* look
