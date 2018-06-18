@@ -5,6 +5,7 @@
 +=  move  (pair bone card)
 +=  poke  $%  [%dns-bind for=ship him=ship target]
               [%dns-bond for=ship him=ship turf]
+              [%dns-authority authority]
           ==
 +=  card  $%  [%tend wire ~]
               [%poke wire dock poke]
@@ -101,6 +102,7 @@
 ::
 ++  sigh-httr
   |=  [wir=wire rep=httr:eyre]
+  ^-  (quip move _this)
   ?-  wir
       [%authority %confirm ~]
     ?~  nem
@@ -129,16 +131,15 @@
 ++  poke-dns-bind                                     ::  bind or forward
   |=  [for=ship him=ship tar=target]
   ^-  (quip move _this)
-  ~&  [%bind src=src.bow him=him tar=tar]
+  ~&  [%bind src=src.bow for=for him=him tar=tar]
+  ~|  %bind-yoself
+  ?<  =(for him)
   =^  zom=(list move)  ..this
-  ^-  (quip move _this)
+    ?~  nem  [~ this]
+    abet:(~(create bind u.nem) for him tar)
+  =^  zam=(list move)  ..this
     abet:(~(forward tell him ~) tar)
-  ?~  nem
-    [zom this]
-  :: XX =^ nest-fail
-  =/  zam=(quip move _this)
-    abet:(~(create bind u.nem) him tar)
-  [(weld zom -.zam) +.zam]
+  [(weld zom zam) this]
 ::
 :: ++  coup-dns-bind                                     ::  retry?
 ::   |=  [wir=wire saw=(unit tang)]
@@ -155,8 +156,9 @@
 ++  poke-dns-bond                                    ::  confirm or forward
   |=  [for=ship him=ship dom=turf]
   ^-  (quip move _this)
+  ~&  [%bond +<]
+  ~|  %bond-yoself
   ?<  =(for him)
-  ~&  [%bound +<]
   ?:  =(our.bow him)
     :: XX notify eyre/hood/acme etc
     ~&  [%bound-us dom]
@@ -276,10 +278,11 @@
     =/  wir=wire
       /bind/(scot %p him)/for/(scot %p our.bow)
     %-  emit(rel `ler)
-    [%poke wir [our.bow %dns] %dns-bind our.bow him tar]
+    [%poke wir [our.bow dap.bow] %dns-bind our.bow him tar]
   ::
   ++  bake                                            ::  bound
     |=  dom=turf
+    ~&  [%bake dom]
     ^+  this
     ?>  ?=(^ rel)
     =.  bon.u.rel  &
@@ -289,6 +292,7 @@
   ::
   ++  forward                                         ::  on to parent
     |=  tar=target
+    ~&  [%forward tar]
     ^+  this
     ?:  ?=(%~zod our.bow)  ::  ~zod don't forward
       ~&  [%zod-no-forward him tar]
@@ -301,6 +305,6 @@
     =/  wir=wire
       /forward/bind/(scot %p him)/for/(scot %p src.bow)
     %-  emit  :: XX for
-    [%poke wir [to %dns] %dns-bind src.bow him tar]
+    [%poke wir [to dap.bow] %dns-bind src.bow him tar]
   --
 --
