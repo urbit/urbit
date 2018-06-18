@@ -15,17 +15,18 @@
 :: +turf: a domain, TLD first
 ::
 +=  turf  (list @t)
-:: +authority: responsibility for a DNS zone
+:: +provider: DNS service provider (gcloud only for now)
 ::
-:: +provider: DNS service provider
 +=  provider
   $%  [%gcloud project=@ta zone=@ta]
   ==
+:: +authority: responsibility for a DNS zone
+::
 +=  authority
-  $:  :: dom: authority over a domain
+  $:  :: dom: authority over a fully-qualified domain
       ::
       dom=turf
-      :: pro: DNS provider (gcloud only for now)
+      :: pro: DNS service provider
       ::
       pro=provider
   ==
@@ -33,8 +34,10 @@
 ::
 +=  target
   $%  :: %direct: an A record
+      ::
       [%direct %if p=@if]
-      :: %indirect: a CNAME
+      :: %indirect: a CNAME record
+      ::
       [%indirect p=ship]
   ==
 :: +bound: an established binding, plus history
@@ -88,14 +91,21 @@
   |-  ^-  (list @t)
   ?~  t.hot  hot
   [i.hot sep $(hot t.hot)]
+:: |gcloud: provider-specific functions
 ::
 ++  gcloud
   |%
+  ::  +base: provider service endpoint
+  ::
   ++  base
     (need (de-purl:html 'https://www.googleapis.com/dns/v1/projects'))
+  :: +name: fully-qualified domain name
+  ::
   ++  name
     |=  [dom=turf him=ship]
     (cat 3 (join '.' [(crip +:(scow %p him)) (flop dom)]) '.')
+  :: +record: JSON-formatted provider-specific dns record
+  ::
   ++  record
     |=  [dom=turf him=ship tar=target]
     ^-  json
@@ -106,9 +116,12 @@
     :-  %o  %-  my  :~
       name+s+(name dom him)
       type+s+typ
+      :: XX make configureable?
       ttl+n+~.300
       rrdatas+a+[s+dat ~]
     ==
+  :: +request: provider-specific record-creation request
+  ::
   ++  request
     =,  eyre
     |=  [dom=turf him=ship tar=target pro=provider]
@@ -127,8 +140,11 @@
   --
 --
 ::
+::  the app itself
+::
 |_  [bow=bowl:gall state]
 ++  this  .
+:: +poke-noun: debugging
 ::
 ++  poke-noun
   |=  a=*
@@ -157,6 +173,7 @@
         [for=~binzod him=~ridbyl-dovwyd tar=[%direct %if .8.8.8.8]]
     ==
   ==
+:: +sigh-httr: accept http response
 ::
 ++  sigh-httr
   |=  [wir=wire rep=httr:eyre]
@@ -188,28 +205,34 @@
     ~&  +<
     [~ this]
   ==
+:: XX sigh-tang
 ::
-++  poke-dns-authority                                ::  configure
+:: +poke-dns-authority: configure self as an authority
+::
+++  poke-dns-authority
   |=  aut=authority
   ^-  (quip move _this)
   ~|  %authority-reset-wat-do
   ?<  ?=(^ nem)
   abet:(init:bind aut)
+:: +poke-dns-bind: create binding (if authority), forward request
 ::
-++  poke-dns-bind                                     ::  bind or forward
+++  poke-dns-bind
   |=  [for=ship him=ship tar=target]
   ^-  (quip move _this)
   ~&  [%bind src=src.bow for=for him=him tar=tar]
   ~|  %bind-yoself
   ?<  =(for him)
+  :: always forward, there may be multiple authorities
+  ::
   =^  zom=(list move)  ..this
+    abet:(~(forward tell him ~) tar)
+  =^  zam=(list move)  ..this
     ?~  nem  [~ this]
     abet:(~(create bind u.nem) for him tar)
-  =^  zam=(list move)  ..this
-    abet:(~(forward tell him ~) tar)
   [(weld zom zam) this]
 ::
-:: ++  coup-dns-bind                                     ::  retry?
+:: ++  coup-dns-bind
 ::   |=  [wir=wire saw=(unit tang)]
 ::   ~&  [%coup-bind +<]
 ::   ?~  saw
@@ -221,7 +244,9 @@
 ::     *  ~&(coup-dns-bind+wir [~ this])
 ::   ==
 ::
-++  poke-dns-bond                                    ::  confirm or forward
+:: +poke-dns-bond: process established dns binding
+::
+++  poke-dns-bond
   |=  [for=ship him=ship dom=turf]
   ^-  (quip move _this)
   ~&  [%bond +<]
@@ -238,8 +263,9 @@
     (~(bake tell [him (~(get by per) him)]) dom)
   ~&  [%strange-bond +<]
   [~ this]
+:: +rove: hear %ames +lane change for child ships
 ::
-++  rove                                              ::  hear lane change
+++  rove
   |=  [wir=wire p=ship q=lane:ames]
   ^-  (quip move _this)
   ?.  =(our.bow (sein:title p))  :: XX check will
@@ -248,7 +274,8 @@
   ~&  [%rove wir p q]
   ::  XX assert that we intend to be listening?
   =<  abet
-  (~(rove tell [p (~(get by per) p)]) q)
+  (~(hear tell [p (~(get by per) p)]) q)
+:: +prep: adapt state
 ::
 :: ++  prep  _[~ this]
 ++  prep
@@ -257,29 +284,32 @@
   ?^  old
     [~ this(+<+ u.old)]
   ?:  ?=(?(%czar %king) (clan:title our.bow))
-    abet:tend:tell
+    abet:listen:tell
   [~ this]
+:: |bind: acting as zone authority
 ::
-::  acting as zone authority
-::
-++  bind                                              ::  nameserver
+++  bind
   =|  moz=(list move)
   |_  nam=nameserver
   ++  this  .
+  :: +abet: finalize state changes, produce moves
   ::
   ++  abet
     ^-  (quip move _^this)
     [(flop moz) ^this(nem `nam)]
+  :: +emit: emit a move
   ::
   ++  emit
     |=  car=card
     ~&  [%emit-bind car]
     ^+  this
     this(moz [[ost.bow car] moz])
+  :: +emil: emit a list of moves
   ::
   ++  emil
     |=  rac=(list card)
     q:(spin rac this |=([a=card b=_this] [~ (emit:b a)]))
+  :: +init: establish zone authority (request confirmation)
   ::
   ++  init
     |=  aut=authority
@@ -292,6 +322,7 @@
     ~&  url
     %-  emit(nam [aut ~ ~])
     [%hiss wir [~ ~] %httr %hiss url %get ~ ~]
+  :: +create: bind :him, on behalf of :for
   ::
   ++  create
     |=  [for=ship him=ship tar=target]
@@ -301,6 +332,7 @@
       (request:gcloud dom.aut.nam him tar pro.aut.nam)
     %-  emit(pen.nam (~(put by pen.nam) him tar)) :: XX save for
     [%hiss wir [~ ~] %httr %hiss req]
+  :: +confirm: successfully bound
   ::
   ++  confirm
     |=  [for=ship him=ship]
@@ -320,13 +352,13 @@
       [%poke wir [for dap.bow] pok]
     ==
   --
+:: |tell: acting as planet parent or relay
 ::
-::  acting as planet parent or relay
-::
-++  tell                                              ::  relay
+++  tell
   =|  moz=(list move)
   |_  [him=ship rel=(unit relay)]
   ++  this  .
+  :: +abet: finalize state changes, produce moves
   ::
   ++  abet
     ^-  (quip move _^this)
@@ -334,18 +366,21 @@
     ?~  rel
       ^this
     ^this(per (~(put by per) him u.rel))
+  :: +emit: emit a move
   ::
   ++  emit
     |=  car=card
     ~&  [%emit-tell car]
     ^+  this
     this(moz [[ost.bow car] moz])
+  :: +listen: subscribe to %ames +lane changes for child ships
   ::
-  ++  tend                                            ::  listen
+  ++  listen
     ^+  this
     (emit [%tend /tend ~])
+  :: +hear: hear +lane change, maybe emit binding request
   ::
-  ++  rove                                            ::  hear
+  ++  hear
     |=  lan=lane:ames
     ^+  this
     =/  adr=(unit @if)
@@ -367,8 +402,9 @@
       /bind/(scot %p him)/for/(scot %p our.bow)
     %-  emit(rel `ler)
     [%poke wir [our.bow dap.bow] %dns-bind our.bow him tar]
+  :: +bake: successfully bound
   ::
-  ++  bake                                            ::  bound
+  ++  bake
     |=  dom=turf
     ~&  [%bake dom]
     ^+  this
@@ -377,8 +413,9 @@
     :: XX save domain?
     :: XX notify ship?
     this
+  :: +forward: sending binding request up the network
   ::
-  ++  forward                                         ::  on to parent
+  ++  forward
     |=  tar=target
     ~&  [%forward tar]
     ^+  this
