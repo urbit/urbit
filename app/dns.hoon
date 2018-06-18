@@ -1,3 +1,4 @@
+!:
 ::
 :: moves and state
 ::
@@ -77,9 +78,53 @@
       ::
       nem=(unit nameserver)
   ==
+:: +join: dedup with :acme
+::
+++  join
+  |=  [sep=@t hot=(list @t)]
+  ^-  @t
+  ?>  ?=(^ hot)
+  %+  rap  3
+  |-  ^-  (list @t)
+  ?~  t.hot  hot
+  [i.hot sep $(hot t.hot)]
 ::
 ++  gcloud
-  (need (de-purl:html 'https://www.googleapis.com/dns/v1/projects'))
+  |%
+  ++  base
+    (need (de-purl:html 'https://www.googleapis.com/dns/v1/projects'))
+  ++  name
+    |=  [dom=turf him=ship]
+    (cat 3 (join '.' [(crip +:(scow %p him)) (flop dom)]) '.')
+  ++  record
+    |=  [dom=turf him=ship tar=target]
+    ^-  json
+    =+  ^-  [typ=cord dat=cord]
+      ?:  ?=(%direct -.tar)
+        ['A' (crip +:(scow %if p.tar))]
+      ['CNAME' (name dom p.tar)]
+    :-  %o  %-  my  :~
+      name+s+(name dom him)
+      type+s+typ
+      ttl+n+~.300
+      rrdatas+a+[s+dat ~]
+    ==
+  ++  request
+    =,  eyre
+    |=  [dom=turf him=ship tar=target pro=provider]
+    ^-  hiss
+    ?>  ?=([%gcloud *] pro)
+    =/  url=purl
+      =+  base
+      -(q.q (weld q.q.- /[project.pro]/['managedZones']/[zone.pro]/changes))
+    =/  hed=math
+      (my content-type+['application/json' ~] ~)
+    =/  bod=octs
+      %-  as-octt:mimes:html
+      %-  en-json:html
+      o+(my additions+a+[(record dom him tar) ~] ~)
+    [url %post hed `bod]
+  --
 --
 ::
 |_  [bow=bowl:gall state]
@@ -87,8 +132,11 @@
 ::
 ++  poke-noun
   |=  a=*
-  ::^-  (quip move _this)
-  ?:  ?=(%aut a)
+  ^-  (quip move _this)
+  ?+  a  ~&  +<+:this
+         [~ this]
+  ::
+      %aut
     :_  this  :_  ~
     :*  ost.bow
         %poke
@@ -97,8 +145,18 @@
         %dns-authority
         [/org/urbit/dyndns %gcloud %tonal-griffin-853 %dyndns]
     ==
-  ~&  +<+:this
-  [~ this]
+  ::
+      %bin
+    :_  this  :_  ~
+    :*  ost.bow
+        %poke
+        /bar
+        [our.bow dap.bow]
+        %dns-bind
+        :: [for=~binzod him=~ridbyl-dovwyd tar=[%indirect p=~binzod]]
+        [for=~binzod him=~ridbyl-dovwyd tar=[%direct %if .8.8.8.8]]
+    ==
+  ==
 ::
 ++  sigh-httr
   |=  [wir=wire rep=httr:eyre]
@@ -112,9 +170,19 @@
       ~&  [%authority-confirm-fail rep]
       [~ this(nem ~)]
     :: XX anything to do here? parse body?
-    :: abet:(~(confirm bind u.nem) httr
     ~&  %authority-confirmed
     [~ this]
+  ::
+      [%authority %create @ %for @ ~]
+    ?~  nem
+      ~&  [%strange-authority wire=wir response=rep]
+      [~ this]
+    ?.  =(200 p.rep)
+      ~&  [%authority-create-fail wire=wir response=rep]
+      [~ this]
+    =/  him=ship  (slav %p i.t.t.wir)
+    =/  for=ship  (slav %p i.t.t.t.t.wir)
+    abet:(~(confirm bind u.nem) for him)
   ::
       *
     ~&  +<
@@ -204,34 +272,53 @@
     [(flop moz) ^this(nem `nam)]
   ::
   ++  emit
-    |=  a=card
+    |=  car=card
+    ~&  [%emit-bind car]
     ^+  this
-    this(moz [[ost.bow a] moz])
+    this(moz [[ost.bow car] moz])
+  ::
+  ++  emil
+    |=  rac=(list card)
+    q:(spin rac this |=([a=card b=_this] [~ (emit:b a)]))
   ::
   ++  init
     |=  aut=authority
     :: ?>  ?=(%gcloud pro.aut)
     =/  wir=wire  /authority/confirm
-    =/  url=purl:eyre  gcloud
+    =/  url=purl:eyre  base:gcloud
     =.  q.q.url
-      (weld q.q.url /[project.pro.aut]/['managedZones']/[zone.pro.aut])
+      %+  weld  q.q.url
+      /[project.pro.aut]/['managedZones']/[zone.pro.aut]
     ~&  url
     %-  emit(nam [aut ~ ~])
     [%hiss wir [~ ~] %httr %hiss url %get ~ ~]
   ::
   ++  create
-    |=  [him=ship tar=target]
-    =|  for=@p :: XX
-    %-  emit
-    :*  %poke
-        /foward/bound/(scot %p him)/for/(scot %p for)
-        [for %dns]
-        [%dns-bond him for *turf]
-    ==
+    |=  [for=ship him=ship tar=target]
+    =/  wir=wire
+      /authority/create/(scot %p him)/for/(scot %p for)
+    =/  req=hiss:eyre
+      (request:gcloud dom.aut.nam him tar pro.aut.nam)
+    %-  emit(pen.nam (~(put by pen.nam) him tar)) :: XX save for
+    [%hiss wir [~ ~] %httr %hiss req]
   ::
   ++  confirm
-    |=  him=ship
-    this :: XX
+    |=  [for=ship him=ship]
+    =/  tar=target  (~(got by pen.nam) him)
+    =/  bon=(unit bound)
+      (~(get by bon.nam) him)
+    =/  nob=bound
+      [now.bow tar ?~(bon ~ [[wen.u.bon cur.u.bon] hit.u.bon])]
+    =.  pen.nam  (~(del by pen.nam) him)
+    =.  bon.nam  (~(put by bon.nam) him nob)
+    =/  wir=wire
+      /forward/bound/(scot %p him)/for/(scot %p for)
+    =/  pok=poke
+      [%dns-bond him for *turf]
+    %-  emil  :~
+      [%poke wir [him dap.bow] pok]
+      [%poke wir [for dap.bow] pok]
+    ==
   --
 ::
 ::  acting as planet parent or relay
@@ -249,9 +336,10 @@
     ^this(per (~(put by per) him u.rel))
   ::
   ++  emit
-    |=  a=card
+    |=  car=card
+    ~&  [%emit-tell car]
     ^+  this
-    this(moz [[ost.bow a] moz])
+    this(moz [[ost.bow car] moz])
   ::
   ++  tend                                            ::  listen
     ^+  this
