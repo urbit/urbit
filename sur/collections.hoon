@@ -3,12 +3,12 @@
 ++  collection                                      ::
   $:  conf/{mod/@da config}                         ::  configuration
       tops/(map @da topicful)                       ::
+      $~                                            ::  /.  compatibility
   ==                                                ::
-::++  coll-full
-::  {host/(unit @p) col/time}
 ++  topicful                                        ::
   $:  info/{mod/@da topic}                          ::
       coms/(map @da {mod/@da comment})              ::
+      $~                                            ::  /.  compatibility
   ==                                                ::
 ::                                                  ::
 ++  topicshow
@@ -18,10 +18,11 @@
   ==
 ++  config                                          ::
   $:  desc/cord                                     ::  description
+      publ/?                                        ::  public or private
       visi/?                                        ::  visible or hidden
-      read/rule:clay                                ::  read permissions
-      write-post/rule:clay                          ::  top-level posting permissions
-      write-reply/rule:clay                         ::  comment/reply posting permissions
+      comm/?                                       ::  comments
+      xeno/?                                        ::  foreign posters?
+      mems/(set ship)                               ::  ships on list
   ==                                                ::
 ++  topic                                           ::
   $:  tit/cord                                      ::  title
@@ -35,15 +36,25 @@
 ::
 ++  api
   |%
-  ++  action
-    $%  {$create cof/config}                                     ::  create a collection
-        {$change-config col/@da cof/config}                      ::  edit config
-        {$submit host/@p col/@da tit/cord wat/wain}              ::  submit a post/note
-        {$resubmit host/@p col/@da top/@da tit/cord wat/wain}    ::  edit a post/note
-        {$comment host/@p col/@da top/@da com/?(~ @da) wat/wain} ::  submit a comment
-        {$delete host/@p col/@da}                                ::  delete a collection
-        {$delete-topic host/@p col/@da top/@da}                  ::  delete a topic
-        {$delete-comment host/@p col/@da top/@da com/@da}        ::  delete a comment
-    ==
+  ++  kind  ?($blog $fora $note)                      ::
+  ++  action                                          ::
+    $%  $:  $create                                   ::  create a collection
+            ::wat/kind                                  ::  collection kind
+            desc/cord                                 ::  name
+            publ/?                                    ::  public or private
+            visi/?                                    ::  visible or hidden
+            comm/?                                    ::  others can comment
+            xeno/?                                    ::  others can post
+            ses/(set ship)                            ::  black/whitelist
+        ==                                            ::
+        {$submit col/time tit/cord wat/wain}          ::  submit a post/note
+        {$resubmit col/time top/@da tit/cord wat/wain} ::  edit a post/note
+        {$comment col/time top/@da com/?(~ @da) wat/wain} ::  submit a comment
+        {$delete col/time}                            ::  delete a collection
+        ::
+        ::REVIEW names? nest collection/topic/comment actions?
+        {$delete-topic col/time top/@da}              ::  delete a collection
+        {$delete-comment col/time top/@da com/@da}    ::  delete a collection
+    ==                                                ::
   --
 --
