@@ -221,8 +221,14 @@
   |=  [for=ship him=ship tar=target]
   ^-  (quip move _this)
   ~&  [%bind src=src.bow for=for him=him tar=tar]
-  ~|  %bind-yoself
-  ?<  =(for him)
+  ?:  =(for him)
+    ~|(%bind-yoself !!)
+  ?:  ?&  ?=(%king (clan:title him))
+          ?=(%indirect -.tar)
+      ==
+    ~&  [%indirect-star +<]
+    :: XX crash?
+    [~ this]
   :: always forward, there may be multiple authorities
   ::
   =^  zom=(list move)  ..this
@@ -326,6 +332,10 @@
   ::
   ++  create
     |=  [for=ship him=ship tar=target]
+    :: XX defer %indirect where target isn't yet bound
+    ?>  ?|  ?=(%direct -.tar)
+            (~(has by bon.nam) p.tar)
+        ==
     =/  wir=wire
       /authority/create/(scot %p him)/for/(scot %p for)
     =/  req=hiss:eyre
