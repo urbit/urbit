@@ -250,19 +250,6 @@
     ?~  nem  [~ this]
     abet:(~(create bind u.nem) for him tar)
   [(weld zom zam) this]
-::
-:: ++  coup-dns-bind
-::   |=  [wir=wire saw=(unit tang)]
-::   ~&  [%coup-bind +<]
-::   ?~  saw
-::     [~ this]
-::   ?>  ?=(^ wir)
-::   ?-  i.wir
-::     %forward  !!  :: re-forward?
-::     %bind     !!  :: rebind?
-::     *  ~&(coup-dns-bind+wir [~ this])
-::   ==
-::
 :: +poke-dns-bond: process established dns binding
 ::
 ++  poke-dns-bond
@@ -282,6 +269,13 @@
     (~(bake tell [him (~(get by per) him)]) dom)
   ~&  [%strange-bond +<]
   [~ this]
+:: +coup: general poke acknowledgement or error
+::
+++  coup
+  |=  [wir=wire saw=(unit tang)]
+  ?~  saw  [~ this]
+  ~&  [%coup-fallthru wir]
+  [((slog u.saw) ~) this]
 :: +rove: hear %ames +lane change for child ships
 ::
 ++  rove
