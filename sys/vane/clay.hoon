@@ -2370,20 +2370,19 @@
       (read-p-in pax pew.red)
     ::
     ++  read-p-in
-      !:
       |=  {pax/path pes/regs}
       ^-  dict
       =/  rul=(unit rule)  (~(get by pes) pax)
       ?^  rul
         :+  pax  mod.u.rul
         %-  ~(rep in who.u.rul)
-        |=  {w/whom out/(set @p)}
+        |=  {w/whom out/(pair (set @p) (map @ta crew))}
         ?:  ?=([$& @p] w)
-          (~(put in out) +.w)
-        =/  cru=(unit (set @p))  (~(get by cez.ruf) +.w)
+          [(~(put in p.out) +.w) q.out]
+        =/  cru=(unit crew)  (~(get by cez.ruf) +.w)
         ?~  cru  out
-        (~(uni in out) u.cru)
-      ?~  pax  [/ %white ~]
+        [p.out (~(put by q.out) +.w u.cru)]
+      ?~  pax  [/ %white ~ ~]
       $(pax (scag (dec (lent pax)) `path`pax))
     ::
     ++  may-read
@@ -2417,7 +2416,13 @@
       |=  {who/ship pax/path pes/regs}
       ^-  ?
       =/  rul=real  rul:(read-p-in pax pes)
-      =/  in-list=?  (~(has in who.rul) who)
+      =/  in-list=?  
+        ?|  (~(has in p.who.rul) who)
+            %-  ~(rep by q.who.rul)
+            |=  [[@ta cru=crew] out=_|]
+            ?:  out  &
+            (~(has in cru) who)
+        ==
       ?:  =(%black mod.rul)
         !in-list
       in-list

@@ -508,7 +508,10 @@
         {$mult p/mool}                                  ::  next version of any
         {$many p/? q/moat}                              ::  track range
     ==                                                  ::
-  ++  real  {mod/?($black $white) who/(set ship)}       ::  resolved permissions
+  ++  real                                              ::  resolved permissions
+    $:  mod/?($black $white)                            ::
+        who/(pair (set ship) (map @ta crew))            ::
+    ==                                                  ::
   ++  regs  (map path rule)                             ::  rules for paths
   ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
   ++  rite                                              ::  new permissions
