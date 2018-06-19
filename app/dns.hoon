@@ -232,7 +232,7 @@
   :: always forward, there may be multiple authorities
   ::
   =^  zom=(list move)  ..this
-    abet:(~(forward tell him ~) tar)
+    abet:(~(forward tell him ~) for tar)
   =^  zam=(list move)  ..this
     ?~  nem  [~ this]
     abet:(~(create bind u.nem) for him tar)
@@ -426,7 +426,7 @@
   :: +forward: sending binding request up the network
   ::
   ++  forward
-    |=  tar=target
+    |=  [for=ship tar=target]
     ~&  [%forward tar]
     ^+  this
     ?:  ?=(%~zod our.bow)  ::  ~zod don't forward
@@ -438,8 +438,8 @@
         *      (sein:title our.bow)
       ==
     =/  wir=wire
-      /forward/bind/(scot %p him)/for/(scot %p src.bow)
+      /forward/bind/(scot %p him)/for/(scot %p for)
     %-  emit  :: XX for
-    [%poke wir [to dap.bow] %dns-bind src.bow him tar]
+    [%poke wir [to dap.bow] %dns-bind for him tar]
   --
 --
