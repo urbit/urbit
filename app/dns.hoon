@@ -220,15 +220,16 @@
 ++  poke-dns-bind
   |=  [for=ship him=ship tar=target]
   ^-  (quip move _this)
-  ~&  [%bind src=src.bow for=for him=him tar=tar]
+  ~&  [%bind src=src.bow +<.$]
+  =/  lan  (clan:title him)
+  ?:  ?=(%czar lan)
+    ~|(%bind-galazy !!)
   ?:  =(for him)
     ~|(%bind-yoself !!)
-  ?:  ?&  ?=(%king (clan:title him))
+  ?:  ?&  ?=(%king lan)
           ?=(%indirect -.tar)
       ==
-    ~&  [%indirect-star +<]
-    :: XX crash?
-    [~ this]
+    ~|(%bind-indirect-star !!)
   :: always forward, there may be multiple authorities
   ::
   =^  zom=(list move)  ..this
