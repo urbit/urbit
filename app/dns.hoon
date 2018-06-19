@@ -205,7 +205,19 @@
     ~&  +<
     [~ this]
   ==
-:: XX sigh-tang
+:: +sigh-tang: failed to make http request
+::
+++  sigh-tang
+  |=  [wir=wire saw=tang]
+  ^-  (quip move _this)
+  ~&  [%sigh-tang wir]
+  ?+  wir
+        [((slog saw) ~) this]
+  ::
+      [%authority %confirm ~]
+    ~&  %authority-confirm-fail
+    [((slog saw) ~) this(nem ~)]
+  ==
 ::
 :: +poke-dns-authority: configure self as an authority
 ::
