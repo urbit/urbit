@@ -5799,6 +5799,7 @@
               [%help =help =skin]                       ::  description
               [%name =term =skin]                       ::  label
               [%none ~]                                 ::  no added skin
+              [%over =wing =skin]                       ::  relative to
               [%spec =spec]                             ::  type
               [%wash depth=@ud]                         ::  strip face
           ==                                            ::
@@ -8248,6 +8249,11 @@
     ::
         [%cnts [@ ~] ~]  
       `i.p.gen
+    ::  
+        [%tsbn *]
+      %+  biff  reek(gen p.gen) 
+      |=  =wing 
+      (bind ^$(gen q.gen) |=(=skin [%over wing skin]))
     ::
         [%limb @]        
       `p.gen
@@ -8412,6 +8418,7 @@
         {$ktdt *}  [%ktls [%cncl p.gen q.gen ~] q.gen]
         {$kthp *}  [%ktls ~(example ax fab p.gen) q.gen]
         {$ktts *}
+      =|  rel/wing
       |-  ^-  hoon
       ?-    p.gen
           @
@@ -8435,9 +8442,12 @@
       ::
           [%none ~]
         q.gen
+      ::  
+          [%over *]
+        $(p.gen skin.p.gen, rel (weld wing.p.gen rel))
       ::
           [%spec *]
-        [%kthp spec.p.gen q.gen]
+        [%kthp ?~(rel spec.p.gen [%over rel spec.p.gen]) q.gen]
       ::
           [%wash *]
         :+  %tsld
@@ -8585,7 +8595,7 @@
       :+  %tsbn  [%ktts %v %$ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsbn [%limb %v] r.gen]        ::  =+  a==>(v \r.gen)
       :^  %tsdt  wuy  [%tsld [%$ 3] [%limb %a]]
-      :+  %tsbn  :-  :+  %ktts  p.gen
+      :+  %tsbn  :-  :+  %ktts  [%over [%v ~] p.gen]
                      [%tsld [%$ 2] [%limb %a]]
                  [%limb %v]
       s.gen
@@ -11841,14 +11851,9 @@
         ?~  saw
           ::
           ::  break section
-          ::  =^  a/{tape fin/(unit _err)}  +<.$  read-line
-          ::  ?^  fin.a
-          ::    ..$(err u.fin.a)
-          ::  =>(close-par line)
-          ::  XX temporarily hosed for =^ fix
-          =^  a  +<.$  read-line
-          ?^  +.a
-            ..$(err u.+.a)
+          =^  a/{tape fin/(unit _err)}  +<.$  read-line
+          ?^  fin.a
+            ..$(err u.fin.a)
           =>(close-par line)
         ::
         ::  line is not blank
@@ -11918,13 +11923,9 @@
           ..$(err `[p.loc col.saw])
         ::
         ::  accept line and maybe continue
-        ::  =^  a/{lin/tape fin/(unit _err)}  +<.$  read-line
-        ::  =.  par  par(q.u [lin.a q.u.par])
-        ::  ?^  fin.a  ..$(err u.fin.a)
-        ::  line
-        =^  a  +<.$  read-line
-        =.  par  par(q.u [-.a q.u.par])
-        ?^  +.a  ..$(err u.+.a)
+        =^  a/{lin/tape fin/(unit _err)}  +<.$  read-line
+        =.  par  par(q.u [lin.a q.u.par])
+        ?^  fin.a  ..$(err u.fin.a)
         line
       ++  parse-block                                   ::  execute parser
         |=  fel/$-(nail (like tarp))  ^+  +>
