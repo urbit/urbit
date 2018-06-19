@@ -7,6 +7,8 @@
 +=  poke  $%  [%dns-bind for=ship him=ship target]
               [%dns-bond for=ship him=ship turf]
               [%dns-authority authority]
+              :: XX some other notification channel?
+              [%helm-send-hi ship (unit tape)]
           ==
 +=  card  $%  [%tend wire ~]
               [%poke wire dock poke]
@@ -201,6 +203,15 @@
     =/  for=ship  (slav %p i.t.t.t.t.wir)
     abet:(~(confirm bind u.nem) for him)
   ::
+      [%check @ ~]
+    =/  him=ship  (slav %p i.t.wir)
+    ?:  =(200 p.rep)
+      ~&  %direct-confirm
+      abet:~(bind tell [him (~(get by per) him)])
+    :: XX specific messages per status code
+    ~&  %direct-confirm-fail
+    abet:(~(fail tell [him (~(get by per) him)]) %failed-request)
+  ::
       *
     ~&  +<
     [~ this]
@@ -217,6 +228,12 @@
       [%authority %confirm ~]
     ~&  %authority-confirm-fail
     [((slog saw) ~) this(nem ~)]
+  ::
+      [%check @ ~]
+    ~&  %direct-confirm-fail
+    =/  him=ship  (slav %p i.t.wir)
+    %-  (slog saw)
+    abet:(~(fail tell [him (~(get by per) him)]) %crash)
   ==
 ::
 :: +poke-dns-authority: configure self as an authority
@@ -245,7 +262,7 @@
   :: always forward, there may be multiple authorities
   ::
   =^  zom=(list move)  ..this
-    abet:(~(forward tell him ~) for tar)
+    abet:(~(forward tell [him (~(get by per) him)]) for tar)
   =^  zam=(list move)  ..this
     ?~  nem  [~ this]
     abet:(~(create bind u.nem) for him tar)
@@ -400,17 +417,61 @@
           ==
         [%indirect our.bow]
       [%direct %if u.adr]
-    =/  ler=relay
-      [now.bow adr | tar]
     ?.  ?|  ?=(~ rel)
             !=(tar tar.u.rel)
         ==
       this
-    :: we may be an authority, so we poke ourselves
+    =.  rel  `[wen=now.bow adr bon=| tar]
+    ?:(?=(%indirect -.tar) bind check)
+  :: +check: confirm %direct target is accessible
+  ::
+  ++  check
+    ^+  this
+    ?>  ?=(^ rel)
+    ?>  ?=(%direct -.tar.u.rel)
+    :: XX check for reserved ip
+    ?:  |
+      (fail %reserved-ip)
+    =/  wir=wire
+      /check/(scot %p him)
+    =/  url=purl:eyre
+      :-  [sec=| por=~ host=[%| `@if`p.tar.u.rel]]
+      [[ext=`~.md path=~] query=~]
+    :: XX state mgmt
+    %-  emit
+    [%hiss wir [~ ~] %httr %hiss url %get ~ ~]
+  :: +fail: %direct target is invalid or inaccessible
+  ::
+  ++  fail
+    |=  err=@tas
+    ^+  this
+    ?>  ?=(^ rel)
+    ~&  [%fail err him tar.u.rel]
+    =/  wir=wire
+      /fail/(scot %p him)
+    =/  msg=tape
+      ?+  err
+            "dns binding failed"
+      ::
+          %reserved-ip
+        ?>  ?=(%direct -.tar.u.rel)
+        "unable to create dns binding reserved address {(scow %if p.tar.u.rel)}"
+      ==
+    :: XX state mgmt
+    %-  emit
+    [%poke wir [our.bow %hood] %helm-send-hi him `msg]
+  :: +bind: request binding for target
+  ::
+  ::   Since we may be an authority, we poke ourselves.
+  ::
+  ++  bind
+    ^+  this
+    ?>  ?=(^ rel)
+    :: XX state mgmt
     =/  wir=wire
       /bind/(scot %p him)/for/(scot %p our.bow)
-    %-  emit(rel `ler)
-    [%poke wir [our.bow dap.bow] %dns-bind our.bow him tar]
+    %-  emit
+    [%poke wir [our.bow dap.bow] %dns-bind our.bow him tar.u.rel]
   :: +bake: successfully bound
   ::
   ++  bake
