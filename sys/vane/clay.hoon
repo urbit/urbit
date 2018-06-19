@@ -2376,8 +2376,8 @@
       ?^  rul
         :+  pax  mod.u.rul
         %-  ~(rep in who.u.rul)
-        |=  {w/whom out/(pair (set @p) (map @ta crew))}
-        ?:  ?=([$& @p] w)
+        |=  {w/whom out/(pair (set ship) (map @ta crew))}
+        ?:  ?=({$& @p} w)
           [(~(put in p.out) +.w) q.out]
         =/  cru=(unit crew)  (~(get by cez.ruf) +.w)
         ?~  cru  out
@@ -2418,15 +2418,16 @@
       =/  rul=real  rul:(read-p-in pax pes)
       =/  in-list=?  
         ?|  (~(has in p.who.rul) who)
+          ::
             %-  ~(rep by q.who.rul)
-            |=  [[@ta cru=crew] out=_|]
+            |=  {{@ta cru=crew} out/_|}
             ?:  out  &
             (~(has in cru) who)
         ==
       ?:  =(%black mod.rul)
         !in-list
       in-list
-    ::  ::
+    ::
     ::  Checks for existence of a node at an aeon.
     ::
     ::  This checks for existence of content at the node, and does *not* look
