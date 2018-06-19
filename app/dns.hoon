@@ -255,9 +255,8 @@
 ++  poke-dns-bond
   |=  [for=ship him=ship dom=turf]
   ^-  (quip move _this)
-  ~&  [%bond +<]
-  ~|  %bond-yoself
-  ?<  =(for him)
+  ?:  =(for him)
+    ~|(%bond-yoself !!)
   ?:  =(our.bow him)
     :: XX notify eyre/hood/acme etc
     ~&  [%bound-us dom]
@@ -317,11 +316,6 @@
     ~&  [%emit-bind car]
     ^+  this
     this(moz [[ost.bow car] moz])
-  :: +emil: emit a list of moves
-  ::
-  ++  emil
-    |=  rac=(list card)
-    q:(spin rac this |=([a=card b=_this] [~ (emit:b a)]))
   :: +init: establish zone authority (request confirmation)
   ::
   ++  init
@@ -361,13 +355,11 @@
     =.  pen.nam  (~(del by pen.nam) him)
     =.  bon.nam  (~(put by bon.nam) him nob)
     =/  wir=wire
-      /forward/bound/(scot %p him)/for/(scot %p for)
-    =/  pok=poke
-      [%dns-bond him for *turf]
-    %-  emil  :~
-      [%poke wir [him dap.bow] pok]
-      [%poke wir [for dap.bow] pok]
-    ==
+      /bound/(scot %p him)/for/(scot %p for)
+    =/  dom=turf
+      (weld dom.aut.nam /(crip +:(scow %p him)))
+    %-  emit
+    [%poke wir [for dap.bow] %dns-bond for him dom]
   --
 :: |tell: acting as planet parent or relay
 ::
@@ -426,10 +418,11 @@
     ~&  [%bake dom]
     ^+  this
     ?>  ?=(^ rel)
-    =.  bon.u.rel  &
-    :: XX save domain?
-    :: XX notify ship?
-    this
+    =/  wir=wire
+      /forward/bound/(scot %p him)/for/(scot %p our.bow)
+    :: XX save domain, track bound-state per-domain
+    %-  emit(bon.u.rel &)
+    [%poke wir [him dap.bow] %dns-bond our.bow him dom]
   :: +forward: sending binding request up the network
   ::
   ++  forward
