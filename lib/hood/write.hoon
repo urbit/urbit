@@ -3,7 +3,7 @@
 ::::  /hoon/write/hood/lib
   ::
 /?    310
-/-    profile
+/-    plan-diff, plan-acct
 =,  format
 =*  as-octs  as-octs:mimes:html
 =,  space:userlib
@@ -11,7 +11,7 @@
 ++  part  {$write $0 pith}           :: no state
 ++  pith  $~
 --
-::::
+::
 ::::
   ::
 |%
@@ -41,19 +41,42 @@
   |=  {sup/path mim/mime}  ^+  abet     ::  XX determine extension, beak
   (poke--data [`%md (flop sup)] %mime mim)
 ::
-++  poke-profile
-  |=  pro=profile:profile
-  ^+  abet
+++  poke-plan-account
+  |=  {sev/knot usr/plan-acct}  ^+  abet
+  (poke-plan-diff [~ ~ [[sev usr] ~ ~]])
+::
+++  poke-plan-info
+  |=  {who/@t loc/@t}
+  (poke-plan-diff [[~ who loc] ~ ~])
+::
+++  poke-plan-diff
+  |=  dif/plan-diff  ^+  abet
   ?.  =(our src)
     ~|(foreign-write+[our=our src=src] !!)
-  =/  serving=path  .^(path %e /(scot %p our)/serv/(scot %da now))
-  ?>  ?=([@ @ *] serving)
-  =/  latest   .^(cass:clay %cw /(scot %p our)/[i.t.serving]/(scot %da now))  ::
-  =/  pax  /(scot %p our)/(scot %tas i.t.serving)/(scot %ud ud.latest)/web/profile
-  =<  abet
-  %-  emit
-  =/  fol  (foal pax [%profile !>(pro)])
-  [%info /write-profile our fol]
+  =/  sev
+    =+  .^(path %e /(scot %p our)/serv/(scot %da now))
+    ?>(?=({@tas @tas *} -) -)
+  =;  sob/soba:clay
+    ?~(sob abet abet:(emit %info write+~ our `toro:clay`[i.t.sev %& sob]))
+  =+  pax=`path`/web/plan
+  =+  paf=(en-beam beak-now (flop pax))
+  ?~  [fil:.^(arch %cy paf)]
+    =+  ins=(pact-plan [['' ''] ~] dif)
+    [pax %ins plan+!>(ins)]~
+  =+  ole=.^({{@t @t} (map knot plan-acct)} %cx paf)
+  =+  neu=(pact-plan ole dif)
+  ?:  =(ole neu)  ~
+  [pax %dif plan-diff+!>(dif)]~
+::
+++  pact-plan                         :: XX clay should handle fused insert+diff
+  |=  {all/{{who/@t loc/@t} acc/(map knot plan-acct)} dif/plan-diff}
+  ^+  all
+  :-  (fall inf.dif -.all)
+  =;  neu  (~(uni by neu) put.dif)
+  =+  del=~(tap by del.dif)                             :: XXX map functions
+  |-  ^+  acc.all
+  ?~  del  acc.all
+  $(del t.del, acc.all (~(del by acc.all) p.i.del))
 ::
 ++  poke-paste
   |=  {typ/?($hoon $md $txt) txt/@t}  ^+  abet
