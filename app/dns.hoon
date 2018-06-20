@@ -109,17 +109,6 @@
         %dns-authority
         [/org/urbit/dyndns %gcloud %tonal-griffin-853 %dyndns]
     ==
-  ::
-      %bin
-    :_  this  :_  ~
-    :*  ost.bow
-        %poke
-        /bar
-        [our.bow dap.bow]
-        %dns-bind
-        :: [for=~binzod him=~ridbyl-dovwyd tar=[%indirect p=~binzod]]
-        [for=~binzod him=~ridbyl-dovwyd tar=[%direct %if .8.8.8.8]]
-    ==
   ==
 :: +sigh-httr: accept http response
 ::
@@ -135,7 +124,6 @@
       ~&  [%authority-confirm-fail rep]
       [~ this(nem ~)]
     :: XX anything to do here? parse body?
-    ~&  %authority-confirmed
     [~ this]
   ::
       [%authority %create @ %for @ ~]
@@ -152,7 +140,6 @@
       [%check @ ~]
     =/  him=ship  (slav %p i.t.wir)
     ?:  =(200 p.rep)
-      ~&  %direct-confirm
       abet:~(bind tell [him (~(get by per) him)])
     :: XX specific messages per status code
     ~&  %direct-confirm-fail
@@ -276,7 +263,6 @@
   ::
   ++  emit
     |=  car=card
-    ~&  [%emit-bind car]
     ^+  this
     this(moz [[ost.bow car] moz])
   :: +init: establish zone authority (request confirmation)
@@ -342,7 +328,6 @@
   ::
   ++  emit
     |=  car=card
-    ~&  [%emit-tell car]
     ^+  this
     this(moz [[ost.bow car] moz])
   :: +listen: subscribe to %ames +lane changes for child ships
