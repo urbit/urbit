@@ -2,11 +2,11 @@
 ::::  /hoon/comments/tree/ren
   ::
 /?    310
+/+    rekey
+::
 /:    /%/comments
   /;  |=  a/(map knot {ship marl})
-      =-    (sort - dor)
-      %+  turn  ~(tap by a)
-      |=({b/knot c/{ship marl}} [(slav %da b) c])
+      (sort ~(tap by ((rekey %da) a)) dor)
   /_ 
   /;  |=  a/manx  ^-  {ship marl}
       ~|  a

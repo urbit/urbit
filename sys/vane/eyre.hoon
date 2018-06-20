@@ -149,7 +149,8 @@
       {$poll p/{i/@uvH t/(list @uvH)}}
       {$spur p/spur}
       {$subs p/?($put $delt) q/{dock $json wire path}}
-      {$view p/ixor q/{$~ u/@ud}}
+      ::{$view p/ixor q/{$~ u/@ud}}
+      {$view p/ixor q/{$~ u/@ud} r/(unit @dr)}
   ==
 ::
 ++  perk-auth                                           ::  parsed auth
@@ -762,6 +763,37 @@
             (ames-gram q.p.kyz aut+~ p.u.mez)
           =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
           (ames-gram q.p.kyz hat+~ p.u.mez our-host)
+      ::
+        $get-inner
+          %^  exec-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)  -.q.u.mez
+          ::
+          =/  ext  r.u.mez
+          =/  fig/coin  (fcgi ~ *cred)  ::STUB fcgi params for /$
+          [%bake ext fig q.u.mez]
+      ::
+        $got-inner
+          ?.  (~(has by pox) p.u.mez)
+            ~&  lost-gram-inner+p.kyz^p.u.mez
+            +>.$
+          =:  hen  (~(got by pox) p.u.mez)
+              pox  (~(del by pox) p.u.mez)
+            ==
+          ?-    -.q.u.mez
+              %|
+            =/  dep  0v0  ::XX remote dependency?
+            (fail 500 dep p.q.u.mez)
+          ::
+              %&
+            =/  res/(cask)  p.q.u.mez
+            =/  dep  0v0  ::XX remote dependency?
+            =/  bek  -.top  ::XX where is wrapper-renderer beak stored exactly
+            :: XX store request mark
+            =/  ext  (end 3 (sub (met 3 p.res) (met 3 '-elem')) p.res) :: %x-urb-elem -> %x-urb
+            %^  exec-live  ha+(en-beam bek ~)  (norm-beak bek)
+            :+  %cast  ext
+            :+  %call  [%core (norm-beak bek) /wrap/[ext]/ren]
+            [[%$ deps+!>(dep)] [%vale res]]
+          ==
       ==
     ::
       $wegh  !!                                         ::  handled elsewhere
@@ -844,10 +876,18 @@
       =|  ses/(unit hole)
       |-  ^+  ..axon
       ?-    tee
-          $@($~ {?($on $ay $ow) *})  ~|(e+ford+lost+tee !!)
+          $@($~ {?($on $ow) *})  ~|(e+ford+lost+tee !!)
           {$of @ $~}  ~|(e+ford+lost+tee !!)
           {$si $~}  (give-sigh q.sih)
           {$se ^}   (get-made:(dom-vi q.tee) p.tee [p q]:sih)
+          {$ay ^}
+        =/  res/(each (cask) tang)
+          ?-  -.q.sih
+            %|  [%| p.q.sih]
+            %&  [%& [p q.q]:p.q.sih]  ::  strip type
+          ==
+        (ames-gram (slav %p p.tee) got-inner+~ (slav %uv q.tee) res)
+      ::
           {$hi ^}
         ?:  ?=($| -.q.sih)
           (give-sigh q.sih)  ::  XX crash?
@@ -1060,6 +1100,7 @@
     ++  teba  |*(a/$-(* _..handle) |*(b/* %_(done ..handle (a b))))
     ++  del-deps  (teba ^del-deps)
     ++  new-deps  (teba ^new-deps)
+    ++  ames-gram  (teba ^ames-gram)
     ++  exec-live  (teba ^exec-live)
     ++  give-html  (teba ^give-html)
     ++  give-thou  (teba ^give-thou)
@@ -1243,9 +1284,15 @@
           (turn dep |=({a/@tas $~} (slav %uv a)))
         ::
             $of
-          :+  %view  ?>(?=({@ $~} but) i.but)
-          ?>  ?=({{$poll @} $~} quy)     ::  XX eventsource
+          :^  %view  
+          ?>  ?=({@ $~} but)
+          i.but
+          ?>  ?=({{$poll @} *} quy)     ::  XX eventsource
           [~ (rash q.i.quy dem)]
+          ?:  ?=({{$t @} $~} +.quy)
+            =/  s  (rash q.i.t.quy dem)
+            `(yule [0 0 0 s ~])
+          ~
         ::
             $to
           =+  ^-  dir/{p/ship q/term r/mark}
@@ -1332,10 +1379,17 @@
           $away  [%& %html logout-page:xml]
           ?($beam $spur)
         =^  payload  mef  process-payload
-        =+  ext=(fall p.pok %urb)
+        =+  ext=(fall p.pok %x-urb)
         =+  bem=?-(-.hem $beam p.hem, $spur [-.top (weld p.hem s.top)])
         ~|  bad-beam+q.bem
         ?<  =([~ 0] (sky [151 %noun] %cw (en-beam bem(+ ~, r [%da now]))))
+        ?:  ::!=(our p.bem) ::TODO also if it is?
+            =('x-' (end 3 2 ext))
+          =.  ext  (cat 3 ext '-elem')
+          =.  -.bem  (norm-beak -.bem)
+          =/  han  (sham hen)
+          =.  pox  (~(put by pox) han hen)
+          [%| (ames-gram p.bem [%get-inner ~] han bem ext)]
         =+  wir=`whir`[%ha (en-beam -.bem ~)]
         =.  wir  ?+(mef !! $get wir, $head [%he wir])
         =.  r.bem  ?+(r.bem r.bem {$ud $0} da+now)
@@ -1387,7 +1441,7 @@
       ::
           $view
         ~|  lost-ixor+p.hem
-        [%| ((teba poll:(ire-ix p.hem)) u.q.hem)]
+        [%| ((teba poll:(ire-ix p.hem)) u.q.hem r.hem)]
       ==
     ::
     ++  process-auth
@@ -1741,12 +1795,15 @@
     ::
     ++  pop-duct  =^(ned med ~(get to med) abet(hen ned))
     ++  poll
-      |=  a/@u  ^+  ..ix
+      |=  [a/@u t=(unit @dr)]
+      ^+  ..ix
       =<  abet
       =.  ..poll  refresh
       ?:  =(a p.eve)
         =.  ..poll  poll-rest
-        =.  era  (add ~s30 now)
+        =.  era  
+          ?~  t  (add ~s30 now)
+          (add u.t now)
         =.  lyv  (~(put by lyv) hen [%poll ire])
         pass-wait(ude [~ hen &])
       ?:  (gth a p.eve)  ~|(seq-high+cur=p.eve !!)

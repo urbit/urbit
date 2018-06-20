@@ -717,6 +717,9 @@
         [[%get ~] p=@uvH q=[? clip httq]]               ::  remote request
         [[%got ~] p=@uvH q=httr]                        ::  remote response
         [[%gib ~] p=@uvH]                               ::  remote cancel
+      ::
+        [[%get-inner ~] p=@uvH q=beam r=mark]  ::TODO details?
+        [[%got-inner ~] p=@uvH q=(each (cask) tang)]  ::TODO details?
     ==                                                  ::
   ++  hart  {p/? q/(unit @ud) r/host}                   ::  http sec+port+host
   ++  hate  {p/purl q/@p r/moth}                        ::  semi-cooked request
@@ -829,6 +832,7 @@
         {$fsbc p/hoon}                                  ::  /$  argument
         {$fsbr p/(list horn)}                           ::  /|  options
         {$fshx p/horn}                                  ::  /#  insert dephash
+        {$fspt p/horn}                                  ::  /@  insert mod-time
         {$fsts p/term q/horn}                           ::  /=  apply face
         {$fsdt p/(list horn)}                           ::  /.  list
         {$fscm p/(list (pair spur horn))}               ::  /,  switch by path

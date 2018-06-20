@@ -2354,13 +2354,13 @@
           =-  (~(so-first-grams so:ta nom.qer ~ -) ran.qer)
           ::TODO  this can be done more efficiently.
           ?~  wer.qer  u.soy
-          %_  u.soy
-              grams
-            ?.  (~(has by sourced.u.soy) u.wer.qer)  ~
-            %+  turn  (~(got by sourced.u.soy) u.wer.qer)
-            |=  n/@ud
-            (snag n grams.u.soy)
-          ==
+          =-  u.soy(grams -, count (lent -))
+          ?.  (~(has by sourced.u.soy) u.wer.qer)  ~
+          %+  turn
+            %-  flop
+            (~(got by sourced.u.soy) u.wer.qer)
+          |=  n/@ud
+          (snag n grams.u.soy)
         (cury gram-to-envelope nom.qer)
       :-  shape.u.soy
       ?.  (~(has in wat.qer) %config-r)  ~
