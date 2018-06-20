@@ -1,5 +1,6 @@
---- qt-5.8.0-orig/src/platformsupport/linuxaccessibility/dbusconnection.cpp
-+++ qt-5.8.0/src/platformsupport/linuxaccessibility/dbusconnection.cpp
+diff -ur qtbase-opensource-src-5.9.6-orig/src/platformsupport/linuxaccessibility/dbusconnection.cpp qtbase-opensource-src-5.9.6/src/platformsupport/linuxaccessibility/dbusconnection.cpp
+--- qtbase-opensource-src-5.9.6-orig/src/platformsupport/linuxaccessibility/dbusconnection.cpp	2018-06-19 12:42:00.533895696 -0700
++++ qtbase-opensource-src-5.9.6/src/platformsupport/linuxaccessibility/dbusconnection.cpp	2018-06-19 12:45:03.308744607 -0700
 @@ -75,7 +75,7 @@
      connect(dbusWatcher, SIGNAL(serviceRegistered(QString)), this, SLOT(serviceRegistered()));
  
@@ -9,14 +10,3 @@
          serviceRegistered();
  
      // In addition try if there is an xatom exposing the bus address, this allows applications run as root to work
---- qtbase-5.8.0-orig/src/platformsupport/themes/genericunix/qgenericunixthemes.cpp
-+++ qtbase-5.8.0/src/platformsupport/themes/genericunix/qgenericunixthemes.cpp
-@@ -122,7 +122,7 @@
- {
-     QDBusConnection connection = QDBusConnection::sessionBus();
-     QString registrarService = QStringLiteral("com.canonical.AppMenu.Registrar");
--    return connection.interface()->isServiceRegistered(registrarService);
-+    return connection.interface() && connection.interface()->isServiceRegistered(registrarService);
- }
- 
- static bool isDBusGlobalMenuAvailable()

@@ -6,7 +6,7 @@
 { crossenv, libudev, libxall, at-spi2-headers, dejavu-fonts }:
 
 let
-  version = "5.9.2";
+  version = "5.9.6";
 
   name = "qtbase-${version}";
 
@@ -24,7 +24,7 @@ let
 
   base_src = crossenv.nixpkgs.fetchurl {
     url = "https://download.qt.io/official_releases/qt/5.9/${version}/submodules/qtbase-opensource-src-${version}.tar.xz";
-    sha256 = "16v0dny4rcyd5p8qsnsfg89w98k8kqk3rp9x3g3k7xjmi53bpqkz";
+    sha256 = "0vz3rgx7bk50jzy78lxv5pff2l8xqmqs9iiz7gc9n6cb4v5j1mpf";
   };
 
   base_raw = crossenv.make_derivation {
@@ -41,9 +41,6 @@ let
       # compiler, and don't pass redundant options to it (-arch, -isysroot,
       # -mmacosx-version-min).
       ./macos-config.patch
-
-      # Fix a compilation error.
-      ./mac-font-database.patch
 
       # libX11.a depends on libxcb.a.  This makes tests.xlib in
       # src/gui/configure.json pass, enabling lots of X functionality in Qt.
