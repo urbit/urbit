@@ -39,6 +39,58 @@
   |-  ^-  (list @t)
   ?~  t.hot  hot
   [i.hot sep $(hot t.hot)]
+:: +reserved: check if an ipv4 address is in a reserved range
+::
+++  reserved
+  |=  a=@if
+  ^-  ?
+  =/  b  (rip 3 a)
+  ?>  ?=([@ @ @ @ ~] b)
+  ?|  :: 0.0.0.0/8 (software)
+      ::
+      =(0 i.b)
+      :: 10.0.0.0/8 (private)
+      ::
+      =(10 i.b)
+      :: 100.64.0.0/10 (carrier-grade NAT)
+      ::
+      &(=(100 i.b) (gte 64 i.t.b) (lte 127 i.t.b))
+      :: 127.0.0.0/8 (localhost)
+      ::
+      =(127 i.b)
+      :: 169.254.0.0/16 (link-local)
+      ::
+      &(=(169 i.b) =(254 i.t.b))
+      :: 172.16.0.0/12 (private)
+      ::
+      &(=(172 i.b) (gte 16 i.t.b) (lte 31 i.t.b))
+      :: 192.0.0.0/24 (protocol assignment)
+      ::
+      &(=(192 i.b) =(0 i.t.b) =(0 i.t.t.b))
+      :: 192.0.2.0/24 (documentation)
+      ::
+      &(=(192 i.b) =(0 i.t.b) =(2 i.t.t.b))
+      :: 192.18.0.0/15 (reserved, benchmark)
+      ::
+      &(=(192 i.b) |(=(18 i.t.b) =(19 i.t.b)))
+      :: 192.51.100.0/24 (documentation)
+      ::
+      &(=(192 i.b) =(51 i.t.b) =(100 i.t.t.b))
+      :: 192.88.99.0/24 (reserved, ex-anycast)
+      ::
+      &(=(192 i.b) =(88 i.t.b) =(99 i.t.t.b))
+      :: 192.168.0.0/16 (private)
+      ::
+      &(=(192 i.b) =(168 i.t.b))
+      :: 203.0.113/24 (documentation)
+      ::
+      &(=(203 i.b) =(0 i.t.b) =(113 i.t.t.b))
+      :: 224.0.0.0/8 (multicast)
+      :: 240.0.0.0/4 (reserved, future)
+      :: 255.255.255.255/32 (broadcast)
+      ::
+      (gte 224 i.b)
+  ==
 :: |gcloud: provider-specific functions
 ::
 ++  gcloud
@@ -360,8 +412,7 @@
     ^+  this
     ?>  ?=(^ rel)
     ?>  ?=(%direct -.tar.u.rel)
-    :: XX check for reserved ip
-    ?:  |
+    ?:  (reserved p.tar.u.rel)
       (fail %reserved-ip)
     =/  wir=wire
       /check/(scot %p him)
