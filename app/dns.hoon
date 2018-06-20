@@ -39,6 +39,17 @@
   |-  ^-  (list @t)
   ?~  t.hot  hot
   [i.hot sep $(hot t.hot)]
+:: +name: fully-qualified domain name
+::
+++  name
+  |=  [him=ship dom=turf]
+  (cat 3 (join '.' [(crip +:(scow %p him)) (flop dom)]) '.')
+:: +endpoint: append path to purl
+::
+++  endpoint
+  |=  [bas=purl:eyre pat=path]
+  ^+  bas
+  bas(q.q (weld q.q.bas pat))
 :: +reserved: check if an ipv4 address is in a reserved range
 ::
 ++  reserved
@@ -94,27 +105,23 @@
 :: |gcloud: provider-specific functions
 ::
 ++  gcloud
-  |%
+  |_  aut=authority
   ::  +base: provider service endpoint
   ::
   ++  base
     (need (de-purl:html 'https://www.googleapis.com/dns/v1/projects'))
-  :: +name: fully-qualified domain name
-  ::
-  ++  name
-    |=  [dom=turf him=ship]
-    (cat 3 (join '.' [(crip +:(scow %p him)) (flop dom)]) '.')
   :: +record: JSON-formatted provider-specific dns record
   ::
   ++  record
-    |=  [dom=turf him=ship tar=target]
+    |=  [him=ship tar=target]
     ^-  json
+    :: ?>  ?=([%gcloud *] pro.aut)
     =+  ^-  [typ=cord dat=cord]
       ?:  ?=(%direct -.tar)
         ['A' (crip +:(scow %if p.tar))]
-      ['CNAME' (name dom p.tar)]
+      ['CNAME' (name p.tar dom.aut)]
     :-  %o  %-  my  :~
-      name+s+(name dom him)
+      name+s+(name him dom.aut)
       type+s+typ
       :: XX make configureable?
       ttl+n+~.300
@@ -124,18 +131,21 @@
   ::
   ++  request
     =,  eyre
-    |=  [dom=turf him=ship tar=target pro=provider]
+    |=  [him=ship tar=target pre=(unit target)]
     ^-  hiss
-    ?>  ?=([%gcloud *] pro)
+    :: ?>  ?=([%gcloud *] pro.aut)
     =/  url=purl
-      =+  base
-      -(q.q (weld q.q.- /[project.pro]/['managedZones']/[zone.pro]/changes))
+      %+  endpoint  base
+      /[project.pro.aut]/['managedZones']/[zone.pro.aut]/changes
     =/  hed=math
       (my content-type+['application/json' ~] ~)
     =/  bod=octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      o+(my additions+a+[(record dom him tar) ~] ~)
+      :-  %o  %-  my
+      :-  additions+a+[(record him tar) ~]
+      ?~  pre  ~
+      [deletions+a+[(record him u.pre) ~] ~]
     [url %post hed `bod]
   --
 --
@@ -312,9 +322,8 @@
     |=  aut=authority
     :: ?>  ?=(%gcloud pro.aut)
     =/  wir=wire  /authority/confirm
-    =/  url=purl:eyre  base:gcloud
-    =.  q.q.url
-      %+  weld  q.q.url
+    =/  url=purl:eyre
+      %+  endpoint  base:gcloud
       /[project.pro.aut]/['managedZones']/[zone.pro.aut]
     ~&  url
     %-  emit(nam [aut ~ ~])
@@ -329,8 +338,12 @@
         ==
     =/  wir=wire
       /authority/create/(scot %p him)/for/(scot %p for)
+    =/  pre=(unit target)
+      =/  bon=(unit bound)  (~(get by bon.nam) him)
+      ?~(bon ~ `cur.u.bon)
+    :: ?>  ?=(%gcloud pro.aut.nam)
     =/  req=hiss:eyre
-      (request:gcloud dom.aut.nam him tar pro.aut.nam)
+      (~(request gcloud aut.nam) him tar pre)
     %-  emit(pen.nam (~(put by pen.nam) him tar)) :: XX save for
     [%hiss wir [~ ~] %httr %hiss req]
   :: +confirm: successfully bound
