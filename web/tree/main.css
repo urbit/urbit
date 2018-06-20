@@ -423,13 +423,6 @@ div.logo.inverse:before {
     margin-left: .05rem;
     font-size: 1rem; } }
 
-[data-path^='/docs/system/hoon/runes'] .nav-link {
-  font-family: 'scp'; }
-
-[data-path^='/docs/system/hoon/runes'] .nav-link,
-[data-path^='/docs/system/hoon/runes'] .ctrl .selected a.nav-link {
-  font-weight: 600; }
-
 .app {
   vertical-align: top;
   font-size: 1.6rem;
@@ -649,20 +642,37 @@ ol > li:before {
   margin-right: 1rem;
   margin-left: -2rem; }
 
-.body[data-path*='/docs'] h1,
-.body[data-path^='/work'] h1 {
-  color: #000; }
-
 .body[data-path*='/docs'] h1 code,
 .body[data-path^='/work'] h1 code {
   background-color: transparent;
   color: #000;
-  padding: 0; }
+  padding: 0;
+  font-size: 100%;
+  font-weight: 500; }
 
 .body[data-path*='/docs'] .head,
 .body[data-path^='/work'] .head {
   margin-bottom: 4rem;
   padding-left: 0; }
+
+.body[data-path*='/docs'] p.label,
+.body[data-path^='/work'] p.label {
+  font-size: .8rem;
+  padding: 0;
+  display: block;
+  text-align: left;
+  margin-bottom: .6rem; }
+  .body[data-path*='/docs'] p.label .type,
+  .body[data-path^='/work'] p.label .type {
+    background-color: #B1B7BD;
+    color: #fff;
+    padding: .4rem;
+    margin-right: .3rem; }
+  .body[data-path*='/docs'] p.label code,
+  .body[data-path^='/work'] p.label code {
+    background-color: transparent;
+    font-size: 100%;
+    font-weight: 400; }
 
 .body[data-path*='/docs'] .book h2,
 .body[data-path^='/work'] .book h2 {
@@ -681,24 +691,21 @@ ol > li:before {
 .body[data-path^='/work'] .book hr {
   margin-bottom: 3rem; }
 
+.body[data-path*='/docs'] .book img,
+.body[data-path^='/work'] .book img {
+  max-width: 100%; }
+
 .body[data-path^='/work'] h2 {
   color: #000; }
 
-.body[data-path^='/docs/system/hoon/runes/'] h1 {
-  color: #B1B7BD; }
+.more {
+  border-bottom: 0.1rem solid #000; }
 
-.body[data-path^='/docs/system/hoon/runes/basic'] h1 {
-  color: #000; }
-
-.body[data-path^='/docs/system/hoon/library/'] h3 {
-  font-size: 1.5rem; }
-
-.body[data-path^='/docs/system/hoon/library/'] h2 {
-  font-size: 1rem; }
-
-.body[data-path^='/docs/system/hoon/library/'] .toc h3 {
-  padding-top: 0;
-  margin-bottom: 0; }
+.more::after {
+  content: "→";
+  font-family: "scp";
+  font-weight: 600;
+  padding-left: .3rem; }
 
 .body .urbit {
   padding-bottom: 9rem; }
@@ -1161,6 +1168,9 @@ ol > li:before {
   font-size: 1.6rem;
   font-weight: 500; }
 
+.list.spaced li {
+  margin-bottom: 2rem; }
+
 .list.children h1 {
   font-weight: 500;
   font-size: 1.4rem; }
@@ -1178,6 +1188,9 @@ ol > li:before {
   content: "—";
   margin-right: .6rem; }
 
+.list.p.code {
+  background-color: transparent; }
+
 .body[data-path*='/docs'] .list,
 .body[data-path^='/work'] .list {
   list-style-type: none;
@@ -1186,11 +1199,15 @@ ol > li:before {
   .body[data-path*='/docs'] .list h1,
   .body[data-path^='/work'] .list a,
   .body[data-path^='/work'] .list h1 {
-    color: #55595c;
+    color: #000;
     font-weight: 500;
     height: 2rem;
     display: inline;
     text-decoration: none; }
+  .body[data-path*='/docs'] .list p a,
+  .body[data-path^='/work'] .list p a {
+    font-weight: 400;
+    text-decoration: underline; }
   .body[data-path*='/docs'] .list h1,
   .body[data-path^='/work'] .list h1 {
     border-bottom: 2px solid #000; }
@@ -1367,8 +1384,7 @@ ol > li:before {
   display: none; }
 
 .sections h1 {
-  font-size: 2rem;
-  color: #0500F0; }
+  font-size: 2rem; }
 
 .sections h1:first-of-type {
   padding-bottom: 1rem; }
