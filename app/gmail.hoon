@@ -1,4 +1,4 @@
-:: Three ways we interactg with this app
+:: Three ways we interact with this app
 :: 1. .^(%gx /=gh=/endpoint)
 :: 2. [%peer [our %gh] /endpoint]
 :: 3. :gh &gh-poke %post /gists json-data
