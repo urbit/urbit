@@ -80,7 +80,12 @@
   =+  myr=(clan:title our)
   ?:  ?=($pawn myr)
     [[%base %collections] [%base %hall] [%base %talk] [%base %dojo] ~]
-  [[%home %collections] [%home %hall] [%home %talk] [%home %dojo] ~]
+  :~  [%home %collections]
+      [%home %dns]
+      [%home %dojo]
+      [%home %hall]
+      [%home %talk]
+  ==
 ::
 ++  deft-fish                                           ::  default connects
   |=  our/ship

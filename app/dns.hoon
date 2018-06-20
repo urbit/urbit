@@ -149,19 +149,8 @@
 ++  poke-noun
   |=  a=*
   ^-  (quip move _this)
-  ?+  a  ~&  +<+:this
-         [~ this]
-  ::
-      %aut
-    :_  this  :_  ~
-    :*  ost.bow
-        %poke
-        /foo
-        [our.bow dap.bow]
-        %dns-authority
-        [/org/urbit/dyndns %gcloud %tonal-griffin-853 %dyndns]
-    ==
-  ==
+  ~&  +<+:this
+  [~ this]
 :: +sigh-httr: accept http response
 ::
 ++  sigh-httr
