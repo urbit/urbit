@@ -61,7 +61,7 @@
         ==                                              ::
       $=  puk                                           ::  public keys (pubs)
         $:  yen=(jug ship duct)                         ::  trackers
-            kyz=(map ship (map life (pair pass pass)))  ::  public key versions
+            kyz=(map ship kist)                         ::  public key versions
         ==                                              ::
       $=  eth                                           ::  ethereum (vent)
         ::TODO  the subscribers here never hear dns or hul...
@@ -930,7 +930,7 @@
     |%
     ::                                                  ::  ++pubs:feel:su
     ++  pubs                                            ::  kick public keys
-      |=  kez=(map ship (map life (pair pass pass)))
+      |=  kez=(map ship kist)
       =/  kes  ~(tap by kez)
       ::
       ::  process change for each ship separately
@@ -1070,13 +1070,13 @@
       ?:(new &+evs |+evs)
     ::
     =+  vez=(order-events:ez ~(tap by evs))
-    =|  kyz=(map ship (map life (pair pass pass)))
+    =|  kyz=(map ship kist)
     |^  ?~  vez  (pubs:feel kyz)
         =^  kyn  ..file  (file-event i.vez)
         $(vez t.vez, kyz kyn)
     ::
     ++  file-keys
-      |=  [who=ship rev=life pub=(pair pass pass)]
+      |=  [who=ship rev=life pub=kest]
       ^+  kyz
       =-  (~(put by kyz) who -)
       =-  (~(put by -) rev pub)
@@ -1108,7 +1108,7 @@
         :-  ?~  kez  kyz
             (file-keys who u.kez)
         ..file(hul.eth (~(put by hul.eth) who hel))
-      ^-  [hel=hull kez=(unit (pair life (pair pass pass)))]
+      ^-  [hel=hull kez=(unit (pair life kest))]
       =+  hul=(fall (~(get by hul.eth) who) *hull)
       ::
       ::  if new, first dif must be %full
@@ -1118,19 +1118,26 @@
       ::  sanity checks, should never fail if we operate correctly
       ::
       ?>  ?+  -.dif  &
-            %spawned      !(~(has in spawned.hul) who.dif)
-            %keys         =(rev.dif +(key-revision.hul))
-            %continuity   =(new.dif +(continuity-number.hul))
+            %spawned      ?>  ?=(^ kid.hul)
+                          !(~(has in spawned.u.kid.hul) who.dif)
+            %keys         ?>  ?=(^ net.hul)
+                          =(rev.dif +(key-revision.u.net.hul))
+            %continuity   ?>  ?=(^ net.hul)
+                          =(new.dif +(continuity-number.u.net.hul))
           ==
       ::
       ::  apply hull changes, catch key changes
       ::
       :-  (apply-hull-diff hul dif)
       ?+  -.dif  ~
-        %keys   `[rev.dif enc.dif aut.dif]
-        %full   =>  new.dif  ::TODO  do we want/need to do a diff-check here?
+        %keys   `[rev.dif enc.dif aut.dif sut.dif]
+        %full   ?~  net.new.dif  ~
+                ::TODO  do we want/need to do a diff-check
+                =>  u.net.new.dif
                 :+  ~  key-revision
-                [encryption-key authentication-key]
+                :+  encryption-key
+                  authentication-key
+                crypto-suite
       ==
     ::
     ++  file-dns

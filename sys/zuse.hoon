@@ -191,17 +191,28 @@
   ++  constitution
     |%
     ++  hull
-      $:  owner=address
-          encryption-key=pass
-          authentication-key=pass
-          key-revision=@ud
-          continuity-number=@ud
-          spawn-count=@ud
-          spawned=(set @p)
-          sponsor=@p
-          escape=(unit @p)
-          spawn-proxy=address
-          transfer-proxy=address
+      $:  $=  own                                       ::  ownership
+          $:  owner=address
+              transfer-proxy=address
+          ==
+        ::
+          $=  net                                       ::  networking
+          %-  unit
+          $:  encryption-key=pass
+              authentication-key=pass
+              crypto-suite=@ud
+              key-revision=@ud
+              continuity-number=@ud
+              sponsor=(unit @p)
+              escape=(unit @p)
+          ==
+        ::
+          $=  kid                                       ::  spawning
+          %-  unit
+          $:  spawn-proxy=address
+              spawn-count=@ud
+              spawned=(set @p)
+          ==
       ==
     ::
     ++  complete-ship
@@ -223,10 +234,12 @@
             %bool           ::  active
             [%bytes-n 32]   ::  encryptionKey
             [%bytes-n 32]   ::  authenticationKey
+            %uint           ::  cryptoSuiteVersion
             %uint           ::  keyRevisionNumber
             %uint           ::  continuityNumber
             %uint           ::  spawnCount
             %uint           ::  sponsor
+            %bool           ::  hasSponsor
             %bool           ::  escapeRequested
             %uint           ::  escapeRequestedTo
             %address        ::  spawnProxy
@@ -241,10 +254,12 @@
             active=?
             encryption-key=octs
             authentication-key=octs
+            crypto-suite=@ud
             key-revision=@ud
             continuity-number=@ud
             spawn-count=@ud
             sponsor=@ud
+            has-sponsor=?
             escape-requested=?
             escape-to=@ud
             spawn-proxy=address
@@ -274,15 +289,16 @@
       ==
     ::
     ++  diff-hull
-      $%  [%full new=hull]
-          [%owner new=address]
-          [%spawned who=@p]
-          [%keys enc=@ aut=@ rev=@ud]
-          [%continuity new=@ud]
-          [%sponsor new=@p]
-          [%escape new=(unit @p)]
-          [%spawn-proxy new=address]
-          [%transfer-proxy new=address]
+      $%  [%full new=hull]                              ::
+          [%owner new=address]                          ::  OwnerChanged
+          [%activated who=@p]                           ::  Activated
+          [%spawned who=@p]                             ::  Spawned
+          [%keys enc=@ aut=@ sut=@ud rev=@ud]           ::  ChangedKeys
+          [%continuity new=@ud]                         ::  BrokeContinuity
+          [%sponsor new=(unit @p)]                      ::  EscapeAcc/LostSpons
+          [%escape new=(unit @p)]                       ::  EscapeReq/Can
+          [%spawn-proxy new=address]                    ::  ChangedSpawnProxy
+          [%transfer-proxy new=address]                 ::  ChangedTransferProxy
       ==
     ::
     ::  #  constants
@@ -299,15 +315,15 @@
     ++  ships-events
       |%
       ::
-      ::  Transferred(uint32,address)
-      ++  transferred
-        0x9014.bd16.807a.ce11.f497.2993.3667.4031.
-          8029.4d9f.0e4f.42a1.5be6.0d26.5369.171c
+      ::  OwnerChanged(uint32,address)
+      ++  owner-changed
+        0x16d0.f539.d49c.6cad.822b.767a.9445.bfb1.
+          cf7e.a6f2.a6c2.b120.a7ea.4cc7.660d.8fda
       ::
-      ::  Activated(uint32,address)
+      ::  Activated(uint32)
       ++  activated
-         0xe5a.2849.1af6.e9a4.a694.b3a0.fa1a.7ff7.
-          3b8a.a7ce.fbf5.0808.a81c.d89e.dfeb.a20d
+        0xe74c.0380.9d07.69e1.b1f7.06cc.8414.258c.
+          d1f3.b6fe.020c.d15d.0165.c210.ba50.3a0f
       ::
       ::  Spawned(uint32,uint32)
       ++  spawned
@@ -319,20 +335,25 @@
         0xb4d4.850b.8f21.8218.141c.5665.cba3.79e5.
           3e9b.b015.b51e.8d93.4be7.0210.aead.874a
       ::
-      ::  EscapeCanceled(uint32)
+      ::  EscapeCanceled(uint32,uint32)
       ++  escape-canceled
-        0x68f7.f1dc.6784.a962.1f80.dcbd.3e7f.ef93.
-          f77c.9228.d5c5.3dc7.a56f.10e1.c445.705a
+        0xd653.bb0e.0bb7.ce83.93e6.24d9.8fbf.17cd.
+          a590.2c83.28ed.0cd0.9988.f368.90d9.932a
       ::
       ::  EscapeAccepted(uint32,uint32)
       ++  escape-accepted
         0x7e44.7c9b.1bda.4b17.4b07.96e1.00bf.7f34.
           ebf3.6dbb.7fe6.6549.0b1b.fce6.246a.9da5
       ::
-      ::  ChangedKeys(uint32,bytes32,bytes32,uint32)
+      ::  LostSponsor(uint32,uint32)
+      ++  lost-sponsor
+        0xd770.4f9a.2519.3dbd.0b0c.b4a8.09fe.ffff.
+          a7f1.9d1a.ae88.17a7.1346.c194.4482.10d5
+      ::
+      ::  ChangedKeys(uint32,bytes32,bytes32,uint32,uint32)
       ++  changed-keys
-        0x6a39.f4e0.c935.b557.860d.3df3.9f1f.cb6b.
-          d63c.5a23.2d9e.fc28.5388.2994.f60c.708a
+        0xaa10.e7a0.117d.4323.f1d9.9d63.0ec1.69be.
+          bb3a.988e.8957.70e3.5198.7e01.ff54.23d5
       ::
       ::  BrokeContinuity(uint32,uint32)
       ++  broke-continuity
@@ -1245,7 +1266,7 @@
       ==  ==                                            ::
     ++  gift                                            ::  out result <-$
       $%  [%mack p=(unit tang)]                         ::  message n/ack
-          [%pubs p=(map life (pair pass pass))]         ::  public keys
+          [%pubs p=kist]                                ::  public keys
           {$vest p/tally}                               ::  balance update
           {$vein p/life q/(map life ring)}              ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
@@ -1343,6 +1364,12 @@
     ::  lost information that the old life had.
     ::
     ++  hand  @uvH                                      ::  128-bit hash
+    ++  kest                                            ::  public key-set
+      $:  enc=pass                                      ::  encryption key
+          aut=pass                                      ::  authentication key
+          sut=@ud                                       ::  crypto-suite version
+      ==                                                ::
+    ++  kist  (map life kest)                           ::  public key history
     ++  life  @ud                                       ::  ship version
     ++  mind  {who/ship lyf/life}                       ::  key identifier
     ++  name  (pair @ta @t)                             ::  ascii / unicode
@@ -5469,6 +5496,14 @@
   ::
   ::  for details on encoding, see below.
   ::
+  ++  decode-topics
+    :>  tox:  list of hex words
+    |*  [tox=(list @t) tys=(list etyp)]
+    =-  (decode-arguments - tys)
+    %+  roll  tox
+    |=  [top=@t tos=@t]
+    (cat 3 tos (rsh 3 2 top))
+  ::
   ++  decode-results
     :>  rex:  string of hex bytes with leading 0x.
     |*  [rex=@t tys=(list etyp)]
@@ -5702,31 +5737,43 @@
     |%
     ::
     ++  hull-from-eth
-      |=  hull:eth-noun
+      |=  [who=@p hull:eth-noun]
       ^-  hull
-      :*  owner
+      ::
+      ::  ownership
+      ::
+      :+  [owner transfer-proxy]
         ::
-          ?>  =(32 p.encryption-key)
-          `pass`q.encryption-key
+        ::  network state
         ::
-          ?>  =(32 p.authentication-key)
-          `pass`q.authentication-key
-        ::
-          key-revision
-        ::
-          continuity-number
-        ::
+        ?:  =(0 key-revision)  ~
+        :-  ~
+        :*  ?>  =(32 p.encryption-key)
+            `pass`q.encryption-key
+          ::
+            ?>  =(32 p.authentication-key)
+            `pass`q.authentication-key
+          ::
+            crypto-suite
+          ::
+            key-revision
+          ::
+            continuity-number
+          ::
+            ?.  has-sponsor  ~
+            ``@p`sponsor
+          ::
+            ?.  escape-requested  ~
+            ``@p`escape-to
+        ==
+      ::
+      ::  spawn state
+      ::
+      ?.  ?=(?(%czar %king) (clan:title who))  ~
+      :-  ~
+      :*  spawn-proxy
           spawn-count
-        ::
-          ~
-        ::
-          `@p`sponsor
-        ::
-          ?.  escape-requested  ~
-          ``@p`escape-to
-        ::
-          spawn-proxy
-          transfer-proxy
+          ~  ::NOTE  not returned for ships call
       ==
     ::
     ++  event-log-to-hull-diff
@@ -5736,56 +5783,61 @@
       ^-  (unit (pair ship diff-hull))
       ~?  ?=(~ mined.log)  %processing-unmined-event
       ::
-      ?:  =(event.log transferred)
-        =+  ^-  [who=@ wer=address]  ::TODO  should we make @p work here?
-            (decode-results data.log ~[%uint %address])
+      ?:  =(event.log owner-changed)
+        =+  ^-  [who=@ wer=address]
+            (decode-topics topics.log ~[%uint %address])
         `[who %owner wer]
       ::
       ?:  =(event.log activated)
-        =+  ^-  [who=@ wer=address]
-            (decode-results data.log ~[%uint %address])
-        :^  ~  who  %full
-        %*(. *hull owner wer, sponsor (sein:title who))
+        =/  who=@
+          (decode-topics topics.log ~[%uint])
+        `[who %activated who]
       ::
       ?:  =(event.log spawned)
-        =+  ^-  [pre=@ who=@]
-            (decode-results data.log ~[%uint %uint])
+        =/  pre=@  (decode-topics topics.log ~[%uint])
+        =/  who=@  (decode-results data.log ~[%uint])
         `[pre %spawned who]
       ::
       ?:  =(event.log escape-requested)
         =+  ^-  [who=@ wer=@]
-            (decode-results data.log ~[%uint %uint])
+            (decode-topics topics.log ~[%uint %uint])
         `[who %escape `wer]
       ::
       ?:  =(event.log escape-canceled)
-        =/  who=@  (decode-results data.log ~[%uint])
+        ::TODO verify this is safe, topics are 2 uints
+        =/  who=@  (decode-topics topics.log ~[%uint])
         `[who %escape ~]
       ::
       ?:  =(event.log escape-accepted)
         =+  ^-  [who=@ wer=@]
-            (decode-results data.log ~[%uint %uint])
-        `[who %sponsor wer]
+            (decode-topics topics.log ~[%uint %uint])
+        `[who %sponsor `wer]
+      ::
+      ?:  =(event.log lost-sponsor)
+        =/  who=@  (decode-topics topics.log ~[%uint])
+        `[who %sponsor ~]
       ::
       ?:  =(event.log changed-keys)
-        =+  ^-  [who=@ enc=octs aut=octs rev=@ud]
+        =/  who=@  (decode-topics topics.log ~[%uint])
+        =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
             %+  decode-results  data.log
-            ~[%uint [%bytes-n 32] [%bytes-n 32] %uint]
+            ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
         ?>  &(=(p.enc 32) =(p.aut 32))  ::  sanity
-        `[who %keys q.enc q.aut rev]
+        `[who %keys q.enc q.aut sut rev]
       ::
       ?:  =(event.log broke-continuity)
-        =+  ^-  [who=@ num=@]
-            (decode-results data.log ~[%uint %uint])
+        =/  who=@  (decode-topics topics.log ~[%uint])
+        =/  num=@  (decode-results data.log ~[%uint])
         `[who %continuity num]
       ::
       ?:  =(event.log changed-spawn-proxy)
         =+  ^-  [who=@ sox=address]
-            (decode-results data.log ~[%uint %address])
+            (decode-topics topics.log ~[%uint %address])
         `[who %spawn-proxy sox]
       ::
       ?:  =(event.log changed-transfer-proxy)
         =+  ^-  [who=@ tox=address]
-            (decode-results data.log ~[%uint %address])
+            (decode-topics topics.log ~[%uint %address])
         `[who %transfer-proxy tox]
       ::
       ::NOTE  0x8be0...57e0 is Owneable's OwnershipTransferred(address,address).
@@ -5798,19 +5850,55 @@
       ^-  hull
       ?-  -.dif
         %full             new.dif
-        %owner            hul(owner new.dif)
-        %spawned          =+  (~(put in spawned.hul) who.dif)
-                          hul(spawn-count +(spawn-count.hul), spawned -)
-        %keys             %_  hul
-                            encryption-key      enc.dif
-                            authentication-key  aut.dif
-                            key-revision        rev.dif
-                          ==
-        %continuity       hul(continuity-number new.dif)
-        %sponsor          hul(sponsor new.dif, escape ~)
-        %escape           hul(escape new.dif)
-        %spawn-proxy      hul(spawn-proxy new.dif)
-        %transfer-proxy   hul(transfer-proxy new.dif)
+      ::
+          %activated
+        %_  hul
+          net  `[0 0 0 0 0 `(sein:title who.dif) ~]
+          kid  ?.  ?=(?(%czar %king) (clan:title who.dif))  ~
+               `[0x0 0 ~]
+        ==
+      ::
+      ::  ownership
+      ::
+        %owner           hul(owner.own new.dif)
+        %transfer-proxy  hul(transfer-proxy.own new.dif)
+      ::
+      ::  networking
+      ::
+          ?(%keys %continuity %sponsor %escape)
+        ?>  ?=(^ net.hul)
+        ?-  -.dif
+            %keys
+          =-  hul(u.net -)
+          %_  u.net.hul
+            encryption-key      enc.dif
+            authentication-key  aut.dif
+            crypto-suite        sut.dif
+            key-revision        rev.dif
+          ==
+        ::
+            %sponsor
+          ?~  new.dif  hul(sponsor.u.net ~)
+          hul(sponsor.u.net new.dif, escape.u.net ~)
+        ::
+          %continuity  hul(continuity-number.u.net new.dif)
+          %escape      hul(escape.u.net new.dif)
+        ==
+      ::
+      ::  spawning
+      ::
+          ?(%spawned %spawn-proxy)
+        ?>  ?=(^ kid.hul)
+        ?-  -.dif
+            %spawned
+          =-  hul(u.kid -)
+          =*  kid  u.kid.hul
+          :+  spawn-proxy.kid
+            +(spawn-count.kid)
+          (~(put in spawned.kid) who.dif)
+        ::
+          %spawn-proxy  hul(spawn-proxy.u.kid new.dif)
+        ==
       ==
     ::
     ++  parse-id
