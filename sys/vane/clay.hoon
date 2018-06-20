@@ -2372,9 +2372,17 @@
     ++  read-p-in
       |=  {pax/path pes/regs}
       ^-  dict
-      =+  rul=(~(get by pes) pax)
-      ?^  rul  [pax u.rul]
-      ?~  pax  [/ %white ~]
+      =/  rul/(unit rule)  (~(get by pes) pax)
+      ?^  rul
+        :+  pax  mod.u.rul
+        %-  ~(rep in who.u.rul)
+        |=  {w/whom out/(pair (set ship) (map @ta crew))}
+        ?:  ?=({$& @p} w)
+          [(~(put in p.out) +.w) q.out]
+        =/  cru/(unit crew)  (~(get by cez.ruf) +.w)
+        ?~  cru  out
+        [p.out (~(put by q.out) +.w u.cru)]
+      ?~  pax  [/ %white ~ ~]
       $(pax (scag (dec (lent pax)) `path`pax))
     ::
     ++  may-read
@@ -2407,13 +2415,18 @@
     ++  allowed-by
       |=  {who/ship pax/path pes/regs}
       ^-  ?
-      =+  rul=rul:(read-p-in pax pes)
-      =-  ?:(?=($black mod.rul) !- -)
-      %-  ~(rep in who.rul)
-      |=  {w/whom h/_|}
-      ?:  h  &
-      ?:  ?=($& -.w)  =(p.w who)
-      (~(has in (fall (~(get by cez) p.w) ~)) who)
+      =/  rul/real  rul:(read-p-in pax pes)
+      =/  in-list/?
+        ?|  (~(has in p.who.rul) who)
+          ::
+            %-  ~(rep by q.who.rul)
+            |=  {{@ta cru/crew} out/_|}
+            ?:  out  &
+            (~(has in cru) who)
+        ==
+      ?:  =(%black mod.rul)
+        !in-list
+      in-list
     ::
     ::  Checks for existence of a node at an aeon.
     ::
