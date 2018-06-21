@@ -1223,6 +1223,7 @@
         $ogre  `%c
         $perm  `%c
         $serv  `%e
+        $tend  `%a
         $them  `%e
         $wait  `%b
         $want  `%a

@@ -135,6 +135,7 @@
           {$init p/@p}                                  ::  report install
           {$mack p/(unit tang)}                         ::  
           {$mass p/mass}                                ::  memory usage
+          {$rove p/ship q/lane}                         ::  lane change
           {$send p/lane q/@}                            ::  transmit packet
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
@@ -161,6 +162,7 @@
           {$nuke p/@p}                                  ::  toggle auto-block
           {$make p/(unit @t) q/@ud r/@ s/?}             ::  wild license
           {$sith p/@p q/@uw r/?}                        ::  imperial generator
+          {$tend $~}                                    ::  watch lane changes
           {$wake $~}                                    ::  timer activate
           {$wegh $~}                                    ::  report memory
           {$west p/sack q/path r/*}                     ::  network request
@@ -203,6 +205,7 @@
   ++  boon                                              ::  fort output
     $%  {$beer p/ship q/@uvG}                           ::  gained ownership
         {$cake p/sock q/soap r/coop s/duct}             ::  e2e message result
+        {$maze p/ship q/lane}                           ::  lane change
         {$mead p/lane q/rock}                           ::  accept packet
         {$milk p/sock q/soap r/*}                       ::  e2e pass message
         {$ouzo p/lane q/rock}                           ::  transmit packet
@@ -240,12 +243,13 @@
         wid/@ud                                         ::  logical wdow msgs
     ==                                                  ::
   ++  fort                                              ::  formal state
-    $:  $0                                              ::  version
+    $:  $1                                              ::  version
         gad/duct                                        ::  client interface
         hop/@da                                         ::  network boot date
         bad/(set @p)                                    ::  bad ships
         ton/town                                        ::  security
         zac/(map ship corn)                             ::  flows by server
+        ten/(set duct)                                  ::  watch lanes
     ==                                                  ::
   ++  gcos                                              ::  id description
     $%  {$czar $~}                                      ::  8-bit ship
@@ -661,9 +665,11 @@
   ++  able  ^?
     |%
     +=  gift                                            ::  out result <-$
-      $%  [%mass p=mass]                                ::  memory usage
+      $%  [%form p=http-config]                         ::  configuration
+          [%mass p=mass]                                ::  memory usage
           [%mack p=(unit tang)]                         ::  message ack
           [%sigh p=cage]                                ::  marked http response
+          [%that p=@p q=@ud r=?]                        ::  get proxied request
           [%thou p=httr]                                ::  raw http response
           [%thus p=@ud q=(unit hiss)]                   ::  http request+cancel
           [%veer p=@ta q=path r=@t]                     ::  drop-through
@@ -675,6 +681,7 @@
           [%crud p=@tas q=(list tank)]                  ::  XX rethink
           [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
           [%init p=@p]                                  ::  report install
+          [%live p=@ud q=(unit @ud)]                    ::  http/s ports
           [%serv p=$@(desk beam)]                       ::  set serving root
           [%them p=(unit hiss)]                         ::  outbound request
           [%they p=@ud q=httr]                          ::  inbound response
@@ -684,6 +691,7 @@
           [%wegh ~]                                     ::  report memory
           [%went p=sack q=path r=@ud s=coop]            ::  response confirm
           [%west p=sack q=[path *]]                     ::  network request
+          [%wise p=@p q=@ud r=?]                        ::  proxy notification
       ==                                                ::
     --  ::able
   ::
@@ -720,6 +728,8 @@
       ::
         [[%get-inner ~] p=@uvH q=beam r=mark]  ::TODO details?
         [[%got-inner ~] p=@uvH q=(each (cask) tang)]  ::TODO details?
+      ::
+        [[%not ~] p=@ud q=?]                            ::  proxy notification
     ==                                                  ::
   ++  hart  {p/? q/(unit @ud) r/host}                   ::  http sec+port+host
   ++  hate  {p/purl q/@p r/moth}                        ::  semi-cooked request
@@ -730,6 +740,24 @@
   ++  host  (each (list @t) @if)                        ::  http host
   ++  hoke  %+  each   {$localhost $~}                  ::  local host
             ?($.0.0.0.0 $.127.0.0.1)                    ::
+  :: +http-config: full http-server configuration
+  ::
+  +=  http-config
+    $:  :: secure: PEM-encoded RSA private key and certificate chain
+        ::
+        secure=(unit [key=wain certificate=wain])
+        :: proxy: reverse TCP proxy HTTP(s)
+        ::
+        proxy=?
+        :: log: keep HTTP(s) access logs
+        ::
+        log=?
+        :: redirect: send 301 redirects to upgrade HTTP to HTTPS
+        ::
+        ::   Note: requires certificate.
+        ::
+        redirect=?
+    ==
   ++  httq                                              ::  raw http request
     $:  p/meth                                          ::  method
         q/@t                                            ::  unparsed url

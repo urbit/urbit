@@ -636,7 +636,14 @@
     =.  our  ?~(hov our u.hov)  ::  XX
     =.  p.top  our              ::  XX necessary?
     ?-    -.kyz
-        $born  +>.$(ged hen)                            ::  register external
+        $born
+      %=  +>.$
+        ged  hen                                        ::  register external
+        mow  :_(mow [hen [%give %form [~ ?=(%king our) & &]]])
+      ==
+    ::
+        $live  +>.$             :: XX save ports
+    ::
         $serv
       =<  ~&([%serving (en-beam top)] .)
       ?^(p.kyz +>.$(top p.kyz) +>.$(q.top p.kyz))
@@ -794,9 +801,13 @@
             :+  %call  [%core (norm-beak bek) /wrap/[ext]/ren]
             [[%$ deps+!>(dep)] [%vale res]]
           ==
+      ::
+        $not  +>.$(mow :_(mow [ged [%give %that q.p.kyz p.u.mez q.u.mez]]))
       ==
     ::
       $wegh  !!                                         ::  handled elsewhere
+    ::
+      $wise  (ames-gram p.kyz [%not ~] q.kyz r.kyz)     ::  proxy notification
     ==
   ::
   ::++  axom                                              ::  old response
