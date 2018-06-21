@@ -578,19 +578,6 @@
         return ret;
       }
 
-      case c3__tstr: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
-      _mull_used();
-      {
-        u3_noun boc = u3qfu_buss(van, sut, p_gen, q_gen);
-        u3_noun nuf = u3qfu_buss(van, dox, p_gen, q_gen);
-        u3_noun ret = _mull_in(van, boc, gol, nuf, r_gen);
-
-        u3z(boc);
-        u3z(nuf);
-
-        return ret;
-      }
-
       case c3__tscm: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
