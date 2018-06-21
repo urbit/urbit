@@ -1,4 +1,4 @@
-::                                                      ::   
+::
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
 =<  ride
@@ -5795,12 +5795,14 @@
           ==                                            ::
 +$  skin                                                ::  resurface
           $@  =term                                     ::  name/~[term %none]
-          $%  [%cell =skin =skin]                       ::  pair
-              [%help =help =skin]                       ::  description
-              [%name =term =skin]                       ::  label
+          $%  ::  [%base =base]                             ::  
+              [%cell =skin =skin]                       ::  pair
+              ::  [%dbug =spot =skin]                       ::  trace
+              [%help =help =skin]                       ::  describe
+              [%name =term =skin]                       ::  apply label
               [%none ~]                                 ::  no added skin
               [%over =wing =skin]                       ::  relative to
-              [%spec =spec]                             ::  type
+              [%spec =spec]                             ::  cast to
               [%wash depth=@ud]                         ::  strip face
           ==                                            ::
 +$  tome  (pair what (map term hoon))                   ::  core chapter
@@ -5929,7 +5931,7 @@
     {$tskt p/skin q/wing r/hoon s/hoon}                 ::  =^  state machine
     {$tsls p/hoon q/hoon}                               ::  =+  q w/[p subject]
     {$tssg p/(list hoon)}                               ::  =~  hoon stack
-    {$tstr p/term q/hoon r/hoon}                        ::  =*  r w/alias p/q
+    {$tstr p/(pair term (unit spec)) q/hoon r/hoon}     ::  =*  new style
     {$tscm p/hoon q/hoon}                               ::  =,  overload p in q
   ::                                            ::::::  conditionals
     {$wtbr p/(list hoon)}                               ::  ?|  loobean or
@@ -6787,7 +6789,7 @@
     |=  gen/hoon
     ^-  hoon
     ?-  -.tik
-      %&  ?~(p.tik gen [%tstr u.p.tik [%wing q.tik] gen])
+      %&  ?~(p.tik gen [%tstr [u.p.tik ~] [%wing q.tik] gen])
       %|  [%tsls ?~(p.tik q.tik [%ktts u.p.tik q.tik]) gen]
     ==
   ::
@@ -8233,9 +8235,9 @@
                   ?~(t.p.gen $(gen i.p.gen) `[i.p.gen %cltr t.p.gen])
     ==
 ::::
-  ::  +hind: hoon to skin
+  ::  +flay: hoon to skin
   ::
-  ++  hind
+  ++  flay
     |-  ^-  (unit skin)
     ?+    gen
       =+(open ?:(=(- gen) ~ $(gen -)))
@@ -8257,6 +8259,9 @@
     ::
         [%limb @]        
       `p.gen
+    ::
+      ::  [%rock *]
+      ::  [%spec %leaf q.gen q.gen]
     ::
         [%note [%help *] *]
       (bind $(gen q.gen) |=(=skin [%help p.p.gen skin])) 
@@ -8341,7 +8346,7 @@
                    %-  ~(run by q.tome)
                    |=  =hoon
                    ?~  q.gen  hoon
-                   [%tstr p.i.q.gen q.i.q.gen $(q.gen t.q.gen)]
+                   [%tstr [p.i.q.gen ~] q.i.q.gen $(q.gen t.q.gen)]
         {$brcl *}  [%tsls p.gen [%brdt q.gen]]
         {$brdt *}  :+  %brcn  ~
                    =-  [[%$ ~ -] ~ ~]
@@ -8433,6 +8438,9 @@
           q.gen
         :-  $(p.gen skin.p.gen, q.gen [%$ 4])
         $(p.gen ^skin.p.gen, q.gen [%$ 5])
+      ::
+      ::    [%dbug *]
+      ::  [%dbug spot.p.ken $(p.gen skin.p.gen)]
       ::
           [%help *]
         [%note [%help help.p.gen] $(p.gen skin.p.gen)] 
@@ -8577,6 +8585,11 @@
     ::
         {$tsbr *}
       [%tsls ~(example ax fab p.gen) q.gen]
+    ::
+        {$tstr *}
+      :+  %tsld
+        r.gen
+      [%tune [[p.p.gen ~ ?~(q.p.gen q.gen [%kthp u.q.p.gen q.gen])] ~ ~] ~]
     ::
         {$tscl *}
       [%tsbn [%cncb [[%& 1] ~] p.gen] q.gen]
@@ -9733,9 +9746,6 @@
       =+  dov=$(sut p.fid, gen q.gen)
       [p.dov (comb q.fid q.dov)]
     ::
-        {$tstr *}
-      $(gen r.gen, sut (buss p.gen q.gen))
-    ::
         {$tscm *}
       $(gen q.gen, sut (busk p.gen))
     ::
@@ -9880,13 +9890,6 @@
         {$tsbn *}
       =+  lem=$(gen p.gen, gol %noun)
       $(gen q.gen, sut p.lem, dox q.lem)
-    ::
-        {$tstr *}
-      %=  $
-        gen  r.gen
-        sut  (buss p.gen q.gen)
-        dox  (buss(sut dox) p.gen q.gen)
-      ==
     ::
         {$wtcl *}
       =+  nor=$(gen p.gen, gol bool)
@@ -10210,7 +10213,6 @@
       {$sgzp *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       {$sgbn *}  $(gen q.gen)
       {$tsbn *}  $(gen q.gen, sut $(gen p.gen))
-      {$tstr *}  $(gen r.gen, sut (buss p.gen q.gen))
       {$wtcl *}  =+  [fex=(gain p.gen) wux=(lose p.gen)]
                  %-  fork  :~
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
@@ -12377,7 +12379,6 @@
           (stag %bsts ;~(plug sym ;~(pfix ;~(pose net tis) wyde)))
           (stag %like (most col rope))
         ==
-        
     ==
   ::
   ++  scat
@@ -12782,7 +12783,7 @@
                   ['<' (rune led %tsld expb)]
                   ['>' (rune ban %tsbn expb)]
                   ['-' (rune hep %tshp expb)]
-                  ['*' (rune tar %tstr expl)]
+                  ['*' (rune tar %tstr expg)]
                   [',' (rune com %tscm expb)]
                   ['+' (rune lus %tsls expb)]
                   ['~' (rune sig %tssg expi)]
@@ -12962,14 +12963,10 @@
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
     ++  hank  (most muck loaf)                          ::  gapped hoons
     ++  hunk  (most muck loan)                          ::  gapped specs
-    ++  lore  %+  sear
-                |=  =hoon 
-                =+  ~(hind ap hoon)
-                ~?  =(~ -)  [%bad-lore hoon]
-                -
-              loaf
+    ++  lore  (sear |=(=hoon ~(flay ap hoon)) loaf)     ::  skin
     ++  loaf  ?:(tol tall wide)                         ::  tall/wide hoon
     ++  loan  ?:(tol till wyde)                         ::  tall/wide spec
+    ++  lomp  ;~(plug sym (punt ;~(pfix tis wyde)))     ::  typeable name
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
     ++  muck  ?:(tol gap ace)                           ::  general separator
     ++  teak  %+  knee  *tiki  |.  ~+                   ::  wing or hoon
@@ -13015,7 +13012,7 @@
     ++  expd  |.(;~(gunk loaf loaf loaf loaf))          ::  four hoons
     ++  expe  |.(wisp)                                  ::  core tail
     ++  expf  |.(;~(gunk ;~(pfix cen sym) loaf))        ::  %term and hoon
-    ++  expg  |.(;~(gunk sym loaf))                     ::  term and hoon
+    ++  expg  |.(;~(gunk lomp loaf loaf))               ::  term/spec, two hoons
     ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [spec hoon]s
     ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more hoons
     ++  expj  |.(;~(gunk lore loaf))                    ::  skin and hoon
@@ -13141,7 +13138,7 @@
       $col  ?:(=([%base %flag] ros) ~ [~ %tsld ros p.vil])
       $lit  (bind ~(reek ap ros) |=(hyp/wing [%cnts hyp p.vil]))
       $ket  [~ ros p.vil]
-      $tis  =+  rud=~(hind ap ros)
+      $tis  =+  rud=~(flay ap ros)
             ?~(rud ~ `[%ktts u.rud p.vil])
     ==
   ::
@@ -13200,7 +13197,11 @@
       ?~  unit
         term
       [%name term %spec u.unit]
-    ;~(plug sym (punt ;~(pfix ;~(pose net tis) wyde)))
+    ;~  plug  sym 
+      ::  XX: net deprecated
+      ::
+      (punt ;~(pfix ;~(pose net tis) wyde))
+    ==
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
     |.(~+((wart ;~(pose expression:(norm &) long lute apex:(sail &)))))
