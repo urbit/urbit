@@ -3275,9 +3275,7 @@
           ==
       ^-  @
       ::  urbit's little-endian to keccak's big-endian.
-      =.  q.inp
-        =+  (swp 3 q.inp)
-        (lsh 3 (sub p.inp (met 3 q.inp)) -)
+      =.  q.inp  (rev 3 inp)
       %.  [inp out]
       (sponge per pad rat cap)
     ::
