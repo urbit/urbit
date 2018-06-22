@@ -1,3 +1,4 @@
+!:
 ::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
 |=  pit=vase
@@ -533,6 +534,7 @@
       %slit  ~
       %vale  ~
       %volt  ~
+      %walk  ~
   ==
 ::  +date-from-schematic: finds the latest pin date from this schematic tree.
 ::
@@ -2008,10 +2010,10 @@
   ++  make
     |=  =build
     ^-  build-receipt
-    ~&  [%turbo-make (build-to-tape build)]
     ::  accessed-builds: builds accessed/depended on during this run.
     ::
     =|  accessed-builds=(list ^build)
+    ::  ~&  [%turbo-make (build-to-tape build)]
     ::  dispatch based on the kind of +schematic in :build
     ::
     ::
@@ -2048,6 +2050,7 @@
             %slit  (make-slit gate sample)
             %vale  (make-vale disc mark input)
             %volt  (make-volt disc mark input)
+            %walk  (make-walk disc source target)
         ==
     ::  |schematic-handlers:make: implementation of the schematics
     ::
@@ -4487,6 +4490,296 @@
       %-  return-error
       =/  =beam  [[ship.disc desk.disc %da date.build] spur.rail.u.path-result]
       [leaf+"ford: %vale failed: invalid input for mark: {<(en-beam beam)>}"]~
+    ::
+    ++  make-walk
+      |=  [=disc source=term target=term]
+      ^-  build-receipt
+      ::
+      |^  ^-  build-receipt
+          ::  load all marks.
+          ::
+          ::    Any random mark can implement a +grab arm, so we must load all
+          ::    the marks if we want the mark graph to be complete.
+          ::
+          =^  load-directory-result  accessed-builds
+            (load-directory /mar "" "")
+          ?:  ?=([%error *] load-directory-result)
+            :*  build
+                [%build-result %error message.load-directory-result]
+                accessed-builds
+            ==
+          ?:  ?=([%block *] load-directory-result)
+            :*  build
+                [%blocks builds.load-directory-result ~]
+                accessed-builds
+            ==
+          ::  build an edge graph
+          ::
+          ::    :load-directory-result is a raw set of mark names and compiled
+          ::    cores. +build-edges reads that data into a consistent build
+          ::    graph.
+          ::
+          =/  edges  (build-edges ~(tap in results.load-directory-result))
+          ::  find a path through the graph
+          ::
+          ::    Make a list of individual mark translation actions which will
+          ::    take us from :source to :term.
+          ::
+          =/  path  (find-path-through edges)
+          ::  if there is no path between these marks, give a nice error message.
+          ::
+          ?~  path
+            :*  build
+                :*  %build-result  %error
+                    [leaf+"ford: no mark path from {<source>} to {<target>}"]~
+                ==
+                accessed-builds
+            ==
+          ::
+          :*  build
+              [%build-result %success %walk path]
+              accessed-builds
+          ==
+      ::  +load-result: either a complete map, some blocks, or an error
+      ::
+      +=  load-result
+        $%  [%result results=(map tape vase)]
+            [%block builds=(list ^build)]
+            [%error message=tang]
+        ==
+      ::  +load-directory: recursively walks the directory tree, loading marks
+      ::
+      ::    This either returns a map of all the mark cores on the specified
+      ::    :disc, a list of blocked builds or a fatal error.
+      ::
+      ::    We must load all the marks on :disc because any random mark may
+      ::    have a +grab arm which we must consider when doing the mark graph
+      ::    traversal.
+      ::
+      ++  load-directory
+        |=  [=path prev-name=tape name=tape]
+        ^-  [load-result _accessed-builds]
+        ::  load the directory directly
+        ::
+        =/  dir-build=^build  [date.build [%scry %c %y [disc path]]]
+        =^  dir-result  accessed-builds  (depend-on dir-build)
+        ?~  dir-result
+          [[%block [dir-build]~] accessed-builds]
+        ::
+        ?.  ?=([~ %success %scry *] dir-result)
+          ::  when directory scrys fail, this is a hard error.
+          ?>  ?=([~ %error *] dir-result)
+          [[%error message.u.dir-result] accessed-builds]
+        ::
+        =/  dir-arch=arch  ;;(arch q.q.cage.u.dir-result)
+        ::  try loading the file here
+        ::
+        =^  fil-result=load-result  accessed-builds
+          ?~  fil.dir-arch
+            ::  we have no file at this node. ignore it.
+            ::
+            [[%result ~] accessed-builds]
+          ?.  =(name "hoon")
+            ::  this is a non-hoon file in the mark directory. ignore it.
+            ::
+            [[%result ~] accessed-builds]
+          ::  load the file and return it
+          ::
+          =/  core-build=^build  [date.build [%core [disc path]]]
+          =^  core-result  accessed-builds  (depend-on core-build)
+          ?~  core-result
+            [[%block [core-build]~] accessed-builds]
+          ::
+          ?.  ?=([~ %success %core *] core-result)
+            ::  it is not a hard error if there's a hoon file which failed to compile.
+            ::
+            [[%result ~] accessed-builds]
+          ::
+          [[%result (my [prev-name vase.u.core-result]~)] accessed-builds]
+        ::
+        =/  valid-marks=(list @ta)
+          (skim (turn ~(tap by dir.dir-arch) head) (sane %tas))
+        ::  block on recursing into each directory
+        ::
+        =^  sub-results  accessed-builds
+          =|  results=(list load-result)
+          |-  ^+  [results accessed-builds]
+          ?~  valid-marks  [results accessed-builds]
+          ::
+          =*  current-name  i.valid-marks
+          =/  new-prev-name
+            ?~  prev-name
+              name
+            :(weld prev-name "-" name)
+          =^  sub-result  accessed-builds
+            (load-directory [current-name path] new-prev-name (trip current-name))
+          ::
+          =.  results  [sub-result results]
+          ::
+          $(valid-marks t.valid-marks)
+        ::  our results are the file node and the directory results
+        ::
+        =.  sub-results  [fil-result sub-results]
+        ::  return the first error, if exists
+        ::
+        =/  errors=(list tang)
+          %+  murn  sub-results
+          |=  result=load-result
+          ^-  (unit tang)
+          ?.  ?=([%error *] result)
+            ~
+          `message.result
+        ?^  errors
+          [[%error i.errors] accessed-builds]
+        ::  return all blocks, if exists
+        ::
+        =/  blocks=(list ^build)
+          %+  roll  sub-results
+          |=  [result=load-result blocks=(list ^build)]
+          ^-  (list ^build)
+          ?.  ?=([%block *] result)
+            blocks
+          (welp builds.result blocks)
+        ?^  blocks
+          [[%block blocks] accessed-builds]
+        ::  our list only has results. merge them.
+        ::
+        =/  merged=(map tape vase)
+          %+  roll  sub-results
+          |=  [result=load-result merged=(map tape vase)]
+          ^-  (map tape vase)
+          ?>  ?=([%result *] result)
+          (~(uni by merged) results.result)
+        [[%result merged] accessed-builds]
+      ::  edge-jug: type of our graph representation
+      ::
+      +=  edge-jug  (jug source=term [target=term arm=?(%grow %grab)])
+      ::  +build-edges: build an edge database out of raw mark vases
+      ::
+      ++  build-edges
+        |=  marks=(list [name=tape =vase])
+        ^-  edge-jug
+        ::
+        =|  edges=edge-jug
+        |-
+        ^+  edges
+        ?~  marks  edges
+        ::
+        =/  mark-name  (crip name.i.marks)
+        =/  mark-vase  vase.i.marks
+        ::
+        =?  edges  (slob %grab p.mark-vase)
+          =/  grab-arms  (sloe p:(slap mark-vase [%limb %grab]))
+          |-
+          ^+  edges
+          ?~  grab-arms  edges
+          =.  edges  (~(put ju edges) i.grab-arms [mark-name %grab])
+          $(grab-arms t.grab-arms)
+        ::
+        =?  edges  (slob %grow p.mark-vase)
+          =/  grow-arms  (sloe p:(slap mark-vase [%limb %grow]))
+          |-
+          ^+  edges
+          ?~  grow-arms  edges
+          =.  edges  (~(put ju edges) mark-name [i.grow-arms %grow])
+          $(grow-arms t.grow-arms)
+        ::
+        $(marks t.marks)
+      ::  mark-path: a path through the mark graph
+      ::
+      +=  mark-path  (list mark-action)
+      ::  +find-path-through: breadth first search over the mark graph
+      ::
+      ++  find-path-through
+        |=  edges=edge-jug
+        ^-  mark-path
+        ::  the source node starts out visited
+        =/  visited-nodes=(set mark)  [source ~ ~]
+        ::  these paths are flopped so we're always inserting to the front.
+        =|  path-queue=(qeu mark-path)
+        ::  start the queue with all the edges which start at the source mark
+        ::
+        =.  path-queue
+          =/  start-links  (find-links-in-edges edges source)
+          ::
+          |-
+          ^+  path-queue
+          ?~  start-links
+            path-queue
+          ::
+          =.  path-queue  (~(put to path-queue) [i.start-links]~)
+          ::
+          $(start-links t.start-links)
+        ::
+        |-
+        ^-  mark-path
+        ::
+        ?:  =(~ path-queue)
+          ::  no path found
+          ~
+        =^  current  path-queue  [p q]:~(get to path-queue)
+        ?>  ?=(^ current)
+        ::
+        ?:  =(target target.i.current)
+          ::  we have a completed path. paths in the queue are backwards
+          (flop current)
+        ::
+        =+  next-steps=(find-links-in-edges edges target.i.current)
+        ::  filter out already visited nodes
+        ::
+        =.  next-steps
+          %+  skip  next-steps
+          |=  link=mark-action
+          (~(has in visited-nodes) source.link)
+        ::  then add the new ones to the set of already visited nodes
+        ::
+        =.  visited-nodes
+          (~(gas in visited-nodes) (turn next-steps |=(mark-action source)))
+        ::  now all next steps go in the queue
+        ::
+        =.  path-queue
+          %-  ~(gas to path-queue)
+          %+  turn  next-steps
+          |=  new-link=mark-action
+          [new-link current]
+        ::
+        $
+      ::  +find-links-in-edges: gets edges usable by +find-path-through
+      ::
+      ::    This deals with disambiguating between %grab and %grow so we always
+      ::    pick %grab over %grow.
+      ::
+      ++  find-links-in-edges
+        |=  [edges=edge-jug source=term]
+        ^-  (list mark-action)
+        ::
+        =+  links=~(tap in (~(get ju edges) source))
+        ::
+        =|  results=(set mark-action)
+        |-
+        ^-  (list mark-action)
+        ?~  links
+          ~(tap in results)
+        ::
+        ?-    arm.i.links
+            %grab
+          ::  if :results has a %grow entry, remove it before adding our %grab
+          =/  grow-entry=mark-action  [%grow source target.i.links]
+          =?  results  (~(has in results) grow-entry)
+            (~(del in results) grow-entry)
+          ::
+          =.  results  (~(put in results) [%grab source target.i.links])
+          $(links t.links)
+        ::
+            %grow
+          ::  if :results has a %grab entry, don't add a %grow entry
+          ?:  (~(has in results) [%grab source target.i.links])
+            $(links t.links)
+          ::
+          =.  results  (~(put in results) [%grow source target.i.links])
+          $(links t.links)
+        ==
+      --
     ::  |utilities:make: helper arms
     ::
     ::+|  utilities

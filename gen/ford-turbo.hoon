@@ -120,6 +120,8 @@
   test-list
   test-mash
   test-multi-core-same-dependency
+  test-walk-prefer-grab
+  test-walk-large-graph
 ==
 ++  test-tear
   :-  `tank`leaf+"test-tear"
@@ -6738,6 +6740,369 @@
     results3
     results4
   ==
+::  tests that we can do the simple adjacent mark case, and that we use grab
+::  when both available.
+::
+++  test-walk-prefer-grab
+  :-  `tank`leaf+"test-walk-prefer-grab"
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  arch-type=type  -:!>(*arch)
+  ::
+  =/  scry-results=(map [term beam] (unit cage))
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |_  [a=tape b=@ud]
+      ::  convert to
+      ++  grow
+        |%
+        ++  two  [b a "grow"]
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |_  [a=@ud b=tape c=type]
+      ++  grab
+        |%
+        ++  one  |=([a=tape b=@ud] [b a "grab"])
+        --
+      --
+      '''
+    ::
+      ::  make sure we can deal with random not-hoon files in mar
+      :-  [%cy [[~nul %home %da ~1234.5.6] /js/dummy/mar]]
+      :-  ~
+      :-  %js
+      :-  hoon-src-type
+      '''
+      window.onload = function()
+      '''
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.one ~] [~.two ~] [~.dummy ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /one/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.hoon ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /two/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.hoon ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /dummy/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.js ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  fil=[~ u=0v1]
+      ~
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  fil=[~ u=0v2]
+      ~
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /js/dummy/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  fil=[~ u=0v3]
+      ~
+    ==
+  ::
+  =^  results1  ford-gate
+    %-  test-ford-call  :*
+      ford-gate
+      now=~1234.5.6
+      scry=(scry-with-results-and-failures scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/walk]  type=~  %build  ~nul
+            %walk  [~nul %home]  %one  %two
+        ==
+      ::
+      ^=  moves
+        :~  ^-  move:ford-gate
+            :*  duct=~[/walk]  %give  %made  ~1234.5.6
+                %complete  %success  %walk
+                [%grab %one %two]~
+            ==
+            ^-  move:ford-gate
+            :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home
+                %c  %warp  [~nul ~nul]  %home  ~  %mult  [%da ~1234.5.6]
+                %-  sy  :~
+                  [%y /mar/dummy]  [%y /mar/two/hoon]  [%y /mar/two]
+                  [%y /mar/one]  [%y /mar]  [%y /mar/dummy/js]
+                  [%y /mar/one/hoon]  [%x /mar/two/hoon]  [%x /mar/one/hoon]
+    ==  ==  ==  ==
+  ::
+  =^  results2  ford-gate
+    %-  test-ford-call  :*
+      ford-gate
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/walk] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home
+                %c  %warp  [~nul ~nul]  %home  ~
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
+++  test-walk-large-graph
+  :-  `tank`leaf+"test-walk-large-graph"
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  arch-type=type  -:!>(*arch)
+  ::
+  =/  scry-results=(map [term beam] (unit cage))
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |_  [a=tape b=@ud]
+      ::  convert to
+      ++  grow
+        |%
+        ++  two  [b a "grow"]
+        ++  five  b
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |_  [a=@ud b=tape c=tape]
+      ++  grab
+        |%
+        ++  one  |=([a=tape b=@ud] [b a "grab"])
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/three/mar]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |_  [b=tape c=tape]
+      ++  grab
+        |%
+        ++  one  |=([a=tape b=@ud] [a "grab"])
+        --
+      ++  grow
+        |%
+        ++  two
+          [b c]
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/four/mar]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |_  [c=tape b=tape]
+      ++  grab
+        |%
+        ++  two
+          |=  [a=@ud b=tape c=tape]
+          [c b]
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/five/mar]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |_  a=@u
+      ++  grab
+        |%
+        ++  four
+          ::  ignore the value entirely
+          |=  [c=tape b=tape]
+          5
+        --
+      ++  grow
+        |%
+        ++  one
+          [a "empty" "grow"]
+        --
+      --
+      '''
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.one ~] [~.two ~] [~.three ~] [~.four ~] [~.five ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /one/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.hoon ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /two/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.hoon ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /three/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.hoon ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /four/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.hoon ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /five/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  ~
+      (my ~[[~.hoon ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  fil=[~ u=0v1]
+      ~
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  fil=[~ u=0v2]
+      ~
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/three/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  fil=[~ u=0v3]
+      ~
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/four/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  fil=[~ u=0v4]
+      ~
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/five/mar]]
+      :-  ~
+      :-  %arch
+      :-  arch-type
+      :-  fil=[~ u=0v5]
+      ~
+    ==
+  ::
+  =^  results1  ford-gate
+    %-  test-ford-call  :*
+      ford-gate
+      now=~1234.5.6
+      scry=(scry-with-results-and-failures scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/walk]  type=~  %build  ~nul
+            %walk  [~nul %home]  %one  %four
+        ==
+      ::
+      ^=  moves
+        :~  ^-  move:ford-gate
+            :*  duct=~[/walk]  %give  %made  ~1234.5.6
+                %complete  %success  %walk
+                [[%grab %one %two] [%grab %two %four] ~]
+            ==
+            ^-  move:ford-gate
+            :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home
+                %c  %warp  [~nul ~nul]  %home  ~  %mult  [%da ~1234.5.6]
+                %-  sy  :~
+                  [%y /mar]
+                  ::
+                  [%y /mar/one]  [%y /mar/two]  [%y /mar/three]  [%y /mar/four]
+                  [%y /mar/five]
+                  ::
+                  [%y /mar/one/hoon]  [%y /mar/two/hoon]  [%y /mar/three/hoon]
+                  [%y /mar/four/hoon]  [%y /mar/five/hoon]
+                  ::
+                  [%x /mar/one/hoon]  [%x /mar/two/hoon]  [%x /mar/three/hoon]
+                  [%x /mar/four/hoon]  [%x /mar/five/hoon]
+    ==  ==  ==  ==
+  ::
+  =^  results2  ford-gate
+    %-  test-ford-call  :*
+      ford-gate
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/walk] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home
+                %c  %warp  [~nul ~nul]  %home  ~
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford-gate ~nul)
+  ==
+
+    ::
 ::  |utilities: helper arms
 ::
 ::+|  utilities

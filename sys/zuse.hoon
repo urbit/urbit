@@ -995,7 +995,16 @@
                 [%slit =type]
                 [%vale =cage]
                 [%volt =cage]
+                [%walk results=(list mark-action)]
     ==  ==  ==
+  ::  +mark-action: represents a single mark conversion step
+  ::
+  ::    In mark conversion, we want to convert from :source to :target. We also
+  ::    need to keep track of what type of conversion this is. If %grab, we
+  ::    want to use the definitions in the :target mark. If %grow, we want to
+  ::    use the :source mark.
+  ::
+  +=  mark-action  [type=?(%grow %grab) source=term target=term]
   ::
   ::  +schematic: plan for building
   ::
@@ -1313,6 +1322,19 @@
             ::
             input=*
         ==
+        ::  %walk: finds a mark conversion path between two marks
+        ::
+        $:  %walk
+            ::  disc in clay to load the marks from
+            ::
+            =disc
+            ::  source: the original mark type
+            ::
+            source=term
+            ::  target: the destination mark type
+            ::
+            target=term
+        ==
     ==
   ::
   ::  +scaffold: program construction in progress
@@ -1544,6 +1566,7 @@
         %slit  [%noun !>(type.result)]
         %vale  cage.result
         %volt  cage.result
+        %walk  [%noun !>(results.result)]
     ==
   ::  +result-as-error: extracts a tang out of a made-result
   ::
