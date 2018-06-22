@@ -1214,17 +1214,18 @@
       ^-  (unit @tas)
       ?+  sep  ~&  [%ap-vain sep]
                ~
+        $build  `%f
         $cash  `%a
         $conf  `%g
         $cred  `%c
         $crew  `%c
         $crow  `%c
         $deal  `%g
-        $build  `%f
-        $kill  `%f
-        $flog  `%d
         $drop  `%c
+        $flog  `%d
         $info  `%c
+        $keep  `%f
+        $kill  `%f
         $merg  `%c
         $mont  `%c
         $nuke  `%a
@@ -1238,7 +1239,7 @@
         $want  `%a
         $warp  `%c
         $well  `%e
-        ::  $wipe  `%f                                      ::  XX cache clear
+        $wipe  `%f
       ==
     --
   --
