@@ -926,13 +926,15 @@
   ?~  t.hot
     (rap 3 [i.hot out])
   $(out [sep i.hot out], hot t.hot)
-::
-:::: acme api response json reparsers
+:: |grab: acme api response json reparsers
 ::
 ++  grab
   =,  dejs:format
   |%
+  :: +json-purl: parse url
+  ::
   ++  json-purl  (su auri:de-purl:html)
+  :: +directory: parse ACME service directory
   ::
   ++  directory
     %-  ot
@@ -942,6 +944,7 @@
         ['revokeCert' json-purl]
         ['keyChange' json-purl]
     ==
+  :: +acct: parse ACME service account
   ::
   ++  acct
     %-  ot
@@ -950,6 +953,7 @@
         ['status' so]
         :: ignore key, contact, initialIp
     ==
+  :: +order: parse certificate order
   ::
   ++  order
     %-  ot
@@ -958,12 +962,18 @@
         ['expires' so] :: XX (su iso-8601)
         ['status' so]
     ==
+  :: +finalizing-order: parse order in a finalizing state
+  ::
+  ::   XX remove once +order has optional keys
   ::
   ++  finalizing-order
     %-  ot
     :~  ['expires' so] :: XX (su iso-8601)
         ['status' so]
     ==
+  :: +final-order: parse order in a finalized state
+  ::
+  ::   XX remove once +order has optional keys
   ::
   ++  final-order
     %-  ot
@@ -971,12 +981,15 @@
         ['status' so]
         ['certificate' json-purl]
     ==
-  ::
+  :: +auth: parse authorization
   ++  auth
     =>  |%
+        :: +iden: parse dns identifier to +turf
+        ::
         ++  iden
           |=  [typ=@t hot=host]
           ?>(&(?=(%dns typ) ?=([%& *] hot)) p.hot)
+        :: +trial: transform parsed domain validation challenge
         ::
         ++  trial
           |=  a=(list [typ=@t sas=@t url=purl tok=@t])
@@ -991,6 +1004,7 @@
         ['expires' so] :: XX (su iso-8601)
         ['challenges' (cu trial (ar challenge))]
     ==
+  :: +challenge: parse domain validation challenge
   ::
   ++  challenge
     %-  ot
@@ -999,6 +1013,7 @@
         ['url' json-purl]
         ['token' so]
     ==
+  :: +error: parse ACME service error response
   ::
   ++  error
     %-  ot
@@ -1011,290 +1026,461 @@
 ::::  acme state
 ::
 |%
-+=  move  [bone card]                                   ::
-+=  card                                                ::
-  $%  [%hiss wire [~ ~] %httr %hiss hiss:eyre]          ::
-      [%well wire path (unit mime)]                     ::
-  ==                                                    ::
-+=  directory                                           ::  ACME v2
-  $:  reg/purl                                          ::  newAccount
-      non/purl                                          ::  newNonce
-      der/purl                                          ::  newOrder
-      rev/purl                                          ::  revokeCert
-      rek/purl                                          ::  keyChange
-  ==                                                    ::
-+=  acct  [key=key:rsa reg=(unit [wen=@t kid=@t])]      ::  account XX wen=@da
-+=  turf  (list @t)                                     ::  domain
-+=  trial                                               ::  challenge
-  $%  [%http cal=purl tok=@t sas=?(%recv %pend %auth)]  ::    http-only
-  ==                                                    ::
-+=  auth                                                ::  authorization
-  $%  [%0 aut=purl]                                     ::    received
-      [%1 aut=purl dom=turf cal=trial]                  ::    in-progress
-  ==                                                    ::
-+=  order                                               ::  certificate order
-  $%  [%0 dom=(list turf)]                              ::    initialized
-      [%1 dom=(list turf) exp=@t der=purl fin=purl aut=(map @ud auth)] :: XX exp=@da
-      [%2 dom=(list turf) exp=@t der=purl fin=purl key=key:rsa csr=@ux]      ::    cert requested
-  ==                                                    ::
-+=  config  [key=key:rsa exp=@da cer=wain]              ::  finalized config
-+=  history                                             ::  isn't over
-  $:  act=(list acct)                                   ::
-      rod=(list order)                                  ::
-      fig=(list (pair (list turf) config))              ::
-  ==                                                    ::
-+=  acme                                                ::
-  $:  bas=purl                                          ::  service base url
-      dir=directory                                     ::  service urls
-      act=acct                                          ::  service account
-      non=@t                                            ::  nonce from last
-      rod=(map @ud order)                               ::  active orders
-      cey=key:rsa                                       ::  cert key
-      liv=(map (list turf) config)                      ::  active config
-      hit=history                                       ::  a foreign country
-  ==                                                    ::
---                                                      ::
+:: +move: output effect
+::
++=  move  [bone card]
+:: +card: output effect payload
+::
++=  card
+  $%  [%hiss wire [~ ~] %httr %hiss hiss:eyre]
+      [%well wire path (unit mime)]
+  ==
+:: +turf: a domain, TLD first
+::
++=  turf  (list @t)
+:: +acct: an ACME service account
+::
++=  acct
+  $:  :: key: account keypair
+      ::
+      key=key:rsa
+      :: reg: account registration
+      ::
+      reg=(unit [wen=@t kid=@t])   :: XX wen=@da
+  ==
+:: +config: finalized configuration
+::
++=  config
+  $:  :: dom: domains
+      ::
+      dom=(set turf)
+      :: key: certificate keypair
+      ::
+      key=key:rsa
+      :: cer: signed certificate
+      ::
+      cer=wain
+      :: exp: expiration date
+      ::
+      exp=@da
+      :: dor: source ACME service order URL
+      ::
+      dor=purl
+  ==
+:: +trial: domain validation challenge
+::
++=  trial
+  $%  :: %http only for now
+      $:  %http
+          :: ego: ACME service challenge url
+          ::
+          ego=purl
+          :: tok: challenge token
+          ::
+          tok=@t
+          :: sas: challenge status
+          ::
+          sas=?(%recv %pend %auth)
+  ==  ==
+:: +auth: domain authorization
+::
++=  auth
+  $:  :: ego: ACME service authorization url
+      ::
+      ego=purl
+      :: dom: domain under authorization
+      ::
+      dom=turf
+      :: cal: domain validation challenge
+      ::
+      cal=trial
+  ==
+:: +order-auth: domain authorization state for order processing
+::
++=  order-auth
+  $:  :: pending: remote authorization urls
+      ::
+      pending=(list purl)
+      :: active: authorization in progress
+      ::
+      active=(unit [idx=@ auth])
+      :: done: finalized authorizations (XX or failed?)
+      ::
+      done=(list auth)
+  ==
+:: +order: ACME certificate order
+::
++=  order
+  $:  :: dom: domains
+      ::
+      dom=(set turf)
+      :: sas: order state
+      ::
+      sas=$@(%wake [%rest wen=@da])
+      :: exp: expiration date
+      ::
+      ::   XX @da once ISO-8601 parser
+      ::
+      exp=@t
+      :: ego: ACME service order url
+      ::
+      ego=purl
+      :: fin: ACME service order finalization url
+      ::
+      fin=purl
+      :: key: certificate keypair
+      ::
+      key=key:rsa
+      :: csr: DER-encoded PKCS10 certificate signing request
+      ::
+      csr=@ux
+      :: aut: authorizations required by this order
+      ::
+      aut=order-auth
+  ==
+:: +history: archive of past ACME service interactions
+::
++=  history
+  $:  :: act: list of revoked account keypairs
+      ::
+      act=(list acct)
+      :: fig: list of expired configurations
+      ::
+      fig=(list config)
+      :: fal: list of failed order attempts
+      ::
+      fal=(list order)
+  ==
+:: +directory: ACME v2 service directory
+::
++=  directory
+  $:  :: reg: registration url (newAccount)
+      ::
+      reg=purl
+      :: non: nonce creation url (newNonce)
+      ::
+      non=purl
+      :: der: order creation url (newOrder)
+      ::
+      der=purl
+      :: rev: certificate revocation url (revokeCert)
+      ::
+      rev=purl
+      :: rek: account key revocation url (keyChange)
+      ::
+      rek=purl
+  ==
+:: +acme: complete app state
+::
++=  acme
+  $:  :: bas: ACME service root url
+      ::
+      bas=purl
+      :: dir: ACME service directory
+      ::
+      dir=directory
+      :: act: ACME service account
+      ::
+      act=acct
+      :: liv: active, live configuration
+      ::
+      liv=(unit config)
+      :: hit: ACME account history
+      ::
+      hit=history
+      :: nonces: list of unused nonces
+      ::
+      nonces=(list @t)
+      :: rod: active, in-progress order
+      ::
+      rod=(unit order)
+      :: pen: pending domains for next order
+      ::
+      pen=(unit (set turf))
+      :: cey: certificate key XX move?
+      ::
+      cey=key:rsa
+  ==
+--
 ::
 ::::  acme app
 ::
-=|  mov=(list move)
-|_  [bow=bowl:gall acme]
+:: mov: list of outgoing moves for the current transaction
 ::
-++  this  .               :: XX #712
+=|  mov=(list move)
+::
+|_  [bow=bowl:gall acme]
+:: +this: self
+::
+::   XX Should be a +* core alias, see urbit/arvo#712
+::
+++  this  .
+:: +emit: emit a move
 ::
 ++  emit
   |=  car=card
   ~&  [%emit car]
   this(mov [[ost.bow car] mov])
-::
-++  emil
-  |=  rac=(list card)
-  q:(spin rac this |=([a=card b=_this] [~ (emit:b a)]))
+:: +abet: finalize transaction
 ::
 ++  abet
+  ^-  (quip move _this)
   [(flop mov) this(mov ~)]
+:: +request: generic http request
 ::
 ++  request
-  |=  [wir=wire url=purl bod=(unit json)]
-  |^  ^-  card
-      [%hiss wir [~ ~] %httr %hiss url moth]
-  ::
-  ++  moth
-    ?~  bod
-      [%get ~ ~]
-    [%post (my content-type+['application/jose+json' ~] ~) `body]
-  ::
-  ++  body
-    ?>  ?=(^ bod)
-    ^-  octs
-    =;  pro=json
-      (as-octt:mimes:html (en-json:html (sign:jws key.act pro u.bod)))
-    :-  %o  %-  my  :~
-      nonce+s+non
-      url+s+(crip (en-purl:html url))
-      ?^  reg.act
-        kid+s+kid.u.reg.act
-      jwk+(pass:en:jwk key.act)
-    ==
-  --
-::
-++  directory
-  (emit (request /acme/dir/(scot %p our.bow) bas ~))
-::
-++  nonce
-  |=  nex=wire
-  ^+  this
-  ?>  ?=([%next *] nex)
-  (emit (request (weld `wire`/acme/non `wire`nex) non.dir ~))
-::
-++  register
-  %-  emit(reg.act ~)
-  %^  request  /acme/reg/(scot %p our.bow)
-    reg.dir
-  `[%o (my [['termsOfServiceAgreed' b+&] ~])]
-::
-++  new-order
-  ^+  this
-  ?~  reg.act
-    this          :: XX pending registration assumed
-  %-  emil
-  %+  turn
-    (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %0 *] a)))
-  |=  [i=@ud rod=order]
+  |=  [wir=wire req=hiss]
   ^-  card
-  ?>  ?=([%0 *] rod)
-  %^  request  /acme/der/(scot %ud i)
-    der.dir
+  [%hiss wir [~ ~] %httr %hiss req]
+:: +signed-request: JWS JSON POST
+::
+++  signed-request
+  |=  [url=purl non=@t bod=json]
+  ^-  hiss
+  :^  url  %post
+    (my content-type+['application/jose+json' ~] ~)
   :-  ~
-  ^-  json
+  ^-  octs
+  =;  pro=json
+    (as-octt:mimes:html (en-json:html (sign:jws key.act pro bod)))
   :-  %o  %-  my  :~
-    :-  %identifiers
-    :-  %a
-    %+  turn
-      dom.rod
-    |=(a=turf [%o (my type+s+'dns' value+s+(join '.' a) ~)])
+    nonce+s+non
+    url+s+(crip (en-purl:html url))
+    ?^  reg.act
+      kid+s+kid.u.reg.act
+    jwk+(pass:en:jwk key.act)
   ==
+:: +bad-nonce: check if an http response is a badNonce error
 ::
-++  authorize
-  ^+  this
-  %-  emil
-  =/  aut=(list (trel @ud @ud purl))
-    %-  zing
-    %+  turn
-      (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %1 *] a)))
-    |=  [ider=@ud rod=order]
-    ?>  ?=([%1 *] rod)
-    %+  turn
-      ~(tap by aut.rod)
-    |=  [i=@ud aut=auth]
-    ?>  ?=([%0 *] aut)
-    [i ider aut.aut]
-  %+  turn  aut
-  |=  [i=@ud ider=@ud aut=purl]
-  ^-  card
-  (request /acme/aut/(scot %ud i)/der/(scot %ud ider) aut ~)
+++  bad-nonce
+  |=  rep=httr
+  ^-  ?
+  :: XX always 400?
+  ?.  =(400 p.rep)  |
+  ?~  r.rep  |
+  =/  jon=(unit json)  (de-json:html q.u.r.rep)
+  ?~  jon  |
+  :: XX unit parser, types
+  =('urn:ietf:params:acme:error:badNonce' +:(error:grab u.jon))
+:: |effect: send moves to advance
 ::
-++  save-challenge
-  ^+  this
-  %-  emil
-  =/  cal=(list (trel @ud @ud trial))
-    %-  zing
-    %+  turn
-      (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %1 *] a)))
-    |=  [ider=@ud rod=order]
-    ?>  ?=([%1 *] rod)
-    %+  turn
-      ~(tap by aut.rod)
-    |=  [i=@ud aut=auth]
-    ?>  ?=([%1 *] aut)
-    [i ider cal.aut]
-  %+  turn  cal
-  |=  [i=@ud ider=@ud cal=trial]
-  ^-  card
-  :^    %well
-      /acme/wel/(scot %ud i)/der/(scot %ud ider)
-    /acme-challenge/[tok.cal]
-  :+  ~
-    /text/plain
-  %-  as-octs:mimes:html
-  (rap 3 [tok.cal '.' (pass:thumb:jwk key.act) ~])
-::
-++  test-challenge
-  ^+  this
-  %-  emil
-  =/  cal=(list [@ud @ud turf trial])
-    %-  zing
-    %+  turn
-      (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %1 *] a)))
-    |=  [ider=@ud rod=order]
-    ?>  ?=([%1 *] rod)
-    %+  turn
-      ~(tap by aut.rod)
-    |=  [i=@ud aut=auth]
-    ?>  ?=([%1 *] aut)
-    [i ider dom.aut cal.aut]
-  %+  turn  cal
-  |=  [i=@ud ider=@ud dom=turf cal=trial]
-  ^-  card
-  =/  wir=wire  /acme/tcal/(scot %ud i)/der/(scot %ud ider)
-  =/  pat=path  /'.well-known'/acme-challenge/[tok.cal]
-  =/  pul=purl  [[| ~ [%& dom]] [~ pat] ~]
-  (request wir pul ~)
-::
-++  finalize-challenge
-  ^+  this
-  %-  emil
-  =/  cal=(list (trel @ud @ud purl))
-    %-  zing
-    %+  turn
-      (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %1 *] a)))
-    |=  [ider=@ud rod=order]
-    ?>  ?=([%1 *] rod)
-    %+  turn
-      ~(tap by aut.rod)
-    |=  [i=@ud aut=auth]
-    ?>  ?=([%1 *] aut)
-    [i ider cal.cal.aut]
-  %+  turn  cal
-  |=  [i=@ud ider=@ud cal=purl]
-  ^-  card
-  =/  wir=wire  /acme/cal/(scot %ud i)/der/(scot %ud ider)
-  (request wir cal `[%o ~])
-::
-++  finalize-order
-  ^+  this
-  %-  emil
-  =/  csr=(list (trel @ud purl @ux))
-    %+  turn
-      (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %2 *] a)))
-    |=  [i=@ud rod=order]
-    ?>  ?=([%2 *] rod)
-    [i fin.rod csr.rod]
-  %+  turn  csr
-  |=  [i=@ud fin=purl csr=@ux]
-  ^-  card
-  %^    request
-      /acme/fin/(scot %ud i)
-    fin
-  `[%o (my csr+s+(en-base64url csr) ~)]
-::
-++  poll-order
-  ^+  this
-  %-  emil
-  =/  url=(list (pair @ud purl))
-    %+  turn
-      (skim ~(tap by rod) |=(a=[@ud order] ?=([@ %2 *] a)))
-    |=  [i=@ud rod=order]
-    ?>  ?=([%2 *] rod)
-    [i der.rod]
-  %+  turn  url
-  |=  [i=@ud der=purl]
-  ^-  card
-  (request /acme/por/(scot %ud i) der ~)
-::
-++  sigh-httr
-  |=  [wir=wire rep=httr:eyre]
-  ^-  (quip move _this)
-  ~&  [wir rep]
-  ?>  ?=([%acme ^] wir)
-  =/  ron  (skim q.rep |=((pair @t @t) ?=(%replay-nonce p)))
-  =?  non  ?=(^ ron)  q.i.ron
-  ?.  ?=(%2 (div p.rep 100))
-    ~&  %lack-of-success
-    ?:  ?=(%tcal i.t.wir)
-      abet:test-challenge  :: XX sleep?
-    =/  bod=[typ=@t det=@t]
-      (error:grab (need (de-json:html q:(need r.rep))))
-    ?:  =('urn:ietf:params:acme:error:badNonce' typ.bod)
-      ?.  ?=(?(%reg %der %aut %cal %fin) i.t.wir)
-        ~&(unrecoverable-bad-nonce+wir abet:this)
-      abet:(nonce /next/[i.t.wir])
-    :: XX challenge is not pending
-    :: XX order can't be finalized
-    abet:this
-  ~|  sigh-fail+rep
-  ?+  i.t.wir  !!
-      %dir
-    =<  abet:(nonce /next/reg)
-    =/  bod=^directory
-      (directory:grab (need (de-json:html q:(need r.rep))))
-    this(dir bod)
+++  effect
+  |%
+  :: +directory: get ACME service directory
   ::
-      %non
-    =<  abet
-    ?.  ?=([%next ^] t.t.wir)
-      ~&(unrecognized-nonce-wire+wir this)
-    =*  nex  i.t.t.t.wir
-    ?+  nex  ~&(unknown-nonce-next+nex this)
-      %reg  register
-      %der  new-order
-      %aut  authorize
-      %cal  finalize-challenge
-      %fin  finalize-order
+  ++  directory
+    ^+  this
+    (emit (request /acme/directory/(scot %p our.bow) bas %get ~ ~)) :: XX now?
+  :: +nonce: get a new nonce for the next request
+  ::
+  ++  nonce
+    |=  nex=wire
+    ^+  this
+    ?>  ?=([%next *] nex)  :: XX now?
+    (emit (request (weld `wire`/acme/nonce `wire`nex) non.dir %get ~ ~))
+  :: +register: create ACME service account
+  ::
+  ::   Note: accepts services ToS.
+  ::
+  ++  register
+    ^+  this
+    ?~  nonces
+      (nonce /next/register)
+    %-  emit(nonces t.nonces, reg.act ~)
+    %+  request
+      /acme/register/(scot %p our.bow) :: XX now?
+    %^  signed-request  reg.dir  i.nonces
+    [%o (my [['termsOfServiceAgreed' b+&] ~])]
+  :: XX rekey
+  ::
+  :: +new-order: create a new certificate order
+  ::
+  ++  new-order
+    ^+  this
+    ~|  %new-order-effect-fail
+    ?.  ?=(^ reg.act)  ~|(%no-account !!)
+    ?.  ?=([~ ^] pen)  ~|(%no-domains !!)
+    ?~  nonces
+      (nonce /next/new-order)
+    %-  emit(nonces t.nonces)
+    %+  request
+      /acme/new-order/(scot %da now.bow)
+    %^  signed-request  der.dir  i.nonces
+    :-  %o  %-  my  :~
+      :-  %identifiers
+      :-  %a
+      %+  turn
+        ~(tap in `(set turf)`u.pen)
+      |=(a=turf [%o (my type+s+'dns' value+s+(join '.' a) ~)])
     ==
+  :: +finalize-order: finalize completed order
   ::
-      %reg
-    =<  abet:new-order
+  ++  finalize-order
+    ^+  this
+    ~|  %finalize-order-effect-fail
+    ?.  ?=(^ reg.act)  ~|(%no-account !!)
+    ?.  ?=(^ rod)      ~|(%no-active-order !!)
+    ?.  ?=(~ pending.aut.u.rod)  ~|(%pending-authz !!)
+    ?.  ?=(~ active.aut.u.rod)   ~|(%active-authz !!)
+    :: XX revisit wrt rate limits
+    ?>  ?=(%wake sas.u.rod)
+    ?~  nonces
+      (nonce /next/finalize-order)
+    %-  emit(nonces t.nonces)
+    %+  request
+      /acme/finalize-order/(scot %da now.bow)
+    %^  signed-request  fin.u.rod  i.nonces
+    [%o (my csr+s+(en-base64url csr.u.rod) ~)]
+  :: +check-order: check completed order for certificate availability
+  ::
+  ++  check-order
+    ^+  this
+    ~|  %check-order-effect-fail
+    ?.  ?=(^ reg.act)  ~|(%no-account !!)
+    ?.  ?=(^ rod)      ~|(%no-active-order !!)
+    ?.  ?=(~ pending.aut.u.rod)  ~|(%pending-authz !!)
+    ?.  ?=(~ active.aut.u.rod)   ~|(%active-authz !!)
+    :: XX revisit wrt rate limits
+    ?>  ?=(%wake sas.u.rod)
+    (emit (request /acme/check-order/(scot %da now.bow) ego.u.rod %get ~ ~))
+  :: +certificate: download PEM-encoded certificate
+  ::
+  ++  certificate
+    |=  url=purl
+    ^+  this
+    ~|  %certificate-effect-fail
+    ?.  ?=(^ reg.act)  ~|(%no-account !!)
+    ?.  ?=(^ rod)      ~|(%no-active-order !!)
+    =/  hed  (my accept+['applicate/x-pem-file' ~] ~)
+    (emit (request /acme/certificate/(scot %da now.bow) url %get hed ~))
+  :: +get-authz: get next ACME service domain authorization object
+  ::
+  ++  get-authz
+    ^+  this
+    ~|  %get-authz-effect-fail
+    ?.  ?=(^ reg.act)  ~|(%no-account !!)
+    ?.  ?=(^ rod)      ~|(%no-active-order !!)
+    ?.  ?=(^ pending.aut.u.rod)  ~|(%no-pending-authz !!)
+    :: XX revisit wrt rate limits
+    ?>  ?=(%wake sas.u.rod)
+    %-  emit
+    (request /acme/get-authz/(scot %da now.bow) i.pending.aut.u.rod %get ~ ~)
+  :: XX check/finalize-authz ??
+  ::
+  :: +save-trial: save ACME domain validation challenge to /.well-known/
+  ::
+  ++  save-trial
+    ^+  this
+    ~|  %save-trial-effect-fail
+    ?.  ?=(^ reg.act)  ~|(%no-account !!)
+    ?.  ?=(^ rod)      ~|(%no-active-order !!)
+    ?.  ?=(^ active.aut.u.rod)  ~|(%no-active-authz !!)
+    :: XX revisit wrt rate limits
+    ?>  ?=(%wake sas.u.rod)
+    =*  aut  u.active.aut.u.rod
+    %-  emit
+    :^    %well
+        :: XX idx in wire?
+        /acme/save-trial/(scot %da now.bow)
+      /acme-challenge/[tok.cal.aut]
+    :+  ~
+      /text/plain
+    %-  as-octs:mimes:html
+    (rap 3 [tok.cal.aut '.' (pass:thumb:jwk key.act) ~])
+  :: +test-trial: confirm that ACME domain validation challenge is available
+  ::
+  ++  test-trial
+    ^+  this
+    ~|  %test-trial-effect-fail
+    ?.  ?=(^ reg.act)  ~|(%no-account !!)
+    ?.  ?=(^ rod)      ~|(%no-active-order !!)
+    ?.  ?=(^ active.aut.u.rod)  ~|(%no-active-authz !!)
+    :: XX revisit wrt rate limits
+    ?>  ?=(%wake sas.u.rod)
+    =*  aut  u.active.aut.u.rod
+    =/  pat=path  /'.well-known'/acme-challenge/[tok.cal.aut]
+    :: note: requires port 80, just as the ACME service will
+    =/  url=purl  [[sec=| por=~ hos=[%& dom.aut]] [ext=~ pat] hed=~]
+    :: =/  url=purl  [[sec=| por=`8.081 hos=[%& /localhost]] [ext=~ pat] hed=~]
+    :: XX idx in wire?
+    (emit (request /acme/test-trial/(scot %da now.bow) url %get ~ ~))
+  :: +finalize-trial: notify ACME service that challenge is ready
+  ::
+  ++  finalize-trial
+    ^+  this
+    ~|  %test-trial-effect-fail
+    ?.  ?=(^ reg.act)  ~|(%no-account !!)
+    ?.  ?=(^ rod)      ~|(%no-active-order !!)
+    ?.  ?=(^ active.aut.u.rod)  ~|(%no-active-authz !!)
+    :: XX revisit wrt rate limits
+    ?>  ?=(%wake sas.u.rod)
+    =*  aut  u.active.aut.u.rod
+    ?~  nonces
+      (nonce /next/finalize-trial)
+    %-  emit(nonces t.nonces)
+    %+  request
+      :: XX idx in wire?
+      /acme/finalize-trial/(scot %da now.bow)
+    :: empty object included for signature
+    (signed-request ego.cal.aut i.nonces [%o ~])
+  ::  XX delete-trial?
+  ::
+  :: +retry: retry effect after timeout
+  ::
+  ++  retry  !!
+  --
+:: |event: accept event, emit next effect(s)
+::
+::   XX should these next effects be triggered at call sites instead?
+::
+++  event
+  |%
+  :: +directory: accept ACME service directory, trigger registration
+  ::
+  ++  directory
+    |=  rep=httr
+    ^+  this
+    ?.  =(200 p.rep)
+      :: XX never happened yet, wat do?
+      ~&  [%directory-fail rep]
+      this
+    =.  dir  (directory:grab (need (de-json:html q:(need r.rep))))
+    ?~(reg.act register:effect this)
+  :: +nonce: accept new nonce (XX already saved?), trigger next effect
+  ::
+  ::   As specified in the wire.
+  ::
+  ++  nonce
+    |=  [wir=wire rep=httr]
+    ^+  this
+    ?.  =(204 p.rep)
+      :: XX never happened yet, retry nonce?
+      ~&  [%nonce-fail wir rep]
+      this
+    ?.  &(?=(^ wir) ?=([%next ^] t.wir))
+      ~&  [%unrecognized-nonce-wire wir]
+      this
+    =*  nex  i.t.t.wir
+    ?+  nex
+        ~&  [%unknown-nonce-next nex]
+        this
+      %register        register:effect
+      %new-order       new-order:effect
+      %finalize-order  finalize-order:effect
+      %finalize-trial  finalize-trial:effect
+    ==
+  :: +register: accept ACME service registration
+  ::
+  ++  register
+    |=  [wir=wire rep=httr]
+    ^+  this
+    ?.  =(201 p.rep)
+      ::XX 204?
+      ?:  (bad-nonce rep)
+        (nonce:effect /next/register)
+      :: XX retry immediately or backoff?
+      ~&  [%register-fail wir rep]
+      this
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
     =/  wen=@t              :: XX @da
@@ -1305,136 +1491,241 @@
       ?>  ?=(%valid sas.bod)
       wen.bod
     this(reg.act `[wen loc])
+  :: XX rekey
   ::
-      %der
-    =<  abet:authorize
-    =/  i=@ud  (slav %ud (head t.t.wir))
-    =/  der=order  (~(got by rod) i)
-    ?>  ?=([%0 *] der)
+  ::  +new-order: order created, begin processing authorizations
+  ::
+  ++  new-order
+    |=  [wir=wire rep=httr]
+    ^+  this
+    ?.  =(201 p.rep)
+      ?:  (bad-nonce rep)
+        (nonce:effect /next/new-order)
+      :: XX retry immediately or backoff?
+      :: XX possible 204?
+      ~&  [%new-order-fail wir rep]
+      this
+    :: XX delete order if not?
+    ?>  ?=(^ pen)
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
-    =/  url=purl  (need (de-purl:html loc))
+    =/  ego=purl  (need (de-purl:html loc))
+    :: XX add parser output types
+    :: XX parse identifiers, confirm equal to pending domains
+    :: XX check status
     =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t]
       (order:grab (need (de-json:html q:(need r.rep))))
-    =/  aut  %-  ~(gas by *(map @ud auth))
-             (spun aut.bod |=([a=purl b=@ud] [[b %0 a] +(b)]))
-    =/  dor=order  [%1 dom.der exp.bod url fin.bod aut]
-    this(rod (~(put by rod) i dor))
+    :: XX maybe generate key here?
+    =/  csr=@ux  (en:der:pkcs10 cey ~(tap in u.pen))
+    =/  dor=order
+      [dom=u.pen sas=%wake exp.bod ego fin.bod cey csr [aut.bod ~ ~]]
+    get-authz:effect(rod `dor, pen ~)
+  :: +finalize-order: order finalized, poll for certificate
   ::
-      %aut
-    =<  abet:test-challenge:save-challenge
-    ?>  ?=([@ %der @ *] t.t.wir)
-    =/  i  (slav %ud i.t.t.wir)
-    =/  ider  (slav %ud i.t.t.t.t.wir)
-    =/  der=order  (~(got by rod) ider)
-    ?>  ?=([%1 *] der)
-    =/  aut=auth  (~(got by aut.der) i)
-    ?>  ?=([%0 *] aut)
-    =/  bod=[dom=turf sas=@t exp=@t cal=[typ=@t sas=@t url=purl tok=@t]]
-      (auth:grab (need (de-json:html q:(need r.rep))))
-    =/  cal=trial
-      [%http url.cal.bod tok.cal.bod %recv] :: XX parse tok?
-    =/  tau=auth  [%1 aut.aut dom.bod cal]
-    =.  der  der(aut (~(put by aut.der) i tau))
-    this(rod (~(put by rod) ider der))
-  ::
-      %tcal
-    :: XX check content type and response body
-    abet:finalize-challenge
-  ::
-      %cal
-    =<  abet:finalize-order
-    ?>  ?=([@ %der @ *] t.t.wir)
-    =/  i  (slav %ud i.t.t.wir)
-    =/  ider  (slav %ud i.t.t.t.t.wir)
-    =/  der=order  (~(got by rod) ider)
-    ?>  ?=([%1 *] der)
-    =/  aut=auth  (~(got by aut.der) i)
-    ?>  ?=([%1 *] aut)
-    :: XX 204 assuming pending?
-    :: =/  bod=[typ=@t sas=@t url=purl tok=@t]
-    ::   (challenge:grab (need (de-json:html q:(need r.rep))))
-    :: ?>  ?=(%pending sas.bod)
-    =.  sas.cal.aut  %pend
-    =.  der  der(aut (~(put by aut.der) i aut))
-    =.  rod  (~(put by rod) ider der)
-    =/  fin=(list (pair @ud order))
-      %+  skim
-        ~(tap by rod)
-      |=  a=[@ud order]
-      ?&  ?=([@ %1 *] a)
-          %+  levy
-            ~(tap by aut.a)
-          |=  [i=@ud aut=auth]
-          ?&  ?=([%1 *] aut)
-              ?=(%pend sas.cal.aut)
-      ==  ==
-    %=  this
-      rod  %-  ~(gas by rod)
-           %+  turn  fin
-           |=  [i=@ud der=order]
-           ^+  [i der]
-           ?>  ?=([%1 *] der)
-           :: =/  k=key:rsa  rekey  :: XX reuse
-           =/  csr=@ux  (en:der:pkcs10 cey dom.der)
-           [i %2 dom.der exp.der der.der fin.der cey csr]
-      :: XX save pending authz somewhere instead of just dropping them
-    ==
-  ::
-      %fin
-    :: XX rep body missing authorizations
+  ++  finalize-order
+    |=  [wir=wire rep=httr]
+    ^+  this
+    ?.  =(200 p.rep)
+      ?:  (bad-nonce rep)
+        (nonce:effect /next/finalize-order)
+      ~&  [%finalize-order-fail wir rep]
+      ?>  ?=(^ rod)
+      :: XX get the failure reason
+      this(rod ~, fal.hit [u.rod fal.hit])
+    ?>  ?=(^ rod)
+    :: XX rep body missing authorizations, need flexible/separate parser
     :: XX finalizing-order
     :: =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t]
     ::   (order:grab (need (de-json:html q:(need r.rep))))
     :: XX check status? (i don't think failures get here)
-    abet:poll-order
+    check-order:effect
+  ::  +check-order: check if certificate is ready for finalized order
   ::
-      %por
-    =/  i=@ud  (slav %ud (head t.t.wir))
+  ++  check-order
+    |=  [wir=wire rep=httr]
+    ^+  this
+    ?.  =(200 p.rep)
+      :: XX retry immediately? backoff?
+      ~&  [%check-order-fail wir rep]
+      this
+    ?>  ?=(^ rod)
     =/  raw=json
       (need (de-json:html q:(need r.rep)))
     =/  bod=[exp=@t sas=@t]
       (finalizing-order:grab raw)
     ?+  sas.bod
-        ~&(poll-order-status+sas.bod abet)
-      %invalid     abet          :: XX check authz, retry order?
-      %pending     abet:poll-order
-      %processing  abet:poll-order
-      %valid       =<  abet
-                   =/  bod=[exp=@t sas=@t cer=purl]
-                     (final-order:grab raw)  :: XX json reparser unit
-                   %-  emit                  :: XX accept hed
-                   (request /acme/cer/(scot %ud i) cer.bod ~)
-                   :: XX del .well-known
+      ~&  [%check-order-status-unknown sas.bod]
+      this
+    ::
+        %invalid
+      ~&  [%check-order-fail %invalid wir rep]
+      :: XX check authz for debug info
+      :: XX send notification somehow?
+      :: XX start over with new order?
+      this
+    ::
+        %pending
+      check-order:effect
+    ::
+        %processing
+      check-order:effect
+    ::
+        %valid
+      :: XX json reparser unit
+      =/  bod=[exp=@t sas=@t cer=purl]
+        (final-order:grab raw)
+      :: XX update order state
+      :: XX =< delete-trial
+      (certificate:effect cer.bod)
     ==
   ::
-      %cer    :: XX send configuration to eyre
-    =<  abet
-    =/  i=@ud  (slav %ud (head t.t.wir))
-    =/  der=order  (~(got by rod) i)
-    =/  cer=wain
-      (to-wain:format q:(need r.rep))
-    ?>  ?=([%2 *] der)
-    %=  this
-      liv      (~(put by liv) dom.der [key.der *@da cer]) :: XX exp when?
-      rod      (~(del by rod) i)
-      rod.hit  [der rod.hit]
-    ==
+  :: +certificate: accept PEM-encoded certificate
+  ::
+  ++  certificate
+    |=  [wir=wire rep=httr]
+    ^+  this
+    ?.  =(200 p.rep)
+      :: XX retry immediately? backoff?
+      ~&  [%certificate-fail wir rep]
+      this
+    ?>  ?=(^ rod)
+    =/  cer=wain  (to-wain:format q:(need r.rep))
+    =/  fig=config
+      :: XX expiration date
+      [dom.u.rod key.u.rod cer *@da ego.u.rod]
+    =?  fig.hit  ?=(^ liv)  [u.liv fig.hit]
+    this(liv `fig, rod ~)
+    :: XX send configuration to eyre
+    :: XX other subscribers?
+  :: +get-authz: accept ACME service authorization object
+  ::
+  ++  get-authz
+    |=  [wir=wire rep=httr]
+    ^+  this
+    ?.  =(200 p.rep)
+      :: XX retry immediately? backoff?
+      ~&  [%get-authz-fail wir rep]
+      this
+    ?>  ?=(^ rod)
+    ?>  ?=(^ pending.aut.u.rod)
+    :: XX parser types
+    =/  bod=[dom=turf sas=@t exp=@t cal=[typ=@t sas=@t ego=purl tok=@t]]
+      (auth:grab (need (de-json:html q:(need r.rep))))
+    =/  cal=trial
+       :: XX parse token to verify url-safe base64?
+      [%http ego.cal.bod tok.cal.bod %recv]
+    :: XX check that URLs are the same
+   =/  tau=auth  [i.pending.aut.u.rod dom.bod cal]
+    :: XX get idx from wire instead?
+    =/  idx=@ud  +((lent done.aut.u.rod))
+    =/  rod-aut=order-auth
+      %=  aut.u.rod
+        pending  t.pending.aut.u.rod
+        active   `[idx tau]
+      ==
+    =<  test-trial:effect
+    save-trial:effect(aut.u.rod rod-aut)
+  :: XX check/finalize-authz ??
+  ::
+  :: +test-trial: accept response from challenge test
+  ::
+  ::   Note that +save-trail:effect has no corresponding event.
+  ::
+  ++  test-trial
+    |=  [wir=wire rep=httr]
+    ^+  this
+    ?.  =(200 p.rep)
+      :: XX retry immediately? backoff?
+      ~&  [%test-trial-fail wir rep]
+      this
+    ?>  ?=(^ rod)
+    ?>  ?=(^ active.aut.u.rod)
+    :: XX check content type and response body
+    finalize-trial:effect
+  :: +finalize-trial:
+  ::
+  ++  finalize-trial
+    |=  [wir=wire rep=httr]
+    ^+  this
+    ?.  =(200 p.rep)
+      ?:  (bad-nonce rep)
+        (nonce:effect /next/finalize-trial)
+      :: XX retry? or cancel order?
+      :: XX 204 assume pending?
+      ~&  [%finalize-trial-fail wir rep]
+      :: XX handle "challenge is not pending"
+      this
+    ?>  ?=(^ rod)
+    ?>  ?=(^ active.aut.u.rod)
+    =*  aut  u.active.aut.u.rod
+    =/  bod=[typ=@t sas=@t url=purl tok=@t]
+      (challenge:grab (need (de-json:html q:(need r.rep))))
+    :: XX what if it's not?
+    ?>  ?=(%pending sas.bod)
+    ~!  aut
+    =/  rod-aut=order-auth
+      aut.u.rod(active ~, done [+.aut(sas.cal %pend) done.aut.u.rod])
+    ?~  pending.aut.u.rod
+      finalize-order:effect(aut.u.rod rod-aut)
+    get-authz:effect(aut.u.rod rod-aut)
+  ::  XX delete-trial?
+  ::
+  :: +retry: retry effect after timeout
+  ::
+  ++  retry
+    :: XX implement wire parsing / next effect
+    !!
+  --
+:: +sigh-tang: handle http request failure
+::
+++  sigh-tang
+  |=  [wir=wire saw=tang]
+  ^-  (quip move _this)
+  ~&  [%sigh-tang wir]
+  :: XX take evasive action
+  [((slog saw) ~) this]
+:: +sigh-httr: accept http response
+::
+++  sigh-httr
+  |=  [wir=wire rep=httr]
+  ^-  (quip move _this)
+  ~&  [wir rep]
+  ?>  ?=([%acme ^] wir)
+  :: add nonce to pool, if present
+  =/  nonhed  (skim q.rep |=((pair @t @t) ?=(%replay-nonce p)))
+  =?  nonces  ?=(^ nonhed)  [q.i.nonhed nonces]
+  =<  abet
+  ~|  [%sigh-fail wir rep]
+  ?+  i.t.wir
+      ~&([%unknown-wire i.t.wir] !!)
+    %directory       (directory:event rep)
+    %nonce           (nonce:event t.wir rep)
+    %register        (register:event t.wir rep)
+    :: XX rekey
+    %new-order       (new-order:event t.wir rep)
+    %finalize-order  (finalize-order:event t.wir rep)
+    %check-order     (check-order:event t.wir rep)
+    %get-authz       (get-authz:event t.wir rep)
+    :: XX check/finalize-authz ??
+    %test-trial      (test-trial:event t.wir rep)
+    %finalize-trial  (finalize-trial:event t.wir rep)
+    ::  XX delete-trial?
   ==
 ::
 ++  poke-noun
   |=  a=*
   ^-  (quip move _this)
-  ?+  a  ~&  +<+.this
-         [~ this]
-    %init   abet:init
-    %reg    abet:register
-    %order  abet:new-order
-    %auth   abet:authorize
-    %trial  abet:test-challenge
-    %final  abet:finalize-order
-    %poll   abet:poll-order
-    %our    abet:(add-order /org/urbit/(crip +:(scow %p our.bow)) ~)
+  =<  abet
+  ?+  a
+      ~&(+<+.this this)
+    %init   init
+    %reg    register:effect
+    %order  new-order:effect
+    %auth   get-authz:effect
+    %trial  test-trial:effect
+    %final  finalize-order:effect
+    %poll   check-order:effect
+    %our    (add-order /org/urbit/(crip +:(scow %p our.bow)) ~)
     %test   test
   ==
 ::
@@ -1444,9 +1735,12 @@
 :: ++  prep  _[~ this]
 ++  prep
   |=  old=(unit acme)
-  ?~  old
-    abet:init
-  [~ this(+<+ u.old)]
+  ^-  (quip move _this)
+  ?^  old
+    [~ this(+<+ u.old)]
+  ?:  ?=(?(%earl %pawn) (clan:title our.bow))
+    [~ this]
+  abet:init
 ::
 ++  rekey                             :: XX do something about this
   |=  eny=@
@@ -1454,14 +1748,16 @@
   |-  ^-  key:rsa
   =/  k  (new-key:rsa 2.048 eny)
   =/  m  (met 0 n.pub.k)
-  ?:  =(0 (mod m 8))  k
+  :: ?:  =(0 (mod m 8))  k
+  ?:  =(2.048 m)  k
   ~&  [%key iter=i width=m]
   $(i +(i), eny +(eny))
 ::
 ++  init
   =/  url
     'https://acme-staging-v02.api.letsencrypt.org/directory'
-  %=  directory
+  =<  directory:effect
+  %=  this
     bas  (need (de-purl:html url))
     act  [(rekey eny.bow) ~]
     cey  (rekey (mix eny.bow (shaz now.bow)))
@@ -1472,12 +1768,12 @@
 ++  add-order
   |=  dom=(list turf)
   ^+  this
-  :: XX temporarily force one at a time
-  :: new-order(rod (~(put by rod) ~(wyt by rod) [%0 dom]))
-  %=  new-order
-    rod.hit  (weld ~(val by rod) rod.hit)
-    rod      (~(put by ^+(rod ~)) ~(wyt by rod) [%0 dom])
-  ==
+  :: XX we may have pending moves out for this order
+  :: XX put dates in wires, check against order creation date?
+  :: XX or re-use order-id?
+  =?  fal.hit  ?=(^ rod)  [u.rod fal.hit]
+  :: XX check registration, defer
+  new-order:effect(pen `(sy dom))
 ::
 ++  test
   =,  tester:tester
@@ -1498,7 +1794,7 @@
             test-jws
             test-csr
           ==
-      ?~(out abet ((slog out) abet))
+      ?~(out this ((slog out) this))
   ::
   ++  test-base64
     ;:  weld
