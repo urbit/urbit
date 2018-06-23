@@ -1438,7 +1438,7 @@
   :: +directory: accept ACME service directory, trigger registration
   ::
   ++  directory
-    |=  rep=httr
+    |=  [wir=wire rep=httr]
     ^+  this
     ?.  =(200 p.rep)
       :: XX never happened yet, wat do?
@@ -1696,20 +1696,21 @@
   =?  nonces  ?=(^ nonhed)  [q.i.nonhed nonces]
   =<  abet
   ~|  [%sigh-fail wir rep]
+  %.  [t.wir rep]
   ?+  i.t.wir
       ~&([%unknown-wire i.t.wir] !!)
-    %directory       (directory:event rep)
-    %nonce           (nonce:event t.wir rep)
-    %register        (register:event t.wir rep)
+    %directory       directory:event
+    %nonce           nonce:event
+    %register        register:event
     :: XX rekey
-    %new-order       (new-order:event t.wir rep)
-    %finalize-order  (finalize-order:event t.wir rep)
-    %check-order     (check-order:event t.wir rep)
-    %certificate     (certificate:event t.wir rep)
-    %get-authz       (get-authz:event t.wir rep)
+    %new-order       new-order:event
+    %finalize-order  finalize-order:event
+    %check-order     check-order:event
+    %certificate     certificate:event
+    %get-authz       get-authz:event
     :: XX check/finalize-authz ??
-    %test-trial      (test-trial:event t.wir rep)
-    %finalize-trial  (finalize-trial:event t.wir rep)
+    %test-trial      test-trial:event
+    %finalize-trial  finalize-trial:event
     ::  XX delete-trial?
   ==
 ::
