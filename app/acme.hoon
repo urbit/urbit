@@ -1705,6 +1705,7 @@
     %new-order       (new-order:event t.wir rep)
     %finalize-order  (finalize-order:event t.wir rep)
     %check-order     (check-order:event t.wir rep)
+    %certificate     (certificate:event t.wir rep)
     %get-authz       (get-authz:event t.wir rep)
     :: XX check/finalize-authz ??
     %test-trial      (test-trial:event t.wir rep)
