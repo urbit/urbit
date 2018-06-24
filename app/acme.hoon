@@ -1660,9 +1660,9 @@
     =*  aut  u.active.aut.u.rod
     =/  bod=[typ=@t sas=@t url=purl tok=@t]
       (challenge:grab (need (de-json:html q:(need r.rep))))
-    :: XX what if it's not?
-    ?>  ?=(%pending sas.bod)
-    ~!  aut
+    :: XX check for other possible values in 200 response
+    :: note: may have already been validated
+    ?>  ?=(?(%pending %valid) sas.bod)
     =/  rod-aut=order-auth
       aut.u.rod(active ~, done [+.aut(sas.cal %pend) done.aut.u.rod])
     ?~  pending.aut.u.rod
