@@ -1720,6 +1720,9 @@
   =<  abet
   ?+  a
       ~&(+<+.this this)
+    %dbug  ~&  [%private (ring:en:pem:pkcs1 key.act)]
+           ~&  [%public (pass:en:pem:pkcs1 key.act)]
+           this
     %init   init
     %reg    register:effect
     %order  new-order:effect
