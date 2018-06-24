@@ -1797,6 +1797,7 @@
             test-rs256
             test-jwk
             test-jws
+            test-jws-fail
             test-csr
           ==
       ?~(out this ((slog out) this))
@@ -2322,6 +2323,88 @@
         :-  exp-ws
         (en-base64url (swp 3 (~(sign rs256 k) inp-ws)))
     ==
+  :: XX this test should fail, but doesn't.
+  :: XX fix the bug and make it fail.
+  ::
+  ::   urn:ietf:params:acme:error:malformed
+  ::   JWS verification error
+  ::
+  ++  test-jws-fail
+    =/  kpem=wain
+      :~  '-----BEGIN RSA PRIVATE KEY-----'
+          'MIIEogIBAAKCAQEAkmWLu+9gyzCbrGAHTFE6Hs7CtVQofONmpnhmE7JQkmdS+aph'
+          'WwZQfp9p6RU6vSoBaPXD96uqMXhvoOXz9/Ub5TRwLmQzfHZdksfU3pEZ8qFMikZU'
+          'p5v+CyBnLq9YR0VXN+/JVatmYb1hhC1k101X9m+IU3DR3U+kyCZnXuOd10xVX05H'
+          '0pXl+nI25bZyMJFnz1Xfw1rTnhtU/w7bgCWYdMii5jLkl5zfoY2gulpPu7QeYa4K'
+          '3fTqklDNFK7kQQ1l4O3461fbSO0cnG4t8Vk3026ageA54+Qx8O8UDi8k18Z1NF+B'
+          'pbPUZn55/InuZ8iGyHBZ4GRFIPG0iOdWM7gHCwIDAQABAoIBAAMQN/9SS6MJMULq'
+          'CsXHxyl5sHtXa/BgWLHP+j2/FtRX++EkR0s+ln2FobZa+l5Q9m4Ljn5PbqSMAFfM'
+          'Y6u0hNyj9om04oOl8bILl4Vcvqgp51oFvAEGOW15/o69+6bS3aBx7cqwfnsivInr'
+          'nIXDvHcyey3kh9WCKNx3rxNVgfuTCkw0+K2qXkMTh2c3Iz2efR2f78qbNWQcBe1+'
+          's83fABafxACYuXzfOYoO01GBCJnHrmXxJVePLXwxLkLeJHOQJQgPnagVbUH4kbUp'
+          'OLd9h1dOVYKpyVaxbQiAH3U/ekOXCCv18a47/PQSbueolzSzMzwVPSZdf+88lzuq'
+          'ZZyDXDECgYEAk5zt4cO7X+8IIeNXx8/2pztT9WmC1kqw4RtInoVXm62K1B0pPndW'
+          'm0nMVFEDuSwdn61G5amlaOT0dTFHlMFydC9H+1L5PMK7d+6ArSeAtMWoUhz+jkcO'
+          'B9KoMfZ9CtP2r5589zDGir8kaY8Fia5Z7TohpJDidmuumgDabl+qH+kCgYEA/eP6'
+          'lIGVHF8EIrfewjLM+8i1RE/hzItOpegrwDUVeYfZlPM59xUyC9REdgvmnTssxPcL'
+          '2+EB11wvcImSPLuwN0kXUkh9qZUkr9hvYlikALNH1f8WhCJ0kT6pUeA7LbjU4/bM'
+          'fsgcOh1POW2piIMERl1TuNRZg7JdKuCJKax3qtMCgYB2dxcifOc/0qIAMGgeX/Rf'
+          'ueljp03tlPvnbPIW5oSs19X27YBQNY44Cj4F3Q7T6WfM4k9nuYKacEUQWIBODgJA'
+          '5EEsniaQcOfrFGoIjQ9qBMdVPxe8L6I+/P0nO96Wdg4gW12HNIniiAw8+x9Co75f'
+          '+KtPW0ekKj9yMQUcV4I9IQKBgE06bruDmzbRFDH3WjQaPc4M5E6OOfH9IgRHVh+W'
+          'Rhz8nMu5HJWzBdEhVV3PCuwi1uBnAV112RiIOwnxXuFIejam7ggics8Fxe4TWPZC'
+          'Xki0QBKxEElLLcgMlnaITZf/1AovxU5/Uk6/IZ0nZV1X9RHuS4w6U6xCsiJbwH1D'
+          'r/bvAoGAV/Vx+Z2BD7QhmHofu98OMW6EGSjWMgOI4iXdcQ80Urz9akHkOM4KGojq'
+          'UDobbxxkJt1K5Dzux+vnp1siiIkcLdVdtMzqo7KcKYWonMqZmppNqIFCXQHscCRD'
+          'r6f1TIjlurYrazLAkRsmjE5uYM13/E1UdxplWSkdCbivIWqoqTM='
+          '-----END RSA PRIVATE KEY-----'
+      ==
+    =/  k=key:rsa
+      (need (ring:de:pem:pkcs1 kpem))
+    =/  kid=@t
+      'https://acme-staging-v02.api.letsencrypt.org/acme/acct/6336694'
+    =/  non=@t
+      'a5Pwh6GcuqRSvHTQouW96XNg3iiMORMkBf_wSLOf0M4'
+    =/  url=purl
+      :-  [sec=%.y por=~ hot=[%.y p=/org/letsencrypt/api/acme-staging-v02]]
+      :_  query=~
+      :-  ext=~
+      %+  weld
+        /acme/challenge
+      /'efJn0ywfjIi3M7yT-6H8Mdq85R2LnI8XsTG3DaaY8Gc'/'138087558'
+    =/  protected-header=json
+      :-  %o  %-  my  :~
+        nonce+s+non
+        url+s+(crip (en-purl:html url))
+        kid+s+kid
+      ==
+    =/  bod=json
+      [%o ~]
+    =/  exp=json
+      =/  payload=@t  'e30'
+      =/  protected=@t
+        %+  rap  3
+        :~  'eyJhbGci'
+            'OiJSUzI1NiIsImtpZCI6Imh0dHBzOi8vYWNtZS1zdGFnaW5nLXYwMi5hcGkubGV0c2'
+            'VuY3J5cHQub3JnL2FjbWUvYWNjdC82MzM2Njk0Iiwibm9uY2UiOiJhNVB3aDZHY3Vx'
+            'UlN2SFRRb3VXOTZYTmczaWlNT1JNa0JmX3dTTE9mME00IiwidXJsIjoiaHR0cHM6Ly'
+            '9hY21lLXN0YWdpbmctdjAyLmFwaS5sZXRzZW5jcnlwdC5vcmcvYWNtZS9jaGFsbGVu'
+            'Z2UvZWZKbjB5d2ZqSWkzTTd5VC02SDhNZHE4NVIyTG5JOFhzVEczRGFhWThHYy8xMz'
+            'gwODc1NTgifQ'
+        ==
+      =/  signature=@t
+        %+  rap  3
+        :~  'ZuQgIjhNY3UbmnPwBfleJRrmc2CCrwQ2eKkw1594_MaBwGZdSg6'
+            'UaDljoJ9SKXpd_2-glsQuZG1YgpFzZIk66rip6D80Xu0ZJg9AR8KEqLSMHavONj4CR'
+            'c6USw9Ov3LnfQgvt9W5xb8rc2NNl-ESCNRKkOBmwhNNM1kiOY1AbQa8Ko0uNFHSn3a'
+            'Rm_PLGlaTcP-k8j6ZlyOBCp3CuyxBJ68I92cWH3aSEHf4mYQo6IE0qqhk6Dv1Cyayt'
+            '7Ds8ocmhvESxo-iiiecBTkEaw_YCYJle_Re6F2hyyEnLVULowMJdyrYvb2YXjjj9d9'
+            '9m3SSTy_L3kTohpktQxRSwWlmcg'
+        ==
+      [%o (my payload+s+payload protected+s+protected signature+s+signature ~)]
+    %-  expect-eq  !>
+      :-  exp
+      (sign:jws k protected-header bod)
   ::
   ++  test-csr
     =/  kpem=wain
