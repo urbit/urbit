@@ -1775,7 +1775,7 @@
   :: XX or re-use order-id?
   =?  fal.hit  ?=(^ rod)  [u.rod fal.hit]
   :: XX check registration, defer
-  new-order:effect(pen `(sy dom))
+  new-order:effect(rod ~, pen `(sy dom))
 ::
 ++  test
   =,  tester:tester
