@@ -108,7 +108,7 @@
         [%bit bit=@ux]
         ::  %oct: octets in little-endian byte order
         ::
-        [%oct oct=@ux]
+        [%oct len=@ud oct=@ux]
         ::  %nul: fully supported!
         ::
         [%nul ~]
@@ -204,7 +204,13 @@
           ::  presumed to be already padded to a byte boundary
           ::
           [%bit *]  [0 (rip 3 bit.pec)]
-          [%oct *]  (rip 3 oct.pec)
+          ::  padded to byte-width
+          ::
+          [%oct *]  =/  a  (rip 3 oct.pec)
+                    =/  b  ~|  %der-invalid-oct
+                        (sub len.pec (lent a))
+                    (weld a (reap b 0))
+          ::
           [%nul *]  ~
           [%obj *]  (rip 3 obj.pec)
           ::
@@ -248,7 +254,7 @@
       ;~  pose
         (stag %int (bass 256 (sear int ;~(pfix (tag 2) till))))
         (stag %bit (boss 256 (cook tail ;~(pfix (tag 3) till)))) :: XX test
-        (stag %oct (boss 256 ;~(pfix (tag 4) till)))
+        (stag %oct (cook oct ;~(pfix (tag 4) till)))
         (stag %nul (cold ~ ;~(plug (tag 5) (tag 0))))
         (stag %obj (boss 256 ;~(pfix (tag 6) till)))
         (stag %seq (sear recur ;~(pfix (tag 48) till)))
@@ -268,6 +274,13 @@
       ?:  ?=([@ ~] a)  `a
       ?.  =(0 i.a)  `a
       ?.((gth i.t.a 127) ~ `t.a)
+    :: +oct:de:der: cook bytes to capture length
+    ::
+    ++  oct
+      |=  a=(list @D)
+      ^-  [len=@ud oct=@ux]
+      :: XX do this in a parser combinator instead
+      [(lent a) (scan a (boss 256 (star next)))]
     ::  +recur:de:der: parse bytes for a list of +spec:asn1
     ::
     ++  recur
@@ -386,7 +399,7 @@
     =/  pec=spec:asn1
       :~  %seq
           [%seq [%obj sha-256:obj:asn1] [%nul ~] ~]
-          [%oct (shax m)]
+          [%oct 32 (shax m)]
       ==
     =/  t=(list @)  ~(ren raw:en:der pec)
     =/  tlen  (lent t)
@@ -680,7 +693,10 @@
                     :~  %seq
                         :~  %seq
                             [%obj sub-alt:obj:asn1]
-                            [%oct (en:^der (san hot))]
+                            :: XX revisit, make +der output +octs
+                            :: [%oct (en:^der (san hot))]
+                            =/  nas=(list @D)  ~(ren raw:en:^der (san hot))
+                            [%oct (lent nas) (rep 3 nas)]
         ==  ==  ==  ==  ==
       ::  +san:en:spec:pkcs10: subject-alternate-names
       ::
@@ -1824,7 +1840,7 @@
     =/  nul=spec:asn1  [%nul ~]
     =/  int=spec:asn1  [%int 187]
     =/  obj=spec:asn1  [%obj sha-256:obj:asn1]
-    =/  oct=spec:asn1  [%oct (shax 'hello\0a')]
+    =/  oct=spec:asn1  [%oct 32 (shax 'hello\0a')]
     =/  seq=spec:asn1  [%seq [%seq obj nul ~] oct ~]
     ;:  weld
       %-  expect-eq  !>
