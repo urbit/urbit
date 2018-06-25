@@ -1797,7 +1797,7 @@
             test-rs256
             test-jwk
             test-jws
-            test-jws-fail
+            test-jws-2
             test-csr
           ==
       ?~(out this ((slog out) this))
@@ -2323,13 +2323,11 @@
         :-  exp-ws
         (en-base64url (swp 3 (~(sign rs256 k) inp-ws)))
     ==
-  :: XX this test should fail, but doesn't.
-  :: XX fix the bug and make it fail.
   ::
-  ::   urn:ietf:params:acme:error:malformed
-  ::   JWS verification error
-  ::
-  ++  test-jws-fail
+  ++  test-jws-2
+    :: captured from an in-the-wild failure
+    :: relevant sha-256 has a significant leading zero
+    :: which was not being captured in the asn.1 digest ...
     =/  kpem=wain
       :~  '-----BEGIN RSA PRIVATE KEY-----'
           'MIIEogIBAAKCAQEAkmWLu+9gyzCbrGAHTFE6Hs7CtVQofONmpnhmE7JQkmdS+aph'
@@ -2394,12 +2392,12 @@
         ==
       =/  signature=@t
         %+  rap  3
-        :~  'ZuQgIjhNY3UbmnPwBfleJRrmc2CCrwQ2eKkw1594_MaBwGZdSg6'
-            'UaDljoJ9SKXpd_2-glsQuZG1YgpFzZIk66rip6D80Xu0ZJg9AR8KEqLSMHavONj4CR'
-            'c6USw9Ov3LnfQgvt9W5xb8rc2NNl-ESCNRKkOBmwhNNM1kiOY1AbQa8Ko0uNFHSn3a'
-            'Rm_PLGlaTcP-k8j6ZlyOBCp3CuyxBJ68I92cWH3aSEHf4mYQo6IE0qqhk6Dv1Cyayt'
-            '7Ds8ocmhvESxo-iiiecBTkEaw_YCYJle_Re6F2hyyEnLVULowMJdyrYvb2YXjjj9d9'
-            '9m3SSTy_L3kTohpktQxRSwWlmcg'
+        :~  'cukOS_KIWTolvORyJoIu5eejdLoFi6xpd06Y6nW565zFMKZi44BepsWIZXw4yxYjxs'
+            '8xFdoKOxtXhBS5BT0mbkHSUGokAPTUiF5b1wjm00ZiKRYwnIotizsLPzHAJKwhMlFs'
+            'x6oAu25mmremBgnNtVD_cskQBbkTBgiTL6alrkrmwxlP2gSqyX6uEO-UCY71QB_xYj'
+            '4IOoX2k0jdXJevXDAJSUWfs5cZkm8Ug_q4GVTRWhZmFHMnMzonmCC4Ui7nDa9oKJH5'
+            'Npyn74FCcqbz111AK-Aul1dNhz3ojE1VOk3eVjH69lSGsaMleYR5fi60Jdc5ZbpPPy'
+            't-CZRp1F0k6w'
         ==
       [%o (my payload+s+payload protected+s+protected signature+s+signature ~)]
     %-  expect-eq  !>
