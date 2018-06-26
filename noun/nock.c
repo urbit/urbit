@@ -1591,30 +1591,6 @@ _n_kale(u3_noun a)
   return a;
 }
 
-
-/* _n_edit(): PRODUCE a modified big with its axe axis
- *            changed to som. axe is RETAINED.
- */
-static u3_noun
-_n_edit(u3_noun big, u3_noun axe, u3_noun som)
-{
-  if ( c3y == u3a_is_cat(axe) ) {
-    return u3i_molt(big, axe, som, 0);
-  }
-  else {
-    u3_noun mor = u3qc_mas(axe);
-    if ( c3n == u3du(big) ) {
-      u3m_bail(c3__exit);
-    }
-    u3_noun pro = ( 2 == u3qc_cap(axe) )
-                ? u3nc(_n_edit(u3k(u3h(big)), mor, som), u3k(u3t(big)))
-                : u3nc(u3k(u3h(big)), _n_edit(u3k(u3t(big)), mor, som));
-    u3z(mor);
-    u3z(big);
-    return pro;
-  }
-}
-
 typedef struct {
   u3n_prog* pog_u;
   c3_w     ip_w;
@@ -2325,7 +2301,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       _n_toss(mov, off);
       top = _n_peek(off);
     edit_in:
-      *top = _n_edit(*top, x, o);
+      *top = u3i_edit(*top, x, o);
       BURN();
   }
 }
