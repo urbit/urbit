@@ -812,6 +812,8 @@
             [%int 0]
             [%seq ~]
             (pass:en:spec:pkcs8 key)
+            :: explicit, context-specific tag #0 (extensions)
+            ::
             :+  %con
               `bespoke:asn1`[| 0]
             %~  ren
