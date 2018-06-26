@@ -22,8 +22,7 @@
   test-date-from-schematic
   test-unify-jugs
   test-resource-wire-encoding
-  test-parse-scaffold-direct
-  test-parse-scaffold-indirect
+  test-parse-scaffold
   test-parse-scaffold-sur-lib
   test-parse-scaffold-zuse-version
   test-parse-scaffold-crane-fssg
@@ -85,7 +84,7 @@
 ::  test-reef  ::  very slow
   test-reef-short-circuit
   test-path
-  test-plan-direct-hoon
+  test-plan-hoon
   test-core
   test-core-linker
   test-core-multi-hoon
@@ -233,8 +232,8 @@
     [%g care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
   ==
 ::
-++  test-parse-scaffold-direct
-  :-  `tank`leaf+"test-parse-scaffold-direct"
+++  test-parse-scaffold
+  :-  `tank`leaf+"test-parse-scaffold"
   ::
   %-  expect-eq  !>
   :-  :-  [1 19]
@@ -247,7 +246,7 @@
           libraries=~
           cranes=~
           ^=  sources
-            :*  %direct  %dbug  [/~nul/desk/~1234.5.6/foo/bar [[1 1] [1 19]]]
+            :*  %dbug  [/~nul/desk/~1234.5.6/foo/bar [[1 1] [1 19]]]
                 (ream '!.  |=(a=@ud +(a))')
             ==
           ~
@@ -255,29 +254,6 @@
   %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
     [1 1]
   "!.  |=(a=@ud +(a))"
-::
-++  test-parse-scaffold-indirect
-  :-  `tank`leaf+"test-parse-scaffold-indirect"
-  ::
-  =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-      [1 1]
-    """
-    //  /%/child/hoon
-    """
-  ?~  q.parsed
-    [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      cranes=~
-      ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
 ::
 ++  test-parse-scaffold-sur-lib
   :-  `tank`leaf+"test-parse-scaffold-sur-lib"
@@ -301,8 +277,7 @@
       libraries=~[[`%library %library] [~ %thing]]
       cranes=~
       ^=  sources
-        :~  :*  %direct
-                %dbug
+        :~  :*  %dbug
                 [/~nul/desk/~1234.5.6/foo/bar [3 1] [4 8]]
                 (ream '|=(a a)')
   ==    ==  ==
@@ -328,8 +303,7 @@
       libraries=~
       cranes=~
       ^=  sources
-        :~  :*  %direct
-                %dbug
+        :~  :*  %dbug
                 [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
                 (ream '|=(a a)')
   ==    ==  ==
@@ -360,8 +334,7 @@
                 (ream '[a=1 b=3]')
         ==  ==
       ^=  sources
-        :~  :*  %direct
-                %dbug
+        :~  :*  %dbug
                 [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
                 (ream '|=(a b)')
   ==    ==  ==
@@ -392,8 +365,7 @@
                 (ream '|=(a a)')
         ==  ==
       ^=  sources
-        :~  :*  %direct
-                %dbug
+        :~  :*  %dbug
                 [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
                 (ream '|=(a b)')
   ==    ==  ==
@@ -408,7 +380,7 @@
     /|  /~  ~
         /~  ~
         ==
-    //  /%/child/hoon
+    5
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
@@ -429,9 +401,8 @@
                         [%bust %null]
         ==  ==  ==  ==
       ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
+        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 5]]
+  ==    ==
 ::
 ++  test-parse-scaffold-crane-fsts
   :-  `tank`leaf+"test-parse-scaffold-crane-fsts"
@@ -441,7 +412,7 @@
       [1 1]
     """
     /=  a  /~  ~
-    //  /%/child/hoon
+    5
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
@@ -457,9 +428,8 @@
                 [%bust %null]
         ==  ==
       ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
+        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 5]]
+  ==    ==
 ::
 ++  test-parse-scaffold-crane-fsdt
   :-  `tank`leaf+"test-parse-scaffold-crane-fsdt"
@@ -471,7 +441,7 @@
     /.  /~  !.  a=5
         /~  !.  b=6
         ==
-    //  /%/child/hoon
+    5
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
@@ -492,9 +462,8 @@
                         (ream 'b=6')
         ==  ==  ==  ==
       ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
+        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 5]]
+  ==    ==
 ::
 ++  test-parse-scaffold-crane-fscm
   :-  `tank`leaf+"test-parse-scaffold-crane-fscm"
@@ -510,7 +479,7 @@
         /path/to/b
       /~  !.  b=6
     ==
-    //  /%/child/hoon
+    1
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
@@ -533,9 +502,8 @@
                         (ream 'b=6')
         ==  ==  ==  ==
       ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
+        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [8 1] [8 2]] [%sand %ud 1]]
+  ==    ==
 ::
 ++  test-parse-scaffold-crane-fspm
   :-  `tank`leaf+"test-parse-scaffold-crane-fspm"
@@ -545,7 +513,7 @@
       [1 1]
     """
     /=  data  /&  mark  /~  !.  a=1
-    //  /%/child/hoon
+    1
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
@@ -563,9 +531,8 @@
                 (ream 'a=1')
         ==  ==
       ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
+        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 1]]
+  ==    ==
 ::
 ++  test-parse-scaffold-crane-fscb
   :-  `tank`leaf+"test-parse-scaffold-crane-fscb"
@@ -575,7 +542,7 @@
       [1 1]
     """
     /_  /mark/
-    //  /%/child/hoon
+    8
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
@@ -589,9 +556,8 @@
         :~  :*  %fscb  %fszy  %mark
         ==  ==
       ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
+        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 8]]
+  ==    ==
 ::
 ++  test-parse-scaffold-crane-fssm
   :-  `tank`leaf+"test-parse-scaffold-crane-fssm"
@@ -603,7 +569,7 @@
     /=  data
       /;  !.  |=(a=@u +(a))
       /~  !.  5
-    //  /%/child/hoon
+    7
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
@@ -626,9 +592,8 @@
                     (ream '5')
         ==  ==  ==
       ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
+        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 7]]
+  ==    ==
 ::
 ++  test-parse-scaffold-crane-fscl
   :-  `tank`leaf+"test-parse-scaffold-crane-fscl"
@@ -640,7 +605,7 @@
     /=  tests
       /:  /===/tests
       /_  /mark/
-    //  /%/child/hoon
+    3
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
@@ -656,9 +621,8 @@
                 %fscb  %fszy  %mark
         ==  ==
       ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
+        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 3]]
+  ==    ==
 ::
 ++  test-parse-scaffold-crane-fskt
   :-  `tank`leaf+"test-parse-scaffold-crane-fskt"
@@ -672,7 +636,7 @@
       /.  /~  !.  1
           /~  !.  2
           ==
-    //  /%/child/hoon
+    6
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
@@ -699,9 +663,8 @@
                         (ream '2')
         ==  ==  ==  ==
       ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
+        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [6 1] [6 2]] [%sand %ud 6]]
+  ==    ==
 ::
 ++  test-parse-scaffold-crane-fszp
   :-  `tank`leaf+"test-parse-scaffold-crane-fszp"
@@ -711,7 +674,7 @@
       [1 1]
     """
     /=  data  /!mark/
-    //  /%/child/hoon
+    2
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
@@ -726,9 +689,8 @@
                 %fszp  %mark
         ==  ==
       ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
+        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 2]]
+  ==    ==
 ::
 ++  test-parse-scaffold-crane-fszy
   :-  `tank`leaf+"test-parse-scaffold-crane-fszy"
@@ -738,7 +700,7 @@
       [1 1]
     """
     /=  data  /mark/
-    //  /%/child/hoon
+    9
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
@@ -753,9 +715,8 @@
                 %fszy  %mark
         ==  ==
       ^=  sources
-        :~  :*  %indirect
-                [[~nul %desk [%da ~1234.5.6]] /hoon/child/bar/foo]
-  ==    ==  ==
+        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 9]]
+  ==    ==
 ::
 ++  test-literal
   :-  `tank`leaf+"test-literal"
@@ -2259,8 +2220,7 @@
                     libraries=~
                     cranes=~
                     ^=  sources
-                      :~  :*  %direct
-                              %dbug
+                      :~  :*  %dbug
                               [/~nul/desk/0/foo/bar/hoon [1 1] [1 19]]
                               (ream '|=(a=@ud +(a))')
             ==  ==    ==  ==
@@ -3895,8 +3855,8 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-plan-direct-hoon
-  :-  `tank`leaf+"test-plan-direct-hoon"
+++  test-plan-hoon
+  :-  `tank`leaf+"test-plan-hoon"
   ::
   =/  =hoon  (ream '`@tas`%constant')
   ::
@@ -3917,7 +3877,7 @@
             structures=~
             libraries=~
             cranes=~
-            sources=[%direct hoon]~
+            sources=[hoon]~
         ==
       ::
       ^=  comparator
@@ -4273,6 +4233,7 @@
     results1
     (expect-ford-empty ford-gate ~nul)
   ==
+
 ::
 ++  test-core-fssm
   :-  `tank`leaf+"test-core-fssm"
@@ -4468,7 +4429,7 @@
                     structures=~
                     libraries=~
                     cranes=[%fsts %data [%fszp %noun]]~
-                    sources=[%direct %wing [%data]~]~
+                    sources=[%wing [%data]~]~
         ==  ==  ==
       ::
       ^=  comparator
@@ -4742,7 +4703,7 @@
                     structures=~
                     libraries=~
                     cranes=[%fsts %data [%fszp %noun]]~
-                    sources=[%direct %wing [%data]~]~
+                    sources=`(list hoon)`[[%wing [%data]~] ~]
         ==  ==  ==
       ::
       ^=  comparator
@@ -4873,6 +4834,7 @@
   :-  `tank`leaf+"test-core-fspm"
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
+  =/  arch-type=type  -:!>(*arch)
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
@@ -4906,6 +4868,22 @@
         --
       --
       '''
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
+      :^  %arch  arch-type  ~
+      (my ~[[~.first ~] [~.second ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /first/mar]]
+      [%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /second/mar]]
+      [%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/first/mar]]
+      [%arch arch-type fil=[~ u=0v1] ~]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/second/mar]]
+      [%arch arch-type fil=[~ u=0v2] ~]
     ==
   ::
   =^  results1  ford-gate
@@ -5259,13 +5237,32 @@
     --
     '''
   ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  arch-type=type  -:!>(*arch)
+  ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
-      [%hoon !>(foo-mark-src)]
+      [%hoon hoon-src-type foo-mark-src]
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
-      [%hoon !>(bar-mark-src)]
+      [%hoon hoon-src-type bar-mark-src]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
+      :^  %arch  arch-type  ~
+      (my ~[[~.foo ~] [~.bar ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /foo/mar]]
+      [%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /bar/mar]]
+      [%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      [%arch arch-type fil=[~ u=0v1] ~]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
+      [%arch arch-type fil=[~ u=0v2] ~]
     ==
   ::
   =^  results1  ford-gate
@@ -5339,13 +5336,32 @@
     --
     '''
   ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  arch-type=type  -:!>(*arch)
+  ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
-      [%hoon !>(foo-mark-src)]
+      [%hoon hoon-src-type foo-mark-src]
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
-      [%hoon !>(bar-mark-src)]
+      [%hoon hoon-src-type bar-mark-src]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
+      :^  %arch  arch-type  ~
+      (my ~[[~.foo ~] [~.bar ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /foo/mar]]
+      [%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /bar/mar]]
+      [%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      [%arch arch-type fil=[~ u=0v1] ~]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
+      [%arch arch-type fil=[~ u=0v2] ~]
     ==
   ::
   =^  results1  ford-gate
@@ -5516,6 +5532,7 @@
   :-  `tank`leaf+"test-bake-mark"
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
+  =/  arch-type=type  -:!>(*arch)
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
@@ -5552,6 +5569,23 @@
     ::
       :-  [%cy [[~nul %home %da ~1234.5.6] /bar/data]]
       `[%arch !>(`arch`[fil=`*@uv dir=~])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
+      :-  ~
+      :^  %arch  arch-type  ~
+      (my ~[[~.foo ~] [~.bar ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /foo/mar]]
+      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /bar/mar]]
+      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      `[%arch arch-type fil=[~ u=0v1] ~]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
+      `[%arch arch-type fil=[~ u=0v2] ~]
     ==
   ::
   =^  results1  ford-gate
@@ -5603,11 +5637,12 @@
   :-  `tank`leaf+"test-diff"
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
+  =/  arch-type=type  -:!>(*arch)
   ::
-  =/  scry-results=(map [term beam] (unit cage))
+  =/  scry-results=(map [term beam] cage)
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
-      :^  ~  %hoon  hoon-src-type
+      :+  %hoon  hoon-src-type
       '''
       |_  cell=^
       ++  grab
@@ -5621,13 +5656,23 @@
         --
       --
       '''
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
+      :^  %arch  arch-type  ~
+      (my ~[[~.foo ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /foo/mar]]
+      [%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      [%arch arch-type fil=[~ u=0v1] ~]
     ==
   ::
   =^  results1  ford-gate
     %-  test-ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
-      scry=(scry-with-results-and-failures scry-results)
+      scry=(scry-with-results scry-results)
       ::
       ::
       ^=  call-args
@@ -5674,6 +5719,7 @@
   :-  `tank`leaf+"test-diff-form"
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
+  =/  arch-type=type  -:!>(*arch)
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
@@ -5710,6 +5756,23 @@
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
       ~
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
+      :-  ~
+      :^  %arch  arch-type  ~
+      (my ~[[~.txt ~] [~.txt-diff ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /txt/mar]]
+      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /txt-diff/mar]]
+      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      `[%arch arch-type fil=[~ u=0v1] ~]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
+      `[%arch arch-type fil=[~ u=0v2] ~]
     ==
   ::
   =^  results1  ford-gate
@@ -5762,6 +5825,7 @@
   :-  `tank`leaf+"test-pact"
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
+  =/  arch-type=type  -:!>(*arch)
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
@@ -5803,6 +5867,23 @@
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
       ~
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
+      :-  ~
+      :^  %arch  arch-type  ~
+      (my ~[[~.txt ~] [~.txt-diff ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /txt/mar]]
+      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /txt-diff/mar]]
+      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      `[%arch arch-type fil=[~ u=0v1] ~]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
+      `[%arch arch-type fil=[~ u=0v2] ~]
     ==
   ::
   =^  results1  ford-gate
@@ -5855,6 +5936,7 @@
   :-  `tank`leaf+"test-pact-mark"
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
+  =/  arch-type=type  -:!>(*arch)
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
@@ -5913,6 +5995,29 @@
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
       ~
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
+      :-  ~
+      :^  %arch  arch-type  ~
+      (my ~[[~.txt ~] [~.foo ~] [~.txt-diff ~]])
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /txt/mar]]
+      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /txt-diff/mar]]
+      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /foo/mar]]
+      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      `[%arch arch-type fil=[~ u=0v1] ~]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
+      `[%arch arch-type fil=[~ u=0v2] ~]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      `[%arch arch-type fil=[~ u=0v3] ~]
     ==
   ::
   =^  results1  ford-gate
@@ -6749,10 +6854,9 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  arch-type=type  -:!>(*arch)
   ::
-  =/  scry-results=(map [term beam] (unit cage))
+  =/  scry-results=(map [term beam] cage)
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
-      :-  ~
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -6766,7 +6870,6 @@
       '''
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
-      :-  ~
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -6780,7 +6883,6 @@
     ::
       ::  make sure we can deal with random not-hoon files in mar
       :-  [%cy [[~nul %home %da ~1234.5.6] /js/dummy/mar]]
-      :-  ~
       :-  %js
       :-  hoon-src-type
       '''
@@ -6788,49 +6890,42 @@
       '''
     ::
       :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
-      :-  ~
       :-  %arch
       :-  arch-type
       :-  ~
       (my ~[[~.one ~] [~.two ~] [~.dummy ~]])
     ::
       :-  [%cy [[~nul %home %da ~1234.5.6] /one/mar]]
-      :-  ~
       :-  %arch
       :-  arch-type
       :-  ~
       (my ~[[~.hoon ~]])
     ::
       :-  [%cy [[~nul %home %da ~1234.5.6] /two/mar]]
-      :-  ~
       :-  %arch
       :-  arch-type
       :-  ~
       (my ~[[~.hoon ~]])
     ::
       :-  [%cy [[~nul %home %da ~1234.5.6] /dummy/mar]]
-      :-  ~
       :-  %arch
       :-  arch-type
       :-  ~
       (my ~[[~.js ~]])
     ::
       :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
-      :-  ~
       :-  %arch
       :-  arch-type
       :-  fil=[~ u=0v1]
       ~
     ::
       :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
-      :-  ~
       :-  %arch
       :-  arch-type
       :-  fil=[~ u=0v2]
       ~
     ::
       :-  [%cy [[~nul %home %da ~1234.5.6] /js/dummy/mar]]
-      :-  ~
       :-  %arch
       :-  arch-type
       :-  fil=[~ u=0v3]
@@ -6841,7 +6936,7 @@
     %-  test-ford-call  :*
       ford-gate
       now=~1234.5.6
-      scry=(scry-with-results-and-failures scry-results)
+      scry=(scry-with-results scry-results)
       ::
       ^=  call-args
         :*  duct=~[/walk]  type=~  %build  ~nul
@@ -6885,176 +6980,11 @@
 ++  test-walk-large-graph
   :-  `tank`leaf+"test-walk-large-graph"
   ::
-  =/  hoon-src-type=type  [%atom %$ ~]
-  =/  arch-type=type  -:!>(*arch)
-  ::
-  =/  scry-results=(map [term beam] (unit cage))
-    %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
-      :-  ~
-      :-  %hoon
-      :-  hoon-src-type
-      '''
-      |_  [a=tape b=@ud]
-      ::  convert to
-      ++  grow
-        |%
-        ++  two  [b a "grow"]
-        ++  five  b
-        --
-      --
-      '''
-    ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
-      :-  ~
-      :-  %hoon
-      :-  hoon-src-type
-      '''
-      |_  [a=@ud b=tape c=tape]
-      ++  grab
-        |%
-        ++  one  |=([a=tape b=@ud] [b a "grab"])
-        --
-      --
-      '''
-    ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/three/mar]]
-      :-  ~
-      :-  %hoon
-      :-  hoon-src-type
-      '''
-      |_  [b=tape c=tape]
-      ++  grab
-        |%
-        ++  one  |=([a=tape b=@ud] [a "grab"])
-        --
-      ++  grow
-        |%
-        ++  two
-          [b c]
-        --
-      --
-      '''
-    ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/four/mar]]
-      :-  ~
-      :-  %hoon
-      :-  hoon-src-type
-      '''
-      |_  [c=tape b=tape]
-      ++  grab
-        |%
-        ++  two
-          |=  [a=@ud b=tape c=tape]
-          [c b]
-        --
-      --
-      '''
-    ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/five/mar]]
-      :-  ~
-      :-  %hoon
-      :-  hoon-src-type
-      '''
-      |_  a=@u
-      ++  grab
-        |%
-        ++  four
-          ::  ignore the value entirely
-          |=  [c=tape b=tape]
-          5
-        --
-      ++  grow
-        |%
-        ++  one
-          [a "empty" "grow"]
-        --
-      --
-      '''
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
-      :-  ~
-      :-  %arch
-      :-  arch-type
-      :-  ~
-      (my ~[[~.one ~] [~.two ~] [~.three ~] [~.four ~] [~.five ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /one/mar]]
-      :-  ~
-      :-  %arch
-      :-  arch-type
-      :-  ~
-      (my ~[[~.hoon ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /two/mar]]
-      :-  ~
-      :-  %arch
-      :-  arch-type
-      :-  ~
-      (my ~[[~.hoon ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /three/mar]]
-      :-  ~
-      :-  %arch
-      :-  arch-type
-      :-  ~
-      (my ~[[~.hoon ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /four/mar]]
-      :-  ~
-      :-  %arch
-      :-  arch-type
-      :-  ~
-      (my ~[[~.hoon ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /five/mar]]
-      :-  ~
-      :-  %arch
-      :-  arch-type
-      :-  ~
-      (my ~[[~.hoon ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
-      :-  ~
-      :-  %arch
-      :-  arch-type
-      :-  fil=[~ u=0v1]
-      ~
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
-      :-  ~
-      :-  %arch
-      :-  arch-type
-      :-  fil=[~ u=0v2]
-      ~
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/three/mar]]
-      :-  ~
-      :-  %arch
-      :-  arch-type
-      :-  fil=[~ u=0v3]
-      ~
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/four/mar]]
-      :-  ~
-      :-  %arch
-      :-  arch-type
-      :-  fil=[~ u=0v4]
-      ~
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/five/mar]]
-      :-  ~
-      :-  %arch
-      :-  arch-type
-      :-  fil=[~ u=0v5]
-      ~
-    ==
-  ::
   =^  results1  ford-gate
     %-  test-ford-call  :*
       ford-gate
       now=~1234.5.6
-      scry=(scry-with-results-and-failures scry-results)
+      scry=(scry-with-results large-mark-graph)
       ::
       ^=  call-args
         :*  duct=~[/walk]  type=~  %build  ~nul
@@ -7100,6 +7030,158 @@
     results1
     results2
     (expect-ford-empty ford-gate ~nul)
+  ==
+::  |data: shared data between cases
+::  +|  data
+++  large-mark-graph
+  ^-  (map [term beam] cage)
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  arch-type=type  -:!>(*arch)
+  ::
+  %-  my  :~
+    :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
+    :-  %hoon
+    :-  hoon-src-type
+    '''
+    |_  [a=tape b=@ud]
+    ::  convert to
+    ++  grow
+      |%
+      ++  two  [b a "grow"]
+      ++  five  b
+      --
+    --
+    '''
+  ::
+    :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
+    :-  %hoon
+    :-  hoon-src-type
+    '''
+    |_  [a=@ud b=tape c=tape]
+    ++  grab
+      |%
+      ++  one  |=([a=tape b=@ud] [b a "grab"])
+      --
+    --
+    '''
+  ::
+    :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/three/mar]]
+    :-  %hoon
+    :-  hoon-src-type
+    '''
+    |_  [b=tape c=tape]
+    ++  grab
+      |%
+      ++  one  |=([a=tape b=@ud] [a "grab"])
+      --
+    ++  grow
+      |%
+      ++  two
+        [b c]
+      --
+    --
+    '''
+  ::
+    :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/four/mar]]
+    :-  %hoon
+    :-  hoon-src-type
+    '''
+    |_  [c=tape b=tape]
+    ++  grab
+      |%
+      ++  two
+        |=  [a=@ud b=tape c=tape]
+        [c b]
+      --
+    --
+    '''
+  ::
+    :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/five/mar]]
+    :-  %hoon
+    :-  hoon-src-type
+    '''
+    |_  a=@u
+    ++  grab
+      |%
+      ++  four
+        ::  ignore the value entirely
+        |=  [c=tape b=tape]
+        5
+      --
+    ++  grow
+      |%
+      ++  one
+        [a "empty" "grow"]
+      --
+    --
+    '''
+  ::
+    :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
+    :-  %arch
+    :-  arch-type
+    :-  ~
+    (my ~[[~.one ~] [~.two ~] [~.three ~] [~.four ~] [~.five ~]])
+  ::
+    :-  [%cy [[~nul %home %da ~1234.5.6] /one/mar]]
+    :-  %arch
+    :-  arch-type
+    :-  ~
+    (my ~[[~.hoon ~]])
+  ::
+    :-  [%cy [[~nul %home %da ~1234.5.6] /two/mar]]
+    :-  %arch
+    :-  arch-type
+    :-  ~
+    (my ~[[~.hoon ~]])
+  ::
+    :-  [%cy [[~nul %home %da ~1234.5.6] /three/mar]]
+    :-  %arch
+    :-  arch-type
+    :-  ~
+    (my ~[[~.hoon ~]])
+  ::
+    :-  [%cy [[~nul %home %da ~1234.5.6] /four/mar]]
+    :-  %arch
+    :-  arch-type
+    :-  ~
+    (my ~[[~.hoon ~]])
+  ::
+    :-  [%cy [[~nul %home %da ~1234.5.6] /five/mar]]
+    :-  %arch
+    :-  arch-type
+    :-  ~
+    (my ~[[~.hoon ~]])
+  ::
+    :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
+    :-  %arch
+    :-  arch-type
+    :-  fil=[~ u=0v1]
+    ~
+  ::
+    :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
+    :-  %arch
+    :-  arch-type
+    :-  fil=[~ u=0v2]
+    ~
+  ::
+    :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/three/mar]]
+    :-  %arch
+    :-  arch-type
+    :-  fil=[~ u=0v3]
+    ~
+  ::
+    :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/four/mar]]
+    :-  %arch
+    :-  arch-type
+    :-  fil=[~ u=0v4]
+    ~
+  ::
+    :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/five/mar]]
+    :-  %arch
+    :-  arch-type
+    :-  fil=[~ u=0v5]
+    ~
   ==
 
     ::

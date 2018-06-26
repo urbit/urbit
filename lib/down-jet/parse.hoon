@@ -3,6 +3,7 @@
 ::::  /hoon/parse/down-jet/lib
   ::
 /?    310
+/-  *markdown
 =,  html
 =,  format
 =+  =~

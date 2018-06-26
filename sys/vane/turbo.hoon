@@ -732,7 +732,7 @@
   =/  hoon-parser  (vang & (en-beam src-beam))
   |^  ::
       %+  cook
-        |=  a=[@ud (list ^cable) (list ^cable) (list ^crane) (list ^brick)]
+        |=  a=[@ud (list ^cable) (list ^cable) (list ^crane) (list hoon)]
         ^-  scaffold
         [[[p q] s]:src-beam a]
       ::
@@ -757,10 +757,9 @@
           (easy ~)
         ==
       ::
-        ::  todo: the rest of the horns
         (star ;~(sfix crane gap))
       ::
-        (most gap brick)
+        (most gap tall:hoon-parser)
       ==
   ::  +beam: parses a hood path and converts it to a beam
   ::
@@ -769,13 +768,6 @@
     ;~  pfix
       fas
       (sear plex (stag %clsg poor)):hoon-parser
-    ==
-  ::  +brick: parses a +^brick, a direct or indirect piece of hoon code
-  ::
-  ++  brick
-    ;~  pose
-      (stag %indirect ;~(pfix fas fas gap beam))
-      (stag %direct tall:hoon-parser)
     ==
   ::  +cable: parses a +^cable, a reference to something on the filesystem
   ::
@@ -3489,7 +3481,6 @@
       |=  [path-to-render=rail query-string=coin =scaffold]
       ^-  build-receipt
       ::  TODO: support query-string
-      ::  TODO: support indirect hoons
       ::
       ::  blocks: accumulator for blocked sub-builds
       ::
@@ -3554,7 +3545,7 @@
             [build [%blocks builds.crane-result ~] accessed-builds]
           ::  combined-hoon: source hoons condensed into a single +hoon
           ::
-          =/  combined-hoon=hoon  (stack-sources sources.scaffold)
+          =/  combined-hoon=hoon  [%tssg sources.scaffold]
           ::  compile :combined-hoon against :subject
           ::
           =/  compile=^build
@@ -4170,19 +4161,6 @@
           [[%face face.cable.i.imports p.i.core-vases] q.i.core-vases]
         ::
         $(core-vases t.core-vases, imports t.imports)
-      ::  +stack-sources: combine bricks into one +hoon: =~(hoon1 hoon2 ...)
-      ::
-      ++  stack-sources
-        |=  sources=(list brick)
-        ^-  hoon
-        ::
-        =-  [%tssg -]
-        %+  turn  sources
-        |=  =brick
-        ^-  hoon
-        ::
-        ?>  ?=(%direct -.brick)
-        source.brick
       --
     ::
     ++  make-reef

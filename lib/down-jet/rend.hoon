@@ -3,6 +3,10 @@
 ::::  /hoon/rend/down-jet/lib
   ::
 /?    310
+/-  *markdown
+::
+=,  format
+=,  html
 ::
 |%
 ++  into-inner
