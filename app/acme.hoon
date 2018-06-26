@@ -402,6 +402,37 @@
         ::
         sek=(unit [d=@ux p=@ux q=@ux])
     ==
+  ::  +ramp: make rabin-miller probabilistic prime
+  ::
+  ::    XX replace +ramp:number?
+  ::    a: bitwidth
+  ::    b: snags (XX small primes to check divisibility?)
+  ::    c: entropy
+  ::
+  ++  ramp
+    |=  [a=@ b=(list @) c=@]
+    =.  c  (shas %ramp c)
+    :: XX what is this value?
+    ::
+    =|  d=@
+    |-  ^-  @ux
+    :: XX what is this condition?
+    ::
+    ?:  =((mul 100 a) d)
+      ~|(%ar-ramp !!)
+    :: e: prime candidate
+    ::
+    ::   Sets low bit, as prime must be odd.
+    ::   Sets high bit, as +raw:og only gives up to :a bits.
+    ::
+    =/  e  :(con 1 (lsh 0 (dec a) 1) (~(raw og c) a))
+    :: XX what algorithm is this modular remainder check?
+    ::
+    ?:  ?&  (levy b |=(f/@ !=(1 (mod e f))))
+            (pram:number e)
+        ==
+      e
+    $(c +(c), d (shax d))
   ::  +elcm:rsa: carmichael totient
   ::
   ++  elcm
@@ -414,8 +445,8 @@
     |=  [wid=@ eny=@]
     ^-  key
     =/  diw  (rsh 0 1 wid)
-    =/  p=@ux  (ramp:number diw [3 5 ~] eny)
-    =/  q=@ux  (ramp:number diw [3 5 ~] +(eny))
+    =/  p=@ux  (ramp diw [3 5 ~] eny)
+    =/  q=@ux  (ramp diw [3 5 ~] +(eny))
     =/  n=@ux  (mul p q)
     =/  d=@ux  (~(inv fo (elcm (dec p) (dec q))) e)
     [[n e] `[d p q]]
