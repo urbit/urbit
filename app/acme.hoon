@@ -57,26 +57,43 @@
   ::
   ++  de
     |=  a=cord
-    ^-  (unit @)
-    %+  rush  a
-    :: XX refactor and expose parser combinator
-    %+  cook  (cury swp 3)
-    %+  bass  64
-    %+  cook  welp
+    ^-  (unit octs)
+    (rush a parse)
+  ::  +parse:base64: parse base64 cord to +octs
+  ::
+  ++  parse
+    %+  sear  reduce
     ;~  plug
-      %-  plus
-      ;~  pose
+      %-  plus  ;~  pose
         (cook |=(a=@ (sub a 'A')) (shim 'A' 'Z'))
         (cook |=(a=@ (sub a 'G')) (shim 'a' 'z'))
         (cook |=(a=@ (add a 4)) (shim '0' '9'))
         (cold 62 (just ?:(url '-' '+')))
         (cold 63 (just ?:(url '_' '/')))
       ==
-      ?:  pad
-        (stun 0^2 (cold %0 tis))
-      =/  b  (~(dif fo 4) 0 (met 3 a))
-      (cold (reap b %0) (easy ~))
+      (stun 0^2 (cold %0 tis))
     ==
+  ::  +reduce: reduce, measure, and swap base64 digits
+  ::
+  ++  reduce
+    |=  [dat=(list @) dap=(list @)]
+    ^-  (unit [len=@ud dat=@])
+    =/  lat  (lent dat)
+    =/  lap  (lent dap)
+    =/  dif  (~(dif fo 4) 0 lat)
+    ?:  &(pad !=(dif lap))
+      ::  padding required and incorrect
+      ~&(%base-64-padding-err-one ~)
+    ?:  &(!pad !=(0 lap))
+      ::  padding not required but present
+      ~&(%base-64-padding-err-two ~)
+    =/  len  (sub (mul 3 (div (add lat dif) 4)) dif)
+    :+  ~  len
+    %+  swp  3
+    ::  %+  base  64
+    %+  roll
+      (weld dat (reap dif 0))
+    |=([p=@ q=@] (add p (mul 64 q)))
   --
 ::  +en-base64url: url-safe base64 encoding, without padding
 ::
@@ -482,7 +499,7 @@
     :: XX validate label?
     ?.  =((rap 3 ['-----BEGIN ' lab '-----' ~]) i.mep)  ~
     ?.  =((rap 3 ['-----END ' lab '-----' ~]) (snag a t.mep))  ~
-    =-  ?~(- ~ `[(met 3 u.-) u.-])
+    ^-  (unit [@ @])
     (de:base64 (rap 3 (scag a t.mep)))
   --
 ::  |pkcs1: RSA asymmetric cryptography (rfc3447)
@@ -855,10 +872,9 @@
     ++  pass
       =,  dejs-soft:format
       %+  ci
-        |=  [kty=@t n=(unit @) e=(unit @)]
+        |=  [kty=@t n=(unit octs) e=(unit octs)]
         ^-  (unit key:rsa)
-        =/  swp  (cury swp 3)
-        =/  pub  (both (bind n swp) (bind e swp))
+        =/  pub  (both (bind n de:octn) (bind e de:octn))
         ?~(pub ~ `[u.pub ~])
       %-  ot  :~
         kty+(su (jest 'RSA'))
@@ -871,16 +887,15 @@
       =,  dejs-soft:format
       %+  ci
         |=  $:  kty=@t
-                n=(unit @)
-                e=(unit @)
-                d=(unit @)
-                p=(unit @)
-                q=(unit @)
+                n=(unit octs)
+                e=(unit octs)
+                d=(unit octs)
+                p=(unit octs)
+                q=(unit octs)
             ==
         ^-  (unit key:rsa)
-        =/  swp  (cury swp 3)
-        =/  pub  (both (bind n swp) (bind e swp))
-        =/  sek  :(both (bind d swp) (bind p swp) (bind q swp))
+        =/  pub  (both (bind n de:octn) (bind e de:octn))
+        =/  sek  :(both (bind d de:octn) (bind p de:octn) (bind q de:octn))
         ?:(|(?=(~ pub) ?=(~ sek)) ~ `[u.pub sek])
       %-  ot  :~
         kty+(su (jest 'RSA'))
@@ -1855,17 +1870,17 @@
       %-  expect-eq  !>
         ['AQAB' (en-base64url (en:octn 65.537))]
       %-  expect-eq  !>
-        [65.537 (need (de-base64url 'AQAB'))]
+        [65.537 (de:octn (need (de-base64url 'AQAB')))]
       :: echo "hello" | base64
       %-  expect-eq  !>
         ['aGVsbG8K' (en:base64 (as-octs:mimes:html 'hello\0a'))]
       %-  expect-eq  !>
-        ['hello\0a' (need (de:base64 'aGVsbG8K'))]
+        ['hello\0a' +:(need (de:base64 'aGVsbG8K'))]
       :: echo -n -e "\x01\x01\x02\x03" | base64
       %-  expect-eq  !>
         ['AQECAw==' (en:base64 (en:octn 0x101.0203))]
       %-  expect-eq  !>
-        [0x302.0101 (need (de:base64 'AQECAw=='))]
+        [0x302.0101 +:(need (de:base64 'AQECAw=='))]
     ==
   ::
   ++  test-asn1
