@@ -2,7 +2,7 @@
 
 source $setup
 
-if [ "$version" != "5.9.2" ]; then
+if [ "$version" != "5.9.6" ]; then
   echo "You need to update the license fragment builder for Qt $version."
   exit 1
 fi
