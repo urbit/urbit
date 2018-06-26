@@ -65,6 +65,7 @@
                 who+[%s (scot %p who.info.f)]
                 id+[%s (scot %da e)]
                 modified+[%s (scot %da mod.info.f)]
+                comment-count+[%n (scot %ud ~(wyt by coms.f))]
             ==
         ==
   --
