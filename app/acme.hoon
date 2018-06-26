@@ -287,7 +287,13 @@
   ::  +de:der: decode atom to +spec:asn1
   ::
   ++  de
-    =<  |=([len=@ud dat=@ux] `(unit spec:asn1)`(rush dat parse))
+    =<  |=  [len=@ud dat=@ux]
+        ^-  (unit spec:asn1)
+        :: XX refactor into +parse
+        =/  a  (rip 3 dat)
+        =/  b  ~|  %der-invalid-len
+            (sub len (lent a))
+        (rust `(list @D)`(weld a (reap b 0)) parse)
     |%
     ::  +parse:de:der: DER parser combinator
     ::
