@@ -4,6 +4,18 @@
 ::::  %zuse additions
 ::
 |%
+::  +rev: reverses block order, accounting for leading zeroes
+::
+::    XX deduplicate with Mark's eth stuff
+::
+++  rev
+  ::  boq: block size
+  ::  len: size of dat, in boq
+  ::  dat: data to reverse
+  ::
+  |=  [boq=bloq len=@ud dat=@]
+  =+  (swp boq dat)
+  (lsh boq (sub len (met boq dat)) -)
 ::  |base64: flexible base64 encoding for little-endian atoms
 ::
 ++  base64
@@ -12,13 +24,17 @@
   ::
   =+  [pad=& url=|]
   |%
-  ::  +en:base64: encode atom to base64 cord
+  ::  +en:base64: encode +octs to base64 cord
   ::
   ++  en
-    |=  tig=@
+    |=  inp=octs
     ^-  cord
-    =/  poc  (~(dif fo 3) 0 (met 3 tig))
-    =/  pad  (lsh 3 poc (swp 3 tig))
+    ::  dif: offset from 3-byte block
+    ::
+    =/  dif=@ud  (~(dif fo 3) 0 p.inp)
+    ::  dap: reversed, 3-byte block-aligned input
+    ::
+    =/  dap=@ux  (lsh 3 dif (rev 3 inp))
     =/  cha
       ?:  url
         'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
@@ -26,16 +42,16 @@
     %-  crip
     %-  flop
     %+  weld
-      ?.(^pad ~ (reap poc '='))
-    %+  slag  poc
+      ?.(pad ~ (reap dif '='))
+    %+  slag  dif
     |-  ^-  tape
-    ?~  pad  ~
-    =/  d  (end 3 3 pad)
+    ?:  =(0x0 dap)  ~
+    =/  d  (end 3 3 dap)
     :*  (cut 3 [(cut 0 [0 6] d) 1] cha)
         (cut 3 [(cut 0 [6 6] d) 1] cha)
         (cut 3 [(cut 0 [12 6] d) 1] cha)
         (cut 3 [(cut 0 [18 6] d) 1] cha)
-        $(pad (rsh 3 3 pad))
+        $(dap (rsh 3 3 dap))
     ==
   ::  +de:base64: decode base64 cord to (unit @)
   ::
@@ -70,6 +86,13 @@
 ::
 ++  de-base64url
   ~(de base64 | &)
+::  |octn: encode/decode unsigned atoms as big-endian octet stream
+::
+++  octn
+  |%
+  ++  en  |=(a=@u `octs`[(met 3 a) (swp 3 a)])
+  ++  de  |=(a=octs `@u`(rev 3 p.a q.a))
+  --
 ::
 ::::  %/lib/pkcs
 ::
@@ -156,10 +179,13 @@
 ::
 ++  der
   |%
-  ::  +en:der: encode +spec:asn1 to atom
+  ::  +en:der: encode +spec:asn1 to +octs (kindof)
   ::
   ++  en
-    =<  |=(a=spec:asn1 `@ux`(rep 3 ~(ren raw a)))
+    =<  |=  a=spec:asn1
+        ^-  [len=@ud dat=@ux]
+        =/  b  ~(ren raw a)
+        [(lent b) (rep 3 b)]
     |%
     ::  +raw:en:der: door for encoding +spec:asn1 to list of bytes
     ::
@@ -244,7 +270,7 @@
   ::  +de:der: decode atom to +spec:asn1
   ::
   ++  de
-    =<  |=(a=@ `(unit spec:asn1)`(rush a parse))
+    =<  |=([len=@ud dat=@ux] `(unit spec:asn1)`(rush dat parse))
     |%
     ::  +parse:de:der: DER parser combinator
     ::
@@ -437,11 +463,11 @@
   ::  +en:pem: PEM encode
   ::
   ++  en
-    |=  [lab=@t der=@ux]
+    |=  [lab=@t len=@ud der=@ux]
     ^-  wain
     :: XX validate label?
     :-  (rap 3 ['-----BEGIN ' lab '-----' ~])
-    =/  a  (en:base64 der)
+    =/  a  (en:base64 len `@`der)
     |-  ^-  wain
     ?~  a
       [(rap 3 ['-----END ' lab '-----' ~]) ~]
@@ -450,12 +476,13 @@
   ::
   ++  de
     |=  [lab=@t mep=wain]
-    ^-  (unit @ux)
+    ^-  (unit [len=@ud der=@ux])
     =/  a  (sub (lent mep) 2)
     ?~  mep  ~
     :: XX validate label?
     ?.  =((rap 3 ['-----BEGIN ' lab '-----' ~]) i.mep)  ~
     ?.  =((rap 3 ['-----END ' lab '-----' ~]) (snag a t.mep))  ~
+    =-  ?~(- ~ `[(met 3 u.-) u.-])
     (de:base64 (rap 3 (scag a t.mep)))
   --
 ::  |pkcs1: RSA asymmetric cryptography (rfc3447)
@@ -541,13 +568,13 @@
     |%
     ++  en
       |%
-      ++  pass  |=(k=key:rsa `@ux`(en:^der (pass:en:spec k)))
-      ++  ring  |=(k=key:rsa `@ux`(en:^der (ring:en:spec k)))
+      ++  pass  |=(k=key:rsa (en:^der (pass:en:spec k)))
+      ++  ring  |=(k=key:rsa (en:^der (ring:en:spec k)))
       --
     ++  de
       |%
-      ++  pass  |=(a=@ `(unit key:rsa)`(biff (de:^der a) pass:de:spec))
-      ++  ring  |=(a=@ `(unit key:rsa)`(biff (de:^der a) ring:de:spec))
+      ++  pass  |=([len=@ud dat=@ux] `(unit key:rsa)`(biff (de:^der len dat) pass:de:spec))
+      ++  ring  |=([len=@ud dat=@ux] `(unit key:rsa)`(biff (de:^der len dat) ring:de:spec))
       --
     --
   ::  |pem:pkcs1: PEM encoding for RSA keys
@@ -587,7 +614,7 @@
         ^-  spec:asn1
         :~  %seq
             [%seq [[%obj rsa:obj:asn1] [%nul ~] ~]]
-            [%bit (pass:en:der:pkcs1 k)]
+            [%bit +:(pass:en:der:pkcs1 k)]
         ==
       ::  +ring:spec:pkcs8: private key ASN.1
       ::
@@ -608,7 +635,7 @@
                 =(rsa:obj:asn1 obj.i.seq.i.seq.a)
             ==
           ~
-        (pass:de:der:pkcs1 bit.i.t.seq.a)
+        (pass:de:der:pkcs1 (met 3 bit.i.t.seq.a) bit.i.t.seq.a)
       ::  +ring:de:spec:pkcs8:
       ::
       ++  ring  !!
@@ -623,12 +650,12 @@
     |%
     ++  en
       |%
-      ++  pass  |=(k=key:rsa `@ux`(en:^der (pass:en:spec k)))
+      ++  pass  |=(k=key:rsa `[len=@ud dat=@ux]`(en:^der (pass:en:spec k)))
       ++  ring  !! ::|=(k=key:rsa `@ux`(en:^der (ring:spec k)))
       --
     ++  de
       |%
-      ++  pass  |=(a=@ `(unit key:rsa)`(biff (de:^der a) pass:de:spec))
+      ++  pass  |=([len=@ud dat=@ux] `(unit key:rsa)`(biff (de:^der len dat) pass:de:spec))
       ++  ring  !! ::|=(a=@ `(unit key:rsa)`(biff (de:^der a) ring:de:spec))
       --
     --
@@ -676,7 +703,8 @@
               dat
               [%seq [[%obj rsa-sha-256:obj:asn1] [%nul ~] ~]]
               :: big-endian signature bytes
-              [%bit (swp 3 (~(sign rs256 key) (en:^der dat)))]
+              :: XX revisit %bit
+              [%bit (swp 3 (~(sign rs256 key) +:(en:^der dat)))]
           ==
       ::  +info:en:spec:pkcs10: certificate request info
       ::
@@ -697,10 +725,7 @@
                     :~  %seq
                         :~  %seq
                             [%obj sub-alt:obj:asn1]
-                            :: XX revisit, make +der output +octs
-                            :: [%oct (en:^der (san hot))]
-                            =/  nas=(list @D)  ~(ren raw:en:^der (san hot))
-                            [%oct (lent nas) (rep 3 nas)]
+                            [%oct (en:^der (san hot))]
         ==  ==  ==  ==  ==
       ::  +san:en:spec:pkcs10: subject-alternate-names
       ::
@@ -720,7 +745,7 @@
   ::
   ++  der
     |%
-    ++  en  |=(a=csr `@ux`(en:^der (en:spec a)))
+    ++  en  |=(a=csr `[len=@ud der=@ux]`(en:^der (en:spec a)))
     ++  de  !! ::|=(a=@ `(unit csr)`(biff (de:^der a) de:spec))
     --
   ::  |pem:pkcs10: PEM encoding for certificate signing requests
@@ -802,8 +827,8 @@
       ^-  json
       :-  %o  %-  my  :~
         kty+s+'RSA'
-        n+s+(en-base64url (swp 3 n.pub.k))
-        e+s+(en-base64url (swp 3 e.pub.k))
+        n+s+(en-base64url (en:octn n.pub.k))
+        e+s+(en-base64url (en:octn e.pub.k))
       ==
     ::  +ring:en:jwk: json encode private key
     ::
@@ -814,11 +839,11 @@
       ?>  ?=(^ sek.k)
       :-  %o  %-  my  :~
         kty+s+'RSA'
-        n+s+(en-base64url (swp 3 n.pub.k))
-        e+s+(en-base64url (swp 3 e.pub.k))
-        d+s+(en-base64url (swp 3 d.u.sek.k))
-        p+s+(en-base64url (swp 3 p.u.sek.k))
-        q+s+(en-base64url (swp 3 q.u.sek.k))
+        n+s+(en-base64url (en:octn n.pub.k))
+        e+s+(en-base64url (en:octn e.pub.k))
+        d+s+(en-base64url (en:octn d.u.sek.k))
+        p+s+(en-base64url (en:octn p.u.sek.k))
+        q+s+(en-base64url (en:octn q.u.sek.k))
       ==
     --
   ::  |de:jwk: decoding of json cryptographic keys
@@ -874,7 +899,7 @@
     ::
     ++  pass
       |=  k=key:rsa
-      (en-base64url (shax (crip (en-json-sort aor (pass:en k)))))
+      (en-base64url 32 (shax (crip (en-json-sort aor (pass:en k)))))
     ::  +ring:thumb:jwk: thumbprint json-encoded private key
     ::
     ++  ring  !!
@@ -912,15 +937,18 @@
     ::
     ++  encode
       |=  jon=json
-      (en-base64url (crip (en-json-sort aor jon)))
+      %-  en-base64url
+      %-  as-octt:mimes:html
+      (en-json-sort aor jon)
     ::  +sign:sign:jws: compute signature
     ::
     ::    Url-safe base64 encode in big-endian byte order.
     ::
     ++  sign
       |=  [protect=cord payload=cord]
-      %-  en-base64url
-      (swp 3 (~(sign rs256 k) (rap 3 ~[protect '.' payload])))
+      =/  sig=@ud  (~(sign rs256 k) (rap 3 ~[protect '.' payload]))
+      =/  len=@ud  (met 3 n.pub.k)
+      (en-base64url len (rev 3 len sig))
     --
   ::  +verify:jws: verify signature
   ::
@@ -1350,7 +1378,7 @@
     %+  request
       /acme/finalize-order/(scot %da now.bow)
     %^  signed-request  fin.u.rod  i.nonces
-    [%o (my csr+s+(en-base64url csr.u.rod) ~)]
+    [%o (my csr+s+(en-base64url (met 3 csr.u.rod) `@`csr.u.rod) ~)]
   :: +check-order: check completed order for certificate availability
   ::
   ++  check-order
@@ -1536,7 +1564,7 @@
     =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t]
       (order:grab (need (de-json:html q:(need r.rep))))
     :: XX maybe generate key here?
-    =/  csr=@ux  (en:der:pkcs10 cey ~(tap in u.pen))
+    =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in u.pen))
     =/  dor=order
       [dom=u.pen sas=%wake exp.bod ego fin.bod cey csr [aut.bod ~ ~]]
     get-authz:effect(rod `dor, pen ~)
@@ -1825,17 +1853,17 @@
   ++  test-base64
     ;:  weld
       %-  expect-eq  !>
-        ['AQAB' (en-base64url 65.537)]
+        ['AQAB' (en-base64url (en:octn 65.537))]
       %-  expect-eq  !>
         [65.537 (need (de-base64url 'AQAB'))]
       :: echo "hello" | base64
       %-  expect-eq  !>
-        ['aGVsbG8K' (en:base64 'hello\0a')]
+        ['aGVsbG8K' (en:base64 (as-octs:mimes:html 'hello\0a'))]
       %-  expect-eq  !>
         ['hello\0a' (need (de:base64 'aGVsbG8K'))]
       :: echo -n -e "\x01\x01\x02\x03" | base64
       %-  expect-eq  !>
-        ['AQECAw==' (en:base64 (swp 3 0x101.0203))]
+        ['AQECAw==' (en:base64 (en:octn 0x101.0203))]
       %-  expect-eq  !>
         [0x302.0101 (need (de:base64 'AQECAw=='))]
     ==
@@ -1865,13 +1893,13 @@
       %-  expect-eq  !>
         :-    0x420.5891.b5b5.22d5.df08.6d0f.f0b1.10fb.
           d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
-        `@ux`(swp 3 (en:der oct))
+        `@ux`(swp 3 +:(en:der oct))
       %-  expect-eq  !>
         [oct (scan ~(ren raw:en:der oct) parse:de:der)]
       %-  expect-eq  !>
         :-  0x30.3130.0d06.0960.8648.0165.0304.0201.0500.0420.5891.b5b5.22d5.
             df08.6d0f.f0b1.10fb.d9d2.1bb4.fc71.63af.34d0.8286.a2e8.46f6.be03
-        `@ux`(swp 3 (en:der seq))
+        `@ux`(swp 3 +:(en:der seq))
       %-  expect-eq  !>
         [seq (scan ~(ren raw:en:der seq) parse:de:der)]
     ==
@@ -2222,7 +2250,7 @@
       :: save kpem2 to private.pem
       :: echo "hello" | openssl dgst -sha256 -sign private.pem | base64
       %-  expect-eq  !>
-        [exp2b64 (en:base64 (swp 3 sig))]
+        [exp2b64 (en:base64 (met 3 sig) (swp 3 sig))]
     ==
   ::
   ++  test-jwk
@@ -2335,13 +2363,13 @@
         `@ux`(~(inv fo (elcm:rsa (dec p.u.sek.k) (dec q.u.sek.k))) e.pub.k)
       %-  expect-eq  !>
         :-  hedt
-        (en-base64url (crip (en-json-sort aor hed)))
+        (en-base64url (as-octt:mimes:html (en-json-sort aor hed)))
       %-  expect-eq  !>
         :-  lodt
-        (en-base64url (crip (en-json-sort (eor lte lod-order) lod)))
+        (en-base64url (as-octt:mimes:html (en-json-sort (eor lte lod-order) lod)))
       %-  expect-eq  !>
         :-  exp-ws
-        (en-base64url (swp 3 (~(sign rs256 k) inp-ws)))
+        (en-base64url (en:octn (~(sign rs256 k) inp-ws)))
     ==
   ::
   ++  test-jws-2
