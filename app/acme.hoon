@@ -1173,6 +1173,14 @@
   $%  [%hiss wire [~ ~] %httr %hiss hiss:eyre]
       [%well wire path (unit mime)]
   ==
+:: +nonce-next: next effect to emit upon receiving nonce
+::
++=  nonce-next
+  $?  %register
+      %new-order
+      %finalize-order
+      %finalize-trial
+  ==
 :: +turf: a domain, TLD first
 ::
 +=  turf  (list @t)
@@ -1399,7 +1407,7 @@
   =/  jon=(unit json)  (de-json:html q.u.r.rep)
   ?~  jon  |
   :: XX unit parser, types
-  =('urn:ietf:params:acme:error:badNonce' +:(error:grab u.jon))
+  =('urn:ietf:params:acme:error:badNonce' -:(error:grab u.jon))
 :: |effect: send moves to advance
 ::
 ++  effect
@@ -1412,10 +1420,12 @@
   :: +nonce: get a new nonce for the next request
   ::
   ++  nonce
-    |=  nex=wire
+    |=  nex=@tas
+    ~|  [%bad-nonce-next nex]
+    ?>  ?=(nonce-next nex)
     ^+  this
-    ?>  ?=([%next *] nex)  :: XX now?
-    (emit (request (weld `wire`/acme/nonce `wire`nex) non.dir %get ~ ~))
+    :: XX now?
+    (emit (request /acme/nonce/next/[nex] non.dir %get ~ ~))
   :: +register: create ACME service account
   ::
   ::   Note: accepts services ToS.
@@ -1423,7 +1433,7 @@
   ++  register
     ^+  this
     ?~  nonces
-      (nonce /next/register)
+      (nonce %register)
     %-  emit(nonces t.nonces, reg.act ~)
     %+  request
       /acme/register/(scot %p our.bow) :: XX now?
@@ -1439,7 +1449,7 @@
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
     ?.  ?=([~ ^] pen)  ~|(%no-domains !!)
     ?~  nonces
-      (nonce /next/new-order)
+      (nonce %new-order)
     %-  emit(nonces t.nonces)
     %+  request
       /acme/new-order/(scot %da now.bow)
@@ -1463,7 +1473,7 @@
     :: XX revisit wrt rate limits
     ?>  ?=(%wake sas.u.rod)
     ?~  nonces
-      (nonce /next/finalize-order)
+      (nonce %finalize-order)
     %-  emit(nonces t.nonces)
     %+  request
       /acme/finalize-order/(scot %da now.bow)
@@ -1554,7 +1564,7 @@
     ?>  ?=(%wake sas.u.rod)
     =*  aut  u.active.aut.u.rod
     ?~  nonces
-      (nonce /next/finalize-trial)
+      (nonce %finalize-trial)
     %-  emit(nonces t.nonces)
     %+  request
       :: XX idx in wire?
@@ -1584,24 +1594,27 @@
       this
     =.  dir  (directory:grab (need (de-json:html q:(need r.rep))))
     ?~(reg.act register:effect this)
-  :: +nonce: accept new nonce (XX already saved?), trigger next effect
+  :: +nonce: accept new nonce and trigger next effect
   ::
-  ::   As specified in the wire.
+  ::   Nonce has already been saved in +sigh-httr. The next effect
+  ::   is specified in the wire.
   ::
   ++  nonce
     |=  [wir=wire rep=httr]
     ^+  this
-    ?.  =(204 p.rep)
-      :: XX never happened yet, retry nonce?
-      ~&  [%nonce-fail wir rep]
-      this
-    ?.  &(?=(^ wir) ?=([%next ^] t.wir))
-      ~&  [%unrecognized-nonce-wire wir]
-      this
+    ~|  [%unrecognized-nonce-wire wir]
+    ?>  &(?=(^ wir) ?=([%next ^] t.wir))
     =*  nex  i.t.t.wir
-    ?+  nex
-        ~&  [%unknown-nonce-next nex]
-        this
+    ~|  [%unknown-nonce-next nex]
+    ?>  ?=(nonce-next nex)
+    ?.  =(204 p.rep)
+      :: cttp i/o timeout, always retry
+      :: XX set timer to backoff?
+      ?:  =(504 p.rep)  (nonce:effect nex)
+      :: XX never happened yet, retry nonce anyway?
+      ::
+      ~&([%nonce-fail wir rep] this)
+    ?-  nex
       %register        register:effect
       %new-order       new-order:effect
       %finalize-order  finalize-order:effect
@@ -1615,7 +1628,7 @@
     ?.  =(201 p.rep)
       ::XX 204?
       ?:  (bad-nonce rep)
-        (nonce:effect /next/register)
+        (nonce:effect %register)
       :: XX retry immediately or backoff?
       ~&  [%register-fail wir rep]
       this
@@ -1638,7 +1651,7 @@
     ^+  this
     ?.  =(201 p.rep)
       ?:  (bad-nonce rep)
-        (nonce:effect /next/new-order)
+        (nonce:effect %new-order)
       :: XX retry immediately or backoff?
       :: XX possible 204?
       ~&  [%new-order-fail wir rep]
@@ -1665,7 +1678,7 @@
     ^+  this
     ?.  =(200 p.rep)
       ?:  (bad-nonce rep)
-        (nonce:effect /next/finalize-order)
+        (nonce:effect %finalize-order)
       ~&  [%finalize-order-fail wir rep]
       ?>  ?=(^ rod)
       :: XX get the failure reason
@@ -1787,7 +1800,7 @@
     ^+  this
     ?.  =(200 p.rep)
       ?:  (bad-nonce rep)
-        (nonce:effect /next/finalize-trial)
+        (nonce:effect %finalize-trial)
       :: XX retry? or cancel order?
       :: XX 204 assume pending?
       ~&  [%finalize-trial-fail wir rep]
