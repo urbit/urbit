@@ -145,11 +145,14 @@
         ::  %bit: very minimal support for bit strings
         ::
         ::    Specifically, values must already be padded and byte-aligned.
-        ::    Note that leading zeros are significant in ASN.1 bit strings,
-        ::    so atomic encoding would be insufficient for complete support.
+        ::    len: bitwidth
+        ::    bit: data
         ::
-        [%bit bit=@ux]
+        [%bit len=@ud bit=@ux]
         ::  %oct: octets in little-endian byte order
+        ::
+        ::    len: bytewidth
+        ::    bit: data
         ::
         [%oct len=@ud oct=@ux]
         ::  %nul: fully supported!
@@ -247,9 +250,14 @@
           [%int *]  =/  a  (flop (rip 3 int.pec))
                     ?~  a  [0 ~]
                     ?:((lte i.a 127) a [0 a])
-          ::  presumed to be already padded to a byte boundary
+          ::  padded to byte-width, must be already byte-aligned
           ::
-          [%bit *]  [0 (rip 3 bit.pec)]
+          [%bit *]  =/  a  (rip 3 bit.pec)
+                    =/  b  ~|  %der-invalid-bit
+                        ?.  =(0 (mod len.pec 8))
+                          ~|(%der-invalid-bit-alignment !!)
+                        (sub (div len.pec 8) (lent a))
+                    [0 (weld a (reap b 0))]
           ::  padded to byte-width
           ::
           [%oct *]  =/  a  (rip 3 oct.pec)
@@ -303,7 +311,7 @@
     =<  ^-  $-(nail (like spec:asn1))
         ;~  pose
           (stag %int (bass 256 (sear int ;~(pfix (tag 2) till))))
-          (stag %bit (^boss 256 (cook tail ;~(pfix (tag 3) till)))) :: XX test
+          (stag %bit (sear bit (boss 256 ;~(pfix (tag 3) till))))
           (stag %oct (boss 256 ;~(pfix (tag 4) till)))
           (stag %nul (cold ~ ;~(plug (tag 5) (tag 0))))
           (stag %obj (^boss 256 ;~(pfix (tag 6) till)))
@@ -325,6 +333,15 @@
       ?:  ?=([@ ~] a)  `a
       ?.  =(0 i.a)  `a
       ?.((gth i.t.a 127) ~ `t.a)
+    ::  +bit:parse:der: convert bytewidth to bitwidth
+    ::
+    ++  bit
+      |=  [len=@ud dat=@ux]
+      ^-  (unit [len=@ud dat=@ux])
+      ?.  =(0 (end 3 1 dat))  ~
+      :+  ~
+        (mul 8 (dec len))
+      (rsh 3 1 dat)
     ::  +recur:parse:der: parse bytes for a list of +spec:asn1
     ::
     ++  recur
@@ -670,7 +687,9 @@
         ^-  spec:asn1
         :~  %seq
             [%seq [[%obj rsa:obj:asn1] [%nul ~] ~]]
-            [%bit +:(pass:en:der:pkcs1 k)]
+            =/  a=[len=@ud dat=@ux]
+              (pass:en:der:pkcs1 k)
+            [%bit (mul 8 len.a) dat.a]
         ==
       ::  +ring:spec:pkcs8: private key ASN.1
       ::
@@ -691,7 +710,7 @@
                 =(rsa:obj:asn1 obj.i.seq.i.seq.a)
             ==
           ~
-        (pass:de:der:pkcs1 (met 3 bit.i.t.seq.a) bit.i.t.seq.a)
+        (pass:de:der:pkcs1 (div len.i.t.seq.a 8) bit.i.t.seq.a)
       ::  +ring:de:spec:pkcs8:
       ::
       ++  ring  !!
@@ -758,9 +777,13 @@
           :~  %seq
               dat
               [%seq [[%obj rsa-sha-256:obj:asn1] [%nul ~] ~]]
-              :: big-endian signature bytes
-              :: XX revisit %bit
-              [%bit (swp 3 (~(sign rs256 key) +:(en:^der dat)))]
+              :: big-endian signature bits
+              ::
+              ::   the signature bitwidth is definitionally the key length
+              ::
+              :+  %bit
+                (met 0 n.pub.key)
+              (swp 3 (~(sign rs256 key) +:(en:^der dat)))
           ==
       ::  +info:en:spec:pkcs10: certificate request info
       ::
@@ -1886,6 +1909,7 @@
             test-rsa
             test-rsapem
             test-rsa-pkcs8
+            test-rsa-pem-zero
             test-rs256
             test-jwk
             test-jws
@@ -2145,6 +2169,32 @@
       (need (ring:de:pem:pkcs1 kpem))
     %-  expect-eq  !>
       [pub (pass:en:pem:pkcs8 k)]
+  ::
+  ++  test-rsa-pem-zero
+    :: intentional bad values to test significant trailing zeros
+    =/  k=key:rsa  [[n=(bex 16) e=(bex 16)] ~]
+    :: pkcs1
+    =/  kpem=wain
+      :~  '-----BEGIN RSA PUBLIC KEY-----'
+          'MAoCAwEAAAIDAQAA'
+          '-----END RSA PUBLIC KEY-----'
+      ==
+    :: pkcs8
+    =/  kpem2=wain
+    :~  '-----BEGIN PUBLIC KEY-----'
+        'MB4wDQYJKoZIhvcNAQEBBQADDQAwCgIDAQAAAgMBAAA='
+        '-----END PUBLIC KEY-----'
+    ==
+    ;:  weld
+      %-  expect-eq  !>
+        [kpem (pass:en:pem:pkcs1 k)]
+      %-  expect-eq  !>
+        [`k (pass:de:pem:pkcs1 kpem)]
+      %-  expect-eq  !>
+        [kpem2 (pass:en:pem:pkcs8 k)]
+      %-  expect-eq  !>
+        [`k (pass:de:pem:pkcs8 kpem2)]
+    ==
   ::
   ++  test-rsa
     =/  k1=key:rsa
