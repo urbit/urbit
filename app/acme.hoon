@@ -290,34 +290,33 @@
   ::  +de:der: decode atom to +spec:asn1
   ::
   ++  de
-    =<  |=  [len=@ud dat=@ux]
-        ^-  (unit spec:asn1)
-        :: XX refactor into +parse
-        =/  a  (rip 3 dat)
-        =/  b  ~|  %der-invalid-len
-            (sub len (lent a))
-        (rust `(list @D)`(weld a (reap b 0)) parse)
+    |=  [len=@ud dat=@ux]
+    ^-  (unit spec:asn1)
+    :: XX refactor into +parse
+    =/  a  (rip 3 dat)
+    =/  b  ~|  %der-invalid-len
+        (sub len (lent a))
+    (rust `(list @D)`(weld a (reap b 0)) parse)
+  ::  +parse:der: DER parser combinator
+  ::
+  ++  parse
+    =<  ^-  $-(nail (like spec:asn1))
+        ;~  pose
+          (stag %int (bass 256 (sear int ;~(pfix (tag 2) till))))
+          (stag %bit (^boss 256 (cook tail ;~(pfix (tag 3) till)))) :: XX test
+          (stag %oct (boss 256 ;~(pfix (tag 4) till)))
+          (stag %nul (cold ~ ;~(plug (tag 5) (tag 0))))
+          (stag %obj (^boss 256 ;~(pfix (tag 6) till)))
+          (stag %seq (sear recur ;~(pfix (tag 48) till)))
+          (stag %set (sear recur ;~(pfix (tag 49) till)))
+          (stag %con ;~(plug (sear context next) till))
+        ==
     |%
-    ::  +parse:de:der: DER parser combinator
-    ::
-    ++  parse
-      %+  cook  |*(a=* `spec:asn1`a)   ::  XX fix
-      :: ^-  $-(nail (like spec:asn1))
-      ;~  pose
-        (stag %int (bass 256 (sear int ;~(pfix (tag 2) till))))
-        (stag %bit (^boss 256 (cook tail ;~(pfix (tag 3) till)))) :: XX test
-        (stag %oct (boss 256 ;~(pfix (tag 4) till)))
-        (stag %nul (cold ~ ;~(plug (tag 5) (tag 0))))
-        (stag %obj (^boss 256 ;~(pfix (tag 6) till)))
-        (stag %seq (sear recur ;~(pfix (tag 48) till)))
-        (stag %set (sear recur ;~(pfix (tag 49) till)))
-        (stag %con ;~(plug (sear context next) till))
-      ==
-    ::  +tag:de:der: parse tag byte
+    ::  +tag:parse:der: parse tag byte
     ::
     ++  tag
       |=(a=@D (just a))
-    ::  +int:de:der: sear unsigned big-endian bytes
+    ::  +int:parse:der: sear unsigned big-endian bytes
     ::
     ++  int
       |=  a=(list @D)
@@ -326,11 +325,11 @@
       ?:  ?=([@ ~] a)  `a
       ?.  =(0 i.a)  `a
       ?.((gth i.t.a 127) ~ `t.a)
-    ::  +recur:de:der: parse bytes for a list of +spec:asn1
+    ::  +recur:parse:der: parse bytes for a list of +spec:asn1
     ::
     ++  recur
       |=(a=(list @) (rust a (star parse)))
-    ::  +context:de:der: decode context-specific tag byte
+    ::  +context:parse:der: decode context-specific tag byte
     ::
     ++  context
       |=  a=@D
@@ -339,7 +338,7 @@
       :+  ~
         =(1 (cut 0 [5 1] a))
       (dis 0x1f a)
-    ::  +boss:de:der: shadowed to count as well
+    ::  +boss:parse:der: shadowed to count as well
     ::
     ::    Use for parsing +octs more broadly?
     ::
@@ -350,7 +349,7 @@
         :-  (lent waq)
         (reel waq |=([p=@ q=@] (add p (mul wuc q))))
       tyd
-    ::  +till:de:der: parser combinator for len-prefixed bytes
+    ::  +till:parse:der: parser combinator for len-prefixed bytes
     ::
     ::  advance until
     ::
