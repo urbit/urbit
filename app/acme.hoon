@@ -253,10 +253,10 @@
       :: ^-  $-(nail (like spec:asn1))
       ;~  pose
         (stag %int (bass 256 (sear int ;~(pfix (tag 2) till))))
-        (stag %bit (boss 256 (cook tail ;~(pfix (tag 3) till)))) :: XX test
-        (stag %oct (cook oct ;~(pfix (tag 4) till)))
+        (stag %bit (^boss 256 (cook tail ;~(pfix (tag 3) till)))) :: XX test
+        (stag %oct (boss 256 ;~(pfix (tag 4) till)))
         (stag %nul (cold ~ ;~(plug (tag 5) (tag 0))))
-        (stag %obj (boss 256 ;~(pfix (tag 6) till)))
+        (stag %obj (^boss 256 ;~(pfix (tag 6) till)))
         (stag %seq (sear recur ;~(pfix (tag 48) till)))
         (stag %set (sear recur ;~(pfix (tag 49) till)))
         (stag %con ;~(plug (sear context next) till))
@@ -274,13 +274,6 @@
       ?:  ?=([@ ~] a)  `a
       ?.  =(0 i.a)  `a
       ?.((gth i.t.a 127) ~ `t.a)
-    :: +oct:de:der: cook bytes to capture length
-    ::
-    ++  oct
-      |=  a=(list @D)
-      ^-  [len=@ud oct=@ux]
-      :: XX do this in a parser combinator instead
-      [(lent a) (scan a (boss 256 (star next)))]
     ::  +recur:de:der: parse bytes for a list of +spec:asn1
     ::
     ++  recur
@@ -294,6 +287,17 @@
       :+  ~
         =(1 (cut 0 [5 1] a))
       (dis 0x1f a)
+    ::  +boss:de:der: shadowed to count as well
+    ::
+    ::    Use for parsing +octs more broadly?
+    ::
+    ++  boss
+      |*  [wuc=@ tyd=rule]
+      %+  cook
+        |=  waq=(list @)
+        :-  (lent waq)
+        (reel waq |=([p=@ q=@] (add p (mul wuc q))))
+      tyd
     ::  +till:de:der: parser combinator for len-prefixed bytes
     ::
     ::  advance until
