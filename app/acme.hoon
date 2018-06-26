@@ -875,17 +875,18 @@
   ::  |en:jwk: encoding of json cryptographic keys
   ::
   ++  en
+    =>  |%
+        ::  +numb:en:jwk: base64-url encode big-endian number
+        ::
+        ++  numb  (corl en-base64url en:octn)
+        --
     |%
     ::  +pass:en:jwk: json encode public key
     ::
     ++  pass
       |=  k=key:rsa
       ^-  json
-      :-  %o  %-  my  :~
-        kty+s+'RSA'
-        n+s+(en-base64url (en:octn n.pub.k))
-        e+s+(en-base64url (en:octn e.pub.k))
-      ==
+      [%o (my kty+s+'RSA' n+s+(numb n.pub.k) e+s+(numb e.pub.k) ~)]
     ::  +ring:en:jwk: json encode private key
     ::
     ++  ring
@@ -895,55 +896,44 @@
       ?>  ?=(^ sek.k)
       :-  %o  %-  my  :~
         kty+s+'RSA'
-        n+s+(en-base64url (en:octn n.pub.k))
-        e+s+(en-base64url (en:octn e.pub.k))
-        d+s+(en-base64url (en:octn d.u.sek.k))
-        p+s+(en-base64url (en:octn p.u.sek.k))
-        q+s+(en-base64url (en:octn q.u.sek.k))
+        n+s+(numb n.pub.k)
+        e+s+(numb e.pub.k)
+        d+s+(numb d.u.sek.k)
+        p+s+(numb p.u.sek.k)
+        q+s+(numb q.u.sek.k)
       ==
     --
   ::  |de:jwk: decoding of json cryptographic keys
   ::
   ++  de
+    =,  dejs-soft:format
+    =>  |%
+        ::  +numb:de:jwk: parse base64-url big-endian number
+        ::
+        ++  numb  (cu (cork de-base64url (lift de:octn)) so)
+        --
     |%
     ::  +pass:de:jwk: decode json public key
     ::
     ++  pass
-      =,  dejs-soft:format
       %+  ci
-        |=  [kty=@t n=(unit octs) e=(unit octs)]
+        =/  a  (unit @ux)
+        |=  [kty=@t n=a e=a]
         ^-  (unit key:rsa)
-        =/  pub  (both (bind n de:octn) (bind e de:octn))
+        =/  pub  (both n e)
         ?~(pub ~ `[u.pub ~])
-      %-  ot  :~
-        kty+(su (jest 'RSA'))
-        n+(cu de-base64url so)
-        e+(cu de-base64url so)
-      ==
+      (ot kty+(su (jest 'RSA')) n+numb e+numb ~)
     ::  +ring:de:jwk: decode json private key
     ::
     ++  ring
-      =,  dejs-soft:format
       %+  ci
-        |=  $:  kty=@t
-                n=(unit octs)
-                e=(unit octs)
-                d=(unit octs)
-                p=(unit octs)
-                q=(unit octs)
-            ==
+        =/  a  (unit @ux)
+        |=  [kty=@t n=a e=a d=a p=a q=a]
         ^-  (unit key:rsa)
-        =/  pub  (both (bind n de:octn) (bind e de:octn))
-        =/  sek  :(both (bind d de:octn) (bind p de:octn) (bind q de:octn))
+        =/  pub  (both n e)
+        =/  sek  :(both d p q)
         ?:(|(?=(~ pub) ?=(~ sek)) ~ `[u.pub sek])
-      %-  ot  :~
-        kty+(su (jest 'RSA'))
-        n+(cu de-base64url so)
-        e+(cu de-base64url so)
-        d+(cu de-base64url so)
-        p+(cu de-base64url so)
-        q+(cu de-base64url so)
-      ==
+      (ot kty+(su (jest 'RSA')) n+numb e+numb d+numb p+numb q+numb ~)
     --
   ::  |thumb:jwk: "thumbprint" json-encoded key (rfc7638)
   ::
