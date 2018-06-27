@@ -188,10 +188,11 @@
   ++  hmac-sha512l  (cury hmac sha-512l 128 64)
   ::
   ++  hmac
-    ::  boq: block size used by haj
+    ::  boq: block size in bytes used by haj
     ::  out: bytes output by haj
     |*  [[haj=$-([@u @] @) boq=@u out=@u] [kl=@u key=@] [ml=@u msg=@]]
-    ::  ensure key and message fit signalled lengths
+    ::  ensure key and message fit signaled lengths
+    ::TODO  other crypto implementations should do this too, probably
     =.  key  (end 3 kl key)
     =.  msg  (end 3 ml msg)
     ::  keys longer than block size are shortened by hashing
@@ -203,7 +204,7 @@
     =+  kip=(mix key (fil 3 boq 0x36))
     =+  kop=(mix key (fil 3 boq 0x5c))
     ::  append inner padding to message, then hash
-    =+  (haj (add ml boq) (add (lsh 3 boq msg) kip))
+    =+  (haj (add ml boq) (add (lsh 3 ml kip) msg))
     ::  prepend outer padding to result, hash again
     (haj (add out boq) (add (lsh 3 out kop) -))
   --
