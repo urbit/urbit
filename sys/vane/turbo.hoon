@@ -2184,72 +2184,28 @@
       ::
       =/  sub-path-segments=(list @ta)
         (skim (turn ~(tap by dir.toplevel-arch) head) (sane %tas))
-      ::  create :sub-builds to check which :sub-path-segments are files
       ::
-      =/  sub-builds=(list ^build)
+      =/  sub-schematics=(list [sub-path=@ta =schematic])
         %+  turn  sub-path-segments
         |=  sub=@ta
-        ^-  ^build
-        :-  date.build
+        :-  sub
         [%scry %c %y path-to-render(spur [sub spur.path-to-render])]
       ::
-      =|  $=  results
-        (list [kid=^build sub-path=@ta result=(unit build-result)])
-      ::  run :sub-builds
-      ::
-      =/  subs-results
-        |-  ^+  [results accessed-builds]
-        ?~  sub-builds  [results accessed-builds]
-        ?>  ?=(^ sub-path-segments)
-        ::
-        =/  kid=^build    i.sub-builds
-        =/  sub-path=@ta  i.sub-path-segments
-        ::
-        =^  result  accessed-builds  (depend-on kid)
-        =.  results  [[kid sub-path result] results]
-        ::
-        $(sub-builds t.sub-builds, sub-path-segments t.sub-path-segments)
-      ::  apply mutations from depending on :sub-builds
-      ::
-      =:  results          -.subs-results
-          accessed-builds  +.subs-results
-      ==
-      ::  split :results into completed :mades and incomplete :blocks
-      ::
-      =/  split-results
-        (skid results |=([* * r=(unit build-result)] ?=(^ r)))
-      ::
-      =/  mades=_results   -.split-results
-      =/  blocks=_results  +.split-results
-      ::  if any builds blocked, produce them all as %blocks
-      ::
-      ?^  blocks
-        [build [%blocks (turn `_results`blocks head) ~] accessed-builds]
-      ::  check for errors
-      ::
-      =/  errors=_results
-        %+  skim  results
-        |=  [* * r=(unit build-result)]
-        ?=([~ %error *] r)
-      ::  if any errored, produce the first error, as is tradition
-      ::
-      ?^  errors
-        ?>  ?=([~ %error *] result.i.errors)
-        =/  =build-result
-          [%error message.u.result.i.errors]
-        ::
-        [build [%build-result build-result] accessed-builds]
+      =^  schematic-results  accessed-builds
+        (perform-schematics sub-schematics %fail-on-errors *@ta)
+      ?:  ?=([%| *] schematic-results)
+        ::  block or error
+        p.schematic-results
       ::  marks: list of the marks of the files at :path-to-render
       ::
       =/  marks=(list @tas)
-        %+  murn  results
-        |=  [kid=^build sub-path=@ta result=(unit build-result)]
+        %+  murn  p.schematic-results
+        |=  [sub-path=@ta result=build-result]
         ^-  (unit @tas)
         ::
-        ?>  ?=([@da %scry %c %y *] kid)
-        ?>  ?=([~ %success %scry *] result)
+        ?>  ?=([%success %scry *] result)
         ::
-        =/  =arch  ;;(arch q.q.cage.u.result)
+        =/  =arch  ;;(arch q.q.cage.result)
         ::  if it's a directory, not a file, we can't load it
         ::
         ?~  fil.arch
@@ -2881,52 +2837,23 @@
     ++  make-list
       |=  schematics=(list schematic)
       ^-  build-receipt
+      ::
+      =/  key-and-schematics
+        (turn schematics |=(=schematic [~ schematic]))
       ::  depend on builds of each schematic
       ::
-      =^  results-raw  accessed-builds
-        %+  roll  schematics
-        |=  $:  =schematic
-                $=  accumulator
-                $:  results=(list [^build (unit build-result)])
-                    accessed-builds=_accessed-builds
-            ==  ==
-        ^+  accumulator
-        ::
-        =.  accessed-builds  accessed-builds.accumulator
-        ::
-        =/  sub-build=^build  [date.build schematic]
-        ::
-        =^  result  accessed-builds.accumulator  (depend-on sub-build)
-        =.  results.accumulator  [[sub-build result] results.accumulator]
-        ::
-        accumulator
-      ::  help out the type system
-      ::
-      =/  results=(list [^build (unit build-result)])  results-raw
-      ::  if any sub-builds blocked, produce all blocked sub-builds
-      ::
-      =/  blocks=(list ^build)
-        %+  murn  results
-        |=  [sub=^build result=(unit build-result)]
-        ^-  (unit ^build)
-        ?^  result
-          ~
-        `sub
-      ::
-      ?^  blocks
-        [build [%blocks blocks ~] accessed-builds]
+      =^  schematic-results  accessed-builds
+        (perform-schematics key-and-schematics %ignore-errors *~)
+      ?:  ?=([%| *] schematic-results)
+        ::  block or error
+        p.schematic-results
       ::  return all builds
       ::
       =/  =build-result
         :+  %success  %list
         ::  the roll above implicitly flopped the results
         ::
-        %-  flop
-        %+  turn  results
-        |=  [* result=(unit build-result)]
-        ^-  build-result
-        ?>  ?=(^ result)
-        u.result
+        (flop (turn p.schematic-results tail))
       [build [%build-result build-result] accessed-builds]
     ::
     ++  make-mash
@@ -3093,65 +3020,22 @@
       =/  subject-cage=cage  (result-to-cage u.subject-result)
       ::
       =/  subject-vase=vase  q.subject-cage
-      ::  run the mutants as sub-builds
       ::
-      =^  results-raw  accessed-builds
-        %+  roll  mutations
-        |=  $:  [=wing =schematic]
-                $=  accumulator
-                $:  results=(list [wing ^build (unit build-result)])
-                    accessed-builds=_accessed-builds
-            ==  ==
-        ^+  accumulator
-        ::
-        =.  accessed-builds  accessed-builds.accumulator
-        ::
-        =/  sub-build=^build  [date.build schematic]
-        ::
-        =^  result  accessed-builds.accumulator  (depend-on sub-build)
-        =.  results.accumulator  [[wing sub-build result] results.accumulator]
-        ::
-        accumulator
-      ::  help out the type system
-      ::
-      =/  results=(list [wing ^build (unit build-result)])  results-raw
-      ::  check for errors
-      ::
-      =/  error=tang
-        %-  zing  ^-  (list tang)
-        %+  murn  results
-        |=  [* * result=(unit build-result)]
-        ^-  (unit tang)
-        ?.  ?=([~ %error *] result)
-          ~
-        `message.u.result
-      ::  only produce the first error, as is tradition
-      ::
-      ?^  error
-        =.  error  [leaf+"ford: %mute failed: " error]
-        [build [%build-result %error error] accessed-builds]
-      ::  if any sub-builds blocked, produce all blocked sub-builds
-      ::
-      =/  blocks=(list ^build)
-        %+  murn  `(list [wing ^build (unit build-result)])`results
-        |=  [* sub=^build result=(unit build-result)]
-        ^-  (unit ^build)
-        ?^  result
-          ~
-        `sub
-      ::
-      ?^  blocks
-        [build [%blocks blocks ~] accessed-builds]
+      =^  schematic-results  accessed-builds
+        (perform-schematics mutations %fail-on-errors *wing)
+      ?:  ?=([%| *] schematic-results)
+        ::  block or error
+        p.schematic-results
       ::  all builds succeeded; retrieve vases from results
       ::
       =/  successes=(list [=wing =vase])
-        %+  turn  results
-        |=  [=wing * result=(unit build-result)]
+        %+  turn  p.schematic-results
+        |=  [=wing result=build-result]
         ^-  [^wing vase]
         ::
-        ?>  ?=([~ %success *] result)
+        ?>  ?=([%success *] result)
         ::
-        [wing q:(result-to-cage u.result)]
+        [wing q:(result-to-cage result)]
       ::  create and run a +build to apply all mutations in order
       ::
       =/  ride-build=^build
@@ -3391,54 +3275,33 @@
       ::  possible-spurs: flopped paths to which :raw-path could resolve
       ::
       =/  possible-spurs=(list spur)  (turn (segments raw-path) flop)
-      ::  sub-builds: scry builds to check each path in :possible-paths
+      ::  rails-and-schematics: scrys to check each path in :possible-paths
       ::
-      =/  sub-builds=(list ^build)
+      =/  rails-and-schematics=(list [=rail =schematic])
         %+  turn  possible-spurs
         |=  possible-spur=spur
-        ^-  ^build
+        ^-  [rail schematic]
         ::  full-spur: wrap :possible-spur with :prefix and /hoon suffix
         ::
         =/  full-spur=spur  :(welp /hoon possible-spur /[prefix])
         ::
-        [date.build [%scry %c %x `rail`[disc full-spur]]]
-      ::  results: accumulator for results of sub-builds
+        :-  [disc full-spur]
+        [%scry %c %x `rail`[disc full-spur]]
+      ::  depend on builds of each schematic
       ::
-      =|  results=(list [kid=^build result=(unit build-result)])
-      ::  depend on all the sub-builds and collect their results
-      ::
-      =/  subs-results
-        |-  ^+  [results accessed-builds]
-        ?~  sub-builds  [results accessed-builds]
-        ::
-        =/  kid=^build  i.sub-builds
-        ::
-        =^  result  accessed-builds  (depend-on kid)
-        =.  results  [[kid result] results]
-        ::
-        $(sub-builds t.sub-builds)
-      ::  apply mutations from depending on sub-builds
-      ::
-      =:  results          -.subs-results
-          accessed-builds  +.subs-results
-      ==
-      ::  split :results into completed :mades and incomplete :blocks
-      ::
-      =+  split-results=(skid results |=([* r=(unit build-result)] ?=(^ r)))
-      ::
-      =/  mades=_results   -.split-results
-      =/  blocks=_results  +.split-results
-      ::  if any builds blocked, produce them all in %blocks
-      ::
-      ?^  blocks
-        [build [%blocks (turn `_results`blocks head) ~] accessed-builds]
+      =^  schematic-results  accessed-builds
+        (perform-schematics rails-and-schematics %ignore-errors *rail)
+      ?:  ?=([%| *] schematic-results)
+        ::  block or error
+        p.schematic-results
       ::  matches: builds that completed with a successful result
       ::
-      =/  matches=_results
-        %+  skim  mades
-        |=  [* r=(unit build-result)]
+      =/  matches=_p.schematic-results
+        ~!  p.schematic-results
+        %+  skim  p.schematic-results
+        |=  [* r=build-result]
         ::
-        ?=([~ %success *] r)
+        ?=([%success *] r)
       ::  if no matches, error out
       ::
       ?~  matches
@@ -3449,13 +3312,7 @@
       ::  if exactly one path matches, succeed with the matching path
       ::
       ?:  ?=([* ~] matches)
-        =*  kid  kid.i.matches
-        ?>  ?=(%scry -.schematic.kid)
-        ::
-        :*  build
-            [%build-result %success %path rail.resource.schematic.kid]
-            accessed-builds
-        ==
+        [build [%build-result %success %path key.i.matches] accessed-builds]
       ::  multiple paths matched; error out
       ::
       %-  return-error
@@ -3463,17 +3320,12 @@
       :-  [%leaf "multiple matches for %path: "]
       ::  tmi; cast :matches back to +list
       ::
-      %+  roll  `_results`matches
-      |=  [[kid=^build result=(unit build-result)] message=tang]
+      %+  roll  `_p.schematic-results`matches
+      |=  [[key=rail result=build-result] message=tang]
       ^-  tang
-      ::
-      ?>  ?=(%scry -.schematic.kid)
       ::  beam: reconstruct request from :kid's schematic and date
       ::
-      =/  =beam
-        :*  [ship.disc desk.disc [%da date.kid]]
-            spur.rail.resource.schematic.kid
-        ==
+      =/  =beam  [[ship.disc desk.disc [%da date.build]] spur.key]
       ::
       [[%leaf "{<(en-beam beam)>}"] message]
     ::
@@ -4761,6 +4613,81 @@
     ::  |utilities:make: helper arms
     ::
     ::+|  utilities
+    ::  +perform-schematics: helper function that performs a list of builds
+    ::
+    ::    We often need to run a list of builds. This helper method will
+    ::    depend on all :builds, will return a +build-receipt of either the
+    ::    blocks or the first error, or a list of all completed results.
+    ::
+    ::    This is a wet gate so individual callers can associate their own
+    ::    key types with schematics.
+    ::
+    ++  perform-schematics
+      |*  $:  builds=(list [key=* =schematic])
+              on-error=?(%fail-on-errors %ignore-errors)
+              key-bunt=*
+          ==
+      ^-  $:  (each (list [key=_key-bunt result=build-result]) build-receipt)
+              _accessed-builds
+          ==
+      ::
+      |^  =^  results  accessed-builds
+            =|  results=(list [_key-bunt ^build (unit build-result)])
+            |-
+            ^+  [results accessed-builds]
+            ::
+            ?~  builds
+              [results accessed-builds]
+            ::
+            =/  sub-build=^build  [date.build schematic.i.builds]
+            =^  result  accessed-builds  (depend-on sub-build)
+            =.  results  [[key.i.builds sub-build result] results]
+            ::
+            $(builds t.builds)
+          ?:  =(%fail-on-errors on-error)
+            (check-errors results)
+          (handle-rest results)
+      ::
+      ++  check-errors
+        |=  results=(list [_key-bunt ^build (unit build-result)])
+        ::
+        =/  error=tang
+          %-  zing  ^-  (list tang)
+          %+  murn  results
+          |=  [* * result=(unit build-result)]
+          ^-  (unit tang)
+          ?.  ?=([~ %error *] result)
+            ~
+          `message.u.result
+        ::  only produce the first error, as is tradition
+        ::
+        ?^  error
+          =.  error  [leaf+"ford: %mute failed: " error]
+          [[%| [build [%build-result %error error] accessed-builds]] accessed-builds]
+        (handle-rest results)
+      ::
+      ++  handle-rest
+        |=  results=(list [_key-bunt ^build (unit build-result)])
+        ::  if any sub-builds blocked, produce all blocked sub-builds
+        ::
+        =/  blocks=(list ^build)
+          %+  murn  `(list [* ^build (unit build-result)])`results
+          |=  [* sub=^build result=(unit build-result)]
+          ^-  (unit ^build)
+          ?^  result
+            ~
+          `sub
+        ::
+        ?^  blocks
+          [[%| [build [%blocks blocks ~] accessed-builds]] accessed-builds]
+        ::
+        :_  accessed-builds
+        :-  %&
+        %+  turn  results
+        |*  [key=_key-bunt ^build result=(unit build-result)]
+        ^-  [_key-bunt build-result]
+        [key (need result)]
+      --
     ::  +wrap-error: wrap an error message around a failed sub-build
     ::
     ++  wrap-error
