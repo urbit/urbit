@@ -2335,33 +2335,6 @@
     ++  make-cast
       |=  [=disc mark=term input=schematic]
       ^-  build-receipt
-      ::  find the path of the destination mark source
-      ::
-      =/  final-mark-path-build=^build  [date.build [%path disc %mar mark]]
-      ::
-      =^  final-mark-path-result  accessed-builds
-        (depend-on final-mark-path-build)
-      ::
-      ?~  final-mark-path-result
-        [build [%blocks [final-mark-path-build]~ ~] accessed-builds]
-      ::
-      ?.  ?=([~ %success %path *] final-mark-path-result)
-        (wrap-error final-mark-path-result)
-      ::
-      =/  final-mark-path=rail  rail.u.final-mark-path-result
-      ::  build the destination mark source into a +vase of the mark core
-      ::
-      =/  final-mark-build=^build  [date.build [%core final-mark-path]]
-      ::
-      =^  final-mark-result  accessed-builds  (depend-on final-mark-build)
-      ?~  final-mark-result
-        [build [%blocks [final-mark-build]~ ~] accessed-builds]
-      ::
-      ?.  ?=([~ %success %core *] final-mark-result)
-        (wrap-error final-mark-result)
-      ::
-      =/  final-mark=vase  vase.u.final-mark-result
-      ::  run the :input schematic to obtain the mark and value of the input
       ::
       =/  input-build=^build  [date.build input]
       ::
@@ -2372,72 +2345,135 @@
       ?.  ?=([~ %success *] input-result)
         (wrap-error input-result)
       ::
-      =/  input-result-cage=cage  (result-to-cage u.input-result)
+      =/  result-cage=cage  (result-to-cage u.input-result)
       ::
-      |^  ::  if :final-mark has no +grab arm, grow from the input mark
+      =/  translation-path-build=^build
+        [date.build [%walk disc p.result-cage mark]]
+      =^  translation-path-result  accessed-builds
+        (depend-on translation-path-build)
+      ::
+      ?~  translation-path-result
+        [build [%blocks [translation-path-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %walk *] translation-path-result)
+        (wrap-error translation-path-result)
+      ::
+      =/  translation-path=(list mark-action)
+        results.u.translation-path-result
+      ::
+      |^  ^-  build-receipt
+          ?~  translation-path
+            [build [%build-result %success %cast result-cage] accessed-builds]
           ::
-          ?.  (slob %grab p.final-mark)
-            grow
-          ::  find +grab within the destination mark core
+          =^  action-result  accessed-builds
+            =,  i.translation-path
+            ?-  -.i.translation-path
+              %grow  (run-grow source target result-cage)
+              %grab  (run-grab source target result-cage)
+            ==
           ::
-          =/  grab-build=^build
-            [date.build [%ride [%limb %grab] [%$ %noun final-mark]]]
+          ?-    -.action-result
+              %success
+            %_  $
+              translation-path  t.translation-path
+              result-cage  cage.action-result
+            ==
           ::
-          =^  grab-result  accessed-builds  (depend-on grab-build)
-          ?~  grab-result
-            [build [%blocks [grab-build]~ ~] accessed-builds]
+              %blocks
+            [build [%blocks blocks.action-result ~] accessed-builds]
           ::
-          ?.  ?=([~ %success %ride *] grab-result)
-            (wrap-error grab-result)
-          ::  if the +grab core has no arm for the input mark, grow from input
-          ::
-          ?.  (slob p.input-result-cage p.vase.u.grab-result)
-            grow
-          ::  find an arm for the input's mark within the +grab core
-          ::
-          =/  grab-mark-build=^build
-            :-  date.build
-            [%ride [%limb p.input-result-cage] [%$ %noun vase.u.grab-result]]
-          ::
-          =^  grab-mark-result  accessed-builds  (depend-on grab-mark-build)
-          ?~  grab-mark-result
-            [build [%blocks [grab-mark-build]~ ~] accessed-builds]
-          ::
-          ?.  ?=([~ %success %ride *] grab-mark-result)
-            (wrap-error grab-mark-result)
-          ::  slam the +mark-name:grab gate on the result of running :input
-          ::
-          =/  call-build=^build
-            :-  date.build
-            [%call gate=[%$ %noun vase.u.grab-mark-result] sample=input]
-          ::
-          =^  call-result  accessed-builds  (depend-on call-build)
-          ?~  call-result
-            [build [%blocks [call-build]~ ~] accessed-builds]
-          ::
-          ?.  ?=([~ %success %call *] call-result)
-            (wrap-error call-result)
-          ::
-          =/  =build-result
-            [%success %cast [mark vase.u.call-result]]
-          ::
-          [build [%build-result build-result] accessed-builds]
+              %error
+            :*  build
+                :*  %build-result  %error
+                    leaf+"ford: failed to %cast"
+                    tang.action-result
+                ==
+                accessed-builds
+            ==
+        ==
+      ::
+      +=  action-result
+        $%  ::  translation was successful and here's a cage for you
+            [%success =cage]
+            ::  it was an error. sorry.
+            [%error =tang]
+            ::  we block on a build
+            [%blocks blocks=(list ^build)]
+        ==
+      ::
+      ++  run-grab
+        |=  [source-mark=term target-mark=term input-cage=cage]
+        ^-  [action-result _accessed-builds]
+        ::
+        =/  mark-path-build=^build
+          [date.build [%path disc %mar target-mark]]
+        ::
+        =^  mark-path-result  accessed-builds
+          (depend-on mark-path-build)
+        ?~  mark-path-result
+          [[%blocks [mark-path-build]~] accessed-builds]
+        ::
+        ?.  ?=([~ %success %path *] mark-path-result)
+          (cast-wrap-error mark-path-result)
+        ::
+        =/  mark-core-build=^build  [date.build [%core rail.u.mark-path-result]]
+        ::
+        =^  mark-core-result  accessed-builds  (depend-on mark-core-build)
+        ?~  mark-core-result
+          [[%blocks ~[mark-core-build]] accessed-builds]
+        ::  find +grab within the destination mark core
+        ::
+        =/  grab-build=^build
+          [date.build [%ride [%limb %grab] [%$ (result-to-cage u.mark-core-result)]]]
+        ::
+        =^  grab-result  accessed-builds  (depend-on grab-build)
+        ?~  grab-result
+          [[%blocks [grab-build]~] accessed-builds]
+        ::
+        ?.  ?=([~ %success %ride *] grab-result)
+          (cast-wrap-error grab-result)
+        ::  find an arm for the input's mark within the +grab core
+        ::
+        =/  grab-mark-build=^build
+          :-  date.build
+          [%ride [%limb source-mark] [%$ %noun vase.u.grab-result]]
+        ::
+        =^  grab-mark-result  accessed-builds  (depend-on grab-mark-build)
+        ?~  grab-mark-result
+          [[%blocks [grab-mark-build]~] accessed-builds]
+        ::
+        ?.  ?=([~ %success %ride *] grab-mark-result)
+          (cast-wrap-error grab-mark-result)
+        ::  slam the +mark-name:grab gate on the result of running :input
+        ::
+        =/  call-build=^build
+          :-  date.build
+          [%call gate=[%$ %noun vase.u.grab-mark-result] sample=[%$ input-cage]]
+        ::
+        =^  call-result  accessed-builds  (depend-on call-build)
+        ?~  call-result
+          [[%blocks [call-build]~] accessed-builds]
+        ::
+        ?.  ?=([~ %success %call *] call-result)
+          (cast-wrap-error call-result)
+        ::
+        [[%success [mark vase.u.call-result]] accessed-builds]
       ::  +grow: grow from the input mark to the destination mark
       ::
-      ++  grow
-        ^-  build-receipt
-        ::  we couldn't grab; try to +grow from the input mark
+      ++  run-grow
+        |=  [source-mark=term target-mark=term input-cage=cage]
+        ^-  [action-result _accessed-builds]
         ::
         =/  starting-mark-path-build=^build
-          [date.build [%path disc %mar p.input-result-cage]]
+          [date.build [%path disc %mar source-mark]]
         ::
         =^  starting-mark-path-result  accessed-builds
           (depend-on starting-mark-path-build)
         ?~  starting-mark-path-result
-          [build [%blocks [starting-mark-path-build]~ ~] accessed-builds]
+          [[%blocks [starting-mark-path-build]~] accessed-builds]
         ::
         ?.  ?=([~ %success %path *] starting-mark-path-result)
-          (wrap-error starting-mark-path-result)
+          (cast-wrap-error starting-mark-path-result)
         ::  grow the value from the initial mark to the final mark
         ::
         ::  Replace the input mark's sample with the input's result,
@@ -2446,7 +2482,7 @@
         =/  grow-build=^build
           :-  date.build
           :+  %ride
-            formula=`hoon`[%tsgl [%wing ~[mark]] [%wing ~[%grow]]]
+            formula=`hoon`[%tsgl [%wing ~[target-mark]] [%wing ~[%grow]]]
           ^=  subject
           ^-  schematic
           :*  %mute
@@ -2454,33 +2490,40 @@
               [%core rail.u.starting-mark-path-result]
               ^=  mutations
               ^-  (list [wing schematic])
-              [[%& 6]~ [%$ input-result-cage]]~
+              [[%& 6]~ [%$ input-cage]]~
           ==
         ::
         =^  grow-result  accessed-builds  (depend-on grow-build)
         ?~  grow-result
-          [build [%blocks [grow-build]~ ~] accessed-builds]
+          [[%blocks [grow-build]~] accessed-builds]
         ::
         ?.  ?=([~ %success %ride *] grow-result)
-          (wrap-error grow-result)
+          (cast-wrap-error grow-result)
         ::  make sure the product nests in the sample of the destination mark
         ::
         =/  bunt-build=^build  [date.build [%bunt disc mark]]
         ::
         =^  bunt-result  accessed-builds  (depend-on bunt-build)
         ?~  bunt-result
-          [build [%blocks [bunt-build]~ ~] accessed-builds]
+          [[%blocks [bunt-build]~] accessed-builds]
         ::
         ?.  ?=([~ %success %bunt *] bunt-result)
-          (wrap-error bunt-result)
+          (cast-wrap-error bunt-result)
         ::
         ?.  (~(nest ut p.q.cage.u.bunt-result) | p.vase.u.grow-result)
-          (return-error [leaf+"ford: %cast failed: nest fail"]~)
+          [[%error [leaf+"ford: %cast failed: nest fail"]~] accessed-builds]
         ::
-        =/  =build-result
-          [%success %cast mark vase.u.grow-result]
+        [[%success mark vase.u.grow-result] accessed-builds]
+      ::
+      ++  cast-wrap-error
+        |=  result=(unit build-result)
+        ^-  [action-result _accessed-builds]
         ::
-        [build [%build-result build-result] accessed-builds]
+        ?>  ?=([~ %error *] result)
+        =/  message=tang
+          [[%leaf "ford: {<-.schematic.build>} failed: "] message.u.result]
+        ::
+        [[%error message] accessed-builds]
       --
     ::
     ++  make-core

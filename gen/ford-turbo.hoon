@@ -121,6 +121,7 @@
   test-multi-core-same-dependency
   test-walk-prefer-grab
   test-walk-large-graph
+  test-cast-large-graph
 ==
 ++  test-tear
   :-  `tank`leaf+"test-tear"
@@ -4835,9 +4836,10 @@
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  arch-type=type  -:!>(*arch)
-  =/  scry-results=(map [term beam] cage)
+  =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  ~
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4846,6 +4848,7 @@
       '''
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/first/mar]]
+      :-  ~
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4858,6 +4861,7 @@
       '''
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/second/mar]]
+      :-  ~
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4869,28 +4873,15 @@
       --
       '''
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
-      :^  %arch  arch-type  ~
-      (my ~[[~.first ~] [~.second ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /first/mar]]
-      [%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /second/mar]]
-      [%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/first/mar]]
-      [%arch arch-type fil=[~ u=0v1] ~]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/second/mar]]
-      [%arch arch-type fil=[~ u=0v2] ~]
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/noun/mar]]
+      ~
     ==
   ::
   =^  results1  ford-gate
     %-  test-ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
-      scry=(scry-with-results scry-results)
+      scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
         :*  duct=~[/path]  type=~  %build  ~nul
@@ -5240,36 +5231,23 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  arch-type=type  -:!>(*arch)
   ::
-  =/  scry-results=(map [term beam] cage)
+  =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
-      [%hoon hoon-src-type foo-mark-src]
+      `[%hoon hoon-src-type foo-mark-src]
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
-      [%hoon hoon-src-type bar-mark-src]
+      `[%hoon hoon-src-type bar-mark-src]
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
-      :^  %arch  arch-type  ~
-      (my ~[[~.foo ~] [~.bar ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /foo/mar]]
-      [%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /bar/mar]]
-      [%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
-      [%arch arch-type fil=[~ u=0v1] ~]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
-      [%arch arch-type fil=[~ u=0v2] ~]
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/noun/mar]]
+      ~
     ==
   ::
   =^  results1  ford-gate
     %-  test-ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
-      scry=(scry-with-results scry-results)
+      scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
         :*  duct=~[/path]  type=~  %build  ~nul
@@ -5339,36 +5317,23 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  arch-type=type  -:!>(*arch)
   ::
-  =/  scry-results=(map [term beam] cage)
+  =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
-      [%hoon hoon-src-type foo-mark-src]
+      `[%hoon hoon-src-type foo-mark-src]
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
-      [%hoon hoon-src-type bar-mark-src]
+      `[%hoon hoon-src-type bar-mark-src]
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
-      :^  %arch  arch-type  ~
-      (my ~[[~.foo ~] [~.bar ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /foo/mar]]
-      [%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /bar/mar]]
-      [%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
-      [%arch arch-type fil=[~ u=0v1] ~]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
-      [%arch arch-type fil=[~ u=0v2] ~]
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/noun/mar]]
+      ~
     ==
   ::
   =^  results1  ford-gate
     %-  test-ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
-      scry=(scry-with-results scry-results)
+      scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
         :*  duct=~[/path]  type=~  %build  ~nul
@@ -5564,28 +5529,14 @@
       :-  [%cx [[~nul %home %da ~1234.5.6] /bar/data]]
       `[%bar !>([12 13])]
     ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/noun/mar]]
+      ~
+    ::
       :-  [%cy [[~nul %home %da ~1234.5.6] /data]]
       `[%arch !>(`arch`[fil=~ dir=(my [%bar ~]~)])]
     ::
       :-  [%cy [[~nul %home %da ~1234.5.6] /bar/data]]
       `[%arch !>(`arch`[fil=`*@uv dir=~])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
-      :-  ~
-      :^  %arch  arch-type  ~
-      (my ~[[~.foo ~] [~.bar ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /foo/mar]]
-      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /bar/mar]]
-      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
-      `[%arch arch-type fil=[~ u=0v1] ~]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
-      `[%arch arch-type fil=[~ u=0v2] ~]
     ==
   ::
   =^  results1  ford-gate
@@ -5656,16 +5607,6 @@
         --
       --
       '''
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
-      :^  %arch  arch-type  ~
-      (my ~[[~.foo ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /foo/mar]]
-      [%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
-      [%arch arch-type fil=[~ u=0v1] ~]
     ==
   ::
   =^  results1  ford-gate
@@ -5756,23 +5697,6 @@
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
       ~
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
-      :-  ~
-      :^  %arch  arch-type  ~
-      (my ~[[~.txt ~] [~.txt-diff ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /txt/mar]]
-      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /txt-diff/mar]]
-      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
-      `[%arch arch-type fil=[~ u=0v1] ~]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
-      `[%arch arch-type fil=[~ u=0v2] ~]
     ==
   ::
   =^  results1  ford-gate
@@ -5867,23 +5791,6 @@
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
       ~
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
-      :-  ~
-      :^  %arch  arch-type  ~
-      (my ~[[~.txt ~] [~.txt-diff ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /txt/mar]]
-      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /txt-diff/mar]]
-      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
-      `[%arch arch-type fil=[~ u=0v1] ~]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
-      `[%arch arch-type fil=[~ u=0v2] ~]
     ==
   ::
   =^  results1  ford-gate
@@ -5996,28 +5903,8 @@
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
       ~
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
-      :-  ~
-      :^  %arch  arch-type  ~
-      (my ~[[~.txt ~] [~.foo ~] [~.txt-diff ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /txt/mar]]
-      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /txt-diff/mar]]
-      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /foo/mar]]
-      `[%arch arch-type ~ (my ~[[~.hoon ~]])]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
-      `[%arch arch-type fil=[~ u=0v1] ~]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
-      `[%arch arch-type fil=[~ u=0v2] ~]
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
-      `[%arch arch-type fil=[~ u=0v3] ~]
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/noun/mar]]
+      ~
     ==
   ::
   =^  results1  ford-gate
@@ -6888,48 +6775,6 @@
       '''
       window.onload = function()
       '''
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
-      :-  %arch
-      :-  arch-type
-      :-  ~
-      (my ~[[~.one ~] [~.two ~] [~.dummy ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /one/mar]]
-      :-  %arch
-      :-  arch-type
-      :-  ~
-      (my ~[[~.hoon ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /two/mar]]
-      :-  %arch
-      :-  arch-type
-      :-  ~
-      (my ~[[~.hoon ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /dummy/mar]]
-      :-  %arch
-      :-  arch-type
-      :-  ~
-      (my ~[[~.js ~]])
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
-      :-  %arch
-      :-  arch-type
-      :-  fil=[~ u=0v1]
-      ~
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
-      :-  %arch
-      :-  arch-type
-      :-  fil=[~ u=0v2]
-      ~
-    ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /js/dummy/mar]]
-      :-  %arch
-      :-  arch-type
-      :-  fil=[~ u=0v3]
-      ~
     ==
   ::
   =^  results1  ford-gate
@@ -7021,6 +6866,50 @@
     results2
     (expect-ford-empty ford-gate ~nul)
   ==
+::  +test-walk-large-graph, except we're going to shove data through it.
+::
+++  test-cast-large-graph
+  :-  `tank`leaf+"test-cast-large-graph"
+  ::
+  =^  results1  ford-gate
+    %-  test-ford-call-with-comparator  :*
+      ford-gate
+      now=~1234.5.6
+      scry=(scry-with-results large-mark-graph)
+      ::
+      ^=  call-args
+        :*  duct=~[/large]  type=~  %build  ~nul
+            %pin  ~1234.5.6
+            [%cast [~nul %home] %four [%volt [~nul %home] %one ["one" 1]]]
+        ==
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=([^ ~] moves)
+        ?>  ?=([* %give %made @da %complete %success %pin @da %success %cast *] i.moves)
+        ::
+        =/  result=cage  cage.build-result.build-result.result.p.card.i.moves
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  %four
+          p.result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  ["grab" "one"]
+          q.q.result
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.q.result) | -:!>(*[tape tape]))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford-gate ~nul)
+  ==
 ::  |data: shared data between cases
 ::  +|  data
 ++  large-mark-graph
@@ -7106,74 +6995,7 @@
       --
     --
     '''
-  ::
-    :-  [%cy [[~nul %home %da ~1234.5.6] /mar]]
-    :-  %arch
-    :-  arch-type
-    :-  ~
-    (my ~[[~.one ~] [~.two ~] [~.three ~] [~.four ~] [~.five ~]])
-  ::
-    :-  [%cy [[~nul %home %da ~1234.5.6] /one/mar]]
-    :-  %arch
-    :-  arch-type
-    :-  ~
-    (my ~[[~.hoon ~]])
-  ::
-    :-  [%cy [[~nul %home %da ~1234.5.6] /two/mar]]
-    :-  %arch
-    :-  arch-type
-    :-  ~
-    (my ~[[~.hoon ~]])
-  ::
-    :-  [%cy [[~nul %home %da ~1234.5.6] /three/mar]]
-    :-  %arch
-    :-  arch-type
-    :-  ~
-    (my ~[[~.hoon ~]])
-  ::
-    :-  [%cy [[~nul %home %da ~1234.5.6] /four/mar]]
-    :-  %arch
-    :-  arch-type
-    :-  ~
-    (my ~[[~.hoon ~]])
-  ::
-    :-  [%cy [[~nul %home %da ~1234.5.6] /five/mar]]
-    :-  %arch
-    :-  arch-type
-    :-  ~
-    (my ~[[~.hoon ~]])
-  ::
-    :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
-    :-  %arch
-    :-  arch-type
-    :-  fil=[~ u=0v1]
-    ~
-  ::
-    :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
-    :-  %arch
-    :-  arch-type
-    :-  fil=[~ u=0v2]
-    ~
-  ::
-    :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/three/mar]]
-    :-  %arch
-    :-  arch-type
-    :-  fil=[~ u=0v3]
-    ~
-  ::
-    :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/four/mar]]
-    :-  %arch
-    :-  arch-type
-    :-  fil=[~ u=0v4]
-    ~
-  ::
-    :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/five/mar]]
-    :-  %arch
-    :-  arch-type
-    :-  fil=[~ u=0v5]
-    ~
   ==
-
     ::
 ::  |utilities: helper arms
 ::
