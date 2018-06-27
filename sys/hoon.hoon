@@ -1272,7 +1272,7 @@
     ~/  %bif
     |*  b/*
     ^+  [l=a r=a]
-    =<  [+< +>]
+    =<  +
     |-  ^+  a
     ?~  a
       [b ~ ~]
@@ -1475,7 +1475,7 @@
     ~/  %bif
     |*  {b/* c/*}
     ^+  [l=a r=a]
-    =<  [+< +>]
+    =<  +
     |-  ^+  a
     ?~  a
       [[b c] ~ ~]
@@ -1921,12 +1921,7 @@
   ++  my                                                  ::  construct map
     |*  a/(list (pair))
     =>  .(a ^+((le a) a))
-    (~(gas by `(map _p.i.-.a _q.i.-.a)`~) a)
-  ::                                                      ::
-  ++  mz                                                  ::  construct map
-    |*  a/(list (pair))
-    =>  .(a ^+((le a) a))
-    (~(gas by ~) a)
+    (~(gas by `(map _p.i.-.a _q.i.-.a)`~) a)                                                 
   ::                                                      ::
   ++  si                                                  ::  construct set
     |*  a/(list)
