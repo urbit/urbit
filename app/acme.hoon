@@ -504,13 +504,16 @@
           [%seq [%obj sha-256:obj:asn1] [%nul ~] ~]
           [%oct 32 (shax m)]
       ==
-    =/  t=(list @)  ~(ren raw:en:der pec)
-    =/  tlen  (lent t)
+    ::  note: this asn.1 digest is rendered raw here, as we require
+    ::  big-endian bytes, and the product of +en:der is little-endian
+    ::
+    =/  t=(list @D)  ~(ren raw:en:der pec)
+    =/  tlen=@ud  (lent t)
     ?:  (lth emlen (add 11 tlen))
       ~|(%emsa-too-short !!)
-    =/  ps  (reap (sub emlen (add 3 tlen)) 0xff)
-    %+  rep  3
-    (flop (weld [0x0 0x1 ps] [0x0 t]))  :: note: big-endian
+    =/  ps=(list @D)
+      (reap (sub emlen (add 3 tlen)) 0xff)
+    (rep 3 (flop (weld [0x0 0x1 ps] [0x0 t])))
   ::  +sign:rs256: sign message
   ::
   ::    An RSA signature is the primitive decryption of the message hash.
