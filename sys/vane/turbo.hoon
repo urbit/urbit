@@ -3290,18 +3290,13 @@
       ::  depend on builds of each schematic
       ::
       =^  schematic-results  accessed-builds
-        (perform-schematics rails-and-schematics %ignore-errors *rail)
+        (perform-schematics rails-and-schematics %filter-errors *rail)
       ?:  ?=([%| *] schematic-results)
         ::  block or error
         p.schematic-results
       ::  matches: builds that completed with a successful result
       ::
-      =/  matches=_p.schematic-results
-        ~!  p.schematic-results
-        %+  skim  p.schematic-results
-        |=  [* r=build-result]
-        ::
-        ?=([%success *] r)
+      =/  matches  p.schematic-results
       ::  if no matches, error out
       ::
       ?~  matches
@@ -4328,34 +4323,16 @@
       |^  ^-  build-receipt
           ::  load all marks.
           ::
-          ::    Any random mark can implement a +grab arm, so we must load all
-          ::    the marks if we want the mark graph to be complete.
-          ::
-          =^  load-directory-result  accessed-builds
-            (load-directory /mar "" "")
-          ?:  ?=([%error *] load-directory-result)
-            :*  build
-                [%build-result %error message.load-directory-result]
-                accessed-builds
-            ==
-          ?:  ?=([%block *] load-directory-result)
-            :*  build
-                [%blocks builds.load-directory-result ~]
-                accessed-builds
-            ==
-          ::  build an edge graph
-          ::
-          ::    :load-directory-result is a raw set of mark names and compiled
-          ::    cores. +build-edges reads that data into a consistent build
-          ::    graph.
-          ::
-          =/  edges  (build-edges ~(tap in results.load-directory-result))
+          =^  load-marks-result  accessed-builds
+            (load-marks-reachable-from [[%grow source] [%grab target] ~])
+          ?:  ?=([%| *] load-marks-result)
+            p.load-marks-result
           ::  find a path through the graph
           ::
           ::    Make a list of individual mark translation actions which will
           ::    take us from :source to :term.
           ::
-          =/  path  (find-path-through edges)
+          =/  path  (find-path-through p.load-marks-result)
           ::  if there is no path between these marks, give a nice error message.
           ::
           ?~  path
@@ -4370,154 +4347,124 @@
               [%build-result %success %walk path]
               accessed-builds
           ==
-      ::  +load-result: either a complete map, some blocks, or an error
+      ::  +load-node: a queued loading action
       ::
-      +=  load-result
-        $%  [%result results=(map tape vase)]
-            [%block builds=(list ^build)]
-            [%error message=tang]
-        ==
-      ::  +load-directory: recursively walks the directory tree, loading marks
-      ::
-      ::    This either returns a map of all the mark cores on the specified
-      ::    :disc, a list of blocked builds or a fatal error.
-      ::
-      ::    We must load all the marks on :disc because any random mark may
-      ::    have a +grab arm which we must consider when doing the mark graph
-      ::    traversal.
-      ::
-      ++  load-directory
-        |=  [=path prev-name=tape name=tape]
-        ^-  [load-result _accessed-builds]
-        ::  load the directory directly
-        ::
-        =/  dir-build=^build  [date.build [%scry %c %y [disc path]]]
-        =^  dir-result  accessed-builds  (depend-on dir-build)
-        ?~  dir-result
-          [[%block [dir-build]~] accessed-builds]
-        ::
-        ?.  ?=([~ %success %scry *] dir-result)
-          ::  when directory scrys fail, this is a hard error.
-          ?>  ?=([~ %error *] dir-result)
-          [[%error message.u.dir-result] accessed-builds]
-        ::
-        =/  dir-arch=arch  ;;(arch q.q.cage.u.dir-result)
-        ::  try loading the file here
-        ::
-        =^  fil-result=load-result  accessed-builds
-          ?~  fil.dir-arch
-            ::  we have no file at this node. ignore it.
-            ::
-            [[%result ~] accessed-builds]
-          ?.  =(name "hoon")
-            ::  this is a non-hoon file in the mark directory. ignore it.
-            ::
-            [[%result ~] accessed-builds]
-          ::  load the file and return it
-          ::
-          =/  core-build=^build  [date.build [%core [disc path]]]
-          =^  core-result  accessed-builds  (depend-on core-build)
-          ?~  core-result
-            [[%block [core-build]~] accessed-builds]
-          ::
-          ?.  ?=([~ %success %core *] core-result)
-            ::  it is not a hard error if there's a hoon file which failed to compile.
-            ::
-            [[%result ~] accessed-builds]
-          ::
-          [[%result (my [prev-name vase.u.core-result]~)] accessed-builds]
-        ::
-        =/  valid-marks=(list @ta)
-          (skim (turn ~(tap by dir.dir-arch) head) (sane %tas))
-        ::  block on recursing into each directory
-        ::
-        =^  sub-results  accessed-builds
-          =|  results=(list load-result)
-          |-  ^+  [results accessed-builds]
-          ?~  valid-marks  [results accessed-builds]
-          ::
-          =*  current-name  i.valid-marks
-          =/  new-prev-name
-            ?~  prev-name
-              name
-            :(weld prev-name "-" name)
-          =^  sub-result  accessed-builds
-            (load-directory [current-name path] new-prev-name (trip current-name))
-          ::
-          =.  results  [sub-result results]
-          ::
-          $(valid-marks t.valid-marks)
-        ::  our results are the file node and the directory results
-        ::
-        =.  sub-results  [fil-result sub-results]
-        ::  return the first error, if exists
-        ::
-        =/  errors=(list tang)
-          %+  murn  sub-results
-          |=  result=load-result
-          ^-  (unit tang)
-          ?.  ?=([%error *] result)
-            ~
-          `message.result
-        ?^  errors
-          [[%error i.errors] accessed-builds]
-        ::  return all blocks, if exists
-        ::
-        =/  blocks=(list ^build)
-          %+  roll  sub-results
-          |=  [result=load-result blocks=(list ^build)]
-          ^-  (list ^build)
-          ?.  ?=([%block *] result)
-            blocks
-          (welp builds.result blocks)
-        ?^  blocks
-          [[%block blocks] accessed-builds]
-        ::  our list only has results. merge them.
-        ::
-        =/  merged=(map tape vase)
-          %+  roll  sub-results
-          |=  [result=load-result merged=(map tape vase)]
-          ^-  (map tape vase)
-          ?>  ?=([%result *] result)
-          (~(uni by merged) results.result)
-        [[%result merged] accessed-builds]
+      +=  load-node  [type=?(%grab %grow) mark=term]
       ::  edge-jug: type of our graph representation
       ::
       +=  edge-jug  (jug source=term [target=term arm=?(%grow %grab)])
-      ::  +build-edges: build an edge database out of raw mark vases
-      ::
-      ++  build-edges
-        |=  marks=(list [name=tape =vase])
-        ^-  edge-jug
-        ::
-        =|  edges=edge-jug
-        |-
-        ^+  edges
-        ?~  marks  edges
-        ::
-        =/  mark-name  (crip name.i.marks)
-        =/  mark-vase  vase.i.marks
-        ::
-        =?  edges  (slob %grab p.mark-vase)
-          =/  grab-arms  (sloe p:(slap mark-vase [%limb %grab]))
-          |-
-          ^+  edges
-          ?~  grab-arms  edges
-          =.  edges  (~(put ju edges) i.grab-arms [mark-name %grab])
-          $(grab-arms t.grab-arms)
-        ::
-        =?  edges  (slob %grow p.mark-vase)
-          =/  grow-arms  (sloe p:(slap mark-vase [%limb %grow]))
-          |-
-          ^+  edges
-          ?~  grow-arms  edges
-          =.  edges  (~(put ju edges) mark-name [i.grow-arms %grow])
-          $(grow-arms t.grow-arms)
-        ::
-        $(marks t.marks)
       ::  mark-path: a path through the mark graph
       ::
       +=  mark-path  (list mark-action)
+      ::  +load-marks-reachable-from: partial mark graph loading
+      ::
+      ::    While we can just load all marks in the %/mar directory, this is
+      ::    rather slow. What we do instead is traverse forwards and backwards
+      ::    from the source and target marks: we start at the source mark,
+      ::    check all the grow arms, and then check their grow arms. At the
+      ::    same time, we start from the target mark, check all the grab arms,
+      ::    and then check their grab arms. This gives us a much smaller
+      ::    dependency set than loading the entire %/mar directory.
+      ::
+      ++  load-marks-reachable-from
+        |=  queued-nodes=(list load-node)
+        ::  list of nodes in the graph that we've already checked
+        ::
+        =|  visited=(set load-node)
+        ::  graph of the available edges
+        ::
+        =|  =edge-jug
+        ::
+        |-
+        ^-  [(each ^edge-jug build-receipt) _accessed-builds]
+        ::  no ?~ to prevent tmi
+        ::
+        ?:  =(~ queued-nodes)
+          [[%& edge-jug] accessed-builds]
+        ::
+        =/  nodes-and-schematics
+          %+  turn  queued-nodes
+          |=  =load-node
+          ^-  [^load-node schematic]
+          :-  load-node
+          [%path disc %mar mark.load-node]
+        ::  get the path for each mark name
+        ::
+        ::    For %path builds, any ambiguous path is just filtered out.
+        ::
+        =^  path-results  accessed-builds
+          (perform-schematics nodes-and-schematics %filter-errors *load-node)
+        ?:  ?=([%| *] path-results)
+          [path-results accessed-builds]
+        ::
+        =/  nodes-and-cores
+          %+  turn  p.path-results
+          |=  [=load-node =build-result]
+          ^-  [^load-node schematic]
+          ::
+          ?>  ?=([%success %path *] build-result)
+          ::
+          :-  load-node
+          [%core rail.build-result]
+        ::
+        =^  core-results  accessed-builds
+          (perform-schematics nodes-and-cores %filter-errors *load-node)
+        ?:  ?=([%| *] core-results)
+          [core-results accessed-builds]
+        ::  clear the queue before we process the new results
+        ::
+        =.  queued-nodes  ~
+        ::
+        =/  cores  p.core-results
+        ::
+        |-
+        ?~  cores
+          ^$
+        ::  mark this node as visited
+        ::
+        =.  visited  (~(put in visited) key.i.cores)
+        ::
+        =/  target-arms=(list load-node)
+          ?>  ?=([%success %core *] result.i.cores)
+          ?:  =(%grow type.key.i.cores)
+            (get-arms-of-type %grow vase.result.i.cores)
+          (get-arms-of-type %grab vase.result.i.cores)
+        ::  filter places we know we've already been.
+        ::
+        =.  target-arms
+          %+  skip  target-arms  ~(has in visited)
+        =.  queued-nodes  (weld target-arms queued-nodes)
+        ::
+        =.  edge-jug
+          |-
+          ?~  target-arms
+            edge-jug
+          ::
+          =.  edge-jug
+            ?-    type.i.target-arms
+            ::
+                %grab
+              (~(put ju edge-jug) mark.i.target-arms [mark.key.i.cores %grab])
+            ::
+                %grow
+              (~(put ju edge-jug) mark.key.i.cores [mark.i.target-arms %grow])
+            ==
+          $(target-arms t.target-arms)
+        ::
+        $(cores t.cores)
+      ::
+      ++  get-arms-of-type
+        |=  [type=?(%grab %grow) =vase]
+        ^-  (list load-node)
+        ::  it is valid for this node to not have a +grow arm.
+        ::
+        ?.  (slob type p.vase)
+          ~
+        ::
+        %+  turn
+          (sloe p:(slap vase [%limb type]))
+        |=  arm=term
+        [type arm]
       ::  +find-path-through: breadth first search over the mark graph
       ::
       ++  find-path-through
@@ -4624,7 +4571,7 @@
     ::
     ++  perform-schematics
       |*  $:  builds=(list [key=* =schematic])
-              on-error=?(%fail-on-errors %ignore-errors)
+              on-error=?(%fail-on-errors %filter-errors %ignore-errors)
               key-bunt=*
           ==
       ^-  $:  (each (list [key=_key-bunt result=build-result]) build-receipt)
@@ -4646,6 +4593,8 @@
             $(builds t.builds)
           ?:  =(%fail-on-errors on-error)
             (check-errors results)
+          ?:  =(%filter-errors on-error)
+            (filter-errors results)
           (handle-rest results)
       ::
       ++  check-errors
@@ -4664,6 +4613,14 @@
         ?^  error
           =.  error  [leaf+"ford: %mute failed: " error]
           [[%| [build [%build-result %error error] accessed-builds]] accessed-builds]
+        (handle-rest results)
+      ::
+      ++  filter-errors
+        |=  results=(list [_key-bunt ^build (unit build-result)])
+        =.  results
+          %+  skip  results
+          |=  [* * r=(unit build-result)]
+          ?=([~ %error *] r)
         (handle-rest results)
       ::
       ++  handle-rest

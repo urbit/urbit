@@ -6953,9 +6953,7 @@
             :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home
                 %c  %warp  [~nul ~nul]  %home  ~  %mult  [%da ~1234.5.6]
                 %-  sy  :~
-                  [%y /mar/dummy]  [%y /mar/two/hoon]  [%y /mar/two]
-                  [%y /mar/one]  [%y /mar]  [%y /mar/dummy/js]
-                  [%y /mar/one/hoon]  [%x /mar/two/hoon]  [%x /mar/one/hoon]
+                  [%x /mar/two/hoon]  [%x /mar/one/hoon]
     ==  ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -7001,15 +6999,7 @@
             :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home
                 %c  %warp  [~nul ~nul]  %home  ~  %mult  [%da ~1234.5.6]
                 %-  sy  :~
-                  [%y /mar]
-                  ::
-                  [%y /mar/one]  [%y /mar/two]  [%y /mar/three]  [%y /mar/four]
-                  [%y /mar/five]
-                  ::
-                  [%y /mar/one/hoon]  [%y /mar/two/hoon]  [%y /mar/three/hoon]
-                  [%y /mar/four/hoon]  [%y /mar/five/hoon]
-                  ::
-                  [%x /mar/one/hoon]  [%x /mar/two/hoon]  [%x /mar/three/hoon]
+                  [%x /mar/one/hoon]  [%x /mar/two/hoon]
                   [%x /mar/four/hoon]  [%x /mar/five/hoon]
     ==  ==  ==  ==
   ::
