@@ -304,6 +304,14 @@
     =/  p  ~(. fo p)
     =/  n  ~(. fo n)
     |%
+    ++  point-compressed
+      |=  pont
+      (can 3 ~[w^x 1^(add 0x2 (cut 0 [0 1] y))])
+    ::
+    ++  point-uncompressed
+      |=  pont
+      (can 3 ~[w^y w^x 1^0x4])
+    ::
     ++  priv-to-pub                                     ::  get pub from priv
       |=  prv=@
       ^-  pont
