@@ -9,6 +9,163 @@
 ::  https://crypto.stackexchange.com/a/21206
 ::
 |%
+::TODO  so much cleanup, better interface, etc.
+::NOTE  primitive derivation functions tested correct against
+::      https://en.bitcoin.it/wiki/BIP_0032_TestVectors
+++  bip
+  =,  hmac
+  =,  secp
+  =+  ecc=secp256k1
+  |%
+  ++  point  priv-to-pub.ecc
+  ::
+  ++  ser-p  point-compressed.ecc
+  ::
+  ++  n      ^n:ecc
+  ::
+  ++  from-seed
+    |=  [w=@u s=@]
+    ^-  [@ux @ux]
+    =+  (hmac-sha512l 12^(crip (flop "Bitcoin seed")) [w s])
+    [(cut 3 [32 32] -) (cut 3 [0 32] -)]
+  ::
+  ::TODO  fingerprint generation
+  ::
+  ++  derive-private
+    |=  [m=[k=@ c=@] j=(list @u)]
+    ^-  [key=@ chain=@]
+    ?~  j  m
+    $(m (ckd-priv m i.j), j t.j)
+  ::
+  ++  derive-public
+    |=  [m=[k=pont c=@] j=(list @u)]
+    ^-  [key=pont chain=@]
+    ?~  j  m
+    $(m (ckd-pub m i.j), j t.j)
+  ::
+  ++  ckd-priv
+    |=  [[k=@ c=@] i=@u]
+    ^-  [key=@ chain=@]
+    =/  child=[l=@ r=@]
+      =-  [(cut 3 [32 32] -) (cut 3 [0 32] -)]
+      %+  hmac-sha512l  [32 c]
+      :-  37
+      ?:  (gte i (bex 31))
+        ::  hardened child
+        (can 3 ~[4^i 32^k 1^0])
+      ::  normal child
+      (can 3 ~[4^i 33^(ser-p (point k))])
+    =+  key=(mod (add l.child k) n)
+    ?:  |(=(0 key) (gte l.child n))  $(i +(i))
+    [key r.child]
+  ::
+  ++  ckd-pub
+    |=  [[k=pont c=@] i=@u]
+    ^-  [key=pont chain=@]
+    ?>  (lth i (bex 31))
+    =/  child=[l=@ r=@]
+      =-  [(cut 3 [32 32] -) (cut 3 [0 32] -)]
+      %+  hmac-sha512l  [32 c]
+      37^(can 3 ~[4^i 33^(ser-p k)])
+    ?:  (gte l.child n)  $(i +(i))  ::TODO  or child key is point at infinity
+    [(jc-add.ecc (point l.child) k) r.child]
+  ::
+  ++  priv-to-pub
+    |=  [k=@ c=@]
+    ^-  [key=pont chain=@]
+    [(point k) c]
+  ::
+  ++  priv-to-pub-child-a
+    |=  [[k=@ c=@] i=@]
+    (priv-to-pub (ckd-priv [k c] i))
+  ::
+  ++  priv-to-pub-child-b
+    |=  [[k=@ c=@] i=@]
+    (ckd-pub (priv-to-pub k c) i)
+  ::
+  ::
+  ++  serialize-priv-extended  ::NOTE  verified correct for current simple case
+    (cork build-extended en-b58c-bip32-priv)
+  ::
+  ++  serialize-pubp-extended
+    |=  [[p=pont c=@] d=@u i=@u]
+    %-  serialize-pub-extended
+    [[(point-compressed.ecc p) c] d i]
+  ::
+  ++  serialize-pub-extended
+    (cork build-extended en-b58c-bip32-pub)
+  ::
+  ++  build-extended
+    |=  [[k=@ c=@] d=@u i=@u]
+    %+  can  3
+    :~  33^k
+        32^c
+        4^i
+        4^0  ::TODO  fingerprint of parent
+        1^d
+    ==
+  ::
+  ::TODO  parse extended
+  ::
+  ++  en-b58c-bip32-priv
+    |=  k=@
+    (en-b58c-bip32 0x488.ade4 [74 k])
+  ++  en-b58c-bip32-pub
+    |=  k=@
+    (en-b58c-bip32 0x488.b21e [74 k])
+  ++  en-b58c-bip32
+    |=  [v=@ d=[@u @]]
+    (en-base58check [4 v] d)
+  ::
+  ++  de-b58c-bip32
+    (cury de-base58check 4)
+  ::
+  ++  en-base58check  ::NOTE  verified correct
+    ::  v: version bytes
+    ::  vw: amount of version bytes
+    |=  [[vw=@u v=@] [dw=@u d=@]]
+    %-  en-base58
+    =+  p=[(add vw dw) (can 3 ~[dw^d vw^v])]
+    =-  (can 3 ~[4^- p])
+    %^  rsh  3  28
+    (sha-256l:sha 32 (sha-256l:sha p))
+  ::
+  ++  de-base58check
+    |=  [vw=@u c=cord]
+    =+  x=(de-base58 c)
+    =+  hash=(sha-256l:sha 32 (sha-256:sha (rsh 3 4 x)))
+    ?>  =((end 3 4 x) (rsh 3 28 hash))
+    ::NOTE  assumes four version bytes
+    (cut 3 [vw (sub (met 3 x) (add 4 vw))] x)
+  ::
+  ++  en-base58
+    |=  a=@
+    =/  cha
+      '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+    %-  flop
+    |-  ^-  tape
+    ?:  =(0 a)  ~
+    :-  (cut 3 [(mod a 58) 1] cha)
+    $(a (div a 58))
+  ::
+  ++  de-base58
+    =-  |=(a/cord (rash a fel))
+    =<  fel=(bass 58 .)
+    =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
+    ^=  siw
+    ;~  pose
+      (cook |=(a/@ (sub a 56)) (shim 'A' 'H'))
+      (cook |=(a/@ (sub a 57)) (shim 'J' 'N'))
+      (cook |=(a/@ (sub a 58)) (shim 'P' 'Z'))
+      (cook |=(a/@ (sub a 64)) (shim 'a' 'k'))
+      (cook |=(a/@ (sub a 65)) (shim 'm' 'z'))
+      (cook |=(a/@ (sub a 49)) (shim '1' '9'))
+    ==
+  --
+::
+++  hash160
+  |=  d=@
+  (ripemd-160 256 (sha-256:sha d))
 ::
 ::  ripemd
 ::
