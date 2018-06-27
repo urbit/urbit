@@ -668,7 +668,7 @@
       --
     --
   --
-::  |pkcs8: asymmetric cryptography (rfc5208)
+::  |pkcs8: asymmetric cryptography (rfc5208, rfc5958)
 ::
 ::    RSA-only for now.
 ::
@@ -682,6 +682,9 @@
       |%
       ::  +pass:spec:pkcs8: public key ASN.1
       ::
+      ::    Technically not part of pkcs8, but standardized later in
+      ::    the superseding RFC. Included here for symmetry.
+      ::
       ++  pass
         |=  k=key:rsa
         ^-  spec:asn1
@@ -693,13 +696,19 @@
         ==
       ::  +ring:spec:pkcs8: private key ASN.1
       ::
-      ++  ring  !!
+      ++  ring
+        |=  k=key:rsa
+        ^-  spec:asn1
+        :~  %seq
+            [%seq [[%obj rsa:obj:asn1] [%nul ~] ~]]
+            [%oct (ring:en:der:pkcs1 k)]
+        ==
       --
-    ::  |de:spec:pkcs8:
+    ::  |de:spec:pkcs8: ASN.1 decoding for asymmetric keys
     ::
     ++  de
       |%
-      ::  +pass:de:spec:pkcs8:
+      ::  +pass:de:spec:pkcs8: decode public key ASN.1
       ::
       ++  pass
         |=  a=spec:asn1
@@ -711,9 +720,18 @@
             ==
           ~
         (pass:de:der:pkcs1 (div len.i.t.seq.a 8) bit.i.t.seq.a)
-      ::  +ring:de:spec:pkcs8:
+      ::  +ring:de:spec:pkcs8: decode private key ASN.1
       ::
-      ++  ring  !!
+      ++  ring
+        |=  a=spec:asn1
+        ^-  (unit key:rsa)
+        ?.  ?=([%seq [%seq *] [%oct *] ~] a)
+          ~
+        ?.  ?&  ?=([[%obj *] [%nul ~] ~] seq.i.seq.a)
+                =(rsa:obj:asn1 obj.i.seq.i.seq.a)
+            ==
+          ~
+        (ring:de:der:pkcs1 [len oct]:i.t.seq.a)
       --
     --
   ::  |der:pkcs8: DER encoding for asymmetric keys
@@ -726,12 +744,12 @@
     ++  en
       |%
       ++  pass  |=(k=key:rsa `[len=@ud dat=@ux]`(en:^der (pass:en:spec k)))
-      ++  ring  !! ::|=(k=key:rsa `@ux`(en:^der (ring:spec k)))
+      ++  ring  |=(k=key:rsa `[len=@ud dat=@ux]`(en:^der (ring:en:spec k)))
       --
     ++  de
       |%
       ++  pass  |=([len=@ud dat=@ux] `(unit key:rsa)`(biff (de:^der len dat) pass:de:spec))
-      ++  ring  !! ::|=(a=@ `(unit key:rsa)`(biff (de:^der a) ring:de:spec))
+      ++  ring  |=([len=@ud dat=@ux] `(unit key:rsa)`(biff (de:^der len dat) ring:de:spec))
       --
     --
   ::  |pem:pkcs8: PEM encoding for asymmetric keys
@@ -744,12 +762,12 @@
     ++  en
       |%
       ++  pass  |=(k=key:rsa (en:^pem 'PUBLIC KEY' (pass:en:der k)))
-      ++  ring  !! ::|=(k=key:rsa (en:^pem 'PUBLIC KEY' (ring:en:der k)))
+      ++  ring  |=(k=key:rsa (en:^pem 'PRIVATE KEY' (ring:en:der k)))
       --
     ++  de
       |%
       ++  pass  |=(mep=wain (biff (de:^pem 'PUBLIC KEY' mep) pass:de:der))
-      ++  ring  !! ::|=(mep=wain (biff (de:^pem 'PRIVATE KEY' mep) ring:de:der))
+      ++  ring  |=(mep=wain (biff (de:^pem 'PRIVATE KEY' mep) ring:de:der))
       --
     --
   --
@@ -2165,10 +2183,48 @@
           'FwIDAQAB'
           '-----END PUBLIC KEY-----'
       ==
+    =/  pri=wain
+      :~  '-----BEGIN PRIVATE KEY-----'
+          'MIIEujANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDaMmnx2AArLlxLMMTg'
+          'P5pRspmxCgyEhYjYgWUT4A7QYIEyKDmrHHYggA9UhxKLl+M4u1Mee4hljD6zTqp5'
+          'vxAgpG+RlojCcDcvPlRSvGCH3qx7N1cIJIbsWd0gWyRxP7MbTQkv589F2U+O3VWD'
+          'ZveSd6jloAowg/I5PNxjn3RRNz6W5DceGBKI0XeflhCHbh3eRLZg5ShJdDXf5hGW'
+          'PE18GBdtX4Lv+A7yYXGmRp+GaCQgY15aWpP2gAhFr6A7HXe48CD4lv/yU9X1sZoW'
+          'oa/G8EynfFQBKXNgeIOe1wHkyI49FboGggYjmoMVJhFkGTL1ysTtYBiCq0+2DbXO'
+          '/HAXAgMBAAECggEAfSrsYaKyPhMjOLLqTWXPBcy5o7iLA76CiQh5TlR6ywiBNJ+k'
+          'rUbvcKdlo+y0M8XWv+Wdwd/Fl9NC6KNY4ew7uS37Hn5HR5sN3RkZUDjl+ys+sJRH'
+          'ZdFmYNEQK459MkYDXcbsXUHSQlRt8huAAZggrzHbfpY3Iiue2TzThIalOCy0Kxnn'
+          'WsrkYvp2JlVBt5TzTqg/VmHH/J7/81GZLkbSKKX/8fjWlXlYaiY5fSar38dgFmoK'
+          'dyrMuSLoUV2ZfKSPPyye9dRHjRLwH5rQX8s37nj09J7Z2n2HQfHgcIk6wv0LIJCK'
+          'aqqoTwo9DgFTPyrf4yHHXETJrEiU0f0QKCjUIQKBgQD6aLu9BHOy1gl6tuEK1p4W'
+          's5H+fwN+3sXIU37khXsfaibLqB/TOvUZaOamHlHSww+Avy5VEYA1SuS5lm4KvfmJ'
+          'jrNCl0IUHgP237NtO9OavG3ahVoTXr90gnpvxwfNHZCsSHy7Dn+sQrNYEIc1LwW9'
+          'cc+9e+dpxNnktlErSyyyEQKBgQDfEZCcOWZHDJW2j/UNAwueMgxrNDvX2q0I7+l/'
+          'gEd6pwNicjBhvnMsGPac9XwP2mozWkY5W46BwL0iKatsd54bCnWJJMfgC/EMiPoj'
+          'KuZvPZ1veUZ0dWT3Eu9OJjOfYoraxjGYWXcNEEW60VDZjF12odsTcOz3pj+5FeGq'
+          'PsjXpwKBgQDUBU3Acz6LU5LfJm1RQfrE+fJJa73H9FO+lIPCdgqTxMtocMfRj//r'
+          'LdjtGorpS2Oa/UT7nj/R38HeKbKuwb/BauP5JB0871Un+KzxdlBqmdThyztDX1v4'
+          'CGomrny6faf7V7zUnSgY8LjtfcEdlNzlVLIym/CKq7RaZMxBPftwIQKBgAIwRu3x'
+          'djpuOi3PXcUh6YRE03Bd09R7VcVHrU/N72WZq+PUYPskhjbBi/HgSrZRG0ejtBqt'
+          '9kj5niFurTrkNY3oXVzaGoftNhE8as/bhOVEgn3sf69202XFLsnigBEpQ1mAJk5r'
+          'WkqrhTOfCB8KTIR0dBTNv9VyMR/cwhkMgqXzAoGAGuwiOIO+mR+emZDt96EQkiL5'
+          'XhIayQvEUfdlO+eAUWhivLd0vmBDqYWwN+ufiKAhwTLpsyklDeVvBK3LNxZkswmB'
+          '0jbcVOU9dMQbs9yVlK7EGlCm+DcyJU7OpVOuGdj5N6ZxJxLHk7p/fZoN85RZYLOb'
+          'D+DO8nFRiUmqOp3t2VM='
+          '-----END PRIVATE KEY-----'
+      ==
     =/  k=key:rsa
       (need (ring:de:pem:pkcs1 kpem))
-    %-  expect-eq  !>
-      [pub (pass:en:pem:pkcs8 k)]
+    ;:  weld
+      %-  expect-eq  !>
+        [pub (pass:en:pem:pkcs8 k)]
+      %-  expect-eq  !>
+        [`k(sek ~) (pass:de:pem:pkcs8 pub)]
+      %-  expect-eq  !>
+        [pri (ring:en:pem:pkcs8 k)]
+      %-  expect-eq  !>
+        [`k (ring:de:pem:pkcs8 pri)]
+    ==
   ::
   ++  test-rsa-pem-zero
     :: intentional bad values to test significant trailing zeros
