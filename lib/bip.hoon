@@ -220,27 +220,25 @@
     (cut 3 [vw (sub (met 3 x) (add 4 vw))] x)
   ::
   ++  en-base58
-    |=  a=@
+    |=  dat=@
     =/  cha
       '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
     %-  flop
     |-  ^-  tape
-    ?:  =(0 a)  ~
-    :-  (cut 3 [(mod a 58) 1] cha)
-    $(a (div a 58))
+    ?:  =(0 dat)  ~
+    :-  (cut 3 [(mod dat 58) 1] cha)
+    $(dat (div dat 58))
   ::
   ++  de-base58
-    =-  |=(t=tape (scan t fel))
-    =<  fel=(bass 58 .)
-    =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
-    ^=  siw
+    |=  t=tape
+    =-  (scan t (bass 58 (plus -)))
     ;~  pose
-      (cook |=(a/@ (sub a 56)) (shim 'A' 'H'))
-      (cook |=(a/@ (sub a 57)) (shim 'J' 'N'))
-      (cook |=(a/@ (sub a 58)) (shim 'P' 'Z'))
-      (cook |=(a/@ (sub a 64)) (shim 'a' 'k'))
-      (cook |=(a/@ (sub a 65)) (shim 'm' 'z'))
-      (cook |=(a/@ (sub a 49)) (shim '1' '9'))
+      (cook |=(a=@ (sub a 56)) (shim 'A' 'H'))
+      (cook |=(a=@ (sub a 57)) (shim 'J' 'N'))
+      (cook |=(a=@ (sub a 58)) (shim 'P' 'Z'))
+      (cook |=(a=@ (sub a 64)) (shim 'a' 'k'))
+      (cook |=(a=@ (sub a 65)) (shim 'm' 'z'))
+      (cook |=(a=@ (sub a 49)) (shim '1' '9'))
     ==
   --
 ::
