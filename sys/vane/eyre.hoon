@@ -86,6 +86,9 @@
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
   $:  $0                                                ::  version
+      dom/(set (list @t))                               ::  domain names
+      fig/http-config                                   ::  config
+      por/{clr/@ud sek/(unit @ud)}                      ::  live ports
       gub/@t                                            ::  random identity
       hov/(unit ship)                                   ::  master for remote
       top/beam                                          ::  ford serve prefix
@@ -637,12 +640,50 @@
     =.  p.top  our              ::  XX necessary?
     ?-    -.kyz
         $born
+      :: XX capture IPs too
+      =/  mod/(set (list @t))
+        %-  ~(gas in *(set (list @t)))
+        %+  turn
+          (skim p.kyz |=(a=host ?=(%& -.a)))
+        |=(a=host ?>(?=(%& -.a) p.a))
+      =/  dif/(set (list @t))  (~(dif in mod) dom)
+      =?  dom  ?=(^ dif)  (~(uni in dom) mod)
+      ~&  [%eyre %acme-order dom]
+      :: =?  mow  ?=(^ dif)
+      ::   =/  cmd  [%acme %poke `cage`[%acme-order !>(dom)]]
+      ::   [[hen %pass ~ %g %deal [our our] cmd] mow]
       %=  +>.$
         ged  hen                                        ::  register external
-        mow  :_(mow [hen [%give %form [~ ?=(%king our) & &]]])
+        mow  :_(mow [hen [%give %form fig]])
       ==
     ::
-        $live  +>.$             :: XX save ports
+        $live
+      +>.$(clr.por p.kyz, sek.por q.kyz)
+    ::
+        $rule
+      ?-  -.p.kyz
+          $cert
+        ?:  =(secure.fig p.p.kyz)  +>.$
+        %=  +>.$
+          secure.fig  p.p.kyz
+          mow         :_(mow [hen [%give %form fig]])
+        ==
+      ::
+          $turf
+        =/  mod/(set (list @t))
+          ?:  ?=(%put p.p.kyz)
+            (~(put in dom) q.p.kyz)
+          (~(del in dom) q.p.kyz)
+        ?:  =(dom mod)  +>.$
+        ~&  [%eyre %acme-order dom]
+        :: =.  mow
+        ::   =/  cmd  [%acme %poke `cage`[%acme-order !>(dom)]]
+        ::   [[hen %pass ~ %g %deal [our our] cmd] mow]
+        %=  +>.$
+          dom  mod
+          mow  :_(mow [hen [%give %form fig]])
+        ==
+      ==
     ::
         $serv
       =<  ~&([%serving (en-beam top)] .)
@@ -653,6 +694,7 @@
     ::
         $init                                           ::  register ownership
       =.  our  ?~(hov p.kyz (min u.hov p.kyz))
+      =.  fig  [~ ?=(%king our) & &]
       +>.$(hov [~ our], top [[our %home ud+0] /web])
     ::
         ?($chis $this)                                  ::  inbound request
@@ -2124,7 +2166,14 @@
     ?+  p.lot  [~ ~]
       {$tas $fake}  ``[& [~ 8.443] %& /localhost]       :: XX from unix
       {$tas $real}
-        ``~(our-host ye [`duct`~[/] [now eny our sky] ~] bol)
+        =/  hot=host  [%& ?^(dom n.dom /localhost)]
+        =/  sek=?    &(?=(^ sek.por) !?=(hoke hot))
+        =/  por=(unit @ud)
+          ?.  sek
+            ?:(=(80 clr.por) ~ `clr.por)
+          ?>  ?=(^ sek.por)
+          ?:(=(443 u.sek.por) ~ sek.por)
+        ``[sek por hot]
     ==
   ==
 ::

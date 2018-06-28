@@ -1222,6 +1222,7 @@
         $nuke  `%a
         $ogre  `%c
         $perm  `%c
+        $rule  `%e
         $serv  `%e
         $tend  `%a
         $them  `%e

@@ -677,11 +677,12 @@
           [%velo p=@t q=@t]                             ::  drop-through
       ==                                                ::
     +=  task                                            ::  in request ->$
-      $%  [%born ~]                                     ::  new unix process
+      $%  [%born p=(list host)]                         ::  new unix process
           [%crud p=@tas q=(list tank)]                  ::  XX rethink
           [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
           [%init p=@p]                                  ::  report install
           [%live p=@ud q=(unit @ud)]                    ::  http/s ports
+          [%rule p=http-rule]                           ::  update config
           [%serv p=$@(desk beam)]                       ::  set serving root
           [%them p=(unit hiss)]                         ::  outbound request
           [%they p=@ud q=httr]                          ::  inbound response
@@ -743,9 +744,9 @@
   :: +http-config: full http-server configuration
   ::
   +=  http-config
-    $:  :: secure: PEM-encoded RSA private key and certificate chain
+    $:  :: secure: PEM-encoded RSA private key and cert or cert chain
         ::
-        secure=(unit [key=wain certificate=wain])
+        secure=(unit [key=wain cert=wain])
         :: proxy: reverse TCP proxy HTTP(s)
         ::
         proxy=?
@@ -757,6 +758,16 @@
         ::   Note: requires certificate.
         ::
         redirect=?
+    ==
+  :: +http-rule: update configuration
+  ::
+  +=  http-rule
+    $%  :: %cert: set or clear certificate and keypair
+        ::
+        [%cert p=(unit [key=wain cert=wain])]
+        :: %turf: add or remove established dns binding
+        ::
+        [%turf p=?(%put %del) q=(list @t)]
     ==
   ++  httq                                              ::  raw http request
     $:  p/meth                                          ::  method
