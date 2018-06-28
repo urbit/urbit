@@ -9,118 +9,199 @@
 ::  https://crypto.stackexchange.com/a/21206
 ::
 |%
-::TODO  so much cleanup, better interface, etc.
-::NOTE  primitive derivation functions tested correct against
+::
++=  byts  [wid=@ud dat=@]  ::NOTE  different from octs, those expect @t/lsb
+::
+::NOTE  tested to be correct against
 ::      https://en.bitcoin.it/wiki/BIP_0032_TestVectors
 ++  bip
   =,  hmac
   =,  secp
   =+  ecc=secp256k1
-  |%
+  ::  prv:  private key
+  ::  pub:  public key
+  ::  cad:  chain code
+  ::  dep:  depth in chain
+  ::  ind:  index at depth
+  ::  pif:  parent fingerprint (4 bytes)
+  |_  [prv=@ pub=pont cad=@ dep=@ud ind=@ud pif=@]
+  ::
+  +=  keyc  [key=@ cai=@]  ::  prv/pub key + chain code
+  ::
+  ::  elliptic curve operations and values
+  ::
   ++  point  priv-to-pub.ecc
   ::
   ++  ser-p  point-compressed.ecc
   ::
   ++  n      ^n:ecc
   ::
-  ++  from-seed
-    |=  [w=@u s=@]
-    ^-  [@ux @ux]
-    =+  (hmac-sha512l 12^(crip (flop "Bitcoin seed")) [w s])
-    [(cut 3 [32 32] -) (cut 3 [0 32] -)]
+  ::  core initialization
   ::
-  ::TODO  fingerprint generation
+  ++  from-seed
+    |=  byts
+    ^+  +>
+    =+  der=(hmac-sha512l [12 'dees nioctiB'] [wid dat])
+    =+  pri=(cut 3 [32 32] -)
+    +>.$(prv pri, pub (point pri), cad (cut 3 [0 32] der))
+  ::
+  ++  from-private
+    |=  keyc
+    +>(prv key, pub (point key), cad cai)
+  ::
+  ++  from-public
+    |=  keyc
+    +>(pub (decompress-point.ecc key), cad cai)
+  ::
+  ++  from-public-point
+    |=  [pon=pont cai=@]
+    +>(pub pon, cad cai)
+  ::
+  ++  from-extended
+    |=  t=tape
+    =+  x=(de-base58check 4 t)
+    =>  |%
+        ++  take
+          |=  b=@ud
+          ^-  [v=@ x=@]
+          :-  (end 3 b x)
+          (rsh 3 b x)
+        --
+    =^  k  x  (take 33)
+    =^  c  x  (take 32)
+    =^  i  x  (take 4)
+    =^  p  x  (take 4)
+    =^  d  x  (take 1)
+    ?>  =(0 x)  ::  sanity check
+    %.  [d i p]
+    =<  set-metadata
+    =+  v=(scag 4 t)
+    ?:  =("xprv" v)  (from-private k c)
+    ?:  =("xpub" v)  (from-public k c)
+    !!
+  ::
+  ++  set-metadata
+    |=  [d=@ud i=@ud p=@]
+    +>(dep d, ind i, pif p)
+  ::
+  ::  derivation
+  ::
+  ++  derivation-path
+    ;~  pfix
+      ;~(pose (jest 'm/') (easy ~))
+    %+  most  net
+    ;~  pose
+      %+  cook
+        |=(i=@ (add i (bex 31)))
+      ;~(sfix dem say)
+    ::
+      dem
+    ==  ==
+  ::
+  ++  derive-path
+    |=  t=tape
+    %-  derive-sequence
+    (scan t derivation-path)
+  ::
+  ++  derive-sequence
+    |=  j=(list @u)
+    ?~  j  +>
+    =.  +>  (derive i.j)
+    $(j t.j)
+  ::
+  ::
+  ++  derive
+    ?:  =(0 prv)
+      derive-public
+    derive-private
   ::
   ++  derive-private
-    |=  [m=[k=@ c=@] j=(list @u)]
-    ^-  [key=@ chain=@]
-    ?~  j  m
-    $(m (ckd-priv m i.j), j t.j)
-  ::
-  ++  derive-public
-    |=  [m=[k=pont c=@] j=(list @u)]
-    ^-  [key=pont chain=@]
-    ?~  j  m
-    $(m (ckd-pub m i.j), j t.j)
-  ::
-  ++  ckd-priv
-    |=  [[k=@ c=@] i=@u]
-    ^-  [key=@ chain=@]
-    =/  child=[l=@ r=@]
+    |=  i=@u
+    ^+  +>
+    ::  we must have a private key to derive the next one
+    ?:  =(0 prv)
+      ~|  %know-no-private-key
+      !!
+    ::  derive child at i
+    =+  ^-  [left=@ right=@]  ::TODO  =/ w/o face
       =-  [(cut 3 [32 32] -) (cut 3 [0 32] -)]
-      %+  hmac-sha512l  [32 c]
+      %+  hmac-sha512l  [32 cad]
       :-  37
       ?:  (gte i (bex 31))
         ::  hardened child
-        (can 3 ~[4^i 32^k 1^0])
+        (can 3 ~[4^i 32^prv 1^0])
       ::  normal child
-      (can 3 ~[4^i 33^(ser-p (point k))])
-    =+  key=(mod (add l.child k) n)
-    ?:  |(=(0 key) (gte l.child n))  $(i +(i))
-    [key r.child]
-  ::
-  ++  ckd-pub
-    |=  [[k=pont c=@] i=@u]
-    ^-  [key=pont chain=@]
-    ?>  (lth i (bex 31))
-    =/  child=[l=@ r=@]
-      =-  [(cut 3 [32 32] -) (cut 3 [0 32] -)]
-      %+  hmac-sha512l  [32 c]
-      37^(can 3 ~[4^i 33^(ser-p k)])
-    ?:  (gte l.child n)  $(i +(i))  ::TODO  or child key is point at infinity
-    [(jc-add.ecc (point l.child) k) r.child]
-  ::
-  ++  priv-to-pub
-    |=  [k=@ c=@]
-    ^-  [key=pont chain=@]
-    [(point k) c]
-  ::
-  ++  priv-to-pub-child-a
-    |=  [[k=@ c=@] i=@]
-    (priv-to-pub (ckd-priv [k c] i))
-  ::
-  ++  priv-to-pub-child-b
-    |=  [[k=@ c=@] i=@]
-    (ckd-pub (priv-to-pub k c) i)
-  ::
-  ::
-  ++  serialize-priv-extended  ::NOTE  verified correct for current simple case
-    (cork build-extended en-b58c-bip32-priv)
-  ::
-  ++  serialize-pubp-extended
-    |=  [[p=pont c=@] d=@u i=@u]
-    %-  serialize-pub-extended
-    [[(point-compressed.ecc p) c] d i]
-  ::
-  ++  serialize-pub-extended
-    (cork build-extended en-b58c-bip32-pub)
-  ::
-  ++  build-extended
-    |=  [[k=@ c=@] d=@u i=@u]
-    %+  can  3
-    :~  33^k
-        32^c
-        4^i
-        4^0  ::TODO  fingerprint of parent
-        1^d
+      (can 3 ~[4^i 33^(ser-p (point prv))])
+    =+  key=(mod (add left prv) n)
+    ::  rare exception, invalid key, go to the next one
+    ?:  |(=(0 key) (gte left n))  $(i +(i))
+    %_  +>.$
+      prv   key
+      pub   (point key)
+      cad   right
+      dep   +(dep)
+      ind   i
+      pif   fingerprint
     ==
   ::
-  ::TODO  parse extended
+  ++  derive-public
+    |=  i=@u
+    ^+  +>
+    ::  public keys can't be hardened
+    ?:  (gte i (bex 31))
+      ~|  %cant-derive-hardened-public-key
+      !!
+    ::  derive child at i
+    =+  ^-  [left=@ right=@]  ::TODO  =/  w/o face
+      =-  [(cut 3 [32 32] -) (cut 3 [0 32] -)]
+      %+  hmac-sha512l  [32 cad]
+      37^(can 3 ~[4^i 33^(ser-p pub)])
+    ::  rare exception, invalid key, go to the next one
+    ?:  (gte left n)  $(i +(i))  ::TODO  or child key is "point at infinity"
+    %_  +>.$
+      pub   (jc-add.ecc (point left) pub)
+      cad   right
+      dep   +(dep)
+      ind   i
+      pif   fingerprint
+    ==
   ::
-  ++  en-b58c-bip32-priv
-    |=  k=@
-    (en-b58c-bip32 0x488.ade4 [74 k])
-  ++  en-b58c-bip32-pub
-    |=  k=@
-    (en-b58c-bip32 0x488.b21e [74 k])
+  ::  rendering
+  ::
+  ++  private-key     ?.(=(0 prv) prv ~|(%know-no-private-key !!))
+  ++  public-key      (ser-p pub)
+  ++  chain-code      cad
+  ++  private-chain   [private-key cad]
+  ++  public-chain    [public-key cad]
+  ::
+  ++  identity        (hash160 public-key)
+  ++  fingerprint     (cut 3 [16 4] identity)
+  ::
+  ++  prv-extended
+    %+  en-b58c-bip32  0x488.ade4
+    (build-extended private-key)
+  ::
+  ++  pub-extended
+    %+  en-b58c-bip32  0x488.b21e
+    (build-extended public-key)
+  ::
+  ++  build-extended
+    |=  key=@
+    %+  can  3
+    :~  33^key
+        32^cad
+        4^ind
+        4^pif
+        1^dep
+    ==
+  ::
   ++  en-b58c-bip32
-    |=  [v=@ d=[@u @]]
-    (en-base58check [4 v] d)
+    |=  [v=@ k=@]
+    (en-base58check [4 v] [74 k])
   ::
-  ++  de-b58c-bip32
-    (cury de-base58check 4)
+  ::  stdlib
   ::
-  ++  en-base58check  ::NOTE  verified correct
+  ++  en-base58check
     ::  v: version bytes
     ::  vw: amount of version bytes
     |=  [[vw=@u v=@] [dw=@u d=@]]
@@ -131,11 +212,11 @@
     (sha-256l:sha 32 (sha-256l:sha p))
   ::
   ++  de-base58check
-    |=  [vw=@u c=cord]
-    =+  x=(de-base58 c)
+    ::  vw: amount of version bytes
+    |=  [vw=@u t=tape]
+    =+  x=(de-base58 t)
     =+  hash=(sha-256l:sha 32 (sha-256:sha (rsh 3 4 x)))
     ?>  =((end 3 4 x) (rsh 3 28 hash))
-    ::NOTE  assumes four version bytes
     (cut 3 [vw (sub (met 3 x) (add 4 vw))] x)
   ::
   ++  en-base58
@@ -149,7 +230,7 @@
     $(a (div a 58))
   ::
   ++  de-base58
-    =-  |=(a/cord (rash a fel))
+    =-  |=(t=tape (scan t fel))
     =<  fel=(bass 58 .)
     =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
     ^=  siw
@@ -537,6 +618,18 @@
     ++  point-uncompressed
       |=  pont
       (can 3 ~[w^y w^x 1^0x4])
+    ::
+    ++  decompress-point
+      |=  dat=@
+      ^-  pont
+      =+  x=(end 3 w a)
+      =+  y=:(add (pow x 3) (mul a x) b)
+      =+  s=(rsh 3 32 dat)
+      :-  x
+      ?:  =(0x2 s)  y
+      ?:  =(0x3 s)  y
+      ~|  [`@ux`s `@ux`dat]
+      !!
     ::
     ++  priv-to-pub                                     ::  get pub from priv
       |=  prv=@
