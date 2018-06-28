@@ -1172,6 +1172,7 @@
 +=  card
   $%  [%hiss wire [~ ~] %httr %hiss hiss:eyre]
       [%well wire path (unit mime)]
+      [%rule wire %cert (unit [wain wain])]
   ==
 :: +nonce-next: next effect to emit upon receiving nonce
 ::
@@ -1501,6 +1502,15 @@
     ?.  ?=(^ rod)      ~|(%no-active-order !!)
     =/  hed  (my accept+['applicate/x-pem-file' ~] ~)
     (emit (request /acme/certificate/(scot %da now.bow) url %get hed ~))
+  :: +install: tell %eyre about our certificate
+  ::
+  ++  install
+    ^+  this
+    ~|  %install-effect-fail
+    ?>  ?=(^ liv)
+    :: XX use pkcs8
+    =/  key=wain  (ring:en:pem:pkcs1 key.u.liv)
+    (emit %rule /install %cert `[key `wain`cer.u.liv])
   :: +get-authz: get next ACME service domain authorization object
   ::
   ++  get-authz
@@ -1743,11 +1753,10 @@
     =/  cer=wain  (to-wain:format q:(need r.rep))
     =/  fig=config
       :: XX expiration date
-      [dom.u.rod key.u.rod cer *@da ego.u.rod]
+      [dom.u.rod key.u.rod cer (add now.bow ~d90) ego.u.rod]
     =?  fig.hit  ?=(^ liv)  [u.liv fig.hit]
-    this(liv `fig, rod ~)
-    :: XX send configuration to eyre
-    :: XX other subscribers?
+    :: XX set renewal timer
+    install:effect(liv `fig, rod ~)
   :: +get-authz: accept ACME service authorization object
   ::
   ++  get-authz
@@ -1864,6 +1873,11 @@
     %finalize-trial  finalize-trial:event
     ::  XX delete-trial?
   ==
+:: +poke-acme-order: create new order for a set of domains
+::
+++  poke-acme-order
+  |=(a=(set turf) abet:(add-order ~(tap in a)))
+:: +poke-noun: for debugging
 ::
 ++  poke-noun
   |=  a=*
@@ -1882,8 +1896,10 @@
     %final  finalize-order:effect
     %poll   check-order:effect
     %our    (add-order /org/urbit/(crip +:(scow %p our.bow)) ~)
+    %rule   install:effect
     %test   test
   ==
+:: +poke-path: for debugging
 ::
 ++  poke-path
   |=(a=path abet:(add-order a ~))

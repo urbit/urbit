@@ -671,10 +671,9 @@
         |=(a=host ?>(?=(%& -.a) p.a))
       =/  dif/(set (list @t))  (~(dif in mod) dom)
       =?  dom  ?=(^ dif)  (~(uni in dom) mod)
-      ~&  [%eyre %acme-order dom]
-      :: =?  mow  ?=(^ dif)
-      ::   =/  cmd  [%acme %poke `cage`[%acme-order !>(dom)]]
-      ::   [[hen %pass ~ %g %deal [our our] cmd] mow]
+      =?  mow  ?=(^ dif)
+        =/  cmd  [%acme %poke `cage`[%acme-order !>(dom)]]
+        :_(mow [hen %pass /acme/order %g %deal [our our] cmd])
       %=  +>.$
         ged  hen                                        ::  register external
         mow  :_(mow [hen [%give %form fig]])
@@ -687,10 +686,8 @@
       ?-  -.p.kyz
           $cert
         ?:  =(secure.fig p.p.kyz)  +>.$
-        %=  +>.$
-          secure.fig  p.p.kyz
-          mow         :_(mow [hen [%give %form fig]])
-        ==
+        =.  secure.fig  p.p.kyz
+        +>.$(mow :_(mow [ged [%give %form fig]]))
       ::
           $turf
         =/  mod/(set (list @t))
@@ -698,13 +695,10 @@
             (~(put in dom) q.p.kyz)
           (~(del in dom) q.p.kyz)
         ?:  =(dom mod)  +>.$
-        ~&  [%eyre %acme-order dom]
-        :: =.  mow
-        ::   =/  cmd  [%acme %poke `cage`[%acme-order !>(dom)]]
-        ::   [[hen %pass ~ %g %deal [our our] cmd] mow]
+        =/  cmd  [%acme %poke `cage`[%acme-order !>(mod)]]
         %=  +>.$
           dom  mod
-          mow  :_(mow [hen [%give %form fig]])
+          mow  :_(mow [hen %pass /acme/order %g %deal [our our] cmd])
         ==
       ==
     ::
