@@ -419,9 +419,11 @@
   |%
   ++  meet  |=([k=@ m=@] [[(met 3 k) k] [(met 3 m) m]])
   ::
+  ++  hmac-sha1    (cork meet hmac-sha1l)
   ++  hmac-sha256  (cork meet hmac-sha256l)
   ++  hmac-sha512  (cork meet hmac-sha512l)
   ::
+  ++  hmac-sha1l    (cury hmac sha-1l 64 20)
   ++  hmac-sha256l  (cury hmac sha-256l 64 32)
   ++  hmac-sha512l  (cury hmac sha-512l 128 64)
   ::
