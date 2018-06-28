@@ -85,7 +85,7 @@
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
-  $:  $0                                                ::  version
+  $:  $1                                                ::  version
       dom/(set (list @t))                               ::  domain names
       fig/http-config                                   ::  config
       por/{clr/@ud sek/(unit @ud)}                      ::  live ports
@@ -2166,10 +2166,14 @@
   ~
 ::
 ++  load                                                ::  take previous state
-  ::|=  *  %.  (bolo +<)
-  |=  old/?(bolo)  ^+  ..^$
+  =>  |%
+      ++  bolo-old  (cork bolo |=(bolo [%0 |5.+<]))
+      --
+  |=  old/?(bolo-old bolo)
+  ^+  ..^$
   ?-  -.old
-    $0  ..^$(+>- old)
+    $0  $(old [%1 ~ *http-config [8.080 ~] [~ ~] +.old])
+    $1  ..^$(+>- old)
   ==
 ::
 ++  scry
