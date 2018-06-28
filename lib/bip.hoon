@@ -32,7 +32,7 @@
   ::
   ++  point  priv-to-pub.ecc
   ::
-  ++  ser-p  point-compressed.ecc
+  ++  ser-p  compress-point.ecc
   ::
   ++  n      ^n:ecc
   ::
@@ -613,12 +613,14 @@
     =/  p  ~(. fo p)
     =/  n  ~(. fo n)
     |%
-    ++  point-compressed
+    ++  compress-point
       |=  pont
+      ^-  @
       (can 3 ~[w^x 1^(add 0x2 (cut 0 [0 1] y))])
     ::
-    ++  point-uncompressed
+    ++  serialize-point
       |=  pont
+      ^-  @
       (can 3 ~[w^y w^x 1^0x4])
     ::
     ++  decompress-point
