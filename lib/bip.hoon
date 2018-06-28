@@ -251,29 +251,29 @@
 ::  ripemd
 ::
 ++  md5-pad
-  |=  [size=@u data=@]
-  ^-  [len=@u dat=@]
-  =+  (sub 511 (mod (add size 64) 512))
-  :-  :(add 64 +(-) size)
+  |=  byts
+  ^-  byts
+  =+  (sub 511 (mod (add wid 64) 512))
+  :-  :(add 64 +(-) wid)
   %+  can  0
-  ~[64^(rev 3 8 size) +(-)^(lsh 0 - 1) size^data]
+  ~[64^(rev 3 8 wid) +(-)^(lsh 0 - 1) wid^dat]
 ::
 ::NOTE  verified correct against:
 ::      http://homes.esat.kuleuven.be/~bosselae/ripemd160.html
 ++  ripemd-160
   ::  w: data size in bits
   ::  d: data to hash
-  |=  [w=@u d=@]
+  |=  byts
   ^-  @
   ::  add padding
-  =+  (md5-pad w d)
+  =+  (md5-pad wid dat)
   ::  endianness
   =.  dat
     %+  can  5
     %+  turn  (rip 5 dat)
     |=(a=@ 1^(rev 3 4 a))
   =*  x  dat
-  =+  blocks=(div len 512)
+  =+  blocks=(div wid 512)
   =+  fev=~(. fe 5)
   ::  initial register values
   =+  h0=0x6745.2301
@@ -428,21 +428,21 @@
   ++  hmac
     ::  boq: block size in bytes used by haj
     ::  out: bytes output by haj
-    |*  [[haj=$-([@u @] @) boq=@u out=@u] [kl=@u key=@] [ml=@u msg=@]]
+    |*  [[haj=$-([@u @] @) boq=@u out=@u] key=byts msg=byts]
     ::  ensure key and message fit signaled lengths
     ::TODO  other crypto implementations should do this too, probably
-    =.  key  (end 3 kl key)
-    =.  msg  (end 3 ml msg)
+    =.  dat.key  (end 3 wid.key dat.key)
+    =.  dat.msg  (end 3 wid.msg dat.msg)
     ::  keys longer than block size are shortened by hashing
-    =?  key  (gth kl boq)  (haj kl key)
-    =?  kl   (gth kl boq)  out
+    =?  dat.key  (gth wid.key boq)  (haj wid.key dat.key)
+    =?  wid.key  (gth wid.key boq)  out
     ::  keys shorter than block size are right-padded
-    =?  key  (lth kl boq)  (lsh 3 (sub boq kl) key)
+    =?  dat.key  (lth wid.key boq)  (lsh 3 (sub boq wid.key) dat.key)
     ::  pad key, inner and outer
-    =+  kip=(mix key (fil 3 boq 0x36))
-    =+  kop=(mix key (fil 3 boq 0x5c))
+    =+  kip=(mix dat.key (fil 3 boq 0x36))
+    =+  kop=(mix dat.key (fil 3 boq 0x5c))
     ::  append inner padding to message, then hash
-    =+  (haj (add ml boq) (add (lsh 3 ml kip) msg))
+    =+  (haj (add wid.msg boq) (add (lsh 3 wid.msg kip) dat.msg))
     ::  prepend outer padding to result, hash again
     (haj (add out boq) (add (lsh 3 out kop) -))
   --
@@ -459,18 +459,18 @@
   ++  sha-512l  :(cork flim shal (flip 64))
   ::
   ++  flin      |=(a=@ (swp 3 a))                       ::  flip input
-  ++  flim      |=([w=@u a=@] [w (rev 3 w a)])          ::  flip input w/ length
+  ++  flim      |=(byts [wid (rev 3 wid dat)])          ::  flip input w/ length
   ++  flip      |=(w=@u (cury (cury rev 3) w))          ::  flip output of size
   ++  meet      |=(a=@ [(met 3 a) a])
   ::
   ++  sha-1l
-    |=  [len=@u dat=@]
+    |=  byts
     =+  [few==>(fe .(a 5)) wac=|=({a/@ b/@} (cut 5 [a 1] b))]
     =+  [sum=sum.few ror=ror.few rol=rol.few net=net.few inv=inv.few]
-    =+  ral=(lsh 0 3 len)
+    =+  ral=(lsh 0 3 wid)
     =+  ^=  ful
         %+  can  0
-        :~  [ral (rev 3 len dat)]
+        :~  [ral (rev 3 wid dat)]
             [8 128]
             [(mod (sub 960 (mod (add 8 ral) 512)) 512) 0]
             [64 (~(net fe 6) ral)]
