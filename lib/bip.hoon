@@ -190,7 +190,7 @@
   =.  dat
     %+  can  5
     %+  turn  (rip 5 dat)
-    |=(a=@ 1^(swp 3 a))
+    |=(a=@ 1^(rev 3 4 a))
   =*  x  dat
   =+  blocks=(div len 512)
   =+  fev=~(. fe 5)
