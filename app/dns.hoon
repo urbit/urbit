@@ -14,6 +14,7 @@
           ==
 +=  card  $%  [%tend wire ~]
               [%poke wire dock poke]
+              [%rule wire %turf %put turf]
               [%hiss wire [~ ~] %httr %hiss hiss:eyre]
           ==
 :: +state: complete app state
@@ -259,9 +260,8 @@
   ?:  =(for him)
     ~|(%bond-yoself !!)
   ?:  =(our.bow him)
-    :: XX notify eyre/hood/acme etc
     ~&  [%bound-us dom]
-    :-  ~
+    :-  [[ost.bow %rule /bound %turf %put dom] ~]
     this(dom (~(put in ^dom) dom))
   ?:  =(our.bow for)
     ~&  [%bound-him him dom]
