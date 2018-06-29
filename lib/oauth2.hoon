@@ -101,7 +101,7 @@
   %+  rap  3  :-  (wack a)
   (turn b |=(c/knot (cat 3 '_' (wack c))))
 ::
-++  our-host  .^(hart %e /(scot %p our)/host/fake)
+++  our-host  .^(hart %e /(scot %p our)/host/real)
 ++  redirect-uri
   %-    crip    %-  en-purl
   %^  into-url:interpolate  'https://our-host/~/ac/:domain/:user/in'
