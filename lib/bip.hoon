@@ -288,7 +288,7 @@
       %+  can  5
       %+  turn  `(list @)`~[h4 h3 h2 h1 h0]
       ::  endianness
-      |=(h=@ 1^(swp 3 h))
+      |=(h=@ 1^(rev 3 4 h))
     =:  a  h0     aa  h0
         b  h1     bb  h1
         c  h2     cc  h2
