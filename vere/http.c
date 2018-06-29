@@ -35,9 +35,9 @@ static void _proxy_serv_close(u3_prox* lis_u);
 static u3_prox* _proxy_serv_new(u3_http* htp_u, c3_s por_s, c3_o sec);
 static u3_prox* _proxy_serv_start(u3_prox* lis_u);
 
-static void _http_conn_close(u3_hcon* hon_u);
-static void _http_serv_close_hard(u3_http* htp_u);
+static void _http_serv_free(u3_http* htp_u);
 static void _http_serv_start_all(void);
+static void _http_form_free(void);
 
 static const c3_i TCP_BACKLOG = 16;
 
@@ -239,38 +239,6 @@ _http_req_unlink(u3_hreq* req_u)
   }
 }
 
-/* _http_req_free(): free http request.
-*/
-static void
-_http_req_free(u3_hreq* req_u)
-{
-  u3_hcon* hon_u = req_u->hon_u;
-  u3_http* htp_u = hon_u->htp_u;
-
-  _http_req_unlink(req_u);
-
-  if ( (c3n == htp_u->liv) && (0 == hon_u->req_u) ) {
-    _http_conn_close(hon_u);
-  }
-
-  free(req_u);
-}
-
-/* _http_req_new(): receive http request.
-*/
-static u3_hreq*
-_http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
-{
-  u3_hreq* req_u = c3_malloc(sizeof(*req_u));
-  req_u->rec_u = rec_u;
-  req_u->sat_e = u3_rsat_init;
-  req_u->pre_u = 0;
-
-  _http_req_link(hon_u, req_u);
-
-  return req_u;
-}
-
 /* _http_req_to_duct(): translate srv/con/req to duct
 */
 static u3_noun
@@ -290,6 +258,37 @@ _http_req_kill(u3_hreq* req_u)
 {
   u3_noun pox = _http_req_to_duct(req_u);
   u3v_plan(pox, u3nc(c3__thud, u3_nul));
+}
+
+/* _http_req_done(): request finished, deallocation callback
+*/
+static void
+_http_req_done(void* ptr_v)
+{
+  u3_hreq* req_u = (u3_hreq*)ptr_v;
+
+  // client canceled request
+  if ( u3_rsat_plan == req_u->sat_e ) {
+    _http_req_kill(req_u);
+  }
+
+  _http_req_unlink(req_u);
+}
+
+/* _http_req_new(): receive http request.
+*/
+static u3_hreq*
+_http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
+{
+  u3_hreq* req_u = h2o_mem_alloc_shared(&rec_u->pool, sizeof(*req_u),
+                                        _http_req_done);
+  req_u->rec_u = rec_u;
+  req_u->sat_e = u3_rsat_init;
+  req_u->pre_u = 0;
+
+  _http_req_link(hon_u, req_u);
+
+  return req_u;
 }
 
 /* _http_req_dispatch(): dispatch http request to %eyre
@@ -312,7 +311,6 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
 typedef struct _u3_hgen {
   h2o_generator_t neg_u;
   h2o_iovec_t     bod_u;
-  u3_hreq*        req_u;
   u3_hhed*        hed_u;
 } u3_hgen;
 
@@ -322,7 +320,6 @@ static void
 _http_hgen_dispose(void* ptr_v)
 {
   u3_hgen* gen_u = (u3_hgen*)ptr_v;
-  _http_req_free(gen_u->req_u);
   _http_heds_free(gen_u->hed_u);
   free(gen_u->bod_u.base);
 }
@@ -356,7 +353,6 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
   u3_hgen* gen_u = h2o_mem_alloc_shared(&rec_u->pool, sizeof(*gen_u),
                                         _http_hgen_dispose);
   gen_u->neg_u = (h2o_generator_t){0, 0};
-  gen_u->req_u = req_u;
   gen_u->hed_u = hed_u;
 
   while ( 0 != hed_u ) {
@@ -372,6 +368,13 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
   h2o_start_response(rec_u, &gen_u->neg_u);
   h2o_send(rec_u, &gen_u->bod_u, 1, H2O_SEND_STATE_FINAL);
 
+  {
+    u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
+
+    if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
+      rec_u->http1_is_persistent = 0;
+    }
+  }
 
   u3z(sas); u3z(hed); u3z(bod);
 }
@@ -401,18 +404,6 @@ _http_rec_to_httq(h2o_req_t* rec_u)
   return u3nq(med, url, hed, bod);
 }
 
-/* _http_rec_fail(): fail on bad h2o_req_t
-*/
-static void
-_http_rec_fail(h2o_req_t* rec_u, c3_i sas_i, c3_c* sas_c)
-{
-  static h2o_generator_t gen_u = {0, 0};
-  rec_u->res.status = sas_i;
-  rec_u->res.reason = sas_c;
-  h2o_start_response(rec_u, &gen_u);
-  h2o_send(rec_u, 0, 0, H2O_SEND_STATE_FINAL);
-}
-
 typedef struct _h2o_uv_sock {         //  see private st_h2o_uv_socket_t
   h2o_socket_t     sok_u;             //  socket
   uv_stream_t*     han_u;             //  client stream handler (u3_hcon)
@@ -432,7 +423,8 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
       uL(fprintf(uH, "strange %.*s request\n", (int)rec_u->method.len,
                                                rec_u->method.base));
     }
-    _http_rec_fail(rec_u, 400, "bad request");
+    c3_c* msg_c = "bad request";
+    h2o_send_error_generic(rec_u, 400, msg_c, msg_c, 0);
   }
   else {
     h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
@@ -512,32 +504,50 @@ _http_conn_free(uv_handle_t* han_t)
 {
   u3_hcon* hon_u = (u3_hcon*)han_t;
   u3_http* htp_u = hon_u->htp_u;
+  u3_h2o_serv* h2o_u = htp_u->h2o_u;
 
-  while ( 0 != hon_u->req_u ) {
-    u3_hreq* req_u = hon_u->req_u;
-    u3_hreq* nex_u = req_u->nex_u;
+  c3_assert( 0 == hon_u->req_u );
 
-    _http_req_kill(req_u);
-    _http_req_free(req_u);
-    // XX close/free h2o_req_t
-    hon_u->req_u = nex_u;
+#if 0
+  {
+    c3_w len_w = 0;
+
+    u3_hcon* noh_u = htp_u->hon_u;
+
+    while ( 0 != noh_u ) {
+      len_w++;
+      noh_u = noh_u->nex_u;
+    }
+
+    uL(fprintf(uH, "http conn free %d of %u server %d\n", hon_u->coq_l, len_w, htp_u->sev_l));
   }
+#endif
 
   _http_conn_unlink(hon_u);
 
-  if ( (c3n == htp_u->liv) && (0 == htp_u->hon_u) ) {
-    _http_serv_close_hard(htp_u);
+#if 0
+  {
+    c3_w len_w = 0;
+
+    u3_hcon* noh_u = htp_u->hon_u;
+
+    while ( 0 != noh_u ) {
+      len_w++;
+      noh_u = noh_u->nex_u;
+    }
+
+    uL(fprintf(uH, "http conn free %u remaining\n", len_w));
+  }
+#endif
+
+  if ( (0 == htp_u->hon_u) && (0 != h2o_u->ctx_u.shutdown_requested) ) {
+#if 0
+    uL(fprintf(uH, "http conn free %d free server %d\n", hon_u->coq_l, htp_u->sev_l));
+#endif
+    _http_serv_free(htp_u);
   }
 
   free(hon_u);
-}
-
-/* _http_conn_close(): close http connection.
-*/
-static void
-_http_conn_close(u3_hcon* hon_u)
-{
-  h2o_socket_close(hon_u->sok_u);
 }
 
 /* _http_conn_new(): create and accept http connection.
@@ -554,6 +564,10 @@ _http_conn_new(u3_http* htp_u)
   hon_u->pre_u = 0;
 
   _http_conn_link(htp_u, hon_u);
+
+#if 0
+  uL(fprintf(uH, "http conn neww %d server %d\n", hon_u->coq_l, htp_u->sev_l));
+#endif
 
   return hon_u;
 }
@@ -618,80 +632,176 @@ _http_serv_unlink(u3_http* htp_u)
   }
 }
 
-/* _http_serv_free(): free http server.
+/* _http_h2o_context_dispose(): h2o_context_dispose, inlined and cleaned up.
 */
 static void
-_http_serv_free(u3_http* htp_u)
+_http_h2o_context_dispose(h2o_context_t* ctx)
 {
-  uL(fprintf(uH, "_http_serv_free\n"));
+  h2o_globalconf_t *config = ctx->globalconf;
+  size_t i, j;
 
-  _http_serv_unlink(htp_u);
-
-  while ( 0 != htp_u->hon_u ) {
-    _http_conn_close(htp_u->hon_u);
-    htp_u->hon_u = htp_u->hon_u->nex_u;
+  for (i = 0; config->hosts[i] != NULL; ++i) {
+    h2o_hostconf_t *hostconf = config->hosts[i];
+    for (j = 0; j != hostconf->paths.size; ++j) {
+      h2o_pathconf_t *pathconf = hostconf->paths.entries + j;
+      h2o_context_dispose_pathconf_context(ctx, pathconf);
+    }
+    h2o_context_dispose_pathconf_context(ctx, &hostconf->fallback_path);
   }
+
+  free(ctx->_pathconfs_inited.entries);
+  free(ctx->_module_configs);
+
+  h2o_timeout_dispose(ctx->loop, &ctx->zero_timeout);
+  h2o_timeout_dispose(ctx->loop, &ctx->hundred_ms_timeout);
+  h2o_timeout_dispose(ctx->loop, &ctx->handshake_timeout);
+  h2o_timeout_dispose(ctx->loop, &ctx->http1.req_timeout);
+  h2o_timeout_dispose(ctx->loop, &ctx->http2.idle_timeout);
+
+  // NOTE: linked in http2/connection, never unlinked
+  h2o_timeout_unlink(&ctx->http2._graceful_shutdown_timeout);
+
+  h2o_timeout_dispose(ctx->loop, &ctx->http2.graceful_shutdown_timeout);
+  h2o_timeout_dispose(ctx->loop, &ctx->proxy.io_timeout);
+  h2o_timeout_dispose(ctx->loop, &ctx->one_sec_timeout);
+
+  h2o_filecache_destroy(ctx->filecache);
+  ctx->filecache = NULL;
+
+  /* clear storage */
+  for (i = 0; i != ctx->storage.size; ++i) {
+    h2o_context_storage_item_t *item = ctx->storage.entries + i;
+    if (item->dispose != NULL) {
+        item->dispose(item->data);
+    }
+  }
+
+  free(ctx->storage.entries);
+
+  h2o_multithread_unregister_receiver(ctx->queue, &ctx->receivers.hostinfo_getaddr);
+  h2o_multithread_destroy_queue(ctx->queue);
+
+  if (ctx->_timestamp_cache.value != NULL) {
+    h2o_mem_release_shared(ctx->_timestamp_cache.value);
+  }
+
+  // NOTE: explicit uv_run removed
+}
+
+/* _http_serv_really_free(): free http server.
+*/
+static void
+_http_serv_really_free(u3_http* htp_u)
+{
+  c3_assert( 0 == htp_u->hon_u );
 
   if ( 0 != htp_u->h2o_u ) {
     u3_h2o_serv* h2o_u = htp_u->h2o_u;
-
-    h2o_config_dispose(&h2o_u->fig_u);
 
     if ( 0 != h2o_u->cep_u.ssl_ctx ) {
       SSL_CTX_free(h2o_u->cep_u.ssl_ctx);
     }
 
+    h2o_config_dispose(&h2o_u->fig_u);
+
+    // XX h2o_cleanup_thread if not restarting?
+
     free(htp_u->h2o_u);
     htp_u->h2o_u = 0;
   }
 
-  if ( 0 != htp_u->rox_u ) {
-    _proxy_serv_close(htp_u->rox_u);
-    htp_u->rox_u = 0;
-  }
-
-  // XX groace
-  if ( (c3n == htp_u->liv) && (0 == u3_Host.htp_u) ) {
-    _http_serv_start_all();
-  }
-
+  _http_serv_unlink(htp_u);
   free(htp_u);
 }
 
-/* _http_serv_close_hard(): close http server.
+/* http_serv_free_cb(): timer callback for freeing http server.
 */
 static void
-_http_serv_close_hard(u3_http* htp_u)
+http_serv_free_cb(uv_timer_t* tim_u)
 {
-  uL(fprintf(uH, "_http_serv_close_hard\n"));
-  uv_close((uv_handle_t*)&htp_u->wax_u,
-           (uv_close_cb)_http_serv_free);
+  u3_http* htp_u = tim_u->data;
+
+  _http_serv_really_free(htp_u);
+
+  uv_close((uv_handle_t*)tim_u, (uv_close_cb)free);
 }
 
-/* _http_serv_close_soft(): close http server gracefully.
+/* _http_serv_free(): begin to free http server.
 */
 static void
-_http_serv_close_soft(u3_http* htp_u)
+_http_serv_free(u3_http* htp_u)
 {
-  uL(fprintf(uH, "_http_serv_close_soft\n"));
+#if 0
+  uL(fprintf(uH, "http serv free %d\n", htp_u->sev_l));
+#endif
+
+  c3_assert( 0 == htp_u->hon_u );
+
+  if ( 0 == htp_u->h2o_u ) {
+    _http_serv_really_free(htp_u);
+  }
+  else {
+    u3_h2o_serv* h2o_u = htp_u->h2o_u;
+
+    _http_h2o_context_dispose(&h2o_u->ctx_u);
+
+    // NOTE: free deferred to allow timers to be closed
+    uv_timer_t* tim_u = c3_malloc(sizeof(*tim_u));
+
+    tim_u->data = htp_u;
+
+    uv_timer_init(u3L, tim_u);
+    uv_timer_start(tim_u, http_serv_free_cb, 0, 0);
+  }
+}
+
+/* _http_serv_close_cb(): http server uv_close callback.
+*/
+static void
+_http_serv_close_cb(uv_handle_t* han_u)
+{
+  u3_http* htp_u = (u3_http*)han_u;
+  htp_u->liv = c3n;
+
+  // otherwise freed by the last linked connection
+  if ( 0 == htp_u->hon_u ) {
+    _http_serv_free(htp_u);
+  }
+
+  // restart if all linked servers have been shutdown
+  {
+    htp_u = u3_Host.htp_u;
+    c3_o res = c3y;
+
+    while ( 0 != htp_u ) {
+      if ( c3y == htp_u->liv ) {
+        res = c3n;
+      }
+      htp_u = htp_u->nex_u;
+    }
+
+    if ( (c3y == res) && (0 != u3_Host.fig_u.for_u) ) {
+      _http_serv_start_all();
+    }
+  }
+}
+
+/* _http_serv_close(): close http server gracefully.
+*/
+static void
+_http_serv_close(u3_http* htp_u)
+{
   u3_h2o_serv* h2o_u = htp_u->h2o_u;
   h2o_context_request_shutdown(&h2o_u->ctx_u);
 
-  htp_u->liv = c3n;
+#if 0
+  uL(fprintf(uH, "http serv close %d %p\n", htp_u->sev_l, &htp_u->wax_u));
+#endif
 
-  u3_hcon* hon_u = htp_u->hon_u;
-
-  while ( 0 != hon_u ) {
-    u3_hcon* nex_u = hon_u->nex_u;
-
-    if ( 0 == hon_u->req_u ) {
-      _http_conn_close(hon_u);
-    }
-
-    hon_u = nex_u;
-  }
+  uv_close((uv_handle_t*)&htp_u->wax_u, _http_serv_close_cb);
 
   if ( 0 != htp_u->rox_u ) {
+    // XX close soft
     _proxy_serv_close(htp_u->rox_u);
     htp_u->rox_u = 0;
   }
@@ -724,10 +834,6 @@ _http_serv_new(c3_s por_s, c3_o sec, c3_o lop)
 static void
 _http_serv_accept(u3_http* htp_u)
 {
-  if ( c3n == htp_u->liv ) {
-    return;
-  }
-
   u3_hcon* hon_u = _http_conn_new(htp_u);
 
   uv_tcp_init(u3L, &hon_u->wax_u);
@@ -1211,27 +1317,25 @@ u3_http_ef_thou(c3_l     sev_l,
   u3z(rep);
 }
 
+/* _http_serv_start_all(): initialize and start servers based on saved config.
+*/
 static void
 _http_serv_start_all(void)
 {
-  // serv_close has already been called, but they
-  // might not have been freed or unlinked yet
-  u3_Host.htp_u = 0;
-
-  // this may be shared across servers, so
-  // there's no good place for it to go
-  u3_Host.tls_u = 0;
-
-  if ( 0 != u3_Host.fig_u.tim_u ) {
-    uv_timer_stop(u3_Host.fig_u.tim_u);
-    free(u3_Host.fig_u.tim_u);
-    u3_Host.fig_u.tim_u = 0;
-  }
-
   u3_http* htp_u;
   c3_s por_s;
 
+  u3_noun sec = u3_nul;
+  u3_noun non = u3_none;
+
   u3_form* for_u = u3_Host.fig_u.for_u;
+
+  c3_assert( 0 != for_u );
+
+  u3_lo_open();
+
+  // if the SSL_CTX existed, it'll be freed with the servers
+  u3_Host.tls_u = 0;
 
   //  HTTPS server.
   if ( (0 != for_u->key_u.base) && (0 != for_u->cer_u.base) ) {
@@ -1248,6 +1352,9 @@ _http_serv_start_all(void)
       if ( (c3y == for_u->pro) || (c3y == u3_Host.ops_u.fak) ) {
         htp_u->rox_u = _proxy_serv_new(htp_u, 443, c3y);
       }
+
+      _http_serv_start(htp_u);
+      sec = u3nc(u3_nul, htp_u->por_s);
     }
   }
 
@@ -1260,6 +1367,9 @@ _http_serv_start_all(void)
     if ( (c3y == for_u->pro) || (c3y == u3_Host.ops_u.fak) ) {
       htp_u->rox_u = _proxy_serv_new(htp_u, 80, c3n);
     }
+
+    _http_serv_start(htp_u);
+    non = htp_u->por_s;
   }
 
   //  Loopback server.
@@ -1268,55 +1378,22 @@ _http_serv_start_all(void)
     htp_u = _http_serv_new(por_s, c3n, c3y);
     htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
     // never proxied
-  }
 
-  for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
     _http_serv_start(htp_u);
   }
 
   //  send listening ports to %eyre
   {
-    u3_noun pax = u3nq(u3_blip, c3__http, u3k(u3A->sen), u3_nul);
-    u3_noun sec = u3_nul;
-    u3_noun non = u3_none;
-
-    for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
-      if ( c3n == htp_u->lop ) {
-        if ( c3y == htp_u->sec ) {
-          sec = u3nc(u3_nul, htp_u->por_s);
-        }
-        else {
-          non = htp_u->por_s;
-        }
-      }
-    }
-
     c3_assert( u3_none != non );
 
-    // XX open/shut?
+    u3_noun pax = u3nq(u3_blip, c3__http, u3k(u3A->sen), u3_nul);
     u3v_plan(pax, u3nt(c3__live, non, sec));
   }
 
   _http_write_ports_file(u3_Host.dir_c);
-}
+  _http_form_free();
 
-/* _http_serv_restart_cb(): force shutdown, then start servers.
-*/
-static void
-_http_serv_restart_cb(uv_timer_t* tim_u)
-{
-  u3_http* htp_u;
-
-  free(tim_u);
-  u3_Host.fig_u.tim_u = 0;
-
-  uL(fprintf(uH, "http: force shutdown\n"));
-
-  for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
-    _http_serv_close_hard(htp_u);
-  }
-
-  _http_serv_start_all();
+  u3_lo_shut(c3y);
 }
 
 /* _http_serv_restart(): gracefully shutdown, then start servers.
@@ -1324,32 +1401,36 @@ _http_serv_restart_cb(uv_timer_t* tim_u)
 static void
 _http_serv_restart(void)
 {
-  u3_http* htp_u;
+  u3_http* htp_u = u3_Host.htp_u;
 
-  if ( 0 == u3_Host.htp_u ) {
+  if ( 0 == htp_u ) {
     _http_serv_start_all();
+  }
+  else {
+    uL(fprintf(uH, "http: restarting servers to apply configuration\n"));
+
+    while ( 0 != htp_u ) {
+      if ( c3y == htp_u->liv ) {
+        _http_serv_close(htp_u);
+      }
+      htp_u = htp_u->nex_u;
+    }
+
+    _http_release_ports_file(u3_Host.dir_c);
+  }
+}
+
+/* _http_form_free(): free and unlink saved config.
+*/
+static void
+_http_form_free(void)
+{
+  u3_form* for_u = u3_Host.fig_u.for_u;
+
+  if ( 0 == for_u ) {
     return;
   }
 
-  uL(fprintf(uH, "http: restarting servers to apply configuration\n"));
-
-  for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
-    // flag that servers are coming down
-    // stop accepting connections
-    _http_serv_close_soft(htp_u);
-  }
-
-  u3_Host.fig_u.tim_u = c3_malloc(sizeof(uv_timer_t));
-
-  uv_timer_init(u3L, u3_Host.fig_u.tim_u);
-  uv_timer_start(u3_Host.fig_u.tim_u, _http_serv_restart_cb, 0, 0);
-
-  _http_release_ports_file(u3_Host.dir_c);
-}
-
-static void
-_http_form_free(u3_form* for_u)
-{
   if ( 0 != for_u->key_u.base ) {
     free(for_u->key_u.base);
   }
@@ -1359,6 +1440,7 @@ _http_form_free(u3_form* for_u)
   }
 
   free(for_u);
+  u3_Host.fig_u.for_u = 0;
 }
 
 /* u3_http_ef_form(): apply configuration, restart servers.
@@ -1389,10 +1471,7 @@ u3_http_ef_form(u3_noun fig)
   }
 
   u3z(fig);
-
-  if ( 0 != u3_Host.fig_u.for_u ) {
-    _http_form_free(u3_Host.fig_u.for_u);
-  }
+  _http_form_free();
 
   u3_Host.fig_u.for_u = for_u;
 
@@ -1404,9 +1483,6 @@ u3_http_ef_form(u3_noun fig)
 void
 u3_http_io_init(void)
 {
-  u3_Host.fig_u.for_u = 0;
-  u3_Host.fig_u.cli_u = 0;
-  u3_Host.fig_u.con_u = 0;
 }
 
 /* u3_http_io_talk(): start http I/O.
@@ -1619,6 +1695,12 @@ _proxy_conn_free(u3_pcon* con_u)
 static void
 _proxy_conn_close(u3_pcon* con_u)
 {
+  // XX revisit, this is called twice when con_u
+  // is a loopback connection and we're restarting
+  if ( uv_is_closing((uv_handle_t*)&con_u->don_u) ){
+    return;
+  }
+
   if ( 0 != con_u->upt_u ) {
     uv_close((uv_handle_t*)con_u->upt_u, (uv_close_cb)free);
   }

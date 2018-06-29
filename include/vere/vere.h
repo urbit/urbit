@@ -80,7 +80,7 @@
         c3_s             por_s;             //  running port
         c3_o             sec;               //  logically secure
         c3_o             lop;               //  loopback-only
-        c3_o             liv;               //  c3n == shutting down
+        c3_o             liv;               //  c3n == shutdown
         struct _u3_hcon* hon_u;             //  connection list
         struct _u3_http* nex_u;             //  next in list
       } u3_http;
@@ -99,8 +99,7 @@
     */
       typedef struct _u3_hfig {
         u3_form*         for_u;             //  config from %eyre
-        uv_timer_t*      tim_u;             //  hard restart timer
-        struct _u3_warc* cli_u;             //  rev proxy client
+        struct _u3_warc* cli_u;             //  rev proxy clients
         struct _u3_pcon* con_u;             //  cli_u connections
       } u3_hfig;
 
