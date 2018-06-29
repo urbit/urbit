@@ -1171,6 +1171,7 @@
 ::
 +=  card
   $%  [%hiss wire [~ ~] %httr %hiss hiss:eyre]
+      [%wait wire @da]
       [%well wire path (unit mime)]
       [%rule wire %cert (unit [wain wain])]
   ==
@@ -1585,7 +1586,10 @@
   ::
   :: +retry: retry effect after timeout
   ::
-  ++  retry  !!
+  ++  retry
+    |=  [wir=wire wen=@da]
+    :: XX validate wire and date
+    (emit %wait [%acme wir] wen)
   --
 :: |event: accept event, emit next effect(s)
 ::
@@ -1833,8 +1837,13 @@
   :: +retry: retry effect after timeout
   ::
   ++  retry
-    :: XX implement wire parsing / next effect
-    !!
+    |=  wir=wire
+    ^+  this
+    ?+  wir
+        ~&(unknown-retry+wir this)
+      :: XX do the needful
+      [%directory ~]  directory:effect
+    ==
   --
 :: +sigh-tang: handle http request failure
 ::
@@ -1873,6 +1882,14 @@
     %finalize-trial  finalize-trial:event
     ::  XX delete-trial?
   ==
+:: +wake: timer wakeup event
+::
+++  wake
+  |=  [wir=wire ~]
+  ^-  (quip move _this)
+  ~&  [%wake wir]
+  ?>  ?=([%acme *] wir)
+  abet:(retry:event t.wir)
 :: +poke-acme-order: create new order for a set of domains
 ::
 ++  poke-acme-order
@@ -1928,7 +1945,7 @@
 ++  init
   =/  url
     'https://acme-staging-v02.api.letsencrypt.org/directory'
-  =<  directory:effect
+  =<  (retry:effect /directory +(now.bow))
   %=  this
     bas  (need (de-purl:html url))
     act  [(rekey eny.bow) ~]
