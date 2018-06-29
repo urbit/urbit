@@ -1655,7 +1655,8 @@
         (acct:grab (need (de-json:html q.u.r.rep)))
       ?>  ?=(%valid sas.bod)
       wen.bod
-    this(reg.act `[wen loc])
+    =.  reg.act  `[wen loc]
+    ?~(pen this new-order:effect)
   :: XX rekey
   ::
   ::  +new-order: order created, begin processing authorizations
@@ -1893,7 +1894,9 @@
 :: +poke-acme-order: create new order for a set of domains
 ::
 ++  poke-acme-order
-  |=(a=(set turf) abet:(add-order ~(tap in a)))
+  |=  a=(set turf)
+  ~&  [%poke-acme a]
+  abet:(add-order a)
 :: +poke-noun: for debugging
 ::
 ++  poke-noun
@@ -1912,14 +1915,14 @@
     %trial  test-trial:effect
     %final  finalize-order:effect
     %poll   check-order:effect
-    %our    (add-order /org/urbit/(crip +:(scow %p our.bow)) ~)
+    %our    (add-order (sy /org/urbit/(crip +:(scow %p our.bow)) ~))
     %rule   install:effect
     %test   test
   ==
 :: +poke-path: for debugging
 ::
 ++  poke-path
-  |=(a=path abet:(add-order a ~))
+  |=(a=path abet:(add-order (sy a ~)))
 ::
 :: ++  prep  _[~ this]
 ++  prep
@@ -1951,18 +1954,16 @@
     act  [(rekey eny.bow) ~]
     cey  (rekey (mix eny.bow (shaz now.bow)))
   ==
-  :: XX wait for DNS binding confirmation?
-  :: (add-order /org/urbit/(crip +:(scow %p our.bow)) ~)
 ::
 ++  add-order
-  |=  dom=(list turf)
+  |=  dom=(set turf)
   ^+  this
   :: XX we may have pending moves out for this order
   :: XX put dates in wires, check against order creation date?
   :: XX or re-use order-id?
   =?  fal.hit  ?=(^ rod)  [u.rod fal.hit]
-  :: XX check registration, defer
-  new-order:effect(rod ~, pen `(sy dom))
+  =<  ?~(reg.act this new-order:effect)
+  this(rod ~, pen `dom)
 ::
 ++  test
   =,  tester:tester
