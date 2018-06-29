@@ -56,17 +56,16 @@
 ++  reserved
   |=  a=@if
   ^-  ?
-  =/  b  (rip 3 a)
-  ?>  ?=([@ @ @ @ ~] b)
-  ?|  :: 0.0.0.0/8 (software)
-      ::
-      =(0 i.b)
-      :: 10.0.0.0/8 (private)
+  =/  b  (flop (rip 3 a))
+  :: 0.0.0.0/8 (software)
+  ::
+  ?.  ?=([@ @ @ @ ~] b)  &
+  ?|  :: 10.0.0.0/8 (private)
       ::
       =(10 i.b)
       :: 100.64.0.0/10 (carrier-grade NAT)
       ::
-      &(=(100 i.b) (gte 64 i.t.b) (lte 127 i.t.b))
+      &(=(100 i.b) (gte i.t.b 64) (lte i.t.b 127))
       :: 127.0.0.0/8 (localhost)
       ::
       =(127 i.b)
@@ -75,7 +74,7 @@
       &(=(169 i.b) =(254 i.t.b))
       :: 172.16.0.0/12 (private)
       ::
-      &(=(172 i.b) (gte 16 i.t.b) (lte 31 i.t.b))
+      &(=(172 i.b) (gte i.t.b 16) (lte i.t.b 31))
       :: 192.0.0.0/24 (protocol assignment)
       ::
       &(=(192 i.b) =(0 i.t.b) =(0 i.t.t.b))
@@ -101,7 +100,7 @@
       :: 240.0.0.0/4 (reserved, future)
       :: 255.255.255.255/32 (broadcast)
       ::
-      (gte 224 i.b)
+      (gte i.b 224)
   ==
 :: |gcloud: provider-specific functions
 ::
