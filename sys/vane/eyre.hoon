@@ -772,11 +772,11 @@
           (ames-gram q.p.kyz hat+~ p.u.mez our-host)
       ::
         $get-inner
-          %^  exec-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)  -.q.u.mez
+          %^  exec-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)  -.s.u.mez
           ::
-          =/  ext  r.u.mez
-          =/  fig/coin  (fcgi ~ *cred)  ::STUB fcgi params for /$
-          [%bake ext fig q.u.mez]
+::          =/  ext/mark  q.u.mez
+::          =/  fig/coin  r.u.mez  ::(fcgi ~ *cred)  ::STUB fcgi params for /$
+          [%bake q.u.mez r.u.mez s.u.mez]
       ::
         $got-inner
           ?.  (~(has by pox) p.u.mez)
@@ -1400,7 +1400,8 @@
           =.  -.bem  (norm-beak -.bem)
           =/  han  (sham hen)
           =.  pox  (~(put by pox) han hen)
-          [%| (ames-gram p.bem [%get-inner ~] han bem ext)]
+          =+  arg=(fcgi payload fcgi-cred)
+          [%| (ames-gram p.bem [%get-inner ~] han ext arg bem)]
         =+  wir=`whir`[%ha (en-beam -.bem ~)]
         =.  wir  ?+(mef !! $get wir, $head [%he wir])
         =.  r.bem  ?+(r.bem r.bem {$ud $0} da+now)

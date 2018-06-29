@@ -726,7 +726,7 @@
         [[%got ~] p=@uvH q=httr]                        ::  remote response
         [[%gib ~] p=@uvH]                               ::  remote cancel
       ::
-        [[%get-inner ~] p=@uvH q=beam r=mark]  ::TODO details?
+        [[%get-inner ~] p=@uvH q=mark r=coin s=beam]  ::TODO details?
         [[%got-inner ~] p=@uvH q=(each (cask) tang)]  ::TODO details?
       ::
         [[%not ~] p=@ud q=?]                            ::  proxy notification
