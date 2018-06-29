@@ -1928,11 +1928,9 @@
 ++  prep
   |=  old=(unit acme)
   ^-  (quip move _this)
-  ?^  old
-    [~ this(+<+ u.old)]
-  ?:  ?=(?(%earl %pawn) (clan:title our.bow))
+  ?~  old
     [~ this]
-  abet:init
+  [~ this(+<+ u.old)]
 ::
 ++  rekey                             :: XX do something about this
   |=  eny=@
@@ -1958,12 +1956,26 @@
 ++  add-order
   |=  dom=(set turf)
   ^+  this
-  :: XX we may have pending moves out for this order
-  :: XX put dates in wires, check against order creation date?
-  :: XX or re-use order-id?
+  ?:  ?=(?(%earl %pawn) (clan:title our.bow))
+    this
+  :: set pending order
+  ::
+  =.  pen  `dom
+  :: archive active order if exists
+  ::
+  ::   XX we may have pending moves out for this order
+  ::   put dates in wires, check against order creation date?
+  ::   or re-use order-id?
+  ::
   =?  fal.hit  ?=(^ rod)  [u.rod fal.hit]
-  =<  ?~(reg.act this new-order:effect)
-  this(rod ~, pen `dom)
+  =.  rod  ~
+  :: if registered, create order
+  ::
+  ?^  reg.act
+    new-order:effect
+  :: if initialized, defer
+  ::
+  ?.(=(act *acct) this init)
 ::
 ++  test
   =,  tester:tester
