@@ -1967,11 +1967,14 @@
         %+  mix  txt
         %^  rsh  3  (sub (mul 16 blocks) len)
         %+  rep  7
-        %-  flop
-        |-  ^-  (list @ux)
-        ?:  =(blocks 0)  ~
-        :-  (encrypt ctr)
-            $(ctr (inc mod ctr), blocks (dec blocks))
+        =|  seed=(list @ux)
+        |-  ^+  seed
+        ?:  =(blocks 0)  seed
+        %=  $
+          seed    [(encrypt ctr) seed]
+          ctr     (inc mod ctr)
+          blocks  (dec blocks)
+        ==
       ::                                                ::  ++de:ctra:aes:crypto
       ++  de                                            ::  decrypt
         en
@@ -1991,11 +1994,14 @@
         %+  mix  txt
         %^  rsh  3  (sub (mul 16 blocks) len)
         %+  rep  7
-        %-  flop
-        |-  ^-  (list @ux)
-        ?:  =(blocks 0)  ~
-        :-  (encrypt ctr)
-            $(ctr (inc mod ctr), blocks (dec blocks))
+        =|  seed=(list @ux)
+        |-  ^+  seed
+        ?:  =(blocks 0)  seed
+        %=  $
+          seed    [(encrypt ctr) seed]
+          ctr     (inc mod ctr)
+          blocks  (dec blocks)
+        ==
       ::                                                ::  ++de:ctrb:aes:crypto
       ++  de                                            ::  decrypt
         en
@@ -2015,11 +2021,14 @@
         %+  mix  txt
         %^  rsh  3  (sub (mul 16 blocks) len)
         %+  rep  7
-        %-  flop
-        |-  ^-  (list @ux)
-        ?:  =(blocks 0)  ~
-        :-  (encrypt ctr)
-            $(ctr (inc mod ctr), blocks (dec blocks))
+        =|  seed=(list @ux)
+        |-  ^+  seed
+        ?:  =(blocks 0)  seed
+        %=  $
+          seed    [(encrypt ctr) seed]
+          ctr     (inc mod ctr)
+          blocks  (dec blocks)
+        ==
       ::                                                ::  ++de:ctrc:aes:crypto
       ++  de                                            ::  decrypt
         en
