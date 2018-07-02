@@ -242,6 +242,188 @@
     ==
   --
 ::
+::
+::  blake2
+::
+::TODO  generalize for both blake2 variants
+++  blake2b
+  |=  [msg=byts key=byts out=@ud]
+  ^-  @
+  ::  initialization vector
+  =/  iv=@
+    0x6a09.e667.f3bc.c908.
+      bb67.ae85.84ca.a73b.
+      3c6e.f372.fe94.f82b.
+      a54f.f53a.5f1d.36f1.
+      510e.527f.ade6.82d1.
+      9b05.688c.2b3e.6c1f.
+      1f83.d9ab.fb41.bd6b.
+      5be0.cd19.137e.2179
+  ::  per-round constants
+  =/  sigma=(list (list @ud))
+    :~  :~   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  ==
+        :~  14  10   4   8   9  15  13   6   1  12   0   2  11   7   5   3  ==
+        :~  11   8  12   0   5   2  15  13  10  14   3   6   7   1   9   4  ==
+        :~   7   9   3   1  13  12  11  14   2   6   5  10   4   0  15   8  ==
+        :~   9   0   5   7   2   4  10  15  14   1  11  12   6   8   3  13  ==
+        :~   2  12   6  10   0  11   8   3   4  13   7   5  15  14   1   9  ==
+        :~  12   5   1  15  14  13   4  10   0   7   6   3   9   2   8  11  ==
+        :~  13  11   7  14  12   1   3   9   5   0  15   4   8   6   2  10  ==
+        :~   6  15  14   9  11   3   0   8  12   2  13   7   1   4  10   5  ==
+        :~  10   2   8   4   7   6   1   5  15  11   9  14   3  12  13   0  ==
+        :~   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  ==
+        :~  14  10   4   8   9  15  13   6   1  12   0   2  11   7   5   3  ==
+    ==
+  =>  |%
+      ++  get-word-list
+        |=  [h=@ w=@ud]
+        ^-  (list @)
+        %-  flop
+        =+  l=(rip 6 h)
+        =-  (weld - l)
+        (reap (sub w (lent l)) 0)
+      ::
+      ++  get-word
+        |=  [h=@ i=@ud w=@ud]
+        ^-  @
+        %+  snag  i
+        (get-word-list h w)
+      ::
+      ++  put-word
+        |=  [h=@ i=@ud w=@ud d=@]
+        ^-  @
+        %+  rep  6
+        =+  l=(get-word-list h w)
+        %-  flop
+        %+  weld  (scag i l)
+        [d (slag +(i) l)]
+      ::
+      ++  mod-word
+        |*  [h=@ i=@ud w=@ud g=$-(@ @)]
+        (put-word h i w (g (get-word h i w)))
+      ::
+      ++  pad
+        |=  [byts len=@ud]
+        (lsh 3 (sub len wid) dat)
+      ::
+      ++  compress
+        |=  [h=@ c=@ t=@ud l=?]
+        ^-  @
+        ::  set up local work vector
+        =+  v=(add (lsh 6 8 h) iv)
+        ::  xor the counter t into v
+        =.  v
+          %-  mod-word
+          :^  v  12  16
+          (cury mix (end 0 64 t))
+        =.  v
+          %-  mod-word
+          :^  v  13  16
+          (cury mix (rsh 0 64 t))
+        ::  for the last block, invert v14
+        =?  v  l
+          %-  mod-word
+          :^  v  14  16
+          (cury mix 0xffff.ffff.ffff.ffff)
+        ::  twelve rounds of message mixing
+        =+  i=0
+        =|  s=(list @)
+        |^
+          ?:  =(i 12)
+            ::  xor upper and lower halves of v into state h
+            =.  h  (mix h (rsh 6 8 v))
+            (mix h (end 6 8 v))
+          ::  select message mixing schedule and mix v
+          =.  s  (snag (mod i 10) sigma)
+          =.  v  (do-mix 0 4 8 12 0 1)
+          =.  v  (do-mix 1 5 9 13 2 3)
+          =.  v  (do-mix 2 6 10 14 4 5)
+          =.  v  (do-mix 3 7 11 15 6 7)
+          =.  v  (do-mix 0 5 10 15 8 9)
+          =.  v  (do-mix 1 6 11 12 10 11)
+          =.  v  (do-mix 2 7 8 13 12 13)
+          =.  v  (do-mix 3 4 9 14 14 15)
+          $(i +(i))
+        ::
+        ++  do-mix
+          |=  [na=@ nb=@ nc=@ nd=@ nx=@ ny=@]
+          ^-  @
+          =-  =.  v  (put-word v na 16 a)
+              =.  v  (put-word v nb 16 b)
+              =.  v  (put-word v nc 16 c)
+                     (put-word v nd 16 d)
+          %-  b2mix
+          :*  (get-word v na 16)
+              (get-word v nb 16)
+              (get-word v nc 16)
+              (get-word v nd 16)
+              (get-word c (snag nx s) 16)
+              (get-word c (snag ny s) 16)
+          ==
+        --
+      ::
+      ++  b2mix
+        |=  [a=@ b=@ c=@ d=@ x=@ y=@]
+        ^-  [a=@ b=@ c=@ d=@]
+        =.  x  (rev 3 8 x)
+        =.  y  (rev 3 8 y)
+        =+  fed=~(. fe 6)
+        =.  a  :(sum:fed a b x)
+        =.  d  (ror:fed 0 32 (mix d a))
+        =.  c  (sum:fed c d)
+        =.  b  (ror:fed 0 24 (mix b c))
+        =.  a  :(sum:fed a b y)
+        =.  d  (ror:fed 0 16 (mix d a))
+        =.  c  (sum:fed c d)
+        =.  b  (ror:fed 0 63 (mix b c))
+        [a b c d]
+      --
+  ::  ensure inputs adhere to contraints
+  =.  out  (max 1 (min out 64))
+  =.  wid.msg  (min wid.msg (bex 128))
+  =.  wid.key  (min wid.key 64)
+  =.  dat.msg  (end 3 wid.msg dat.msg)
+  =.  dat.key  (end 3 wid.key dat.key)
+  ::  initialize state vector
+  =+  h=iv
+  ::  mix key length and output length into h0
+  =.  h
+    %-  mod-word
+    :^  h  0  8
+    %+  cury  mix
+    %+  add  0x101.0000
+    (add (lsh 3 1 wid.key) out)
+  ::  keep track of how much we've compressed
+  =*  mes  dat.msg
+  =+  com=0
+  =+  rem=wid.msg
+  ::  if we have a key, pad it and prepend to msg
+  =?  mes  (gth wid.key 0)
+    (can 3 ~[rem^mes 128^(pad key 128)])
+  =?  rem  (gth wid.key 0)
+    (add rem 128)
+  |-
+  ::  compress 128-byte chunks of the message
+  ?:  (gth rem 128)
+    =+  c=(cut 3 [(sub rem 128) 128] mes)
+    =.  com   (add com 128)
+    %_  $
+      rem   (sub rem 128)
+      h     (compress h c com |)
+    ==
+  ::  compress the final bytes of the msg
+  =+  c=(cut 3 [0 rem] mes)
+  =.  com  (add com rem)
+  =.  c  (pad [rem c] 128)
+  =.  h  (compress h c com &)
+  ::  produce output of desired length
+  %^  rsh  3  (sub 64 out)
+  ::  do some word
+  %+  rep  6
+  %+  turn  (flop (gulf 0 7))
+  |=  a=@
+  (rev 3 8 (get-word h a 8))
+::
 ++  hash160
   |=  d=@
   (ripemd-160 256 (sha-256:sha d))
