@@ -142,6 +142,7 @@
     :-  /gen/twit           "slow and/or crash"
     :-  /mar/twit           "slow and/or crash"
     :-  /web/pages/nutalk/menu           "/$ doensn't work in tests"
+    :-  /web/pages/nutalk/profile           "/$ doensn't work in tests"
   ==
 ::
 ++  failing
