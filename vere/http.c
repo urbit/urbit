@@ -634,6 +634,7 @@ _http_serv_free(u3_http* htp_u)
 
   if ( 0 != htp_u->h2o_u ) {
     h2o_config_dispose(&((u3_h2o_serv*)htp_u->h2o_u)->fig_u);
+    // XX call SSL_CTX_free once ref-counted
     free(htp_u->h2o_u);
     htp_u->h2o_u = 0;
   }
@@ -786,6 +787,7 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
 
   h2o_u->cep_u.ctx = (h2o_context_t*)&h2o_u->ctx_u;
   h2o_u->cep_u.hosts = h2o_u->fig_u.hosts;
+  // XX increment ref count with SSL_CTX_up_ref
   h2o_u->cep_u.ssl_ctx = tls_u;
 
   h2o_u->han_u = h2o_create_handler(&h2o_u->hos_u->fallback_path,
@@ -944,7 +946,7 @@ _http_wain_to_buf(u3_noun wan)
 /* _http_init_tls: initialize OpenSSL context
 */
 static SSL_CTX*
-_http_init_tls(u3_noun key, u3_noun cer)
+_http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
 {
   // XX require 1.1.0 and use TLS_server_method()
   SSL_CTX* tls_u = SSL_CTX_new(SSLv23_server_method());
@@ -962,13 +964,11 @@ _http_init_tls(u3_noun key, u3_noun cer)
                           "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
 
   {
-    uv_buf_t key_u = _http_wain_to_buf(u3k(key));
     BIO* bio_u = BIO_new_mem_buf(key_u.base, key_u.len);
     // XX PKCS8 PEM_read_bio_PrivateKey
     RSA* rsa_u = PEM_read_bio_RSAPrivateKey(bio_u, 0, 0, 0);
 
     BIO_free(bio_u);
-    free(key_u.base);
 
     if( (0 == rsa_u) ||
         (0 == SSL_CTX_use_RSAPrivateKey(tls_u, rsa_u)) ) {
@@ -986,7 +986,6 @@ _http_init_tls(u3_noun key, u3_noun cer)
   }
 
   {
-    uv_buf_t cer_u = _http_wain_to_buf(u3k(cer));
     BIO* bio_u = BIO_new_mem_buf(cer_u.base, cer_u.len);
     X509* xer_u = PEM_read_bio_X509_AUX(bio_u, 0, 0, 0);
 
@@ -997,7 +996,6 @@ _http_init_tls(u3_noun key, u3_noun cer)
       uL(1);
 
       BIO_free(bio_u);
-      free(cer_u.base);
 
       if ( 0 != xer_u ) {
         X509_free(xer_u);
@@ -1021,7 +1019,6 @@ _http_init_tls(u3_noun key, u3_noun cer)
     }
 
     BIO_free(bio_u);
-    free(cer_u.base);
   }
 
   return tls_u;
@@ -1232,28 +1229,18 @@ _http_serv_start_all(void)
   u3_http* htp_u;
   c3_s por_s;
 
-  u3_noun fig = u3_Host.fig_u.fig;
-
-  // XX validate / test axes?
-  u3_noun sec = u3h(fig);
-  u3_noun lob = u3t(fig);
-  u3_noun pro = u3h(lob);
-  u3_noun log = u3h(u3t(lob));
-  u3_noun red = u3t(u3t(lob));
+  u3_form* for_u = u3_Host.fig_u.for_u;
 
   //  HTTPS server.
-  if ( u3_nul != sec ) {
-    // XX validate / test axes?
-    u3_noun key = u3h(u3t(sec));
-    u3_noun cer = u3t(u3t(sec));
-    u3_Host.tls_u = _http_init_tls(key, cer);
+  if ( (0 != for_u->key_u.base) && (0 != for_u->cer_u.base) ) {
+    u3_Host.tls_u = _http_init_tls(for_u->key_u, for_u->cer_u);
 
     if ( 0 != u3_Host.tls_u ) {
-      por_s = ( c3y == pro ) ? 8443 : 443;
+      por_s = ( c3y == for_u->pro ) ? 8443 : 443;
       htp_u = _http_serv_new(por_s, c3y, c3n);
-      htp_u->h2o_u = _http_serv_init_h2o(u3_Host.tls_u, log, red);
+      htp_u->h2o_u = _http_serv_init_h2o(u3_Host.tls_u, for_u->log, for_u->red);
 
-      if ( (c3y == pro) || (c3y == u3_Host.ops_u.fak) ) {
+      if ( (c3y == for_u->pro) || (c3y == u3_Host.ops_u.fak) ) {
         htp_u->rox_u = _proxy_serv_new(htp_u, 443, c3y);
       }
     }
@@ -1261,11 +1248,11 @@ _http_serv_start_all(void)
 
   //  HTTP server.
   {
-    por_s = ( c3y == pro ) ? 8080 : 80;
+    por_s = ( c3y == for_u->pro ) ? 8080 : 80;
     htp_u = _http_serv_new(por_s, c3n, c3n);
-    htp_u->h2o_u = _http_serv_init_h2o(0, log, red);
+    htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
 
-    if ( (c3y == pro) || (c3y == u3_Host.ops_u.fak) ) {
+    if ( (c3y == for_u->pro) || (c3y == u3_Host.ops_u.fak) ) {
       htp_u->rox_u = _proxy_serv_new(htp_u, 80, c3n);
     }
   }
@@ -1274,7 +1261,7 @@ _http_serv_start_all(void)
   {
     por_s = 12321;
     htp_u = _http_serv_new(por_s, c3n, c3y);
-    htp_u->h2o_u = _http_serv_init_h2o(0, log, red);
+    htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
     // never proxied
   }
 
@@ -1315,6 +1302,9 @@ _http_serv_restart_cb(uv_timer_t* tim_u)
 {
   u3_http* htp_u;
 
+  free(tim_u);
+  u3_Host.fig_u.tim_u = 0;
+
   uL(fprintf(uH, "http: force shutdown\n"));
 
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
@@ -1322,11 +1312,6 @@ _http_serv_restart_cb(uv_timer_t* tim_u)
   }
 
   _http_serv_start_all();
-
-  if ( 0 != u3_Host.fig_u.tim_u) {
-    free(u3_Host.fig_u.tim_u);
-    u3_Host.fig_u.tim_u = 0;
-  }
 }
 
 /* _http_serv_restart(): gracefully shutdown, then start servers.
@@ -1357,15 +1342,54 @@ _http_serv_restart(void)
   _http_release_ports_file(u3_Host.dir_c);
 }
 
+static void
+_http_form_free(u3_form* for_u)
+{
+  if ( 0 != for_u->key_u.base ) {
+    free(for_u->key_u.base);
+  }
+
+  if ( 0 != for_u->cer_u.base ) {
+    free(for_u->cer_u.base);
+  }
+
+  free(for_u);
+}
 
 /* u3_http_ef_form(): apply configuration, restart servers.
 */
 void
 u3_http_ef_form(u3_noun fig)
 {
-  // XX validate now?
-  u3z(u3_Host.fig_u.fig);
-  u3_Host.fig_u.fig = fig;
+  // XX validate / test axes?
+  u3_noun sec = u3h(fig);
+  u3_noun lob = u3t(fig);
+
+  u3_form* for_u = c3_malloc(sizeof(*for_u));
+
+  for_u->pro = (c3_o)u3h(lob);
+  for_u->log = (c3_o)u3h(u3t(lob));
+  for_u->red = (c3_o)u3t(u3t(lob));
+
+  if ( u3_nul != sec ) {
+    u3_noun key = u3h(u3t(sec));
+    u3_noun cer = u3t(u3t(sec));
+
+    for_u->key_u = _http_wain_to_buf(u3k(key));
+    for_u->cer_u = _http_wain_to_buf(u3k(cer));
+  }
+  else {
+    for_u->key_u = uv_buf_init(0, 0);
+    for_u->cer_u = uv_buf_init(0, 0);
+  }
+
+  u3z(fig);
+
+  if ( 0 != u3_Host.fig_u.for_u ) {
+    _http_form_free(u3_Host.fig_u.for_u);
+  }
+
+  u3_Host.fig_u.for_u = for_u;
 
   _http_serv_restart();
 }
@@ -1375,9 +1399,7 @@ u3_http_ef_form(u3_noun fig)
 void
 u3_http_io_init(void)
 {
-  // XX avoid u3_noun foo; u3z(foo); is this necessary?
-  u3_Host.fig_u.fig = u3_none;
-
+  u3_Host.fig_u.for_u = 0;
   u3_Host.fig_u.cli_u = 0;
   u3_Host.fig_u.con_u = 0;
 }

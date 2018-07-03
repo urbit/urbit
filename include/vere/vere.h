@@ -85,10 +85,20 @@
         struct _u3_http* nex_u;             //  next in list
       } u3_http;
 
+    /* u3_form: http config from %eyre
+    */
+      typedef struct _u3_form {
+        c3_o             pro;               //  proxy
+        c3_o             log;               //  keep access log
+        c3_o             red;               //  redirect to HTTPS
+        uv_buf_t         key_u;             //  PEM RSA private key
+        uv_buf_t         cer_u;             //  PEM certificate chain
+      } u3_form;
+
     /* u3_hfig: general http configuration
     */
       typedef struct _u3_hfig {
-        u3_noun          fig;               //  config from %eyre
+        u3_form*         for_u;             //  config from %eyre
         uv_timer_t*      tim_u;             //  hard restart timer
         struct _u3_warc* cli_u;             //  rev proxy client
         struct _u3_pcon* con_u;             //  cli_u connections
