@@ -254,7 +254,7 @@ elif osdet == 'darwin'
 
   os_deps = os_deps + [ncurses_dep]
 
-elif osdet == 'bsd'
+elif osdet = 'bsd' or osdet == 'freebsd'
   conf_data.set('U3_OS_bsd', true)
 
   pthread_dep = meson.get_compiler('c').find_library('pthread')
@@ -292,8 +292,8 @@ if(legacy_meson)
   gmp_dep = find_library('gmp')
   sigsegv_dep = find_library('sigsegv')
 else
-  gmp_dep = meson.get_compiler('c').find_library('gmp')
-  sigsegv_dep = meson.get_compiler('c').find_library('sigsegv')
+  gmp_dep = meson.get_compiler('c').find_library('gmp', dirs:['/usr/local/lib'])
+  sigsegv_dep = meson.get_compiler('c').find_library('sigsegv', dirs:['/usr/local/lib'])
 endif
 
 # For these libs we provide fallback bundle
