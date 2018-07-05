@@ -42,7 +42,7 @@
     |=  byts
     ^+  +>
     =+  der=(hmac-sha512l [12 'dees nioctiB'] [wid dat])
-    =+  pri=(cut 3 [32 32] -)
+    =+  pri=(cut 3 [32 32] der)
     +>.$(prv pri, pub (point pri), cad (cut 3 [0 32] der))
   ::
   ++  from-private
