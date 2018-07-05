@@ -51,6 +51,7 @@
         u3_rsat          sat_e;             //  request state
         struct _u3_hcon* hon_u;             //  connection backlink
         struct _u3_hreq* nex_u;             //  next in connection's list
+        struct _u3_hreq* pre_u;             //  next in connection's list
       } u3_hreq;
 
     /* u3_hcon: incoming http connection.
@@ -65,6 +66,7 @@
         struct _u3_http* htp_u;             //  server backlink
         struct _u3_hreq* req_u;             //  request list
         struct _u3_hcon* nex_u;             //  next in server's list
+        struct _u3_hcon* pre_u;             //  next in server's list
       } u3_hcon;
 
     /* u3_http: http server.

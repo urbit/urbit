@@ -210,6 +210,10 @@ _http_req_link(u3_hcon* hon_u, u3_hreq* req_u)
   req_u->hon_u = hon_u;
   req_u->seq_l = hon_u->seq_l++;
   req_u->nex_u = hon_u->req_u;
+
+  if ( 0 != req_u->nex_u ) {
+    req_u->nex_u->pre_u = req_u;
+  }
   hon_u->req_u = req_u;
 }
 
@@ -218,21 +222,18 @@ _http_req_link(u3_hcon* hon_u, u3_hreq* req_u)
 static void
 _http_req_unlink(u3_hreq* req_u)
 {
-  u3_hcon* hon_u = req_u->hon_u;
+  if ( 0 != req_u->pre_u ) {
+    req_u->pre_u->nex_u = req_u->nex_u;
 
-  if ( hon_u->req_u == req_u ) {
-    hon_u->req_u = req_u->nex_u;
+    if ( 0 != req_u->nex_u ) {
+      req_u->nex_u->pre_u = req_u->pre_u;
+    }
   }
   else {
-    u3_hreq* pre_u = hon_u->req_u;
+    req_u->hon_u->req_u = req_u->nex_u;
 
-    //  XX glories of linear search
-    //
-    while ( pre_u ) {
-      if ( pre_u->nex_u == req_u ) {
-        pre_u->nex_u = req_u->nex_u;
-      }
-      else pre_u = pre_u->nex_u;
+    if ( 0 != req_u->nex_u ) {
+      req_u->nex_u->pre_u = 0;
     }
   }
 }
@@ -262,6 +263,8 @@ _http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
   u3_hreq* req_u = c3_malloc(sizeof(*req_u));
   req_u->rec_u = rec_u;
   req_u->sat_e = u3_rsat_init;
+  req_u->pre_u = 0;
+
   _http_req_link(hon_u, req_u);
 
   return req_u;
@@ -476,6 +479,10 @@ _http_conn_link(u3_http* htp_u, u3_hcon* hon_u)
   hon_u->htp_u = htp_u;
   hon_u->coq_l = htp_u->coq_l++;
   hon_u->nex_u = htp_u->hon_u;
+
+  if ( 0 != hon_u->nex_u ) {
+    hon_u->nex_u->pre_u = hon_u;
+  }
   htp_u->hon_u = hon_u;
 }
 
@@ -484,21 +491,18 @@ _http_conn_link(u3_http* htp_u, u3_hcon* hon_u)
 static void
 _http_conn_unlink(u3_hcon* hon_u)
 {
-  u3_http* htp_u = hon_u->htp_u;
+  if ( 0 != hon_u->pre_u ) {
+    hon_u->pre_u->nex_u = hon_u->nex_u;
 
-  if ( htp_u->hon_u == hon_u ) {
-    htp_u->hon_u = hon_u->nex_u;
+    if ( 0 != hon_u->nex_u ) {
+      hon_u->nex_u->pre_u = hon_u->pre_u;
+    }
   }
   else {
-    u3_hcon *pre_u = htp_u->hon_u;
+    hon_u->htp_u->hon_u = hon_u->nex_u;
 
-    //  XX glories of linear search
-    //
-    while ( pre_u ) {
-      if ( pre_u->nex_u == hon_u ) {
-        pre_u->nex_u = hon_u->nex_u;
-      }
-      else pre_u = pre_u->nex_u;
+    if ( 0 != hon_u->nex_u ) {
+      hon_u->nex_u->pre_u = 0;
     }
   }
 }
@@ -549,6 +553,7 @@ _http_conn_new(u3_http* htp_u)
   hon_u->req_u = 0;
   hon_u->sok_u = 0;
   hon_u->con_u = 0;
+  hon_u->pre_u = 0;
 
   _http_conn_link(htp_u, hon_u);
 
