@@ -412,13 +412,10 @@ _http_rec_fail(h2o_req_t* rec_u, c3_i sas_i, c3_c* sas_c)
   h2o_send(rec_u, 0, 0, H2O_SEND_STATE_FINAL);
 }
 
-struct h2o_con_wrap {                 //  see private st_h2o_http1_conn_t
-  h2o_conn_t         con_u;           //  connection
-  struct {                            //  see private st_h2o_uv_socket_t
-    h2o_socket_t     sok_u;           //  socket
-    uv_stream_t*     han_u;           //  client stream handler (u3_hcon)
-  } *suv_u;
-};
+typedef struct _h2o_uv_sock {         //  see private st_h2o_uv_socket_t
+  h2o_socket_t     sok_u;             //  socket
+  uv_stream_t*     han_u;             //  client stream handler (u3_hcon)
+} h2o_uv_sock;
 
 /* _http_rec_accept(); handle incoming http request from h2o.
 */
@@ -437,12 +434,12 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     _http_rec_fail(rec_u, 400, "bad request");
   }
   else {
-    // XX HTTP2 wat do?
-    struct h2o_con_wrap* noc_u = (struct h2o_con_wrap*)rec_u->conn;
-    u3_hcon* hon_u = (u3_hcon*)noc_u->suv_u->han_u;
+    h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
+                           callbacks->get_socket(rec_u->conn);
+    u3_hcon* hon_u = (u3_hcon*)suv_u->han_u;
 
     // sanity check
-    c3_assert(hon_u->sok_u == &noc_u->suv_u->sok_u);
+    c3_assert( hon_u->sok_u == &suv_u->sok_u );
 
     u3_hreq* req_u = _http_req_new(hon_u, rec_u);
     _http_req_dispatch(req_u, req);
