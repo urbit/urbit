@@ -242,6 +242,503 @@
     ==
   --
 ::
+::  argon2
+::
+::NOTE  ported from and tested against
+::      https://pypi.org/project/argon2pure/
+++  argon2
+  |%
+  ::
+  ::  structures
+  ::
+  +=  argon-type  ?(%d %i %id %u)
+  ::
+  ::  shorthands
+  ::
+  ++  argon2-minimal
+    (argon2 32 %id 0x13 1 8 1 *byts *byts)
+  ::
+  ::TODO  discuss and standardize?
+  ++  argon2-urbit
+    (argon2 64 %u 0x13 4 1.024 10 *byts *byts)
+  ::
+  ::  argon2 proper
+  ::
+  ::  main argon2 operation
+  ++  argon2
+    ::  out:       desired output size in bytes
+    ::  typ:       argon2 type
+    ::  version:   argon2 version (0x10/v1.0 or 0x13/v1.3)
+    ::  threads:   amount of threads/parallelism
+    ::  mem-cost:  kb of memory to use
+    ::  time-cost: iterations to run
+    ::  key:       optional secret
+    ::  extra:     optional arbitrary data
+    |=  $:  out=@ud
+            typ=argon-type
+            version=@ux
+          ::
+            threads=@ud
+            mem-cost=@ud
+            time-cost=@ud
+          ::
+            key=byts
+            extra=byts
+        ==
+    ^-  $-([msg=byts sat=byts] @)
+    ::
+    ::  check configuration sanity
+    ::
+    ?:  =(0 threads)
+      ~|  %parallelism-must-be-above-zero
+      !!
+    ?:  =(0 time-cost)
+      ~|  %time-cost-must-be-above-zero
+      !!
+    ?:  (lth mem-cost (mul 8 threads))
+      ~|  :-  %memory-cost-must-be-at-least-threads
+          [threads %times 8 (mul 8 threads)]
+      !!
+    ?.  |(=(0x10 version) =(0x13 version))
+      ~|  [%unsupported-version version %want [0x10 0x13]]
+      !!
+    ::
+    ::  calculate constants and initialize buffer
+    ::
+    ::  for each thread, there is a row in the buffer.
+    ::  the amount of columns depends on the memory-cost.
+    ::  columns are split into groups of four.
+    ::  a single such quarter section of a row is a segment.
+    ::
+    ::  blocks:     (m_prime)
+    ::  columns:    row length (q)
+    ::  seg-length: segment length
+    =/  blocks=@ud
+      ::  round mem-cost down to the nearest multiple of 4*threads
+      =+  (mul 4 threads)
+      (mul (div mem-cost -) -)
+    =+  columns=(div blocks threads)
+    =+  seg-length=(div columns 4)
+    ::
+    =/  buffer=(list (list @))
+      (reap threads (reap columns 0))
+    ::
+    ::  main function
+    ::
+    ::  msg: the main input
+    ::  sat: optional salt
+    |=  [msg=byts sat=byts]
+    ^-  @
+    ::
+    ::  h0: initial 64-byte block
+    =/  h0=@
+      =-  (blake2b - 0^0 64)
+      :-  :(add 40 wid.msg wid.sat wid.key wid.extra)
+      %+  can  3
+      =+  (cury (cury rev 3) 4)
+      :~  (prep-wid extra)
+          (prep-wid key)
+          (prep-wid sat)
+          (prep-wid msg)
+          4^(- (type-to-num typ))
+          4^(- version)
+          4^(- time-cost)
+          4^(- mem-cost)
+          4^(- out)
+          4^(- threads)
+      ==
+    ::
+    ::  do time-cost passes over the buffer
+    ::
+    =+  t=0
+    |-
+    ?:  (lth t time-cost)
+      ::
+      ::  process all four segments in the columns...
+      ::
+      =+  s=0
+      |-
+      ?.  (lth s 4)  ^$(t +(t))
+      ::
+      ::  ...of every row/thread
+      ::
+      =+  r=0
+      |-
+      ?.  (lth r threads)  ^$(s +(s))
+      =;  new=_buffer
+        $(buffer new, r +(r))
+      %-  fill-segment
+      :*  buffer   h0
+          t        s          r
+          blocks   columns    seg-length
+          threads  time-cost  typ         version
+      ==
+    ::
+    ::  mix all rows together and hash the result
+    ::
+    =+  r=0
+    =|  final=@
+    |-
+    ?:  =(r threads)
+      (hash 1.024^final out)
+    =-  $(final -, r +(r))
+    %+  mix  final
+    (snag (dec columns) (snag r buffer))
+  ::
+  ::  per-segment computation
+  ++  fill-segment
+    |=  $:  buffer=(list (list @))
+            h0=@
+          ::
+            itn=@ud
+            seg=@ud
+            row=@ud
+          ::
+            blocks=@ud
+            columns=@ud
+            seg-length=@ud
+          ::
+            threads=@ud
+            time-cost=@ud
+            typ=argon-type
+            version=@ux
+        ==
+    ::
+    ::  fill-segment utilities
+    ::
+    =>  |%
+        ++  put-word
+          |=  [rob=(list @) i=@ud d=@]
+          %+  weld  (scag i rob)
+          [d (slag +(i) rob)]
+        --
+    ^+  buffer
+    ::
+    ::  rob:   row buffer to operate on
+    ::  do-i:  whether to use prns from input rather than state
+    ::  rands: prns generated from input, if we do-i
+    =+  rob=(snag row buffer)
+    =/  do-i=?
+      ?|  ?=(%i typ)
+          &(?=(%id typ) =(0 itn) (lte seg 1))
+          &(?=(%u typ) =(0 itn) (lte seg 2))
+      ==
+    =/  rands=(list (pair @ @))
+      ?.  do-i  ~
+      ::
+      ::  keep going until we have a list of :seg-length prn pairs
+      ::
+      =+  l=0
+      =+  counter=1
+      |-  ^-  (list (pair @ @))
+      ?:  (gte l seg-length)  ~
+      =-  (weld - $(counter +(counter), l (add l 128)))
+      ::
+      ::  generate pseudorandom block by compressing metadata
+      ::
+      =/  random-block=@
+        %+  compress  0
+        %+  compress  0
+        %^  lsh  3  968
+        %+  rep  6
+        =+  (cury (cury rev 3) 8)
+        :~  (- counter)
+            (- (type-to-num typ))
+            (- time-cost)
+            (- blocks)
+            (- seg)
+            (- row)
+            (- itn)
+        ==
+      ::
+      ::  split the random-block into 64-bit sections,
+      ::  then extract the first two 4-byte sections from each.
+      ::
+      %+  turn  (flop (rip 6 random-block))
+      |=  a=@
+      ^-  (pair @ @)
+      :-  (rev 3 4 (rsh 5 1 a))
+      (rev 3 4 (end 5 1 a))
+    ::
+    ::  iterate over the entire segment length
+    ::
+    =+  sin=0
+    |-
+    ::
+    ::  when done, produce the updated buffer
+    ::
+    ?:  =(sin seg-length)
+      %+  weld  (scag row buffer)
+      [rob (slag +(row) buffer)]
+    ::
+    ::  col: current column to process
+    =/  col=@ud
+      (add (mul seg seg-length) sin)
+    ::
+    ::  first two columns are generated from h0
+    ::
+    ?:  &(=(0 itn) (lth col 2))
+      =+  (app-num (app-num 64^h0 col) row)
+      =+  (hash - 1.024)
+      $(rob (put-word rob col -), sin +(sin))
+    ::
+    ::  c1, c2: prns for picking reference block
+    =+  ^-  [c1=@ c2=@]  ::TODO  =/ w/o face
+      ?:  do-i  (snag sin rands)
+      =+  =-  (snag - rob)
+          ?:  =(0 col)  (dec columns)
+          (mod (dec col) columns)
+      :-  (rev 3 4 (cut 3 [1.020 4] -))
+      (rev 3 4 (cut 3 [1.016 4] -))
+    ::
+    ::  ref-row: reference block row
+    =/  ref-row=@ud
+      ?:  &(=(0 itn) =(0 seg))  row
+      (mod c2 threads)
+    ::
+    ::  ref-col: reference block column
+    =/  ref-col=@ud
+      =-  (mod - columns)
+      %+  add
+        ::  starting index
+        ?:  |(=(0 itn) =(3 seg))  0
+        (mul +(seg) seg-length)
+      ::  pseudorandom offset
+      =-  %+  sub  (dec -)
+          %^  rsh  0  32
+          %+  mul  -
+          (rsh 0 32 (mul c1 c1))
+      ::  reference area size
+      ?:  =(0 itn)
+        ?:  |(=(0 seg) =(row ref-row))  (dec col)
+        ?:  =(0 sin)  (dec (mul seg seg-length))
+        (mul seg seg-length)
+      =+  sul=(sub columns seg-length)
+      ?:  =(ref-row row)   (dec (add sul sin))
+      ?:  =(0 sin)  (dec sul)
+      sul
+    ::
+    ::  compress the previous and reference block
+    ::  to create the new block
+    ::
+    =/  new=@
+      %+  compress
+        =-  (snag - rob)
+        ::  previous index, wrap-around
+        ?:  =(0 col)  (dec columns)
+        (mod (dec col) columns)
+      ::  get reference block
+      %+  snag  ref-col
+      ?:  =(ref-row row)  rob
+      (snag ref-row buffer)
+    ::
+    ::  starting from v1.3, we xor the new block in,
+    ::  rather than directly overwriting the old block
+    ::
+    =?  new  &(!=(0 itn) =(0x13 version))
+      (mix new (snag col rob))
+    $(rob (put-word rob col new), sin +(sin))
+  ::
+  ::  compression function (g)
+  ++  compress
+    ::  x, y: assumed to be 1024 bytes
+    |=  [x=@ y=@]
+    ^-  @
+    ::
+    =+  r=(mix x y)
+    =|  q=(list @)
+    ::
+    ::  iterate over rows of r to get q
+    ::
+    =+  i=0
+    |-
+    ?:  (lth i 8)
+      =;  p=(list @)
+        $(q (weld q p), i +(i))
+      %-  permute
+      =-  (weld (reap (sub 8 (lent -)) 0) -)
+      %-  flop
+      %+  rip  7
+      (cut 10 [(sub 7 i) 1] r)
+    ::
+    ::  iterate over columns of q to get z
+    ::
+    =/  z=(list @)  (reap 64 0)
+    =.  i  0
+    |-
+    ::
+    ::  when done, assemble z and xor it with r
+    ::
+    ?.  (lth i 8)
+      (mix (rep 7 (flop z)) r)
+    ::
+    ::  permute the column
+    ::
+    =/  out=(list @)
+      %-  permute
+      :~  (snag i q)
+          (snag (add i 8) q)
+          (snag (add i 16) q)
+          (snag (add i 24) q)
+          (snag (add i 32) q)
+          (snag (add i 40) q)
+          (snag (add i 48) q)
+          (snag (add i 56) q)
+      ==
+    ::
+    ::  put the result into z per column
+    ::
+    =+  j=0
+    |-
+    ?:  =(8 j)  ^$(i +(i))
+    =-  $(z -, j +(j))
+    =+  (add i (mul j 8))
+    %+  weld  (scag - z)
+    [(snag j out) (slag +(-) z)]
+  ::
+  ::  permutation function (p)
+  ++  permute
+    ::NOTE  this function really just takes and produces
+    ::      8 values, but taking and producing them as
+    ::      lists helps clean up the code significantly.
+    |=  s=(list @)
+    ?>  =(8 (lent s))
+    ^-  (list @)
+    ::
+    ::  list inputs as 16 8-byte values
+    ::
+    =/  v=(list @)
+      %-  zing
+      ^-  (list (list @))
+      %+  turn  s
+      |=  a=@
+      ::  rev for endianness
+      =+  (rip 6 (rev 3 16 a))
+      (weld - (reap (sub 2 (lent -)) 0))
+    ::
+    ::  do permutation rounds
+    ::
+    =.  v  (do-round v 0 4 8 12)
+    =.  v  (do-round v 1 5 9 13)
+    =.  v  (do-round v 2 6 10 14)
+    =.  v  (do-round v 3 7 11 15)
+    =.  v  (do-round v 0 5 10 15)
+    =.  v  (do-round v 1 6 11 12)
+    =.  v  (do-round v 2 7 8 13)
+    =.  v  (do-round v 3 4 9 14)
+    ::  rev for endianness
+    =.  v  (turn v (cury (cury rev 3) 8))
+    ::
+    ::  cat v back together into 8 16-byte values
+    ::
+    %+  turn  (gulf 0 7)
+    |=  i=@
+    =+  (mul 2 i)
+    (cat 6 (snag +(-) v) (snag - v))
+  ::
+  ::  perform a round and produce updated value list
+  ++  do-round
+    |=  [v=(list @) na=@ nb=@ nc=@ nd=@]
+    ^+  v
+    =>  |%
+        ++  get-word
+          |=  i=@ud
+          (snag i v)
+        ::
+        ++  put-word
+          |=  [i=@ud d=@]
+          ^+  v
+          %+  weld  (scag i v)
+          [d (slag +(i) v)]
+        --
+    =-  =.  v  (put-word na a)
+        =.  v  (put-word nb b)
+        =.  v  (put-word nc c)
+               (put-word nd d)
+    %-  round
+    :*  (get-word na)
+        (get-word nb)
+        (get-word nc)
+        (get-word nd)
+    ==
+  ::
+  ::  perform a round (bg) and produce updated values
+  ++  round
+    |=  [a=@ b=@ c=@ d=@]
+    ^-  [a=@ b=@ c=@ d=@]
+    ::  operate on 64 bit words
+    =+  fed=~(. fe 6)
+    =*  sum  sum:fed
+    =*  ror  ror:fed
+    =+  end=(cury (cury end 5) 1)
+    =.  a  :(sum a b :(mul 2 (end a) (end b)))
+    =.  d  (ror 0 32 (mix d a))
+    =.  c  :(sum c d :(mul 2 (end c) (end d)))
+    =.  b  (ror 0 24 (mix b c))
+    =.  a  :(sum a b :(mul 2 (end a) (end b)))
+    =.  d  (ror 0 16 (mix d a))
+    =.  c  :(sum c d :(mul 2 (end c) (end d)))
+    =.  b  (ror 0 63 (mix b c))
+    [a b c d]
+  ::
+  ::  argon2 wrapper around blake2b (h')
+  ++  hash
+    |=  [byts out=@ud]
+    ^-  @
+    ::
+    ::  msg: input with byte-length prepended
+    =+  msg=(prep-num [wid dat] out)
+    ::
+    ::  if requested size is low enough, hash directly
+    ::
+    ?:  (lte out 64)
+      (blake2b msg 0^0 out)
+    ::
+    ::  build up the result by hashing and re-hashing
+    ::  the input message, adding the first 32 bytes
+    ::  of the hash to the result, until we have the
+    ::  desired output size.
+    ::
+    =+  tmp=(blake2b msg 0^0 64)
+    =+  res=(rsh 3 32 tmp)
+    =.  out  (sub out 32)
+    |-
+    ?:  (gth out 64)
+      =.  tmp  (blake2b 64^tmp 0^0 64)
+      =.  res  (add (lsh 3 32 res) (rsh 3 32 tmp))
+      $(out (sub out 32))
+    %+  add  (lsh 3 out res)
+    (blake2b 64^tmp 0^0 out)
+  ::
+  ::  utilities
+  ::
+  ++  type-to-num
+    |=  t=argon-type
+    ?-  t
+      %d    0
+      %i    1
+      %id   2
+      %u   10
+    ==
+  ::
+  ++  app-num
+    |=  [byts num=@ud]
+    ^-  byts
+    :-  (add wid 4)
+    %+  can  3
+    ~[4^(rev 3 4 num) wid^dat]
+  ::
+  ++  prep-num
+    |=  [byts num=@ud]
+    ^-  byts
+    :-  (add wid 4)
+    %+  can  3
+    ~[wid^dat 4^(rev 3 4 num)]
+  ::
+  ++  prep-wid
+    |=  a=byts
+    (prep-num a wid.a)
+  --
 ::
 ::  blake2
 ::
