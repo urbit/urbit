@@ -482,6 +482,10 @@ static void
 _cttp_creq_link(u3_creq* ceq_u)
 {
   ceq_u->nex_u = u3_Host.ctp_u.ceq_u;
+
+  if ( 0 != ceq_u->nex_u ) {
+    ceq_u->nex_u->pre_u = ceq_u;
+  }
   u3_Host.ctp_u.ceq_u = ceq_u;
 }
 
@@ -492,9 +496,17 @@ _cttp_creq_unlink(u3_creq* ceq_u)
 {
   if ( ceq_u->pre_u ) {
     ceq_u->pre_u->nex_u = ceq_u->nex_u;
+
+    if ( 0 != ceq_u->nex_u ) {
+      ceq_u->nex_u->pre_u = ceq_u->pre_u;
+    }
   }
   else {
     u3_Host.ctp_u.ceq_u = ceq_u->nex_u;
+
+    if ( 0 != ceq_u->nex_u ) {
+      ceq_u->nex_u->pre_u = 0;
+    }
   }
 }
 
