@@ -633,8 +633,14 @@ _http_serv_free(u3_http* htp_u)
   }
 
   if ( 0 != htp_u->h2o_u ) {
-    h2o_config_dispose(&((u3_h2o_serv*)htp_u->h2o_u)->fig_u);
-    // XX call SSL_CTX_free once ref-counted
+    u3_h2o_serv* h2o_u = htp_u->h2o_u;
+
+    h2o_config_dispose(&h2o_u->fig_u);
+
+    if ( 0 != h2o_u->cep_u.ssl_ctx ) {
+      SSL_CTX_free(h2o_u->cep_u.ssl_ctx);
+    }
+
     free(htp_u->h2o_u);
     htp_u->h2o_u = 0;
   }
@@ -787,7 +793,6 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
 
   h2o_u->cep_u.ctx = (h2o_context_t*)&h2o_u->ctx_u;
   h2o_u->cep_u.hosts = h2o_u->fig_u.hosts;
-  // XX increment ref count with SSL_CTX_up_ref
   h2o_u->cep_u.ssl_ctx = tls_u;
 
   h2o_u->han_u = h2o_create_handler(&h2o_u->hos_u->fallback_path,
@@ -1213,17 +1218,14 @@ _http_serv_start_all(void)
   // might not have been freed or unlinked yet
   u3_Host.htp_u = 0;
 
+  // this may be shared across servers, so
+  // there's no good place for it to go
+  u3_Host.tls_u = 0;
+
   if ( 0 != u3_Host.fig_u.tim_u ) {
     uv_timer_stop(u3_Host.fig_u.tim_u);
     free(u3_Host.fig_u.tim_u);
     u3_Host.fig_u.tim_u = 0;
-  }
-
-  // this may be shared across servers, so
-  // there's no good place for it to go
-  if ( 0 != u3_Host.tls_u ) {
-    SSL_CTX_free(u3_Host.tls_u);
-    u3_Host.tls_u = 0;
   }
 
   u3_http* htp_u;
@@ -1234,6 +1236,9 @@ _http_serv_start_all(void)
   //  HTTPS server.
   if ( (0 != for_u->key_u.base) && (0 != for_u->cer_u.base) ) {
     u3_Host.tls_u = _http_init_tls(for_u->key_u, for_u->cer_u);
+
+    // Note: if tls_u is used for additional servers,
+    // its reference count must be incremented with SSL_CTX_up_ref
 
     if ( 0 != u3_Host.tls_u ) {
       por_s = ( c3y == for_u->pro ) ? 8443 : 443;
