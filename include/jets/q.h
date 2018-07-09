@@ -214,6 +214,8 @@
     u3_noun u3qfl_bunt(u3_noun, u3_noun); 
     u3_noun u3qfl_whip(u3_noun, u3_noun, u3_noun);
 
+    u3_noun u3qfr_fish(u3_noun, u3_noun, u3_noun, u3_noun);
+
     u3_noun u3qfp_hack(u3_noun, u3_noun);
     u3_noun u3qfp_late(u3_noun);
     u3_noun u3qfp_open(u3_noun, u3_noun, u3_noun);
@@ -238,6 +240,7 @@
     u3_noun u3qfu_dunq(u3_noun, const c3_c*, u3_noun);
     void    u3qfu_dump(u3_noun, const c3_c*, u3_noun);
     u3_noun u3qfu_fond(u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qfu_find(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_finc(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_fink(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_fire(u3_noun, u3_noun, u3_noun);
@@ -292,6 +295,8 @@
     u3_noun u3qzl_bunt(u3_noun, u3_noun); 
     u3_noun u3qzl_whip(u3_noun, u3_noun, u3_noun);
 
+    u3_noun u3qzr_fish(u3_noun, u3_noun, u3_noun, u3_noun);
+
     u3_noun u3qzp_hack(u3_noun, u3_noun);
     u3_noun u3qzp_late(u3_noun);
     u3_noun u3qzp_open(u3_noun, u3_noun, u3_noun);
@@ -317,6 +322,7 @@
     u3_noun u3qzu_dunq(u3_noun, const c3_c*, u3_noun);
     void    u3qzu_dump(u3_noun, const c3_c*, u3_noun);
     u3_noun u3qzu_fond(u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qzu_find(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qzu_finc(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qzu_fink(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qzu_fire(u3_noun, u3_noun, u3_noun);

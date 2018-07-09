@@ -45,6 +45,24 @@
   }
 
   static u3_noun
+  _mull_tend(u3_noun vit)
+  {
+    if ( u3_nul == vit ) {
+      return 1;
+    } else {
+      u3_noun nex = _mull_tend(u3t(vit));
+
+      if ( u3_nul == u3h(vit) ) {
+        return nex;
+      } else {
+        u3_noun boy = u3qc_peg(u3t(u3h(vit)), nex);
+
+        u3z(nex);
+        return boy;
+      }
+    }
+  }
+  static u3_noun
   _mull_coke(u3_noun nug)
   {
     if ( 0 == u3h(nug) ) {
@@ -334,6 +352,61 @@
         u3z(p_syx); u3z(q_syx);
         u3z(p_pov); u3z(q_pov);
         u3z(dok);
+
+        return _mull_both(van, gol, _mull_bean());
+      }
+
+      case c3__wthx: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _mull_used();
+      {
+        u3_noun hyp = u3nc(u3nc(c3y, 1), u3k(q_gen));
+        u3_noun fid = u3qfu_find(van, sut, c3__free, hyp);
+        u3_noun gax = u3qfu_find(van, dox, c3__free, hyp);
+        u3_noun old_type, old_axis;
+        u3_noun new_type, new_axis;
+
+        {
+          if ( c3y != u3h(fid) ) {
+            return u3m_error("mull-bonk-x");
+          }
+          else { 
+            u3_noun pp_fid = u3h(u3t(fid));
+            u3_noun qp_fid = u3t(u3t(fid));
+
+            if ( c3y != u3h(qp_fid) ) {
+              return u3m_error("mull-bonk-x");
+            }
+            new_type = u3t(qp_fid);
+            new_axis = _mull_tend(pp_fid);
+          }
+        }
+
+        {
+          if ( c3y != u3h(gax) ) {
+            return u3m_error("mull-bonk-x");
+          }
+          else { 
+            u3_noun pp_gax = u3h(u3t(gax));
+            u3_noun qp_gax = u3t(u3t(gax));
+
+            if ( c3y != u3h(qp_gax) ) {
+              return u3m_error("mull-bonk-x");
+            }
+            old_type = u3t(qp_gax);
+            old_axis = _mull_tend(pp_gax);
+          }
+        }
+        if ( c3n == u3r_sing(old_axis, new_axis) ) {
+          return u3m_error("mull-bonk-x");
+        }
+        else if ( c3n == u3qfu_nest(van, old_type, c3y, new_type) ) {
+          return u3m_error("mull-bonk-x");
+        }
+
+        u3z(old_axis);
+        u3z(new_axis);
+        u3z(gax); 
+        u3z(fid);
 
         return _mull_both(van, gol, _mull_bean());
       }

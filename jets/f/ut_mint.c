@@ -17,6 +17,25 @@
   }
 
   static u3_noun
+  _mint_tend(u3_noun vit)
+  {
+    if ( u3_nul == vit ) {
+      return 1;
+    } else {
+      u3_noun nex = _mint_tend(u3t(vit));
+
+      if ( u3_nul == u3h(vit) ) {
+        return nex;
+      } else {
+        u3_noun boy = u3qc_peg(u3t(u3h(vit)), nex);
+
+        u3z(nex);
+        return boy;
+      }
+    }
+  }
+
+  static u3_noun
   _mint_vet(u3_noun van)
   {
     // u3_noun vet = u3j_hook(u3k(van), "vet");
@@ -688,6 +707,39 @@
 
         u3z(von);
         return ret;
+      }
+
+      case c3__wthx: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _mint_used();
+      {
+        u3_noun hyp = u3nc(u3nc(c3y, 1), u3k(q_gen));
+        u3_noun fid = u3qfu_find(van, sut, c3__free, hyp);
+
+        if ( c3y != u3h(fid) ) {
+          return u3m_error("mint-fragment");
+        }
+        else {
+          u3_noun pp_fid = u3h(u3t(fid));
+          u3_noun qp_fid = u3t(u3t(fid));
+
+          if ( c3y != u3h(qp_fid) ) {
+            return u3m_error("mint-fragment");
+          }
+          else {
+            u3_noun pqp_fid = u3t(qp_fid);
+            u3_noun axe     = _mint_tend(pp_fid);
+            u3_noun ret;
+          
+            ret = u3nc(_mint_nice(van, gol, _mint_bean()),
+                       u3qfr_fish(van, pqp_fid, p_gen, axe));
+
+            u3z(axe);
+            u3z(fid);
+            u3z(hyp);
+
+            return ret;
+          }
+        }
       }
 
       case c3__cold:

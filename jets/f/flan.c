@@ -10,6 +10,9 @@
   u3qf_flan(u3_noun bos,
             u3_noun nif)
   {
+    if ( c3y == u3r_sing(bos, nif) ) {
+      return u3k(bos);
+    }
     if ( c3y == u3r_sing(1, u3h(bos)) ) {
       if ( (u3_nul == u3t(bos)) ) {
         return u3k(nif);

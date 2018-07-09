@@ -997,6 +997,29 @@
     return u3i_molt(gat, u3x_sam, u3k(gen), 0);
   }
 
+  static u3_noun
+  _ar_core(u3_noun van,
+           u3_noun ref,
+           u3_noun syn)
+  {
+    u3_noun gat = u3j_hook(u3k(van), "ar");
+
+    return u3i_molt(gat, u3x_sam, u3nc(u3k(ref), u3k(syn)), 0);
+  }
+
+/* fish
+*/
+  u3_noun
+  u3qfr_fish(u3_noun van,
+             u3_noun ref,
+             u3_noun syn,
+             u3_noun axe)
+  {
+    u3_noun gat = u3j_soft(_ar_core(van, ref, syn), "fish");
+
+    return u3n_slam_on(gat, u3k(axe));
+  }
+
 /* open
 */
   static u3_noun
