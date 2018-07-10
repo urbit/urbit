@@ -1,4 +1,4 @@
-::  
+::
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
 =<  ride
@@ -5842,7 +5842,7 @@
     {$note p/note q/hoon}                               ::  annotate
     {$fits p/hoon q/wing}                               ::  underlying ?=
     {$knit p/(list woof)}                               ::  assemble string
-    {$leaf p/(pair term @)}                             ::  symbol
+    {$leaf p/(pair term @)}                             ::  symbol spec
     {$limb p/term}                                      ::  take limb
     {$lost p/hoon}                                      ::  not to be taken
     {$rock p/term q/*}                                  ::  fixed constant
@@ -8314,6 +8314,9 @@
         [%base *]
       `gen
     ::
+        [%rock *]
+      ?@(q.gen `[%leaf p.gen q.gen] ~)
+    ::
         [%cnts [@ ~] ~]  
       `i.p.gen
     ::  
@@ -8781,7 +8784,6 @@
   ::  +ar: texture engine
   ::
   ++  ar
-    ~>  %slog.[0 leaf/"texture-engine"]
     ~%    %ar
         +>
       ==
