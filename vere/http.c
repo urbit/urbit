@@ -846,13 +846,12 @@ _http_serv_accept(u3_http* htp_u)
       uL(fprintf(uH, "http: accept: %s\n", uv_strerror(sas_i)));
     }
 
-    uv_close((uv_handle_t*)&hon_u->wax_u,
-             (uv_close_cb)_http_conn_free);
+    uv_close((uv_handle_t*)&hon_u->wax_u, _http_conn_free);
     return;
   }
 
   hon_u->sok_u = h2o_uv_socket_create((uv_stream_t*)&hon_u->wax_u,
-                                      (uv_close_cb)_http_conn_free);
+                                      _http_conn_free);
 
   h2o_accept(&((u3_h2o_serv*)htp_u->h2o_u)->cep_u, hon_u->sok_u);
 
@@ -1675,8 +1674,10 @@ _proxy_conn_unlink(u3_pcon* con_u)
 /* _proxy_conn_free(): free proxy connection
 */
 static void
-_proxy_conn_free(u3_pcon* con_u)
+_proxy_conn_free(uv_handle_t* han_u)
 {
+  u3_pcon* con_u = han_u->data;
+
   if ( 0 != con_u->buf_u.base ) {
     free(con_u->buf_u.base);
   }
@@ -1705,7 +1706,7 @@ _proxy_conn_close(u3_pcon* con_u)
     uv_close((uv_handle_t*)con_u->upt_u, (uv_close_cb)free);
   }
 
-  uv_close((uv_handle_t*)&con_u->don_u, (uv_close_cb)_proxy_conn_free);
+  uv_close((uv_handle_t*)&con_u->don_u, _proxy_conn_free);
 }
 
 /* _proxy_conn_new(): allocate proxy connection
@@ -1963,8 +1964,10 @@ _proxy_ward_unlink(u3_ward* rev_u)
 /* _proxy_ward_free(): free reverse proxy listener
 */
 static void
-_proxy_ward_free(u3_ward* rev_u)
+_proxy_ward_free(uv_handle_t* han_u)
 {
+  u3_ward* rev_u = han_u->data;
+
   u3z(rev_u->sip);
   _proxy_ward_unlink(rev_u);
   free(rev_u);
@@ -1976,7 +1979,7 @@ static void
 _proxy_ward_close(u3_ward* rev_u)
 {
   uv_timer_stop((uv_timer_t*)&rev_u->tim_u);
-  uv_close((uv_handle_t*)&rev_u->tcp_u, (uv_close_cb)_proxy_ward_free);
+  uv_close((uv_handle_t*)&rev_u->tcp_u, _proxy_ward_free);
 }
 
 /* _proxy_ward_new(): allocate reverse proxy listener
