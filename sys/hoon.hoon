@@ -1,4 +1,4 @@
-::
+::  
 ::::    /sys/hoon                                       ::
   ::                                                    ::  
 =<  ride
@@ -6793,6 +6793,11 @@
     ^-  spec
     [%over [%& 3]~ mod]
   ::
+  ++  tele
+    |=  syn/skin
+    ^-  skin
+    [%over [%& 3]~ syn]
+  ::
   ++  gray
     |=  gen/hoon
     ^-  hoon
@@ -6817,6 +6822,7 @@
             [puce (blue gen) (turn opt |=({a/spec b/hoon} [a (blue b)]))]
   ++  wtvt  |=({sic/hoon non/hoon} (gray [%wtvt puce (blue sic) (blue non)]))
   ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
+  ++  wthx  |=(syn/skin (gray [%wthx (tele syn) puce]))
   ++  wtts  |=(mod/spec (gray [%wtts (teal mod) puce]))
   --
 ::  type-to-spec
@@ -8718,6 +8724,7 @@
   ~%    %ut
       +>+
     ==
+      %ar     ar
       %fan    fan
       %rib    rib
       %vet    vet
@@ -8774,6 +8781,14 @@
   ::  +ar: texture engine
   ::
   ++  ar
+    ~>  %slog.[0 leaf/"texture-engine"]
+    ~%    %ar
+        +>
+      ==
+        %fish  fish
+        %gain  gain
+        %lose  lose
+      ==
     |_  [ref=type =skin]
     ::
     ::  =fish: make a $nock that tests a .ref at .axis for .skin
@@ -9846,6 +9861,10 @@
     |=  {how/? gen/hoon}  ^-  type
     ?:  ?=({$wtts *} gen)
       (cool how q.gen (play ~(example ax fab p.gen)))
+    ?:  ?=({$wthx *} gen)
+      ~&  [%wthx gen]
+      =+  (play %wing q.gen)
+      ?:(how ~(gain ar - p.gen) ~(lose ar - p.gen))
     ?:  ?&(how ?=({$wtpd *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=({$wtbr *} gen))
@@ -10013,6 +10032,13 @@
       =+  ran=$(sut wux, gen r.gen)
       [(fork p.hiq p.ran ~) (cond duy q.hiq q.ran)]
     ::
+        {$wthx *}
+      :-  (nice bool)
+      =+  fid=(find %read [[%& 1] q.gen])
+      ~>  %mean.[%leaf "mint-fragment"]
+      ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
+      (~(fish ar `type`p.q.p.fid `skin`p.gen) (tend p.p.fid))
+    ::
         {$fits *}
       :-  (nice bool)
       =+  ref=(play p.gen)
@@ -10174,6 +10200,18 @@
       =+  pov=[p=(fish(sut p.waz) p.syx) q=(fish(sut q.waz) q.syx)]
       ?.  &(=(p.syx q.syx) =(p.pov q.pov))
         ~>(%mean.[%leaf "mull-bonk-a"] !!)
+      (beth bool)
+    ::
+        {$wthx *}
+      ~>  %mean.[%leaf "mull-bonk-x"]
+      =+  :-  =+  (find %read [[%& 1] q.gen])
+              ?>  &(?=(%& -.-) ?=(%& -.q.p.-))
+              new=[type=p.q.p.- axis=(tend p.p.-)]
+          =+  (find(sut dox) %read [%& 1] q.gen)
+          ?>  &(?=(%& -.-) ?=(%& -.q.p.-))
+          old=[type=p.q.p.- axis=(tend p.p.-)]
+      ?>  =(axis.old axis.new)
+      ?>  (nest(sut type.old) & type.new)
       (beth bool)
     ::
         {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
@@ -10471,6 +10509,7 @@
                    ?:(=(%void wux) %void $(sut wux, gen r.gen))
                  ==
       {$fits *}  bool
+      {$wthx *}  bool
       {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
       {$zpcm *}  (play p.gen)
       {$lost *}  %void
@@ -13053,6 +13092,7 @@
                   ['-' ;~(pfix hep (toad txhp))]
                   ['^' ;~(pfix ket (toad tkkt))]
                   ['=' ;~(pfix tis (toad txts))]
+                  ['#' ;~(pfix hax (toad txhx))]
                   ['+' ;~(pfix lus (toad txls))]
                   ['&' (rune pad %wtpd exps)]
                   ['@' ;~(pfix vat (toad tkvt))]
@@ -13322,6 +13362,9 @@
     ++  txts  |.  %+  cook  |=  {a/spec b/tiki}
                             (~(wtts ah b) a)
                   ;~(gunk loan teak)
+    ++  txhx  |.  %+  cook  |=  {a/skin b/tiki}
+                            (~(wthx ah b) a)
+                  ;~(gunk lore teak)
     ::
     ::    hint syntax
     ::
