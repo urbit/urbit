@@ -777,6 +777,20 @@
   ?~  b  0
   (add (lsh a c (end a 1 i.b)) $(c +(c), b t.b))
 ::
+++  rev
+  ::  reverses block order, accounting for leading zeroes
+  ::
+  ::  boz: block size
+  ::  len: size of dat, in boz
+  ::  dat: data to flip
+  ~/  %rev
+  |=  [boz=bloq len=@ud dat=@]
+  ^-  @
+  =.  dat  (end boz len dat)
+  %^  lsh  boz
+    (sub len (met boz dat))
+  (swp boz dat)
+::
 ++  rip                                                 ::  disassemble
   ~/  %rip
   |=  {a/bloq b/@}
