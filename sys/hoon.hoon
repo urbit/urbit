@@ -1933,6 +1933,7 @@
 ::::  2q: molds and mold builders                       ::
   ::                                                    ::
   ::
++=  byts  [wid=@ud dat=@]                               ::  bytes, MSB first
 ++  char  @t                                            ::  UTF8 byte
 ++  cord  @t                                            ::  UTF8, LSB first
 ++  date  {{a/? y/@ud} m/@ud t/tarp}                    ::  parsed date
