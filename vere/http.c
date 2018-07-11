@@ -2110,11 +2110,10 @@ _proxy_ward_plan(u3_ward* rev_u)
   u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
                      u3nc(u3k(u3A->sen), u3_nul));
 
-  // XX include nonce
-  // u3i_words(16, (c3_w*)rev_u->non_u.base)
-  u3_noun wis = u3nq(c3__wise, u3k(rev_u->sip),
-                               rev_u->por_s,
-                               u3k(rev_u->con_u->sec));
+  u3_noun wis = u3nc(c3__wise, u3nq(u3k(rev_u->sip),
+                                    rev_u->por_s,
+                                    u3k(rev_u->con_u->sec),
+                                    u3i_words(16, (c3_w*)rev_u->non_u.base)));
   u3v_plan(pax, wis);
 }
 
@@ -2154,14 +2153,10 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
     {
       c3_w* non_w = c3_malloc(64);
 
-      // c3_rand(non_w);
+      c3_rand(non_w);
 
-      // u3_noun non = u3i_words(16, non_w)
-      // c3_w len_w = u3r_met(3, non);
-
-      u3_noun non = u3qc_rap(3, u3qb_reap(64, 97));
-      c3_w len_w = 64;
-      u3r_bytes(0, len_w, (c3_y*)non_w, non);
+      u3_noun non = u3i_words(16, non_w);
+      c3_w len_w = u3r_met(3, non);
 
       rev_u->non_u = uv_buf_init((c3_c*)non_w, len_w);
 
@@ -2672,13 +2667,19 @@ _proxy_serv_start(u3_prox* lis_u)
 /* u3_http_ef_that(): reverse proxy requested connection notification.
 */
 void
-u3_http_ef_that(u3_noun sip, u3_noun por, u3_noun sec)
+u3_http_ef_that(u3_noun tat)
 {
+  u3_noun sip = u3h(tat);
+  u3_noun por = u3h(u3t(tat));
+  u3_noun sec = u3h(u3t(u3t(tat)));
+  u3_noun non = u3t(u3t(u3t(tat)));
+
   if( c3n == u3ud(sip) ||
       c3n == u3a_is_cat(por) ||
-      !( c3y == sec || c3n == sec ) ) {
+      !( c3y == sec || c3n == sec ) ||
+      c3n == u3ud(non) ) {
     uL(fprintf(uH, "http: that: invalid card\n"));
-    u3z(sip); u3z(por); u3z(sec);
+    u3z(tat);
     return;
   }
 
@@ -2694,17 +2695,16 @@ u3_http_ef_that(u3_noun sip, u3_noun por, u3_noun sec)
   if ( 0 == htp_u ) {
     uL(fprintf(uH, "http: that: no %s server\n", (c3y == sec) ?
                                                  "secure" : "insecure"));
-    u3z(sip); u3z(por); u3z(sec);
+    u3z(tat);
     return;
   }
 
   cli_u = _proxy_warc_new(htp_u, (u3_atom)sip, (c3_s)por, (c3_o)sec);
 
-  // XX get from card
-  u3_noun non = u3qc_rap(3, u3qb_reap(64, 97));
+  // XX add to constructor
   c3_w len_w = u3r_met(3, non);
 
-  c3_assert( 255 >= len_w );
+  c3_assert( 256 > len_w );
 
   c3_y* non_y = c3_malloc(1 + len_w);
   non_y[0] = (c3_y)len_w;
@@ -2713,7 +2713,6 @@ u3_http_ef_that(u3_noun sip, u3_noun por, u3_noun sec)
 
   cli_u->non_u = uv_buf_init((c3_c*)non_y, 1 + len_w);
 
-  u3z(non);
 
   if ( c3n == u3_Host.ops_u.net ) {
     cli_u->ipf_w = INADDR_LOOPBACK;
@@ -2722,4 +2721,6 @@ u3_http_ef_that(u3_noun sip, u3_noun por, u3_noun sec)
   }
 
   _proxy_ward_resolve(cli_u);
+
+  u3z(tat);
 }

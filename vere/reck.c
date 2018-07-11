@@ -144,11 +144,9 @@ _reck_kick_http(u3_noun  pox,
       return c3y;
     }
 
-    case c3__that: p_fav = u3h(u3t(fav)); q_fav = u3h(u3t(u3t(fav)));
+    case c3__that: p_fav = u3t(fav);
     {
-      u3_noun r_fav = u3t(u3t(u3t(fav)));
-
-      u3_http_ef_that(u3k(p_fav), u3k(q_fav), u3k(r_fav));
+      u3_http_ef_that(u3k(p_fav));
 
       u3z(pox); u3z(fav);
       return c3y;
