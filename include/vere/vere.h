@@ -134,6 +134,7 @@
         c3_o             sec;               //  secure connection
         u3_atom          sip;               //  ward ship
         c3_c*            hot_c;             //  ward hostname
+        uv_buf_t         non_u;             //  nonce
         struct _u3_http* htp_u;             //  local server backlink
         struct _u3_warc* nex_u;             //  next in list
         struct _u3_warc* pre_u;             //  previous in list
@@ -146,6 +147,7 @@
         uv_timer_t       tim_u;             //  expiration timer
         u3_atom          sip;               //  reverse proxy for ship
         c3_s             por_s;             //  listening on port
+        uv_buf_t         non_u;             //  nonce
         struct _u3_pcon* con_u;             //  initiating connection
         struct _u3_ward* nex_u;             //  next in list
         struct _u3_ward* pre_u;             //  previous in list

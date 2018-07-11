@@ -1581,6 +1581,7 @@ static void
 _proxy_warc_free(u3_warc* cli_u)
 {
   _proxy_warc_unlink(cli_u);
+  free(cli_u->non_u.base);
   free(cli_u);
 }
 
@@ -1970,6 +1971,7 @@ _proxy_ward_free(uv_handle_t* han_u)
 
   u3z(rev_u->sip);
   _proxy_ward_unlink(rev_u);
+  free(rev_u->non_u.base);
   free(rev_u);
 }
 
@@ -2001,6 +2003,50 @@ _proxy_ward_new(u3_pcon* con_u, u3_atom sip)
   return rev_u;
 }
 
+/* _proxy_ward_peek_read_cb(): authenticate connection by checking nonce.
+*/
+static void
+_proxy_ward_peek_read_cb(uv_stream_t* upt_u,
+                         ssize_t      siz_w,
+                         const uv_buf_t* buf_u)
+{
+  u3_ward* rev_u = upt_u->data;
+
+  if ( 0 > siz_w ) {
+    if ( UV_EOF != siz_w ) {
+      uL(fprintf(uH, "proxy: ward peek: %s\n", uv_strerror(siz_w)));
+    }
+    uv_close((uv_handle_t*)upt_u, (uv_close_cb)free);
+  }
+  else {
+    uv_read_stop(upt_u);
+
+    c3_w len_w = rev_u->non_u.len;
+
+    if ( ((len_w + 1) != siz_w) ||
+         (len_w != buf_u->base[0]) ||
+         (0 != memcmp(rev_u->non_u.base, buf_u->base + 1, len_w)) ) {
+      uL(fprintf(uH, "proxy: ward peek fail\n"));
+      uv_close((uv_handle_t*)upt_u, (uv_close_cb)free);
+    }
+    else {
+      upt_u->data = rev_u->con_u;
+      rev_u->con_u->upt_u = (uv_tcp_t*)upt_u;
+      _proxy_fire(rev_u->con_u);
+      _proxy_ward_close(rev_u);
+    }
+  }
+}
+
+/* _proxy_ward_peek(): peek at a new incoming connection
+*/
+static void
+_proxy_ward_peek(uv_tcp_t* upt_u)
+{
+  uv_read_start((uv_stream_t*)upt_u,
+                _proxy_alloc, _proxy_ward_peek_read_cb);
+}
+
 /* _proxy_ward_accept(): accept new connection on ward
 */
 static void
@@ -2008,8 +2054,9 @@ _proxy_ward_accept(u3_ward* rev_u)
 {
   uv_tcp_t* upt_u = c3_malloc(sizeof(*upt_u));
 
-  upt_u->data = rev_u->con_u;
-  rev_u->con_u->upt_u = upt_u;
+  // XX use linked list to avoid leaking
+  // ward upstream candidate connections
+  upt_u->data = rev_u;
 
   uv_tcp_init(u3L, upt_u);
 
@@ -2021,7 +2068,7 @@ _proxy_ward_accept(u3_ward* rev_u)
     _proxy_conn_close(rev_u->con_u);
   }
   else {
-    _proxy_fire(rev_u->con_u);
+    _proxy_ward_peek(upt_u);
   }
 }
 
@@ -2039,9 +2086,6 @@ _proxy_ward_listen_cb(uv_stream_t* tcp_u, c3_i sas_i)
   else {
     _proxy_ward_accept(rev_u);
   }
-
-  // ward listener is always closed
-  _proxy_ward_close(rev_u);
 }
 
 /* _proxy_ward_timer_cb(): expiration timer for ward
@@ -2065,6 +2109,9 @@ _proxy_ward_plan(u3_ward* rev_u)
   // XX confirm duct
   u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
                      u3nc(u3k(u3A->sen), u3_nul));
+
+  // XX include nonce
+  // u3i_words(16, (c3_w*)rev_u->non_u.base)
   u3_noun wis = u3nq(c3__wise, u3k(rev_u->sip),
                                rev_u->por_s,
                                u3k(rev_u->con_u->sec));
@@ -2103,6 +2150,24 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
     // XX u3_lo_open();
 
     rev_u->por_s = ntohs(add_u.sin_port);
+
+    {
+      c3_w* non_w = c3_malloc(64);
+
+      // c3_rand(non_w);
+
+      // u3_noun non = u3i_words(16, non_w)
+      // c3_w len_w = u3r_met(3, non);
+
+      u3_noun non = u3qc_rap(3, u3qb_reap(64, 97));
+      c3_w len_w = 64;
+      u3r_bytes(0, len_w, (c3_y*)non_w, non);
+
+      rev_u->non_u = uv_buf_init((c3_c*)non_w, len_w);
+
+      u3z(non);
+    }
+
     _proxy_ward_plan(rev_u);
 
     uv_timer_init(u3L, &rev_u->tim_u);
@@ -2126,7 +2191,15 @@ _proxy_ward_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
     _proxy_conn_close(con_u);
   }
   else {
+    // XX can con_u close before the loopback conn is established?
     _proxy_loop_connect(con_u);
+
+    u3_warc* cli_u = con_u->src_u.cli_u;
+
+    // send %that nonce to ward for authentication
+    _proxy_write(con_u, (uv_stream_t*)&(con_u->don_u), cli_u->non_u);
+
+    cli_u->non_u = uv_buf_init(0, 0);
   }
 
   free(upc_u);
@@ -2626,6 +2699,21 @@ u3_http_ef_that(u3_noun sip, u3_noun por, u3_noun sec)
   }
 
   cli_u = _proxy_warc_new(htp_u, (u3_atom)sip, (c3_s)por, (c3_o)sec);
+
+  // XX get from card
+  u3_noun non = u3qc_rap(3, u3qb_reap(64, 97));
+  c3_w len_w = u3r_met(3, non);
+
+  c3_assert( 255 >= len_w );
+
+  c3_y* non_y = c3_malloc(1 + len_w);
+  non_y[0] = (c3_y)len_w;
+
+  u3r_bytes(0, len_w, non_y + 1, non);
+
+  cli_u->non_u = uv_buf_init((c3_c*)non_y, 1 + len_w);
+
+  u3z(non);
 
   if ( c3n == u3_Host.ops_u.net ) {
     cli_u->ipf_w = INADDR_LOOPBACK;
