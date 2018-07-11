@@ -669,7 +669,7 @@
           [%mass p=mass]                                ::  memory usage
           [%mack p=(unit tang)]                         ::  message ack
           [%sigh p=cage]                                ::  marked http response
-          [%that p=@p q=@ud r=?]                        ::  get proxied request
+          [%that p=@p q=prox]                           ::  get proxied request
           [%thou p=httr]                                ::  raw http response
           [%thus p=@ud q=(unit hiss)]                   ::  http request+cancel
           [%veer p=@ta q=path r=@t]                     ::  drop-through
@@ -693,7 +693,7 @@
           [%well p=path q=(unit mime)]                  ::  put/del .well-known
           [%went p=sack q=path r=@ud s=coop]            ::  response confirm
           [%west p=sack q=[path *]]                     ::  network request
-          [%wise p=@p q=@ud r=?]                        ::  proxy notification
+          [%wise p=ship q=prox]                         ::  proxy notification
       ==                                                ::
     --  ::able
   ::
@@ -731,7 +731,7 @@
         [[%get-inner ~] p=@uvH q=beam r=mark]  ::TODO details?
         [[%got-inner ~] p=@uvH q=(each (cask) tang)]  ::TODO details?
       ::
-        [[%not ~] p=@ud q=?]                            ::  proxy notification
+        [[%not ~] p=prox]                               ::  proxy notification
     ==                                                  ::
   ++  hart  {p/? q/(unit @ud) r/host}                   ::  http sec+port+host
   ++  hate  {p/purl q/@p r/moth}                        ::  semi-cooked request
@@ -807,6 +807,22 @@
   ++  octs  {p/@ud q/@t}                                ::  octet-stream
   ++  oryx  @t                                          ::  CSRF secret
   ++  pork  {p/(unit @ta) q/(list @t)}                  ::  fully parsed url
+  :: +prox: proxy notification
+  ::
+  ::   Used on both the proxy (ward) and upstream sides for
+  ::   sending/receiving proxied-request notifications.
+  ::
+  +=  prox
+    $:  :: por: tcp port
+        ::
+        por=@ud
+        :: sek: secure?
+        ::
+        sek=?
+        :: non: authentication nonce
+        ::
+        non=@uvJ
+    ==
   ++  purf  (pair purl (unit @t))                       ::  url with fragment
   ++  purl  {p/hart q/pork r/quay}                      ::  parsed url
   ++  quay  (list {p/@t q/@t})                          ::  parsed url query

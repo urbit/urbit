@@ -864,12 +864,12 @@
             [[%$ deps+!>(dep)] [%vale res]]
           ==
       ::
-        $not  +>.$(mow :_(mow [ged [%give %that q.p.kyz p.u.mez q.u.mez]]))
+        $not  +>.$(mow :_(mow [ged [%give %that q.p.kyz p.u.mez]]))
       ==
     ::
       $wegh  !!                                         ::  handled elsewhere
     ::
-      $wise  (ames-gram p.kyz [%not ~] q.kyz r.kyz)     ::  proxy notification
+      $wise  (ames-gram p.kyz [%not ~] q.kyz)           ::  proxy notification
     ==
   ::
   ::++  axom                                              ::  old response
