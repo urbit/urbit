@@ -1830,7 +1830,7 @@
   =|  pri/@                                             ::  priority level
   |=  a/tang  ^+  same                                  ::  .=  ~&(%a 1)
   ?~(a same ~>(%slog.[pri i.a] $(a t.a)))               ::  ((slog ~[>%a<]) 1)
-::                                                      ::  
+::                                                      ::
 ++  mean                                                ::  crash with trace
   |=  a/tang
   ^+  !!
@@ -3459,6 +3459,96 @@
     |=  b/@                                             ::  continuation
     =+  r=(raw b)
     [r +>.$(a (shas %og-s (mix a r)))]
+  --
+::
+++  sha                                                 ::  correct byte-order
+  ~%  %sha  ..sha  ~
+  =>  |%
+      ++  flin  |=(a=@ (swp 3 a))                       ::  flip input
+      ++  flim  |=(byts [wid (rev 3 wid dat)])          ::  flip input w/ length
+      ++  flip  |=(w=@u (cury (cury rev 3) w))          ::  flip output of size
+      ++  meet  |=(a=@ [(met 3 a) a])                   ::  measure input size
+      --
+  |%
+  ::
+  ::  use with @
+  ::
+  ++  sha-1     (cork meet sha-1l)
+  ++  sha-256   :(cork flin shax (flip 32))
+  ++  sha-512   :(cork flin shaz (flip 64))
+  ::
+  ::  use with byts
+  ::
+  ++  sha-256l  :(cork flim shay (flip 32))
+  ++  sha-512l  :(cork flim shal (flip 64))
+  ::
+  ++  sha-1l
+    ~/  %sha1
+    |=  byts
+    ^-  @
+    =+  [few==>(fe .(a 5)) wac=|=({a/@ b/@} (cut 5 [a 1] b))]
+    =+  [sum=sum.few ror=ror.few rol=rol.few net=net.few inv=inv.few]
+    =+  ral=(lsh 0 3 wid)
+    =+  ^=  ful
+        %+  can  0
+        :~  [ral (rev 3 wid dat)]
+            [8 128]
+            [(mod (sub 960 (mod (add 8 ral) 512)) 512) 0]
+            [64 (~(net fe 6) ral)]
+        ==
+    =+  lex=(met 9 ful)
+    =+  kbx=0xca62.c1d6.8f1b.bcdc.6ed9.eba1.5a82.7999
+    =+  hax=0xc3d2.e1f0.1032.5476.98ba.dcfe.efcd.ab89.6745.2301
+    =+  i=0
+    |-
+    ?:  =(i lex)
+      (rep 5 (flop (rip 5 hax)))
+    =+  ^=  wox
+        =+  dux=(cut 9 [i 1] ful)
+        =+  wox=(rep 5 (turn (rip 5 dux) net))
+        =+  j=16
+        |-  ^-  @
+        ?:  =(80 j)
+          wox
+        =+  :*  l=(wac (sub j 3) wox)
+                m=(wac (sub j 8) wox)
+                n=(wac (sub j 14) wox)
+                o=(wac (sub j 16) wox)
+            ==
+        =+  z=(rol 0 1 :(mix l m n o))
+        $(wox (con (lsh 5 j z) wox), j +(j))
+    =+  j=0
+    =+  :*  a=(wac 0 hax)
+            b=(wac 1 hax)
+            c=(wac 2 hax)
+            d=(wac 3 hax)
+            e=(wac 4 hax)
+        ==
+    |-  ^-  @
+    ?:  =(80 j)
+      %=  ^$
+        i  +(i)
+        hax  %+  rep  5
+             :~
+                 (sum a (wac 0 hax))
+                 (sum b (wac 1 hax))
+                 (sum c (wac 2 hax))
+                 (sum d (wac 3 hax))
+                 (sum e (wac 4 hax))
+             ==
+      ==
+    =+  fx=(con (dis b c) (dis (not 5 1 b) d))
+    =+  fy=:(mix b c d)
+    =+  fz=:(con (dis b c) (dis b d) (dis c d))
+    =+  ^=  tem
+        ?:  &((gte j 0) (lte j 19))
+          :(sum (rol 0 5 a) fx e (wac 0 kbx) (wac j wox))
+        ?:  &((gte j 20) (lte j 39))
+          :(sum (rol 0 5 a) fy e (wac 1 kbx) (wac j wox))
+        ?:  &((gte j 40) (lte j 59))
+          :(sum (rol 0 5 a) fz e (wac 2 kbx) (wac j wox))
+        :(sum (rol 0 5 a) fy e (wac 3 kbx) (wac j wox))
+    $(j +(j), a tem, b a, c (rol 0 30 b), d c, e d)
   --
 ::                                                      ::
 ::::  3e: AES encryption  (XX removed)                  ::
@@ -5537,22 +5627,22 @@
 ::
 ++  musk                                                ::  nock with block set
   =>  |%
-      ++  block  
+      ++  block
         ::  identity of resource awaited
         ::  XX parameterize
         noun
       ::
-      ++  result  
+      ++  result
         ::  internal interpreter result
         ::
         $@(~ seminoun)
       ::
-      ++  seminoun  
-        ::  partial noun; blocked subtrees are ~ 
+      ++  seminoun
+        ::  partial noun; blocked subtrees are ~
         ::
         {mask/stencil data/noun}
       ::
-      ++  stencil  
+      ++  stencil
         ::  noun knowledge map
         ::
         $%  ::  no; noun has partial block substructure
@@ -5561,7 +5651,7 @@
             ::  yes; noun is either fully complete, or fully blocked
             ::
             {$& blocks/(set block)}
-        == 
+        ==
       ::
       ++  output
         ::  nil; interpreter stopped
@@ -5570,8 +5660,8 @@
         ::  yes, complete noun; no, list of blocks
         ::
         (each noun (list block))
-      -- 
-  |%  
+      --
+  |%
   ++  abet
     ::  simplify raw result
     ::
@@ -5586,7 +5676,7 @@
     :-  ~
     ::  merge all blocking sets
     ::
-    =/  blocks  (squash mask.noy) 
+    =/  blocks  (squash mask.noy)
     ?:  =(~ blocks)
       ::  no blocks, data is complete
       ::
@@ -5611,11 +5701,11 @@
     ::  interpreter loop
     ::
     |-  ^-  result
-    ?@  fol  
+    ?@  fol
       ::  bad formula, stop
       ::
       ~
-    ?:  ?=(^ -.fol)  
+    ?:  ?=(^ -.fol)
       ::  hed: interpret head
       ::
       =+  hed=$(fol -.fol)
@@ -5628,10 +5718,10 @@
       ::  propagate stop
       ::
       ?~  tal  ~
-      ::  combine 
+      ::  combine
       ::
       (combine hed tal)
-    ?+    fol  
+    ?+    fol
     ::  bad formula; stop
     ::
         ~
@@ -5719,28 +5809,28 @@
     ::
     ::  7; composition
     ::
-        {$7 b/* c/*}       
+        {$7 b/* c/*}
       ::  use standard macro expansion (slow)
       ::
       $(fol =>(fol [2 b 1 c]))
     ::
     ::  8; declaration
     ::
-        {$8 b/* c/*}       
+        {$8 b/* c/*}
       ::  use standard macro expansion (slow)
       ::
       $(fol =>(fol [7 [[7 [0 1] b] 0 1] c]))
     ::
     ::  9; invocation
     ::
-        {$9 b/* c/*}       
+        {$9 b/* c/*}
       ::  use standard macro expansion (slow)
       ::
       $(fol =>(fol [7 c 2 [0 1] 0 b]))
     ::
     ::  10; static hint
     ::
-        {$10 @ c/*}        
+        {$10 @ c/*}
       ::  ignore hint
       ::
       $(fol c.fol)
@@ -5765,7 +5855,7 @@
     |=  $:  ::  hed: head of pair
             ::  tal: tail of pair
             ::
-            hed/seminoun 
+            hed/seminoun
             tal/seminoun
         ==
     ^-  seminoun
@@ -5820,8 +5910,8 @@
           ::
           %=  $
             axe  lat
-            bus  ?:  =(2 now) 
-                   [left.mask.bus -.data.bus] 
+            bus  ?:  =(2 now)
+                   [left.mask.bus -.data.bus]
                  [rite.mask.bus +.data.bus]
     ==    ==
   ::  require complete intermediate step
@@ -6225,7 +6315,7 @@
 ++  vair  ?($gold $iron $lead $zinc)                    ::  in/contra/bi/co
 ++  vein  (list (unit axis))                            ::  search trace
 ++  sect  (list pica)                                   ::  paragraph
-++  whit                                                ::  
+++  whit                                                ::
           $:  lab/(unit term)                           ::  label
               boy/(unit (pair cord (list sect)))        ::  body
               def/(map term (pair cord (list sect)))    ::  definitions
@@ -6244,7 +6334,7 @@
           ::  $mark                                     ::  described as mark?
           ::  $mime                                     ::  described as mime:
           ::  $json                                     ::  json schema?
-          ::  
+          ::
           ==
 --
 ::                                                      ::
@@ -6499,7 +6589,7 @@
       $~  ~
   ::
       {* $~ $~}
-    %+  bind  (look cog q.q.n.dom) 
+    %+  bind  (look cog q.q.n.dom)
     |=((pair axis (pair what foot)) [(peg axe p) q])
   ::
       {* $~ *}
@@ -6565,15 +6655,15 @@
           doc=*(list what)
       ==
   |_  mod/tile
-  ++  bunt  
+  ++  bunt
     ::  ~&  [%bunt-model mod]
     ::  =-  ~&  [%bunt-product -]
-    ::      -  
+    ::      -
     ~$  %ut-ersatz-call
     ~+
     ~$  %ut-ersatz-make
     ersatz
-  ++  clam  
+  ++  clam
     ::  ~&  [%clam-model mod]
     ::  =-  ~&  [%clam-product -]
     ::      -
@@ -6581,7 +6671,7 @@
     ~+
     ~$  %ut-factory-make
     factory
-  ++  home  
+  ++  home
     ::  express a hoon against the original subject
     ::
     |=(gen/hoon ^-(hoon ?:(=(1 dom) gen [%tsgr [%$ dom] gen])))
@@ -6608,7 +6698,7 @@
       ?:  ?=($herb -.cys)
         (home [%tsgl [%limb %$] p.mod])
       $(mod cys)
-    ::  
+    ::
         {$deet *}
       $(mod q.mod)
     ::
@@ -6619,7 +6709,7 @@
       ?~(t.p.mod ^$(mod i.p.mod) $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod))
     ::
         {$kelp *}
-      ::  last entry is the default value  
+      ::  last entry is the default value
       ::
       |-  ^-  hoon
       ?~(t.p.mod ^$(mod i.p.mod) $(i.p.mod i.t.p.mod, t.p.mod t.t.p.mod))
@@ -6669,7 +6759,7 @@
         $void
       ::  should not actually be a thing
       ::
-      [%zpzp ~] 
+      [%zpzp ~]
     ==
   ::
   ++  decorate
@@ -6701,7 +6791,7 @@
       ?:  ?=($herb -.cys)
         (home [%tsgl [%limb %$] p.mod])
       ersatz(mod cys)
-    ::  
+    ::
         {$deet *}  [%dbug p.mod ersatz(mod q.mod)]
         {$fern *}  trivial
         {$kelp *}  trivial
@@ -6731,7 +6821,7 @@
             ::  top: topographic type of sample
             ::
             axe/axis
-            top/tope 
+            top/tope
         ==
     ++  basic
       |=  bas/base
@@ -6839,7 +6929,7 @@
       |-  ^-  hoon
       ::  if no other choices, construct head
       ::
-      ?~  rep  construct(mod `tile`one) 
+      ?~  rep  construct(mod `tile`one)
       ::  fin: loop completion
       ::
       =/  fin/hoon  $(one i.rep, rep t.rep)
@@ -6873,7 +6963,7 @@
       :+  %tsgr
         ::  construct within trap
         ::
-        :+  %brdt  ~^~ 
+        :+  %brdt  ~^~
         ::  trap is only kicked if sample is cell
         ::
         :+  %sgbc
@@ -6956,7 +7046,7 @@
         construct(mod cys)
       ::
       ::  switch, $%
-      :: 
+      ::
           {$kelp *}
         ::  if atom or unknown, probe
         ::
@@ -6995,7 +7085,7 @@
         ?@  top  probe
         :^    %wtpt
             fetch-wing(axe (peg axe 2))
-          construct(top [%| %&], mod q.mod) 
+          construct(top [%| %&], mod q.mod)
         construct(top [[%& %&] %&], mod p.mod)
       ::
       ::  weed, $_
@@ -7013,7 +7103,7 @@
       %bunt  bunt
       %whip  whip
     ==
-  =+  :*  nag=`*`& 
+  =+  :*  nag=`*`&
           gom=`axis`1
           wat=*what
       ==
@@ -7081,7 +7171,7 @@
         [%wtcl [%bust %bean] $(p.sec t.p.sec) ^$(sec i.p.sec)]
       %=    $
           sec
-        |-  ^-  tile 
+        |-  ^-  tile
         ?~(t.p.sec i.p.sec $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec))
       ==
     ::
@@ -7104,7 +7194,7 @@
         {$weed *}
       (hail (home p.sec))
     ==
-  ++  clam  
+  ++  clam
     ^-  hoon
     =/  raw  [%brts [~ ~] [%base %noun] (whip(gom 7) 6)]
     ::
@@ -7118,9 +7208,9 @@
   ++  whip
     |=  axe/axis
     =+  ^=  tun
-        |=  $:  def/tile 
+        |=  $:  def/tile
                 noy/$-(* hoon)
-            == 
+            ==
         ^-  hoon
         ?@  nag
           =+  luz=[%cnts [[%& 1] ~] [[[%& axe] ~] bunt(sec def)] ~]
@@ -7287,13 +7377,13 @@
       ::  ?|  ?=(^ lab)
       ::      ?=(^ boy)
       ::      |-  ^-  ?
-      ::      ?~  def  | 
+      ::      ?~  def  |
       ::      |($(def l.def) $(def r.def) !(~(has in use) p.n.def))
       ::  ==
     ::
     ++  grad
-      |=  $:  gen/hoon 
-              wit/whit 
+      |=  $:  gen/hoon
+              wit/whit
               aid/$-({? hoon whit} {hoon whit})
           ==
       ^-  (unit (pair hoon whit))
@@ -7307,7 +7397,7 @@
         ^-  (unit (pair hoon whit))
         =^  one  wit  prim
         =^  two  wit  senc(gen one)
-        ?:  =(gen two) 
+        ?:  =(gen two)
           ~
         `(aid & two wit)
       ::
@@ -7327,7 +7417,7 @@
           $bchp   runk
           $bckt   runk
           $bcwt   runk
-          $bcts   flam 
+          $bcts   flam
           $bcsm   runk
           $brcb   ((doof -.gen +>.gen) p.gen)
           $brcl   ((doof -.gen +>.gen) p.gen)
@@ -7388,14 +7478,14 @@
         |=  hot/toro
         ^-  (pair hoon whit)
         =^  tog  wit  (tong p.hot)
-        [[pif [tog q.hot] suf] wit] 
+        [[pif [tog q.hot] suf] wit]
       ::
       ++  humm
         |*  {pif/@tas suf/*}
         |=  {wat/what cog/term}
         ^-  (pair hoon whit)
         =^  taw  wit  (grif cog wat)
-        [[pif [taw cog] suf] wit] 
+        [[pif [taw cog] suf] wit]
       ::
       ++  runk
         ^-  (pair hoon whit)
@@ -7471,7 +7561,7 @@
       {$tsgr *}  (weld $(gen p.gen) $(gen q.gen))
       {$wing *}  [p.gen ~]
       {$limb *}  [[p.gen ~] ~]
-    ==                 
+    ==
   ::
   ++  bawl
     ~|  %bawl-failure
@@ -7619,7 +7709,7 @@
         {$brdt *}  :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
-        {$brkt *}  :+  %tsgr 
+        {$brkt *}  :+  %tsgr
                       :+  %brcn  p.gen
                       =+  one=(~(got by r.gen) 0)
                       %+  ~(put by r.gen)  0
@@ -7631,7 +7721,7 @@
                    :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
-        {$brts *}  :^  %brcb  p.gen  q.gen 
+        {$brts *}  :^  %brcb  p.gen  q.gen
                    =-  [~ [[0 [~ ~] -] ~ ~]]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
         {$brwt *}  [%ktwt %brdt p.gen q.gen]
@@ -7830,7 +7920,7 @@
                      :+  %kthp
                         :+  %bcts  p.p.gen
                         [%tsgr [%limb %v] u.q.p.gen]
-                     [%tsgl [%$ 2] [%limb %a]] 
+                     [%tsgl [%$ 2] [%limb %a]]
                 [%limb %v]
       s.gen
     ::
@@ -7869,7 +7959,7 @@
       ?~(p.gen [%rock %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
     ::
         {$xray *}
-      |^  :-  [(open-mane n.g.p.gen) %clsg (turn a.g.p.gen open-mart)] 
+      |^  :-  [(open-mane n.g.p.gen) %clsg (turn a.g.p.gen open-mart)]
           [%smts c.p.gen]
       ::
       ++  open-mane
@@ -7877,7 +7967,7 @@
         ?@(a [%rock %tas a] [[%rock %tas -.a] [%rock %tas +.a]])
       ::
       ++  open-mart
-        |=  {n/mane:hoon v/(list beer:hoon)} 
+        |=  {n/mane:hoon v/(list beer:hoon)}
         [(open-mane n) %knit v]
       --
     ::
@@ -7927,11 +8017,11 @@
         ==
     ^-  {hoon life}
     =/  use  &
-    =<  apex 
-    |%  
+    =<  apex
+    |%
     ++  apex
       |-  ^-  {hoon life}
-      =*  aid  |=  {use/? gen/hoon vit/life} 
+      =*  aid  |=  {use/? gen/hoon vit/life}
                ^$(use use, gen gen, vit vit)
       =/  gun  ?:(use (mac gen vit aid) ~)
       ?^  gun  u.gun
@@ -8056,7 +8146,7 @@
     ++  arms
       (raid (twin noop (raid (twin noop heel))))
     ::
-    ++  bark 
+    ++  bark
       |=  wof/woof
       ?-(wof @ [wof vit], ^ (lead ~ (expr p.wof)))
     ::
@@ -8272,10 +8362,10 @@
       $void      [&+[~ ~ ~] ~]
       {$atom *}  ?~(q.sut [&+[~ ~ ~] ~] [&+~ u.q.sut])
       {$cell *}  (combine:musk $(sut p.sut) $(sut q.sut))
-      {$core *}  %+  combine:musk 
+      {$core *}  %+  combine:musk
                    ?~  p.s.q.sut  [&+[~ ~ ~] ~]
                    [&+~ p.s.q.sut]
-                 $(sut p.sut) 
+                 $(sut p.sut)
       {$face *}  $(sut repo)
       {$fork *}  [&+[~ ~ ~] ~]
       {$help *}  $(sut repo)
@@ -8729,7 +8819,7 @@
                       [(fork p.q.p.p.hax p.q.p.p.yor ~) q.q.p.p.hax]
                     ?>  ?=($& -.yor)
                     ?>  =(p.q.p.hax p.q.p.yor)
-                    :^    %&  
+                    :^    %&
                         (join p.p.hax p.p.yor)
                       p.q.p.hax
                     ?:  &(?=($& -.q.q.p.hax) ?=($& -.q.q.p.yor))
@@ -8759,7 +8849,7 @@
                   ?~  zem  [~ p.heg]
                   ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
               ?^  zem
-                :^    %&  
+                :^    %&
                     p.q.u.zem
                   [`axe lon]
                 [%| (peg 2 p.u.zem) [[sut(p.q %gold) q.q.u.zem] ~ ~]]
@@ -9235,7 +9325,7 @@
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) (wrap(sut q.vat) %lead)])
     ::
         {$docs *}
-      =+  vat=$(gen q.gen) 
+      =+  vat=$(gen q.gen)
       [(help [%docs p.gen] p.vat) (help [%docs p.gen] q.vat)]
     ::
         {$ktsg *}  $(gen p.gen)
@@ -9380,7 +9470,7 @@
     |%
     ++  dext
       ^-  ?
-      ::  
+      ::
       ?:  =(ref sut)
         (nest(sut %void) | sut)
       ?-  sut
@@ -9391,7 +9481,7 @@
         {$core *}  sint(sut [%cell %noun %noun])
         {$fork *}  %+  levy  ~(tap in p.sut)
                    |=(type dext(sut +<))
-        {$face *}  dext(sut q.sut) 
+        {$face *}  dext(sut q.sut)
         {$help *}  dext(sut q.sut)
         {$hold *}  =+  (~(gas in *(set type)) `(list type)`[sut ref ~])
                    ?:  (~(has in gil) -)
@@ -9659,7 +9749,7 @@
       ?~  wec  `~
       ::  any reference faces must be clear
       ::
-      ?.  ?=({* $~ $~} wec)  
+      ?.  ?=({* $~ $~} wec)
         ~&  [%dear-many wec]
         ~
       :-  ~
@@ -9679,7 +9769,7 @@
       ::
       ::    overlap is a weird corner case.  +lip is
       ::    almost always 0.  brute force is fine.
-      :: 
+      ::
       =/  lip
         =|  lup/(unit @ud)
         =|  lip/@ud
@@ -9688,7 +9778,7 @@
           (fall lup 0)
         ::  lep: overlap candidate: suffix of subject face stack
         ::
-        =/  lep  (slag (sub p.len lip) hos) 
+        =/  lep  (slag (sub p.len lip) hos)
         ::  lap: overlap candidate: prefix of reference face stack
         ::
         =/  lap  (scag lip har)
@@ -9706,12 +9796,12 @@
       ^-  type
       ::  check for trivial cases
       ::
-      ?:  ?|  =(sut ref) 
+      ?:  ?|  =(sut ref)
               ?=(?($noun $void {?($atom $core) *}) ref)
           ==
         done
       ::  ~_  (dunk 'redo: dext: sut')
-      ::  ~_  (dunk(sut ref) 'redo: dext: ref')  
+      ::  ~_  (dunk(sut ref) 'redo: dext: ref')
       ?-    sut
           ?($noun $void {?($atom $core) *})
         ::  reduce reference and reassemble leaf
@@ -9750,12 +9840,12 @@
         [%help p.sut dext(sut q.sut)]
       ::
           {$fork *}
-        ::  reconstruct each case in fork 
+        ::  reconstruct each case in fork
         ::
         (fork (turn ~(tap in p.sut) |=(type dext(sut +<))))
       ::
           {$hold *}
-        ::  reduce to hard 
+        ::  reduce to hard
         ::
         =>  (sint |)
         ?>  ?=({$hold *} sut)
@@ -9776,11 +9866,11 @@
     ::                                                  ::
     ++  done                                            ::  complete assembly
       ^-  type
-      ::  :type: subject refurbished 
+      ::  :type: subject refurbished
       ::
       ::  lov: combined face stack
       ::
-      =/  lov  
+      =/  lov
           =/  lov  dear
           ?~  lov
             ::  ~_  (dunk 'redo: dear: sut')
@@ -9816,7 +9906,7 @@
           wec  (~(run in wec) |=((list tool) [q.p.ref +<]))
         ==
       ::
-          {$fork *}  
+          {$fork *}
         ::  reconstruct all relevant cases
         ::
         =-  ::  ~>  %slog.[0 (dunk 'fork: sut')]
@@ -10629,7 +10719,7 @@
     ++  rant
       |*  sec/rule
       %-  star
-      ;~  pfix  
+      ;~  pfix
         (indo null)
         (plus (into sec))
       ==
@@ -11015,7 +11105,7 @@
                   $fens                                 ::    ``` code fence
                   $expr                                 ::    ;sail expression
               ==  ==                                    ::
-              {$new p/trig-new}                         ::  open container 
+              {$new p/trig-new}                         ::  open container
               {$old $text}                              ::  anything else
           ==                                            ::
         ++  trig-new                                    ::  start a
@@ -11358,7 +11448,7 @@
         ++  lent                                        ::  list entry
           |=  ord/?($lord $lunt)
           ^+  +>
-          =>  ?:(=(ord p.cur) +>.$ (push ord))          ::  push list if new 
+          =>  ?:(=(ord p.cur) +>.$ (push ord))          ::  push list if new
           (entr %lime)
         --
       --
@@ -11625,7 +11715,7 @@
         =>  (sail &)                                    ::  tall-form
         %+  ifix  [(star ace) ;~(simu gap (easy))]      ::  look-ahead for gap
         (cook drop-top top-level)                        ::  list of tags
-        ::  
+        ::
       ::
       ++  whit                                          ::  whitespace
         (cold ' ' (plus ;~(pose (just ' ') (just '\0a'))))
@@ -11744,7 +11834,7 @@
           (cold [%base %bean] wut)
         ==
       :-  '~'
-        (cold [%base %null] sig)  
+        (cold [%base %null] sig)
       :-  '^'
         ;~  pose
           scab
@@ -12214,7 +12304,7 @@
       (most muck boog)
     ::
     ++  wasp                                            ::  $brcb aliases
-      ;~  pose  
+      ;~  pose
         %+  ifix
           [;~(plug lus tar muck) muck]
         (most muck ;~(gunk sym loaf))
@@ -12525,7 +12615,7 @@
     ::  XX performance: this makes the parser about 50% slower.
     ::  because we double-parse most of the spaces in the file.
     ::  just so we can do a postfix doc-comment.
-    ::  
+    ::
     ::  the correct solution to this problem is to unify the
     ::  parsing of docs with the parsing of comments/spaces.
     ::  but at this point we're pretty much in parser rewrite.
@@ -12537,7 +12627,7 @@
       apex:docs
       fel
       apse:docs
-    ==  
+    ==
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
     |.(~+((wart (wrap ;~(pose (norm | &) long lute apex:(sail &))))))
@@ -12636,7 +12726,7 @@
          $|  (nets p.mes -.p.som)
       ==
     ?>  hip
-    [[p.dor q.dor(+6 +7.som)] +>+<.$] 
+    [[p.dor q.dor(+6 +7.som)] +>+<.$]
   ::
   ++  neat                                              ::  type compliance
     |=  {typ/type som/(each vase ^)}
