@@ -43,6 +43,11 @@
     u3_noun
     u3kc_rip(u3_atom a, u3_atom b);
 
+  /* u3kc_swp(): reverse block order.
+  */
+    u3_noun
+    u3kc_swp(u3_atom a, u3_atom b);
+
 /* u3kd: tier 4 functions
 */
   /* u3kdb_get(): map get for key `b` in map `a` with u3_none.

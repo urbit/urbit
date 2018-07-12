@@ -66,6 +66,7 @@
     u3_noun u3wc_rep(u3_noun);
     u3_noun u3wc_rip(u3_noun);
     u3_noun u3wc_rsh(u3_noun);
+    u3_noun u3wc_swp(u3_noun);
     u3_noun u3wc_sqt(u3_noun);
     u3_noun u3wc_vor(u3_noun);
 

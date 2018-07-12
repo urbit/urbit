@@ -512,6 +512,7 @@ static u3j_core _143_tri_d[] =
   static u3j_harm _143_two_rep_a[] = {{".2", u3wc_rep, c3y}, {}};
   static u3j_harm _143_two_rip_a[] = {{".2", u3wc_rip, c3y}, {}};
   static u3j_harm _143_two_rsh_a[] = {{".2", u3wc_rsh, c3y}, {}};
+  static u3j_harm _143_two_swp_a[] = {{".2", u3wc_swp, c3y}, {}};
   static u3j_harm _143_two_sqt_a[] = {{".2", u3wc_sqt, c3y}, {}};
   static u3j_harm _143_two_vor_a[] = {{".2", u3wc_vor, c3y}, {}};
   static u3j_harm _143_two_xeb_a[] = {{".2", u3wc_xeb, c3y}, {}};
@@ -618,12 +619,14 @@ static u3j_core _143_two_d[] =
     { "rub", _143_two_rub_a },
     { "peg", _143_two_peg_a },
     { "pow", _143_two_pow_a },
+    { "swp", _143_two_swp_a },
     { "sqt", _143_two_sqt_a },
     { "vor", _143_two_vor_a },
     { "xeb", _143_two_xeb_a },
 
     { "by", 0, _143_two__by_d },
     { "in", 0, _143_two__in_d },
+    {}
   };
 
 
