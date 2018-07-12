@@ -71,6 +71,7 @@ jets_c_src = [
 'jets/c/pow.c',
 'jets/c/rap.c',
 'jets/c/rep.c',
+'jets/c/rev.c',
 'jets/c/rip.c',
 'jets/c/rsh.c',
 'jets/c/swp.c',

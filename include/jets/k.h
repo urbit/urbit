@@ -43,6 +43,11 @@
     u3_noun
     u3kc_rip(u3_atom a, u3_atom b);
 
+  /* u3kc_rev(): reverse block order, accounting for leading zeroes.
+  */
+    u3_noun
+    u3kc_rev(u3_atom boz, u3_atom len, u3_atom dat);
+
   /* u3kc_swp(): reverse block order.
   */
     u3_noun
