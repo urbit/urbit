@@ -189,7 +189,9 @@
     ==
   ++  sign
     |=  {key/cord bay/tape}  ^-  tape
-    (en-base64:mimes:html (swp 3 (hmac:crypto key (crip bay))))
+    %-  en-base64:mimes:html
+    %+  swp  3
+    (hmac-sha1t:hmac:crypto key (crip bay))
   ::
   ++  signing-key
     %-  crip

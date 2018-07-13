@@ -2418,17 +2418,6 @@
       =+  h=(shaz ha)
       =((scam bb ss) (ward u.rr (scam u.aa h)))
     --  ::ed
-  ::                                                    ::  ++hmac:crypto
-  ++  hmac                                              ::  HMAC-SHA1
-    |=  {key/@ mes/@}
-    =+  ip=(fil 3 64 0x36)
-    =+  op=(fil 3 64 0x5c)
-    =+  ^=  kex
-        ?:  (gth (met 3 key) 64)
-          (lsh 3 44 (shan key))
-        (lsh 3 (sub 64 (met 3 key)) (swp 3 key))
-    =+  inn=(shan (swp 3 (cat 3 (swp 3 mes) (mix ip kex))))
-    (shan (swp 3 (cat 3 inn (mix op kex))))
   ::                                                    ::
   ::::                    ++scr:crypto                  ::  (2b3) scrypt
     ::                                                  ::::
@@ -3280,6 +3269,59 @@
         ==
       --
     --  ::keccak
+  ::                                                    ::
+  ::::                    ++hmac:crypto                 ::  (2b8) hmac family
+    ::                                                  ::::
+  ++  hmac
+    ~%  %hmac  ..is  ~
+    =,  sha
+    =>  |%
+        ++  meet  |=([k=@ m=@] [[(met 3 k) k] [(met 3 m) m]])
+        ++  flip  |=([k=@ m=@] [(swp 3 k) (swp 3 m)])
+        --
+    |%
+    ::
+    ::  use with @
+    ::
+    ++  hmac-sha1     (cork meet hmac-sha1l)
+    ++  hmac-sha256   (cork meet hmac-sha256l)
+    ++  hmac-sha512   (cork meet hmac-sha512l)
+    ::
+    ::  use with @t
+    ::
+    ++  hmac-sha1t    (cork flip hmac-sha1)
+    ++  hmac-sha256t  (cork flip hmac-sha256)
+    ++  hmac-sha512t  (cork flip hmac-sha512)
+    ::
+    ::  use with byts
+    ::
+    ++  hmac-sha1l    (cury hmac sha-1l 64 20)
+    ++  hmac-sha256l  (cury hmac sha-256l 64 32)
+    ++  hmac-sha512l  (cury hmac sha-512l 128 64)
+    ::
+    ::  main logic
+    ::
+    ++  hmac
+      ~/  %hmac
+      ::  boq: block size in bytes used by haj
+      ::  out: bytes output by haj
+      |*  [[haj=$-([@u @] @) boq=@u out=@u] key=byts msg=byts]
+      ::  ensure key and message fit signaled lengths
+      =.  dat.key  (end 3 wid.key dat.key)
+      =.  dat.msg  (end 3 wid.msg dat.msg)
+      ::  keys longer than block size are shortened by hashing
+      =?  dat.key  (gth wid.key boq)  (haj wid.key dat.key)
+      =?  wid.key  (gth wid.key boq)  out
+      ::  keys shorter than block size are right-padded
+      =?  dat.key  (lth wid.key boq)  (lsh 3 (sub boq wid.key) dat.key)
+      ::  pad key, inner and outer
+      =+  kip=(mix dat.key (fil 3 boq 0x36))
+      =+  kop=(mix dat.key (fil 3 boq 0x5c))
+      ::  append inner padding to message, then hash
+      =+  (haj (add wid.msg boq) (add (lsh 3 wid.msg kip) dat.msg))
+      ::  prepend outer padding to result, hash again
+      (haj (add out boq) (add (lsh 3 out kop) -))
+    --  ::  hmac
   --  ::crypto
 ::                                                      ::::
 ::::                      ++unity                       ::  (2c) unit promotion
