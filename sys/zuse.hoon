@@ -3386,11 +3386,11 @@
         =*  hmc  hmac-sha256l:hmac
         =/  v  (fil 3 w 1)
         =/  k  0
-        =.  k  (hmc k w [+ -]:(as-octs (can 3 [w has] [w prv] [1 0x0] [w v] ~)))
-        =.  v  (hmc k w v w)
-        =.  k  (hmc k w [+ -]:(as-octs (can 3 [w has] [w prv] [1 0x1] [w v] ~)))
-        =.  v  (hmc k w v w)
-        (hmc k w v w)
+        =.  k  (hmc w^k (as-octs (can 3 [w has] [w prv] [1 0x0] [w v] ~)))
+        =.  v  (hmc w^k w^v)
+        =.  k  (hmc w^k (as-octs (can 3 [w has] [w prv] [1 0x1] [w v] ~)))
+        =.  v  (hmc w^k w^v)
+        (hmc w^k w^v)
       ::
       ++  ecdsa-raw-sign                                ::  generate signature
         |=  [has=@uvI prv=@]
