@@ -33,7 +33,7 @@
       CC_SHA1_Update(&ctx_h, fat_y, wid);
       CC_SHA1_Final(dig_y, &ctx_h);
 #else
-      SHA1_CTX ctx_h;
+      SHA_CTX ctx_h;
 
       SHA1_Init(&ctx_h);
       SHA1_Update(&ctx_h, fat_y, wid);
