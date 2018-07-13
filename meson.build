@@ -106,6 +106,7 @@ jets_e_src = [
 'jets/e/aesc.c',
 'jets/e/cue.c',
 'jets/e/fl.c',
+'jets/e/hmac.c',
 'jets/e/jam.c',
 'jets/e/mat.c',
 'jets/e/mink.c',

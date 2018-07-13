@@ -89,6 +89,13 @@ static u3j_core _143_hex_coed_d[] =
     {}
   };
 
+  static u3j_harm _143_hex_hmac_a[] = {{".2", u3we_hmac}, {}};
+
+  static u3j_core _143_hex_hmac_d[] =
+    { { "hmac", _143_hex_hmac_a },
+      {}
+    };
+
 static u3j_core _143_hex_d[] =
   { { "down", 0, _143_hex_down_d },
     { "lore", _143_hex_lore_a },
@@ -96,6 +103,7 @@ static u3j_core _143_hex_d[] =
     { "lune", _143_hex_lune_a },
     { "coed", 0, _143_hex_coed_d },
     { "aes", 0, _143_hex_aes_d },
+    { "hmac", 0, _143_hex_hmac_d },
     {}
   };
 
