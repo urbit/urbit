@@ -145,6 +145,7 @@
     u3_noun u3we_shay(u3_noun);
     u3_noun u3we_shas(u3_noun);
     u3_noun u3we_shal(u3_noun);
+    u3_noun u3we_sha1(u3_noun);
 
     u3_noun u3weo_raw(u3_noun);
 

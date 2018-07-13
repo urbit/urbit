@@ -118,6 +118,7 @@ jets_e_src = [
 'jets/e/rub.c',
 'jets/e/scr.c',
 'jets/e/shax.c',
+'jets/e/sha1.c',
 'jets/e/lore.c',
 'jets/e/loss.c',
 'jets/e/lune.c',

@@ -446,6 +446,12 @@ static u3j_core _143_qua_d[] =
       {}
     };
 
+    static u3j_harm _143_tri__sha_sha1_a[] = {{".2", u3we_sha1}, {}};
+  static u3j_core _143_tri__sha_d[] =
+    { { "sha1", _143_tri__sha_sha1_a },
+      {}
+    };
+
   static u3j_harm _143_tri_shax_a[] = {{".2", u3we_shax}, {}};
   static u3j_harm _143_tri_shay_a[] = {{".2", u3we_shay}, {}};
   static u3j_harm _143_tri_shas_a[] = {{".2", u3we_shas}, {}};
@@ -460,6 +466,7 @@ static u3j_core _143_tri_d[] =
     { "rq", 0, _143_tri__rq_d },
     { "rh", 0, _143_tri__rh_d },
     { "og", 0, _143_tri__og_d },
+    { "sha", 0, _143_tri__sha_d },
     { "shax", _143_tri_shax_a },
     { "shay", _143_tri_shay_a },
     { "shas", _143_tri_shas_a },
