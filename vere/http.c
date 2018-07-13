@@ -1079,6 +1079,14 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
                           "ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:"
                           "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
 
+  // enable ALPN for HTTP 2 support
+#if H2O_USE_ALPN
+  {
+    SSL_CTX_set_ecdh_auto(tls_u, 1);
+    h2o_ssl_register_alpn_protocols(tls_u, h2o_http2_alpn_protocols);
+  }
+#endif
+
   {
     BIO* bio_u = BIO_new_mem_buf(key_u.base, key_u.len);
     // XX PKCS8 PEM_read_bio_PrivateKey
