@@ -746,12 +746,18 @@ _http_serv_free(u3_http* htp_u)
     _http_h2o_context_dispose(&h2o_u->ctx_u);
 
     // NOTE: free deferred to allow timers to be closed
+    // this is a heavy-handed workaround for the lack of
+    // close callbacks in h2o_timer_t
+    // it's unpredictable how many event-loop turns will
+    // be required to finish closing the underlying uv_timer_t
+    // and we can't free until that's done (or we have UB)
+    // testing reveals 5s to be a long enough deferral
     uv_timer_t* tim_u = c3_malloc(sizeof(*tim_u));
 
     tim_u->data = htp_u;
 
     uv_timer_init(u3L, tim_u);
-    uv_timer_start(tim_u, http_serv_free_cb, 0, 0);
+    uv_timer_start(tim_u, http_serv_free_cb, 5000, 0);
   }
 }
 
