@@ -21,18 +21,10 @@
 #include "vere/vere.h"
 
 static        void _term_spinner_cb(void*);
-static        void _term_read_tn_cb(uv_stream_t* tcp_u,
-                                    ssize_t      siz_i,
-                                    const uv_buf_t *     buf_u);
 static        void _term_read_cb(uv_stream_t* tcp_u,
                                  ssize_t      siz_i,
                                  const uv_buf_t *     buf_u);
 static inline void _term_suck(u3_utty*, const c3_y*, ssize_t);
-
-
-#define _T_ECHO 1    //  local echo
-#define _T_CTIM 3    //  suppress GA/char-at-a-time
-#define _T_NAWS 31   //  negotiate about window size
 
 #define _SPIN_COOL_US 500000  //  spinner activation delay when cool
 #define _SPIN_WARM_US 50000   //  spinner activation delay when warm
