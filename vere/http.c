@@ -1975,13 +1975,22 @@ _proxy_ward_free(uv_handle_t* han_u)
   free(rev_u);
 }
 
+/* _proxy_ward_close_timer(): close ward timer
+*/
+static void
+_proxy_ward_close_timer(uv_handle_t* han_u)
+{
+  u3_ward* rev_u = han_u->data;
+
+  uv_close((uv_handle_t*)&rev_u->tim_u, _proxy_ward_free);
+}
+
 /* _proxy_ward_close(): close ward (ship-specific listener)
 */
 static void
 _proxy_ward_close(u3_ward* rev_u)
 {
-  uv_timer_stop((uv_timer_t*)&rev_u->tim_u);
-  uv_close((uv_handle_t*)&rev_u->tcp_u, _proxy_ward_free);
+  uv_close((uv_handle_t*)&rev_u->tcp_u, _proxy_ward_close_timer);
 }
 
 /* _proxy_ward_new(): allocate reverse proxy listener
