@@ -803,7 +803,11 @@
   |=  {a/bloq b/@u c/@}
   (div c (bex (mul (bex a) b)))
 ::
-++  swp  |=({a/bloq b/@} (rep a (flop (rip a b))))      ::  reverse bloq order
+++  swp                                                 ::  reverse bloq order
+  ~/  %swp
+  |=  {a/bloq b/@}
+  (rep a (flop (rip a b)))
+::
 ++  xeb                                                 ::  binary logarithm
   ~/  %xeb
   |=  a/@
