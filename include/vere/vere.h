@@ -140,6 +140,14 @@
         struct _u3_warc* pre_u;             //  previous in list
       } u3_warc;
 
+    /* u3_wcon: candidate u3_ward upstream connection
+    */
+      typedef struct _u3_wcon {
+        uv_tcp_t         upt_u;             //  connection handle
+        struct _u3_ward* rev_u;             //  connecting to ward
+        struct _u3_wcon* nex_u;             //  next in list
+      } u3_wcon;
+
     /* u3_ward: reverse, reverse TCP proxy (ship-specific listener)
     */
       typedef struct _u3_ward {
@@ -148,6 +156,7 @@
         u3_atom          sip;               //  reverse proxy for ship
         c3_s             por_s;             //  listening on port
         uv_buf_t         non_u;             //  nonce
+        struct _u3_wcon* won_u;             //  candidate upstream connections
         struct _u3_pcon* con_u;             //  initiating connection
         struct _u3_ward* nex_u;             //  next in list
         struct _u3_ward* pre_u;             //  previous in list

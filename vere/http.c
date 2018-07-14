@@ -1934,6 +1934,73 @@ _proxy_loop_connect(u3_pcon* con_u)
   }
 }
 
+/* _proxy_wcon_link(): link wcon to ward.
+*/
+static void
+_proxy_wcon_link(u3_wcon* won_u, u3_ward* rev_u)
+{
+  won_u->nex_u = rev_u->won_u;
+  rev_u->won_u = won_u;
+}
+
+/* _proxy_wcon_unlink(): unlink wcon from ward.
+*/
+static void
+_proxy_wcon_unlink(u3_wcon* won_u)
+{
+  u3_ward* rev_u = won_u->rev_u;
+
+  if ( rev_u->won_u == won_u ) {
+    rev_u->won_u = won_u->nex_u;
+  }
+  else {
+    u3_wcon* pre_u = rev_u->won_u;
+
+    //  XX glories of linear search
+    //
+    while ( 0 != pre_u ) {
+      if ( pre_u->nex_u == won_u ) {
+        pre_u->nex_u = won_u->nex_u;
+      }
+      else pre_u = pre_u->nex_u;
+    }
+  }
+}
+
+/* _proxy_wcon_free(): free ward upstream candidate.
+*/
+static void
+_proxy_wcon_free(uv_handle_t* han_u)
+{
+  u3_wcon* won_u = han_u->data;
+
+  // Note: not unlinked here, freed concurrent with u3_ward
+  free(won_u);
+}
+
+/* _proxy_wcon_close(): close ward upstream candidate.
+*/
+static void
+_proxy_wcon_close(u3_wcon* won_u)
+{
+  uv_read_stop((uv_stream_t*)&won_u->upt_u);
+  uv_close((uv_handle_t*)&won_u->upt_u, _proxy_wcon_free);
+}
+
+/* _proxy_wcon_new(): allocate ward upstream candidate.
+*/
+static u3_wcon*
+_proxy_wcon_new(u3_ward* rev_u)
+{
+  u3_wcon* won_u = c3_malloc(sizeof(*won_u));
+  won_u->rev_u = rev_u;
+  won_u->upt_u.data = won_u;
+
+  _proxy_wcon_link(won_u, rev_u);
+
+  return won_u;
+}
+
 /* _proxy_ward_link(): link ward to listener.
 */
 static void
@@ -2004,6 +2071,11 @@ _proxy_ward_close_timer(uv_handle_t* han_u)
 static void
 _proxy_ward_close(u3_ward* rev_u)
 {
+  while ( 0 != rev_u->won_u ) {
+    _proxy_wcon_close(rev_u->won_u);
+    rev_u->won_u = rev_u->won_u->nex_u;
+  }
+
   uv_close((uv_handle_t*)&rev_u->tcp_u, _proxy_ward_close_timer);
 }
 
@@ -2018,6 +2090,7 @@ _proxy_ward_new(u3_pcon* con_u, u3_atom sip)
   rev_u->con_u = con_u;
   rev_u->sip = sip;
   rev_u->por_s = 0; // set after opened
+  rev_u->won_u = 0;
   rev_u->nex_u = 0;
   rev_u->pre_u = 0;
 
@@ -2026,48 +2099,55 @@ _proxy_ward_new(u3_pcon* con_u, u3_atom sip)
   return rev_u;
 }
 
-/* _proxy_ward_peek_read_cb(): authenticate connection by checking nonce.
+/* _proxy_wcon_peek_read_cb(): authenticate connection by checking nonce.
 */
 static void
-_proxy_ward_peek_read_cb(uv_stream_t* upt_u,
+_proxy_wcon_peek_read_cb(uv_stream_t* upt_u,
                          ssize_t      siz_w,
                          const uv_buf_t* buf_u)
 {
-  u3_ward* rev_u = upt_u->data;
+  u3_wcon* won_u = upt_u->data;
+  u3_ward* rev_u = won_u->rev_u;
 
   if ( 0 > siz_w ) {
     if ( UV_EOF != siz_w ) {
       uL(fprintf(uH, "proxy: ward peek: %s\n", uv_strerror(siz_w)));
     }
-    uv_close((uv_handle_t*)upt_u, (uv_close_cb)free);
+    _proxy_wcon_close(won_u);
   }
   else {
     uv_read_stop(upt_u);
 
     c3_w len_w = rev_u->non_u.len;
 
+    // XX await further reads if siz_w < len_w ?
     if ( ((len_w + 1) != siz_w) ||
          (len_w != buf_u->base[0]) ||
          (0 != memcmp(rev_u->non_u.base, buf_u->base + 1, len_w)) ) {
-      uL(fprintf(uH, "proxy: ward peek fail\n"));
-      uv_close((uv_handle_t*)upt_u, (uv_close_cb)free);
+      uL(fprintf(uH, "proxy: ward auth fail\n"));
+      _proxy_wcon_unlink(won_u);
+      _proxy_wcon_close(won_u);
     }
     else {
-      upt_u->data = rev_u->con_u;
-      rev_u->con_u->upt_u = (uv_tcp_t*)upt_u;
-      _proxy_fire(rev_u->con_u);
+      _proxy_wcon_unlink(won_u);
+
+      u3_pcon* con_u = rev_u->con_u;
+      con_u->upt_u = (uv_tcp_t*)&won_u->upt_u;
+      con_u->upt_u->data = con_u;
+
+      _proxy_fire(con_u);
       _proxy_ward_close(rev_u);
     }
   }
 }
 
-/* _proxy_ward_peek(): peek at a new incoming connection
+/* _proxy_wcon_peek(): peek at a new incoming connection
 */
 static void
-_proxy_ward_peek(uv_tcp_t* upt_u)
+_proxy_wcon_peek(u3_wcon* won_u)
 {
-  uv_read_start((uv_stream_t*)upt_u,
-                _proxy_alloc, _proxy_ward_peek_read_cb);
+  uv_read_start((uv_stream_t*)&won_u->upt_u,
+                _proxy_alloc, _proxy_wcon_peek_read_cb);
 }
 
 /* _proxy_ward_accept(): accept new connection on ward
@@ -2075,23 +2155,19 @@ _proxy_ward_peek(uv_tcp_t* upt_u)
 static void
 _proxy_ward_accept(u3_ward* rev_u)
 {
-  uv_tcp_t* upt_u = c3_malloc(sizeof(*upt_u));
+  u3_wcon* won_u = _proxy_wcon_new(rev_u);
 
-  // XX use linked list to avoid leaking
-  // ward upstream candidate connections
-  upt_u->data = rev_u;
-
-  uv_tcp_init(u3L, upt_u);
+  uv_tcp_init(u3L, &won_u->upt_u);
 
   c3_i sas_i;
 
   if ( 0 != (sas_i = uv_accept((uv_stream_t*)&rev_u->tcp_u,
-                               (uv_stream_t*)upt_u)) ) {
+                               (uv_stream_t*)&won_u->upt_u)) ) {
     uL(fprintf(uH, "proxy: accept: %s\n", uv_strerror(sas_i)));
-    _proxy_conn_close(rev_u->con_u);
+    _proxy_wcon_close(won_u);
   }
   else {
-    _proxy_ward_peek(upt_u);
+    _proxy_wcon_peek(won_u);
   }
 }
 
@@ -2103,8 +2179,7 @@ _proxy_ward_listen_cb(uv_stream_t* tcp_u, c3_i sas_i)
   u3_ward* rev_u = (u3_ward*)tcp_u;
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "proxy: listen_cb: %s\n", uv_strerror(sas_i)));
-    _proxy_conn_close(rev_u->con_u);
+    uL(fprintf(uH, "proxy: ward: %s\n", uv_strerror(sas_i)));
   }
   else {
     _proxy_ward_accept(rev_u);
@@ -2121,6 +2196,7 @@ _proxy_ward_timer_cb(uv_timer_t* tim_u)
   if ( 0 != rev_u ) {
     uL(fprintf(uH, "proxy: ward expired: %d\n", rev_u->por_s));
     _proxy_ward_close(rev_u);
+    _proxy_conn_close(rev_u->con_u);
   }
 }
 
