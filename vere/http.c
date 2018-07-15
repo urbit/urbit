@@ -1141,24 +1141,26 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
 static void
 _http_write_ports_file(c3_c *pax_c)
 {
-  c3_i    pal_i;
-  c3_c    *paf_c;
-  c3_i    por_i;
-  u3_http *htp_u;
+  c3_c* nam_c = ".http.ports";
+  c3_w len_w = 1 + strlen(pax_c) + 1 + strlen(nam_c);
 
-  pal_i = strlen(pax_c) + 13; /* includes NUL */
-  paf_c = u3a_malloc(pal_i);
-  snprintf(paf_c, pal_i, "%s/%s", pax_c, ".http.ports");
+  c3_c* paf_c = c3_malloc(len_w);
+  snprintf(paf_c, len_w, "%s/%s", pax_c, nam_c);
 
-  por_i = open(paf_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-  u3a_free(paf_c);
+  c3_i por_i = open(paf_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+  free(paf_c);
 
-  for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
+  u3_http* htp_u = u3_Host.htp_u;
+
+  while ( 0 != htp_u ) {
+    // XX write proxy ports instead?
     if ( 0 < htp_u->por_s ) {
       dprintf(por_i, "%u %s %s\n", htp_u->por_s,
                      (c3y == htp_u->sec) ? "secure" : "insecure",
                      (c3y == htp_u->lop) ? "loopback" : "public");
     }
+
+    htp_u = htp_u->nex_u;
   }
 
   c3_sync(por_i);
@@ -1170,15 +1172,14 @@ _http_write_ports_file(c3_c *pax_c)
 static void
 _http_release_ports_file(c3_c *pax_c)
 {
-  c3_i pal_i;
-  c3_c *paf_c;
+  c3_c* nam_c = ".http.ports";
+  c3_w len_w = 1 + strlen(pax_c) + 1 + strlen(nam_c);
 
-  pal_i = strlen(pax_c) + 13; /* includes NUL */
-  paf_c = u3a_malloc(pal_i);
-  snprintf(paf_c, pal_i, "%s/%s", pax_c, ".http.ports");
+  c3_c* paf_c = c3_malloc(len_w);
+  snprintf(paf_c, len_w, "%s/%s", pax_c, nam_c);
 
   unlink(paf_c);
-  u3a_free(paf_c);
+  free(paf_c);
 }
 
 /* _http_czar_host(): galaxy hostname as (unit host:eyre)
