@@ -6,17 +6,20 @@
 ::
 |%
 +=  move  (pair bone card)
-+=  poke  $%  [%dns-bind for=ship him=ship target]
-              [%dns-bond for=ship him=ship turf]
-              [%dns-authority authority]
-              :: XX some other notification channel?
-              [%helm-send-hi ship (unit tape)]
-          ==
-+=  card  $%  [%tend wire ~]
-              [%poke wire dock poke]
-              [%rule wire %turf %put turf]
-              [%hiss wire [~ ~] %httr %hiss hiss:eyre]
-          ==
++=  poke
+  $%  [%dns-bind for=ship him=ship target]
+      [%dns-bond for=ship him=ship turf]
+      [%dns-authority authority]
+      :: XX some other notification channel?
+      [%helm-send-hi ship (unit tape)]
+  ==
++=  card
+  $%  [%tend wire ~]
+      [%wait wire @da]
+      [%poke wire dock poke]
+      [%rule wire %turf %put turf]
+      [%hiss wire [~ ~] %httr %hiss hiss:eyre]
+  ==
 :: +state: complete app state
 ::
 +=  state
@@ -192,6 +195,11 @@
     =/  him=ship  (slav %p i.t.wir)
     ?:  =(200 p.rep)
       abet:~(bind tell [him (~(get by per) him)])
+    :: cttp timeout
+    ?:  =(504 p.rep)
+      :: XX backoff, refactor
+      :_  this  :_  ~
+      [ost.bow %wait wir (add now.bow ~m10)]
     :: XX specific messages per status code
     ~&  %direct-confirm-fail
     abet:(~(fail tell [him (~(get by per) him)]) %failed-request)
@@ -219,6 +227,16 @@
     %-  (slog saw)
     abet:(~(fail tell [him (~(get by per) him)]) %crash)
   ==
+:: +wake: timer callback
+::
+++  wake
+  |=  [wir=wire ~]
+  ^-  (quip move _this)
+  ?.  ?=([%check @ ~] wir)
+    ~&  [%strange-wake wir]
+    [~ this]
+  =/  him=ship  (slav %p i.t.wir)
+  abet:~(check tell [him (~(get by per) him)])
 ::
 :: +poke-dns-authority: configure self as an authority
 ::
@@ -405,7 +423,7 @@
             !=(tar tar.u.rel)
         ==
       this
-    =.  rel  `[wen=now.bow adr bon=| tar]
+    =.  rel  `[wen=now.bow adr bon=| try=0 tar]
     ?:(?=(%indirect -.tar) bind check)
   :: +check: confirm %direct target is accessible
   ::
@@ -415,6 +433,9 @@
     ?>  ?=(%direct -.tar.u.rel)
     ?:  (reserved p.tar.u.rel)
       (fail %reserved-ip)
+    ?:  (gth try.u.rel 2)
+      (fail %unreachable)
+    =.  try.u.rel  +(try.u.rel)
     =/  wir=wire
       /check/(scot %p him)
     =/  url=purl:eyre
