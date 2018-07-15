@@ -1089,22 +1089,19 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
 
   {
     BIO* bio_u = BIO_new_mem_buf(key_u.base, key_u.len);
-    // XX PKCS8 PEM_read_bio_PrivateKey
-    RSA* rsa_u = PEM_read_bio_RSAPrivateKey(bio_u, 0, 0, 0);
+    EVP_PKEY* pky_u = PEM_read_bio_PrivateKey(bio_u, 0, 0, 0);
+    c3_i sas_i = SSL_CTX_use_PrivateKey(tls_u, pky_u);
 
+    EVP_PKEY_free(pky_u);
     BIO_free(bio_u);
 
-    if( (0 == rsa_u) ||
-        (0 == SSL_CTX_use_RSAPrivateKey(tls_u, rsa_u)) ) {
+    if( 0 == sas_i ) {
       uL(fprintf(uH, "http: load private key failed:\n"));
       ERR_print_errors_fp(uH);
       uL(1);
 
-      if ( 0 != rsa_u ) {
-        RSA_free(rsa_u);
-      }
-
       SSL_CTX_free(tls_u);
+
       return 0;
     }
   }
@@ -1112,29 +1109,20 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
   {
     BIO* bio_u = BIO_new_mem_buf(cer_u.base, cer_u.len);
     X509* xer_u = PEM_read_bio_X509_AUX(bio_u, 0, 0, 0);
+    c3_i sas_i = SSL_CTX_use_certificate(tls_u, xer_u);
 
-    if ( (0 == xer_u) ||
-         (0 == SSL_CTX_use_certificate(tls_u, xer_u)) ) {
+    X509_free(xer_u);
+
+    if( 0 == sas_i ) {
       uL(fprintf(uH, "http: load certificate failed:\n"));
       ERR_print_errors_fp(uH);
       uL(1);
 
       BIO_free(bio_u);
-
-      if ( 0 != xer_u ) {
-        X509_free(xer_u);
-      }
-
       SSL_CTX_free(tls_u);
 
       return 0;
     }
-
-    // freed on success too
-    X509_free(xer_u);
-
-    // XX require 1.02 or newer
-    // SSL_CTX_clear_chain_certs(tls_u);
 
     // get any additional CA certs, ignoring errors
     while ( 0 != (xer_u = PEM_read_bio_X509(bio_u, 0, 0, 0)) ) {
