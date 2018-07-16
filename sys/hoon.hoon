@@ -485,6 +485,7 @@
 ++  tang  (list tank)                                   ::  bottom-first error
 ++  tank  $~  [%leaf ~]                                 ::
           $%  {$leaf p/tape}                            ::  printing formats
+              {$plum p/plum}                            ::  
               $:  $palm                                 ::  backstep list
                   p/{p/tape q/tape r/tape s/tape}       ::
                   q/(list tank)                         ::
@@ -4170,12 +4171,304 @@
   |=  {{tab/@ edg/@} tac/tank}  ^-  wall
   (~(win re tac) tab edg)
 ::
+++  plume
+  |_  =plum
+  ::
+  ::  +flat: print as a single line
+  ::
+  ++  flat
+    text:linear
+  ::
+  ::  +tall: print as multiple lines
+  ::
+  ++  tall
+    ^-  wain
+    %+  turn  window
+    |=  [indent=@ud text=tape]
+    (crip (runt [indent ' '] text))
+  ::
+  ::  +adjust: adjust lines to right
+  ::
+  ++  adjust
+    |=  [tab=@ud =(list [length=@ud text=tape])]
+    (turn list |=([@ud tape] [(add tab +<-) +<+]))
+  ::  
+  ::  +window: print as list of tabbed lines
+  ::
+  ++  window
+    ^-  (list [indent=@ud text=tape])
+    ::  memoize for random access
+    ::
+    ~+  
+    ::  trivial text
+    ::
+    ?@  plum  [0 (trip plum)]~
+    ?-  -.plum
+      ::  %|: text wrap
+      ::
+      %|  ::  wrapping stub, should wrap text to 40 characters
+          ::
+          [0 +:linear]~
+      ::
+      ::  %&: text tree
+      ::
+      %&  ::  trial: attempt at wide hint
+          ::
+          =/  trial  ?~(wide.plum ~ [~ u=linear])
+          ::  if wide hint is available or optimal
+          ::
+          ?:  ?&  ?=(^ trial)
+                  ?|  ?=(~ tall.plum)
+                      (lte length.u.trial 40)
+              ==  ==
+            ::  then produce wide hint
+            ::
+            [0 text.u.trial]~
+          ::  else assert tall style (you gotta set either wide or tall)
+          ::
+          ?>  ?=(^ tall.plum)
+          ::  blocks:  subwindows
+          ::  prelude: intro as tape
+          ::
+          =/  blocks   (turn list.plum |=(=^plum window(plum plum)))
+          =/  prelude  (trip intro.u.tall.plum)
+          ::  if, :indef is empty
+          ::
+          ?~  indef.u.tall.plum
+            ::  then, print in sloping mode
+            ::
+            ::  if, no children
+            ::
+            ?:  =(~ blocks)
+              ::  then, the prelude if any
+              ::
+              ?~(prelude ~ [0 prelude]~)
+            ::  else, format children and inject any prelude
+            ::
+            ^-  (list [indent=@ud text=tape])
+            ::  concatenate child blocks into a single output
+            ::
+            %-  zing
+            ::  count: number of children
+            ::  index: current child from 1 to n
+            ::
+            =/  count  (lent blocks)
+            =/  index  1
+            |-  ^+  blocks
+            ?~  blocks  ~
+            :_  $(blocks t.blocks, index +(index))
+            ^-  (list [indent=@ud text=tape])
+            ::  indent: backstep indentation level
+            ::
+            =/  indent  (mul 2 (sub count index))
+            ::  unless, we're on the first block
+            ::
+            ?.  =(1 index)
+              ::  else, apply normal backstep indentation
+              ::
+              (adjust indent i.blocks)
+            ::  then, apply and/or inject prelude
+            ::
+            ::    this fixes the naive representations
+            ::
+            ::      :+  
+            ::          foo
+            ::        bar
+            ::      baz
+            ::
+            ::    and
+            ::
+            ::      :-
+            ::        foo
+            ::      bar
+            ::
+            =.  indent  (max indent (add 2 (lent prelude)))
+            =.  i.blocks  (adjust indent i.blocks)
+            ?~  i.blocks  ?~(prelude ~ [0 prelude]~)
+            ?~  prelude   i.blocks
+            :_  t.i.blocks
+            :-  0
+            %+  weld  prelude
+            (runt [(sub indent.i.i.blocks (lent prelude)) ' '] text.i.i.blocks)
+          ::
+          ::  else, print in vertical mode
+          :: 
+          ::  prefix: before each entry
+          ::  finale: after all entries
+          ::
+          =/  prefix  (trip sigil.u.indef.u.tall.plum)
+          =/  finale  (trip final.u.indef.u.tall.plum)
+          ::  if, no children, then, just prelude and finale
+          ::
+          ?:  =(~ blocks)
+            %+  weld
+              ?~(prelude ~ [0 prelude]~)
+            ?~(finale ~ [0 finale]~)
+          ::  if, no :prefix
+          ::
+          ?:  =(~ prefix)
+            ::  kids: flat list of child lines
+            ::  tab:  amount to indent kids
+            ::
+            =/  kids  `(list [indent=@ud text=tape])`(zing blocks)
+            =*  tab   =+((lent prelude) ?+(- 2 %0 0, %1 2, %2 4))
+            ::  indent kids by tab
+            ::
+            =.  kids  (turn kids |=([@ud tape] [(add tab +<-) +<+]))
+            ::  prepend or inject prelude
+            ::
+            =.  kids  
+              ?:  =(~ prelude)  kids
+              ::  if, no kids, or prelude doesn't fit
+              ::
+              ?:  |(?=(~ kids) (gte +((lent prelude)) indent.i.kids))
+                ::  don't inject, just add to head if needed
+                ::
+                [[0 prelude] kids]
+              ::  inject: prelude 
+              ::
+              =*  inject  %+  weld
+                            prelude
+                          %+  runt 
+                            [(sub indent.i.kids (lent prelude)) ' ']
+                          text.i.kids
+              [[0 inject] t.kids]
+            ::  append finale
+            ::
+            ?~  finale  kids
+            (weld kids ^+(kids [0 finale]~))
+          ::  else, with :prefix
+          ::
+          ::  append :finale 
+          ::
+          =-  ?~  finale  -
+              (weld - ^+(- [0 finale]~))
+          ^-  (list [indent=@ud text=tape])
+          ::  clear: clearance needed to miss prefix
+          ::
+          =/  clear  (add 2 (lent prefix))
+          %-  zing
+          ::  combine each subtree with the prefix
+          ::
+          %+  turn  blocks
+          |=  =(list [indent=@ud text=tape])
+          ^+  +<
+          ::  tab: depth to indent
+          ::
+          =*  tab  ?~(list 0 (sub clear (min clear indent.i.list)))
+          =.  list  (turn list |=([@ud tape] [(add tab +<-) +<+]))
+          ?~  list  ~
+          :_  t.list
+          :-  0
+          %+  weld  
+            prefix
+          (runt [(sub indent.i.list (lent prefix)) ' '] text.i.list)
+    ==
+  ::
+  ::  +linear: make length and tape
+  ::
+  ++  linear
+    ^-  $:  length=@ud
+            text=tape
+        ==
+    ::  memoize for random access
+    ::
+    ~+  
+    ::  atomic plums are just text
+    ::
+    ?@  plum  [(met 3 plum) (trip plum)]
+    ?-  -.plum
+      ::  %|: text wrap
+      ::
+      %|  ::  lay the text out flat, regardless of length
+          ::
+          |-  ^-  [length=@ud text=tape]
+          ?~  list.plum  [0 ~]
+          =/  next  $(list.plum t.list.plum)
+          =/  this  [length=(met 3 i.list.plum) text=(trip i.list.plum)]
+          :-  (add +(length.this) length.next)
+          (weld text.this `tape`[' ' text.next])
+      ::
+      ::  %&: text tree
+      ::
+      %&  ::  if there is no wide representation
+          ::
+          ?~  wide.plum
+            ::  then lay out a window, then separate with double-spaces
+            ::
+            =/  window  window           
+            |-  ^-  [length=@ud text=tape]
+            ?~  window  [0 ~]
+            =/  next  $(window t.window)
+            :-  :(add (lent text.i.window) 2 length.next)
+            ?~(text.next text.i.window :(weld text.i.window "  " text.next))
+          ::
+          ::  else use wide layout
+          ::
+          =-  ::  add enclosure if any
+              ::
+              ?~  enclose.u.wide.plum  body
+              =*  clamps  u.enclose.u.wide.plum
+              =/  close  [(trip -.clamps) (trip +.clamps)]
+              :-  :(add length.body (lent -.close) (lent +.close))
+              :(weld -.close text.body +.close) 
+          ::
+          ::  body: body of wide rendering 
+          :: 
+          ^=  body
+          =/  stop  (trip delimit.u.wide.plum)
+          |-  ^-  [length=@ud text=tape]
+          ?~  list.plum  [0 ~]
+          =/  next  $(list.plum t.list.plum)
+          =/  this  linear(plum i.list.plum) 
+          ?~  text.next  this
+          :-  :(add length.this (lent stop) length.next)
+          :(weld text.this stop text.next)
+    ==
+  --
+::  highly unsatisfactory temporary tank printer
+::
+++  plum-to-tank
+  |=  =plum
+  ^-  tank
+  ?@  plum  [%leaf (trip plum)]
+  ?-  -.plum
+    %|  :+  %rose
+          ["" " " ""]
+        (turn list.plum |=(@ta [%leaf (trip +<)]))
+    %&  =/  list  (turn list.plum ..$)
+        ?~  tall.plum
+          ?>  ?=(^ wide.plum)
+          =?  enclose.u.wide.plum  ?=(~ enclose.u.wide.plum)  `['{' '}']
+          :+  %rose
+            :*  (trip delimit.u.wide.plum)
+                (trip +<:enclose.u.wide.plum)
+                (trip +>:enclose.u.wide.plum)
+            ==
+          list
+        ?:  ?=(^ indef.u.tall.plum)
+          :+  %rose
+            :*  (trip sigil.u.indef.u.tall.plum)
+                (weld (trip intro.u.tall.plum) "[")
+                (weld "]" (trip final.u.indef.u.tall.plum))
+            ==
+          list
+        :+  %palm
+          :*  (weld (trip intro.u.tall.plum) "(")
+              ""
+              ""
+              ")"
+          ==
+        list
+  ==
+::
 ++  re
   |_  tac/tank
   ++  ram
     ^-  tape
     ?-    -.tac
         $leaf  p.tac
+        $plum  ~(flat plume p.tac)
         $palm  ram(tac [%rose [p.p.tac (weld q.p.tac r.p.tac) s.p.tac] q.tac])
         $rose
       %+  weld
@@ -4202,6 +4495,7 @@
       ^-  tank
       ?-  -.tac
         %leaf  [%leaf (hew p.tac)]
+        %plum  tac    ::  XX consider
         %palm  :+  %palm
                  [(hew p.p.tac) (hew q.p.tac) (hew r.p.tac) (hew s.p.tac)]
                (turn q.tac act)
@@ -4227,6 +4521,7 @@
     |^  |-  ^-  wall
         ?-    -.tac
             $leaf  (rig p.tac)
+            $plum  (turn ~(tall plume p.tac) |=(=cord (trip cord)))
             $palm
           ?:  fit
             (rig ram)
@@ -5728,26 +6023,34 @@
           ==                                            ::
 +$  pica  (pair ? cord)                                 ::  & prose, | code
 +$  palo  (pair vein opal)                              ::  wing trace, match
-+$  plot                                                ::  output analysis
++$  plat                                                ::  
+          $?  %hoon                                     ::
+              %type                                     ::
+              %nock                                     ::
+              %tank                                     ::
+          ==                                            ::
++$  plot                                                ::  externalization
           $~  [%base %noun]                             ::
-          $%  [%base p=base]                            ::  base type
-              [%core p=plot q=@udF r=(set term)]        ::  core with arms, mug
-              [%leaf p=@tas]                            ::  constant
-              [%loop p=@ud]                             ::  repetition point
-              [%list p=plot]                            ::  i-t list
-              [%many p=(list plot)]                     ::  tuple
-              [%mark p=stud q=plot]                     ::  famous format
-              [%name p=term q=plot]                     ::  name attached
-              [%pair p=plot q=plot]                     ::  pq cell
+          $%  [%base =base]                             ::  base value
+              [%core =plot count=@ud code=@udF]         ::  any core
+              [%deep =plat]                             ::  stand
+              [%gate =plot =plot]                       ::  gate sample/context
+              [%leaf =@tas]                             ::  constant
+              [%loop =@ud]                              ::  repetition point
+              [%list =plot]                             ::  i-t list
+              [%many =(list plot)]                      ::  tuple
+              [%mark =stud =plot]                       ::  standard
+              [%name =term =plot]                       ::  name attached
+              [%pair =plot =plot]                       ::  pq cell
               [%path ~]                                 ::  with @ta segments
-              [%pick p=(list plot)]                     ::  overlap
-              [%pool p=(map @ud plot)]                  ::  repetition pool
-              [%qual p=plot q=plot r=plot]              ::  formal 
-              [%quil p=plot q=plot r=plot s=plot t=plot]::  formal quintuple
+              [%pick =(list plot)]                      ::  overlap
+              [%pool =plot =(map @ud plot)]             ::  repetition pool
+              [%qual =plot =plot =plot =plot]           ::  formal quadruple
+              [%quil =plot =plot =plot =plot =plot]     ::  formal quintuple
               [%tape ~]                                 ::  utf8 bytes
               [%tour ~]                                 ::  utf32 graphemes
               [%tree p=plot]                            ::  n-l-r tree
-              [%trip p=plot q=plot r=plot s=plot]       ::  formal triple
+              [%trip p=plot q=plot r=plot]              ::  formal triple
               [%unit p=plot]                            ::  maybe
           ==                                            ::
 +$  pock  (pair axis nock)                              ::  changes
@@ -6874,17 +7177,6 @@
     |=  [=type index=@ud spec=^spec]
     [(synthetic index) spec]
   ::
-  ::  +pattern: pattern and context for data inspection
-  ::
-  ++  pattern
-    ^-  $:  ::  main: rendering pattern 
-            ::  context: recursion points by counter
-            ::
-            main=plot
-            loop=(map @ud plot)
-        ==
-    !!
-  ::
   ::  +synthetic: convert :number to a synthetic name
   ::
   ++  synthetic
@@ -6942,10 +7234,6 @@
       ::
       :-  [%loop (synthetic p.u.new)] 
       load(pairs (~(put by pairs.load) sut [p.u.new spec]))
-    ::
-    ::  +meta: try to make spec from type of filter
-    ::
-    ::++  meta ^-  [(unit spec) _load]
     ::
     ::  +main: make spec from any type
     ::
@@ -7116,297 +7404,6 @@
     ++  foo  !!
     --
   --
-::
-++  plume
-  |_  =plum
-  ::
-  ::  +flat: print as a single line
-  ::
-  ++  flat
-    text:linear
-  ::
-  ::  +tall: print as multiple lines
-  ::
-  ++  tall
-    ^-  wain
-    %+  turn  window
-    |=  [indent=@ud text=tape]
-    (crip (runt [indent ' '] text))
-  ::
-  ::  +adjust: adjust lines to right
-  ::
-  ++  adjust
-    |=  [tab=@ud =(list [length=@ud text=tape])]
-    (turn list |=([@ud tape] [(add tab +<-) +<+]))
-  ::  
-  ::  +window: print as list of tabbed lines
-  ::
-  ++  window
-    ^-  (list [indent=@ud text=tape])
-    ::  memoize for random access
-    ::
-    ~+  
-    ::  trivial text
-    ::
-    ?@  plum  [0 (trip plum)]~
-    ?-  -.plum
-      ::  %|: text wrap
-      ::
-      %|  ::  wrapping stub, should wrap text to 40 characters
-          ::
-          [0 +:linear]~
-      ::
-      ::  %&: text tree
-      ::
-      %&  ::  trial: attempt at wide hint
-          ::
-          =/  trial  ?~(wide.plum ~ [~ u=linear])
-          ::  if wide hint is available or optimal
-          ::
-          ?:  ?&  ?=(^ trial)
-                  ?|  ?=(~ tall.plum)
-                      (lte length.u.trial 40)
-              ==  ==
-            ::  then produce wide hint
-            ::
-            [0 text.u.trial]~
-          ::  else assert tall style (you gotta set either wide or tall)
-          ::
-          ?>  ?=(^ tall.plum)
-          ::  blocks:  subwindows
-          ::  prelude: intro as tape
-          ::
-          =/  blocks   (turn list.plum |=(=^plum window(plum plum)))
-          =/  prelude  (trip intro.u.tall.plum)
-          ::  if, :indef is empty
-          ::
-          ?~  indef.u.tall.plum
-            ::  then, print in sloping mode
-            ::
-            ::  if, no children
-            ::
-            ?:  =(~ blocks)
-              ::  then, the prelude if any
-              ::
-              ?~(prelude ~ [0 prelude]~)
-            ::  else, format children and inject any prelude
-            ::
-            ^-  (list [indent=@ud text=tape])
-            ::  concatenate child blocks into a single output
-            ::
-            %-  zing
-            ::  count: number of children
-            ::  index: current child from 1 to n
-            ::
-            =/  count  (lent blocks)
-            =/  index  1
-            |-  ^+  blocks
-            ?~  blocks  ~
-            :_  $(blocks t.blocks, index +(index))
-            ^-  (list [indent=@ud text=tape])
-            ::  indent: backstep indentation level
-            ::
-            =/  indent  (mul 2 (sub count index))
-            ::  unless, we're on the first block
-            ::
-            ?.  =(1 index)
-              ::  else, apply normal backstep indentation
-              ::
-              (adjust indent i.blocks)
-            ::  then, apply and/or inject prelude
-            ::
-            ::    this fixes the naive representations
-            ::
-            ::      :+  
-            ::          foo
-            ::        bar
-            ::      baz
-            ::
-            ::    and
-            ::
-            ::      :-
-            ::        foo
-            ::      bar
-            ::
-            =.  indent  (max indent (add 2 (lent prelude)))
-            =.  i.blocks  (adjust indent i.blocks)
-            ?~  i.blocks  ?~(prelude ~ [0 prelude]~)
-            ?~  prelude   i.blocks
-            :_  t.i.blocks
-            :-  0
-            %+  weld  prelude
-            (runt [(sub indent.i.i.blocks (lent prelude)) ' '] text.i.i.blocks)
-          ::
-          ::  else, print in vertical mode
-          :: 
-          ::  prefix: before each entry
-          ::  finale: after all entries
-          ::
-          =/  prefix  (trip sigil.u.indef.u.tall.plum)
-          =/  finale  (trip final.u.indef.u.tall.plum)
-          ::  if, no children, then, just prelude and finale
-          ::
-          ?:  =(~ blocks)
-            %+  weld
-              ?~(prelude ~ [0 prelude]~)
-            ?~(finale ~ [0 finale]~)
-          ::  if, no :prefix
-          ::
-          ?:  =(~ prefix)
-            ::  kids: flat list of child lines
-            ::  tab:  amount to indent kids
-            ::
-            =/  kids  `(list [indent=@ud text=tape])`(zing blocks)
-            =*  tab   =+((lent prelude) ?+(- 2 %0 0, %1 2, %2 4))
-            ::  indent kids by tab
-            ::
-            =.  kids  (turn kids |=([@ud tape] [(add tab +<-) +<+]))
-            ::  prepend or inject prelude
-            ::
-            =.  kids  
-              ?:  =(~ prelude)  kids
-              ::  if, no kids, or prelude doesn't fit
-              ::
-              ?:  |(?=(~ kids) (gte +((lent prelude)) indent.i.kids))
-                ::  don't inject, just add to head if needed
-                ::
-                [[0 prelude] kids]
-              ::  inject: prelude 
-              ::
-              =*  inject  %+  weld
-                            prelude
-                          %+  runt 
-                            [(sub indent.i.kids (lent prelude)) ' ']
-                          text.i.kids
-              [[0 inject] t.kids]
-            ::  append finale
-            ::
-            ?~  finale  kids
-            (weld kids ^+(kids [0 finale]~))
-          ::  else, with :prefix
-          ::
-          ::  append :finale 
-          ::
-          =-  ?~  finale  -
-              (weld - ^+(- [0 finale]~))
-          ^-  (list [indent=@ud text=tape])
-          ::  clear: clearance needed to miss prefix
-          ::
-          =/  clear  (add 2 (lent prefix))
-          %-  zing
-          ::  combine each subtree with the prefix
-          ::
-          %+  turn  blocks
-          |=  =(list [indent=@ud text=tape])
-          ^+  +<
-          ::  tab: depth to indent
-          ::
-          =*  tab  ?~(list 0 (sub clear (min clear indent.i.list)))
-          =.  list  (turn list |=([@ud tape] [(add tab +<-) +<+]))
-          ?~  list  ~
-          :_  t.list
-          :-  0
-          %+  weld  
-            prefix
-          (runt [(sub indent.i.list (lent prefix)) ' '] text.i.list)
-    ==
-  ::
-  ::  +linear: make length and tape
-  ::
-  ++  linear
-    ^-  $:  length=@ud
-            text=tape
-        ==
-    ::  memoize for random access
-    ::
-    ~+  
-    ::  atomic plums are just text
-    ::
-    ?@  plum  [(met 3 plum) (trip plum)]
-    ?-  -.plum
-      ::  %|: text wrap
-      ::
-      %|  ::  lay the text out flat, regardless of length
-          ::
-          |-  ^-  [length=@ud text=tape]
-          ?~  list.plum  [0 ~]
-          =/  next  $(list.plum t.list.plum)
-          =/  this  [length=(met 3 i.list.plum) text=(trip i.list.plum)]
-          :-  (add +(length.this) length.next)
-          (weld text.this `tape`[' ' text.next])
-      ::
-      ::  %&: text tree
-      ::
-      %&  ::  if there is no wide representation
-          ::
-          ?~  wide.plum
-            ::  then lay out a window, then separate with double-spaces
-            ::
-            =/  window  window           
-            |-  ^-  [length=@ud text=tape]
-            ?~  window  [0 ~]
-            =/  next  $(window t.window)
-            :-  :(add (lent text.i.window) 2 length.next)
-            ?~(text.next text.i.window :(weld text.i.window "  " text.next))
-          ::
-          ::  else use wide layout
-          ::
-          =-  ::  add enclosure if any
-              ::
-              ?~  enclose.u.wide.plum  body
-              =*  clamps  u.enclose.u.wide.plum
-              =/  close  [(trip -.clamps) (trip +.clamps)]
-              :-  :(add length.body (lent -.close) (lent +.close))
-              :(weld -.close text.body +.close) 
-          ::
-          ::  body: body of wide rendering 
-          :: 
-          ^=  body
-          =/  stop  (trip delimit.u.wide.plum)
-          |-  ^-  [length=@ud text=tape]
-          ?~  list.plum  [0 ~]
-          =/  next  $(list.plum t.list.plum)
-          =/  this  linear(plum i.list.plum) 
-          ?~  text.next  this
-          :-  :(add length.this (lent stop) length.next)
-          :(weld text.this stop text.next)
-    ==
-  --
-::  highly unsatisfactory temporary tank printer
-::
-++  plum-to-tank
-  |=  =plum
-  ^-  tank
-  ?@  plum  [%leaf (trip plum)]
-  ?-  -.plum
-    %|  :+  %rose
-          ["" " " ""]
-        (turn list.plum |=(@ta [%leaf (trip +<)]))
-    %&  =/  list  (turn list.plum ..$)
-        ?~  tall.plum
-          ?>  ?=(^ wide.plum)
-          =?  enclose.u.wide.plum  ?=(~ enclose.u.wide.plum)  `['{' '}']
-          :+  %rose
-            :*  (trip delimit.u.wide.plum)
-                (trip +<:enclose.u.wide.plum)
-                (trip +>:enclose.u.wide.plum)
-            ==
-          list
-        ?:  ?=(^ indef.u.tall.plum)
-          :+  %rose
-            :*  (trip sigil.u.indef.u.tall.plum)
-                (weld (trip intro.u.tall.plum) "[")
-                (weld "]" (trip final.u.indef.u.tall.plum))
-            ==
-          list
-        :+  %palm
-          :*  (weld (trip intro.u.tall.plum) "(")
-              ""
-              ""
-              ")"
-          ==
-        list
-  ==
 ++  limb-to-plum
   |=  =limb
   ?@  limb  limb
@@ -8783,7 +8780,7 @@
   ::
   ::  +ar: texture engine
   ::
-  ++  ar
+  ++  ar  !:
     ~%    %ar
         +>
       ==
@@ -8874,8 +8871,8 @@
             [%face *]  (face p.ref $(ref q.ref))
             [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
             [%hint *]  (hint p.ref $(ref q.ref))
-            [%hold *]  ?:  (~(has in gil) sut)  %void
-                       $(gil (~(put in gil) sut), sut repo)
+            [%hold *]  ?:  (~(has in gil) ref)  %void
+                       $(gil (~(put in gil) ref), ref repo(sut ref))
           ==
         ==
       ::
@@ -8897,8 +8894,8 @@
             [%face *]  (face p.ref $(ref q.ref))
             [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
             [%hint *]  (hint p.ref $(ref q.ref))
-            [%hold *]  ?:  (~(has in gil) sut)  %void
-                       $(gil (~(put in gil) sut), sut repo)
+            [%hold *]  ?:  (~(has in gil) ref)  %void
+                       $(gil (~(put in gil) ref), ref repo(sut ref))
         ==
       ::
           %leaf  
@@ -8919,8 +8916,8 @@
           [%face *]  (face p.ref $(ref q.ref))
           [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
           [%hint *]  (hint p.ref $(ref q.ref))
-          [%hold *]  ?:  (~(has in gil) sut)  %void
-                     $(gil (~(put in gil) sut), sut repo)
+          [%hold *]  ?:  (~(has in gil) ref)  %void
+                     $(gil (~(put in gil) ref), ref repo(sut ref))
         ==
       ::
           %dbug  $(skin skin.skin)
@@ -8964,8 +8961,8 @@
             [%face *]  (face p.ref $(ref q.ref))
             [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
             [%hint *]  (hint p.ref $(ref q.ref))
-            [%hold *]  ?:  (~(has in gil) sut)  %void
-                       $(gil (~(put in gil) sut), sut repo)
+            [%hold *]  ?:  (~(has in gil) ref)  %void
+                       $(gil (~(put in gil) ref), ref repo(sut ref))
           ==
         ==
       ::
@@ -8987,8 +8984,8 @@
             [%face *]  (face p.ref $(ref q.ref))
             [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
             [%hint *]  (hint p.ref $(ref q.ref))
-            [%hold *]  ?:  (~(has in gil) sut)  %void
-                       $(gil (~(put in gil) sut), sut repo)
+            [%hold *]  ?:  (~(has in gil) ref)  %void
+                       $(gil (~(put in gil) ref), ref repo(sut ref))
         ==
       ::
           %leaf  
@@ -9005,8 +9002,8 @@
           [%face *]  (face p.ref $(ref q.ref))
           [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
           [%hint *]  (hint p.ref $(ref q.ref))
-          [%hold *]  ?:  (~(has in gil) sut)  %void
-                     $(gil (~(put in gil) sut), sut repo)
+          [%hold *]  ?:  (~(has in gil) ref)  %void
+                     $(gil (~(put in gil) ref), ref repo(sut ref))
         ==
       ::
           %dbug  $(skin skin.skin)
@@ -9864,9 +9861,14 @@
     ?:  ?=({$wtts *} gen)
       (cool how q.gen (play ~(example ax fab p.gen)))
     ?:  ?=({$wthx *} gen)
-      ~&  [%wthx gen]
       =+  (play %wing q.gen)
-      ?:(how ~(gain ar - p.gen) ~(lose ar - p.gen))
+      ~>  %slog.[0 [%leaf "chipping"]]
+      ?:  how 
+        =-  ~>  %slog.[0 (dunk(sut +<) 'chip: gain: ref')]
+            ~>  %slog.[0 (dunk(sut -) 'chip: gain: gain')]
+            -
+        ~(gain ar - p.gen) 
+      ~(lose ar - p.gen)
     ?:  ?&(how ?=({$wtpd *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=({$wtbr *} gen))
@@ -10957,7 +10959,7 @@
       ==
     --
   ::
-  ++  dish
+  ++  dish  !:  
     |=  {ham/cape lum/*}  ^-  tank
     ~|  [%dish-h ?@(q.ham q.ham -.q.ham)]
     ~|  [%lump lum]
