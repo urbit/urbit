@@ -13,11 +13,11 @@
 ;*  ?:  (~(has by qix.gas) 'edit')
       ;div
         ;div#edit(urb-component "TopicCreatePage", urb-coll "{(trip +<:s.bem.gas)}", urb-top "{(trip -:s.bem.gas)}", urb-text "{(trip (of-wain:format wat.info.metawcom))}", urb-ship "{(scow %p p.bem.gas)}", urb-lastedit "{<mod.info.metawcom>}");
-      ;input(type "hidden", name "urb-header", value "edit", title "{(trip desc:(need config))}", publ "{<publ:(need config)>}", id "{(trip +<:s.bem.gas)}", postid "{(trip -:s.bem.gas)}", ship "{(scow %p p.bem.gas)}", station "{(scow %p p.bem.gas)}/collection_~{(trip +<:s.bem.gas)}");
+      ;input(type "hidden", name "urb-header", value "collection-edit", title "{(trip desc:(need config))}", publ "{<publ:(need config)>}", id "{(trip +<:s.bem.gas)}", postid "{(trip -:s.bem.gas)}", ship "{(scow %p p.bem.gas)}", station "{(scow %p p.bem.gas)}/collection_~{(trip +<:s.bem.gas)}");
       ==
   ;div.container
     ;div.row
-      ;input(type "hidden", name "urb-header", value "collection", title "{(trip desc:(need config))}", publ "{<publ:(need config)>}", id "{(trip +<:s.bem.gas)}", postid "{(trip -:s.bem.gas)}", ship "{(scow %p p.bem.gas)}", station "{(scow %p p.bem.gas)}/collection_~{(trip +<:s.bem.gas)}");
+      ;input(type "hidden", name "urb-header", value "collection-item", title "{(trip desc:(need config))}", publ "{<publ:(need config)>}", id "{(trip +<:s.bem.gas)}", postid "{(trip -:s.bem.gas)}", ship "{(scow %p p.bem.gas)}", station "{(scow %p p.bem.gas)}/collection_~{(trip +<:s.bem.gas)}");
       ;div.col-sm-10.col-sm-offset-2
         ;div.post.collection-post-page
           ;div.row.collection-date
@@ -39,7 +39,7 @@
                     ;span(urb-component "IconComment");
                     ;span: {<~(wyt by coms.metawcom)>}
                   ==
-                  ;ul
+                  ;ul.vanilla
                     ;*  %+  turn
                           %+  sort
                             ~(tap by coms.metawcom)

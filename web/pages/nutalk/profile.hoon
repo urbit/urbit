@@ -19,7 +19,7 @@
           ;div.profile-avatar
             ;div(urb-component "AvatarLg");
             ;div.profile-shipname: {(scow %p p.bem.gas)}
-            ;a.no-underline.mb-6.btn.btn-sm.profile-message-btn(href "/~~/pages/nutalk/stream/create?dm={(scow %p p.bem.gas)}"): Message 
+            ;a.no-underline.mb-6.btn.btn-sm.profile-message-btn(href "/~~/pages/nutalk/stream/create?dm={(scow %p p.bem.gas)}"): Message
           ==
         ==
       ==
@@ -29,7 +29,7 @@
     ;div.row
       ;div.col-sm-offset-2.col-sm-10
         ::;div.text-700.mt-8: Blogs, Forum and Notes
-        ::;ul
+        ::;ul.vanilla
         ::  ;div;
         ::  ;*  %+  turn
         ::        %+  sort
