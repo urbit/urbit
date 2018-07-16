@@ -1567,7 +1567,7 @@
   ::
   ++  finalize-trial
     ^+  this
-    ~|  %test-trial-effect-fail
+    ~|  %finalize-trial-effect-fail
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
     ?.  ?=(^ rod)      ~|(%no-active-order !!)
     ?.  ?=(^ active.aut.u.rod)  ~|(%no-active-authz !!)
