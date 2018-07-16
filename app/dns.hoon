@@ -298,6 +298,9 @@
 ++  rove
   |=  [wir=wire p=ship q=lane:ames]
   ^-  (quip move _this)
+  :: XX move to %ames
+  ?:  =(our.bow p)
+    [~ this]
   ?.  =(our.bow (sein:title p))  :: XX check will
     ~&  [%rove-false p]
     [~ this]
