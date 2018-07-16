@@ -917,7 +917,26 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
   }
 
   if ( c3y == log ) {
-    // XX enable access log
+    // XX move this to post serv_start and put the port in the name
+#if 0
+    c3_c* pax_c = u3_Host.dir_c;
+    u3_noun now = u3dc("scot", c3__da, u3k(u3A->now));
+    c3_c* now_c = u3r_string(now);
+    c3_c* nam_c = ".access.log";
+    c3_w len_w = 1 + strlen(pax_c) + 1 + strlen(now_c) + strlen(nam_c);
+
+    c3_c* paf_c = c3_malloc(len_w);
+    snprintf(paf_c, len_w, "%s/%s%s", pax_c, now_c, nam_c);
+
+    h2o_access_log_filehandle_t* fil_u =
+      h2o_access_log_open_handle(paf_c, 0, H2O_LOGCONF_ESCAPE_APACHE);
+
+    h2o_access_log_register(&h2o_u->hos_u->fallback_path, fil_u);
+
+    free(paf_c);
+    free(now_c);
+    u3z(now);
+#endif
   }
 
   // XX h2o_compress_register
