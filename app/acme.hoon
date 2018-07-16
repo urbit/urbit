@@ -1510,8 +1510,7 @@
     ^+  this
     ~|  %install-effect-fail
     ?>  ?=(^ liv)
-    :: XX use pkcs8
-    =/  key=wain  (ring:en:pem:pkcs1 key.u.liv)
+    =/  key=wain  (ring:en:pem:pkcs8 key.u.liv)
     (emit %rule /install %cert `[key `wain`cer.u.liv])
   :: +get-authz: get next ACME service domain authorization object
   ::
@@ -2021,7 +2020,9 @@
         'n5Z5MqkYhlMI3J1tPRTp1nEt9fyGspBOO05gi148Qasp+3N+svqKomoQglNoAxU='
         '-----END CERTIFICATE-----'
     ==
-  (emit %rule /install %cert `[key cert])
+  =/  k=key:rsa  (need (ring:de:pem:pkcs1 key))
+  =/  k8=wain  (ring:en:pem:pkcs8 k)
+  (emit %rule /install %cert `[k8 cert])
 :: +poke-path: for debugging
 ::
 ++  poke-path
