@@ -424,6 +424,7 @@
       [%direct %if u.adr]
     ?.  ?|  ?=(~ rel)
             !=(tar tar.u.rel)
+            !bon.u.rel
         ==
       this
     =.  rel  `[wen=now.bow adr bon=| try=0 tar]
