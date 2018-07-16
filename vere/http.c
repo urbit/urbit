@@ -2298,13 +2298,15 @@ _proxy_ward_connect(u3_warc* cli_u)
   uv_tcp_init(u3L, &con_u->don_u);
 
   if ( 0 == cli_u->hot_c ) {
-    c3_c* sip_c = u3r_string(u3dc("scot", 'p', u3k(cli_u->sip)));
+    u3_noun sip = u3dc("scot", 'p', u3k(cli_u->sip));
+    c3_c* sip_c = u3r_string(sip);
     c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.ops_u.dns_c);
     cli_u->hot_c = c3_malloc(len_w);
     // incremented to skip '~'
     snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, u3_Host.ops_u.dns_c);
 
     free(sip_c);
+    u3z(sip);
   }
 
   struct sockaddr_in add_u;
