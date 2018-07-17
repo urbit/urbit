@@ -221,6 +221,11 @@ _http_req_unlink(u3_hreq* req_u)
 static void
 _http_req_free(u3_hreq* req_u)
 {
+  if ( 0 != req_u->tim_u ) {
+    uv_close((uv_handle_t*)req_u->tim_u, (uv_close_cb)free);
+    req_u->tim_u = 0;
+  }
+
   _http_req_unlink(req_u);
   free(req_u);
 }
@@ -233,6 +238,8 @@ _http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
   u3_hreq* req_u = c3_malloc(sizeof(*req_u));
   req_u->rec_u = rec_u;
   req_u->sat_e = u3_rsat_init;
+  req_u->tim_u = 0;
+
   _http_req_link(hon_u, req_u);
 
   return req_u;
@@ -257,6 +264,22 @@ _http_req_kill(u3_hreq* req_u)
 {
   u3_noun pox = _http_req_to_duct(req_u);
   u3v_plan(pox, u3nc(c3__thud, u3_nul));
+}
+
+/* _http_req_timer_cb(): request timeout callback
+*/
+static void
+_http_req_timer_cb(uv_timer_t* tim_u)
+{
+  u3_hreq* req_u = tim_u->data;
+
+  if ( u3_rsat_plan == req_u->sat_e ) {
+    _http_req_kill(req_u);
+    req_u->sat_e = u3_rsat_ripe;
+
+    c3_c* msg_c = "gateway timeout";
+    h2o_send_error_generic(req_u->rec_u, 504, msg_c, msg_c, 0);
+  }
 }
 
 /* _http_req_dispatch(): dispatch http request to %eyre
@@ -308,6 +331,8 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
   }
 
   req_u->sat_e = u3_rsat_ripe;
+
+  uv_timer_stop(req_u->tim_u);
 
   h2o_req_t* rec_u = req_u->rec_u;
 
@@ -411,6 +436,12 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     c3_assert(hon_u->sok_u == &noc_u->suv_u->sok_u);
 
     u3_hreq* req_u = _http_req_new(hon_u, rec_u);
+
+    req_u->tim_u = c3_malloc(sizeof(*req_u->tim_u));
+    req_u->tim_u->data = req_u;
+    uv_timer_init(u3L, req_u->tim_u);
+    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 30 * 1000, 0);
+
     _http_req_dispatch(req_u, req);
   }
 

@@ -50,6 +50,7 @@
         h2o_req_t*       rec_u;             //  h2o request
         c3_w             seq_l;             //  sequence within connection
         u3_rsat          sat_e;             //  request state
+        uv_timer_t*      tim_u;             //  timeout
         struct _u3_hcon* hon_u;             //  connection backlink
         struct _u3_hreq* nex_u;             //  next in connection's list
       } u3_hreq;
