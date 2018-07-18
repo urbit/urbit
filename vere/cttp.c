@@ -932,8 +932,7 @@ _cttp_init_h2o()
 {
   h2o_timeout_t* tim_u = c3_malloc(sizeof(*tim_u));
 
-  // XX how long? 1 minute?
-  h2o_timeout_init(u3L, tim_u, 10000);
+  h2o_timeout_init(u3L, tim_u, 120 * 1000);
 
   h2o_http1client_ctx_t* ctx_u = c3_calloc(sizeof(*ctx_u));
   ctx_u->loop = u3L;
