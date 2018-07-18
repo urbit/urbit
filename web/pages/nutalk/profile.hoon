@@ -12,20 +12,16 @@
 ^-  manx
 ;div.profile-page
   ;input(type "hidden", name "urb-header", value "profile", ship "{(scow %p p.bem.gas)}");
-  ;div.profile-banner
-    ;div.container
-      ;div.row
-        ;div.col-sm-offset-2.col-sm-10
-          ;div.profile-avatar
-            ;div(urb-component "AvatarLg");
-            ;div.profile-shipname: {(scow %p p.bem.gas)}
-            ;a.no-underline.mb-6.btn.btn-sm.profile-message-btn(href "/~~/pages/nutalk/stream/create?dm={(scow %p p.bem.gas)}"): Message
-          ==
+  ;div.container
+    ;div.row
+      ;div.col-sm-offset-2.col-sm-10
+        ;div.profile-avatar
+          ;div(urb-component "AvatarLg", urb-ship "{(scow %p p.bem.gas)}");
+          ;div.profile-shipname: {(scow %p p.bem.gas)}
+          ;div(urb-component "ProfileMsgBtn", urb-ship "{(scow %p p.bem.gas)}");
         ==
       ==
     ==
-  ==
-  ;div.container
     ;div.row
       ;div.col-sm-offset-2.col-sm-10
         ::;div.text-700.mt-8: Blogs, Forum and Notes
