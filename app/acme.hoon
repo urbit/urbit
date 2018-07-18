@@ -1800,9 +1800,9 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ?.  =(200 p.rep)
-      :: XX retry immediately? backoff?
+      :: XX count retries, backoff
       ~&  [%test-trial-fail wir rep]
-      this
+      (retry:effect /test-trial (add now.bow ~m10))
     ?>  ?=(^ rod)
     ?>  ?=(^ active.aut.u.rod)
     :: XX check content type and response body
@@ -1844,6 +1844,7 @@
         ~&(unknown-retry+wir this)
       :: XX do the needful
       [%directory ~]  directory:effect
+      [%test-trial ~]  test-trial:effect
     ==
   --
 :: +sigh-tang: handle http request failure
