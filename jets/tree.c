@@ -96,6 +96,13 @@ static u3j_core _143_hex_coed_d[] =
       {}
     };
 
+  static u3j_harm _143_hex_argon2_a[] = {{".2", u3we_argon2, c3n}, {}};
+
+  static u3j_core _143_hex_argon_d[] =
+    { { "argon2", _143_hex_argon2_a },
+      {}
+    };
+
 static u3j_core _143_hex_d[] =
   { { "down", 0, _143_hex_down_d },
     { "lore", _143_hex_lore_a },
@@ -104,6 +111,7 @@ static u3j_core _143_hex_d[] =
     { "coed", 0, _143_hex_coed_d },
     { "aes", 0, _143_hex_aes_d },
     { "hmac", 0, _143_hex_hmac_d },
+    { "argon", 0, _143_hex_argon_d },
     {}
   };
 

@@ -19,3 +19,6 @@
 [submodule "subprojects/h2o"]
 	path = subprojects/libh2o
 	url = https://github.com/urbit/h2o.git
+[submodule "subprojects/argon2"]
+	path = subprojects/argon2
+	url = https://github.com/urbit/argon2.git

@@ -104,6 +104,7 @@ jets_e_src = [
 'jets/e/aes_ecb.c',
 'jets/e/aes_cbc.c',
 'jets/e/aesc.c',
+'jets/e/argon2.c',
 'jets/e/cue.c',
 'jets/e/fl.c',
 'jets/e/hmac.c',
@@ -309,6 +310,7 @@ murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'm
 softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
 libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
 libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
+argon2_dep = dependency('argon2', version: '>=1', fallback: ['argon2', 'argon2_dep'])
 
 executable('urbit',
 sources : sources,
@@ -325,5 +327,6 @@ dependencies: [openssl_dep,
                urbitscrypt_dep,
                ed25519_dep,
                murmur3_dep,
+               argon2_dep,
                softfloat3_dep] + os_deps,
 install: true)
