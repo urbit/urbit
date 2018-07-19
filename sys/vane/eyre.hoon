@@ -85,7 +85,11 @@
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
-  $:  $0                                                ::  version
+  $:  $1                                                ::  version
+      dom/(set (list @t))                               ::  domain names
+      fig/http-config                                   ::  config
+      por/{clr/@ud sek/(unit @ud)}                      ::  live ports
+      wel/wank                                          ::  .well-known
       gub/@t                                            ::  random identity
       hov/(unit ship)                                   ::  master for remote
       top/beam                                          ::  ford serve prefix
@@ -173,6 +177,9 @@
       {$html p/manx}                                    ::  successful page
       {$htme p/manx}                                    ::  authentication fail
   ==
+::
+++  wank                                                ::  .well-known ankh
+  {p/(unit mime) q/(map @ta wank)}
 --                                                      ::
 |%
 ++  eat-headers
@@ -222,6 +229,25 @@
   ^-  wall
   (zing (turn tan |=(a/tank (wash 0^wid a))))
 ::
+++  yank                                                ::  get .well-known
+  |=  [wel=wank pat=path]
+  ^-  (unit mime)
+  ?~  pat  p.wel
+  =/  wan  (~(get by q.wel) i.pat)
+  ?~  wan  ~
+  $(wel u.wan, pat t.pat)
+::
+++  dank                                                ::  put/del .well-known
+  |=  [wel=wank pat=path mim=(unit mime)]
+  ^-  wank
+  ?~  pat  wel(p mim)
+  =/  wan  (~(get by q.wel) i.pat)
+  ?:  &(?=(~ wan) ?=(~ mim))
+    wel
+  :-  p.wel
+  %+  ~(put by q.wel)
+    i.pat
+  $(wel ?~(wan *wank u.wan), pat t.pat)
 ::
 ++  add-cookies
   |=  {cug/(list @t) hit/httr}  ^-  httr
@@ -637,12 +663,44 @@
     =.  p.top  our              ::  XX necessary?
     ?-    -.kyz
         $born
+      :: XX capture IPs too
+      =/  mod/(set (list @t))
+        %-  ~(gas in *(set (list @t)))
+        %+  turn
+          (skim p.kyz |=(a=host ?=(%& -.a)))
+        |=(a=host ?>(?=(%& -.a) p.a))
+      =/  dif/(set (list @t))  (~(dif in mod) dom)
+      =?  dom  ?=(^ dif)  (~(uni in dom) mod)
+      =?  mow  ?=(^ dif)
+        =/  cmd  [%acme %poke `cage`[%acme-order !>(dom)]]
+        :_(mow [hen %pass /acme/order %g %deal [our our] cmd])
       %=  +>.$
         ged  hen                                        ::  register external
-        mow  :_(mow [hen [%give %form [~ ?=(%king our) & &]]])
+        mow  :_(mow [hen [%give %form fig]])
       ==
     ::
-        $live  +>.$             :: XX save ports
+        $live
+      +>.$(clr.por p.kyz, sek.por q.kyz)
+    ::
+        $rule
+      ?-  -.p.kyz
+          $cert
+        ?:  =(secure.fig p.p.kyz)  +>.$
+        =.  secure.fig  p.p.kyz
+        +>.$(mow :_(mow [ged [%give %form fig]]))
+      ::
+          $turf
+        =/  mod/(set (list @t))
+          ?:  ?=(%put p.p.kyz)
+            (~(put in dom) q.p.kyz)
+          (~(del in dom) q.p.kyz)
+        ?:  =(dom mod)  +>.$
+        =/  cmd  [%acme %poke `cage`[%acme-order !>(mod)]]
+        %=  +>.$
+          dom  mod
+          mow  :_(mow [hen %pass /acme/order %g %deal [our our] cmd])
+        ==
+      ==
     ::
         $serv
       =<  ~&([%serving (en-beam top)] .)
@@ -653,6 +711,7 @@
     ::
         $init                                           ::  register ownership
       =.  our  ?~(hov p.kyz (min u.hov p.kyz))
+      =.  fig  [~ ?=(%king our) & &]
       +>.$(hov [~ our], top [[our %home ud+0] /web])
     ::
         ?($chis $this)                                  ::  inbound request
@@ -740,6 +799,9 @@
         (del-deps:$(p.lid t.p.lid) i.p.lid %& hen)
       ==
     ::
+        $well
+      +>.$(wel (dank wel p.kyz q.kyz))
+    ::
         $went
       ::  this won't happen until we send responses.
       !!
@@ -802,12 +864,12 @@
             [[%$ deps+!>(dep)] [%vale res]]
           ==
       ::
-        $not  +>.$(mow :_(mow [ged [%give %that q.p.kyz p.u.mez q.u.mez]]))
+        $not  +>.$(mow :_(mow [ged [%give %that q.p.kyz p.u.mez]]))
       ==
     ::
       $wegh  !!                                         ::  handled elsewhere
     ::
-      $wise  (ames-gram p.kyz [%not ~] q.kyz r.kyz)     ::  proxy notification
+      $wise  (ames-gram p.kyz [%not ~] q.kyz)           ::  proxy notification
     ==
   ::
   ::++  axom                                              ::  old response
@@ -1228,6 +1290,11 @@
           :~  'User-agent: *'
               'Disallow: '
           ==
+        ::
+            {@tas $'.well-known' ^}  ::  XX file extension?
+          =/  mim  (yank wel (tail q.pok))
+          ?~  mim  ~
+          `(resp 200 p.u.mim q.q.u.mim)
         ==
       ::
       ++  is-spur  |(?~(q.pok & ((sane %ta) i.q.pok)))
@@ -2094,10 +2161,14 @@
   ~
 ::
 ++  load                                                ::  take previous state
-  ::|=  *  %.  (bolo +<)
-  |=  old/?(bolo)  ^+  ..^$
+  =>  |%
+      ++  bolo-old  (cork bolo |=(bolo [%0 |5.+<]))
+      --
+  |=  old/?(bolo-old bolo)
+  ^+  ..^$
   ?-  -.old
-    $0  ..^$(+>- old)
+    $0  $(old [%1 ~ *http-config [8.080 ~] [~ ~] +.old])
+    $1  ..^$(+>- old)
   ==
 ::
 ++  scry
@@ -2125,7 +2196,14 @@
     ?+  p.lot  [~ ~]
       {$tas $fake}  ``[& [~ 8.443] %& /localhost]       :: XX from unix
       {$tas $real}
-        ``~(our-host ye [`duct`~[/] [now eny our sky] ~] bol)
+        =/  hot=host  [%& ?^(dom n.dom /localhost)]
+        =/  sek=?    &(?=(^ sek.por) !?=(hoke hot))
+        =/  por=(unit @ud)
+          ?.  sek
+            ?:(=(80 clr.por) ~ `clr.por)
+          ?>  ?=(^ sek.por)
+          ?:(=(443 u.sek.por) ~ sek.por)
+        ``[sek por hot]
     ==
   ==
 ::

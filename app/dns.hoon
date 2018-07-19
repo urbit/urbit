@@ -6,16 +6,20 @@
 ::
 |%
 +=  move  (pair bone card)
-+=  poke  $%  [%dns-bind for=ship him=ship target]
-              [%dns-bond for=ship him=ship turf]
-              [%dns-authority authority]
-              :: XX some other notification channel?
-              [%helm-send-hi ship (unit tape)]
-          ==
-+=  card  $%  [%tend wire ~]
-              [%poke wire dock poke]
-              [%hiss wire [~ ~] %httr %hiss hiss:eyre]
-          ==
++=  poke
+  $%  [%dns-bind for=ship him=ship target]
+      [%dns-bond for=ship him=ship turf]
+      [%dns-authority authority]
+      :: XX some other notification channel?
+      [%helm-send-hi ship (unit tape)]
+  ==
++=  card
+  $%  [%tend wire ~]
+      [%wait wire @da]
+      [%poke wire dock poke]
+      [%rule wire %turf %put turf]
+      [%hiss wire [~ ~] %httr %hiss hiss:eyre]
+  ==
 :: +state: complete app state
 ::
 +=  state
@@ -55,17 +59,16 @@
 ++  reserved
   |=  a=@if
   ^-  ?
-  =/  b  (rip 3 a)
-  ?>  ?=([@ @ @ @ ~] b)
-  ?|  :: 0.0.0.0/8 (software)
-      ::
-      =(0 i.b)
-      :: 10.0.0.0/8 (private)
+  =/  b  (flop (rip 3 a))
+  :: 0.0.0.0/8 (software)
+  ::
+  ?.  ?=([@ @ @ @ ~] b)  &
+  ?|  :: 10.0.0.0/8 (private)
       ::
       =(10 i.b)
       :: 100.64.0.0/10 (carrier-grade NAT)
       ::
-      &(=(100 i.b) (gte 64 i.t.b) (lte 127 i.t.b))
+      &(=(100 i.b) (gte i.t.b 64) (lte i.t.b 127))
       :: 127.0.0.0/8 (localhost)
       ::
       =(127 i.b)
@@ -74,7 +77,7 @@
       &(=(169 i.b) =(254 i.t.b))
       :: 172.16.0.0/12 (private)
       ::
-      &(=(172 i.b) (gte 16 i.t.b) (lte 31 i.t.b))
+      &(=(172 i.b) (gte i.t.b 16) (lte i.t.b 31))
       :: 192.0.0.0/24 (protocol assignment)
       ::
       &(=(192 i.b) =(0 i.t.b) =(0 i.t.t.b))
@@ -100,7 +103,7 @@
       :: 240.0.0.0/4 (reserved, future)
       :: 255.255.255.255/32 (broadcast)
       ::
-      (gte 224 i.b)
+      (gte i.b 224)
   ==
 :: |gcloud: provider-specific functions
 ::
@@ -192,6 +195,11 @@
     =/  him=ship  (slav %p i.t.wir)
     ?:  =(200 p.rep)
       abet:~(bind tell [him (~(get by per) him)])
+    :: cttp timeout
+    ?:  =(504 p.rep)
+      :: XX backoff, refactor
+      :_  this  :_  ~
+      [ost.bow %wait wir (add now.bow ~m10)]
     :: XX specific messages per status code
     ~&  %direct-confirm-fail
     abet:(~(fail tell [him (~(get by per) him)]) %failed-request)
@@ -219,6 +227,16 @@
     %-  (slog saw)
     abet:(~(fail tell [him (~(get by per) him)]) %crash)
   ==
+:: +wake: timer callback
+::
+++  wake
+  |=  [wir=wire ~]
+  ^-  (quip move _this)
+  ?.  ?=([%check @ ~] wir)
+    ~&  [%strange-wake wir]
+    [~ this]
+  =/  him=ship  (slav %p i.t.wir)
+  abet:~(check tell [him (~(get by per) him)])
 ::
 :: +poke-dns-authority: configure self as an authority
 ::
@@ -259,9 +277,8 @@
   ?:  =(for him)
     ~|(%bond-yoself !!)
   ?:  =(our.bow him)
-    :: XX notify eyre/hood/acme etc
     ~&  [%bound-us dom]
-    :-  ~
+    :-  [[ost.bow %rule /bound %turf %put dom] ~]
     this(dom (~(put in ^dom) dom))
   ?:  =(our.bow for)
     ~&  [%bound-him him dom]
@@ -281,6 +298,9 @@
 ++  rove
   |=  [wir=wire p=ship q=lane:ames]
   ^-  (quip move _this)
+  :: XX move to %ames
+  ?:  =(our.bow p)
+    [~ this]
   ?.  =(our.bow (sein:title p))  :: XX check will
     ~&  [%rove-false p]
     [~ this]
@@ -404,9 +424,10 @@
       [%direct %if u.adr]
     ?.  ?|  ?=(~ rel)
             !=(tar tar.u.rel)
+            !bon.u.rel
         ==
       this
-    =.  rel  `[wen=now.bow adr bon=| tar]
+    =.  rel  `[wen=now.bow adr bon=| try=0 tar]
     ?:(?=(%indirect -.tar) bind check)
   :: +check: confirm %direct target is accessible
   ::
@@ -416,6 +437,9 @@
     ?>  ?=(%direct -.tar.u.rel)
     ?:  (reserved p.tar.u.rel)
       (fail %reserved-ip)
+    ?:  (gth try.u.rel 2)
+      (fail %unreachable)
+    =.  try.u.rel  +(try.u.rel)
     =/  wir=wire
       /check/(scot %p him)
     =/  url=purl:eyre
