@@ -15,6 +15,7 @@
   ++  noun  recoverable-error
   ++  httr
     |=  a/^httr  ^-  recoverable-error
+    ~&  [%recoverable-httr a]
     ~!  a
     ?+  p.a  ~|(non-recoverable+p.a !!)
       $429  :+  p.a  %rate-limit

@@ -1855,6 +1855,14 @@
   ~&  [%sigh-tang wir]
   :: XX take evasive action
   [((slog saw) ~) this]
+:: +sigh-recoverable-error: handle http rate-limit response
+::
+++  sigh-recoverable-error
+  |=  [wir=wire %429 %rate-limit lim=(unit @da)]
+  ^-  (quip move _this)
+  ~&  [%sigh-recoverable wir lim]
+  :: XX retry
+  [~ this]
 :: +sigh-httr: accept http response
 ::
 ++  sigh-httr
