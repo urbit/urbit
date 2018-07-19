@@ -18,7 +18,7 @@
 
     dat = u3qc_end(boz, len, dat);
     c3_w met = u3r_met(boz, dat);
-    return u3kc_lsh(u3k(boz), (len - met), u3kc_swp(u3k(boz), dat));
+    return u3kc_lsh(boz, (len - met), u3kc_swp(boz, dat));
   }
 
   u3_noun
