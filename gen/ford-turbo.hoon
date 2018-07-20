@@ -18,27 +18,27 @@
 =-  ((slog -) ~)
 ^-  tang
 ;:  weld
-  ::  test-tear
-  ::  test-is-schematic-live
-  ::  test-date-from-schematic
-  ::  test-unify-jugs
-  ::  test-resource-wire-encoding
-  ::  test-parse-scaffold
-  ::  test-parse-scaffold-sur-lib
-  ::  test-parse-scaffold-zuse-version
-  ::  test-parse-scaffold-crane-fssg
-  ::  test-parse-scaffold-crane-fsbc
-  ::  test-parse-scaffold-crane-fsbr
-  ::  test-parse-scaffold-crane-fsts
-  ::  test-parse-scaffold-crane-fsdt
-  ::  test-parse-scaffold-crane-fscm
-  ::  test-parse-scaffold-crane-fspm
-  ::  test-parse-scaffold-crane-fscb
-  ::  test-parse-scaffold-crane-fssm
-  ::  test-parse-scaffold-crane-fscl
-  ::  test-parse-scaffold-crane-fskt
-  ::  test-parse-scaffold-crane-fszp
-  ::  test-parse-scaffold-crane-fszy
+  test-tear
+  test-is-schematic-live
+  test-date-from-schematic
+  test-unify-jugs
+  test-resource-wire-encoding
+  test-parse-scaffold
+  test-parse-scaffold-sur-lib
+  test-parse-scaffold-zuse-version
+  test-parse-scaffold-crane-fssg
+  test-parse-scaffold-crane-fsbc
+  test-parse-scaffold-crane-fsbr
+  test-parse-scaffold-crane-fsts
+  test-parse-scaffold-crane-fsdt
+  test-parse-scaffold-crane-fscm
+  test-parse-scaffold-crane-fspm
+  test-parse-scaffold-crane-fscb
+  test-parse-scaffold-crane-fssm
+  test-parse-scaffold-crane-fscl
+  test-parse-scaffold-crane-fskt
+  test-parse-scaffold-crane-fszp
+  test-parse-scaffold-crane-fszy
   test-literal
   test-autocons-same
   test-autocons-different
@@ -83,46 +83,46 @@
 ::    test-cache-reclamation-live-promote
 ::    test-five-oh-cache-reclamation
 ::  ::  test-reef  ::  very slow
-::    test-reef-short-circuit
-::    test-path
-::    test-plan-hoon
-::    test-core
-::    test-core-linker
-::    test-core-multi-hoon
-::    test-core-fsts-fssg
-::    test-core-fsdt-fskt
-::    test-core-fskt-nest-fail
-::    test-core-fssm
-::    test-core-fsbr
-::    test-core-fsbr-out-of-options
-::    test-plan-fszp-as-noun
-::    test-core-fszp-as-mark
-::    test-core-fscl-fszp
-::    test-core-fscm
-::    test-plan-fsbc
-::    test-core-fscb
-::    test-core-fspm
-::    test-core-fszy-renderer
-::    test-bunt
-::    test-volt
-::    test-vale
-::    test-vale-error
-::    test-cast
-::    test-cast-grow
-::    test-mute
-::    test-bake-renderer
-::    test-bake-mark
-::    test-diff
-::    test-diff-form
-::    test-pact
-::    test-pact-mark
-::    test-join
-::    test-list
-::    test-mash
-::    test-multi-core-same-dependency
-::    test-walk-prefer-grab
-::    test-walk-large-graph
-::    test-cast-large-graph
+  test-reef-short-circuit
+  test-path
+  test-plan-hoon
+  test-core
+  test-core-linker
+  test-core-multi-hoon
+  test-core-fsts-fssg
+  test-core-fsdt-fskt
+  test-core-fskt-nest-fail
+  test-core-fssm
+  test-core-fsbr
+  test-core-fsbr-out-of-options
+  test-plan-fszp-as-noun
+  test-core-fszp-as-mark
+  test-core-fscl-fszp
+  test-core-fscm
+  test-plan-fsbc
+  test-core-fscb
+  test-core-fspm
+  test-core-fszy-renderer
+  test-bunt
+  test-volt
+  test-vale
+  test-vale-error
+  test-cast
+  test-cast-grow
+  test-mute
+  test-bake-renderer
+  test-bake-mark
+  test-diff
+  test-diff-form
+  test-pact
+  test-pact-mark
+  test-join
+  test-list
+  test-mash
+  test-multi-core-same-dependency
+  test-walk-prefer-grab
+  test-walk-large-graph
+  test-cast-large-graph
 ==
 ++  test-tear
   :-  `tank`leaf+"test-tear"
@@ -6267,7 +6267,7 @@
         %-  expect-eq  !>
         :_  i.t.moves
         ^-  move:ford-gate
-        :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home
+        :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.6
             %c  %warp  [~nul ~nul]  %home
             `[%mult [%da ~1234.5.6] files]
         ==
@@ -6371,8 +6371,8 @@
       ^=  comparator
         |=  moves=(list move:ford-gate)
         ::
-        ?>  =(3 (lent moves))
-        ?>  ?=([^ ^ ^ ~] moves)
+        ?>  =(2 (lent moves))
+        ?>  ?=([^ ^ ~] moves)
         ?>  ?=([* %give %made @da %complete %success %core *] i.moves)
         ::
         =/  =vase  vase.build-result.result.p.card.i.moves
@@ -6387,14 +6387,6 @@
           :-  &
           (~(nest ut p.vase) | -:!>(12))
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :_  i.t.moves
-          ^-  move:ford-gate
-          :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home
-            %c  %warp  [~nul ~nul]  %home  ~
-          ==
-        ::
         =/  files=(set [%x path])
           %-  sy  :~
             [%x /lib/old-lib/hoon]
@@ -6402,7 +6394,6 @@
             [%x /sur/plan-acct/hoon]
             [%x /sur/plan/acct/hoon]
             [%x /lib/old/lib/hoon]
-            [%x /app/gh/hoon]
             [%x /app/gh2/hoon]
             [%x /lib/gh/parse/hoon]
             [%x /lib/gh-parse/hoon]
@@ -6410,9 +6401,9 @@
           ==
         ::
         %-  expect-eq  !>
-        :_  i.t.t.moves
+        :_  i.t.moves
         ^-  move:ford-gate
-        :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home
+        :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.7
             %c  %warp  [~nul ~nul]  %home
             `[%mult [%da ~1234.5.7] files]
         ==
@@ -6529,8 +6520,8 @@
       ^=  comparator
         |=  moves=(list move:ford-gate)
         ::
-        ?>  =(3 (lent moves))
-        ?>  ?=([^ ^ ^ ~] moves)
+        ?>  =(2 (lent moves))
+        ?>  ?=([^ ^ ~] moves)
         ?>  ?=([* %give %made @da %complete %success %core *] i.moves)
         ::
         =/  =vase  vase.build-result.result.p.card.i.moves
@@ -6545,14 +6536,6 @@
           :-  &
           (~(nest ut p.vase) | -:!>(11))
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :_  i.t.moves
-          ^-  move:ford-gate
-          :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home
-            %c  %warp  [~nul ~nul]  %home  ~
-          ==
-        ::
         =/  files=(set [%x path])
           %-  sy  :~
             [%x /lib/old-lib/hoon]
@@ -6560,8 +6543,6 @@
             [%x /sur/plan-acct/hoon]
             [%x /sur/plan/acct/hoon]
             [%x /lib/old/lib/hoon]
-            [%x /app/gh/hoon]
-            [%x /app/gh2/hoon]
             [%x /app/gh3/hoon]
             [%x /lib/gh/parse/hoon]
             [%x /lib/gh-parse/hoon]
@@ -6569,9 +6550,9 @@
           ==
         ::
         %-  expect-eq  !>
-        :_  i.t.t.moves
+        :_  i.t.moves
         ^-  move:ford-gate
-        :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home
+        :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.8
             %c  %warp  [~nul ~nul]  %home
             `[%mult [%da ~1234.5.8] files]
         ==
@@ -6680,7 +6661,7 @@
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  take-args
-        :*  wire=/~nul/clay-sub/~nul/home  duct=~[/gh3]
+        :*  wire=/~nul/clay-sub/~nul/home/~1234.5.6  duct=~[/gh]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.9] (sy [%x /lib/connector/hoon]~)]
         ==
@@ -6688,11 +6669,9 @@
       ^=  comparator
         |=  moves=(list move:ford-gate)
         ::
-        ?>  =(4 (lent moves))
-        ?>  ?=([^ ^ ^ ^ ~] moves)
+        ?>  =(2 (lent moves))
+        ?>  ?=([^ ^ ~] moves)
         ?>  ?=([* %give %made @da %complete %success %core *] i.moves)
-        ?>  ?=([* %give %made @da %complete %success %core *] i.t.moves)
-        ?>  ?=([* %give %made @da %complete %success %core *] i.t.t.moves)
         ::
         =/  =vase  vase.build-result.result.p.card.i.moves
         ::
@@ -6704,7 +6683,99 @@
             [%x /sur/plan/acct/hoon]
             [%x /lib/old/lib/hoon]
             [%x /app/gh/hoon]
+            [%x /lib/gh/parse/hoon]
+            [%x /lib/gh-parse/hoon]
+            [%x /lib/connector/hoon]
+          ==
+        ::
+        ;:  weld
+          (expect-eq !>([~[/gh] duct.i.moves]))
+          (compare-vase !>(17) vase.build-result.result.p.card.i.moves)
+        ::
+          %-  expect-eq  !>
+          :_  i.t.moves
+          ^-  move:ford-gate
+          :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
+              %c  %warp  [~nul ~nul]  %home
+              `[%mult [%da ~1234.5.9] files]
+          ==
+    ==  ==
+  ::
+  =^  results5  ford-gate
+    %-  test-ford-take-with-comparator  :*
+      ford-gate
+      now=~1234.5.9
+      scry=(scry-with-results-and-failures scry-results)
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/home/~1234.5.7  duct=~[/gh2]
+            ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
+            [%c %wris [%da ~1234.5.9] (sy [%x /lib/connector/hoon]~)]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(2 (lent moves))
+        ?>  ?=([^ ^ ~] moves)
+        ?>  ?=([* %give %made @da %complete %success %core *] i.moves)
+        ::
+        =/  =vase  vase.build-result.result.p.card.i.moves
+        ::
+        =/  files=(set [%x path])
+          %-  sy  :~
+            [%x /lib/old-lib/hoon]
+            [%x /sur/gh/hoon]
+            [%x /sur/plan-acct/hoon]
+            [%x /sur/plan/acct/hoon]
+            [%x /lib/old/lib/hoon]
             [%x /app/gh2/hoon]
+            [%x /lib/gh/parse/hoon]
+            [%x /lib/gh-parse/hoon]
+            [%x /lib/connector/hoon]
+          ==
+        ::
+        ;:  weld
+          (expect-eq !>([~[/gh2] duct.i.moves]))
+          (compare-vase !>(16) vase.build-result.result.p.card.i.moves)
+        ::
+          %-  expect-eq  !>
+          :_  i.t.moves
+          ^-  move:ford-gate
+          :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
+              %c  %warp  [~nul ~nul]  %home
+              `[%mult [%da ~1234.5.9] files]
+          ==
+    ==  ==
+  ::
+  =^  results6  ford-gate
+    %-  test-ford-take-with-comparator  :*
+      ford-gate
+      now=~1234.5.9
+      scry=(scry-with-results-and-failures scry-results)
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/home/~1234.5.8  duct=~[/gh3]
+            ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
+            [%c %wris [%da ~1234.5.9] (sy [%x /lib/connector/hoon]~)]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(2 (lent moves))
+        ?>  ?=([^ ^ ~] moves)
+        ?>  ?=([* %give %made @da %complete %success %core *] i.moves)
+        ::
+        =/  =vase  vase.build-result.result.p.card.i.moves
+        ::
+        =/  files=(set [%x path])
+          %-  sy  :~
+            [%x /lib/old-lib/hoon]
+            [%x /sur/gh/hoon]
+            [%x /sur/plan-acct/hoon]
+            [%x /sur/plan/acct/hoon]
+            [%x /lib/old/lib/hoon]
             [%x /app/gh3/hoon]
             [%x /lib/gh/parse/hoon]
             [%x /lib/gh-parse/hoon]
@@ -6715,26 +6786,65 @@
           (expect-eq !>([~[/gh3] duct.i.moves]))
           (compare-vase !>(15) vase.build-result.result.p.card.i.moves)
         ::
-          (expect-eq !>([~[/gh2] duct.i.t.moves]))
-          (compare-vase !>(16) vase.build-result.result.p.card.i.t.moves)
-        ::
-          (expect-eq !>([~[/gh] duct.i.t.t.moves]))
-          (compare-vase !>(17) vase.build-result.result.p.card.i.t.t.moves)
-        ::
           %-  expect-eq  !>
-          :_  i.t.t.t.moves
+          :_  i.t.moves
           ^-  move:ford-gate
-          :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home
+          :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
               %c  %warp  [~nul ~nul]  %home
               `[%mult [%da ~1234.5.9] files]
           ==
     ==  ==
+  ::
+  =^  results7  ford-gate
+    %-  test-ford-call  :*
+      ford-gate
+      now=~1234.5.10
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/gh] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/gh]  %pass  /~nul/clay-sub/~nul/home/~1234.5.9
+                %c  %warp  [~nul ~nul]  %home  ~
+    ==  ==  ==
+  ::
+  =^  results8  ford-gate
+    %-  test-ford-call  :*
+      ford-gate
+      now=~1234.5.11
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/gh2] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/gh2]  %pass  /~nul/clay-sub/~nul/home/~1234.5.9
+                %c  %warp  [~nul ~nul]  %home  ~
+    ==  ==  ==
+  ::
+  =^  results9  ford-gate
+    %-  test-ford-call  :*
+      ford-gate
+      now=~1234.5.12
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/gh3] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/gh3]  %pass  /~nul/clay-sub/~nul/home/~1234.5.9
+                %c  %warp  [~nul ~nul]  %home  ~
+    ==  ==  ==
   ::
   ;:  weld
     results1
     results2
     results3
     results4
+    results5
+    results6
+    results7
+    results8
+    results9
+    (expect-ford-empty ford-gate ~nul)
   ==
 ::  tests that we can do the simple adjacent mark case, and that we use grab
 ::  when both available.
@@ -6799,7 +6909,7 @@
                 [%grab %one %two]~
             ==
             ^-  move:ford-gate
-            :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home
+            :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home/~1234.5.6
                 %c  %warp  [~nul ~nul]  %home  ~  %mult  [%da ~1234.5.6]
                 %-  sy  :~
                   [%x /mar/two/hoon]  [%x /mar/one/hoon]
@@ -6814,7 +6924,7 @@
       call-args=[duct=~[/walk] type=~ %kill ~nul]
       ::
       ^=  moves
-        :~  :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home
+        :~  :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home/~1234.5.6
                 %c  %warp  [~nul ~nul]  %home  ~
     ==  ==  ==
   ::
@@ -6845,7 +6955,7 @@
                 [[%grab %one %two] [%grab %two %four] ~]
             ==
             ^-  move:ford-gate
-            :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home
+            :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home/~1234.5.6
                 %c  %warp  [~nul ~nul]  %home  ~  %mult  [%da ~1234.5.6]
                 %-  sy  :~
                   [%x /mar/one/hoon]  [%x /mar/two/hoon]
@@ -6861,7 +6971,7 @@
       call-args=[duct=~[/walk] type=~ %kill ~nul]
       ::
       ^=  moves
-        :~  :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home
+        :~  :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home/~1234.5.6
                 %c  %warp  [~nul ~nul]  %home  ~
     ==  ==  ==
   ::
