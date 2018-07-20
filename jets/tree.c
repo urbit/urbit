@@ -96,7 +96,7 @@ static u3j_core _143_hex_coed_d[] =
       {}
     };
 
-  static u3j_harm _143_hex_argon2_a[] = {{".2", u3we_argon2, c3n}, {}};
+  static u3j_harm _143_hex_argon2_a[] = {{".2", u3we_argon2}, {}};
 
   static u3j_core _143_hex_argon_d[] =
     { { "argon2", _143_hex_argon2_a },
