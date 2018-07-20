@@ -177,8 +177,20 @@
       $=  live
       $%  [%once in-progress=@da]
           $:  %live
+              ::
+              ::
               in-progress=(unit @da)
-              last-sent=(unit [date=@da resources=(jug disc resource)])
+              ::  the last subscription we made
+              ::
+              ::    This can possibly have an empty set of resources, in which
+              ::    we never sent a move.
+              ::
+              ::    NOTE: This implies that a single live build can only depend
+              ::    on live resources from a single disc. We don't have a
+              ::    working plan for fixing this and will need to think very
+              ::    hard about the future.
+              ::
+              last-sent=(unit [date=@da subscription=(unit subscription)])
       ==  ==
       ::  root-schematic: the requested build for this duct
       ::
@@ -1036,15 +1048,9 @@
     =.  state  (remove-duct-from-root root-build)
     ::
     ::
-    =/  resources  ~(tap by resources.u.last-sent.live.u.duct-status)
-    |-  ^+  ..execute
-    ?~  resources  ..execute
-    ::
-    ::  TODO: Also add scry cancels here.
-    ::
-    =.  ..execute  (cancel-clay-subscription date.root-build i.resources)
-    ::
-    $(resources t.resources)
+    ?~  subscription.u.last-sent.live.u.duct-status
+      ..execute
+    (cancel-clay-subscription u.subscription.u.last-sent.live.u.duct-status)
   ::  +remove-duct-from-root: remove :duct from a build tree
   ::
   ++  remove-duct-from-root
@@ -1363,8 +1369,13 @@
                   ?!
                   ?&  ?=(%live -.live.duct-status)
                       ?=(^ last-sent.live.duct-status)
-                      %+  ~(has ju resources.u.last-sent.live.duct-status)
-                        (extract-disc resource.schematic.build)
+                  ::
+                      =/  subscription=(unit subscription)
+                        subscription.u.last-sent.live.duct-status
+                      ::
+                      ?~  subscription
+                        %.n
+                      %-  ~(has in resources.u.subscription)
                       resource.schematic.build
           ==  ==  ==
         (add-build-to-next build)
@@ -4752,24 +4763,7 @@
       ..execute
     ::
         %live
-      =/  resources  (collect-live-resources build)
-      ::
-      =.  ..execute
-        =/  resource-list  ~(tap by resources)
-        |-
-        ^+  ..execute
-        ~&  %starting-resource-loop
-        ::
-        ?~  resource-list
-          ~&  %exiting-resource-loop
-          ..execute
-        ::
-        =.  ..execute  (start-clay-subscription date.build i.resource-list)
-        ~&  %finished-start-clay-subscription
-        ::
-        $(resource-list t.resource-list)
-      ~&  %finished-resource-loop
-      ::  ~&  [%duct-status duct-status]
+      =/  resources=(jug disc resource)  (collect-live-resources build)
       ::  clean up previous build
       ::
       =?  state  ?=(^ last-sent.live.duct-status)
@@ -4777,15 +4771,53 @@
         ::
         ::  ~&  [%remove-previous-duct-from-root duct duct-status (build-to-tape old-build)]
         (remove-duct-from-root old-build)
-      ~&  %about-add-to-ducts
+      ::
+      =/  resource-list=(list [=disc resources=(set resource)])
+        ~(tap by resources)
+      ::  we can only handle a single subscription
+      ::
+      ::    In the long term, we need Clay's interface to change so we can
+      ::    subscribe to multiple desks at the same time.
+      ::
+      ?:  (lth 1 (lent resource-list))
+        =.  ..execute  (send-incomplete build)
+        =.  ducts.state  (~(del by ducts.state) duct)
+        =.  state  (remove-duct-from-root build)
+        ..execute
+      ::
+      =/  subscription=(unit subscription)
+        ?~  resource-list
+          ~
+        `[date.build disc.i.resource-list resources.i.resource-list]
+      ::
+      =?  ..execute  ?=(^ subscription)
+        (start-clay-subscription u.subscription)
       ::
       =.  ducts.state
         %+  ~(put by ducts.state)  duct
-        duct-status(live [%live in-progress=~ last-sent=`[date.build resources]])
+        %_    duct-status
+            live
+          [%live in-progress=~ last-sent=`[date.build subscription]]
+        ==
       ::
-      ~&  %end-of-on-root-build-complete
       ..execute
     ==
+  ::  +send-incomplete:
+  ::
+  ++  send-incomplete
+    |=  =build
+    ^+  ..execute
+    ::
+    =.  moves
+      :_  moves
+      ^-  move
+      :*  duct  %give  %made  date.build
+          ^-  made-result
+          :-  %incomplete
+          [%leaf "build tried to subscribe to multiple discs"]~
+      ==
+    ::
+    ..execute
   ::  +cleanup-orphaned-provisional-builds: delete extraneous sub-builds
   ::
   ::    Remove unverified linkages to sub builds. If a sub-build has no other
@@ -5208,13 +5240,11 @@
       ::
       ::  ~&  [%pending-subscriptions pending-subscriptions.ship-state]
       =/  =subscription
-        :+  date  disc
-        ^-  (set resource)
-        ::
         =/  =duct-status  (~(got by ducts.ship-state) duct)
         ?>  ?=(%live -.live.duct-status)
         ?>  ?=(^ last-sent.live.duct-status)
-        (~(got by resources.u.last-sent.live.duct-status) disc)
+        ?>  ?=(^ subscription.u.last-sent.live.duct-status)
+        u.subscription.u.last-sent.live.duct-status
       ::  ~&  [%subscription subscription]
       ::
       =/  ducts=(list ^duct)
