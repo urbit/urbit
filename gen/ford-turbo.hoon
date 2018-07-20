@@ -76,8 +76,8 @@
   test-ride-scry-promote
   test-five-oh-fora
   test-alts
-  ::  test-alts-and-live
-  ::  test-double-alts
+  test-alts-and-live
+  test-double-alts
 ::    test-cache-reclamation-trivial
 ::    test-cache-reclamation-live-rebuild
 ::    test-cache-reclamation-live-promote
@@ -3036,9 +3036,6 @@
         :~  :*  duct=~[/alts]  %give  %made  ~1234.5.7  %complete
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-two'
             ==
-            :*  duct=~[/same]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk  ~
-            ==
             :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
                 %c  %warp  [~nul ~nul]  %desk
                 `[%mult [%da ~1234.5.7] (sy [%x /scry/two] [%x /scry/one] ~)]
@@ -3066,7 +3063,7 @@
             ::
             :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
                 %c  %warp  [~nul ~nul]  %desk
-                `[%mult [%da ~1234.5.8] (sy [%x /scry/one] [%x /scry/two] ~)]
+                `[%mult [%da ~1234.5.8] (sy [%x /scry/one] ~)]
     ==  ==  ==
   ::
   ::  kill the /same build
@@ -3083,12 +3080,8 @@
       call-args=[duct=~[/same] type=~ %kill ~nul]
       ::
       ^=  moves
-        :~  :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
+        :~  :*  duct=~[/same]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
                 %c  %warp  [~nul ~nul]  %desk  ~
-            ==
-            :*  duct=~[/same]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
-                %c  %warp  [~nul ~nul]  %desk
-                `[%mult [%da ~1234.5.8] (sy [%x /scry/one] ~)]
     ==  ==  ==
   ::
   =^  results5  ford-gate
@@ -3100,7 +3093,7 @@
       call-args=[duct=~[/alts] type=~ %kill ~nul]
       ::
       ^=  moves
-        :~  :*  duct=~[/same]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
+        :~  :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
                 %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==  ==
   ::
@@ -3122,27 +3115,31 @@
     %-  my  :~
       :-  [%cx [[~nul %desk %da ~1234.5.6] /one/scry]]
       ~
-    ::
       :-  [%cx [[~nul %desk %da ~1234.5.6] /two/scry]]
       `[%noun scry-type 'scry-two']
+      :-  [%cx [[~nul %desk %da ~1234.5.6] /three/scry]]
+      ~
     ::
+      :-  [%cx [[~nul %desk %da ~1234.5.7] /one/scry]]
+      ~
+      :-  [%cx [[~nul %desk %da ~1234.5.7] /two/scry]]
+      `[%noun scry-type 'scry-two']
       :-  [%cx [[~nul %desk %da ~1234.5.7] /three/scry]]
       ~
     ::
-      :-  [%cx [[~nul %desk %da ~1234.5.7] /two/scry]]
+      :-  [%cx [[~nul %desk %da ~1234.5.8] /one/scry]]
+      ~
+      :-  [%cx [[~nul %desk %da ~1234.5.8] /two/scry]]
       `[%noun scry-type 'scry-two']
-    ::
       :-  [%cx [[~nul %desk %da ~1234.5.8] /three/scry]]
       `[%noun scry-type 'scry-three']
     ::
-      :-  [%cx [[~nul %desk %da ~1234.5.8] /two/scry]]
-      `[%noun scry-type 'scry-two']
-    ::
       :-  [%cx [[~nul %desk %da ~1234.5.9] /one/scry]]
       `[%noun scry-type 'scry-one']
-    ::
       :-  [%cx [[~nul %desk %da ~1234.5.9] /two/scry]]
       `[%noun scry-type 'scry-two-changed']
+      :-  [%cx [[~nul %desk %da ~1234.5.9] /three/scry]]
+      `[%noun scry-type 'scry-three']
     ==
   ::
   =/  scry  (scry-with-results-and-failures scry-results)
@@ -3166,7 +3163,7 @@
         :~  :*  duct=~[/first]  %give  %made  ~1234.5.6  %complete
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-two'
             ==
-            :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk
+            :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
                 %c  %warp  [~nul ~nul]  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /scry/one] [%x /scry/two] ~)]
     ==  ==  ==
@@ -3184,12 +3181,9 @@
         :~  :*  duct=~[/second]  %give  %made  ~1234.5.7  %complete
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-two'
             ==
-            :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk
-                %c  %warp  [~nul ~nul]  %desk  ~
-            ==
-            :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk
+            :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
                 %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.7]
-                (sy [%x /scry/one] [%x /scry/two] [%x /scry/three] ~)
+                (sy [%x /scry/two] [%x /scry/three] ~)
     ==  ==  ==
   ::
   ::  alts2 should now just return 'scry-three'
@@ -3201,7 +3195,7 @@
       scry=scry
       ::
       ^=  take-args
-        :*  wire=/~nul/clay-sub/~nul/desk  duct=~[/second]
+        :*  wire=/~nul/clay-sub/~nul/desk/~1234.5.7  duct=~[/second]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.8] (sy [%x /scry/three]~)]
         ==
@@ -3210,12 +3204,10 @@
         :~  :*  duct=~[/second]  %give  %made  ~1234.5.8  %complete
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-three'
             ==
-            :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk
+            :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
                 %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.8]
-                (sy [%x /scry/one] [%x /scry/two] [%x /scry/three] ~)
+                (sy [%x /scry/three] ~)
     ==  ==  ==
-  ::
-  ::  alts1 should now just return 'scry-one'
   ::
   =^  results4  ford-gate
     %-  test-ford-take  :*
@@ -3224,7 +3216,7 @@
       scry=scry
       ::
       ^=  take-args
-        :*  wire=/~nul/clay-sub/~nul/desk  duct=~[/second]
+        :*  wire=/~nul/clay-sub/~nul/desk/~1234.5.6  duct=~[/first]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.9] (sy [%x /scry/one] [%x /scry/two] ~)]
         ==
@@ -3233,9 +3225,9 @@
         :~  :*  duct=~[/first]  %give  %made  ~1234.5.9  %complete
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-one'
             ==
-            :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk
+            :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.9
                 %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.9]
-                (sy [%x /scry/one] [%x /scry/three] ~)
+                (sy [%x /scry/one] ~)
     ==  ==  ==
   ::
   =^  results5  ford-gate
@@ -3247,12 +3239,8 @@
       call-args=[duct=~[/first] type=~ %kill ~nul]
       ::
       ^=  moves
-        :~  :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk
+        :~  :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.9
                 %c  %warp  [~nul ~nul]  %desk  ~
-            ==
-            :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk
-                %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.9]
-                (sy [%x /scry/three] ~)
     ==  ==  ==
   ::
   =^  results6  ford-gate
@@ -3264,7 +3252,7 @@
       call-args=[duct=~[/second] type=~ %kill ~nul]
       ::
       ^=  moves
-        :~  :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk
+        :~  :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
                 %c  %warp  [~nul ~nul]  %desk  ~
     ==  ==  ==
   ::

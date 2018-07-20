@@ -403,6 +403,15 @@
     %-  enclose
     ;:(welp $(build [date head.schematic]) " " $(build [date tail.schematic]))
   ::
+      %alts
+    ;:  welp
+      %+  roll  choices.schematic
+      |=  [choice=^schematic txt=_"[alts"]
+      :(welp txt " " ^$(schematic.build choice))
+    ::
+      "]"
+    ==
+  ::
       %core
     :(welp "[core " (spud (en-beam (rail-to-beam source-path.schematic))) "]")
   ::
@@ -1056,7 +1065,7 @@
   ++  remove-duct-from-root
     |=  =build
     ^+  state
-    ::  ~&  [%remove-duct-from-root (build-to-tape build)]
+    ::  ~&  [%remove-duct-from-root (build-to-tape build) duct]
     ::
     =.  builds.state
       =<  builds
@@ -1146,7 +1155,6 @@
       ^$(build i.subs)
     ::
     $(subs t.subs)
-    
   ::  +copy-build-tree-as-provisional: prepopulate new live build
   ::
   ::    Make a provisional copy of the completed old root build tree at the
