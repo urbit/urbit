@@ -121,12 +121,6 @@
       ::  pending-subscriptions: pending subscription requests
       ::
       pending-subscriptions=subscription-tracker
-      ::  next-builds: builds to perform in the next iteration
-      ::
-      next-builds=(set build)
-      ::  candidate-builds: builds which might go into next-builds
-      ::
-      candidate-builds=(set build)
   ==
 ::  +build-status: current data for a build, including construction status
 ::
@@ -899,6 +893,12 @@
   ::    Otherwise, the value will contain a +cage.
   ::
   =|  scry-results=(map scry-request (unit cage))
+  ::  next-builds: builds to perform in the next iteration
+  ::
+  =|  next-builds=(set build)
+  ::  candidate-builds: builds which might go into next-builds
+  ::
+  =|  candidate-builds=(set build)
   ::  the +per-event gate; each event will have a different sample
   ::
   ::    Not a `|_` because of the `=/`s at the beginning.
@@ -1251,8 +1251,8 @@
     ::
     =.  ..execute  (execute builds)
     ::
-    ?:  ?&  ?=(~ next-builds.state)
-            ?=(~ candidate-builds.state)
+    ?:  ?&  ?=(~ next-builds)
+            ?=(~ candidate-builds)
         ==
       ..execute
     ::
@@ -1276,28 +1276,27 @@
   ::  +gather: collect builds to be run in a batch
   ::
   ::    The +gather phase is the first of the three parts of +execute. In
-  ::    +gather, we look through each item in :candidate-builds.state.  If we
-  ::    should run the candidate build this cycle through the +execute loop,
-  ::    we place it in :next-builds.state. +gather runs until it has no more
-  ::    candidates.
+  ::    +gather, we look through each item in :candidate-builds.  If we
+  ::    should run the candidate build this cycle through the +execute loop, we
+  ::    place it in :next-builds. +gather runs until it has no more candidates.
   ::
   ++  gather
     |=  [builds=(set build) force=?]
     ^+  ..execute
     ::  add builds that were triggered by incoming event to the candidate list
     ::
-    =.  candidate-builds.state  (~(uni in candidate-builds.state) builds)
+    =.  candidate-builds  (~(uni in candidate-builds) builds)
     ::
     |^  ^+  ..execute
-        ::  ~&  [%candidate-builds (turn ~(tap in candidate-builds.state) build-to-tape)]
+        ::  ~&  [%candidate-builds (turn ~(tap in candidate-builds) build-to-tape)]
         ::
-        ?:  =(~ candidate-builds.state)
+        ?:  =(~ candidate-builds)
           ..execute
         ::
         =/  next=build
-          ?<  ?=(~ candidate-builds.state)
-          n.candidate-builds.state
-        =.  candidate-builds.state  (~(del in candidate-builds.state) next)
+          ?<  ?=(~ candidate-builds)
+          n.candidate-builds
+        =.  candidate-builds  (~(del in candidate-builds) next)
         ::
         $(..execute (gather-build next))
     ::  +gather-build: looks at a single candidate build
@@ -1430,16 +1429,16 @@
         ::
         ::    When not all our sub builds have results, we can't add :build to
         ::    :next-builds.state. Instead, put all the remaining uncached new
-        ::    subs into :candidate-builds.state.
+        ::    subs into :candidate-builds.
         ::
         ::    If all of our sub-builds finish immediately (i.e. promoted) when
         ::    they pass through +gather-internal, they will add :build back to
-        ::    :candidate-builds.state and we will run again before +execute runs
+        ::    :candidate-builds and we will run again before +execute runs
         ::    +make.
         ::
         %_    ..execute
-            candidate-builds.state
-          (~(gas in candidate-builds.state) un-stored-new-subs)
+            candidate-builds
+          (~(gas in candidate-builds) un-stored-new-subs)
         ==
       ::
       =^  promotable  builds.state  (are-subs-unchanged old-subs new-subs)
@@ -1474,7 +1473,7 @@
     ::
     ++  add-build-to-next
       |=  =build
-      ..execute(next-builds.state (~(put in next-builds.state) build))
+      ..execute(next-builds (~(put in next-builds) build))
     ::  +promote-build: promote result of :build to newer :date
     ::
     ::    Also performs relevant accounting, and possibly sends %made moves.
@@ -1531,9 +1530,9 @@
     ^-  [(list build-receipt) _..execute]
     ::
     =/  build-receipts=(list build-receipt)
-      (turn ~(tap in next-builds.state) make)
+      (turn ~(tap in next-builds) make)
     ::
-    =.  next-builds.state  ~
+    =.  next-builds  ~
     [build-receipts ..execute]
   ::  reduce: apply +build-receipts produce from the +make phase.
   ::
@@ -1694,7 +1693,7 @@
         build-status(state [%blocked ~])
       ::  enqueue :blocks to be run next
       ::
-      =.  candidate-builds.state  (~(gas in candidate-builds.state) blocks)
+      =.  candidate-builds  (~(gas in candidate-builds) blocks)
       ::
       ..execute
     ::  +clay-request-for-scry-request: new move to request blocked resource
@@ -4719,8 +4718,7 @@
       (on-root-build-complete build)
     ::
     =^  unblocked-clients  builds.state  (unblock-clients-on-duct build)
-    =.  candidate-builds.state
-      (~(gas in candidate-builds.state) unblocked-clients)
+    =.  candidate-builds  (~(gas in candidate-builds) unblocked-clients)
     ::
     ..execute
   ::  +on-root-build-complete: handle completion or promotion of a root build
