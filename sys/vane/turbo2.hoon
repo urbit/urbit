@@ -928,7 +928,7 @@
     ::
     =<  finalize
     ::
-    ~&  [%rebuild subscription=subscription pending-subscriptions.state]
+    ::  ~&  [%rebuild subscription=subscription pending-subscriptions.state]
     =.  pending-subscriptions.state
       +:(del-subscription pending-subscriptions.state subscription duct)
     ::
@@ -1024,14 +1024,14 @@
     ::
     =?    state
         ?=(^ in-progress.live.u.duct-status)
-      ~&  [%removing-in-progress (build-to-tape [u.in-progress.live root-schematic]:u.duct-status)]
+      ::  ~&  [%removing-in-progress (build-to-tape [u.in-progress.live root-schematic]:u.duct-status)]
       (remove-duct-from-root [u.in-progress.live root-schematic]:u.duct-status)
     ::
     ?~  last-sent.live.u.duct-status
       ..execute
     ::
     =/  root-build=build  [date.u.last-sent.live root-schematic]:u.duct-status
-    ~&  [%canceling-root-build (build-to-tape root-build)]
+    ::  ~&  [%canceling-root-build (build-to-tape root-build)]
     ::
     =.  state  (remove-duct-from-root root-build)
     ::
@@ -1050,7 +1050,7 @@
   ++  remove-duct-from-root
     |=  =build
     ^+  state
-    ~&  [%remove-duct-from-root (build-to-tape build)]
+    ::  ~&  [%remove-duct-from-root (build-to-tape build)]
     ::
     =.  builds.state
       =<  builds
@@ -1119,7 +1119,7 @@
   ++  remove-duct-from-subs
     |=  =build
     ^+  builds.state
-    ~&  [%remove-duct-from-subs (build-to-tape build)]
+    ::  ~&  [%remove-duct-from-subs (build-to-tape build)]
     ::
     =/  =build-status  (~(got by builds.state) build)
     =/  subs=(list ^build)  ~(tap in ~(key by subs.build-status))
@@ -1275,7 +1275,7 @@
     =.  candidate-builds.state  (~(uni in candidate-builds.state) builds)
     ::
     |^  ^+  ..execute
-        ~&  [%candidate-builds (turn ~(tap in candidate-builds.state) build-to-tape)]
+        ::  ~&  [%candidate-builds (turn ~(tap in candidate-builds.state) build-to-tape)]
         ::
         ?:  =(~ candidate-builds.state)
           ..execute
@@ -1295,7 +1295,7 @@
     ++  gather-build
       |=  =build
       ^+  ..execute
-      ~&  [%gather-build duct (build-to-tape build)]
+      ::  ~&  [%gather-build duct (build-to-tape build)]
       ~|  [%duct duct]
       =/  duct-status  (~(got by ducts.state) duct)
       ::  if we already have a result for this build, don't rerun the build
@@ -1463,7 +1463,7 @@
     ++  promote-build
       |=  [old-build=build new-date=@da new-subs=(list build)]
       ^+  ..execute
-      ~&  [%promote-build (build-to-tape old-build) new-date]
+      ::  ~&  [%promote-build (build-to-tape old-build) new-date]
       ::  grab the previous result, freshening the cache
       ::
       =^  old-build-record  builds.state  (access-build-record old-build)
@@ -4513,7 +4513,7 @@
   ::
   ++  remove-builds
     |=  builds=(list build)
-    ~&  [%remove-builds (turn builds build-to-tape)]
+    ::  ~&  [%remove-builds (turn builds build-to-tape)]
     ::
     |^  ^+  state
         ::
@@ -4540,12 +4540,12 @@
       ::  never delete a build that something depends on
       ::
       ?^  clients.build-status
-        ~&  [%skip-remove-because-clients (build-to-tape build) clients.build-status]
+        ::  ~&  [%skip-remove-because-clients (build-to-tape build) clients.build-status]
         [removed=| state]
       ?^  requesters.build-status
-        ~&  [%skip-remove-because-requesters (build-to-tape build) requesters.build-status]
+        ::  ~&  [%skip-remove-because-requesters (build-to-tape build) requesters.build-status]
         [removed=| state]
-      ~&  [%removing (build-to-tape build) (~(got by builds.state) build)]
+      ::  ~&  [%removing (build-to-tape build) (~(got by builds.state) build)]
       ::  nothing depends on :build, so we'll remove it
       ::
       :-  removed=&
@@ -4713,7 +4713,7 @@
     |=  =build
     ^+  ..execute
     ::
-    ~&  [%on-root-build-complete (build-to-tape build)]
+    ::  ~&  [%on-root-build-complete (build-to-tape build)]
     ::
     =/  =build-status  (~(got by builds.state) build)
     =/  =duct-status  (~(got by ducts.state) duct)
@@ -4758,21 +4758,26 @@
         =/  resource-list  ~(tap by resources)
         |-
         ^+  ..execute
+        ~&  %starting-resource-loop
         ::
         ?~  resource-list
+          ~&  %exiting-resource-loop
           ..execute
         ::
         =.  ..execute  (start-clay-subscription date.build i.resource-list)
         ~&  %finished-start-clay-subscription
         ::
         $(resource-list t.resource-list)
+      ~&  %finished-resource-loop
+      ::  ~&  [%duct-status duct-status]
       ::  clean up previous build
       ::
       =?  state  ?=(^ last-sent.live.duct-status)
         =/  old-build=^build  build(date date.u.last-sent.live.duct-status)
         ::
-        ~&  [%remove-previous-duct-from-root duct duct-status (build-to-tape old-build)]
+        ::  ~&  [%remove-previous-duct-from-root duct duct-status (build-to-tape old-build)]
         (remove-duct-from-root old-build)
+      ~&  %about-add-to-ducts
       ::
       =.  ducts.state
         %+  ~(put by ducts.state)  duct
@@ -4790,7 +4795,7 @@
   ++  cleanup-orphaned-provisional-builds
     |=  =build
     ^+  ..execute
-    ~&  [%cleanup-orphaned-provisional-builds (build-to-tape build)]
+    ::  ~&  [%cleanup-orphaned-provisional-builds (build-to-tape build)]
     ::
     =/  =build-status  (~(got by builds.state) build)
     ::
@@ -4870,19 +4875,19 @@
     ::   does this build even exist?!
     ::
     ?~  maybe-build-status=(~(get by builds.state) build)
-      ~&  [%cleanup-no-build (build-to-tape build)]
+      ::  ~&  [%cleanup-no-build (build-to-tape build)]
       state
     ::
     =/  =build-status  u.maybe-build-status
     ::  never delete a build that something depends on
     ::
     ?^  clients.build-status
-      ~&  [%cleanup-clients-no-op (build-to-tape build)]
+      ::  ~&  [%cleanup-clients-no-op (build-to-tape build)]
       state
     ?^  requesters.build-status
-      ~&  [%cleanup-requesters-no-op (build-to-tape build)]
+      ::  ~&  [%cleanup-requesters-no-op (build-to-tape build)]
       state
-    ~&  [%cleanup (build-to-tape build)]
+    ::  ~&  [%cleanup (build-to-tape build)]
     ::
     (remove-builds ~[build])
   ::  +collect-live-resources: produces all live resources from sub-scrys
@@ -4890,7 +4895,7 @@
   ++  collect-live-resources
     |=  =build
     ^-  (jug disc resource)
-    ~&  [%collect-live-resources (build-to-tape build)]
+    ::  ~&  [%collect-live-resources (build-to-tape build)]
     ::
     ?:  ?=(%scry -.schematic.build)
       =*  resource  resource.schematic.build
@@ -4948,7 +4953,7 @@
     ::
     =/  already-subscribed=?
       (~(has by pending-subscriptions.state) subscription)
-    ~&  [%start-clay-subscription subscription already-subscribed=already-subscribed pending-subscriptions.state]
+    ::  ~&  [%start-clay-subscription subscription already-subscribed=already-subscribed pending-subscriptions.state]
     ::
     =.  pending-subscriptions.state
       (put-subscription pending-subscriptions.state subscription duct)
@@ -5201,7 +5206,7 @@
       =+  [ship desk date]=(raid:wired t.t.wire ~[%p %tas %da])
       =/  disc  [ship desk]
       ::
-      ~&  [%pending-subscriptions pending-subscriptions.ship-state]
+      ::  ~&  [%pending-subscriptions pending-subscriptions.ship-state]
       =/  =subscription
         :+  date  disc
         ^-  (set resource)
@@ -5210,12 +5215,12 @@
         ?>  ?=(%live -.live.duct-status)
         ?>  ?=(^ last-sent.live.duct-status)
         (~(got by resources.u.last-sent.live.duct-status) disc)
-      ~&  [%subscription subscription]
+      ::  ~&  [%subscription subscription]
       ::
       =/  ducts=(list ^duct)
         (get-subscription-ducts pending-subscriptions.ship-state subscription)
       ::
-      ~&  [%ducts-for-clay-sub ducts]
+      ::  ~&  [%ducts-for-clay-sub ducts]
       ::
       =|  moves=(list move)
       |-
@@ -5254,7 +5259,7 @@
       ~|  [%scry-request scry-request]
       ~(tap in (~(got by pending-scrys.ship-state) scry-request))
     ::
-    ~&  [%ducts-for-scrys ducts]
+    ::  ~&  [%ducts-for-scrys ducts]
     ::
     =|  moves=(list move)
     |-

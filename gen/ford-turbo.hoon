@@ -39,42 +39,42 @@
   ::  test-parse-scaffold-crane-fskt
   ::  test-parse-scaffold-crane-fszp
   ::  test-parse-scaffold-crane-fszy
-  ::  test-literal
-  ::  test-autocons-same
-  ::  test-autocons-different
-  ::  test-scry-clay-succeed
-  ::  test-scry-clay-fail
-  ::  test-scry-clay-block
-  ::  test-scry-clay-live
-  ::  test-scry-clay-live-again
-  ::  test-scry-clay-same-path
-  ::  test-pinned-in-past
-  ::  test-pinned-in-future
-  ::  test-pinned-in-pin
-  ::  test-pinned-in-live
-  ::  test-live-build-that-blocks
-  ::  test-live-and-once
-  ::  test-live-two-deep
-  ::  test-live-three-deep
-  ::  test-live-triangle
-  ::  test-live-and-pinned-triangle
-  ::  test-call
-  ::  test-call-scry-succeed
-  ::  test-call-scry-fail
-  ::  test-call-scry-block
+  test-literal
+  test-autocons-same
+  test-autocons-different
+  test-scry-clay-succeed
+  test-scry-clay-fail
+  test-scry-clay-block
+  test-scry-clay-live
+  test-scry-clay-live-again
+  test-scry-clay-same-path
+  test-pinned-in-past
+  test-pinned-in-future
+  test-pinned-in-pin
+  test-pinned-in-live
+  test-live-build-that-blocks
+  test-live-and-once
+  test-live-two-deep
+  test-live-three-deep
+  test-live-triangle
+  test-live-and-pinned-triangle
+  test-call
+  test-call-scry-succeed
+  test-call-scry-fail
+  test-call-scry-block
   test-call-scry-varies
-  ::  test-dude
-  ::  test-dude-error
-  ::  test-hood
-  ::  test-slim
-  ::  test-slit
-  ::  test-slit-error
-  ::  test-ride
-  ::  test-ride-scry-succeed
-  ::  test-ride-scry-fail
-  ::  test-ride-scry-block
-  ::  test-ride-scry-promote
-  ::  test-five-oh-fora
+  test-dude
+  test-dude-error
+  test-hood
+  test-slim
+  test-slit
+  test-slit-error
+  test-ride
+  test-ride-scry-succeed
+  test-ride-scry-fail
+  test-ride-scry-block
+  test-ride-scry-promote
+  test-five-oh-fora
 
 ::    test-alts
 ::    test-alts-and-live
