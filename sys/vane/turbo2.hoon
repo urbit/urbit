@@ -100,13 +100,27 @@
 ::  +ford-state: all state that ford maintains for a @p ship identity
 ::
 +=  ford-state
-  $:  ::  results: all stored build results
+  $:  ::  builds: per-build state machine for all builds
       ::
-      ::    Ford generally stores the result for all the most recently
-      ::    completed live builds, unless it's been asked to wipe its cache.
+      ::    Ford holds onto all in-progress builds that were either directly
+      ::    requested by a duct (root builds) or that are dependencies
+      ::    (sub-builds) of a directly requested build.
+      ::
+      ::    It also stores the last completed version of each live build tree
+      ::    (root build and sub-builds), and any cached builds.
       ::
       builds=(map build build-status)
-      ::  ducts: build requests to their state
+      ::  ducts: per-duct state machine for all incoming ducts (build requests)
+      ::
+      ::    Ford tracks every duct that has requested a build until it has
+      ::    finished dealing with that request.
+      ::
+      ::    For live ducts, we store the duct while we repeatedly run new
+      ::    versions of the live build it requested until it is explicitly
+      ::    canceled by the requester.
+      ::
+      ::    A once (non-live) duct, on the other hand, will be removed
+      ::    as soon as the requested build has been completed.
       ::
       ducts=(map duct duct-status)
       ::  builds-by-schematic: all attempted builds, sorted by time
@@ -115,12 +129,12 @@
       ::    list the formal dates of all build attempts, sorted newest first.
       ::
       builds-by-schematic=(map schematic (list @da))
-      ::  pending-scrys: pending scry requests
+      ::  pending-scrys: outgoing requests for static resources
       ::
-      pending-scrys=(jug scry-request duct)
-      ::  pending-subscriptions: pending subscription requests
+      pending-scrys=(request-tracker scry-request)
+      ::  pending-subscriptions: outgoing subscriptions on live resources
       ::
-      pending-subscriptions=subscription-tracker
+      pending-subscriptions=(request-tracker subscription)
   ==
 ::  +build-status: current data for a build, including construction status
 ::
@@ -252,14 +266,15 @@
       ::
       =schematic
   ==
-::  +subscription-tracker: information about ducts subscribed to resources
+::  +request-tracker: generic tracker and multiplexer for pending requests
 ::
-+=  subscription-tracker
-  %+  map  subscription
-  $:  ::  subscribed: set of all ducts subscribed to this subscription
++=  request-tracker
+  |*  request-type=mold
+  %+  map  request-type
+  $:  ::  waiting: ducts blocked on this request
       ::
-      subscribed=(set duct)
-      ::  originator: the duct which the subscription was made on
+      waiting=(set duct)
+      ::  originator: the duct that kicked off the request
       ::
       originator=duct
   ==
@@ -634,43 +649,42 @@
       `[i.dates schematic.build]
     $(dates t.dates)
   --
-::  +get-subscription-ducts: returns all ducts subscribed to :subscription
+::  +get-request-ducts: all ducts waiting on this request
 ::
-++  get-subscription-ducts
-  |=  [=subscription-tracker =subscription]
+++  get-request-ducts
+  |*  tracker=(request-tracker)
+  |=  request=_?>(?=(^ tracker) p.n.tracker)
   ^-  (list duct)
   ::
-  ~(tap in subscribed:(~(got by subscription-tracker) subscription))
-::  +put-subscription: associates a :duct with a :subscription
+  ~(tap in waiting:(~(got by tracker) request))
+::  +put-request: associates a +duct with a request
 ::
-++  put-subscription
-  |=  [=subscription-tracker =subscription =duct]
-  ^+  subscription-tracker
+++  put-request
+  |*  tracker=(request-tracker)
+  |=  [request=_?>(?=(^ tracker) p.n.tracker) =duct]
   ::
-  %+  ~(put by subscription-tracker)  subscription
-  ?~  original=(~(get by subscription-tracker) subscription)
+  %+  ~(put by tracker)  request
+  ?~  existing=(~(get by tracker) request)
     [(sy duct ~) duct]
-  u.original(subscribed (~(put in subscribed.u.original) duct))
-::  +del-subscription: remove a duct and return the originating duct if empty
+  u.existing(waiting (~(put in waiting.u.existing) duct))
+::  +del-request: remove a duct and produce the originating duct if empty
 ::
-++  del-subscription
-  |=  [=subscription-tracker =subscription =duct]
-  ^-  [(unit ^duct) _subscription-tracker]
+++  del-request
+  |*  tracker=(request-tracker)
+  |=  [request=_?>(?=(^ tracker) p.n.tracker) =duct]
+  ^-  [(unit ^duct) _tracker]
+  ::  remove :duct from the existing :record of this :request
   ::
-  =/  record  (~(got by subscription-tracker) subscription)
-  =.  subscribed.record  (~(del in subscribed.record) duct)
+  =/  record  (~(got by tracker) request)
+  =.  waiting.record  (~(del in waiting.record) duct)
+  ::  if we still have ducts waiting on this request, don't delete it
   ::
-  ?^  subscribed.record
-    ::  we still have subscribed ducts
-    ::
-    =.  subscription-tracker
-      (~(put by subscription-tracker) subscription record)
-    ::
-    [~ subscription-tracker]
-  ::  delete this final duct record
+  ?^  waiting.record
+    [~ (~(put by tracker) request record)]
+  ::  no ducts are left; delete this request entirely
   ::
-  =.  subscription-tracker  (~(del by subscription-tracker) subscription)
-  [`originator.record subscription-tracker]
+  =.  tracker  (~(del by tracker) request)
+  [`originator.record tracker]
 ::  +parse-scaffold: produces a parser for a hoon file with +crane instances
 ::
 ::    Ford parses a superset of hoon which contains additional runes to
@@ -932,7 +946,7 @@
     ::
     ::  ~&  [%rebuild subscription=subscription pending-subscriptions.state]
     =.  pending-subscriptions.state
-      +:(del-subscription pending-subscriptions.state subscription duct)
+      +:((del-request pending-subscriptions.state) subscription duct)
     ::
     =/  builds=(list build)
       %+  turn  ~(tap in care-paths)
@@ -4972,7 +4986,7 @@
     ::  ~&  [%start-clay-subscription subscription already-subscribed=already-subscribed pending-subscriptions.state]
     ::
     =.  pending-subscriptions.state
-      (put-subscription pending-subscriptions.state subscription duct)
+      ((put-request pending-subscriptions.state) subscription duct)
     ::  don't send a duplicate move if we're already subscribed
     ::
     ?:  already-subscribed
@@ -5013,7 +5027,7 @@
     ::
     ::  ~&  [%cancel-clay-subscription subscription pending-subscriptions.state]
     =^  originator  pending-subscriptions.state
-      (del-subscription pending-subscriptions.state subscription duct)
+      ((del-request pending-subscriptions.state) subscription duct)
     ::  if there are still other ducts on this subscription, don't send a move
     ::
     ?~  originator
@@ -5227,7 +5241,7 @@
       ::  ~&  [%subscription subscription]
       ::
       =/  ducts=(list ^duct)
-        (get-subscription-ducts pending-subscriptions.ship-state subscription)
+        ((get-request-ducts pending-subscriptions.ship-state) subscription)
       ::
       ::  ~&  [%ducts-for-clay-sub ducts]
       ::
