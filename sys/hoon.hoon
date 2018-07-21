@@ -6260,7 +6260,6 @@
     {$zpwt p/$@(p/@ {p/@ q/@}) q/hoon}                  ::  !?
     {$zpzp ~}                                           ::  !!
   ==                                                    ::
-+$  sofa  (pair skin (unit spec))                       ::
 +$  tyre  (list {p/term q/hoon})                        ::
 +$  tyke  (list (unit hoon))                            ::
 ::                                                      ::::::  virtual nock
@@ -7551,7 +7550,7 @@
     ::
     |-  ^-  (unit term)
     ?-  -.mod 
-      $base  ?.(?=([%atom *] p.mod) ~ `p.p.mod)
+      $base  ?.(?=([%atom *] p.mod) ~ ?:(=(%$ p.p.mod) `%atom `p.p.mod))
       $dbug  $(mod q.mod)
       $leaf  `p.mod
       $loop  `p.mod
@@ -12665,9 +12664,16 @@
       :-  '='
         ;~  pfix  tis
           %+  sear
-            |=  mod/spec 
-            (bind ~(autoname ax & +<) |=(term [%bsts +< +>+<]))
-          wyde
+            |=  [=(unit term) =spec]
+            %+  bind
+              ~(autoname ax & spec) 
+            |=  =term 
+            =*  name  ?~(unit term (cat 3 u.unit (cat 3 '-' term)))
+            [%bsts name spec]
+          ;~  pose 
+            ;~(plug (stag ~ ;~(sfix sym tis)) wyde)
+            (stag ~ wyde)
+          ==
         ==
       :-  ['a' 'z']
         ;~  pose
