@@ -1634,6 +1634,7 @@ _proxy_warc_free(u3_warc* cli_u)
 {
   _proxy_warc_unlink(cli_u);
   free(cli_u->non_u.base);
+  free(cli_u->hot_c);
   free(cli_u);
 }
 
@@ -1643,10 +1644,14 @@ static u3_warc*
 _proxy_warc_new(u3_http* htp_u, u3_atom sip, c3_s por_s, c3_o sec)
 {
   u3_warc* cli_u = c3_malloc(sizeof(*cli_u));
+  cli_u->htp_u = htp_u;
+  cli_u->por_s = por_s;
+  // XX set here instead of u3_http_ef_that() ?
+  cli_u->non_u = uv_buf_init(0, 0);
   cli_u->sip = sip;
   cli_u->sec = sec;
-  cli_u->htp_u = htp_u;
-  cli_u->por_s = por_s; // set after opened
+  // XX set here instead of _proxy_ward_resolve() ?
+  cli_u->hot_c = 0;
   cli_u->nex_u = 0;
   cli_u->pre_u = 0;
 
@@ -2346,18 +2351,6 @@ _proxy_ward_connect(u3_warc* cli_u)
 
   uv_tcp_init(u3L, &con_u->don_u);
 
-  if ( 0 == cli_u->hot_c ) {
-    u3_noun sip = u3dc("scot", 'p', u3k(cli_u->sip));
-    c3_c* sip_c = u3r_string(sip);
-    c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.ops_u.dns_c);
-    cli_u->hot_c = c3_malloc(len_w);
-    // incremented to skip '~'
-    snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, u3_Host.ops_u.dns_c);
-
-    free(sip_c);
-    u3z(sip);
-  }
-
   struct sockaddr_in add_u;
 
   memset(&add_u, 0, sizeof(add_u));
@@ -2417,7 +2410,17 @@ _proxy_ward_resolve(u3_warc* cli_u)
   hin_u.ai_socktype = SOCK_STREAM;
   hin_u.ai_protocol = IPPROTO_TCP;
 
-  // XX set port?
+  if ( 0 == cli_u->hot_c ) {
+    u3_noun sip = u3dc("scot", 'p', u3k(cli_u->sip));
+    c3_c* sip_c = u3r_string(sip);
+    c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.ops_u.dns_c);
+    cli_u->hot_c = c3_malloc(len_w);
+    // incremented to skip '~'
+    snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, u3_Host.ops_u.dns_c);
+
+    free(sip_c);
+    u3z(sip);
+  }
 
   c3_i sas_i;
 
