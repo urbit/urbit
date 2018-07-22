@@ -2310,7 +2310,7 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
     uv_timer_init(u3L, &rev_u->tim_u);
 
     // XX how long?
-    uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 30 * 1000, 0);
+    uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 120 * 1000, 0);
 
     // XX u3_lo_shut(c3y);
   }
