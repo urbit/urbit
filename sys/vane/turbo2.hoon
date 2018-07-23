@@ -1595,10 +1595,10 @@
       ::
       ?-    -.result.made
           %build-result
-        (apply-build-result build.made build-result.result.made)
+        (apply-build-result [build build-result.result]:made)
       ::
           %blocks
-        (apply-blocks build.made result.made sub-builds.made)
+        (apply-blocks [build builds.result scry-blocked.result]:made)
       ==
     ::  +track-sub-builds:
     ::
@@ -1671,32 +1671,14 @@
     ::    and try those blocked builds as candidates in the next pass.
     ::
     ++  apply-blocks
-      |=  $:  =build
-              $:  %blocks
-                  blocks=(list build)
-                  scry-blocked=(unit scry-request)
-              ==
-              sub-builds=(list build)
-          ==
+      |=  [=build blocks=(list build) scry-blocked=(unit scry-request)]
       ^+  ..execute
       ::  ~&  [%apply-blocks duct (build-to-tape build)]
       ::  if a %scry blocked, register it and maybe send an async request
       ::
       =?    ..execute
           ?=(^ scry-blocked)
-        ::  we only know how to make asynchronous scrys to clay, for now
-        ::
-        ?>  ?=(%c vane.u.scry-blocked)
-        ::  if we are the first block depending on this scry, send a move
-        ::
-        =?  moves  !(~(has by pending-scrys.state) u.scry-blocked)
-          :_  moves
-          (clay-request-for-scry-request date.build u.scry-blocked)
-        ::
-        =.  pending-scrys.state
-          ((put-request pending-scrys.state) u.scry-blocked duct)
-        ::
-        ..execute
+        (start-scry-request u.scry-blocked)
       ::  we must run +apply-build-receipt on :build.made before :block
       ::
       ?<  %+  lien  blocks
@@ -1716,29 +1698,7 @@
       =.  candidate-builds  (~(gas in candidate-builds) blocks)
       ::
       ..execute
-    ::  +clay-request-for-scry-request: new move to request blocked resource
-    ::
-    ++  clay-request-for-scry-request
-      |=  [date=@da =scry-request]
-      ^-  move
-      ::
-      =/  =wire  (scry-request-wire scry-request)
-      ::
-      =/  =note
-        =/  =disc  [p q]:beam.scry-request
-        :*  %c  %warp  sock=[our their=ship.disc]  desk.disc
-            `[%sing care.scry-request case=[%da date] (flop s.beam.scry-request)]
-        ==
-      ::
-      [duct [%pass wire note]]
     --
-  ::  +scry-request-wire
-  ::
-  ++  scry-request-wire
-    |=  =scry-request
-    ^-  wire
-    (welp /(scot %p our)/scry-request (scry-request-to-path scry-request))
-
   ::  +make: attempt to perform :build, non-recursively
   ::
   ::    Registers component linkages between :build and its sub-builds.
@@ -5023,11 +4983,9 @@
     ?:  already-subscribed
       ..execute
     ::
-    =.  moves  :_  moves
-      ^-  move
-      :^  duct  %pass
-        wire=(clay-subscription-wire date.subscription disc.subscription)
-      ^-  note
+    =/  =wire  (clay-subscription-wire [date disc]:subscription)
+    ::
+    =/  =note
       ::  request-contents: the set of [care path]s to subscribe to in clay
       ::
       =/  request-contents=(set [care:clay path])
@@ -5049,6 +5007,8 @@
       ^-  riff:clay
       [desk `[%mult `case`[%da date.subscription] request-contents]]
     ::
+    =.  moves  [`move`[duct [%pass wire note]] moves]
+    ::
     ..execute
   ::  +cancel-clay-subscription: remove a subscription on :duct
   ::
@@ -5064,18 +5024,13 @@
     ?~  originator
       ..execute
     ::
-    =.  moves  :_  moves
-      ^-  move
-      :^  u.originator  %pass
-        wire=(clay-subscription-wire date.subscription disc.subscription)
-      ^-  note
-      ::
+    =/  =wire  (clay-subscription-wire [date disc]:subscription)
+    ::
+    =/  =note
       =+  [their desk]=disc.subscription
-      ::
-      :^  %c  %warp  sock=[our their]
-      ^-  riff:clay
-      ~!  desk
-      [desk ~]
+      [%c %warp sock=[our their] `riff:clay`[desk ~]]
+    ::
+    =.  moves  [`move`[u.originator [%pass wire note]] moves]
     ::
     ..execute
   ::  +clay-sub-wire: the wire to use for a clay subscription
@@ -5091,6 +5046,67 @@
     =+  [their desk]=disc
     ::
     /(scot %p our)/clay-sub/(scot %p their)/[desk]/(scot %da date)
+  ::  +start-scry-request: kick off an asynchronous request for a resource
+  ::
+  ++  start-scry-request
+    |=  =scry-request
+    ^+  ..execute
+    ::  we only know how to make asynchronous scrys to clay, for now
+    ::
+    ?>  ?=(%c vane.scry-request)
+    ::  if we are the first block depending on this scry, send a move
+    ::
+    =/  already-started=?  (~(has by pending-scrys.state) scry-request)
+    ::
+    =.  pending-scrys.state
+      ((put-request pending-scrys.state) scry-request duct)
+    ::  don't send a duplicate move if we've already sent one
+    ::
+    ?:  already-started
+      ..execute
+    ::
+    =/  =wire  (scry-request-wire scry-request)
+    ::
+    =/  =note
+      =/  =disc  [p q]:beam.scry-request
+      :*  %c  %warp  sock=[our their=ship.disc]  desk.disc
+          `[%sing care.scry-request case=[%da date] (flop s.beam.scry-request)]
+      ==
+    ::
+    =.  moves  [`move`[duct [%pass wire note]] moves]
+    ::
+    ..execute
+  ::  +cancel-scry-request: cancel a pending asynchronous scry request
+  ::
+  ++  cancel-scry-request
+    |=  =scry-request
+    ^+  ..execute
+    ::  we only know how to make asynchronous scrys to clay, for now
+    ::
+    ?>  ?=(%c vane.scry-request)
+    ::
+    =^  originator  pending-scrys.state
+      ((del-request pending-scrys.state) scry-request duct)
+    ::  if there are still other ducts on this subscription, don't send a move
+    ::
+    ?~  originator
+      ..execute
+    ::
+    =/  =wire  (scry-request-wire scry-request)
+    ::
+    =/  =note
+      =+  [their desk]=[p q]:beam.scry-request
+      [%c %warp sock=[our their] `riff:clay`[desk ~]]
+    ::
+    =.  moves  [`move`[u.originator [%pass wire note]] moves]
+    ::
+    ..execute
+  ::  +scry-request-wire
+  ::
+  ++  scry-request-wire
+    |=  =scry-request
+    ^-  wire
+    (welp /(scot %p our)/scry-request (scry-request-to-path scry-request))
   --
 --
 ::
