@@ -735,7 +735,7 @@
       ::
       ^=  moves
         :~  :*  duct=~  %give  %made  ~1234.5.6
-                %complete  %success  %pin  ~1234.5.6  %success  %$  %noun  !>(**)
+                %complete  %success  %$  %noun  !>(**)
         ==  ==
     ==
   ::
@@ -760,9 +760,9 @@
       ::
       ^=  moves
         :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
-                %success  %pin  ~1234.5.6  %success
-               [%success %$ %noun !>(**)]
-               [%success %$ %noun !>(**)]
+                %success
+                [%success %$ %noun !>(**)]
+                [%success %$ %noun !>(**)]
     ==  ==  ==
   ::
   %+  welp
@@ -786,7 +786,7 @@
       ::
       ^=  moves
         :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
-                %success  %pin  ~1234.5.6  %success
+                %success
                 [%success %$ %noun !>(42)]
                 [%success %$ %noun !>(43)]
     ==  ==  ==
@@ -812,7 +812,7 @@
       ::
       ^=  moves
         :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %success
-                [%pin ~1234.5.6 %success [%scry %noun !>(42)]]
+                [%scry %noun !>(42)]
     ==  ==  ==
   ::
   %+  welp
@@ -882,7 +882,7 @@
       ::
       ^=  moves
         :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %success
-                [%pin ~1234.5.6 %success [%scry %noun !>(42)]]
+                [%scry %noun !>(42)]
     ==  ==  ==
   ::
   ;:  welp
@@ -1109,8 +1109,8 @@
       ^=  expected-moves
         ^-  (list move:ford-gate)
         :~  :*  duct=~[/first]  %give  %made  ~1234.5.6  %complete  %success
-                [%success %pin ~1234.5.7 %success %scry %noun scry-type %seven]
-                [%success %pin ~1234.5.8 %success %scry %noun scry-type %eight]
+                [%success %scry %noun scry-type %seven]
+                [%success %scry %noun scry-type %eight]
     ==  ==  ==
   ::
   =^  results4  ford-gate
@@ -1147,7 +1147,7 @@
       ::
       ^=  expected-moves
         :~  :*  duct=~[/pin]  %give  %made  ~1234.5.5  %complete
-                %success  %pin  ~1234.5.5  %success  %$  %noun  !>(42)
+                %success  %$  %noun  !>(42)
     ==  ==  ==
   results1
 ::
@@ -1166,7 +1166,7 @@
       ::
       ^=  expected-moves
         :~  :*  duct=~[/pin]  %give  %made  ~1234.5.7  %complete
-                %success  %pin  ~1234.5.7  %success  %$  %noun  !>(42)
+                %success  %$  %noun  !>(42)
     ==  ==  ==
   results1
 ::
@@ -1189,8 +1189,6 @@
       ^=  moves
         :~  :*  duct=~[/pinned-in-pin]
                 %give  %made  ~1234.5.7  %complete
-                %success  %pin  ~1234.5.7
-                %success  %pin  ~1234.5.6
                 [%success %scry %noun !>(42)]
     ==  ==  ==
   ::
@@ -1212,7 +1210,7 @@
   ::
   =/  build=build:ford-gate  [~1234.5.6 schematic]
   =/  result=build-result:ford-gate
-    [%success %same %success %pin ~1234.5.6 %success [%scry %noun !>(42)]]
+    [%success [%scry %noun !>(42)]]
   ::
   =^  results1  ford-gate
     %-  test-ford-call  :*
@@ -1387,7 +1385,7 @@
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
             ==
             :*  duct=~[/once]  %give  %made  ~1234.5.6  %complete
-                [%success [%pin ~1234.5.6 %success [%scry %noun !>(42)]]]
+                [%success [%scry %noun !>(42)]]
     ==  ==  ==
   ::
   =^  results4  ford-gate
@@ -1430,7 +1428,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/two-deep-4u]  %give  %made  ~1234.5.6  %complete
-                %success  %same  %success  [%scry %noun !>(42)]
+                %success  [%scry %noun !>(42)]
             ==
             :*  duct=~[/two-deep-4u]  %pass
                 wire=/~nul/clay-sub/~nul/desk/~1234.5.6
@@ -1452,7 +1450,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/two-deep-4u]  %give  %made  ~1234.5.7  %complete
-                %success  %same  %success  [%scry %noun !>(43)]
+                %success  [%scry %noun !>(43)]
             ==
             :*  duct=~[/two-deep-4u]  %pass
                 wire=/~nul/clay-sub/~nul/desk/~1234.5.7
@@ -1680,7 +1678,6 @@
       ::
       ^=  moves
         :~  :*  duct=~[/static]  %give  %made  ~1234.5.6  %complete  %success
-                %same  %success  %pin  ~1234.5.6  %success
                 [%success [%ride ride-type %constant]]
                 [%success [%scry %noun scry-type %it-does-in-fact-matter]]
     ==  ==  ==
@@ -2131,7 +2128,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/once]  %give  %made  ~1234.5.6  %complete  %success
-                [%pin ~1234.5.6 %success %dude %success [%scry %noun !>(42)]]
+                [%scry %noun !>(42)]
     ==  ==  ==
   ::
   ;:  weld
@@ -3010,7 +3007,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/same]  %give  %made  ~1234.5.6  %complete
-                %success  %same  %success  %scry  %noun  scry-type  'scry-two'
+                %success  %scry  %noun  scry-type  'scry-two'
             ==
             :*  duct=~[/same]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
                 %c  %warp  [~nul ~nul]  %desk
@@ -3282,7 +3279,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/trivial]  %give  %made  ~1234.5.6
-                %complete  %success  %pin  ~1234.5.6  %success  %$  %noun  !>(**)
+                %complete  %success  %$  %noun  !>(**)
         ==  ==
     ==
   ::
@@ -3755,7 +3752,7 @@
         ?>  ?=([* %give %made *] i.moves)
         =/  result  result.p.card.i.moves
         ?>  ?=(%complete -.result)
-        ?>  ?=([%success %pin @da %success %reef *] +.result)
+        ?>  ?=([%success %reef *] +.result)
         ::
         =/  kernel=vase  |5:+.result
         ::
@@ -3805,7 +3802,7 @@
         ?>  ?=([* %give %made *] i.moves)
         =/  result  result.p.card.i.moves
         ?>  ?=(%complete -.result)
-        ?>  ?=([%success %pin @da %success %reef *] +.result)
+        ?>  ?=([%success %reef *] +.result)
         ::
         =/  kernel=vase  |5:+.result
         ::
@@ -3851,7 +3848,6 @@
       ::
       ^=  moves
         :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete
-                %success  %pin  ~1234.5.6
                 %success  %path  [[~nul %desk] /hoon/bar/foo/lib]
     ==  ==  ==
   ::
@@ -3894,7 +3890,7 @@
         ?>  ?=([* %give %made *] i.moves)
         =/  result  result.p.card.i.moves
         ?>  ?=(%complete -.result)
-        ?>  ?=([%success %pin @da %success %plan *] +.result)
+        ?>  ?=([%success %plan *] +.result)
         ::
         =/  =vase  |5:+.result
         ::
@@ -3938,7 +3934,6 @@
       ::
       ^=  moves
         :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete
-                %success  %pin  ~1234.5.6
                 %success  %core  [%atom %tas ~]  %constant
     ==  ==  ==
   ::
@@ -4003,12 +3998,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %core *] build-result.pin-result)
+        ?>  ?=([%success %core *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4065,12 +4059,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %core *] build-result.pin-result)
+        ?>  ?=([%success %core *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4120,12 +4113,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %core *] build-result.pin-result)
+        ?>  ?=([%success %core *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4178,12 +4170,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %core *] build-result.pin-result)
+        ?>  ?=([%success %core *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4273,12 +4264,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %core *] build-result.pin-result)
+        ?>  ?=([%success %core *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4332,12 +4322,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %core *] build-result.pin-result)
+        ?>  ?=([%success %core *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4442,12 +4431,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %plan *] build-result.pin-result)
+        ?>  ?=([%success %plan *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4516,12 +4504,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %core *] build-result.pin-result)
+        ?>  ?=([%success %core *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4579,12 +4566,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %core *] build-result.pin-result)
+        ?>  ?=([%success %core *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4648,12 +4634,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %core *] build-result.pin-result)
+        ?>  ?=([%success %core *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4716,12 +4701,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %plan *] build-result.pin-result)
+        ?>  ?=([%success %plan *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4813,12 +4797,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %core *] build-result.pin-result)
+        ?>  ?=([%success %core *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4898,12 +4881,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %core *] build-result.pin-result)
+        ?>  ?=([%success %core *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -4969,12 +4951,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %core *] build-result.pin-result)
+        ?>  ?=([%success %core *] build-result.result)
         ::
-        =/  =vase  vase.build-result.pin-result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -5026,12 +5007,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %bunt *] build-result.pin-result)
+        ?>  ?=([%success %bunt *] build-result.result)
         ::
-        =/  =vase  q.cage.build-result.pin-result
+        =/  =vase  q.cage.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -5084,12 +5064,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %volt *] build-result.pin-result)
+        ?>  ?=([%success %volt *] build-result.result)
         ::
-        =/  =vase  q.cage.build-result.pin-result
+        =/  =vase  q.cage.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -5142,12 +5121,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %vale *] build-result.pin-result)
+        ?>  ?=([%success %vale *] build-result.result)
         ::
-        =/  =vase  q.cage.build-result.pin-result
+        =/  =vase  q.cage.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -5264,13 +5242,12 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %cast *] build-result.pin-result)
+        ?>  ?=([%success %cast *] build-result.result)
         ::
-        =/  mark=term  p.cage.build-result.pin-result
-        =/  =vase      q.cage.build-result.pin-result
+        =/  mark=term  p.cage.build-result.result
+        =/  =vase      q.cage.build-result.result
         ::
         ;:  welp
           %-  expect-eq  !>
@@ -5350,13 +5327,12 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %cast *] build-result.pin-result)
+        ?>  ?=([%success %cast *] build-result.result)
         ::
-        =/  mark=term  p.cage.build-result.pin-result
-        =/  =vase      q.cage.build-result.pin-result
+        =/  mark=term  p.cage.build-result.result
+        =/  =vase      q.cage.build-result.result
         ::
         ;:  welp
           %-  expect-eq  !>
@@ -5403,13 +5379,12 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %mute *] build-result.pin-result)
+        ?>  ?=([%success %mute *] build-result.result)
         ::
-        =/  mark=term  p.cage.build-result.pin-result
-        =/  =vase      q.cage.build-result.pin-result
+        =/  mark=term  p.cage.build-result.result
+        =/  =vase      q.cage.build-result.result
         ::
         ;:  welp
           %-  expect-eq  !>
@@ -5470,12 +5445,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %bake *] build-result.pin-result)
+        ?>  ?=([%success %bake *] build-result.result)
         ::
-        =/  =cage  cage.build-result.pin-result
+        =/  =cage  cage.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -5561,12 +5535,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %bake *] build-result.pin-result)
+        ?>  ?=([%success %bake *] build-result.result)
         ::
-        =/  =cage  cage.build-result.pin-result
+        =/  =cage  cage.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -5633,12 +5606,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %diff *] build-result.pin-result)
+        ?>  ?=([%success %diff *] build-result.result)
         ::
-        =/  =cage  cage.build-result.pin-result
+        =/  =cage  cage.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -5722,12 +5694,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %diff *] build-result.pin-result)
+        ?>  ?=([%success %diff *] build-result.result)
         ::
-        =/  =cage  cage.build-result.pin-result
+        =/  =cage  cage.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -5816,12 +5787,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %pact *] build-result.pin-result)
+        ?>  ?=([%success %pact *] build-result.result)
         ::
-        =/  =cage  cage.build-result.pin-result
+        =/  =cage  cage.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -5934,12 +5904,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %pact *] build-result.pin-result)
+        ?>  ?=([%success %pact *] build-result.result)
         ::
-        =/  =cage  cage.build-result.pin-result
+        =/  =cage  cage.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -6006,12 +5975,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %join *] build-result.pin-result)
+        ?>  ?=([%success %join *] build-result.result)
         ::
-        =/  =cage  cage.build-result.pin-result
+        =/  =cage  cage.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -6054,7 +6022,6 @@
       ::
       ^=  moves
         :~  :*  duct=~[/count]  %give  %made  ~1234.5.6  %complete
-                %success  %pin  ~1234.5.6
                 %success  %list
                 :~  [%success %$ %noun ud-type 1]
                     [%success %$ %noun ud-type 2]
@@ -6116,12 +6083,11 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
-        ?>  ?=([* %give %made @da %complete %success %pin *] i.moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
         =/  result  result.p.card.i.moves
-        =/  pin-result  build-result.result
-        ?>  ?=([%success %mash *] build-result.pin-result)
+        ?>  ?=([%success %mash *] build-result.result)
         ::
-        =/  =cage  cage.build-result.pin-result
+        =/  =cage  cage.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -7001,9 +6967,9 @@
         ::
         ?>  =(1 (lent moves))
         ?>  ?=([^ ~] moves)
-        ?>  ?=([* %give %made @da %complete %success %pin @da %success %cast *] i.moves)
+        ?>  ?=([* %give %made @da %complete %success %cast *] i.moves)
         ::
-        =/  result=cage  cage.build-result.build-result.result.p.card.i.moves
+        =/  result=cage  cage.build-result.result.p.card.i.moves
         ::
         %+  weld
           %-  expect-eq  !>

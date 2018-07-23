@@ -974,7 +974,6 @@
         $:  %success
             $^  [head=build-result tail=build-result]
             $%  [%$ =cage]
-                [%pin date=@da =build-result]
                 [%alts =build-result]
                 [%bake =cage]
                 [%bunt =cage]
@@ -982,7 +981,6 @@
                 [%cast =cage]
                 [%core =vase]
                 [%diff =cage]
-                [%dude =build-result]
                 [%hood =scaffold]
                 [%join =cage]
                 [%list results=(list build-result)]
@@ -993,7 +991,6 @@
                 [%plan =vase]
                 [%reef =vase]
                 [%ride =vase]
-                [%same =build-result]
                 [%scry =cage]
                 [%slim [=type =nock]]
                 [%slit =type]
