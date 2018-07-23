@@ -444,7 +444,7 @@
   ++  cass  {ud/@ud da/@da}                             ::  cases for revision
   ++  coop  (unit ares)                                 ::  e2e ack
   ++  crew  (set ship)                                  ::  permissions group
-  ++  dict  {src/path rul/rule}                         ::  effective permission
+  ++  dict  {src/path rul/real}                         ::  effective permission
   ++  dome                                              ::  project state
     $:  ank/ankh                                        ::  state
         let/@ud                                         ::  top id
@@ -507,6 +507,10 @@
         {$next p/mood}                                  ::  await next version
         {$mult p/mool}                                  ::  next version of any
         {$many p/? q/moat}                              ::  track range
+    ==                                                  ::
+  ++  real                                              ::  resolved permissions
+    $:  mod/?($black $white)                            ::
+        who/(pair (set ship) (map @ta crew))            ::
     ==                                                  ::
   ++  regs  (map path rule)                             ::  rules for paths
   ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
@@ -885,6 +889,12 @@
               ::  our: who our ship is (remove after cc-release)
               ::
               our=@p
+              ::  live: whether we run this build live
+              ::
+              ::    A live build will subscribe to further updates and keep the
+              ::    build around.
+              ::
+              live=?
               ::  plan: the schematic to build
               ::
               =schematic
@@ -970,7 +980,6 @@
         $:  %success
             $^  [head=build-result tail=build-result]
             $%  [%$ =cage]
-                [%pin date=@da =build-result]
                 [%alts =build-result]
                 [%bake =cage]
                 [%bunt =cage]
@@ -978,7 +987,6 @@
                 [%cast =cage]
                 [%core =vase]
                 [%diff =cage]
-                [%dude =build-result]
                 [%hood =scaffold]
                 [%join =cage]
                 [%list results=(list build-result)]
@@ -989,7 +997,6 @@
                 [%plan =vase]
                 [%reef =vase]
                 [%ride =vase]
-                [%same =build-result]
                 [%scry =cage]
                 [%slim [=type =nock]]
                 [%slit =type]
@@ -1360,7 +1367,7 @@
         cranes=(list crane)
         ::  sources: hoon sources, either parsed or on the filesystem
         ::
-        sources=(list brick)
+        sources=(list hoon)
     ==
   ::  +cable: a reference to something on the filesystem
   ::
@@ -1372,19 +1379,6 @@
         ::
         file-path=term
     ==
-  ::  +brick: hoon code, either directly specified or referencing clay
-  ::
-  +=  brick
-    $%  $:  ::  %direct: inline parsed hoon
-            ::
-            %direct
-            source=hoon
-        ==
-        $:  ::  %indirect: reference to a hoon file in clay
-            ::
-            %indirect
-            location=beam
-    ==  ==
   ::  +truss: late-bound path
   ::
   ::    TODO: the +tyke data structure should be rethought, possibly as part
@@ -1541,7 +1535,6 @@
     ?-    -.+.result
         ^      [%noun (slop q:$(result head.result) q:$(result tail.result))]
         %$     cage.result
-        %pin   $(result build-result.result)
         %alts  $(result build-result.result)
         %bake  cage.result
         %bunt  cage.result
@@ -1549,7 +1542,6 @@
         %cast  cage.result
         %core  [%noun vase.result]
         %diff  cage.result
-        %dude  $(result build-result.result)
         %hood  [%noun !>(scaffold.result)]
         %join  cage.result
         %list  [%noun -:!>(*(list cage)) (turn results.result result-to-cage)]
@@ -1560,7 +1552,6 @@
         %plan  [%noun vase.result]
         %reef  [%noun vase.result]
         %ride  [%noun vase.result]
-        %same  $(result build-result.result)
         %scry  cage.result
         %slim  [%noun !>([type nock]:result)]
         %slit  [%noun !>(type.result)]
