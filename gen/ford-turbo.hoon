@@ -1512,7 +1512,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/ride]  %give  %made  ~1234.5.6  %complete
-                [%success [%same [%success [%ride scry-type %constant]]]]
+                [%success [%ride scry-type %constant]]
             ==
             :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
                 %c  %warp  [~nul ~nul]  %desk
@@ -3754,7 +3754,7 @@
         ?>  ?=(%complete -.result)
         ?>  ?=([%success %reef *] +.result)
         ::
-        =/  kernel=vase  |5:+.result
+        =/  kernel=vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -3804,7 +3804,7 @@
         ?>  ?=(%complete -.result)
         ?>  ?=([%success %reef *] +.result)
         ::
-        =/  kernel=vase  |5:+.result
+        =/  kernel=vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
@@ -3820,7 +3820,6 @@
     results1
     (expect-ford-empty ford-gate ~nul)
   ==
- 
 ::
 ++  test-path
   :-  `tank`leaf+"test-path"
@@ -3892,7 +3891,7 @@
         ?>  ?=(%complete -.result)
         ?>  ?=([%success %plan *] +.result)
         ::
-        =/  =vase  |5:+.result
+        =/  =vase  vase.build-result.result
         ::
         %+  weld
           %-  expect-eq  !>
