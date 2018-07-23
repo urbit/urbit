@@ -677,20 +677,18 @@
   ::
   =/  record  (~(got by tracker) request)
   =.  waiting.record  (~(del in waiting.record) duct)
-  ::  if we still have ducts waiting on this request, don't delete it
+  ::  if no more ducts wait on :request, delete it
   ::
   ?^  waiting.record
     [~ (~(put by tracker) request record)]
-  ::  no ducts are left; delete this request entirely
-  ::
-  =.  tracker  (~(del by tracker) request)
-  [`originator.record tracker]
+  [`originator.duct (~(del by tracker) request)]
 ::  +parse-scaffold: produces a parser for a hoon file with +crane instances
 ::
 ::    Ford parses a superset of hoon which contains additional runes to
 ::    represent +crane s. This parses to a +scaffold.
 ::
 ::    src-beam: +beam of the source file we're parsing
+::
 ++  parse-scaffold
   |=  src-beam=beam
   ::
@@ -703,20 +701,20 @@
       ::
       %+  ifix  [gay gay]
       ;~  plug
+      ::  parses the zuse version, eg "/?  309"
       ::
-        ::  parses the zuse version, eg "/?  309"
         ;~  pose
           (ifix [;~(plug fas wut gap) gap] dem)
           (easy zuse)
         ==
+      ::  pareses the structures, eg "/-  types"
       ::
-        ::  pareses the structures, eg "/-  types"
         ;~  pose
           (ifix [;~(plug fas hep gap) gap] (most ;~(plug com gaw) cable))
           (easy ~)
         ==
+      ::  parses the libraries, eg "/+  lib1, lib2"
       ::
-        ::  parses the libraries, eg "/+  lib1, lib2"
         ;~  pose
           (ifix [;~(plug fas lus gap) gap] (most ;~(plug com gaw) cable))
           (easy ~)
@@ -1000,7 +998,8 @@
     ::
     =.  scry-results  (~(put by scry-results) scry-request scry-result)
     ::
-    =.  pending-scrys.state  (~(del ju pending-scrys.state) scry-request duct)
+    =.  pending-scrys.state
+      +:((del-request pending-scrys.state) scry-request duct)
     ::
     =/  unblocked-build=build  (scry-request-to-build scry-request)
     =.  builds.state
@@ -1029,32 +1028,59 @@
     ?~  duct-status=(~(get by ducts.state) duct)
       ~&  [%no-build-for-duct duct]
       ..execute
+    ::  this duct is no more; it has ceased to be
     ::
     =.  ducts.state  (~(del by ducts.state) duct)
+    ::  if the duct was not live, cancel any in-progress builds
     ::
     ?:  ?=(%once -.live.u.duct-status)
-      =.  state
-        (remove-duct-from-root [in-progress.live root-schematic]:u.duct-status)
       ::
+      =/  root-build=build  [in-progress.live root-schematic]:u.duct-status
+      ::
+      =.  ..execute  (cancel-scrys root-build)
+      =.  state  (remove-duct-from-root root-build)
+      ..execute
+    ::  if the duct was live and has an unfinished build, cancel it
+    ::
+    =?  ..execute  ?=(^ in-progress.live.u.duct-status)
+      ::
+      =/  root-build=build  [u.in-progress.live root-schematic]:u.duct-status
+      ::
+      =.  ..execute  (cancel-scrys root-build)
+      =.  state  (remove-duct-from-root root-build)
+      ..execute
+    ::  if there is no completed build for the live duct, we're done
+    ::
+    ?~  last-sent=last-sent.live.u.duct-status
       ..execute
     ::
-    =?    state
-        ?=(^ in-progress.live.u.duct-status)
-      ::  ~&  [%removing-in-progress (build-to-tape [u.in-progress.live root-schematic]:u.duct-status)]
-      (remove-duct-from-root [u.in-progress.live root-schematic]:u.duct-status)
+    ::  there is a completed build for the live duct, so delete it
     ::
-    ?~  last-sent.live.u.duct-status
-      ..execute
-    ::
-    =/  root-build=build  [date.u.last-sent.live root-schematic]:u.duct-status
-    ::  ~&  [%canceling-root-build (build-to-tape root-build)]
+    =/  root-build=build  [date.u.last-sent root-schematic.u.duct-status]
     ::
     =.  state  (remove-duct-from-root root-build)
     ::
-    ::
-    ?~  subscription.u.last-sent.live.u.duct-status
+    ?~  subscription.u.last-sent
       ..execute
-    (cancel-clay-subscription u.subscription.u.last-sent.live.u.duct-status)
+    (cancel-clay-subscription u.subscription.u.last-sent)
+  ::  +cancel-scrys: cancel all blocked %scry sub-builds of :root-builds
+  ::
+  ++  cancel-scrys
+    |=  root-build
+    ^+  ..execute
+    ::
+    =/  blocked-sub-scrys  ~(tap in (collect-blocked-sub-scrys root-build))
+    ::
+    |-  ^+  ..execute
+    ?~  blocked-sub-scrys  ..execute
+    ::
+    =^  originator  pending-scrys.state
+      ((del-request pending-scrys.state) duct i.blocked-sub-scrys)
+    ::
+    =?  ..execute  ?=(~ originator)
+      (cancel-scry-request u.originator i.blocked-sub-scrys)
+    ::
+    $(blocked-sub-scrys t.blocked-sub-scrys)
   ::  +remove-duct-from-root: remove :duct from a build tree
   ::
   ++  remove-duct-from-root
@@ -1325,12 +1351,11 @@
           ~(tap in (collect-blocked-sub-scrys build))
         ::
         =.  pending-scrys.state
-          |-
-          ?~  sub-scrys
-            pending-scrys.state
+          |-  ^+  pending-scrys.state
+          ?~  sub-scrys  pending-scrys.state
           ::
           =.  pending-scrys.state
-            (~(put ju pending-scrys.state) i.sub-scrys duct)
+            ((put-request pending-scrys.state) i.sub-scrys duct)
           ::
           $(sub-scrys t.sub-scrys)
         ::
@@ -1656,21 +1681,21 @@
           ==
       ^+  ..execute
       ::  ~&  [%apply-blocks duct (build-to-tape build)]
-      ::  if we scryed, set our duct as depending on the scry and maybe send a move
+      ::  if a %scry blocked, register it and maybe send an async request
       ::
       =?    ..execute
           ?=(^ scry-blocked)
-        ::  TODO: handle other vanes
+        ::  we only know how to make asynchronous scrys to clay, for now
         ::
         ?>  ?=(%c vane.u.scry-blocked)
         ::  if we are the first block depending on this scry, send a move
         ::
-        =?  moves  ?=(~ (~(get ju pending-scrys.state) u.scry-blocked))
+        =?  moves  !(~(has by pending-scrys.state) u.scry-blocked)
           :_  moves
           (clay-request-for-scry-request date.build u.scry-blocked)
         ::
         =.  pending-scrys.state
-          (~(put ju pending-scrys.state) u.scry-blocked duct)
+          ((put-request pending-scrys.state) u.scry-blocked duct)
         ::
         ..execute
       ::  we must run +apply-build-receipt on :build.made before :block
@@ -1680,6 +1705,7 @@
           ?~  maybe-build-status=(~(get by builds.state) block)
             %.n
           ?=(%complete -.state.u.maybe-build-status)
+      ::  transition :build's state machine to the %blocked state
       ::
       =.  builds.state
         =<  builds
@@ -1697,8 +1723,7 @@
       |=  [date=@da =scry-request]
       ^-  move
       ::
-      =/  =wire
-        (welp /(scot %p our)/scry-request (scry-request-to-path scry-request))
+      =/  =wire  (scry-request-wire scry-request)
       ::
       =/  =note
         =/  =disc  [p q]:beam.scry-request
@@ -1708,6 +1733,13 @@
       ::
       [duct [%pass wire note]]
     --
+  ::  +scry-request-wire
+  ::
+  ++  scry-request-wire
+    |=  =scry-request
+    ^-  wire
+    (welp /(scot %p our)/scry-request (scry-request-to-path scry-request))
+
   ::  +make: attempt to perform :build, non-recursively
   ::
   ::    Registers component linkages between :build and its sub-builds.
@@ -5223,16 +5255,31 @@
   ::  we know :our is already in :state-by-ship because we sent this request
   ::
   =/  our=@p  (slav %p i.wire)
-  =/  ship-state  ~|(our+our (~(got by state-by-ship.ax) our))
+  =/  ship-state  ~|(take-our+our (~(got by state-by-ship.ax) our))
   ::
-  =^  moves  ship-state
-    ?:  =(%clay-sub i.t.wire)
+  |^  ^-  [p=(list move) q=_ford-gate]
+      ::
+      =^  moves  ship-state
+        ?+  i.t.wire     ~|([%bad-take-wire wire] !!)
+          %clay-sub      take-rebuilds
+          %scry-request  take-unblocks
+        ==
+      ::
+      =.  state-by-ship.ax  (~(put by state-by-ship.ax) our ship-state)
+      ::
+      [moves ford-gate]
+    ::  +take-rebuilds: rebuild all live builds affected by the Clay changes
+    ::
+    ++  take-rebuilds
+      ^-  [(list move) ford-state]
+      ::
       ?>  ?=([%c %wris *] sign)
       =+  [ship desk date]=(raid:wired t.t.wire ~[%p %tas %da])
       =/  disc  [ship desk]
       ::
       ::  ~&  [%pending-subscriptions pending-subscriptions.ship-state]
       =/  =subscription
+        ~|  [%ford-take-bad-clay-sub wire=wire duct=duct]
         =/  =duct-status  (~(got by ducts.ship-state) duct)
         ?>  ?=(%live -.live.duct-status)
         ?>  ?=(^ last-sent.live.duct-status)
@@ -5241,15 +5288,13 @@
       ::  ~&  [%subscription subscription]
       ::
       =/  ducts=(list ^duct)
+        ~|  [%ford-take-missing-subscription subscription]
         ((get-request-ducts pending-subscriptions.ship-state) subscription)
-      ::
       ::  ~&  [%ducts-for-clay-sub ducts]
       ::
       =|  moves=(list move)
-      |-
-      ^+  [moves ship-state]
-      ?~  ducts
-        [moves ship-state]
+      |-  ^+  [moves ship-state]
+      ?~  ducts  [moves ship-state]
       ::
       =*  event-args  [[our i.ducts now scry-gate] ship-state]
       =*  rebuild  rebuild:(per-event event-args)
@@ -5257,50 +5302,43 @@
         (rebuild subscription p.case.sign disc care-paths.sign)
       ::
       $(ducts t.ducts, moves (weld moves duct-moves))
+    ::  +take-unblocks: unblock all builds waiting on this scry request
     ::
-    ?.  =(%scry-request i.t.wire)
-      ~|  [%unknown-take i.t.wire]
-      !!
-    ::
-    ?>  ?=([%c %writ *] sign)
-    ::  scry-request: the +scry-request we had previously blocked on
-    ::
-    =/  =scry-request
-      ~|  [%bad-scry-request wire]
-      (need (path-to-scry-request t.t.wire))
-    ::  scry-result: parse a (unit cage) from :sign
-    ::
-    ::    If the result is `~`, the requested resource was not available.
-    ::
-    =/  scry-result=(unit cage)
-      ?~  riot.sign
-        ~
-      `r.u.riot.sign
-    ::
-    =/  ducts=(list ^duct)
-      ~|  [%pending-scrys pending-scrys.ship-state]
-      ~|  [%scry-request scry-request]
-      ~(tap in (~(got by pending-scrys.ship-state) scry-request))
-    ::
-    ::  ~&  [%ducts-for-scrys ducts]
-    ::
-    =|  moves=(list move)
-    |-
-    ^+  [moves ship-state]
-    ?~  ducts
-      [moves ship-state]
-    ::
-    =*  event-args  [[our i.ducts now scry-gate] ship-state]
-    ::  unblock the builds that had blocked on :resource
-    ::
-    =*  unblock  unblock:(per-event event-args)
-    =^  duct-moves  ship-state  (unblock scry-request scry-result)
-    ::
-    $(ducts t.ducts, moves (weld moves duct-moves))
-  ::
-  =.  state-by-ship.ax  (~(put by state-by-ship.ax) our ship-state)
-  ::
-  [moves ford-gate]
+    ++  take-unblocks
+      ^-  [(list move) ford-state]
+      ::
+      ?>  ?=([%c %writ *] sign)
+      ::  scry-request: the +scry-request we had previously blocked on
+      ::
+      =/  =scry-request
+        ~|  [%ford-take-bad-scry-request wire=wire duct=duct]
+        (need (path-to-scry-request t.t.wire))
+      ::  scry-result: parse a (unit cage) from :sign
+      ::
+      ::    If the result is `~`, the requested resource was not available.
+      ::
+      =/  scry-result=(unit cage)
+        ?~  riot.sign
+          ~
+        `r.u.riot.sign
+      ::
+      =/  ducts=(list ^duct)
+        ~|  [%ford-take-missing-scry-request scry-request]
+        ((get-request-ducts pending-scrys.ship-state) scry-request)
+      ::  ~&  [%ducts-for-scrys ducts]
+      ::
+      =|  moves=(list move)
+      |-  ^+  [moves ship-state]
+      ?~  ducts  [moves ship-state]
+      ::
+      =*  event-args  [[our i.ducts now scry-gate] ship-state]
+      ::  unblock the builds that had blocked on :resource
+      ::
+      =*  unblock  unblock:(per-event event-args)
+      =^  duct-moves  ship-state  (unblock scry-request scry-result)
+      ::
+      $(ducts t.ducts, moves (weld moves duct-moves))
+  --
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
