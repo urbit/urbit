@@ -559,25 +559,6 @@
       %volt  ~
       %walk  ~
   ==
-::  +date-from-schematic: finds the latest pin date from this schematic tree.
-::
-++  date-from-schematic
-  |=  =schematic
-  ^-  @da
-  =+  children=(get-sub-schematics schematic)
-  =/  dates  (turn children date-from-schematic)
-  =+  children-latest=(roll dates max)
-  ?.  ?=(%pin -.schematic)
-    children-latest
-  (max date.schematic children-latest)
-::  +is-schematic-live:
-::
-::    A schematic is live if it is not pinned.
-::
-++  is-schematic-live
-  |=  =schematic
-  ^-  ?
-  !?=(%pin -.schematic)
 ::  +by-schematic: door for manipulating :by-schematic.builds.ford-state
 ::
 ::    The :dates list for each key in :builds is sorted in reverse
@@ -5110,15 +5091,10 @@
    ::    with the new :ship-state and produce it along with :moves.
    ::
    =^  ship-state  state-by-ship.ax  (find-or-create-ship-state our.task)
-   =/  live=?  (is-schematic-live schematic.task)
-   =/  =build
-     :_  schematic.task
-     ?:  live
-       now
-     (date-from-schematic schematic.task)
+   =/  =build  [now schematic.task]
    =*  event-args  [[our.task duct now scry-gate] ship-state]
    =*  start-build  start-build:(per-event event-args)
-   =^  moves  ship-state  (start-build build live)
+   =^  moves  ship-state  (start-build build live.task)
    =.  state-by-ship.ax  (~(put by state-by-ship.ax) our.task ship-state)
    ::
    [moves ford-gate]

@@ -872,6 +872,7 @@
         {$volt p/(cask *)}                              ::  unsafe add type
     ==                                                  ::
   --  ::ford
+
 ::  |ford: build system vane interface
 ::
 ++  ford-api  ^?
@@ -889,6 +890,12 @@
               ::  our: who our ship is (remove after cc-release)
               ::
               our=@p
+              ::  live: whether we run this build live
+              ::
+              ::    A live build will subscribe to further updates and keep the
+              ::    build around.
+              ::
+              live=?
               ::  plan: the schematic to build
               ::
               =schematic
@@ -1529,7 +1536,6 @@
     ?-    -.+.result
         ^      [%noun (slop q:$(result head.result) q:$(result tail.result))]
         %$     cage.result
-        %pin   $(result build-result.result)
         %alts  $(result build-result.result)
         %bake  cage.result
         %bunt  cage.result
@@ -1537,7 +1543,6 @@
         %cast  cage.result
         %core  [%noun vase.result]
         %diff  cage.result
-        %dude  $(result build-result.result)
         %hood  [%noun !>(scaffold.result)]
         %join  cage.result
         %list  [%noun -:!>(*(list cage)) (turn results.result result-to-cage)]
@@ -1548,7 +1553,6 @@
         %plan  [%noun vase.result]
         %reef  [%noun vase.result]
         %ride  [%noun vase.result]
-        %same  $(result build-result.result)
         %scry  cage.result
         %slim  [%noun !>([type nock]:result)]
         %slit  [%noun !>(type.result)]
