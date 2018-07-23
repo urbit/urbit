@@ -1028,7 +1028,7 @@
     ?~  duct-status=(~(get by ducts.state) duct)
       ~&  [%no-build-for-duct duct]
       ..execute
-    ::  this duct is no more; it has ceased to be
+    ::  :duct is being canceled, so remove it unconditionally
     ::
     =.  ducts.state  (~(del by ducts.state) duct)
     ::  if the duct was not live, cancel any in-progress builds
@@ -1053,7 +1053,6 @@
     ::
     ?~  last-sent=last-sent.live.u.duct-status
       ..execute
-    ::
     ::  there is a completed build for the live duct, so delete it
     ::
     =/  root-build=build  [date.u.last-sent root-schematic.u.duct-status]
@@ -1077,7 +1076,7 @@
     =^  originator  pending-scrys.state
       ((del-request pending-scrys.state) duct i.blocked-sub-scrys)
     ::
-    =?  ..execute  ?=(~ originator)
+    =?  ..execute  ?=(^ originator)
       (cancel-scry-request u.originator i.blocked-sub-scrys)
     ::
     $(blocked-sub-scrys t.blocked-sub-scrys)
