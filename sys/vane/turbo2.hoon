@@ -268,7 +268,7 @@
   ==
 ::  +request-tracker: generic tracker and multiplexer for pending requests
 ::
-+=  request-tracker
+++  request-tracker
   |*  request-type=mold
   %+  map  request-type
   $:  ::  waiting: ducts blocked on this request
@@ -652,16 +652,14 @@
 ::  +get-request-ducts: all ducts waiting on this request
 ::
 ++  get-request-ducts
-  |*  tracker=(request-tracker)
-  |=  request=_?>(?=(^ tracker) p.n.tracker)
+  |*  [tracker=(request-tracker) request=*]
   ^-  (list duct)
   ::
   ~(tap in waiting:(~(got by tracker) request))
 ::  +put-request: associates a +duct with a request
 ::
 ++  put-request
-  |*  tracker=(request-tracker)
-  |=  [request=_?>(?=(^ tracker) p.n.tracker) =duct]
+  |*  [tracker=(request-tracker) request=* =duct]
   ::
   %+  ~(put by tracker)  request
   ?~  existing=(~(get by tracker) request)
@@ -670,8 +668,7 @@
 ::  +del-request: remove a duct and produce the originating duct if empty
 ::
 ++  del-request
-  |*  tracker=(request-tracker)
-  |=  [request=_?>(?=(^ tracker) p.n.tracker) =duct]
+  |*  [tracker=(request-tracker) request=* =duct]
   ^-  [(unit ^duct) _tracker]
   ::  remove :duct from the existing :record of this :request
   ::
@@ -681,7 +678,7 @@
   ::
   ?^  waiting.record
     [~ (~(put by tracker) request record)]
-  [`originator.duct (~(del by tracker) request)]
+  [`originator.record (~(del by tracker) request)]
 ::  +parse-scaffold: produces a parser for a hoon file with +crane instances
 ::
 ::    Ford parses a superset of hoon which contains additional runes to
@@ -944,7 +941,7 @@
     ::
     ::  ~&  [%rebuild subscription=subscription pending-subscriptions.state]
     =.  pending-subscriptions.state
-      +:((del-request pending-subscriptions.state) subscription duct)
+      +:(del-request pending-subscriptions.state subscription duct)
     ::
     =/  builds=(list build)
       %+  turn  ~(tap in care-paths)
@@ -999,7 +996,7 @@
     =.  scry-results  (~(put by scry-results) scry-request scry-result)
     ::
     =.  pending-scrys.state
-      +:((del-request pending-scrys.state) scry-request duct)
+      +:(del-request pending-scrys.state scry-request duct)
     ::
     =/  unblocked-build=build  (scry-request-to-build scry-request)
     =.  builds.state
@@ -1065,7 +1062,7 @@
   ::  +cancel-scrys: cancel all blocked %scry sub-builds of :root-builds
   ::
   ++  cancel-scrys
-    |=  root-build
+    |=  root-build=build
     ^+  ..execute
     ::
     =/  blocked-sub-scrys  ~(tap in (collect-blocked-sub-scrys root-build))
@@ -1073,11 +1070,7 @@
     |-  ^+  ..execute
     ?~  blocked-sub-scrys  ..execute
     ::
-    =^  originator  pending-scrys.state
-      ((del-request pending-scrys.state) duct i.blocked-sub-scrys)
-    ::
-    =?  ..execute  ?=(^ originator)
-      (cancel-scry-request u.originator i.blocked-sub-scrys)
+    =.  ..execute  (cancel-scry-request i.blocked-sub-scrys)
     ::
     $(blocked-sub-scrys t.blocked-sub-scrys)
   ::  +remove-duct-from-root: remove :duct from a build tree
@@ -1354,7 +1347,7 @@
           ?~  sub-scrys  pending-scrys.state
           ::
           =.  pending-scrys.state
-            ((put-request pending-scrys.state) i.sub-scrys duct)
+            (put-request pending-scrys.state i.sub-scrys duct)
           ::
           $(sub-scrys t.sub-scrys)
         ::
@@ -4977,7 +4970,7 @@
     ::  ~&  [%start-clay-subscription subscription already-subscribed=already-subscribed pending-subscriptions.state]
     ::
     =.  pending-subscriptions.state
-      ((put-request pending-subscriptions.state) subscription duct)
+      (put-request pending-subscriptions.state subscription duct)
     ::  don't send a duplicate move if we're already subscribed
     ::
     ?:  already-subscribed
@@ -5018,7 +5011,7 @@
     ::
     ::  ~&  [%cancel-clay-subscription subscription pending-subscriptions.state]
     =^  originator  pending-subscriptions.state
-      ((del-request pending-subscriptions.state) subscription duct)
+      (del-request pending-subscriptions.state subscription duct)
     ::  if there are still other ducts on this subscription, don't send a move
     ::
     ?~  originator
@@ -5059,7 +5052,7 @@
     =/  already-started=?  (~(has by pending-scrys.state) scry-request)
     ::
     =.  pending-scrys.state
-      ((put-request pending-scrys.state) scry-request duct)
+      (put-request pending-scrys.state scry-request duct)
     ::  don't send a duplicate move if we've already sent one
     ::
     ?:  already-started
@@ -5068,9 +5061,10 @@
     =/  =wire  (scry-request-wire scry-request)
     ::
     =/  =note
-      =/  =disc  [p q]:beam.scry-request
+      =,  scry-request
+      =/  =disc  [p q]:beam
       :*  %c  %warp  sock=[our their=ship.disc]  desk.disc
-          `[%sing care.scry-request case=[%da date] (flop s.beam.scry-request)]
+          `[%sing care case=r.beam (flop s.beam)]
       ==
     ::
     =.  moves  [`move`[duct [%pass wire note]] moves]
@@ -5086,7 +5080,7 @@
     ?>  ?=(%c vane.scry-request)
     ::
     =^  originator  pending-scrys.state
-      ((del-request pending-scrys.state) scry-request duct)
+      (del-request pending-scrys.state scry-request duct)
     ::  if there are still other ducts on this subscription, don't send a move
     ::
     ?~  originator
@@ -5304,7 +5298,7 @@
       ::
       =/  ducts=(list ^duct)
         ~|  [%ford-take-missing-subscription subscription]
-        ((get-request-ducts pending-subscriptions.ship-state) subscription)
+        (get-request-ducts pending-subscriptions.ship-state subscription)
       ::  ~&  [%ducts-for-clay-sub ducts]
       ::
       =|  moves=(list move)
@@ -5339,7 +5333,7 @@
       ::
       =/  ducts=(list ^duct)
         ~|  [%ford-take-missing-scry-request scry-request]
-        ((get-request-ducts pending-scrys.ship-state) scry-request)
+        (get-request-ducts pending-scrys.ship-state scry-request)
       ::  ~&  [%ducts-for-scrys ducts]
       ::
       =|  moves=(list move)
