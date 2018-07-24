@@ -5190,7 +5190,12 @@
     |=  [our=@ ford-state]  ^-  mass
     :+  (scot %p our)  %|
     ::
-    [[%builds [%& builds]] ~]
+    :~  [%builds [%& builds]]
+        [%ducts [%& ducts]]
+        [%builds-by-schematic [%& builds-by-schematic]]
+        [%pending-scrys [%& pending-scrys]]
+        [%pending-subscriptions [%& pending-subscriptions]]
+    ==
   ==
 ::  +wipe: wipe half a +ford-state's cache, in LRU (least recently used) order
 ::

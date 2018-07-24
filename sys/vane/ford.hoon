@@ -1894,32 +1894,7 @@
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
     :-  %ford
-    :-  %|
-    %-  |=  a/(list (list mass))  ^-  (list mass)       :: XX single-home
-        =+  a2=a
-        ?~  a  !!
-        ?~  i.a  ~
-        :_  $(a (turn a2 tail))
-        :-  p.i.i.a
-        ?~  -.q.i.i.a
-          [%& (turn (turn a2 head) |=(b/mass ?~(-.q.b p.q.b !!)))]
-        [%| $(a (turn (turn a2 head) |=(b/mass ?~(-.q.b !! p.q.b))))]
-    %+  turn  ~(tap by pol)
-    |=  {@ baby}
-    :~  =/  caches/(jar term *)
-          %-  ~(rep by jav)
-        |=({{* a/{term *}} b/(jar term *)} (~(add ja b) -.a +.a))
-        =/  cache-for  |=(a/term [a %& (~(get ja caches) a)])
-        cache+[%| (turn `(list term)`/hood/bake/slit/slim/slap/slam cache-for)]
-    ::
-        :+  %depends  %|  :~
-          definitions+[%& deh]
-          listeners+[%& sup]
-          waiting+[%& out]
-        ==
-    ::
-        tasks+[%& dym tad]
-    ==
+    :-  %&  0
   =+  our=p.kis
   =+  ^=  bay  ^-  baby
       =+  buy=(~(get by pol.lex) our)
