@@ -1,6 +1,6 @@
 /+  tester
 ::
-/=  ford-turbo  /:  /===/sys/vane/turbo2
+/=  ford-turbo  /:  /===/sys/vane/turbo
                 /!noun/
 ::
 =,  ford-api

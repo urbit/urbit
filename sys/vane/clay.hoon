@@ -335,7 +335,7 @@
   $%  {$flog p/{$crud p/@tas q/(list tank)}}            ::  to %dill
   ==  ==                                                ::
       $:  $t                                            ::
-  $%  [%build our=@p schematic=schematic:ford-api]      ::
+  $%  [%build our=@p live=? schematic=schematic:ford-api]      ::
   ==  ==
       $:  $b                                            ::
   $%  {$wait p/@da}                                     ::
@@ -492,12 +492,11 @@
   ++  made-result-to-success-cages
     |=  result=made-result:ford-api
     ^-  (list (pair cage cage))
-    ?.  ?=([%complete %success %pin @da %success %list *] result)
+    ?.  ?=([%complete %success %list *] result)
       (ford-fail >%strange-ford-result< ~)
     ::  process each row in the list, filtering out errors
     ::
-    ~!  build-result.result
-    %+  murn  results.build-result.build-result.result
+    %+  murn  results.build-result.result
     |=  row=build-result:ford-api
     ^-  (unit [cage cage])
     ::
@@ -517,11 +516,10 @@
     ::
     ?:  ?=([%incomplete *] result)
       (mule |.(`$~`(ford-fail tang.result)))
-    ?.  ?=([%complete %success %pin @da %success %list *] result)
-      ~&  build-result.result
+    ?.  ?=([%complete %success %list *] result)
       (mule |.(`$~`(ford-fail >%strange-ford-result -.build-result.result< ~)))
     =/  results=(list build-result:ford-api)
-      results.build-result.build-result.result
+      results.build-result.result
     =<  ?+(. [%& .] {@ *} .)
     |-
     ^-  ?((list [cage cage]) (each $~ tang))
@@ -598,7 +596,7 @@
       (emit hen %give %writ ~ [p.mun q.mun syd] r.mun p.dat)
     %-  emit
     :*  hen  %pass  [%blab p.mun (scot q.mun) syd r.mun]
-        %t  %build  our  %pin
+        %t  %build  our  live=%.n  %pin
         (case-to-date q.mun)
         (lobe-to-schematic:ze [her syd] r.mun p.dat)
     ==
@@ -814,7 +812,7 @@
     %-  emit
     ^-  move
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %t
-        %build  our  %pin  now  %list
+        %build  our  live=%.n  %list
         ^-  (list schematic:ford-api)
         %+  turn  `(list path)`mus
         |=  a/path
@@ -1131,7 +1129,7 @@
       ^-  (list move)
       :~  :*  hen  %pass
               [%inserting (scot %p her) syd (scot %da wen) ~]
-              %t  %build  our  %pin  wen  %list
+              %t  %build  our  live=%.n  %pin  wen  %list
               ^-  (list schematic:ford-api)
               %+  turn  ins
               |=  {pax/path mis/miso}
@@ -1142,7 +1140,7 @@
           ==
           :*  hen  %pass
               [%diffing (scot %p her) syd (scot %da wen) ~]
-              %t  %build  our  %pin  wen  %list
+              %t  %build  our  live=%.n  %pin  wen  %list
               ^-  (list schematic:ford-api)
               %+  turn  dif
               |=  {pax/path mis/miso}
@@ -1154,7 +1152,7 @@
           ==
           :*  hen  %pass
               [%castifying (scot %p her) syd (scot %da wen) ~]
-              %t  %build  our  %pin  wen  %list
+              %t  %build  our  live=%.n  %pin  wen  %list
               ::~  [her syd %da wen]  %tabl
               ^-  (list schematic:ford-api)
               %+  turn  mut
@@ -1310,7 +1308,7 @@
     %-  emit
     :*  hen  %pass
         [%mutating (scot %p her) syd (scot %da wen) ~]
-        %t  %build  our  %pin  wen  %list
+        %t  %build  our  live=%.n  %pin  wen  %list
         ^-  (list schematic:ford-api)
         %+  turn  cat
         |=  {pax/path cay/cage}
@@ -1407,7 +1405,7 @@
     ^+  +>
     %-  emit
     :*  hen  %pass  [%patching (scot %p her) syd ~]  %t
-        %build  our  %pin  now  %list
+        %build  our  live=%.n  %list
         ^-  (list schematic:ford-api)
         %+  turn  ~(tap by hat)
         |=  {a/path b/lobe}
@@ -1494,7 +1492,7 @@
     ::  =-  ~&  %formed-ergo  -
     %-  emit(dok ~)
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %t
-        %build  our  %pin  now  %list
+        %build  our  live=%.n  %list
         ^-  (list schematic:ford-api)
         %+  turn  ~(tap in sum)
         |=  a/path
@@ -1665,7 +1663,7 @@
     %-  emit
     :*  hen  %pass
         [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
-        %t  %build  our  %pin
+        %t  %build  our  live=%.n  %pin
         (case-to-date cas)
         (vale-page [her syd] peg)
     ==
@@ -1774,8 +1772,7 @@
     %-  emit
     :*  hen  %pass
         [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
-        %t  %build  our  %pin
-        (case-to-date cas)
+        %t  %build  our  live=%.n  %pin  (case-to-date cas)
         %list
         ^-  (list schematic:ford-api)
         %+  turn  ~(tap in pop)
@@ -3038,7 +3035,7 @@
         :*  hen  %pass
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
-            %t  %build  p.bob  %pin  (case-to-date r.oth)  %list
+            %t  %build  p.bob  live=%.n  %pin  (case-to-date r.oth)  %list
             ^-  (list schematic:ford-api)
             %+  murn  ~(tap by q.bas.dat)
             |=  {pax/path lob/lobe}
@@ -3167,7 +3164,7 @@
           %-  emit(wat.dat %merge)
           :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
-              %t  %build  p.bob  %pin  now  %list
+              %t  %build  p.bob  live=%.n  %list
               ^-  (list schematic:ford-api)
               %+  turn  ~(tap by (~(int by can.dal.dat) can.dob.dat))
               |=  {pax/path *}
@@ -3207,7 +3204,7 @@
         %-  emit(wat.dat %build)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %build ~]
-            %t  %build  p.bob  %pin  now  %list
+            %t  %build  p.bob  live=%.n  %list
             ^-  (list schematic:ford-api)
             %+  murn  ~(tap by bof.dat)
             |=  {pax/path cay/(unit cage)}
@@ -3353,7 +3350,7 @@
         %-  emit(wat.dat %checkout)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
-            %t  %build  p.bob  %pin  (case-to-date r.val)  %list
+            %t  %build  p.bob  live=%.n  %pin  (case-to-date r.val)  %list
 ::            ~  val  %tabl
             ^-  (list schematic:ford-api)
             %+  murn  ~(tap by q.new.dat)
@@ -3411,7 +3408,7 @@
         %-  emit(wat.dat %ergo)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
-            %t  %build  p.bob  %pin  (case-to-date r.val)  %list
+            %t  %build  p.bob  live=%.n  %pin  (case-to-date r.val)  %list
             ^-  (list schematic:ford-api)
             %+  turn  ~(tap in sum)
             |=  a/path
