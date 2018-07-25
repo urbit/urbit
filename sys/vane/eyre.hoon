@@ -711,7 +711,7 @@
     ::
         $init                                           ::  register ownership
       =.  our  ?~(hov p.kyz (min u.hov p.kyz))
-      =.  fig  [~ ?=(%king our) & &]
+      =.  fig  [~ ?=(%king (clan:title our)) & &]
       +>.$(hov [~ our], top [[our %home ud+0] /web])
     ::
         ?($chis $this)                                  ::  inbound request
@@ -2172,7 +2172,13 @@
   ^+  ..^$
   ?-  -.old
     $0  $(old [%1 ~ *http-config [8.080 ~] [~ ~] +.old])
-    $1  ..^$(+>- old)
+  ::
+    $1  :: XX temporary fix for bad proxy config
+        ::
+        =/  rox=?  ?~  hov.old
+                     proxy.fig.old
+                   ?=(%king (clan:title u.hov.old))
+        ..^$(+>- old(proxy.fig rox))
   ==
 ::
 ++  scry
