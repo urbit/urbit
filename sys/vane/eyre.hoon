@@ -1,3 +1,4 @@
+!:
 ::  ::  %eyre, http servant
 !?  164
 ::::
@@ -34,6 +35,9 @@
           ==  ==                                        ::
               $:  $g                                    ::  to %gall
           $%  {$deal p/sock q/cush:gall}               ::  full transmission
+          ==  ==
+              $:  $t                                            ::
+          $%  [%build our=@p live=? schematic=schematic:ford-api]      ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  $a                                    ::  by %ames
@@ -53,6 +57,9 @@
           $%  {$made p/@uvH q/gage:ford}                     ::
               {$news p/@uvH}                            ::
           ==  ==                                        ::
+              $:  $t
+          $%  [%made date=@da result=made-result:ford-api]  ::
+          ==  ==
               $:  @tas                                  ::  by any
           $%  {$crud p/@tas q/(list tank)}              ::
           ==  ==  ==                                    ::
@@ -838,7 +845,16 @@
         $|  (get-even:(ire-ix p.sus) +.sih)
       ==
     ::
+
         $made
+      ::  hack: we must disambiguate between %f and %t %made responses
+      ::
+      ?:  ?=([%t %made *] sih)
+        ?>  ?=([%se ^] tee)
+        ~!  sih
+        (get-made:(dom-vi q.tee) p.tee result:sih)
+      ::  ?>  ?=([%f %made *] sih)
+      ::  ~!  sih
       ?<  ?=($tabl -.q.sih)
       =.  our  (need hov)                             ::  XX
       =|  ses/(unit hole)
@@ -847,7 +863,7 @@
           $@($~ {?($on $ay $ow) *})  ~|(e+ford+lost+tee !!)
           {$of @ $~}  ~|(e+ford+lost+tee !!)
           {$si $~}  (give-sigh q.sih)
-          {$se ^}   (get-made:(dom-vi q.tee) p.tee [p q]:sih)
+          {$se ^}   !!  ::(get-made:(dom-vi q.tee) p.tee [p q]:sih)
           {$hi ^}
         ?:  ?=($| -.q.sih)
           (give-sigh q.sih)  ::  XX crash?
@@ -990,6 +1006,13 @@
     |=  {tea/whir req/{beak silk:ford}}
     =.  lyv  (~(put by lyv) hen [%exec tea])
     (execute tea req)
+  ::
+  ++  execute-turbo
+    |=  [tea=whir live=? request=schematic:ford-api]
+    %+  pass-note  tea
+    :*  %t  %build  our  live
+        [%dude [|.(+)]:[%leaf "eyre: execute {<tea>}"] request]
+    ==
   ::
   ++  execute
     |=  {tea/whir bek/beak sil/silk:ford}
@@ -1784,8 +1807,9 @@
         ==
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<- +<+))
-    ++  execute  
-      |=({a/whir-se b/{beak silk:ford}} (execute:abet se+[a usr dom] b))
+    ++  execute-turbo
+      |=  [wir=whir-se live=? schematic=schematic:ford-api]
+      (execute-turbo:abet se+[wir usr dom] live schematic)
     ++  dead-this  |=(a/tang (fail:abet 500 0v0 a))
     ++  dead-hiss  |=(a/tang pump(req ~(nap to req), ..vi (give-sigh %| a)))
     ++  eyre-them  |=({a/whir-se b/vase} (eyre-them:abet se+[a usr dom] b))
@@ -1800,31 +1824,35 @@
     ++  cor-type  ?~(cor %void ?~(u.cor %void p.u.cor))
     ++  has-arm  ~(has in (silt (sloe cor-type)))
     ++  build
-      %^  execute  %core  root-beak
+      %^  execute-turbo  %core  live=%.y
       :::+  %dude  [|.(+)]:>%mod-samp<
-      ^-  silk:ford
-      :^  %mute  core+[root-beak (flop %_(dom . sec+dom))]
-        [[%& 12]~ %$ bale+!>(*(bale @))]  :: XX specify on type?
-      ?~  cor  ~
-      ?~  u.cor  ~
-      ?:  (has-arm %discard-state)  ~
-      ?:  (has-arm %update)
-        [[%& 13]~ ride+[limb+%update prep-cor]]~
-      [[%& 13]~ %$ noun+(slot 13 u.cor)]~
+      ^-  schematic:ford-api
+      :+  %mute
+        ^-  schematic:ford-api
+        [%core [[our %home] (flop %_(dom . sec+dom))]]
+      ^-  (list (pair wing schematic:ford-api))
+      :*  [[%& 12]~ %$ bale+!>(*(bale @))]  :: XX specify on type?
+          ?~  cor  ~
+          ?~  u.cor  ~
+          ?:  (has-arm %discard-state)  ~
+          ?:  (has-arm %update)
+            [[%& 13]~ ride+[limb+%update prep-cor]]~
+          [[%& 13]~ %$ noun+(slot 13 u.cor)]~
+      ==
     ::
     ++  call
       |=  {arm/vi-arm sam/cage}
-      %^  execute  arm  root-beak
+      %^  execute-turbo  arm  live=%.n
       call+[ride+[limb+arm prep-cor] [%$ sam]]
     ::
-    ++  prep-cor  ^-  silk:ford
+    ++  prep-cor  ^-  schematic:ford-api
       ?~  cor  ~|(%no-core !!)
       ?~  u.cor  ~|(%nil-driver !!)
       :+  %$  %core
       %_    u.cor
           +12.q
         =+  ^=  ato
-            %-  sky 
+            %-  sky
             [[151 %noun] %cx (en-beam root-beak [%atom (flop %_(dom . sec+dom))])]
         =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
         =.  key
@@ -1872,9 +1900,10 @@
       ==
     ::
     ++  get-made
-      |=  {wir/whir-se dep/@uvH res/(each cage tang)}  ^+  abet
-      ?:  ?=($core wir)  (made-core dep res)
-      %.  res
+      |=  [wir/whir-se result=made-result:ford-api]  ^+  abet
+      ::  |=  {wir/whir-se dep/@uvH res/(each cage tang)}  ^+  abet
+      ?:  ?=($core wir)  (made-core result)
+      %.  result
       ?-  wir
         ?($filter-request $out)             made-filter-request
         ?($filter-response $res)            made-filter-response
@@ -1883,14 +1912,21 @@
       ==
     ::
     ++  made-core
-      |=  {dep/@uvH gag/(each cage tang)}
+      |=  [result=made-result:ford-api]
+      ::  |=  {dep/@uvH gag/(each cage tang)}
       :: ~&  got-update/dep
-      =.  ..vi  (pass-note %core [%f [%wasp our dep &]])
-      ?~  -.gag  pump(cor `q.p.gag)
+      ::  =.  ..vi  (pass-note %core [%f [%wasp our dep &]])
+      ?:  ?=([%complete %success *] result)
+        =/  =cage  (result-to-cage:ford-api build-result.result)
+        pump(cor `q:cage)
       ?:  &(=(~ cor) =(%$ usr))
         =.  cor  `~
         pump ::(cor `~)  :: userless %hiss defaults to "nop" driver
-      (warn p.gag)
+      %-  warn
+      ?:  ?=(%incomplete -.result)
+        tang.result
+      ?>  ?=(%error -.build-result.result)
+      message.build-result.result
     ::
     ++  made-filter-request
       %+  on-ford-fail  dead-hiss
@@ -1952,17 +1988,25 @@
       $(a t.a)
     ::
     ++  on-ford-fail
-      |=  {err/$-(tang _abet) try/$-((each cage tang) _abet)}
-      |=  a/(each cage tang)  ^+  abet
-      ?-(-.a $| (err p.a), $& (try a))
+      |=  {err/$-(tang _abet) try/$-(made-result:ford-api _abet)}
+      |=  a/made-result:ford-api  ^+  abet
+      ?:  ?=(%incomplete -.a)
+        (err tang.a)
+      ?:  ?=(%error -.build-result.a)
+        (err message.build-result.a)
+      (try a)
     ::
     ++  on-error
       |=  {err/$-(tang _abet) handle-move/_|.(|~(vase abet))}
-      |=  a/(each cage tang)  ^+  abet
+      |=  a=made-result:ford-api  ^+  abet
       =+  try=(possibly-stateful |=(b/_self (handle-move(+ b))))  :: XX types
-      ?:  ?=($| -.a)  (err p.a)
+      ?:  ?=(%incomplete -.a)
+        (err tang.a)
+      ?:  ?=(%error -.build-result.a)
+        (err message.build-result.a)
+      =/  =cage  (result-to-cage:ford-api build-result.a)
       =-  ?-(-.- $& p.-, $| (err p.-))
-      (mule |.(~|(driver+dom ~|(bad-res+p.q.p.a (try q.p.a)))))
+      (mule |.(~|(driver+dom ~|(bad-res+p.q.cage (try q.cage)))))
     ::
     ++  possibly-stateful
       |=  han/$-(_self $-(vase _abet))  :: XX |.(|+(vase abet))
