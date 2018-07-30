@@ -129,7 +129,7 @@
       ?@  ^shoe  shoe
       ?-    -.shoe
           %bark  
-        ?+    -.^shoe  !!
+        ?-    -.^shoe 
             %bark
           [%bark (~(uni in set.^shoe) set.shoe)]
         ::
