@@ -3,6 +3,7 @@
 ::::  /hoon/hello/gen
   ::
 /?    310
+!:
 ::
 ::::
   ::
@@ -14,9 +15,233 @@
     =/  plum=plum  (spec-to-plum spec)
     ~(tall plume plum)    
 |%
-::  highly unsatisfactory temporary converter
+::
+::  *cosmetic-state: for cosmetic below
+::
++*  cosmetic-state  [product]
+  $:  ::  count: cumulative blocks detected
+      ::  pairs: blocking numbers and specs
+      ::
+      count=@ud
+      pairs=(map type (pair @ud product))
+  ==
+::
+::  $shoe: superficial type deconstruction
+::
++$  shoe
+          $@  %void                                     ::  empty
+          $%  [%bark =(set [=atom =aura])]              ::  flat constants
+              [%bush =wide=shoe =long=shoe]             ::  by cell/atom head
+              [%root =flat=shoe =deep=shoe]             ::  by atom/cell
+              [%weak =weak =(set type)]                 ::  mystery meat
+              [%wood =(map [=atom =aura] =type)]        ::  by atom head
+          ==                                            ::
++$  weak  ?(%noun %atom %cell)                          ::  weak noun category
+::
+::  =shew: deconstruct type
+::
+++  shew
+  |=  sut=type
+  ^-  shoe
+  =<  main
+  |%
+  ++  main
+    =|  gil/(set type)
+    |-  ^-  shoe
+    ?-    sut 
+        %void  %void
+        %noun  [%weak %noun [%noun ~ ~]]
+    ::
+        [%atom *]  
+      ?~  q.sut 
+        [%weak %noun [sut ~ ~]]
+      [%bark [[u.q.sut p.sut] ~ ~]]
+    ::
+        [%cell *]  
+      =/  hed  $(gil ~, sut p.sut)
+      ?:  ?=([%bark [* ~ ~]] hed)
+        [%wood [[n.set.hed q.sut] ~ ~]]
+      [%weak %cell [sut ~ ~]]
+    ::
+        [%core *]
+      [%weak %cell [sut ~ ~]]
+    ::
+        [%face *]  
+      =+($(sut q.sut) ?:(?=([%bark * ~ ~] -) - soft))
+    ::
+        [%fork *]
+      =/  list  ~(tap by p.sut)
+      |-  ^-  shoe
+      ?~  list  %void
+      (~(merge work ^$(sut i.list)) $(list t.list))
+    ::
+        [%hint *]
+      =+($(sut q.sut) ?:(?=([%bark * ~ ~] -) - soft))
+    ::
+        [%hold *]
+      ?:  (~(has in gil) sut)  %void 
+      $(gil (~(put in gil) sut), sut ~(repo ut sut))
+    ==
+  ::
+  ++  soft
+    ^-  shoe
+    ?:  (~(nest ut %void) %| sut)  %void
+    :-  %weak
+    :_  [sut ~ ~]
+    ?:  (~(nest ut [%atom %$ ~]) %| sut)  %atom
+    ?:  (~(nest ut [%cell %noun %noun]) %| sut)  %cell
+    %noun
+  ::
+  ++  work
+    |_  =shoe
+    ::  -decay: can't use shoe directly, make it weak
+    ::
+    ++  decay
+      ^-  ^shoe
+      =-  ?:  (~(nest ut %void) %| fork/-)  %void
+          :-  %weak
+          :_  -
+          ?:  (~(nest ut [%atom %$ ~]) %| fork/-)  %atom
+          ?:  (~(nest ut [%cell %noun %noun]) %| fork/-)  %cell
+          %noun
+      |-  ^-  (set type)
+      ?@  shoe  [%void ~ ~]
+      ?-  -.shoe
+        %bark  %-  ~(gas in *(set type))
+               %+  turn  ~(tap in set.shoe)
+               |=  [=atom =aura]
+               [%atom aura `atom]
+        %bush  (~(uni in $(shoe wide-shoe.shoe)) $(shoe long-shoe.shoe))
+        %root  (~(uni in $(shoe flat-shoe.shoe)) $(shoe deep-shoe.shoe))
+        %weak  set.shoe
+        %wood  %-  ~(gas in *(set type))
+               %+  turn  ~(tap by map.shoe)
+               |=  [[=atom =aura] =type]
+               [%cell [%atom aura `atom] type]
+      ==
+    ::
+    ::  =merge: merge with another shoe
+    ::
+    ++  merge
+      |=  =^shoe
+      ^-  ^^shoe
+      ?@  shoe  ^shoe
+      ?@  ^shoe  shoe
+      ?-    -.shoe
+          %bark  
+        ?+    -.^shoe  !!
+            %bark
+          [%bark (~(uni in set.^shoe) set.shoe)]
+        ::
+            %bush
+          $(shoe decay(shoe shoe), ^shoe decay(shoe ^shoe))
+        ::
+            %root
+          [%root $(^shoe flat-shoe.^shoe) deep-shoe.^shoe]
+        ::
+            %weak
+          $(^shoe decay(shoe ^shoe))
+        ::
+            %wood
+          !!
+        ==
+      ::
+          %bush  
+        !! 
+          %root  
+        !! 
+          %weak
+        !!
+          %wood
+        !!
+      ==
+    --
+  --
 ::
 ++  cosmetic
+  %-  kismet 
+  |%
+  ++  atom  
+    |=  $:  ::  aura: flavor of atom
+            ::  constant: one value, or all values
+            ::
+            aura=term 
+            constant=(unit @)
+        ==
+    ^-  spec
+    ::  if atom is not constant
+    ::
+    ?~  constant
+      ::  %base: flavored atom with arbitrary value
+      ::
+      [%base atom/aura]
+    ::  %leaf: flavored constant
+    ::
+    [%leaf aura u.constant]
+  ::
+  ++  cell  
+    |=  $:  ::  head: head of cell
+            ::  tail: tail of cell
+            ::
+            head=spec
+            tail=spec
+        ==
+    ^-  spec
+    ::  %bscl: raw tuple
+    ::
+    ?:  ?=(%bscl -.tail)
+      [%bscl head +.tail]
+    [%bscl head tail ~]
+  ::      
+  ++  core 
+    |=  $:  ::  variance: co/contra/in/bi
+            ::  payload: data 
+            ::  battery: code
+            ::
+            variance=vair
+            payload=spec
+            battery=(map term spec)
+        ==
+    ?-  variance
+      %lead  [%bszp payload battery]
+      %gold  [%bsdt payload battery]
+      %zinc  [%bstc payload battery]
+      %iron  [%bsnt payload battery]
+    ==
+  ::
+  ++  face  
+    |=  $:  ::  decor: decoration 
+            ::  content: decorated content
+            ::
+            decor=$@(term tune)
+            body=spec
+        ==
+    ^-  spec
+    ?@  decor  [%bsts decor body]
+    ::  discard aliases, etc
+    ::
+    body
+  ::
+  ++  fork
+    |=  specs=(list spec)
+    ^-  spec
+    ?<  ?=(~ specs)
+    [%bswt specs]
+  --
+::
+::  type-to-spec
+::
+++  kismet
+  |=  $=  producer
+      $_
+      ^?
+      |%
+      ++  atom  *$-([aura=term constant=(unit @)] spec)
+      ++  cell  *$-([=spec =spec] spec)
+      ++  core  *$-([=vair =spec =(map term spec)] spec)
+      ++  face  *$-([decor=$@(term tune) =spec] spec)
+      ++  fork  *$-(=(list spec) spec)
+      --
   =|  ::  coat: contextual metadata
       ::
       $=  coat
@@ -26,13 +251,7 @@
       ==
   =|  ::  load: accumulating metadata (state)
       ::
-      $=  load
-      $:  ::  count: cumulative blocks detected
-          ::  pairs: blocking numbers and specs
-          ::
-          count=@ud
-          pairs=(map type (pair @ud spec))
-      ==
+      load=(cosmetic-state spec)
   ::
   ::  sut: type we're analyzing
   ::
@@ -180,16 +399,7 @@
           ==
       ::  pure function
       ::
-      :_  load  ^-  spec
-      ::  if atom is not constant
-      ::
-      ?~  constant
-        ::  %base: flavored atom with arbitrary value
-        ::
-        [%base atom/aura]
-      ::  %leaf: flavored constant
-      ::
-      [%leaf aura u.constant]
+      [(atom:producer aura constant) load] 
     ::
     ::  +cell: convert a %cell to a spec
     ::
@@ -206,12 +416,7 @@
       ::
       =^  head  load  main(sut left)
       =^  tail  load  main(sut rite)
-      :_  load
-      ::  %bscl: raw tuple
-      ::
-      ?:  ?=(%bscl -.tail)
-        [%bscl head +.tail]
-      [%bscl head tail ~]
+      [(cell:producer head tail) load]
     ::
     ::  +core: convert a %core to a spec
     ::
@@ -247,13 +452,7 @@
       ::  arm-map: all arms in the core, as a a spec map
       ::
       =*  arm-map  (~(gas by *(map term spec)) arm-specs)
-      :_  load
-      ?-  r.p.battery
-        %lead  [%bszp payload-spec arm-map]
-        %gold  [%bsdt payload-spec arm-map]
-        %zinc  [%bstc payload-spec arm-map]
-        %iron  [%bsnt payload-spec arm-map]
-      ==
+      [(core:producer r.p.battery payload-spec arm-map) load]
     ::
     ::  +face: convert a %face to a +spec
     ::
@@ -266,11 +465,7 @@
           ==
       ^-  [spec _load]
       =^  body  load  main(sut content)
-      :_  load
-      ?@  decor  [%bsts decor body]
-      ::  discard aliases, etc
-      ::
-      body
+      [(face:producer decor body) load]
     ::
     ::  +fork: convert a %fork to a +spec
     ::
@@ -288,21 +483,7 @@
         =^  mor  load  $(type-list t.type-list)
         =^  les  load  main(sut i.type-list)
         [[les mor] load]
-      ?<  ?=(~ specs)
-      :_(load [%bswt specs])
-    --
-  ::
-  ::  +explore:cosmetic: convert :sut to an inspection pattern (+plot).
-  ::
-  ++  explore
-    ^-  [plot _.]
-    =<  [- +>] 
-    |^  ^-  [plot _.]
-        ?+  sut  !!
-          %void  :_(. [%base %void])
-          %noun  :_(. [%base %noun])
-        ==
-    ++  foo  !!
+      [(fork:producer specs) load]
     --
   --
 ::
@@ -659,6 +840,11 @@
     p.hoon
   %hooon
 ::
+++  skin-to-plum
+  |=  =skin
+  ^-  plum
+  %skinny
+::
 ++  spec-to-plum
   |=  =spec
   ^-  plum
@@ -708,7 +894,7 @@
     %bstc  (core-to-plum '$`' p.spec q.spec)
     %bsts  :+  %&
              [`['=' ~] `['$=' ~]]
-           :~  p.spec
+           :~  (skin-to-plum p.spec)
                $(spec q.spec)
            ==
     %bsvt  &/[(fixed '$@') $(spec p.spec) $(spec q.spec) ~]

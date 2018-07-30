@@ -18,7 +18,6 @@
 ::  #  %math
 ::    unsigned arithmetic
 +|  %math
-++  foo-141  !!
 ++  add
   ~/  %add
   ::  unsigned addition
@@ -525,7 +524,6 @@
   ::
 ~%  %two  +  ~
 |%
-++  foo-141  !!
 ::                                                      ::
 ::::  2a: unit logic                                    ::
   ::                                                    ::
@@ -2035,7 +2033,6 @@
   ::                                                    ::
 ~%  %tri  +  ~
 |%
-++  foo-141  !!
 ::
 ::::  3a: signed and modular ints                       ::
   ::                                                    ::
@@ -3750,7 +3747,6 @@
 ::
 ::::  4a: exotic bases
   ::
-++  foo-141  !!
 ++  po                                                  ::  phonetic base
   ~/  %po
   =+  :-  ^=  sis                                       ::  prefix syllables
@@ -6427,7 +6423,6 @@
 ::
 ::::  5aa: new partial nock interpreter
   ::
-++  foo-141  !!
 ++  musk  !.                                            ::  nock with block set
   |%  
   ++  abet
