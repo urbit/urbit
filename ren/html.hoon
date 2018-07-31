@@ -9,8 +9,9 @@
   /web/collections
     /&html&/collection-elem/
   /  
-    /|  /&html&/!hymn/
-        /html/
-    ==
+::    /|
+        /&html&/!hymn/
+::        /html/
+::    ==
   ==
 page

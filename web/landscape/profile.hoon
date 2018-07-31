@@ -1,5 +1,4 @@
-/+  collections
-/+  colls
+/+  collections, colls
 /=  gas  /$  fuel:html
 /=  all-colls  /:  /===/web/collections
                /collection-web-item/

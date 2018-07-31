@@ -861,7 +861,7 @@
             %^  exec-live  ha+(en-beam bek ~)  (norm-beak bek)
             :+  %cast  ext
             :+  %call  [%core (norm-beak bek) /wrap/[ext]/ren]
-            [[%$ deps+!>(dep)] [%vale res]]
+            [%vale res]
           ==
       ::
         $not  +>.$(mow :_(mow [ged [%give %that q.p.kyz p.u.mez]]))

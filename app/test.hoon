@@ -134,14 +134,16 @@
     :-  /ren/css            "not meant to be called outside /web/pack"
     :-  /ren/js             "not meant to be called outside /web/pack"
     :-  /ren/run            "not meant to be called except on a (different) hoon file"
-    :-  /ren/collections    "temporarily disabled"
+    :-  /ren/collection     "temporarily disabled"
+    :-  /ren/x-urb          "temporarily disabled"
+    :-  /ren/urb            "temporarily disabled"
   ::
     :-  /app/gh             "hangs for some reason"
     :-  /mar/gh             "hangs for some reason"
     :-  /app/twit           "slow and/or crash"
     :-  /gen/twit           "slow and/or crash"
     :-  /mar/twit           "slow and/or crash"
-    :-  /web/pages/nutalk           "/$ doensn't work in tests"
+    :-  /web/landscape           "/$ doensn't work in tests"
   ==
 ::
 ++  failing
