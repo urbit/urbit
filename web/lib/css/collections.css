@@ -1,0 +1,14 @@
+input.red {
+    background: hsl(0, 100%, 60%);
+}
+
+form.inline {
+    display: inline;
+}
+
+.edit-toggle:checked ~ .edit-off {
+    display:  none;
+}
+.edit-toggle:not(:checked) ~ .edit-on {
+    display: none;
+}

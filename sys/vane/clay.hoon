@@ -1,3 +1,4 @@
+!:
 ::  clay (4c), revision control
 ::
 ::  This is split in three top-level sections:  structure definitions, main
@@ -44,9 +45,9 @@
 ::  Type of request.
 ::
 ::  %d produces a set of desks, %p gets file permissions, %u checks for
-::  existence, %v produces a ++dome of all desk data, %w gets @ud and @da
-::  variants for the given case, %x gets file contents, %y gets a directory
-::  listing, and %z gets a recursive hash of the file contents and children.
+::  existence, %v produces a ++dome of all desk data, %w gets a revision
+::  number/date, %x gets file contents, %y gets a directory listing, and %z gets
+::  a recursive hash of the file contents and children.
 ::
 :: ++  care  ?($d $p $u $v $w $x $y $z)
 ::
@@ -2391,6 +2392,7 @@
         $delta     (~(put in $(lob q.q.gar)) lob)
       ==
     ::
+    ::
     ::  Gets the permissions that apply to a particular node.
     ::
     ::  If the node has no permissions of its own, we use its parent's.
@@ -2398,7 +2400,7 @@
     ::  we default to fully private (empty whitelist).
     ::
     ++  read-p
-      |=  pax/path
+      |=  {aeon pax/path}
       ^-  (unit (unit (each cage lobe)))
       =-  [~ ~ %& %noun !>(-)]
       :-  (read-p-in pax per.red)
