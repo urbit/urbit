@@ -18,7 +18,7 @@
 ::
 +=  config
   $:  full-path=beam
-      name=@t
+      name=@ta
       description=@t
     ::
       owner=@p

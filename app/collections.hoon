@@ -197,6 +197,7 @@
       :~  [%owner (scot %p src.bol)]
           [%date-created dat]
           [%last-modified dat]
+          [%type %comments]
       ==
     [%write (weld pax.a /[dat]/umd) %umd (update-umd-front front content.a)]
   ::
