@@ -5,7 +5,7 @@
 /=  page  /%
   /^  manx
   /,  /web/collections
-    /collection-elem/
+    /collections-elem/
       /  
     /!hymn/
   ==

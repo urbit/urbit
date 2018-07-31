@@ -7,7 +7,7 @@
   /^  collection:collections
   /;  |=  a=(map knot item:collections)
       [*config:collections a]
-  /:  /===/web/collections  /_  /collection-item/
+  /:  /===/web/collections  /_  /collections-item/
 ::
 =,  collections
 =,  space:userlib

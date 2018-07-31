@@ -17,12 +17,12 @@
           [%no-config (map knot item:collections) ~]
           ~
       ==
-  /|  /.  /collection-config/
-          /_  /collection-item/
+  /|  /.  /collections-config/
+          /_  /collections-item/
       ==
       ::
       /.  /~  %no-config
-          /_  /collection-item/
+          /_  /collections-item/
       ==
       ::
       /~  ~
