@@ -136,6 +136,9 @@
     :-  /ren/run            "not meant to be called except on a (different) hoon file"
     :-  /ren/collection     "temporarily disabled"
     :-  /ren/x-urb          "temporarily disabled"
+    :-  /ren/x-htm          "temporarily disabled"
+    :-  /ren/x-collections-snip          "temporarily disabled"
+    :-  /ren/x-collections-json          "temporarily disabled"
     :-  /ren/urb            "temporarily disabled"
   ::
     :-  /app/gh             "hangs for some reason"

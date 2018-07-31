@@ -80,12 +80,14 @@
           desc+so:dejs
           comments+bo:dejs
           visible+bo:dejs
+          type+(su:dejs sym)
       ==
     ::
     ++  post
       %-  ot:dejs
       :~  path+(su:dejs ;~(pfix fas (more fas urs:ab)))
           name+sa
+          type+(su:dejs sym)
           comments+bo:dejs
           content+so:dejs
       ==
@@ -93,8 +95,6 @@
     ++  comment
       %-  ot:dejs
       :~  path+(su:dejs ;~(pfix fas (more fas urs:ab)))
-          name+sa
-          comments+bo:dejs
           content+so:dejs
       ==
     ::

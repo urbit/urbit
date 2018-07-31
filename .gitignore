@@ -1,1 +1,5 @@
 /sec/**/*.atom
+*.swp
+*.swo
+/web/collections
+!/web/collection
