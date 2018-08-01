@@ -122,6 +122,34 @@
       ['content' [%s data.raw]]
   ==
 ::
+++  front-to-wain
+  |=  a=(map knot cord)
+  ^-  wain
+  =/  entries=wain
+    %+  turn  ~(tap by a)
+    |=  b=[knot cord]
+    =/  c=[term knot]  ((hard ,[term knot]) b)
+    (crip "  [{<-.c>} {<+.c>}]")
+  ::
+  ?~  entries  ~
+  ;:  weld
+    [':-  :~' ~]
+    entries
+    ['    ==' ~]
+  ==
+::
+++  update-umd-front
+  |=  [fro=(map knot cord) umd=@t]
+  ^-  @t
+  %-  of-wain:format
+  =/  tum  (weld (trip umd) "\0a")
+  =/  id  (find ";>" tum)
+  ?~  id
+    %+  weld  (front-to-wain fro)
+    (to-wain:format (crip (weld ";>\0a" tum)))
+  %+  weld  (front-to-wain fro)
+  (to-wain:format (crip (slag u.id tum)))
+::
 ::
 ::
 ++  poke-noun
@@ -146,7 +174,6 @@
 ++  poke-collections-action
   |=  act=action:collections
   ^-  (quip move _this)
-::  ~&  act
   ?.  =(who.act our.bol)
     ::
     ::  forward poke if its not meant for us

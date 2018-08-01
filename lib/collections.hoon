@@ -53,31 +53,4 @@
       [%collections-config config]
   ==
 ::
-::
-::
-++  front-to-wain
-  |=  a=(map knot cord)
-  ^-  wain
-  =/  entries=wain
-    %+  turn  ~(tap by a)
-    |=  b=[knot cord]
-    =/  c=[term knot]  ((hard ,[term knot]) b)
-    (crip "  [{<-.c>} {<+.c>}]")
-  ::
-  ?~  entries  ~
-  ;:  weld
-    [':-  :~' ~]
-    entries
-    ['    ==' ~]
-  ==
-::
-++  update-umd-front
-  |=  [fro=(map knot cord) umd=@t]
-  ^-  @t
-  %-  of-wain:format
-  =/  tum  (trip umd)
-  =/  id  (need (find ";>" tum))
-  %+  weld  (front-to-wain fro)
-  (to-wain:format (crip (slag id tum)))
-::
 --

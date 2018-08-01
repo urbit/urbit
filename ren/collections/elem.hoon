@@ -134,7 +134,7 @@
                 =href  "/~~/landscape/profile"
                 ; {(trip owner)}
               ==
-              ;+  elm:(static:cram (ream data.raw))
+              ;+  elm:(static:cram (ream data.raw.ite))
             ==
             ;span.collection-date: {(trip date)}
           ==
