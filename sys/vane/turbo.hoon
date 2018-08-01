@@ -4593,6 +4593,12 @@
     ::
     ~|  hoon-version=hoon-version
     ?>  ?=(?(%143 %151) hoon-version)
+    ::  if the actual scry produces a value, use that value; otherwise use local
+    ::
+    =/  scry-response  (scry +<.$)
+    ::
+    ?^  scry-response
+      scry-response
     ::
     =/  vane=(unit ?(%c %g))  ((soft ?(%c %g)) (end 3 1 term))
     ?~  vane
@@ -4611,12 +4617,6 @@
       p.r.beam
     ::
     =/  =build  [date %scry resource]
-    ::  if the actual scry produces a value, use that value; otherwise use local
-    ::
-    =/  scry-response  (scry +<.$)
-    ::
-    ?^  scry-response
-      scry-response
     ::  look up the scry result from our permanent state
     ::
     ::    Note: we can't freshen this cache entry because we can't modify
