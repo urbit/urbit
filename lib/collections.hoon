@@ -50,7 +50,7 @@
 ::
 +=  form
   $%  [%umd @t]
-      [%collection-config config]
+      [%collections-config config]
   ==
 ::
 ::

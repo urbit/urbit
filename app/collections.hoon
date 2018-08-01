@@ -21,7 +21,7 @@
   ==
 +=  poke
   $%  [%hall-action action:hall]
-      [%collection-action action:collections]
+      [%collections-action action:collections]
       [%json json]
   ==
 --
@@ -140,10 +140,10 @@
       ==
     ==
   =/  mow=move
-    [ost.bol %poke /poke-act [our.bol %collections] %collection-action act]
+    [ost.bol %poke /poke-act [our.bol %collections] %collections-action act]
   [[mow]~ this]
 ::
-++  poke-collection-action
+++  poke-collections-action
   |=  act=action:collections
   ^-  (quip move _this)
 ::  ~&  act
@@ -153,9 +153,9 @@
     :_  this
     :_  ~
     :*  ost.bol  %poke  
-        /forward-collection-action  
+        /forward-collections-action  
         [who.act %collections]
-        %collection-action  act
+        %collections-action  act
     ==
   ::
   ::  resolve %collection, %post, or %comment to %write action
@@ -165,7 +165,7 @@
   ^-  sub-action
   ?:  ?=(%collection -.a)
     =/  conf=config
-      :*  [byk.bol (flop (weld pax.a /[name.a]/collection-config))]
+      :*  [byk.bol (flop (weld pax.a /[name.a]/collections-config))]
           name.a
           desc.a
           our.bol
@@ -176,7 +176,7 @@
           ~
           visible.a
       ==
-    [%write (weld pax.a /[name.a]/collection-config) %collection-config conf]
+    [%write (weld pax.a /[name.a]/collections-config) %collections-config conf]
   ::
   ?:  ?=(%post -.a)
     =/  front=(map knot cord)
@@ -339,7 +339,7 @@
         %collection
       =.  ta-this  
         (ta-hall-json parent 'deleted collection' (collection-notify pax meta.col.old))
-      =.  ta-this  (ta-flush-permissions (weld pax /collection-config))
+      =.  ta-this  (ta-flush-permissions (weld pax /collections-config))
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.old)
       |-
       ?~  items  ta-this
@@ -352,7 +352,7 @@
       =.  ta-this  
         (ta-hall-json parent 'deleted item' (item-notify pax raw.old))
       =.  ta-this  (ta-flush-permissions pax)
-      =.  ta-this  (ta-flush-permissions (weld pax /collection-config))
+      =.  ta-this  (ta-flush-permissions (weld pax /collections-config))
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.old)
       |-
       ?~  items  ta-this
@@ -448,7 +448,7 @@
           =('.y' (fall (~(get by meta.old) %comments) '.n'))
       ==
       ::  delete comments
-      (ta-remove (weld pax /collection-config))
+      (ta-remove (weld pax /collections-config))
     ::
     ::  check if file has been modified
     ::  and if so update last modified field
@@ -539,7 +539,7 @@
   ++  ta-generate-comments
     |=  pax=path
     ^+  ta-this
-    =/  sup=path  [%collection-config (flop pax)]
+    =/  sup=path  [%collections-config (flop pax)]
     =/  pat  (en-beam:format [byk.bol sup])
     =/  cay=config
       :*  [byk.bol sup]
@@ -553,7 +553,7 @@
           ~
           |
       ==
-    (ta-write (flop sup) %collection-config !>(cay))
+    (ta-write (flop sup) %collections-config !>(cay))
   ::
   ::  writing files
   ::
@@ -614,6 +614,8 @@
       ?:  =(nom.circ %c)
         [our.bol %inbox]
       (path-to-circle (scag (dec (lent pax)) pax))
+::    ~&  create+circ
+::    ~&  source+parent
     %-  ta-hall-actions
     :: XX TODO make this depend on clay perms
     :~  [%create nom.circ description %journal]  
