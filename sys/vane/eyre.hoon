@@ -968,9 +968,40 @@
       ::  hack: we must disambiguate between %f and %t %made responses
       ::
       ?:  ?=([%t %made *] sih)
-        ?+  tee  ~&  [%tee tee]  !!
-          {$si $~}  (give-turbo-sigh result.sih)
-          {$se ^}   (get-made:(dom-vi q.tee) p.tee result:sih)
+        ?+    tee  ~&  [%tee tee]  !!
+            {$si $~}  (give-turbo-sigh result.sih)
+            {$se ^}   (get-made:(dom-vi q.tee) p.tee result:sih)
+        ::
+        ::
+            {$ha *}
+          %-  emule  |.  ^+  ..apex
+          ?:  ?=([%incomplete *] result.sih)
+            ~&  [%fail-on-incomplete result.sih]
+            (fail-turbo 404 tang.result.sih)
+          ?:  ?=([%complete %error *] result.sih)
+            ~&  [%fail-on-error result.sih]
+            (fail-turbo 404 message.build-result.result.sih)
+          ~&  %kinda-pass
+          =/  cay=cage  (result-to-cage:ford-api build-result.result.sih)
+          ?:  ?=($red-quri p.cay)
+            =+  url=(apex:en-purl ((hard quri) q.q.cay))
+            (give-thou 307 [location+(crip url)]~ ~)
+            :: (give-html:abet 200 ~ (redir:xml url))
+          ?.  ?=($mime p.cay)
+            =+  bek=(norm-beak -:(need (de-beam p.tee)))
+            =+  tee-ses=?~(ses tee [%ac u.ses tee])
+            ::  TODO: Why cast here? Shouldn't the cast wrap the previous result?
+            ::
+            (exec-turbo-live tee-ses [%cast [p q]:bek %mime [%$ cay]])
+            ::  (exec-live tee-ses bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
+          ~|  q.q.cay
+          =+  cug=?~(ses ~ cug:(~(got by wup) u.ses))
+          =+  ((hard {mit/mite rez/octs}) q.q.cay)
+          ::  TODO: Used to use dep for etag control.
+          ::
+          ::  =+  dep=(crip "W/{(en-json %s (scot %uv p.sih))}")
+          =+  hit=[200 ~[content-type+(en-mite mit)] ~ rez]  :: etag+dep 
+          (give-thou (add-cookies cug hit))
         ==
       ::  ?>  ?=([%f %made *] sih)
       ::  ~!  sih
@@ -1041,21 +1072,28 @@
           {$ha *}
         %-  emule  |.  ^+  ..apex
         ?.  ?=($& -.q.sih)
+          ~&  %fail
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
         ?:  ?=($red-quri p.cay)
+          ~&  %red-quri-case
           =+  url=(apex:en-purl ((hard quri) q.q.cay))
           (give-thou 307 [location+(crip url)]~ ~)
           :: (give-html:abet 200 ~ (redir:xml url))
         ?.  ?=($mime p.cay)
+          ~&  [%mime-casting tee]
           =+  bek=(norm-beak -:(need (de-beam p.tee)))
           =+  tee-ses=?~(ses tee [%ac u.ses tee])
-          (exec-live tee-ses bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
+          ::  TODO: Why cast here? Shouldn't the cast wrap the previous result?
+          ::
+          (exec-turbo-live tee-ses [%cast [p q]:bek %mime [%$ cay]])
+          ::  (exec-live tee-ses bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
         ~|  q.q.cay
         =+  cug=?~(ses ~ cug:(~(got by wup) u.ses))
         =+  ((hard {mit/mite rez/octs}) q.q.cay)
         =+  dep=(crip "W/{(en-json %s (scot %uv p.sih))}")
         =+  hit=[200 ~[etag+dep content-type+(en-mite mit)] ~ rez]
+        ~&  [%main-give-thou tee]
         (give-thou (add-cookies cug hit))
       ==
     ==
