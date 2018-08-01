@@ -506,10 +506,6 @@
         q/path                                          ::  spur
         r/cage                                          ::  data
     ==                                                  ::
-  ++  real                                              ::  resolved permissions
-    $:  mod/?($black $white)                            ::
-        who/(pair (set ship) (map @ta crew))            ::
-    ==                                                  ::
   ++  rave                                              ::  general request
     $%  {$sing p/mood}                                  ::  single request
         {$next p/mood}                                  ::  await next version
