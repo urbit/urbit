@@ -916,6 +916,7 @@
     ::
     ::
         $thou
+      ~&  %axon-thou
       ?+    -.tee  !!
         $ay  (ames-gram (slav %p p.tee) got+~ (slav %uv q.tee) |2.sih)
         $hi  (cast-thou q.tee httr+!>(p.sih))
@@ -961,22 +962,23 @@
       ==
     ::
         $made
-      ::  hack: we must disambiguate between %f and %t %made responses
-      ::
-      ?:  ?=([%t %made *] sih)
-        ?>  ?=([%se ^] tee)
-        ~!  sih
-        (get-made:(dom-vi q.tee) p.tee result:sih)
-      ::  ?>  ?=([%f %made *] sih)
-      ::  ~!  sih
-      ?<  ?=($tabl -.q.sih)
       =.  our  (need hov)                             ::  XX
       =|  ses/(unit hole)
       |-  ^+  ..axon
+      ::  hack: we must disambiguate between %f and %t %made responses
+      ::
+      ?:  ?=([%t %made *] sih)
+        ?+  tee  ~&  [%tee tee]  !!
+          {$si $~}  (give-turbo-sigh result.sih)
+          {$se ^}   (get-made:(dom-vi q.tee) p.tee result:sih)
+        ==
+      ::  ?>  ?=([%f %made *] sih)
+      ::  ~!  sih
+      ?<  ?=($tabl -.q.sih)
       ?-    tee
           $@($~ {?($on $ow) *})  ~|(e+ford+lost+tee !!)
           {$of @ $~}  ~|(e+ford+lost+tee !!)
-          {$si $~}  (give-sigh q.sih)
+          {$si $~}  !!  ::(give-sigh q.sih)
           {$se ^}   !!  ::(get-made:(dom-vi q.tee) p.tee [p q]:sih)
           {$ay ^}
         =/  res/(each (cask) tang)
@@ -1098,11 +1100,22 @@
     |=  {tea/whir mar/mark cay/cage}
     (execute tea (norm-beak -.top) [%cast mar $+cay])
   ::
-  ++  cast-thou
+  ++  cast-old-thou
     |=  {mar/mark cay/cage}
     ?:  ?=($httr mar)  (give-sigh %& cay)
     %^  execute  si+~  (norm-beak -.top)
     [%alts [%cast mar $+cay] [%cast %recoverable-error $+cay] ~]
+  ::
+  ++  cast-thou  :: turbo
+    |=  [mar=mark cay=cage]
+    ?:  ?=($httr mar)
+      ~&  [%cast-thou-immediate mar]
+      (give-sigh %& cay)
+    ~&  [%cast-thou mar]
+    %^  execute-turbo  si+~  live=%.n
+    ::  %^  execute  si+~  (norm-beak -.top)
+    =/  =beak  (norm-beak -.top)
+    [%alts [%cast [p q]:beak mar $+cay] [%cast [p q]:beak %recoverable-error $+cay] ~]
   ::
   ++  del-deps
     |=  {a/@uvH b/(each duct ixor)}  ^+  +>.$
