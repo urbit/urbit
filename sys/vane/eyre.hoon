@@ -308,6 +308,16 @@
     ;script@"/~/on/{<dep>}.js";
   ==
 ::
+++  render-turbo-tang
+  |=  tan/tang
+  ;html
+    ;head
+      ;link(rel "stylesheet", href "/lib/base.css");
+      ;title: server error
+    ==
+    ;body:div#c.err:pre:code:"*{(add-links (wush 80 tan))}"
+  ==
+::
 ++  favi                                                ::  XX favicon
   0w3.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.
   ~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.
@@ -937,8 +947,8 @@
       (give-json 200 ~ (frond:enjs %beat %b &))
     ::
         $news                                         ::  dependency updated
-      ?:  ?=({$se *} tee)
-        (get-news:(dom-vi q.tee) p.sih)
+      ::  the only use of $news now is for the $on dependency tracking
+      ::
       ?.  ?=({$on $~} tee)
         ~&(e+lost+[tee hen] +>.$)
       %+  roll  ~(tap in (~(get ju liz) p.sih))
@@ -950,7 +960,6 @@
         $|  (get-even:(ire-ix p.sus) +.sih)
       ==
     ::
-
         $made
       ::  hack: we must disambiguate between %f and %t %made responses
       ::
@@ -1120,6 +1129,11 @@
     =.  lyv  (~(put by lyv) hen [%exec tea])
     (execute tea req)
   ::
+  ++  exec-turbo-live
+    |=  [tea=whir req=schematic:ford-api]
+    =.  lyv  (~(put by lyv) hen [%exec tea])
+    (execute-turbo tea live=%.n req)
+  ::
   ++  execute-turbo
     |=  [tea=whir live=? request=schematic:ford-api]
     %+  pass-note  tea
@@ -1138,6 +1152,12 @@
     ^+  +>
     :: (back ha+~ dep %tang !>(mez))  ::tang->urb chain may be source of failure
     (give-html sas ~ (render-tang dep mez))
+  ::
+  ++  fail-turbo                                        ::  failing faster
+    |=  [sas=@ud mez=tang]
+    ^+  +>
+    :: (back ha+~ dep %tang !>(mez))  ::tang->urb chain may be source of failure
+    (give-html sas ~ (render-turbo-tang mez))
   ::
   ++  give-html
     |=  {sas/@ud cug/(list @t) max/manx}
@@ -1163,6 +1183,14 @@
     =-  +>.$(mow :_(mow [hen %give %sigh `cage`-]))
     ?.  ?=($| -.res)  p.res
     [%tang !>(p.res)]
+  ::
+  ++  give-turbo-sigh
+    |=  result=made-result:ford-api
+    ~&  %give-turbo-sigh
+    =-  +>.$(mow :_(mow [hen %give %sigh `cage`-]))
+    ?:  ?=(%incomplete -.result)
+      [%tang !>(tang.result)]
+    (result-to-cage:ford-api build-result.result)
   ::
   ++  mean-json  |=({sas/@uG err/ares} (give-json sas ~ (ares-to-json err)))
   ++  nice-json  |=(* (give-json 200 ~ (frond:enjs %ok %b &)))
@@ -1198,6 +1226,7 @@
     ++  new-deps  (teba ^new-deps)
     ++  ames-gram  (teba ^ames-gram)
     ++  exec-live  (teba ^exec-live)
+    ++  exec-turbo-live  (teba ^exec-turbo-live)
     ++  give-html  (teba ^give-html)
     ++  give-thou  (teba ^give-thou)
     ++  give-json  (teba ^give-json)
@@ -1235,6 +1264,8 @@
           $html  (give-html 200 cug p.pez)
           $htme  (give-html 401 cug p.pez)
           $bake
+        ::  TODO: this needs reworking here.
+        ::
         =+  req=[%bake mar=q.pez [r s]:pez]
         =+  red=req(mar %red-quri)
         (exec-live p.pez -.s.pez `silk:ford`[%alts ~[req red]])
