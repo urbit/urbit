@@ -2218,7 +2218,7 @@
           (cast-wrap-error grow-result)
         ::  make sure the product nests in the sample of the destination mark
         ::
-        =/  bunt-build=^build  [date.build [%bunt disc mark]]
+        =/  bunt-build=^build  [date.build [%bunt disc target-mark]]
         ::
         =^  bunt-result  accessed-builds  (depend-on bunt-build)
         ?~  bunt-result
