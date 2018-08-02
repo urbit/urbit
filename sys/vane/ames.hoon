@@ -661,8 +661,9 @@
       ++  myx                                           ::  dore by ship
         |=  her=ship
         ^+  lax
-        =+  fod=(~(get by hoc.saf) her)
-        ~(. lax [her ?~(fod (gur her) u.fod)])
+        =/  fod=dore
+          (fall (~(get by hoc.saf) her) (gur her))
+        ~(. lax [her fod])
       ::
       ++  nux                                           ::  install dore
         |=  new=_lax
@@ -1088,10 +1089,8 @@
     ::
     ++  um                                              ::  per server
       |=  our=ship
-      =+  gus=(need (~(us go ton.fox) our))
-      =+  ^=  weg  ^-  corn
-          =+  weg=(~(get by zac.fox) our)
-          ?^(weg u.weg *corn)
+      =/  gus   (need (~(us go ton.fox) our))
+      =/  weg=corn  (fall (~(get by zac.fox) our) *corn)
       =|  bin=(list boon)
       |%
       ++  ho                                            ::    ho:um:am
@@ -1205,17 +1204,15 @@
             |%
             ++  apse
               ^+  +>.$
-              =+  oub=bust:puz
-              =+  neg==(~ yed.caq.dur.diz)
+              =/  oub  bust:puz
+              =/  neg  =(~ yed.caq.dur.diz)
               =.  +>.$  east
-              =+  eng==(~ yed.caq.dur.diz)
-              =+  bou=bust:puz
-              =.  bin
-                ?.  &(oub !bou)  bin
-                :_(bin [%wine [our her] " is ok"])
-              =.  bin
-                ?.  &(neg !eng)  bin
-                :_(bin [%wine [our her] " is your neighbor"])
+              =/  eng  =(~ yed.caq.dur.diz)
+              =/  bou  bust:puz
+              =?  +>.$  &(oub !bou)
+                (emit [%wine [our her] " is ok"])
+              =?  +>.$  &(neg !eng)
+                (emit [%wine [our her] " is your neighbor"])
               +>.$
             ::
             ++  east
@@ -1438,17 +1435,17 @@
         ++  wool                                        ::    wool:ho:um:am
           |=  [hen=duct cha=path val=*]                 ::  send a statement
           ^+  +>
-          =+  ^=  rol  ^-  rill
-              =+  rol=(~(get by ryl.bah) cha)
-              ?~(rol *rill u.rol)
-          =+  sex=sed.rol
+          =/  rol=rill  (fall (~(get by ryl.bah) cha) *rill)
+          =/  sex=@ud  sed.rol
           ::  ~&  [%tx [our her] cha sex]
           =.  ryl.bah
               %+  ~(put by ryl.bah)  cha
-              rol(sed +(sed.rol), san (~(put by san.rol) sex hen))
-          =+  cov=[p=p:sen:gus q=clon:diz]
+              %=  rol
+                sed  +(sed.rol)
+                san  (~(put by san.rol) sex hen)
+              ==
           %+  wind  [cha sex]
-          [%bond q.cov cha sex val]
+          [%bond clon:diz cha sex val]
         ::
         ++  zest                                        ::    zest:ho:um:am
           :~  :~  :*  [%rtt rtt.sop.bah]
