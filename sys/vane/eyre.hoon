@@ -981,13 +981,14 @@
           ?:  ?=([%complete %error *] result.sih)
             ~&  [%fail-on-error result.sih]
             (fail-turbo 404 message.build-result.result.sih)
-          ~&  %kinda-pass
+          ~&  [%inside-turbo-ha-handler tee]
           =/  cay=cage  (result-to-cage:ford-api build-result.result.sih)
           ?:  ?=($red-quri p.cay)
             =+  url=(apex:en-purl ((hard quri) q.q.cay))
             (give-thou 307 [location+(crip url)]~ ~)
             :: (give-html:abet 200 ~ (redir:xml url))
           ?.  ?=($mime p.cay)
+            ~&  [%mime-casting-inside-turbo-response tee]
             =+  bek=(norm-beak -:(need (de-beam p.tee)))
             =+  tee-ses=?~(ses tee [%ac u.ses tee])
             ::  TODO: Why cast here? Shouldn't the cast wrap the previous result?
@@ -1000,7 +1001,8 @@
           ::  TODO: Used to use dep for etag control.
           ::
           ::  =+  dep=(crip "W/{(en-json %s (scot %uv p.sih))}")
-          =+  hit=[200 ~[content-type+(en-mite mit)] ~ rez]  :: etag+dep 
+          =+  hit=[200 ~[content-type+(en-mite mit)] ~ rez]  :: etag+dep
+          ~&  [%giving-turbo-thou tee]
           (give-thou (add-cookies cug hit))
         ==
       ::  ?>  ?=([%f %made *] sih)
@@ -1081,7 +1083,7 @@
           (give-thou 307 [location+(crip url)]~ ~)
           :: (give-html:abet 200 ~ (redir:xml url))
         ?.  ?=($mime p.cay)
-          ~&  [%mime-casting tee]
+          ~&  [%mime-casting-to-turbo tee]
           =+  bek=(norm-beak -:(need (de-beam p.tee)))
           =+  tee-ses=?~(ses tee [%ac u.ses tee])
           ::  TODO: Why cast here? Shouldn't the cast wrap the previous result?
@@ -1315,11 +1317,23 @@
           $html  (give-html 200 cug p.pez)
           $htme  (give-html 401 cug p.pez)
           $bake
-        ::  TODO: this needs reworking here.
+
+        ~&  [%bake pez]
+        %+  exec-turbo-live  p.pez
+        ^-  schematic:ford-api
+        :-  %alts  :~
+          ^-  schematic:ford-api
+          [%bake q.pez r.pez [[p q] s]:s.pez]
         ::
-        =+  req=[%bake mar=q.pez [r s]:pez]
-        =+  red=req(mar %red-quri)
-        (exec-live p.pez -.s.pez `silk:ford`[%alts ~[req red]])
+          ^-  schematic:ford-api
+          [%bake %red-quri r.pez [[p q] s]:s.pez]
+        ==
+
+        ::  ::  TODO: this needs reworking here.
+        ::  ::
+        ::  =+  req=[%bake mar=q.pez [r s]:pez]
+        ::  =+  red=req(mar %red-quri)
+        ::  (exec-live p.pez -.s.pez `silk:ford`[%alts ~[req red]])
       ::
           $red
         =+  url=(en-purl hat pok(p [~ %html]) quy)
