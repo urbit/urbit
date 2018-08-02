@@ -2,7 +2,7 @@
 ::::  /hoon/json/ren
   ::
 /?  309
-/=  page  /%
+/=  page
   /^  json
   /,  /web/collections
     /&  json

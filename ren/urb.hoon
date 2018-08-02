@@ -4,7 +4,7 @@
 /?    309
 ::      nutalk        ::FIXME write ren/urb/nutalk
 /=  inner
-/%    /^    manx
+      /^    manx
       /,   ::   /web/pages/nutalk  /#  /!htm/
               /web/pages         /!hymn/
           :: put collections through the same .htm

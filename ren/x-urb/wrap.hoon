@@ -5,7 +5,7 @@
 /?  309
 /+  nutalk
 /=  wrapped
-/%  /^  $-(inr=manx out=manx)
+    /^  $-(inr=manx out=manx)
     /~  nutalk
 ::       /,      /web/pages/nutalk   /~  nutalk
 ::               /web/pages          /~  urb-split

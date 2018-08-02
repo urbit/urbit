@@ -3,7 +3,7 @@
 ::::  /hoon/js/ren
   ::
 /?    309
-/,  /web/pack/js  /%   /!js/
+/,  /web/pack/js  /!js/
     /             /~  !!
 ==
 -.-

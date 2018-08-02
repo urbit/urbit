@@ -2,7 +2,7 @@
 ::::  /hoon/elem/x-htm/ren
   ::
 /?  309
-/=  page  /%
+/=  page
   /^  manx
   /,  /web/collections
     /collection-elem/

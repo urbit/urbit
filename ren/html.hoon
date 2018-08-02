@@ -3,7 +3,7 @@
   ::
 /?  309
 /+  collections
-/=  page  /%
+/=  page
   /^  @t
     /,  
   /web/collections

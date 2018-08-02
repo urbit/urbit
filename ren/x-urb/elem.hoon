@@ -3,7 +3,7 @@
   ::
 /?    309
 /=  inner
-/%  /^  manx
+    /^  manx
     /,  /web/landscape     /!hymn/
         /web/collections   /collection-elem/
         / 

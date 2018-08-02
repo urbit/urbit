@@ -3,7 +3,7 @@
 ::::  /hoon/css/ren
   ::
 /?    310
-/,  /web/pack/css  /%   /!css/
+/,  /web/pack/css  /!css/
     /              /~  !!
 ==
 -.-
