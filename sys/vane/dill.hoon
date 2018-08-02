@@ -530,8 +530,11 @@
     [:_(moz [(need hey.all) %give %init p.q.hic]) ..^$]
   =+  nus=(ax hen q.hic)
   ?~  nus
-    ~&  [%dill-no-flow q.hic]
-    [~ ..^$]
+    ?.  ?=(%crud -.q.hic)
+      ~&  [%dill-no-flow q.hic]
+      [~ ..^$]
+    ~&  [%dill-no-flow %crud p.q.hic]
+    [((slog (flop q.q.hic)) ~) ..^$]
   =^  moz  all  abet:(call:u.nus q.hic)
   [moz ..^$]
 ::
