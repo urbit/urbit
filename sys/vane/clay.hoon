@@ -2400,7 +2400,7 @@
     ::  we default to fully private (empty whitelist).
     ::
     ++  read-p
-      |=  {aeon pax/path}
+      |=  pax=path
       ^-  (unit (unit (each cage lobe)))
       =-  [~ ~ %& %noun !>(-)]
       :-  (read-p-in pax per.red)

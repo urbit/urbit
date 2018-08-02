@@ -1703,7 +1703,7 @@
     ::  accessed-builds: builds accessed/depended on during this run.
     ::
     =|  accessed-builds=(list ^build)
-    ::  ~&  [%turbo-make (build-to-tape build)]
+    ~&  [%turbo-make (build-to-tape build)]
     ::  dispatch based on the kind of +schematic in :build
     ::
     ::
@@ -1716,7 +1716,7 @@
             %$  (make-literal literal)
         ::
             %pin   (make-pin date schematic)
-            %alts  (make-alts choices)
+            %alts  (make-alts choices ~)
             %bake  (make-bake renderer query-string path-to-render)
             %bunt  (make-bunt disc mark)
             %call  (make-call gate sample)
@@ -1792,11 +1792,11 @@
       [build [%build-result u.result] accessed-builds]
     ::
     ++  make-alts
-      |=  choices=(list schematic)
+      |=  [choices=(list schematic) errors=(list tank)]
       ^-  build-receipt
       ::
       ?~  choices
-        (return-error [leaf+"%alts: all options failed"]~)
+        (return-error [[%leaf "%alts: all options failed"] errors])
       ::
       =/  choice=^build  [date.build i.choices]
       ::
@@ -1805,6 +1805,12 @@
         [build [%blocks ~[choice] ~] accessed-builds]
       ::
       ?:  ?=([%error *] u.result)
+        ::  TODO: When the type system wises up, fix this:
+        ::
+        =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
+        =/  wrapped-error=tank
+          [%rose braces `(list tank)`message.u.result]
+        =.  errors  [[%leaf "option"] wrapped-error errors]
         $(choices t.choices)
       ::
       [build [%build-result %success %alts u.result] accessed-builds]
