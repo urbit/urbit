@@ -112,6 +112,7 @@
   test-mute
   test-bake-renderer
   test-bake-mark
+  test-bake-mark-fallback
   test-diff
   test-diff-form
   test-pact
@@ -2967,9 +2968,19 @@
       call-args=[duct=~[/alts] type=~ %build ~nul live=%.y alts]
       ::
       ^=  moves
-        :~  :*  duct=~[/alts]  %give  %made  ~1234.5.6  %complete
-                [%error [%leaf "%alts: all options failed"]~]
-            ==
+        :~  :*  duct=~[/alts]  %give  %made  ~1234.5.6  %complete  %error
+                :~  [%leaf "%alts: all options failed"]
+                    [%leaf "option"]
+                    :+  %rose  ["  " "\{" "}"]  :~
+                        [%leaf "scry failed for"]
+                        [%leaf "%cx /~nul/home/~1234.5.6/scry/one"]
+                    ==
+                    [%leaf "option"]
+                    :+  %rose  ["  " "\{" "}"]  :~
+                        [%leaf "scry failed for"]
+                        [%leaf "%cx /~nul/home/~1234.5.6/scry/two"]
+                    ==
+            ==  ==
             :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.6
                 %c  %warp  [~nul ~nul]  %home
                 `[%mult [%da ~1234.5.6] (sy [%x /scry/two] [%x /scry/one] ~)]
@@ -5595,6 +5606,90 @@
         %-  expect-eq  !>
         :-  &
         (~(nest ut p.q.cage) | -:!>([12 13]))
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::  renderers can fail, and we should fall back to using the mark
+::
+++  test-bake-mark-fallback
+  :-  `tank`leaf+"test-bake-mark-fallback"
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  scry-results=(map [term beam] (unit cage))
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/dat/ren]]
+      :^  ~  %hoon  hoon-src-type
+      '''
+      /=  data  /~  !!
+      data
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/dat/mar]]
+      :^  ~  %hoon  hoon-src-type
+      '''
+      |_  atom=@
+      ++  grab
+        |%
+        ++  txt  @
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /txt/data]]
+      :^  ~  %txt  hoon-src-type
+      '''
+      one
+      '''
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /data]]
+      `[%arch !>(`arch`[fil=~ dir=(my [%txt ~]~)])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /txt/data]]
+      `[%arch !>(`arch`[fil=`*@uv dir=~])]
+    ==
+  ::
+  =^  results1  ford-gate
+    %-  test-ford-call-with-comparator  :*
+      ford-gate
+      now=~1234.5.6
+      scry=(scry-with-results-and-failures scry-results)
+      ::
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %build  ~nul  live=%.n
+            [%bake %dat *coin `rail:ford-gate`[[~nul %home] /data]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
+        =/  result  result.p.card.i.moves
+        ?>  ?=([%success %bake *] build-result.result)
+        ::
+        =/  =cage  cage.build-result.result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  %dat
+          p.cage
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  'one'
+          q.q.cage
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.q.cage) | -:!>('one'))
     ==
   ::
   ;:  weld
