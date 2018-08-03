@@ -8,7 +8,7 @@
 ::
 ::
 /=  collection-post     
-  /^  $-(@t manx)
+::  /^  $-(raw-item:collections manx)
   /:  /===/web/landscape/collections/post     /%  /!noun/
 /=  collection-details
   /^  manx
@@ -37,7 +37,7 @@
         %collection
       ?+  sho     !!
         %default  (collection-to-elem col.itm)
-        %post     (collection-post '')
+        %post     (collection-post ~ (flop s.bem.gas))
         %edit     !!
         %details  collection-details
       ==
@@ -46,7 +46,7 @@
       ?+  sho     !!
         %default  (raw-to-elem raw.itm)
         %post     !!
-        %edit     (collection-post data.raw.itm)
+        %edit     (collection-post `raw.itm (flop s.bem.gas))
         %details  collection-details
       ==
     ::
@@ -54,7 +54,7 @@
       ?+  sho     !!
         %default  (both-to-elem col.itm raw.itm)
         %post     !!
-        %edit     (collection-post data.raw.itm)
+        %edit     (collection-post `raw.itm (flop s.bem.gas))
         %details  collection-details
       ==
     ::

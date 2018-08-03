@@ -142,7 +142,7 @@
   |=  [fro=(map knot cord) umd=@t]
   ^-  @t
   %-  of-wain:format
-  =/  tum  (weld (trip umd) "\0a")
+  =/  tum  (trip umd)
   =/  id  (find ";>" tum)
   ?~  id
     %+  weld  (front-to-wain fro)
@@ -206,6 +206,7 @@
     [%write (weld pax.a /[name.a]/collections-config) %collections-config conf]
   ::
   ?:  ?=(%post -.a)
+    =.  content.a  (crip (weld (trip content.a) "\0a"))
     =/  front=(map knot cord)
       %-  my
       :~  [%name name.a]
@@ -215,9 +216,10 @@
           [%last-modified (scot %da now.bol)]
           [%type type.a]
       ==
-    [%write (weld pax.a /[name.a]/umd) %umd (update-umd-front front content.a)]
+    [%write (weld pax.a /[name.a]/umd) %umd `@t`(update-umd-front front content.a)]
   ::
   ?:  ?=(%comment -.a)
+    =.  content.a  (crip (weld (trip content.a) "\0a"))
     =/  dat  (scot %da now.bol)
     =/  front=(map knot cord)
       %-  my
@@ -286,7 +288,11 @@
     =.  ta-this
     ?+    -.a
       !!
-      %write   (ta-write pax.a `cage`[-.for.a !>(+.for.a)])
+      %write
+        ?-  -.for.a
+          %umd                 (ta-write pax.a `cage`[-.for.a !>(+.for.a)])
+          %collections-config  (ta-write pax.a `cage`[-.for.a !>(+.for.a)])
+        ==
       %delete  (ta-remove pax.a)
       %perms   (ta-set-permissions pax.a r.a w.a)
     ==
@@ -586,9 +592,9 @@
   ::
   ++  ta-write
     |=  [pax=path cay=cage]
-::    ~&  writing+pax
     ^+  ta-this
     =.  pax  (en-beam:format byk.bol (flop pax))
+::    ~&  w+(foal pax cay)
     %+  ta-emit  ost.bol
     [%info (weld /ta-write pax) our.bol (foal pax cay)]
   ::

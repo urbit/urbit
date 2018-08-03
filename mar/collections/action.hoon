@@ -17,9 +17,9 @@
   |%
   ++  noun  action:collections
   ++  json
-::    |=  jon=^json
-::    %-  (hard action:collections)
-    =<  action
+    |=  jon=^json
+    %-  (hard action:collections)
+    =<  (action jon)
     |%
     ++  action
       %-  ot:dejs
