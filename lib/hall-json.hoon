@@ -29,10 +29,10 @@
 ++  de-tape                                             :::  tape to sur (parse)
   |%
   ++  circ                                              :::  circle
-    ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
+    ;~((glue net) ;~(pfix sig fed:ag) urs:ab)
   ::
   ++  pont
-    ;~  pfix  fas
+    ;~  pfix  net
       %+  sear
         |=  a/coin
         ^-  (unit place)

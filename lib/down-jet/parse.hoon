@@ -503,8 +503,8 @@
                 %+  stag  %html
                 ;~  plug  gal
                   ;~  pose
-                   ;~(plug blo ;~(pose fas gar gah))
-                   ;~(plug fas blo ;~(pose gar gah))
+                   ;~(plug blo ;~(pose net gar gah))
+                   ;~(plug net blo ;~(pose gar gah))
                    (mask "?!")
                   ==
                 ==

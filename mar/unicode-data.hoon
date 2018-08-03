@@ -71,7 +71,7 @@
     ++  string-number
       %+  cook
         |=(a=tape a)
-      (star ;~(pose nud fas hep))
+      (star ;~(pose nud net hep))
     ::
     --
   --
