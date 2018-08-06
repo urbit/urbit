@@ -133,7 +133,7 @@
     ++  gift                                            ::  out result <-$
       $%  {$hear p/lane q/@}                            ::  receive packet
           {$init p/@p}                                  ::  report install
-          {$mack p/(unit tang)}                         ::  
+          {$mack p/(unit tang)}                         ::
           {$mass p/mass}                                ::  memory usage
           {$send p/lane q/@}                            ::  transmit packet
           {$woot p/ship q/coop}                         ::  reaction message
@@ -1509,7 +1509,7 @@
   ::                                                    ::
   ::::                    ++aes:crypto                  ::  (2b1) aes, all sizes
     ::                                                  ::::
-  ++  aes    !.                                         
+  ++  aes    !.
     ~%  %aes  ..is  ~
     |%
     ::                                                  ::  ++ahem:aes:crypto
@@ -1594,7 +1594,7 @@
           --
         ::                                              ::  ++mcol:ahem:aes:
         ++  mcol                                        ::
-          |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}  
+          |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}
           ^-  (list @)
           =+  c=[p=*@ q=*@ r=*@ s=*@]
           |-  ^-  (list @)
@@ -1643,7 +1643,7 @@
                 (pode 5 nnb (cut 5 [(mul (ix.a b) nnb) nnb] c))
               ::                                        ::  ++sark:be:ahem:aes:
               ++  sark                                  ::
-                |=  {c/(list @) d/(list @)}  
+                |=  {c/(list @) d/(list @)}
                 ^-  (list @)
                 ?~  c  ~
                 ?~  d  !!
@@ -4369,7 +4369,7 @@
   ++  drop-pole                                         ::  unit tuple
     |*  but/(pole (unit))
     ?~  but  !!
-    ?~  +.but  
+    ?~  +.but
       u:->.but
     [u:->.but (drop-pole +.but)]
   --
@@ -4377,7 +4377,7 @@
 ::::                      ++format                      ::  (2d) common formats
   ::                                                    ::::
 ++  format  ^?
-  |%               
+  |%
   ::                                                    ::  ++to-wain:format
   ++  to-wain                                           ::  atom to line list
     ~%  %lore  ..is  ~
@@ -4458,7 +4458,7 @@
     ++  ship                                            ::  string from ship
       |=  a/^ship
       ^-  json
-      (tape (slag 1 (scow %p a))) 
+      (tape (slag 1 (scow %p a)))
     ::                                                  ::  ++numb:enjs:format
     ++  numb                                            ::  number from unsigned
       |=  a/@u
@@ -4633,7 +4633,7 @@
     ++  zp                                              ::  unit tuple
       |*  but/(pole (unit))
       ?~  but  !!
-      ?~  +.but  
+      ?~  +.but
         u:->.but
       [u:->.but (zp +.but)]
     ::
@@ -4660,7 +4660,7 @@
       |=  jon/json
       ?.  ?=({$a *} jon)  ~
       %-  zl
-      |-  
+      |-
       ?~  p.jon  ~
       [i=(wit i.p.jon) t=$(p.jon t.p.jon)]
     ::
@@ -4716,7 +4716,7 @@
       !!
     ::
     ++  ni                                              ::  number as integer
-      |=  jon/json 
+      |=  jon/json
       ?.  ?=({$n *} jon)  ~
       (rush p.jon dem)
     ::
@@ -4731,7 +4731,7 @@
       ?.  ?=({$o {@ *} $~ $~} jon)  ~
       |-
       ?~  wer  ~
-      ?:  =(-.-.wer p.n.p.jon)  
+      ?:  =(-.-.wer p.n.p.jon)
         ((pe -.-.wer +.-.wer) q.n.p.jon)
       ((of +.wer) jon)
     ::
@@ -4757,7 +4757,7 @@
     ::
     ++  op                                              ::  parse keys of map
       |*  {fel/rule wit/fist}
-      %+  cu  
+      %+  cu
         |=  a/(list (pair _(wonk *fel) _(need *wit)))
         (my:nl a)
       %-  ci  :_  (om wit)
@@ -4766,7 +4766,7 @@
       %-  zl
       %+  turn  ~(tap by a)
       |=  {a/cord b/_(need *wit)}
-      =+  nit=(rush a fel) 
+      =+  nit=(rush a fel)
       ?~  nit  ~
       (some [u.nit b])
     ::
@@ -4808,7 +4808,7 @@
     ++  zp                                              ::  unit tuple
       |*  but/(pole (unit))
       ?~  but  !!
-      ?~  +.but  
+      ?~  +.but
         u:->.but
       [u:->.but (zp +.but)]
     ::
@@ -5032,6 +5032,28 @@
          (cold 62 (just '+'))
          (cold 63 (just '/'))
        ==
+    ::
+    ++  en-base58
+      |=  dat=@
+      =/  cha
+        '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+      %-  flop
+      |-  ^-  tape
+      ?:  =(0 dat)  ~
+      :-  (cut 3 [(mod dat 58) 1] cha)
+      $(dat (div dat 58))
+    ::
+    ++  de-base58
+      |=  t=tape
+      =-  (scan t (bass 58 (plus -)))
+      ;~  pose
+        (cook |=(a=@ (sub a 56)) (shim 'A' 'H'))
+        (cook |=(a=@ (sub a 57)) (shim 'J' 'N'))
+        (cook |=(a=@ (sub a 58)) (shim 'P' 'Z'))
+        (cook |=(a=@ (sub a 64)) (shim 'a' 'k'))
+        (cook |=(a=@ (sub a 65)) (shim 'm' 'z'))
+        (cook |=(a=@ (sub a 49)) (shim '1' '9'))
+      ==
     --  ::mimes
   ::                                                    ::  ++en-json:html
   ++  en-json                                           ::  print json
@@ -5782,7 +5804,7 @@
     ?:  (gth wen now)
       (cat 3 (scot %ud (msec (sub wen now))) %ms)
     (cat 3 '-' $(now wen, wen now))
-  ::  
+  ::
   ++  about                                             ::  ++about:milly
     |=  wun/(unit @da)                                  ::  unit relative msec
     ^-  @tas
@@ -6173,5 +6195,5 @@
       {$this p/? q/clip:eyre r/httq:eyre}               ::  eyre: in request
       {$thud $~}                                        ::  eyre: in cancel
       {$wake $~}                                        ::  behn: wakeup
-  == 
+  ==
 --  ::
