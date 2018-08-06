@@ -826,6 +826,7 @@
         $west                                           ::  remote request
       =.  mow  :_(mow [hen %give %mack ~])
       =+  mez=((soft gram) q.kyz)
+      ~&  [%west mez]
       ?~  mez
         ~&  e+[%strange-west p.kyz]
         ~|(%strange-west !!)
@@ -851,11 +852,9 @@
           (ames-gram q.p.kyz hat+~ p.u.mez our-host)
       ::
         $get-inner
-          %^  exec-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)  -.s.u.mez
-          ::
-::          =/  ext/mark  q.u.mez
-::          =/  fig/coin  r.u.mez  ::(fcgi ~ *cred)  ::STUB fcgi params for /$
-          [%bake q.u.mez r.u.mez s.u.mez]
+          ~&  [%get-inner mez]
+          %+  exec-turbo-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)
+          [%bake q.u.mez r.u.mez [[p q] s]:s.u.mez]
       ::
         $got-inner
           ?.  (~(has by pox) p.u.mez)
@@ -875,6 +874,7 @@
             =/  bek  -.top  ::XX where is wrapper-renderer beak stored exactly
             :: XX store request mark
             =/  ext  (end 3 (sub (met 3 p.res) (met 3 '-elem')) p.res) :: %x-urb-elem -> %x-urb
+            =+  norm=(norm-beak bek)
             %^  exec-live  ha+(en-beam bek ~)  (norm-beak bek)
             :+  %cast  ext
             :+  %call  [%core (norm-beak bek) /wrap/[ext]/ren]
@@ -972,6 +972,16 @@
             {$si $~}  (give-turbo-sigh result.sih)
             {$se ^}   (get-made:(dom-vi q.tee) p.tee result:sih)
         ::
+            {$ay ^}
+          =/  res/(each (cask) tang)
+            ?:  ?=(%incomplete -.result.sih)
+              [%| tang.result.sih]
+            ?:  ?=([%complete %error *] result.sih)
+              [%| message.build-result.result.sih]
+            ~&  [%build-result build-result.result.sih]
+            [%& [p q.q]:(result-to-cage:ford-api build-result.result.sih)]
+          (ames-gram (slav %p p.tee) got-inner+~ (slav %uv q.tee) res)
+        ::
         ::
             {$ha *}
           %-  emule  |.  ^+  ..apex
@@ -1013,13 +1023,7 @@
           {$of @ $~}  ~|(e+ford+lost+tee !!)
           {$si $~}  !!  ::(give-sigh q.sih)
           {$se ^}   !!  ::(get-made:(dom-vi q.tee) p.tee [p q]:sih)
-          {$ay ^}
-        =/  res/(each (cask) tang)
-          ?-  -.q.sih
-            %|  [%| p.q.sih]
-            %&  [%& [p q.q]:p.q.sih]  ::  strip type
-          ==
-        (ames-gram (slav %p p.tee) got-inner+~ (slav %uv q.tee) res)
+          {$ay ^}   !!
       ::
           {$hi ^}
         ?:  ?=($| -.q.sih)
@@ -1138,10 +1142,12 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  {tea/whir mar/mark cay/cage}
+    ~&  [%baby-got-back tea mark]
     (execute tea (norm-beak -.top) [%cast mar $+cay])
   ::
   ++  cast-old-thou
     |=  {mar/mark cay/cage}
+    ~&  %cast-old-thou
     ?:  ?=($httr mar)  (give-sigh %& cay)
     %^  execute  si+~  (norm-beak -.top)
     [%alts [%cast mar $+cay] [%cast %recoverable-error $+cay] ~]
@@ -1164,6 +1170,7 @@
     :: ~&  del-deps+[a (~(get ju liz) a)]
     ?:  (~(has by liz) a)  +>.$
     =-  -(hen hen.+)
+    ~&  %f-del-deps
     (pass-note(hen `~) on+~ %f [%wasp our a |])
   ::
   ++  new-deps
@@ -1174,12 +1181,17 @@
     =.  liz  (~(put ju liz) a b)
     ?:  had  +>.$
     =-  -(hen hen.+)
+    ~&  %f-new-deps
     (pass-note(hen `~) on+~ %f [%wasp our a &])
   ::
-  ++  ford-req  |=({bek/beak kas/silk:ford} [%f [%exec our `[bek kas]]])
+  ++  ford-req
+    |=  {bek/beak kas/silk:ford}
+    ~&  [%ford-req bek]
+    [%f [%exec our `[bek kas]]]
   ++  exec-live
     |=  {tea/whir req/{beak silk:ford}}
     =.  lyv  (~(put by lyv) hen [%exec tea])
+    ~&  %exec-live
     (execute tea req)
   ::
   ++  exec-turbo-live
@@ -1196,6 +1208,7 @@
   ::
   ++  execute
     |=  {tea/whir bek/beak sil/silk:ford}
+    ~&  [%old-execute tea]
     %+  pass-note  tea
     :^  %f  %exec  our
     `[bek [%dude [|.(+)]:[%leaf "eyre: execute {<tea>}"] sil]]

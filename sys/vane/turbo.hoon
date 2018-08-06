@@ -434,6 +434,9 @@
   ::
     ::    %slim
     ::  "slim {<subject-type.schematic>} {<formula.schematic>}"
+  ::
+      %vale
+    :(welp "[vale [" (trip (scot %p ship.disc.schematic)) " " (trip desk.disc.schematic) "] " (trip mark.schematic) "]")
   ==
 ::  +rail-to-beam
 ::
@@ -1703,7 +1706,7 @@
     ::  accessed-builds: builds accessed/depended on during this run.
     ::
     =|  accessed-builds=(list ^build)
-    ::  ~&  [%turbo-make (build-to-tape build)]
+    ~&  [%turbo-make (build-to-tape build)]
     ::  dispatch based on the kind of +schematic in :build
     ::
     ::
@@ -1863,7 +1866,12 @@
         ?>  ?=([~ %success %plan *] plan-result)
         ::
         =/  =build-result
-          [%success %bake %noun vase.u.plan-result]
+          ::  TODO: renderers returned their name as the mark in old ford
+          ::
+          ::    We should rethink whether we want this to be the case going
+          ::    forward, but for now, Eyre depends on this detail to work.
+          ::
+          [%success %bake renderer vase.u.plan-result]
         ::
         [build [%build-result build-result] accessed-builds]
       ::
