@@ -852,7 +852,6 @@
           (ames-gram q.p.kyz hat+~ p.u.mez our-host)
       ::
         $get-inner
-          ~&  [%get-inner mez]
           %+  exec-turbo-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)
           [%bake q.u.mez r.u.mez [[p q] s]:s.u.mez]
       ::
@@ -875,10 +874,12 @@
             :: XX store request mark
             =/  ext  (end 3 (sub (met 3 p.res) (met 3 '-elem')) p.res) :: %x-urb-elem -> %x-urb
             =+  norm=(norm-beak bek)
-            %^  exec-live  ha+(en-beam bek ~)  (norm-beak bek)
-            :+  %cast  ext
-            :+  %call  [%core (norm-beak bek) /wrap/[ext]/ren]
-            [%vale res]
+            ::
+            %+  exec-turbo-live  ha+(en-beam bek ~)
+            :^  %cast  [p q]:norm  ext
+            :+  %call
+              [%core [p q]:norm /hoon/wrap/[ext]/ren]
+            [%vale [p q]:norm res]
           ==
       ::
         $not  +>.$(mow :_(mow [ged [%give %that q.p.kyz p.u.mez]]))
