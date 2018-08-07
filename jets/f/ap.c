@@ -1002,10 +1002,8 @@
            u3_noun ref,
            u3_noun syn)
   {
-    fprintf(stderr, "ar: hook\r\n");
     u3_noun gat = u3j_hook(u3k(van), "ar");
 
-    fprintf(stderr, "ar: hooked\r\n");
     return u3i_molt(gat, u3x_sam, u3nc(u3k(ref), u3k(syn)), 0);
   }
 
@@ -1019,8 +1017,10 @@
   {
     u3_noun gat = u3j_soft(_ar_core(van, ref, syn), "fish");
 
-    fprintf(stderr, "got gate\r\n");
-    return u3n_slam_on(gat, u3k(axe));
+    return u3n_kick_on(u3i_molt(gat, 
+                                u3x_sam,
+                                u3k(axe),
+                                0));
   }
 
 /* open
