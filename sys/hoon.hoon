@@ -558,6 +558,12 @@
   ?~  b  a
   [~ u=(c u.a u.b)]
 ::
+++  clef                                                ::  compose
+  |*  {a/(unit) b/(unit) c/_=>(~ |=(^ `+<-))}
+  ?~  a  ~
+  ?~  b  ~
+  (c u.a u.b)
+::
 ++  drop                                                ::  enlist
   |*  a/(unit)
   ?~  a  ~

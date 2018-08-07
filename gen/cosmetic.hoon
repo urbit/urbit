@@ -18,148 +18,289 @@
 ::
 ::  *cosmetic-state: for cosmetic below
 ::
-+*  cosmetic-state  [product]
++*  cosmetic-state  [form]
   $:  ::  count: cumulative blocks detected
       ::  pairs: blocking numbers and specs
       ::
       count=@ud
-      pairs=(map type (pair @ud product))
+      pairs=(map type (pair @ud form))
   ==
 ::
-::  $shoe: superficial type deconstruction
++*  analyst  [form]
+  $_  ^?
+  |%
+  ++  atom  *$-([aura=term constant=(unit @)] form)
+  ++  cell  *$-([=form =form] form)
+  ++  core  *$-([=vair =form =(map term form)] form)
+  ++  face  *$-([decor=$@(term tune) =form] form)
+  ++  fork  *$-(=(list form) form)
+  ++  loop  *$-([=form =(map @ud form)] form)
+  --
 ::
+::  $xray: initial type analysis
+::
+
++$  scan
+          $-  
+          $@  $?  %noun
+                  %void
+              ==
+          $%  [%bare =atom =aura]                       ::  constant
+              [%bark =(map atom aura)]                  ::  constant set
+
+
+
 +$  shoe
           $@  %void                                     ::  empty
-          $%  [%bark =(set [=atom =aura])]              ::  flat constants
-              [%bush =wide=shoe =long=shoe]             ::  by cell/atom head
-              [%root =flat=shoe =deep=shoe]             ::  by atom/cell
-              [%weak =weak =(set type)]                 ::  mystery meat
-              [%wood =(map [=atom =aura] =type)]        ::  by atom head
+          $%  [%bark =(map atom type)]                  ::  flat constants
+              [%bush wide=shoe long=shoe]               ::  by cell/atom head
+              [%leaf =type]                             ::  any atom
+              [%root flat=shoe deep=shoe]               ::  by atom/cell
+              [%tree =type]                             ::  any cell
+              [%wood =(map atom (pair type type))]      ::  by atom head
           ==                                            ::
-+$  weak  ?(%noun %atom %cell)                          ::  weak noun category
+::
+::  =merge: combine two shoes
+::
+++  merge-shoes
+  |=  [one=shoe two=shoe]
+  ^-  (unit shoe)
+  ?@  one  `two
+  ?@  two  `one
+  ?-    -.one
+      %bark  
+    ?-    -.two
+        %bark
+      :+  ~  %bark
+      ::  (both maps merged, combining collisions)
+      ::
+      =/  list  ~(tap by map.one)
+      |-  ^-  (map atom type)
+      ?~  list  map.two
+      %=    $
+          list  t.list
+          map.two 
+        %+  ~(put by map.two)
+          p.i.list
+        =+  (~(get by map.two) p.i.list)
+        ?~  -  q.i.list
+        (fork u.- q.i.list ~)
+      ==
+    ::
+        %bush 
+      `[%root one two]
+    ::
+        %leaf
+      :-  ~
+      :-  %leaf
+      %+  fork 
+        type.two 
+      (turn ~(tap by map.one) |=([* =type] type))
+    ::
+        %root
+      %+  bind  $(two flat.two)
+      |=  new=shoe 
+      [%root new deep.two]
+    ::
+        %tree
+      `[%root one two]
+    ::
+        %wood
+      `[%root one two]
+    ==
+  ::
+      %bush
+    ?+    -.two  $(one two, two one)
+    ::
+        %bush 
+      %^    clef
+          $(one wide.one, two wide.two)
+        $(one long.one, two long.two)
+      |=([wide=shoe long=shoe] `[%root wide long])
+    ::
+        %leaf
+      `[%root two one]
+    ::
+        %root
+      %+  bind  $(two deep.two)
+      |=  new=shoe 
+      [%root flat.two new]
+    ::
+        %tree
+      ~
+    ::
+        %wood
+      %+  bind  $(one long.one)
+      |=  new=shoe
+      [%bush wide.one new]
+    ==
+  ::
+      %leaf
+    ?+    -.two  $(one two, two one)
+    ::
+        %leaf
+      `[%leaf (fork type.one type.two ~)]
+    ::
+        %root
+      %+  bind  $(two flat.two)
+      |=  new=shoe
+      [%root new deep.two]
+    ::
+        %tree
+      `[%root one two]
+    ::
+        %wood
+      `[%root one two]
+    ==
+  ::
+      %root
+    ?+    -.two  $(one two, two one)
+    ::
+        %root
+      %^    clef
+          $(one flat.one, two flat.two)
+        $(one deep.one, two deep.two)
+      |=([flat=shoe deep=shoe] `[%root flat deep])
+    ::
+        %tree
+      %+  bind  $(one deep.one)
+      |=  new=shoe
+      [%root one new]
+    ::
+        %wood
+      %+  bind  $(one deep.one)
+      |=  new=shoe
+      [%root one new]
+    ==
+  ::
+      %tree
+    ?+    -.two  $(one two, two one)
+    ::
+        %tree
+      `[%tree (fork type.one type.two ~)]
+    ::
+        %wood
+      ~
+    ==
+  ::
+      %wood
+    ?+    -.two  $(one two, two one)
+    ::
+        %wood
+      ::  (both maps merged, combining collisions)
+      ::
+      :-  ~
+      :-  %wood
+      =/  list  ~(tap by map.one)
+      |-  ^-  (map atom (pair type type))
+      ?~  list  map.two
+      %=    $
+          list  t.list
+          map.two 
+        %+  ~(put by map.two)
+          p.i.list
+        =+  (~(get by map.two) p.i.list)
+        ?~  -  q.i.list
+        [(fork p.u.- p.q.i.list ~) (fork q.u.- q.q.i.list ~)]
+      ==
+    ==
+  == 
 ::
 ::  =shew: deconstruct type
 ::
 ++  shew
-  |=  sut=type
-  ^-  shoe
-  =<  main
-  |%
-  ++  main
-    =|  gil/(set type)
-    |-  ^-  shoe
-    ?-    sut 
-        %void  %void
-        %noun  [%weak %noun [%noun ~ ~]]
-    ::
-        [%atom *]  
-      ?~  q.sut 
-        [%weak %noun [sut ~ ~]]
-      [%bark [[u.q.sut p.sut] ~ ~]]
-    ::
-        [%cell *]  
-      =/  hed  $(gil ~, sut p.sut)
-      ?:  ?=([%bark [* ~ ~]] hed)
-        [%wood [[n.set.hed q.sut] ~ ~]]
-      [%weak %cell [sut ~ ~]]
-    ::
-        [%core *]
-      [%weak %cell [sut ~ ~]]
-    ::
-        [%face *]  
-      =+($(sut q.sut) ?:(?=([%bark * ~ ~] -) - soft))
-    ::
-        [%fork *]
-      =/  list  ~(tap by p.sut)
-      |-  ^-  shoe
-      ?~  list  %void
-      (~(merge work ^$(sut i.list)) $(list t.list))
-    ::
-        [%hint *]
-      =+($(sut q.sut) ?:(?=([%bark * ~ ~] -) - soft))
-    ::
-        [%hold *]
-      ?:  (~(has in gil) sut)  %void 
-      $(gil (~(put in gil) sut), sut ~(repo ut sut))
-    ==
+  |=  =type
+  ::  (analysis of .type, if well-formed)
   ::
-  ++  soft
-    ^-  shoe
-    ?:  (~(nest ut %void) %| sut)  %void
-    :-  %weak
-    :_  [sut ~ ~]
-    ?:  (~(nest ut [%atom %$ ~]) %| sut)  %atom
-    ?:  (~(nest ut [%cell %noun %noun]) %| sut)  %cell
-    %noun
-  ::
-  ++  work
-    |_  =shoe
-    ::  -decay: can't use shoe directly, make it weak
-    ::
-    ++  decay
-      ^-  ^shoe
-      =-  ?:  (~(nest ut %void) %| fork/-)  %void
-          :-  %weak
-          :_  -
-          ?:  (~(nest ut [%atom %$ ~]) %| fork/-)  %atom
-          ?:  (~(nest ut [%cell %noun %noun]) %| fork/-)  %cell
-          %noun
-      |-  ^-  (set type)
-      ?@  shoe  [%void ~ ~]
-      ?-  -.shoe
-        %bark  %-  ~(gas in *(set type))
-               %+  turn  ~(tap in set.shoe)
-               |=  [=atom =aura]
-               [%atom aura `atom]
-        %bush  (~(uni in $(shoe wide-shoe.shoe)) $(shoe long-shoe.shoe))
-        %root  (~(uni in $(shoe flat-shoe.shoe)) $(shoe deep-shoe.shoe))
-        %weak  set.shoe
-        %wood  %-  ~(gas in *(set type))
-               %+  turn  ~(tap by map.shoe)
-               |=  [[=atom =aura] =type]
-               [%cell [%atom aura `atom] type]
-      ==
-    ::
-    ::  =merge: merge with another shoe
-    ::
-    ++  merge
-      |=  =^shoe
-      ^-  ^^shoe
-      ?@  shoe  ^shoe
-      ?@  ^shoe  shoe
-      ?-    -.shoe
-          %bark  
-        ?-    -.^shoe 
-            %bark
-          [%bark (~(uni in set.^shoe) set.shoe)]
-        ::
-            %bush
-          $(shoe decay(shoe shoe), ^shoe decay(shoe ^shoe))
-        ::
-            %root
-          [%root $(^shoe flat-shoe.^shoe) deep-shoe.^shoe]
-        ::
-            %weak
-          $(^shoe decay(shoe ^shoe))
-        ::
-            %wood
-          !!
-        ==
+  ^-  (unit shoe)
+  =-  ::  (analysis without trivial cases)
       ::
-          %bush  
-        !! 
-          %root  
-        !! 
-          %weak
-        !!
-          %wood
-        !!
+      %+  biff  -
+      |=  =shoe 
+      ?-  shoe
+        %void      ~
+        [%bark *]  ?:(?=([* ~ ~] map.shoe) ~ `shoe)
+        [%bush *]  `shoe
+        [%leaf *]  ~
+        [%root *]  `shoe
+        [%tree *]  ~
+        [%wood *]  ?:(?=([* ~ ~] map.shoe) ~ `shoe)
       ==
-    --
+  |^  =|  gil/(set ^type)
+      |-  ^-  (unit shoe)
+      ?-    type
+          %void  `%void
+          %noun  ~
+      ::
+          [%atom *]  as-done
+          [%cell *]  ::  if the head of .type is always a cell
+                     ::
+                     ?:  is-cell(type p.type)
+                       ::  (a trivial bush)
+                       ::
+                       `[%bush [%tree type] %void]
+                     ::  unless the head of .type is an atom
+                     ::
+                     ?.  is-atom(type p.type)  
+                       ::  (an opaque cell)
+                       ::
+                       `[%tree type]
+                     %+  biff  to-atom(type p.type)
+                     |=  =atom
+                     ::  (a trivial wood)
+                     ::
+                     `[%wood [%atom p.type q.type] ~ ~]
+          [%core *]  ~
+          [%face *]  as-done
+          [%fork *]  =/  list  ~(tap in p.type)
+                     |-  ^-  (unit shoe)
+                     ?~  list  `%void
+                     %+  biff  ^$(type i.list)
+                     |=  =shoe
+                     %+  biff  ^$(list t.list)
+                     |=  =^shoe
+                     (merge-shoes shoe ^shoe)
+      :: 
+          [%hint *]  $(type q.type)
+          [%hold *]  ?:  (~(has in gil) type)  `%void 
+                     $(gil (~(put in gil) type), type ~(repo ut type))
+      ==
+  ::
+  ++  is-atom  (~(nest ut [%atom %$ ~]) %| type)
+  ++  is-cell  (~(nest ut [%cell %noun %noun]) %| type)
+  ++  as-done  ?:  is-atom 
+                 =+  to-atom 
+                 ?~  - 
+                   `[%leaf type] 
+                 `[%bark [u.- type] ~ ~]
+               ?:  is-cell 
+                 `[%tree type]
+               ~
+  ++  to-atom  |-  ^-  (unit atom)
+               ?-  type
+                  %void  ~
+                  %noun  !!
+                  [%atom *]  q.type
+                  [%cell *]  !!
+                  [%core *]  !!
+                  [%fork *]  =/  list  ~(tap in p.type)
+                             ?~  list  !!
+                             |-  ^-  (unit atom)
+                             =+  ^$(type i.list)
+                             ?~  t.list  -
+                             %+  biff  -
+                             |=  =atom
+                             %+  biff  ^$(i.list i.t.list, t.list t.t.list)
+                             |=  =^atom
+                             ?.(=(atom ^atom) ~ `atom)
+                  [%face *]  $(type q.type)
+                  [%hint *]  $(type q.type)
+                  [%hold *]  $(type ~(repo ut type))
+               ==
   --
 ::
 ++  cosmetic
-  %-  kismet 
+  %-  (kismet spec)
   |%
   ++  atom  
     |=  $:  ::  aura: flavor of atom
@@ -232,16 +373,8 @@
 ::  type-to-spec
 ::
 ++  kismet
-  |=  $=  producer
-      $_
-      ^?
-      |%
-      ++  atom  *$-([aura=term constant=(unit @)] spec)
-      ++  cell  *$-([=spec =spec] spec)
-      ++  core  *$-([=vair =spec =(map term spec)] spec)
-      ++  face  *$-([decor=$@(term tune) =spec] spec)
-      ++  fork  *$-(=(list spec) spec)
-      --
+  |*  form=mold
+  |=  producer=(analyst form)
   =|  ::  coat: contextual metadata
       ::
       $=  coat
@@ -251,7 +384,7 @@
       ==
   =|  ::  load: accumulating metadata (state)
       ::
-      load=(cosmetic-state spec)
+      load=(cosmetic-state form)
   ::
   ::  sut: type we're analyzing
   ::
