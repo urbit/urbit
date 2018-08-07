@@ -43,5 +43,13 @@
   =+  manage-seed=(child-seed transfer-seed "manage" 0 shh)
   :-  manage=(wallet-from-seed manage-seed)
   =+  urbit-seed=(child-seed manage-seed "urbit" 0 shh)
-  ~  ::TODO  networking keypairs from seed
+  =+  urbit=(pit:nu:crub:crypto (mul 8 wid.urbit-seed) dat.urbit-seed)
+  =+  pub=pub:ex:urbit
+  =+  sec=sec:ex:urbit
+  :-  ^=  auth
+      :-  public=`@ux`(rsh 3 1 (end 3 33 pub))
+          secret=`@ux`(rsh 3 1 (end 3 33 sec))
+  ^=  crypt
+  :-  public=`@ux`(rsh 3 33 pub)
+      secret=`@ux`(rsh 3 33 sec)
 --
