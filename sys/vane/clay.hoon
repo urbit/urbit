@@ -3798,13 +3798,10 @@
           ?<  (~(has by fat.ruf) our.req)
           (~(put by fat.ruf) our.req [-(hun hen)]:[*room .])
         ==
-    =+  [bos=(sein:title our.req) can=(clan:title our.req)]
-    %-  zing  ^-  (list (list move))
-    :~  ?:  =(bos our.req)  ~
-        [hen %pass /init-merge %c %merg our.req %base bos %kids da+now %init]~
-    ::
-        ~
-    ==
+    ^-  (list move)
+    ?:  ?=(%czar (clan:title our.req))
+      ~
+    [hen %pass /init-merge %c %merg our.req %base (sein:title our.req) %kids da+now %init]~
   ::
       $into
     =.  hez.ruf  `hen
