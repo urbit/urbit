@@ -287,7 +287,7 @@
   |=  {way/wire are/(each (set path) (pair term tang))}
   abet:abet:(mere:(take way) are)
 ::
-++  made
+++  take-made
   |=  [date=@da result=made-result:ford]
   abet
 ::  ++  take-made                                         ::
