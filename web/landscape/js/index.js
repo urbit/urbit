@@ -52163,17 +52163,15 @@ function uuid() {
   return str.slice(0, -1);
 }
 function parseCollCircle(st) {
-  var collMeta = /(.*)\/collection_~(~[a-z,\.,0-9]*)(:?_~)?(:?~.*)?/.exec(st);
-  var r; // console.log('regex', collMeta);
-
-  if (collMeta) {
-    r = {
-      ship: collMeta[1],
-      coll: collMeta[2],
-      top: collMeta[4]
-    };
-  }
-
+  var sp = st.split('/');
+  var pax = sp[1].split('-');
+  pax.shift();
+  pax = ['web', 'collections'].concat(pax);
+  var r = {
+    ship: sp[0],
+    path: pax,
+    name: pax[pax.length - 1]
+  };
   return r;
 }
 function isPatTa(str) {
@@ -52258,10 +52256,10 @@ function foreignUrl(shipName, own, urlFrag) {
 
 function prettyShip(ship) {
   var sp = ship.split('-');
-  return [sp.length == 9 ? "".concat(sp[0], "_").concat(sp[8]) : ship, ship[0] === '~' ? "/~~/".concat(ship, "/==/web/pages/nutalk/profile") : "/~~/~".concat(ship, "/==/web/pages/nutalk/profile")];
+  return [sp.length == 9 ? "".concat(sp[0], "_").concat(sp[8]) : ship, ship[0] === '~' ? "/~~/".concat(ship, "/==/web/landscape/profile") : "/~~/~".concat(ship, "/==/web/landscape/profile")];
 }
 function profileUrl(ship) {
-  return "/~~/~".concat(ship, "/==/web/pages/nutalk/profile");
+  return "/~~/~".concat(ship, "/==/web/landscape/profile");
 }
 function isDMStation(station) {
   var host = station.split('/')[0].substr(1);
@@ -52299,23 +52297,21 @@ function getStationDetails(station) {
     ret.type = "inbox";
   } else if (isDMStation(station)) {
     ret.type = "dm";
-  } else if (station.includes("collection") && collParts.top) {
-    ret.type = "text-topic";
-  } else if (station.includes("collection") && !collParts.top) {
-    ret.type = "text";
+  } else if (station.includes("/c")) {
+    ret.type = "collection";
   } else {
     ret.type = "chat";
   }
 
   switch (ret.type) {
     case "inbox":
-      ret.stationUrl = "/~~/pages/nutalk";
+      ret.stationUrl = "/~~/landscape";
       ret.stationTitle = ret.cir;
       break;
 
     case "chat":
-      ret.stationUrl = "/~~/pages/nutalk/stream?station=".concat(station);
-      ret.stationDetailsUrl = "/~~/pages/nutalk/stream/details?station=".concat(station);
+      ret.stationUrl = "/~~/landscape/stream?station=".concat(station);
+      ret.stationDetailsUrl = "/~~/landscape/stream/details?station=".concat(station);
       ret.stationTitle = ret.cir;
       break;
 
@@ -52331,23 +52327,13 @@ function getStationDetails(station) {
         ret.stationTitle = "unknown";
       }
 
-      ret.stationUrl = "/~~/pages/nutalk/stream?station=".concat(station);
+      ret.stationUrl = "/~~/landscape/stream?station=".concat(station);
       break;
 
-    case "text":
-      ret.collId = collParts.coll;
-      ret.stationUrl = "/~~/~".concat(ret.host, "/==/web/collections/").concat(collParts.coll);
-      ret.stationTitle = config.cap;
-      break;
-
-    case "text-topic":
-      ret.collId = collParts.coll;
-      ret.stationUrl = "/~~/~".concat(ret.host, "/==/web/collections/").concat(collParts.coll);
-      ret.stationTitle = config.cap;
-      ret.postUrl = "/~~/~".concat(ret.host, "/==/web/collections/").concat(collParts.coll, "/").concat(collParts.top);
-      ret.postId = collParts.top;
-      ret.postTitle = null; // TODO: Should be able to determine this from the station metadata alone.
-
+    case "collection":
+      ret.path = collParts.path;
+      ret.stationUrl = "/~~/~".concat(ret.host, "/==/").concat(collParts.path.join('/'));
+      ret.stationTitle = collParts.name;
       break;
   }
 
@@ -52358,23 +52344,26 @@ function getMessageContent(msg) {
   var MESSAGE_TYPES = {
     'sep.app.sep.fat.sep.lin.msg': 'app',
     'sep.app.sep.lin.msg': 'app',
-    'sep.fat.sep.lin.msg': function sepFatSepLinMsg(msg) {
+    'sep.fat': function sepFat(msg) {
+      var type = msg.sep.fat.tac.text;
       var station = msg.aud[0];
       var stationDetails = getStationDetails(station);
-      var metadata = msg.sep.fat.sep.lin.msg.split("|");
-      var content = msg.sep.fat.tac.text.substr(0, 500);
-      var postId = metadata[0];
-      var postTitle = metadata[1] || content.substr(0, 20);
-      var postUrl = "".concat(stationDetails.stationUrl, "/").concat(metadata[0]);
+      var jason = JSON.parse(msg.sep.fat.sep.lin.msg);
+      var content = type.includes('collection') ? null : jason.content;
+      var par = jason.path.slice(0, -1);
       return {
-        type: 'newpost',
+        type: msg.sep.fat.tac.text,
+        contentType: jason.type,
         content: content,
-        postId: postId,
-        postTitle: postTitle,
-        postUrl: postUrl
+        owner: jason.owner,
+        date: jason.date,
+        path: jason.path,
+        postTitle: jason.name,
+        postUrl: "/~~/".concat(jason.owner, "/==/").concat(jason.path.join('/')),
+        parentTitle: jason.path.slice(-2, -1),
+        parentUrl: "/~~/".concat(jason.owner, "/==/").concat(jason.path.slice(0, -1).join('/'))
       };
     },
-    'sep.fat.tac.text': 'comment',
     'sep.inv.cir': 'inv',
     'sep.lin.msg': 'lin',
     'sep.url': 'url',
@@ -52426,14 +52415,14 @@ function getSubscribedStations(ship, storeConfigs) {
     chatStations: stationDetailList.filter(function (d) {
       return d.type === "chat";
     }),
-    textStations: stationDetailList.filter(function (d) {
-      return d.type === "text";
+    collStations: stationDetailList.filter(function (d) {
+      return d.type === "collection";
     }),
     dmStations: stationDetailList.filter(function (d) {
       return d.type === "dm";
     })
   };
-  var numSubs = ret.chatStations.length + ret.textStations.length;
+  var numSubs = ret.chatStations.length + ret.collStations.length;
   var numDMs = ret.dmStations.length;
   var numString = [];
   if (numSubs > 0) numString.push("".concat(numSubs, " subscriptions"));
@@ -52695,7 +52684,7 @@ function () {
       // earlier element in the array. since we want later timestamps to
       // override, sort first
       .uniqBy('uid') // dedupe
-      .slice(0, INBOX_MESSAGE_COUNT) // grab the first 30 or so
+      .uniqBy('sep.fat.sep.lin.msg').slice(0, INBOX_MESSAGE_COUNT) // grab the first 30 or so
       .value(); // unwrap lodash chain
       // for (let msg of ret) {
       //   console.log(`msg ${msg.uid}: ${msg.wen}`);
@@ -52712,6 +52701,7 @@ function () {
     key: "filterInboxMessages",
     value: function filterInboxMessages(msg) {
       var msgDetails = getMessageContent(msg);
+      var newItem = msgDetails.type === "new item";
       var typeApp = msgDetails.type === "app";
       var typeInv = msgDetails.type === "inv";
       var isDmInvite = typeInv && isDMStation(msgDetails.content);
@@ -52719,6 +52709,7 @@ function () {
       if (typeApp) return false;
       if (isDmInvite) return false;
       if (hasResponded) return false;
+      if (!newItem) return false;
       return true;
     }
   }]);
@@ -53474,6 +53465,7 @@ function (_Component) {
     value: function getHeaderData(type) {
       var headerData = {};
       var defaultData;
+      var actions = {};
 
       switch (type) {
         case "stream":
@@ -53486,42 +53478,50 @@ function (_Component) {
           });
           break;
 
-        case "collection-index":
+        case "collection":
           defaultData = this.getStationHeaderData(this.props.data.station);
+
+          if (this.props.data.show === 'default') {
+            actions = {
+              details: "/~~/".concat(this.props.data.ship, "/==").concat(this.props.data.path, "?show=details"),
+              write: "/~~/".concat(this.props.data.ship, "/==").concat(this.props.data.path, "?show=post")
+            };
+          } else if (this.props.data.show === 'details') {
+            actions = {
+              back: "/~~/".concat(this.props.data.ship, "/==").concat(this.props.data.path)
+            };
+          }
+
           headerData = _objectSpread({}, defaultData, {
             icon: IconBlog,
             title: _objectSpread({}, defaultData.title, {
               display: this.props.data.title ? this.props.data.title : defaultData.title.display
             }),
-            actions: {
-              details: defaultData.stationDetails.stationDetailsUrl,
-              write: "/~~/pages/nutalk/collection/post?station=~".concat(defaultData.stationDetails.host, "/collection_~").concat(defaultData.stationDetails.collId)
-            }
+            actions: actions
           });
           break;
 
-        case "collection-item":
+        case "raw":
+        case "both":
           defaultData = this.getStationHeaderData(this.props.data.station);
-          headerData = _objectSpread({}, defaultData, {
-            icon: IconBlog,
-            title: _objectSpread({}, defaultData.title, {
-              display: this.props.data.title ? this.props.data.title : defaultData.title.display
-            }),
-            actions: {
-              edit: "/~~/~".concat(defaultData.stationDetails.host, "/==/web/collections/").concat(defaultData.stationDetails.collId, "/").concat(this.props.data.postid, "?edit=true")
-            }
-          });
-          break;
 
-        case "collection-write":
-        case "collection-edit":
-          defaultData = this.getStationHeaderData(this.props.data.station);
+          if (this.props.data.show === 'default') {
+            actions = {
+              details: "/~~/".concat(this.props.data.ship, "/==").concat(this.props.data.path, "?show=details"),
+              edit: "/~~/".concat(this.props.data.ship, "/==").concat(this.props.data.path, "?show=edit")
+            };
+          } else if (this.props.data.show === 'details') {
+            actions = {
+              back: "/~~/".concat(this.props.data.ship, "/==").concat(this.props.data.path)
+            };
+          }
+
           headerData = _objectSpread({}, defaultData, {
             icon: IconBlog,
             title: _objectSpread({}, defaultData.title, {
               display: this.props.data.title ? this.props.data.title : defaultData.title.display
             }),
-            actions: {}
+            actions: actions
           });
           break;
 
@@ -53541,7 +53541,7 @@ function (_Component) {
           headerData = {
             title: {
               display: "Inbox",
-              href: "/~~/pages/nutalk"
+              href: "/~~/landscape"
             }
           };
           break;
@@ -65087,13 +65087,17 @@ function (_Component) {
     _this.state = {
       snipHtml: ''
     };
-    fetch(_this.snipUrl(props.messageDetails.postUrl, props.api.authTokens.ship)).then(function (res) {
-      return res.text();
-    }).then(function (d) {
-      _this.setState({
-        snipHtml: d
+
+    if (props.messageDetails.type.includes('item')) {
+      fetch(_this.snipUrl(props.messageDetails.postUrl, props.api.authTokens.ship)).then(function (res) {
+        return res.text();
+      }).then(function (d) {
+        _this.setState({
+          snipHtml: d
+        });
       });
-    });
+    }
+
     return _this;
   }
 
@@ -65126,10 +65130,12 @@ function (_Component) {
     key: "render",
     value: function render() {
       if (this.state.snipHtml) {
-        return react.createElement("div", {
-          className: "collection-preview",
-          dangerouslySetInnerHTML: this.dangerousHtml(this.state.snipHtml)
-        });
+        return (//        <div className="collection-preview">{this.props.messageDetails.postUrl}</div>
+          react.createElement("div", {
+            className: "collection-preview",
+            dangerouslySetInnerHTML: this.dangerousHtml(this.state.snipHtml)
+          })
+        );
       } else {
         return react.createElement("div", {
           className: "collection-preview"
@@ -65185,7 +65191,7 @@ function (_Component) {
         data: PAGE_STATUS_TRANSITIONING
       }]);
       this.props.pushCallback("circle.config.dif.source", function (rep) {
-        _this2.props.transitionTo("/~~/pages/nutalk/stream?station=".concat(station));
+        _this2.props.transitionTo("/~~/landscape/stream?station=".concat(station));
       });
     }
   }, {
@@ -65218,7 +65224,7 @@ function (_Component) {
         data: PAGE_STATUS_TRANSITIONING
       }]);
       this.props.pushCallback("circle.config.dif.full", function (rep) {
-        _this3.props.transitionTo("/~~/pages/nutalk/stream?station=~".concat(_this3.props.api.authTokens.ship, "/").concat(circle));
+        _this3.props.transitionTo("/~~/landscape/stream?station=~".concat(_this3.props.api.authTokens.ship, "/").concat(circle));
       });
       this.props.pushCallback("circle.config.dif.full", function (rep) {
         api.permit(circle, everyoneElse, false);
@@ -65288,7 +65294,7 @@ function (_Component) {
         }, this.props.details.content), react.createElement("pre", {
           className: "text-mono mt-0"
         }, this.props.details.res));
-      } else if (this.props.details.type === "newpost") {
+      } else if (this.props.details.type === 'new item') {
         return react.createElement(CollectionPreview, {
           messageDetails: this.props.details,
           api: this.props.api
@@ -65383,10 +65389,17 @@ function (_Component) {
     key: "buildPostTitle",
     value: function buildPostTitle(messageDetails) {
       if (messageDetails.postUrl) {
-        return react.createElement("a", {
-          className: "pr-12 text-600 underline",
-          href: messageDetails.postUrl
-        }, messageDetails.postTitle);
+        if (messageDetails.contentType === "comments") {
+          return react.createElement("a", {
+            className: "pr-12 text-600 underline",
+            href: messageDetails.parentUrl
+          }, messageDetails.parentTitle, "  /  comment");
+        } else {
+          return react.createElement("a", {
+            className: "pr-12 text-600 underline",
+            href: messageDetails.postUrl
+          }, messageDetails.postTitle);
+        }
       } else {
         return null;
       }
@@ -65473,9 +65486,8 @@ function (_Component) {
         }, "/"));
         var postDisplay = null;
 
-        if (section.details.type === "text-topic") {
-          var postTitle = _this3.findPostTitleFromMessage(section.details.postId);
-
+        if (section.details.type === "collection") {
+          var postTitle = section.details.stationTitle;
           postDisplay = react.createElement("span", null, react.createElement("span", {
             className: "ml-2 mr-2"
           }, "/"), react.createElement("a", {
@@ -65499,7 +65511,7 @@ function (_Component) {
         }, hostDisplay, react.createElement("a", {
           href: section.details.stationUrl,
           className: "text-700 underline"
-        }, section.details.stationTitle), postDisplay)), sectionContent);
+        }, section.details.stationTitle))), sectionContent);
       });
     } // Group inbox messages by time-chunked stations, strictly ordered by message time.
     // TODO:  Inbox does not handle messages with multiple audiences very well
@@ -65600,7 +65612,7 @@ function (_Component) {
       var stations = getSubscribedStations(this.props.api.authTokens.ship, this.props.store.configs);
       if (!stations) return null;
       var chatStations = this.buildSection(stations.chatStations);
-      var textStations = this.buildSection(stations.textStations);
+      var collStations = this.buildSection(stations.collStations);
       var DMStations = this.buildDMSection(stations.dmStations);
       return react.createElement("div", {
         className: "container"
@@ -65616,7 +65628,7 @@ function (_Component) {
         className: "mt-9"
       }, react.createElement("div", {
         className: "text-700"
-      }, "Blogs, Forum and Notes"), textStations), react.createElement("div", {
+      }, "Blogs, Forum and Notes"), collStations), react.createElement("div", {
         className: "mt-9"
       }, react.createElement("div", {
         className: "text-700"
@@ -72940,18 +72952,20 @@ function (_Component) {
         data: PAGE_STATUS_TRANSITIONING
       }]);
       this.props.pushCallback("circle.gram", function (rep) {
+        console.log('ydsdifsdfsjf');
+
         _this2.setState({
           status: STATUS_READY
         });
 
-        var content = lodash.get(rep.data, "gam.sep.fat.tac.text", null);
+        var type = lodash.get(rep.data, "gam.sep.fat.tac.text", null);
 
-        var postId = lodash.get(rep.data, "gam.sep.fat.sep.lin.msg", null);
+        if (type && (type === 'new item' || type === 'edited item')) {
+          var content = lodash.get(rep.data, "gam.sep.fat.sep.lin.msg", null);
 
-        postId = postId ? postId.split("|")[0] : null;
+          content = JSON.parse(content);
 
-        if (content && content === _this2.state.topicContent) {
-          _this2.props.transitionTo("/~~/~".concat(details.hostship, "/==/").concat(details.clayPath.join('/')));
+          _this2.props.transitionTo("/~~/~".concat(details.hostship, "/==/").concat(content.path.join('/')));
 
           return true;
         }
@@ -73266,7 +73280,7 @@ function (_Component) {
             return react.createElement("div", {
               className: "mt-2 text-500"
             }, react.createElement("a", {
-              href: "/~~/pages/nutalk/stream?station=".concat(cir)
+              href: "/~~/landscape/stream?station=".concat(cir)
             }, cir));
           } else {
             return null;
@@ -73310,7 +73324,7 @@ function (_Component) {
       if (this.props.api.authTokens.ship === this.props.ship.substr(1)) return null;
       var members = [this.props.api.authTokens.ship, this.props.ship.substr(1)];
       var dmStation = "~".concat(this.props.api.authTokens.ship, "/").concat(members.sort().join("."));
-      var dmLink = "/~~/pages/nutalk/stream?station=".concat(dmStation);
+      var dmLink = "/~~/landscape/stream?station=".concat(dmStation);
       return react.createElement("a", {
         className: "vanilla mb-6 btn btn-sm btn-secondary",
         href: dmLink
@@ -73584,16 +73598,21 @@ function (_Component) {
             type: "transition",
             data: PAGE_STATUS_TRANSITIONING
           }]);
-          this.props.api.coll({
-            create: {
-              desc: this.state.formData.name,
-              publ: true,
-              visi: this.state.formData.visible === "yes",
-              comm: true,
-              xeno: true,
-              ses: ""
-            }
-          });
+          var dat = {
+            ship: this.props.api.authTokens.ship,
+            desk: 'home',
+            acts: [{
+              collection: {
+                path: '/web/collections',
+                name: this.state.formData.name,
+                desc: this.state.formData.name,
+                visible: this.state.formData.visible === "yes",
+                comments: true,
+                type: "blog"
+              }
+            }]
+          };
+          this.props.api.coll(dat);
           this.props.pushCallback("circles", function (rep) {
             var station = "~".concat(_this.props.api.authTokens.ship, "/").concat(rep.data.cir);
             var details = getStationDetails(station);
@@ -74050,7 +74069,7 @@ function (_Component) {
       return [{
         name: "inbox",
         action: function action() {
-          _this8.props.transitionTo('/~~/pages/nutalk');
+          _this8.props.transitionTo('/~~/landscape');
         },
         displayText: "inbox",
         helpText: "Go to the inbox"
@@ -74337,14 +74356,30 @@ function (_Component) {
     key: "loadHeader",
     value: function loadHeader(tempDOM) {
       var headerQuery = tempDOM.querySelectorAll('[name="urb-header"]');
-      var headerData = {
-        type: headerQuery.length > 0 ? headerQuery[0].getAttribute('value') : "default",
-        title: headerQuery.length > 0 ? headerQuery[0].getAttribute('title') : null,
-        station: headerQuery.length > 0 ? headerQuery[0].getAttribute('station') : null,
-        postid: headerQuery.length > 0 ? headerQuery[0].getAttribute('postid') : null,
-        ship: headerQuery.length > 0 ? headerQuery[0].getAttribute('ship') : null,
-        publ: headerQuery.length > 0 ? headerQuery[0].getAttribute('publ') : null
-      };
+      var headerType = headerQuery.length > 0 ? headerQuery[0].getAttribute('value') : "default";
+      var headerData;
+      console.log(headerType);
+
+      if (headerType === "collection" || headerType === "both" || headerType === "raw") {
+        headerData = {
+          type: headerType,
+          path: headerQuery.length > 0 ? headerQuery[0].getAttribute('path') : null,
+          station: "".concat(headerQuery[0].getAttribute('ship'), "/c-").concat(headerQuery[0].getAttribute('path').split('/').slice(3).join('-')),
+          postid: headerQuery.length > 0 ? headerQuery[0].getAttribute('postid') : null,
+          ship: headerQuery.length > 0 ? headerQuery[0].getAttribute('ship') : null,
+          show: headerQuery.length > 0 ? headerQuery[0].getAttribute('show') : null
+        };
+      } else {
+        headerData = {
+          type: headerType,
+          title: headerQuery.length > 0 ? headerQuery[0].getAttribute('title') : null,
+          station: headerQuery.length > 0 ? headerQuery[0].getAttribute('station') : null,
+          postid: headerQuery.length > 0 ? headerQuery[0].getAttribute('postid') : null,
+          ship: headerQuery.length > 0 ? headerQuery[0].getAttribute('ship') : null,
+          publ: headerQuery.length > 0 ? headerQuery[0].getAttribute('publ') : null
+        };
+      }
+
       headerData.station = headerData.station === "query" ? getQueryParams().station : headerData.station;
       return react.createElement(Header, {
         data: headerData,

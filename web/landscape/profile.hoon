@@ -50,7 +50,7 @@
         ;div.mt-2.text-500.row
           ;span.col-sm-2: Issued:
           ;span.col-sm-10.text-mono
-            ;a(href "/~~/{(scow %p (sein:title p.bem.gas))}/==/web/pages/nutalk/profile"): {(scow %p (sein:title p.bem.gas))}
+            ;a(href "/~~/{(scow %p (sein:title p.bem.gas))}/==/web/landscape/profile"): {(scow %p (sein:title p.bem.gas))}
           ==
         ==
         ;div.mt-2.text-500.row
