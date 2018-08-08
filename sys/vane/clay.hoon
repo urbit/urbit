@@ -335,8 +335,8 @@
       $:  $d                                            ::
   $%  {$flog p/{$crud p/@tas q/(list tank)}}            ::  to %dill
   ==  ==                                                ::
-      $:  $t                                            ::
-  $%  [%build our=@p live=? schematic=schematic:ford-api]      ::
+      $:  $f                                            ::
+  $%  [%build our=@p live=? schematic=schematic:ford]      ::
   ==  ==
       $:  $b                                            ::
   $%  {$wait p/@da}                                     ::
@@ -353,8 +353,8 @@
               {$mere p/(each (set path) (pair term tang))}
               {$writ p/riot}                            ::
           ==  ==                                        ::
-              $:  $t                                    ::
-          $%  [%made date=@da result=made-result:ford-api]  ::
+              $:  $f                                    ::
+          $%  [%made date=@da result=made-result:ford]  ::
           ==  ==                                        ::
               $:  $b                                    ::
           $%  {$wake $~}                                ::  timer activate
@@ -483,7 +483,7 @@
   ::  ++gage-to-success-cages?
   ::
   ++  made-result-to-cages
-    |=  result=made-result:ford-api
+    |=  result=made-result:ford
     ^-  (list (pair cage cage))
     (unwrap-tang (made-result-to-cages-or-error result))
   ::
@@ -491,20 +491,19 @@
   ::  ++gage-to-cages?
   ::
   ++  made-result-to-success-cages
-    |=  result=made-result:ford-api
+    |=  result=made-result:ford
     ^-  (list (pair cage cage))
     ?.  ?=([%complete %success %list *] result)
       (ford-fail >%strange-ford-result< ~)
     ::  process each row in the list, filtering out errors
     ::
     %+  murn  results.build-result.result
-    |=  row=build-result:ford-api
+    |=  row=build-result:ford
     ^-  (unit [cage cage])
     ::
     ?.  ?=([%success [%success *] [%success *]] row)
       ~
-    =,  ford-api
-    `[(result-to-cage head.row) (result-to-cage tail.row)]
+    `[(result-to-cage:ford head.row) (result-to-cage:ford tail.row)]
   ::
   ::  Expects a single-level gage (i.e. a list of pairs of cages).  If the
   ::  result is of a different form, or if some of the computations in the gage
@@ -512,14 +511,14 @@
   ::  of cages.
   ::
   ++  made-result-to-cages-or-error
-    |=  result=made-result:ford-api
+    |=  result=made-result:ford
     ^-  (each (list (pair cage cage)) tang)
     ::
     ?:  ?=([%incomplete *] result)
       (mule |.(`$~`(ford-fail tang.result)))
     ?.  ?=([%complete %success %list *] result)
       (mule |.(`$~`(ford-fail >%strange-ford-result -.build-result.result< ~)))
-    =/  results=(list build-result:ford-api)
+    =/  results=(list build-result:ford)
       results.build-result.result
     =<  ?+(. [%& .] {@ *} .)
     |-
@@ -535,8 +534,8 @@
     ::
     =+  $(results t.results)
     ?:  ?=([@ *] -)  -
-    =,  ford-api
-    [[(result-to-cage head.i.results) (result-to-cage tail.i.results)] -]
+    :_  -
+    [(result-to-cage:ford head.i.results) (result-to-cage:ford tail.i.results)]
   ::
   ::  Assumes the list of pairs of cages is actually a listified map of paths
   ::  to cages, and converts it to (map path cage) or a stack trace on error.
@@ -597,7 +596,7 @@
       (emit hen %give %writ ~ [p.mun q.mun syd] r.mun p.dat)
     %-  emit
     :*  hen  %pass  [%blab p.mun (scot q.mun) syd r.mun]
-        %t  %build  our  live=%.n  %pin
+        %f  %build  our  live=%.n  %pin
         (case-to-date q.mun)
         (lobe-to-schematic:ze [her syd] r.mun p.dat)
     ==
@@ -812,9 +811,9 @@
       +>.$
     %-  emit
     ^-  move
-    :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %t
+    :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
         %build  our  live=%.n  %list
-        ^-  (list schematic:ford-api)
+        ^-  (list schematic:ford)
         %+  turn  `(list path)`mus
         |=  a/path
         :-  [%$ %path !>(a)]
@@ -1130,8 +1129,8 @@
       ^-  (list move)
       :~  :*  hen  %pass
               [%inserting (scot %p her) syd (scot %da wen) ~]
-              %t  %build  our  live=%.n  %pin  wen  %list
-              ^-  (list schematic:ford-api)
+              %f  %build  our  live=%.n  %pin  wen  %list
+              ^-  (list schematic:ford)
               %+  turn  ins
               |=  {pax/path mis/miso}
               ?>  ?=($ins -.mis)
@@ -1141,8 +1140,8 @@
           ==
           :*  hen  %pass
               [%diffing (scot %p her) syd (scot %da wen) ~]
-              %t  %build  our  live=%.n  %pin  wen  %list
-              ^-  (list schematic:ford-api)
+              %f  %build  our  live=%.n  %pin  wen  %list
+              ^-  (list schematic:ford)
               %+  turn  dif
               |=  {pax/path mis/miso}
               ?>  ?=($dif -.mis)
@@ -1153,9 +1152,9 @@
           ==
           :*  hen  %pass
               [%castifying (scot %p her) syd (scot %da wen) ~]
-              %t  %build  our  live=%.n  %pin  wen  %list
+              %f  %build  our  live=%.n  %pin  wen  %list
               ::~  [her syd %da wen]  %tabl
-              ^-  (list schematic:ford-api)
+              ^-  (list schematic:ford)
               %+  turn  mut
               |=  {pax/path mis/miso}
               ?>  ?=($mut -.mis)
@@ -1230,7 +1229,7 @@
   ::  diffs and mutations), then we go ahead and run ++apply-edit.
   ::
   ++  take-inserting
-    |=  {wen/@da res/made-result:ford-api}
+    |=  {wen/@da res/made-result:ford}
     ^+  +>
     ?~  dok
       ~&  %clay-take-inserting-unexpected-made  +>.$
@@ -1258,7 +1257,7 @@
   ::  insertions and mutations), then we go ahead and run ++apply-edit.
   ::
   ++  take-diffing
-    |=  {wen/@da res/made-result:ford-api}
+    |=  {wen/@da res/made-result:ford}
     ^+  +>
     ?~  dok
       ~&  %clay-take-diffing-unexpected-made  +>.$
@@ -1289,7 +1288,7 @@
   ::  this is handled in ++take-mutating.
   ::
   ++  take-castify
-    |=  {wen/@da res/made-result:ford-api}
+    |=  {wen/@da res/made-result:ford}
     ^+  +>
     ?~  dok
       ~&  %clay-take-castifying-unexpected-made  +>.$
@@ -1309,8 +1308,8 @@
     %-  emit
     :*  hen  %pass
         [%mutating (scot %p her) syd (scot %da wen) ~]
-        %t  %build  our  live=%.n  %pin  wen  %list
-        ^-  (list schematic:ford-api)
+        %f  %build  our  live=%.n  %pin  wen  %list
+        ^-  (list schematic:ford)
         %+  turn  cat
         |=  {pax/path cay/cage}
         :-  [%$ %path -:!>(*path) pax]
@@ -1328,7 +1327,7 @@
   ::  ++apply-edit.
   ::
   ++  take-mutating
-    |=  {wen/@da res/made-result:ford-api}
+    |=  {wen/@da res/made-result:ford}
     ^+  +>
     ?~  dok
       ~&  %clay-take-mutating-unexpected-made  +>.$
@@ -1405,12 +1404,12 @@
     |=  hat/(map path lobe)
     ^+  +>
     %-  emit
-    :*  hen  %pass  [%patching (scot %p her) syd ~]  %t
+    :*  hen  %pass  [%patching (scot %p her) syd ~]  %f
         %build  our  live=%.n  %list
-        ^-  (list schematic:ford-api)
+        ^-  (list schematic:ford)
         %+  turn  ~(tap by hat)
         |=  {a/path b/lobe}
-        ^-  schematic:ford-api
+        ^-  schematic:ford
         :-  [%$ %path-hash !>([a b])]
         (lobe-to-schematic:ze [her syd] a b)
     ==
@@ -1426,12 +1425,12 @@
   ::  mim in dok).  The result is handled in ++take-ergo.
   ::
   ++  take-patch
-    |=  res/made-result:ford-api
+    |=  res/made-result:ford
     ^+  +>
     ::  ~&  %taking-patch
     ?.  ?=([%complete %success *] res)
       =.  dok  ~
-      =*  message  (made-result-as-error:ford-api res)
+      =*  message  (made-result-as-error:ford res)
       (print-to-dill '!' %rose [" " "" ""] leaf+"clay patch failed" message)
     ::  ~&  %editing
     =+  ^-  sim/(list (pair path misu))
@@ -1492,12 +1491,12 @@
     ::  ~&  %forming-ergo
     ::  =-  ~&  %formed-ergo  -
     %-  emit(dok ~)
-    :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %t
+    :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
         %build  our  live=%.n  %list
-        ^-  (list schematic:ford-api)
+        ^-  (list schematic:ford)
         %+  turn  ~(tap in sum)
         |=  a/path
-        ^-  schematic:ford-api
+        ^-  schematic:ford
         :-  [%$ %path !>(a)]
         =+  b=(~(got by can) a)
         ?:  ?=($del -.b)
@@ -1518,7 +1517,7 @@
   ::  an %ergo card) to keep unix up-to-date.  Send this to unix.
   ::
   ++  take-ergo
-    |=  res/made-result:ford-api
+    |=  res/made-result:ford
     ^+  +>
     ?:  ?=([%incomplete *] res)
       (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" tang.res)
@@ -1664,7 +1663,7 @@
     %-  emit
     :*  hen  %pass
         [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
-        %t  %build  our  live=%.n  %pin
+        %f  %build  our  live=%.n  %pin
         (case-to-date cas)
         (vale-page [her syd] peg)
     ==
@@ -1675,8 +1674,8 @@
   ::  purposes.
   ::
   ++  vale-page
-    |=  [disc=disc:ford-api a=page]
-    ^-  schematic:ford-api
+    |=  [disc=disc:ford a=page]
+    ^-  schematic:ford
     ?.  ?=($hoon p.a)  [%vale disc a]
     ?.  ?=(@t q.a)  [%dude |.(>%weird-hoon<) %ride [%zpzp ~] %$ *cage]
     [%$ p.a [%atom %t ~] q.a]
@@ -1686,15 +1685,15 @@
   ::  This completes the receiving of %x foreign data.
   ::
   ++  take-foreign-x
-    |=  {car/care cas/case pax/path res/made-result:ford-api}
+    |=  {car/care cas/case pax/path res/made-result:ford}
     ^+  +>
     ?>  ?=(^ ref)
     ?.  ?=([%complete %success *] res)
       ~|  "validate foreign x failed"
-      =+  why=(made-result-as-error:ford-api res)
+      =+  why=(made-result-as-error:ford res)
       ~>  %mean.|.(%*(. >[%plop-fail %why]< |1.+> why))
       !!
-    =*  as-cage  `(result-to-cage:ford-api build-result.res)
+    =*  as-cage  `(result-to-cage:ford build-result.res)
     wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] as-cage))
   ::
   ::  When we get a %w foreign update, store this in our state.
@@ -1773,9 +1772,9 @@
     %-  emit
     :*  hen  %pass
         [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
-        %t  %build  our  live=%.n  %pin  (case-to-date cas)
+        %f  %build  our  live=%.n  %pin  (case-to-date cas)
         %list
-        ^-  (list schematic:ford-api)
+        ^-  (list schematic:ford)
         %+  turn  ~(tap in pop)
         |=  a/plop
         ?-  -.a
@@ -1789,7 +1788,7 @@
   ::  state.
   ::
   ++  take-foreign-plops
-    |=  {lem/(unit @da) res/made-result:ford-api}
+    |=  {lem/(unit @da) res/made-result:ford}
     ^+  +>
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
@@ -2069,8 +2068,8 @@
     ::  Creates a schematic out of a page (which is a [mark noun]).
     ::
     ++  page-to-schematic
-      |=  [disc=disc:ford-api a=page]
-      ^-  schematic:ford-api
+      |=  [disc=disc:ford a=page]
+      ^-  schematic:ford
       ::
       ?.  ?=($hoon p.a)  [%volt disc a]
       ::  %hoon bootstrapping
@@ -2079,15 +2078,15 @@
     ::  Creates a schematic out of a lobe (content hash).
     ::
     ++  lobe-to-schematic
-      |=  [disc=disc:ford-api pax=path lob=lobe]
-      ^-  schematic:ford-api
+      |=  [disc=disc:ford pax=path lob=lobe]
+      ^-  schematic:ford
       ::
       =+  ^-  hat/(map path lobe)
           ?:  =(let.dom 0)
             ~
           q:(aeon-to-yaki let.dom)
       =+  lol=`(unit lobe)`?.(=(~ ref) `0vsen.tinel (~(get by hat) pax))
-      |-  ^-  schematic:ford-api
+      |-  ^-  schematic:ford
       ?:  =([~ lob] lol)
         =+  (need (need (read-x let.dom pax)))
         ?>  ?=($& -<)
@@ -2750,7 +2749,7 @@
       ::  we're in, and call the appropriate function for that stage.
       ::
       ++  route
-        |=  {sat/term res/(each riot made-result:ford-api)}
+        |=  {sat/term res/(each riot made-result:ford)}
         ^+  +>.$
         ?.  =(sat wat.dat)
           ~|  :*  %hold-your-horses-merge-out-of-order
@@ -3037,11 +3036,11 @@
         :*  hen  %pass
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
-            %t  %build  p.bob  live=%.n  %pin  (case-to-date r.oth)  %list
-            ^-  (list schematic:ford-api)
+            %f  %build  p.bob  live=%.n  %pin  (case-to-date r.oth)  %list
+            ^-  (list schematic:ford)
             %+  murn  ~(tap by q.bas.dat)
             |=  {pax/path lob/lobe}
-            ^-  (unit schematic:ford-api)
+            ^-  (unit schematic:ford)
             =+  a=(~(get by q.yak) pax)
             ?~  a
               ~
@@ -3068,7 +3067,7 @@
       ::  call ++diff-bob.
       ::
       ++  diffed-ali
-        |=  res/made-result:ford-api
+        |=  res/made-result:ford
         ^+  +>
         =+  tay=(made-result-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -3116,7 +3115,7 @@
       ::  call ++merge.
       ::
       ++  diffed-bob
-        |=  res/made-result:ford-api
+        |=  res/made-result:ford
         ^+  +>
         =+  tay=(made-result-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -3166,11 +3165,11 @@
           %-  emit(wat.dat %merge)
           :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
-              %t  %build  p.bob  live=%.n  %list
-              ^-  (list schematic:ford-api)
+              %f  %build  p.bob  live=%.n  %list
+              ^-  (list schematic:ford)
               %+  turn  ~(tap by (~(int by can.dal.dat) can.dob.dat))
               |=  {pax/path *}
-              ^-  schematic:ford-api
+              ^-  schematic:ford
               =+  cal=(~(got by can.dal.dat) pax)
               =+  cob=(~(got by can.dob.dat) pax)
               =+  ^=  her
@@ -3184,7 +3183,7 @@
       ::  Put merged changes in bof.dat and call ++build.
       ::
       ++  merged
-        |=  res/made-result:ford-api
+        |=  res/made-result:ford
         =+  tay=(made-result-to-cages-or-error res)
         ?:  ?=($| -.tay)
           (error:he %merge-bad-made leaf+"merging failed" p.tay)
@@ -3206,11 +3205,11 @@
         %-  emit(wat.dat %build)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %build ~]
-            %t  %build  p.bob  live=%.n  %list
-            ^-  (list schematic:ford-api)
+            %f  %build  p.bob  live=%.n  %list
+            ^-  (list schematic:ford)
             %+  murn  ~(tap by bof.dat)
             |=  {pax/path cay/(unit cage)}
-            ^-  (unit schematic:ford-api)
+            ^-  (unit schematic:ford)
             ?~  cay
               ~
             :-  ~
@@ -3232,7 +3231,7 @@
       ::  Sum all the changes into a new commit (new.dat), and checkout.
       ::
       ++  built
-        |=  res/made-result:ford-api
+        |=  res/made-result:ford
         ^+  +>
         =+  tay=(made-result-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -3352,12 +3351,12 @@
         %-  emit(wat.dat %checkout)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
-            %t  %build  p.bob  live=%.n  %pin  (case-to-date r.val)  %list
+            %f  %build  p.bob  live=%.n  %pin  (case-to-date r.val)  %list
 ::            ~  val  %tabl
-            ^-  (list schematic:ford-api)
+            ^-  (list schematic:ford)
             %+  murn  ~(tap by q.new.dat)
             |=  {pax/path lob/lobe}
-            ^-  (unit schematic:ford-api)
+            ^-  (unit schematic:ford)
             ?:  (~(has by bop.dat) pax)
               ~
             `[[%$ %path !>(pax)] (merge-lobe-to-schematic:he [p q]:val pax lob)]
@@ -3367,7 +3366,7 @@
       ::  some of the changes, call ++ergo.
       ::
       ++  checked-out
-        |=  res/made-result:ford-api
+        |=  res/made-result:ford
         ^+  +>
         =+  tay=(made-result-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -3410,11 +3409,11 @@
         %-  emit(wat.dat %ergo)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
-            %t  %build  p.bob  live=%.n  %pin  (case-to-date r.val)  %list
-            ^-  (list schematic:ford-api)
+            %f  %build  p.bob  live=%.n  %pin  (case-to-date r.val)  %list
+            ^-  (list schematic:ford)
             %+  turn  ~(tap in sum)
             |=  a/path
-            ^-  schematic:ford-api
+            ^-  schematic:ford
             :-  [%$ %path !>(a)]
             =+  b=(~(got by erg.dat) a)
             ?.  b
@@ -3427,7 +3426,7 @@
       ::  Tell unix about the changes made by the merge.
       ::
       ++  ergoed
-        |=  res/made-result:ford-api
+        |=  res/made-result:ford
         ^+  +>
         =+  tay=(made-result-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -3486,8 +3485,8 @@
         ::  We short-circuit if we already have the content somewhere.
         ::
         ++  merge-lobe-to-schematic
-          |=  [disc=disc:ford-api pax=path lob=lobe]
-          ^-  schematic:ford-api
+          |=  [disc=disc:ford pax=path lob=lobe]
+          ^-  schematic:ford
           =+  hat=q.ali.dat
           =+  hot=q.bob.dat
           =+  ^=  lal
@@ -3495,7 +3494,7 @@
               |=  had/dome
               (~(get by q:(tako-to-yaki (~(got by hit.had) let.had))) pax)
           =+  lol=(~(get by hot) pax)
-          |-  ^-  schematic:ford-api
+          |-  ^-  schematic:ford
           ?:  =([~ lob] lol)
             =+  (need (need (read-x let.dom pax)))
             ?>  ?=($& -<)
@@ -3952,7 +3951,7 @@
     ?>  ?=($made +<.q.hin)
     ?.  ?=([%complete %success *] result.q.hin)
       ~|  %blab-fail
-      ~>  %mean.|.((made-result-as-error:ford-api result.q.hin))
+      ~>  %mean.|.((made-result-as-error:ford result.q.hin))
       !!                              ::  interpolate ford fail into stack trace
     :_  ..^$  :_  ~
     :*  hen  %give  %writ  ~
@@ -3960,7 +3959,7 @@
         [i.t.tea ((hard case) +>:(slay i.t.t.tea)) i.t.t.t.tea]
     ::
         `path`t.t.t.t.tea
-        `cage`(result-to-cage:ford-api build-result.result.q.hin)
+        `cage`(result-to-cage:ford build-result.result.q.hin)
     ==
   ?-    -.+.q.hin
   ::

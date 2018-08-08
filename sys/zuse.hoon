@@ -847,94 +847,9 @@
 ::                                                      ::::
 ::::                    ++ford                            ::  (1f) build
   ::                                                    ::::
-++  ford  ^?
-  |%
-  ::                                                    ::
-  ::::                  ++able:ford                     ::  (1f1) arvo moves
-    ::                                                  ::::
-  ++  able  ^?
-    |%
-    ++  gift                                            ::  out result <-$
-      $%  {$made p/@uvH q/gage}                         ::  computed result
-          {$mass p/mass}                                ::  memory usage
-          {$news p/@uvH}                                ::  fresh depends
-      ==                                                ::
-    ++  task                                            ::  in request ->$
-      $%  {$exec p/@p q/(unit bilk)}                    ::  make / kill
-          {$wasp p/@p q/{@uvH ?}}                       ::  depends ask / kill
-          {$wegh $~}                                    ::  report memory
-          {$wipe p/@p $~}                               ::  clear cache
-      ==                                                ::
-    --  ::able
-  ++  bilk  (pair beak silk)                            ::  sourced request
-  ++  gage                                              ::  recursive cage+tang
-    $%  {$& p/cage}                                     ::  success
-        {$| p/tang}                                     ::  error
-        {$tabl p/(list (pair gage gage))}               ::  table of results
-    ==                                                  ::
-  ++  hood                                              ::  assembly plan
-    $:  zus/@ud                                         ::  zuse kelvin
-        sur/(list hoof)                                 ::  structures
-        lib/(list hoof)                                 ::  libraries
-        fan/(list horn)                                 ::  resources
-        src/(list hoop)                                 ::  program
-    ==                                                  ::
-  ++  hoof  (trel ? term (unit (pair case ship)))       ::  resource reference
-  ++  hoop                                              ::  source in hood
-    $%  {$& p/hoon}                                     ::  direct hoon
-        {$| p/beam}                                     ::  resource location
-    ==                                                  ::
-  ++  hops                                              ::  XX late-bound path
-    $:  pre/(unit tyke)                                 ::
-        pof/(unit {p/@ud q/tyke})                       ::
-    ==                                                  ::
-  ++  horn                                              ::  resource tree
-    $%  {$fssg p/hoon}                                  ::  /~  twig by hand
-        {$fsbc p/hoon}                                  ::  /$  argument
-        {$fsbr p/(list horn)}                           ::  /|  options
-        {$fshx p/horn}                                  ::  /#  insert dephash
-        {$fspt p/horn}                                  ::  /@  insert mod-time
-        {$fsts p/term q/horn}                           ::  /=  apply face
-        {$fsdt p/(list horn)}                           ::  /.  list
-        {$fscm p/(list (pair spur horn))}               ::  /,  switch by path
-        {$fscn p/horn}                                  ::  /%  propagate args
-        {$fspm p/(list mark) q/horn}                    ::  /&  translates
-        {$fscb p/horn}                                  ::  /_  homo map
-        {$fssm p/hoon q/horn}                           ::  /;  operate on
-        {$fscl p/hops q/horn}                           ::  /:  relative to
-        {$fskt p/hoon q/horn}                           ::  /^  cast
-        {$fszp q/mark}                                  ::  /!mark/ eval value
-        {$fszy q/mark}                                  ::  /mark/ static/grow
-    ==                                                  ::
-  ++  milk  (trel ship desk silk)                       ::  sourced silk
-  ++  silk                                              ::  construction layer
-    $^  {p/silk q/silk}                                 ::  cons
-    $%  {$$ p/cage}                                     ::  literal
-        {$alts p/(list silk)}                           ::  options
-        {$bake p/mark q/coin r/beam}                    ::  local synthesis
-        {$bunt p/mark}                                  ::  example of mark
-        {$call p/silk q/silk}                           ::  slam
-        {$cast p/mark q/silk}                           ::  translate
-        {$core p/beam}                                  ::  build program
-        {$diff p/silk q/silk}                           ::  diff
-        {$dude p/(trap tank) q/silk}                    ::  error wrap
-        {$file p/beam}                                  ::  from clay
-        {$flag p/(set $@(@uvH beam)) q/silk}            ::  add dependencies
-        {$join p/mark q/silk r/silk}                    ::  merge
-        {$mash p/mark q/milk r/milk}                    ::  annotate
-        {$mute p/silk q/(list (pair wing silk))}        ::  mutant
-        {$pact p/silk q/silk}                           ::  patch
-        {$plan p/beam q/coin r/hood}                    ::  structured assembly
-        {$reef $~}                                      ::  kernel reef
-        {$ride p/hoon q/silk}                           ::  silk thru hoon
-        {$tabl p/(list (pair silk silk))}               ::  list
-        {$vale p/mark q/*}                              ::  validate
-        {$volt p/(cask *)}                              ::  unsafe add type
-    ==                                                  ::
-  --  ::ford
 ::  |ford: build system vane interface
 ::
-++  ford-api  ^?
+++  ford  ^?
   |%
   ::  |able:ford: ford's public +move interface
   ::
@@ -5833,7 +5748,6 @@
       gift:able:eyre
       gift:able:ford
       gift:able:gall
-      gift:able:ford-api
   ==
 ++  task-arvo                                           ::  in request ->$
   $?  task:able:ames
@@ -5843,7 +5757,6 @@
       task:able:eyre
       task:able:ford
       task:able:gall
-      task:able:ford-api
   ==
 ++  note-arvo                                           ::  out request $->
   $?  {@tas $meta vase}
@@ -5854,7 +5767,6 @@
       {$e task:able:eyre}
       {$f task:able:ford}
       {$g task:able:gall}
-      {$t task:able:ford-api}
   ==  ==
 ++  sign-arvo                                           ::  in result $<-
   $%  {$a gift:able:ames}
@@ -5865,7 +5777,6 @@
       {$f gift:able:ford}
       {$g gift:able:gall}
       {$j gift:able:jael}
-      {$t gift:able:ford-api}
   ==
 ::
 ++  unix-task                                           ::  input from unix
