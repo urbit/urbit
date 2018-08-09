@@ -650,7 +650,7 @@
   :>  c: gate from list-item and state to product and new state
   ~/  %spin
   |*  [a=(list) b=* c=_|=(^ [** +<+])]
-  =>  .(c `$-([_?>(?=(^ a) i.a) _b] [* _b])`c)
+  =>  .(c `$-([_?>(?=(^ a) i.a) _b] [_-:(c) _b])`c)
   =/  acc=(list _-:(c))  ~
   :>  transformed list and updated state
   |-  ^-  (pair _acc _b)

@@ -44,6 +44,13 @@
   |=  {pax/path sup/spur hed/@t txt/@t}
   ^-  (quip move _+>)
   :_  +>
+  ::
+  ::  if txt is blank then return no moves.
+  ::
+  ?:  ?=(^ (rush txt spac:de-json:html))  ~
+  ::
+  ::  otherwise, post the content.
+  ::
   :~  %-  act
       :+  %phrase  [[our.bol %fora-posts] ~ ~]
       :_  ~
@@ -67,6 +74,13 @@
   |=  {pax/path sup/spur txt/@t}
   ^-  (quip move _+>)
   :_  +>
+  ::
+  ::  if txt is blank then return no moves.
+  ::
+  ?:  ?=(^ (rush txt spac:de-json:html))  ~
+  ::
+  ::  otherwise, post the content.
+  ::
   :~  ^-  move
       %-  act
       :+  %phrase  [[our.bol %fora-comments] ~ ~]

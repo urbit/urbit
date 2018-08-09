@@ -412,12 +412,12 @@
           leaf+"bad %writ response"
         (render "on sync" sud her syd)
       ~
-    =.  let  ?.  ?=($w p.p.u.rot)  let  ((hard @ud) q.q.r.u.rot)
+    =.  let  ?.  ?=($w p.p.u.rot)  let  ud:((hard cass:clay) q.q.r.u.rot)
     %-  blab  ^-  (list move)  :_  ~
     :*  ost  %merg
         [%kiln %sync syd (scot %p her) sud ?:(reset /reset /)]
         our  syd  her  sud  ud+let
-        ?:  =(0 .^(* %cw /(scot %p our)/[syd]/(scot %da now)))
+        ?:  =(0 ud:.^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now)))
           %init
         %mate
     ==
@@ -524,7 +524,7 @@
     ^+  +>
     ?.  ?=($auto gim)
       perform(auto |, gem gim, her her, cas cas, sud sud)
-    ?:  =(0 .^(@ %cw /(scot %p our)/[syd]/(scot %da now)))
+    ?:  =(0 ud:.^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now)))
       =>  $(gim %init)
       .(auto &)
     =>  $(gim %fine)

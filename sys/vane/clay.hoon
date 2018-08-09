@@ -45,9 +45,9 @@
 ::  Type of request.
 ::
 ::  %d produces a set of desks, %p gets file permissions, %u checks for
-::  existence, %v produces a ++dome of all desk data, %w gets a revision
-::  number/date, %x gets file contents, %y gets a directory listing, and %z gets
-::  a recursive hash of the file contents and children.
+::  existence, %v produces a ++dome of all desk data, %w gets @ud and @da
+::  variants for the given case, %x gets file contents, %y gets a directory
+::  listing, and %z gets a recursive hash of the file contents and children.
 ::
 :: ++  care  ?($d $p $u $v $w $x $y $z)
 ::
@@ -280,7 +280,7 @@
 ++  wove  {p/(unit ship) q/rove}                        ::  stored source + req
 ++  rove                                                ::  stored request
           $%  {$sing p/mood}                            ::  single request
-              {$next p/mood q/cach}                     ::  next version
+              {$next p/mood q/(unit aeon) r/cach}       ::  next version of one
               $:  $mult                                 ::  next version of any
                   p/mool                                ::  original request
                   q/(unit aeon)                         ::  checking for change
@@ -907,7 +907,7 @@
       ::  if the requested case is in the future, we can't know anything yet.
       ?~  aey  (store ~ ~ ~)
       =+  old=(read-all-at cas)
-      =+  yon=+((need (case-to-aeon:ze cas)))
+      =+  yon=+(u.aey)
       |-  ^+  ..start-request
       ::  if we need future revisions to look for change, wait.
       ?:  (gth yon let.dom)
@@ -948,7 +948,7 @@
         ^-  rove
         ?:  ?=($mult -.rav)
           [-.rav p.rav nex old new]
-        :+  -.rav  p.rav
+        :^  -.rav  p.rav  nex
         =+  ole=~(tap by old)
         ?>  (lte (lent ole) 1)
         ?~  ole  ~
@@ -1583,7 +1583,7 @@
         :+  ~
           p.r.u.rut
         ?+  p.r.u.rut  ~|  %strange-w-over-nextwork  !!
-          $aeon  !>(((hard aeon) q.r.u.rut))
+          $cass  !>(((hard cass) q.r.u.rut))
           $null  [[%atom %n ~] ~]
           $nako  !>(~|([%harding [&1 &2 &3]:q.r.u.rut] ((hard nako) q.r.u.rut)))
         ==
@@ -1860,10 +1860,11 @@
       |^
       =/  rov/rove
         ?:  ?=($mult -.vor)  vor
+        =*  mod  p.vor
         :*  %mult
-            [q.p.vor [[p.p.vor r.p.vor] ~ ~]]
-            `let.dom
-            [[[p.p.vor r.p.vor] q.vor] ~ ~]
+            [q.mod [[p.mod r.mod] ~ ~]]
+            q.vor
+            [[[p.mod r.mod] r.vor] ~ ~]
             ~
         ==
       ?>  ?=($mult -.rov)
@@ -1927,7 +1928,7 @@
         ?:  ?=($mult -.vor)  rov
         ?>  ?=({* $~ $~} r.rov)
         =*  one  n.r.rov
-        [%next [p.p.one p.p.rov q.p.one] q.one]
+        [%next [p.p.one p.p.rov q.p.one] q.rov q.one]
       ::
       ++  respond                                       ::  send changes
         |=  res/(map mood (each cage lobe))
@@ -2356,7 +2357,6 @@
         $delta     (~(put in $(lob q.q.gar)) lob)
       ==
     ::
-    ::
     ::  Gets the permissions that apply to a particular node.
     ::
     ::  If the node has no permissions of its own, we use its parent's.
@@ -2379,7 +2379,7 @@
         %-  ~(rep in who.u.rul)
         |=  {w/whom out/(pair (set ship) (map @ta crew))}
         ?:  ?=({$& @p} w)
-        [(~(put in p.out) +.w) q.out]
+          [(~(put in p.out) +.w) q.out]
         =/  cru/(unit crew)  (~(get by cez.ruf) +.w)
         ?~  cru  out
         [p.out (~(put by q.out) +.w u.cru)]
@@ -2461,16 +2461,20 @@
         ~
       ``[%dome -:!>(*dome) dom]
     ::
-    ::  Gets the modification date of a node
+    ::  Gets all cases refering to the same revision as the given case.
+    ::
+    ::  For the %da case, we give just the canonical timestamp of the revision.
     ::
     ++  read-w
-      |=  {yon/aeon pax/path}
-      ^-  (unit (unit {$time (hypo time)}))
-      ?^  pax    ~  ::TODO functionality other than %ud -> %da
-      ?:  =(0 yon)  [~ ~]
-      %+  bind  (~(get by hit.dom) yon)
-      |=  tak=tako
-      [~ %time -:!>(*time) `time`t:(tako-to-yaki tak)]
+      |=  cas/case
+      ^-  (unit (unit (each cage lobe)))
+      =+  aey=(case-to-aeon cas)
+      ?~  aey  ~
+      =-  [~ ~ %& %cass !>(-)]
+      ^-  cass
+      :-  u.aey
+      ?:  =(0 u.aey)  `@da`0
+      t:(aeon-to-yaki u.aey)
     ::
     ::  Gets the data at a node.
     ::
@@ -2583,18 +2587,12 @@
     ::  meaning we either have the value directly or a content hash of the
     ::  value.
     ::
-    ::  Should change last few lines to an explicit ++read-w.
-    ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  {for/(unit ship) yon/aeon mun/mood}           ::  seek and read
       ^-  (unit (unit (each cage lobe)))
       ?.  |(?=($~ for) (may-read u.for p.mun yon r.mun))
         ~
-      ?-    p.mun
-          $w
-        ?.  ?=($ud -.q.mun)  ?^(r.mun ~ [~ ~ %& %aeon !>(yon)])
-        (bind (read-w yon r.mun) (lift |=(a/cage [%& a])))
-      ::
+      ?-  p.mun
           $d
         =+  rom=(~(get by fat.ruf) her)
         ?~  rom
@@ -2603,31 +2601,14 @@
           ~&(%no-cd-path [~ ~])
         [~ ~ %& %noun !>(~(key by dos.u.rom))]
       ::
-          $p  (read-p yon r.mun)
-          $u  (read-u yon r.mun)
-          $v  (bind (read-v yon r.mun) (lift |=(a/cage [%& a])))
-          $x  (read-x yon r.mun)
-          $y  (bind (read-y yon r.mun) (lift |=(a/cage [%& a])))
-          $z  (bind (read-z yon r.mun) (lift |=(a/cage [%& a])))
+        $p  (read-p r.mun)
+        $u  (read-u yon r.mun)
+        $v  (bind (read-v yon r.mun) (lift |=(a/cage [%& a])))
+        $w  (read-w q.mun)
+        $x  (read-x yon r.mun)
+        $y  (bind (read-y yon r.mun) (lift |=(a/cage [%& a])))
+        $z  (bind (read-z yon r.mun) (lift |=(a/cage [%& a])))
       ==
-    ::
-    ::  Stubbed out, should be removed in the refactoring mentioned in ++query.
-    ::
-    ++  rewind                                          ::    rewind:ze
-      |=  yon/aeon                                      ::  rewind to aeon
-      ^-  (unit (unit _+>))
-      ?:  =(let.dom yon)  ``+>
-      ?:  (gth yon let.dom)  !!                         ::  don't have version
-      =+  hat=q:(aeon-to-yaki yon)
-      ?:  (~(any by hat) |=(a/lobe ?=($delta [-:(lobe-to-blob a)])))
-        ~
-      ~
-      ::=+  ^-  (map path cage)
-      ::    %-  ~(run by hat)
-      ::    |=  a=lobe
-      ::    =+  (lobe-to-blob a)
-      ::    ?-(-.- %direct q.-, %delta !!)
-      ::`+>.$(ank.dom (map-to-ankh -), let.dom yon)
     ::
     ::  Traverse an ankh.
     ::
@@ -3540,7 +3521,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  $0                                            ::  vane version
+    $:  $1                                            ::  vane version
         ruf/raft                                      ::  revision tree
     ==                                                ::
 |=  {now/@da eny/@ ski/sley}                          ::  activate
@@ -3801,12 +3782,79 @@
 ::
 ++  load
   =>  |%
-      ++  axle  $%({$0 ruf/raft})
+      ++  rove-0
+        $%  {$sing p/mood}
+            {$next p/mood q/cach}
+            $:  $mult
+                p/mool
+                q/(unit aeon)
+                r/(map (pair care path) cach)
+                s/(map (pair care path) cach)
+            ==
+            {$many p/? q/moat r/(map path lobe)}
+        ==
+      ++  wove-0  (cork wove |=(a/wove a(q (rove-0 q.a))))
+      ++  cult-0  (jug wove-0 duct)
+      ++  dojo-0  (cork dojo |=(a/dojo a(qyx *cult-0)))
+      ++  rede-0  (cork rede |=(a/rede a(qyx *cult-0)))
+      ++  room-0  (cork room |=(a/room a(dos (~(run by dos.a) dojo-0))))
+      ++  rung-0  (cork rung |=(a/rung a(rus (~(run by rus.a) rede-0))))
+      ++  raft-0
+        %+  cork  raft
+        |=  a/raft
+        %=  a
+          fat   (~(run by fat.a) room-0)
+          hoy   (~(run by hoy.a) rung-0)
+        ==
+      ::
+      ++  axle  $%({$1 ruf/raft} {$0 ruf/raft-0})
       --
   |=  old/axle
   ^+  ..^$
   ?-  -.old
-    $0  ..^$(ruf ruf.old)
+      $1
+    ..^$(ruf ruf.old)
+  ::
+      $0
+    |^
+      =-  ^$(old [%1 -])
+      =+  ruf.old
+      :*  (~(run by fat) rom)
+          (~(run by hoy) run)
+          ran  mon  hez  ~
+      ==
+    ::
+    ++  wov
+      |=  a/wove-0
+      ^-  wove
+      :-  p.a
+      ?.  ?=($next -.q.a)  q.a
+      [%next p.q.a ~ q.q.a]
+    ::
+    ++  cul
+      |=  a/cult-0
+      ^-  cult
+      %-  ~(gas by *cult)
+      %+  turn  ~(tap by a)
+      |=  {p/wove-0 q/(set duct)}
+      [(wov p) q]
+    ::
+    ++  rom
+      |=  room-0
+      ^-  room
+      :-  hun
+      %-  ~(run by dos)
+      |=  d/dojo-0
+      ^-  dojo
+      d(qyx (cul qyx.d))
+    ::
+    ++  run
+      |=  a/rung-0
+      =-  a(rus (~(run by rus.a) -))
+      |=  r/rede-0
+      ^-  rede
+      r(qyx (cul qyx.r))
+    --
   ==
 ::
 ++  scry                                              ::  inspect
@@ -3838,7 +3886,7 @@
   ?:  ?=($& -.u.u.-)  ``p.u.u.-
   ~
 ::
-++  stay  [%0 ruf]
+++  stay  [%1 ruf]
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
