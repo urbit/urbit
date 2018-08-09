@@ -1351,7 +1351,7 @@ u3_http_ef_thou(c3_l     sev_l,
   else if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
     if ( bug_w ) {
       uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n",
-                 			sev_l, coq_l, seq_l));
+                     sev_l, coq_l, seq_l));
     }
   }
   else {
