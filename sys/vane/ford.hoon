@@ -1706,7 +1706,7 @@
     ::  accessed-builds: builds accessed/depended on during this run.
     ::
     =|  accessed-builds=(list ^build)
-    ~&  [%turbo-make (build-to-tape build)]
+    ::  ~&  [%turbo-make (build-to-tape build)]
     ::  dispatch based on the kind of +schematic in :build
     ::
     ::
@@ -1895,9 +1895,19 @@
           [build [%blocks [toplevel-build]~ ~] accessed-builds]
         ::
         ?.  ?=([~ %success %scry *] toplevel-result)
-          ::  TODO: include :errors in the output since both failed.
+          ?~  errors
+            ~&  %no-renderer-errors1
+            (wrap-error toplevel-result)
           ::
-          (wrap-error toplevel-result)
+          ?>  ?=([~ %error *] toplevel-result)
+          =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
+          %-  return-error  :~
+            [%leaf "ford: %bake {<renderer>} failed:"]
+            [%leaf "as-renderer"]
+            [%rose braces errors]
+            [%leaf "as-mark"]
+            [%rose braces message.u.toplevel-result]
+          ==
         ::
         =/  toplevel-arch=arch  ;;(arch q.q.cage.u.toplevel-result)
         ::  find the :sub-path-segments that could be files
@@ -1958,7 +1968,19 @@
           [build [%blocks [alts-build]~ ~] accessed-builds]
         ::
         ?.  ?=([~ %success %alts *] alts-result)
-          (wrap-error alts-result)
+          ?~  errors
+            ~&  %no-renderer-errors2
+            (wrap-error alts-result)
+          ::
+          ?>  ?=([~ %error *] alts-result)
+          =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
+          %-  return-error  :~
+            [%leaf "ford: %bake {<renderer>} failed:"]
+            [%leaf "as-renderer"]
+            [%rose braces errors]
+            [%leaf "as-mark"]
+            [%rose braces message.u.alts-result]
+          ==
         ::
         =/  =build-result
           [%success %bake (result-to-cage u.alts-result)]
@@ -3678,6 +3700,7 @@
         ++  run-fszy
           |=  =mark
           ^-  compose-cranes
+          ::  why does this not actually run the renderer in the collections.hoon case?
           ::
           =/  bake-build=^build
             :-  date.build
@@ -3686,7 +3709,7 @@
           ?~  bake-result
             [[%block [bake-build]~] ..run-crane]
           ?:  ?=([~ %error *] bake-result)
-            [[%error [leaf+"/mark/ failed: " message.u.bake-result]] ..run-crane]
+            [[%error [leaf+"/{<mark>}/ failed: " message.u.bake-result]] ..run-crane]
           ?>  ?=([~ %success %bake *] bake-result)
           ::
           [[%subject cage.u.bake-result] ..run-crane]
