@@ -24,7 +24,7 @@
           /~  ~
       ==
     ::
-      /|  /collection/
+      /|  /collections/
           /~  ~
       ==
     ::

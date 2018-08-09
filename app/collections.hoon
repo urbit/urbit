@@ -7,7 +7,7 @@
   /^  collection:collections
   /;  |=  a=(map knot item:collections)
       [*config:collections a]
-  /:  /===/web/collections  /_  /collection-item/
+  /:  /===/web/collections  /_  /collections-item/
 ::
 =,  collections
 =,  space:userlib
@@ -21,7 +21,7 @@
   ==
 +=  poke
   $%  [%hall-action action:hall]
-      [%collection-action action:collections]
+      [%collections-action action:collections]
       [%json json]
   ==
 --
@@ -122,6 +122,34 @@
       ['content' [%s data.raw]]
   ==
 ::
+++  front-to-wain
+  |=  a=(map knot cord)
+  ^-  wain
+  =/  entries=wain
+    %+  turn  ~(tap by a)
+    |=  b=[knot cord]
+    =/  c=[term knot]  ((hard ,[term knot]) b)
+    (crip "  [{<-.c>} {<+.c>}]")
+  ::
+  ?~  entries  ~
+  ;:  weld
+    [':-  :~' ~]
+    entries
+    ['    ==' ~]
+  ==
+::
+++  update-umd-front
+  |=  [fro=(map knot cord) umd=@t]
+  ^-  @t
+  %-  of-wain:format
+  =/  tum  (trip umd)
+  =/  id  (find ";>" tum)
+  ?~  id
+    %+  weld  (front-to-wain fro)
+    (to-wain:format (crip (weld ";>\0a" tum)))
+  %+  weld  (front-to-wain fro)
+  (to-wain:format (crip (slag u.id tum)))
+::
 ::
 ::
 ++  poke-noun
@@ -140,22 +168,21 @@
       ==
     ==
   =/  mow=move
-    [ost.bol %poke /poke-act [our.bol %collections] %collection-action act]
+    [ost.bol %poke /poke-act [our.bol %collections] %collections-action act]
   [[mow]~ this]
 ::
-++  poke-collection-action
+++  poke-collections-action
   |=  act=action:collections
   ^-  (quip move _this)
-::  ~&  act
   ?.  =(who.act our.bol)
     ::
     ::  forward poke if its not meant for us
     :_  this
     :_  ~
     :*  ost.bol  %poke  
-        /forward-collection-action  
+        /forward-collections-action  
         [who.act %collections]
-        %collection-action  act
+        %collections-action  act
     ==
   ::
   ::  resolve %collection, %post, or %comment to %write action
@@ -165,7 +192,7 @@
   ^-  sub-action
   ?:  ?=(%collection -.a)
     =/  conf=config
-      :*  [byk.bol (flop (weld pax.a /[name.a]/collection-config))]
+      :*  [byk.bol (flop (weld pax.a /[name.a]/collections-config))]
           name.a
           desc.a
           our.bol
@@ -176,9 +203,10 @@
           ~
           visible.a
       ==
-    [%write (weld pax.a /[name.a]/collection-config) %collection-config conf]
+    [%write (weld pax.a /[name.a]/collections-config) %collections-config conf]
   ::
   ?:  ?=(%post -.a)
+    =.  content.a  (crip (weld (trip content.a) "\0a"))
     =/  front=(map knot cord)
       %-  my
       :~  [%name name.a]
@@ -188,9 +216,10 @@
           [%last-modified (scot %da now.bol)]
           [%type type.a]
       ==
-    [%write (weld pax.a /[name.a]/umd) %umd (update-umd-front front content.a)]
+    [%write (weld pax.a /[name.a]/umd) %umd `@t`(update-umd-front front content.a)]
   ::
   ?:  ?=(%comment -.a)
+    =.  content.a  (crip (weld (trip content.a) "\0a"))
     =/  dat  (scot %da now.bol)
     =/  front=(map knot cord)
       %-  my
@@ -259,7 +288,11 @@
     =.  ta-this
     ?+    -.a
       !!
-      %write   (ta-write pax.a `cage`[-.for.a !>(+.for.a)])
+      %write
+        ?-  -.for.a
+          %umd                 (ta-write pax.a `cage`[-.for.a !>(+.for.a)])
+          %collections-config  (ta-write pax.a `cage`[-.for.a !>(+.for.a)])
+        ==
       %delete  (ta-remove pax.a)
       %perms   (ta-set-permissions pax.a r.a w.a)
     ==
@@ -339,7 +372,7 @@
         %collection
       =.  ta-this  
         (ta-hall-json parent 'deleted collection' (collection-notify pax meta.col.old))
-      =.  ta-this  (ta-flush-permissions (weld pax /collection-config))
+      =.  ta-this  (ta-flush-permissions (weld pax /collections-config))
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.old)
       |-
       ?~  items  ta-this
@@ -352,7 +385,7 @@
       =.  ta-this  
         (ta-hall-json parent 'deleted item' (item-notify pax raw.old))
       =.  ta-this  (ta-flush-permissions pax)
-      =.  ta-this  (ta-flush-permissions (weld pax /collection-config))
+      =.  ta-this  (ta-flush-permissions (weld pax /collections-config))
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.old)
       |-
       ?~  items  ta-this
@@ -448,7 +481,7 @@
           =('.y' (fall (~(get by meta.old) %comments) '.n'))
       ==
       ::  delete comments
-      (ta-remove (weld pax /collection-config))
+      (ta-remove (weld pax /collections-config))
     ::
     ::  check if file has been modified
     ::  and if so update last modified field
@@ -539,7 +572,7 @@
   ++  ta-generate-comments
     |=  pax=path
     ^+  ta-this
-    =/  sup=path  [%collection-config (flop pax)]
+    =/  sup=path  [%collections-config (flop pax)]
     =/  pat  (en-beam:format [byk.bol sup])
     =/  cay=config
       :*  [byk.bol sup]
@@ -553,15 +586,15 @@
           ~
           |
       ==
-    (ta-write (flop sup) %collection-config !>(cay))
+    (ta-write (flop sup) %collections-config !>(cay))
   ::
   ::  writing files
   ::
   ++  ta-write
     |=  [pax=path cay=cage]
-::    ~&  writing+pax
     ^+  ta-this
     =.  pax  (en-beam:format byk.bol (flop pax))
+::    ~&  w+(foal pax cay)
     %+  ta-emit  ost.bol
     [%info (weld /ta-write pax) our.bol (foal pax cay)]
   ::
@@ -614,6 +647,8 @@
       ?:  =(nom.circ %c)
         [our.bol %inbox]
       (path-to-circle (scag (dec (lent pax)) pax))
+::    ~&  create+circ
+::    ~&  source+parent
     %-  ta-hall-actions
     :: XX TODO make this depend on clay perms
     :~  [%create nom.circ description %journal]  

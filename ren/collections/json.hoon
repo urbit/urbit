@@ -80,6 +80,6 @@
     ::
     --
 ::
-/collection-web-item/
+/collections-web-item/
 ::
 jon

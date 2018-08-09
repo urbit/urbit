@@ -6,7 +6,7 @@
   /^  json
   /,  /web/collections
     /&  json
-    /collection-json/
+    /collections-json/
       /  
     /!json/
   ==
