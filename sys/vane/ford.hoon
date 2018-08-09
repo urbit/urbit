@@ -1896,7 +1896,6 @@
         ::
         ?.  ?=([~ %success %scry *] toplevel-result)
           ?~  errors
-            ~&  %no-renderer-errors1
             (wrap-error toplevel-result)
           ::
           ?>  ?=([~ %error *] toplevel-result)
@@ -1969,7 +1968,6 @@
         ::
         ?.  ?=([~ %success %alts *] alts-result)
           ?~  errors
-            ~&  %no-renderer-errors2
             (wrap-error alts-result)
           ::
           ?>  ?=([~ %error *] alts-result)
