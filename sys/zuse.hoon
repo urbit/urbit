@@ -447,7 +447,7 @@
     ==                                                  ::
   ++  coop  (unit ares)                                 ::  e2e ack
   ++  crew  (set ship)                                  ::  permissions group
-  ++  dict  {src/path rul/rule}                         ::  effective permission
+  ++  dict  {src/path rul/real}                         ::  effective permission
   ++  dome                                              ::  project state
     $:  ank/ankh                                        ::  state
         let/@ud                                         ::  top id
@@ -504,6 +504,10 @@
     $:  p/{p/care q/case r/desk}                        ::  clade release book
         q/path                                          ::  spur
         r/cage                                          ::  data
+    ==                                                  ::
+  ++  real                                              ::  resolved permissions
+    $:  mod/?($black $white)                            ::
+        who/(pair (set ship) (map @ta crew))            ::
     ==                                                  ::
   ++  rave                                              ::  general request
     $%  {$sing p/mood}                                  ::  single request

@@ -1,6 +1,13 @@
-/|  /&json&/collections-topic-full/
-     /&json&/collections-collection/
-     /&json&/collections/
- ==
--.-
-
+::
+::::  /hoon/json/ren
+  ::
+/?  309
+/=  page  /%
+  /^  json
+  /,  /web/collections
+    /&  json
+    /collections-json/
+      /  
+    /!json/
+  ==
+page

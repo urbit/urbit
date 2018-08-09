@@ -1,15 +1,16 @@
-/-  collections
-/=  snip   /^  {hed=marl tal=marl}
-           /%  /&  collections-snip
-           /&  elem
-           /&  md
-           /;  |=  a/topic:collections
-                 (of-wain:format wat.a)
-               /collections-topic/
+::
+::  no snip view for collections, only items
+::
+/=  snipped-umd
+   /&  snip
+   /&  elem
+   /umd/
 ^-  manx
 ;div
   ;h1
-    ;*  hed.snip
+    ;*  hed.snipped-umd
   ==
-  ;*  tal.snip
+  ;*  tal.snipped-umd
 ==
+
+

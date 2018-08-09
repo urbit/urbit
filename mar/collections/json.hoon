@@ -1,20 +1,24 @@
 ::
-::::  /hoon/json/collections/mar
+::::  /hoon/json/collection/mar
   ::
-/?    310
+/?    309
   ::
 ::::  compute
   ::
-=,  mimes:html
+=,  eyre
+=,  format
 =,  html
 |_  jon/json
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  mime  [/text/json (as-octt (en-json jon))]        ::  convert to %mime
+  ++  txt   (crip (en-json jon))
+  ++  json  jon
   --
 ++  grab
   |%                                                    ::  convert from
-  ++  noun  json                                        ::  clam from %noun
+  ++  noun  ^json                                        ::  clam from %noun
+  ++  json  ^json
   --
+++  grad  %mime
 --

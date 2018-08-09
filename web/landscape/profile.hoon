@@ -1,13 +1,12 @@
-/-  collections
-/+  colls
+/+  collections, colls
 /=  gas  /$  fuel:html
-/=  all-colls  /:  /===/web/collections
-            /^  (map knot collection:collections)  /_  /collections-collection/
+::/=  all-colls  /:  /===/web/collections
+::               /collection-web-item/
 |%
   :: is this collection on the profile?
   ++  is-pro
-  |=  {a/knot coll/collection:collections}
-  visi.conf.coll
+  |=  col=collection:collections
+  visible.meta.col
 --
 ^-  manx
 ;div.profile-page
@@ -51,7 +50,7 @@
         ;div.mt-2.text-500.row
           ;span.col-sm-2: Issued:
           ;span.col-sm-10.text-mono
-            ;a(href "/~~/{(scow %p (sein:title p.bem.gas))}/==/web/pages/nutalk/profile"): {(scow %p (sein:title p.bem.gas))}
+            ;a(href "/~~/{(scow %p (sein:title p.bem.gas))}/==/web/landscape/profile"): {(scow %p (sein:title p.bem.gas))}
           ==
         ==
         ;div.mt-2.text-500.row
