@@ -3791,7 +3791,7 @@
       ::    for the kernel we're already running. Note that this fails
       ::    referential transparency if |autoload is turned off.
       ::
-      ?:  ?&  =(disc [our %home])
+      ?:  ?&  |(=(disc [our %home]) =(disc [our %base]))
               ::  is :date.build the latest commit on the %home desk?
               ::
               ?|  =(now date.build)

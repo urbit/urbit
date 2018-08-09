@@ -126,34 +126,38 @@
 ::
 ++  poke--data
   |=  {{ext/(unit @t) pax/path} dat/data}  ^+  abet
-  abet
-  ::  ?~  ext  $(ext [~ -.dat])
-  ::  =+  cay=?-(-.dat $json [-.dat !>(+.dat)], $mime [-.dat !>(+.dat)])
-  ::  ?:  =(u.ext -.dat)
-  ::    (made pax ~ &+cay)
-  ::  =<  abet
-  ::  %^  emit  %build  write+pax  live=%.n                ::  XX defer %nice
-  ::  ^-  schematic:ford   ::  SYNTAX ERROR AT START OF LINE?
-  ::  =/  =beak  beak-now
-  ::  [%cast [p q]:beak u.ext [%$ cay]]
+  ?~  ext  $(ext [~ -.dat])
+  =+  cay=?-(-.dat $json [-.dat !>(+.dat)], $mime [-.dat !>(+.dat)])
+  ?:  =(u.ext -.dat)
+    (made pax now [%complete %success %$ cay])
+  =<  abet
+  %-  emit  :*
+    %build
+    write+pax
+    our
+    live=%.n                ::  XX defer %nice
+    ^-  schematic:ford   ::  SYNTAX ERROR AT START OF LINE?
+    =/  =beak  beak-now
+    [%cast [p q]:beak u.ext [%$ cay]]
+  ==
 ::
 ++  made
   |=  [pax=wire date=@da result=made-result:ford]
   ^+  abet
-  abet
-  ::  ::  |=  {pax/wire @ res/gage:ford}  ^+  abet
-  ::  :: ?.  =(our src)
-  ::  ::   ~|(foreign-write/[our=our src=src] !!)
-  ::  ?:  ?=(%incomplete -.result)
-  ::    (mean tang.result)
-  ::  ::
-  ::  =/  build-result  build-result.result.sih
-  ::  ::
-  ::  ?:  ?=([%error *] build-result)
-  ::    (mean message.build-result)
-  ::  ::
-  ::  =/  =cage  (result-to-cage:ford build-result)
-  ::  ::
-  ::  =-  abet:(emit %info write+~ our -)
-  ::  (foal :(welp (en-beam beak-now ~) pax /[-.p.cage]) p.cage)
+  ::  |=  {pax/wire @ res/gage:ford}  ^+  abet
+  :: ?.  =(our src)
+  ::   ~|(foreign-write/[our=our src=src] !!)
+  ?:  ?=(%incomplete -.result)
+    (mean tang.result)
+  ::
+  =/  build-result  build-result.result
+  ::
+  ?:  ?=([%error *] build-result)
+    (mean message.build-result)
+  ::
+  =/  =cage  (result-to-cage:ford build-result)
+  ::
+  =-  abet:(emit %info write+~ our -)
+  ::
+  (foal :(welp (en-beam beak-now ~) pax /[-.cage]) cage)
 --
