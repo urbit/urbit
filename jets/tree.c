@@ -103,6 +103,21 @@ static u3j_core _143_hex_coed_d[] =
       {}
     };
 
+  static u3j_harm _143_hex_blake2b_a[] = {{".2", u3we_blake, c3y}, {}};
+
+  static u3j_core _143_hex_blake_d[] =
+    { { "blake2b",  _143_hex_blake2b_a },
+      {}
+    };
+
+  static u3j_harm _143_hex_ripemd_160_a[] = {{".2", u3we_ripe, c3y}, {}};
+
+  static u3j_core _143_hex_ripe_d[] =
+    { { "ripemd160",  _143_hex_ripemd_160_a },
+      {}
+    };
+
+
 static u3j_core _143_hex_d[] =
   { { "down", 0, _143_hex_down_d },
     { "lore", _143_hex_lore_a },
@@ -112,6 +127,8 @@ static u3j_core _143_hex_d[] =
     { "aes", 0, _143_hex_aes_d },
     { "hmac", 0, _143_hex_hmac_d },
     { "argon", 0, _143_hex_argon_d },
+    { "blake2b", 0, _143_hex_blake_d },
+    { "ripemd", 0, _143_hex_ripe_d },
     {}
   };
 

@@ -158,6 +158,10 @@
 
     u3_noun u3we_argon2(u3_noun);
 
+    u3_noun u3we_blake(u3_noun);
+
+    u3_noun u3we_ripe(u3_noun);
+
     u3_noun u3we_bend_fun(u3_noun);
     u3_noun u3we_cold_fun(u3_noun);
     u3_noun u3we_cook_fun(u3_noun);
