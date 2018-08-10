@@ -77,7 +77,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.bat = c3n;
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
-  u3_Host.ops_u.fak = c3n;
   u3_Host.ops_u.fog = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
@@ -92,7 +91,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:I:w:u:f:k:l:n:p:r:NabcdgqsvxFMPDXRS")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:I:w:u:f:F:k:l:n:p:r:NabcdgqsvxMPDXRS")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -114,8 +113,13 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.dns_c = strdup(optarg);
         break;
       }
+      // XX remove in deference to -K
       case 'I': {
         u3_Host.ops_u.imp_c = _main_presig(optarg);
+        break;
+      }
+      case 'F': {
+        u3_Host.ops_u.fak_c = _main_presig(optarg);
         break;
       }
       case 'w': {
@@ -177,7 +181,6 @@ _main_getopt(c3_i argc, c3_c** argv)
         return c3y;
       }
       case 'N': { u3_Host.ops_u.net = c3y; break; }
-      case 'F': { u3_Host.ops_u.fak = c3y; break; }
       case 'a': { u3_Host.ops_u.abo = c3y; break; }
       case 'b': { u3_Host.ops_u.bat = c3y; break; }
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
@@ -195,10 +198,29 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
-  if ( u3_Host.ops_u.fak == c3n && u3_Host.ops_u.net == c3y ) {
+  // XX remove -I
+  if ( (0 != u3_Host.ops_u.fak_c) && (0 != u3_Host.ops_u.imp_c) ) {
+    fprintf(stderr, "-I is redundant with -F\n");
+    return c3n;
+  }
+
+  // set galaxy name
+  // XX need to do this with -K too
+  // -A is required when booting a galaxy
+  if ( (0 != u3_Host.ops_u.fak_c) && (4 == strlen(u3_Host.ops_u.fak_c)) ) {
+    u3_Host.ops_u.imp_c = strdup(u3_Host.ops_u.fak_c);
+  }
+
+  if ( (0 != u3_Host.ops_u.fak_c) && (c3n == u3_Host.ops_u.nuu) ) {
+    fprintf(stderr, "-F only makes sense on initial boot\n");
+    return c3n;
+  }
+
+  // XX revisit
+  if ( (0 == u3_Host.ops_u.fak_c) && (c3y == u3_Host.ops_u.net) ) {
     fprintf(stderr, "-N only makes sense with -F\n");
     return c3n;
-  } else if ( u3_Host.ops_u.fak == c3n && u3_Host.ops_u.net == c3n ) {
+  } else if ( (0 == u3_Host.ops_u.fak_c) && (c3n == u3_Host.ops_u.net) ) {
     u3_Host.ops_u.net = c3y;  /* remote networking is always on in real mode. */
   }
 
@@ -333,7 +355,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-c pier       Create a new urbit in pier/\n",
     "-d            Daemon mode\n",
     "-D            Recompute from events\n",
-    "-F            Fake keys; also disables networking\n",
+    "-F ship       Fake keys; also disables networking\n",
     "-f            Fuzz testing\n",
     "-g            Set GC flag\n",
     "-H domain     Set ames bootstrap domain (default urbit.org)\n",

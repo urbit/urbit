@@ -261,9 +261,11 @@ _sist_sing(u3_noun ovo)
         u3_noun fex = u3h(vir);
         u3_noun fav = u3t(fex);
 
-        if ( (c3__init == u3h(fav)) || (c3__inuk == u3h(fav)) ) {
-          u3A->own = u3nc(u3k(u3t(fav)), u3A->own);
+        // XX is this now just to support ctrl-z during first boot?
+        if ( c3__init == u3h(fav) ) {
+          u3A->own = u3k(u3t(fav));
         }
+
         vir = u3t(vir);
       }
       u3z(nug);
@@ -1342,30 +1344,47 @@ _sist_dawn(void)
 void
 u3_sist_boot(void)
 {
-  // uL(fprintf(uH, "sist: booting\n"));
-
   if ( c3y == u3_Host.ops_u.nuu ) {
     u3_noun pig;
 
-    if ( c3y == u3_Host.ops_u.fak ) {
-      // XX or who_c
-      u3_noun imp = u3i_string(u3_Host.ops_u.imp_c);
-      u3_noun whu = u3dc("slaw", 'p', u3k(imp));
+    if ( 0 != u3_Host.ops_u.fak_c ) {
+      u3_noun whu = u3dc("slaw", 'p', u3i_string(u3_Host.ops_u.fak_c));
 
       if ( (u3_nul == whu) ) {
-        fprintf(stderr, "czar: incorrect format\r\n");
+        fprintf(stderr, "fake: invalid ship: %s\r\n", u3_Host.ops_u.fak_c);
         u3_lo_bail();
       }
 
-      pig = u3nc(c3__fake, u3t(whu));
+      fprintf(stderr, "fake: %s\r\n", u3_Host.ops_u.fak_c);
+
+      u3A->fak = c3y;
+      pig = u3nc(c3__fake, u3k(u3t(whu)));
+      u3z(whu);
     }
     else {
+      u3A->fak = c3n;
       pig = _sist_dawn();
     }
 
+    // will be set by %init card in reck.c
+    u3A->own = u3_none;
     _sist_make(pig);
   }
   else {
+    if ( c3y == u3A->fak ) {
+      c3_c* who_c = u3r_string(u3dc("scot", 'p', u3k(u3A->own)));
+      fprintf(stderr, "fake: %s\r\n", who_c);
+
+      // XX use clan:title
+      if ( 4 == strlen(who_c) ) {
+        u3_Host.ops_u.imp_c = who_c;
+      } else {
+        free(who_c);
+      }
+
+      // XX make conditional
+      u3_Host.ops_u.net = c3n;
+    }
     _sist_rest();
   }
 }

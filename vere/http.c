@@ -1401,7 +1401,7 @@ _http_serv_start_all(void)
       htp_u = _http_serv_new(por_s, c3y, c3n);
       htp_u->h2o_u = _http_serv_init_h2o(u3_Host.tls_u, for_u->log, for_u->red);
 
-      if ( (c3y == for_u->pro) || (c3y == u3_Host.ops_u.fak) ) {
+      if ( c3y == for_u->pro ) {
         htp_u->rox_u = _proxy_serv_new(htp_u, 443, c3y);
       }
 
@@ -1416,7 +1416,7 @@ _http_serv_start_all(void)
     htp_u = _http_serv_new(por_s, c3n, c3n);
     htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
 
-    if ( (c3y == for_u->pro) || (c3y == u3_Host.ops_u.fak) ) {
+    if ( c3y == for_u->pro ) {
       htp_u->rox_u = _proxy_serv_new(htp_u, 80, c3n);
     }
 
@@ -2571,25 +2571,16 @@ _proxy_dest(u3_pcon* con_u, u3_noun sip)
     _proxy_loop_connect(con_u);
   }
   else {
-    u3_noun hip = u3k(u3t(sip));
-    u3_noun own = u3A->own;
-    c3_o our = c3n;
+    u3_noun hip = u3t(sip);
 
-    while ( u3_nul != own ) {
-      if ( c3y == u3r_sing(hip, u3h(own)) ) {
-        our = c3y;
-        break;
-      }
-      own = u3t(own);
-    }
-
-    if ( c3y == our ) {
+    if ( c3y == u3r_sing(u3A->own, hip) ) {
       _proxy_loop_connect(con_u);
     }
     else {
       // XX check if (sein:title sip) == our
       // XX check will
-      _proxy_ward_start(con_u, hip);
+      // XX extract bytes from hip, this could leak
+      _proxy_ward_start(con_u, u3k(hip));
     }
   }
 
@@ -2852,6 +2843,7 @@ u3_http_ef_that(u3_noun tat)
     return;
   }
 
+  // XX extract bytes from sip, this could leak
   cli_u = _proxy_warc_new(htp_u, (u3_atom)sip, (c3_s)por, (c3_o)sec);
 
   // XX add to constructor

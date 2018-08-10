@@ -591,7 +591,7 @@
         c3_o    bat;                        //  -b, batch create
         c3_o    dem;                        //  -d, daemon
         c3_o    dry;                        //  -D, dry compute  
-        c3_o    fak;                        //  -F, fake carrier
+        c3_c*   fak_c;                      //  -F, fake ship
         c3_o    fog;                        //  -X, skip last event
         c3_o    gab;                        //  -g, run with garbage collector
         c3_o    has;                        //  -S, Skip battery hashes
