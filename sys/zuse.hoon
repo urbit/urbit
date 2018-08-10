@@ -4188,10 +4188,10 @@
     |%
     ++  ripemd-160
       ~/  %ripemd160
-      ::  w: data size in bits
-      ::  d: data to hash
       |=  byts
       ^-  @
+      ::  we operate on bits rather than bytes
+      =.  wid  (mul wid 8)
       ::  add padding
       =+  (md5-pad wid dat)
       ::  endianness
