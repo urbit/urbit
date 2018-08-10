@@ -1,39 +1,34 @@
-language: node_js # ish, mainly used as an entry point
+language: node_js
 node_js:
-  - 4
+- 4
 before_install:
-  - cd .travis # keep main directory clear
-  
-  - wget -i pin-urbit-release.url -O ./urbit.deb
-  - sudo apt install ./urbit.deb
-  
-      
+- cd .travis
+- wget -i pin-urbit-release.url -O ./urbit.deb
+- sudo apt install ./urbit.deb
 before_script: bash get-or-build-pill.sh
-
 # https://github.com/travis-ci/travis-ci/issues/2570
 before_deploy: "[ -d piers ] || { mkdir piers && tar cvzSf piers/zod-$TRAVIS_COMMIT.tgz zod/; }"
 deploy:
   - skip_cleanup: true
     provider: gcs
-    access_key_id: GOOGW5WD4W7RF3TQ5EBM
+    access_key_id: GOOGTADOPP55X5ZTH3IKAXQW
     secret_access_key:
-      secure: cbMrx/jloYtTiMc9b+gujrpdzmB05yHC7C2PN1dqHoe25JqwS1c8ne0jhzYOanSkJptPEjwpKeEYLyF87CStCglMJaHwsx1wAm94D8Vh6WL96pgxFbMdVRD+g2dAcSXYnSX5C0QpFrnxY8ujg9yqhItpvd+whsPYjxZahIUd5rPPS1gCP2O6hGpKFCv5++DB1RgqL5y1Hlm9efsLxsnkS7cuzrSX6o8I6Yns5pFlDDRED7Tgpp5DYYfq6ZmiIpxbuYZK+AYJKK7N2zC4RfFXstgL+M9h7joFE1r8RlzrVHLXL7+3qg8POWEEu47008ORByDCmlt5VKoMBJ3q4J4ykDKI2qmx3jw68tGIu2o5uVf6KpxtAM2IJSNZ4mOEYjs7ieR1GOrLKr7lSSYEOIShJhx7J1MMjBOaS17Ho7Uc4iNLGpH4M7DpiKwVLnjfsYiasv/1xq71ed386wLTpI5YyY/SfsNPoIbgv1IjkKIMRLl5l85tEUK10h8dxQi3mXeaP698LnQLdHdxeBKJB08hwJrl7kIOJnqZxWPBp8i7OQeIvKcu+WzMg5UIR4hR7wj7NEga/+1jjjDQeo7EHQB2Tk9dhXtTmozOGpsW49H7+VBThhhNODEYeX3CIcdOtSyjuwBLZ45HsKIhhWA00b+YyE8boBkV1yQeFh/IYCZBn7s=
+      secure: lALZvAW22oBMCXafvDOkqKDkdP0K8bGKlSb6uhh54z+2bJu49+5vrfxgA9YLcExGiz8uFttzNYhEoAQEjb96DPHAHvH2iJrwieKltrWM4hLkGuSHVSCBIIm+Qe4BVRSVJPQ1rtO1ausNr0XuzO6BVnKY7NCrz8la2XNjm5+miQdtrJUnrfy2JsM/c/Bkwjj3Tc4op9Ne+7Xzc9DI6LB97XiJx5PgeOx1WeZi9IKQ3IhPBHBzBpBrJ4lWxb4PFvDUqNzSk1wuMGy/sH73IFhGcz3CZRZYbeICDdwmHcUnkdPxG6+RLH+YLhSxx175R+HdaARRQvRANxvY9KNJ11NKmV3Rs9q7fZgWZbrptuB0CDMhfZ/Aiz9tgHGV0UVhYHb8n614fDIKzpXwIy5DPjCKpxPoZRVzABQcdzPTvxnZtZDbarsfdfq0vh9xXNPLGuFYZQnZ6iEpv17qp/2TbeCBSMKIxwIG3LQTwr0a4wKL1T/YIZm6oiN6NycHhMHaczQIRANKw9e7oqbgnXu/WnqHIxyTY2CCvzVOgipRmKKa7jz7CcSoP883XZ9o7WAOnfJY+T4ofpdkzHn1ElNXPjDPpX7CUkowNFH4DZk2Ljwe0CgxPOF6ygnsNrqqs4XoNQaBnHGXMq20Upg6OK9MBmZibtlX9STCeSAt4WudekpEOPU=
     bucket: ci-piers.urbit.org
     local-dir: piers/
     acl: public-read
     on:
       repo: urbit/arvo
       all_branches: true
-  #
   - skip_cleanup: true
     provider: gcs
-    access_key_id: GOOGW5WD4W7RF3TQ5EBM
+    access_key_id: GOOGTADOPP55X5ZTH3IKAXQW
     secret_access_key:
-      secure: cbMrx/jloYtTiMc9b+gujrpdzmB05yHC7C2PN1dqHoe25JqwS1c8ne0jhzYOanSkJptPEjwpKeEYLyF87CStCglMJaHwsx1wAm94D8Vh6WL96pgxFbMdVRD+g2dAcSXYnSX5C0QpFrnxY8ujg9yqhItpvd+whsPYjxZahIUd5rPPS1gCP2O6hGpKFCv5++DB1RgqL5y1Hlm9efsLxsnkS7cuzrSX6o8I6Yns5pFlDDRED7Tgpp5DYYfq6ZmiIpxbuYZK+AYJKK7N2zC4RfFXstgL+M9h7joFE1r8RlzrVHLXL7+3qg8POWEEu47008ORByDCmlt5VKoMBJ3q4J4ykDKI2qmx3jw68tGIu2o5uVf6KpxtAM2IJSNZ4mOEYjs7ieR1GOrLKr7lSSYEOIShJhx7J1MMjBOaS17Ho7Uc4iNLGpH4M7DpiKwVLnjfsYiasv/1xq71ed386wLTpI5YyY/SfsNPoIbgv1IjkKIMRLl5l85tEUK10h8dxQi3mXeaP698LnQLdHdxeBKJB08hwJrl7kIOJnqZxWPBp8i7OQeIvKcu+WzMg5UIR4hR7wj7NEga/+1jjjDQeo7EHQB2Tk9dhXtTmozOGpsW49H7+VBThhhNODEYeX3CIcdOtSyjuwBLZ45HsKIhhWA00b+YyE8boBkV1yQeFh/IYCZBn7s=
+      secure: lALZvAW22oBMCXafvDOkqKDkdP0K8bGKlSb6uhh54z+2bJu49+5vrfxgA9YLcExGiz8uFttzNYhEoAQEjb96DPHAHvH2iJrwieKltrWM4hLkGuSHVSCBIIm+Qe4BVRSVJPQ1rtO1ausNr0XuzO6BVnKY7NCrz8la2XNjm5+miQdtrJUnrfy2JsM/c/Bkwjj3Tc4op9Ne+7Xzc9DI6LB97XiJx5PgeOx1WeZi9IKQ3IhPBHBzBpBrJ4lWxb4PFvDUqNzSk1wuMGy/sH73IFhGcz3CZRZYbeICDdwmHcUnkdPxG6+RLH+YLhSxx175R+HdaARRQvRANxvY9KNJ11NKmV3Rs9q7fZgWZbrptuB0CDMhfZ/Aiz9tgHGV0UVhYHb8n614fDIKzpXwIy5DPjCKpxPoZRVzABQcdzPTvxnZtZDbarsfdfq0vh9xXNPLGuFYZQnZ6iEpv17qp/2TbeCBSMKIxwIG3LQTwr0a4wKL1T/YIZm6oiN6NycHhMHaczQIRANKw9e7oqbgnXu/WnqHIxyTY2CCvzVOgipRmKKa7jz7CcSoP883XZ9o7WAOnfJY+T4ofpdkzHn1ElNXPjDPpX7CUkowNFH4DZk2Ljwe0CgxPOF6ygnsNrqqs4XoNQaBnHGXMq20Upg6OK9MBmZibtlX9STCeSAt4WudekpEOPU=
     bucket: bootstrap.urbit.org
     local-dir: built-pill/
     acl: public-read
     on:
-      condition: -d built-pill/
+      condition: "-d built-pill/"
       repo: urbit/arvo
       all_branches: true
