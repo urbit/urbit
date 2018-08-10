@@ -750,10 +750,10 @@
   ++  del
     |=  =build
     ^+  builds
-    =.  builds  %+  ~(put by builds)  schematic.build
-      ::
+    =.  builds
+      %+  ~(jab by builds)  schematic.build
+      |=  dates=(list @da)
       ~|  build+build
-      =/  dates  (~(got by builds) schematic.build)
       =/  date-index  (need (find [date.build]~ dates))
       (oust [date-index 1] dates)
     ::  if :builds has an empty entry for :build, delete it
@@ -1064,8 +1064,7 @@
     =.  state  (add-build build)
     ::
     =.  builds.state
-      =<  builds
-      %+  update-build-status  build
+      %+  ~(jab by builds.state)  build
       |=  =build-status
       build-status(requesters (~(put in requesters.build-status) duct))
     ::
@@ -1145,8 +1144,7 @@
     ::
     =/  unblocked-build=build  (scry-request-to-build scry-request)
     =.  builds.state
-      =<  builds
-      %+  update-build-status  unblocked-build
+      %+  ~(jab by builds.state)  unblocked-build
       |=  =build-status
       build-status(state [%unblocked ~])
     ::
@@ -1314,8 +1312,7 @@
     ::  ~&  [%remove-duct-from-root (build-to-tape build) duct]
     ::
     =.  builds.state
-      =<  builds
-      %+  update-build-status  build
+      %+  ~(jab by builds.state)  build
       |=  =build-status
       build-status(requesters (~(del in requesters.build-status) duct))
     ::
@@ -1415,8 +1412,7 @@
     =.  state  (add-build new-client)
     ::
     =.  builds.state
-      =<  builds
-      %+  update-build-status  new-client
+      %+  ~(jab by builds.state)  new-client
       |=  =build-status
       build-status(requesters (~(put in requesters.build-status) duct))
     ::
@@ -1453,8 +1449,7 @@
       =.  state  (add-build new-sub)
       ::
       =.  builds.state
-        =<  builds
-        %+  update-build-status  new-sub
+        %+  ~(jab by builds.state)  new-sub
         |=  =build-status
         build-status(clients (~(put ju clients.build-status) duct new-client))
       ::
@@ -1466,8 +1461,7 @@
     |=  [new-client=build new-subs=(list build) =build-relation]
     ^+  builds.state
     ::
-    =<  builds
-    %+  update-build-status  new-client
+    %+  ~(jab by builds.state)  new-client
     |=  =build-status
     %_    build-status
         subs
@@ -1737,8 +1731,8 @@
       ::
       =/  new-build=build  old-build(date new-date)
       ::
-      =.  builds.state  =<  builds
-        %+  update-build-status  new-build
+      =.  builds.state
+        %+  ~(jab by builds.state)  new-build
         |=  =build-status
         ^+  build-status
         ::
@@ -1858,9 +1852,7 @@
       ?~  sub-builds  state
       ::
       =.  builds.state
-        ::
-        =<  builds
-        %+  update-build-status  i.sub-builds
+        %+  ~(jab by builds.state)  i.sub-builds
         |=  build-status=^build-status
         %_    build-status
         ::  freshen :last-accessed date
@@ -1892,8 +1884,8 @@
           cache-key.u.cache-access
         build-result
       ::
-      =^  build-status  builds.state
-        %+  update-build-status  build
+      =.  builds.state
+        %+  ~(jab by builds.state)  build
         |=  =build-status
         build-status(state [%complete [%value last-accessed=now build-result]])
       ::
@@ -1924,8 +1916,7 @@
       ::  transition :build's state machine to the %blocked state
       ::
       =.  builds.state
-        =<  builds
-        %+  update-build-status  build
+        %+  ~(jab by builds.state)  build
         |=  =build-status
         build-status(state [%blocked ~])
       ::  enqueue :blocks to be run next
@@ -4856,11 +4847,8 @@
         ::
         =?  builds.state  (~(has by builds.state) i.subs)
           ::
-          =<  builds
-          %+  update-build-status  i.subs
+          %+  ~(jab by builds.state)  i.subs
           |=  build-status=^build-status
-          ^+  build-status
-          ::
           build-status(clients (~(del ju clients.build-status) duct build))
         ::
         $(subs t.subs)
@@ -4961,8 +4949,8 @@
       |=  client-status=^build-status
       ::
       =.  subs.client-status
-        %+  ~(put by subs.client-status)  build
-        =/  original  (~(got by subs.client-status) build)
+        %+  ~(jab by subs.client-status)  build
+        |=  original=build-relation
         original(blocked |)
       ::
       =?    state.client-status

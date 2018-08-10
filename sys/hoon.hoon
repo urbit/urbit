@@ -1450,6 +1450,21 @@
       %-  uni(a $(b l.b, a [n.a l.a ~]))  $(a r.a)
     %-  uni(a $(b r.b, a [n.a ~ r.a]))  $(a l.a)
   ::
+  +-  jab
+    ~/  %jab
+    |*  [key=_?>(?=(^ a) p.n.a) fun=$-(_?>(?=(^ a) q.n.a) _?>(?=(^ a) q.n.a))]
+    ^+  a
+    ::
+    ?~  a  !!
+    ::
+    ?:  =(key p.n.a)
+      a(q.n (fun q.n.a))
+    ::
+    ?:  (gor key p.n.a)
+      a(l $(a l.a))
+    ::
+    a(r $(a r.a))
+  ::
   +-  mar                                               ::  add with validation
     |*  {b/_?>(?=(^ a) p.n.a) c/(unit _?>(?=(^ a) q.n.a))}
     ?~  c
