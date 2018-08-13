@@ -29,9 +29,9 @@
   :+  met  dat.child-seed
   (wallet:dr child-seed)
 ::
-++  full-wallet-from-entropy
-  |=  [entropy=byts seed-size=@ud sis=(set ship) pass=(unit @t) revs=revisions]
-  =+  owner-seed=seed-size^(argon2u entropy seed-size)
+++  full-wallet-from-ticket
+  |=  [ticket=byts seed-size=@ud sis=(set ship) pass=(unit @t) revs=revisions]
+  =+  owner-seed=seed-size^(argon2u ticket seed-size)
   (full-wallet-from-seed owner-seed sis pass revs)
 ::
 ++  full-wallet-from-seed
