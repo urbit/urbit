@@ -341,9 +341,6 @@
               ::  builds: builds that :build blocked on
               ::
               builds=(list build)
-              ::  scry-blocked: namespace request that :build blocked on
-              ::
-              scry-blocked=(unit scry-request)
           ==
       ==
       ::  sub-builds: subbuilds of :build
@@ -1605,7 +1602,7 @@
         (apply-build-result [build build-result.result]:made)
       ::
           %blocks
-        (apply-blocks [build builds.result scry-blocked.result]:made)
+        (apply-blocks [build builds.result]:made)
       ==
     ::  +track-sub-builds:
     ::
@@ -1678,14 +1675,17 @@
     ::    and try those blocked builds as candidates in the next pass.
     ::
     ++  apply-blocks
-      |=  [=build blocks=(list build) scry-blocked=(unit scry-request)]
+      |=  [=build blocks=(list build)]
       ^+  ..execute
       ::  ~&  [%apply-blocks duct (build-to-tape build)]
       ::  if a %scry blocked, register it and maybe send an async request
       ::
       =?    ..execute
-          ?=(^ scry-blocked)
-        (start-scry-request u.scry-blocked)
+          ?=(~ blocks)
+        ?>  ?=(%scry -.schematic.build)
+        =,  resource.schematic.build
+        %-  start-scry-request
+        [vane care [[ship.disc.rail desk.disc.rail [%da date.build]] spur.rail]]
       ::  we must run +apply-build-receipt on :build.made before :block
       ::
       ?<  %+  lien  blocks
@@ -1781,7 +1781,7 @@
       ::
       ?^  blocks
         ::
-        (return-blocks blocks ~)
+        (return-blocks blocks)
       ::
       ?<  ?=(~ head-result)
       ?<  ?=(~ tail-result)
@@ -1803,7 +1803,7 @@
       =^  result  out  (depend-on pinned-sub)
       ::
       ?~  result
-        (return-blocks ~[pinned-sub] ~)
+        (return-blocks ~[pinned-sub])
       ::
       (return-result u.result)
     ::
@@ -1818,7 +1818,7 @@
       ::
       =^  result  out  (depend-on choice)
       ?~  result
-        (return-blocks ~[choice] ~)
+        (return-blocks ~[choice])
       ::
       ?:  ?=([%error *] u.result)
         ::  TODO: When the type system wises up, fix this:
@@ -1841,7 +1841,7 @@
       ::
       =^  path-result  out  (depend-on path-build)
       ?~  path-result
-        (return-blocks [path-build]~ ~)
+        (return-blocks [path-build]~)
       ::
       |^  ^-  build-receipt
           ::  if there's a renderer called :renderer, use it on :path-to-render
@@ -1859,7 +1859,7 @@
         ::
         =^  hood-result  out  (depend-on hood-build)
         ?~  hood-result
-          (return-blocks [hood-build]~ ~)
+          (return-blocks [hood-build]~)
         ::
         ?:  ?=([~ %error *] hood-result)
           (try-mark message.u.hood-result)
@@ -1872,7 +1872,7 @@
         ::
         =^  plan-result  out  (depend-on plan-build)
         ?~  plan-result
-          (return-blocks [plan-build]~ ~)
+          (return-blocks [plan-build]~)
         ::
         ?:  ?=([~ %error *] plan-result)
           (try-mark message.u.plan-result)
@@ -1905,7 +1905,7 @@
         ::
         =^  toplevel-result  out  (depend-on toplevel-build)
         ?~  toplevel-result
-          (return-blocks [toplevel-build]~ ~)
+          (return-blocks [toplevel-build]~)
         ::
         ?.  ?=([~ %success %scry *] toplevel-result)
           ?~  errors
@@ -1976,7 +1976,7 @@
         ::
         =^  alts-result  out  (depend-on alts-build)
         ?~  alts-result
-          (return-blocks [alts-build]~ ~)
+          (return-blocks [alts-build]~)
         ::
         ?.  ?=([~ %success %alts *] alts-result)
           ?~  errors
@@ -2007,7 +2007,7 @@
       ::
       =^  path-result  out  (depend-on path-build)
       ?~  path-result
-        (return-blocks [path-build]~ ~)
+        (return-blocks [path-build]~)
       ::
       ?.  ?=([~ %success %path *] path-result)
         (wrap-error path-result)
@@ -2017,7 +2017,7 @@
       ::
       =^  core-result  out  (depend-on core-build)
       ?~  core-result
-        (return-blocks [core-build]~ ~)
+        (return-blocks [core-build]~)
       ::
       ?.  ?=([~ %success %core *] core-result)
         (wrap-error core-result)
@@ -2048,7 +2048,7 @@
       =?  blocks  ?=(~ sample-result)  [[date.build sample] blocks]
       ?^  blocks
         ::
-        (return-blocks blocks ~)
+        (return-blocks blocks)
       ::
       ?<  ?=(~ gate-result)
       ?<  ?=(~ sample-result)
@@ -2062,7 +2062,7 @@
       =/  slit-build=^build  [date.build slit-schematic]
       =^  slit-result  out  (depend-on slit-build)
       ?~  slit-result
-        (return-blocks [date.build slit-schematic]~ ~)
+        (return-blocks [date.build slit-schematic]~)
       ::
       ?.  ?=([~ %success %slit *] slit-result)
         (wrap-error slit-result)
@@ -2101,7 +2101,7 @@
       ::
       =^  input-result  out  (depend-on input-build)
       ?~  input-result
-        (return-blocks [input-build]~ ~)
+        (return-blocks [input-build]~)
       ::
       ?.  ?=([~ %success *] input-result)
         (wrap-error input-result)
@@ -2114,7 +2114,7 @@
         (depend-on translation-path-build)
       ::
       ?~  translation-path-result
-        (return-blocks [translation-path-build]~ ~)
+        (return-blocks [translation-path-build]~)
       ::
       ?.  ?=([~ %success %walk *] translation-path-result)
         (wrap-error translation-path-result)
@@ -2141,7 +2141,7 @@
             ==
           ::
               %blocks
-            (return-blocks blocks.action-result ~)
+            (return-blocks blocks.action-result)
           ::
               %error
             (return-error [leaf+"ford: failed to %cast" tang.action-result])
@@ -2294,7 +2294,7 @@
       ::
       =^  hood-result  out  (depend-on hood-build)
       ?~  hood-result
-        (return-blocks [hood-build]~ ~)
+        (return-blocks [hood-build]~)
       ::
       ?:  ?=(%error -.u.hood-result)
         (wrap-error hood-result)
@@ -2307,7 +2307,7 @@
       ::
       =^  plan-result  out  (depend-on plan-build)
       ?~  plan-result
-        (return-blocks [plan-build]~ ~)
+        (return-blocks [plan-build]~)
       ::
       ?:  ?=(%error -.u.plan-result)
         (wrap-error plan-result)
@@ -2324,7 +2324,7 @@
       ::
       =^  sub-result  out  (depend-on sub-build)
       ?~  sub-result
-        (return-blocks [sub-build]~ ~)
+        (return-blocks [sub-build]~)
       ::
       ?.  ?=([~ %success ^ ^] sub-result)
         (wrap-error sub-result)
@@ -2352,7 +2352,7 @@
       ::
       =^  mark-path-result  out  (depend-on mark-path-build)
       ?~  mark-path-result
-        (return-blocks [mark-path-build]~ ~)
+        (return-blocks [mark-path-build]~)
       ::
       ?.  ?=([~ %success %path *] mark-path-result)
         (wrap-error mark-path-result)
@@ -2361,7 +2361,7 @@
       ::
       =^  mark-result  out  (depend-on mark-build)
       ?~  mark-result
-        (return-blocks [mark-build]~ ~)
+        (return-blocks [mark-build]~)
       ::
       ?.  ?=([~ %success %core *] mark-result)
         (wrap-error mark-result)
@@ -2375,7 +2375,7 @@
       ::
       =^  grad-result  out  (depend-on grad-build)
       ?~  grad-result
-        (return-blocks [grad-build]~ ~)
+        (return-blocks [grad-build]~)
       ::
       ?.  ?=([~ %success %ride *] grad-result)
         (wrap-error grad-result)
@@ -2396,7 +2396,7 @@
         ::
         =^  diff-result  out  (depend-on diff-build)
         ?~  diff-result
-          (return-blocks [diff-build]~ ~)
+          (return-blocks [diff-build]~)
         ::
         ?.  ?=([~ %success %diff *] diff-result)
           (wrap-error diff-result)
@@ -2438,7 +2438,7 @@
       ::
       =^  diff-result  out  (depend-on diff-build)
       ?~  diff-result
-        (return-blocks [diff-build]~ ~)
+        (return-blocks [diff-build]~)
       ::
       ?.  ?=([~ %success %call *] diff-result)
         (wrap-error diff-result)
@@ -2448,7 +2448,7 @@
       ::
       =^  form-result  out  (depend-on form-build)
       ?~  form-result
-        (return-blocks [form-build]~ ~)
+        (return-blocks [form-build]~)
       ::
       ?.  ?=([~ %success %ride *] form-result)
         (wrap-error form-result)
@@ -2471,7 +2471,7 @@
       =^  attempt-result  out  (depend-on attempt-build)
       ?~  attempt-result
         ::
-        (return-blocks ~[[date.build attempt]] ~)
+        (return-blocks ~[[date.build attempt]])
       ::
       ?.  ?=([%error *] u.attempt-result)
         (return-result u.attempt-result)
@@ -2486,7 +2486,7 @@
       =^  scry-result  out  (depend-on scry-build)
       ?~  scry-result
         ::
-        (return-blocks ~[scry-build] ~)
+        (return-blocks ~[scry-build])
       ::
       ?:  ?=([~ %error *] scry-result)
         (wrap-error scry-result)
@@ -2514,7 +2514,7 @@
       ::
       =^  initial-result  out  (depend-on initial-build)
       ?~  initial-result
-        (return-blocks [initial-build]~ ~)
+        (return-blocks [initial-build]~)
       ::
       ?.  ?=([~ %success [%success ^ ^] %success %path *] initial-result)
         (wrap-error initial-result)
@@ -2532,7 +2532,7 @@
       ::
       =^  mark-result  out  (depend-on mark-build)
       ?~  mark-result
-        (return-blocks [mark-build]~ ~)
+        (return-blocks [mark-build]~)
       ::
       ?.  ?=([~ %success %core *] mark-result)
         (wrap-error mark-result)
@@ -2548,7 +2548,7 @@
       ::
       =^  grad-result  out  (depend-on grad-build)
       ?~  grad-result
-        (return-blocks [grad-build]~ ~)
+        (return-blocks [grad-build]~)
       ::
       ?.  ?=([~ %success %ride *] grad-result)
         (wrap-error grad-result)
@@ -2569,7 +2569,7 @@
         ::
         =^  join-result  out  (depend-on join-build)
         ?~  join-result
-          (return-blocks [join-build]~ ~)
+          (return-blocks [join-build]~)
         ::
         ?.  ?=([~ %success %join *] join-result)
           (wrap-error join-result)
@@ -2592,7 +2592,7 @@
       ::
       =^  form-result  out  (depend-on form-build)
       ?~  form-result
-        (return-blocks [form-build]~ ~)
+        (return-blocks [form-build]~)
       ::
       ?.  ?=([~ %success %ride *] form-result)
         (wrap-error form-result)
@@ -2622,7 +2622,7 @@
       ::
       =^  diff-result  out  (depend-on diff-build)
       ?~  diff-result
-        (return-blocks [diff-build]~ ~)
+        (return-blocks [diff-build]~)
       ::
       ?.  ?=([~ %success %call *] diff-result)
         (wrap-error diff-result)
@@ -2670,7 +2670,7 @@
       ::
       =^  initial-result  out  (depend-on initial-build)
       ?~  initial-result
-        (return-blocks [initial-build]~ ~)
+        (return-blocks [initial-build]~)
       ::  TODO: duplicate logic with +make-join
       ::
       ?.  ?=([~ %success [%success ^ ^] %success %path *] initial-result)
@@ -2689,7 +2689,7 @@
       ::
       =^  mark-result  out  (depend-on mark-build)
       ?~  mark-result
-        (return-blocks [mark-build]~ ~)
+        (return-blocks [mark-build]~)
       ::
       ?.  ?=([~ %success %core *] mark-result)
         (wrap-error mark-result)
@@ -2705,7 +2705,7 @@
       ::
       =^  grad-result  out  (depend-on grad-build)
       ?~  grad-result
-        (return-blocks [grad-build]~ ~)
+        (return-blocks [grad-build]~)
       ::
       ?.  ?=([~ %success %ride *] grad-result)
         (wrap-error grad-result)
@@ -2730,7 +2730,7 @@
         ::
         =^  mash-result  out  (depend-on mash-build)
         ?~  mash-result
-          (return-blocks [mash-build]~ ~)
+          (return-blocks [mash-build]~)
         ::
         ?.  ?=([~ %success %mash *] mash-result)
           (wrap-error mash-result)
@@ -2753,7 +2753,7 @@
       ::
       =^  form-result  out  (depend-on form-build)
       ?~  form-result
-        (return-blocks [form-build]~ ~)
+        (return-blocks [form-build]~)
       ::
       ?.  ?=([~ %success %ride *] form-result)
         (wrap-error form-result)
@@ -2795,7 +2795,7 @@
       ::
       =^  mash-result  out  (depend-on mash-build)
       ?~  mash-result
-        (return-blocks [mash-build]~ ~)
+        (return-blocks [mash-build]~)
       ::
       ?.  ?=([~ %success %call *] mash-result)
         (wrap-error mash-result)
@@ -2813,7 +2813,7 @@
       =/  subject-build=^build  [date.build subject]
       =^  subject-result  out  (depend-on subject-build)
       ?~  subject-result
-        (return-blocks [subject-build]~ ~)
+        (return-blocks [subject-build]~)
       ::
       ?.  ?=([~ %success *] subject-result)
         (wrap-error subject-result)
@@ -2884,7 +2884,7 @@
       ::
       =^  ride-result  out  (depend-on ride-build)
       ?~  ride-result
-        (return-blocks [ride-build]~ ~)
+        (return-blocks [ride-build]~)
       ::
       ?.  ?=([~ %success %ride *] ride-result)
         (wrap-error ride-result)
@@ -2903,7 +2903,7 @@
       ::
       =^  initial-result  out  (depend-on initial-build)
       ?~  initial-result
-        (return-blocks [initial-build]~ ~)
+        (return-blocks [initial-build]~)
       ::
       ?>  ?=([~ %success ^ ^] initial-result)
       =/  start-result=build-result  head.u.initial-result
@@ -2927,7 +2927,7 @@
         (depend-on mark-path-build)
       ::
       ?~  mark-path-result
-        (return-blocks [mark-path-build]~ ~)
+        (return-blocks [mark-path-build]~)
       ::
       ?.  ?=([~ %success %path *] mark-path-result)
         (wrap-error mark-path-result)
@@ -2936,7 +2936,7 @@
       ::
       =^  mark-result  out  (depend-on mark-build)
       ?~  mark-result
-        (return-blocks [mark-build]~ ~)
+        (return-blocks [mark-build]~)
       ::
       ?.  ?=([~ %success %core *] mark-result)
         (wrap-error mark-result)
@@ -2953,7 +2953,7 @@
       ::
       =^  grad-result  out  (depend-on grad-build)
       ?~  grad-result
-        (return-blocks [grad-build]~ ~)
+        (return-blocks [grad-build]~)
       ::
       ?.  ?=([~ %success %ride *] grad-result)
         (wrap-error grad-result)
@@ -2991,7 +2991,7 @@
         ::
         =^  cast-result  out  (depend-on cast-build)
         ?~  cast-result
-          (return-blocks [cast-build]~ ~)
+          (return-blocks [cast-build]~)
         ::
         ?.  ?=([~ %success %cast *] cast-result)
           (wrap-error cast-result)
@@ -3025,7 +3025,7 @@
       ::
       =^  form-result  out  (depend-on form-build)
       ?~  form-result
-        (return-blocks [form-build]~ ~)
+        (return-blocks [form-build]~)
       ::
       ?.  ?=([~ %success %ride *] form-result)
         (wrap-error form-result)
@@ -3059,7 +3059,7 @@
       ::
       =^  pact-result  out  (depend-on pact-build)
       ?~  pact-result
-        (return-blocks [pact-build]~ ~)
+        (return-blocks [pact-build]~)
       ::
       ?.  ?=([~ %success %call *] pact-result)
         (wrap-error pact-result)
@@ -3147,7 +3147,7 @@
           ::
           =^  path-results  ..$  (resolve-builds path-builds)
           ?^  blocks
-            (return-blocks blocks ~)
+            (return-blocks blocks)
           ::
           ?^  error-message
             (return-error error-message)
@@ -3160,7 +3160,7 @@
           ::
           =^  core-results  ..$  (resolve-builds core-builds)
           ?^  blocks
-            (return-blocks blocks ~)
+            (return-blocks blocks)
           ::
           ?^  error-message
             (return-error error-message)
@@ -3170,7 +3170,7 @@
           ::
           =^  reef-result  out  (depend-on reef-build)
           ?~  reef-result
-            (return-blocks [reef-build]~ ~)
+            (return-blocks [reef-build]~)
           ::
           ?.  ?=([~ %success %reef *] reef-result)
             (wrap-error reef-result)
@@ -3188,7 +3188,7 @@
           ?:  ?=(%error -.crane-result)
             (return-error message.crane-result)
           ?:  ?=(%block -.crane-result)
-            (return-blocks builds.crane-result ~)
+            (return-blocks builds.crane-result)
           ::  combined-hoon: source hoons condensed into a single +hoon
           ::
           =/  combined-hoon=hoon  [%tssg sources.scaffold]
@@ -3201,7 +3201,7 @@
           ::  compilation blocked; produce block on sub-build
           ::
           ?~  compiled
-            (return-blocks ~[compile] ~)
+            (return-blocks ~[compile])
           ::  compilation failed; error out
           ::
           ?.  ?=([~ %success %ride *] compiled)
@@ -3853,7 +3853,7 @@
       =?  blocks  ?=(~ zuse-scry-result)  [zuse-scry blocks]
       ::
       ?^  blocks
-        (return-blocks blocks ~)
+        (return-blocks blocks)
       ::
       ?.  ?=([~ %success %scry *] hoon-scry-result)
         (wrap-error hoon-scry-result)
@@ -3887,7 +3887,7 @@
       ::
       =^  zuse-build-result  out  (depend-on zuse-build)
       ?~  zuse-build-result
-        (return-blocks [zuse-build]~ ~)
+        (return-blocks [zuse-build]~)
       ::
       ?.  ?=([~ %success %ride *] zuse-build-result)
         (wrap-error zuse-build-result)
@@ -3900,13 +3900,13 @@
       ::
       =^  result  out  (depend-on [date.build schematic])
       ?~  result
-        (return-blocks [date.build schematic]~ ~)
+        (return-blocks [date.build schematic]~)
       ::
       =*  subject-vase  q:(result-to-cage u.result)
       =/  slim-schematic=^schematic  [%slim p.subject-vase formula]
       =^  slim-result  out  (depend-on [date.build slim-schematic])
       ?~  slim-result
-        (return-blocks [date.build slim-schematic]~ ~)
+        (return-blocks [date.build slim-schematic]~)
       ::
       ?.  ?=([~ %success %slim *] slim-result)
         (wrap-error slim-result)
@@ -3942,7 +3942,7 @@
       =^  result  out  (depend-on [date.build schematic])
       ::
       ?~  result
-        (return-blocks [date.build schematic]~ ~)
+        (return-blocks [date.build schematic]~)
       (return-result u.result)
     ::
     ++  make-scry
@@ -3968,12 +3968,7 @@
       ::  scry blocked
       ::
       ?~  scry-response
-        ::  TODO: Verify handling of already blocked scrys later
-        ::
-        ::    We killed a bunch of code which "worked" but which might have
-        ::    been a no-op.
-        ::
-        (return-blocks ~ `scry-request)
+        (return-blocks ~)
       ::  scry failed
       ::
       ?~  u.scry-response
@@ -4046,7 +4041,7 @@
       ::
       =^  bunt-result  out  (depend-on bunt-build)
       ?~  bunt-result
-        (return-blocks [bunt-build]~ ~)
+        (return-blocks [bunt-build]~)
       ::
       ?.  ?=([~ %success %bunt *] bunt-result)
         (wrap-error bunt-result)
@@ -4072,7 +4067,7 @@
       ::
       =^  path-result  out  (depend-on path-build)
       ?~  path-result
-        (return-blocks [path-build]~ ~)
+        (return-blocks [path-build]~)
       ::
       ?.  ?=([~ %success %path *] path-result)
         (wrap-error path-result)
@@ -4081,7 +4076,7 @@
       ::
       =^  bunt-result  out  (depend-on bunt-build)
       ?~  bunt-result
-        (return-blocks [bunt-build]~ ~)
+        (return-blocks [bunt-build]~)
       ::
       ?.  ?=([~ %success %bunt *] bunt-result)
         (wrap-error bunt-result)
@@ -4101,7 +4096,7 @@
       ::
       =^  call-result  out  (depend-on call-build)
       ?~  call-result
-        (return-blocks [call-build]~ ~)
+        (return-blocks [call-build]~)
       ::
       ?.  ?=([~ %success %call *] call-result)
         (wrap-error call-result)
@@ -4439,7 +4434,7 @@
           `sub
         ::
         ?^  blocks
-          [~ (return-blocks blocks ~)]
+          [~ (return-blocks blocks)]
         ::
         :_  out
         :-  ~
@@ -4462,9 +4457,9 @@
     ::  +return-blocks: exit +make as a blocked build
     ::
     ++  return-blocks
-      |=  [builds=(list ^build) scry-blocked=(unit scry-request)]
+      |=  builds=(list ^build)
       ^-  build-receipt
-      out(result [%blocks builds scry-blocked])
+      out(result [%blocks builds])
     ::  +return-error: exit +make with a specific failure message
     ::
     ++  return-error
@@ -4565,11 +4560,7 @@
         =.  out  accumulator
         +:(depend-on [date.block schematic.block])
       ::
-      ::  TODO: Here we are passing a single ~ for :scry-blocked. Should we
-      ::  be passing one or multiple resource back instead? Maybe not? Are
-      ::  we building blocking schematics, which they themselves will scry?
-      ::
-      (return-blocks blocks ~)
+      (return-blocks blocks)
     --
   ::  |utilities:per-event: helper arms
   ::
