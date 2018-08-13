@@ -8,6 +8,7 @@
 =,  sha
 =,  ^keygen
 ::
+|%
 ++  to-byts
   |=  a=@t
   =+  (met 3 a)
@@ -20,57 +21,54 @@
   %-  argon2:argon2:crypto
   [out %u 0x13 1 1.024 10 *byts *byts]
 ::
+++  child-node-from-seed
+  |=  [seed=byts met=meta pass=(unit @t)]
+  ^-  node
+  =+  dr=~(. sd pass)
+  =+  child-seed=(seed:dr seed met)
+  :+  met  dat.child-seed
+  (wallet:dr child-seed)
+::
 ++  full-wallet-from-entropy
-  |=  [entropy=byts seed-size=@ud sis=(set ship) pass=(unit @t)]
+  |=  [entropy=byts seed-size=@ud sis=(set ship) pass=(unit @t) revs=revisions]
   =+  owner-seed=seed-size^(argon2u entropy seed-size)
-  (full-wallet-from-seed owner-seed sis pass)
+  (full-wallet-from-seed owner-seed sis pass revs)
 ::
 ++  full-wallet-from-seed
-  |=  [owner-seed=byts sis=(set ship) pass=(unit @t)]
+  |=  [owner-seed=byts sis=(set ship) pass=(unit @t) revs=revisions]
   =+  dr=~(. sd pass)
+  =+  cn=|=([s=byts m=meta] (child-node-from-seed s m pass))
   ::
   :-  ^=  owner  ^-  node
       :+  *meta  dat.owner-seed
       (wallet:dr owner-seed)
   ::
-  =/  delegate-meta=meta  ["delegate" 0 ~]
-  =+  delegate-seed=(seed:dr owner-seed delegate-meta)
-  :-  ^=  delegate  ^-  node
-      :-  meta=delegate-meta
-      :-  seed=`@ux`dat.delegate-seed
-      keys=(wallet:dr delegate-seed)
+  :-  ^=  delegate
+      (cn owner-seed "delegate" delegate.revs ~)
   ::
-  =/  manage-meta=meta  ["manage" 0 ~]
-  =+  manage-seed=(seed:dr owner-seed manage-meta)
-  :-  ^=  manage  ^-  node
-      :-  meta=manage-meta
-      :-  seed=`@ux`dat.manage-seed
-      keys=(wallet:dr manage-seed)
+  =/  manage=node
+    (cn owner-seed "manage" manage.revs ~)
+  :-  manage=manage
   ::
-  =/  transfer=(map ship (pair byts node))
+  =/  transfer=(map ship node)
     %-  ~(rep in sis)
-    |=  [w=ship n=(map ship (pair byts node))]
-    %+  ~(put by n)  w
-    =+  m=["transfer" 0 `w]
-    =+  s=(seed:dr owner-seed -)
-    [s [m dat.s (wallet:dr s)]]
-  :-  ^=  transfer  ^-  nodes
-      (~(run by transfer) tail)
+    |=  [s=ship n=(map ship node)]
+    %+  ~(put by n)  s
+    (cn owner-seed "transfer" transfer.revs `s)
+  :-  transfer=transfer
   ::
   :-  ^=  spawn  ^-  nodes
-      %-  ~(rep by transfer)
-      |=  [[w=ship s=byts *] n=(map ship node)]
-      %+  ~(put by n)  w
-      =+  m=["spawn" 0 `w]
-      =+  s=(seed:dr s m)
-      [m dat.s (wallet:dr s)]
+      %-  ~(urn by transfer)
+      |=  [s=ship n=node]
+      %+  cn  [wid.owner-seed seed.n]
+      ["spawn" spawn.revs `s]
   ::
   ^=  network  ^-  uodes
   %-  ~(rep in sis)
-  |=  [w=ship u=(map ship uode)]
-  %+  ~(put by u)  w
-  =+  m=["network" 0 `w]
-  =+  s=(seed:dr manage-seed m)
+  |=  [s=ship u=(map ship uode)]
+  %+  ~(put by u)  s
+  =+  m=["network" network.revs `s]
+  =+  s=(seed:dr [wid.owner-seed seed.manage] m)
   [m dat.s (urbit:dr s)]
 ::
 ++  sd                                                  ::  seed derivation
