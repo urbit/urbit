@@ -81,6 +81,79 @@
 =,  ford  ::  TODO remove once in vane
 ::
 |%
+++  clock
+  |*  $:  ::  key-type: mold of keys
+          ::
+          key-type=mold
+          ::  val-type: mold of values
+          ::
+          val-type=mold
+      ==
+    $:  lookup=(map key-type [val=val-type fresh=@ud])
+        queue=(qeu key-type)
+        size=@ud
+        max-size=@ud
+        depth=@ud
+    ==
+--
+|%
+++  ops
+  |*  [key-type=mold val-type=mold]
+  |_  clock=(clock key-type val-type)
+  ::  +get: looks up a key, marking it as fresh
+  ::
+  ++  get
+    |=  key=key-type
+    ^+  [val-type clock]
+    ::
+    =+  maybe-got=(~(get by lookup.clock) key)
+    ?~  maybe-got
+      [~ clock]
+    ::
+    =.  lookup.clock
+      %+  ~(put by lookup.clock)  key
+      u.maybe-got(fresh (max +(fresh.u.maybe-got) depth.clock))
+    [val.u.maybe-got clock]
+  ::  +put: add a new cache entry, possibly removing an old one
+  ::
+  ++  put
+    |=  [key=key-type val=val-type]
+    ^+  clock
+    ::  no overwrite allowed
+    ::
+    ?<  (~(has by lookup.clock) key)
+    ::
+    =?  clock  =(max-size.clock +(size.clock))
+      ::
+      =.  size.clock  (dec size.clock)
+      ::
+      |-
+      ^+  clock
+      ::
+      =^  old-key  queue.clock  ~(get to queue.clock)
+      =/  old-entry  (~(got by lookup.clock) old-key)
+      ::
+      ?:  =(0 fresh.old-entry)
+        clock(lookup (~(del by lookup.clock) old-key))
+      ::
+      %_    $
+          lookup.clock
+        (~(put by lookup.clock) old-key old-entry(fresh (dec fresh.old-entry)))
+      ::
+          queue.clock
+        (~(put to queue.clock) old-key)
+      ==
+    ::
+    %_  clock
+      size    +(size.clock)
+      lookup  (~(put by lookup.clock) key [val 1])
+      queue   (~(put to queue.clock) key)
+    ==
+  ::
+  ++  wyt  size.clock
+  --
+--
+|%
 ::
 ::  +axle: overall ford state
 ::
