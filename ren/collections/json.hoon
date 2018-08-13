@@ -22,7 +22,7 @@
           %both
         %-  pairs:enjs:format
         :~  [%item (raw-to-json raw.itm)]
-            [%colleciton (collection-to-json col.itm)]
+            [%collection (collection-to-json col.itm)]
         ==
       ==
     ::
