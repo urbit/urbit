@@ -50,22 +50,21 @@
     (cn owner-seed "manage" manage.revs ~)
   :-  manage=manage
   ::
-  =/  transfer=(map ship node)
-    %-  ~(rep in sis)
-    |=  [s=ship n=(map ship node)]
-    %+  ~(put by n)  s
-    (cn owner-seed "transfer" transfer.revs `s)
-  :-  transfer=transfer
+  :-  ^=  transfer
+      %-  ~(rep in sis)
+      |=  [s=ship n=nodes]
+      %+  ~(put by n)  s
+      (cn owner-seed "transfer" transfer.revs `s)
   ::
-  :-  ^=  spawn  ^-  nodes
-      %-  ~(urn by transfer)
-      |=  [s=ship n=node]
-      %+  cn  [wid.owner-seed seed.n]
-      ["spawn" spawn.revs `s]
+  :-  ^=  spawn
+      %-  ~(rep in sis)
+      |=  [s=ship n=nodes]
+      %+  ~(put by n)  s
+      (cn owner-seed "spawn" spawn.revs `s)
   ::
-  ^=  network  ^-  uodes
+  ^=  network
   %-  ~(rep in sis)
-  |=  [s=ship u=(map ship uode)]
+  |=  [s=ship u=uodes]
   %+  ~(put by u)  s
   =+  m=["network" network.revs `s]
   =+  s=(seed:dr [wid.owner-seed seed.manage] m)
