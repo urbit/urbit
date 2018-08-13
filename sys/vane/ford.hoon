@@ -1,3 +1,4 @@
+!:
 ::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
 |=  pit=vase
@@ -1703,14 +1704,16 @@
   ++  make
     |=  =build
     ^-  build-receipt
-    ::  accessed-builds: builds accessed/depended on during this run.
+    ::  out: receipt to return to caller
     ::
-    =|  accessed-builds=(list ^build)
+    =|  out=build-receipt
     ::  ~&  [%turbo-make (build-to-tape build)]
     ::  dispatch based on the kind of +schematic in :build
     ::
     ::
     |^  =,  schematic.build
+        ::
+        =.  build.out  build
         ::
         ?-    -.schematic.build
         ::
@@ -1757,8 +1760,8 @@
       ::
       =/  head-build=^build  [date.build head]
       =/  tail-build=^build  [date.build tail]
-      =^  head-result  accessed-builds  (depend-on head-build)
-      =^  tail-result  accessed-builds  (depend-on tail-build)
+      =^  head-result  out  (depend-on head-build)
+      =^  tail-result  out  (depend-on tail-build)
       ::
       =|  blocks=(list ^build)
       =?  blocks  ?=(~ head-result)  [head-build blocks]
@@ -1767,18 +1770,17 @@
       ::
       ?^  blocks
         ::
-        [build [%blocks blocks ~] accessed-builds]
+        (return-blocks blocks ~)
       ::
       ?<  ?=(~ head-result)
       ?<  ?=(~ tail-result)
       ::
-      =-  [build [%build-result -] accessed-builds]
-      `build-result`[%success u.head-result u.tail-result]
+      (return-result %success u.head-result u.tail-result)
     ::
     ++  make-literal
       |=  =cage
       ^-  build-receipt
-      [build [%build-result %success %$ cage] accessed-builds]
+      (return-result %success %$ cage)
     ::
     ++  make-pin
       |=  [date=@da =schematic]
@@ -1787,12 +1789,12 @@
       ::
       =/  pinned-sub=^build  [date schematic]
       ::
-      =^  result  accessed-builds  (depend-on pinned-sub)
+      =^  result  out  (depend-on pinned-sub)
       ::
       ?~  result
-        [build [%blocks ~[pinned-sub] ~] accessed-builds]
+        (return-blocks ~[pinned-sub] ~)
       ::
-      [build [%build-result u.result] accessed-builds]
+      (return-result u.result)
     ::
     ++  make-alts
       |=  [choices=(list schematic) errors=(list tank)]
@@ -1803,9 +1805,9 @@
       ::
       =/  choice=^build  [date.build i.choices]
       ::
-      =^  result  accessed-builds  (depend-on choice)
+      =^  result  out  (depend-on choice)
       ?~  result
-        [build [%blocks ~[choice] ~] accessed-builds]
+        (return-blocks ~[choice] ~)
       ::
       ?:  ?=([%error *] u.result)
         ::  TODO: When the type system wises up, fix this:
@@ -1816,7 +1818,7 @@
         =.  errors  (weld errors `(list tank)`[[%leaf "option"] wrapped-error ~])
         $(choices t.choices)
       ::
-      [build [%build-result %success %alts u.result] accessed-builds]
+      (return-result %success %alts u.result)
     ::
     ++  make-bake
       |=  [renderer=term query-string=coin path-to-render=rail]
@@ -1826,9 +1828,9 @@
       =/  path-build=^build
         [date.build [%path disc.path-to-render %ren renderer]]
       ::
-      =^  path-result  accessed-builds  (depend-on path-build)
+      =^  path-result  out  (depend-on path-build)
       ?~  path-result
-        [build [%blocks [path-build]~ ~] accessed-builds]
+        (return-blocks [path-build]~ ~)
       ::
       |^  ^-  build-receipt
           ::  if there's a renderer called :renderer, use it on :path-to-render
@@ -1844,9 +1846,9 @@
         ::
         =/  hood-build=^build  [date.build [%hood rail]]
         ::
-        =^  hood-result  accessed-builds  (depend-on hood-build)
+        =^  hood-result  out  (depend-on hood-build)
         ?~  hood-result
-          [build [%blocks [hood-build]~ ~] accessed-builds]
+          (return-blocks [hood-build]~ ~)
         ::
         ?:  ?=([~ %error *] hood-result)
           (try-mark message.u.hood-result)
@@ -1857,9 +1859,9 @@
           :-  date.build
           [%plan path-to-render query-string scaffold.u.hood-result]
         ::
-        =^  plan-result  accessed-builds  (depend-on plan-build)
+        =^  plan-result  out  (depend-on plan-build)
         ?~  plan-result
-          [build [%blocks [plan-build]~ ~] accessed-builds]
+          (return-blocks [plan-build]~ ~)
         ::
         ?:  ?=([~ %error *] plan-result)
           (try-mark message.u.plan-result)
@@ -1873,7 +1875,7 @@
           ::
           [%success %bake renderer vase.u.plan-result]
         ::
-        [build [%build-result build-result] accessed-builds]
+        (return-result build-result)
       ::
       ++  try-mark
         |=  errors=(list tank)
@@ -1890,9 +1892,9 @@
         =/  toplevel-build=^build
           [date.build [%scry %c %y path-to-render]]
         ::
-        =^  toplevel-result  accessed-builds  (depend-on toplevel-build)
+        =^  toplevel-result  out  (depend-on toplevel-build)
         ?~  toplevel-result
-          [build [%blocks [toplevel-build]~ ~] accessed-builds]
+          (return-blocks [toplevel-build]~ ~)
         ::
         ?.  ?=([~ %success %scry *] toplevel-result)
           ?~  errors
@@ -1924,15 +1926,14 @@
           :-  sub
           [%scry %c %y path-to-render(spur [sub spur.path-to-render])]
         ::
-        =^  schematic-results  accessed-builds
+        =^  maybe-schematic-results  out
           (perform-schematics sub-schematics %fail-on-errors *@ta)
-        ?:  ?=([%| *] schematic-results)
-          ::  block or error
-          p.schematic-results
+        ?~  maybe-schematic-results
+          out
         ::  marks: list of the marks of the files at :path-to-render
         ::
         =/  marks=(list @tas)
-          %+  murn  p.schematic-results
+          %+  murn  u.maybe-schematic-results
           |=  [sub-path=@ta result=build-result]
           ^-  (unit @tas)
           ::
@@ -1962,9 +1963,9 @@
           ::
           [%cast disc.file renderer [%scry %c %x file]]
         ::
-        =^  alts-result  accessed-builds  (depend-on alts-build)
+        =^  alts-result  out  (depend-on alts-build)
         ?~  alts-result
-          [build [%blocks [alts-build]~ ~] accessed-builds]
+          (return-blocks [alts-build]~ ~)
         ::
         ?.  ?=([~ %success %alts *] alts-result)
           ?~  errors
@@ -1983,7 +1984,7 @@
         =/  =build-result
           [%success %bake (result-to-cage u.alts-result)]
         ::
-        [build [%build-result build-result] accessed-builds]
+        (return-result build-result)
       --
     ::
     ++  make-bunt
@@ -1993,9 +1994,9 @@
       ::
       =/  path-build=^build  [date.build [%path disc %mar mark]]
       ::
-      =^  path-result  accessed-builds  (depend-on path-build)
+      =^  path-result  out  (depend-on path-build)
       ?~  path-result
-        [build [%blocks [path-build]~ ~] accessed-builds]
+        (return-blocks [path-build]~ ~)
       ::
       ?.  ?=([~ %success %path *] path-result)
         (wrap-error path-result)
@@ -2003,9 +2004,9 @@
       ::
       =/  core-build=^build  [date.build [%core rail.u.path-result]]
       ::
-      =^  core-result  accessed-builds  (depend-on core-build)
+      =^  core-result  out  (depend-on core-build)
       ?~  core-result
-        [build [%blocks [core-build]~ ~] accessed-builds]
+        (return-blocks [core-build]~ ~)
       ::
       ?.  ?=([~ %success %core *] core-result)
         (wrap-error core-result)
@@ -2019,24 +2020,24 @@
       =?  sample-type  ?=(%face -.sample-type)  q.sample-type
       ::
       =/  =cage  [mark sample-type sample-value]
-      [build [%build-result %success %bunt cage] accessed-builds]
+      (return-result %success %bunt cage)
     ::
     ++  make-call
       |=  [gate=schematic sample=schematic]
       ^-  build-receipt
       ::
       =/  gate-build=^build  [date.build gate]
-      =^  gate-result    accessed-builds  (depend-on gate-build)
+      =^  gate-result    out  (depend-on gate-build)
       ::
       =/  sample-build=^build  [date.build sample]
-      =^  sample-result  accessed-builds  (depend-on sample-build)
+      =^  sample-result  out  (depend-on sample-build)
       ::
       =|  blocks=(list ^build)
       =?  blocks  ?=(~ gate-result)    [[date.build gate] blocks]
       =?  blocks  ?=(~ sample-result)  [[date.build sample] blocks]
       ?^  blocks
         ::
-        [build [%blocks blocks ~] accessed-builds]
+        (return-blocks blocks ~)
       ::
       ?<  ?=(~ gate-result)
       ?<  ?=(~ sample-result)
@@ -2048,9 +2049,9 @@
       ::
       =/  slit-schematic=schematic  [%slit gate-vase sample-vase]
       =/  slit-build=^build  [date.build slit-schematic]
-      =^  slit-result  accessed-builds  (depend-on slit-build)
+      =^  slit-result  out  (depend-on slit-build)
       ?~  slit-result
-        [build [%blocks [date.build slit-schematic]~ ~] accessed-builds]
+        (return-blocks [date.build slit-schematic]~ ~)
       ::
       ?.  ?=([~ %success %slit *] slit-result)
         (wrap-error slit-result)
@@ -2064,10 +2065,7 @@
       ::
       ?-    -.val
           %0
-        :*  build
-            [%build-result %success %call [type.u.slit-result p.val]]
-            accessed-builds
-        ==
+        (return-result %success %call [type.u.slit-result p.val])
       ::
           %1
         =/  blocked-paths=(list path)  ((hard (list path)) p.val)
@@ -2083,9 +2081,9 @@
       ::
       =/  input-build=^build  [date.build input]
       ::
-      =^  input-result  accessed-builds  (depend-on input-build)
+      =^  input-result  out  (depend-on input-build)
       ?~  input-result
-        [build [%blocks [input-build]~ ~] accessed-builds]
+        (return-blocks [input-build]~ ~)
       ::
       ?.  ?=([~ %success *] input-result)
         (wrap-error input-result)
@@ -2094,11 +2092,11 @@
       ::
       =/  translation-path-build=^build
         [date.build [%walk disc p.result-cage mark]]
-      =^  translation-path-result  accessed-builds
+      =^  translation-path-result  out
         (depend-on translation-path-build)
       ::
       ?~  translation-path-result
-        [build [%blocks [translation-path-build]~ ~] accessed-builds]
+        (return-blocks [translation-path-build]~ ~)
       ::
       ?.  ?=([~ %success %walk *] translation-path-result)
         (wrap-error translation-path-result)
@@ -2108,9 +2106,9 @@
       ::
       |^  ^-  build-receipt
           ?~  translation-path
-            [build [%build-result %success %cast result-cage] accessed-builds]
+            (return-result %success %cast result-cage)
           ::
-          =^  action-result  accessed-builds
+          =^  action-result  out
             =,  i.translation-path
             ?-  -.i.translation-path
               %grow  (run-grow source target result-cage)
@@ -2125,16 +2123,10 @@
             ==
           ::
               %blocks
-            [build [%blocks blocks.action-result ~] accessed-builds]
+            (return-blocks blocks.action-result ~)
           ::
               %error
-            :*  build
-                :*  %build-result  %error
-                    leaf+"ford: failed to %cast"
-                    tang.action-result
-                ==
-                accessed-builds
-            ==
+            (return-error [leaf+"ford: failed to %cast" tang.action-result])
         ==
       ::
       +=  action-result
@@ -2148,32 +2140,32 @@
       ::
       ++  run-grab
         |=  [source-mark=term target-mark=term input-cage=cage]
-        ^-  [action-result _accessed-builds]
+        ^-  [action-result _out]
         ::
         =/  mark-path-build=^build
           [date.build [%path disc %mar target-mark]]
         ::
-        =^  mark-path-result  accessed-builds
+        =^  mark-path-result  out
           (depend-on mark-path-build)
         ?~  mark-path-result
-          [[%blocks [mark-path-build]~] accessed-builds]
+          [[%blocks [mark-path-build]~] out]
         ::
         ?.  ?=([~ %success %path *] mark-path-result)
           (cast-wrap-error mark-path-result)
         ::
         =/  mark-core-build=^build  [date.build [%core rail.u.mark-path-result]]
         ::
-        =^  mark-core-result  accessed-builds  (depend-on mark-core-build)
+        =^  mark-core-result  out  (depend-on mark-core-build)
         ?~  mark-core-result
-          [[%blocks ~[mark-core-build]] accessed-builds]
+          [[%blocks ~[mark-core-build]] out]
         ::  find +grab within the destination mark core
         ::
         =/  grab-build=^build
           [date.build [%ride [%limb %grab] [%$ (result-to-cage u.mark-core-result)]]]
         ::
-        =^  grab-result  accessed-builds  (depend-on grab-build)
+        =^  grab-result  out  (depend-on grab-build)
         ?~  grab-result
-          [[%blocks [grab-build]~] accessed-builds]
+          [[%blocks [grab-build]~] out]
         ::
         ?.  ?=([~ %success %ride *] grab-result)
           (cast-wrap-error grab-result)
@@ -2183,9 +2175,9 @@
           :-  date.build
           [%ride [%limb source-mark] [%$ %noun vase.u.grab-result]]
         ::
-        =^  grab-mark-result  accessed-builds  (depend-on grab-mark-build)
+        =^  grab-mark-result  out  (depend-on grab-mark-build)
         ?~  grab-mark-result
-          [[%blocks [grab-mark-build]~] accessed-builds]
+          [[%blocks [grab-mark-build]~] out]
         ::
         ?.  ?=([~ %success %ride *] grab-mark-result)
           (cast-wrap-error grab-mark-result)
@@ -2195,27 +2187,27 @@
           :-  date.build
           [%call gate=[%$ %noun vase.u.grab-mark-result] sample=[%$ input-cage]]
         ::
-        =^  call-result  accessed-builds  (depend-on call-build)
+        =^  call-result  out  (depend-on call-build)
         ?~  call-result
-          [[%blocks [call-build]~] accessed-builds]
+          [[%blocks [call-build]~] out]
         ::
         ?.  ?=([~ %success %call *] call-result)
           (cast-wrap-error call-result)
         ::
-        [[%success [mark vase.u.call-result]] accessed-builds]
+        [[%success [mark vase.u.call-result]] out]
       ::  +grow: grow from the input mark to the destination mark
       ::
       ++  run-grow
         |=  [source-mark=term target-mark=term input-cage=cage]
-        ^-  [action-result _accessed-builds]
+        ^-  [action-result _out]
         ::
         =/  starting-mark-path-build=^build
           [date.build [%path disc %mar source-mark]]
         ::
-        =^  starting-mark-path-result  accessed-builds
+        =^  starting-mark-path-result  out
           (depend-on starting-mark-path-build)
         ?~  starting-mark-path-result
-          [[%blocks [starting-mark-path-build]~] accessed-builds]
+          [[%blocks [starting-mark-path-build]~] out]
         ::
         ?.  ?=([~ %success %path *] starting-mark-path-result)
           (cast-wrap-error starting-mark-path-result)
@@ -2238,9 +2230,9 @@
               [[%& 6]~ [%$ input-cage]]~
           ==
         ::
-        =^  grow-result  accessed-builds  (depend-on grow-build)
+        =^  grow-result  out  (depend-on grow-build)
         ?~  grow-result
-          [[%blocks [grow-build]~] accessed-builds]
+          [[%blocks [grow-build]~] out]
         ::
         ?.  ?=([~ %success %ride *] grow-result)
           (cast-wrap-error grow-result)
@@ -2248,9 +2240,9 @@
         ::
         =/  bunt-build=^build  [date.build [%bunt disc target-mark]]
         ::
-        =^  bunt-result  accessed-builds  (depend-on bunt-build)
+        =^  bunt-result  out  (depend-on bunt-build)
         ?~  bunt-result
-          [[%blocks [bunt-build]~] accessed-builds]
+          [[%blocks [bunt-build]~] out]
         ::
         ?.  ?=([~ %success %bunt *] bunt-result)
           (cast-wrap-error bunt-result)
@@ -2258,21 +2250,21 @@
         ?.  (~(nest ut p.q.cage.u.bunt-result) | p.vase.u.grow-result)
           =*  src  source-mark
           =*  dst  target-mark
-          :_  accessed-builds
+          :_  out
           :-  %error
           [leaf+"ford: %cast from {<src>} to {<dst>} failed: nest fail"]~
         ::
-        [[%success mark vase.u.grow-result] accessed-builds]
+        [[%success mark vase.u.grow-result] out]
       ::
       ++  cast-wrap-error
         |=  result=(unit build-result)
-        ^-  [action-result _accessed-builds]
+        ^-  [action-result _out]
         ::
         ?>  ?=([~ %error *] result)
         =/  message=tang
           [[%leaf "ford: {<-.schematic.build>} failed: "] message.u.result]
         ::
-        [[%error message] accessed-builds]
+        [[%error message] out]
       --
     ::
     ++  make-core
@@ -2282,9 +2274,9 @@
       ::
       =/  hood-build=^build  [date.build [%hood source-path]]
       ::
-      =^  hood-result  accessed-builds  (depend-on hood-build)
+      =^  hood-result  out  (depend-on hood-build)
       ?~  hood-result
-        [build [%blocks [hood-build]~ ~] accessed-builds]
+        (return-blocks [hood-build]~ ~)
       ::
       ?:  ?=(%error -.u.hood-result)
         (wrap-error hood-result)
@@ -2295,15 +2287,15 @@
       =/  plan-build=^build
         [date.build [%plan source-path `coin`[%many ~] scaffold.u.hood-result]]
       ::
-      =^  plan-result  accessed-builds  (depend-on plan-build)
+      =^  plan-result  out  (depend-on plan-build)
       ?~  plan-result
-        [build [%blocks [plan-build]~ ~] accessed-builds]
+        (return-blocks [plan-build]~ ~)
       ::
       ?:  ?=(%error -.u.plan-result)
         (wrap-error plan-result)
       ::
       ?>  ?=([%success %plan *] u.plan-result)
-      [build [%build-result %success %core vase.u.plan-result] accessed-builds]
+      (return-result %success %core vase.u.plan-result)
     ::
     ++  make-diff
       |=  [=disc start=schematic end=schematic]
@@ -2312,9 +2304,9 @@
       ::
       =/  sub-build=^build  [date.build [start end]]
       ::
-      =^  sub-result  accessed-builds  (depend-on sub-build)
+      =^  sub-result  out  (depend-on sub-build)
       ?~  sub-result
-        [build [%blocks [sub-build]~ ~] accessed-builds]
+        (return-blocks [sub-build]~ ~)
       ::
       ?.  ?=([~ %success ^ ^] sub-result)
         (wrap-error sub-result)
@@ -2336,22 +2328,22 @@
         =/  =build-result
           [%success %diff [%null [%atom %n ~] ~]]
         ::
-        [build [%build-result build-result] accessed-builds]
+        (return-result build-result)
       ::
       =/  mark-path-build=^build  [date.build [%path disc %mar p.start-cage]]
       ::
-      =^  mark-path-result  accessed-builds  (depend-on mark-path-build)
+      =^  mark-path-result  out  (depend-on mark-path-build)
       ?~  mark-path-result
-        [build [%blocks [mark-path-build]~ ~] accessed-builds]
+        (return-blocks [mark-path-build]~ ~)
       ::
       ?.  ?=([~ %success %path *] mark-path-result)
         (wrap-error mark-path-result)
       ::
       =/  mark-build=^build  [date.build [%core rail.u.mark-path-result]]
       ::
-      =^  mark-result  accessed-builds  (depend-on mark-build)
+      =^  mark-result  out  (depend-on mark-build)
       ?~  mark-result
-        [build [%blocks [mark-build]~ ~] accessed-builds]
+        (return-blocks [mark-build]~ ~)
       ::
       ?.  ?=([~ %success %core *] mark-result)
         (wrap-error mark-result)
@@ -2363,9 +2355,9 @@
       =/  grad-build=^build
         [date.build [%ride [%limb %grad] [%$ %noun vase.u.mark-result]]]
       ::
-      =^  grad-result  accessed-builds  (depend-on grad-build)
+      =^  grad-result  out  (depend-on grad-build)
       ?~  grad-result
-        [build [%blocks [grad-build]~ ~] accessed-builds]
+        (return-blocks [grad-build]~ ~)
       ::
       ?.  ?=([~ %success %ride *] grad-result)
         (wrap-error grad-result)
@@ -2384,9 +2376,9 @@
             [%cast disc u.mark [%$ start-cage]]
           [%cast disc u.mark [%$ end-cage]]
         ::
-        =^  diff-result  accessed-builds  (depend-on diff-build)
+        =^  diff-result  out  (depend-on diff-build)
         ?~  diff-result
-          [build [%blocks [diff-build]~ ~] accessed-builds]
+          (return-blocks [diff-build]~ ~)
         ::
         ?.  ?=([~ %success %diff *] diff-result)
           (wrap-error diff-result)
@@ -2394,7 +2386,7 @@
         =/  =build-result
           [%success %diff cage.u.diff-result]
         ::
-        [build [%build-result build-result] accessed-builds]
+        (return-result build-result)
       ::  +grad produced a cell, which should be a core with a +form arm
       ::
       ?.  (slab %form p.vase.u.grad-result)
@@ -2426,9 +2418,9 @@
         ::
         sample=`schematic`[%$ end-cage]
       ::
-      =^  diff-result  accessed-builds  (depend-on diff-build)
+      =^  diff-result  out  (depend-on diff-build)
       ?~  diff-result
-        [build [%blocks [diff-build]~ ~] accessed-builds]
+        (return-blocks [diff-build]~ ~)
       ::
       ?.  ?=([~ %success %call *] diff-result)
         (wrap-error diff-result)
@@ -2436,9 +2428,9 @@
       =/  form-build=^build
         [date.build [%ride [%limb %form] [%$ %noun vase.u.grad-result]]]
       ::
-      =^  form-result  accessed-builds  (depend-on form-build)
+      =^  form-result  out  (depend-on form-build)
       ?~  form-result
-        [build [%blocks [form-build]~ ~] accessed-builds]
+        (return-blocks [form-build]~ ~)
       ::
       ?.  ?=([~ %success %ride *] form-result)
         (wrap-error form-result)
@@ -2451,20 +2443,20 @@
       =/  =build-result
         [%success %diff [u.mark vase.u.diff-result]]
       ::
-      [build [%build-result build-result] accessed-builds]
+      (return-result build-result)
     ::
     ++  make-dude
       |=  [error=(trap tank) attempt=schematic]
       ^-  build-receipt
       ::
       =/  attempt-build=^build  [date.build attempt]
-      =^  attempt-result  accessed-builds  (depend-on attempt-build)
+      =^  attempt-result  out  (depend-on attempt-build)
       ?~  attempt-result
         ::
-        [build [%blocks ~[[date.build attempt]] ~] accessed-builds]
+        (return-blocks ~[[date.build attempt]] ~)
       ::
       ?.  ?=([%error *] u.attempt-result)
-        [build [%build-result u.attempt-result] accessed-builds]
+        (return-result u.attempt-result)
       ::
       (return-error [$:error message.u.attempt-result])
     ::
@@ -2473,10 +2465,10 @@
       ^-  build-receipt
       ::
       =/  scry-build=^build  [date.build [%scry [%c %x source-path]]]
-      =^  scry-result  accessed-builds  (depend-on scry-build)
+      =^  scry-result  out  (depend-on scry-build)
       ?~  scry-result
         ::
-        [build [%blocks ~[scry-build] ~] accessed-builds]
+        (return-blocks ~[scry-build] ~)
       ::
       ?:  ?=([~ %error *] scry-result)
         (wrap-error scry-result)
@@ -2493,7 +2485,7 @@
       ?~  q.parsed
         (return-error [%leaf "syntax error: {<p.p.parsed>} {<q.p.parsed>}"]~)
       ::
-      [build [%build-result %success %hood p.u.q.parsed] accessed-builds]
+      (return-result %success %hood p.u.q.parsed)
     ::
     ++  make-join
       |=  [disc=^disc mark=term first=schematic second=schematic]
@@ -2502,9 +2494,9 @@
       =/  initial-build=^build
         [date.build [first second] [%path disc %mar mark]]
       ::
-      =^  initial-result  accessed-builds  (depend-on initial-build)
+      =^  initial-result  out  (depend-on initial-build)
       ?~  initial-result
-        [build [%blocks [initial-build]~ ~] accessed-builds]
+        (return-blocks [initial-build]~ ~)
       ::
       ?.  ?=([~ %success [%success ^ ^] %success %path *] initial-result)
         (wrap-error initial-result)
@@ -2520,9 +2512,9 @@
       ::
       =/  mark-build=^build  [date.build [%core mark-path]]
       ::
-      =^  mark-result  accessed-builds  (depend-on mark-build)
+      =^  mark-result  out  (depend-on mark-build)
       ?~  mark-result
-        [build [%blocks [mark-build]~ ~] accessed-builds]
+        (return-blocks [mark-build]~ ~)
       ::
       ?.  ?=([~ %success %core *] mark-result)
         (wrap-error mark-result)
@@ -2536,9 +2528,9 @@
       =/  grad-build=^build
         [date.build [%ride [%limb %grad] [%$ %noun mark-vase]]]
       ::
-      =^  grad-result  accessed-builds  (depend-on grad-build)
+      =^  grad-result  out  (depend-on grad-build)
       ?~  grad-result
-        [build [%blocks [grad-build]~ ~] accessed-builds]
+        (return-blocks [grad-build]~ ~)
       ::
       ?.  ?=([~ %success %ride *] grad-result)
         (wrap-error grad-result)
@@ -2557,14 +2549,14 @@
         =/  join-build=^build
           [date.build [%join disc mark [%$ first-cage] [%$ second-cage]]]
         ::
-        =^  join-result  accessed-builds  (depend-on join-build)
+        =^  join-result  out  (depend-on join-build)
         ?~  join-result
-          [build [%blocks [join-build]~ ~] accessed-builds]
+          (return-blocks [join-build]~ ~)
         ::
         ?.  ?=([~ %success %join *] join-result)
           (wrap-error join-result)
         ::
-        [build [%build-result u.join-result] accessed-builds]
+        (return-result u.join-result)
       ::  make sure the +grad core has a +form arm
       ::
       ?.  (slab %form p.grad-vase)
@@ -2580,9 +2572,9 @@
       =/  form-build=^build
         [date.build [%ride [%limb %form] [%$ %noun grad-vase]]]
       ::
-      =^  form-result  accessed-builds  (depend-on form-build)
+      =^  form-result  out  (depend-on form-build)
       ?~  form-result
-        [build [%blocks [form-build]~ ~] accessed-builds]
+        (return-blocks [form-build]~ ~)
       ::
       ?.  ?=([~ %success %ride *] form-result)
         (wrap-error form-result)
@@ -2599,7 +2591,7 @@
       ::  if the diffs are identical, just produce the first
       ::
       ?:  =(q.q.first-cage q.q.second-cage)
-        [build [%build-result %success %join first-cage] accessed-builds]
+        (return-result %success %join first-cage)
       ::  call the +join:grad gate on the two diffs
       ::
       =/  diff-build=^build
@@ -2610,9 +2602,9 @@
           [%$ %noun grad-vase]
         [%$ %noun (slop q.first-cage q.second-cage)]
       ::
-      =^  diff-result  accessed-builds  (depend-on diff-build)
+      =^  diff-result  out  (depend-on diff-build)
       ?~  diff-result
-        [build [%blocks [diff-build]~ ~] accessed-builds]
+        (return-blocks [diff-build]~ ~)
       ::
       ?.  ?=([~ %success %call *] diff-result)
         (wrap-error diff-result)
@@ -2624,7 +2616,7 @@
           [%null vase.u.diff-result]
         [u.form-mark (slot 3 vase.u.diff-result)]
       ::
-      [build [%build-result build-result] accessed-builds]
+      (return-result build-result)
     ::
     ++  make-list
       |=  schematics=(list schematic)
@@ -2634,19 +2626,18 @@
         (turn schematics |=(=schematic [~ schematic]))
       ::  depend on builds of each schematic
       ::
-      =^  schematic-results  accessed-builds
+      =^  maybe-schematic-results  out
         (perform-schematics key-and-schematics %ignore-errors *~)
-      ?:  ?=([%| *] schematic-results)
-        ::  block or error
-        p.schematic-results
+      ?~  maybe-schematic-results
+        out
       ::  return all builds
       ::
       =/  =build-result
         :+  %success  %list
         ::  the roll above implicitly flopped the results
         ::
-        (flop (turn p.schematic-results tail))
-      [build [%build-result build-result] accessed-builds]
+        (flop (turn u.maybe-schematic-results tail))
+      (return-result build-result)
     ::
     ++  make-mash
       |=  $:  disc=^disc
@@ -2659,9 +2650,9 @@
       =/  initial-build=^build
         [date.build [schematic.first schematic.second] [%path disc %mar mark]]
       ::
-      =^  initial-result  accessed-builds  (depend-on initial-build)
+      =^  initial-result  out  (depend-on initial-build)
       ?~  initial-result
-        [build [%blocks [initial-build]~ ~] accessed-builds]
+        (return-blocks [initial-build]~ ~)
       ::  TODO: duplicate logic with +make-join
       ::
       ?.  ?=([~ %success [%success ^ ^] %success %path *] initial-result)
@@ -2678,9 +2669,9 @@
       ::
       =/  mark-build=^build  [date.build [%core mark-path]]
       ::
-      =^  mark-result  accessed-builds  (depend-on mark-build)
+      =^  mark-result  out  (depend-on mark-build)
       ?~  mark-result
-        [build [%blocks [mark-build]~ ~] accessed-builds]
+        (return-blocks [mark-build]~ ~)
       ::
       ?.  ?=([~ %success %core *] mark-result)
         (wrap-error mark-result)
@@ -2694,9 +2685,9 @@
       =/  grad-build=^build
         [date.build [%ride [%limb %grad] [%$ %noun mark-vase]]]
       ::
-      =^  grad-result  accessed-builds  (depend-on grad-build)
+      =^  grad-result  out  (depend-on grad-build)
       ?~  grad-result
-        [build [%blocks [grad-build]~ ~] accessed-builds]
+        (return-blocks [grad-build]~ ~)
       ::
       ?.  ?=([~ %success %ride *] grad-result)
         (wrap-error grad-result)
@@ -2719,9 +2710,9 @@
             [disc.first mark.first [%$ first-cage]]
           [disc.second mark.second [%$ second-cage]]
         ::
-        =^  mash-result  accessed-builds  (depend-on mash-build)
+        =^  mash-result  out  (depend-on mash-build)
         ?~  mash-result
-          [build [%blocks [mash-build]~ ~] accessed-builds]
+          (return-blocks [mash-build]~ ~)
         ::
         ?.  ?=([~ %success %mash *] mash-result)
           (wrap-error mash-result)
@@ -2729,7 +2720,7 @@
         =/  =build-result
           [%success %mash cage.u.mash-result]
         ::
-        [build [%build-result build-result] accessed-builds]
+        (return-result build-result)
       ::
       ?.  (slab %form p.grad-vase)
         %-  return-error  :_  ~  :-  %leaf
@@ -2742,9 +2733,9 @@
       =/  form-build=^build
         [date.build [%ride [%limb %form] [%$ %noun grad-vase]]]
       ::
-      =^  form-result  accessed-builds  (depend-on form-build)
+      =^  form-result  out  (depend-on form-build)
       ?~  form-result
-        [build [%blocks [form-build]~ ~] accessed-builds]
+        (return-blocks [form-build]~ ~)
       ::
       ?.  ?=([~ %success %ride *] form-result)
         (wrap-error form-result)
@@ -2762,7 +2753,7 @@
         =/  =build-result
           [%success %mash [%null [%atom %n ~] ~]]
         ::
-        [build [%build-result build-result] accessed-builds]
+        (return-result build-result)
       ::  call the +mash:grad gate on two [ship desk diff] triples
       ::
       =/  mash-build=^build
@@ -2784,9 +2775,9 @@
           q.second-cage
         ==
       ::
-      =^  mash-result  accessed-builds  (depend-on mash-build)
+      =^  mash-result  out  (depend-on mash-build)
       ?~  mash-result
-        [build [%blocks [mash-build]~ ~] accessed-builds]
+        (return-blocks [mash-build]~ ~)
       ::
       ?.  ?=([~ %success %call *] mash-result)
         (wrap-error mash-result)
@@ -2794,7 +2785,7 @@
       =/  =build-result
         [%success %mash [u.form-mark vase.u.mash-result]]
       ::
-      [build [%build-result build-result] accessed-builds]
+      (return-result build-result)
     ::
     ++  make-mute
       |=  [subject=schematic mutations=(list [=wing =schematic])]
@@ -2802,9 +2793,9 @@
       ::  run the subject build to produce the noun to be mutated
       ::
       =/  subject-build=^build  [date.build subject]
-      =^  subject-result  accessed-builds  (depend-on subject-build)
+      =^  subject-result  out  (depend-on subject-build)
       ?~  subject-result
-        [build [%blocks [subject-build]~ ~] accessed-builds]
+        (return-blocks [subject-build]~ ~)
       ::
       ?.  ?=([~ %success *] subject-result)
         (wrap-error subject-result)
@@ -2813,15 +2804,14 @@
       ::
       =/  subject-vase=vase  q.subject-cage
       ::
-      =^  schematic-results  accessed-builds
+      =^  maybe-schematic-results  out
         (perform-schematics mutations %fail-on-errors *wing)
-      ?:  ?=([%| *] schematic-results)
-        ::  block or error
-        p.schematic-results
+      ?~  maybe-schematic-results
+        out
       ::  all builds succeeded; retrieve vases from results
       ::
       =/  successes=(list [=wing =vase])
-        %+  turn  p.schematic-results
+        %+  turn  u.maybe-schematic-results
         |=  [=wing result=build-result]
         ^-  [^wing vase]
         ::
@@ -2874,9 +2864,9 @@
         ::
         (slop vase.i.successes $(successes t.successes))
       ::
-      =^  ride-result  accessed-builds  (depend-on ride-build)
+      =^  ride-result  out  (depend-on ride-build)
       ?~  ride-result
-        [build [%blocks [ride-build]~ ~] accessed-builds]
+        (return-blocks [ride-build]~ ~)
       ::
       ?.  ?=([~ %success %ride *] ride-result)
         (wrap-error ride-result)
@@ -2884,7 +2874,7 @@
       =/  =build-result
         [%success %mute p.subject-cage vase.u.ride-result]
       ::
-      [build [%build-result build-result] accessed-builds]
+      (return-result build-result)
     ::
     ++  make-pact
       |=  [disc=^disc start=schematic diff=schematic]
@@ -2893,9 +2883,9 @@
       ::
       =/  initial-build=^build  [date.build start diff]
       ::
-      =^  initial-result  accessed-builds  (depend-on initial-build)
+      =^  initial-result  out  (depend-on initial-build)
       ?~  initial-result
-        [build [%blocks [initial-build]~ ~] accessed-builds]
+        (return-blocks [initial-build]~ ~)
       ::
       ?>  ?=([~ %success ^ ^] initial-result)
       =/  start-result=build-result  head.u.initial-result
@@ -2915,20 +2905,20 @@
       ::
       =/  mark-path-build=^build  [date.build [%path disc %mar start-mark]]
       ::
-      =^  mark-path-result  accessed-builds
+      =^  mark-path-result  out
         (depend-on mark-path-build)
       ::
       ?~  mark-path-result
-        [build [%blocks [mark-path-build]~ ~] accessed-builds]
+        (return-blocks [mark-path-build]~ ~)
       ::
       ?.  ?=([~ %success %path *] mark-path-result)
         (wrap-error mark-path-result)
       ::
       =/  mark-build=^build  [date.build [%core rail.u.mark-path-result]]
       ::
-      =^  mark-result  accessed-builds  (depend-on mark-build)
+      =^  mark-result  out  (depend-on mark-build)
       ?~  mark-result
-        [build [%blocks [mark-build]~ ~] accessed-builds]
+        (return-blocks [mark-build]~ ~)
       ::
       ?.  ?=([~ %success %core *] mark-result)
         (wrap-error mark-result)
@@ -2943,9 +2933,9 @@
       =/  grad-build=^build
         [date.build [%ride [%limb %grad] [%$ %noun mark-vase]]]
       ::
-      =^  grad-result  accessed-builds  (depend-on grad-build)
+      =^  grad-result  out  (depend-on grad-build)
       ?~  grad-result
-        [build [%blocks [grad-build]~ ~] accessed-builds]
+        (return-blocks [grad-build]~ ~)
       ::
       ?.  ?=([~ %success %ride *] grad-result)
         (wrap-error grad-result)
@@ -2981,9 +2971,9 @@
             [%$ start-cage]
           [%$ diff-cage]
         ::
-        =^  cast-result  accessed-builds  (depend-on cast-build)
+        =^  cast-result  out  (depend-on cast-build)
         ?~  cast-result
-          [build [%blocks [cast-build]~ ~] accessed-builds]
+          (return-blocks [cast-build]~ ~)
         ::
         ?.  ?=([~ %success %cast *] cast-result)
           (wrap-error cast-result)
@@ -2991,7 +2981,7 @@
         =/  =build-result
           [%success %pact cage.u.cast-result]
         ::
-        [build [%build-result build-result] accessed-builds]
+        (return-result build-result)
       ::  +grad produced a core; make sure it has a +form arm
       ::
       ::    +grad can produce a core containing +pact and +form
@@ -3015,9 +3005,9 @@
       =/  form-build=^build
         [date.build [%ride [%limb %form] [%$ %noun grad-vase]]]
       ::
-      =^  form-result  accessed-builds  (depend-on form-build)
+      =^  form-result  out  (depend-on form-build)
       ?~  form-result
-        [build [%blocks [form-build]~ ~] accessed-builds]
+        (return-blocks [form-build]~ ~)
       ::
       ?.  ?=([~ %success %ride *] form-result)
         (wrap-error form-result)
@@ -3049,9 +3039,9 @@
         ^-  schematic
         [%$ diff-cage]
       ::
-      =^  pact-result  accessed-builds  (depend-on pact-build)
+      =^  pact-result  out  (depend-on pact-build)
       ?~  pact-result
-        [build [%blocks [pact-build]~ ~] accessed-builds]
+        (return-blocks [pact-build]~ ~)
       ::
       ?.  ?=([~ %success %call *] pact-result)
         (wrap-error pact-result)
@@ -3059,7 +3049,7 @@
       =/  =build-result
         [%success %pact start-mark vase.u.pact-result]
       ::
-      [build [%build-result build-result] accessed-builds]
+      (return-result build-result)
     ::
     ++  make-path
       |=  [disc=^disc prefix=@tas raw-path=@tas]
@@ -3081,14 +3071,13 @@
         [%scry %c %x `rail`[disc full-spur]]
       ::  depend on builds of each schematic
       ::
-      =^  schematic-results  accessed-builds
+      =^  maybe-schematic-results  out
         (perform-schematics rails-and-schematics %filter-errors *rail)
-      ?:  ?=([%| *] schematic-results)
-        ::  block or error
-        p.schematic-results
+      ?~  maybe-schematic-results
+        out
       ::  matches: builds that completed with a successful result
       ::
-      =/  matches  p.schematic-results
+      =/  matches  u.maybe-schematic-results
       ::  if no matches, error out
       ::
       ?~  matches
@@ -3099,7 +3088,7 @@
       ::  if exactly one path matches, succeed with the matching path
       ::
       ?:  ?=([* ~] matches)
-        [build [%build-result %success %path key.i.matches] accessed-builds]
+        (return-result %success %path key.i.matches)
       ::  multiple paths matched; error out
       ::
       %-  return-error
@@ -3107,7 +3096,7 @@
       :-  [%leaf "multiple matches for %path: "]
       ::  tmi; cast :matches back to +list
       ::
-      %+  roll  `_p.schematic-results`matches
+      %+  roll  `_u.maybe-schematic-results`matches
       |=  [[key=rail result=build-result] message=tang]
       ^-  tang
       ::  beam: reconstruct request from :kid's schematic and date
@@ -3140,7 +3129,7 @@
           ::
           =^  path-results  ..$  (resolve-builds path-builds)
           ?^  blocks
-            [build [%blocks blocks ~] accessed-builds]
+            (return-blocks blocks ~)
           ::
           ?^  error-message
             (return-error error-message)
@@ -3153,7 +3142,7 @@
           ::
           =^  core-results  ..$  (resolve-builds core-builds)
           ?^  blocks
-            [build [%blocks blocks ~] accessed-builds]
+            (return-blocks blocks ~)
           ::
           ?^  error-message
             (return-error error-message)
@@ -3161,9 +3150,9 @@
           ::
           =/  reef-build=^build  [date.build [%reef disc.path-to-render]]
           ::
-          =^  reef-result  accessed-builds  (depend-on reef-build)
+          =^  reef-result  out  (depend-on reef-build)
           ?~  reef-result
-            [build [%blocks [reef-build]~ ~] accessed-builds]
+            (return-blocks [reef-build]~ ~)
           ::
           ?.  ?=([~ %success %reef *] reef-result)
             (wrap-error reef-result)
@@ -3181,7 +3170,7 @@
           ?:  ?=(%error -.crane-result)
             (return-error message.crane-result)
           ?:  ?=(%block -.crane-result)
-            [build [%blocks builds.crane-result ~] accessed-builds]
+            (return-blocks builds.crane-result ~)
           ::  combined-hoon: source hoons condensed into a single +hoon
           ::
           =/  combined-hoon=hoon  [%tssg sources.scaffold]
@@ -3190,18 +3179,18 @@
           =/  compile=^build
             [date.build [%ride combined-hoon [%$ subject.crane-result]]]
           ::
-          =^  compiled  accessed-builds  (depend-on compile)
+          =^  compiled  out  (depend-on compile)
           ::  compilation blocked; produce block on sub-build
           ::
           ?~  compiled
-            [build [%blocks ~[compile] ~] accessed-builds]
+            (return-blocks ~[compile] ~)
           ::  compilation failed; error out
           ::
           ?.  ?=([~ %success %ride *] compiled)
             (wrap-error compiled)
           ::  compilation succeeded: produce resulting +vase
           ::
-          [build [%build-result %success %plan vase.u.compiled] accessed-builds]
+          (return-result %success %plan vase.u.compiled)
       ::  +compose-result: the result of a single composition
       ::
       +=  compose-result
@@ -3258,7 +3247,7 @@
           ::
           =/  ride-build=^build
             [date.build [%ride hoon [%$ subject]]]
-          =^  ride-result  accessed-builds  (depend-on ride-build)
+          =^  ride-result  out  (depend-on ride-build)
           ?~  ride-result
             [[%block [ride-build]~] ..run-crane]
           ?:  ?=([~ %error *] ride-result)
@@ -3273,7 +3262,7 @@
           ::
           =/  query-compile-build=^build
             [date.build [%ride ((jock |) query-string) [%$ %noun !>(~)]]]
-          =^  query-compile-result  accessed-builds  (depend-on query-compile-build)
+          =^  query-compile-result  out  (depend-on query-compile-build)
           ?~  query-compile-result
             [[%block [query-compile-build]~] ..run-crane]
           ?:  ?=([~ %error *] query-compile-result)
@@ -3289,7 +3278,7 @@
           ::
           =/  call-build=^build
             [date.build [%call [%ride hoon [%$ subject]] [%$ %noun arguments]]]
-          =^  call-result  accessed-builds  (depend-on call-build)
+          =^  call-result  out  (depend-on call-build)
           ?~  call-result
             [[%block [call-build]~] ..run-crane]
           ?:  ?=([~ %error *] call-result)
@@ -3358,7 +3347,7 @@
               ::
               [%$ subject.child]
             [%cast disc.source-rail.scaffold i.marks $(marks t.marks)]
-          =^  cast-result  accessed-builds  (depend-on cast-build)
+          =^  cast-result  out  (depend-on cast-build)
           ?~  cast-result
             [[%block [cast-build]~] ..run-crane]
           ::
@@ -3377,7 +3366,7 @@
           =/  toplevel-build=^build
             [date.build [%scry [%c %y path-to-render]]]
           ::
-          =^  toplevel-result  accessed-builds  (depend-on toplevel-build)
+          =^  toplevel-result  out  (depend-on toplevel-build)
           ?~  toplevel-result
             [[%block ~[toplevel-build]] ..run-crane]
           ::
@@ -3406,21 +3395,21 @@
           ::    results could be generalized.
           ::
           =/  subs-results
-            |-  ^+  [results accessed-builds]
-            ?~  sub-builds  [results accessed-builds]
+            |-  ^+  [results out]
+            ?~  sub-builds  [results out]
             ?>  ?=(^ sub-paths)
             ::
             =/  kid=^build  i.sub-builds
             =/  sub-path=@ta  i.sub-paths
             ::
-            =^  result  accessed-builds  (depend-on kid)
+            =^  result  out  (depend-on kid)
             =.  results  [[kid sub-path result] results]
             ::
             $(sub-builds t.sub-builds, sub-paths t.sub-paths)
           ::  apply mutations from depending on sub-builds
           ::
-          =:  results          -.subs-results
-              accessed-builds  +.subs-results
+          =:  results  -.subs-results
+              out      +.subs-results
           ==
           ::  split :results into completed :mades and incomplete :blocks
           ::
@@ -3593,7 +3582,7 @@
           ::
           =/  call-build=^build
             [date.build [%call [%ride hoon [%$ subject]] [%$ subject.child]]]
-          =^  call-result  accessed-builds  (depend-on call-build)
+          =^  call-result  out  (depend-on call-build)
           ?~  call-result
             [[%block [call-build]~] ..run-crane]
           ?:  ?=([~ %error *] call-result)
@@ -3636,7 +3625,7 @@
           ::
           =/  bunt-build=^build
             [date.build [%ride [%bunt mold] [%$ subject]]]
-          =^  bunt-result  accessed-builds  (depend-on bunt-build)
+          =^  bunt-result  out  (depend-on bunt-build)
           ?~  bunt-result
             [[%block [bunt-build]~] ..run-crane]
           ?:  ?=([~ %error *] bunt-result)
@@ -3657,7 +3646,7 @@
             [disc [%hoon spur]]
           ::
           =/  hood-build=^build  [date.build [%hood hoon-path]]
-          =^  hood-result  accessed-builds  (depend-on hood-build)
+          =^  hood-result  out  (depend-on hood-build)
           ?~  hood-result
             [[%block [hood-build]~] ..run-crane]
           ?:  ?=([~ %error *] hood-result)
@@ -3667,7 +3656,7 @@
           =/  plan-build=^build
             :-  date.build
             [%plan path-to-render query-string scaffold.u.hood-result]
-          =^  plan-result  accessed-builds  (depend-on plan-build)
+          =^  plan-result  out  (depend-on plan-build)
           ?~  plan-result
             [[%block [plan-build]~] ..run-crane]
           ?:  ?=([~ %error *] plan-result)
@@ -3685,7 +3674,7 @@
           =/  vale-build=^build
             :-  date.build
             [%vale disc.source-rail.scaffold mark q.vase.u.plan-result]
-          =^  vale-result  accessed-builds  (depend-on vale-build)
+          =^  vale-result  out  (depend-on vale-build)
           ?~  vale-result
             [[%block [vale-build]~] ..run-crane]
           ?:  ?=([~ %error *] vale-result)
@@ -3703,7 +3692,7 @@
           =/  bake-build=^build
             :-  date.build
             [%bake mark query-string path-to-render]
-          =^  bake-result  accessed-builds  (depend-on bake-build)
+          =^  bake-result  out  (depend-on bake-build)
           ?~  bake-result
             [[%block [bake-build]~] ..run-crane]
           ?:  ?=([~ %error *] bake-result)
@@ -3736,7 +3725,7 @@
         ?~  builds
           [results ..^$]
         ::
-        =^  result  accessed-builds  (depend-on i.builds)
+        =^  result  out  (depend-on i.builds)
         ?~  result
           =.  blocks  [i.builds blocks]
           $(builds t.builds)
@@ -3823,22 +3812,22 @@
                   (scry [%143 %noun] ~ %cw beam(r [%da now]))
           ==  ==
         ::
-        [build [%build-result %success %reef pit] accessed-builds]
+        (return-result %success %reef pit)
       ::
       =/  hoon-scry
         [date.build [%scry %c %x [disc /hoon/hoon/sys]]]
       ::
-      =^  hoon-scry-result  accessed-builds  (depend-on hoon-scry)
+      =^  hoon-scry-result  out  (depend-on hoon-scry)
       ::
       =/  arvo-scry
         [date.build [%scry %c %x [disc /hoon/arvo/sys]]]
       ::
-      =^  arvo-scry-result  accessed-builds  (depend-on arvo-scry)
+      =^  arvo-scry-result  out  (depend-on arvo-scry)
       ::
       =/  zuse-scry
         [date.build [%scry %c %x [disc /hoon/zuse/sys]]]
       ::
-      =^  zuse-scry-result  accessed-builds  (depend-on zuse-scry)
+      =^  zuse-scry-result  out  (depend-on zuse-scry)
       ::
       =|  blocks=(list ^build)
       =?  blocks  ?=(~ hoon-scry-result)  [hoon-scry blocks]
@@ -3846,7 +3835,7 @@
       =?  blocks  ?=(~ zuse-scry-result)  [zuse-scry blocks]
       ::
       ?^  blocks
-        [build [%blocks blocks ~] accessed-builds]
+        (return-blocks blocks ~)
       ::
       ?.  ?=([~ %success %scry *] hoon-scry-result)
         (wrap-error hoon-scry-result)
@@ -3878,46 +3867,40 @@
             [%$ %noun !>(~)]
         ==
       ::
-      =^  zuse-build-result  accessed-builds  (depend-on zuse-build)
+      =^  zuse-build-result  out  (depend-on zuse-build)
       ?~  zuse-build-result
-        [build [%blocks [zuse-build]~ ~] accessed-builds]
+        (return-blocks [zuse-build]~ ~)
       ::
       ?.  ?=([~ %success %ride *] zuse-build-result)
         (wrap-error zuse-build-result)
       ::
-      :+  build
-        [%build-result %success %reef vase.u.zuse-build-result]
-      accessed-builds
+      (return-result %success %reef vase.u.zuse-build-result)
     ::
     ++  make-ride
       |=  [formula=hoon =schematic]
       ^-  build-receipt
       ::
-      =^  result  accessed-builds  (depend-on [date.build schematic])
+      =^  result  out  (depend-on [date.build schematic])
       ?~  result
-        [build [%blocks [date.build schematic]~ ~] accessed-builds]
+        (return-blocks [date.build schematic]~ ~)
       ::
-      =*  subject  u.result
-      =*  subject-cage  (result-to-cage subject)
-      =/  slim-schematic=^schematic  [%slim p.q.subject-cage formula]
-      =^  slim-result  accessed-builds  (depend-on [date.build slim-schematic])
+      =*  subject-vase  q:(result-to-cage u.result)
+      =/  slim-schematic=^schematic  [%slim p.subject-vase formula]
+      =^  slim-result  out  (depend-on [date.build slim-schematic])
       ?~  slim-result
-        [build [%blocks [date.build slim-schematic]~ ~] accessed-builds]
+        (return-blocks [date.build slim-schematic]~ ~)
       ::
       ?.  ?=([~ %success %slim *] slim-result)
         (wrap-error slim-result)
       ::
       =/  val
-        (mock [q.q.subject-cage nock.u.slim-result] intercepted-scry)
+        (mock [q.subject-vase nock.u.slim-result] intercepted-scry)
       ::  val is a toon, which might be a list of blocks.
       ::
       ?-    -.val
       ::
           %0
-        :*  build
-            [%build-result %success %ride [type.u.slim-result p.val]]
-            accessed-builds
-        ==
+        (return-result %success %ride [type.u.slim-result p.val])
       ::
           %1
         =/  blocked-paths=(list path)  ((hard (list path)) p.val)
@@ -3931,11 +3914,11 @@
       |=  =schematic
       ^-  build-receipt
       ::
-      =^  result  accessed-builds  (depend-on [date.build schematic])
+      =^  result  out  (depend-on [date.build schematic])
       ::
       ?~  result
-        [build [%blocks [date.build schematic]~ ~] accessed-builds]
-      [build [%build-result u.result] accessed-builds]
+        (return-blocks [date.build schematic]~ ~)
+      (return-result u.result)
     ::
     ++  make-scry
       ::  TODO: All accesses to :state which matter happens in this function;
@@ -3965,7 +3948,7 @@
         ::    We killed a bunch of code which "worked" but which might have
         ::    been a no-op.
         ::
-        [build [%blocks ~ `scry-request] accessed-builds]
+        (return-blocks ~ `scry-request)
       ::  scry failed
       ::
       ?~  u.scry-response
@@ -3975,7 +3958,7 @@
         ==
       ::  scry succeeded
       ::
-      [build [%build-result %success %scry u.u.scry-response] accessed-builds]
+      (return-result %success %scry u.u.scry-response)
     ::
     ++  make-slim
       |=  [subject-type=type formula=hoon]
@@ -3984,12 +3967,12 @@
       =/  compiled=(each (pair type nock) tang)
         (mule |.((~(mint ut subject-type) [%noun formula])))
       ::
-      :*  build
-          ?-  -.compiled
-            %|  [%build-result %error [leaf+"%slim failed: " p.compiled]]
-            %&  [%build-result %success %slim p.compiled]
-          ==
-          accessed-builds
+      %_    out
+          result
+        ?-  -.compiled
+          %|  [%build-result %error [leaf+"%slim failed: " p.compiled]]
+          %&  [%build-result %success %slim p.compiled]
+        ==
       ==
     ::
     ++  make-slit
@@ -3999,18 +3982,18 @@
       =/  product=(each type tang)
         (mule |.((slit p.gate p.sample)))
       ::
-      :*  build
-          ?-  -.product
-            %|  :*  %build-result   %error
-                    :*  (~(dunk ut p.sample) %have)
-                        (~(dunk ut (~(peek ut p.gate) %free 6)) %want)
-                        leaf+"%slit failed: "
-                        p.product
-                    ==
-                ==
-            %&  [%build-result %success %slit p.product]
-          ==
-          accessed-builds
+      %_    out
+          result
+        ?-  -.product
+          %|  :*  %build-result   %error
+                  :*  (~(dunk ut p.sample) %have)
+                      (~(dunk ut (~(peek ut p.gate) %free 6)) %want)
+                      leaf+"%slit failed: "
+                      p.product
+                  ==
+              ==
+          %&  [%build-result %success %slit p.product]
+        ==
       ==
     ::
     ++  make-volt
@@ -4019,9 +4002,9 @@
       ::
       =/  bunt-build=^build  [date.build [%bunt disc mark]]
       ::
-      =^  bunt-result  accessed-builds  (depend-on bunt-build)
+      =^  bunt-result  out  (depend-on bunt-build)
       ?~  bunt-result
-        [build [%blocks [bunt-build]~ ~] accessed-builds]
+        (return-blocks [bunt-build]~ ~)
       ::
       ?.  ?=([~ %success %bunt *] bunt-result)
         (wrap-error bunt-result)
@@ -4029,7 +4012,7 @@
       =/  =build-result
         [%success %volt [mark p.q.cage.u.bunt-result input]]
       ::
-      [build [%build-result build-result] accessed-builds]
+      (return-result build-result)
     ::
     ++  make-vale
       ::  TODO: better docs
@@ -4041,22 +4024,22 @@
       ?:  =(%noun mark)
         =/  =build-result  [%success %vale [%noun %noun input]]
         ::
-        [build [%build-result build-result] accessed-builds]
+        (return-result build-result)
       ::
       =/  path-build  [date.build [%path disc %mar mark]]
       ::
-      =^  path-result  accessed-builds  (depend-on path-build)
+      =^  path-result  out  (depend-on path-build)
       ?~  path-result
-        [build [%blocks [path-build]~ ~] accessed-builds]
+        (return-blocks [path-build]~ ~)
       ::
       ?.  ?=([~ %success %path *] path-result)
         (wrap-error path-result)
       ::
       =/  bunt-build=^build  [date.build [%bunt disc mark]]
       ::
-      =^  bunt-result  accessed-builds  (depend-on bunt-build)
+      =^  bunt-result  out  (depend-on bunt-build)
       ?~  bunt-result
-        [build [%blocks [bunt-build]~ ~] accessed-builds]
+        (return-blocks [bunt-build]~ ~)
       ::
       ?.  ?=([~ %success %bunt *] bunt-result)
         (wrap-error bunt-result)
@@ -4074,9 +4057,9 @@
           ==
         sample=[%$ %noun %noun input]
       ::
-      =^  call-result  accessed-builds  (depend-on call-build)
+      =^  call-result  out  (depend-on call-build)
       ?~  call-result
-        [build [%blocks [call-build]~ ~] accessed-builds]
+        (return-blocks [call-build]~ ~)
       ::
       ?.  ?=([~ %success %call *] call-result)
         (wrap-error call-result)
@@ -4091,7 +4074,7 @@
         =/  =build-result
           [%success %vale [mark p.mark-sample q.product]]
         ::
-        [build [%build-result build-result] accessed-builds]
+        (return-result build-result)
       ::
       %-  return-error
       =/  =beam  [[ship.disc desk.disc %da date.build] spur.rail.u.path-result]
@@ -4104,30 +4087,27 @@
       |^  ^-  build-receipt
           ::  load all marks.
           ::
-          =^  load-marks-result  accessed-builds
+          =^  maybe-load-marks-result  out
             (load-marks-reachable-from [[%grow source] [%grab target] ~])
-          ?:  ?=([%| *] load-marks-result)
-            p.load-marks-result
+          ?~  maybe-load-marks-result
+            out
           ::  find a path through the graph
           ::
           ::    Make a list of individual mark translation actions which will
           ::    take us from :source to :term.
           ::
-          =/  path  (find-path-through p.load-marks-result)
+          =/  path  (find-path-through u.maybe-load-marks-result)
           ::  if there is no path between these marks, give a nice error message.
           ::
           ?~  path
-            :*  build
-                :*  %build-result  %error
-                    [leaf+"ford: no mark path from {<source>} to {<target>}"]~
-                ==
-                accessed-builds
+            %_    out
+                result
+              :*  %build-result  %error
+                  [leaf+"ford: no mark path from {<source>} to {<target>}"]~
+              ==
             ==
           ::
-          :*  build
-              [%build-result %success %walk path]
-              accessed-builds
-          ==
+          (return-result %success %walk path)
       ::  +load-node: a queued loading action
       ::
       +=  load-node  [type=?(%grab %grow) mark=term]
@@ -4157,11 +4137,11 @@
         =|  =edge-jug
         ::
         |-
-        ^-  [(each ^edge-jug build-receipt) _accessed-builds]
+        ^-  [(unit ^edge-jug) _out]
         ::  no ?~ to prevent tmi
         ::
         ?:  =(~ queued-nodes)
-          [[%& edge-jug] accessed-builds]
+          [`edge-jug out]
         ::
         =/  nodes-and-schematics
           %+  turn  queued-nodes
@@ -4173,13 +4153,13 @@
         ::
         ::    For %path builds, any ambiguous path is just filtered out.
         ::
-        =^  path-results  accessed-builds
+        =^  maybe-path-results  out
           (perform-schematics nodes-and-schematics %filter-errors *load-node)
-        ?:  ?=([%| *] path-results)
-          [path-results accessed-builds]
+        ?~  maybe-path-results
+          [~ out]
         ::
         =/  nodes-and-cores
-          %+  turn  p.path-results
+          %+  turn  u.maybe-path-results
           |=  [=load-node =build-result]
           ^-  [^load-node schematic]
           ::
@@ -4188,15 +4168,15 @@
           :-  load-node
           [%core rail.build-result]
         ::
-        =^  core-results  accessed-builds
+        =^  maybe-core-results  out
           (perform-schematics nodes-and-cores %filter-errors *load-node)
-        ?:  ?=([%| *] core-results)
-          [core-results accessed-builds]
+        ?~  maybe-core-results
+          [~ out]
         ::  clear the queue before we process the new results
         ::
         =.  queued-nodes  ~
         ::
-        =/  cores  p.core-results
+        =/  cores  u.maybe-core-results
         ::
         |-
         ?~  cores
@@ -4355,20 +4335,20 @@
               on-error=?(%fail-on-errors %filter-errors %ignore-errors)
               key-bunt=*
           ==
-      ^-  $:  (each (list [key=_key-bunt result=build-result]) build-receipt)
-              _accessed-builds
+      ^-  $:  (unit (list [key=_key-bunt result=build-result]))
+              _out
           ==
       ::
-      |^  =^  results  accessed-builds
+      |^  =^  results  out
             =|  results=(list [_key-bunt ^build (unit build-result)])
             |-
-            ^+  [results accessed-builds]
+            ^+  [results out]
             ::
             ?~  builds
-              [results accessed-builds]
+              [results out]
             ::
             =/  sub-build=^build  [date.build schematic.i.builds]
-            =^  result  accessed-builds  (depend-on sub-build)
+            =^  result  out  (depend-on sub-build)
             =.  results  [[key.i.builds sub-build result] results]
             ::
             $(builds t.builds)
@@ -4393,7 +4373,7 @@
         ::
         ?^  error
           =.  error  [leaf+"ford: %mute failed: " error]
-          [[%| [build [%build-result %error error] accessed-builds]] accessed-builds]
+          [~ (return-error error)]
         (handle-rest results)
       ::
       ++  filter-errors
@@ -4417,10 +4397,10 @@
           `sub
         ::
         ?^  blocks
-          [[%| [build [%blocks blocks ~] accessed-builds]] accessed-builds]
+          [~ (return-blocks blocks ~)]
         ::
-        :_  accessed-builds
-        :-  %&
+        :_  out
+        :-  ~
         %+  turn  results
         |*  [key=_key-bunt ^build result=(unit build-result)]
         ^-  [_key-bunt build-result]
@@ -4436,19 +4416,31 @@
       =/  message=tang
         [[%leaf "ford: {<-.schematic.build>} failed: "] message.u.result]
       ::
-      [build [%build-result %error message] accessed-builds]
-    ::  +return-error: returns a specific failure message
+      (return-error message)
+    ::  +return-blocks: exit +make as a blocked build
+    ::
+    ++  return-blocks
+      |=  [builds=(list ^build) scry-blocked=(unit scry-request)]
+      ^-  build-receipt
+      out(result [%blocks builds scry-blocked])
+    ::  +return-error: exit +make with a specific failure message
     ::
     ++  return-error
       |=  =tang
       ^-  build-receipt
-      [build [%build-result %error tang] accessed-builds]
+      out(result [%build-result %error tang])
+    ::  +return-result: exit +make with a completed build
+    ::
+    ++  return-result
+      |=  =build-result
+      ^-  build-receipt
+      out(result [%build-result build-result])
     ::
     ++  depend-on
       |=  kid=^build
-      ^-  [(unit build-result) _accessed-builds]
+      ^-  [(unit build-result) _out]
       ::
-      =.  accessed-builds  [kid accessed-builds]
+      =.  sub-builds.out  [kid sub-builds.out]
       ::  +access-build-record will mutate :results.state
       ::
       ::    It's okay to ignore this because the accessed-builds get gathered
@@ -4456,13 +4448,13 @@
       ::
       =/  maybe-build-record  -:(access-build-record kid)
       ?~  maybe-build-record
-        [~ accessed-builds]
+        [~ out]
       ::
       =*  build-record  u.maybe-build-record
       ?:  ?=(%tombstone -.build-record)
-        [~ accessed-builds]
+        [~ out]
       ::
-      [`build-result.build-record accessed-builds]
+      [`build-result.build-record out]
     ::  +blocked-paths-to-receipt: handle the %2 case for mock
     ::
     ::    Multiple schematics handle +toon instances. This handles the %2 case
@@ -4509,7 +4501,7 @@
       ?^  failed
         ::  some failed
         ::
-        [build [%build-result %error failed] accessed-builds]
+        out(result [%build-result %error failed])
       ::  no failures
       ::
       =/  blocks=(list ^build)
@@ -4519,17 +4511,17 @@
         ::
         p.block
       ::
-      =.  accessed-builds
+      =.  out
         %+  roll  blocks
-        |=  [block=^build accumulator=_accessed-builds]
-        =.  accessed-builds  accumulator
+        |=  [block=^build accumulator=_out]
+        =.  out  accumulator
         +:(depend-on [date.block schematic.block])
       ::
       ::  TODO: Here we are passing a single ~ for :scry-blocked. Should we
       ::  be passing one or multiple resource back instead? Maybe not? Are
       ::  we building blocking schematics, which they themselves will scry?
       ::
-      [build [%blocks blocks ~] accessed-builds]
+      (return-blocks blocks ~)
     --
   ::  |utilities:per-event: helper arms
   ::
