@@ -1,5 +1,5 @@
 /?  309
-/+  collections
+/+  collections, cram, elem-to-react-json
 /=  gas  /$  fuel:html
 /=  jon
 /^  json
@@ -44,8 +44,10 @@
     ++  raw-to-json
       |=  raw=raw-item:collections
       ^-  json
+      =/  elm=manx  elm:(static:cram (ream data.raw))
+      =/  rec=json  (elem-to-react-json elm)
       %-  pairs:enjs:format
-      :~  [%data [%s data.raw]]
+      :~  [%data rec]
           [%meta (meta-to-json meta.raw)]
       ==
     ::
