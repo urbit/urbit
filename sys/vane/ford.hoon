@@ -306,6 +306,14 @@
       ::
       =beam
   ==
+::  +cache-key: content addressable build definitions
+::
++=  cache-key
+  $%  [%call gate=vase sample=vase]
+      [%ride formula=hoon subject=vase]
+      [%slim subject-type=type formula=hoon]
+      [%slit gate=type sample=type]
+  ==
 ::  +build-receipt: result of running +make
 ::
 ::    A +build-receipt contains all information necessary to perform the
@@ -345,6 +353,9 @@
       ::    component linkages and cache access times.
       ::
       sub-builds=(list build)
+      ::  cache-key: if not ~, cache this result as :cache-key.
+      ::
+      cache-key=(unit cache-key)
   ==
 ::  +vane: short names for vanes
 ::
@@ -2056,6 +2067,11 @@
       ?.  ?=([~ %success %slit *] slit-result)
         (wrap-error slit-result)
       ::
+      =/  =cache-key  [%call gate-vase sample-vase]
+      =^  cached-result  out  (access-cache cache-key)
+      ?^  cached-result
+        (return-result u.cached-result)
+      ::
       ::  How much duplication is there going to be here between +call and
       ::  +ride? Right now, we're just !! on scrys, but for reals we want it to
       ::  do the same handling.
@@ -2065,6 +2081,7 @@
       ::
       ?-    -.val
           %0
+        =.  cache-key.out  `cache-key
         (return-result %success %call [type.u.slit-result p.val])
       ::
           %1
@@ -2072,6 +2089,7 @@
         (blocked-paths-to-receipt %call blocked-paths)
       ::
           %2
+        =.  cache-key.out  `cache-key
         (return-error [[%leaf "ford: %call failed:"] p.val])
       ==
     ::
@@ -3893,6 +3911,11 @@
       ?.  ?=([~ %success %slim *] slim-result)
         (wrap-error slim-result)
       ::
+      =/  =cache-key  [%ride formula subject-vase]
+      =^  cached-result  out  (access-cache cache-key)
+      ?^  cached-result
+        (return-result u.cached-result)
+      ::
       =/  val
         (mock [q.subject-vase nock.u.slim-result] intercepted-scry)
       ::  val is a toon, which might be a list of blocks.
@@ -3900,6 +3923,7 @@
       ?-    -.val
       ::
           %0
+        =.  cache-key.out  `cache-key
         (return-result %success %ride [type.u.slim-result p.val])
       ::
           %1
@@ -3907,6 +3931,7 @@
         (blocked-paths-to-receipt %ride blocked-paths)
       ::
           %2
+        =.  cache-key.out  `cache-key
         (return-error [[%leaf "ford: %ride failed:"] p.val])
       ==
     ::
@@ -3964,25 +3989,42 @@
       |=  [subject-type=type formula=hoon]
       ^-  build-receipt
       ::
+      =/  =cache-key  [%slim subject-type formula]
+      =^  cached-result  out  (access-cache cache-key)
+      ?^  cached-result
+        (return-result u.cached-result)
+      ::
       =/  compiled=(each (pair type nock) tang)
         (mule |.((~(mint ut subject-type) [%noun formula])))
       ::
       %_    out
+          cache-key
+        `cache-key
+      ::
           result
         ?-  -.compiled
           %|  [%build-result %error [leaf+"%slim failed: " p.compiled]]
           %&  [%build-result %success %slim p.compiled]
         ==
       ==
+    ::  TODO: Take in +type instead of +vase?
     ::
     ++  make-slit
       |=  [gate=vase sample=vase]
       ^-  build-receipt
       ::
+      =/  =cache-key  [%slit p.gate p.sample]
+      =^  cached-result  out  (access-cache cache-key)
+      ?^  cached-result
+        (return-result u.cached-result)
+      ::
       =/  product=(each type tang)
         (mule |.((slit p.gate p.sample)))
       ::
       %_    out
+          cache-key
+        `cache-key
+      ::
           result
         ?-  -.product
           %|  :*  %build-result   %error
@@ -4435,6 +4477,12 @@
       |=  =build-result
       ^-  build-receipt
       out(result [%build-result build-result])
+    ::
+    ++  access-cache
+      |=  =cache-key
+      ^-  [(unit build-result) _out]
+      ::
+      [~ out]
     ::
     ++  depend-on
       |=  kid=^build
