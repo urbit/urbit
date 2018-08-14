@@ -102,7 +102,7 @@
   |=  a/$@(@t purl)  ^-  hiss
   (post-quay (parse-url a) oauth-callback+oauth-callback ~)
 ::
-++  our-host  .^(hart %e /(scot %p our)/host/fake)
+++  our-host  .^(hart %e /(scot %p our)/host/real)
 ++  oauth-callback
   ~&  [%oauth-warning "Make sure this urbit ".
                       "is running on {(en-purl:html our-host `~ ~)}"]

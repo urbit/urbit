@@ -78,10 +78,17 @@
   %-  ~(gas in *(set well:gall))
   ^-  (list well:gall)
   =+  myr=(clan:title our)
+  ::  TODO: Make sure all the other apps compile later.
+  ::
   ::  ?:  ?=($pawn myr)
-  ::    [[%base %hall] [%base %talk] [%base %dojo] ~]
-  ::  [[%home %hall] [%home %talk] [%home %dojo] ~]
-  [[%home %dojo] ~]
+  ::    [[%base %collections] [%base %hall] [%base %talk] [%base %dojo] ~]
+  :~  [%home %collections]
+      [%home %acme]
+      [%home %dns]
+      [%home %dojo]
+      ::  [%home %hall]
+      ::  [%home %talk]
+  ==
 ::
 ++  deft-fish                                           ::  default connects
   |=  our/ship

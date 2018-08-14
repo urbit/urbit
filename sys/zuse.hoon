@@ -135,6 +135,7 @@
           {$init p/@p}                                  ::  report install
           {$mack p/(unit tang)}                         ::  
           {$mass p/mass}                                ::  memory usage
+          {$rove p/ship q/lane}                         ::  lane change
           {$send p/lane q/@}                            ::  transmit packet
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
@@ -161,6 +162,7 @@
           {$nuke p/@p}                                  ::  toggle auto-block
           {$make p/(unit @t) q/@ud r/@ s/?}             ::  wild license
           {$sith p/@p q/@uw r/?}                        ::  imperial generator
+          {$tend $~}                                    ::  watch lane changes
           {$wake $~}                                    ::  timer activate
           {$wegh $~}                                    ::  report memory
           {$west p/sack q/path r/*}                     ::  network request
@@ -203,6 +205,7 @@
   ++  boon                                              ::  fort output
     $%  {$beer p/ship q/@uvG}                           ::  gained ownership
         {$cake p/sock q/soap r/coop s/duct}             ::  e2e message result
+        {$maze p/ship q/lane}                           ::  lane change
         {$mead p/lane q/rock}                           ::  accept packet
         {$milk p/sock q/soap r/*}                       ::  e2e pass message
         {$ouzo p/lane q/rock}                           ::  transmit packet
@@ -240,12 +243,13 @@
         wid/@ud                                         ::  logical wdow msgs
     ==                                                  ::
   ++  fort                                              ::  formal state
-    $:  $0                                              ::  version
+    $:  $1                                              ::  version
         gad/duct                                        ::  client interface
         hop/@da                                         ::  network boot date
         bad/(set @p)                                    ::  bad ships
         ton/town                                        ::  security
         zac/(map ship corn)                             ::  flows by server
+        ten/(set duct)                                  ::  watch lanes
     ==                                                  ::
   ++  gcos                                              ::  id description
     $%  {$czar $~}                                      ::  8-bit ship
@@ -666,9 +670,11 @@
   ++  able  ^?
     |%
     +=  gift                                            ::  out result <-$
-      $%  [%mass p=mass]                                ::  memory usage
+      $%  [%form p=http-config]                         ::  configuration
+          [%mass p=mass]                                ::  memory usage
           [%mack p=(unit tang)]                         ::  message ack
           [%sigh p=cage]                                ::  marked http response
+          [%that p=@p q=prox]                           ::  get proxied request
           [%thou p=httr]                                ::  raw http response
           [%thus p=@ud q=(unit hiss)]                   ::  http request+cancel
           [%veer p=@ta q=path r=@t]                     ::  drop-through
@@ -676,10 +682,12 @@
           [%velo p=@t q=@t]                             ::  drop-through
       ==                                                ::
     +=  task                                            ::  in request ->$
-      $%  [%born ~]                                     ::  new unix process
+      $%  [%born p=(list host)]                         ::  new unix process
           [%crud p=@tas q=(list tank)]                  ::  XX rethink
           [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
           [%init p=@p]                                  ::  report install
+          [%live p=@ud q=(unit @ud)]                    ::  http/s ports
+          [%rule p=http-rule]                           ::  update config
           [%serv p=$@(desk beam)]                       ::  set serving root
           [%them p=(unit hiss)]                         ::  outbound request
           [%they p=@ud q=httr]                          ::  inbound response
@@ -687,8 +695,10 @@
           [%this p=? q=clip r=httq]                     ::  inbound request
           [%thud ~]                                     ::  inbound cancel
           [%wegh ~]                                     ::  report memory
+          [%well p=path q=(unit mime)]                  ::  put/del .well-known
           [%went p=sack q=path r=@ud s=coop]            ::  response confirm
           [%west p=sack q=[path *]]                     ::  network request
+          [%wise p=ship q=prox]                         ::  proxy notification
       ==                                                ::
     --  ::able
   ::
@@ -722,6 +732,11 @@
         [[%get ~] p=@uvH q=[? clip httq]]               ::  remote request
         [[%got ~] p=@uvH q=httr]                        ::  remote response
         [[%gib ~] p=@uvH]                               ::  remote cancel
+      ::
+        [[%get-inner ~] p=@uvH q=mark r=coin s=beam]  ::TODO details?
+        [[%got-inner ~] p=@uvH q=(each (cask) tang)]  ::TODO details?
+      ::
+        [[%not ~] p=prox]                               ::  proxy notification
     ==                                                  ::
   ++  hart  {p/? q/(unit @ud) r/host}                   ::  http sec+port+host
   ++  hate  {p/purl q/@p r/moth}                        ::  semi-cooked request
@@ -732,6 +747,34 @@
   ++  host  (each (list @t) @if)                        ::  http host
   ++  hoke  %+  each   {$localhost $~}                  ::  local host
             ?($.0.0.0.0 $.127.0.0.1)                    ::
+  :: +http-config: full http-server configuration
+  ::
+  +=  http-config
+    $:  :: secure: PEM-encoded RSA private key and cert or cert chain
+        ::
+        secure=(unit [key=wain cert=wain])
+        :: proxy: reverse TCP proxy HTTP(s)
+        ::
+        proxy=?
+        :: log: keep HTTP(s) access logs
+        ::
+        log=?
+        :: redirect: send 301 redirects to upgrade HTTP to HTTPS
+        ::
+        ::   Note: requires certificate.
+        ::
+        redirect=?
+    ==
+  :: +http-rule: update configuration
+  ::
+  +=  http-rule
+    $%  :: %cert: set or clear certificate and keypair
+        ::
+        [%cert p=(unit [key=wain cert=wain])]
+        :: %turf: add or remove established dns binding
+        ::
+        [%turf p=?(%put %del) q=(list @t)]
+    ==
   ++  httq                                              ::  raw http request
     $:  p/meth                                          ::  method
         q/@t                                            ::  unparsed url
@@ -769,6 +812,22 @@
   ++  octs  {p/@ud q/@t}                                ::  octet-stream
   ++  oryx  @t                                          ::  CSRF secret
   ++  pork  {p/(unit @ta) q/(list @t)}                  ::  fully parsed url
+  :: +prox: proxy notification
+  ::
+  ::   Used on both the proxy (ward) and upstream sides for
+  ::   sending/receiving proxied-request notifications.
+  ::
+  +=  prox
+    $:  :: por: tcp port
+        ::
+        por=@ud
+        :: sek: secure?
+        ::
+        sek=?
+        :: non: authentication nonce
+        ::
+        non=@uvJ
+    ==
   ++  purf  (pair purl (unit @t))                       ::  url with fragment
   ++  purl  {p/hart q/pork r/quay}                      ::  parsed url
   ++  quay  (list {p/@t q/@t})                          ::  parsed url query
@@ -788,93 +847,9 @@
 ::                                                      ::::
 ::::                    ++ford                            ::  (1f) build
   ::                                                    ::::
-++  ford  ^?
-  |%
-  ::                                                    ::
-  ::::                  ++able:ford                     ::  (1f1) arvo moves
-    ::                                                  ::::
-  ++  able  ^?
-    |%
-    ++  gift                                            ::  out result <-$
-      $%  {$made p/@uvH q/gage}                         ::  computed result
-          {$mass p/mass}                                ::  memory usage
-          {$news p/@uvH}                                ::  fresh depends
-      ==                                                ::
-    ++  task                                            ::  in request ->$
-      $%  {$exec p/@p q/(unit bilk)}                    ::  make / kill
-          {$wasp p/@p q/{@uvH ?}}                       ::  depends ask / kill
-          {$wegh $~}                                    ::  report memory
-          {$wipe p/@p $~}                               ::  clear cache
-      ==                                                ::
-    --  ::able
-  ++  bilk  (pair beak silk)                            ::  sourced request
-  ++  gage                                              ::  recursive cage+tang
-    $%  {$& p/cage}                                     ::  success
-        {$| p/tang}                                     ::  error
-        {$tabl p/(list (pair gage gage))}               ::  table of results
-    ==                                                  ::
-  ++  hood                                              ::  assembly plan
-    $:  zus/@ud                                         ::  zuse kelvin
-        sur/(list hoof)                                 ::  structures
-        lib/(list hoof)                                 ::  libraries
-        fan/(list horn)                                 ::  resources
-        src/(list hoop)                                 ::  program
-    ==                                                  ::
-  ++  hoof  (trel ? term (unit (pair case ship)))       ::  resource reference
-  ++  hoop                                              ::  source in hood
-    $%  {$& p/hoon}                                     ::  direct hoon
-        {$| p/beam}                                     ::  resource location
-    ==                                                  ::
-  ++  hops                                              ::  XX late-bound path
-    $:  pre/(unit tyke)                                 ::
-        pof/(unit {p/@ud q/tyke})                       ::
-    ==                                                  ::
-  ++  horn                                              ::  resource tree
-    $%  {$fssg p/hoon}                                  ::  /~  twig by hand
-        {$fsbc p/hoon}                                  ::  /$  argument
-        {$fsbr p/(list horn)}                           ::  /|  options
-        {$fshx p/horn}                                  ::  /#  insert dephash
-        {$fsts p/term q/horn}                           ::  /=  apply face
-        {$fsdt p/(list horn)}                           ::  /.  list
-        {$fscm p/(list (pair spur horn))}               ::  /,  switch by path
-        {$fscn p/horn}                                  ::  /%  propagate args
-        {$fspm p/(list mark) q/horn}                    ::  /&  translates
-        {$fscb p/horn}                                  ::  /_  homo map
-        {$fssm p/hoon q/horn}                           ::  /;  operate on
-        {$fscl p/hops q/horn}                           ::  /:  relative to
-        {$fskt p/hoon q/horn}                           ::  /^  cast
-        {$fszp q/mark}                                  ::  /!mark/ eval value
-        {$fszy q/mark}                                  ::  /mark/ static/grow
-    ==                                                  ::
-  ++  milk  (trel ship desk silk)                       ::  sourced silk
-  ++  silk                                              ::  construction layer
-    $^  {p/silk q/silk}                                 ::  cons
-    $%  {$$ p/cage}                                     ::  literal
-        {$alts p/(list silk)}                           ::  options
-        {$bake p/mark q/coin r/beam}                    ::  local synthesis
-        {$bunt p/mark}                                  ::  example of mark
-        {$call p/silk q/silk}                           ::  slam
-        {$cast p/mark q/silk}                           ::  translate
-        {$core p/beam}                                  ::  build program
-        {$diff p/silk q/silk}                           ::  diff
-        {$dude p/(trap tank) q/silk}                    ::  error wrap
-        {$file p/beam}                                  ::  from clay
-        {$flag p/(set $@(@uvH beam)) q/silk}            ::  add dependencies
-        {$join p/mark q/silk r/silk}                    ::  merge
-        {$mash p/mark q/milk r/milk}                    ::  annotate
-        {$mute p/silk q/(list (pair wing silk))}        ::  mutant
-        {$pact p/silk q/silk}                           ::  patch
-        {$plan p/beam q/coin r/hood}                    ::  structured assembly
-        {$reef $~}                                      ::  kernel reef
-        {$ride p/hoon q/silk}                           ::  silk thru hoon
-        {$tabl p/(list (pair silk silk))}               ::  list
-        {$vale p/mark q/*}                              ::  validate
-        {$volt p/(cask *)}                              ::  unsafe add type
-    ==                                                  ::
-  --  ::ford
 ::  |ford: build system vane interface
 ::
-++  ford-api  ^?
+++  ford  ^?
   |%
   ::  |able:ford: ford's public +move interface
   ::
@@ -2638,11 +2613,14 @@
         %+  mix  txt
         %^  rsh  3  (sub (mul 16 blocks) len)
         %+  rep  7
-        %-  flop
-        |-  ^-  (list @ux)
-        ?:  =(blocks 0)  ~
-        :-  (encrypt ctr)
-            $(ctr (inc mod ctr), blocks (dec blocks))
+        =|  seed=(list @ux)
+        |-  ^+  seed
+        ?:  =(blocks 0)  seed
+        %=  $
+          seed    [(encrypt ctr) seed]
+          ctr     (inc mod ctr)
+          blocks  (dec blocks)
+        ==
       ::                                                ::  ++de:ctra:aes:crypto
       ++  de                                            ::  decrypt
         en
@@ -2662,11 +2640,14 @@
         %+  mix  txt
         %^  rsh  3  (sub (mul 16 blocks) len)
         %+  rep  7
-        %-  flop
-        |-  ^-  (list @ux)
-        ?:  =(blocks 0)  ~
-        :-  (encrypt ctr)
-            $(ctr (inc mod ctr), blocks (dec blocks))
+        =|  seed=(list @ux)
+        |-  ^+  seed
+        ?:  =(blocks 0)  seed
+        %=  $
+          seed    [(encrypt ctr) seed]
+          ctr     (inc mod ctr)
+          blocks  (dec blocks)
+        ==
       ::                                                ::  ++de:ctrb:aes:crypto
       ++  de                                            ::  decrypt
         en
@@ -2686,11 +2667,14 @@
         %+  mix  txt
         %^  rsh  3  (sub (mul 16 blocks) len)
         %+  rep  7
-        %-  flop
-        |-  ^-  (list @ux)
-        ?:  =(blocks 0)  ~
-        :-  (encrypt ctr)
-            $(ctr (inc mod ctr), blocks (dec blocks))
+        =|  seed=(list @ux)
+        |-  ^+  seed
+        ?:  =(blocks 0)  seed
+        %=  $
+          seed    [(encrypt ctr) seed]
+          ctr     (inc mod ctr)
+          blocks  (dec blocks)
+        ==
       ::                                                ::  ++de:ctrc:aes:crypto
       ++  de                                            ::  decrypt
         en
@@ -5764,7 +5748,6 @@
       gift:able:eyre
       gift:able:ford
       gift:able:gall
-      gift:able:ford-api
   ==
 ++  task-arvo                                           ::  in request ->$
   $?  task:able:ames
@@ -5774,7 +5757,6 @@
       task:able:eyre
       task:able:ford
       task:able:gall
-      task:able:ford-api
   ==
 ++  note-arvo                                           ::  out request $->
   $?  {@tas $meta vase}
@@ -5785,7 +5767,6 @@
       {$e task:able:eyre}
       {$f task:able:ford}
       {$g task:able:gall}
-      {$t task:able:ford-api}
   ==  ==
 ++  sign-arvo                                           ::  in result $<-
   $%  {$a gift:able:ames}
@@ -5796,7 +5777,6 @@
       {$f gift:able:ford}
       {$g gift:able:gall}
       {$j gift:able:jael}
-      {$t gift:able:ford-api}
   ==
 ::
 ++  unix-task                                           ::  input from unix

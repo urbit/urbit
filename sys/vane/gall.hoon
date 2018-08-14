@@ -1,3 +1,4 @@
+!:
 ::  ::  %gall, agent execution  
 !?  163
 ::::
@@ -150,7 +151,7 @@
   ::  +mo-recieve-core: receives an app core built by ford-turbo
   ::
   ++  mo-recieve-core
-    |=  [dap=dude byk=beak made-result=made-result:ford-api]
+    |=  [dap=dude byk=beak made-result=made-result:ford]
     ^+  +>
     ::
     ?:  ?=([%incomplete *] made-result)
@@ -161,7 +162,7 @@
     ?:  ?=([%error *] build-result)
       (mo-give %onto %| message.build-result)
     ::
-    =/  result-cage=cage  (result-to-cage:ford-api build-result)
+    =/  result-cage=cage  (result-to-cage:ford build-result)
     ::
     =/  app-data=(unit seat)  (~(get by bum) dap)
     ?^  app-data
@@ -206,7 +207,7 @@
     ^+  +>
     %+  mo-pass  [%sys %core dap (scot %p p.byk) q.byk (scot r.byk) ~]
     ^-  note-arvo
-    [%t %build our live=%.y [%core [[p q]:byk [%hoon dap %app ~]]]]
+    [%f %build our live=%.y [%core [[p q]:byk [%hoon dap %app ~]]]]
   ::
   ++  mo-away                                           ::  foreign request
     |=  {him/ship caz/cush}                             ::  
@@ -306,14 +307,14 @@
     ^+  +>
     ?+    -.pax  !!
         $core
-      ?>  ?=([%t %made *] sih)
+      ?>  ?=([%f %made *] sih)
       ?>  ?=({@ @ @ @ $~} t.pax)
       (mo-recieve-core i.t.pax (mo-chew t.t.pax) result.sih)
     ::
         %pel                                            ::  translated peer
       ?>  ?=({@ $~} t.pax)
       =+  mar=i.t.pax
-      ?>  ?=([%t %made *] sih)
+      ?>  ?=([%f %made *] sih)
       ::
       ?:  ?=([%incomplete *] result.sih)
         (mo-give %unto %coup `tang.result.sih)
@@ -323,7 +324,7 @@
       ?:  ?=([%error *] build-result)
         (mo-give %unto %coup `message.build-result)
       ::
-      (mo-give %unto %diff (result-to-cage:ford-api build-result))
+      (mo-give %unto %diff (result-to-cage:ford build-result))
     ::
         $red                                            ::  diff ack
       ?>  ?=({@ @ @ $~} t.pax)
@@ -343,7 +344,7 @@
     ::
         %rep                                            ::  reverse request
       ?>  ?=({@ @ @ $~} t.pax)
-      ?>  ?=([%t %made *] sih)
+      ?>  ?=([%f %made *] sih)
       =+  :*  him=(slav %p i.t.pax)
               dap=i.t.t.pax
               num=(slav %ud i.t.t.t.pax)
@@ -361,7 +362,7 @@
       ::
       ::  "XX pump should ack"
       =.  +>.$  (mo-give %mack ~)
-      =*  result-cage  (result-to-cage:ford-api build-result)
+      =*  result-cage  (result-to-cage:ford build-result)
       (mo-give(hen (mo-ball him num)) %unto %diff result-cage)
     ::
         $req                                            ::  inbound request
@@ -371,11 +372,17 @@
               num=(slav %ud i.t.t.t.pax)
           ==
       ?:  ?=({$f $made *} sih)
-        ?-  -.q.+>.sih
-          $tabl  ~|(%made-tabl !!)
-          $|  (mo-give %mack `p.q.+>.sih)               ::  XX should crash
-          $&  (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke p.q.+>.sih)
-        ==
+        ?:  ?=([%incomplete *] result.sih)
+          ::  "XX should crash"
+          (mo-give %mack `tang.result.sih)
+        ::
+        =/  build-result  build-result.result.sih
+        ::
+        ?:  ?=([%error *] build-result)
+          ::  "XX should crash"
+          (mo-give %mack `message.build-result)
+        =/  cay/cage  (result-to-cage:ford build-result)
+        (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke cay)
       ?:  ?=({$a $woot *} sih)  +>.$                    ::  quit ack, boring
       ?>  ?=({$g $unto *} sih)
       =+  cuf=`cuft`+>.sih
@@ -391,7 +398,7 @@
         %val                                            ::  inbound validate
       ?>  ?=({@ @ $~} t.pax)
       =+  [him=(slav %p i.t.pax) dap=i.t.t.pax]
-      ?>  ?=([%t %made *] sih)
+      ?>  ?=([%f %made *] sih)
       ::
       ?:  ?=([%incomplete *] result.sih)
         (mo-give %unto %coup `tang.result.sih)
@@ -401,7 +408,7 @@
       ?:  ?=([%error *] build-result)
         (mo-give %unto %coup `message.build-result)
       ::
-      =*  result-cage  (result-to-cage:ford-api build-result)
+      =*  result-cage  (result-to-cage:ford build-result)
       (mo-clip dap `prey`[%high ~ him] [%poke result-cage])
     ::
         $way                                            ::  outbound request
@@ -468,12 +475,12 @@
     ?:  ?=($puff -.cub)
       %+  mo-pass
         [%sys %val (scot %p q.q.pry) dap ~]
-      [%t %build our live=%.n [%vale [p q]:(mo-beak dap) +.cub]]
+      [%f %build our live=%.n [%vale [p q]:(mo-beak dap) +.cub]]
     ?:  ?=($punk -.cub)
       %+  mo-pass
         [%sys %val (scot %p q.q.pry) dap ~]
-      :*  %t  %build  our  live=%.n
-          ^-  schematic:ford-api
+      :*  %f  %build  our  live=%.n
+          ^-  schematic:ford
           [%cast [p q]:(mo-beak dap) p.cub [%$ q.cub]]
       ==
     ?:  ?=($peer-not -.cub)
@@ -510,7 +517,7 @@
         $d
       %+  mo-pass
         [%sys %rep (scot %p him) dap (scot %ud num) ~]
-      [%t %build our live=%.n [%vale [p q]:(mo-beak dap) p.ron q.ron]]
+      [%f %build our live=%.n [%vale [p q]:(mo-beak dap) p.ron q.ron]]
     ::
         $x  =.  +>  (mo-give %mack ~)                  ::  XX should crash
             (mo-give(hen (mo-ball him num)) %unto %quit ~)
@@ -588,7 +595,7 @@
         ?:  =(mar p.cay)  [%give %unto p.q.cov]
         :+  %pass
           [%sys %pel dap ~]
-        [%t %build our live=%.n [%cast [p q]:(mo-beak dap) mar [%$ cay]]]
+        [%f %build our live=%.n [%cast [p q]:(mo-beak dap) mar [%$ cay]]]
       ::
           $pass
         :+  %pass  `path`[%use dap p.q.cov]
@@ -1213,23 +1220,25 @@
         $crew  `%c
         $crow  `%c
         $deal  `%g
-        $exec  `%f
+        $build  `%f
+        $kill  `%f
         $flog  `%d
         $drop  `%c
         $info  `%c
-        %kill  `%t
-        %build  `%t
         $merg  `%c
         $mont  `%c
         $nuke  `%a
         $ogre  `%c
         $perm  `%c
+        $rule  `%e
         $serv  `%e
+        $tend  `%a
         $them  `%e
         $wait  `%b
         $want  `%a
         $warp  `%c
-        $wipe  `%f                                      ::  XX cache clear
+        $well  `%e
+        ::  $wipe  `%f                                      ::  XX cache clear
       ==
     --
   --
