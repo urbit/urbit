@@ -92,19 +92,19 @@
     $:  lookup=(map key-type [val=val-type fresh=@ud])
         queue=(qeu key-type)
         size=@ud
-        max-size=@ud
-        depth=@ud
+        max-size=_2.048
+        depth=_1
     ==
 --
 |%
-++  ops
+++  by-clock
   |*  [key-type=mold val-type=mold]
   |_  clock=(clock key-type val-type)
   ::  +get: looks up a key, marking it as fresh
   ::
   ++  get
     |=  key=key-type
-    ^+  [val-type clock]
+    ^-  [(unit val-type) _clock]
     ::
     =+  maybe-got=(~(get by lookup.clock) key)
     ?~  maybe-got
@@ -113,7 +113,8 @@
     =.  lookup.clock
       %+  ~(put by lookup.clock)  key
       u.maybe-got(fresh (max +(fresh.u.maybe-got) depth.clock))
-    [val.u.maybe-got clock]
+    ::
+    [`val.u.maybe-got clock]
   ::  +put: add a new cache entry, possibly removing an old one
   ::
   ++  put
@@ -208,6 +209,9 @@
       ::  pending-subscriptions: outgoing subscriptions on live resources
       ::
       pending-subscriptions=(request-tracker subscription)
+      ::  cache: clock based cache of build results
+      ::
+      cache=(clock cache-key build-result)
   ==
 ::  +build-status: current data for a build, including construction status
 ::
@@ -423,9 +427,9 @@
       ::    component linkages and cache access times.
       ::
       sub-builds=(list build)
-      ::  cache-key: if not ~, cache this result as :cache-key.
+      ::  cache-access: if not ~, cache this result as :cache-key.
       ::
-      cache-key=(unit cache-key)
+      cache-access=(unit [=cache-key new=?])
   ==
 ::  +vane: short names for vanes
 ::
@@ -1672,7 +1676,7 @@
       ::
       ?-    -.result.made
           %build-result
-        (apply-build-result [build build-result.result]:made)
+        (apply-build-result [build build-result.result cache-access]:made)
       ::
           %blocks
         (apply-blocks [build builds.result]:made)
@@ -1732,9 +1736,21 @@
     ::    Our build produced an actual result.
     ::
     ++  apply-build-result
-      |=  [=build =build-result]
+      |=  [=build =build-result cache-access=(unit [=cache-key new=?])]
       ^+  ..execute
       ::  ~&  [%apply-build-result (build-to-tape build) (~(got by builds.state) build)]
+      ::
+      =?  cache.state  ?=(^ cache-access)
+        =+  by-clock=(by-clock cache-key ^build-result)
+        ?.  new.u.cache-access
+          =^  ignored  cache.state
+            (~(get by-clock cache.state) cache-key.u.cache-access)
+          cache.state
+        ::
+        ~&  [%put-by-clock (build-to-tape build)]
+        %+  ~(put by-clock cache.state)
+          cache-key.u.cache-access
+        build-result
       ::
       =^  build-status  builds.state
         %+  update-build-status  build
@@ -2143,6 +2159,7 @@
       =/  =cache-key  [%call gate-vase sample-vase]
       =^  cached-result  out  (access-cache cache-key)
       ?^  cached-result
+        ~&  [%using-cached-for (build-to-tape build)]
         (return-result u.cached-result)
       ::
       ::  How much duplication is there going to be here between +call and
@@ -2154,7 +2171,6 @@
       ::
       ?-    -.val
           %0
-        =.  cache-key.out  `cache-key
         (return-result %success %call [type.u.slit-result p.val])
       ::
           %1
@@ -2162,7 +2178,6 @@
         (blocked-paths-to-receipt %call blocked-paths)
       ::
           %2
-        =.  cache-key.out  `cache-key
         (return-error [[%leaf "ford: %call failed:"] p.val])
       ==
     ::
@@ -3987,6 +4002,7 @@
       =/  =cache-key  [%ride formula subject-vase]
       =^  cached-result  out  (access-cache cache-key)
       ?^  cached-result
+        ~&  [%using-cached-for (build-to-tape build)]
         (return-result u.cached-result)
       ::
       =/  val
@@ -3996,7 +4012,6 @@
       ?-    -.val
       ::
           %0
-        =.  cache-key.out  `cache-key
         (return-result %success %ride [type.u.slim-result p.val])
       ::
           %1
@@ -4004,7 +4019,6 @@
         (blocked-paths-to-receipt %ride blocked-paths)
       ::
           %2
-        =.  cache-key.out  `cache-key
         (return-error [[%leaf "ford: %ride failed:"] p.val])
       ==
     ::
@@ -4060,15 +4074,13 @@
       =/  =cache-key  [%slim subject-type formula]
       =^  cached-result  out  (access-cache cache-key)
       ?^  cached-result
+        ~&  [%using-cached-for (build-to-tape build)]
         (return-result u.cached-result)
       ::
       =/  compiled=(each (pair type nock) tang)
         (mule |.((~(mint ut subject-type) [%noun formula])))
       ::
       %_    out
-          cache-key
-        `cache-key
-      ::
           result
         ?-  -.compiled
           %|  [%build-result %error [leaf+"%slim failed: " p.compiled]]
@@ -4084,15 +4096,13 @@
       =/  =cache-key  [%slit p.gate p.sample]
       =^  cached-result  out  (access-cache cache-key)
       ?^  cached-result
+        ~&  [%using-cached-for (build-to-tape build)]
         (return-result u.cached-result)
       ::
       =/  product=(each type tang)
         (mule |.((slit p.gate p.sample)))
       ::
       %_    out
-          cache-key
-        `cache-key
-      ::
           result
         ?-  -.product
           %|  :*  %build-result   %error
@@ -4550,7 +4560,12 @@
       |=  =cache-key
       ^-  [(unit build-result) _out]
       ::
-      [~ out]
+      ?~  entry=(~(get by lookup.cache.state) cache-key)
+        ~&  [%access-cache-no (build-to-tape build)]
+        [~ out(cache-access `[cache-key new=%.y])]
+      ::
+      ~&  [%access-cache-yes (build-to-tape build)]
+      [`val.u.entry out(cache-access `[cache-key new=%.n])]
     ::
     ++  depend-on
       |=  kid=^build
