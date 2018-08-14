@@ -3693,12 +3693,9 @@
     ::
     ::  shorthands
     ::
-    ++  argon2-minimal
-      (argon2 32 %id 0x13 1 8 1 *byts *byts)
-    ::
-    ::TODO  discuss and standardize?
     ++  argon2-urbit
-      (argon2 64 %u 0x13 4 1.024 10 *byts *byts)
+      |=  out=@ud
+      (argon2 out %u 0x13 4 512.000 1 *byts *byts)
     ::
     ::  argon2 proper
     ::

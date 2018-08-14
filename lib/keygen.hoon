@@ -17,9 +17,8 @@
 ++  argon2u
   |=  [inp=byts out=@ud]
   ^-  @
-  %.  [inp (to-byts 'urbitkeygen')]
-  %-  argon2:argon2:crypto
-  [out %u 0x13 1 1.024 10 *byts *byts]
+  %-  (argon2-urbit:argon2:crypto out)
+  [inp (to-byts 'urbitkeygen')]
 ::
 ++  child-node-from-seed
   |=  [seed=byts met=meta pass=(unit @t)]
