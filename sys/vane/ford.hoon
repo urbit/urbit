@@ -110,9 +110,7 @@
     ?~  maybe-got
       [~ clock]
     ::
-    =.  lookup.clock
-      %+  ~(put by lookup.clock)  key
-      u.maybe-got(fresh (max +(fresh.u.maybe-got) depth.clock))
+    =.  clock  (freshen key)
     ::
     [`val.u.maybe-got clock]
   ::  +put: add a new cache entry, possibly removing an old one
@@ -120,9 +118,14 @@
   ++  put
     |=  [key=key-type val=val-type]
     ^+  clock
-    ::  no overwrite allowed
+    ::  no overwrite allowed, but allow duplicate puts
     ::
-    ?<  (~(has by lookup.clock) key)
+    ?^  existing=(~(get by lookup.clock) key)
+      ::  val must not change
+      ::
+      ?>  =(val val.u.existing)
+      ::
+      (freshen key)
     ::
     =?  clock  =(max-size.clock +(size.clock))
       ::
@@ -152,6 +155,18 @@
     ==
   ::
   ++  wyt  size.clock
+  ::
+  ++  freshen
+    |=  key=key-type
+    ^+  clock
+    %_    clock
+        lookup
+      ::  TODO: This is a jab.
+      ::
+      %+  ~(put by lookup.clock)  key
+      =/  entry  (~(got by lookup.clock) key)
+      entry(fresh (max +(fresh.entry) depth.clock))
+    ==
   --
 --
 |%
@@ -1747,7 +1762,6 @@
             (~(get by-clock cache.state) cache-key.u.cache-access)
           cache.state
         ::
-        ~&  [%put-by-clock (build-to-tape build)]
         %+  ~(put by-clock cache.state)
           cache-key.u.cache-access
         build-result
@@ -2159,7 +2173,6 @@
       =/  =cache-key  [%call gate-vase sample-vase]
       =^  cached-result  out  (access-cache cache-key)
       ?^  cached-result
-        ~&  [%using-cached-for (build-to-tape build)]
         (return-result u.cached-result)
       ::
       ::  How much duplication is there going to be here between +call and
@@ -4002,7 +4015,6 @@
       =/  =cache-key  [%ride formula subject-vase]
       =^  cached-result  out  (access-cache cache-key)
       ?^  cached-result
-        ~&  [%using-cached-for (build-to-tape build)]
         (return-result u.cached-result)
       ::
       =/  val
@@ -4074,7 +4086,6 @@
       =/  =cache-key  [%slim subject-type formula]
       =^  cached-result  out  (access-cache cache-key)
       ?^  cached-result
-        ~&  [%using-cached-for (build-to-tape build)]
         (return-result u.cached-result)
       ::
       =/  compiled=(each (pair type nock) tang)
@@ -4096,7 +4107,6 @@
       =/  =cache-key  [%slit p.gate p.sample]
       =^  cached-result  out  (access-cache cache-key)
       ?^  cached-result
-        ~&  [%using-cached-for (build-to-tape build)]
         (return-result u.cached-result)
       ::
       =/  product=(each type tang)
@@ -4561,10 +4571,8 @@
       ^-  [(unit build-result) _out]
       ::
       ?~  entry=(~(get by lookup.cache.state) cache-key)
-        ~&  [%access-cache-no (build-to-tape build)]
         [~ out(cache-access `[cache-key new=%.y])]
       ::
-      ~&  [%access-cache-yes (build-to-tape build)]
       [`val.u.entry out(cache-access `[cache-key new=%.n])]
     ::
     ++  depend-on

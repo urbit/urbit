@@ -7439,6 +7439,7 @@
   ^-  tang
   =/  ford  *ford-gate
   %-  expect-eq  !>
-  :-  (my [ship *ford-state:ford]~)
-  state-by-ship.ax.+>+<.ford
+  :-  *ford-state:ford
+  =/  state  (~(got by state-by-ship.ax.+>+<.ford) ship)
+  state(cache cache:*ford-state:ford)
 --
