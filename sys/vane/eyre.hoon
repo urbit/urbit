@@ -819,7 +819,6 @@
         $west                                           ::  remote request
       =.  mow  :_(mow [hen %give %mack ~])
       =+  mez=((soft gram) q.kyz)
-      ~&  [%west mez]
       ?~  mez
         ~&  e+[%strange-west p.kyz]
         ~|(%strange-west !!)
@@ -910,7 +909,6 @@
     ::
     ::
         $thou
-      ~&  %axon-thou
       ?+    -.tee  !!
         $ay  (ames-gram (slav %p p.tee) got+~ (slav %uv q.tee) |2.sih)
         $hi  (cast-thou q.tee httr+!>(p.sih))
@@ -981,7 +979,6 @@
         ::
         ::  =+  dep=(crip "W/{(en-json %s (scot %uv p.sih))}")
         =+  hit=[200 ~[content-type+(en-mite mit)] ~ rez]  :: etag+dep
-        ~&  [%giving-turbo-thou tee]
         (give-thou (add-cookies cug hit))
       ::
           {$hi ^}
@@ -1057,9 +1054,7 @@
   ++  cast-thou  :: turbo
     |=  [mar=mark cay=cage]
     ?:  ?=($httr mar)
-      ~&  [%cast-thou-immediate mar]
       (give-sigh %& cay)
-    ~&  [%cast-thou mar]
     %^  execute-turbo  si+~  live=%.n
     =/  =beak  (norm-beak -.top)
     [%alts [%cast [p q]:beak mar $+cay] [%cast [p q]:beak %recoverable-error $+cay] ~]
@@ -1140,7 +1135,6 @@
   ::
   ++  give-turbo-sigh
     |=  result=made-result:ford
-    ~&  %give-turbo-sigh
     =-  +>.$(mow :_(mow [hen %give %sigh `cage`-]))
     ?:  ?=(%incomplete -.result)
       [%tang !>(tang.result)]
@@ -1217,8 +1211,6 @@
           $html  (give-html 200 cug p.pez)
           $htme  (give-html 401 cug p.pez)
           $bake
-
-        ~&  [%bake pez]
         %+  exec-turbo-live  p.pez
         ^-  schematic:ford
         :-  %alts  :~
