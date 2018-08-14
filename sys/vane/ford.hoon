@@ -7,7 +7,6 @@
 ::  ford internal data structures
 ::
 =>  =~
-=,  ford  ::  TODO remove once in vane
 |%
 ::  +move: arvo moves that ford can emit
 ::
@@ -77,8 +76,6 @@
               care-paths=(set [care=care:clay =path])
   ==  ==  ==  ==
 --
-::
-=,  ford  ::  TODO remove once in vane
 ::
 |%
 ++  clock
@@ -528,7 +525,11 @@
     :(welp "[hood " (spud (en-beam (rail-to-beam source-path.schematic))) "]")
   ::
       %plan
-    :(welp "[plan " (spud (en-beam (rail-to-beam path-to-render.schematic))) "]")
+    ;:  welp
+      "[plan "
+      (spud (en-beam (rail-to-beam path-to-render.schematic)))
+      "]"
+    ==
   ::
       %scry
     (spud (en-beam (extract-beam resource.schematic ~)))
@@ -537,7 +538,15 @@
     ::  "slim {<subject-type.schematic>} {<formula.schematic>}"
   ::
       %vale
-    :(welp "[vale [" (trip (scot %p ship.disc.schematic)) " " (trip desk.disc.schematic) "] " (trip mark.schematic) "]")
+    ;:  welp
+      "[vale ["
+      (trip (scot %p ship.disc.schematic))
+      " "
+      (trip desk.disc.schematic)
+      "] "
+      (trip mark.schematic)
+      "]"
+    ==
   ==
 ::  +rail-to-beam
 ::
@@ -972,8 +981,6 @@
       ==
     ==
   --
-
-
 ::  +per-event: per-event core
 ::
 ++  per-event
@@ -1037,7 +1044,11 @@
   ::  +rebuild: rebuild any live builds based on +resource updates
   ::
   ++  rebuild
-    |=  [=subscription new-date=@da =disc care-paths=(set [care=care:clay =path])]
+    |=  $:  =subscription
+            new-date=@da
+            =disc
+            care-paths=(set [care=care:clay =path])
+        ==
     ^-  [(list move) ford-state]
     ::
     =<  finalize
@@ -1377,8 +1388,8 @@
   ::
   ::    Performs the three step build process: First, figure out which builds
   ::    we're going to run this loop through the ford algorithm. Second, run
-  ::    the gathered builds, possibly in parallel. Third, apply the +build-receipt
-  ::    algorithms to the ford state.
+  ::    the gathered builds, possibly in parallel. Third, apply the
+  ::    +build-receipt algorithms to the ford state.
   ::
   ++  execute
     |=  builds=(set build)
@@ -1404,7 +1415,6 @@
     =.  candidate-builds  (~(uni in candidate-builds) builds)
     ::
     |^  ^+  ..execute
-        ::  ~&  [%candidate-builds (turn ~(tap in candidate-builds) build-to-tape)]
         ::
         ?:  =(~ candidate-builds)
           ..execute
@@ -1652,8 +1662,8 @@
   ::  reduce: apply +build-receipts produce from the +make phase.
   ::
   ::    +gather produces builds to run make on. +make produces
-  ::    +build-receipts. It is in +reduce where we take these +build-receipts and
-  ::    apply them to ..execute.
+  ::    +build-receipts. It is in +reduce where we take these +build-receipts
+  ::    and apply them to ..execute.
   ::
   ++  reduce
     |=  build-receipts=(list build-receipt)
@@ -1687,7 +1697,6 @@
       ::  process :sub-builds.made
       ::
       =.  state  (track-sub-builds build.made sub-builds.made)
-      ::  ~&  [%post-track receipt=made build-state=(~(got by builds.state) build.made)]
       ::
       ?-    -.result.made
           %build-result
@@ -1705,7 +1714,6 @@
     ++  track-sub-builds
       |=  [client=build sub-builds=(list build)]
       ^+  state
-      ::  ~&  [%track-sub-builds build=(build-to-tape client) subs=(turn sub-builds build-to-tape)]
       ::  mark :sub-builds as :subs in :build's +build-status
       ::
       =^  build-status  builds.state
@@ -1753,7 +1761,6 @@
     ++  apply-build-result
       |=  [=build =build-result cache-access=(unit [=cache-key new=?])]
       ^+  ..execute
-      ::  ~&  [%apply-build-result (build-to-tape build) (~(got by builds.state) build)]
       ::
       =?  cache.state  ?=(^ cache-access)
         =+  by-clock=(by-clock cache-key ^build-result)
@@ -1780,7 +1787,6 @@
     ++  apply-blocks
       |=  [=build blocks=(list build)]
       ^+  ..execute
-      ::  ~&  [%apply-blocks duct (build-to-tape build)]
       ::  if a %scry blocked, register it and maybe send an async request
       ::
       =?    ..execute
@@ -1823,7 +1829,6 @@
     =|  out=build-receipt
     ::  ~&  [%turbo-make (build-to-tape build)]
     ::  dispatch based on the kind of +schematic in :build
-    ::
     ::
     |^  =,  schematic.build
         ::
@@ -1929,7 +1934,8 @@
         =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
         =/  wrapped-error=tank
           [%rose braces `(list tank)`message.u.result]
-        =.  errors  (weld errors `(list tank)`[[%leaf "option"] wrapped-error ~])
+        =.  errors
+          (weld errors `(list tank)`[[%leaf "option"] wrapped-error ~])
         $(choices t.choices)
       ::
       (return-result %success %alts u.result)
@@ -2150,7 +2156,6 @@
       =?  blocks  ?=(~ gate-result)    [[date.build gate] blocks]
       =?  blocks  ?=(~ sample-result)  [[date.build sample] blocks]
       ?^  blocks
-        ::
         (return-blocks blocks)
       ::
       ?<  ?=(~ gate-result)
@@ -2158,7 +2163,6 @@
       ::
       =/  gate-vase=vase    q:(result-to-cage u.gate-result)
       =/  sample-vase=vase  q:(result-to-cage u.sample-result)
-      ::
       ::  run %slit to get the resulting type of calculating the gate
       ::
       =/  slit-schematic=schematic  [%slit gate-vase sample-vase]
@@ -2175,9 +2179,6 @@
       ?^  cached-result
         (return-result u.cached-result)
       ::
-      ::  How much duplication is there going to be here between +call and
-      ::  +ride? Right now, we're just !! on scrys, but for reals we want it to
-      ::  do the same handling.
       ?>  &(?=(^ q.gate-vase) ?=(^ +.q.gate-vase))
       =/  val
         (mong [q.gate-vase q.sample-vase] intercepted-scry)
@@ -2280,7 +2281,8 @@
         ::  find +grab within the destination mark core
         ::
         =/  grab-build=^build
-          [date.build [%ride [%limb %grab] [%$ (result-to-cage u.mark-core-result)]]]
+          :-  date.build
+          [%ride [%limb %grab] [%$ (result-to-cage u.mark-core-result)]]
         ::
         =^  grab-result  out  (depend-on grab-build)
         ?~  grab-result
@@ -2607,7 +2609,7 @@
       (return-result %success %hood p.u.q.parsed)
     ::
     ++  make-join
-      |=  [disc=^disc mark=term first=schematic second=schematic]
+      |=  [disc=disc mark=term first=schematic second=schematic]
       ^-  build-receipt
       ::
       =/  initial-build=^build
@@ -2759,10 +2761,10 @@
       (return-result build-result)
     ::
     ++  make-mash
-      |=  $:  disc=^disc
+      |=  $:  disc=disc
               mark=term
-              first=[disc=^disc mark=term =schematic]
-              second=[disc=^disc mark=term =schematic]
+              first=[disc=disc mark=term =schematic]
+              second=[disc=disc mark=term =schematic]
           ==
       ^-  build-receipt
       ::
@@ -2996,7 +2998,7 @@
       (return-result build-result)
     ::
     ++  make-pact
-      |=  [disc=^disc start=schematic diff=schematic]
+      |=  [disc=disc start=schematic diff=schematic]
       ^-  build-receipt
       ::  first, build the inputs
       ::
@@ -3171,7 +3173,7 @@
       (return-result build-result)
     ::
     ++  make-path
-      |=  [disc=^disc prefix=@tas raw-path=@tas]
+      |=  [disc=disc prefix=@tas raw-path=@tas]
       ^-  build-receipt
       ::  possible-spurs: flopped paths to which :raw-path could resolve
       ::
@@ -3385,7 +3387,8 @@
           ?~  query-compile-result
             [[%block [query-compile-build]~] ..run-crane]
           ?:  ?=([~ %error *] query-compile-result)
-            [[%error [leaf+"/; failed: " message.u.query-compile-result]] ..run-crane]
+            :-  [%error [leaf+"/; failed: " message.u.query-compile-result]]
+            ..run-crane
           ?>  ?=([~ %success %ride *] query-compile-result)
           ::  TODO: if we had a slop build type, everything could be crammed
           ::  into one sub-build.
@@ -3490,7 +3493,8 @@
             [[%block ~[toplevel-build]] ..run-crane]
           ::
           ?:  ?=([~ %error *] toplevel-result)
-            [[%error [leaf+"/_ failed: " message.u.toplevel-result]] ..run-crane]
+            :-  [%error [leaf+"/_ failed: " message.u.toplevel-result]]
+            ..run-crane
           ?>  ?=([~ %success %scry *] toplevel-result)
           ::
           =/  toplevel-arch=arch  ;;(arch q.q.cage.u.toplevel-result)
@@ -3504,10 +3508,12 @@
             %+  turn  sub-paths
             |=  sub=@ta
             ^-  ^build
-            [date.build [%scry [%c %y path-to-render(spur [sub spur.path-to-render])]]]
+            :-  date.build
+            [%scry [%c %y path-to-render(spur [sub spur.path-to-render])]]
           ::  results: accumulator for results of sub-builds
           ::
-          =|  results=(list [kid=^build sub-path=@ta results=(unit build-result)])
+          =|  $=  results
+              (list [kid=^build sub-path=@ta results=(unit build-result)])
           ::  resolve all the :sub-builds
           ::
           ::    TODO: It feels like this running sub build and filtering
@@ -3532,7 +3538,8 @@
           ==
           ::  split :results into completed :mades and incomplete :blocks
           ::
-          =+  split-results=(skid results |=([* * r=(unit build-result)] ?=(^ r)))
+          =+  ^=  split-results
+              (skid results |=([* * r=(unit build-result)] ?=(^ r)))
           ::
           =/  mades=_results   -.split-results
           =/  blocks=_results  +.split-results
@@ -3575,7 +3582,8 @@
           =^  crane-results  ..run-crane
             %+  roll  sub-paths
             |=  $:  [=rail sub-path=@ta]
-                    accumulator=[(list [sub-path=@ta =compose-result]) _..run-crane]
+                    $=  accumulator
+                    [(list [sub-path=@ta =compose-result]) _..run-crane]
                 ==
             =.  ..run-crane  +.accumulator
             =.  path-to-render  rail
@@ -3753,7 +3761,8 @@
           ::
           ?.  (~(nest ut p.vase.u.bunt-result) | p.q.subject.child)
             [[%error [leaf+"/^ failed: nest-fail"]~] ..run-crane]
-          [[%subject %noun [p.vase.u.bunt-result q.q.subject.child]] ..run-crane]
+          :_  ..run-crane
+          [%subject %noun [p.vase.u.bunt-result q.q.subject.child]]
         ::  +run-fszp: runs the `/!mark/` "rune"
         ::
         ++  run-fszp
@@ -3806,7 +3815,6 @@
         ++  run-fszy
           |=  =mark
           ^-  compose-cranes
-          ::  why does this not actually run the renderer in the collections.hoon case?
           ::
           =/  bake-build=^build
             :-  date.build
@@ -3815,7 +3823,8 @@
           ?~  bake-result
             [[%block [bake-build]~] ..run-crane]
           ?:  ?=([~ %error *] bake-result)
-            [[%error [leaf+"/{<mark>}/ failed: " message.u.bake-result]] ..run-crane]
+            :_  ..run-crane
+            [%error [leaf+"/{<mark>}/ failed: " message.u.bake-result]]
           ?>  ?=([~ %success %bake *] bake-result)
           ::
           [[%subject cage.u.bake-result] ..run-crane]
@@ -4045,15 +4054,11 @@
       (return-result u.result)
     ::
     ++  make-scry
-      ::  TODO: All accesses to :state which matter happens in this function;
-      ::  those calculations need to be lifted out of +make into +execute.
-      ::
       |=  =resource
       ^-  build-receipt
       ::  construct a full +beam to make the scry request
       ::
-      =/  =beam  (extract-beam resource `date.build)
-      ::
+      =/  =beam          (extract-beam resource `date.build)
       =/  =scry-request  [vane.resource care.resource beam]
       ::  perform scry operation if we don't already know the result
       ::
@@ -4227,7 +4232,7 @@
           ::    take us from :source to :term.
           ::
           =/  path  (find-path-through u.maybe-load-marks-result)
-          ::  if there is no path between these marks, give a nice error message.
+          ::  if there is no path between these marks, give an error message
           ::
           ?~  path
             %_    out
@@ -4238,6 +4243,8 @@
             ==
           ::
           (return-result %success %walk path)
+      ::  TODO: Move these types into a core above
+      ::
       ::  +load-node: a queued loading action
       ::
       +=  load-node  [type=?(%grab %grow) mark=term]
@@ -4624,7 +4631,7 @@
           :-  %|
           [%leaf "ford: {<name>}: invalid resource in scry path: {<path>}"]
         ::
-        =/  sub-schematic=^schematic  [%pin date %scry u.resource]
+        =/  sub-schematic=schematic  [%pin date %scry u.resource]
         ::
         [%& `^build`[date sub-schematic]]
       ::
@@ -4688,7 +4695,6 @@
   ::
   ++  remove-builds
     |=  builds=(list build)
-    ::  ~&  [%remove-builds (turn builds build-to-tape)]
     ::
     |^  ^+  state
         ::
@@ -4707,7 +4713,6 @@
     ::  +remove-build: stop storing :build in the state
     ::
     ::    Removes all linkages to and from sub-builds
-    ::    TODO: should we assert we're not subscribed?
     ::
     ++  remove-single-build
       |=  [=build =build-status]
@@ -4715,12 +4720,9 @@
       ::  never delete a build that something depends on
       ::
       ?^  clients.build-status
-        ::  ~&  [%skip-remove-because-clients (build-to-tape build) clients.build-status]
         [removed=| state]
       ?^  requesters.build-status
-        ::  ~&  [%skip-remove-because-requesters (build-to-tape build) requesters.build-status]
         [removed=| state]
-      ::  ~&  [%removing (build-to-tape build) (~(got by builds.state) build)]
       ::  nothing depends on :build, so we'll remove it
       ::
       :-  removed=&
@@ -4865,7 +4867,6 @@
     |=  =build
     ^+  ..execute
     ::
-    ::  ~&  [%on-build-complete (build-to-tape build)]
     =.  ..execute  (cleanup-orphaned-provisional-builds build)
     ::
     =/  duct-status  (~(got by ducts.state) duct)
@@ -4886,8 +4887,6 @@
   ++  on-root-build-complete
     |=  =build
     ^+  ..execute
-    ::
-    ::  ~&  [%on-root-build-complete (build-to-tape build)]
     ::
     =/  =build-status  (~(got by builds.state) build)
     =/  =duct-status  (~(got by ducts.state) duct)
@@ -4932,7 +4931,6 @@
       =?  state  ?=(^ last-sent.live.duct-status)
         =/  old-build=^build  build(date date.u.last-sent.live.duct-status)
         ::
-        ::  ~&  [%remove-previous-duct-from-root duct duct-status (build-to-tape old-build)]
         (remove-duct-from-root old-build)
       ::
       =/  resource-list=(list [=disc resources=(set resource)])
@@ -4965,7 +4963,7 @@
       ::
       ..execute
     ==
-  ::  +send-incomplete:
+  ::  +send-incomplete: emit a move indicating we can't complete :build
   ::
   ++  send-incomplete
     |=  =build
@@ -4977,6 +4975,8 @@
       :*  duct  %give  %made  date.build
           ^-  made-result
           :-  %incomplete
+          ::  TODO: Factor this out into the sample
+          ::
           [%leaf "build tried to subscribe to multiple discs"]~
       ==
     ::
@@ -4990,7 +4990,6 @@
   ++  cleanup-orphaned-provisional-builds
     |=  =build
     ^+  ..execute
-    ::  ~&  [%cleanup-orphaned-provisional-builds (build-to-tape build)]
     ::
     =/  =build-status  (~(got by builds.state) build)
     ::
@@ -5070,19 +5069,15 @@
     ::   does this build even exist?!
     ::
     ?~  maybe-build-status=(~(get by builds.state) build)
-      ::  ~&  [%cleanup-no-build (build-to-tape build)]
       state
     ::
     =/  =build-status  u.maybe-build-status
     ::  never delete a build that something depends on
     ::
     ?^  clients.build-status
-      ::  ~&  [%cleanup-clients-no-op (build-to-tape build)]
       state
     ?^  requesters.build-status
-      ::  ~&  [%cleanup-requesters-no-op (build-to-tape build)]
       state
-    ::  ~&  [%cleanup (build-to-tape build)]
     ::
     (remove-builds ~[build])
   ::  +collect-live-resources: produces all live resources from sub-scrys
@@ -5090,7 +5085,6 @@
   ++  collect-live-resources
     |=  =build
     ^-  (jug disc resource)
-    ::  ~&  [%collect-live-resources (build-to-tape build)]
     ::
     ?:  ?=(%scry -.schematic.build)
       =*  resource  resource.schematic.build
@@ -5148,7 +5142,6 @@
     ::
     =/  already-subscribed=?
       (~(has by pending-subscriptions.state) subscription)
-    ::  ~&  [%start-clay-subscription subscription already-subscribed=already-subscribed pending-subscriptions.state]
     ::
     =.  pending-subscriptions.state
       (put-request pending-subscriptions.state subscription duct)
@@ -5190,7 +5183,6 @@
     |=  =subscription
     ^+  ..execute
     ::
-    ::  ~&  [%cancel-clay-subscription subscription pending-subscriptions.state]
     =^  originator  pending-subscriptions.state
       (del-request pending-subscriptions.state subscription duct)
     ::  if there are still other ducts on this subscription, don't send a move
@@ -5288,7 +5280,6 @@
 ::  end =~
 ::
 .  ==
-=,  ford  ::  TODO remove once in vane
 ::
 ::::  vane core
   ::
