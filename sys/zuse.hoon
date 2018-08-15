@@ -884,9 +884,9 @@
           ::  %wegh: produce memory usage information
           ::
           [%wegh ~]
-          ::  %wipe: clear cache
+          ::  %wipe: wipes stored builds
           ::
-          [%wipe ~]
+          [%wipe percent-to-remove=@ud]
       ==
     ::  +gift:able:ford: responses from ford
     ::
