@@ -1,4 +1,3 @@
-!:
 ::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
 |=  pit=vase
@@ -167,7 +166,6 @@
   --
 --
 |%
-::
 ::  +axle: overall ford state
 ::
 +=  axle
@@ -5364,10 +5362,7 @@
     :+  (scot %p our)  %|
     ::
     :~  [%builds [%& builds]]
-        [%ducts [%& ducts]]
-        [%builds-by-schematic [%& builds-by-schematic]]
-        [%pending-scrys [%& pending-scrys]]
-        [%pending-subscriptions [%& pending-subscriptions]]
+        [%cache [%& cache]]
     ==
   ==
 ::  +wipe: wipe half a +ford-state's cache, in LRU (least recently used) order
