@@ -1,4 +1,3 @@
-!:
 ::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
 |=  pit=vase
@@ -145,6 +144,18 @@
       =/  entry  (~(got by lookup.clock) key)
       entry(fresh (max +(fresh.entry) depth.clock))
     ==
+  ::  +resize: changes the maximum size, removing entries if needed
+  ::
+  ++  resize
+    |=  new-max=@ud
+    ^+  clock
+    ::
+    =.  max-size.clock  new-max
+    ::
+    ?:  (gte new-max size.clock)
+      clock
+    ::
+    (trim (sub size.clock new-max))
   ::  +evict: remove an entry from the cache
   ::
   ++  evict
@@ -1221,6 +1232,13 @@
       ::
       $(stale-builds t.stale-builds)
     --
+  ::  +keep: resize cache to :max entries
+  ::
+  ++  keep
+    |=  max=@ud
+    ^+  state
+    ::
+    state(cache (~(resize (by-clock cache-key build-result) cache.state) max))
   ::  +cancel: cancel a build
   ::
   ::    When called on a live build, removes all tracking related to the live
@@ -5427,6 +5445,28 @@
     ::
     [moves ford-gate]
   ::
+      ::  %keep: keep :count cache entries
+      ::
+      %keep
+    ::
+    =/  ship-states=(list [ship=@p state=ford-state])
+      ~(tap by state-by-ship.ax)
+    ::
+    =.  state-by-ship.ax
+      |-  ^+  state-by-ship.ax
+      ?~  ship-states  state-by-ship.ax
+      ::
+      =,  i.ship-states
+      =*  event-args   [[ship duct now scry-gate] state]
+      ::
+      =.  state-by-ship.ax
+        %+  ~(put by state-by-ship.ax)  ship
+        (keep:(per-event event-args) max.task)
+      ::
+      $(ship-states t.ship-states)
+    ::
+    [~ ford-gate]
+  ::
       ::  %kill: cancel a %build
       ::
       %kill
@@ -5465,7 +5505,7 @@
     :_  ~
     :^  duct  %give  %mass
     ^-  mass
-    :-  %turbo
+    :-  %ford
     :-  %|
     %+  turn  ~(tap by state-by-ship.ax)     :: XX single-home
     |=  [our=@ ford-state]  ^-  mass
