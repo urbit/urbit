@@ -7,6 +7,6 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{met/ship $~} $~}
+        {{met/ship ~} ~}
     ==
 [%helm-tlon-init-stream met]

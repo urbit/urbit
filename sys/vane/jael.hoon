@@ -1,6 +1,5 @@
 !:                                                      ::  /van/jael
 ::                                                      ::  %reference/0
-^%
 !?  150
 ::
 ::
@@ -380,15 +379,15 @@
   ++  div                                               ::  allocate
     |=  b/@ud
     ^-  (unit (pair pile pile))
-    =<  ?-(- $& [~ p], $| ~)
+    =<  ?-(- %& [~ p], %| ~)
     |-  ^-  (each (pair pile pile) @u)
     ?:  =(0 b)
       [%& ~ a]
     ?~  a  [%| 0]
     =/  al  $(a l.a)
     ?-    -.al
-        $&  [%& p.p.al a(l q.p.al)]
-        $|
+        %&  [%& p.p.al a(l q.p.al)]
+        %|
       =.  b  (^sub b p.al)
       =/  top  +((^sub q.n.a p.n.a))
       ?:  =(b top)
@@ -399,8 +398,8 @@
         (uni(a r.a) [n.a ~ ~])
       =/  ar  $(a r.a, b (^sub b top))
       ?-    -.ar
-          $&  [%& a(r p.p.ar) q.p.ar]
-          $|  [%| :(add top p.al p.ar)]
+          %&  [%& a(r p.p.ar) q.p.ar]
+          %|  [%| :(add top p.al p.ar)]
       ==
     ==
   ::
@@ -1148,7 +1147,7 @@
       ::
       ::  pig: purse report for partner
       ::
-      ?.  ?=($| -.q.hug)  ..feel
+      ?.  ?=(%| -.q.hug)  ..feel
       =*  pig  (~(lawn ur urb) our p.hug)
       %_    ..feel
           moz  :_  moz
@@ -1628,8 +1627,8 @@
       =/  gob  (fall (~(get by shy) pal) *safe)
       =/  yer  ^-  (pair bump safe)
         ?-  -.rem
-          $&  [[p.rem ~] (~(splice up gob) p.rem)]
-          $|  [(~(differ up gob) p.rem) p.rem]
+          %&  [[p.rem ~] (~(splice up gob) p.rem)]
+          %|  [(~(differ up gob) p.rem) p.rem]
         ==
       %_  +>.$
         shy  (~(put by shy) pal q.yer)

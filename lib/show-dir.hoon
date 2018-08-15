@@ -3,11 +3,11 @@
 ::::  /hoon/show-dir/lib
   ::
 /?    310
-|=  {vane/?($g $c) pax/path des/(map @t $~)}
+|=  {vane/?($g $c) pax/path des/(map @t ~)}
 ^-  tank
 :+  %rose  [" " `~]
 %+  turn  (sort ~(tap by des) aor)
-|=  {kid/@ta $~}
+|=  {kid/@ta ~}
 =+  paf=`path`/[kid]
 =-  :+  %rose  ["/" ~ ?:(dir "/" ~)]
     (turn paf |=(a/knot leaf+(trip a)))
@@ -17,6 +17,6 @@
   [| paf]
 ?~  dir.arf
   [& paf]  ::  !!
-?.  ?=({^ $~ $~} dir.arf)
+?.  ?=({^ ~ ~} dir.arf)
   [& paf]
 $(paf (welp paf /[p.n.dir.arf]))

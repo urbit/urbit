@@ -8,8 +8,8 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {mon/term $~}
-        $~
+        {mon/term ~}
+        ~
     ==
 :-  %kiln-commit
 mon

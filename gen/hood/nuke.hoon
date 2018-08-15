@@ -8,6 +8,6 @@
   !:
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{him/@p $~} $~}
+        {{him/@p ~} ~}
     ==
 [%helm-nuke him]

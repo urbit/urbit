@@ -7,8 +7,8 @@
 =,  old-zuse
 ::
 |%
-++  beaky  {knot knot knot $~}
-++  sorc  ?({bek/beaky $~} {her/@p sud/@tas $~})
+++  beaky  {knot knot knot ~}
+++  sorc  ?({bek/beaky ~} {her/@p sud/@tas ~})
 --
 ::
 ::::
@@ -21,18 +21,18 @@
 |^  :-  %kiln-merge
     ^-  {syd/desk her/ship sud/desk cas/case gem/?(germ $auto)}
     ?-  arg
-      {@ @ $~}
+      {@ @ ~}
         =+(arg [sud ?.(=(our her) her (sein her)) sud (opt-case da+now) gem])
     ::
-      {^ $~}
+      {^ ~}
         =+  (pars bek.arg)
         [dez ?.(=(our who) who (sein who)) dez (opt-case caz) gem]
     ::
-      {* @ @ $~}
+      {* @ @ ~}
         :-  (pars-src syd.arg)
         =+(arg [her sud (opt-case da+now) gem])
     ::
-      {* ^ $~}
+      {* ^ ~}
         :-  (pars-src syd.arg)
         =+((pars bek.arg) [who dez (opt-case caz) gem])
     ==

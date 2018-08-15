@@ -8,15 +8,15 @@
 =*  as-octs  as-octs:mimes:html
 =,  space:userlib
 |%
-++  part  {$write $0 pith}           :: no state
-++  pith  $~
++$  part  {$write $0 pith}           :: no state
++$  pith  ~
 --
 ::
 ::::
   ::
 |%
 ++  data  $%({$json json} {$mime mime})
-++  card  $%  {$exec wire @p $~ {beak silk:ford}}
+++  card  $%  {$exec wire @p ~ {beak silk:ford}}
               {$info wire @p toro:clay}
           ==
 --
@@ -119,7 +119,7 @@
 ::
 ++  poke-sec-atom
   |=  {hot/host:eyre dat/@}
-  ?>  ?=($& -.hot)
+  ?>  ?=(%& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
   =.  dat  (scot %uw (en:crua:crypto ames-secret dat))
   (poke--data [`%atom [%sec p.hot]] %mime / (as-octs dat))
@@ -139,8 +139,8 @@
   :: ?.  =(our src)
   ::   ~|(foreign-write/[our=our src=src] !!)
   ?+  -.res  ~|(gage+-.res !!)
-    $|  (mean p.res)
-    $&  =-  abet:(emit %info write+~ our -)
+    %|  (mean p.res)
+    %&  =-  abet:(emit %info write+~ our -)
         (foal :(welp (en-beam beak-now ~) pax /[-.p.res]) p.res)
   ==
 --

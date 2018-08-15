@@ -52,7 +52,7 @@
   =,  enjs
   |%
   ++  lens-json                       :: json for cli client
-    ^-  ?($~ ^json)                   :: null = ignore
+    ^-  ?(~ ^json)                   :: null = ignore
     ?+    -.sef  ~
         $tan  (wall (turn (flop p.sef) |=(a/tank ~(ram re a))))
         $txt  s+(crip p.sef)
@@ -61,7 +61,7 @@
     ::
         $mor
       =+  all=(turn p.sef |=(a/sole-effect lens-json(sef a)))
-      =.  all  (skip all |=(a/^json ?=($~ a)))
+      =.  all  (skip all |=(a/^json ?=(~ a)))
       ?~  all  ~
       ?~  t.all  i.all
       ~|(multiple-effects+`(list ^json)`all !!)

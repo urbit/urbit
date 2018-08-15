@@ -12,8 +12,8 @@
 =,  sole
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/$@($~ {dom/path $~})}
-        $~
+        {arg/$@(~ {dom/path ~})}
+        ~
     ==
 ^-  (sole-result {$write-sec-atom p/host q/@})
 =-  ?~  arg  -
@@ -22,7 +22,7 @@
   [%& %oauth-hostname "api hostname: https://"]
 %+  sole-go  thos:urlp
 |=  hot/host
-?:  ?=($| -.hot)
+?:  ?=(%| -.hot)
   ~|(%ips-unsupported !!)
 %+  sole-lo
   [%& %oauth-client "consumer key: "]

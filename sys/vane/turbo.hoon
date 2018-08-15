@@ -1,5 +1,6 @@
 ::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
-::
+::  
+!:
 |=  pit=vase
 ::
 =,  ford-api
@@ -434,9 +435,6 @@
   ::
     ::    %slim
     ::  "slim {<subject-type.schematic>} {<formula.schematic>}"
-  ::
-      %vale
-    :(welp "[vale [" (trip (scot %p ship.disc.schematic)) " " (trip desk.disc.schematic) "] " (trip mark.schematic) "]")
   ==
 ::  +rail-to-beam
 ::
@@ -703,19 +701,19 @@
       ::  parses the zuse version, eg "/?  309"
       ::
         ;~  pose
-          (ifix [;~(plug fas wut gap) gap] dem)
+          (ifix [;~(plug net wut gap) gap] dem)
           (easy zuse)
         ==
       ::  pareses the structures, eg "/-  types"
       ::
         ;~  pose
-          (ifix [;~(plug fas hep gap) gap] (most ;~(plug com gaw) cable))
+          (ifix [;~(plug net hep gap) gap] (most ;~(plug com gaw) cable))
           (easy ~)
         ==
       ::  parses the libraries, eg "/+  lib1, lib2"
       ::
         ;~  pose
-          (ifix [;~(plug fas lus gap) gap] (most ;~(plug com gaw) cable))
+          (ifix [;~(plug net lus gap) gap] (most ;~(plug com gaw) cable))
           (easy ~)
         ==
       ::
@@ -728,7 +726,7 @@
   ++  beam
     %+  sear  de-beam
     ;~  pfix
-      fas
+      net
       (sear plex (stag %clsg poor)):hoon-parser
     ==
   ::  +cable: parses a +^cable, a reference to something on the filesystem
@@ -756,7 +754,7 @@
     |%
     ++  apex
       %+  knee  *^crane  |.  ~+
-      ;~  pfix  fas
+      ;~  pfix  net
         ;~  pose
           ::  `/~`  hoon literal
           (stag %fssg ;~(pfix sig hoon))
@@ -771,26 +769,26 @@
           ::  `/,`  switch by path
           (stag %fscm ;~(pfix com parse-switch))
           ::  `/&`  pass through a series of mark
-          (stag %fspm ;~(pfix pam parse-pipe))
+          (stag %fspm ;~(pfix pad parse-pipe))
           ::  `/_`  run a crane on each file in the current directory
           (stag %fscb ;~(pfix cab subcrane))
           ::  `/;`  passes date through a gate
-          (stag %fssm ;~(pfix sem parse-gate))
+          (stag %fssm ;~(pfix mic parse-gate))
           ::  `/:`  evaluate at path
           (stag %fscl ;~(pfix col parse-at-path))
           ::  `/^` cast
           (stag %fskt ;~(pfix ket parse-cast))
           ::  `/!mark/ evaluate as hoon, then pass through mark
-          (stag %fszp ;~(pfix zap ;~(sfix sym fas)))
+          (stag %fszp ;~(pfix zap ;~(sfix sym net)))
           ::  `/mark/` passes current path through :mark
-          (stag %fszy ;~(sfix sym fas))
+          (stag %fszy ;~(sfix sym net))
         ==
       ==
     ::  +parse-alts: parse a set of alternatives
     ::
     ++  parse-alts
       %+  wide-or-tall
-        (ifix [pel per] (most ace subcrane))
+        (ifix [lit rit] (most ace subcrane))
       ;~(sfix (star subcrane) gap duz)
     ::  +parse-face: parse a face around a subcrane
     ::
@@ -810,19 +808,19 @@
       %+  wide-or-tall
         fail
       =-  ;~(sfix (star -) gap duz)
-      ;~(pfix gap fas ;~(plug static-path subcrane))
+      ;~(pfix gap net ;~(plug static-path subcrane))
     ::  +parse-pipe: parses a pipe of mark conversions
     ::
     ++  parse-pipe
       %+  wide-or-tall
-        ;~(plug (plus ;~(sfix sym pam)) subcrane)
+        ;~(plug (plus ;~(sfix sym pad)) subcrane)
       =+  (cook |=(a=term [a ~]) sym)
       ;~(pfix gap ;~(plug - subcrane))
     ::  +parse-gate: parses a gate applied to a crane
     ::
     ++  parse-gate
       %+  wide-or-tall
-        ;~(plug ;~(sfix wide:hoon-parser sem) subcrane)
+        ;~(plug ;~(sfix wide:hoon-parser mic) subcrane)
       ;~(pfix gap ;~(plug tall:hoon-parser subcrane))
     ::  +parse-at-path: parses a late bound bath
     ::
@@ -834,8 +832,8 @@
     ::
     ++  parse-cast
       %+  wide-or-tall
-        ;~(plug ;~(sfix wide:hoon-parser ket) subcrane)
-      ;~(pfix gap ;~(plug tall:hoon-parser subcrane))
+        ;~(plug ;~(sfix wyde:hoon-parser ket) subcrane)
+      ;~(pfix gap ;~(plug till:hoon-parser subcrane))
     ::  +crane: parses a subcrane
     ::
     ++  subcrane
@@ -852,17 +850,17 @@
     ::
     ++  hoon
       %+  wide-or-tall
-        (ifix [sel ser] (stag %cltr (most ace wide:hoon-parser)))
+        (ifix [lac rac] (stag %cltr (most ace wide:hoon-parser)))
       ;~(pfix gap tall:hoon-parser)
     --
   ::  +static-path: parses a path
   ::
   ++  static-path
-    (sear plex (stag %clsg (more fas hasp))):hoon-parser
+    (sear plex (stag %clsg (more net hasp))):hoon-parser
   ::  +late-bound-path: a path whose time varies
   ::
   ++  late-bound-path
-    ;~  pfix  fas
+    ;~  pfix  net
       %+  cook  |=(a=truss a)
       =>  hoon-parser
       ;~  plug
@@ -1706,7 +1704,7 @@
     ::  accessed-builds: builds accessed/depended on during this run.
     ::
     =|  accessed-builds=(list ^build)
-    ~&  [%turbo-make (build-to-tape build)]
+    ::  ~&  [%turbo-make (build-to-tape build)]
     ::  dispatch based on the kind of +schematic in :build
     ::
     ::
@@ -1719,7 +1717,7 @@
             %$  (make-literal literal)
         ::
             %pin   (make-pin date schematic)
-            %alts  (make-alts choices ~)
+            %alts  (make-alts choices)
             %bake  (make-bake renderer query-string path-to-render)
             %bunt  (make-bunt disc mark)
             %call  (make-call gate sample)
@@ -1795,11 +1793,11 @@
       [build [%build-result u.result] accessed-builds]
     ::
     ++  make-alts
-      |=  [choices=(list schematic) errors=(list tank)]
+      |=  choices=(list schematic)
       ^-  build-receipt
       ::
       ?~  choices
-        (return-error [[%leaf "%alts: all options failed"] errors])
+        (return-error [leaf+"%alts: all options failed"]~)
       ::
       =/  choice=^build  [date.build i.choices]
       ::
@@ -1808,12 +1806,6 @@
         [build [%blocks ~[choice] ~] accessed-builds]
       ::
       ?:  ?=([%error *] u.result)
-        ::  TODO: When the type system wises up, fix this:
-        ::
-        =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
-        =/  wrapped-error=tank
-          [%rose braces `(list tank)`message.u.result]
-        =.  errors  (weld errors `(list tank)`[[%leaf "option"] wrapped-error ~])
         $(choices t.choices)
       ::
       [build [%build-result %success %alts u.result] accessed-builds]
@@ -1829,28 +1821,19 @@
       =^  path-result  accessed-builds  (depend-on path-build)
       ?~  path-result
         [build [%blocks [path-build]~ ~] accessed-builds]
+      ::  if there's a renderer called :renderer, use it on :path-to-render
       ::
-      |^  ^-  build-receipt
-          ::  if there's a renderer called :renderer, use it on :path-to-render
-          ::
-          ?:  ?=([~ %success %path *] path-result)
-            (try-renderer rail.u.path-result)
-          (try-mark ~)
-      ::  try using a renderer first, falling back to marks on errors
-      ::
-      ++  try-renderer
-        |=  =rail
+      ?:  ?=([~ %success %path *] path-result)
         ::  build a +scaffold from the renderer source
         ::
-        =/  hood-build=^build  [date.build [%hood rail]]
+        =/  hood-build=^build  [date.build [%hood rail.u.path-result]]
         ::
         =^  hood-result  accessed-builds  (depend-on hood-build)
         ?~  hood-result
           [build [%blocks [hood-build]~ ~] accessed-builds]
         ::
-        ?:  ?=([~ %error *] hood-result)
-          (try-mark message.u.hood-result)
-        ?>  ?=([~ %success %hood *] hood-result)
+        ?.  ?=([~ %success %hood *] hood-result)
+          (wrap-error hood-result)
         ::  link the renderer, passing through :path-to-render and :query-string
         ::
         =/  plan-build=^build
@@ -1861,110 +1844,98 @@
         ?~  plan-result
           [build [%blocks [plan-build]~ ~] accessed-builds]
         ::
-        ?:  ?=([~ %error *] plan-result)
-          (try-mark message.u.plan-result)
-        ?>  ?=([~ %success %plan *] plan-result)
+        ?.  ?=([~ %success %plan *] plan-result)
+          (wrap-error plan-result)
         ::
         =/  =build-result
-          ::  TODO: renderers returned their name as the mark in old ford
-          ::
-          ::    We should rethink whether we want this to be the case going
-          ::    forward, but for now, Eyre depends on this detail to work.
-          ::
-          [%success %bake renderer vase.u.plan-result]
+          [%success %bake %noun vase.u.plan-result]
         ::
         [build [%build-result build-result] accessed-builds]
+      ::  no renderer, try mark; retrieve directory listing of :path-to-render
       ::
-      ++  try-mark
-        |=  errors=(list tank)
-        ::  no renderer, try mark; retrieve directory listing of :path-to-render
+      ::    There might be multiple files of different marks stored at
+      ::    :path-to-render. Retrieve the directory listing for
+      ::    :path-to-render, then check which of the path segments in
+      ::    that directory are files (not just folders), then for each
+      ::    file try to %cast its mark to the desired mark (:renderer).
+      ::
+      ::    Start by retrieving the directory listing, using :toplevel-build.
+      ::
+      =/  toplevel-build=^build
+        [date.build [%scry %c %y path-to-render]]
+      ::
+      =^  toplevel-result  accessed-builds  (depend-on toplevel-build)
+      ?~  toplevel-result
+        [build [%blocks [toplevel-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %scry *] toplevel-result)
+        (wrap-error toplevel-result)
+      ::
+      =/  toplevel-arch=arch  ;;(arch q.q.cage.u.toplevel-result)
+      ::  find the :sub-path-segments that could be files
+      ::
+      ::    Filter out path segments that aren't a +term,
+      ::    since those aren't valid marks and therefore can't
+      ::    be the last segment of a filepath in Clay.
+      ::
+      =/  sub-path-segments=(list @ta)
+        (skim (turn ~(tap by dir.toplevel-arch) head) (sane %tas))
+      ::
+      =/  sub-schematics=(list [sub-path=@ta =schematic])
+        %+  turn  sub-path-segments
+        |=  sub=@ta
+        :-  sub
+        [%scry %c %y path-to-render(spur [sub spur.path-to-render])]
+      ::
+      =^  schematic-results  accessed-builds
+        (perform-schematics sub-schematics %fail-on-errors *@ta)
+      ?:  ?=([%| *] schematic-results)
+        ::  block or error
+        p.schematic-results
+      ::  marks: list of the marks of the files at :path-to-render
+      ::
+      =/  marks=(list @tas)
+        %+  murn  p.schematic-results
+        |=  [sub-path=@ta result=build-result]
+        ^-  (unit @tas)
         ::
-        ::    There might be multiple files of different marks stored at
-        ::    :path-to-render. Retrieve the directory listing for
-        ::    :path-to-render, then check which of the path segments in
-        ::    that directory are files (not just folders), then for each
-        ::    file try to %cast its mark to the desired mark (:renderer).
+        ?>  ?=([%success %scry *] result)
         ::
-        ::    Start by retrieving the directory listing, using :toplevel-build.
+        =/  =arch  ;;(arch q.q.cage.result)
+        ::  if it's a directory, not a file, we can't load it
         ::
-        =/  toplevel-build=^build
-          [date.build [%scry %c %y path-to-render]]
+        ?~  fil.arch
+          ~
+        [~ `@tas`sub-path]
+      ::  sort marks in alphabetical order
+      ::
+      =.  marks  (sort marks lte)
+      ::  try to convert files to the destination mark, in order
+      ::
+      =/  alts-build=^build
         ::
-        =^  toplevel-result  accessed-builds  (depend-on toplevel-build)
-        ?~  toplevel-result
-          [build [%blocks [toplevel-build]~ ~] accessed-builds]
+        :+  date.build  %alts
+        ^=  choices  ^-  (list schematic)
         ::
-        ?.  ?=([~ %success %scry *] toplevel-result)
-          ::  TODO: include :errors in the output since both failed.
-          ::
-          (wrap-error toplevel-result)
+        %+  turn  marks
+        |=  mark=term
+        ^-  schematic
         ::
-        =/  toplevel-arch=arch  ;;(arch q.q.cage.u.toplevel-result)
-        ::  find the :sub-path-segments that could be files
+        =/  file=rail  path-to-render(spur [mark spur.path-to-render])
         ::
-        ::    Filter out path segments that aren't a +term,
-        ::    since those aren't valid marks and therefore can't
-        ::    be the last segment of a filepath in Clay.
-        ::
-        =/  sub-path-segments=(list @ta)
-          (skim (turn ~(tap by dir.toplevel-arch) head) (sane %tas))
-        ::
-        =/  sub-schematics=(list [sub-path=@ta =schematic])
-          %+  turn  sub-path-segments
-          |=  sub=@ta
-          :-  sub
-          [%scry %c %y path-to-render(spur [sub spur.path-to-render])]
-        ::
-        =^  schematic-results  accessed-builds
-          (perform-schematics sub-schematics %fail-on-errors *@ta)
-        ?:  ?=([%| *] schematic-results)
-          ::  block or error
-          p.schematic-results
-        ::  marks: list of the marks of the files at :path-to-render
-        ::
-        =/  marks=(list @tas)
-          %+  murn  p.schematic-results
-          |=  [sub-path=@ta result=build-result]
-          ^-  (unit @tas)
-          ::
-          ?>  ?=([%success %scry *] result)
-          ::
-          =/  =arch  ;;(arch q.q.cage.result)
-          ::  if it's a directory, not a file, we can't load it
-          ::
-          ?~  fil.arch
-            ~
-          [~ `@tas`sub-path]
-        ::  sort marks in alphabetical order
-        ::
-        =.  marks  (sort marks lte)
-        ::  try to convert files to the destination mark, in order
-        ::
-        =/  alts-build=^build
-          ::
-          :+  date.build  %alts
-          ^=  choices  ^-  (list schematic)
-          ::
-          %+  turn  marks
-          |=  mark=term
-          ^-  schematic
-          ::
-          =/  file=rail  path-to-render(spur [mark spur.path-to-render])
-          ::
-          [%cast disc.file renderer [%scry %c %x file]]
-        ::
-        =^  alts-result  accessed-builds  (depend-on alts-build)
-        ?~  alts-result
-          [build [%blocks [alts-build]~ ~] accessed-builds]
-        ::
-        ?.  ?=([~ %success %alts *] alts-result)
-          (wrap-error alts-result)
-        ::
-        =/  =build-result
-          [%success %bake (result-to-cage u.alts-result)]
-        ::
-        [build [%build-result build-result] accessed-builds]
-      --
+        [%cast disc.file renderer [%scry %c %x file]]
+      ::
+      =^  alts-result  accessed-builds  (depend-on alts-build)
+      ?~  alts-result
+        [build [%blocks [alts-build]~ ~] accessed-builds]
+      ::
+      ?.  ?=([~ %success %alts *] alts-result)
+        (wrap-error alts-result)
+      ::
+      =/  =build-result
+        [%success %bake (result-to-cage u.alts-result)]
+      ::
+      [build [%build-result build-result] accessed-builds]
     ::
     ++  make-bunt
       |=  [=disc mark=term]
@@ -2207,7 +2178,7 @@
         =/  grow-build=^build
           :-  date.build
           :+  %ride
-            formula=`hoon`[%tsgl [%wing ~[target-mark]] [%wing ~[%grow]]]
+            formula=`hoon`[%tsld [%wing ~[target-mark]] [%wing ~[%grow]]]
           ^=  subject
           ^-  schematic
           :*  %mute
@@ -2226,7 +2197,7 @@
           (cast-wrap-error grow-result)
         ::  make sure the product nests in the sample of the destination mark
         ::
-        =/  bunt-build=^build  [date.build [%bunt disc target-mark]]
+        =/  bunt-build=^build  [date.build [%bunt disc mark]]
         ::
         =^  bunt-result  accessed-builds  (depend-on bunt-build)
         ?~  bunt-result
@@ -2236,11 +2207,7 @@
           (cast-wrap-error bunt-result)
         ::
         ?.  (~(nest ut p.q.cage.u.bunt-result) | p.vase.u.grow-result)
-          =*  src  source-mark
-          =*  dst  target-mark
-          :_  accessed-builds
-          :-  %error
-          [leaf+"ford: %cast from {<src>} to {<dst>} failed: nest fail"]~
+          [[%error [leaf+"ford: %cast failed: nest fail"]~] accessed-builds]
         ::
         [[%success mark vase.u.grow-result] accessed-builds]
       ::
@@ -2267,6 +2234,7 @@
         [build [%blocks [hood-build]~ ~] accessed-builds]
       ::
       ?:  ?=(%error -.u.hood-result)
+        ~&  [%error source-path]
         (wrap-error hood-result)
       ::  build the +scaffold into a program
       ::
@@ -2393,7 +2361,7 @@
           ^=  gate
           :+  %ride
             ::
-            formula=`hoon`[%tsgl [%wing ~[%diff]] [%wing ~[%grad]]]
+            formula=`hoon`[%tsld [%wing ~[%diff]] [%wing ~[%grad]]]
           ::
           ^=  subject
           :+  %mute
@@ -3019,7 +2987,7 @@
         :+  %call
           ^-  schematic
           :+  %ride
-            [%tsgl [%limb %pact] [%limb %grad]]
+            [%tsld [%limb %pact] [%limb %grad]]
           ^-  schematic
           :+  %mute
             ^-  schematic
@@ -3302,7 +3270,7 @@
           :_  ..run-crane
           :*  %subject
               p.subject.child
-              [[%face [~ face] p.q.subject.child] q.q.subject.child]
+              [[%face face p.q.subject.child] q.q.subject.child]
           ==
         ::  +run-fscm: runs the `/,` rune
         ::
@@ -3607,7 +3575,7 @@
         ::  +run-fskt: runs the `/^` rune
         ::
         ++  run-fskt
-          |=  [mold=hoon sub-crane=^crane]
+          |=  [=spec sub-crane=^crane]
           ^-  compose-cranes
           ::
           =^  child  ..run-crane  (run-crane subject sub-crane)
@@ -3615,7 +3583,7 @@
             [child ..run-crane]
           ::
           =/  bunt-build=^build
-            [date.build [%ride [%bunt mold] [%$ subject]]]
+            [date.build [%ride [%kttr spec] [%$ subject]]]
           =^  bunt-result  accessed-builds  (depend-on bunt-build)
           ?~  bunt-result
             [[%block [bunt-build]~] ..run-crane]
@@ -3777,7 +3745,7 @@
           ::  use the library name as a face to prevent namespace leakage
           ::
           ^-  vase
-          [[%face face.cable.i.imports p.i.core-vases] q.i.core-vases]
+          [[%face u.face.cable.i.imports p.i.core-vases] q.i.core-vases]
         ::
         $(core-vases t.core-vases, imports t.imports)
       --
@@ -4048,7 +4016,7 @@
           ^=  gate
           :*  %ride
               ::  (ream 'noun:grab')
-              formula=`hoon`[%tsgl [%wing ~[%noun]] [%wing ~[%grab]]]
+              formula=`hoon`[%tsld [%wing ~[%noun]] [%wing ~[%grab]]]
               subject=`schematic`[%core rail.u.path-result]
           ==
         sample=[%$ %noun %noun input]
@@ -4627,12 +4595,6 @@
     ::
     ~|  hoon-version=hoon-version
     ?>  ?=(?(%143 %151) hoon-version)
-    ::  if the actual scry produces a value, use that value; otherwise use local
-    ::
-    =/  scry-response  (scry +<.$)
-    ::
-    ?^  scry-response
-      scry-response
     ::
     =/  vane=(unit ?(%c %g))  ((soft ?(%c %g)) (end 3 1 term))
     ?~  vane
@@ -4651,6 +4613,12 @@
       p.r.beam
     ::
     =/  =build  [date %scry resource]
+    ::  if the actual scry produces a value, use that value; otherwise use local
+    ::
+    =/  scry-response  (scry +<.$)
+    ::
+    ?^  scry-response
+      scry-response
     ::  look up the scry result from our permanent state
     ::
     ::    Note: we can't freshen this cache entry because we can't modify

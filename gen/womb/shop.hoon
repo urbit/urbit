@@ -5,7 +5,7 @@
 /?    310
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        arg/$@($~ {typ/?($planets $galaxies $stars) $~})
+        arg/$@(~ {typ/?($planets $galaxies $stars) ~})
         who/(unit @p)
     ==
 ?~  arg  $(arg ~[typ=%planets])

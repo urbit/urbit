@@ -9,7 +9,7 @@
 ::
 ::::
   ::
-|_  {bal/(bale keys) $~}
+|_  {bal/(bale keys) ~}
 ++  auth
   |%
   ++  header

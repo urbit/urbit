@@ -7,7 +7,7 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{bos/$@($~ {i/@p $~})} $~}
+        {{bos/$@(~ {i/@p ~})} ~}
     ==
 :-  %womb-obey
 ?~(bos ~ (some i.bos))

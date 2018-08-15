@@ -11,10 +11,10 @@
 =,  html
 |%
 ++  twit-path                                           ::  valid peer path
-  $%  {$cred $~}                                        ::  credential info
-      {$home p/@t $~}                                   ::  home timeline
-      {$user p/@t $~}                                   ::  user's tweets
-      {$post p/@taxuv $~}                               ::  status of status
+  $%  {$cred ~}                                        ::  credential info
+      {$home p/@t ~}                                   ::  home timeline
+      {$user p/@t ~}                                   ::  user's tweets
+      {$post p/@taxuv ~}                               ::  status of status
   ==
 ::
 ++  axle                                                ::  app state
@@ -26,7 +26,7 @@
   ==
 ::
 ++  gift                                                ::  subscription action
-  $%  {$quit $~}                                         ::  terminate
+  $%  {$quit ~}                                         ::  terminate
       {$diff gilt}                                      ::  send data
   ==
 ++  gilt
@@ -52,7 +52,7 @@
   ==                                                    ::
 ++  sign                                                ::  arvo response
   $%  {$e $thou p/httr}                                 ::  HTTP result
-      {$t $wake $~}                                      ::  timeout ping
+      {$t $wake ~}                                      ::  timeout ping
   ==
 ::
 ::  XX =*
@@ -115,7 +115,7 @@
   ==
 ::
 ++  wake-peer
-  |=  {pax/path $~}  ^+  done
+  |=  {pax/path ~}  ^+  done
   ~&  twit-wake+peer+pax
   :_  +>.$
   ?.  (~(has by ran) peer+pax)                           ::  ignore if retracted
@@ -137,7 +137,7 @@
 ++  sigh-twit-cred-scry-cred  sigh-twit-cred-cred       :: alias
 ++  sigh-twit-cred-cred
   |=  {wir/wire acc/plan-acct raw/json}  ^+  done
-  ?>  ?=($~ wir)
+  ?>  ?=(~ wir)
   =+  pax=`twit-path`cred+wir
   :_  +>.$(ced `[now raw])
   :-  [ost %poke pax [our %hood] %write-plan-account ~.twitter acc]
@@ -177,7 +177,7 @@
       tan
       :: [leaf/"HTTP Code {<p.hit>}" (turn (need err) mean:render:twit)]
   ?+    pax  [[ost git]~ +>.$]
-    {$post @ $~}
+    {$post @ ~}
       [(spam pax git ~) +>.$]
   ==
 ::
@@ -248,12 +248,12 @@
   ==
 ::
 ++  pear-scry
-  |=  pax/twit-path  ^-  $%({$none $~} {$part p/gilt} {$full p/gilt})
+  |=  pax/twit-path  ^-  $%({$none ~} {$part p/gilt} {$full p/gilt})
   ?-    -.pax
       $post
     =+  (raid:wired +.pax mez=%uv ~)
     =+  sta=(~(get by out) mez)
-    ?.  ?=({$~ $| *} sta)
+    ?.  ?=({~ %| *} sta)
       [%none ~]
     [%full twit-post+p.u.sta]
   ::

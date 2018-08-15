@@ -1,4 +1,5 @@
-!:::::
+!:
+::::::
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -123,8 +124,8 @@
   |=  {a/cafe b/gage}  ^-  (bolt cage)
   ?-  -.b
     $tabl  (flaw a >%bad-marc< ~)
-    $|     (flaw a p.b)
-    $&     (fine a p.b)
+    %|     (flaw a p.b)
+    %&     (fine a p.b)
   ==
 ::
 ++  fret                                                ::  lift error
@@ -390,7 +391,7 @@
       ?>  ?=($g van)
       =.  kig  (~(del in kig) +<-.$)
       =.  mow  :_(mow [hen (cancel van ren bem)])
-      ?:  ?=($| -.gag)
+      ?:  ?=(%| -.gag)
         abut:(give [%made dep %| leaf+"ford-scry-made-fail" p.gag])
       ?:  ?=($tabl -.gag)
         abut:(give [%made dep %| leaf+"ford-scry-made-strange" ~])
@@ -509,18 +510,18 @@
         $0  [%0 p=*(set beam) q=(fun p.ton)]
         $1  ::  ~&  [%coup-need ((list path) p.ton)]
             =-  ?-  -.faw
-                  $&  :-  %1
+                  %&  :-  %1
                       ^=  p
                       %-  silt
                       %+  turn  p.faw
                       |=(a/{vane care:clay beam} [-.a +<.a +>.a *tang])
-                  $|  [%2 p=*(set beam) q=p.faw]
+                  %|  [%2 p=*(set beam) q=p.faw]
                 ==
             ^=  faw
             |-  ^-  (each (list (trel vane care:clay beam)) tang)
             ?~  p.ton  [%& ~]
             =+  nex=$(p.ton t.p.ton)
-            =+  err=|=(a/tape [%| leaf+a ?:(?=($& -.nex) ~ p.nex)])
+            =+  err=|=(a/tape [%| leaf+a ?:(?=(%& -.nex) ~ p.nex)])
             =+  pax=(path i.p.ton)
             ?~  pax  (err "blocking empty")
             =+  ren=((soft care:clay) (rsh 3 1 i.pax))
@@ -531,13 +532,13 @@
               (err "blocking not beam: {<t.pax>}")
             ?:  ?=($g (end 3 1 i.pax))
               ?-  -.nex
-                $&  [%& [%g u.ren u.zis] p.nex]
-                $|  nex
+                %&  [%& [%g u.ren u.zis] p.nex]
+                %|  nex
               ==
             ?:  ?=($c (end 3 1 i.pax))
               ?-  -.nex
-                $&  [%& [%c u.ren u.zis] p.nex]
-                $|  nex
+                %&  [%& [%c u.ren u.zis] p.nex]
+                %|  nex
               ==
             (err "blocking bad vane")
       ==
@@ -547,8 +548,8 @@
       |*  {tod/(each * tang) fun/gate}
       %+  (coup cof)
         ?-  -.tod
-          $&  [%0 p=p.tod]
-          $|  [%2 p=p.tod]
+          %&  [%0 p=p.tod]
+          %|  [%2 p=p.tod]
         ==
       fun
     ::
@@ -575,14 +576,14 @@
       |*  fun/(burg knot (unit))
       =+  res=_(need [?+(-.q !! $0 q.q)]:*fun)
       =+  marv=(map knot res)
-      |=  {cof/cafe sud/(map knot $~)}  ^-  (bolt marv)
+      |=  {cof/cafe sud/(map knot ~)}  ^-  (bolt marv)
       ?~  sud  (flue cof)
       %.  [cof sud]
       ;~  cope
         ;~  coax
           |=({cof/cafe _sud} ^$(cof cof, sud l))
           |=({cof/cafe _sud} ^$(cof cof, sud r))
-          |=  {cof/cafe {dir/@ta $~} ^}
+          |=  {cof/cafe {dir/@ta ~} ^}
           %+  cope  (fun cof dir)
           (flux (lift |*(* [dir +<])))
         ==
@@ -734,7 +735,7 @@
       ++  flat                                          ::  at most one
         |=  {cof/cafe opt/(map term beam)}  ^-  (bolt (unit beam))
         ?~  opt  (flue cof)
-        ?:  ?=({^ $~ $~} opt)  (fine cof `q.n.opt)
+        ?:  ?=({^ ~ ~} opt)  (fine cof `q.n.opt)
         =+  all=(~(run by `(map term beam)`opt) en-beam)
         (flaw cof leaf+"fame: fork {<all>}" ~)
       --
@@ -757,15 +758,15 @@
           [~ u=p.a]
         nuck:so
       ::
-      ++  mota  ;~(pfix pat mota:vez)                   ::  atom odor
+      ++  mota  ;~(pfix vat mota:vez)                   ::  atom odor
       ++  hath  (sear plex (stag %clsg poor)):vez       ::  hood path
-      ++  have  (sear de-beam ;~(pfix fas hath))           ::  hood beam
+      ++  have  (sear de-beam ;~(pfix net hath))        ::  hood beam
       ++  hith                                          ::  static path
         =>  vez
-        (sear plex (stag %clsg (more fas hasp)))
+        (sear plex (stag %clsg (more net hasp)))
       ::
       ++  hive                                          ::  late-bound path
-        ;~  pfix  fas
+        ;~  pfix  net
           %+  cook  |=(a/hops a)
           =>  vez
           ;~  plug
@@ -778,17 +779,17 @@
         %+  ifix  [gay gay]
         ;~  plug
           ;~  pose
-            (ifix [;~(plug fas wut gap) gap] dem)
+            (ifix [;~(plug net wut gap) gap] dem)
             (easy zuse)
           ==
         ::
           ;~  pose
-            (ifix [;~(plug fas hep gap) gap] (most ;~(plug com gaw) hoof))
+            (ifix [;~(plug net hep gap) gap] (most ;~(plug com gaw) hoof))
             (easy ~)
           ==
         ::
           ;~  pose
-            (ifix [;~(plug fas lus gap) gap] (most ;~(plug com gaw) hoof))
+            (ifix [;~(plug net lus gap) gap] (most ;~(plug com gaw) hoof))
             (easy ~)
           ==
         ::
@@ -800,7 +801,7 @@
         ;~  plug
           sym
           %-  punt
-          ;~(pfix fas ;~((glue fas) case ship))
+          ;~(pfix net ;~((glue net) case ship))
         ==
       ::
       ++  ship  ;~(pfix sig fed:ag)
@@ -813,7 +814,7 @@
       ::
       ++  hoop
         ;~  pose
-          (stag %| ;~(pfix fas fas gap have))
+          (stag %| ;~(pfix net net gap have))
           (stag %& tall:vez)
         ==
       ::
@@ -823,24 +824,23 @@
         |%
         ++  apex
           %+  knee  *^horn  |.  ~+
-          ;~  pfix  fas
+          ;~  pfix  net
             ;~  pose
               (stag %fssg ;~(pfix sig hoon:read))       ::  /~  hoon by hand
-              (stag %fsbc ;~(pfix buc hoon:read))       ::  /$  extra arguments
+              (stag %fsbc ;~(pfix bus hoon:read))       ::  /$  extra arguments
               (stag %fsbr ;~(pfix bar alts:read))       ::  /|  or (options)
               (stag %fshx ;~(pfix hax horn:read))       ::  /#  insert dephash
-              (stag %fspt ;~(pfix pat horn:read))       ::  /@  insert dephash
               (stag %fsts ;~(pfix tis name:read))       ::  /=  apply face
               (stag %fsdt ;~(pfix dot list:read))       ::  /.  list
               (stag %fscm ;~(pfix com case:read))       ::  /,  switch by path
               (stag %fscn ;~(pfix cen horn:read))       ::  /%  propagate args
-              (stag %fspm ;~(pfix pam pipe:read))       ::  /&  translates
+              (stag %fspm ;~(pfix pad pipe:read))       ::  /&  translates
               (stag %fscb ;~(pfix cab horn:read))       ::  /_  homo map
-              (stag %fssm ;~(pfix sem gate:read))       ::  /;  operate on
+              (stag %fssm ;~(pfix mic gate:read))       ::  /;  operate on
               (stag %fscl ;~(pfix col path:read))       ::  /:  relative to
               (stag %fskt ;~(pfix ket cast:read))       ::  /^  cast
-              (stag %fszp ;~(pfix zap ;~(sfix sym fas)))::  /!mark/ run to mark
-              (stag %fszy ;~(sfix sym fas))             ::  /mark/ render file
+              (stag %fszp ;~(pfix zap ;~(sfix sym net)))::  /!mark/ run to mark
+              (stag %fszy ;~(sfix sym net))             ::  /mark/ render file
             ==
           ==
         ::
@@ -852,12 +852,12 @@
         ++  read
           |%  ++  hoon
                 %+  rail
-                  (ifix [sel ser] (stag %cltr (most ace wide:vez)))
+                  (ifix [lac rac] (stag %cltr (most ace wide:vez)))
                 ;~(pfix gap tall:vez)
           ::
               ++  alts
                 %+  rail
-                  (ifix [pel per] (most ace horn))
+                  (ifix [lit rit] (most ace horn))
                 ;~(sfix (star horn) gap duz)
           ::
               ++  horn
@@ -877,17 +877,17 @@
               ++  case
                 %+  rail  fail
                 =-  ;~(sfix (star -) gap duz)
-                ;~(pfix gap fas ;~(plug hith horn))
+                ;~(pfix gap net ;~(plug hith horn))
           ::
               ++  pipe
                 %+  rail
-                  ;~(plug (plus ;~(sfix sym pam)) horn)
+                  ;~(plug (plus ;~(sfix sym pad)) horn)
                 =+  (cook |=(a/term [a ~]) sym)
                 ;~(pfix gap ;~(plug - horn))
           ::
               ++  gate
                 %+  rail
-                  ;~(plug ;~(sfix wide:vez sem) horn)
+                  ;~(plug ;~(sfix wide:vez mic) horn)
                 ;~(pfix gap ;~(plug tall:vez horn))
           ::
               ++  path
@@ -1015,7 +1015,7 @@
             ~[leaf+"ford: keel" rose+[" " ~ ~]^(murn yom +)]
         |=  {a/wing b/type *}  ^-  (unit tank)
         =+  typ=(mule |.(p:(slap suh wing+a)))
-        ?:  ?=($| -.typ)
+        ?:  ?=(%| -.typ)
           (some (show [%c %pull] %l a))
         ?:  (~(nest ut p.typ) | b)  ~
         %^  some  %palm  ["." ~ ~ ~]
@@ -1035,7 +1035,7 @@
     ::
     ++  lads                                            ::  possible children
       |=  {cof/cafe bem/beam}
-      ^-  (bolt (map knot $~))
+      ^-  (bolt (map knot ~))
       %^  filter-at-beam  cof  bem
       |=  {cof/cafe dir/knot}
       %+  cope  (load-arch cof bem(s [dir s.bem]))
@@ -1045,12 +1045,12 @@
       |=  {cof/cafe bem/beam}
       %^  filter-at-beam  cof  bem
       |=  {cof/cafe for/mark}
-      ^-  (bolt (unit $~))
+      ^-  (bolt (unit ~))
       ?.  ((sane %tas) for)  (flue cof)
       =.  s.bem  [for s.bem]
       %+  cope  (load-arch cof bem)
       |=  {cof/cafe arc/arch}
-      (fine cof (bind fil.arc $~))
+      (fine cof (bind fil.arc |=(* ~)))
     ::
     ++  lace                                            ::  load file
       |=  {cof/cafe for/mark bem/beam}
@@ -1133,7 +1133,7 @@
       ^-  (bolt arch)
       =+  von=(syve [151 %noun] ~ %cy bem)
       ?~  von  [p=cof q=[%1 [%c %y bem ~] ~ ~]]
-      ?>  ?=({$~ $arch ^} u.von)
+      ?>  ?=({~ $arch ^} u.von)
       =+  arc=((hard arch) q.q.u.u.von)
       %+  cope  (normalize-beak cof bem)
       |=  {cof/cafe bem/beam}
@@ -1152,21 +1152,6 @@
         (flaw cof leaf+"file not found" (smyt (en-beam bem)) ~)
       (fine cof u.u.von)
     ::
-    ++  load-time
-      ~/  %load-time
-      |=  {cof/cafe bem/beam}
-      ^-  (bolt time)
-      ?:  =([%ud 0] r.bem)
-        (flaw cof [leaf+"ford: no data: {<(en-beam bem(s ~))>}"]~)
-      ?.  =(%ud -.r.bem)
-        ~|(%beam-not-normalized !!)  ::XX flaw?
-      =+  von=(syve [151 %noun] ~ %cw bem)
-      ?~  von
-        [p=cof q=[%1 [[%c %w bem ~] ~ ~]]]
-      ?.  ?=([~ %time * @da] u.von)
-        (flaw cof leaf+"ford: bad-revision: {<(bind u.von head)>}" ~)
-      (fine cof q.q.u.u.von)
-    ::
     ++  load-to-mark
       ~/  %load-to-mark
       |=  {cof/cafe for/mark bem/beam}
@@ -1174,7 +1159,7 @@
       |=  {cof/cafe for/mark bem/beam}
       ^-  (bolt (unit vase))
       %+  cope  (laze cof bem)
-      |=  {cof/cafe mal/(map mark $~)}
+      |=  {cof/cafe mal/(map mark ~)}
       ?:  (~(has by mal) for)
         (cope (lace cof for bem) (flux some))
       =+  opt=(silt (turn ~(tap by mal) head))          ::  XX asymptotics
@@ -1218,7 +1203,7 @@
         %+  cool  |.(leaf+"ford: grow {<for>} to {<too>}")
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  {cof/cafe pox/vase}
-        (wrapped-slap cof pox [%tsgr [%limb %grow] [%limb too]])
+        (wrapped-slap cof pox [%tsbn [%limb %grow] [%limb too]])
       %+  cope  (fang cof too)
       ~%  %grab  translate-mark-jet  ~
       |=  {cof/cafe pro/vase}
@@ -1305,8 +1290,8 @@
       |=  {cof/cafe sut/type gen/hoon}
       =+  puz=(mule |.((~(mint ut sut) [%noun gen])))
       ?-  -.puz
-        $|  (flaw cof p.puz)
-        $&  (fine cof p.puz)
+        %|  (flaw cof p.puz)
+        %&  (fine cof p.puz)
       ==
     ::
     ++  wrapped-slap                                    ::  slap
@@ -1513,8 +1498,8 @@
       %+  cool  |.(%.(%want ~(dunk ut (~(peek ut gat) %free 6))))
       =+  top=(mule |.((slit gat sam)))
       ?-  -.top
-        $|  (flaw cof p.top)
-        $&  (fine cof p.top)
+        %|  (flaw cof p.top)
+        %&  (fine cof p.top)
       ==
     ::
     ++  maul                                            ::  slam
@@ -1538,17 +1523,17 @@
       |%
       ++  able                                          ::  assemble preamble
         ^-  hoon
-        :+  %tsgr
+        :+  %tsbn
           ?:  =(~ rop)  
             [%$ 1] 
-          :+  %brcn  [~ ~]
-          =-  [[0 [~ ~] -] ~ ~]
-          (~(run by rop) |=({^ a/hoon} [~ %ash a]))
+          :+  %brcn  ~
+          =-  [[%$ ~ -] ~ ~]
+          (~(run by rop) |=({^ a/hoon} a))
         ?:  =(~ bil) 
           [%$ 1] 
-        :+  %brcn  [~ ~]
-        =-  [[0 [~ ~] -] ~ ~]
-        (~(run by bil) |=({^ a/hoon} [~ %ash a]))
+        :+  %brcn  ~
+        =-  [[%$ ~ -] ~ ~]
+        (~(run by bil) |=({^ a/hoon} a))
       ::
       ++  abut                                          ::  generate
         |=  {cof/cafe hyd/hood}
@@ -1637,35 +1622,11 @@
           |=  {mark vax/vase}
           [%noun (slop [atom+['uvH' ~] dep] vax)]
         ::
-            $fspt
-          ?.  ?=([$fszy @] p.hon)
-            (flaw cof leaf+"ford: STUB /@ only implemented for /mark/" ~)
-          %+  cope  $(cof cof, hon p.hon)
-          |=  {cof/cafe mark vax/vase}
-          %+  cope  (normalize-beak cof how(s [q.p.hon s.how]))
-          |=  {cof/cafe bem/beam}
-          ?>  ?=(%ud -.r.bem)
-          %+  cope  (load-arch cof bem)
-          |=  {cof/cafe ark/arch}
-          ?~  fil.ark  (flaw cof leaf+"ford: no file {<(tope bem)>}" ~)
-          =;  res
-            =.  q.res   ::XX prevent infinite dependency loop
-              ?-(-.q.res $1 [!!], ?($0 $2) q.res(p ~))
-            res
-          ::
-          |-  ^-  (bolt cage)  ::TODO do this in clay
-          =/  bom  bem(p.r (dec p.r.bem))
-          %+  cope  (load-arch cof bom)
-          |=  {cof/cafe ork/arch}
-          ?:  =(fil.ork fil.ark)  ^$(cof cof, bem bom)
-          %+  cope  (load-time cof bem(s ~))
-          (flux |=(wen/time [%noun (slop !>(wen) vax)]))
-        ::
             $fsts
           %+  cope  $(hon q.hon)
           %-  flux
           |=  {mar/mark vax/vase}
-          [mar [%face [~ p.hon] p.vax] q.vax]
+          [mar [%face p.hon p.vax] q.vax]
         ::
             $fsdt
           %+  cope
@@ -1725,7 +1686,7 @@
             $fskt
           %+  cope  $(hon q.hon)
           |=  {cof/cafe mar/mark vax/vase}
-          %+  cope  (wrapped-slap cof bax [%bunt p.hon])
+          %+  cope  (wrapped-slap cof bax [%kttr %bsmc p.hon])
           |=  {cof/cafe tug/vase}
           ?.  (~(nest ut p.tug) | p.vax)
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
@@ -1814,8 +1775,8 @@
         |=  {cof/cafe hop/hoop}
         ^-  (bolt _..wilt)
         ?-    -.hop
-            $&  (fine cof ..wilt(boy [p.hop boy]))
-            $|
+            %&  (fine cof ..wilt(boy [p.hop boy]))
+            %|
           =.  r.p.hop  ?:(?=({$ud $0} r.p.hop) r.how r.p.hop)
           %+  cool  |.(leaf+"ford: wilt {<[(en-beam p.hop)]>}")
           %+  cope  (load-arch cof p.hop)
@@ -1827,12 +1788,12 @@
             (flux |=(sel/_..wilt sel(boy [[%tssg boy.sel] boy])))
           =+  [all=(lark (slat %tas) arc) sel=..wilt]
           %+  cope
-            |-  ^-  (bolt (pair (map term (pair what foot)) _..wilt))
+            |-  ^-  (bolt (pair (map term hoon) _..wilt))
             ?~  all  (fine cof ~ ..wilt)
             %+  cope  $(all l.all)
-            |=  {cof/cafe lef/(map term (pair what foot)) sel/_..wilt}
+            |=  {cof/cafe lef/(map term hoon) sel/_..wilt}
             %+  cope  ^$(all r.all, cof cof, sel sel)
-            |=  {cof/cafe rig/(map term (pair what foot)) sel/_..wilt}
+            |=  {cof/cafe rig/(map term hoon) sel/_..wilt}
             %+  cope
               %=    ^^^^$
                   cof      cof
@@ -1842,12 +1803,12 @@
             |=  {cof/cafe sel/_..wilt}
             %+  fine  cof
             :_  sel
-            ^-  (map term (pair what foot))
-            [[p.n.all [~ %ash [%tssg boy.sel]]] lef rig]
-          |=  {cof/cafe mav/(map term (pair what foot)) sel/_..wilt}
+            ^-  (map term hoon)
+            [[p.n.all [%tssg boy.sel]] lef rig]
+          |=  {cof/cafe mav/(map term hoon) sel/_..wilt}
           ?~  mav
             (flaw cof [%leaf "source missing: {<(en-beam p.hop)>}"]~)
-          (fine cof sel(boy [[%brcn [~ ~] [[0 [~ ~] mav] ~ ~]] boy]))
+          (fine cof sel(boy [[%brcn ~ [[%$ ~ mav] ~ ~]] boy]))
         ==
       --
     ::

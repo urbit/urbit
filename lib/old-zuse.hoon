@@ -31,8 +31,6 @@
 ++  jone        numb:enjs:format                        ::  number from unsigned
 ++  jode        time:enjs:format                        ::  ms timestamp
 ++  jesc        jesc:en-json:html                       ::  escape for json
-++  scanf       scanf:userlib                           ::  formatted scan
-++  parsf       parsf:scanf:userlib                     ::  make parser from:
 ++  taco        as-octs:mimes:html                      ::  atom to octstream
 ++  tact        as-octt:mimes:html                      ::  tape to octstream
 ++  tell        of-wall:format                          ::  wall to octstream
@@ -108,7 +106,7 @@
 ++  cone        !!                                      ::  XX depreacted
 ++  corn        !!                                      ::  XX depreacted
 ++  cred        cred:eyre                               ::  credential
-++  deco        deco:dill                               ::  text decoration
+++  deco        deco                                    ::  text decoration
 ++  deed        deed:pki:jael                           ::  sig stage fake?
 ++  dome        dome:clay                               ::  project state
 ++  dore        dore:ames                               ::  foreign contact
@@ -212,14 +210,10 @@
 ++  soba        soba:clay                               ::  delta
 ++  spur        spur.is                                 ::  ship desk case spur
 ++  step        step:ames                               ::  identity stage
-++  stub        stub:dill                               ::  styled tuba
-++  stye        stye:dill                               ::  decos/bg/fg
-++  styl        styl:dill                               ::  text style
-++  styx        styx:dill                               ::  styled text
 ++  suba        suba:clay                               ::  delta
 ++  tako        tako:clay                               ::  yaki ref
 ++  tick        tick:ames                               ::  process id
-++  tint        tint:dill                               ::  text color
+++  tint        tint                                    ::  text color
 ++  toro        toro:clay                               ::  general change 
 ++  town        town:ames                               ::  all security state
 ++  tube        !!                                      ::  canonical path

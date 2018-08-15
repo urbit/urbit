@@ -7,7 +7,7 @@
 ::::
   ::
 :-  %say
-|=  {^ {pax/path fla/$@($~ {$full $~})} $~}
+|=  {^ {pax/path fla/$@(~ {$full ~})} ~}
 =+  len=(lent pax)
 =+  rend=?^(fla smyt |=(a/path (smyt (slag len a))))
 :-  %tang  %-  flop
@@ -18,5 +18,5 @@
 %-  zing
 %+  turn
   (sort ~(tap by dir.ark) aor)
-|=  {a/@t $~}
+|=  {a/@t ~}
 ^$(pax (welp pax /[a]))

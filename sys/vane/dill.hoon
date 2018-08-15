@@ -1,3 +1,4 @@
+!:
 ::
 ::  dill (4d), terminal handling
 ::
@@ -38,11 +39,16 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note-ames                                           ::  weird ames move
   $%  {$make p/(unit @t) q/@ud r/@ s/?}                 ::
-      {$sith p/@p q/@uw r/?}                          ::
+      {$sith p/@p q/@uw r/?}                            ::
+      {$wegh $~}                                        ::
+  ==                                                    ::
+++  note-behn                                           ::
+  $%  {$wegh $~}                                        ::
   ==                                                    ::
 ++  note-clay                                           ::
   $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:clay}::  merge desks
       {$warp p/sock q/riff:clay}                        ::  wait for clay hack
+      {$wegh $~}                                        ::
       {$perm p/ship q/desk r/path s/rite:clay}          ::  change permissions
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
@@ -55,42 +61,65 @@
       {$velo p/@t q/@t}                                 ::  reboot by path
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
+++  note-eyre                                           ::
+  $%  {$wegh $~}                                        ::
+  ==                                                    ::
+++  note-ford                                           ::
+  $%  {$wegh $~}                                        ::
+  ==                                                    ::
 ++  note-gall                                           ::
   $%  {$conf dock $load ship desk}                      ::
-      {$deal p/sock q/cush:gall}                       ::
+      {$deal p/sock q/cush:gall}                        ::
+      {$wegh $~}                                        ::
   ==                                                    ::
 ++  note                                                ::  out request $->
-  $?  {?($a $b $c $e $f $g $t) $wegh $~}                ::
   $%  {$a note-ames}                                    ::
+      {$b note-behn}                                    ::
       {$c note-clay}                                    ::
       {$d note-dill}                                    ::
+      {$e note-eyre}                                    ::
+      {$f note-ford}                                    ::
       {$g note-gall}                                    ::
-  ==  ==                                                ::
+  ==                                                    ::
 ++  sign-ames                                           ::
   $%  {$nice $~}                                        ::
       {$send p/lane:ames q/@}                           ::
       {$init p/ship}                                    ::
+      {$mass p/mass}                                    ::
+  ==                                                    ::
+++  sign-behn                                           ::
+  $%  {$mass p/mass}                                    ::
   ==                                                    ::
 ++  sign-clay                                           ::
   $%  {$mere p/(each (set path) (pair term tang))}      ::
       {$note p/@tD q/tank}                              ::
       {$writ p/riot:clay}                               ::
+      {$mass p/mass}                                    ::
       {$mack p/(unit tang)}                             ::
   ==                                                    ::
 ++  sign-dill                                           ::
   $%  {$blit p/(list blit)}                             ::
   ==                                                    ::
+++  sign-eyre                                           ::
+  $%  {$mass p/mass}                                    ::
+  ==                                                    ::
+++  sign-ford                                           ::
+  $%  {$mass p/mass}                                    ::
+  ==                                                    ::
 ++  sign-gall                                           ::
   $%  {$onto p/(each suss:gall tang)}                   ::
       {$unto p/cuft:gall}                               ::
+      {$mass p/mass}                                    ::
   ==                                                    ::
 ++  sign                                                ::  in result $<-
-  $?  {?($a $b $c $e $f $g $t) $mass p/mass}            ::
   $%  {$a sign-ames}                                    ::
+      {$b sign-behn}                                    ::
       {$c sign-clay}                                    ::
       {$d sign-dill}                                    ::
+      {$e sign-eyre}                                    ::
+      {$f sign-ford}                                    ::
       {$g sign-gall}                                    ::
-  ==  ==                                                ::
+  ==
 ::::::::                                                ::  dill tiles
 --
 =|  all/axle
@@ -220,7 +249,7 @@
           =>((tint a) [+(p) q])                         ::  (add 10 fg)
         ::
         ++  scap                                        ::  ANSI escape seq
-          |=  a/$^((pair @ @) @)
+          |=  a/$@(@ (pair @ @))
           %-  (list @c)
           :+  27  '['                                   ::  "\033[{a}m"
           ?@(a :~(a 'm') :~(p.a q.a 'm'))
@@ -228,7 +257,7 @@
         ++  deco                                        ::  ANSI effects
           |=  a/^deco  ^-  @
           ?-  a
-            $~   '0'
+            ~   '0'
             $br  '1'
             $un  '4'
             $bl  '5'
@@ -247,7 +276,7 @@
             $m  '5'
             $c  '6'
             $w  '7'
-            $~  '9'
+            ~  '9'
           ==
         --
       ::
@@ -260,7 +289,6 @@
               [hen %pass /heft/eyre %e %wegh ~]
               [hen %pass /heft/ford %f %wegh ~]
               [hen %pass /heft/gall %g %wegh ~]
-              [hen %pass /heft/turbo %t %wegh ~]
               moz
           ==
         ==
@@ -378,15 +406,15 @@
           +>(moz :_(moz [hen %give +.sih]))
         ::
             {$c $mere *}
-          ?:  ?=($& -.p.sih)
+          ?:  ?=(%& -.p.sih)
             +>.$
           (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
         ::
             {$g $onto *}
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
-            $|  (crud %onto p.p.+>.sih)
-            $&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
+            %|  (crud %onto p.p.+>.sih)
+            %&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
           ==
         ::
             {$g $unto *}
@@ -487,10 +515,10 @@
     :_(..^$ [hen %pass ~ (note %a p.q.hic)]~)
   ?:  ?=($flog -.q.hic)
     ::  ~&  [%dill-flog +.q.hic]
-    ?:  ?=({$crud $hax-init {$leaf *} $~} p.q.hic)
+    ?:  ?=({$crud $hax-init {$leaf *} ~} p.q.hic)
       =+  him=(slav %p (crip p.i.q.p.q.hic))
       :_(..^$ ?~(hey.all ~ [u.hey.all %give %init him]~))
-    ?:  ?=({$crud $hax-heft $~} p.q.hic)
+    ?:  ?=({$crud $hax-heft ~} p.q.hic)
       :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d %heft ~]~))
     :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d p.q.hic]~))
   =.  hey.all  ?^(hey.all hey.all `hen)
@@ -525,7 +553,7 @@
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ?.  ?=($& -.why)  ~
+  ?.  ?=(%& -.why)  ~
   =*  his  p.why
   [~ ~]
 ::

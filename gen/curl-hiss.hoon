@@ -7,7 +7,7 @@
 /+  old-zuse
 =,  old-zuse
 =,  sole
-:-  %get  |=  {^ {a/hiss $~} usr/iden}
+:-  %get  |=  {^ {a/hiss ~} usr/iden}
 ^-  (sole-request (cask httr))
 ?.  ?=($get p.q.a)
   ~|  %only-get-requests-supported-in-generators  :: XX enforced?

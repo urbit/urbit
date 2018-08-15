@@ -8,8 +8,8 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        arg/$@($~ {number/@u $~})
-        $~
+        arg/$@(~ {number/@u ~})
+        ~
     ==
 ?~  arg  $(arg [5 ~])
 :-  %noun

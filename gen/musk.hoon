@@ -2,7 +2,7 @@
 ::::
   ::
 :-  %say
-|=  {^ {{typ/type gen/hoon $~} $~}}
+|=  {^ {{typ/type gen/hoon ~} ~}}
 =<  :-  %noun
     =+  pro=(~(mint ut typ) %noun gen)
     ~_  (~(dunk ut typ) 'blow-subject')
@@ -12,7 +12,7 @@
     ?~  jon
       ~&  %constant-stopped
       !!
-    ?.  ?=($& -.u.jon)
+    ?.  ?=(%& -.u.jon)
       ~&  %constant-blocked
       !!
     ::  [p.pro [%1 p.u.jon]]
@@ -40,10 +40,10 @@
         ::
         $%  ::  no; noun has partial block substructure
             ::
-            {$| left/stencil rite/stencil}
+            {%| left/stencil rite/stencil}
             ::  yes; noun is either fully complete, or fully blocked
             ::
-            {$& blocks/(set block)}
+            {%& blocks/(set block)}
         == 
       ::
       ++  output
@@ -278,7 +278,7 @@
             tal/seminoun
         ==
     ^-  seminoun
-    ?.  ?&  &(?=($& -.mask.hed) ?=($& -.mask.tal))
+    ?.  ?&  &(?=(%& -.mask.hed) ?=(%& -.mask.tal))
             =(=(~ blocks.mask.hed) =(~ blocks.mask.tal))
         ==
       ::  default merge
@@ -314,7 +314,7 @@
     ?-  -.mask.bus
     ::  subject is fully blocked or complete
     ::
-      $&  ::  if fully blocked, produce self
+      %&  ::  if fully blocked, produce self
           ::
           ?^  blocks.mask.bus  bus
           ::  descending into atom, stop
@@ -325,7 +325,7 @@
           $(axe lat, bus [&+~ ?:(=(2 now) -.data.bus +.data.bus)])
     ::  subject is partly blocked
     ::
-      $|  ::  descend into partial cell
+      %|  ::  descend into partial cell
           ::
           %=  $
             axe  lat
@@ -345,7 +345,7 @@
     ?~  noy  ~
     ::  if partial block, squash blocks and stop
     ::
-    ?:  ?=($| -.mask.noy)  [&+(squash mask.noy) ~]
+    ?:  ?=(%| -.mask.noy)  [&+(squash mask.noy) ~]
     ::  if full block, propagate block
     ::
     ?:  ?=(^ blocks.mask.noy)  [mask.noy ~]
@@ -359,8 +359,8 @@
     |=  tyn/stencil
     ^-  (set block)
     ?-  -.tyn
-      $&  blocks.tyn
-      $|  (~(uni in $(tyn left.tyn)) $(tyn rite.tyn))
+      %&  blocks.tyn
+      %|  (~(uni in $(tyn left.tyn)) $(tyn rite.tyn))
     ==
   --
 --

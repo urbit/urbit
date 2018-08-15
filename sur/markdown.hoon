@@ -8,13 +8,13 @@
 ++  inline
   =+  ^=  inlik
       $%  {$emph p/?}                                   ::  strong?
-          {$delt $~}                                    ::  strikethrough
+          {$delt ~}                                    ::  strikethrough
           {$link p/tape q/(unit tape)}
           {$blot p/tape q/(unit tape)}                  ::  image
       ==
   =+  ^=  inlin
       $%  {$$ p/tape}
-          {$line $~}
+          {$line ~}
           {$code p/tape}
           {$htmt p/cord}                                ::  XX  (each marx mane)
       ==
@@ -24,19 +24,19 @@
 ++  elem  $^(tops node)
 ++  tops                                                ::  childful block
   $:  $=  p
-      $%  {$bloq $~}
+      $%  {$bloq ~}
           {$list p/? q/$@(char {p/@u q/char})}          ::  tight ordered?
-          {$item $~}
+          {$item ~}
       ==
       q/down
   ==
 ++  node                                                ::  childless block
   $%  {$para p/kids}
       {$meta p/(map cord cord)}                         ::  front matter
-      {$hrul $~}
+      {$hrul ~}
       {$head p/@u q/kids}
       {$code p/(unit {p/char q/@u r/tape}) q/wain}      ::  info contents
       {$html p/wain}
-      {$defn $~}                                        ::  empty para
+      {$defn ~}                                        ::  empty para
   ==
 --

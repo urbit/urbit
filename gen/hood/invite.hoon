@@ -37,7 +37,7 @@
 --
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{who/@t etc/$@($~ {typ/type $~})} ref/(unit (each ship mail:hood-womb))}
+        {{who/@t etc/$@(~ {typ/type ~})} ref/(unit (each ship mail:hood-womb))}
     ==
 ?~  etc  $(etc ~[planets+2])
 :-  %womb-invite

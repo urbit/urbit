@@ -100,13 +100,13 @@
     ++  subscription-result
       $%  {$arch arch}
           {$json json}
-          {$null $~}
+          {$null ~}
           {$inbox (list {message-id/@t thread-id/@t})}
           {$message from/@t subject/@t}
       ==
     ++  card
       $%  {$diff subscription-result}
-          {$hiss wire {$~ $~} $httr {$hiss hiss:eyre}}
+          {$hiss wire {~ ~} $httr {$hiss hiss:eyre}}
       ==
     ++  easy-ot
       =,  dejs-soft:format
@@ -222,18 +222,18 @@
   ?~  arg
     =+  switch=t.t.t.t.wir
     ?+  switch  [%json `json`u.jon]
-      {$messages $~}
+      {$messages ~}
     =/  new-mezes
       ((ot messages+(ar (ot id+so 'threadId'^so ~)) ~):dejs-soft:format u.jon)
     ::%+  turn  new-mezes
     ::|=  id
-    ::?<  ?=($~ new-mezes)
+    ::?<  ?=(~ new-mezes)
     ::=.  received-ids  [new-mezes received-ids]
     ::~&  received-ids
     ::=.  received
     [%inbox (need new-mezes)]
       ::
-      {$messages @t $~}
+      {$messages @t ~}
       ::
     :: =+  body-parser==+(jo (ot body+(ot data+(cu ofis-google so) ~) ~)) :: (ok /body/data so):jo
     :: ~&  %.(u.jon (om (om |=(a/json (some -.a))):jo))
@@ -291,7 +291,7 @@
     ?~  dir
       [%arch `(shax (jam u.jon)) ~]
     ?~  arg
-      [%arch `(shax (jam u.jon)) (~(run by u.dir) $~)]
+      [%arch `(shax (jam u.jon)) (~(run by u.dir) ~)]
     =+  new-jon=(~(get by u.dir) i.arg)
     $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
   ==

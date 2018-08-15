@@ -8,7 +8,7 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{who/@p key/@ $~} $~}
+        {{who/@p key/@ ~} ~}
     ==
 :-  %womb-manage-old-key
 [who key]

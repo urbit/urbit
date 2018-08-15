@@ -9,7 +9,7 @@
   !:
 :-  %say
 |=  $:  {now/@da * bec/beak}
-        {{who/@p $~} try/_| $~}
+        {{who/@p ~} try/_| ~}
     ==
 ::
 ::  we're creating an event series E whose lifecycle can be computed
