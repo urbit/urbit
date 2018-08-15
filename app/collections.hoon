@@ -83,6 +83,8 @@
 ::
 ++  allowed-by
   |=  [who=@p dic=dict:clay]
+  ^-  ?
+  ?:  =(who our.bol)  &
   =/  in-list=?
     ?|  (~(has in p.who.rul.dic) who)
       ::
@@ -152,19 +154,19 @@
 ::
 ::
 ::
+++  coup
+  |=  [wir=wire err=(unit tang)]
+  ^-  (quip move _this)
+  ?~  err
+    [~ this]
+  (mean u.err)
 ++  poke-noun
   |=  a=*
   ^-  (quip move _this)
 ::  =/  pax  ((hard path) a)
-  =/  yo=item  (~(got by data.cols) ~.yoyo)
-  ?>  ?=(%both -.yo)
-  =/  new-front  (~(put by meta.raw.yo) %new-field ~.fuck-off)
-  =/  new-body   (crip (weld (trip data.raw.yo) "new line\0a"))
-  =/  new-contents  (update-umd-front new-front data.raw.yo)
-
   =/  act=action:collections
     :*  our.bol  %home
-      :~  [%write /web/collections/yoyo/umd %umd new-body]
+      :~  [%post /web/collections ~.test 'test' & '# title\0a\0abody']
       ==
     ==
   =/  mow=move
@@ -185,12 +187,38 @@
         %collections-action  act
     ==
   ::
-  ::  resolve %collection, %post, or %comment to %write action
+  ::  resolve %collection, %post, or %comment to %write + %perms action
   =.  acts.act
-  %+  turn  acts.act
-  |=  a=sub-action
-  ^-  sub-action
-  ?:  ?=(%collection -.a)
+  %+  roll  acts.act
+  |=  [a=sub-action out=(list sub-action)]
+  ^-  (list sub-action)
+  =/  sap  (en-beam:format [byk.bol (flop (path +<.a))])
+  ?-    -.a
+  ::
+      %write
+    =/  perms  .^([dict:clay dict:clay] %cp sap)
+    ?:  (allowed-by src.bol +.perms)
+      [a out]
+    out
+  ::
+      %delete
+    =/  perms  .^([dict:clay dict:clay] %cp sap)
+    ?:  (allowed-by src.bol +.perms)
+      [a out]
+    out
+  ::
+      %perms
+    ?:  =(src.bol our.bol)  :: XX admin priveleges for other users?
+      [a out]
+    out
+  ::
+  ::
+  ::  XX some of this is redunant
+  ::
+      %collection
+    =/  perms  .^([dict:clay dict:clay] %cp (weld sap /[name.a]/collections-config))
+    ?.  (allowed-by src.bol +.perms)
+      out
     =/  conf=config
       :*  [byk.bol (flop (weld pax.a /[name.a]/collections-config))]
           name.a
@@ -203,9 +231,23 @@
           ~
           visible.a
       ==
-    [%write (weld pax.a /[name.a]/collections-config) %collections-config conf]
+    =/  new=(list sub-action)
+    :~  [%write (weld pax.a /[name.a]/collections-config) %collections-config conf]
+        :: restrict permissions on config file
+        :^  %perms  (weld pax.a /[name.a]/collections-config)
+        [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  read  XX maybe open this?
+        [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  write
+        :: open permissions on collection items
+        :^  %perms  (weld pax.a /[name.a])
+        [%black ((set whom:clay) ~)]                   ::  read
+        [%black ((set whom:clay) ~)]                   ::  write
+    ==
+    (weld new out)
   ::
-  ?:  ?=(%post -.a)
+      %post
+    =/  perms  .^([dict:clay dict:clay] %cp (weld sap /[name.a]/umd))
+    ?.  (allowed-by src.bol +.perms)
+      out
     =.  content.a  (crip (weld (trip content.a) "\0a"))
     =/  front=(map knot cord)
       %-  my
@@ -216,11 +258,25 @@
           [%last-modified (scot %da now.bol)]
           [%type type.a]
       ==
-    [%write (weld pax.a /[name.a]/umd) %umd `@t`(update-umd-front front content.a)]
+    =/  new=(list sub-action)
+    :~  [%write (weld pax.a /[name.a]/umd) %umd `@t`(update-umd-front front content.a)]
+        :: restrict write permissions on umd file
+        :^  %perms  (weld pax.a /[name.a]/umd)
+        [%black ((set whom:clay) ~)]                   ::  read
+        [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  write
+        :: open permissions on comments
+        :^  %perms  (weld pax.a /[name.a])
+        [%black ((set whom:clay) ~)]                   ::  read
+        [%black ((set whom:clay) ~)]                   ::  write
+    ==
+    (weld new out)
   ::
-  ?:  ?=(%comment -.a)
-    =.  content.a  (crip (weld (trip content.a) "\0a"))
+      %comment
     =/  dat  (scot %da now.bol)
+    =/  perms  .^([dict:clay dict:clay] %cp (weld sap /[dat]/umd))
+    ?.  (allowed-by src.bol +.perms)
+      out
+    =.  content.a  (crip (weld (trip content.a) "\0a"))
     =/  front=(map knot cord)
       %-  my
       :~  [%owner (scot %p src.bol)]
@@ -228,33 +284,18 @@
           [%last-modified dat]
           [%type %comments]
       ==
-    [%write (weld pax.a /[dat]/umd) %umd (update-umd-front front content.a)]
+    =/  new=(list sub-action)
+    :~  [%write (weld pax.a /[dat]/umd) %umd (update-umd-front front content.a)]
+        :: restrict write permissions on umd file
+        :^  %perms  (weld pax.a /[dat]/umd)
+        [%black ((set whom:clay) ~)]                   ::  read
+        [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  write
+    ==
+    (weld new out)
   ::
-  a
-  ::
-  ::  if its from us no need to check permissions
-  ?:  =(src.bol our.bol)
-    ta-done:(ta-act:ta act)
-  ::
-  ::  if not from us, check if every action in the list is permitted
-  ::  if even one isn't, don't reject the whole list
-  =/  success=?
-  %+  levy  acts.act
-  |=  a=sub-action
-  =/  pax  (path +<.a)
-  ?+    -.a    !!
-      %write  
-    =/  perms  .^([dict:clay dict:clay] %cp pax)
-    (allowed-by src.bol +.perms)
-      %delete
-    =/  perms  .^([dict:clay dict:clay] %cp pax)
-    (allowed-by src.bol +.perms)
-      %perms  |
   ==
   ::
-  ?:  success
-    ta-done:(ta-act:ta act)
-  [~ this]  :: XX TODO: report failure
+  ta-done:(ta-act:ta act)
 ::
 ::::::
 ::::::
