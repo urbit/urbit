@@ -138,10 +138,8 @@
     ^+  clock
     %_    clock
         lookup
-      ::  TODO: This is a jab.
-      ::
-      %+  ~(put by lookup.clock)  key
-      =/  entry  (~(got by lookup.clock) key)
+      %+  ~(jab by lookup.clock)  key
+      |=  entry=[val=val-type fresh=@ud]
       entry(fresh (max +(fresh.entry) depth.clock))
     ==
   ::  +resize: changes the maximum size, removing entries if needed
@@ -430,6 +428,7 @@
 ::
 +=  cache-key
   $%  [%call gate=vase sample=vase]
+      [%hood =beam txt=@t]
       [%ride formula=hoon subject=vase]
       [%slim subject-type=type formula=hoon]
       [%slit gate=type sample=type]
@@ -1036,8 +1035,10 @@
   ::    Produces a core containing four public arms:
   ::    +start-build, +rebuild, +unblock, and +cancel.
   ::
+  ~%  %f  ..is  ~
   |=  [[our=@p =duct now=@da scry=sley] state=ford-state]
   ::
+  ~%  %per-event  +  ~
   |%
   ++  finalize
     ^-  [(list move) ford-state]
@@ -1049,6 +1050,7 @@
   ::  +start-build: perform a fresh +build, either live or once
   ::
   ++  start-build
+    ~/  %start-build
     |=  [=build live=?]
     ^-  [(list move) ford-state]
     ::
@@ -1074,6 +1076,7 @@
   ::  +rebuild: rebuild any live builds based on +resource updates
   ::
   ++  rebuild
+    ~/  %rebuild
     |=  $:  =subscription
             new-date=@da
             =disc
@@ -1119,6 +1122,7 @@
   ::  +unblock: continue builds that had blocked on :resource
   ::
   ++  unblock
+    ~/  %unblock
     |=  [=scry-request scry-result=(unit cage)]
     ^-  [(list move) ford-state]
     ::
@@ -1152,6 +1156,7 @@
   ::  +wipe: forcibly decimate build results from the state
   ::
   ++  wipe
+    ~/  %wipe
     |=  percent-to-remove=@ud
     ^+  state
     ::  removing 0% is the same as doing nothing, so do nothing
@@ -1233,6 +1238,7 @@
   ::  +keep: resize cache to :max entries
   ::
   ++  keep
+    ~/  %keep
     |=  max=@ud
     ^+  state
     ::
@@ -1307,6 +1313,7 @@
   ::  +remove-duct-from-root: remove :duct from a build tree
   ::
   ++  remove-duct-from-root
+    ~/  %remove-duct-from-root
     |=  =build
     ^+  state
     ::  ~&  [%remove-duct-from-root (build-to-tape build) duct]
@@ -1322,6 +1329,7 @@
   ::  +add-ducts-to-build-subs: for each sub, add all of :build's ducts
   ::
   ++  add-ducts-to-build-subs
+    ~/  %add-ducts-to-build-subs
     |=  =build
     ^+  state
     ::
@@ -1350,6 +1358,7 @@
   ::  +add-duct-to-subs: attach :duct to :build's descendants
   ::
   ++  add-duct-to-subs
+    ~/  %add-duct-to-subs
     |=  [duct=^duct =build]
     ^+  builds.state
     ::
@@ -1375,6 +1384,7 @@
   ::  +remove-duct-from-subs: recursively remove duct from sub-builds
   ::
   ++  remove-duct-from-subs
+    ~/  %remove-duct-from-subs
     |=  =build
     ^+  builds.state
     ::  ~&  [%remove-duct-from-subs (build-to-tape build)]
@@ -1404,6 +1414,7 @@
   ::    :new time.
   ::
   ++  copy-build-tree-as-provisional
+    ~/  %copy-build-tree-as-provisional
     |=  [old-root=build new-date=@da]
     ^+  state
     ::
@@ -1458,6 +1469,7 @@
   ::  TODO: consolidate all these new sub/duct functions to one area.
   ::
   ++  add-subs-to-client
+    ~/  %add-subs-to-client
     |=  [new-client=build new-subs=(list build) =build-relation]
     ^+  builds.state
     ::
@@ -1486,6 +1498,7 @@
   ::    blocking the main Urbit event loop, letting other work be done.
   ::
   ++  execute-loop
+    ~/  %execute-loop
     |=  builds=(set build)
     ^+  ..execute
     ::
@@ -1505,6 +1518,7 @@
   ::    +build-receipt algorithms to the ford state.
   ::
   ++  execute
+    ~/  %execute
     |=  builds=(set build)
     ^+  ..execute
     ::
@@ -1521,6 +1535,7 @@
   ::    place it in :next-builds. +gather runs until it has no more candidates.
   ::
   ++  gather
+    ~/  %gather
     |=  [builds=(set build) force=?]
     ^+  ..execute
     ::  add builds that were triggered by incoming event to the candidate list
@@ -1765,6 +1780,8 @@
   ::    dependencies between builds here.
   ::
   ++  run-builds
+    ~%  %run-builds  +  ~
+    |-
     ^-  [(list build-receipt) _..execute]
     ::
     =/  build-receipts=(list build-receipt)
@@ -1779,6 +1796,7 @@
   ::    and apply them to ..execute.
   ::
   ++  reduce
+    ~/  %reduce
     |=  build-receipts=(list build-receipt)
     ^+  ..execute
     ::  sort :build-receipts so blocks are processed before completions
@@ -1932,6 +1950,7 @@
   ::    any moves.
   ::
   ++  make
+    ~/  %make
     |=  =build
     ^-  build-receipt
     ::  out: receipt to return to caller
@@ -1984,6 +2003,7 @@
     ::  +|  schematic-handlers
     ::
     ++  make-autocons
+      ~%  %make-autocons  ..^^$  ~
       |=  [head=schematic tail=schematic]
       ^-  build-receipt
       ::
@@ -2007,11 +2027,13 @@
       (return-result %success u.head-result u.tail-result)
     ::
     ++  make-literal
+      ~%  %make-literal  ..^^$  ~
       |=  =cage
       ^-  build-receipt
       (return-result %success %$ cage)
     ::
     ++  make-pin
+      ~%  %make-pin  ..^^$  ~
       |=  [date=@da =schematic]
       ^-  build-receipt
       ::  pinned-sub: sub-build with the %pin date as formal date
@@ -2026,6 +2048,7 @@
       (return-result u.result)
     ::
     ++  make-alts
+      ~%  %make-alts  ..^^$  ~
       |=  [choices=(list schematic) errors=(list tank)]
       ^-  build-receipt
       ::
@@ -2051,6 +2074,7 @@
       (return-result %success %alts u.result)
     ::
     ++  make-bake
+      ~%  %make-bake  ..^^$  ~
       |=  [renderer=term query-string=coin path-to-render=rail]
       ^-  build-receipt
       ::  path-build: find the file path for the renderer source
@@ -2218,6 +2242,7 @@
       --
     ::
     ++  make-bunt
+      ~%  %make-bunt  ..^^$  ~
       |=  [=disc mark=term]
       ^-  build-receipt
       ::  resolve path of the mark definition file
@@ -2253,6 +2278,7 @@
       (return-result %success %bunt cage)
     ::
     ++  make-call
+      ~%  %make-call  ..^^$  ~
       |=  [gate=schematic sample=schematic]
       ^-  build-receipt
       ::
@@ -2306,6 +2332,7 @@
       ==
     ::
     ++  make-cast
+      ~%  %make-cast  ..^^$  ~
       |=  [=disc mark=term input=schematic]
       ^-  build-receipt
       ::
@@ -2499,6 +2526,7 @@
       --
     ::
     ++  make-core
+      ~%  %make-core  ..^^$  ~
       |=  source-path=rail
       ^-  build-receipt
       ::  convert file at :source-path to a +scaffold
@@ -2529,6 +2557,7 @@
       (return-result %success %core vase.u.plan-result)
     ::
     ++  make-diff
+      ~%  %make-diff  ..^^$  ~
       |=  [=disc start=schematic end=schematic]
       ^-  build-receipt
       ::  run both input schematics as an autocons build
@@ -2677,6 +2706,7 @@
       (return-result build-result)
     ::
     ++  make-dude
+      ~%  %make-dude  ..^^$  ~
       |=  [error=(trap tank) attempt=schematic]
       ^-  build-receipt
       ::
@@ -2692,6 +2722,7 @@
       (return-error [$:error message.u.attempt-result])
     ::
     ++  make-hood
+      ~%  %make-hood  ..^^$  ~
       |=  source-path=rail
       ^-  build-receipt
       ::
@@ -2709,7 +2740,13 @@
       ?.  ?=(@ q.q.as-cage)
         (return-error [%leaf "ford: %hood: file not an atom"]~)
       ::
-      =*  src-beam  [[ship.disc desk.disc [%ud 0]] spur]:source-path
+      =/  src-beam=beam  [[ship.disc desk.disc [%ud 0]] spur]:source-path
+      ::
+      =/  =cache-key  [%hood src-beam q.q.as-cage]
+      =^  cached-result  out  (access-cache cache-key)
+      ?^  cached-result
+        (return-result u.cached-result)
+      ::
       =/  parsed
         ((full (parse-scaffold src-beam)) [1 1] (trip q.q.as-cage))
       ::
@@ -2719,6 +2756,7 @@
       (return-result %success %hood p.u.q.parsed)
     ::
     ++  make-join
+      ~%  %make-join  ..^^$  ~
       |=  [disc=disc mark=term first=schematic second=schematic]
       ^-  build-receipt
       ::
@@ -2850,6 +2888,7 @@
       (return-result build-result)
     ::
     ++  make-list
+      ~%  %make-list  ..^^$  ~
       |=  schematics=(list schematic)
       ^-  build-receipt
       ::
@@ -2871,6 +2910,7 @@
       (return-result build-result)
     ::
     ++  make-mash
+      ~%  %make-mash  ..^^$  ~
       |=  $:  disc=disc
               mark=term
               first=[disc=disc mark=term =schematic]
@@ -3019,6 +3059,7 @@
       (return-result build-result)
     ::
     ++  make-mute
+      ~%  %make-mute  ..^^$  ~
       |=  [subject=schematic mutations=(list [=wing =schematic])]
       ^-  build-receipt
       ::  run the subject build to produce the noun to be mutated
@@ -3108,6 +3149,7 @@
       (return-result build-result)
     ::
     ++  make-pact
+      ~%  %make-pact  ..^^$  ~
       |=  [disc=disc start=schematic diff=schematic]
       ^-  build-receipt
       ::  first, build the inputs
@@ -3283,6 +3325,7 @@
       (return-result build-result)
     ::
     ++  make-path
+      ~%  %make-path  ..^^$  ~
       |=  [disc=disc prefix=@tas raw-path=@tas]
       ^-  build-receipt
       ::  possible-spurs: flopped paths to which :raw-path could resolve
@@ -3337,6 +3380,7 @@
       [[%leaf "{<(en-beam beam)>}"] message]
     ::
     ++  make-plan
+      ~%  %make-plan  ..^^$  ~
       |=  [path-to-render=rail query-string=coin =scaffold]
       ^-  build-receipt
       ::  TODO: support query-string
@@ -4031,6 +4075,7 @@
       --
     ::
     ++  make-reef
+      ~%  %make-reef  ..^^$  ~
       |=  =disc
       ^-  build-receipt
       ::  short-circuit to :pit if asked for current %home desk
@@ -4115,6 +4160,7 @@
       (return-result %success %reef vase.u.zuse-build-result)
     ::
     ++  make-ride
+      ~%  %make-ride  ..^^$  ~
       |=  [formula=hoon =schematic]
       ^-  build-receipt
       ::
@@ -4154,6 +4200,7 @@
       ==
     ::
     ++  make-same
+      ~%  %make-same  ..^^$  ~
       |=  =schematic
       ^-  build-receipt
       ::
@@ -4164,6 +4211,7 @@
       (return-result u.result)
     ::
     ++  make-scry
+      ~%  %make-scry  ..^^$  ~
       |=  =resource
       ^-  build-receipt
       ::  construct a full +beam to make the scry request
@@ -4195,6 +4243,7 @@
       (return-result %success %scry u.u.scry-response)
     ::
     ++  make-slim
+      ~%  %make-slim  ..^^$  ~
       |=  [subject-type=type formula=hoon]
       ^-  build-receipt
       ::
@@ -4216,6 +4265,7 @@
     ::  TODO: Take in +type instead of +vase?
     ::
     ++  make-slit
+      ~%  %make-slit  ..^^$  ~
       |=  [gate=vase sample=vase]
       ^-  build-receipt
       ::
@@ -4242,6 +4292,7 @@
       ==
     ::
     ++  make-volt
+      ~%  %make-volt  ..^^$  ~
       |=  [=disc mark=term input=*]
       ^-  build-receipt
       ::
@@ -4260,6 +4311,7 @@
       (return-result build-result)
     ::
     ++  make-vale
+      ~%  %make-vale  ..^^$  ~
       ::  TODO: better docs
       ::
       |=  [=disc mark=term input=*]
@@ -4326,6 +4378,7 @@
       [leaf+"ford: %vale failed: invalid input for mark: {<(en-beam beam)>}"]~
     ::
     ++  make-walk
+      ~%  %make-walk  ..^^$  ~
       |=  [=disc source=term target=term]
       ^-  build-receipt
       ::
@@ -4782,6 +4835,7 @@
   ::  +add-build: store a fresh, unstarted build in the state
   ::
   ++  add-build
+    ~/  %add-build
     |=  =build
     ^+  state
     ::  ~&  [%add-build (build-to-tape build)]
@@ -4804,6 +4858,7 @@
   ::  +remove-builds: remove builds and their sub-builds
   ::
   ++  remove-builds
+    ~/  %remove-builds
     |=  builds=(list build)
     ::
     |^  ^+  state
@@ -4864,6 +4919,7 @@
   ::  +update-build-status: replace :build's +build-status by running a function
   ::
   ++  update-build-status
+    ~/  %update-build-status
     |=  [=build update-func=$-(build-status build-status)]
     ^-  [build-status builds=_builds.state]
     ::
@@ -4877,6 +4933,7 @@
   ::
   ++  intercepted-scry
     %-  sloy  ^-  slyd
+    ~/  %intercepted-scry
     |=  [ref=* (unit (set monk)) =term =beam]
     ^-  (unit (unit (cask)))
     ?>  ?=([@ *] ref)
@@ -4930,6 +4987,7 @@
   ::
   ++  unblock-clients-on-duct
     =|  unblocked=(list build)
+    ~%  %unblock-clients-on-duct  +>+  ~
     |=  =build
     ^+  [unblocked builds.state]
     ::
@@ -4971,6 +5029,7 @@
   ::  +on-build-complete: handles completion of any build
   ::
   ++  on-build-complete
+    ~/  %on-build-complete
     |=  =build
     ^+  ..execute
     ::
@@ -4992,6 +5051,7 @@
   ::    on the requesting duct and also do duct and build book-keeping.
   ::
   ++  on-root-build-complete
+    ~/  %on-root-build-complete
     |=  =build
     ^+  ..execute
     ::
@@ -5095,6 +5155,7 @@
   ::    its subs and call +cleanup on it.
   ::
   ++  cleanup-orphaned-provisional-builds
+    ~/  %cleanup-orphaned-provisional-builds
     |=  =build
     ^+  ..execute
     ::
@@ -5150,6 +5211,7 @@
   ::    ```
   ::
   ++  access-build-record
+    ~/  %access-build-record
     |=  =build
     ^-  [(unit build-record) _builds.state]
     ::
@@ -5171,6 +5233,7 @@
   ::  +cleanup: try to clean up a build and its sub-builds
   ::
   ++  cleanup
+    ~/  %cleanup
     |=  =build
     ^+  state
     ::   does this build even exist?!
@@ -5190,6 +5253,7 @@
   ::  +collect-live-resources: produces all live resources from sub-scrys
   ::
   ++  collect-live-resources
+    ~/  %collect-live-resources
     |=  =build
     ^-  (jug disc resource)
     ::
@@ -5212,6 +5276,7 @@
   ::  +collect-blocked-resources: produces all blocked resources from sub-scrys
   ::
   ++  collect-blocked-sub-scrys
+    ~/  %collect-blocked-sub-scrys
     |=  =build
     ^-  (set scry-request)
     ::
@@ -5244,6 +5309,7 @@
   ::  +start-clay-subscription: listen for changes in the filesystem
   ::
   ++  start-clay-subscription
+    ~/  %start-clay-subscription
     |=  =subscription
     ^+  ..execute
     ::
@@ -5287,6 +5353,7 @@
   ::  +cancel-clay-subscription: remove a subscription on :duct
   ::
   ++  cancel-clay-subscription
+    ~/  %cancel-clay-subscription
     |=  =subscription
     ^+  ..execute
     ::
@@ -5394,7 +5461,7 @@
 |=  [now=@da eny=@ scry-gate=sley]
 ::  allow jets to be registered within this core
 ::
-~%  %ford-d  ..is  ~  ::  XX  why the '-d'?
+~%  %ford  ..is  ~
 ::
 ::  ^?  ::  to be added to real vane
 ::
