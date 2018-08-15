@@ -4362,9 +4362,13 @@
         (wrap-error call-result)
       ::
       =/  product=vase  vase.u.call-result
-      ::  TODO: why do we check nesting here?
+      ::  +grab might produce the wrong type
       ::
-      ?>  (~(nest ut p.mark-sample) | p.product)
+      ?.  (~(nest ut p.mark-sample) | p.product)
+        %-  return-error
+        :~  leaf+"ford: %vale failed"
+            leaf+"+grab has wrong type in mark {<mark>} on disc {<disc>}"
+        ==
       ::  check mold idempotence; if different, nest fail
       ::
       ?:  =(q.product input)
