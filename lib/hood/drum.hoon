@@ -652,14 +652,14 @@
   ::
   ++  ta-got                                          ::  apply change
     |=  cal/sole-change
-    =^  ted  say.inp  (~(receive ^sole say.inp) cal)
+    =^  ted  say.inp  (~(receive sole say.inp) cal)
     (ta-dog:(ta-off ted.cal) ted)
   ::
   ++  ta-hom                                          ::  local edit
     |=  ted/sole-edit
     ^+  +>
     =.  +>  (ta-det:(ta-off ted) ted)
-    (ta-dog(say.inp (~(commit ^sole say.inp) ted)) ted)
+    (ta-dog(say.inp (~(commit sole say.inp) ted)) ted)
   ::
   ++  ta-jump                                         ::  buffer pos
     |=  {dir/?($l $r) til/?($ace $edg $wrd) pos/@ud}
