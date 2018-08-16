@@ -838,7 +838,7 @@
               (stag %fscb ;~(pfix cab horn:read))       ::  /_  homo map
               (stag %fssm ;~(pfix mic gate:read))       ::  /;  operate on
               (stag %fscl ;~(pfix col path:read))       ::  /:  relative to
-              (stag %fskt ;~(pfix ket cast:read))       ::  /^  cast
+              :: (stag %fskt ;~(pfix ket cast:read))       ::  /^  cast
               (stag %fszp ;~(pfix zap ;~(sfix sym net)))::  /!mark/ run to mark
               (stag %fszy ;~(sfix sym net))             ::  /mark/ render file
             ==
@@ -897,8 +897,8 @@
           ::
               ++  cast
                 %+  rail
-                  ;~(plug ;~(sfix wide:vez ket) horn)
-                ;~(pfix gap ;~(plug tall:vez horn))
+                  ;~(plug ;~(sfix wyde:vez ket) horn)
+                ;~(pfix gap ;~(plug till:vez horn))
           --
         --
       --
@@ -1597,6 +1597,7 @@
         |=  {cof/cafe bax/vase hon/horn}
         ^-  (bolt cage)
         ?-    -.hon
+            $fspt  !!
             $fssg
           (cope (wrapped-slap cof bax p.hon) (flux |=(a/vase [%noun a])))
         ::
@@ -1686,7 +1687,7 @@
             $fskt
           %+  cope  $(hon q.hon)
           |=  {cof/cafe mar/mark vax/vase}
-          %+  cope  (wrapped-slap cof bax [%kttr %bsmc p.hon])
+          %+  cope  (wrapped-slap cof bax [%kttr p.hon])
           |=  {cof/cafe tug/vase}
           ?.  (~(nest ut p.tug) | p.vax)
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)

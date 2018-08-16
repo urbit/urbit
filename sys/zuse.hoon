@@ -865,7 +865,7 @@
         {$fscb p/horn}                                  ::  /_  homo map
         {$fssm p/hoon q/horn}                           ::  /;  operate on
         {$fscl p/hops q/horn}                           ::  /:  relative to
-        {$fskt p/hoon q/horn}                           ::  /^  cast
+        {$fskt p/spec q/horn}                           ::  /^  cast
         {$fszp q/mark}                                  ::  /!mark/ eval value
         {$fszy q/mark}                                  ::  /mark/ static/grow
     ==                                                  ::
@@ -1535,7 +1535,7 @@
             %fskt
             ::  mold: evaluates to a mold to be applied to :crane
             ::
-            mold=hoon
+            =spec
             =crane
         ==
         $:  ::  %fszp: `/!mark/` evaluate as hoon, then pass through mark
@@ -5789,6 +5789,7 @@
 ::
 ++  zuse  %309                                          ::  hoon+zuse kelvin
 ++  gift-arvo                                           ::  out result <-$
+  $~  [%init ~zod]
   $%  gift:able:ames
       gift:able:behn
       gift:able:clay
@@ -5809,6 +5810,7 @@
       task:able:ford-api
   ==
 ++  note-arvo                                           ::  out request $->
+  $~  [%a %init ~zod]
   $%  {@tas $meta vase}
   $%  {$a task:able:ames}
       {$b task:able:behn}
