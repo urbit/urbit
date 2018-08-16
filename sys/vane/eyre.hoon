@@ -186,6 +186,7 @@
   ==
 ::
 ++  wank                                                ::  .well-known ankh
+  $~  [~ ~]
   {p/(unit mime) q/(map @ta wank)}
 --                                                      ::
 |%
@@ -752,7 +753,7 @@
         ~(apex handle pul [q.+.kyz |] [p.heq maf s.heq])
       =+  han=(sham hen)
       =.  pox  (~(put by pox) han hen)
-      (ames-gram u.her [%get ~] han +.kyz)
+      (ames-gram u.her %get han +.kyz)
     ::
         $them                                           ::  outbound request
       ?~  p.kyz
@@ -808,7 +809,7 @@
           $xeno
         =+  han=(sham hen)
         =.  pox  (~(del by pox) han hen)
-        (ames-gram p.lid [%gib ~] han)
+        (ames-gram p.lid %gib han)
       ::
           $wasp
         |-  ^+  +>.^$
@@ -830,7 +831,7 @@
       ?~  mez
         ~&  e+[%strange-west p.kyz]
         ~|(%strange-west !!)
-      ?-  -<.u.mez
+      ?-  -.u.mez
         $aut  abet:(logon:(ses-ya p.u.mez) q.p.kyz)
         $hat  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
         $gib  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %thud ~])
@@ -847,9 +848,9 @@
         $lon
           ::  ~&  ses-ask+[p.u.mez sop (~(run by wup) ~)]
           ?:  (ses-authed p.u.mez)
-            (ames-gram q.p.kyz aut+~ p.u.mez)
+            (ames-gram q.p.kyz %aut p.u.mez)
           =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
-          (ames-gram q.p.kyz hat+~ p.u.mez our-host)
+          (ames-gram q.p.kyz %hat p.u.mez our-host)
       ::
         $get-inner
           %+  exec-turbo-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)
@@ -887,7 +888,7 @@
     ::
       $wegh  !!                                         ::  handled elsewhere
     ::
-      $wise  (ames-gram p.kyz [%not ~] q.kyz)           ::  proxy notification
+      $wise  (ames-gram p.kyz %not q.kyz)           ::  proxy notification
     ==
   ::
   ::++  axom                                              ::  old response
@@ -919,7 +920,7 @@
         $thou
       ~&  %axon-thou
       ?+    -.tee  !!
-        $ay  (ames-gram (slav %p p.tee) got+~ (slav %uv q.tee) |2.sih)
+        $ay  (ames-gram (slav %p p.tee) %got (slav %uv q.tee) |2.sih)
         $hi  (cast-thou q.tee httr+!>(p.sih))
         $se  (get-thou:(dom-vi q.tee) p.tee p.sih)
       ==
@@ -981,7 +982,7 @@
               [%| message.build-result.result.sih]
             ~&  [%build-result build-result.result.sih]
             [%& [p q.q]:(result-to-cage:ford-api build-result.result.sih)]
-          (ames-gram (slav %p p.tee) got-inner+~ (slav %uv q.tee) res)
+          (ames-gram (slav %p p.tee) %got-inner (slav %uv q.tee) res)
         ::
         ::
             {$ha *}
@@ -1139,7 +1140,7 @@
     (pass-note tea [%e %meta :(slop !>(%them) !>(~) vax)])
   ::
   ++  ames-gram
-    |=({him/ship gam/gram} (pass-note ~ %a %want [our him] [%e -.gam] +.gam))
+    |=({him/ship gam/gram} (pass-note ~ %a %want [our him] [%e -.gam ~] +.gam))
   ::
   ++  back                                              ::  %ford bounce
     |=  {tea/whir mar/mark cay/cage}
@@ -1603,7 +1604,7 @@
           =/  han  (sham hen)
           =.  pox  (~(put by pox) han hen)
           =+  arg=(fcgi payload fcgi-cred)
-          [%| (ames-gram p.bem [%get-inner ~] han ext arg bem)]
+          [%| (ames-gram p.bem %get-inner han ext arg bem)]
         =+  wir=`whir`[%ha (en-beam -.bem ~)]
         =.  wir  ?+(mef !! $get wir, $head [%he wir])
         =.  r.bem  ?+(r.bem r.bem {$ud $0} da+now)
@@ -1806,7 +1807,7 @@
       |=  {him/ship pul/purl}  ^+  ..ya
       =.  way  (~(put by way) him pul hen)
       ~&  asking-foreign+him
-      (ames-gram:abet him [lon+~ ses])
+      (ames-gram:abet him [%lon ses])
     ::
     ++  foreign-hat
       |=  {him/ship hat/hart}  ^+  ..ya
@@ -1835,7 +1836,7 @@
           ::  ~&  sap+sap
           ?.  ?=({~ @ %|} sap)
             ..ya
-          (ames-gram -.u.sap aut+~ ses)
+          (ames-gram -.u.sap %aut ses)
       ==
     ++  logoff
       |=  her/(unit ship)  ^+  ..ya
@@ -2319,21 +2320,8 @@
   ~
 ::
 ++  load                                                ::  take previous state
-  =>  |%
-      ++  bolo-old  (cork bolo |=(bolo [%0 |5.+<]))
-      --
-  |=  old/?(bolo-old bolo)
-  ^+  ..^$
-  ?-  -.old
-    $0  $(old [%1 ~ *http-config [8.080 ~] [~ ~] +.old])
-  ::
-    $1  :: XX temporary fix for bad proxy config
-        ::
-        =/  rox=?  ?~  hov.old
-                     proxy.fig.old
-                   ?=(%king (clan:title u.hov.old))
-        ..^$(+>- old(proxy.fig rox))
-  ==
+  |=  old/bolo
+  ..^$(+>- old)
 ::
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}

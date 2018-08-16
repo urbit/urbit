@@ -5141,7 +5141,7 @@
 ++  hax  (just '#')
 ++  hep  (just '-')   ::  pronounced "ep"
 ++  ket  (just '^')
-++  leb  (just '{')   ::  XX deprecated
+++  leb  (just '{')
 ++  led  (just '<')
 ++  lob  (just '{') 
 ++  lit  (just '(')
@@ -5151,7 +5151,7 @@
 ++  net  (just '/')
 ++  pad  (just '&')
 ++  rac  (just ']')
-++  reb  (just '}')   ::  XX deprecated
+++  reb  (just '}')
 ++  rob  (just '}')
 ++  rit  (just ')') 
 ++  say  (just '\'')
