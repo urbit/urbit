@@ -584,6 +584,12 @@
   |=  =rail
   ^-  beam
   [[ship.disc.rail desk.disc.rail [%ud 0]] spur.rail]
+::  +rail-to-path: pretty-printable rail
+::
+++  rail-to-path
+  |=  =rail
+  ^-  path
+  (en-beam (rail-to-beam rail))
 ::  +unify-jugs: make a new jug, unifying sets for all keys
 ::
 ++  unify-jugs
@@ -2150,19 +2156,23 @@
         ?~  toplevel-result
           (return-blocks [toplevel-build]~)
         ::
-        ?.  ?=([~ %success %scry *] toplevel-result)
-          ?~  errors
-            (wrap-error toplevel-result)
+        ?:  ?=([~ %error *] toplevel-result)
           ::
-          ?>  ?=([~ %error *] toplevel-result)
+          =/  =path  (rail-to-path path-to-render)
+          ?~  errors
+            %-  return-error
+            :-  [%leaf "ford: %bake {<renderer>} on {<path>} failed:"]
+            message.u.toplevel-result
+          ::
           =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
           %-  return-error  :~
-            [%leaf "ford: %bake {<renderer>} failed:"]
+            [%leaf "ford: %bake {<renderer>} on {<path>} failed:"]
             [%leaf "as-renderer"]
             [%rose braces errors]
             [%leaf "as-mark"]
             [%rose braces message.u.toplevel-result]
           ==
+        ?>  ?=([~ %success %scry *] toplevel-result)
         ::
         =/  toplevel-arch=arch  ;;(arch q.q.cage.u.toplevel-result)
         ::  find the :sub-path-segments that could be files
@@ -2181,7 +2191,12 @@
           [%scry %c %y path-to-render(spur [sub spur.path-to-render])]
         ::
         =^  maybe-schematic-results  out
-          (perform-schematics sub-schematics %fail-on-errors *@ta)
+          %-  perform-schematics  :*
+            "ford: %bake {<renderer>} on {<path>} contained failures:"
+            sub-schematics
+            %fail-on-errors
+            *@ta
+          ==
         ?~  maybe-schematic-results
           out
         ::  marks: list of the marks of the files at :path-to-render
@@ -2221,19 +2236,23 @@
         ?~  alts-result
           (return-blocks [alts-build]~)
         ::
-        ?.  ?=([~ %success %alts *] alts-result)
+        ?:  ?=([~ %error *] alts-result)
+          =/  =path  (rail-to-path path-to-render)
           ?~  errors
-            (wrap-error alts-result)
+            %-  return-error
+            :-  [%leaf "ford: %bake {<renderer>} on {<path>} failed:"]
+            message.u.alts-result
           ::
-          ?>  ?=([~ %error *] alts-result)
           =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
           %-  return-error  :~
-            [%leaf "ford: %bake {<renderer>} failed:"]
+            [%leaf "ford: %bake {<renderer>} on {<path>} failed:"]
             [%leaf "as-renderer"]
             [%rose braces errors]
             [%leaf "as-mark"]
             [%rose braces message.u.alts-result]
           ==
+        ::
+        ?>  ?=([~ %success %alts *] alts-result)
         ::
         =/  =build-result
           [%success %bake (result-to-cage u.alts-result)]
@@ -2253,8 +2272,13 @@
       ?~  path-result
         (return-blocks [path-build]~)
       ::
-      ?.  ?=([~ %success %path *] path-result)
-        (wrap-error path-result)
+      ?:  ?=([~ %error *] path-result)
+        %-  return-error
+        :_  message.u.path-result
+        :-  %leaf
+        "ford: %bunt resolving path for {<mark>} on {<disc>} failed:"
+      ::
+      ?>  ?=([~ %success %path *] path-result)
       ::  build the mark core from source
       ::
       =/  core-build=^build  [date.build [%core rail.u.path-result]]
@@ -2263,8 +2287,13 @@
       ?~  core-result
         (return-blocks [core-build]~)
       ::
-      ?.  ?=([~ %success %core *] core-result)
-        (wrap-error core-result)
+      ?:  ?=([~ %error *] core-result)
+        %-  return-error
+        :_  message.u.core-result
+        :-  %leaf
+        "ford: %bunt compiling mark {<mark>} on {<disc>} failed:"
+      ::
+      ?>  ?=([~ %success %core *] core-result)
       ::  extract the sample from the mark core
       ::
       =/  mark-vase=vase    vase.u.core-result
@@ -2307,8 +2336,12 @@
       ?~  slit-result
         (return-blocks [date.build slit-schematic]~)
       ::
-      ?.  ?=([~ %success %slit *] slit-result)
-        (wrap-error slit-result)
+      ?:  ?=([~ %error *] slit-result)
+        %-  return-error
+        :-  [%leaf "ford: %call failed type calculation"]
+        message.u.slit-result
+      ::
+      ?>  ?=([~ %success %slit *] slit-result)
       ::
       =/  =cache-key  [%call gate-vase sample-vase]
       =^  cached-result  out  (access-cache cache-key)
@@ -2328,7 +2361,7 @@
         (blocked-paths-to-receipt %call blocked-paths)
       ::
           %2
-        (return-error [[%leaf "ford: %call failed:"] p.val])
+        (return-error [[%leaf "ford: %call execution failed:"] p.val])
       ==
     ::
     ++  make-cast
@@ -2342,8 +2375,12 @@
       ?~  input-result
         (return-blocks [input-build]~)
       ::
-      ?.  ?=([~ %success *] input-result)
-        (wrap-error input-result)
+      ?:  ?=([~ %error *] input-result)
+        %-  return-error
+        :-  [%leaf "ford: %cast {<mark>} on {<disc>} failed on input:"]
+        message.u.input-result
+      ::
+      ?>  ?=([~ %success *] input-result)
       ::
       =/  result-cage=cage  (result-to-cage u.input-result)
       ::
@@ -2355,8 +2392,12 @@
       ?~  translation-path-result
         (return-blocks [translation-path-build]~)
       ::
-      ?.  ?=([~ %success %walk *] translation-path-result)
-        (wrap-error translation-path-result)
+      ?:  ?=([~ %error *] translation-path-result)
+        %-  return-error
+        :-  [%leaf "ford: %cast {<mark>} on {<disc>} failed:"]
+        message.u.translation-path-result
+      ::
+      ?>  ?=([~ %success %walk *] translation-path-result)
       ::
       =/  translation-path=(list mark-action)
         results.u.translation-path-result
@@ -2408,7 +2449,7 @@
           [[%blocks [mark-path-build]~] out]
         ::
         ?.  ?=([~ %success %path *] mark-path-result)
-          (cast-wrap-error mark-path-result)
+          (cast-wrap-error %grab source-mark target-mark mark-path-result)
         ::
         =/  mark-core-build=^build  [date.build [%core rail.u.mark-path-result]]
         ::
@@ -2426,7 +2467,7 @@
           [[%blocks [grab-build]~] out]
         ::
         ?.  ?=([~ %success %ride *] grab-result)
-          (cast-wrap-error grab-result)
+          (cast-wrap-error %grab source-mark target-mark grab-result)
         ::  find an arm for the input's mark within the +grab core
         ::
         =/  grab-mark-build=^build
@@ -2438,7 +2479,7 @@
           [[%blocks [grab-mark-build]~] out]
         ::
         ?.  ?=([~ %success %ride *] grab-mark-result)
-          (cast-wrap-error grab-mark-result)
+          (cast-wrap-error %grab source-mark target-mark grab-mark-result)
         ::  slam the +mark-name:grab gate on the result of running :input
         ::
         =/  call-build=^build
@@ -2450,7 +2491,7 @@
           [[%blocks [call-build]~] out]
         ::
         ?.  ?=([~ %success %call *] call-result)
-          (cast-wrap-error call-result)
+          (cast-wrap-error %grab source-mark target-mark call-result)
         ::
         [[%success [mark vase.u.call-result]] out]
       ::  +grow: grow from the input mark to the destination mark
@@ -2468,7 +2509,7 @@
           [[%blocks [starting-mark-path-build]~] out]
         ::
         ?.  ?=([~ %success %path *] starting-mark-path-result)
-          (cast-wrap-error starting-mark-path-result)
+          (cast-wrap-error %grow source-mark target-mark starting-mark-path-result)
         ::  grow the value from the initial mark to the final mark
         ::
         ::  Replace the input mark's sample with the input's result,
@@ -2493,7 +2534,7 @@
           [[%blocks [grow-build]~] out]
         ::
         ?.  ?=([~ %success %ride *] grow-result)
-          (cast-wrap-error grow-result)
+          (cast-wrap-error %grow source-mark target-mark grow-result)
         ::  make sure the product nests in the sample of the destination mark
         ::
         =/  bunt-build=^build  [date.build [%bunt disc target-mark]]
@@ -2503,7 +2544,7 @@
           [[%blocks [bunt-build]~] out]
         ::
         ?.  ?=([~ %success %bunt *] bunt-result)
-          (cast-wrap-error bunt-result)
+          (cast-wrap-error %grow source-mark target-mark bunt-result)
         ::
         ?.  (~(nest ut p.q.cage.u.bunt-result) | p.vase.u.grow-result)
           =*  src  source-mark
@@ -2515,14 +2556,23 @@
         [[%success mark vase.u.grow-result] out]
       ::
       ++  cast-wrap-error
-        |=  result=(unit build-result)
+        |=  $:  action=term
+                source-mark=term
+                target-mark=term
+                result=(unit build-result)
+            ==
         ^-  [action-result _out]
         ::
+        :_  out
+        :-  %error
+        :-  :-  %leaf
+            ;:  weld
+              "ford: %cast {<mark>} on {<disc>} failed "
+              "while calling {<action>} to cast from "
+              "{<source-mark>} to {<target-mark>}:"
+            ==
         ?>  ?=([~ %error *] result)
-        =/  message=tang
-          [[%leaf "ford: {<-.schematic.build>} failed: "] message.u.result]
-        ::
-        [[%error message] out]
+        message.u.result
       --
     ::
     ++  make-core
@@ -2538,7 +2588,9 @@
         (return-blocks [hood-build]~)
       ::
       ?:  ?=(%error -.u.hood-result)
-        (wrap-error hood-result)
+        %-  return-error
+        :-  [%leaf "ford: %core on {<(rail-to-path source-path)>} failed:"]
+        message.u.hood-result
       ::  build the +scaffold into a program
       ::
       ?>  ?=([%success %hood *] u.hood-result)
@@ -2551,7 +2603,9 @@
         (return-blocks [plan-build]~)
       ::
       ?:  ?=(%error -.u.plan-result)
-        (wrap-error plan-result)
+        %-  return-error
+        :-  [%leaf "ford: %core on {<(rail-to-path source-path)>} failed:"]
+        message.u.plan-result
       ::
       ?>  ?=([%success %plan *] u.plan-result)
       (return-result %success %core vase.u.plan-result)
@@ -2596,8 +2650,12 @@
       ?~  mark-path-result
         (return-blocks [mark-path-build]~)
       ::
-      ?.  ?=([~ %success %path *] mark-path-result)
-        (wrap-error mark-path-result)
+      ?:  ?=([~ %error *] mark-path-result)
+        %-  return-error
+        :-  [%leaf "ford: %diff failed on {<disc>}:"]
+        message.u.mark-path-result
+      ::
+      ?>  ?=([~ %success %path *] mark-path-result)
       ::
       =/  mark-build=^build  [date.build [%core rail.u.mark-path-result]]
       ::
@@ -2605,8 +2663,12 @@
       ?~  mark-result
         (return-blocks [mark-build]~)
       ::
-      ?.  ?=([~ %success %core *] mark-result)
-        (wrap-error mark-result)
+      ?:  ?=([~ %error *] mark-result)
+        %-  return-error
+        :-  [%leaf "ford: %diff failed on {<disc>}:"]
+        message.u.mark-result
+      ::
+      ?>  ?=([~ %success %core *] mark-result)
       ::
       ?.  (slab %grad p.vase.u.mark-result)
         %-  return-error  :_  ~  :-  %leaf
@@ -2619,8 +2681,12 @@
       ?~  grad-result
         (return-blocks [grad-build]~)
       ::
-      ?.  ?=([~ %success %ride *] grad-result)
-        (wrap-error grad-result)
+      ?:  ?=([~ %error *] grad-result)
+        %-  return-error
+        :-  [%leaf "ford: %diff failed on {<disc>}:"]
+        message.u.grad-result
+      ::
+      ?>  ?=([~ %success %ride *] grad-result)
       ::  if +grad produced a @tas, convert to that mark and diff those
       ::
       ?@  q.vase.u.grad-result
@@ -2723,24 +2789,31 @@
     ::
     ++  make-hood
       ~%  %make-hood  ..^^$  ~
-      |=  source-path=rail
+      |=  source-rail=rail
       ^-  build-receipt
       ::
-      =/  scry-build=^build  [date.build [%scry [%c %x source-path]]]
+      =/  scry-build=^build  [date.build [%scry [%c %x source-rail]]]
       =^  scry-result  out  (depend-on scry-build)
       ?~  scry-result
         ::
         (return-blocks ~[scry-build])
       ::
       ?:  ?=([~ %error *] scry-result)
-        (wrap-error scry-result)
+        =/  =path  (rail-to-path source-rail)
+        %-  return-error
+        :-  [%leaf "ford: %hood failed for {<path>}:"]
+        message.u.scry-result
       =+  as-cage=(result-to-cage u.scry-result)
       ::  hoon files must be atoms to parse
       ::
       ?.  ?=(@ q.q.as-cage)
-        (return-error [%leaf "ford: %hood: file not an atom"]~)
+        =/  =path  (rail-to-path source-rail)
+        %-  return-error
+        :_  ~
+        :-  %leaf
+        "ford: %hood: path {<path>} not an atom"
       ::
-      =/  src-beam=beam  [[ship.disc desk.disc [%ud 0]] spur]:source-path
+      =/  src-beam=beam  [[ship.disc desk.disc [%ud 0]] spur]:source-rail
       ::
       =/  =cache-key  [%hood src-beam q.q.as-cage]
       =^  cached-result  out  (access-cache cache-key)
@@ -2751,7 +2824,13 @@
         ((full (parse-scaffold src-beam)) [1 1] (trip q.q.as-cage))
       ::
       ?~  q.parsed
-        (return-error [%leaf "syntax error: {<p.p.parsed>} {<q.p.parsed>}"]~)
+        =/  =path  (rail-to-path source-rail)
+        ~&  [%fail path]
+        %-  return-error
+        :-  :-  %leaf
+            %+  weld  "ford: %hood: syntax error at "
+            "[{<p.p.parsed>} {<q.p.parsed>}] in {<path>}"
+        ~
       ::
       (return-result %success %hood p.u.q.parsed)
     ::
@@ -2785,8 +2864,12 @@
       ?~  mark-result
         (return-blocks [mark-build]~)
       ::
-      ?.  ?=([~ %success %core *] mark-result)
-        (wrap-error mark-result)
+      ?:  ?=([~ %error *] mark-result)
+        %-  return-error
+        :-  [%leaf "ford: %join to {<mark>} on {<disc>} failed:"]
+        message.u.mark-result
+      ::
+      ?>  ?=([~ %success %core *] mark-result)
       ::
       =/  mark-vase=vase  vase.u.mark-result
       ::
@@ -2801,8 +2884,12 @@
       ?~  grad-result
         (return-blocks [grad-build]~)
       ::
-      ?.  ?=([~ %success %ride *] grad-result)
-        (wrap-error grad-result)
+      ?:  ?=([~ %error *] grad-result)
+        %-  return-error
+        :-  [%leaf "ford: %join to {<mark>} on {<disc>} failed:"]
+        message.u.grad-result
+      ::
+      ?>  ?=([~ %success %ride *] grad-result)
       ::
       =/  grad-vase=vase  vase.u.grad-result
       ::  if +grad produced a mark, delegate %join behavior to that mark
@@ -2822,8 +2909,12 @@
         ?~  join-result
           (return-blocks [join-build]~)
         ::
-        ?.  ?=([~ %success %join *] join-result)
-          (wrap-error join-result)
+        ?:  ?=([~ %error *] join-result)
+          %-  return-error
+          :-  [%leaf "ford: %join to {<mark>} on {<disc>} failed:"]
+          message.u.join-result
+        ::
+        ?>  ?=([~ %success %join *] join-result)
         ::
         (return-result u.join-result)
       ::  make sure the +grad core has a +form arm
@@ -2875,8 +2966,12 @@
       ?~  diff-result
         (return-blocks [diff-build]~)
       ::
-      ?.  ?=([~ %success %call *] diff-result)
-        (wrap-error diff-result)
+      ?:  ?=([~ %error *] diff-result)
+        %-  return-error
+        :-  [%leaf "ford: %join to {<mark>} on {<disc>} failed:"]
+        message.u.diff-result
+      ::
+      ?>  ?=([~ %success %call *] diff-result)
       ::  the result was a unit; if `~`, use %null mark; otherwise grab tail
       ::
       =/  =build-result
@@ -2897,7 +2992,7 @@
       ::  depend on builds of each schematic
       ::
       =^  maybe-schematic-results  out
-        (perform-schematics key-and-schematics %ignore-errors *~)
+        (perform-schematics "" key-and-schematics %ignore-errors *~)
       ?~  maybe-schematic-results
         out
       ::  return all builds
@@ -3077,7 +3172,12 @@
       =/  subject-vase=vase  q.subject-cage
       ::
       =^  maybe-schematic-results  out
-        (perform-schematics mutations %fail-on-errors *wing)
+        %-  perform-schematics  :*
+          "ford: %mute contained failures:"
+          mutations
+          %fail-on-errors
+          *wing
+        ==
       ?~  maybe-schematic-results
         out
       ::  all builds succeeded; retrieve vases from results
@@ -3346,7 +3446,18 @@
       ::  depend on builds of each schematic
       ::
       =^  maybe-schematic-results  out
-        (perform-schematics rails-and-schematics %filter-errors *rail)
+        %-  perform-schematics  :*
+          ;:  weld
+            "ford: %path resolution of "
+            (trip raw-path)
+            "at prefix "
+            (trip prefix)
+            " contained failures:"
+          ==
+          rails-and-schematics
+          %filter-errors
+          *rail
+        ==
       ?~  maybe-schematic-results
         out
       ::  matches: builds that completed with a successful result
@@ -4258,7 +4369,7 @@
       %_    out
           result
         ?-  -.compiled
-          %|  [%build-result %error [leaf+"%slim failed: " p.compiled]]
+          %|  [%build-result %error [leaf+"ford: %slim failed: " p.compiled]]
           %&  [%build-result %success %slim p.compiled]
         ==
       ==
@@ -4283,7 +4394,7 @@
           %|  :*  %build-result   %error
                   :*  (~(dunk ut p.sample) %have)
                       (~(dunk ut (~(peek ut p.gate) %free 6)) %want)
-                      leaf+"%slit failed: "
+                      leaf+"ford: %slit failed: "
                       p.product
                   ==
               ==
@@ -4302,8 +4413,12 @@
       ?~  bunt-result
         (return-blocks [bunt-build]~)
       ::
-      ?.  ?=([~ %success %bunt *] bunt-result)
-        (wrap-error bunt-result)
+      ?:  ?=([~ %error *] bunt-result)
+        %-  return-error
+        :-  [%leaf "ford: %volt {<mark>} on {<disc>} failed:"]
+        message.u.bunt-result
+      ::
+      ?>  ?=([~ %success %bunt *] bunt-result)
       ::
       =/  =build-result
         [%success %volt [mark p.q.cage.u.bunt-result input]]
@@ -4329,8 +4444,12 @@
       ?~  path-result
         (return-blocks [path-build]~)
       ::
-      ?.  ?=([~ %success %path *] path-result)
-        (wrap-error path-result)
+      ?:  ?=([~ %error *] path-result)
+        %-  return-error
+        :-  leaf+"ford: %vale failed while searching for {<mark>}:"
+        message.u.path-result
+      ::
+      ?>  ?=([~ %success %path *] path-result)
       ::
       =/  bunt-build=^build  [date.build [%bunt disc mark]]
       ::
@@ -4458,7 +4577,12 @@
         ::    For %path builds, any ambiguous path is just filtered out.
         ::
         =^  maybe-path-results  out
-          (perform-schematics nodes-and-schematics %filter-errors *load-node)
+          %-  perform-schematics  :*
+            "ford: %walk from {<source>} to {<target>} contained failures:"
+            nodes-and-schematics
+            %filter-errors
+            *load-node
+          ==
         ?~  maybe-path-results
           [~ out]
         ::
@@ -4473,7 +4597,12 @@
           [%core rail.build-result]
         ::
         =^  maybe-core-results  out
-          (perform-schematics nodes-and-cores %filter-errors *load-node)
+          %-  perform-schematics  :*
+            "ford: %walk from {<source>} to {<target>} contained failures:"
+            nodes-and-cores
+            %filter-errors
+            *load-node
+          ==
         ?~  maybe-core-results
           [~ out]
         ::  clear the queue before we process the new results
@@ -4635,7 +4764,8 @@
     ::    key types with schematics.
     ::
     ++  perform-schematics
-      |*  $:  builds=(list [key=* =schematic])
+      |*  $:  failure=tape
+              builds=(list [key=* =schematic])
               on-error=?(%fail-on-errors %filter-errors %ignore-errors)
               key-bunt=*
           ==
@@ -4665,19 +4795,21 @@
       ++  check-errors
         |=  results=(list [_key-bunt ^build (unit build-result)])
         ::
-        =/  error=tang
-          %-  zing  ^-  (list tang)
+        =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
+        =/  errors=(list tank)
           %+  murn  results
           |=  [* * result=(unit build-result)]
-          ^-  (unit tang)
+          ^-  (unit tank)
           ?.  ?=([~ %error *] result)
             ~
-          `message.u.result
-        ::  only produce the first error, as is tradition
+          `[%rose braces message.u.result]
         ::
-        ?^  error
-          =.  error  [leaf+"ford: %mute failed: " error]
-          [~ (return-error error)]
+        ?^  errors
+          :-  ~
+          %-  return-error
+          :-  [%leaf failure]
+          errors
+        ::
         (handle-rest results)
       ::
       ++  filter-errors
