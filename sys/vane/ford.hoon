@@ -4394,7 +4394,7 @@
           %|  :*  %build-result   %error
                   :*  (~(dunk ut p.sample) %have)
                       (~(dunk ut (~(peek ut p.gate) %free 6)) %want)
-                      leaf+"ford: %slit failed: "
+                      leaf+"ford: %slit failed:"
                       p.product
                   ==
               ==

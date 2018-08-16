@@ -1927,7 +1927,7 @@
         ::
         :_  i.moves(|7 ~)
         :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
-            [%error [leaf+"ford: %call failed:" ~]]
+            [%error [leaf+"ford: %call execution failed:" ~]]
     ==  ==
   ::
   =^  results2  ford-gate
@@ -2400,7 +2400,7 @@
                 [%leaf "want"]
                 [%palm ["/" "" "" ""] [%leaf "a"] [%leaf "@ud"] ~]
             ==
-            [%leaf "%slit failed: "]
+            [%leaf "ford: %slit failed:"]
             [%leaf "nest-fail"]
         ==
     ==
@@ -3371,7 +3371,7 @@
       scry=scry-is-forbidden
       ::  ask ford to wipe its cache
       ::
-      call-args=[duct=~[/trivial] type=~ %wipe ~]
+      call-args=[duct=~[/trivial] type=~ %wipe 10]
       ::  cache wiping should never produce any moves
       ::
       moves=~
@@ -3413,7 +3413,7 @@
       scry=scry-is-forbidden
       ::  ask ford to wipe its cache
       ::
-      call-args=[duct=~[/build] type=~ %wipe ~]
+      call-args=[duct=~[/build] type=~ %wipe 10]
       ::  cache wiping should never produce any moves
       ::
       moves=~
@@ -3508,7 +3508,7 @@
       scry=scry-is-forbidden
       ::  ask ford to wipe its cache
       ::
-      call-args=[duct=~[/ride] type=~ %wipe ~]
+      call-args=[duct=~[/ride] type=~ %wipe 10]
       ::  cache wiping should never produce any moves
       ::
       moves=~
@@ -3648,7 +3648,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/wipe] type=~ %wipe ~]
+      call-args=[duct=~[/wipe] type=~ %wipe 10]
       moves=~
     ==
   ::
@@ -4293,7 +4293,8 @@
       ::
       ^=  moves
         :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %error
-                :~  [%leaf "ford: %core failed: "]
+                :~  :-  %leaf
+                    "ford: %core on /~nul/home/0/gen/program/hoon failed:"
                     [%leaf "/^ failed: nest-fail"]
     ==  ==  ==  ==
   ::
@@ -4446,7 +4447,8 @@
       ::
       ^=  moves
         :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %error
-                :~  [%leaf "ford: %core failed: "]
+                :~  :-  %leaf
+                    "ford: %core on /~nul/home/0/gen/program/hoon failed:"
                     [%leaf "/| failed: out of options"]
     ==  ==  ==  ==
   ::
