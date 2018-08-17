@@ -9039,7 +9039,7 @@
   ++  bran
     ~+
     =+  gil=*(set type)
-    |-  ^-  seminoun:musk
+    |-  ~+  ^-  seminoun:musk
     ?-    sut
       $noun      [full/[~ ~ ~] ~]
       $void      [full/[~ ~ ~] ~]
