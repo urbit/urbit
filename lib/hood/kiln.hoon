@@ -70,7 +70,8 @@
           {$merg wire @p @tas @p @tas case germ}        ::
           {$perm wire ship desk path rite}              ::
           {$poke wire dock pear}                        ::
-          {$wipe wire @p ~}                            ::
+          {$wipe wire @p ~}                             ::
+          [%keep wire max-cache-size=@ud]               ::
           {$wait wire @da}                              ::
           {$warp wire sock riff}                        ::
       ==                                                ::
@@ -275,7 +276,15 @@
   ?>  (gte start now)
   abet:(emit %wait /kiln/overload/(scot %dr recur) start)
 ::
+<<<<<<< HEAD
 ++  poke-wipe-ford  |=(~ abet:(emit %wipe /kiln our ~))
+=======
+++  poke-wipe-ford
+  |=($~ abet:(emit %wipe /kiln our ~))
+::
+++  poke-keep-ford
+  |=(max-cache-size=@ud abet:(emit %keep /kiln max-cache-size))
+>>>>>>> origin/ford-turbo
 ::
 ++  mack
   |=  {way/wire saw/(unit tang)}

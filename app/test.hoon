@@ -134,7 +134,7 @@
     :-  /ren/css            "not meant to be called outside /web/pack"
     :-  /ren/js             "not meant to be called outside /web/pack"
     :-  /ren/run            "not meant to be called except on a (different) hoon file"
-    :-  /ren/collection     "temporarily disabled"
+    :-  /ren/collections    "temporarily disabled"
     :-  /ren/x-urb          "temporarily disabled"
     :-  /ren/x-htm          "temporarily disabled"
     :-  /ren/x-collections-snip          "temporarily disabled"

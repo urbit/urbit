@@ -4,15 +4,15 @@
 /?  309
 /+  collections, cram
 /=  gas  /$  fuel:html
-/=  itm  /collection-web-item/
+/=  itm  /%  /collections-web-item/
 ::
 ::
 /=  collection-post     
-  /^  manx
-  /:  /===/web/landscape/collection/post     /!hymn/
+::  /^  $-(raw-item:collections manx)
+  /:  /===/web/landscape/collections/post     /!noun/
 /=  collection-details
   /^  manx
-  /:  /===/web/landscape/collection/details  /!hymn/
+  /:  /===/web/landscape/collections/details  /!hymn/
 ::
 ::
 =<  (item-to-elem itm)
@@ -20,7 +20,7 @@
 ++  item-to-elem
   |=  itm=item:collections
   ^-  manx
-  =/  sho  (~(get by qix.gas) %show)
+  =/  sho  (fall (~(get by qix.gas) %show) %default)
   ;div.container
   ;input
     =type  "hidden"
@@ -35,27 +35,27 @@
     ?-    -.itm
     ::
         %collection
-      ?+  sho         !!
-        ~             (collection-to-elem col.itm)
-        [~ %post]     collection-post
-        [~ %edit]     !!
-        [~ %details]  collection-details
+      ?+  sho     !!
+        %default  (collection-to-elem col.itm)
+        %post     (collection-post ~ (flop s.bem.gas))
+        %edit     !!
+        %details  collection-details
       ==
     ::
         %raw
-      ?+  sho         !!
-        ~             (raw-to-elem raw.itm)
-        [~ %post]     !!
-        [~ %edit]     collection-post
-        [~ %details]  collection-details
+      ?+  sho     !!
+        %default  (raw-to-elem raw.itm)
+        %post     !!
+        %edit     (collection-post `raw.itm (flop s.bem.gas))
+        %details  collection-details
       ==
     ::
         %both
-      ?+  sho         !!
-        ~             (both-to-elem col.itm raw.itm)
-        [~ %post]     !!
-        [~ %edit]     collection-post
-        [~ %details]  collection-details
+      ?+  sho     !!
+        %default  (both-to-elem col.itm raw.itm)
+        %post     !!
+        %edit     (collection-post `raw.itm (flop s.bem.gas))
+        %details  collection-details
       ==
     ::
     ==
@@ -134,7 +134,7 @@
                 =href  "/~~/landscape/profile"
                 ; {(trip owner)}
               ==
-              ;+  elm:(static:cram (ream data.raw))
+              ;+  elm:(static:cram (ream data.raw.ite))
             ==
             ;span.collection-date: {(trip date)}
           ==

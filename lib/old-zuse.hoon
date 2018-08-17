@@ -247,17 +247,6 @@
 ++  gram        gram:eyre                               ::  inter-ship message
 ++  kiss-eyre   task:able:eyre                          ::  in request ->$
 ++  gift-eyre   gift:able:eyre                          ::  out result <-$
-++  hood        hood:ford                               ::  assembly plan
-++  hoof        hoof:ford                               ::  resource reference
-++  hoop        hoop:ford                               ::  source in hood
-++  hops        hops:ford                               ::  XX late-bound path
-++  horn        horn:ford                               ::  resource tree
-++  milk        milk:ford                               ::  sourced silk
-++  silk        silk:ford                               ::  construction layer
-++  bilk        bilk:ford                               ::  sourced request
-++  gage        gage:ford                               ::  recursive cage+tang
-++  kiss-ford   task:able:ford                          ::  in request ->$
-++  gift-ford   gift:able:ford                          ::  out result <-$
 ++  club        club:gall                               ::  agent action
 ++  cuft        cuft:gall                               ::  internal gift
 ++  culm        culm:gall                               ::  config action

@@ -3,7 +3,7 @@
   /^  collection:collections
   /;  |=  [a=config:collections b=(map knot item:collections) ~] 
           [a b]
-      /.  /collection-config/
-          /_  /collection-item/
+      /.  /collections-config/
+          /_  /collections-item/
       ==
 collection

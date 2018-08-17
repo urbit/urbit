@@ -5,7 +5,7 @@
 /=  inner
     /^  manx
     /,  /web/landscape     /!hymn/
-        /web/collections   /collection-elem/
+        /web/collections   /collections-elem/
         / 
       /|  /!hymn/
 ::          /&hymn&/elem/

@@ -828,6 +828,9 @@
               ::
               =schematic
           ==
+          ::  %keep: resize cache to :max entries
+          ::
+          [%keep max=@ud]
           ::  %kill: stop a build; send on same duct as original %build request
           ::
           $:  %kill
@@ -838,9 +841,9 @@
           ::  %wegh: produce memory usage information
           ::
           [%wegh ~]
-          ::  %wipe: clear cache
+          ::  %wipe: wipes stored builds
           ::
-          [%wipe ~]
+          [%wipe percent-to-remove=@ud]
       ==
     ::  +gift:able:ford: responses from ford
     ::
