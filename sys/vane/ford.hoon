@@ -544,7 +544,7 @@
 ::  +build-to-tape: convert :build to a printable format
 ::
 ::    Builds often contain the standard library and large types, so
-::    this function should always be called
+::    this function should always be called when trying to print a +build.
 ::
 ++  build-to-tape
   |=  =build
