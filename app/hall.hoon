@@ -165,7 +165,6 @@
       --
   =|  mos/(list move)
   |=  old/(unit states)
-  ~&  old
   ^-  (quip move _..prep)
   ?~  old
     %-  pre-bake
@@ -489,7 +488,6 @@
       ::
       |=  {nom/name des/cord typ/security}
       ^+  ..ta-action
-      ~&  nom
       ?.  (~(has in stories) nom)
         %^  impact  nom  %new
         :*  [[[our.bol nom] ~] ~ ~]
@@ -554,8 +552,6 @@
       ::
       |=  {nom/name sub/? srs/(set source)}
       =+  soy=(~(get by stories) nom)
-      ~&  nom
-      ~&  srs
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
       so-done:(~(so-sources so nom ~ u.soy) sub srs)
@@ -582,7 +578,6 @@
       :>  copy all behavior of create, permit, and source in that order
       ::
       |=  {sis/(set ship)}
-      ~&  sis
       =/  nom/name
       %^  rsh  3  1
       %+  roll
