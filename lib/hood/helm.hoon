@@ -180,7 +180,6 @@
         [%e /vane/eyre]
         [%f /vane/ford]
         [%g /vane/gall]
-        [%t /vane/turbo]
     ==
   |=  {p/@tas q/path}
   =+  way=`path`(welp top q)

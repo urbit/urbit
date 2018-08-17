@@ -1,9 +1,9 @@
 /+  tester
 ::
-/=  ford-turbo  /:  /===/sys/vane/turbo
+/=  ford-turbo  /:  /===/sys/vane/ford
                 /!noun/
 ::
-=,  ford-api
+=,  ford
 ::
 :-  %say
 |=  [[now=@da eny=@ bek=beak] ~ ~]
@@ -5506,7 +5506,7 @@
         ::
         %+  weld
           %-  expect-eq  !>
-          :-  %noun
+          :-  %foo
           p.cage
         ::
         %+  weld

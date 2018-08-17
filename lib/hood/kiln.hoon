@@ -61,7 +61,7 @@
 ?>  =(src our)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$exec wire @p ~ {beak silk:ford}}                ::
+      $%  {$build wire @p ? schematic:ford}             ::
           {$drop wire @p @tas}                          ::
           {$info wire @p @tas nori}                     ::
           {$mont wire @tas beam}                        ::
@@ -200,7 +200,7 @@
   |%
   ++  emit  |=(a/card +>(..autoload (^emit a)))
   ++  tracked-vanes
-    `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall %turbo]
+    `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall]
   ::
   ++  our-home  /(scot %p our)/home/(scot %da now)
   ++  sys-hash  |=(pax/path .^(@uvI %cz :(welp our-home /sys pax)))
@@ -287,8 +287,8 @@
   |=  {way/wire are/(each (set path) (pair term tang))}
   abet:abet:(mere:(take way) are)
 ::
-++  take-made                                         ::
-  |=  {way/wire dep/@uvH reg/gage:ford}
+++  take-made
+  |=  [way=wire date=@da result=made-result:ford]
   ::  hack for |overload
   ::
   ::    We might have gotten an ignorable response back for our cache priming
@@ -297,7 +297,7 @@
   ?:  =(/prime/cache way)
     ~&  %cache-primed
     abet
-  abet:abet:(made:(take way) dep reg)
+  abet:abet:(made:(take way) date result)
 ::
 ++  take-coup-fancy                                   ::
   |=  {way/wire saw/(unit tang)}
@@ -342,23 +342,7 @@
   |=  {way/wire ~}
   ?>  ?=({@ ~} way)
   =+  tym=(slav %dr i.way)
-  ::  this builds up a ford build for the front page to prime the cache.
-  =.  +>.$
-    =/  request-data  :~
-        [0 [0 8.080] 0 'localhost' ~]
-        ::  associate 0 as the anonymous ship, which is the ++add result.
-        [[0 (scot %p (add our ^~((bex 64))))] ~ ~]
-        'not-yet-implemented'
-        `'en-US,en;q=0.9'
-        `.127.0.0.1
-      ==
-    =/  monies/coin  [%many ~[[%blob request-data] [%$ ~.n 0]]]
-    =/  request/silk:ford  [%bake %urb monies [our %home [%da now]] /web]
-    (emit `card`[%exec /kiln/prime/cache our `[[our %home [%da now]] request]])
-  =.  +>.$
-    (emit %wipe /kiln/overload/[i.way] our ~)
-  =.  +>.$
-    (emit %wait /kiln/overload/[i.way] (add tym now))
+  ~&  %wake-overload-deprecated
   abet
 ::
 ++  spam
@@ -484,30 +468,6 @@
       p.res
     (ford-fail p.res)
   ::
-  ++  gage-to-cages
-    |=  gag/gage:ford  ^-  (list (pair cage cage))
-    (unwrap-tang (gage-to-tage gag))
-  ::
-  ++  gage-to-tage
-    |=  gag/gage:ford
-    ^-  (each (list (pair cage cage)) tang)
-    ?.  ?=($tabl -.gag)
-      (mule |.(`~`(ford-fail >%strange-gage< ~)))
-    =<  ?+(. [%& .] {@ *} .)
-    |-  ^-  ?((list {cage cage}) (each ~ tang))
-    ?~  p.gag  ~
-    ?-    -.p.i.p.gag
-        $tabl  (mule |.(`~`(ford-fail >%strange-gage< ~)))
-        %|     (mule |.(`~`(ford-fail p.p.i.p.gag)))
-        %&
-      ?-  -.q.i.p.gag
-        $tabl  (mule |.(`~`(ford-fail >%strange-gage< ~)))
-        %|     (mule |.(`~`(ford-fail p.q.i.p.gag)))
-        %&     =+  $(p.gag t.p.gag)
-               ?+(- [[p.p p.q]:i.p.gag -] {@ *} -)
-      ==
-    ==
-  ::
   ++  perform                                         ::
     ^+  .
     (blab [ost %merg /kiln/[syd] our syd her sud cas gem] ~)
@@ -554,23 +514,29 @@
         =>  .(+>.$ (spam leaf+- ~))
         =+  tic=(cat 3 syd '-scratch')
         %-  blab  :_  ~
-        :*  ost  %exec  /kiln/[syd]
-            our  ~  [our tic %da now]  %tabl
-            ^-  (list (pair silk:ford silk:ford))
+        =,  ford
+        :*  ost  %build  /kiln/[syd]  our  live=%.n
+            ^-  schematic
+            :-  %list
+            ^-  (list schematic)
             :: ~&  >  kiln-mashing+[p.are syd=syd +<.abet]
             %+  turn  ~(tap in p.are)
             |=  pax/path
-            ^-  (pair silk:ford silk:ford)
+            ^-  [schematic schematic]
             :-  [%$ %path -:!>(*path) pax]
-            =+  base=[%file [our tic %da now] (flop pax)]
-            =+  alis=[%file [her sud cas] (flop pax)]
-            =+  bobs=[%file [our syd %da now] (flop pax)]
-            =+  dali=[%diff base alis]
-            =+  dbob=[%diff base bobs]
+            =/  base=schematic  [%scry %c %x `rail`[[our tic] (flop pax)]]
+            ?>  ?=([%da @] cas)
+            =/  alis=schematic
+              [%pin p.cas `schematic`[%scry %c %x [[our syd] (flop pax)]]]
+            =/  bobs=schematic
+              [%scry %c %x [[our syd] (flop pax)]]
+            =/  dali=schematic  [%diff [our syd] base alis]
+            =/  dbob=schematic  [%diff [our syd] base bobs]
             =+  ^-  for/mark
                 =+  (slag (dec (lent pax)) pax)
                 ?~(- %$ i.-)
-            [%mash for [her sud dali] [our syd dbob]]
+            ^-  schematic
+            [%mash [our tic] for [[her sud] for dali] [[our syd] for dbob]]
         ==
       =+  "failed to merge with strategy meld"
       lose:(spam leaf+- >p.p.are< q.p.are)
@@ -624,15 +590,26 @@
     (welp (tape-to-tanks "\0a{c}{a}") >b< ~)
   ::
   ++  made
-    |=  {dep/@uvH reg/gage:ford}
+    |=  [date=@da result=made-result:ford]
+    ::  |=  {dep/@uvH reg/gage:ford}
     ^+  +>
-    ?:  ?=(%| -.reg)
+    ::
+    ?:  ?=([%incomplete *] result)
       =+  "failed to mash"
-      lose:(spam leaf+- p.reg)
+      lose:(spam leaf+- tang.result)
+    ?:  ?=([%complete %error *] result)
+      =+  "failed to mash"
+      lose:(spam leaf+- message.build-result.result)
+    ?>  ?=([%complete %success %list *] result)
     =+  ^-  can/(list (pair path (unit miso)))
-        %+  turn  (gage-to-cages reg)
-        |=  {pax/cage dif/cage}
+        %+  turn  results.build-result.result
+        |=  res=build-result:ford
         ^-  (pair path (unit miso))
+        ?>  ?=([%success ^ *] res)
+        ~!  res
+        =+  pax=(result-to-cage:ford head.res)
+        =+  dif=(result-to-cage:ford tail.res)
+        ::
         ?.  ?=($path p.pax)
           ~|  "strange path mark: {<p.pax>}"
           !!

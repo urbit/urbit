@@ -28,12 +28,12 @@
               {$this p/? q/clip r/httq}                 ::  proxied request
               {$meta vase}                              ::  type check
           ==  ==                                        ::
+              $:  $f                                            ::
+          $%  [%build our=@p live=? schematic=schematic:ford]
+              [%kill our=@p]
+          ==  ==
               $:  $g                                    ::  to %gall
           $%  {$deal p/sock q/cush:gall}               ::  full transmission
-          ==  ==
-              $:  $t                                            ::
-          $%  [%build our=@p live=? schematic=schematic:ford-api]
-              [%kill our=@p]
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $%  $:  $a                                    ::  by %ames
@@ -49,8 +49,8 @@
               $:  $e                                    ::  by self
           $%  {$thou p/httr}                            ::  response for proxy
           ==  ==                                        ::
-              $:  $t
-          $%  [%made date=@da result=made-result:ford-api]  ::
+              $:  $f
+          $%  [%made date=@da result=made-result:ford]  ::
           ==  ==
               $:  @tas                                  ::  by any
           $%  {$crud p/@tas q/(list tank)}              ::
@@ -791,7 +791,7 @@
       :: ~&  did-thud+[-.lid hen]
       ?-  -.lid
           $exec
-        (pass-note p.lid %t [%kill our])
+        (pass-note p.lid %f [%kill our])
       ::
           $poll
         ?.  (~(has by wix) p.lid)
@@ -955,8 +955,8 @@
             [%| tang.result.sih]
           ?:  ?=([%complete %error *] result.sih)
             [%| message.build-result.result.sih]
-          [%& [p q.q]:(result-to-cage:ford-api build-result.result.sih)]
-        (ames-gram (slav %p p.tee) got-inner+~ (slav %uv q.tee) res)
+          [%& [p q.q]:(result-to-cage:ford build-result.result.sih)]
+        (ames-gram (slav %p p.tee) %got-inner (slav %uv q.tee) res)
       ::
           {$ha *}
         %-  emule  |.  ^+  ..apex
@@ -964,7 +964,7 @@
           (fail-turbo 404 tang.result.sih)
         ?:  ?=([%complete %error *] result.sih)
           (fail-turbo 404 message.build-result.result.sih)
-        =/  cay=cage  (result-to-cage:ford-api build-result.result.sih)
+        =/  cay=cage  (result-to-cage:ford build-result.result.sih)
         ?:  ?=($red-quri p.cay)
           =+  url=(apex:en-purl ((hard quri) q.q.cay))
           (give-thou 307 [location+(crip url)]~ ~)
@@ -988,13 +988,13 @@
         ?.  ?=([%complete %success *] result.sih)
           (give-turbo-sigh result.sih)
         ::
-        =/  cay/cage  (result-to-cage:ford-api build-result.result.sih)
+        =/  cay/cage  (result-to-cage:ford build-result.result.sih)
         ?>  ?=($hiss p.cay)
         ?:  =('~' p.tee)
           (eyre-them tee q.cay)
         =+  usr=(slav %ta p.tee)
         =+  ((hard {pul/purl ^}) q.q.cay)
-        ?.  ?=($& -.r.p.pul)
+        ?.  ?=(%& -.r.p.pul)
           ~&  [%auth-lost usr (head:en-purl p.pul)]
           (eyre-them tee q.cay)
         (get-req:(dom-vi usr (scag 2 p.r.p.pul)) q.tee q.cay)
@@ -1004,7 +1004,7 @@
           ((slog tang.result.sih) +>.^$)
         ?:  ?=([%complete %error *] result.sih)
           ((slog message.build-result.result.sih) +>.^$)
-        =/  cay=cage  (result-to-cage:ford-api build-result.result.sih)
+        =/  cay=cage  (result-to-cage:ford build-result.result.sih)
         %+  get-rush:(ire-ix p.tee)  q.tee
         ?>  ?=($json p.cay)                    ::  XX others
         ((hard json) q.q.cay)
@@ -1051,7 +1051,7 @@
     |=  [tea=whir mar=mark cay=cage]
     =/  disc  [p q]:(norm-beak -.top)
     %^  execute-turbo  tea  live=%.n
-    ^-  schematic:ford-api
+    ^-  schematic:ford
     [%cast disc mar [%$ cay]]
   ::
   ++  cast-thou  :: turbo
@@ -1090,14 +1090,14 @@
     +>.$
   ::
   ++  exec-turbo-live
-    |=  [tea=whir req=schematic:ford-api]
+    |=  [tea=whir req=schematic:ford]
     =.  lyv  (~(put by lyv) hen [%exec tea])
     (execute-turbo tea live=%.n req)
   ::
   ++  execute-turbo
-    |=  [tea=whir live=? request=schematic:ford-api]
+    |=  [tea=whir live=? request=schematic:ford]
     %+  pass-note  tea
-    :*  %t  %build  our  live
+    :*  %f  %build  our  live
         [%dude [|.(+)]:[%leaf "eyre: execute {<tea>}"] request]
     ==
   ::
@@ -1139,12 +1139,12 @@
     [%tang !>(p.res)]
   ::
   ++  give-turbo-sigh
-    |=  result=made-result:ford-api
+    |=  result=made-result:ford
     ~&  %give-turbo-sigh
     =-  +>.$(mow :_(mow [hen %give %sigh `cage`-]))
     ?:  ?=(%incomplete -.result)
       [%tang !>(tang.result)]
-    (result-to-cage:ford-api build-result.result)
+    (result-to-cage:ford build-result.result)
   ::
   ++  mean-json  |=({sas/@uG err/ares} (give-json sas ~ (ares-to-json err)))
   ++  nice-json  |=(* (give-json 200 ~ (frond:enjs %ok %b &)))
@@ -1220,12 +1220,12 @@
 
         ~&  [%bake pez]
         %+  exec-turbo-live  p.pez
-        ^-  schematic:ford-api
+        ^-  schematic:ford
         :-  %alts  :~
-          ^-  schematic:ford-api
+          ^-  schematic:ford
           [%bake q.pez r.pez [[p q] s]:s.pez]
         ::
-          ^-  schematic:ford-api
+          ^-  schematic:ford
           [%bake %red-quri r.pez [[p q] s]:s.pez]
         ==
       ::
@@ -1937,7 +1937,7 @@
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<- +<+))
     ++  execute-turbo
-      |=  [wir=whir-se live=? schematic=schematic:ford-api]
+      |=  [wir=whir-se live=? schematic=schematic:ford]
       (execute-turbo:abet se+[wir usr dom] live schematic)
     ++  dead-this  |=(a/tang (fail:abet 500 0v0 a))
     ++  dead-hiss  |=(a/tang pump(req ~(nap to req), ..vi (give-sigh %| a)))
@@ -1955,11 +1955,11 @@
     ++  build
       %^  execute-turbo  %core  live=%.y
       :::+  %dude  [|.(+)]:>%mod-samp<
-      ^-  schematic:ford-api
+      ^-  schematic:ford
       :+  %mute
-        ^-  schematic:ford-api
+        ^-  schematic:ford
         [%core [[our %home] (flop %_(dom . sec+dom))]]
-      ^-  (list (pair wing schematic:ford-api))
+      ^-  (list (pair wing schematic:ford))
       :*  [[%& 12]~ %$ bale+!>(*(bale @))]  :: XX specify on type?
           ?~  cor  ~
           ?~  u.cor  ~
@@ -1974,7 +1974,7 @@
       %^  execute-turbo  arm  live=%.n
       call+[ride+[limb+arm prep-cor] [%$ sam]]
     ::
-    ++  prep-cor  ^-  schematic:ford-api
+    ++  prep-cor  ^-  schematic:ford
       ?~  cor  ~|(%no-core !!)
       ?~  u.cor  ~|(%nil-driver !!)
       :+  %$  %core
@@ -2028,7 +2028,7 @@
       ==
     ::
     ++  get-made
-      |=  [wir/whir-se result=made-result:ford-api]  ^+  abet
+      |=  [wir/whir-se result=made-result:ford]  ^+  abet
       ::  |=  {wir/whir-se dep/@uvH res/(each cage tang)}  ^+  abet
       ?:  ?=($core wir)  (made-core result)
       %.  result
@@ -2040,12 +2040,12 @@
       ==
     ::
     ++  made-core
-      |=  [result=made-result:ford-api]
+      |=  [result=made-result:ford]
       ::  |=  {dep/@uvH gag/(each cage tang)}
       :: ~&  got-update/dep
       ::  =.  ..vi  (pass-note %core [%f [%wasp our dep &]])
       ?:  ?=([%complete %success *] result)
-        =/  =cage  (result-to-cage:ford-api build-result.result)
+        =/  =cage  (result-to-cage:ford build-result.result)
         pump(cor `q:cage)
       ?:  &(=(~ cor) =(%$ usr))
         =.  cor  `~
@@ -2116,8 +2116,8 @@
       $(a t.a)
     ::
     ++  on-ford-fail
-      |=  {err/$-(tang _abet) try/$-(made-result:ford-api _abet)}
-      |=  a/made-result:ford-api  ^+  abet
+      |=  {err/$-(tang _abet) try/$-(made-result:ford _abet)}
+      |=  a/made-result:ford  ^+  abet
       ?:  ?=(%incomplete -.a)
         (err tang.a)
       ?:  ?=(%error -.build-result.a)
@@ -2126,13 +2126,13 @@
     ::
     ++  on-error
       |=  {err/$-(tang _abet) handle-move/_|.(|~(vase abet))}
-      |=  a=made-result:ford-api  ^+  abet
+      |=  a=made-result:ford  ^+  abet
       =+  try=(possibly-stateful |=(b/_self (handle-move(+ b))))  :: XX types
       ?:  ?=(%incomplete -.a)
         (err tang.a)
       ?:  ?=(%error -.build-result.a)
         (err message.build-result.a)
-      =/  =cage  (result-to-cage:ford-api build-result.a)
+      =/  =cage  (result-to-cage:ford build-result.a)
       =-  ?-(-.- %& p.-, %| (err p.-))
       (mule |.(~|(driver+dom ~|(bad-res+p.q.cage (try q.cage)))))
     ::
