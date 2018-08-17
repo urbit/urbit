@@ -1,4 +1,3 @@
-!:
 ::  ::  %eyre, http servant
 !?  164
 ::::
