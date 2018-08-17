@@ -147,6 +147,7 @@
       {$permit nom/name inv/? sis/(set ship)}           :<  invite/banish
       {$source nom/name sub/? srs/(set source)}         :<  un/sub to/from src
       {$read nom/name red/@ud}                          :<  change read message
+      {$newdm sis/(set ship)}
       {$usage nom/name add/? tas/tags}                  :<  add/rem usage tags
       ::  messaging                                     ::
       {$convey tos/(list thought)}                      :<  post exact

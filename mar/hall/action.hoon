@@ -24,6 +24,7 @@
         source+(ot nom+so sub+bo srs+(as sorc) ~)
         read+(ot nom+so red+ni ~)
         usage+(ot nom+so add+bo tas+(as so) ~)
+        newdm+(ot sis+(as (su fed:ag)) ~)
         ::
         convey+(ar thot)
         phrase+(ot aud+audi ses+(ar spec:dejs:hall-json) ~)
@@ -57,6 +58,7 @@
       $source  ~[nom+s+nom.act sub+b+sub.act srs+(sa srs.act sorc)]
       $read    ~[nom+s+nom.act red+(numb red.act)]
       $usage   ~[nom+s+nom.act add+b+add.act tas+(sa tas.act cord:enjs)]
+      $newdm   ~[sis+(sa sis.act ship)]
       ::
       $phrase  ~[aud+(audi aud.act) ses+a+(turn ses.act spec:enjs)]
       ::
