@@ -24,30 +24,15 @@
   $%  ::  %c: to clay
       ::
       $:  %c
-      ::  %warp: internal (intra-ship) file request
-      ::
-      $%  $:  %warp
-              ::  sock: pair of requesting ship, requestee ship
-              ::
-              =sock
-              ::  riff: clay request contents
-              ::
-              riff=riff:clay
-      ==  ==  ==
-      ::  %g: to gall
-      ::
-      $:  %g
-      ::  %unto: full transmission
-      ::
-      ::    TODO: document more fully
-      ::
-      $%  $:  %deal
-          ::  sock: pair of requesting ship, requestee ship
+          ::  %warp: internal (intra-ship) file request
           ::
-          =sock
-          ::  cush: gall request contents
-          ::
-          cush=cush:gall
+          $%  $:  %warp
+                  ::  sock: pair of requesting ship, requestee ship
+                  ::
+                  =sock
+                  ::  riff: clay request contents
+                  ::
+                  riff=riff:clay
   ==  ==  ==  ==
 ::  +sign: private response from another vane to ford
 ::
@@ -55,28 +40,33 @@
   $%  ::  %c: from clay
       ::
       $:  %c
-      $%  ::  %writ: internal (intra-ship) file response
+          ::  %writ: internal (intra-ship) file response
           ::
-          $:  %writ
-              ::  riot: response contents
+          $%  $:  %writ
+                  ::  riot: response contents
+                  ::
+                  riot=riot:clay
+              ==
+              ::  %wris: response to %mult; many changed files
               ::
-              riot=riot:clay
-          ==
-          ::  %wris: response to %mult; many changed files
-          ::
-          $:  %wris
-              ::  case: case of the new files
-              ::
-              ::    %wris can only return dates to us.
-              ::
-              case=[%da p=@da]
-              ::  care-paths: the +care:clay and +path of each file
-              ::
-              care-paths=(set [care=care:clay =path])
+              $:  %wris
+                  ::  case: case of the new files
+                  ::
+                  ::    %wris can only return dates to us.
+                  ::
+                  case=[%da p=@da]
+                  ::  care-paths: the +care:clay and +path of each file
+                  ::
+                  care-paths=(set [care=care:clay =path])
   ==  ==  ==  ==
 --
 ::
 |%
+::  +clock: polymorphic cache type for use with the clock replacement algorithm
+::
+::     The +by-clock core wraps interface arms for manipulating a mapping from
+::     :key-type to :val-type. Detailed docs for this type can be found there.
+::
 ++  clock
   |*  $:  ::  key-type: mold of keys
           ::
@@ -93,6 +83,32 @@
     ==
 --
 |%
+::  +by-clock: interface core for a cache using the clock replacement algorithm
+::
+::    Presents an interface for a mapping, but somewhat specialized, and with
+::    stateful accessors. The clock's :depth parameter is used as the maximum
+::    freshness that an entry can have. The standard clock algorithm has a depth
+::    of 1, meaning that a single sweep of the arm will delete the entry. For
+::    more scan resistance, :depth can be set to a higher number.
+::
+::    Internally, :clock maintains a :lookup of type
+::    `(map key-type [val=val-type fresh=@ud])`, where :depth.clock is the
+::    maximum value of :fresh. Looking up a key increments its freshness, and a
+::    sweep of the clock arm decrements its freshness.
+::
+::    The clock arm is stored as :queue, which is a `(qeu key-type)`. The head
+::    of the queue represents the position of the clock arm. New entries are
+::    inserted at the tail of the queue. When the clock arm sweeps, it
+::    pops the head off the queue. If the :fresh of the head's entry in :lookup
+::    is 0, remove the entry from the mapping and replace it with the new entry.
+::    Otherwise, decrement the entry's freshness, put it back at the tail of
+::    the queue, and pop the next head off the queue and try again.
+::
+::    Cache entries must be immutable: a key cannot be overwritten with a new
+::    value. This property is enforced for entries currently stored in the
+::    cache, but it is not enforced for previously deleted entries, since we
+::    no longer remember what that key's value was supposed to be.
+::
 ++  by-clock
   |*  [key-type=mold val-type=mold]
   |_  clock=(clock key-type val-type)
@@ -414,9 +430,11 @@
 +=  scry-request
   $:  ::  vane: the vane from which to make the request
       ::
-      ::    TODO: use +vane here
+      ::    If we add other vanes in the future, this will become a fork type.
+      ::    For now, though, Ford only knows how to make asynchronous scry
+      ::    requests to Clay.
       ::
-      vane=?(%c %g)
+      vane=%c
       ::  care: type of request
       ::
       care=care:clay
@@ -473,15 +491,16 @@
       ::
       cache-access=(unit [=cache-key new=?])
   ==
-::  +vane: short names for vanes
-::
-::    TODO: move to zuse
-::
-+=  vane  ?(%a %b %c %d %e %f %g)
 --
 =,  format
 |%
 ::  +tear: split a +term into segments delimited by `-`
+::
+::  Example:
+::  ```
+::  dojo> (tear 'foo-bar-baz')
+::  ['foo' 'bar' 'baz']
+::  ```
 ::
 ++  tear
   |=  a=term
@@ -491,7 +510,14 @@
   =/  sym-no-heps  (cook crip ;~(plug low (star ;~(pose low nud))))
   ::
   (fall (rush a (most hep sym-no-heps)) /[a])
-::  +segments: TODO rename
+::  +segments: compute all paths from :path-part, replacing some `/`s with `-`s
+::
+::    For example, when passed a :path-part of 'foo-bar-baz',
+::    the product will contain:
+::    ```
+::    dojo> (segments 'foo-bar-baz')
+::    [/foo/bar/baz /foo/bar-baz /foo-bar/baz /foo-bar-baz]
+::    ```
 ::
 ++  segments
   |=  path-part=@tas
@@ -516,6 +542,9 @@
   ?>  ?=(^ s)
   ~[[i.torn s] [(join i.torn i.s) t.s]]
 ::  +build-to-tape: convert :build to a printable format
+::
+::    Builds often contain the standard library and large types, so
+::    this function should always be called
 ::
 ++  build-to-tape
   |=  =build
@@ -578,7 +607,7 @@
       "]"
     ==
   ==
-::  +rail-to-beam
+::  +rail-to-beam: convert :rail to a +beam, filling in the case with `[%ud 0]`
 ::
 ++  rail-to-beam
   |=  =rail
@@ -591,6 +620,15 @@
   ^-  path
   (en-beam (rail-to-beam rail))
 ::  +unify-jugs: make a new jug, unifying sets for all keys
+::
+::    Example:
+::    ```
+::    dojo> %+  unify-jugs
+::            (~(gas by *(jug @tas @ud)) ~[[%a (sy 1 2 ~)] [%b (sy 4 5 ~)]])
+::          (~(gas by *(jug @tas @ud)) ~[[%b (sy 5 6 ~)] [%c (sy 7 8 ~)]])
+::
+::    {[p=%a q={1 2 3}] [p=%b q={4 5 6}] [p=%c q={7 8}]}
+::    ```
 ::
 ++  unify-jugs
   |*  [a=(jug) b=(jug)]
@@ -611,13 +649,6 @@
     $(vals t.vals, a (~(put ju a) key i.vals))
   ::
   $(tapped t.tapped)
-::  +scry-request-to-path: encode a +scry-request in a +wire
-::
-++  scry-request-to-path
-  |=  =scry-request
-  ^-  path
-  =/  =term  (cat 3 [vane care]:scry-request)
-  [term (en-beam beam.scry-request)]
 ::  +path-to-resource: decode a +resource from a +wire
 ::
 ++  path-to-resource
@@ -631,33 +662,37 @@
   =/  =beam  bem
   =/  =rail  [disc=[p.beam q.beam] spur=s.beam]
   `[vane care rail]
-::  +path-to-scry-request: parse :path to a :scry-request
+::  +scry-request-to-path: encode a +scry-request in a +wire
+::
+::    Example:
+::    ```
+::    dojo> %-  scry-request-to-path
+::          [%c %x [[~zod %home [%da ~2018.1.1]] /hoon/bar]])
+::
+::    /cx/~zod/home/~2018.1.1/bar/hoon
+::    ```
+::
+++  scry-request-to-path
+  |=  =scry-request
+  ^-  path
+  =/  =term  (cat 3 [vane care]:scry-request)
+  [term (en-beam beam.scry-request)]
+::  +path-to-scry-request: parse :path's components into :vane, :care, and :rail
 ::
 ++  path-to-scry-request
   |=  =path
   ^-  (unit scry-request)
   ::
-  ?.  ?=([@ @ *] path)
+  ?~  path
     ~
-  ::  parse :path's components into :vane, :care, and :rail
-  ::
-  =/  vane=(unit ?(%c %g))  ((soft ?(%c %g)) (end 3 1 i.path))
-  ?~  vane
+  ?~  vane=((soft ,%c) (end 3 1 i.path))
     ~
-  =/  care=(unit care:clay)  ((soft care:clay) (rsh 3 1 i.path))
-  ?~  care
+  ?~  care=((soft care:clay) (rsh 3 1 i.path))
     ~
-  =/  rest=(unit ^path)  ((soft ^path) t.path)
-  ?~  rest
+  ?~  beam=(de-beam t.path)
     ~
-  =/  beam  (de-beam u.rest)
-  ?~  beam
-    ~
-  ::  we only operate on dates, not other kinds of +case:clay
-  ::
   ?.  ?=(%da -.r.u.beam)
     ~
-  ::
   `[u.vane u.care u.beam]
 ::  +scry-request-to-build: convert a +scry-request to a %scry build
 ::
@@ -1472,7 +1507,7 @@
       ::
       state
     --
-  ::  TODO: consolidate all these new sub/duct functions to one area.
+  ::  +add-subs-to-client: register :new-subs as subs of :new-client
   ::
   ++  add-subs-to-client
     ~/  %add-subs-to-client
@@ -1498,7 +1533,7 @@
   ::
   ::  +execute-loop: +execute repeatedly until there's no more work to do
   ::
-  ::    TODO: This implementation is for simplicity. In the longer term, we'd
+  ::    This implementation is for simplicity. In the longer term, we'd
   ::    like to just perform a single run through +execute and set a Behn timer
   ::    to wake us up immediately. This has the advantage that Ford stops hard
   ::    blocking the main Urbit event loop, letting other work be done.
@@ -1607,7 +1642,19 @@
             ==
           ::  check whether :build was run as part of the last live build tree
           ::
-          ::    TODO: cleanup docs
+          ::    If we had build this schematic as part of the build tree
+          ::    during the last run of this live build, then we can compare
+          ::    our result to that build. It might not be the most recent,
+          ::    but if our sub-builds have the same results as they did then,
+          ::    we can promote them. This is especially helpful for a %scry
+          ::    build, because we don't have to make a new request for the
+          ::    resource if the last live build subscribed to it.
+          ::
+          ::    Otherwise, default to looking up the most recent build of this
+          ::    schematic in :builds-by-schematic.state. We'll have to rerun
+          ::    any %scry sub-builds, but other than that, we should still be
+          ::    able to promote its result if its sub-builds have the same
+          ::    results as ours.
           ::
           =/  possible-build=^build
             [date.u.last-sent.live.duct-status schematic.build]
@@ -1781,9 +1828,9 @@
   ::
   ::    Runs the builds and cleans up the build lists afterwards.
   ::
-  ::    TODO: When the vere interpreter has a parallel variant of +turn, use
+  ::    When the vere interpreter has a parallel variant of +turn, use
   ::    that as each build might take a while and there are no data
-  ::    dependencies between builds here.
+  ::    dependencies between builds here. For now, though, run them serially.
   ::
   ++  run-builds
     ~%  %run-builds  +  ~
@@ -2068,7 +2115,6 @@
         (return-blocks ~[choice])
       ::
       ?:  ?=([%error *] u.result)
-        ::  TODO: When the type system wises up, fix this:
         ::
         =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
         =/  wrapped-error=tank
@@ -2095,13 +2141,17 @@
       |^  ^-  build-receipt
           ::  if there's a renderer called :renderer, use it on :path-to-render
           ::
+          ::    Otherwise, fall back to running the contents of :path-to-render
+          ::    through a mark that has the same name as :renderer.
+          ::
           ?:  ?=([~ %success %path *] path-result)
-            (try-renderer rail.u.path-result)
+            (try-renderer-then-mark rail.u.path-result)
           (try-mark ~)
-      ::  try using a renderer first, falling back to marks on errors
+      ::  +try-renderer-then-mark: try to render a path, then fall back to mark
       ::
-      ++  try-renderer
+      ++  try-renderer-then-mark
         |=  =rail
+        ^-  build-receipt
         ::  build a +scaffold from the renderer source
         ::
         =/  hood-build=^build  [date.build [%hood rail]]
@@ -2109,6 +2159,7 @@
         =^  hood-result  out  (depend-on hood-build)
         ?~  hood-result
           (return-blocks [hood-build]~)
+        ::  if we can't find and parse the renderer, try the mark instead
         ::
         ?:  ?=([~ %error *] hood-result)
           (try-mark message.u.hood-result)
@@ -2122,23 +2173,26 @@
         =^  plan-result  out  (depend-on plan-build)
         ?~  plan-result
           (return-blocks [plan-build]~)
+        ::  if compiling the renderer errors out, try the mark instead
         ::
         ?:  ?=([~ %error *] plan-result)
           (try-mark message.u.plan-result)
         ?>  ?=([~ %success %plan *] plan-result)
+        ::  renderers return their name as the mark
         ::
-        =/  =build-result
-          ::  TODO: renderers returned their name as the mark in old ford
-          ::
-          ::    We should rethink whether we want this to be the case going
-          ::    forward, but for now, Eyre depends on this detail to work.
-          ::
-          [%success %bake renderer vase.u.plan-result]
+        ::    We should rethink whether we want this to be the case going
+        ::    forward, but for now, Eyre depends on this detail to work.
         ::
-        (return-result build-result)
+        (return-result [%success %bake renderer vase.u.plan-result])
+      ::   +try-mark: try to cast a file's contents through a mark
+      ::
+      ::     :errors contains any error messages from our previous attempt to
+      ::     run a renderer, if we made one. This way if both the renderer and
+      ::     mark fail, the requester will see the errors of both attempts.
       ::
       ++  try-mark
         |=  errors=(list tank)
+        ^-  build-receipt
         ::  no renderer, try mark; retrieve directory listing of :path-to-render
         ::
         ::    There might be multiple files of different marks stored at
@@ -3494,8 +3548,6 @@
       ~%  %make-plan  ..^^$  ~
       |=  [path-to-render=rail query-string=coin =scaffold]
       ^-  build-receipt
-      ::  TODO: support query-string
-      ::
       ::  blocks: accumulator for blocked sub-builds
       ::
       =|  blocks=(list ^build)
@@ -3640,7 +3692,7 @@
             [[%error [leaf+"/~ failed: " message.u.ride-result]] ..run-crane]
           ?>  ?=([~ %success %ride *] ride-result)
           [[%subject %noun vase.u.ride-result] ..run-crane]
-        ::  +run-fsbc: runes the `/$` rune
+        ::  +run-fsbc: runs the `/$` rune
         ::
         ++  run-fsbc
           |=  =hoon
@@ -3655,8 +3707,6 @@
             :-  [%error [leaf+"/; failed: " message.u.query-compile-result]]
             ..run-crane
           ?>  ?=([~ %success %ride *] query-compile-result)
-          ::  TODO: if we had a slop build type, everything could be crammed
-          ::  into one sub-build.
           ::
           =/  =beam
             =,  path-to-render
@@ -3673,7 +3723,7 @@
           ?>  ?=([~ %success %call *] call-result)
           ::
           [[%subject %noun vase.u.call-result] ..run-crane]
-        ::  +run-fsbr: runes the `/|` rune
+        ::  +run-fsbr: runs the `/|` rune
         ::
         ++  run-fsbr
           |=  choices=(list ^crane)
@@ -3730,7 +3780,7 @@
             ^-  schematic
             ?~  marks
               ::  TODO: If we were keeping track of the mark across runes, this
-              ::  wouldn't have %noun here. This is case where it might matter.
+              ::  wouldn't have %noun here. This is a case where it might matter.
               ::
               [%$ subject.child]
             [%cast disc.source-rail.scaffold i.marks $(marks t.marks)]
@@ -3780,9 +3830,6 @@
           =|  $=  results
               (list [kid=^build sub-path=@ta results=(unit build-result)])
           ::  resolve all the :sub-builds
-          ::
-          ::    TODO: It feels like this running sub build and filtering
-          ::    results could be generalized.
           ::
           =/  subs-results
             |-  ^+  [results out]
@@ -4504,6 +4551,29 @@
       ~%  %make-walk  ..^^$  ~
       |=  [=disc source=term target=term]
       ^-  build-receipt
+      ::  define some types used in this gate
+      ::
+      =>  |%
+          ::  +load-node: a queued arm to run from a mark core
+          ::
+          +=  load-node  [type=?(%grab %grow) mark=term]
+          ::  edge-jug: directed graph from :source mark to :target marks
+          ::
+          ::    :source can be converted to :target either by running
+          ::    its own +grow arm, or by running the target's +grab arm.
+          ::
+          +=  edge-jug  (jug source=term [target=term arm=?(%grow %grab)])
+          ::  mark-path: a path through the mark graph
+          ::
+          ::    +mark-path represents a series of mark translation
+          ::    operations to be performed to 'walk' from one mark to another.
+          ::
+          ::    +mark-action is defined in Zuse. It represents a conversion
+          ::    from a source mark to a target mark, and it specifies
+          ::    whether it will use +grow or +grab.
+          ::
+          +=  mark-path  (list mark-action)
+          --
       ::
       |^  ^-  build-receipt
           ::  load all marks.
@@ -4529,17 +4599,6 @@
             ==
           ::
           (return-result %success %walk path)
-      ::  TODO: Move these types into a core above
-      ::
-      ::  +load-node: a queued loading action
-      ::
-      +=  load-node  [type=?(%grab %grow) mark=term]
-      ::  edge-jug: type of our graph representation
-      ::
-      +=  edge-jug  (jug source=term [target=term arm=?(%grow %grab)])
-      ::  mark-path: a path through the mark graph
-      ::
-      +=  mark-path  (list mark-action)
       ::  +load-marks-reachable-from: partial mark graph loading
       ::
       ::    While we can just load all marks in the %/mar directory, this is
@@ -4754,6 +4813,7 @@
     ::  |utilities:make: helper arms
     ::
     ::+|  utilities
+    ::
     ::  +perform-schematics: helper function that performs a list of builds
     ::
     ::    We often need to run a list of builds. This helper method will
@@ -4974,7 +5034,6 @@
     ~/  %add-build
     |=  =build
     ^+  state
-    ::  ~&  [%add-build (build-to-tape build)]
     ::  don't overwrite an existing entry
     ::
     ?:  (~(has by builds.state) build)
@@ -4986,8 +5045,6 @@
     ::
         builds
       %+  ~(put by builds.state)  build
-      ::  TODO: when bunts work better, just bunt
-      ::
       =|  =build-status
       build-status(state [%untried ~])
     ==
@@ -5065,7 +5122,11 @@
     =/  mutant=build-status  (update-func original)
     ::
     [mutant (~(put by builds.state) build mutant)]
-  ::  +intercepted-scry: use local results as a scry facade
+  ::  +intercepted-scry: augment real scry with local %scry build results
+  ::
+  ::    Try to deduplicate requests for possibly remote resources by looking up
+  ::    the result in local state if the real scry has no synchronous
+  ::    answer (it produced `~`).
   ::
   ++  intercepted-scry
     %-  sloy  ^-  slyd
@@ -5084,27 +5145,21 @@
     ?^  scry-response
       scry-response
     ::
-    =/  vane=(unit ?(%c %g))  ((soft ?(%c %g)) (end 3 1 term))
+    =/  vane=(unit %c)  ((soft ,%c) (end 3 1 term))
     ?~  vane
       ~
     =/  care=(unit care:clay)  ((soft care:clay) (rsh 3 1 term))
     ?~  care
       ~
-    ::
-    =/  =resource
-      [u.vane u.care rail=[[p.beam q.beam] s.beam]]
-    ::  TODO: handle other kinds of +case
-    ::
-    =/  date=@da
-      ~|  bad-case+r.beam
-      ?>  ?=(%da -.r.beam)
-      p.r.beam
-    ::
-    =/  =build  [date %scry resource]
+    ?.  ?=(%da -.r.beam)
+      ~
+    =/  =resource  [u.vane u.care rail=[[p.beam q.beam] s.beam]]
+    =/  =build     [date=p.r.beam %scry resource]
     ::  look up the scry result from our permanent state
     ::
-    ::    Note: we can't freshen this cache entry because we can't modify
-    ::    the state in this gate.
+    ::    Note: we can't freshen :build's :last-accessed date because
+    ::    we can't mutate :state from this gate. %scry results might get
+    ::    deleted during %wipe more quickly than they should because of this.
     ::
     =/  local-result  -:(access-build-record build)
     ?~  local-result
@@ -5244,7 +5299,14 @@
       ::    subscribe to multiple desks at the same time.
       ::
       ?:  (lth 1 (lent resource-list))
-        =.  ..execute  (send-incomplete build)
+        =.  ..execute
+          %+  send-incomplete  build  :~
+            [%leaf "root build {(build-to-tape build)}"]
+            [%leaf "on duct:"]
+            [%leaf "{<duct>}"]
+            [%leaf "tried to subscribe to multiple discs:"]
+            [%leaf "{<resource-list>}"]
+          ==
         =.  ducts.state  (~(del by ducts.state) duct)
         =.  state  (remove-duct-from-root build)
         ..execute
@@ -5269,19 +5331,12 @@
   ::  +send-incomplete: emit a move indicating we can't complete :build
   ::
   ++  send-incomplete
-    |=  =build
+    |=  [=build message=tang]
     ^+  ..execute
     ::
     =.  moves
       :_  moves
-      ^-  move
-      :*  duct  %give  %made  date.build
-          ^-  made-result
-          :-  %incomplete
-          ::  TODO: Factor this out into the sample
-          ::
-          [%leaf "build tried to subscribe to multiple discs"]~
-      ==
+      `move`[duct %give %made date.build %incomplete message]
     ::
     ..execute
   ::  +cleanup-orphaned-provisional-builds: delete extraneous sub-builds
@@ -5469,8 +5524,6 @@
         %+  murn  ~(tap in `(set resource)`resources.subscription)
         |=  =resource  ^-  (unit [care:clay path])
         ::
-        ?.  ?=(%c -.resource)  ~
-        ::
         `[care.resource (flop spur.rail.resource)]
       ::  if :request-contents is `~`, this code is incorrect
       ::
@@ -5527,9 +5580,6 @@
   ++  start-scry-request
     |=  =scry-request
     ^+  ..execute
-    ::  we only know how to make asynchronous scrys to clay, for now
-    ::
-    ?>  ?=(%c vane.scry-request)
     ::  if we are the first block depending on this scry, send a move
     ::
     =/  already-started=?  (~(has by pending-scrys.state) scry-request)
@@ -5558,9 +5608,6 @@
   ++  cancel-scry-request
     |=  =scry-request
     ^+  ..execute
-    ::  we only know how to make asynchronous scrys to clay, for now
-    ::
-    ?>  ?=(%c vane.scry-request)
     ::
     =^  originator  pending-scrys.state
       (del-request pending-scrys.state scry-request duct)
@@ -5711,20 +5758,22 @@
 ++  take
   |=  [=wire =duct wrapped-sign=(hypo sign)]
   ^-  [p=(list move) q=_ford-gate]
-  ::  unwrap :sign from :wrapped-sign
-  ::
-  ::    TODO: verify wrapped-sign isn't an evil vase?
+  ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign
-  ::  TODO: support other responses
-  ::
-  ::  parse :wire into :our, :ship-state, and :resource
+  ::  :wire must at least contain :our and a tag for dispatching
   ::
   ?>  ?=([@ @ *] wire)
-  ::  we know :our is already in :state-by-ship because we sent this request
+  ::  :parse our from the head of :wire
   ::
   =/  our=@p  (slav %p i.wire)
-  =/  ship-state  ~|(take-our+our (~(got by state-by-ship.ax) our))
+  ::
+  ::
+  =/  ship-state
+    ::  we know :our is already in :state-by-ship because we sent this request
+    ::
+    ~|  [%take-our our]
+    (~(got by state-by-ship.ax) our)
   ::
   |^  ^-  [p=(list move) q=_ford-gate]
       ::

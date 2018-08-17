@@ -170,17 +170,6 @@
     %-  expect-eq  !>
     :-  (need (path-to-scry-request:ford /cx/~nul/desk/~1234.5.6/bar/foo))
     `scry-request:ford`[%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
-  ::
-    %-  expect-eq  !>
-    :-  /gx/~nul/desk/~1234.5.6/bar/foo
-    ^-  path
-    %-  scry-request-to-path:ford
-    [%g care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
-  ::
-    %-  expect-eq  !>
-    :-  (need (path-to-scry-request:ford /gx/~nul/desk/~1234.5.6/bar/foo))
-    ^-  scry-request:ford
-    [%g care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
   ==
 ::
 ++  test-parse-scaffold

@@ -932,7 +932,7 @@
   +=  resource
     $:  ::  vane which we are querying
         ::
-        vane=?(%c %g)
+        vane=%c
         ::  type of request
         ::
         ::    TODO: care:clay should be cleaned up in zuse as it is a general
