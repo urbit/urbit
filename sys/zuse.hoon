@@ -612,14 +612,6 @@
         {$velo p/@t q/@t}                               ::  reboot
         {$verb ~}                                      ::  verbose mode
     ==                                                  ::
-  ++  stub  (list (pair stye (list @c)))                ::  styled tuba
-  ++  stye  (pair (set deco) (pair tint tint))          ::  decos/bg/fg
-  ++  styl                                              ::  cascading stye
-    %+  pair  (unit deco)                               ::
-    (pair (unit tint) (unit tint))                      ::
-  ::                                                    ::
-  ++  styx  (list $@(@t (pair styl styx)))              ::  styled text
-  ++  tint  ?(~ $r $g $b $c $m $y $k $w)               ::  text color
   --  ::dill
 ::                                                      ::::
 ::::                    ++eyre                            ::  (1e) oldweb
@@ -5810,8 +5802,7 @@
       task:able:ford-api
   ==
 ++  note-arvo                                           ::  out request $->
-  $~  [%a %init ~zod]
-  $%  {@tas $meta vase}
+  $~  [%a %wake ~] 
   $%  {$a task:able:ames}
       {$b task:able:behn}
       {$c task:able:clay}
@@ -5820,7 +5811,8 @@
       {$f task:able:ford}
       {$g task:able:gall}
       {$t task:able:ford-api}
-  ==  ==
+      {@tas $meta vase}
+  ==
 ++  sign-arvo                                           ::  in result $<-
   $%  {$a gift:able:ames}
       {$b gift:able:behn}
