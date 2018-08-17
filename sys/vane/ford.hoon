@@ -1,3 +1,4 @@
+!:
 ::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
 |=  pit=vase
@@ -266,9 +267,12 @@
       ::  pending-subscriptions: outgoing subscriptions on live resources
       ::
       pending-subscriptions=(request-tracker subscription)
-      ::  cache: clock based cache of build results
+      ::  build-cache: fifo queue of previous completed ducts.
       ::
-      cache=(clock cache-key build-result)
+      ::  build-cache=(qeu duct)
+      ::  compiler-cache: clock based cache of build results
+      ::
+      compiler-cache=(clock compiler-cache-key build-result)
   ==
 ::  +build-status: current data for a build, including construction status
 ::
@@ -442,9 +446,9 @@
       ::
       =beam
   ==
-::  +cache-key: content addressable build definitions
+::  +compiler-cache-key: content addressable build definitions
 ::
-+=  cache-key
++=  compiler-cache-key
   $%  [%call gate=vase sample=vase]
       [%hood =beam txt=@t]
       [%ride formula=hoon subject=vase]
@@ -487,9 +491,9 @@
       ::    component linkages and cache access times.
       ::
       sub-builds=(list build)
-      ::  cache-access: if not ~, cache this result as :cache-key.
+      ::  cache-access: if not ~, cache this result as :compiler-cache-key.
       ::
-      cache-access=(unit [=cache-key new=?])
+      cache-access=(unit [=compiler-cache-key new=?])
   ==
 --
 =,  format
@@ -1238,22 +1242,31 @@
     ::    always eventually remove every build.
     ::
     =/  num-completed-builds=@ud
-      (add (lent completed-builds) size.cache.state)
+      (add (lent completed-builds) size.compiler-cache.state)
     =/  percent-to-keep=@ud  (sub 100 percent-to-remove)
     =/  num-to-keep=@ud  (div (mul percent-to-keep num-completed-builds) 100)
     =/  num-to-remove=@ud  (sub num-completed-builds num-to-keep)
     ::
     |^  ^+  state
         ::
-        =+  cache-size=size.cache.state
+        =+  cache-size=size.compiler-cache.state
         ?:  (lte num-to-remove cache-size)
           (remove-from-cache num-to-remove)
-        =.  cache.state  ~(purge (by-clock cache-key build-result) cache.state)
+        =.  compiler-cache.state
+          %~  purge
+            (by-clock compiler-cache-key build-result)
+          compiler-cache.state
         (tombstone-builds (sub num-to-remove cache-size))
     ::
     ++  remove-from-cache
       |=  count=@ud
-      state(cache (~(trim (by-clock cache-key build-result) cache.state) count))
+      %_    state
+          compiler-cache
+        %-  %~  trim
+                (by-clock compiler-cache-key build-result)
+                compiler-cache.state
+        count
+      ==
     ::
     ++  tombstone-builds
       |=  num-to-remove=@ud
@@ -1283,7 +1296,13 @@
     |=  max=@ud
     ^+  state
     ::
-    state(cache (~(resize (by-clock cache-key build-result) cache.state) max))
+    %_    state
+        compiler-cache
+      %-  %~  resize
+              (by-clock compiler-cache-key build-result)
+              compiler-cache.state
+      max
+    ==
   ::  +cancel: cancel a build
   ::
   ::    When called on a live build, removes all tracking related to the live
@@ -1941,18 +1960,18 @@
     ::    Our build produced an actual result.
     ::
     ++  apply-build-result
-      |=  [=build =build-result cache-access=(unit [=cache-key new=?])]
+      |=  [=build =build-result cache-access=(unit [=compiler-cache-key new=?])]
       ^+  ..execute
       ::
-      =?  cache.state  ?=(^ cache-access)
-        =+  by-clock=(by-clock cache-key ^build-result)
+      =?  compiler-cache.state  ?=(^ cache-access)
+        =+  by-clock=(by-clock compiler-cache-key ^build-result)
         ?.  new.u.cache-access
-          =^  ignored  cache.state
-            (~(get by-clock cache.state) cache-key.u.cache-access)
-          cache.state
+          =^  ignored  compiler-cache.state
+            (~(get by-clock compiler-cache.state) compiler-cache-key.u.cache-access)
+          compiler-cache.state
         ::
-        %+  ~(put by-clock cache.state)
-          cache-key.u.cache-access
+        %+  ~(put by-clock compiler-cache.state)
+          compiler-cache-key.u.cache-access
         build-result
       ::
       =.  builds.state
@@ -2397,8 +2416,8 @@
       ::
       ?>  ?=([~ %success %slit *] slit-result)
       ::
-      =/  =cache-key  [%call gate-vase sample-vase]
-      =^  cached-result  out  (access-cache cache-key)
+      =/  =compiler-cache-key  [%call gate-vase sample-vase]
+      =^  cached-result  out  (access-cache compiler-cache-key)
       ?^  cached-result
         (return-result u.cached-result)
       ::
@@ -2563,7 +2582,12 @@
           [[%blocks [starting-mark-path-build]~] out]
         ::
         ?.  ?=([~ %success %path *] starting-mark-path-result)
-          (cast-wrap-error %grow source-mark target-mark starting-mark-path-result)
+          %-  cast-wrap-error  :*
+            %grow
+            source-mark
+            target-mark
+            starting-mark-path-result
+          ==
         ::  grow the value from the initial mark to the final mark
         ::
         ::  Replace the input mark's sample with the input's result,
@@ -2869,8 +2893,8 @@
       ::
       =/  src-beam=beam  [[ship.disc desk.disc [%ud 0]] spur]:source-rail
       ::
-      =/  =cache-key  [%hood src-beam q.q.as-cage]
-      =^  cached-result  out  (access-cache cache-key)
+      =/  =compiler-cache-key  [%hood src-beam q.q.as-cage]
+      =^  cached-result  out  (access-cache compiler-cache-key)
       ?^  cached-result
         (return-result u.cached-result)
       ::
@@ -4335,8 +4359,8 @@
       ?.  ?=([~ %success %slim *] slim-result)
         (wrap-error slim-result)
       ::
-      =/  =cache-key  [%ride formula subject-vase]
-      =^  cached-result  out  (access-cache cache-key)
+      =/  =compiler-cache-key  [%ride formula subject-vase]
+      =^  cached-result  out  (access-cache compiler-cache-key)
       ?^  cached-result
         (return-result u.cached-result)
       ::
@@ -4405,8 +4429,8 @@
       |=  [subject-type=type formula=hoon]
       ^-  build-receipt
       ::
-      =/  =cache-key  [%slim subject-type formula]
-      =^  cached-result  out  (access-cache cache-key)
+      =/  =compiler-cache-key  [%slim subject-type formula]
+      =^  cached-result  out  (access-cache compiler-cache-key)
       ?^  cached-result
         (return-result u.cached-result)
       ::
@@ -4427,8 +4451,8 @@
       |=  [gate=vase sample=vase]
       ^-  build-receipt
       ::
-      =/  =cache-key  [%slit p.gate p.sample]
-      =^  cached-result  out  (access-cache cache-key)
+      =/  =compiler-cache-key  [%slit p.gate p.sample]
+      =^  cached-result  out  (access-cache compiler-cache-key)
       ?^  cached-result
         (return-result u.cached-result)
       ::
@@ -4933,13 +4957,13 @@
       out(result [%build-result build-result])
     ::
     ++  access-cache
-      |=  =cache-key
+      |=  =compiler-cache-key
       ^-  [(unit build-result) _out]
       ::
-      ?~  entry=(~(get by lookup.cache.state) cache-key)
-        [~ out(cache-access `[cache-key new=%.y])]
+      ?~  entry=(~(get by lookup.compiler-cache.state) compiler-cache-key)
+        [~ out(cache-access `[compiler-cache-key new=%.y])]
       ::
-      [`val.u.entry out(cache-access `[cache-key new=%.n])]
+      [`val.u.entry out(cache-access `[compiler-cache-key new=%.n])]
     ::
     ++  depend-on
       |=  kid=^build
@@ -5750,7 +5774,7 @@
     :+  (scot %p our)  %|
     ::
     :~  [%builds [%& builds]]
-        [%cache [%& cache]]
+        [%compiler-cache [%& compiler-cache]]
     ==
   ==
 ::  +take: receive a response from another vane
