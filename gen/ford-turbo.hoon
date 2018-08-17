@@ -7428,9 +7428,23 @@
 ++  expect-ford-empty
   |=  [ford-gate=_ford-gate ship=@p]
   ^-  tang
+  ::
   =/  ford  *ford-gate
-  %-  expect-eq  !>
-  :-  *ford-state:ford
   =/  state  (~(got by state-by-ship.ax.+>+<.ford) ship)
-  state(cache cache:*ford-state:ford)
+  =.  compiler-cache.state  compiler-cache:*ford-state:ford
+  ::
+  ?:  =(*ford-state:ford state)
+    ~
+  ::
+  =/  build-state=(list tank)
+    %+  turn  ~(tap in ~(key by builds.state))
+    |=  build=build:ford
+    [%leaf (build-to-tape:ford build)]
+  ::
+  =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
+  ::
+  :~  [%leaf "failed to cleanup"]
+      [%leaf "builds.state:"]
+      [%rose braces build-state]
+  ==
 --
