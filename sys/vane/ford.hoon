@@ -2520,6 +2520,7 @@
         (return-blocks [hood-build]~)
       ::
       ?:  ?=(%error -.u.hood-result)
+        ~&  [%make-core-error source-path]
         (wrap-error hood-result)
       ::  build the +scaffold into a program
       ::

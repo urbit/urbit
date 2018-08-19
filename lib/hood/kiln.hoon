@@ -276,15 +276,11 @@
   ?>  (gte start now)
   abet:(emit %wait /kiln/overload/(scot %dr recur) start)
 ::
-<<<<<<< HEAD
-++  poke-wipe-ford  |=(~ abet:(emit %wipe /kiln our ~))
-=======
 ++  poke-wipe-ford
-  |=($~ abet:(emit %wipe /kiln our ~))
+  |=(~ abet:(emit %wipe /kiln our ~))
 ::
 ++  poke-keep-ford
   |=(max-cache-size=@ud abet:(emit %keep /kiln max-cache-size))
->>>>>>> origin/ford-turbo
 ::
 ++  mack
   |=  {way/wire saw/(unit tang)}

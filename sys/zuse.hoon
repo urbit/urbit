@@ -122,9 +122,9 @@
           {$nuke p/@p}                                  ::  toggle auto-block
           {$make p/(unit @t) q/@ud r/@ s/?}             ::  wild license
           {$sith p/@p q/@uw r/?}                        ::  imperial generator
-          {$tend ~}                                    ::  watch lane changes
-          {$wake ~}                                    ::  timer activate
-          {$wegh ~}                                    ::  report memory
+          {$tend ~}                                     ::  watch lane changes
+          {$wake ~}                                     ::  timer activate
+          {$wegh ~}                                     ::  report memory
           {$west p/sack q/path r/*}                     ::  network request
           {$want p/sock q/path r/*}                     ::  forward message
       ==                                                ::

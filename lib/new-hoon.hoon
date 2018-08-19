@@ -853,7 +853,7 @@
   |*  [a=mold b=mold]
   %+  cork  (tree (pair a b))
   |=  c/(tree (pair a b))  ^+  c
-  ?.((valid:dct c) ~ c)
+  ?~(c ~ ?.((valid:dct c) ~ c))
 ::
 ++  dct
   |%

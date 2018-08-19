@@ -12,6 +12,7 @@
   (list instance)
 ::
 +$  instance
+  $~  [%$ [%| ~]]
   ::  a mapping between a term and part of a test tree.
   (pair term (each $-(@uvJ (list tank)) tests))
 ::

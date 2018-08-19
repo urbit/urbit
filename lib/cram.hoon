@@ -16,7 +16,7 @@
   ~|(%many-elems !!)
 ::
 ++  shut-mart                                           :: xml attrs
-  |=({n/mane v/(list beer:hoon)} [n (turn v |=(a/beer:hoon ?^(a !! a)))])
+  |=({n/mane v/(list beer:hoot)} [n (turn v |=(a/beer:hoot ?^(a !! a)))])
 ::
 ++  shut                                                :: as xml constant
   |=  gen/hoon  ^-  marl
