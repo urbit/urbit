@@ -23,11 +23,12 @@
   =/  sho  (fall (~(get by qix.gas) %show) %default)
   ;div.container
   ;input
-    =type  "hidden"
-    =name  "urb-header"
-    =value  "collection"
-    =station  "{(scow %p p.bem.gas)}/{<(flop s.bem.gas)>}"
-    =ship  "{(scow %p p.bem.gas)}";
+    =type   "hidden"
+    =name   "urb-header"
+    =value  (trip -.itm)
+    =show   (trip sho)
+    =path   "{<(flop s.bem.gas)>}"
+    =ship   "{(scow %p p.bem.gas)}";
   ;div.row
   ;div.col-sm-10.col-sm-offset-2
   ;div.collection-index.mt-12

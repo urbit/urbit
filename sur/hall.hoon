@@ -116,13 +116,14 @@
       {$filter fit/filter}                              ::  changed filter
       {$secure sec/security}                            ::  changed security
       {$permit add/? sis/(set ship)}                    ::  add/rem to b/w-list
-      {$remove ~}                                      ::  removed config
+      {$remove ~}                                       ::  removed config
+      {$read red/@ud}                                   ::  changed read message
   ==                                                    ::
 ++  diff-status                                         ::  status change
   $%  {$full sat/status}                                ::  fully changed status
       {$presence pec/presence}                          ::  changed presence
       {$human dif/diff-human}                           ::  changed name
-      {$remove ~}                                      ::  removed status
+      {$remove ~}                                       ::  removed status
   ==                                                    ::
 ++  diff-human                                          ::  name change
   $%  {$full man/human}                                 ::  fully changed name
@@ -145,6 +146,8 @@
       {$filter nom/name fit/filter}                     ::  change message rules
       {$permit nom/name inv/? sis/(set ship)}           ::  invite/banish
       {$source nom/name sub/? srs/(set source)}         ::  un/sub to/from src
+      {$read nom/name red/@ud}                          ::  change read message
+      {$newdm sis/(set ship)}
       {$usage nom/name add/? tas/tags}                  ::  add/rem usage tags
       ::  messaging                                     ::
       {$convey tos/(list thought)}                      ::  post exact
@@ -186,6 +189,7 @@
       tag/tags                                          ::  usage tags
       fit/filter                                        ::  message rules
       con/control                                       ::  restrictions
+      red/@ud                                           ::  last read message
   ==                                                    ::
 ++  source  {cir/circle ran/range}                      ::  subscription target
 ++  filter                                              ::  content filters

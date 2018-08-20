@@ -145,6 +145,7 @@
     $caption  cof(cap cap.dif)
     $filter   cof(fit fit.dif)
     $remove   cof
+    $read     cof(red red.dif)
   ::
       $usage
     %=  cof

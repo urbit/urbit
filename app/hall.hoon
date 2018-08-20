@@ -194,11 +194,17 @@
     ++  prep-config
       |=  cof/config-0
       ^-  config
-      %=  cof
-          src
+      =.  src.cof
         %-  ~(gas in *(set source))
         (murn ~(tap in src.cof) prep-source)
+      :*  src.cof
+          cap.cof
+          tag.cof
+          fit.cof
+          con.cof
+          0
       ==
+
     ::
     ++  prep-source
       |=  src/source-0
@@ -425,6 +431,8 @@
         $permit  (action-permit +.act)
         $delete  (action-delete +.act)
         $usage   (action-usage +.act)
+        $read    (action-read +.act)
+        $newdm   (action-newdm +.act)
         ::  messaging
         $convey  (action-convey +.act)
         $phrase  (action-phrase +.act)
@@ -493,6 +501,7 @@
             :-  typ
             ?.  ?=(?($village $journal) typ)  ~
             [our.bol ~ ~]
+            0
         ==
       (ta-evil (crip "{(trip nom)}: already exists"))
     ::
@@ -559,6 +568,52 @@
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
       so-done:(~(so-usage so nom ~ u.soy) add tas)
+    ::
+    ++  action-read
+      ::  set the read message number
+      ::
+      |=  {nom/name red/@ud}
+      =+  soy=(~(get by stories) nom)
+      ?~  soy
+        (ta-evil (crip "no story {(trip nom)}"))
+      so-done:(~(so-read so nom ~ u.soy) red)
+    ::
+    ++  action-newdm
+      ::  copy all behavior of create, permit, and source in that order
+      ::
+      |=  {sis/(set ship)}
+      =/  nom/name
+      %^  rsh  3  1
+      %+  roll
+        %+  sort  (weld ~(tap in sis) [our.bol ~])
+        |=  [a=ship b=ship]
+        ^-  ?
+        (lth a b)
+      |=  {p/ship nam/name}
+      ^-  @tas
+      (crip "{(trip `@t`nam)}.{(slag 1 (trip (scot %p p)))}")
+      =/  dels/(list delta)
+      :~
+      :*
+          %story
+          %inbox
+          %follow
+          &
+          [[[our.bol nom] ~] ~ ~]
+      ==
+      :*
+          %story
+          nom
+          %new
+          [[[our.bol nom] ~] ~ ~]
+          'dm'
+          ~
+          *filter
+          [%village (~(put in sis) our.bol)]
+          0
+      ==
+      ==
+      (ta-deltas dels)
     ::
     ::  #  %messaging
     +|  %messaging
@@ -1182,6 +1237,7 @@
             [%filter fit.cof]
             [%secure sec.con.cof]
             [%permit & sis.con.cof]
+            [%read red.cof]
         ==
       =-  (murn - same)
       ^-  (list (unit diff-config))
@@ -1261,6 +1317,13 @@
         ?:(add ~(dif in tas) ~(int in tas))
       ?~  sas  +>.$
       (so-delta-our %config so-cir %usage add sas)
+    ::
+    ++  so-read
+      ::  set the read message number in circle config
+      |=  {red/@ud}
+      ^+  +>
+      ?:  =(red red.shape)  +>
+      (so-delta-our %config so-cir %read red)
     ::
     ++  so-filter
       ::    change message rules

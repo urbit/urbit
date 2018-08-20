@@ -183,6 +183,7 @@
       $secure   s+sec.a
       $permit   (pairs add+b+add.a sis+(sa sis.a ship) ~)
       $remove   b+&
+      $read     (numb red.a)
     ==
   ::
   ++  disa                                              :::  diff-status
@@ -233,6 +234,7 @@
       tag+(sa tag.a cord)
       fit+(filt fit.a)
       con+(cont con.a)
+      red+(numb red.a)
     ==
   ::
   ++  sorc                                              :::  source
@@ -475,6 +477,7 @@
       tag+(as so)
       fit+filt
       con+cont
+      red+ni
     ==
   ::
   ::TODO  maybe just an object?
