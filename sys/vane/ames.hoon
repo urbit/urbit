@@ -1821,7 +1821,7 @@
       ``[%noun !>(pals:(~(um am [now fox]) our))]
     ?.  ?=([%life ~] tyl)
       =+  muc=$(tyl [%life ~])
-      (perm our his ?~(muc 0 (@ud u.muc)) tyl)
+      (perm our his ?~(muc 0 (fall ((soft @ud) u.muc) 0)) tyl)
     =+  gys=(~(us go ton.fox) our)
     ?~  gys  ~
     ?.  =(our his)

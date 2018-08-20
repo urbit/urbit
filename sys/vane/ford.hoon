@@ -4273,8 +4273,8 @@
                   ::
                   =/  =beam  [[our %home [%da date.build]] /hoon/hoon/sys]
                   ::
-                  .=  (scry [%143 %noun] ~ %cw beam)
-                  (scry [%143 %noun] ~ %cw beam(r [%da now]))
+                  .=  (scry [%141 %noun] ~ %cw beam)
+                  (scry [%141 %noun] ~ %cw beam(r [%da now]))
           ==  ==
         ::
         (return-result %success %reef pit)
@@ -4408,7 +4408,7 @@
       =/  scry-response
         ?:  (~(has by scry-results) scry-request)
           (~(get by scry-results) scry-request)
-        (scry [%143 %noun] ~ `@tas`(cat 3 [vane care]:resource) beam)
+        (scry [%141 %noun] ~ `@tas`(cat 3 [vane care]:resource) beam)
       ::  scry blocked
       ::
       ?~  scry-response
@@ -5159,11 +5159,6 @@
     ~/  %intercepted-scry
     |=  [ref=* (unit (set monk)) =term =beam]
     ^-  (unit (unit (cask)))
-    ?>  ?=([@ *] ref)
-    =/  hoon-version=@ud  -.ref
-    ::
-    ~|  hoon-version=hoon-version
-    ?>  ?=(?(%143 %151) hoon-version)
     ::  if the actual scry produces a value, use that value; otherwise use local
     ::
     =/  scry-response  (scry +<.$)
