@@ -18,7 +18,7 @@
 ::
 +=  config
   $:  full-path=beam
-      name=@ta
+      name=@t
       description=@t
     ::
       owner=@p
@@ -43,8 +43,8 @@
       [%delete pax=path]
       [%perms pax=path r=rule:clay w=rule:clay]
     ::
-      [%collection pax=path name=@ta desc=@t comments=? visible=? type=@tas]
-      [%post pax=path name=@ta type=@tas comments=? content=@t]
+      [%collection pax=path name=@t desc=@t comments=? visible=? type=@tas]
+      [%post pax=path name=@t type=@tas comments=? content=@t]
       [%comment pax=path content=@t]
   ==
 ::

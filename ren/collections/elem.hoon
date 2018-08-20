@@ -123,7 +123,7 @@
           ^-  manx
           ::  XX TODO: accept types other than comments
           ?>  ?=(%raw -.ite)
-          ?>  =(%comments (~(got by meta.raw.ite) %type))
+         :: ?>  =(%comments (~(got by meta.raw.ite) %type))
           =/  owner  (fall (~(get by meta.raw.ite) %owner) 'anonymous')
           =/  date  (fall (~(get by meta.raw.ite) %date-created) 'missing date')
           ;li.collection-comment
