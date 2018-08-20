@@ -7429,17 +7429,37 @@
   |=  [ford-gate=_ford-gate ship=@p]
   ^-  tang
   ::
+  =^  results1  ford-gate
+    %-  test-ford-call  :*
+      ford-gate
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      call-args=[duct=~[/empty] type=~ [%keep 0 0]]
+      expected-moves=~
+    ==
+  ::
   =/  ford  *ford-gate
   =/  state  (~(got by state-by-ship.ax.+>+<.ford) ship)
-  =.  compiler-cache.state  compiler-cache:*ford-state:ford
   ::
-  ?:  =(*ford-state:ford state)
+  =/  default-state  *ford-state:ford
+  ::
+  =.  max-size.compiler-cache.state     max-size.compiler-cache.default-state
+  =.  max-size.queue.build-cache.state  max-size.queue.build-cache.default-state
+  =.  next-anchor-id.build-cache.state  0
+  ::
+  %+  welp  results1
+  ::
+  ?:  =(default-state state)
     ~
   ::
   =/  build-state=(list tank)
-    %+  turn  ~(tap in ~(key by builds.state))
-    |=  build=build:ford
-    [%leaf (build-to-tape:ford build)]
+    %-  zing
+    %+  turn  ~(tap by builds.state)
+    |=  [build=build:ford build-status=build-status:ford]
+    :~  [%leaf (build-to-tape:ford build)]
+        [%leaf "requesters: {<requesters.build-status>}"]
+        [%leaf "clients: {<~(tap in ~(key by clients.build-status))>}"]
+    ==
   ::
   =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
   ::
