@@ -266,11 +266,6 @@
 ::
 ++  head  |*(^ ,:+<-)                                   ::  get head
 ++  same  |*(* +<)                                      ::  identity
-++  soft                                                ::  maybe remold
-  |*  han/$-(* *)
-  |=  fud/*  ^-  (unit han)
-  =+  gol=(han fud)
-  ?.(=(gol fud) ~ [~ gol])
 ::
 ++  tail  |*(^ ,:+<+)                                   ::  get tail
 ++  test  |=(^ =(+<- +<+))                              ::  equality
@@ -5987,6 +5982,15 @@
     $0  [%& p.ton]
     $1  [%| (turn p.ton |=(a/* (smyt (path a))))]
     $2  [%| p.ton]
+  ==
+::
+++  soft                                                ::  maybe remold
+  |*  han/$-(* *)
+  |=  fud/*  ^-  (unit han)
+  =+  result=(mule |.((han fud)))
+  ?-  -.result
+    %|  ~
+    %&  [~ p.result]
   ==
 ::
 ::::  4o: molds and mold builders
