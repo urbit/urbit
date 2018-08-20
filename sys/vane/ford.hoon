@@ -4552,6 +4552,7 @@
         (wrap-error call-result)
       ::
       =/  product=vase  vase.u.call-result
+      ~&  [%call-result u.call-result]
       ::  +grab might produce the wrong type
       ::
       ?.  (~(nest ut p.mark-sample) | p.product)
