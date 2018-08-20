@@ -22,22 +22,12 @@
 ::        ==
 ::
 ::::
-<<<<<<< HEAD
-  ::
 =,  hall-sur
 =,  hall-lib
-=>  :>  #
-    :>  #  %arch
-    :>  #
-    :>    data structures
-=======
-  ::  
-=,  hall
 =>  ::  #
     ::  #  %arch
     ::  #
     ::    data structures
->>>>>>> research-tome
     ::
     |%
     ::  #  %state
@@ -592,11 +582,7 @@
       =-  (ta-think & our.bol tos)
       |-  ^-  tos/(list thought)
       ?~  ses  ~
-<<<<<<< HEAD
       =^  sir  eny.bol  ~(uniq hall-lib bol)
-=======
-      =^  sir  eny.bol  ~(uniq ^hall bol)
->>>>>>> research-tome
       :_  $(ses t.ses)
       [sir aud [now.bol i.ses]]
     ::
@@ -2802,7 +2788,7 @@
   ::
   |=  pax/path
   ^-  (quip move _+>)
-  ?:  ?=({$sole *} pax)  ~&(%hall-no-sole !!)
+  ?:  ?=([%sole *] pax)  ~&(%hall-no-sole !!)
   =+  qer=(path-to-query pax)
   ?.  (leak src.bol qer)  ~&(%peer-invisible !!)
   =^  mos  +>.$

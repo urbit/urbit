@@ -1005,11 +1005,7 @@
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
-<<<<<<< HEAD
           (~(transmit sole-lib say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
-=======
-          (~(transmit ^^sole say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
->>>>>>> research-tome
       (sh-fact [%mor [%det lic] ?~(err ~ [%err u.err]~)])
     ::
     ++  sh-obey
@@ -1031,11 +1027,7 @@
       =+  buf=buf.say.she
       =?  ..sh-obey  &(?=({$';' *} buf) !?=($reply -.u.jub))
         (sh-note (tufa `(list @)`buf))
-<<<<<<< HEAD
       =^  cal  say.she  (~(transmit sole-lib say.she) [%set ~])
-=======
-      =^  cal  say.she  (~(transmit ^^sole say.she) [%set ~])
->>>>>>> research-tome
       %+  sh-fact  %mor
       :~  [%nex ~]
           [%det cal]
