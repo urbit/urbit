@@ -818,7 +818,20 @@
     ::
         $west                                           ::  remote request
       =.  mow  :_(mow [hen %give %mack ~])
-      =+  mez=((soft gram) q.kyz)
+      ::  TODO: make +gram and %west play nicely together
+      ::
+      ::    %west passes paths around, where all the paths are actually single
+      ::    tags. The old version of +gram used [%tag ~] as tag types in its
+      ::    definition, which no longer works.
+      ::
+      ::    Actually fixing this is a cross-ames-eyre surgery, for now hack it
+      ::    by molding the incoming thing into a gram shape before we try to
+      ::    soft it.
+      ::
+      ?~  -.q.kyz
+        ~&  e+[%strange-west-wire p.kyz]
+        ~!(%strange-west-wire !!)
+      =+  mez=((soft gram) [i.-.q.kyz +.q.kyz])
       ?~  mez
         ~&  e+[%strange-west p.kyz]
         ~|(%strange-west !!)
@@ -1042,7 +1055,11 @@
     (pass-note tea [%e %meta :(slop !>(%them) !>(~) vax)])
   ::
   ++  ames-gram
-    |=({him/ship gam/gram} (pass-note ~ %a %want [our him] [%e -.gam ~] +.gam))
+    |=  [him=ship gam=gram]
+    ::  TODO: To make this work
+    ::
+    ~!  -.gam
+    (pass-note ~ %a %want [our him] [%e -.gam ~] +.gam)
   ::
   ++  back-turbo
     |=  [tea=whir mar=mark cay=cage]
@@ -1475,7 +1492,7 @@
           =/  han  (sham hen)
           =.  pox  (~(put by pox) han hen)
           =+  arg=(fcgi payload fcgi-cred)
-          [%| (ames-gram p.bem [%get-inner ~] han ext arg bem)]
+          [%| (ames-gram p.bem %get-inner han ext arg bem)]
         =+  wir=`whir`[%ha (en-beam -.bem ~)]
         =.  wir  ?+(mef !! $get wir, $head [%he wir])
         =.  r.bem  ?+(r.bem r.bem {$ud $0} da+now)
