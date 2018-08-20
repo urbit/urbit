@@ -67,13 +67,16 @@
 ++  collection-to-elem
   |=  col=collection:collections
   ^-  manx
-  ;ul
-    ;*  %+  turn  ~(tap by data.col)
-        |=  [nom=knot ite=item:collections]
-        ^-  manx
-        ;li.collection-post.mt-6
-          ;+  (item-to-snip nom ite)
-        ==
+  ;div
+    ;+  (config-to-elem meta.col)
+    ;ul
+      ;*  %+  turn  ~(tap by data.col)
+          |=  [nom=knot ite=item:collections]
+          ^-  manx
+          ;li.collection-post.mt-6
+            ;+  (item-to-snip nom ite)
+          ==
+    ==
   ==
 ::
 ++  raw-to-elem
@@ -86,6 +89,7 @@
   =/  owner  (fall (~(get by meta.raw) %owner) 'anonymous')
   ::
   ;div
+    ;+  (front-to-elem meta.raw)
     ;div.collection-date: {(trip date)}
     ::
     ;div#show
@@ -225,6 +229,28 @@
       ==
     ==
   ==
+::
+++  front-to-elem
+  |=  fro=(map knot cord)
+  ^-  manx
+  :_  ~
+  :-  %div
+  %+  turn  ~(tap by (~(put by fro) %class %item-meta))
+  |=  [a=knot b=cord]
+  ^-  [mane tape]
+  [((hard @tas) a) (trip b)]
+::
+++  config-to-elem
+  |=  con=config:collections
+  ^-  manx
+  ;div.collection-meta
+    =urb-full-path      (spud (en-beam:format full-path.con))
+    =urb-name           (trip name.con)
+    =urb-description    (trip description.con)
+    =urb-owner          (scow %p owner.con)
+    =urb-date-created   (scow %da date-created.con)
+    =urb-last-modified  (scow %da last-modified.con)
+    =urb-type           (trip type.con);
 ::::
 ::::  /mar/snip
 ::::
