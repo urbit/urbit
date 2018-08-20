@@ -6903,10 +6903,12 @@
   ~/  %cons
   |=  {vur/nock sed/nock}
   ^-  nock
-  ?:  ?=({{$0 *} {$0 *}} +<)
-    ?:  ?&(=(+(p.vur) p.sed) =((div p.vur 2) (div p.sed 2)))
-      [%0 (div p.vur 2)]
-    [vur sed]
+  ::  this optimization can remove crashes which are essential
+  ::
+  ::  ?:  ?=([[%0 *] [%0 *]] +<)
+  ::  ?:  ?&(=(+(p.vur) p.sed) =((div p.vur 2) (div p.sed 2)))
+  ::    [%0 (div p.vur 2)]
+  ::  [vur sed]
   ?:  ?=({{$1 *} {$1 *}} +<)
     [%1 p.vur p.sed]
   [vur sed]
