@@ -106,7 +106,7 @@
   test-bunt
   test-volt
   test-vale
-::  test-vale-error  ::  broken until type system is fixed
+  test-vale-error
   test-cast
   test-cast-grow
   test-mute
@@ -5223,12 +5223,14 @@
       ::
       ^=  moves
         :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %error
-                :-  %leaf
-                %+  weld
-                  "ford: %vale failed: invalid input for mark: "
-                "/~nul/home/~1234.5.6/mar/foo/hoon"
-                ~
-    ==  ==  ==
+                :~  :-  %leaf
+                    %+  weld
+                      "ford: %vale failed: invalid input for mark: "
+                    "/~nul/home/~1234.5.6/mar/foo/hoon"
+                ::
+                    :-  %leaf
+                    "ford: %call execution failed:"
+    ==  ==  ==  ==
   ::
   ;:  weld
     results1

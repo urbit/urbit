@@ -4548,11 +4548,18 @@
       ?~  call-result
         (return-blocks [call-build]~)
       ::
-      ?.  ?=([~ %success %call *] call-result)
-        (wrap-error call-result)
+      ?:  ?=([~ %error *] call-result)
+        ::
+        %-  return-error
+        =/  =beam
+          [[ship.disc desk.disc %da date.build] spur.rail.u.path-result]
+        :*  :-  %leaf
+            "ford: %vale failed: invalid input for mark: {<(en-beam beam)>}"
+            message.u.call-result
+        ==
       ::
+      ?>  ?=([~ %success %call *] call-result)
       =/  product=vase  vase.u.call-result
-      ~&  [%call-result u.call-result]
       ::  +grab might produce the wrong type
       ::
       ?.  (~(nest ut p.mark-sample) | p.product)
@@ -4560,17 +4567,11 @@
         :~  leaf+"ford: %vale failed"
             leaf+"+grab has wrong type in mark {<mark>} on disc {<disc>}"
         ==
-      ::  check mold idempotence; if different, nest fail
       ::
-      ?:  =(q.product input)
-        =/  =build-result
-          [%success %vale [mark p.mark-sample q.product]]
-        ::
-        (return-result build-result)
+      =/  =build-result
+        [%success %vale [mark p.mark-sample q.product]]
       ::
-      %-  return-error
-      =/  =beam  [[ship.disc desk.disc %da date.build] spur.rail.u.path-result]
-      [leaf+"ford: %vale failed: invalid input for mark: {<(en-beam beam)>}"]~
+      (return-result build-result)
     ::
     ++  make-walk
       ~%  %make-walk  ..^^$  ~
