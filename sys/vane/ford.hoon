@@ -274,6 +274,24 @@
       ::
       compiler-cache=(clock compiler-cache-key build-result)
   ==
+::  +anchor: something which holds on to builds
+::
+::    An anchor is a reference which keeps builds. This is either a %duct, in
+::    which case the build is live because a duct is waiting for a response, or
+::    a %cache, in which case the anchor is a cached build.
+::
+::    When a duct would be removed from a build, the %duct anchor is replaced
+::    with a %cache anchor. This %cache anchor refers to a FIFO queue of cached
+::    builds.
+::
++=  anchor
+  $%  ::  %duct: this is anchored on a duct
+      ::
+      [%duct =duct]
+      ::  %cache: this is anchored to a cache entry
+      ::
+      [%cache id=@ud]
+  ==
 ::  +build-status: current data for a build, including construction status
 ::
 ::    +build-status stores the construction status of a build as a finite state
@@ -283,10 +301,10 @@
 +=  build-status
   $:  ::  requesters: ducts for whom this build is the root build
       ::
-      requesters=(set duct)
+      requesters=(set anchor)
       ::  clients: per duct information for this build
       ::
-      clients=(jug duct build)
+      clients=(jug anchor build)
       ::  subs: sub-builds of this build, for whom this build is a client
       ::
       subs=(map build build-relation)
@@ -1113,9 +1131,9 @@
     =.  builds.state
       %+  ~(jab by builds.state)  build
       |=  =build-status
-      build-status(requesters (~(put in requesters.build-status) duct))
+      build-status(requesters (~(put in requesters.build-status) [%duct duct]))
     ::
-    =.  builds.state  (add-duct-to-subs duct build)
+    =.  builds.state  (add-anchor-to-subs [%duct duct] build)
     ::
     (execute-loop (sy [build ~]))
   ::  +rebuild: rebuild any live builds based on +resource updates
@@ -1381,7 +1399,7 @@
     =.  builds.state
       %+  ~(jab by builds.state)  build
       |=  =build-status
-      build-status(requesters (~(del in requesters.build-status) duct))
+      build-status(requesters (~(del in requesters.build-status) [%duct duct]))
     ::
     =.  builds.state  (remove-duct-from-subs build)
     ::
@@ -1394,7 +1412,7 @@
     ^+  state
     ::
     =/  =build-status  (~(got by builds.state) build)
-    =/  new-ducts  ~(tap in (~(put in ~(key by clients.build-status)) duct))
+    =/  new-anchors  ~(tap in (~(put in ~(key by clients.build-status)) [%duct duct]))
     =/  subs  ~(tap in ~(key by subs.build-status))
     ::
     =.  state
@@ -1408,18 +1426,18 @@
     ::
     =.  builds.state
       |-  ^+  builds.state
-      ?~  new-ducts  builds.state
+      ?~  new-anchors  builds.state
       ::
-      =.  builds.state  (add-duct-to-subs i.new-ducts build)
+      =.  builds.state  (add-anchor-to-subs i.new-anchors build)
       ::
-      $(new-ducts t.new-ducts)
+      $(new-anchors t.new-anchors)
     ::
     state
-  ::  +add-duct-to-subs: attach :duct to :build's descendants
+  ::  +add-anchor-to-subs: attach :duct to :build's descendants
   ::
-  ++  add-duct-to-subs
-    ~/  %add-duct-to-subs
-    |=  [duct=^duct =build]
+  ++  add-anchor-to-subs
+    ~/  %add-anchor-to-subs
+    |=  [=anchor =build]
     ^+  builds.state
     ::
     =/  =build-status  (~(got by builds.state) build)
@@ -1431,14 +1449,14 @@
     ::
     =/  sub-status=^build-status  (~(got by builds.state) i.subs)
     ::
-    =/  already-had-duct=?  (~(has by clients.sub-status) duct)
+    =/  already-had-anchor=?  (~(has by clients.sub-status) anchor)
     ::
     =.  clients.sub-status
-      (~(put ju clients.sub-status) duct client)
+      (~(put ju clients.sub-status) anchor client)
     ::
     =.  builds.state  (~(put by builds.state) i.subs sub-status)
     ::
-    =?  builds.state  !already-had-duct  ^$(build i.subs)
+    =?  builds.state  !already-had-anchor  ^$(build i.subs)
     ::
     $(subs t.subs)
   ::  +remove-duct-from-subs: recursively remove duct from sub-builds
@@ -1459,11 +1477,11 @@
     =/  sub-status=^build-status  (~(got by builds.state) i.subs)
     ::
     =.  clients.sub-status
-      (~(del ju clients.sub-status) duct client)
+      (~(del ju clients.sub-status) [%duct duct] client)
     ::
     =.  builds.state  (~(put by builds.state) i.subs sub-status)
     ::
-    =?  builds.state  !(~(has by clients.sub-status) duct)
+    =?  builds.state  !(~(has by clients.sub-status) [%duct duct])
       ::
       ^$(build i.subs)
     ::
@@ -1485,7 +1503,7 @@
     =.  builds.state
       %+  ~(jab by builds.state)  new-client
       |=  =build-status
-      build-status(requesters (~(put in requesters.build-status) duct))
+      build-status(requesters (~(put in requesters.build-status) [%duct duct]))
     ::
     =<  copy-node
     ::
@@ -1522,7 +1540,7 @@
       =.  builds.state
         %+  ~(jab by builds.state)  new-sub
         |=  =build-status
-        build-status(clients (~(put ju clients.build-status) duct new-client))
+        build-status(clients (~(put ju clients.build-status) [%duct duct] new-client))
       ::
       state
     --
@@ -5122,7 +5140,7 @@
           ::
           %+  ~(jab by builds.state)  i.subs
           |=  build-status=^build-status
-          build-status(clients (~(del ju clients.build-status) duct build))
+          build-status(clients (~(del ju clients.build-status) [%duct duct] build))
         ::
         $(subs t.subs)
       ::
@@ -5211,7 +5229,7 @@
       ~|  [%unblocking (build-to-tape build)]
       (~(got by builds.state) build)
     ::
-    =/  clients=(list ^build)  ~(tap in (~(get ju clients.build-status) duct))
+    =/  clients=(list ^build)  ~(tap in (~(get ju clients.build-status) [%duct duct]))
     ::
     |-
     ^+  [unblocked builds.state]
@@ -5254,7 +5272,7 @@
     =/  duct-status  (~(got by ducts.state) duct)
     ::
     =/  =build-status  (~(got by builds.state) build)
-    ?:  (~(has in requesters.build-status) duct)
+    ?:  (~(has in requesters.build-status) [%duct duct])
       (on-root-build-complete build)
     ::
     =^  unblocked-clients  builds.state  (unblock-clients-on-duct build)
@@ -5409,10 +5427,10 @@
       %+  update-build-status  i.orphans
       |=  orphan-status=_build-status
       %_  orphan-status
-        clients  (~(del ju clients.orphan-status) duct build)
+        clients  (~(del ju clients.orphan-status) [%duct duct] build)
       ==
     ::
-    ?:  (~(has by clients.orphan-status) duct)
+    ?:  (~(has by clients.orphan-status) [%duct duct])
       $(orphans t.orphans)
     ::  :build was the last client on this duct so remove it
     ::
