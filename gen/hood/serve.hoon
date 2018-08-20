@@ -10,7 +10,7 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{pax/$@(term {i/knot t/path}) $~} $~}
+        {{pax/$@(term {i/knot t/path}) ~} ~}
     ==
 :-  %helm-serve
 ?@  pax  pax

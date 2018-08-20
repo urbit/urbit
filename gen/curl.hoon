@@ -7,7 +7,7 @@
 /+  old-zuse
 =,  old-zuse
 =,  sole
-:-  %get  |=  {^ {a/tape $~} $~}
+:-  %get  |=  {^ {a/tape ~} ~}
 ^-  (sole-request (cask httr))
 %+  sole-at  (scan a auri:urlp)
 |=  hit/httr

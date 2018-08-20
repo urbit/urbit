@@ -6,14 +6,14 @@
 /-  sole
 /+  old-zuse
 =,  old-zuse
-[. sole]
+=,  sole
 ::
 ::::
   ::
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        $~
-        $~
+        ~
+        ~
     ==
 =/  ran  (clan p.bec)
 ?:  ?=({?($earl $pawn)} ran)

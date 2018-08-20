@@ -6,8 +6,9 @@
 ::
 ::
 |%
-+=  collection  [meta=config data=(map nom=knot =item)]
++=  collection  [meta=config data=(map nom=knot =item)]  
 +=  item
+  $~  [%raw %umd ~ %$]
   $%  [%collection col=collection]
       [%raw raw=raw-item]
       [%both col=collection raw=raw-item]

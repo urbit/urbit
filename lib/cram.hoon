@@ -12,11 +12,11 @@
 ::
 ++  single                                              :: unwrap one-elem marl
   |=  xml/marl  ^-  manx
-  ?:  ?=({* $~} xml)  i.xml
+  ?:  ?=({* ~} xml)  i.xml
   ~|(%many-elems !!)
 ::
 ++  shut-mart                                           :: xml attrs
-  |=({n/mane v/(list beer:hoon)} [n (turn v |=(a/beer:hoon ?^(a !! a)))])
+  |=({n/mane v/(list beer:hoot)} [n (turn v |=(a/beer:hoot ?^(a !! a)))])
 ::
 ++  shut                                                :: as xml constant
   |=  gen/hoon  ^-  marl
@@ -24,16 +24,16 @@
       $dbug  $(gen q.gen)
   ::
       $xray
-    [[n.g.p.gen (turn a.g.p.gen shut-mart)] $(gen [%smts c.p.gen])]~
+    [[n.g.p.gen (turn a.g.p.gen shut-mart)] $(gen [%mcts c.p.gen])]~
   ::
-      $smts
+      $mcts
     ?~  p.gen  ~
     =-  (weld - $(p.gen t.p.gen))
     ?^  -.i.p.gen  $(gen [%xray i.p.gen])
     ~|  [%shut-tuna -.i.p.gen]
     ?+  -.i.p.gen  !!
       $manx  ?>(?=($xray -.p.i.p.gen) $(gen p.i.p.gen))
-      $marl  ?>(?=($smts -.p.i.p.gen) $(gen p.i.p.gen))
+      $marl  ?>(?=($mcts -.p.i.p.gen) $(gen p.i.p.gen))
     ==
   ==
 ::

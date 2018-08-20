@@ -8,6 +8,6 @@
   !:
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/$~ $~}
+        {arg/~ ~}
     ==
 [%kiln-wipe-ford ~]

@@ -4,7 +4,7 @@
 /?    310                                               ::  version
 /-    sole, hall
 /+    sole
-[. ^sole]
+=,    ^sole
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -14,11 +14,11 @@
 ::                                                      ::
 ++  pith-1                                              ::       pre-style
   %+  cork  pith-2                                      ::
-  |=(pith-2 +<(bin *(map bone source-1)))               ::
+  |:($:pith-2 +<(bin ((map bone source-1))))            ::
 ::                                                      ::
 ++  source-1                                            ::
   %+  cork  source                                      ::
-  |=(source +<(mir *(pair @ud (list @c))))              ::  style-less mir
+  |:($:source +<(mir ((pair @ud (list @c)))))           ::  style-less mir
 ::                                                      ::
 ++  pith-2                                              ::
   $:  sys/(unit bone)                                   ::  local console
@@ -46,7 +46,7 @@
       kil/kill                                          ::  kill buffer
       inx/@ud                                           ::  ring index
       fug/(map gill:gall (unit target))                ::  connections
-      mir/(pair @ud stub:dill)                         ::  mirrored terminal
+      mir/(pair @ud stub)                               ::  mirrored terminal
   ==                                                    ::
 ++  history                                             ::  past input
   $:  pos/@ud                                           ::  input position
@@ -116,7 +116,7 @@
 ::
 ++  de-gill                                           ::  gill from wire
   |=  way/wire  ^-  gill:gall
-  ?>(?=({@ @ $~} way) [(slav %p i.way) i.t.way])
+  ?>(?=({@ @ ~} way) [(slav %p i.way) i.t.way])
 --
 ::
 ::::
@@ -137,7 +137,7 @@
           {$diff lime}                                ::
           {$peer wire dock path}                      ::
           {$poke wire dock pear}                      ::
-          {$pull wire dock $~}                        ::
+          {$pull wire dock ~}                        ::
       ==                                              ::
     ++  move  (pair bone card)                        ::  user-level move
     --
@@ -177,7 +177,7 @@
   (se-klin gyl)
 ::
 ++  poke-exit                                         ::  shutdown
-  |=  $~
+  |=  ~
   se-abet:(se-blit-sys `dill-blit:dill`[%qit ~])
 ::
 ++  poke-put                                          ::  write file
@@ -205,12 +205,12 @@
 ++  take-onto                                         ::  ack start
   |=  {way/wire saw/(each suss:gall tang)}
   =<  se-abet  =<  se-view
-  ?>  ?=({@ @ $~} way)
+  ?>  ?=({@ @ ~} way)
   ?>  (~(has by fur) i.t.way)
   =/  wel/well:gall  [i.way i.t.way]
   ?-  saw
-    {$| *}  (se-dump p.saw)
-    {$& *}  ?>  =(q.wel p.p.saw)
+    {%| *}  (se-dump p.saw)
+    {%& *}  ?>  =(q.wel p.p.saw)
             ::  =.  +>.$  (se-text "live {<p.saw>}")
             +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))
   ==
@@ -245,10 +245,10 @@
   ^+  .
   %+  roll  ~(tap in ray)
   =<  .(con +>)
-  |=  {wel/well:gall con/_..se-adit}  ^+  con
+  |:  $:{wel/well:gall con/_..se-adit}  ^+  con
   =.  +>.$  con
   =+  hig=(~(get by fur) q.wel)
-  ?:  &(?=(^ hig) |(?=($~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
+  ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
   =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   %-  se-emit(fur (~(put by fur) q.wel ~))
   [ost.hid %conf [%drum p.wel q.wel ~] [our.hid q.wel] %load our.hid p.wel]
@@ -257,7 +257,7 @@
   ^+  .
   %+  roll  ~(tap in eel)
   =<  .(con +>)
-  |=  {gil/gill:gall con/_.}  ^+  con
+  |:  $:{gil/gill:gall con/_.}  ^+  con
   =.  +>.$  con
   ?:  (~(has by fug) gil)
     +>.$
@@ -269,7 +269,7 @@
   ^+  .
   %-  ~(rep by bin)
   =<  .(con +>)
-  |=  {{ost/bone dev/source} con/_.}  ^+  con
+  |:  $:{{ost/bone dev/source} con/_.}  ^+  con
   =+  xeno=se-subze-local:%_(con ost.hid ost, dev dev)
   xeno(ost.hid ost.hid.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
 ::
@@ -277,7 +277,7 @@
   ^+  .
   %-  ~(rep by fug)
   =<  .(con +>)
-  |=  {{gil/gill:gall *} con/_.}  ^+  con
+  |:  $:{{gil/gill:gall *} con/_.}  ^+  con
   =.  +>.$  con
   ?:  (~(has in eel) gil)
     +>.$
@@ -288,7 +288,7 @@
   ^-  ?
   ?.  (~(has by bin) ost.hid)  &
   =+  gyr=(~(get by fug) gyl)
-  |(?=($~ gyr) ?=($~ u.gyr))
+  |(?=(~ gyr) ?=(~ u.gyr))
 ::
 ++  se-alas                                           ::  recalculate index
   |=  gyl/gill:gall
@@ -301,7 +301,7 @@
 ++  se-amor                                           ::  live targets
   ^-  (list gill:gall)
   %+  skim  ~(tap in eel)
-  |=(a/gill:gall ?=({$~ $~ *} (~(get by fug) a)))
+  |=(a/gill:gall ?=({~ ~ *} (~(get by fug) a)))
 ::
 ++  se-anon                                           ::  rotate index
   =+  wag=se-amor
@@ -326,7 +326,7 @@
       {$yow *}  ~&([%no-yow -.bet] +>)
     ==
   =+  gul=se-agon
-  ?:  |(?=($~ gul) (se-aint u.gul))
+  ?:  |(?=(~ gul) (se-aint u.gul))
     (se-blit %bel ~)
   ta-abet:(ta-belt:(se-tame u.gul) bet)
 ::
@@ -372,7 +372,7 @@
   |=  gyl/gill:gall
   ^+  +>
   =.  +>  (se-text "[linked to {<gyl>}]")
-  ?>  ?=($~ (~(got by fug) gyl))
+  ?>  ?=(~ (~(got by fug) gyl))
   (se-alas(fug (~(put by fug) gyl `*target)) gyl)
 ::
 ++  se-nuke                                           ::  teardown connection
@@ -398,7 +398,7 @@
   (se-emit [u.sys %diff %dill-blit bil])
 ::
 ++  se-show                                           ::  show buffer, raw
-  |=  lin/(pair @ud stub:dill)
+  |=  lin/(pair @ud stub)
   ^+  +>
   =.  p.lin  (add p.lin (lent-stye:klr q.lin))
   ?:  =(mir lin)  +>
@@ -407,7 +407,7 @@
   +>(mir lin)
 ::
 ++  se-just                                           ::  adjusted buffer
-  |=  {pom/stub:dill lin/(pair @ud (list @c))}
+  |=  {pom/stub lin/(pair @ud (list @c))}
   ^+  +>
   =/  pol  (lent-char:klr pom)
   =/  pos  (add pol p.lin)
@@ -415,7 +415,7 @@
     =/  off  ?:((lte pos edg) 0 (sub pos edg))
     %+  se-show
       (sub pos off)
-    (swag:klr [off edg] (welp pom [*stye:dill q.lin]~))
+    (swag:klr [off edg] (welp pom [*stye q.lin]~))
   =/  end  (sub edg pol)
   =.  off  ?:  (gth p.lin (add end off))
              (sub p.lin end)
@@ -424,12 +424,12 @@
            off
   %+  se-show
     (sub pos off)
-  (welp pom [*stye:dill (swag [off end] q.lin)]~)
+  (welp pom [*stye (swag [off end] q.lin)]~)
 ::
 ++  se-view                                           ::  flush buffer
   ^+  .
   =+  gul=se-agon
-  ?:  |(?=($~ gul) (se-aint u.gul))  +
+  ?:  |(?=(~ gul) (se-aint u.gul))  +
   (se-just ta-vew:(se-tame u.gul))
 ::
 ++  se-emit                                           ::  emit move
@@ -784,7 +784,7 @@
     ^+  .
     =.  ris  ~
     =.  lay.hit  ~
-    ?:  ?|  ?=($~ buf.say.inp)
+    ?:  ?|  ?=(~ buf.say.inp)
             &(?=(^ old.hit) =(buf.say.inp i.old.hit))
         ==
       .(pos.hit num.hit)
@@ -829,7 +829,7 @@
   ++  ta-ser                                          ::  reverse search
     |=  ext/(list @c)
     ^+  +>
-    ?:  |(?=($~ ris) =(0 pos.u.ris))
+    ?:  |(?=(~ ris) =(0 pos.u.ris))
       ta-bel
     =+  sop=?~(ext (dec pos.u.ris) pos.u.ris)
     =+  tot=(weld str.u.ris ext)
@@ -851,8 +851,8 @@
     (ta-hom (cat:edit pos.inp txt))
   ::
   ++  ta-vew                                          ::  computed prompt
-    ^-  {pom/stub:dill lin/(pair @ud (list @c))}
-    =;  vew/(pair (list @c) styx:dill)
+    ^-  {pom/stub lin/(pair @ud (list @c))}
+    =;  vew/(pair (list @c) styx)
       [(make:klr q.vew) pos.inp p.vew]
     ?:  vis.pom
       :-  buf.say.inp                                 ::  default prompt
@@ -932,7 +932,7 @@
     |=  a/(list @)
     =|  i/@ud
     |-  ^-  @ud
-    ?:  |(?=($~ a) (alnm i.a))  i
+    ?:  |(?=(~ a) (alnm i.a))  i
     $(i +(i), a t.a)
   --
 ::

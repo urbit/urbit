@@ -21,7 +21,7 @@
     =/  tab  (sub 10 (mod (lent "{p.c}  ") 10))
     [%palm ["  {(reap tab ' ')}" ``~] leaf+p.c leaf+q.c ~]
   :-  ?-  b
-        $~  "/"  :: XX !! maybe?
+        ~  "/"  :: XX !! maybe?
         {$hood ^}  "|{(path-heps t.b)}"
         ^          "+{(path-heps b)}"  :: XX deal with :hall|foo
       ==
@@ -41,7 +41,7 @@
 --
 ::
 :-  %say
-|=  {{now/time @ our/ship ^} typ/$@($~ {p/term $~}) $~}
+|=  {{now/time @ our/ship ^} typ/$@(~ {p/term ~}) ~}
 =/  pax/path  /(scot %p our)/home/(scot %da now)/gen  :: XX hardcoded
 =+  len=(lent pax)
 =.  pax  ?~(typ pax (welp pax /[p.typ]))
@@ -53,7 +53,7 @@
   (drop (bind red rend))
 |-  ^-  tang
 =+  =<  arl=~(tap by (~(urn by dir.ark) .))
-    |=({a/@t $~} .^(arch cy+(welp pax /[a])))
+    |=({a/@t ~} .^(arch cy+(welp pax /[a])))
 %+  welp
   =/  dir/(list {@ path})
     (murn arl (read-at len pax))

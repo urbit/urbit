@@ -35,7 +35,7 @@
   ::
   ++  meld                                              ::  verify connect
     |=  [new=deyd old=deyd]
-    ^-  $&
+    ^-  %&
     ?>  (melt new old)
     ?>  =((shaf %meld (sham q.new)) (need (sure:as:(com:nu:crub:crypto r.q.old) *code p.new)))
     %&
@@ -71,7 +71,7 @@
   ::
   ++  pier  !:                                          ::  initial deyd
     |=  wed=deyd
-    ^-  $&
+    ^-  %&
     ?>  =+  rac=(clan:title r.p.q.wed)
         =+  loy=(com:nu:crub:crypto r.q.wed)
         ?:  &(r.wed =(rac %czar))  %&
@@ -1576,19 +1576,13 @@
       (hunt lth doz rtn.sop.bah)
     ::
     ++  load
-      =/  old-fort
-        (cork fort |=(fort [%0 gad=gad hop=hop bad=bad ton=ton zac=zac]))
-      |=  old=?(fort old-fort)
-      ?-  old
-        [%0 *]  $(old [%1 gad hop bad ton zac ~]:old)
-        [%1 *]  ~&  %ames-reload
-                ..^$(fox old)
-      ==
+      |=  old=fort
+      ..^$(fox old)
     ::
     ++  scry
       |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
       ^-  (unit (unit cage))
-      ?.  ?=($& -.why)  [~ ~]
+      ?.  ?=(%& -.why)  [~ ~]
       ?~  tyl  [~ ~]
       =+  hun=(slaw %p i.tyl)
       ?~  hun  [~ ~]

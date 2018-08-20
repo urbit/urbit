@@ -58,10 +58,10 @@
   $(txt (slag ?:(nex +(end) end) `tape`txt))
 ::
 ++  range-to-path
-  :>    msg range to path
-  :>
-  :>  turns a range structure into a path used for
-  :>  subscriptions.
+  ::    msg range to path
+  ::
+  ::  turns a range structure into a path used for
+  ::  subscriptions.
   ::
   |=  ran/range
   ^-  path
@@ -71,10 +71,10 @@
   [(place-to-knot u.tal.u.ran) ~]
 ::
 ++  place-to-knot
-  :>    msg pointer to path component
-  :>
-  :>  turns a place structure into a knot for use in
-  :>  subscription paths.
+  ::    msg pointer to path component
+  ::
+  ::  turns a place structure into a knot for use in
+  ::  subscription paths.
   ::
   |=  pla/place
   ^-  knot
@@ -82,10 +82,10 @@
   (cat 3 '-' (scot %ud (abs:si +.pla)))
 ::
 ++  path-to-range
-  :>    path to msg range
-  :>
-  :>  turns the tail of a subscription path into a
-  :>  range structure, skipping over non-range terms.
+  ::    path to msg range
+  ::
+  ::  turns the tail of a subscription path into a
+  ::  range structure, skipping over non-range terms.
   ::
   |=  pax/path
   ^-  range
@@ -98,7 +98,7 @@
   (rush i.t.pax placer)
 ::
 ++  placer
-  :>  parse a range place
+  ::  parse a range place
   ;~  pose
     (stag %ud dem:ag)
   ::
@@ -112,7 +112,7 @@
     ;~(pfix hep dem:ag)
   ==
 ::
-++  change-glyphs                                       :<  ...
+++  change-glyphs                                       ::  ...
   ::
   |=  {gys/(jug char audience) bin/? gyf/char aud/audience}
   ^+  gys
@@ -124,10 +124,10 @@
   (~(del ju gys) gyf aud)
 ::
 ++  change-nicks
-  :>    change nick map
-  :>
-  :>  changes a nickname in a map, adding if it doesn't
-  :>  yet exist, removing if the nickname is empty.
+  ::    change nick map
+  ::
+  ::  changes a nickname in a map, adding if it doesn't
+  ::  yet exist, removing if the nickname is empty.
   ::
   |=  {nis/(map ship cord) who/ship nic/cord}
   ^+  nis
@@ -136,7 +136,7 @@
   (~(put by nis) who nic)
 ::
 ++  change-config
-  :>  applies a config diff to the given config.
+  ::  applies a config diff to the given config.
   ::
   |=  {cof/config dif/diff-config}
   ^+  cof
@@ -187,7 +187,7 @@
   ==
 ::
 ++  change-status
-  :>  applies a status diff to the given status.
+  ::  applies a status diff to the given status.
   ::
   |=  {sat/status dif/diff-status}
   ^+  sat
@@ -250,18 +250,19 @@
     (^$(buk t-buk) wer)
   ::
   ++  or
-    =+  tmp=|-($@(@tas {@tas $}))  ::TODO typ/that syntax-errors...
-    |*  typ/tmp
-    |=  con/coin
-    ::^-  _(snag *@ (turn (limo typ) |*(a/@tas [a (odo:raid:wired a)])))
-    ?>  ?=($$ -.con)
-    =/  i-typ  ?@(typ typ -.typ)
-    ?:  =(i-typ p.p.con)
-      :-  i-typ
-      ^-  (odo:raid:wired i-typ)
-      q.p.con
-    ?@  typ  ~|(%bad-odor !!)
-    (^$(typ +.typ) con)
+    =+  typ=$:|-($@(@tas {@tas $}))  
+    |@  ++  $
+          |=  con/coin
+          ::^-  _(snag *@ (turn (limo typ) |*(a/@tas [a (odo:raid:wired a)])))
+          ?>  ?=($$ -.con)
+          =/  i-typ  ?@(typ typ -.typ)
+          ?:  =(i-typ p.p.con)
+            :-  i-typ
+            ^-  (odo:raid:wired i-typ)
+            q.p.con
+          ?@  typ  ~|(%bad-odor !!)
+          (^$(typ +.typ) con)
+    --
   ::
   ++  do
     |*  typ/@tas

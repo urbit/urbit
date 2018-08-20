@@ -14,8 +14,8 @@
 =,  format
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/$@($~ {jon/json $~})}
-        $~
+        {arg/$@(~ {jon/json ~})}
+        ~
     ==
 ^-  (sole-result {$write-sec-atom p/host:eyre q/@})
 %+  sole-yo  leaf+"Accepting credentials for https://*.googleapis.com"

@@ -888,19 +888,19 @@
       ::  parses the zuse version, eg "/?  309"
       ::
         ;~  pose
-          (ifix [;~(plug fas wut gap) gap] dem)
+          (ifix [;~(plug net wut gap) gap] dem)
           (easy zuse)
         ==
       ::  pareses the structures, eg "/-  types"
       ::
         ;~  pose
-          (ifix [;~(plug fas hep gap) gap] (most ;~(plug com gaw) cable))
+          (ifix [;~(plug net hep gap) gap] (most ;~(plug com gaw) cable))
           (easy ~)
         ==
       ::  parses the libraries, eg "/+  lib1, lib2"
       ::
         ;~  pose
-          (ifix [;~(plug fas lus gap) gap] (most ;~(plug com gaw) cable))
+          (ifix [;~(plug net lus gap) gap] (most ;~(plug com gaw) cable))
           (easy ~)
         ==
       ::
@@ -913,7 +913,7 @@
   ++  beam
     %+  sear  de-beam
     ;~  pfix
-      fas
+      net
       (sear plex (stag %clsg poor)):hoon-parser
     ==
   ::  +cable: parses a +^cable, a reference to something on the filesystem
@@ -941,12 +941,12 @@
     |%
     ++  apex
       %+  knee  *^crane  |.  ~+
-      ;~  pfix  fas
+      ;~  pfix  net
         ;~  pose
           ::  `/~`  hoon literal
           (stag %fssg ;~(pfix sig hoon))
           ::  `/$`  process query string
-          (stag %fsbc ;~(pfix buc hoon))
+          (stag %fsbc ;~(pfix bus hoon))
           ::  `/|`  first of many options that succeeds
           (stag %fsbr ;~(pfix bar parse-alts))
           ::  `/=`  wrap a face around a crane
@@ -956,26 +956,26 @@
           ::  `/,`  switch by path
           (stag %fscm ;~(pfix com parse-switch))
           ::  `/&`  pass through a series of mark
-          (stag %fspm ;~(pfix pam parse-pipe))
+          (stag %fspm ;~(pfix pad parse-pipe))
           ::  `/_`  run a crane on each file in the current directory
           (stag %fscb ;~(pfix cab subcrane))
           ::  `/;`  passes date through a gate
-          (stag %fssm ;~(pfix sem parse-gate))
+          (stag %fssm ;~(pfix mic parse-gate))
           ::  `/:`  evaluate at path
           (stag %fscl ;~(pfix col parse-at-path))
           ::  `/^` cast
           (stag %fskt ;~(pfix ket parse-cast))
           ::  `/!mark/ evaluate as hoon, then pass through mark
-          (stag %fszp ;~(pfix zap ;~(sfix sym fas)))
+          (stag %fszp ;~(pfix zap ;~(sfix sym net)))
           ::  `/mark/` passes current path through :mark
-          (stag %fszy ;~(sfix sym fas))
+          (stag %fszy ;~(sfix sym net))
         ==
       ==
     ::  +parse-alts: parse a set of alternatives
     ::
     ++  parse-alts
       %+  wide-or-tall
-        (ifix [pel per] (most ace subcrane))
+        (ifix [lit rit] (most ace subcrane))
       ;~(sfix (star subcrane) gap duz)
     ::  +parse-face: parse a face around a subcrane
     ::
@@ -995,19 +995,19 @@
       %+  wide-or-tall
         fail
       =-  ;~(sfix (star -) gap duz)
-      ;~(pfix gap fas ;~(plug static-path subcrane))
+      ;~(pfix gap net ;~(plug static-path subcrane))
     ::  +parse-pipe: parses a pipe of mark conversions
     ::
     ++  parse-pipe
       %+  wide-or-tall
-        ;~(plug (plus ;~(sfix sym pam)) subcrane)
+        ;~(plug (plus ;~(sfix sym pad)) subcrane)
       =+  (cook |=(a=term [a ~]) sym)
       ;~(pfix gap ;~(plug - subcrane))
     ::  +parse-gate: parses a gate applied to a crane
     ::
     ++  parse-gate
       %+  wide-or-tall
-        ;~(plug ;~(sfix wide:hoon-parser sem) subcrane)
+        ;~(plug ;~(sfix wide:hoon-parser mic) subcrane)
       ;~(pfix gap ;~(plug tall:hoon-parser subcrane))
     ::  +parse-at-path: parses a late bound bath
     ::
@@ -1019,8 +1019,8 @@
     ::
     ++  parse-cast
       %+  wide-or-tall
-        ;~(plug ;~(sfix wide:hoon-parser ket) subcrane)
-      ;~(pfix gap ;~(plug tall:hoon-parser subcrane))
+        ;~(plug ;~(sfix wyde:hoon-parser ket) subcrane)
+      ;~(pfix gap ;~(plug till:hoon-parser subcrane))
     ::  +crane: parses a subcrane
     ::
     ++  subcrane
@@ -1037,17 +1037,17 @@
     ::
     ++  hoon
       %+  wide-or-tall
-        (ifix [sel ser] (stag %cltr (most ace wide:hoon-parser)))
+        (ifix [lac rac] (stag %cltr (most ace wide:hoon-parser)))
       ;~(pfix gap tall:hoon-parser)
     --
   ::  +static-path: parses a path
   ::
   ++  static-path
-    (sear plex (stag %clsg (more fas hasp))):hoon-parser
+    (sear plex (stag %clsg (more net hasp))):hoon-parser
   ::  +late-bound-path: a path whose time varies
   ::
   ++  late-bound-path
-    ;~  pfix  fas
+    ;~  pfix  net
       %+  cook  |=(a=truss a)
       =>  hoon-parser
       ;~  plug
@@ -2596,7 +2596,7 @@
         =/  grow-build=^build
           :-  date.build
           :+  %ride
-            formula=`hoon`[%tsgl [%wing ~[target-mark]] [%wing ~[%grow]]]
+            formula=`hoon`[%tsld [%wing ~[target-mark]] [%wing ~[%grow]]]
           ^=  subject
           ^-  schematic
           :*  %mute
@@ -2809,7 +2809,7 @@
           ^=  gate
           :+  %ride
             ::
-            formula=`hoon`[%tsgl [%wing ~[%diff]] [%wing ~[%grad]]]
+            formula=`hoon`[%tsld [%wing ~[%diff]] [%wing ~[%grad]]]
           ::
           ^=  subject
           :+  %mute
@@ -3480,7 +3480,7 @@
         :+  %call
           ^-  schematic
           :+  %ride
-            [%tsgl [%limb %pact] [%limb %grad]]
+            [%tsld [%limb %pact] [%limb %grad]]
           ^-  schematic
           :+  %mute
             ^-  schematic
@@ -3772,7 +3772,7 @@
           :_  ..run-crane
           :*  %subject
               p.subject.child
-              [[%face [~ face] p.q.subject.child] q.q.subject.child]
+              [[%face face p.q.subject.child] q.q.subject.child]
           ==
         ::  +run-fscm: runs the `/,` rune
         ::
@@ -4079,7 +4079,7 @@
         ::  +run-fskt: runs the `/^` rune
         ::
         ++  run-fskt
-          |=  [mold=hoon sub-crane=^crane]
+          |=  [=spec sub-crane=^crane]
           ^-  compose-cranes
           ::
           =^  child  ..run-crane  (run-crane subject sub-crane)
@@ -4087,7 +4087,7 @@
             [child ..run-crane]
           ::
           =/  bunt-build=^build
-            [date.build [%ride [%bunt mold] [%$ subject]]]
+            [date.build [%ride [%kttr spec] [%$ subject]]]
           =^  bunt-result  out  (depend-on bunt-build)
           ?~  bunt-result
             [[%block [bunt-build]~] ..run-crane]
@@ -4251,7 +4251,7 @@
           ::  use the library name as a face to prevent namespace leakage
           ::
           ^-  vase
-          [[%face face.cable.i.imports p.i.core-vases] q.i.core-vases]
+          [[%face u.face.cable.i.imports p.i.core-vases] q.i.core-vases]
         ::
         $(core-vases t.core-vases, imports t.imports)
       --
@@ -4539,7 +4539,7 @@
           ^=  gate
           :*  %ride
               ::  (ream 'noun:grab')
-              formula=`hoon`[%tsgl [%wing ~[%noun]] [%wing ~[%grab]]]
+              formula=`hoon`[%tsld [%wing ~[%noun]] [%wing ~[%grab]]]
               subject=`schematic`[%core rail.u.path-result]
           ==
         sample=[%$ %noun %noun input]

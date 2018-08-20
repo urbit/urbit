@@ -8,8 +8,8 @@
 =*  as-octs  as-octs:mimes:html
 =,  space:userlib
 |%
-++  part  {$write $0 pith}           :: no state
-++  pith  $~
++$  part  {$write $0 pith}           :: no state
++$  pith  ~
 --
 ::
 ::::
@@ -119,7 +119,7 @@
 ::
 ++  poke-sec-atom
   |=  {hot/host:eyre dat/@}
-  ?>  ?=($& -.hot)
+  ?>  ?=(%& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
   =.  dat  (scot %uw (en:crua:crypto ames-secret dat))
   (poke--data [`%atom [%sec p.hot]] %mime / (as-octs dat))

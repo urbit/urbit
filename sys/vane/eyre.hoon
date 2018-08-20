@@ -1,4 +1,3 @@
-!:
 ::  ::  %eyre, http servant
 !?  164
 ::::
@@ -25,7 +24,7 @@
           $%  {$flog p/{$crud p/@tas q/(list tank)}}    ::
           ==  ==                                        ::
               $:  $e                                    ::  to self
-          $%  {$thud $~}                                ::  proxied death
+          $%  {$thud ~}                                ::  proxied death
               {$this p/? q/clip r/httq}                 ::  proxied request
               {$meta vase}                              ::  type check
           ==  ==                                        ::
@@ -37,12 +36,12 @@
           $%  {$deal p/sock q/cush:gall}               ::  full transmission
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
-          $?  $:  $a                                    ::  by %ames
+          $%  $:  $a                                    ::  by %ames
           $%  {$woot p/ship q/coop}              ::  acknowledgment
               {$went ship cape:ames}                   ::  XX ignore
           ==  ==                                        ::
               $:  $b                                    ::  by %behn
-          $%  {$wake $~}                                ::  timer activate
+          $%  {$wake ~}                                ::  timer activate
           ==  ==                                        ::
               $:  $g                                    ::  by %gall
           $%  {$unto p/cuft:gall}                      ::  within agent
@@ -57,18 +56,18 @@
           $%  {$crud p/@tas q/(list tank)}              ::
           ==  ==  ==                                    ::
 ++  ixor  @t                                            ::  oryx hash
-++  whir  $@  $~                                        ::  wire subset
+++  whir  $@  ~                                        ::  wire subset
           $%  {$ac p/hole q/whir}                       ::  cookied
               {$at p/hole q/whir}                       ::  authenticated
-              {$ay p/knot q/knot $~}     :: /ay/@p/@uvH ::  remote duct
+              {$ay p/knot q/knot ~}     :: /ay/@p/@uvH ::  remote duct
               {$ha p/path}               :: /ha/[beak]  ::  GET request
               {$he p/whir}                              ::  HEAD request
-              {$hi p/knot q/mark $~}                    ::  outbound HTTP
+              {$hi p/knot q/mark ~}                    ::  outbound HTTP
               {$se p/whir-se q/{user (list @t)}}        ::  outbound to domain
-              {$si $~}                                  ::  response done
-              {$of p/ixor q/$@($~ whir-of)}             ::  associated view
-              {$ow p/ixor $~}                           ::  dying view
-              {$on $~}                                  ::  dependency
+              {$si ~}                                  ::  response done
+              {$of p/ixor q/$@(~ whir-of)}             ::  associated view
+              {$ow p/ixor ~}                           ::  dying view
+              {$on ~}                                  ::  dependency
           ==                                            ::
 ++  whir-of  {p/@taxp q/term r/?($mess $lens) s/wire}   ::  path in dock
 ++  whir-se  ?($core vi-arm)                            ::  build/call
@@ -109,7 +108,7 @@
   ==                                                    ::
 ::
 ++  driv                                                ::  driver state
-  %+  pair  (unit $@($~ vase))                          ::  main core
+  %+  pair  (unit $@(~ vase))                          ::  main core
   {liv/? req/(qeu (trel duct mark vase:hiss))}          ::  waiting requests
 ::
 ++  live                                                ::  in flight
@@ -144,33 +143,33 @@
 ::
 ++  perk                                                ::  parsed request
   $%  {$auth p/perk-auth}
-      {$away $~}
+      {$away ~}
       {$oath p/knot q/(list @t)}
-      {$bugs p/?($as $to) $~}
+      {$bugs p/?($as $to) ~}
       {$beam p/beam}
       {$deps p/?($put $delt) q/@uvH}
       {$mess p/dock q/mark r/wire s/json}
       {$poll p/{i/@uvH t/(list @uvH)}}
       {$spur p/spur}
       {$subs p/?($put $delt) q/{dock $json wire path}}
-      {$view p/ixor q/{$~ u/@ud}}
-      ::{$view p/ixor q/{$~ u/@ud} r/(unit @dr)}
+      {$view p/ixor q/{~ u/@ud}}
+      ::{$view p/ixor q/{~ u/@ud} r/(unit @dr)}
   ==
 ::
 ++  perk-auth                                           ::  parsed auth
   $%  {$at p/pork}                                      ::  inject auth
       {$del p/(unit ship)}
       {$get him/ship rem/pork}
-      {$js $~}
-      {$json $~}
+      {$js ~}
+      {$json ~}
       {$try him/ship paz/(unit cord)}
       {$xen ses/hole rem/pork}
   ==
 ::
 ++  pest                                                ::  result
-  $@  $~
+  $@  ~
   $%  {$$ p/httr}                                       ::  direct response
-      {$red $~}                                         ::  parent redirect
+      {$red ~}                                         ::  parent redirect
       {$bake p/whir q/mark r/coin s/beam}               ::  ford request
       {$js p/@t}                                        ::  script
       {$json p/json}                                    ::  data
@@ -179,6 +178,7 @@
   ==
 ::
 ++  wank                                                ::  .well-known ankh
+  $~  [~ ~]
   {p/(unit mime) q/(map @ta wank)}
 --                                                      ::
 |%
@@ -732,20 +732,20 @@
       =+  maf=(eat-headers r.heq)
       =+  ^=  pul  ^-  purl
           ?-  -.ryp
-            $&  ?>(=(sec p.p.p.ryp) p.ryp)
-            $|  =+  hot=(~(get ja maf) %host)
-                ?>  ?=({@ $~} hot)
+            %&  ?>(=(sec p.p.p.ryp) p.ryp)
+            %|  =+  hot=(~(get ja maf) %host)
+                ?>  ?=({@ ~} hot)
                 [[sec (rash i.hot thor:de-purl)] p.ryp q.ryp]
           ==
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
       ?:  ?=($chis -.kyz)                               :: IPC escape hatch
         ~(lens handle pul [q.+.kyz |] [p.heq maf s.heq])
       =+  her=(host-to-ship r.p.pul)
-      ?:  |(?=($~ her) =(our u.her))
+      ?:  |(?=(~ her) =(our u.her))
         ~(apex handle pul [q.+.kyz |] [p.heq maf s.heq])
       =+  han=(sham hen)
       =.  pox  (~(put by pox) han hen)
-      (ames-gram u.her [%get ~] han +.kyz)
+      (ames-gram u.her %get han +.kyz)
     ::
         $them                                           ::  outbound request
       ?~  p.kyz
@@ -801,7 +801,7 @@
           $xeno
         =+  han=(sham hen)
         =.  pox  (~(del by pox) han hen)
-        (ames-gram p.lid [%gib ~] han)
+        (ames-gram p.lid %gib han)
       ::
           $wasp
         |-  ^+  +>.^$
@@ -822,7 +822,7 @@
       ?~  mez
         ~&  e+[%strange-west p.kyz]
         ~|(%strange-west !!)
-      ?-  -<.u.mez
+      ?-  -.u.mez
         $aut  abet:(logon:(ses-ya p.u.mez) q.p.kyz)
         $hat  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
         $gib  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %thud ~])
@@ -837,11 +837,11 @@
           (give-thou q.u.mez)
       ::
         $lon
-          ::  ~&  ses-ask+[p.u.mez sop (~(run by wup) $~)]
+          ::  ~&  ses-ask+[p.u.mez sop (~(run by wup) ~)]
           ?:  (ses-authed p.u.mez)
-            (ames-gram q.p.kyz aut+~ p.u.mez)
+            (ames-gram q.p.kyz %aut p.u.mez)
           =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
-          (ames-gram q.p.kyz hat+~ p.u.mez our-host)
+          (ames-gram q.p.kyz %hat p.u.mez our-host)
       ::
         $get-inner
           %+  exec-turbo-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)
@@ -879,7 +879,7 @@
     ::
       $wegh  !!                                         ::  handled elsewhere
     ::
-      $wise  (ames-gram p.kyz [%not ~] q.kyz)           ::  proxy notification
+      $wise  (ames-gram p.kyz %not q.kyz)           ::  proxy notification
     ==
   ::
   ::++  axom                                              ::  old response
@@ -894,7 +894,7 @@
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
     ?:  &(?=({?($of $ow) ^} tee) !(~(has by wix) p.tee))
-      ~&(dead-ire+[`whir`tee ({term term $~} +.sih)] +>)
+      ~&(dead-ire+[`whir`tee ({term term ~} +.sih)] +>)
     ?-    &2.sih
         $crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::  $dumb
@@ -910,7 +910,7 @@
     ::
         $thou
       ?+    -.tee  !!
-        $ay  (ames-gram (slav %p p.tee) got+~ (slav %uv q.tee) |2.sih)
+        $ay  (ames-gram (slav %p p.tee) %got (slav %uv q.tee) |2.sih)
         $hi  (cast-thou q.tee httr+!>(p.sih))
         $se  (get-thou:(dom-vi q.tee) p.tee p.sih)
       ==
@@ -933,7 +933,7 @@
       ==
     ::
         $wake
-      ?>  ?=({?($of $ow) @ $~} tee)
+      ?>  ?=({?($of $ow) @ ~} tee)
       ?:  ?=($ow -.tee)
         abut:(ire-ix p.tee)
       =>  wake:(ire-ix p.tee)
@@ -954,7 +954,7 @@
           ?:  ?=([%complete %error *] result.sih)
             [%| message.build-result.result.sih]
           [%& [p q.q]:(result-to-cage:ford build-result.result.sih)]
-        (ames-gram (slav %p p.tee) got-inner+~ (slav %uv q.tee) res)
+        (ames-gram (slav %p p.tee) %got-inner (slav %uv q.tee) res)
       ::
           {$ha *}
         %-  emule  |.  ^+  ..apex
@@ -991,7 +991,7 @@
           (eyre-them tee q.cay)
         =+  usr=(slav %ta p.tee)
         =+  ((hard {pul/purl ^}) q.q.cay)
-        ?.  ?=($& -.r.p.pul)
+        ?.  ?=(%& -.r.p.pul)
           ~&  [%auth-lost usr (head:en-purl p.pul)]
           (eyre-them tee q.cay)
         (get-req:(dom-vi usr (scag 2 p.r.p.pul)) q.tee q.cay)
@@ -1025,7 +1025,7 @@
   ++  ses-authed
     |=  ses/hole
     =+  sap=(~(get by sop) ses)
-    ?:  ?=({$~ @ $&} sap)  &
+    ?:  ?=({~ @ %&} sap)  &
     =+  cyz=(~(get by wup) ses)
     ?~  cyz  |
     (~(has in aut.u.cyz) our)
@@ -1042,7 +1042,7 @@
     (pass-note tea [%e %meta :(slop !>(%them) !>(~) vax)])
   ::
   ++  ames-gram
-    |=({him/ship gam/gram} (pass-note ~ %a %want [our him] [%e -.gam] +.gam))
+    |=({him/ship gam/gram} (pass-note ~ %a %want [our him] [%e -.gam ~] +.gam))
   ::
   ++  back-turbo
     |=  [tea=whir mar=mark cay=cage]
@@ -1130,7 +1130,7 @@
   ++  give-sigh                                       ::  userspace done
     |=  res/(each cage tang)
     =-  +>.$(mow :_(mow [hen %give %sigh `cage`-]))
-    ?.  ?=($| -.res)  p.res
+    ?.  ?=(%| -.res)  p.res
     [%tang !>(p.res)]
   ::
   ++  give-turbo-sigh
@@ -1149,7 +1149,7 @@
     ^-  (unit ship)
     :: =+  gow=(~(get by dop) hot)    ::  XX trust
     :: ?^  gow  gow
-    ?.  ?=($& -.hot)  ~
+    ?.  ?=(%& -.hot)  ~
     =+  dom=(flop p.hot)                                ::  domain name
     ?~  dom  ~
     (rush i.dom fed:ag)
@@ -1191,7 +1191,7 @@
       =+  oar=(host-to-ship r.hat)
       =.  our  ?~(oar our u.oar)  ::  XX
       =+  pez=process
-      ?:  ?=($| -.pez)  p.pez
+      ?:  ?=(%| -.pez)  p.pez
       (resolve ~ p.pez)
     ::
     ++  lens
@@ -1205,7 +1205,7 @@
       |=  {cug/(list @t) pez/pest}  ^+  done
       ?~  pez  done
       ?-  -.pez
-          $~     (give-thou (add-cookies cug p.pez))
+          ~     (give-thou (add-cookies cug p.pez))
           $js    $(pez [%$ (resp 200 text+/javascript p.pez)])
           $json  (give-json 200 cug p.pez)
           $html  (give-html 200 cug p.pez)
@@ -1224,9 +1224,9 @@
           $red
         =+  url=(en-purl hat pok(p [~ %html]) quy)
         ?+    p.pok  ~|(bad-redirect+[p.pok url] !!)
-            {$~ $js}
+            {~ $js}
           $(pez [%js auth-redir:js])
-            {$~ $json}
+            {~ $json}
           =/  red
             (pairs:enjs ok+b+| red+(tape:enjs url) ~)
           $(pez [%json red])
@@ -1237,7 +1237,7 @@
     ++  is-anon  =([~ ''] (~(get by (molt quy)) 'anon'))
     ++  check-oryx                    ::  | if json with bad oryx
       ^-  ?
-      ?.  &(?=({$~ $json} p.pok) ?=($post mef) ?=(^ bod) !is-anon)  &
+      ?.  &(?=({~ $json} p.pok) ?=($post mef) ?=(^ bod) !is-anon)  &
       =+  oxe=grab-oryx
       ?~  oxe  |
       ?:  (~(has in vew.cyz:for-client) u.oxe)
@@ -1283,12 +1283,12 @@
       ++  as-magic-filename
         ^-  (unit httr)
         ?+    [(fall p.pok %$) q.pok]  ~
-            {?($ico $png) $favicon $~}
+            {?($ico $png) $favicon ~}
           :-  ~
           %^  resp  200  image+/png
           favi
         ::
-            {$txt $robots $~}
+            {$txt $robots ~}
           :-  ~
           %^  resp  200  text+/plain
           %-  of-wain:format
@@ -1320,9 +1320,9 @@
           ?.  ?=($post mef)  mef
           ?+    (skim quy |=({a/@t b/@t} &(=('' b) =(a (crip (cuss (trip a)))))))
               ~|(bad-quy+[req='"?PUT" or "?DELETE"' quy] !!)
-            $~   mef
-            {{$'DELETE' $~} $~}  %delt
-            {{$'PUT' $~} $~}     %put
+            ~   mef
+            {{$'DELETE' ~} ~}  %delt
+            {{$'PUT' ~} ~}     %put
           ==
         |-
         ?:  ?=({$'~~' *} q.pok)                            ::  auth shortcuts
@@ -1337,10 +1337,10 @@
             $ac
           ?~  but  ~|(no-host+`path`/~/[pef] !!)
           =+  `dom/host`~|(bad-host+i.but (rash i.but thos:de-purl))
-          ?:  ?=($| -.dom)  ~|(auth-ip+dom !!)
+          ?:  ?=(%| -.dom)  ~|(auth-ip+dom !!)
           =-  [%oath - p.dom]
           ~|  bad-user+`path`t.but
-          ?>  ?=({@ $in $~} t.but)
+          ?>  ?=({@ $in ~} t.but)
           =+  in-quy=(rush i.t.but ;~(pfix cab fque:de-purl))
           ?~  in-quy
             (slav %ta i.t.but)
@@ -1362,19 +1362,19 @@
             $on
           :-  %poll
           ?^  but  [(raid but %uv ~)]~
-          =+  dep=((hard (list {@ $~})) quy)
+          =+  dep=((hard (list {@ ~})) quy)
           =<  ?~(. !! .)
-          (turn dep |=({a/@tas $~} (slav %uv a)))
+          (turn dep |=({a/@tas ~} (slav %uv a)))
         ::
             $of
-          :+  %view  ?>(?=({@ $~} but) i.but)
-          ?>  ?=({{$poll @} $~} quy)
+          :+  %view  ?>(?=({@ ~} but) i.but)
+          ?>  ?=({{$poll @} ~} quy)
 ::          :^  %view  
-::          ?>  ?=({@ $~} but)
+::          ?>  ?=({@ ~} but)
 ::          i.but
 ::          ?>  ?=({{$poll @} *} quy)     ::  XX eventsource
           [~ (rash q.i.quy dem)]
-::          ?:  ?=({{$t @} $~} +.quy)
+::          ?:  ?=({{$t @} ~} +.quy)
 ::            =/  s  (rash q.i.t.quy dem)
 ::            `(yule [0 0 0 s ~])
 ::          ~
@@ -1383,8 +1383,8 @@
           =+  ^-  dir/{p/ship q/term r/mark}
               ~|  bad-mess+but
               ?+  but  !!
-                {@ @ $~}    [our (raid but %tas %tas ~)]
-                {@ @ @ $~}  (raid but %p %tas %tas ~)
+                {@ @ ~}    [our (raid but %tas %tas ~)]
+                {@ @ @ ~}  (raid but %p %tas %tas ~)
               ==
           =;  x/{wir/wire mez/json}
             [%mess [p q]:dir r.dir wir.x mez.x]
@@ -1394,7 +1394,7 @@
         ::
             $in
           ~|  expect+[%post 'application+json' /'@uv' '?PUT/DELETE']
-          ?>  &(?=(?($delt $put) mef) ?=($@($~ {$~ $json}) p.pok))
+          ?>  &(?=(?($delt $put) mef) ?=($@(~ {~ $json}) p.pok))
           [%deps mef (raid but %uv ~)]
         ::
             $is
@@ -1415,9 +1415,9 @@
           :-  %auth
           |-  ^-  perk-auth
           ?+    p.pok  !!
-              $~         $(p.pok [~ %json])
-              {$~ $js}    [%js ~]
-              {$~ $json}
+              ~         $(p.pok [~ %json])
+              {~ $js}    [%js ~]
+              {~ $json}
             ?+    mef  ~|(bad-meth+mef !!)
                 $get   [%json ~]
                 $put
@@ -1453,7 +1453,7 @@
     ++  process
       ^-  (each pest _done)
       =+  pet=parse
-      ?:  ?=($| -.pet)
+      ?:  ?=(%| -.pet)
         [%& %$ p.pet]
       (process-parsed p.pet)
     ::
@@ -1475,7 +1475,7 @@
           =/  han  (sham hen)
           =.  pox  (~(put by pox) han hen)
           =+  arg=(fcgi payload fcgi-cred)
-          [%| (ames-gram p.bem [%get-inner ~] han ext arg bem)]
+          [%| (ames-gram p.bem %get-inner han ext arg bem)]
         =+  wir=`whir`[%ha (en-beam -.bem ~)]
         =.  wir  ?+(mef !! $get wir, $head [%he wir])
         =.  r.bem  ?+(r.bem r.bem {$ud $0} da+now)
@@ -1510,7 +1510,7 @@
         [%| %.(quy (teba get-quay:(dom-vi [p q]:hem)))]
       ::
           $poll
-        ?:  ?=({$~ $js} p.pok)  ::  XX treat non-json cases?
+        ?:  ?=({~ $js} p.pok)  ::  XX treat non-json cases?
           =+  deps=[%a (turn `(list @uvH)`p.hem |=(a/@ s+(scot %uv a)))]
           [%& %js (add-json (frond:enjs %deps deps) poll:js)]
         =.  lyv  (~(put by lyv) hen %wasp p.hem)
@@ -1543,7 +1543,7 @@
           $at
         =.  ..ya  abet.yac
         =+  pez=process(pok p.ham, aut |)
-        ?.  ?=($& -.pez)  ~|(no-inject+p.ham !!)
+        ?.  ?=(%& -.pez)  ~|(no-inject+p.ham !!)
         ?~  p.pez  pez
         ?+    -.p.pez  ~&(bad-inject+p.pez !!)
             $red  pez
@@ -1570,7 +1570,7 @@
         ?:  |(=(anon him.ham) (~(has in aut.yac) him.ham))
           =.  ..ya  abet.yac(him him.ham)
           =+  pez=process(pok rem.ham, aut &)
-          ?:  ?=($| -.pez)  pez
+          ?:  ?=(%| -.pez)  pez
           [%| (resolve ~ p.pez)]
         ?.  =(our him.ham)
           [%| ((teba foreign-auth.yac) him.ham hat rem.ham quy)]
@@ -1591,7 +1591,7 @@
     ::
     ++  show-login-page
       |=  ses/(unit hole)  ^-  (each pest _done)
-      ?.  ?=($@($~ {$~ $html}) p.pok)
+      ?.  ?=($@(~ {~ $html}) p.pok)
         [%& %red ~]
       ?~  ses
         [%& %htme login-page:xml]
@@ -1607,12 +1607,12 @@
     ++  cookie-domain
       ^-  cord
       ?-  r.hat
-        {$| @}  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
-        {$& $org $urbit *}  '; Domain=.urbit.org'
-        {$& @ @ *}  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
+        {%| @}  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
+        {%& $org $urbit *}  '; Domain=.urbit.org'
+        {%& @ @ *}  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
                     (turn (flop `path`t.p.r.hat) |=(a/knot (cat 3 a '.')))
 
-        {$& *}  ''  ::  XX security?
+        {%& *}  ''  ::  XX security?
       ==
     ::
     ++  set-cookie
@@ -1678,7 +1678,7 @@
       |=  {him/ship pul/purl}  ^+  ..ya
       =.  way  (~(put by way) him pul hen)
       ~&  asking-foreign+him
-      (ames-gram:abet him [lon+~ ses])
+      (ames-gram:abet him [%lon ses])
     ::
     ++  foreign-hat
       |=  {him/ship hat/hart}  ^+  ..ya
@@ -1705,9 +1705,9 @@
             ..ya
           =+  sap=(~(get by sop) ses)
           ::  ~&  sap+sap
-          ?.  ?=({$~ @ $|} sap)
+          ?.  ?=({~ @ %|} sap)
             ..ya
-          (ames-gram -.u.sap aut+~ ses)
+          (ames-gram -.u.sap %aut ses)
       ==
     ++  logoff
       |=  her/(unit ship)  ^+  ..ya
@@ -1923,7 +1923,7 @@
   ++  vi                                                ::  auth engine
     ~%  %eyre-v  ..is  ~
     |_  $:  {usr/user dom/path}
-            cor/(unit $@($~ vase))
+            cor/(unit $@(~ vase))
             {liv/? req/(qeu {p/duct q/mark r/vase:hiss})}
         ==
     ++  self  .
@@ -2104,7 +2104,7 @@
       |-
       ?~  a  ~|(allowed=(opt) !!)
       ?:  =(p.i.a -.q.b)
-        (q.i.a (spec b))
+        (q.i.a (sped b))
       $(a t.a)
     ::
     ++  on-ford-fail
@@ -2125,7 +2125,7 @@
       ?:  ?=(%error -.build-result.a)
         (err message.build-result.a)
       =/  =cage  (result-to-cage:ford build-result.a)
-      =-  ?-(-.- $& p.-, $| (err p.-))
+      =-  ?-(-.- %& p.-, %| (err p.-))
       (mule |.(~|(driver+dom ~|(bad-res+p.q.cage (try q.cage)))))
     ::
     ++  possibly-stateful
@@ -2190,26 +2190,13 @@
   ~
 ::
 ++  load                                                ::  take previous state
-  =>  |%
-      ++  bolo-old  (cork bolo |=(bolo [%0 |5.+<]))
-      --
-  |=  old/?(bolo-old bolo)
-  ^+  ..^$
-  ?-  -.old
-    $0  $(old [%1 ~ *http-config [8.080 ~] [~ ~] +.old])
-  ::
-    $1  :: XX temporary fix for bad proxy config
-        ::
-        =/  rox=?  ?~  hov.old
-                     proxy.fig.old
-                   ?=(%king (clan:title u.hov.old))
-        ..^$(+>- old(proxy.fig rox))
-  ==
+  |=  old/bolo
+  ..^$(+>- old)
 ::
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ?.  ?=($& -.why)  ~
+  ?.  ?=(%& -.why)  ~
   =*  who  p.why
   =+  our=(need hov)                  :: XX single home
   =+  ska=(sloy ski)

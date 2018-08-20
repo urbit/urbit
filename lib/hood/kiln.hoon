@@ -70,8 +70,8 @@
           {$merg wire @p @tas @p @tas case germ}        ::
           {$perm wire ship desk path rite}              ::
           {$poke wire dock pear}                        ::
-          {$wipe wire @p $~}                            ::
-          [%keep wire max-cache-size=@ud]
+          {$wipe wire @p ~}                             ::
+          [%keep wire max-cache-size=@ud]               ::
           {$wait wire @da}                              ::
           {$warp wire sock riff}                        ::
       ==                                                ::
@@ -79,7 +79,7 @@
       $%  {$hall-command command:hall}                  ::
           {$kiln-merge kiln-merge}                      ::
           {$helm-reload (list term)}                    ::
-          {$helm-reset $~}                              ::
+          {$helm-reset ~}                              ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     --
@@ -133,7 +133,7 @@
   abet:abet:(start-sync:(auto hos) |)
 ::
 ++  poke-syncs                                        ::  print sync config
-  |=  $~
+  |=  ~
   =<  abet  %-  spam
   ?:  =(0 ~(wyt by syn))
     [%leaf "no syncs configured"]~
@@ -195,7 +195,7 @@
   [our syd pax %r ~ ?:(pub %black %white) ~]
 ::
 ++  poke-autoload  |=(lod/(unit ?) abet:(poke:autoload lod))
-++  poke-start-autoload  |=($~ abet:start:autoload)
+++  poke-start-autoload  |=(~ abet:start:autoload)
 ::
 ++  autoload
   |%
@@ -256,7 +256,7 @@
   ::
   ++  load-vane
     =<  %_(. con ..load-vane)
-    |=  {syd/@tas con/_.}
+    |:  $:{syd/@tas con/_.}
     =.  +>.$  con
     =/  new-vane  q:(hash-vane syd)
     ?:  =(`new-vane (~(get by cur-vanes) syd))
@@ -271,13 +271,13 @@
   --
 ::
 ++  poke-overload
-  :>  +poke-overload: wipes ford cache at {start}, and then every {recur}.
+  ::  +poke-overload: wipes ford cache at {start}, and then every {recur}.
   |=  [recur=@dr start=@da]
   ?>  (gte start now)
   abet:(emit %wait /kiln/overload/(scot %dr recur) start)
 ::
 ++  poke-wipe-ford
-  |=($~ abet:(emit %wipe /kiln our ~))
+  |=(~ abet:(emit %wipe /kiln our ~))
 ::
 ++  poke-keep-ford
   |=(max-cache-size=@ud abet:(emit %keep /kiln max-cache-size))
@@ -287,7 +287,7 @@
   ~?  ?=(^ saw)  [%kiln-nack u.saw]
   abet
 ::
-++  take  |=(way/wire ?>(?=({@ $~} way) (work i.way))) ::  general handler
+++  take  |=(way/wire ?>(?=({@ ~} way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
   |=  {way/wire are/(each (set path) (pair term tang))}
   abet:abet:(mere:(take way) are)
@@ -339,13 +339,13 @@
 ::
 ++  take-writ-autoload
   |=  {way/wire rot/riot}
-  ?>  ?=($~ way)
+  ?>  ?=(~ way)
   ?>  ?=(^ rot)
   abet:writ:autoload
 ::
 ++  take-wake-overload
-  |=  {way/wire $~}
-  ?>  ?=({@ $~} way)
+  |=  {way/wire ~}
+  ?>  ?=({@ ~} way)
   =+  tym=(slav %dr i.way)
   ~&  %wake-overload-deprecated
   abet
@@ -417,7 +417,7 @@
     =.  let  +(let)
     =.  +>.$
       %-  spam
-      ?:  ?=($& -.mes)
+      ?:  ?=(%& -.mes)
         [(render "sync succeeded" sud her syd) ~]
       ?+  p.p.mes
         :*  (render "sync failed" sud her syd)
@@ -469,7 +469,7 @@
   ::
   ++  unwrap-tang
     |*  res/(each * tang)
-    ?:  ?=($& -.res)
+    ?:  ?=(%& -.res)
       p.res
     (ford-fail p.res)
   ::
@@ -510,7 +510,7 @@
     |=  are/(each (set path) (pair term tang))
     ^+  +>
     ?:  =(%meld gem)
-      ?:  ?=($& -.are)
+      ?:  ?=(%& -.are)
         ?.  auto
           =+  "merged with strategy {<gem>}"
           win:(spam leaf+- ?~(p.are ~ [>`(set path)`p.are< ~]))
@@ -545,7 +545,7 @@
         ==
       =+  "failed to merge with strategy meld"
       lose:(spam leaf+- >p.p.are< q.p.are)
-    ?:  ?=($& -.are)
+    ?:  ?=(%& -.are)
       =+  "merged with strategy {<gem>}"
       win:(spam leaf+- ?~(p.are ~ [>`(set path)`p.are< ~]))
     ?.  auto

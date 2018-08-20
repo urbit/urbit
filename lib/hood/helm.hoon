@@ -42,8 +42,8 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|=  {bowl:gall part}                                   ::  main helm work
-=+  sez=(fall (~(get by hoc) ost) *session)
+|:  $:{bowl:gall part}                                  ::  main helm work
+=+  sez=(fall (~(get by hoc) ost) $:session)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
       $%  {$cash wire p/@p q/buck:ames}                 ::
@@ -64,7 +64,8 @@
           {$hall-action action:hall}                    ::
       ==                                                ::
     --
-|_  moz/(list move)
+=+  moz=((list move))
+|%
 ++  abet                                              ::  resolve
   [(flop moz) %_(+<+.$ hoc (~(put by hoc) ost sez))]
 ::
@@ -76,7 +77,7 @@
 ::
 ++  poke-begin                                        ::  make/send keypair
   |=  hood-begin  =<  abet
-  ?>  ?=($~ bur)
+  ?>  ?=(~ bur)
   ~&  [%poke-begin our his]
   =+  buz=(shaz :(mix (jam ges) eny))
   =+  loy=(pit:nu:crub:crypto 512 buz)
@@ -97,7 +98,7 @@
   (emit %nuke /helm him)
 ::
 ++  poke-mass
-  |=  $~  =<  abet
+  |=  ~  =<  abet
   (emit %flog /heft %crud %hax-heft ~)
 ::
 ++  poke-send-hi
@@ -131,31 +132,31 @@
 ::
 ++  coup-hi
   |=  {pax/path cop/(unit tang)}  =<  abet
-  ?>  ?=({@t $~} pax)
+  ?>  ?=({@t ~} pax)
   (emit %flog ~ %text "hi {(trip i.pax)} {?~(cop "" "un")}successful")
 ::
 ++  coup-ask
   |=  {pax/path cop/(unit tang)}  =<  abet
-  ?>  ?=({@t $~} pax)
+  ?>  ?=({@t ~} pax)
   (emit %flog ~ %text "ask {<src>} {?~(cop "" "un")}successful")
 ::
 ++  poke-reload  |=(all/(list term) (poke-reload-desk %home all))
 ++  poke-reload-desk                                 ::  reload vanes
-  |=  {syd/desk all/(list term)}  =<  abet
+  |:  $:{syd/desk all/(list term)}  =<  abet
   %-  emil
   %-  flop
   %+  turn  all
   =+  top=`path`/(scot %p our)/[syd]/(scot %da now)
-  =/  van/(list {term $~})
+  =/  van/(list {term ~})
     :-  zus=[%zuse ~]
     ~(tap by dir:.^(arch %cy (welp top /sys/vane)))
   |=  nam/@tas
     =.  nam
     ?.  =(1 (met 3 nam))
       nam
-    =+  ^-  zaz/(list {p/knot $~})
-        (skim van |=({a/term $~} =(nam (end 3 1 a))))
-    ?>  ?=({{@ $~} $~} zaz)
+    =+  ^-  zaz/(list {p/knot ~})
+        (skim van |=({a/term ~} =(nam (end 3 1 a))))
+    ?>  ?=({{@ ~} ~} zaz)
     `term`p.i.zaz
   =+  tip=(end 3 1 nam)
   =+  zus==('z' tip)
@@ -212,7 +213,7 @@
   [%flog /reset %veer p way txt]
 ::
 ++  poke-will                                         ::  hear certificate
-  |=  wil/(unit wyll:ames)
+  |:  wil=((unit wyll:ames))
   ?>  ?=(^ bur)
   ?>  ?=(^ wil)
   =<  abet
@@ -222,15 +223,15 @@
   ==
 ::
 ++  poke-verb                                         ::  toggle verbose
-  |=  $~  =<  abet
+  |=  ~  =<  abet
   (emit %flog /helm %verb ~)
 ::
 ++  take-onto                                         ::  result of %conf
   |=  saw/(each suss:gall tang)  =<  abet
   %-  emit
   ?-   -.saw
-    $|  [%flog ~ %crud %onto `tang`p.saw]
-    $&  [%flog ~ %text "<{<p.saw>}>"]
+    %|  [%flog ~ %crud %onto `tang`p.saw]
+    %&  [%flog ~ %text "<{<p.saw>}>"]
   ==
 ::
 ++  take-note                                         ::  result of %init

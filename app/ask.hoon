@@ -3,7 +3,7 @@
   ::
 /?    310
 /+    sole, hood-womb, prey
-[. sole]
+=,    sole
 |%
   ++  card
     $%  {$diff $sole-effect sole-effect}
@@ -89,13 +89,13 @@
     ?^  wom  [[(effect mor+help)]~ +>.$]    :: show help
     ?:  =(~ buf.som)  [[(effect txt+"Please enter womb ship")]~ +>.$]
     =/  try  (rose (tufa buf.som) fed:ag)
-    ?.  ?=({$& ^} try)
+    ?.  ?=({%& ^} try)
       [[(effect bel+~)]~ +>.$]
     =>  .(wom p.try)  :: XX TMI
     (transmit set+~ pro+prompt ~)   :: XX handle multiple links?
   ::
       $det                              :: reject all input
-    =^  inv  som  (~(transceive sole som) +.act)
+    =^  inv  som  (~(transceive ^sole som) +.act)
     =.  sos  (~(put by sos) ost.bow som)
     ?~  wom
       =/  try  (rose (tufa buf.som) fed:ag)
@@ -126,7 +126,7 @@
 ++  transmit
   |=  {inv/sole-edit mor/(list sole-effect)}
   =/  som  (~(got by sos) ost.bow)
-  =^  det  som  (~(transmit sole som) inv)
+  =^  det  som  (~(transmit ^sole som) inv)
   =.  sos  (~(put by sos) ost.bow som)
   [[(effect mor+[det+det mor])]~ +>.$]
 ::

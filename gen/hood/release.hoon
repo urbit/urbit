@@ -8,7 +8,7 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{sta/@u gal/$@($~ {i/@u $~})} $~}
+        {{sta/@u gal/$@(~ {i/@u ~})} ~}
     ==
 :-  %womb-release
 [?^(gal i.gal 0) sta]
