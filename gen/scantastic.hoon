@@ -50,10 +50,24 @@
       [%wood =(map atom (pair aura xray))]
   ==
 ::
-::  _ex: type analysis kernel
+::  =realign: analyze superpositions 
 ::
-++  ex
-  |_  scan
+++  realign
+  |=  scan
+  ^-  ^xray
+  |^  ?@  xray  xray
+      ?-  -.xray
+        %bark  xray
+        %bush  [%bush $(xray wide.xray) $(xray tall.xray)]
+        %core  :^    %core 
+                   vair.xray
+                 xray.xray
+               (~(run by map.xray) |=(xray ^$(xray +<)))
+        %face  [%face term.xray 
+      ==
+
+
+  ::
   ++  aura-merge
     |=  [=aura =aura]
     ?:  =(aura ^aura)  aura
