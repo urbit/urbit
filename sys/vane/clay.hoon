@@ -501,6 +501,15 @@
     |=  row=build-result:ford
     ^-  (unit [cage cage])
     ::
+    ?:  ?=([%error *] row)
+      ~&  [%clay-whole-build-failed message.row]
+      ~
+    ?:  ?=([%success [%error *] *] row)
+      ~&  [%clay-first-failure message.head.row]
+      ~
+    ?:  ?=([%success [%success *] [%error *]] row)
+      ~&  [%clay-second-failure message.tail.row]
+      ~
     ?.  ?=([%success [%success *] [%success *]] row)
       ~
     `[(result-to-cage:ford head.row) (result-to-cage:ford tail.row)]
