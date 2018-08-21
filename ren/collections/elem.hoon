@@ -168,10 +168,12 @@
 ++  collection-to-snip
   |=  [nom=knot col=collection:collections]
   ^-  manx
+  =/  lnk=tape
+    "/~~/{(scow %p p.full-path.meta.col)}/=={(spud (flop (slag 1 s.full-path.meta.col)))}"
   ;div
     ;div.collection-date: {<date-created.meta.col>}
     ;h3
-      ;a(href "{(trip -.s.bem.gas)}/{(trip nom)}"): {(trip name.meta.col)}
+      ;a(href lnk): {(trip name.meta.col)}
     ==
     ;div.who.text-mono.text-600: {<owner.meta.col>}
     ;div.meta-cont
@@ -191,13 +193,15 @@
   =/  title  (fall (~(get by meta.raw) %name) nom)
   =/  date   (fall (~(get by meta.raw) %date-created) 'missing date')
   =/  owner  (fall (~(get by meta.raw) %owner) 'anonymous')
+  =/  lnk=tape
+    "/~~/{(scow %p p.bem.gas)}/=={(spud (flop s.bem.gas))}/{(trip nom)}"
   ::
   ;div
     ;div.collection-date: {(trip date)}
     ;h3
       ;+  ?~  hed.ht
-            ;a(href "{(trip -.s.bem.gas)}/{(trip nom)}"): {(trip title)}
-          ;a(href "{(trip -.s.bem.gas)}/{(trip nom)}"): *{hed.ht}
+            ;a(href lnk): {(trip title)}
+          ;a(href lnk): *{hed.ht}
     ==
     ;div.who.text-mono.text-600: {(trip owner)}
     ;div.snippet
@@ -213,13 +217,15 @@
   =?  tal.ht  ?=(~ hed.ht)
     (scag 5 c.elm)
   =/  title  (fall (~(get by meta.raw) %name) nom)
+  =/  lnk=tape
+    "/~~/{(scow %p p.bem.gas)}/=={(spud (flop s.bem.gas))}/{(trip nom)}"
   ::
   ;div
     ;div.collection-date: {<date-created.meta.col>}
     ;h3
       ;+  ?~  hed.ht
-            ;a(href "{(trip -.s.bem.gas)}/{(trip nom)}"): {(trip title)}
-          ;a(href "{(trip -.s.bem.gas)}/{(trip nom)}"): *{hed.ht}
+            ;a(href lnk): {(trip title)}
+          ;a(href lnk): *{hed.ht}
     ==
     ;div.who.text-mono.text-600: {<owner.meta.col>}
     ;div.snippet: *{tal.ht}
