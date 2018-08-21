@@ -4761,24 +4761,37 @@
       |^  ^-  build-receipt
           ::  load all marks.
           ::
-          =^  maybe-load-marks-result  out
+          =^  marks-result  out
             (load-marks-reachable-from [[%grow source] [%grab target] ~])
-          ?~  maybe-load-marks-result
+          ?~  -.marks-result
             out
           ::  find a path through the graph
           ::
           ::    Make a list of individual mark translation actions which will
           ::    take us from :source to :term.
           ::
-          =/  path  (find-path-through u.maybe-load-marks-result)
+          =/  path  (find-path-through u.-.marks-result)
           ::  if there is no path between these marks, give an error message
           ::
           ?~  path
+            ::  we failed; surface errors from +load-marks-reachable-from
+            ::
+            =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
+            =/  errors=(list tank)
+              %-  zing
+              %+  turn  ~(tap in +.marks-result)
+              |=  [mark=term err=tang]
+              ^-  tang
+              :~  [%leaf "while compiling {<mark>}:"]
+                  [%rose braces err]
+              ==
+            ::
             %_    out
                 result
               :*  %build-result  %error
-                  [leaf+"ford: no mark path from {<source>} to {<target>}"]~
-              ==
+                  :*  [leaf+"ford: no mark path from {<source>} to {<target>}"]
+                      errors
+              ==  ==
             ==
           ::
           (return-result %success %walk path)
@@ -4800,13 +4813,16 @@
         ::  graph of the available edges
         ::
         =|  =edge-jug
+        ::  compile-failures: mark files which didn't compile
+        ::
+        =|  compile-failures=(map term tang)
         ::
         |-
-        ^-  [(unit ^edge-jug) _out]
+        ^-  [[(unit ^edge-jug) _compile-failures] _out]
         ::  no ?~ to prevent tmi
         ::
         ?:  =(~ queued-nodes)
-          [`edge-jug out]
+          [[`edge-jug compile-failures] out]
         ::
         =/  nodes-and-schematics
           %+  turn  queued-nodes
@@ -4826,7 +4842,7 @@
             *load-node
           ==
         ?~  maybe-path-results
-          [~ out]
+          [[~ ~] out]
         ::
         =/  nodes-and-cores
           %+  turn  u.maybe-path-results
@@ -4842,11 +4858,11 @@
           %-  perform-schematics  :*
             "ford: %walk from {<source>} to {<target>} contained failures:"
             nodes-and-cores
-            %filter-errors
+            %ignore-errors
             *load-node
           ==
         ?~  maybe-core-results
-          [~ out]
+          [[~ ~] out]
         ::  clear the queue before we process the new results
         ::
         =.  queued-nodes  ~
@@ -4859,9 +4875,15 @@
         ::  mark this node as visited
         ::
         =.  visited  (~(put in visited) key.i.cores)
+        ::  add core errors to compile failures
+        ::
+        =?  compile-failures  ?=([%error *] result.i.cores)
+          %+  ~(put by compile-failures)  mark.key.i.cores
+          message.result.i.cores
         ::
         =/  target-arms=(list load-node)
-          ?>  ?=([%success %core *] result.i.cores)
+          ?.  ?=([%success %core *] result.i.cores)
+            ~
           ?:  =(%grow type.key.i.cores)
             (get-arms-of-type %grow vase.result.i.cores)
           (get-arms-of-type %grab vase.result.i.cores)
