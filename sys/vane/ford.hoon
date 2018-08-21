@@ -1272,7 +1272,22 @@
       ==
     ==
   --
-::  +per-event: per-event core
+::  +per-event: per-event core; main build engine
+::
+::    This arm produces a gate that when called with state and event
+::    information produces the core of Ford's main build engine.
+::
+::    The main build engine core has the following entry points:
+::
+::      +start-build  start performing a build
+::      +rebuild      rerun a live build at a new date
+::      +unblock      continue a build that was waiting on a resource
+::      +cancel       stop trying to run a build and delete its tracking info
+::      +wipe         wipe the build storage to free memory
+::      +keep         resize caches, deleting entries if necessary
+::
+::    The main internal arm is +execute-loop, which is called from +start-build,
+::    +rebuild, and +unblock. +execute defines Ford's build loop.
 ::
 ++  per-event
   ::  moves: the moves to be sent out at the end of this event, reversed
@@ -1290,17 +1305,19 @@
   ::  candidate-builds: builds which might go into next-builds
   ::
   =|  candidate-builds=(set build)
-  ::  the +per-event gate; each event will have a different sample
+  ::  gate that produces the +per-event core from event information
   ::
-  ::    Not a `|_` because of the `=/`s at the beginning.
-  ::    Produces a core containing four public arms:
-  ::    +start-build, +rebuild, +unblock, and +cancel.
+  ::    Produces a core containing Ford's main build engine.
   ::
   ~%  %f  ..is  ~
   |=  [[our=@p =duct now=@da scry=sley] state=ford-state]
   ::
   ~%  %per-event  +  ~
   |%
+  ::  +finalize: extract moves and state from the +per-event core
+  ::
+  ::    Run once at the end of processing an event.
+  ::
   ++  finalize
     ^-  [(list move) ford-state]
     [(flop moves) state]
@@ -1310,12 +1327,16 @@
   ::
   ::  +start-build: perform a fresh +build, either live or once
   ::
+  ::    This might complete the build, or the build might block on one or more
+  ::    requests for resources. Calls +execute-loop.
+  ::
   ++  start-build
     ~/  %start-build
     |=  [=build live=?]
     ^-  [(list move) ford-state]
     ::
     =<  finalize
+    ::  associate :duct with :build in :ducts.state
     ::
     =.  ducts.state
       %+  ~(put by ducts.state)  duct
@@ -1323,18 +1344,39 @@
       ?:  live
         [%live in-progress=`date.build last-sent=~]
       [%once in-progress=date.build]
+    ::  register a state machine for :build in :builds.state
     ::
     =.  state  (add-build build)
+    ::  :anchor: the reason we hold onto the root of this build tree
+    ::
+    =/  =anchor  [%duct duct]
+    ::  register :duct as an anchor in :requesters.build-status
+    ::
+    ::    This establishes :build as the root build for :duct.
     ::
     =.  builds.state
       %+  ~(jab by builds.state)  build
       |=  =build-status
-      build-status(requesters (~(put in requesters.build-status) [%duct duct]))
+      build-status(requesters (~(put in requesters.build-status) anchor))
+    ::  copy :anchor into any preexisting descendants
     ::
-    =.  builds.state  (add-anchor-to-subs [%duct duct] build)
+    ::    Sub-builds will reference :build in their :clients.build-status,
+    ::    using `[%duct duct]` as the key. Some sub-builds might already
+    ::    exist if we've already started running :build, so make sure they
+    ::    know who their daddy is.
+    ::
+    =.  builds.state  (add-anchor-to-subs anchor build)
+    ::  run +execute on :build in a loop until it completes or blocks
     ::
     (execute-loop (sy [build ~]))
-  ::  +rebuild: rebuild any live builds based on +resource updates
+  ::  +rebuild: rebuild a live build based on +resource updates
+  ::
+  ::    For every changed resource, run the %scry build for that
+  ::    for that resource. Then rebuild upward using the main +execute-loop
+  ::    until all relevant builds either complete or block on external
+  ::    resources. Use dependency tracking information from the previous
+  ::    run of this live build to inform the dependency tracking for this
+  ::    new rebuild.
   ::
   ++  rebuild
     ~/  %rebuild
@@ -1346,9 +1388,11 @@
     ^-  [(list move) ford-state]
     ::
     =<  finalize
+    ::  mark this subscription as complete now that we've heard a response
     ::
     =.  pending-subscriptions.state
       +:(del-request pending-subscriptions.state subscription duct)
+    ::  for every changed resource, create a %scry build
     ::
     =/  builds=(list build)
       %+  turn  ~(tap in care-paths)
@@ -1356,6 +1400,7 @@
       ^-  build
       ::
       [new-date [%scry [%c care rail=[disc spur=(flop path)]]]]
+    ::  sanity check; only rebuild live builds, not once builds
     ::
     =/  duct-status  (~(got by ducts.state) duct)
     ?>  ?=(%live -.live.duct-status)
@@ -1368,6 +1413,17 @@
     =.  ducts.state
       %+  ~(put by ducts.state)  duct
       duct-status(in-progress.live `new-date)
+    ::  copy the previous build's tree as provisional sub-builds
+    ::
+    ::    This provides an upward rebuild path from leaves to root,
+    ::    so that once the %scry builds complete, we'll know to rebuild
+    ::    their clients. This process will continue up through rebuilding
+    ::    the root build.
+    ::
+    ::    If the build at this new date ends up with a different set of
+    ::    dependencies from its previous incarnation, provisional sub-builds
+    ::    that weren't actually used will be removed in
+    ::    +cleanup-orphaned-provisional-builds.
     ::
     =/  old-root=build
       [date.u.last-sent.live.duct-status root-schematic.duct-status]
@@ -1375,11 +1431,29 @@
       (copy-build-tree-as-provisional old-root new-date=new-date)
     ::  gather all the :builds, forcing reruns
     ::
+    ::    The normal +gather logic would promote the previous results
+    ::    for these %scry builds, since we have subscriptions on them.
+    ::    We pass `force=%.y` to ensure the builds get enqueued instead
+    ::    of promoted.
+    ::
     =.  ..execute  (gather (sy builds) force=%.y)
     ::  rebuild resource builds at the new date
     ::
+    ::    This kicks off the main build loop, which will first build
+    ::    :builds, then rebuild upward toward the root. If the whole
+    ::    build tree completes synchronously, then this will produce
+    ::    %made moves at the end of this event. Otherwise, it will
+    ::    block on resources and complete during a later event.
+    ::
     (execute-loop ~)
   ::  +unblock: continue builds that had blocked on :resource
+  ::
+  ::    A build can be stymied temporarily if it depends on a resource
+  ::    that must be fetched asynchronously. +unblock is called when
+  ::    we receive a response to a resource request that blocked a build.
+  ::
+  ::    We pick up the build from where we left off, starting with the
+  ::    %scry build that blocked on this resource last time we tried it.
   ::
   ++  unblock
     ~/  %unblock
@@ -1402,18 +1476,23 @@
     ::    to be used during this event before it goes out of scope.
     ::
     =.  scry-results  (~(put by scry-results) scry-request scry-result)
+    ::  mark this +scry-request as complete now that we have a response
     ::
     =.  pending-scrys.state
       +:(del-request pending-scrys.state scry-request duct)
+    ::  update :unblocked-build's state machine to reflect its new status
     ::
     =/  unblocked-build=build  (scry-request-to-build scry-request)
     =.  builds.state
       %+  ~(jab by builds.state)  unblocked-build
       |=  =build-status
       build-status(state [%unblocked ~])
+    ::  jump into the main build loop, starting with :unblocked-build
     ::
     (execute-loop (sy unblocked-build ~))
   ::  +wipe: forcibly decimate build results from the state
+  ::
+  ::    TODO: more detailed documentation
   ::
   ++  wipe
     ~/  %wipe
@@ -1504,7 +1583,14 @@
       ::
       $(stale-builds t.stale-builds)
     --
-  ::  +keep: resize cache to :max entries
+  ::  +keep: resize caches
+  ::
+  ::    Ford maintains two caches: a :build-cache for caching previously
+  ::    completed build trees, and a :compiler-cache for caching various
+  ::    compiler operations that tend to be shared among multiple builds.
+  ::
+  ::    To handle this command, we reset the maximum sizes of both of
+  ::    these caches, removing entries from the caches if necessary.
   ::
   ++  keep
     ~/  %keep
@@ -1523,6 +1609,7 @@
       =.  state  (remove-anchor-from-root root-build.i.pops [%cache id.i.pops])
       ::
       $(pops t.pops)
+    ::  resize the :compiler-cache
     ::
     %_    state
         compiler-cache
@@ -1834,6 +1921,10 @@
   ::+|  construction
   ::
   ::  +execute-loop: +execute repeatedly until there's no more work to do
+  ::
+  ::    Keep running +execute until all relevant builds either complete or
+  ::    block on external resource requests. See +execute for details of each
+  ::    loop execution.
   ::
   ::    This implementation is for simplicity. In the longer term, we'd
   ::    like to just perform a single run through +execute and set a Behn timer
@@ -5939,22 +6030,37 @@
   --
 --
 ::
-::  end =~
+::  end the =~
 ::
 .  ==
 ::
-::::  vane core
+::::  vane interface
   ::
+::  begin with a default +axle as a blank slate
+::
 =|  ax=axle
+::  a vane is activated with current date, entropy, and a namespace function
+::
 |=  [now=@da eny=@ scry-gate=sley]
 ::  allow jets to be registered within this core
 ::
 ~%  %ford  ..is  ~
-::
-::  ^?  ::  to be added to real vane
-::
 |%
 ::  +call: handle a +task:able from arvo
+::
+::    Ford can be tasked with:
+::
+::      %build: perform a build
+::      %keep: resize caches
+::      %kill: cancel a build
+::      %wipe: clear memory
+::
+::    The general procedure is for Ford to determine the `our` identity
+::    for this +task and operate on the :ship-state for that identity.
+::
+::    Most requests get converted into operations to be performed inside
+::    the +per-event core, which is Ford's main build engine. The %keep
+::    and %wipe requests work across all identities stored in Ford, though.
 ::
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task:able)]
@@ -6059,6 +6165,27 @@
     ==
   ==
 ::  +take: receive a response from another vane
+::
+::    A +take is a response to a request that Ford made of another vane.
+::
+::    Ford decodes the type of response based on the +wire in the +take.
+::    The possibilities are:
+::
+::      %clay-sub: Clay notification of an update to a subscription
+::
+::        If Ford receives this, it will rebuild one or more live builds,
+::        taking into account the new date and changed resources.
+::
+::      %scry-request: Clay response to a request for a resource
+::
+::        If Ford receives this, it will continue building one or more builds
+::        that were blocked on this resource.
+::
+::    The general procedure is for Ford to determine the `our` identity
+::    for this +task and operate on the :ship-state for that identity.
+::
+::    The +sign gets converted into operations to be performed inside
+::    the +per-event core, which is Ford's main build engine.
 ::
 ++  take
   |=  [=wire =duct wrapped-sign=(hypo sign)]
