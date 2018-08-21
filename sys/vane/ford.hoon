@@ -4759,6 +4759,8 @@
           --
       ::
       |^  ^-  build-receipt
+          ?:  =(source target)
+            (return-result %success %walk ~)
           ::  load all marks.
           ::
           =^  marks-result  out
