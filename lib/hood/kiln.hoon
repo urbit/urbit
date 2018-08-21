@@ -70,8 +70,8 @@
           {$merg wire @p @tas @p @tas case germ}        ::
           {$perm wire ship desk path rite}              ::
           {$poke wire dock pear}                        ::
-          {$wipe wire @p ~}                             ::
-          [%keep wire max-cache-size=@ud]               ::
+          {$wipe wire @ud}                              ::
+          [%keep wire compiler-cache-size=@ud build-cache-size=@ud]
           {$wait wire @da}                              ::
           {$warp wire sock riff}                        ::
       ==                                                ::
@@ -277,10 +277,11 @@
   abet:(emit %wait /kiln/overload/(scot %dr recur) start)
 ::
 ++  poke-wipe-ford
-  |=(~ abet:(emit %wipe /kiln our ~))
+  |=(percent=@ud abet:(emit %wipe /kiln percent))
 ::
 ++  poke-keep-ford
-  |=(max-cache-size=@ud abet:(emit %keep /kiln max-cache-size))
+  |=  [compiler-cache-size=@ud build-cache-size=@ud]
+  abet:(emit %keep /kiln compiler-cache-size build-cache-size)
 ::
 ++  mack
   |=  {way/wire saw/(unit tang)}

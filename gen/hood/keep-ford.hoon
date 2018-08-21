@@ -7,7 +7,7 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        [[max-cache-size=@ud ~] ~]
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [[compiler-cache-size=@ud build-cache-size=@ud ~] ~]
     ==
-[%kiln-keep-ford max-cache-size]
+[%kiln-keep-ford compiler-cache-size build-cache-size]
