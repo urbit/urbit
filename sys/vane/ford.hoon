@@ -1,4 +1,127 @@
 !:
+::  ford: build system vane
+::
+::    Ford is a functional reactive build system.
+::
+::    A Ford build is a function of the Urbit namespace and a date that
+::    produces marked, typed data or an error.
+::
+::    The function in the definition of a build is called a "schematic,"
+::    and it's represented by a Hoon data structure with twenty-five sub-types.
+::    A schematic is a (possibly trivial) DAG of sub-builds to be performed.
+::    The different schematic sub-types transform the results of their
+::    sub-builds in different ways.
+::
+::    We call the date in the definition of a build the "formal date" to
+::    distinguish it from the time at which the build was performed.
+
+::    Each build is referentially transparent with respect to its formal date:
+::    ask to run that function on the namespace and a particular formal date,
+::    and Ford will always produce the same result.
+::
+::    We can now say Ford is a functional build system, since each build is a
+::    function. We have not yet explained how it's a functional reactive build
+::    system. With Ford, you can subscribe to results of a build. Ford tracks
+::    the result of a "live" build consisting of a static schematic and the
+::    ever-changing current date. Whenever this live build's result changes,
+::    Ford sends you the new result and the formal date of the build (the date
+::    which would cause the same result if you asked Ford to build that
+::    schematic again). This is in fact a classic FRP paradigm.
+::
+::    The implementation is event-driven, like the rest of Urbit. While
+::    performing a build, Ford registers each namespace access as a dependency
+::    and also notes whether the dependency is "live," meaning the path within
+::    the namespace updates with time. For example a live Clay dependency would
+::    update the +case within the +beam over time.
+::
+::    A request to perform a build without subscribing to its future changes is
+::    called a "once build."
+::
+::    After finishing a build, Ford subscribes to updates on the build's
+::    dependencies. For now, this just means it subscribes to Clay for file
+::    changes. Whenever any of the files in the subscription have new contents,
+::    Clay will notify Ford, which will then rerun any live builds that depend
+::    on any of the changed files and send its subscribers the new results.
+::
+::    This matches the semantics of live builds defined above. If someone had
+::    asked for a build of the schematic with a formal date d2 just before the
+::    changed Clay files, Ford would respond with the result of the previous
+::    build with formal date d1, which would still be an accurate
+::    representation of the schematic's result at d2, since Ford knows none of
+::    its dependencies changed between d1 and d2.
+::
+::    Note that Ford can only calculate dependencies after running a build,
+::    not before. This is because Ford can be thought of as an interpreter for
+::    schematics, rather than a compiler, in the sense that it can't have a
+::    dependency-gathering step followed by a build step. The dependencies of
+::    some schematics must be calculated based on results, e.g. the %alts
+::    schematic, which tries a sequence of sub-builds until one succeeds. If
+::    the first sub-build succeeds, the build depends only on that first
+::    sub-build, but if the first fails and the second succeeds, the build
+::    depends on both.
+::
+::    This dynamicity implies we don't know what we depend on until we depend
+::    on it. Most build systems have this property, but this part of Ford's
+::    job is easier than for most Unix-based build systems: Ford draws all
+::    resources from an immutable namespace, and it can track every access of
+::    that namespace.
+::
+::    Ford might produce a build's result asynchronously, in a subsequent Arvo
+::    event. This happens when accessing the namespace doesn't complete
+::    synchronously, such as when grabbing a file from another ship. Ford
+::    guarantees it will respond with build results in chronological order
+::    using the formal date, not the order in which the builds completed.
+::
+::    Ford does not guarantee it will notify a subscriber of a changed build
+::    only once per change. In common usage it will not send duplicate
+::    notifications, but it might if its cache was recently wiped.
+::
+::    Ford uses dependency tracking, caching, and results of previous builds
+::    to eliminate excess work. When rerunning a live build, Ford "promotes"
+::    previous results to the new time if the build's dependencies hvaen't
+::    changed since the previous build's formal date. Ford does this check
+::    for each build in a tree of sub-builds under the "root build," which
+::    is the build that was requested directly.
+::
+::    In addition to the main %build +task sub-type, Ford also supports
+::    four other commands:
+::
+::    %kill: cancel a build
+::
+::      A once build in progress will be canceled, including all of its
+::      sub-builds that aren't part of any other builds.
+::
+::      A live build's subscriptions will be canceled, its completed results
+::      will be deleted, and its dependency tracking information will be
+::      deleted. If a rebuild is in progress, it will be canceled.
+::
+::    %keep: resize caches
+::
+::      Ford maintains two caches: a :compiler-cache that stores
+::      content-addressed compiler operations, such as parsing, compiling,
+::      and type inference; and a :build-cache that stores previously
+::      completed build trees along with their results and dependency tracking.
+::
+::      The %keep command resets the maximum sizes of these caches, deleting
+::      entries if necessary.
+::
+::    %wipe: decimate storage
+::
+::      The %wipe command removes build results from storage to free memory.
+::      It deletes the specified percentage of build results, in LRU
+::      (Least Recently Used) order. It also removes entries from the compiler
+::      cache. It does not remove dependency tracking information.
+::
+::    %wegh: report memory usage
+::
+::      Like all vanes, Ford can also be asked to produce a human-readable
+::      report of its memory usage. Nock cannot calculate its own memory use
+::      directly, so instead we produce the nouns themselves, which the runtime
+::      "weighs" based on its memory model.
+::
+::    For details on Ford's implementation, consult Ford's vane interface core
+::    near the bottom of the file.
+::
 ::  pit: a +vase of the hoon+zuse kernel, which is a deeply nested core
 ::
 |=  pit=vase
