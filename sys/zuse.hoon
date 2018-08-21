@@ -308,8 +308,7 @@
     ++  contracts
       |%
       ++  ships
-        0xe083.4579.269e.ac6b.eca2.
-          882a.6a21.f6fb.0b1d.7196
+        0x6c22.3e68.fefe.b0d2.aaa1.3d5a.3b12.f50f.8b6b.498a
       --
     ::
     ::  hashes of ship event signatures
