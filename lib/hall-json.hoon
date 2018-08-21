@@ -37,8 +37,8 @@
         |=  a/coin
         ^-  (unit place)
         ?+  a  ~
-          {$$ $da @da}  `p.a
-          {$$ $ud @ud}  `p.a
+          [%$ %da @da]  `p.a
+          [%$ %ud @ud]  `p.a
         ==
       nuck:so
     ==
@@ -71,6 +71,9 @@
   ++  dank                                              :::  tank
     |=  a/tank
     ?:  ?=($leaf -.a)  (frond %leaf (tape p.a))
+    ::  TODO: No idea what a plum is, but it was recently added
+    ::
+    ?:  ?=($plum -.a)  (frond %plum [%o ~])
     %+  frond  -.a
     %-  pairs
     ?-  -.a

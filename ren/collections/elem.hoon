@@ -4,7 +4,7 @@
 /?  309
 /+  collections, cram
 /=  gas  /$  fuel:html
-/=  itm  /%  /collections-web-item/
+/=  itm  /collections-web-item/
 ::
 ::
 /=  collection-post     

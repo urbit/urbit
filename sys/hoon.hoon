@@ -5137,7 +5137,7 @@
 ++  ban  (just '>')
 ++  bar  (just '|')
 ++  bas  (just '\\')  ::  XX deprecated
-++  bat  (just '\\')  
+++  bat  (just '\\')
 ++  buc  (just '$')   ::  XX deprecated
 ++  bus  (just '$')
 ++  cab  (just '_')
@@ -5145,6 +5145,7 @@
 ++  col  (just ':')
 ++  com  (just ',')
 ++  dot  (just '.')
+++  fas  (just '/')  ::  XX deprecated?
 ++  gal  (just '<')   ::  XX deprecated
 ++  gar  (just '>')   ::  XX deprecated
 ++  vat  (just '@')   ::  pronounced "at"
@@ -5153,7 +5154,7 @@
 ++  ket  (just '^')
 ++  leb  (just '{')
 ++  led  (just '<')
-++  lob  (just '{') 
+++  lob  (just '{')
 ++  lit  (just '(')
 ++  lac  (just '[')
 ++  lus  (just '+')
@@ -5163,7 +5164,7 @@
 ++  rac  (just ']')
 ++  reb  (just '}')
 ++  rob  (just '}')
-++  rit  (just ')') 
+++  rit  (just ')')
 ++  say  (just '\'')
 ++  sig  (just '~')
 ++  tar  (just '*')

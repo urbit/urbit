@@ -1,7 +1,7 @@
 /+  collections
 /=  gas  /$  fuel:html
 /=  raw
-  /^  $?(raw-item:collections ~)
+  /^  $@(~ raw-item:collections)
   /|  /;  |=  [a=(map knot cord) b=@t ~]
           ^-  raw-item:collections
           [%umd a b]
@@ -13,11 +13,12 @@
   ==
 ::
 /=  col
-  /^  $?  [config:collections (map knot item:collections) ~]
-          [%no-config (map knot item:collections) ~]
-          ~
+  /^  $@  ~
+      $%  [%config config=config:collections items=(map knot item:collections) ~]
+          [%no-config items=(map knot item:collections) ~]
       ==
-  /|  /.  /collections-config/
+  /|  /.  /~  %config
+          /collections-config/
           /_  /collections-item/
       ==
       ::
@@ -27,6 +28,7 @@
       ::
       /~  ~
   ==
+
 ::
 ::
 ^-  item:collections
@@ -38,11 +40,11 @@
 ?:  ?=(%no-config -.col)
   ?:  =(s.bem.gas /collections/web)
     ?~  raw
-      [%collection *config:collections +<.col]
-    [%both [*config:collections +<.col] raw]
+      [%collection *config:collections items.col]
+    [%both [*config:collections items.col] raw]
   ?~  raw
     !!
   [%raw raw]
 ?~  raw
-  [%collection -.col +<.col]
-[%both [-.col +<.col] raw]
+  [%collection config.col items.col]
+[%both [config.col items.col] raw]
