@@ -37,7 +37,7 @@
     |=  [new=deyd old=deyd]
     ^-  %&
     ?>  (melt new old)
-    ?>  =((shaf %meld (sham q.new)) (need (sure:as:(com:nu:crub:crypto r.q.old) *code p.new)))
+    ?>  =((shaf %meld (sham q.new)) (need (sure:as:(com:nu:crub:crypto r.q.old) p.new)))
     %&
   ::
   ++  melt                                              ::  proper connect
@@ -77,7 +77,7 @@
         ?:  &(r.wed =(rac %czar))  %&
         ?>  =(0 p.p.q.wed)
         ?>  =(fig:ex:loy ?+(rac !! %czar (zeno r.p.q.wed), %pawn r.p.q.wed))
-        ?>  =((shaf %self (sham q.wed)) (need (sure:as:loy *code p.wed)))
+        ?>  =((shaf %self (sham q.wed)) (need (sure:as:loy p.wed)))
         %&
     %&
   ::
@@ -439,7 +439,7 @@
           ?.  =(pub r.q.i.lew.wod.u.rad)  [~ +>.$]
           [[~ lew.wod.u.rad] +>.$]
         =+  syp=[[0 [~ p.nes] her now] ges pub]
-        =+  ded=[(sign:as:q.nes *code (shaf %meld (sham syp))) syp fak.ton]
+        =+  ded=[(sign:as:q.nes (shaf %meld (sham syp))) syp fak.ton]
         =+  wil=[ded law.saf]
         ?>  =(wil (grip wil ~))
         :-  [~ wil]
@@ -642,13 +642,13 @@
               %^    jam
                   [~ `life`p.yig]
                 bil
-              (sign:as:q.yig tuy hom)
+              (sign:as:q.yig hom)
             :-  %full
               =+  cay=cluy
               %^    jam
                   [`life`p.cay `life`p.yig]
                 bil
-              (seal:as:q.yig pub:ex:r.cay tuy hom)
+              (seal:as:q.yig pub:ex:r.cay (jam tuy hom))
           --                                            ::  --zuul:lax:as:go
         --                                              ::  --lax:as:go
       ::
@@ -988,7 +988,7 @@
         %^    ~(ha go ton.fox)
             our
           `mace`[[0 rig] ~]
-        `wyll`[[(sign:as:loy *@ (shaf %self (sham syp))) syp fak] ~]
+        `wyll`[[(sign:as:loy (shaf %self (sham syp))) syp fak] ~]
           fak.ton
         fak
       ==
@@ -1006,7 +1006,7 @@
       ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
       =+  mac=`mace`[[0 sec:ex:loy] ~]
       =+  syp=`step`[`bray`[0 ~ our now] [%en %czar ~] pub:ex:loy]
-      =+  ded=`deyd`[(sign:as:loy *@ (shaf %self (sham syp))) syp fak]
+      =+  ded=`deyd`[(sign:as:loy (shaf %self (sham syp))) syp fak]
       =+  buq=`buck`[mac [ded ~]]
       =:  ton.fox  (~(ha go ton.fox) our buq)
           zac.fox  (~(put by zac.fox) our *corn)
@@ -1244,7 +1244,8 @@
                 =+  wug=cluy:diz
                 ?>  =(q.p.mex p.wug)
                 =+  gey=(sev:gus p.p.mex)
-                =+  mes=(need (tear:as:q.gey pub:ex:r.wug r.mex))
+                =+  sem=(need (tear:as:q.gey pub:ex:r.wug r.mex))
+                =+  mes=((hard (pair @ @)) (cue sem))
                 =.  diz  (wasc:diz p.mes)
                 =.  puz  (bilk:puz now)
                 (west(msg q.mes))
@@ -1255,7 +1256,7 @@
                 =.  diz  (deng:diz q.mex)
                 =+  wug=cluy:diz
                 ?>  =(q.p.mex p.wug)
-                =+  mes=(need (sure:as:r.wug *code r.mex))
+                =+  mes=(need (sure:as:r.wug r.mex))
                 =.  puz  (bilk:puz now)
                 (west(msg mes))
               ==

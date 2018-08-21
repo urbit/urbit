@@ -448,11 +448,10 @@
   ++  acru  $_  ^?                                      ::  asym cryptosuite
     |%                                                  ::  opaque object
     ++  as  ^?                                          ::  asym ops
-      |%  ++  seal  |~({a/pass b/@ c/@} *@)             ::  encrypt to a
-          ++  sign  |~({a/@ b/@} *@)                    ::  certify as us
-          ++  sure  |~({a/@ b/@} *(unit @))             ::  authenticate from us
-          ++  tear  |~  {a/pass b/@}                    ::  accept from a
-                    *(unit {p/@ q/@})                   ::
+      |%  ++  seal  |~({a/pass b/@} *@)                 ::  encrypt to a
+          ++  sign  |~(a/@ *@)                          ::  certify as us
+          ++  sure  |~(a/@ *(unit @))                   ::  authenticate from us
+          ++  tear  |~({a/pass b/@} *(unit @))          ::  accept from a
       --  ::as                                          ::
     ++  de  |~({a/@ b/@} *(unit @))                     ::  symmetric de, soft
     ++  dy  |~({a/@ b/@} *@)                            ::  symmetric de, hard
@@ -465,8 +464,8 @@
       --  ::ex                                          ::
     ++  nu  ^?                                          ::  reconstructors
       |%  ++  pit  |~({a/@ b/@} ^?(..nu))               ::  from [width seed]
-          ++  nol  |~(a/@ ^?(..nu))                     ::  from naked ring
-          ++  com  |~(a/@ ^?(..nu))                     ::  from naked pass
+          ++  nol  |~(a/ring ^?(..nu))                  ::  from ring
+          ++  com  |~(a/pass ^?(..nu))                  ::  from pass
       --  ::nu                                          ::
     --  ::acru                                          ::
   ++  bait  {p/skin q/@ud r/dove}                       ::  fmt nrecvd spec
@@ -3587,32 +3586,31 @@
       |%
       ::                                                ::  ++sign:as:crub:
       ++  sign                                          ::
-        |=  {@ msg/@}
+        |=  msg=@
         ^-  @ux
         ?~  sek  ~|  %pubkey-only  !!
         (jam [(sign:ed msg sgn.u.sek) msg])
       ::                                                ::  ++sure:as:crub:
       ++  sure                                          ::
-        |=  {@ txt/@}
+        |=  txt=@
         ^-  (unit @ux)
         =+  ((hard {sig/@ msg/@}) (cue txt))
         ?.  (veri:ed sig msg sgn.pub)  ~
         (some msg)
       ::                                                ::  ++seal:as:crub:
       ++  seal                                          ::
-        |=  {bpk/pass m1/@ m2/@}
+        |=  {bpk/pass msg/@}
         ^-  @ux
         ?~  sek  ~|  %pubkey-only  !!
         ?>  =('b' (end 3 1 bpk))
         =+  pk=(rsh 8 1 (rsh 3 1 bpk))
         =+  shar=(shax (shar:ed pk cry.u.sek))
-        =+  msg=(jam m1 m2)
-        =+  smsg=(sign ~ msg)
+        =+  smsg=(sign msg)
         (jam (~(en siva:aes shar ~) smsg))
       ::                                                ::  ++tear:as:crub:
       ++  tear                                          ::
         |=  {bpk/pass txt/@}
-        ^-  (unit (pair @ux @ux))
+        ^-  (unit @ux)
         ?~  sek  ~|  %pubkey-only  !!
         ?>  =('b' (end 3 1 bpk))
         =+  pk=(rsh 8 1 (rsh 3 1 bpk))
@@ -3620,9 +3618,7 @@
         =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
         =+  try=(~(de siva:aes shar ~) iv len cph)
         ?~  try  ~
-        =+  veri=(sure:as:(com:nu:crub bpk) ~ u.try)
-        ?~  veri  ~
-        (some ((hard (pair @ux @ux)) (cue u.veri)))
+        (sure:as:(com:nu:crub bpk) u.try)
       --  ::as
     ::                                                  ::  ++de:crub:crypto
     ++  de                                              ::  decrypt
@@ -3713,12 +3709,12 @@
       ::
       =/  secret-key  %-  shaz
           'Let there be no duplicity when taking a stand against him.'
-      =/  signed-key   (sign:as.ali ~ secret-key)
-      =/  crypted-key  (seal:as.ali pub:ex.bob-pub ~ signed-key)
+      =/  signed-key   (sign:as.ali secret-key)
+      =/  crypted-key  (seal:as.ali pub:ex.bob-pub signed-key)
       ::  bob decrypts and verifies
       =/  decrypt-key-attempt  (tear:as.bob pub:ex.ali-pub crypted-key)
       =/  decrypted-key    ~|  %decrypt-fail  (need decrypt-key-attempt)
-      =/  verify-key-attempt   (sure:as.ali-pub ~ q.decrypted-key)
+      =/  verify-key-attempt   (sure:as.ali-pub decrypted-key)
       =/  verified-key     ~|  %verify-fail  (need verify-key-attempt)
       ::  bob encrypts with symmetric key
       =/  crypted-msg  (en.bob verified-key msg)
