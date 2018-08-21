@@ -71,11 +71,11 @@
     ::
        (rash type.txs ;~(pfix (jest 'type: ') (cook crip (star next)))) 
     ::
-       (rash com.txs ;~(pfix (jest 'comments: ') (flag %y %n)))
+       (rash com.txs ;~(pfix (jest 'comments: ') (fuss %y %n)))
     ::
        (rush sk.txs ;~(pfix (jest 'sort-key: ') dem:ag))
     ::
-       (rash vis.txs ;~(pfix (jest 'visible: ') (flag %y %n)))
+       (rash vis.txs ;~(pfix (jest 'visible: ') (fuss %y %n)))
     ==
   ++  noun  config:collections
   --
