@@ -82,6 +82,14 @@
         max-size=_2.048
         depth=_1
     ==
+::  +capped-queue: a +qeu with a maximum number of entries
+::
+++  capped-queue
+  |*  item-type=mold
+  $:  queue=(qeu item-type)
+      size=@ud
+      max-size=_64
+  ==
 --
 |%
 ::  +by-clock: interface core for a cache using the clock replacement algorithm
@@ -212,6 +220,56 @@
       size    0
     ==
   --
+::  +to-capped-queue: interface door for +capped-queue
+::
+++  to-capped-queue
+  |*  item-type=mold
+  |_  queue=(capped-queue item-type)
+  ::  +put: enqueue :item, possibly popping and producing an old item
+  ::
+  ++  put
+    |=  item=item-type
+    ^-  [(unit item-type) _queue]
+    ::   are we already at max capacity?
+    ::
+    ?.  =(size.queue max-size.queue)
+      ::  we're below max capacity, so push and increment size
+      ::
+      =.  queue.queue  (~(put to queue.queue) item)
+      =.  size.queue   +(size.queue)
+      ::
+      [~ queue]
+    ::  we're at max capacity, so pop before pushing; size is unchanged
+    ::
+    =^  oldest  queue.queue  ~(get to queue.queue)
+    =.  queue.queue          (~(put to queue.queue) item)
+    ::
+    [`oldest queue]
+  ::  +get: pop an item off the queue, adjusting size
+  ::
+  ++  get
+    ^-  [item-type _queue]
+    ::
+    =.  size.queue           (dec size.queue)
+    =^  oldest  queue.queue  ~(get to queue.queue)
+    ::
+    [oldest queue]
+  ::  change the :max-size of the queue, popping items if necessary
+  ::
+  ++  resize
+    =|  pops=(list item-type)
+    |=  new-max=@ud
+    ^+  [pops queue]
+    ::  we're not overfull, so no need to pop off more items
+    ::
+    ?:  (gte new-max size.queue)
+      [(flop pops) queue(max-size new-max)]
+    ::  we're above capacity; pop an item off and recurse
+    ::
+    =^  oldest  queue  get
+    ::
+    $(pops [oldest pops])
+  --
 --
 |%
 ::  +axle: overall ford state
@@ -267,12 +325,37 @@
       ::  pending-subscriptions: outgoing subscriptions on live resources
       ::
       pending-subscriptions=(request-tracker subscription)
-      ::  build-cache: fifo queue of previous completed ducts.
+      ::  build-cache: fifo queue of completed root builds
       ::
-      ::  build-cache=(qeu duct)
+      $=  build-cache
+      $:  ::  next-anchor-id: incrementing identifier for cache anchors
+          ::
+          next-anchor-id=@ud
+          ::  queue: fifo queue of root builds identified by anchor id
+          ::
+          queue=(capped-queue build-cache-key)
+      ==
       ::  compiler-cache: clock based cache of build results
       ::
       compiler-cache=(clock compiler-cache-key build-result)
+  ==
+::  +anchor: something which holds on to builds
+::
+::    An anchor is a reference which keeps builds. This is either a %duct, in
+::    which case the build is live because a duct is waiting for a response, or
+::    a %cache, in which case the anchor is a cached build.
+::
+::    When a duct would be removed from a build, the %duct anchor is replaced
+::    with a %cache anchor. This %cache anchor refers to a FIFO queue of cached
+::    builds.
+::
++=  anchor
+  $%  ::  %duct: this is anchored on a duct
+      ::
+      [%duct =duct]
+      ::  %cache: this is anchored to a cache entry
+      ::
+      [%cache id=@ud]
   ==
 ::  +build-status: current data for a build, including construction status
 ::
@@ -283,10 +366,10 @@
 +=  build-status
   $:  ::  requesters: ducts for whom this build is the root build
       ::
-      requesters=(set duct)
+      requesters=(set anchor)
       ::  clients: per duct information for this build
       ::
-      clients=(jug duct build)
+      clients=(jug anchor build)
       ::  subs: sub-builds of this build, for whom this build is a client
       ::
       subs=(map build build-relation)
@@ -454,6 +537,16 @@
       [%ride formula=hoon subject=vase]
       [%slim subject-type=type formula=hoon]
       [%slit gate=type sample=type]
+  ==
+::  +build-cache-key: key for the fifo cache of completed build trees
+::
++=  build-cache-key
+  $:  ::  id: incrementing identifier for an +anchor
+      ::
+      id=@ud
+      ::  root-build: the root build associated with this anchor
+      ::
+      root-build=build
   ==
 ::  +build-receipt: result of running +make
 ::
@@ -1113,9 +1206,9 @@
     =.  builds.state
       %+  ~(jab by builds.state)  build
       |=  =build-status
-      build-status(requesters (~(put in requesters.build-status) duct))
+      build-status(requesters (~(put in requesters.build-status) [%duct duct]))
     ::
-    =.  builds.state  (add-duct-to-subs duct build)
+    =.  builds.state  (add-anchor-to-subs [%duct duct] build)
     ::
     (execute-loop (sy [build ~]))
   ::  +rebuild: rebuild any live builds based on +resource updates
@@ -1131,7 +1224,6 @@
     ::
     =<  finalize
     ::
-    ::  ~&  [%rebuild subscription=subscription pending-subscriptions.state]
     =.  pending-subscriptions.state
       +:(del-request pending-subscriptions.state subscription duct)
     ::
@@ -1293,15 +1385,28 @@
   ::
   ++  keep
     ~/  %keep
-    |=  max=@ud
+    |=  [compiler-cache-size=@ud build-cache-size=@ud]
     ^+  state
+    ::  pop old builds out of :build-cache and remove their cache anchors
+    ::
+    =^  pops  queue.build-cache.state
+      %.  build-cache-size
+      ~(resize (to-capped-queue build-cache-key) queue.build-cache.state)
+    ::
+    =.  state
+      |-  ^+  state
+      ?~  pops  state
+      ::
+      =.  state  (remove-anchor-from-root root-build.i.pops [%cache id.i.pops])
+      ::
+      $(pops t.pops)
     ::
     %_    state
         compiler-cache
       %-  %~  resize
               (by-clock compiler-cache-key build-result)
               compiler-cache.state
-      max
+      compiler-cache-size
     ==
   ::  +cancel: cancel a build
   ::
@@ -1332,7 +1437,7 @@
       =/  root-build=build  [in-progress.live root-schematic]:u.duct-status
       ::
       =.  ..execute  (cancel-scrys root-build)
-      =.  state  (remove-duct-from-root root-build)
+      =.  state  (remove-anchor-from-root root-build [%duct duct])
       ..execute
     ::  if the duct was live and has an unfinished build, cancel it
     ::
@@ -1341,7 +1446,7 @@
       =/  root-build=build  [u.in-progress.live root-schematic]:u.duct-status
       ::
       =.  ..execute  (cancel-scrys root-build)
-      =.  state  (remove-duct-from-root root-build)
+      =.  state  (remove-anchor-from-root root-build [%duct duct])
       ..execute
     ::  if there is no completed build for the live duct, we're done
     ::
@@ -1351,7 +1456,7 @@
     ::
     =/  root-build=build  [date.u.last-sent root-schematic.u.duct-status]
     ::
-    =.  state  (remove-duct-from-root root-build)
+    =.  state  (remove-anchor-from-root root-build [%duct duct])
     ::
     ?~  subscription.u.last-sent
       ..execute
@@ -1370,31 +1475,113 @@
     =.  ..execute  (cancel-scry-request i.blocked-sub-scrys)
     ::
     $(blocked-sub-scrys t.blocked-sub-scrys)
-  ::  +remove-duct-from-root: remove :duct from a build tree
+  ::  +move-root-to-cache: replace :duct with a %cache anchor in :build's tree
   ::
-  ++  remove-duct-from-root
-    ~/  %remove-duct-from-root
+  ++  move-root-to-cache
+    ~/  %move-root-to-cache
     |=  =build
     ^+  state
-    ::  ~&  [%remove-duct-from-root (build-to-tape build) duct]
+    ::  obtain the new cache id and increment the :next-anchor-id in the state
+    ::
+    =^  new-id  next-anchor-id.build-cache.state
+      =/  id=@ud  next-anchor-id.build-cache.state
+      [id +(id)]
+    ::  replace the requester in the root build
     ::
     =.  builds.state
       %+  ~(jab by builds.state)  build
       |=  =build-status
-      build-status(requesters (~(del in requesters.build-status) duct))
+      %_    build-status
+          requesters
+        =-  (~(del in -) [%duct duct])
+        =-  (~(put in -) [%cache new-id])
+        requesters.build-status
+      ==
+    ::  enqueue :build into cache, possibly popping and deleting a stale build
     ::
-    =.  builds.state  (remove-duct-from-subs build)
+    =^  oldest  queue.build-cache.state
+      %.  [new-id build]
+      ~(put (to-capped-queue build-cache-key) queue.build-cache.state)
+    ::
+    =?    state
+        ?=(^ oldest)
+      (remove-anchor-from-root root-build.u.oldest [%cache id.u.oldest])
+    ::  recursively replace :clients in :build and descendants
+    ::
+    |-  ^+  state
+    ::
+    =/  client-status=build-status  (~(got by builds.state) build)
+    =/  subs=(list ^build)  ~(tap in ~(key by subs.client-status))
+    ::
+    |-  ^+  state
+    ?~  subs  state
+    ::
+    =.  builds.state
+      %+  ~(jab by builds.state)  i.subs
+      |=  =build-status
+      %_    build-status
+          clients
+        =/  old-clients-on-duct  (~(get ju clients.build-status) [%duct duct])
+        ::
+        =-  (~(del by -) [%duct duct])
+        =-  (~(put by -) [%cache new-id] old-clients-on-duct)
+        clients.build-status
+      ==
+    ::
+    =.  state  ^$(build i.subs)
+    ::
+    $(subs t.subs)
+  ::  +remove-anchor-from-root: remove :anchor from :build's tree
+  ::
+  ++  remove-anchor-from-root
+    ~/  %remove-anchor-from-root
+    |=  [=build =anchor]
+    ^+  state
+    ::
+    =.  builds.state
+      %+  ~(jab by builds.state)  build
+      |=  =build-status
+      build-status(requesters (~(del in requesters.build-status) anchor))
+    ::
+    =.  builds.state  (remove-anchor-from-subs build anchor)
     ::
     (cleanup build)
-  ::  +add-ducts-to-build-subs: for each sub, add all of :build's ducts
+  ::  +remove-anchor-from-subs: recursively remove :anchor from sub-builds
   ::
-  ++  add-ducts-to-build-subs
-    ~/  %add-ducts-to-build-subs
+  ++  remove-anchor-from-subs
+    ~/  %remove-anchor-from-subs
+    |=  [=build =anchor]
+    ^+  builds.state
+    ::
+    =/  =build-status  (~(got by builds.state) build)
+    =/  subs=(list ^build)  ~(tap in ~(key by subs.build-status))
+    =/  client=^build  build
+    ::
+    |-  ^+  builds.state
+    ?~  subs  builds.state
+    ::
+    =/  sub-status=^build-status  (~(got by builds.state) i.subs)
+    ::
+    =.  clients.sub-status
+      (~(del ju clients.sub-status) anchor client)
+    ::
+    =.  builds.state  (~(put by builds.state) i.subs sub-status)
+    ::
+    =?  builds.state  !(~(has by clients.sub-status) anchor)
+      ::
+      ^$(build i.subs)
+    ::
+    $(subs t.subs)
+  ::  +add-anchors-to-build-subs: for each sub, add all of :build's anchors
+  ::
+  ++  add-anchors-to-build-subs
+    ~/  %add-anchors-to-build-subs
     |=  =build
     ^+  state
     ::
     =/  =build-status  (~(got by builds.state) build)
-    =/  new-ducts  ~(tap in (~(put in ~(key by clients.build-status)) duct))
+    =/  new-anchors
+      ~(tap in (~(put in ~(key by clients.build-status)) [%duct duct]))
     =/  subs  ~(tap in ~(key by subs.build-status))
     ::
     =.  state
@@ -1408,18 +1595,18 @@
     ::
     =.  builds.state
       |-  ^+  builds.state
-      ?~  new-ducts  builds.state
+      ?~  new-anchors  builds.state
       ::
-      =.  builds.state  (add-duct-to-subs i.new-ducts build)
+      =.  builds.state  (add-anchor-to-subs i.new-anchors build)
       ::
-      $(new-ducts t.new-ducts)
+      $(new-anchors t.new-anchors)
     ::
     state
-  ::  +add-duct-to-subs: attach :duct to :build's descendants
+  ::  +add-anchor-to-subs: attach :duct to :build's descendants
   ::
-  ++  add-duct-to-subs
-    ~/  %add-duct-to-subs
-    |=  [duct=^duct =build]
+  ++  add-anchor-to-subs
+    ~/  %add-anchor-to-subs
+    |=  [=anchor =build]
     ^+  builds.state
     ::
     =/  =build-status  (~(got by builds.state) build)
@@ -1431,41 +1618,14 @@
     ::
     =/  sub-status=^build-status  (~(got by builds.state) i.subs)
     ::
-    =/  already-had-duct=?  (~(has by clients.sub-status) duct)
+    =/  already-had-anchor=?  (~(has by clients.sub-status) anchor)
     ::
     =.  clients.sub-status
-      (~(put ju clients.sub-status) duct client)
+      (~(put ju clients.sub-status) anchor client)
     ::
     =.  builds.state  (~(put by builds.state) i.subs sub-status)
     ::
-    =?  builds.state  !already-had-duct  ^$(build i.subs)
-    ::
-    $(subs t.subs)
-  ::  +remove-duct-from-subs: recursively remove duct from sub-builds
-  ::
-  ++  remove-duct-from-subs
-    ~/  %remove-duct-from-subs
-    |=  =build
-    ^+  builds.state
-    ::  ~&  [%remove-duct-from-subs (build-to-tape build)]
-    ::
-    =/  =build-status  (~(got by builds.state) build)
-    =/  subs=(list ^build)  ~(tap in ~(key by subs.build-status))
-    =/  client=^build  build
-    ::
-    |-  ^+  builds.state
-    ?~  subs  builds.state
-    ::
-    =/  sub-status=^build-status  (~(got by builds.state) i.subs)
-    ::
-    =.  clients.sub-status
-      (~(del ju clients.sub-status) duct client)
-    ::
-    =.  builds.state  (~(put by builds.state) i.subs sub-status)
-    ::
-    =?  builds.state  !(~(has by clients.sub-status) duct)
-      ::
-      ^$(build i.subs)
+    =?  builds.state  !already-had-anchor  ^$(build i.subs)
     ::
     $(subs t.subs)
   ::  +copy-build-tree-as-provisional: prepopulate new live build
@@ -1485,7 +1645,7 @@
     =.  builds.state
       %+  ~(jab by builds.state)  new-client
       |=  =build-status
-      build-status(requesters (~(put in requesters.build-status) duct))
+      build-status(requesters (~(put in requesters.build-status) [%duct duct]))
     ::
     =<  copy-node
     ::
@@ -1522,7 +1682,7 @@
       =.  builds.state
         %+  ~(jab by builds.state)  new-sub
         |=  =build-status
-        build-status(clients (~(put ju clients.build-status) duct new-client))
+        build-status(clients (~(put ju clients.build-status) [%duct duct] new-client))
       ::
       state
     --
@@ -1622,7 +1782,6 @@
     ++  gather-build
       |=  =build
       ^+  ..execute
-      ::  ~&  [%gather-build duct (build-to-tape build)]
       ~|  [%duct duct]
       =/  duct-status  (~(got by ducts.state) duct)
       ::  if we already have a result for this build, don't rerun the build
@@ -1638,7 +1797,7 @@
       ::
       =/  =build-status  (~(got by builds.state) build)
       ?:  ?=(%blocked -.state.build-status)
-        =.  state  (add-ducts-to-build-subs build)
+        =.  state  (add-anchors-to-build-subs build)
         ::
         =/  sub-scrys=(list scry-request)
           ~(tap in (collect-blocked-sub-scrys build))
@@ -1747,7 +1906,7 @@
       =.  builds.state
         (add-subs-to-client build un-stored-new-subs [verified=%.n blocked=%.y])
       ::
-      =.  state  (add-ducts-to-build-subs build)
+      =.  state  (add-anchors-to-build-subs build)
       ::
       ?^  un-stored-new-subs
         ::  enqueue incomplete sub-builds to be promoted or run
@@ -1806,7 +1965,6 @@
     ++  promote-build
       |=  [old-build=build new-date=@da new-subs=(list build)]
       ^+  ..execute
-      ::  ~&  [%promote-build (build-to-tape old-build) new-date]
       ::  grab the previous result, freshening the cache
       ::
       =^  old-build-record  builds.state  (access-build-record old-build)
@@ -1936,7 +2094,7 @@
           [sub [verified=& blocked]]
         ==
       ::
-      =.  state  (add-ducts-to-build-subs client)
+      =.  state  (add-anchors-to-build-subs client)
       ::
       |-  ^+  state
       ?~  sub-builds  state
@@ -2903,7 +3061,6 @@
       ::
       ?~  q.parsed
         =/  =path  (rail-to-path source-rail)
-        ~&  [%fail path]
         %-  return-error
         :-  :-  %leaf
             %+  weld  "ford: %hood: syntax error at "
@@ -5123,7 +5280,7 @@
           ::
           %+  ~(jab by builds.state)  i.subs
           |=  build-status=^build-status
-          build-status(clients (~(del ju clients.build-status) duct build))
+          build-status(clients (~(del ju clients.build-status) [%duct duct] build))
         ::
         $(subs t.subs)
       ::
@@ -5207,7 +5364,7 @@
       ~|  [%unblocking (build-to-tape build)]
       (~(got by builds.state) build)
     ::
-    =/  clients=(list ^build)  ~(tap in (~(get ju clients.build-status) duct))
+    =/  clients=(list ^build)  ~(tap in (~(get ju clients.build-status) [%duct duct]))
     ::
     |-
     ^+  [unblocked builds.state]
@@ -5250,7 +5407,7 @@
     =/  duct-status  (~(got by ducts.state) duct)
     ::
     =/  =build-status  (~(got by builds.state) build)
-    ?:  (~(has in requesters.build-status) duct)
+    ?:  (~(has in requesters.build-status) [%duct duct])
       (on-root-build-complete build)
     ::
     =^  unblocked-clients  builds.state  (unblock-clients-on-duct build)
@@ -5299,7 +5456,7 @@
     ?-    -.live.duct-status
         %once
       =.  ducts.state  (~(del by ducts.state) duct)
-      =.  state  (remove-duct-from-root build)
+      =.  state  (move-root-to-cache build)
       ::
       ..execute
     ::
@@ -5310,7 +5467,7 @@
       =?  state  ?=(^ last-sent.live.duct-status)
         =/  old-build=^build  build(date date.u.last-sent.live.duct-status)
         ::
-        (remove-duct-from-root old-build)
+        (move-root-to-cache old-build)
       ::
       =/  resource-list=(list [=disc resources=(set resource)])
         ~(tap by resources)
@@ -5328,8 +5485,10 @@
             [%leaf "tried to subscribe to multiple discs:"]
             [%leaf "{<resource-list>}"]
           ==
+        ::  delete this instead of caching it, since it wasn't right
+        ::
         =.  ducts.state  (~(del by ducts.state) duct)
-        =.  state  (remove-duct-from-root build)
+        =.  state  (remove-anchor-from-root build [%duct duct])
         ..execute
       ::
       =/  subscription=(unit subscription)
@@ -5397,6 +5556,8 @@
         $(orphans t.orphans)
       ==
     ::
+    =/  =anchor  [%duct duct]
+    ::
     |-  ^+  ..execute
     ?~  orphans  ..execute
     ::  remove link to :build in :i.orphan's +build-status
@@ -5405,14 +5566,14 @@
       %+  update-build-status  i.orphans
       |=  orphan-status=_build-status
       %_  orphan-status
-        clients  (~(del ju clients.orphan-status) duct build)
+        clients  (~(del ju clients.orphan-status) anchor build)
       ==
     ::
-    ?:  (~(has by clients.orphan-status) duct)
+    ?:  (~(has by clients.orphan-status) anchor)
       $(orphans t.orphans)
     ::  :build was the last client on this duct so remove it
     ::
-    =.  builds.state  (remove-duct-from-subs i.orphans)
+    =.  builds.state  (remove-anchor-from-subs i.orphans anchor)
     =.  state  (cleanup i.orphans)
     $(orphans t.orphans)
   ::  +access-build-record: access a +build-record, updating :last-accessed
@@ -5720,7 +5881,7 @@
       ::
       =.  state-by-ship.ax
         %+  ~(put by state-by-ship.ax)  ship
-        (keep:(per-event event-args) max.task)
+        (keep:(per-event event-args) [compiler-cache build-cache]:task)
       ::
       $(ship-states t.ship-states)
     ::
@@ -5816,7 +5977,6 @@
       =+  [ship desk date]=(raid:wired t.t.wire ~[%p %tas %da])
       =/  disc  [ship desk]
       ::
-      ::  ~&  [%pending-subscriptions pending-subscriptions.ship-state]
       =/  =subscription
         ~|  [%ford-take-bad-clay-sub wire=wire duct=duct]
         =/  =duct-status  (~(got by ducts.ship-state) duct)
@@ -5824,12 +5984,10 @@
         ?>  ?=(^ last-sent.live.duct-status)
         ?>  ?=(^ subscription.u.last-sent.live.duct-status)
         u.subscription.u.last-sent.live.duct-status
-      ::  ~&  [%subscription subscription]
       ::
       =/  ducts=(list ^duct)
         ~|  [%ford-take-missing-subscription subscription]
         (get-request-ducts pending-subscriptions.ship-state subscription)
-      ::  ~&  [%ducts-for-clay-sub ducts]
       ::
       =|  moves=(list move)
       |-  ^+  [moves ship-state]
@@ -5864,7 +6022,6 @@
       =/  ducts=(list ^duct)
         ~|  [%ford-take-missing-scry-request scry-request]
         (get-request-ducts pending-scrys.ship-state scry-request)
-      ::  ~&  [%ducts-for-scrys ducts]
       ::
       =|  moves=(list move)
       |-  ^+  [moves ship-state]

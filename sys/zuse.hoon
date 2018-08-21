@@ -828,9 +828,9 @@
               ::
               =schematic
           ==
-          ::  %keep: resize cache to :max entries
+          ::  %keep: reset cache sizes
           ::
-          [%keep max=@ud]
+          [%keep compiler-cache=@ud build-cache=@ud]
           ::  %kill: stop a build; send on same duct as original %build request
           ::
           $:  %kill
