@@ -1492,7 +1492,20 @@
     (execute-loop (sy unblocked-build ~))
   ::  +wipe: forcibly decimate build results from the state
   ::
-  ::    TODO: more detailed documentation
+  ::    +wipe decimates both the :compiler-cache and the results in
+  ::    :builds.state. It removes the specified percentage of build results
+  ::    from the state. For simplicity, it considers the weight of each
+  ::    compiler cache line to be equal to the weight of a build result.
+  ::
+  ::    It deletes cache entries before dipping into :builds.state; it only
+  ::    converts entries in :builds.state to %tombstone's if there aren't
+  ::    enough entries in the compiler cache to sate the request's bloodlust.
+  ::
+  ::    When deleting results from :builds.state, it first sorts them by
+  ::    their :last-accessed date so that the stalest builds are deleted first.
+  ::    We do not touch the :build-cache directly, but because the results
+  ::    of the builds in :build-cache live in :builds.state, the results of
+  ::    both FIFO-cached builds and active builds are all sorted and trimmed.
   ::
   ++  wipe
     ~/  %wipe
