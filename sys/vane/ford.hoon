@@ -1387,6 +1387,8 @@
         ==
     ^-  [(list move) ford-state]
     ::
+    ~|  [%rebuilding new-date disc]
+    ::
     =<  finalize
     ::  mark this subscription as complete now that we've heard a response
     ::
@@ -1427,7 +1429,14 @@
     ::
     =/  old-root=build
       [date.u.last-sent.live.duct-status root-schematic.duct-status]
+    ::
     =.  state
+      ::
+      ~|  [%duct-doesnt-refer-to-real-build live.duct-status]
+      ~|  [%missing-build (build-to-tape old-root)]
+      ~|  [%dates (~(get by builds-by-schematic.state) root-schematic.duct-status)]
+      ?>  (~(has by builds.state) old-root)
+      ::
       (copy-build-tree-as-provisional old-root new-date=new-date)
     ::  gather all the :builds, forcing reruns
     ::
@@ -1860,6 +1869,7 @@
     ~/  %copy-build-tree-as-provisional
     |=  [old-root=build new-date=@da]
     ^+  state
+    ~|  [old-root=(build-to-tape old-root) new-date=new-date]
     ::
     =/  old-client=build  old-root
     =/  new-client=build  old-client(date new-date)
@@ -1876,7 +1886,9 @@
     ++  copy-node
       ^+  state
       ::
-      =/  old-build-status=build-status  (~(got by builds.state) old-client)
+      =/  old-build-status=build-status
+        ~|  old-client=(build-to-tape old-client)
+        (~(got by builds.state) old-client)
       ::
       =/  old-subs=(list build)  ~(tap in ~(key by subs.old-build-status))
       =/  new-subs=(list build)  (turn old-subs |=(a=build a(date new-date)))
@@ -5718,6 +5730,25 @@
     ~/  %on-root-build-complete
     |=  =build
     ^+  ..execute
+    ::
+    =;  res=_..execute
+        =/  duct-status=(unit duct-status)
+          (~(get by ducts.state.res) duct)
+        ?~  duct-status  res
+        ::  debugging assertions to try to track down failure in
+        ::  +copy-build-tree-as-provisional
+        ::
+        ~|  [%failed-to-preserve-live-build (build-to-tape build)]
+        ?>  ?=(%live -.live.u.duct-status)
+        ~|  %failed-2
+        ?>  ?=(^ last-sent.live.u.duct-status)
+        ~|  %failed-3
+        ?>  .=  build
+            [date.u.last-sent.live.u.duct-status root-schematic.u.duct-status]
+        ~|  %failed-4
+        ?>  (~(has by builds.state.res) build)
+        ::
+        res
     ::
     =/  =build-status  (~(got by builds.state) build)
     =/  =duct-status  (~(got by ducts.state) duct)
