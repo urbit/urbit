@@ -1,3 +1,10 @@
 |_  a=manx
-++  grow  |%  ++  htm  a
---        --
+++  grab
+  |%
+  ++  noun  manx
+  --
+++  grow
+  |%
+  ++  htm  a
+  --
+--
