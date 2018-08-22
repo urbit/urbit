@@ -22,60 +22,43 @@
   ^-  manx
   =/  sho  (fall (~(get by qix.gas) %show) %default)
   ;div.container
-  ;+
-    ?-    -.itm
-    ::
-        %collection
-      ?+  sho     !!
-        %default  (collection-to-elem col.itm)
-        %post     
-          ;div
-            ;+  (config-to-elem meta.col.itm) 
-            ;+  (collection-post ~ (flop s.bem.gas))
-          ==
-        %edit     !!
-::        %details  collection-details
+    ;+  (meta-to-elem itm sho)
+    ;+
+      ?-    -.itm
+      ::
+          %collection
+        ?+  sho     !!
+          %default  (collection-to-elem col.itm)
+          %post     (collection-post ~ (flop s.bem.gas))
+          %edit     !!
+        ==
+      ::
+          %raw
+        ?+  sho     !!
+          %default  (raw-to-elem raw.itm)
+          %post     !!
+          %edit     (collection-post `raw.itm (flop s.bem.gas))
+        ==
+      ::
+          %both
+        ?+  sho     !!
+          %default  (both-to-elem col.itm raw.itm)
+          %post     !!
+          %edit     (collection-post `raw.itm (flop s.bem.gas))
+        ==
+      ::
       ==
-    ::
-        %raw
-      ?+  sho     !!
-        %default  (raw-to-elem raw.itm)
-        %post     !!
-        %edit     
-          ;div
-            ;+  (front-to-elem meta.raw.itm) 
-            ;+  (collection-post `raw.itm (flop s.bem.gas))
-          ==
-::        %details  collection-details
-      ==
-    ::
-        %both
-      ?+  sho     !!
-        %default  (both-to-elem col.itm raw.itm)
-        %post     !!
-        %edit 
-          ;div
-            ;+  (config-to-elem meta.col.itm) 
-            ;+  (collection-post `raw.itm (flop s.bem.gas))
-          ==
-::        %details  collection-details
-      ==
-    ::
-    ==
   ==
 ++  collection-to-elem
   |=  col=collection:collections
   ^-  manx
-  ;div
-    ;+  (config-to-elem meta.col)
-    ;ul
-      ;*  %+  turn  ~(tap by data.col)
-          |=  [nom=knot ite=item:collections]
-          ^-  manx
-          ;li.collection-post.mt-6
-            ;+  (item-to-snip nom ite)
-          ==
-    ==
+  ;ul
+    ;*  %+  turn  ~(tap by data.col)
+        |=  [nom=knot ite=item:collections]
+        ^-  manx
+        ;li.collection-post.mt-6
+          ;+  (item-to-snip nom ite)
+        ==
   ==
 ::
 ++  raw-to-elem
@@ -88,7 +71,6 @@
   =/  owner  (fall (~(get by meta.raw) %owner) 'anonymous')
   ::
   ;div
-    ;+  (front-to-elem meta.raw)
     ;div.collection-date: {(trip date)}
     ::
     ;div#show
@@ -235,42 +217,49 @@
     ==
   ==
 ::
-++  front-to-elem
-  |=  fro=(map knot cord)
+++  meta-to-elem
+  |=  [itm=item:collections sho=@tas]
   ^-  manx
-  =/  man=(list [mane tape])
-  %+  turn  ~(tap by fro) 
-  |=  [a=knot b=cord]
-  ^-  [mane tape]
-  [((hard @tas) (cat 3 'urb-' a)) (trip b)]
+  ~&  itm
+  =/  mat=mart
+    :~  [%type "hidden"]
+        [%name "urb-metadata"]
+        [%urb-show (trip sho)]
+        [%urb-path (spud (flop s.bem.gas))]
+    ==
   :_  ~
   :-  %input
-  %+  welp  man
-  ^-  (list [mane tape])
-  :~  [%name "urb-metadata"]
-      [%type "hidden"]
-      [%value "item"]
-      [%show "default"]
+  %+  weld  mat
+  ^-  mart
+  ?-    -.itm
+      %collection
+    =*  met  meta.col.itm
+    :~  [%urb-name (trip name.met)]
+        [%urb-owner (scow %p owner.met)]
+        [%urb-date-created (scow %da date-created.met)]
+        [%urb-last-modified (scow %da last-modified.met)]
+        [%urb-content-type (trip type.met)]
+        [%urb-structure-type "collection-index"]
+    ==
+      %raw
+    =/  met  ~(got by meta.raw.itm)
+    :~  [%urb-name (trip (met %name))]
+        [%urb-owner (trip (met %owner))]
+        [%urb-date-created (trip (met %date-created))]
+        [%urb-last-modified (trip (met %last-modified))]
+        [%urb-content-type (trip (met %type))]
+        [%urb-structure-type "collection-post"]
+    ==
+      %both
+    =/  met  ~(got by meta.raw.itm)
+    :~  [%urb-name (trip (met %name))]
+        [%urb-owner (trip (met %owner))]
+        [%urb-date-created (trip (met %date-created))]
+        [%urb-last-modified (trip (met %last-modified))]
+        [%urb-content-type (trip (met %type))]
+        [%urb-structure-type "collection-post"]
+    ==
   ==
-::
-++  config-to-elem
-  |=  con=config:collections
-  ^-  manx
-  ;div.collection-meta
-    =urb-full-path      (spud (en-beam:format full-path.con))
-    =urb-name           (trip name.con)
-    =urb-description    (trip description.con)
-    =urb-owner          (scow %p owner.con)
-    =urb-date-created   (scow %da date-created.con)
-    =urb-last-modified  (scow %da last-modified.con)
-    =urb-type           (trip type.con)
-    ::
-    =type   "hidden"
-    =name   "urb-metadata"
-    =value  "collection"
-    =show   "default"
-    =path   "{<(flop s.bem.gas)>}"
-    =ship   "{(scow %p p.bem.gas)}";
 ::::
 ::::  /mar/snip
 ::::
