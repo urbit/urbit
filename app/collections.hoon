@@ -256,8 +256,8 @@
             name.a
             desc.a
             our.bol
-            now.bol
-            now.bol
+            now-id
+            now-id
             type.a
             comments.a
             ~
@@ -288,8 +288,8 @@
         :~  [%name name.a]
             [%comments ?:(comments.a ~..y ~..n)]
             [%owner (scot %p src.bol)]
-            [%date-created (scot %da now.bol)]
-            [%last-modified (scot %da now.bol)]
+            [%date-created dat]
+            [%last-modified dat]
             [%type type.a]
         ==
       =.  ta-this  
