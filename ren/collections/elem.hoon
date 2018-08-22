@@ -10,9 +10,9 @@
 /=  collection-post     
 ::  /^  $-(raw-item:collections manx)
   /:  /===/web/landscape/collections/post     /%  /!noun/
-/=  collection-details
-  /^  manx
-  /:  /===/web/landscape/collections/details  /%  /!hymn/
+::/=  collection-details
+::  /^  manx
+::  /:  /===/web/landscape/collections/details  /%  /!hymn/
 ::
 ::
 =<  (item-to-elem itm)
@@ -22,47 +22,46 @@
   ^-  manx
   =/  sho  (fall (~(get by qix.gas) %show) %default)
   ;div.container
-  ;input
-    =type   "hidden"
-    =name   "urb-header"
-    =value  (trip -.itm)
-    =show   (trip sho)
-    =path   "{<(flop s.bem.gas)>}"
-    =ship   "{(scow %p p.bem.gas)}";
-  ;div.row
-  ;div.col-sm-10.col-sm-offset-2
-  ;div.collection-index.mt-12
   ;+
     ?-    -.itm
     ::
         %collection
       ?+  sho     !!
         %default  (collection-to-elem col.itm)
-        %post     (collection-post ~ (flop s.bem.gas))
+        %post     
+          ;div
+            ;+  (config-to-elem meta.col.itm) 
+            ;+  (collection-post ~ (flop s.bem.gas))
+          ==
         %edit     !!
-        %details  collection-details
+::        %details  collection-details
       ==
     ::
         %raw
       ?+  sho     !!
         %default  (raw-to-elem raw.itm)
         %post     !!
-        %edit     (collection-post `raw.itm (flop s.bem.gas))
-        %details  collection-details
+        %edit     
+          ;div
+            ;+  (front-to-elem meta.raw.itm) 
+            ;+  (collection-post `raw.itm (flop s.bem.gas))
+          ==
+::        %details  collection-details
       ==
     ::
         %both
       ?+  sho     !!
         %default  (both-to-elem col.itm raw.itm)
         %post     !!
-        %edit     (collection-post `raw.itm (flop s.bem.gas))
-        %details  collection-details
+        %edit 
+          ;div
+            ;+  (config-to-elem meta.col.itm) 
+            ;+  (collection-post `raw.itm (flop s.bem.gas))
+          ==
+::        %details  collection-details
       ==
     ::
     ==
-  ==
-  ==
-  ==
   ==
 ++  collection-to-elem
   |=  col=collection:collections
@@ -239,12 +238,20 @@
 ++  front-to-elem
   |=  fro=(map knot cord)
   ^-  manx
-  :_  ~
-  :-  %div
-  %+  turn  ~(tap by (~(put by fro) %class %item-meta))
+  =/  man=(list [mane tape])
+  %+  turn  ~(tap by fro) 
   |=  [a=knot b=cord]
   ^-  [mane tape]
-  [((hard @tas) a) (trip b)]
+  [((hard @tas) (cat 3 'urb-' a)) (trip b)]
+  :_  ~
+  :-  %input
+  %+  welp  man
+  ^-  (list [mane tape])
+  :~  [%name "urb-metadata"]
+      [%type "hidden"]
+      [%value "item"]
+      [%show "default"]
+  ==
 ::
 ++  config-to-elem
   |=  con=config:collections
@@ -256,7 +263,14 @@
     =urb-owner          (scow %p owner.con)
     =urb-date-created   (scow %da date-created.con)
     =urb-last-modified  (scow %da last-modified.con)
-    =urb-type           (trip type.con);
+    =urb-type           (trip type.con)
+    ::
+    =type   "hidden"
+    =name   "urb-metadata"
+    =value  "collection"
+    =show   "default"
+    =path   "{<(flop s.bem.gas)>}"
+    =ship   "{(scow %p p.bem.gas)}";
 ::::
 ::::  /mar/snip
 ::::
