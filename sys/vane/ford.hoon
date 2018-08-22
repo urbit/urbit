@@ -2907,7 +2907,14 @@
           [[%blocks [mark-path-build]~] out]
         ::
         ?.  ?=([~ %success %path *] mark-path-result)
-          (cast-wrap-error %grab source-mark target-mark mark-path-result)
+          %-  cast-wrap-error  :*
+            source-mark
+            target-mark
+            %+  weld
+              "ford: %cast failed to find path for mark {<source-mark>} "
+              "during +grab:"
+            mark-path-result
+          ==
         ::
         =/  mark-core-build=^build  [date.build [%core rail.u.mark-path-result]]
         ::
@@ -2925,7 +2932,13 @@
           [[%blocks [grab-build]~] out]
         ::
         ?.  ?=([~ %success %ride *] grab-result)
-          (cast-wrap-error %grab source-mark target-mark grab-result)
+          =/  =path  (rail-to-path rail.u.mark-path-result)
+          %-  cast-wrap-error  :*
+            source-mark
+            target-mark
+            "ford: %cast failed to ride {<path>} during +grab:"
+            grab-result
+          ==
         ::  find an arm for the input's mark within the +grab core
         ::
         =/  grab-mark-build=^build
@@ -2937,7 +2950,13 @@
           [[%blocks [grab-mark-build]~] out]
         ::
         ?.  ?=([~ %success %ride *] grab-mark-result)
-          (cast-wrap-error %grab source-mark target-mark grab-mark-result)
+          =/  =path  (rail-to-path rail.u.mark-path-result)
+          %-  cast-wrap-error  :*
+            source-mark
+            target-mark
+            "ford: %cast failed to ride {<path>} during +grab:"
+            grab-mark-result
+          ==
         ::  slam the +mark-name:grab gate on the result of running :input
         ::
         =/  call-build=^build
@@ -2949,7 +2968,13 @@
           [[%blocks [call-build]~] out]
         ::
         ?.  ?=([~ %success %call *] call-result)
-          (cast-wrap-error %grab source-mark target-mark call-result)
+          =/  =path  (rail-to-path rail.u.mark-path-result)
+          %-  cast-wrap-error  :*
+            source-mark
+            target-mark
+            "ford: %cast failed to call +grab arm in {<path>}:"
+            call-result
+          ==
         ::
         [[%success [mark vase.u.call-result]] out]
       ::  +grow: grow from the input mark to the destination mark
@@ -2968,9 +2993,11 @@
         ::
         ?.  ?=([~ %success %path *] starting-mark-path-result)
           %-  cast-wrap-error  :*
-            %grow
             source-mark
             target-mark
+            %+  weld
+              "ford: %cast failed to find path for mark {<source-mark>} "
+              "during +grow:"
             starting-mark-path-result
           ==
         ::  grow the value from the initial mark to the final mark
@@ -2997,7 +3024,13 @@
           [[%blocks [grow-build]~] out]
         ::
         ?.  ?=([~ %success %ride *] grow-result)
-          (cast-wrap-error %grow source-mark target-mark grow-result)
+          =/  =path  (rail-to-path rail.u.starting-mark-path-result)
+          %-  cast-wrap-error  :*
+            source-mark
+            target-mark
+            "ford: %cast failed to ride {<path>} during +grow:"
+            grow-result
+          ==
         ::  make sure the product nests in the sample of the destination mark
         ::
         =/  bunt-build=^build  [date.build [%bunt disc target-mark]]
@@ -3007,7 +3040,12 @@
           [[%blocks [bunt-build]~] out]
         ::
         ?.  ?=([~ %success %bunt *] bunt-result)
-          (cast-wrap-error %grow source-mark target-mark bunt-result)
+          %-  cast-wrap-error  :*
+            source-mark
+            target-mark
+            "ford: %cast failed to bunt {<target-mark>}:"
+            bunt-result
+          ==
         ::
         ?.  (~(nest ut p.q.cage.u.bunt-result) | p.vase.u.grow-result)
           =*  src  source-mark
@@ -3019,23 +3057,24 @@
         [[%success mark vase.u.grow-result] out]
       ::
       ++  cast-wrap-error
-        |=  $:  action=term
-                source-mark=term
+        |=  $:  source-mark=term
                 target-mark=term
+                description=tape
                 result=(unit build-result)
             ==
         ^-  [action-result _out]
         ::
+        ?>  ?=([~ %error *] result)
+        ::
         :_  out
         :-  %error
-        :-  :-  %leaf
-            ;:  weld
-              "ford: %cast {<mark>} on {<disc>} failed "
-              "while calling {<action>} to cast from "
+        :*  :-  %leaf
+            %+  weld
+              "ford: %cast failed while trying to cast from "
               "{<source-mark>} to {<target-mark>}:"
-            ==
-        ?>  ?=([~ %error *] result)
-        message.u.result
+            [%leaf description]
+            message.u.result
+        ==
       --
     ::
     ++  make-core
@@ -4740,8 +4779,13 @@
       ?~  slim-result
         (return-blocks [date.build slim-schematic]~)
       ::
-      ?.  ?=([~ %success %slim *] slim-result)
-        (wrap-error slim-result)
+      ?:  ?=([~ %error *] slim-result)
+        %-  return-error
+        :*  [%leaf "ford: %ride failed to compute type:"]
+            message.u.slim-result
+        ==
+      ::
+      ?>  ?=([~ %success %slim *] slim-result)
       ::
       =/  =compiler-cache-key  [%ride formula subject-vase]
       =^  cached-result  out  (access-cache compiler-cache-key)
@@ -4762,7 +4806,7 @@
         (blocked-paths-to-receipt %ride blocked-paths)
       ::
           %2
-        (return-error [[%leaf "ford: %ride failed:"] p.val])
+        (return-error [[%leaf "ford: %ride failed to execute:"] p.val])
       ==
     ::
     ++  make-same
