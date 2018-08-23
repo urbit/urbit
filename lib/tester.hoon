@@ -54,8 +54,6 @@
   :-  name
   ^-  test-func
   ::
-  =-  ~&  [%compiled-test name]  -
-  ::
   |=  eny=@uvJ
   ^-  tang
   ((hard tang) .*(test-core(+6 (init-test eny)) nock.run-arm))
