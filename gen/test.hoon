@@ -1,12 +1,10 @@
-/+  new-hoon, tester
+/+  tester
 /=  all-tests
   /^  (map path (list test-arm:tester))
   /:  /===/tests
   /*  /test-gen/
 ::
-=,  new-hoon
 |%
-::
 ++  test-runner
   |=  [defer=? eny=@uvJ tests=(list test:tester)]
   ^-  tang
