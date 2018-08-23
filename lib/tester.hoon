@@ -47,6 +47,7 @@
   ::
   ?>  (~(nest ut (~(peek ut test-core-type) %free 6)) & p:!>((init-test)))
   ::
+  ~|  [%failed-to-compile-test-arm name]
   =/  run-arm=[=type =nock]
     (~(mint ut test-core-type) p:!>(*tang) [%limb name])
   ::
