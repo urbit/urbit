@@ -2798,7 +2798,16 @@
         (return-blocks blocks)
       ::
       ?<  ?=(~ gate-result)
+      ?:  ?=([~ %error *] gate-result)
+        %-  return-error
+        :-  [%leaf "ford: %call failed to build gate:"]
+        message.u.gate-result
+      ::
       ?<  ?=(~ sample-result)
+      ?:  ?=([~ %error *] sample-result)
+        %-  return-error
+        :-  [%leaf "ford: %call failed to build sample:"]
+        message.u.sample-result
       ::
       =/  gate-vase=vase    q:(result-to-cage u.gate-result)
       =/  sample-vase=vase  q:(result-to-cage u.sample-result)
