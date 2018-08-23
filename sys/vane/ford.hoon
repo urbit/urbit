@@ -26,7 +26,7 @@
 ::    ever-changing current date. Whenever this live build's result changes,
 ::    Ford sends you the new result and the formal date of the build (the date
 ::    which would cause the same result if you asked Ford to build that
-::    schematic again). This is in fact a classic FRP paradigm.
+::    schematic again). This is a push-based FRP paradigm.
 ::
 ::    The implementation is event-driven, like the rest of Urbit. While
 ::    performing a build, Ford registers each namespace access as a dependency
