@@ -1,7 +1,7 @@
 /?  310
 |_  [hed=marl tal=marl]
-++  grow  
-|%  
+++  grow
+  |%
   ++  mime
     =<  mime
     |%
@@ -11,10 +11,11 @@
     ++  mime  [/text/html (as-octs:mimes:^html html)]               ::  convert to %mime
     --
   ++  collections-snip  [hed tal]
---        
+  --
+::
 ++  grab
-|%  
-  ++  noun  [marl marl]
---        
+  |%
+  +$  noun  [marl marl]
+  --
 --
 
