@@ -444,8 +444,9 @@
       ::
       [%| prefix=tile =(list @t)]
       $:  %&
-          $:  ::  wide: one-line syntax
-              ::  tall: multiline syntax
+          $=  style
+          $:  ::  wide: one-line style
+              ::  tall: multiline style
               ::
               $=  wide
               ::  %~: no wide form
@@ -480,6 +481,7 @@
           ::
           =(list plum)
       ==
+      [%& style=[wide=whatever tall=whatever] content=(list plum)]
   ==
 ++  tang  (list tank)                                   ::  bottom-first error
 ++  tank  $~  [%leaf ~]                                 ::
@@ -10111,7 +10113,7 @@
       {$cell *}  |($(sut p.sut) $(sut q.sut))
       {$core *}  $(sut p.sut)
       {$face *}  $(sut q.sut)
-      {$fork *}  (lien ~(tap in p.sut) |=(type ^$(sut +<)))
+      {$fork *}  (levy ~(tap in p.sut) |=(type ^$(sut +<)))
       {$hint *}  $(sut q.sut)
       {$hold *}  |((~(has in gil) sut) $(gil (~(put in gil) sut), sut repo))
       $noun      |
