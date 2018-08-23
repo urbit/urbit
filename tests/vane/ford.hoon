@@ -1,132 +1,22 @@
 /+  tester
 ::
-/=  ford-turbo  /:  /===/sys/vane/ford
-                /!noun/
+/=  ford-turbo  /:  /===/sys/vane/ford  /!noun/
 ::
+/=  hoon-scry   /:  /===/sys/hoon       /hoon/
+/=  arvo-scry   /:  /===/sys/arvo       /hoon/
+/=  zuse-scry   /:  /===/sys/zuse       /hoon/
+/=  txt-scry    /:  /===/mar/txt        /hoon/
+/=  diff-scry   /:  /===/mar/txt-diff   /hoon/
+::
+!:
 =,  ford
+=,  format
 ::
-:-  %say
-|=  [[now=@da eny=@ bek=beak] ~ ~]
-:-  %noun
-~&  %now-i-am-running-test
-=+  tester:tester
-::
-=/  test-pit=vase  !>(.)
+=/  test-pit=vase  !>(..zuse)
 =/  ford-gate  (ford-turbo test-pit)
 ::
-|^
-=-  ((slog -) ~)
-^-  tang
-;:  weld
-  test-tear
-  test-unify-jugs
-  test-resource-wire-encoding
-  test-parse-scaffold
-  test-parse-scaffold-sur-lib
-  test-parse-scaffold-zuse-version
-  test-parse-scaffold-crane-fssg
-  test-parse-scaffold-crane-fsbc
-  test-parse-scaffold-crane-fsbr
-  test-parse-scaffold-crane-fsts
-  test-parse-scaffold-crane-fsdt
-  test-parse-scaffold-crane-fscm
-  test-parse-scaffold-crane-fspm
-  test-parse-scaffold-crane-fscb
-  test-parse-scaffold-crane-fssm
-  test-parse-scaffold-crane-fscl
-  test-parse-scaffold-crane-fskt
-  test-parse-scaffold-crane-fszp
-  test-parse-scaffold-crane-fszy
-  test-literal
-  test-autocons-same
-  test-autocons-different
-  test-scry-clay-succeed
-  test-scry-clay-fail
-  test-scry-clay-block
-  test-scry-clay-multiblock
-  test-scry-clay-cancel
-  test-scry-clay-live
-  test-scry-clay-live-again
-  test-scry-clay-same-path
-  test-pinned-in-past
-  test-pinned-in-future
-  test-pinned-in-pin
-  test-pinned-in-live
-  test-live-build-that-blocks
-  test-live-and-once
-  test-live-two-deep
-  test-live-three-deep
-  test-live-triangle
-  test-live-and-pinned-triangle
-  test-call
-  test-call-scry-succeed
-  test-call-scry-fail
-  test-call-scry-block
-  test-call-scry-varies
-  test-dude
-  test-dude-error
-  test-hood
-  test-slim
-  test-slit
-  test-slit-error
-  test-ride
-  test-ride-scry-succeed
-  test-ride-scry-fail
-  test-ride-scry-block
-  test-ride-scry-promote
-  test-five-oh-fora
-  test-alts
-  test-alts-and-live
-  test-double-alts
-::    test-cache-reclamation-trivial
-::    test-cache-reclamation-live-rebuild
-::    test-cache-reclamation-live-promote
-::    test-five-oh-cache-reclamation
-::  ::  test-reef  ::  very slow
-  test-reef-short-circuit
-  test-path
-  test-plan-hoon
-  test-core
-  test-core-linker
-  test-core-multi-hoon
-  test-core-fsts-fssg
-  test-core-fsdt-fskt
-  test-core-fskt-nest-fail
-  test-core-fssm
-  test-core-fsbr
-  test-core-fsbr-out-of-options
-  test-plan-fszp-as-noun
-  test-core-fszp-as-mark
-  test-core-fscl-fszp
-  test-core-fscm
-  test-plan-fsbc
-  test-core-fscb
-  test-core-fspm
-  test-core-fszy-renderer
-  test-bunt
-  test-volt
-  test-vale
-  test-vale-error
-  test-cast
-  test-cast-grow
-  test-mute
-  test-bake-renderer
-  test-bake-mark
-  test-bake-mark-fallback
-  test-diff
-  test-diff-form
-  test-pact
-  test-pact-mark
-  test-join
-  test-list
-  test-mash
-  test-multi-core-same-dependency
-  test-walk-prefer-grab
-  test-walk-large-graph
-  test-cast-large-graph
-==
-++  test-tear
-  :-  `tank`leaf+"test-tear"
+|_  _tester:tester
+++  test-tear  ^-  tang
   ::
   ;:  welp
     %-  expect-eq  !>
@@ -142,8 +32,7 @@
     (tear:ford-gate 'ab/c')
   ==
 ::
-++  test-unify-jugs
-  :-  `tank`leaf+"test-unify-jugs"
+++  test-unify-jugs  ^-  tang
   ::
   =/  ford  (ford-gate now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
   ::
@@ -155,8 +44,7 @@
     `(jug @tas @ud)`(my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 ~)]])
   `(jug @tas @ud)`(my ~[[%b (sy 5 6 ~)] [%c (sy 7 8 ~)]])
 ::
-++  test-resource-wire-encoding
-  :-  `tank`leaf+"test-resource-wire-encoding"
+++  test-resource-wire-encoding  ^-  tang
   ::
   =/  ford  (ford-gate now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
   ::
@@ -172,8 +60,7 @@
     `scry-request:ford`[%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
   ==
 ::
-++  test-parse-scaffold
-  :-  `tank`leaf+"test-parse-scaffold"
+++  test-parse-scaffold  ^-  tang
   ::
   %-  expect-eq  !>
   :-  :-  [1 19]
@@ -195,8 +82,7 @@
     [1 1]
   "!.  |=(a=@ud +(a))"
 ::
-++  test-parse-scaffold-sur-lib
-  :-  `tank`leaf+"test-parse-scaffold-sur-lib"
+++  test-parse-scaffold-sur-libk  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -222,8 +108,7 @@
                 (ream '|=(a a)')
   ==    ==  ==
 ::
-++  test-parse-scaffold-zuse-version
-  :-  `tank`leaf+"test-parse-scaffold-zuse-version"
+++  test-parse-scaffold-zuse-version  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -248,8 +133,7 @@
                 (ream '|=(a a)')
   ==    ==  ==
 ::
-++  test-parse-scaffold-crane-fssg
-  :-  `tank`leaf+"test-parse-scaffold-crane-fssg"
+++  test-parse-scaffold-crane-fssg  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -279,8 +163,7 @@
                 (ream '|=(a b)')
   ==    ==  ==
 ::
-++  test-parse-scaffold-crane-fsbc
-  :-  `tank`leaf+"test-parse-scaffold-crane-fsbc"
+++  test-parse-scaffold-crane-fsbc  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -310,8 +193,7 @@
                 (ream '|=(a b)')
   ==    ==  ==
 ::
-++  test-parse-scaffold-crane-fsbr
-  :-  `tank`leaf+"test-parse-scaffold-crane-fsbr"
+++  test-parse-scaffold-crane-fsbr  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -344,8 +226,7 @@
         :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 5]]
   ==    ==
 ::
-++  test-parse-scaffold-crane-fsts
-  :-  `tank`leaf+"test-parse-scaffold-crane-fsts"
+++  test-parse-scaffold-crane-fsts  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -371,8 +252,7 @@
         :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 5]]
   ==    ==
 ::
-++  test-parse-scaffold-crane-fsdt
-  :-  `tank`leaf+"test-parse-scaffold-crane-fsdt"
+++  test-parse-scaffold-crane-fsdt  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -405,8 +285,7 @@
         :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 5]]
   ==    ==
 ::
-++  test-parse-scaffold-crane-fscm
-  :-  `tank`leaf+"test-parse-scaffold-crane-fscm"
+++  test-parse-scaffold-crane-fscm  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -445,8 +324,7 @@
         :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [8 1] [8 2]] [%sand %ud 1]]
   ==    ==
 ::
-++  test-parse-scaffold-crane-fspm
-  :-  `tank`leaf+"test-parse-scaffold-crane-fspm"
+++  test-parse-scaffold-crane-fspm  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -474,8 +352,7 @@
         :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 1]]
   ==    ==
 ::
-++  test-parse-scaffold-crane-fscb
-  :-  `tank`leaf+"test-parse-scaffold-crane-fscb"
+++  test-parse-scaffold-crane-fscb  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -499,8 +376,7 @@
         :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 8]]
   ==    ==
 ::
-++  test-parse-scaffold-crane-fssm
-  :-  `tank`leaf+"test-parse-scaffold-crane-fssm"
+++  test-parse-scaffold-crane-fssm  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -535,8 +411,7 @@
         :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 7]]
   ==    ==
 ::
-++  test-parse-scaffold-crane-fscl
-  :-  `tank`leaf+"test-parse-scaffold-crane-fscl"
+++  test-parse-scaffold-crane-fscl  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -564,17 +439,16 @@
         :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 3]]
   ==    ==
 ::
-++  test-parse-scaffold-crane-fskt
-  :-  `tank`leaf+"test-parse-scaffold-crane-fskt"
+++  test-parse-scaffold-crane-fskt  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
       [1 1]
     """
     /=  data
-      /^  !.  (list @ud)
-      /.  /~  !.  1
-          /~  !.  2
+      /^  (list @ud)
+      /.  /~  1
+          /~  2
           ==
     6
     """
@@ -590,24 +464,32 @@
         :~  :*  %fsts  %data
                 %fskt
                 :*  %dbug
-                    [/~nul/desk/~1234.5.6/foo/bar [2 7] [2 21]]
-                    (ream '(list @ud)')
+                    [/~nul/desk/~1234.5.6/foo/bar [2 7] [2 17]]
+                    %make
+                    :+  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [2 8] [2 12]]
+                    [%wing ~[%list]]
+                    :~  :+  %dbug
+                          [/~nul/desk/~1234.5.6/foo/bar [2 13] [2 16]]
+                        [%base [%atom %ud]]
+                    ==
                 ==
                 %fsdt
-                :~  :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/foo/bar [3 11] [3 16]]
-                        (ream '1')
-                    ==
-                    :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/foo/bar [4 11] [4 16]]
-                        (ream '2')
-        ==  ==  ==  ==
+                :~  :-  %fssg
+                    :+  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [3 11] [3 12]]
+                    [%sand %ud 1]
+                    ::
+                    :-  %fssg
+                    :+  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [4 11] [4 12]]
+                    [%sand %ud 2]
+        ==  ==  ==
       ^=  sources
         :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [6 1] [6 2]] [%sand %ud 6]]
   ==    ==
 ::
-++  test-parse-scaffold-crane-fszp
-  :-  `tank`leaf+"test-parse-scaffold-crane-fszp"
+++  test-parse-scaffold-crane-fszp  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -632,8 +514,7 @@
         :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 2]]
   ==    ==
 ::
-++  test-parse-scaffold-crane-fszy
-  :-  `tank`leaf+"test-parse-scaffold-crane-fszy"
+++  test-parse-scaffold-crane-fszy  ^-  tang
   ::
   =/  parsed
     %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
@@ -658,11 +539,10 @@
         :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 9]]
   ==    ==
 ::
-++  test-literal
-  :-  `tank`leaf+"test-literal"
+++  test-literal  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -681,11 +561,10 @@
     results1
   (expect-ford-empty ford-gate ~nul)
 ::
-++  test-autocons-same
-  :-  `tank`leaf+"test-autocons-same"
+++  test-autocons-same  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -707,11 +586,10 @@
     results1
   (expect-ford-empty ford-gate ~nul)
 ::
-++  test-autocons-different
-  :-  `tank`leaf+"test-autocons-different"
+++  test-autocons-different  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -733,11 +611,10 @@
     results1
     (expect-ford-empty ford-gate ~nul)
 ::
-++  test-scry-clay-succeed
-  :-  `tank`leaf+"test-scry-clay-succeed"
+++  test-scry-clay-succeed  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
@@ -757,11 +634,10 @@
     results1
   (expect-ford-empty ford-gate ~nul)
 ::
-++  test-scry-clay-fail
-  :-  `tank`leaf+"test-scry-clay-fail"
+++  test-scry-clay-fail  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-fail ~1234.5.6)
@@ -783,11 +659,10 @@
     results1
     (expect-ford-empty ford-gate ~nul)
 ::
-++  test-scry-clay-block
-  :-  `tank`leaf+"test-scry-clay-block"
+++  test-scry-clay-block  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-block ~1234.5.6)
@@ -806,7 +681,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -829,11 +704,10 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-scry-clay-multiblock
-  :-  `tank`leaf+"test-scry-clay-multiblock"
+++  test-scry-clay-multiblock  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-block ~1234.5.6)
@@ -852,7 +726,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=(scry-block ~1234.5.6)
@@ -867,7 +741,7 @@
     ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -894,11 +768,10 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-scry-clay-cancel
-  :-  `tank`leaf+"test-scry-clay-cancel"
+++  test-scry-clay-cancel  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-block ~1234.5.6)
@@ -917,7 +790,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -936,11 +809,10 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-scry-clay-live
-  :-  `tank`leaf+"test-scry-clay-live"
+++  test-scry-clay-live  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
@@ -960,7 +832,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.7
       scry=(scry-succeed ~1234.5.7 [%noun !>(43)])
@@ -981,7 +853,7 @@
     ==  ==  ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -1000,11 +872,10 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-scry-clay-live-again
-  :-  `tank`leaf+"test-scry-clay-live-again"
+++  test-scry-clay-live-again  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
@@ -1025,7 +896,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=(scry-succeed ~1234.5.7 [%noun !>(42)])
@@ -1045,7 +916,7 @@
     ==  ==  ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -1057,7 +928,7 @@
     ==  ==  ==
   ::
   =^  results4  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.9
       scry=scry-is-forbidden
@@ -1082,8 +953,7 @@
 ::    block on /~nul/desk/~1234.5.7/... and /~nul/desk/~1234.5.8/... at the
 ::    same time.
 ::
-++  test-scry-clay-same-path
-  :-  `tank`leaf+"test-scry-clay-same-path"
+++  test-scry-clay-same-path  ^-  tang
   ::
   =/  scry-type=type  [%atom %tas ~]
   ::
@@ -1095,7 +965,7 @@
     [[%pin ~1234.5.7 scry-schematic] [%pin ~1234.5.8 scry-schematic]]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-blocks blocks)
@@ -1121,7 +991,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.7
       scry=(scry-blocks blocks)
@@ -1138,7 +1008,7 @@
     ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.8
       scry=(scry-blocks blocks)
@@ -1159,7 +1029,7 @@
     ==  ==  ==
   ::
   =^  results4  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.9
       scry=scry-is-forbidden
@@ -1177,13 +1047,12 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-pinned-in-past
-  :-  `tank`leaf+"test-pinned-in-past"
+++  test-pinned-in-past  ^-  tang
   ::
   =/  schematic  [%pin ~1234.5.5 [%$ %noun !>(42)]]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -1196,13 +1065,12 @@
     ==  ==  ==
   results1
 ::
-++  test-pinned-in-future
-  :-  `tank`leaf+"test-pinned-in-future"
+++  test-pinned-in-future  ^-  tang
   ::
   =/  schematic  [%pin ~1234.5.7 [%$ %noun !>(42)]]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -1215,11 +1083,10 @@
     ==  ==  ==
   results1
 ::
-++  test-pinned-in-pin
-  :-  `tank`leaf+"test-pinned-in-pin"
+++  test-pinned-in-pin  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
@@ -1242,8 +1109,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-pinned-in-live
-  :-  `tank`leaf+"test-pinned-in-live"
+++  test-pinned-in-live  ^-  tang
   ::
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
   =/  scry-43  (scry-succeed ~1234.5.7 [%noun !>(43)])
@@ -1258,7 +1124,7 @@
     [%success [%scry %noun !>(42)]]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-42
@@ -1268,7 +1134,7 @@
     ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -1283,15 +1149,14 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-live-build-that-blocks
-  :-  `tank`leaf+"test-live-build-that-blocks"
+++  test-live-build-that-blocks  ^-  tang
   ::
   =/  scry-blocked  (scry-block ~1234.5.6)
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
   =/  scry-43  (scry-succeed ~1234.5.8 [%noun !>(43)])
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-blocked
@@ -1309,7 +1174,7 @@
     ==  ==  ==
   ::
   =^  results2    ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.7
       scry=scry-42
@@ -1330,7 +1195,7 @@
     ==  ==  ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.8
       scry=scry-43
@@ -1351,7 +1216,7 @@
     ==  ==  ==
   ::
   =^  results4  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.9
       scry=scry-is-forbidden
@@ -1371,14 +1236,13 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-live-and-once
-  :-  `tank`leaf+"test-live-and-once"
+++  test-live-and-once  ^-  tang
   ::
   =/  scry-blocked  (scry-block ~1234.5.6)
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-blocked
@@ -1396,7 +1260,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-blocked
@@ -1410,7 +1274,7 @@
     ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -1434,7 +1298,7 @@
     ==  ==  ==
   ::
   =^  results4  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.9
       scry=scry-is-forbidden
@@ -1454,14 +1318,13 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-live-two-deep
-  :-  `tank`leaf+"test-live-two-deep"
+++  test-live-two-deep  ^-  tang
   ::
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
   =/  scry-43  (scry-succeed ~1234.5.7 [%noun !>(43)])
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-42
@@ -1482,7 +1345,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.7
       scry=scry-43
@@ -1504,7 +1367,7 @@
     ==  ==  ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -1524,8 +1387,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-live-three-deep
-  :-  `tank`leaf+"test-live-three-deep"
+++  test-live-three-deep  ^-  tang
   ::
   =/  scry-type=type  [%atom %tas ~]
   ::
@@ -1548,7 +1410,7 @@
   =/  same=schematic:ford-gate  [%same ride]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry
@@ -1565,7 +1427,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.7
       scry=scry
@@ -1583,7 +1445,7 @@
     ==  ==  ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -1602,8 +1464,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-live-triangle
-  :-  `tank`leaf+"test-live-triangle"
+++  test-live-triangle  ^-  tang
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
@@ -1625,7 +1486,7 @@
   =/  autocons=schematic:ford-gate  [ride subject-schematic]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry
@@ -1643,7 +1504,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.7
       scry=scry
@@ -1665,7 +1526,7 @@
     ==  ==  ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -1688,8 +1549,7 @@
 ::    Ensures that we deal with various issues with live builds which
 ::    were partially pinned and their interaction with other live builds.
 ::
-++  test-live-and-pinned-triangle
-  :-  `tank`leaf+"test-live-and-pinned-triangle"
+++  test-live-and-pinned-triangle  ^-  tang
   ::
   =/  scry-type=type  [%atom %tas ~]
   ::
@@ -1714,7 +1574,7 @@
   =/  static=schematic:ford-gate  [%same [%pin ~1234.5.6 autocons]]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry
@@ -1728,7 +1588,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry
@@ -1746,7 +1606,7 @@
     ==  ==  ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -1757,7 +1617,7 @@
     ==
   ::
   =^  results4  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.9
       scry=scry-is-forbidden
@@ -1777,8 +1637,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-call
-  :-  `tank`leaf+"test-call"
+++  test-call  ^-  tang
   ::
   =/  sample-schematic=schematic:ford-gate  [%$ %noun !>(5)]
   =/  gate-schematic=schematic:ford-gate  [%$ %noun !>(|=(a=@ud +(a)))]
@@ -1786,7 +1645,7 @@
     [%call gate-schematic sample-schematic]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -1813,7 +1672,7 @@
     ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -1829,8 +1688,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-call-scry-succeed
-  :-  `tank`leaf+"test-call-scry-succeed"
+++  test-call-scry-succeed  ^-  tang
   ::
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
   ::
@@ -1841,7 +1699,7 @@
     [%call gate-schematic sample-schematic]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry-42
@@ -1869,7 +1727,7 @@
     ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -1884,8 +1742,7 @@
     results2
     (expect-ford-empty ford-gate ~nul)
   ==
-++  test-call-scry-fail
-  :-  `tank`leaf+"test-call-scry-fail"
+++  test-call-scry-fail  ^-  tang
   ::
   =/  scry-failed  (scry-fail ~1234.5.6)
   ::
@@ -1896,7 +1753,7 @@
     [%call gate-schematic sample-schematic]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry-failed
@@ -1920,7 +1777,7 @@
     ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -1937,8 +1794,7 @@
   ==
 ::
 ::
-++  test-call-scry-block
-  :-  `tank`leaf+"test-call-scry-block"
+++  test-call-scry-block  ^-  tang
   ::
   =/  scry-blocked  (scry-block ~1234.5.6)
   ::
@@ -1949,7 +1805,7 @@
     [%call gate-schematic sample-schematic]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-blocked
@@ -1964,7 +1820,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-take-with-comparator  :*
+    %-  ford-take-with-comparator  :*
       ford-gate
       now=~1234.5.7
       scry=scry-blocked
@@ -2002,7 +1858,7 @@
     ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -2023,8 +1879,7 @@
 ::    is a date. Inside of the gate called, we scry on a path based on the
 ::    passed in sample date.
 ::
-++  test-call-scry-varies
-  :-  `tank`leaf+"test-call-scry-varies"
+++  test-call-scry-varies  ^-  tang
   ::
   =/  date-type=type  [%atom %da ~]
   =/  term-type=type   [%atom %tas ~]
@@ -2054,7 +1909,7 @@
     [%call gate-schematic sample-schematic]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry
@@ -2092,7 +1947,7 @@
     ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-take-with-comparator  :*
+    %-  ford-take-with-comparator  :*
       ford-gate
       now=~1234.5.7
       scry=scry
@@ -2133,7 +1988,7 @@
     ==  ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -2152,8 +2007,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-dude
-  :-  `tank`leaf+"test-dude"
+++  test-dude  ^-  tang
   ::
   =/  schematic=schematic:ford-gate
     :*  %dude  |.(>%test-no-error<)
@@ -2163,7 +2017,7 @@
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-42
@@ -2180,8 +2034,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-dude-error
-  :-  `tank`leaf+"test-dude-error"
+++  test-dude-error  ^-  tang
   ::
   =/  schematic=schematic:ford-gate
     :*  %dude  |.(>%in-the-error-message<)
@@ -2191,7 +2044,7 @@
   =/  scry-42  (scry-fail ~1234.5.6)
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-42
@@ -2211,8 +2064,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-hood
-  :-  `tank`leaf+"test-hood"
+++  test-hood  ^-  tang
   ::
   =/  scry-type=type  [%atom %tas ~]
   =/  scry
@@ -2228,7 +2080,7 @@
   =/  schematic=schematic:ford-gate  [%hood [[~nul %desk] /hoon/bar/foo]]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry
@@ -2254,7 +2106,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -2272,14 +2124,13 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-slim
-  :-  `tank`leaf+"test-slim"
+++  test-slim  ^-  tang
   ::
   =/  formula=hoon  (ream '(add 2 2)')
   =/  subject-type=type  -:!>(.)
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -2293,7 +2144,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -2309,14 +2160,13 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-slit
-  :-  `tank`leaf+"test-slit"
+++  test-slit  ^-  tang
   ::
   =/  gate=vase    (ride %noun '|=(a=@ud ["one" a])')
   =/  sample=vase  !>(42)
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -2341,7 +2191,7 @@
     ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -2357,14 +2207,13 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-slit-error
-  :-  `tank`leaf+"test-slit-error"
+++  test-slit-error  ^-  tang
   ::
   =/  gate=vase    (ride %noun '|=(a=@ud ["one" a])')
   =/  sample=vase  !>("a tape instead of @ud")
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -2395,7 +2244,7 @@
     ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -2411,15 +2260,14 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-ride
-  :-  `tank`leaf+"test-ride"
+++  test-ride  ^-  tang
   ::
   =/  fun  |=(a=@ (add 2 a))
   =/  formula=hoon  (ream '!:  (fun 3)')
   =/  subject-schematic=schematic:ford-gate  [%$ %noun !>(.)]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -2456,7 +2304,7 @@
     ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -2471,8 +2319,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-ride-scry-succeed
-  :-  `tank`leaf+"test-ride-scry-succeed"
+++  test-ride-scry-succeed  ^-  tang
   ::
   =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
   ::
@@ -2480,7 +2327,7 @@
   =/  subject-schematic=schematic:ford-gate  [%$ %noun !>(.)]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry-42
@@ -2516,7 +2363,7 @@
     ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -2531,8 +2378,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-ride-scry-fail
-  :-  `tank`leaf+"test-ride-scry-fail"
+++  test-ride-scry-fail  ^-  tang
   ::
   =/  scry-failed  (scry-fail ~1234.5.6)
   ::
@@ -2540,7 +2386,7 @@
   =/  subject-schematic=schematic:ford-gate  [%$ %noun !>(.)]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry-failed
@@ -2567,7 +2413,7 @@
     ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -2582,8 +2428,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-ride-scry-block
-  :-  `tank`leaf+"test-ride-scry-block"
+++  test-ride-scry-block  ^-  tang
   ::
   =/  scry-blocked  (scry-block ~1234.5.6)
   ::
@@ -2591,7 +2436,7 @@
   =/  subject-schematic=schematic:ford-gate  [%$ %noun !>(.)]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-blocked
@@ -2609,7 +2454,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-take-with-comparator  :*
+    %-  ford-take-with-comparator  :*
       ford-gate
       now=~1234.5.7
       ::  TODO: using +scry-is-forbidden causes a bail: 4
@@ -2649,7 +2494,7 @@
     ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -2665,8 +2510,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-ride-scry-promote
-  :-  `tank`leaf+"test-ride-scry-promote"
+++  test-ride-scry-promote  ^-  tang
   ::
   =/  scry-type=type  [%atom %tas ~]
   ::
@@ -2687,7 +2531,7 @@
   =/  ride=schematic:ford-gate  [%ride formula subject-schematic]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry
@@ -2704,7 +2548,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.7
       scry=scry
@@ -2722,7 +2566,7 @@
     ==  ==  ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -2741,8 +2585,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-five-oh-fora
-  :-  `tank`leaf+"test-five-oh-fora"
+++  test-five-oh-fora  ^-  tang
   ::
   =/  scry-type=type
     [%cell [%face %title [%atom %tas ~]] [%face %contents -:!>("")]]
@@ -2780,7 +2623,7 @@
   ::  first, ask ford to build rendered-a
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry
@@ -2793,7 +2636,7 @@
         ::
         ?>  ?=([^ ^ ~] moves)
         %+  welp
-          %-  check-post-made  :*
+          %-  verify-post-made  :*
             move=i.moves
             duct=~[/post-a]
             type=scry-type
@@ -2809,7 +2652,7 @@
     ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.7
       scry=scry
@@ -2822,7 +2665,7 @@
         ::
         ?>  ?=([^ ^ ~] moves)
         %+  welp
-          %-  check-post-made  :*
+          %-  verify-post-made  :*
             move=i.moves
             duct=~[/post-b]
             type=scry-type
@@ -2838,7 +2681,7 @@
     ==  ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-take-with-comparator  :*
+    %-  ford-take-with-comparator  :*
       ford-gate
       now=~1234.5.8
       scry=scry
@@ -2855,7 +2698,7 @@
         ::
         ?>  ?=([^ ^ ~] moves)
         %+  welp
-          %-  check-post-made  :*
+          %-  verify-post-made  :*
             move=i.moves
             duct=~[/post-a]
             type=scry-type
@@ -2871,7 +2714,7 @@
     ==  ==
   ::
   =^  results4  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.9
       scry=scry
@@ -2886,7 +2729,7 @@
     ==
   ::
   =^  results5  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.10
       scry=scry-is-forbidden
@@ -2897,7 +2740,7 @@
     ==
   ::
   =^  results6  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.11
       scry=scry-is-forbidden
@@ -2919,8 +2762,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-alts
-  :-  `tank`leaf+"test-alts"
+++  test-alts  ^-  tang
   ::
   =/  scry-type=type  [%atom %tas ~]
   ::
@@ -2949,7 +2791,7 @@
   =/  alts=schematic:ford-gate   [%alts [scry1 scry2 ~]]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry
@@ -2976,7 +2818,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.7
       scry=scry
@@ -2997,7 +2839,7 @@
     ==  ==  ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.8
       scry=scry
@@ -3018,7 +2860,7 @@
     ==  ==  ==
   ::
   =^  results4  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.9
       scry=scry-is-forbidden
@@ -3038,8 +2880,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-alts-and-live
-  :-  `tank`leaf+"test-alts-and-live"
+++  test-alts-and-live  ^-  tang
   ::
   =/  scry-type=type  [%atom %tas ~]
   ::
@@ -3068,7 +2909,7 @@
   ::  depend on scry2 for the duration of the test
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry
@@ -3092,7 +2933,7 @@
   ::    to /scry/two.
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry
@@ -3111,7 +2952,7 @@
   ::  tell ford that /scry/one exists now
   ::
   =^  results3  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.8
       scry=scry
@@ -3139,7 +2980,7 @@
   ::    subscription.
   ::
   =^  results4  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.9
       scry=scry
@@ -3152,7 +2993,7 @@
     ==  ==  ==
   ::
   =^  results5  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.10
       scry=scry
@@ -3173,8 +3014,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-double-alts
-  :-  `tank`leaf+"test-double-alts"
+++  test-double-alts  ^-  tang
   ::
   =/  scry-type=type  [%atom %tas ~]
   ::
@@ -3219,7 +3059,7 @@
   ::  alts1 will depend on both scry1 and scry2
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry
@@ -3237,7 +3077,7 @@
   ::  alts2 will depend on both scry3 and scry2
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry
@@ -3256,7 +3096,7 @@
   ::  alts2 should now just return 'scry-three'
   ::
   =^  results3  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.8
       scry=scry
@@ -3277,7 +3117,7 @@
     ==  ==  ==
   ::
   =^  results4  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.9
       scry=scry
@@ -3298,7 +3138,7 @@
     ==  ==  ==
   ::
   =^  results5  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.10
       scry=scry
@@ -3311,7 +3151,7 @@
     ==  ==  ==
   ::
   =^  results6  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.11
       scry=scry
@@ -3334,11 +3174,10 @@
   ==
 ::  +test-cache-reclamation-trivial: reclaim cache on a blank slate ford
 ::
-++  test-cache-reclamation-trivial
-  :-  `tank`leaf+"test-cache-reclamation-trivial"
+++  disabled-test-cache-reclamation-trivial
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -3354,7 +3193,7 @@
     ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -3372,11 +3211,10 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-cache-reclamation-live-rebuild
-  :-  `tank`leaf+"test-cache-reclamation-live-rebuild"
+++  disabled-test-cache-reclamation-live-rebuild
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
@@ -3396,7 +3234,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -3409,7 +3247,7 @@
     ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.7
       scry=(scry-succeed ~1234.5.7 [%noun !>(43)])
@@ -3430,7 +3268,7 @@
     ==  ==  ==
   ::
   =^  results4  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -3450,8 +3288,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-cache-reclamation-live-promote
-  :-  `tank`leaf+"test-cache-reclamation-live-promote"
+++  disabled-test-cache-reclamation-live-promote
   ::
   =/  scry-type=type  [%atom %tas ~]
   ::
@@ -3474,7 +3311,7 @@
   =/  same=schematic:ford-gate  [%same ride]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry
@@ -3491,7 +3328,7 @@
     ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.7
       scry=scry-is-forbidden
@@ -3504,7 +3341,7 @@
     ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-take  :*
+    %-  ford-take  :*
       ford-gate
       now=~1234.5.7
       scry=scry
@@ -3522,7 +3359,7 @@
     ==  ==  ==
   ::
   =^  results4  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -3543,8 +3380,7 @@
   ==
 ::  tests that doing a cache reclamation during the five-oh-fora rebuild works
 ::
-++  test-five-oh-cache-reclamation
-  :-  `tank`leaf+"test-five-oh-cache-reclamation"
+++  disabled-test-five-oh-cache-reclamation  ^-  tang
   ::
   =/  scry-type=type
     [%cell [%face %title [%atom %tas ~]] [%face %contents -:!>("")]]
@@ -3581,7 +3417,7 @@
   ::  first, ask ford to build rendered-a
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry
@@ -3594,7 +3430,7 @@
         ::
         ?>  ?=([^ ^ ~] moves)
         %+  welp
-          %-  check-post-made  :*
+          %-  verify-post-made  :*
             move=i.moves
             duct=~[/post-a]
             type=scry-type
@@ -3610,7 +3446,7 @@
     ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.7
       scry=scry
@@ -3622,7 +3458,7 @@
         ^-  tang
         ::
         ?>  ?=([^ ~] moves)
-        %-  check-post-made  :*
+        %-  verify-post-made  :*
           move=i.moves
           duct=~[/post-b]
           type=scry-type
@@ -3632,7 +3468,7 @@
     ==  ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.8
       scry=scry-is-forbidden
@@ -3642,7 +3478,7 @@
     ==
   ::
   =^  results4  ford-gate
-    %-  test-ford-take-with-comparator  :*
+    %-  ford-take-with-comparator  :*
       ford-gate
       now=~1234.5.9
       scry=scry
@@ -3671,7 +3507,7 @@
           ::
           ?>  ?=([^ ^ ~] moves)
           ::
-          %-  check-post-made  :*
+          %-  verify-post-made  :*
             move=i.moves
             duct=~[/post-a]
             type=scry-type
@@ -3688,7 +3524,7 @@
         ::
         =/  post-a-first=tang
           %+  welp
-            %-  check-post-made  :*
+            %-  verify-post-made  :*
               move=i.moves
               duct=~[/post-a]
               type=scry-type
@@ -3696,7 +3532,7 @@
               title='post-a'
               contents="post-a-contents-changed"
             ==
-          %-  check-post-made  :*
+          %-  verify-post-made  :*
             move=i.t.moves
             duct=~[/post-b]
             type=scry-type
@@ -3713,7 +3549,7 @@
         ::    Either way, return post-b first check.
         ::
         %+  welp
-          %-  check-post-made  :*
+          %-  verify-post-made  :*
             move=i.moves
             duct=~[/post-b]
             type=scry-type
@@ -3722,7 +3558,7 @@
             contents="post-b"
           ==
         ::
-        %-  check-post-made  :*
+        %-  verify-post-made  :*
           move=i.t.moves
           duct=~[/post-a]
           type=scry-type
@@ -3732,7 +3568,7 @@
     ==  ==
   ::
   =^  results5  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.10
       scry=scry-is-forbidden
@@ -3742,7 +3578,7 @@
     ==
   ::
   =^  results6  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.11
       scry=scry-is-forbidden
@@ -3764,22 +3600,18 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-reef
-  :-  `tank`leaf+"test-reef"
+++  disabled-slow-test-reef
   ::
-  =/  hoon-beam-path=path  (en-beam:format [bek /hoon/hoon/sys])
-  =/  hoon-txt=@t  .^(@t %cx hoon-beam-path)
-  =/  hoon-parsed=hoon  (rain hoon-beam-path hoon-txt)
+  =/  hoon-parsed=hoon
+    (rain /~nul/base/~1234.5.6/sys/hoon/hoon hoon-scry)
   ~&  %parsed-hoon
   ::
-  =/  arvo-beam-path=path  (en-beam:format [bek /hoon/arvo/sys])
-  =/  arvo-txt=@t  .^(@t %cx arvo-beam-path)
-  =/  arvo-parsed=hoon  (rain arvo-beam-path arvo-txt)
+  =/  arvo-parsed=hoon
+    (rain /~nul/base/~1234.5.6/sys/arvo/hoon arvo-scry)
   ~&  %parsed-arvo
   ::
-  =/  zuse-beam-path=path  (en-beam:format [bek /hoon/zuse/sys])
-  =/  zuse-txt=@t  .^(@t %cx zuse-beam-path)
-  =/  zuse-parsed=hoon  (rain zuse-beam-path zuse-txt)
+  =/  zuse-parsed=hoon
+    (rain /~nul/base/~1234.5.6/sys/zuse/hoon zuse-scry)
   ~&  %parsed-zuse
   ::
   =/  pit=vase  !>(~)
@@ -3793,17 +3625,17 @@
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
       :-  [%cx [[~nul %base %da ~1234.5.6] /hoon/hoon/sys]]
-      [%noun !>(hoon-txt)]
+      [%noun !>(hoon-scry)]
     ::
       :-  [%cx [[~nul %base %da ~1234.5.6] /hoon/arvo/sys]]
-      [%noun !>(arvo-txt)]
+      [%noun !>(arvo-scry)]
     ::
       :-  [%cx [[~nul %base %da ~1234.5.6] /hoon/zuse/sys]]
-      [%noun !>(zuse-txt)]
+      [%noun !>(zuse-scry)]
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -3828,7 +3660,7 @@
         ::
         %+  weld
           %-  expect-eq  !>
-          :-  (en-beam:format *beam)
+          :-  (en-beam *beam)
           q:(slym (slap (slap kernel [%limb %format]) [%limb %en-beam]) *beam)
         ::
         %-  expect-eq  !>
@@ -3841,11 +3673,10 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-reef-short-circuit
-  :-  `tank`leaf+"test-reef-short-circuit"
+++  test-reef-short-circuit  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       ^=  scry
@@ -3878,7 +3709,7 @@
         ::
         %+  weld
           %-  expect-eq  !>
-          :-  (en-beam:format *beam)
+          :-  (en-beam *beam)
           q:(slym (slap (slap kernel [%limb %format]) [%limb %en-beam]) *beam)
         ::
         %-  expect-eq  !>
@@ -3891,8 +3722,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-path
-  :-  `tank`leaf+"test-path"
+++  test-path  ^-  tang
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
@@ -3904,7 +3734,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
@@ -3924,13 +3754,12 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-plan-hoon
-  :-  `tank`leaf+"test-plan-hoon"
+++  test-plan-hoon  ^-  tang
   ::
   =/  =hoon  (ream '`@tas`%constant')
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -3975,8 +3804,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core
-  :-  `tank`leaf+"test-core"
+++  test-core  ^-  tang
   ::
   =/  hoon-src  '`@tas`%constant'
   =/  hoon-src-type=type  [%atom %$ ~]
@@ -3988,7 +3816,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4008,8 +3836,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-linker
-  :-  `tank`leaf+"test-core-linker"
+++  test-core-linker  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4048,7 +3875,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4084,8 +3911,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-multi-hoon
-  :-  `tank`leaf+"test-core-multi-hoon"
+++  test-core-multi-hoon  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4108,7 +3934,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4144,8 +3970,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-fsts-fssg
-  :-  `tank`leaf+"test-core-fsts-fssg"
+++  test-core-fsts-fssg  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4161,7 +3986,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4197,8 +4022,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-fsdt-fskt
-  :-  `tank`leaf+"test-core-fsdt-fskt"
+++  test-core-fsdt-fskt  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4217,7 +4041,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4253,8 +4077,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-fskt-nest-fail
-  :-  `tank`leaf+"test-core-fskt-nest-fail"
+++  test-core-fskt-nest-fail  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4270,7 +4093,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4293,8 +4116,7 @@
   ==
 
 ::
-++  test-core-fssm
-  :-  `tank`leaf+"test-core-fssm"
+++  test-core-fssm  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4310,7 +4132,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4346,8 +4168,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-fsbr
-  :-  `tank`leaf+"test-core-fsbr"
+++  test-core-fsbr  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4367,7 +4188,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4403,8 +4224,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-fsbr-out-of-options
-  :-  `tank`leaf+"test-core-fsbr-out-of-options"
+++  test-core-fsbr-out-of-options  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4424,7 +4244,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4446,8 +4266,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-plan-fszp-as-noun
-  :-  `tank`leaf+"test-plan-fszp-as-noun"
+++  test-plan-fszp-as-noun  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4469,7 +4288,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4511,8 +4330,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-fszp-as-mark
-  :-  `tank`leaf+"test-core-fszp-as-mark"
+++  test-core-fszp-as-mark  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4547,7 +4365,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4583,8 +4401,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-fscl-fszp
-  :-  `tank`leaf+"test-core-fscl-fszp"
+++  test-core-fscl-fszp  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4607,7 +4424,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4644,8 +4461,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-fscm
-  :-  `tank`leaf+"test-core-fscm"
+++  test-core-fscm  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4674,7 +4490,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4711,8 +4527,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-plan-fsbc
-  :-  `tank`leaf+"test-plan-fsbc"
+++  test-plan-fsbc  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4729,7 +4544,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4777,8 +4592,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-fscb
-  :-  `tank`leaf+"test-core-fscb"
+++  test-core-fscb  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  arch-type=type  -:!>(*arch)
@@ -4835,7 +4649,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -4872,8 +4686,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-fspm
-  :-  `tank`leaf+"test-core-fspm"
+++  test-core-fspm  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  arch-type=type  -:!>(*arch)
@@ -4919,7 +4732,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
@@ -4955,8 +4768,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-core-fszy-renderer
-  :-  `tank`leaf+"test-core-fszy-renderer"
+++  test-core-fszy-renderer  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -4987,7 +4799,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -5024,8 +4836,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-bunt
-  :-  `tank`leaf+"test-bunt"
+++  test-bunt  ^-  tang
   ::
   =/  hoon-src=@ta
     '''
@@ -5043,7 +4854,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -5079,8 +4890,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-volt
-  :-  `tank`leaf+"test-volt"
+++  test-volt  ^-  tang
   ::
   =/  hoon-src=@ta
     '''
@@ -5099,7 +4909,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -5135,8 +4945,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-vale
-  :-  `tank`leaf+"test-vale"
+++  test-vale  ^-  tang
   ::
   =/  hoon-src=@ta
     '''
@@ -5155,7 +4964,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -5191,8 +5000,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-vale-error
-  :-  `tank`leaf+"test-vale-error"
+++  test-vale-error  ^-  tang
   ::
   =/  hoon-src=@ta
     '''
@@ -5211,7 +5019,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -5237,8 +5045,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-cast
-  :-  `tank`leaf+"test-cast"
+++  test-cast  ^-  tang
   ::
   =/  foo-mark-src=@ta
     '''
@@ -5276,7 +5083,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
@@ -5317,8 +5124,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-cast-grow
-  :-  `tank`leaf+"test-cast-grow"
+++  test-cast-grow  ^-  tang
   ::
   =/  foo-mark-src=@ta
     '''
@@ -5360,7 +5166,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
@@ -5401,13 +5207,12 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-mute
-  :-  `tank`leaf+"test-mute"
+++  test-mute  ^-  tang
   ::
   =/  atom-type=type  [%atom %$ ~]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -5452,8 +5257,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-bake-renderer
-  :-  `tank`leaf+"test-bake-renderer"
+++  test-bake-renderer  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
@@ -5475,7 +5279,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -5517,8 +5321,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-bake-mark
-  :-  `tank`leaf+"test-bake-mark"
+++  test-bake-mark  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  arch-type=type  -:!>(*arch)
@@ -5564,7 +5367,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
@@ -5607,8 +5410,7 @@
   ==
 ::  renderers can fail, and we should fall back to using the mark
 ::
-++  test-bake-mark-fallback
-  :-  `tank`leaf+"test-bake-mark-fallback"
+++  test-bake-mark-fallback  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] (unit cage))
@@ -5648,7 +5450,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
@@ -5690,8 +5492,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-diff
-  :-  `tank`leaf+"test-diff"
+++  test-diff  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  arch-type=type  -:!>(*arch)
@@ -5716,7 +5517,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -5760,8 +5561,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-diff-form
-  :-  `tank`leaf+"test-diff-form"
+++  test-diff-form  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  arch-type=type  -:!>(*arch)
@@ -5804,7 +5604,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
@@ -5847,8 +5647,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-pact
-  :-  `tank`leaf+"test-pact"
+++  test-pact  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  arch-type=type  -:!>(*arch)
@@ -5896,7 +5695,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
@@ -5939,8 +5738,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-pact-mark
-  :-  `tank`leaf+"test-pact-mark"
+++  test-pact-mark  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  arch-type=type  -:!>(*arch)
@@ -6008,7 +5806,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
@@ -6058,8 +5856,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-join
-  :-  `tank`leaf+"test-join"
+++  test-join  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   ::
@@ -6067,18 +5864,18 @@
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
       :^  ~  %hoon  hoon-src-type
-      .^(@t %cx (en-beam:format [bek /hoon/txt/mar]))
+      txt-scry
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
       :^  ~  %hoon  hoon-src-type
-      .^(@t %cx (en-beam:format [bek /hoon/txt-diff/mar]))
+      diff-scry
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
       ~
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
@@ -6125,13 +5922,12 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-list
-  :-  `tank`leaf+"test-list"
+++  test-list  ^-  tang
   ::
   =/  ud-type=type  [%atom %ud ~]
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -6157,8 +5953,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-mash
-  :-  `tank`leaf+"test-mash"
+++  test-mash  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   ::
@@ -6166,18 +5961,18 @@
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
       :^  ~  %hoon  hoon-src-type
-      .^(@t %cx (en-beam:format [bek /hoon/txt/mar]))
+      txt-scry
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
       :^  ~  %hoon  hoon-src-type
-      .^(@t %cx (en-beam:format [bek /hoon/txt-diff/mar]))
+      diff-scry
     ::
       :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
       ~
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
@@ -6235,8 +6030,7 @@
 ::
 ::    Test why multiple app cores don't receive dependencies
 ::
-++  test-multi-core-same-dependency
-  :-  `tank`leaf+"test-multi-core-same-dependency"
+++  test-multi-core-same-dependency  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   ::
@@ -6311,7 +6105,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results-and-failures scry-results)
@@ -6447,7 +6241,7 @@
     ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.7
       scry=(scry-with-results-and-failures scry-results)
@@ -6596,7 +6390,7 @@
     ==
   ::
   =^  results3  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.8
       scry=(scry-with-results-and-failures scry-results)
@@ -6744,7 +6538,7 @@
     ==
   ::
   =^  results4  ford-gate
-    %-  test-ford-take-with-comparator  :*
+    %-  ford-take-with-comparator  :*
       ford-gate
       now=~1234.5.9
       scry=(scry-with-results-and-failures scry-results)
@@ -6791,7 +6585,7 @@
     ==  ==
   ::
   =^  results5  ford-gate
-    %-  test-ford-take-with-comparator  :*
+    %-  ford-take-with-comparator  :*
       ford-gate
       now=~1234.5.9
       scry=(scry-with-results-and-failures scry-results)
@@ -6838,7 +6632,7 @@
     ==  ==
   ::
   =^  results6  ford-gate
-    %-  test-ford-take-with-comparator  :*
+    %-  ford-take-with-comparator  :*
       ford-gate
       now=~1234.5.9
       scry=(scry-with-results-and-failures scry-results)
@@ -6885,7 +6679,7 @@
     ==  ==
   ::
   =^  results7  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.10
       scry=scry-is-forbidden
@@ -6898,7 +6692,7 @@
     ==  ==  ==
   ::
   =^  results8  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.11
       scry=scry-is-forbidden
@@ -6911,7 +6705,7 @@
     ==  ==  ==
   ::
   =^  results9  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.12
       scry=scry-is-forbidden
@@ -6938,8 +6732,7 @@
 ::  tests that we can do the simple adjacent mark case, and that we use grab
 ::  when both available.
 ::
-++  test-walk-prefer-grab
-  :-  `tank`leaf+"test-walk-prefer-grab"
+++  test-walk-prefer-grab  ^-  tang
   ::
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  arch-type=type  -:!>(*arch)
@@ -6981,7 +6774,7 @@
     ==
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results scry-results)
@@ -7005,7 +6798,7 @@
     ==  ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -7023,11 +6816,10 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-walk-large-graph
-  :-  `tank`leaf+"test-walk-large-graph"
+++  test-walk-large-graph  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results large-mark-graph)
@@ -7052,7 +6844,7 @@
     ==  ==  ==  ==
   ::
   =^  results2  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
@@ -7071,11 +6863,10 @@
   ==
 ::  +test-walk-large-graph, except we're going to shove data through it.
 ::
-++  test-cast-large-graph
-  :-  `tank`leaf+"test-cast-large-graph"
+++  test-cast-large-graph  ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call-with-comparator  :*
+    %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
       scry=(scry-with-results large-mark-graph)
@@ -7202,7 +6993,7 @@
 ::  |utilities: helper arms
 ::
 ::+|  utilities
-++  check-post-made
+++  verify-post-made
   |=  $:  move=move:ford-gate
           =duct
           =type
@@ -7340,7 +7131,7 @@
   ~|  scry-is-forbidden+[beam+beam term+term]
   !!
 ::
-++  test-ford-call
+++  ford-call
   |=  $:  ford-gate=_ford-gate
           now=@da
           scry=sley
@@ -7361,7 +7152,7 @@
   ::
   [output ford-gate]
 ::
-++  test-ford-take
+++  ford-take
   |=  $:  ford-gate=_ford-gate
           now=@da
           scry=sley
@@ -7381,12 +7172,12 @@
     moves
   ::
   [output ford-gate]
-::  +test-ford-call-with-comparator
+::  +ford-call-with-comparator
 ::
-::    Sometimes we can't just do simple comparisons between the moves statements and
-::    must instead specify a gate that performs the comparisons.
+::    Sometimes we can't just do simple comparisons between the moves statements
+::    and must instead specify a gate that performs the comparisons.
 ::
-++  test-ford-call-with-comparator
+++  ford-call-with-comparator
   |=  $:  ford-gate=_ford-gate
           now=@da
           scry=sley
@@ -7403,9 +7194,9 @@
   =/  output=tang  (move-comparator moves)
   ::
   [output ford-gate]
-::  +test-ford-take-with-comparator
+::  +ford-take-with-comparator
 ::
-++  test-ford-take-with-comparator
+++  ford-take-with-comparator
   |=  $:  ford-gate=_ford-gate
           now=@da
           scry=sley
@@ -7432,7 +7223,7 @@
   ^-  tang
   ::
   =^  results1  ford-gate
-    %-  test-ford-call  :*
+    %-  ford-call  :*
       ford-gate
       now=~1234.5.6
       scry=scry-is-forbidden
