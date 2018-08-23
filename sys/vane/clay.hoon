@@ -1,3 +1,4 @@
+!:
 ::  clay (4c), revision control
 ::
 ::  This is split in three top-level sections:  structure definitions, main
@@ -1601,6 +1602,9 @@
         $p
       ~|  %requesting-foreign-permissions-is-invalid
       !!
+        $t
+      ~|  %requesting-foreign-directory-is-vaporware
+      !!
         $u
       ~|  %im-thinkin-its-prolly-a-bad-idea-to-request-rang-over-the-network
       !!
@@ -2471,6 +2475,36 @@
       ?:  =(%black mod.rul)
         !in-list
       in-list
+    ::  +read-t: produce the list of paths within a yaki with :pax as prefix
+    ::
+    ++  read-t
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit [%file-list (hypo (list path))]))
+      ::  if asked for version 0, produce an empty list of files
+      ::
+      ?:  =(0 yon)
+        ``[%file-list -:!>(*(list path)) *(list path)]
+      ::  if asked for a future version, we don't have an answer
+      ::
+      ?~  tak=(~(get by hit.dom) yon)
+        ~
+      ::  look up the yaki snapshot based on the version
+      ::
+      =/  yak=yaki  (tako-to-yaki u.tak)
+      ::  calculate the path length once outside the loop
+      ::
+      =/  path-length  (lent pax)
+      ::
+      :^  ~  ~  %file-list
+      :-  -:!>(*(list path))
+      ^-  (list path)
+      ::  sort the matching paths alphabetically
+      ::
+      =-  (sort - aor)
+      ::  traverse the filesystem, filtering for paths with :pax as prefix
+      ::
+      %+  skim  ~(tap in ~(key by q.yak))
+      |=(paf=path =(pax (scag path-length paf)))
     ::
     ::  Checks for existence of a node at an aeon.
     ::
@@ -2645,6 +2679,7 @@
         [~ ~ %& %noun !>(~(key by dos.u.rom))]
       ::
         $p  (read-p r.mun)
+        $t  (bind (read-t yon r.mun) (lift |=(a=cage [%& a])))
         $u  (read-u yon r.mun)
         $v  (bind (read-v yon r.mun) (lift |=(a/cage [%& a])))
         $w  (read-w q.mun)

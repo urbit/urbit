@@ -1,38 +1,31 @@
 /+  new-hoon, tester
 /=  all-tests
-  /^  (map @ta tests:tester)
+  /^  (map path (list test-arm:tester))
   /:  /===/tests
-  /_  /test-tree/
+  /*  /test-gen/
 ::
 =,  new-hoon
 |%
 ::
 ++  test-runner
-  ::  run all tests in {a} with a filter.
-  =|  pax=path
-  |=  [filter=path [defer=? eny=@uvJ] a=tests:tester]
+  |=  [defer=? eny=@uvJ tests=(list test:tester)]
   ^-  tang
-  %-  concat:ls
-  %+  turn  a
-  |=  b=instance:tester
-  ^-  tang
-  =;  tan/tang
-    ?:  defer  tan
-    ((slog (flop tan)) ~)
-  =^  matches  filter  (match-filter filter p.b)
-  ?.  matches
-    ~
-  ?-  -.q.b
-      %&
-    (run-test [p.b pax] eny p.q.b)
   ::
-      %|
-    ^$(pax [p.b pax], a p.q.b)
-  ==
+  %-  zing
+  %+  turn  tests
+  |=  [=path test-func=test-func:tester]
+  ^-  tang
+  ::
+  =/  test-results=tang  (run-test path eny test-func)
+  ::  if :defer is set, produce errors; otherwise print them and produce ~
+  ::
+  ?:  defer
+    test-results
+  ((slog (flop test-results)) ~)
 ::
 ++  run-test
   ::  executes an individual test.
-  |=  [pax=path eny=@uvJ test=$-(@uvJ (list tank))]
+  |=  [pax=path eny=@uvJ test=test-func:tester]
   ^-  tang
   =+  name=(spud (flop pax))
   =+  run=(mule |.((test eny)))
@@ -56,15 +49,18 @@
           p.run
         ==
   ==
+::  +filter-tests-by-prefix
 ::
-++  match-filter
-  ::  checks to see if {name} matches the head of {filter}.
-  |=  [filter=path name=term]
-  ^-  [? path]
-  ?~  filter
-    ::  when there's no filter, we always match.
-    [%.y ~]
-  [=(i.filter name) t.filter]
+++  filter-tests-by-prefix
+  |=  [prefix=path tests=(list test:tester)]
+  ^+  tests
+  ::
+  =/  prefix-length=@ud  (lent prefix)
+  ::
+  %+  skim  tests
+  ::
+  |=  [=path *]
+  =(prefix (scag prefix-length path))
 --
 ::
 :-  %say
@@ -72,9 +68,18 @@
         [filter=$?(~ [pax=path ~])]
         [defer=_& seed=?(~ @uvJ)]
     ==
-~?  !defer  %test-compiled
+::  start printing early if we're not deferring output
+::
+~?  !defer  %tests-compiled
 :-  %tang
-%^    test-runner
-    ?~(filter ~ pax.filter)
-  [defer ?~(seed eny seed)]
-(test-map-to-test-list:tester all-tests)
+::  use empty path prefix if unspecified
+::
+=/  prefix=path  ?~(filter ~ pax.filter)
+=/  entropy  ?~(seed eny seed)
+::
+=/  filtered-tests=(list test:tester)
+  %+  filter-tests-by-prefix
+    prefix
+  (resolve-test-paths:tester all-tests)
+::
+(test-runner defer entropy filtered-tests)

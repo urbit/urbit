@@ -1340,7 +1340,7 @@
   ++  from-list
     ::  creates a tree from a list.
     |*  a=(list (pair))
-    |-
+    |-  ^-  (dict _p.-.i.-.a _q.+.i.-.a)
     %^  foldl:ls  a
     `(dict _p.-.i.-.a _q.+.i.-.a)`~
     |=  [m=(dict _p.-.i.-.a _q.+.i.-.a) p=_i.-.a]

@@ -400,7 +400,7 @@
     $%  {$delta p/lobe q/{p/mark q/lobe} r/page}        ::  delta on q
         {$direct p/lobe q/page}                         ::  immediate
     ==                                                  ::
-  ++  care  ?($d $p $u $v $w $x $y $z)                  ::  clay submode
+  ++  care  ?($d $p $t $u $v $w $x $y $z)               ::  clay submode
   ++  case                                              ::  ship desk case spur
     $%  {$da p/@da}                                     ::  date
         {$tas p/@tas}                                   ::  label
@@ -1445,6 +1445,11 @@
             ::  mold: evaluates to a mold to be applied to :crane
             ::
             =spec
+            =crane
+        ==
+        $:  ::  %fstr: `/*` run :crane on all files with current path as prefix
+            ::
+            %fstr
             =crane
         ==
         $:  ::  %fszp: `/!mark/` evaluate as hoon, then pass through mark
