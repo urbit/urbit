@@ -585,13 +585,14 @@
       =/  nom/name
       %^  rsh  3  1
       %+  roll
-        %+  sort  (weld ~(tap in sis) [our.bol ~])
-        |=  [a=ship b=ship]
-        ^-  ?
-        (lth a b)
-      |=  {p/ship nam/name}
+        %+  sort  %+  turn  (weld ~(tap in sis) [our.bol ~])
+        |=  p/ship
+        ^-  cord
+        (scot %p p)
+        aor
+      |=  {p/cord nam/name}
       ^-  @tas
-      (crip "{(trip `@t`nam)}.{(slag 1 (trip (scot %p p)))}")
+      (crip "{(trip `@t`nam)}.{(slag 1 (trip p))}")
       =/  dels/(list delta)
       :~
       :*

@@ -67,13 +67,16 @@
 ++  collection-to-elem
   |=  col=collection:collections
   ^-  manx
-  ;ul
-    ;*  %+  turn  ~(tap by data.col)
-        |=  [nom=knot ite=item:collections]
-        ^-  manx
-        ;li.collection-post.mt-6
-          ;+  (item-to-snip nom ite)
-        ==
+  ;div
+    ;+  (config-to-elem meta.col)
+    ;ul
+      ;*  %+  turn  ~(tap by data.col)
+          |=  [nom=knot ite=item:collections]
+          ^-  manx
+          ;li.collection-post.mt-6
+            ;+  (item-to-snip nom ite)
+          ==
+    ==
   ==
 ::
 ++  raw-to-elem
@@ -86,6 +89,7 @@
   =/  owner  (fall (~(get by meta.raw) %owner) 'anonymous')
   ::
   ;div
+    ;+  (front-to-elem meta.raw)
     ;div.collection-date: {(trip date)}
     ::
     ;div#show
@@ -123,7 +127,7 @@
           ^-  manx
           ::  XX TODO: accept types other than comments
           ?>  ?=(%raw -.ite)
-          ?>  =(%comments (~(got by meta.raw.ite) %type))
+         :: ?>  =(%comments (~(got by meta.raw.ite) %type))
           =/  owner  (fall (~(get by meta.raw.ite) %owner) 'anonymous')
           =/  date  (fall (~(get by meta.raw.ite) %date-created) 'missing date')
           ;li.collection-comment
@@ -164,10 +168,12 @@
 ++  collection-to-snip
   |=  [nom=knot col=collection:collections]
   ^-  manx
+  =/  lnk=tape
+    "/~~/{(scow %p p.full-path.meta.col)}/=={(spud (flop (slag 1 s.full-path.meta.col)))}"
   ;div
     ;div.collection-date: {<date-created.meta.col>}
     ;h3
-      ;a(href "{(trip -.s.bem.gas)}/{(trip nom)}"): {(trip name.meta.col)}
+      ;a(href lnk): {(trip name.meta.col)}
     ==
     ;div.who.text-mono.text-600: {<owner.meta.col>}
     ;div.meta-cont
@@ -187,13 +193,15 @@
   =/  title  (fall (~(get by meta.raw) %name) nom)
   =/  date   (fall (~(get by meta.raw) %date-created) 'missing date')
   =/  owner  (fall (~(get by meta.raw) %owner) 'anonymous')
+  =/  lnk=tape
+    "/~~/{(scow %p p.bem.gas)}/=={(spud (flop s.bem.gas))}/{(trip nom)}"
   ::
   ;div
     ;div.collection-date: {(trip date)}
     ;h3
       ;+  ?~  hed.ht
-            ;a(href "{(trip -.s.bem.gas)}/{(trip nom)}"): {(trip title)}
-          ;a(href "{(trip -.s.bem.gas)}/{(trip nom)}"): *{hed.ht}
+            ;a(href lnk): {(trip title)}
+          ;a(href lnk): *{hed.ht}
     ==
     ;div.who.text-mono.text-600: {(trip owner)}
     ;div.snippet
@@ -209,13 +217,15 @@
   =?  tal.ht  ?=(~ hed.ht)
     (scag 5 c.elm)
   =/  title  (fall (~(get by meta.raw) %name) nom)
+  =/  lnk=tape
+    "/~~/{(scow %p p.bem.gas)}/=={(spud (flop s.bem.gas))}/{(trip nom)}"
   ::
   ;div
     ;div.collection-date: {<date-created.meta.col>}
     ;h3
       ;+  ?~  hed.ht
-            ;a(href "{(trip -.s.bem.gas)}/{(trip nom)}"): {(trip title)}
-          ;a(href "{(trip -.s.bem.gas)}/{(trip nom)}"): *{hed.ht}
+            ;a(href lnk): {(trip title)}
+          ;a(href lnk): *{hed.ht}
     ==
     ;div.who.text-mono.text-600: {<owner.meta.col>}
     ;div.snippet: *{tal.ht}
@@ -225,6 +235,28 @@
       ==
     ==
   ==
+::
+++  front-to-elem
+  |=  fro=(map knot cord)
+  ^-  manx
+  :_  ~
+  :-  %div
+  %+  turn  ~(tap by (~(put by fro) %class %item-meta))
+  |=  [a=knot b=cord]
+  ^-  [mane tape]
+  [((hard @tas) a) (trip b)]
+::
+++  config-to-elem
+  |=  con=config:collections
+  ^-  manx
+  ;div.collection-meta
+    =urb-full-path      (spud (en-beam:format full-path.con))
+    =urb-name           (trip name.con)
+    =urb-description    (trip description.con)
+    =urb-owner          (scow %p owner.con)
+    =urb-date-created   (scow %da date-created.con)
+    =urb-last-modified  (scow %da last-modified.con)
+    =urb-type           (trip type.con);
 ::::
 ::::  /mar/snip
 ::::

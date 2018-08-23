@@ -36,7 +36,7 @@
           |=  [nom=knot ite=item:collections]
           ^-  json
           %-  pairs:enjs:format
-          :~  [%name %s nom]
+          :~  [%filename %s nom]
               [%item (item-to-json ite)]
           ==
       ==
@@ -62,13 +62,15 @@
             %+  turn  (en-beam:format full-path.con)
             |=  a=@ta
             [%s a]
-          :-  %name           [%s description.con]
+          :-  %name           [%s name.con]
           :-  %desc           [%s description.con]
           :-  %owner          (ship:enjs:format owner.con)
           :-  %date-created   (time:enjs:format date-created.con)
           :-  %last-modified  (time:enjs:format last-modified.con)
+          :-  %type           [%s type.con]
           :-  %comments       [%b comments.con]
           :-  %sort-key       ?~(sort-key.con ~ (numb:enjs:format u.sort-key.con))
+          :-  %visible        [%b visible.con]
       ==
     ::
     ++  meta-to-json
