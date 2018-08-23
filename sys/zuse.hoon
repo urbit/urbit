@@ -49,6 +49,7 @@
       {$n p/@ta}                                        ::  number
       {$s p/@t}                                         ::  string
   ==                                                    ::
+++  life  @ud                                           ::  ship version
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  sack  {p/ship q/ship}                               ::  incoming [our his]
@@ -200,10 +201,8 @@
         ::
           $=  net                                       ::  networking
           %-  unit
-          $:  encryption-key=pass
-              authentication-key=pass
-              crypto-suite=@ud
-              key-revision=@ud
+          $:  =life
+              =pass
               continuity-number=@ud
               sponsor=(unit @p)
               escape=(unit @p)
@@ -220,7 +219,7 @@
     ++  complete-ship
       $:  state=hull
           history=(list diff-hull)  ::TODO  maybe block/event nr?  ::  newest first
-          keys=(map @ud (pair @ @))
+          keys=(map life pass)
       ==
     ::
     ++  fleet  (map @p complete-ship)
@@ -295,7 +294,7 @@
           [%owner new=address]                          ::  OwnerChanged
           [%activated who=@p]                           ::  Activated
           [%spawned who=@p]                             ::  Spawned
-          [%keys enc=@ aut=@ sut=@ud rev=@ud]           ::  ChangedKeys
+          [%keys =life =pass]                           ::  ChangedKeys
           [%continuity new=@ud]                         ::  BrokeContinuity
           [%sponsor new=(unit @p)]                      ::  EscapeAcc/LostSpons
           [%escape new=(unit @p)]                       ::  EscapeReq/Can
@@ -540,7 +539,6 @@
     ==                                                  ::
   ++  lang  @ta                                         ::  IETF lang as code
   ++  lice  {p/ship q/buck}                             ::  full license
-  ++  life  @ud                                         ::  regime number
   ++  mace  (list {p/life q/ring})                      ::  private secrets
   ++  meal                                              ::  payload
     $%  {$back p/coop q/flap r/@dr}                     ::  ack
@@ -1954,9 +1952,9 @@
       ==  ==                                            ::
     ++  gift                                            ::  out result <-$
       $%  [%mack p=(unit tang)]                         ::  message n/ack
-          [%pubs p=kist]                                ::  public keys
+          [%pubs =life pubs=(map life pass)]            ::  public keys
           {$vest p/tally}                               ::  balance update
-          {$vein p/life q/(map life ring)}              ::  private keys
+          [%vein =life vein=(map life ring)]            ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
           [%vent p=chain]                               ::  ethereum changes
       ==                                                ::
@@ -2058,7 +2056,6 @@
           sut=@ud                                       ::  crypto-suite version
       ==                                                ::
     ++  kist  (map life kest)                           ::  public key history
-    ++  life  @ud                                       ::  ship version
     ++  mind  {who/ship lyf/life}                       ::  key identifier
     ++  name  (pair @ta @t)                             ::  ascii / unicode
     ++  oath  @                                         ::  signature
@@ -2172,7 +2169,6 @@
         {$is p/@ud q/(unit lane) r/@is}                 ::  IPv6 w+alternates
         {$ix p/@da q/@ud r/@if}                         ::  IPv4 provisional
     ==                                                  ::
-  ++  life  @ud                                         ::  regime number
   --  ::xmas
 --  ::
 ::                                                      ::  ::
@@ -6289,6 +6285,13 @@
     =,  constitution:ethe
     |%
     ::
+    ++  pass-from-eth
+      |=  [enc=octs aut=octs sut=@ud]
+      ^-  (unit pass)
+      ?.  &(=(1 sut) =(p.enc 32) =(p.aut 32))
+        ~
+      `(cat 3 'b' (cat 8 q.aut q.enc))
+    ::
     ++  hull-from-eth
       |=  [who=@p hull:eth-noun]
       ^-  hull
@@ -6301,15 +6304,10 @@
         ::
         ?:  =(0 key-revision)  ~
         :-  ~
-        :*  ?>  =(32 p.encryption-key)
-            `pass`q.encryption-key
+        :*  key-revision
           ::
-            ?>  =(32 p.authentication-key)
-            `pass`q.authentication-key
-          ::
-            crypto-suite
-          ::
-            key-revision
+            %-  need
+            (pass-from-eth encryption-key authentication-key crypto-suite)
           ::
             continuity-number
           ::
@@ -6375,8 +6373,7 @@
         =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
             %+  decode-results  data.log
             ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
-        ?>  &(=(p.enc 32) =(p.aut 32))  ::  sanity
-        `[who %keys q.enc q.aut sut rev]
+        `[who %keys rev (need (pass-from-eth enc aut sut))]
       ::
       ?:  =(event.log broke-continuity)
         =/  who=@  (decode-topics topics.log ~[%uint])
@@ -6406,7 +6403,7 @@
       ::
           %activated
         %_  hul
-          net  `[0 0 0 0 0 `(sein:title who.dif) ~]
+          net  `[0 0 0 `(sein:title who.dif) ~]
           kid  ?.  ?=(?(%czar %king) (clan:title who.dif))  ~
                `[0x0 0 ~]
         ==
@@ -6422,13 +6419,7 @@
         ?>  ?=(^ net.hul)
         ?-  -.dif
             %keys
-          =-  hul(u.net -)
-          %_  u.net.hul
-            encryption-key      enc.dif
-            authentication-key  aut.dif
-            crypto-suite        sut.dif
-            key-revision        rev.dif
-          ==
+          hul(life.u.net life.dif, pass.u.net pass.dif)
         ::
             %sponsor
           ?~  new.dif  hul(sponsor.u.net ~)
