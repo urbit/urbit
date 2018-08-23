@@ -1,7 +1,12 @@
 /+  new-hoon, tester
 =,  dct:new-hoon
-=+  four=(from-list [[1 "one"] [2 "two"] [3 "three"] [4 "four"] ~])
-=+  three=(from-list [[1 "one"] [2 "two"] [3 "three"] ~])
+::
+=/  four=(dict @ud tape)
+  (from-list `(list [@ud tape])`[[1 "one"] [2 "two"] [3 "three"] [4 "four"] ~])
+::
+=/  three=(dict @ud tape)
+  (from-list `(list [@ud tape])`[[1 "one"] [2 "two"] [3 "three"] ~])
+::
 |_  _tester:tester
 ++  test-empty
   (expect-eq !>([%.n (empty four)]))
@@ -14,18 +19,25 @@
 ::
 ++  test-put-with
   %-  expect-eq  !>
-  :-  (from-list [["one" 1] ["two" 2] ["three" 5] ["four" 4] ~])
-  =/  ints  (from-list [["one" 1] ["two" 2] ["three" 3] ["four" 4] ~])
+  :-  %-  from-list  ^-  (list [tape @ud])
+      [["one" 1] ["two" 2] ["three" 5] ["four" 4] ~]
+  ::
+  =/  ints  %-  from-list  ^-  (list [tape @ud])
+            [["one" 1] ["two" 2] ["three" 3] ["four" 4] ~]
+  ::
   (put-with ints "three" 2 add)
 ::
 ++  test-put-with-key
   %-  expect-eq  !>
-  :-  (from-list [[1 "one"] [2 "two"] [3 "three"] [4 "4four"] ~])
+  :-  %-  from-list  ^-  (list [@ud tape])
+      [[1 "one"] [2 "two"] [3 "three"] [4 "4four"] ~]
   (put-with-key four 4 "four" |=({a/@ud b/tape c/tape} (weld (scow %ud a) b)))
 ::
 ++  test-put-lookup-with-key
   %-  expect-eq  !>
-  :-  [`"four" (from-list [[1 "one"] [2 "two"] [3 "three"] [4 "five"] ~])]
+  :-  :-  `"four"
+      %-  from-list  ^-  (list [@ud tape])
+      [[1 "one"] [2 "two"] [3 "three"] [4 "five"] ~]
   %^  put-lookup-with-key  four
     4
   :-  "five"
@@ -38,49 +50,55 @@
 ::
 ++  test-adjust
   %-  expect-eq  !>
-  :-  (from-list [[1 "one"] [2 "two"] [3 "thisthree"] [4 "four"] ~])
+  :-  %-  from-list  ^-  (list [@ud tape])
+      [[1 "one"] [2 "two"] [3 "thisthree"] [4 "four"] ~]
   %^  adjust  four
     3
   |=(a/tape (weld "this" a))
 ::
 ++  test-adjust-with-key
   %-  expect-eq  !>
-  :-  (from-list [[1 "one"] [2 "two"] [3 "3three"] [4 "four"] ~])
+  :-  (from-list `(list [@ud tape])`[[1 "one"] [2 "two"] [3 "3three"] [4 "four"] ~])
   %^  adjust-with-key  four
     3
   |=({a/@ud b/tape} (weld (scow %ud a) b))
-::
+
 ++  test-update
   %-  expect-eq  !>
-  :-  (from-list [[1 "one"] [2 "two"] [4 "four"] ~])
+  :-  %-  from-list  ^-  (list [@ud tape])
+      [[1 "one"] [2 "two"] [4 "four"] ~]
   %^  update  four
     3
   |=(a/tape `(maybe tape)`~)
 ::
 ++  test-update-with-key
   %-  expect-eq  !>
-  :-  (from-list [[1 "one"] [2 "two"] [3 "3three"] [4 "four"] ~])
+  :-  %-  from-list  ^-  (list [@ud tape])
+      [[1 "one"] [2 "two"] [3 "3three"] [4 "four"] ~]
   %^  update-with-key  four
     3
   |=({a/@u b/tape} `(maybe tape)`[~ (weld (scow %ud a) b)])
 ::
 ++  test-alter-as-add
   %-  expect-eq  !>
-  :-  (from-list [[1 "one"] [2 "two"] [3 "three"] [4 "four"] [5 "five"] ~])
+  :-  %-  from-list  ^-  (list [@ud tape])
+      [[1 "one"] [2 "two"] [3 "three"] [4 "four"] [5 "five"] ~]
   %^  alter  four
     5
   |=(a/(maybe tape) `(maybe tape)`[~ "five"])
 ::
 ++  test-alter-as-delete
   %-  expect-eq  !>
-  :-  (from-list [[1 "one"] [3 "three"] [4 "four"] ~])
+  :-  %-  from-list  ^-  (list [@ud tape])
+      [[1 "one"] [3 "three"] [4 "four"] ~]
   %^  alter  four
     2
   |=(a/(maybe tape) `(maybe tape)`~)
 ::
 ++  test-alter-as-change
   %-  expect-eq  !>
-  :-  (from-list [[1 "one"] [2 "dos"] [3 "three"] [4 "four"] ~])
+  :-  %-  from-list  ^-  (list [@ud tape])
+      [[1 "one"] [2 "dos"] [3 "three"] [4 "four"] ~]
   %^  alter  four
     2
   |=(a/(maybe tape) `(maybe tape)`[~ "dos"])
@@ -94,7 +112,7 @@
   ::  this is dumb, but use {a} as entropy?
   =/  gen  (random:new-hoon (jam a))
   =|  i/@u
-  |-
+  |-  ^-  ?
   ?:  =(i 40)
     %.y
   =^  key  gen  (range:gen 0 100)
@@ -118,7 +136,7 @@
   %+  union
     (from-list [[1 "left"] [2 "left"] ~])
   (from-list [[2 "right"] [3 "right"] ~])
-::
+::::
 ++  test-union-with
   %-  expect-eq  !>
   :-  (from-list [[1 "left"] [2 "leftright"] [3 "right"] ~])
@@ -154,20 +172,22 @@
     "Everything:"
   |=  {accumulator/tape value/tape}
   [:(weld accumulator " " value) (weld value "X")]
-::
-++  test-map-keys
-  %-  expect-eq  !>
-  :-  (from-list [[11 "one"] [12 "two"] [13 "three"] ~])
-  %+  map-keys  three
-  |=(a/@u (add a 10))
-::
-++  test-map-keys-with
-  %-  expect-eq  !>
-  :-  (from-list [[42 "twothreeone"] ~])
-  %^  map-keys-with  three
-    |=(a/@u 42)
-  weld
-::
+::::  TODO: causes a compiler hang
+::::
+::++  test-map-keys
+::  %-  expect-eq  !>
+::  :-  (from-list [[11 "one"] [12 "two"] [13 "three"] ~])
+::  %+  map-keys  three
+::  |=(a/@u (add a 10))
+::::  TODO: causes a compiler hang
+::::
+::++  test-map-keys-with
+::  %-  expect-eq  !>
+::  :-  (from-list [[42 "twothreeone"] ~])
+::  %^  map-keys-with  three
+::    |=(a/@u 42)
+::  weld
+::::
 ++  test-fold
   %-  expect-eq  !>
   :-  "Everything: twoonethree"
