@@ -71566,13 +71566,13 @@ function (_Component) {
   _createClass(TopicCreatePage, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var path = "/circle/".concat(this.state.details.circle, "/config-l/grams/-10");
+      var path = "/circle/".concat(this.state.details.namedCircle, "/config-l/grams/-10");
       this.props.api.bind(path, "PUT", this.state.details.hostship);
     }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
-      var path = "/circle/".concat(this.state.details.circle, "/config-l/grams/-10");
+      var path = "/circle/".concat(this.state.details.namedCircle, "/config-l/grams/-10");
       this.props.api.bind(path, "DELETE", this.state.details.hostship);
     }
   }, {
@@ -71599,6 +71599,7 @@ function (_Component) {
         details.clayPath = props.claypath.split('/').slice(1);
         details.hostship = props.ship.substr(1);
         details.circle = "~".concat(details.hostship, "/c").concat([''].concat(details.clayPath.slice(2, -1)).join('-'));
+        details.namedCircle = "c".concat([''].concat(details.clayPath.slice(2, -1)).join('-'));
         details.lastedit = props.lastedit;
         details.title = details.clayPath.slice(-1)[0];
         details.body = props.content;
@@ -71611,6 +71612,7 @@ function (_Component) {
         details.clayPath = props.claypath.split('/').slice(1);
         details.hostship = props.ship.substr(1);
         details.circle = "~".concat(details.hostship, "/c").concat([''].concat(details.clayPath.slice(2)).join('-'));
+        details.namedCircle = "c".concat([''].concat(details.clayPath.slice(2)).join('-'));
       }
 
       return details;
