@@ -1,4 +1,3 @@
-/+  new-hoon
 |%
 ::  $test: a test with a fully resolved path
 ::
@@ -57,84 +56,22 @@
   |=  eny=@uvJ
   ^-  tang
   ((hard tang) .*(test-core(+6 (init-test eny)) nock.run-arm))
-::  +has-test-prefix: does the arm start with 'test-' or 'check-'?
-::
-::    TODO: what are 'check-' arms for? Are they different from test arms?
+::  +has-test-prefix: does the arm define a test we should run?
 ::
 ++  has-test-prefix
   |=  a=term  ^-  ?
-  ?|  =((end 3 5 a) 'test-')
-      =((end 3 6 a) 'check-')
-  ==
+  =((end 3 5 a) 'test-')
 ::  +init-test: data initialized on a per-test basis
 ::
-++  init-test  |=({eny/@uvJ} %*(. tester eny eny, check-iterations 10))
+++  init-test  |=(eny=@uvJ ~(. tester eny))
 ::  +tester: main testing core with helper arms to be used in tests
 ::
+::    TODO provide a lot more helper functions.
+::
 ++  tester
-  |_  $:  eny=@uvJ                                    ::  entropy
-          check-iterations=@u                         ::  # of check trials
-          current-iteration=@u                        ::  current iteration
-      ==
-  ::  #
-  ::  #  %check
-  ::  #
-  ::    gates for quick check style tests.
-  +|  %check
-  ++  check
-    |*  [generator=$-(@uvJ *) test=$-(* ?)]
-    |-  ^-  tang
-    ?:  (gth current-iteration check-iterations)
-      ~
-    ::  todo: wrap generator in mule so it can crash.
-    =+  sample=(generator eny)
-    ::  todo: wrap test in mule so it can crash.
-    ?:  (test sample)
-      %=  $
-        eny    (shaf %huh eny)                        ::  xxx: better random?
-        current-iteration  (add current-iteration 1)
-      ==
-    =/  case  +(current-iteration)
-    =/  pl  ?+(case "" %1 "s")
-    ::XXX sample is a noun
-    [leaf+"falsified after {<case>} case{pl} by '{<`*`sample>}', seed {<eny>}"]~
+  |_  eny=@uvJ
+  ::  +expect-eq: compares !>([expected actual]) and pretty-prints the result
   ::
-  ::  todo: a generate function that takes an arbitrary span.
-  ::
-  ++  generate-range
-    |=  [min=@ max=@]
-    |=  c=@uvJ
-    ^-  @
-    =+  gen=(random:new-hoon c)
-    =^  num  gen  (range:gen min max)
-    num
-  ::
-  ++  generate-dict
-    ::  generator which will produce a dict with {count} random pairs.
-    |=  count=@u
-    ::  generate a dict with entropy {c}.
-    |=  c=@uvJ
-    ::
-    ::  gen: stateful random number generator
-    ::  out: resulting map
-    ::  i: loop counter
-    ::
-    =/  gen  (random:new-hoon c)
-    =|  out=(dict:new-hoon @ud @ud)
-    =|  i=@u
-    |-
-    ^-  (dict:new-hoon @ud @ud)
-    ?:  =(i count)
-      out
-    =^  first  gen  (range:gen 0 100)
-    =^  second  gen  (range:gen 0 100)
-    $(out (put:dct:new-hoon out first second), i +(i))
-  ::  #
-  ::  #  %test
-  ::  #
-  ::    test expectation functions
-  +|  %test
-  ::  todo: unit testing libraries have a lot more to them than just eq.
   ++  expect-eq
     |=  a=vase
     ^-  tang
@@ -144,11 +81,8 @@
     :~  palm+[": " ~ ~ ~]^~[leaf+"expected" (sell (slot 2 a))]
         palm+[": " ~ ~ ~]^~[leaf+"actual" (sell (slot 3 a))]
     ==
-  ::  #
-  ::  #  %formatting
-  ::  #
-  ::    test result presentation
-  +|  %formatting
+  ::  +category: prepends a name to an error result; passes successes unchanged
+  ::
   ++  category
     |=  [a=tape b=tang]  ^-  tang
     ?:  =(~ b)  ~  :: test OK

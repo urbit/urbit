@@ -18,7 +18,7 @@
     ::
     ::  parses a single character information line of the unicode data file.
     ++  line
-      ;~  (glue sem)
+      ;~  (glue mic)
         hex                       :: code/@c        codepoint in hex format
         name-string               :: name/tape      character name
         general-category          :: gen/general    type of character
@@ -44,7 +44,7 @@
     ++  name-string
       %+  cook
         |=(a=tape a)
-      (star ;~(less sem prn))
+      (star ;~(less mic prn))
     ::
     ::  parses a unicode general category abbreviation to symbol
     ++  general-category
