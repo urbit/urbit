@@ -1447,6 +1447,11 @@
             =spec
             =crane
         ==
+        $:  ::  %fstr: `/*` run :crane on all files with current path as prefix
+            ::
+            %fstr
+            =crane
+        ==
         $:  ::  %fszp: `/!mark/` evaluate as hoon, then pass through mark
             ::
             %fszp

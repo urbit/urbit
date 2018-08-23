@@ -1160,30 +1160,46 @@
       ;~  pfix  net
         ;~  pose
           ::  `/~`  hoon literal
+          ::
           (stag %fssg ;~(pfix sig hoon))
           ::  `/$`  process query string
+          ::
           (stag %fsbc ;~(pfix bus hoon))
           ::  `/|`  first of many options that succeeds
+          ::
           (stag %fsbr ;~(pfix bar parse-alts))
           ::  `/=`  wrap a face around a crane
+          ::
           (stag %fsts ;~(pfix tis parse-face))
           ::  `/.`  null terminated list
+          ::
           (stag %fsdt ;~(pfix dot parse-list))
           ::  `/,`  switch by path
+          ::
           (stag %fscm ;~(pfix com parse-switch))
           ::  `/&`  pass through a series of mark
+          ::
           (stag %fspm ;~(pfix pad parse-pipe))
           ::  `/_`  run a crane on each file in the current directory
+          ::
           (stag %fscb ;~(pfix cab subcrane))
           ::  `/;`  passes date through a gate
+          ::
           (stag %fssm ;~(pfix mic parse-gate))
           ::  `/:`  evaluate at path
+          ::
           (stag %fscl ;~(pfix col parse-at-path))
-          ::  `/^` cast
+          ::  `/^`  cast
+          ::
           (stag %fskt ;~(pfix ket parse-cast))
+          ::  `/*`  run a crane on each file with current path as prefix
+          ::
+          (stag %fstr ;~(pfix tar subcrane))
           ::  `/!mark/ evaluate as hoon, then pass through mark
+          ::
           (stag %fszp ;~(pfix zap ;~(sfix sym net)))
           ::  `/mark/` passes current path through :mark
+          ::
           (stag %fszy ;~(sfix sym net))
         ==
       ==
@@ -1237,7 +1253,7 @@
       %+  wide-or-tall
         ;~(plug ;~(sfix wyde:hoon-parser ket) subcrane)
       ;~(pfix gap ;~(plug till:hoon-parser subcrane))
-    ::  +crane: parses a subcrane
+    ::  +subcrane: parses a subcrane
     ::
     ++  subcrane
       %+  wide-or-tall
@@ -4082,6 +4098,7 @@
               %fssm  (run-fssm +.crane)
               %fscl  (run-fscl +.crane)
               %fskt  (run-fskt +.crane)
+              %fstr  (run-fstr +.crane)
               %fszp  (run-fszp +.crane)
               %fszy  (run-fszy +.crane)
             ==
@@ -4483,6 +4500,102 @@
             [[%error [leaf+"/^ failed: nest-fail"]~] ..run-crane]
           :_  ..run-crane
           [%subject %noun [p.vase.u.bunt-result q.q.subject.child]]
+        ::  +run-fstr: runs the `/*` rune
+        ::
+        ::    TODO: some duplicate code with +run-fscb
+        ::
+        ++  run-fstr
+          |=  sub-crane=^crane
+          ^-  compose-cranes
+          ::
+          =/  tree-build=^build
+            [date.build [%scry [%c %t path-to-render]]]
+          ::
+          =^  tree-result  out  (depend-on tree-build)
+          ?~  tree-result
+            [[%block ~[tree-build]] ..run-crane]
+          ::
+          ?:  ?=([~ %error *] tree-result)
+            :-  [%error [%leaf "/* failed: "] message.u.tree-result]
+            ..run-crane
+          ?>  ?=([~ %success %scry *] tree-result)
+          ::
+          =/  file-list=(list path)  ;;((list path) q.q.cage.u.tree-result)
+          ::  trim file extensions off the file paths
+          ::
+          ::    This is pretty ugly, but Ford expects :path-to-render not to
+          ::    have a file extension, so we need to trim it off each path.
+          ::
+          =.  file-list
+            ::  deduplicate since multiple files could share a trimmed path
+            ::
+            =-  ~(tap in (~(gas in *(set path)) `(list path)`-))
+            %+  turn  file-list
+            |=  =path
+            ^+  path
+            (scag (sub (lent path) 1) path)
+          ::
+          =/  old-path-to-render  path-to-render
+          ::  apply each of the paths in :file-list to the :sub-crane
+          ::
+          =^  crane-results  ..run-crane
+            %+  roll  file-list
+            |=  $:  =path
+                    $=  accumulator
+                    [(list [=path =compose-result]) _..run-crane]
+                ==
+            =.  ..run-crane  +.accumulator
+            =.  spur.path-to-render  (flop path)
+            ::
+            =^  result  ..run-crane  (run-crane subject sub-crane)
+            [[[path result] -.accumulator] ..run-crane]
+          ::
+          =.  path-to-render  old-path-to-render
+          ::  if any sub-cranes error, return the first error
+          ::
+          =/  error-list=(list [=path =compose-result])
+            %+  skim  crane-results
+            |=  [=path =compose-result]
+            =(%error -.compose-result)
+          ::
+          ?^  error-list
+            [compose-result.i.error-list ..run-crane]
+          ::  if any sub-cranes block, return all blocks
+          ::
+          =/  block-list=(list ^build)
+            =|  block-list=(list ^build)
+            |-  ^+  block-list
+            ?~  crane-results  block-list
+            ::
+            ?.  ?=(%block -.compose-result.i.crane-results)
+              $(crane-results t.crane-results)
+            =.  block-list
+              (weld builds.compose-result.i.crane-results block-list)
+            ::
+            $(crane-results t.crane-results)
+          ::
+          ?^  block-list
+            [[%block block-list] ..run-crane]
+          ::
+          =/  result-map=(map path vase)
+            %-  my
+            %+  turn  crane-results
+            |=  [=path =compose-result]
+            ^-  (pair ^path vase)
+            ::
+            ?>  ?=(%subject -.compose-result)
+            [path q.subject.compose-result]
+          ::
+          =/  as-vase
+            =/  path-type  -:!>(*path)
+            |-  ^-  vase
+            ?~  result-map  [[%atom %n `0] 0]
+            ::
+            %+  slop
+              (slop [path-type p.n.result-map] q.n.result-map)
+            (slop $(result-map l.result-map) $(result-map r.result-map))
+          ::
+          [[%subject %noun as-vase] ..run-crane]
         ::  +run-fszp: runs the `/!mark/` "rune"
         ::
         ++  run-fszp
@@ -4544,7 +4657,7 @@
             [[%block [bake-build]~] ..run-crane]
           ?:  ?=([~ %error *] bake-result)
             :_  ..run-crane
-            [%error [leaf+"/{<mark>}/ failed: " message.u.bake-result]]
+            [%error [leaf+"/{(trip mark)}/ failed: " message.u.bake-result]]
           ?>  ?=([~ %success %bake *] bake-result)
           ::
           [[%subject cage.u.bake-result] ..run-crane]
