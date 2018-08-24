@@ -6764,6 +6764,8 @@
       --
       '''
     ::
+      ::  todo: %cy looks funny here
+      ::
       ::  make sure we can deal with random not-hoon files in mar
       :-  [%cy [[~nul %home %da ~1234.5.6] /js/dummy/mar]]
       :-  %js
@@ -6901,6 +6903,374 @@
   ::
   ;:  weld
     results1
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
+++  test-complex-live-cranes
+  ^-  tang
+  ::  set the build-cache to 2 to force eviction
+  ::
+  =^  results0  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.5
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/config] type=~ %keep [2.048 0]]
+      moves=~
+    ==
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  =/  item-type=type  -:!>([%item ''])
+  =/  arch-type=type  -:!>(*arch)
+  ::
+  =/  scry-results1=(map [term beam] (unit cage))
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/app]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /+  things
+      /=  data
+        /^  box:things
+        /;  |=  a=(map knot item:things)
+            [*config:things a]
+        /:  /===/web  /_  /item/
+      ::
+      data
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/things/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |%
+      +$  box     [config (map knot item)]
+      +$  config  [%config @t]
+      +$  item    [%item @t]
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/item/mar]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /+  things
+      |_  item:things
+      ::  convert to
+      ++  grab
+        |%
+        ++  noun  item:things
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/item/ren]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /item/data1/web]]
+      :-  ~
+      :-  %item
+      :-  item-type
+      [%item 'one']
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /web]]
+      `[%arch !>(`arch`[fil=~ dir=(my [[%data1 ~] ~])])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /data1/web]]
+      `[%arch !>(`arch`[fil=~ dir=(my [%item ~]~)])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.6] /item/data1/web]]
+      `[%arch !>(`arch`[fil=`0v1 dir=~])]
+    ==
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1234.5.6
+      scry=(scry-with-results-and-failures scry-results1)
+      ::
+      ^=  call-args
+        ^-  [=duct type=* wrapped-task=(hobo task:able:ford-gate)]
+        :*  duct=~[/app]  type=~  %build  ~nul  live=%.y
+            [%core source-path=`rail:ford-gate`[[~nul %home] /hoon/program/app]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?>  =(2 (lent moves))
+        ?>  ?=(^ moves)
+        ::
+        ?>  ?=([* %give %made @da %complete *] i.moves)
+        =/  result  result.p.card.i.moves
+        ?>  ?=([%success %core *] build-result.result)
+        ::
+        =/  =vase  vase.build-result.result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  :-  [%config '']
+              (my [%data1 [%item 'one']] ~) :: [%data2 [%item 'two']] ~)
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>(*[[%config @t] (map knot [%item @t])]))
+        ::
+        ::  TODO: check the subscription?
+    ==
+  ::
+  =/  scry-results2=(map [term beam] (unit cage))
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/program/app]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /+  things
+      /=  data
+        /^  box:things
+        /;  |=  a=(map knot item:things)
+            [*config:things a]
+        /:  /===/web  /_  /item/
+      ::
+      data
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/things/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |%
+      +$  box     [config (map knot item)]
+      +$  config  [%config @t]
+      +$  item    [%item @t]
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/item/mar]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /+  things
+      |_  item:things
+      ::  convert to
+      ++  grab
+        |%
+        ++  noun  item:things
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /hoon/item/ren]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /item/data1/web]]
+      :-  ~
+      :-  %item
+      :-  item-type
+      [%item 'one']
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.7] /item/data2/web]]
+      :-  ~
+      :-  %item
+      :-  item-type
+      [%item 'two']
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.7] /web]]
+      `[%arch !>(`arch`[fil=~ dir=(my [[%data1 ~] [%data2 ~] ~])])]
+    ::a
+      :-  [%cy [[~nul %home %da ~1234.5.7] /data1/web]]
+      `[%arch !>(`arch`[fil=~ dir=(my [%item ~]~)])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.7] /data2/web]]
+      `[%arch !>(`arch`[fil=~ dir=(my [%item ~]~)])]
+
+      :-  [%cy [[~nul %home %da ~1234.5.7] /item/data1/web]]
+      `[%arch !>(`arch`[fil=`0v1 dir=~])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.7] /item/data2/web]]
+      `[%arch !>(`arch`[fil=`0v2 dir=~])]
+    ==
+  ::
+  =^  results2  ford-gate
+    %-  ford-take-with-comparator  :*
+      ford-gate
+      now=~1234.5.7
+      scry=(scry-with-results-and-failures scry-results2)
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/home/~1234.5.6  duct=~[/app]
+            ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
+            [%c %wris [%da ~1234.5.7] (sy [%y /web]~)]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?>  =(2 (lent moves))
+        ?>  ?=(^ moves)
+        ::
+        ?>  ?=([* %give %made @da %complete *] i.moves)
+        =/  result  result.p.card.i.moves
+        ?>  ?=([%success %core *] build-result.result)
+        ::
+        =/  =vase  vase.build-result.result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  :-  [%config '']
+              (my [%data1 [%item 'one']] [%data2 [%item 'two']] ~)
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>(*[[%config @t] (map knot [%item @t])]))
+        ::
+        ::  TODO: check the subscription?
+    ==
+  ::
+  =/  scry-results3=(map [term beam] (unit cage))
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/program/app]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /+  things
+      /=  data
+        /^  box:things
+        /;  |=  a=(map knot item:things)
+            [*config:things a]
+        /:  /===/web  /_  /item/
+      ::
+      data
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/things/lib]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      |%
+      +$  box     [config (map knot item)]
+      +$  config  [%config @t]
+      +$  item    [%item @t]
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/item/mar]]
+      :-  ~
+      :-  %hoon
+      :-  hoon-src-type
+      '''
+      /+  things
+      |_  item:things
+      ::  convert to
+      ++  grab
+        |%
+        ++  noun  item:things
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /hoon/item/ren]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /item/data1/web]]
+      :-  ~
+      :-  %item
+      :-  item-type
+      [%item 'one']
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.8] /item/data2/web]]
+      :-  ~
+      :-  %item
+      :-  item-type
+      [%item 'changed-two']
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.8] /web]]
+      `[%arch !>(`arch`[fil=~ dir=(my [[%data1 ~] [%data2 ~] ~])])]
+    ::a
+      :-  [%cy [[~nul %home %da ~1234.5.8] /data1/web]]
+      `[%arch !>(`arch`[fil=~ dir=(my [%item ~]~)])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.8] /data2/web]]
+      `[%arch !>(`arch`[fil=~ dir=(my [%item ~]~)])]
+
+      :-  [%cy [[~nul %home %da ~1234.5.8] /item/data1/web]]
+      `[%arch !>(`arch`[fil=`0v1 dir=~])]
+    ::
+      :-  [%cy [[~nul %home %da ~1234.5.8] /item/data2/web]]
+      `[%arch !>(`arch`[fil=`0v222 dir=~])]
+    ==
+  ::
+  =^  results3  ford-gate
+    %-  ford-take-with-comparator  :*
+      ford-gate
+      now=~1234.5.7
+      scry=(scry-with-results-and-failures scry-results3)
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/home/~1234.5.7  duct=~[/app]
+            ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
+            :*  %c  %wris  [%da ~1234.5.8]
+                (sy [%x /web/data2/item] [%y /web/data2/item] ~)
+        ==  ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?>  =(2 (lent moves))
+        ?>  ?=(^ moves)
+        ::
+        ?>  ?=([* %give %made @da %complete *] i.moves)
+        =/  result  result.p.card.i.moves
+        ?>  ?=([%success %core *] build-result.result)
+        ::
+        =/  =vase  vase.build-result.result
+        ::
+        %+  weld
+          %-  expect-eq  !>
+          :-  :-  [%config '']
+              (my [%data1 [%item 'one']] [%data2 [%item 'changed-two']] ~)
+          q.vase
+        ::
+        %-  expect-eq  !>
+        :-  &
+        (~(nest ut p.vase) | -:!>(*[[%config @t] (map knot [%item @t])]))
+        ::
+        ::  TODO: check the subscription?
+    ==
+  ::
+  =^  results4  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/app] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/app]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.8
+                %c  %warp  [~nul ~nul]  %home  ~
+    ==  ==  ==
+  ::
+  ;:  weld
+    results0
+    results1
+    results2
+    results3
+    results4
     (expect-ford-empty ford-gate ~nul)
   ==
 ::  |data: shared data between cases
