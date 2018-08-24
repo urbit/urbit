@@ -2409,7 +2409,7 @@
         ::
         :_  i.moves(|7 ~)
         :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
-            [%error [leaf+"ford: %ride failed:" ~]]
+            [%error [leaf+"ford: %ride failed to execute:" ~]]
     ==  ==
   ::
   =^  results2  ford-gate

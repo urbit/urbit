@@ -25,20 +25,20 @@
   ::  executes an individual test.
   |=  [pax=path eny=@uvJ test=test-func:tester]
   ^-  tang
-  =+  name=(spud (flop pax))
+  =+  name=(spud pax)
   =+  run=(mule |.((test eny)))
   ?-  -.run
     %|  ::  the stack is already flopped for output?
         ;:  weld
           p.run
-          `tang`[[%leaf (weld name " CRASHED")] ~]
+          `tang`[[%leaf (weld "CRASHED " name)] ~]
         ==
     %&  ?:  =(~ p.run)
-          [[%leaf (weld name " OK")] ~]
+          [[%leaf (weld "OK      " name)] ~]
         ::  Create a welded list of all failures indented.
         %-  flop
         ;:  weld
-          `tang`[[%leaf (weld name " FAILED")] ~]
+          `tang`[[%leaf (weld "FAILED  " name)] ~]
           ::TODO indent
           :: %+  turn  p:run
           ::   |=  {i/tape}
