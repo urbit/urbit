@@ -5909,16 +5909,15 @@
       ..execute
     ::
         %live
-      =/  resources=(jug disc resource)  (collect-live-resources build)
       ::  clean up previous build
       ::
       =?  state  ?=(^ last-sent.live.duct-status)
         =/  old-build=^build  build(date date.u.last-sent.live.duct-status)
         ::
-        (move-root-to-cache old-build)
+        (remove-anchor-from-root old-build [%duct duct])
       ::
       =/  resource-list=(list [=disc resources=(set resource)])
-        ~(tap by resources)
+        ~(tap by (collect-live-resources build))
       ::  we can only handle a single subscription
       ::
       ::    In the long term, we need Clay's interface to change so we can
