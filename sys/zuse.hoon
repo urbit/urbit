@@ -40,6 +40,14 @@
 ::  miscellaneous systems types
 ::+|
 ++  ares  (unit {p/term q/(list tank)})                 ::  possible error
+::  +capped-queue: a +qeu with a maximum number of entries
+::
+++  capped-queue
+  |*  item-type=mold
+  $:  queue=(qeu item-type)
+      size=@ud
+      max-size=_64
+  ==
 ::  +clock: polymorphic cache type for use with the clock replacement algorithm
 ::
 ::     The +by-clock core wraps interface arms for manipulating a mapping from
@@ -5539,6 +5547,59 @@
         queue   ~
         size    0
       ==
+    --
+  ::  +to-capped-queue: interface door for +capped-queue
+  ::
+  ::    Provides a queue of a limited size where pushing additional items will
+  ::    force pop the items at the front of the queue.
+  ::
+  ++  to-capped-queue
+    |*  item-type=mold
+    |_  queue=(capped-queue item-type)
+    ::  +put: enqueue :item, possibly popping and producing an old item
+    ::
+    ++  put
+      |=  item=item-type
+      ^-  [(unit item-type) _queue]
+      ::   are we already at max capacity?
+      ::
+      ?.  =(size.queue max-size.queue)
+        ::  we're below max capacity, so push and increment size
+        ::
+        =.  queue.queue  (~(put to queue.queue) item)
+        =.  size.queue   +(size.queue)
+        ::
+        [~ queue]
+      ::  we're at max capacity, so pop before pushing; size is unchanged
+      ::
+      =^  oldest  queue.queue  ~(get to queue.queue)
+      =.  queue.queue          (~(put to queue.queue) item)
+      ::
+      [`oldest queue]
+    ::  +get: pop an item off the queue, adjusting size
+    ::
+    ++  get
+      ^-  [item-type _queue]
+      ::
+      =.  size.queue           (dec size.queue)
+      =^  oldest  queue.queue  ~(get to queue.queue)
+      ::
+      [oldest queue]
+    ::  change the :max-size of the queue, popping items if necessary
+    ::
+    ++  resize
+      =|  pops=(list item-type)
+      |=  new-max=@ud
+      ^+  [pops queue]
+      ::  we're not overfull, so no need to pop off more items
+      ::
+      ?:  (gte new-max size.queue)
+        [(flop pops) queue(max-size new-max)]
+      ::  we're above capacity; pop an item off and recurse
+      ::
+      =^  oldest  queue  get
+      ::
+      $(pops [oldest pops])
     --
   --
 ::                                                      ::

@@ -116,10 +116,6 @@
     %-  expect-eq  !>
     :-  1
     ~(wyt by lookup.c)
-  ::
-    %-  expect-eq  !>
-    :-  1
-    ~(dep to queue.c)
   ==
 ::
 ++  test-clock-resized-to-zero
