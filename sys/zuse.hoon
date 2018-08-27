@@ -5495,7 +5495,7 @@
   ::  for details on encoding, see below.
   ::
   ++  decode-topics
-    :>  tox:  list of hex words
+    ::  tox:  list of hex words
     |*  [tox=(list @t) tys=(list etyp)]
     =-  (decode-arguments - tys)
     %+  roll  tox
@@ -5503,7 +5503,7 @@
     (cat 3 tos (rsh 3 2 top))
   ::
   ++  decode-results
-    :>  rex:  string of hex bytes with leading 0x.
+    ::  rex:  string of hex bytes with leading 0x.
     |*  [rex=@t tys=(list etyp)]
     (decode-arguments (rsh 3 2 rex) tys)
   ::
@@ -5608,14 +5608,14 @@
     (render-hex-bytes 32 (keccak-256:keccak:crypto (as-octs function)))
   ::
   ++  encode-args
-    :>  encode list of arguments.
+    ::  encode list of arguments.
     ::
     |=  das=(list data)
     ^-  tape
     (encode-data [%array-n das])
   ::
   ++  encode-data
-    :>  encode typed data into ABI bytestring.
+    ::  encode typed data into ABI bytestring.
     ::
     |=  dat=data
     ^-  tape
@@ -5717,7 +5717,7 @@
   ::
   ::
   ++  render-hex-bytes
-    :>  atom to string of hex bytes without 0x prefix and dots.
+    ::  atom to string of hex bytes without 0x prefix and dots.
     |=  a=octs
     ^-  tape
     ((x-co:co (mul 2 p.a)) q.a)
