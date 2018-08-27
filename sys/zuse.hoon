@@ -40,6 +40,26 @@
 ::  miscellaneous systems types
 ::+|
 ++  ares  (unit {p/term q/(list tank)})                 ::  possible error
+::  +clock: polymorphic cache type for use with the clock replacement algorithm
+::
+::     The +by-clock core wraps interface arms for manipulating a mapping from
+::     :key-type to :val-type. Detailed docs for this type can be found there.
+::
+++  clock
+  |*  $:  ::  key-type: mold of keys
+          ::
+          key-type=mold
+          ::  val-type: mold of values
+          ::
+          val-type=mold
+      ==
+    $:  lookup=(map key-type [val=val-type fresh=@ud])
+        queue=(qeu key-type)
+        size=@ud
+        max-size=_2.048
+        depth=_1
+    ==
+::
 ++  coop  (unit ares)                                   ::  possible error
 ++  json                                                ::  normal json value
   $@  ~                                                ::  null
@@ -5382,6 +5402,144 @@
     |=  une/(unit @dr)
     ^-  @tas
     ?~(une %no (mill u.une))
+  --
+::
+::::
+  ::
+++  contain  ^?
+  |%
+  ::  +by-clock: interface core for a cache using the clock replacement algorithm
+  ::
+  ::    Presents an interface for a mapping, but somewhat specialized, and with
+  ::    stateful accessors. The clock's :depth parameter is used as the maximum
+  ::    freshness that an entry can have. The standard clock algorithm has a depth
+  ::    of 1, meaning that a single sweep of the arm will delete the entry. For
+  ::    more scan resistance, :depth can be set to a higher number.
+  ::
+  ::    Internally, :clock maintains a :lookup of type
+  ::    `(map key-type [val=val-type fresh=@ud])`, where :depth.clock is the
+  ::    maximum value of :fresh. Looking up a key increments its freshness, and a
+  ::    sweep of the clock arm decrements its freshness.
+  ::
+  ::    The clock arm is stored as :queue, which is a `(qeu key-type)`. The head
+  ::    of the queue represents the position of the clock arm. New entries are
+  ::    inserted at the tail of the queue. When the clock arm sweeps, it
+  ::    pops the head off the queue. If the :fresh of the head's entry in :lookup
+  ::    is 0, remove the entry from the mapping and replace it with the new entry.
+  ::    Otherwise, decrement the entry's freshness, put it back at the tail of
+  ::    the queue, and pop the next head off the queue and try again.
+  ::
+  ::    Cache entries must be immutable: a key cannot be overwritten with a new
+  ::    value. This property is enforced for entries currently stored in the
+  ::    cache, but it is not enforced for previously deleted entries, since we
+  ::    no longer remember what that key's value was supposed to be.
+  ::
+  ++  by-clock
+    |*  [key-type=mold val-type=mold]
+    |_  clock=(clock key-type val-type)
+    ::  +get: looks up a key, marking it as fresh
+    ::
+    ++  get
+      |=  key=key-type
+      ^-  [(unit val-type) _clock]
+      ::
+      =+  maybe-got=(~(get by lookup.clock) key)
+      ?~  maybe-got
+        [~ clock]
+      ::
+      =.  clock  (freshen key)
+      ::
+      [`val.u.maybe-got clock]
+    ::  +put: add a new cache entry, possibly removing an old one
+    ::
+    ++  put
+      |=  [key=key-type val=val-type]
+      ^+  clock
+      ::  do nothing if our size is 0 so we don't decrement-underflow
+      ::
+      ?:  =(0 max-size.clock)
+        clock
+      ::  no overwrite allowed, but allow duplicate puts
+      ::
+      ?^  existing=(~(get by lookup.clock) key)
+        ::  val must not change
+        ::
+        ?>  =(val val.u.existing)
+        ::
+        (freshen key)
+      ::
+      =?  clock  =(max-size.clock size.clock)
+        evict
+      ::
+      %_  clock
+        size    +(size.clock)
+        lookup  (~(put by lookup.clock) key [val 1])
+        queue   (~(put to queue.clock) key)
+      ==
+    ::  +freshen: increment the protection level on an entry
+    ::
+    ++  freshen
+      |=  key=key-type
+      ^+  clock
+      %_    clock
+          lookup
+        %+  ~(jab by lookup.clock)  key
+        |=  entry=[val=val-type fresh=@ud]
+        entry(fresh (min +(fresh.entry) depth.clock))
+      ==
+    ::  +resize: changes the maximum size, removing entries if needed
+    ::
+    ++  resize
+      |=  new-max=@ud
+      ^+  clock
+      ::
+      =.  max-size.clock  new-max
+      ::
+      ?:  (gte new-max size.clock)
+        clock
+      ::
+      (trim (sub size.clock new-max))
+    ::  +evict: remove an entry from the cache
+    ::
+    ++  evict
+      ^+  clock
+      ::
+      =.  size.clock  (dec size.clock)
+      ::
+      |-
+      ^+  clock
+      ::
+      =^  old-key  queue.clock  ~(get to queue.clock)
+      =/  old-entry  (~(got by lookup.clock) old-key)
+      ::
+      ?:  =(0 fresh.old-entry)
+        clock(lookup (~(del by lookup.clock) old-key))
+      ::
+      %_    $
+          lookup.clock
+        (~(put by lookup.clock) old-key old-entry(fresh (dec fresh.old-entry)))
+      ::
+          queue.clock
+        (~(put to queue.clock) old-key)
+      ==
+    ::  +trim: remove :count entries from the cache
+    ::
+    ++  trim
+      |=  count=@ud
+      ^+  clock
+      ?:  =(0 count)
+        clock
+      $(count (dec count), clock evict)
+    ::  +purge: removes all cache entries
+    ::
+    ++  purge
+      ^+  clock
+      %_  clock
+        lookup  ~
+        queue   ~
+        size    0
+      ==
+    --
   --
 ::                                                      ::
 ::::                      ++userlib                     ::  (2u) non-vane utils
