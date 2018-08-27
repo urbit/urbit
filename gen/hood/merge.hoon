@@ -3,7 +3,7 @@
 ::::  /hoon/merge/hood/gen
   ::
 /?    310
-/+  *old-zuse
+/+  old-zuse
 =,  old-zuse
 ::
 |%
