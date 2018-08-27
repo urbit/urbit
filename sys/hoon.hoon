@@ -921,6 +921,16 @@
   ?~  b  0
   (add (lsh a c (end a 1 i.b)) $(c +(c), b t.b))
 ::
+++  rev
+  ::  reverses block order, accounting for leading zeroes
+  ::
+  ::  boq: block size
+  ::  len: size of dat, in boq
+  ::  dat: data to flip
+  |=  [boq=bloq len=@ud dat=@]
+  =+  (swp boq dat)
+  (lsh boq (sub len (met boq dat)) -)
+::
 ++  rip                                                 ::  disassemble
   ~/  %rip
   |=  {a/bloq b/@}
@@ -933,7 +943,7 @@
   |=  {a/bloq b/@u c/@}
   (div c (bex (mul (bex a) b)))
 ::
-++  swp  |=({a/bloq b/@} (rep a (flop (rip a b))))      ::  reverse bloq order
+++  swp  |=({a/bloq b/@} (rep a (flop (rip a b))))      ::  naive rev bloq order
 ++  xeb                                                 ::  binary logarithm
   ~/  %xeb
   |=  a/@
