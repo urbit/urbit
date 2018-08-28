@@ -34,7 +34,7 @@ So what is the structure of these test files? They contain a door, with arms sta
 /+  tester
 |_  tester-type:tester
 ++  test-some-test
-  (expect-eq 4 4 "trivial")
+  (expect-eq !>(4) !>(4))
 --
 ```
 
