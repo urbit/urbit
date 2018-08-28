@@ -35,14 +35,10 @@
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
         ?>  ?=([* %pass * %e %hiss *] i.moves)
-        ::  the response contains a vase, check both the value and that it nests
         ::
-        %+  weld
-          %-  expect-eq  (slop !>(hiss-httr) q.r.q.q.i.moves)
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.r.q.q.i.moves) | -:!>(hiss-httr))
+        %+  expect-nu-eq
+          !>(hiss-httr)
+          q.r.q.q.i.moves
     ==
   ::
   results1
@@ -61,9 +57,9 @@
     %-  call:jael  call-args
   ::
   =/  output=tang
-    %-  expect-eq  !>
-    :-  expected-moves
-    moves
+    %+  expect-nu-eq
+      !>  expected-moves
+      !>  moves
   ::
   [output jael-gate]
 ::
