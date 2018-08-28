@@ -16,7 +16,7 @@
   [%& %dns-domain "dns domain: "]
 %+  sole-go  thos:de-purl:html
 |=  hot=host:eyre
-?:  ?=($| -.hot)
+?:  ?=(%| -.hot)
   ~|(%ips-unsupported !!)
 %+  sole-lo
   [%& %project "gcloud project: "]

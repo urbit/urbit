@@ -23,69 +23,91 @@
 =,  ford
 =,  format
 |_  {bowl $~}
+::
 ++  peek  _~
+::
 ++  report-error
-  |=  [a=spur b=(each cage tang)]  ^-  tang
-  =/  should-fail  (~(get by failing) (flop a))
-  ?-    -.b
-      %&
+  |=  [=spur bud=build-result]
+  ^-  tang
+  =/  should-fail  (~(get by failing) (flop spur))
+  ?-    -.bud
+      %success
     ?~  should-fail  ~
     :~  leaf+"warn: expected failure, {<`tape`u.should-fail>}"
         leaf+"warn: built succesfully"
-        (sell q.p.b)
+        ?:  ?=(%bake +<.bud)
+          (sell q.cage.bud)
+        ?>  ?=(%core +<.bud)
+        (sell vase.bud)
     ==
   ::
-      %|
+      %error
     ?^  should-fail
       ~[>[%failed-known `tape`(weld "TODO: " u.should-fail)]<]
-    (flop p.b)
+    (flop message.bud)
   ==
 ::
 ++  made-a-core
-  |=  {a/spur @uvH b/gage}
+  |=  [=spur @da res=made-result]
   :_  +>.$
-  ?>  ?=([%tabl [(each) (each)] ~] b)
-  %-  (slog (report-error a p.i.p.b))
-  =/  nex/(list spur)
-    =<(p ;;(,[%& %cont * p=(list spur)] q.i.p.b))
+  ?:  ?=([%incomplete *] res)
+    ~&  incomplete-core+spur
+    ((slog tang.res) ~)
+  ?.  ?=([%complete %success *] res)
+    ~&  unsuccessful-core+spur
+    ((slog message.build-result.res) ~)
+  ?>  ?=(^ +<.build-result.res)
+  %-  (slog (report-error spur head.build-result.res))
+  =/  nex=(list ^spur)
+    =<  p
+    ;;  ,[%success %$ %cont * p=(list ^spur)]
+    tail.build-result.res
   ?~  nex  ~&(%cores-tested ~)
   [ost (build-core nex)]~
 ::
 ++  build-core
   |=  [a=spur b=(list spur)]
   ~&  >>  (flop a)
-  :^  %exec  a-core+a  our
-  %-  some
-  ^-  bilk
-  :-  now-beak
-  :~  %tabl
-    [[%core now-beak a] [%$ %cont !>(b)]]
-  ==
+  :-  %build
+  :^    a-core+a
+      our
+    live=|
+  ^-  schematic:ford
+  :-  [%core now-disc %hoon a]
+  [%$ %cont !>(b)]
 ::
 ++  made-a-rend
-  |=  {a/wire @uvH b/gage}
-  ?>  ?=([ren=mark ~] a)
-  =+  `[ren=term pax=path]`?~(a !! a)
+  |=  [=spur @da res=made-result]
   :_  +>.$
-  ?>  ?=([%tabl [(each) (each)] ~] b)
-  %-  (slog (report-error /[ren.i.a]/ren p.i.p.b))
-  =/  nex/(list term)
-    =<(p ;;(,[%& %cont * p=(list term)] q.i.p.b))
+  ?>  ?=([ren=term ~] spur)
+  =+  `[ren=term pax=path]`?~(spur !! spur)
+  ?:  ?=([%incomplete *] res)
+    ~&  incomplete-core+spur
+    ((slog tang.res) ~)
+  ?.  ?=([%complete %success *] res)
+    ~&  unsuccessful-core+spur
+    ((slog message.build-result.res) ~)
+  ?>  ?=(^ +<.build-result.res)
+  %-  (slog (report-error /[ren]/ren head.build-result.res))
+  =/  nex=(list term)
+    =<  p
+    ;;  ,[%success %$ %cont * p=(list term)]
+    tail.build-result.res
   ?~  nex  ~&(%rens-tested ~)
   [ost (build-rend nex)]~
 ::
 ++  build-rend
   |=  [a=term b=(list term)]
   ~&  >>  [%ren a]
-  =/  bem/beam  (need (de-beam %/example))
-  =.  -.bem  now-beak
-  :^  %exec  a-rend+/[a]  our
-  %-  some
-  ^-  bilk
-  :-  -.bem
-  :~  %tabl
-    [`silk`[%bake a fake-fcgi bem] [%$ %cont !>(b)]]
-  ==
+  :-  %build
+  :^    a-rend+/[a]
+      our
+    live=|
+  ^-  schematic:ford
+  =/  bem=beam  (need (de-beam %/example))
+  =/  =rail  [[p q] s]:bem
+  :-  [%bake a fake-fcgi rail]
+  [%$ %cont !>(b)]
 ::
 ++  poke-noun
   |=  a=test
@@ -128,6 +150,7 @@
   [sup ^$]
 ::
 ++  now-beak  %_(byk r [%da now])
+++  now-disc  `disc:ford`[p.byk q.byk]
 ++  skip-completely
   ^~  ^-  (map path tape)
   %-  my  :~ ::TODO don't hardcode
@@ -135,6 +158,9 @@
     :-  /ren/js             "not meant to be called outside /web/pack"
     :-  /ren/run            "not meant to be called except on a (different) hoon file"
     :-  /ren/collections    "temporarily disabled"
+    :-  /ren/test-gen       "temporarily disabled"
+    :-  /ren/tree/index     "temporarily disabled"
+    :-  /ren/tree/elem      "temporarily disabled"
     :-  /ren/x-urb          "temporarily disabled"
     :-  /ren/x-htm          "temporarily disabled"
     :-  /ren/x-collections-snip          "temporarily disabled"
@@ -146,7 +172,30 @@
     :-  /app/twit           "slow and/or crash"
     :-  /gen/twit           "slow and/or crash"
     :-  /mar/twit           "slow and/or crash"
-    :-  /web/landscape           "/$ doensn't work in tests"
+    :-  /gen/al             "compiler types out-of-date"
+    :-  /gen/ivory          "compiler types out-of-date"
+    :-  /gen/musk           "compiler types out-of-date"
+    :-  /gen/cosmetic       "incomplete"
+    :-  /gen/lust           "incomplete"
+    :-  /gen/scantastic     "incomplete"
+    :-  /gen/curl           "remove?"
+    :-  /gen/curl-hiss      "remove?"
+    :-  /gen/deco             "obsolete syntax"
+    :-  /lib/down-jet         "obsolete syntax"
+    :-  /lib/down-jet/parse   "obsolete syntax"
+    :-  /mar/lens/command     "obsolete syntax"
+    :-  /mar/down             "obsolete syntax"
+    :-  /sur/twitter          "obsolete syntax"
+    :-  /web/pack/css/codemirror-fonts-bootstrap-tree  "obsolete syntax"
+    :-  /web/pack/js/tree-urb                          "obsolete syntax"
+    :-  /web/unmark/all       "obsolete syntax"
+    :-  /app/constitution         "incomplete, obsolete syntax"
+    :-  /lib/constitution         "incomplete, obsolete syntax"
+    :-  /lib/ethereum             "incomplete, obsolete syntax"
+    :-  /mar/constitution/update  "incomplete, obsolete syntax"
+    :-  /sur/ethereum             "incomplete, obsolete syntax"
+    :-  /sur/constitution         "incomplete, obsolete syntax"
+    :-  /web/landscape      "/$ doensn't work in tests"
   ==
 ::
 ++  failing
@@ -154,13 +203,10 @@
   %-  my  :~ ::TODO don't hardcode
   ::
     :-  /app/pipe           "wants 'flavor:hall' to exist"
+    :-  /app/mark-dashboard   "wants old ford"
+    :-  /app/static         "wants old ford"
     :-  /gen/capitalize     "wants unicode-data/txt"
   ::
-    :-  /lib/down-jet/parse       "// nonsense"
-    :-  /lib/down-jet/rend        "// nonsense"
-    :-  /lib/hood/kiln            "ford can't handle surs from libs"
-    :-  /lib/sole                 "ford can't handle surs from libs"
-    :-  /lib/hall                 "ford can't handle surs from libs"
     :-  /lib/twitter              "ford can't handle surs from libs"
     :-  /sys/arvo                 "BROKEN"
     :-  /sys/vane/jael            "expects our"

@@ -49,7 +49,7 @@
   |=  bod/(unit octs)  ^-  quay-enc
   ~|  %parsing-body
   ?~  bod  ~
-  (rash q.u.bod (more pam (plus ;~(less pam prn))))
+  (rash q.u.bod (more pad (plus ;~(less pad prn))))
 ::
 ++  post-quay
   |=  {a/purl b/quay}  ^-  hiss

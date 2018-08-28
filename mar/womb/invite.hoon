@@ -21,7 +21,7 @@
     =>  jo
     =/  mail
       ;~  simu
-        ;~(pfix (plus ;~(less pat next)) pat)
+        ;~(pfix (plus ;~(less vat next)) vat)
         (cook crip (star ;~(less ace prn)))
       ==
     %-  ot  :~

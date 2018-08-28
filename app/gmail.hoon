@@ -21,7 +21,6 @@
 /-  rfc, gmail-label, gmail-message
 /+  http
 ::::
-/=  rfctext  /:  /%/rfc  /txt/
 ::
 |%
 ::  Splits a path into the endpoint prefix and the remainder,
@@ -158,7 +157,7 @@
     ['urbit' 'urbit.org'] :: [(crip "urbit+{<our.hid>}") 'urbit.org']
   ::
     =-  (rash adr -)
-    [;~((glue pat) . .)]:(cook crip (plus ;~(less pat next)))  :: /[^@]+@[^@]+/
+    [;~((glue vat) . .)]:(cook crip (plus ;~(less vat next)))  :: /[^@]+@[^@]+/
   ::
     (crip tyl)
     (of-wain:format (turn mez crip))
@@ -291,7 +290,7 @@
     ?~  dir
       [%arch `(shax (jam u.jon)) ~]
     ?~  arg
-      [%arch `(shax (jam u.jon)) (~(run by u.dir) ~)]
+      [%arch `(shax (jam u.jon)) (~(run by u.dir) ,~)]
     =+  new-jon=(~(get by u.dir) i.arg)
     $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
   ==

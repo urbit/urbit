@@ -12,7 +12,6 @@
 ++  move  (pair bone card)
 ++  card
   $%  {$poke wire dock poke}
-      {$exec wire @p ~ {beak silk:ford}}
       {$info wire @p toro:clay}
   ==
 ++  poke

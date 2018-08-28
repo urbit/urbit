@@ -11,7 +11,7 @@
 ++  suffix-email
   %+  cook  welp
   ;~  plug
-    (star ;~(less pat prn))
+    (star ;~(less vat prn))
     ;~(pose (plus prn) (easy "@gmail.com"))
   ==
 ::
