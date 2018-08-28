@@ -4,7 +4,8 @@
   =>  =~
 ::  structures
 =,  ames
-=+  protocol-version=2
+::  this number needs to be below 8
+=+  protocol-version=0
 |%
 +=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
 --
@@ -34,7 +35,7 @@
   ::
   ++  meld                                              ::  verify connect
     |=  [new=deyd old=deyd]
-    ^-  $&
+    ^-  %&
     ?>  (melt new old)
     ?>  =((shaf %meld (sham q.new)) (need (sure:as:(com:nu:crub:crypto r.q.old) *code p.new)))
     %&
@@ -70,7 +71,7 @@
   ::
   ++  pier  !:                                          ::  initial deyd
     |=  wed=deyd
-    ^-  $&
+    ^-  %&
     ?>  =+  rac=(clan:title r.p.q.wed)
         =+  loy=(com:nu:crub:crypto r.q.wed)
         ?:  &(r.wed =(rac %czar))  %&
@@ -445,6 +446,7 @@
         +>.$(hoc.saf (~(put by hoc.saf) her [[~31337.1.1 ~ wil] ~ *clot]))
       ::
       ++  lax                                           ::    lax:as:go
+        =|  rov=(unit lane)                             ::  maybe lane change
         |_  [her=ship dur=dore]                         ::  per client
         ++  cluy                                        ::    cluy:lax:as:go
           ^-  [p=life q=gens r=acru]                    ::  client crypto
@@ -518,6 +520,25 @@
                 [~ ryn]
               lun.wod.dur
             [~ ryn]
+          ::
+              rov
+            |-  ^-  (unit lane)
+            :: XX check will
+            ?:  ?|  !=(our (sein:title her))
+                    ?=(?(%earl %pawn) (clan:title her))
+                ==
+              ~
+            ?-  ryn
+              [%if *]  ?.  ?=([~ %if *] lun.wod.dur)
+                         `ryn
+                       ?:(=(r.u.lun.wod.dur r.ryn) ~ `ryn)
+              ::
+              [%ix *]  ?.  ?=([~ %ix *] lun.wod.dur)
+                         `ryn
+                       ?:(=(r.u.lun.wod.dur r.ryn) ~ `ryn)
+              ::
+              [%is *]  ?~(q.ryn ~ $(ryn u.q.ryn))
+            ==
           ==
         ::
         ++  wist                                        ::    wist:lax:as:go
@@ -1471,8 +1492,10 @@
           ==
         ::
         ++  zank                                        ::    zank:ho:um:am
+          =?  bin  ?=(^ rov.diz)
+              [[%maze her u.rov.diz] bin]
           %=  +>.$                                      ::  resolve
-            gus      (nux:gus diz)
+            gus      (nux:gus diz(rov ~))
             wab.weg  (~(put by wab.weg) her bah(sop abet:puz))
           ==
         --                                              ::  --ho:um:am
@@ -1554,13 +1577,12 @@
     ::
     ++  load
       |=  old=fort
-      ~&  %ames-reload
       ..^$(fox old)
     ::
     ++  scry
       |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
       ^-  (unit (unit cage))
-      ?.  ?=($& -.why)  [~ ~]
+      ?.  ?=(%& -.why)  [~ ~]
       ?~  tyl  [~ ~]
       =+  hun=(slaw %p i.tyl)
       ?~  hun  [~ ~]
@@ -1604,6 +1626,11 @@
       :_  fox
       :~  [s.bon %give %woot q.p.bon r.bon]
       ==
+    ::
+        %maze
+      :_  fox
+      %+  turn  ~(tap in ten.fox)
+      |=(hen=duct [hen %give %rove p.bon q.bon])
     ::
         %mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
         %milk
@@ -1714,6 +1741,14 @@
             %sith
           (~(czar am [now fox]) p.kyz q.kyz r.kyz)
         ::
+            %tend
+          :: XX exclude comets and moons? and planets?
+          :: ?>  &(?=(^ hen) ?=([@ @ *] i.hen))
+          :: =/  who=@p  (slav %p i.t.i.hen)
+          :: ?:  ?=((%earl %pawn) (clan:title who))
+          ::   [~ fox]
+          [~ fox(ten (~(put in ten.fox) hen))]
+        ::
             %nuke
           :-  ~
           ?:  (~(has in bad.fox) p.kyz)
@@ -1786,7 +1821,7 @@
       ``[%noun !>(pals:(~(um am [now fox]) our))]
     ?.  ?=([%life ~] tyl)
       =+  muc=$(tyl [%life ~])
-      (perm our his ?~(muc 0 (@ud u.muc)) tyl)
+      (perm our his ?~(muc 0 (fall ((soft @ud) u.muc) 0)) tyl)
     =+  gys=(~(us go ton.fox) our)
     ?~  gys  ~
     ?.  =(our his)

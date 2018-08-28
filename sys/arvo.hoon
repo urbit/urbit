@@ -3,11 +3,12 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =>  +7
 ~>  %slog.[0 leaf+"%arvo-assembly"]
+=-  ~>  %slog.[0 leaf+"%arvo-assembled"]
+    -
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-=>
-~%  %hex  +  ~
+=>  
 |%
 ++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
 ++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
@@ -50,7 +51,8 @@
   ==                                                    ::
 ++  mark  @tas                                          ::  content type
 ++  mash  |=(* (mass +<))                               ::  producing mass
-++  mass  (pair cord (each noun (list mash)))           ::  memory usage  
+++  mass  $~  [%$ [%& ~]]                               ::  memory usage  
+          (pair cord (each noun (list mash)))           ::
 ++  mill  (each vase milt)                              ::  vase+metavase
 ++  milt  {p/* q/*}                                     ::  metavase
 ++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
@@ -79,6 +81,13 @@
               {$give p/b}                               ::  retreat
           ==                                            ::
 ++  wire  path                                          ::  event pretext
+--
+=>
+~%  %hex  +>  ~
+|%
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::                section 3bE, Arvo core                ::
+::
 ++  sloy
   !:
   |=  sod/slyd
@@ -103,8 +112,6 @@
   ?~  bop  ~
   ?~  u.bop  [~ ~]
   [~ ~ +.q.u.u.bop]
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bE, Arvo core                ::
 ::
 ++  vent                                                ::  vane core
   |=  {lal/@tas vil/vile bud/vase sew/(pair worm vase)}
@@ -113,11 +120,12 @@
   ++  ruck                                              ::  update vase
     |=  {pax/path txt/@ta}
     ^+  +>
-    =-  ?:(?=($| -.res) ((slog p.res) +>.$) p.res)
+    =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
     ^=  res  %-  mule  |.
     =+  arg=[~2000.1.1 0 =>(~ |~(* ~))]
     =+  rig=(slym q.sew arg)
-    =+  rev=(slym (slap bud (rain pax txt)) bud)
+    =+  gen=(rain pax txt)
+    =+  rev=(slym (slap bud gen) bud)
     =+  syg=(slym rev arg)
     ~|  %load-lost
     +>.^$(q.sew (slam (slap syg [%limb %load]) (slap rig [%limb %stay])))
@@ -135,7 +143,7 @@
     ++  slid
       |=  {hed/mill tal/mill}
       ^-  mill
-      ?:  &(?=($& -.hed) ?=($& -.tal))
+      ?:  &(?=(%& -.hed) ?=(%& -.tal))
         [%& (slop p.hed p.tal)]
       [%| [%cell p.p.hed p.p.tal] [q.p.hed q.p.tal]]
     ::
@@ -143,8 +151,8 @@
       |=  hil/mill
       ^-  mill
       ?-  -.hil
-        $&  [%& (slop [typ.vil p.p.hil] p.hil)]
-        $|  [%| [%cell typ.vil p.p.hil] p.hil]
+        %&  [%& (slop [typ.vil p.p.hil] p.hil)]
+        %|  [%| [%cell typ.vil p.p.hil] p.hil]
       ==
     ::
     ++  slur                                            ::  call gate on
@@ -153,8 +161,8 @@
       =+  sam=(slot 6 gat)
       =+  ^=  hig
         ?-  -.hil
-          $&  (~(nest wa p.sew) p.sam p.p.hil)
-          $|  (~(nets wa p.sew) p.sam p.p.hil)
+          %&  (~(nest wa p.sew) p.sam p.p.hil)
+          %|  (~(nets wa p.sew) p.sam p.p.hil)
         ==
       ?.(-.hig ~ `[(slym gat +>.hil) +.hig])
     ::
@@ -165,6 +173,7 @@
     ++  slur-e  ~/(%slur-e |=({gat/vase hil/mill} =+(%e (slur gat hil))))
     ++  slur-f  ~/(%slur-f |=({gat/vase hil/mill} =+(%f (slur gat hil))))
     ++  slur-g  ~/(%slur-g |=({gat/vase hil/mill} =+(%g (slur gat hil))))
+    ++  slur-j  ~/(%slur-j |=({gat/vase hil/mill} =+(%j (slur gat hil))))
     ++  slur-z  ~/(%slur-z |=({gat/vase hil/mill} =+(%z (slur gat hil))))
     ::
     ++  slur-pro                                        ::  profiling slur
@@ -178,6 +187,7 @@
         $e  (slur-e gat hil)
         $f  (slur-f gat hil)
         $g  (slur-g gat hil)
+        $j  (slur-j gat hil)
       ==
     ::
     ++  song                                            ::  reduce metacard
@@ -210,8 +220,8 @@
       |=  a/duct
       %+  bind  
         =-  ?-  -.har
-              $|  ~&  [%dead-card p.har]  ~             ::  XX properly log?
-              $&  (some p.har)
+              %|  ~&  [%dead-card p.har]  ~             ::  XX properly log?
+              %&  (some p.har)
             ==
         ^=  har  ^-  (each (pair arvo worm) term)
         =^  caq  p.sew  (~(spot wa p.sew) 3 wec)
@@ -323,18 +333,22 @@
 ::
 ++  vint                                                ::  create vane
   |=  {lal/@tas vil/vile bud/vase pax/path txt/@ta}     ::
-  =-  ?:(?=($| -.res) ((slog p.res) ~) (some p.res))
+  =-  ?:(?=(%| -.res) ((slog p.res) ~) (some p.res))
   ^=  res  %-  mule  |.
-  (vent lal vil bud *worm (slym (slap bud (rain pax txt)) bud))
+  =+  gen=(rain pax txt)
+  ~&  [%vane-parsed `@p`(mug gen)]
+  =+  pro=(vent lal vil bud *worm (slym (slap bud gen) bud))
+  ~&  [%vane-compiled `@p`(mug pro)]
+  pro
 ::
 ++  viol                                                ::  vane tools
   |=  but/type
   ^-  vile
   =+  pal=|=(a/@t ^-(type (~(play ut but) (vice a))))
-  :*  typ=(pal '*type')
-      duc=(pal '*duct')
-      pah=(pal '*path')
-      mev=(pal '*{$meta $vase}')
+  :*  typ=(pal '$:type')
+      duc=(pal '$:duct')
+      pah=(pal '$:path')
+      mev=(pal '$:{$meta $vase}')
   ==
 ::
 ++  is                                                  ::  operate in time
@@ -451,6 +465,7 @@
 --
 =+  pit=`vase`!>(.)                                     ::
 =+  bud=pit                                             ::  becomes tang
+::  =+  vil=(viol p.bud)                                ::  cached reflexives
 =+  vil=(viol p.bud)                                    ::  cached reflexives
 =|  $:  lac/?                                           ::  laconic bit
         eny/@                                           ::  entropy
@@ -553,7 +568,7 @@
 ++  veke                                                ::  build new kernel
   |=  {now/@da hap/path zup/path}
   ^-  *
-  =-  ?:(?=($& -.res) p.res ((slog p.res) ~))
+  =-  ?:(?=(%& -.res) p.res ((slog p.res) ~))
   ^=  res  %-  mule  |.
   =+  pax=(weld hap `path`[%hoon ~])
   =+  wax=(weld zup `path`[%hoon ~])
@@ -572,7 +587,7 @@
 ++  vega                                                ::  reboot kernel
   |=  {now/@da ova/(list ovum) hap/path zup/path}
   ^-  (unit {p/(list ovum) q/*})
-  =-  ?:(?=($| -.res) ((slog p.res) ~) `p.res)
+  =-  ?:(?=(%| -.res) ((slog p.res) ~) `p.res)
   ^=  res  %-  mule  |.
   =+  ken=(veke now hap zup)
   ~&  [%vega-kernel `@ux`(mug ken)] 
@@ -590,7 +605,7 @@
 ++  veer                                                ::  install vane/tang
   |=  {now/@da fav/curd}
   =>  .(fav ((hard {$veer lal/@ta pax/path txt/@t}) fav))
-  =-  ?:(?=($| -.res) ((slog p.res) +>.$) p.res)
+  =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
   ^=  res  %-  mule  |.
   ?:  =(%$ lal.fav)
     ~&  [%tang pax.fav `@p`(mug txt.fav)]

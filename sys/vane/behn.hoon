@@ -5,19 +5,21 @@
 |=  pit/vase
 =>  =~
 |%
-++  sqeu  |*  {a/_* b/_*}                               ::  binary skew queno
++*  sqeu  [a b]                                         ::  binary skew queno
+          $~  [0 *a *b ~]                               ::
           $:  r/@u                                      ::  rank+depth
               k/a                                       ::  priority
               n/b                                       ::  value
               c/(broq a b)                              ::  children
           ==                                            ::
-++  broq  |*  {a/_* b/_*}                               ::  brodal skew qeu
++*  broq  [a b]                                         ::  brodal skew qeu
           (list (sqeu a b))                             ::
-++  move  {p/duct q/(wind note gift:able)}              ::  local move
-++  note  $~                                            ::  out request $->
-++  sign  $~                                            ::  in result $<-
-++  clok  (broq @da duct)                               ::  stored timers
-++  coke  $:  $0                                        ::  all state
++$  move  {p/duct q/(wind note gift:able)}              ::  local move
++$  note  ~                                             ::  out request $->
++$  sign  ~                                             ::  in result $<-
++$  clok  (broq @da duct)                               ::  stored timers
++$  coke  $~  [%0 ~ ~]
+          $:  $0                                        ::  all state
               tym/{p/clok q/clok}                       ::  positive+negative
           ==                                            ::
 --
@@ -211,7 +213,7 @@
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ?.  ?=($& -.why)  ~
+  ?.  ?=(%& -.why)  ~
   =*  who  p.why
   =+  ^=  liz
       |-  ^-  (list {@da duct})

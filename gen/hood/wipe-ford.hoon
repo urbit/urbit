@@ -7,7 +7,8 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/$~ $~}
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [percent=@ud ~]
+        ~
     ==
-[%kiln-wipe-ford ~]
+[%kiln-wipe-ford percent]

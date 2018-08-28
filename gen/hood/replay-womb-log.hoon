@@ -9,6 +9,6 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {log/(list {@uvJ transaction:hood-womb}) $~}
+        {log/(list {@uvJ transaction:hood-womb}) ~}
     ==
 [%womb-replay-log log]

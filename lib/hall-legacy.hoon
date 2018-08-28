@@ -2,7 +2,7 @@
 /?    310
 /-  hall
 /+  old-zuse
-[old-zuse .]
+=,  old-zuse
 =>
 |%
 ++  audience  (map partner (pair envelope delivery))    ::  destination+state
@@ -23,7 +23,7 @@
 ++  speech                                              ::  narrative action
   $%  {$lan p/knot q/@t}                                ::  local announce
       {$exp p/@t}                                       ::  hoon line
-      {$non $~}                                         ::  no content (yo)
+      {$non ~}                                         ::  no content (yo)
       {$ext p/@tas q/*}                                 ::  extended action
       {$fat p/torso q/speech}                           ::  attachment
       {$url p/purf}                                     ::  parsed url
@@ -55,8 +55,8 @@
 --
 |%
 ++  from-json
-  =>  [jo ..telegram]
-  |=  a/^json  ^-  (list telegram:hall)
+  =,  jo
+  |:  $:{a/^json}  ^-  (list telegram:hall)
   =-  %-  zing
       %+  turn
         (need ((ar (ot ship+(su fed:ag) thought+thot ~)) a))
@@ -122,9 +122,9 @@
   ++  parn
     ^-  $-(nail (like partner))
     %+  pick
-      ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
+      ;~((glue net) ;~(pfix sig fed:ag) urs:ab)
     %+  sear  (soft passport)
-    ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
+    ;~((glue net) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
   ::
   ++  stam  (ot date+di bouquet+(as (ar so)) speech+spec ~)
   ++  spec
@@ -168,14 +168,14 @@
     |=  p/partner
     ^-  (unit circle:hall)
     ?-  -.p
-      $&  :+  ~  p.p.p
+      %&  :+  ~  p.p.p
           ?:  ?|  =(q.p.p 'porch')
                   =(q.p.p 'court')
                   =(q.p.p 'floor')
               ==
             %inbox
           q.p.p
-      $|  ~
+      %|  ~
     ==
   ::
   ++  convert-speech

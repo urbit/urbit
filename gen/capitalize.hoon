@@ -5,47 +5,78 @@
 ::  part 1: parse the file into {uppers}
 ::
 /-  unicode-data
-/+  new-hoon
 /=  case-table
-  /;  |=  a=(list line:unicode-data)
-      =,  new-hoon
+  /;  !:
+      =>
+      |%
+      +$  case-fold
+        ::  state that's part of the fold which generates the list of case-nodes
+        $:  ::  resulting data to pass to treeify.
+            out=(list case-node:unicode-data)
+            ::  the start of a run of characters; ~ for not active.
+            start=(unit case-state)
+            ::  previous character state
+            prev=case-state
+        ==
+      ::
+      +$  case-state
+        ::  a temporary model which we compress later in a second pass.
+        $:  point=@c
+            case=case-class
+            upper=case-offset:unicode-data
+            lower=case-offset:unicode-data
+            title=case-offset:unicode-data
+        ==
+      ::
+      +$  case-class
+        ::  classification of an individual character.
+        $?  $upper
+            $lower
+            $title
+            $none
+            $missing
+        ==
+      --
+      |=  a=(list line:unicode-data)
+      ::
       |^  %-  build-tree
           %-  flop
           (build-case-nodes a)
       ::
-      :>  #
-      :>  #  %case-nodes
-      :>  #
-      :>    transforms raw unicode data into sequential case nodes.
-      +|
+      ::  #
+      ::  #  %case-nodes
+      ::  #
+      ::    transforms raw unicode data into sequential case nodes.
+      +|  %case-nodes
       ++  build-case-nodes
-        :>  raw list of unicode data lines to a compact list of chardata
-        |=  a=(list line:unicode-data)
+        ::  raw list of unicode data lines to a compact list of chardata
+        |=  lines=(list line:unicode-data)
         ^-  (list case-node:unicode-data)
-        =<  out
         ::
         ::  todo: we don't have the final case range in the output of this
         ::  gate. this is because this algorithm doesn't work when the last
         ::  char is part of a range. this doesn't happen with the real one,
         ::  only the excerpts i was using for testing.
         ::
-        %^  foldl:ls  a  *case-fold
-        |=  [c=case-fold l=line:unicode-data]
-        ^+  c
-        =+  state=(line-to-case-state l)
-        ?:  (is-adjacent state prev.c)
-          c(prev state)
-        =.  c  (add-range c)
-        %=  c
-          start
-            ?:  &(!=(case.state %missing) !=(case.state %none))
-              `state
-            ~
-          prev  state
+        =<  out
+        =|  =case-fold
+        |-  ^+  case-fold
+        ?~  lines  case-fold
+        ::
+        =/  state=case-state  (line-to-case-state i.lines)
+        ::
+        ?:  (is-adjacent state prev.case-fold)
+          case-fold(prev state)
+        ::
+        =.  case-fold  (add-range case-fold)
+        ::
+        %_    case-fold
+          prev   state
+          start  ?.(?=(?(%missing %none) case.state) ~ `state)
         ==
       ::
       ++  line-to-case-state
-        :>  creates an easy to merge form.
+        ::  creates an easy to merge form.
         |=  line:unicode-data
         ^-  case-state
         =/  out=case-state
@@ -84,7 +115,7 @@
         [%sub (sub dst src)]
       ::
       ++  is-adjacent
-        :>  is {rhs} a continuation of {lhs}?
+        ::  is {rhs} a continuation of {lhs}?
         |=  [lhs=case-state rhs=case-state]
         ^-  ?
         ?:  (lth point.rhs point.lhs)
@@ -106,9 +137,9 @@
         %.y
       ::
       ++  upper-lower-adjacent
-        :>    detects %upper-lower spans.
-        :>
-        :>  is {lhs} the same as {rhs}, but with opposite case?
+        ::    detects %upper-lower spans.
+        ::
+        ::  is {lhs} the same as {rhs}, but with opposite case?
         |=  [lhs=case-state rhs=case-state]
         ?:  &(=(case.lhs %upper) !=(case.rhs %lower))
           %.n
@@ -153,48 +184,25 @@
           [`@ux`point.u.start.c `@ux`point.prev.c +.+.u.start.c]
         c(out [node out.c])
       ::
-      ++  case-fold
-        :>  state that's part of the fold which generates the list of case-nodes
-        $:  :>  resulting data to pass to treeify.
-            out=(list case-node:unicode-data)
-            :>  the start of a run of characters; ~ for not active.
-            start=(unit case-state)
-            :>  previous character state
-            prev=case-state
-        ==
-      ::
-      ++  case-state
-        :>  a temporary model which we compress later in a second pass.
-        $:  point=@c
-            case=case-class
-            upper=case-offset:unicode-data
-            lower=case-offset:unicode-data
-            title=case-offset:unicode-data
-        ==
-      ::
-      ++  case-class
-        :>  classification of an individual character.
-        $?  $upper
-            $lower
-            $title
-            $none
-            $missing
-        ==
-      ::
-      :>  #
-      :>  #  %tree-building
-      :>  #
-      :>    builds a binary search tree out of the list
-      +|
+      ::  #
+      ::  #  %tree-building
+      ::  #
+      ::    builds a binary search tree out of the list
+      +|  %tree-building
       ++  build-tree
         |=  a=(list case-node:unicode-data)
         ^-  case-tree:unicode-data
         ::  there's probably a bottom up approach that doesn't require walking
         ::  a list over and over again.
-        ?~  a
+        ::
+        ::  use ?: instead of ?~ to prevent the TMI problem.
+        ::
+        ?:  =(~ a)
           ~
         =+  len=(lent a)
-        =+  [lhs rhs]=(split-at:ls (div len 2) a)
+        =/  split-at=@  (div len 2)
+        =/  lhs  (scag split-at a)
+        =/  rhs  (slag split-at a)
         ?~  rhs
           ?~  lhs
             ~
@@ -213,7 +221,7 @@
   (turn (tuba a) fun)
 ::
 ++  to-upper
-  :>  returns the uppercase of unicode codepoint {a}
+  ::  returns the uppercase of unicode codepoint {a}
   |=  a=@c
   ^-  @c
   ::  special case ascii to not perform map lookup.
@@ -224,7 +232,7 @@
   (apply-table a case-table %upper)
 ::
 ++  to-lower
-  :>  returns the lowercase of unicode codepoint {a}
+  ::  returns the lowercase of unicode codepoint {a}
   |=  a=@c
   ^-  @c
   ?:  (lte a max-ascii)
@@ -234,10 +242,10 @@
   (apply-table a case-table %lower)
 ::
 ++  apply-table
-  :>    searches {table} and apples applies {type} to {a}.
-  :>
-  :>  this recursively walks the case tree {table}. if it finds an entry which
-  :>  matches on {a}, it will apply the offset. otherwise, returns {a}.
+  ::    searches {table} and apples applies {type} to {a}.
+  ::
+  ::  this recursively walks the case tree {table}. if it finds an entry which
+  ::  matches on {a}, it will apply the offset. otherwise, returns {a}.
   |=  [a=@c table=case-tree:unicode-data type=?($upper $lower $title)]
   ^-  @c
   ?~  table
@@ -256,7 +264,7 @@
   ==
 ::
 ++  apply-offset
-  :>  applies an character offset to {a}.
+  ::  applies an character offset to {a}.
   |=  [a=@c type=?($upper $lower $title) offset=case-offset:unicode-data]
   ^-  @c
   ?-  offset
@@ -279,7 +287,7 @@
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [n=tape $~]
-        $~
+        [n=tape ~]
+        ~
     ==
 :-  %tape  (transform n to-upper)

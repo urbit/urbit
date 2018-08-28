@@ -40,10 +40,10 @@
           q.kev
         (con 96 q.kev)                ::  ctrl key decoding
       =+  cha=(tuba (trip q.kev))
-      ?>  ?=({@ $~} cha)               ::  of a single character
+      ?>  ?=({@ ~} cha)               ::  of a single character
       ?+  mod  !!                     ::  modified by one buckykey
-        {$ctrl $~ $~}  [%ctl i.cha]
-        {$alt $~ $~}   [%met i.cha]
+        {$ctrl ~ ~}  [%ctl i.cha]
+        {$alt ~ ~}   [%met i.cha]
       ==
     ?@  q.kev
       [%txt (tuba (trip q.kev))]

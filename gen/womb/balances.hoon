@@ -6,7 +6,7 @@
 /+    hood-womb
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        $~
+        ~
         who/(unit @p)
     ==
 :-  %womb-balance-all

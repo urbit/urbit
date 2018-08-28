@@ -3,6 +3,10 @@
 ::::  /hoon/rend/down-jet/lib
   ::
 /?    310
+/-  *markdown
+::
+=,  format
+=,  html
 ::
 |%
 ++  into-inner
@@ -235,7 +239,7 @@
     %+  into-inner  kid
     ?-  p.b
       {$emph ?}   ?.(p.p.b ;em; ;strong;)
-      {$delt $~}  ;del;
+      {$delt ~}  ;del;
       {$link ^}   =+  url=(urly p.p.b)
                   =.  url  ?^(url url "#{(sanitize kid)}")
                   ?~  q.p.b  ;a/"{url}";

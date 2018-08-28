@@ -8,7 +8,7 @@
   !.
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{her/@p $~} $~}
+        {{her/@p ~} ~}
     ==
 :-  %noun
 ~_  leaf+"can't ticket {<her>} (not a child of {<p.bec>})"

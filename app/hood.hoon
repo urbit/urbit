@@ -20,11 +20,11 @@
 ++  hood-module
   ::  each hood module follows this general shape
   =>  |%
-      +=  part  [%module %0 pith]
-      +=  pith  ~
+      +$  part  [%module %0 pith]
+      +$  pith  ~
       ::
-      +=  move  [bone card]
-      +=  card  $%  [%fake _!!]
+      +$  move  [bone card]
+      +$  card  $%  [%fake ~]
                 ==
       --
   |=  [bowl:gall own=part]
@@ -42,28 +42,32 @@
     ++  hood-1                                          ::  unified state
       {$1 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::  extract specific
-      |*  hed/hood-head                                 ::
-      |=  paw/hood-part                                 ::
-      ?-  hed                                           ::
-        $drum  ?>(?=($drum -.paw) `part:hood-drum`paw)  ::
-        $helm  ?>(?=($helm -.paw) `part:hood-helm`paw)  ::
-        $kiln  ?>(?=($kiln -.paw) `part:hood-kiln`paw)  ::
-        $womb  ?>(?=($womb -.paw) `part:hood-womb`paw)  ::
-        $write  ?>(?=($write -.paw) `part:hood-write`paw) ::
-      ==                                                ::  module name
-    ++  hood-head  _-:*hood-part                        ::  initialize state
+      =+  hed=$:hood-head
+      |@  ++  $
+            |:  paw=$:hood-part
+            ?-  hed
+              $drum  ?>(?=($drum -.paw) `part:hood-drum`paw)
+              $helm  ?>(?=($helm -.paw) `part:hood-helm`paw)
+              $kiln  ?>(?=($kiln -.paw) `part:hood-kiln`paw)
+              $womb  ?>(?=($womb -.paw) `part:hood-womb`paw)
+              $write  ?>(?=($write -.paw) `part:hood-write`paw)
+            ==
+      --
+    ++  hood-head  _-:$:hood-part                       ::  initialize state
     ++  hood-make                                       ::
-      |*  {our/@p hed/hood-head}                        ::
-      ?-  hed                                           ::
-        $drum  (make:hood-drum our)                     ::
-        $helm  *part:hood-helm                          ::
-        $kiln  *part:hood-kiln                          ::
-        $womb  *part:hood-womb                          ::
-        $write  *part:hood-write                        ::
-      ==                                                ::
+      =+  $:{our/@p hed/hood-head}                      ::
+      |@  ++  $
+            ?-  hed 
+              $drum  (make:hood-drum our)
+              $helm  *part:hood-helm
+              $kiln  *part:hood-kiln
+              $womb  *part:hood-womb
+              $write  *part:hood-write
+            ==
+      --
     ++  hood-part-old  hood-part                        ::  old state for ++prep
     ++  hood-port                                       ::  state transition
-      |=  paw/hood-part-old  ^-  hood-part              ::
+      |:  paw=$:hood-part-old  ^-  hood-part            ::
       paw                                               ::
     ::                                                  ::
     ++  hood-part                                       ::  current module state
@@ -82,14 +86,18 @@
         hood-1                                          ::  module states
     ==                                                  ::
 ++  able                                                ::  find+make part
-  |*  hed/hood-head
-  =+  rep=(~(get by lac) hed)
-  =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
-  ((hood-good hed) par)
+  =+  hed=$:hood-head
+  |@  ++  $
+        =+  rep=(~(get by lac) hed)
+        =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
+        ((hood-good hed) par)
+  --
 ::
 ++  ably                                                ::  save part
-  |*  {(list) hood-part}
-  [(flop +<-) %_(+> lac (~(put by lac) +<+< +<+))]
+  =+  $:{(list) hood-part}
+  |@  ++  $
+        [(flop +<-) %_(+> lac (~(put by lac) +<+< +<+))]
+  --
 ::                                                      ::  ::
 ::::                                                    ::  ::  generic handling
   ::                                                    ::  ::
@@ -182,6 +190,7 @@
 ++  poke-kiln-syncs           (wrap poke-syncs):from-kiln
 ++  poke-kiln-start-autoload  (wrap poke-start-autoload):from-kiln
 ++  poke-kiln-wipe-ford       (wrap poke-wipe-ford):from-kiln
+++  poke-kiln-keep-ford       (wrap poke-keep-ford):from-kiln
 ++  poke-kiln-autoload        (wrap poke-autoload):from-kiln
 ++  poke-kiln-overload        (wrap poke-overload):from-kiln
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln

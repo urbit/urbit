@@ -19,7 +19,7 @@
 ++  unt         unt:chrono:userlib                      ::  UGT to UTC time
 ++  yu          yu:chrono:userlib                       ::  UTC format constants
 ++  moon        en-mite:mimes:html                      ::  mime type to text
-++  perk        perk.is                                 ::  parse cube fork 
+++  perk        perk.is                                 ::  parse cube fork
 ++  poja        de-json:html                            ::  parse JSON
 ++  pojo        en-json:html                            ::  print json
 ++  poxo        en-xml:html                             ::  node to tape
@@ -31,8 +31,6 @@
 ++  jone        numb:enjs:format                        ::  number from unsigned
 ++  jode        time:enjs:format                        ::  ms timestamp
 ++  jesc        jesc:en-json:html                       ::  escape for json
-++  scanf       scanf:userlib                           ::  formatted scan
-++  parsf       parsf:scanf:userlib                     ::  make parser from:
 ++  taco        as-octs:mimes:html                      ::  atom to octstream
 ++  tact        as-octt:mimes:html                      ::  tape to octstream
 ++  tell        of-wall:format                          ::  wall to octstream
@@ -64,7 +62,7 @@
 ++  gnow        gnow:title                              ::  display gcos
 ++  pale        pale:pubsub:userlib                     ::  filter peers
 ++  prix        prix:pubsub:userlib                     ::  filter gate
-++  prey        prey:pubsub:userlib                     ::  prefix 
+++  prey        prey:pubsub:userlib                     ::  prefix
 ++  hunt        !!                                      ::  YY in hoon with dif abi
 ++  mole        !!                                      ::  XX deprecated
 ++  myle        !!                                      ::  XX deprecated
@@ -108,8 +106,7 @@
 ++  cone        !!                                      ::  XX depreacted
 ++  corn        !!                                      ::  XX depreacted
 ++  cred        cred:eyre                               ::  credential
-++  deco        deco:dill                               ::  text decoration
-++  deed        deed:pki:jael                           ::  sig stage fake?
+++  deco        deco                                    ::  text decoration
 ++  dome        dome:clay                               ::  project state
 ++  dore        dore:ames                               ::  foreign contact
 ++  dove        dove:ames                               ::  count hash 13-blocks
@@ -212,15 +209,11 @@
 ++  soba        soba:clay                               ::  delta
 ++  spur        spur.is                                 ::  ship desk case spur
 ++  step        step:ames                               ::  identity stage
-++  stub        stub:dill                               ::  styled tuba
-++  stye        stye:dill                               ::  decos/bg/fg
-++  styl        styl:dill                               ::  text style
-++  styx        styx:dill                               ::  styled text
 ++  suba        suba:clay                               ::  delta
 ++  tako        tako:clay                               ::  yaki ref
 ++  tick        tick:ames                               ::  process id
-++  tint        tint:dill                               ::  text color
-++  toro        toro:clay                               ::  general change 
+++  tint        tint                                    ::  text color
+++  toro        toro:clay                               ::  general change
 ++  town        town:ames                               ::  all security state
 ++  tube        !!                                      ::  canonical path
 ++  tutu        !!                                      ::  XX deprecated
@@ -230,7 +223,6 @@
 ++  whom        whom:ames                               ::  year+govt+id
 ++  woof        !!                                      ::  XX deprecated
 ++  wund        wund:ames                               ::  mace in action
-++  will        will:pki:jael                           ::  certificate
 ++  zuse        ^zuse                                   ::  hoon+zuse kelvin
 ++  kiss-ames   task:able:ames                          ::  in request ->$
 ++  gift-ames   gift:able:ames                          ::  out result <-$
@@ -253,17 +245,6 @@
 ++  gram        gram:eyre                               ::  inter-ship message
 ++  kiss-eyre   task:able:eyre                          ::  in request ->$
 ++  gift-eyre   gift:able:eyre                          ::  out result <-$
-++  hood        hood:ford                               ::  assembly plan
-++  hoof        hoof:ford                               ::  resource reference
-++  hoop        hoop:ford                               ::  source in hood
-++  hops        hops:ford                               ::  XX late-bound path
-++  horn        horn:ford                               ::  resource tree
-++  milk        milk:ford                               ::  sourced silk
-++  silk        silk:ford                               ::  construction layer
-++  bilk        bilk:ford                               ::  sourced request
-++  gage        gage:ford                               ::  recursive cage+tang
-++  kiss-ford   task:able:ford                          ::  in request ->$
-++  gift-ford   gift:able:ford                          ::  out result <-$
 ++  club        club:gall                               ::  agent action
 ++  cuft        cuft:gall                               ::  internal gift
 ++  culm        culm:gall                               ::  config action

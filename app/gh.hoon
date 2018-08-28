@@ -25,7 +25,7 @@
     ++  card  
       $%  {$diff sub-result}
           {$them wire (unit hiss)}
-          {$hiss wire {$~ $~} $httr {$hiss hiss}}
+          {$hiss wire {~ ~} $httr {$hiss hiss}}
       ==
     ::
     ::  Types of results we produce to subscribers.
@@ -37,7 +37,7 @@
           {$gh-issues issues:gh}
           {$gh-issue-comment issue-comment:gh}
           {$json json}
-          {$null $~}
+          {$null ~}
       ==
     ::
     ::  Types of webhooks we expect.
@@ -76,40 +76,40 @@
         %+  bind  ((ar:jo issue:gh-parse) jon)
         |=  issues/(list issue:gh)
         :-  `(shax (jam issues))
-        %-  malt  ^-  (list {@ta $~})
+        %-  malt  ^-  (list {@ta ~})
         :-  [%gh-list-issues ~]
         (turn issues |=(issue:gh [(rsh 3 2 (scot %ui number)) ~]))
       --
   :~  ^-  place                       ::  /
-      :*  guard=$~
+      :*  guard=~
           read-x=read-null
           read-y=(read-static %issues ~)
           sigh-x=sigh-strange
           sigh-y=sigh-strange
       ==
       ^-  place                       ::  /issues
-      :*  guard={$issues $~}
+      :*  guard={$issues ~}
           read-x=read-null
           read-y=(read-static %mine %by-repo ~)
           sigh-x=sigh-strange
           sigh-y=sigh-strange
       ==
       ^-  place                       ::  /issues/mine
-      :*  guard={$issues $mine $~}
+      :*  guard={$issues $mine ~}
           read-x=(read-get /issues)
           read-y=(read-static %gh-list-issues ~)
           sigh-x=sigh-list-issues-x
           sigh-y=sigh-list-issues-y
       ==
       ^-  place                       ::  /issues/mine/<mark>
-      :*  guard={$issues $mine @t $~}
+      :*  guard={$issues $mine @t ~}
           read-x=read-null
           read-y=read-sentinel
           sigh-x=sigh-list-issues-x
           sigh-y=sigh-list-issues-y
       ==
       ^-  place                       ::  /issues/by-repo
-      :*  guard={$issues $by-repo $~}
+      :*  guard={$issues $by-repo ~}
           read-x=read-null
           ^=  read-y
           |=  pax/path
@@ -121,7 +121,7 @@
           sigh-y=sigh-strange
       ==
       ^-  place                       ::  /issues/by-repo/<user>
-      :*  guard={$issues $by-repo @t $~}
+      :*  guard={$issues $by-repo @t ~}
           read-x=read-null
           read-y=|=(pax/path (get /users/[-.+>.pax]/repos))
           sigh-x=sigh-strange
@@ -132,14 +132,14 @@
           [~ (malt (turn repos |=(repository:gh [name ~])))]
       ==
       ^-  place                       ::  /issues/by-repo/<user>/<repo>
-      :*  guard={$issues $by-repo @t @t $~}
+      :*  guard={$issues $by-repo @t @t ~}
           read-x=|=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues))
           read-y=|=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues))
           sigh-x=sigh-list-issues-x
           sigh-y=sigh-list-issues-y
       ==
       ^-  place                       ::  /issues/by-repo/<user>/<repo>/<number>
-      :*  guard={$issues $by-repo @t @t @t $~}
+      :*  guard={$issues $by-repo @t @t @t ~}
           ^=  read-x
           |=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues/[-.+>+>.pax]))
         ::
@@ -159,7 +159,7 @@
           sigh-y=sigh-strange
       ==
       ^-  place                       ::  /issues/by-repo/<u>/<r>/<n>/<mark>
-      :*  guard={$issues $by-repo @t @t @t @t $~}
+      :*  guard={$issues $by-repo @t @t @t @t ~}
           read-x=read-null
           read-y=read-sentinel
           sigh-x=sigh-strange

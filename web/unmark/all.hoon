@@ -28,8 +28,8 @@
     %-  mule  |.
     elm:(static:cram (rash (nule:unix ';>' a) apex:(sail &):vast))
   ?-  -.try
-    $&  p.try
-    $|  ;div
+    %&  p.try
+    %|  ;div
           ;h3: ERROR
           ;pre: {(wush 120 p.try)}
   ==    ==
@@ -46,9 +46,9 @@
   :_  (turn c.a ..$)
   ?+  g.a  g.a
     {@ {$id *} *}   g.a(a t.a.g.a)
-    {$$ {$$ *} $~}
+    {$$ {$$ *} ~}
       =<  g.a(v.i.a (tufa (turn (tuba v.i.a.g.a) .)))
-      |=(b/@c `@`?+(b b $~-~201c. '"', $~-~201d. '"'))
+      |=(b/@c `@`?+(b b ~-~201c. '"', ~-~201d. '"'))
   ==
 --
 ::

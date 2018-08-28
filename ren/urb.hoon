@@ -1,26 +1,15 @@
 ::
-::::  /hoon/urb/ren
+::::  /hoon/elem/urb/ren
   ::
-/?    310
-/+    urb-split    :: for single-page apps
-/%    /^  {hed/{@uvH marl} bod/{@uvH marl}}
-      /,      /web/pages
-          /;  urb-split  /#  /!hymn/
-              /web/static
-          ::
-          ::  TODO: remove once we no longer need static site generator
-          ::
-          /;  |=  urb=manx
-              ^-  [hed=[@uvH marl] bod=[@uvH marl]]
-              ?:  ?=({{$html $~} {{$head $~} *} {{$body $~} *} $~} urb)
-                =+  `{{$html $~} {{$head $~} hed/marl} {{$body $~} bod/marl} $~}`urb
-                :-  [0v0 hed]
-                    [0v0 bod]
-              :-  [0v0 ~]
-                  [0v0 [urb ~]]
-          /&hymn&/html/
-          ::
-              /
-          /urb-tree/
+/?    309
+::      nutalk        ::FIXME write ren/urb/nutalk
+/=  inner
+      /^    manx
+      /,   ::   /web/pages/nutalk  /#  /!htm/
+              /web/pages         /!hymn/
+          :: put collections through the same .htm
+          :: routing structure as nutalk
+::              /web/collections   /#  /htm/  ::a lot of stuff in here isn't .hoon files
+              /        /!hymn/     ::     /tree-elem/
       ==
--.-
+inner

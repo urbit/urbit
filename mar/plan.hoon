@@ -62,8 +62,8 @@
   ++  diff
     |=  neu/_all  ^-  plan-diff                        :: XXX map functions
     :+  ?:(=(-.all -.neu) ~ (some -.neu))
-      =<  (malt `(list {knot $~})`(murn ~(tap by acc.all) .))
-      |=  {a/knot *}  ^-  (unit {knot $~})
+      =<  (malt `(list {knot ~})`(murn ~(tap by acc.all) .))
+      |=  {a/knot *}  ^-  (unit {knot ~})
       ?:((~(has by acc.neu) a) ~ (some [a ~]))
     =<  (malt (murn ~(tap by acc.neu) .))
     |=  {a/knot b/plan-acct}  ^-  (unit {knot plan-acct})

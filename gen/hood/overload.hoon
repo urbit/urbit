@@ -8,6 +8,6 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{recur/@dr start/@da $~} $~}
+        {{recur/@dr start/@da ~} ~}
     ==
 [%kiln-overload recur start]

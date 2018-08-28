@@ -6,7 +6,7 @@
 /+    hood-womb
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {pas/@uvG $~}
+        {pas/@uvG ~}
         who/(unit @p)
     ==
 =-  [%womb-balance .^(balance:hood-womb %gx /[him]/hood/[cas]/womb/balance/[key]/womb-balance)]

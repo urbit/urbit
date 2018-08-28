@@ -18,7 +18,7 @@
     ::  A place consists of:
     ::  --  `guard`, the type of the paths we should match.  For
     ::      example, to match `/issues/<user>/<repo>` use
-    ::      `{$issues @t @t $~}`.
+    ::      `{$issues @t @t ~}`.
     ::  --  `read-x`, called when someone tries to read the
     ::      place with care `%x`.  Should produce a single move,
     ::      usually either a `%diff` response if we can

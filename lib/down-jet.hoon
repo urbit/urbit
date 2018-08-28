@@ -2,13 +2,10 @@
 ::::  /hoon/down-jet/lib
   ::
 /?    310
-/-    markdown
+/+    *down-jet-parse, *down-jet-rend
 ::
 ::::
   ::
-=,(^?(markdown) .)
-//    /%/parse                       ::  inli donp parse
-//    /%/rend                        ::  sing sung sang flat into-inner
 ~%  %down  ..is  ~
 |%
 ++  mark
