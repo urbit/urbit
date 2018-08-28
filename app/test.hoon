@@ -104,8 +104,9 @@
       our
     live=|
   ^-  schematic:ford
-  :: XX what should the rail be?
-  :-  [%bake a fake-fcgi now-disc /example]
+  =/  bem=beam  (need (de-beam %/example))
+  =/  =rail  [[p q] s]:bem
+  :-  [%bake a fake-fcgi rail]
   [%$ %cont !>(b)]
 ::
 ++  poke-noun
@@ -117,9 +118,7 @@
       %cores  [ost (build-core [- +]:(list-hoons p.a skip=(sy /sys /ren ~)))]~
       %names  ~&((list-names p.a) ~)
       %marks  ~|(%stub !!) ::TODO restore historical handler
-      %renders  :: XX temporarily disabled
-                :: [ost (build-rend [- +]:(list-names (weld /ren p.a)))]~
-                ~
+      %renders  [ost (build-rend [- +]:(list-names (weld /ren p.a)))]~
   ==    
 ::
 ++  list-names
@@ -159,6 +158,9 @@
     :-  /ren/js             "not meant to be called outside /web/pack"
     :-  /ren/run            "not meant to be called except on a (different) hoon file"
     :-  /ren/collections    "temporarily disabled"
+    :-  /ren/test-gen       "temporarily disabled"
+    :-  /ren/tree-index     "temporarily disabled"
+    :-  /ren/tree-elem      "temporarily disabled"
     :-  /ren/x-urb          "temporarily disabled"
     :-  /ren/x-htm          "temporarily disabled"
     :-  /ren/x-collections-snip          "temporarily disabled"
