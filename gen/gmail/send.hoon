@@ -9,7 +9,7 @@
 :-  %gmail-req
 :^  %post  /messages/'send'  ~['uploadType'^'simple']
 ^-  message:rfc
-=+  parse-adr=;~((glue pat) (cook crip (star ;~(less pat next))) (cook crip (star next)))
+=+  parse-adr=;~((glue vat) (cook crip (star ;~(less vat next))) (cook crip (star next)))
 :+  (scan from parse-adr)
   (scan to parse-adr)
 [(crip subject) ?~(opt '' (crip mess.opt))]
