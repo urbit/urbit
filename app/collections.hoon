@@ -1,8 +1,20 @@
-::  /app/collections/hoon
 ::
+::::  /app/collections/hoon
+  ::
 /?  309
 /-  hall
 /+  collections
+::
+::  cols:
+::
+::    run collections-item renderer on children of /web/collections
+::    combine with a bunted config in a +collection structure defined in /lib/collections
+::    because the top level collection has no config file
+::
+::    whenever any of the clay files that compose this renderer change, this app will
+::    recompile and the +prep arm will fire. we then check which files changed and notify
+::    the corresponding hall circle of that change
+::
 /=  cols
   /^  collection:collections
   /;  |=  a=(map knot item:collections)
@@ -26,13 +38,24 @@
   ==
 --
 ::
-::::
-  ::
+::  state: 
+::    
+::    stores the collection built by above by :cols so that we can compare old and new
+::    versions whenever the rendered data changes
+::
 |_  [bol=bowl:gall state=collection]
+::
+::  +this: app core subject
 ::
 ++  this  .
 ::
-::::
+::  +prep:
+::
+::    on initial boot, create top level hall circle for collections, called %c
+::
+::    on subsequent compiles, call +ta-update:ta on the old collection data,
+::    then update state to store the new collection data
+::
 ++  prep
   |=  old=(unit *)
   ^-  (quip move _this)
@@ -47,7 +70,7 @@
     (ta-update:ta u.old-col)
   [mow this(state cols)]
 ::
-::  mack: acknowledgement for permissions
+::  +mack: recieve acknowledgement for permissions changes, print error if it failed
 ::
 ++  mack
   |=  [wir=wire err=(unit tang)]
@@ -55,12 +78,20 @@
   ?~  err
     [~ this]
   (mean u.err)
-::::::
-::  utilities
 ::
-++  base-spur  `spur`/web/collections
-++  base-beam  `beam`[byk.bol (flop base-spur)]
-++  base-path  `path`(en-beam:format base-beam)
+::  +coup: recieve acknowledgement for poke, print error if it failed
+::
+++  coup
+  |=  [wir=wire err=(unit tang)]
+  ^-  (quip move _this)
+  ?~  err
+    [~ this]
+  (mean u.err)
+::
+::  +path-to-circle:
+::
+::    takes a clay path and returns a hall circle
+::    for a path /foo/bar it returns a circle with a :name %c-foo-bar
 ::
 ++  path-to-circle
   |=  pax=path
@@ -81,6 +112,8 @@
     ((hard @tas) seg)
   [our.bol nam]
 ::
+::  +allowed-by: checks if ship :who is allowed by the permission rules in :dic
+::
 ++  allowed-by
   |=  [who=@p dic=dict:clay]
   ^-  ?
@@ -97,6 +130,8 @@
     !in-list
   in-list
 ::
+::  +collection-notify: XX
+::
 ++  collection-notify
   |=  [pax=path conf=config]
   ^-  json
@@ -107,6 +142,8 @@
       ['date' [%s (crip (scow %da last-modified.conf))]]
       ['type' [%s type.conf]]
   ==
+::
+::  +item-notify: XX
 ::
 ++  item-notify
   |=  [pax=path raw=raw-item]
@@ -124,6 +161,8 @@
       ['content' [%s data.raw]]
   ==
 ::
+::  +front-to-wain: XX
+::
 ++  front-to-wain
   |=  a=(map knot cord)
   ^-  wain
@@ -140,6 +179,8 @@
     ['    ==' ~]
   ==
 ::
+::  +update-umd-front: XX
+::
 ++  update-umd-front
   |=  [fro=(map knot cord) umd=@t]
   ^-  @t
@@ -152,34 +193,17 @@
   %+  weld  (front-to-wain fro)
   (to-wain:format (crip (slag u.id tum)))
 ::
+::  +poke-collections-action:
 ::
-::
-++  coup
-  |=  [wir=wire err=(unit tang)]
-  ^-  (quip move _this)
-  ?~  err
-    [~ this]
-  (mean u.err)
-++  poke-noun
-  |=  a=*
-  ^-  (quip move _this)
-::  =/  pax  ((hard path) a)
-  =/  act=action:collections
-    :*  our.bol  %home
-      :~  [%post /web/collections ~.test 'test' & '# title\0a\0abody']
-      ==
-    ==
-  =/  mow=move
-    [ost.bol %poke /poke-act [our.bol %collections] %collections-action act]
-  [[mow]~ this]
+::    the main interface for creating and deleting collections and collections items
 ::
 ++  poke-collections-action
   |=  act=action:collections
   ^-  (quip move _this)
   ?:  =(who.act our.bol)
     ta-done:(ta-act:ta act)
-  ::
   ::  forward poke if its not meant for us
+  ::
   :_  this
   :_  ~
   :*  ost.bol  %poke  
@@ -188,32 +212,43 @@
       %collections-action  act
   ==
 ::
-::::::
-::::::
+::  +ta: main event core for collections
 ::
 ++  ta
   |_  moves=(list move)
   ::
-  ::  core control
+  ::  +ta-this: ta core subject
   ::
   ++  ta-this  .
+  ::
+  ::  +ta-done: flop :moves for finalization, since moves are to the head of the list
+  ::
   ++  ta-done  [(flop moves) this]
+  ::
+  ::  +ta-emit: add a +move to :moves
+  ::
   ++  ta-emit
     |=  mov=move
     %_  ta-this
       moves  [mov moves]
     ==
+  ::
+  ::  +ta-emil: add a list of +move to :moves
+  ::
   ++  ta-emil
     |=  mos=(list move)
     %_  ta-this
       moves  (welp (flop mos) moves)
     ==
   ::
-  ::  interface
+  ::  +ta-act: process collection-action
   ::
   ++  ta-act
     |=  act=action:collections
     ^+  ta-this
+    ::
+    ::  iterate through list of +sub-action of +action
+    ::
     |-
     ?~  acts.act  ta-this
     =*  a  i.acts.act
@@ -332,15 +367,14 @@
     ==
     $(acts.act t.acts.act)
   ::
-  ::  clay updates
+  ::  +ta-update:
+  ::
+  ::
   ::
   ++  ta-update
     |=  old=collection
     ^+  ta-this
-::    ~&  old+old
-::    ~&  new+cols
     ?:  =(old cols)
-::      ~&  %no-update
       ta-this
     (ta-update-collection old cols /web/collections)
   ::
@@ -364,11 +398,11 @@
       $(items t.items)
     ::
         %both
-      =.  ta-this  
-        (ta-hall-json parent-path 'new collection' (collection-notify pax meta.col.new))
-      =.  ta-this  
-        (ta-hall-json parent-path 'new item' (item-notify pax raw.new))
-      =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
+::      =.  ta-this  
+::        (ta-hall-json parent-path 'new collection' (collection-notify pax meta.col.new))
+::      =.  ta-this  
+::        (ta-hall-json parent-path 'new item' (item-notify pax raw.new))
+::      =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.new)
       =.  ta-this
       |-
@@ -643,14 +677,12 @@
   ::
   ++  ta-set-permissions
     |=  [pax=path r=rule:clay w=rule:clay]
-::    =.  pax  (weld base-spur pax)
     ^+  ta-this
     %+  ta-emit  ost.bol
     [%perm (weld /perms pax) our.bol q.byk.bol pax [%rw `r `w]]
   ::
   ++  ta-flush-permissions
     |=  pax=path
-::    =.  pax  (weld base-spur pax)
     ^+  ta-this
     %+  ta-emit  ost.bol
     [%perm (weld /perms pax) our.bol q.byk.bol pax [%rw ~ ~]]
@@ -698,6 +730,7 @@
   ::
   ++  ta-hall-json
     |=  [pax=path header=@t jon=json]
+    ~&  notify+[pax header]
     ^+  ta-this
     =/  circ=circle:hall  (path-to-circle pax)
     %-  ta-hall-action
