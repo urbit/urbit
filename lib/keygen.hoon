@@ -6,7 +6,7 @@
 ::
 ::
 =,  sha
-=,  ^keygen
+=,  keygen
 ::
 |%
 ++  to-byts
