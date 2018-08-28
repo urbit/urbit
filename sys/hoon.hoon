@@ -2649,7 +2649,7 @@
   ::
   ::  w=width:         bits in exponent field
   ::  p=precision:     bits in fraction field
-  ::  w=bias:          added to exponent when storing
+  ::  b=bias:          added to exponent when storing
   ::  r=rounding mode: same as in ++fl
   ::
   ++  sb  (bex (^add w p))                              ::  sign bit
