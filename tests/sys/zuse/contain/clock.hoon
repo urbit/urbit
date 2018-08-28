@@ -17,14 +17,14 @@
   =.  c  (~(put by-clock c) 1 "one")
   =^  maybe1  c  (~(get by-clock c) 1)
   =/  results1
-    %-  expect-eq  !>
-    :-  [~ "one"]
-    maybe1
+    %+  expect-nu-eq
+      !>  [~ "one"]
+      !>  maybe1
   ::
   =/  results2
-    %-  expect-eq  !>
-    :-  1
-    size.c
+    %+  expect-nu-eq
+      !>  1
+      !>  size.c
   ::  push that key out of the cache
   ::
   =.  c  (~(put by-clock c) 2 "two")
@@ -32,15 +32,15 @@
   =.  c  (~(put by-clock c) 4 "four")
   ::
   =/  results3
-    %-  expect-eq  !>
-    :-  3
-    size.c
+    %+  expect-nu-eq
+      !>  3
+      !>  size.c
   ::
   =^  maybe2  c  (~(get by-clock c) 1)
   =/  results4
-    %-  expect-eq  !>
-    :-  ~
-    maybe2
+    %+  expect-nu-eq
+      !>  ~
+      !>  maybe2
   ::
   ;:  weld
     results1
@@ -68,21 +68,21 @@
   =.  c  ~(purge by-clock c)
   ::
   ;:  weld
-    %-  expect-eq  !>
-    :-  0
-    size.c
+    %+  expect-nu-eq
+      !>  0
+      !>  size.c
   ::
-    %-  expect-eq  !>
-    :-  3
-    max-size.c
+    %+  expect-nu-eq
+      !>  3
+      !>  max-size.c
   ::
-    %-  expect-eq  !>
-    :-  ~
-    lookup.c
+    %+  expect-nu-eq
+      !>  ~
+      !>  lookup.c
   ::
-    %-  expect-eq  !>
-    :-  ~
-    queue.c
+    %+  expect-nu-eq
+      !>  ~
+      !>  queue.c
   ==
 ::
 ++  test-clock-trim
@@ -104,18 +104,18 @@
   =.  c  (~(trim by-clock c) 2)
   ::
   ;:  weld
-    %-  expect-eq  !>
-    :-  1
-    size.c
+    %+  expect-nu-eq
+      !>  1
+      !>  size.c
   ::
     =^  results1  c  (~(get by-clock c) 3)
-    %-  expect-eq  !>
-    :-  [~ "three"]
-    results1
+    %+  expect-nu-eq
+      !>  [~ "three"]
+      !>  results1
   ::
-    %-  expect-eq  !>
-    :-  1
-    ~(wyt by lookup.c)
+    %+  expect-nu-eq
+      !>  1
+      !>  ~(wyt by lookup.c)
   ==
 ::
 ++  test-clock-resized-to-zero
@@ -137,39 +137,39 @@
   =.  c  (~(resize by-clock c) 0)
   ::
   =/  results1
-    %-  expect-eq  !>
-    :-  0
-    size.c
+    %+  expect-nu-eq
+      !>  0
+      !>  size.c
   ::
   =/  results2
-    %-  expect-eq  !>
-    :-  ~
-    lookup.c
+    %+  expect-nu-eq
+      !>  ~
+      !>  lookup.c
   ::
   =/  results3
-    %-  expect-eq  !>
-    :-  ~
-    queue.c
+    %+  expect-nu-eq
+      !>  ~
+      !>  queue.c
   ::
   =/  results4
-    %-  expect-eq  !>
-    :-  0
-    max-size.c
+    %+  expect-nu-eq
+      !>  0
+      !>  max-size.c
   ::  trying to get an element just returns ~
   ::
   =^  maybe1  c  (~(get by-clock c) 3)
   =/  results5
-    %-  expect-eq  !>
-    :-  ~
-    maybe1
+    %+  expect-nu-eq
+      !>  ~
+      !>  maybe1
   ::  trying to put an element in doesn't mutate the clock
   ::
   =.  c  (~(put by-clock c) 4 "four")
   ::
   =/  results6
-    %-  expect-eq  !>
-    :-  0
-    size.c
+    %+  expect-nu-eq
+      !>  0
+      !>  size.c
   ::
   ;:  weld
     results1
