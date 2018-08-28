@@ -1662,13 +1662,7 @@
         ::
         =/  result=vase  |7:i.moves
         ::
-        %+  weld
-          %-  expect-eq  !>
-          [6 q.result]
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.result) | -:!>(*@ud))
+        (expect-nu-eq !>(6) result)
     ==
   ::
   =^  results2  ford-gate
@@ -1717,13 +1711,7 @@
         ::
         =/  result=vase  |7:i.moves
         ::
-        %+  weld
-          %-  expect-eq  !>
-          [42 q.result]
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.result) | -:!>(*@ud))
+        (expect-nu-eq !>(42) result)
     ==
   ::
   =^  results2  ford-gate
@@ -1839,22 +1827,9 @@
         ?>  ?=(^ moves)
         ?>  ?=([* %give %made @da %complete %success %call *] i.moves)
         ::
-        %+  welp
-          %-  expect-eq  !>
-          ::  compare the move to the expected move, omitting vase type checking
-          ::
-          ::    Types can't be compared using simple equality, so normalize the
-          ::    type to check the rest of the move.
-          ::
-          :_  i.moves(&8 *type)
-          :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete
-              [%success [%call *type 42]]
-          ==
-        ::  make sure the types nest
+        =/  result  |7:i.moves
         ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut &8:i.moves) | -:!>(*@))
+        (expect-nu-eq !>(42) result)
     ==
   ::
   =^  results3  ford-gate
@@ -1924,19 +1899,10 @@
         ?>  =(2 (lent moves))
         ?>  ?=([^ ^ ~] moves)
         ?>  ?=([* %give %made @da %complete %success %call *] i.moves)
-        ::  compare the move to the expected move, omitting vase type checking
         ::
         %+  weld
-          %-  expect-eq  !>
-          :_  i.moves(&8 *type)
-          :*  duct=~[/call]  %give  %made  ~1234.5.6  %complete  %success
-              %call  *type  %first
-          ==
-        ::  make sure the types nest
-        %+  weld
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut &8:i.moves) | -:!>(*@tas))
+          =/  result  |7:i.moves
+          (expect-nu-eq !>(%first) result)
         ::  make sure the other move is a subscription
         ::
         %-  expect-eq  !>
@@ -1965,19 +1931,10 @@
         ?>  =(2 (lent moves))
         ?>  ?=([^ ^ ~] moves)
         ?>  ?=([* %give %made @da %complete %success %call *] i.moves)
-        ::  compare the move to the expected move, omitting vase type checking
         ::
         %+  weld
-          %-  expect-eq  !>
-          :_  i.moves(&8 *type)
-          :*  duct=~[/call]  %give  %made  ~1234.5.7  %complete  %success
-              %call  *type  %second
-          ==
-        ::  make sure the types nest
-        %+  weld
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut &8:i.moves) | -:!>(*@tas))
+          =/  result  |7:i.moves
+          (expect-nu-eq !>(%second) result)
         ::  make sure the other move is a subscription
         ::
         %-  expect-eq  !>
@@ -2285,22 +2242,8 @@
         ?>  ?=(^ moves)
         ?>  ?=([* %give %made @da %complete %success %ride *] i.moves)
         ::
-        %+  weld
-          %-  expect-eq  !>
-          ::  compare the move to the expected move, omitting vase type checking
-          ::
-          ::    Types can't be compared using simple equality, so normalize the
-          ::    type to check the rest of the move.
-          ::
-          :_  i.moves(&8 *type)
-          :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
-              [%success [%ride *type 5]]
-          ==
-        ::  make sure the returned type nests
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut &8:i.moves) | -:!>(*@))
+        =/  result  |7:i.moves
+        (expect-nu-eq !>(5) result)
     ==
   ::
   =^  results2  ford-gate
@@ -2345,21 +2288,8 @@
         ?>  ?=(^ moves)
         ?>  ?=([* %give %made @da %complete %success %ride *] i.moves)
         ::
-        %+  welp
-          %-  expect-eq  !>
-          ::  compare the move to the expected move, omitting vase type checking
-          ::
-          ::    Types can't be compared using simple equality, so normalize the
-          ::    type to check the rest of the move.
-          ::
-          :_  i.moves(&8 *type)
-          :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
-              [%success [%ride *type 42]]
-          ==
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut &8:i.moves) | -:!>(*@))
+        =/  result  |7:i.moves
+        (expect-nu-eq !>(42) result)
     ==
   ::
   =^  results2  ford-gate
@@ -2475,22 +2405,8 @@
         ?>  ?=(^ moves)
         ?>  ?=([* %give %made @da %complete %success %ride *] i.moves)
         ::
-        %+  welp
-          %-  expect-eq  !>
-          ::  compare the move to the expected move, omitting vase type checking
-          ::
-          ::    Types can't be compared using simple equality, so normalize the
-          ::    type to check the rest of the move.
-          ::
-          :_  i.moves(&8 *type)
-          :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete
-              [%success [%ride *type 42]]
-          ==
-        ::  make sure the types nest
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut &8:i.moves) | -:!>(*@))
+        =/  result  |7:i.moves
+        (expect-nu-eq !>(42) result)
     ==
   ::
   =^  results3  ford-gate
@@ -3790,13 +3706,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>(*@tas))
-        ::
-        %-  expect-eq  !>
-        [%constant q.vase]
+        (expect-nu-eq !>(%constant) vase)
     ==
   ::
   ;:  weld
@@ -3896,14 +3806,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ["onetwo" 3]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(["onetwo" 3]))
+        (expect-nu-eq !>(["onetwo" 3]) vase)
     ==
   ::
   ;:  weld
@@ -3955,14 +3858,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ["one" 1]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(["one" 1]))
+        (expect-nu-eq !>(["one" 1]) vase)
     ==
   ::
   ;:  weld
@@ -4007,14 +3903,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  3
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([3]))
+        (expect-nu-eq !>(3) vase)
     ==
   ::
   ;:  weld
@@ -4062,14 +3951,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [1 2 3 4 5 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([1 2 3 4 5 ~]))
+        (expect-nu-eq !>([1 2 3 4 5 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4114,7 +3996,6 @@
     results1
     (expect-ford-empty ford-gate ~nul)
   ==
-
 ::
 ++  test-core-fssm  ^-  tang
   ::
@@ -4153,14 +4034,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [5 5 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([5 5 ~]))
+        (expect-nu-eq !>([5 5 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4209,14 +4083,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [6 6 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([6 6 ~]))
+        (expect-nu-eq !>([6 6 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4315,14 +4182,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [1 2 3 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([1 2 3 ~]))
+        (expect-nu-eq !>([1 2 3 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4386,14 +4246,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ["five" 5]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(["five" 5]))
+        (expect-nu-eq !>(["five" 5]) vase)
     ==
   ::
   ;:  weld
@@ -4446,14 +4299,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [1 2 3 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([1 2 3 ~]))
+        (expect-nu-eq !>([1 2 3 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4512,14 +4358,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [1 2 3 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([1 2 3 ~]))
+        (expect-nu-eq !>([1 2 3 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4577,14 +4416,9 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [[[~nul %home [%da ~1234.5.6]] /other/lib] %value]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([*beam *@tas]))
+        %+  expect-nu-eq
+          !>([[[~nul %home [%da ~1234.5.6]] /other/lib] %value])
+          vase
     ==
   ::
   ;:  weld
@@ -4602,7 +4436,8 @@
       :-  %hoon
       :-  hoon-src-type
       '''
-      /=  data  /:  /===/data
+      /=  data  /^  (map @ta @ud)
+                /:  /===/data
                 /_  /!noun/
       data
       '''
@@ -4671,14 +4506,8 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  (my [[%one 1] [%two 2] ~])
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*[[@ta @ud] [[@ta @ud] ~ ~] ~]))
+        =/  expected  (my [[%one 1] [%two 2] ~])
+        (expect-nu-eq !>(expected) vase)
     ==
   ::
   ;:  weld
@@ -4752,15 +4581,7 @@
         ?>  ?=([%success %core *] build-result.result)
         ::
         =/  =vase  vase.build-result.result
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  5
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(5))
+        (expect-nu-eq !>(5) vase)
     ==
   ::
   ;:  weld
@@ -4821,14 +4642,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [1 2 3 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([1 2 3 ~]))
+        (expect-nu-eq !>([1 2 3 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4875,14 +4689,7 @@
         ::
         =/  =vase  q.cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [0 0]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*^))
+        (expect-nu-eq !>([0 0]) vase)
     ==
   ::
   ;:  weld
@@ -4930,14 +4737,7 @@
         ::
         =/  =vase  q.cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [12 13]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*^))
+        (expect-nu-eq !>([12 13]) vase)
     ==
   ::
   ;:  weld
@@ -4985,14 +4785,7 @@
         ::
         =/  =vase  q.cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [12 13]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*^))
+        (expect-nu-eq !>([12 13]) vase)
     ==
   ::
   ;:  weld
@@ -5102,22 +4895,10 @@
         =/  result  result.p.card.i.moves
         ?>  ?=([%success %cast *] build-result.result)
         ::
-        =/  mark=term  p.cage.build-result.result
-        =/  =vase      q.cage.build-result.result
+        =/  =cage      cage.build-result.result
         ::
-        ;:  welp
-          %-  expect-eq  !>
-          :-  %foo
-          mark
-        ::
-          %-  expect-eq  !>
-          :-  [12 13]
-          q.vase
-        ::
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>(*^))
-    ==  ==
+        (expect-cage %foo !>([12 13]) cage)
+    ==
   ::
   ;:  weld
     results1
@@ -5185,22 +4966,10 @@
         =/  result  result.p.card.i.moves
         ?>  ?=([%success %cast *] build-result.result)
         ::
-        =/  mark=term  p.cage.build-result.result
-        =/  =vase      q.cage.build-result.result
+        =/  =cage      cage.build-result.result
         ::
-        ;:  welp
-          %-  expect-eq  !>
-          :-  %foo
-          mark
-        ::
-          %-  expect-eq  !>
-          :-  [12 13]
-          q.vase
-        ::
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>([12 13]))
-    ==  ==
+        (expect-cage %foo !>([12 13]) cage)
+    ==
   ::
   ;:  weld
     results1
@@ -5235,22 +5004,10 @@
         =/  result  result.p.card.i.moves
         ?>  ?=([%success %mute *] build-result.result)
         ::
-        =/  mark=term  p.cage.build-result.result
-        =/  =vase      q.cage.build-result.result
+        =/  =cage      cage.build-result.result
         ::
-        ;:  welp
-          %-  expect-eq  !>
-          :-  %foo
-          mark
-        ::
-          %-  expect-eq  !>
-          :-  [2 43 4]
-          q.vase
-        ::
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>([2 43 4]))
-    ==  ==
+        (expect-cage %foo !>([2 43 4]) cage)
+    ==
   ::
   ;:  weld
     results1
@@ -5301,19 +5058,7 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %foo
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [1 2 3 ~]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>([1 2 3 ~]))
+        (expect-cage %foo !>([1 2 3 ~]) cage)
     ==
   ::
   ;:  weld
@@ -5389,19 +5134,7 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %foo
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [12 13]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>([12 13]))
+        (expect-cage %foo !>([12 13]) cage)
     ==
   ::
   ;:  weld
@@ -5472,19 +5205,7 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %dat
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  'one'
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>('one'))
+        (expect-cage %dat !>('one') cage)
     ==
   ::
   ;:  weld
@@ -5541,19 +5262,7 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %foo
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [17 18]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>([17 18]))
+        (expect-cage %foo !>([17 18]) cage)
     ==
   ::
   ;:  weld
@@ -5627,19 +5336,7 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %txt-diff
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ~[[%& 1] [%| ~[%b] ~[%d]]]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>(~[[%& 1] [%| ~[%b] ~[%d]]]))
+        (expect-cage %txt-diff !>(~[[%& 1] [%| ~[%b] ~[%d]]]) cage)
     ==
   ::
   ;:  weld
@@ -5718,19 +5415,7 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %txt
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ~[%a %d]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>(~[%a %d]))
+        (expect-cage %txt !>(~[%a %d]) cage)
     ==
   ::
   ;:  weld
@@ -5833,22 +5518,12 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %foo
-          p.cage
+        =/  expected  '''
+                      a
+                      d
+                      '''
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  '''
-              a
-              d
-              '''
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>(''))
+        (expect-cage %foo !>(expected) cage)
     ==
   ::
   ;:  weld
@@ -5902,19 +5577,8 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %txt-diff
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ~[[%| ~[%a] ~[%c]] [%| ~[%b] ~[%d]]]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>(*(urge:clay cord)))
+        =/  result=(urge:clay cord)  ~[[%| ~[%a] ~[%c]] [%| ~[%b] ~[%d]]]
+        (expect-cage %txt-diff !>(result) cage)
     ==
   ::
   ;:  weld
@@ -6007,19 +5671,9 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %txt-diff
-          p.cage
+        =/  result=(urge:clay cord)  ~[[%| ~[%a] ~[%c]] [%| ~[%b] ~[%d]]]
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ~[[%| ~[%a] ~[%c]] [%| ~[%b] ~[%d]]]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>(*(urge:clay cord)))
+        (expect-cage %txt-diff !>(result) cage)
     ==
   ::
   ;:  weld
@@ -6125,14 +5779,7 @@
         =/  =vase  vase.build-result.result.p.card.i.moves
         ::
         %+  weld
-          %-  expect-eq  !>
-          :-  13
-          q.vase
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>(13))
+          (expect-nu-eq !>(13) vase)
         ::
         =/  files=(set [%x path])
           %-  sy  :~
@@ -6261,14 +5908,7 @@
         =/  =vase  vase.build-result.result.p.card.i.moves
         ::
         %+  weld
-          %-  expect-eq  !>
-          :-  12
-          q.vase
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>(12))
+          (expect-nu-eq !>(12) vase)
         ::
         =/  files=(set [%x path])
           %-  sy  :~
@@ -6410,14 +6050,7 @@
         =/  =vase  vase.build-result.result.p.card.i.moves
         ::
         %+  weld
-          %-  expect-eq  !>
-          :-  11
-          q.vase
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>(11))
+          (expect-nu-eq !>(11) vase)
         ::
         =/  files=(set [%x path])
           %-  sy  :~
@@ -6573,7 +6206,7 @@
         ::
         ;:  weld
           (expect-eq !>([~[/gh] duct.i.moves]))
-          (compare-vase !>(17) vase.build-result.result.p.card.i.moves)
+          (expect-nu-eq !>(17) vase.build-result.result.p.card.i.moves)
         ::
           %-  expect-eq  !>
           :_  i.t.moves
@@ -6620,7 +6253,7 @@
         ::
         ;:  weld
           (expect-eq !>([~[/gh2] duct.i.moves]))
-          (compare-vase !>(16) vase.build-result.result.p.card.i.moves)
+          (expect-nu-eq !>(16) vase.build-result.result.p.card.i.moves)
         ::
           %-  expect-eq  !>
           :_  i.t.moves
@@ -6667,7 +6300,7 @@
         ::
         ;:  weld
           (expect-eq !>([~[/gh3] duct.i.moves]))
-          (compare-vase !>(15) vase.build-result.result.p.card.i.moves)
+          (expect-nu-eq !>(15) vase.build-result.result.p.card.i.moves)
         ::
           %-  expect-eq  !>
           :_  i.t.moves
@@ -6886,19 +6519,7 @@
         ::
         =/  result=cage  cage.build-result.result.p.card.i.moves
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %four
-          p.result
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ["grab" "one"]
-          q.q.result
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.result) | -:!>(*[tape tape]))
+        (expect-cage %four !>(["grab" "one"]) result)
     ==
   ::
   ;:  weld
@@ -7012,15 +6633,11 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  :-  [%config '']
-              (my [%data1 [%item 'one']] ~) :: [%data2 [%item 'two']] ~)
-          q.vase
+        =/  result=[[%config @t] (map knot [%item @t])]
+          :-  [%config '']
+          (my [%data1 [%item 'one']] ~)
         ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*[[%config @t] (map knot [%item @t])]))
+        (expect-nu-eq !>(result) vase)
         ::
         ::  TODO: check the subscription?
     ==
@@ -7125,15 +6742,11 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  :-  [%config '']
-              (my [%data1 [%item 'one']] [%data2 [%item 'two']] ~)
-          q.vase
+        =/  result=[[%config @t] (map knot [%item @t])]
+          :-  [%config '']
+          (my [%data1 [%item 'one']] [%data2 [%item 'two']] ~)
         ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*[[%config @t] (map knot [%item @t])]))
+        (expect-nu-eq !>(result) vase)
         ::
         ::  TODO: check the subscription?
     ==
@@ -7239,15 +6852,11 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  :-  [%config '']
-              (my [%data1 [%item 'one']] [%data2 [%item 'changed-two']] ~)
-          q.vase
+        =/  result=[[%config @t] (map knot [%item @t])]
+          :-  [%config '']
+          (my [%data1 [%item 'one']] [%data2 [%item 'changed-two']] ~)
         ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*[[%config @t] (map knot [%item @t])]))
+        (expect-nu-eq !>(result) vase)
         ::
         ::  TODO: check the subscription?
     ==
@@ -7411,19 +7020,6 @@
     :-  &
     (~(nest ut p.vase.tail.tail.result) | -:!>(''))
   ==
-::  +compare-vase: compares the value of a vase and ensure that the types nest
-::
-++  compare-vase
-  |=  [expected=vase actual=vase]
-  ^-  tang
-  %+  weld
-    %-  expect-eq  !>
-    :-  q.expected
-    q.actual
-  ::
-  %-  expect-eq  !>
-  :-  &
-  (~(nest ut p.actual) | p.expected)
 ::
 ::  +scry-with-results
 ++  scry-with-results
@@ -7583,6 +7179,16 @@
   =/  output=tang  (move-comparator moves)
   ::
   [output ford-gate]
+::  +expect-cage: assert that the actual cage has the right mark and vase
+::
+++  expect-cage
+  |=  [mark=term expected=vase actual=cage]
+  %+  weld
+    %-  expect-eq  !>
+    :-  mark
+    p.actual
+  ::
+  (expect-nu-eq expected q.actual)
 ::  +expect-ford-empty: assert that ford's state is one empty ship
 ::
 ::    At the end of every test, we want to assert that we have cleaned up all
