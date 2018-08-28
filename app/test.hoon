@@ -155,6 +155,7 @@
     :-  /lib/sole                 "ford can't handle surs from libs"
     :-  /lib/hall                 "ford can't handle surs from libs"
     :-  /lib/twitter              "ford can't handle surs from libs"
+    :-  /lib/keygen               "ford can't handle surs from libs"
     :-  /sys/arvo                 "BROKEN"
     :-  /sys/vane/jael            "expects our"
     :-  /sys/vane/xmas            "expects our"

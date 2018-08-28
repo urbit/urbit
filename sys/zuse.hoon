@@ -3693,12 +3693,9 @@
     ::
     ::  shorthands
     ::
-    ++  argon2-minimal
-      (argon2 32 %id 0x13 1 8 1 *byts *byts)
-    ::
-    ::TODO  discuss and standardize?
     ++  argon2-urbit
-      (argon2 64 %u 0x13 4 1.024 10 *byts *byts)
+      |=  out=@ud
+      (argon2 out %u 0x13 4 512.000 1 *byts *byts)
     ::
     ::  argon2 proper
     ::
@@ -5032,6 +5029,28 @@
          (cold 62 (just '+'))
          (cold 63 (just '/'))
        ==
+    ::
+    ++  en-base58
+      |=  dat=@
+      =/  cha
+        '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+      %-  flop
+      |-  ^-  tape
+      ?:  =(0 dat)  ~
+      :-  (cut 3 [(mod dat 58) 1] cha)
+      $(dat (div dat 58))
+    ::
+    ++  de-base58
+      |=  t=tape
+      =-  (scan t (bass 58 (plus -)))
+      ;~  pose
+        (cook |=(a=@ (sub a 56)) (shim 'A' 'H'))
+        (cook |=(a=@ (sub a 57)) (shim 'J' 'N'))
+        (cook |=(a=@ (sub a 58)) (shim 'P' 'Z'))
+        (cook |=(a=@ (sub a 64)) (shim 'a' 'k'))
+        (cook |=(a=@ (sub a 65)) (shim 'm' 'z'))
+        (cook |=(a=@ (sub a 49)) (shim '1' '9'))
+      ==
     --  ::mimes
   ::                                                    ::  ++en-json:html
   ++  en-json                                           ::  print json
