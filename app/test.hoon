@@ -23,69 +23,90 @@
 =,  ford
 =,  format
 |_  {bowl $~}
+::
 ++  peek  _~
+::
 ++  report-error
-  |=  [a=spur b=(each cage tang)]  ^-  tang
-  =/  should-fail  (~(get by failing) (flop a))
-  ?-    -.b
-      %&
+  |=  [=spur bud=build-result]
+  ^-  tang
+  =/  should-fail  (~(get by failing) (flop spur))
+  ?-    -.bud
+      %success
     ?~  should-fail  ~
     :~  leaf+"warn: expected failure, {<`tape`u.should-fail>}"
         leaf+"warn: built succesfully"
-        (sell q.p.b)
+        ?:  ?=(%bake +<.bud)
+          (sell q.cage.bud)
+        ?>  ?=(%core +<.bud)
+        (sell vase.bud)
     ==
   ::
-      %|
+      %error
     ?^  should-fail
       ~[>[%failed-known `tape`(weld "TODO: " u.should-fail)]<]
-    (flop p.b)
+    (flop message.bud)
   ==
 ::
 ++  made-a-core
-  |=  {a/spur @uvH b/gage}
+  |=  [=spur @da res=made-result]
   :_  +>.$
-  ?>  ?=([%tabl [(each) (each)] ~] b)
-  %-  (slog (report-error a p.i.p.b))
-  =/  nex/(list spur)
-    =<(p ;;(,[%& %cont * p=(list spur)] q.i.p.b))
+  ?:  ?=([%incomplete *] res)
+    ~&  incomplete-core+spur
+    ((slog tang.res) ~)
+  ?.  ?=([%complete %success *] res)
+    ~&  unsuccessful-core+spur
+    ((slog message.build-result.res) ~)
+  ?>  ?=(^ +<.build-result.res)
+  %-  (slog (report-error spur head.build-result.res))
+  =/  nex=(list ^spur)
+    =<  p
+    ;;  ,[%success %$ %cont * p=(list ^spur)]
+    tail.build-result.res
   ?~  nex  ~&(%cores-tested ~)
   [ost (build-core nex)]~
 ::
 ++  build-core
   |=  [a=spur b=(list spur)]
   ~&  >>  (flop a)
-  :^  %exec  a-core+a  our
-  %-  some
-  ^-  bilk
-  :-  now-beak
-  :~  %tabl
-    [[%core now-beak a] [%$ %cont !>(b)]]
-  ==
+  :-  %build
+  :^    a-core+a
+      our
+    live=|
+  ^-  schematic:ford
+  :-  [%core now-disc %hoon a]
+  [%$ %cont !>(b)]
 ::
 ++  made-a-rend
-  |=  {a/wire @uvH b/gage}
-  ?>  ?=([ren=mark ~] a)
-  =+  `[ren=term pax=path]`?~(a !! a)
+  |=  [=spur @da res=made-result]
   :_  +>.$
-  ?>  ?=([%tabl [(each) (each)] ~] b)
-  %-  (slog (report-error /[ren.i.a]/ren p.i.p.b))
-  =/  nex/(list term)
-    =<(p ;;(,[%& %cont * p=(list term)] q.i.p.b))
+  ?>  ?=([ren=term ~] spur)
+  =+  `[ren=term pax=path]`?~(spur !! spur)
+  ?:  ?=([%incomplete *] res)
+    ~&  incomplete-core+spur
+    ((slog tang.res) ~)
+  ?.  ?=([%complete %success *] res)
+    ~&  unsuccessful-core+spur
+    ((slog message.build-result.res) ~)
+  ?>  ?=(^ +<.build-result.res)
+  %-  (slog (report-error /[ren]/ren head.build-result.res))
+  =/  nex=(list term)
+    =<  p
+    ;;  ,[%success %$ %cont * p=(list term)]
+    tail.build-result.res
   ?~  nex  ~&(%rens-tested ~)
   [ost (build-rend nex)]~
 ::
 ++  build-rend
   |=  [a=term b=(list term)]
   ~&  >>  [%ren a]
-  =/  bem/beam  (need (de-beam %/example))
-  =.  -.bem  now-beak
-  :^  %exec  a-rend+/[a]  our
-  %-  some
-  ^-  bilk
-  :-  -.bem
-  :~  %tabl
-    [`silk`[%bake a fake-fcgi bem] [%$ %cont !>(b)]]
-  ==
+  :-  %build
+  :^    a-rend+/[a]
+      our
+    live=|
+  ^-  schematic:ford
+  :: XX what should the rail be?
+  :-  [%bake a fake-fcgi now-disc /example]
+  [%$ %cont !>(b)]
 ::
 ++  poke-noun
   |=  a=test
@@ -96,7 +117,9 @@
       %cores  [ost (build-core [- +]:(list-hoons p.a skip=(sy /sys /ren ~)))]~
       %names  ~&((list-names p.a) ~)
       %marks  ~|(%stub !!) ::TODO restore historical handler
-      %renders  [ost (build-rend [- +]:(list-names (weld /ren p.a)))]~
+      %renders  :: XX temporarily disabled
+                :: [ost (build-rend [- +]:(list-names (weld /ren p.a)))]~
+                ~
   ==    
 ::
 ++  list-names
@@ -128,6 +151,7 @@
   [sup ^$]
 ::
 ++  now-beak  %_(byk r [%da now])
+++  now-disc  `disc:ford`[p.byk q.byk]
 ++  skip-completely
   ^~  ^-  (map path tape)
   %-  my  :~ ::TODO don't hardcode
