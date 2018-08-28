@@ -34,7 +34,7 @@
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         ^-  tang
-        ;:  welp
+        ;:  weld
           %-  expect-eq  !>
           :_  i.moves
           ^-  move:clay-gate
@@ -61,8 +61,7 @@
           =/  =duct                                      p.move
           =/  card=(wind note:clay-gate gift:able:clay)  q.move
           ::
-          ^-  tang
-          %+  welp
+          %+  weld
             (expect-eq !>([~[/info] duct]))
           ::
           ?.  ?=(%pass -.card)
@@ -70,8 +69,7 @@
           ::
           =/  =wire  p.card
           ::
-          ^-  tang
-          %+  welp
+          %+  weld
             (expect-eq !>([/inserting/~nul/home/~1111.1.1 wire]))
           ::
           =/  note=note:clay-gate  q.card
@@ -79,19 +77,16 @@
           ?.  ?=([%f %build *] note)
             [%leaf "bad move, not a %build: {<move>}"]~
           ::
-          ^-  tang
-          %+  welp
+          %+  weld
             (expect-eq !>([~nul our.note]))
           ::
-          ^-  tang
-          %+  welp
+          %+  weld
             (expect-eq !>([%.n live.note]))
           ::
           ?.  ?=(%pin -.schematic.note)
             [%leaf "bad move, not a %pin: {<move>}"]~
           ::
-          ^-  tang
-          %+  welp
+          %+  weld
             (expect-eq !>([~1111.1.1 date.schematic.note]))
           ::
           =/  list-schematic=schematic:ford  schematic.schematic.note
@@ -115,8 +110,7 @@
           ::
           =/  vase1=vase  q.literal.path1
           ::
-          ^-  tang
-          %+  welp
+          %+  weld
             (expect-eq !>([[-:!>(*path) /file1/noun] vase1]))
           ::
           =/  cast1=schematic:ford  +.s1
@@ -126,8 +120,7 @@
           ::
           =/  lit1=schematic:ford  input.cast1
           ::
-          ^-  tang
-          %+  welp
+          %+  weld
             (expect-eq !>([[%$ %noun %noun 'file1'] lit1]))
           ::  test :s2
           ::
@@ -140,10 +133,8 @@
           ::
           =/  vase2=vase  q.literal.path2
           ::
-          ^-  tang
-          %+  welp
+          %+  weld
             (expect-eq !>([[-:!>(*path) /file2/noun] vase2]))
-          ^-  tang
           ::
           =/  cast2=schematic:ford  +.s2
           ::
