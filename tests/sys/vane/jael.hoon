@@ -1,40 +1,16 @@
+/+  tester
 ::
 /=  jael-raw  /:  /===/sys/vane/jael
               /!noun/
 =/  type-spear  -:!>(jael-raw)
 ::
-::  this is parts of tester.hoon copied in manually because /+ is broken on research-fjord!?
-::
-|%
-++  expect-eq
-  |=  a=vase
-  ^-  tang
-  ?@  q.a  [palm+[": " ~ ~ ~]^~[>%ex-expected-pair< (sell a)]]~
-  ?:  =(-.q.a +.q.a)
-    ~
-  :~  palm+[": " ~ ~ ~]^~[leaf+"expected" (sell (slot 2 a))]
-      palm+[": " ~ ~ ~]^~[leaf+"actual" (sell (slot 3 a))]
-  ==
---
-::
-::
-:-  %say
-|=  [[now=@da eny=@ bek=beak] ~ ~]
-:-  %noun
-::
 =/  test-pit=vase  !>(.)
 =/  jael-gate  (jael-raw test-pit)
 ::
-|^
-=-  ((slog -) ~)
-^-  tang
-;:  weld
-  test-init-as-galaxy
-==
+|_  _tester:tester
 ::  tests that galaxies try to listen to an ethereum node
 ::
-++  test-init-as-galaxy
-  :-  `tank`leaf+"test-init-as-galaxy"
+++  test-init-as-galaxy  ^-  tang
   ::
   =/  hiss-httr=hiss:eyre
     %+  json-request:ethereum
@@ -49,7 +25,7 @@
     ==
   ::
   =^  results1  jael-gate
-    %-  test-jael-call-with-comparator  :*
+    %-  jael-call-with-comparator  :*
       jael-gate
       now=~1234.5.6
       call-args=[duct=~ type=*type %init ~nul]
@@ -71,7 +47,7 @@
   ::
   results1
 ::
-++  test-jael-call
+++  jael-call
   |=  $:  jael-gate=_jael-gate
           now=@da
           call-args=[=duct wrapped-task=(hypo (hobo task:able:jael-gate))]
@@ -91,7 +67,7 @@
   ::
   [output jael-gate]
 ::
-++  test-jael-call-with-comparator
+++  jael-call-with-comparator
   |=  $:  jael-gate=_jael-gate
           now=@da
           call-args=[=duct wrapped-task=(hypo (hobo task:able:jael-gate))]
@@ -108,3 +84,4 @@
   ::
   [output jael-gate]
 --
+
