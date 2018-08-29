@@ -1,20 +1,20 @@
-/+  tester
+/+  test-runner
 /=  all-tests
-  /^  (map path (list test-arm:tester))
+  /^  (map path (list test-arm:test-runner))
   /:  /===/tests
   /*  /test-gen/
 ::
 |%
-++  test-runner
-  |=  [defer=? eny=@uvJ tests=(list test:tester)]
+++  main
+  |=  [defer=? tests=(list test:test-runner)]
   ^-  tang
   ::
   %-  zing
   %+  turn  tests
-  |=  [=path test-func=test-func:tester]
+  |=  [=path test-func=test-func:test-runner]
   ^-  tang
   ::
-  =/  test-results=tang  (run-test path eny test-func)
+  =/  test-results=tang  (run-test path test-func)
   ::  if :defer is set, produce errors; otherwise print them and produce ~
   ::
   ?:  defer
@@ -23,10 +23,10 @@
 ::
 ++  run-test
   ::  executes an individual test.
-  |=  [pax=path eny=@uvJ test=test-func:tester]
+  |=  [pax=path test=test-func:test-runner]
   ^-  tang
   =+  name=(spud pax)
-  =+  run=(mule |.((test eny)))
+  =+  run=(mule test)
   ?-  -.run
     %|  ::  the stack is already flopped for output?
         ;:  weld
@@ -50,7 +50,7 @@
 ::  +filter-tests-by-prefix
 ::
 ++  filter-tests-by-prefix
-  |=  [prefix=path tests=(list test:tester)]
+  |=  [prefix=path tests=(list test:test-runner)]
   ^+  tests
   ::
   =/  prefix-length=@ud  (lent prefix)
@@ -73,11 +73,10 @@
 ::  use empty path prefix if unspecified
 ::
 =/  prefix=path  ?~(filter ~ pax.filter)
-=/  entropy  ?~(seed eny seed)
 ::
-=/  filtered-tests=(list test:tester)
+=/  filtered-tests=(list test:test-runner)
   %+  filter-tests-by-prefix
     prefix
-  (resolve-test-paths:tester all-tests)
+  (resolve-test-paths:test-runner all-tests)
 ::
-(test-runner defer entropy filtered-tests)
+(main defer filtered-tests)

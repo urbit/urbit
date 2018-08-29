@@ -1,6 +1,5 @@
-/+  tester
+/+  *test
 =,  ford
-=,  tester:tester
 |%
 ::  +expect-schematic: assert a +schematic:ford is what we expect
 ::

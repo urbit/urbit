@@ -1,8 +1,8 @@
-/+  tester
+/+  *test
 ::
 =,  contain
 ::
-|_  _tester:tester
+|%
 ++  test-basic-clock
   ::
   =|  c=(clock @u tape)

@@ -31,8 +31,8 @@ You can then just run that individual test suite (and not the ones that are besi
 So what is the structure of these test files? They contain a door, with arms starting with `++test-` or `++check-`. At minimum:
 
 ```
-/+  tester
-|_  tester-type:tester
+/+  *test
+|%
 ++  test-some-test
   (expect-eq !>(4) !>(4))
 --

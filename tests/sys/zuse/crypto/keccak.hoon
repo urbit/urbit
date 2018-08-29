@@ -16,7 +16,7 @@
 ::  these tests were written.
 ::
 ::
-/+  tester
+/+  *test
 =,  keccak:crypto
 ::
 ::  per bytelength, an example input.
@@ -72,7 +72,7 @@
       d79d.c266.f6a5.be6b.b0e4.a92e.ceeb.aeb1
   ==
 ::
-|_  _tester:tester
+|%
 ::
 ::  check a list of bytelength-answer pairs to see if
 ::  they match the output given by {hash} for the

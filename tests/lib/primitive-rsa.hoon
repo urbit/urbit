@@ -1,6 +1,6 @@
-/+  primitive-rsa, tester
+/+  primitive-rsa, *test
 =*  rsa  primitive-rsa
-|_  _tester:tester
+|%
 ++  test-rsakey
   =/  primes=(list @)
     :~    2    3    5    7   11   13   17   19   23   29   31   37   41   43
@@ -14,7 +14,7 @@
         617  619  631  641  643  647  653  659  661  673  677  683  691  701
         709  719  727  733  739  743  751
     ==
-  =/  k1  (new-key:rsa 2.048 eny)
+  =/  k1  (new-key:rsa 2.048 0xdead.beef)
   ::
   =/  k2=key:rsa
     =/  p  0x1837.be57.1286.bf6a.3cf8.4716.634f.ef85.f947.c654.da6e.e222.

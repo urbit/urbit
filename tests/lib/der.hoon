@@ -1,6 +1,6 @@
 /-  asn1
-/+  der, tester
-|_  _tester:tester
+/+  der, *test
+|%
 ++  test-asn1-der
   =/  nul=spec:asn1  [%nul ~]
   =/  int=spec:asn1  [%int 187]
