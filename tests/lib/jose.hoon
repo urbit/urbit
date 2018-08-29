@@ -1,8 +1,8 @@
 /-  asn1
-/+  primitive-rsa, *pkcs, *jose, tester
+/+  primitive-rsa, *pkcs, *jose, *test
 =,  eyre
 =*  rsa  primitive-rsa
-|_  _tester:tester
+|%
 ++  test-jwk
   :: rfc7638 section 3.1
   =/  n

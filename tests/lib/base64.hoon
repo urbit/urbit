@@ -1,4 +1,4 @@
-/+  base64, tester
+/+  base64, *test
 :: XX move to zuse
 ::
 |%
@@ -13,7 +13,7 @@
   ~(de base64 | &)
 --
 ::
-|_  _tester:tester
+|%
 ++  test-base64
   ;:  weld
     %+  expect-eq

@@ -1,4 +1,4 @@
-/+  tester
+/+  *test
 ::
 /=  clay-raw  /:  /===/sys/vane/clay  /!noun/
 ::
@@ -8,7 +8,7 @@
 =/  test-pit=vase  !>(..zuse)
 =/  clay-gate  (clay-raw test-pit)
 ::
-|_  _tester:tester
+|%
 ++  test-info  ^-  tang
   ::
   =^  results1  clay-gate

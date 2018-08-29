@@ -1,4 +1,4 @@
-/+  tester
+/+  *test
 ::
 /=  ford-vane   /:  /===/sys/vane/ford  /!noun/
 ::
@@ -15,7 +15,7 @@
 =/  test-pit=vase  !>(..zuse)
 =/  ford-gate  (ford-vane test-pit)
 ::
-|_  _tester:tester
+|%
 ++  test-tear  ^-  tang
   ::
   ;:  welp

@@ -1,7 +1,7 @@
 /-  asn1
-/+  primitive-rsa, *pkcs, tester
+/+  primitive-rsa, *pkcs, *test
 =*  rsa  primitive-rsa
-|_  _tester:tester
+|%
 ++  test-rsapem
   ::  ex from https://stackoverflow.com/a/19855935
   =/  k1=key:rsa

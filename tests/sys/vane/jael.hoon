@@ -1,4 +1,4 @@
-/+  tester
+/+  *test
 ::
 /=  jael-raw  /:  /===/sys/vane/jael
               /!noun/
@@ -7,7 +7,7 @@
 =/  test-pit=vase  !>(.)
 =/  jael-gate  (jael-raw test-pit)
 ::
-|_  _tester:tester
+|%
 ::  tests that galaxies try to listen to an ethereum node
 ::
 ++  test-init-as-galaxy  ^-  tang

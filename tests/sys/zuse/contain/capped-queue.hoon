@@ -1,8 +1,8 @@
-/+  tester
+/+  *test
 ::
 =,  contain
 ::
-|_  _tester:tester
+|%
 ++  test-basic-capped-queue
   ::
   =|  q=(capped-queue @u)

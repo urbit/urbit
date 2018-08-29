@@ -1,5 +1,4 @@
-/+  tester
+/+  test-runner
 /=  test-core  /!noun/
 ::
-~&  [%loading-test-arms %]
-(get-test-arms:tester !>(test-core))
+(get-test-arms:test-runner !>(test-core))
