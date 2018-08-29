@@ -106,21 +106,32 @@
   ::
   ?>  ?=(^ sek.k1)
   ;:  weld
-    %-  expect-eq  !>
-      [413 d.u.sek.k1]
-    %-  expect-eq  !>
-      [2.790 (en:rsa 65 k1)]
-    %-  expect-eq  !>
-      [65 (de:rsa 2.790 k1)]
-    ::
-    %-  expect-eq  !>
-      [48 (en:rsa 9 k2)]
-    %-  expect-eq  !>
-      [9 (de:rsa 48 k2)]
-    ::
-    %-  expect-eq  !>
-      [c3 (en:rsa m3 k3)]
-    %-  expect-eq  !>
-      [m3 (de:rsa c3 k3)]
+    %+  expect-nu-eq
+      !>  `@ux`413
+      !>  d.u.sek.k1
+  ::
+    %+  expect-nu-eq
+      !>  2.790
+      !>  (en:rsa 65 k1)
+  ::
+    %+  expect-nu-eq
+      !>  65
+      !>  (de:rsa 2.790 k1)
+  ::
+    %+  expect-nu-eq
+      !>  48
+      !>  (en:rsa 9 k2)
+  ::
+    %+  expect-nu-eq
+      !>  9
+      !>  (de:rsa 48 k2)
+  ::
+    %+  expect-nu-eq
+      !>  c3
+      !>  (en:rsa m3 k3)
+  ::
+    %+  expect-nu-eq
+      !>  m3
+      !>  (de:rsa c3 k3)
   ==
 --

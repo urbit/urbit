@@ -21,12 +21,13 @@
     ==
   =/  k  (need (pass:de:jwk jk))
   ;:  weld
-    %-  expect-eq  !>
-      :-  jk
-      (pass:en:jwk k)
-    %-  expect-eq  !>
-      :-  'NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs'
-      (pass:thumb:jwk k)
+    %+  expect-nu-eq
+      !>  jk
+      !>  (pass:en:jwk k)
+  ::
+    %+  expect-nu-eq
+      !>  'NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs'
+      !>  (pass:thumb:jwk k)
   ==
 ::
 ++  test-jws
@@ -104,22 +105,30 @@
   =/  lod-order=(list @t)  ['iss' 'exp' 'http://example.com/is_root' ~]
   ?>  ?=(^ sek.k)
   ;:  weld
-    %-  expect-eq  !>
-      [jk (ring:en:jwk k)]
-    %-  expect-eq  !>
-      [n.pub.k `@ux`(mul p.u.sek.k q.u.sek.k)]
-    %-  expect-eq  !>
-      :-  d.u.sek.k
-      `@ux`(~(inv fo (elcm:rsa (dec p.u.sek.k) (dec q.u.sek.k))) e.pub.k)
-    %-  expect-eq  !>
-      :-  hedt
-      (en-base64url (as-octt:mimes:html (en-json-sort aor hed)))
-    %-  expect-eq  !>
-      :-  lodt
-      (en-base64url (as-octt:mimes:html (en-json-sort (eor lte lod-order) lod)))
-    %-  expect-eq  !>
-      :-  exp-ws
-      (en-base64url (en:octn (~(sign rs256 k) inp-ws)))
+    %+  expect-nu-eq
+      !>  jk
+      !>  (ring:en:jwk k)
+  ::
+    %+  expect-nu-eq
+      !>  n.pub.k
+      !>  `@ux`(mul p.u.sek.k q.u.sek.k)
+  ::
+    %+  expect-nu-eq
+      !>  d.u.sek.k
+      !>  `@ux`(~(inv fo (elcm:rsa (dec p.u.sek.k) (dec q.u.sek.k))) e.pub.k)
+  ::
+    %+  expect-nu-eq
+      !>  hedt
+      !>  (en-base64url (as-octt:mimes:html (en-json-sort aor hed)))
+  ::
+    %+  expect-nu-eq
+      !>  lodt
+      !>  %-  en-base64url
+          (as-octt:mimes:html (en-json-sort (eor lte lod-order) lod))
+  ::
+    %+  expect-nu-eq
+      !>  exp-ws
+      !>  (en-base64url (en:octn (~(sign rs256 k) inp-ws)))
   ==
 ::
 ++  test-jws-2
@@ -198,7 +207,7 @@
           't-CZRp1F0k6w'
       ==
     [%o (my payload+s+payload protected+s+protected signature+s+signature ~)]
-  %-  expect-eq  !>
-    :-  exp
-    (sign:jws k protected-header bod)
+  %+  expect-nu-eq
+    !>  exp
+    !>  (sign:jws k protected-header bod)
 --
