@@ -70,17 +70,30 @@
 ::
 ++  tester
   |_  eny=@uvJ
-  ::  +expect-eq: compares !>([expected actual]) and pretty-prints the result
+  ::  +expect-eq: compares :expected and :actual and pretty-prints the result
   ::
   ++  expect-eq
-    |=  a=vase
+    |=  [expected=vase actual=vase]
     ^-  tang
-    ?@  q.a  [palm+[": " ~ ~ ~]^~[>%ex-expected-pair< (sell a)]]~
-    ?:  =(-.q.a +.q.a)
-      ~
-    :~  palm+[": " ~ ~ ~]^~[leaf+"expected" (sell (slot 2 a))]
-        palm+[": " ~ ~ ~]^~[leaf+"actual" (sell (slot 3 a))]
-    ==
+    ::
+    =|  result=tang
+    ::
+    =?  result  !=(q.expected q.actual)
+      %+  weld  result
+      ^-  tang
+      :~  [%palm [": " ~ ~ ~] [leaf+"expected" (sell expected) ~]]
+          [%palm [": " ~ ~ ~] [leaf+"actual" (sell actual) ~]]
+      ==
+    ::
+    =?  result  !(~(nest ut p.actual) | p.expected)
+      %+  weld  result
+      ^-  tang
+      :~  :+  %palm  [": " ~ ~ ~]
+          :~  [%leaf "failed to nest"]
+              (~(dunk ut p.actual) %actual)
+              (~(dunk ut p.expected) %expected)
+      ==  ==
+    result
   ::  +category: prepends a name to an error result; passes successes unchanged
   ::
   ++  category

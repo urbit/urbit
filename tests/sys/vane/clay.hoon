@@ -35,25 +35,25 @@
         ::
         ^-  tang
         ;:  weld
-          %-  expect-eq  !>
-          :_  i.moves
-          ^-  move:clay-gate
-          :-  duct=~[/info]
-          ^-  (wind note:clay-gate gift:able:clay)
-          :+  %pass  /castifying/~nul/home/~1111.1.1
-          ^-  note:clay-gate
-          :-  %f
-          [%build ~nul live=%.n [%pin ~1111.1.1 [%list ~]]]
+          %+  expect-eq
+            !>  ^-  move:clay-gate
+                :-  duct=~[/info]
+                ^-  (wind note:clay-gate gift:able:clay)
+                :+  %pass  /castifying/~nul/home/~1111.1.1
+                ^-  note:clay-gate
+                :-  %f
+                [%build ~nul live=%.n [%pin ~1111.1.1 [%list ~]]]
+            !>  i.moves
         ::
-          %-  expect-eq  !>
-          :_  i.t.moves
-          ^-  move:clay-gate
-          :-  duct=~[/info]
-          ^-  (wind note:clay-gate gift:able:clay)
-          :+  %pass  /diffing/~nul/home/~1111.1.1
-          ^-  note:clay-gate
-          :-  %f
-          [%build ~nul live=%.n [%pin ~1111.1.1 [%list ~]]]
+          %+  expect-eq
+            !>  ^-  move:clay-gate
+                :-  duct=~[/info]
+                ^-  (wind note:clay-gate gift:able:clay)
+                :+  %pass  /diffing/~nul/home/~1111.1.1
+                ^-  note:clay-gate
+                :-  %f
+                [%build ~nul live=%.n [%pin ~1111.1.1 [%list ~]]]
+            !>  i.t.moves
         ::
           ^-  tang
           ::
@@ -62,7 +62,7 @@
           =/  card=(wind note:clay-gate gift:able:clay)  q.move
           ::
           %+  weld
-            (expect-eq !>([~[/info] duct]))
+            (expect-eq !>(~[/info]) !>(duct))
           ::
           ?.  ?=(%pass -.card)
             [%leaf "bad move, not a %pass: {<move>}"]~
@@ -70,7 +70,7 @@
           =/  =wire  p.card
           ::
           %+  weld
-            (expect-eq !>([/inserting/~nul/home/~1111.1.1 wire]))
+            (expect-eq !>(/inserting/~nul/home/~1111.1.1) !>(wire))
           ::
           =/  note=note:clay-gate  q.card
           ::
@@ -78,16 +78,16 @@
             [%leaf "bad move, not a %build: {<move>}"]~
           ::
           %+  weld
-            (expect-eq !>([~nul our.note]))
+            (expect-eq !>(~nul) !>(our.note))
           ::
           %+  weld
-            (expect-eq !>([%.n live.note]))
+            (expect-eq !>(%.n) !>(live.note))
           ::
           ?.  ?=(%pin -.schematic.note)
             [%leaf "bad move, not a %pin: {<move>}"]~
           ::
           %+  weld
-            (expect-eq !>([~1111.1.1 date.schematic.note]))
+            (expect-eq !>(~1111.1.1) !>(date.schematic.note))
           ::
           =/  list-schematic=schematic:ford  schematic.schematic.note
           ::
@@ -111,7 +111,7 @@
           =/  vase1=vase  q.literal.path1
           ::
           %+  weld
-            (expect-eq !>([[-:!>(*path) /file1/noun] vase1]))
+            (expect-eq !>([-:!>(*path) /file1/noun]) !>(vase1))
           ::
           =/  cast1=schematic:ford  +.s1
           ::
@@ -121,7 +121,7 @@
           =/  lit1=schematic:ford  input.cast1
           ::
           %+  weld
-            (expect-eq !>([[%$ %noun %noun 'file1'] lit1]))
+            (expect-eq !>([%$ %noun %noun 'file1']) !>(lit1))
           ::  test :s2
           ::
           ?.  ?=([^ *] s2)
@@ -134,7 +134,7 @@
           =/  vase2=vase  q.literal.path2
           ::
           %+  weld
-            (expect-eq !>([[-:!>(*path) /file2/noun] vase2]))
+            (expect-eq !>([-:!>(*path) /file2/noun]) !>(vase2))
           ::
           =/  cast2=schematic:ford  +.s2
           ::
@@ -143,7 +143,7 @@
           ::
           =/  lit2=schematic:ford  input.cast2
           ::
-          (expect-eq !>([[%$ %noun %noun 'file2'] lit2]))
+          (expect-eq !>([%$ %noun %noun 'file2']) !>(lit2))
     ==  ==
   ::
   ;:  welp
@@ -171,9 +171,9 @@
   =^  moves  clay-gate  (call:clay-core call-args)
   ::
   =/  output=tang
-    %-  expect-eq  !>
-    :-  expected-moves
-    moves
+    %+  expect-eq
+      !>  expected-moves
+      !>  moves
   ::
   [output clay-gate]
 ::  +clay-call-with-comparator: run a clay +task and test output moves

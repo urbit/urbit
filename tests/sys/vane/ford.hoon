@@ -1,6 +1,6 @@
 /+  tester
 ::
-/=  ford-turbo  /:  /===/sys/vane/ford  /!noun/
+/=  ford-vane   /:  /===/sys/vane/ford  /!noun/
 ::
 /=  hoon-scry   /:  /===/sys/hoon       /hoon/
 /=  arvo-scry   /:  /===/sys/arvo       /hoon/
@@ -13,74 +13,73 @@
 =,  format
 ::
 =/  test-pit=vase  !>(..zuse)
-=/  ford-gate  (ford-turbo test-pit)
+=/  ford-gate  (ford-vane test-pit)
 ::
 |_  _tester:tester
 ++  test-tear  ^-  tang
   ::
   ;:  welp
-    %-  expect-eq  !>
-    :-  ~['a' 'bc' 'de']
-    (tear:ford-gate 'a-bc-de')
+    %+  expect-eq
+      !>  ~['a' 'bc' 'de']
+      !>  (tear:ford-gate 'a-bc-de')
   ::
-    %-  expect-eq  !>
-    :-  ~['abc']
-    (tear:ford-gate 'abc')
+    %+  expect-eq
+      !>  ~['abc']
+      !>  (tear:ford-gate 'abc')
   ::
-    %-  expect-eq  !>
-    :-  ~['ab/c']
-    (tear:ford-gate 'ab/c')
+    %+  expect-eq
+      !>  ~['ab/c']
+      !>  (tear:ford-gate 'ab/c')
   ==
 ::
 ++  test-unify-jugs  ^-  tang
   ::
-  =/  ford  (ford-gate now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
-  ::
-  %-  expect-eq  !>
-  :-  ^-  (jug @tas @ud)
-      (my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 5 6 ~)] [%c (sy 7 8 ~)]])
-  ::
-  %+  unify-jugs:ford
-    `(jug @tas @ud)`(my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 ~)]])
-  `(jug @tas @ud)`(my ~[[%b (sy 5 6 ~)] [%c (sy 7 8 ~)]])
+  %+  expect-eq
+    !>  ^-  (jug @tas @ud)
+        (my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 5 6 ~)] [%c (sy 7 8 ~)]])
+    !>  %+  unify-jugs:ford-gate
+          `(jug @tas @ud)`(my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 ~)]])
+        `(jug @tas @ud)`(my ~[[%b (sy 5 6 ~)] [%c (sy 7 8 ~)]])
 ::
 ++  test-resource-wire-encoding  ^-  tang
   ::
-  =/  ford  (ford-gate now=~1234.5.6 eny=0xdead.beef scry=scry-is-forbidden)
-  ::
   ;:  welp
-    %-  expect-eq  !>
-    :-  /cx/~nul/desk/~1234.5.6/bar/foo
-    ^-  path
-    %-  scry-request-to-path:ford
-    [%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
+    %+  expect-eq
+      !>  /cx/~nul/desk/~1234.5.6/bar/foo
+      !>  ^-  path
+          %-  scry-request-to-path:ford-gate
+          [%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
   ::
-    %-  expect-eq  !>
-    :-  (need (path-to-scry-request:ford /cx/~nul/desk/~1234.5.6/bar/foo))
-    `scry-request:ford`[%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
+    %+  expect-eq
+      !>  [%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
+      !>  %-  need
+          (path-to-scry-request:ford-gate /cx/~nul/desk/~1234.5.6/bar/foo)
   ==
 ::
 ++  test-parse-scaffold  ^-  tang
   ::
-  %-  expect-eq  !>
-  :-  :-  [1 19]
-      :-  ~
-      :_  [[1 19] ""]
-      ^-  scaffold:ford-gate
-      :*  source-rail=[[~nul %desk] /bar/foo]
-          zuse-version=%309
-          structures=~
-          libraries=~
-          cranes=~
-          ^=  sources
-            :*  %dbug  [/~nul/desk/~1234.5.6/foo/bar [[1 1] [1 19]]]
-                (ream '!.  |=(a=@ud +(a))')
-            ==
-          ~
-      ==
-  %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-    [1 1]
-  "!.  |=(a=@ud +(a))"
+  =/  parsed
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+      [1 1]
+    "!.  |=(a=@ud +(a))"
+  ?~  q.parsed
+    [%leaf "failed to parse at {<p.parsed>}"]~
+  ::
+  %+  expect-eq
+    !>  :-  [1 19]
+        :-  ~
+        :_  [[1 19] ""]
+        ^-  scaffold:ford-gate
+        :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=%309
+            structures=~
+            libraries=~
+            cranes=~
+            ^=  sources
+              :~  :*  %dbug  [/~nul/desk/~1234.5.6/foo/bar [[1 1] [1 19]]]
+                      (ream '!.  |=(a=@ud +(a))')
+        ==    ==  ==
+    !>  parsed
 ::
 ++  test-parse-scaffold-sur-libk  ^-  tang
   ::
@@ -95,18 +94,18 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~[[`%struct %struct] [`%face %other]]
-      libraries=~[[`%library %library] [~ %thing]]
-      cranes=~
-      ^=  sources
-        :~  :*  %dbug
-                [/~nul/desk/~1234.5.6/foo/bar [3 1] [4 8]]
-                (ream '|=(a a)')
-  ==    ==  ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~[[`%struct %struct] [`%face %other]]
+            libraries=~[[`%library %library] [~ %thing]]
+            cranes=~
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [3 1] [4 8]]
+                      (ream '|=(a a)')
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-zuse-version  ^-  tang
   ::
@@ -120,18 +119,18 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=400
-      structures=~
-      libraries=~
-      cranes=~
-      ^=  sources
-        :~  :*  %dbug
-                [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
-                (ream '|=(a a)')
-  ==    ==  ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=400
+            structures=~
+            libraries=~
+            cranes=~
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
+                      (ream '|=(a a)')
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fssg  ^-  tang
   ::
@@ -145,23 +144,23 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fssg
-                %dbug
-                [/~nul/desk/~1234.5.6/foo/bar [1 5] [1 18]]
-                (ream '[a=1 b=3]')
-        ==  ==
-      ^=  sources
-        :~  :*  %dbug
-                [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
-                (ream '|=(a b)')
-  ==    ==  ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fssg
+                      %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [1 5] [1 18]]
+                      (ream '[a=1 b=3]')
+              ==  ==
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
+                      (ream '|=(a b)')
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fsbc  ^-  tang
   ::
@@ -175,23 +174,23 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fsbc
-                %dbug
-                [/~nul/desk/~1234.5.6/foo/bar [1 5] [1 16]]
-                (ream '|=(a a)')
-        ==  ==
-      ^=  sources
-        :~  :*  %dbug
-                [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
-                (ream '|=(a b)')
-  ==    ==  ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fsbc
+                      %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [1 5] [1 16]]
+                      (ream '|=(a a)')
+              ==  ==
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
+                      (ream '|=(a b)')
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fsbr  ^-  tang
   ::
@@ -206,25 +205,25 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fsbr
-                :~  :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/foo/bar [1 9] [1 10]]
-                        [%bust %null]
-                    ==
-                    :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/foo/bar [2 9] [2 10]]
-                        [%bust %null]
-        ==  ==  ==  ==
-      ^=  sources
-        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 5]]
-  ==    ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fsbr
+                      :~  :*  %fssg  %dbug
+                              [/~nul/desk/~1234.5.6/foo/bar [1 9] [1 10]]
+                              [%bust %null]
+                          ==
+                          :*  %fssg  %dbug
+                              [/~nul/desk/~1234.5.6/foo/bar [2 9] [2 10]]
+                              [%bust %null]
+              ==  ==  ==  ==
+            ^=  sources
+              :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 5]]
+        ==    ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fsts  ^-  tang
   ::
@@ -237,20 +236,21 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fsts  %a
-                %fssg  %dbug  [/~nul/desk/~1234.5.6/foo/bar [1 12] [1 13]]
-                [%bust %null]
-        ==  ==
-      ^=  sources
-        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 5]]
-  ==    ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fsts  %a
+                      %fssg  %dbug  [/~nul/desk/~1234.5.6/foo/bar [1 12] [1 13]]
+                      [%bust %null]
+              ==  ==
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 5]
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fsdt  ^-  tang
   ::
@@ -265,25 +265,26 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fsdt
-                :~  :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/foo/bar [1 9] [1 16]]
-                        (ream 'a=5')
-                    ==
-                    :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/foo/bar [2 9] [2 16]]
-                        (ream 'b=6')
-        ==  ==  ==  ==
-      ^=  sources
-        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 5]]
-  ==    ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fsdt
+                      :~  :*  %fssg  %dbug
+                              [/~nul/desk/~1234.5.6/foo/bar [1 9] [1 16]]
+                              (ream 'a=5')
+                          ==
+                          :*  %fssg  %dbug
+                              [/~nul/desk/~1234.5.6/foo/bar [2 9] [2 16]]
+                              (ream 'b=6')
+              ==  ==  ==  ==
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]]  [%sand %ud 5]
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fscm  ^-  tang
   ::
@@ -302,27 +303,28 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fscm
-                :~  :-  /path/to/a
-                    :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/foo/bar [3 7] [3 14]]
-                        (ream 'a=5')
-                    ==
-                    :-  /path/to/b
-                    :*  %fssg  %dbug
-                        [/~nul/desk/~1234.5.6/foo/bar [6 7] [6 14]]
-                        (ream 'b=6')
-        ==  ==  ==  ==
-      ^=  sources
-        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [8 1] [8 2]] [%sand %ud 1]]
-  ==    ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fscm
+                      :~  :-  /path/to/a
+                          :*  %fssg  %dbug
+                              [/~nul/desk/~1234.5.6/foo/bar [3 7] [3 14]]
+                              (ream 'a=5')
+                          ==
+                          :-  /path/to/b
+                          :*  %fssg  %dbug
+                              [/~nul/desk/~1234.5.6/foo/bar [6 7] [6 14]]
+                              (ream 'b=6')
+              ==  ==  ==  ==
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [8 1] [8 2]]  [%sand %ud 1]
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fspm  ^-  tang
   ::
@@ -335,22 +337,23 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fsts  %data
-                %fspm  [%mark ~]
-                %fssg  %dbug
-                [/~nul/desk/~1234.5.6/foo/bar [1 25] [1 32]]
-                (ream 'a=1')
-        ==  ==
-      ^=  sources
-        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 1]]
-  ==    ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fsts  %data
+                      %fspm  [%mark ~]
+                      %fssg  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [1 25] [1 32]]
+                      (ream 'a=1')
+              ==  ==
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 1]
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fscb  ^-  tang
   ::
@@ -363,18 +366,19 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fscb  %fszy  %mark
-        ==  ==
-      ^=  sources
-        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 8]]
-  ==    ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fscb  %fszy  %mark
+              ==  ==
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 8]
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fssm  ^-  tang
   ::
@@ -389,27 +393,28 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fsts  %data
-                %fssm
-                :*  %dbug
-                    [/~nul/desk/~1234.5.6/foo/bar [2 7] [2 24]]
-                    (ream '|=(a=@u +(a))')
-                ==
-                %fssg
-                :*  %dbug
-                    [/~nul/desk/~1234.5.6/foo/bar [3 7] [3 12]]
-                    (ream '5')
-        ==  ==  ==
-      ^=  sources
-        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 7]]
-  ==    ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fsts  %data
+                      %fssm
+                      :*  %dbug
+                          [/~nul/desk/~1234.5.6/foo/bar [2 7] [2 24]]
+                          (ream '|=(a=@u +(a))')
+                      ==
+                      %fssg
+                      :*  %dbug
+                          [/~nul/desk/~1234.5.6/foo/bar [3 7] [3 12]]
+                          (ream '5')
+              ==  ==  ==
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]]  [%sand %ud 7]
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fscl  ^-  tang
   ::
@@ -424,20 +429,21 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fsts  %tests
-                %fscl  [[~ ~[~ ~ ~ [~ [%sand %tas 495.874.958.708]]]] ~]
-                %fscb  %fszy  %mark
-        ==  ==
-      ^=  sources
-        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 3]]
-  ==    ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fsts  %tests
+                      %fscl  [[~ ~[~ ~ ~ [~ [%sand %tas 495.874.958.708]]]] ~]
+                      %fscb  %fszy  %mark
+              ==  ==
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]]  [%sand %ud 3]
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fskt  ^-  tang
   ::
@@ -454,40 +460,41 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fsts  %data
-                %fskt
-                :*  %dbug
-                    [/~nul/desk/~1234.5.6/foo/bar [2 7] [2 17]]
-                    %make
-                    :+  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [2 8] [2 12]]
-                    [%wing ~[%list]]
-                    :~  :+  %dbug
-                          [/~nul/desk/~1234.5.6/foo/bar [2 13] [2 16]]
-                        [%base [%atom %ud]]
-                    ==
-                ==
-                %fsdt
-                :~  :-  %fssg
-                    :+  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [3 11] [3 12]]
-                    [%sand %ud 1]
-                    ::
-                    :-  %fssg
-                    :+  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [4 11] [4 12]]
-                    [%sand %ud 2]
-        ==  ==  ==
-      ^=  sources
-        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [6 1] [6 2]] [%sand %ud 6]]
-  ==    ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fsts  %data
+                      %fskt
+                      :*  %dbug
+                          [/~nul/desk/~1234.5.6/foo/bar [2 7] [2 17]]
+                          %make
+                          :+  %dbug
+                            [/~nul/desk/~1234.5.6/foo/bar [2 8] [2 12]]
+                          [%wing ~[%list]]
+                          :~  :+  %dbug
+                                [/~nul/desk/~1234.5.6/foo/bar [2 13] [2 16]]
+                              [%base [%atom %ud]]
+                          ==
+                      ==
+                      %fsdt
+                      :~  :-  %fssg
+                          :+  %dbug
+                            [/~nul/desk/~1234.5.6/foo/bar [3 11] [3 12]]
+                          [%sand %ud 1]
+                          ::
+                          :-  %fssg
+                          :+  %dbug
+                            [/~nul/desk/~1234.5.6/foo/bar [4 11] [4 12]]
+                          [%sand %ud 2]
+              ==  ==  ==
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [6 1] [6 2]]  [%sand %ud 6]
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fszp  ^-  tang
   ::
@@ -500,19 +507,20 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fsts  %data
-                %fszp  %mark
-        ==  ==
-      ^=  sources
-        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 2]]
-  ==    ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fsts  %data
+                      %fszp  %mark
+              ==  ==
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 2]
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fszy  ^-  tang
   ::
@@ -525,19 +533,20 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %-  expect-eq  !>
-  :_  p.u.q.parsed
-  :*  source-rail=[[~nul %desk] /bar/foo]
-      zuse-version=309
-      structures=~
-      libraries=~
-      ^=  crane
-        :~  :*  %fsts  %data
-                %fszy  %mark
-        ==  ==
-      ^=  sources
-        :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]] [%sand %ud 9]]
-  ==    ==
+  %+  expect-eq
+    !>  :*  source-rail=[[~nul %desk] /bar/foo]
+            zuse-version=309
+            structures=~
+            libraries=~
+            ^=  crane
+              :~  :*  %fsts  %data
+                      %fszy  %mark
+              ==  ==
+            ^=  sources
+              :~  :*  %dbug
+                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 9]
+        ==    ==  ==
+    !>  p.u.q.parsed
 ::
 ++  test-literal  ^-  tang
   ::
@@ -976,19 +985,20 @@
         |=  moves=(list move:ford-gate)
         ^-  tang
         ::
-        %-  expect-eq  !>
-        :-  (sy moves)
-        %-  sy
-        :~  :*  duct=~[/first]  %pass
-                wire=/~nul/scry-request/cx/~nul/desk/~1234.5.7/foo/bar
-                %c  %warp  [~nul ~nul]  %desk
-                `[%sing %x [%da ~1234.5.7] /foo/bar]
-            ==
-            :*  duct=~[/first]  %pass
-                wire=/~nul/scry-request/cx/~nul/desk/~1234.5.8/foo/bar
-                %c  %warp  [~nul ~nul]  %desk
-                `[%sing %x [%da ~1234.5.8] /foo/bar]
-    ==  ==  ==
+        %+  expect-eq
+          !>  %-  sy
+              :~  :*  duct=~[/first]  %pass
+                      wire=/~nul/scry-request/cx/~nul/desk/~1234.5.7/foo/bar
+                      %c  %warp  [~nul ~nul]  %desk
+                      `[%sing %x [%da ~1234.5.7] /foo/bar]
+                  ==
+                  :*  duct=~[/first]  %pass
+                      wire=/~nul/scry-request/cx/~nul/desk/~1234.5.8/foo/bar
+                      %c  %warp  [~nul ~nul]  %desk
+                      `[%sing %x [%da ~1234.5.8] /foo/bar]
+              ==  ==
+          !>  (sy moves)
+    ==
   ::
   =^  results2  ford-gate
     %-  ford-take  :*
@@ -1662,13 +1672,7 @@
         ::
         =/  result=vase  |7:i.moves
         ::
-        %+  weld
-          %-  expect-eq  !>
-          [6 q.result]
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.result) | -:!>(*@ud))
+        (expect-eq !>(6) result)
     ==
   ::
   =^  results2  ford-gate
@@ -1717,13 +1721,7 @@
         ::
         =/  result=vase  |7:i.moves
         ::
-        %+  weld
-          %-  expect-eq  !>
-          [42 q.result]
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.result) | -:!>(*@ud))
+        (expect-eq !>(42) result)
     ==
   ::
   =^  results2  ford-gate
@@ -1767,14 +1765,14 @@
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
         ?>  ?=([* %give %made @da %complete %error *] i.moves)
-        ::
-        %-  expect-eq  !>
         ::  compare the move to the expected move, omitting check on stack trace
         ::
-        :_  i.moves(|7 ~)
-        :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
-            [%error [leaf+"ford: %call execution failed:" ~]]
-    ==  ==
+        %+  expect-eq
+          !>  :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+                  [%error [leaf+"ford: %call execution failed:" ~]]
+              ==
+          !>  i.moves(|7 ~)
+    ==
   ::
   =^  results2  ford-gate
     %-  ford-call  :*
@@ -1839,22 +1837,9 @@
         ?>  ?=(^ moves)
         ?>  ?=([* %give %made @da %complete %success %call *] i.moves)
         ::
-        %+  welp
-          %-  expect-eq  !>
-          ::  compare the move to the expected move, omitting vase type checking
-          ::
-          ::    Types can't be compared using simple equality, so normalize the
-          ::    type to check the rest of the move.
-          ::
-          :_  i.moves(&8 *type)
-          :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete
-              [%success [%call *type 42]]
-          ==
-        ::  make sure the types nest
+        =/  result  |7:i.moves
         ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut &8:i.moves) | -:!>(*@))
+        (expect-eq !>(42) result)
     ==
   ::
   =^  results3  ford-gate
@@ -1924,27 +1909,19 @@
         ?>  =(2 (lent moves))
         ?>  ?=([^ ^ ~] moves)
         ?>  ?=([* %give %made @da %complete %success %call *] i.moves)
-        ::  compare the move to the expected move, omitting vase type checking
         ::
         %+  weld
-          %-  expect-eq  !>
-          :_  i.moves(&8 *type)
-          :*  duct=~[/call]  %give  %made  ~1234.5.6  %complete  %success
-              %call  *type  %first
-          ==
-        ::  make sure the types nest
-        %+  weld
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut &8:i.moves) | -:!>(*@tas))
+          =/  result  |7:i.moves
+          (expect-eq !>(%first) result)
         ::  make sure the other move is a subscription
         ::
-        %-  expect-eq  !>
-        :_  i.t.moves
-        :*  duct=~[/call]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /timer] ~)]
-    ==  ==
+        %+  expect-eq
+          !>  :*  duct=~[/call]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
+                  %c  %warp  [~nul ~nul]  %desk
+                  `[%mult [%da ~1234.5.6] (sy [%x /timer] ~)]
+              ==
+          !>  i.t.moves
+    ==
   ::
   =^  results2  ford-gate
     %-  ford-take-with-comparator  :*
@@ -1965,27 +1942,19 @@
         ?>  =(2 (lent moves))
         ?>  ?=([^ ^ ~] moves)
         ?>  ?=([* %give %made @da %complete %success %call *] i.moves)
-        ::  compare the move to the expected move, omitting vase type checking
         ::
         %+  weld
-          %-  expect-eq  !>
-          :_  i.moves(&8 *type)
-          :*  duct=~[/call]  %give  %made  ~1234.5.7  %complete  %success
-              %call  *type  %second
-          ==
-        ::  make sure the types nest
-        %+  weld
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut &8:i.moves) | -:!>(*@tas))
+          =/  result  |7:i.moves
+          (expect-eq !>(%second) result)
         ::  make sure the other move is a subscription
         ::
-        %-  expect-eq  !>
-        :_  i.t.moves
-        :*  duct=~[/call]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.7] (sy [%x /timer] ~)]
-    ==  ==
+        %+  expect-eq
+          !>  :*  duct=~[/call]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
+                  %c  %warp  [~nul ~nul]  %desk
+                  `[%mult [%da ~1234.5.7] (sy [%x /timer] ~)]
+              ==
+          !>  i.t.moves
+    ==
   ::
   =^  results3  ford-gate
     %-  ford-call  :*
@@ -2185,9 +2154,9 @@
         ::
         =/  expected-type=type  -:!>([*tape *@ud])
         =/  actual-type=type    |7:i.moves
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut actual-type) | expected-type)
+        %+  expect-eq
+          !>  &
+          !>  (~(nest ut actual-type) | expected-type)
     ==
   ::
   =^  results2  ford-gate
@@ -2231,16 +2200,16 @@
         ::
         =/  messages=tang  (scag 4 `tang`|6:i.moves)
         ::
-        %-  expect-eq  !>
-        :_  messages
-        :~  [%palm ["." "-" "" ""] [%leaf "have"] [%leaf "\"\""] ~]
-            :~  %palm  ["." "-" "" ""]
-                [%leaf "want"]
-                [%palm ["/" "" "" ""] [%leaf "a"] [%leaf "@ud"] ~]
-            ==
-            [%leaf "ford: %slit failed:"]
-            [%leaf "nest-fail"]
-        ==
+        %+  expect-eq
+          !>  :~  [%palm ["." "-" "" ""] [%leaf "have"] [%leaf "\"\""] ~]
+                  :~  %palm  ["." "-" "" ""]
+                      [%leaf "want"]
+                      [%palm ["/" "" "" ""] [%leaf "a"] [%leaf "@ud"] ~]
+                  ==
+                  [%leaf "ford: %slit failed:"]
+                  [%leaf "nest-fail"]
+              ==
+          !>  messages
     ==
   ::
   =^  results2  ford-gate
@@ -2285,22 +2254,8 @@
         ?>  ?=(^ moves)
         ?>  ?=([* %give %made @da %complete %success %ride *] i.moves)
         ::
-        %+  weld
-          %-  expect-eq  !>
-          ::  compare the move to the expected move, omitting vase type checking
-          ::
-          ::    Types can't be compared using simple equality, so normalize the
-          ::    type to check the rest of the move.
-          ::
-          :_  i.moves(&8 *type)
-          :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
-              [%success [%ride *type 5]]
-          ==
-        ::  make sure the returned type nests
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut &8:i.moves) | -:!>(*@))
+        =/  result  |7:i.moves
+        (expect-eq !>(5) result)
     ==
   ::
   =^  results2  ford-gate
@@ -2345,21 +2300,8 @@
         ?>  ?=(^ moves)
         ?>  ?=([* %give %made @da %complete %success %ride *] i.moves)
         ::
-        %+  welp
-          %-  expect-eq  !>
-          ::  compare the move to the expected move, omitting vase type checking
-          ::
-          ::    Types can't be compared using simple equality, so normalize the
-          ::    type to check the rest of the move.
-          ::
-          :_  i.moves(&8 *type)
-          :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
-              [%success [%ride *type 42]]
-          ==
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut &8:i.moves) | -:!>(*@))
+        =/  result  |7:i.moves
+        (expect-eq !>(42) result)
     ==
   ::
   =^  results2  ford-gate
@@ -2403,14 +2345,14 @@
         ?>  =(1 (lent moves))
         ?>  ?=(^ moves)
         ?>  ?=([* %give %made @da %complete %error *] i.moves)
-        ::
-        %-  expect-eq  !>
         ::  compare the move to the expected move, omitting check on stack trace
         ::
-        :_  i.moves(|7 ~)
-        :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
-            [%error [leaf+"ford: %ride failed to execute:" ~]]
-    ==  ==
+        %+  expect-eq
+          !>  :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+                  [%error [leaf+"ford: %ride failed to execute:" ~]]
+              ==
+          !>  i.moves(|7 ~)
+    ==
   ::
   =^  results2  ford-gate
     %-  ford-call  :*
@@ -2475,22 +2417,8 @@
         ?>  ?=(^ moves)
         ?>  ?=([* %give %made @da %complete %success %ride *] i.moves)
         ::
-        %+  welp
-          %-  expect-eq  !>
-          ::  compare the move to the expected move, omitting vase type checking
-          ::
-          ::    Types can't be compared using simple equality, so normalize the
-          ::    type to check the rest of the move.
-          ::
-          :_  i.moves(&8 *type)
-          :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete
-              [%success [%ride *type 42]]
-          ==
-        ::  make sure the types nest
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut &8:i.moves) | -:!>(*@))
+        =/  result  |7:i.moves
+        (expect-eq !>(42) result)
     ==
   ::
   =^  results3  ford-gate
@@ -2588,7 +2516,7 @@
 ++  test-five-oh-fora  ^-  tang
   ::
   =/  scry-type=type
-    [%cell [%face %title [%atom %tas ~]] [%face %contents -:!>("")]]
+    [%cell [%face %title [%atom %t ~]] [%face %contents -:!>("")]]
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
@@ -2644,12 +2572,14 @@
             title='post-a'
             contents="post-a-contents"
           ==
-        %-  expect-eq  !>
-        :_  i.t.moves
-        :*  duct=~[/post-a]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
-    ==  ==
+        %+  expect-eq
+          !>  :*  duct=~[/post-a]  %pass
+                  wire=/~nul/clay-sub/~nul/desk/~1234.5.6  %c  %warp
+                  [~nul ~nul]  %desk
+                  `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
+              ==
+          !>  i.t.moves
+    ==
   ::
   =^  results2  ford-gate
     %-  ford-call-with-comparator  :*
@@ -2673,12 +2603,14 @@
             title='post-b'
             contents="post-b-contents"
           ==
-        %-  expect-eq  !>
-        :_  i.t.moves
-        :*  duct=~[/post-b]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.7] (sy [%x /posts/a] [%x /posts/b] ~)]
-    ==  ==
+        %+  expect-eq
+          !>  :*  duct=~[/post-b]  %pass
+                  wire=/~nul/clay-sub/~nul/desk/~1234.5.7  %c  %warp
+                  [~nul ~nul]  %desk
+                  `[%mult [%da ~1234.5.7] (sy [%x /posts/a] [%x /posts/b] ~)]
+              ==
+          !>  i.t.moves
+    ==
   ::
   =^  results3  ford-gate
     %-  ford-take-with-comparator  :*
@@ -2706,12 +2638,14 @@
             title='post-a'
             contents="post-a-contents-changed"
           ==
-        %-  expect-eq  !>
-        :_  i.t.moves
-        :*  duct=~[/post-a]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.8] (sy [%x /posts/a] [%x /posts/b] ~)]
-    ==  ==
+        %+  expect-eq
+          !>  :*  duct=~[/post-a]  %pass
+                  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
+                  %c  %warp  [~nul ~nul]  %desk
+                  `[%mult [%da ~1234.5.8] (sy [%x /posts/a] [%x /posts/b] ~)]
+              ==
+          !>  i.t.moves
+    ==
   ::
   =^  results4  ford-gate
     %-  ford-take  :*
@@ -3383,7 +3317,7 @@
 ++  disabled-test-five-oh-cache-reclamation  ^-  tang
   ::
   =/  scry-type=type
-    [%cell [%face %title [%atom %tas ~]] [%face %contents -:!>("")]]
+    [%cell [%face %title [%atom %t ~]] [%face %contents -:!>("")]]
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
@@ -3438,12 +3372,13 @@
             title='post-a'
             contents="post-a-contents"
           ==
-        %-  expect-eq  !>
-        :_  i.t.moves
-        :*  duct=~[/post-a]  %pass  wire=/~nul/clay-sub/~nul/desk
-            %c  %warp  [~nul ~nul]  %desk
-            `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
-    ==  ==
+        %+  expect-eq
+          !>  :*  duct=~[/post-a]  %pass  wire=/~nul/clay-sub/~nul/desk
+                  %c  %warp  [~nul ~nul]  %desk
+                  `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
+              ==
+          !>  i.t.moves
+    ==
   ::
   =^  results2  ford-gate
     %-  ford-call-with-comparator  :*
@@ -3659,13 +3594,15 @@
         =/  kernel=vase  vase.build-result.result
         ::
         %+  weld
-          %-  expect-eq  !>
-          :-  (en-beam *beam)
-          q:(slym (slap (slap kernel [%limb %format]) [%limb %en-beam]) *beam)
+          =/  result
+            q:(slym (slap (slap kernel [%limb %format]) [%limb %en-beam]) *beam)
+          %+  expect-eq
+            !>  (en-beam *beam)
+            !>  result
         ::
-        %-  expect-eq  !>
-        :-  &
-        (slab %format p.kernel)
+        %+  expect-eq
+          !>  &
+          !>  (slab %format p.kernel)
     ==
   ::
   ;:  weld
@@ -3708,13 +3645,15 @@
         =/  kernel=vase  vase.build-result.result
         ::
         %+  weld
-          %-  expect-eq  !>
-          :-  (en-beam *beam)
-          q:(slym (slap (slap kernel [%limb %format]) [%limb %en-beam]) *beam)
+          =/  result
+            q:(slym (slap (slap kernel [%limb %format]) [%limb %en-beam]) *beam)
+          %+  expect-eq
+            !>  (en-beam *beam)
+            !>  result
         ::
-        %-  expect-eq  !>
-        :-  &
-        (slab %format p.kernel)
+        %+  expect-eq
+          !>  &
+          !>  (slab %format p.kernel)
     ==
   ::
   ;:  weld
@@ -3790,13 +3729,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>(*@tas))
-        ::
-        %-  expect-eq  !>
-        [%constant q.vase]
+        (expect-eq !>(%constant) vase)
     ==
   ::
   ;:  weld
@@ -3896,14 +3829,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ["onetwo" 3]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(["onetwo" 3]))
+        (expect-eq !>(["onetwo" 3]) vase)
     ==
   ::
   ;:  weld
@@ -3955,14 +3881,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ["one" 1]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(["one" 1]))
+        (expect-eq !>(["one" 1]) vase)
     ==
   ::
   ;:  weld
@@ -4007,14 +3926,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  3
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([3]))
+        (expect-eq !>(3) vase)
     ==
   ::
   ;:  weld
@@ -4062,14 +3974,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [1 2 3 4 5 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([1 2 3 4 5 ~]))
+        (expect-eq !>([1 2 3 4 5 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4114,7 +4019,6 @@
     results1
     (expect-ford-empty ford-gate ~nul)
   ==
-
 ::
 ++  test-core-fssm  ^-  tang
   ::
@@ -4153,14 +4057,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [5 5 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([5 5 ~]))
+        (expect-eq !>([5 5 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4209,14 +4106,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [6 6 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([6 6 ~]))
+        (expect-eq !>([6 6 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4315,14 +4205,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [1 2 3 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([1 2 3 ~]))
+        (expect-eq !>([1 2 3 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4386,14 +4269,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ["five" 5]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(["five" 5]))
+        (expect-eq !>(["five" 5]) vase)
     ==
   ::
   ;:  weld
@@ -4446,14 +4322,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [1 2 3 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([1 2 3 ~]))
+        (expect-eq !>([1 2 3 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4512,14 +4381,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [1 2 3 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([1 2 3 ~]))
+        (expect-eq !>([1 2 3 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4577,14 +4439,9 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [[[~nul %home [%da ~1234.5.6]] /other/lib] %value]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([*beam *@tas]))
+        %+  expect-eq
+          !>([[[~nul %home [%da ~1234.5.6]] /other/lib] %value])
+          vase
     ==
   ::
   ;:  weld
@@ -4602,7 +4459,8 @@
       :-  %hoon
       :-  hoon-src-type
       '''
-      /=  data  /:  /===/data
+      /=  data  /^  (map @ta @ud)
+                /:  /===/data
                 /_  /!noun/
       data
       '''
@@ -4671,14 +4529,8 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  (my [[%one 1] [%two 2] ~])
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*[[@ta @ud] [[@ta @ud] ~ ~] ~]))
+        =/  expected  (my [[%one 1] [%two 2] ~])
+        (expect-eq !>(expected) vase)
     ==
   ::
   ;:  weld
@@ -4752,15 +4604,7 @@
         ?>  ?=([%success %core *] build-result.result)
         ::
         =/  =vase  vase.build-result.result
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  5
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(5))
+        (expect-eq !>(5) vase)
     ==
   ::
   ;:  weld
@@ -4821,14 +4665,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [1 2 3 ~]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>([1 2 3 ~]))
+        (expect-eq !>([1 2 3 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4875,14 +4712,7 @@
         ::
         =/  =vase  q.cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [0 0]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*^))
+        (expect-eq !>([0 0]) vase)
     ==
   ::
   ;:  weld
@@ -4930,14 +4760,7 @@
         ::
         =/  =vase  q.cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [12 13]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*^))
+        (expect-eq !>([12 13]) vase)
     ==
   ::
   ;:  weld
@@ -4985,14 +4808,7 @@
         ::
         =/  =vase  q.cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [12 13]
-          q.vase
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*^))
+        (expect-eq !>([12 13]) vase)
     ==
   ::
   ;:  weld
@@ -5102,22 +4918,10 @@
         =/  result  result.p.card.i.moves
         ?>  ?=([%success %cast *] build-result.result)
         ::
-        =/  mark=term  p.cage.build-result.result
-        =/  =vase      q.cage.build-result.result
+        =/  =cage      cage.build-result.result
         ::
-        ;:  welp
-          %-  expect-eq  !>
-          :-  %foo
-          mark
-        ::
-          %-  expect-eq  !>
-          :-  [12 13]
-          q.vase
-        ::
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>(*^))
-    ==  ==
+        (expect-cage %foo !>([12 13]) cage)
+    ==
   ::
   ;:  weld
     results1
@@ -5185,22 +4989,10 @@
         =/  result  result.p.card.i.moves
         ?>  ?=([%success %cast *] build-result.result)
         ::
-        =/  mark=term  p.cage.build-result.result
-        =/  =vase      q.cage.build-result.result
+        =/  =cage      cage.build-result.result
         ::
-        ;:  welp
-          %-  expect-eq  !>
-          :-  %foo
-          mark
-        ::
-          %-  expect-eq  !>
-          :-  [12 13]
-          q.vase
-        ::
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>([12 13]))
-    ==  ==
+        (expect-cage %foo !>([12 13]) cage)
+    ==
   ::
   ;:  weld
     results1
@@ -5235,22 +5027,10 @@
         =/  result  result.p.card.i.moves
         ?>  ?=([%success %mute *] build-result.result)
         ::
-        =/  mark=term  p.cage.build-result.result
-        =/  =vase      q.cage.build-result.result
+        =/  =cage      cage.build-result.result
         ::
-        ;:  welp
-          %-  expect-eq  !>
-          :-  %foo
-          mark
-        ::
-          %-  expect-eq  !>
-          :-  [2 43 4]
-          q.vase
-        ::
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>([2 43 4]))
-    ==  ==
+        (expect-cage %foo !>([2 43 4]) cage)
+    ==
   ::
   ;:  weld
     results1
@@ -5301,19 +5081,7 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %foo
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [1 2 3 ~]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>([1 2 3 ~]))
+        (expect-cage %foo !>([1 2 3 ~]) cage)
     ==
   ::
   ;:  weld
@@ -5389,19 +5157,7 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %foo
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [12 13]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>([12 13]))
+        (expect-cage %foo !>([12 13]) cage)
     ==
   ::
   ;:  weld
@@ -5472,19 +5228,7 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %dat
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  'one'
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>('one'))
+        (expect-cage %dat !>('one') cage)
     ==
   ::
   ;:  weld
@@ -5541,19 +5285,7 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %foo
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  [17 18]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>([17 18]))
+        (expect-cage %foo !>([17 18]) cage)
     ==
   ::
   ;:  weld
@@ -5627,19 +5359,7 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %txt-diff
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ~[[%& 1] [%| ~[%b] ~[%d]]]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>(~[[%& 1] [%| ~[%b] ~[%d]]]))
+        (expect-cage %txt-diff !>(~[[%& 1] [%| ~[%b] ~[%d]]]) cage)
     ==
   ::
   ;:  weld
@@ -5718,19 +5438,7 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %txt
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ~[%a %d]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>(~[%a %d]))
+        (expect-cage %txt !>(~[%a %d]) cage)
     ==
   ::
   ;:  weld
@@ -5833,22 +5541,12 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %foo
-          p.cage
+        =/  expected  '''
+                      a
+                      d
+                      '''
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  '''
-              a
-              d
-              '''
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>(''))
+        (expect-cage %foo !>(expected) cage)
     ==
   ::
   ;:  weld
@@ -5902,19 +5600,8 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %txt-diff
-          p.cage
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ~[[%| ~[%a] ~[%c]] [%| ~[%b] ~[%d]]]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>(*(urge:clay cord)))
+        =/  result=(urge:clay cord)  ~[[%| ~[%a] ~[%c]] [%| ~[%b] ~[%d]]]
+        (expect-cage %txt-diff !>(result) cage)
     ==
   ::
   ;:  weld
@@ -6007,19 +5694,9 @@
         ::
         =/  =cage  cage.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %txt-diff
-          p.cage
+        =/  result=(urge:clay cord)  ~[[%| ~[%a] ~[%c]] [%| ~[%b] ~[%d]]]
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ~[[%| ~[%a] ~[%c]] [%| ~[%b] ~[%d]]]
-          q.q.cage
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.cage) | -:!>(*(urge:clay cord)))
+        (expect-cage %txt-diff !>(result) cage)
     ==
   ::
   ;:  weld
@@ -6125,14 +5802,7 @@
         =/  =vase  vase.build-result.result.p.card.i.moves
         ::
         %+  weld
-          %-  expect-eq  !>
-          :-  13
-          q.vase
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>(13))
+          (expect-eq !>(13) vase)
         ::
         =/  files=(set [%x path])
           %-  sy  :~
@@ -6147,13 +5817,13 @@
             [%x /lib/connector/hoon]
           ==
         ::
-        %-  expect-eq  !>
-        :_  i.t.moves
-        ^-  move:ford-gate
-        :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.6
-            %c  %warp  [~nul ~nul]  %home
-            `[%mult [%da ~1234.5.6] files]
-        ==
+        %+  expect-eq
+          !>  ^-  move:ford-gate
+              :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.6
+                  %c  %warp  [~nul ~nul]  %home
+                  `[%mult [%da ~1234.5.6] files]
+              ==
+          !>  i.t.moves
     ==
   ::  add a gh2 app which is the same as gh; move dates forward
   ::
@@ -6261,14 +5931,7 @@
         =/  =vase  vase.build-result.result.p.card.i.moves
         ::
         %+  weld
-          %-  expect-eq  !>
-          :-  12
-          q.vase
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>(12))
+          (expect-eq !>(12) vase)
         ::
         =/  files=(set [%x path])
           %-  sy  :~
@@ -6283,13 +5946,13 @@
             [%x /lib/connector/hoon]
           ==
         ::
-        %-  expect-eq  !>
-        :_  i.t.moves
-        ^-  move:ford-gate
-        :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.7
-            %c  %warp  [~nul ~nul]  %home
-            `[%mult [%da ~1234.5.7] files]
-        ==
+        %+  expect-eq
+          !>  ^-  move:ford-gate
+              :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.7
+                  %c  %warp  [~nul ~nul]  %home
+                  `[%mult [%da ~1234.5.7] files]
+              ==
+          !>  i.t.moves
     ==
   ::
   ::  add a gh3 app which is the same as gh; move dates forward
@@ -6410,14 +6073,7 @@
         =/  =vase  vase.build-result.result.p.card.i.moves
         ::
         %+  weld
-          %-  expect-eq  !>
-          :-  11
-          q.vase
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  &
-          (~(nest ut p.vase) | -:!>(11))
+          (expect-eq !>(11) vase)
         ::
         =/  files=(set [%x path])
           %-  sy  :~
@@ -6432,13 +6088,13 @@
             [%x /lib/connector/hoon]
           ==
         ::
-        %-  expect-eq  !>
-        :_  i.t.moves
-        ^-  move:ford-gate
-        :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.8
-            %c  %warp  [~nul ~nul]  %home
-            `[%mult [%da ~1234.5.8] files]
-        ==
+        %+  expect-eq
+          !>  ^-  move:ford-gate
+              :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.8
+                  %c  %warp  [~nul ~nul]  %home
+                  `[%mult [%da ~1234.5.8] files]
+              ==
+          !>  i.t.moves
     ==
   ::
   ::  change the implementation of /lib/connector/hoon
@@ -6572,16 +6228,16 @@
           ==
         ::
         ;:  weld
-          (expect-eq !>([~[/gh] duct.i.moves]))
-          (compare-vase !>(17) vase.build-result.result.p.card.i.moves)
+          (expect-eq !>(~[/gh]) !>(duct.i.moves))
+          (expect-eq !>(17) vase.build-result.result.p.card.i.moves)
         ::
-          %-  expect-eq  !>
-          :_  i.t.moves
-          ^-  move:ford-gate
-          :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
-              %c  %warp  [~nul ~nul]  %home
-              `[%mult [%da ~1234.5.9] files]
-          ==
+          %+  expect-eq
+            !>  ^-  move:ford-gate
+                :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
+                    %c  %warp  [~nul ~nul]  %home
+                    `[%mult [%da ~1234.5.9] files]
+                ==
+            !>  i.t.moves
     ==  ==
   ::
   =^  results5  ford-gate
@@ -6619,16 +6275,16 @@
           ==
         ::
         ;:  weld
-          (expect-eq !>([~[/gh2] duct.i.moves]))
-          (compare-vase !>(16) vase.build-result.result.p.card.i.moves)
+          (expect-eq !>(~[/gh2]) !>(duct.i.moves))
+          (expect-eq !>(16) vase.build-result.result.p.card.i.moves)
         ::
-          %-  expect-eq  !>
-          :_  i.t.moves
-          ^-  move:ford-gate
-          :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
-              %c  %warp  [~nul ~nul]  %home
-              `[%mult [%da ~1234.5.9] files]
-          ==
+          %+  expect-eq
+            !>  ^-  move:ford-gate
+                :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
+                    %c  %warp  [~nul ~nul]  %home
+                    `[%mult [%da ~1234.5.9] files]
+                ==
+            !>  i.t.moves
     ==  ==
   ::
   =^  results6  ford-gate
@@ -6666,16 +6322,16 @@
           ==
         ::
         ;:  weld
-          (expect-eq !>([~[/gh3] duct.i.moves]))
-          (compare-vase !>(15) vase.build-result.result.p.card.i.moves)
+          (expect-eq !>(~[/gh3]) !>(duct.i.moves))
+          (expect-eq !>(15) vase.build-result.result.p.card.i.moves)
         ::
-          %-  expect-eq  !>
-          :_  i.t.moves
-          ^-  move:ford-gate
-          :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
-              %c  %warp  [~nul ~nul]  %home
-              `[%mult [%da ~1234.5.9] files]
-          ==
+          %+  expect-eq
+            !>  ^-  move:ford-gate
+                :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
+                    %c  %warp  [~nul ~nul]  %home
+                    `[%mult [%da ~1234.5.9] files]
+                ==
+            !>  i.t.moves
     ==  ==
   ::
   =^  results7  ford-gate
@@ -6886,19 +6542,7 @@
         ::
         =/  result=cage  cage.build-result.result.p.card.i.moves
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  %four
-          p.result
-        ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  ["grab" "one"]
-          q.q.result
-        ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.q.result) | -:!>(*[tape tape]))
+        (expect-cage %four !>(["grab" "one"]) result)
     ==
   ::
   ;:  weld
@@ -7012,15 +6656,11 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  :-  [%config '']
-              (my [%data1 [%item 'one']] ~) :: [%data2 [%item 'two']] ~)
-          q.vase
+        =/  result=[[%config @t] (map knot [%item @t])]
+          :-  [%config '']
+          (my [%data1 [%item 'one']] ~)
         ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*[[%config @t] (map knot [%item @t])]))
+        (expect-eq !>(result) vase)
         ::
         ::  TODO: check the subscription?
     ==
@@ -7125,15 +6765,11 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  :-  [%config '']
-              (my [%data1 [%item 'one']] [%data2 [%item 'two']] ~)
-          q.vase
+        =/  result=[[%config @t] (map knot [%item @t])]
+          :-  [%config '']
+          (my [%data1 [%item 'one']] [%data2 [%item 'two']] ~)
         ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*[[%config @t] (map knot [%item @t])]))
+        (expect-eq !>(result) vase)
         ::
         ::  TODO: check the subscription?
     ==
@@ -7239,15 +6875,11 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  weld
-          %-  expect-eq  !>
-          :-  :-  [%config '']
-              (my [%data1 [%item 'one']] [%data2 [%item 'changed-two']] ~)
-          q.vase
+        =/  result=[[%config @t] (map knot [%item @t])]
+          :-  [%config '']
+          (my [%data1 [%item 'one']] [%data2 [%item 'changed-two']] ~)
         ::
-        %-  expect-eq  !>
-        :-  &
-        (~(nest ut p.vase) | -:!>(*[[%config @t] (map knot [%item @t])]))
+        (expect-eq !>(result) vase)
         ::
         ::  TODO: check the subscription?
     ==
@@ -7381,49 +7013,30 @@
   ?>  ?=([%success %ride type-title-b=* %post-b] tail.tail.result)
   ::
   ;:  welp
-    %-  expect-eq  !>
-    [duct duct.move]
+    %+  expect-eq
+      !>  duct
+      !>  duct.move
   ::
-    %-  expect-eq  !>
-    [date date.p.card.move]
+    %+  expect-eq
+      !>  date
+      !>  date.p.card.move
   ::
-    %-  expect-eq  !>
-    :_  head.result(p.q.cage *^type)
-    [%success %scry %noun *^type [title=title contents=contents]]
+    %+  expect-eq
+      !>  [%success %scry %noun *^type [title=title contents=contents]]
+      !>  head.result(p.q.cage *^type)
   ::
-    %-  expect-eq  !>
-    :-  &
-    (~(nest ut p.q.cage.head.result) | type)
+    %+  expect-eq
+      !>  &
+      !>  (~(nest ut p.q.cage.head.result) | type)
   ::
-    %-  expect-eq  !>
-    :-  [%success %ride *^type 'post-a']
-    head.tail.result(p.vase *^type)
+    %+  expect-eq
+      !>  'post-a'
+      vase.head.tail.result
   ::
-    %-  expect-eq  !>
-    :-  &
-    (~(nest ut p.vase.head.tail.result) | -:!>(''))
-  ::
-    %-  expect-eq  !>
-    :-  [%success %ride *^type 'post-b']
-    tail.tail.result(p.vase *^type)
-  ::
-    %-  expect-eq  !>
-    :-  &
-    (~(nest ut p.vase.tail.tail.result) | -:!>(''))
+    %+  expect-eq
+      !>  'post-b'
+      vase.tail.tail.result
   ==
-::  +compare-vase: compares the value of a vase and ensure that the types nest
-::
-++  compare-vase
-  |=  [expected=vase actual=vase]
-  ^-  tang
-  %+  weld
-    %-  expect-eq  !>
-    :-  q.expected
-    q.actual
-  ::
-  %-  expect-eq  !>
-  :-  &
-  (~(nest ut p.actual) | p.expected)
 ::
 ::  +scry-with-results
 ++  scry-with-results
@@ -7516,9 +7129,9 @@
     %-  call:ford  call-args
   ::
   =/  output=tang
-    %-  expect-eq  !>
-    :-  expected-moves
-    moves
+    %+  expect-eq
+      !>  expected-moves
+      !>  moves
   ::
   [output ford-gate]
 ::
@@ -7537,9 +7150,9 @@
     %-  take:ford  take-args
   ::
   =/  output=tang
-    %-  expect-eq  !>
-    :-  expected-moves
-    moves
+    %+  expect-eq
+      !>  expected-moves
+      !>  moves
   ::
   [output ford-gate]
 ::  +ford-call-with-comparator
@@ -7583,6 +7196,16 @@
   =/  output=tang  (move-comparator moves)
   ::
   [output ford-gate]
+::  +expect-cage: assert that the actual cage has the right mark and vase
+::
+++  expect-cage
+  |=  [mark=term expected=vase actual=cage]
+  %+  weld
+    %+  expect-eq
+      !>  mark
+      !>  p.actual
+  ::
+  (expect-eq expected q.actual)
 ::  +expect-ford-empty: assert that ford's state is one empty ship
 ::
 ::    At the end of every test, we want to assert that we have cleaned up all

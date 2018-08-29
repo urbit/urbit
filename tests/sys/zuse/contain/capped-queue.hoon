@@ -15,29 +15,29 @@
   =^  maybe1  q  (~(put to-capped-queue q) 5)
   ::
   =/  results1
-    %-  expect-eq  !>
-    :-  ~
-    maybe1
+    %+  expect-eq
+      !>  ~
+      !>  maybe1
   =/  results2
-    %-  expect-eq  !>
-    :-  1
-    size.q
+    %+  expect-eq
+      !>  1
+      !>  size.q
   =/  results3
-    %-  expect-eq  !>
-    :-  [~ 5]
-    ~(top to queue.q)
+    %+  expect-eq
+      !>  [~ 5]
+      !>  ~(top to queue.q)
   ::  remove the single element
   ::
   =^  maybe2  q  ~(get to-capped-queue q)
   ::
   =/  results4
-    %-  expect-eq  !>
-    :-  5
-    maybe2
+    %+  expect-eq
+      !>  5
+      !>  maybe2
   =/  results5
-    %-  expect-eq  !>
-    :-  0
-    size.q
+    %+  expect-eq
+      !>  0
+      !>  size.q
   ::
   ;:  weld
     results1
@@ -58,33 +58,33 @@
   ::
   =^  maybe1  q  (~(put to-capped-queue q) 5)
   =/  results1
-    %-  expect-eq  !>
-    :-  ~
-    maybe1
+    %+  expect-eq
+      !>  ~
+      !>  maybe1
   =/  results2
-    %-  expect-eq  !>
-    :-  1
-    size.q
+    %+  expect-eq
+      !>  1
+      !>  size.q
   ::
   =^  maybe2  q  (~(put to-capped-queue q) 6)
   =/  results3
-    %-  expect-eq  !>
-    :-  ~
-    maybe2
+    %+  expect-eq
+      !>  ~
+      !>  maybe2
   =/  results4
-    %-  expect-eq  !>
-    :-  2
-    size.q
+    %+  expect-eq
+      !>  2
+      !>  size.q
   ::
   =^  maybe3  q  (~(put to-capped-queue q) 7)
   =/  results5
-    %-  expect-eq  !>
-    :-  [~ 5]
-    maybe3
+    %+  expect-eq
+      !>  [~ 5]
+      !>  maybe3
   =/  results6
-    %-  expect-eq  !>
-    :-  2
-    size.q
+    %+  expect-eq
+      !>  2
+      !>  size.q
   ::
   ;:  weld
     results1
@@ -113,13 +113,13 @@
   =^  pops  q  (~(resize to-capped-queue q) 3)
   ::
   =/  results1
-    %-  expect-eq  !>
-    :-  [1 2 ~]
-    pops
+    %+  expect-eq
+      !>  [1 2 ~]
+      !>  pops
   =/  results2
-    %-  expect-eq  !>
-    :-  3
-    size.q
+    %+  expect-eq
+      !>  3
+      !>  size.q
   ::
   ;:  weld
     results1
