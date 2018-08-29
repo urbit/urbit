@@ -15,15 +15,15 @@
   =^  maybe1  q  (~(put to-capped-queue q) 5)
   ::
   =/  results1
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  ~
       !>  maybe1
   =/  results2
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  1
       !>  size.q
   =/  results3
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  [~ 5]
       !>  ~(top to queue.q)
   ::  remove the single element
@@ -31,11 +31,11 @@
   =^  maybe2  q  ~(get to-capped-queue q)
   ::
   =/  results4
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  5
       !>  maybe2
   =/  results5
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  0
       !>  size.q
   ::
@@ -58,31 +58,31 @@
   ::
   =^  maybe1  q  (~(put to-capped-queue q) 5)
   =/  results1
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  ~
       !>  maybe1
   =/  results2
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  1
       !>  size.q
   ::
   =^  maybe2  q  (~(put to-capped-queue q) 6)
   =/  results3
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  ~
       !>  maybe2
   =/  results4
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  2
       !>  size.q
   ::
   =^  maybe3  q  (~(put to-capped-queue q) 7)
   =/  results5
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  [~ 5]
       !>  maybe3
   =/  results6
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  2
       !>  size.q
   ::
@@ -113,11 +113,11 @@
   =^  pops  q  (~(resize to-capped-queue q) 3)
   ::
   =/  results1
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  [1 2 ~]
       !>  pops
   =/  results2
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  3
       !>  size.q
   ::

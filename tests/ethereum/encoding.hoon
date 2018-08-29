@@ -4,7 +4,7 @@
 ::  https://github.com/ethereum/web3.js/blob/master/test/coder.encodeParam.js
 ::
 ++  test-static-args
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  %-  encode-args:ethereum
         :~  [%string "dave"]
             [%bool &]
@@ -23,7 +23,7 @@
         ==
 ::
 ++  test-dynamic-args
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  %-  encode-args:ethereum
         :~  [%uint `@ud`0x123]
             [%array [%uint `@ud`0x456] [%uint `@ud`0x789] ~]

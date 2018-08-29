@@ -19,22 +19,22 @@
 ++  test-tear  ^-  tang
   ::
   ;:  welp
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  ~['a' 'bc' 'de']
       !>  (tear:ford-gate 'a-bc-de')
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  ~['abc']
       !>  (tear:ford-gate 'abc')
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  ~['ab/c']
       !>  (tear:ford-gate 'ab/c')
   ==
 ::
 ++  test-unify-jugs  ^-  tang
   ::
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  ^-  (jug @tas @ud)
         (my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 5 6 ~)] [%c (sy 7 8 ~)]])
     !>  %+  unify-jugs:ford-gate
@@ -44,13 +44,13 @@
 ++  test-resource-wire-encoding  ^-  tang
   ::
   ;:  welp
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  /cx/~nul/desk/~1234.5.6/bar/foo
       !>  ^-  path
           %-  scry-request-to-path:ford-gate
           [%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  [%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
       !>  %-  need
           (path-to-scry-request:ford-gate /cx/~nul/desk/~1234.5.6/bar/foo)
@@ -65,7 +65,7 @@
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
   ::
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :-  [1 19]
         :-  ~
         :_  [[1 19] ""]
@@ -94,7 +94,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~[[`%struct %struct] [`%face %other]]
@@ -119,7 +119,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=400
             structures=~
@@ -144,7 +144,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -174,7 +174,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -205,7 +205,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -236,7 +236,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -265,7 +265,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -303,7 +303,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -337,7 +337,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -366,7 +366,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -393,7 +393,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -429,7 +429,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -460,7 +460,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -507,7 +507,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -533,7 +533,7 @@
     """
   ?~  q.parsed
     [%leaf "failed to parse at {<p.parsed>}"]~
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  :*  source-rail=[[~nul %desk] /bar/foo]
             zuse-version=309
             structures=~
@@ -985,7 +985,7 @@
         |=  moves=(list move:ford-gate)
         ^-  tang
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  %-  sy
               :~  :*  duct=~[/first]  %pass
                       wire=/~nul/scry-request/cx/~nul/desk/~1234.5.7/foo/bar
@@ -1672,7 +1672,7 @@
         ::
         =/  result=vase  |7:i.moves
         ::
-        (expect-nu-eq !>(6) result)
+        (expect-eq !>(6) result)
     ==
   ::
   =^  results2  ford-gate
@@ -1721,7 +1721,7 @@
         ::
         =/  result=vase  |7:i.moves
         ::
-        (expect-nu-eq !>(42) result)
+        (expect-eq !>(42) result)
     ==
   ::
   =^  results2  ford-gate
@@ -1767,7 +1767,7 @@
         ?>  ?=([* %give %made @da %complete %error *] i.moves)
         ::  compare the move to the expected move, omitting check on stack trace
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
                   [%error [leaf+"ford: %call execution failed:" ~]]
               ==
@@ -1839,7 +1839,7 @@
         ::
         =/  result  |7:i.moves
         ::
-        (expect-nu-eq !>(42) result)
+        (expect-eq !>(42) result)
     ==
   ::
   =^  results3  ford-gate
@@ -1912,10 +1912,10 @@
         ::
         %+  weld
           =/  result  |7:i.moves
-          (expect-nu-eq !>(%first) result)
+          (expect-eq !>(%first) result)
         ::  make sure the other move is a subscription
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  :*  duct=~[/call]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
                   %c  %warp  [~nul ~nul]  %desk
                   `[%mult [%da ~1234.5.6] (sy [%x /timer] ~)]
@@ -1945,10 +1945,10 @@
         ::
         %+  weld
           =/  result  |7:i.moves
-          (expect-nu-eq !>(%second) result)
+          (expect-eq !>(%second) result)
         ::  make sure the other move is a subscription
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  :*  duct=~[/call]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
                   %c  %warp  [~nul ~nul]  %desk
                   `[%mult [%da ~1234.5.7] (sy [%x /timer] ~)]
@@ -2154,7 +2154,7 @@
         ::
         =/  expected-type=type  -:!>([*tape *@ud])
         =/  actual-type=type    |7:i.moves
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  &
           !>  (~(nest ut actual-type) | expected-type)
     ==
@@ -2200,7 +2200,7 @@
         ::
         =/  messages=tang  (scag 4 `tang`|6:i.moves)
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  :~  [%palm ["." "-" "" ""] [%leaf "have"] [%leaf "\"\""] ~]
                   :~  %palm  ["." "-" "" ""]
                       [%leaf "want"]
@@ -2255,7 +2255,7 @@
         ?>  ?=([* %give %made @da %complete %success %ride *] i.moves)
         ::
         =/  result  |7:i.moves
-        (expect-nu-eq !>(5) result)
+        (expect-eq !>(5) result)
     ==
   ::
   =^  results2  ford-gate
@@ -2301,7 +2301,7 @@
         ?>  ?=([* %give %made @da %complete %success %ride *] i.moves)
         ::
         =/  result  |7:i.moves
-        (expect-nu-eq !>(42) result)
+        (expect-eq !>(42) result)
     ==
   ::
   =^  results2  ford-gate
@@ -2347,7 +2347,7 @@
         ?>  ?=([* %give %made @da %complete %error *] i.moves)
         ::  compare the move to the expected move, omitting check on stack trace
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
                   [%error [leaf+"ford: %ride failed to execute:" ~]]
               ==
@@ -2418,7 +2418,7 @@
         ?>  ?=([* %give %made @da %complete %success %ride *] i.moves)
         ::
         =/  result  |7:i.moves
-        (expect-nu-eq !>(42) result)
+        (expect-eq !>(42) result)
     ==
   ::
   =^  results3  ford-gate
@@ -2572,7 +2572,7 @@
             title='post-a'
             contents="post-a-contents"
           ==
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  :*  duct=~[/post-a]  %pass
                   wire=/~nul/clay-sub/~nul/desk/~1234.5.6  %c  %warp
                   [~nul ~nul]  %desk
@@ -2603,7 +2603,7 @@
             title='post-b'
             contents="post-b-contents"
           ==
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  :*  duct=~[/post-b]  %pass
                   wire=/~nul/clay-sub/~nul/desk/~1234.5.7  %c  %warp
                   [~nul ~nul]  %desk
@@ -2638,7 +2638,7 @@
             title='post-a'
             contents="post-a-contents-changed"
           ==
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  :*  duct=~[/post-a]  %pass
                   wire=/~nul/clay-sub/~nul/desk/~1234.5.8
                   %c  %warp  [~nul ~nul]  %desk
@@ -3372,7 +3372,7 @@
             title='post-a'
             contents="post-a-contents"
           ==
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  :*  duct=~[/post-a]  %pass  wire=/~nul/clay-sub/~nul/desk
                   %c  %warp  [~nul ~nul]  %desk
                   `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
@@ -3596,11 +3596,11 @@
         %+  weld
           =/  result
             q:(slym (slap (slap kernel [%limb %format]) [%limb %en-beam]) *beam)
-          %+  expect-nu-eq
+          %+  expect-eq
             !>  (en-beam *beam)
             !>  result
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  &
           !>  (slab %format p.kernel)
     ==
@@ -3647,11 +3647,11 @@
         %+  weld
           =/  result
             q:(slym (slap (slap kernel [%limb %format]) [%limb %en-beam]) *beam)
-          %+  expect-nu-eq
+          %+  expect-eq
             !>  (en-beam *beam)
             !>  result
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  &
           !>  (slab %format p.kernel)
     ==
@@ -3729,7 +3729,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        (expect-nu-eq !>(%constant) vase)
+        (expect-eq !>(%constant) vase)
     ==
   ::
   ;:  weld
@@ -3829,7 +3829,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        (expect-nu-eq !>(["onetwo" 3]) vase)
+        (expect-eq !>(["onetwo" 3]) vase)
     ==
   ::
   ;:  weld
@@ -3881,7 +3881,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        (expect-nu-eq !>(["one" 1]) vase)
+        (expect-eq !>(["one" 1]) vase)
     ==
   ::
   ;:  weld
@@ -3926,7 +3926,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        (expect-nu-eq !>(3) vase)
+        (expect-eq !>(3) vase)
     ==
   ::
   ;:  weld
@@ -3974,7 +3974,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        (expect-nu-eq !>([1 2 3 4 5 ~]) vase)
+        (expect-eq !>([1 2 3 4 5 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4057,7 +4057,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        (expect-nu-eq !>([5 5 ~]) vase)
+        (expect-eq !>([5 5 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4106,7 +4106,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        (expect-nu-eq !>([6 6 ~]) vase)
+        (expect-eq !>([6 6 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4205,7 +4205,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        (expect-nu-eq !>([1 2 3 ~]) vase)
+        (expect-eq !>([1 2 3 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4269,7 +4269,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        (expect-nu-eq !>(["five" 5]) vase)
+        (expect-eq !>(["five" 5]) vase)
     ==
   ::
   ;:  weld
@@ -4322,7 +4322,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        (expect-nu-eq !>([1 2 3 ~]) vase)
+        (expect-eq !>([1 2 3 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4381,7 +4381,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        (expect-nu-eq !>([1 2 3 ~]) vase)
+        (expect-eq !>([1 2 3 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4439,7 +4439,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>([[[~nul %home [%da ~1234.5.6]] /other/lib] %value])
           vase
     ==
@@ -4530,7 +4530,7 @@
         =/  =vase  vase.build-result.result
         ::
         =/  expected  (my [[%one 1] [%two 2] ~])
-        (expect-nu-eq !>(expected) vase)
+        (expect-eq !>(expected) vase)
     ==
   ::
   ;:  weld
@@ -4604,7 +4604,7 @@
         ?>  ?=([%success %core *] build-result.result)
         ::
         =/  =vase  vase.build-result.result
-        (expect-nu-eq !>(5) vase)
+        (expect-eq !>(5) vase)
     ==
   ::
   ;:  weld
@@ -4665,7 +4665,7 @@
         ::
         =/  =vase  vase.build-result.result
         ::
-        (expect-nu-eq !>([1 2 3 ~]) vase)
+        (expect-eq !>([1 2 3 ~]) vase)
     ==
   ::
   ;:  weld
@@ -4712,7 +4712,7 @@
         ::
         =/  =vase  q.cage.build-result.result
         ::
-        (expect-nu-eq !>([0 0]) vase)
+        (expect-eq !>([0 0]) vase)
     ==
   ::
   ;:  weld
@@ -4760,7 +4760,7 @@
         ::
         =/  =vase  q.cage.build-result.result
         ::
-        (expect-nu-eq !>([12 13]) vase)
+        (expect-eq !>([12 13]) vase)
     ==
   ::
   ;:  weld
@@ -4808,7 +4808,7 @@
         ::
         =/  =vase  q.cage.build-result.result
         ::
-        (expect-nu-eq !>([12 13]) vase)
+        (expect-eq !>([12 13]) vase)
     ==
   ::
   ;:  weld
@@ -5802,7 +5802,7 @@
         =/  =vase  vase.build-result.result.p.card.i.moves
         ::
         %+  weld
-          (expect-nu-eq !>(13) vase)
+          (expect-eq !>(13) vase)
         ::
         =/  files=(set [%x path])
           %-  sy  :~
@@ -5817,7 +5817,7 @@
             [%x /lib/connector/hoon]
           ==
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  ^-  move:ford-gate
               :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.6
                   %c  %warp  [~nul ~nul]  %home
@@ -5931,7 +5931,7 @@
         =/  =vase  vase.build-result.result.p.card.i.moves
         ::
         %+  weld
-          (expect-nu-eq !>(12) vase)
+          (expect-eq !>(12) vase)
         ::
         =/  files=(set [%x path])
           %-  sy  :~
@@ -5946,7 +5946,7 @@
             [%x /lib/connector/hoon]
           ==
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  ^-  move:ford-gate
               :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.7
                   %c  %warp  [~nul ~nul]  %home
@@ -6073,7 +6073,7 @@
         =/  =vase  vase.build-result.result.p.card.i.moves
         ::
         %+  weld
-          (expect-nu-eq !>(11) vase)
+          (expect-eq !>(11) vase)
         ::
         =/  files=(set [%x path])
           %-  sy  :~
@@ -6088,7 +6088,7 @@
             [%x /lib/connector/hoon]
           ==
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>  ^-  move:ford-gate
               :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.8
                   %c  %warp  [~nul ~nul]  %home
@@ -6228,10 +6228,10 @@
           ==
         ::
         ;:  weld
-          (expect-nu-eq !>(~[/gh]) !>(duct.i.moves))
-          (expect-nu-eq !>(17) vase.build-result.result.p.card.i.moves)
+          (expect-eq !>(~[/gh]) !>(duct.i.moves))
+          (expect-eq !>(17) vase.build-result.result.p.card.i.moves)
         ::
-          %+  expect-nu-eq
+          %+  expect-eq
             !>  ^-  move:ford-gate
                 :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
                     %c  %warp  [~nul ~nul]  %home
@@ -6275,10 +6275,10 @@
           ==
         ::
         ;:  weld
-          (expect-nu-eq !>(~[/gh2]) !>(duct.i.moves))
-          (expect-nu-eq !>(16) vase.build-result.result.p.card.i.moves)
+          (expect-eq !>(~[/gh2]) !>(duct.i.moves))
+          (expect-eq !>(16) vase.build-result.result.p.card.i.moves)
         ::
-          %+  expect-nu-eq
+          %+  expect-eq
             !>  ^-  move:ford-gate
                 :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
                     %c  %warp  [~nul ~nul]  %home
@@ -6322,10 +6322,10 @@
           ==
         ::
         ;:  weld
-          (expect-nu-eq !>(~[/gh3]) !>(duct.i.moves))
-          (expect-nu-eq !>(15) vase.build-result.result.p.card.i.moves)
+          (expect-eq !>(~[/gh3]) !>(duct.i.moves))
+          (expect-eq !>(15) vase.build-result.result.p.card.i.moves)
         ::
-          %+  expect-nu-eq
+          %+  expect-eq
             !>  ^-  move:ford-gate
                 :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
                     %c  %warp  [~nul ~nul]  %home
@@ -6660,7 +6660,7 @@
           :-  [%config '']
           (my [%data1 [%item 'one']] ~)
         ::
-        (expect-nu-eq !>(result) vase)
+        (expect-eq !>(result) vase)
         ::
         ::  TODO: check the subscription?
     ==
@@ -6769,7 +6769,7 @@
           :-  [%config '']
           (my [%data1 [%item 'one']] [%data2 [%item 'two']] ~)
         ::
-        (expect-nu-eq !>(result) vase)
+        (expect-eq !>(result) vase)
         ::
         ::  TODO: check the subscription?
     ==
@@ -6879,7 +6879,7 @@
           :-  [%config '']
           (my [%data1 [%item 'one']] [%data2 [%item 'changed-two']] ~)
         ::
-        (expect-nu-eq !>(result) vase)
+        (expect-eq !>(result) vase)
         ::
         ::  TODO: check the subscription?
     ==
@@ -7013,27 +7013,27 @@
   ?>  ?=([%success %ride type-title-b=* %post-b] tail.tail.result)
   ::
   ;:  welp
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  duct
       !>  duct.move
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  date
       !>  date.p.card.move
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  [%success %scry %noun *^type [title=title contents=contents]]
       !>  head.result(p.q.cage *^type)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  &
       !>  (~(nest ut p.q.cage.head.result) | type)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  'post-a'
       vase.head.tail.result
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  'post-b'
       vase.tail.tail.result
   ==
@@ -7129,7 +7129,7 @@
     %-  call:ford  call-args
   ::
   =/  output=tang
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  expected-moves
       !>  moves
   ::
@@ -7150,7 +7150,7 @@
     %-  take:ford  take-args
   ::
   =/  output=tang
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  expected-moves
       !>  moves
   ::
@@ -7201,11 +7201,11 @@
 ++  expect-cage
   |=  [mark=term expected=vase actual=cage]
   %+  weld
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  mark
       !>  p.actual
   ::
-  (expect-nu-eq expected q.actual)
+  (expect-eq expected q.actual)
 ::  +expect-ford-empty: assert that ford's state is one empty ship
 ::
 ::    At the end of every test, we want to assert that we have cleaned up all

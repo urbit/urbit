@@ -17,12 +17,12 @@
   =.  c  (~(put by-clock c) 1 "one")
   =^  maybe1  c  (~(get by-clock c) 1)
   =/  results1
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  [~ "one"]
       !>  maybe1
   ::
   =/  results2
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  1
       !>  size.c
   ::  push that key out of the cache
@@ -32,13 +32,13 @@
   =.  c  (~(put by-clock c) 4 "four")
   ::
   =/  results3
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  3
       !>  size.c
   ::
   =^  maybe2  c  (~(get by-clock c) 1)
   =/  results4
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  ~
       !>  maybe2
   ::
@@ -68,19 +68,19 @@
   =.  c  ~(purge by-clock c)
   ::
   ;:  weld
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  0
       !>  size.c
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  3
       !>  max-size.c
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  ~
       !>  lookup.c
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  ~
       !>  queue.c
   ==
@@ -104,16 +104,16 @@
   =.  c  (~(trim by-clock c) 2)
   ::
   ;:  weld
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  1
       !>  size.c
   ::
     =^  results1  c  (~(get by-clock c) 3)
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  [~ "three"]
       !>  results1
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  1
       !>  ~(wyt by lookup.c)
   ==
@@ -137,29 +137,29 @@
   =.  c  (~(resize by-clock c) 0)
   ::
   =/  results1
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  0
       !>  size.c
   ::
   =/  results2
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  ~
       !>  lookup.c
   ::
   =/  results3
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  ~
       !>  queue.c
   ::
   =/  results4
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  0
       !>  max-size.c
   ::  trying to get an element just returns ~
   ::
   =^  maybe1  c  (~(get by-clock c) 3)
   =/  results5
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  ~
       !>  maybe1
   ::  trying to put an element in doesn't mutate the clock
@@ -167,7 +167,7 @@
   =.  c  (~(put by-clock c) 4 "four")
   ::
   =/  results6
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  0
       !>  size.c
   ::

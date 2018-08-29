@@ -70,19 +70,9 @@
 ::
 ++  tester
   |_  eny=@uvJ
-  ::  +expect-eq: compares !>([expected actual]) and pretty-prints the result
+  ::  +expect-eq: compares :expected and :actual and pretty-prints the result
   ::
   ++  expect-eq
-    |=  a=vase
-    ^-  tang
-    ?@  q.a  [palm+[": " ~ ~ ~]^~[>%ex-expected-pair< (sell a)]]~
-    ?:  =(-.q.a +.q.a)
-      ~
-    :~  palm+[": " ~ ~ ~]^~[leaf+"expected" (sell (slot 2 a))]
-        palm+[": " ~ ~ ~]^~[leaf+"actual" (sell (slot 3 a))]
-    ==
-  ::
-  ++  expect-nu-eq
     |=  [expected=vase actual=vase]
     ^-  tang
     ::

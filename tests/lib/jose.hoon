@@ -21,11 +21,11 @@
     ==
   =/  k  (need (pass:de:jwk jk))
   ;:  weld
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  jk
       !>  (pass:en:jwk k)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  'NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs'
       !>  (pass:thumb:jwk k)
   ==
@@ -105,28 +105,28 @@
   =/  lod-order=(list @t)  ['iss' 'exp' 'http://example.com/is_root' ~]
   ?>  ?=(^ sek.k)
   ;:  weld
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  jk
       !>  (ring:en:jwk k)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  n.pub.k
       !>  `@ux`(mul p.u.sek.k q.u.sek.k)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  d.u.sek.k
       !>  `@ux`(~(inv fo (elcm:rsa (dec p.u.sek.k) (dec q.u.sek.k))) e.pub.k)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  hedt
       !>  (en-base64url (as-octt:mimes:html (en-json-sort aor hed)))
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  lodt
       !>  %-  en-base64url
           (as-octt:mimes:html (en-json-sort (eor lte lod-order) lod))
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  exp-ws
       !>  (en-base64url (en:octn (~(sign rs256 k) inp-ws)))
   ==
@@ -207,7 +207,7 @@
           't-CZRp1F0k6w'
       ==
     [%o (my payload+s+payload protected+s+protected signature+s+signature ~)]
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  exp
     !>  (sign:jws k protected-header bod)
 --

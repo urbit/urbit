@@ -71,31 +71,31 @@
   =/  k3-pub=key:rsa
     (need (pass:de:pem:pkcs1 kpem3-pub))
   ;:  weld
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  kpem1
       !>  (ring:en:pem:pkcs1 k1)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  k1
       !>  (need (ring:de:pem:pkcs1 kpem1))
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  kpem2
       !>  (ring:en:pem:pkcs1 k2)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  k2
       !>  (need (ring:de:pem:pkcs1 kpem2))
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  kpem3
       !>  (ring:en:pem:pkcs1 k3)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  kpem3-pub
       !>  (pass:en:pem:pkcs1 k3)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  k3-pub
       !>  `key:rsa`[pub.k3 ~]
   ==
@@ -174,19 +174,19 @@
   =/  k=key:rsa
     (need (ring:de:pem:pkcs1 kpem))
   ;:  weld
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  pub
       !>  (pass:en:pem:pkcs8 k)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  `k(sek ~)
       !>  (pass:de:pem:pkcs8 pub)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  pri
       !>  (ring:en:pem:pkcs8 k)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  `k
       !>  (ring:de:pem:pkcs8 pri)
   ==
@@ -207,19 +207,19 @@
       '-----END PUBLIC KEY-----'
   ==
   ;:  weld
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  kpem
       !>  (pass:en:pem:pkcs1 k)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  `k
       !>  (pass:de:pem:pkcs1 kpem)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  kpem2
       !>  (pass:en:pem:pkcs8 k)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  `k
       !>  (pass:de:pem:pkcs8 kpem2)
   ==
@@ -303,29 +303,29 @@
     ==
   =/  sig=@ux  (~(sign rs256 k2) inp2)
   ;:  weld
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  exp1
       !>  (~(sign rs256 k1) inp1)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  &
       !>  (~(verify rs256 k1) exp1 inp1)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  emsa1
       !>  `@ux`(~(emsa rs256 k1) inp1)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  &
       !>  (~(verify rs256 k2) sig inp2)
   ::
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  exp2
       !>  sig
   ::
     :: save kpem2 to private.pem
     :: echo "hello" | openssl dgst -sha256 -sign private.pem | base64
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  exp2b64
       !>  (en:base64 (met 3 sig) (swp 3 sig))
   ==
@@ -383,7 +383,7 @@
     ==
   =/  hot1  /org/urbit/zod
   =/  hot2  /urbit/zod
-  %+  expect-nu-eq
+  %+  expect-eq
     !>  csr-pem
     !>  (en:pem:pkcs10 k [hot1 hot2 ~])
 --

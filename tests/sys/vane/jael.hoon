@@ -36,7 +36,7 @@
         ?>  ?=(^ moves)
         ?>  ?=([* %pass * %e %hiss *] i.moves)
         ::
-        %+  expect-nu-eq
+        %+  expect-eq
           !>(hiss-httr)
           q.r.q.q.i.moves
     ==
@@ -57,7 +57,7 @@
     %-  call:jael  call-args
   ::
   =/  output=tang
-    %+  expect-nu-eq
+    %+  expect-eq
       !>  expected-moves
       !>  moves
   ::
