@@ -84,7 +84,7 @@
             (expect-eq !>(%.n) !>(live.note))
           ::
           %-  expect-schematic:test-ford
-          :_  [-:!>(*schematic:ford) schematic.note]
+          :_  !>(schematic.note)
           ^-  schematic:ford
           :+  %pin  ~1111.1.1
           :-  %list
