@@ -1,4 +1,4 @@
-/+  *test
+/+  *test, test-ford
 ::
 /=  clay-raw  /:  /===/sys/vane/clay  /!noun/
 ::
@@ -83,67 +83,19 @@
           %+  weld
             (expect-eq !>(%.n) !>(live.note))
           ::
-          ?.  ?=(%pin -.schematic.note)
-            [%leaf "bad move, not a %pin: {<move>}"]~
+          %-  expect-schematic:test-ford
+          :_  !>(schematic.note)
+          ^-  schematic:ford
+          :+  %pin  ~1111.1.1
+          :-  %list
+          :~  :-  [%$ %path -:!>(*path) /file1/noun]
+              :^  %cast  [~nul %home]  %noun
+              [%$ %noun %noun 'file1']
           ::
-          %+  weld
-            (expect-eq !>(~1111.1.1) !>(date.schematic.note))
-          ::
-          =/  list-schematic=schematic:ford  schematic.schematic.note
-          ::
-          ?.  ?=(%list -.list-schematic)
-            [%leaf "bad move, not a %list: {<move>}"]~
-          ::
-          ?.  ?=([* * ~] schematics.list-schematic)
-            [%leaf "bad move, wrong number of sub-schematics: {<move>}"]~
-          ::
-          =/  s1=schematic:ford  i.schematics.list-schematic
-          =/  s2=schematic:ford  i.t.schematics.list-schematic
-          ::  test :s1
-          ::
-          ?.  ?=([^ *] s1)
-            [%leaf "bad move, s1 not cell: {<move>}"]~
-          ::
-          =/  path1=schematic:ford  -.s1
-          ?.  ?=([%$ %path *] path1)
-            [%leaf "bad move, path1 not %path: {<move>}"]~
-          ::
-          =/  vase1=vase  q.literal.path1
-          ::
-          %+  weld
-            (expect-eq !>([-:!>(*path) /file1/noun]) !>(vase1))
-          ::
-          =/  cast1=schematic:ford  +.s1
-          ::
-          ?.  ?=([%cast [%~nul %home] %noun *] cast1)
-            [%leaf "bad move, wrong cast1: {<move>}"]~
-          ::
-          =/  lit1=schematic:ford  input.cast1
-          ::
-          %+  weld
-            (expect-eq !>([%$ %noun %noun 'file1']) !>(lit1))
-          ::  test :s2
-          ::
-          ?.  ?=([^ *] s2)
-            [%leaf "bad move, s2 not cell: {<move>}"]~
-          ::
-          =/  path2=schematic:ford  -.s2
-          ?.  ?=([%$ %path *] path2)
-            [%leaf "bad move, path2 not %path: {<move>}"]~
-          ::
-          =/  vase2=vase  q.literal.path2
-          ::
-          %+  weld
-            (expect-eq !>([-:!>(*path) /file2/noun]) !>(vase2))
-          ::
-          =/  cast2=schematic:ford  +.s2
-          ::
-          ?.  ?=([%cast [%~nul %home] %noun *] cast2)
-            [%leaf "bad move, wrong cast2: {<move>}"]~
-          ::
-          =/  lit2=schematic:ford  input.cast2
-          ::
-          (expect-eq !>([%$ %noun %noun 'file2']) !>(lit2))
+              :-  [%$ %path -:!>(*path) /file2/noun]
+              :^  %cast  [~nul %home]  %noun
+              [%$ %noun %noun 'file2']
+          ==
     ==  ==
   ::
   ;:  welp
