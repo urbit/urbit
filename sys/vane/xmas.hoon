@@ -456,7 +456,8 @@
         =+  mex=((hard {p/{p/life q/life} q/gree r/@}) (cue msg))
         =+  rig=(~(got by wyr) p.p.mex)
         =+  pas=(whom q.p.mex q.mex)
-        =+  [key out]=(need (tear:as:(nol:nu:crub:crypto rig) pas r.mex))
+        =+  mes=(need (tear:as:(nol:nu:crub:crypto rig) pas r.mex))
+        =+  [key out]=((hard (pair @ux @ux)) (cue mes))
         :-  :~  [%link ~2018.1.1 key]
                 [%meet q.mex]
             ==
@@ -465,7 +466,7 @@
           $open
         =+  mex=((hard {p/{$~ q/life} q/gree r/@}) (cue msg))
         =+  pas=(whom q.p.mex q.mex)
-        =+  out=(need (sure:as:(com:nu:crub:crypto pas) *code r.mex))
+        =+  out=(need (sure:as:(com:nu:crub:crypto pas) r.mex))
         [[%meet q.mex]~ & (maul r.mex)]
       ==
   ++  maul  |=(@ `meal`((hard meal) (cue +<)))          ::  unpack message
@@ -956,14 +957,14 @@
       %^    jam
           [~ lyf]
         `gree`!!
-      (sign:as:cry *code hom)
+      (sign:as:cry hom)
     =+  key=(shaz :(mix (mug ham) now eny))
     :-  [%line ~2018.1.1 key]~
     :-  %full
     %^    jam
         [u.cur.det lyf]
       `gree`!!
-    (seal:as:cry pub.dat:(~(got by pub.det) u.cur.det) key hom)
+    (seal:as:cry pub.dat:(~(got by pub.det) u.cur.det) (jam key hom))
   --
 ::                                                      ::
 ::::  rail                                              ::::  message manager

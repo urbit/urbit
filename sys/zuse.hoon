@@ -77,6 +77,7 @@
       {$n p/@ta}                                        ::  number
       {$s p/@t}                                         ::  string
   ==                                                    ::
+++  life  @ud                                           ::  ship version
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  sack  {p/ship q/ship}                               ::  incoming [our his]
@@ -228,10 +229,8 @@
         ::
           $=  net                                       ::  networking
           %-  unit
-          $:  encryption-key=pass
-              authentication-key=pass
-              crypto-suite=@ud
-              key-revision=@ud
+          $:  =life
+              =pass
               continuity-number=@ud
               sponsor=(unit @p)
               escape=(unit @p)
@@ -248,7 +247,7 @@
     ++  complete-ship
       $:  state=hull
           history=(list diff-hull)  ::TODO  maybe block/event nr?  ::  newest first
-          keys=(map @ud (pair @ @))
+          keys=(map life pass)
       ==
     ::
     ++  fleet  (map @p complete-ship)
@@ -323,7 +322,7 @@
           [%owner new=address]                          ::  OwnerChanged
           [%activated who=@p]                           ::  Activated
           [%spawned who=@p]                             ::  Spawned
-          [%keys enc=@ aut=@ sut=@ud rev=@ud]           ::  ChangedKeys
+          [%keys =life =pass]                           ::  ChangedKeys
           [%continuity new=@ud]                         ::  BrokeContinuity
           [%sponsor new=(unit @p)]                      ::  EscapeAcc/LostSpons
           [%escape new=(unit @p)]                       ::  EscapeReq/Can
@@ -337,8 +336,7 @@
     ++  contracts
       |%
       ++  ships
-        0xe083.4579.269e.ac6b.eca2.
-          882a.6a21.f6fb.0b1d.7196
+        0x6c22.3e68.fefe.b0d2.aaa1.3d5a.3b12.f50f.8b6b.498a
       --
     ::
     ::  hashes of ship event signatures
@@ -476,11 +474,10 @@
   ++  acru  $_  ^?                                      ::  asym cryptosuite
     |%                                                  ::  opaque object
     ++  as  ^?                                          ::  asym ops
-      |%  ++  seal  |~({a/pass b/@ c/@} *@)             ::  encrypt to a
-          ++  sign  |~({a/@ b/@} *@)                    ::  certify as us
-          ++  sure  |~({a/@ b/@} *(unit @))             ::  authenticate from us
-          ++  tear  |~  {a/pass b/@}                    ::  accept from a
-                    *(unit {p/@ q/@})                   ::
+      |%  ++  seal  |~({a/pass b/@} *@)                 ::  encrypt to a
+          ++  sign  |~(a/@ *@)                          ::  certify as us
+          ++  sure  |~(a/@ *(unit @))                   ::  authenticate from us
+          ++  tear  |~({a/pass b/@} *(unit @))          ::  accept from a
       --  ::as                                          ::
     ++  de  |~({a/@ b/@} *(unit @))                     ::  symmetric de, soft
     ++  dy  |~({a/@ b/@} *@)                            ::  symmetric de, hard
@@ -493,8 +490,8 @@
       --  ::ex                                          ::
     ++  nu  ^?                                          ::  reconstructors
       |%  ++  pit  |~({a/@ b/@} ^?(..nu))               ::  from [width seed]
-          ++  nol  |~(a/@ ^?(..nu))                     ::  from naked ring
-          ++  com  |~(a/@ ^?(..nu))                     ::  from naked pass
+          ++  nol  |~(a/ring ^?(..nu))                  ::  from ring
+          ++  com  |~(a/pass ^?(..nu))                  ::  from pass
       --  ::nu                                          ::
     --  ::acru                                          ::
   ++  bait  {p/skin q/@ud r/dove}                       ::  fmt nrecvd spec
@@ -569,7 +566,6 @@
     ==                                                  ::
   ++  lang  @ta                                         ::  IETF lang as code
   ++  lice  {p/ship q/buck}                             ::  full license
-  ++  life  @ud                                         ::  regime number
   ++  mace  (list {p/life q/ring})                      ::  private secrets
   ++  meal                                              ::  payload
     $%  {$back p/coop q/flap r/@dr}                     ::  ack
@@ -1983,9 +1979,9 @@
       ==  ==                                            ::
     ++  gift                                            ::  out result <-$
       $%  [%mack p=(unit tang)]                         ::  message n/ack
-          [%pubs p=kist]                                ::  public keys
+          [%pubs =life pubs=(map life pass)]            ::  public keys
           {$vest p/tally}                               ::  balance update
-          {$vein p/life q/(map life ring)}              ::  private keys
+          [%vein =life vein=(map life ring)]            ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
           [%vent p=chain]                               ::  ethereum changes
       ==                                                ::
@@ -2087,7 +2083,6 @@
           sut=@ud                                       ::  crypto-suite version
       ==                                                ::
     ++  kist  (map life kest)                           ::  public key history
-    ++  life  @ud                                       ::  ship version
     ++  mind  {who/ship lyf/life}                       ::  key identifier
     ++  name  (pair @ta @t)                             ::  ascii / unicode
     ++  oath  @                                         ::  signature
@@ -2201,7 +2196,6 @@
         {$is p/@ud q/(unit lane) r/@is}                 ::  IPv6 w+alternates
         {$ix p/@da q/@ud r/@if}                         ::  IPv4 provisional
     ==                                                  ::
-  ++  life  @ud                                         ::  regime number
   --  ::xmas
 --  ::
 ::                                                      ::  ::
@@ -3615,32 +3609,31 @@
       |%
       ::                                                ::  ++sign:as:crub:
       ++  sign                                          ::
-        |=  {@ msg/@}
+        |=  msg=@
         ^-  @ux
         ?~  sek  ~|  %pubkey-only  !!
         (jam [(sign:ed msg sgn.u.sek) msg])
       ::                                                ::  ++sure:as:crub:
       ++  sure                                          ::
-        |=  {@ txt/@}
+        |=  txt=@
         ^-  (unit @ux)
         =+  ((hard {sig/@ msg/@}) (cue txt))
         ?.  (veri:ed sig msg sgn.pub)  ~
         (some msg)
       ::                                                ::  ++seal:as:crub:
       ++  seal                                          ::
-        |=  {bpk/pass m1/@ m2/@}
+        |=  {bpk/pass msg/@}
         ^-  @ux
         ?~  sek  ~|  %pubkey-only  !!
         ?>  =('b' (end 3 1 bpk))
         =+  pk=(rsh 8 1 (rsh 3 1 bpk))
         =+  shar=(shax (shar:ed pk cry.u.sek))
-        =+  msg=(jam m1 m2)
-        =+  smsg=(sign ~ msg)
+        =+  smsg=(sign msg)
         (jam (~(en siva:aes shar ~) smsg))
       ::                                                ::  ++tear:as:crub:
       ++  tear                                          ::
         |=  {bpk/pass txt/@}
-        ^-  (unit (pair @ux @ux))
+        ^-  (unit @ux)
         ?~  sek  ~|  %pubkey-only  !!
         ?>  =('b' (end 3 1 bpk))
         =+  pk=(rsh 8 1 (rsh 3 1 bpk))
@@ -3648,9 +3641,7 @@
         =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
         =+  try=(~(de siva:aes shar ~) iv len cph)
         ?~  try  ~
-        =+  veri=(sure:as:(com:nu:crub bpk) ~ u.try)
-        ?~  veri  ~
-        (some ((hard (pair @ux @ux)) (cue u.veri)))
+        (sure:as:(com:nu:crub bpk) u.try)
       --  ::as
     ::                                                  ::  ++de:crub:crypto
     ++  de                                              ::  decrypt
@@ -3720,191 +3711,7 @@
   ::                                                    ::
   ::::                    ++crua:crypto                 ::  (2b5) suite B, RSA
     ::                                                  ::::
-  ++  crua  !:
-    ^-  acru
-    =|  {mos/@ pon/(unit {p/@ q/@ r/{p/@ q/@} s/_*fu})}
-    =>  |%
-        ::                                              ::  ++mx:crua:crypto
-        ++  mx                                          ::  bit length
-          (dec (met 0 mos))
-        ::                                              ::  ++dap:crua:crypto
-        ++  dap                                         ::  OEAP decode
-          |=  {wid/@ xar/@ dog/@}  ^-  {p/@ q/@}
-          =+  pav=(sub wid xar)
-          =+  qoy=(cut 0 [xar pav] dog)
-          =+  dez=(mix (end 0 xar dog) (shaw %pad-b xar qoy))
-          [dez (mix qoy (shaw %pad-a pav dez))]
-        ::                                              ::  ++pad:crua:crypto
-        ++  pad                                         ::  OEAP encode
-          |=  {wid/@ rax/{p/@ q/@} meg/@}  ^-  @
-          =+  pav=(sub wid p.rax)
-          ?>  (gte pav (met 0 meg))
-          ^-  @
-          =+  qoy=(mix meg (shaw %pad-a pav q.rax))
-          =+  dez=(mix q.rax (shaw %pad-b p.rax qoy))
-          (can 0 [p.rax dez] [pav qoy] ~)
-        ::                                              ::  ++pull:crua:crypto
-        ++  pull                                        ::
-          |=(a/@ (~(exp fo mos) 3 a))
-        ::                                              ::  ++push:crua:crypto
-        ++  push                                        ::
-          |=(a/@ (~(exp fo mos) 5 a))
-        ::                                              ::  ++pump:crua:crypto
-        ++  pump                                        ::
-          |=  a/@  ^-  @
-          ?~  pon  !!
-          (out.s.u.pon (exp.s.u.pon p.r.u.pon (sit.s.u.pon a)))
-        ::                                              ::  ++punt:crua:crypto
-        ++  punt                                        ::
-          |=  a/@  ^-  @
-          ?~  pon  !!
-          (out.s.u.pon (exp.s.u.pon q.r.u.pon (sit.s.u.pon a)))
-        --  ::
-    |%
-    ::                                                  ::  ++as:crua:crypto
-    ++  as                                              ::
-      =>  |%
-          ::                                            ::  ++haul:as:crua:
-          ++  haul                                      ::
-            |=  a/pass
-            =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-            ?>  =('a' mag)
-            ..as(mos bod, pon ~)
-          --  ::
-      ^?
-      |%
-      ::                                                ::  ++seal:as:crua:
-      ++  seal                                          ::
-        |=  {a/pass b/@ c/@}
-        ^-  @
-        =>  .(c (sign b c))
-        =+  her=(haul a)
-        =+  det=(lte (add 256 (met 0 c)) mx.her)
-        =+  lip=?:(det c 0)
-        =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
-        ^=  mav  ^-  {p/? q/@}
-        :-  det
-        =+  dog=(pad mx.her [256 b] lip)
-        =+  hog=(push.her dog)
-        =+  ben=(en b c)
-        ?:(det hog (jam hog ben))
-      ::                                                ::  ++sign:as:crua:
-      ++  sign                                          ::
-        |=  {a/@ b/@}  ^-  @
-        =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
-        ^=  mav  ^-  {p/? q/@}
-        =+  det=(lte (add 128 (met 0 b)) mx)
-        :-  det
-        =+  hec=(shaf (mix %agis a) b)
-        =+  dog=(pad mx [128 hec] ?:(det b 0))
-        =+  hog=(pump dog)
-        ?:(det hog (jam hog b))
-      ::                                                ::  ++sure:as:crua:
-      ++  sure                                          ::
-        |=  {a/@ b/@}
-        ^-  (unit @)
-        =+  [det==(0 (end 0 1 b)) bod=(rsh 0 1 b)]
-        =+  gox=?:(det [p=bod q=0] ((hard {p/@ q/@}) (cue bod)))
-        =+  dog=(pull p.gox)
-        =+  pig=(dap mx 128 dog)
-        =+  log=?:(det q.pig q.gox)
-        ?.(=(p.pig (shaf (mix %agis a) log)) ~ [~ log])
-      ::                                                ::  ++tear:as:crua:
-      ++  tear                                          ::
-        |=  {a/pass b/@}
-        ^-  (unit {p/@ q/@})
-        =+  her=(haul a)
-        =+  [det==(0 (end 0 1 b)) bod=(rsh 0 1 b)]
-        =+  gox=?:(det [p=bod q=0] ((hard {p/@ q/@}) (cue bod)))
-        =+  dog=(punt p.gox)
-        =+  pig=(dap mx 256 dog)
-        =+  ^=  cow
-            ^-  (unit @)
-            ?:  det
-              [~ q.pig]
-            (de p.pig q.gox)
-        ?~  cow  ~
-        =>  .(cow (sure:as.her p.pig u.cow))
-        ?~  cow  ~
-        [~ p.pig u.cow]
-      --  ::as
-    ::                                                  ::  ++de:crua:crypto
-    ++  de                                              ::  decrypt
-      |~  {key/@ cep/@}  ^-  (unit @)
-      =+  toh=(met 8 cep)
-      ?:  (lth toh 2)
-        ~
-      =+  adj=(dec toh)
-      =+  [hax=(end 8 1 cep) bod=(rsh 8 1 cep)]
-      =+  msg=(mix (~(raw og (mix hax key)) (mul 256 adj)) bod)
-      ?.  =(hax (shax (mix key (shax (mix adj msg)))))
-        ~
-      [~ msg]
-    ::                                                  ::  ++dy:crua:crypto
-    ++  dy                                              ::  need decrypt
-      |~({a/@ b/@} (need (de a b)))
-    ::                                                  ::  ++en:crua:crypto
-    ++  en                                              ::  encrypt
-      |~  {key/@ msg/@}  ^-  @ux
-      =+  len=(met 8 msg)
-      =+  adj=?:(=(0 len) 1 len)
-      =+  hax=(shax (mix key (shax (mix adj msg))))
-      (rap 8 hax (mix msg (~(raw og (mix hax key)) (mul 256 adj))) ~)
-    ::                                                  ::  ++ex:crua:crypto
-    ++  ex                                              ::  extract
-      ^?
-      |%
-      ::                                                ::  ++fig:ex:crua:crypto
-      ++  fig                                           ::  fingerprint
-        `@uvH`(shaf %afig mos)
-      ::                                                ::  ++pac:ex:crua:crypto
-      ++  pac                                           ::  private fingerprint
-        `@uvG`(end 6 1 (shaf %acod sec))
-      ::                                                ::  ++pub:ex:crua:crypto
-      ++  pub                                           ::  public fingerprint
-        `pass`(cat 3 'a' mos)
-      ::                                                ::  ++sec:ex:crua:crypto
-      ++  sec                                           ::  private key
-        `ring`?~(pon !! (cat 3 'A' (jam p.u.pon q.u.pon)))
-      --  ::ex
-    ::                                                  ::  ++nu:crua:crypto
-    ++  nu                                              ::
-      =>  |%
-          ::                                            ::  ++elcm:nu:crua:
-          ++  elcm                                      ::
-            |=  {a/@ b/@}
-            (div (mul a b) d:(egcd a b))
-          ::                                            ::  ++eldm:nu:crua:
-          ++  eldm                                      ::
-            |=  {a/@ b/@ c/@}
-            (~(inv fo (elcm (dec b) (dec c))) a)
-          ::                                            ::  ++ersa:nu:crua:
-          ++  ersa                                      ::
-            |=  {a/@ b/@}
-            [a b [(eldm 3 a b) (eldm 5 a b)] (fu a b)]
-          --  ::
-      ^?
-      |%
-      ::                                                ::  ++com:nu:crua:crypto
-      ++  com                                           ::
-        |=  a/@
-        ^+  ^?(..nu)
-        ..nu(mos a, pon ~)
-      ::                                                ::  ++pit:nu:crua:crypto
-      ++  pit                                           ::
-        |=  {a/@ b/@}
-        =+  c=(rsh 0 1 a)
-        =+  [d=(ramp c [3 5 ~] b) e=(ramp c [3 5 ~] +(b))]
-        ^+  ^?(..nu)
-        ..nu(mos (mul d e), pon [~ (ersa d e)])
-      ::                                                ::  ++nol:nu:crua:crypto
-      ++  nol                                           ::
-        |=  a/@
-        ^+  ^?(..nu)
-        =+  b=((hard {p/@ q/@}) (cue a))
-        ..nu(mos (mul p.b q.b), pon [~ (ersa p.b q.b)])
-      --  ::nu
-    --  ::crua
+  ++  crua  !!
   ::                                                    ::
   ::::                    ++test:crypto                 ::  (2b6) test crypto
     ::                                                  ::::
@@ -3925,12 +3732,12 @@
       ::
       =/  secret-key  %-  shaz
           'Let there be no duplicity when taking a stand against him.'
-      =/  signed-key   (sign:as.ali ~ secret-key)
-      =/  crypted-key  (seal:as.ali pub:ex.bob-pub ~ signed-key)
+      =/  signed-key   (sign:as.ali secret-key)
+      =/  crypted-key  (seal:as.ali pub:ex.bob-pub signed-key)
       ::  bob decrypts and verifies
       =/  decrypt-key-attempt  (tear:as.bob pub:ex.ali-pub crypted-key)
       =/  decrypted-key    ~|  %decrypt-fail  (need decrypt-key-attempt)
-      =/  verify-key-attempt   (sure:as.ali-pub ~ q.decrypted-key)
+      =/  verify-key-attempt   (sure:as.ali-pub decrypted-key)
       =/  verified-key     ~|  %verify-fail  (need verify-key-attempt)
       ::  bob encrypts with symmetric key
       =/  crypted-msg  (en.bob verified-key msg)
@@ -6696,6 +6503,13 @@
     =,  constitution:ethe
     |%
     ::
+    ++  pass-from-eth
+      |=  [enc=octs aut=octs sut=@ud]
+      ^-  (unit pass)
+      ?.  &(=(1 sut) =(p.enc 32) =(p.aut 32))
+        ~
+      `(cat 3 'b' (cat 8 q.aut q.enc))
+    ::
     ++  hull-from-eth
       |=  [who=@p hull:eth-noun]
       ^-  hull
@@ -6708,15 +6522,10 @@
         ::
         ?:  =(0 key-revision)  ~
         :-  ~
-        :*  ?>  =(32 p.encryption-key)
-            `pass`q.encryption-key
+        :*  key-revision
           ::
-            ?>  =(32 p.authentication-key)
-            `pass`q.authentication-key
-          ::
-            crypto-suite
-          ::
-            key-revision
+            %-  need
+            (pass-from-eth encryption-key authentication-key crypto-suite)
           ::
             continuity-number
           ::
@@ -6782,8 +6591,7 @@
         =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
             %+  decode-results  data.log
             ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
-        ?>  &(=(p.enc 32) =(p.aut 32))  ::  sanity
-        `[who %keys q.enc q.aut sut rev]
+        `[who %keys rev (need (pass-from-eth enc aut sut))]
       ::
       ?:  =(event.log broke-continuity)
         =/  who=@  (decode-topics topics.log ~[%uint])
@@ -6813,7 +6621,7 @@
       ::
           %activated
         %_  hul
-          net  `[0 0 0 0 0 `(sein:title who.dif) ~]
+          net  `[0 0 0 `(sein:title who.dif) ~]
           kid  ?.  ?=(?(%czar %king) (clan:title who.dif))  ~
                `[0x0 0 ~]
         ==
@@ -6829,13 +6637,7 @@
         ?>  ?=(^ net.hul)
         ?-  -.dif
             %keys
-          =-  hul(u.net -)
-          %_  u.net.hul
-            encryption-key      enc.dif
-            authentication-key  aut.dif
-            crypto-suite        sut.dif
-            key-revision        rev.dif
-          ==
+          hul(life.u.net life.dif, pass.u.net pass.dif)
         ::
             %sponsor
           ?~  new.dif  hul(sponsor.u.net ~)

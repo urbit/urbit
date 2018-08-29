@@ -142,7 +142,6 @@
 ++  lath        !!                                      ::  pipeline stage
 ++  lawn        !!                                      ::  pipeline (??)
 ++  lice        lice:ames                               ::  full license
-++  life        life:xmas                               ::  regime number
 ++  lint        !!                                      ::  fragment array
 ++  lobe        lobe:clay                               ::  blob ref
 ++  love        love:eyre                               ::  http response

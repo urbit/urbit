@@ -57,11 +57,11 @@
       $=  own                                           ::  vault (vein)
         $:  yen/(set duct)                              ::  trackers
             lyf/life                                    ::  version
-            jaw/(map life ring)  ::TODO  pair of rings? ::  private keys
+            jaw/(map life ring)                         ::  private keys
         ==                                              ::
       $=  puk                                           ::  public keys (pubs)
         $:  yen=(jug ship duct)                         ::  trackers
-            kyz=(map ship kist)                         ::  public key versions
+            kyz=(map ship (map life pass))              ::  public key versions
         ==                                              ::
       $=  eth                                           ::  ethereum (vent)
         ::TODO  the subscribers here never hear dns or hul...
@@ -900,8 +900,11 @@
     ++  pubs
       |=  who=ship
       %_  ..feed
-        moz      =-  [[hen %give %pubs -] moz]
-                 (fall (~(get by kyz.puk) who) ~)
+        moz      =/  zen  (~(get by kyz.puk) who)
+                 ?~  zen  moz
+                 =/  lyf  (roll ~(tap in ~(key by u.zen)) max)
+                 ?:  =(0 lyf)  moz
+                 [[hen %give %pubs lyf u.zen] moz]
         yen.puk  (~(put ju yen.puk) who hen)
       ==
     ::                                                  ::  ++vein:feed:su
@@ -930,7 +933,7 @@
     |%
     ::                                                  ::  ++pubs:feel:su
     ++  pubs                                            ::  kick public keys
-      |=  kez=(map ship kist)
+      |=  kez=(map ship (map life pass))
       =/  kes  ~(tap by kez)
       ::
       ::  process change for each ship separately
@@ -940,6 +943,7 @@
       =;  fel  $(kes t.kes, ..feel fel)
       =*  who  p.i.kes
       =*  kyn  q.i.kes
+      =/  lyf  (roll ~(tap in ~(key by kyn)) max)
       ::
       ::  build new public key store
       ::
@@ -950,9 +954,12 @@
       ::  update public key store and notify subscribers
       ::  of the change
       ::
+      ::  XX we're sending a map here, but it only contains the update
+      ::  send full key history? or use [%pubs =life =pass]
+      ::
       %+  exec(kyz.puk -)
         (~(get ju yen.puk) who)
-      [%give %pubs kyn]
+      [%give %pubs lyf kyn]
     ::                                                  ::  ++vein:feel:su
     ++  vein                                            ::  kick private keys
       ^+  ..feel
@@ -1070,17 +1077,22 @@
       ?:(new &+evs |+evs)
     ::
     =+  vez=(order-events:ez ~(tap by evs))
-    =|  kyz=(map ship kist)
+    =|  kyz=(map ship (map life pass))
     |^  ?~  vez  (pubs:feel kyz)
         =^  kyn  ..file  (file-event i.vez)
         $(vez t.vez, kyz kyn)
     ::
     ++  file-keys
-      |=  [who=ship rev=life pub=kest]
+      |=  [who=ship =life =pass]
       ^+  kyz
-      =-  (~(put by kyz) who -)
-      =-  (~(put by -) rev pub)
-      (fall (~(get by kyz) who) ~)
+      =/  zen  (fall (~(get by kyz) who) ~)
+      =/  pub  (~(get by zen) life)
+      ?~  pub
+        %+  ~(put by kyz)
+          who
+        (~(put by zen) life pass)
+      ~|  [%key-mismatch who life]
+      ?>(=(u.pub pass) kyz)
     ::
     ++  file-event
       |=  [wer=event-id dif=diff-constitution]
@@ -1108,12 +1120,13 @@
         :-  ?~  kez  kyz
             (file-keys who u.kez)
         ..file(hul.eth (~(put by hul.eth) who hel))
-      ^-  [hel=hull kez=(unit (pair life kest))]
+      ^-  [hel=hull kez=(unit (pair life pass))]
       =+  hul=(fall (~(get by hul.eth) who) *hull)
       ::
       ::  if new, first dif must be %full
+      ::  XX review, requirement seems obsolete
       ::
-      ?>  |((~(has by hul.eth) who) ?=(%full -.dif))
+      :: ?>  |((~(has by hul.eth) who) ?=(%full -.dif))
       ::
       ::  sanity checks, should never fail if we operate correctly
       ::
@@ -1121,7 +1134,7 @@
             %spawned      ?>  ?=(^ kid.hul)
                           !(~(has in spawned.u.kid.hul) who.dif)
             %keys         ?>  ?=(^ net.hul)
-                          =(rev.dif +(key-revision.u.net.hul))
+                          =(life.dif +(life.u.net.hul))
             %continuity   ?>  ?=(^ net.hul)
                           =(new.dif +(continuity-number.u.net.hul))
           ==
@@ -1130,14 +1143,10 @@
       ::
       :-  (apply-hull-diff hul dif)
       ?+  -.dif  ~
-        %keys   `[rev.dif enc.dif aut.dif sut.dif]
+        %keys   `[life pass]:dif
         %full   ?~  net.new.dif  ~
                 ::TODO  do we want/need to do a diff-check
-                =>  u.net.new.dif
-                :+  ~  key-revision
-                :+  encryption-key
-                  authentication-key
-                crypto-suite
+                `[life pass]:u.net.new.dif
       ==
     ::
     ++  file-dns

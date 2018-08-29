@@ -338,7 +338,13 @@
       =>  .(pax `path`[%req t.pax])
       ?~  q.+>.sih 
         (mo-pass [%sys pax] %g %deal [him our] dap %pump ~)
-      ~&  [%diff-bad-ack q.+>.sih]                      ::  should not happen
+      :: should not happen (XX wat mean?)
+      ::
+      %-  ?.  ?=([~ ~ %mack *] q.+>.sih)
+            ~&  [%diff-bad-ack q.+>.sih]
+            same
+          ~&  [%diff-bad-ack %mack]
+          (slog (flop q.,.+>.q.+>.sih))
       =.  +>.$  (mo-pass [%sys pax] %g %deal [him our] dap %pull ~)
       (mo-pass [%sys pax] %a %want [our him] [%g %gh dap ~] [num %x ~])
     ::
