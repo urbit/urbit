@@ -2,6 +2,12 @@
 =,  ford
 =,  tester:tester
 |%
+::  +expect-schematic: assert a +schematic:ford is what we expect
+::
+::    Since Ford requests contain types, we can't do simple
+::    equality checking. This function handles all the different
+::    kinds of +schematic:ford, dealing with types as necessary.
+::
 ++  expect-schematic
   |=  [expected=schematic actual=vase]
   ^-  tang
