@@ -1,103 +1,9 @@
-/+  tester
+/+  base64, tester
 =,  eyre
 ::
 ::::  %zuse additions
 ::
 |%
-::  +rev: reverses block order, accounting for leading zeroes
-::
-::    XX deduplicate with Mark's eth stuff
-::
-++  rev
-  ::  boq: block size
-  ::  len: size of dat, in boq
-  ::  dat: data to reverse
-  ::
-  |=  [boq=bloq len=@ud dat=@]
-  =+  (swp boq dat)
-  (lsh boq (sub len (met boq dat)) -)
-::  |base64: flexible base64 encoding for little-endian atoms
-::
-++  base64
-  ::  pad: include padding when encoding, require when decoding
-  ::  url: use url-safe characters '-' for '+' and '_' for '/'
-  ::
-  =+  [pad=& url=|]
-  |%
-  ::  +en:base64: encode +octs to base64 cord
-  ::
-  ++  en
-    |=  inp=octs
-    ^-  cord
-    ::  dif: offset from 3-byte block
-    ::
-    =/  dif=@ud  (~(dif fo 3) 0 p.inp)
-    ::  dap: reversed, 3-byte block-aligned input
-    ::
-    =/  dap=@ux  (lsh 3 dif (rev 3 inp))
-    =/  cha
-      ?:  url
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-    %-  crip
-    %-  flop
-    %+  weld
-      ?.(pad ~ (reap dif '='))
-    %+  slag  dif
-    |-  ^-  tape
-    ?:  =(0x0 dap)  ~
-    =/  d  (end 3 3 dap)
-    :*  (cut 3 [(cut 0 [0 6] d) 1] cha)
-        (cut 3 [(cut 0 [6 6] d) 1] cha)
-        (cut 3 [(cut 0 [12 6] d) 1] cha)
-        (cut 3 [(cut 0 [18 6] d) 1] cha)
-        $(dap (rsh 3 3 dap))
-    ==
-  ::  +de:base64: decode base64 cord to (unit @)
-  ::
-  ++  de
-    |=  a=cord
-    ^-  (unit octs)
-    (rush a parse)
-  ::  +parse:base64: parse base64 cord to +octs
-  ::
-  ++  parse
-    =<  ^-  $-(nail (like octs))
-        %+  sear  reduce
-        ;~  plug
-          %-  plus  ;~  pose
-            (cook |=(a=@ (sub a 'A')) (shim 'A' 'Z'))
-            (cook |=(a=@ (sub a 'G')) (shim 'a' 'z'))
-            (cook |=(a=@ (add a 4)) (shim '0' '9'))
-            (cold 62 (just ?:(url '-' '+')))
-            (cold 63 (just ?:(url '_' '/')))
-          ==
-          (stun 0^2 (cold %0 tis))
-        ==
-    |%
-    ::  +reduce:parse:base64: reduce, measure, and swap base64 digits
-    ::
-    ++  reduce
-      |=  [dat=(list @) dap=(list @)]
-      ^-  (unit octs)
-      =/  lat  (lent dat)
-      =/  lap  (lent dap)
-      =/  dif  (~(dif fo 4) 0 lat)
-      ?:  &(pad !=(dif lap))
-        ::  padding required and incorrect
-        ~&(%base-64-padding-err-one ~)
-      ?:  &(!pad !=(0 lap))
-        ::  padding not required but present
-        ~&(%base-64-padding-err-two ~)
-      =/  len  (sub (mul 3 (div (add lat dif) 4)) dif)
-      :+  ~  len
-      %+  swp  3
-      ::  %+  base  64
-      %+  roll
-        (weld dat (reap dif 0))
-      |=([p=@ q=@] (add p (mul 64 q)))
-    --
-  --
 ::  +en-base64url: url-safe base64 encoding, without padding
 ::
 ++  en-base64url
@@ -2098,7 +2004,6 @@
     ::      h9bpt.vlmm7.lh375.f6u9n.krqv8.5jcml.cujkr.v1uqv.cjhe5.nplta
   |^  =/  out=tang
           ;:  weld
-            test-base64
             test-asn1
             test-rsakey
             test-rsa
@@ -2112,24 +2017,6 @@
             test-csr
           ==
       ?~(out this ((slog out) this))
-  ::
-  ++  test-base64
-    ;:  weld
-      %-  expect-eq  !>
-        ['AQAB' (en-base64url (en:octn 65.537))]
-      %-  expect-eq  !>
-        [65.537 (de:octn (need (de-base64url 'AQAB')))]
-      :: echo "hello" | base64
-      %-  expect-eq  !>
-        ['aGVsbG8K' (en:base64 (as-octs:mimes:html 'hello\0a'))]
-      %-  expect-eq  !>
-        ['hello\0a' +:(need (de:base64 'aGVsbG8K'))]
-      :: echo -n -e "\x01\x01\x02\x03" | base64
-      %-  expect-eq  !>
-        ['AQECAw==' (en:base64 (en:octn 0x101.0203))]
-      %-  expect-eq  !>
-        [0x302.0101 +:(need (de:base64 'AQECAw=='))]
-    ==
   ::
   ++  test-asn1
     =/  nul=spec:asn1  [%nul ~]
