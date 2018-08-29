@@ -1,5 +1,5 @@
 /-  asn1
-/+  base64, der, primitive-rsa, *pkcs, *jose, tester
+/+  base64, der, primitive-rsa, *pkcs, *jose
 =,  eyre
 =*  rsa  primitive-rsa
 ::
