@@ -1123,11 +1123,6 @@
       ^-  [hel=hull kez=(unit (pair life pass))]
       =+  hul=(fall (~(get by hul.eth) who) *hull)
       ::
-      ::  if new, first dif must be %full
-      ::  XX review, requirement seems obsolete
-      ::
-      :: ?>  |((~(has by hul.eth) who) ?=(%full -.dif))
-      ::
       ::  sanity checks, should never fail if we operate correctly
       ::
       ?>  ?+  -.dif  &
