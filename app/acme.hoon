@@ -2,7 +2,6 @@
 /+  base64, der, primitive-rsa, *pkcs, *jose, tester
 =,  eyre
 =*  rsa  primitive-rsa
-::  XX move these to %zuse and dedupe libs and tests
 ::
 |%
 ::  +en-base64url: url-safe base64 encoding, without padding
