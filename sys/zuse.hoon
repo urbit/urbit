@@ -398,6 +398,16 @@
         0xcfe3.69b7.197e.7f0c.f067.93ae.2472.a9b1.
           3583.fecb.ed2f.78df.a14d.1f10.796b.847c
       ::
+      ::  ChangedManager(address,address)
+      ++  changed-manager
+        0x73cd.9f21.dac5.ada0.0bce.c622.ae57.b362.
+          3d62.867a.0104.48a4.fa99.19b1.af37.8de7
+      ::
+      ::  ChangedDelegate(address,address)
+      ++  changed-delegate
+        0x3aca.0f3b.26ca.e754.a743.7b18.4417.8ce6.
+          07f2.1ca0.cbed.955e.0621.96d3.3c91.de6c
+      ::
       ::  ChangedDns(string,string,string)
       ++  changed-dns
         0xfafd.04ad.e1da.ae2e.1fdb.0fc1.cc6a.899f.
@@ -1972,6 +1982,7 @@
       logs                                              ::  | new events
     ++  change                                          ::  urbit change
       $%  [%ethe can=chain]                             ::  on-chain change
+          [%meet who=ship]                              ::  meet in new era
           $:  %rite                                     ::  rights change
               rex/ship                                  ::  issuer
               pal/ship                                  ::  issued to
@@ -1979,7 +1990,7 @@
       ==  ==                                            ::
     ++  gift                                            ::  out result <-$
       $%  [%mack p=(unit tang)]                         ::  message n/ack
-          [%pubs =life pubs=(map life pass)]            ::  public keys
+          [%pubs public]                                ::  public keys
           {$vest p/tally}                               ::  balance update
           [%vein =life vein=(map life ring)]            ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
@@ -1992,6 +2003,11 @@
           [%e %hiss p=(unit user) q=mark r=cage]        ::  outbound user req
           [%a %want p=sock q=path r=*]                  ::  send message
           [%j %vent-result p=chain]                     ::  tmp workaround
+      ==                                                ::
+    ++  public                                          ::  public key state
+      $:  live=?                                        ::  seen in current era
+          life=life                                     ::  current key number
+          pubs=(map life pass)                          ::  pubkeys by number
       ==                                                ::
     ++  remote                                          ::  remote notification
       %+  each  safe                                    ::  &/addition
@@ -2017,6 +2033,7 @@
           ::TODO  %next for generating/putting new private key
           [%nuke ~]                                     ::  cancel tracker from
           [%pubs our=ship who=ship]                     ::  view public keys
+          [%meet our=ship who=ship]                     ::  met after breach
           [%vein our=ship]                              ::  view signing keys
           [%vent our=ship]                              ::  view ethereum events
           [%vest our=ship]                              ::  view public balance
@@ -7655,7 +7672,6 @@
         `[who %escape `wer]
       ::
       ?:  =(event.log escape-canceled)
-        ::TODO verify this is safe, topics are 2 uints
         =/  who=@  (decode-topics topics.log ~[%uint])
         `[who %escape ~]
       ::
@@ -7690,9 +7706,18 @@
             (decode-topics topics.log ~[%uint %address])
         `[who %transfer-proxy tox]
       ::
-      ::NOTE  0x8be0...57e0 is Owneable's OwnershipTransferred(address,address).
-      ::      changed-dns is handled separately since it doesn't affect hulls.
-      ~&  [%unimplemented-event event.log]
+      ~?  ?!
+          ?|  =(event.log changed-manager)
+            ::
+              =(event.log changed-delegate)
+            ::
+              ::  contract owner changed
+              .=  event.log
+              ::  OwnershipTransferred(address,address)
+              0x8be0.079c.5316.5914.1344.cd1f.d0a4.f284.
+                1949.7f97.22a3.daaf.e3b4.186f.6b64.57e0
+          ==
+        [%unimplemented-event event.log]
       ~
     ::
     ++  apply-hull-diff

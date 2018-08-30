@@ -61,7 +61,7 @@
         ==                                              ::
       $=  puk                                           ::  public keys (pubs)
         $:  yen=(jug ship duct)                         ::  trackers
-            kyz=(map ship (map life pass))              ::  public key versions
+            kyz=(map ship public)                       ::  public key state
         ==                                              ::
       $=  eth                                           ::  ethereum (vent)
         ::TODO  the subscribers here never hear dns or hul...
@@ -706,6 +706,13 @@
       %-  curd  =<  abet
       (~(pubs ~(feed su our.tac urb sub etn) hen) who.tac)
     ::
+    ::  seen after breach
+    ::    [%meet our=ship who=ship]
+    ::
+        %meet
+      %+  cure  our.tac
+      [[%meet who.tac]~ urb]
+    ::
     ::  watch private keys
     ::    {$vein $~}
     ::
@@ -866,6 +873,7 @@
         +>
       ?-  -.i.hab
         %ethe  (file can.i.hab)
+        %meet  (meet +.i.hab)
         %rite  (paid +.i.hab)
       ==
     ==
@@ -900,11 +908,10 @@
     ++  pubs
       |=  who=ship
       %_  ..feed
-        moz      =/  zen  (~(get by kyz.puk) who)
-                 ?~  zen  moz
-                 =/  lyf  (roll ~(tap in ~(key by u.zen)) max)
-                 ?:  =(0 lyf)  moz
-                 [[hen %give %pubs lyf u.zen] moz]
+        moz      =/  pub  (~(get by kyz.puk) who)
+                 ?~  pub  moz
+                 ?:  =(0 life.u.pub)  moz
+                 [[hen %give %pubs u.pub] moz]
         yen.puk  (~(put ju yen.puk) who hen)
       ==
     ::                                                  ::  ++vein:feed:su
@@ -933,33 +940,25 @@
     |%
     ::                                                  ::  ++pubs:feel:su
     ++  pubs                                            ::  kick public keys
-      |=  kez=(map ship (map life pass))
-      =/  kes  ~(tap by kez)
+      ::  puz: new public key states
+      |=  puz=(map ship public)
+      =/  pus  ~(tap by puz)
       ::
       ::  process change for each ship separately
       ::
       |-  ^+  ..feel
-      ?~  kes  ..feel
-      =;  fel  $(kes t.kes, ..feel fel)
-      =*  who  p.i.kes
-      =*  kyn  q.i.kes
-      =/  lyf  (roll ~(tap in ~(key by kyn)) max)
-      ::
-      ::  build new public key store
-      ::
-      =+  %+  ~(put by kyz.puk)  who
-          =-  (~(uni by -) kyn)
-          (fall (~(get by kyz.puk) who) ~)
+      ?~  pus  ..feel
+      =;  fel  $(pus t.pus, ..feel fel)
+      =*  who  p.i.pus
+      =*  pub  q.i.pus
       ::
       ::  update public key store and notify subscribers
-      ::  of the change
+      ::  of the new state
       ::
-      ::  XX we're sending a map here, but it only contains the update
-      ::  send full key history? or use [%pubs =life =pass]
-      ::
-      %+  exec(kyz.puk -)
+      ~&  [%sending-pubs-about who]
+      %+  exec(kyz.puk (~(put by kyz.puk) who pub))
         (~(get ju yen.puk) who)
-      [%give %pubs lyf kyn]
+      [%give %pubs pub]
     ::                                                  ::  ++vein:feel:su
     ++  vein                                            ::  kick private keys
       ^+  ..feel
@@ -1063,36 +1062,62 @@
     ::
     ?.  (~(exists up mor.del) %jewel)  +>
     vein:feel
-  ::
-  ++  file
+  ::                                                    ::  ++meet:su
+  ++  meet                                              ::  seen after breach
+    |=  who=ship
+    ^+  +>
+    =+  ~|  [%met-unknown-ship who]
+        (~(got by kyz.puk) who)
+    (pubs:feel [[who -(live &)] ~ ~])
+  ::                                                    ::  ++file:su
+  ++  file                                              ::  process event logs
     ::TODO  whenever we add subscriptions for data,
     ::      outsource the updating of relevant state
     ::      to a ++feel arm.
     |=  [new=? evs=logs]
     ^+  +>
     =?  +>  new
+      ::TODO  should we be mutating state here,
+      ::      or better to move this into ++vent:feel?
       +>(dns.eth *dnses, hul.eth ~, kyz.puk ~)
     =?  +>  |(new !=(0 ~(wyt by evs)))
       %-  vent:feel
       ?:(new &+evs |+evs)
     ::
     =+  vez=(order-events:ez ~(tap by evs))
-    =|  kyz=(map ship (map life pass))
+    =|  kyz=(map ship public)
     |^  ?~  vez  (pubs:feel kyz)
         =^  kyn  ..file  (file-event i.vez)
         $(vez t.vez, kyz kyn)
     ::
+    ++  get-public
+      |=  who=ship
+      ^-  public
+      %+  fall  (~(get by kyz) who)
+      ::NOTE  we can only do this because ++pubs:feel
+      ::      sends out entire new state, rather than
+      ::      just the processed changes.
+      %+  fall  (~(get by kyz.puk) who)
+      %*(. *public live |)
+    ::
     ++  file-keys
       |=  [who=ship =life =pass]
       ^+  kyz
-      =/  zen  (fall (~(get by kyz) who) ~)
-      =/  pub  (~(get by zen) life)
-      ?~  pub
-        %+  ~(put by kyz)
-          who
-        (~(put by zen) life pass)
-      ~|  [%key-mismatch who life]
-      ?>(=(u.pub pass) kyz)
+      =/  pub  (get-public who)
+      =/  puk  (~(get by pubs.pub) life)
+      ?^  puk
+        ::  key known, nothing changes
+        ~|  [%key-mismatch who life]
+        ?>(=(u.puk pass) kyz)
+      %+  ~(put by kyz)  who
+      :+  live.pub
+        (max life life.pub)
+      (~(put by pubs.pub) life pass)
+    ::
+    ++  file-discontinuity
+      |=  who=ship
+      =+  (get-public who)
+      (~(put by kyz) who -(live |))
     ::
     ++  file-event
       |=  [wer=event-id dif=diff-constitution]
@@ -1117,19 +1142,19 @@
       |=  [who=ship dif=diff-hull]
       ^+  [kyz ..file]
       =-  ::TODO  =; with just the type
-        :-  ?~  kez  kyz
-            (file-keys who u.kez)
+        :-  ?:  ?=(%& -.new)
+              (file-keys who p.new)
+            ?:  p.new  kyz
+            (file-discontinuity who)
         ..file(hul.eth (~(put by hul.eth) who hel))
-      ^-  [hel=hull kez=(unit (pair life pass))]
+      ::  hel: updated hull
+      ::  new: new keypair or "kept continuity?" (yes is no-op)
+      ^-  [hel=hull new=(each (pair life pass) ?)]
       =+  hul=(fall (~(get by hul.eth) who) *hull)
-      ::
-      ::  if new, first dif must be %full
-      ::  XX review, requirement seems obsolete
-      ::
-      :: ?>  |((~(has by hul.eth) who) ?=(%full -.dif))
       ::
       ::  sanity checks, should never fail if we operate correctly
       ::
+      ~|  %diff-order-insanity
       ?>  ?+  -.dif  &
             %spawned      ?>  ?=(^ kid.hul)
                           !(~(has in spawned.u.kid.hul) who.dif)
@@ -1139,14 +1164,16 @@
                           =(new.dif +(continuity-number.u.net.hul))
           ==
       ::
-      ::  apply hull changes, catch key changes
+      ::  apply hull changes, catch continuity and key changes
       ::
       :-  (apply-hull-diff hul dif)
-      ?+  -.dif  ~
-        %keys   `[life pass]:dif
-        %full   ?~  net.new.dif  ~
-                ::TODO  do we want/need to do a diff-check
-                `[life pass]:u.net.new.dif
+      =*  nop  |+&  ::  no-op
+      ?+  -.dif  nop
+        %continuity   |+|
+        %keys         &+[life pass]:dif
+        %full         ?~  net.new.dif  nop
+                      ::TODO  do we want/need to do a diff-check
+                      &+[life pass]:u.net.new.dif
       ==
     ::
     ++  file-dns
@@ -1488,9 +1515,11 @@
   ::
   ::  +|  filter-results
   ::
-  ::  +wake: kick polling
+  ::  +wake: kick polling, unless we changed source
   ::
-  ++  wake  poll-filter
+  ++  wake
+    ?.  ?=(%| -.source)  .
+    poll-filter
   ::
   ::  +sigh: parse rpc response and process it
   ::
