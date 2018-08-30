@@ -402,7 +402,7 @@
 ::        (ta-hall-json parent-path 'new collection' (collection-notify pax meta.col.new))
 ::      =.  ta-this  
 ::        (ta-hall-json parent-path 'new item' (item-notify pax raw.new))
-::      =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
+      =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.new)
       =.  ta-this
       |-
