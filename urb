@@ -101,7 +101,7 @@ class sourceAction(argparse.Action):
 
     def construct_value(self, new_value):
         if new_value == '-':
-            return self.construct_value(''.join(sys.stdin))
+            return self.construct_value(''.join(sys.stdin.readlines()))
         elif new_value[0:2] == '@@':
             with open(new_value[2:]) as f:
               content = f.readlines()
