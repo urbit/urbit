@@ -189,12 +189,6 @@
     :-  /web/pack/css/codemirror-fonts-bootstrap-tree  "obsolete syntax"
     :-  /web/pack/js/tree-urb                          "obsolete syntax"
     :-  /web/unmark/all       "obsolete syntax"
-    :-  /app/constitution         "incomplete, obsolete syntax"
-    :-  /lib/constitution         "incomplete, obsolete syntax"
-    :-  /lib/ethereum             "incomplete, obsolete syntax"
-    :-  /mar/constitution/update  "incomplete, obsolete syntax"
-    :-  /sur/ethereum             "incomplete, obsolete syntax"
-    :-  /sur/constitution         "incomplete, obsolete syntax"
     :-  /web/landscape      "/$ doensn't work in tests"
   ==
 ::
