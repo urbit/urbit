@@ -16,6 +16,9 @@
   |=  paths-to-tests=(map path (list test-arm))
   ^-  (list test)
   ::
+  %-  sort  :_  |=([a=test b=test] !(aor path.a path.b))
+  ::
+  ^-  (list test)
   %-  zing
   %+  turn  ~(tap by paths-to-tests)
   |=  [=path test-arms=(list test-arm)]
