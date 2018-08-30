@@ -448,10 +448,10 @@
       $(items t.items)
     ::
         %both
-      =.  ta-this  
-        (ta-hall-json parent 'deleted collection' (collection-notify pax meta.col.old))
-      =.  ta-this  
-        (ta-hall-json parent 'deleted item' (item-notify pax raw.old))
+::      =.  ta-this  
+::        (ta-hall-json parent 'deleted collection' (collection-notify pax meta.col.old))
+::      =.  ta-this  
+::        (ta-hall-json parent 'deleted item' (item-notify pax raw.old))
       =.  ta-this  (ta-flush-permissions pax)
       =.  ta-this  (ta-flush-permissions (weld pax /collections-config))
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.old)
