@@ -362,7 +362,7 @@
     ++  contracts
       |%
       ++  ships
-        0x6c22.3e68.fefe.b0d2.aaa1.3d5a.3b12.f50f.8b6b.498a
+        0x84b3.7fbc.6188.da8a.e866.1eae.322a.f4d9.2db4.5ecc
       --
     ::
     ::  hashes of ship event signatures
@@ -7941,5 +7941,150 @@
         ==
       --
     --
+  --
+::  |dawn: pre-boot request/response de/serialization and validation
+::
+++  dawn
+  =>  |%
+      ::  +live: public network state of a ship
+      ::
+      +$  live  (unit [=life breach=?])
+      ::  +seed: private boot parameters
+      ::
+      +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki:jael)]
+      --
+  |%
+  ::  |give:dawn: produce requests for pre-boot validation
+  ::
+  ++  give
+    =/  tract  ships:contracts:constitution:ethe
+    |%
+    ::  +czar:give:dawn: Eth RPC for galaxy table
+    ::
+    ++  czar
+      ^-  octs
+      %-  as-octt:mimes:html
+      %-  en-json:html
+      %-  batch-read-request:ethereum
+      %+  turn  (gulf 0 255)
+      |=(gal=@ [`(scot %ud gal) tract ['getKeys(uint32)' [%uint gal]~]])
+    ::  +hull:give:dawn: Eth RPC for ship's contract state
+    ::
+    ++  hull
+      |=  who=ship
+      ^-  octs
+      %-  as-octt:mimes:html
+      %-  en-json:html
+      (read-request:ethereum [~ tract ['ships(uint32)' [%uint `@`who]~]])
+    ::  +turf:give:dawn: Eth RPC for network domains
+    ::
+    ++  turf
+      ^-  octs
+      %-  as-octt:mimes:html
+      %-  en-json:html
+      %-  batch-read-request:ethereum
+      %+  turn  (gulf 0 2)
+      |=(idx=@ [`(scot %ud idx) tract ['dnsDomains(uint256)' [%uint idx]~]])
+    --
+  ::  |take:dawn: parse responses for pre-boot validation
+  ::
+  ++  take
+    =,  dejs:format
+    |%
+    ::  +czar:take:dawn: parse galaxy table
+    ::
+    ++  czar
+      |=  rep=octs
+      ^-  (map ship [=life =pass])
+      =/  jon=json  (need (de-json:html q.rep))
+      =/  res=(list [@t @t])
+        ((ar (ot id+so result+so ~)) jon)
+      %+  roll  res
+      |=  $:  res=[id=@t result=@t]
+              kyz=(map ship [=life =pass])
+          ==
+      ^+  kyz
+      =/  who=ship  (slav %ud id.res)
+      =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
+        %+  decode-results:ethereum
+          result.res
+        ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
+      =/  pub=(unit pass)
+        (pass-from-eth:constitution:ethereum enc aut sut)
+      ?~  pub  kyz
+      (~(put by kyz) who [rev u.pub])
+    ::  +hull:take:dawn: parse ship's contract state
+    ::
+    ++  hull
+      |=  [who=ship rep=octs]
+      ^-  hull:constitution:ethe
+      =/  jon=json  (need (de-json:html q.rep))
+      =/  res=cord  ((ot result+so ~) jon)
+      %+  hull-from-eth:constitution:ethereum
+        who
+      :_  *deed:eth-noun:constitution:ethereum
+      (decode-results:ethereum res hull:eth-type:constitution:ethe)
+    ::  +turf:take:dawn: parse network domains
+    ::
+    ++  turf
+      |=  rep=octs
+      ^-  (list [@ud (list @ta)])
+      =/  jon=json  (need (de-json:html q.rep))
+      =/  res=(list [@t @t])
+        ((ar (ot id+so result+so ~)) jon)
+      %+  turn  res
+      |=  [id=@t result=@t]
+      :-  (slav %ud id)
+      =/  dom=tape
+        (decode-results:ethereum result [%string]~)
+      =/  hot=host:eyre
+        (scan dom thos:de-purl:html)
+      ?>(?=(%& -.hot) p.hot)
+    --
+  ::  +veri:dawn: validate keys, life, discontinuity, &c
+  ::
+  ++  veri
+    |=  [=seed =hull:constitution:ethe =live]
+    ^-  $%  [%& ^seed (unit ship)]
+            [%| rank:ames @tas]
+        ==
+    =/  rac  (clan:title who.seed)
+    =/  cub  (nol:nu:crub:crypto key.seed)
+    ?-  rac
+        %pawn
+      ?.  =(who.seed `@`fig:ex:cub)
+        [%| rac %key-mismatch]
+      ?^  live
+        [%| rac %already-booted]
+      ?.  ?=(%1 lyf.seed)
+        [%| rac %invalid-life]
+      [%& seed ~]
+    ::
+        %earl
+      ?~  sig.seed
+        [%| rac %missing-sig]
+      ?~  net.hull
+        [%| rac %parent-not-keyed]
+        =/  loy  (com:nu:crub:crypto pass.u.net.hull)
+      =/  hax  (shaf %earl (sham lyf.seed pub:ex:cub))
+      ?.  =((some hax) (sure:as:loy u.sig.seed))
+        [%| rac %invalid-sig]
+      :: XX revisit for rekey
+      ?^  live
+        [%| rac %already-booted]
+      [%& seed ~]
+    ::
+        *
+      ?~  net.hull
+        [%| rac %not-keyed]
+      ?.  =(pub:ex:cub pass.u.net.hull)
+        [%| rac %key-mismatch]
+      ?:  ?&  ?=(^ live)
+              ?|  ?=(%| breach.u.live)
+                  (lte life.u.net.hull life.u.live)
+          ==  ==
+        [%| rac %already-booted]
+      [%& seed sponsor.u.net.hull]
+    ==
   --
 --  ::
