@@ -1077,6 +1077,8 @@
     |=  [new=? evs=logs]
     ^+  +>
     =?  +>  new
+      ::TODO  should we be mutating state here,
+      ::      or better to move this into ++vent:feel?
       +>(dns.eth *dnses, hul.eth ~, kyz.puk ~)
     =?  +>  |(new !=(0 ~(wyt by evs)))
       %-  vent:feel
@@ -1152,6 +1154,7 @@
       ::
       ::  sanity checks, should never fail if we operate correctly
       ::
+      ~|  %diff-order-insanity
       ?>  ?+  -.dif  &
             %spawned      ?>  ?=(^ kid.hul)
                           !(~(has in spawned.u.kid.hul) who.dif)
@@ -1512,9 +1515,11 @@
   ::
   ::  +|  filter-results
   ::
-  ::  +wake: kick polling
+  ::  +wake: kick polling, unless we changed source
   ::
-  ++  wake  poll-filter
+  ++  wake
+    ?.  ?=(%| -.source)  .
+    poll-filter
   ::
   ::  +sigh: parse rpc response and process it
   ::
