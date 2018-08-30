@@ -3616,15 +3616,7 @@
     %-  ford-call-with-comparator  :*
       ford-gate
       now=~1234.5.6
-      ^=  scry
-        |=  [* * =term =beam]
-        ^-  (unit (unit cage))
-        ::
-        ~|  [term=term beam=beam]
-        ?>  =(%cw term)
-        ?>  =([[~nul %home [%da ~1234.5.6]] /hoon/hoon/sys] beam)
-        ::
-        ``[%cass !>(`cass:clay`[ud=1 da=~1234.5.6])]
+      scry=(scry-reef ~1234.5.6)
       ::
       ^=  call-args
         :*  duct=~[/reef]  type=~  %build  ~nul  live=%.n
@@ -5815,6 +5807,9 @@
             [%x /lib/gh/parse/hoon]
             [%x /lib/gh-parse/hoon]
             [%x /lib/connector/hoon]
+            [%x /sys/hoon/hoon]
+            [%x /sys/arvo/hoon]
+            [%x /sys/zuse/hoon]
           ==
         ::
         %+  expect-eq
@@ -5944,6 +5939,9 @@
             [%x /lib/gh/parse/hoon]
             [%x /lib/gh-parse/hoon]
             [%x /lib/connector/hoon]
+            [%x /sys/hoon/hoon]
+            [%x /sys/arvo/hoon]
+            [%x /sys/zuse/hoon]
           ==
         ::
         %+  expect-eq
@@ -6086,6 +6084,9 @@
             [%x /lib/gh/parse/hoon]
             [%x /lib/gh-parse/hoon]
             [%x /lib/connector/hoon]
+            [%x /sys/hoon/hoon]
+            [%x /sys/arvo/hoon]
+            [%x /sys/zuse/hoon]
           ==
         ::
         %+  expect-eq
@@ -6225,6 +6226,9 @@
             [%x /lib/gh/parse/hoon]
             [%x /lib/gh-parse/hoon]
             [%x /lib/connector/hoon]
+            [%x /sys/hoon/hoon]
+            [%x /sys/arvo/hoon]
+            [%x /sys/zuse/hoon]
           ==
         ::
         ;:  weld
@@ -6272,6 +6276,9 @@
             [%x /lib/gh/parse/hoon]
             [%x /lib/gh-parse/hoon]
             [%x /lib/connector/hoon]
+            [%x /sys/hoon/hoon]
+            [%x /sys/arvo/hoon]
+            [%x /sys/zuse/hoon]
           ==
         ::
         ;:  weld
@@ -6319,6 +6326,9 @@
             [%x /lib/gh/parse/hoon]
             [%x /lib/gh-parse/hoon]
             [%x /lib/connector/hoon]
+            [%x /sys/hoon/hoon]
+            [%x /sys/arvo/hoon]
+            [%x /sys/zuse/hoon]
           ==
         ::
         ;:  weld
@@ -6452,7 +6462,11 @@
             :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home/~1234.5.6
                 %c  %warp  [~nul ~nul]  %home  ~  %mult  [%da ~1234.5.6]
                 %-  sy  :~
-                  [%x /mar/two/hoon]  [%x /mar/one/hoon]
+                  [%x /mar/two/hoon]
+                  [%x /mar/one/hoon]
+                  [%x /sys/hoon/hoon]
+                  [%x /sys/arvo/hoon]
+                  [%x /sys/zuse/hoon]
     ==  ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -6497,8 +6511,13 @@
             :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home/~1234.5.6
                 %c  %warp  [~nul ~nul]  %home  ~  %mult  [%da ~1234.5.6]
                 %-  sy  :~
-                  [%x /mar/one/hoon]  [%x /mar/two/hoon]
-                  [%x /mar/four/hoon]  [%x /mar/five/hoon]
+                  [%x /mar/one/hoon]
+                  [%x /mar/two/hoon]
+                  [%x /mar/four/hoon]
+                  [%x /mar/five/hoon]
+                  [%x /sys/hoon/hoon]
+                  [%x /sys/arvo/hoon]
+                  [%x /sys/zuse/hoon]
     ==  ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -7037,12 +7056,15 @@
       !>  'post-b'
       vase.tail.tail.result
   ==
-::
-::  +scry-with-results
 ++  scry-with-results
   |=  results=(map [=term =beam] cage)
   |=  [* (unit (set monk)) =term =beam]
   ^-  (unit (unit cage))
+  ::
+  =/  date=@da  ?>(?=(%da -.r.beam) p.r.beam)
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
   ::
   ~|  scry-with-results+[term=term beam=beam]
   ::
@@ -7054,6 +7076,11 @@
   |=  [* (unit (set monk)) =term =beam]
   ^-  (unit (unit cage))
   ::
+  =/  date=@da  ?>(?=(%da -.r.beam) p.r.beam)
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
   ~|  scry-with-results+[term=term beam=beam]
   ::
   [~ (~(got by results) [term beam])]
@@ -7063,6 +7090,9 @@
   |=  [date=@da result=cage]  ^-  sley
   |=  [* (unit (set monk)) =term =beam]
   ^-  (unit (unit cage))
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
   ::
   ~|  scry-succeed+[beam+beam term+term]
   ?>  =(term %cx)
@@ -7076,6 +7106,9 @@
   |=  [* (unit (set monk)) =term =beam]
   ^-  (unit (unit cage))
   ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
   ~|  scry-fail+[beam+beam term+term]
   ?>  =(term %cx)
   ?>  =(beam [[~nul %desk %da date] /bar/foo])
@@ -7088,11 +7121,15 @@
   |=  [* (unit (set monk)) =term =beam]
   ^-  (unit (unit cage))
   ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
   ~|  scry-block+[beam+beam term+term]
   ?>  =(term %cx)
   ?>  =(beam [[~nul %desk %da date] /bar/foo])
   ::
   ~
+::  +scry-blocks: block on a file at multiple dates; does not include %reef
 ::
 ++  scry-blocks
   |=  dates=(set @da)  ^-  sley
@@ -7111,8 +7148,34 @@
   |=  [* (unit (set monk)) =term =beam]
   ^-  (unit (unit cage))
   ::
+  =/  date=@da  ?>(?=(%da -.r.beam) p.r.beam)
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
   ~|  scry-is-forbidden+[beam+beam term+term]
   !!
+::
+++  scry-reef
+  |=  date=@da  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  =-  ?~  res=(~(get by -) [term beam])
+        ~
+      `res
+  ::
+  %-  ~(gas by *(map [^term ^beam] cage))
+  :~  :-  [%cx [[~nul %home %da date] /hoon/hoon/sys]]
+      [%noun !>(~)]
+      :-  [%cx [[~nul %home %da date] /hoon/arvo/sys]]
+      [%noun !>(~)]
+      :-  [%cx [[~nul %home %da date] /hoon/zuse/sys]]
+      [%noun !>(~)]
+  ::
+      :-  [%cw [[~nul %home %da date] /hoon/hoon/sys]]
+      [%cass !>([ud=0 da=date])]
+  ==
 ::
 ++  ford-call
   |=  $:  ford-gate=_ford-gate
