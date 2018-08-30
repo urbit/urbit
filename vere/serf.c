@@ -385,6 +385,9 @@ _serf_poke(void* vod_p, u3_noun mat)
 void
 u3_serf_boot(void)
 {
+  fprintf(ulog, "worker: serf boot %li \n", u3A->ent_d + 1);
+  fflush(ulog);
+
   c3_d nex_d  = 1ULL;
   u3_noun dat = u3_nul;
 
@@ -404,6 +407,9 @@ u3_serf_boot(void)
   fprintf(stderr, "serf: play %lld\r\n", nex_d);
 
   _serf_send(u3nc(c3__play, dat));
+
+  fprintf(ulog, "worker: play sent \n");
+  fflush(ulog);
 }
 
 /* main(): main() when run as urbit-worker
@@ -411,6 +417,9 @@ u3_serf_boot(void)
 c3_i
 main(c3_i argc, c3_c* argv[])
 {
+  fprintf(ulog, "worker: serf_main() \n");
+  fflush(ulog);
+
   uv_loop_t* lup_u = uv_default_loop();
   c3_c*      dir_c = argv[1];
   c3_c*      key_c = argv[2];
@@ -452,6 +461,9 @@ main(c3_i argc, c3_c* argv[])
     c3_assert(!err_i);
     uv_pipe_open(&u3V.out_u.pyp_u, 1);
   }
+
+  fprintf(ulog, "worker: pipe done \n");
+  fflush(ulog);
 
   /* set up writing
   */

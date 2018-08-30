@@ -12,6 +12,11 @@
 #     define FirstKernel   164
 #     define DefaultKernel 164
 
+#define FDB_API_VERSION 520
+#include <fdb_c.h>
+
+#include <sqlite3.h>
+
 #define RECK
 
   /** Data types.
@@ -540,6 +545,8 @@
       typedef struct _u3_opts {
         // XX find a way to re-enable -A (fastboot)
         // c3_c*   arv_c;                      //  -A, initial sync from
+        c3_c*   pin_c;                      //  -i, persistant storage in
+        c3_c*   pot_c;                      //  -o, persistant storage out
         c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_o    bat;                        //  -b, batch create
@@ -603,9 +610,13 @@
           u3_noun          now;                 //  event time
           c3_l             msc_l;               //  ms to timeout
           c3_l             mug_l;               //  hash before executing
-          u3_foil*         fol_u;               //  precommit file
           u3_atom          mat;                 //  jammed $work, or 0
           u3_noun          act;                 //  action list
+          void*            mwh_u;               //  multi-write handle (for fond.c writes)
+          c3_o             pes_o;               //  write submitted to initiated to persistant store
+          c3_o             ped_o;               //  write done
+          c3_o             ces_o;               //  compute started
+          c3_o             ced_o;               //  compute done
           struct _u3_writ* nex_u;               //  next in queue, or 0
         } u3_writ;
 
@@ -625,31 +636,46 @@
           struct _u3_pier*     pir_u;           //  pier backpointer
         } u3_lord;
 
-      /* u3_disk: manage events on disk.
+      /* u3_queue: manage events (incoming, processing, persisted in disk / database)
       **
       **    any event once discovered should be in one of these sets.
       **    at present, all sets are ordered and can be defined by a
       **    simple counter.  any events <= the counter is in the set.
       */
-        typedef struct _u3_disk {               
+        typedef struct _u3_queue {
+      /* persistance (disk / SQLite / FoundationDB) state machine */
+          c3_d             moc_d;               //  ID of max event sent to persistant store
+          c3_d             com_d;               //  ID of max event confirmed by persistant store
+          struct _u3_pier* pir_u;               //  pier backpointer
+        } u3_queue;
+
+        typedef struct _u3_disk {
           u3_dire*         dir_u;               //  main pier directory
           u3_dire*         urb_u;               //  urbit system data
           u3_dire*         com_u;               //  log directory
-          u3_dire*         pre_u;               //  precommit directory
           u3_foil*         fol_u;               //  logfile
           c3_d             end_d;               //  byte end of file
-          c3_d             rep_d;               //  precommit requested
-          c3_d             pre_d;               //  precommitted
-          c3_d             moc_d;               //  commit requested
-          c3_d             com_d;               //  committed
           struct _u3_pier* pir_u;               //  pier backpointer
         } u3_disk;
 
-      /* u3_boot: startup controller.
+        typedef struct _u3_sqlt {
+          sqlite3 *        sql_u;               //
+          struct _u3_pier* pir_u;               //  pier backpointer
+        } u3_sqlt;
+
+        typedef struct _u3_fond {
+          FDBDatabase *    dab_u;               //
+          struct _u3_pier* pir_u;               //  pier backpointer
+        } u3_fond;
+
+      /* u3_pers: persistance handle
       */
-        typedef struct _u3_boot {
-          
-        } u3_boot;
+        typedef struct _u3_pers {
+          u3_disk*         log_u;               //  option 1: disk
+          u3_sqlt *        sql_u;               //  option 2: sqlite
+          u3_fond *        fond_u;              //  option 3: foundationdb
+          c3_d             pos_d;               //  read position
+        } u3_pers;
 
       /* u3_pier: ship controller.
       */
@@ -657,7 +683,7 @@
           c3_c*            pax_c;               //  pier directory
           c3_c*            sys_c;               //  pill file
           c3_w             wag_w;               //  config flags
-          c3_d             gen_d;               //  last event discovered
+          c3_d             gen_d;               //  last event discovered  (our counter for events; new events based off this)
           c3_d             but_d;               //  boot barrier
           c3_d             tic_d[1];            //  ticket (unstretched)
           c3_d             sec_d[1];            //  generator (unstretched)
@@ -667,7 +693,6 @@
           c3_s             por_s;               //  UDP port
           c3_o             fak_o;               //  yes iff fake security
           u3_noun          bot;                 //  boot event XX review
-          u3_disk*         log_u;               //  event log
           u3_lord*         god_u;               //  computer
           u3_ames*         sam_u;               //  packet interface
           u3_behn*         teh_u;               //  behn timer
@@ -676,6 +701,9 @@
           u3_writ*         ent_u;               //  entry of queue
           u3_writ*         ext_u;               //  exit of queue
           uv_prepare_t     pep_u;               //  preloop registration
+          u3_queue *       que_u;               //  event queue
+          u3_pers *        pin_u;               //  persistance (read in)
+          u3_pers *        pot_u;               //  persistance (write out)
         } u3_pier;
 
       /* u3_king: all executing piers.
@@ -1212,6 +1240,8 @@
 
     /** Pier control.
     **/
+
+
       /* u3_pier_create(): create a pier, loading existing.
       */
         u3_pier*
@@ -1297,3 +1327,94 @@
       */
         void
         u3_king_commence();
+
+
+        void
+        u3_pier_apply(u3_pier*);
+
+        void
+        _pier_init_read(u3_pier* pir_u, c3_c * pin_c);
+
+        void
+        _pier_init_writ(u3_pier* pir_u, c3_c * pot_c);
+
+
+      /*  plugable storage backend functions
+      */
+
+      /* read */
+        c3_o
+        u3_disk_read_init(u3_pier* pir_u, c3_c * sto_c);
+        c3_o
+        u3_sqlt_read_init(u3_pier* pir_u, c3_c * sto_c);
+        c3_o
+        u3_fond_read_init(u3_pier* pir_u, c3_c * sto_c);
+
+        c3_o
+        u3_disk_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u);
+        c3_o
+        u3_sqlt_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u);
+        c3_o
+        u3_fond_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u);
+
+        void
+        u3_disk_read_done(void * hand_u);
+        void
+        u3_sqlt_read_done(void * hand_u);
+        void
+        u3_fond_read_done(void * hand_u);
+
+        void
+        u3_disk_read_shut(u3_pier* pir_u);
+        void
+        u3_sqlt_read_shut(u3_pier* pir_u);
+        void
+        u3_fond_read_shut(u3_pier* pir_u);
+
+        /* write */
+
+#define PERS_WRIT_HEAD_SIZE 3
+
+        c3_o
+        u3_disk_write_init(u3_pier* pir_u, c3_c * sto_c);
+        c3_o
+        u3_sqlt_write_init(u3_pier* pir_u, c3_c * sto_c);
+        c3_o
+        u3_fond_write_init(u3_pier* pir_u, c3_c * sto_c);
+
+        void
+        u3_pier_writ_done(u3_noun);   /* callback from pluggable persistance noting noun is committed */
+
+        /*  conforming write_write() functions must do three things:
+              1) write to persistent store     [ action ]
+              2) on success,set
+                     wit_u->ped_o = c3y        [ ack     ]
+              3) free(buf_y)                   [ cleanup ]
+        */
+        void
+        u3_disk_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w);
+        void
+        u3_sqlt_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w);
+        void
+        u3_fond_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w);
+
+        void
+        u3_disk_write_shut(u3_pier* pir_u);
+        void
+        u3_sqlt_write_shut(u3_pier* pir_u);
+        void
+        u3_fond_write_shut(u3_pier* pir_u);
+
+/* TESTING ENTRY POINTS */
+
+c3_o  rein(u3_pier* pir_u, c3_c * pot_c);
+c3_o  rere(u3_pier* pir_u, c3_y ** dat_y, c3_w* len_w, void ** opaq_u) ;
+void  rede(void * opaq_u) ;
+void  resh(u3_pier* pir_u) ;
+
+c3_o wrin(u3_pier* pir_u, c3_c * pot_c) ;
+void wric(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y,  c3_y* byt_y, c3_w  len_w);
+void wris(u3_pier* pir_u) ;
+
+// debugging for TJIC
+extern FILE * ulog;

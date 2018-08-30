@@ -253,7 +253,7 @@ u3_term_io_init()
       uty_u->tat_u.sun.sit_u = (uv_thread_t*)malloc(sizeof(uv_thread_t));
       if ( uty_u->tat_u.sun.sit_u ) {
         uv_mutex_init(&uty_u->tat_u.mex_u);
-        uv_mutex_lock(&uty_u->tat_u.mex_u);
+        //        uv_mutex_lock(&uty_u->tat_u.mex_u);
 
         c3_w ret_w = uv_thread_create(uty_u->tat_u.sun.sit_u,
                                       _term_spinner_cb,
@@ -264,6 +264,8 @@ u3_term_io_init()
           uty_u->tat_u.sun.sit_u = NULL;
           uv_mutex_unlock(&uty_u->tat_u.mex_u);
           uv_mutex_destroy(&uty_u->tat_u.mex_u);
+        } else {
+          // uv_mutex_unlock(&uty_u->tat_u.mex_u);
         }
       }
     }

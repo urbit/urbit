@@ -31,6 +31,8 @@
  */
 STATIC_ASSERT(( 0 == CHAR_MIN && UCHAR_MAX == CHAR_MAX ), "unsigned char required");
 
+FILE * ulog;
+
 /* _main_readw(): parse a word from a string.
 */
 static u3_noun
@@ -70,6 +72,8 @@ _main_getopt(c3_i argc, c3_c** argv)
   c3_i ch_i;
   c3_w arg_w;
 
+  u3_Host.ops_u.pot_c = NULL;
+
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.bat = c3n;
   u3_Host.ops_u.dem = c3n;
@@ -88,9 +92,24 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
+  fprintf(stderr, "about to sleep for gdb in main.c:__LINE__ - PID = %i\n\r", getpid());
+  fprintf(stderr, "...\n\r");
+  sleep(1);
+
+  fprintf(ulog, "post sleep\n");
+  fflush(ulog);
+
   // XX re-enable -s, -A
-  while ( (ch_i=getopt(argc, argv,"G:J:B:K:H:w:u:j:e:E:f:F:k:p:LabcdgqtvxPDRS")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:J:B:K:H:w:u:j:e:E:f:F:k:o:i:p:LabcdgqtvxPDRS")) != -1 ) {
     switch ( ch_i ) {
+      case 'o': {
+        u3_Host.ops_u.pot_c = strdup(optarg);
+        break;
+      }
+      case 'i': {
+        u3_Host.ops_u.pin_c = strdup(optarg);
+        break;
+      }
       case 'J': {
         u3_Host.ops_u.lit_c = strdup(optarg);
         break;
@@ -376,6 +395,8 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-v            Verbose\n",
     "-w name       Boot as ~name\n",
     "-x            Exit immediately\n",
+    "-o spec       Specify persistent storage (output). Valid specs are 'disk' (default) / 'sql' / 'found'\n",
+    "-i spec       Specify persistent storage (input).  Valid specs are 'disk' (default) / 'sql' / 'found'\n",
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
@@ -518,6 +539,12 @@ c3_i
 main(c3_i   argc,
      c3_c** argv)
 {
+  char * logpath = malloc(1024);
+  sprintf(logpath, "/tmp/urbit_log_%i", getpid());
+  ulog = fopen(logpath, "w");
+  fprintf(ulog, "start\n");
+  fflush(ulog);
+
   //  Parse options.
   //
   if ( c3n == _main_getopt(argc, argv) ) {

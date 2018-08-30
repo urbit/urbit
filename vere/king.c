@@ -467,6 +467,7 @@ void
 _king_loop_init()
 {
   /* move signals out of unix.c */
+  /* build a linked list */
   {
     u3_usig* sig_u;
 

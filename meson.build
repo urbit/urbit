@@ -225,10 +225,15 @@ vere_lib_src = [
   'vere/term.c',
   'vere/time.c',
   'vere/unix.c',
-  'vere/walk.c'
+  'vere/walk.c',
+  'vere/disk.c',
+  'vere/fond.c',
+  'vere/sqlt.c'
 ]
 
-incdir = include_directories('include/')
+#  XX revisit storage build
+#
+incdir = include_directories('include/', '/usr/include/foundationdb/',)
 
 conf_data = configuration_data()
 conf_data.set('URBIT_VERSION', '"0.6.0"')
@@ -237,7 +242,10 @@ conf_data.set('U3_CPU_DEBUG', get_option('prof'))
 conf_data.set('U3_EVENT_TIME_DEBUG', get_option('event-time'))
 
 osdet = build_machine.system()
-os_c_flags = ['-funsigned-char','-ffast-math']
+
+#  XX revisit storage build
+#
+os_c_flags = ['-funsigned-char','-ffast-math', '-fdump-rtl-expand', '-ggdb', '-Og']
 os_deps = []
 os_link_flags = []
 
@@ -250,8 +258,16 @@ if osdet == 'linux'
     pthread_dep = meson.get_compiler('c').find_library('pthread')
   endif
 
+  #  XX revisit storage build
+  #
+  if(legacy_meson)
+    math_dep = find_library('m')
+  else
+    math_dep = meson.get_compiler('c').find_library('m')
+  endif
+
   ncurses_dep = dependency('ncurses')
-  os_deps = os_deps + [pthread_dep, ncurses_dep]
+  os_deps = os_deps + [pthread_dep, ncurses_dep, math_dep]
 
 elif osdet == 'darwin'
   conf_data.set('U3_OS_osx', true)
@@ -350,12 +366,19 @@ libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libs
 libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
 libwhereami_dep = dependency('libwhereami', version: '>=1.0.0', fallback: ['whereami', 'libwhereami_dep'])
 
+#  XX revisit storage build
+#
+sqlt_dep = meson.get_compiler('c').find_library('libsqlite3', dirs:['/usr/lib/'])
+fond_dep = meson.get_compiler('c').find_library('libfdb_c', dirs:['/usr/lib/'])
+
 vere_deps = [curl_dep,
             libh2o_dep,
             libsni_dep,
             libuv_dep,
             libwhereami_dep,
-            openssl_dep]
+            openssl_dep,
+            sqlt_dep,
+            fond_dep]
 
 executable('urbit',
 sources : vere_lib_src + [ 'vere/main.c' ],
@@ -374,6 +397,16 @@ link_args: os_link_flags,
 dependencies: vere_deps + os_deps,
 link_with: libnoun,
 install: true)
+
+executable('perstest',
+sources : test_sources,
+sources : vere_lib_src + [ 'vere/test.c' ],
+include_directories : incdir,
+c_args : os_c_flags,
+link_args: os_link_flags,
+dependencies: vere_deps + os_deps,
+link_with: libnoun,
+install: false)
 
 test_hashtable = executable('test-hashtable',
 sources : vere_lib_src + ['tests/hashtable_tests.c'],
