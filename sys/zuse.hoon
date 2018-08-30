@@ -1989,7 +1989,7 @@
       ==  ==                                            ::
     ++  gift                                            ::  out result <-$
       $%  [%mack p=(unit tang)]                         ::  message n/ack
-          [%pubs =life pubs=(map life pass)]            ::  public keys
+          [%pubs public]                                ::  public keys
           {$vest p/tally}                               ::  balance update
           [%vein =life vein=(map life ring)]            ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
@@ -2002,6 +2002,11 @@
           [%e %hiss p=(unit user) q=mark r=cage]        ::  outbound user req
           [%a %want p=sock q=path r=*]                  ::  send message
           [%j %vent-result p=chain]                     ::  tmp workaround
+      ==                                                ::
+    ++  public                                          ::  public key state
+      $:  live=?                                        ::  seen in current era
+          life=life                                     ::  current key number
+          pubs=(map life pass)                          ::  pubkeys by number
       ==                                                ::
     ++  remote                                          ::  remote notification
       %+  each  safe                                    ::  &/addition
