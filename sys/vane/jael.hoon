@@ -706,6 +706,13 @@
       %-  curd  =<  abet
       (~(pubs ~(feed su our.tac urb sub etn) hen) who.tac)
     ::
+    ::  seen after breach
+    ::    [%meet our=ship who=ship]
+    ::
+        %meet
+      %+  cure  our.tac
+      [[%meet who.tac]~ urb]
+    ::
     ::  watch private keys
     ::    {$vein $~}
     ::
@@ -866,6 +873,7 @@
         +>
       ?-  -.i.hab
         %ethe  (file can.i.hab)
+        %meet  (meet +.i.hab)
         %rite  (paid +.i.hab)
       ==
     ==
@@ -1054,8 +1062,15 @@
     ::
     ?.  (~(exists up mor.del) %jewel)  +>
     vein:feel
-  ::
-  ++  file
+  ::                                                    ::  ++meet:su
+  ++  meet                                              ::  seen after breach
+    |=  who=ship
+    ^+  +>
+    =+  ~|  [%met-unknown-ship who]
+        (~(got by kyz.puk) who)
+    (pubs:feel [[who -(live &)] ~ ~])
+  ::                                                    ::  ++file:su
+  ++  file                                              ::  process event logs
     ::TODO  whenever we add subscriptions for data,
     ::      outsource the updating of relevant state
     ::      to a ++feel arm.

@@ -1982,6 +1982,7 @@
       logs                                              ::  | new events
     ++  change                                          ::  urbit change
       $%  [%ethe can=chain]                             ::  on-chain change
+          [%meet who=ship]                              ::  meet in new era
           $:  %rite                                     ::  rights change
               rex/ship                                  ::  issuer
               pal/ship                                  ::  issued to
@@ -2032,6 +2033,7 @@
           ::TODO  %next for generating/putting new private key
           [%nuke ~]                                     ::  cancel tracker from
           [%pubs our=ship who=ship]                     ::  view public keys
+          [%meet our=ship who=ship]                     ::  met after breach
           [%vein our=ship]                              ::  view signing keys
           [%vent our=ship]                              ::  view ethereum events
           [%vest our=ship]                              ::  view public balance
