@@ -3535,7 +3535,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  disabled-slow-test-reef
+++  disabled-test-reef-slow
   ::
   =/  hoon-parsed=hoon
     (rain /~nul/base/~1234.5.6/sys/hoon/hoon hoon-scry)
@@ -3554,7 +3554,9 @@
   ~&  %hoon-compiled
   =/  arvo-compiled=vase  (slap hoon-compiled arvo-parsed)
   ~&  %arvo-compiled
-  =/  zuse-compiled=vase  (slap arvo-compiled zuse-parsed)
+  =/  pit-compiled=vase   (slap arvo-compiled [%cnts ~[[%& 1] %is] ~])
+  ~&  %pit-compiled
+  =/  zuse-compiled=vase  (slap pit-compiled zuse-parsed)
   ~&  %zuse-compiled
   ::
   =/  scry-results=(map [term beam] cage)

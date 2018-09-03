@@ -4675,6 +4675,9 @@
       =/  zuse-build=^build
         :*  date.build
             %ride  zuse-hoon
+            ::  hoon for `..is` to grab the :pit out of the arvo core
+            ::
+            %ride  [%cnts ~[[%& 1] %is] ~]
             %ride  arvo-hoon
             %ride  hoon-hoon
             [%$ %noun !>(~)]
