@@ -8,427 +8,260 @@
 ::    kinds of +schematic:ford, dealing with types as necessary.
 ::
 ++  expect-schematic
-  |=  [expected=schematic actual=vase]
+  |=  [expected=schematic actual=schematic]
   ^-  tang
   ::
   ?^    -.expected
-    ::  specialize :actual's type to be an autocons
-    ::
-    =.  actual
-      %+  slap  actual
-      ^-  hoon
-      :+  %wtbn
-        [%wtts [%base %cell] [%& 2]~]
-      [%wing [%& 1]~]
+    ?.  ?=(^ -.actual)
+      [%leaf "expected autocons, but got {<-.actual>}"]~
     ::
     %+  weld
-      $(expected -.expected, actual (slap actual [%limb %head]))
-    $(expected +.expected, actual (slap actual [%limb %tail]))
-  ::
-  =.  actual  (specialize-by-tag -.expected actual)
+      $(expected head.expected, actual head.actual)
+    $(expected tail.expected, actual tail.actual)
   ::
   ?-    -.expected
       %$
-    %+  weld
-      ^-  tang
-      %+  expect-eq
-        `vase`[`type`[%atom %tas ~] `term`p.literal.expected]
-      `vase`(slap actual `hoon`[%wing ~[%p %literal]])
+    ?.  ?=(%$ -.actual)
+      [%leaf "expected %$, but got {<-.actual>}"]~
     ::
-    %+  expect-eq
-      q.literal.expected
-    ((hard vase) q:(slap actual [%wing ~[%q %literal]]))
+    %+  weld
+      (expect-eq !>(p.literal.expected) !>(p.literal.actual))
+    (expect-eq q.literal.expected q.literal.actual)
   ::
       %pin
     ::
-    %+  weld
-      %+  expect-eq
-        [[%atom %da ~] date.expected]
-      (slap actual [%limb %date])
+    ?.  ?=(%pin -.actual)
+      [%leaf "expected %pin, but got {<-.actual>}"]~
     ::
-    $(expected schematic.expected, actual (slap actual [%limb %schematic]))
+    %+  weld
+      (expect-eq !>(date.expected) !>(date.actual))
+    $(expected schematic.expected, actual schematic.actual)
   ::
       %alts
-    =.  actual  (slap actual [%limb %choices])
     ::
-    =|  res=tang
-    |-  ^+  res
+    ?.  ?=(%alts -.actual)
+      [%leaf "expected %alts, but got {<-.actual>}"]~
+    ::
+    |-  ^-  tang
     ?~  choices.expected
       ::  make sure there aren't any extra :choices in :actual
       ::
-      =.  actual  (assert-null actual)
-      ::  no more choices; produce any errors we got
-      ::
-      res
+      ?~  choices.actual
+        ~
+      [%leaf "actual had more choices than expected"]~
     ::  :expected isn't empty yet; make sure :actual isn't either
     ::
-    =.  actual  (assert-not-null actual)
+    ?~  choices.actual
+      [%leaf "expected had more choices than actual"]~
     ::  recurse on the first sub-schematic
     ::
-    =.  res
-      %+  weld  res
-      ^$(expected i.choices.expected, actual (slap actual [%limb %i]))
-    ::  recurse on the rest of the sub-schematics
-    ::
-    $(choices.expected t.choices.expected, actual (slap actual [%limb %t]))
+    %+  weld
+      ^$(expected i.choices.expected, actual i.choices.actual)
+    $(choices.expected t.choices.expected, choices.actual t.choices.actual)
   ::
       %bake
-    ::
-    %+  weld
-      %+  expect-eq
-        [[%atom %tas ~] renderer.expected]
-      (slap actual [%limb %renderer])
-    ::
-    %+  weld
-      %+  expect-eq
-        [-:!>(*coin) query-string.expected]
-      (slap actual [%limb %query-string])
-    ::
-    %+  expect-eq
-      [-:!>(*rail) path-to-render.expected]
-    (slap actual [%limb %path-to-render])
+    (expect-eq [schematic-type expected] [schematic-type actual])
   ::
       %bunt
-    ::
-    %-  expect-eq
-    :_  %+  slap  actual
-        ^-  hoon
-        [%clhp [%limb %disc] [%limb %mark]]
-    ^-  vase
-    :_  [disc mark]:expected
-    ^-  type
-    :+  %cell
-      [%face %disc -:!>(*disc)]
-    [%face %mark -:!>(*term)]
+    (expect-eq [schematic-type expected] [schematic-type actual])
   ::
       %call
+    ::
+    ?.  ?=(%call -.actual)
+      [%leaf "expected %call, but got {<-.actual>}"]~
+    ::
     %+  weld
-      $(expected gate.expected, actual (slap actual [%limb %gate]))
-    $(expected sample.expected, actual (slap actual [%limb %sample]))
+      $(expected gate.expected, actual gate.actual)
+    $(expected sample.expected, actual sample.actual)
   ::
       %cast
+    ::
+    ?.  ?=(%cast -.actual)
+      [%leaf "expected %cast, but got {<-.actual>}"]~
+    ::
     ;:  weld
-      %+  expect-eq
-        [-:!>(*disc) disc.expected]
-      (slap actual [%limb %disc])
-    ::
-      %+  expect-eq
-        [-:!>(*term) mark.expected]
-      (slap actual [%limb %mark])
-    ::
-      $(expected input.expected, actual (slap actual [%limb %input]))
+      (expect-eq !>(disc.expected) !>(disc.actual))
+      (expect-eq !>(mark.expected) !>(mark.actual))
+      $(expected input.expected, actual input.actual)
     ==
   ::
       %core
-    %+  expect-eq
-      [-:!>(*rail) source-path.expected]
-    (slap actual [%limb %source-path])
+    (expect-eq [schematic-type expected] [schematic-type actual])
   ::
       %diff
-    %+  weld
-      %+  expect-eq
-        [[%face %disc -:!>(*disc)] disc.expected]
-      (slap actual [%limb %disc])
     ::
-    %+  weld
-      $(expected start.expected, actual (slap actual [%limb %start]))
-    $(expected end.expected, actual (slap actual [%limb %end]))
+    ?.  ?=(%diff -.actual)
+      [%leaf "expected %diff, but got {<-.actual>}"]~
+    ::
+    ;:  weld
+      (expect-eq !>(disc.expected) !>(disc.actual))
+      $(expected start.expected, actual start.actual)
+      $(expected end.expected, actual end.actual)
+    ==
   ::
       %dude
-    =/  error-result=tank  (error.expected)
-    %+  expect-eq
-      [-:!>(*tank) error-result]
-    (slap actual `hoon`[%kttr [%like ~[%error] ~]])
+    ::
+    ?.  ?=(%dude -.actual)
+      [%leaf "expected %dude, but got {<-.actual>}"]~
+    ::
+    %+  weld
+      (expect-eq !>((error.expected)) !>((error.actual)))
+    $(expected attempt.expected, actual attempt.actual)
   ::
       %hood
-    %+  expect-eq
-      [-:!>(*rail) source-path.expected]
-    (slap actual [%limb %source-path])
+    (expect-eq [schematic-type expected] [schematic-type actual])
   ::
       %join
-    %+  weld
-      %+  expect-eq
-        [[%face %disc -:!>(*disc)] disc.expected]
-      (slap actual [%limb %disc])
     ::
-    %+  weld
-      %+  expect-eq
-        [[%face %mark [%atom %tas ~]] mark.expected]
-      (slap actual [%limb %mark])
+    ?.  ?=(%join -.actual)
+      [%leaf "expected %join, but got {<-.actual>}"]~
     ::
-    %+  weld
-      $(expected first.expected, actual (slap actual [%limb %first]))
-    $(expected second.expected, actual (slap actual [%limb %second]))
+    ;:  weld
+      (expect-eq !>(disc.expected) !>(disc.actual))
+      (expect-eq !>(mark.expected) !>(mark.actual))
+      $(expected first.expected, actual first.actual)
+      $(expected second.expected, actual second.actual)
+    ==
   ::
       %list
-    =.  actual  (slap actual [%limb %schematics])
     ::
-    =/  schematics  schematics.expected
+    ?.  ?=(%list -.actual)
+      [%leaf "expected %list, but got {<-.actual>}"]~
     ::
-    =|  res=tang
-    |-  ^+  res
-    ?~  schematics
-      ::  make sure there aren't any extra :choices in :actual
+    |-  ^-  tang
+    ?~  schematics.expected
+      ::  make sure there aren't any extra :schematics in :actual
       ::
-      =.  actual  (assert-null actual)
-      ::  no more choices; produce any errors we got
-      ::
-      res
+      ?~  schematics.actual
+        ~
+      [%leaf "actual had more schematics than expected"]~
     ::  :expected isn't empty yet; make sure :actual isn't either
     ::
-    =.  actual  (assert-not-null actual)
-    ::  recurse on the first sub-schematic
-    ::
-    =.  res
-      %+  weld  res
-      ^$(expected i.schematics, actual (slap actual [%limb %i]))
-    ::  recurse on the rest of the sub-schematics
-    ::
-    $(schematics t.schematics, actual (slap actual [%limb %t]))
-  ::
-      %mash
-    %+  weld
-      %+  expect-eq
-        [[%face %disc -:!>(*disc)] disc.expected]
-      (slap actual [%limb %disc])
+    ?~  schematics.actual
+      [%leaf "expected had more schematics than actual"]~
     ::
     %+  weld
-      %+  expect-eq
-        [[%face %mark [%atom %tas ~]] mark.expected]
-      (slap actual [%limb %mark])
-    ::
-    %+  weld
-      %+  expect-eq
-        [[%face %disc-first -:!>(*disc)] disc.expected]
-      (slap actual [%wing ~[%disc %first]])
-    ::
-    %+  weld
-      %+  expect-eq
-        [[%face %mark-first -:!>(*disc)] disc.expected]
-      (slap actual [%wing ~[%mark %first]])
-    ::
-    %+  weld
-      %_  $
-        expected  schematic.first.expected
-        actual    (slap actual [%wing ~[%schematic %first]])
-      ==
-    ::
-    %+  weld
-      %+  expect-eq
-        [[%face %disc-second -:!>(*disc)] disc.expected]
-      (slap actual [%wing ~[%disc %second]])
-    ::
-    %+  weld
-      %+  expect-eq
-        [[%face %mark-second -:!>(*disc)] disc.expected]
-      (slap actual [%wing ~[%mark %second]])
+      ^$(expected i.schematics.expected, actual i.schematics.actual)
     ::
     %_  $
-      expected  schematic.second.expected
-      actual    (slap actual [%wing ~[%schematic %second]])
+      schematics.expected  t.schematics.expected
+      schematics.actual    t.schematics.actual
+    ==
+  ::
+      %mash
+    ::
+    ?.  ?=(%mash -.actual)
+      [%leaf "expected %mash, but got {<-.actual>}"]~
+    ::
+    ;:  weld
+      (expect-eq !>(disc.expected) !>(disc.actual))
+      (expect-eq !>(mark.expected) !>(mark.actual))
+      (expect-eq !>(disc.first.expected) !>(disc.first.actual))
+      (expect-eq !>(mark.first.expected) !>(mark.first.actual))
+      (expect-eq !>(disc.second.expected) !>(disc.second.actual))
+      (expect-eq !>(mark.second.expected) !>(mark.second.actual))
+      $(expected schematic.first.expected, actual schematic.first.actual)
+      $(expected schematic.second.expected, actual schematic.second.actual)
     ==
   ::
       %mute
-    %+  weld
-      $(expected subject.expected, actual (slap actual [%limb %subject]))
     ::
-    =/  mutations  mutations.expected
-    =.  actual     (slap actual [%limb %mutations])
+    ?.  ?=(%mute -.actual)
+      [%leaf "expected %mute, but got {<-.actual>}"]~
     ::
-    =|  index=@ud
-    =|  res=tang
-    |-  ^+  res
-    ?~  mutations
-      ::  make sure there aren't any extra :choices in :actual
+    %+  weld  $(expected subject.expected, actual subject.actual)
+    ::
+    |-  ^-  tang
+    ?~  mutations.expected
+      ::  make sure there aren't any extra :mutations in :actual
       ::
-      =.  actual  (assert-null actual)
-      ::  no more choices; produce any errors we got
-      ::
-      res
+      ?~  mutations.actual
+        ~
+      [%leaf "actual had more mutations than expected"]~
     ::  :expected isn't empty yet; make sure :actual isn't either
     ::
-    =.  actual  (assert-not-null actual)
-    ::  recurse on the first sub-schematic
+    ?~  mutations.actual
+      [%leaf "expected had more mutations than actual"]~
     ::
-    =.  res
-      %+  weld
-        res
-      %+  weld
-        %+  expect-eq
-          [[%face (cat 3 'wing-' (scot %tas index)) -:!>(*wing)] p.i.mutations]
-        (slap actual [%wing ~[%p %mutations]])
-      ::
-      ^$(expected q.i.mutations, actual (slap actual [%wing ~[%q %mutations]]))
-    ::  recurse on the rest of the sub-schematics
-    ::
-    $(mutations t.mutations, actual (slap actual [%limb %t]))
+    ;:  weld
+      (expect-eq !>(p.i.mutations.expected) !>(p.i.mutations.actual))
+      ^$(expected q.i.mutations.expected, actual q.i.mutations.actual)
+      %_  $
+        mutations.expected  t.mutations.expected
+        mutations.actual    t.mutations.actual
+      ==
+    ==
   ::
       %pact
-    %+  weld
-      %+  expect-eq
-        [[%face %disc -:!>(*disc)] disc.expected]
-      (slap actual [%limb %disc])
     ::
-    %+  weld
-      $(expected start.expected, actual (slap actual [%limb %start]))
-    $(expected diff.expected, actual (slap actual [%limb %diff]))
+    ?.  ?=(%pact -.actual)
+      [%leaf "expected %pact, but got {<-.actual>}"]~
+    ::
+    ;:  weld
+      (expect-eq !>(disc.expected) !>(disc.actual))
+      $(expected start.expected, actual start.actual)
+      $(expected diff.expected, actual diff.actual)
+    ==
   ::
       %path
-    %-  expect-eq
-    ::
-    :_  %+  slap  actual
-        [%cnls [%limb %disc] [%limb %prefix] [%limb %raw-path]]
-    ::
-    ^-  vase
-    :_  [disc prefix raw-path]:expected
-    ^-  type
-    :+  %cell
-      [%face %disc -:!>(*disc)]
-    :+  %cell
-      [%face %prefix [%atom %tas ~]]
-    [%face %raw-path [%atom %tas ~]]
+    (expect-eq [schematic-type expected] [schematic-type actual])
   ::
       %plan
-    %+  weld
-      %+  expect-eq
-        [[%face %path-to-render -:!>(*rail)] path-to-render.expected]
-      (slap actual [%limb %path-to-render])
-    ::
-    %+  weld
-      %+  expect-eq
-        [[%face %query-string -:!>(*coin)] query-string.expected]
-      (slap actual [%limb %query-string])
-    ::
-    %+  expect-eq
-      [[%face %scaffold -:!>(*scaffold)] scaffold.expected]
-    (slap actual [%limb %scaffold])
+    (expect-eq [schematic-type expected] [schematic-type actual])
   ::
       %reef
-    %+  expect-eq
-      [[%face %disc -:!>(*disc)] disc.expected]
-    (slap actual [%limb %disc])
+    (expect-eq [schematic-type expected] [schematic-type actual])
   ::
       %ride
-    %+  weld
-      %+  expect-eq
-        [[%face %formula -:!>(*hoon)] formula.expected]
-      (slap actual [%limb %formula])
     ::
-    $(expected subject.expected, actual (slap actual [%limb %subject]))
+    ?.  ?=(%ride -.actual)
+      [%leaf "expected %ride, but got {<-.actual>}"]~
+    ::
+    %+  weld
+      (expect-eq !>(formula.expected) !>(formula.actual))
+    $(expected subject.expected, actual subject.actual)
   ::
       %same
-    $(expected schematic.expected, actual (slap actual [%limb %schematic]))
+    ::
+    ?.  ?=(%same -.actual)
+      [%leaf "expected %same, but got {<-.actual>}"]~
+    ::
+    $(expected schematic.expected, actual schematic.actual)
   ::
       %scry
-    %+  expect-eq
-      [[%face %resource -:!>(*resource)] resource.expected]
-    (slap actual [%limb %resource])
+    (expect-eq [schematic-type expected] [schematic-type actual])
   ::
       %slim
+    ::
+    ?.  ?=(%slim -.actual)
+      [%leaf "expected %slim, but got {<-.actual>}"]~
+    ::
     %+  weld
-      %+  expect-eq
-        !>(`?`%.y)
-      ^-  vase
-      :-  -:!>(*?)
-      ^-  ?
-      =<  -
-      %+  ~(nets wa *worm)
-        subject-type.expected
-      q:(slap actual [%limb %subject-type])
+      (expect-eq !>(formula.expected) !>(formula.actual))
     ::
     %+  expect-eq
-      [[%face %formula -:!>(*hoon)] formula.expected]
-    (slap actual [%limb %formula])
+      !>(`?`%.y)
+    ^-  vase
+    :-  -:!>(*?)
+    ^-  ?
+    (~(nest ut subject-type.expected) | subject-type.actual)
   ::
       %slit
-    %+  weld
-      %+  expect-eq
-        gate.expected
-      ((hard vase) q:(slap actual [%limb %gate]))
     ::
-    %+  expect-eq
-      sample.expected
-    ((hard vase) q:(slap actual [%limb %sample]))
+    ?.  ?=(%slit -.actual)
+      [%leaf "expected %slit, but got {<-.actual>}"]~
+    ::
+    %+  weld
+      (expect-eq gate.expected gate.actual)
+    (expect-eq sample.expected sample.actual)
   ::
       ?(%vale %volt)
-    %+  weld
-      %+  expect-eq
-        [[%face %disc -:!>(*disc)] disc.expected]
-      (slap actual [%limb %disc])
-    ::
-    %+  weld
-      %+  expect-eq
-        [[%face %mark -:!>(*term)] mark.expected]
-      (slap actual [%limb %mark])
-    ::
-    %+  expect-eq
-      [[%face %input -:!>(**)] input.expected]
-    (slap actual [%limb %input])
+    (expect-eq [schematic-type expected] [schematic-type actual])
   ::
       %walk
-    %+  weld
-      %+  expect-eq
-        [[%face %disc -:!>(*disc)] disc.expected]
-      (slap actual [%limb %disc])
-    ::
-    %+  weld
-      %+  expect-eq
-        [[%face %source -:!>(*term)] source.expected]
-      (slap actual [%limb %source])
-    ::
-    %+  expect-eq
-      [[%face %source -:!>(*term)] target.expected]
-    (slap actual [%limb %target])
+    (expect-eq [schematic-type expected] [schematic-type actual])
   ==
-::  +specialize-by-tag: specialize a $% vase's type to a particular :tag
+::  +schematic-type: the +type for +schematic:ford
 ::
-::    Vase equivalent of:
-::
-::    ```
-::    ?>  ?=(<tag> -.value)  value
-::    ```
-::
-++  specialize-by-tag
-  |=  [tag=@tas =vase]
-  ^+  vase
-  ::
-  %+  slap  vase
-  ^-  hoon
-  :+  %wtbn
-    [%wtts [%leaf %tas tag] [%& 2]~]
-  [%wing [%& 1]~]
-::  +assert-null: specialize a vase to have a null type, crashing if invalid
-::
-::    Vase equivalent of:
-::
-::    ```
-::    ?>  ?=(~ value)  value
-::    ```
-::
-++  assert-null
-  |=  =vase
-  ^+  vase
-  ::
-  %+  slap  vase
-  ^-  hoon
-  :+  %wtbn
-    [%wtts [%base %null] [%& 1]~]
-  [%wing [%& 1]~]
-::  +assert-not-null: specialize a vase to non-null type, crashing if invalid
-::
-::    Vase equivalent of:
-::
-::    ```
-::    ?<  ?=(~ value)  value
-::    ```
-::
-++  assert-not-null
-  |=  =vase
-  ^+  vase
-  ::
-  %+  slap  vase
-  ^-  hoon
-  :+  %wtld
-    [%wtts [%base %null] [%& 1]~]
-  [%wing [%& 1]~]
+++  schematic-type  ^~  `type`-:!>(*schematic:ford)
 --
