@@ -123,7 +123,6 @@ u3qe_sign(u3_atom has,
   byte_reverse(rec_y + 32, s_y, 32);
 
   /* package s,r,v signature for return */
-  v += 27;
   u3_noun s  = u3i_words(8, (const c3_w*) s_y);
   u3_noun r  = u3i_words(8, (const c3_w*) r_y);
   return (u3nt(v, r, s));
@@ -191,7 +190,6 @@ u3qe_reco(u3_atom has,
   }
 
   c3_ws siv_ws = siv_y[0];
-  siv_ws -= 27;
   secp256k1_ecdsa_recoverable_signature sig_u;
   memset( (void *)  & sig_u, 0, sizeof(secp256k1_ecdsa_recoverable_signature)  );
   c3_ws ret = secp256k1_ecdsa_recoverable_signature_parse_compact(ctx_u,     /* IN:  context */
