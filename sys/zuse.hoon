@@ -115,7 +115,7 @@
 ++  ethe
   |%
   ::
-  ::  ethereum types. integer bitsizes ignored.
+  ::  solidity types. integer bitsizes ignored
   ++  etyp
     $%  ::  static
         %address  %bool
@@ -128,7 +128,7 @@
         %bytes    %string
     ==
   ::
-  ::  ethereum-style typed data. integer bitsizes ignored.
+  ::  solidity-style typed data. integer bitsizes ignored
   ++  data
     $%  [%address p=address]
         [%string p=tape]
@@ -139,7 +139,7 @@
         [%ureal p=@urs]
         [%array-n p=(list data)]
         [%array p=(list data)]
-        [%bytes-n p=octs]  ::TODO  just @, because context knowns length?
+        [%bytes-n p=octs]  ::TODO  just @, because context knows length?
         [%bytes p=octs]
     ==
   ::
@@ -7731,7 +7731,6 @@
       ==
     ::
     ++  event-log-to-hull-diff
-      =,  ethe
       =,  ships-events
       |=  log=event-log
       ^-  (unit (pair ship diff-hull))
