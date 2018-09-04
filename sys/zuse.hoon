@@ -171,6 +171,7 @@
         ==
         [%eth-get-filter-logs fid=@ud]
         [%eth-get-filter-changes fid=@ud]
+        [%eth-send-raw-transaction dat=@ux]
     ==
   ::
   ::TODO
@@ -179,6 +180,7 @@
         [%eth-new-filter fid=@ud]
         [%eth-get-filter-logs los=(list event-log)]
         [%eth-got-filter-changes los=(list event-log)]
+        [%eth-transaction-hash haz=@ux]
     ==
   ::
   ++  event-log
@@ -7342,6 +7344,9 @@
     ::
         %eth-get-filter-changes
       ['eth_getFilterChanges' (tape (num-to-hex fid.req)) ~]
+    ::
+        %eth-send-raw-transaction
+      ['eth_sendRawTransaction' (tape (num-to-hex dat.req)) ~]
     ==
   ::
   ++  eth-call-to-json
@@ -7378,7 +7383,7 @@
     ==
   ::
   ++  num-to-hex
-    |=  n=@ud
+    |=  n=@
     ^-  tape
     %-  prefix-hex
     (render-hex-bytes (as-octs n))
@@ -7396,11 +7401,15 @@
   ::
   ::  parsing responses from nodes
   ::
-  ++  parse-eth-new-filter-res
+  ++  parse-hex-result
     |=  j=json
-    ^-  @ud
+    ^-  @
     ?>  ?=(%s -.j)
     (hex-to-num p.j)
+  ::
+  ++  parse-eth-new-filter-res  parse-hex-result
+  ::
+  ++  parse-transaction-hash  parse-hex-result
   ::
   ++  parse-event-logs
     (ar:dejs:format parse-event-log)
