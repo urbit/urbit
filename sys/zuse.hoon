@@ -143,6 +143,17 @@
         [%bytes p=octs]
     ==
   ::
+  ::  raw transaction data
+  +$  transaction
+    $:  nonce=@ud
+        gas-price=@ud
+        gas=@ud
+        to=address
+        value=@ud
+        data=@ux
+        chain-id=@ux
+    ==
+  ::
   ::  ethereum address, 20 bytes.
   ++  address  @ux
   ::
@@ -7185,6 +7196,72 @@
   =,  mimes:html
   =,  ethe
   |%
+  ++  sign-transaction
+    =,  crypto
+    |=  [tx=transaction pk=@]
+    ^-  @ux
+    =/  dat=@
+      %-  encode-atoms:rlp
+      tx(chain-id [chain-id.tx 0 0 ~])
+    =/  hash=@
+      =+  wid=(met 3 dat)
+      %-  keccak-256:keccak
+      [wid (rev 3 wid dat)]
+    =+  (ecdsa-raw-sign:secp256k1:secp hash pk)
+    %-  encode-atoms:rlp
+    tx(chain-id [:(add (mul chain-id.tx 2) 35 v) r s ~])
+  ::
+  ::  rlp en/decoding
+  ::NOTE  https://github.com/ethereum/wiki/wiki/RLP
+  ::
+  ++  rlp
+    |%
+    ::NOTE  rlp encoding doesn't really care about leading zeroes,
+    ::      but because we need to disinguish between no-bytes zero
+    ::      and one-byte zero (and also empty list) we end up with
+    ::      this awful type...
+    +$  item
+      $%  [%l l=(list item)]
+          [%b b=byts]
+      ==
+    ::
+    ::  treat atoms as list of items
+    ++  encode-atoms
+      |=  l=(list @)
+      %+  encode  %l
+      %+  turn  l
+      |=(a=@ b+[(met 3 a) a])
+    ::
+    ++  encode
+      |=  in=item
+      ^-  @
+      ?-  -.in
+          %b
+        ?:  &(=(1 wid.b.in) (lth dat.b.in 0x80))
+          dat.b.in
+        %^  cat  3  dat.b.in
+        ::TODO  unsure if this should pass wid or (met 3 dat)...
+        (encode-length wid.b.in 0x80)
+      ::
+          %l
+        =/  out=@
+          %+  roll  l.in
+          |=  [ni=item en=@]
+          (cat 3 (encode ni) en)
+        %^  cat  3  out
+        (encode-length (met 3 out) 0xc0)
+      ==
+    ::
+    ++  encode-length
+      |=  [len=@ off=@]
+      ?:  (lth len 56)  (add len off)
+      =-  (cat 3 len -)
+      :(add (met 3 len) off 55)
+    ::
+    ::TODO  decode
+    ::
+    --
+  ::
   ::  making calls to nodes
   ::
   ::  see also the json rpc api spec:
