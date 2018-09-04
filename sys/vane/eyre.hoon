@@ -1967,7 +1967,7 @@
       ^-  schematic:ford
       :+  %mute
         ^-  schematic:ford
-        [%core [[our %home] (flop %_(dom . sec+dom))]]
+        [%core [[our %home] [%hoon (flop %_(dom . sec+dom))]]]
       ^-  (list (pair wing schematic:ford))
       :*  [[%& 12]~ %$ bale+!>(*(bale @))]  :: XX specify on type?
           ?~  cor  ~
@@ -1991,7 +1991,7 @@
           +12.q
         =+  ^=  ato
             %-  sky
-            [[151 %noun] %cx (en-beam root-beak [%atom (flop %_(dom . sec+dom))])]
+            [[151 %noun] %cx (en-beam root-beak [%atom [%hoon (flop %_(dom . sec+dom))]])]
         =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
         =.  key
           ?~  key  ''
