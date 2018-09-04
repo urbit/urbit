@@ -4209,7 +4209,7 @@
       ++  ecdsa-raw-recover                             ::  get pubkey from sig
         |=  [has=@uvI sig=[v=@ r=@ s=@]]
         ^-  pont
-        ?>  ?&((lte 27 v.sig) (lte v.sig 34))
+        ?>  (lte v.sig 7)
         =/  x  r.sig
         =/  ysq  (sum.p b (exp.p 3 x))               ::  omits A=0
         =/  bet  (exp.p (div +(^p) 4) ysq)
