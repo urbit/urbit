@@ -7202,14 +7202,19 @@
     =,  crypto
     |=  [tx=transaction pk=@]
     ^-  @ux
-    =/  dat=@
-      %-  encode-atoms:rlp
-      tx(chain-id [chain-id.tx 0 0 ~])
+    ::  hash the raw transaction data
     =/  hash=@
+      =/  dat=@
+        %-  encode-atoms:rlp
+        ::  with v=chain-id, r=0, s=0
+        tx(chain-id [chain-id.tx 0 0 ~])
       =+  wid=(met 3 dat)
       %-  keccak-256:keccak
       [wid (rev 3 wid dat)]
+    ::  sign transaction hash with private key
     =+  (ecdsa-raw-sign:secp256k1:secp hash pk)
+    ::  complete transaction is raw data, with r and s
+    ::  taken from the signature, and v as per eip-155
     %-  encode-atoms:rlp
     tx(chain-id [:(add (mul chain-id.tx 2) 35 v) r s ~])
   ::
