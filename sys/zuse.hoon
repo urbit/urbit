@@ -4188,7 +4188,7 @@
         =+  [r y]=(jc-mul g k)
         =/  s  (pro.n `@`(inv.n k) `@`(sum.n z (mul r prv)))
         =/  big-s  (gte (mul 2 s) ^n)
-        :*  v=(add 27 (mix (end 0 1 y) ?:(big-s 1 0)))
+        :*  v=(mix (end 0 1 y) ?:(big-s 1 0))
             r=r
             s=?.(big-s s (sub ^n s))
         ==
