@@ -203,6 +203,7 @@
       $village                                          :<  whitelist
       $journal                                          :<  pub r, whitelist w
       $mailbox                                          :<  our r, blacklist w
+      $custom                                           :<  according to custom-rule
   ==                                                    ::
 ::  participant metadata.                               ::
 ++  crowd      {loc/group rem/(map circle group)}       :<  our & srcs presences

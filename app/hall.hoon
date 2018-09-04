@@ -16,6 +16,9 @@
       /|  /:  /%/filter  /!noun/
           /~  |=({t/telegram:hall bowl:gall} t)
       ==
+/=    custom-rules
+      /^  (map knot $-({ship ?($r %w) bowl:gall} ?))
+      /:  /%/rules  /_  /!noun/
 ::
 ::::
   ::
@@ -1617,6 +1620,10 @@
         $village  (~(has in sis.con.shape) her)         :<  whitelist
         $journal  (~(has in sis.con.shape) her)         :<  author whitelist
         $mailbox  !(~(has in sis.con.shape) her)        :<  author blacklist
+        $custom                                         :<  custom rule
+          =/  rul/$-({ship ?($r $w) bowl:gall} ?)  
+            (fall (~(get by custom-rules) nom) |=(* |))
+          (rul her %w bol)
       ==
     ::
     ++  so-visible
@@ -1629,6 +1636,10 @@
         $village  (~(has in sis.con.shape) her)         :<  whitelist
         $journal  &                                     :<  all
         $mailbox  (team:title our.bol her)              :<  our team
+        $custom                                         :<  custom rule
+          =/  rul/$-({ship ?($r $w) bowl:gall} ?)  
+            (fall (~(get by custom-rules) nom) |=(* |))
+          (rul her %r bol)
       ==
     --
   --

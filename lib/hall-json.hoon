@@ -495,7 +495,7 @@
   ::
   ++  secu                                              ::>  security
     ^-  $-(json (unit security))
-    (su (perk %channel %village %journal %mailbox ~))
+    (su (perk %channel %village %journal %mailbox %custom ~))
   ::
   ++  crow                                              ::>  crowd
     ^-  $-(json (unit crowd))
