@@ -297,7 +297,20 @@
         ;~(pose sym (easy dp-default-app))
       ==
     ++  dp-beam                                         ::  ++beam
-      %+  cook  |=(a/path =+((de-beam a) ?^(- u [he-beak (flop a)])))
+      %+  cook
+        |=  a/path
+        ::  hack: fixup paths that come out of the hoon parser
+        ::
+        ::    We currently invoke the hoon parser to read relative paths from
+        ::    the command line, and this parser will produce leading ~ path
+        ::    components with paths that start with a `/`.
+        ::
+        ::    This entire path is nuts and we shouldn't be representing paths
+        ::    as arbitrary hoons.
+        ::
+        =?  a  &(?=(^ a) =('' i.a))
+          t.a
+        =+((de-beam a) ?^(- u [he-beak (flop a)]))
       =+  vez=(vang | dp-path)
       (sear plex:vez (stag %clsg poor:vez))
     ::
