@@ -212,6 +212,16 @@
       %collections-action  act
   ==
 ::
+::  +poke-noun
+::
+::    utility for setting whether or not to display the onboarding page
+::
+++  poke-noun
+  |=  onb=?
+  ^-  (quip move _this)
+  =<  ta-done
+  (ta-write:ta /web/landscape/onboard/atom [%atom !>(onb)])
+::
 ::  +ta: main event core for collections
 ::
 ++  ta
