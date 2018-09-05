@@ -12,9 +12,9 @@
 /+    hall-lib=hall, hall-legacy                        ::  libraries
 /=    seed  /~  !>(.)
 /=    filter-gram
-      /^  $-({telegram:hall bowl:gall} telegram:hall)
+      /^  $-({telegram:hall-sur bowl:gall} telegram:hall-sur)
       /|  /:  /%/filter  /!noun/
-          /~  |=({t/telegram:hall bowl:gall} t)
+          /~  |=({t/telegram:hall-sur bowl:gall} t)
       ==
 /=    custom-rules
       /^  (map knot $-({ship ?($r %w) bowl:gall} ?))
@@ -1568,9 +1568,8 @@
       ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
       =.  sep.gam  (so-sane sep.gam)
-      ::TODO  figure out why +filter-gram doesnt work in turd-turbo.
       ::
-      ::=.  gam  (filter-gram gam bol)
+      =.  gam  (filter-gram gam bol)
       ::  if we already have it, ignore.
       =+  old=(~(get by known) uid.gam)
       ?.  &(?=(^ old) =(gam (snag u.old grams)))
