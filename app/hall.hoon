@@ -11,15 +11,14 @@
 /-    hall-sur=hall                                     ::  structures
 /+    hall-lib=hall, hall-legacy                        ::  libraries
 /=    seed  /~  !>(.)
-
-
-::  TODO: Figure out why this doesn't work:
-::
-::  /=    filter-gram
-::        /^  $-({telegram:hall bowl:gall} telegram:hall)
-::        /|  /:  /%/filter  /!noun/
-::            /~  |=({t/telegram:hall bowl:gall} t)
-::        ==
+/=    filter-gram
+      /^  $-({telegram:hall-sur bowl:gall} telegram:hall-sur)
+      /|  /:  /%/filter  /!noun/
+          /~  |=({t/telegram:hall-sur bowl:gall} t)
+      ==
+/=    custom-rules
+      /^  (map knot $-({ship ?($r %w) bowl:gall} ?))
+      /:  /%/rules  /_  /!noun/
 ::
 ::::
 =,  hall-sur
@@ -1569,9 +1568,8 @@
       ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
       =.  sep.gam  (so-sane sep.gam)
-      ::TODO  figure out why +filter-gram doesnt work in turd-turbo.
       ::
-      ::=.  gam  (filter-gram gam bol)
+      =.  gam  (filter-gram gam bol)
       ::  if we already have it, ignore.
       =+  old=(~(get by known) uid.gam)
       ?.  &(?=(^ old) =(gam (snag u.old grams)))
@@ -1623,6 +1621,10 @@
         $village  (~(has in sis.con.shape) her)         ::  whitelist
         $journal  (~(has in sis.con.shape) her)         ::  author whitelist
         $mailbox  !(~(has in sis.con.shape) her)        ::  author blacklist
+        $custom                                         ::  custom rule
+          =/  rul/$-({ship ?($r $w) bowl:gall} ?)
+            (fall (~(get by custom-rules) nom) |=(* |))
+          (rul her %w bol)
       ==
     ::
     ++  so-visible
@@ -1635,6 +1637,10 @@
         $village  (~(has in sis.con.shape) her)         ::  whitelist
         $journal  &                                     ::  all
         $mailbox  (team:title our.bol her)              ::  our team
+        $custom                                         ::  custom rule
+          =/  rul/$-({ship ?($r $w) bowl:gall} ?)
+            (fall (~(get by custom-rules) nom) |=(* |))
+          (rul her %r bol)
       ==
     --
   --

@@ -51064,536 +51064,9 @@ var PAGE_STATUS_PROCESSING = "page status processing";
 var PAGE_STATUS_DISCONNECTED = "page status disconnected";
 var PAGE_STATUS_RECONNECTING = "page status reconnecting";
 var REPORT_PAGE_STATUS = "report page status update";
-
-function capitalize(str) {
-  return "".concat(str[0].toUpperCase()).concat(str.substr(1));
-}
-function getQueryParams() {
-  if (window.location.search !== "") {
-    return JSON.parse('{"' + decodeURI(window.location.search.substr(1).replace(/&/g, "\",\"").replace(/=/g, "\":\"")) + '"}');
-  } else {
-    return {};
-  }
-}
-function getLoadingClass(storeTransition) {
-  return classnames({
-    'hide': storeTransition === PAGE_STATUS_READY,
-    'page-status': storeTransition !== PAGE_STATUS_READY,
-    'page-status-primary': storeTransition === PAGE_STATUS_TRANSITIONING,
-    'page-status-secondary': storeTransition === PAGE_STATUS_PROCESSING,
-    'page-status-tertiary': storeTransition === PAGE_STATUS_DISCONNECTED,
-    'page-status-quaternary': storeTransition === PAGE_STATUS_RECONNECTING
-  });
-}
-/*
-  Goes from:
-    1531943107869               // "javascript unix time"
-  To:
-    "48711y 2w 5d 11m 9s"       // "stringified time increments"
-*/
-
-function secToString(secs) {
-  if (secs <= 0) {
-    return 'Completed';
-  }
-
-  secs = Math.floor(secs);
-  var min = 60;
-  var hour = 60 * min;
-  var day = 24 * hour;
-  var week = 7 * day;
-  var year = 52 * week;
-
-  var fy = function fy(s) {
-    if (s < year) {
-      return ['', s];
-    } else {
-      return [Math.floor(s / year) + 'y', s % year];
-    }
-  };
-
-  var fw = function fw(tup) {
-    var str = tup[0];
-    var sec = tup[1];
-
-    if (sec < week) {
-      return [str, sec];
-    } else {
-      return [str + ' ' + Math.floor(sec / week) + 'w', sec % week];
-    }
-  };
-
-  var fd = function fd(tup) {
-    var str = tup[0];
-    var sec = tup[1];
-
-    if (sec < day) {
-      return [str, sec];
-    } else {
-      return [str + ' ' + Math.floor(sec / day) + 'd', sec % day];
-    }
-  };
-
-  var fh = function fh(tup) {
-    var str = tup[0];
-    var sec = tup[1];
-
-    if (sec < hour) {
-      return [str, sec];
-    } else {
-      return [str + ' ' + Math.floor(sec / hour) + 'h', sec % hour];
-    }
-  };
-
-  var fm = function fm(tup) {
-    var str = tup[0];
-    var sec = tup[1];
-
-    if (sec < min) {
-      return [str, sec];
-    } else {
-      return [str + ' ' + Math.floor(sec / min) + 'm', sec % min];
-    }
-  };
-
-  var fs = function fs(tup) {
-    var str = tup[0];
-    var sec = tup[1];
-    return str + ' ' + sec + 's';
-  };
-
-  return fs(fm(fh(fd(fw(fy(secs)))))).trim();
-}
-function collectionAuthorization(stationDetails, usership) {
-  if (stationDetails.host === usership) {
-    return "write";
-  } else if (lodash.has(stationDetails, "config.con.sec")) {
-    var sec = lodash.get(stationDetails, "config.con.sec", null);
-
-    if (sec === "journal") {
-      return "write";
-    }
-  }
-
-  return "read";
-}
-function uuid() {
-  var str = "0v";
-  str += Math.ceil(Math.random() * 8) + ".";
-
-  for (var i = 0; i < 5; i++) {
-    var _str = Math.ceil(Math.random() * 10000000).toString(32);
-
-    _str = ("00000" + _str).substr(-5, 5);
-    str += _str + ".";
-  }
-
-  return str.slice(0, -1);
-}
-function parseCollCircle(st) {
-  var sp = st.split('/');
-  var pax = sp[1].split('-');
-  pax.shift();
-  pax = ['web', 'collections'].concat(pax);
-  var r = {
-    ship: sp[0],
-    path: pax,
-    name: pax[pax.length - 1]
-  };
-  return r;
-}
-function isPatTa(str) {
-  var r = /^[a-z,0-9,\-,\.,_,~]+$/.exec(str);
-  return !!r;
-}
-function isValidStation(st) {
-  var tokens = st.split("/");
-  if (tokens.length !== 2) return false;
-  return urbitOb.isShip(tokens[0]) && isPatTa(tokens[1]);
-}
-/*
-  Goes from:
-    ~2018.7.17..23.15.09..5be5    // urbit @da
-  To:
-    (javascript Date object)
-*/
-
-function daToDate(st) {
-  var dub = function dub(n) {
-    return parseInt(n) < 10 ? "0" + parseInt(n) : n.toString();
-  };
-
-  var da = st.split('..');
-  var bigEnd = da[0].split('.');
-  var lilEnd = da[1].split('.');
-  var ds = "".concat(bigEnd[0].slice(1), "-").concat(dub(bigEnd[1]), "-").concat(dub(bigEnd[2]), "T").concat(dub(lilEnd[0]), ":").concat(dub(lilEnd[1]), ":").concat(dub(lilEnd[2]), "Z");
-  return new Date(ds);
-}
-/*
-  Goes from:
-    (javascript Date object)
-  To:
-    ~2018.7.17..23.15.09..5be5    // urbit @da
-*/
-
-function dateToDa(d, mil) {
-  var fil = function fil(n) {
-    return n >= 10 ? n : "0" + n;
-  };
-
-  return "~".concat(d.getUTCFullYear(), ".") + "".concat(d.getUTCMonth() + 1, ".") + "".concat(fil(d.getUTCDate()), "..") + "".concat(fil(d.getUTCHours()), ".") + "".concat(fil(d.getUTCMinutes()), ".") + "".concat(fil(d.getUTCSeconds())) + "".concat(mil ? "..0000" : "");
-} // ascending for clarity
-
-function sortSrc(circleArray) {
-  var sc = circleArray.map(function (c) {
-    return util.parseCollCircle(c);
-  }).filter(function (pc) {
-    return typeof pc != 'undefined' && typeof pc.top == 'undefined';
-  });
-  return sc.map(function (src) {
-    return src.coll;
-  }).sort(function (a, b) {
-    return util.daToDate(a) - util.daToDate(b);
-  });
-}
-function arrayEqual(a, b) {
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-  if (a.length != b.length) return false; // If you don't care about the order of the elements inside
-  // the array, you should sort both arrays here.
-
-  for (var i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) return false;
-  }
-
-  return true;
-}
-
-function deSig(ship) {
-  return ship.replace('~', '');
-} // use urbit.org proxy if it's not on our ship
-
-
-function foreignUrl(shipName, own, urlFrag) {
-  if (deSig(shipName) != deSig(own)) {
-    return "http://".concat(deSig(shipName), ".urbit.org").concat(urlFrag);
-  } else {
-    return urlFrag;
-  }
-} // shorten comet names
-
-function prettyShip(ship) {
-  var sp = ship.split('-');
-  return [sp.length == 9 ? "".concat(sp[0], "_").concat(sp[8]) : ship, ship[0] === '~' ? "/~~/".concat(ship, "/==/web/landscape/profile") : "/~~/~".concat(ship, "/==/web/landscape/profile")];
-}
-function profileUrl(ship) {
-  return "/~~/~".concat(ship, "/==/web/landscape/profile");
-}
-function isDMStation(station) {
-  var host = station.split('/')[0].substr(1);
-  var circle = station.split('/')[1];
-  return station.indexOf('.') !== -1 && circle.indexOf(host) !== -1;
-}
-function calculateStations(configs) {
-  var numSubs = Object.keys(configs).filter(function (sta) {
-    return !isDMStation(sta) && !sta.includes("inbox");
-  }).length;
-  var numDMs = Object.keys(configs).filter(function (sta) {
-    return isDMStation(sta);
-  }).length;
-  var numString = [];
-  if (numSubs) numString.push("".concat(numSubs, " subscriptions"));
-  if (numDMs) numString.push("".concat(numDMs, " DMs"));
-  numString = numString.join(", ");
-  return numString;
-}
-function getStationDetails(station) {
-  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var usership = arguments.length > 2 ? arguments[2] : undefined;
-  var host = station.split("/")[0].substr(1);
-  var ret = {
-    type: "none",
-    station: station,
-    config: config,
-    host: host,
-    cir: station.split("/")[1],
-    hostProfileUrl: profileUrl(host)
-  };
-  var collParts = parseCollCircle(station);
-
-  if (station.includes("inbox")) {
-    ret.type = "inbox";
-  } else if (isDMStation(station)) {
-    ret.type = "dm";
-  } else if (station.includes("/c")) {
-    ret.type = "collection";
-  } else {
-    ret.type = "chat";
-  }
-
-  switch (ret.type) {
-    case "inbox":
-      ret.stationUrl = "/~~/landscape";
-      ret.stationTitle = ret.cir;
-      break;
-
-    case "chat":
-      ret.stationUrl = "/~~/landscape/stream?station=".concat(station);
-      ret.stationDetailsUrl = "/~~/landscape/stream/details?station=".concat(station);
-      ret.stationTitle = ret.cir;
-      break;
-
-    case "dm":
-      if (config.con) {
-        ret.stationTitle = ret.cir.split(".").filter(function (mem) {
-          return mem !== usership;
-        }).map(function (mem) {
-          return "~".concat(mem);
-        }).join(", ");
-        
-      } else {
-        ret.stationTitle = "unknown";
-      }
-
-      ret.stationUrl = "/~~/landscape/stream?station=".concat(station);
-      break;
-
-    case "collection":
-      ret.path = collParts.path;
-      ret.stationUrl = "/~~/~".concat(ret.host, "/==/").concat(collParts.path.join('/'));
-      ret.stationTitle = collParts.name;
-      break;
-  }
-
-  return ret;
-}
-function getMessageContent(msg) {
-  var ret;
-  var MESSAGE_TYPES = {
-    'sep.app.sep.fat.sep.lin.msg': 'app',
-    'sep.app.sep.lin.msg': 'app',
-    'sep.fat': function sepFat(msg) {
-      var type = msg.sep.fat.tac.text;
-      var station = msg.aud[0];
-      var stationDetails = getStationDetails(station);
-      var jason = JSON.parse(msg.sep.fat.sep.lin.msg);
-      var content = type.includes('collection') ? null : jason.content;
-      var par = jason.path.slice(0, -1);
-      return {
-        type: msg.sep.fat.tac.text,
-        contentType: jason.type,
-        content: content,
-        owner: jason.owner,
-        date: jason.date,
-        path: jason.path,
-        postTitle: jason.name,
-        postUrl: "/~~/".concat(jason.owner, "/==/").concat(jason.path.join('/')),
-        parentTitle: jason.path.slice(-2, -1),
-        parentUrl: "/~~/".concat(jason.owner, "/==/").concat(jason.path.slice(0, -1).join('/'))
-      };
-    },
-    'sep.inv.cir': 'inv',
-    'sep.lin.msg': 'lin',
-    'sep.url': 'url',
-    'sep.exp': function sepExp(msg) {
-      return {
-        type: "exp",
-        content: msg.sep.exp.exp,
-        res: msg.sep.exp.res.join('\n')
-      };
-    }
-  };
-  Object.arrayify(MESSAGE_TYPES).some(function (_ref) {
-    var key = _ref.key,
-        value = _ref.value;
-
-    if (lodash.has(msg, key)) {
-      if (typeof value === "string") {
-        ret = {
-          type: value,
-          content: lodash.get(msg, key)
-        };
-      } else if (typeof value === "function") {
-        ret = value(msg);
-      }
-
-      return true;
-    }
-  });
-
-  if (typeof ret === "undefined") {
-    ret = {
-      type: "unknown"
-    };
-    console.log("ASSERT: unknown message type on ", msg);
-  }
-
-  return ret;
-}
-function getSubscribedStations(ship, storeConfigs) {
-  var inbox = storeConfigs["~".concat(ship, "/inbox")];
-  if (!inbox) return null;
-  var stationDetailList = inbox.src.map(function (station) {
-    if (!storeConfigs[station]) return null;
-    return getStationDetails(station, storeConfigs[station], ship);
-  }).filter(function (station) {
-    return station !== null;
-  });
-  var ret = {
-    chatStations: stationDetailList.filter(function (d) {
-      return d.type === "chat";
-    }),
-    collStations: stationDetailList.filter(function (d) {
-      return d.type === "collection";
-    }),
-    dmStations: stationDetailList.filter(function (d) {
-      return d.type === "dm";
-    })
-  };
-  var numSubs = ret.chatStations.length + ret.collStations.length;
-  var numDMs = ret.dmStations.length;
-  var numString = [];
-  if (numSubs > 0) numString.push("".concat(numSubs, " subscriptions"));
-  if (numDMs > 0) numString.push("".concat(numDMs, " DMs"));
-  ret.numString = numString.join(", ");
-  return ret;
-} // maybe do fancier stuff later
-
-function isUrl(string) {
-  var r = /^http|^www|\.com$/.exec(string);
-
-  if (r) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-var util$1 = Object.freeze({
-	capitalize: capitalize,
-	getQueryParams: getQueryParams,
-	getLoadingClass: getLoadingClass,
-	secToString: secToString,
-	collectionAuthorization: collectionAuthorization,
-	uuid: uuid,
-	parseCollCircle: parseCollCircle,
-	isPatTa: isPatTa,
-	isValidStation: isValidStation,
-	daToDate: daToDate,
-	dateToDa: dateToDa,
-	sortSrc: sortSrc,
-	arrayEqual: arrayEqual,
-	foreignUrl: foreignUrl,
-	prettyShip: prettyShip,
-	profileUrl: profileUrl,
-	isDMStation: isDMStation,
-	calculateStations: calculateStations,
-	getStationDetails: getStationDetails,
-	getMessageContent: getMessageContent,
-	getSubscribedStations: getSubscribedStations,
-	isUrl: isUrl
-});
-
-var UrbitApi =
-/*#__PURE__*/
-function () {
-  function UrbitApi() {
-    _classCallCheck(this, UrbitApi);
-  }
-
-  _createClass(UrbitApi, [{
-    key: "setAuthTokens",
-    value: function setAuthTokens(authTokens) {
-      this.authTokens = authTokens;
-    } // keep default bind to hall, since its bind procedure more complex for now AA
-
-  }, {
-    key: "bind",
-    value: function bind(path, method) {
-      var ship = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.authTokens.ship;
-      var appl = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "hall";
-      console.log('binding to ...', appl, ", path: ", path, ", as ship: ", ship, ", by method: ", method);
-      var params = {
-        appl: appl,
-        mark: "json",
-        oryx: this.authTokens.oryx,
-        ship: ship,
-        path: path,
-        wire: path
-      };
-      return fetch("/~/is/~".concat(ship, "/").concat(appl).concat(path, ".json?").concat(method), {
-        credentials: "same-origin",
-        method: "POST",
-        body: JSON.stringify(params)
-      });
-    }
-  }, {
-    key: "hall",
-    value: function hall(data, transition) {
-      this.action("hall", "hall-action", data, transition);
-    }
-  }, {
-    key: "coll",
-    value: function coll(data, transition) {
-      this.action("collections", "collections-action", data, transition);
-    }
-  }, {
-    key: "action",
-    value: function action(appl, mark, data, transition) {
-      var params = {
-        appl: appl,
-        mark: mark,
-        oryx: this.authTokens.oryx,
-        ship: this.authTokens.ship,
-        wire: "/",
-        xyro: data
-      };
-      fetch("/~/to/".concat(appl, "/").concat(mark), {
-        credentials: "same-origin",
-        method: "POST",
-        body: JSON.stringify(params)
-      });
-    }
-    /*
-      Special actions
-    */
-
-  }, {
-    key: "permit",
-    value: function permit(nom, aud, message) {
-      this.hall({
-        permit: {
-          nom: nom,
-          sis: aud,
-          inv: true
-        }
-      });
-
-      if (message) {
-        var audInboxes = aud.map(function (aud) {
-          return "~".concat(aud, "/inbox");
-        });
-        var inviteMessage = {
-          aud: audInboxes,
-          ses: [{
-            inv: {
-              inv: true,
-              cir: "~".concat(this.authTokens.ship, "/").concat(nom)
-            }
-          }]
-        };
-        this.hall({
-          phrase: inviteMessage
-        });
-      }
-    }
-  }]);
-
-  return UrbitApi;
-}();
-
-var api$1 = new UrbitApi();
-window.api = api$1;
+var AGGREGATOR_COLL = "c";
+var AGGREGATOR_INBOX = "inbox";
+var AGGREGATOR_NAMES = [AGGREGATOR_INBOX, AGGREGATOR_COLL];
 
 var INBOX_MESSAGE_COUNT = 30;
 var MessagesReducer =
@@ -51609,7 +51082,8 @@ function () {
       var _this = this;
 
       reports.forEach(function (rep) {
-        var fromInbox = rep.from && rep.from.path.includes("inbox");
+        var fromCircle = rep.from && rep.from.path.split("/")[2];
+        var fromInbox = fromCircle === "inbox";
 
         switch (rep.type) {
           case "circle.nes":
@@ -51628,7 +51102,8 @@ function () {
 
           case "circle.cos.loc":
             if (fromInbox) {
-              store.messages.inboxSrc = rep.data.src;
+              store.messages.inbox.config = rep.data;
+              store.messages.inbox.src = rep.data.src;
 
               _this.storeInboxMessages(store);
             }
@@ -51638,9 +51113,9 @@ function () {
           case "circle.config.dif.source":
             if (fromInbox) {
               if (rep.data.add) {
-                store.messages.inboxSrc = _toConsumableArray(store.messages.inboxSrc).concat([rep.data.src]);
+                store.messages.inbox.src = _toConsumableArray(store.messages.inbox.src).concat([rep.data.src]);
               } else {
-                store.messages.inboxSrc = store.messages.inboxSrc.filter(function (src) {
+                store.messages.inbox.src = store.messages.inbox.src.filter(function (src) {
                   return src !== rep.data.src;
                 });
               }
@@ -51655,7 +51130,12 @@ function () {
   }, {
     key: "processMessages",
     value: function processMessages(messages, store) {
-      this.storeStationMessages(messages, store);
+      var msgs = messages.filter(function (m) {
+        return !m.gam.aud.some(function (st) {
+          return isRootCollection(st);
+        });
+      });
+      this.storeStationMessages(msgs, store);
       this.storeInboxMessages(store);
     } // TODO:  Make this more like storeInboxMessages
 
@@ -51699,7 +51179,7 @@ function () {
     value: function storeInboxMessages(store) {
       var _this2 = this;
 
-      var messages = store.messages.inboxSrc.reduce(function (msgs, src) {
+      var messages = store.messages.inbox.src.reduce(function (msgs, src) {
         var msgGroup = store.messages.stations[src];
         if (!msgGroup) return msgs;
         return msgs.concat(msgGroup.filter(_this2.filterInboxMessages)); // filter out app & accepted invite msgs
@@ -51719,7 +51199,7 @@ function () {
       // }
 
 
-      store.messages.inboxMessages = ret;
+      store.messages.inbox.messages = ret;
     } // Filter out of inbox:
     //   - app messages
     //   - accepted invites
@@ -51818,10 +51298,6 @@ function () {
       Object.keys(configs).forEach(function (cos) {
         storeConfigs[cos] = storeConfigs[cos] || {};
         Object.assign(storeConfigs[cos], configs[cos]);
-
-        if (cos.includes('inbox')) {
-          storeConfigs["inbox"] = configs[cos];
-        }
       });
     }
   }, {
@@ -51873,13 +51349,13 @@ function () {
         switch (rep.type) {
           case REPORT_PAGE_STATUS:
             // Don't let any state other than "READY" or "RECONNECTNG" override the disconnected state
-            var isDisconnected = store.views.transition === PAGE_STATUS_DISCONNECTED;
-            var readyOrReconnecting = rep.data === PAGE_STATUS_READY || rep.data === PAGE_STATUS_RECONNECTING;
-
-            if (!isDisconnected || readyOrReconnecting) {
-              store.views.transition = rep.data;
-            }
-
+            // let isDisconnected = store.views.transition === PAGE_STATUS_DISCONNECTED;
+            // let readyOrReconnecting = rep.data === PAGE_STATUS_READY || rep.data === PAGE_STATUS_RECONNECTING;
+            //
+            // if (!isDisconnected || readyOrReconnecting) {
+            //   store.views.transition = rep.data;
+            // }
+            store.views.transition = rep.data;
             break;
         }
       });
@@ -51920,7 +51396,7 @@ function () {
             Object.arrayify(rep.data).forEach(function (_ref) {
               var station = _ref.key,
                   config = _ref.value;
-              var details = getStationDetails(station, config);
+              var details = getStationDetails(station);
 
               if (ships[details.host]) {
                 ships[details.host] = lodash.uniq(ships[details.host].concat(details.cir));
@@ -52003,11 +51479,14 @@ function () {
       Object.arrayify(ships).forEach(function (_ref2) {
         var ship = _ref2.key,
             stations = _ref2.value;
+        var sttns = stations.filter(function (s) {
+          return s !== "c";
+        });
 
         if (!_storeNames[ship]) {
-          _storeNames[ship] = stations;
+          _storeNames[ship] = sttns;
         } else {
-          _storeNames[ship] = lodash.uniq(stations.concat(_storeNames[ship]));
+          _storeNames[ship] = lodash.uniq(sttns.concat(_storeNames[ship]));
         }
       });
     }
@@ -52100,47 +51579,6 @@ function () {
   return DmsReducer;
 }();
 
-// import { router } from '/router';
-
-function createDMStation(station, foreign) {
-  var circle = station.split("/")[1];
-  var everyoneElse = circle.split(".").filter(function (ship) {
-    return ship !== api$1.authTokens.ship;
-  });
-  api$1.hall({
-    create: {
-      nom: circle,
-      des: "dm",
-      sec: "village"
-    }
-  });
-  warehouse.pushCallback("circles", function (rep) {
-    api$1.hall({
-      source: {
-        nom: 'inbox',
-        sub: true,
-        srs: ["~".concat(api$1.authTokens.ship, "/").concat(rep.data.cir)]
-      }
-    });
-  });
-  warehouse.pushCallback("circle.config.dif.full", function (rep) {
-    api$1.permit(circle, everyoneElse, !foreign);
-  });
-
-  if (foreign) {
-    warehouse.pushCallback("circle.config.dif.full", function (rep) {
-      api$1.hall({
-        source: {
-          nom: circle,
-          sub: true,
-          srs: [station]
-        }
-      });
-    });
-  }
-}
-
-var LONGPOLL_TIMEOUT = 10000;
 /**
   Response format
 
@@ -52186,7 +51624,7 @@ function () {
         this.runPoll();
         this.bindInbox();
         this.bindShortcuts();
-        this.bindOperations();
+        this.bindQuietDmInvites();
       } else {
         console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
       }
@@ -52201,8 +51639,7 @@ function () {
         if (details.type === "inv" && isDMStation(xenoStation) && xenoStation !== "~zod/null") {
           var circle = xenoStation.split("/")[1];
 
-          if (!warehouse.store.dms.stations.includes(circle)) {
-            createDMStation(xenoStation, true);
+          if (!warehouse.store.dms.stations.includes(circle)) {// createDMStation(xenoStation, true);
           }
 
           var newSep = {
@@ -52221,8 +51658,8 @@ function () {
       });
     }
   }, {
-    key: "bindOperations",
-    value: function bindOperations() {
+    key: "bindQuietDmInvites",
+    value: function bindQuietDmInvites() {
       var _this = this;
 
       // Automatically accept DM invite messages
@@ -52258,7 +51695,9 @@ function () {
       api$1.bind("/circles/~".concat(api$1.authTokens.ship), "PUT");
       warehouse.pushCallback('circles', function (rep) {
         // inbox local + remote configs, remote presences
-        api$1.bind("/circle/inbox/config/group-r/0", "PUT"); // inbox messages
+        api$1.bind("/circle/inbox/config/group-r/0", "PUT"); // grab the config for the root collection circle
+
+        api$1.bind("/circle/c/config/group-r/0", "PUT"); // inbox messages
 
         api$1.bind("/circle/inbox/grams/-50", "PUT");
         return true;
@@ -52276,29 +51715,28 @@ function () {
     value: function runPoll() {
       var _this2 = this;
 
-      console.log('fetching... ', this.seqn);
-      var controller = new AbortController();
-      var disconnectedTimeout = setTimeout(function () {
-        controller.abort();
-        warehouse.storeReports([{
-          type: REPORT_PAGE_STATUS,
-          data: PAGE_STATUS_DISCONNECTED
-        }]);
+      console.log('fetching... ', this.seqn); // const controller = new AbortController();
+      // const signal = controller.signal;
+      // const disconnectedTimeout = setTimeout(() => {
+      //   controller.abort();
+      //   warehouse.storeReports([{
+      //     type: REPORT_PAGE_STATUS,
+      //     data: PAGE_STATUS_DISCONNECTED
+      //   }]);
+      //   this.runPoll();
+      // }, LONGPOLL_TIMEOUT);
 
-        _this2.runPoll();
-      }, LONGPOLL_TIMEOUT);
       fetch("/~/of/".concat(api$1.authTokens.ixor, "?poll=").concat(this.seqn), {
-        credentials: "same-origin",
-        signal: controller.signal
+        credentials: "same-origin" // signal: controller.signal
+
       }).then(function (res) {
         return res.json();
       }).then(function (data) {
-        warehouse.storeReports([{
-          type: REPORT_PAGE_STATUS,
-          data: PAGE_STATUS_READY
-        }]);
-        clearTimeout(disconnectedTimeout);
-
+        // warehouse.storeReports([{
+        //   type: REPORT_PAGE_STATUS,
+        //   data: PAGE_STATUS_READY
+        // }]);
+        // clearTimeout(disconnectedTimeout);
         if (data.beat) {
           console.log('beat');
 
@@ -52315,12 +51753,13 @@ function () {
           _this2.runPoll();
         }
       }).catch(function (error) {
-        console.error('error = ', error);
-        warehouse.storeReports([{
-          type: REPORT_PAGE_STATUS,
-          data: PAGE_STATUS_DISCONNECTED
-        }]);
-        clearTimeout(disconnectedTimeout); // TODO: Make this reconnect automatically
+        console.error('error = ', error); // warehouse.storeReports([{
+        //   type: REPORT_PAGE_STATUS,
+        //   data: PAGE_STATUS_DISCONNECTED
+        // }]);
+        //
+        // clearTimeout(disconnectedTimeout);
+        // TODO: Make this reconnect automatically
         // setTimeout(() => {
         //   this.runPoll();
         // }, LONGPOLL_TRYAGAIN);
@@ -52509,17 +51948,18 @@ function (_Component) {
   _createClass(Header, [{
     key: "isSubscribed",
     value: function isSubscribed(station) {
-      var inbox = this.props.store.configs["~".concat(this.props.api.authTokens.ship, "/inbox")];
-      if (!inbox) return false;
-      return inbox.src.includes(station);
+      var inboxSrc = this.props.store.messages.inbox.src;
+      if (!inboxSrc) return false;
+      return inboxSrc.includes(station);
     }
   }, {
     key: "toggleSubscribe",
-    value: function toggleSubscribe(station) {
-      var subscribed = this.isSubscribed(station);
+    value: function toggleSubscribe() {
+      var subscribed = this.isSubscribed(this.props.data.station);
+      var stationDetails = getStationDetails(this.props.data.station);
       this.props.api.hall({
         source: {
-          nom: "inbox",
+          nom: 'inbox',
           sub: !subscribed,
           srs: [this.props.data.station]
         }
@@ -52547,7 +51987,7 @@ function (_Component) {
   }, {
     key: "getStationHeaderData",
     value: function getStationHeaderData(station) {
-      var stationDetails = getStationDetails(station, this.props.store.configs[station], this.props.api.authTokens.ship);
+      var stationDetails = getStationDetails(station);
       return {
         title: {
           display: stationDetails.stationTitle,
@@ -52582,17 +52022,17 @@ function (_Component) {
           });
           break;
 
-        case "collection":
+        case "collection-index":
           defaultData = this.getStationHeaderData(this.props.data.station);
 
-          if (this.props.data.show === 'default') {
+          if (this.props.data.collectionPageMode === 'default') {
             actions = {
-              details: "/~~/".concat(this.props.data.ship, "/==").concat(this.props.data.path, "?show=details"),
-              write: "/~~/".concat(this.props.data.ship, "/==").concat(this.props.data.path, "?show=post")
+              details: "/~~/".concat(this.props.data.owner, "/==/web/collections/").concat(this.props.data.collId, "?show=details"),
+              write: "/~~/".concat(this.props.data.owner, "/==/web/collections/").concat(this.props.data.collId, "?show=post")
             };
-          } else if (this.props.data.show === 'details') {
+          } else if (this.props.data.collectionPageMode === 'details') {
             actions = {
-              back: "/~~/".concat(this.props.data.ship, "/==").concat(this.props.data.path)
+              back: "/~~/".concat(this.props.data.owner, "/==/web/collections/").concat(this.props.data.collId)
             };
           }
 
@@ -52605,18 +52045,17 @@ function (_Component) {
           });
           break;
 
-        case "raw":
-        case "both":
+        case "collection-post":
           defaultData = this.getStationHeaderData(this.props.data.station);
 
-          if (this.props.data.show === 'default') {
+          if (this.props.data.collectionPageMode === 'default') {
             actions = {
-              details: "/~~/".concat(this.props.data.ship, "/==").concat(this.props.data.path, "?show=details"),
-              edit: "/~~/".concat(this.props.data.ship, "/==").concat(this.props.data.path, "?show=edit")
+              details: "/~~/".concat(this.props.data.owner, "/==/web/collections/").concat(this.props.data.collId, "/").concat(this.props.data.postId, "?show=details"),
+              edit: "/~~/".concat(this.props.data.owner, "/==/web/collections/").concat(this.props.data.collId, "/").concat(this.props.data.postId, "?show=edit")
             };
-          } else if (this.props.data.show === 'details') {
+          } else if (this.props.data.collectionPageMode === 'details') {
             actions = {
-              back: "/~~/".concat(this.props.data.ship, "/==").concat(this.props.data.path)
+              back: "/~~/".concat(this.props.data.owner, "/==/web/collections/").concat(this.props.data.collId, "/").concat(this.props.data.postId)
             };
           }
 
@@ -52625,6 +52064,10 @@ function (_Component) {
             title: _objectSpread({}, defaultData.title, {
               display: this.props.data.title ? this.props.data.title : defaultData.title.display
             }),
+            breadcrumbs: [defaultData.breadcrumbs[0], {
+              display: this.props.data.collTitle,
+              href: "/~~/".concat(this.props.data.owner, "/==/web/collections/").concat(this.props.data.collId)
+            }],
             actions: actions
           });
           break;
@@ -52632,8 +52075,8 @@ function (_Component) {
         case "profile":
           headerData = {
             title: {
-              display: this.props.data.ship,
-              href: profileUrl(this.props.data.ship.substr(1)),
+              display: this.props.data.owner,
+              href: profileUrl(this.props.data.owner.substr(1)),
               style: "mono"
             }
           };
@@ -52733,8 +52176,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var type = this.props.data.type ? this.props.data.type : "default";
-      console.log('header type = ', type); // TODO: This is an ugly hack until we fix queryParams
+      var type = this.props.data.type ? this.props.data.type : "default"; // TODO: This is an ugly hack until we fix queryParams
 
       if (["stream", "dm", "collection-write"].includes(type) && !getQueryParams().station) {
         return null;
@@ -62117,7 +61559,7 @@ function hasOwnProperty$3(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-var util$2 = {
+var util$1 = {
   inherits: inherits$3,
   _extend: _extend,
   log: log$1,
@@ -62143,7 +61585,7 @@ var util$2 = {
 };
 
 
-var util$3 = Object.freeze({
+var util$2 = Object.freeze({
 	format: format,
 	deprecate: deprecate,
 	debuglog: debuglog,
@@ -62166,7 +61608,7 @@ var util$3 = Object.freeze({
 	log: log$1,
 	inherits: inherits$3,
 	_extend: _extend,
-	default: util$2
+	default: util$1
 });
 
 var inherits_browser = createCommonjsModule(function (module) {
@@ -62195,7 +61637,7 @@ if (typeof Object.create === 'function') {
 }
 });
 
-var require$$0$31 = ( util$3 && util$2 ) || util$3;
+var require$$0$31 = ( util$2 && util$1 ) || util$2;
 
 var inherits = createCommonjsModule(function (module) {
 try {
@@ -64053,9 +63495,10 @@ function (_Component) {
     value: function subStation(station) {
       var _this2 = this;
 
+      var stationDetails = getStationDetails(station);
       this.props.api.hall({
         source: {
-          nom: "inbox",
+          nom: 'inbox',
           sub: true,
           srs: [station]
         }
@@ -64135,7 +63578,9 @@ function (_Component) {
       } else if (this.props.details.type === "inv") {
         return react.createElement("div", {
           className: "invite"
-        }, "invite to ", this.props.details.content, "...", react.createElement(Button, {
+        }, react.createElement("span", {
+          className: "text-body"
+        }, "invite to ", this.props.details.content, "..."), react.createElement(Button, {
           classes: "btn btn-primary accept",
           action: this.acceptInvite,
           actionData: {
@@ -64163,7 +63608,9 @@ function (_Component) {
           }, this.props.details.content);
         }
       } else if (this.props.details.type === "exp") {
-        return react.createElement("div", null, react.createElement("div", {
+        return react.createElement("div", {
+          className: "text-body"
+        }, react.createElement("div", {
           className: "text-mono"
         }, this.props.details.content), react.createElement("pre", {
           className: "text-mono mt-0"
@@ -64174,10 +63621,14 @@ function (_Component) {
           api: this.props.api
         });
       } else if (this.props.details.type === "lin") {
-        return this.props.details.content;
+        return react.createElement("span", {
+          className: "text-body"
+        }, this.props.details.content);
       }
 
-      return "<unknown message type>";
+      return react.createElement("span", {
+        className: "text-mono"
+      }, '<unknown message type>');
     }
   }]);
 
@@ -64240,6 +63691,32 @@ function (_Component) {
   return Icon;
 }(react_1);
 
+/*
+  Data structure:
+    common: {
+      host: zod,
+      hostProfileUrl: (...)/~zod/profile,
+
+      cir: [@ta/dmjoin]
+
+      station: [host]/[circle]
+      stationUrl: [streamUrl/collIndexUrl]
+
+      subcircle: @ta
+      subcircleUrl: (...)collIndexUrl/subcircle
+
+      type: {"dm", "chat", "fora"}
+    }
+
+    Breadcrumb display:
+      [host] [circle* /coll@ta [*]/dmjoin *] [...subcollection]
+
+      case "dm":
+        <span mono *>[dmjoin]</span>
+
+    dm:
+
+*/
 var InboxRecentPage =
 /*#__PURE__*/
 function (_Component) {
@@ -64331,7 +63808,7 @@ function (_Component) {
   }, {
     key: "findPostTitleFromMessage",
     value: function findPostTitleFromMessage(postId) {
-      var inbox = this.props.store.messages.inboxMessages;
+      var inbox = this.props.store.messages.inbox.messages;
       var result = null;
 
       for (var i = 0; i < inbox.length; i++) {
@@ -64354,7 +63831,7 @@ function (_Component) {
 
         var hostDisplay = section.details.type === "dm" ? null : react.createElement("span", null, react.createElement("a", {
           href: section.details.hostProfileUrl,
-          className: "text-700 text-mono underline"
+          className: "text-600 text-mono underline"
         }, "~", section.details.host), react.createElement("span", {
           className: "ml-2 mr-2"
         }, "/"));
@@ -64366,7 +63843,7 @@ function (_Component) {
             className: "ml-2 mr-2"
           }, "/"), react.createElement("a", {
             href: section.details.postUrl,
-            className: "text-700 underline"
+            className: "text-600 underline"
           }, postTitle));
         }
 
@@ -64384,7 +63861,7 @@ function (_Component) {
           className: "col-sm-10"
         }, hostDisplay, react.createElement("a", {
           href: section.details.stationUrl,
-          className: "text-700 underline"
+          className: "text-600 underline"
         }, section.details.stationTitle))), sectionContent);
       });
     } // Group inbox messages by time-chunked stations, strictly ordered by message time.
@@ -64393,7 +63870,7 @@ function (_Component) {
   }, {
     key: "getSectionData",
     value: function getSectionData() {
-      var inbox = this.props.store.messages.inboxMessages;
+      var inbox = this.props.store.messages.inbox.messages;
       var lastStationName = [];
       var sections = [];
       var stationIndex = -1;
@@ -64406,7 +63883,7 @@ function (_Component) {
           sections.push({
             name: aud,
             msgs: [msg],
-            details: getStationDetails(aud, this.props.store.configs[aud], this.props.api.authTokens.ship)
+            details: getStationDetails(aud)
           });
           stationIndex++;
         } else {
@@ -64483,7 +63960,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var stations = getSubscribedStations(this.props.api.authTokens.ship, this.props.store.configs);
+      var stations = getSubscribedStations(this.props.api.authTokens.ship, this.props.store);
       if (!stations) return null;
       var chatStations = this.buildSection(stations.chatStations);
       var collStations = this.buildSection(stations.collStations);
@@ -64497,15 +63974,15 @@ function (_Component) {
       }, react.createElement("div", {
         className: "mt-9"
       }, react.createElement("div", {
-        className: "text-700"
+        className: "text-600"
       }, "Chats"), chatStations), react.createElement("div", {
         className: "mt-9"
       }, react.createElement("div", {
-        className: "text-700"
+        className: "text-600"
       }, "Blogs, Forum and Notes"), collStations), react.createElement("div", {
         className: "mt-9"
       }, react.createElement("div", {
-        className: "text-700"
+        className: "text-600"
       }, "Direct Messages"), DMStations))));
     }
   }]);
@@ -71216,7 +70693,7 @@ function (_Component) {
     key: "createDMStationIfNeeded",
     value: function createDMStationIfNeeded() {
       if (this.props.store.dms.stored === true && isDMStation(this.state.station) && !this.props.store.dms.stations.includes(this.state.station.split("/")[1]) && !this.state.dmStationCreated) {
-        createDMStation(this.state.station, false);
+        // createDMStation(this.state.station, false);
         this.setState({
           dmStationCreated: true
         });
@@ -71433,7 +70910,7 @@ function (_Component) {
 
       if (msg.printship) {
         contentElem = react.createElement(react.Fragment, null, react.createElement("a", {
-          className: "vanilla hoverline text-700 text-mono",
+          className: "vanilla hoverline text-600 text-mono",
           href: prettyShip(msg.aut)[1]
         }, prettyShip("~".concat(msg.aut))[0]), msg.dateGroup === parseInt(this.state.activatedMsg.dateGroup, 10) && react.createElement(react.Fragment, null, react.createElement(Elapsed, {
           timestring: parseInt(this.state.activatedMsg.date, 10),
@@ -71515,7 +70992,7 @@ function (_Component) {
         onChange: this.messageChange
       }))), react.createElement("a", {
         onClick: this.messageSubmit,
-        className: "text-700"
+        className: "text-600"
       }, "Send")));
     }
   }], [{
@@ -71662,39 +71139,26 @@ function (_Component) {
 
       
       this.props.api.coll(dat);
-      this.props.pushCallback("circle.config.dif.source", function (rep) {
-        api.hall({
-          source: {
-            nom: 'inbox',
-            sub: true,
-            srs: [rep.data.src]
-          }
-        });
-      });
       this.props.storeReports([{
         type: REPORT_PAGE_STATUS,
         data: PAGE_STATUS_TRANSITIONING
       }]);
-      this.props.pushCallback("circle.gram", function (rep) {
-        console.log('ydsdifsdfsjf');
-
+      this.props.pushCallback("circles", function (rep) {
         _this2.setState({
           status: STATUS_READY
         });
 
-        var type = lodash.get(rep.data, "gam.sep.fat.tac.text", null);
+        var station = "".concat(rep.from.path.split('/')[2], "/").concat(rep.data.cir);
+        var stationDetails = getStationDetails(station);
+        api.hall({
+          source: {
+            nom: 'inbox',
+            sub: true,
+            srs: [station]
+          }
+        });
 
-        if (type && (type === 'new item' || type === 'edited item')) {
-          var content = lodash.get(rep.data, "gam.sep.fat.sep.lin.msg", null);
-
-          content = JSON.parse(content);
-
-          _this2.props.transitionTo("/~~/~".concat(details.hostship, "/==/").concat(content.path.join('/')));
-
-          return true;
-        }
-
-        return false;
+        _this2.props.transitionTo(stationDetails.stationUrl);
       });
     }
   }, {
@@ -71813,7 +71277,7 @@ function (_Component) {
         _this2.setState({
           comment: '',
           status: STATUS_READY
-        }); //   this.props.transitionTo(this.pageShip == this.props.api.authTokens.ship ? `/~~/collections/${this.props.coll}/${this.props.top}` : `/~~/${this.pageShip}/==/web/collections/${this.props.coll}/${this.props.top}`)
+        }); // this.props.transitionTo(this.pageShip == this.props.api.authTokens.ship ? `/~~/collections/${this.props.coll}/${this.props.top}` : `/~~/${this.pageShip}/==/web/collections/${this.props.coll}/${this.props.top}`)
 
 
         _this2.props.transitionTo(window.location.pathname); // any reason we shouldnt do this?
@@ -71970,11 +71434,9 @@ function (_Component) {
   }, {
     key: "renderText",
     value: function renderText() {
-      var _this = this;
-
       if (this.props.store.public[this.props.hostship]) {
         var text = this.props.store.public[this.props.hostship].map(function (cir) {
-          var deets = getStationDetails(cir, _this.props.store.configs[cir], _this.props.api.authTokens.ship);
+          var deets = getStationDetails(cir);
 
           if (deets.type == "text") {
             return react.createElement("div", {
@@ -71994,11 +71456,9 @@ function (_Component) {
   }, {
     key: "renderChats",
     value: function renderChats() {
-      var _this2 = this;
-
       if (this.props.store.public[this.props.hostship]) {
         var chats = this.props.store.public[this.props.hostship].map(function (cir) {
-          var deets = getStationDetails(cir, _this2.props.store.configs[cir], _this2.props.api.authTokens.ship);
+          var deets = getStationDetails(cir);
 
           if (deets.type == "chat") {
             return react.createElement("div", {
@@ -72021,9 +71481,9 @@ function (_Component) {
       var chats = this.renderChats();
       var text = this.renderText();
       return react.createElement("div", null, react.createElement("div", {
-        className: "text-700 mt-8"
+        className: "text-600 mt-8"
       }, "Blogs, Fora and Notes"), text, react.createElement("div", {
-        className: "text-700 mt-8"
+        className: "text-600 mt-8"
       }, "Chats"), chats);
     }
   }]);
@@ -72212,10 +71672,10 @@ function (_Component) {
         value: this.state.formData[name],
         disabled: this.state.status === STATUS_LOADING,
         placeholder: field.placeholder,
-        autocomplete: "off",
-        autocorrect: "off",
-        autocapitalize: "off",
-        spellcheck: "false"
+        autoComplete: "off",
+        autoCorrect: "off",
+        autoCapitalize: "off",
+        spellCheck: "false"
       };
       if (first) inputProps.ref = this.firstInputRef;
 
@@ -72705,7 +72165,7 @@ function (_Component) {
 
       var isShip = urbitOb.isShip(term.substr(1));
       var isStation = isValidStation(term);
-      var details = isStation && getStationDetails(term, this.props.store.configs[term]); // use collection description if it's a collection
+      var details = isStation && getStationDetails(term); // use collection description if it's a collection
 
       var displayTextTerm = isStation ? details.type == 'text' ? "".concat(details.station.split("/")[0], " / ").concat(details.stationTitle) : details.station.split("/").join("  /  ") : term;
       var displayText = "go ".concat(displayTextTerm);
@@ -73079,32 +72539,55 @@ function (_Component) {
   }, {
     key: "loadHeader",
     value: function loadHeader(tempDOM) {
-      var headerQuery = tempDOM.querySelectorAll('[name="urb-header"]');
-      var headerType = headerQuery.length > 0 ? headerQuery[0].getAttribute('value') : "default";
-      var headerData;
-      console.log(headerType);
+      // Example metadata:
+      // <input type="hidden"
+      //   name="urb-metadata"
+      //   urb-show="default"
+      //   urb-path="/web/collections/~2018.8.28..19.59.32..0013/~2018.8.28..21.49.27..6131"
+      //   urb-name="New post yet again"
+      //   urb-owner="~zod"
+      //   urb-date-created="~2018.8.28..21.49.27..6131"
+      //   urb-last-modified="~2018.8.28..21.49.27..6131"
+      //   urb-content-type="blog"
+      //   urb-structure-type="collection-post">
+      var headerQuery = tempDOM.querySelectorAll('[name="urb-metadata"]');
+      var headerData = {
+        type: "default"
+      };
 
-      if (headerType === "collection" || headerType === "both" || headerType === "raw") {
-        headerData = {
-          type: headerType,
-          path: headerQuery.length > 0 ? headerQuery[0].getAttribute('path') : null,
-          station: "".concat(headerQuery[0].getAttribute('ship'), "/c-").concat(headerQuery[0].getAttribute('path').split('/').slice(3).join('-')),
-          postid: headerQuery.length > 0 ? headerQuery[0].getAttribute('postid') : null,
-          ship: headerQuery.length > 0 ? headerQuery[0].getAttribute('ship') : null,
-          show: headerQuery.length > 0 ? headerQuery[0].getAttribute('show') : null
-        };
-      } else {
-        headerData = {
-          type: headerType,
-          title: headerQuery.length > 0 ? headerQuery[0].getAttribute('title') : null,
-          station: headerQuery.length > 0 ? headerQuery[0].getAttribute('station') : null,
-          postid: headerQuery.length > 0 ? headerQuery[0].getAttribute('postid') : null,
-          ship: headerQuery.length > 0 ? headerQuery[0].getAttribute('ship') : null,
-          publ: headerQuery.length > 0 ? headerQuery[0].getAttribute('publ') : null
-        };
+      if (headerQuery.length > 0) {
+        headerData.type = headerQuery[0].getAttribute('urb-structure-type');
       }
 
-      headerData.station = headerData.station === "query" ? getQueryParams().station : headerData.station;
+      if (headerQuery.length > 0 && headerData.type) {
+        headerData.owner = headerQuery[0].getAttribute('urb-owner');
+        headerData.pageTitle = headerQuery[0].getAttribute('urb-name');
+        headerData.collectionPageMode = headerQuery[0].getAttribute('urb-show');
+        headerData.dateCreated = headerQuery[0].getAttribute('urb-date-created');
+        headerData.dateModified = headerQuery[0].getAttribute('urb-date-modified');
+        headerData.collPath = headerQuery[0].getAttribute('urb-path');
+
+        if (headerData.type === "collection-index") {
+          headerData.title = headerData.pageTitle;
+          headerData.collId = headerData.dateCreated;
+          headerData.station = "".concat(headerData.owner, "/c-").concat(headerData.collId);
+        }
+
+        if (headerData.type === "collection-post") {
+          headerData.title = headerData.pageTitle;
+          headerData.collId = headerData.collPath.split("/")[3];
+          headerData.collTitle = "TBD";
+          headerData.postId = headerData.dateCreated;
+          headerData.station = "".concat(headerData.owner, "/c-").concat(headerData.collId, "-").concat(headerData.postId);
+        }
+
+        if (headerData.type === "stream") {
+          headerData.station = getQueryParams().station;
+          if (!headerData.station) return;
+          headerData.title = headerData.station.split("/")[1];
+        }
+      }
+
       return react.createElement(Header, {
         data: headerData,
         api: this.props.api,
@@ -73113,7 +72596,57 @@ function (_Component) {
         pushCallback: this.props.pushCallback,
         transitionTo: this.props.transitionTo,
         runPoll: this.props.runPoll
-      });
+      }); // let headerType = (headerQuery.length > 0) ?
+      //   headerQuery[0].getAttribute('value') : "default";
+      //
+      // let headerData;
+      //
+      // if (headerType === "collection" ||
+      //     headerType === "both" ||
+      //     headerType === "raw"){
+      //
+      //   headerData = {
+      //     type: headerType,
+      //     path: (headerQuery.length > 0) ?
+      //       headerQuery[0].getAttribute('path') : null,
+      //     station: `${headerQuery[0].getAttribute('ship')}/c-${headerQuery[0].getAttribute('path').split('/').slice(3).join('-')}`,
+      //
+      //     postid: (headerQuery.length > 0) ?
+      //       headerQuery[0].getAttribute('postid') : null,
+      //     ship: (headerQuery.length > 0) ?
+      //       headerQuery[0].getAttribute('ship') : null,
+      //     show: (headerQuery.length > 0) ?
+      //       headerQuery[0].getAttribute('show') : null,
+      //   }
+      //
+      // } else {
+      //   headerData = {
+      //     type: headerType,
+      //     title: (headerQuery.length > 0) ?
+      //       headerQuery[0].getAttribute('title') : null,
+      //     station: (headerQuery.length > 0) ?
+      //       headerQuery[0].getAttribute('station') : null,
+      //     postid: (headerQuery.length > 0) ?
+      //       headerQuery[0].getAttribute('postid') : null,
+      //     ship: (headerQuery.length > 0) ?
+      //       headerQuery[0].getAttribute('ship') : null,
+      //     publ: (headerQuery.length > 0) ?
+      //       headerQuery[0].getAttribute('publ') : null,
+      //   }
+      // }
+      // headerData.station = (headerData.station === "query") ? getQueryParams().station : headerData.station;
+      //
+      // return (
+      //   <Header
+      //     data={headerData}
+      //     api={this.props.api}
+      //     store={this.props.store}
+      //     storeReports={this.props.storeReports}
+      //     pushCallback={this.props.pushCallback}
+      //     transitionTo={this.props.transitionTo}
+      //     runPoll={this.props.runPoll}
+      //   />
+      // )
     }
   }, {
     key: "render",
@@ -73310,8 +72843,11 @@ function () {
 
     this.store = {
       messages: {
-        inboxMessages: [],
-        inboxSrc: [],
+        inbox: {
+          src: [],
+          messages: [],
+          config: {}
+        },
         stations: {}
       },
       configs: {},
@@ -73438,6 +72974,523 @@ function () {
 var warehouse = new UrbitWarehouse();
 window.warehouse = warehouse;
 
+function getStationDetails(station) {
+  var host = station.split("/")[0].substr(1);
+  var config = warehouse.store.configs[station];
+  var ret = {
+    type: "none",
+    station: station,
+    host: host,
+    cir: station.split("/")[1],
+    config: config,
+    hostProfileUrl: profileUrl(host)
+  };
+  var circleParts = ret.cir.split("-");
+
+  if (ret.cir === "inbox") {
+    ret.type = "inbox";
+  } else if (ret.cir === "c") {
+    ret.type = "aggregator";
+  } else if (isDMStation(station)) {
+    ret.type = "dm";
+  } else if (ret.cir.includes("c-") && circleParts.length > 2) {
+    ret.type = "collection-post";
+  } else if (ret.cir.includes("c-")) {
+    ret.type = "collection-index";
+  } else {
+    ret.type = "chat";
+  }
+
+  switch (ret.type) {
+    case "inbox":
+      ret.stationUrl = "/~~/landscape";
+      ret.stationTitle = ret.cir;
+      break;
+
+    case "chat":
+      ret.stationUrl = "/~~/landscape/stream?station=".concat(station);
+      ret.stationDetailsUrl = "/~~/landscape/stream/details?station=".concat(station);
+      ret.stationTitle = ret.cir;
+      break;
+
+    case "dm":
+      if (config.con) {
+        ret.stationTitle = ret.cir.split(".").filter(function (mem) {
+          return mem !== api$1.authTokens.ship;
+        }).map(function (mem) {
+          return "~".concat(mem);
+        }).join(", ");
+        
+      } else {
+        ret.stationTitle = "unknown";
+      }
+
+      ret.stationUrl = "/~~/landscape/stream?station=".concat(station);
+      break;
+
+    case "collection-index":
+      ret.collId = circleParts[1];
+      ret.stationUrl = "/~~/~".concat(ret.host, "/==/web/collections/").concat(ret.collId);
+      ret.stationTitle = "TBD";
+      break;
+
+    case "collection-post":
+      ret.collId = circleParts[1];
+      ret.postId = circleParts[2];
+      ret.parentCollectionUrl = "/~~/~".concat(ret.host, "/==/web/collections/").concat(ret.collId);
+      ret.stationUrl = "/~~/~".concat(ret.host, "/==/web/collections/").concat(ret.collId, "/").concat(ret.postId);
+      ret.stationTitle = "TBD";
+      break;
+  }
+
+  return ret;
+}
+window.getStationDetails = getStationDetails;
+
+function capitalize(str) {
+  return "".concat(str[0].toUpperCase()).concat(str.substr(1));
+}
+function getQueryParams() {
+  if (window.location.search !== "") {
+    return JSON.parse('{"' + decodeURI(window.location.search.substr(1).replace(/&/g, "\",\"").replace(/=/g, "\":\"")) + '"}');
+  } else {
+    return {};
+  }
+}
+function isAggregator(station) {
+  var cir = station.split("/")[1];
+  return AGGREGATOR_NAMES.includes(cir);
+}
+function getLoadingClass(storeTransition) {
+  return classnames({
+    'hide': storeTransition === PAGE_STATUS_READY,
+    'page-status': storeTransition !== PAGE_STATUS_READY,
+    'page-status-primary': storeTransition === PAGE_STATUS_TRANSITIONING,
+    'page-status-secondary': storeTransition === PAGE_STATUS_PROCESSING,
+    'page-status-tertiary': storeTransition === PAGE_STATUS_DISCONNECTED,
+    'page-status-quaternary': storeTransition === PAGE_STATUS_RECONNECTING
+  });
+}
+/*
+  Goes from:
+    1531943107869               // "javascript unix time"
+  To:
+    "48711y 2w 5d 11m 9s"       // "stringified time increments"
+*/
+
+function secToString(secs) {
+  if (secs <= 0) {
+    return 'Completed';
+  }
+
+  secs = Math.floor(secs);
+  var min = 60;
+  var hour = 60 * min;
+  var day = 24 * hour;
+  var week = 7 * day;
+  var year = 52 * week;
+
+  var fy = function fy(s) {
+    if (s < year) {
+      return ['', s];
+    } else {
+      return [Math.floor(s / year) + 'y', s % year];
+    }
+  };
+
+  var fw = function fw(tup) {
+    var str = tup[0];
+    var sec = tup[1];
+
+    if (sec < week) {
+      return [str, sec];
+    } else {
+      return [str + ' ' + Math.floor(sec / week) + 'w', sec % week];
+    }
+  };
+
+  var fd = function fd(tup) {
+    var str = tup[0];
+    var sec = tup[1];
+
+    if (sec < day) {
+      return [str, sec];
+    } else {
+      return [str + ' ' + Math.floor(sec / day) + 'd', sec % day];
+    }
+  };
+
+  var fh = function fh(tup) {
+    var str = tup[0];
+    var sec = tup[1];
+
+    if (sec < hour) {
+      return [str, sec];
+    } else {
+      return [str + ' ' + Math.floor(sec / hour) + 'h', sec % hour];
+    }
+  };
+
+  var fm = function fm(tup) {
+    var str = tup[0];
+    var sec = tup[1];
+
+    if (sec < min) {
+      return [str, sec];
+    } else {
+      return [str + ' ' + Math.floor(sec / min) + 'm', sec % min];
+    }
+  };
+
+  var fs = function fs(tup) {
+    var str = tup[0];
+    var sec = tup[1];
+    return str + ' ' + sec + 's';
+  };
+
+  return fs(fm(fh(fd(fw(fy(secs)))))).trim();
+}
+function collectionAuthorization(stationDetails, usership) {
+  if (stationDetails.host === usership) {
+    return "write";
+  } else if (lodash.has(stationDetails, "config.con.sec")) {
+    var sec = lodash.get(stationDetails, "config.con.sec", null);
+
+    if (sec === "journal") {
+      return "write";
+    }
+  }
+
+  return "read";
+}
+function uuid() {
+  var str = "0v";
+  str += Math.ceil(Math.random() * 8) + ".";
+
+  for (var i = 0; i < 5; i++) {
+    var _str = Math.ceil(Math.random() * 10000000).toString(32);
+
+    _str = ("00000" + _str).substr(-5, 5);
+    str += _str + ".";
+  }
+
+  return str.slice(0, -1);
+}
+function isPatTa(str) {
+  var r = /^[a-z,0-9,\-,\.,_,~]+$/.exec(str);
+  return !!r;
+}
+function isValidStation(st) {
+  var tokens = st.split("/");
+  if (tokens.length !== 2) return false;
+  return urbitOb.isShip(tokens[0]) && isPatTa(tokens[1]);
+}
+/*
+  Goes from:
+    ~2018.7.17..23.15.09..5be5    // urbit @da
+  To:
+    (javascript Date object)
+*/
+
+function daToDate(st) {
+  var dub = function dub(n) {
+    return parseInt(n) < 10 ? "0" + parseInt(n) : n.toString();
+  };
+
+  var da = st.split('..');
+  var bigEnd = da[0].split('.');
+  var lilEnd = da[1].split('.');
+  var ds = "".concat(bigEnd[0].slice(1), "-").concat(dub(bigEnd[1]), "-").concat(dub(bigEnd[2]), "T").concat(dub(lilEnd[0]), ":").concat(dub(lilEnd[1]), ":").concat(dub(lilEnd[2]), "Z");
+  return new Date(ds);
+}
+/*
+  Goes from:
+    (javascript Date object)
+  To:
+    ~2018.7.17..23.15.09..5be5    // urbit @da
+*/
+
+function dateToDa(d, mil) {
+  var fil = function fil(n) {
+    return n >= 10 ? n : "0" + n;
+  };
+
+  return "~".concat(d.getUTCFullYear(), ".") + "".concat(d.getUTCMonth() + 1, ".") + "".concat(fil(d.getUTCDate()), "..") + "".concat(fil(d.getUTCHours()), ".") + "".concat(fil(d.getUTCMinutes()), ".") + "".concat(fil(d.getUTCSeconds())) + "".concat(mil ? "..0000" : "");
+} // ascending for clarity
+// export function sortSrc(circleArray, topic=false){
+//   let sc = circleArray.map((c) => util.parseCollCircle(c)).filter((pc) => typeof pc != 'undefined' && typeof pc.top == 'undefined');
+//   return sc.map((src) => src.coll).sort((a, b) => util.daToDate(a) - util.daToDate(b));
+// }
+
+function arrayEqual(a, b) {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length != b.length) return false; // If you don't care about the order of the elements inside
+  // the array, you should sort both arrays here.
+
+  for (var i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
+  }
+
+  return true;
+}
+
+function deSig(ship) {
+  return ship.replace('~', '');
+} // use urbit.org proxy if it's not on our ship
+
+
+function foreignUrl(shipName, own, urlFrag) {
+  if (deSig(shipName) != deSig(own)) {
+    return "http://".concat(deSig(shipName), ".urbit.org").concat(urlFrag);
+  } else {
+    return urlFrag;
+  }
+} // shorten comet names
+
+function prettyShip(ship) {
+  var sp = ship.split('-');
+  return [sp.length == 9 ? "".concat(sp[0], "_").concat(sp[8]) : ship, ship[0] === '~' ? "/~~/".concat(ship, "/==/web/landscape/profile") : "/~~/~".concat(ship, "/==/web/landscape/profile")];
+}
+function profileUrl(ship) {
+  return "/~~/~".concat(ship, "/==/web/landscape/profile");
+}
+function isDMStation(station) {
+  var host = station.split('/')[0].substr(1);
+  var circle = station.split('/')[1];
+  return station.indexOf('.') !== -1 && circle.indexOf(host) !== -1;
+}
+function isRootCollection(station) {
+  return station.split("/")[1] === "c";
+}
+function getMessageContent(msg) {
+  var ret;
+  var MESSAGE_TYPES = {
+    'sep.app.sep.fat.sep.lin.msg': 'app',
+    'sep.app.sep.lin.msg': 'app',
+    'sep.fat': function sepFat(msg) {
+      var type = msg.sep.fat.tac.text;
+      var station = msg.aud[0];
+      var stationDetails = getStationDetails(station);
+      var jason = JSON.parse(msg.sep.fat.sep.lin.msg);
+      var content = type.includes('collection') ? null : jason.content;
+      var par = jason.path.slice(0, -1);
+      return {
+        type: msg.sep.fat.tac.text,
+        contentType: jason.type,
+        content: content,
+        owner: jason.owner,
+        date: jason.date,
+        path: jason.path,
+        postTitle: jason.name,
+        postUrl: "/~~/".concat(jason.owner, "/==/").concat(jason.path.join('/')),
+        parentTitle: jason.path.slice(-2, -1),
+        parentUrl: "/~~/".concat(jason.owner, "/==/").concat(jason.path.slice(0, -1).join('/'))
+      };
+    },
+    'sep.inv.cir': 'inv',
+    'sep.lin.msg': 'lin',
+    'sep.url': 'url',
+    'sep.exp': function sepExp(msg) {
+      return {
+        type: "exp",
+        content: msg.sep.exp.exp,
+        res: msg.sep.exp.res.join('\n')
+      };
+    }
+  };
+  Object.arrayify(MESSAGE_TYPES).some(function (_ref) {
+    var key = _ref.key,
+        value = _ref.value;
+
+    if (lodash.has(msg, key)) {
+      if (typeof value === "string") {
+        ret = {
+          type: value,
+          content: lodash.get(msg, key)
+        };
+      } else if (typeof value === "function") {
+        ret = value(msg);
+      }
+
+      return true;
+    }
+  });
+
+  if (typeof ret === "undefined") {
+    ret = {
+      type: "unknown"
+    };
+    console.log("ASSERT: unknown message type on ", msg);
+  }
+
+  return ret;
+}
+function getSubscribedStations(ship, store) {
+  var inbox = store.messages.inbox;
+  var configs = store.configs; // TODO: Maybe I need this?
+  // if (!inbox) return null;
+
+  var stationDetailList = inbox.src.map(function (station) {
+    if (!configs[station]) return null;
+    return getStationDetails(station);
+  }).filter(function (station) {
+    return station !== null;
+  });
+  var ret = {
+    chatStations: stationDetailList.filter(function (d) {
+      return d.type === "chat";
+    }),
+    collStations: stationDetailList.filter(function (d) {
+      return ["collection-index", "collection-post"].includes(d.type);
+    }),
+    dmStations: stationDetailList.filter(function (d) {
+      return d.type === "dm";
+    })
+  };
+  var numSubs = ret.chatStations.length + ret.collStations.length;
+  var numDMs = ret.dmStations.length;
+  var numString = [];
+  if (numSubs > 0) numString.push("".concat(numSubs, " subscriptions"));
+  if (numDMs > 0) numString.push("".concat(numDMs, " DMs"));
+  ret.numString = numString.join(", ");
+  return ret;
+} // maybe do fancier stuff later
+
+function isUrl(string) {
+  var r = /^http|^www|\.com$/.exec(string);
+
+  if (r) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+var util = Object.freeze({
+	capitalize: capitalize,
+	getQueryParams: getQueryParams,
+	isAggregator: isAggregator,
+	getLoadingClass: getLoadingClass,
+	secToString: secToString,
+	collectionAuthorization: collectionAuthorization,
+	uuid: uuid,
+	isPatTa: isPatTa,
+	isValidStation: isValidStation,
+	daToDate: daToDate,
+	dateToDa: dateToDa,
+	arrayEqual: arrayEqual,
+	foreignUrl: foreignUrl,
+	prettyShip: prettyShip,
+	profileUrl: profileUrl,
+	isDMStation: isDMStation,
+	isRootCollection: isRootCollection,
+	getMessageContent: getMessageContent,
+	getSubscribedStations: getSubscribedStations,
+	isUrl: isUrl
+});
+
+var UrbitApi =
+/*#__PURE__*/
+function () {
+  function UrbitApi() {
+    _classCallCheck(this, UrbitApi);
+  }
+
+  _createClass(UrbitApi, [{
+    key: "setAuthTokens",
+    value: function setAuthTokens(authTokens) {
+      this.authTokens = authTokens;
+    } // keep default bind to hall, since its bind procedure more complex for now AA
+
+  }, {
+    key: "bind",
+    value: function bind(path, method) {
+      var ship = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.authTokens.ship;
+      var appl = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "hall";
+      console.log('binding to ...', appl, ", path: ", path, ", as ship: ", ship, ", by method: ", method);
+      var params = {
+        appl: appl,
+        mark: "json",
+        oryx: this.authTokens.oryx,
+        ship: ship,
+        path: path,
+        wire: path
+      };
+      return fetch("/~/is/~".concat(ship, "/").concat(appl).concat(path, ".json?").concat(method), {
+        credentials: "same-origin",
+        method: "POST",
+        body: JSON.stringify(params)
+      });
+    }
+  }, {
+    key: "hall",
+    value: function hall(data, transition) {
+      this.action("hall", "hall-action", data, transition);
+    }
+  }, {
+    key: "coll",
+    value: function coll(data, transition) {
+      this.action("collections", "collections-action", data, transition);
+    }
+  }, {
+    key: "action",
+    value: function action(appl, mark, data, transition) {
+      var params = {
+        appl: appl,
+        mark: mark,
+        oryx: this.authTokens.oryx,
+        ship: this.authTokens.ship,
+        wire: "/",
+        xyro: data
+      };
+      fetch("/~/to/".concat(appl, "/").concat(mark), {
+        credentials: "same-origin",
+        method: "POST",
+        body: JSON.stringify(params)
+      });
+    }
+    /*
+      Special actions
+    */
+
+  }, {
+    key: "permit",
+    value: function permit(nom, aud, message) {
+      this.hall({
+        permit: {
+          nom: nom,
+          sis: aud,
+          inv: true
+        }
+      });
+
+      if (message) {
+        var audInboxes = aud.map(function (aud) {
+          return "~".concat(aud, "/inbox");
+        });
+        var inviteMessage = {
+          aud: audInboxes,
+          ses: [{
+            inv: {
+              inv: true,
+              cir: "~".concat(this.authTokens.ship, "/").concat(nom)
+            }
+          }]
+        };
+        this.hall({
+          phrase: inviteMessage
+        });
+      }
+    }
+  }]);
+
+  return UrbitApi;
+}();
+
+var api$1 = new UrbitApi();
+window.api = api$1;
+
 console.log('app running');
 /*
   Common variables:
@@ -73456,7 +73509,7 @@ fetch('/~/auth.json', {
   router.start();
   operator.start();
 });
-window.util = util$1;
+window.util = util;
 window._ = lodash;
 
 })));
