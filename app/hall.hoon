@@ -11,15 +11,14 @@
 /-    hall-sur=hall                                     ::  structures
 /+    hall-lib=hall, hall-legacy                        ::  libraries
 /=    seed  /~  !>(.)
-
-
-::  TODO: Figure out why this doesn't work:
-::
-::  /=    filter-gram
-::        /^  $-({telegram:hall bowl:gall} telegram:hall)
-::        /|  /:  /%/filter  /!noun/
-::            /~  |=({t/telegram:hall bowl:gall} t)
-::        ==
+/=    filter-gram
+      /^  $-({telegram:hall bowl:gall} telegram:hall)
+      /|  /:  /%/filter  /!noun/
+          /~  |=({t/telegram:hall bowl:gall} t)
+      ==
+/=    custom-rules
+      /^  (map knot $-({ship ?($r %w) bowl:gall} ?))
+      /:  /%/rules  /_  /!noun/
 ::
 ::::
 =,  hall-sur
@@ -1623,6 +1622,10 @@
         $village  (~(has in sis.con.shape) her)         ::  whitelist
         $journal  (~(has in sis.con.shape) her)         ::  author whitelist
         $mailbox  !(~(has in sis.con.shape) her)        ::  author blacklist
+        $custom                                         ::  custom rule
+          =/  rul/$-({ship ?($r $w) bowl:gall} ?)
+            (fall (~(get by custom-rules) nom) |=(* |))
+          (rul her %w bol)
       ==
     ::
     ++  so-visible
@@ -1635,6 +1638,10 @@
         $village  (~(has in sis.con.shape) her)         ::  whitelist
         $journal  &                                     ::  all
         $mailbox  (team:title our.bol her)              ::  our team
+        $custom                                         ::  custom rule
+          =/  rul/$-({ship ?($r $w) bowl:gall} ?)
+            (fall (~(get by custom-rules) nom) |=(* |))
+          (rul her %r bol)
       ==
     --
   --

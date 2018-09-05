@@ -3,7 +3,7 @@
 ;html
 ::
   ;head
-    ;title: Nutalk
+    ;title: Landscape
     ;meta(charset "utf-8");
     ;meta
       =name     "viewport"

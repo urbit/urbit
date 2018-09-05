@@ -7,7 +7,7 @@
 /=  itm  /%  /collections-web-item/
 ::
 ::
-/=  collection-post     
+/=  collection-post
 ::  /^  $-(raw-item:collections manx)
   /:  /===/web/landscape/collections/post     /%  /!noun/
 ::/=  collection-details
@@ -22,37 +22,43 @@
   ^-  manx
   =/  sho  (fall (~(get by qix.gas) %show) %default)
   ;div.container
-    ;+  (meta-to-elem itm sho)
-    ;+
-      ?-    -.itm
-      ::
-          %collection
-        ?+  sho     !!
-          %default  (collection-to-elem col.itm)
-          %post     (collection-post ~ (flop s.bem.gas))
-          %edit     !!
+  ;div.row
+  ;div.col-sm-10.col-sm-offset-2
+  ;div.collection-index.mt-12
+      ;+  (meta-to-elem itm sho)
+      ;+
+        ?-    -.itm
+        ::
+            %collection
+          ?+  sho     !!
+            %default  (collection-to-elem col.itm)
+            %post     (collection-post ~ (flop s.bem.gas))
+            %edit     !!
+          ==
+        ::
+            %raw
+          ?+  sho     !!
+            %default  (raw-to-elem raw.itm)
+            %post     !!
+            %edit     (collection-post `raw.itm (flop s.bem.gas))
+          ==
+        ::
+            %both
+          ?+  sho     !!
+            %default  (both-to-elem col.itm raw.itm)
+            %post     !!
+            %edit     (collection-post `raw.itm (flop s.bem.gas))
+          ==
+        ::
         ==
-      ::
-          %raw
-        ?+  sho     !!
-          %default  (raw-to-elem raw.itm)
-          %post     !!
-          %edit     (collection-post `raw.itm (flop s.bem.gas))
-        ==
-      ::
-          %both
-        ?+  sho     !!
-          %default  (both-to-elem col.itm raw.itm)
-          %post     !!
-          %edit     (collection-post `raw.itm (flop s.bem.gas))
-        ==
-      ::
-      ==
+  ==
+  ==
+  ==
   ==
 ++  collection-to-elem
   |=  col=collection:collections
   ^-  manx
-  ;ul
+  ;ul.vanilla
     ;*  %+  turn  ~(tap by data.col)
         |=  [nom=knot ite=item:collections]
         ^-  manx
