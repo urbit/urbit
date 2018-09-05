@@ -187,6 +187,8 @@
 ::      location).
 ::  --  `hez` is the unix duct that %ergo's should be sent to.
 ::  --  `cez` is a collection of named permission groups.
+::  --  `cue` is a queue of requests to perform in later events.
+::  --  `tip` is the date of the last write; if now, enqueue incoming requests.
 ::
 ++  raft                                                ::  filesystem
   $:  fat/(map ship room)                               ::  domestic
@@ -195,6 +197,8 @@
       mon/(map term beam)                               ::  mount points
       hez/(unit duct)                                   ::  sync duct
       cez/(map @ta crew)                                ::  permission groups
+      cue/(qeu [duct task:able])                        ::  queued requests
+      tip/@da                                           ::  last write date
   ==                                                    ::
 ::
 ::  Object store.
@@ -3681,6 +3685,17 @@
     [mos ..^$]
   ::
       $info
+    ::  second write at :now gets enqueued with a timer to be run in next event
+    ::
+    ?:  =(now tip.ruf)
+      =.  cue.ruf  (~(put to cue.ruf) [hen req])
+      =/  =move  [hen %pass /queued-request %b %wait now]
+      ::
+      [~[move] ..^$]
+    ::  set the last date to now so we'll know to enqueue a second write
+    ::
+    =.  tip.ruf  now
+    ::
     ?:  =(%$ des.req)
       [~ ..^$]
     =^  mos  ruf
@@ -3903,7 +3918,7 @@
       =+  ruf.old
       :*  (~(run by fat) rom)
           (~(run by hoy) run)
-          ran  mon  hez  ~
+          ran  mon  hez  ~  ~  *@da
       ==
     ::
     ++  wov
@@ -4112,7 +4127,15 @@
   ::
       $note  [[hen %give +.q.hin]~ ..^$]
       $wake
-    ~|  %why-wakey  !!
+    =^  queued  cue.ruf  ~(get to cue.ruf) 
+    ::
+    =/  queued-duct=duct       -.queued
+    =/  queued-task=task:able  +.queued
+    ::
+    ~|  [%mismatched-ducts %queued queued-duct %timer hen]
+    ?>  =(hen queued-duct)
+    ::
+    (call hen [-:!>(*task:able) queued-task])
     ::  =+  dal=(turn ~(tap by fat.ruf) |=([a=@p b=room] a))
     ::  =|  mos=(list move)
     ::  |-  ^-  [p=(list move) q=_..^^$]

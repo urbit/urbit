@@ -65,7 +65,7 @@
         ::
           ^-  tang
           ::
-          =/  move=move:clay-gate  i.t.t.moves
+          =/  move=move:clay-gate                        i.t.t.moves
           =/  =duct                                      p.move
           =/  card=(wind note:clay-gate gift:able:clay)  q.move
           ::
@@ -109,7 +109,7 @@
   =^  results2  clay-gate
     %-  clay-take-with-comparator  :*
       clay-gate
-      now=~2222.2.2
+      now=~1111.1.1
       scry=*sley
       ^=  take-args
         :*  wire=/castifying/~nul/home/~1111.1.1
@@ -160,7 +160,7 @@
   =^  results3  clay-gate
     %-  clay-take  :*
       clay-gate
-      now=~3333.3.3
+      now=~1111.1.1
       scry=*sley
       ^=  take-args
         :*  wire=/mutating/~nul/home/~1111.1.1
@@ -175,7 +175,7 @@
   =^  results4  clay-gate
     %-  clay-take  :*
       clay-gate
-      now=~4444.4.4
+      now=~1111.1.1
       scry=*sley
       ^=  take-args
         :*  wire=/diffing/~nul/home/~1111.1.1
@@ -190,7 +190,7 @@
   =^  results5  clay-gate
     %-  clay-take-with-comparator  :*
       clay-gate
-      now=~5555.5.5
+      now=~1111.1.1
       scry=*sley
       ^=  take-args
         :*  wire=/inserting/~nul/home/~1111.1.1
@@ -261,7 +261,7 @@
   =^  results6  clay-gate
     %-  clay-take  :*
       clay-gate
-      now=~6666.6.6
+      now=~1111.1.1
       scry=*sley
       ^=  take-args
         :*  wire=/patching/~nul/home
@@ -287,8 +287,7 @@
                     [%success %volt %noun %noun 'file1']
         ==  ==  ==
       ^=  expected-moves
-        :~  :*  duct=~[/init]  %give  %note  '+'  %rose
-                ["/" "/" ~]
+        :~  :*  duct=~[/init]  %give  %note  '+'  %rose  ["/" "/" ~]
                 :~  [%leaf "~nul"]
                     [%leaf "home"]
                     [%leaf "1"]
@@ -296,14 +295,146 @@
                     [%leaf "noun"]
             ==  ==
         ::
-            :*  duct=~[/init]  %give  %note  '+'  %rose
-                ["/" "/" ~]
+            :*  duct=~[/init]  %give  %note  '+'  %rose  ["/" "/" ~]
                 :~  [%leaf "~nul"]
                     [%leaf "home"]
                     [%leaf "1"]
                     [%leaf "file2"]
                     [%leaf "noun"]
     ==  ==  ==  ==
+  ::  make a second write request during the same arvo event
+  ::
+  ::    This should produce a Behn timer at `now` to run the write
+  ::    request.
+  ::
+  =^  results7  clay-gate
+    %-  clay-call-with-comparator  :*
+      clay-gate
+      now=~1111.1.1
+      scry=*sley
+      ^=  call-args
+        :+  duct=~[/info2]  type=-:!>(*task:able:clay)
+        ^-  task:able:clay
+        :^  %info  ~nul  %home
+        ^-  nori:clay
+        :-  %&
+        ^-  soba:clay
+        :~  [/file3/noun `miso:clay`[%ins [%noun %noun 'file3']]]
+            [/file4/noun `miso:clay`[%ins [%noun %noun 'file4']]]
+        ==
+      ^=  comparator
+        |=  moves=(list move:clay-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<moves>}"]~
+        ::
+        =/  move=move:clay-gate                        i.moves
+        =/  =duct                                      p.move
+        =/  card=(wind note:clay-gate gift:able:clay)  q.move
+        ::
+        %+  weld
+          (expect-eq !>(~[/info2]) !>(duct))
+        ::
+        ?.  ?=(%pass -.card)
+          [%leaf "bad move, not a %pass: {<move>}"]~
+        ::
+        =/  =wire  p.card
+        ::
+        %+  weld
+          (expect-eq !>(/queued-request) !>(wire))
+        ::
+        =/  note=note:clay-gate  q.card
+        ::
+        ?.  ?=([%b %wait *] note)
+          [%leaf "bad move, not a %wait: {<move>}"]~
+        ::
+        (expect-eq !>(~1111.1.1) !>(p.note))
+    ==
+  ::
+  =^  results8  clay-gate
+    %-  clay-take-with-comparator  :*
+      clay-gate
+      now=~2222.2.2
+      scry=*sley
+      ^=  take-args
+        :*  wire=/queued-request
+            duct=~[/info2] 
+            -:!>(*sign:clay-gate)
+            ^-  sign:clay-gate
+            [%b %wake ~]
+        ==
+      ^=  comparator
+        |=  moves=(list move:clay-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* * * ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ^-  tang
+        ;:  weld
+          %+  expect-eq
+            !>  ^-  move:clay-gate
+                :-  duct=~[/info2]
+                ^-  (wind note:clay-gate gift:able:clay)
+                :+  %pass  /castifying/~nul/home/~2222.2.2
+                ^-  note:clay-gate
+                :-  %f
+                [%build ~nul live=%.n [%pin ~2222.2.2 [%list ~]]]
+            !>  i.moves
+        ::
+          %+  expect-eq
+            !>  ^-  move:clay-gate
+                :-  duct=~[/info2]
+                ^-  (wind note:clay-gate gift:able:clay)
+                :+  %pass  /diffing/~nul/home/~2222.2.2
+                ^-  note:clay-gate
+                :-  %f
+                [%build ~nul live=%.n [%pin ~2222.2.2 [%list ~]]]
+            !>  i.t.moves
+        ::
+          ^-  tang
+          ::
+          =/  move=move:clay-gate                        i.t.t.moves
+          =/  =duct                                      p.move
+          =/  card=(wind note:clay-gate gift:able:clay)  q.move
+          ::
+          %+  weld
+            (expect-eq !>(~[/info2]) !>(duct))
+          ::
+          ?.  ?=(%pass -.card)
+            [%leaf "bad move, not a %pass: {<move>}"]~
+          ::
+          =/  =wire  p.card
+          ::
+          %+  weld
+            (expect-eq !>(/inserting/~nul/home/~2222.2.2) !>(wire))
+          ::
+          =/  note=note:clay-gate  q.card
+          ::
+          ?.  ?=([%f %build *] note)
+            [%leaf "bad move, not a %build: {<move>}"]~
+          ::
+          %+  weld
+            (expect-eq !>(~nul) !>(our.note))
+          ::
+          %+  weld
+            (expect-eq !>(%.n) !>(live.note))
+          ::
+          %-  expect-schematic:test-ford
+          :_  schematic.note
+          ^-  schematic:ford
+          :+  %pin  ~2222.2.2
+          :-  %list
+          :~  :-  [%$ %path -:!>(*path) /file3/noun]
+              :^  %cast  [~nul %home]  %noun
+              [%$ %noun %noun 'file3']
+          ::
+              :-  [%$ %path -:!>(*path) /file4/noun]
+              :^  %cast  [~nul %home]  %noun
+              [%$ %noun %noun 'file4']
+          ==
+    ==  ==
   ::
   ;:  welp
     results0
@@ -313,6 +444,7 @@
     results4
     results5
     results6
+    results7
   ==
 ::  |utilities: helper functions for testing
 ::
