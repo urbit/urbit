@@ -9,7 +9,7 @@
 ::
 /=  collection-post
 ::  /^  $-(raw-item:collections manx)
-  /:  /===/web/landscape/collections/post     /!noun/
+  /:  /===/web/landscape/collections/post      /!noun/
 ::/=  collection-details
 ::  /^  manx
 ::  /:  /===/web/landscape/collections/details  /%  /!hymn/
@@ -226,7 +226,6 @@
 ++  meta-to-elem
   |=  [itm=item:collections sho=@tas]
   ^-  manx
-  ~&  itm
   =/  mat=mart
     :~  [%type "hidden"]
         [%name "urb-metadata"]

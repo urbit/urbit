@@ -8,12 +8,12 @@
 ::  cols:
 ::
 ::    run collections-item renderer on children of /web/collections
-::    combine with a bunted config in a +collection structure defined in /lib/collections
-::    because the top level collection has no config file
+::    combine with a bunted config in a +collection structure defined in 
+::    /lib/collections because the top level collection has no config file
 ::
-::    whenever any of the clay files that compose this renderer change, this app will
-::    recompile and the +prep arm will fire. we then check which files changed and notify
-::    the corresponding hall circle of that change
+::    whenever any of the clay files that compose this renderer change, this app
+::    will recompile and the +prep arm will fire. we then check which files 
+::    changed and notify the corresponding hall circle of that change
 ::
 /=  cols
   /^  collection:collections
@@ -40,8 +40,8 @@
 ::
 ::  state: 
 ::    
-::    stores the collection built by above by :cols so that we can compare old and new
-::    versions whenever the rendered data changes
+::    stores the collection built by above by :cols so that we can compare old
+::    and new versions whenever the rendered data changes
 ::
 |_  [bol=bowl:gall state=collection]
 ::
@@ -70,7 +70,9 @@
     (ta-update:ta u.old-col)
   [mow this(state cols)]
 ::
-::  +mack: recieve acknowledgement for permissions changes, print error if it failed
+::  +mack: 
+::
+::    recieve acknowledgement for permissions changes, print error if it failed
 ::
 ++  mack
   |=  [wir=wire err=(unit tang)]
@@ -420,10 +422,11 @@
       =.  ta-this  (ta-insert-item item.i.items (weld pax [nom.i.items ~]))
       $(items t.items)
       ::
-      ?:  ?&  (~(has by meta.raw.new) %comments)
-              =('.y' (~(got by meta.raw.new) %comments))
-          ==
-        (ta-generate-comments pax)
+::      ?:  ?&  (~(has by meta.raw.new) %comments)
+::              =('.y' (~(got by meta.raw.new) %comments))
+::          ==
+::        ~&  insert-both-comments+pax
+::        (ta-generate-comments pax)
       ta-this
     ::
         %raw
@@ -572,7 +575,6 @@
         %+  update-umd-front
         (~(put by meta.new) %last-modified (scot %da now.bol))
         data.new
-
 ::      ~&  %update-last-modified
 ::      ~&  contents
 ::      ~&  (weld pax /umd)
@@ -652,13 +654,14 @@
     ^+  ta-this
     =/  sup=path  [%collections-config (flop pax)]
     =/  pat  (en-beam:format [byk.bol sup])
+    =/  dat=@da  (slav %da (snag 0 (flop pax)))
     =/  cay=config
       :*  [byk.bol sup]
           'comments'
           'comments'
           our.bol
-          now.bol
-          now.bol
+          dat
+          dat
           %comments
           |
           ~
@@ -672,7 +675,6 @@
     |=  [pax=path cay=cage]
     ^+  ta-this
     =.  pax  (en-beam:format byk.bol (flop pax))
-::    ~&  w+(foal pax cay)
     %+  ta-emit  ost.bol
     [%info (weld /ta-write pax) our.bol (foal pax cay)]
   ::
@@ -740,7 +742,6 @@
   ::
   ++  ta-hall-json
     |=  [pax=path header=@t jon=json]
-    ~&  notify+[pax header]
     ^+  ta-this
     =/  circ=circle:hall  (path-to-circle pax)
     %-  ta-hall-action
