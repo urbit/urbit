@@ -4,12 +4,12 @@
 /?  309
 /+  collections, cram
 /=  gas  /$  fuel:html
-/=  itm  /%  /collections-web-item/
+/=  itm  /collections-web-item/
 ::
 ::
 /=  collection-post
 ::  /^  $-(raw-item:collections manx)
-  /:  /===/web/landscape/collections/post     /%  /!noun/
+  /:  /===/web/landscape/collections/post     /!noun/
 ::/=  collection-details
 ::  /^  manx
 ::  /:  /===/web/landscape/collections/details  /%  /!hymn/
