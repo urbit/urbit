@@ -1,9 +1,8 @@
 ::
-/-  constitution
-|_  upd=update:constitution
-::.
+|_  upd=update:constitution:ethe
+::
 ++  grab                                                ::  convert from
   |%
-  ++  noun  update:constitution                                  ::  from %noun
+  ++  noun  update:constitution:ethe                    ::  from %noun
   --
 --

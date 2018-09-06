@@ -115,7 +115,7 @@
 ++  ethe
   |%
   ::
-  ::  ethereum types. integer bitsizes ignored.
+  ::  solidity types. integer bitsizes ignored
   ++  etyp
     $%  ::  static
         %address  %bool
@@ -128,7 +128,7 @@
         %bytes    %string
     ==
   ::
-  ::  ethereum-style typed data. integer bitsizes ignored.
+  ::  solidity-style typed data. integer bitsizes ignored
   ++  data
     $%  [%address p=address]
         [%string p=tape]
@@ -139,8 +139,19 @@
         [%ureal p=@urs]
         [%array-n p=(list data)]
         [%array p=(list data)]
-        [%bytes-n p=octs]  ::TODO  just @, because context knowns length?
+        [%bytes-n p=octs]  ::TODO  just @, because context knows length?
         [%bytes p=octs]
+    ==
+  ::
+  ::  raw transaction data
+  +$  transaction
+    $:  nonce=@ud
+        gas-price=@ud
+        gas=@ud
+        to=address
+        value=@ud
+        data=@ux
+        chain-id=@ux
     ==
   ::
   ::  ethereum address, 20 bytes.
@@ -160,6 +171,7 @@
         ==
         [%eth-get-filter-logs fid=@ud]
         [%eth-get-filter-changes fid=@ud]
+        [%eth-send-raw-transaction dat=@ux]
     ==
   ::
   ::TODO
@@ -168,6 +180,7 @@
         [%eth-new-filter fid=@ud]
         [%eth-get-filter-logs los=(list event-log)]
         [%eth-got-filter-changes los=(list event-log)]
+        [%eth-transaction-hash haz=@ux]
     ==
   ::
   ++  event-log
@@ -4188,7 +4201,7 @@
         =+  [r y]=(jc-mul g k)
         =/  s  (pro.n `@`(inv.n k) `@`(sum.n z (mul r prv)))
         =/  big-s  (gte (mul 2 s) ^n)
-        :*  v=(add 27 (mix (end 0 1 y) ?:(big-s 1 0)))
+        :*  v=(mix (end 0 1 y) ?:(big-s 1 0))
             r=r
             s=?.(big-s s (sub ^n s))
         ==
@@ -4196,7 +4209,7 @@
       ++  ecdsa-raw-recover                             ::  get pubkey from sig
         |=  [has=@uvI sig=[v=@ r=@ s=@]]
         ^-  pont
-        ?>  ?&((lte 27 v.sig) (lte v.sig 34))
+        ?>  (lte v.sig 7)
         =/  x  r.sig
         =/  ysq  (sum.p b (exp.p 3 x))               ::  omits A=0
         =/  bet  (exp.p (div +(^p) 4) ysq)
@@ -7185,6 +7198,77 @@
   =,  mimes:html
   =,  ethe
   |%
+  ++  sign-transaction
+    =,  crypto
+    |=  [tx=transaction pk=@]
+    ^-  @ux
+    ::  hash the raw transaction data
+    =/  hash=@
+      =/  dat=@
+        %-  encode-atoms:rlp
+        ::  with v=chain-id, r=0, s=0
+        tx(chain-id [chain-id.tx 0 0 ~])
+      =+  wid=(met 3 dat)
+      %-  keccak-256:keccak
+      [wid (rev 3 wid dat)]
+    ::  sign transaction hash with private key
+    =+  (ecdsa-raw-sign:secp256k1:secp hash pk)
+    ::  complete transaction is raw data, with r and s
+    ::  taken from the signature, and v as per eip-155
+    %-  encode-atoms:rlp
+    tx(chain-id [:(add (mul chain-id.tx 2) 35 v) r s ~])
+  ::
+  ::  rlp en/decoding
+  ::NOTE  https://github.com/ethereum/wiki/wiki/RLP
+  ::
+  ++  rlp
+    |%
+    ::NOTE  rlp encoding doesn't really care about leading zeroes,
+    ::      but because we need to disinguish between no-bytes zero
+    ::      and one-byte zero (and also empty list) we end up with
+    ::      this awful type...
+    +$  item
+      $%  [%l l=(list item)]
+          [%b b=byts]
+      ==
+    ::
+    ::  treat atoms as list of items
+    ++  encode-atoms
+      |=  l=(list @)
+      %+  encode  %l
+      %+  turn  l
+      |=(a=@ b+[(met 3 a) a])
+    ::
+    ++  encode
+      |=  in=item
+      ^-  @
+      ?-  -.in
+          %b
+        ?:  &(=(1 wid.b.in) (lth dat.b.in 0x80))
+          dat.b.in
+        %^  cat  3  dat.b.in
+        ::TODO  unsure if this should pass wid or (met 3 dat)...
+        (encode-length wid.b.in 0x80)
+      ::
+          %l
+        =/  out=@
+          %+  roll  l.in
+          |=  [ni=item en=@]
+          (cat 3 (encode ni) en)
+        %^  cat  3  out
+        (encode-length (met 3 out) 0xc0)
+      ==
+    ::
+    ++  encode-length
+      |=  [len=@ off=@]
+      ?:  (lth len 56)  (add len off)
+      =-  (cat 3 len -)
+      :(add (met 3 len) off 55)
+    ::
+    ::TODO  decode
+    ::
+    --
+  ::
   ::  making calls to nodes
   ::
   ::  see also the json rpc api spec:
@@ -7265,6 +7349,9 @@
     ::
         %eth-get-filter-changes
       ['eth_getFilterChanges' (tape (num-to-hex fid.req)) ~]
+    ::
+        %eth-send-raw-transaction
+      ['eth_sendRawTransaction' (tape (num-to-hex dat.req)) ~]
     ==
   ::
   ++  eth-call-to-json
@@ -7301,7 +7388,7 @@
     ==
   ::
   ++  num-to-hex
-    |=  n=@ud
+    |=  n=@
     ^-  tape
     %-  prefix-hex
     (render-hex-bytes (as-octs n))
@@ -7319,11 +7406,15 @@
   ::
   ::  parsing responses from nodes
   ::
-  ++  parse-eth-new-filter-res
+  ++  parse-hex-result
     |=  j=json
-    ^-  @ud
+    ^-  @
     ?>  ?=(%s -.j)
     (hex-to-num p.j)
+  ::
+  ++  parse-eth-new-filter-res  parse-hex-result
+  ::
+  ++  parse-transaction-hash  parse-hex-result
   ::
   ++  parse-event-logs
     (ar:dejs:format parse-event-log)
@@ -7645,7 +7736,6 @@
       ==
     ::
     ++  event-log-to-hull-diff
-      =,  ethe
       =,  ships-events
       |=  log=event-log
       ^-  (unit (pair ship diff-hull))
