@@ -444,7 +444,6 @@
       ::
       [%| prefix=tile =(list @t)]
       $:  %&
-          $=  style
           $:  ::  wide: one-line style
               ::  tall: multiline style
               ::
@@ -481,7 +480,6 @@
           ::
           =(list plum)
       ==
-      [%& style=[wide=whatever tall=whatever] content=(list plum)]
   ==
 ++  tang  (list tank)                                   ::  bottom-first error
 ++  tank  $~  [%leaf ~]                                 ::
@@ -5997,10 +5995,11 @@
               {ven/term pro/term kel/@}                 ::  vendor and product
               {ven/term pro/term ver/@ kel/@}           ::  all of the above
           ==                                            ::
-+$  coil  $:  p/{p/(unit term) q/poly r/vair}           ::  name, wet/dry, vary
++$  coil  $:  p/garb                                    ::  name, wet/dry, vary
               q/type                                    ::  context
-              r/{p/seminoun q/(map term tome)}          ::  arms
+              r/(pair seminoun (map term tome))         ::  chapters
           ==                                            ::
++$  garb  (trel (unit term) poly vair)                  ::  core 
 +$  poly  ?(%wet %dry)                                  ::  polarity
 +$  foot  $%  {$dry p/hoon}                             ::  dry arm, geometric
               {$wet p/hoon}                             ::  wet arm, generic
@@ -6052,7 +6051,7 @@
               [%qual =plot =plot =plot =plot]           ::  formal quadruple
               [%quil =plot =plot =plot =plot =plot]     ::  formal quintuple
               [%tape ~]                                 ::  utf8 bytes
-              [%tour ~]                                 ::  utf32 graphemes
+              [%tour ~]                                 ::  utf32/nfc graphemes
               [%tree p=plot]                            ::  n-l-r tree
               [%trip p=plot q=plot r=plot]              ::  formal triple
               [%unit p=plot]                            ::  maybe

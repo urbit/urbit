@@ -134,7 +134,6 @@
       ::
       :-  [%knot [p.u.new ~ ~] xray]
       state(table (~(put by table.state) type [p.u.new xray]))
-
     ::
     ::  -main: main analysis without entry control
     ::

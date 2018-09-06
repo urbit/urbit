@@ -1,6 +1,6 @@
-::  Hoon printer
+::  type printer
 ::
-::::  /hoon/hoon-printer/gen
+::::  /hoon/type-printer/gen
   ::
 /?    310
 !:
@@ -8,7 +8,7 @@
 ::::
   ::
 :-  %say
-|=  {^ {{demo=hoon ~} ~}}
+|=  {^ {{subject=type ~} ~}}
 :-  %txt
 ^-  wain
 =<  =/  plum=plum  (hoon-to-plum demo)
