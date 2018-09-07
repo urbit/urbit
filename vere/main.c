@@ -92,7 +92,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:A:H:I:w:u:t:f:k:l:n:p:r:NabcdgqsvxFMPDXRS")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:I:w:u:t:f:k:l:n:p:r:NabcdgqsvxFMPDXRS")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -143,6 +143,11 @@ _main_getopt(c3_i argc, c3_c** argv)
         if ( c3n == _main_readw(optarg, 100, &u3_Host.ops_u.fuz_w) ) {
           return c3n;
         }
+        break;
+      }
+      case 'K': {
+        u3_Host.ops_u.key_c = strdup(optarg);
+        u3_Host.ops_u.nuu = c3y;
         break;
       }
       case 'k': {
@@ -249,6 +254,11 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.key_c != 0) {
+    fprintf(stderr, "-K only makes sense when bootstrapping a new instance\n");
+    return c3n;
+  }
+
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.url_c != 0 ) {
     fprintf(stderr, "-u only makes sense when bootstrapping a new instance\n");
     return c3n;
@@ -275,6 +285,14 @@ _main_getopt(c3_i argc, c3_c** argv)
     struct stat s;
     if ( stat(u3_Host.ops_u.pil_c, &s) != 0 ) {
       fprintf(stderr, "pill %s not found\n", u3_Host.ops_u.pil_c);
+      return c3n;
+    }
+  }
+
+  if ( u3_Host.ops_u.key_c != 0 ) {
+    struct stat s;
+    if ( stat(u3_Host.ops_u.key_c, &s) != 0 ) {
+      fprintf(stderr, "keyfile %s not found\n", u3_Host.ops_u.key_c);
       return c3n;
     }
   }

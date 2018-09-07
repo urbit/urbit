@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <curl/curl.h>
 #include <uv.h>
 
 #include "all.h"
@@ -1165,6 +1166,181 @@ _sist_zen()
   return u3i_words(16, rad_w);
 }
 
+/* _sist_curl_alloc(): allocate a response buffer for curl
+*/
+static size_t
+_sist_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, uv_buf_t* buf_u)
+{
+  size_t siz_t = uni_t * mem_t;
+  buf_u->base = realloc(buf_u->base, 1 + siz_t + buf_u->len);
+
+  if ( 0 == buf_u->base ) {
+    fprintf(stderr, "out of memory\n");
+    u3_lo_bail();
+  }
+
+  memcpy(buf_u->base + buf_u->len, dat_v, siz_t);
+  buf_u->len += siz_t;
+  buf_u->base[buf_u->len] = 0;
+
+  return siz_t;
+}
+
+/* _sist_post_json(): POST JSON to url_c
+*/
+static uv_buf_t
+_sist_post_json(c3_c* url_c, uv_buf_t lod_u)
+{
+  CURL *curl;
+  CURLcode result;
+  long cod_l;
+  struct curl_slist* hed_u = 0;
+
+  uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
+
+  if ( !(curl = curl_easy_init()) ) {
+    fprintf(stderr, "failed to initialize libcurl\n");
+    u3_lo_bail();
+  }
+
+  hed_u = curl_slist_append(hed_u, "Accept: application/json");
+  hed_u = curl_slist_append(hed_u, "Content-Type: application/json");
+  hed_u = curl_slist_append(hed_u, "charsets: utf-8");
+
+  curl_easy_setopt(curl, CURLOPT_URL, url_c);
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _sist_curl_alloc);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
+
+  // note: must be terminated!
+  curl_easy_setopt(curl, CURLOPT_POSTFIELDS, lod_u.base);
+
+  result = curl_easy_perform(curl);
+  curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
+
+  // XX retry?
+  if ( CURLE_OK != result ) {
+    fprintf(stderr, "failed to fetch %s: %s\n",
+                    url_c, curl_easy_strerror(result));
+    u3_lo_bail();
+  }
+  if ( 300 <= cod_l ) {
+    fprintf(stderr, "error fetching %s: HTTP %ld\n", url_c, cod_l);
+    u3_lo_bail();
+  }
+
+  curl_easy_cleanup(curl);
+
+  return buf_u;
+}
+
+/* _sist_oct_to_buf(): +octs to uv_buf_t
+*/
+static uv_buf_t
+_sist_oct_to_buf(u3_noun oct)
+{
+  if ( c3n == u3a_is_cat(u3h(oct)) ) {
+    u3_lo_bail();
+  }
+
+  c3_w len_w  = u3h(oct);
+  c3_y* buf_y = c3_malloc(1 + len_w);
+  buf_y[len_w] = 0;
+
+  u3r_bytes(0, len_w, buf_y, u3t(oct));
+
+  u3z(oct);
+  return uv_buf_init((void*)buf_y, len_w);
+}
+
+/* _sist_buf_to_oct(): uv_buf_t to +octs
+*/
+static u3_noun
+_sist_buf_to_oct(uv_buf_t buf_u)
+{
+  u3_noun len = u3i_words(1, (c3_w*)&buf_u.len);
+
+  if ( c3n == u3a_is_cat(len) ) {
+    u3_lo_bail();
+  }
+
+  return u3nc(len, u3i_bytes(buf_u.len, (const c3_y*)buf_u.base));
+}
+
+/* _sist_eth_rpc(): ethereum JSON RPC with request/response as +octs
+*/
+static u3_noun
+_sist_eth_rpc(c3_c* url_c, u3_noun oct)
+{
+  return _sist_buf_to_oct(_sist_post_json(url_c, _sist_oct_to_buf(oct)));
+}
+
+/* _sist_dawn(): produce %dawn boot card - validate keys and query contract
+*/
+static u3_noun
+_sist_dawn(void)
+{
+  if ( c3y == u3_Host.ops_u.fak ) {
+    // XX generate fake keys, or use separate fake boot event
+  }
+
+  if ( 0 == u3_Host.ops_u.key_c ) {
+    // XX print nice error
+    u3_lo_bail();
+  }
+
+  u3_noun eds = u3m_file(u3_Host.ops_u.key_c);
+  u3_noun des = u3dc("slaw", c3__uw, eds);
+
+  if ( u3_nul == des ) {
+    // XX print nice error
+    u3_lo_bail();
+  }
+
+  //  +seed:dawn:
+  //  [who=ship lyf=life key=ring sig=(unit oath:pki:jael)]
+  u3_noun sed = u3ke_cue(u3t(des));
+  u3_noun who = u3h(sed);
+
+  // u3_noun lyf = u3h(u3t(sed));
+  // u3_noun key = u3h(u3t(u3t(sed)));
+  // u3_noun sig = u3t(u3t(u3t(sed)));
+  // u3_noun rac = u3do("clan:title", u3k(who));
+
+  // XX configure default globally, add cli arg to specify
+  c3_c* url_c = "http://localhost:8545";
+
+  u3_noun luh = _sist_eth_rpc(url_c, u3do("hull:give:dawn", u3k(who)));
+  u3_noun hul = u3dc("hull:take:dawn", u3k(who), luh);
+
+  // XX actually make request
+  // u3_noun liv = _sist_get_json(parent, /some/url)
+  u3_noun liv = u3_nul;
+
+  u3_noun sas = u3dt("veri:dawn", sed, hul, liv);
+
+  if ( c3n == u3h(sas) ) {
+    // XX deconstruct sas, print helpful error messages
+    u3m_p("pre-boot error", u3t(sas));
+    u3_lo_bail();
+  }
+
+  // XX slow, temporarily disabled
+  // XX maybe print messages, spin a cursor, etc.
+  // u3_noun raz = _sist_eth_rpc(url_c, u3v_wish("czar:give:dawn"));
+  // u3_noun zar = u3do("czar:take:dawn", raz);
+  u3_noun zar = u3_nul;
+
+  u3_noun fut = _sist_eth_rpc(url_c, u3v_wish("turf:give:dawn"));
+  u3_noun tuf = u3do("turf:take:dawn", fut);
+
+  // XX extract from sas
+  // XX or maybe pass entire hull?
+  u3_noun pon = u3_nul;
+
+  // [%dawn =seed:dawn spon=(unit ship) czar=(map ship [=life =pass]) turf=(list (pair @ud (list @ta)))]
+  return u3nc(c3__dawn, u3nq(sed, pon, zar, tuf));
+}
+
 /* u3_sist_boot(): restore or create.
 */
 void
@@ -1173,51 +1349,7 @@ u3_sist_boot(void)
   // uL(fprintf(uH, "sist: booting\n"));
 
   if ( c3y == u3_Host.ops_u.nuu ) {
-    u3_noun pig = u3_none;
-
-    if ( 0 == u3_Host.ops_u.imp_c ) {
-      u3_noun ten = _sist_zen();
-      uL(fprintf(uH, "generating curve25519 key pair...\n"));
-
-      pig = u3nq(c3__make, u3_nul, 11, u3nc(ten, u3_Host.ops_u.fak));
-    }
-    else {
-      u3_noun imp = u3i_string(u3_Host.ops_u.imp_c);
-      u3_noun whu = u3dc("slaw", 'p', u3k(imp));
-
-      if ( (u3_nul == whu) ) {
-        fprintf(stderr, "czar: incorrect format\r\n");
-        u3_lo_bail();
-      }
-      else {
-        u3_noun gen = u3_nul;
-        u3_noun gun = u3_nul;
-        if (c3n == u3_Host.ops_u.fak) {
-          if ( 0 != u3_Host.ops_u.gen_c) {
-            gen = u3i_string(u3_Host.ops_u.gen_c);
-          }
-          else {
-            gen = _sist_text("generator"); // XX move to main.c
-          }
-          gun = u3dc("slaw", c3__uw, gen);
-
-          if ( u3_nul == gun ) {
-            fprintf(stderr, "czar: incorrect format\r\n");
-            u3_lo_bail();
-          }
-        }
-        else {
-          gun = u3nc(u3_nul, u3_nul);
-        }
-        pig = u3nq(c3__sith,
-                   u3k(u3t(whu)),
-                   u3k(u3t(gun)),
-                   u3_Host.ops_u.fak);
-
-        u3z(whu); u3z(gun);
-      }
-      u3z(imp);
-    }
+    u3_noun pig = _sist_dawn();
     _sist_make(pig);
   }
   else {

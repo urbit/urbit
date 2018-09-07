@@ -284,6 +284,7 @@
 #   define c3__dant   c3_s4('d','a','n','t')
 #   define c3__dast   c3_s4('d','a','s','t')
 #   define c3__data   c3_s4('d','a','t','a')
+#   define c3__dawn   c3_s4('d','a','w','n')
 #   define c3__dbug   c3_s4('d','b','u','g')
 #   define c3__dec    c3_s3('d','e','c')
 #   define c3__deem   c3_s4('d','e','e','m')

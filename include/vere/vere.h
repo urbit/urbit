@@ -587,6 +587,7 @@
         c3_c*   tic_c;                      //  -t, ticket value
         c3_c*   url_c;                      //  -u, pill url
         c3_c*   who_c;                      //  -w, begin with ticket
+        c3_c*   key_c;                      //  -K, private key file
         c3_o    abo;                        //  -a
         c3_o    bat;                        //  -b, batch create
         c3_o    dem;                        //  -d, daemon
