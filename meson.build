@@ -125,7 +125,7 @@ jets_e_src = [
 'jets/e/lore.c',
 'jets/e/loss.c',
 'jets/e/lune.c',
-'jets/e/trip.c'
+'jets/e/trip.c',
 'jets/e/ripe.c'
 ]
 
