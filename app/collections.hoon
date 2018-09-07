@@ -8,12 +8,12 @@
 ::  cols:
 ::
 ::    run collections-item renderer on children of /web/collections
-::    combine with a bunted config in a +collection structure defined in /lib/collections
-::    because the top level collection has no config file
+::    combine with a bunted config in a +collection structure defined in 
+::    /lib/collections because the top level collection has no config file
 ::
-::    whenever any of the clay files that compose this renderer change, this app will
-::    recompile and the +prep arm will fire. we then check which files changed and notify
-::    the corresponding hall circle of that change
+::    whenever any of the clay files that compose this renderer change, this app
+::    will recompile and the +prep arm will fire. we then check which files 
+::    changed and notify the corresponding hall circle of that change
 ::
 /=  cols
   /^  collection:collections
@@ -40,8 +40,8 @@
 ::
 ::  state: 
 ::    
-::    stores the collection built by above by :cols so that we can compare old and new
-::    versions whenever the rendered data changes
+::    stores the collection built by above by :cols so that we can compare old
+::    and new versions whenever the rendered data changes
 ::
 |_  [bol=bowl:gall state=collection]
 ::
@@ -70,7 +70,9 @@
     (ta-update:ta u.old-col)
   [mow this(state cols)]
 ::
-::  +mack: recieve acknowledgement for permissions changes, print error if it failed
+::  +mack: 
+::
+::    recieve acknowledgement for permissions changes, print error if it failed
 ::
 ++  mack
   |=  [wir=wire err=(unit tang)]
@@ -195,7 +197,7 @@
 ::
 ::  +poke-collections-action:
 ::
-::    the main interface for creating and deleting collections and collections items
+::    the main interface for creating and deleting collections and items
 ::
 ++  poke-collections-action
   |=  act=action:collections
@@ -231,7 +233,9 @@
   ::
   ++  ta-this  .
   ::
-  ::  +ta-done: flop :moves for finalization, since moves are to the head of the list
+  ::  +ta-done: 
+  ::    
+  ::    flop :moves for finalization, since moves are prepended to the list
   ::
   ++  ta-done  [(flop moves) this]
   ::
@@ -293,7 +297,8 @@
     ::  XX some of this is redunant
     ::
         %collection
-      =/  perms  .^([dict:clay dict:clay] %cp (weld sap /[dat]/collections-config))
+      =/  perms  
+        .^([dict:clay dict:clay] %cp (weld sap /[dat]/collections-config))
       ?.  (allowed-by src.bol +.perms)
         ta-this
       =/  conf=config
@@ -314,7 +319,7 @@
       ::  restrict permissions on config file
       =.  ta-this  
         %^  ta-set-permissions  (weld pax.a /[dat]/collections-config) 
-        [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  read  XX maybe open this?
+        [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  read
         [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  write
       ::  open permissions on collection items
       =.  ta-this  
@@ -391,14 +396,14 @@
   ++  ta-insert-item
     |=  [new=item pax=path]
     ^+  ta-this
-::    ~&  insert+[-.new pax]
     =/  parent-path  (scag (dec (lent pax)) pax)
     ::
     ?-    -.new
     ::
         %collection
       =.  ta-this
-        (ta-hall-json parent-path 'new collection' (collection-notify pax meta.col.new))
+        %^  ta-hall-json  parent-path  'new collection' 
+        (collection-notify pax meta.col.new)
       ::
       =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.new)
@@ -408,10 +413,6 @@
       $(items t.items)
     ::
         %both
-::      =.  ta-this  
-::        (ta-hall-json parent-path 'new collection' (collection-notify pax meta.col.new))
-::      =.  ta-this  
-::        (ta-hall-json parent-path 'new item' (item-notify pax raw.new))
       =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.new)
       =.  ta-this
@@ -420,10 +421,6 @@
       =.  ta-this  (ta-insert-item item.i.items (weld pax [nom.i.items ~]))
       $(items t.items)
       ::
-      ?:  ?&  (~(has by meta.raw.new) %comments)
-              =('.y' (~(got by meta.raw.new) %comments))
-          ==
-        (ta-generate-comments pax)
       ta-this
     ::
         %raw
@@ -440,7 +437,6 @@
   ++  ta-remove-item
     |=  [old=item pax=path]
     ^+  ta-this
-::    ~&  remove+[-.old pax]
     ::  flush permissions
     ::  notify parent of deletion
     =/  parent  (scag (dec (lent pax)) pax)
@@ -449,7 +445,8 @@
     ::
         %collection
       =.  ta-this  
-        (ta-hall-json parent 'deleted collection' (collection-notify pax meta.col.old))
+        %^  ta-hall-json  parent  'deleted collection' 
+        (collection-notify pax meta.col.old)
       =.  ta-this  (ta-flush-permissions (weld pax /collections-config))
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.old)
       |-
@@ -458,10 +455,6 @@
       $(items t.items)
     ::
         %both
-::      =.  ta-this  
-::        (ta-hall-json parent 'deleted collection' (collection-notify pax meta.col.old))
-::      =.  ta-this  
-::        (ta-hall-json parent 'deleted item' (item-notify pax raw.old))
       =.  ta-this  (ta-flush-permissions pax)
       =.  ta-this  (ta-flush-permissions (weld pax /collections-config))
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.old)
@@ -484,7 +477,6 @@
     ::
     |=  [old=item new=item pax=path]
     ^+  ta-this
-::    ~&  update-item+[-.old -.new pax]
     ?:  =(old new)
       ta-this
     ::
@@ -539,7 +531,6 @@
   ++  ta-update-raw-item
     |=  [old=raw-item new=raw-item pax=path]
     ^+  ta-this
-::    ~&  update-raw-item+[-.old -.new pax]
     ?:  =(old new)
       ta-this
     ::
@@ -572,10 +563,6 @@
         %+  update-umd-front
         (~(put by meta.new) %last-modified (scot %da now.bol))
         data.new
-
-::      ~&  %update-last-modified
-::      ~&  contents
-::      ~&  (weld pax /umd)
       (ta-write (weld pax /umd) %umd !>(contents))
     ::
     ta-this
@@ -586,11 +573,11 @@
             pax=path
         ==
     ^+  ta-this
-::    ~&  update-collection+pax
     ::
     =?  ta-this  !=(meta.old meta.new)
       =/  parent-path  (scag (dec (lent pax)) pax)
-      (ta-hall-json parent-path 'edited collection' (collection-notify pax meta.new))
+      %^  ta-hall-json  parent-path  'edited collection'
+      (collection-notify pax meta.new)
     ::
     ?:  =(data.old data.new)
       ta-this
@@ -610,10 +597,6 @@
     =/  del-old=(list [nom=knot =item])  ~(tap by del-old)
     ::
     =/  lam  |=([[a=knot item] out=(list path)] [(weld pax [a ~]) out])
-::    ~&  upd-new+(roll upd-new lam)
-::    ~&  upd-old+(roll upd-old lam)
-::    ~&  ins-new+(roll ins-new lam)
-::    ~&  del-old+(roll del-old lam)
     ::
     =.  ta-this  |-
     ?~  upd-new
@@ -652,13 +635,14 @@
     ^+  ta-this
     =/  sup=path  [%collections-config (flop pax)]
     =/  pat  (en-beam:format [byk.bol sup])
+    =/  dat=@da  (slav %da (snag 0 (flop pax)))
     =/  cay=config
       :*  [byk.bol sup]
           'comments'
           'comments'
           our.bol
-          now.bol
-          now.bol
+          dat
+          dat
           %comments
           |
           ~
@@ -672,7 +656,6 @@
     |=  [pax=path cay=cage]
     ^+  ta-this
     =.  pax  (en-beam:format byk.bol (flop pax))
-::    ~&  w+(foal pax cay)
     %+  ta-emit  ost.bol
     [%info (weld /ta-write pax) our.bol (foal pax cay)]
   ::
@@ -723,10 +706,7 @@
       ?:  =(nom.circ %c)
         [our.bol %inbox]
       (path-to-circle (scag (dec (lent pax)) pax))
-::    ~&  create+circ
-::    ~&  source+parent
     %-  ta-hall-actions
-    :: XX TODO make this depend on clay perms
     :~  [%create nom.circ description %journal]  
         [%source nom.parent & (sy `source:hall`[circ ~] ~)]
     ==
@@ -740,7 +720,6 @@
   ::
   ++  ta-hall-json
     |=  [pax=path header=@t jon=json]
-    ~&  notify+[pax header]
     ^+  ta-this
     =/  circ=circle:hall  (path-to-circle pax)
     %-  ta-hall-action
