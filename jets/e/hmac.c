@@ -53,7 +53,6 @@
     u3_atom outmsg = u3ka_add(u3kc_lsh(3, out, outkey), innhaj);
     u3_atom outhaj = u3n_slam_on(u3k(haj), u3nc((out + boq), outmsg));
 
-    fprintf(stderr, "\naaaaaa\n");
     return outhaj;
   }
 

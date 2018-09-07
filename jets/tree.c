@@ -103,6 +103,29 @@ static u3j_core _143_hex_coed_d[] =
       {}
     };
 
+  static u3j_harm _143_hex_secp_make_a[] = {{".2", u3we_make, c3y}, {}};
+  static u3j_harm _143_hex_secp_sign_a[] = {{".2", u3we_sign, c3y}, {}};
+  static u3j_harm _143_hex_secp_reco_a[] = {{".2", u3we_reco, c3y}, {}};
+
+  static u3j_core _143_hex_secp_secp_helper_d[] =
+    { { "make-k",            _143_hex_secp_make_a },
+      { "ecdsa-raw-sign",    _143_hex_secp_sign_a },
+      { "ecdsa-raw-recover", _143_hex_secp_reco_a },
+      {}
+    };
+
+  static u3j_core _143_hex_secp_secp_d[] =
+    { { "helper", 0,   _143_hex_secp_secp_helper_d },
+      {}
+    };
+
+  static u3j_core _143_hex_secp_d[] =
+    { { "secp", 0,   _143_hex_secp_secp_d },
+      {}
+    };
+
+
+
 static u3j_core _143_hex_d[] =
   { { "down", 0, _143_hex_down_d },
     { "lore", _143_hex_lore_a },
@@ -112,6 +135,7 @@ static u3j_core _143_hex_d[] =
     { "aes", 0, _143_hex_aes_d },
     { "hmac", 0, _143_hex_hmac_d },
     { "argon", 0, _143_hex_argon_d },
+    { "secp", 0, _143_hex_secp_d },
     {}
   };
 

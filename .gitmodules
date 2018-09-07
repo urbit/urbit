@@ -22,3 +22,7 @@
 [submodule "subprojects/argon2"]
 	path = subprojects/argon2
 	url = https://github.com/urbit/argon2.git
+[submodule "subprojects/secp256k1"]
+	path = subprojects/secp256k1
+	url = https://github.com/urbit/secp256k1.git
+
