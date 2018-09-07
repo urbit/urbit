@@ -385,11 +385,11 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
     c3_w cod_w;
 
     {
-      char soc_c[6];
+      char soc_c[5];
 
-      memset(soc_c, 0, 6);
-      strncpy(soc_c, cop_u->cos_c, 5);
-      soc_c[5] = 0;
+      memset(soc_c, 0, 5);
+      strncpy(soc_c, cop_u->cos_c, 4);
+      soc_c[4] = 0;
       cod_w = u3i_string(soc_c);
 
       cod_w = u3a_lush(cod_w);
