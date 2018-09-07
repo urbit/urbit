@@ -7,7 +7,7 @@
 #include "../src/blake2/blake2.h"
 
 //    `@ux`(blake2b:blake:crypto 1^0xaa 2^0xbbcc 32)
-
+#if 0
 static void pretty_print_hex(char * headline,
                              c3_y * ptr,
                              c3_w num_bytes)
@@ -24,7 +24,7 @@ static void pretty_print_hex(char * headline,
   fprintf(stderr, "\n\r");
 
 }
-
+#endif
 
 u3_noun
 u3qe_blake(u3_atom msg, u3_atom key, u3_atom out)
@@ -52,8 +52,6 @@ u3qe_blake(u3_atom msg, u3_atom key, u3_atom out)
   c3_y * mod_y =  (c3_y * ) u3a_malloc(men_w);
   u3r_bytes(0, men,   (void *) mod_y, mod);
 
-  pretty_print_hex("mod_y (message body bytes)", mod_y, men);
-
   /* key 
    */
 
@@ -78,8 +76,6 @@ u3qe_blake(u3_atom msg, u3_atom key, u3_atom out)
   c3_y * kod_y =  (c3_y * ) u3a_malloc(ken_w);
   u3r_bytes(0, ken,   (void *) kod_y, kod);
 
-  pretty_print_hex("kod_y (message body bytes)", kod_y, ken);
-
   
   int ret;
   c3_y out_y[64];
@@ -93,7 +89,6 @@ u3qe_blake(u3_atom msg, u3_atom key, u3_atom out)
   /* free() BEFORE checking error code; we don't want to leak memory if we return early */
   u3a_free(mod_y );
   u3a_free(kod_y );
-  pretty_print_hex("out", out_y, 64);
 
   if (ret != 0){
     fprintf(stderr, "\rblake jet: cryto lib error\n");
