@@ -458,16 +458,18 @@
           $:  $a                                        ::  to %ames
       $%  {$kick p/@da}                                 ::
       ==  ==                                            ::
+          $:  %j                                        ::  to %jael
+      $%  [%pubs our=ship who=ship]                     ::  view public keys
+          [%vein our=ship]                              ::  view private keys
+      ==  ==                                            ::
           $:  $g                                        ::  to %gall
       $%  {$deal p/sock q/cush:gall}                    ::
       ==  ==                                            ::
           $:  @tas                                      ::  to any
-      $%  {$init p/@p}                                  ::
-          {$west p/sack q/path r/*}                     ::
+      $%  {$west p/sack q/path r/*}                     ::
       ==  ==  ==                                        ::
     ++  gift                                            ::  out result <-$
       $%  {$hear p/lane q/@}                            ::  receive packet
-          {$init p/@p}                                  ::  report install
           {$mack p/(unit tang)}                         ::  
           {$mass p/mass}                                ::  memory usage
           {$rove p/ship q/lane}                         ::  lane change
@@ -475,7 +477,11 @@
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
     ++  sign                                            ::  in result _<-
-      $%  $:  $g                                        ::  from %gall
+      $%  $:  %j                                        ::  from %jael
+      $%  [%pubs public:able:jael]                      ::  public keys
+          [%vein =life vein=(map life ring)]            ::  private keys
+      ==  ==                                            ::
+          $:  $g                                        ::  from %gall
       $%  {$unto p/cuft:gall}                           ::
           {$mean p/ares}                                ::  XX old clean up
           {$nice ~}                                    ::
@@ -488,15 +494,13 @@
     ++  task                                            ::  in request ->$
       $%  {$barn ~}                                    ::  new unix process
           {$crud p/@tas q/(list tank)}                  ::  error with trace
-          {$cash p/@p q/buck}                           ::  civil license
           {$hear p/lane q/@}                            ::  receive packet
           {$halo p/lane q/@ r/ares}                     ::  hole with trace
           {$hole p/lane q/@}                            ::  packet failed
+          [%init p=ship]                                ::  report install
           {$junk p/@}                                   ::  entropy
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
-          {$make p/(unit @t) q/@ud r/@ s/?}             ::  wild license
-          {$sith p/@p q/@uw r/?}                        ::  imperial generator
           {$tend ~}                                     ::  watch lane changes
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
@@ -537,12 +541,13 @@
         ryl/(map path rill)                             ::  statements outbound
     ==                                                  ::
   ++  boon                                              ::  fort output
-    $%  {$beer p/ship q/@uvG}                           ::  gained ownership
+    $%  {$beer p/sock}                                  ::  request public keys
         {$cake p/sock q/soap r/coop s/duct}             ::  e2e message result
         {$maze p/ship q/lane}                           ::  lane change
         {$mead p/lane q/rock}                           ::  accept packet
         {$milk p/sock q/soap r/*}                       ::  e2e pass message
         {$ouzo p/lane q/rock}                           ::  transmit packet
+        {$sake p/ship}                                  ::  our private keys
         {$wine p/sock q/tape}                           ::  notify user
     ==                                                  ::
   ++  bray  {p/life q/(unit life) r/ship s/@da}         ::  our parent us now
@@ -2015,7 +2020,8 @@
               del/bump                                  ::  change
       ==  ==                                            ::
     ++  gift                                            ::  out result <-$
-      $%  [%mack p=(unit tang)]                         ::  message n/ack
+      $%  [%init p=ship]                                ::  report install unix
+          [%mack p=(unit tang)]                         ::  message n/ack
           [%pubs public]                                ::  public keys
           {$vest p/tally}                               ::  balance update
           [%vein =life vein=(map life ring)]            ::  private keys
@@ -2029,6 +2035,7 @@
           [%e %hiss p=(unit user) q=mark r=cage]        ::  outbound user req
           [%a %want p=sock q=path r=*]                  ::  send message
           [%j %vent-result p=chain]                     ::  tmp workaround
+          [@tas %init p=ship]                           ::  report install
       ==                                                ::
     ++  public                                          ::  public key state
       $:  live=?                                        ::  seen in current era
@@ -2038,7 +2045,10 @@
     ++  remote                                          ::  remote notification
       %+  each  safe                                    ::  &/addition
       safe                                              ::  |/replacement
-    ::                                                  ::
+    ::  +seed: private boot parameters
+    ::
+    +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
+    ::
     ++  sign                                            ::  in result $<-
       $%  {$b $wake ~}                                 ::  wakeup
           [%e %sigh p=cage]                             ::  marked http response
@@ -2052,6 +2062,12 @@
     +=  task                                            ::  in request ->$
       $%  [%burn our=ship p=ship q=safe]                ::  destroy rights
           [%hail our=ship p=ship q=remote]              ::  remote update
+          $:  %dawn                                     ::  boot from keys
+              =seed:able:jael                           ::    identity params
+              spon=(unit ship)                          ::    sponsor
+              czar=(map ship [=life =pass])             ::    galaxy table
+              turf=(list (pair @ud (list @ta)))         ::    domains
+          ==                                            ::
           [%init our=ship]                              ::  initialize urbit
           [%look our=ship src=(each ship purl:eyre)]    ::  set ethereum source
           [%mint our=ship p=ship q=safe]                ::  create rights
@@ -7943,9 +7959,6 @@
       ::  +live: public network state of a ship
       ::
       +$  live  (unit [=life breach=?])
-      ::  +seed: private boot parameters
-      ::
-      +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki:jael)]
       --
   |%
   ::  |give:dawn: produce requests for pre-boot validation
@@ -8038,8 +8051,8 @@
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::
   ++  veri
-    |=  [=seed =hull:constitution:ethe =live]
-    ^-  $%  [%& ^seed (unit ship)]
+    |=  [=seed:able:jael =hull:constitution:ethe =live]
+    ^-  $%  [%& seed:able:jael (unit ship)]
             [%| rank:ames @tas]
         ==
     =/  rac  (clan:title who.seed)

@@ -647,6 +647,43 @@
       %+  cure  our.tac
       abet:abet:(deal:(burb our.tac) p.tac [~ q.tac])
     ::
+    ::  boot from keys
+    ::    {$dawn =seed spon=(unit ship) czar=(map ship [=life =pass]) turf=(list (pair @ud turf))}
+    ::
+        %dawn
+      =*  our  who.seed.tac
+      ::  our initial private key, as a +tree of +rite
+      ::
+      =/  rit  (sy [%jewel (my [lyf.seed.tac key.seed.tac] ~)] ~)
+      =.  +>.$  $(tac [%mint our our rit])
+      ::  our initial galaxy table as a +map from +life to +public
+      ::
+      =/  kyz
+        %-  ~(run by czar.tac)
+        |=([=life =pass] `public`[live=| life (my [life pass] ~)])
+      =.  +>.$
+        %-  curd  =<  abet
+        (pubs:~(feel su our urb sub etn) kyz)
+      ::  XX sponsor
+      ::  XX turf
+      =.  moz
+        %+  weld  moz
+        ::  order is crucial!
+        ::
+        ::    %dill must init after %gall (and after %give intended for unix)
+        ::    %jael init must be deferred post %eyre init
+        ::
+        ^-  (list move)
+        :~  [hen %pass /(scot %p our)/init %b %wait +(now.sys)]
+            [hen %slip %d %init our]
+            [hen %give %init our]
+            [hen %slip %g %init our]
+            [hen %slip %e %init our]
+            [hen %slip %c %init our]
+            [hen %slip %a %init our]
+        ==
+      +>.$
+    ::
     ::  remote update
     ::    {$hail p/ship q/remote}
     ::
@@ -798,8 +835,12 @@
       (~(sigh et our now.sys etn.lex) wir p.hin)
     ::
         [%b %wake ~]
-      %+  cute  our  =<  abet
-      ~(wake et our now.sys etn.lex)
+      %+  cute  our
+      ::  XX cleanup
+      ::
+      ?:  ?=([%init ~] wir)
+        abet:(~(init et our now.sys etn.lex) our)
+      abet:~(wake et our now.sys etn.lex)
     ::
         [%j %vent *]
       %+  cute  our  =<  abet

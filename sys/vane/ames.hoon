@@ -962,59 +962,6 @@
   |%
   ++  am                                                ::    am
     |_  [now=@da fox=fort]                              ::  protocol engine
-    ++  boot                                            ::    boot:am
-      ^-  fort                                          ::  restore from noun
-      %=    fox
-          urb.ton
-        %-  ~(gas by *(map ship sufi))
-        %+  turn
-          ~(tap by urb.ton.fox)
-        |=  [p=ship q=sufi]  ^-  [p=ship q=sufi]
-        :-  p
-        %=    q
-            val
-          (turn val.q |=([p=life q=ring r=acru] [p q (nol:nu:crub:crypto q)]))
-        ==
-      ==
-    ++  come                                            ::    come:am
-      |=  [ges=(unit @t) wid=@ bur=@ fak=?]            ::  instantiate pawn
-      ^-  [p=[p=ship q=@uvG] q=fort]
-      =+  loy=(pit:nu:crub:crypto wid bur)
-      =+  rig=sec:ex:loy
-      =+  our=`@p`fig:ex:loy
-      =+  syp=[[0 ~ our now] [%en %pawn ges] pub:ex:loy]
-      :-  [our pac:ex:loy]
-      %_    fox
-          ton
-        %^    ~(ha go ton.fox)
-            our
-          `mace`[[0 rig] ~]
-        `wyll`[[(sign:as:loy (shaf %self (sham syp))) syp fak] ~]
-          fak.ton
-        fak
-      ==
-    ::
-    ++  czar  !:                                        ::    czar:am
-      |=  [our=ship ger=@uw fak=?]                      ::  instantiate emperor
-      ^-  [p=(list boon) q=fort]
-      =+  ^=  loy
-          ?:  fak
-            ::  fake uses carrier number as seed
-            ::
-            (pit:nu:crub:crypto 512 our)
-          (pit:nu:crub:crypto 512 ger)
-      =+  fim==(fig:ex:loy (zeno our))
-      ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
-      =+  mac=`mace`[[0 sec:ex:loy] ~]
-      =+  syp=`step`[`bray`[0 ~ our now] [%en %czar ~] pub:ex:loy]
-      =+  ded=`deyd`[(sign:as:loy (shaf %self (sham syp))) syp fak]
-      =+  buq=`buck`[mac [ded ~]]
-      =:  ton.fox  (~(ha go ton.fox) our buq)
-          zac.fox  (~(put by zac.fox) our *corn)
-          fak.ton.fox  fak
-        ==
-      [[[%beer our pac:ex:loy] ~] fox]
-    ::
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
@@ -1045,14 +992,6 @@
       =.  sox  $(wab.q.n.zac.fox l.wab.q.n.zac.fox)
       =.  sox  $(wab.q.n.zac.fox r.wab.q.n.zac.fox)
       [[p.n.zac.fox p.n.wab.q.n.zac.fox] sox]
-    ::
-    ++  have                                            ::    have:am
-      |=  [our=ship buq=buck]                           ::  acquire license
-      ^-  [p=(list boon) q=fort]
-      =:  ton.fox  (~(ha go ton.fox) our buq)
-          zac.fox  (~(put by zac.fox) our *corn)
-        ==
-      [[[%beer our pac:ex:q:sen:(need (~(us go ton.fox) our))] ~] fox]
     ::
     ++  kick                                            ::    kick:am
       |=  hen=duct                                      ::  refresh net
@@ -1438,6 +1377,10 @@
           =/  rol=rill  (fall (~(get by ryl.bah) cha) *rill)
           =/  sex=@ud  sed.rol
           ::  ~&  [%tx [our her] cha sex]
+          ::  if we don't have a public key for :her,
+          ::  request keys and proceed (skin will be %open)
+          ::
+          =?  bin  =(~ lew.wod.dur.diz)  :_(bin [%beer our her])
           =.  ryl.bah
               %+  ~(put by ryl.bah)  cha
               %=  rol
@@ -1609,15 +1552,9 @@
     ^-  [(list move) fort]
     ?-    -.bon
         %beer
-      :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~ ~ ~]))
-      :*  [hen [%slip %c %init p.bon]]
-          [hen [%give %init p.bon]]
-          [hen [%slip %a %kick now]]
-          [hen [%slip %e %init p.bon]]
-          [hen [%slip %g %init p.bon]]
-          [hen [%slip %d %init p.bon]]                  ::  must be after gall
-          ~
-      ==
+      =/  wir=wire
+        /our/(scot %p p.p.bon)/her/(scot %p q.p.bon)/now/(scot %da now)
+      :_  fox  [hen [%pass wir %j %pubs p.p.bon q.p.bon]]~
     ::
         %cake
       ::  ~?  ?=(^ r.bon)  [%cake-woot-bad hen r.bon]
@@ -1634,7 +1571,7 @@
         %milk
       ::  ~&  [%milk p.bon q.bon]
       ?>  ?=([@ @ *] q.q.bon)
-      ?>  ?=(?(%a %c %e %g) i.q.q.bon)
+      ?>  ?=(?(%a %c %e %g %j) i.q.q.bon)
       =+  pax=[(scot %p p.p.bon) (scot %p q.p.bon) q.q.bon]
       :_  fox  [hen %pass pax i.q.q.bon %west p.bon t.q.q.bon r.bon]~
     ::
@@ -1642,6 +1579,11 @@
       ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
+    ::
+        %sake
+      =/  wir=wire
+        /our/(scot %p p.bon)/now/(scot %da now)
+      :_  fox  [hen [%pass wir %j %vein p.bon]]~
     ::
         %wine
       :_  fox
@@ -1662,9 +1604,35 @@
     ^-  [(list move) _+>]
     ?-  +<.sih
         %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
+    ::
         %mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
                $(sih [%g %mean `[%mack +>+.sih]])
+    ::
+        %pubs
+      ?.  ?=([%our @ %her @ %now @ ~] tea)
+        ~&  [%strange-pubs tea]
+        [~ +>]
+      ~&  [%hear-pubs tea sih]
+      =/  our=ship  (slav %p i.t.tea)
+      =/  her=ship  (slav %p i.t.t.t.tea)
+      =/  now=@da   (slav %da i.t.t.t.t.t.tea)
+      ::  XX update hoc : urb.ton.fox with public key
+      ::
+      [~ +>.$]
+    ::
         %unto  [~ +>]
+    ::
+        %vein
+      ?.  ?=([%our @ %now @ ~] tea)
+        ~&  [%strange-vein tea]
+        [~ +>]
+      ~&  [%hear-vein tea sih]
+      =/  our=ship  (slav %p i.t.tea)
+      =/  now=@da   (slav %da i.t.t.t.tea)
+      ::  XX update urb.ton.fox with private key
+      ::
+      [~ +>.$]
+    ::
         %woot  [~ +>]
         ?(%mean %nice)                                  ::  XX obsolete
       ?:  ?=([%ye ~] tea)
@@ -1714,8 +1682,6 @@
         ?-    -.kyz
             %barn
           [~ fox(gad hen)]
-            %cash
-          (~(have am [now fox]) p.kyz q.kyz)
         ::
             %hear
           (~(gnaw am [now fox]) %good p.kyz q.kyz)
@@ -1726,18 +1692,20 @@
             %hole
           (~(gnaw am [now fox]) %dead p.kyz q.kyz)
         ::
+            %init
+          ~&  %ames-init
+          ::  XX initialize corn here, or wait for %vein?
+          ::
+          ::  fox(zac (~(put by zac.fox) p.kyz `corn`[hen ~ ~ ~]))
+          :_  fox  [%sake p.kyz]~
+        ::
+          ::  XX confirm unused, remove
+          ::
             %junk
           [~ fox(any.ton (shax (mix any.ton.fox p.kyz)))]
         ::
             %kick
           (~(kick am [now fox(hop p.kyz)]) hen)
-        ::
-            %make
-          =+  vun=(~(come am [now fox]) p.kyz (bex q.kyz) r.kyz s.kyz)
-          [[[%beer p.vun] ~] q.vun]
-        ::
-            %sith
-          (~(czar am [now fox]) p.kyz q.kyz r.kyz)
         ::
             %tend
           :: XX exclude comets and moons? and planets?

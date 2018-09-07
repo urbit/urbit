@@ -36,9 +36,7 @@
   ==                                                    ::
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note-ames                                           ::  weird ames move
-  $%  {$make p/(unit @t) q/@ud r/@ s/?}                 ::
-      {$sith p/@p q/@uw r/?}                            ::
-      {$wegh $~}                                        ::
+  $%  {$wegh $~}                                        ::
   ==                                                    ::
 ++  note-behn                                           ::
   $%  {$wegh $~}                                        ::
@@ -70,6 +68,14 @@
       {$deal p/sock q/cush:gall}                        ::
       {$wegh $~}                                        ::
   ==                                                    ::
+++  note-jael                                           ::
+  $%  $:  %dawn                                         ::  boot from keys
+          =seed:able:jael                               ::    identity params
+          spon=(unit ship)                              ::    sponsor
+          czar=(map ship [=life =pass])                 ::    galaxy table
+          turf=(list (pair @ud (list @ta)))             ::    domains
+      :: XX wegh
+  ==  ==                                                ::
 ++  note                                                ::  out request $->
   $%  {$a note-ames}                                    ::
       {$b note-behn}                                    ::
@@ -78,11 +84,11 @@
       {$e note-eyre}                                    ::
       {$f note-ford}                                    ::
       {$g note-gall}                                    ::
+      {$j note-jael}                                    ::
   ==                                                    ::
 ++  sign-ames                                           ::
   $%  {$nice $~}                                        ::
       {$send p/lane:ames q/@}                           ::
-      {$init p/ship}                                    ::
       {$mass p/mass}                                    ::
   ==                                                    ::
 ++  sign-behn                                           ::
@@ -109,6 +115,9 @@
       {$unto p/cuft:gall}                               ::
       {$mass p/mass}                                    ::
   ==                                                    ::
+++  sign-jael                                           ::
+  $%  [%init p=ship]                                    ::
+  ==                                                    ::
 ++  sign                                                ::  in result $<-
   $%  {$a sign-ames}                                    ::
       {$b sign-behn}                                    ::
@@ -117,6 +126,7 @@
       {$e sign-eyre}                                    ::
       {$f sign-ford}                                    ::
       {$g sign-gall}                                    ::
+      {%j sign-jael}                                    ::
   ==
 ::::::::                                                ::  dill tiles
 --
@@ -397,7 +407,7 @@
           ::  ~&  [%take-nice-ames sih]
           +>
         ::
-            {$a $init *}
+            [%j %init *]
           +>(moz :_(moz [hen %give +.sih]))
         ::
             {$a $send *}
@@ -508,24 +518,39 @@
         ((hard task:able) q.hic)
       ==
   ?:  ?=($boot -.q.hic)
-    :_(..^$ [hen %pass ~ (note %a p.q.hic)]~)
+    ?>  ?=(%dawn -.p.q.hic)
+    ::  XX clamming - use +hard or something?
+    ::  XX just save default duct here?
+    ::
+    :_(..^$ [hen %pass / (note %j p.q.hic)]~)
   ?:  ?=($flog -.q.hic)
     ::  ~&  [%dill-flog +.q.hic]
+    ::  XX obsolete, remove (and from helm)
+    ::
     ?:  ?=({$crud $hax-init {$leaf *} ~} p.q.hic)
       =+  him=(slav %p (crip p.i.q.p.q.hic))
       :_(..^$ ?~(hey.all ~ [u.hey.all %give %init him]~))
+    ::  XX is this just a means to hide %helm from other apps?
+    ::
     ?:  ?=({$crud $hax-heft ~} p.q.hic)
       :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d %heft ~]~))
+    ::  XX why send indirect moves to ourself this way?
+    ::
     :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d p.q.hic]~))
   =.  hey.all  ?^(hey.all hey.all `hen)
   ?:  ?=($init -.q.hic)
     ::  ~&  [%cnhp-init hen]
     ?:  =(ore.all `p.q.hic)
+      ::  XX duplicate init, remove, negative assert, or ignore?
+      ::
+      ~&  [%dill-dupe-init ore.all hen q.hic]
       [[hen %give q.hic]~ ..^$]
     =:  ore.all  `p.q.hic
         dug.all   ~
       ==
     =^  moz  all  abet:(need (ax (need hey.all) [%flow %hood ~]))
+    ::  XX why %give %init here either way?
+    ::
     ?:  |((lth p.q.hic 256) (gte p.q.hic (bex 64)))  [moz ..^$] ::  XX HORRIBLE
     [:_(moz [(need hey.all) %give %init p.q.hic]) ..^$]
   =+  nus=(ax hen q.hic)
@@ -562,8 +587,11 @@
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
   ?:  =(~ ore.all)
-    ?:  ?=({$a $init *} q.hin)
-      ::  ~&  [%take-init hen]
+    ::  note: required to establish default duct
+    ::
+    ::    XX dedupe with take:as and +call
+    ::
+    ?:  ?=([%j %init *] q.hin)
       =.  hey.all  ?^(hey.all hey.all `hen)
       [[[hen %give +.q.hin] ~] ..^$]
       ::  [~ ..^$]
