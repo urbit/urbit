@@ -42,14 +42,14 @@
             ::  %union: fork of atom/tag head, noun/record tail
             ::  %junction: fork of atom or cell
             ::  %conjunction: fork of cell with atom or cell head
-            ::  %misjunction: malformed selection
+            ::  %misjunction: malformed superposition
             ::
             [%constant =atom]
             [%instance =atom]
             [%option =(map atom xray)]
             [%union =(map atom xray)]
             [%junction flat=xray deep=xray]
-            [%conjunction wide=xray deep=xray]
+            [%conjunction wide=xray tall=xray]
             [%misjunction one=xray two=xray]
         ==
       ::  $battery: battery analysis
@@ -116,6 +116,7 @@
       ::
       +$  pattern
         $@  $?  ::  %hoon: $hoon (hoon program)
+                ::  %json: $json (json data)
                 ::  %manx: $manx (xml node) 
                 ::  %nock: $nock (nock formula)
                 ::  %path: $path (list @ta)
@@ -441,19 +442,41 @@
       ::
           %core  %cell
           %face  $(xray xray.data.xray)
-          %fork  !!
+          %fork  $(xray (forge ~(tap in set.data.xray)))
       ==
     ::
-    ::  -join: compose union of two xrays
+    ::  =join-report: try to consolidate metadata
+    ::
+    ++  join-report
+      |=  [this=report that=report]
+      ^-  (unit report)
+      !!
+    ::
+    ::  =join-chassis: try to consolidate data
+    ::
+    ++  join-chassis
+      |=  [this=chassis that=chassis]
+      ^-  (unit chassis)
+      !!
+    ::
+    ::  =join-simple: compose without consolidating
+    ::
+    ++  join-simple
+      |=  [this=^xray that=^xray]
+      ^-  ^xray
+      !!
+    ::
+    ::  =join: compose union of two xrays
     ::
     ++  join
       |=  [this=^xray that=^xray]
       ^-  ^xray
-      ::  
-      ::
-      ?:  &(?=([* %fork *] this) =(*report meta.this))
-        !!
-      !!
+      ?:  |(?=(@ this) ?=(@ that))  (join-simple this that)
+      =+  data-unit=(join-chassis data.this data.that)
+      ?~  data-unit  (join-simple this that)
+      =+  meta-unit=(join-report meta.this meta.that)
+      ?~  meta-unit  (join-simple this that)
+      [u.meta-unit u.data-unit]
     ::
     ::  =binary: compose binary junction/conjunction/misjunction
     ::
@@ -474,6 +497,31 @@
       ^-  ^xray
       =+  (combine frame(xray this) frame(xray that))
       ?@(-> -> ->(shape-unit.meta `-<))
+    ::
+    ::  =collate: merge option maps
+    ::
+    ++  collate
+      |=  [thick=(map atom ^xray) thin=(map atom ^xray)]
+      =/  list  ~(tap by thin)
+      |-  ^-  (map atom ^xray)
+      ?~  list  thick
+      =/  item  (~(get by thick) p.i.list)
+      %=    $
+          list  t.list
+          thick
+        %+  ~(put by thick)
+          p.i.list
+        ?~(item q.i.list (merge u.item q.i.list))
+      ==
+    ::
+    ::  =forge: combine list of shape-described xrays
+    ::
+    ++  forge
+      |=  =(list ^xray)
+      =/  new-xray  `^xray`[*report %void]
+      |-  ^-  ^xray
+      ?~  list  new-xray
+      $(list t.list, new-xray (merge i.list new-xray))
     ::
     ::  =combine: combine shape-described xrays
     ::
@@ -523,51 +571,79 @@
         ?-  -.shape.that
           %constant     :_  (join xray.this xray.that) 
                         :-  %option 
-                        ^-  (map atom ^xray)
-                        %-  my 
-                        :~  [atom.shape.this xray.this]
-                            [atom.shape.that xray.that]
-                        ==
-          %instance     !!
-          %option       !!
-          %union        !!
-          %junction     !!
-          %conjunction  !!
+                        %+  collate
+                          [[atom.shape.this xray.this] ~ ~]
+                        [[atom.shape.that xray.that] ~ ~]
+          %instance     ((binary %junction) xray.this xray.that)
+          %option       ((binary %misjunction) xray.this xray.that)
+          %union        ((binary %junction) xray.this xray.that)
+          %junction     %+  (binary %junction)
+                          (merge xray.this flat.shape.that)
+                        deep.shape.that
+          %conjunction  ((binary %junction) xray.this xray.that)
         ==
       ::
           %instance
         ?+  -.shape.that  $(this that, that this)
-          %instance     !!
-          %option       !!
-          %union        !!
-          %junction     !!
-          %conjunction  !!
+          %instance     :_  (join xray.this xray.that)
+                        :-  %union
+                        %+  collate
+                          [[atom.shape.this xray.this] ~ ~]
+                        [[atom.shape.that xray.that] ~ ~]
+          %option       ((binary %junction) xray.this xray.that)
+          %union        :_  (join xray.this xray.that)
+                        :-  %union
+                        %+  collate 
+                          map.shape.that 
+                        [[atom.shape.this xray.this] ~ ~]
+          %junction     %+  (binary %junction)
+                          flat.shape.that
+                        (merge xray.this deep.shape.that)
+          %conjunction  %+  (binary %junction)
+                          wide.shape.that
+                        (merge xray.this tall.shape.that)
         ==
       ::
           %option
         ?+  -.shape.that  $(this that, that this)
-          %option       !!
-          %union        !!
-          %junction     !!
-          %conjunction  !!
+          %option       :_  (join xray.this xray.that)
+                        :-  %option
+                        (collate map.shape.this map.shape.that)
+          %union        ((binary %junction) xray.this xray.that)
+          %junction     %+  (binary %junction)
+                          (merge xray.this flat.shape.that)
+                        deep.shape.that
+          %conjunction  ((binary %junction) xray.this xray.that)
         ==
       ::
           %union
         ?+  -.shape.that  $(this that, that this)
-          %union        !!
-          %junction     !!
-          %conjunction  !!
+          %union        :_  (join xray.this xray.that)
+                        :-  %union
+                        (collate map.shape.this map.shape.that)
+          %junction     %+  (binary %junction)
+                          flat.shape.that
+                        (merge xray.this deep.shape.that)
+          %conjunction  %+  (binary %conjunction)
+                          wide.shape.that
+                        (merge xray.this tall.shape.that)
         ==
       ::
           %junction
         ?+  -.shape.that  $(this that, that this)
-          %junction     !!
-          %conjunction  !!
+          %junction     %+  (binary %junction)
+                          (merge flat.shape.this flat.shape.that)
+                        (merge deep.shape.this deep.shape.that)
+          %conjunction  %+  (binary %junction)
+                          flat.shape.this
+                        (merge deep.shape.this xray.that)
         ==
       ::
           %conjunction
         ?+  -.shape.that  $(this that, that this)
-          %conjunction  !!
+          %conjunction  %+  (binary %conjunction)
+                          (merge wide.shape.this wide.shape.that)
+                        (merge tall.shape.this tall.shape.that)
         ==
       == 
     ::
@@ -649,7 +725,16 @@
         +>+(shape-unit.meta.xray `require(xray body))
       ::
           %fork 
-        !!
+        =^  list  loop-map
+          =/  list  ~(tap in set.data.xray)
+          |-  ^-  [(^list ^xray) _loop-map]
+          ?~  list  [~ loop-map]
+          =^  this  loop-map  complete:analyze(xray i.list)
+          =^  rest  loop-map  $(list t.list)
+          [[this rest] loop-map]
+        =/  new-xray  (forge list)
+        ?@  new-xray  +>+>(xray new-xray)
+        +>+>(xray new-xray(entry-set.meta entry-set.meta.xray))
       ==
     --
   ::
@@ -691,10 +776,6 @@
   ::  |tool: functions
   ::
   +|  %tool
-  ::  =shape-merge: superimpose shapes
-  ::
-  ++  shape-merge
-    |=  [dis=shape dat=shape]
-    !!
+  ++  moo  %bar
   --
 --
