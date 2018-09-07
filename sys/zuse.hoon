@@ -2068,7 +2068,6 @@
               czar=(map ship [=life =pass])             ::    galaxy table
               turf=(list (pair @ud (list @ta)))         ::    domains
           ==                                            ::
-          [%init our=ship]                              ::  initialize urbit
           [%look our=ship src=(each ship purl:eyre)]    ::  set ethereum source
           [%mint our=ship p=ship q=safe]                ::  create rights
           [%move our=ship p=ship q=ship r=safe]         ::  transfer from=to

@@ -691,13 +691,6 @@
       %+  cure  our.tac
       abet:abet:(hail:(burb our.tac) p.tac q.tac)
     ::
-    ::  initialize vane
-    ::    [%init our=ship]
-    ::
-        $init
-      %+  cute  our.tac  =<  abet
-      (~(init et our.tac now.sys etn.lex) our.tac)
-    ::
     ::  set ethereum source
     ::    [%look p=(each ship purl)]
     ::
