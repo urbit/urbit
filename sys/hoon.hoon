@@ -6032,30 +6032,6 @@
               %nock                                     ::
               %tank                                     ::
           ==                                            ::
-+$  plot                                                ::  externalization
-          $~  [%base %noun]                             ::
-          $%  [%base =base]                             ::  base value
-              [%core =plot count=@ud code=@udF]         ::  any core
-              [%deep =plat]                             ::  stand
-              [%gate =plot =plot]                       ::  gate sample/context
-              [%leaf =@tas]                             ::  constant
-              [%loop =@ud]                              ::  repetition point
-              [%list =plot]                             ::  i-t list
-              [%many =(list plot)]                      ::  tuple
-              [%mark =stud =plot]                       ::  standard
-              [%name =term =plot]                       ::  name attached
-              [%pair =plot =plot]                       ::  pq cell
-              [%path ~]                                 ::  with @ta segments
-              [%pick =(list plot)]                      ::  overlap
-              [%pool =plot =(map @ud plot)]             ::  repetition pool
-              [%qual =plot =plot =plot =plot]           ::  formal quadruple
-              [%quil =plot =plot =plot =plot =plot]     ::  formal quintuple
-              [%tape ~]                                 ::  utf8 bytes
-              [%tour ~]                                 ::  utf32/nfc graphemes
-              [%tree p=plot]                            ::  n-l-r tree
-              [%trip p=plot q=plot r=plot]              ::  formal triple
-              [%unit p=plot]                            ::  maybe
-          ==                                            ::
 +$  pock  (pair axis nock)                              ::  changes
 +$  port  (each palo (pair type nock))                  ::  successful match
 +$  spec                                                ::  structure definition
