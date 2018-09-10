@@ -1,3 +1,4 @@
+!:
 :-  %say
 |=  {^ {{subject=type ~} ~}}
 :-  %txt
