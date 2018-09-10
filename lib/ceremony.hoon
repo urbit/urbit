@@ -41,13 +41,20 @@
 ++  zero-ux
   ;~(pfix (jest '0x') hex)
 ::
+++  get-file
+  |=  pax=path
+  .^  (list cord)  %cx
+      (weld /(scot %p ~zod)/home/(scot %da now) pax)
+  ==
+::
+++  order-shiplist
+  |=  [[a=ship *] [b=ship *]]
+  (lth a b)
+::
 ++  init
   |=  [n=@da g=@ud]
   ^+  this
-  =/  pkf
-    .^  (list cord)  %cx
-        /(scot %p ~zod)/home/(scot %da now)/pk/txt
-    ==
+  =+  pkf=(get-file /pk/txt)
   ?>  ?=(^ pkf)
   =+  prv=(rash i.pkf ;~(pfix (jest '0x') hex))
   %_  this
@@ -59,10 +66,7 @@
 ::
 ++  get-account-proxies
   ^-  (list [own=address manage=address delegate=(unit address)])
-  =/  lis=(list cord)
-    .^  (list cord)  %cx
-        /(scot %p ~zod)/home/(scot %da now)/accounts/txt
-    ==
+  =+  lis=(get-file /accounts/txt)
   %+  turn  lis
   |=  c=cord
   %+  rash  c
@@ -74,15 +78,35 @@
 ::
 ++  get-ship-deeds
   ^-  (list [who=ship rights])
-  =/  lis=(list cord)
-    .^  (list cord)  %cx
-        /(scot %p ~zod)/home/(scot %da now)/deeds/txt
-    ==
+  =+  lis=(get-file /deeds/txt)
   %+  turn  lis
   |=  c=cord
   %+  rash  c
   ;~  (glue com)
     ;~(pfix sig fed:ag)
+    zero-ux
+    zero-ux
+    (punt zero-ux)
+    (punt ;~(plug zero-ux ;~(pfix com zero-ux)))
+  ==
+::
+++  get-linear-deeds
+  ^-  %-  list
+      $:  who=ship
+          windup=@ud
+          rate=@ud
+          rate-unit=@ud
+          rights
+      ==
+  =+  lis=(get-file /deeds-linear/txt)
+  %+  turn  lis
+  |=  c=cord
+  %+  rash  c
+  ;~  (glue com)
+    ;~(pfix sig fed:ag)
+    dum:ag
+    dum:ag
+    dum:ag
     zero-ux
     zero-ux
     (punt zero-ux)
@@ -106,10 +130,7 @@
 ::
 ++  deploy-contract
   |=  [wat=cord arg=(list data)]
-  =/  cod=(list cord)
-    .^  (list cord)  %cx
-        /(scot %p ~zod)/home/(scot %da now)/contracts/[wat]/txt
-    ==
+  =+  cod=(get-file /contracts/[wat]/txt)
   ?>  ?=(^ cod)
   %-  tape-to-ux
   (weld (trip i.cod) (encode-args arg))
@@ -144,6 +165,7 @@
   =+  deeds=get-ship-deeds
   =/  deed-map=(map ship rights)
     (~(gas by *(map ship rights)) deeds)
+  =+  linears=get-linear-deeds
   ~&  'Deed data sanity check...'
   =/  galaxies=chart
     %+  roll  deeds
@@ -198,6 +220,12 @@
         [%string "constitution"]  ::TODO  ens subdomain
         [%address claims]
     ==
+  ~&  'Deploying linear-star-release...'
+  =^  linear-star-release  this
+    %+  do-deploy  'linear-star-release'
+    ~[address+ships]
+  ::TODO  deploy conditionalstarrelease
+  ::TODO  deploy censures, delegatedsending
   ::
   ::  contract configuration
   ::
@@ -209,12 +237,9 @@
     %^  do  polls  50.000
     (transfer-ownership:dat constit)
   ::
-  ::TODO  deploy linearstarrelease, conditionalstarrelease
-  ::TODO  deploy censures, delegatedsending
-  ::
   ::  owner proxy configuration
   ::
-  =*  do-constit  (cury (cury do constit) 6.000.000)
+  =*  do-constit  (cury (cury do constit) 6.000.000)  ::TODO  downsize
   ~&  'Assigning managers and delegates...'
   |-
   ?^  accounts
@@ -230,19 +255,14 @@
   ::  ship deeding and configuration
   ::
   ~&  'Deeding regular assets...'
-  =/  gs
-    %+  sort  ~(tap by galaxies)
-    |=  [[a=ship *] [b=ship *]]
-    (lth a b)
-  ~&  galaxies
-  ~&  gs
+  =/  gs  (sort ~(tap by galaxies) order-shiplist)
   |-
-  ~&  [(lent gs) 'galaxies remaining']
   ?^  gs
+    ~&  [(lent gs) 'galaxies remaining']
     =*  gal  p.i.gs
     =*  sas  q.i.gs
     =+  gad=(~(got by deed-map) gal)
-    ~&  [gal ~(key by sas)]
+    ~&  gal
     =.  this
       %-  do-constit
       (create-galaxy:dat gal)
@@ -253,16 +273,13 @@
       %-  do-constit
       (configure-keys:dat gal u.net.gad)
     ::
-    =/  ss
-      %+  sort  ~(tap by sas)
-      |=  [[a=ship *] [b=ship *]]
-      (lth a b)
+    =/  ss  (sort ~(tap by sas) order-shiplist)
     |-
     ?^  ss
       =*  sar  p.i.ss
       =*  pas  q.i.ss
       =+  sad=(~(got by deed-map) sar)
-      ~&  [sar pas]
+      ~&  sar
       =.  this
         %-  do-constit
         (spawn:dat sar own.sad)
@@ -278,7 +295,6 @@
       ?^  ps
         =*  pan  i.ps
         =+  pad=(~(got by deed-map) pan)
-        ~&  pan
         =.  this
           %-  do-constit
           (spawn:dat pan own.pad)
@@ -291,7 +307,6 @@
         =.  this
           %-  do-constit
           (set-transfer-proxy-for:dat pan transfer.pad)
-        ~&  %next-planet
         $(ps t.ps)
       ::
       =.  this
@@ -300,7 +315,6 @@
       =.  this
         %-  do-constit
         (set-transfer-proxy-for:dat sar transfer.gad)
-      ~&  %next-star
       ^$(ss t.ss)
     ::
     =.  this
@@ -309,8 +323,49 @@
     =.  this
       %-  do-constit
       (set-transfer-proxy-for:dat gal transfer.gad)
-    ~&  %next-galaxy
     ^$(gs t.gs)
+  ::
+  ~&  'Deeding linear release assets...'
+  =*  do-linear  (cury (cury do linear-star-release) 300.000)
+  =/  ls  (sort linears order-shiplist)
+  |-
+  ?^  ls
+    ~&  [(lent ls) 'galaxies remaining']
+    =*  gal  who.i.ls
+    =*  gad  i.ls
+    ~&  gal
+    =.  this
+      %-  do-constit
+      (create-galaxy:dat gal)
+    =.  this
+      %-  do-constit
+      (set-spawn-proxy:dat gal linear-star-release)
+    =.  this
+      %-  do-constit
+      (configure-keys:dat gal (need net.gad))
+    ::
+    =.  this
+      %-  do-linear
+      (register-linear:dat own.gad windup.gad rate.gad rate-unit.gad)
+    =+  sab=(gulf 1 255)
+    |-
+    ?^  sab
+      =.  this
+        %-  do-linear
+        (deposit-linear:dat own.gad (cat 3 gal i.sab))
+      $(sab t.sab)
+    ::
+    =.  this
+      %-  do-constit
+      (set-spawn-proxy:dat gal (fall spawn.gad 0x0))
+    =.  this
+      %-  do-constit
+      (transfer-ship:dat gal own.gad)
+    =.  this
+      %-  do-constit
+      (set-transfer-proxy-for:dat gal transfer.gad)
+    ^$(ls t.ls)
+  ::
   complete
   ::TODO  deploy true-constitution(ceremony-constitution, ships, polls,
   ::                               ensRegistry, 'urbit-eth', 'constitution',
@@ -335,6 +390,8 @@
   ++  set-transfer-proxy-for  (enc set-transfer-proxy-for:cal)
   ++  upgrade-to              (enc upgrade-to:cal)
   ++  transfer-ownership      (enc transfer-ownership:cal)
+  ++  register-linear         (enc register-linear:cal)
+  ++  deposit-linear          (enc deposit-linear:cal)
   --
 ::
 ++  cal
@@ -418,11 +475,36 @@
     :~  [%address to]
     ==
   ::
+  ::
   ++  transfer-ownership  ::  of contract
     |=  to=address
     ^-  call-data
     :-  'transferOwnership(address)'
     :~  [%address to]
+    ==
+  ::
+  ::
+  ++  register-linear
+    |=  $:  to=address
+            windup=@ud
+            rate=@ud
+            rate-unit=@ud
+        ==
+    ^-  call-data
+    :-  'register(address,uint256,uint16,uint16,uint256)'
+    :~  [%address to]
+        [%uint windup]
+        [%uint 255]
+        [%uint rate]
+        [%uint rate-unit]
+    ==
+  ::
+  ++  deposit-linear
+    |=  [to=address star=ship]
+    ^-  call-data
+    :-  'deposit(address,uint16)'
+    :~  [%address to]
+        [%uint `@`star]
     ==
   --
 --
