@@ -366,11 +366,23 @@
       (set-transfer-proxy-for:dat gal transfer.gad)
     ^$(ls t.ls)
   ::
+  ~&  'Deploying constitution-final...'
+  =^  consti2  this
+    %+  do-deploy  'constitution-final'
+    :~  [%address constit]
+        [%address ships]
+        [%address polls]
+        [%address 0x0]  ::TODO  standard ens registry
+        [%string "urbit-eth"]  ::TODO  ens domain
+        [%string "constitution"]  ::TODO  ens subdomain
+        [%address claims]
+    ==
+  =.  this
+    ::NOTE  currently included bytecode has on-upgrade ens functionality
+    ::      stripped out to make this not fail despite 0x0 dns contract
+    %-  do-constit
+    (upgrade-to:dat consti2)
   complete
-  ::TODO  deploy true-constitution(ceremony-constitution, ships, polls,
-  ::                               ensRegistry, 'urbit-eth', 'constitution',
-  ::                               claims)
-  ::TODO  upgrade-to
 ::
 ::TODO  most of these should later be cleaned and go in ++constitution
 ::
