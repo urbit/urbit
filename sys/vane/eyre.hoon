@@ -1991,7 +1991,7 @@
           +12.q
         =+  ^=  ato
             %-  sky
-            [[151 %noun] %cx (en-beam root-beak [%atom [%hoon (flop %_(dom . sec+dom))]])]
+            [[151 %noun] %cx (en-beam root-beak [%atom (flop %_(dom . sec+dom))])]
         =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
         =.  key
           ?~  key  ''
