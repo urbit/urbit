@@ -171,6 +171,7 @@
         ==
         [%eth-get-filter-logs fid=@ud]
         [%eth-get-filter-changes fid=@ud]
+        [%eth-get-transaction-receipt txh=@ux]
         [%eth-send-raw-transaction dat=@ux]
     ==
   ::
@@ -7350,6 +7351,9 @@
         %eth-get-filter-changes
       ['eth_getFilterChanges' (tape (num-to-hex fid.req)) ~]
     ::
+        %eth-get-transaction-receipt
+      ['eth_getTransactionReceipt' (tape (transaction-to-hex txh.req)) ~]
+    ::
         %eth-send-raw-transaction
       ['eth_sendRawTransaction' (tape (num-to-hex dat.req)) ~]
     ==
@@ -7398,6 +7402,12 @@
     ^-  tape
     %-  prefix-hex
     (render-hex-bytes 20 `@`a)
+  ::
+  ++  transaction-to-hex
+    |=  h=@
+    ^-  tape
+    %-  prefix-hex
+    (render-hex-bytes 32 h)
   ::
   ++  prefix-hex
     |=  a=tape
