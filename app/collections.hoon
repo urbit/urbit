@@ -3,7 +3,7 @@
   ::
 /?  309
 /-  hall
-/+  collections
+/+  collections, cram
 ::
 ::  cols:
 ::
@@ -151,9 +151,19 @@
   |=  [pax=path raw=raw-item]
   ^-  json
   =/  owner  (fall (~(get by meta.raw) %owner) ~.anon)
-  =/  dat  (fall (~(get by meta.raw) %last-modified) (scot %da now.bol))
-  =/  nom  (fall (~(get by meta.raw) %name) ~.no-title)
-  =/  typ  (fall (~(get by meta.raw) %type) ~.no-type)
+  =/  dat    (fall (~(get by meta.raw) %last-modified) (scot %da now.bol))
+  =/  nom    (fall (~(get by meta.raw) %name) ~.no-title)
+  =/  typ    (fall (~(get by meta.raw) %type) ~.no-type)
+  ::
+  =/  elm=manx   elm:(static:cram (ream data.raw))
+  =/  snip=marl  tal:(hedtal +.elm)
+  =/  inner      (crip (en-xml:html -.snip))    :: inner html
+  ::
+  =/  parent-spur  [%collections-config (slag 1 (flop pax))]
+  =/  bek=beak     byk.bol(r [%da now.bol])
+  =/  parent-path  (en-beam:format [bek parent-spur])
+  =/  parent-conf  (config-to-json .^(config %cx parent-path))
+  ::
   %-  pairs:enjs:format
   :~  ['owner' [%s owner]]
       ['path' [%a (turn pax |=(a=@ta `json`[%s a]))]]
@@ -161,6 +171,8 @@
       ['date' [%s dat]]
       ['type' [%s typ]]
       ['content' [%s data.raw]]
+      ['snip' [%s inner]]
+      ['parent-config' parent-conf]
   ==
 ::
 ::  +front-to-wain: XX
@@ -267,9 +279,10 @@
     ?~  acts.act  ta-this
     =*  a  i.acts.act
     ::
-    =/  sap  (en-beam:format [byk.bol (flop (path +<.a))])
     =/  now-id=@da  (sub now.bol (div (dis now.bol ~s0..fffe) 2))
     =/  dat  (scot %da now-id)
+    =/  bek=beak  byk.bol(r [%da now-id])
+    =/  sap  (en-beam:format [bek (flop (path +<.a))])
     ::
     =.  ta-this
     ?-    -.a
@@ -302,7 +315,7 @@
       ?.  (allowed-by src.bol +.perms)
         ta-this
       =/  conf=config
-        :*  [byk.bol (flop (weld pax.a /[dat]/collections-config))]
+        :*  [bek (flop (weld pax.a /[dat]/collections-config))]
             name.a
             desc.a
             our.bol
@@ -329,7 +342,11 @@
       ta-this
     ::
         %post
-      =/  perms  .^([dict:clay dict:clay] %cp (weld sap /[dat]/umd))
+      =?  pax.a  !edit.a
+        (weld pax.a /[dat])
+      =?  sap  !edit.a
+        (en-beam:format [bek (flop pax.a)])
+      =/  perms  .^([dict:clay dict:clay] %cp (weld sap /umd))
       ?.  (allowed-by src.bol +.perms)
         ta-this
       =.  content.a  (crip (weld (trip content.a) "\0a"))
@@ -343,16 +360,16 @@
             [%type type.a]
         ==
       =.  ta-this  
-        %+  ta-write  (weld pax.a /[dat]/umd) 
+        %+  ta-write  (weld pax.a /umd) 
         [%umd !>((update-umd-front front content.a))]
       ::  restrict permissions on umd file
       =.  ta-this  
-        %^  ta-set-permissions  (weld pax.a /[dat]/umd) 
+        %^  ta-set-permissions  (weld pax.a /umd) 
         [%black ((set whom:clay) ~)]                   ::  read
         [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  write
       ::  open permissions on comments
       =.  ta-this  
-        %^  ta-set-permissions  (weld pax.a /[dat]) 
+        %^  ta-set-permissions  pax.a 
         [%black ((set whom:clay) ~)]                   ::  read
         [%black ((set whom:clay) ~)]                   ::  write
       ta-this
@@ -634,10 +651,11 @@
     |=  pax=path
     ^+  ta-this
     =/  sup=path  [%collections-config (flop pax)]
-    =/  pat  (en-beam:format [byk.bol sup])
+    =/  bek  byk.bol(r [%da now.bol])
+    =/  pat  (en-beam:format [bek sup])
     =/  dat=@da  (slav %da (snag 0 (flop pax)))
     =/  cay=config
-      :*  [byk.bol sup]
+      :*  [bek sup]
           'comments'
           'comments'
           our.bol
@@ -655,13 +673,15 @@
   ++  ta-write
     |=  [pax=path cay=cage]
     ^+  ta-this
-    =.  pax  (en-beam:format byk.bol (flop pax))
+    =/  bek  byk.bol(r [%da now.bol])
+    =.  pax  (en-beam:format bek (flop pax))
     %+  ta-emit  ost.bol
     [%info (weld /ta-write pax) our.bol (foal pax cay)]
   ::
   ++  ta-remove
     |=  pax=path
-    =.  pax  (en-beam:format byk.bol (flop pax))
+    =/  bek  byk.bol(r [%da now.bol])
+    =.  pax  (en-beam:format bek (flop pax))
     ^+  ta-this
     %+  ta-emit  ost.bol
     [%info (weld /ta-remove pax) our.bol (fray pax)]

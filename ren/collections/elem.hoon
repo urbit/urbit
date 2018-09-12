@@ -59,7 +59,12 @@
   |=  col=collection:collections
   ^-  manx
   ;ul.vanilla
-    ;*  %+  turn  ~(tap by data.col)
+    ;*  %+  turn  
+          %+  sort  ~(tap by data.col)
+          |=  [[knot a=item:collections] [knot b=item:collections]]
+          =/  a-dat  (extract-date-created a)
+          =/  b-dat  (extract-date-created b)
+          (lth a-dat b-dat)
         |=  [nom=knot ite=item:collections]
         ^-  manx
         ;li.collection-post.mt-6
@@ -71,7 +76,7 @@
   |=  raw=raw-item:collections
   ^-  manx
   =/  elm  elm:(static:cram (ream data.raw))
-  =/  ht  (hedtal +.elm)
+  =/  ht  (hedtal:collections +.elm)
   =/  title  (fall (~(get by meta.raw) %name) -.s.bem.gas)
   =/  date   (fall (~(get by meta.raw) %date-created) 'missing date')
   =/  owner  (fall (~(get by meta.raw) %owner) 'anonymous')
@@ -109,7 +114,12 @@
       ==
       ::
       ;ul
-      ;*  %+  turn  ~(tap by data.col)  :: XX TODO: sort
+      ;*  %+  turn
+            %+  sort  ~(tap by data.col)
+            |=  [[knot a=item:collections] [knot b=item:collections]]
+            =/  a-dat  (extract-date-created a)
+            =/  b-dat  (extract-date-created b)
+            (lte a-dat b-dat)
           |=  [nom=knot ite=item:collections]
           ^-  manx
           ::  XX TODO: accept types other than comments
@@ -138,6 +148,16 @@
         =urb-ship       "{(scow %p p.bem.gas)}";
     ==
   ==
+::
+++  extract-date-created
+  |=  i=item:collections
+  ^-  @da
+  ?-  -.i
+    %collection  date-created.meta.col.i
+    %both        date-created.meta.col.i
+    %raw         (slav %da (~(got by meta.raw.i) %date-created))
+  ==
+::
 ::
 ::
 ++  item-to-snip
@@ -174,7 +194,7 @@
   |=  [nom=knot raw=raw-item:collections]
   ^-  manx
   =/  elm=manx  elm:(static:cram (ream data.raw))
-  =/  ht  (hedtal +.elm)
+  =/  ht  (hedtal:collections +.elm)
   =?  tal.ht  ?=(~ hed.ht)
     (scag 5 c.elm)
   =/  title  (fall (~(get by meta.raw) %name) nom)
@@ -200,7 +220,7 @@
   |=  [nom=knot col=collection:collections raw=raw-item:collections]
   ^-  manx
   =/  elm=manx  elm:(static:cram (ream data.raw))
-  =/  ht  (hedtal +.elm)
+  =/  ht  (hedtal:collections +.elm)
   =?  tal.ht  ?=(~ hed.ht)
     (scag 5 c.elm)
   =/  title  (fall (~(get by meta.raw) %name) nom)
@@ -265,46 +285,4 @@
         [%urb-structure-type "collection-post"]
     ==
   ==
-::::
-::::  /mar/snip
-::::
-++  words  1
-++  hedtal
-  =|  met/marl
-  |=  a/marl  ^-  {hed/marl tal/marl}
-  ?~  a  [~ ~]
-  :: looks like it only terminates if it finds an h1?
-  ?.  ?=($h1 n.g.i.a)
-    ?:  ?=($meta n.g.i.a)
-      $(a t.a, met [i.a met])
-    =+  had=$(a c.i.a)
-    ?^  -.had  had
-    $(a t.a)
-  [c.i.a (weld (flop met) (limit words t.a))]
-  ::
-::
-++  limit
-  |=  {lim/@u mal/marl}
-  =<  res
-  |-  ^-  {rem/@u res/marl}
-  ?~  mal  [lim ~]
-  ?~  lim  [0 ~]
-  =+  ^-  {lam/@u hed/manx}
-    ?:  ?=(_;/(**) i.mal)
-      [lim ;/(tay)]:(deword lim v.i.a.g.i.mal)
-    [rem ele(c res)]:[ele=i.mal $(mal c.i.mal)]
-  [rem - res]:[hed $(lim lam, mal t.mal)]
-::
-++  deword
-  |=  {lim/@u tay/tape}  ^-  {lim/@u tay/tape}
-  ?~  tay  [lim tay]
-  ?~  lim  [0 ~]
-  =+  wer=(dot 1^1 tay)
-  ?~  q.wer
-    [lim - tay]:[i.tay $(tay t.tay)]
-  =+  nex=$(lim (dec lim), tay q.q.u.q.wer)
-  [-.nex [(wonk wer) +.nex]]
-::
-::
-::
 --

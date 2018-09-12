@@ -90,6 +90,7 @@
           type+(su:dejs sym)
           comments+bo:dejs
           content+so:dejs
+          edit+bo:dejs
       ==
     ::
     ++  comment
