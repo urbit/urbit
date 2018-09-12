@@ -2120,12 +2120,6 @@
     ::  lost information that the old life had.
     ::
     ++  hand  @uvH                                      ::  128-bit hash
-    ++  kest                                            ::  public key-set
-      $:  enc=pass                                      ::  encryption key
-          aut=pass                                      ::  authentication key
-          sut=@ud                                       ::  crypto-suite version
-      ==                                                ::
-    ++  kist  (map life kest)                           ::  public key history
     ++  mind  {who/ship lyf/life}                       ::  key identifier
     ++  name  (pair @ta @t)                             ::  ascii / unicode
     ++  oath  @                                         ::  signature
