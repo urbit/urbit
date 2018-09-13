@@ -1734,6 +1734,9 @@
     ~/  %add-subs-to-client
     |=  [new-client=build new-subs=(list build) =build-relation]
     ^+  builds.state
+    ::  the client must not add itself as a sub-build
+    ::
+    ?<  (lien new-subs |=(b=build =(new-client b)))
     ::
     %+  ~(jab by builds.state)  new-client
     |=  =build-status
@@ -2121,6 +2124,9 @@
     ++  track-sub-builds
       |=  [client=build sub-builds=(list build)]
       ^+  state
+      ::  the client must not add itself as a sub-build
+      ::
+      ?<  (lien sub-builds |=(b=build =(client b)))
       ::  mark :sub-builds as :subs in :build's +build-status
       ::
       =^  build-status  builds.state
@@ -3229,10 +3235,15 @@
         =/  grad-mark=(unit term)  ((sand %tas) q.grad-vase)
         ?~  grad-mark
           %-  return-error  :_  ~  :-  %leaf
-          "ford: %pact failed: %{<mark>} mark invalid +grad"
+          "ford: %join failed: %{<mark>} mark invalid +grad"
+        ::  todo: doesn't catch full cycles of +grad arms, only simple cases
+        ::
+        ?:  =(u.grad-mark mark)
+          %-  return-error  :_  ~  :-  %leaf
+          "ford: %join failed: %{<mark>} mark +grad arm refers to self"
         ::
         =/  join-build=^build
-          [date.build [%join disc mark [%$ first-cage] [%$ second-cage]]]
+          [date.build [%join disc u.grad-mark [%$ first-cage] [%$ second-cage]]]
         ::
         =^  join-result  out  (depend-on join-build)
         ?~  join-result
@@ -5350,6 +5361,8 @@
     ++  depend-on
       |=  kid=^build
       ^-  [(unit build-result) _out]
+      ::
+      ?<  =(kid build)
       ::
       =.  sub-builds.out  [kid sub-builds.out]
       ::  +access-build-record will mutate :results.state
