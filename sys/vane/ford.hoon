@@ -560,6 +560,7 @@
 ++  build-to-tape
   |=  =build
   ^-  tape
+  ~+
   ::
   =/  enclose  |=(tape "[{+<}]")
   =/  date=@da  date.build
@@ -1734,9 +1735,6 @@
     ~/  %add-subs-to-client
     |=  [new-client=build new-subs=(list build) =build-relation]
     ^+  builds.state
-    ::  the client must not add itself as a sub-build
-    ::
-    ?<  (lien new-subs |=(b=build =(new-client b)))
     ::
     %+  ~(jab by builds.state)  new-client
     |=  =build-status
@@ -2124,9 +2122,6 @@
     ++  track-sub-builds
       |=  [client=build sub-builds=(list build)]
       ^+  state
-      ::  the client must not add itself as a sub-build
-      ::
-      ?<  (lien sub-builds |=(b=build =(client b)))
       ::  mark :sub-builds as :subs in :build's +build-status
       ::
       =^  build-status  builds.state
@@ -5362,7 +5357,9 @@
       |=  kid=^build
       ^-  [(unit build-result) _out]
       ::
-      ?<  =(kid build)
+      ?:  =(kid build)
+        ~|  [%depend-on-self (build-to-tape kid)]
+        !!
       ::
       =.  sub-builds.out  [kid sub-builds.out]
       ::  +access-build-record will mutate :results.state
