@@ -57,9 +57,6 @@
 ++  epur        de-purl:html                            ::  url+header parser
 ++  clan        clan:title                              ::  ship to rank
 ++  cite        cite:title                              ::  ship short name
-++  glam        glam:title                              ::  carrier names
-++  gnom        gnom:title                              ::  ship display name
-++  gnow        gnow:title                              ::  display gcos
 ++  pale        pale:pubsub:userlib                     ::  filter peers
 ++  prix        prix:pubsub:userlib                     ::  filter gate
 ++  prey        prey:pubsub:userlib                     ::  prefix
@@ -90,9 +87,7 @@
 ++  boat        boat:gall                               ::  outgoing subs
 ++  boon        boon:ames                               ::  fort output
 ++  bowl        bowl:gall                               ::  standard app state
-++  bray        bray:ames                               ::  our parent us now
 ++  brow        !!                                      ::  XX deprecated
-++  buck        buck:ames                               ::  all security data
 ++  cake        cake:ames                               ::  top level packet
 ++  cape        cape:ames                               ::  end-to-end result
 ++  care        care:clay                               ::  clay submode
@@ -116,10 +111,7 @@
 ++  fort        !!                                      ::  XX deprecated
 ++  gank        !!                                      ::  XX deprecated
 ++  gilt        !!                                      ::  YY declare locally
-++  gens        gens:ames                               ::  general identity
 ++  germ        germ:clay                               ::  merge style
-++  gcos        gcos:ames                               ::  id description
-++  govt        govt:ames                               ::  country+postcode
 ++  hand        hand:ames                               ::  hash of code
 ++  hart        hart:eyre                               ::  http sec+port+host
 ++  hate        hate:eyre                               ::  semi-cooked request
@@ -136,17 +128,14 @@
 ++  kite        !!                                      ::  XX deprecated
 ++  lamb        !!                                      ::  XX deprecated
 ++  lane        lane:xmas                               ::  packet route
-++  lang        lang:ames                               ::  IETF lang as code
 ++  lark        !!                                      ::  parsed command
 ++  lass        !!                                      ::  power increment
 ++  lath        !!                                      ::  pipeline stage
 ++  lawn        !!                                      ::  pipeline (??)
-++  lice        lice:ames                               ::  full license
 ++  lint        !!                                      ::  fragment array
 ++  lobe        lobe:clay                               ::  blob ref
 ++  love        love:eyre                               ::  http response
 ++  maki        maki:clay                               ::  XX dead?
-++  mace        mace:ames                               ::  private secrets
 ++  math        math:eyre                               ::  semiparsed headers
 ++  meal        meal:ames                               ::  payload
 ++  mess        mess:eyre                               ::  raw http headers
@@ -160,7 +149,6 @@
 ++  moat        moat:clay                               ::  change range
 ++  mood        mood:clay                               ::  request in desk
 ++  moth        moth:eyre                               ::  http operation
-++  name        name:ames                               ::  first mid+nick last
 ++  newt        !!                                      ::  XX deprecated
 ++  nori        nori:clay                               ::  repository action
 ++  nuri        nuri:clay                               ::  repository action
@@ -182,7 +170,7 @@
 ++  quay        quay:eyre                               ::  parsed url query
 ++  quri        quri:eyre                               ::  request-uri
 ++  race        race:ames                               ::  inbound stream
-++  rank        rank:ames                               ::  ship width class
+++  rank        rank:title                              ::  ship width class
 ++  rang        rang:clay                               ::  object store
 ++  rand        !!                                      ::  YY moved to clay
 ++  rant        rant:clay                               ::  namespace binding
@@ -197,7 +185,6 @@
 ++  sufi        sufi:ames                               ::  domestic host
 ++  salt        !!                                      ::  XX deprecated
 ++  seal        !!                                      ::  XX deprecated
-++  sect        sect:ames                               ::  banner
 ++  shed        shed:ames                               ::  packet flow
 ++  skit        !!                                      ::  XX deprecated
 ++  skin        skin:ames                               ::  encoding stem
@@ -207,10 +194,8 @@
 ++  soul        soul:ames                               ::  packet in travel
 ++  soba        soba:clay                               ::  delta
 ++  spur        spur.is                                 ::  ship desk case spur
-++  step        step:ames                               ::  identity stage
 ++  suba        suba:clay                               ::  delta
 ++  tako        tako:clay                               ::  yaki ref
-++  tick        tick:ames                               ::  process id
 ++  tint        tint                                    ::  text color
 ++  toro        toro:clay                               ::  general change
 ++  town        town:ames                               ::  all security state
@@ -218,8 +203,6 @@
 ++  tutu        !!                                      ::  XX deprecated
 ++  yaki        yaki:clay                               ::  XX deprecated
 ++  waks        !!                                      ::  XX deprecated
-++  what        what:ames                               ::  logical identity
-++  whom        whom:ames                               ::  year+govt+id
 ++  woof        !!                                      ::  XX deprecated
 ++  wund        wund:ames                               ::  mace in action
 ++  zuse        ^zuse                                   ::  hoon+zuse kelvin

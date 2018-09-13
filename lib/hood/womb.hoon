@@ -122,7 +122,6 @@
       {$poke wire dock pear}                            ::  app RPC
       {$next wire p/ring}                               ::  update private key
       {$tick wire p/@pG q/@p}                           ::  save ticket
-      {$knew wire p/ship q/wyll:ames}                        ::  learn will (old pki)
   ==                                                    ::
 ++  pear                                                ::
   $%  {$email mail tape wall}                           ::  send email
@@ -141,8 +140,7 @@
 ++  move  (pair bone card)                              ::  user-level move
 ::
 ++  transaction                                         ::  logged poke
-  $%  {$report her/@p wyl/wyll:ames}
-      {$release gal/@ud sta/@ud}
+  $%  {$release gal/@ud sta/@ud}
       {$release-ships (list ship)}
       {$claim aut/passcode her/@p}
       {$recycle who/mail him/knot tik/knot}
@@ -614,7 +612,6 @@
       $claim     (teba (poke-claim +.pok.i.a))
       $bonus    (teba (poke-bonus +.pok.i.a))
       $invite    (teba (poke-invite +.pok.i.a))
-      $report    (teba (poke-report +.pok.i.a))
       $release   (teba (poke-release +.pok.i.a))
       $recycle   (teba (poke-recycle +.pok.i.a))
       $reinvite  (teba (poke-reinvite +.pok.i.a))
@@ -693,13 +690,6 @@
   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
   ::  (emit /rekey %next sec:ex:(pit:nu:crub 512 (shaz (mix %next (shaz eny)))))
   ~&  %rekey-stub  .
-::
-++  poke-report                                       ::  report wyll
-  |=  {her/@p wyl/wyll:ames}                               ::
-  =<  abet
-  =.  log-transaction  (log-transaction %report +<)
-  ?>  =(src src)                                      ::  self-authenticated
-  (emit %knew /report her wyl)
 ::
 ++  use-reference                                     ::  bonus stars
   |=  a/(each @p mail)  ^-  (unit _+>)

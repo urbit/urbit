@@ -550,8 +550,6 @@
         {$sake p/ship}                                  ::  our private keys
         {$wine p/sock q/tape}                           ::  notify user
     ==                                                  ::
-  ++  bray  {p/life q/(unit life) r/ship s/@da}         ::  our parent us now
-  ++  buck  {p/mace q/wyll}                             ::  all security data
   ++  cake  {p/sock q/skin r/@}                         ::  top level packet
   ++  cape                                              ::  end-to-end result
     $?  $good                                           ::  delivered
@@ -569,10 +567,9 @@
         olz/(map flap cape)                             ::  packets completed
         wab/(map ship bath)                             ::  relationship
     ==                                                  ::
-  ++  deyd  {p/@ q/step r/?}                            ::  sig stage fake?
+  +$  deed  [=life =pass oath=(unit oath:pki:jael)]     ::  stage/pub/sig
   ++  dore                                              ::  foreign contact
     $:  wod/road                                        ::  connection to
-        wyl/wyll                                        ::  inferred mirror
         caq/clot                                        ::  symmetric key state
     ==                                                  ::
   ++  dove  {p/@ud q/(map @ud @)}                       ::  count hash 13-blocks
@@ -590,24 +587,12 @@
         zac/(map ship corn)                             ::  flows by server
         ten/(set duct)                                  ::  watch lanes
     ==                                                  ::
-  ++  gcos                                              ::  id description
-    $%  {$czar ~}                                      ::  8-bit ship
-        {$duke p/what}                                  ::  32-bit ship
-        {$earl p/@t}                                    ::  64-bit ship
-        {$king p/@t}                                    ::  16-bit ship
-        {$pawn p/(unit @t)}                             ::  128-bit ship
-    ==                                                  ::
-  ++  gens  {p/lang q/gcos}                             ::  general identity
-  ++  govt  path                                        ::  country+postcode
   ++  hand  @uvH                                        ::  128-bit hash
   ++  lane                                              ::  packet route
     $%  {$if p/@da q/@ud r/@if}                         ::  IP4/public UDP/addr
         {$is p/@ud q/(unit lane) r/@is}                 ::  IPv6 w+alternates
         {$ix p/@da q/@ud r/@if}                         ::  IPv4 provisional
     ==                                                  ::
-  ++  lang  @ta                                         ::  IETF lang as code
-  ++  lice  {p/ship q/buck}                             ::  full license
-  ++  mace  (list {p/life q/ring})                      ::  private secrets
   ++  meal                                              ::  payload
     $%  {$back p/coop q/flap r/@dr}                     ::  ack
         {$bond p/life q/path r/@ud s/*}                 ::  message
@@ -625,7 +610,6 @@
         bum/(map @ud ares)                              ::  nacks
         mis/(map @ud {p/cape q/lane r/flap s/(unit)})   ::  misordered
     ==                                                  ::
-  ++  rank  ?($czar $king $duke $earl $pawn)            ::  ship width class
   ++  rill                                              ::  outbound stream
     $:  sed/@ud                                         ::  sent
         san/(map @ud duct)                              ::  outstanding
@@ -633,10 +617,9 @@
   ++  road                                              ::  secured oneway route
     $:  exp/@da                                         ::  expiration date
         lun/(unit lane)                                 ::  route to friend
-        lew/wyll                                        ::  wyll of friend
+        lew/(unit deed)                                 ::  deed of friend
     ==                                                  ::
   ++  rock  @uvO                                        ::  packet
-  ++  sect  ?($black $blue $red $orange $white)         ::  banner
   ++  shed                                              ::  packet flow
     $:  $:  rtt/@dr                                     ::  smoothed rtt
             rto/@dr                                     ::  retransmit timeout
@@ -665,30 +648,18 @@
         lys/@da                                         ::  last sent
         pac/rock                                        ::  packet data
     ==                                                  ::
-  ++  step  {p/bray q/gens r/pass}                      ::  identity stage
   ++  sufi                                              ::  domestic host
     $:  hoy/(list ship)                                 ::  hierarchy
         val/wund                                        ::  private keys
-        law/wyll                                        ::  server wyll
+        law/deed                                        ::  server deed
         seh/(map hand {p/ship q/@da})                   ::  key cache
         hoc/(map ship dore)                             ::  neighborhood
     ==                                                  ::
-  ++  tick  @ud                                         ::  process id
   ++  town                                              ::  all security state
-    $:  lit/@ud                                         ::  imperial modulus
-        any/@                                           ::  entropy
+    $:  any/@                                           ::  entropy
         urb/(map ship sufi)                             ::  all keys and routes
-        fak/?                                           ::
     ==                                                  ::
-  ++  what                                              ::  logical identity
-    $%  {$anon ~}                                      ::  anonymous
-        {$lady p/whom}                                  ::  female person ()
-        {$lord p/whom}                                  ::  male person []
-        {$punk p/sect q/@t}                             ::  opaque handle ""
-    ==                                                  ::
-  ++  whom  {p/@ud q/govt r/sect s/name}                ::  year+govt+id
-  ++  wund  (list {p/life q/ring r/acru})               ::  mace in action
-  ++  wyll  (list deyd)                                 ::  certificate
+  ++  wund  (list {p/life q/ring r/acru})               ::  secrets in action
   --  ::ames
 ::                                                      ::::
 ::::                    ++behn                            ::  (1b) timekeeping
@@ -920,7 +891,6 @@
           {$hook ~}                                    ::  this term hung up
           {$harm ~}                                    ::  all terms hung up
           {$init p/ship}                                ::  after gall ready
-          {$tick p/@p q/@p}                             ::  initial ticket
           {$noop ~}                                    ::  no operation
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
@@ -6551,52 +6521,15 @@
     name
   ::                                                    ::  ++clan:title
   ++  clan                                              ::  ship to rank
-    |=  who/ship  ^-  rank:ames
+    |=  who/ship  ^-  rank
     =+  wid=(met 3 who)
     ?:  (lte wid 1)   %czar
     ?:  =(2 wid)      %king
     ?:  (lte wid 4)   %duke
     ?:  (lte wid 8)   %earl
     ?>  (lte wid 16)  %pawn
-  ::                                                    ::  ++glam:title
-  ++  glam                                              ::  galaxy name
-    |=  zar/@pD  ^-  tape
-    (weld "galaxy " (scow %p zar))
-  ::                                                    ::  ++gnom:title
-  ++  gnom                                              ::  ship display name
-    |=  {{our/@p now/@da} him/@p}  ^-  @t
-    =+  yow=(scot %p him)
-    =+  pax=[(scot %p our) %ktts (scot %da now) yow ~]
-    =+  woy=.^(@t %a pax)
-    ?:  =(%$ woy)  yow
-    (rap 3 yow ' ' woy ~)
-  ::                                                    ::  ++gnow:title
-  ++  gnow                                              ::  full display name
-    |=  {who/@p gos/gcos:ames}  ^-  @t
-    ?-    -.gos
-        $czar                 (rap 3 '|' (rap 3 (glam who)) '|' ~)
-        $king                 (rap 3 '_' p.gos '_' ~)
-        $earl                 (rap 3 ':' p.gos ':' ~)
-        $pawn                 ?~(p.gos %$ (rap 3 '.' u.p.gos '.' ~))
-        $duke
-      ?:  ?=($anon -.p.gos)  %$
-      %+  rap  3
-      ^-  (list @)
-      ?-    -.p.gos
-          $punk  ~['"' q.p.gos '"']
-          ?($lord $lady)
-        =+  ^=  nad
-            =+  nam=`name:ames`s.p.p.gos
-            %+  rap  3
-            :~  p.nam
-                ?~(q.nam 0 (cat 3 ' ' u.q.nam))
-                ?~(r.nam 0 (rap 3 ' (' u.r.nam ')' ~))
-                ' '
-                s.nam
-            ==
-        ?:(=(%lord -.p.gos) ~['[' nad ']'] ~['(' nad ')'])
-      ==
-    ==
+  ::
+  +$  rank  ?(%czar %king %duke %earl %pawn)            ::  ship width class
   ::                                                    ::  ++saxo:title
   ++  saxo                                              ::  autocanon
     |=  who/ship
@@ -8053,7 +7986,7 @@
   ++  veri
     |=  [=seed:able:jael =hull:constitution:ethe =live]
     ^-  $%  [%& seed:able:jael (unit ship)]
-            [%| rank:ames @tas]
+            [%| rank:title @tas]
         ==
     =/  rac  (clan:title who.seed)
     =/  cub  (nol:nu:crub:crypto key.seed)

@@ -156,24 +156,6 @@
                  (crud p.kyz q.kyz)
           $blew  (send %rez p.p.kyz q.p.kyz)
           $heft  heft
-          $tick  =+  ^=  ges  ^-  gens:ames
-                     :-  %en
-                     =+  can=(clan:title p.kyz)
-                     ?-  can
-                       $czar  [%czar ~]
-                       $duke  [%duke %anon ~]
-                       $earl  [%earl (scot %p p.kyz)]
-                       $king  [%king (scot %p p.kyz)]
-                       $pawn  [%pawn ~]
-                     ==
-                 =+  yen=(scot %p (shax :(mix %ticket eny now)))
-                 =+  ^=  beg  ^-  {his/@p tic/@p yen/@t ges/gens:ames}
-                     [p.kyz q.kyz yen ges]
-                 =+  cmd=[%hood %poke `cage`[%helm-begin !>(beg)]]
-                 %=    +>.$
-                     moz
-                   :_(moz [hen %pass ~ %g %deal [our our] cmd])
-                 ==
           $veer  (dump kyz)
           $vega  (dump kyz)
           $velo  (dump kyz)
@@ -527,11 +509,6 @@
     :_(..^$ [hen %pass / (note %j p.q.hic)]~)
   ?:  ?=($flog -.q.hic)
     ::  ~&  [%dill-flog +.q.hic]
-    ::  XX obsolete, remove (and from helm)
-    ::
-    ?:  ?=({$crud $hax-init {$leaf *} ~} p.q.hic)
-      =+  him=(slav %p (crip p.i.q.p.q.hic))
-      :_(..^$ ?~(hey.all ~ [u.hey.all %give %init him]~))
     ::  XX is this just a means to hide %helm from other apps?
     ::
     ?:  ?=({$crud $hax-heft ~} p.q.hic)
