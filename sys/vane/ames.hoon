@@ -8,6 +8,13 @@
 =+  protocol-version=0
 |%
 +=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
+::  |pact: internal packet structures
+::
+++  pact
+  |%
+  +$  full  [lyf=[to=life from=life] law=(unit deed) txt=@]
+  +$  open  [lyf=[to=~ from=life] law=(unit deed) txt=@]
+  --
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aA, identity logic           ::
@@ -72,15 +79,59 @@
         ::
         ++  clon
           ^-  life
-          :: XX default life of 1?
+          ::  if we don't have a +deed for :her, we guess 1
+          ::  XX should we keep guessing 0? is this used for crypto?
           ::
-          ?~(lew.wod.dur 0 life.u.lew.wod.dur)
+          ?~(lew.wod.dur 1 life.u.lew.wod.dur)
+        ::  XX move this logic into %zuse, namespaced under %jael?
         ::
         ++  deng
           |=  law=(unit deed)
-          :: XX port
-          ::
-          +>
+          ^+  +>.$
+          ?:  |(=(~ law) =(lew.wod.dur law))
+            +>.$
+          ~|  [%deng-fail her]
+          ?>  ?=(^ law)
+          =*  wed  u.law
+          ?>  ^-  ?
+              ?-    (clan:title her)
+                  %earl
+                ::  signed by parent
+                ::
+                =/  seg  (sein:title her)
+                =/  yig
+                  ?:  =(our seg)
+                    sen
+                  ~(cluy lax [seg (~(got by hoc.saf) seg)])
+                ::  XX should anything else be signed?
+                ::
+                ?&  =(lyf.yig life.wed)
+                    ?=(^ oath.wed)
+                    .=  (need (sure:as:cub.yig u.oath.wed))
+                    (shaf %earl (sham [her life.wed pass.wed]))
+                ==
+              ::
+                  %pawn
+                ::  self-signed, life 1, address is fingerprint
+                ::
+                =/  cub=acru  (com:nu:crub:crypto pass.wed)
+                ?&  =(`@`fig:ex:cub her)
+                    ?=(%1 life.wed)
+                    ?=(^ oath.wed)
+                    ::  XX do we care about this signature at all?
+                    ::
+                    .=  (need (sure:as:cub u.oath.wed))
+                    (shaf %self (sham [her life.wed pass.wed]))
+                ==
+              ::
+                  *
+                ::  our initial sponsor
+                ::
+                ::    XX ensure initial?
+                ::
+                =(her (sein:title our))
+              ==
+          +>.$(lew.wod.dur law)
         ::
         ++  griz                                        ::    griz:lax:as:go
           |=  now=@da                                   ::  generate key for
@@ -248,29 +299,36 @@
               (en:cub:cluy q.u.yed.caq.dur (jam ham))
             ?:  &(=(~ lew.wod.dur) =(%back -.ham))
               [wasp ..wisp]
-            =^  tuy  +>.$
-              ?:(=(~ lew.wod.dur) [*code +>.$] (griz now))
-            :_  ..wisp
-            =+  yig=sen
-            ::  =+  bil=`wyll`(pare wyl.dur law.saf)    ::  XX not set
-            =+  bil=law.saf                             ::  XX send whole wyll
-            =+  hom=(jam ham)
+            =/  bil=(unit deed)
+              ?.  ?|  ?=(?(%earl %pawn) (clan:title our))
+                      ?&  =(our (sein:title her))
+                          ::  XX is this necessary?
+                          ::
+                          !=(our her)
+                  ==  ==
+                ~
+              `law.saf
+            =/  yig  sen
+            =/  hom  (jam ham)
             ?:  =(~ lew.wod.dur)
+              :_  ..wisp
               :-  %open
-              %^    jam
-                  [~ `life`lyf.yig]
-                :: XX port
-                ::
-                `bil
+              %-  jam
+              ^-  open:pact
+              :+  [~ lyf.yig]
+                bil
               (sign:as:cub.yig hom)
+            =/  cay  cluy
+            :: :tuy: symmetric key proposal
+            ::
+            =^  tuy  +>.$  (griz now)
+            :_  ..wisp
             :-  %full
-              =+  cay=cluy
-              %^    jam
-                  [`life`lyf.cay `life`lyf.yig]
-                :: XX port
-                ::
-                `bil
-              (seal:as:cub.yig pub:ex:cub.cay (jam tuy hom))
+            %-  jam
+            ^-  full:pact
+            :+  [lyf.cay lyf.yig]
+              bil
+            (seal:as:cub.yig pub:ex:cub.cay (jam tuy hom))
           --                                            ::  --zuul:lax:as:go
         --                                              ::  --lax:as:go
       ::
@@ -761,6 +819,32 @@
             |%
             ++  apse
               ^+  +>.$
+              ::  request keys and continue processing packet if
+              ::  :her is our initial sponsor (TOFU)
+              ::
+              ::    XX ensure initial?
+              ::
+              =?  +>.$  ?&  =(~ lew.wod.dur.diz)
+                            =(her (sein:title our))
+                        ==
+                (emit %beer our her)
+              ::  request keys and drop packet if :her is (or is a moon of)
+              ::  an unfamilar on-chain ship (and not our initial sponsor)
+              ::
+              ::    XX ensure initial?
+              ::
+              =/  rac  (clan:title her)
+              =/  seg  (sein:title her)
+              ?:  ?&  =(~ lew.wod.dur.diz)
+                      !=(her (sein:title our))
+                      ?|  !?=(?(%earl %pawn) rac)
+                          ?&  ?=(%earl rac)
+                              =/  fod  (~(get by hoc.saf.gus) seg)
+                              ?|  ?=(~ fod)
+                                  ?=(~ lew.wod.u.fod)
+                  ==  ==  ==  ==
+                ~&  [%chew-no-will %drop her]
+                (emit %beer our ?:(?=(%earl rac) seg her))
               =/  oub  bust:puz
               =/  neg  =(~ yed.caq.dur.diz)
               =.  +>.$  east
@@ -783,34 +867,34 @@
                   %fast
                 ::  ~&  %chew-fast
                 =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
-                =+  dey=(kuch:diz mag)
-                ?~  dey
-                  ::  ~&  [%bad-key her mag]
-                  +>.$                           ::  ignore unknown key
+                =/  dey  (kuch:diz mag)
+                ::  ignore unknown key
+                ::
+                ?~  dey  +>.$
                 =.  puz  (bilk:puz now)
                 =^  key  diz  u.dey
                 (chow(aut sin) ((hard meal) (cue (dy:cub:sen:gus key bod))))
               ::
                   %full
                 ::  ~&  %chew-full
-                =+  mex=((hard ,[p=[p=life q=life] q=(unit deed) r=@]) (cue msg))
-                =.  diz  (deng:diz q.mex)
-                =+  wug=cluy:diz
-                ?>  =(q.p.mex lyf.wug)
-                =+  gey=(sev:gus p.p.mex)
-                =+  sem=(need (tear:as:q.gey pub:ex:cub.wug r.mex))
-                =+  mes=((hard (pair @ @)) (cue sem))
+                =/  mex  ((hard full:pact) (cue msg))
+                =.  diz  (deng:diz law.mex)
+                =/  wug  cluy:diz
+                ?>  =(lyf.wug from.lyf.mex)
+                =/  gey  (sev:gus to.lyf.mex)
+                =/  sem  (need (tear:as:q.gey pub:ex:cub.wug txt.mex))
+                =/  mes  ((hard (pair @ @)) (cue sem))
                 =.  diz  (wasc:diz p.mes)
                 =.  puz  (bilk:puz now)
                 (west(msg q.mes))
               ::
                   %open
                 ::  ~&  %chew-open
-                =+  mex=((hard ,[p=[~ q=life] q=(unit deed) r=@]) (cue msg))
-                =.  diz  (deng:diz q.mex)
-                =+  wug=cluy:diz
-                ?>  =(q.p.mex lyf.wug)
-                =+  mes=(need (sure:as:cub.wug r.mex))
+                =/  mex  ((hard open:pact) (cue msg))
+                =.  diz  (deng:diz law.mex)
+                =/  wug  cluy:diz
+                ?>  =(lyf.wug from.lyf.mex)
+                =/  mes  (need (sure:as:cub.wug txt.mex))
                 =.  puz  (bilk:puz now)
                 (west(msg mes))
               ==
