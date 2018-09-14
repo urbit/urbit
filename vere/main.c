@@ -92,7 +92,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:I:w:u:t:f:k:l:n:p:r:NabcdgqsvxFMPDXRS")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:I:w:u:f:k:l:n:p:r:NabcdgqsvxFMPDXRS")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -125,10 +125,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'u': {
         u3_Host.ops_u.url_c = strdup(optarg);
-        break;
-      }
-      case 't': {
-        u3_Host.ops_u.tic_c = _main_presig(optarg);
         break;
       }
       case 'x': {
@@ -226,22 +222,9 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
-  if ( u3_Host.ops_u.tic_c != 0 && ( u3_Host.ops_u.imp_c != 0 ||
-                                     u3_Host.ops_u.nuu   == c3n ) ) {
-    fprintf(stderr, "-t only makes sense when creating a new non-galaxy\n");
-    return c3n;
-  }
-
   if ( u3_Host.ops_u.rop_s == 0 && u3_Host.ops_u.raf_c != 0 ) {
     fprintf(stderr, "The -r flag requires -l.\n");
     return c3n;
-  }
-
-  if ( u3_Host.ops_u.tic_c == 0 && u3_Host.ops_u.who_c != 0 ) {
-    c3_c tic_c[29];
-    printf("your ticket: ~");
-    scanf("%28s",tic_c);
-    u3_Host.ops_u.tic_c = _main_presig(tic_c);
   }
 
   if ( c3y == u3_Host.ops_u.bat ) {
@@ -366,7 +349,6 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-r host       Initial peer address\n",
     "-R            Report urbit build info\n",
     "-s            Pill URL from arvo git hash\n",
-    "-t ticket     Use ~ticket automatically\n",
     "-u url        URL from which to download pill\n",
     "-v            Verbose\n",
     "-w name       Immediately upgrade to ~name\n",

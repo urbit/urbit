@@ -584,7 +584,6 @@
         c3_c*   nam_c;                      //  -n, unix hostname
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_c*   raf_c;                      //  -r, raft flotilla
-        c3_c*   tic_c;                      //  -t, ticket value
         c3_c*   url_c;                      //  -u, pill url
         c3_c*   who_c;                      //  -w, begin with ticket
         c3_c*   key_c;                      //  -K, private key file
@@ -861,11 +860,6 @@
       */
         void
         u3_term_ef_boil();
-
-      /* u3_term_ef_ticket(): initial effects for new ticket.
-      */
-        void
-        u3_term_ef_ticket(c3_c* who_c, c3_c* tic_c);
 
       /* u3_term_ef_verb(): initial effects for verbose events.
       */
