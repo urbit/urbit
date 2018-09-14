@@ -546,6 +546,40 @@
   |%
   ++  am                                                ::    am
     |_  [now=@da fox=fort]                              ::  protocol engine
+    ++  vein                                            ::    vein:am
+      |=  [our=ship =life vein=(map life ring)]         ::  new private keys
+      ^-  fort
+      ::
+      ~|  [%vein-mismatch +<]
+      ?>  (~(has by vein) life)
+      ?>  =(life (roll ~(tap in ~(key by vein)) max))
+      ::
+      ~|  %vein-stub
+      ?<  (~(has by urb.ton.fox) our)
+      ::
+      =/  can=(list ship)
+        %-  flop
+        |-  ^-  (list ship)
+        ?:((lth our 256) ~ =+(seg=(sein:title our) [seg $(our seg)]))
+      ::
+      =/  new=wund
+        %+  turn
+          %+  sort
+            ~(tap by vein)
+          |=  [a=[=^life =ring] b=[=^life =ring]]
+          (gth life.a life.b)
+        |=  [=^life =ring]
+        [life ring (nol:nu:crub:crypto ring)]
+      ::
+      =/  ded=deed
+        ?>  ?=(^ new)
+        [life=p.i.new pass=pub:ex:r.i.new oath=~]
+      ::
+      %=  fox
+        urb.ton  (~(put by urb.ton.fox) our [can new ded ~ ~])
+        zac      (~(put by zac.fox) our *corn)
+      ==
+    ::
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
@@ -1199,9 +1233,16 @@
       ~&  [%hear-pubs tea sih]
       =/  our=ship  (slav %p i.t.tea)
       =/  her=ship  (slav %p i.t.t.t.tea)
-      =/  now=@da   (slav %da i.t.t.t.t.t.tea)
-      ::  XX update hoc : urb.ton.fox with public key
-      ::
+      =/  wen=@da   (slav %da i.t.t.t.t.t.tea)
+      ?:  =(0 life.sih)
+        ~&  %ames-hear-empty-pubs
+        [~ +>.$]
+      =/  ded=deed
+        [life.sih (~(got by pubs.sih) life.sih) oath=~]
+      =/  gus  (need (~(us go ton.fox) our))
+      =/  diz  (myx:gus her)
+      =.  lew.wod.dur.diz  `ded
+      =.  ton.fox  (~(su go ton.fox) (nux:gus diz))
       [~ +>.$]
     ::
         %unto  [~ +>]
@@ -1212,8 +1253,9 @@
         [~ +>]
       ~&  [%hear-vein tea sih]
       =/  our=ship  (slav %p i.t.tea)
-      =/  now=@da   (slav %da i.t.t.t.tea)
-      ::  XX update urb.ton.fox with private key
+      =/  wen=@da   (slav %da i.t.t.t.tea)
+      =.  fox  (~(vein am [now fox]) our life.sih vein.sih)
+      ::  XX save duct in corn here, or remove from structure
       ::
       [~ +>.$]
     ::
@@ -1266,10 +1308,6 @@
           (~(gnaw am [now fox]) %dead p.kyz q.kyz)
         ::
             %init
-          ~&  %ames-init
-          ::  XX initialize corn here, or wait for %vein?
-          ::
-          ::  fox(zac (~(put by zac.fox) p.kyz `corn`[hen ~ ~ ~]))
           :_  fox  [%sake p.kyz]~
         ::
           ::  XX confirm unused, remove
