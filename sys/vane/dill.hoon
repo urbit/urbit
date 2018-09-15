@@ -74,8 +74,10 @@
           spon=(unit ship)                              ::    sponsor
           czar=(map ship [=life =pass])                 ::    galaxy table
           turf=(list (pair @ud (list @ta)))             ::    domains
-      :: XX wegh
-  ==  ==                                                ::
+      ==                                                ::
+      [%fake our=ship]                                  ::  boot fake
+      :: XX wegh                                        ::
+  ==                                                    ::
 ++  note                                                ::  out request $->
   $%  {$a note-ames}                                    ::
       {$b note-behn}                                    ::
@@ -518,7 +520,7 @@
         ((hard task:able) q.hic)
       ==
   ?:  ?=($boot -.q.hic)
-    ?>  ?=(%dawn -.p.q.hic)
+    ?>  ?=(?(%dawn %fake) -.p.q.hic)
     ::  XX clamming - use +hard or something?
     ::  XX just save default duct here?
     ::

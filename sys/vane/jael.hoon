@@ -74,6 +74,7 @@
 ++  state-absolute                                      ::  absolute urbit
   $:  pry/(map ship (map ship safe))                    ::  promises
       eve=logs                                          ::  on-chain events
+      fak/_|                                            ::  fake keys
   ==                                                    ::
 ++  state-eth-node                                      ::  node config + meta
   $:  source=(each ship node-src)                       ::  learning from
@@ -684,6 +685,38 @@
         ==
       +>.$
     ::
+    ::  boot fake
+    ::    {$fake our/ship}
+    ::
+        %fake
+      =*  our  our.tac
+      ::  our private key, as a +tree of +rite
+      ::
+      ::    Private key updates are disallowed for fake ships,
+      ::    so we do this first.
+      ::
+      =/  cub  (pit:nu:crub:crypto 512 our)
+      =/  rit  (sy [%jewel (my [1 sec:ex:cub] ~)] ~)
+      =.  +>.$  $(tac [%mint our our rit])
+      ::  set the fake bit
+      ::
+      =.  fak.urb  &
+      ::  initialize other vanes per the usual procedure
+      ::
+      ::    Except for ourselves!
+      ::
+      =.  moz
+        %+  weld  moz
+        ^-  (list move)
+        :~  [hen %slip %d %init our]
+            [hen %give %init our]
+            [hen %slip %g %init our]
+            [hen %slip %e %init our]
+            [hen %slip %c %init our]
+            [hen %slip %a %init our]
+        ==
+      +>.$
+    ::
     ::  remote update
     ::    {$hail p/ship q/remote}
     ::
@@ -702,6 +735,8 @@
     ::    {$mint p/ship q/safe}
     ::
         $mint
+      ~|  %fake-jael
+      ?<  fak.urb
       %+  cure  our.tac
       abet:abet:(deal:(burb our.tac) p.tac [q.tac ~])
     ::
@@ -941,6 +976,8 @@
     ::
     ++  pubs
       |=  who=ship
+      ?:  fak.urb
+        (pubs:fake who)
       %_  ..feed
         moz      =/  pub  (~(get by kyz.puk) who)
                  ?~  pub  moz
@@ -968,6 +1005,17 @@
         :: moz      [[hen %give %vent &+eve] moz]
         yen.eth  (~(put in yen.eth) hen)
       ==
+    ::                                                  ::  ++fake:feed:su
+    ++  fake                                            ::  fake subs and state
+      ?>  fak.urb
+      |%
+      ++  pubs
+        |=  who=ship
+        =/  cub  (pit:nu:crub:crypto 512 who)
+        =/  pub  [live=| life=1 (my [1 pub:ex:cub] ~)]
+        =.  moz  [[hen %give %pubs pub] moz]
+        (pubs:feel (my [who pub] ~))
+      --
     --
   ::                                                    ::  ++feel:su
   ++  feel                                              ::  update tracker
