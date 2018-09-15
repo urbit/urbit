@@ -375,6 +375,7 @@
 #   define c3__face   c3_s4('f','a','c','e')
 #   define c3__fail   c3_s4('f','a','i','l')
 #   define c3__fair   c3_s4('f','a','i','r')
+#   define c3__fake   c3_s4('f','a','k','e')
 #   define c3__fan    c3_s3('f','a','n')
 #   define c3__farg   c3_s4('f','a','r','g')
 #   define c3__fast   c3_s4('f','a','s','t')

@@ -1279,10 +1279,6 @@ _sist_eth_rpc(c3_c* url_c, u3_noun oct)
 static u3_noun
 _sist_dawn(void)
 {
-  if ( c3y == u3_Host.ops_u.fak ) {
-    // XX generate fake keys, or use separate fake boot event
-  }
-
   if ( 0 == u3_Host.ops_u.key_c ) {
     // XX print nice error
     u3_lo_bail();
@@ -1349,7 +1345,24 @@ u3_sist_boot(void)
   // uL(fprintf(uH, "sist: booting\n"));
 
   if ( c3y == u3_Host.ops_u.nuu ) {
-    u3_noun pig = _sist_dawn();
+    u3_noun pig;
+
+    if ( c3y == u3_Host.ops_u.fak ) {
+      // XX or who_c
+      u3_noun imp = u3i_string(u3_Host.ops_u.imp_c);
+      u3_noun whu = u3dc("slaw", 'p', u3k(imp));
+
+      if ( (u3_nul == whu) ) {
+        fprintf(stderr, "czar: incorrect format\r\n");
+        u3_lo_bail();
+      }
+
+      pig = u3nc(c3__fake, u3t(whu));
+    }
+    else {
+      pig = _sist_dawn();
+    }
+
     _sist_make(pig);
   }
   else {
