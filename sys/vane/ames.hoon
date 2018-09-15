@@ -823,6 +823,7 @@
               ::  :her is our initial sponsor (TOFU)
               ::
               ::    XX ensure initial?
+              ::    XX update state so we only ask once?
               ::
               =?  +>.$  ?&  =(~ lew.wod.dur.diz)
                             =(her (sein:title our))
@@ -1082,6 +1083,8 @@
           ::  if we don't have a public key for :her,
           ::  request keys and proceed (skin will be %open)
           ::
+          ::    XX update state so we only ask once?
+          ::
           =?  bin  =(~ lew.wod.dur.diz)  :_(bin [%beer our her])
           =.  ryl.bah
               %+  ~(put by ryl.bah)  cha
@@ -1255,7 +1258,7 @@
     ?-    -.bon
         %beer
       =/  wir=wire
-        /our/(scot %p p.p.bon)/her/(scot %p q.p.bon)/now/(scot %da now)
+        /our/(scot %p p.p.bon)/her/(scot %p q.p.bon)
       :_  fox  [hen [%pass wir %j %pubs p.p.bon q.p.bon]]~
     ::
         %cake
@@ -1284,7 +1287,7 @@
     ::
         %sake
       =/  wir=wire
-        /our/(scot %p p.bon)/now/(scot %da now)
+        /our/(scot %p p.bon)
       :_  fox  [hen [%pass wir %j %vein p.bon]]~
     ::
         %wine
@@ -1311,13 +1314,12 @@
                $(sih [%g %mean `[%mack +>+.sih]])
     ::
         %pubs
-      ?.  ?=([%our @ %her @ %now @ ~] tea)
+      ?.  ?=([%our @ %her @ ~] tea)
         ~&  [%strange-pubs tea]
         [~ +>]
       ~&  [%hear-pubs tea sih]
       =/  our=ship  (slav %p i.t.tea)
       =/  her=ship  (slav %p i.t.t.t.tea)
-      =/  wen=@da   (slav %da i.t.t.t.t.t.tea)
       ?:  =(0 life.sih)
         ~&  %ames-hear-empty-pubs
         [~ +>.$]
@@ -1332,12 +1334,11 @@
         %unto  [~ +>]
     ::
         %vein
-      ?.  ?=([%our @ %now @ ~] tea)
+      ?.  ?=([%our @ ~] tea)
         ~&  [%strange-vein tea]
         [~ +>]
       ~&  [%hear-vein tea sih]
       =/  our=ship  (slav %p i.t.tea)
-      =/  wen=@da   (slav %da i.t.t.t.tea)
       =.  fox  (~(vein am [now fox]) our life.sih vein.sih)
       ::  XX save duct in corn here, or remove from structure
       ::

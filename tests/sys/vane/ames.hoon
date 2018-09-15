@@ -15,7 +15,7 @@
     =/  hen=duct
       [/ /term/1 / ~]
     =/  wir=wire
-      /our/~nul/now/~1234.5.6
+      /our/~nul
     %-  ames-call
     :*  ames-gate
         now=~1234.5.6
