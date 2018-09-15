@@ -853,8 +853,15 @@
               =/  bou  bust:puz
               =?  +>.$  &(oub !bou)
                 (emit [%wine [our her] " is ok"])
+              ::  the presence of a symmetric key indicates neighboring
+              ::  XX use deed instead?
+              ::
               =?  +>.$  &(neg !eng)
-                (emit [%wine [our her] " is your neighbor"])
+                %-  emir  :~
+                  [%wine [our her] " is your neighbor"]
+                  ?>  ?=(^ lew.wod.dur.diz)
+                  [%raki [our her] [life pass]:u.lew.wod.dur.diz]
+                ==
               +>.$
             ::
             ++  east
@@ -1290,6 +1297,9 @@
       ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
+    ::
+        %raki
+      :_  fox  [hen [%pass / %j %meet p.p.bon q.p.bon q.bon r.bon]]~
     ::
         %sake
       =/  wir=wire

@@ -461,7 +461,8 @@
       $%  {$kick p/@da}                                 ::
       ==  ==                                            ::
           $:  %j                                        ::  to %jael
-      $%  [%pubs our=ship who=ship]                     ::  view public keys
+      $%  [%meet our=ship who=ship =life =pass]         ::  neighbor
+          [%pubs our=ship who=ship]                     ::  view public keys
           [%turf ~]                                     ::  view domains
           [%vein our=ship]                              ::  view private keys
       ==  ==                                            ::
@@ -554,6 +555,7 @@
         {$mead p/lane q/rock}                           ::  accept packet
         {$milk p/sock q/soap r/*}                       ::  e2e pass message
         {$ouzo p/lane q/rock}                           ::  transmit packet
+        {$raki p/sock q/life r/pass}                    ::  neighbor'd
         {$sake p/ship}                                  ::  our private keys
         {$wine p/sock q/tape}                           ::  notify user
     ==                                                  ::
@@ -1991,7 +1993,7 @@
       logs                                              ::  | new events
     ++  change                                          ::  urbit change
       $%  [%ethe can=chain]                             ::  on-chain change
-          [%meet who=ship]                              ::  meet in new era
+          [%meet who=ship =life =pass]                  ::  meet in new era
           $:  %rite                                     ::  rights change
               rex/ship                                  ::  issuer
               pal/ship                                  ::  issued to
@@ -2054,7 +2056,7 @@
           ::TODO  %next for generating/putting new private key
           [%nuke ~]                                     ::  cancel tracker from
           [%pubs our=ship who=ship]                     ::  view public keys
-          [%meet our=ship who=ship]                     ::  met after breach
+          [%meet our=ship who=ship =life =pass]         ::  met after breach
           [%turf ~]                                     ::  view domains
           [%vein our=ship]                              ::  view signing keys
           [%vent our=ship]                              ::  view ethereum events

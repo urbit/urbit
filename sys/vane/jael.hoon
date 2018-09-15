@@ -782,7 +782,7 @@
     ::
         %meet
       %+  cure  our.tac
-      [[%meet who.tac]~ urb]
+      [[%meet who.tac life.tac pass.tac]~ urb]
     ::
     ::  XX should be a subscription
     ::  XX reconcile with .dns.eth
@@ -1041,10 +1041,12 @@
     ::                                                  ::  ++pubs:feel:su
     ++  pubs                                            ::  kick public keys
       ::  puz: new public key states
+      ::
       |=  puz=(map ship public)
       =/  pus  ~(tap by puz)
       ::
       ::  process change for each ship separately
+      ::  XX check for diffs before sending?
       ::
       |-  ^+  ..feel
       ?~  pus  ..feel
@@ -1164,11 +1166,34 @@
     vein:feel
   ::                                                    ::  ++meet:su
   ++  meet                                              ::  seen after breach
-    |=  who=ship
+    |=  [who=ship =life =pass]
     ^+  +>
-    =+  ~|  [%met-unknown-ship who]
-        (~(got by kyz.puk) who)
-    (pubs:feel [[who -(live &)] ~ ~])
+    =;  new=public
+      (pubs:feel (my [who new] ~))
+    ::
+    =/  old=(unit public)
+      (~(get by kyz.puk) who)
+    ?:  ?|  ?=(?(%earl %pawn) (clan:title who))
+            ::  XX full saxo chain?
+            ::
+            =(who (sein:title our))
+        ==
+      ?~  old
+        [live=& life (my [life pass] ~)]
+      =/  fyl  life.u.old
+      =/  sap  (~(got by pubs.u.old) fyl)
+      ~|  [%met-mismatch who life=[old=fyl new=life] pass=[old=sap new=pass]]
+      ?>  ?:  =(fyl life)
+            =(sap pass)
+          =(+(fyl) life)
+      [live=& life (~(put by pubs.u.old) life pass)]
+    ?.  ?=(^ old)
+      ~|  [%met-unknown-ship who]  !!
+    =/  fyl  life.u.old
+    =/  sap  (~(got by pubs.u.old) fyl)
+    ~|  [%met-mismatch who life=[old=fyl new=life] pass=[old=sap new=pass]]
+    ?>  &(=(fyl life) =(sap pass))
+    [live=& life pubs.u.old]
   ::                                                    ::  ++file:su
   ++  file                                              ::  process event logs
     ::TODO  whenever we add subscriptions for data,
