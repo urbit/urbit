@@ -7,9 +7,12 @@
 =|  gas-price=@ud
 =|  now=@da
 ::
-|_  [nonce=@ud transactions=(list cord)]
+|_  $:  nonce=@ud                                       ::  next tx id
+        transactions=(list cord)                        ::  generated txs
+        constitution=address                            ::  deployed address
+    ==
 ::
-+*  this  .
+++  this  .
 ::
 +$  rights
   $:  own=address
@@ -115,6 +118,7 @@
 ::
 ++  write-tx
   |=  tx=transaction
+  ^+  this
   =-  this(transactions [- transactions])
   (crip '0' 'x' ((x-co:co 0) (sign-transaction tx pk)))
 ::
@@ -146,6 +150,7 @@
   ::TODO  maybe reconsider encode-call interface, if we end up wanting @ux
   ::      as or more often than we want tapes
   |=  [to=address gas=@ud dat=$@(@ux tape)]
+  ^+  this
   %-  write-tx(nonce +(nonce))
   :*  nonce
       gas-price
@@ -159,6 +164,9 @@
 ++  sequence
   |=  [won=@da gasp=@ud]
   =.  this  (init(now won) won gasp)
+  ::
+  ::  data loading
+  ::
   ::NOTE  we do these first so that we are sure we have sane files,
   ::      without waiting for that answer
   =+  accounts=get-account-proxies
@@ -167,7 +175,7 @@
     (~(gas by *(map ship rights)) deeds)
   =+  linears=get-linear-deeds
   ~&  'Deed data sanity check...'
-  =/  galaxies=chart
+  =/  galaxy-deeds=chart
     %+  roll  deeds
     |=  [[who=ship *] net=chart]
     ^+  net
@@ -220,6 +228,7 @@
         [%string "constitution"]  ::TODO  ens subdomain
         [%address claims]
     ==
+  =.  constitution  constit
   ~&  'Deploying linear-star-release...'
   =^  linear-star-release  this
     %+  do-deploy  'linear-star-release'
@@ -232,14 +241,14 @@
   ~&  'Transferring contract ownership...'
   =.  this
     %^  do  ships  50.000
-    ((cork transfer-ownership:cal encode-call) constit)
+    (transfer-ownership:dat constit)
   =.  this
     %^  do  polls  50.000
     (transfer-ownership:dat constit)
   ::
   ::  owner proxy configuration
   ::
-  =*  do-constit  (cury (cury do constit) 6.000.000)  ::TODO  downsize
+  =*  do-constit  (cury (cury do constit) 300.000)
   ~&  'Assigning managers and delegates...'
   |-
   ?^  accounts
@@ -252,122 +261,90 @@
       (set-delegate-for:dat own.acc u.delegate.acc)
     $(accounts t.accounts)
   ::
-  ::  ship deeding and configuration
+  ::  simple deeding
   ::
   ~&  'Deeding regular assets...'
-  =/  gs  (sort ~(tap by galaxies) order-shiplist)
+  =/  galaxies  (sort ~(tap by galaxy-deeds) order-shiplist)
   |-
-  ?^  gs
-    ~&  [(lent gs) 'galaxies remaining']
-    =*  gal  p.i.gs
-    =*  sas  q.i.gs
-    =+  gad=(~(got by deed-map) gal)
-    ~&  gal
+  ?^  galaxies
+    ~&  [(lent galaxies) 'galaxies remaining']
+    =*  galaxy  p.i.galaxies
+    =+  gal-deed=(~(got by deed-map) galaxy)
+    ~&  galaxy
     =.  this
-      %-  do-constit
-      (create-galaxy:dat gal)
-    =?  this  ?=(^ spawn.gad)
-      %-  do-constit
-      (set-spawn-proxy:dat gal u.spawn.gad)
-    =?  this  ?=(^ net.gad)
-      %-  do-constit
-      (configure-keys:dat gal u.net.gad)
+      (prepare-ship galaxy spawn.gal-deed net.gal-deed)
     ::
-    =/  ss  (sort ~(tap by sas) order-shiplist)
+    =/  stars  (sort ~(tap by q.i.galaxies) order-shiplist)
     |-
-    ?^  ss
-      =*  sar  p.i.ss
-      =*  pas  q.i.ss
-      =+  sad=(~(got by deed-map) sar)
-      ~&  sar
+    ?^  stars
+      =*  star  p.i.stars
+      =+  sta-deed=(~(got by deed-map) star)
+      ~&  star
       =.  this
-        %-  do-constit
-        (spawn:dat sar own.sad)
-      =?  this  ?=(^ spawn.sad)
-        %-  do-constit
-        (set-spawn-proxy:dat sar u.spawn.sad)
-      =?  this  ?=(^ net.sad)
-        %-  do-constit
-        (configure-keys:dat sar u.net.sad)
+        (prepare-ship star spawn.sta-deed net.sta-deed)
       ::
-      =+  ps=(sort ~(tap in pas) lth)
+      =+  planets=(sort ~(tap in q.i.stars) lth)
       |-
-      ?^  ps
-        =*  pan  i.ps
-        =+  pad=(~(got by deed-map) pan)
+      ?^  planets
+        =*  planet  i.planets
+        =+  pla-deed=(~(got by deed-map) planet)
         =.  this
-          %-  do-constit
-          (spawn:dat pan own.pad)
-        =?  this  ?=(^ net.pad)
-          %-  do-constit
-          (configure-keys:dat pan u.net.pad)
+          (prepare-ship planet ~ net.pla-deed)
         =.  this
-          %-  do-constit
-          (transfer-ship:dat pan own.pad)
-        =.  this
-          %-  do-constit
-          (set-transfer-proxy-for:dat pan transfer.pad)
-        $(ps t.ps)
+          (send-ship planet own.pla-deed transfer.pla-deed)
+        $(planets t.planets)
       ::
       =.  this
-        %-  do-constit
-        (transfer-ship:dat sar own.gad)
-      =.  this
-        %-  do-constit
-        (set-transfer-proxy-for:dat sar transfer.gad)
-      ^$(ss t.ss)
+        (send-ship star own.sta-deed transfer.sta-deed)
+      ^$(stars t.stars)
     ::
     =.  this
-      %-  do-constit
-      (transfer-ship:dat gal own.gad)
-    =.  this
-      %-  do-constit
-      (set-transfer-proxy-for:dat gal transfer.gad)
-    ^$(gs t.gs)
+      (send-ship galaxy own.gal-deed transfer.gal-deed)
+    ^$(galaxies t.galaxies)
   ::
+  ::  linear release deeding
+  ::
+  ::TODO  rewrite to take non-standard cases into account
   ~&  'Deeding linear release assets...'
   =*  do-linear  (cury (cury do linear-star-release) 300.000)
-  =/  ls  (sort linears order-shiplist)
+  =/  galaxies  (sort linears order-shiplist)
   |-
-  ?^  ls
-    ~&  [(lent ls) 'galaxies remaining']
-    =*  gal  who.i.ls
-    =*  gad  i.ls
-    ~&  gal
+  ?^  galaxies
+    ~&  [(lent galaxies) 'galaxies remaining']
+    =*  galaxy  who.i.galaxies
+    =*  gal-deed  i.galaxies
+    ~&  galaxy
     =.  this
-      %-  do-constit
-      (create-galaxy:dat gal)
-    =.  this
-      %-  do-constit
-      (set-spawn-proxy:dat gal linear-star-release)
-    =.  this
-      %-  do-constit
-      (configure-keys:dat gal (need net.gad))
+      (prepare-ship galaxy `linear-star-release net.gal-deed)
     ::
     =.  this
       %-  do-linear
-      (register-linear:dat own.gad windup.gad rate.gad rate-unit.gad)
-    =+  sab=(gulf 1 255)
+      %-  register-linear:dat
+      :*  own.gal-deed
+          windup.gal-deed
+          rate.gal-deed
+          rate-unit.gal-deed
+      ==
+    =+  stars=(gulf 1 255)
     |-
-    ?^  sab
+    ?^  stars
       =.  this
         %-  do-linear
-        (deposit-linear:dat own.gad (cat 3 gal i.sab))
-      $(sab t.sab)
+        %-  deposit-linear:dat
+        [own.gal-deed (cat 3 galaxy i.stars)]
+      $(stars t.stars)
     ::
     =.  this
       %-  do-constit
-      (set-spawn-proxy:dat gal (fall spawn.gad 0x0))
+      (set-spawn-proxy:dat galaxy (fall spawn.gal-deed 0x0))
     =.  this
-      %-  do-constit
-      (transfer-ship:dat gal own.gad)
-    =.  this
-      %-  do-constit
-      (set-transfer-proxy-for:dat gal transfer.gad)
-    ^$(ls t.ls)
+      (send-ship galaxy own.gal-deed transfer.gal-deed)
+    ^$(galaxies t.galaxies)
+  ::
+  ::  concluding ceremony
   ::
   ~&  'Deploying constitution-final...'
-  =^  consti2  this
+  =^  constit-final  this
     %+  do-deploy  'constitution-final'
     :~  [%address constit]
         [%address ships]
@@ -381,9 +358,35 @@
     ::NOTE  currently included bytecode has on-upgrade ens functionality
     ::      stripped out to make this not fail despite 0x0 dns contract
     %-  do-constit
-    (upgrade-to:dat consti2)
+    (upgrade-to:dat constit-final)
   complete
 ::
+::  create or spawn a ship, configure its spawn proxy and pubkeys
+++  prepare-ship
+  |=  [who=ship spawn=(unit address) keys=(unit [@ux @ux])]
+  ^+  this
+  =+  wat=(clan:title who)
+  =*  do-c  (cury (cury do constitution) 300.000)
+  =.  this
+    ?:  ?=(%czar wat)
+      (do-c (create-galaxy:dat who))
+    (do-c (spawn:dat who))
+  =?  this  &(?=(^ spawn) !?=(%duke wat))
+    (do-c (set-spawn-proxy:dat who u.spawn))
+  =?  this  ?=(^ keys)
+    (do-c (configure-keys:dat who u.keys))
+  this
+::
+::  transfer a ship to a new owner, set a transfer proxy
+++  send-ship
+  |=  [who=ship own=address transfer=address]
+  ^+  this
+  =*  do-c  (cury (cury do constitution) 300.000)
+  =.  this
+    (do-c (transfer-ship:dat who own))
+  (do-c (set-transfer-proxy-for:dat who transfer))
+::
+::  call data generation
 ::TODO  most of these should later be cleaned and go in ++constitution
 ::
 ++  dat
@@ -419,7 +422,7 @@
     ==
   ::
   ++  spawn
-    |=  [who=ship to=address]
+    |=  who=ship
     ^-  call-data
     ?>  ?=(?(%king %duke) (clan:title who))
     :-  'spawn(uint32,address)'
