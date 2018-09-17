@@ -1,5 +1,4 @@
 ::
-/-  json-rpc
 /+  ceremony
 ::
 |%
@@ -48,9 +47,7 @@
   %+  json-request:ethereum
     =+  (need (de-purl:html 'http://localhost:8545'))
     -(p.p |)
-  :-  %a
-  %+  turn  req
-  request-to-json:ethereum
+  a+(turn req request-to-json:ethereum)
 ::
 ++  send-next-batch
   ^-  [(list move) _this]
@@ -58,7 +55,7 @@
     ~&  'all sent!'
     [~ this]
   :_  .(txs (slag 50 txs))
-  ~&  ['waiting txs: ' (lent txs)]
+  ~&  ['remaining txs: ' (lent txs)]
   ~&  'sending 50 txs...'
   :_  ~
   %+  batch-requests  /send
@@ -68,13 +65,13 @@
   [%eth-send-raw-transaction tx]
 ::
 ++  sigh-json-rpc-response-send
-  |=  [wir=wire res=response:json-rpc]
+  |=  [wir=wire res=response:rpc:jstd]
   ^-  [(list move) _this]
   ?>  ?=(%batch -.res)
   =.  see
     %-  ~(gas in see)
     %+  turn  bas.res
-    |=  r=response:json-rpc
+    |=  r=response:rpc:jstd
     ^-  @ux
     ?:  ?=(%error -.r)
       ~|  :-  'transaction send failed, game over'
@@ -106,28 +103,30 @@
   [%eth-get-transaction-receipt txh]
 ::
 ++  sigh-json-rpc-response-see
-  |=  [wir=wire res=response:json-rpc]
+  |=  [wir=wire res=response:rpc:jstd]
   ^-  [(list move) _this]
   ?>  ?=(%batch -.res)
   =.  see
     %-  ~(gas in see)
     %+  murn  bas.res
-    |=  r=response:json-rpc
+    |=  r=response:rpc:jstd
     ^-  (unit @ux)
     ?<  ?=(%batch -.r)
     =+  txh=(tape-to-ux:ceremony (trip id.r))
+    =*  done  ~
+    =*  wait  `txh
     ?:  ?=(%error -.r)
       ~&  :-  'receipt fetch error'
           [code.r message.r]
-      `txh
-    ?~  res.r  `txh
+      wait
+    ?~  res.r  wait
     ?>  ?=(%o -.res.r)
-    =+  stat=(~(got by p.res.r) 'status')
     ?:  .=  1
         %-  tape-to-ux:ceremony
-        (sa:dejs:format stat)
-      ~
-    `txh
+        %-  sa:dejs:format
+        (~(got by p.res.r) 'status')
+      done
+    wait
   ?~  see
     ~&  'batch confirmed, next!'
     send-next-batch
