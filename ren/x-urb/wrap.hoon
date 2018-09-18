@@ -5,6 +5,8 @@
 /?  309
 /+  landscape
 /=  wrapped
-    /^  $-(inr=manx out=manx)
-    /~  landscape
+  /^  $-(inr=manx out=manx)
+  /,  /web/pages  /~  |=(manx +<)
+      /           /~  landscape
+  ==
 wrapped

@@ -20,6 +20,7 @@
 ++  item-to-elem
   |=  itm=item:collections
   ^-  manx
+  ?<  =(/collections/web s.bem.gas)
   =/  sho  (fall (~(get by qix.gas) %show) %default)
   ;div.container
   ;div.row
