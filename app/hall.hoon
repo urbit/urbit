@@ -353,6 +353,7 @@
           ^-  (list {security name cord})
           :~  [%mailbox %inbox 'default home']
               [%journal %public 'visible activity']
+              [%mailbox %i 'dm invites']
           ==
         |:  [[typ=*security nom=*name des=*cord] ta]
         (ta-action [%create nom des typ])
@@ -580,11 +581,14 @@
     ++  action-newdm
       ::  copy all behavior of create, permit, and source in that order
       ::
-      |=  {sis/(set ship)}
+      |=  sis/(set ship)
+      ::  generate circle name from sis as a dot seperated list of ship names
+      ::  in alphabetical order
+      ::
       =/  nom/name
       %^  rsh  3  1
       %+  roll
-        %+  sort  %+  turn  (weld ~(tap in sis) [our.bol ~])
+        %+  sort  %+  turn  ~(tap in (~(put in sis) our.bol))
         |=  p/ship
         ^-  cord
         (scot %p p)
@@ -592,26 +596,68 @@
       |=  {p/cord nam/name}
       ^-  @tas
       (crip "{(trip `@t`nam)}.{(slag 1 (trip p))}")
+      ::  if we've already created this circle, no-op
+      ::
+      ?:  (~(has in ~(key by stories)) nom)
+        (ta-deltas ~)
+      ::  check if we already have an invite to this dm group
+      ::  or if we are creating it
+      ::
+      =/  inv=(list telegram)
+      %+  skim  grams:(~(got by stories) %i)
+      |=  g=telegram
+      ^-  ?
+      ?.  ?=({$inv *} sep.g)     %.n
+      ?.  =(nom nom.cir.sep.g)   %.n
+      ?.  (~(has in sis) aut.g)  %.n
+      %.y
+      ::
+      =.  inv  %+  sort  inv
+        |=  {a/telegram b/telegram}
+        (lte wen.a wen.b)
+      ::  create our side of the dm and source it to our inbox
+      ::
       =/  dels/(list delta)
-      :~
-      :*
-          %story
-          %inbox
+      :~  :*  %story
+              %inbox
+              %follow
+              &
+              [[[our.bol nom] ~] ~ ~]
+          ==
+          :*  %story
+              nom
+              %new
+              [[[our.bol nom] ~] ~ ~]
+              'dm'
+              ~
+              *filter
+              [%village (~(put in sis) our.bol)]
+              0
+          ==
+      ==
+      ::  if we did initiate the dm, send out invites
+      ::
+      ?:  ?=(~ inv)
+        =.  ..ta-action  (ta-deltas dels)
+        %-  action-convey
+        ^-  (list thought)
+        %+  turn  ~(tap in (~(del in sis) our.bol))
+        |=  a=ship
+        ^-  thought
+        :*  uid=(shaf a eny.bol)
+            aud=(sy [a %i] ~)
+            wen=now.bol
+            sep=[%inv & [our.bol nom]]
+        ==
+      ::  if we did not initiate the dm, source to the initiators copy
+      ::
+      =.  dels
+      :_  dels
+      :*  %story
+          nom
           %follow
           &
-          [[[our.bol nom] ~] ~ ~]
-      ==
-      :*
-          %story
-          nom
-          %new
-          [[[our.bol nom] ~] ~ ~]
-          'dm'
-          ~
-          *filter
-          [%village (~(put in sis) our.bol)]
-          0
-      ==
+          [[[aut.i.inv nom] ~] ~ ~]
       ==
       (ta-deltas dels)
     ::
