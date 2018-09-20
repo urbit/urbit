@@ -22,6 +22,7 @@ omni.inputproto
 {$all}.ion
 omni.kbproto
 {$linux}.libudev
+{$all}.libusb
 {$all}.libusbp{,.examples}
 {$linux}.libx11
 {$linux}.libxall

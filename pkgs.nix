@@ -47,6 +47,10 @@ rec {
     inherit crossenv;
   };
 
+  libusb = import ./pkgs/libusb {
+    inherit crossenv libudev;
+  };
+
   libusbp = import ./pkgs/libusbp {
     inherit crossenv libudev;
   };

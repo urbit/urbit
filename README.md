@@ -34,6 +34,7 @@ Packages collection (Nixpkgs)][nixpkgs].
   - [Ruby](https://www.ruby-lang.org/)
 - Notable supported libraries:
   - [Qt](https://www.qt.io/) 5.9.6
+  - [libusb](https://libusb.info/)
   - [libusbp](https://github.com/pololu/libusbp)
   - [Windows API](https://en.wikipedia.org/wiki/Windows_API) (thanks to mingw-w64)
 
