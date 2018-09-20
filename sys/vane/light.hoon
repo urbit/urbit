@@ -118,14 +118,14 @@
 ::  +http-method: exhaustive list of http verbs
 ::
 +$  http-method
-  $?  %'CONNECT'
-      %'DELETE'
-      %'GET'
-      %'HEAD'
-      %'OPTIONS'
-      %'POST'
-      %'PUT'
-      %'TRACE'
+  $?  _'CONNECT'
+      _'DELETE'
+      _'GET'
+      _'HEAD'
+      _'OPTIONS'
+      _'POST'
+      _'PUT'
+      _'TRACE'
   ==
 ::  +http-request: a single http-request
 ::
@@ -174,6 +174,13 @@
           ::
           ::
           $%  [%build our=@p live=? schematic=schematic:ford]
+      ==  ==
+      ::  %g: to gall
+      ::
+      $:  %g
+          ::
+          ::
+          $%  [%deal id=sock data=cush:gall]
   ==  ==  ==
 --
 ::  more structures
@@ -208,6 +215,13 @@
       ::    the :binding into a (map (unit @t) (trie knot =action)).
       ::
       bindings=(list [=binding =duct =action])
+      ::  outstanding: open http connections not fully complete
+      ::
+      ::    This refers to outstanding connections where the connection to
+      ::    outside is opened and we are currently waiting on ford or an app to
+      ::    produce the results.
+      ::
+      outstanding=(map duct action)
   ==
 ::  +action: the action to take when a binding matches an incoming request
 ::
@@ -229,6 +243,23 @@
 ::  utilities
 ::
 |%
+::  +file-not-found-page: 404 page for when all other options failed
+::
+++  file-not-found-page
+  |=  url=@t
+  ^-  octs
+  %-  as-octs:mimes:html
+  %-  crip
+  %-  en-xml:html
+  ;html
+    ;head
+      ;title:"404 Not Found"
+    ==
+    ;body
+      ;h1:"Not Found"
+      ;p:"The requested URL {<(trip url)>} was not found on this server."
+    ==
+  ==
 ::  +get-header: returns the value for :header, if it exists in :header-list
 ::
 ++  get-header
@@ -247,28 +278,52 @@
 ++  per-server-event
   |=  [[our=@p =duct now=@da scry=sley] state=server-state]
   |%
+  ::  +request: starts handling an inbound http request
+  ::
   ++  request
     |=  [secure=? =address =http-request]
     ^-  [(list move) server-state]
     ::
     =+  host=(get-header 'Host' header-list.http-request)
     =+  action=(get-action-for-binding host url.http-request)
+    ::  if no action matches, send the built in 404 page.
     ::
     ?~  action
-      ~&  %no-match-for-request
-      ::  todo: return a reconstruction of the apache 404 page here
-      ::
-      [~ state]
+      :_  state
+      :_  ~
+      :+  duct  %give
+      :*  %http-response  %start
+          status-code=404
+          ::  TODO: Content-Length?
+          headers=['Content-Type' 'text/html']~
+          data=[~ (file-not-found-page url.http-request)]
+          complete=%.y
+      ==
+    ::  record that we started an asynchronous response
+    ::
+    =.  outstanding.state  (~(put by outstanding.state) duct u.action)
     ::
     ?-    -.u.action
     ::
         %gen
+      ::  TODO: when we get here, we need to make sure that the generator has
+      ::  been compiled.
+      ::
       ~&  [%i-should-run-a-generator generator.u.action]
       [~ state]
     ::
         %app
-      ~&  [%i-should-run-an-app app.u.action]
-      [~ state]
+      :_  state
+      :_  ~
+      :^  duct  %pass  /run-app/[app.u.action]
+      ^-  note
+      :^  %g  %deal  [our our]
+      ::  todo: i don't entirely understand gall; there's a way to make a gall
+      ::  use a %handle arm instead of a sub-%poke with the
+      ::  %handle-http-request type.
+      ::
+      ^-  cush:gall
+      [app.u.action %poke %handle-http-request !>([secure address http-request])]
     ==
   ::  +add-binding: conditionally add a pairing between binding and action
   ::
@@ -311,16 +366,6 @@
       ^-  ?
       &(=(item-binding binding) =(item-duct duct))
     ==
-
-  ::
-  ::  Split string by parsing rule delimiter.
-  ++  split
-    |*  {str/tape delim/cord}
-    ^-  (list tape)
-    %+  fall
-      (rust str (more (jest delim) (star ;~(less (jest delim) next))))
-    [str ~]
-
   ::  +get-action-for-binding: finds an action for an incoming web request
   ::
   ++  get-action-for-binding
@@ -352,12 +397,8 @@
       raw-host
     ::  url is the raw thing passed over the 'Request-Line'.
     ::
-    ::    We need to handle both the form 'http://one.com/two/three' and
-    ::    '/two/three', but we're punting for now and just doing a split on
-    ::    '/'.
-    ::
     =/  parsed-url=(list @t)
-      (turn (split (trip url) '/') crip)
+      q:(need (rush url apat:de-purl:html))
     ::
     =/  bindings  bindings.state
     |-
@@ -366,8 +407,13 @@
       ~
     ::
     ?:  ?&  =(site.binding.i.bindings host)
-            =(`0 (find path.binding.i.bindings parsed-url))
-        ==
+            ?|  ::  root directory
+                ::
+                &(=(~ parsed-url) =(~ path.binding.i.bindings))
+                ::  everything else
+                ::
+                =(`0 (find path.binding.i.bindings parsed-url))
+        ==  ==
       `action.i.bindings
     ::
     $(bindings t.bindings)
