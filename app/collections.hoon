@@ -157,12 +157,25 @@
   ::
   =/  elm=manx   elm:(static:cram (ream data.raw))
   =/  snip=marl  tal:(hedtal +.elm)
-  =/  inner      (crip (en-xml:html -.snip))    :: inner html
+  =/  inner
+    ?~  snip 
+      (crip (en-xml:html elm)) 
+    (crip (en-xml:html i.snip))    :: inner html
   ::
-  =/  parent-spur  [%collections-config (slag 1 (flop pax))]
+  =/  parent-spur  (slag 1 (flop pax))
   =/  bek=beak     byk.bol(r [%da now.bol])
   =/  parent-path  (en-beam:format [bek parent-spur])
-  =/  parent-conf  (config-to-json .^(config %cx parent-path))
+  =/  parent-dir   .^(arch %cy parent-path)
+  ::
+  =/  parent-conf=json
+    ?:  (~(has in dir.parent-dir) ~.umd ~)
+      %-  meta-to-json
+      %-  umd-to-front 
+      .^(@t %cx (weld parent-path /umd))
+    ?:  (~(has in dir.parent-dir) ~.collections-config ~)
+      %-  config-to-json
+      .^(config %cx (weld parent-path /collections-config))
+    ~
   ::
   %-  pairs:enjs:format
   :~  ['owner' [%s owner]]
@@ -357,7 +370,7 @@
         :~  [%name name.a]
             [%comments ?:(comments.a ~..y ~..n)]
             [%owner (scot %p src.bol)]
-            [%date-created dat]
+            [%date-created (snag 0 (flop pax.a))]
             [%last-modified dat]
             [%type type.a]
         ==
@@ -573,16 +586,16 @@
     ::
     ::  check if file has been modified
     ::  and if so update last modified field
-    =/  told  (trip data.old)
-    =/  newt  (trip data.new)
-    =/  old-con  (slag (need (find ";>" told)) told)
-    =/  new-con  (slag (need (find ";>" newt)) newt)
-    =?  ta-this  !=(old-con new-con)
-      =/  contents=@t
-        %+  update-umd-front
-        (~(put by meta.new) %last-modified (scot %da now.bol))
-        data.new
-      (ta-write (weld pax /umd) %umd !>(contents))
+::    =/  told  (trip data.old)
+::    =/  newt  (trip data.new)
+::    =/  old-con  (slag (need (find ";>" told)) told)
+::    =/  new-con  (slag (need (find ";>" newt)) newt)
+::    =?  ta-this  !=(old-con new-con)
+::      =/  contents=@t
+::        %+  update-umd-front
+::        (~(put by meta.new) %last-modified (scot %da now.bol))
+::        data.new
+::      (ta-write (weld pax /umd) %umd !>(contents))
     ::
     ta-this
   ::

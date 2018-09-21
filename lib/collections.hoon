@@ -171,4 +171,12 @@
   ^-  [@t json]
   [key [%s val]]
 ::
+++  umd-to-front
+  |=  u=@t
+  ^-  (map knot cord)
+  %-  ~(run by inf:(static:cram (ream u)))
+  |=  a=dime  ^-  cord
+  ?+  (end 3 1 p.a)  (scot a)
+    %t  q.a
+  ==
 --
