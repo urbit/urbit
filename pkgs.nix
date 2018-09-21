@@ -63,6 +63,10 @@ rec {
     inherit crossenv;
   };
 
+  openocd = import ./pkgs/openocd {
+    inherit crossenv libusb;
+  };
+
   angle = import ./pkgs/angle {
     inherit crossenv gdb;
   };
