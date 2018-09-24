@@ -2,7 +2,7 @@ require! <[ split ]>
 {through} = require 'promise-streams'
 {Urbit,ERROR} = require './runner.ls'
 
-urbit = new Urbit process.argv[2 to]
+urbit = new Urbit process.argv[3 to]
 
 urbit.expect ERROR .then -> process.exit 1
 
