@@ -1561,6 +1561,11 @@
       |=  =build-status
       %_    build-status
           clients
+        ::  if we've already encountered :i.subs, don't overwrite
+        ::
+        ?:  (~(has by clients.build-status) [%cache new-id])
+          clients.build-status
+        ::
         =/  old-clients-on-duct  (~(get ju clients.build-status) [%duct duct])
         ::
         =-  (~(del by -) [%duct duct])
@@ -1725,7 +1730,9 @@
       =.  builds.state
         %+  ~(jab by builds.state)  new-sub
         |=  =build-status
-        build-status(clients (~(put ju clients.build-status) [%duct duct] new-client))
+        %_  build-status
+          clients  (~(put ju clients.build-status) [%duct duct] new-client)
+        ==
       ::
       state
     --
@@ -5500,22 +5507,6 @@
       ::  nothing depends on :build, so we'll remove it
       ::
       :-  removed=&
-      ^+  state
-      ::
-      =/  subs=(list ^build)  ~(tap in ~(key by subs.build-status))
-      ::  for each sub, remove :build from its :clients
-      ::
-      =.  builds.state
-        |-  ^+  builds.state
-        ?~  subs  builds.state
-        ::
-        =?  builds.state  (~(has by builds.state) i.subs)
-          ::
-          %+  ~(jab by builds.state)  i.subs
-          |=  build-status=^build-status
-          build-status(clients (~(del ju clients.build-status) [%duct duct] build))
-        ::
-        $(subs t.subs)
       ::
       %_    state
           builds-by-schematic
