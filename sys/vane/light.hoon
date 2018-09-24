@@ -17,47 +17,7 @@
   ++  gift
     $%  ::  http-response: response from urbit to earth
         ::
-        ::    Urbit treats Earth's HTTP servers as pipes, where Urbit sends one or
-        ::    more %http-response replies on the wire. The first of these will
-        ::    always be a %start or an %error, and the last will always be %error
-        ::    or will have :complete set to %.y to finish the connection.
-        ::
-        ::    Calculation of control headers such as 'Content-Length' or
-        ::    'Transfer-Encoding' are performed inside Urbit and sent to Vere.
-        ::
-        $:  %http-response
-            ::
-            ::
-            $%  ::  %start: the first packet in a response
-                ::
-                $:  %start
-                    ::  status: http status code
-                    ::
-                    status-code=@ud
-                    ::  headers: http headers
-                    ::
-                    headers=header-list
-                    ::  data: data to pass to the pipe
-                    ::
-                    data=(unit octs)
-                    ::  whether this completes the request
-                    ::
-                    complete=?
-                ==
-                ::  %continue: every subsequent packet
-                ::
-                $:  %continue
-                    ::  data: data to pass to the pipe
-                    ::
-                    data=(unit octs)
-                    ::  complete: whether this completes the request
-                    ::
-                    complete=?
-                ==
-                ::  %cancel: whether the connection should terminate unsuccessfully
-                ::
-                [%cancel ~]
-        ==  ==
+        [%http-response =raw-http-response]
         ::  response to a %connect or %serve
         ::
         ::    :accepted is whether :binding was valid. Duplicate bindings are not allowed.
@@ -145,6 +105,48 @@
       ::
       body=(unit octs)
   ==
+::  +raw-http-response: http-response to sent to earth
+::
+::    Urbit treats Earth's HTTP servers as pipes, where Urbit sends one or
+::    more %http-response replies on the wire. The first of these will
+::    always be a %start or an %error, and the last will always be %error
+::    or will have :complete set to %.y to finish the connection.
+::
+::    Calculation of control headers such as 'Content-Length' or
+::    'Transfer-Encoding' should be performed at a higher level; this structure
+::    is merely for what gets sent to Earth.
+::
++$  raw-http-response
+  $%  ::  %start: the first packet in a response
+      ::
+      $:  %start
+          ::  status: http status code
+          ::
+          status-code=@ud
+          ::  headers: http headers
+          ::
+          headers=header-list
+          ::  data: data to pass to the pipe
+          ::
+          data=(unit octs)
+          ::  whether this completes the request
+          ::
+          complete=?
+      ==
+      ::  %continue: every subsequent packet
+      ::
+      $:  %continue
+          ::  data: data to pass to the pipe
+          ::
+          data=(unit octs)
+          ::  complete: whether this completes the request
+          ::
+          complete=?
+      ==
+      ::  %cancel: whether the connection should terminate unsuccessfully
+      ::
+      [%cancel ~]
+  ==
 ::  +address: client IP address
 ::
 +$  address
@@ -182,6 +184,16 @@
           ::
           $%  [%deal id=sock data=cush:gall]
   ==  ==  ==
+::  +sign: private response from another vane to ford
+::
++$  sign
+  $%  ::  %g: from gall
+      ::
+      $:  %g
+          ::  %response: http-response from a gall app
+          ::
+          [%response =raw-http-response]
+  ==  ==
 --
 ::  more structures
 ::
@@ -215,13 +227,29 @@
       ::    the :binding into a (map (unit @t) (trie knot =action)).
       ::
       bindings=(list [=binding =duct =action])
-      ::  outstanding: open http connections not fully complete
+      ::  connections: open http connections not fully complete
       ::
-      ::    This refers to outstanding connections where the connection to
-      ::    outside is opened and we are currently waiting on ford or an app to
-      ::    produce the results.
+      connections=(map duct outstanding-connection)
+  ==
+::  +outstanding-connection: open http connections not fully complete:
+::
+::    This refers to outstanding connections where the connection to
+::    outside is opened and we are currently waiting on ford or an app to
+::    produce the results.
+::
++$  outstanding-connection
+  $:  ::  action: the action that had matched
       ::
-      outstanding=(map duct action)
+      =action
+      ::  code: the status code, if sent
+      ::
+      code=(unit @ud)
+      ::  headers: the headers, if sent
+      ::
+      headers=(unit header-list)
+      ::  bytes-sent: the total bytes sent in response
+      ::
+      bytes-sent=@ud
   ==
 ::  +action: the action to take when a binding matches an incoming request
 ::
@@ -301,7 +329,9 @@
       ==
     ::  record that we started an asynchronous response
     ::
-    =.  outstanding.state  (~(put by outstanding.state) duct u.action)
+    =|  record=outstanding-connection
+    =.  action.record  u.action
+    =.  connections.state  (~(put by connections.state) duct record)
     ::
     ?-    -.u.action
     ::
@@ -325,6 +355,92 @@
       ^-  cush:gall
       [app.u.action %poke %handle-http-request !>([secure address http-request])]
     ==
+  ::  +handle-response: check a response for correctness and send to earth
+  ::
+  ::    TODO: I don't actually know how this gets hooked up. The app response
+  ::    should really be a +take since it is a response to the +call poke, but
+  ::    the gall interface seems to be mismatched to that.
+  ::
+  ++  handle-response
+    |=  =raw-http-response
+    ^-  [(list move) server-state]
+    ::  verify that this is a valid response on the duct
+    ::
+    ?~  connection-state=(~(get by connections.state) duct)
+      ~&  [%invalid-outstanding-connection duct]
+      [~ state]
+    ::
+    |^  ^-  [(list move) server-state]
+        ::
+        ?-    -.raw-http-response
+        ::
+            %start
+          ?^  code.u.connection-state
+            ~&  [%http-multiple-start duct]
+            error-connection
+          ::
+          =.  connections.state
+            %+  ~(jab by connections.state)  duct
+            |=  connection=outstanding-connection
+            ~!  data.raw-http-response
+            %_  connection
+              code        `status-code.raw-http-response
+              headers     `headers.raw-http-response
+              bytes-sent  ?~(data.raw-http-response 0 p.u.data.raw-http-response)
+            ==
+          ::
+          =?  state  complete.raw-http-response
+            log-complete-request
+          ::
+          pass-response
+        ::
+            %continue
+          ?~  code.u.connection-state
+            ~&  [%http-continue-without-start duct]
+            error-connection
+          ::
+          =.  connections.state
+            %+  ~(jab by connections.state)  duct
+            |=  connection=outstanding-connection
+            =+  size=?~(data.raw-http-response 0 p.u.data.raw-http-response)
+            connection(bytes-sent (add bytes-sent.connection size))
+          ::
+          =?  state  complete.raw-http-response
+            log-complete-request
+          ::
+          pass-response
+        ::
+            %cancel
+          ::  todo: log this differently from an ise.
+          ::
+          error-connection
+        ==
+    ::
+    ++  pass-response
+      ^-  [(list move) server-state]
+      [[duct %give %http-response raw-http-response]~ state]
+    ::
+    ++  log-complete-request
+      ::  todo: log the complete request
+      ::
+      ::  remove all outstanding state for this connection
+      ::
+      =.  connections.state
+        (~(del by connections.state) duct)
+      state
+    ::
+    ++  error-connection
+      ::  todo: log application error
+      ::
+      ::  remove all outstanding state for this connection
+      ::
+      =.  connections.state
+        (~(del by connections.state) duct)
+      ::  respond to outside with %error
+      ::
+      ^-  [(list move) server-state]
+      [[duct %give %http-response %cancel ~]~ state]
+    --
   ::  +add-binding: conditionally add a pairing between binding and action
   ::
   ::    Adds =binding =action if there is no conflicting bindings.
@@ -479,6 +595,32 @@
     =.  server-state.ax  (remove-binding binding.task)
     [~ light-gate]
   ==
+::
+++  take
+  |=  [=wire =duct wrapped-sign=(hypo sign)]
+  ^-  [p=(list move) q=_light-gate]
+  ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
+  ::
+  =/  =sign  q.wrapped-sign
+  ::  :wire must at least contain two parts, the type and the build
+  ::
+  ?>  ?=([@ @ *] wire)
+  ::
+  |^  ^-  [p=(list move) q=_light-gate]
+      ::
+      ?:  =(%run-app i.wire)
+        run-app
+      ::
+      ~|([%bad-take-wire wire] !!)
+  ::
+  ++  run-app
+    ?>  ?=([%g %response *] sign)
+    ::
+    =/  event-args  [[(need ship.ax) duct now scry-gate] server-state.ax]
+    =/  handle-response  handle-response:(per-server-event event-args)
+    =^  moves  server-state.ax  (handle-response raw-http-response.sign)
+    [moves light-gate]
+  --
 ::
 ++  light-gate  ..$
 --

@@ -253,10 +253,30 @@
               ==
           card
     ==
+  ::  theoretical outside response
+  ::
+  =^  results4  light-gate
+    %-  light-take  :*
+      light-gate
+      now=~1111.1.4
+      scry=*sley
+      ^=  take-args
+        :*  wire=/run-app/app1  duct=~[/http-blah]
+            ^-  (hypo sign:light-gate)  :-  *type
+            :+  %g  %response
+            ^-  raw-http-response:light-gate
+            [%start 200 ['Content-Type' 'text/html']~ [~ (as-octs:mimes:html 'Hiya!')] %.y]
+         ==
+      ^=  expected-move
+        :~  :*  duct=~[/http-blah]  %give  %http-response
+                [%start 200 ['Content-Type' 'text/html']~ `[5 'Hiya!'] %.y]
+    ==  ==  ==
+  ::
   ;:  weld
     results1
     results2
     results3
+    results4
   ==
 ::
 ++  light-call
@@ -291,6 +311,43 @@
   =/  light-core  (light-gate now=now eny=0xdead.beef scry=scry)
   ::
   =^  moves  light-gate  (call:light-core call-args)
+  ::
+  =/  output=tang  (move-comparator moves)
+  ::
+  [output light-gate]
+::
+++  light-take
+  |=  $:  light-gate=_light-gate
+          now=@da
+          scry=sley
+          take-args=[=wire =duct wrapped-task=(hypo sign:light-gate)]
+          expected-moves=(list move:light-gate)
+      ==
+  ^-  [tang _light-gate]
+  ::
+  =/  light-core  (light-gate now=now eny=0xdead.beef scry=scry)
+  ::
+  =^  moves  light-gate  (take:light-core take-args)
+  ::
+  =/  output=tang
+    %+  expect-eq
+      !>  expected-moves
+      !>  moves
+  ::
+  [output light-gate]
+::
+++  light-take-with-comparator
+  |=  $:  light-gate=_light-gate
+          now=@da
+          scry=sley
+          take-args=[=wire =duct wrapped-task=(hypo sign:light-gate)]
+          move-comparator=$-((list move:light-gate) tang)
+      ==
+  ^-  [tang _light-gate]
+  ::
+  =/  light-core  (light-gate now=now eny=0xdead.beef scry=scry)
+  ::
+  =^  moves  light-gate  (take:light-core take-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::
