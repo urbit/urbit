@@ -279,6 +279,108 @@
     results4
   ==
 ::
+++  test-multipart-app-request
+  ::
+  =^  results1  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.1
+      scry=*sley
+      call-args=[duct=~[/init] ~ [%init ~nul]]
+      expected-moves=~
+    ==
+  ::  app1 binds successfully
+  ::
+  =^  results2  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.2
+      scry=*sley
+      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
+      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
+    ==
+  ::  outside requests a path that app1 has bound to
+  ::
+  =^  results3  light-gate
+    %-  light-call-with-comparator  :*
+      light-gate
+      now=~1111.1.3
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-blah]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            ['GET' '/' ~ ~]
+        ==
+      ^=  comparator
+        |=  moves=(list move:light-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ::
+        =/  move=move:light-gate                              i.moves
+        =/  =duct                                             duct.move
+        =/  card=(wind note:light-gate gift:able:light-gate)  card.move
+        ::
+        %+  weld
+          (expect-eq !>(~[/http-blah]) !>(duct))
+        ::
+        %+  expect-gall-deal
+          :+  /run-app/app1  [~nul ~nul]
+              ^-  cush:gall
+              :*  %app1  %poke  %handle-http-request
+                  !>([%.n [%ipv4 .192.168.1.1] ['GET' '/' ~ ~]])
+              ==
+          card
+    ==
+  ::  theoretical outside response
+  ::
+  =^  results4  light-gate
+    %-  light-take  :*
+      light-gate
+      now=~1111.1.4
+      scry=*sley
+      ^=  take-args
+        :*  wire=/run-app/app1  duct=~[/http-blah]
+            ^-  (hypo sign:light-gate)  :-  *type
+            :+  %g  %response
+            ^-  raw-http-response:light-gate
+            [%start 200 ['Content-Type' 'text/html']~ [~ (as-octs:mimes:html 'Hi')] %.n]
+         ==
+      ^=  expected-move
+        :~  :*  duct=~[/http-blah]  %give  %http-response
+                [%start 200 ['Content-Type' 'text/html']~ `[2 'Hi'] %.n]
+    ==  ==  ==
+  ::  theoretical outside response
+  ::
+  =^  results5  light-gate
+    %-  light-take  :*
+      light-gate
+      now=~1111.1.4
+      scry=*sley
+      ^=  take-args
+        :*  wire=/run-app/app1  duct=~[/http-blah]
+            ^-  (hypo sign:light-gate)  :-  *type
+            :+  %g  %response
+            ^-  raw-http-response:light-gate
+            [%continue [~ (as-octs:mimes:html 'ya!')] %.y]
+         ==
+      ^=  expected-move
+        :~  :*  duct=~[/http-blah]  %give  %http-response
+                [%continue `[3 'ya!'] %.y]
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    results5
+  ==
+::
 ++  light-call
   |=  $:  light-gate=_light-gate
           now=@da
