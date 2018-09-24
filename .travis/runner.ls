@@ -8,6 +8,8 @@ export class Urbit
     @pty = pty.spawn \urbit args
     @pty.on \data ~> @stdout.write it # TODO pipe?
     console.log "FIXME Running Ubuntu 14.04, which causes a libtinfo version info warning. Should update to 16.04."
+    console.log "starting vere with the following arguments:"
+    console.log args
     #
     @last-output = Date.now()
     @pty.on \data ~> @last-output = Date.now()
