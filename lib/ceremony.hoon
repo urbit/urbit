@@ -16,6 +16,8 @@
 ::
 +$  rights
   $:  own=address
+      manage=address
+      delegate=(unit address)
       transfer=address
       spawn=(unit address)
       net=(unit [crypt=@ux auth=@ux])
@@ -67,18 +69,6 @@
     addr        (address-from-prv prv)
   ==
 ::
-++  get-account-proxies
-  ^-  (list [own=address manage=address delegate=(unit address)])
-  =+  lis=(get-file /accounts/txt)
-  %+  turn  lis
-  |=  c=cord
-  %+  rash  c
-  ;~  (glue com)
-    zero-ux
-    zero-ux
-    (punt zero-ux)
-  ==
-::
 ++  get-ship-deeds
   ^-  (list [who=ship rights])
   =+  lis=(get-file /deeds/txt)
@@ -88,6 +78,8 @@
   ;~  (glue com)
     ;~(pfix sig fed:ag)
     zero-ux
+    zero-ux
+    (punt zero-ux)
     zero-ux
     (punt zero-ux)
     (punt ;~(plug zero-ux ;~(pfix com zero-ux)))
@@ -111,6 +103,8 @@
     dum:ag
     dum:ag
     zero-ux
+    zero-ux
+    (punt zero-ux)
     zero-ux
     (punt zero-ux)
     (punt ;~(plug zero-ux ;~(pfix com zero-ux)))
@@ -169,7 +163,6 @@
   ::
   ::NOTE  we do these first so that we are sure we have sane files,
   ::      without waiting for that answer
-  =+  accounts=get-account-proxies
   =+  deeds=get-ship-deeds
   =/  deed-map=(map ship rights)
     (~(gas by *(map ship rights)) deeds)
@@ -246,24 +239,10 @@
     %^  do  polls  50.000
     (transfer-ownership:dat constit)
   ::
-  ::  owner proxy configuration
-  ::
-  =*  do-constit  (cury (cury do constit) 300.000)
-  ~&  'Assigning managers and delegates...'
-  |-
-  ?^  accounts
-    =*  acc  i.accounts
-    =.  this
-      %-  do-constit
-      (set-manager-for:dat own.acc manage.acc)
-    =?  this  ?=(^ delegate.acc)
-      %-  do-constit
-      (set-delegate-for:dat own.acc u.delegate.acc)
-    $(accounts t.accounts)
-  ::
   ::  simple deeding
   ::
   ~&  'Deeding regular assets...'
+  =*  do-constit  (cury (cury do constit) 300.000)
   =/  galaxies  (sort ~(tap by galaxy-deeds) order-shiplist)
   |-
   ?^  galaxies
@@ -272,7 +251,7 @@
     =+  gal-deed=(~(got by deed-map) galaxy)
     ~&  galaxy
     =.  this
-      (prepare-ship galaxy spawn.gal-deed net.gal-deed)
+      (prepare-ship galaxy [manage delegate spawn net]:gal-deed)
     ::
     =/  stars  (sort ~(tap by q.i.galaxies) order-shiplist)
     |-
@@ -281,7 +260,7 @@
       =+  sta-deed=(~(got by deed-map) star)
       ~&  star
       =.  this
-        (prepare-ship star spawn.sta-deed net.sta-deed)
+        (prepare-ship star [manage delegate spawn net]:sta-deed)
       ::
       =+  planets=(sort ~(tap in q.i.stars) lth)
       |-
@@ -289,7 +268,7 @@
         =*  planet  i.planets
         =+  pla-deed=(~(got by deed-map) planet)
         =.  this
-          (prepare-ship planet ~ net.pla-deed)
+          (prepare-ship planet [manage delegate ~ net]:pla-deed)
         =.  this
           (send-ship planet own.pla-deed transfer.pla-deed)
         $(planets t.planets)
@@ -306,7 +285,7 @@
   ::
   ::TODO  rewrite to take non-standard cases into account
   ~&  'Deeding linear release assets...'
-  =*  do-linear  (cury (cury do linear-star-release) 300.000)
+  =*  do-linear  (cury (cury do linear-star-release) 350.000)
   =/  galaxies  (sort linears order-shiplist)
   |-
   ?^  galaxies
@@ -315,7 +294,7 @@
     =*  gal-deed  i.galaxies
     ~&  galaxy
     =.  this
-      (prepare-ship galaxy `linear-star-release net.gal-deed)
+      (prepare-ship galaxy manage.gal-deed delegate.gal-deed `linear-star-release net.gal-deed)
     ::
     =.  this
       %-  do-linear
@@ -363,7 +342,12 @@
 ::
 ::  create or spawn a ship, configure its spawn proxy and pubkeys
 ++  prepare-ship
-  |=  [who=ship spawn=(unit address) keys=(unit [@ux @ux])]
+  |=  $:  who=ship
+          manage=address
+          voting=(unit address)
+          spawn=(unit address)
+          keys=(unit [@ux @ux])
+      ==
   ^+  this
   =+  wat=(clan:title who)
   =*  do-c  (cury (cury do constitution) 300.000)
@@ -371,6 +355,10 @@
     ?:  ?=(%czar wat)
       (do-c (create-galaxy:dat who))
     (do-c (spawn:dat who))
+  =.  this
+    (do-c (set-management-proxy:dat who manage))
+  =?  this  &(?=(^ voting) ?=(%czar wat))
+    (do-c (set-voting-proxy:dat who u.voting))
   =?  this  &(?=(^ spawn) !?=(%duke wat))
     (do-c (set-spawn-proxy:dat who u.spawn))
   =?  this  ?=(^ keys)
@@ -400,8 +388,8 @@
   ++  configure-keys          (enc configure-keys:cal)
   ++  set-spawn-proxy         (enc set-spawn-proxy:cal)
   ++  transfer-ship           (enc transfer-ship:cal)
-  ++  set-manager-for         (enc set-manager-for:cal)
-  ++  set-delegate-for        (enc set-delegate-for:cal)
+  ++  set-management-proxy    (enc set-management-proxy:cal)
+  ++  set-voting-proxy        (enc set-voting-proxy:cal)
   ++  set-transfer-proxy-for  (enc set-transfer-proxy-for:cal)
   ++  upgrade-to              (enc upgrade-to:cal)
   ++  transfer-ownership      (enc transfer-ownership:cal)
@@ -442,6 +430,22 @@
         [%bool |]
     ==
   ::
+  ++  set-management-proxy
+    |=  [who=ship proxy=address]
+    ^-  call-data
+    :-  'setManagementProxy(uint32,address)'
+    :~  [%uint `@`who]
+        [%address proxy]
+    ==
+  ::
+  ++  set-voting-proxy
+    |=  [who=ship proxy=address]
+    ^-  call-data
+    :-  'setVotingProxy(uint8,address)'
+    :~  [%uint `@`who]
+        [%address proxy]
+    ==
+  ::
   ++  set-spawn-proxy
     |=  [who=ship proxy=address]
     ^-  call-data
@@ -457,22 +461,6 @@
     :~  [%uint `@`who]
         [%address to]
         [%bool |]
-    ==
-  ::
-  ++  set-manager-for
-    |=  [who=address proxy=address]
-    ^-  call-data
-    :-  'setManagerFor(address,address)'
-    :~  [%address who]
-        [%address proxy]
-    ==
-  ::
-  ++  set-delegate-for
-    |=  [who=address proxy=address]
-    ^-  call-data
-    :-  'setDelegateFor(address,address)'
-    :~  [%address who]
-        [%address proxy]
     ==
   ::
   ++  set-transfer-proxy-for
