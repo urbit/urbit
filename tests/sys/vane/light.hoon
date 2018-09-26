@@ -380,6 +380,153 @@
     results4
     results5
   ==
+::  tests an app redirecting to the login handler, which then receives a post
+::  and redirects back to app
+::
+++  test-login-handler-full-path
+  ::
+  =^  results1  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.1
+      scry=*sley
+      call-args=[duct=~[/init] ~ [%init ~nul]]
+      expected-moves=~
+    ==
+  ::  app1 binds successfully
+  ::
+  =^  results2  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.2
+      scry=*sley
+      call-args=[duct=~[/app1] ~ [%connect [~ /'~landscape'] %app1]]
+      expected-moves=[duct=~[/app1] %give %bound %.y [~ /'~landscape']]~
+    ==
+  ::  outside requests a path that app1 has bound to
+  ::
+  =^  results3  light-gate
+    %-  light-call-with-comparator  :*
+      light-gate
+      now=~1111.1.3
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-blah]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            ['GET' '/~landscape/inner-path' ~ ~]
+        ==
+      ^=  comparator
+        |=  moves=(list move:light-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ::
+        =/  move=move:light-gate                              i.moves
+        =/  =duct                                             duct.move
+        =/  card=(wind note:light-gate gift:able:light-gate)  card.move
+        ::
+        %+  weld
+          (expect-eq !>(~[/http-blah]) !>(duct))
+        ::
+        %+  expect-gall-deal
+          :+  /run-app/app1  [~nul ~nul]
+              ^-  cush:gall
+              :*  %app1  %poke  %handle-http-request
+                  !>([%.n [%ipv4 .192.168.1.1] ['GET' '/~landscape/inner-path' ~ ~]])
+              ==
+          card
+    ==
+  ::  app then gives a redirect to Eyre
+  ::
+  =^  results4  light-gate
+    %-  light-take  :*
+      light-gate
+      now=~1111.1.4
+      scry=*sley
+      ^=  take-args
+        :*  wire=/run-app/app1  duct=~[/http-blah]
+            ^-  (hypo sign:light-gate)  :-  *type
+            :+  %g  %response
+            ^-  raw-http-response:light-gate
+            [%start 307 ['Location' '/~/login?redirect=/~landscape/inner-path']~ ~ %.y]
+         ==
+      ^=  expected-move
+        :~  :*  duct=~[/http-blah]  %give  %http-response
+                [%start 307 ['Location' '/~/login?redirect=/~landscape/inner-path']~ ~ %.y]
+    ==  ==  ==
+  ::  the browser then fetches the login page
+  ::
+  =^  results5  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.2
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-blah]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            ['GET' '/~/login?redirect=/~landscape' ~ ~]
+        ==
+      ^=  expected-moves
+        ^-  (list move:light-gate)
+        :~  :*  duct=~[/http-blah]
+                %give
+                %http-response
+                %start
+                200
+                ['Content-Type' 'text/html']~
+                [~ (login-page:light-gate `'/~landscape')]
+                complete=%.y
+        ==  ==
+    ==
+  ::  a response post redirects back to the application, setting cookie
+  ::
+  =^  results6  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.3
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-blah]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            'POST'
+            '/~/login'
+            ~
+            :-  ~
+            %-  as-octs:mimes:html
+            'password=lidlut-tabwed-pillex-ridrup&redirect=/~landscape'
+        ==
+      ^=  expected-moves
+        ^-  (list move:light-gate)
+        :~  :*  duct=~[/http-blah]
+                %give
+                %http-response
+                %start
+                307
+                :~  ['Location' '/~landscape']
+                    :-  'Set-Cookie'
+                    'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Max-Age: 86400'
+                ==
+                ~
+                complete=%.y
+        ==  ==
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    results5
+    results6
+  ==
 ::
 ++  light-call
   |=  $:  light-gate=_light-gate

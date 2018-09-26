@@ -92,7 +92,7 @@
 +$  http-request
   $:  ::  http-method:
       ::
-      =http-method
+      method=http-method
       ::  url: the url requested
       ::
       ::    The url is not escaped. There is no escape.
@@ -230,6 +230,9 @@
       ::  connections: open http connections not fully complete
       ::
       connections=(map duct outstanding-connection)
+      ::  authentication-state: state managed by the +authentication core
+      ::
+      =authentication-state
   ==
 ::  +outstanding-connection: open http connections not fully complete:
 ::
@@ -260,12 +263,23 @@
       ::  dispatch to an application
       ::
       [%app app=term]
-      ::  dispatch to a vane
+      ::  internal authentication page
       ::
-      ::    Ted pointed out that we are planning for jael to start talking
-      ::    to the web server and not going through an app.
+      [%login-handler ~]
+  ==
+::
+::
++$  authentication-state
+  $%  ::  sessions: a mapping of session cookies to session information
       ::
-      ::[%sys vane=term]
+      sessions=(map @uv session)
+  ==
+::  +session: server side data about a session
+::
++$  session
+  $%  ::  expiry-time: when this session expires
+      ::
+      expiry-time=@da
   ==
 --
 ::  utilities
@@ -288,6 +302,28 @@
       ;p:"The requested URL {<(trip url)>} was not found on this server."
     ==
   ==
+::  +login-page: internal page to login to an Urbit
+::
+++  login-page
+  |=  redirect-url=(unit @t)
+  ^-  octs
+  =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
+  %-  as-octs:mimes:html
+  %-  crip
+  %-  en-xml:html
+  ;html
+    ;head
+      ;title:"Sign in"
+    ==
+    ;body
+      ;h1:"Sign in"
+      ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
+        ;input(type "password", name "password", placeholder "passcode");
+        ;input(type "hidden", name "redirect", value redirect-str);
+        ;button(type "submit"):"Login"
+      ==
+    ==
+  ==
 ::  +get-header: returns the value for :header, if it exists in :header-list
 ::
 ++  get-header
@@ -304,7 +340,7 @@
 ::  +per-server-event: per-event client core
 ::
 ++  per-server-event
-  |=  [[our=@p =duct now=@da scry=sley] state=server-state]
+  |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
   |%
   ::  +request: starts handling an inbound http request
   ::
@@ -317,16 +353,8 @@
     ::  if no action matches, send the built in 404 page.
     ::
     ?~  action
-      :_  state
-      :_  ~
-      :+  duct  %give
-      :*  %http-response  %start
-          status-code=404
-          ::  TODO: Content-Length?
-          headers=['Content-Type' 'text/html']~
-          data=[~ (file-not-found-page url.http-request)]
-          complete=%.y
-      ==
+      %^  return-static-data-on-duct  404  'text/html'
+      (file-not-found-page url.http-request)
     ::  record that we started an asynchronous response
     ::
     =|  record=outstanding-connection
@@ -354,7 +382,126 @@
       ::
       ^-  cush:gall
       [app.u.action %poke %handle-http-request !>([secure address http-request])]
+    ::
+        %login-handler
+      (handle-request:authentication secure address http-request)
     ==
+  ::  +return-static-data-on-duct: returns one piece of data all at once
+  ::
+  ++  return-static-data-on-duct
+    |=  [code=@ content-type=@t data=octs]
+    ^-  [(list move) server-state]
+    ::
+    :_  state
+    :_  ~
+    :+  duct  %give
+    :*  %http-response  %start
+        status-code=code
+        ^=  headers
+          :~  ['Content-Type' content-type]
+              ::  todo: how do I print a number? +scot adds '.' for hoon style.
+              ::
+              ::  ['Content-Length' p.data]
+          ==
+        data=[~ data]
+        complete=%.y
+    ==
+  ::  +authentication: per-event authentication as this Urbit's owner
+  ::
+  ::    Right now this hard codes the authentication page using the old +code
+  ::    system, but in the future should be pluggable so we can use U2F or
+  ::    WebAuthn or whatever is more secure than passwords.
+  ::
+  ++  authentication
+    |%
+    ::  +handle-request: handles an http request for the 
+    ::
+    ++  handle-request
+      |=  [secure=? =address =http-request]
+      ^-  [(list move) server-state]
+      ::
+      ::  if we received a simple get, just return the page
+      ::
+      ?:  =('GET' method.http-request)
+        ::  parse the arguments out of request uri
+        ::
+        =+  request-line=(parse-request-line url.http-request)
+        %^  return-static-data-on-duct  200  'text/html'
+        (login-page (get-header 'redirect' args.request-line))
+      ::  if we are not a post, return an error
+      ::
+      ?.  =('POST' method.http-request)
+        ~&  [%something-other-than-get-post-on-login method.http-request]
+        (return-static-data-on-duct 400 'text/html' (login-page ~))
+      ::  we are a post, and must process the body type as form data
+      ::
+      ?~  body.http-request
+        (return-static-data-on-duct 400 'text/html' (login-page ~))
+      ::
+      =/  parsed=(unit (list [key=@t value=@t]))
+        ~!  q.u.body.http-request
+        (rush q.u.body.http-request yquy:de-purl:html)
+      ?~  parsed
+        (return-static-data-on-duct 400 'text/html' (login-page ~))
+      ::
+      ?~  password=(get-header 'password' u.parsed)
+        (return-static-data-on-duct 400 'text/html' (login-page ~))
+      ::  check that the password is correct
+      ::
+      ?.  =(u.password code)
+        (return-static-data-on-duct 400 'text/html' (login-page ~))
+      ::  mint a unique session cookie
+      ::
+      =/  session=@uv
+        |-
+        =/  candidate=@uv  (~(raw og eny) 128)
+        ?.  (~(has by sessions.authentication-state.state) candidate)
+          candidate
+        $(eny (shas %try-again candidate))
+      ::  record cookie and record expiry time
+      ::
+      =.  sessions.authentication-state.state
+        (~(put by sessions.authentication-state.state) session (add now ~h24))
+      ::
+      =/  cookie-line
+        %-  crip
+        "urbauth={<session>}; Max-Age: 86400"
+      ::
+      =/  new-location=@t
+        ?~  redirect=(get-header 'redirect' u.parsed)
+          '/'
+        u.redirect
+      ::
+      :_  state
+      :_  ~
+      :+  duct  %give
+      :*  %http-response  %start
+          status-code=307
+          ^=  headers
+            :~  ['Location' new-location]
+                ['Set-Cookie' cookie-line]
+            ==
+          data=~
+          complete=%.y
+      ==
+    ::  +request-is-logged-in: checks to see if the request is authenticated
+    ::
+    ++  request-is-logged-in
+      |=  =http-request
+      ^-  ?
+      ::
+      %.n
+    ::  +code: returns the same as |code
+    ::
+    ::    This has the problem where the signature for sky vs sley.
+    ::
+    ++  code
+      ^-  @ta
+      'lidlut-tabwed-pillex-ridrup'
+      ::  =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
+      ::  %^  rsh  3  1
+      ::  (scot %p (@ (need ((sloy scry) [151 %noun] %a pax))))
+    --
   ::  +handle-response: check a response for correctness and send to earth
   ::
   ::    TODO: I don't actually know how this gets hooked up. The app response
@@ -513,8 +660,11 @@
       raw-host
     ::  url is the raw thing passed over the 'Request-Line'.
     ::
-    =/  parsed-url=(list @t)
-      q:(need (rush url apat:de-purl:html))
+    ::    todo: this is really input validation, and we should return a 500 to
+    ::    the client.
+    ::
+    =/  request-line  (parse-request-line url)
+    =/  parsed-url=(list @t)  site.request-line
     ::
     =/  bindings  bindings.state
     |-
@@ -534,6 +684,12 @@
     ::
     $(bindings t.bindings)
   --
+  ::
+  ::
+  ++  parse-request-line
+    |=  url=@t
+    ^-  [[(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
+    (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
 --
 ::  end the =~
 ::
@@ -563,12 +719,17 @@
       %init
     ::
     =.  ship.ax  [~ our.task]
+    ::  initial value for the login handler
+    ::
+    =.  bindings.server-state.ax
+      :~  [[~ /~/login] duct [%login-handler ~]]
+      ==
     [~ light-gate]
   ::
       ::  %inbound-request: handles an inbound http request
       ::
       %inbound-request
-    =/  event-args  [[(need ship.ax) duct now scry-gate] server-state.ax]
+    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
     =/  request  request:(per-server-event event-args)
     =^  moves  server-state.ax
       (request +.task)
@@ -577,7 +738,7 @@
       ::  %connect / %serve
       ::
       ?(%connect %serve)
-    =/  event-args  [[(need ship.ax) duct now scry-gate] server-state.ax]
+    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
     =/  add-binding  add-binding:(per-server-event event-args)
     =^  moves  server-state.ax
       %+  add-binding  binding.task
@@ -590,7 +751,7 @@
       ::  %disconnect
       ::
       %disconnect
-    =/  event-args  [[(need ship.ax) duct now scry-gate] server-state.ax]
+    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
     =/  remove-binding  remove-binding:(per-server-event event-args)
     =.  server-state.ax  (remove-binding binding.task)
     [~ light-gate]
@@ -616,7 +777,7 @@
   ++  run-app
     ?>  ?=([%g %response *] sign)
     ::
-    =/  event-args  [[(need ship.ax) duct now scry-gate] server-state.ax]
+    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
     =/  handle-response  handle-response:(per-server-event event-args)
     =^  moves  server-state.ax  (handle-response raw-http-response.sign)
     [moves light-gate]
