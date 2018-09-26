@@ -593,6 +593,7 @@
   ?.(=(u.a u.b) ~>(%mean.[%leaf "mate"] !!) a)
 ::
 ++  need                                                ::  demand
+  ~/  %need
   |*  a/(unit)
   ?~  a  ~>(%mean.[%leaf "need"] !!)
   u.a
@@ -3217,6 +3218,7 @@
   (shaf %sham (jam yux))
 ::
 ++  shas                                                ::  salted hash
+  ~/  %shas
   |=  {sal/@ ruz/@}
   (shax (mix sal (shax ruz)))
 ::
