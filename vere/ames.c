@@ -22,18 +22,6 @@
 #include "all.h"
 #include "vere/vere.h"
 
-/* u3_pact: ames packet struct.
-*/
-typedef struct {
-  uv_udp_send_t snd_u;
-  c3_y*         buf_y;
-  c3_w          len_w;
-  c3_s          por_s;
-  c3_w          pip_w;
-  c3_y          imp_y;
-  c3_c*         dns_c;
-} u3_pact;
-
 /* _ames_alloc(): libuv buffer allocator.
 */
 static void
@@ -60,7 +48,7 @@ _ames_free(void* ptr_v)
 static void
 _ames_pact_free(u3_pact* pac_u)
 {
-  free(pac_u->buf_y);
+  free(pac_u->hun_y);
   free(pac_u->dns_c);
   free(pac_u);
 }
@@ -88,7 +76,7 @@ _ames_send(u3_pact* pac_u)
 {
   u3_ames* sam_u = &u3_Host.sam_u;
 
-  if ( !pac_u->buf_y ) {
+  if ( !pac_u->hun_y ) {
     _ames_pact_free(pac_u);
     return;
   }
@@ -100,7 +88,7 @@ _ames_send(u3_pact* pac_u)
   add_u.sin_addr.s_addr = htonl(pac_u->pip_w);
   add_u.sin_port = htons(pac_u->por_s);
 
-  uv_buf_t buf_u = uv_buf_init((c3_c*)pac_u->buf_y, pac_u->len_w);
+  uv_buf_t buf_u = uv_buf_init((c3_c*)pac_u->hun_y, pac_u->len_w);
 
   c3_i sas_i;
 
@@ -222,6 +210,7 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
        (now - sam_u->imp_t[pac_u->imp_y]) > 300 ) { /* 5 minute TTL */
     u3_noun  nam = u3dc("scot", 'p', pac_u->imp_y);
     c3_c*  nam_c = u3r_string(nam);
+    // XX remove extra byte for '~'
     pac_u->dns_c = c3_malloc(1 + strlen(bos_c) + 1 + strlen(nam_c));
 
     snprintf(pac_u->dns_c, 256, "%s.%s", nam_c + 1, bos_c);
@@ -302,9 +291,9 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
 
   if ( c3y == _ames_lane_ip(lan, &pac_u->por_s, &pac_u->pip_w) ) {
     pac_u->len_w = u3r_met(3, pac);
-    pac_u->buf_y = c3_malloc(pac_u->len_w);
+    pac_u->hun_y = c3_malloc(pac_u->len_w);
 
-    u3r_bytes(0, pac_u->len_w, pac_u->buf_y, pac);
+    u3r_bytes(0, pac_u->len_w, pac_u->hun_y, pac);
 
     if ( 0 == pac_u->pip_w ) {
       pac_u->pip_w = 0x7f000001;
@@ -477,6 +466,7 @@ u3_ames_io_exit()
 {
   u3_ames* sam_u = &u3_Host.sam_u;
 
+  // XX close wax_u instead
   uv_close(&sam_u->had_u, 0);
 }
 

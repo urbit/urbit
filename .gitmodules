@@ -19,3 +19,6 @@
 [submodule "subprojects/h2o"]
 	path = subprojects/libh2o
 	url = https://github.com/urbit/h2o.git
+[submodule "subprojects/libsni"]
+	path = subprojects/libsni
+	url = https://github.com/urbit/sniproxy

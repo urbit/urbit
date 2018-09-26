@@ -482,6 +482,10 @@ static void
 _cttp_creq_link(u3_creq* ceq_u)
 {
   ceq_u->nex_u = u3_Host.ctp_u.ceq_u;
+
+  if ( 0 != ceq_u->nex_u ) {
+    ceq_u->nex_u->pre_u = ceq_u;
+  }
   u3_Host.ctp_u.ceq_u = ceq_u;
 }
 
@@ -492,9 +496,17 @@ _cttp_creq_unlink(u3_creq* ceq_u)
 {
   if ( ceq_u->pre_u ) {
     ceq_u->pre_u->nex_u = ceq_u->nex_u;
+
+    if ( 0 != ceq_u->nex_u ) {
+      ceq_u->nex_u->pre_u = ceq_u->pre_u;
+    }
   }
   else {
     u3_Host.ctp_u.ceq_u = ceq_u->nex_u;
+
+    if ( 0 != ceq_u->nex_u ) {
+      ceq_u->nex_u->pre_u = 0;
+    }
   }
 }
 
@@ -829,21 +841,22 @@ _cttp_creq_resolve_cb(uv_getaddrinfo_t* adr_u,
   u3_creq* ceq_u = adr_u->data;
 
   if ( u3_csat_quit == ceq_u->sat_e ) {
-    return _cttp_creq_quit(ceq_u);;
+    _cttp_creq_quit(ceq_u);;
   }
-
-  if ( 0 != sas_i ) {
-    return _cttp_creq_fail(ceq_u, uv_strerror(sas_i));
+  else if ( 0 != sas_i ) {
+    _cttp_creq_fail(ceq_u, uv_strerror(sas_i));
   }
+  else {
+    // XX traverse struct a la _ames_czar_cb
+    ceq_u->ipf_w = ntohl(((struct sockaddr_in *)aif_u->ai_addr)->sin_addr.s_addr);
+    ceq_u->ipf_c = _cttp_creq_ip(ceq_u->ipf_w);
 
-  ceq_u->ipf_w = ntohl(((struct sockaddr_in *)aif_u->ai_addr)->sin_addr.s_addr);
-  ceq_u->ipf_c = _cttp_creq_ip(ceq_u->ipf_w);
+    ceq_u->sat_e = u3_csat_ripe;
+    _cttp_creq_connect(ceq_u);
+  }
 
   free(adr_u);
   uv_freeaddrinfo(aif_u);
-
-  ceq_u->sat_e = u3_csat_ripe;
-  _cttp_creq_connect(ceq_u);
 }
 
 /* _cttp_creq_resolve(): resolve hostname to IP address
@@ -864,6 +877,7 @@ _cttp_creq_resolve(u3_creq* ceq_u)
   hin_u.ai_socktype = SOCK_STREAM;
   hin_u.ai_protocol = IPPROTO_TCP;
 
+  // XX is this necessary?
   c3_c* por_c = ceq_u->por_c ? ceq_u->por_c :
                 ( c3y == ceq_u->sec ) ? "443" : "80";
 
@@ -920,8 +934,7 @@ _cttp_init_h2o()
 {
   h2o_timeout_t* tim_u = c3_malloc(sizeof(*tim_u));
 
-  // XX how long? 1 minute?
-  h2o_timeout_init(u3L, tim_u, 10000);
+  h2o_timeout_init(u3L, tim_u, 120 * 1000);
 
   h2o_http1client_ctx_t* ctx_u = c3_calloc(sizeof(*ctx_u));
   ctx_u->loop = u3L;

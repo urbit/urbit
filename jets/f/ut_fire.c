@@ -76,7 +76,7 @@
       u3_noun dox = u3nt
         (c3__core, u3k(qq_typ), u3k(q_typ));
 
-      if ( c3__ash == u3h(gat) ) {
+      if ( (c3__ash == u3h(gat)) || (c3__dry == u3h(gat)) ) {
         if ( (c3y == vet) &&
              (c3n == u3qfu_nest(van, qq_typ, c3y, p_typ)) )
         {
@@ -94,7 +94,7 @@
         }
       }
       else {
-        c3_assert(c3__elm == u3h(gat));
+        c3_assert(c3__wet == u3h(gat));
 #if 0
         u3_noun dun = u3qfu_dunq(van, "wild", typ);
         u3_noun niz = u3qfu_dunq(van, "tame", dox);
@@ -155,7 +155,7 @@
         u3_noun pi_hag = u3h(i_hag);
         u3_noun qi_hag = u3t(i_hag);
 
-        if ( c3__elm == u3h(qi_hag) ) {
+        if ( (c3__wet == u3h(qi_hag)) ) {
           u3_noun qqi_hag = u3t(qi_hag);
 
           if ( c3y == u3du(qqi_hag) &&
