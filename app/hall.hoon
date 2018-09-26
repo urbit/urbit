@@ -3115,8 +3115,16 @@
 ::TODO  for debug purposes. remove eventually.
 ::  users beware, here be dragons.
 ++  poke-noun
-  |=  a/@t
+  |=  a/*
   ^-  (quip move _+>)
+  ?:  ?=([%kill ship] a)
+    :_  +>
+    %-  ~(rep by sup.bol)
+    |=  [[b=bone c=(pair ship path)] out=(list move)]
+    ?:  =(+.a p.c)
+      [[b %quit ~] out]
+    out
+  ?>  ?=(@t a)
   ?:  =(a 'check')
     ~&  'verifying message reference integrity...'
     =-  ~&(- [~ +>.$])
@@ -3186,5 +3194,22 @@
     :_  +>
     :_  ~
     (wire-to-peer /report/(crip (slag 10 (trip a))))
+  ::
+  ::
+  ?:  =(a 'kill-all-subs')
+    :_  +>
+    %-  ~(rep by sup.bol)
+    |=  [[b=bone (pair ship path)] out=(list move)]
+    [[b %quit ~] out]
+  ::
+  ?:  =(a 'kill-our-subs')
+    :_  +>
+    %-  ~(rep by sup.bol)
+    |=  [[b=bone c=(pair ship path)] out=(list move)]
+    ?:  =(our.bol p.c)
+      [[b %quit ~] out]
+    out
+  ::
+  ::
   [~ +>]
 --
