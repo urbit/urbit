@@ -36,6 +36,7 @@ mkdir prev
   HASH2=$(git -C .. log -2 $HASH --format=%H -- sys/ | tail -1)
   PILL_NAME2="git-${HASH2:0:10}"
   wget https://bootstrap.urbit.org/$PILL_NAME2.pill -O prev/urbit.pill &&
+  ([ -d prev/zod ] && rm -r prev/zod || true) &&
   lsc ./in-urbit.ls -A .. -B prev/urbit.pill -cSFI zod prev/zod <<'  .'
     %booted-prev-zod
   .
