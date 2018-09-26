@@ -57,13 +57,14 @@
   (lth a b)
 ::
 ++  init
-  |=  [n=@da g=@ud]
+  |=  [n=@da g=@ud non=@ud]
   ^+  this
   =+  pkf=(get-file /pk/txt)
   ?>  ?=(^ pkf)
   =+  prv=(rash i.pkf ;~(pfix (jest '0x') hex))
   %_  this
     now         n
+    nonce       non
     gas-price   g
     pk          prv
     addr        (address-from-prv prv)
@@ -126,19 +127,15 @@
   %^  end  3  20
   (keccak-256:keccak:crypto wid (rev 3 wid dat))
 ::
-++  deploy-contract
-  |=  [wat=cord arg=(list data)]
-  =+  cod=(get-file /contracts/[wat]/txt)
-  ?>  ?=(^ cod)
-  %-  tape-to-ux
-  (weld (trip i.cod) (encode-args arg))
-::
 ++  do-deploy
   |=  [wat=cord arg=(list data)]
   ^-  [address _this]
   :-  get-contract-address
   %^  do  0x0  6.000.000
-  (deploy-contract wat arg)
+  =+  cod=(get-file /contracts/[wat]/txt)
+  ?>  ?=(^ cod)
+  %-  tape-to-ux
+  (weld (trip i.cod) (encode-args arg))
 ::
 ++  do
   ::TODO  maybe reconsider encode-call interface, if we end up wanting @ux
@@ -152,12 +149,12 @@
       to
       0
       `@`?@(dat dat (tape-to-ux dat))
-      0x1
+      0x1  :: 0x1 for main or fakenet, 0x3 for ropsten
   ==
 ::
 ++  sequence
-  |=  [won=@da gasp=@ud]
-  =.  this  (init(now won) won gasp)
+  |=  [won=@da gasp=@ud non=@ud]
+  =.  this  (init(now won) won gasp non)
   ::
   ::  data loading
   ::
@@ -242,7 +239,6 @@
   ::  simple deeding
   ::
   ~&  'Deeding regular assets...'
-  =*  do-constit  (cury (cury do constit) 300.000)
   =/  galaxies  (sort ~(tap by galaxy-deeds) order-shiplist)
   |-
   ?^  galaxies
@@ -285,6 +281,7 @@
   ::
   ::TODO  rewrite to take non-standard cases into account
   ~&  'Deeding linear release assets...'
+  =*  do-constit  (cury (cury do constit) 300.000)
   =*  do-linear  (cury (cury do linear-star-release) 350.000)
   =/  galaxies  (sort linears order-shiplist)
   |-
