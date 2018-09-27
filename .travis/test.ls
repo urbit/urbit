@@ -14,6 +14,16 @@ Promise.resolve urbit
     urb.reset-listeners!
   ]
 .then (urb)->
+  urb.note "Running /===/tests"
+  errs = "" #REVIEW stream reduce?
+  urb.every /(\/[ -~]* (FAILED|CRASHED))/, ([_,result])->
+    if !errs => urb.warn "First error"
+    errs += "\n  #result"
+  <- urb.line "+test, =defer |, =seed `@uvI`(shaz %reproducible)" .then
+  <- urb.expect-echo "%ran-tests" .then
+  if errs => throw Error errs
+  urb.reset-listeners!
+.then (urb)->
   urb.note "Testing compilation"
   errs = {} #REVIEW stream reduce?
   cur = "init"
@@ -43,16 +53,6 @@ Promise.resolve urbit
   <- urb.expect-echo "%renderers-tested" .then
   errs := Object.keys errs
   if errs.length => throw Error "in #errs"
-  urb.reset-listeners!
-.then (urb)->
-  urb.note "Running /===/tests"
-  errs = "" #REVIEW stream reduce?
-  urb.every /(\/[ -~]* (FAILED|CRASHED))/, ([_,result])->
-    if !errs => urb.warn "First error"
-    errs += "\n  #result"
-  <- urb.line "+test, =defer |, =seed `@uvI`(shaz %reproducible)" .then
-  <- urb.expect-echo "%ran-tests" .then
-  if errs => throw Error errs
   urb.reset-listeners!
 .then ->
   urbit.exit 0
