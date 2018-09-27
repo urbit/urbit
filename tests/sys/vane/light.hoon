@@ -249,7 +249,7 @@
           :+  /run-app/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
-                  !>([%.n [%ipv4 .192.168.1.1] ['GET' '/' ~ ~]])
+                  !>([%.n %.n [%ipv4 .192.168.1.1] ['GET' '/' ~ ~]])
               ==
           card
     ==
@@ -332,7 +332,7 @@
           :+  /run-app/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
-                  !>([%.n [%ipv4 .192.168.1.1] ['GET' '/' ~ ~]])
+                  !>([%.n %.n [%ipv4 .192.168.1.1] ['GET' '/' ~ ~]])
               ==
           card
     ==
@@ -436,7 +436,7 @@
           :+  /run-app/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
-                  !>([%.n [%ipv4 .192.168.1.1] ['GET' '/~landscape/inner-path' ~ ~]])
+                  !>([%.n %.n [%ipv4 .192.168.1.1] ['GET' '/~landscape/inner-path' ~ ~]])
               ==
           card
     ==
@@ -463,14 +463,14 @@
   =^  results5  light-gate
     %-  light-call  :*
       light-gate
-      now=~1111.1.2
+      now=~1111.1.5
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-blah]  ~
             %inbound-request
             %.n
             [%ipv4 .192.168.1.1]
-            ['GET' '/~/login?redirect=/~landscape' ~ ~]
+            ['GET' '/~/login?redirect=/~landscape/inner-path' ~ ~]
         ==
       ^=  expected-moves
         ^-  (list move:light-gate)
@@ -480,7 +480,7 @@
                 %start
                 200
                 ['Content-Type' 'text/html']~
-                [~ (login-page:light-gate `'/~landscape')]
+                [~ (login-page:light-gate `'/~landscape/inner-path')]
                 complete=%.y
         ==  ==
     ==
@@ -489,7 +489,7 @@
   =^  results6  light-gate
     %-  light-call  :*
       light-gate
-      now=~1111.1.3
+      now=~1111.1.6
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-blah]  ~
@@ -517,6 +517,48 @@
                 ~
                 complete=%.y
         ==  ==
+    ==
+  ::  going back to the original url will acknowledge the authentication cookie
+  ::
+  =^  results7  light-gate
+    %-  light-call-with-comparator  :*
+      light-gate
+      now=~1111.1.6..1.0.0
+      scry=*sley
+      ^=  call-args
+        ^-  [=duct type=* wrapped-task=(hobo task:able:light-gate)]
+        :*  duct=~[/http-blah]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            'GET'
+            '/~landscape/inner-path'
+            ['Cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ~
+        ==
+      ^=  comparator
+        |=  moves=(list move:light-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ::
+        =/  move=move:light-gate                              i.moves
+        =/  =duct                                             duct.move
+        =/  card=(wind note:light-gate gift:able:light-gate)  card.move
+        ::
+        %+  weld
+          (expect-eq !>(~[/http-blah]) !>(duct))
+        ::  expect authenticated=%.y in the handle below
+        ::
+        %+  expect-gall-deal
+          :+  /run-app/app1  [~nul ~nul]
+              ^-  cush:gall
+              :*  %app1  %poke  %handle-http-request
+                  !>([%.y %.n [%ipv4 .192.168.1.1] ['GET' '/~landscape/inner-path' ~ ~]])
+              ==
+          card
     ==
   ::
   ;:  weld

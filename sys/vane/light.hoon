@@ -361,6 +361,8 @@
     =.  action.record  u.action
     =.  connections.state  (~(put by connections.state) duct record)
     ::
+    =/  authenticated  (request-is-logged-in:authentication http-request)
+    ::
     ?-    -.u.action
     ::
         %gen
@@ -381,7 +383,7 @@
       ::  %handle-http-request type.
       ::
       ^-  cush:gall
-      [app.u.action %poke %handle-http-request !>([secure address http-request])]
+      [app.u.action %poke %handle-http-request !>([authenticated secure address http-request])]
     ::
         %login-handler
       (handle-request:authentication secure address http-request)
@@ -486,11 +488,38 @@
       ==
     ::  +request-is-logged-in: checks to see if the request is authenticated
     ::
+    ::    We are considered logged in if this http-request has an urbauth
+    ::    Cookie which is not expired.
+    ::
     ++  request-is-logged-in
       |=  =http-request
       ^-  ?
+      ::  are there cookies passed with this request?
       ::
-      %.n
+      ::    TODO: In HTTP2, the client is allowed to put multiple 'Cookie'
+      ::    headers.
+      ::
+      ?~  cookie-header=(get-header 'Cookie' header-list.http-request)
+        %.n
+      ::  is the cookie line is valid?
+      ::
+      ?~  cookies=(rush u.cookie-header cock:de-purl:html)
+        %.n
+      ::  is there an urbauth cookie?
+      ::
+      ?~  urbauth=(get-header 'urbauth' u.cookies)
+        %.n
+      ::  is this formatted like a valid session cookie?
+      ::
+      ?~  session-id=(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
+        %.n
+      ::  is this a session that we know about?
+      ::
+      ?~  session=(~(get by sessions.authentication-state.state) u.session-id)
+        %.n
+      ::  is this session still valid?
+      ::
+      (lte now expiry-time.u.session)
     ::  +code: returns the same as |code
     ::
     ::    This has the problem where the signature for sky vs sley.
