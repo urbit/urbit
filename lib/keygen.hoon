@@ -29,44 +29,55 @@
   (wallet:dr child-seed)
 ::
 ++  full-wallet-from-ticket
-  |=  [ticket=byts seed-size=@ud sis=(set ship) pass=(unit @t) revs=revisions]
-  =+  owner-seed=seed-size^(argon2u ticket seed-size)
-  (full-wallet-from-seed owner-seed sis pass revs)
-::
-++  full-wallet-from-seed
-  |=  [owner-seed=byts sis=(set ship) pass=(unit @t) revs=revisions]
+  |=  $:  ticket=byts
+          seed-size=@ud
+          sis=(set ship)
+          pass=(unit @t)
+          revs=revisions
+          boot=?
+      ==
+  ^-  vault
+  =/  owner-seed=byts
+    seed-size^(argon2u ticket seed-size)
   =+  dr=~(. sd pass)
-  =+  cn=|=([s=byts m=meta] (child-node-from-seed s m pass))
+  =/  cn
+    |=  m=meta
+    (child-node-from-seed owner-seed m pass)
   ::
-  :-  ^=  owner  ^-  node
-      :+  *meta  dat.owner-seed
+  :-  `@q`dat.ticket
+  ::
+  :-  :+  *meta  dat.owner-seed
       (wallet:dr owner-seed)
   ::
-  :-  ^=  delegate
-      (cn owner-seed "delegate" delegate.revs ~)
+  =/  manage=nodes
+    %-  ~(rep in sis)
+    |=  [s=ship n=nodes]
+    %+  ~(put by n)  s
+    (cn "manage" manage.revs `s)
+  :-  manage
   ::
-  =/  manage=node
-    (cn owner-seed "manage" manage.revs ~)
-  :-  manage=manage
+  :-  %-  ~(rep in sis)
+      |=  [s=ship n=nodes]
+      ?.  =(%czar (clan:title s))  n
+      %+  ~(put by n)  s
+      (cn "voting" voting.revs `s)
   ::
-  :-  ^=  transfer
-      %-  ~(rep in sis)
+  :-  %-  ~(rep in sis)
       |=  [s=ship n=nodes]
       %+  ~(put by n)  s
-      (cn owner-seed "transfer" transfer.revs `s)
+      (cn "transfer" transfer.revs `s)
   ::
-  :-  ^=  spawn
-      %-  ~(rep in sis)
+  :-  %-  ~(rep in sis)
       |=  [s=ship n=nodes]
       %+  ~(put by n)  s
-      (cn owner-seed "spawn" spawn.revs `s)
+      (cn "spawn" spawn.revs `s)
   ::
-  ^=  network
+  ?.  boot  ~
   %-  ~(rep in sis)
   |=  [s=ship u=uodes]
   %+  ~(put by u)  s
   =+  m=["network" network.revs `s]
-  =+  s=(seed:dr [wid.owner-seed seed.manage] m)
+  =+  s=(seed:dr wid.owner-seed^seed:(~(got by manage) s) m)
   [m dat.s (urbit:dr s)]
 ::
 ++  sd                                                  ::  seed derivation
@@ -83,7 +94,9 @@
     |=  seed=byts
     ^-  ^wallet
     =>  (from-seed:bip32 64^(sha-512l seed))
-    [public-key private-key chain-code]
+    :+  [public-key private-key]
+      chain-code
+    (address-from-pub:ethereum public-key)
   ::
   ++  urbit
     %+  cork  append-pass
@@ -91,12 +104,12 @@
     ^-  edkeys
     =+  =<  [pub=pub:ex sec=sec:ex]
         (pit:nu:crub:crypto (mul 8 wid.seed) dat.seed)
-    :-  ^=  auth
-        :-  (rsh 3 1 (end 3 33 pub))
-            (rsh 3 1 (end 3 33 sec))
-    ^=  crypt
-    :-  (rsh 3 33 pub)
-        (rsh 3 33 sec)
+    ::  crypt
+    :-  :-  (rsh 3 33 pub)
+            (rsh 3 33 sec)
+    ::  auth
+    :-  (rsh 3 1 (end 3 33 pub))
+        (rsh 3 1 (end 3 33 sec))
   ::
   ++  seed
     |=  [seed=byts meta]
