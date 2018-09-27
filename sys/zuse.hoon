@@ -102,7 +102,7 @@
   |%
   ++  rpc
     |%
-    ++  response  ::TODO  id and jsonrpc fields?
+    ++  response  ::TODO  id should be optional
       $%  [%result id=@t res=json]
           [%error id=@t code=@t message=@t]  ::TODO  data?
           [%batch bas=(list response)]
@@ -174,7 +174,7 @@
         [%eth-send-raw-transaction dat=@ux]
     ==
   ::
-  ::TODO
+  ::TODO  clean up & actually use
   ++  response
     $%  ::TODO
         [%eth-new-filter fid=@ud]
@@ -7586,7 +7586,8 @@
       ::  enc(X) = head(X[0]) ... head(X[k-1]) tail(X[0]) ... tail(X[k-1])
       ::  where head and tail are defined for X[i] being of a static type as
       ::  head(X[i]) = enc(X[i]) and tail(X[i]) = "" (the empty string), or as
-      ::  head(X[i]) = enc(len(head(X[0])..head(X[k-1]) tail(X[0])..tail(X[i-1])))
+      ::  head(X[i]) = enc(len( head(X[0])..head(X[k-1])
+      ::                        tail(X[0])..tail(X[i-1]) ))
       ::  and tail(X[i]) = enc(X[i]) otherwise.
       ::
       ::  so: if it's a static type, data goes in the head. if it's a dynamic
@@ -7633,16 +7634,17 @@
       $(dat [%array-n p.dat])
     ::
         %bytes-n
-      ::  enc(X) is the sequence of bytes in X padded with zero-bytes to a length
-      ::  of 32.
+      ::  enc(X) is the sequence of bytes in X padded with zero-bytes to a
+      ::  length of 32.
       ::  Note that for any X, len(enc(X)) is a multiple of 32.
+      ?>  (lte p.p.dat 32)
       (pad-to-multiple (render-hex-bytes p.dat) 64 %right)
     ::
         %bytes  ::  of length k (which is assumed to be of type uint256)
       ::  enc(X) = enc(k) pad_right(X), i.e. the number of bytes is encoded as a
       ::  uint256 followed by the actual value of X as a byte sequence, followed
-      ::  by the minimum number of zero-bytes such that len(enc(X)) is a multiple
-      ::  of 32.
+      ::  by the minimum number of zero-bytes such that len(enc(X)) is a
+      ::  multiple of 32.
       %+  weld  $(dat [%uint p.p.dat])
       $(dat [%bytes-n p.dat])
     ::

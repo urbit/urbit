@@ -20,6 +20,7 @@
     |=  a=json
     ^-  (unit response)
     =/  res=(unit [@t json])
+      ::TODO  breaks when no id present
       ((ot id+so result+some ~) a)
     ?^  res  `[%result u.res]
     ~|  a
