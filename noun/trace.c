@@ -261,7 +261,9 @@ u3t_samp(void)
 
       c3_assert(u3R == &u3H->rod_u);
       if ( 0 == u3R->pro.day ) { 
-        u3R->pro.day = u3v_do("doss", 0);
+        /* bunt a +doss
+        */
+        u3R->pro.day = u3nt(u3nq(0, 0, 0, u3nq(0, 0, 0, 0)), 0, 0);
       }
       u3R->pro.day = u3dt("pi-noon", mot_l, lab, u3R->pro.day);
     }
@@ -350,7 +352,9 @@ u3t_damp(void)
     u3_noun wol = u3do("pi-tell", u3R->pro.day);
     u3_term_wall(wol);
 
-    u3R->pro.day = u3v_do("doss", 0);
+    /* bunt a +doss
+    */
+    u3R->pro.day = u3nt(u3nq(0, 0, 0, u3nq(0, 0, 0, 0)), 0, 0);
   }
 
   u3t_print_steps("nocks", u3R->pro.nox_d);
