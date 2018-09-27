@@ -2346,6 +2346,14 @@ _n_ream(u3_noun kev)
 {
   c3_w i_w;
   u3n_prog* pog_u = u3to(u3n_prog, u3t(kev));
+
+  // fix up pointers for loom portability
+  pog_u->byc_u.ops_y = (c3_y*) _n_prog_dat(pog_u);
+  pog_u->lit_u.non   = (u3_noun*) (pog_u->byc_u.ops_y + pog_u->byc_u.len_w);
+  pog_u->mem_u.sot_u = (u3n_memo*) (pog_u->lit_u.non + pog_u->lit_u.len_w);
+  pog_u->cal_u.sit_u = (u3j_site*) (pog_u->mem_u.sot_u + pog_u->mem_u.len_w);
+  pog_u->reg_u.rit_u = (u3j_rite*) (pog_u->cal_u.sit_u + pog_u->cal_u.len_w);
+
   for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
     u3j_site_ream(&(pog_u->cal_u.sit_u[i_w]));
   }
