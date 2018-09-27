@@ -6006,6 +6006,23 @@
       {$7 b/* c/*}       $(fol =>(fol [2 b 1 c]))
       {$8 b/* c/*}       $(fol =>(fol [7 [[7 [0 1] b] 0 1] c]))
       {$9 b/* c/*}       $(fol =>(fol [7 c 2 [0 1] 0 b]))
+  ::
+      {$10 {b/@ c/*} d/*}
+    =+  bog=$(fol d.fol)
+    ?.  ?=({$0 *} bog)  bog
+    =+  lot=$(fol c.fol)
+    ?.  ?=({$0 *} lot)  lot
+    =+  [axe=b.fol big=p.bog lit=p.lot]
+    ^-  tone
+    :-  %0
+    |-  ^-  p/*
+    ?:  =(2 axe)  [lit +.big]
+    ?:  =(3 axe)  [-.big lit]
+    =+  mor=(mas axe)
+    ?:  =(2 (cap axe))
+      [$(big -.big, axe mor) +.big]
+    [-.big $(big +.big, axe mor)]
+  ::
       {$11 @ c/*}        $(fol c.fol)
       {$11 {b/* c/*} d/*}
     =+  ben=$(fol c.fol)
@@ -6407,6 +6424,7 @@
               {$7 p/nock q/nock}                        ::  serial compose
               {$8 p/nock q/nock}                        ::  push onto subject
               {$9 p/@ q/nock}                           ::  select arm and fire
+              {$10 p/{p/@ q/nock} q/nock}               ::  edit
               {$11 p/$@(@ {p/@ q/nock}) q/nock}         ::  hint
               {$12 p/nock q/nock}                       ::  grab data from sky
               {$0 p/@}                                  ::  axis select
@@ -6775,6 +6793,23 @@
       ::
       |=(noun ^$(bus one, fol +<))
     ::
+    ::  10; edit
+    ::
+        {$10 {b/@ c/*} d/*}
+      ::  tar:  target of edit
+      ::
+      =+  tar=$(fol d.fol)
+      ::  propagate stop
+      ::
+      ?~  tar  ~
+      ::  inn:  inner value
+      ::
+      =+  inn=$(fol c.fol)
+      ::  propagate stop
+      ::
+      ?~  inn  ~
+      (mutate b.fol inn tar)
+    ::
     ::  11; static hint
     ::
         {$11 @ c/*}
@@ -6915,9 +6950,75 @@
                       [left.mask.bus -.data.bus] 
                     [rite.mask.bus +.data.bus]
     ==       ==
-  ::  require complete intermediate step
+  ::
+  ++  mutate
+    ::  change a single axis in a seminoun
+    ::
+    |=  $:  ::  axe: axis within big to change
+            ::  lit: (little) seminoun to insert within big at axe
+            ::  big: seminoun to mutate
+            ::
+            axe/@
+            lit/seminoun
+            big/seminoun
+        ==
+    ^-  result
+    ::  stop on zero axis
+    ::
+    ?~  axe  ~
+    ::  edit root of big means discard it
+    ::
+    ?:  =(1 axe)  lit
+    ::  decompose axis into path of head-tail
+    ::
+    |-  ^-  result
+    ?:  =(2 axe)
+      ::  mutate head of cell
+      ::
+      =+  tal=(fragment 3 big)
+      ::  propagate stop
+      ::
+      ?~  tal  ~
+      (combine lit tal)
+    ?:  =(3 axe)
+      ::  mutate tail of cell
+      ::
+      =+  hed=(fragment 2 big)
+      ::  propagate stop
+      ::
+      ?~  hed  ~
+      (combine hed lit)
+    ::  deeper axis: keep one side of big and
+    ::  recurse into the other with smaller axe
+    ::
+    =+  mor=(mas axe)
+    =+  hed=(fragment 2 big)
+    ::  propagate stop
+    ::
+    ?~  hed  ~
+    =+  tal=(fragment 3 big)
+    ::  propagate stop
+    ::
+    ?~  tal  ~
+    ?:  =(2 (cap axe))
+      ::  recurse into the head
+      ::
+      =+  mut=$(big hed, axe mor)
+      ::  propagate stop
+      ::
+      ?~  mut  ~
+      (combine mut tal)
+    ::  recurse into the tail
+    ::
+    =+  mut=$(big tal, axe mor)
+    ::  propagate stop
+    ::
+    ?~  mut  ~
+    (combine hed mut)
   ::
   ++  require
+    ::  require complete intermediate step
+    ::
     |=  $:  noy/result
             yen/$-(* result)
         ==
