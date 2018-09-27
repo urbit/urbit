@@ -932,6 +932,7 @@ static u3j_core _141_two_d[] =
 
   { "by",  7, 0, _141_two__by_d, _141_two__by_ha },
   { "in",  7, 0, _141_two__in_d, _141_two__in_ha },
+  {}
 };
 static c3_c* _141_two_ha[] = {0};
 
