@@ -7683,7 +7683,9 @@
   ::
   ++  pad-to-multiple
     |=  [wat=tape mof=@ud wer=?(%left %right)]
+    ^-  tape
     =+  len=(lent wat)
+    ?:  =(len mof)  wat
     =+  tad=(reap (sub mof (mod len mof)) '0')
     %-  weld
     ?:(?=(%left wer) [tad wat] [wat tad])
