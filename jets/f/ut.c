@@ -14,7 +14,7 @@
              u3_noun     typ)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(typ), 0);
-    u3_noun ret = u3j_hook(u3k(von), "dune");
+    u3_noun ret = u3j_cook("u3qfu_duck-dune", u3k(von), "dune");
 
     u3z(von);
     return ret;
@@ -28,7 +28,7 @@
              u3_noun     typ)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(typ), 0);
-    u3_noun duq = u3j_hook(u3k(von), "dunk");
+    u3_noun duq = u3j_cook("u3qfu_dung-dunk", u3k(von), "dunk");
     u3_noun ret = u3i_molt(u3k(duq), u3x_sam, u3k(paz), 0);
 
     u3z(duq);
@@ -44,7 +44,7 @@
              u3_noun     typ)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(typ), 0);
-    u3_noun duq = u3j_hook(u3k(von), "dunk");
+    u3_noun duq = u3j_cook("u3qfu_dunq-dunk", u3k(von), "dunk");
     u3_noun paz = u3i_string(paz_c);
     u3_noun ret = u3i_molt(u3k(duq), u3x_sam, u3k(paz), 0);
 
@@ -77,7 +77,7 @@
   u3qfu_shew(u3_noun van,
              u3_noun mol)
   {
-    u3_noun sho = u3j_hook(u3k(van), "show");
+    u3_noun sho = u3j_cook("u3qfu_shew-show", u3k(van), "show");
     u3_noun ret = u3i_molt(u3k(sho), u3x_sam, u3k(mol), 0);
 
     u3z(sho);

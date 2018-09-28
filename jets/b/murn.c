@@ -3,11 +3,8 @@
 */
 #include "all.h"
 
-
-/* functions
-*/
   u3_noun
-  u3qb_murn(u3_noun a, u3_noun b)
+  _murn_in(u3j_site* sit_u, u3_noun a)
   {
     if ( 0 == a ) {
       return a;
@@ -16,8 +13,8 @@
       return u3m_bail(c3__exit);
     }
     else {
-      u3_noun one = u3n_slam_on(u3k(b), u3k(u3h(a)));
-      u3_noun two = u3qb_murn(u3t(a), b);
+      u3_noun one = u3j_gate_slam(sit_u, u3k(u3h(a)));
+      u3_noun two = _murn_in(sit_u, u3t(a));
       u3_noun nex;
 
       switch ( u3ud(one) ) {
@@ -31,6 +28,19 @@
                    return u3_none;
       }
     }
+  }
+
+/* functions
+*/
+  u3_noun
+  u3qb_murn(u3_noun a, u3_noun b)
+  {
+    u3_noun pro;
+    u3j_site sit_u;
+    u3j_gate_prep(&sit_u, u3k(b));
+    pro = _murn_in(&sit_u, a);
+    u3j_gate_lose(&sit_u);
+    return pro;
   }
   u3_noun
   u3wb_murn(u3_noun cor)

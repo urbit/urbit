@@ -128,9 +128,16 @@
         } all;
 
         struct {                              //  jet dashboard
-          u3p(u3h_root) har_p;                //  warm state
-          u3_noun       das;                  //  cold state
+          u3p(u3h_root) hot_p;                //  hot state (home road only)
+          u3p(u3h_root) war_p;                //  warm state
+          u3p(u3h_root) cod_p;                //  cold state
+          u3p(u3h_root) han_p;                //  hank cache
+          u3p(u3h_root) bas_p;                //  battery hashes
         } jed;
+
+        struct {                              // bytecode state
+          u3p(u3h_root) har_p;                // formula->post of bytecode
+        } byc;
 
         struct {                              //  namespace
           u3_noun gul;                        //  (list $+(* (unit (unit)))) now
@@ -249,6 +256,15 @@
                          ?  u3a_north_is_senior(r, som) \
                          :  u3a_south_is_senior(r, som) )
 
+#     define  u3a_is_mutable(r, som) \
+                ( _(u3a_is_atom(som)) \
+                  ? c3n \
+                  : _(u3a_is_senior(r, som)) \
+                  ? c3n \
+                  : _(u3a_is_junior(r, som)) \
+                  ? c3n \
+                  : (u3a_botox(u3a_to_ptr(som))->use_w == 1) \
+                  ? c3y : c3n )
 
   /**  Globals.
   **/

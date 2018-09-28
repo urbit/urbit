@@ -5,6 +5,8 @@
 #include "all.h"
 #include <pthread.h>
 
+static c3_o _ct_lop_o;
+
 /* u3t_push(): push on trace stack.
 */
 void
@@ -110,24 +112,17 @@ u3t_heck(u3_atom cog)
 #endif
 }
 
-/* _t_jet_label():
-*/
-u3_weak
-_t_jet_label(u3a_road* rod_u, u3_noun bat)
+#if 0
+static void
+_ct_sane(u3_noun lab)
 {
-  while ( 1 ) {
-    u3_weak cax = u3h_git(rod_u->jed.har_p, bat);
-
-    if ( u3_none != cax ) {
-      return u3h(u3t(u3t(u3h(cax))));
-    }
-
-    if ( rod_u->par_p ) {
-      rod_u = u3to(u3_road, rod_u->par_p);
-    }
-    else return u3_none;
+  if ( u3_nul != lab ) {
+    c3_assert(c3y == u3du(lab));
+    c3_assert(c3y == u3ud(u3h(lab)));
+    _ct_sane(u3t(lab));
   }
 }
+#endif
 
 #if 1
 /* _t_samp_process(): process raw sample data from live road.
@@ -145,22 +140,13 @@ _t_samp_process(u3_road* rod_u)
     u3_noun don = rod_u->pro.don;
 
     while ( u3_nul != don ) {
-      u3_noun bat = u3h(don);
-      u3_noun lab;
-
-      //  Find the label from this battery, surface allocated.
+      //  Get surface allocated label
       //
-      {
-        u3_noun laj = _t_jet_label(rod_u, bat);
-        
-        if ( u3_none == laj ) {
-          don = u3t(don);
-          continue;
-        }
+      //  u3_noun lab = u3nc(u3i_string("foobar"), 0);
+      u3_noun laj = u3h(don),
+              lab = u3a_take(laj);
+      u3a_wash(laj);
 
-        // lab = u3nc(u3i_string("foobar"), u3_nul);
-        lab = u3a_take(laj); u3a_wash(laj);
-      }
       //  Add the label to the traced label stack, trimming recursion.
       //  
       {
@@ -218,6 +204,12 @@ _t_samp_process(u3_road* rod_u)
 void
 u3t_samp(void)
 {
+  if ( c3y == _ct_lop_o ) {
+    // _ct_lop_o here is a mutex for modifying pro.don. we
+    // do not want to sample in the middle of doing that, as
+    // it can cause memory errors.
+    return;
+  }
   u3C.wag_w &= ~u3o_debug_cpu;
 
   static int home = 0;
@@ -279,10 +271,13 @@ u3t_samp(void)
 /* u3t_come(): push on profile stack; return yes if active push.  RETAIN.
 */
 c3_o
-u3t_come(u3_noun bat)
+u3t_come(u3_noun lab)
 {
-  if ( (u3_nul == u3R->pro.don) || !_(u3r_sing(bat, u3h(u3R->pro.don))) ) {
-    u3R->pro.don = u3nc(u3k(bat), u3R->pro.don);
+  if ( (u3_nul == u3R->pro.don) || !_(u3r_sing(lab, u3h(u3R->pro.don))) ) {
+    u3a_gain(lab);
+    _ct_lop_o = c3y;
+    u3R->pro.don = u3nc(lab, u3R->pro.don);
+    _ct_lop_o = c3n;
     return c3y;
   } 
   else return c3n;
@@ -293,10 +288,11 @@ u3t_come(u3_noun bat)
 void
 u3t_flee(void)
 {
-  u3_noun t_don = u3k(u3t(u3R->pro.don));
-
-  u3z(u3R->pro.don);
-  u3R->pro.don = t_don;
+  _ct_lop_o = c3y;
+  u3_noun don  = u3R->pro.don;
+  u3R->pro.don = u3k(u3t(don));
+  _ct_lop_o = c3n;
+  u3z(don);
 }
 
 extern FILE*
@@ -391,6 +387,7 @@ void
 u3t_boot(void)
 {
   if ( u3C.wag_w & u3o_debug_cpu ) { 
+    _ct_lop_o = c3n;
 #if defined(U3_OS_osx)
 #if 1
     {
