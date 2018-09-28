@@ -25,4 +25,6 @@
 [submodule "subprojects/secp256k1"]
 	path = subprojects/secp256k1
 	url = https://github.com/urbit/secp256k1.git
-
+[submodule "subprojects/libsni"]
+	path = subprojects/libsni
+	url = https://github.com/urbit/sniproxy

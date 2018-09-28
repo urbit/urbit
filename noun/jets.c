@@ -5,7 +5,8 @@
 
   /* _cj_count(): count and link dashboard entries.
   */
-  static c3_w 
+  __attribute__((no_sanitize("address")))
+  static c3_w
   _cj_count(u3j_core* par_u, u3j_core* dev_u)
   {
     c3_w len_l = 0;
@@ -23,6 +24,7 @@
   }
   /* _cj_install(): install dashboard entries.
   */
+  __attribute__((no_sanitize("address")))
   static c3_w
   _cj_install(u3j_core* ray_u, c3_w jax_l, u3j_core* dev_u)
   {
@@ -268,6 +270,7 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
 **
 ** XX bat is used only for printing, remove.
 */
+__attribute__((no_sanitize("address")))
 static c3_l
 _cj_hot_mean(c3_l par_l, u3_noun mop, u3_noun bat)
 {
@@ -382,11 +385,11 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
     c3_w cod_w;
 
     {
-      char soc_c[6];
+      char soc_c[5];
 
-      memset(soc_c, 0, 6);
-      strncpy(soc_c, cop_u->cos_c, 5);
-      soc_c[5] = 0;
+      memset(soc_c, 0, 5);
+      strncpy(soc_c, cop_u->cos_c, 4);
+      soc_c[4] = 0;
       cod_w = u3i_string(soc_c);
 
       cod_w = u3a_lush(cod_w);

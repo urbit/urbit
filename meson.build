@@ -133,8 +133,8 @@ jets_e_ed_src = [
 'jets/e/ed_sign.c',
 'jets/e/ed_veri.c',
 'jets/e/ed_shar.c'
-
 ]
+
 jets_f_src = [
 'jets/f/ap.c',
 'jets/f/cell.c',
@@ -147,7 +147,7 @@ jets_f_src = [
 'jets/f/flip.c',
 'jets/f/flor.c',
 'jets/f/fork.c',
-'jets/f/help.c',
+'jets/f/hint.c',
 'jets/f/hike.c',
 'jets/f/look.c',
 'jets/f/loot.c'
@@ -155,9 +155,7 @@ jets_f_src = [
 
 jets_f_ut_src =  [
 'jets/f/ut.c',
-'jets/f/ut_burn.c',
 'jets/f/ut_buss.c',
-'jets/f/ut_conk.c',
 'jets/f/ut_crop.c',
 'jets/f/ut_find.c',
 'jets/f/ut_fire.c',
@@ -176,6 +174,47 @@ jets_f_ut_src =  [
 'jets/f/ut_tack.c',
 'jets/f/ut_toss.c',
 'jets/f/ut_wrap.c'
+]
+
+jets_z_src = [
+'jets/z/ap.c',
+'jets/z/cell.c',
+'jets/z/comb.c',
+'jets/z/cons.c',
+'jets/z/core.c',
+'jets/z/face.c',
+'jets/z/fitz.c',
+'jets/z/flan.c',
+'jets/z/flip.c',
+'jets/z/flor.c',
+'jets/z/fork.c',
+'jets/z/hint.c',
+'jets/z/hike.c',
+'jets/z/look.c',
+'jets/z/loot.c'
+]
+
+jets_z_ut_src =  [
+'jets/z/ut.c',
+'jets/z/ut_buss.c',
+'jets/z/ut_crop.c',
+'jets/z/ut_find.c',
+'jets/z/ut_fire.c',
+'jets/z/ut_fish.c',
+'jets/z/ut_fuse.c',
+'jets/z/ut_gain.c',
+'jets/z/ut_lose.c',
+'jets/z/ut_mint.c',
+'jets/z/ut_mull.c',
+'jets/z/ut_nest.c',
+'jets/z/ut_peek.c',
+'jets/z/ut_peel.c',
+'jets/z/ut_play.c',
+'jets/z/ut_repo.c',
+'jets/z/ut_rest.c',
+'jets/z/ut_tack.c',
+'jets/z/ut_toss.c',
+'jets/z/ut_wrap.c'
 ]
 
 jets_g_src = [
@@ -217,7 +256,9 @@ src_list = [
 vere_src, noun_src,
 jets_a_src, jets_b_src,
 jets_c_src, jets_d_src,
-jets_e_src, jets_e_ed_src, jets_f_src, jets_f_ut_src,
+jets_e_src, jets_e_ed_src, 
+jets_f_src, jets_f_ut_src,
+jets_z_src, jets_z_ut_src,
 jets_g_src, jets_src]
 
 sources = []
@@ -250,7 +291,7 @@ if osdet == 'linux'
 elif osdet == 'darwin'
   conf_data.set('U3_OS_osx', true)
 
-  os_c_flags = os_c_flags + ['-bind_at_load']
+  #  os_c_flags = os_c_flags + ['-bind_at_load']
   #  os_link_flags = ['-framework CoreServices', '-framework CoreFoundation']
   if(legacy_meson)
     ncurses_dep = find_library('ncurses')
@@ -314,6 +355,8 @@ libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'lib
 argon2_dep = dependency('argon2', version: '>=1', fallback: ['argon2', 'argon2_dep'])
 secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
 
+libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
+
 executable('urbit',
 sources : sources,
 include_directories : incdir,
@@ -331,5 +374,6 @@ dependencies: [openssl_dep,
                ed25519_dep,
                murmur3_dep,
                argon2_dep,
-               softfloat3_dep] + os_deps,
+               softfloat3_dep,
+               libsni_dep] + os_deps,
 install: true)
