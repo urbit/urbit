@@ -53,6 +53,7 @@
         [%g /vane/gall]
         [%e /vane/eyre]
         [%j /vane/jael]
+        [%l /vane/light]
     ==
 |-  ^+  all
 ?~  vay  all

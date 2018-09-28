@@ -2,159 +2,11 @@
 ::  lighter than eyre
 ::
 |=  pit=vase
+=,  light
 ::  internal data structures
 ::
 =>  =~
 ::
-|%
---
-::  TODO: this becomes the +eyre interface arm in zuse
-::
-|%
-+|  %vane-interface
-++  able
-  |%
-  ++  gift
-    $%  ::  http-response: response from urbit to earth
-        ::
-        [%http-response =raw-http-response]
-        ::  response to a %connect or %serve
-        ::
-        ::    :accepted is whether :binding was valid. Duplicate bindings are not allowed.
-        ::
-        [%bound accepted=? =binding]
-    ==
-  ::
-  ++  task
-    $%  ::  initializes ourselves with an identity
-        ::
-        ::    TODO: Remove this once we single home.
-        ::
-        [%init our=@p]
-        ::  starts handling an inbound http request
-        ::
-        [%inbound-request secure=? =address =http-request]
-        ::  connects a binding to an app
-        ::
-        [%connect =binding app=term]
-        ::  connects a binding to a generator
-        ::
-        [%serve =binding generator=[=desk path=(list @t)] arguments=*]
-        ::  disconnects a binding
-        ::
-        ::    This must be called with the same duct that made the binding in
-        ::    the first place.
-        ::
-        [%disconnect =binding]
-    ==
-  --
-::
-+|  %bindings
-::  +binding: A rule to match a path.
-::
-::    A +binding is a system unique mapping for a path to match. A +binding
-::    must be system unique because we don't want two handlers for a path;
-::    what happens if there are two different actions for [~ /]?
-::
-+$  binding
-  $:  ::  site: the site to match.
-      ::
-      ::    A ~ will match the Urbit's identity site (your.urbit.org). Any
-      ::    other value will match a domain literal.
-      ::
-      site=(unit @t)
-      ::  path: matches this prefix path
-      ::
-      ::    /~myapp will match /~myapp or /~myapp/longer/path
-      ::
-      path=(list @t)
-  ==
-::
-+|  %http
-::  +header-list: an ordered list of http headers
-::
-+$  header-list
-  (list [key=@t value=@t])
-::  +http-method: exhaustive list of http verbs
-::
-+$  http-method
-  $?  _'CONNECT'
-      _'DELETE'
-      _'GET'
-      _'HEAD'
-      _'OPTIONS'
-      _'POST'
-      _'PUT'
-      _'TRACE'
-  ==
-::  +http-request: a single http-request
-::
-+$  http-request
-  $:  ::  http-method:
-      ::
-      method=http-method
-      ::  url: the url requested
-      ::
-      ::    The url is not escaped. There is no escape.
-      ::
-      url=@t
-      ::  header-list: headers to pass with this request
-      ::
-      =header-list
-      ::  body: optionally, data to send with this request
-      ::
-      body=(unit octs)
-  ==
-::  +raw-http-response: http-response to sent to earth
-::
-::    Urbit treats Earth's HTTP servers as pipes, where Urbit sends one or
-::    more %http-response replies on the wire. The first of these will
-::    always be a %start or an %error, and the last will always be %error
-::    or will have :complete set to %.y to finish the connection.
-::
-::    Calculation of control headers such as 'Content-Length' or
-::    'Transfer-Encoding' should be performed at a higher level; this structure
-::    is merely for what gets sent to Earth.
-::
-+$  raw-http-response
-  $%  ::  %start: the first packet in a response
-      ::
-      $:  %start
-          ::  status: http status code
-          ::
-          status-code=@ud
-          ::  headers: http headers
-          ::
-          headers=header-list
-          ::  data: data to pass to the pipe
-          ::
-          data=(unit octs)
-          ::  whether this completes the request
-          ::
-          complete=?
-      ==
-      ::  %continue: every subsequent packet
-      ::
-      $:  %continue
-          ::  data: data to pass to the pipe
-          ::
-          data=(unit octs)
-          ::  complete: whether this completes the request
-          ::
-          complete=?
-      ==
-      ::  %cancel: whether the connection should terminate unsuccessfully
-      ::
-      [%cancel ~]
-  ==
-::  +address: client IP address
-::
-+$  address
-  $%  [%ipv4 @if]
-      [%ipv6 @is]
-      ::  [%ames @p]
-  ==
---
 ::  internal data structures that won't go in zuse
 ::
 |%
@@ -740,6 +592,7 @@
   =/  task=task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
+    ~|  [%call p.wrapped-task]
     ((hard task:able) p.wrapped-task)
   ::
   ?-    -.task
@@ -753,6 +606,22 @@
     =.  bindings.server-state.ax
       :~  [[~ /~/login] duct [%login-handler ~]]
       ==
+    [~ light-gate]
+      ::  %born: new unix process
+      ::
+      %born
+    ::
+    ~&  [%todo-handle-born p.task]
+    ::  hand back a default configuration for now
+    ::
+    [[duct %give %form *http-config]~ light-gate]
+  ::
+      ::  %live: no idea what this is for
+      ::
+      %live
+    ::
+    ~&  [%todo-live p.task q.task]
+    ::
     [~ light-gate]
   ::
       ::  %inbound-request: handles an inbound http request
@@ -813,4 +682,20 @@
   --
 ::
 ++  light-gate  ..$
+::  +load: migrate old state to new state (called on vane reload)
+::
+++  load
+  |=  old=axle
+  ^+  ..^$
+  ::
+  ~!  %loading
+  ..^$(ax old)
+::  +stay: produce current state
+::
+++  stay  `axle`ax
+::  +scry: request a path in the urbit namespace
+::
+++  scry
+  |=  *
+  [~ ~]
 --

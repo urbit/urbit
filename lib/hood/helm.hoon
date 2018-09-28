@@ -180,6 +180,7 @@
         [%e /vane/eyre]
         [%f /vane/ford]
         [%g /vane/gall]
+        [%l /vane/light]
         [%j /vane/jael]
     ==
   |=  {p/@tas q/path}
@@ -206,6 +207,7 @@
         [%e %eyre]
         [%f %ford]
         [%g %gall]
+        [%l %light]
         [%j %jael]
     ==
   |=  {p/@tas q/@tas}

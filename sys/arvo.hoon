@@ -173,6 +173,7 @@
     ++  slur-e  ~/(%slur-e |=({gat/vase hil/mill} =+(%e (slur gat hil))))
     ++  slur-f  ~/(%slur-f |=({gat/vase hil/mill} =+(%f (slur gat hil))))
     ++  slur-g  ~/(%slur-g |=({gat/vase hil/mill} =+(%g (slur gat hil))))
+    ++  slur-l  ~/(%slur-l |=({gat/vase hil/mill} =+(%l (slur gat hil))))
     ++  slur-j  ~/(%slur-j |=({gat/vase hil/mill} =+(%j (slur gat hil))))
     ++  slur-z  ~/(%slur-z |=({gat/vase hil/mill} =+(%z (slur gat hil))))
     ::
@@ -187,6 +188,7 @@
         $e  (slur-e gat hil)
         $f  (slur-f gat hil)
         $g  (slur-g gat hil)
+        $l  (slur-l gat hil)
         $j  (slur-j gat hil)
       ==
     ::
@@ -379,7 +381,7 @@
       {@ $newt *}  %a
       {@ $sync *}  %c
       {@ $term *}  %d
-      {@ $http *}  %e
+      {@ $http *}  %l
       {@ $behn *}  %b
     ==
   ::
