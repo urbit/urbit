@@ -1437,7 +1437,7 @@
           :_  pok(q t.but)
           ?+  i.but  (slav %p i.but)
             $anon  anon
-            $own   (fall (ship-from-cookies maf) our)
+            $own   our
           ==
         ::
             $on
@@ -1855,12 +1855,12 @@
       (pass-note:abet [%of ire (gsig a)] b)
     ::
     ++  init
-      =.  die  (add ~d1 now)
+      =.  die  (add ~h2 now)
       abet(mow :_(mow [`/ %pass ow+/[ire] [%b %wait die]]))
     ::
     ++  refresh
       =.  mow  :_(mow [`/ %pass ow+/[ire] [%b %rest die]])
-      =.  die  (add ~d1 now)
+      =.  die  (add ~h2 now)
       done(mow :_(mow [`/ %pass ow+/[ire] [%b %wait die]]))
     ::
     ++  add-even
@@ -1916,7 +1916,9 @@
     ::
     ++  get-quit
       |=  a/whir-of  ^+  ..ix
-      (get-even [%quit [[(slav %p p.a) q.a] s.a]])
+      =/  doc=dock  [(slav %p p.a) q.a]
+      =.  sus  (~(del in sus) [doc %json s.a s.a])
+      (get-even [%quit [doc s.a]])
     ::
     ++  get-ack
       |=  {a/whir-of b/(unit {term tang})}  ^+  ..ix
