@@ -264,6 +264,7 @@ incdir = include_directories('include/')
 
 conf_data = configuration_data()
 conf_data.set('URBIT_VERSION', '"0.6.0"')
+conf_data.set('U3_MEMORY_DEBUG', get_option('gc'))
 
 osdet = build_machine.system()
 os_c_flags = ['-funsigned-char','-ffast-math']

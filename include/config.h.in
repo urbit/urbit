@@ -10,4 +10,6 @@
 #mesondefine U3_OS_ENDIAN_little
 #mesondefine U3_OS_ENDIAN_big
 
+#mesondefine U3_MEMORY_DEBUG
+
 #endif /*CONFIG_H*/
