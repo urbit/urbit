@@ -2861,6 +2861,7 @@ u3_http_ef_that(u3_noun tat)
   if ( c3n == u3_Host.ops_u.net ) {
     cli_u->ipf_w = INADDR_LOOPBACK;
     _proxy_ward_connect(cli_u);
+    u3z(tat);
     return;
   }
 
