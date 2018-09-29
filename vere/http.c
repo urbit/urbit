@@ -1383,7 +1383,8 @@ _http_serv_start_all(void)
 
   c3_assert( 0 != for_u );
 
-  u3_lo_open();
+  // disabled, as this causes a memory leak
+  // u3_lo_open();
 
   // if the SSL_CTX existed, it'll be freed with the servers
   u3_Host.tls_u = 0;
@@ -1444,7 +1445,8 @@ _http_serv_start_all(void)
   _http_write_ports_file(u3_Host.dir_c);
   _http_form_free();
 
-  u3_lo_shut(c3y);
+  // disabled, see above
+  // u3_lo_shut(c3y);
 }
 
 /* _http_serv_restart(): gracefully shutdown, then start servers.
