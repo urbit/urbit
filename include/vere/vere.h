@@ -16,7 +16,6 @@
 
   /** Data types.
   **/
-    struct _u3_http;
 
     /* u3_hhed: http header.
     */
@@ -50,8 +49,10 @@
         h2o_req_t*       rec_u;             //  h2o request
         c3_w             seq_l;             //  sequence within connection
         u3_rsat          sat_e;             //  request state
+        uv_timer_t*      tim_u;             //  timeout
         struct _u3_hcon* hon_u;             //  connection backlink
         struct _u3_hreq* nex_u;             //  next in connection's list
+        struct _u3_hreq* pre_u;             //  next in connection's list
       } u3_hreq;
 
     /* u3_hcon: incoming http connection.
@@ -66,25 +67,112 @@
         struct _u3_http* htp_u;             //  server backlink
         struct _u3_hreq* req_u;             //  request list
         struct _u3_hcon* nex_u;             //  next in server's list
+        struct _u3_hcon* pre_u;             //  next in server's list
       } u3_hcon;
 
     /* u3_http: http server.
     */
       typedef struct _u3_http {
         uv_tcp_t         wax_u;             //  server stream handler
-        h2o_globalconf_t* fig_u;            //  h2o global config
-        h2o_context_t*   ctx_u;             //  h2o ctx
-        h2o_accept_ctx_t* cep_u;            //  h2o accept ctx (wat for?)
-        h2o_hostconf_t*  hos_u;             //  h2o host config
-        h2o_handler_t*   han_u;             //  h2o request handler
+        void*            h2o_u;             //  libh2o configuration
+        struct _u3_prox* rox_u;             //  maybe proxied
         c3_w             sev_l;             //  server number
         c3_w             coq_l;             //  next connection number
-        c3_w             por_w;             //  running port
+        c3_s             por_s;             //  running port
         c3_o             sec;               //  logically secure
         c3_o             lop;               //  loopback-only
+        c3_o             liv;               //  c3n == shutdown
         struct _u3_hcon* hon_u;             //  connection list
         struct _u3_http* nex_u;             //  next in list
       } u3_http;
+
+    /* u3_form: http config from %eyre
+    */
+      typedef struct _u3_form {
+        c3_o             pro;               //  proxy
+        c3_o             log;               //  keep access log
+        c3_o             red;               //  redirect to HTTPS
+        uv_buf_t         key_u;             //  PEM RSA private key
+        uv_buf_t         cer_u;             //  PEM certificate chain
+      } u3_form;
+
+    /* u3_hfig: general http configuration
+    */
+      typedef struct _u3_hfig {
+        u3_form*         for_u;             //  config from %eyre
+        struct _u3_warc* cli_u;             //  rev proxy clients
+        struct _u3_pcon* con_u;             //  cli_u connections
+      } u3_hfig;
+
+    /* u3_proxy_type: proxy connection downstream type
+    */
+      typedef enum {
+        u3_ptyp_prox = 0,                   //  connected to us
+        u3_ptyp_ward = 1                    //  we connected back to
+      } u3_proxy_type;
+
+    /* u3_pcon: established proxy connection
+    */
+      typedef struct _u3_pcon {
+        uv_tcp_t         don_u;             //  downstream handle
+        uv_tcp_t*        upt_u;             //  upstream handle
+        uv_buf_t         buf_u;             //  pending buffer
+        c3_o             sec;               //  yes == https
+        u3_proxy_type    typ_e;             //  tagged
+        union {                             //  union
+          struct _u3_warc* cli_u;           //  typ_e == ward
+          struct _u3_prox* lis_u;           //  typ_e == prox
+        } src_u;                            //  connection source
+        struct _u3_pcon* nex_u;             //  next in list
+        struct _u3_pcon* pre_u;             //  previous in list
+      } u3_pcon;
+
+    /* u3_warc: server connecting back to u3_ward as client
+    */
+      typedef struct _u3_warc {
+        c3_w             ipf_w;             //  ward ip
+        c3_s             por_s;             //  ward port
+        c3_o             sec;               //  secure connection
+        u3_atom          sip;               //  ward ship
+        c3_c*            hot_c;             //  ward hostname
+        uv_buf_t         non_u;             //  nonce
+        struct _u3_http* htp_u;             //  local server backlink
+        struct _u3_warc* nex_u;             //  next in list
+        struct _u3_warc* pre_u;             //  previous in list
+      } u3_warc;
+
+    /* u3_wcon: candidate u3_ward upstream connection
+    */
+      typedef struct _u3_wcon {
+        uv_tcp_t         upt_u;             //  connection handle
+        struct _u3_ward* rev_u;             //  connecting to ward
+        struct _u3_wcon* nex_u;             //  next in list
+      } u3_wcon;
+
+    /* u3_ward: reverse, reverse TCP proxy (ship-specific listener)
+    */
+      typedef struct _u3_ward {
+        uv_tcp_t         tcp_u;             //  listener handle
+        uv_timer_t       tim_u;             //  expiration timer
+        u3_atom          sip;               //  reverse proxy for ship
+        c3_s             por_s;             //  listening on port
+        uv_buf_t         non_u;             //  nonce
+        struct _u3_wcon* won_u;             //  candidate upstream connections
+        struct _u3_pcon* con_u;             //  initiating connection
+        struct _u3_ward* nex_u;             //  next in list
+        struct _u3_ward* pre_u;             //  previous in list
+      } u3_ward;
+
+    /* u3_prox: reverse TCP proxy server
+    */
+      typedef struct _u3_prox {
+        uv_tcp_t         sev_u;             //  server handle
+        c3_s             por_s;             //  listening on port
+        c3_o             sec;               //  yes == https
+        struct _u3_http* htp_u;             //  local server backlink
+        struct _u3_pcon* con_u;             //  active connection list
+        struct _u3_ward* rev_u;             //  active reverse listeners
+      } u3_prox;
 
     /* u3_csat: client connection state.
     */
@@ -146,15 +234,17 @@
         void*            tls_u;             //  client SSL_CTX*
       } u3_cttp;
 
-    /* u3_apac: ames packet, coming or going.
+    /* u3_pact: ames packet, coming or going.
     */
-      typedef struct _u3_apac {
-        struct _u3_apac* nex_u;             //  next in queue
-        c3_w             pip_w;             //  IPv4 address, to
-        c3_s             por_s;             //  IPv4 port, to
+      typedef struct _u3_pact {
+        uv_udp_send_t    snd_u;             //  udp send request
+        c3_w             pip_w;             //  target IPv4 address
+        c3_s             por_s;             //  target port
         c3_w             len_w;             //  length in bytes
-        c3_y             hun_y[0];          //  data
-      } u3_apac;
+        c3_y*            hun_y;             //  packet buffer
+        c3_y             imp_y;             //  galaxy number (optional)
+        c3_c*            dns_c;             //  galaxy fqdn (optional)
+      } u3_pact;
 
     /* u3_ames: ames networking.
     */
@@ -527,6 +617,7 @@
         c3_c*      dir_c;                   //  pier path (no trailing /)
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
+        u3_hfig    fig_u;                   //  http configuration
         u3_http*   htp_u;                   //  http servers
         u3_cttp    ctp_u;                   //  http clients
         u3_utel    tel_u;                   //  telnet listener
@@ -971,6 +1062,16 @@
 
     /**  HTTP server.
     **/
+      /* u3_http_ef_form: send %from effect to http.
+      */
+        void
+        u3_http_ef_form(u3_noun fig);
+
+      /* u3_http_ef_that: send %that effect to http.
+      */
+        void
+        u3_http_ef_that(u3_noun tat);
+
       /* u3_http_ef_thou(): send %thou effect to http.
       */
         void

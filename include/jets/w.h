@@ -156,11 +156,16 @@
 
     u3_noun u3we_hmac(u3_noun);
 
+
     u3_noun u3we_argon2(u3_noun);
 
     u3_noun u3we_blake(u3_noun);
 
     u3_noun u3we_ripe(u3_noun);
+
+    u3_noun u3we_make(u3_noun);
+    u3_noun u3we_sign(u3_noun);
+    u3_noun u3we_reco(u3_noun);
 
     u3_noun u3we_bend_fun(u3_noun);
     u3_noun u3we_cold_fun(u3_noun);
@@ -244,7 +249,7 @@
     u3_noun u3wf_flor(u3_noun);
     u3_noun u3wf_forq(u3_noun);
     u3_noun u3wf_fork(u3_noun);
-    u3_noun u3wf_help(u3_noun);
+    u3_noun u3wf_hint(u3_noun);
     u3_noun u3wf_hike(u3_noun);
     u3_noun u3wf_look(u3_noun);
     u3_noun u3wf_loot(u3_noun);

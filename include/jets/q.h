@@ -139,6 +139,7 @@
     u3_noun u3qe_hmac(u3_noun, u3_atom, u3_atom,
                       u3_atom, u3_atom, u3_atom, u3_atom);
 
+
     u3_noun u3qe_argon2(u3_atom, u3_atom, u3_atom,
                         u3_atom, u3_atom, u3_atom,
                         u3_atom, u3_atom, u3_atom, u3_atom,
@@ -147,6 +148,10 @@
     u3_noun u3qe_blake(u3_atom msg, u3_atom key, u3_atom out);
 
     u3_noun u3qe_ripe(u3_atom byts);
+
+    u3_noun u3qe_make(u3_atom has, u3_atom prv);
+    u3_noun u3qe_reco(u3_atom has, u3_atom sig_v, u3_atom sig_r, u3_atom sig_s);
+    u3_noun u3qe_sign(u3_atom has, u3_atom prv);
 
     u3_noun u3qeo_raw(u3_atom, u3_atom);
 
@@ -219,7 +224,7 @@
     u3_noun u3qf_forq(u3_noun, u3_noun);
     u3_noun u3qf_fork(u3_noun);
     u3_noun u3qf_grof(u3_noun);
-    u3_noun u3qf_help(u3_noun, u3_noun);
+    u3_noun u3qf_hint(u3_noun, u3_noun);
     u3_noun u3qf_hike(u3_noun, u3_noun);
     u3_noun u3qf_look(u3_noun, u3_noun);
     u3_noun u3qf_loot(u3_noun, u3_noun);
@@ -229,9 +234,11 @@
     u3_noun u3qfl_bunt(u3_noun, u3_noun); 
     u3_noun u3qfl_whip(u3_noun, u3_noun, u3_noun);
 
+    u3_noun u3qfr_fish(u3_noun, u3_noun, u3_noun, u3_noun);
+
     u3_noun u3qfp_hack(u3_noun, u3_noun);
     u3_noun u3qfp_late(u3_noun);
-    u3_noun u3qfp_open(u3_noun, u3_noun);
+    u3_noun u3qfp_open(u3_noun, u3_noun, u3_noun);
     u3_noun u3qfp_nepo(u3_noun, u3_noun);
     u3_noun u3qfp_rake(u3_noun);
 
@@ -253,6 +260,7 @@
     u3_noun u3qfu_dunq(u3_noun, const c3_c*, u3_noun);
     void    u3qfu_dump(u3_noun, const c3_c*, u3_noun);
     u3_noun u3qfu_fond(u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qfu_find(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_finc(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_fink(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_fire(u3_noun, u3_noun, u3_noun);
@@ -297,7 +305,7 @@
     u3_noun u3qz_forq(u3_noun, u3_noun);
     u3_noun u3qz_fork(u3_noun);
     u3_noun u3qz_grof(u3_noun);
-    u3_noun u3qz_help(u3_noun, u3_noun);
+    u3_noun u3qz_hint(u3_noun, u3_noun);
     u3_noun u3qz_hike(u3_noun, u3_noun);
     u3_noun u3qz_look(u3_noun, u3_noun);
     u3_noun u3qz_loot(u3_noun, u3_noun);
@@ -307,11 +315,14 @@
     u3_noun u3qzl_bunt(u3_noun, u3_noun); 
     u3_noun u3qzl_whip(u3_noun, u3_noun, u3_noun);
 
+    u3_noun u3qzr_fish(u3_noun, u3_noun, u3_noun, u3_noun);
+
     u3_noun u3qzp_hack(u3_noun, u3_noun);
     u3_noun u3qzp_late(u3_noun);
-    u3_noun u3qzp_open(u3_noun, u3_noun);
-    u3_noun u3qzp_nepo(u3_noun, u3_noun);
+    u3_noun u3qzp_open(u3_noun, u3_noun, u3_noun);
     u3_noun u3qzp_rake(u3_noun);
+
+    void u3qf_test(const c3_c*, u3_noun);
 
 #   define u3qzu_van_fan  28
 #   define u3qzu_van_rib  58
@@ -331,6 +342,7 @@
     u3_noun u3qzu_dunq(u3_noun, const c3_c*, u3_noun);
     void    u3qzu_dump(u3_noun, const c3_c*, u3_noun);
     u3_noun u3qzu_fond(u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qzu_find(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qzu_finc(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qzu_fink(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qzu_fire(u3_noun, u3_noun, u3_noun);

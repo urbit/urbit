@@ -187,6 +187,7 @@ _cm_signal_reset(void)
   u3R->kid_p = 0;
 }
 
+#if 0
 /* _cm_stack_recover(): recover stack trace, with lacunae.
 */
 static u3_noun
@@ -226,6 +227,25 @@ _cm_stack_recover(u3a_road* rod_u)
       return u3kb_weld(beg, fin);
     }
   }
+}
+#endif
+
+/* _cm_stack_unwind(): unwind to the top level, preserving all frames.
+*/
+static u3_noun
+_cm_stack_unwind(void)
+{
+  u3_noun tax;
+
+  while ( u3R != &(u3H->rod_u) ) {
+    u3_noun yat = u3m_love(u3R->bug.tax);
+
+    u3R->bug.tax = u3kb_weld(yat, u3R->bug.tax);
+  }
+  tax = u3R->bug.tax;
+
+  u3R->bug.tax = 0;
+  return tax;
 }
 
 /* _cm_signal_recover(): recover from a deep signal, after longjmp.  Free arg.
@@ -268,6 +288,7 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
     //
     _cm_emergency("recover: dig", sig_l);
 
+#if 0
     //  Descend to the innermost trace, collecting stack.
     //
     {
@@ -285,7 +306,9 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
         rod_u = u3to(u3_road, rod_u->kid_p);
       }
     }
-
+#else
+    tax = _cm_stack_unwind();
+#endif
     pro = u3nt(3, sig_l, tax);
     _cm_signal_reset();
 
