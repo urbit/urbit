@@ -124,6 +124,19 @@ static u3j_core _141_hex_coed_d[] =
       {}
     };
 
+  static u3j_harm _141_hex_blake2b_a[] = {{".2", u3we_blake, c3y}, {}};
+
+  static u3j_core _141_hex_blake_d[] =
+    { { "blake2b",  _141_hex_blake2b_a },
+      {}
+    };
+
+  static u3j_harm _141_hex_ripemd_160_a[] = {{".2", u3we_ripe, c3y}, {}};
+
+  static u3j_core _141_hex_ripe_d[] =
+    { { "ripemd160",  _141_hex_ripemd_160_a },
+      {}
+    };
 
 
 static u3j_core _141_hex_d[] =
@@ -135,6 +148,8 @@ static u3j_core _141_hex_d[] =
     { "aes", 0, _141_hex_aes_d },
     { "hmac", 0, _141_hex_hmac_d },
     { "argon", 0, _141_hex_argon_d },
+    { "blake2b", 0, _141_hex_blake_d },
+    { "ripemd", 0, _141_hex_ripe_d },
     { "secp", 0, _141_hex_secp_d },
     {}
   };

@@ -145,10 +145,13 @@
                         u3_atom, u3_atom, u3_atom, u3_atom,
                         u3_atom, u3_atom, u3_atom, u3_atom);
 
+    u3_noun u3qe_blake(u3_atom msg, u3_atom key, u3_atom out);
+
+    u3_noun u3qe_ripe(u3_atom byts);
+
     u3_noun u3qe_make(u3_atom has, u3_atom prv);
     u3_noun u3qe_reco(u3_atom has, u3_atom sig_v, u3_atom sig_r, u3_atom sig_s);
     u3_noun u3qe_sign(u3_atom has, u3_atom prv);
-
 
     u3_noun u3qeo_raw(u3_atom, u3_atom);
 
