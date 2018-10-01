@@ -201,7 +201,7 @@
     ^-  [(list move) server-state]
     ~&  [%request secure address http-request]
     ::
-    =+  host=(get-header 'Host' header-list.http-request)
+    =+  host=(get-header 'host' header-list.http-request)
     =+  action=(get-action-for-binding host url.http-request)
     ::  if no action matches, send the built in 404 page.
     ::
@@ -253,10 +253,10 @@
     :*  %http-response  %start
         status-code=code
         ^=  headers
-          :~  ['Content-Type' content-type]
+          :~  ['content-type' content-type]
               ::  todo: how do I print a number? +scot adds '.' for hoon style.
               ::
-              ::  ['Content-Length' p.data]
+              ::  ['content-length' p.data]
           ==
         data=[~ data]
         complete=%.y
@@ -333,8 +333,8 @@
       :*  %http-response  %start
           status-code=307
           ^=  headers
-            :~  ['Location' new-location]
-                ['Set-Cookie' cookie-line]
+            :~  ['location' new-location]
+                ['set-cookie' cookie-line]
             ==
           data=~
           complete=%.y
@@ -352,7 +352,7 @@
       ::    TODO: In HTTP2, the client is allowed to put multiple 'Cookie'
       ::    headers.
       ::
-      ?~  cookie-header=(get-header 'Cookie' header-list.http-request)
+      ?~  cookie-header=(get-header 'cookie' header-list.http-request)
         %.n
       ::  is the cookie line is valid?
       ::
@@ -530,6 +530,8 @@
       ::  TODO: Check IP addresses. I can't just check the
       ::  `\d{0-3}\.\d{0-3}...` regex here.
       ::
+      ::  TODO: Check for localhost
+      ::
       ::  render our as a tape, and cut off the sig in front.
       ::
       =/  with-sig=tape  (scow %p our)
@@ -593,6 +595,7 @@
   =/  task=task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
+    ~|  [%p-wrapped-task p.wrapped-task]
     ((hard task:able) p.wrapped-task)
   ::
   ?-    -.task

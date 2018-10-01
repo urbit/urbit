@@ -185,7 +185,7 @@
                 %http-response
                 %start
                 404
-                ['Content-Type' 'text/html']~
+                ['content-type' 'text/html']~
                 [~ (file-not-found-page:light-gate '/')]
                 complete=%.y
         ==  ==
@@ -265,11 +265,11 @@
             ^-  (hypo sign:light-gate)  :-  *type
             :+  %g  %response
             ^-  raw-http-response:light-gate
-            [%start 200 ['Content-Type' 'text/html']~ [~ (as-octs:mimes:html 'Hiya!')] %.y]
+            [%start 200 ['content-type' 'text/html']~ [~ (as-octs:mimes:html 'Hiya!')] %.y]
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %http-response
-                [%start 200 ['Content-Type' 'text/html']~ `[5 'Hiya!'] %.y]
+                [%start 200 ['content-type' 'text/html']~ `[5 'Hiya!'] %.y]
     ==  ==  ==
   ::
   ;:  weld
@@ -348,11 +348,11 @@
             ^-  (hypo sign:light-gate)  :-  *type
             :+  %g  %response
             ^-  raw-http-response:light-gate
-            [%start 200 ['Content-Type' 'text/html']~ [~ (as-octs:mimes:html 'Hi')] %.n]
+            [%start 200 ['content-type' 'text/html']~ [~ (as-octs:mimes:html 'Hi')] %.n]
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %http-response
-                [%start 200 ['Content-Type' 'text/html']~ `[2 'Hi'] %.n]
+                [%start 200 ['content-type' 'text/html']~ `[2 'Hi'] %.n]
     ==  ==  ==
   ::  theoretical outside response
   ::
@@ -452,11 +452,11 @@
             ^-  (hypo sign:light-gate)  :-  *type
             :+  %g  %response
             ^-  raw-http-response:light-gate
-            [%start 307 ['Location' '/~/login?redirect=/~landscape/inner-path']~ ~ %.y]
+            [%start 307 ['location' '/~/login?redirect=/~landscape/inner-path']~ ~ %.y]
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %http-response
-                [%start 307 ['Location' '/~/login?redirect=/~landscape/inner-path']~ ~ %.y]
+                [%start 307 ['location' '/~/login?redirect=/~landscape/inner-path']~ ~ %.y]
     ==  ==  ==
   ::  the browser then fetches the login page
   ::
@@ -479,7 +479,7 @@
                 %http-response
                 %start
                 200
-                ['Content-Type' 'text/html']~
+                ['content-type' 'text/html']~
                 [~ (login-page:light-gate `'/~landscape/inner-path')]
                 complete=%.y
         ==  ==
@@ -510,8 +510,8 @@
                 %http-response
                 %start
                 307
-                :~  ['Location' '/~landscape']
-                    :-  'Set-Cookie'
+                :~  ['location' '/~landscape']
+                    :-  'set-cookie'
                     'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Max-Age: 86400'
                 ==
                 ~
@@ -533,7 +533,7 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~landscape/inner-path'
-            ['Cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
             ~
         ==
       ^=  comparator
