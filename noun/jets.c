@@ -104,6 +104,10 @@ c3_w* u3qe_jam_buf(u3_noun, c3_w* bit_w);
 static u3_noun
 _cj_bash(u3_noun bat)
 {
+  if ( u3C.wag_w & u3o_hashless ) {
+    return u3_nul;
+  }
+
   u3_weak pro;
   u3a_road* rod_u = u3R;
   while ( 1 ) {
@@ -648,16 +652,19 @@ _cj_spot(u3_noun cor, u3_weak* bas)
     if ( u3_none == *bas ) {
       *bas = _cj_bash(u3h(cor));
     }
-    u3_weak act = _cj_spot_hot(cor, *bas, &loc);
-    if ( u3_none != act ) {
-      reg = _cj_gust(reg, _cj_loc_axe(loc), _cj_loc_pel(loc), u3k(loc));
-      u3h_put(u3R->jed.cod_p, u3h(cor), u3nc(u3k(*bas), u3k(reg)));
-      /* caution: could overwrites old value, debug batteries etc.
-      **          old value contains old _cj_jit (from different
-      **          battery). if we change jit to (map battery *),
-      **          will need to merge with that map here.
-      */
-      u3h_put(u3R->jed.war_p, loc, act);
+
+    if ( !(u3C.wag_w & u3o_hashless) ) {
+      u3_weak act = _cj_spot_hot(cor, *bas, &loc);
+      if ( u3_none != act ) {
+        reg = _cj_gust(reg, _cj_loc_axe(loc), _cj_loc_pel(loc), u3k(loc));
+        u3h_put(u3R->jed.cod_p, u3h(cor), u3nc(u3k(*bas), u3k(reg)));
+        /* caution: could overwrites old value, debug batteries etc.
+        **          old value contains old _cj_jit (from different
+        **          battery). if we change jit to (map battery *),
+        **          will need to merge with that map here.
+        */
+        u3h_put(u3R->jed.war_p, loc, act);
+      }
     }
   }
   if ( u3_none != bak ) {
@@ -1774,22 +1781,26 @@ _cj_mine(u3_noun cey, u3_noun cor, u3_noun bas)
     u3m_p("new jet", bal);
     fprintf(stderr, "  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
 #endif
-    if ( jax_l ) {
-      c3_y dig_y[32];
-      c3_w i_w;
-      u3_noun i = bal;
-      fprintf(stderr, "hot jet: ");
-      while ( i != u3_nul ) {
-        _cj_print_tas(stderr, u3h(i));
-        i = u3t(i);
+
+    if ( !(u3C.wag_w & u3o_hashless) ) {
+      if ( jax_l ) {
+        c3_y dig_y[32];
+        c3_w i_w;
+        u3_noun i = bal;
+        fprintf(stderr, "hot jet: ");
+        while ( i != u3_nul ) {
+          _cj_print_tas(stderr, u3h(i));
+          i = u3t(i);
+        }
+        fprintf(stderr, "\r\n  axe %d, jax %d,\r\n  bash ", axe, jax_l);
+        u3r_bytes(0, 32, dig_y, bas);
+        for ( i_w = 32; i_w > 0; ) {
+          fprintf(stderr, "%02x", dig_y[--i_w]);
+        }
+        fprintf(stderr, "\r\n");
       }
-      fprintf(stderr, "\r\n  axe %d, jax %d,\r\n  bash ", axe, jax_l);
-      u3r_bytes(0, 32, dig_y, bas);
-      for ( i_w = 32; i_w > 0; ) {
-        fprintf(stderr, "%02x", dig_y[--i_w]);
-      }
-      fprintf(stderr, "\r\n");
     }
+
     hap   = _cj_warm_hump(jax_l, u3t(u3t(loc)));
     act   = u3nq(jax_l, hap, bal, _cj_jit(jax_l, bat));
     u3h_put(u3R->jed.cod_p, bat, u3nc(u3k(bas), reg));

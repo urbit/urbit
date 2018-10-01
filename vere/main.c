@@ -81,6 +81,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.fog = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
+  u3_Host.ops_u.has = c3n;
   u3_Host.ops_u.net = c3n;
   u3_Host.ops_u.mem = c3n;
   u3_Host.ops_u.nuu = c3n;
@@ -91,7 +92,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:A:H:I:w:u:t:f:k:l:n:p:r:NabcdgqsvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:A:H:I:w:u:t:f:k:l:n:p:r:NabcdgqsvxFMPDXRS")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -186,6 +187,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'q': { u3_Host.ops_u.qui = c3y; break; }
       case 'v': { u3_Host.ops_u.veb = c3y; break; }
       case 's': { u3_Host.ops_u.git = c3y; break; }
+      case 'S': { u3_Host.ops_u.has = c3y; break; }
       case '?': default: {
         return c3n;
       }
@@ -595,6 +597,12 @@ main(c3_i   argc,
       */
       if ( _(u3_Host.ops_u.dry) ) {
         u3C.wag_w |= u3o_dryrun;
+      }
+
+      /*  Set hashboard flag
+      */
+      if ( _(u3_Host.ops_u.has) ) {
+        u3C.wag_w |= u3o_hashless;
       }
     }
     u3m_boot(u3_Host.ops_u.nuu,
