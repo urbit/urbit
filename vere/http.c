@@ -46,14 +46,14 @@ static const c3_i TCP_BACKLOG = 16;
 static u3_weak
 _http_vec_to_meth(h2o_iovec_t vec_u)
 {
-  return ( 0 == strncmp(vec_u.base, "GET",     vec_u.len) ) ? c3__get  :
-         ( 0 == strncmp(vec_u.base, "PUT",     vec_u.len) ) ? c3__put  :
-         ( 0 == strncmp(vec_u.base, "POST",    vec_u.len) ) ? c3__post :
-         ( 0 == strncmp(vec_u.base, "HEAD",    vec_u.len) ) ? c3__head :
-         ( 0 == strncmp(vec_u.base, "CONNECT", vec_u.len) ) ? c3__conn :
-         ( 0 == strncmp(vec_u.base, "DELETE",  vec_u.len) ) ? c3__delt :
-         ( 0 == strncmp(vec_u.base, "OPTIONS", vec_u.len) ) ? c3__opts :
-         ( 0 == strncmp(vec_u.base, "TRACE",   vec_u.len) ) ? c3__trac :
+  return ( 0 == strncmp(vec_u.base, "GET",     vec_u.len) ) ? u3i_string("GET") :
+         ( 0 == strncmp(vec_u.base, "PUT",     vec_u.len) ) ? u3i_string("PUT")  :
+         ( 0 == strncmp(vec_u.base, "POST",    vec_u.len) ) ? u3i_string("POST") :
+         ( 0 == strncmp(vec_u.base, "HEAD",    vec_u.len) ) ? u3i_string("HEAD") :
+         ( 0 == strncmp(vec_u.base, "CONNECT", vec_u.len) ) ? u3i_string("CONNECT") :
+         ( 0 == strncmp(vec_u.base, "DELETE",  vec_u.len) ) ? u3i_string("DELETE") :
+         ( 0 == strncmp(vec_u.base, "OPTIONS", vec_u.len) ) ? u3i_string("OPTIONS") :
+         ( 0 == strncmp(vec_u.base, "TRACE",   vec_u.len) ) ? u3i_string("TRACE") :
          // TODO ??
          // ( 0 == strncmp(vec_u.base, "PATCH",   vec_u.len) ) ? c3__patc :
          u3_none;
@@ -322,11 +322,12 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
   req_u->sat_e = u3_rsat_plan;
 
   u3_noun pox = _http_req_to_duct(req_u);
-  u3_noun typ = _(req_u->hon_u->htp_u->lop) ? c3__chis : c3__this;
+  u3_noun typ = u3i_string("inbound-request");
+      //_(req_u->hon_u->htp_u->lop) ? c3__chis : c3__this;
 
   u3v_plan(pox, u3nq(typ,
                      req_u->hon_u->htp_u->sec,
-                     u3nc(c3y, u3i_words(1, &req_u->hon_u->ipf_w)),
+                     u3nc(c3__ipv4, u3i_words(1, &req_u->hon_u->ipf_w)),
                      req));
 }
 
@@ -402,6 +403,69 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
 
   u3z(sas); u3z(hed); u3z(bod);
 }
+
+/* _http_start_respond(): write a [%http-response %start ...] to h2o_req_t->res
+*/
+static void
+_http_start_respond(u3_hreq* req_u,
+                    u3_noun status,
+                    u3_noun headers,
+                    u3_noun data,
+                    u3_noun complete)
+{
+  if ( u3_rsat_plan != req_u->sat_e ) {
+    //uL(fprintf(uH, "duplicate response\n"));
+    return;
+  }
+
+  req_u->sat_e = u3_rsat_ripe;
+
+  uv_timer_stop(req_u->tim_u);
+
+  h2o_req_t* rec_u = req_u->rec_u;
+
+  rec_u->res.status = status;
+  rec_u->res.reason = (status < 200) ? "weird" :
+                      (status < 300) ? "ok" :
+                      (status < 400) ? "moved" :
+                      (status < 500) ? "missing" :
+                      "hosed";
+
+  u3_hhed* hed_u = _http_heds_from_noun(u3k(headers));
+
+  u3_hgen* gen_u = h2o_mem_alloc_shared(&rec_u->pool, sizeof(*gen_u),
+                                        _http_hgen_dispose);
+  gen_u->neg_u = (h2o_generator_t){0, 0};
+  gen_u->hed_u = hed_u;
+
+  while ( 0 != hed_u ) {
+    h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
+                          hed_u->nam_c, hed_u->nam_w, 0, 0,
+                          hed_u->val_c, hed_u->val_w);
+    hed_u = hed_u->nex_u;
+  }
+
+  gen_u->bod_u = _http_vec_from_octs(u3k(data));
+  rec_u->res.content_length = gen_u->bod_u.len;
+
+  h2o_start_response(rec_u, &gen_u->neg_u);
+  h2o_send(rec_u, &gen_u->bod_u, 1,
+           (c3y == complete ?
+            H2O_SEND_STATE_FINAL : H2O_SEND_STATE_IN_PROGRESS));
+
+  {
+    u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
+
+    if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
+      rec_u->http1_is_persistent = 0;
+    }
+  }
+
+  u3z(status); u3z(headers); u3z(data); u3z(complete);
+}
+
+
+
 
 /* _http_rec_to_httq(): convert h2o_req_t to httq
 */
@@ -1362,6 +1426,57 @@ u3_http_ef_thou(c3_l     sev_l,
     }
     else {
       _http_req_respond(req_u, u3k(p_rep), u3k(q_rep), u3k(r_rep));
+    }
+  }
+
+  u3z(rep);
+}
+
+/*  responds to an incoming %http-response from %light
+*/
+void
+u3_http_ef_http_response(c3_l    sev_l,
+                         c3_l    coq_l,
+                         c3_l    seq_l,
+                         u3_noun rep)
+{
+  u3_http* htp_u;
+  u3_hcon* hon_u;
+  u3_hreq* req_u;
+  c3_w bug_w = u3C.wag_w & u3o_verbose;
+
+  if ( !(htp_u = _http_serv_find(sev_l)) ) {
+    if ( bug_w ) {
+      uL(fprintf(uH, "http: server not found: %x\r\n", sev_l));
+    }
+  }
+  else if ( !(hon_u = _http_conn_find(htp_u, coq_l)) ) {
+    if ( bug_w ) {
+      uL(fprintf(uH, "http: connection not found: %x/%d\r\n", sev_l, coq_l));
+    }
+  }
+  else if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
+    if ( bug_w ) {
+      uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n",
+                     sev_l, coq_l, seq_l));
+    }
+  }
+  else {
+    if (c3y == u3r_sing(u3i_string("start"), u3k(u3h(rep)))) {
+      // Separate the %start message into its components.
+      u3_noun status, headers, data, complete;
+      if (c3y == u3r_qual(u3t(rep), &status, &headers, &data, &complete)) {
+        _http_start_respond(req_u, u3k(status), u3k(headers), u3k(data),
+                            u3k(complete));
+      } else {
+        uL(fprintf(uH, "http: strange %%start response\n"));
+      }
+    } else if (c3y == u3r_sing(u3i_string("continue"), u3k(u3h(rep)))) {
+      
+    } else if (c3y == u3r_sing(u3i_string("cancel"), u3k(u3h(rep)))) {
+
+    } else {
+      uL(fprintf(uH, "http: strange response\n"));
     }
   }
 

@@ -133,6 +133,13 @@ _reck_kick_http(u3_noun  pox,
   if ( c3n == u3du(fav) ) {
     u3z(pox); u3z(fav); return c3n;
   }
+  else if (c3y == u3r_sing(u3i_string("http-response"), u3k(u3h(fav)))) {
+    p_fav = u3t(fav);
+    u3_http_ef_http_response(sev_l, coq_l, seq_l, u3k(p_fav));
+
+    u3z(pox); u3z(fav);
+    return c3y;
+  }
   else switch ( u3h(fav) ) {
     default: u3z(pox); u3z(fav); return c3n;
 

@@ -568,6 +568,7 @@
 #   define c3__into   c3_s4('i','n','t','o')
 #   define c3__intr   c3_s4('i','n','t','r')
 #   define c3__inuk   c3_s4('i','n','u','k')
+#   define c3__ipv4   c3_s4('i','p','v','4')
 #   define c3__iron   c3_s4('i','r','o','n')
 #   define c3__is     c3_s2('i','s')
 #   define c3__item   c3_s4('i','t','e','m')
