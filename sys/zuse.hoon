@@ -2291,14 +2291,14 @@
   ::  +http-method: exhaustive list of http verbs
   ::
   +$  http-method
-    $?  _'CONNECT'
-        _'DELETE'
-        _'GET'
-        _'HEAD'
-        _'OPTIONS'
-        _'POST'
-        _'PUT'
-        _'TRACE'
+    $?  %'CONNECT'
+        %'DELETE'
+        %'GET'
+        %'HEAD'
+        %'OPTIONS'
+        %'POST'
+        %'PUT'
+        %'TRACE'
     ==
   ::  +http-request: a single http-request
   ::

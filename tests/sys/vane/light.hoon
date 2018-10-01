@@ -176,7 +176,7 @@
             %inbound-request
             %.n
             [%ipv4 .192.168.1.1]
-            ['GET' '/' ~ ~]
+            [%'GET' '/' ~ ~]
         ==
       ^=  expectec-moves
         ^-  (list move:light-gate)
@@ -228,7 +228,7 @@
             %inbound-request
             %.n
             [%ipv4 .192.168.1.1]
-            ['GET' '/' ~ ~]
+            [%'GET' '/' ~ ~]
         ==
       ^=  comparator
         |=  moves=(list move:light-gate)
@@ -249,7 +249,7 @@
           :+  /run-app/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
-                  !>([%.n %.n [%ipv4 .192.168.1.1] ['GET' '/' ~ ~]])
+                  !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
           card
     ==
@@ -311,7 +311,7 @@
             %inbound-request
             %.n
             [%ipv4 .192.168.1.1]
-            ['GET' '/' ~ ~]
+            [%'GET' '/' ~ ~]
         ==
       ^=  comparator
         |=  moves=(list move:light-gate)
@@ -332,7 +332,7 @@
           :+  /run-app/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
-                  !>([%.n %.n [%ipv4 .192.168.1.1] ['GET' '/' ~ ~]])
+                  !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
           card
     ==
@@ -415,7 +415,7 @@
             %inbound-request
             %.n
             [%ipv4 .192.168.1.1]
-            ['GET' '/~landscape/inner-path' ~ ~]
+            [%'GET' '/~landscape/inner-path' ~ ~]
         ==
       ^=  comparator
         |=  moves=(list move:light-gate)
@@ -436,7 +436,7 @@
           :+  /run-app/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
-                  !>([%.n %.n [%ipv4 .192.168.1.1] ['GET' '/~landscape/inner-path' ~ ~]])
+                  !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/~landscape/inner-path' ~ ~]])
               ==
           card
     ==
@@ -470,7 +470,7 @@
             %inbound-request
             %.n
             [%ipv4 .192.168.1.1]
-            ['GET' '/~/login?redirect=/~landscape/inner-path' ~ ~]
+            [%'GET' '/~/login?redirect=/~landscape/inner-path' ~ ~]
         ==
       ^=  expected-moves
         ^-  (list move:light-gate)
@@ -496,7 +496,7 @@
             %inbound-request
             %.n
             [%ipv4 .192.168.1.1]
-            'POST'
+            %'POST'
             '/~/login'
             ~
             :-  ~
@@ -531,7 +531,7 @@
             %inbound-request
             %.n
             [%ipv4 .192.168.1.1]
-            'GET'
+            %'GET'
             '/~landscape/inner-path'
             ['Cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
             ~

@@ -199,6 +199,7 @@
   ++  request
     |=  [secure=? =address =http-request]
     ^-  [(list move) server-state]
+    ~&  [%request secure address http-request]
     ::
     =+  host=(get-header 'Host' header-list.http-request)
     =+  action=(get-action-for-binding host url.http-request)
@@ -592,7 +593,6 @@
   =/  task=task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
-    ~|  [%call p.wrapped-task]
     ((hard task:able) p.wrapped-task)
   ::
   ?-    -.task
@@ -627,6 +627,10 @@
       ::  %inbound-request: handles an inbound http request
       ::
       %inbound-request
+    ::
+    ::  TODO: This is uncommit
+    ::
+    ~|  [%ship ship.ax]
     =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
     =/  request  request:(per-server-event event-args)
     =^  moves  server-state.ax
@@ -636,6 +640,7 @@
       ::  %connect / %serve
       ::
       ?(%connect %serve)
+    ~|  [%task task]
     =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
     =/  add-binding  add-binding:(per-server-event event-args)
     =^  moves  server-state.ax
