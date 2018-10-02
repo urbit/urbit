@@ -2,12 +2,6 @@
 **
 ** This file is in the public domain.
 */
-  /**  Options.
-  **/
-    /* U3_CPU_DEBUG: activate profiling.
-    */
-#     undef U3_CPU_DEBUG
-
   /** Data structures.
   **/
     /* u3t_trace: fast execution flags.

@@ -2,12 +2,6 @@
 **
 ** This file is in the public domain.
 */
-  /**  Options.
-  **/
-    /* U3_MEMORY_DEBUG: add debugging information to heap.  Breaks image.
-    */
-#     undef U3_MEMORY_DEBUG
-
   /**  Constants.
   **/
     /* u3a_bits: number of bits in word-addressed pointer.  29 == 2GB.

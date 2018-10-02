@@ -19,6 +19,8 @@
 #       define u3x_sam_7  27
 #       define u3x_sam_14 54
 #       define u3x_sam_15 55
+#       define u3x_sam_30 110
+#       define u3x_sam_31 111
 #     define u3x_con      7       //  context
 #     define u3x_con_2    14      //  context
 #     define u3x_con_3    15      //  context
