@@ -12,7 +12,7 @@
   |%
   ++  noun  command                                     ::  from %noun
   ++  json                                              ::  from %json
-    =>  [. dejs:hall-json]  ::TODO  =,
+    =,  dejs:hall-json
     =,  dejs-soft:format
     |=  a/json
     ^-  command:hall
@@ -26,7 +26,7 @@
 ++  grow                                                ::  convert to
   |%
   ++  json                                              ::  to %json
-    =>  [. enjs:hall-json]  ::TODO  =,
+    =,  enjs:hall-json
     =,  enjs:format
     %+  frond  -.cod
     ::  only %publish has just a single piece of data.
