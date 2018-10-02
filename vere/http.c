@@ -1383,7 +1383,8 @@ _http_serv_start_all(void)
 
   c3_assert( 0 != for_u );
 
-  u3_lo_open();
+  // disabled, as this causes a memory leak
+  // u3_lo_open();
 
   // if the SSL_CTX existed, it'll be freed with the servers
   u3_Host.tls_u = 0;
@@ -1444,7 +1445,8 @@ _http_serv_start_all(void)
   _http_write_ports_file(u3_Host.dir_c);
   _http_form_free();
 
-  u3_lo_shut(c3y);
+  // disabled, see above
+  // u3_lo_shut(c3y);
 }
 
 /* _http_serv_restart(): gracefully shutdown, then start servers.
@@ -1499,15 +1501,26 @@ _http_form_free(void)
 void
 u3_http_ef_form(u3_noun fig)
 {
-  // XX validate / test axes?
-  u3_noun sec = u3h(fig);
-  u3_noun lob = u3t(fig);
+  u3_noun sec, pro, log, red;
+
+  if ( (c3n == u3r_qual(fig, &sec, &pro, &log, &red) ) ||
+       // confirm sec is a valid (unit ^)
+       !( u3_nul == sec || ( c3y == u3du(sec) &&
+                             c3y == u3du(u3t(sec)) &&
+                             u3_nul == u3h(sec) ) ) ||
+       // confirm valid flags ("loobeans")
+       !( c3y == pro || c3n == pro ) ||
+       !( c3y == log || c3n == log ) ||
+       !( c3y == red || c3n == red ) ) {
+    uL(fprintf(uH, "http: form: invalid card\n"));
+    u3z(fig);
+    return;
+  }
 
   u3_form* for_u = c3_malloc(sizeof(*for_u));
-
-  for_u->pro = (c3_o)u3h(lob);
-  for_u->log = (c3_o)u3h(u3t(lob));
-  for_u->red = (c3_o)u3t(u3t(lob));
+  for_u->pro = (c3_o)pro;
+  for_u->log = (c3_o)log;
+  for_u->red = (c3_o)red;
 
   if ( u3_nul != sec ) {
     u3_noun key = u3h(u3t(sec));
@@ -2811,15 +2824,13 @@ _proxy_serv_start(u3_prox* lis_u)
 void
 u3_http_ef_that(u3_noun tat)
 {
-  u3_noun sip = u3h(tat);
-  u3_noun por = u3h(u3t(tat));
-  u3_noun sec = u3h(u3t(u3t(tat)));
-  u3_noun non = u3t(u3t(u3t(tat)));
+  u3_noun sip, por, sec, non;
 
-  if( c3n == u3ud(sip) ||
-      c3n == u3a_is_cat(por) ||
-      !( c3y == sec || c3n == sec ) ||
-      c3n == u3ud(non) ) {
+  if ( ( c3n == u3r_qual(tat, &sip, &por, &sec, &non) ) ||
+       ( c3n == u3ud(sip) ) ||
+       ( c3n == u3a_is_cat(por) ) ||
+       !( c3y == sec || c3n == sec ) ||
+       ( c3n == u3ud(non) ) ) {
     uL(fprintf(uH, "http: that: invalid card\n"));
     u3z(tat);
     return;
@@ -2859,6 +2870,7 @@ u3_http_ef_that(u3_noun tat)
   if ( c3n == u3_Host.ops_u.net ) {
     cli_u->ipf_w = INADDR_LOOPBACK;
     _proxy_ward_connect(cli_u);
+    u3z(tat);
     return;
   }
 
