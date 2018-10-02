@@ -2,29 +2,31 @@
 ::
 ::::  /hoon/authority/dns/gen
   ::
-/-  dns, sole
-=,  [dns sole]
+/-  dns
+/+  sole
+=,  dns
+=,  ask:sole
 :-  %ask
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [arg=$@(~ [dom=path ~])]
         ~
     ==
-^-  (sole-result [%dns-authority authority])
+^-  (sole-result:sole [%dns-authority authority])
 =-  ?~  arg  -
     (fun.q.q [%& dom.arg])
-%+  sole-lo
+%+  prompt
   [%& %dns-domain "dns domain: "]
-%+  sole-go  thos:de-purl:html
+%+  parse  thos:de-purl:html
 |=  hot=host:eyre
 ?:  ?=(%| -.hot)
   ~|(%ips-unsupported !!)
-%+  sole-lo
+%+  prompt
   [%& %project "gcloud project: "]
-%+  sole-go  urs:ab
+%+  parse  urs:ab
 |=  project=@ta
-%+  sole-lo
+%+  prompt
   [%& %zone "dns zone: "]
-%+  sole-go  urs:ab
+%+  parse  urs:ab
 |=  zone=@ta
-%+  sole-so  %dns-authority
+%+  output  %dns-authority
 [p.hot %gcloud project zone]

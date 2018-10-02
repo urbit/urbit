@@ -3,15 +3,14 @@
 ::::  /hoon/curl-hiss/gen
   ::
 /?    310
-/-  sole
-/+  old-zuse
+/+  sole, old-zuse
 =,  old-zuse
-=,  sole
+=,  ask:sole
 :-  %get  |=  {^ {a/hiss ~} usr/iden}
-^-  (sole-request (cask httr))
+^-  (sole-request:sole (cask httr))
 ?.  ?=($get p.q.a)
   ~|  %only-get-requests-supported-in-generators  :: XX enforced?
   !!
 :-  *tang
 :^  %|  `usr  `hiss`a
-|=(hit/httr (sole-so %httr hit))
+|=(hit/httr (output %httr hit))

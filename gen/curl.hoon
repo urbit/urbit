@@ -3,12 +3,11 @@
 ::::  /hoon/curl/gen
   ::
 /?    310
-/-  sole
-/+  old-zuse
+/+  sole, old-zuse
 =,  old-zuse
-=,  sole
+=,  ask:sole
 :-  %get  |=  {^ {a/tape ~} ~}
-^-  (sole-request (cask httr))
-%+  sole-at  (scan a auri:urlp)
+^-  (sole-request:sole (cask httr))
+%+  curl  (scan a auri:urlp)
 |=  hit/httr
-(sole-so %httr hit)
+(output %httr hit)

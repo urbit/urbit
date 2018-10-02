@@ -3,13 +3,12 @@
 ::::  /hoon/google/init-oauth2/hood/gen
   ::
 /?  314
-/-  sole
-/+  old-zuse
+/+  sole, old-zuse
 =,  old-zuse
 ::
 ::::
   ::
-=,  sole
+=,  ask:sole
 =,  html
 =,  format
 :-  %ask
@@ -17,17 +16,17 @@
         {arg/$@(~ {jon/json ~})}
         ~
     ==
-^-  (sole-result {$write-sec-atom p/host:eyre q/@})
-%+  sole-yo  leaf+"Accepting credentials for https://*.googleapis.com"
+^-  (sole-result:sole {$write-sec-atom p/host:eyre q/@})
+%+  print  leaf+"Accepting credentials for https://*.googleapis.com"
 =+  hot=[%& /com/googleapis]
 =-  ?~  arg  -
     (fun.q.q jon.arg)
-%+  sole-lo
+%+  prompt
   [%& %oauth-json "json credentials: "]
-%+  sole-go  apex:de-json
+%+  parse  apex:de-json
 |=  jon/json
 =+  ~|  bad-json+jon
     =-  `{cid/@t cis/@t}`(need (rep jon))
     rep=(ot web+(ot 'client_id'^so 'client_secret'^so ~) ~):dejs-soft:format
-%+  sole-so  %write-sec-atom    :: XX typed pair
+%+  output  %write-sec-atom    :: XX typed pair
 [hot (of-wain:format cid cis ~)]
