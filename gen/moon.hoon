@@ -3,9 +3,10 @@
 ::::  /hoon/moon/gen
   ::
 /?    310
-/+  sole, old-zuse
+/-  sole
+/+  generators, old-zuse
 =,  old-zuse
-=,  ask:sole
+=,  generators
 ::
 ::::
   ::
@@ -16,9 +17,9 @@
     ==
 =/  ran  (clan p.bec)
 ?:  ?=({?($earl $pawn)} ran)
-  %-  output
+  %-  produce
   :-  %tang  :_  ~
   leaf+"can't create a moon from a {?:(?=($earl ran) "moon" "comet")}"
 =/  mon  (mix (lsh 5 1 (end 5 1 eny)) p.bec)
 =/  tic  .^(@ /a/(scot %p p.bec)/tick/(scot %da now)/(scot %p mon))
-(output [%tang leaf+"ticket: {<`@p`tic>}" leaf+"moon: {<`@p`mon>}" ~])
+(produce [%tang leaf+"ticket: {<`@p`tic>}" leaf+"moon: {<`@p`mon>}" ~])

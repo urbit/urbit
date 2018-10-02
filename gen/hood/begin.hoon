@@ -3,7 +3,8 @@
 ::::  /hoon/begin/hood/gen
   ::
 /?    310
-/+  sole, old-zuse
+/-  sole
+/+  generators, old-zuse
 =,  old-zuse
 ::
 ::::
@@ -12,7 +13,7 @@
     ++  begs  {his/@p tic/@p yen/@t ges/gens}
     ++  scug  |*({a/@ b/(pole)} ?~(b ~ ?~(a ~ [-.b $(b +.b, a (dec a))])))
     --
-=,  ask:sole
+=,  generators
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/_(scug *@ *{his/@p tic/@p ~})}
@@ -23,7 +24,7 @@
   %+  print
     :-  %leaf
     "|begin is deprecated, please invoke urbit with -w [name] -t [ticket]"
-  no-result
+  no-product
 =-  -
 %+  prompt
   [%& %helm-begin "your urbit: ~"]
@@ -39,7 +40,7 @@
 |=  yen/@t
 =+  ney=(shax yen)
 %+  print  `tank`[%leaf "entropy check: {(scow %p `@p`(mug ney))}"]
-%+  output  %helm-begin
+%+  produce  %helm-begin
 :*  his
     tic
     ney

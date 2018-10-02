@@ -3,12 +3,13 @@
 ::::  /hoon/google/init-oauth2/hood/gen
   ::
 /?  314
-/+  sole, old-zuse
+/-  sole
+/+  generators, old-zuse
 =,  old-zuse
 ::
 ::::
   ::
-=,  ask:sole
+=,  generators
 =,  html
 =,  format
 :-  %ask
@@ -28,5 +29,5 @@
 =+  ~|  bad-json+jon
     =-  `{cid/@t cis/@t}`(need (rep jon))
     rep=(ot web+(ot 'client_id'^so 'client_secret'^so ~) ~):dejs-soft:format
-%+  output  %write-sec-atom    :: XX typed pair
+%+  produce  %write-sec-atom    :: XX typed pair
 [hot (of-wain:format cid cis ~)]

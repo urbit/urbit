@@ -3,12 +3,13 @@
 ::::  /hoon/init-oauth2/hood/gen
   ::
 /?  314
-/+  sole, old-zuse
+/-  sole
+/+  generators, old-zuse
 =,  old-zuse
 ::
 ::::
   ::
-=,  ask:sole
+=,  generators
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/$@(~ {dom/path ~})}
@@ -31,5 +32,5 @@
   [%& %oauth-secret "client secret: "]
 %+  parse  (boss 256 (star prn))
 |=  cis/@t
-%+  output  %write-sec-atom    :: XX typed pair
+%+  produce  %write-sec-atom    :: XX typed pair
 [hot (of-wain:format cid cis ~)]

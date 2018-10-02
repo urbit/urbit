@@ -3,11 +3,12 @@
 ::::  /hoon/init-auth-basic/hood/gen
   ::
 /?  314
-/+  sole
+/-  sole
+/+  generators
 ::
 ::::
   ::
-=,  ask:sole
+=,  generators
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/$@(~ {dom/path ~})}
@@ -30,5 +31,5 @@
   [%| %auth-passwd "password: "]
 %+  parse  (boss 256 (star prn))
 |=  pas/@t
-%+  output  %write-sec-atom    :: XX typed pair
+%+  produce  %write-sec-atom    :: XX typed pair
 [hot (crip (en-base64:mimes:html (rap 3 usr ':' pas ~)))]
