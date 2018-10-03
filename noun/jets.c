@@ -695,6 +695,7 @@ _cj_cast(u3_noun cor, u3_noun loc)
     loc = u3t(dyn);
     pat = u3h(loc);
     rev = u3nc(u3nc(u3k(bat), u3k(pax)), rev);
+    // pax already known-valid
     cor = u3r_at(pax, cor);
     ++i_w;
   }
@@ -1000,6 +1001,7 @@ _cj_hook_in(u3_noun     cor,
       u3_noun dyn = u3t(pat),
               axe = u3h(dyn),
               pel = u3t(dyn);
+      // axe already known-valid
       roc = u3k(u3r_at(axe, cor));
       u3z(cor);
       cor = roc;
@@ -1165,6 +1167,7 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
         sit_u->pog_p = _cj_prog(loc, fol);
       }
       else {
+        // loc already known-valid
         han_u->sit_u.pog_p = _cj_prog(loc, u3r_at(sit_u->axe, cor));
         han_u->sit_u.jet_o = _cj_nail(loc, sit_u->axe,
             &(sit_u->lab), &(sit_u->cop_u), &(sit_u->ham_u));
@@ -1178,6 +1181,7 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
       u3_noun dyn = u3t(pat),
               axe = u3h(dyn),
               xah;
+      // axe already known-valid
       cor = u3r_at(axe, cor);
       loc = u3t(dyn);
       xah = u3qc_peg(axe, hax);
@@ -1206,14 +1210,9 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
 static u3_noun
 _cj_sink(u3_noun cor, u3_noun axe)
 {
-  u3_weak fol = u3r_at(axe, cor);
-  if ( u3_none == fol ) {
-    return u3m_bail(c3__exit);
-  }
-  else {
-    u3z(axe);
-    return u3n_nock_on(cor, u3k(fol));
-  }
+  u3_noun fol = u3x_at(axe, cor);
+  u3z(axe);
+  return u3n_nock_on(cor, u3k(fol));
 }
 
 /* u3j_kick(): new kick.
