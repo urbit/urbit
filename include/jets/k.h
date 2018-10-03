@@ -28,13 +28,6 @@
     u3_noun
     u3kc_rsh(u3_noun a, u3_noun b, u3_noun c);
 
-  /* u3kc_mux_f(): mux with function pointers.
-  */
-    u3_noun
-    u3kc_mux_f(u3_noun a,
-               u3_atom (*hat)(void*, u3_atom), void* has_u,
-               u3_atom (*mix)(void*, u3_atom, u3_atom), void* mis_u);
-
 /* u3kd: tier 4 functions
 */
   /* u3kdb_get(): map get for key `b` in map `a` with u3_none.
