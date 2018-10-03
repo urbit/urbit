@@ -122,9 +122,16 @@
         } all;
 
         struct {                              //  jet dashboard
-          u3p(u3h_root) har_p;                //  warm state
-          u3_noun       das;                  //  cold state
+          u3p(u3h_root) hot_p;                //  hot state (home road only)
+          u3p(u3h_root) war_p;                //  warm state
+          u3p(u3h_root) cod_p;                //  cold state
+          u3p(u3h_root) han_p;                //  hank cache
+          u3p(u3h_root) bas_p;                //  battery hashes
         } jed;
+
+        struct {                              // bytecode state
+          u3p(u3h_root) har_p;                // formula->post of bytecode
+        } byc;
 
         struct {                              //  namespace
           u3_noun gul;                        //  (list $+(* (unit (unit)))) now

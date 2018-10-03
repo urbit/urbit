@@ -3,12 +3,8 @@
 */
 #include "all.h"
 
-
-/* functions
-*/
-  u3_noun
-  u3qb_skip(u3_noun a,
-            u3_noun b)
+  static u3_noun
+  _skip_in(u3j_site* sit_u, u3_noun a)
   {
     if ( 0 == a ) {
       return a;
@@ -16,8 +12,8 @@
     else if ( c3n == u3du(a) ) {
       return u3_none;
     } else {
-      u3_noun hoz = u3n_slam_on(u3k(b), u3k(u3h(a)));
-      u3_noun vyr = u3qb_skip(u3t(a), b);
+      u3_noun hoz = u3j_gate_slam(sit_u, u3k(u3h(a)));
+      u3_noun vyr = _skip_in(sit_u, u3t(a));
 
       switch ( hoz ) {
         case c3y:  return vyr;
@@ -27,6 +23,20 @@
                    return u3_none;
       }
     }
+  }
+
+/* functions
+*/
+  u3_noun
+  u3qb_skip(u3_noun a,
+            u3_noun b)
+  {
+    u3j_site sit_u;
+    u3_noun  pro;
+    u3j_gate_prep(&sit_u, u3k(b));
+    pro = _skip_in(&sit_u, a);
+    u3j_gate_lose(&sit_u);
+    return pro;
   }
   u3_noun
   u3wb_skip(u3_noun cor)

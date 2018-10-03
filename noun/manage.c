@@ -481,8 +481,11 @@ static void
 _pave_parts(void)
 {
   u3R->cax.har_p = u3h_new();
-  u3R->jed.har_p = u3h_new();
-  u3R->jed.das = u3_nul;
+  u3R->jed.war_p = u3h_new();
+  u3R->jed.cod_p = u3h_new();
+  u3R->jed.han_p = u3h_new();
+  u3R->jed.bas_p = u3h_new();
+  u3R->byc.har_p = u3h_new();
 }
 
 /* u3m_mark(): mark all nouns in the road.
@@ -491,8 +494,8 @@ c3_w
 u3m_mark(void)
 {
   c3_w tot_w = 0;
-  tot_w += u3h_mark(u3R->jed.har_p);
-  tot_w += u3a_mark_noun(u3R->jed.das);
+  tot_w += u3j_mark();
+  tot_w += u3n_mark();
   tot_w += u3a_mark_noun(u3R->ski.gul);
   tot_w += u3a_mark_noun(u3R->bug.tax);
   tot_w += u3a_mark_noun(u3R->bug.mer);
@@ -530,8 +533,8 @@ void
 u3m_clear(void)
 {
   u3h_free(u3R->cax.har_p);
-  u3h_free(u3R->jed.har_p);
-  u3a_lose(u3R->jed.das);
+  u3j_free();
+  u3n_free();
 }
 
 void
@@ -817,14 +820,18 @@ u3_noun
 u3m_love(u3_noun pro)
 {
   {
-    u3_noun das         = u3R->jed.das;
-    u3p(u3h_root) har_p = u3R->jed.har_p;
+    u3p(u3h_root) cod_p = u3R->jed.cod_p;
+    u3p(u3h_root) war_p = u3R->jed.war_p;
+    u3p(u3h_root) han_p = u3R->jed.han_p;
+    u3p(u3h_root) bas_p = u3R->jed.bas_p;
+    u3p(u3h_root) byc_p = u3R->byc.har_p;
 
     u3m_fall();
 
     pro = u3a_take(pro);
 
-    u3j_reap(das, har_p);
+    u3j_reap(cod_p, war_p, han_p, bas_p);
+    u3n_reap(byc_p);
 
     u3R->cap_p = u3R->ear_p;
     u3R->ear_p = 0;
@@ -1689,7 +1696,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
 
   /* Initialize the jet system.
   */
-  u3j_boot();
+  u3j_boot(nuu_o);
 
   /* Install or reactivate the kernel.
   */
@@ -1708,5 +1715,6 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
   else {
     u3v_hose();
     u3j_ream();
+    u3n_ream();
   }
 }

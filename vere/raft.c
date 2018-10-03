@@ -1880,11 +1880,11 @@ _raft_grab(u3_noun ova)
     fprintf(stderr, "arvo stuff: ");
     _raft_print_memory(utv_w);
 
-    har_w = u3h_mark(u3R->jed.har_p);
+    har_w = u3h_mark(u3R->jed.war_p);
     fprintf(stderr, "  warm jet state: ");
     _raft_print_memory(har_w);
 
-    das_w = u3a_mark_noun(u3R->jed.das);
+    das_w = u3h_mark(u3R->jed.cod_p);
     fprintf(stderr, "  cold jet state: ");
     _raft_print_memory(das_w);
 
