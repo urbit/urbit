@@ -26,7 +26,7 @@ mkdir prev
   : Pilling: trying pinned fakezod
   wget -i pin-parent-pill-pier.url -O - | tar xvz -C prev/ &&
   : Downloaded prev/zod &&
-  lsc ./in-urbit.ls -FI zod prev/zod <<'  .'
+  lsc ./in-urbit.ls -SFI zod prev/zod <<'  .'
     |autoload |
     |mount %
   .
@@ -36,7 +36,8 @@ mkdir prev
   HASH2=$(git -C .. log -2 $HASH --format=%H -- sys/ | tail -1)
   PILL_NAME2="git-${HASH2:0:10}"
   wget https://bootstrap.urbit.org/$PILL_NAME2.pill -O prev/urbit.pill &&
-  lsc ./in-urbit.ls -A .. -B prev/urbit.pill -cFI zod prev/zod <<'  .'
+  ([ -d prev/zod ] && rm -r prev/zod || true) &&
+  lsc ./in-urbit.ls -A .. -B prev/urbit.pill -cSFI zod prev/zod <<'  .'
     %booted-prev-zod
   .
 } || {
@@ -45,7 +46,7 @@ mkdir prev
 }
 
 : Pier created, soliding actual pill
-lsc ./in-urbit.ls -FI zod prev/zod <<.
+lsc ./in-urbit.ls -SFI zod prev/zod <<.
   |label %home %$PILL_NAME
   .urbit/pill +solid /==/$PILL_NAME/sys, =dub &
 .
