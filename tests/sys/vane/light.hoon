@@ -262,8 +262,9 @@
       scry=*sley
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
-            ^-  (hypo sign:light-gate)  :-  *type
-            :+  %g  %response
+            ^-  (hypo sign:light-gate)
+            :-  *type
+            :^  %g  %unto  %http-response
             ^-  raw-http-response:light-gate
             [%start 200 ['content-type' 'text/html']~ [~ (as-octs:mimes:html 'Hiya!')] %.y]
          ==
@@ -346,7 +347,7 @@
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
             ^-  (hypo sign:light-gate)  :-  *type
-            :+  %g  %response
+            :^  %g  %unto  %http-response
             ^-  raw-http-response:light-gate
             [%start 200 ['content-type' 'text/html']~ [~ (as-octs:mimes:html 'Hi')] %.n]
          ==
@@ -364,7 +365,7 @@
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
             ^-  (hypo sign:light-gate)  :-  *type
-            :+  %g  %response
+            :^  %g  %unto  %http-response
             ^-  raw-http-response:light-gate
             [%continue [~ (as-octs:mimes:html 'ya!')] %.y]
          ==
@@ -450,7 +451,7 @@
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
             ^-  (hypo sign:light-gate)  :-  *type
-            :+  %g  %response
+            :^  %g  %unto  %http-response
             ^-  raw-http-response:light-gate
             [%start 307 ['location' '/~/login?redirect=/~landscape/inner-path']~ ~ %.y]
          ==
