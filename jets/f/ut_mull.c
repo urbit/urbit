@@ -21,7 +21,7 @@
             u3_noun loc)
   {
     u3_noun mol = u3nc('o', u3k(loc));
-    u3_noun sho = u3j_hook(u3k(van), "show");
+    u3_noun sho = u3j_cook("_mull_loc-show", u3k(van), "show");
     u3_noun ret = u3i_molt(u3k(sho), u3x_sam, u3k(mol), 0);
 
     u3z(mol);
@@ -176,7 +176,7 @@
              u3_noun rig)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_hook(von, "emul");
+    u3_noun gat = u3j_cook("_mull_cnts-emul", von, "emul");
 
     return u3n_kick_on(u3i_molt(gat, 
                                 u3x_sam_2, 

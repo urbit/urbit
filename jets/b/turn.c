@@ -3,25 +3,33 @@
 */
 #include "all.h"
 
+  static u3_noun
+  _turn_in(u3j_site* sit_u, u3_noun a)
+  {
+    if ( u3_nul == a ) {
+      return u3_nul;
+    }
+    else {
+      return u3nc(
+          u3j_gate_slam(sit_u, u3k(u3h(a))),
+          _turn_in(sit_u, u3t(a)));
+    }
+  }
 
 /* functions
 */
   u3_noun
   u3qb_turn(u3_noun a, u3_noun b)
   {
-    if ( 0 == a ) {
-      return a;
-    }
-    else if ( c3n == u3du(a) ) {
-      return u3m_bail(c3__exit);
-    }
-    else {
-      u3_noun one = u3n_slam_on(u3k(b), u3k(u3h(a)));
-      u3_noun two = u3qb_turn(u3t(a), b);
+    u3_noun  pro;
+    u3j_site sit_u;
 
-      return u3nc(one, two);
-    }
+    u3j_gate_prep(&sit_u, u3k(b));
+    pro = _turn_in(&sit_u, a);
+    u3j_gate_lose(&sit_u);
+    return pro;
   }
+
   u3_noun
   u3wb_turn(u3_noun cor)
   {
