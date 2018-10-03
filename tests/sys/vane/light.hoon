@@ -571,6 +571,17 @@
     results6
   ==
 ::
+++  test-simplified-url-parser
+  ;:  weld
+    %+  expect-eq
+      !>  `[[%site 'localhost'] [~ 8.000]]
+      !>  (rush 'localhost:8000' simplified-url-parser:light-gate)
+  ::
+    %+  expect-eq
+      !>  `[[%ip .192.168.1.1] ~]
+      !>  (rush '192.168.1.1' simplified-url-parser:light-gate)
+  ==
+::
 ++  light-call
   |=  $:  light-gate=_light-gate
           now=@da

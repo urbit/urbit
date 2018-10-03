@@ -42,12 +42,9 @@
   $%  ::  %g: from gall
       ::
       $:  %g
-          ::  %response: http-response from a gall app
           ::
-          $%  [%response =raw-http-response]
-              ::
-              ::
-              [%unto p=cuft:gall]
+          ::
+          $%  [%unto p=cuft:gall]
   ==  ==  ==
 --
 ::  more structures
@@ -192,6 +189,23 @@
     `value.i.header-list
   ::
   $(header-list t.header-list)
+::  +simplified-url-parser: returns [(each @if @t) (unit port=@ud)]
+::
+++  simplified-url-parser
+  ;~  plug
+    ;~  pose
+      %+  stag  %ip
+      =+  tod=(ape:ag ted:ab)
+      %+  bass  256
+      ;~(plug tod (stun [3 3] ;~(pfix dot tod)))
+    ::
+      (stag %site (cook crip (star ;~(pose dot alp))))
+    ==
+    ;~  pose
+      (stag ~ ;~(pfix col dim:ag))
+      (easy ~)
+    ==
+  ==
 ::  +per-server-event: per-event client core
 ::
 ++  per-server-event
@@ -513,19 +527,6 @@
       ^-  ?
       &(=(item-binding binding) =(item-duct duct))
     ==
-  ::  +simplified-url-parser: returns [(each @if @t) (unit port=@ud)]
-  ::
-  ++  simplified-url-parser
-    ;~  plug
-      ;~  pose
-        (stag %site (cook crip (star ;~(pose dot dit))))
-        (stag %ip (cook crip (star ;~(pose dot alp))))
-      ==
-      ;~  pose
-        (stag ~ ;~(pfix col dim:ag))
-        (easy ~)
-      ==
-    ==
   ::  +get-action-for-binding: finds an action for an incoming web request
   ::
   ++  get-action-for-binding
@@ -544,23 +545,25 @@
         ~
       ::  Parse the raw-host so that we can ignore ports, usernames, etc.
       ::
-      ?~  parsed=(rush u.raw-host simplified-url-parser)
-        ~&  [%doesnt-parse u.raw-host]
+      =+  parsed=(rush u.raw-host simplified-url-parser)
+      ?~  parsed
         ~
       ::  if the url is a raw IP, assume default site.
       ::
-      ::  ?:  ?=([%ip *] u.parsed)
-      ::    ~
-      ::  ::  TODO: Check for localhost
-      ::  ::
-      ::  ::  render our as a tape, and cut off the sig in front.
-      ::  ::
-      ::  =/  with-sig=tape  (scow %p our)
-      ::  ?>  ?=(^ with-sig)
-      ::  ?:  =(u.raw-host (crip t.with-sig))
-      ::    ::  [our].urbit.org is the default site
-      ::    ::
-      ::    ~
+      ?:  ?=([%ip *] -.u.parsed)
+        ~
+      ::  if the url is "localhost", assume default site.
+      ::
+      ?:  =([%site 'localhost'] -.u.parsed)
+        ~
+      ::  render our as a tape, and cut off the sig in front.
+      ::
+      =/  with-sig=tape  (scow %p our)
+      ?>  ?=(^ with-sig)
+      ?:  =(u.raw-host (crip t.with-sig))
+        ::  [our].urbit.org is the default site
+        ::
+        ~
       ::
       raw-host
     ::  url is the raw thing passed over the 'Request-Line'.
@@ -702,8 +705,6 @@
       ~|([%bad-take-wire wire] !!)
   ::
   ++  run-app
-    ?.  ?=([%g %unto *] sign)
-      ~|([%bad-take-app wire sign] !!)
     ::
     ?.  ?=([%g %unto %http-response *] sign)
       ::  entirely normal to get things other than http-response calls, but we
