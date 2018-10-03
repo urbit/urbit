@@ -13,7 +13,6 @@
   |%
   ++  mime  |=({p/mite:eyre q/octs:eyre} (to-wain q.q))
   ++  noun  wain                                        ::  clam from %noun
-  ++  json  (corl to-wain so:dejs:format)
   --
 ++  grow
   =>  v=.
