@@ -943,6 +943,8 @@
         (get-rush:(ire-ix p.tee) q.tee ((hard json) q.q.p.cuf))
       ::
           $quit  ~&(quit+tee (get-quit:(ire-ix p.tee) q.tee))
+          ::  ironically, old eyre will never get an http-response.
+          $http-response  !!
       ==
     ::
         $wake

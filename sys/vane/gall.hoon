@@ -399,6 +399,9 @@
         $quit  %+  mo-pass  [%sys pax]
                [%a %want [our him] [%g %gh dap ~] [num %x ~]]
         $reap  (mo-give %mack p.cuf)
+        ::  we send http-responses, we don't receive them.
+        ::
+        $http-response  !!
       ==
     ::
         %val                                            ::  inbound validate
@@ -609,7 +612,12 @@
           $hiss  `note-arvo`[%e %hiss +.q.q.cov]
           $send  `note-arvo`[%g %deal [our p.q.q.cov] q.q.q.cov]
           $meta  `note-arvo`[`@tas`p.q.q.cov %meta `vase`q.q.q.cov]
+::          $response  `note-arvo`[%l %response raw-http-response.q.q.cov]
         ==
+        ::
+        :: I'm sort of stumped on how to get a %give out of the above; it's
+        :: just turning %cove into a %pass instead.
+        ::
       ==
     ::
     ++  ap-avid                                         ::  onto results
@@ -793,6 +801,7 @@
         $poke  (ap-move-poke -.q.vax cav)
         $send  (ap-move-send -.q.vax cav)
         $quit  (ap-move-quit -.q.vax cav)
+        $http-response  (ap-move-http-response -.q.vax cav)
       ==
     ::
     ++  ap-move-quit                                    ::  give quit move
@@ -810,6 +819,15 @@
         :_(+>.$ [%| (ap-suck "diff: improper give")])
       =^  tel  vel  (~(slot wa vel) 3 pec)
       :_(+>.$ [%& sto %give %diff `cage`[-.q.pec tel]])
+    ::
+    ++  ap-move-http-response
+      |=  [sto=bone vax=vase]
+      ^-  [(each cove tang) _+>]
+      ::
+      ::  TODO: Magic vase validation. I have no idea how malformed checking works.
+      ::
+      :_  +>.$
+      [%& sto %give %http-response ((hard raw-http-response:light) q.vax)]
     ::
     ++  ap-move-hiss                                    ::  pass %hiss
       |=  {sto/bone vax/vase}
@@ -1072,6 +1090,8 @@
         $diff  (ap-diff q.q.pry pax p.cuf)
         $quit  (ap-take q.q.pry %quit +.pax ~)
         $reap  (ap-take q.q.pry %reap +.pax `!>(p.cuf))
+        ::  ???
+        $http-response  !!
       ==
     ::
     ++  ap-prep                                         ::  install
@@ -1247,6 +1267,7 @@
         $well  `%e
         $well  `%e
         $wipe  `%f
+        %connect  `%l
       ==
     --
   --

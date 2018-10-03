@@ -1,4 +1,3 @@
-!:
 ::                                                      ::  /van/zuse
 ::                                                      ::  %reference/1
 ::  %zuse: arvo library.
@@ -1927,6 +1926,7 @@
         {$diff p/cage}                                  ::  subscription output
         {$quit ~}                                      ::  close subscription
         {$reap p/(unit tang)}                           ::  peer result
+        [%http-response =raw-http-response:light]       ::  serve http result
     ==                                                  ::
   ++  culm                                              ::  config action
     $%  {$load p/scup}                                  ::  load+reload
@@ -7354,6 +7354,7 @@
       {$f task:able:ford}
       {$g task:able:gall}
       {$j task:able:jael}
+      {$l task:able:light}
       {@tas $meta vase}
   ==
 ++  sign-arvo                                           ::  in result $<-
@@ -7365,6 +7366,7 @@
       {$f gift:able:ford}
       {$g gift:able:gall}
       {$j gift:able:jael}
+      {%l gift:able:light}
   ==
 ::
 ++  unix-task                                           ::  input from unix

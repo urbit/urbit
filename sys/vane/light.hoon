@@ -44,8 +44,11 @@
       $:  %g
           ::  %response: http-response from a gall app
           ::
-          [%response =raw-http-response]
-  ==  ==
+          $%  [%response =raw-http-response]
+              ::
+              ::
+              [%unto p=cuft:gall]
+  ==  ==  ==
 --
 ::  more structures
 ::
@@ -199,7 +202,6 @@
   ++  request
     |=  [secure=? =address =http-request]
     ^-  [(list move) server-state]
-    ~&  [%request secure address http-request]
     ::
     =+  host=(get-header 'host' header-list.http-request)
     =+  action=(get-action-for-binding host url.http-request)
@@ -511,6 +513,19 @@
       ^-  ?
       &(=(item-binding binding) =(item-duct duct))
     ==
+  ::  +simplified-url-parser: returns [(each @if @t) (unit port=@ud)]
+  ::
+  ++  simplified-url-parser
+    ;~  plug
+      ;~  pose
+        (stag %site (cook crip (star ;~(pose dot dit))))
+        (stag %ip (cook crip (star ;~(pose dot alp))))
+      ==
+      ;~  pose
+        (stag ~ ;~(pfix col dim:ag))
+        (easy ~)
+      ==
+    ==
   ::  +get-action-for-binding: finds an action for an incoming web request
   ::
   ++  get-action-for-binding
@@ -527,19 +542,25 @@
     =/  host=(unit @t)
       ?~  raw-host
         ~
-      ::  TODO: Check IP addresses. I can't just check the
-      ::  `\d{0-3}\.\d{0-3}...` regex here.
+      ::  Parse the raw-host so that we can ignore ports, usernames, etc.
       ::
-      ::  TODO: Check for localhost
-      ::
-      ::  render our as a tape, and cut off the sig in front.
-      ::
-      =/  with-sig=tape  (scow %p our)
-      ?>  ?=(^ with-sig)
-      ?:  =(u.raw-host (crip t.with-sig))
-        ::  [our].urbit.org is the default site
-        ::
+      ?~  parsed=(rush u.raw-host simplified-url-parser)
+        ~&  [%doesnt-parse u.raw-host]
         ~
+      ::  if the url is a raw IP, assume default site.
+      ::
+      ::  ?:  ?=([%ip *] u.parsed)
+      ::    ~
+      ::  ::  TODO: Check for localhost
+      ::  ::
+      ::  ::  render our as a tape, and cut off the sig in front.
+      ::  ::
+      ::  =/  with-sig=tape  (scow %p our)
+      ::  ?>  ?=(^ with-sig)
+      ::  ?:  =(u.raw-host (crip t.with-sig))
+      ::    ::  [our].urbit.org is the default site
+      ::    ::
+      ::    ~
       ::
       raw-host
     ::  url is the raw thing passed over the 'Request-Line'.
@@ -681,11 +702,18 @@
       ~|([%bad-take-wire wire] !!)
   ::
   ++  run-app
-    ?>  ?=([%g %response *] sign)
+    ?.  ?=([%g %unto *] sign)
+      ~|([%bad-take-app wire sign] !!)
+    ::
+    ?.  ?=([%g %unto %http-response *] sign)
+      ::  entirely normal to get things other than http-response calls, but we
+      ::  don't care.
+      ::
+      [~ light-gate]
     ::
     =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
     =/  handle-response  handle-response:(per-server-event event-args)
-    =^  moves  server-state.ax  (handle-response raw-http-response.sign)
+    =^  moves  server-state.ax  (handle-response raw-http-response.p.sign)
     [moves light-gate]
   --
 ::
