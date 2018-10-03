@@ -238,6 +238,8 @@
       $:  $=  own                                       ::  ownership
           $:  owner=address
               transfer-proxy=address
+              management-proxy=address
+              voting-proxy=address
           ==
         ::
           $=  net                                       ::  networking
@@ -272,8 +274,7 @@
     ++  eth-type
       |%
       ++  hull
-        :~  %address        ::  owner
-            %bool           ::  active
+        :~  %bool           ::  active
             [%bytes-n 32]   ::  encryptionKey
             [%bytes-n 32]   ::  authenticationKey
             %uint           ::  cryptoSuiteVersion
@@ -284,6 +285,11 @@
             %bool           ::  hasSponsor
             %bool           ::  escapeRequested
             %uint           ::  escapeRequestedTo
+        ==
+      ++  deed
+        :~  %address        ::  owner
+            %address        ::  managementProxy
+            %address        ::  votingProxy
             %address        ::  spawnProxy
             %address        ::  transferProxy
         ==
@@ -292,8 +298,7 @@
     ++  eth-noun
       |%
       ++  hull
-        $:  owner=address
-            active=?
+        $:  active=?
             encryption-key=octs
             authentication-key=octs
             crypto-suite=@ud
@@ -304,6 +309,11 @@
             has-sponsor=?
             escape-requested=?
             escape-to=@ud
+        ==
+      ++  deed
+        $:  owner=address
+            management-proxy=address
+            voting-proxy=address
             spawn-proxy=address
             transfer-proxy=address
         ==
@@ -313,6 +323,7 @@
       |%
       ++  ships
         $%  [%ships who=@p]
+            [%rights who=@p]
             [%get-spawned who=@p]
             [%dns-domains ind=@ud]
         ==
@@ -339,6 +350,8 @@
           [%continuity new=@ud]                         ::  BrokeContinuity
           [%sponsor new=(unit @p)]                      ::  EscapeAcc/LostSpons
           [%escape new=(unit @p)]                       ::  EscapeReq/Can
+          [%management-proxy new=address]               ::  ChangedManagementPro
+          [%voting-proxy new=address]                   ::  ChangedVotingProxy
           [%spawn-proxy new=address]                    ::  ChangedSpawnProxy
           [%transfer-proxy new=address]                 ::  ChangedTransferProxy
       ==
@@ -411,15 +424,15 @@
         0xcfe3.69b7.197e.7f0c.f067.93ae.2472.a9b1.
           3583.fecb.ed2f.78df.a14d.1f10.796b.847c
       ::
-      ::  ChangedManager(address,address)
-      ++  changed-manager
-        0x73cd.9f21.dac5.ada0.0bce.c622.ae57.b362.
-          3d62.867a.0104.48a4.fa99.19b1.af37.8de7
+      ::  ChangedManagementProxy(uint32,address)
+      ++  changed-management-proxy
+        0xab9c.9327.cffd.2acc.168f.afed.be06.139f.
+          5f55.cb84.c761.df05.e051.1c25.1e2e.e9bf
       ::
-      ::  ChangedDelegate(address,address)
-      ++  changed-delegate
-        0x3aca.0f3b.26ca.e754.a743.7b18.4417.8ce6.
-          07f2.1ca0.cbed.955e.0621.96d3.3c91.de6c
+      ::  ChangedVotingProxy(uint32,address)
+      ++  changed-voting-proxy
+        0xcbd6.269e.c714.57f2.c7b1.a227.74f2.46f6.
+          c5a2.eae3.795e.d730.0db5.1768.0c61.c805
       ::
       ::  ChangedDns(string,string,string)
       ++  changed-dns
@@ -7705,12 +7718,16 @@
       `(cat 3 'b' (cat 8 q.aut q.enc))
     ::
     ++  hull-from-eth
-      |=  [who=@p hull:eth-noun]
+      |=  [who=@p hull:eth-noun deed:eth-noun]
       ^-  hull
       ::
       ::  ownership
       ::
-      :+  [owner transfer-proxy]
+      :+  :*  owner
+              management-proxy
+              voting-proxy
+              transfer-proxy
+          ==
         ::
         ::  network state
         ::
@@ -7790,6 +7807,16 @@
         =/  num=@  (decode-results data.log ~[%uint])
         `[who %continuity num]
       ::
+      ?:  =(event.log changed-management-proxy)
+        =+  ^-  [who=@ sox=address]
+            (decode-topics topics.log ~[%uint %address])
+        `[who %management-proxy sox]
+      ::
+      ?:  =(event.log changed-voting-proxy)
+        =+  ^-  [who=@ tox=address]
+            (decode-topics topics.log ~[%uint %address])
+        `[who %voting-proxy tox]
+      ::
       ?:  =(event.log changed-spawn-proxy)
         =+  ^-  [who=@ sox=address]
             (decode-topics topics.log ~[%uint %address])
@@ -7800,17 +7827,12 @@
             (decode-topics topics.log ~[%uint %address])
         `[who %transfer-proxy tox]
       ::
-      ~?  ?!
-          ?|  =(event.log changed-manager)
-            ::
-              =(event.log changed-delegate)
-            ::
-              ::  contract owner changed
-              .=  event.log
+      ::  warn about unimplemented events, but ignore
+      ::  the ones we know are harmless.
+      ~?  ?!  .=  event.log
               ::  OwnershipTransferred(address,address)
               0x8be0.079c.5316.5914.1344.cd1f.d0a4.f284.
                 1949.7f97.22a3.daaf.e3b4.186f.6b64.57e0
-          ==
         [%unimplemented-event event.log]
       ~
     ::
@@ -7831,6 +7853,8 @@
       ::
         %owner           hul(owner.own new.dif)
         %transfer-proxy  hul(transfer-proxy.own new.dif)
+        %management-proxy  hul(management-proxy.own new.dif)
+        %voting-proxy      hul(voting-proxy.own new.dif)
       ::
       ::  networking
       ::
@@ -7893,6 +7917,10 @@
             %ships
           :-  (crip "ships({(scow %p who.cal)})")
           ['ships(uint32)' ~[uint+`@`who.cal]]
+        ::
+            %rights
+          :-  (crip "rights({(scow %p who.cal)})")
+          ['rights(uint32)' ~[uint+`@`who.cal]]
         ::
             %get-spawned
           :-  (crip "getSpawned({(scow %p who.cal)})")
