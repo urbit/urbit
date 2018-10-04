@@ -79,11 +79,17 @@
 ::  of all version numbers to commit hashes (commits are in hut.rang), and map
 ::  of labels to version numbers.
 ::
+::  `mim` is a cache of all new content that came with a mime mark.  Often,
+::  we need to convert to mime anyway to send to unix, so we just keep it
+::  around. If you try to perform more than one commit at a time on a desk,
+::  this will break, but so will lots of other things.
+::
 ++  dome
   $:  ank/ankh                                          ::  state
       let/aeon                                          ::  top id
       hit/(map aeon tako)                               ::  versions by id
       lab/(map @tas aeon)                               ::  labels
+      mim/(map path mime)                               ::  mime cache
   ==                                                    ::
 ::
 ::  Commit state.
@@ -98,9 +104,6 @@
 ::      file).
 ::  --  `muh` is the hashes of all the new content in `muc`.
 ::  --  `mut` is the diffs between `muc` and the original files.
-::  --  `mim` is a cache of all new content that came with a mime mark.  Often,
-::      we need to convert to mime anyway to send to unix, so we just keep it
-::      around.
 ::
 ++  dork                                                ::  diff work
   $:  del/(list path)                                   ::  deletes
@@ -111,7 +114,6 @@
       muc/(map path cage)                               ::  store mutations
       muh/(map path lobe)                               ::  store hashes
       mut/(unit (list (trel path lobe cage)))           ::  mutations
-      mim/(map path mime)                               ::  mime cache
   ==                                                    ::
 ::
 ::  Hash of a blob, for lookup in the object store (lat.ran)
@@ -367,6 +369,15 @@
               $:  @tas                                  ::  by any
           $%  {$crud p/@tas q/(list tank)}              ::
           ==  ==  ==                                    ::
+--  =>
+::  %utilities
+::
+|%
+::  +sort-by-head: sorts alphabetically using the head of each element
+::
+++  sort-by-head
+  |=([a=(pair path *) b=(pair path *)] (aor p.a p.b))
+::
 --  =>
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  section 4cA, filesystem logic
@@ -1126,18 +1137,56 @@
       wake:(print-changes:(checkout-ankh u.hat) wen lem)
     ?.  =(~ dok)
       ~&  %already-applying-changes  +>
-    =+  del=(skim p.lem :(corl (cury test %del) head tail))
-    =+  ins=(skim p.lem :(corl (cury test %ins) head tail))
-    =+  dif=(skim p.lem :(corl (cury test %dif) head tail))
-    =+  mut=(skim p.lem :(corl (cury test %mut) head tail))
-    =^  ink  ins
-      ^-  {(list (pair path miso)) (list (pair path miso))}
-      %+  skid  `(list (pair path miso))`ins
-      |=  {pax/path mis/miso}
-      ?>  ?=($ins -.mis)
-      ?&  ?=({$hoon *} (flop pax))
-          ?=($mime p.p.mis)
+    ::
+    =|  $=  nuz
+        $:  del=(list (pair path miso))
+            ins=(list (pair path miso))
+            dif=(list (pair path miso))
+            mut=(list (pair path miso))
+            ink=(list (pair path miso))
+        ==
+    ::
+    =.  nuz
+      |-  ^+  nuz
+      ?~  p.lem  nuz
+      ::
+      ?-    -.q.i.p.lem
+          %del  $(p.lem t.p.lem, del.nuz [i.p.lem del.nuz])
+          %dif  $(p.lem t.p.lem, dif.nuz [i.p.lem dif.nuz])
+          %ins
+        =/  pax=path  p.i.p.lem
+        =/  mar=mark  p.p.q.i.p.lem
+        ::
+        ?:  ?&  ?=([%hoon *] (flop pax))
+                ?=(%mime mar)
+            ==
+          $(p.lem t.p.lem, ink.nuz [i.p.lem ink.nuz])
+        $(p.lem t.p.lem, ins.nuz [i.p.lem ins.nuz])
+      ::
+          %mut
+        =/  pax=path  p.i.p.lem
+        =/  mis=miso  q.i.p.lem
+        ?>  ?=(%mut -.mis)
+        =/  cag=cage  p.mis
+        =/  mim=mime  ((hard mime) q.q.cag)
+        ::  if we have the %mime value cached, there's no change to apply
+        ::
+        =?    mut.nuz
+            !=(`mim (~(get by mim.dom) pax))
+          [i.p.lem mut.nuz]
+        ::
+        $(p.lem t.p.lem)
       ==
+    ::  sort each section alphabetically for determinism
+    ::
+    =.  nuz  :*
+      (sort del.nuz sort-by-head)
+      (sort ins.nuz sort-by-head)
+      (sort dif.nuz sort-by-head)
+      (sort mut.nuz sort-by-head)
+      (sort ink.nuz sort-by-head)
+    ==
+    ::
     =.  +>.$
       %-  emil
       ^-  (list move)
@@ -1145,7 +1194,7 @@
               [%inserting (scot %p her) syd (scot %da wen) ~]
               %f  %build  our  live=%.n  %pin  wen  %list
               ^-  (list schematic:ford)
-              %+  turn  ins
+              %+  turn  ins.nuz
               |=  {pax/path mis/miso}
               ?>  ?=($ins -.mis)
               :-  [%$ %path -:!>(*path) pax]
@@ -1156,7 +1205,7 @@
               [%diffing (scot %p her) syd (scot %da wen) ~]
               %f  %build  our  live=%.n  %pin  wen  %list
               ^-  (list schematic:ford)
-              %+  turn  dif
+              %+  turn  dif.nuz
               |=  {pax/path mis/miso}
               ?>  ?=($dif -.mis)
               =+  (need (need (read-x:ze let.dom pax)))
@@ -1169,7 +1218,7 @@
               %f  %build  our  live=%.n  %pin  wen  %list
               ::~  [her syd %da wen]  %tabl
               ^-  (list schematic:ford)
-              %+  turn  mut
+              %+  turn  mut.nuz
               |=  {pax/path mis/miso}
               ?>  ?=($mut -.mis)
               :-  [%$ %path -:!>(*path) pax]
@@ -1179,10 +1228,12 @@
       ==
     %_    +>.$
         dok
-      :-  ~
-      :*  (turn del |=({pax/path mis/miso} ?>(?=($del -.mis) pax)))
       ::
-          %+  turn  ink
+      :-  ~
+      ^-  dork
+      :*  (turn del.nuz |=({pax/path mis/miso} ?>(?=($del -.mis) pax)))
+      ::
+          %+  turn  ink.nuz
           |=  {pax/path mis/miso}
           ^-  (pair path cage)
           ?>  ?=($ins -.mis)
@@ -1192,45 +1243,58 @@
           ~
       ::
           %-  malt
-          (turn dif |=({pax/path mis/miso} ?>(?=($dif -.mis) [pax p.mis])))
+          (turn dif.nuz |=({pax/path mis/miso} ?>(?=($dif -.mis) [pax p.mis])))
       ::
           ~
       ::
           %-  malt
-          (turn mut |=({pax/path mis/miso} ?>(?=($mut -.mis) [pax p.mis])))
+          (turn mut.nuz |=({pax/path mis/miso} ?>(?=($mut -.mis) [pax p.mis])))
       ::
           ~
       ::
           ~
+      ==
+    ::
+        mim.dom
+      ::  remove all deleted files from the new mime cache
       ::
-          %-  molt  ^-  (list (pair path mime))
-          ;:  weld
-            ^-  (list (pair path mime))
-            %+  murn  ins
-            |=  {pax/path mis/miso}
-            ^-  (unit (pair path mime))
-            ?>  ?=($ins -.mis)
-            ?.  ?=($mime p.p.mis)
-              ~
-            `[pax ((hard mime) q.q.p.mis)]
-          ::
-            ^-  (list (pair path mime))
-            %+  murn  ink
-            |=  {pax/path mis/miso}
-            ^-  (unit (pair path mime))
-            ?>  ?=($ins -.mis)
-            ?>  ?=($mime p.p.mis)
-            `[pax ((hard mime) q.q.p.mis)]
-          ::
-            ^-  (list (pair path mime))
-            %+  murn  mut
-            |=  {pax/path mis/miso}
-            ^-  (unit (pair path mime))
-            ?>  ?=($mut -.mis)
-            ?.  ?=($mime p.p.mis)
-              ~
-            `[pax ((hard mime) q.q.p.mis)]
-          ==
+      =.  mim.dom
+        |-  ^+  mim.dom
+        ?~  del.nuz  mim.dom
+        ::
+        =.  mim.dom  (~(del by mim.dom) `path`p.i.del.nuz)
+        ::
+        $(del.nuz t.del.nuz)
+      ::  add or overwrite the new files to the new mime cache
+      ::
+      %-  ~(gas by mim.dom)
+      ^-  (list (pair path mime))
+      ;:  weld
+        ^-  (list (pair path mime))
+        %+  murn  ins.nuz
+        |=  {pax/path mis/miso}
+        ^-  (unit (pair path mime))
+        ?>  ?=($ins -.mis)
+        ?.  ?=($mime p.p.mis)
+          ~
+        `[pax ((hard mime) q.q.p.mis)]
+      ::
+        ^-  (list (pair path mime))
+        %+  murn  ink.nuz
+        |=  {pax/path mis/miso}
+        ^-  (unit (pair path mime))
+        ?>  ?=($ins -.mis)
+        ?>  ?=($mime p.p.mis)
+        `[pax ((hard mime) q.q.p.mis)]
+      ::
+        ^-  (list (pair path mime))
+        %+  murn  mut.nuz
+        |=  {pax/path mis/miso}
+        ^-  (unit (pair path mime))
+        ?>  ?=($mut -.mis)
+        ?.  ?=($mime p.p.mis)
+          ~
+        `[pax ((hard mime) q.q.p.mis)]
       ==
     ==
   ::
@@ -1421,7 +1485,7 @@
     :*  hen  %pass  [%patching (scot %p her) syd ~]  %f
         %build  our  live=%.n  %list
         ^-  (list schematic:ford)
-        %+  turn  ~(tap by hat)
+        %+  turn  (sort ~(tap by hat) sort-by-head)
         |=  {a/path b/lobe}
         ^-  schematic:ford
         :-  [%$ %path-hash !>([a b])]
@@ -1515,7 +1579,7 @@
         =+  b=(~(got by can) a)
         ?:  ?=($del -.b)
           [%$ %null !>(~)]
-        =+  (~(get by mim.u.dok) a)
+        =+  (~(get by mim.dom) a)
         ?^  -  [%$ %mime !>(u.-)]
         :^  %cast  [her syd]  %mime
         =+  (need (need (read-x:ze let.dom a)))
@@ -2526,21 +2590,22 @@
     ::  Gets the dome (desk state) at a particular aeon.
     ::
     ::  For past aeons, we don't give an actual ankh in the dome, but the rest
-    ::  of the data is legit.
+    ::  of the data is legit. We also never send the mime cache over the wire.
     ::
     ++  read-v
       |=  {yon/aeon pax/path}
-      ^-  (unit (unit {$dome (hypo dome)}))
+      ^-  (unit (unit {$dome (hypo dome:clay)}))
       ?:  (lth yon let.dom)
         :*  ~  ~  %dome  -:!>(%dome)
-            ank=`[[%ank-in-old-v-not-implemented *ankh] ~ ~]
-            let=yon
-            hit=(molt (skim ~(tap by hit.dom) |=({p/@ud *} (lte p yon))))
-            lab=(molt (skim ~(tap by lab.dom) |=({* p/@ud} (lte p yon))))
-        ==
+            ^-  dome:clay
+            :*  ank=`[[%ank-in-old-v-not-implemented *ankh] ~ ~]
+                let=yon
+                hit=(molt (skim ~(tap by hit.dom) |=({p/@ud *} (lte p yon))))
+                lab=(molt (skim ~(tap by lab.dom) |=({* p/@ud} (lte p yon))))
+        ==  ==
       ?:  (gth yon let.dom)
         ~
-      ``[%dome -:!>(*dome) dom]
+      ``[%dome -:!>(*dome:clay) [ank let hit lab]:dom]
     ::
     ::  Gets all cases refering to the same revision as the given case.
     ::
@@ -2860,8 +2925,16 @@
         ?~  rot
           (error:he %bad-fetch-ali ~)
         =+  ^=  dum
-            %-  (hard {ank/* let/@ud hit/(map @ud tako) lab/(map @tas @ud)})
-            q.q.r.u.rot
+            ::  construct an empty mime cache
+            ::
+            :_  mim=*(map path mime)
+            %.  q.q.r.u.rot
+            %-  hard
+            $:  ank=*
+                let=@ud
+                hit=(map @ud tako)
+                lab=(map @tas @ud)
+            ==
         ?:  =(0 let.dum)
           (error:he %no-ali-desk ~)
         =+  (~(get by hit.dum) let.dum)

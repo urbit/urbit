@@ -246,16 +246,16 @@
         :-  %list
         ^-  (list schematic:ford)
         :~  :-  :^  %$  %path-hash  -:!>([*path *@uvI])
-                :-  /file2/noun
-                0vj.5f6kr.5o1of.dubnd.6k5a7.jprgp.8ifgp.0ljbi.dqau7.7c0q0.fj144
-            ::
-            [%volt [~nul %home] %noun 'file2']
-        ::
-            :-  :^  %$  %path-hash  -:!>([*path *@uvI])
                 :-  /file1/noun
                 0v1u.egg7f.h1o7a.22g2g.torgm.2kcfj.k8b3s.n5hlf.57i21.5m1nn.bhob7
             ::
             [%volt [~nul %home] %noun 'file1']
+        ::
+            :-  :^  %$  %path-hash  -:!>([*path *@uvI])
+                :-  /file2/noun
+                0vj.5f6kr.5o1of.dubnd.6k5a7.jprgp.8ifgp.0ljbi.dqau7.7c0q0.fj144
+            ::
+            [%volt [~nul %home] %noun 'file2']
     ==  ==
   ::
   =^  results6  clay-gate
@@ -272,19 +272,19 @@
                 ^-  (list build-result:ford)
                 :~  :+  %success
                       :*  %success  %$  %path-hash  -:!>([*path *@uvI])
-                          /file2/noun
-                          0vj.5f6kr.5o1of.dubnd.6k5a7.jprgp.
-                          8ifgp.0ljbi.dqau7.7c0q0.fj144
-                      ==
-                    [%success %volt %noun %noun 'file2']
-                ::
-                    :+  %success
-                      :*  %success  %$  %path-hash  -:!>([*path *@uvI])
                           /file1/noun
                           0v1u.egg7f.h1o7a.22g2g.torgm.2kcfj.
                           k8b3s.n5hlf.57i21.5m1nn.bhob7
                       ==
                     [%success %volt %noun %noun 'file1']
+                ::
+                    :+  %success
+                      :*  %success  %$  %path-hash  -:!>([*path *@uvI])
+                          /file2/noun
+                          0vj.5f6kr.5o1of.dubnd.6k5a7.jprgp.
+                          8ifgp.0ljbi.dqau7.7c0q0.fj144
+                      ==
+                    [%success %volt %noun %noun 'file2']
         ==  ==  ==
       ^=  expected-moves
         :~  :*  duct=~[/init]  %give  %note  '+'  %rose  ["/" "/" ~]
