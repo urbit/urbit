@@ -10,7 +10,7 @@
   |%
   ++  noun  rumor:hall                                  :::  from %noun
   ++  json                                              :::  from %json
-    =>  [. dejs:hall-json]  ::TODO  =,
+    =,  dejs:hall-json
     =,  dejs-soft:format
     |=  a/json
     ^-  rumor:hall
@@ -26,7 +26,7 @@
 ++  grow                                                :::  convert to
   |%
   ++  json                                              :::  to %json
-    =>  [. enjs:hall-json]  ::TODO  =,
+    =,  enjs:hall-json
     =,  enjs:format
     %+  frond  -.rum
     ?+  -.rum  !!

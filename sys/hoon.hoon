@@ -593,6 +593,7 @@
   ?.(=(u.a u.b) ~>(%mean.[%leaf "mate"] !!) a)
 ::
 ++  need                                                ::  demand
+  ~/  %need
   |*  a/(unit)
   ?~  a  ~>(%mean.[%leaf "need"] !!)
   u.a
@@ -3217,6 +3218,7 @@
   (shaf %sham (jam yux))
 ::
 ++  shas                                                ::  salted hash
+  ~/  %shas
   |=  {sal/@ ruz/@}
   (shax (mix sal (shax ruz)))
 ::
@@ -4881,6 +4883,8 @@
 ::
 ++  pfix                                                ::  discard first rule
   ~/  %pfix
+  |*  sam=*
+  %.  sam
   (comp |*({a/* b/*} b))
 ::
 ++  plug                                                ::  first then second
@@ -4911,6 +4915,8 @@
 ::
 ++  sfix                                                ::  discard second rule
   ~/  %sfix
+  |*  sam=*
+  %.  sam
   (comp |*({a/* b/*} a))
 ::
 ::::  4f: parsing (rule builders)
