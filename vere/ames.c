@@ -197,6 +197,8 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
     return;
   }
 
+  c3_assert( 0 != bos_c );
+
   time_t now = time(0);
 
   // backoff
@@ -269,6 +271,8 @@ _ames_lane_ip(u3_noun lan, c3_s* por_s, c3_w* pip_w)
   return c3n;
 }
 
+/* u3_ames_ef_bake(): notify %ames that we're live.
+*/
 void
 u3_ames_ef_bake(void)
 {
@@ -303,7 +307,7 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
     if ( (0 == (pac_u->pip_w >> 16)) && (1 == (pac_u->pip_w >> 8)) ) {
       pac_u->imp_y = (pac_u->pip_w & 0xff);
 
-      _ames_czar(pac_u, u3_Host.ops_u.dns_c);
+      _ames_czar(pac_u, u3_Host.sam_u.dns_c);
     }
     else if ( (c3y == u3_Host.ops_u.net) || (0x7f000001 == pac_u->pip_w) ) {
       _ames_send(pac_u);
@@ -326,15 +330,22 @@ static void
 _ames_time_cb(uv_timer_t* tim_uo)
 {
   u3_ames* sam_u = &u3_Host.sam_u;
-  u3_lo_open();
 
-  sam_u->law_w = time(0);
-  {
-    u3v_plan
-      (u3nt(u3_blip, c3__ames, u3_nul),
-       u3nc(c3__wake, u3_nul));
+  // defer until started via u3_ames_ef_turf()
+  if ( c3n == sam_u->liv ) {
+    uv_timer_start(&sam_u->tim_u, _ames_time_cb, 1000, 0);
   }
-  u3_lo_shut(c3n);
+  else {
+    u3_lo_open();
+
+    sam_u->law_w = time(0);
+    {
+      u3v_plan
+        (u3nt(u3_blip, c3__ames, u3_nul),
+         u3nc(c3__wake, u3_nul));
+    }
+    u3_lo_shut(c3n);
+  }
 }
 
 /* _ames_recv_cb(): receive callback.
@@ -376,15 +387,15 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   }
 }
 
-/* u3_ames_io_init(): initialize ames I/O.
+/* _ames_io_start(): initialize ames I/O.
 */
-void
-u3_ames_io_init()
+static void
+_ames_io_start()
 {
   u3_ames* sam_u = &u3_Host.sam_u;
-  c3_s por_s;
+  c3_s por_s     = u3_Host.ops_u.por_s;
 
-  por_s = u3_Host.ops_u.por_s;
+  // XX use clan:title u3A->own
   if ( 0 != u3_Host.ops_u.imp_c ) {
     u3_noun imp   = u3i_string(u3_Host.ops_u.imp_c);
     u3_noun num   = u3dc("slaw", 'p', imp);
@@ -442,10 +453,103 @@ u3_ames_io_init()
 
     sam_u->por_s = ntohs(add_u.sin_port);
   }
-  //  Timer too.
-  {
-    uv_timer_init(u3L, &sam_u->tim_u);
+
+  // uL(fprintf(uH, "ames: on localhost, UDP %d.\n", sam_u->por_s));
+  uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
+
+  sam_u->liv = c3y;
+}
+
+/* _cttp_mcut_char(): measure/cut character.
+*/
+static c3_w
+_cttp_mcut_char(c3_c* buf_c, c3_w len_w, c3_c chr_c)
+{
+  if ( buf_c ) {
+    buf_c[len_w] = chr_c;
   }
+  return len_w + 1;
+}
+
+/* _cttp_mcut_cord(): measure/cut cord.
+*/
+static c3_w
+_cttp_mcut_cord(c3_c* buf_c, c3_w len_w, u3_noun san)
+{
+  c3_w ten_w = u3r_met(3, san);
+
+  if ( buf_c ) {
+    u3r_bytes(0, ten_w, (c3_y *)(buf_c + len_w), san);
+  }
+  u3z(san);
+  return (len_w + ten_w);
+}
+
+/* _cttp_mcut_path(): measure/cut cord list.
+*/
+static c3_w
+_cttp_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u3_noun pax)
+{
+  u3_noun axp = pax;
+
+  while ( u3_nul != axp ) {
+    u3_noun h_axp = u3h(axp);
+
+    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(h_axp));
+    axp = u3t(axp);
+
+    if ( u3_nul != axp ) {
+      len_w = _cttp_mcut_char(buf_c, len_w, sep_c);
+    }
+  }
+  u3z(pax);
+  return len_w;
+}
+
+/* _cttp_mcut_host(): measure/cut host.
+*/
+static c3_w
+_cttp_mcut_host(c3_c* buf_c, c3_w len_w, u3_noun hot)
+{
+  len_w = _cttp_mcut_path(buf_c, len_w, '.', u3kb_flop(u3k(hot)));
+  u3z(hot);
+  return len_w;
+}
+
+/* u3_ames_ef_turf(): initialize ames I/O on domain(s).
+*/
+void
+u3_ames_ef_turf(u3_noun tuf)
+{
+  if ( u3_nul != tuf ) {
+    // XX save all for fallback, not just first
+    u3_noun hot = u3k(u3h(tuf));
+    c3_w  len_w = _cttp_mcut_host(0, 0, u3k(hot));
+
+    u3_Host.sam_u.dns_c = c3_malloc(1 + len_w);
+    _cttp_mcut_host(u3_Host.sam_u.dns_c, 0, hot);
+    u3_Host.sam_u.dns_c[len_w] = 0;
+
+    u3z(tuf);
+  }
+  else if ( c3n == u3A->fak ) {
+    // XX assert?
+    uL(fprintf(uH, "ames: turf: no domains\n"));
+  }
+
+  if ( c3n == u3_Host.sam_u.liv ) {
+    _ames_io_start();
+  }
+}
+
+/* u3_ames_io_init(): initialize ames I/O.
+*/
+void
+u3_ames_io_init()
+{
+  u3_ames* sam_u = &u3_Host.sam_u;
+  sam_u->liv = c3n;
+  uv_timer_init(u3L, &sam_u->tim_u);
 }
 
 /* u3_ames_io_talk(): start receiving ames traffic.
@@ -453,10 +557,6 @@ u3_ames_io_init()
 void
 u3_ames_io_talk()
 {
-  u3_ames* sam_u = &u3_Host.sam_u;
-
-  uL(fprintf(uH, "ames: on localhost, UDP %d.\n", sam_u->por_s));
-  uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
 }
 
 /* u3_ames_io_exit(): terminate ames I/O.
@@ -466,8 +566,12 @@ u3_ames_io_exit()
 {
   u3_ames* sam_u = &u3_Host.sam_u;
 
-  // XX close wax_u instead
-  uv_close(&sam_u->had_u, 0);
+  uv_close((uv_handle_t*)&sam_u->tim_u, 0);
+
+  if ( c3y == sam_u->liv ) {
+    // XX remove had_u/wax_u union, cast and close wax_u
+    uv_close(&sam_u->had_u, 0);
+  }
 }
 
 /* u3_ames_io_poll(): update ames IO state.

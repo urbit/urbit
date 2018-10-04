@@ -667,7 +667,12 @@ u3_lo_lead(void)
   //  Further server configuration.
   //
   {
+    u3_ames_ef_bake();
     u3_http_ef_bake();
+
+    if ( (c3y == u3_Host.ops_u.nuu) && (0 != u3_Host.ops_u.imp_c) ) {
+      u3_unix_ef_initial_into();
+    }
   }
 
   _lo_talk();

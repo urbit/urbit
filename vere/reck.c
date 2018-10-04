@@ -208,6 +208,11 @@ _reck_kick_newt(u3_noun pox, u3_noun fav)
       u3_ames_ef_send(lan, pac);
       u3z(pox); u3z(fav); return c3y;
     } break;
+
+    case c3__turf: {
+      u3_ames_ef_turf(u3k(u3t(fav)));
+      u3z(pox); u3z(fav); return c3y;
+    } break;
   }
   u3z(pox); u3z(fav); return c3n;
 }

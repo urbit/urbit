@@ -277,21 +277,6 @@ _sist_sing(u3_noun ovo)
   }
 }
 
-
-/* _sist_home(): remains of "create ship directory" after refactor to u3m_boot().
-*/
-static void
-_sist_home()
-{
-#if 1
-  //  Copy zod files, if we're generating a carrier.
-  //
-  if ( u3_Host.ops_u.imp_c ) {
-    u3_unix_ef_initial_into();
-  }
-#endif
-}
-
 /* _sist_cask(): ask for a passcode.
 */
 static u3_noun
@@ -518,10 +503,6 @@ _sist_zest()
   c3_c        ful_c[8193];
   c3_l        sal_l;
 
-  //  Create the ship directory.
-  //
-  _sist_home();
-
   //  Create the record file.
   {
     c3_i pig_i = O_CREAT | O_WRONLY | O_EXCL;
@@ -602,9 +583,6 @@ _sist_zest()
 static void
 _sist_make(u3_noun fav)
 {
-  //  Initialize ames
-  u3_ames_ef_bake();
-
   //  Authenticate and initialize terminal.
   //
   u3_term_ef_bake(fav);
