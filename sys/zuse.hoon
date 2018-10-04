@@ -4162,21 +4162,26 @@
       ==
     ::
     ++  secp
-      |=  [w=@ p=@ a=@ b=@ g=pont n=@]
+      ~/  %secp
+      |=  [w=@ p=@ a=@ b=@ g=pont n=@]  :: being passed in from above
       =/  p  ~(. fo p)
       =/  n  ~(. fo n)
+      ~%  %helper  ..$  ~
       |%
       ++  compress-point
+        ~/  %compress-point
         |=  pont
         ^-  @
         (can 3 ~[w^x 1^(add 0x2 (cut 0 [0 1] y))])
       ::
       ++  serialize-point
+        ~/  %serialize-point
         |=  pont
         ^-  @
         (can 3 ~[w^y w^x 1^0x4])
       ::
       ++  decompress-point
+        ~/  %decompress-point
         |=  dat=@
         ^-  pont
         =+  x=(end 3 w a)
@@ -4189,11 +4194,13 @@
         !!
       ::
       ++  priv-to-pub                                   ::  get pub from priv
+        ~/  %priv-to-pub
         |=  prv=@
         ^-  pont
         (jc-mul g prv)
       ::
       ++  make-k                                        ::  deterministic nonce
+        ~/  %make-k
         =,  mimes:html
         |=  [has=@uvI prv=@]
         ^-  @
@@ -4207,6 +4214,7 @@
         (hmc w^k w^v)
       ::
       ++  ecdsa-raw-sign                                ::  generate signature
+        ~/  %ecdsa-raw-sign
         |=  [has=@uvI prv=@]
         ^-  [v=@ r=@ s=@]
         =/  z  has
@@ -4220,6 +4228,7 @@
         ==
       ::
       ++  ecdsa-raw-recover                             ::  get pubkey from sig
+        ~/  %ecdsa-raw-recover
         |=  [has=@uvI sig=[v=@ r=@ s=@]]
         ^-  pont
         ?>  (lte v.sig 7)
