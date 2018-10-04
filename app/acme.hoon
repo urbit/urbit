@@ -139,9 +139,6 @@
       %finalize-order
       %finalize-trial
   ==
-:: +turf: a domain, TLD first
-::
-+=  turf  (list @t)
 :: +acct: an ACME service account
 ::
 +=  acct

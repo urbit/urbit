@@ -147,7 +147,7 @@
         '"}]'
     ==
   %+  expect-eq
-    !>  [[0 /org/urbit] [1 /org/urbit] [2 /org/urbit] ~]
+    !>  [/org/urbit ~]
     !>  (turf:take:dawn oct)
 ::
 ++  test-veri-good

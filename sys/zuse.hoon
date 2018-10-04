@@ -95,6 +95,8 @@
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
   (cask vase)                                           ::  marked cargo
+::
+++  turf  (list @t)                                     ::  domain, tld first
 ::                                                      ::
 ::::                      ++jstd                        ::  json standards structures
   ::                                                    ::::
@@ -460,6 +462,7 @@
       ==  ==                                            ::
           $:  %j                                        ::  to %jael
       $%  [%pubs our=ship who=ship]                     ::  view public keys
+          [%turf ~]                                     ::  view domains
           [%vein our=ship]                              ::  view private keys
       ==  ==                                            ::
           $:  $g                                        ::  to %gall
@@ -474,11 +477,13 @@
           {$mass p/mass}                                ::  memory usage
           {$rove p/ship q/lane}                         ::  lane change
           {$send p/lane q/@}                            ::  transmit packet
+          {$turf p/(list turf)}                         ::  bind to domains
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
     ++  sign                                            ::  in result _<-
       $%  $:  %j                                        ::  from %jael
       $%  [%pubs public:able:jael]                      ::  public keys
+          [%turf turf=(list turf)]                      ::  bind to domains
           [%vein =life vein=(map life ring)]            ::  private keys
       ==  ==                                            ::
           $:  $g                                        ::  from %gall
@@ -542,6 +547,8 @@
     ==                                                  ::
   ++  boon                                              ::  fort output
     $%  {$beer p/sock}                                  ::  request public keys
+        {$bock ~}                                       ::  bind to domains
+        {$brew ~}                                       ::  request domains
         {$cake p/sock q/soap r/coop s/duct}             ::  e2e message result
         {$maze p/ship q/lane}                           ::  lane change
         {$mead p/lane q/rock}                           ::  accept packet
@@ -581,6 +588,7 @@
   ++  fort                                              ::  formal state
     $:  $1                                              ::  version
         gad/duct                                        ::  client interface
+        tuf/(list turf)                                 ::  domains
         hop/@da                                         ::  network boot date
         bad/(set @p)                                    ::  bad ships
         ton/town                                        ::  security
@@ -1046,7 +1054,7 @@
   ++  hiss  {p/purl q/moth}                             ::  outbound request
   ++  hole  @t                                          ::  session identity
   ++  hort  {p/(unit @ud) q/host}                       ::  http port+host
-  ++  host  (each (list @t) @if)                        ::  http host
+  ++  host  (each turf @if)                             ::  http host
   ++  hoke  %+  each   {$localhost ~}                  ::  local host
             ?($.0.0.0.0 $.127.0.0.1)                    ::
   :: +http-config: full http-server configuration
@@ -1075,7 +1083,7 @@
         [%cert p=(unit [key=wain cert=wain])]
         :: %turf: add or remove established dns binding
         ::
-        [%turf p=?(%put %del) q=(list @t)]
+        [%turf p=?(%put %del) q=turf]
     ==
   ++  httq                                              ::  raw http request
     $:  p/meth                                          ::  method
@@ -1993,6 +2001,7 @@
       $%  [%init p=ship]                                ::  report install unix
           [%mack p=(unit tang)]                         ::  message n/ack
           [%pubs public]                                ::  public keys
+          [%turf turf=(list turf)]                      ::  domains
           {$vest p/tally}                               ::  balance update
           [%vein =life vein=(map life ring)]            ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
@@ -2036,7 +2045,7 @@
               =seed:able:jael                           ::    identity params
               spon=(unit ship)                          ::    sponsor
               czar=(map ship [=life =pass])             ::    galaxy table
-              turf=(list (pair @ud (list @ta)))         ::    domains
+              turf=(list turf)                          ::    domains
           ==                                            ::
           [%fake our=ship]                              ::  fake boot
           [%look our=ship src=(each ship purl:eyre)]    ::  set ethereum source
@@ -2046,6 +2055,7 @@
           [%nuke ~]                                     ::  cancel tracker from
           [%pubs our=ship who=ship]                     ::  view public keys
           [%meet our=ship who=ship]                     ::  met after breach
+          [%turf ~]                                     ::  view domains
           [%vein our=ship]                              ::  view signing keys
           [%vent our=ship]                              ::  view ethereum events
           [%vest our=ship]                              ::  view public balance
@@ -7968,18 +7978,32 @@
     ::
     ++  turf
       |=  rep=octs
-      ^-  (list [@ud (list @ta)])
+      ^-  (list ^turf)
       =/  jon=json  (need (de-json:html q.rep))
       =/  res=(list [@t @t])
         ((ar (ot id+so result+so ~)) jon)
-      %+  turn  res
-      |=  [id=@t result=@t]
-      :-  (slav %ud id)
-      =/  dom=tape
-        (decode-results:ethereum result [%string]~)
-      =/  hot=host:eyre
-        (scan dom thos:de-purl:html)
-      ?>(?=(%& -.hot) p.hot)
+      =/  dom=(list (pair @ud ^turf))
+        %+  turn  res
+        |=  [id=@t result=@t]
+        ^-  (pair @ud ^turf)
+        :-  (slav %ud id)
+        =/  dom=tape
+          (decode-results:ethereum result [%string]~)
+        =/  hot=host:eyre
+          (scan dom thos:de-purl:html)
+        ?>(?=(%& -.hot) p.hot)
+      :: sort by id, ascending, removing duplicates
+      ::
+      =|  tuf=(map ^turf @ud)
+      |-  ^-  (list ^turf)
+      ?~  dom
+        %+  turn
+          %+  sort  ~(tap by tuf)
+          |=([a=(pair ^turf @ud) b=(pair ^turf @ud)] (lth q.a q.b))
+        head
+      =?  tuf  !(~(has by tuf) q.i.dom)
+        (~(put by tuf) q.i.dom p.i.dom)
+      $(dom t.dom)
     --
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::

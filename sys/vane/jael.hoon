@@ -74,6 +74,8 @@
 ++  state-absolute                                      ::  absolute urbit
   $:  pry/(map ship (map ship safe))                    ::  promises
       eve=logs                                          ::  on-chain events
+      :: XX reconcile with .dns.eth
+      tuf=(list turf)                                   ::  domains
       fak/_|                                            ::  fake keys
   ==                                                    ::
 ++  state-eth-node                                      ::  node config + meta
@@ -649,7 +651,7 @@
       abet:abet:(deal:(burb our.tac) p.tac [~ q.tac])
     ::
     ::  boot from keys
-    ::    {$dawn =seed spon=(unit ship) czar=(map ship [=life =pass]) turf=(list (pair @ud turf))}
+    ::    {$dawn =seed spon=(unit ship) czar=(map ship [=life =pass]) turf=(list turf)}
     ::
         %dawn
       =*  our  who.seed.tac
@@ -666,7 +668,11 @@
         %-  curd  =<  abet
         (pubs:~(feel su our urb sub etn) kyz)
       ::  XX sponsor
-      ::  XX turf
+      ::  XX reconcile with .dns.eth
+      ::  set initial domains
+      ::
+      =.  tuf.urb  turf.tac
+      ::
       =.  moz
         %+  weld  moz
         ::  order is crucial!
@@ -777,6 +783,14 @@
         %meet
       %+  cure  our.tac
       [[%meet who.tac]~ urb]
+    ::
+    ::  XX should be a subscription
+    ::  XX reconcile with .dns.eth
+    ::  request domains
+    ::    [%turf ~]
+    ::
+        %turf
+      +>.$(moz [[hen %give %turf tuf.urb] moz])
     ::
     ::  watch private keys
     ::    {$vein $~}

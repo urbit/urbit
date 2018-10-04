@@ -3793,15 +3793,17 @@
     [mos ..^$]
   ::
       $init
-    :_  %_    ..^$
-            fat.ruf
-          ?<  (~(has by fat.ruf) our.req)
-          (~(put by fat.ruf) our.req [-(hun hen)]:[*room .])
-        ==
-    ^-  (list move)
+    =.  fat.ruf
+      ?<  (~(has by fat.ruf) our.req)
+      (~(put by fat.ruf) our.req [-(hun hen)]:[*room .])
+    ::
     ?:  ?=(%czar (clan:title our.req))
-      ~
-    [hen %pass /init-merge %c %merg our.req %base (sein:title our.req) %kids da+now %init]~
+      [~ ..^$]
+    =/  =task:able
+      [%merg our.req %base (sein:title our.req) %kids da+now %init]
+    =.  cue.ruf  (~(put to cue.ruf) [hen task])
+    =/  =move  [hen %pass /queued-request %b %wait now]
+    [~[move] ..^$]
   ::
       $into
     =.  hez.ruf  `hen

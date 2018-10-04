@@ -73,7 +73,7 @@
           =seed:able:jael                               ::    identity params
           spon=(unit ship)                              ::    sponsor
           czar=(map ship [=life =pass])                 ::    galaxy table
-          turf=(list (pair @ud (list @ta)))             ::    domains
+          turf=(list turf)                              ::    domains
       ==                                                ::
       [%fake our=ship]                                  ::  boot fake
       :: XX wegh                                        ::

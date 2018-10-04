@@ -16,7 +16,7 @@
     0w8O.k5Ry4.QsKQq.1k~uj.DBOU4.numfq.nXOwa.cSk7B.VcHVm.
     -8~kX.3ALiG.rQjOi.HZ9hj.84b6G.P5pCZ.UtNtt.Lh9TE.2DQJ2
   =/  dan
-    [`seed:able:jael`[~nul 1 key ~] ~ ~ [0 /urbit/org]~]
+    [`seed:able:jael`[~nul 1 key ~] ~ ~ [/org/urbit ~]]
   ::
   =^  results1  jael-gate
     =/  hen=duct

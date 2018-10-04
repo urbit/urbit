@@ -1,7 +1,4 @@
 |%
-:: +turf: a domain, TLD first
-::
-+=  turf  (list @t)
 :: +provider: DNS service provider (gcloud only for now)
 ::
 +=  provider

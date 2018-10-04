@@ -20,7 +20,7 @@
     :*  ames-gate
         now=~1234.5.6
         call-args=[hen type=*type %soft %init ~nul]
-        [hen %pass wir %j %vein ~nul]~
+        [[hen %pass wir %j %vein ~nul] [hen %pass / %j %turf ~] ~]
     ==
   ::
   results1
