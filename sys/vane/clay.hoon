@@ -1168,14 +1168,30 @@
         =/  mis=miso  q.i.p.lem
         ?>  ?=(%mut -.mis)
         =/  cag=cage  p.mis
-        =/  mim=mime  ((hard mime) q.q.cag)
-        ::  if we have the %mime value cached, there's no change to apply
+        ::  if :mis has the %mime mark and it's the same as cached, no-op
         ::
-        =?    mut.nuz
-            !=(`mim (~(get by mim.dom) pax))
-          [i.p.lem mut.nuz]
+        ?:  ?.  =(%mime p.cag)
+              %.n
+            ?~  cached=(~(get by mim.dom) pax)
+              %.n
+            =(((hard mime) q.q.cag) u.cached)
+          ::
+          $(p.lem t.p.lem)
+        ::  if the :mis mark is the target mark and the value is the same, no-op
         ::
-        $(p.lem t.p.lem)
+        ?:  =/  target-mark=mark  =+(spur=(flop pax) ?~(spur !! i.spur))
+            ?.  =(target-mark p.cag)
+              %.n
+            ::
+            =/  stored            (need (need (read-x:ze let.dom pax)))
+            =/  stored-cage=cage  ?>(?=(%& -.stored) p.stored)
+            ::
+            =(q.q.stored-cage q.q.cag)
+          ::
+          $(p.lem t.p.lem)
+        ::  the value differs from what's stored, so register mutation
+        ::
+        $(p.lem t.p.lem, mut.nuz [i.p.lem mut.nuz])
       ==
     ::  sort each section alphabetically for determinism
     ::
