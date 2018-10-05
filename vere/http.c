@@ -347,63 +347,6 @@ _http_hgen_dispose(void* ptr_v)
   free(gen_u->bod_u.base);
 }
 
-/* _http_req_respond(): write httr to h2o_req_t->res and send
-*/
-static void
-_http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
-{
-  // XX ideally
-  //c3_assert(u3_rsat_plan == req_u->sat_e);
-
-  if ( u3_rsat_plan != req_u->sat_e ) {
-    //uL(fprintf(uH, "duplicate response\n"));
-    return;
-  }
-
-  req_u->sat_e = u3_rsat_ripe;
-
-  uv_timer_stop(req_u->tim_u);
-
-  h2o_req_t* rec_u = req_u->rec_u;
-
-  rec_u->res.status = sas;
-  rec_u->res.reason = (sas < 200) ? "weird" :
-                      (sas < 300) ? "ok" :
-                      (sas < 400) ? "moved" :
-                      (sas < 500) ? "missing" :
-                      "hosed";
-
-  u3_hhed* hed_u = _http_heds_from_noun(u3k(hed));
-
-  u3_hgen* gen_u = h2o_mem_alloc_shared(&rec_u->pool, sizeof(*gen_u),
-                                        _http_hgen_dispose);
-  gen_u->neg_u = (h2o_generator_t){0, 0};
-  gen_u->hed_u = hed_u;
-
-  while ( 0 != hed_u ) {
-    h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
-                          hed_u->nam_c, hed_u->nam_w, 0, 0,
-                          hed_u->val_c, hed_u->val_w);
-    hed_u = hed_u->nex_u;
-  }
-
-  gen_u->bod_u = _http_vec_from_octs(u3k(bod));
-  rec_u->res.content_length = gen_u->bod_u.len;
-
-  h2o_start_response(rec_u, &gen_u->neg_u);
-  h2o_send(rec_u, &gen_u->bod_u, 1, H2O_SEND_STATE_FINAL);
-
-  {
-    u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
-
-    if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
-      rec_u->http1_is_persistent = 0;
-    }
-  }
-
-  u3z(sas); u3z(hed); u3z(bod);
-}
-
 /* _http_start_respond(): write a [%http-response %start ...] to h2o_req_t->res
 */
 static void
@@ -413,6 +356,7 @@ _http_start_respond(u3_hreq* req_u,
                     u3_noun data,
                     u3_noun complete)
 {
+  fprintf(stderr, "start\n");
   if ( u3_rsat_plan != req_u->sat_e ) {
     //uL(fprintf(uH, "duplicate response\n"));
     return;
@@ -446,9 +390,87 @@ _http_start_respond(u3_hreq* req_u,
   }
 
   gen_u->bod_u = _http_vec_from_octs(u3k(data));
-  rec_u->res.content_length = gen_u->bod_u.len;
+
+  if (c3y == complete) {
+    // We know the entire size of the response, so ensure we tell h2o about the size.
+    rec_u->res.content_length = gen_u->bod_u.len;
+  }
 
   h2o_start_response(rec_u, &gen_u->neg_u);
+
+  if (c3y == complete) {
+    fprintf(stderr, "start and send state final\n");
+
+    // We are the final message.
+    h2o_send(rec_u, &gen_u->bod_u, 1, H2O_SEND_STATE_FINAL);
+
+    u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
+
+    if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
+      rec_u->http1_is_persistent = 0;
+    }
+  } else {
+    fprintf(stderr, "start and send state in progress\n");
+
+    // We are the first of multiple messages.
+    h2o_send(rec_u, &gen_u->bod_u, 1, H2O_SEND_STATE_IN_PROGRESS);
+
+    // We must restart the timeout timer.
+    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 30 * 1000, 0);
+  }
+
+  u3z(status); u3z(headers); u3z(data); u3z(complete);
+}
+
+/* _http_continue_respond(): write a [%http-response %continue ...] to
+ * h2o_req_t->res
+*/
+static void
+_http_continue_respond(u3_hreq* req_u,
+                       /* u3_noun status, */
+                       /* u3_noun headers, */
+                       u3_noun data,
+                       u3_noun complete)
+{
+  fprintf(stderr, "continue\n");
+
+  /* if ( u3_rsat_plan != req_u->sat_e ) { */
+  /*   //uL(fprintf(uH, "duplicate response\n")); */
+  /*   return; */
+  /* } */
+
+  /* req_u->sat_e = u3_rsat_ripe; */
+
+  uv_timer_stop(req_u->tim_u);
+
+  h2o_req_t* rec_u = req_u->rec_u;
+
+  /* rec_u->res.status = status; */
+  /* rec_u->res.reason = (status < 200) ? "weird" : */
+  /*                     (status < 300) ? "ok" : */
+  /*                     (status < 400) ? "moved" : */
+  /*                     (status < 500) ? "missing" : */
+  /*                     "hosed"; */
+
+  /* u3_hhed* hed_u = _http_heds_from_noun(u3k(headers)); */
+
+  u3_hgen* gen_u = h2o_mem_alloc_shared(&rec_u->pool, sizeof(*gen_u),
+                                        _http_hgen_dispose);
+  gen_u->neg_u = (h2o_generator_t){0, 0};
+  /* gen_u->hed_u = hed_u; */
+
+  /* while ( 0 != hed_u ) { */
+  /*   h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers, */
+  /*                         hed_u->nam_c, hed_u->nam_w, 0, 0, */
+  /*                         hed_u->val_c, hed_u->val_w); */
+  /*   hed_u = hed_u->nex_u; */
+  /* } */
+
+  gen_u->bod_u = _http_vec_from_octs(u3k(data));
+  /* rec_u->res.content_length = gen_u->bod_u.len; */
+
+
+  /* h2o_start_response(rec_u, &gen_u->neg_u); */
   h2o_send(rec_u, &gen_u->bod_u, 1,
            (c3y == complete ?
             H2O_SEND_STATE_FINAL : H2O_SEND_STATE_IN_PROGRESS));
@@ -461,11 +483,8 @@ _http_start_respond(u3_hreq* req_u,
     }
   }
 
-  u3z(status); u3z(headers); u3z(data); u3z(complete);
+  u3z(data); u3z(complete);
 }
-
-
-
 
 /* _http_rec_to_httq(): convert h2o_req_t to httq
 */
@@ -708,6 +727,9 @@ static void
 _http_serv_unlink(u3_http* htp_u)
 {
   // XX link elsewhere initially, relink on start?
+#if 0
+  uL(fprintf(uH, "http serv unlink %d\n", htp_u->sev_l));
+#endif
 
   if ( u3_Host.htp_u == htp_u ) {
     u3_Host.htp_u = htp_u->nex_u;
@@ -814,6 +836,10 @@ static void
 http_serv_free_cb(uv_timer_t* tim_u)
 {
   u3_http* htp_u = tim_u->data;
+
+#if 0
+  uL(fprintf(uH, "http serv free cb %d\n", htp_u->sev_l));
+#endif
 
   _http_serv_really_free(htp_u);
 
@@ -1421,12 +1447,14 @@ u3_http_ef_thou(c3_l     sev_l,
   else {
     u3_noun p_rep, q_rep, r_rep;
 
-    if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) {
-      uL(fprintf(uH, "http: strange response\n"));
-    }
-    else {
-      _http_req_respond(req_u, u3k(p_rep), u3k(q_rep), u3k(r_rep));
-    }
+    fprintf(stderr, "Old %thou not used anymore\n");
+
+    /* if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) { */
+    /*   uL(fprintf(uH, "http: strange response\n")); */
+    /* } */
+    /* else { */
+    /*   _http_req_respond(req_u, u3k(p_rep), u3k(q_rep), u3k(r_rep)); */
+    /* } */
   }
 
   u3z(rep);
@@ -1472,7 +1500,13 @@ u3_http_ef_http_response(c3_l    sev_l,
         uL(fprintf(uH, "http: strange %%start response\n"));
       }
     } else if (c3y == u3r_sing(u3i_string("continue"), u3k(u3h(rep)))) {
-      
+      // Separate the %continue message into its components.
+      u3_noun data, complete;
+      if (c3y == u3r_cell(u3t(rep), &data, &complete)) {
+        _http_continue_respond(req_u, u3k(data), u3k(complete));
+      } else {
+        uL(fprintf(uH, "http: strange %%continue response\n"));
+      }
     } else if (c3y == u3r_sing(u3i_string("cancel"), u3k(u3h(rep)))) {
 
     } else {
