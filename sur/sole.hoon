@@ -77,7 +77,7 @@
   %^    trel                                            ::  fetch and continue
       (unit knot)
     hiss:eyre
-  $-(httr:eyre $;(..$))
+  $-(httr:eyre (sole-request out))
 --
 |%
 ::                                                      ::

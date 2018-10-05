@@ -99,7 +99,7 @@
     ::
     ::  arms producing molds are introduced with {+$}.  the
     ::  compiler will copy the arm decoration onto its product
-    +|
+    :: +|
     +$  spot  [p=@ q=@]                                 ::  a coordinate
     +$  tops                                            ::  also a coordinate
       [p=@ q=@]
@@ -121,7 +121,7 @@
     ::
     ::  other languages might call these "type constructors"
     ::  or "higher-kinded types".
-    +|
+    :: +|
     ++  binary-tree                                     ::  tree pattern
       |*  a=$-(* *)
       $@(~ [n=a l=(binary-tree a) r=(binary-tree a)])
@@ -129,7 +129,7 @@
     ::  #  %constant
     ::  #
     ::    if you have constants, put them in their own chapter.
-    +|
+    :: +|
     ++  answer                                          ::  answer to everything
       42
     --
@@ -170,7 +170,7 @@
   =/  foo  (add 2 2)
   =/  bar  (add (mul num foo) 2)
   =/  moo  (mul num bar)                                ::  for all the cows
-  "goodbye and {(scot %ud moo)}, {(rip 3 txt)}"
+  "goodbye and {(scow %ud moo)}, {(rip 3 txt)}"
 ::
 ++  say-minimum                                         ::  minimal decoration
   |=  txt=term
