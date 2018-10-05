@@ -16,17 +16,12 @@
 ::
 +$  rights
   $:  own=address
-      manage=address
-      delegate=(unit address)
-      transfer=address
+      manage=(unit address)
+      voting=(unit address)
+      transfer=(unit address)
       spawn=(unit address)
       net=(unit [crypt=@ux auth=@ux])
   ==
-::
-+$  chart
-  %+  map  ship  ::  galaxies
-  %+  map  ship  ::  stars
-  %-  set  ship  ::  planets
 ::
 ::TODO  into zuse
 ++  address-from-prv
@@ -46,11 +41,41 @@
 ++  zero-ux
   ;~(pfix (jest '0x') hex)
 ::
+++  ship-and-rights
+  |=  live=?
+  ;~  (glue com)
+    ;~(pfix sig fed:ag)
+    (all-rights live)
+  ==
+::
+++  all-rights
+  |=  live=?
+  ;~  (glue com)
+    zero-ux
+    (punt zero-ux)
+    (punt zero-ux)
+    (punt zero-ux)
+    (punt zero-ux)
+  ::
+    ?.  live
+      (punt ;~(plug zero-ux ;~(pfix com zero-ux)))
+    (stag ~ ;~(plug zero-ux ;~(pfix com zero-ux)))
+    :: %.  ;~(plug zero-ux ;~(pfix com zero-ux))
+    :: ?.  live  punt
+    :: (cury stag ~)
+  ==
+::
 ++  get-file
   |=  pax=path
   .^  (list cord)  %cx
       (weld /(scot %p ~zod)/home/(scot %da now) pax)
   ==
+::
+++  parse-lines
+  |*  [fil=knot par=rule]
+  %+  turn  (get-file /[fil]/txt)
+  |=  c=cord
+  (rash c par)
 ::
 ++  order-shiplist
   |=  [[a=ship *] [b=ship *]]
@@ -70,45 +95,65 @@
     addr        (address-from-prv prv)
   ==
 ::
-++  get-ship-deeds
+++  get-direct-galaxies
   ^-  (list [who=ship rights])
-  =+  lis=(get-file /deeds/txt)
-  %+  turn  lis
-  |=  c=cord
-  %+  rash  c
-  ;~  (glue com)
-    ;~(pfix sig fed:ag)
-    zero-ux
-    zero-ux
-    (punt zero-ux)
-    zero-ux
-    (punt zero-ux)
-    (punt ;~(plug zero-ux ;~(pfix com zero-ux)))
-  ==
+  %+  parse-lines  'direct-galaxies'
+  (ship-and-rights |)
 ::
-++  get-linear-deeds
+++  get-direct-deeds
+  ^-  (list [who=ship rights])
+  %+  parse-lines  'direct-deeds'
+  (ship-and-rights |)
+::
+++  get-linear-recipients
   ^-  %-  list
-      $:  who=ship
+      $:  recipient=address
           windup=@ud
+          stars=@ud
           rate=@ud
           rate-unit=@ud
-          rights
       ==
-  =+  lis=(get-file /deeds-linear/txt)
-  %+  turn  lis
-  |=  c=cord
-  %+  rash  c
+  %+  parse-lines  'linear-recipients'
+  ;~  (glue com)
+    zero-ux
+    dum:ag
+    dum:ag
+    dum:ag
+    dum:ag
+  ==
+::
+++  get-conditional-recipients
+  ^-  %-  list
+      $:  recipient=address
+          b1=@ud
+          b2=@ud
+          b3=@ud
+          rate=@ud
+          rate-unit=@ud
+      ==
+  %+  parse-lines  'conditional-recipients'
+  ;~  (glue com)
+    zero-ux
+    dum:ag
+    dum:ag
+    dum:ag
+    dum:ag
+    dum:ag
+  ==
+::
+++  get-locked-galaxies
+  |=  type=@t
+  ^-  (list [who=ship rights])
+  %+  parse-lines  (cat 3 type '-galaxies')
+  (ship-and-rights &)
+::
+++  get-locked-stars
+  |=  type=@t
+  ^-  (list [who=ship recipient=address])
+  %+  parse-lines  (cat 3 type '-stars')
   ;~  (glue com)
     ;~(pfix sig fed:ag)
-    dum:ag
-    dum:ag
-    dum:ag
     zero-ux
-    zero-ux
-    (punt zero-ux)
-    zero-ux
-    (punt zero-ux)
-    (punt ;~(plug zero-ux ;~(pfix com zero-ux)))
   ==
 ::
 ++  write-tx
@@ -130,6 +175,7 @@
 ++  do-deploy
   |=  [wat=cord arg=(list data)]
   ^-  [address _this]
+  ~&  [`@ux`get-contract-address +(nonce)]
   :-  get-contract-address
   %^  do  0x0  6.000.000
   =+  cod=(get-file /contracts/[wat]/txt)
@@ -160,37 +206,44 @@
   ::
   ::NOTE  we do these first so that we are sure we have sane files,
   ::      without waiting for that answer
-  =+  deeds=get-ship-deeds
-  =/  deed-map=(map ship rights)
-    (~(gas by *(map ship rights)) deeds)
-  =+  linears=get-linear-deeds
+  =+  tlon-gal=get-direct-galaxies
+  =+  directs=get-direct-deeds
+  ::
+  =+  lin-rec=get-linear-recipients
+  =+  lin-gal=(get-locked-galaxies 'linear')
+  =+  lin-sar=(get-locked-stars 'linear')
+  ::
+  =+  con-rec=get-conditional-recipients
+  =+  con-gal=(get-locked-galaxies 'conditional')
+  =+  con-sar=(get-locked-stars 'conditional')
+  ::
   ~&  'Deed data sanity check...'
-  =/  galaxy-deeds=chart
-    %+  roll  deeds
-    |=  [[who=ship *] net=chart]
-    ^+  net
+  =/  tlon-map=(map ship rights)
+    (~(gas by *(map ship rights)) tlon-gal)
+  =/  deed-map=(map ship rights)
+    (~(gas by *(map ship rights)) directs)
+  =/  star-map=(map ship (set ship))
+    %+  roll  directs
+    |=  [[who=ship *] smp=(map ship (set ship))]
+    ^+  smp
     =+  par=(sein:title who)
     ~|  [%need-parent par %for who]
-    ?>  ?|  =(who par)
-            ?&  (~(has by deed-map) par)
-              ::
-                =+  net:(~(got by deed-map) par)
-                ?=(^ -)
+    ?>  ?&  ?|  (~(has by tlon-map) par)
+                (~(has by deed-map) par)
             ==
+          ::
+            ?=  ^
+            =<  net
+            %+  fall
+              (~(get by deed-map) par)
+            (~(got by tlon-map) par)
         ==
-    %-  ~(put by net)
-    ^-  [ship (map ship (set ship))]
+    %-  ~(put by smp)
+    ^-  [ship (set ship)]
     ?+  (clan:title who)  !!
-      %czar  [who (fall (~(get by net) who) ~)]
-      %king  :-  par
-             =+  gm=(fall (~(get by net) par) ~)
-             %+  ~(put by gm)  who
-             (fall (~(get by gm) who) ~)
-      %duke  =+  gs=(sein:title par)
-             :-  gs
-             =+  gm=(fall (~(get by net) gs) ~)
-             =+  sm=(fall (~(get by gm) par) ~)
-             %+  ~(put by gm)  par
+      %king  [who (fall (~(get by smp) who) ~)]
+      %duke  :-  par
+             =+  sm=(fall (~(get by smp) par) ~)
              (~(put in sm) who)
     ==
   ::
@@ -219,15 +272,6 @@
         [%address claims]
     ==
   =.  constitution  constit
-  ~&  'Deploying linear-star-release...'
-  =^  linear-star-release  this
-    %+  do-deploy  'linear-star-release'
-    ~[address+ships]
-  ::TODO  deploy conditionalstarrelease
-  ::TODO  deploy censures, delegatedsending
-  ::
-  ::  contract configuration
-  ::
   ~&  'Transferring contract ownership...'
   =.  this
     %^  do  ships  50.000
@@ -235,87 +279,117 @@
   =.  this
     %^  do  polls  50.000
     (transfer-ownership:dat constit)
+  ~&  'Deploying linear-star-release...'
+  =^  linear-star-release  this
+    %+  do-deploy  'linear-star-release'
+    ~[address+ships]
+  ~&  'Deploying conditional-star-release...'
+  =^  conditional-star-release  this
+    %+  do-deploy  'conditional-star-release'
+    :~  [%address ships]
+      ::
+        :-  %array
+        :~  [%bytes 32^`@`0x0]
+            [%bytes 32^`@`0x2]  ::TODO  settle on value
+            [%bytes 32^`@`0x3]  ::TODO  settle on value
+        ==
+      ::
+        :-  %array  ::TODO  verify
+        :~  [%uint 1.515.974.400]  ::  2018-01-15 00:00:00 UTC
+            [%uint 1.547.510.400]  ::  2019-01-15 00:00:00 UTC
+            [%uint 1.579.046.400]  ::  2020-01-15 00:00:00 UTC
+        ==
+      ::
+        :-  %array  ::TODO  verify
+        :~  [%uint 1.547.510.400]  ::  2019-01-15 00:00:00 UTC
+            [%uint 1.579.046.400]  ::  2020-01-15 00:00:00 UTC
+            [%uint 1.610.668.800]  ::  2021-01-15 00:00:00 UTC
+        ==
+    ==
+  ::TODO  deploy censures, votingdsending
   ::
-  ::  simple deeding
+  ::  tlon galaxy booting
   ::
-  ~&  'Deeding regular assets...'
-  =/  galaxies  (sort ~(tap by galaxy-deeds) order-shiplist)
+  ~&  'Booting Tlon galaxies...'
+  =/  galaxies  (sort tlon-gal order-shiplist)
   |-
   ?^  galaxies
-    ~&  [(lent galaxies) 'galaxies remaining']
-    =*  galaxy  p.i.galaxies
-    =+  gal-deed=(~(got by deed-map) galaxy)
-    ~&  galaxy
     =.  this
-      (prepare-ship galaxy [manage delegate spawn net]:gal-deed)
+      (create-ship [who ~ net]:i.galaxies)
+    $(galaxies t.galaxies)
+  ::
+  ::  direct deeding
+  ::
+  ~&  'Directly deeding assets...'
+  =/  stars  (sort ~(tap by star-map) order-shiplist)
+  |-
+  ?^  stars
+    =*  star  p.i.stars
+    =+  star-deed=(~(got by deed-map) star)
+    =.  this
+      (create-ship star ~ net.star-deed)
     ::
-    =/  stars  (sort ~(tap by q.i.galaxies) order-shiplist)
+    =+  planets=(sort ~(tap in q.i.stars) lth)
     |-
-    ?^  stars
-      =*  star  p.i.stars
-      =+  sta-deed=(~(got by deed-map) star)
-      ~&  star
+    ?^  planets
+      =*  planet  i.planets
+      =+  plan-deed=(~(got by deed-map) planet)
       =.  this
-        (prepare-ship star [manage delegate spawn net]:sta-deed)
-      ::
-      =+  planets=(sort ~(tap in q.i.stars) lth)
-      |-
-      ?^  planets
-        =*  planet  i.planets
-        =+  pla-deed=(~(got by deed-map) planet)
-        =.  this
-          (prepare-ship planet [manage delegate ~ net]:pla-deed)
-        =.  this
-          (send-ship planet own.pla-deed transfer.pla-deed)
-        $(planets t.planets)
+        (create-ship planet ~ net.plan-deed)
       ::
       =.  this
-        (send-ship star own.sta-deed transfer.sta-deed)
-      ^$(stars t.stars)
+        (send-ship planet [own manage voting spawn transfer]:plan-deed)
+      $(planets t.planets)
     ::
     =.  this
-      (send-ship galaxy own.gal-deed transfer.gal-deed)
-    ^$(galaxies t.galaxies)
+      (send-ship star [own manage voting spawn transfer]:star-deed)
+    ^$(stars t.stars)
   ::
-  ::  linear release deeding
+  ::  linear release registration and deeding
   ::
-  ::TODO  rewrite to take non-standard cases into account
-  ~&  'Deeding linear release assets...'
-  =*  do-constit  (cury (cury do constit) 300.000)
-  =*  do-linear  (cury (cury do linear-star-release) 350.000)
-  =/  galaxies  (sort linears order-shiplist)
+  ~&  'Registering linear release recipients...'
+  |-
+  ?^  lin-rec
+    =.  this
+      %^  do  linear-star-release  350.000
+      (register-linear:dat i.lin-rec)
+    $(lin-rec t.lin-rec)
+  ::
+  ~&  'Depositing linear release galaxies...'
+  =.  this
+    (deposit-galaxies linear-star-release lin-gal)
+  ::
+  ~&  'Depositing linear release stars...'
+  =.  this
+    (deposit-stars linear-star-release lin-sar)
+  ::
+  ::  conditional release registration and deeding
+  ::
+  ~&  'Registering conditional release recipients...'
+  |-
+  ?^  con-rec
+    =.  this
+      %^  do  conditional-star-release  350.000
+      (register-conditional:dat i.con-rec)
+    $(con-rec t.con-rec)
+  ::
+  ~&  'Depositing conditional release galaxies...'
+  =.  this
+    (deposit-galaxies conditional-star-release con-gal)
+  ::
+  ~&  'Depositing conditional release stars...'
+  =.  this
+    (deposit-stars conditional-star-release con-sar)
+  ::
+  ::  tlon galaxy sending
+  ::
+  ~&  'Sending Tlon galaxies...'
+  =/  galaxies  (sort tlon-gal order-shiplist)
   |-
   ?^  galaxies
-    ~&  [(lent galaxies) 'galaxies remaining']
-    =*  galaxy  who.i.galaxies
-    =*  gal-deed  i.galaxies
-    ~&  galaxy
     =.  this
-      (prepare-ship galaxy manage.gal-deed delegate.gal-deed `linear-star-release net.gal-deed)
-    ::
-    =.  this
-      %-  do-linear
-      %-  register-linear:dat
-      :*  own.gal-deed
-          windup.gal-deed
-          rate.gal-deed
-          rate-unit.gal-deed
-      ==
-    =+  stars=(gulf 1 255)
-    |-
-    ?^  stars
-      =.  this
-        %-  do-linear
-        %-  deposit-linear:dat
-        [own.gal-deed (cat 3 galaxy i.stars)]
-      $(stars t.stars)
-    ::
-    =.  this
-      %-  do-constit
-      (set-spawn-proxy:dat galaxy (fall spawn.gal-deed 0x0))
-    =.  this
-      (send-ship galaxy own.gal-deed transfer.gal-deed)
-    ^$(galaxies t.galaxies)
+      (send-ship [who own manage voting spawn transfer]:i.galaxies)
+    $(galaxies t.galaxies)
   ::
   ::  concluding ceremony
   ::
@@ -333,15 +407,13 @@
   =.  this
     ::NOTE  currently included bytecode has on-upgrade ens functionality
     ::      stripped out to make this not fail despite 0x0 dns contract
-    %-  do-constit
+    %^  do  constit  300.000
     (upgrade-to:dat constit-final)
   complete
 ::
 ::  create or spawn a ship, configure its spawn proxy and pubkeys
-++  prepare-ship
+++  create-ship
   |=  $:  who=ship
-          manage=address
-          voting=(unit address)
           spawn=(unit address)
           keys=(unit [@ux @ux])
       ==
@@ -352,10 +424,6 @@
     ?:  ?=(%czar wat)
       (do-c (create-galaxy:dat who))
     (do-c (spawn:dat who))
-  =.  this
-    (do-c (set-management-proxy:dat who manage))
-  =?  this  &(?=(^ voting) ?=(%czar wat))
-    (do-c (set-voting-proxy:dat who u.voting))
   =?  this  &(?=(^ spawn) !?=(%duke wat))
     (do-c (set-spawn-proxy:dat who u.spawn))
   =?  this  ?=(^ keys)
@@ -364,12 +432,88 @@
 ::
 ::  transfer a ship to a new owner, set a transfer proxy
 ++  send-ship
-  |=  [who=ship own=address transfer=address]
+  |=  $:  who=ship
+          own=address
+          manage=(unit address)
+          voting=(unit address)
+          spawn=(unit address)
+          transfer=(unit address)
+      ==
   ^+  this
+  =+  wat=(clan:title who)
   =*  do-c  (cury (cury do constitution) 300.000)
+  =?  this  ?=(^ manage)
+    (do-c (set-management-proxy:dat who u.manage))
+  =?  this  &(?=(^ voting) ?=(%czar wat))
+    (do-c (set-voting-proxy:dat who u.voting))
+  =?  this  &(?=(^ spawn) !?=(%duke wat))
+    (do-c (set-spawn-proxy:dat who u.spawn))
   =.  this
     (do-c (transfer-ship:dat who own))
-  (do-c (set-transfer-proxy-for:dat who transfer))
+  =?  this  ?=(^ transfer)
+    (do-c (set-transfer-proxy-for:dat who u.transfer))
+  this
+::
+::  deposit a whole galaxy into a star release contract
+++  deposit-galaxies
+  |=  [into=address galaxies=(list [gal=ship rights])]
+  ^+  this
+  =.  galaxies  (sort galaxies order-shiplist)
+  |-
+  ?~  galaxies  this
+  ~&  [(lent galaxies) 'galaxies remaining']
+  =*  galaxy  gal.i.galaxies
+  =*  gal-deed  i.galaxies
+  ::
+  ::  create the galaxy, with spawn proxy set to the lockup contract
+  =.  this
+    ~|  [%locked-galaxy-needs-network-keys galaxy]
+    ~!  net.gal-deed
+    ?>  ?=(^ net.gal-deed)
+    (create-ship galaxy `into net.gal-deed)
+  ::
+  ::  deposit all its stars
+  =+  stars=(gulf 1 2)::55)
+  |-
+  ?^  stars
+    =.  this
+      %^  do  into  350.000
+      %-  deposit:dat
+      [own.gal-deed (cat 3 galaxy i.stars)]
+    $(stars t.stars)
+  ::
+  ::  send the galaxy to its owner, with spawn proxy at zero
+  ::  because it can't spawn anymore
+  =.  this
+    (send-ship galaxy [own manage voting `0x0 transfer]:gal-deed)
+  ^$(galaxies t.galaxies)
+::
+::  deposit a list of stars
+++  deposit-stars
+  |=  [into=address stars=(list [who=ship recipient=address])]
+  ^+  this
+  =.  stars  (sort stars order-shiplist)
+  =|  gals=(set ship)
+  |-
+  ?~  stars  this
+  =*  star  who.i.stars
+  =*  to  recipient.i.stars
+  ::
+  ::  if the parent galaxy hasn't made the target contracts
+  ::  a spawn proxy yet, do so now
+  =+  par=(sein:title star)
+  =?  this  !(~(has in gals) par)
+    ~&  [%setting-spawn-proxy-for par +(nonce)]
+    =.  gals  (~(put in gals) par)
+    %^  do  constitution  350.000
+    %+  set-spawn-proxy:dat  par
+    into
+  ::
+  ~&  [%depositing star +(nonce)]
+  =.  this
+    %^  do  into  350.000
+    (deposit:dat to star)
+  $(stars t.stars)
 ::
 ::  call data generation
 ::TODO  most of these should later be cleaned and go in ++constitution
@@ -391,7 +535,8 @@
   ++  upgrade-to              (enc upgrade-to:cal)
   ++  transfer-ownership      (enc transfer-ownership:cal)
   ++  register-linear         (enc register-linear:cal)
-  ++  deposit-linear          (enc deposit-linear:cal)
+  ++  register-conditional    (enc register-conditional:cal)
+  ++  deposit                 (enc deposit:cal)
   --
 ::
 ++  cal
@@ -487,6 +632,7 @@
   ++  register-linear
     |=  $:  to=address
             windup=@ud
+            stars=@ud
             rate=@ud
             rate-unit=@ud
         ==
@@ -494,12 +640,28 @@
     :-  'register(address,uint256,uint16,uint16,uint256)'
     :~  [%address to]
         [%uint windup]
-        [%uint 255]
+        [%uint stars]
         [%uint rate]
         [%uint rate-unit]
     ==
   ::
-  ++  deposit-linear
+  ++  register-conditional
+    |=  $:  to=address
+            b1=@ud
+            b2=@ud
+            b3=@ud
+            rate=@ud
+            rate-unit=@ud
+        ==
+    ^-  call-data
+    :-  'register(address,uint16[],uint16,uint256)'
+    :~  [%address to]
+        [%array ~[uint+b1 uint+b2 uint+b3]]
+        [%uint rate]
+        [%uint rate-unit]
+    ==
+  ::
+  ++  deposit
     |=  [to=address star=ship]
     ^-  call-data
     :-  'deposit(address,uint16)'
