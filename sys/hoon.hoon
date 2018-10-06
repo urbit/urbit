@@ -12572,6 +12572,14 @@
         ==
       ::
       ::
+      ++  calf                                          ::  cash but for tec tec
+        |*  tem=rule
+        %-  star
+        ;~  pose
+          whit
+          ;~(pfix bas tem)
+          ;~(less tem prn)
+        ==
       ++  cash                                          ::  escaped fence
         |*  tem/rule
         %-  echo
@@ -12676,7 +12684,7 @@
         ::
         ::  `classic markdown quote`
         ::
-          (stag %code (ifix [tec tec] (cash tec)))
+          (stag %code (ifix [tec tec] (calf tec)))
         ::
         ::  ++arm
         ::
