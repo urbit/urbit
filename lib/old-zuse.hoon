@@ -2,7 +2,7 @@
 ::
 ::::  /hoon/oldzuse/lib
   ::
-|%
+^?  |%
 ++  dope        !!                                      ::  XX deprecated
 ++  fu          fu:number                               ::  modulo (mul p q)
 ++  aes         aes:crypto                              ::  aes, all sizes
