@@ -261,9 +261,10 @@ _sist_sing(u3_noun ovo)
         u3_noun fex = u3h(vir);
         u3_noun fav = u3t(fex);
 
-        // XX is this now just to support ctrl-z during first boot?
         if ( c3__init == u3h(fav) ) {
           u3A->own = u3k(u3t(fav));
+          // note: c3__boot == u3h(u3t(ovo))
+          u3A->fak = ( c3__fake == u3h(u3t(u3t(ovo))) ) ? c3y : c3n;
         }
 
         vir = u3t(vir);
@@ -1064,7 +1065,7 @@ _sist_rest()
     }
     u3z(rou);
   }
-  uL(fprintf(stderr, "\n---------------- playback complete----------------\n"));
+  uL(fprintf(stderr, "\n---------------- playback complete----------------\r\n"));
 
 #if 0
   //  If you see this error, your record is totally fscking broken!
@@ -1371,6 +1372,8 @@ u3_sist_boot(void)
     _sist_make(pig);
   }
   else {
+    _sist_rest();
+
     if ( c3y == u3A->fak ) {
       c3_c* who_c = u3r_string(u3dc("scot", 'p', u3k(u3A->own)));
       fprintf(stderr, "fake: %s\r\n", who_c);
@@ -1385,6 +1388,5 @@ u3_sist_boot(void)
       // XX make conditional
       u3_Host.ops_u.net = c3n;
     }
-    _sist_rest();
   }
 }
