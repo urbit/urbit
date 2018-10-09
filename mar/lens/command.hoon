@@ -1,14 +1,14 @@
 /-  lens
-/+    old-zuse
+/+  old-zuse
 ::
 =,  old-zuse
-|_  com/command:^^lens
+|_  com/command:lens
 ++  grab
   |%
-  ++  noun  command:^^lens
+  ++  noun  command:lens
   ++  json
     |=  jon/^json
-    ^-  command:^^lens
+    ^-  command:lens
     ~|  jon=jon
     %-  need
     %.  jon
@@ -19,7 +19,7 @@
         ==
     |%
     ++  source
-      ^-  $-(^json (unit source:^^lens))
+      ^-  $-(^json (unit source:lens))
       |=  jon/^json
       =+  tuple=%.(jon (ar source))
       ?^  tuple
@@ -42,7 +42,7 @@
         hoon+(ot code+so:jo next+source ~)
       ==
     ++  sink
-      ^-  $-(^json (unit sink:^^lens))
+      ^-  $-(^json (unit sink:lens))
       %-  of  :~
         stdout+|=(^json (some ~))
         output-file+so:jo
