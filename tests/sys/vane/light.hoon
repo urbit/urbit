@@ -1,4 +1,4 @@
-/+  *test
+/+  *test, *test-ford
 ::
 /=  light-raw  /:  /===/sys/vane/light  /!noun/
 ::
@@ -185,7 +185,9 @@
                 %http-response
                 %start
                 404
-                ['content-type' 'text/html']~
+                :~  ['content-type' 'text/html']
+                    ['content-length' '153']
+                ==
                 [~ (file-not-found-page:light-gate '/')]
                 complete=%.y
         ==  ==
@@ -480,7 +482,9 @@
                 %http-response
                 %start
                 200
-                ['content-type' 'text/html']~
+                :~  ['content-type' 'text/html']
+                    ['content-length' '348']
+                ==
                 [~ (login-page:light-gate `'/~landscape/inner-path')]
                 complete=%.y
         ==  ==
@@ -569,6 +573,102 @@
     results4
     results5
     results6
+  ==
+::
+++  test-generator
+  ::
+  =^  results1  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.1
+      scry=*sley
+      call-args=[duct=~[/init] ~ [%init ~nul]]
+      expected-moves=~
+    ==
+  ::  gen1 binds successfully
+  ::
+  =^  results2  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.2
+      scry=*sley
+      call-args=[duct=~[/gen1] ~ [%serve [~ /] [%home /gen/handler/hoon] ~]]
+      expected-moves=[duct=~[/gen1] %give %bound %.y [~ /]]~
+    ==
+  ::  outside requests a path that app1 has bound to
+  ::
+  =^  results3  light-gate
+    %-  light-call-with-comparator  :*
+      light-gate
+      now=~1111.1.3
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-blah]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            [%'GET' '/' ~ ~]
+        ==
+      ^=  comparator
+        |=  moves=(list move:light-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ::
+        =/  move=move:light-gate                              i.moves
+        =/  =duct                                             duct.move
+        =/  card=(wind note:light-gate gift:able:light-gate)  card.move
+        ::
+        ?.  ?=(%pass -.card)
+          [%leaf "not a %pass"]~
+        ?.  ?=(%f -.q.card)
+          [%leaf "not a ford build"]~
+        ::
+        %+  weld
+          %+  expect-eq
+            !>  /run-build/a
+            !>  p.card
+        ::
+        %+  expect-schematic
+          [%cast [~nul %home] %mime [%$ %txt !>('one two three')]]
+          schematic.q.card
+    ==
+  ::  ford response (time assumes nothing blocked)
+  ::
+  =^  results4  light-gate
+    %-  light-take  :*
+      light-gate
+      now=~1111.1.3
+      scry=*sley
+      ^=  take-args
+        :*  wire=/run-build/a  duct=~[/http-blah]
+            ^-  (hypo sign:light-gate)
+            :-  *type
+            :^  %f  %made  ~1111.1.3
+            ^-  made-result:ford
+            :-  %complete
+            ^-  build-result:ford
+            :-  %success
+            [%cast %mime !>([['text' 'plain' ~] (as-octs:mimes:html 'one two three')])]
+         ==
+      ^=  expected-move
+        :~  :*  duct=~[/http-blah]  %give  %http-response
+                :*  %start
+                    200
+                    :~  ['content-type' 'text/plain']
+                        ['content-length' '13']
+                    ==
+                    `[13 'one two three']
+                    %.y
+    ==  ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
   ==
 ::
 ++  test-simplified-url-parser

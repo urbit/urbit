@@ -39,7 +39,14 @@
 ::  +sign: private response from another vane to ford
 ::
 +$  sign
-  $%  ::  %g: from gall
+  $%  ::  %f: from ford
+      ::
+      $:  %f
+          ::
+          ::
+          $%  [%made date=@da result=made-result:ford]
+      ==  ==
+      ::  %g: from gall
       ::
       $:  %g
           ::
@@ -66,6 +73,42 @@
       ::
       =server-state
   ==
+::  +client: light as an http client
+::
+++  client
+  |%
+  ::  +state:client: state relating to open outbound HTTP connections
+  ::
+  +$  state
+    $:  ::  next-id: monotonically increasing id number for the next connection
+        ::
+        next-id=@ud
+        ::  connection-by-id: open connections to the
+        ::
+        connection-by-id=(map @ud [=duct =http-request])
+    ==
+  ::  +in-progress-http-request: state around an outbound http
+  ::
+  +$  in-progress-http-request
+    $:  ::  remaining-redirects: http limit of number of redirects before error
+        ::
+        remaining-redirects=_5
+        ::  remaining-retries: number of times to retry the request
+        ::
+        ::    TODO: We can't just retry by default. We might only
+        ::
+        remaining-retries=_3
+        ::  chunks: a list of partial results returned from unix
+        ::
+        chunks=(list octs)
+        ::  bytes-read: the sum of the size of the :chunks
+        ::
+        bytes-read=@ud
+        ::  expected-size: the expected content-length of the http request
+        ::
+        expected-size=(unit @ud)
+    ==
+  --
 ::  +server-state: state relating to open inbound HTTP connections
 ::
 +$  server-state
@@ -96,6 +139,12 @@
   $:  ::  action: the action that had matched
       ::
       =action
+      ::  authenticated: whether the user was logged in
+      ::
+      authenticated=?
+      ::  url: the original url of this request
+      ::
+      url=@t
       ::  code: the status code, if sent
       ::
       code=(unit @ud)
@@ -176,6 +225,38 @@
       ==
     ==
   ==
+::  +internal-server-error: 500 page, with a tang
+::
+++  internal-server-error
+  |=  [authorized=? url=@t =tang]
+  ^-  octs
+  %-  as-octs:mimes:html
+  %-  crip
+  %-  en-xml:html
+  ;html
+    ;head
+      ;title:"500 Internal Server Error"
+    ==
+    ;body
+      ;h1:"Internal Server Error"
+      ;p:"There was an error while handling the request for {<(trip url)>}."
+      ;*  ?:  authorized
+            ;=
+              ;p:"hi"
+            ==
+          ~
+    ==
+  ==
+::  +format-ud-as-integer: prints a number for consumption outside urbit
+::
+++  format-ud-as-integer
+  |=  a=@ud
+  ^-  @t
+  ?:  =(0 a)  '0'
+  %-  crip
+  %-  flop
+  |-  ^-  tape
+  ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])
 ::  +get-header: returns the value for :header, if it exists in :header-list
 ::
 ++  get-header
@@ -224,22 +305,35 @@
     ?~  action
       %^  return-static-data-on-duct  404  'text/html'
       (file-not-found-page url.http-request)
+    ::
+    =/  authenticated  (request-is-logged-in:authentication http-request)
     ::  record that we started an asynchronous response
     ::
     =|  record=outstanding-connection
     =.  action.record  u.action
-    =.  connections.state  (~(put by connections.state) duct record)
+    =.  authenticated.record  authenticated
+    =.  url.record  url.http-request
     ::
-    =/  authenticated  (request-is-logged-in:authentication http-request)
+    =.  connections.state  (~(put by connections.state) duct record)
     ::
     ?-    -.u.action
     ::
         %gen
-      ::  TODO: when we get here, we need to make sure that the generator has
-      ::  been compiled.
+      =/  =disc:ford  [our desk.generator.u.action]
       ::
-      ~&  [%i-should-run-a-generator generator.u.action]
-      [~ state]
+      =-  [[duct %pass /run-build/a %f %build our live=%.n schematic=-]~ state]
+      ::
+      ^-  schematic:ford
+      ::
+      =-  [%cast disc %mime -]
+      ::
+      ::
+      [%$ %txt !>('one two three')]
+      ::  :+  %call
+      ::    :+  %call
+      ::      [%core [disc path.generator.u.action]]
+      ::    []
+      ::  [authenticated http-request]
     ::
         %app
       :_  state
@@ -270,9 +364,9 @@
         status-code=code
         ^=  headers
           :~  ['content-type' content-type]
-              ::  todo: how do I print a number? +scot adds '.' for hoon style.
+              ::  TODO: Why is libh2o adding its own content-length header?
               ::
-              ::  ['content-length' p.data]
+              ['content-length' (format-ud-as-integer p.data)]
           ==
         data=[~ data]
         complete=%.y
@@ -400,11 +494,39 @@
       ::  %^  rsh  3  1
       ::  (scot %p (@ (need ((sloy scry) [151 %noun] %a pax))))
     --
-  ::  +handle-response: check a response for correctness and send to earth
+  ::  +handle-ford-response: translates a ford response for the outside world
   ::
-  ::    TODO: I don't actually know how this gets hooked up. The app response
-  ::    should really be a +take since it is a response to the +call poke, but
-  ::    the gall interface seems to be mismatched to that.
+  ::    TODO: Get the authentication state and source url here.
+  ::
+  ++  handle-ford-response
+    |=  made-result=made-result:ford
+    ^-  [(list move) server-state]
+    ::
+    ?:  ?=(%incomplete -.made-result)
+      %^  return-static-data-on-duct  500  'text/html'
+      ::  TODO: Thread original URL and authentication state here.
+      (internal-server-error %.n 'http://' tang.made-result)
+    ::
+    ?:  ?=(%error -.build-result.made-result)
+      %^  return-static-data-on-duct  500  'text/html'
+      (internal-server-error %.n 'http://' message.build-result.made-result)
+    ::
+    =/  =cage  (result-to-cage:ford build-result.made-result)
+    ::
+    %-  handle-response
+    =/  result=mime  ((hard mime) q.q.cage)
+    ::
+    ^-  raw-http-response
+    :*  %start
+        200
+        ^-  header-list
+        :~  ['content-type' (en-mite:mimes:html p.result)]
+            ['content-length' (format-ud-as-integer p.q.result)]
+        ==
+        `(unit octs)`[~ q.result]
+        complete=%.y
+    ==
+  ::  +handle-response: check a response for correctness and send to earth
   ::
   ++  handle-response
     |=  =raw-http-response
@@ -699,10 +821,12 @@
   ::
   |^  ^-  [p=(list move) q=_light-gate]
       ::
-      ?:  =(%run-app i.wire)
-        run-app
+      ?+     i.wire
+           ~|([%bad-take-wire wire] !!)
       ::
-      ~|([%bad-take-wire wire] !!)
+         %run-app    run-app
+         %run-build  run-build
+      ==
   ::
   ++  run-app
     ::
@@ -715,6 +839,15 @@
     =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
     =/  handle-response  handle-response:(per-server-event event-args)
     =^  moves  server-state.ax  (handle-response raw-http-response.p.sign)
+    [moves light-gate]
+  ::
+  ++  run-build
+    ::
+    ?>  ?=([%f %made *] sign)
+    ::
+    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
+    =/  handle-ford-response  handle-ford-response:(per-server-event event-args)
+    =^  moves  server-state.ax  (handle-ford-response result.sign)
     [moves light-gate]
   --
 ::
