@@ -6021,6 +6021,22 @@
     ?.  ?=($0 -.ben)  ben
     =+  val=(gul p.ref p.ben)
     ?~(val [%1 p.ben ~] ?~(u.val [%2 [[%hunk (mush p.ben)] tax]] [%0 u.u.val]))
+  ::
+      {$13 @ c/*}        $(fol c.fol)
+      {$13 {b/* c/*} d/*}
+    =+  ben=$(fol c.fol)
+    ?.  ?=($0 -.ben)  ben
+    ?:  ?=(?($hunk $hand $lose $mean $spot) b.fol)
+      $(fol d.fol, tax [[b.fol p.ben] tax])
+    $(fol d.fol)
+  ::
+      {$14 b/* c/*}
+    =+  ref=$(fol b.fol)
+    =+  ben=$(fol c.fol)
+    ?.  ?=($0 -.ref)  ref
+    ?.  ?=($0 -.ben)  ben
+    =+  val=(gul p.ref p.ben)
+    ?~(val [%1 p.ben ~] ?~(u.val [%2 [[%hunk (mush p.ben)] tax]] [%0 u.u.val]))
   ==
 ::
 ++  mock
@@ -6802,6 +6818,32 @@
       ::  else ignore hint
       ::
       $(fol d.fol)
+    ::
+    ::  13; static hint
+    ::
+        {$13 @ c/*}
+      ::  ignore hint
+      ::
+      $(fol c.fol)
+    ::
+    ::  13; dynamic hint
+    ::
+        {$13 {b/* c/*} d/*}
+      ::  noy: dynamic hint
+      ::
+      =+  noy=$(fol c.fol)
+      ::  propagate stop
+      ::
+      ?~  noy  ~
+      ::  if hint is a fully computed trace
+      ::
+      ?:  &(?=($spot b.fol) ?=([[%full ~] *] noy))
+        ::  compute within trace
+        ::
+        ~_((show %o +.noy) $(fol d.fol))
+      ::  else ignore hint
+      ::
+      $(fol d.fol)
     ==
   ::
   ++  apex
@@ -7004,7 +7046,7 @@
   |=  nug/nock
   ?-    nug
       {$0 *}   p.nug
-      {$10 *}  $(nug q.nug)
+      {?($10 $13) *}  $(nug q.nug)
       *        ~_(leaf+"cove" !!)
   ==
 ++  comb                                                ::  combine two formulas
