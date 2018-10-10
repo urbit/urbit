@@ -7215,24 +7215,66 @@
 ::
 ++  hike
   ~/  %hike
-  |=  {axe/axis pac/(list {p/axis q/nock})}
-  ^-  nock
-  ?~  pac
-    [%0 axe]
-  =+  zet=(skim pac.$ |=({p/axis q/nock} [=(1 p)]))
-  ?~  zet
-    =+  tum=(skim pac.$ |=({p/axis q/nock} ?&(!=(1 p) =(2 (cap p)))))
-    =+  gam=(skim pac.$ |=({p/axis q/nock} ?&(!=(1 p) =(3 (cap p)))))
-    %+  cons
-      %=  $
-        axe  (peg axe 2)
-        pac  (turn tum |=({p/axis q/nock} [(mas p) q]))
-      ==
+  |=  [a=axis pac=(list (pair axis nock))]
+  |^  =/  rel=(map axis nock)  (roll pac insert)
+      =/  ord=(list axis)      (sort ~(tap in ~(key by rel)) gth)
+      |-  ^-  nock
+      ?~  ord
+        [%0 a]
+      =/  b=axis  i.ord
+      =/  c=nock  (~(got by rel) b)
+      =/  d=nock  $(ord t.ord)
+      [%10 [b c] d]
+  ::
+  ++  contains
+    |=  [container=axis contained=axis]
+    ^-  ?
+    =/  big=@    (met 0 container)
+    =/  small=@  (met 0 contained)
+    ?:  (lte small big)  |
+    =/  dif=@  (sub small big)
+    =(container (rsh 0 dif contained))
+  ::
+  ++  parent
+    |=  a=axis
+    `axis`(rsh 0 1 a)
+  ::
+  ++  sibling
+    |=  a=axis
+    ^-  axis
+    ?~  (mod a 2)
+      +(a)
+    (dec a)
+  ::
+  ++  insert
+    |=  [e=[axe=axis fol=nock] n=(map axis nock)]
+    ^-  (map axis nock)
+    ?:  =/  a=axis  axe.e
+        |-  ^-  ?
+        ?:  =(1 a)  |
+        ?:  (~(has by n) a)
+          &
+        $(a (parent a))
+      ::  parent already in
+      n
+    =.  n
+      ::  remove children
+      %+  roll  ~(tap by n)
+      |=  [[axe=axis fol=nock] m=_n]
+      ?.  (contains axe.e axe)  m
+      (~(del by m) axe)
+    =/  sib  (sibling axe.e)
+    =/  un   (~(get by n) sib)
+    ?~  un   (~(put by n) axe.e fol.e)
+    ::  replace sibling with parent
     %=  $
-      axe  (peg axe 3)
-      pac  (turn gam |=({p/axis q/nock} [(mas p) q]))
+      n  (~(del by n) sib)
+      e  :-  (parent sib)
+         ?:  (gth sib axe.e)
+           (cons fol.e u.un)
+         (cons u.un fol.e)
     ==
-  ?>(?=({* ~} zet) q.i.zet)
+  --
 ::
 ++  jock
   |=  rad/?
