@@ -6156,6 +6156,12 @@
     ::
     [moves ford-gate]
   ::
+      ::  %sunk: foreign ship has lost continutity
+      ::
+      %sunk
+    ::
+    [~ ford-gate]
+  ::
       ::  %wipe: wipe stored builds, clearing :percent-to-remove of the entries
       ::
       %wipe

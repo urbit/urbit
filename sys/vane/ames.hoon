@@ -1441,6 +1441,18 @@
           ~&  [%block p.kyz]
           fox(bad (~(put in bad.fox) p.kyz))
         ::
+            %sunk
+          =/  con=corn  (~(got by zac.fox) p.kyz)
+          =.  con       con(wab (~(del by wab.con) p.kyz))
+          =/  suf=sufi  (~(got by urb.ton.fox) p.kyz)
+          =.  suf       suf(hoc (~(del by hoc.suf) p.kyz))
+          ::
+          :-  ~
+          %=  fox
+            zac      (~(put by zac.fox) p.kyz con)
+            urb.ton  (~(put by urb.ton.fox) p.kyz suf)
+          ==
+        ::
             %wake
           (~(wake am [now fox]) hen)
         ::

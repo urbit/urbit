@@ -1273,6 +1273,8 @@
     ::  ~&  [%gall-init p.q.hic]
     [~ ..^$(pol.all (~(put by pol.all) p.q.hic %*(. *mast sys hen)))]
   ::
+      $sunk  [~ ..^$]
+  ::
       $west
     ?.  (~(has by pol.all) p.p.q.hic)
       ~&  [%gall-not-ours p.q.hic]

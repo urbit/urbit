@@ -3902,6 +3902,8 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
+      $sunk  [~ ..^$]
+  ::
       ?($warp $werp)
     =^  for  req
       ?:  ?=($warp -.req)

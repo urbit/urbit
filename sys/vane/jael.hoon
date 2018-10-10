@@ -647,7 +647,7 @@
     ::    {$burn p/ship q/safe}
     ::
         $burn
-      %+  cure  our.tac
+      %^  cure  hen  our.tac
       abet:abet:(deal:(burb our.tac) p.tac [~ q.tac])
     ::
     ::  boot from keys
@@ -666,7 +666,7 @@
         |=([=life =pass] `public`[live=| life (my [life pass] ~)])
       =.  +>.$
         %-  curd  =<  abet
-        (pubs:~(feel su our urb sub etn) kyz)
+        (pubs:~(feel su hen our urb sub etn) kyz)
       ::  XX sponsor
       ::  XX reconcile with .dns.eth
       ::  set initial domains
@@ -727,14 +727,14 @@
     ::    {$hail p/ship q/remote}
     ::
         $hail
-      %+  cure  our.tac
+      %^  cure  hen  our.tac
       abet:abet:(hail:(burb our.tac) p.tac q.tac)
     ::
     ::  set ethereum source
     ::    [%look p=(each ship purl)]
     ::
         %look
-      %+  cute  our.tac  =<  abet
+      %^  cute  hen  our.tac  =<  abet
       (~(look et our.tac now.sys etn.lex) src.tac)
     ::
     ::  create promises
@@ -743,7 +743,7 @@
         $mint
       ~|  %fake-jael
       ?<  fak.urb
-      %+  cure  our.tac
+      %^  cure  hen  our.tac
       abet:abet:(deal:(burb our.tac) p.tac [q.tac ~])
     ::
     ::
@@ -752,10 +752,10 @@
     ::
         $move
       =.  +>
-        %+  cure  our.tac
+        %^  cure  hen  our.tac
         abet:abet:(deal:(burb our.tac) p.tac [~ r.tac])
       =.  +>
-        %+  cure  our.tac
+        %^  cure  hen  our.tac
         abet:abet:(deal:(burb our.tac) q.tac [r.tac ~])
       +>
     ::
@@ -775,13 +775,13 @@
     ::
         %pubs
       %-  curd  =<  abet
-      (~(pubs ~(feed su our.tac urb sub etn) hen) who.tac)
+      (~(pubs ~(feed su hen our.tac urb sub etn) hen) who.tac)
     ::
     ::  seen after breach
     ::    [%meet our=ship who=ship]
     ::
         %meet
-      %+  cure  our.tac
+      %^  cure  hen  our.tac
       [[%meet who.tac life.tac pass.tac]~ urb]
     ::
     ::  XX should be a subscription
@@ -800,20 +800,20 @@
     ::    {$vein $~}
     ::
         $vein
-      (curd abet:~(vein ~(feed su our.tac urb sub etn) hen))
+      (curd abet:~(vein ~(feed su hen our.tac urb sub etn) hen))
     ::
     ::  watch ethereum events
     ::    [%vent ~]
     ::
         %vent
       =.  moz  [[hen %give %mack ~] moz]
-      (curd abet:~(vent ~(feed su our.tac urb sub etn) hen))
+      (curd abet:~(vent ~(feed su hen our.tac urb sub etn) hen))
     ::
     ::  monitor assets
     ::    {$vest $~}
     ::
         $vest
-      (curd abet:~(vest ~(feed su our.tac urb sub etn) hen))
+      (curd abet:~(vest ~(feed su hen our.tac urb sub etn) hen))
     ::
     ::  monitor all
     ::    {$vine $~}
@@ -834,7 +834,7 @@
       ::    [%hail p=remote]
       ::
           %hail
-        %+  cure  our
+        %^  cure  hen  our
         abet:abet:(hail:(burb our) dem p.mes)
       ::
       ::  cancel trackers
@@ -856,7 +856,7 @@
         ?.  &(-.source.etn =(dem p.source.etn))
           +>.$
         =.  moz  [[hen %give %mack ~] moz]
-        %+  cute  our  =<  abet
+        %^  cute  hen  our  =<  abet
         (~(hear-vent et our now.sys etn.lex) p.mes)
       ==
     ==
@@ -877,11 +877,11 @@
       +>.$
     ::
         [%e %sigh *]
-      %+  cute  our  =<  abet
+      %^  cute  hen  our  =<  abet
       (~(sigh et our now.sys etn.lex) wir p.hin)
     ::
         [%b %wake ~]
-      %+  cute  our
+      %^  cute  hen  our
       ::  XX cleanup
       ::
       ?:  ?=([%init ~] wir)
@@ -889,7 +889,7 @@
       abet:~(wake et our now.sys etn.lex)
     ::
         [%j %vent *]
-      %+  cute  our  =<  abet
+      %^  cute  hen  our  =<  abet
       (~(hear-vent et our now.sys etn.lex) p.hin)
     ==
   ::                                                    ::  ++curd:of
@@ -898,19 +898,20 @@
     +>(sub sub, moz (weld (flop moz) ^moz))
   ::                                                    ::  ++cure:of
   ++  cure                                              ::  absolute edits
-    |=  {our/ship hab/(list change) urb/state-absolute}
+    |=  {hen/duct our/ship hab/(list change) urb/state-absolute}
     ^+  +>
-    (curd(urb urb) abet:(~(apex su our urb sub etn) hab))
+    (curd(urb urb) abet:(~(apex su hen our urb sub etn) hab))
   ::                                                    ::  ++cute:of
   ++  cute                                              ::  ethereum changes
-    |=  $:  our=ship
+    |=  $:  hen=duct
+            our=ship
             mos=(list move)
             ven=chain
             net=state-eth-node
         ==
     ^+  +>
     %-  cure(etn net, moz (weld (flop mos) moz))
-    [our abet:(link:(burb our) ven)]
+    [hen our abet:(link:(burb our) ven)]
   --
 ::                                                      ::  ++su
 ::::                    ## relative^heavy               ::  subjective engine
@@ -930,7 +931,8 @@
       ::
   =|  moz/(list move)
   =|  evs=logs
-  =|  $:  our/ship
+  =|  $:  hen/duct
+          our/ship
           state-absolute
           state-relative
           state-eth-node
@@ -939,9 +941,9 @@
   ::  urb: absolute urbit state
   ::  sub: relative urbit state
   ::
-  =*  urb  ->-
-  =*  sub  ->+<
-  =*  etn  ->+>
+  =*  urb  ->+<
+  =*  sub  ->+>-
+  =*  etn  ->+>+
   |%
   ::                                                    ::  ++abet:su
   ++  abet                                              ::  resolve
@@ -1241,6 +1243,7 @@
     ::
     ++  file-discontinuity
       |=  who=ship
+      ^+  kyz
       =+  (get-public who)
       (~(put by kyz) who -(live |))
     ::
@@ -1267,11 +1270,25 @@
       |=  [who=ship dif=diff-hull]
       ^+  [kyz ..file]
       =-  ::TODO  =; with just the type
-        :-  ?:  ?=(%& -.new)
-              (file-keys who p.new)
-            ?:  p.new  kyz
-            (file-discontinuity who)
-        ..file(hul.eth (~(put by hul.eth) who hel))
+        ?:  ?=(%& -.new)
+          :-  (file-keys who p.new)
+          ..file(hul.eth (~(put by hul.eth) who hel))
+        ?:  p.new
+          :-  kyz
+          ..file(hul.eth (~(put by hul.eth) who hel))
+        :-  (file-discontinuity who)
+        %=  ..file
+          hul.eth  (~(put by hul.eth) who hel)
+        ::
+          moz  :*  [hen %slip %a %sunk who]
+                   [hen %slip %c %sunk who]
+                   [hen %slip %d %sunk who]
+                   [hen %slip %e %sunk who]
+                   [hen %slip %f %sunk who]
+                   [hen %slip %g %sunk who]
+                   moz
+               ==
+        ==
       ::  hel: updated hull
       ::  new: new keypair or "kept continuity?" (yes is no-op)
       ^-  [hel=hull new=(each (pair life pass) ?)]

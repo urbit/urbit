@@ -507,6 +507,7 @@
           {$junk p/@}                                   ::  entropy
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
+          {$sunk p=ship}                                ::  report death
           {$tend ~}                                     ::  watch lane changes
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
@@ -737,6 +738,7 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm our/ship des/desk pax/path rit/rite}   ::  change permissions
+          {$sunk p=ship}                                ::  report death
           {$warp wer/sock rif/riff}                     ::  internal file req
           {$werp who/ship wer/sock rif/riff}            ::  external file req
           {$wegh ~}                                    ::  report memory
@@ -902,6 +904,7 @@
           {$harm ~}                                    ::  all terms hung up
           {$init p/ship}                                ::  after gall ready
           {$noop ~}                                    ::  no operation
+          {$sunk p=ship}                                ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
@@ -1001,6 +1004,7 @@
           [%live p=@ud q=(unit @ud)]                    ::  http/s ports
           [%rule p=http-rule]                           ::  update config
           [%serv p=$@(desk beam)]                       ::  set serving root
+          [%sunk p=ship]                                ::  report death
           [%them p=(unit hiss)]                         ::  outbound request
           [%they p=@ud q=httr]                          ::  inbound response
           [%chis p=? q=clip r=httq]                     ::  IPC inbound request
@@ -1196,6 +1200,9 @@
               ::
               our=@p
           ==
+          ::  %sunk: recieve a report that a foreign ship has lost continuity
+          ::
+          [%sunk =ship]
           ::  %wegh: produce memory usage information
           ::
           [%wegh ~]
@@ -1886,6 +1893,7 @@
       $%  {$conf p/dock q/culm}                         ::  configure app
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
+          {$sunk p=ship}                                ::  report death
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
           {$west p/sack q/path r/*}                     ::  network request
           {$wegh ~}                                    ::  report memory
@@ -2010,14 +2018,24 @@
           [%vent p=chain]                               ::  ethereum changes
       ==                                                ::
     ++  note                                            ::  out request $->
-      =,  eyre
-      $%  [%b %rest p=@da]                              ::  cancel timer
-          [%b %wait p=@da]                              ::  wait until
-          [%e %hiss p=(unit user) q=mark r=cage]        ::  outbound user req
-          [%a %want p=sock q=path r=*]                  ::  send message
-          [%j %vent-result p=chain]                     ::  tmp workaround
-          [@tas %init p=ship]                           ::  report install
-      ==                                                ::
+      =,  eyre                                          ::
+      $%  $:  %b                                        ::
+      $%  [%rest p=@da]                                 ::  cancel timer
+          [%wait p=@da]                                 ::  wait until
+      ==  ==                                            ::
+          $:  %e                                        ::
+      $%  [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
+      ==  ==                                            ::
+          $:  %a                                        ::
+      $%  [%want p=sock q=path r=*]                     ::  send message
+      ==  ==                                            ::
+          $:  %j                                        ::
+      $%  [%vent-result p=chain]                        ::  tmp workaround
+      ==  ==                                            ::
+          $:  @tas                                      ::
+      $%  [%init p=ship]                                ::  report install
+          [%sunk p=ship]                                ::  report death
+      ==  ==  ==                                        ::
     ++  public                                          ::  public key state
       $:  live=?                                        ::  seen in current era
           life=life                                     ::  current key number
