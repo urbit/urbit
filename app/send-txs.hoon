@@ -24,14 +24,14 @@
   [~ ..prep]
 ::
 ++  poke-noun
-  |=  a=@t
+  |=  skip=@ud
   ^-  [(list move) _this]
-  ?.  =('start' a)  [~ this]
   ~&  'loading txs...'
   =/  tox=(list cord)
     .^  (list cord)  %cx
         /(scot %p our.bol)/home/(scot %da now.bol)/txs/txt
     ==
+  =.  tox  (slag skip tox)
   =.  txs
     %+  turn  tox
     (cork trip tape-to-ux:ceremony)
@@ -87,7 +87,7 @@
   ~&  :_  ~(wyt in see)
       'waiting for transaction confirms... '
   ?:  (gth wen now.bol)  [~ this]
-  =.  wen  (add now.bol ~s5)  ::TODO  more sane/polite value
+  =.  wen  (add now.bol ~s30)  ::TODO  more sane/polite value
   [[ost.bol %wait /see wen]~ this]
 ::
 ++  wake-see
@@ -106,6 +106,10 @@
   |=  [wir=wire res=response:rpc:jstd]
   ^-  [(list move) _this]
   ?>  ?=(%batch -.res)
+  ?:  =(0 (lent bas.res))
+    ::TODO  node lost our txs?
+    ~|  %txs-lost-tmp
+    !!
   =.  see
     %-  ~(gas in see)
     %+  murn  bas.res
@@ -136,5 +140,7 @@
   |=  [wir=wire err=tang]
   ~&  %sigh-tang
   ~&  (slog err)
-  [~ this]
+  ?:  (gth wen now.bol)  [~ this]
+  =.  wen  (add now.bol ~s30)  ::TODO  more sane/polite value
+  [[ost.bol %wait /see wen]~ this]
 --
