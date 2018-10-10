@@ -1258,16 +1258,40 @@ _sist_dawn(u3_noun des)
     u3_noun eds = u3dc("slaw", c3__uw, u3k(des));
 
     if ( u3_nul == eds ) {
-      // XX print nice error
+      c3_c* sed_c = u3r_string(des);
+      fprintf(stderr, "dawn: invalid private keys: %s\r\n", sed_c);
+      free(sed_c);
+      u3_lo_bail();
+    }
+
+    if ( 0 == u3_Host.ops_u.who_c ) {
+      fprintf(stderr, "dawn: -w required\r\n");
+      u3_lo_bail();
+    }
+
+    u3_noun woh = u3i_string(u3_Host.ops_u.who_c);
+    u3_noun whu = u3dc("slaw", 'p', u3k(woh));
+
+    if ( u3_nul == whu ) {
+      fprintf(stderr, "dawn: invalid ship specificed with -w %s\r\n",
+                                                 u3_Host.ops_u.who_c);
       u3_lo_bail();
     }
 
     // +seed:able:jael: private key file
     sed = u3ke_cue(u3k(u3t(eds)));
-    // XX compare against ops_u.who_c
     who = u3h(sed);
 
-    u3z(des); u3z(eds);
+    if ( who != u3t(whu) ) {
+      u3_noun how = u3dc("scot", 'p', u3k(who));
+      c3_c* how_c = u3r_string(u3k(how));
+      fprintf(stderr, "dawn: mismatch between -w %s and -K %s\r\n",
+                                                 u3_Host.ops_u.who_c, how_c);
+      free(how_c);
+      u3_lo_bail();
+    }
+
+    u3z(woh); u3z(whu); u3z(des); u3z(eds);
   }
 
   // XX leaks nock
