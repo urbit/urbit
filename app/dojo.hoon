@@ -1814,6 +1814,10 @@
   |=  act/sole-action  ~|  poke+act  %.  act
   (wrap he-type):arm
 ::
+++  poke-lens-command
+  |=  com/command:^^^^lens  ~|  poke-lens+com  %.  com
+  (wrap he-lens):arm
+::
 ++  poke-json
   |=  jon/json
   ^-  {(list move) _+>.$}
