@@ -2240,7 +2240,7 @@
           [%connect =binding app=term]
           ::  connects a binding to a generator
           ::
-          [%serve =binding generator=[=desk path=(list @t)] arguments=*]
+          [%serve =binding =generator]
           ::  disconnects a binding
           ::
           ::    This must be called with the same duct that made the binding in
@@ -2269,6 +2269,23 @@
         ::    /~myapp will match /~myapp or /~myapp/longer/path
         ::
         path=(list @t)
+    ==
+  ::  +generator: a generator on the local ship that handles requests
+  ::
+  ::    This refers to a generator on the local ship, run with a set of
+  ::    arguments. Since http requests are time sensitive, we require that the
+  ::    generator be on the current ship.
+  ::
+  +$  generator
+    $:  ::  desk: desk on current ship that contains the generator
+        ::
+        =desk
+        ::  path: path on :desk to the generator's hoon file
+        ::
+        path=(list @t)
+        ::  args: arguments passed to the gate
+        ::
+        args=*
     ==
   ::  %config: http configuration
   ::

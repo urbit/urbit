@@ -226,4 +226,6 @@
 ++  woot-helm                 (wrap take-woot):from-helm
 ++  writ-kiln-autoload        (wrap take-writ-autoload):from-kiln
 ++  writ-kiln-sync            (wrap take-writ-sync):from-kiln
+
+++  bound                     (wrap take-bound):from-helm
 --

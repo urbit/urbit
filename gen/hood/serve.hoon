@@ -3,18 +3,13 @@
 ::::  /hoon/serve/hood/gen
   ::
 /?    310
-/+  old-zuse
-=,  old-zuse
 ::
 ::::
   ::
 :-  %say
+::
+::  TODO: dojo doesn't like the types?
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{pax/$@(term {i/knot t/path}) ~} ~}
+        {{=binding:light =generator:light ~} ~}
     ==
-:-  %helm-serve
-?@  pax  pax
-=+  bem=(need (tome pax))
-?.  =([%da now] r.bem)                :: XX actual sentinel
-  bem
-bem(r [%ud 0])
+[%helm-serve binding generator]

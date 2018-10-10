@@ -51,7 +51,8 @@
           {$flog wire flog:dill}                        ::
           {$funk wire @p @p @}                          ::
           {$nuke wire ship}                             ::
-          {$serv wire ?(desk beam)}                     ::
+          ::  {$serv wire ?(desk beam)}                 ::
+          [%serve wire binding:light generator:light]   ::
           {$poke wire dock pear}                        ::
           {$want wire sock path *}                      ::  send message
       ==                                                ::
@@ -111,9 +112,9 @@
   %^  emit  %poke  /helm/ask/(scot %p ~socden-malzod)
   [[~socden-malzod %ask] %ask-mail mel]
 ::
-++  poke-serve
-  |=  top/?(desk beam)  =<  abet
-  (emit %serv /helm/serv top)
+::  ++  poke-serve
+::    |=  top/?(desk beam)  =<  abet
+::    (emit %serv /helm/serv top)
 ::
 ++  poke-hi
   |=  mes/@t
@@ -244,6 +245,14 @@
 ++  take-woot                                         ::  result of %want
   |=  {way/wire her/ship cop/coop}  =<  abet
   (emit %flog ~ %text "woot: {<[way cop]>}")
+::
+++  poke-serve
+  |=  [=binding:light =generator:light]  =<  abet
+  (emit %serve /helm/serv binding generator)
+::
+++  take-bound
+  |=  [wir=wire success=? binding=binding:light]  =<  abet
+  (emit %flog ~ %text "bound: {<success>}")
 ::
 ++  poke-tlon-init-stream
   ::  creates stream channel and makes it pull from

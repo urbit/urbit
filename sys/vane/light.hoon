@@ -160,7 +160,7 @@
 +$  action
   $%  ::  dispatch to a generator
       ::
-      [%gen generator=[=desk path=(list @t)] args=*]
+      [%gen =generator]
       ::  dispatch to an application
       ::
       [%app app=term]
@@ -225,10 +225,20 @@
       ==
     ==
   ==
+::  +render-tang: renders a tang and adds <br/> tags between each line
+::
+++  render-tang
+  |=  {wid/@u tan/tang}
+  ^-  marl
+  =/  raw=(list tape)  (zing (turn tan |=(a/tank (wash 0^wid a))))
+  ::
+  |-  ^-  marl
+  ?~  raw  ~
+  [;/(i.raw) ;br; $(raw t.raw)]
 ::  +internal-server-error: 500 page, with a tang
 ::
 ++  internal-server-error
-  |=  [authorized=? url=@t =tang]
+  |=  [authorized=? url=@t t=tang]
   ^-  octs
   %-  as-octs:mimes:html
   %-  crip
@@ -242,7 +252,7 @@
       ;p:"There was an error while handling the request for {<(trip url)>}."
       ;*  ?:  authorized
             ;=
-              ;p:"hi"
+              ;code:"*{(render-tang 80 t)}"
             ==
           ~
     ==
@@ -319,21 +329,22 @@
     ?-    -.u.action
     ::
         %gen
-      =/  =disc:ford  [our desk.generator.u.action]
       ::
-      =-  [[duct %pass /run-build/a %f %build our live=%.n schematic=-]~ state]
+      =-  [[duct %pass /run-build %f %build our live=%.n schematic=-]~ state]
       ::
       ^-  schematic:ford
       ::
-      =-  [%cast disc %mime -]
+      =-  [%cast [our desk.generator.u.action] %mime -]
       ::
-      ::
-      [%$ %txt !>('one two three')]
-      ::  :+  %call
-      ::    :+  %call
-      ::      [%core [disc path.generator.u.action]]
-      ::    []
-      ::  [authenticated http-request]
+      ^-  schematic:ford
+      :+  %call
+        :+  %call
+          [%core [[our desk.generator.u.action] (flop path.generator.u.action)]]
+        ::  TODO: Figure out what goes in generators. We need to slop the
+        ::  prelude with the arguments passed in.
+        ::
+        [%$ %noun !>([[now=now eny=eny bek=[our desk.generator.u.action [%da now]]] ~ ~])]
+      [%$ %noun !>([authenticated http-request])]
     ::
         %app
       :_  state
@@ -505,11 +516,11 @@
     ?:  ?=(%incomplete -.made-result)
       %^  return-static-data-on-duct  500  'text/html'
       ::  TODO: Thread original URL and authentication state here.
-      (internal-server-error %.n 'http://' tang.made-result)
+      (internal-server-error %.y 'http://' tang.made-result)
     ::
     ?:  ?=(%error -.build-result.made-result)
       %^  return-static-data-on-duct  500  'text/html'
-      (internal-server-error %.n 'http://' message.build-result.made-result)
+      (internal-server-error %.y 'http://' message.build-result.made-result)
     ::
     =/  =cage  (result-to-cage:ford build-result.made-result)
     ::
@@ -796,7 +807,7 @@
       %+  add-binding  binding.task
       ?-  -.task
         %connect  [%app app.task]
-        %serve    [%gen generator.task arguments.task]
+        %serve    [%gen generator.task]
       ==
     [moves light-gate]
   ::
@@ -817,7 +828,7 @@
   =/  =sign  q.wrapped-sign
   ::  :wire must at least contain two parts, the type and the build
   ::
-  ?>  ?=([@ @ *] wire)
+  ?>  ?=([@ *] wire)
   ::
   |^  ^-  [p=(list move) q=_light-gate]
       ::

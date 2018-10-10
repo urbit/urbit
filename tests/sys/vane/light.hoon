@@ -628,7 +628,7 @@
         ::
         %+  weld
           %+  expect-eq
-            !>  /run-build/a
+            !>  /run-build
             !>  p.card
         ::
         %+  expect-schematic
@@ -643,7 +643,7 @@
       now=~1111.1.3
       scry=*sley
       ^=  take-args
-        :*  wire=/run-build/a  duct=~[/http-blah]
+        :*  wire=/run-build  duct=~[/http-blah]
             ^-  (hypo sign:light-gate)
             :-  *type
             :^  %f  %made  ~1111.1.3

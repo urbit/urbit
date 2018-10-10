@@ -2,10 +2,15 @@
 ::
 ::  outer gate is a standard generator
 ::
-|=  [bowl:gall base-path=[=desk =spur] $~]
+|=  [[now=@da eny=@ bek=beak] $~ $~]
 ::
-:-  %build
-|=  http-request
+::  :-  %build
+|=  [authorized=? http-request:light]
+^-  mime
+:-  ['text' 'html' ~]
+%-  as-octs:mimes:html
+%-  crip
+%-  en-xml:html
 ^-  manx
 ;html
   ;head
@@ -13,7 +18,7 @@
   ==
   ;body
     ;h1:"Ran generator"
-    ;p:"Executing on {<(scot %p our)>}."
+    ::  ;p:"Executing on {<(scot %p our)>}."
     ;p:"The method was {<(trip method)>}."
     ;p:"The url was {<(trip url)>}."
   ==

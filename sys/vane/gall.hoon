@@ -1268,6 +1268,7 @@
         $well  `%e
         $wipe  `%f
         %connect  `%l
+        %serve  `%l
       ==
     --
   --
