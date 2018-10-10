@@ -10152,7 +10152,7 @@
     ::
         {$dtkt *}
       =+  nef=$(gen [%kttr p.gen])
-      [p.nef [%11 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
+      [p.nef [%14 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
     ::
         {$dtls *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
         {$sand *}  [(nice (play gen)) [%1 q.gen]]
@@ -10187,7 +10187,7 @@
       :: ?:  &(huz !?=(%|(@ [?(%sgcn %sgls) ^]) p.gen))
       ::  hum
       :-  p.hum
-      :+  %10
+      :+  %13
         ?-    p.gen
             @   p.gen
             ^   [p.p.gen q:$(gen q.p.gen, gol %noun)]
@@ -10238,7 +10238,7 @@
         {$dbug *}
       ~_  (show %o p.gen)
       =+  hum=$(gen q.gen)
-      [p.hum [%10 [%spot %1 p.gen] q.hum]]
+      [p.hum [%13 [%spot %1 p.gen] q.hum]]
     ::
         {$zpcm *}   [(nice (play p.gen)) [%1 q.gen]]   ::  XX validate!
         {$lost *}
