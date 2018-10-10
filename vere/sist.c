@@ -578,20 +578,6 @@ _sist_zest()
   u3_raft_work();
 }
 
-/* _sist_make(): boot from scratch.
-*/
-static void
-_sist_make(u3_noun fav)
-{
-  //  Authenticate and initialize terminal.
-  //
-  u3_term_ef_bake(fav);
-
-  //  Create the ship directory.
-  //
-  _sist_zest();
-}
-
 /* _sist_rest_nuu(): upgrade log from previous format.
 */
 static void
@@ -1258,60 +1244,79 @@ _sist_eth_rpc(c3_c* url_c, u3_noun oct)
 /* _sist_dawn(): produce %dawn boot card - validate keys and query contract
 */
 static u3_noun
-_sist_dawn(void)
+_sist_dawn(u3_noun des)
 {
-  if ( 0 == u3_Host.ops_u.key_c ) {
-    // XX print nice error
-    u3_lo_bail();
+  u3_noun who, sed, pon, zar, tuf;
+
+  {
+    u3_noun eds = u3dc("slaw", c3__uw, u3k(des));
+
+    if ( u3_nul == eds ) {
+      // XX print nice error
+      u3_lo_bail();
+    }
+
+    // +seed:able:jael: private key file
+    sed = u3ke_cue(u3k(u3t(eds)));
+    // XX compare against ops_u.who_c
+    who = u3h(sed);
+
+    u3z(des); u3z(eds);
   }
-
-  u3_noun eds = u3m_file(u3_Host.ops_u.key_c);
-  u3_noun des = u3dc("slaw", c3__uw, eds);
-
-  if ( u3_nul == des ) {
-    // XX print nice error
-    u3_lo_bail();
-  }
-
-  //  +seed:dawn:
-  //  [who=ship lyf=life key=ring sig=(unit oath:pki:jael)]
-  u3_noun sed = u3ke_cue(u3t(des));
-  u3_noun who = u3h(sed);
-
-  // u3_noun lyf = u3h(u3t(sed));
-  // u3_noun key = u3h(u3t(u3t(sed)));
-  // u3_noun sig = u3t(u3t(u3t(sed)));
-  // u3_noun rac = u3do("clan:title", u3k(who));
 
   // XX configure default globally, add cli arg to specify
   c3_c* url_c = "http://localhost:8545";
 
-  u3_noun luh = _sist_eth_rpc(url_c, u3do("hull:give:dawn", u3k(who)));
-  u3_noun hul = u3dc("hull:take:dawn", u3k(who), luh);
+  // XX leaks nock
+  {
+    // +hull:constitution:ethe: on-chain state
+    u3_noun oct = u3do("hull:give:dawn", u3k(who));
+    u3_noun luh = _sist_eth_rpc(url_c, u3k(oct));
+    u3_noun hul = u3dc("hull:take:dawn", u3k(who), u3k(luh));
 
-  // XX actually make request
-  // u3_noun liv = _sist_get_json(parent, /some/url)
-  u3_noun liv = u3_nul;
+    // +live:dawn: network state
+    // XX actually make request
+    // u3_noun liv = _sist_get_json(parent, /some/url)
+    u3_noun liv = u3_nul;
 
-  u3_noun sas = u3dt("veri:dawn", sed, hul, liv);
+      // XX revisit
+    // (each [seed (unit ship)] [rank @tas])
+    u3_noun sas = u3dt("veri:dawn", u3k(sed), u3k(hul), u3k(liv));
 
-  if ( c3n == u3h(sas) ) {
-    // XX deconstruct sas, print helpful error messages
-    u3m_p("pre-boot error", u3t(sas));
-    u3_lo_bail();
+    if ( c3n == u3h(sas) ) {
+      // XX deconstruct sas, print helpful error messages
+      u3m_p("pre-boot error", u3t(sas));
+      u3_lo_bail();
+    }
+
+    // (unit ship): sponsor
+    // produced by +veri:dawn to avoid coupling to +hull structure
+    pon = u3k(u3t(u3t(sas)));
+
+    u3z(oct); u3z(luh); u3z(hul); u3z(liv); u3z(sas);
   }
 
-  u3_noun raz = _sist_eth_rpc(url_c, u3v_wish("czar:give:dawn"));
-  u3_noun zar = u3do("czar:take:dawn", raz);
+  // XX leaks nock
+  {
+    // (map ship [=life =pass]): galaxy table
+    u3_noun oct = u3v_wish("czar:give:dawn");
+    u3_noun raz = _sist_eth_rpc(url_c, u3k(oct));
+    zar = u3do("czar:take:dawn", u3k(raz));
 
-  u3_noun fut = _sist_eth_rpc(url_c, u3v_wish("turf:give:dawn"));
-  u3_noun tuf = u3do("turf:take:dawn", fut);
+    u3z(oct); u3z(raz);
+  }
 
-  // XX extract from sas
-  // XX or maybe pass entire hull?
-  u3_noun pon = u3_nul;
+  // XX leaks nock
+  {
+    // (list turf): ames domains
+    u3_noun oct = u3v_wish("turf:give:dawn");
+    u3_noun fut = _sist_eth_rpc(url_c, u3k(oct));
+    tuf = u3do("turf:take:dawn", u3k(fut));
 
-  // [%dawn =seed:dawn spon=(unit ship) czar=(map ship [=life =pass]) turf=(list (pair @ud (list @ta)))]
+    u3z(oct); u3z(fut);
+  }
+
+  // [%dawn seed sponsor galaxies domains]
   return u3nc(c3__dawn, u3nq(sed, pon, zar, tuf));
 }
 
@@ -1320,7 +1325,19 @@ _sist_dawn(void)
 void
 u3_sist_boot(void)
 {
-  if ( c3y == u3_Host.ops_u.nuu ) {
+  if ( c3n == u3_Host.ops_u.nuu ) {
+    _sist_rest();
+
+    if ( c3y == u3A->fak ) {
+      c3_c* who_c = u3r_string(u3dc("scot", 'p', u3k(u3A->own)));
+      fprintf(stderr, "fake: %s\r\n", who_c);
+      free(who_c);
+
+      // XX make conditional
+      u3_Host.ops_u.net = c3n;
+    }
+  }
+  else {
     u3_noun pig, who;
 
     if ( 0 != u3_Host.ops_u.fak_c ) {
@@ -1335,34 +1352,31 @@ u3_sist_boot(void)
 
       u3A->fak = c3y;
       who = u3k(u3t(whu));
-      pig = u3nc(c3__fake, who);
+      pig = u3nc(c3__fake, u3k(who));
+
       u3z(whu);
     }
     else {
+      if ( 0 == u3_Host.ops_u.key_c ) {
+        // XX print nice error
+        u3_lo_bail();
+      }
+
+      u3_noun des = u3m_file(u3_Host.ops_u.key_c);
+
       u3A->fak = c3n;
-      pig = _sist_dawn();
+      pig = _sist_dawn(u3k(des));
       who = u3k(u3h(u3h(u3t(pig))));
+
+      u3z(des);
     }
 
     u3A->own = who;
-    _sist_make(pig);
-  }
-  else {
-    _sist_rest();
 
-    if ( c3y == u3A->fak ) {
-      c3_c* who_c = u3r_string(u3dc("scot", 'p', u3k(u3A->own)));
-      fprintf(stderr, "fake: %s\r\n", who_c);
+    // Authenticate and initialize terminal.
+    u3_term_ef_bake(pig);
 
-      // XX use clan:title
-      if ( 4 == strlen(who_c) ) {
-        u3_Host.ops_u.imp_c = who_c;
-      } else {
-        free(who_c);
-      }
-
-      // XX make conditional
-      u3_Host.ops_u.net = c3n;
-    }
+    // Create the ship directory.
+    _sist_zest();
   }
 }
