@@ -57,10 +57,11 @@
     (punt zero-ux)
     (punt zero-ux)
   ::
-    ?.  live
-      (punt ;~(plug zero-ux ;~(pfix com zero-ux)))
-    (stag ~ ;~(plug zero-ux ;~(pfix com zero-ux)))
+    =+  ;~(plug zero-ux ;~(pfix com zero-ux))
+    ?.  live  (punt -)
+    (stag ~ -)
     :: %.  ;~(plug zero-ux ;~(pfix com zero-ux))
+    :: ^-  $-(rule rule)
     :: ?.  live  punt
     :: (cury stag ~)
   ==
@@ -306,7 +307,14 @@
             [%uint 1.610.668.800]  ::  2021-01-15 00:00:00 UTC
         ==
     ==
-  ::TODO  deploy censures, votingdsending
+  ~&  'Deploying censures...'
+  =^  censures  this
+    %+  do-deploy  'censures'
+    ~[address+ships]
+  ~&  'Deploying delegated-sending...'
+  =^  delegated-sending  this
+    %+  do-deploy  'delegated-sending'
+    ~[address+ships]
   ::
   ::  tlon galaxy booting
   ::
@@ -378,6 +386,7 @@
     (deposit-galaxies conditional-star-release con-gal)
   ::
   ~&  'Depositing conditional release stars...'
+  ~&  con-sar
   =.  this
     (deposit-stars conditional-star-release con-sar)
   ::
@@ -463,6 +472,7 @@
   ?~  galaxies  this
   ~&  [(lent galaxies) 'galaxies remaining']
   =*  galaxy  gal.i.galaxies
+  ~&  `@p`galaxy
   =*  gal-deed  i.galaxies
   ::
   ::  create the galaxy, with spawn proxy set to the lockup contract
@@ -473,7 +483,7 @@
     (create-ship galaxy `into net.gal-deed)
   ::
   ::  deposit all its stars
-  =+  stars=(gulf 1 2)::55)
+  =+  stars=(gulf 1 255)
   |-
   ?^  stars
     =.  this
@@ -503,15 +513,13 @@
   ::  a spawn proxy yet, do so now
   =+  par=(sein:title star)
   =?  this  !(~(has in gals) par)
-    ~&  [%setting-spawn-proxy-for par +(nonce)]
     =.  gals  (~(put in gals) par)
-    %^  do  constitution  350.000
+    %^  do  constitution  300.000
     %+  set-spawn-proxy:dat  par
     into
   ::
-  ~&  [%depositing star +(nonce)]
   =.  this
-    %^  do  into  350.000
+    %^  do  into  550.000
     (deposit:dat to star)
   $(stars t.stars)
 ::
