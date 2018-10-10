@@ -222,8 +222,8 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
-  if ( u3_Host.ops_u.gen_c != 0 && ( !imp_t || u3_Host.ops_u.nuu == c3n ) ) {
-    fprintf(stderr, "-G only makes sense when creating a new galaxy\n");
+  if ( u3_Host.ops_u.gen_c != 0 && u3_Host.ops_u.nuu == c3n ) {
+    fprintf(stderr, "-G only makes sense when bootstrapping a new instance\n");
     return c3n;
   }
 

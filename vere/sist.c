@@ -1386,12 +1386,18 @@ u3_sist_boot(void)
       u3z(whu);
     }
     else {
-      if ( 0 == u3_Host.ops_u.key_c ) {
+      u3_noun des = u3_none;
+
+      if ( 0 != u3_Host.ops_u.key_c ) {
+        des = u3m_file(u3_Host.ops_u.key_c);
+      }
+      else if ( 0 != u3_Host.ops_u.gen_c ) {
+        des = u3i_string(u3_Host.ops_u.gen_c);
+      }
+      else {
         // XX print nice error
         u3_lo_bail();
       }
-
-      u3_noun des = u3m_file(u3_Host.ops_u.key_c);
 
       u3A->fak = c3n;
       pig = _sist_dawn(u3k(des));
