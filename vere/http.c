@@ -1238,6 +1238,7 @@ static u3_noun
 _http_czar_host(void)
 {
   u3_noun dom = u3_nul;
+  return dom;
 
   // XX revisit
 #if 0
@@ -1275,7 +1276,6 @@ _http_czar_host(void)
       }
     }
   }
-#endif
 
   if ( u3_nul == dom ) {
     return dom;
@@ -1285,6 +1285,7 @@ _http_czar_host(void)
   dom = u3nc(u3i_string(u3_Host.ops_u.imp_c + 1), u3kb_flop(u3k(dom)));
 
   return u3nt(u3_nul, c3y, u3kb_flop(u3k(dom)));
+#endif
 }
 
 /* u3_http_ef_bake(): notify %eyre that we're live

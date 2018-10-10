@@ -91,7 +91,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:K:A:I:w:u:f:F:k:l:n:p:r:NabcdgqsvxMPDXRS")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:K:A:w:u:f:F:k:l:n:p:r:NabcdgqsvxMPDXRS")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -107,11 +107,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'A': {
         u3_Host.ops_u.arv_c = strdup(optarg);
-        break;
-      }
-      // XX remove in deference to -K
-      case 'I': {
-        u3_Host.ops_u.imp_c = _main_presig(optarg);
         break;
       }
       case 'F': {
@@ -143,7 +138,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'K': {
         u3_Host.ops_u.key_c = strdup(optarg);
-        u3_Host.ops_u.nuu = c3y;
         break;
       }
       case 'k': {
@@ -194,18 +188,11 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
-  // XX remove -I
-  if ( (0 != u3_Host.ops_u.fak_c) && (0 != u3_Host.ops_u.imp_c) ) {
-    fprintf(stderr, "-I is redundant with -F\n");
-    return c3n;
+  if ( 0 != u3_Host.ops_u.fak_c ) {
+    u3_Host.ops_u.who_c = strdup(u3_Host.ops_u.fak_c);
   }
 
-  // set galaxy name
-  // XX need to do this with -K too
-  // -A is required when booting a galaxy
-  if ( (0 != u3_Host.ops_u.fak_c) && (4 == strlen(u3_Host.ops_u.fak_c)) ) {
-    u3_Host.ops_u.imp_c = strdup(u3_Host.ops_u.fak_c);
-  }
+  c3_t imp_t = ( (0 != u3_Host.ops_u.who_c) && (4 == strlen(u3_Host.ops_u.who_c)) );
 
   if ( (0 != u3_Host.ops_u.fak_c) && (c3n == u3_Host.ops_u.nuu) ) {
     fprintf(stderr, "-F only makes sense on initial boot\n");
@@ -220,22 +207,18 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.ops_u.net = c3y;  /* remote networking is always on in real mode. */
   }
 
-  if ( u3_Host.ops_u.arv_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
-                                     u3_Host.ops_u.nuu   == c3n ) ) {
+  if ( u3_Host.ops_u.arv_c != 0 && !imp_t ) {
     fprintf(stderr, "-A only makes sense when creating a new galaxy\n");
     return c3n;
   }
 
-  if ( u3_Host.ops_u.imp_c != 0 &&
-       u3_Host.ops_u.arv_c == 0 &&
-       u3_Host.ops_u.nuu   == c3y ) {
+  if ( u3_Host.ops_u.arv_c == 0 && imp_t ) {
     fprintf(stderr, "can't create a new galaxy without specifying "
                     "the initial sync path with -A\n");
     return c3n;
   }
 
-  if ( u3_Host.ops_u.gen_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
-                                     u3_Host.ops_u.nuu   == c3n ) ) {
+  if ( u3_Host.ops_u.gen_c != 0 && ( !imp_t || u3_Host.ops_u.nuu == c3n ) ) {
     fprintf(stderr, "-G only makes sense when creating a new galaxy\n");
     return c3n;
   }
@@ -350,7 +333,6 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-F ship       Fake keys; also disables networking\n",
     "-f            Fuzz testing\n",
     "-g            Set GC flag\n",
-    "-I galaxy     Start as ~galaxy\n",
     "-k stage      Start at Hoon kernel version stage\n",
     "-l port       Initial peer port\n",
     "-M            Memory madness\n",
