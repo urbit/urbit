@@ -148,16 +148,16 @@
   }
 
   static u3_noun
-  _mint_coke(u3_noun nug)
+  _mint_cove(u3_noun nug)
   {
     if ( 0 == u3h(nug) ) {
       return u3k(u3t(nug));
     }
-    else if ( 10 == u3h(nug) ) {
-      return _mint_coke(u3t(u3t(nug)));
+    else if ( (10 == u3h(nug)) || (13 == u3h(nug)) ) {
+      return _mint_cove(u3t(u3t(nug)));
     }
     else {
-      return u3m_error("mint-coke");
+      return u3m_error("mint-cove");
     }
   }
 
@@ -370,7 +370,7 @@
         u3_noun wam = u3qfu_play(van, sut, p_gen);
         u3_noun dok = u3nc(c3__wing, u3k(q_gen));
         u3_noun vol = _mint_corn(van, sut, dok);
-        u3_noun axe = _mint_coke(vol);
+        u3_noun axe = _mint_cove(vol);
 
         ret = u3nc(_mint_nice(van, gol, _mint_bean()),
                    u3qfu_fish(van, wam, axe));
@@ -471,7 +471,7 @@
         u3_noun viz = _mint_in(van, sut, c3__noun, q_gen);
 
         ret = u3nc(u3k(u3h(nef)),
-                   u3nt(11, u3nc(1, u3nc(151, u3k(u3h(nef)))), u3k(u3t(viz))));
+                   u3nt(14, u3nc(1, u3nc(151, u3k(u3h(nef)))), u3k(u3t(viz))));
 
         u3z(viz);
         u3z(nef);
@@ -683,7 +683,7 @@
                        _mint_corn(van, sut, u3t(p_gen)));
           }
           ret = u3nc(u3k(u3h(hum)),
-                     u3nt(10, bez, u3k(u3t(hum))));
+                     u3nt(13, bez, u3k(u3t(hum))));
 
         u3z(hum);
         return ret;
@@ -786,7 +786,7 @@
           u3_noun hum = _mint_in(van, sut, gol, q_gen);
           u3_noun bez = u3nt(c3__spot, 1, u3k(p_gen));
 
-          ret = u3nc(u3k(u3h(hum)), u3nt(10, bez, u3k(u3t(hum))));
+          ret = u3nc(u3k(u3h(hum)), u3nt(13, bez, u3k(u3t(hum))));
           u3z(hum);
         }
         u3t_drop();

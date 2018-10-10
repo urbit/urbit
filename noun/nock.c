@@ -1289,6 +1289,21 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       ++tot_w; _n_emit(ops, (c3y == los_o) ? WILS : WISH);
       break;
 
+    // temporary home for hint
+    case 13:
+      u3x_cell(arg, &hed, &tel);
+      tot_w += _n_bint(ops, hed, tel, los_o, tel_o);
+      break;
+
+    // temporary home for wish
+    case 14:
+      u3x_cell(arg, &hed, &tel);
+      tot_w += _n_comp(ops, hed, c3n, c3n);
+      ++tot_w; _n_emit(ops, SWAP);
+      tot_w += _n_comp(ops, tel, c3n, c3n);
+      ++tot_w; _n_emit(ops, (c3y == los_o) ? WILS : WISH);
+      break;
+
     default:
       u3m_bail(c3__exit);
       return 0;
