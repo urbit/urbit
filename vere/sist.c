@@ -1174,6 +1174,8 @@ _sist_post_json(c3_c* url_c, uv_buf_t lod_u)
   hed_u = curl_slist_append(hed_u, "Content-Type: application/json");
   hed_u = curl_slist_append(hed_u, "charsets: utf-8");
 
+  // XX require TLS, pin default cert?
+
   curl_easy_setopt(curl, CURLOPT_URL, url_c);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _sist_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
@@ -1248,6 +1250,10 @@ _sist_dawn(u3_noun des)
 {
   u3_noun who, sed, pon, zar, tuf;
 
+  c3_t  eth_t = ( 0 != u3_Host.ops_u.eth_c );
+  // XX require https?
+  c3_c* url_c = eth_t ? u3_Host.ops_u.eth_c : "http://localhost:8545";
+
   {
     u3_noun eds = u3dc("slaw", c3__uw, u3k(des));
 
@@ -1263,9 +1269,6 @@ _sist_dawn(u3_noun des)
 
     u3z(des); u3z(eds);
   }
-
-  // XX configure default globally, add cli arg to specify
-  c3_c* url_c = "http://localhost:8545";
 
   // XX leaks nock
   {
@@ -1315,6 +1318,8 @@ _sist_dawn(u3_noun des)
 
     u3z(oct); u3z(fut);
   }
+
+  // XX include ops_u.eth_c if set
 
   // [%dawn seed sponsor galaxies domains]
   return u3nc(c3__dawn, u3nq(sed, pon, zar, tuf));
