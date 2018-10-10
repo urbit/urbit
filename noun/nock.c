@@ -526,7 +526,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define SLIB 70
 #define SLIS 71
 #define SAVE 72
-// nock 12
+// nock 10
 #define MUTH 73
 #define KUTH 74
 #define MUTT 75
@@ -1302,20 +1302,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       }
       break;
 
-    case 11:
-      u3x_cell(arg, &hed, &tel);
-      tot_w += _n_bint(ops, hed, tel, los_o, tel_o);
-      break;
-
-    case 12:
-      u3x_cell(arg, &hed, &tel);
-      tot_w += _n_comp(ops, hed, c3n, c3n);
-      ++tot_w; _n_emit(ops, SWAP);
-      tot_w += _n_comp(ops, tel, c3n, c3n);
-      ++tot_w; _n_emit(ops, (c3y == los_o) ? WILS : WISH);
-      break;
-
-    case 12: {
+    case 10: {
       u3_noun axe, nef;
       u3x_cell(arg, &hed, &tel);
       u3x_cell(hed, &axe, &nef);
@@ -1346,6 +1333,19 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       }
       break;
     }
+
+    case 11:
+      u3x_cell(arg, &hed, &tel);
+      tot_w += _n_bint(ops, hed, tel, los_o, tel_o);
+      break;
+
+    case 12:
+      u3x_cell(arg, &hed, &tel);
+      tot_w += _n_comp(ops, hed, c3n, c3n);
+      ++tot_w; _n_emit(ops, SWAP);
+      tot_w += _n_comp(ops, tel, c3n, c3n);
+      ++tot_w; _n_emit(ops, (c3y == los_o) ? WILS : WISH);
+      break;
 
     default:
       u3m_bail(c3__exit);
