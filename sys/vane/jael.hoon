@@ -1154,7 +1154,7 @@
       ::
       ::  sanity checks, should never fail if we operate correctly
       ::
-      ~|  %diff-order-insanity
+      ~|  [%diff-order-insanity -.dif]
       ?>  ?+  -.dif  &
             %spawned      ?>  ?=(^ kid.hul)
                           !(~(has in spawned.u.kid.hul) who.dif)

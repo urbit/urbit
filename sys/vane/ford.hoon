@@ -1,4 +1,3 @@
-!:
 ::  ford: build system vane
 ::
 ::    Ford is a functional reactive build system.
@@ -560,6 +559,7 @@
 ++  build-to-tape
   |=  =build
   ^-  tape
+  ~+
   ::
   =/  enclose  |=(tape "[{+<}]")
   =/  date=@da  date.build
@@ -1560,6 +1560,11 @@
       |=  =build-status
       %_    build-status
           clients
+        ::  if we've already encountered :i.subs, don't overwrite
+        ::
+        ?:  (~(has by clients.build-status) [%cache new-id])
+          clients.build-status
+        ::
         =/  old-clients-on-duct  (~(get ju clients.build-status) [%duct duct])
         ::
         =-  (~(del by -) [%duct duct])
@@ -1724,7 +1729,9 @@
       =.  builds.state
         %+  ~(jab by builds.state)  new-sub
         |=  =build-status
-        build-status(clients (~(put ju clients.build-status) [%duct duct] new-client))
+        %_  build-status
+          clients  (~(put ju clients.build-status) [%duct duct] new-client)
+        ==
       ::
       state
     --
@@ -3229,10 +3236,15 @@
         =/  grad-mark=(unit term)  ((sand %tas) q.grad-vase)
         ?~  grad-mark
           %-  return-error  :_  ~  :-  %leaf
-          "ford: %pact failed: %{<mark>} mark invalid +grad"
+          "ford: %join failed: %{<mark>} mark invalid +grad"
+        ::  todo: doesn't catch full cycles of +grad arms, only simple cases
+        ::
+        ?:  =(u.grad-mark mark)
+          %-  return-error  :_  ~  :-  %leaf
+          "ford: %join failed: %{<mark>} mark +grad arm refers to self"
         ::
         =/  join-build=^build
-          [date.build [%join disc mark [%$ first-cage] [%$ second-cage]]]
+          [date.build [%join disc u.grad-mark [%$ first-cage] [%$ second-cage]]]
         ::
         =^  join-result  out  (depend-on join-build)
         ?~  join-result
@@ -5351,6 +5363,10 @@
       |=  kid=^build
       ^-  [(unit build-result) _out]
       ::
+      ?:  =(kid build)
+        ~|  [%depend-on-self (build-to-tape kid)]
+        !!
+      ::
       =.  sub-builds.out  [kid sub-builds.out]
       ::  +access-build-record will mutate :results.state
       ::
@@ -5490,22 +5506,6 @@
       ::  nothing depends on :build, so we'll remove it
       ::
       :-  removed=&
-      ^+  state
-      ::
-      =/  subs=(list ^build)  ~(tap in ~(key by subs.build-status))
-      ::  for each sub, remove :build from its :clients
-      ::
-      =.  builds.state
-        |-  ^+  builds.state
-        ?~  subs  builds.state
-        ::
-        =?  builds.state  (~(has by builds.state) i.subs)
-          ::
-          %+  ~(jab by builds.state)  i.subs
-          |=  build-status=^build-status
-          build-status(clients (~(del ju clients.build-status) [%duct duct] build))
-        ::
-        $(subs t.subs)
       ::
       %_    state
           builds-by-schematic

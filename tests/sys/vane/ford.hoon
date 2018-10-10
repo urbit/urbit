@@ -5603,6 +5603,78 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
+++  test-join-grad  ^-  tang
+  ::
+  =/  hoon-src-type=type  [%atom %$ ~]
+  ::
+  =/  scry-results=(map [term beam] (unit cage))
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      :^  ~  %hoon  hoon-src-type
+      txt-scry
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
+      :^  ~  %hoon  hoon-src-type
+      diff-scry
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/hoon/mar]]
+      :^  ~  %hoon  hoon-src-type
+      '''
+      |_  foo=@t
+      ++  grab
+        |%
+        ++  noun  @t
+        ++  txt  of-wain:format
+        --
+      ++  grow
+        |%
+        ++  txt  (to-wain:format foo)
+        --
+      ++  grad  %txt
+      --
+      '''
+    ==
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1234.5.6
+      scry=(scry-with-results-and-failures scry-results)
+      ::
+      ^=  call-args
+        :*  duct=~[/path]  type=~  %build  ~nul  live=%.n
+            :^  %join  [~nul %home]  %hoon
+            ::  replace %a with %c on the first line
+            ::
+            :-  [%$ %txt-diff !>(~[[%| ~[%a] ~[%c]] [%& 1]])]
+            ::  replace %b with %d on the second line
+            ::
+            [%$ %txt-diff !>(~[[%& 1] [%| ~[%b] ~[%d]]])]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ::
+        ?>  =(1 (lent moves))
+        ?>  ?=(^ moves)
+        ?>  ?=([* %give %made @da %complete *] i.moves)
+        =/  result  result.p.card.i.moves
+        ?>  ?=([%success %join *] build-result.result)
+        ::
+        =/  =cage  cage.build-result.result
+        ::
+        =/  result=(urge:clay cord)  ~[[%| ~[%a] ~[%c]] [%| ~[%b] ~[%d]]]
+        (expect-cage %txt-diff !>(result) cage)
+    ==
+  ::
+  ;:  weld
+    results1
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
 ++  test-list  ^-  tang
   ::
   =/  ud-type=type  [%atom %ud ~]

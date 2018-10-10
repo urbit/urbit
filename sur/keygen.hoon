@@ -2,16 +2,30 @@
 +=  nodes  (map ship node)
 +=  uodes  (map ship uode)
 ::
-+=  node  [meta=meta seed=@ux keys=wallet]
-+=  uode  [meta=meta seed=@ux keys=edkeys]
++=  node  [meta=meta seed=@ux wallet]
++=  uode  [meta=meta seed=@ux edkeys]
 ::
 +=  meta  [typ=tape rev=@ud who=(unit ship)]
 ::
-+=  wallet  [public=@ux private=@ux chain=@ux]
++=  wallet
+  $:  keys=[public=@ux private=@ux]
+      chain=@ux
+      address=@ux
+  ==
 ::
-+=  edkeys  [auth=keypair crypt=keypair]
++=  vault
+  $:  ticket=@q
+      owner=node
+      manage=nodes
+      voting=nodes
+      transfer=nodes
+      spawn=nodes
+      network=uodes
+  ==
+::
++=  edkeys  [crypt=keypair auth=keypair]
 ::
 +=  keypair  [public=@ux secret=@ux]
 ::
-+=  revisions  [transfer=@ud spawn=@ud delegate=@ud manage=@ud network=@ud]
++=  revisions  [manage=@ud voting=@ud transfer=@ud spawn=@ud network=@ud]
 --
