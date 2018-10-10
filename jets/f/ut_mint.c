@@ -471,7 +471,7 @@
         u3_noun viz = _mint_in(van, sut, c3__noun, q_gen);
 
         ret = u3nc(u3k(u3h(nef)),
-                   u3nt(14, u3nc(1, u3nc(151, u3k(u3h(nef)))), u3k(u3t(viz))));
+                   u3nt(12, u3nc(1, u3nc(151, u3k(u3h(nef)))), u3k(u3t(viz))));
 
         u3z(viz);
         u3z(nef);
@@ -683,7 +683,7 @@
                        _mint_corn(van, sut, u3t(p_gen)));
           }
           ret = u3nc(u3k(u3h(hum)),
-                     u3nt(13, bez, u3k(u3t(hum))));
+                     u3nt(11, bez, u3k(u3t(hum))));
 
         u3z(hum);
         return ret;
@@ -786,7 +786,7 @@
           u3_noun hum = _mint_in(van, sut, gol, q_gen);
           u3_noun bez = u3nt(c3__spot, 1, u3k(p_gen));
 
-          ret = u3nc(u3k(u3h(hum)), u3nt(13, bez, u3k(u3t(hum))));
+          ret = u3nc(u3k(u3h(hum)), u3nt(11, bez, u3k(u3t(hum))));
           u3z(hum);
         }
         u3t_drop();
