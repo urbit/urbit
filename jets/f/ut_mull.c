@@ -68,7 +68,7 @@
     if ( 0 == u3h(nug) ) {
       return u3k(u3t(nug));
     } 
-    else if ( (11 == u3h(nug)) || (13 == u3h(nug)) ) {
+    else if ( 11 == u3h(nug) ) {
       return _mull_cove(u3t(u3t(nug)));
     }
     else {
