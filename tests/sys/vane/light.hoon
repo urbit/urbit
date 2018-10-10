@@ -592,7 +592,7 @@
       light-gate
       now=~1111.1.2
       scry=*sley
-      call-args=[duct=~[/gen1] ~ [%serve [~ /] [%home /gen/handler/hoon] ~]]
+      call-args=[duct=~[/gen1] ~ [%serve [~ /] [%home /gen/handler/hoon ~]]]
       expected-moves=[duct=~[/gen1] %give %bound %.y [~ /]]~
     ==
   ::  outside requests a path that app1 has bound to
@@ -632,7 +632,13 @@
             !>  p.card
         ::
         %+  expect-schematic
-          [%cast [~nul %home] %mime [%$ %txt !>('one two three')]]
+          :^  %cast  [~nul %home]  %mime
+          :+  %call
+            :+  %call
+              [%core [[~nul %home] /hoon/handler/gen]]
+            [%$ %noun !>([[~1111.1.3 0xdead.beef [~nul %home [%da ~1111.1.3]]] ~ ~])]
+          [%$ %noun !>([%.n [%'GET' '/' ~ ~]])]
+        ::
           schematic.q.card
     ==
   ::  ford response (time assumes nothing blocked)
