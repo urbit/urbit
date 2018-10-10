@@ -394,28 +394,24 @@ _ames_io_start()
 {
   u3_ames* sam_u = &u3_Host.sam_u;
   c3_s por_s     = u3_Host.ops_u.por_s;
+  u3_noun rac    = u3do("clan:title", u3k(u3A->own));
 
-  // XX use clan:title u3A->own
-  if ( 0 != u3_Host.ops_u.imp_c ) {
-    u3_noun imp   = u3i_string(u3_Host.ops_u.imp_c);
-    u3_noun num   = u3dc("slaw", 'p', imp);
-    c3_y    num_y;
+  if ( c3__czar == rac ) {
+    u3_noun imp = u3dc("scot", 'p', u3k(u3A->own));
+    c3_c* imp_c = u3r_string(imp);
+    c3_y  num_y = u3r_byte(0, u3A->own);
 
-    if ( c3n == u3du(num) ) {
-      uL(fprintf(uH, "malformed emperor: %s\n", u3_Host.ops_u.imp_c));
-      exit(1);
-    }
-    num_y = u3r_byte(0, u3t(num));
     por_s = _ames_czar_port(num_y);
 
     if ( c3y == u3_Host.ops_u.net ) {
-      uL(fprintf(uH, "ames: czar: %s on %d\n", u3_Host.ops_u.imp_c, por_s));
+      uL(fprintf(uH, "ames: czar: %s on %d\n", imp_c, por_s));
     }
     else {
-      uL(fprintf(uH, "ames: czar: %s on %d (localhost only)\n",
-                     u3_Host.ops_u.imp_c, por_s));
+      uL(fprintf(uH, "ames: czar: %s on %d (localhost only)\n", imp_c, por_s));
     }
-    u3z(num);
+
+    u3z(imp);
+    free(imp_c);
   }
 
   int ret;
@@ -458,6 +454,7 @@ _ames_io_start()
   uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
 
   sam_u->liv = c3y;
+  u3z(rac);
 }
 
 /* _cttp_mcut_char(): measure/cut character.
