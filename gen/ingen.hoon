@@ -61,7 +61,7 @@
     |=  [s=@ m=meta]
     (child-node-from-seed [(met 3 seed) s] m ~)
   ::
-  =+  owner=public:(wallet:dr `byts`[(met 3 seed) seed])
+  =+  owner=public.keys:(wallet:dr `byts`[(met 3 seed) seed])
   =+  delegate=public.keys:(cn seed "delegate" 0 ~)
   =+  manage=(cn seed "manage" 0 ~)
   ::
