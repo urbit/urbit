@@ -1,5 +1,5 @@
 /-  lens
-/+    old-zuse
+/+  old-zuse
 ::
 =,  old-zuse
 |_  com/command:lens

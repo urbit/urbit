@@ -1624,6 +1624,92 @@
       (he-diff %txt ">=")
     (he-diff %tan u.p.cit)
   ::
+  ++  he-lens
+    |=  com/command:^^^^lens
+    ^+  +>
+    =+  ^-  source/dojo-source
+        =|  num/@
+        =-  ?.  ?=($send-api -.sink.com)  ::  XX  num is incorrect
+              sor
+            :-  0
+            :+  %as  `mark`(cat 3 api.sink.com '-poke')
+            :-  1
+            :+  %do
+              ^-  hoon
+              :+  %brtr  [%base %noun]
+              :^  %clls  [%rock %tas %post]
+                [%rock %$ endpoint.sink.com]
+              [%cnts [%& 6]~ ~]
+            sor
+        ^=  sor
+        |-  ^-  dojo-source
+        :-  num
+        ?-    -.source.com
+            $data        [%ex %sand %t data.source.com]
+            $dojo
+          %+  rash  command.source.com
+          (ifix [(punt gap) (punt gap)] dp-build:dp)
+        ::
+            $clay
+          :-  %ex
+          ^-  hoon
+          :+  %dtkt
+            [%base %noun]
+          :+  %clhp
+            [%rock %tas %cx]
+          %+  rash  pax.source.com
+          rood:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
+        ::
+            $url         [%ur `~. url.source.com]
+            $api         !!
+            $get-api
+          :-  %ex
+          ^-  hoon
+          :+  %dtkt
+            [%like ~[%json] ~]
+          :*  %clsg
+              [%rock %tas %gx]
+              [%sand %ta (scot %p our.hid)]
+              [%sand %tas api.source.com]
+              [%sand %ta (scot %da now.hid)]
+              (turn endpoint.source.com |=(a/@t [%sand %ta a]))
+          ==
+        ::
+            $listen-api  !!
+            $as
+          :*  %as  mar.source.com
+              $(num +(num), source.com next.source.com)
+          ==
+        ::
+            $hoon
+          :*  %do
+              %+  rash  code.source.com
+              tall:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
+              $(num +(num), source.com next.source.com)
+          ==
+        ::
+            $tuple
+          :-  %tu
+          |-  ^-  (list dojo-source)
+          ?~  next.source.com
+            ~
+          =.  num  +(num)
+          :-  ^$(source.com i.next.source.com)
+          $(next.source.com t.next.source.com)
+        ==
+    =+  |-  ^-  sink/dojo-sink
+        ?-  -.sink.com
+          $stdout       [%show %0]
+          $output-file  $(sink.com [%command (cat 3 '@' pax.sink.com)])
+          $output-clay  [%file (need (de-beam pax.sink.com))]
+          $url          [%http %post `~. url.sink.com]
+          $to-api       !!
+          $send-api     [%poke our.hid api.sink.com]
+          $command      (rash command.sink.com dp-sink:dp)
+          $app          [%poke our.hid app.sink.com]
+        ==
+    (he-plan sink source)
+  ::
   ++  he-like                                           ::  accept line
     |=  buf/(list @c)
     =(%& -:(he-dope (tufa buf)))
@@ -1727,6 +1813,10 @@
 ++  poke-sole-action
   |=  act/sole-action  ~|  poke+act  %.  act
   (wrap he-type):arm
+::
+++  poke-lens-command
+  |=  com/command:^^^^lens  ~|  poke-lens+com  %.  com
+  (wrap he-lens):arm
 ::
 ++  poke-json
   |=  jon/json
