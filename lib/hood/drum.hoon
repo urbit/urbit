@@ -160,6 +160,10 @@
   =<  se-abet  =<  se-view
   (se-belt bet)
 ::
+++  poke-dill-blit                                    ::  terminal output
+  |=  bit/dill-blit:dill
+  se-abet:(se-blit-sys bit)
+::
 ++  poke-start                                        ::  start app
   |=  wel/well:gall
   =<  se-abet  =<  se-view
