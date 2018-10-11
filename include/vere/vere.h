@@ -50,6 +50,7 @@
         c3_w             seq_l;             //  sequence within connection
         u3_rsat          sat_e;             //  request state
         uv_timer_t*      tim_u;             //  timeout
+        void*            gen_u;             //  response generator
         struct _u3_hcon* hon_u;             //  connection backlink
         struct _u3_hreq* nex_u;             //  next in connection's list
         struct _u3_hreq* pre_u;             //  next in connection's list
