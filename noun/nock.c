@@ -1211,8 +1211,8 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
       u3x_cell(arg, &hed, &tel);
 
       if ( c3n == u3du(hed) ) {
-        tot_w += _n_comp(ops, arg, los_o, c3n);
-        ++tot_w; _n_emit(ops, SAMC);
+        u3m_bail(c3__exit);
+        return 0;
       }
       else {
         c3_t hec_t, tec_t;
