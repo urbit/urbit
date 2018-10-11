@@ -5994,11 +5994,12 @@
     ?.  ?=(@ p.ben)  [%2 tax]
     [%0 .+(p.ben)]
   ::
-      {$5 b/*}
-    =+  ben=$(fol b.fol)
-    ?.  ?=($0 -.ben)  ben
-    ?.  ?=(^ p.ben)  [%2 tax]
-    [%0 =(-.p.ben +.p.ben)]
+      {$5 b/* c/*}
+    =+  hed=$(fol b.fol)
+    ?.  ?=($0 -.hed)  hed
+    =+  tal=$(fol c.fol)
+    ?.  ?=($0 -.tal)  tal
+    [%0 =(p.hed p.tal)]
   ::
       {$6 b/* c/* d/*}
     $(fol =>(fol [2 [0 1] 2 [1 c d] [1 0] 2 [1 2 3] [1 0] 4 4 b]))
@@ -6705,15 +6706,18 @@
     ::
     ::  5; compare
     ::
-        {$5 b/*}
+        {$5 b/* c/*}
       %+  require
         $(fol b.fol)
-      |=  ::  fig: operator input
+      |=  ::  hed: left input
           ::
-          fig/noun
-      ::  stop for atoms, compare cells
-      ::
-      ?@(fig ~ [full/~ =(-.fig +.fig)])
+          hed/noun
+      %+  require
+        ^$(fol c.fol)
+      |=  ::  tal: right input
+          ::
+          tal/noun
+      [full/~ =(hed tal)]
     ::
     ::  6; if-then-else
     ::
