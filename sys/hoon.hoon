@@ -6002,11 +6002,29 @@
     [%0 =(p.hed p.tal)]
   ::
       {$6 b/* c/* d/*}
-    $(fol =>(fol [2 [0 1] 2 [1 c d] [1 0] 2 [1 2 3] [1 0] 4 4 b]))
+    =+  ben=$(fol b.fol)
+    ?.  ?=($0 -.ben)  ben
+    ?:  =(& p.ben)  $(fol c.fol)
+    ?:  =(| p.ben)  $(fol d.fol)
+    [%2 tax]
   ::
-      {$7 b/* c/*}       $(fol =>(fol [2 b 1 c]))
-      {$8 b/* c/*}       $(fol =>(fol [7 [[7 [0 1] b] 0 1] c]))
-      {$9 b/* c/*}       $(fol =>(fol [7 c 2 [0 1] 0 b]))
+      {$7 b/* c/*}
+    =+  ben=$(fol b.fol)
+    ?.  ?=($0 -.ben)  ben
+    $(sub p.ben, fol c.fol)
+  ::
+      {$8 b/* c/*}
+    =+  ben=$(fol b.fol)
+    ?.  ?=($0 -.ben)  ben
+    $(sub [p.ben sub], fol c.fol)
+  ::
+      {$9 b/* c/*}
+    =+  ben=$(fol c.fol)
+    ?.  ?=($0 -.ben)  ben
+    =.  sub  p.ben
+    =+  lof=$(fol [0 b.fol])
+    ?.  ?=($0 -.lof)  lof
+    $(fol p.lof)
   ::
       {$10 {b/@ c/*} d/*}
     =+  bog=$(fol d.fol)
