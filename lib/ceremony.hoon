@@ -192,7 +192,7 @@
   %-  write-tx(nonce +(nonce))
   :*  nonce
       gas-price
-      gas
+      6.000.000
       to
       0
       `@`?@(dat dat (tape-to-ux dat))
