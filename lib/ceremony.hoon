@@ -315,6 +315,10 @@
   =^  delegated-sending  this
     %+  do-deploy  'delegated-sending'
     ~[address+ships]
+  ~&  'Deploying constitution-resolver...'
+  =^  constitution-resolver  this
+    %+  do-deploy  'constitution-resolver'
+    ~[address+ships]
   ::
   ::  tlon galaxy booting
   ::
