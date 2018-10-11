@@ -138,13 +138,13 @@
   :~  ^-  move
       :-  ost.bow
       :*  %http-response
-          [%start 200 ['content-type' 'text/html']~ [~ part1] %.n]
+          [%start 200 ['content-type' 'text/html']~ [~ part1] %.y]
       ==
-  ::
-      ^-  move
-      :-  ost.bow
-      :*  %http-response
-          [%continue [~ (part2 name)] %.y]
-      ==
+  ::  ::
+  ::      ^-  move
+  ::      :-  ost.bow
+  ::      :*  %http-response
+  ::          [%continue [~ (part2 name)] %.y]
+  ::      ==
   ==
 --

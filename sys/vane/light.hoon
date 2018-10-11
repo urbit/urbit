@@ -267,6 +267,18 @@
   %-  flop
   |-  ^-  tape
   ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])
+::  +path-matches: returns %.y if :prefix is a prefix of :full
+::
+++  path-matches
+  |=  [prefix=path full=path]
+  ^-  ?
+  ?~  prefix
+    %.y
+  ?~  full
+    %.n
+  ?.  =(i.prefix i.full)
+    %.n
+  $(prefix t.prefix, full t.full)
 ::  +get-header: returns the value for :header, if it exists in :header-list
 ::
 ++  get-header
@@ -332,11 +344,8 @@
       ::
       =-  [[duct %pass /run-build %f %build our live=%.n schematic=-]~ state]
       ::
-      ^-  schematic:ford
-      ::
       =-  [%cast [our desk.generator.u.action] %mime -]
       ::
-      ^-  schematic:ford
       :+  %call
         :+  %call
           [%core [[our desk.generator.u.action] (flop path.generator.u.action)]]
@@ -632,6 +641,9 @@
     ?~  to-search
       :-  [duct %give %bound %.y binding]~
       =.  bindings.state
+        ::  store in reverse alphabetical order so that longer paths are first
+        ::
+        %-  flop
         %+  sort  [[binding duct action] bindings.state]
         |=  [[a=^binding *] [b=^binding *]]
         ::
@@ -713,14 +725,7 @@
     ?~  bindings
       ~
     ::
-    ?:  ?&  =(site.binding.i.bindings host)
-            ?|  ::  root directory
-                ::
-                &(=(~ parsed-url) =(~ path.binding.i.bindings))
-                ::  everything else
-                ::
-                =(`0 (find path.binding.i.bindings parsed-url))
-        ==  ==
+    ?:  (path-matches path.binding.i.bindings parsed-url)
       `action.i.bindings
     ::
     $(bindings t.bindings)
