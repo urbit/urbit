@@ -5994,27 +5994,63 @@
     ?.  ?=(@ p.ben)  [%2 tax]
     [%0 .+(p.ben)]
   ::
-      {$5 b/*}
-    =+  ben=$(fol b.fol)
-    ?.  ?=($0 -.ben)  ben
-    ?.  ?=(^ p.ben)  [%2 tax]
-    [%0 =(-.p.ben +.p.ben)]
+      {$5 b/* c/*}
+    =+  hed=$(fol b.fol)
+    ?.  ?=($0 -.hed)  hed
+    =+  tal=$(fol c.fol)
+    ?.  ?=($0 -.tal)  tal
+    [%0 =(p.hed p.tal)]
   ::
       {$6 b/* c/* d/*}
-    $(fol =>(fol [2 [0 1] 2 [1 c d] [1 0] 2 [1 2 3] [1 0] 4 4 b]))
+    =+  ben=$(fol b.fol)
+    ?.  ?=($0 -.ben)  ben
+    ?:  =(& p.ben)  $(fol c.fol)
+    ?:  =(| p.ben)  $(fol d.fol)
+    [%2 tax]
   ::
-      {$7 b/* c/*}       $(fol =>(fol [2 b 1 c]))
-      {$8 b/* c/*}       $(fol =>(fol [7 [[7 [0 1] b] 0 1] c]))
-      {$9 b/* c/*}       $(fol =>(fol [7 c 2 [0 1] 0 b]))
-      {$10 @ c/*}        $(fol c.fol)
-      {$10 {b/* c/*} d/*}
+      {$7 b/* c/*}
+    =+  ben=$(fol b.fol)
+    ?.  ?=($0 -.ben)  ben
+    $(sub p.ben, fol c.fol)
+  ::
+      {$8 b/* c/*}
+    =+  ben=$(fol b.fol)
+    ?.  ?=($0 -.ben)  ben
+    $(sub [p.ben sub], fol c.fol)
+  ::
+      {$9 b/* c/*}
+    =+  ben=$(fol c.fol)
+    ?.  ?=($0 -.ben)  ben
+    =.  sub  p.ben
+    =+  lof=$(fol [0 b.fol])
+    ?.  ?=($0 -.lof)  lof
+    $(fol p.lof)
+  ::
+      {$10 {b/@ c/*} d/*}
+    =+  bog=$(fol d.fol)
+    ?.  ?=({$0 *} bog)  bog
+    =+  lot=$(fol c.fol)
+    ?.  ?=({$0 *} lot)  lot
+    =+  [axe=b.fol big=p.bog lit=p.lot]
+    ^-  tone
+    :-  %0
+    |-  ^-  p/*
+    ?:  =(2 axe)  [lit +.big]
+    ?:  =(3 axe)  [-.big lit]
+    =+  mor=(mas axe)
+    ?:  =(2 (cap axe))
+      [$(big -.big, axe mor) +.big]
+    [-.big $(big +.big, axe mor)]
+  ::
+      {$11 @ c/*}        $(fol c.fol)
+      {$11 {b/* c/*} d/*}
     =+  ben=$(fol c.fol)
     ?.  ?=($0 -.ben)  ben
     ?:  ?=(?($hunk $hand $lose $mean $spot) b.fol)
       $(fol d.fol, tax [[b.fol p.ben] tax])
     $(fol d.fol)
   ::
-      {$11 b/* c/*}
+      {$12 b/* c/*}
     =+  ref=$(fol b.fol)
     =+  ben=$(fol c.fol)
     ?.  ?=($0 -.ref)  ref
@@ -6407,8 +6443,9 @@
               {$7 p/nock q/nock}                        ::  serial compose
               {$8 p/nock q/nock}                        ::  push onto subject
               {$9 p/@ q/nock}                           ::  select arm and fire
-              {$10 p/$@(@ {p/@ q/nock}) q/nock}         ::  hint
-              {$11 p/nock q/nock}                       ::  grab data from sky
+              {$10 p/{p/@ q/nock} q/nock}               ::  edit
+              {$11 p/$@(@ {p/@ q/nock}) q/nock}         ::  hint
+              {$12 p/nock q/nock}                       ::  grab data from sky
               {$0 p/@}                                  ::  axis select
           ==                                            ::
 +$  note                                                ::  type annotation
@@ -6687,15 +6724,18 @@
     ::
     ::  5; compare
     ::
-        {$5 b/*}
+        {$5 b/* c/*}
       %+  require
         $(fol b.fol)
-      |=  ::  fig: operator input
+      |=  ::  hed: left input
           ::
-          fig/noun
-      ::  stop for atoms, compare cells
-      ::
-      ?@(fig ~ [full/~ =(-.fig +.fig)])
+          hed/noun
+      %+  require
+        ^$(fol c.fol)
+      |=  ::  tal: right input
+          ::
+          tal/noun
+      [full/~ =(hed tal)]
     ::
     ::  6; if-then-else
     ::
@@ -6775,16 +6815,33 @@
       ::
       |=(noun ^$(bus one, fol +<))
     ::
-    ::  10; static hint
+    ::  10; edit
     ::
-        {$10 @ c/*}        
+        {$10 {b/@ c/*} d/*}
+      ::  tar:  target of edit
+      ::
+      =+  tar=$(fol d.fol)
+      ::  propagate stop
+      ::
+      ?~  tar  ~
+      ::  inn:  inner value
+      ::
+      =+  inn=$(fol c.fol)
+      ::  propagate stop
+      ::
+      ?~  inn  ~
+      (mutate b.fol inn tar)
+    ::
+    ::  11; static hint
+    ::
+        {$11 @ c/*}
       ::  ignore hint
       ::
       $(fol c.fol)
     ::
-    ::  10; dynamic hint
+    ::  11; dynamic hint
     ::
-        {$10 {b/* c/*} d/*}
+        {$11 {b/* c/*} d/*}
       ::  noy: dynamic hint
       ::
       =+  noy=$(fol c.fol)
@@ -6915,9 +6972,75 @@
                       [left.mask.bus -.data.bus] 
                     [rite.mask.bus +.data.bus]
     ==       ==
-  ::  require complete intermediate step
+  ::
+  ++  mutate
+    ::  change a single axis in a seminoun
+    ::
+    |=  $:  ::  axe: axis within big to change
+            ::  lit: (little) seminoun to insert within big at axe
+            ::  big: seminoun to mutate
+            ::
+            axe/@
+            lit/seminoun
+            big/seminoun
+        ==
+    ^-  result
+    ::  stop on zero axis
+    ::
+    ?~  axe  ~
+    ::  edit root of big means discard it
+    ::
+    ?:  =(1 axe)  lit
+    ::  decompose axis into path of head-tail
+    ::
+    |-  ^-  result
+    ?:  =(2 axe)
+      ::  mutate head of cell
+      ::
+      =+  tal=(fragment 3 big)
+      ::  propagate stop
+      ::
+      ?~  tal  ~
+      (combine lit tal)
+    ?:  =(3 axe)
+      ::  mutate tail of cell
+      ::
+      =+  hed=(fragment 2 big)
+      ::  propagate stop
+      ::
+      ?~  hed  ~
+      (combine hed lit)
+    ::  deeper axis: keep one side of big and
+    ::  recurse into the other with smaller axe
+    ::
+    =+  mor=(mas axe)
+    =+  hed=(fragment 2 big)
+    ::  propagate stop
+    ::
+    ?~  hed  ~
+    =+  tal=(fragment 3 big)
+    ::  propagate stop
+    ::
+    ?~  tal  ~
+    ?:  =(2 (cap axe))
+      ::  recurse into the head
+      ::
+      =+  mut=$(big hed, axe mor)
+      ::  propagate stop
+      ::
+      ?~  mut  ~
+      (combine mut tal)
+    ::  recurse into the tail
+    ::
+    =+  mut=$(big tal, axe mor)
+    ::  propagate stop
+    ::
+    ?~  mut  ~
+    (combine hed mut)
   ::
   ++  require
+    ::  require complete intermediate step
+    ::
     |=  $:  noy/result
             yen/$-(* result)
         ==
@@ -7002,7 +7125,7 @@
   |=  nug/nock
   ?-    nug
       {$0 *}   p.nug
-      {$10 *}  $(nug q.nug)
+      {$11 *}  $(nug q.nug)
       *        ~_(leaf+"cove" !!)
   ==
 ++  comb                                                ::  combine two formulas
@@ -7114,24 +7237,66 @@
 ::
 ++  hike
   ~/  %hike
-  |=  {axe/axis pac/(list {p/axis q/nock})}
-  ^-  nock
-  ?~  pac
-    [%0 axe]
-  =+  zet=(skim pac.$ |=({p/axis q/nock} [=(1 p)]))
-  ?~  zet
-    =+  tum=(skim pac.$ |=({p/axis q/nock} ?&(!=(1 p) =(2 (cap p)))))
-    =+  gam=(skim pac.$ |=({p/axis q/nock} ?&(!=(1 p) =(3 (cap p)))))
-    %+  cons
-      %=  $
-        axe  (peg axe 2)
-        pac  (turn tum |=({p/axis q/nock} [(mas p) q]))
-      ==
+  |=  [a=axis pac=(list (pair axis nock))]
+  |^  =/  rel=(map axis nock)  (roll pac insert)
+      =/  ord=(list axis)      (sort ~(tap in ~(key by rel)) gth)
+      |-  ^-  nock
+      ?~  ord
+        [%0 a]
+      =/  b=axis  i.ord
+      =/  c=nock  (~(got by rel) b)
+      =/  d=nock  $(ord t.ord)
+      [%10 [b c] d]
+  ::
+  ++  contains
+    |=  [container=axis contained=axis]
+    ^-  ?
+    =/  big=@    (met 0 container)
+    =/  small=@  (met 0 contained)
+    ?:  (lte small big)  |
+    =/  dif=@  (sub small big)
+    =(container (rsh 0 dif contained))
+  ::
+  ++  parent
+    |=  a=axis
+    `axis`(rsh 0 1 a)
+  ::
+  ++  sibling
+    |=  a=axis
+    ^-  axis
+    ?~  (mod a 2)
+      +(a)
+    (dec a)
+  ::
+  ++  insert
+    |=  [e=[axe=axis fol=nock] n=(map axis nock)]
+    ^-  (map axis nock)
+    ?:  =/  a=axis  axe.e
+        |-  ^-  ?
+        ?:  =(1 a)  |
+        ?:  (~(has by n) a)
+          &
+        $(a (parent a))
+      ::  parent already in
+      n
+    =.  n
+      ::  remove children
+      %+  roll  ~(tap by n)
+      |=  [[axe=axis fol=nock] m=_n]
+      ?.  (contains axe.e axe)  m
+      (~(del by m) axe)
+    =/  sib  (sibling axe.e)
+    =/  un   (~(get by n) sib)
+    ?~  un   (~(put by n) axe.e fol.e)
+    ::  replace sibling with parent
     %=  $
-      axe  (peg axe 3)
-      pac  (turn gam |=({p/axis q/nock} [(mas p) q]))
+      n  (~(del by n) sib)
+      e  :-  (parent sib)
+         ?:  (gth sib axe.e)
+           (cons fol.e u.un)
+         (cons u.un fol.e)
     ==
-  ?>(?=({* ~} zet) q.i.zet)
+  --
 ::
 ++  jock
   |=  rad/?
@@ -10108,7 +10273,7 @@
     ::
         {$dtkt *}
       =+  nef=$(gen [%kttr p.gen])
-      [p.nef [%11 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
+      [p.nef [%12 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
     ::
         {$dtls *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
         {$sand *}  [(nice (play gen)) [%1 q.gen]]
@@ -10143,7 +10308,7 @@
       :: ?:  &(huz !?=(%|(@ [?(%sgcn %sgls) ^]) p.gen))
       ::  hum
       :-  p.hum
-      :+  %10
+      :+  %11
         ?-    p.gen
             @   p.gen
             ^   [p.p.gen q:$(gen q.p.gen, gol %noun)]
@@ -10194,7 +10359,7 @@
         {$dbug *}
       ~_  (show %o p.gen)
       =+  hum=$(gen q.gen)
-      [p.hum [%10 [%spot %1 p.gen] q.hum]]
+      [p.hum [%11 [%spot %1 p.gen] q.hum]]
     ::
         {$zpcm *}   [(nice (play p.gen)) [%1 q.gen]]   ::  XX validate!
         {$lost *}
