@@ -8009,46 +8009,66 @@
   ::
   ++  veri
     |=  [=seed:able:jael =hull:constitution:ethe =live]
-    ^-  $%  [%& seed:able:jael (unit ship)]
-            [%| rank:title @tas]
-        ==
+    ^-  (each sponsor=(unit ship) error=term)
     =/  rac  (clan:title who.seed)
     =/  cub  (nol:nu:crub:crypto key.seed)
     ?-  rac
         %pawn
+      ::  a comet address is the fingerprint of the keypair
+      ::
       ?.  =(who.seed `@`fig:ex:cub)
-        [%| rac %key-mismatch]
+        [%| %key-mismatch]
+      ::  a comet can never be breached
+      ::
       ?^  live
-        [%| rac %already-booted]
+        [%| %already-booted]
+      ::  a comet can never be re-keyed
+      ::
       ?.  ?=(%1 lyf.seed)
-        [%| rac %invalid-life]
-      [%& seed ~]
+        [%| %invalid-life]
+      [%& ~]
     ::
         %earl
+      ::  a moon must be signed by the parent
+      ::
       ?~  sig.seed
-        [%| rac %missing-sig]
+        [%| %missing-sig]
+      ::  the parent must be launched
+      ::
       ?~  net.hull
-        [%| rac %parent-not-keyed]
-        =/  loy  (com:nu:crub:crypto pass.u.net.hull)
-      =/  hax  (shaf %earl (sham lyf.seed pub:ex:cub))
+        [%| %parent-not-keyed]
+      =/  loy  (com:nu:crub:crypto pass.u.net.hull)
+      =/  hax  (shaf %earl (sham who.seed lyf.seed pub:ex:cub))
+      ::  the signature must be valid
+      ::
       ?.  =((some hax) (sure:as:loy u.sig.seed))
-        [%| rac %invalid-sig]
-      :: XX revisit for rekey
+        [%| %invalid-sig]
+      ::  XX revisit for rekey
+      ::
       ?^  live
-        [%| rac %already-booted]
-      [%& seed ~]
+        [%| %already-booted]
+      [%& ~]
     ::
         *
+      ::  on-chain ships must be launched
+      ::
       ?~  net.hull
-        [%| rac %not-keyed]
+        [%| %not-keyed]
+      ::  boot keys must match the contract
+      ::
       ?.  =(pub:ex:cub pass.u.net.hull)
-        [%| rac %key-mismatch]
+        [%| %key-mismatch]
+      ::  the boot life must be greater than and discontinuous with
+      ::  the last seen life (per the sponsor)
+      ::
       ?:  ?&  ?=(^ live)
               ?|  ?=(%| breach.u.live)
                   (lte life.u.net.hull life.u.live)
           ==  ==
-        [%| rac %already-booted]
-      [%& seed sponsor.u.net.hull]
+        [%| %already-booted]
+      ::  produce the sponsor for vere
+      ::
+      [%& sponsor.u.net.hull]
     ==
   --
 --  ::
