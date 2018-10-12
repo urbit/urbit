@@ -269,6 +269,14 @@
         [%address polls]
         [%address claims]
     ==
+  ~&  ['Deploying constitution-final...' +(nonce)]
+  =^  constit-final  this
+    %+  do-deploy  'constitution-final'
+    :~  [%address constit]
+        [%address ships]
+        [%address polls]
+        [%address claims]
+    ==
   =.  constitution  constit
   ~&  'Transferring contract ownership...'
   =.  this
@@ -387,7 +395,6 @@
     (deposit-galaxies conditional-star-release con-gal)
   ::
   ~&  'Depositing conditional release stars...'
-  ~&  con-sar
   =.  this
     (deposit-stars conditional-star-release con-sar)
   ::
@@ -403,14 +410,6 @@
   ::
   ::  concluding ceremony
   ::
-  ~&  'Deploying constitution-final...'
-  =^  constit-final  this
-    %+  do-deploy  'constitution-final'
-    :~  [%address constit]
-        [%address ships]
-        [%address polls]
-        [%address claims]
-    ==
   =.  this
     ::NOTE  currently included bytecode has on-upgrade ens functionality
     ::      stripped out to make this not fail despite 0x0 dns contract
