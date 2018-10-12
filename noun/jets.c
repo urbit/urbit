@@ -249,7 +249,7 @@ _cj_axis(u3_noun fol)
 {
   u3_noun p_fol, q_fol, r_fol;
 
-  while ( _(u3du(fol)) && (10 == u3h(fol)) )
+  while ( _(u3du(fol)) && (11 == u3h(fol)) )
     { fol = u3t(u3t(fol)); }
 
   if ( !_(u3r_trel(fol, &p_fol, &q_fol, &r_fol)) ) {
@@ -436,7 +436,7 @@ _cj_je_fsck(u3_noun clu)
   if ( 0 == (nam_c = _cj_chum(p_clu)) ) {
     u3z(clu); return u3_none;
   }
-  while ( _(u3du(q_clu)) && (10 == u3h(q_clu)) ) { 
+  while ( _(u3du(q_clu)) && (11 == u3h(q_clu)) ) {
     q_clu = u3t(u3t(q_clu));
   }
   if ( !_(u3du(q_clu)) ) {
