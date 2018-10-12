@@ -4,11 +4,11 @@
   ::
 /?    310
 /-  sole
-/+  old-zuse
+/+  generators, old-zuse
 =,  old-zuse
-=,  sole
+=,  generators
 :-  %get  |=  {^ {a/tape ~} ~}
-^-  (sole-request (cask httr))
-%+  sole-at  (scan a auri:urlp)
+^-  (sole-request:sole (cask httr))
+%+  curl  (scan a auri:urlp)
 |=  hit/httr
-(sole-so %httr hit)
+(produce %httr hit)

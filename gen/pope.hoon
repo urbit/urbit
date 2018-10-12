@@ -4,24 +4,24 @@
   ::
 /?    310
 ::  Input twitter keys
-/-    sole
-/+  old-zuse
-=,  old-zuse
+/-  sole
+/+  generators, old-zuse
+=,  [sole generators old-zuse]
 ::
 =+  cryp=crub
-=+  [sole]
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {{who/ship ~} ~}
     ==
 ^-  (sole-result (cask tang))
-%+  sole-yo  leaf+"generating carrier {(scow %p who)} (#{(scow %ud who)})"
-%+  sole-lo  [%| %pope-pass "passphrase: "]
-%+  sole-go  (boss 256 (star prn))
+%+  print  leaf+"generating carrier {(scow %p who)} (#{(scow %ud who)})"
+%+  prompt  [%| %pope-pass "passphrase: "]
+%+  parse  (boss 256 (star prn))
 |=  fra/@t
 =+  bur=(shaz (add who (shaz fra)))
 =+  arc=(pit:nu:cryp 512 bur)
-%+  sole-so  %tang
+%+  produce  %tang
 :~  leaf+"generator: {(scow %uw bur)}"
     leaf+"fingerprint: {(scow %uw fig:ex:arc)}"
 ==
+
