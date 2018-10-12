@@ -6288,9 +6288,7 @@
       ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
     ::                                                  ::  ++auri:de-purl:html
     ++  auri                                            ::  2396 URL
-      %+  cook
-        |=  a/purl
-        ?.(?=(hoke r.p.a) a a(p.p &))
+      %+  cook  |~(a/purl a)
       ;~  plug
         ;~(plug htts thor)
         ;~(plug ;~(pose apat (easy *pork)) yque)
