@@ -267,9 +267,6 @@
     :~  [%address 0x0]
         [%address ships]
         [%address polls]
-        [%address 0x0]  ::TODO  standard ens registry
-        [%string "urbit-eth"]  ::TODO  ens domain
-        [%string "constitution"]  ::TODO  ens subdomain
         [%address claims]
     ==
   =.  constitution  constit
@@ -412,9 +409,6 @@
     :~  [%address constit]
         [%address ships]
         [%address polls]
-        [%address 0x0]  ::TODO  standard ens registry
-        [%string "urbit-eth"]  ::TODO  ens domain
-        [%string "constitution"]  ::TODO  ens subdomain
         [%address claims]
     ==
   =.  this
