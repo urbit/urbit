@@ -19,7 +19,6 @@
 =,  pki:jael
 =,  rights:jael
 =,  able:jael
-=,  title
 =,  crypto
 =,  jael
 =,  ethe
@@ -630,11 +629,29 @@
     ~(able ~(ex ur urb) who)
   ::                                                    ::  ++scry:of
   ++  scry                                              ::  read
-    |=  {syd/@tas pax/path}  ^-  (unit gilt)
+    |=  {syd/@tas pax/path}
+    ~|  %jael-scry-of-stub
     =^  mar  pax  =/(a (flop pax) [-.a (flop t.+.a)])
-    ?>  ?=(_-:*gilt mar)
-    =-  (biff - (flit |=(a/gilt =(-.a mar))))
-    ~  ::TODO
+    !!
+  ::                                                    ::  ++sein:of
+  ++  sein                                              ::  sponsor
+    |=  who=ship
+    ^-  ship
+    ::  XX save %dawn sponsor in .own.sub, check there
+    ::
+    =/  hul  (~(get by hul.eth.sub) who)
+    ?:  ?&  ?=(^ hul)
+            ?=(^ net.u.hul)
+            ?=(^ sponsor.u.net.u.hul)
+        ==
+      u.sponsor.u.net.u.hul
+    (sein:title who)
+  ::                                                    ::  ++saxo:of
+  ++  saxo                                              ::  sponsorship chain
+    |=  who/ship
+    ^-  (list ship)
+    =/  dad  (sein who)
+    [who ?:(=(who dad) ~ $(who dad))]
   ::                                                    ::  ++call:of
   ++  call                                              ::  invoke
     |=  $:  ::  hen: event cause
@@ -683,7 +700,7 @@
       =.  +>.$
         %-  curd  =<  abet
         (pubs:~(feel su hen our urb sub etn) kyz)
-      ::  XX sponsor
+      ::  XX save sponsor in .own.sub
       ::  XX reconcile with .dns.eth
       ::  set initial domains
       ::
@@ -920,9 +937,9 @@
       %^  cute  hen  our
       ::  XX cleanup
       ::
-      ?:  ?=([%init ~] wir)
-        abet:(~(init et our now.sys etn.lex) our)
-      abet:~(wake et our now.sys etn.lex)
+      ?.  ?=([%init ~] wir)
+        abet:~(wake et our now.sys etn.lex)
+      abet:(~(init et our now.sys etn.lex) our (sein our))
     ::
         [%j %vent *]
       %^  cute  hen  our  =<  abet
@@ -1632,10 +1649,10 @@
   ::    for stars and under, we default to the parent ship.
   ::
   ++  init
-    |=  our=ship
+    |=  [our=ship bos=ship]
     ^+  +>
-    ::TODO  ship or node as sample?
-    =+  bos=(sein:title our)
+    ::  TODO: ship or node as sample?
+    ::
     ?.  =(our bos)
       (listen-to-ship our bos)
     =+  (need (de-purl:html 'http://localhost:8545'))
@@ -1852,13 +1869,78 @@
           tyl/spur
       ==
   ^-  (unit (unit cage))
-  :: XX security
+  ::  XX security
+  ::
   ?.  =(lot [%$ %da now])  ~
-  %-  some
-  ?.  =(%$ ren)  ~
-  %+  bind  (~(scry of [now eny] lex) syd tyl)
-  =-  ~!  -  -
-  |=(a/gilt [-.a (slot `@`3 !>(a))])
+  ?.  =(%$ ren)  [~ ~]
+  ?+    syd
+      ~
+  ::
+      %life
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  ?&  ?=(%& -.why)
+            (~(has by pry.urb.lex) p.why)
+        ==
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    ::  fake ships always have life=1
+    ::
+    ?:  fak.own.sub.lex
+      ``[%atom !>(1)]
+    ?:  =(u.who p.why)
+      ``[%atom !>(lyf.own.sub.lex)]
+    =/  pub  (~(get by kyz.puk.sub.lex) u.who)
+    ?~  pub  ~
+    ``[%atom !>(life.u.pub)]
+  ::
+      %earl
+    ?.  ?=([@ @ @ ~] tyl)  [~ ~]
+    ?.  ?&  ?=(%& -.why)
+            (~(has by pry.urb.lex) p.why)
+        ==
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    =/  lyf  (slaw %ud i.t.tyl)
+    =/  pub  (slaw %ux i.t.t.tyl)
+    ?~  who  [~ ~]
+    ?~  lyf  [~ ~]
+    ?~  pub  [~ ~]
+    ?:  (gth u.lyf lyf.own.sub.lex)
+      ~
+    ?:  (lth u.lyf lyf.own.sub.lex)
+      [~ ~]
+    :: XX check that who/lyf hasn't been booted
+    ::
+    =/  sec  (~(got by jaw.own.sub.lex) u.lyf)
+    =/  cub  (nol:nu:crub:crypto sec)
+    =/  sig  (sign:as:cub (shaf %earl (sham u.who u.lyf u.pub)))
+    ``[%atom !>(sig)]
+  ::
+      %sein
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  ?&  ?=(%& -.why)
+            (~(has by pry.urb.lex) p.why)
+        ==
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    :^  ~  ~  %atom
+    !>  ^-  ship
+    (~(sein of [now eny] lex) u.who)
+  ::
+      %saxo
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  ?&  ?=(%& -.why)
+            (~(has by pry.urb.lex) p.why)
+        ==
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    :^  ~  ~  %noun
+    !>  ^-  (list ship)
+    (~(saxo of [now eny] lex) u.who)
+  ==
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve
   lex
