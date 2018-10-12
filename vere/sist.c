@@ -1287,6 +1287,8 @@ _sist_dawn(u3_noun des)
       c3_c* how_c = u3r_string(u3k(how));
       fprintf(stderr, "dawn: mismatch between -w %s and -K %s\r\n",
                                                  u3_Host.ops_u.who_c, how_c);
+
+      u3z(how);
       free(how_c);
       u3_lo_bail();
     }
@@ -1306,19 +1308,54 @@ _sist_dawn(u3_noun des)
     // u3_noun liv = _sist_get_json(parent, /some/url)
     u3_noun liv = u3_nul;
 
-      // XX revisit
-    // (each [seed (unit ship)] [rank @tas])
+    // (each sponsor=(unit ship) error=@tas)
     u3_noun sas = u3dt("veri:dawn", u3k(sed), u3k(hul), u3k(liv));
 
     if ( c3n == u3h(sas) ) {
+      u3_noun rac = u3do("clan:title", u3k(who));
+      u3_noun how = u3dc("scot", 'p', u3k(who));
+      c3_c* how_c = u3r_string(u3k(how));
+
+      c3_c* rac_c;
+
+      switch (rac) {
+        default: c3_assert(0);
+        case c3__czar: {
+          rac_c = "galaxy";
+          break;
+        }
+        case c3__king: {
+          rac_c = "star";
+          break;
+        }
+        case c3__duke: {
+          rac_c = "planet";
+          break;
+        }
+        case c3__earl: {
+          rac_c = "moon";
+          break;
+        }
+        case c3__pawn: {
+          rac_c = "comet";
+          break;
+        }
+      }
+
+      fprintf(stderr, "dawn: invalid keys for %s '%s'\r\n", rac_c, how_c);
+
       // XX deconstruct sas, print helpful error messages
       u3m_p("pre-boot error", u3t(sas));
+
+      u3z(rac);
+      u3z(how);
+      free(how_c);
       u3_lo_bail();
     }
 
     // (unit ship): sponsor
     // produced by +veri:dawn to avoid coupling to +hull structure
-    pon = u3k(u3t(u3t(sas)));
+    pon = u3k(u3t(sas));
 
     u3z(oct); u3z(luh); u3z(hul); u3z(liv); u3z(sas);
   }
