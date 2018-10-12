@@ -81,28 +81,74 @@ _http_vec_to_octs(h2o_iovec_t vec_u)
                       _http_vec_to_atom(vec_u));
 }
 
-/* _http_vec_from_octs(): convert (unit octs) to h2o_iovec_t
+/* _cttp_bods_free(): free body structure.
 */
-static h2o_iovec_t
-_http_vec_from_octs(u3_noun oct)
+static void
+_cttp_bods_free(u3_hbod* bod_u)
 {
-  if ( u3_nul == oct ) {
-    return h2o_iovec_init(0, 0);
+  while ( bod_u ) {
+    u3_hbod* nex_u = bod_u->nex_u;
+
+    free(bod_u);
+    bod_u = nex_u;
+  }
+}
+
+/* _cttp_bod_from_octs(): translate octet-stream noun into body.
+*/
+static u3_hbod*
+_cttp_bod_from_octs(u3_noun oct)
+{
+  c3_w len_w;
+
+  if ( !_(u3a_is_cat(u3h(oct))) ) {     //  2GB max
+    u3m_bail(c3__fail); return 0;
+  }
+  len_w = u3h(oct);
+
+  {
+    u3_hbod* bod_u = c3_malloc(1 + len_w + sizeof(*bod_u));
+    bod_u->hun_y[len_w] = 0;
+    bod_u->len_w = len_w;
+    u3r_bytes(0, len_w, bod_u->hun_y, u3t(oct));
+
+    bod_u->nex_u = 0;
+
+    u3z(oct);
+    return bod_u;
+  }
+}
+
+/* _cttp_bods_to_vec(): translate body buffers to array of h2o_iovec_t
+*/
+static h2o_iovec_t*
+_cttp_bods_to_vec(u3_hbod* bod_u, c3_w* tot_w)
+{
+  h2o_iovec_t* vec_u;
+  c3_w len_w;
+
+  {
+    u3_hbod* bid_u = bod_u;
+    len_w = 0;
+
+    while( bid_u ) {
+      len_w++;
+      bid_u = bid_u->nex_u;
+    }
   }
 
-  //  2GB max
-  if ( c3n == u3a_is_cat(u3h(u3t(oct))) ) {
-    u3m_bail(c3__fail);
+  vec_u = c3_malloc(sizeof(h2o_iovec_t) * len_w);
+  len_w = 0;
+
+  while( bod_u ) {
+    vec_u[len_w] = h2o_iovec_init(bod_u->hun_y, bod_u->len_w);
+    len_w++;
+    bod_u = bod_u->nex_u;
   }
 
-  c3_w len_w  = u3h(u3t(oct));
-  c3_y* buf_y = c3_malloc(1 + len_w);
-  buf_y[len_w] = 0;
+  *tot_w = len_w;
 
-  u3r_bytes(0, len_w, buf_y, u3t(u3t(oct)));
-
-  u3z(oct);
-  return h2o_iovec_init(buf_y, len_w);
+  return vec_u;
 }
 
 /* _http_heds_to_noun(): convert h2o_header_t to (list (pair @t @t))
@@ -333,13 +379,14 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
 
 typedef struct _u3_hgen {
   h2o_generator_t neg_u;             // response callbacks
-  h2o_iovec_t     bod_u;             // pending body
   c3_o            red;               // ready to send
   c3_o            dun;               // done sending
-  void*           fre_v;             // buffer to be freed
-  u3_hhed*        hed_u;             // headers to be freed
+  u3_hbod*        bod_u;             // pending body
+  u3_hbod*        nud_u;             // pending free
+  u3_hhed*        hed_u;             // pending free
   u3_hreq*        req_u;             // originating request
 } u3_hgen;
+
 
 /* _http_hgen_dispose(): dispose response generator and buffers
 */
@@ -348,23 +395,59 @@ _http_hgen_dispose(void* ptr_v)
 {
   u3_hgen* gen_u = (u3_hgen*)ptr_v;
   _http_heds_free(gen_u->hed_u);
-  // free(gen_u->bod_u.base);
-  free(gen_u->fre_v);
+  gen_u->hed_u = 0;
+  _cttp_bods_free(gen_u->nud_u);
+  gen_u->nud_u = 0;
+  _cttp_bods_free(gen_u->bod_u);
+  gen_u->bod_u = 0;
 }
 
-/* _http_stop_response(): h2o is closing an in-progress response.
+static void
+_http_hgen_send(u3_hgen* gen_u)
+{
+  c3_assert( c3y == gen_u->red );
+  c3_assert( 0 == gen_u->nud_u );
+
+  u3_hreq* req_u = gen_u->req_u;
+  h2o_req_t* rec_u = req_u->rec_u;
+
+  c3_w len_w;
+  h2o_iovec_t* vec_u = _cttp_bods_to_vec(gen_u->bod_u, &len_w);
+
+  if ( c3n == gen_u->dun ) {
+    h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_IN_PROGRESS);
+  }
+  else {
+    h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_FINAL);
+
+    u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
+
+    if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
+      rec_u->http1_is_persistent = 0;
+    }
+  }
+
+  // not ready again until _proceed
+  gen_u->red = c3n;
+
+  // stash bod_u to be free'd later
+  gen_u->nud_u = gen_u->bod_u;
+  gen_u->bod_u = 0;
+  free(vec_u);
+}
+
+/* _http_hgen_stop(): h2o is closing an in-progress response.
 */
 static void
-_http_stop_response(h2o_generator_t* neg_u, h2o_req_t* rec_u)
+_http_hgen_stop(h2o_generator_t* neg_u, h2o_req_t* rec_u)
 {
   // kill request in %light
-  // disposal will happen as usual
 }
 
-/* _http_proceed_response(): h2o is ready for more response data.
+/* _http_hgen_proceed(): h2o is ready for more response data.
 */
 static void
-_http_proceed_response(h2o_generator_t* neg_u, h2o_req_t* rec_u)
+_http_hgen_proceed(h2o_generator_t* neg_u, h2o_req_t* rec_u)
 {
   u3_hgen* gen_u = (u3_hgen*)neg_u;
   u3_hreq* req_u = gen_u->req_u;
@@ -372,25 +455,15 @@ _http_proceed_response(h2o_generator_t* neg_u, h2o_req_t* rec_u)
   // sanity check
   c3_assert( rec_u == req_u->rec_u );
 
-  // free the old buffer that has now been completely written
-  if ( 0 != gen_u->fre_v ) {
-    free(gen_u->fre_v);
-    gen_u->fre_v = 0;
-  }
+  gen_u->red = c3y;
 
-  // send the pending buffer
-  if ( 0 != gen_u->bod_u.base ) {
-    h2o_send(rec_u, &gen_u->bod_u, 1, ( c3y == gen_u->dun ) ?
-                                      H2O_SEND_STATE_FINAL :
-                                      H2O_SEND_STATE_IN_PROGRESS);
-    // save a pointer to free later
-    gen_u->fre_v = gen_u->bod_u.base;
-    gen_u->bod_u.base = 0;
-    gen_u->red = c3n;
-  }
-  // we're ready for the next buffer
-  else {
-    gen_u->red = c3y;
+  _http_heds_free(gen_u->hed_u);
+  gen_u->hed_u = 0;
+  _cttp_bods_free(gen_u->nud_u);
+  gen_u->nud_u = 0;
+
+  if ( 0 != gen_u->bod_u ) {
+    _http_hgen_send(gen_u);
   }
 }
 
@@ -403,7 +476,8 @@ _http_start_respond(u3_hreq* req_u,
                     u3_noun data,
                     u3_noun complete)
 {
-  fprintf(stderr, "start\n");
+  uL(fprintf(uH, "start\n"));
+
   if ( u3_rsat_plan != req_u->sat_e ) {
     //uL(fprintf(uH, "duplicate response\n"));
     return;
@@ -411,6 +485,7 @@ _http_start_respond(u3_hreq* req_u,
 
   req_u->sat_e = u3_rsat_ripe;
 
+  // XX revisit timer
   // uv_timer_stop(req_u->tim_u);
 
   h2o_req_t* rec_u = req_u->rec_u;
@@ -431,47 +506,33 @@ _http_start_respond(u3_hreq* req_u,
     hed_u = hed_u->nex_u;
   }
 
-  h2o_iovec_t bod_u = _http_vec_from_octs(u3k(data));
-
   u3_hgen* gen_u = h2o_mem_alloc_shared(&rec_u->pool, sizeof(*gen_u),
                                         _http_hgen_dispose);
-  gen_u->neg_u = (h2o_generator_t){
-    _http_proceed_response,
-    _http_stop_response
-  };
+  gen_u->neg_u = (h2o_generator_t){ _http_hgen_proceed, _http_hgen_stop };
+  gen_u->red   = c3y;
+  gen_u->dun   = complete;
+  gen_u->bod_u = ( u3_nul == data ) ?
+                 0 : _cttp_bod_from_octs(u3k(u3t(data)));
+  gen_u->nud_u = 0;
   gen_u->hed_u = hed_u;
-  gen_u->fre_v = bod_u.base;
   gen_u->req_u = req_u;
+
   req_u->gen_u = gen_u;
 
-  if (c3y == complete) {
+  if ( c3n == complete ) {
+    // XX revisit timer
+    // We must restart the timeout timer
+    // uv_timer_start(req_u->tim_u, _http_req_timer_cb, 30 * 1000, 0);
+  }
+  else {
     // We know the entire size of the response, so ensure we tell h2o about the size.
-    rec_u->res.content_length = gen_u->bod_u.len;
+    rec_u->res.content_length = ( 0 == gen_u->bod_u ) ?
+                                0 : gen_u->bod_u->len_w;
   }
 
   h2o_start_response(rec_u, &gen_u->neg_u);
 
-  if (c3y == complete) {
-    fprintf(stderr, "start and send state final\n");
-
-    // We are the final message.
-    h2o_send(rec_u, &bod_u, 1, H2O_SEND_STATE_FINAL);
-
-    u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
-
-    if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
-      rec_u->http1_is_persistent = 0;
-    }
-  } else {
-    fprintf(stderr, "start and send state in progress\n");
-
-    // We are the first of multiple messages.
-    h2o_send(rec_u, &bod_u, 1, H2O_SEND_STATE_IN_PROGRESS);
-
-    // We must restart the timeout timer
-    // XX revisit timer
-    // uv_timer_start(req_u->tim_u, _http_req_timer_cb, 30 * 1000, 0);
-  }
+  _http_hgen_send(gen_u);
 
   u3z(status); u3z(headers); u3z(data); u3z(complete);
 }
@@ -486,54 +547,56 @@ _http_continue_respond(u3_hreq* req_u,
                        u3_noun data,
                        u3_noun complete)
 {
-  fprintf(stderr, "continue\n");
+  uL(fprintf(uH, "continue\n"));
 
-  // XX add sequence numbers for %continue cards?
-  // Arvo does not guarantee idempotence!!
+  // XX add sequence numbers for %continue effects?
+  // Arvo does not (currently) guarantee effect idempotence!!
 
-  /* if ( u3_rsat_plan != req_u->sat_e ) { */
-  /*   //uL(fprintf(uH, "duplicate response\n")); */
-  /*   return; */
-  /* } */
+  // response has not yet been started
+  if ( u3_rsat_ripe != req_u->sat_e ) {
+    //uL(fprintf(uH, "duplicate response\n"));
+    return;
+  }
 
-  /* req_u->sat_e = u3_rsat_ripe; */
+  u3_hgen* gen_u = req_u->gen_u;
 
   // XX revisit timer
   // uv_timer_stop(req_u->tim_u);
 
-  h2o_iovec_t bod_u = _http_vec_from_octs(u3k(data));
-
-
-  u3_hgen* gen_u = req_u->gen_u;
-  h2o_req_t* rec_u = req_u->rec_u;
+  // XX proposed sequence number safety check
+  // if ( sequence <= gen_u->sequence ) {
+  //   return;
+  // }
+  //
+  // c3_assert( sequence == ++gen_u->sequence );
 
   gen_u->dun = complete;
 
-  // if the generator is ready, immediately send
-  if ( c3y == gen_u->red ) {
-    h2o_send(rec_u, &bod_u, 1, ( c3y == gen_u->dun ) ?
-                               H2O_SEND_STATE_FINAL :
-                               H2O_SEND_STATE_IN_PROGRESS);
+  if ( u3_nul != data ) {
+    u3_hbod* bod_u = _cttp_bod_from_octs(u3k(u3t(data)));
 
-    c3_assert( 0 == gen_u->fre_v );
-    // save a pointer to free later
-    gen_u->fre_v = bod_u.base;
+    if ( 0 == gen_u->bod_u ) {
+      gen_u->bod_u = bod_u;
+    }
+    else {
+      u3_hbod* pre_u = gen_u->bod_u;
 
-    // if we're done, and shutting down ...
-    if ( c3y == gen_u->dun ) {
-      u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
-
-      if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
-        rec_u->http1_is_persistent = 0;
+      while ( 0 != pre_u->nex_u ) {
+        pre_u = pre_u->nex_u;
       }
+
+      pre_u->nex_u = bod_u;
     }
   }
-  // if the generator is not ready, save the buffer
-  // to be sent on _http_proceed_response
-  else {
-    // TODO: this could overwrite
-    // realloc and combine buffers
-    gen_u->bod_u = bod_u;
+
+  if ( c3n == complete ) {
+    // XX revisit timer
+    // We must restart the timeout timer
+    // uv_timer_start(req_u->tim_u, _http_req_timer_cb, 30 * 1000, 0);
+  }
+
+  if ( c3y == gen_u->red ) {
+    _http_hgen_send(gen_u);
   }
 
   u3z(data); u3z(complete);
@@ -1501,7 +1564,7 @@ u3_http_ef_thou(c3_l     sev_l,
   else {
     u3_noun p_rep, q_rep, r_rep;
 
-    fprintf(stderr, "Old %thou not used anymore\n");
+    fprintf(stderr, "Old %%thou not used anymore\n");
 
     /* if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) { */
     /*   uL(fprintf(uH, "http: strange response\n")); */
