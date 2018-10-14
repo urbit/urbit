@@ -3,11 +3,12 @@
 /-  *sole
 ::
 :-  %ask
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {{who/ship ~} ~}
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [who=ship ~]
+        life=_1
     ==
 ^-  (sole-result (cask cord))
-%+  sole-yo  leaf+"generating keys for {(scow %p who)} (#{(scow %ud who)})"
+%+  sole-yo  leaf+"generating keys for {(scow %p who)}, life #{(scow %ud life)}"
 %+  sole-lo  [%| %pope-pass "passphrase: "]
 %+  sole-go  (boss 256 (star prn))
 |=  fra/@t
@@ -25,5 +26,5 @@
 %+  sole-yo  leaf+"ethereum public keys:"
 ::
 =/  sed=seed:able:jael
-  [who 1 sec:ex:cub ~]
+  [who life sec:ex:cub ~]
 %-  sole-so  [%atom (scot %uw (jam sed))]
