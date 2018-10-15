@@ -101,9 +101,9 @@
   %+  parse-lines  'direct-galaxies'
   (ship-and-rights |)
 ::
-++  get-direct-deeds
+++  get-direct-ships
   ^-  (list [who=ship rights])
-  %+  parse-lines  'direct-deeds'
+  %+  parse-lines  'direct-ships'
   (ship-and-rights |)
 ::
 ++  get-linear-recipients
@@ -208,7 +208,7 @@
   ::NOTE  we do these first so that we are sure we have sane files,
   ::      without waiting for that answer
   =+  tlon-gal=get-direct-galaxies
-  =+  directs=get-direct-deeds
+  =+  directs=get-direct-ships
   ::
   =+  lin-rec=get-linear-recipients
   =+  lin-gal=(get-locked-galaxies 'linear')
