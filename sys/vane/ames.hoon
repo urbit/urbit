@@ -536,6 +536,16 @@
   |%
   ++  am                                                ::    am
     |_  [now=@da fox=fort ski=sley]                     ::  protocol engine
+    ::  +deed: scry for our deed
+    ::
+    ++  deed
+      |=  [our=ship now=@da lyf=life]
+      ;;  ^deed
+      %-  need  %-  need
+      %-  (sloy ski)
+      =/  pur=spur
+        /(scot %ud lyf)/(scot %p our)
+      [[151 %noun] %j (en-beam:format [our %deed da+now] pur)]
     ::  +sein: scry for sponsor
     ::
     ++  sein
@@ -557,12 +567,16 @@
       |=  [our=ship =life vein=(map life ring)]         ::  new private keys
       ^-  fort
       ::
-      ~|  [%vein-mismatch +<]
-      ?>  (~(has by vein) life)
-      ?>  =(life (roll ~(tap in ~(key by vein)) max))
+      ?.  ?&  (~(has by vein) life)
+              =(life (roll ~(tap in ~(key by vein)) max))
+          ==
+        ~|  [%vein-mismatch +<]  !!
+      ::  XX single-home
       ::
-      ~|  %strange-vein
-      ?<  (~(has by urb.ton.fox) our)
+      ?.  ?|  (~(has by urb.ton.fox) our)
+              =(~ urb.ton.fox)
+          ==
+        ~|  [%strange-vein +<]  !!
       ::
       =/  new=wund
         %+  turn
@@ -573,9 +587,7 @@
         |=  [=^life =ring]
         [life ring (nol:nu:crub:crypto ring)]
       ::
-      =/  ded=deed
-        ?>  ?=(^ new)
-        [life=p.i.new pass=pub:ex:r.i.new oath=~]
+      =/  ded=^deed  (deed our now life)
       ::  XX remove :hoy from +sufi
       ::
       %=  fox
@@ -744,7 +756,7 @@
         ::  XX move this logic into %zuse, namespaced under %jael?
         ::
         ++  deng                                        ::    deng:ho:um:am
-          |=  law=(unit deed)                           ::  accept inline deed
+          |=  law=(unit ^deed)                          ::  accept inline deed
           ^+  diz
           ?:  |(=(~ law) =(lew.wod.dur.diz law))
             diz

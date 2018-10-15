@@ -1898,6 +1898,34 @@
     ?~  pub  ~
     ``[%atom !>(life.u.pub)]
   ::
+      %deed
+    ?.  ?=([@ @ ~] tyl)  [~ ~]
+    ?.  &(?=(%& -.why) =(p.why our.own.sub.lex))
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    =/  lyf  (slaw %ud i.t.tyl)
+    ?~  who  [~ ~]
+    ?~  lyf  [~ ~]
+    ?:  ?=(%earl (clan:title u.who))
+      ?.  =(u.who p.why)
+        [~ ~]
+      ?:  (gth u.lyf lyf.own.sub.lex)
+        ~
+      ?:  (lth u.lyf lyf.own.sub.lex)
+        [~ ~]
+      =/  sec  (~(got by jaw.own.sub.lex) u.lyf)
+      =/  cub  (nol:nu:crub:crypto sec)
+      :^  ~  ~  %noun
+      !>  ^-  deed:ames
+      [u.lyf pub:ex:cub sig.own.sub.lex]
+    =/  pub  (~(get by kyz.puk.sub.lex) u.who)
+    ?~  pub  ~
+    :: XX check lyf
+    ::
+    :^  ~  ~  %noun
+    !>  ^-  deed:ames
+    [life.u.pub (~(got by pubs.u.pub) life.u.pub) ~]
+  ::
       %earl
     ?.  ?=([@ @ @ ~] tyl)  [~ ~]
     ?.  ?&  ?=(%& -.why)
