@@ -18,7 +18,7 @@
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aA, identity logic           ::
-  ::                removed                             ::
+  ::              removed in favor of jael/ethereum     ::
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aB, packet format            ::
@@ -80,7 +80,6 @@
         ++  clon
           ^-  life
           ::  if we don't have a +deed for :her, we guess 1
-          ::  XX should we keep guessing 0? is this used for crypto?
           ::
           ?~(lew.wod.dur 1 life.u.lew.wod.dur)
         ::  XX move this logic into %zuse, namespaced under %jael?
@@ -127,7 +126,7 @@
                   *
                 ::  our initial sponsor
                 ::
-                ::    XX ensure initial?
+                ::    XX jael scry
                 ::
                 =(her (sein:title our))
               ==
@@ -299,13 +298,16 @@
               (en:cub:cluy q.u.yed.caq.dur (jam ham))
             ?:  &(=(~ lew.wod.dur) =(%back -.ham))
               [wasp ..wisp]
+            ::  we include our deed in asymmetric skins (%open and %full)
+            ::  if we're a comet or moon, or if we're sponsoring her
+            ::
             =/  bil=(unit deed)
-              ?.  ?|  ?=(?(%earl %pawn) (clan:title our))
-                      ?&  =(our (sein:title her))
-                          ::  XX is this necessary?
-                          ::
-                          !=(our her)
-                  ==  ==
+              =/  rac  (clan:title our)
+              ?.  ?|  ?=(?(%earl %pawn) rac)
+                      ::  XX jael scry
+                      ::
+                      ?&(!?=(%czar rac) =(our (sein:title her)))
+                  ==
                 ~
               `law.saf
             =/  yig  sen
@@ -612,13 +614,10 @@
       ?>  (~(has by vein) life)
       ?>  =(life (roll ~(tap in ~(key by vein)) max))
       ::
-      ~|  %vein-stub
+      ~|  %strange-vein
       ?<  (~(has by urb.ton.fox) our)
       ::
-      =/  can=(list ship)
-        %-  flop
-        |-  ^-  (list ship)
-        ?:((lth our 256) ~ =+(seg=(sein:title our) [seg $(our seg)]))
+      =/  can=(list ship)  (tail (saxo:title our))
       ::
       =/  new=wund
         %+  turn
@@ -822,7 +821,7 @@
               ::  request keys and continue processing packet if
               ::  :her is our initial sponsor (TOFU)
               ::
-              ::    XX ensure initial?
+              ::    XX jael scry
               ::    XX update state so we only ask once?
               ::
               =?  +>.$  ?&  =(~ lew.wod.dur.diz)
@@ -830,9 +829,9 @@
                         ==
                 (emit %beer our her)
               ::  request keys and drop packet if :her is (or is a moon of)
-              ::  an unfamilar on-chain ship (and not our initial sponsor)
+              ::  an unfamilar on-chain ship (and not our sponsor)
               ::
-              ::    XX ensure initial?
+              ::    XX jael scry?
               ::
               =/  rac  (clan:title her)
               =/  seg  (sein:title her)

@@ -577,7 +577,7 @@
         olz/(map flap cape)                             ::  packets completed
         wab/(map ship bath)                             ::  relationship
     ==                                                  ::
-  +$  deed  [=life =pass oath=(unit oath:pki:jael)]     ::  stage/pub/sig
+  +$  deed  [=life =pass oath=(unit oath:pki:jael)]     ::  life/pub/sig
   ++  dore                                              ::  foreign contact
     $:  wod/road                                        ::  connection to
         caq/clot                                        ::  symmetric key state
