@@ -82,55 +82,6 @@
           ::  if we don't have a +deed for :her, we guess 1
           ::
           ?~(lew.wod.dur 1 life.u.lew.wod.dur)
-        ::  XX move this logic into %zuse, namespaced under %jael?
-        ::
-        ++  deng
-          |=  law=(unit deed)
-          ^+  +>.$
-          ?:  |(=(~ law) =(lew.wod.dur law))
-            +>.$
-          ~|  [%deng-fail her]
-          ?>  ?=(^ law)
-          =*  wed  u.law
-          ?>  ^-  ?
-              ?-    (clan:title her)
-                  %earl
-                ::  signed by parent
-                ::
-                =/  seg  (^sein:title her)
-                =/  yig
-                  ?:  =(our seg)
-                    sen
-                  ~(cluy lax [seg (~(got by hoc.saf) seg)])
-                ::  XX should anything else be signed?
-                ::
-                ?&  =(lyf.yig life.wed)
-                    ?=(^ oath.wed)
-                    .=  (need (sure:as:cub.yig u.oath.wed))
-                    (shaf %earl (sham [her life.wed pass.wed]))
-                ==
-              ::
-                  %pawn
-                ::  self-signed, life 1, address is fingerprint
-                ::
-                =/  cub=acru  (com:nu:crub:crypto pass.wed)
-                ?&  =(`@`fig:ex:cub her)
-                    ?=(%1 life.wed)
-                    ?=(^ oath.wed)
-                    ::  XX do we care about this signature at all?
-                    ::
-                    .=  (need (sure:as:cub u.oath.wed))
-                    (shaf %self (sham [her life.wed pass.wed]))
-                ==
-              ::
-                  *
-                ::  our initial sponsor
-                ::
-                ::    XX jael scry
-                ::
-                =(her (^sein:title our))
-              ==
-          +>.$(lew.wod.dur law)
         ::
         ++  griz                                        ::    griz:lax:as:go
           |=  now=@da                                   ::  generate key for
@@ -191,7 +142,8 @@
           ::
               rov
             |-  ^-  (unit lane)
-            :: XX check will
+            ::  XX jael scry
+            ::
             ?:  ?|  !=(our (^sein:title her))
                     ?=(?(%earl %pawn) (clan:title her))
                 ==
@@ -239,24 +191,8 @@
               (en:crub:crypto q.u.yed.caq.dyr mal)
           ==
         ::
-        ++  xeno                                        ::    xeno:lax:as:go
-          ^-  (list ship)                               ::  foreign canon
-          (^saxo:title her)
-        ::
-        ++  xong                                        ::    xong:lax:as:go
-          ^-  (list ship)                               ::  route unto
-          =+  [fro=xen too=xeno]
-          =+  ^=  oot  ^-  (list ship)
-              =|  oot=(list ship)
-              |-  ^+  oot
-              ?~  too  ~
-              ?:  (lien fro |=(a=ship =(a i.too)))  ~
-              [i.too $(too t.too)]
-          ::  ~&  [%xong-to [our her] (weld oot ?>(?=(^ fro) t.fro))]
-          (weld oot ?>(?=(^ fro) t.fro))
-        ::
         ++  zuul                                        ::    zuul:lax:as:go
-          |=  [now=@da ham=meal]                        ::  encode message
+          |=  [now=@da seg=ship ham=meal]               ::  encode message
           ^-  [p=(list rock) q=_+>]
           =<  weft
           |%
@@ -304,9 +240,7 @@
             =/  bil=(unit deed)
               =/  rac  (clan:title our)
               ?.  ?|  ?=(?(%earl %pawn) rac)
-                      ::  XX jael scry
-                      ::
-                      ?&(!?=(%czar rac) =(our (^sein:title her)))
+                      &(!?=(%czar rac) =(our seg))
                   ==
                 ~
               `law.saf
@@ -369,10 +303,6 @@
         ?:  =(mar p.i.t.val.saf)
           r.i.t.val.saf
         $(t.val.saf t.t.val.saf)
-      ::
-      ++  xen                                           ::  canon
-        |-  ^-  (list ship)
-        (^saxo:title our)
       --                                                ::  --as:go
     ::
     ++  su                                              ::  install safe
@@ -605,7 +535,24 @@
   ::
   |%
   ++  am                                                ::    am
-    |_  [now=@da fox=fort]                              ::  protocol engine
+    |_  [now=@da fox=fort ski=sley]                     ::  protocol engine
+    ::  +sein: scry for sponsor
+    ::
+    ++  sein
+      |=  [our=ship now=@da who=ship]
+      ;;  ship
+      %-  need  %-  need
+      %-  (sloy ski)
+      [[151 %noun] %j (en-beam:format [our %sein da+now] /(scot %p who))]
+    ::  +saxo: scry for sponsorship chain
+    ::
+    ++  saxo
+      |=  [our=ship now=@da who=ship]
+      ;;  (list ship)
+      %-  need  %-  need
+      %-  (sloy ski)
+      [[151 %noun] %j (en-beam:format [our %saxo da+now] /(scot %p who))]
+    ::
     ++  vein                                            ::    vein:am
       |=  [our=ship =life vein=(map life ring)]         ::  new private keys
       ^-  fort
@@ -616,8 +563,6 @@
       ::
       ~|  %strange-vein
       ?<  (~(has by urb.ton.fox) our)
-      ::
-      =/  can=(list ship)  (tail (^saxo:title our))
       ::
       =/  new=wund
         %+  turn
@@ -631,9 +576,10 @@
       =/  ded=deed
         ?>  ?=(^ new)
         [life=p.i.new pass=pub:ex:r.i.new oath=~]
+      ::  XX remove :hoy from +sufi
       ::
       %=  fox
-        urb.ton  (~(put by urb.ton.fox) our [can new ded ~ ~])
+        urb.ton  (~(put by urb.ton.fox) our [hoy=~ new ded ~ ~])
         zac      (~(put by zac.fox) our *corn)
       ==
     ::
@@ -792,8 +738,58 @@
             ?^  ram  raz.bah
             %+  ~(put by raz.bah)  cha
             rum(dod &, bum ?~(cop bum.rum (~(put by bum.rum) did.rum u.cop)))
-          =^  roc  diz  (zuul:diz now [%back cop dam ~s0])
-          (busk(diz (wast:diz ryn)) xong:diz roc)
+          =/  seg  (sein our now her)
+          =^  roc  diz  (zuul:diz now seg [%back cop dam ~s0])
+          (busk(diz (wast:diz ryn)) xong roc)
+        ::  XX move this logic into %zuse, namespaced under %jael?
+        ::
+        ++  deng                                        ::    deng:ho:um:am
+          |=  law=(unit deed)                           ::  accept inline deed
+          ^+  diz
+          ?:  |(=(~ law) =(lew.wod.dur.diz law))
+            diz
+          ~|  [%deng-fail her]
+          ?>  ?=(^ law)
+          =*  wed  u.law
+          ?>  ^-  ?
+              ?-    (clan:title her)
+                  %earl
+                ::  signed by parent
+                ::
+                =/  seg  (^sein:title her)
+                =/  yig
+                  ?:  =(our seg)
+                    sen:gus
+                  cluy:(myx:gus seg)
+                ::  XX should anything else be signed?
+                ::
+                ?&  =(lyf.yig life.wed)
+                    ?=(^ oath.wed)
+                    .=  (need (sure:as:cub.yig u.oath.wed))
+                    (shaf %earl (sham [her life.wed pass.wed]))
+                ==
+              ::
+                  %pawn
+                ::  self-signed, life 1, address is fingerprint
+                ::
+                =/  cub=acru  (com:nu:crub:crypto pass.wed)
+                ?&  =(`@`fig:ex:cub her)
+                    ?=(%1 life.wed)
+                    ?=(^ oath.wed)
+                    ::  XX do we care about this signature at all?
+                    ::
+                    .=  (need (sure:as:cub u.oath.wed))
+                    (shaf %self (sham [her life.wed pass.wed]))
+                ==
+              ::
+                  *
+                ::  our sponsor
+                ::
+                ?&  !?=(%czar (clan:title our))
+                    =(her (sein our now our))
+                ==
+              ==
+          diz(lew.wod.dur law)
         ::
         ++  done                                        ::    done:ho:um:am
           |=  [cha=path num=@ud]                        ::  complete outgoing
@@ -818,25 +814,27 @@
             |%
             ++  apse
               ^+  +>.$
+              ::  bos: our sponsor
+              ::
+              =/  bos  (sein our now our)
+              ::  seg:  her sponsor
+              ::
+              =/  seg  (sein our now her)
+              ::  rac:  her rank
+              ::
+              =/  rac  (clan:title her)
               ::  request keys and continue processing packet if
               ::  :her is our initial sponsor (TOFU)
               ::
-              ::    XX jael scry
               ::    XX update state so we only ask once?
               ::
-              =?  +>.$  ?&  =(~ lew.wod.dur.diz)
-                            =(her (^sein:title our))
-                        ==
+              =?  +>.$  &(=(~ lew.wod.dur.diz) =(her bos))
                 (emit %beer our her)
               ::  request keys and drop packet if :her is (or is a moon of)
               ::  an unfamilar on-chain ship (and not our sponsor)
               ::
-              ::    XX jael scry?
-              ::
-              =/  rac  (clan:title her)
-              =/  seg  (^sein:title her)
               ?:  ?&  =(~ lew.wod.dur.diz)
-                      !=(her (^sein:title our))
+                      !=(her bos)
                       ?|  !?=(?(%earl %pawn) rac)
                           ?&  ?=(%earl rac)
                               =/  fod  (~(get by hoc.saf.gus) seg)
@@ -885,7 +883,7 @@
                   %full
                 ::  ~&  %chew-full
                 =/  mex  ((hard full:pact) (cue msg))
-                =.  diz  (deng:diz law.mex)
+                =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
                 ?>  =(lyf.wug from.lyf.mex)
                 =/  gey  (sev:gus to.lyf.mex)
@@ -898,7 +896,7 @@
                   %open
                 ::  ~&  %chew-open
                 =/  mex  ((hard open:pact) (cue msg))
-                =.  diz  (deng:diz law.mex)
+                =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
                 ?>  =(lyf.wug from.lyf.mex)
                 =/  mes  (need (sure:as:cub.wug txt.mex))
@@ -925,8 +923,9 @@
             ^+  .                                       ::  send new ack
             ::  ~&  [%back kay dam]
             =*  cop  `coop`?:(=(%good kay) ~ ``[%dead-packet ~])
-            =^  pax  diz  (zuul:diz now [%back cop dam ~s0])
-            +(+> (busk(diz (wast:diz ryn)) xong:diz pax))
+            =/  seg  (sein our now her)
+            =^  pax  diz  (zuul:diz now seg [%back cop dam ~s0])
+            +>(+> (busk(diz (wast:diz ryn)) xong pax))
           ::
           ++  deer                                      ::    deer:la:ho:um:am
             |=  [cha=path num=@ud dut=(unit)]           ::  interpret message
@@ -1009,7 +1008,7 @@
               ?:  =(our p.fud)
                 (emit %mead lyn r.fud)
               =+  zid=(myx:gus p.fud)
-              (emir (wist:zid now xong:zid [~ lyn] r.fud))
+              (emir (wist:zid now xong [~ lyn] r.fud))
             ==
           ::
           ++  emir                                      ::    emir:la:ho:um:am
@@ -1054,7 +1053,7 @@
               ?.  &(bou !oub)  bin
               :_(bin [%wine [our her] " not responding still trying"])
           =.  diz  ?:((boom:puz now) (pode:diz now) diz)
-          (busk xong:diz yem)
+          (busk xong yem)
         ::
         ++  tock                                        ::    tock:ho:um:am
           |=  [cop=coop fap=flap cot=@dr]               ::  e2e ack by hash
@@ -1070,15 +1069,16 @@
               :_  bin
               `boon`[%cake [our her] [[lyf:sen:gus clon:diz] u.p.yoh] cop u.hud]
             ==
-          (busk xong:diz q.yoh)
+          (busk xong q.yoh)
         ::
         ++  wind                                        ::    wind:ho:um:am
           |=  [gom=soup ham=meal]
           ::  ~&  [%wind her gom]
           ^+  +>
-          =^  wyv  diz  (zuul:diz now ham)
+          =/  seg  (sein our now her)
+          =^  wyv  diz  (zuul:diz now seg ham)
           =^  feh  puz  (whap:puz now gom wyv)
-          (busk xong:diz feh)
+          (busk xong feh)
         ::
         ++  wool                                        ::    wool:ho:um:am
           |=  [hen=duct cha=path val=*]                 ::  send a statement
@@ -1150,12 +1150,25 @@
             gus      (nux:gus diz(rov ~))
             wab.weg  (~(put by wab.weg) her bah(sop abet:puz))
           ==
+        ::
+        ++  xong                                        ::    xong:ho:um:am
+          ^-  (list ship)                               ::  route unto
+          =/  fro  (saxo our now our)
+          =/  too  (saxo our now her)
+          =+  ^=  oot  ^-  (list ship)
+              =|  oot=(list ship)
+              |-  ^+  oot
+              ?~  too  ~
+              ?:  (lien fro |=(a=ship =(a i.too)))  ~
+              [i.too $(too t.too)]
+          ::  ~&  [%xong-to [our her] (weld oot ?>(?=(^ fro) t.fro))]
+          (weld oot ?>(?=(^ fro) t.fro))
         --                                              ::  --ho:um:am
       ::
       ++  kick                                          ::    kick:um:am
         |=  hen=duct                                    ::  test connection
         ^+  +>
-        =+  hoy=hoy.saf.gus
+        =/  hoy  (tail (saxo our now our))
         |-  ^+  +>.^$
         ?~  hoy
           +>.^$
@@ -1359,7 +1372,7 @@
         [~ +>]
       ~&  [%hear-vein tea sih]
       =/  our=ship  (slav %p i.t.tea)
-      =.  fox  (~(vein am [now fox]) our life.sih vein.sih)
+      =.  fox  (~(vein am [now fox ski]) our life.sih vein.sih)
       ::  XX save duct in corn here, or remove from structure
       ::
       [~ +>.$]
@@ -1373,7 +1386,7 @@
       =+  pax=t.t.tea
       =+  ^=  fuy
           =<  zork  =<  zank
-          %^  ~(rack am [now fox])  soq  pax
+          %^  ~(rack am [now fox ski])  soq  pax
           ::  ~&  [%knap-ack ?-(+<.sih %mean `p.+.sih, %nice ~)]
           ?-(+<.sih %mean `p.+.sih, %nice ~)
       =>  %_(. fox q.fuy)
@@ -1405,13 +1418,13 @@
           [%bock ~]~
         ::
             %hear
-          (~(gnaw am [now fox]) %good p.kyz q.kyz)
+          (~(gnaw am [now fox ski]) %good p.kyz q.kyz)
         ::
             %halo
-          (~(gnaw am [now fox]) %dead p.kyz q.kyz)
+          (~(gnaw am [now fox ski]) %dead p.kyz q.kyz)
         ::
             %hole
-          (~(gnaw am [now fox]) %dead p.kyz q.kyz)
+          (~(gnaw am [now fox ski]) %dead p.kyz q.kyz)
         ::
             %init
           :_  fox  [[%sake p.kyz] [%brew ~] ~]
@@ -1422,7 +1435,7 @@
           [~ fox(any.ton (shax (mix any.ton.fox p.kyz)))]
         ::
             %kick
-          (~(kick am [now fox(hop p.kyz)]) hen)
+          (~(kick am [now fox(hop p.kyz) ski]) hen)
         ::
             %tend
           :: XX exclude comets and moons? and planets?
@@ -1453,10 +1466,10 @@
           ==
         ::
             %wake
-          (~(wake am [now fox]) hen)
+          (~(wake am [now fox ski]) hen)
         ::
             %want
-          (~(wise am [now fox]) p.kyz hen q.kyz r.kyz)
+          (~(wise am [now fox ski]) p.kyz hen q.kyz r.kyz)
         ==
     =>  %_(. fox q.fuy)
     =|  out=(list move)
@@ -1487,12 +1500,12 @@
       ?^  t.tyl  [~ ~]
       =+  gys=(~(us go ton.fox) our)
       ?~  gys  [~ ~]
-      =+  zet=zest:(ho:(~(um am [now fox]) our) his)
+      =+  zet=zest:(ho:(~(um am [now fox ski]) our) his)
       ``[%noun ?:(=(%show i.tyl) !>(>zet<) !>(zet))]
     ?:  ?=([%pals ~] tyl)
       ?.  =(our his)
         ~
-      ``[%noun !>(pals:(~(um am [now fox]) our))]
+      ``[%noun !>(pals:(~(um am [now fox ski]) our))]
     :: XX move to %jael
     ::
     ?.  ?=([%life ~] tyl)

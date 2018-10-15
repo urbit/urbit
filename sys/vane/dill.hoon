@@ -286,16 +286,25 @@
               moz
           ==
         ==
+      ::  XX move
+      ::
+      ++  sein
+        |=  who=ship
+        ;;  ship
+        %-  need  %-  need
+        %-  (sloy ski)
+        [[151 %noun] %j (en-beam:format [our %sein da+now] /(scot %p who))]
       ::
       ++  init                                          ::  initialize
         ~&  [%dill-init our ram]
-        =+  myt=(flop (need tem))
-        =+  can=(clan:title our)
+        ^+  .
+        =/  myt  (flop (need tem))
+        =/  can  (clan:title our)
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %merg our %home our %base da+now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
-                (sync %base (^sein:title our) %kids)
+                (sync %base (sein our) %kids)
         =.  +>  ?:  ?=(?($czar $pawn) can)
                   (sync %home our %base)
                 (init-sync %home our %base)

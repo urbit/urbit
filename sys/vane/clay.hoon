@@ -3801,7 +3801,12 @@
     ^-  (list move)
     ?:  ?=(%czar (clan:title our.req))
       ~
-    [hen %pass /init-merge %c %merg our.req %base (^sein:title our.req) %kids da+now %init]~
+    =/  bos=ship
+      ;;  ship
+      %-  need  %-  need
+      %-  (sloy ski)
+      [[151 %noun] %j (en-beam:format [our.req %sein da+now] /(scot %p our.req))]
+    [hen %pass /init-merge %c %merg our.req %base bos %kids da+now %init]~
   ::
       $into
     =.  hez.ruf  `hen

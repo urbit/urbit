@@ -1774,6 +1774,13 @@
       [orx abet]
     ::
     ++  fcgi-cred  %_(ced aut (~(put ju aut.ced) %$ (scot %p him)))
+    ::  XX move
+    ::
+    ++  sein
+      |=  who=ship
+      ;;  ship
+      (need (sky [[151 %noun] %j (en-beam [our %sein da+now] /(scot %p who))]))
+    ::
     ++  stat-json
       ^+  [*json ..ya]
       =^  orx  ..ya  new-view
@@ -1782,7 +1789,7 @@
       %-  pairs.j  :~
         oryx+s+orx
         ixor+s+(oryx-to-ixor orx)
-        sein+(ship.j (^sein:title our))
+        sein+(ship.j (sein our))
         ship+(ship.j our)
         user+(ship.j him)
         auth+a+(turn ~(tap in aut) ship.j)
