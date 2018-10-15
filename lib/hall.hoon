@@ -10,14 +10,14 @@
 ::
 ::TODO  add to zuse?
 ++  true-self
-  |=  who/ship
+  |=  [our/ship now/@da who/ship]
   ?.  ?=($earl (clan:title who))  who
-  (sein:title who)
+  (sein:title our now who)
 ::
 ++  above
-  |=  who/ship
+  |=  [our/ship now/@da who/ship]
   ?:  ?=($czar (clan:title who))  ~zod
-  (sein:title who)
+  (sein:title our now who)
 ::
 ++  said-url                                            ::  app url
   |=  url/purl:eyre

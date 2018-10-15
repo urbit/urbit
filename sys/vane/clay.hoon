@@ -3801,7 +3801,7 @@
     ^-  (list move)
     ?:  ?=(%czar (clan:title our.req))
       ~
-    [hen %pass /init-merge %c %merg our.req %base (sein:title our.req) %kids da+now %init]~
+    [hen %pass /init-merge %c %merg our.req %base (^sein:title our.req) %kids da+now %init]~
   ::
       $into
     =.  hez.ruf  `hen

@@ -358,7 +358,7 @@
         (ta-action [%create nom des typ])
     %-  ta-deltas
     ::  if needed, subscribe to our parent's /burden.
-    =+  sen=(above our.bol)
+    =+  sen=(above [our now our]:bol)
     ?:  ?|  !=(%czar (clan:title sen))
             =(sen our.bol)
             =(%pawn (clan:title our.bol))
@@ -704,7 +704,7 @@
     ::
     |=  who/ship
     ^+  +>
-    ?.  =(our.bol (above who))
+    ?.  =(our.bol (above our.bol now.bol who))
       ~&([%not-our-bearer who] +>)
     (ta-delta %observe who)
   ::
@@ -1169,7 +1169,7 @@
           ::  in audience, replace above with us.
           ::TODO  this really should be done by the sender.
           =.  aud.t
-            =+  dem=[(above our.bol) nom]
+            =+  dem=[(above [our now our]:bol) nom]
             ?.  (~(has in aud.t) dem)  aud.t
             =+  (~(del in aud.t) dem)
             (~(put in -) so-cir)
@@ -1177,7 +1177,7 @@
           ?:  &(?=(^ num) =(t (snag u.num grams)))  ~
           ::TODO  this really should have sent us the message
           ::      src as well but that's not an easy fix.
-          `[%story nom %gram [(above our.bol) nom] t]
+          `[%story nom %gram [(above [our now our]:bol) nom] t]
         ==
       ::  inherited flag
       %_(self deltas [[%story nom %inherited &] deltas])
@@ -2250,7 +2250,7 @@
     (welp /circle t.t.t.wir)
   ::
       {$burden *}
-    :-  (above our.bol)
+    :-  (above [our now our]:bol)
     /burden/(scot %p our.bol)
   ::
       {$report @ *}
@@ -2599,7 +2599,7 @@
   ::
       $report
     ::  only send changes we didn't get from above.
-    ?:  =(src.bol (above our.bol))  ~
+    ?:  =(src.bol (above [our now our]:bol))  ~
     ::  only send story reports about grams and status.
     ?.  ?=($story -.det)  ~
     ?.  ?=(?($gram $status) -.det.det)  ~
@@ -2608,7 +2608,7 @@
     ?.  inherited.soy  ~
     ::  only burden channels for now.
     ?.  =(%channel sec.con.shape.soy)  ~
-    `[%burden nom.det (dedicate (above our.bol) nom.det det.det)]
+    `[%burden nom.det (dedicate (above [our now our]:bol) nom.det det.det)]
   ::
       $peers
     ?.  ?=($story -.det)      ~
@@ -2754,10 +2754,10 @@
     $circles  =(who who.qer)
     $public   &
     $burden   ?&  =(who who.qer)
-                  =(our.bol (above who))
+                  =(our.bol (above our.bol now.bol who))
               ==
     $peers    =(who our.bol)  ::TODO  or so-visible?
-    $report   =(who (above our.bol))
+    $report   =(who (above [our now our]:bol))
   ::
       $circle
     ?.  (~(has by stories) nom.qer)  |
@@ -3118,7 +3118,7 @@
   ?:  =(a 'refederate')
     ~&  'refederating. may take a while...'
     :_  +>
-    =+  bov=(above our.bol)
+    =+  bov=(above [our now our]:bol)
     ?:  =(bov our.bol)  ~
     :~  [ost.bol %pull /burden [bov dap.bol] ~]
         (wire-to-peer /burden)

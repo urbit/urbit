@@ -97,7 +97,7 @@
                   %earl
                 ::  signed by parent
                 ::
-                =/  seg  (sein:title her)
+                =/  seg  (^sein:title her)
                 =/  yig
                   ?:  =(our seg)
                     sen
@@ -128,7 +128,7 @@
                 ::
                 ::    XX jael scry
                 ::
-                =(her (sein:title our))
+                =(her (^sein:title our))
               ==
           +>.$(lew.wod.dur law)
         ::
@@ -192,7 +192,7 @@
               rov
             |-  ^-  (unit lane)
             :: XX check will
-            ?:  ?|  !=(our (sein:title her))
+            ?:  ?|  !=(our (^sein:title her))
                     ?=(?(%earl %pawn) (clan:title her))
                 ==
               ~
@@ -241,7 +241,7 @@
         ::
         ++  xeno                                        ::    xeno:lax:as:go
           ^-  (list ship)                               ::  foreign canon
-          (saxo:title her)
+          (^saxo:title her)
         ::
         ++  xong                                        ::    xong:lax:as:go
           ^-  (list ship)                               ::  route unto
@@ -306,7 +306,7 @@
               ?.  ?|  ?=(?(%earl %pawn) rac)
                       ::  XX jael scry
                       ::
-                      ?&(!?=(%czar rac) =(our (sein:title her)))
+                      ?&(!?=(%czar rac) =(our (^sein:title her)))
                   ==
                 ~
               `law.saf
@@ -372,7 +372,7 @@
       ::
       ++  xen                                           ::  canon
         |-  ^-  (list ship)
-        (saxo:title our)
+        (^saxo:title our)
       --                                                ::  --as:go
     ::
     ++  su                                              ::  install safe
@@ -617,7 +617,7 @@
       ~|  %strange-vein
       ?<  (~(has by urb.ton.fox) our)
       ::
-      =/  can=(list ship)  (tail (saxo:title our))
+      =/  can=(list ship)  (tail (^saxo:title our))
       ::
       =/  new=wund
         %+  turn
@@ -825,7 +825,7 @@
               ::    XX update state so we only ask once?
               ::
               =?  +>.$  ?&  =(~ lew.wod.dur.diz)
-                            =(her (sein:title our))
+                            =(her (^sein:title our))
                         ==
                 (emit %beer our her)
               ::  request keys and drop packet if :her is (or is a moon of)
@@ -834,9 +834,9 @@
               ::    XX jael scry?
               ::
               =/  rac  (clan:title her)
-              =/  seg  (sein:title her)
+              =/  seg  (^sein:title her)
               ?:  ?&  =(~ lew.wod.dur.diz)
-                      !=(her (sein:title our))
+                      !=(her (^sein:title our))
                       ?|  !?=(?(%earl %pawn) rac)
                           ?&  ?=(%earl rac)
                               =/  fod  (~(get by hoc.saf.gus) seg)

@@ -1,3 +1,4 @@
+!:
 ::
 ::  dill (4d), terminal handling
 ::
@@ -294,7 +295,7 @@
         =.  moz  :_(moz [hen %pass / %c %merg our %home our %base da+now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
-                (sync %base (sein:title our) %kids)
+                (sync %base (^sein:title our) %kids)
         =.  +>  ?:  ?=(?($czar $pawn) can)
                   (sync %home our %base)
                 (init-sync %home our %base)

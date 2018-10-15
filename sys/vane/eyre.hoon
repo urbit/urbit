@@ -1782,7 +1782,7 @@
       %-  pairs.j  :~
         oryx+s+orx
         ixor+s+(oryx-to-ixor orx)
-        sein+(ship.j (sein:title our))
+        sein+(ship.j (^sein:title our))
         ship+(ship.j our)
         user+(ship.j him)
         auth+a+(turn ~(tap in aut) ship.j)

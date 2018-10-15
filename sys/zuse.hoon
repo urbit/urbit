@@ -6502,7 +6502,39 @@
 ::                                                      ::
 ::::                      ++title                       ::  (2j) namespace
   ::                                                    ::::
-++  title  ^?
+++  title
+  =>  |%
+      ::                                                ::  ++clan:title
+      ++  clan                                          ::  ship to rank
+        |=  who=ship
+        ^-  rank
+        =/  wid  (met 3 who)
+        ?:  (lte wid 1)   %czar
+        ?:  =(2 wid)      %king
+        ?:  (lte wid 4)   %duke
+        ?:  (lte wid 8)   %earl
+        ?>  (lte wid 16)  %pawn
+      ::                                                ::  ++rank:title
+      +$  rank  ?(%czar %king %duke %earl %pawn)        ::  ship width class
+      ::                                                ::  ++saxo:title
+      ++  saxo                                          ::  autocanon
+        |=  who=ship
+        ^-  (list ship)
+        =/  dad  (sein who)
+        [who ?:(=(who dad) ~ $(who dad))]
+      ::                                                ::  ++sein:title
+      ++  sein                                          ::  autoboss
+        |=  who=ship
+        ^-  ship
+        =/  mir  (clan who)
+        ?-  mir
+          $czar  who
+          $king  (end 3 1 who)
+          $duke  (end 4 1 who)
+          $earl  (end 5 1 who)
+          $pawn  ~zod
+        ==
+      --
   |%
   ::                                                    ::  ++cite:title
   ++  cite                                              ::  render ship
@@ -6515,39 +6547,26 @@
     ?:  =(%pawn kind)
       :(weld (swag [0 7] name) "_" (swag [51 6] name))
     name
-  ::                                                    ::  ++clan:title
-  ++  clan                                              ::  ship to rank
-    |=  who/ship  ^-  rank
-    =+  wid=(met 3 who)
-    ?:  (lte wid 1)   %czar
-    ?:  =(2 wid)      %king
-    ?:  (lte wid 4)   %duke
-    ?:  (lte wid 8)   %earl
-    ?>  (lte wid 16)  %pawn
-  ::
-  +$  rank  ?(%czar %king %duke %earl %pawn)            ::  ship width class
   ::                                                    ::  ++saxo:title
   ++  saxo                                              ::  autocanon
-    |=  who/ship
-    ^-  (list ship)
-    =+  dad=(sein who)
-    [who ?:(=(who dad) ~ $(who dad))]
+    |=  [our=ship now=@da who=ship]
+    .^  (list ship)
+        %j
+        /(scot %p our)/saxo/(scot %da now)/(scot %p who)
+    ==
   ::                                                    ::  ++sein:title
   ++  sein                                              ::  autoboss
-    |=  who/ship  ^-  ship
-    =+  mir=(clan who)
-    ?-  mir
-      $czar  who
-      $king  (end 3 1 who)
-      $duke  (end 4 1 who)
-      $earl  (end 5 1 who)
-      $pawn  ~zod
+    |=  [our=ship now=@da who=ship]
+    .^  ship
+        %j
+        /(scot %p our)/sein/(scot %da now)/(scot %p who)
     ==
   ::                                                    ::  ++team:title
   ++  team                                              ::  our / our moon
-    |=  {our/@p him/@p}
-    ?|  =(our him)
-        &(?=($earl (clan him)) =(our (sein him)))
+    |=  [our=ship who=ship]
+    ^-  ?
+    ?|  =(our who)
+        &(?=($earl (clan who)) =(our (^sein who)))
     ==
   --  ::title
 ::                                                      ::
@@ -7792,7 +7811,7 @@
       ::
           %activated
         %_  hul
-          net  `[0 0 0 `(sein:title who.dif) ~]
+          net  `[0 0 0 `(^sein:title who.dif) ~]
           kid  ?.  ?=(?(%czar %king) (clan:title who.dif))  ~
                `[0x0 0 ~]
         ==

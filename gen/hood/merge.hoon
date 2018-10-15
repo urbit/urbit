@@ -22,11 +22,11 @@
     ^-  {syd/desk her/ship sud/desk cas/case gem/?(germ $auto)}
     ?-  arg
       {@ @ ~}
-        =+(arg [sud ?.(=(our her) her (sein her)) sud (opt-case da+now) gem])
+        =+(arg [sud ?.(=(our her) her (sein p.bek now her)) sud (opt-case da+now) gem])
     ::
       {^ ~}
         =+  (pars bek.arg)
-        [dez ?.(=(our who) who (sein who)) dez (opt-case caz) gem]
+        [dez ?.(=(our who) who (sein p.bek now who)) dez (opt-case caz) gem]
     ::
       {* @ @ ~}
         :-  (pars-src syd.arg)

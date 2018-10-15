@@ -645,7 +645,9 @@
             ?=(^ sponsor.u.net.u.hul)
         ==
       u.sponsor.u.net.u.hul
-    (sein:title who)
+    ::  XX fall back to most recent sponsor instead?
+    ::
+    (^sein:title who)
   ::                                                    ::  ++saxo:of
   ++  saxo                                              ::  sponsorship chain
     |=  who/ship
@@ -742,7 +744,7 @@
       =.  sig.own.sub
         ?.  ?=(%earl (clan:title our))
           ~
-        =/  yig  (pit:nu:crub:crypto 512 (sein:title our))
+        =/  yig  (pit:nu:crub:crypto 512 (^sein:title our))
         [~ (sign:as:yig (shaf %earl (sham our 1 pub:ex:cub)))]
       ::  our initial public key
       ::
@@ -1232,9 +1234,11 @@
     =/  old=(unit public)
       (~(get by kyz.puk) who)
     ?:  ?|  ?=(?(%earl %pawn) (clan:title who))
+            ::  XX save %dawn sponsor in .own.sub, check there
+            ::  XX or move sein:of to sein:su?
             ::  XX full saxo chain?
             ::
-            =(who (sein:title our))
+            =(who (^sein:title our))
         ==
       ?~  old
         [live=& life (my [life pass] ~)]
