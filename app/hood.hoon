@@ -11,8 +11,7 @@
     ::     they have been bundled into :hood
     ::
     ::  |command handlers
-    hood-helm, hood-kiln, hood-drum, hood-write,
-    hood-womb
+    hood-helm, hood-kiln, hood-drum, hood-write
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -49,7 +48,6 @@
               $drum  ?>(?=($drum -.paw) `part:hood-drum`paw)
               $helm  ?>(?=($helm -.paw) `part:hood-helm`paw)
               $kiln  ?>(?=($kiln -.paw) `part:hood-kiln`paw)
-              $womb  ?>(?=($womb -.paw) `part:hood-womb`paw)
               $write  ?>(?=($write -.paw) `part:hood-write`paw)
             ==
       --
@@ -61,7 +59,6 @@
               $drum  (make:hood-drum our)
               $helm  *part:hood-helm
               $kiln  *part:hood-kiln
-              $womb  *part:hood-womb
               $write  *part:hood-write
             ==
       --
@@ -74,7 +71,6 @@
       $%  {$drum $2 pith-2:hood-drum}                   ::
           {$helm $0 pith:hood-helm}                     ::
           {$kiln $0 pith:hood-kiln}                     ::
-          {$womb $1 pith:hood-womb}                     ::
           {$write $0 pith:hood-write}                   ::
       ==                                                ::
     --                                                  ::
@@ -126,7 +122,6 @@
 ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum))
 ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm))
 ++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln))
-++  from-womb  (from-module %womb [..$ _abet]:(hood-womb))
 ++  from-write  (from-module %write [..$ _abet]:(hood-write))
 ::
 ::                                                      ::  ::
@@ -148,8 +143,6 @@
 ++  wake-kiln-overload        (wrap take-wake-overload):from-kiln
 ++  onto-drum                 (wrap take-onto):from-drum
 ++  peer-drum                 (wrap peer):from-drum
-++  peek-x-womb               peek-x:(hood-womb hid (able %womb))
-++  peer-scry-x-womb          (wrap peer-scry-x):from-womb
 ++  poke-atom                 (wrap poke-atom):from-helm
 ++  poke-dill-belt            (wrap poke-dill-belt):from-drum
 ++  poke-drum-put             (wrap poke-put):from-drum
@@ -192,21 +185,6 @@
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
 ++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
 ++  poke-kiln-permission      (wrap poke-permission):from-kiln
-++  poke-womb-invite          (wrap poke-invite):from-womb
-++  poke-womb-save            (wrap poke-save):from-womb
-++  poke-womb-obey            (wrap poke-obey):from-womb
-++  poke-womb-bonus           (wrap poke-bonus):from-womb
-++  poke-womb-claim           (wrap poke-claim):from-womb
-++  poke-womb-do-ticket       (wrap poke-do-ticket):from-womb
-++  poke-womb-do-claim        (wrap poke-do-claim):from-womb
-++  poke-womb-rekey           (wrap poke-rekey):from-womb
-++  poke-womb-manage          (wrap poke-manage):from-womb
-++  poke-womb-recycle         (wrap poke-recycle):from-womb
-++  poke-womb-manage-old-key  (wrap poke-manage-old-key):from-womb
-++  poke-womb-release         (wrap poke-release):from-womb
-++  poke-womb-release-ships   (wrap poke-release-ships):from-womb
-++  poke-womb-reinvite        (wrap poke-reinvite):from-womb
-++  poke-womb-replay-log      (wrap poke-replay-log):from-womb
 ++  poke-write-sec-atom       (wrap poke-sec-atom):from-write
 ++  poke-write-paste          (wrap poke-paste):from-write
 ++  poke-write-comment        (wrap poke-comment):from-write

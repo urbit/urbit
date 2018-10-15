@@ -2082,40 +2082,6 @@
           [%vine ~]                                     ::  view secret history
           [%west p=sack q=path r=*]                     ::  remote request
       ==                                                ::
-    ++  gilt  gilt:womb
-    --
-  ::
-  ++  womb  ^?
-    ::  types used to serve the lib/womb invite controller
-    |%
-    ++  ticket  @G                                      ::  old 64-bit ticket
-    ++  passcode  @uvH                                  ::  128-bit passcode
-    ++  passhash  @uwH                                  ::  passocde hash
-    ++  mail  @t                                        ::  email address
-    ++  invite                                          ::
-      $:  who/mail                                      ::  owner email
-          pla/@ud                                       ::  planets to send
-          sta/@ud                                       ::  stars to send
-      ==                                                ::
-    ::                                                  ::
-    ++  reinvite  {tid/passcode inv/invite}             ::  new from old
-    ++  task                                            ::  manage ship %fungi
-      $%  {$claim aut/passcode her/@p tik/ticket}       ::  convert to %final
-          {$bonus tid/passcode pla/@ud sta/@ud}         ::  supplement passcode
-          {$invite tid/passcode inv/invite}             ::  alloc to passcode
-          {$reinvite aut/passcode reinvite}             ::  move to another
-      ==                                                ::
-    ++  scry                                            ::
-      $%  {$shop typ/?($star $planet) nth/@u}           ::  available ships
-          {$stats who/ship}                             ::  ship details
-          {$balance aut/passcode}                       ::  invite details
-      ==                                                ::
-    ++  balance  {who/mail pla/@ud sta/@ud}             ::  XX same as invite?
-    ++  gilt                                            ::
-      $%  {$ships (list ship)}                          ::
-          {$womb-owner (unit mail)}                     ::
-          {$womb-balance (unit balance)}                ::
-      ==
     --
   ::                                                    ::
   ::::                  ++pki:jael                      ::  (1h2) certificates
