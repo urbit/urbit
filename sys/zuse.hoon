@@ -3675,12 +3675,12 @@
       ::                                                ::  ++fig:ex:crub:crypto
       ++  fig                                           ::  fingerprint
         ^-  @uvH
-        (shaf %bfig sgn.^pub)
+        (shaf %bfig pub)
       ::                                                ::  ++pac:ex:crub:crypto
       ++  pac                                           ::  private fingerprint
         ^-  @uvG
         ?~  sek  ~|  %pubkey-only  !!
-        (end 6 1 (shaf %bcod sgn.u.sek))
+        (end 6 1 (shaf %bcod sec))
       ::                                                ::  ++pub:ex:crub:crypto
       ++  pub                                           ::  public key
         ^-  pass
@@ -6532,7 +6532,7 @@
           $king  (end 3 1 who)
           $duke  (end 4 1 who)
           $earl  (end 5 1 who)
-          $pawn  ~zod
+          $pawn  (end 4 1 who)
         ==
       --
   |%
@@ -7909,6 +7909,18 @@
       +$  live  (unit [=life breach=?])
       --
   |%
+  :: +come:dawn: mine a comet under a star
+  ::
+  ++  come
+    |=  [tar=ship eny=@uvJ]
+    ~|  [%come-not-king tar]
+    ?>  ?=(%king (clan:title tar))
+    |-  ^-  seed:able:jael
+    =/  cub=acru:ames  (pit:nu:crub:crypto 512 eny)
+    =/  who=ship  `@`fig:ex:cub
+    ?:  =(tar (^sein:title who))
+      [who 1 sec:ex:cub ~]
+    $(eny +(eny))
   ::  |give:dawn: produce requests for pre-boot validation
   ::
   ++  give
