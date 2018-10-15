@@ -56,6 +56,11 @@
         ==                                              ::
       $=  own                                           ::  vault (vein)
         $:  yen/(set duct)                              ::  trackers
+            :: XX use this                              ::
+            our=ship                                    ::
+            :: XX reconcile with .dns.eth               ::
+            tuf=(list turf)                             ::  domains
+            fak/_|                                      ::  fake keys
             lyf/life                                    ::  version
             jaw/(map life ring)                         ::  private keys
         ==                                              ::
@@ -74,9 +79,6 @@
 ++  state-absolute                                      ::  absolute urbit
   $:  pry/(map ship (map ship safe))                    ::  promises
       eve=logs                                          ::  on-chain events
-      :: XX reconcile with .dns.eth
-      tuf=(list turf)                                   ::  domains
-      fak/_|                                            ::  fake keys
   ==                                                    ::
 ++  state-eth-node                                      ::  node config + meta
   $:  source=(each ship node-src)                       ::  learning from
@@ -655,6 +657,9 @@
     ::
         %dawn
       =*  our  who.seed.tac
+      ::  sort-of single-homed
+      ::
+      =.  our.own.sub  our
       ::  our initial private key, as a +tree of +rite
       ::
       =/  rit  (sy [%jewel (my [lyf.seed.tac key.seed.tac] ~)] ~)
@@ -671,7 +676,7 @@
       ::  XX reconcile with .dns.eth
       ::  set initial domains
       ::
-      =.  tuf.urb  turf.tac
+      =.  tuf.own.sub  turf.tac
       ::
       =.  moz
         %+  weld  moz
@@ -696,6 +701,9 @@
     ::
         %fake
       =*  our  our.tac
+      ::  sort-of single-homed
+      ::
+      =.  our.own.sub  our
       ::  our private key, as a +tree of +rite
       ::
       ::    Private key updates are disallowed for fake ships,
@@ -706,7 +714,7 @@
       =.  +>.$  $(tac [%mint our our rit])
       ::  set the fake bit
       ::
-      =.  fak.urb  &
+      =.  fak.own.sub  &
       ::  initialize other vanes per the usual procedure
       ::
       ::    Except for ourselves!
@@ -742,7 +750,9 @@
     ::
         $mint
       ~|  %fake-jael
-      ?<  fak.urb
+      ?<  ?&  fak.own.sub
+              (~(exists up q.tac) %jewel)
+          ==
       %^  cure  hen  our.tac
       abet:abet:(deal:(burb our.tac) p.tac [q.tac ~])
     ::
@@ -793,8 +803,8 @@
       ::  ships with real keys must have domains,
       ::  those with fake keys must not
       ::
-      ?<  =(fak.urb ?=(^ tuf.urb))
-      +>.$(moz [[hen %give %turf tuf.urb] moz])
+      ?<  =(fak.own.sub ?=(^ tuf.own.sub))
+      +>.$(moz [[hen %give %turf tuf.own.sub] moz])
     ::
     ::  watch private keys
     ::    {$vein $~}
@@ -996,7 +1006,7 @@
     ::
     ++  pubs
       |=  who=ship
-      ?:  fak.urb
+      ?:  fak.own.sub
         (pubs:fake who)
       %_  ..feed
         moz      =/  pub  (~(get by kyz.puk) who)
@@ -1027,7 +1037,7 @@
       ==
     ::                                                  ::  ++fake:feed:su
     ++  fake                                            ::  fake subs and state
-      ?>  fak.urb
+      ?>  fak.own.sub
       |%
       ++  pubs
         |=  who=ship
@@ -1067,8 +1077,11 @@
     ++  vein                                            ::  kick private keys
       ^+  ..feel
       =/  yam  vein:form
-      ?:  =(yam +.own)  ..feel
-      (exec(+.own yam) yen.own [%give %vein +.own])
+      ?:  &(=(lyf.own p.yam) =(jaw.own q.yam))
+        ..feel
+      =.  lyf.own  p.yam
+      =.  jaw.own  q.yam
+      (exec yen.own [%give %vein lyf.own jaw.own])
     ::                                                  ::  ++vest:feel:su
     ++  vest                                            ::  kick balance
       |=  hug/action
