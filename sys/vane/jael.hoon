@@ -58,6 +58,7 @@
         $:  yen/(set duct)                              ::  trackers
             :: XX use this                              ::
             our=ship                                    ::
+            sig=(unit oath)                             ::  for a moon
             :: XX reconcile with .dns.eth               ::
             tuf=(list turf)                             ::  domains
             fak/_|                                      ::  fake keys
@@ -660,6 +661,16 @@
       ::  sort-of single-homed
       ::
       =.  our.own.sub  our
+      ::  save our parent signature (only for moons)
+      ::
+      =.  sig.own.sub  sig.seed.tac
+      ::  our initial public key
+      ::
+      =.  kyz.puk.sub
+        =/  cub  (nol:nu:crub:crypto key.seed.tac)
+        %+  ~(put by kyz.puk.sub)
+          our
+        [& lyf.seed.tac (my [lyf.seed.tac pub:ex:cub] ~)]
       ::  our initial private key, as a +tree of +rite
       ::
       =/  rit  (sy [%jewel (my [lyf.seed.tac key.seed.tac] ~)] ~)
@@ -704,12 +715,27 @@
       ::  sort-of single-homed
       ::
       =.  our.own.sub  our
+      ::  fake keys are deterministically derived from the ship
+      ::
+      =/  cub  (pit:nu:crub:crypto 512 our)
+      ::  save our parent signature (only for moons)
+      ::
+      ::    XX move logic to zuse
+      ::
+      =.  sig.own.sub
+        ?.  ?=(%earl (clan:title our))
+          ~
+        =/  yig  (pit:nu:crub:crypto 512 (sein:title our))
+        [~ (sign:as:yig (shaf %earl (sham our 1 pub:ex:cub)))]
+      ::  our initial public key
+      ::
+      =.  kyz.puk.sub
+        (~(put by kyz.puk.sub) our [& 1 (my [1 pub:ex:cub] ~)])
       ::  our private key, as a +tree of +rite
       ::
       ::    Private key updates are disallowed for fake ships,
       ::    so we do this first.
       ::
-      =/  cub  (pit:nu:crub:crypto 512 our)
       =/  rit  (sy [%jewel (my [1 sec:ex:cub] ~)] ~)
       =.  +>.$  $(tac [%mint our our rit])
       ::  set the fake bit
