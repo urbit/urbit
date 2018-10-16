@@ -1346,7 +1346,7 @@ void
 u3_sist_boot(void)
 {
   if ( c3y == u3_Host.ops_u.nuu ) {
-    u3_noun pig;
+    u3_noun pig, who;
 
     if ( 0 != u3_Host.ops_u.fak_c ) {
       u3_noun whu = u3dc("slaw", 'p', u3i_string(u3_Host.ops_u.fak_c));
@@ -1359,16 +1359,17 @@ u3_sist_boot(void)
       fprintf(stderr, "fake: %s\r\n", u3_Host.ops_u.fak_c);
 
       u3A->fak = c3y;
-      pig = u3nc(c3__fake, u3k(u3t(whu)));
+      who = u3k(u3t(whu));
+      pig = u3nc(c3__fake, who);
       u3z(whu);
     }
     else {
       u3A->fak = c3n;
       pig = _sist_dawn();
+      who = u3k(u3h(u3h(u3t(pig))));
     }
 
-    // will be set by %init card in reck.c
-    u3A->own = u3_none;
+    u3A->own = who;
     _sist_make(pig);
   }
   else {

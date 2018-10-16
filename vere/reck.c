@@ -100,8 +100,8 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
 
     case c3__init: p_fav = u3t(fav);
     {
-      c3_assert( u3_none == u3A->own );
-      u3A->own = u3k(p_fav);
+      uL(fprintf(uH, "kick: init: term\n"));
+      c3_assert( c3y == u3r_sing(u3A->own, p_fav) );
 
       u3z(pox); u3z(fav); return c3y;
     } break;
@@ -225,7 +225,7 @@ _reck_kick_ames(u3_noun pox, u3_noun fav)
     case c3__init: p_fav = u3t(fav);
     {
       uL(fprintf(uH, "kick: init: ames\n"));
-      c3_assert(0);
+      c3_assert( c3y == u3r_sing(u3A->own, p_fav) );
 
       u3z(pox); u3z(fav); return c3y;
     } break;
@@ -315,7 +315,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
       case c3__init: p_fav = u3t(fav);
       {
         uL(fprintf(uH, "kick: init: spec\n"));
-        c3_assert(0);
+        c3_assert( c3y == u3r_sing(u3A->own, p_fav) );
 
         u3z(pox); u3z(fav); return c3y;
       } break;
