@@ -1323,11 +1323,8 @@ _sist_dawn(void)
     u3_lo_bail();
   }
 
-  // XX slow, temporarily disabled
-  // XX maybe print messages, spin a cursor, etc.
-  // u3_noun raz = _sist_eth_rpc(url_c, u3v_wish("czar:give:dawn"));
-  // u3_noun zar = u3do("czar:take:dawn", raz);
-  u3_noun zar = u3_nul;
+  u3_noun raz = _sist_eth_rpc(url_c, u3v_wish("czar:give:dawn"));
+  u3_noun zar = u3do("czar:take:dawn", raz);
 
   u3_noun fut = _sist_eth_rpc(url_c, u3v_wish("turf:give:dawn"));
   u3_noun tuf = u3do("turf:take:dawn", fut);
