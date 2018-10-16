@@ -218,8 +218,8 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   // XX revisit
   if ( (0 == u3_Host.ops_u.fak_c) && (c3y == u3_Host.ops_u.net) ) {
-    fprintf(stderr, "-N only makes sense with -F\n");
-    return c3n;
+    // fprintf(stderr, "-N only makes sense with -F\n");
+    u3_Host.ops_u.net = c3n;
   } else if ( (0 == u3_Host.ops_u.fak_c) && (c3n == u3_Host.ops_u.net) ) {
     u3_Host.ops_u.net = c3y;  /* remote networking is always on in real mode. */
   }
