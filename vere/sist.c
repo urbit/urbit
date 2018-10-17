@@ -1122,17 +1122,6 @@ _sist_rest()
   }
 }
 
-/* _sist_zen(): get OS entropy.
-*/
-static u3_noun
-_sist_zen()
-{
-  c3_w rad_w[16];
-
-  c3_rand(rad_w);
-  return u3i_words(16, rad_w);
-}
-
 /* _sist_curl_alloc(): allocate a response buffer for curl
 */
 static size_t
@@ -1246,55 +1235,15 @@ _sist_eth_rpc(c3_c* url_c, u3_noun oct)
 /* _sist_dawn(): produce %dawn boot card - validate keys and query contract
 */
 static u3_noun
-_sist_dawn(u3_noun des)
+_sist_dawn(u3_noun sed)
 {
-  u3_noun who, sed, pon, zar, tuf;
+  u3_noun pon, zar, tuf;
+
+  u3_noun who = u3h(sed);
 
   c3_t  eth_t = ( 0 != u3_Host.ops_u.eth_c );
   // XX require https?
   c3_c* url_c = eth_t ? u3_Host.ops_u.eth_c : "http://localhost:8545";
-
-  {
-    u3_noun eds = u3dc("slaw", c3__uw, u3k(des));
-
-    if ( u3_nul == eds ) {
-      c3_c* sed_c = u3r_string(des);
-      fprintf(stderr, "dawn: invalid private keys: %s\r\n", sed_c);
-      free(sed_c);
-      u3_lo_bail();
-    }
-
-    if ( 0 == u3_Host.ops_u.who_c ) {
-      fprintf(stderr, "dawn: -w required\r\n");
-      u3_lo_bail();
-    }
-
-    u3_noun woh = u3i_string(u3_Host.ops_u.who_c);
-    u3_noun whu = u3dc("slaw", 'p', u3k(woh));
-
-    if ( u3_nul == whu ) {
-      fprintf(stderr, "dawn: invalid ship specificed with -w %s\r\n",
-                                                 u3_Host.ops_u.who_c);
-      u3_lo_bail();
-    }
-
-    // +seed:able:jael: private key file
-    sed = u3ke_cue(u3k(u3t(eds)));
-    who = u3h(sed);
-
-    if ( who != u3t(whu) ) {
-      u3_noun how = u3dc("scot", 'p', u3k(who));
-      c3_c* how_c = u3r_string(u3k(how));
-      fprintf(stderr, "dawn: mismatch between -w %s and -K %s\r\n",
-                                                 u3_Host.ops_u.who_c, how_c);
-
-      u3z(how);
-      free(how_c);
-      u3_lo_bail();
-    }
-
-    u3z(woh); u3z(whu); u3z(des); u3z(eds);
-  }
 
   // XX leaks nock
   {
@@ -1386,6 +1335,103 @@ _sist_dawn(u3_noun des)
   return u3nc(c3__dawn, u3nq(sed, pon, zar, tuf));
 }
 
+/* _sist_zen(): get OS entropy.
+*/
+static u3_noun
+_sist_zen(void)
+{
+  c3_w rad_w[16];
+
+  c3_rand(rad_w);
+  return u3i_words(16, rad_w);
+}
+
+/* _sist_come(): mine a comet.
+*/
+static u3_noun
+_sist_come(void)
+{
+  u3_noun tar, eny, sed;
+
+  // XX choose from list, at random, &c
+  tar = u3dc("slav", 'p', u3i_string("~marzod"));
+  eny = _sist_zen();
+
+  {
+    u3_noun sar = u3dc("scot", 'p', u3k(tar));
+    c3_c* tar_c = u3r_string(sar);
+
+    fprintf(stderr, "boot: mining a comet under %s\r\n", tar_c);
+    free(tar_c);
+    u3z(sar);
+  }
+
+  sed = u3dc("come:dawn", u3k(tar), u3k(eny));
+
+  {
+    u3_noun who = u3dc("scot", 'p', u3k(u3h(sed)));
+    c3_c* who_c = u3r_string(who);
+
+    fprintf(stderr, "boot: found comet %s\r\n", who_c);
+    free(who_c);
+    u3z(who);
+  }
+
+  u3z(tar); u3z(eny);
+
+  return sed;
+}
+
+/* sist_key(): parse a private key-file.
+*/
+static u3_noun
+sist_key(u3_noun des)
+{
+  u3_noun sed, who;
+
+  u3_noun eds = u3dc("slaw", c3__uw, u3k(des));
+
+  if ( u3_nul == eds ) {
+    c3_c* sed_c = u3r_string(des);
+    fprintf(stderr, "dawn: invalid private keys: %s\r\n", sed_c);
+    free(sed_c);
+    u3_lo_bail();
+  }
+
+  if ( 0 == u3_Host.ops_u.who_c ) {
+    fprintf(stderr, "dawn: -w required\r\n");
+    u3_lo_bail();
+  }
+
+  u3_noun woh = u3i_string(u3_Host.ops_u.who_c);
+  u3_noun whu = u3dc("slaw", 'p', u3k(woh));
+
+  if ( u3_nul == whu ) {
+    fprintf(stderr, "dawn: invalid ship specificed with -w %s\r\n",
+                                               u3_Host.ops_u.who_c);
+    u3_lo_bail();
+  }
+
+  // +seed:able:jael: private key file
+  sed = u3ke_cue(u3k(u3t(eds)));
+  who = u3h(sed);
+
+  if ( c3n == u3r_sing(who, u3t(whu)) ) {
+    u3_noun how = u3dc("scot", 'p', u3k(who));
+    c3_c* how_c = u3r_string(u3k(how));
+    fprintf(stderr, "dawn: mismatch between -w %s and -K %s\r\n",
+                                               u3_Host.ops_u.who_c, how_c);
+
+    u3z(how);
+    free(how_c);
+    u3_lo_bail();
+  }
+
+  u3z(woh); u3z(whu); u3z(des); u3z(eds);
+
+  return sed;
+}
+
 /* u3_sist_boot(): restore or create.
 */
 void
@@ -1413,6 +1459,16 @@ u3_sist_boot(void)
         fprintf(stderr, "fake: invalid ship: %s\r\n", u3_Host.ops_u.fak_c);
         u3_lo_bail();
       }
+      else {
+        u3_noun rac = u3do("clan:title", u3k(u3t(whu)));
+
+        if ( c3__pawn == rac ) {
+          fprintf(stderr, "fake comets are disallowed\r\n");
+          u3_lo_bail();
+        }
+
+        u3z(rac);
+      }
 
       fprintf(stderr, "fake: %s\r\n", u3_Host.ops_u.fak_c);
 
@@ -1423,24 +1479,25 @@ u3_sist_boot(void)
       u3z(whu);
     }
     else {
-      u3_noun des = u3_none;
+      u3_noun sed;
 
       if ( 0 != u3_Host.ops_u.key_c ) {
-        des = u3m_file(u3_Host.ops_u.key_c);
+        u3_noun des = u3m_file(u3_Host.ops_u.key_c);
+        sed = sist_key(des);
       }
       else if ( 0 != u3_Host.ops_u.gen_c ) {
-        des = u3i_string(u3_Host.ops_u.gen_c);
+        u3_noun des = u3i_string(u3_Host.ops_u.gen_c);
+        sed = sist_key(des);
       }
       else {
-        // XX print nice error
-        u3_lo_bail();
+        sed = _sist_come();
       }
 
       u3A->fak = c3n;
-      pig = _sist_dawn(u3k(des));
+      pig = _sist_dawn(u3k(sed));
       who = u3k(u3h(u3h(u3t(pig))));
 
-      u3z(des);
+      u3z(sed);
     }
 
     u3A->own = who;

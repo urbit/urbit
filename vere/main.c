@@ -193,6 +193,11 @@ _main_getopt(c3_i argc, c3_c** argv)
   }
 
   if ( 0 != u3_Host.ops_u.fak_c ) {
+    if ( 28 < strlen(u3_Host.ops_u.fak_c) ) {
+      fprintf(stderr, "fake comets are disallowed\r\n");
+      return c3n;
+    }
+
     u3_Host.ops_u.who_c = strdup(u3_Host.ops_u.fak_c);
   }
 
