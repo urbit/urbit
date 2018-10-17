@@ -1906,7 +1906,21 @@
     =/  lyf  (slaw %ud i.t.tyl)
     ?~  who  [~ ~]
     ?~  lyf  [~ ~]
-    ?:  ?=(%earl (clan:title u.who))
+    =/  rac  (clan:title u.who)
+    ::
+    ?:  ?=(%pawn rac)
+      ?.  =(u.who p.why)
+        [~ ~]
+      ?.  =(1 u.lyf)
+        [~ ~]
+      =/  sec  (~(got by jaw.own.sub.lex) u.lyf)
+      =/  cub  (nol:nu:crub:crypto sec)
+      =/  sig  (sign:as:cub (shaf %self (sham [u.who 1 pub:ex:cub])))
+      :^  ~  ~  %noun
+      !>  ^-  deed:ames
+      [1 pub:ex:cub `sig]
+    ::
+    ?:  ?=(%earl rac)
       ?.  =(u.who p.why)
         [~ ~]
       ?:  (gth u.lyf lyf.own.sub.lex)
@@ -1918,6 +1932,7 @@
       :^  ~  ~  %noun
       !>  ^-  deed:ames
       [u.lyf pub:ex:cub sig.own.sub.lex]
+    ::
     =/  pub  (~(get by kyz.puk.sub.lex) u.who)
     ?~  pub  ~
     :: XX check lyf
