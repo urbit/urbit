@@ -667,18 +667,11 @@ u3_lo_lead(void)
   //  Further server configuration.
   //
   {
-    u3_ames_ef_bake();
-    u3_http_ef_bake();
-
-    if ( c3y == u3_Host.ops_u.nuu ) {
-      u3_noun rac = u3do("clan:title", u3k(u3A->own));
-
-      if ( c3__czar == rac ) {
-        u3_unix_ef_initial_into();
-      }
-
-      u3z(rac);
+    if ( c3n == u3_Host.ops_u.nuu ) {
+      u3_ames_ef_bake();
     }
+
+    u3_http_ef_bake();
   }
 
   _lo_talk();

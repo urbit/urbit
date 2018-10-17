@@ -1445,8 +1445,28 @@ u3_sist_boot(void)
 
     u3A->own = who;
 
+    // initialize ames
+    {
+      u3_noun tuf = (c3y == u3A->fak) ? u3_nul : u3t(u3t(u3t(u3t(pig))));
+      // with a fake event to bring up listeners and configure domains
+      u3_ames_ef_turf(u3k(tuf));
+      // and real effect to set the output duct
+      u3_ames_ef_bake();
+    }
+
     // Authenticate and initialize terminal.
     u3_term_ef_bake(pig);
+
+    // queue initial galaxy sync
+    {
+      u3_noun rac = u3do("clan:title", u3k(u3A->own));
+
+      if ( c3__czar == rac ) {
+        u3_unix_ef_initial_into();
+      }
+
+      u3z(rac);
+    }
 
     // Create the ship directory.
     _sist_zest();

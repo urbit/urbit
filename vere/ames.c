@@ -529,8 +529,7 @@ u3_ames_ef_turf(u3_noun tuf)
 
     u3z(tuf);
   }
-  else if ( c3n == u3A->fak ) {
-    // XX assert?
+  else if ( (c3n == u3A->fak) && (0 == u3_Host.sam_u.dns_c) ) {
     uL(fprintf(uH, "ames: turf: no domains\n"));
   }
 
