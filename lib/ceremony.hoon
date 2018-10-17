@@ -5,6 +5,7 @@
 =|  pk=@
 =|  addr=address
 =|  gas-price=@ud
+=|  network=@ux
 =|  now=@da
 ::
 |_  $:  nonce=@ud                                       ::  next tx id
@@ -196,12 +197,16 @@
       to
       0
       `@`?@(dat dat (tape-to-ux dat))
-      0x1  :: 0x1 for main or fakenet, 0x3 for ropsten
+      network
   ==
 ::
 ++  sequence
-  |=  [won=@da gasp=@ud non=@ud]
+  |=  [won=@da net=?(%fake %main %ropsten) gasp=@ud non=@ud]
   =.  this  (init(now won) won gasp non)
+  =.  network
+    ?+  net  0x1
+      %ropsten  0x3
+    ==
   ::
   ::  data loading
   ::
