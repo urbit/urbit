@@ -84,6 +84,7 @@
           [code.r message.r]
       !!
     ?>  ?=(%result -.r)
+    :-  ~
     %-  tape-to-ux:ceremony
     (sa:dejs:format res.r)
   (wake-see ~ ~)
