@@ -70,10 +70,16 @@
   ?>  ?=(%batch -.res)
   =.  see
     %-  ~(gas in see)
-    %+  turn  bas.res
+    %+  murn  bas.res
     |=  r=response:rpc:jstd
-    ^-  @ux
+    ^-  (unit @ux)
     ?:  ?=(%error -.r)
+      ?:  =('Known transaction' (end 3 17 message.r))
+        ~&  %sent-a-known-transaction--skipping
+        ~
+      ?:  =('Nonce too low' message.r)
+        ~&  %nonce-too-low--skipping
+        ~
       ~|  :-  'transaction send failed, game over'
           [code.r message.r]
       !!
