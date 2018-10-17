@@ -333,7 +333,7 @@
   ::
   ::  tlon galaxy booting
   ::
-  ~&  'Booting Tlon galaxies...'
+  ~&  ['Booting Tlon galaxies...' +(nonce)]
   =/  galaxies  (sort tlon-gal order-shiplist)
   |-
   ?^  galaxies
@@ -343,7 +343,7 @@
   ::
   ::  direct deeding
   ::
-  ~&  'Directly deeding assets...'
+  ~&  ['Directly deeding assets...' +(nonce)]
   =/  stars  (sort ~(tap by star-map) order-shiplist)
   |-
   ?^  stars
@@ -370,7 +370,7 @@
   ::
   ::  linear release registration and deeding
   ::
-  ~&  'Registering linear release recipients...'
+  ~&  ['Registering linear release recipients...' +(nonce)]
   |-
   ?^  lin-rec
     =.  this
@@ -378,17 +378,17 @@
       (register-linear:dat i.lin-rec)
     $(lin-rec t.lin-rec)
   ::
-  ~&  'Depositing linear release galaxies...'
+  ~&  ['Depositing linear release galaxies...' +(nonce)]
   =.  this
     (deposit-galaxies linear-star-release lin-gal)
   ::
-  ~&  'Depositing linear release stars...'
+  ~&  ['Depositing linear release stars...' +(nonce)]
   =.  this
     (deposit-stars linear-star-release lin-sar)
   ::
   ::  conditional release registration and deeding
   ::
-  ~&  'Registering conditional release recipients...'
+  ~&  ['Registering conditional release recipients...' +(nonce)]
   |-
   ?^  con-rec
     =.  this
@@ -396,17 +396,17 @@
       (register-conditional:dat i.con-rec)
     $(con-rec t.con-rec)
   ::
-  ~&  'Depositing conditional release galaxies...'
+  ~&  ['Depositing conditional release galaxies...' +(nonce)]
   =.  this
     (deposit-galaxies conditional-star-release con-gal)
   ::
-  ~&  'Depositing conditional release stars...'
+  ~&  ['Depositing conditional release stars...' +(nonce)]
   =.  this
     (deposit-stars conditional-star-release con-sar)
   ::
   ::  tlon galaxy sending
   ::
-  ~&  'Sending Tlon galaxies...'
+  ~&  ['Sending Tlon galaxies...' +(nonce)]
   =/  galaxies  (sort tlon-gal order-shiplist)
   |-
   ?^  galaxies
