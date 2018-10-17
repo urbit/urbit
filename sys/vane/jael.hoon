@@ -790,6 +790,10 @@
     ::    [%turf ~]
     ::
         %turf
+      ::  ships with real keys must have domains,
+      ::  those with fake keys must not
+      ::
+      ?<  =(fak.urb ?=(^ tuf.urb))
       +>.$(moz [[hen %give %turf tuf.urb] moz])
     ::
     ::  watch private keys
