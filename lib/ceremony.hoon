@@ -77,6 +77,7 @@
   |*  [fil=knot par=rule]
   %+  turn  (get-file /[fil]/txt)
   |=  c=cord
+  ~|  c
   (rash c par)
 ::
 ++  order-shiplist
