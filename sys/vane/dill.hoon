@@ -137,7 +137,8 @@
 |=  {now/@da eny/@ ski/sley}                            ::  current invocation
 =>  |%
     ++  as                                              ::  per cause
-      |_  $:  {moz/(list move) hen/duct our/ship}
+      =|  moz/(list move)
+      |_  $:  {hen/duct our/ship}
               axon
           ==
       ++  abet                                          ::  resolve
@@ -403,6 +404,8 @@
           +>
         ::
             [%j %init *]
+          ::  pass thru to unix
+          ::
           +>(moz :_(moz [hen %give +.sih]))
         ::
             {$a $send *}
@@ -479,22 +482,12 @@
       --
     ::
     ++  ax                                              ::  make ++as
-      |=  {hen/duct kyz/task:able}                           ::
+      |=  hen/duct
+      ^-  (unit _as)
       ?~  ore.all  ~
-      =+  nux=(~(get by dug.all) hen)
-      ?^  nux
-        (some ~(. as [~ hen u.ore.all] u.nux))
-      ?.  ?=($flow -.kyz)  ~
-      %-  some
-      %.  q.kyz
-      %~  into  as
-      :-  [~ hen u.ore.all]
-      :*  p.kyz
-          [~ ~]
-          80
-          0
-          (tuba "<awaiting {(trip p.kyz)}, this may take a few minutes>")
-      ==
+      =/  nux  (~(get by dug.all) hen)
+      ?~  nux  ~
+      (some ~(. as [hen u.ore.all] u.nux))
     --
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request
@@ -512,44 +505,51 @@
         ~&  [%dill-call-flub (@tas `*`-.q.hic)]
         ((hard task:able) q.hic)
       ==
-  ?:  ?=($boot -.q.hic)
+  ::  the boot event passes thru %dill for initial duct distribution
+  ::
+  ?:  ?=(%boot -.q.hic)
     ?>  ?=(?(%dawn %fake) -.p.q.hic)
+    ?>  =(~ hey.all)
+    =.  hey.all  `hen
     ::  XX clamming - use +hard or something?
-    ::  XX just save default duct here?
     ::
     :_(..^$ [hen %pass / (note %j p.q.hic)]~)
-  ?:  ?=($flog -.q.hic)
-    ::  ~&  [%dill-flog +.q.hic]
-    ::  XX is this just a means to hide %helm from other apps?
+  ::  we are subsequently initialized. single-home
+  ::
+  ?:  ?=(%init -.q.hic)
+    ?>  =(~ dug.all)
+    ?>  =(~ ore.all)
+    =.  ore.all  `p.q.hic
+    ::  configure new terminal, setup :hood and %clay
     ::
-    ?:  ?=({$crud $hax-heft ~} p.q.hic)
-      :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d %heft ~]~))
-    ::  XX why send indirect moves to ourself this way?
+    =*  our  p.q.hic
+    =*  duc  (need hey.all)
+    =/  app  %hood
+    =/  see  (tuba "<awaiting {(trip app)}, this may take a few minutes>")
+    =/  zon=axon  [app input=[~ ~] width=80 cursor=0 see]
     ::
-    :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d p.q.hic]~))
-  =.  hey.all  ?^(hey.all hey.all `hen)
-  ?:  ?=($init -.q.hic)
-    ::  ~&  [%cnhp-init hen]
-    ?:  =(ore.all `p.q.hic)
-      ::  XX duplicate init, remove, negative assert, or ignore?
-      ::
-      ~&  [%dill-dupe-init ore.all hen q.hic]
-      [[hen %give q.hic]~ ..^$]
-    =:  ore.all  `p.q.hic
-        dug.all   ~
-      ==
-    =^  moz  all  abet:(need (ax (need hey.all) [%flow %hood ~]))
-    ::  XX why %give %init here either way?
-    ::
-    ?:  |((lth p.q.hic 256) (gte p.q.hic (bex 64)))  [moz ..^$] ::  XX HORRIBLE
-    [:_(moz [(need hey.all) %give %init p.q.hic]) ..^$]
-  =+  nus=(ax hen q.hic)
-  ?~  nus
-    ?.  ?=(%crud -.q.hic)
-      ~&  [%dill-no-flow q.hic]
+    =^  moz  all  abet:(~(into as [duc our] zon) ~)
+    [moz ..^$]
+  ::  %flog tasks are unwrapped and sent back to us on our default duct
+  ::
+  ?:  ?=(%flog -.q.hic)
+    ?~  hey.all
       [~ ..^$]
-    ~&  [%dill-no-flow %crud p.q.hic]
-    [((slog (flop q.q.hic)) ~) ..^$]
+    ::  this lets lib/helm send %heft a la |mass
+    ::
+    =/  not=note-dill
+      ?:(?=([%crud %hax-heft ~] p.q.hic) [%heft ~] p.q.hic)
+    [[u.hey.all %slip %d not]~ ..^$]
+  ::
+  =/  nus  (ax hen)
+  ?~  nus
+    ::  we got this on an unknown duct or
+    ::  before %boot or %init (or one of those crashed)
+    ::
+    ~&  [%dill-call-no-flow hen -.q.hic]
+    =/  tan  ?:(?=(%crud -.q.hic) q.q.hic ~)
+    [((slog (flop tan)) ~) ..^$]
+  ::
   =^  moz  all  abet:(call:u.nus q.hic)
   [moz ..^$]
 ::
@@ -576,23 +576,13 @@
 ++  take                                                ::  process move
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
-  ?:  =(~ ore.all)
-    ::  note: required to establish default duct
+  =/  nus  (ax hen)
+  ?~  nus
+    ::  we got this on an unknown duct or
+    ::  before %boot or %init (or one of those crashed)
     ::
-    ::    XX dedupe with take:as and +call
-    ::
-    ?:  ?=([%j %init *] q.hin)
-      =.  hey.all  ?^(hey.all hey.all `hen)
-      [[[hen %give +.q.hin] ~] ..^$]
-      ::  [~ ..^$]
-    ~&  [%take-back q.hin]
+    ~&  [%dill-take-no-flow hen -.q.hin +<.q.hin]
     [~ ..^$]
-  ?.  (~(has by dug.all) hen)
-    ~&  [%take-weird-sign q.hin]
-    ~&  [%take-weird-hen hen]
-    [~ ..^$]
-  =+  our=?>(?=(^ ore.all) u.ore.all)
-  =^  moz  all
-    abet:(~(take as [~ hen our] (~(got by dug.all) hen)) q.hin)
+  =^  moz  all  abet:(take:u.nus q.hin)
   [moz ..^$]
 --

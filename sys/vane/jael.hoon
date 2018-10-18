@@ -712,15 +712,16 @@
         %+  weld  moz
         ::  order is crucial!
         ::
-        ::    %dill must init after %gall (and after %give intended for unix)
-        ::    %jael init must be deferred post %eyre init
+        ::    %dill must init after %gall
+        ::    the %give init (for unix) must be after %dill init
+        ::    %jael init must be deferred (makes http requests)
         ::
         ^-  (list move)
         :~  [hen %pass /(scot %p our)/init %b %wait +(now.sys)]
-            [hen %slip %d %init our]
             [hen %give %init our]
-            [hen %slip %g %init our]
             [hen %slip %e %init our]
+            [hen %slip %d %init our]
+            [hen %slip %g %init our]
             [hen %slip %c %init our]
             [hen %slip %a %init our]
         ==
@@ -767,10 +768,10 @@
       =.  moz
         %+  weld  moz
         ^-  (list move)
-        :~  [hen %slip %d %init our]
-            [hen %give %init our]
-            [hen %slip %g %init our]
+        :~  [hen %give %init our]
             [hen %slip %e %init our]
+            [hen %slip %d %init our]
+            [hen %slip %g %init our]
             [hen %slip %c %init our]
             [hen %slip %a %init our]
         ==
