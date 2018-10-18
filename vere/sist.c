@@ -1247,6 +1247,10 @@ _sist_dawn(u3_noun sed)
 
   // XX leaks nock
   {
+    fprintf(stderr, "boot: retrieving %s's public keys\r\n",
+                                                     u3_Host.ops_u.who_c);
+
+    // XX check parent if moon
     // +hull:constitution:ethe: on-chain state
     u3_noun oct = u3do("hull:give:dawn", u3k(who));
     u3_noun luh = _sist_eth_rpc(url_c, u3k(oct));
@@ -1256,6 +1260,8 @@ _sist_dawn(u3_noun sed)
     // XX actually make request
     // u3_noun liv = _sist_get_json(parent, /some/url)
     u3_noun liv = u3_nul;
+
+    fprintf(stderr, "boot: verifying keys\r\n");
 
     // (each sponsor=(unit ship) error=@tas)
     u3_noun sas = u3dt("veri:dawn", u3k(sed), u3k(hul), u3k(liv));
@@ -1311,6 +1317,8 @@ _sist_dawn(u3_noun sed)
 
   // XX leaks nock
   {
+    fprintf(stderr, "boot: retrieving galaxy table\r\n");
+
     // (map ship [=life =pass]): galaxy table
     u3_noun oct = u3v_wish("czar:give:dawn");
     u3_noun raz = _sist_eth_rpc(url_c, u3k(oct));
@@ -1321,6 +1329,8 @@ _sist_dawn(u3_noun sed)
 
   // XX leaks nock
   {
+    fprintf(stderr, "boot: retrieving network domains\r\n");
+
     // (list turf): ames domains
     u3_noun oct = u3v_wish("turf:give:dawn");
     u3_noun fut = _sist_eth_rpc(url_c, u3k(oct));
