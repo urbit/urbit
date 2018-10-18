@@ -1466,15 +1466,21 @@
           fox(bad (~(put in bad.fox) p.kyz))
         ::
             %sunk
-          =/  con=corn  (~(got by zac.fox) p.kyz)
-          =.  con       con(wab (~(del by wab.con) p.kyz))
-          =/  suf=sufi  (~(got by urb.ton.fox) p.kyz)
-          =.  suf       suf(hoc (~(del by hoc.suf) p.kyz))
+          ::  XX single-home properly
           ::
-          :-  ~
+          =/  our=ship
+            =/  key  ~(key by urb.ton.fox)
+            ?>(?=([@ ~ ~] key) n.key)
+          =*  who  p.kyz
+          =/  con=corn  (~(got by zac.fox) our)
+          =.  con       con(wab (~(del by wab.con) who))
+          =/  suf=sufi  (~(got by urb.ton.fox) our)
+          =.  suf       suf(hoc (~(del by hoc.suf) who))
+          ::
+          :-  [%wine [our who] " has sunk"]~
           %=  fox
-            zac      (~(put by zac.fox) p.kyz con)
-            urb.ton  (~(put by urb.ton.fox) p.kyz suf)
+            zac      (~(put by zac.fox) our con)
+            urb.ton  (~(put by urb.ton.fox) our suf)
           ==
         ::
             %wake

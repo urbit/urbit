@@ -158,7 +158,6 @@
                  (crud p.kyz q.kyz)
           $blew  (send %rez p.p.kyz q.p.kyz)
           $heft  heft
-          $sunk  +>
           $veer  (dump kyz)
           $vega  (dump kyz)
           $velo  (dump kyz)
@@ -540,6 +539,10 @@
     =/  not=note-dill
       ?:(?=([%crud %hax-heft ~] p.q.hic) [%heft ~] p.q.hic)
     [[u.hey.all %slip %d not]~ ..^$]
+  ::  a %sunk notification from %jail comes in on an unfamiliar duct
+  ::
+  ?:  ?=(%sunk -.q.hic)
+    [~ ..^$]
   ::
   =/  nus  (ax hen)
   ?~  nus
