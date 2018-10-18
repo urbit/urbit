@@ -1232,6 +1232,50 @@ _sist_eth_rpc(c3_c* url_c, u3_noun oct)
   return _sist_buf_to_oct(_sist_post_json(url_c, _sist_oct_to_buf(oct)));
 }
 
+/* _sist_dawn_fail(): pre-boot validation failed
+*/
+static void
+_sist_dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
+{
+  u3_noun how = u3dc("scot", 'p', u3k(who));
+  c3_c* how_c = u3r_string(u3k(how));
+
+  c3_c* rac_c;
+
+  switch (rac) {
+    default: c3_assert(0);
+    case c3__czar: {
+      rac_c = "galaxy";
+      break;
+    }
+    case c3__king: {
+      rac_c = "star";
+      break;
+    }
+    case c3__duke: {
+      rac_c = "planet";
+      break;
+    }
+    case c3__earl: {
+      rac_c = "moon";
+      break;
+    }
+    case c3__pawn: {
+      rac_c = "comet";
+      break;
+    }
+  }
+
+  fprintf(stderr, "dawn: invalid keys for %s '%s'\r\n", rac_c, how_c);
+
+  // XX deconstruct sas, print helpful error messages
+  u3m_p("pre-boot error", u3t(sas));
+
+  u3z(how);
+  free(how_c);
+  u3_lo_bail();
+}
+
 /* _sist_dawn(): produce %dawn boot card - validate keys and query contract
 */
 static u3_noun
@@ -1240,6 +1284,7 @@ _sist_dawn(u3_noun sed)
   u3_noun pon, zar, tuf;
 
   u3_noun who = u3h(sed);
+  u3_noun rac = u3do("clan:title", u3k(who));
 
   c3_t  eth_t = ( 0 != u3_Host.ops_u.eth_c );
   // XX require https?
@@ -1267,45 +1312,9 @@ _sist_dawn(u3_noun sed)
     u3_noun sas = u3dt("veri:dawn", u3k(sed), u3k(hul), u3k(liv));
 
     if ( c3n == u3h(sas) ) {
-      u3_noun rac = u3do("clan:title", u3k(who));
-      u3_noun how = u3dc("scot", 'p', u3k(who));
-      c3_c* how_c = u3r_string(u3k(how));
-
-      c3_c* rac_c;
-
-      switch (rac) {
-        default: c3_assert(0);
-        case c3__czar: {
-          rac_c = "galaxy";
-          break;
-        }
-        case c3__king: {
-          rac_c = "star";
-          break;
-        }
-        case c3__duke: {
-          rac_c = "planet";
-          break;
-        }
-        case c3__earl: {
-          rac_c = "moon";
-          break;
-        }
-        case c3__pawn: {
-          rac_c = "comet";
-          break;
-        }
-      }
-
-      fprintf(stderr, "dawn: invalid keys for %s '%s'\r\n", rac_c, how_c);
-
-      // XX deconstruct sas, print helpful error messages
-      u3m_p("pre-boot error", u3t(sas));
-
-      u3z(rac);
-      u3z(how);
-      free(how_c);
-      u3_lo_bail();
+      // bails, won't return
+      _sist_dawn_fail(who, rac, sas);
+      return u3_none;
     }
 
     // (unit ship): sponsor
@@ -1339,6 +1348,7 @@ _sist_dawn(u3_noun sed)
     u3z(oct); u3z(fut);
   }
 
+  u3z(rac);
   // XX include ops_u.eth_c if set
 
   // [%dawn seed sponsor galaxies domains]
