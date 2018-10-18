@@ -100,7 +100,6 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
 
     case c3__init: p_fav = u3t(fav);
     {
-      uL(fprintf(uH, "kick: init: term\n"));
       c3_assert( c3y == u3r_sing(u3A->own, p_fav) );
 
       u3z(pox); u3z(fav); return c3y;
@@ -196,6 +195,8 @@ _reck_kick_sync(u3_noun pox, u3_noun fav)
   u3z(pox); u3z(fav); return c3n;
 }
 
+/* _reck_kick_newt(): apply packet network outputs.
+*/
 static u3_noun
 _reck_kick_newt(u3_noun pox, u3_noun fav)
 {
@@ -211,27 +212,6 @@ _reck_kick_newt(u3_noun pox, u3_noun fav)
 
     case c3__turf: {
       u3_ames_ef_turf(u3k(u3t(fav)));
-      u3z(pox); u3z(fav); return c3y;
-    } break;
-  }
-  u3z(pox); u3z(fav); return c3n;
-}
-
-/* _reck_kick_ames(): apply packet network outputs.
-*/
-static u3_noun
-_reck_kick_ames(u3_noun pox, u3_noun fav)
-{
-  u3_noun p_fav;
-
-  switch ( u3h(fav) ) {
-    default: break;
-    // XX remove
-    case c3__init: p_fav = u3t(fav);
-    {
-      uL(fprintf(uH, "kick: init: ames\n"));
-      c3_assert( c3y == u3r_sing(u3A->own, p_fav) );
-
       u3z(pox); u3z(fav); return c3y;
     } break;
   }
@@ -305,24 +285,6 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
 
       case c3__newt: {
         return _reck_kick_newt(pox, fav);
-      } break;
-
-      case c3__ames: {
-        if ( (u3_nul != tt_pox) ) {
-          u3z(pox); u3z(fav); return c3n;
-        }
-        else {
-          return _reck_kick_ames(pox, fav);
-        }
-      } break;
-
-      // XX remove
-      case c3__init: p_fav = u3t(fav);
-      {
-        uL(fprintf(uH, "kick: init: spec\n"));
-        c3_assert( c3y == u3r_sing(u3A->own, p_fav) );
-
-        u3z(pox); u3z(fav); return c3y;
       } break;
 
       case c3__term: {
