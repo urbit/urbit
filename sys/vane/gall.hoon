@@ -1233,6 +1233,7 @@
         $keep  `%f
         $kill  `%f
         $merg  `%c
+        $mint  `%j
         $mont  `%c
         $nuke  `%a
         $ogre  `%c

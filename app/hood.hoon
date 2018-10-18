@@ -160,6 +160,7 @@
 ++  poke-helm-send-hi         (wrap poke-send-hi):from-helm
 ++  poke-helm-send-ask        (wrap poke-send-ask):from-helm
 ++  poke-helm-verb            (wrap poke-verb):from-helm
+++  poke-helm-rekey           (wrap poke-rekey):from-helm
 ++  poke-helm-nuke            (wrap poke-nuke):from-helm
 ++  poke-helm-tlon-add-fora   (wrap poke-tlon-add-fora):from-helm
 ++  poke-helm-tlon-add-stream  (wrap poke-tlon-add-stream):from-helm

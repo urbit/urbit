@@ -577,8 +577,13 @@
               =(~ urb.ton.fox)
           ==
         ~|  [%strange-vein +<]  !!
+      ::  XX remove :hoy from +sufi
       ::
-      =/  new=wund
+      =/  suf=sufi  (fall (~(get by urb.ton.fox) our) *sufi)
+      =.  hoc.suf  (~(run by hoc.suf) |=(=dore dore(caq *clot)))
+      =.  law.suf  (deed our now life)
+      =.  val.suf
+        ^-  wund
         %+  turn
           %+  sort
             ~(tap by vein)
@@ -586,13 +591,12 @@
           (gth life.a life.b)
         |=  [=^life =ring]
         [life ring (nol:nu:crub:crypto ring)]
+      ::  XX remove :hen from +corn, or set
       ::
-      =/  ded=^deed  (deed our now life)
-      ::  XX remove :hoy from +sufi
-      ::
+      =/  con=corn  (fall (~(get by zac.fox) our) *corn)
       %=  fox
-        urb.ton  (~(put by urb.ton.fox) our [hoy=~ new ded ~ ~])
-        zac      (~(put by zac.fox) our *corn)
+        urb.ton  (~(put by urb.ton.fox) our suf(hoy ~, seh ~))
+        zac      (~(put by zac.fox) our con)
       ==
     ::
     ++  gnaw                                            ::    gnaw:am

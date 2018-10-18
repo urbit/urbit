@@ -38,6 +38,7 @@
     ++  card                                            ::
       $%  {$conf wire dock $load ship term}             ::
           {$flog wire flog:dill}                        ::
+          [%mint wire our=ship p=ship q=safe:rights:jael]
           {$nuke wire ship}                             ::
           {$serv wire ?(desk beam)}                     ::
           {$poke wire dock pear}                        ::
@@ -61,6 +62,28 @@
   |=  (list card)
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
+::
+++  poke-rekey                                        ::  rotate private keys
+  |=  des=@t
+  =/  sed=(unit seed:able:jael)
+    %+  biff
+      (bind (slaw %uw des) cue)
+    (soft seed:able:jael)
+  =<  abet
+  ?~  sed
+    ~&  %invalid-private-key
+    +>.$
+  ?.  =(our who.u.sed)
+    ~&  [%wrong-private-key-ship who.u.sed]
+    +>.$
+  =/  lyf=life  .^(@ud j+/(scot %p our)/life/(scot %da now)/(scot %p our))
+  ?.  =(+(lyf) lyf.u.sed)
+    ~&  [%wrong-private-key-life expected=+(lyf) actual=lyf.u.sed]
+    +>.$
+  ::  our new private key, as a +tree of +rite
+  ::
+  =/  rit  (sy [%jewel (my [lyf.u.sed key.u.sed] ~)] ~)
+  (emit %mint / our our rit)
 ::
 ++  poke-nuke                                         ::  initialize
   |=  him/ship  =<  abet
