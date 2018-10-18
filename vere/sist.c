@@ -1292,14 +1292,42 @@ _sist_dawn(u3_noun sed)
 
   // XX leaks nock
   {
-    fprintf(stderr, "boot: retrieving %s's public keys\r\n",
-                                                     u3_Host.ops_u.who_c);
-
     // XX check parent if moon
     // +hull:constitution:ethe: on-chain state
-    u3_noun oct = u3do("hull:give:dawn", u3k(who));
-    u3_noun luh = _sist_eth_rpc(url_c, u3k(oct));
-    u3_noun hul = u3dc("hull:take:dawn", u3k(who), u3k(luh));
+    u3_noun hul;
+
+    {
+      if ( c3__pawn == rac ) {
+        // irrelevant, just bunt +hull
+        hul = u3v_wish("*hull:constitution:ethe");
+      }
+      else {
+        u3_noun oct;
+
+        if ( c3__earl == rac ) {
+          u3_noun seg = u3do("^sein:title", u3k(who));
+          u3_noun ges = u3dc("scot", 'p', u3k(seg));
+          c3_c* seg_c = u3r_string(ges);
+
+          fprintf(stderr, "boot: retrieving %s's public keys (for %s)\r\n",
+                                              seg_c, u3_Host.ops_u.who_c);
+          oct = u3do("hull:give:dawn", u3k(seg));
+
+          free(seg_c);
+          u3z(seg); u3z(ges);
+        }
+        else {
+          fprintf(stderr, "boot: retrieving %s's public keys\r\n",
+                                             u3_Host.ops_u.who_c);
+          oct = u3do("hull:give:dawn", u3k(who));
+        }
+
+        u3_noun luh = _sist_eth_rpc(url_c, u3k(oct));
+        hul = u3dc("hull:take:dawn", u3k(who), u3k(luh));
+
+        u3z(oct); u3z(luh);
+      }
+    }
 
     // +live:dawn: network state
     // XX actually make request
@@ -1321,7 +1349,7 @@ _sist_dawn(u3_noun sed)
     // produced by +veri:dawn to avoid coupling to +hull structure
     pon = u3k(u3t(sas));
 
-    u3z(oct); u3z(luh); u3z(hul); u3z(liv); u3z(sas);
+    u3z(hul); u3z(liv); u3z(sas);
   }
 
   // XX leaks nock
