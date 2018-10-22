@@ -3,10 +3,19 @@
 :-  %noun
 =-  "hello, world"
 |%
-+$  scan  [=loop=(map =@ud =xray) =xray]
++$  scan  
+  $:  ::  xray: type analysis record
+      ::  loop-map: loop dictionary
+      ::
+      =xray
+      =loop=(map =@ud =xray) 
+  ==
 +$  xray
-  $~  %noun
-  $@  $?  %noun
+  $~  %void
+  $@  $?  ::  %noun: any noun
+          ::  %void: no nouns
+          ::
+          %noun
           %void
       ==
   $%  ::  %bark: atom selection
@@ -50,6 +59,214 @@
       [%wood =(map atom (pair aura xray))]
   ==
 ::
+::  =untangle: convert $type to $scan
+::
+++  untangle
+  |=  =type
+  =|  $:  ::  trace: set of holds that current analysis is within
+          ::
+          trace=(set ^type) 
+          ::  state: accumulated state
+          ::
+          $=  state
+          $:  ::  count: cumulative loops detected
+              ::  table: loop number and analysis
+              ::
+              count=@ud
+              table=(map ^type (pair @ud xray))
+      ==  ==
+  |^  ::  (full analysis of .type)
+      ::
+      ^-  scan
+      =^  xray  state  specify
+      :-  xray
+      ::  (loop dictionary, from loop table)
+      ::
+      %-  ~(gas by *(map @ud ^xray)) 
+      %+  turn  
+        ~(tap by table.state)
+      |=  [* index=@ud =^xray] 
+      [index xray]
+  ::
+  ::  -specify: analyze type, producing analysis and raw state
+  :: 
+  ++  specify
+    |-  ^-  [xray _state]
+    =<  entry
+    |%
+    ::  -entry: analyze at possible entry point
+    ::
+    ++  entry
+      ::  ($xray of .type; updated .state)
+      ::
+      |-  ^-  [xray _state]
+      ::  old: existing entry for .type in .table.state
+      ::
+      =/  old  (~(get by table.state) type)
+      ::  if, old entry is found in loop table, reuse loop number
+      ::
+      ?^  old  [[%loop p.u.old] state]
+      ::  if, .type is already on our stack .trace
+      ::
+      ?:  (~(has in trace) type)
+        ::  then, build a %loop $xray, and put it in the loop table as a stub
+        ::
+        =+  [%loop count.state]
+        :-  -
+        %=  state
+          count  ::  (count.state incremented to the next unused index)
+                 ::
+                 +(count.state)
+          table  ::  (table.state 
+                 ::
+                 (~(put by table.state) type [count.state -])
+        ==
+      ::  else, apply main analysis loop
+      ::
+      =^  =xray  state  main(trace (~(put in trace) type))
+      ::  new: any xray we added to .table.state for .type
+      ::
+      =/  new  (~(get by table.state) type)
+      ::  if, .new is empty, then .type is not an entry point
+      ::
+      ?~  new  [xray state]
+      ::  else, build a loop declaration and corrected table state
+      ::
+      :-  [%knot [p.u.new ~ ~] xray]
+      state(table (~(put by table.state) type [p.u.new xray]))
+    ::
+    ::  -main: main analysis without entry control
+    ::
+    ++  main
+      |^  ^-  [xray _state]
+          ?-  type
+            %void      [%void state]
+            %noun      [%noun state]
+          ::
+            [%atom *]  (atom p.type q.type)
+            [%cell *]  (cell p.type q.type)
+            [%core *]  (core p.type q.type)
+            [%face *]  (face p.type q.type)
+            [%hint *]  (hint p.type q.type)
+            [%fork *]  (fork p.type)
+            [%hold *]  entry(type ~(repo ut type))
+          == 
+      ::  =atom: convert an %atom $type to an $xray
+      ::
+      ++  atom
+        |=  $:  ::  aura: flavor of atom
+                ::  constant: one value, or all values
+                ::
+                =aura
+                constant=(unit @)
+            ==
+        ^-  [xray _state]
+        :_  state
+        ?~  constant
+          [%sand aura]
+        [%rock u.constant aura]
+      ::
+      ::  =cell: convert a %cell $type to an $xray
+      ::
+      ++  cell
+        |=  $:  ::  left: head of cell
+                ::  rite: tail of cell
+                ::
+                left=^type
+                rite=^type
+            ==
+        ^-  [xray _state]
+        ::  head: analysis of head
+        ::  tail: analysis of tail
+        ::
+        =^  head  state  main(type left)
+        =^  tail  state  main(type rite)
+        [[%cell head tail] state]
+      ::
+      ::  =core: convert a %core $type to an $xray
+      ::
+      ++  core
+        |=  $:  ::  payload-type: type of payload data
+                ::  coil: battery source
+                ::
+                =payload=^type
+                =coil
+            ==
+        ^-  [xray _state]
+        ::  payload-xray: analyzed payload
+        ::
+        =^  payload-xray  state  main(type payload-type)
+        ::  chapters: analyzed chapters 
+        ::
+        =^  chapters=(list (pair term (map term xray)))  state
+          =/  chapters=(list (pair term tome))  ~(tap by q.r.coil)
+          |-  ^-  [(list (pair term (map term xray))) _state]
+          ?~  chapters  [~ state]
+          =^  more-chapters  state  $(chapters t.chapters)
+          =^  this-chapter  state
+            ^-  [(pair term (map term xray)) _state] 
+            =/  arms=(list (pair term hoon))  ~(tap by q.q.i.chapters)
+            =-  :_(-> [p.i.chapters (~(gas by *(map term xray)) -<)])
+            |-  ^-  [(list (pair term xray)) _state]
+            ?~  arms  [~ state]
+            =^  more-arms  state  $(arms t.arms)
+            =^  this-arm  state  
+              main(type [%hold [%core payload-type coil] q.i.arms])
+            [[[p.i.arms this-arm] more-arms] state]
+          [[this-chapter more-chapters] state]
+        :_  state
+        ^-  xray
+        :^    %core
+            r.p.coil
+          payload-xray
+        (~(gas by *(map term (map term xray))) chapters)
+      ::
+      ::  =face: convert a %face $type to an $xray
+      ::
+      ++  face
+        |=  $:  ::  decor: decoration 
+                ::  content-type: decorated content
+                ::
+                decor=$@(term tune)
+                =content=^type
+            ==
+        ^-  [xray _state]
+        ?^  decor  main(type content-type)
+        =^  =xray  state  main(type content-type)
+        [[%face decor xray] state]
+      ::
+      ::  =hint: convert a %hint $type to an $xray
+      ::
+      ++  hint
+        |=  $:  ::  subject-type: subject of note
+                ::  note: hint information
+                ::  content-type: type of hinted content
+                ::
+                [=subject=^type =note]
+                =content=^type
+            ==
+        ^-  [xray _state]
+        =^  =xray  state  main(type content-type)
+        [[%hint [subject-type note] xray] state]
+      ::
+      ::  +fork: convert a %fork $type to an $xray
+      ::
+      ++  fork
+        |=  ::  set: set of union types
+            ::
+            =(set ^type)
+        ^-  [xray _state]
+        =/  list  ~(tap in set)
+        =-  :_(-> [%fork (~(gas in *(^set xray)) -<)])
+        |-  ^-  [(^list xray) _state]
+        ?~  list  [~ state]
+        =^  this-xray  state  main(type i.list)
+        =^  more-xrays  state  $(list t.list)
+        [[this-xray more-xrays] state]
+      --
+    --
+  --
+::
 ::  =realign: analyze superpositions 
 ::
 ++  realign
@@ -59,14 +276,28 @@
       ?-  -.xray
         %bark  xray
         %bush  [%bush $(xray wide.xray) $(xray tall.xray)]
+        %cell  [%cell $(xray head.xray) $(xray tail.xray)]
         %core  :^    %core 
                    vair.xray
                  xray.xray
-               (~(run by map.xray) |=(xray ^$(xray +<)))
-        %face  [%face term.xray 
+               %-  ~(run by map.xray) 
+               |=  (map term ^xray) 
+               (~(run by +<) |=(^xray ^^$(xray +<)))
+        %face  [%face term.xray xray.xray]
+        %fork  =/  list  ~(tap in set.xray)
+               |-  ^-  ^xray
+               ?~  list  %void
+               (merge(xray i.list) `^xray`$(list t.list))
+        %hint  [%hint [type.xray note.xray] $(xray xray.xray)]
+        %knot  [%knot set.xray $(xray xray.xray)]
+        %loop  xray
+        %rock  xray
+        %root  [%root $(xray flat.xray) $(xray deep.xray)]
+        %sand  xray
+        %wood  :-  %wood
+               %-  ~(run by map.xray)
+               |=([aura ^xray] [+<- ^$(xray +<+)])
       ==
-
-
   ::
   ++  aura-merge
     |=  [=aura =aura]
