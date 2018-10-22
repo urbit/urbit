@@ -7942,7 +7942,7 @@
       ^-  octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      (read-request:ethereum [~ tract ['ships(uint32)' [%uint `@`who]~]])
+      (read-request:ethereum [`~.0 tract ['ships(uint32)' [%uint `@`who]~]])
     ::  +turf:give:dawn: Eth RPC for network domains
     ::
     ++  turf
