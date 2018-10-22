@@ -7666,19 +7666,6 @@
       ?<  ?=(~ specs)
       :_(load [%bswt specs])
     --
-  ::
-  ::  +explore:cosmetic: convert :sut to an inspection pattern (+plot).
-  ::
-  ++  explore
-    ^-  [plot _.]
-    =<  [- +>] 
-    |^  ^-  [plot _.]
-        ?+  sut  !!
-          %void  :_(. [%base %void])
-          %noun  :_(. [%base %noun])
-        ==
-    ++  foo  !!
-    --
   --
 ++  limb-to-plum
   |=  =limb
