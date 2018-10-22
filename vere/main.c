@@ -81,7 +81,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.fog = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
-  u3_Host.ops_u.has = c3n;
+  u3_Host.ops_u.has = c3y;
   u3_Host.ops_u.net = c3n;
   u3_Host.ops_u.mem = c3n;
   u3_Host.ops_u.nuu = c3n;
