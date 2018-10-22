@@ -6,13 +6,8 @@
 ::
 +$  card
   $%  [%connect wire [(unit @t) (list @t)] %server]
+      [%wait wire @da]
       [%http-response =raw-http-response:light]
-  ==
-::
-+$  state
-  $:  ::  count: sends back the count value
-      ::
-      count=(map bone @ud)
   ==
 --
 ::  utilities:
@@ -39,48 +34,66 @@
       ;h1:"Hello, {<(trip name)>}"
     ==
   ==
-::  ::  helper library that lets an app handle an EventSource.
-::  ::
-::  ++  event-source
-::    |_  m=(map session=@ud [last-id=@ud])
-::    ++  abet  m
-::    ::  +start-session: called by app to start a session and send first event
-::    ::
-::    ::    This creates a new session where we 
-::    ::
-::    ++  start-session
-::      |=  [session=@ud =bone data=wall]
-::      ^-  [(list move) +>.$]
-::      :-  :~  :*  bone  %http-response
-::                  %start  200
-::                  :~  ['content-type' 'text/event-stream']
-::                      ['cache-control' 'no-cache']
-::                  ==
+::  helper library that lets an app handle an EventSource.
+::
+++  event-source
+  |_  m=(map session=@ud [=bone last-id=@ud])
+  ++  abet  m
+  ::  +start-session: called by app to start a session and send first event
+  ::
+  ::    This creates a new session where we 
+  ::
+  ++  start-session
+    |=  [session=@ud =bone data=wall]
+    ^-  [(list move) _m]
+    ::
+    =/  lines=tape
+    ::
+    :-  :~  :*  bone  %http-response
+                %start  200
+                :~  ['content-type' 'text/event-stream']
+                    ['cache-control' 'no-cache']
+                ==
+                (wall-to-output data)
+                complete=%.n
+        ==  ==
+    m
+  ::  %_    +>.$
+  ::  ::  +reconnect-session: reconnect an old session to a new http pipe
+  ::  ::
+  ::  ::    HTTP sessions can be killed 
+  ::  ::
+  ::  ++  reconnect-session
+  ::    |=  [session=@ud =bone last-seen=@ud]
 
-::                  complete=%.n
-::          ==  ==
-::      %_    +>.$
-::    ::  +reconnect-session: reconnect an old session to a new http pipe
-::    ::
-::    ::    HTTP sessions can be killed 
-::    ::
-::    ++  reconnect-session
-::      |=  [session=@ud =bone last-seen=@ud]
+  ::  ::  +confirm-
+  ::  ::
+  ::  ++  confirm-
 
-::    ::  +confirm-
-::    ::
-::    ++  confirm-
-
-
-::    ::  ::  +end-session: called in response to an http pipe being closed
-::    ::  ::
-::    ::  ++  end-session
-  
-::    ::  ++  send-message
-::    ::    |=  [=bone ]
-::    --
-
-
+  ++  send-message
+    |=  [=bone data=wall]
+    ^-  [(list move) _m]
+    :-  :~  :*  bone  %http-response
+                %continue
+                (wall-to-output data)
+        ==  ==
+    m
+  ::
+  ++  wall-to-output
+    |=  =wall
+    ^-  (unit octs)
+    :-  ~
+    %-  as-octs:mimes:html
+    %-  crip
+    %-  zing
+    %+  weld
+      %+  turn  data
+      |=  t=tape
+      "data: {t}\0a"
+    ::
+    [`tape`['\0a' ~] ~]
+  --
+::
 ++  part1
   ^-  octs
   %-  as-octs:mimes:html
@@ -96,7 +109,28 @@
     (trip name)
     "&quot;</title></head><body><h1>Hello, &quot;"
     (trip name)
-    "&quot;</h1></body></html>"
+    "&quot;</h1>"
+    "<p>Time is <span id=time></span></p>"
+  ::
+    %-  trip
+    '''
+    <script>
+      var evtSource = new EventSource("/~server/stream", { withCredentials: true } );
+
+      evtSource.onmessage = function(e) {
+        var message = document.getElementById("time");
+        message.innerHTML = e.data;
+      }
+    </script>
+    '''
+  ::
+    "</body></html>"
+  ==
+--
+|%
+::
++$  state
+  $:  events=(map session=@ud [=bone last-id=@ud])
   ==
 --
 ::
@@ -119,6 +153,37 @@
   ~&  [%bound success]
   [~ this]
 ::
+::  TODO: Before we can actually add EventSource()s, we need to have %thud
+::  handling working.
+::
+++  handle-start-stream
+  |=  req=http-request:light
+  ^-  (quip move _this)
+  ::  Start a session sending the current time
+  ::
+  =^  moves  events
+    (~(start-session event-source events) 0 ost.bow ["{<now.bow>}" ~])
+  ::
+  :_  this
+  :-  ^-  move
+      [ost.bow %wait /timer (add now.bow ~s1)]
+  ::
+  moves
+::  +wake: responds to a %wait send from +handle-start-stream
+::
+++  wake
+  |=  [wir=wire ~]
+  ^-  (quip move _this)
+  ~&  [%tick wir now.bow]
+  ::
+  =^  moves  events
+    (~(send-message event-source events) ost.bow ["{<now.bow>}" ~])
+  ::
+  :_  this
+  :-  ^-  move
+      [ost.bow %wait /timer (add now.bow ~s1)]
+  moves
+::
 ::  received when we have a 
 ::
 ++  poke-handle-http-request
@@ -132,19 +197,21 @@
     ?~  back-path
       'World'
     i.back-path
+  ?:  =(name 'stream')
+    (handle-start-stream req)
   ~&  [%name name]
   ::
   :_  this
   :~  ^-  move
       :-  ost.bow
       :*  %http-response
-          [%start 200 ['content-type' 'text/html']~ [~ part1] %.y]
+          [%start 200 ['content-type' 'text/html']~ [~ part1] %.n]
       ==
-  ::  ::
-  ::      ^-  move
-  ::      :-  ost.bow
-  ::      :*  %http-response
-  ::          [%continue [~ (part2 name)] %.y]
-  ::      ==
+  ::
+      ^-  move
+      :-  ost.bow
+      :*  %http-response
+          [%continue [~ (part2 name)] %.y]
+      ==
   ==
 --

@@ -371,6 +371,14 @@
         %login-handler
       (handle-request:authentication secure address http-request)
     ==
+  ::  +cancel-request: handles a request being externally aborted
+  ::
+  ++  cancel-request
+    ^-  [(list move) server-state]
+    ::  TODO: Timer stuff is currently commented out at the C layer.
+    ::
+    ~&  [%cancel-request duct]
+    [~ state]
   ::  +return-static-data-on-duct: returns one piece of data all at once
   ::
   ++  return-static-data-on-duct
@@ -800,6 +808,14 @@
     =/  request  request:(per-server-event event-args)
     =^  moves  server-state.ax
       (request +.task)
+    [moves light-gate]
+  ::
+      ::
+      ::
+      %cancel-inbound-request
+    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
+    =/  cancel-request  cancel-request:(per-server-event event-args)
+    =^  moves  server-state.ax  cancel-request
     [moves light-gate]
   ::
       ::  %connect / %serve

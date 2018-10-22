@@ -2235,6 +2235,9 @@
           ::  starts handling an inbound http request
           ::
           [%inbound-request secure=? =address =http-request]
+          ::  cancels a previous request
+          ::
+          [%cancel-inbound-request ~]
           ::  connects a binding to an app
           ::
           [%connect =binding app=term]
