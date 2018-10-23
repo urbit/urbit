@@ -70,14 +70,14 @@
   %+  each  (unit out)                                  ::  ~ is abort
   (pair sole-prompt (sole-dialog out))                  ::  ask and continue
 ::                                                      ::
-++  sole-request                                        ::  scraper result
+++  sole-request                                         ::  scraper result
   |*  out/$-(* *)                                       ::  output structure
   %+  pair  (list tank)                                 ::  
   %+  each  (unit out)                                  ::  ~ is abort
   %^    trel                                            ::  fetch and continue
       (unit knot)
     hiss:eyre
-  $-(httr:eyre $;(..$))
+  $-(httr:eyre (sole-request out))
 --
 |%
 ::                                                      ::
@@ -91,33 +91,4 @@
   {{now/@da eny/@uvJ bek/beak} {,+<- ,+<+}}             ::
 ::                                                      ::
 ::                                                      ::
-++  sole-so                                             ::  construct result
-  |*  pro/*                                             ::
-  [p=*(list tank) q=[%& p=[~ u=pro]]]                   ::
-::                                                      ::
-++  sole-yo                                             ::  add output tank
-  |*  {tan/tank res/(sole-result)}                      ::
-  ?@  res  res                                          ::
-  [p=[i=tan t=p.res] q=q.res]                           ::
-::                                                      ::
-++  sole-lo                                             ::  construct prompt
-  |*  {pom/sole-prompt mor/(sole-dialog)}               ::
-  [p=*(list tank) q=[%| p=pom q=mor]]                   ::
-::                                                      ::
-++  sole-at                                             ::  fetch url
-  =|  usr/knot                                          ::
-  |*  {pul/_purl:eyre fun/$-(httr:eyre *)}            ::
-  :-  p=*(list tank)                                    ::
-  q=[%| p=`usr q=[pul %get ~ ~] r=fun]                  ::
-::                                                      ::
-++  sole-no                                             ::  empty result
-  [p=*(list tank) q=[%& ~]]                             ::
-::                                                      ::
-++  sole-go                                             ::  parse by rule
-  |*  {sef/rule fun/$-(* *)}                            ::
-  |=  txt/sole-input                                    ::
-  =+  vex=(sef [0 0] txt)                               ::
-  ?:  |(!=((lent txt) q.p.vex) ?=(~ q.vex))            ::
-    q.p.vex                                             ::
-  (fun p.u.q.vex)                                       ::
 --

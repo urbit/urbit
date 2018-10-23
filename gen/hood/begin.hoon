@@ -4,7 +4,7 @@
   ::
 /?    310
 /-  sole
-/+  old-zuse
+/+  generators, old-zuse
 =,  old-zuse
 ::
 ::::
@@ -13,34 +13,34 @@
     ++  begs  {his/@p tic/@p yen/@t ges/gens}
     ++  scug  |*({a/@ b/(pole)} ?~(b ~ ?~(a ~ [-.b $(b +.b, a (dec a))])))
     --
-=,  sole
+=,  generators
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/_(scug *@ *{his/@p tic/@p ~})}
         safety/?($off $on)
     ==
-^-  (sole-result (cask begs))
+^-  (sole-result:sole (cask begs))
 ?.  =(safety %off)
-  %+  sole-yo
+  %+  print
     :-  %leaf
     "|begin is deprecated, please invoke urbit with -w [name] -t [ticket]"
-  sole-no
+  no-product
 =-  -
-%+  sole-lo
+%+  prompt
   [%& %helm-begin "your urbit: ~"]
-%+  sole-go  fed:ag
+%+  parse  fed:ag
 |=  his/@p
-%+  sole-lo
+%+  prompt
   [%& %helm-ticket "your ticket: ~"]
-%+  sole-go  fed:ag
+%+  parse  fed:ag
 |=  tic/@p
-%+  sole-lo
+%+  prompt
   [%& %helm-entropy "some entropy: "]
-%+  sole-go  (boss 256 (more gon qit))
+%+  parse  (boss 256 (more gon qit))
 |=  yen/@t
 =+  ney=(shax yen)
-%+  sole-yo  `tank`[%leaf "entropy check: {(scow %p `@p`(mug ney))}"]
-%+  sole-so  %helm-begin
+%+  print  `tank`[%leaf "entropy check: {(scow %p `@p`(mug ney))}"]
+%+  produce  %helm-begin
 :*  his
     tic
     ney
