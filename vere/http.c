@@ -303,8 +303,20 @@ static void
 _http_req_kill(u3_hreq* req_u)
 {
   u3_noun pox = _http_req_to_duct(req_u);
-  u3v_plan(pox, u3nc(c3__thud, u3_nul));
+
+  u3_noun typ = u3i_string("cancel-inbound-request");
+  u3v_plan(pox, u3nc(typ, u3_nul));
 }
+
+typedef struct _u3_hgen {
+  h2o_generator_t neg_u;             // response callbacks
+  c3_o            red;               // ready to send
+  c3_o            dun;               // done sending
+  u3_hbod*        bod_u;             // pending body
+  u3_hbod*        nud_u;             // pending free
+  u3_hhed*        hed_u;             // pending free
+  u3_hreq*        req_u;             // originating request
+} u3_hgen;
 
 /* _http_req_done(): request finished, deallocation callback
 */
@@ -314,7 +326,8 @@ _http_req_done(void* ptr_v)
   u3_hreq* req_u = (u3_hreq*)ptr_v;
 
   // client canceled request
-  if ( u3_rsat_plan == req_u->sat_e ) {
+  if ( (u3_rsat_plan == req_u->sat_e ) ||
+       (0 != req_u->gen_u && c3n == ((u3_hgen*)req_u->gen_u)->dun )) {
     _http_req_kill(req_u);
   }
 
@@ -377,16 +390,6 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
                      req));
 }
 
-typedef struct _u3_hgen {
-  h2o_generator_t neg_u;             // response callbacks
-  c3_o            red;               // ready to send
-  c3_o            dun;               // done sending
-  u3_hbod*        bod_u;             // pending body
-  u3_hbod*        nud_u;             // pending free
-  u3_hhed*        hed_u;             // pending free
-  u3_hreq*        req_u;             // originating request
-} u3_hgen;
-
 
 /* _http_hgen_dispose(): dispose response generator and buffers
 */
@@ -416,6 +419,9 @@ _http_hgen_send(u3_hgen* gen_u)
 
   if ( c3n == gen_u->dun ) {
     h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_IN_PROGRESS);
+
+    // Restart the timer
+    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 45 * 1000, 0);
   }
   else {
     h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_FINAL);
@@ -485,8 +491,7 @@ _http_start_respond(u3_hreq* req_u,
 
   req_u->sat_e = u3_rsat_ripe;
 
-  // XX revisit timer
-  // uv_timer_stop(req_u->tim_u);
+  uv_timer_stop(req_u->tim_u);
 
   h2o_req_t* rec_u = req_u->rec_u;
 
@@ -519,15 +524,10 @@ _http_start_respond(u3_hreq* req_u,
 
   req_u->gen_u = gen_u;
 
-  if ( c3n == complete ) {
-    // XX revisit timer
-    // We must restart the timeout timer
-    // uv_timer_start(req_u->tim_u, _http_req_timer_cb, 30 * 1000, 0);
-  }
-  else {
-    // We know the entire size of the response, so ensure we tell h2o about the size.
-    rec_u->res.content_length = ( 0 == gen_u->bod_u ) ?
-                                0 : gen_u->bod_u->len_w;
+  if ( c3y == complete ) {
+    //  XX: Joe says I may need to copy it from the header.
+    //
+    rec_u->res.content_length = 0;
   }
 
   h2o_start_response(rec_u, &gen_u->neg_u);
@@ -560,8 +560,7 @@ _http_continue_respond(u3_hreq* req_u,
 
   u3_hgen* gen_u = req_u->gen_u;
 
-  // XX revisit timer
-  // uv_timer_stop(req_u->tim_u);
+  uv_timer_stop(req_u->tim_u);
 
   // XX proposed sequence number safety check
   // if ( sequence <= gen_u->sequence ) {
@@ -587,12 +586,6 @@ _http_continue_respond(u3_hreq* req_u,
 
       pre_u->nex_u = bod_u;
     }
-  }
-
-  if ( c3n == complete ) {
-    // XX revisit timer
-    // We must restart the timeout timer
-    // uv_timer_start(req_u->tim_u, _http_req_timer_cb, 30 * 1000, 0);
   }
 
   if ( c3y == gen_u->red ) {
@@ -659,11 +652,10 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
 
     u3_hreq* req_u = _http_req_new(hon_u, rec_u);
 
-    // XX revisit timer
-    // req_u->tim_u = c3_malloc(sizeof(*req_u->tim_u));
-    // req_u->tim_u->data = req_u;
-    // uv_timer_init(u3L, req_u->tim_u);
-    // uv_timer_start(req_u->tim_u, _http_req_timer_cb, 30 * 1000, 0);
+    req_u->tim_u = c3_malloc(sizeof(*req_u->tim_u));
+    req_u->tim_u->data = req_u;
+    uv_timer_init(u3L, req_u->tim_u);
+    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 30 * 1000, 0);
 
     _http_req_dispatch(req_u, req);
 
