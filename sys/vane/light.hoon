@@ -142,9 +142,15 @@
       ::  authenticated: whether the user was logged in
       ::
       authenticated=?
-      ::  url: the original url of this request
+      ::  secure: whether this request was sent over an encrypted channel
       ::
-      url=@t
+      secure=?
+      ::  address: address of the original sender
+      ::
+      =address
+      ::  http-request: the original request
+      ::
+      =http-request
       ::  code: the status code, if sent
       ::
       code=(unit @ud)
@@ -334,7 +340,9 @@
     =|  record=outstanding-connection
     =.  action.record  u.action
     =.  authenticated.record  authenticated
-    =.  url.record  url.http-request
+    =.  secure.record  secure
+    =.  address.record  address
+    =.  http-request.record  http-request
     ::
     =.  connections.state  (~(put by connections.state) duct record)
     ::
@@ -366,7 +374,11 @@
       ::  %handle-http-request type.
       ::
       ^-  cush:gall
-      [app.u.action %poke %handle-http-request !>([authenticated secure address http-request])]
+      :*  app.u.action
+          %poke
+          %handle-http-request
+          !>([authenticated secure address http-request])
+      ==
     ::
         %login-handler
       (handle-request:authentication secure address http-request)
@@ -375,10 +387,41 @@
   ::
   ++  cancel-request
     ^-  [(list move) server-state]
-    ::  TODO: Timer stuff is currently commented out at the C layer.
     ::
     ~&  [%cancel-request duct]
-    [~ state]
+    ::
+    ?~  connection=(~(get by connections.state) duct)
+      ::  nothing has handled this connection
+      ::
+      [~ state]
+    ::
+    ?-    -.action.u.connection
+    ::
+        %gen
+      ~&  [%do-something-to-stop-ford duct]
+      [~ state]
+    ::
+        %app
+      :_  state
+      :_  ~
+      :^  duct  %pass  /run-app/[app.action.u.connection]
+      ^-  note
+      :^  %g  %deal  [our our]
+      ::  todo: i don't entirely understand gall; there's a way to make a gall
+      ::  use a %handle arm instead of a sub-%poke with the
+      ::  %handle-http-request type.
+      ::
+      ^-  cush:gall
+      :*  app.action.u.connection
+          %poke
+          %handle-http-cancel
+          =,  u.connection
+          !>([authenticated secure address http-request])
+      ==
+    ::
+        %login-handler
+      [~ state]
+    ==
   ::  +return-static-data-on-duct: returns one piece of data all at once
   ::
   ++  return-static-data-on-duct

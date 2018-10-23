@@ -36,8 +36,10 @@
   ==
 ::  helper library that lets an app handle an EventSource.
 ::
+::    TODO: This doesn't even attempt to deal with sequence numbers.
+::
 ++  event-source
-  |_  m=(map session=@ud [=bone last-id=@ud])
+  |_  m=(map =bone last-id=@ud)
   ++  abet  m
   ::  +start-session: called by app to start a session and send first event
   ::
@@ -55,30 +57,22 @@
                 (wall-to-output data)
                 complete=%.n
         ==  ==
-    m
-
-::
-  ::  %_    +>.$
-  ::  ::  +reconnect-session: reconnect an old session to a new http pipe
-  ::  ::
-  ::  ::    HTTP sessions can be killed 
-  ::  ::
-  ::  ++  reconnect-session
-  ::    |=  [session=@ud =bone last-seen=@ud]
-
-  ::  ::  +confirm-
-  ::  ::
-  ::  ++  confirm-
-
+    (~(put by m) bone 0)
+  ::  +session-stopped: external notification that a session ended
+  ::
+  ++  session-stopped
+    |=  =bone
+    ^-  _m
+    ::
+    (~(del by m) bone)
+  ::  +send-message: sends a message based on the continuation
+  ::
   ++  send-message
     |=  [=bone data=wall]
     ^-  [(list move) _m]
-    :-  :~  :*  bone  %http-response
-                %continue
-                (wall-to-output data)
-                complete=%.n
-        ==  ==
-    m
+    :-  [bone %http-response %continue (wall-to-output data) complete=%.n]~
+    (~(jab by m) bone |=(a=@ud +(a)))
+  ::  +wall-to-output: changes our raw text lines to a text/event-stream
   ::
   ++  wall-to-output
     |=  =wall
@@ -131,7 +125,7 @@
 |%
 ::
 +$  state
-  $:  events=(map session=@ud [=bone last-id=@ud])
+  $:  events=(map =bone last-id=@ud)
   ==
 --
 ::
@@ -154,9 +148,6 @@
   ~&  [%bound success]
   [~ this]
 ::
-::  TODO: Before we can actually add EventSource()s, we need to have %thud
-::  handling working.
-::
 ++  handle-start-stream
   |=  req=http-request:light
   ^-  (quip move _this)
@@ -175,7 +166,11 @@
 ++  wake
   |=  [wir=wire ~]
   ^-  (quip move _this)
-  ::  ~&  [%tick wir now.bow]
+  ?.  (~(has by events) ost.bow)
+    ~&  [%closed wir now.bow]
+    [~ this]
+  ::
+  ~&  [%timer-tick wir now.bow]
   ::
   =^  moves  events
     (~(send-message event-source events) ost.bow ["{<now.bow>}" ~])
@@ -184,8 +179,7 @@
   :-  ^-  move
       [ost.bow %wait /timer (add now.bow ~s1)]
   moves
-::
-::  received when we have a 
+::  +poke-handle-http-request: received on a new connection established
 ::
 ++  poke-handle-http-request
   |=  [authenticated=? secure=? address=address:light req=http-request:light]
@@ -215,4 +209,15 @@
           [%continue [~ (part2 name)] %.y]
       ==
   ==
+::  +poke-handle-http-cancel: received when a connection was killed
+::
+++  poke-handle-http-cancel
+  |=  [authenticated=? secure=? address=address:light req=http-request:light]
+  ^-  (quip move _this)
+  ::  the only long lived connections we keep state about are the stream ones.
+  ::
+  =.  events
+    (~(session-stopped event-source events) ost.bow)
+  ::
+  [~ this]
 --
