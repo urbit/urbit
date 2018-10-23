@@ -44,10 +44,18 @@ u3_behn_io_exit(void)
 static void
 _behn_time_cb(uv_timer_t* tim_u)
 {
-  u3_behn* teh_u = &u3_Host.teh_u;
-  if(teh_u->run_w < 1024) {
-    teh_u->run_w++;
-  }
+  /*  there was an exponential backoff on timers, which meant that if you set a
+   *  timer for every ~s1 inside urbit, each iteration would be slightly
+   *  slower, up until ~25 timers had fired, at which point the exponential
+   *  curve really kicked in and you wouldn't get a callback for ~m1 when you
+   *  requested one in ~s1. nobody in the office knows why this is the way it
+   *  is, and it goes back to the original behn code from 2014.
+   */
+  /*  u3_behn* teh_u = &u3_Host.teh_u;
+   *  if(teh_u->run_w < 1024) {
+   *    teh_u->run_w++;
+   *  }
+   */
 
   u3_lo_open();
   {
