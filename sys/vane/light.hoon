@@ -28,6 +28,7 @@
           ::
           ::
           $%  [%build our=@p live=? schematic=schematic:ford]
+              [%kill our=@p]
       ==  ==
       ::  %g: to gall
       ::
@@ -395,11 +396,13 @@
       ::
       [~ state]
     ::
+    =.   connections.state  (~(del by connections.state) duct)
+    ::
     ?-    -.action.u.connection
     ::
         %gen
-      ~&  [%do-something-to-stop-ford duct]
-      [~ state]
+      :_  state
+      [duct %pass /run-build %f %kill our]~
     ::
         %app
       :_  state
