@@ -47,8 +47,6 @@
     |=  [session=@ud =bone data=wall]
     ^-  [(list move) _m]
     ::
-    =/  lines=tape
-    ::
     :-  :~  :*  bone  %http-response
                 %start  200
                 :~  ['content-type' 'text/event-stream']
@@ -58,6 +56,8 @@
                 complete=%.n
         ==  ==
     m
+
+::
   ::  %_    +>.$
   ::  ::  +reconnect-session: reconnect an old session to a new http pipe
   ::  ::
@@ -76,6 +76,7 @@
     :-  :~  :*  bone  %http-response
                 %continue
                 (wall-to-output data)
+                complete=%.n
         ==  ==
     m
   ::
@@ -87,7 +88,7 @@
     %-  crip
     %-  zing
     %+  weld
-      %+  turn  data
+      %+  turn  wall
       |=  t=tape
       "data: {t}\0a"
     ::
@@ -174,7 +175,7 @@
 ++  wake
   |=  [wir=wire ~]
   ^-  (quip move _this)
-  ~&  [%tick wir now.bow]
+  ::  ~&  [%tick wir now.bow]
   ::
   =^  moves  events
     (~(send-message event-source events) ost.bow ["{<now.bow>}" ~])
