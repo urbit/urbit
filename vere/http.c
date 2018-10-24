@@ -524,12 +524,6 @@ _http_start_respond(u3_hreq* req_u,
 
   req_u->gen_u = gen_u;
 
-  if ( c3y == complete ) {
-    //  XX: Joe says I may need to copy it from the header.
-    //
-    rec_u->res.content_length = 0;
-  }
-
   h2o_start_response(rec_u, &gen_u->neg_u);
 
   _http_hgen_send(gen_u);
