@@ -907,7 +907,7 @@
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
     ?:  &(?=({?($of $ow) ^} tee) !(~(has by wix) p.tee))
-      ~&(dead-ire+[`whir`tee ({term term ~} +.sih)] +>)
+      ~&(dead-ire+[`whir`tee] +>)
     ?-    &2.sih
         $crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::  $dumb
