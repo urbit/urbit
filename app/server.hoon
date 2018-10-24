@@ -28,10 +28,23 @@
   %-  en-xml:html
   ;html
     ;head
-      ;title:"Hello, {<(trip name)>}"
+      ;title:"Hello, {(trip name)}"
     ==
     ;body
-      ;h1:"Hello, {<(trip name)>}"
+      ;h1:"Hello, {(trip name)}"
+      ;p
+        ; Time is
+        ;span#time;
+      ==
+      ;script:'''
+              var evtSource = new EventSource("/~server/stream",
+                                              { withCredentials: true } );
+
+              evtSource.onmessage = function(e) {
+                var message = document.getElementById("time");
+                message.innerHTML = e.data;
+              }
+              '''
     ==
   ==
 ::  helper library that lets an app handle an EventSource.
@@ -88,39 +101,6 @@
     ::
     [`tape`['\0a' ~] ~]
   --
-::
-++  part1
-  ^-  octs
-  %-  as-octs:mimes:html
-  %-  crip
-  "<html><head><title>Hello, &quot;"
-::
-++  part2
-  |=  name=@t
-  ^-  octs
-  %-  as-octs:mimes:html
-  %-  crip
-  ;:  weld
-    (trip name)
-    "&quot;</title></head><body><h1>Hello, &quot;"
-    (trip name)
-    "&quot;</h1>"
-    "<p>Time is <span id=time></span></p>"
-  ::
-    %-  trip
-    '''
-    <script>
-      var evtSource = new EventSource("/~server/stream", { withCredentials: true } );
-
-      evtSource.onmessage = function(e) {
-        var message = document.getElementById("time");
-        message.innerHTML = e.data;
-      }
-    </script>
-    '''
-  ::
-    "</body></html>"
-  ==
 ::  +require-authorization: redirect to the login page when unauthenticated
 ::
 ++  require-authorization
@@ -218,13 +198,7 @@
   :~  ^-  move
       :-  ost.bow
       :*  %http-response
-          [%start 200 ['content-type' 'text/html']~ [~ part1] %.n]
-      ==
-  ::
-      ^-  move
-      :-  ost.bow
-      :*  %http-response
-          [%continue [~ (part2 name)] %.y]
+          [%start 200 ['content-type' 'text/html']~ [~ (hello name)] %.y]
       ==
   ==
 ::  +poke-handle-http-cancel: received when a connection was killed
