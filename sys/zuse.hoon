@@ -5384,6 +5384,23 @@
         =/  ten  ~|(key+key.wer (wit.wer (~(got by jom) key.wer)))
         ?~(t.wer ten [ten ((ot-raw t.wer) jom)])
       ==
+    ::
+    ++  ou                                              ::  object of units
+      |*  wer/(pole {cord fist})
+      |=  jon/json
+      ?>  ?=({$o *} jon)
+      ((ou-raw wer) p.jon)
+    ::                                                  ::  ++ou-raw:dejs:format
+    ++  ou-raw                                          ::  object of units
+      |*  wer/(pole {cord fist})
+      |=  jom/(map @t json)
+      ?-    wer                                         :: mint-vain on empty
+          :: {{key/@t wit/*} t/*}
+          {{key/@t *} t/*}
+        =>  .(wer [[* wit] *]=wer)
+        =/  ten  ~|(key+key.wer (wit.wer (~(get by jom) key.wer)))
+        ?~(t.wer ten [ten ((ou-raw t.wer) jom)])
+      ==
     ::                                                  ::  ++om:dejs:format
     ++  om                                              ::  object as map
       |*  wit/fist
@@ -5416,6 +5433,16 @@
       |=  jon/json  ^+  (wonk *sab)
       ?>  ?=({$s *} jon)
       (rash p.jon sab)
+    ::                                                  ::  ++uf:dejs:format
+    ++  uf                                              ::  unit fall
+      |*  [def/* wit/fist]
+      |=  jon/(unit json)
+      ?~(jon def (wit u.jon))
+    ::                                                  ::  ++un:dejs:format
+    ++  un                                              ::  unit need
+      |*  wit/fist
+      |=  jon/(unit json)
+      (wit (need jon))
     ::                                                  ::  ++ul:dejs:format
     ++  ul                                              ::  null
       |=(jon/json ?~(jon ~ !!))
