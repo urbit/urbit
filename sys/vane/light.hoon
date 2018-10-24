@@ -140,18 +140,9 @@
   $:  ::  action: the action that had matched
       ::
       =action
-      ::  authenticated: whether the user was logged in
+      ::  inbound-request: the original request which caused this connection
       ::
-      authenticated=?
-      ::  secure: whether this request was sent over an encrypted channel
-      ::
-      secure=?
-      ::  address: address of the original sender
-      ::
-      =address
-      ::  http-request: the original request
-      ::
-      =http-request
+      =inbound-request
       ::  code: the status code, if sent
       ::
       code=(unit @ud)
@@ -338,14 +329,10 @@
     =/  authenticated  (request-is-logged-in:authentication http-request)
     ::  record that we started an asynchronous response
     ::
-    =|  record=outstanding-connection
-    =.  action.record  u.action
-    =.  authenticated.record  authenticated
-    =.  secure.record  secure
-    =.  address.record  address
-    =.  http-request.record  http-request
-    ::
-    =.  connections.state  (~(put by connections.state) duct record)
+    =/  connection=outstanding-connection
+      [u.action [authenticated secure address http-request] ~ ~ 0]
+    =.  connections.state
+      (~(put by connections.state) duct connection)
     ::
     ?-    -.u.action
     ::
@@ -378,7 +365,7 @@
       :*  app.u.action
           %poke
           %handle-http-request
-          !>([authenticated secure address http-request])
+          !>(inbound-request.connection)
       ==
     ::
         %login-handler
@@ -418,8 +405,7 @@
       :*  app.action.u.connection
           %poke
           %handle-http-cancel
-          =,  u.connection
-          !>([authenticated secure address http-request])
+          !>(inbound-request.u.connection)
       ==
     ::
         %login-handler
@@ -438,8 +424,6 @@
         status-code=code
         ^=  headers
           :~  ['content-type' content-type]
-              ::  TODO: Why is libh2o adding its own content-length header?
-              ::
               ['content-length' (format-ud-as-integer p.data)]
           ==
         data=[~ data]
@@ -503,12 +487,13 @@
       ::
       =/  cookie-line
         %-  crip
-        "urbauth={<session>}; Max-Age: 86400"
+        "urbauth={<session>}; Path=/; Max-Age=86400"
       ::
       =/  new-location=@t
         ?~  redirect=(get-header 'redirect' u.parsed)
           '/'
         u.redirect
+      ~&  [%minting http-request]
       ::
       :_  state
       :_  ~

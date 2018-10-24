@@ -2394,6 +2394,22 @@
         [%ipv6 @is]
         ::  [%ames @p]
     ==
+  ::  +inbound-request: +http-request and metadata
+  ::
+  +$  inbound-request
+    $:  ::  authenticated: has a valid session cookie
+        ::
+        authenticated=?
+        ::  secure: whether this request was encrypted (https)
+        ::
+        secure=?
+        ::  address: the source address of this request
+        ::
+        =address
+        ::  http-request: the http-request itself
+        ::
+        =http-request
+    ==
   --
 ::                                                      ::::
 ::::                    ++xmas                            ::  (1i) new network

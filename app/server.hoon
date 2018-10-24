@@ -149,7 +149,7 @@
   [~ this]
 ::
 ++  handle-start-stream
-  |=  req=http-request:light
+  |=  =inbound-request:light
   ^-  (quip move _this)
   ::  Start a session sending the current time
   ::
@@ -179,13 +179,30 @@
   :-  ^-  move
       [ost.bow %wait /timer (add now.bow ~s1)]
   moves
+::
+::  ++  require-authorization
+::    |=  handle=$-(inbound-request:light (quip move _this))
+::    |=  =inbound-request:light
+::    ^-  (quip move _this)
+::    ::
+::    ::
+::    (handle inbound-request)
+
 ::  +poke-handle-http-request: received on a new connection established
 ::
 ++  poke-handle-http-request
-  |=  [authenticated=? secure=? address=address:light req=http-request:light]
+  |=  =inbound-request:light
   ^-  (quip move _this)
   ::
-  =+  request-line=(parse-request-line url.req)
+  ?.  authenticated.inbound-request
+    :_  this
+    ^-  (list move)
+    =/  redirect=cord
+      %-  crip
+      "/~/login?redirect={(trip url.http-request.inbound-request)}"
+    [ost.bow [%http-response %start 307 ['location' redirect]~ ~ %.y]]~
+  ::
+  =+  request-line=(parse-request-line url.http-request.inbound-request)
   ~&  [%request-line request-line]
   =/  name=@t
     =+  back-path=(flop site.request-line)
@@ -193,7 +210,7 @@
       'World'
     i.back-path
   ?:  =(name 'stream')
-    (handle-start-stream req)
+    (handle-start-stream inbound-request)
   ~&  [%name name]
   ::
   :_  this
@@ -212,7 +229,7 @@
 ::  +poke-handle-http-cancel: received when a connection was killed
 ::
 ++  poke-handle-http-cancel
-  |=  [authenticated=? secure=? address=address:light req=http-request:light]
+  |=  =inbound-request:light
   ^-  (quip move _this)
   ::  the only long lived connections we keep state about are the stream ones.
   ::
