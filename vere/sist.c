@@ -1168,6 +1168,7 @@ _sist_post_json(c3_c* url_c, uv_buf_t lod_u)
   curl_easy_setopt(curl, CURLOPT_URL, url_c);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _sist_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
+  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, hed_u);
 
   // note: must be terminated!
   curl_easy_setopt(curl, CURLOPT_POSTFIELDS, lod_u.base);
@@ -1187,6 +1188,7 @@ _sist_post_json(c3_c* url_c, uv_buf_t lod_u)
   }
 
   curl_easy_cleanup(curl);
+  curl_slist_free_all(hed_u);
 
   return buf_u;
 }
