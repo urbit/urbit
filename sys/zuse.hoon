@@ -172,6 +172,12 @@
             top=(list octs)
         ==
         [%eth-get-filter-logs fid=@ud]
+        $:  %eth-get-logs
+            fro=(unit block)
+            tob=(unit block)
+            adr=(list address)
+            top=(list octs)
+        ==
         [%eth-get-filter-changes fid=@ud]
         [%eth-send-raw-transaction dat=@ux]
     ==
@@ -181,6 +187,7 @@
     $%  ::TODO
         [%eth-new-filter fid=@ud]
         [%eth-get-filter-logs los=(list event-log)]
+        [%eth-get-logs los=(list event-log)]
         [%eth-got-filter-changes los=(list event-log)]
         [%eth-transaction-hash haz=@ux]
     ==
@@ -193,6 +200,7 @@
             transaction-hash=@ux
             block-number=@ud
             block-hash=@ux
+            removed=?
         ==
       ::
         address=@ux
@@ -7329,6 +7337,30 @@
         %eth-get-filter-logs
       ['eth_getFilterLogs' (tape (num-to-hex fid.req)) ~]
     ::
+        %eth-get-logs
+      :-  'eth_getLogs'
+      :_  ~
+      :-  %o  %-  ~(gas by *(map @t json))
+      =-  (murn - same)
+      ^-  (list (unit (pair @t json)))
+      :~  ?~  fro.req  ~
+          `['fromBlock' (block-to-json u.fro.req)]
+        ::
+          ?~  tob.req  ~
+          `['toBlock' (block-to-json u.tob.req)]
+        ::
+          ::TODO  fucking tmi
+          ?:  =(0 (lent adr.req))  ~
+          :+  ~  'address'
+          ?:  =(1 (lent adr.req))  (tape (address-to-hex (snag 0 adr.req)))
+          :-  %a
+          (turn adr.req (cork address-to-hex tape))
+        ::
+          ?~  top.req  ~
+          :^  ~  'topics'  %a
+          (turn `(list octs)`top.req :(cork render-hex-bytes prefix-hex tape))
+      ==
+    ::
         %eth-get-filter-changes
       ['eth_getFilterChanges' (tape (num-to-hex fid.req)) ~]
     ::
@@ -7415,6 +7447,7 @@
             'transactionHash'^(cu hex-to-num so)
             'blockNumber'^(cu hex-to-num so)
             'blockHash'^(cu hex-to-num so)
+            'removed'^bo
         ==
       ::
         address+(cu hex-to-num so)

@@ -950,8 +950,8 @@
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
-    |=  {moz/(list move) sub/state-relative}
-    +>(sub sub, moz (weld (flop moz) ^moz))
+    |=  {moz/(list move) sub/state-relative etn/state-eth-node}
+    +>(sub sub, etn etn, moz (weld (flop moz) ^moz))
   ::                                                    ::  ++cure:of
   ++  cure                                              ::  absolute edits
     |=  {hen/duct our/ship hab/(list change) urb/state-absolute}
@@ -1007,7 +1007,7 @@
     :: =>  (exec yen.eth [%give %vent |+evs])
     =>  ?~  evs  .
         (vent-pass yen.eth |+evs)
-    [(flop moz) sub]
+    [(flop moz) sub etn]
   ::                                                    ::  ++apex:su
   ++  apex                                              ::  apply changes
     |=  hab/(list change)
@@ -1316,6 +1316,7 @@
         [kyz ..file]
       ::
       ::  sanity check, should never fail if we operate correctly
+      ::  XX is this true in the presence of reorgs?
       ::
       ?>  (gte block.wer latest-block)
       =:  evs           (~(put by evs) wer dif)
@@ -1603,7 +1604,8 @@
     %-  put-request
     :+  /filter/new  `'new filter'
     :*  %eth-new-filter
-        `[%number +(latest-block)]  ::TODO  or Ships origin block when 0
+        `[%number ?:((lte latest-block 40) 0 (sub latest-block 40))]
+        ::TODO  or Ships origin block when 0
         ~  ::TODO  we should probably chunck these, maybe?
         ::  https://stackoverflow.com/q/49339489
         ~[ships:contracts]
@@ -1736,7 +1738,7 @@
       ~_  q.res
       +>
     ?>  ?=(%json-rpc-response mar)
-    ~|  res
+    ::  ~|  res
     =+  rep=((hard response:rpc:jstd) q.res)
     ?+  cuz  ~|([%weird-sigh-wire cuz] !!)
         [%filter %new *]
@@ -1770,7 +1772,7 @@
       ?.  =('filter not found' message.rep)
         ~&  [%unhandled-filter-error message.rep]
         +>
-      ~&  %filter-timed-out--recreating
+      ~&  [%filter-timed-out--recreating latest-block]
       new-filter
     ::  kick polling timer, only if it hasn't already been.
     =?  +>  ?&  ?=(%| -.source)
@@ -1779,7 +1781,11 @@
       wait-poll
     ?>  ?=(%a -.res.rep)
     =*  changes  p.res.rep
-    ~&  [%filter-changes (lent changes)]
+    ~&  :*  %filter-changes
+            changes=(lent changes)
+            block=latest-block
+            id=?.(?=(%| -.source) ~ `@ux`filter-id.p.source)
+        ==
     |-  ^+  +>.^$
     ?~  changes  +>.^$
     =.  +>.^$
@@ -1798,11 +1804,24 @@
     ::
     ::TODO  if the block number is less than latest, that means we got
     ::      events out of order somehow and should probably reset.
-    ?>  (gth block-number.place latest-block)
+    ::      This could also mean there was a chain reorg if the logs
+    ::      have the 'removed' tag set.  In this case, we should delete
+    ::      the old logs.  Finally, since we rewind 40 blocks on new
+    ::      filter, this could be up to 40 blocks old just because of
+    ::      that.
+    ::  ~?  (lte block-number.place latest-block)
+    ::    [%old-block block-number.place latest-block]
     ::
     ?:  (~(has in heard) block-number.place log-index.place)
-      ~&  %ignoring-duplicate-event
-      +>
+      ?.  removed.u.mined.log
+        ::  ~&  [%ignoring-duplicate-event tx=transaction-hash.u.mined.log]
+        +>
+      ~&  :*  'removed event!  Perhaps chain has reorganized?'
+              tx-hash=transaction-hash.u.mined.log
+              block-number=block-number.u.mined.log
+              block-hash=block-hash.u.mined.log
+          ==
+      +>  ::TODO  undo the effects of this event
     =+  cuz=[block-number.place log-index.place]
     ::
     ?:  =(event.log changed-dns:ships-events)
