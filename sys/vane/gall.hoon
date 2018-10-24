@@ -1232,6 +1232,7 @@
         $info  `%c
         $keep  `%f
         $kill  `%f
+        $look  `%j
         $merg  `%c
         $mint  `%j
         $mont  `%c

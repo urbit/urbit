@@ -364,7 +364,9 @@
     ++  contracts
       |%
       ++  ships
-        0x84b3.7fbc.6188.da8a.e866.1eae.322a.f4d9.2db4.5ecc
+        ::  0xab87.24a7.a953.ef14.e940.b358.6b21.a889.b62f.3d56  ::  ropsten
+        0x84b3.7fbc.6188.da8a.e866.1eae.322a.f4d9.2db4.5ecc  ::  joe
+        ::  0x7134.3566.74e4.0c93.8736.8699.1af8.86dd.2ae8.e642  ::  philip
       --
     ::
     ::  hashes of ship event signatures
@@ -7987,6 +7989,7 @@
       ^-  hull:constitution:ethe
       =/  jon=json  (need (de-json:html q.rep))
       =/  res=cord  ((ot result+so ~) jon)
+      ~?  =(res '0x')  'bad result from node; is ships address correct?'
       %+  hull-from-eth:constitution:ethereum
         who
       :_  *deed:eth-noun:constitution:ethereum
