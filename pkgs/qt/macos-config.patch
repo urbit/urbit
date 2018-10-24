@@ -1,20 +1,6 @@
-diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/common/clang.conf qtbase-opensource-src-5.9.2-mac/mkspecs/common/clang.conf
---- qtbase-opensource-src-5.9.2-orig/mkspecs/common/clang.conf	2017-11-03 20:37:01.001539490 -0700
-+++ qtbase-opensource-src-5.9.2-mac/mkspecs/common/clang.conf	2017-11-03 20:46:20.159382848 -0700
-@@ -4,8 +4,8 @@
- 
- QMAKE_COMPILER          = gcc clang llvm   # clang pretends to be gcc
- 
--QMAKE_CC                = clang
--QMAKE_CXX               = clang++
-+QMAKE_CC                = $${CROSS_COMPILE}clang
-+QMAKE_CXX               = $${CROSS_COMPILE}clang++
- 
- QMAKE_LINK_C            = $$QMAKE_CC
- QMAKE_LINK_C_SHLIB      = $$QMAKE_CC
-diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/common/clang-mac.conf qtbase-opensource-src-5.9.2-mac/mkspecs/common/clang-mac.conf
---- qtbase-opensource-src-5.9.2-orig/mkspecs/common/clang-mac.conf	2017-11-03 20:37:01.001539490 -0700
-+++ qtbase-opensource-src-5.9.2-mac/mkspecs/common/clang-mac.conf	2017-11-03 20:55:13.878575754 -0700
+diff -ur qtbase-everywhere-src-5.11.2-orig/mkspecs/common/clang-mac.conf qtbase-everywhere-src-5.11.2/mkspecs/common/clang-mac.conf
+--- qtbase-everywhere-src-5.11.2-orig/mkspecs/common/clang-mac.conf	2018-10-23 21:31:56.864905432 -0700
++++ qtbase-everywhere-src-5.11.2/mkspecs/common/clang-mac.conf	2018-10-23 21:36:30.288192427 -0700
 @@ -6,8 +6,6 @@
  
  QMAKE_XCODE_GCC_VERSION = com.apple.compilers.llvm.clang.1_0
@@ -24,29 +10,10 @@ diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/common/clang-mac.conf qtbase-o
  QMAKE_AR_LTCG  = libtool -static -o
  
  QMAKE_CFLAGS_APPLICATION_EXTENSION  = -fapplication-extension
-diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/common/mac.conf qtbase-opensource-src-5.9.2-mac/mkspecs/common/mac.conf
---- qtbase-opensource-src-5.9.2-orig/mkspecs/common/mac.conf	2017-11-03 20:37:01.001539490 -0700
-+++ qtbase-opensource-src-5.9.2-mac/mkspecs/common/mac.conf	2017-11-03 22:03:30.960602142 -0700
-@@ -35,10 +35,10 @@
- 
- QMAKE_ACTOOL            = actool
- 
--QMAKE_DSYMUTIL          = dsymutil
--QMAKE_STRIP             = strip
-+QMAKE_DSYMUTIL          = $${CROSS_COMPILE}dsymutil
-+QMAKE_STRIP             = $${CROSS_COMPILE}strip
- QMAKE_STRIPFLAGS_LIB   += -S -x
- 
--QMAKE_AR                = ar cq
--QMAKE_RANLIB            = ranlib -s
--QMAKE_NM                = nm -P
-+QMAKE_AR                = $${CROSS_COMPILE}ar cq
-+QMAKE_RANLIB            = $${CROSS_COMPILE}ranlib -s
-+QMAKE_NM                = $${CROSS_COMPILE}nm -P
-diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_post.prf qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/default_post.prf
---- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_post.prf	2017-11-03 20:37:01.008206202 -0700
-+++ qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/default_post.prf	2017-11-03 21:06:25.247871399 -0700
-@@ -2,29 +2,6 @@
+diff -ur qtbase-everywhere-src-5.11.2-orig/mkspecs/features/mac/default_post.prf qtbase-everywhere-src-5.11.2/mkspecs/features/mac/default_post.prf
+--- qtbase-everywhere-src-5.11.2-orig/mkspecs/features/mac/default_post.prf	2018-10-23 21:31:56.874905553 -0700
++++ qtbase-everywhere-src-5.11.2/mkspecs/features/mac/default_post.prf	2018-10-23 21:39:40.973894346 -0700
+@@ -40,29 +40,6 @@
  
  !no_objective_c:CONFIG += objective_c
  
@@ -76,7 +43,7 @@ diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_post.prf 
  # Add the same default rpaths as Xcode does for new projects.
  # This is especially important for iOS/tvOS/watchOS where no other option is possible.
  !no_default_rpath {
-@@ -89,10 +66,6 @@
+@@ -150,10 +127,6 @@
  
      arch_flags = $(EXPORT_ARCH_ARGS)
  
@@ -87,19 +54,19 @@ diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_post.prf 
      QMAKE_PCH_ARCHS = $$VALID_ARCHS
  
      macos: deployment_target = $$QMAKE_MACOSX_DEPLOYMENT_TARGET
-@@ -149,9 +122,6 @@
-         else: \
-             version_identifier = $$device.deployment_identifier
-         version_min_flag = -m$${version_identifier}-version-min=$$deployment_target
--        QMAKE_CFLAGS += -isysroot $$QMAKE_MAC_SDK_PATH $$version_min_flag
--        QMAKE_CXXFLAGS += -isysroot $$QMAKE_MAC_SDK_PATH $$version_min_flag
--        QMAKE_LFLAGS += -Wl,-syslibroot,$$QMAKE_MAC_SDK_PATH $$version_min_flag
-     }
+@@ -201,9 +174,6 @@
+                 QMAKE_XARCH_LFLAGS_$${arch}
+         }
  
-     # Enable precompiled headers for multiple architectures
-diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_pre.prf qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/default_pre.prf
---- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_pre.prf	2017-11-03 20:37:01.008206202 -0700
-+++ qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/default_pre.prf	2017-11-03 20:46:20.159382848 -0700
+-        QMAKE_CFLAGS += $(EXPORT_QMAKE_XARCH_CFLAGS)
+-        QMAKE_CXXFLAGS += $(EXPORT_QMAKE_XARCH_CFLAGS)
+-        QMAKE_LFLAGS += $(EXPORT_QMAKE_XARCH_LFLAGS)
+     } else {
+         simulator: \
+             version_identifier = $$simulator.deployment_identifier
+diff -ur qtbase-everywhere-src-5.11.2-orig/mkspecs/features/mac/default_pre.prf qtbase-everywhere-src-5.11.2/mkspecs/features/mac/default_pre.prf
+--- qtbase-everywhere-src-5.11.2-orig/mkspecs/features/mac/default_pre.prf	2018-10-23 21:31:56.874905553 -0700
++++ qtbase-everywhere-src-5.11.2/mkspecs/features/mac/default_pre.prf	2018-10-23 21:40:10.464298513 -0700
 @@ -1,43 +1,6 @@
  CONFIG = asset_catalogs rez $$CONFIG
  load(default_pre)
@@ -144,18 +111,18 @@ diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_pre.prf q
  QMAKE_ASSET_CATALOGS_APP_ICON = AppIcon
  
  # Make the default debug info format for static debug builds
-diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/sdk.prf qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/sdk.prf
---- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/sdk.prf	2017-11-03 20:37:01.008206202 -0700
-+++ qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/sdk.prf	2017-11-03 20:46:20.159382848 -0700
+diff -ur qtbase-everywhere-src-5.11.2-orig/mkspecs/features/mac/sdk.prf qtbase-everywhere-src-5.11.2/mkspecs/features/mac/sdk.prf
+--- qtbase-everywhere-src-5.11.2-orig/mkspecs/features/mac/sdk.prf	2018-10-23 21:31:56.874905553 -0700
++++ qtbase-everywhere-src-5.11.2/mkspecs/features/mac/sdk.prf	2018-10-23 21:40:29.624560962 -0700
 @@ -18,7 +18,7 @@
          sdk = $$QMAKE_MAC_SDK
  
      isEmpty(QMAKE_MAC_SDK.$${sdk}.$${info}) {
--        QMAKE_MAC_SDK.$${sdk}.$${info} = $$system("/usr/bin/xcrun --sdk $$sdk $$info 2>/dev/null")
-+        QMAKE_MAC_SDK.$${sdk}.$${info} = $$system("xcrun --sdk $$sdk $$info 2>/dev/null")
+-        QMAKE_MAC_SDK.$${sdk}.$${info} = $$system("/usr/bin/xcrun --sdk $$sdk $$infoarg 2>/dev/null")
++        QMAKE_MAC_SDK.$${sdk}.$${info} = $$system("xcrun --sdk $$sdk $$infoarg 2>/dev/null")
          # --show-sdk-platform-path won't work for Command Line Tools; this is fine
          # only used by the XCTest backend to testlib
-         isEmpty(QMAKE_MAC_SDK.$${sdk}.$${info}):if(!isEmpty(QMAKE_XCODEBUILD_PATH)|!equals(info, "--show-sdk-platform-path")): \
+         isEmpty(QMAKE_MAC_SDK.$${sdk}.$${info}):if(!isEmpty(QMAKE_XCODEBUILD_PATH)|!equals(infoarg, "--show-sdk-platform-path")): \
 @@ -50,7 +50,7 @@
      value = $$eval($$tool)
      isEmpty(value): next()

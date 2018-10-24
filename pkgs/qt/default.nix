@@ -1,4 +1,4 @@
-# TODO: look into why were compiling with this impure option on Linux:
+# TODO: look into why we're compiling with this impure option on Linux:
 #   -DDFLT_XKB_CONFIG_ROOT=\"/usr/share/X11/xkb\"
 
 # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
@@ -6,7 +6,7 @@
 { crossenv, libudev, libxall, at-spi2-headers, dejavu-fonts }:
 
 let
-  version = "5.9.6";
+  version = "5.11.2";
 
   name = "qtbase-${version}";
 
@@ -23,8 +23,8 @@ let
     in "${os_code}-${compiler_code}";
 
   base_src = crossenv.nixpkgs.fetchurl {
-    url = "https://download.qt.io/official_releases/qt/5.9/${version}/submodules/qtbase-opensource-src-${version}.tar.xz";
-    sha256 = "0vz3rgx7bk50jzy78lxv5pff2l8xqmqs9iiz7gc9n6cb4v5j1mpf";
+    url = "https://download.qt.io/official_releases/qt/5.11/${version}/submodules/qtbase-everywhere-src-${version}.tar.xz";
+    sha256 = "01q1rn5rp9biq3z38953z2hgm4nirvp2jfv8wg7isnld8v1yg0b3";
   };
 
   base_raw = crossenv.make_derivation {

@@ -1,7 +1,7 @@
-diff -ur qtbase-opensource-src-5.9.2-orig/src/widgets/configure.json qtbase-opensource-src-5.9.2/src/widgets/configure.json
---- qtbase-opensource-src-5.9.2-orig/src/widgets/configure.json	2017-10-25 13:52:49.173421900 -0700
-+++ qtbase-opensource-src-5.9.2/src/widgets/configure.json	2017-10-25 13:53:42.891341214 -0700
-@@ -28,11 +28,6 @@
+diff -ur qtbase-everywhere-src-5.11.2-orig/src/widgets/configure.json qtbase-everywhere-src-5.11.2/src/widgets/configure.json
+--- qtbase-everywhere-src-5.11.2-orig/src/widgets/configure.json	2018-10-23 21:31:57.188242656 -0700
++++ qtbase-everywhere-src-5.11.2/src/widgets/configure.json	2018-10-23 21:46:23.586209362 -0700
+@@ -27,11 +27,6 @@
      },
  
      "tests": {
@@ -13,12 +13,12 @@ diff -ur qtbase-opensource-src-5.9.2-orig/src/widgets/configure.json qtbase-open
      },
  
      "features": {
-@@ -57,7 +52,7 @@
+@@ -56,7 +51,7 @@
          },
-         "style-windowsxp": {
-             "label": "WindowsXP",
+         "style-windowsvista": {
+             "label": "WindowsVista",
 -            "condition": "features.style-windows && config.win32 && !config.winrt && tests.uxtheme",
 +            "condition": "features.style-windows && config.win32 && !config.winrt",
              "output": [ "privateFeature", "styles" ]
          },
-         "style-windowsvista": {
+         "style-android": {
