@@ -1023,8 +1023,9 @@
                   ::  u.q.fud
               ?:  =(our p.fud)
                 (emit %mead lyn r.fud)
-              =+  zid=(myx:gus p.fud)
-              (emir (wist:zid now xong [~ lyn] r.fud))
+              =/  zid  (myx:gus p.fud)
+              =/  zon  %*(xong ..xong her p.fud)
+              (emir (wist:zid now zon [~ lyn] r.fud))
             ==
           ::
           ++  emir                                      ::    emir:la:ho:um:am
