@@ -478,7 +478,6 @@
         (return-static-data-on-duct 400 'text/html' (login-page ~))
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
-        ~!  q.u.body.http-request
         (rush q.u.body.http-request yquy:de-purl:html)
       ?~  parsed
         (return-static-data-on-duct 400 'text/html' (login-page ~))
@@ -623,7 +622,6 @@
           =.  connections.state
             %+  ~(jab by connections.state)  duct
             |=  connection=outstanding-connection
-            ~!  data.raw-http-response
             %_  connection
               code        `status-code.raw-http-response
               headers     `headers.raw-http-response
@@ -831,9 +829,35 @@
       %born
     ::
     ~&  [%todo-handle-born p.task]
-    ::  hand back a default configuration for now
+    ::  close previously open connections
     ::
-    [[duct %give %form *http-config]~ light-gate]
+    ::    When we have a new unix process, every outstanding open connection is
+    ::    dead. For every duct, send an implicit close connection.
+    ::
+    =^  closed-connections=(list move)  server-state.ax
+      =/  connections=(list [=^duct *])
+        ~(tap by connections.server-state.ax)
+      ::
+      =|  closed-connections=(list move)
+      |-
+      ?~  connections
+        [closed-connections server-state.ax]
+      ::
+      =/  event-args
+        [[(need ship.ax) eny duct.i.connections now scry-gate] server-state.ax]
+      =/  cancel-request  cancel-request:(per-server-event event-args)
+      =^  moves  server-state.ax  cancel-request
+      ::
+      $(closed-connections (weld moves closed-connections), connections t.connections)
+    ::
+    :_  light-gate
+    ;:  weld
+      ::  hand back default configuration for now
+      ::
+      [duct %give %form *http-config]~
+    ::
+      closed-connections
+    ==
   ::
       ::  %live: no idea what this is for
       ::
