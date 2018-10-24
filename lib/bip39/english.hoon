@@ -1,4 +1,5 @@
 ::  english wordlist for use in bip39
+^-  (list tape)
 :~
   "abandon"
   "ability"
