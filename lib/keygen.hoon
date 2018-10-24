@@ -30,36 +30,31 @@
 ::
 ++  full-wallet-from-ticket
   |=  [ticket=byts sis=(set ship) pass=(unit @t) revs=revisions]
-  =+  owner-seed=(argon2u ticket)
-  (full-wallet-from-seed owner-seed sis pass revs)
-::
-++  full-wallet-from-seed
-  |=  [owner-seed=@ux sis=(set ship) pass=(unit @t) revs=revisions]
+  =+  master-seed=(argon2u ticket)
   =+  dr=~(. sd pass)
   =+  cn=|=([s=@ m=meta] (child-node-from-seed s m pass))
   ::
   :-  ^=  owner  ^-  node
-      :+  *meta  owner-seed
-      (wallet:dr owner-seed)
+      (cn master-seed "owner" owner.revs ~)
   ::
   :-  ^=  delegate
-      (cn owner-seed "delegate" delegate.revs ~)
+      (cn master-seed "delegate" delegate.revs ~)
   ::
   =/  manage=node
-    (cn owner-seed "manage" manage.revs ~)
+    (cn master-seed "manage" manage.revs ~)
   :-  manage=manage
   ::
   :-  ^=  transfer
       %-  ~(rep in sis)
       |=  [s=ship n=nodes]
       %+  ~(put by n)  s
-      (cn owner-seed "transfer" transfer.revs `s)
+      (cn master-seed "transfer" transfer.revs `s)
   ::
   :-  ^=  spawn
       %-  ~(rep in sis)
       |=  [s=ship n=nodes]
       %+  ~(put by n)  s
-      (cn owner-seed "spawn" spawn.revs `s)
+      (cn master-seed "spawn" spawn.revs `s)
   ::
   ^=  network
   %-  ~(rep in sis)
