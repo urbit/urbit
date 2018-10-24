@@ -1,3 +1,9 @@
+# The following program, which was distilled from Qt's qrandom.cpp, causes an
+# internal compiler error in i686-w64-mingw32-g++ version 7.3.0 and 8.2.0:
+#   __attribute__((__target__("rdrnd"))) void f(unsigned int * b) noexcept {
+#     __builtin_ia32_rdrand32_step(b);
+#   }
+
 { native, arch, stage ? 2, binutils, libc }:
 
 let
@@ -15,11 +21,11 @@ native.make_derivation rec {
 
   target = "${arch}-w64-mingw32";
 
-  version = "8.2.0";
+  version = "7.3.0";
 
   src = fetchurl {
     url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.xz";
-    sha256 = "10007smilswiiv2ymazr3b6x2i933c0ycxrr529zh4r6p823qv0r";
+    sha256 = "0p71bij6bfhzyrs8676a8jmpjsfz392s2rg862sdnsk30jpacb43";
   };
 
   builder = ./builder.sh;
