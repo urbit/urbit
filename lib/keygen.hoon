@@ -69,8 +69,9 @@
   ++  wallet
     |=  seed=@ux
     ^-  ^wallet
+    =<  [public-key private-key chain-code]
     =>  (from-seed:bip32 32^seed)
-    [public-key private-key chain-code]
+    (derive-path "m/44’/60’/0’/0/0")
   ::
   ++  urbit
     |=  seed=@ux
