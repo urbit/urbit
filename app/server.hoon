@@ -121,6 +121,23 @@
   ::
     "</body></html>"
   ==
+::  +require-authorization: redirect to the login page when unauthenticated
+::
+++  require-authorization
+  |*  [=bone move=mold this=*]
+  |=  handler=$-(inbound-request:light (quip move _this))
+  |=  =inbound-request:light
+  ^-  (quip move _this)
+  ::
+  ?:  authenticated.inbound-request
+    (handler inbound-request)
+  ::
+  :_  this
+  ^-  (list move)
+  =/  redirect=cord
+    %-  crip
+    "/~/login?redirect={(trip url.http-request.inbound-request)}"
+  [bone [%http-response %start 307 ['location' redirect]~ ~ %.y]]~
 --
 |%
 ::
@@ -179,28 +196,12 @@
   :-  ^-  move
       [ost.bow %wait /timer (add now.bow ~s1)]
   moves
-::
-::  ++  require-authorization
-::    |=  handle=$-(inbound-request:light (quip move _this))
-::    |=  =inbound-request:light
-::    ^-  (quip move _this)
-::    ::
-::    ::
-::    (handle inbound-request)
-
 ::  +poke-handle-http-request: received on a new connection established
 ::
 ++  poke-handle-http-request
+  %-  (require-authorization ost.bow move this)
   |=  =inbound-request:light
   ^-  (quip move _this)
-  ::
-  ?.  authenticated.inbound-request
-    :_  this
-    ^-  (list move)
-    =/  redirect=cord
-      %-  crip
-      "/~/login?redirect={(trip url.http-request.inbound-request)}"
-    [ost.bow [%http-response %start 307 ['location' redirect]~ ~ %.y]]~
   ::
   =+  request-line=(parse-request-line url.http-request.inbound-request)
   ~&  [%request-line request-line]
