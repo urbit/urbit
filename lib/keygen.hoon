@@ -21,11 +21,11 @@
   [inp (to-byts 'urbitkeygen')]
 ::
 ++  child-node-from-seed
-  |=  [seed=byts met=meta pass=(unit @t)]
+  |=  [seed=@ met=meta pass=(unit @t)]
   ^-  node
   =+  dr=~(. sd pass)
   =+  child-seed=(seed:dr seed met)
-  :+  met  dat.child-seed
+  :+  met  child-seed
   (wallet:dr child-seed)
 ::
 ++  full-wallet-from-ticket
@@ -36,7 +36,7 @@
 ++  full-wallet-from-seed
   |=  [owner-seed=@ux sis=(set ship) pass=(unit @t) revs=revisions]
   =+  dr=~(. sd pass)
-  =+  cn=|=([s=byts m=meta] (child-node-from-seed s m pass))
+  =+  cn=|=([s=@ m=meta] (child-node-from-seed s m pass))
   ::
   :-  ^=  owner  ^-  node
       :+  *meta  owner-seed
@@ -67,25 +67,17 @@
   %+  ~(put by u)  s
   =+  m=["network" network.revs `s]
   =+  s=(seed:dr seed.manage m)
-  [m dat.s (urbit:dr s)]
+  [m s (urbit:dr s)]
 ::
 ++  sd                                                  ::  seed derivation
   |_  pass=(unit @t)
-  ++  append-pass
-    |=  s=@ux
-    ^-  @ux
-    =+  (fall pass '')
-    (cat 3 (swp 3 -) dat.b)
-  ::
   ++  wallet
-    %+  cork  append-pass
     |=  seed=@ux
     ^-  ^wallet
     =>  (from-seed:bip32 32^seed)
     [public-key private-key chain-code]
   ::
   ++  urbit
-    %+  cork  append-pass
     |=  seed=@ux
     ^-  edkeys
     =+  =<  [pub=pub:ex sec=sec:ex]
@@ -100,13 +92,13 @@
   ++  seed
     |=  [seed=@ux meta]
     ^-  @ux
+    =/  salt=tape
+      ;:  weld
+        typ  "-"  (a-co:co rev)
+        ?~(who ~ ['-' (a-co:co u.who)])
+      ==
     %-  sha-256l
-    %-  append-pass
-    =+  ;:  weld
-          typ  "-"  (a-co:co rev)
-          ?~(who ~ ['-' (a-co:co u.who)])
-        ==
-    :-  (add 32 (lent -))
-    (cat 3 (crip (flop -)) seed)
+    :-  (add 32 (lent salt))
+    (cat 3 (crip (flop salt)) seed)
   --
 --
