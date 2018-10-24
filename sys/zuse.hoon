@@ -7468,13 +7468,13 @@
     :~  =-  ['logIndex'^(cu - (mu so))]
         |=  li=(unit @t)
         ?~  li  ~
-        =-  `((ot -) log)  ::TODO  not sure if elegant or hacky.
-        :~  'logIndex'^(cu hex-to-num so)
-            'transactionIndex'^(cu hex-to-num so)
-            'transactionHash'^(cu hex-to-num so)
-            'blockNumber'^(cu hex-to-num so)
-            'blockHash'^(cu hex-to-num so)
-            'removed'^bo
+        =-  `((ou -) log)  ::TODO  not sure if elegant or hacky.
+        :~  'logIndex'^(un (cu hex-to-num so))
+            'transactionIndex'^(un (cu hex-to-num so))
+            'transactionHash'^(un (cu hex-to-num so))
+            'blockNumber'^(un (cu hex-to-num so))
+            'blockHash'^(un (cu hex-to-num so))
+            'removed'^(uf | bo)
         ==
       ::
         address+(cu hex-to-num so)
