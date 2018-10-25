@@ -1341,7 +1341,7 @@
       ::  sanity check, should never fail if we operate correctly
       ::  XX is this true in the presence of reorgs?
       ::
-      ?>  (gte block.wer latest-block)
+      ::  ?>  (gte block.wer latest-block)
       =:  evs           (~(put by evs) wer dif)
           heard         (~(put in heard) wer)
           latest-block  (max latest-block block.wer)
@@ -1619,7 +1619,9 @@
   ::
   ++  put-change
     |=  [cause=event-id dif=diff-constitution]
-    ?<  (~(has by changes) cause)  ::  one diff per event
+    ?:  (~(has by changes) cause)  ::  one diff per event
+      ~&  [%duplicate-cause cause]
+      !!
     +>(changes (~(put by changes) cause dif))
   ::
   ::  +|  move-generation
@@ -1844,9 +1846,17 @@
     ?:  ?=(%& -.source)  +>
     ?:  ?=(%tang mar)
       ::TODO  proper error handling
-      ~&  %yikes
       ~_  q.res
-      +>
+      ?+  cuz
+            ~&  [%yikes cuz]
+            +>
+          [%filter %changes *]
+        ~&  %retrying-node
+        wait-poll
+          [%catch-up %step *]
+        ~&  %retrying-catch-up
+        catch-up
+      ==
     ?>  ?=(%json-rpc-response mar)
     =+  rep=~|(res ((hard response:rpc:jstd) q.res))
     ?+  cuz  ~|([%weird-sigh-wire cuz] !!)
