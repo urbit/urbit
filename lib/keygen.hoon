@@ -18,7 +18,7 @@
   |=  inp=byts
   ^-  @
   %-  (argon2-urbit:argon2:crypto 32)
-  [inp (to-byts 'urbitkeygen')]
+  [inp (to-byts 'urbitwallet')]
 ::
 ++  child-node-from-seed
   |=  [seed=@ met=meta pass=(unit @t)]
