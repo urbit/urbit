@@ -517,7 +517,7 @@
           {$junk p/@}                                   ::  entropy
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
-          {$sunk p=ship}                                ::  report death
+          {$sunk p=ship q=life}                         ::  report death
           {$tend ~}                                     ::  watch lane changes
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
@@ -748,7 +748,7 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm our/ship des/desk pax/path rit/rite}   ::  change permissions
-          {$sunk p=ship}                                ::  report death
+          {$sunk p=ship q=life}                         ::  report death
           {$warp wer/sock rif/riff}                     ::  internal file req
           {$werp who/ship wer/sock rif/riff}            ::  external file req
           {$wegh ~}                                    ::  report memory
@@ -914,7 +914,7 @@
           {$harm ~}                                    ::  all terms hung up
           {$init p/ship}                                ::  after gall ready
           {$noop ~}                                    ::  no operation
-          {$sunk p=ship}                                ::  report death
+          {$sunk p=ship q=life}                         ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
@@ -1014,7 +1014,7 @@
           [%live p=@ud q=(unit @ud)]                    ::  http/s ports
           [%rule p=http-rule]                           ::  update config
           [%serv p=$@(desk beam)]                       ::  set serving root
-          [%sunk p=ship]                                ::  report death
+          [%sunk p=ship q=life]                         ::  report death
           [%them p=(unit hiss)]                         ::  outbound request
           [%they p=@ud q=httr]                          ::  inbound response
           [%chis p=? q=clip r=httq]                     ::  IPC inbound request
@@ -1210,9 +1210,9 @@
               ::
               our=@p
           ==
-          ::  %sunk: recieve a report that a foreign ship has lost continuity
+          ::  %sunk: receive a report that a foreign ship has lost continuity
           ::
-          [%sunk =ship]
+          [%sunk =ship =life]
           ::  %wegh: produce memory usage information
           ::
           [%wegh ~]
@@ -1903,7 +1903,7 @@
       $%  {$conf p/dock q/culm}                         ::  configure app
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
-          {$sunk p=ship}                                ::  report death
+          {$sunk p=ship q/life}                         ::  report death
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
           {$west p/sack q/path r/*}                     ::  network request
           {$wegh ~}                                    ::  report memory
@@ -2044,7 +2044,7 @@
       ==  ==                                            ::
           $:  @tas                                      ::
       $%  [%init p=ship]                                ::  report install
-          [%sunk p=ship]                                ::  report death
+          [%sunk p=ship q=life]                         ::  report death
       ==  ==  ==                                        ::
     ++  public                                          ::  public key state
       $:  live=?                                        ::  seen in current era

@@ -1477,15 +1477,28 @@
             =/  key  ~(key by urb.ton.fox)
             ?>(?=([@ ~ ~] key) n.key)
           =*  who  p.kyz
+          =*  lyf  q.kyz
+          =/  saf=sufi  (~(got by urb.ton.fox) our)
           =/  con=corn  (~(got by zac.fox) our)
+          ::
+          ?:  =(our who)
+            ?:  (lth lyf p:(head val.saf))
+              ::  replaying our old sinkage, ignore
+              ::  XX review
+              ::
+              [~ fox]
+            ::  XX include some helpful instructions here
+            ::
+            :_  fox
+            [%wine [our who] ", you have sunk"]~
+          ::
+          =.  saf       saf(hoc (~(del by hoc.saf) who))
           =.  con       con(wab (~(del by wab.con) who))
-          =/  suf=sufi  (~(got by urb.ton.fox) our)
-          =.  suf       suf(hoc (~(del by hoc.suf) who))
           ::
           :-  [%wine [our who] " has sunk"]~
           %=  fox
+            urb.ton  (~(put by urb.ton.fox) our saf)
             zac      (~(put by zac.fox) our con)
-            urb.ton  (~(put by urb.ton.fox) our suf)
           ==
         ::
             %wake

@@ -1341,14 +1341,19 @@
         :-  (file-discontinuity who)
         %=  ..file
           hul.eth  (~(put by hul.eth) who hel)
-        ::
-          moz  :*  [hen %slip %a %sunk who]
-                   [hen %slip %c %sunk who]
-                   [hen %slip %d %sunk who]
-                   [hen %slip %e %sunk who]
-                   [hen %slip %f %sunk who]
-                   [hen %slip %g %sunk who]
-                   moz
+          ::  these must be appended here; +abet flops them
+          ::
+          moz  =/  lyf=life
+                 ~|  sunk-unknown+who
+                 life:(~(got by kyz.puk))
+               %+  weld  moz
+               ^-  (list move)
+               :~  [hen %slip %a %sunk who lyf]
+                   [hen %slip %c %sunk who lyf]
+                   [hen %slip %d %sunk who lyf]
+                   [hen %slip %e %sunk who lyf]
+                   [hen %slip %f %sunk who lyf]
+                   [hen %slip %g %sunk who lyf]
                ==
         ==
       ::  hel: updated hull
