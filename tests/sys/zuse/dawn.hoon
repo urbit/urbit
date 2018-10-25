@@ -168,6 +168,12 @@
     !>  [%| %key-mismatch]
     !>  (veri:dawn sed hul ~)
 ::
+++  test-veri-life-mismatch
+  =/  sed  [~zod 2 sec ~]
+  %+  expect-eq
+    !>  [%| %life-mismatch]
+    !>  (veri:dawn sed hul ~)
+::
 ++  test-veri-already-booted
   =/  sed  [~zod 1 sec ~]
   ;:  weld
@@ -212,6 +218,18 @@
   %+  expect-eq
     !>  [%| %parent-not-keyed]
     !>  (veri:dawn sed =>(hul .(net ~)) ~)
+::
+++  test-veri-earl-life-mismatch
+  =/  cub  (pit:nu:crub:crypto 24 %foo)
+  =/  who  ~simtel-mithet-dozzod-dozzod
+  =/  sed
+    =/  sig
+      %-  sign:as:(nol:nu:crub:crypto sec)
+      (shaf %earl (sham who 1 pub:ex:cub))
+    [who 2 sec:ex:cub `sig]
+  %+  expect-eq
+    !>  [%| %life-mismatch]
+    !>  (veri:dawn sed hul ~)
 ::
 ++  test-veri-earl-invalid-sig
   =/  cub  (pit:nu:crub:crypto 24 %foo)

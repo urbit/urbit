@@ -8117,6 +8117,10 @@
       ::
       ?~  net.hull
         [%| %parent-not-keyed]
+      ::  life must match parent's
+      ::
+      ?.  =(lyf.seed life.u.net.hull)
+        [%| %life-mismatch]
       =/  loy  (com:nu:crub:crypto pass.u.net.hull)
       =/  hax  (shaf %earl (sham who.seed lyf.seed pub:ex:cub))
       ::  the signature must be valid
@@ -8138,6 +8142,10 @@
       ::
       ?.  =(pub:ex:cub pass.u.net.hull)
         [%| %key-mismatch]
+      ::  life must match the contract
+      ::
+      ?.  =(lyf.seed life.u.net.hull)
+        [%| %life-mismatch]
       ::  the boot life must be greater than and discontinuous with
       ::  the last seen life (per the sponsor)
       ::
