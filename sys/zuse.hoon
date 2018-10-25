@@ -375,6 +375,8 @@
         ::  0xab87.24a7.a953.ef14.e940.b358.6b21.a889.b62f.3d56  ::  ropsten
         0x84b3.7fbc.6188.da8a.e866.1eae.322a.f4d9.2db4.5ecc  ::  joe
         ::  0x7134.3566.74e4.0c93.8736.8699.1af8.86dd.2ae8.e642  ::  philip
+      ++  launch
+        4.230.928
       --
     ::
     ::  hashes of ship event signatures
@@ -2160,11 +2162,11 @@
     ++  pile  (tree (pair @ @))                         ::  efficient ship set
     ++  rite                                            ::  urbit commitment
       $%  {$apple p/(map site @)}                       ::  web api key
-          {$block ~}                                   ::  banned
+          {$block ~}                                    ::  banned
           {$email p/(set @t)}                           ::  email addresses
           {$final p/(map ship @pG)}                     ::  ticketed ships
           {$fungi p/(map term @ud)}                     ::  fungibles
-          {$guest ~}                                   ::  refugee visa
+          {$guest ~}                                    ::  refugee visa
           {$hotel p/(map dorm pile)}                    ::  reserved block
           {$jewel p/(map life ring)}                    ::  private keyring
           {$login p/(set @pG)}                          ::  login secret
@@ -7454,6 +7456,8 @@
     (hex-to-num p.j)
   ::
   ++  parse-eth-new-filter-res  parse-hex-result
+  ::
+  ++  parse-eth-block-number  parse-hex-result
   ::
   ++  parse-transaction-hash  parse-hex-result
   ::
