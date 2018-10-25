@@ -69,7 +69,7 @@
       ship=(unit ship)
       ::  client-state: state of outbound requests
       ::
-      ::=client-state
+      client-state=state:client
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -86,19 +86,17 @@
         next-id=@ud
         ::  connection-by-id: open connections to the
         ::
-        connection-by-id=(map @ud [=duct =http-request])
+        connection-by-id=(map @ud [=duct =in-progress-http-request])
     ==
   ::  +in-progress-http-request: state around an outbound http
   ::
   +$  in-progress-http-request
     $:  ::  remaining-redirects: http limit of number of redirects before error
         ::
-        remaining-redirects=_5
+        remaining-redirects=@ud
         ::  remaining-retries: number of times to retry the request
         ::
-        ::    TODO: We can't just retry by default. We might only
-        ::
-        remaining-retries=_3
+        remaining-retries=@ud
         ::  chunks: a list of partial results returned from unix
         ::
         chunks=(list octs)
@@ -166,7 +164,7 @@
       ::
       [%login-handler ~]
   ==
-::
+::  +authentication-state: state used in the login system
 ::
 +$  authentication-state
   $%  ::  sessions: a mapping of session cookies to session information
@@ -178,7 +176,14 @@
 +$  session
   $%  ::  expiry-time: when this session expires
       ::
+      ::    We check this server side, too, so we aren't relying on the browser
+      ::    to properly handle cookie expiration as a security mechanism.
+      ::
       expiry-time=@da
+      ::
+      ::  TODO: We should add a system for individual capabilities; we should
+      ::  mint some sort of long lived cookie for mobile apps which only has
+      ::  access to a single application path.
   ==
 --
 ::  utilities
@@ -307,7 +312,38 @@
       (easy ~)
     ==
   ==
-::  +per-server-event: per-event client core
+::  +per-client-event: per-event client core
+::
+++  per-client-event
+  |=  [[our=@p eny=@ =duct now=@da scry=sley] state=state:client]
+  |%
+  ++  fetch
+    |=  [=http-request =outbound-config]
+    ^-  [(list move) state:client]
+    ::  get the next id for this request
+    ::
+    =^  id  next-id.state  [next-id.state +(next-id.state)]
+    ::  add a new open session
+    ::
+    =.  connection-by-id.state
+      %+  ~(put by connection-by-id.state)  id
+      =,  outbound-config
+      [duct [redirects retries ~ 0 ~]]
+    ::  start the download 
+    ::
+    ::  the original eyre keeps track of the duct on %born and then sends a
+    ::  %give on that duct. this seems like a weird inversion of
+    ::  responsibility, where we should instead be doing a pass to unix. the
+    ::  reason we need to manually build ids is because we aren't using the
+    ::  built in duct system.
+    ::
+    ::  email discussions make it sound like fixing that might be hard, so
+    ::  maybe i should just live with the way it is now?
+    ::
+    ::  :-  [duct %pass /fetch 
+    [~ state]
+  --
+::  +per-server-event: per-event server core
 ::
 ++  per-server-event
   |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
@@ -814,6 +850,9 @@
       %born
     ::
     ~&  [%todo-handle-born p.task]
+    ::  TODO: reset the next-id for client state here.
+    ::
+
     ::  close previously open connections
     ::
     ::    When we have a new unix process, every outstanding open connection is
@@ -873,10 +912,30 @@
     =^  moves  server-state.ax  cancel-request
     [moves light-gate]
   ::
+      ::  %fetch
+      ::
+      %fetch
+    ~&  %todo-fetch
+    =/  event-args  [[(need ship.ax) eny duct now scry-gate] client-state.ax]
+    =/  fetch  fetch:(per-client-event event-args)
+    =^  moves  client-state.ax  (fetch +.task)
+    [moves light-gate]
+  ::
+      ::  %cancel-fetch
+      ::
+      %cancel-fetch
+    ~&  %todo-cancel-fetch
+    [~ light-gate]
+  ::
+      ::  %receive: receives http data from unix
+      ::
+      %receive
+    ~&  %todo-receive
+    [~ light-gate]
+  ::
       ::  %connect / %serve
       ::
       ?(%connect %serve)
-    ~|  [%task task]
     =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
     =/  add-binding  add-binding:(per-server-event event-args)
     =^  moves  server-state.ax

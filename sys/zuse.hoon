@@ -2206,12 +2206,40 @@
           ::  http-response: response from urbit to earth
           ::
           [%http-response =raw-http-response]
+          ::  %http-request: outbound http-request to earth
+          ::
+          ::    TODO: id is sort of wrong for this interface; the duct should
+          ::    be enough to identify which request we're talking about?
+          ::
+          [%http-request id=@ud request=(unit http-request)]
           ::  response to a %connect or %serve
           ::
           ::    :accepted is whether :binding was valid. Duplicate bindings are
           ::    not allowed.
           ::
           [%bound accepted=? =binding]
+          ::  periodically sent as an update on the duct that sent %fetch
+          ::
+          $:  %http-progress
+              ::  http-response-header: full transaction header
+              ::
+              ::    In case of a redirect chain, this is the target of the
+              ::    final redirect.
+              ::
+              =http-response-header
+              ::  bytes-fetched: bytes fetched so far
+              ::
+              bytes-fetched=@ud
+              ::  bytes-total: the total size if response had a content-length
+              ::
+              bytes-total=(unit @ud)
+              ::  incremental: data received since the last %http-progress
+              ::
+              incremental=octs
+          ==
+          ::  final response of a download, parsed as mime if successful
+          ::
+          [%http-finished =http-response-header full-file=(unit mime)]
       ==
     ::
     ++  task
@@ -2232,6 +2260,15 @@
           ::  cancels a previous request
           ::
           [%cancel-inbound-request ~]
+          ::  fetches a remote resource
+          ::
+          [%fetch =http-request =outbound-config]
+          ::  cancels a previous fetch
+          ::
+          [%cancel-fetch ~]
+          ::  receives http data from outside
+          ::
+          [%receive =http-request complete=?]
           ::  connects a binding to an app
           ::
           [%connect =binding app=term]
@@ -2309,6 +2346,24 @@
         ::
         redirect=?
     ==
+  ::  +outbound-config: configuration for outbound http requests
+  ::
+  +$  outbound-config
+    $:  ::  number of times to follow a 300 redirect before erroring
+        ::
+        ::    Common values for this will be 3 (the limit most browsers use), 5
+        ::    (the limit recommended by the http standard), or 0 (let the
+        ::    requester deal with 300 redirects).
+        ::
+        redirects=_5
+        ::  number of times to retry before failing
+        ::
+        ::    When we retry, we'll automatically try to use the 'Range' header
+        ::    to resume the download where we left off if we have the
+        ::    'Accept-Range: bytes' in the original response.
+        ::
+        retries=_3
+    ==
   ::
   +|  %http
   ::  +header-list: an ordered list of http headers
@@ -2344,6 +2399,19 @@
         ::  body: optionally, data to send with this request
         ::
         body=(unit octs)
+    ==
+  ::  +http-response: the status code and header list on an http request
+  ::
+  ::    We separate these away from the body data because we may not wait for
+  ::    the entire body before we send a %progress to the caller.
+  ::
+  +$  http-response-header
+    $%  ::  status: http status code
+        ::
+        status-code=@ud
+        ::  headers: http headers
+        ::
+        headers=header-list
     ==
   ::  +raw-http-response: http-response to sent to earth
   ::
