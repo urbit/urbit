@@ -2,12 +2,12 @@
 +=  nodes  (map ship node)
 +=  uodes  (map ship uode)
 ::
-+=  node  [meta=meta seed=@ux keys=wallet]
++=  node  [meta=meta seed=tape keys=wallet]
 +=  uode  [meta=meta seed=@ux keys=edkeys]
 ::
-+=  meta  [typ=tape rev=@ud who=(unit ship)]
++=  meta  [typ=tape rev=@ud who=ship]
 ::
-+=  wallet  [public=@ux private=@ux chain=@ux]
++=  wallet  [keys=[public=@ux private=@ux] addr=@ux chain=@ux]
 ::
 +=  edkeys  [auth=keypair crypt=keypair]
 ::

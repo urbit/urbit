@@ -2,7 +2,7 @@
 ::
 /-  keygen
 ::
-/+  bip32
+/+  bip32, bip39
 ::
 ::
 =,  sha
@@ -23,55 +23,66 @@
 ++  child-node-from-seed
   |=  [seed=@ met=meta pass=(unit @t)]
   ^-  node
-  =+  dr=~(. sd pass)
-  =+  child-seed=(seed:dr seed met)
-  :+  met  child-seed
-  (wallet:dr child-seed)
+  =+  dr=~(. ds pass)
+  =+  sed=(seed:dr seed met)
+  =+  nom=(from-entropy:bip39 32^sed)
+  :+  met  nom
+  %-  wallet:dr
+  %+  to-seed:bip39  nom
+  (trip (fall pass ''))
 ::
 ++  full-wallet-from-ticket
   |=  [ticket=byts sis=(set ship) pass=(unit @t) revs=revisions]
   =+  master-seed=(argon2u ticket)
-  =+  dr=~(. sd pass)
-  =+  cn=|=([s=@ m=meta] (child-node-from-seed s m pass))
+  =/  nn
+    |=  [typ=tape rev=@ud]
+    %-  ~(rep in sis)
+    |=  [who=ship nos=nodes]
+    %+  ~(put by nos)  who
+    %^  child-node-from-seed
+        master-seed
+      [typ rev who]
+    pass
   ::
-  :-  ^=  owner  ^-  node
-      (cn master-seed "owner" owner.revs ~)
+  :-  ^=  owner  ^-  nodes
+      (nn "owner" owner.revs)
   ::
-  :-  ^=  delegate
-      (cn master-seed "delegate" delegate.revs ~)
+  :-  ^=  delegate  ^-  nodes
+      (nn "delegate" delegate.revs)
   ::
-  =/  manage=node
-    (cn master-seed "manage" manage.revs ~)
+  =/  manage=nodes
+    (nn "manage" manage.revs)
   :-  manage=manage
   ::
-  :-  ^=  transfer
-      %-  ~(rep in sis)
-      |=  [s=ship n=nodes]
-      %+  ~(put by n)  s
-      (cn master-seed "transfer" transfer.revs `s)
+  :-  ^=  transfer  ^-  nodes
+      (nn "transfer" transfer.revs)
   ::
-  :-  ^=  spawn
-      %-  ~(rep in sis)
-      |=  [s=ship n=nodes]
-      %+  ~(put by n)  s
-      (cn master-seed "spawn" spawn.revs `s)
+  :-  ^=  spawn  ^-  nodes
+      (nn "spawn" spawn.revs)
   ::
-  ^=  network
+  ^=  network  ^-  uodes
+  =+  dr=~(. ds pass)
   %-  ~(rep in sis)
-  |=  [s=ship u=uodes]
-  %+  ~(put by u)  s
-  =+  m=["network" network.revs `s]
-  =+  s=(seed:dr seed.manage m)
-  [m s (urbit:dr s)]
+  |=  [who=ship nus=uodes]
+  %+  ~(put by nus)  who
+  =/  mad
+    %+  to-seed:bip39
+      seed:(~(got by manage) who)
+    (trip (fall pass ''))
+  =+  met=["network" network.revs who]
+  =+  sed=(seed:dr mad met)
+  [met sed (urbit:dr sed)]
 ::
-++  sd                                                  ::  seed derivation
+++  ds                                                  ::  derive from raw seed
   |_  pass=(unit @t)
   ++  wallet
     |=  seed=@ux
     ^-  ^wallet
-    =<  [public-key private-key chain-code]
-    =>  (from-seed:bip32 32^seed)
-    (derive-path "m/44’/60’/0’/0/0")
+    =+  =>  (from-seed:bip32 32^seed)
+        (derive-path "m/44’/60’/0’/0/0")
+    :+  [public-key private-key]
+      (address-from-pub:ethereum public-key)
+    chain-code
   ::
   ++  urbit
     |=  seed=@ux
@@ -90,8 +101,9 @@
     ^-  @ux
     =/  salt=tape
       ;:  weld
-        typ  "-"  (a-co:co rev)
-        ?~(who ~ ['-' (a-co:co u.who)])
+        typ
+        ['-' (a-co:co who)]
+        ['-' (a-co:co rev)]
       ==
     %-  sha-256l
     :-  (add 32 (lent salt))
