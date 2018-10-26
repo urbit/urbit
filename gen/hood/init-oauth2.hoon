@@ -4,8 +4,7 @@
   ::
 /?  314
 /-  sole
-/+  generators, old-zuse
-=,  old-zuse
+/+  generators
 ::
 ::::
   ::
@@ -28,7 +27,7 @@
   [%& %oauth-client "client id: "]
 %+  parse  (boss 256 (star prn))
 |=  cid/@t
-%+  prompt  
+%+  prompt
   [%& %oauth-secret "client secret: "]
 %+  parse  (boss 256 (star prn))
 |=  cis/@t

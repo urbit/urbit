@@ -3,8 +3,6 @@
 ::::  /hoon/save/hood/gen
   ::
 /?    310
-/+  old-zuse
-=,  old-zuse
 ::
 ::::
   ::
@@ -13,5 +11,5 @@
         {{dap/term ~} ~}
     ==
 ?+  dap  ~|(unknown-backup+dap !!)
-  $womb  [%womb-save (tope byk /womb-part/bak/hood/app)]
+  $womb  [%womb-save (en-beam:format byk /womb-part/bak/hood/app)]
 ==

@@ -2,12 +2,10 @@
 ::::  /hoon/time/app
   ::
 /?    310
-/+  old-zuse
-=,  old-zuse
 |%
 ++  card  {$wait wire @da}
 --
-|_  {bowl ~}
+|_  {bowl:gall ~}
 ++  poke-noun
   |=  *
   :_  +>.$  :_  ~

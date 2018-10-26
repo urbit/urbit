@@ -4,8 +4,8 @@
   ::
 /?    310
 /-  sole
-/+  generators, old-zuse
-=,  old-zuse
+/+  generators
+=,  ames
 ::
 ::::
   ::
@@ -47,7 +47,7 @@
 ::
     ^-  gens
     :-  %en
-    =+  can=(clan his)
+    =+  can=(clan:title his)
     ?-  can
       $czar  [%czar ~]
       $duke  [%duke %anon ~]

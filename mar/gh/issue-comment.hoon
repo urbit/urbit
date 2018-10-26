@@ -1,7 +1,6 @@
 ::  Converts the result of an 'issues' event into a issues:gh.
 /-  gh
-/+  gh-parse, hall, old-zuse
-=,  old-zuse
+/+  gh-parse, hall
 |_  issue-comment/issue-comment:gh
 ++  grow
   |%
@@ -23,7 +22,7 @@
         (rash html-url.comment.issue-comment aurf:urlp)
         %-  jobe  :~
           repository+s+name.repository.issue-comment
-          number+(jone number.issue.issue-comment)
+          number+(numb:enjs:format number.issue.issue-comment)
           title+s+title.issue.issue-comment
         ==
     ==
@@ -32,10 +31,10 @@
   |%
   ++  json
     =;  jop  |=(jon/^json `issue-comment:gh`(need (jop jon)))
-    %-  ot:jo
+    %-  ot:dejs-soft:format
     :~  repository+repository:gh-parse
         sender+user:gh-parse
-        action+so:jo
+        action+so:dejs-soft:format
         issue+issue:gh-parse
         comment+comment:gh-parse
     ==

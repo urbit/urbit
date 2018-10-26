@@ -2,13 +2,12 @@
 ::::  /hoon/stat-all/womb/mar
   ::
 /?    310
-/+    hood-womb, old-zuse
+/+    hood-womb
 ::
 ::::  ~fyr
   ::
 =*  invite     invite:hood-womb
 =*  reference  reference:hood-womb
-=,  old-zuse
 |_  {cord reference invite}
 ::
 ++  grab                                                ::  convert from
@@ -17,8 +16,8 @@
   ++  json
     |=  jon/^json  ^-  {cord reference invite}
     %-  need
-    %.  jon 
-    =>  jo
+    %.  jon
+    =>  dejs-soft:format
     =/  mail
       ;~  simu
         ;~(pfix (plus ;~(less vat next)) vat)

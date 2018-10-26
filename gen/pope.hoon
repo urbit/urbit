@@ -5,10 +5,10 @@
 /?    310
 ::  Input twitter keys
 /-  sole
-/+  generators, old-zuse
-=,  [sole generators old-zuse]
+/+  generators
+=,  [sole generators]
 ::
-=+  cryp=crub
+=+  cryp=crub:crypto
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {{who/ship ~} ~}
@@ -24,4 +24,3 @@
 :~  leaf+"generator: {(scow %uw bur)}"
     leaf+"fingerprint: {(scow %uw fig:ex:arc)}"
 ==
-

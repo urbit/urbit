@@ -4,8 +4,7 @@
   ::
 /?    310
 /-  sole
-/+  generators, old-zuse
-=,  old-zuse
+/+  generators
 =,  generators
 ::
 ::::
@@ -15,7 +14,7 @@
         ~
         ~
     ==
-=/  ran  (clan p.bec)
+=/  ran  (clan:title p.bec)
 ?:  ?=({?($earl $pawn)} ran)
   %-  produce
   :-  %tang  :_  ~
