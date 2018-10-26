@@ -197,8 +197,14 @@ _main_getopt(c3_i argc, c3_c** argv)
   if ( u3_Host.ops_u.fak == c3n && u3_Host.ops_u.net == c3y ) {
     fprintf(stderr, "-N only makes sense with -F\n");
     return c3n;
-  } else if ( u3_Host.ops_u.fak == c3n && u3_Host.ops_u.net == c3n ) {
+  }
+
+  if ( u3_Host.ops_u.fak == c3n && u3_Host.ops_u.net == c3n ) {
     u3_Host.ops_u.net = c3y;  /* remote networking is always on in real mode. */
+  }
+
+  if ( u3_Host.ops_u.fak == c3y ) {
+    u3_Host.ops_u.has = c3y;  /* no battery hashing on fake ships. */
   }
 
   if ( u3_Host.ops_u.arv_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
@@ -348,6 +354,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-r host       Initial peer address\n",
     "-R            Report urbit build info\n",
     "-s            Pill URL from arvo git hash\n",
+    "-S            Disable battery hashing\n",
     "-t ticket     Use ~ticket automatically\n",
     "-u url        URL from which to download pill\n",
     "-v            Verbose\n",
