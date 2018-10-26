@@ -440,8 +440,8 @@
       ::
       [%| prefix=tile =(list @t)]
       $:  %&
-          $:  ::  wide: one-line syntax
-              ::  tall: multiline syntax
+          $:  ::  wide: one-line style
+              ::  tall: multiline style
               ::
               $=  wide
               ::  %~: no wide form
@@ -6163,10 +6163,11 @@
               {ven/term pro/term kel/@}                 ::  vendor and product
               {ven/term pro/term ver/@ kel/@}           ::  all of the above
           ==                                            ::
-+$  coil  $:  p/{p/(unit term) q/poly r/vair}           ::  name, wet/dry, vary
++$  coil  $:  p/garb                                    ::  name, wet/dry, vary
               q/type                                    ::  context
-              r/{p/seminoun q/(map term tome)}          ::  arms
+              r/(pair seminoun (map term tome))         ::  chapters
           ==                                            ::
++$  garb  (trel (unit term) poly vair)                  ::  core 
 +$  poly  ?(%wet %dry)                                  ::  polarity
 +$  foot  $%  {$dry p/hoon}                             ::  dry arm, geometric
               {$wet p/hoon}                             ::  wet arm, generic
@@ -6198,30 +6199,6 @@
               %type                                     ::
               %nock                                     ::
               %tank                                     ::
-          ==                                            ::
-+$  plot                                                ::  externalization
-          $~  [%base %noun]                             ::
-          $%  [%base =base]                             ::  base value
-              [%core =plot count=@ud code=@udF]         ::  any core
-              [%deep =plat]                             ::  stand
-              [%gate =plot =plot]                       ::  gate sample/context
-              [%leaf =@tas]                             ::  constant
-              [%loop =@ud]                              ::  repetition point
-              [%list =plot]                             ::  i-t list
-              [%many =(list plot)]                      ::  tuple
-              [%mark =stud =plot]                       ::  standard
-              [%name =term =plot]                       ::  name attached
-              [%pair =plot =plot]                       ::  pq cell
-              [%path ~]                                 ::  with @ta segments
-              [%pick =(list plot)]                      ::  overlap
-              [%pool =plot =(map @ud plot)]             ::  repetition pool
-              [%qual =plot =plot =plot =plot]           ::  formal quadruple
-              [%quil =plot =plot =plot =plot =plot]     ::  formal quintuple
-              [%tape ~]                                 ::  utf8 bytes
-              [%tour ~]                                 ::  utf32 graphemes
-              [%tree p=plot]                            ::  n-l-r tree
-              [%trip p=plot q=plot r=plot]              ::  formal triple
-              [%unit p=plot]                            ::  maybe
           ==                                            ::
 +$  pock  (pair axis nock)                              ::  changes
 +$  port  (each palo (pair type nock))                  ::  successful match
@@ -7688,19 +7665,6 @@
         [[les mor] load]
       ?<  ?=(~ specs)
       :_(load [%bswt specs])
-    --
-  ::
-  ::  +explore:cosmetic: convert :sut to an inspection pattern (+plot).
-  ::
-  ++  explore
-    ^-  [plot _.]
-    =<  [- +>] 
-    |^  ^-  [plot _.]
-        ?+  sut  !!
-          %void  :_(. [%base %void])
-          %noun  :_(. [%base %noun])
-        ==
-    ++  foo  !!
     --
   --
 ++  limb-to-plum
@@ -10408,7 +10372,7 @@
       {$cell *}  |($(sut p.sut) $(sut q.sut))
       {$core *}  $(sut p.sut)
       {$face *}  $(sut q.sut)
-      {$fork *}  (lien ~(tap in p.sut) |=(type ^$(sut +<)))
+      {$fork *}  (levy ~(tap in p.sut) |=(type ^$(sut +<)))
       {$hint *}  $(sut q.sut)
       {$hold *}  |((~(has in gil) sut) $(gil (~(put in gil) sut), sut repo))
       $noun      |
