@@ -41,8 +41,9 @@
         if ( c3n == u3r_trel(pq_sut, &ppq_sut, &qpq_sut, &rpq_sut) ) {
           return u3m_bail(c3__fail);
         }
-        else if ( c3__gold != rpq_sut ) {
-          return u3m_error("wrap-gold");
+        else if ( (c3__gold != rpq_sut) &&
+                  (c3__lead != yoz) ) {
+          return u3m_error("wrap-metal");
         }
         else {
           return u3nt(c3__core,
