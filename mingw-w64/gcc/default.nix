@@ -1,9 +1,3 @@
-# The following program, which was distilled from Qt's qrandom.cpp, causes an
-# internal compiler error in i686-w64-mingw32-g++ version 7.3.0 and 8.2.0:
-#   __attribute__((__target__("rdrnd"))) void f(unsigned int * b) noexcept {
-#     __builtin_ia32_rdrand32_step(b);
-#   }
-
 { native, arch, stage ? 2, binutils, libc }:
 
 let
@@ -31,10 +25,22 @@ native.make_derivation rec {
   builder = ./builder.sh;
 
   patches = [
+    # Make it so GCC does not force us to have a "mingw" symlink.
     ./mingw-search-paths.patch
-    ./libstdc++-target.patch
-    ./no-sys-dirs.patch
+
+    # Make --with-sysroot and --with-native-system-header-dir work
+    # as described in the GCC documentation.
     ./cppdefault.patch
+
+    # Remove hardcoded absolute paths.
+    ./no-sys-dirs.patch
+
+    # Fix a bug in GCC that causes an internal compiler error when
+    # compiling Qt's qrandom.cpp:
+    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58372#c14
+    ./stack-alignment.patch
+
+    ./libstdc++-target.patch
   ];
 
   native_inputs = [
