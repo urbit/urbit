@@ -1293,7 +1293,6 @@ _sist_dawn(u3_noun sed)
   c3_c* url_c = eth_t ? u3_Host.ops_u.eth_c : "http://localhost:8545";
 
   {
-    // XX check parent if moon
     // +hull:constitution:ethe: on-chain state
     u3_noun hul;
 
@@ -1572,7 +1571,7 @@ u3_sist_boot(void)
       u3z(rac);
     }
 
-    // Create the ship directory.
+    // Create the event log
     _sist_zest();
   }
 }
