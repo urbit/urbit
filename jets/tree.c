@@ -788,9 +788,8 @@ static u3j_harm _141_two_sqt_a[] = {{".2", u3wc_sqt, c3y}, {}};
 static c3_c* _141_two_sqt_ha[] = {0};
 static u3j_harm _141_two_vor_a[] = {{".2", u3wc_vor, c3y}, {}};
 static c3_c* _141_two_vor_ha[] = {0};
-// disabled, leaks
-// static u3j_harm _141_two_xeb_a[] = {{".2", u3wc_xeb, c3y}, {}};
-// static c3_c* _141_two_xeb_ha[] = {0};
+static u3j_harm _141_two_xeb_a[] = {{".2", u3wc_xeb, c3y}, {}};
+static c3_c* _141_two_xeb_ha[] = {0};
 
   static u3j_harm _141_two__in_bif_a[] = {{".2", u3wdi_bif}, {}};
   static c3_c* _141_two__in_bif_ha[] = {0};
@@ -929,8 +928,7 @@ static u3j_core _141_two_d[] =
   { "pow", 7, _141_two_pow_a, 0, _141_two_pow_ha },
   { "sqt", 7, _141_two_sqt_a, 0, _141_two_sqt_ha },
   { "vor", 7, _141_two_vor_a, 0, _141_two_vor_ha },
-  // disabled, leaks
-  // { "xeb", 7, _141_two_xeb_a, 0, _141_two_xeb_ha },
+  { "xeb", 7, _141_two_xeb_a, 0, _141_two_xeb_ha },
 
   { "by",  7, 0, _141_two__by_d, _141_two__by_ha },
   { "in",  7, 0, _141_two__in_d, _141_two__in_ha },
