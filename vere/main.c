@@ -141,13 +141,13 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'K': {
-        u3_Host.ops_u.key_c = strdup(optarg);
-        break;
-      }
-      case 'k': {
         if ( c3n == _main_readw(optarg, 256, &u3_Host.ops_u.kno_w) ) {
           return c3n;
         }
+        break;
+      }
+      case 'k': {
+        u3_Host.ops_u.key_c = strdup(optarg);
         break;
       }
       case 'l': {
@@ -248,7 +248,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   }
 
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.key_c != 0) {
-    fprintf(stderr, "-K only makes sense when bootstrapping a new instance\n");
+    fprintf(stderr, "-k only makes sense when bootstrapping a new instance\n");
     return c3n;
   }
 
@@ -343,8 +343,8 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-F ship       Fake keys; also disables networking\n",
     "-f            Fuzz testing\n",
     "-g            Set GC flag\n",
-    "-K keys       Private key file\n",
-    "-k stage      Start at Hoon kernel version stage\n",
+    "-K stage      Start at Hoon kernel version stage\n",
+    "-k keys       Private key file\n",
     "-l port       Initial peer port\n",
     "-M            Memory madness\n",
     "-n host       Set unix hostname\n",
