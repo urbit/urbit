@@ -61,6 +61,9 @@
             sig=(unit oath)                             ::  for a moon
             :: XX reconcile with .dns.eth               ::
             tuf=(list turf)                             ::  domains
+            :: XX use for eth replay                    ::
+            boq=@ud                                     ::  boot block
+            nod=(unit purl:eyre)                        ::  eth gateway
             fak/_|                                      ::  fake keys
             lyf/life                                    ::  version
             jaw/(map life ring)                         ::  private keys
@@ -687,13 +690,26 @@
       abet:abet:(deal:(burb our.tac) p.tac [~ q.tac])
     ::
     ::  boot from keys
-    ::    {$dawn =seed spon=(unit ship) czar=(map ship [=life =pass]) turf=(list turf)}
+    ::    $:  $dawn
+    ::        =seed
+    ::        spon=(unit ship)
+    ::        czar=(map ship [=life =pass])
+    ::        turf=(list turf)}
+    ::        bloq=@ud
+    ::        node=purl
+    ::    ==
     ::
         %dawn
       =*  our  who.seed.tac
       ::  sort-of single-homed
       ::
       =.  our.own.sub  our
+      ::  save our boot block
+      ::
+      =.  boq.own.sub  bloq.tac
+      ::  save our ethereum gateway (required for galaxies)
+      ::
+      =.  nod.own.sub  node.tac
       ::  save our parent signature (only for moons)
       ::
       =.  sig.own.sub  sig.seed.tac
@@ -1777,10 +1793,10 @@
     ::  TODO: ship or node as sample?
     ::
     =.  latest-block  launch:contracts
-    ?.  =(our bos)
-      (listen-to-ship our bos)
-    =+  (need (de-purl:html 'http://localhost:8545'))
-    (listen-to-node -(p.p |))
+    ?:  |(=(our bos) ?=(^ nod.own))
+      ~|  %jael-init-node
+      (listen-to-node (need nod.own))
+    (listen-to-ship our bos)
   ::
   ::  +look: configure the source of ethereum events
   ::

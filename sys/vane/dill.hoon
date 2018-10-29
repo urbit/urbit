@@ -75,6 +75,8 @@
           spon=(unit ship)                              ::    sponsor
           czar=(map ship [=life =pass])                 ::    galaxy table
           turf=(list turf)                              ::    domains
+          bloq=@ud                                      ::    block number
+          node=(unit purl:eyre)                         ::    gateway url
       ==                                                ::
       [%fake our=ship]                                  ::  boot fake
       :: XX wegh                                        ::
@@ -510,9 +512,10 @@
     ?>  ?=(?(%dawn %fake) -.p.q.hic)
     ?>  =(~ hey.all)
     =.  hey.all  `hen
-    ::  XX clamming - use +hard or something?
-    ::
-    :_(..^$ [hen %pass / (note %j p.q.hic)]~)
+    =/  boot  ((soft note-jael) p.q.hic)
+    ?~  boot
+      ~|  invalid-boot-event+hen  !!
+    :_(..^$ [hen %pass / %j u.boot]~)
   ::  we are subsequently initialized. single-home
   ::
   ?:  ?=(%init -.q.hic)

@@ -15,8 +15,9 @@
   =/  key=ring
     0w8O.k5Ry4.QsKQq.1k~uj.DBOU4.numfq.nXOwa.cSk7B.VcHVm.
     -8~kX.3ALiG.rQjOi.HZ9hj.84b6G.P5pCZ.UtNtt.Lh9TE.2DQJ2
+  =/  url  (de-purl:html 'http://localhost:8545')
   =/  dan
-    [`seed:able:jael`[~nul 1 key ~] ~ ~ [/org/urbit ~]]
+    [`seed:able:jael`[~nul 1 key ~] ~ ~ [/org/urbit ~] 0 url]
   ::
   =^  results1  jael-gate
     =/  hen=duct
@@ -27,10 +28,10 @@
         call-args=[hen type=*type %dawn dan]
         :~  [hen %slip %a %init ~nul]
             [hen %slip %c %init ~nul]
-            [hen %slip %e %init ~nul]
             [hen %slip %g %init ~nul]
-            [hen %give %init ~nul]
             [hen %slip %d %init ~nul]
+            [hen %slip %e %init ~nul]
+            [hen %give %init ~nul]
             [hen %pass /~nul/init %b %wait +(~1234.5.6)]
     ==  ==
   ::
@@ -56,15 +57,10 @@
   =^  results3  jael-gate
     =/  hiss-httr=hiss:eyre
       %+  json-request:ethereum
-        =-  -(p.p |)
-        (need (de-purl:html 'http://localhost:8545'))
-      %+  request-to-json:ethereum  `'new filter'
-      :*  %eth-new-filter
-          `[%number 1]
-          ~
-          ~[ships:contracts:constitution:ethe]
-          ~
-      ==
+        (need url)
+      %+  request-to-json:ethereum
+        `'block number'
+      [%eth-block-number ~]
     %-  jael-take-with-comparator  :*
       jael-gate
       now=(add ~s2 ~1234.5.6)

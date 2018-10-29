@@ -2078,6 +2078,8 @@
               spon=(unit ship)                          ::    sponsor
               czar=(map ship [=life =pass])             ::    galaxy table
               turf=(list turf)                          ::    domains
+              bloq=@ud                                  ::    block number
+              node=(unit purl:eyre)                     ::    gateway url
           ==                                            ::
           [%fake our=ship]                              ::  fake boot
           [%look our=ship src=(each ship purl:eyre)]    ::  set ethereum source
