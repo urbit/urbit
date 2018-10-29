@@ -1283,14 +1283,26 @@ _sist_dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
 static u3_noun
 _sist_dawn(u3_noun sed)
 {
-  u3_noun pon, zar, tuf;
+  u3_noun bok, pon, zar, tuf;
 
   u3_noun who = u3h(sed);
   u3_noun rac = u3do("clan:title", u3k(who));
 
-  c3_t  eth_t = ( 0 != u3_Host.ops_u.eth_c );
   // XX require https?
-  c3_c* url_c = eth_t ? u3_Host.ops_u.eth_c : "http://localhost:8545";
+  c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
+    u3_Host.ops_u.eth_c :
+    "http://localhost:8545";
+
+  {
+    fprintf(stderr, "boot: retrieving latest block\r\n");
+
+    // @ud: block number
+    u3_noun oct = u3v_wish("bloq:give:dawn");
+    u3_noun kob = _sist_eth_rpc(url_c, u3k(oct));
+    bok = u3do("bloq:take:dawn", u3k(kob));
+
+    u3z(oct); u3z(kob);
+  }
 
   {
     // +hull:constitution:ethe: on-chain state
@@ -1311,7 +1323,7 @@ _sist_dawn(u3_noun sed)
 
           fprintf(stderr, "boot: retrieving %s's public keys (for %s)\r\n",
                                               seg_c, u3_Host.ops_u.who_c);
-          oct = u3do("hull:give:dawn", u3k(seg));
+          oct = u3dc("hull:give:dawn", u3k(bok), u3k(seg));
 
           free(seg_c);
           u3z(seg); u3z(ges);
@@ -1319,7 +1331,7 @@ _sist_dawn(u3_noun sed)
         else {
           fprintf(stderr, "boot: retrieving %s's public keys\r\n",
                                              u3_Host.ops_u.who_c);
-          oct = u3do("hull:give:dawn", u3k(who));
+          oct = u3dc("hull:give:dawn", u3k(bok), u3k(who));
         }
 
         u3_noun luh = _sist_eth_rpc(url_c, u3k(oct));
@@ -1356,7 +1368,7 @@ _sist_dawn(u3_noun sed)
     fprintf(stderr, "boot: retrieving galaxy table\r\n");
 
     // (map ship [=life =pass]): galaxy table
-    u3_noun oct = u3v_wish("czar:give:dawn");
+    u3_noun oct = u3do("czar:give:dawn", u3k(bok));
     u3_noun raz = _sist_eth_rpc(url_c, u3k(oct));
     zar = u3do("czar:take:dawn", u3k(raz));
 
@@ -1367,7 +1379,7 @@ _sist_dawn(u3_noun sed)
     fprintf(stderr, "boot: retrieving network domains\r\n");
 
     // (list turf): ames domains
-    u3_noun oct = u3v_wish("turf:give:dawn");
+    u3_noun oct = u3do("turf:give:dawn", u3k(bok));
     u3_noun fut = _sist_eth_rpc(url_c, u3k(oct));
     tuf = u3do("turf:take:dawn", u3k(fut));
 
@@ -1375,7 +1387,9 @@ _sist_dawn(u3_noun sed)
   }
 
   u3z(rac);
-  // XX include ops_u.eth_c if set
+
+  // XX include bok (and parsed eth url)
+  u3z(bok);
 
   // [%dawn seed sponsor galaxies domains]
   return u3nc(c3__dawn, u3nq(sed, pon, zar, tuf));
