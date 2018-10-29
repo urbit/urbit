@@ -221,6 +221,12 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
+  if ( (0 == u3_Host.ops_u.fak_c) && (0 == u3_Host.ops_u.eth_c) && imp_t ) {
+    fprintf(stderr, "can't create a new galaxy without specifying "
+                    "the Ethereum gateway with -e\n");
+    return c3n;
+  }
+
   if ( u3_Host.ops_u.arv_c == 0 && imp_t ) {
     fprintf(stderr, "can't create a new galaxy without specifying "
                     "the initial sync path with -A\n");
