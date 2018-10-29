@@ -82,9 +82,7 @@
 ++  test-take-bloq
   =/  oct
     %-  as-octs:mimes:html
-    %+  rap  3
-    :~  ''
-    ==
+    '{"id":"0","jsonrpc":"2.0","result":"0x20"}'
   =/  boq  32
   %+  expect-eq
     !>  boq
