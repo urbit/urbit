@@ -1283,7 +1283,7 @@ _sist_dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
 static u3_noun
 _sist_dawn(u3_noun sed)
 {
-  u3_noun bok, pon, zar, tuf;
+  u3_noun url, bok, pon, zar, tuf;
 
   u3_noun who = u3h(sed);
   u3_noun rac = u3do("clan:title", u3k(who));
@@ -1292,6 +1292,43 @@ _sist_dawn(u3_noun sed)
   c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
     u3_Host.ops_u.eth_c :
     "http://localhost:8545";
+
+  // ethereum gateway as (unit purl)
+  if ( 0 == u3_Host.ops_u.eth_c ) {
+    if ( c3__czar == rac ) {
+      fprintf(stderr, "boot: galaxy requires ethereum gateway via -e\r\n");
+      // bails, won't return
+      u3_lo_bail();
+      return u3_none;
+    }
+
+    url = u3_nul;
+  }
+  else {
+    u3_noun par = u3v_wish("auru:de-purl:html");
+    u3_noun lur = u3i_string(u3_Host.ops_u.eth_c);
+    u3_noun rul = u3dc("rush", u3k(lur), u3k(par));
+
+    if ( u3_nul == rul ) {
+      if ( c3__czar == rac ) {
+        fprintf(stderr, "boot: galaxy requires ethereum gateway via -e\r\n");
+        // bails, won't return
+        u3_lo_bail();
+        return u3_none;
+      }
+
+      url = u3_nul;
+    }
+    else {
+      // auru:de-purl:html parses to (pair user purl)
+      // we need (unit purl)
+      // (we're using it to avoid the +hoke weirdness)
+      // XX revisit upon merging with release-candidate
+      url = u3nc(u3_nul, u3k(u3t(u3t(rul))));
+    }
+
+    u3z(par); u3z(lur); u3z(rul);
+  }
 
   {
     fprintf(stderr, "boot: retrieving latest block\r\n");
@@ -1388,11 +1425,8 @@ _sist_dawn(u3_noun sed)
 
   u3z(rac);
 
-  // XX include bok (and parsed eth url)
-  u3z(bok);
-
-  // [%dawn seed sponsor galaxies domains]
-  return u3nc(c3__dawn, u3nq(sed, pon, zar, tuf));
+  // [%dawn seed sponsor galaxies domains block eth-url]
+  return u3nc(c3__dawn, u3nq(sed, pon, zar, u3nt(tuf, bok, url)));
 }
 
 /* _sist_zen(): get OS entropy.
@@ -1564,7 +1598,7 @@ u3_sist_boot(void)
 
     // initialize ames
     {
-      u3_noun tuf = (c3y == u3A->fak) ? u3_nul : u3t(u3t(u3t(u3t(pig))));
+      u3_noun tuf = (c3y == u3A->fak) ? u3_nul : u3h(u3t(u3t(u3t(u3t(pig)))));
       // with a fake event to bring up listeners and configure domains
       u3_ames_ef_turf(u3k(tuf));
       // and real effect to set the output duct
