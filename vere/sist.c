@@ -1292,7 +1292,6 @@ _sist_dawn(u3_noun sed)
   // XX require https?
   c3_c* url_c = eth_t ? u3_Host.ops_u.eth_c : "http://localhost:8545";
 
-  // XX leaks nock
   {
     // XX check parent if moon
     // +hull:constitution:ethe: on-chain state
@@ -1354,7 +1353,6 @@ _sist_dawn(u3_noun sed)
     u3z(hul); u3z(liv); u3z(sas);
   }
 
-  // XX leaks nock
   {
     fprintf(stderr, "boot: retrieving galaxy table\r\n");
 
@@ -1366,7 +1364,6 @@ _sist_dawn(u3_noun sed)
     u3z(oct); u3z(raz);
   }
 
-  // XX leaks nock
   {
     fprintf(stderr, "boot: retrieving network domains\r\n");
 
