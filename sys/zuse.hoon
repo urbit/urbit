@@ -7992,38 +7992,74 @@
   ++  give
     =/  tract  ships:contracts:constitution:ethe
     |%
+    ::  +bloq:give:dawn: Eth RPC for latest block number
+    ::
+    ++  bloq
+      ^-  octs
+      %-  as-octt:mimes:html
+      %-  en-json:html
+      %+  request-to-json:ethereum
+        `~.0
+      [%eth-block-number ~]
     ::  +czar:give:dawn: Eth RPC for galaxy table
     ::
     ++  czar
+      |=  boq=@ud
       ^-  octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      %-  batch-read-request:ethereum
+      :-  %a
       %+  turn  (gulf 0 255)
-      |=(gal=@ [`(scot %ud gal) tract ['getKeys(uint32)' [%uint gal]~]])
+      |=  gal=@
+      %+  request-to-json:ethereum
+        `(scot %ud gal)
+      :+  %eth-call
+        =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
+        (encode-call:ethereum 'getKeys(uint32)' [%uint gal]~)
+      [%number boq]
     ::  +hull:give:dawn: Eth RPC for ship's contract state
     ::
     ++  hull
-      |=  who=ship
+      |=  [boq=@ud who=ship]
       ^-  octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      (read-request:ethereum [`~.0 tract ['ships(uint32)' [%uint `@`who]~]])
+      %+  request-to-json:ethereum
+        `~.0
+      :+  %eth-call
+        =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
+        (encode-call:ethereum 'ships(uint32)' [%uint `@`who]~)
+      [%number boq]
     ::  +turf:give:dawn: Eth RPC for network domains
     ::
     ++  turf
+      |=  boq=@ud
       ^-  octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      %-  batch-read-request:ethereum
+      :-  %a
       %+  turn  (gulf 0 2)
-      |=(idx=@ [`(scot %ud idx) tract ['dnsDomains(uint256)' [%uint idx]~]])
+      |=  idx=@
+      %+  request-to-json:ethereum
+        `(scot %ud idx)
+      :+  %eth-call
+        =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
+        (encode-call:ethereum 'dnsDomains(uint256)' [%uint idx]~)
+      [%number boq]
     --
   ::  |take:dawn: parse responses for pre-boot validation
   ::
   ++  take
     =,  dejs:format
     |%
+    ::  +bloq:take:dawn: parse block number
+    ::
+    ++  bloq
+      |=  rep=octs
+      ^-  @ud
+      =/  jon=json  (need (de-json:html q.rep))
+      =/  res=cord  ((ot result+so ~) jon)
+      (hex-to-num:ethereum res)
     ::  +czar:take:dawn: parse galaxy table
     ::
     ++  czar

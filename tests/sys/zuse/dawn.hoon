@@ -28,6 +28,14 @@
   %-  crip
   %+  weld  "0x"
   (render-hex-bytes:ethereum 20 `@`ships:contracts:constitution:ethe)
+::
+++  test-give-bloq
+  =/  oct
+    %-  as-octs:mimes:html
+    '{"jsonrpc":"2.0","id":"0","method":"eth_blockNumber","params":[]}'
+  %+  expect-eq
+    !>  oct
+    !>  bloq:give:dawn
 :: this produces a 1000+ line payload, so we just check that it doesn't crash
 ::
 ++  test-give-czar
@@ -41,14 +49,14 @@
   =/  oct
     %-  as-octs:mimes:html
     %+  rap  3
-    :~  '{"jsonrpc":"2.0","method":"eth_call","params":[{"data":"'
+    :~  '{"jsonrpc":"2.0","id":"0","method":"eth_call","params":[{"data":"'
         '0xb3220694'
         '0000000000000000000000000000000000000000000000000000000000000000'
-        '","to":"'  ships  '"},"latest"]}'
+        '","to":"'  ships  '"},"0x0"]}'
     ==
   %+  expect-eq
     !>  oct
-    !>  (hull:give:dawn ~zod)
+    !>  (hull:give:dawn 0 ~zod)
 ::
 ++  test-give-turf
   =/  oct
@@ -57,19 +65,30 @@
     :~  '[{"jsonrpc":"2.0","id":"0","method":"eth_call","params":[{"data":"'
         '0xeccc8ff1'
         '0000000000000000000000000000000000000000000000000000000000000000'
-        '","to":"'  ships  '"},"latest"]},'
+        '","to":"'  ships  '"},"0x0"]},'
         '{"jsonrpc":"2.0","id":"1","method":"eth_call","params":[{"data":"'
         '0xeccc8ff1'
         '0000000000000000000000000000000000000000000000000000000000000001'
-        '","to":"'  ships  '"},"latest"]},'
+        '","to":"'  ships  '"},"0x0"]},'
         '{"jsonrpc":"2.0","id":"2","method":"eth_call","params":[{"data":"'
         '0xeccc8ff1'
         '0000000000000000000000000000000000000000000000000000000000000002'
-        '","to":"'  ships  '"},"latest"]}]'
+        '","to":"'  ships  '"},"0x0"]}]'
     ==
   %+  expect-eq
     !>  oct
-    !>  turf:give:dawn
+    !>  (turf:give:dawn 0)
+::
+++  test-take-bloq
+  =/  oct
+    %-  as-octs:mimes:html
+    %+  rap  3
+    :~  ''
+    ==
+  =/  boq  32
+  %+  expect-eq
+    !>  boq
+    !>  (bloq:take:dawn oct)
 ::
 ++  test-take-czar
   =/  oct
