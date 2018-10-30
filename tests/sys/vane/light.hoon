@@ -517,7 +517,7 @@
                 307
                 :~  ['location' '/~landscape']
                     :-  'set-cookie'
-                    'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Max-Age: 86400'
+                    'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Path=/; Max-Age=86400'
                 ==
                 ~
                 complete=%.y
@@ -623,7 +623,7 @@
         ::
         ?.  ?=(%pass -.card)
           [%leaf "not a %pass"]~
-        ?.  ?=(%f -.q.card)
+        ?.  ?=([%f %build *] q.card)
           [%leaf "not a ford build"]~
         ::
         %+  weld
