@@ -372,8 +372,13 @@
     ++  contracts
       |%
       ++  ships
-        ::  0xab87.24a7.a953.ef14.e940.b358.6b21.a889.b62f.3d56  ::  ropsten
-        0x84b3.7fbc.6188.da8a.e866.1eae.322a.f4d9.2db4.5ecc  ::  joe
+        ::  ropsten
+        ::
+        0xab87.24a7.a953.ef14.e940.b358.6b21.a889.b62f.3d56
+        ::  local deployments
+        ::  XX remove
+        ::
+        ::  0x84b3.7fbc.6188.da8a.e866.1eae.322a.f4d9.2db4.5ecc  ::  joe
         ::  0x7134.3566.74e4.0c93.8736.8699.1af8.86dd.2ae8.e642  ::  philip
       ++  launch
         4.230.928
