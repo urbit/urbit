@@ -674,6 +674,7 @@
     ?+  sas.bod
       ~&  [%check-order-status-unknown sas.bod]
       this
+    ::  order failed (at any stage)
     ::
         %invalid
       ~&  [%check-order-fail %invalid wir rep]
@@ -681,12 +682,19 @@
       :: XX send notification somehow?
       :: XX start over with new order?
       this
+    ::  initial order state
     ::
         %pending
       check-order:effect
+    ::  validations completed
+    ::
+        %ready
+      finalize-order:effect
+    ::  finalization requested
     ::
         %processing
       check-order:effect
+    ::  certificate issued
     ::
         %valid
       :: XX json reparser unit
@@ -783,7 +791,7 @@
     =/  rod-aut=order-auth
       aut.u.rod(active ~, done [+.aut(sas.cal %pend) done.aut.u.rod])
     ?~  pending.aut.u.rod
-      finalize-order:effect(aut.u.rod rod-aut)
+      check-order:effect(aut.u.rod rod-aut)
     get-authz:effect(aut.u.rod rod-aut)
   ::  XX delete-trial?
   ::
