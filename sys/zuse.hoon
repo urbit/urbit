@@ -494,7 +494,6 @@
       $%  {$hear p/lane q/@}                            ::  receive packet
           {$mack p/(unit tang)}                         ::  
           {$mass p/mass}                                ::  memory usage
-          {$rove p/ship q/lane}                         ::  lane change
           {$send p/lane q/@}                            ::  transmit packet
           {$turf p/(list turf)}                         ::  bind to domains
           {$woot p/ship q/coop}                         ::  reaction message
@@ -526,7 +525,6 @@
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
           {$sunk p=ship q=life}                         ::  report death
-          {$tend ~}                                     ::  watch lane changes
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
           {$west p/sack q/path r/*}                     ::  network request
@@ -570,7 +568,6 @@
         {$bock ~}                                       ::  bind to domains
         {$brew ~}                                       ::  request domains
         {$cake p/sock q/soap r/coop s/duct}             ::  e2e message result
-        {$maze p/ship q/lane}                           ::  lane change
         {$mead p/lane q/rock}                           ::  accept packet
         {$milk p/sock q/soap r/*}                       ::  e2e pass message
         {$ouzo p/lane q/rock}                           ::  transmit packet
@@ -613,7 +610,6 @@
         bad/(set @p)                                    ::  bad ships
         ton/town                                        ::  security
         zac/(map ship corn)                             ::  flows by server
-        ten/(set duct)                                  ::  watch lanes
     ==                                                  ::
   ++  hand  @uvH                                        ::  128-bit hash
   ++  lane                                              ::  packet route
