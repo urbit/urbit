@@ -1324,7 +1324,20 @@
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
         %raki
-      :_  fox  [hen [%pass / %j %meet p.p.bon q.p.bon q.bon r.bon]]~
+      =*  our  p.p.bon
+      =*  her  q.p.bon
+      =/  moz=(list move)
+        [hen [%pass / %j %meet our her life=q.bon pass=r.bon]]~
+      ::  poke :dns with an indirect binding if her is a planet we're spnsoring
+      ::
+      =?  moz  ?&  ?=(%duke (clan:title her))
+                   ?=(%king (clan:title our))
+                   =(our (~(sein am [now fox ski]) our now her))
+               ==
+        =/  cmd  [%meet her]
+        =/  pok  [%dns %poke `cage`[%dns-command !>(cmd)]]
+        :_  moz  [hen [%pass / %g %deal [our our] pok]]
+      [moz fox]
     ::
         %sake
       =/  wir=wire

@@ -53,4 +53,13 @@
       try=@ud
       tar=target
   ==
+::  +command: top-level app actions
+::
++$  command
+  $%  [%authority aut=authority]
+      [%bind for=ship him=ship tar=target]
+      [%bond for=ship him=ship dom=turf]
+      [%ip %if addr=@if]
+      [%meet him=ship]
+  ==
 --
