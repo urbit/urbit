@@ -98,8 +98,8 @@
       snaps=(qeu [block-number=@ud snap=snapshot])      ::  old states
   ==
 ++  snapshot                                            ::  rewind point
-  $:  urb/state-absolute                                ::  all absolute state
-      sub/state-relative                                ::  all relative state
+  $:  eve=logs                                          ::  eth absolute state
+      sub=state-relative                                ::  all relative state
       etn=state-eth-node                                ::  eth connection state
   ==
 ++  node-src                                            ::  ethereum node comms
@@ -1035,29 +1035,24 @@
       ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
         [snap.snap +>.^$]
       $
-    ~&  [%wind block latest-block.etn.snap (~(get by hul.eth.sub.snap) ~ben) ~(wyt by hul.eth.sub.snap)]
-    ::  Keep the following in sync with ++extract-snap:file:su
+    ~&  [%wind block latest-block.etn.snap ~(wyt by hul.eth.sub.snap)]
+    ::  keep the following in sync with ++extract-snap:file:su
     %=  +>.$
-      urb   urb.snap
+      eve.urb   eve.snap
+      etn       etn.snap(source source.etn)
+      sap       sap(last-block 0)
+      sub       %=  sub.snap
+                  yen.bal  yen.bal.sub
+                  yen.own  yen.own.sub
+                  yen.puk  yen.puk.sub
+                  yen.eth  yen.eth.sub
+                ==
     ::
-      sub   %=  sub.snap
-              yen.bal  yen.bal.sub
-              yen.own  yen.own.sub
-              yen.puk  yen.puk.sub
-              yen.eth  yen.eth.sub
-            ==
-    ::
-      etn   %=  etn.snap
-              source  source.etn
-            ==
-    ::
-      sap   sap(last-block 0)
-    ::
-      moz   =-  [[hen %pass /wind/look %j %look our -] moz]
-            ?-  -.source.etn
-              %&  &+p.source.etn
-              %|  |+node.p.source.etn
-            ==
+      moz       =-  [[hen %pass /wind/look %j %look our -] moz]
+                ?-  -.source.etn
+                  %&  &+p.source.etn
+                  %|  |+node.p.source.etn
+                ==
     ==
   --
 ::                                                      ::  ++su
@@ -1513,7 +1508,7 @@
     ::
     ++  extract-snap                                    ::  extract rewind point
       ^-  snapshot
-      :*  urb
+      :*  eve.urb
           %=  sub
             yen.bal  ~
             yen.own  ~
@@ -1812,6 +1807,9 @@
   ::
   ++  poll-filter
     ?>  ?=(%| -.source)
+    ?:  =(0 filter-id.p.source)
+      ~&  %no-filter-bad-poll
+      .
     %-  put-request
     :+  /filter/changes  `'poll filter'
     [%eth-get-filter-changes filter-id.p.source]
@@ -1954,7 +1952,7 @@
     ::
         [%catch-up %step @ta @ta ~]
       =/  from-block  (slav %ud `@ta`i.t.t.cuz)
-      =/  next-block    (slav %ud `@ta`i.t.t.t.cuz)
+      =/  next-block  (slav %ud `@ta`i.t.t.t.cuz)
       (take-catch-up-step rep from-block next-block)
     ==
   ::
@@ -1981,10 +1979,12 @@
     ?<  ?=(%batch -.rep)
     ?<  ?=(%fail -.rep)
     ?:  ?=(%error -.rep)
-      ?.  =('filter not found' message.rep)
-        ~&  [%unhandled-filter-error message.rep]
+      ?.  ?|  =('filter not found' message.rep)  ::  geth
+              =('Filter not found' message.rep)  ::  parity
+          ==
+        ~&  [%unhandled-filter-error +.rep]
         +>
-      ~&  [%filter-timed-out--recreating latest-block]
+      ~&  [%filter-timed-out--recreating block=latest-block +.rep]
       new-filter
     ::  kick polling timer, only if it hasn't already been.
     =?  +>  ?&  ?=(%| -.source)

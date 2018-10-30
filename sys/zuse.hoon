@@ -8022,7 +8022,7 @@
       %+  turn  (gulf 0 255)
       |=  gal=@
       %+  request-to-json:ethereum
-        `(scot %ud gal)
+        `(cat 3 'gal-' (scot %ud gal))
       :+  %eth-call
         =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
         (encode-call:ethereum 'getKeys(uint32)' [%uint gal]~)
@@ -8051,7 +8051,7 @@
       %+  turn  (gulf 0 2)
       |=  idx=@
       %+  request-to-json:ethereum
-        `(scot %ud idx)
+        `(cat 3 'turf-' (scot %ud idx))
       :+  %eth-call
         =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
         (encode-call:ethereum 'dnsDomains(uint256)' [%uint idx]~)
@@ -8083,7 +8083,7 @@
               kyz=(map ship [=life =pass])
           ==
       ^+  kyz
-      =/  who=ship  (slav %ud id.res)
+      =/  who=ship  (slav %ud (rsh 3 4 id.res))
       =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
         %+  decode-results:ethereum
           result.res
@@ -8116,7 +8116,7 @@
         %+  turn  res
         |=  [id=@t result=@t]
         ^-  (pair @ud ^turf)
-        :-  (slav %ud id)
+        :-  (slav %ud (rsh 3 5 id))
         =/  dom=tape
           (decode-results:ethereum result [%string]~)
         =/  hot=host:eyre
