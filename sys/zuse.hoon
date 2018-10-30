@@ -107,6 +107,7 @@
     ++  response  ::TODO  id should be optional
       $%  [%result id=@t res=json]
           [%error id=@t code=@t message=@t]  ::TODO  data?
+          [%fail hit=httr:eyre]
           [%batch bas=(list response)]
       ==
     --
@@ -2048,6 +2049,7 @@
       ==  ==                                            ::
           $:  %j                                        ::
       $%  [%vent-result p=chain]                        ::  tmp workaround
+          [%look our=ship src=(each ship purl:eyre)]    ::
       ==  ==                                            ::
           $:  @tas                                      ::
       $%  [%init p=ship]                                ::  report install
@@ -2100,6 +2102,7 @@
           [%vest our=ship]                              ::  view public balance
           [%vine ~]                                     ::  view secret history
           [%west p=sack q=path r=*]                     ::  remote request
+          [%wind our=ship p=@ud]                        ::  rewind before block
       ==                                                ::
     --
   ::                                                    ::

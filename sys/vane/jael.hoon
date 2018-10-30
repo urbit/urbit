@@ -945,6 +945,12 @@
         %^  cute  hen  our  =<  abet
         (~(hear-vent et our now.sys urb.lex sub.lex etn.lex sap.lex) p.mes)
       ==
+    ::
+    ::  rewind to snapshot
+    ::    {$wind p/@ud}
+    ::
+        %wind
+      (wind hen our.tac p.tac)
     ==
   ::
   ++  take
@@ -1005,6 +1011,54 @@
     ^+  +>
     %-  cure(urb urb, sub sub, etn etn, sap sap, moz (weld (flop mos) moz))
     [hen our abet:(link:(burb our) ven)]
+  ::                                                    ::  ++wind:of
+  ++  wind                                              ::  rewind to snap
+    |=  [hen=duct our=@p block=@ud]
+    ^+  +>
+    ~&  %dripping
+    =/  old-qeu  snaps.sap
+    =:  snaps.sap       ~
+        count.sap       0
+        last-block.sap  0
+      ==
+    =^  snap=snapshot  +>.$
+      ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
+        [%*(. *snapshot latest-block.etn launch:contracts) +>.$]
+      |-  ^-  [snapshot _+>.^$]
+      ::  =^  [new-qeu=(qeu [block-number=@ud snap=snapshot]) snap=snapshot]  snaps.sap
+      =^  snap=[block-number=@ud snap=snapshot]  old-qeu
+        ~(get to old-qeu)
+      =:  count.sap       +(count.sap)
+          last-block.sap  block-number.snap
+          snaps.sap       (~(put to snaps.sap) snap)
+        ==
+      ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
+        [snap.snap +>.^$]
+      $
+    ~&  [%wind block latest-block.etn.snap (~(get by hul.eth.sub.snap) ~ben) ~(wyt by hul.eth.sub.snap)]
+    ::  Keep the following in sync with ++extract-snap:file:su
+    %=  +>.$
+      urb   urb.snap
+    ::
+      sub   %=  sub.snap
+              yen.bal  yen.bal.sub
+              yen.own  yen.own.sub
+              yen.puk  yen.puk.sub
+              yen.eth  yen.eth.sub
+            ==
+    ::
+      etn   %=  etn.snap
+              source  source.etn
+            ==
+    ::
+      sap   sap(last-block 0)
+    ::
+      moz   =-  [[hen %pass /wind/look %j %look our -] moz]
+            ?-  -.source.etn
+              %&  &+p.source.etn
+              %|  |+node.p.source.etn
+            ==
+    ==
   --
 ::                                                      ::  ++su
 ::::                    ## relative^heavy               ::  subjective engine
@@ -1154,7 +1208,7 @@
       ::  update public key store and notify subscribers
       ::  of the new state
       ::
-      ~&  [%sending-pubs-about who]
+      ~&  [%sending-pubs-about who life.pub live.pub]
       %+  exec(kyz.puk (~(put by kyz.puk) who pub))
         (~(get ju yen.puk) who)
       [%give %pubs pub]
@@ -1334,7 +1388,7 @@
       =/  puk  (~(get by pubs.pub) life)
       ?^  puk
         ::  key known, nothing changes
-        ~|  [%key-mismatch who life]
+        ~|  [%key-mismatch who life `@ux`u.puk `@ux`pass (get-public ~zod)]
         ?>(=(u.puk pass) kyz)
       %+  ~(put by kyz)  who
       :+  live.pub
@@ -1364,7 +1418,7 @@
       ==
       =^  kyz  ..file
         ?-  -.dif
-          %hull   (file-hull +.dif)
+          %hull   ~|(wer=wer (file-hull +.dif))
           %dns    [kyz (file-dns +.dif)]
         ==
       [kyz (file-snap wer)]
@@ -1404,7 +1458,7 @@
       ::
       ::  sanity checks, should never fail if we operate correctly
       ::
-      ~|  [%diff-order-insanity -.dif]
+      ~|  [%diff-order-insanity -.dif who (~(get by hul.eth) who)]
       ?>  ?+  -.dif  &
             %spawned      ?>  ?=(^ kid.hul)
                           !(~(has in spawned.u.kid.hul) who.dif)
@@ -1709,14 +1763,16 @@
   ::  +catch-up: get next chunk
   ::
   ++  catch-up
-    ?:  (gte latest-block foreign-block)
+    |=  from-block=@ud
+    ?:  (gte from-block foreign-block)
       new-filter
-    =/  next-block  (min foreign-block (add latest-block 5.760)) ::  ~d1
-    ~&  [%catching-up from=latest-block to=foreign-block]
+    =/  next-block  (min foreign-block (add from-block 5.760)) ::  ~d1
+    ~&  [%catching-up from=from-block to=foreign-block]
     %-  put-request
-    :+  /catch-up/step/(scot %ud next-block)  `'catch up'
+    :+  /catch-up/step/(scot %ud from-block)/(scot %ud next-block)
+      `'catch up'
     :*  %eth-get-logs
-        `number+latest-block
+        `number+from-block
         `number+next-block
         ~[ships:contracts]
         ~
@@ -1868,18 +1924,24 @@
     ?:  ?=(%tang mar)
       ::TODO  proper error handling
       ~_  q.res
-      ?+  cuz
-            ~&  [%yikes cuz]
-            +>
-          [%filter %changes *]
-        ~&  %retrying-node
-        wait-poll
-          [%catch-up %step *]
-        ~&  %retrying-catch-up
-        catch-up
-      ==
+      ~&  [%yikes cuz]
+      +>.$
     ?>  ?=(%json-rpc-response mar)
     =+  rep=~|(res ((hard response:rpc:jstd) q.res))
+    ?:  ?=(%fail -.rep)
+      ?:  =(405 p.hit.rep)
+        ~&  'HTTP 405 error (expected if using infura)'
+        +>.$
+      ?.  =(5 (div p.hit.rep 100))
+        ~&  [%http-error hit.rep]
+        +>.$
+      ?+  cuz
+        ~&  [%retrying-node ((soft tang) q.res)]
+        wait-poll
+          [%catch-up %step @ta @ta ~]
+        ~&  %retrying-catch-up
+        (catch-up (slav %ud `@ta`i.t.t.cuz))
+      ==
     ?+  cuz  ~|([%weird-sigh-wire cuz] !!)
         [%filter %new *]
       (take-new-filter rep)
@@ -1890,8 +1952,10 @@
         [%catch-up %block-number ~]
       (take-block-number rep)
     ::
-        [%catch-up %step @ta ~]
-      (take-catch-up-step rep (slav %ud `@ta`i.t.t.cuz))
+        [%catch-up %step @ta @ta ~]
+      =/  from-block  (slav %ud `@ta`i.t.t.cuz)
+      =/  next-block    (slav %ud `@ta`i.t.t.t.cuz)
+      (take-catch-up-step rep from-block next-block)
     ==
   ::
   ::  +take-new-filter: store filter-id and read it
@@ -1901,6 +1965,7 @@
     ^+  +>
     ~|  rep
     ?<  ?=(%batch -.rep)
+    ?<  ?=(%fail -.rep)
     ?:  ?=(%error -.rep)
       ~&  [%filter-error--retrying message.rep]
       new-filter
@@ -1914,6 +1979,7 @@
     |=  rep=response:rpc:jstd
     ^+  +>
     ?<  ?=(%batch -.rep)
+    ?<  ?=(%fail -.rep)
     ?:  ?=(%error -.rep)
       ?.  =('filter not found' message.rep)
         ~&  [%unhandled-filter-error message.rep]
@@ -1933,26 +1999,27 @@
     |=  rep=response:rpc:jstd
     ^+  +>
     ?<  ?=(%batch -.rep)
+    ?<  ?=(%fail -.rep)
     ?:  ?=(%error -.rep)
       ~&  [%take-block-number-error--retrying message.rep]
       get-latest-block
     =.  foreign-block  (parse-eth-block-number res.rep)
     ~&  [%setting-foreign-block foreign-block]
-    catch-up
+    (catch-up latest-block)
   ::
   ::  +take-catch-up-step: process chunk
   ::
   ++  take-catch-up-step
-    |=  [rep=response:rpc:jstd next-block=@ud]
+    |=  [rep=response:rpc:jstd from-block=@ud next-block=@ud]
     ^+  +>
     ?<  ?=(%batch -.rep)
+    ?<  ?=(%fail -.rep)
     ?:  ?=(%error -.rep)
       ~&  [%catch-up-step-error--retrying message.rep]
-      catch-up
+      (catch-up from-block)
     ::  XX file
     =.  +>.$  (take-events rep)
-    =.  latest-block  next-block
-    catch-up
+    (catch-up next-block)
   ::
   ::  +take-events: process events
   ::
@@ -1960,16 +2027,18 @@
     |=  rep=response:rpc:jstd
     ^+  +>
     ?<  ?=(%batch -.rep)
+    ?<  ?=(%fail -.rep)
     ?<  ?=(%error -.rep)
     ?.  ?=(%a -.res.rep)
       ~&  [%events-not-array rep]
       !!
     =*  changes  p.res.rep
-    ~&  :*  %processing-changes
-            changes=(lent changes)
-            block=latest-block
-            id=?.(?=(%| -.source) ~ `@ux`filter-id.p.source)
-        ==
+    ~?  (gth (lent changes) 0)
+      :*  %processing-changes
+          changes=(lent changes)
+          block=latest-block
+          id=?.(?=(%| -.source) ~ `@ux`filter-id.p.source)
+      ==
     |-  ^+  +>.^$
     ?~  changes  +>.^$
     =.  +>.^$
@@ -2191,6 +2260,22 @@
     :^  ~  ~  %noun
     !>  ^-  (list ship)
     (~(saxo of [now eny] lex) u.who)
+  ::
+      %snap
+    ?.  ?=(~ tyl)  [~ ~]
+    ?:  =(~ snaps.sap.lex)
+      `~
+    :^  ~  ~  %noun  !>
+    %=  sap.lex
+        snaps
+      %-  ~(put to *(qeu [block-number=@ud snap=snapshot]))
+      |-  ^-  [@ud snapshot]
+      =^  snap  snaps.sap.lex
+        ~(get to snaps.sap.lex)
+      ?:  =(~ snaps.sap.lex)
+        snap
+      $
+    ==
   ==
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve
