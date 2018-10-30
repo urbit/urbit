@@ -1,28 +1,28 @@
-/-  dns
-=,  dns
+/-  *dns
 !:
 ::
-:: moves and state
+::  moves and state
 ::
-|%
-+=  move  (pair bone card)
-+=  poke
+=>  |%
++$  move  (pair bone card)
++$  poke
   $%  [%dns-bind for=ship him=ship target]
       [%dns-bond for=ship him=ship turf]
       [%dns-authority authority]
-      :: XX some other notification channel?
+      ::  XX find some other notification channel?
+      ::
       [%helm-send-hi ship (unit tape)]
   ==
-+=  card
++$  card
   $%  [%tend wire ~]
       [%wait wire @da]
       [%poke wire dock poke]
       [%rule wire %turf %put turf]
       [%hiss wire [~ ~] %httr %hiss hiss:eyre]
   ==
-:: +state: complete app state
+::  +state: complete app state
 ::
-+=  state
++$  state
   $:  :: dom: the set of our bindings
       ::
       dom=(set turf)
@@ -33,7 +33,12 @@
       ::
       nem=(unit nameserver)
   ==
-:: +join: dedup with :acme
+--
+::
+::  helpers
+::
+=>  |%
+::  +join: dedup with :acme
 ::
 ++  join
   |=  [sep=@t hot=(list @t)]
@@ -43,68 +48,73 @@
   |-  ^-  (list @t)
   ?~  t.hot  hot
   [i.hot sep $(hot t.hot)]
-:: +name: fully-qualified domain name
+::  +name: fully-qualified domain name
 ::
 ++  name
   |=  [him=ship dom=turf]
   (cat 3 (join '.' [(crip +:(scow %p him)) (flop dom)]) '.')
-:: +endpoint: append path to purl
+::  +endpoint: append path to purl
 ::
 ++  endpoint
   |=  [bas=purl:eyre pat=path]
   ^+  bas
   bas(q.q (weld q.q.bas pat))
-:: +reserved: check if an ipv4 address is in a reserved range
+::  +reserved: check if an ipv4 address is in a reserved range
 ::
 ++  reserved
   |=  a=@if
   ^-  ?
   =/  b  (flop (rip 3 a))
-  :: 0.0.0.0/8 (software)
+  ::  0.0.0.0/8 (software)
   ::
   ?.  ?=([@ @ @ @ ~] b)  &
-  ?|  :: 10.0.0.0/8 (private)
+  ?|  ::  10.0.0.0/8 (private)
       ::
       =(10 i.b)
-      :: 100.64.0.0/10 (carrier-grade NAT)
+      ::  100.64.0.0/10 (carrier-grade NAT)
       ::
       &(=(100 i.b) (gte i.t.b 64) (lte i.t.b 127))
-      :: 127.0.0.0/8 (localhost)
+      ::  127.0.0.0/8 (localhost)
       ::
       =(127 i.b)
-      :: 169.254.0.0/16 (link-local)
+      ::  169.254.0.0/16 (link-local)
       ::
       &(=(169 i.b) =(254 i.t.b))
-      :: 172.16.0.0/12 (private)
+      ::  172.16.0.0/12 (private)
       ::
       &(=(172 i.b) (gte i.t.b 16) (lte i.t.b 31))
-      :: 192.0.0.0/24 (protocol assignment)
+      ::  192.0.0.0/24 (protocol assignment)
       ::
       &(=(192 i.b) =(0 i.t.b) =(0 i.t.t.b))
-      :: 192.0.2.0/24 (documentation)
+      ::  192.0.2.0/24 (documentation)
       ::
       &(=(192 i.b) =(0 i.t.b) =(2 i.t.t.b))
-      :: 192.18.0.0/15 (reserved, benchmark)
+      ::  192.18.0.0/15 (reserved, benchmark)
       ::
       &(=(192 i.b) |(=(18 i.t.b) =(19 i.t.b)))
-      :: 192.51.100.0/24 (documentation)
+      ::  192.51.100.0/24 (documentation)
       ::
       &(=(192 i.b) =(51 i.t.b) =(100 i.t.t.b))
-      :: 192.88.99.0/24 (reserved, ex-anycast)
+      ::  192.88.99.0/24 (reserved, ex-anycast)
       ::
       &(=(192 i.b) =(88 i.t.b) =(99 i.t.t.b))
-      :: 192.168.0.0/16 (private)
+      ::  192.168.0.0/16 (private)
       ::
       &(=(192 i.b) =(168 i.t.b))
-      :: 203.0.113/24 (documentation)
+      ::  203.0.113/24 (documentation)
       ::
       &(=(203 i.b) =(0 i.t.b) =(113 i.t.t.b))
-      :: 224.0.0.0/8 (multicast)
-      :: 240.0.0.0/4 (reserved, future)
-      :: 255.255.255.255/32 (broadcast)
+      ::  224.0.0.0/8 (multicast)
+      ::  240.0.0.0/4 (reserved, future)
+      ::  255.255.255.255/32 (broadcast)
       ::
       (gte i.b 224)
   ==
+--
+::
+::  service providers
+::
+=>  |%
 :: |gcloud: provider-specific functions
 ::
 ++  gcloud
@@ -156,15 +166,17 @@
 ::  the app itself
 ::
 |_  [bow=bowl:gall state]
+::  +this: is sparta
+::
 ++  this  .
-:: +poke-noun: debugging
+::  +poke-noun: debugging
 ::
 ++  poke-noun
   |=  a=*
   ^-  (quip move _this)
   ~&  +<+:this
   [~ this]
-:: +sigh-httr: accept http response
+::  +sigh-httr: accept http response
 ::
 ++  sigh-httr
   |=  [wir=wire rep=httr:eyre]
@@ -208,7 +220,7 @@
     ~&  +<
     [~ this]
   ==
-:: +sigh-tang: failed to make http request
+::  +sigh-tang: failed to make http request
 ::
 ++  sigh-tang
   |=  [wir=wire saw=tang]
@@ -227,7 +239,7 @@
     %-  (slog saw)
     abet:(~(fail tell [him (~(get by per) him)]) %crash)
   ==
-:: +wake: timer callback
+::  +wake: timer callback
 ::
 ++  wake
   |=  [wir=wire ~]
@@ -237,8 +249,7 @@
     [~ this]
   =/  him=ship  (slav %p i.t.wir)
   abet:~(check tell [him (~(get by per) him)])
-::
-:: +poke-dns-authority: configure self as an authority
+::  +poke-dns-authority: configure self as an authority
 ::
 ++  poke-dns-authority
   |=  aut=authority
@@ -246,7 +257,7 @@
   ~|  %authority-reset-wat-do
   ?<  ?=(^ nem)
   abet:(init:bind aut)
-:: +poke-dns-bind: create binding (if authority), forward request
+::  +poke-dns-bind: create binding (if authority), forward request
 ::
 ++  poke-dns-bind
   |=  [for=ship him=ship tar=target]
@@ -269,7 +280,7 @@
     ?~  nem  [~ this]
     abet:(~(create bind u.nem) for him tar)
   [(weld zom zam) this]
-:: +poke-dns-bond: process established dns binding
+::  +poke-dns-bond: process established dns binding
 ::
 ++  poke-dns-bond
   |=  [for=ship him=ship dom=turf]
@@ -286,14 +297,14 @@
     (~(bake tell [him (~(get by per) him)]) dom)
   ~&  [%strange-bond +<]
   [~ this]
-:: +coup: general poke acknowledgement or error
+::  +coup: general poke acknowledgement or error
 ::
 ++  coup
   |=  [wir=wire saw=(unit tang)]
   ?~  saw  [~ this]
   ~&  [%coup-fallthru wir]
   [((slog u.saw) ~) this]
-:: +rove: hear %ames +lane change for child ships
+::  +rove: hear %ames +lane change for child ships
 ::
 ++  rove
   |=  [wir=wire p=ship q=lane:ames]
@@ -308,9 +319,9 @@
   ::  XX assert that we intend to be listening?
   =<  abet
   (~(hear tell [p (~(get by per) p)]) q)
-:: +prep: adapt state
+::  +prep: adapt state
 ::
-:: ++  prep  _[~ this]
+::  ++  prep  _[~ this]
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
@@ -319,24 +330,24 @@
   ?:  ?=(?(%czar %king) (clan:title our.bow))
     abet:listen:tell
   [~ this]
-:: |bind: acting as zone authority
+::  |bind: acting as zone authority
 ::
 ++  bind
   =|  moz=(list move)
   |_  nam=nameserver
   ++  this  .
-  :: +abet: finalize state changes, produce moves
+  ::  +abet: finalize state changes, produce moves
   ::
   ++  abet
     ^-  (quip move _^this)
     [(flop moz) ^this(nem `nam)]
-  :: +emit: emit a move
+  ::  +emit: emit a move
   ::
   ++  emit
     |=  car=card
     ^+  this
     this(moz [[ost.bow car] moz])
-  :: +init: establish zone authority (request confirmation)
+  ::  +init: establish zone authority (request confirmation)
   ::
   ++  init
     |=  aut=authority
@@ -348,7 +359,7 @@
     ~&  url
     %-  emit(nam [aut ~ ~])
     [%hiss wir [~ ~] %httr %hiss url %get ~ ~]
-  :: +create: bind :him, on behalf of :for
+  ::  +create: bind :him, on behalf of :for
   ::
   ++  create
     |=  [for=ship him=ship tar=target]
@@ -366,7 +377,7 @@
       (~(request gcloud aut.nam) him tar pre)
     %-  emit(pen.nam (~(put by pen.nam) him tar)) :: XX save for
     [%hiss wir [~ ~] %httr %hiss req]
-  :: +confirm: successfully bound
+  ::  +confirm: successfully bound
   ::
   ++  confirm
     |=  [for=ship him=ship]
@@ -384,13 +395,13 @@
     %-  emit
     [%poke wir [for dap.bow] %dns-bond for him dom]
   --
-:: |tell: acting as planet parent or relay
+::  |tell: acting as planet parent or relay
 ::
 ++  tell
   =|  moz=(list move)
   |_  [him=ship rel=(unit relay)]
   ++  this  .
-  :: +abet: finalize state changes, produce moves
+  ::  +abet: finalize state changes, produce moves
   ::
   ++  abet
     ^-  (quip move _^this)
@@ -398,18 +409,18 @@
     ?~  rel
       ^this
     ^this(per (~(put by per) him u.rel))
-  :: +emit: emit a move
+  ::  +emit: emit a move
   ::
   ++  emit
     |=  car=card
     ^+  this
     this(moz [[ost.bow car] moz])
-  :: +listen: subscribe to %ames +lane changes for child ships
+  ::  +listen: subscribe to %ames +lane changes for child ships
   ::
   ++  listen
     ^+  this
     (emit [%tend /tend ~])
-  :: +hear: hear +lane change, maybe emit binding request
+  ::  +hear: hear +lane change, maybe emit binding request
   ::
   ++  hear
     |=  lan=lane:ames
@@ -429,7 +440,7 @@
       this
     =.  rel  `[wen=now.bow adr bon=| try=0 tar]
     ?:(?=(%indirect -.tar) bind check)
-  :: +check: confirm %direct target is accessible
+  ::  +check: confirm %direct target is accessible
   ::
   ++  check
     ^+  this
@@ -448,7 +459,7 @@
     :: XX state mgmt
     %-  emit
     [%hiss wir [~ ~] %httr %hiss url %get ~ ~]
-  :: +fail: %direct target is invalid or inaccessible
+  ::  +fail: %direct target is invalid or inaccessible
   ::
   ++  fail
     |=  err=@tas
@@ -468,9 +479,9 @@
     :: XX state mgmt
     %-  emit
     [%poke wir [our.bow %hood] %helm-send-hi him `msg]
-  :: +bind: request binding for target
+  ::  +bind: request binding for target
   ::
-  ::   Since we may be an authority, we poke ourselves.
+  ::    Since we may be an authority, we poke ourselves.
   ::
   ++  bind
     ^+  this
@@ -480,7 +491,7 @@
       /bind/(scot %p him)/for/(scot %p our.bow)
     %-  emit
     [%poke wir [our.bow dap.bow] %dns-bind our.bow him tar.u.rel]
-  :: +bake: successfully bound
+  ::  +bake: successfully bound
   ::
   ++  bake
     |=  dom=turf
@@ -492,7 +503,7 @@
     :: XX save domain, track bound-state per-domain
     %-  emit(bon.u.rel &)
     [%poke wir [him dap.bow] %dns-bond our.bow him dom]
-  :: +forward: sending binding request up the network
+  ::  +forward: sending binding request up the network
   ::
   ++  forward
     |=  [for=ship tar=target]
