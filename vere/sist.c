@@ -1291,7 +1291,7 @@ _sist_dawn(u3_noun sed)
   // XX require https?
   c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
     u3_Host.ops_u.eth_c :
-    "http://localhost:8545";
+    "https://ropsten.infura.io/v3/196a7f37c7d54211b4a07904ec73ad87";
 
   // ethereum gateway as (unit purl)
   if ( 0 == u3_Host.ops_u.eth_c ) {
