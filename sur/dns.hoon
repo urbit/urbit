@@ -49,7 +49,9 @@
 +$  relay
   $:  wen=@da
       wer=(unit @if)
-      bon=?
+      ::  XX track bound state per domain
+      ::
+      dom=(unit turf)
       try=@ud
       tar=target
   ==

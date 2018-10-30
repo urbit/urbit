@@ -219,23 +219,32 @@
       =/  for=ship  (slav %p i.t.t.t.t.wir)
       abet:(~(confirm bind u.nem) for him)
     ==
-  ::  responses for a relay validating a binding
+  ::  responses for a relay validating a binding target
   ::
       %check
     =/  him=ship  (slav %p i.t.wir)
     ?:  =(200 p.rep)
       abet:bind:(tell him)
     ::  cttp timeout
+    ::  XX backoff, refactor
     ::
     ?:  =(504 p.rep)
-      ::  XX backoff, refactor
-      ::
       :_  this  :_  ~
       [ost.bow %wait wir (add now.bow ~m10)]
     ::  XX specific messages per status code
     ::
     ~&  %direct-confirm-fail
     abet:(fail:(tell him) %failed-request)
+  ::  responses for a relay validating an established binding
+  ::
+      %check-bond
+    =/  him=ship  (slav %p i.t.wir)
+    ?:  =(200 p.rep)
+      abet:bake:(tell him)
+    ::  XX backoff, refactor
+    ::
+    :_  this  :_  ~
+    [ost.bow %wait wir (add now.bow ~m5)]
   ==
 ::  +sigh-tang: failed to make http request
 ::
@@ -255,17 +264,31 @@
     =/  him=ship  (slav %p i.t.wir)
     %-  (slog saw)
     abet:(fail:(tell him) %crash)
+  ::
+      [%check-bond @ ~]
+    ~&  check-bond-fail+wir
+    ::  XX backoff, refactor
+    ::
+    :_  this  :_  ~
+    [ost.bow %wait wir (add now.bow ~m10)]
   ==
 ::  +wake: timer callback
 ::
 ++  wake
   |=  [wir=wire ~]
   ^-  (quip move _this)
-  ?.  ?=([%check @ ~] wir)
-    ~&  [%strange-wake wir]
-    [~ this]
-  =/  him=ship  (slav %p i.t.wir)
-  abet:check:(tell him)
+  ?+    wir
+      ~&  [%strange-wake wir]
+      [~ this]
+  ::
+      [%check @ ~]
+    =/  him=ship  (slav %p i.t.wir)
+    abet:check:(tell him)
+  ::
+      [%check-bond @ ~]
+    =/  him=ship  (slav %p i.t.wir)
+    abet:recheck-bond:(tell him)
+  ==
 ::  +poke-dns-command: act on command
 ::
 ++  poke-dns-command
@@ -319,7 +342,7 @@
       this(dom (~(put in dom) dom.com))
     ?:  =(our.bow for.com)
       ~&  [%bound-him him.com dom.com]
-      abet:(bake:(tell him.com) dom.com)
+      abet:(check-bond:(tell him.com) dom.com)
     ~&  [%strange-bond com]
     [~ this]
   ::  manually set our ip, request direct binding
@@ -455,9 +478,9 @@
       ?:  |(?=(~ addr) ?=(%duke (clan:title him)))
         [%indirect our.bow]
       [%direct %if u.addr]
-    ?.  |(?=(~ rel) !=(tar tar.u.rel) !bon.u.rel)
+    ?.  |(?=(~ rel) ?=(~ dom.u.rel) !=(tar tar.u.rel))
       this
-    =.  rel  `[wen=now.bow addr bon=| try=0 tar]
+    =.  rel  `[wen=now.bow addr dom=~ try=0 tar]
     ?:(?=(%indirect -.tar) bind check)
   ::  +check: confirm %direct target is accessible
   ::
@@ -474,8 +497,9 @@
       /check/(scot %p him)
     =/  url=purl:eyre
       :-  [sec=| por=~ host=[%| `@if`p.tar.u.rel]]
-      [[ext=`~.md path=~] query=~]
-    :: XX state mgmt
+      [[ext=`~.umd path=/static] query=~]
+    ::  XX state mgmt
+    ::
     %-  emit
     [%hiss wir [~ ~] %httr %hiss url %get ~ ~]
   ::  +fail: %direct target is invalid or inaccessible
@@ -495,7 +519,8 @@
         ?>  ?=(%direct -.tar.u.rel)
         "unable to create dns binding reserved address {(scow %if p.tar.u.rel)}"
       ==
-    :: XX state mgmt
+    ::  XX state mgmt
+    ::
     %-  emit
     [%poke wir [our.bow %hood] %helm-send-hi him `msg]
   ::  +bind: request binding for target
@@ -510,18 +535,42 @@
       /bind/(scot %p him)/for/(scot %p our.bow)
     %-  emit
     [%poke wir [our.bow dap.bow] %dns-command %bind our.bow him tar.u.rel]
-  ::  +bake: successfully bound
+  ::  +check-bond: confirm binding propagation
   ::
-  ++  bake
+  ++  check-bond
     |=  dom=turf
-    ~&  [%bake dom]
     ^+  this
     ?>  ?=(^ rel)
     =/  wir=wire
+      /check-bond/(scot %p him)
+    =/  url=purl:eyre
+      :-  [sec=| por=~ host=[%& dom]]
+      [[ext=`~.umd path=/static] query=~]
+    ::  XX track bound-state per-domain
+    ::
+    %-  emit(dom.u.rel `dom)
+    [%hiss wir [~ ~] %httr %hiss url %get ~ ~]
+  ::  +recheck-bond: re-attempt to confirm binding propagation
+  ::
+  ++  recheck-bond
+    ^+  this
+    ?>  ?&  ?=(^ rel)
+            ?=(^ dom.u.rel)
+        ==
+    (check-bond u.dom.u.rel)
+  ::  +bake: successfully bound
+  ::
+  ++  bake
+    ^+  this
+    ?>  ?=(^ rel)
+    ?>  ?=(^ dom.u.rel)
+    ~&  [%bake u.dom.u.rel]
+    =/  wir=wire
       /forward/bound/(scot %p him)/for/(scot %p our.bow)
-    :: XX save domain, track bound-state per-domain
-    %-  emit(bon.u.rel &)
-    [%poke wir [him dap.bow] %dns-command %bond our.bow him dom]
+    ::  XX state mgmt
+    ::
+    %-  emit
+    [%poke wir [him dap.bow] %dns-command %bond our.bow him u.dom.u.rel]
   ::  +forward: sending binding request up the network
   ::
   ++  forward
