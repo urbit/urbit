@@ -555,8 +555,15 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ?.  =(200 p.rep)
-      :: XX never happened yet, wat do?
       ~&  [%directory-fail rep]
+      ?:  =(504 p.rep)
+        ::  retry timeouts
+        ::  XX count retries? backoff?
+        ::
+        ~&  %retrying
+        (retry:effect /directory (add now.bow ~s10))
+      ::  XX never happened yet, wat do?
+      ::
       this
     =.  dir  (directory:grab (need (de-json:html q:(need r.rep))))
     ?~(reg.act register:effect this)
@@ -574,12 +581,15 @@
     ~|  [%unknown-nonce-next nex]
     ?>  ?=(nonce-next nex)
     ?.  =(204 p.rep)
-      :: cttp i/o timeout, always retry
-      :: XX set timer to backoff?
-      ?:  =(504 p.rep)  (nonce:effect nex)
-      :: XX never happened yet, retry nonce anyway?
+      ~&  [%nonce-fail wir rep]
+      ::  cttp i/o timeout, always retry
+      ::  XX set timer? count retries? backoff?
       ::
-      ~&([%nonce-fail wir rep] this)
+      ?:  =(504 p.rep)
+        (nonce:effect nex)
+      ::  XX never happened yet, retry nonce anyway?
+      ::
+      this
     ?-  nex
       %register        register:effect
       %new-order       new-order:effect
@@ -592,11 +602,19 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ?.  =(201 p.rep)
-      ::XX 204?
+      ::  XX possible 204?
+      ::
       ?:  (bad-nonce rep)
         (nonce:effect %register)
-      :: XX retry immediately or backoff?
       ~&  [%register-fail wir rep]
+      ?:  =(504 p.rep)
+        ::  retry timeouts
+        ::  XX count retries? backoff?
+        ::
+        ~&  %retrying
+        (retry:effect /register (add now.bow ~s10))
+      ::  XX retry service failures?
+      ::
       this
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
@@ -617,11 +635,19 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ?.  =(201 p.rep)
+      ::  XX possible 204?
+      ::
       ?:  (bad-nonce rep)
         (nonce:effect %new-order)
-      :: XX retry immediately or backoff?
-      :: XX possible 204?
       ~&  [%new-order-fail wir rep]
+      ?:  =(504 p.rep)
+        ::  retry timeouts
+        ::  XX count retries? backoff?
+        ::
+        ~&  %retrying
+        (retry:effect /new-order (add now.bow ~s10))
+      ::  XX retry service failures?
+      ::
       this
     :: XX delete order if not?
     ?>  ?=(^ pen)
@@ -647,8 +673,17 @@
       ?:  (bad-nonce rep)
         (nonce:effect %finalize-order)
       ~&  [%finalize-order-fail wir rep]
+      ?:  =(504 p.rep)
+        ::  retry timeouts
+        ::  XX count retries? backoff?
+        ::
+        ~&  %retrying
+        (retry:effect /finalize-order (add now.bow ~s10))
+      ::  XX get the failure reason
+      ::  XX possible to retry any reasons?
+      ::  XX create new order for domain?
+      ::
       ?>  ?=(^ rod)
-      :: XX get the failure reason
       this(rod ~, fal.hit [u.rod fal.hit])
     ?>  ?=(^ rod)
     :: XX rep body missing authorizations, need flexible/separate parser
@@ -663,8 +698,15 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ?.  =(200 p.rep)
-      :: XX retry immediately? backoff?
       ~&  [%check-order-fail wir rep]
+      ?:  =(504 p.rep)
+        ::  retry timeouts
+        ::  XX count retries? backoff?
+        ::
+        ~&  %retrying
+        (retry:effect /check-order (add now.bow ~s10))
+      ::  XX retry service failures?
+      ::
       this
     ?>  ?=(^ rod)
     =/  raw=json
@@ -711,8 +753,17 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ?.  =(200 p.rep)
-      :: XX retry immediately? backoff?
       ~&  [%certificate-fail wir rep]
+      ?:  =(504 p.rep)
+        ::  retry timeouts
+        ::  XX count retries? backoff?
+        ::
+        ~&  %retrying
+        ::  will re-attempt certificate download per order status
+        ::
+        (retry:effect /check-order (add now.bow ~s10))
+      ::  XX retry service failures?
+      ::
       this
     ?>  ?=(^ rod)
     =/  cer=wain  (to-wain:format q:(need r.rep))
@@ -728,8 +779,15 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ?.  =(200 p.rep)
-      :: XX retry immediately? backoff?
       ~&  [%get-authz-fail wir rep]
+      ?:  =(504 p.rep)
+        ::  retry timeouts
+        ::  XX count retries? backoff?
+        ::
+        ~&  %retrying
+        (retry:effect /get-authz (add now.bow ~s10))
+      ::  XX retry service failures?
+      ::
       this
     ?>  ?=(^ rod)
     ?>  ?=(^ pending.aut.u.rod)
@@ -760,9 +818,10 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ?.  =(200 p.rep)
-      :: XX count retries, backoff
+      ::  XX count retries, backoff
+      ::
       ~&  [%test-trial-fail wir rep]
-      (retry:effect /test-trial (add now.bow ~m10))
+      (retry:effect /test-trial (add now.bow ~s10))
     ?>  ?=(^ rod)
     ?>  ?=(^ active.aut.u.rod)
     :: XX check content type and response body
@@ -773,12 +832,20 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ?.  =(200 p.rep)
+      ::  XX possible 204? assume pending?
+      ::  XX handle "challenge is not pending"
+      ::
       ?:  (bad-nonce rep)
         (nonce:effect %finalize-trial)
-      :: XX retry? or cancel order?
-      :: XX 204 assume pending?
       ~&  [%finalize-trial-fail wir rep]
-      :: XX handle "challenge is not pending"
+      ?:  =(504 p.rep)
+        ::  retry timeouts
+        ::  XX count retries? backoff?
+        ::
+        ~&  %retrying
+        (retry:effect /finalize-trial (add now.bow ~s10))
+      ::  cancel order?
+      ::
       this
     ?>  ?=(^ rod)
     ?>  ?=(^ active.aut.u.rod)
@@ -800,11 +867,17 @@
   ++  retry
     |=  wir=wire
     ^+  this
-    ?+  wir
+    ?>  ?=(^ wir)
+    ?+  i.wir
         ~&(unknown-retry+wir this)
-      :: XX do the needful
-      [%directory ~]  directory:effect
-      [%test-trial ~]  test-trial:effect
+      %directory       directory:effect
+      %register        register:effect
+      %new-order       new-order:effect
+      %finalize-order  finalize-order:effect
+      %check-order     check-order:effect
+      %get-authz       get-authz:effect
+      %test-trial      test-trial:effect
+      %finalize-trial  finalize-trial:effect
     ==
   --
 :: +sigh-tang: handle http request failure
