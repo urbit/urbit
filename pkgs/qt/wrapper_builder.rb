@@ -72,8 +72,11 @@ def make_dep_graph
     add_dep 'libqwindows.a', 'libQt5EventDispatcherSupport.a'
     add_dep 'libqwindows.a', 'libQt5FontDatabaseSupport.a'
     add_dep 'libqwindows.a', 'libQt5ThemeSupport.a'
+    add_dep 'libqwindows.a', 'libQt5WindowsUIAutomationSupport.a'
 
+    add_dep 'libQt5Core.a', '-lnetapi32'
     add_dep 'libQt5Core.a', '-lole32'
+    add_dep 'libQt5Core.a', '-luserenv'
     add_dep 'libQt5Core.a', '-luuid'
     add_dep 'libQt5Core.a', '-lversion'
     add_dep 'libQt5Core.a', '-lwinmm'

@@ -77,9 +77,9 @@ fi
 mkdir -p $out/bin
 
 for prog in analogclock dynamiclayouts openglwindow rasterwindow; do
-  if [ -f bin/$prog ]; then
-    $host-strip bin/$prog
-    cp bin/$prog $out/bin/
+  if [ -f bin/$prog$exe_suffix ]; then
+    $host-strip bin/$prog$exe_suffix
+    cp bin/$prog$exe_suffix $out/bin/
   fi
 done
 
