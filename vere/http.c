@@ -482,7 +482,7 @@ _http_start_respond(u3_hreq* req_u,
                     u3_noun data,
                     u3_noun complete)
 {
-  uL(fprintf(uH, "start\n"));
+  /* uL(fprintf(uH, "start\n")); */
 
   if ( u3_rsat_plan != req_u->sat_e ) {
     //uL(fprintf(uH, "duplicate response\n"));
@@ -541,7 +541,7 @@ _http_continue_respond(u3_hreq* req_u,
                        u3_noun data,
                        u3_noun complete)
 {
-  uL(fprintf(uH, "continue\n"));
+  /* uL(fprintf(uH, "continue\n")); */
 
   // XX add sequence numbers for %continue effects?
   // Arvo does not (currently) guarantee effect idempotence!!

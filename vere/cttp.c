@@ -746,6 +746,8 @@ _cttp_creq_on_body(h2o_http1client_t* cli_u, const c3_c* err_c)
     h2o_buffer_consume(&cli_u->sock->input, buf_u->size);
   }
 
+  // We're using the end of stream thing here to queue event to urbit. we'll
+  // need to separate this into our own timer for partial progress sends.
   if ( h2o_http1client_error_is_eos == err_c ) {
     _cttp_creq_respond(ceq_u);
   }
