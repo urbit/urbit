@@ -4,8 +4,6 @@
 ::
 /+  bip32, bip39
 ::
-::
-=,  sha
 =,  keygen
 ::
 |%
@@ -23,16 +21,15 @@
 ++  child-node-from-seed
   |=  [seed=@ met=meta pass=(unit @t)]
   ^-  node
-  =+  dr=~(. ds pass)
-  =+  sed=(seed:dr seed met)
+  =+  sed=(seed:ds seed met)
   =+  nom=(from-entropy:bip39 32^sed)
   :+  met  nom
-  %-  wallet:dr
+  %-  wallet:ds
   %+  to-seed:bip39  nom
   (trip (fall pass ''))
 ::
 ++  full-wallet-from-ticket
-  |=  [ticket=byts sis=(set ship) pass=(unit @t) revs=revisions]
+  |=  [ticket=byts sis=(set ship) revs=revisions pass=(unit @t)]
   =+  master-seed=(argon2u ticket)
   =/  nn
     |=  [typ=tape rev=@ud]
@@ -44,15 +41,15 @@
       [typ rev who]
     pass
   ::
-  :-  ^=  owner  ^-  nodes
-      (nn "owner" owner.revs)
+  :-  ^=  ownership  ^-  nodes
+      (nn "ownership" ownership.revs)
   ::
-  :-  ^=  delegate  ^-  nodes
-      (nn "delegate" delegate.revs)
+  :-  ^=  voting  ^-  nodes
+      (nn "voting" voting.revs)
   ::
-  =/  manage=nodes
-    (nn "manage" manage.revs)
-  :-  manage=manage
+  =/  management=nodes
+    (nn "managementment" management.revs)
+  :-  management=management
   ::
   :-  ^=  transfer  ^-  nodes
       (nn "transfer" transfer.revs)
@@ -61,31 +58,30 @@
       (nn "spawn" spawn.revs)
   ::
   ^=  network  ^-  uodes
-  =+  dr=~(. ds pass)
   %-  ~(rep in sis)
   |=  [who=ship nus=uodes]
   %+  ~(put by nus)  who
   =/  mad
     %+  to-seed:bip39
-      seed:(~(got by manage) who)
+      seed:(~(got by management) who)
     (trip (fall pass ''))
   =+  met=["network" network.revs who]
-  =+  sed=(seed:dr mad met)
-  [met sed (urbit:dr sed)]
+  =+  sed=(seed:ds mad met)
+  [met sed (urbit:ds sed)]
 ::
 ++  ds                                                  ::  derive from raw seed
-  |_  pass=(unit @t)
+  |%
   ++  wallet
-    |=  seed=@ux
+    |=  seed=@
     ^-  ^wallet
-    =+  =>  (from-seed:bip32 32^seed)
-        (derive-path "m/44’/60’/0’/0/0")
+    =+  =>  (from-seed:bip32 64^seed)
+        (derive-path "m/44'/60'/0'/0/0")
     :+  [public-key private-key]
-      (address-from-pub:ethereum public-key)
+      (address-from-prv:ethereum private-key)
     chain-code
   ::
   ++  urbit
-    |=  seed=@ux
+    |=  seed=@
     ^-  edkeys
     =+  =<  [pub=pub:ex sec=sec:ex]
         (pit:nu:crub:crypto 256 seed)
@@ -97,7 +93,7 @@
         (rsh 3 33 sec)
   ::
   ++  seed
-    |=  [seed=@ux meta]
+    |=  [seed=@ meta]
     ^-  @ux
     =/  salt=tape
       ;:  weld
@@ -105,7 +101,7 @@
         ['-' (a-co:co who)]
         ['-' (a-co:co rev)]
       ==
-    %-  sha-256l
+    %-  sha-256l:sha
     :-  (add 32 (lent salt))
     (cat 3 (crip (flop salt)) seed)
   --

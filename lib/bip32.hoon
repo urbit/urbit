@@ -81,7 +81,7 @@
 ++  derivation-path
   ;~  pfix
     ;~(pose (jest 'm/') (easy ~))
-  %+  most  fas  ::TODO  net
+  %+  most  net
   ;~  pose
     %+  cook
       |=(i=@ (add i (bex 31)))

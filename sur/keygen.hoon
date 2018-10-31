@@ -14,11 +14,11 @@
 +=  keypair  [public=@ux secret=@ux]
 ::
 +=  revisions
-  $:  owner=@ud
+  $:  ownership=@ud
       transfer=@ud
       spawn=@ud
-      delegate=@ud
-      manage=@ud
+      voting=@ud
+      management=@ud
       network=@ud
   ==
 --
