@@ -1,0 +1,46 @@
+--- gcc/gcc/calls.c
++++ gcc/gcc/calls.c
+@@ -4736,9 +4736,41 @@ emit_library_call_value_1 (int retval, rtx orgfun,
+ 
+   /* Ensure current function's preferred stack boundary is at least
+      what we need.  */
+-  if (crtl->preferred_stack_boundary < PREFERRED_STACK_BOUNDARY)
+-    crtl->preferred_stack_boundary = PREFERRED_STACK_BOUNDARY;
++  unsigned int preferred_stack_boundary = PREFERRED_STACK_BOUNDARY;
+ 
++  if (preferred_stack_boundary > crtl->preferred_stack_boundary)
++    crtl->preferred_stack_boundary = preferred_stack_boundary;
++
++  if (SUPPORTS_STACK_ALIGNMENT)
++    {
++      if (preferred_stack_boundary > crtl->stack_alignment_estimated)
++	crtl->stack_alignment_estimated = preferred_stack_boundary;
++      if (preferred_stack_boundary > crtl->stack_alignment_needed)
++	crtl->stack_alignment_needed = preferred_stack_boundary;
++
++      crtl->stack_realign_needed
++	= INCOMING_STACK_BOUNDARY < crtl->stack_alignment_estimated;
++      crtl->stack_realign_tried = crtl->stack_realign_needed;
++
++      if (crtl->drap_reg == NULL_RTX)
++	{
++	  rtx drap_rtx = targetm.calls.get_drap_rtx ();
++
++	  /* stack_realign_drap and drap_rtx must match.  */
++	  gcc_assert ((stack_realign_drap != 0) == (drap_rtx != NULL));
++
++	  /* Do nothing if NULL is returned, which means DRAP is not needed.  */
++	  if (drap_rtx != NULL)
++	    {
++	      crtl->args.internal_arg_pointer = drap_rtx;
++
++	      /* Call fixup_tail_calls to clean up REG_EQUIV note if DRAP is
++		 needed. */
++	      fixup_tail_calls ();
++	    }
++	}
++    }
++
+   /* If this kind of value comes back in memory,
+      decide where in memory it should come back.  */
+   if (outmode != VOIDmode)
