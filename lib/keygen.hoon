@@ -16,12 +16,12 @@
   |=  inp=byts
   ^-  @
   %-  (argon2-urbit:argon2:crypto 32)
-  [inp (to-byts 'urbitwallet')]
+  [inp (to-byts 'urbitkeygen')]
 ::
 ++  child-node-from-seed
   |=  [seed=@ met=meta pass=(unit @t)]
   ^-  node
-  =+  sed=(seed:ds seed met)
+  =+  sed=(seed:ds 32^seed met)
   =+  nom=(from-entropy:bip39 32^sed)
   :+  met  nom
   %-  wallet:ds
@@ -48,7 +48,7 @@
       (nn "voting" voting.revs)
   ::
   =/  management=nodes
-    (nn "managementment" management.revs)
+    (nn "management" management.revs)
   :-  management=management
   ::
   :-  ^=  transfer  ^-  nodes
@@ -66,7 +66,7 @@
       seed:(~(got by management) who)
     (trip (fall pass ''))
   =+  met=["network" network.revs who]
-  =+  sed=(seed:ds mad met)
+  =+  sed=(seed:ds 64^mad met)
   [met sed (urbit:ds sed)]
 ::
 ++  ds                                                  ::  derive from raw seed
@@ -93,7 +93,7 @@
         (rsh 3 33 sec)
   ::
   ++  seed
-    |=  [seed=@ meta]
+    |=  [seed=byts meta]
     ^-  @ux
     =/  salt=tape
       ;:  weld
@@ -102,7 +102,7 @@
         ['-' (a-co:co rev)]
       ==
     %-  sha-256l:sha
-    :-  (add 32 (lent salt))
-    (cat 3 (crip (flop salt)) seed)
+    :-  (add wid.seed (lent salt))
+    (cat 3 (crip (flop salt)) dat.seed)
   --
 --
