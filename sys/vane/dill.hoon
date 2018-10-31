@@ -77,7 +77,7 @@
           turf=(list turf)                              ::    domains
           bloq=@ud                                      ::    block number
           node=(unit purl:eyre)                         ::    gateway url
-          snap=(unit snapshot:able:jael)                ::    head start
+          snap=(unit snapshot:jael)                     ::    head start
       ==                                                ::
       [%fake our=ship]                                  ::  boot fake
       :: XX wegh                                        ::

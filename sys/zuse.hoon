@@ -2035,11 +2035,6 @@
           {$vine p/(list change)}                       ::  all raw changes
           [%vent p=chain]                               ::  ethereum changes
       ==                                                ::
-    ++  node-src                                        ::  ethereum node comms
-      $:  node=purl:eyre                                ::  node url
-          filter-id=@ud                                 ::  current filter
-          poll-timer=@da                                ::  next filter poll
-      ==                                                ::
     ::                                                  ::
     ++  note                                            ::  out request $->
       =,  eyre                                          ::
@@ -2079,22 +2074,6 @@
           [%j %vent p=chain]                            ::  ethereum changes
           [%a %woot p=ship q=coop]                      ::  message result
       ==                                                ::
-    ++  snapshot                                        ::  rewind point
-      =,  constitution:ethe                             ::
-      $:  eve=logs                                      ::  eth absolute state
-          kyz=(map ship public)                         ::  public key state
-          $=  eth                                       ::
-            $:  dns=dnses                               ::  on-chain dns state
-                hul=(map ship hull)                     ::  on-chain ship state
-          ==                                            ::
-          etn=state-eth-node                            ::  eth connection state
-      ==                                                ::
-    ++  state-eth-node                                  ::  node config + meta
-      $:  source=(each ship node-src)                   ::  learning from
-          heard=(set event-id:ethe)                     ::  processed events
-          latest-block=@ud                              ::  last heard block
-          foreign-block=@ud                             ::  node's latest block
-      ==                                                ::
     ++  tally                                           ::  balance update
       %+  each  balance                                 ::  complete
       action                                            ::  change
@@ -2127,7 +2106,31 @@
           [%west p=sack q=path r=*]                     ::  remote request
           [%wind our=ship p=@ud]                        ::  rewind before block
       ==                                                ::
-    --
+    --                                                  ::
+  ::                                                    ::
+  ::::                                                  ::
+    ::                                                  ::
+  ++  node-src                                          ::  ethereum node comms
+    $:  node=purl:eyre                                  ::  node url
+        filter-id=@ud                                   ::  current filter
+        poll-timer=@da                                  ::  next filter poll
+    ==                                                  ::
+  ++  snapshot                                          ::  rewind point
+    =,  constitution:ethe                               ::
+    $:  eve=logs:able                                   ::  eth absolute state
+        kyz=(map ship public:able)                           ::  public key state
+        $=  eth                                         ::
+          $:  dns=dnses                                 ::  on-chain dns state
+              hul=(map ship hull)                       ::  on-chain ship state
+        ==                                              ::
+        etn=state-eth-node                              ::  eth connection state
+    ==                                                  ::
+  ++  state-eth-node                                    ::  node config + meta
+    $:  source=(each ship node-src)                     ::  learning from
+        heard=(set event-id:ethe)                       ::  processed events
+        latest-block=@ud                                ::  last heard block
+        foreign-block=@ud                               ::  node's latest block
+    ==                                                  ::
   ::                                                    ::
   ::::                  ++pki:jael                      ::  (1h2) certificates
     ::                                                  ::::
@@ -8166,13 +8169,13 @@
     ::  +bloq:snap:dawn: extract block number
     ::
     ++  bloq
-      |=  snap=snapshot:able:jael
+      |=  snap=snapshot:jael
       ^-  @ud
       latest-block.etn.snap
     ::  +czar:snap:dawn: extract galaxy table
     ::
     ++  czar
-      |=  snap=snapshot:able:jael
+      |=  snap=snapshot:jael
       ^-  (map ship [=life =pass])
       %-  malt
       %+  turn  (gulf 0 255)
@@ -8184,7 +8187,7 @@
     ::  +hull:snap:dawn: extract ship's contract state
     ::
     ++  hull
-      |=  [who=ship snap=snapshot:able:jael]
+      |=  [who=ship snap=snapshot:jael]
       ^-  hull:constitution:ethe
       =/  res  (~(get by hul.eth.snap) who)
       ?~  res
@@ -8194,7 +8197,7 @@
     ::  +turf:snap:dawn: extract network domains
     ::
     ++  turf
-      |=  snap=snapshot:able:jael
+      |=  snap=snapshot:jael
       ^-  (list ^turf)
       %+  murn
         ^-  (list (pair))
@@ -8203,7 +8206,7 @@
           ~[pri sec ter]:dns.eth.snap
         |=  dom=@t
         ^-  (unit (pair))
-        (rush pri.dns.eth.snap thos:de-purl:html)
+        (rush dom thos:de-purl:html)
       |=([* a=*] ((soft ^turf) a))
     --
   ::  +veri:dawn: validate keys, life, discontinuity, &c

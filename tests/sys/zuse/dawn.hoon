@@ -28,6 +28,21 @@
   %-  crip
   %+  weld  "0x"
   (render-hex-bytes:ethereum 20 `@`ships:contracts:constitution:ethe)
+::  snapshot
+::
+++  snap
+  ^-  snapshot:jael
+  :*  *logs:able:jael
+      ~
+      :*  ['urbit.org' 'urbit.org' '']
+          %-  malt
+          :*  ~zod^hul
+              ~marzod^hul
+              (turn (gulf 1 255) |=(gal=@ gal^hul))
+          ==
+      ==
+      %*(. *state-eth-node:jael latest-block 4.230.000)
+  ==
 ::
 ++  test-give-bloq
   =/  oct
@@ -166,6 +181,26 @@
   %+  expect-eq
     !>  [/org/urbit ~]
     !>  (turf:take:dawn oct)
+::
+++  test-snap-bloq
+  %+  expect-eq
+    !>  4.230.000
+    !>  (bloq:snap:dawn snap)
+::
+++  test-snap-hull
+  %+  expect-eq
+    !>  hul
+    !>  (hull:snap:dawn ~zod snap)
+::
+++  test-snap-czar
+  %+  expect-eq
+    !>  256
+    !>  ~(wyt by (czar:snap:dawn snap))
+::
+++  test-snap-turf
+  %+  expect-eq
+    !>  `(list turf)`~[~['org' 'urbit'] ~['org' 'urbit']]
+    !>  (turf:snap:dawn snap)
 ::
 ++  test-veri-good
   =/  sed  [~zod 1 sec ~]
