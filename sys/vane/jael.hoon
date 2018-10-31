@@ -96,12 +96,16 @@
       count=@ud                                         ::  length of snaps
       last-block=@ud                                    ::  number of last snap
       snaps=(qeu [block-number=@ud snap=snapshot])      ::  old states
-  ==
+  ==                                                    ::
 ++  snapshot                                            ::  rewind point
   $:  eve=logs                                          ::  eth absolute state
-      sub=state-relative                                ::  all relative state
+      kyz=(map ship public)                             ::  public key state
+      $=  eth                                           ::
+        $:  dns=dnses                                   ::  on-chain dns state
+            hul=(map ship hull)                         ::  on-chain ship state
+      ==                                                ::
       etn=state-eth-node                                ::  eth connection state
-  ==
+  ==                                                    ::
 ++  node-src                                            ::  ethereum node comms
   $:  node=purl:eyre                                    ::  node url
       filter-id=@ud                                     ::  current filter
@@ -1035,24 +1039,20 @@
       ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
         [snap.snap +>.^$]
       $
-    ~&  [%wind block latest-block.etn.snap ~(wyt by hul.eth.sub.snap)]
+    ~&  [%wind block latest-block.etn.snap ~(wyt by hul.eth.snap)]
     ::  keep the following in sync with ++extract-snap:file:su
     %=  +>.$
-      eve.urb   eve.snap
-      etn       etn.snap(source source.etn)
-      sap       sap(last-block 0)
-      sub       %=  sub.snap
-                  yen.bal  yen.bal.sub
-                  yen.own  yen.own.sub
-                  yen.puk  yen.puk.sub
-                  yen.eth  yen.eth.sub
-                ==
-    ::
-      moz       =-  [[hen %pass /wind/look %j %look our -] moz]
-                ?-  -.source.etn
-                  %&  &+p.source.etn
-                  %|  |+node.p.source.etn
-                ==
+        eve.urb       eve.snap
+        etn           etn.snap(source source.etn)
+        kyz.puk.sub   kyz.snap
+        +.eth.sub     eth.snap
+        sap           sap(last-block 0)
+        moz
+      =-  [[hen %pass /wind/look %j %look our -] moz]
+      ?-  -.source.etn
+        %&  &+p.source.etn
+        %|  |+node.p.source.etn
+      ==
     ==
   --
 ::                                                      ::  ++su
@@ -1509,15 +1509,9 @@
     ++  extract-snap                                    ::  extract rewind point
       ^-  snapshot
       :*  eve.urb
-          %=  sub
-            yen.bal  ~
-            yen.own  ~
-            yen.puk  ~
-            yen.eth  ~
-          ==
-          %=  etn
-            source  *(each ship node-src)
-          ==
+          kyz.puk.sub
+          +.eth.sub
+          etn(source *(each ship node-src))
       ==
     --
   --
