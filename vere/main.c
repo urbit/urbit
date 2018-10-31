@@ -77,6 +77,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.bat = c3n;
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
+  u3_Host.ops_u.etn = c3n;
   u3_Host.ops_u.fog = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
@@ -91,7 +92,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:K:A:w:u:e:f:F:k:l:n:p:r:NabcdgqsvxMPDXRS")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:K:A:w:u:e:E:f:F:k:l:n:p:r:NabcdgqstvxMPDXRS")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -111,6 +112,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'e': {
         u3_Host.ops_u.eth_c = strdup(optarg);
+        break;
+      }
+      case 'E': {
+        u3_Host.ops_u.ets_c = strdup(optarg);
         break;
       }
       case 'F': {
@@ -186,6 +191,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'v': { u3_Host.ops_u.veb = c3y; break; }
       case 's': { u3_Host.ops_u.git = c3y; break; }
       case 'S': { u3_Host.ops_u.has = c3y; break; }
+      case 't': { u3_Host.ops_u.etn = c3y; break; }
       case '?': default: {
         return c3n;
       }
@@ -218,6 +224,12 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   if ( u3_Host.ops_u.arv_c != 0 && !imp_t ) {
     fprintf(stderr, "-A only makes sense when creating a new galaxy\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.ets_c == 0 && c3y == u3_Host.ops_u.etn ) {
+    fprintf(stderr, "can't trust Ethereum snapshot without specifying "
+                    "snapshot with -E\n");
     return c3n;
   }
 
