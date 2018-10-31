@@ -1243,8 +1243,6 @@
         $serv  `%e
         $tend  `%a
         $them  `%e
-        $turf  `%j
-        $vein  `%j
         $wait  `%b
         $want  `%a
         $warp  `%c
