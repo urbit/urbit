@@ -1412,15 +1412,19 @@
       |=  [who=ship dif=diff-hull]
       ^+  [kyz ..file]
       =-  ::TODO  =; with just the type
+        =.  hul.eth  (~(put by hul.eth) who hel)
+        ::  new keys
+        ::
         ?:  ?=(%& -.new)
-          :-  (file-keys who p.new)
-          ..file(hul.eth (~(put by hul.eth) who hel))
+          [(file-keys who p.new) ..file]
+        ::  kept continuity (no-op)
+        ::
         ?:  p.new
-          :-  kyz
-          ..file(hul.eth (~(put by hul.eth) who hel))
+          [kyz ..file]
+        ::  discontinuity
+        ::
         :-  (file-discontinuity who)
         %=  ..file
-          hul.eth  (~(put by hul.eth) who hel)
           ::  these must be appended here; +abet flops them
           ::
           moz  =/  lyf=life
