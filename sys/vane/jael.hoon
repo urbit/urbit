@@ -84,12 +84,6 @@
   $:  pry/(map ship (map ship safe))                    ::  promises
       eve=logs                                          ::  on-chain events
   ==                                                    ::
-++  state-eth-node                                      ::  node config + meta
-  $:  source=(each ship node-src)                       ::  learning from
-      heard=(set event-id)                              ::  processed events
-      latest-block=@ud                                  ::  last heard block
-      foreign-block=@ud                                 ::  node's latest block
-  ==                                                    ::
 ++  state-snapshots                                     ::  rewind points
   $:  interval=_100                                     ::  block interval
       max-count=_10                                     ::  max snaps
@@ -97,21 +91,6 @@
       last-block=@ud                                    ::  number of last snap
       snaps=(qeu [block-number=@ud snap=snapshot])      ::  old states
   ==                                                    ::
-++  snapshot                                            ::  rewind point
-  $:  eve=logs                                          ::  eth absolute state
-      kyz=(map ship public)                             ::  public key state
-      $=  eth                                           ::
-        $:  dns=dnses                                   ::  on-chain dns state
-            hul=(map ship hull)                         ::  on-chain ship state
-      ==                                                ::
-      etn=state-eth-node                                ::  eth connection state
-  ==                                                    ::
-++  node-src                                            ::  ethereum node comms
-  $:  node=purl:eyre                                    ::  node url
-      filter-id=@ud                                     ::  current filter
-      poll-timer=@da                                    ::  next filter poll
-  ==                                                    ::
-::                                                      ::
 ++  message                                             ::  p2p message
   $%  [%hail p=remote]                                  ::  reset rights
       [%nuke ~]                                         ::  cancel trackers
@@ -741,6 +720,11 @@
       ::  set initial domains
       ::
       =.  tuf.own.sub  turf.tac
+      ::  if we're given a snapshot, restore it
+      ::
+      =.  +>.$
+        ?~  snap.tac  +>.$
+        (restore-snap u.snap.tac)
       ::
       =.  moz
         %+  weld  moz
@@ -1040,6 +1024,18 @@
         [snap.snap +>.^$]
       $
     ~&  [%wind block latest-block.etn.snap ~(wyt by hul.eth.snap)]
+    =.  +>.$  (restore-snap snap)
+    %=    +>.$
+        moz
+      =-  [[hen %pass /wind/look %j %look our -] moz]
+      ?-  -.source.etn
+        %&  &+p.source.etn
+        %|  |+node.p.source.etn
+      ==
+    ==
+  ::                                                    ::  ++restore-snap:of
+  ++  restore-snap                                      ::  restore snapshot
+    |=  snap=snapshot
     ::  keep the following in sync with ++extract-snap:file:su
     %=  +>.$
         eve.urb       eve.snap
@@ -1047,12 +1043,6 @@
         kyz.puk.sub   kyz.snap
         +.eth.sub     eth.snap
         sap           sap(last-block 0)
-        moz
-      =-  [[hen %pass /wind/look %j %look our -] moz]
-      ?-  -.source.etn
-        %&  &+p.source.etn
-        %|  |+node.p.source.etn
-      ==
     ==
   --
 ::                                                      ::  ++su
@@ -1840,7 +1830,7 @@
     ^+  +>
     ::  TODO: ship or node as sample?
     ::
-    =.  latest-block  launch:contracts
+    =.  latest-block  (max latest-block launch:contracts)
     ?:  |(=(our bos) ?=(^ nod.own))
       ~|  %jael-init-node
       (listen-to-node (need nod.own))
@@ -2260,16 +2250,12 @@
     ?:  =(~ snaps.sap.lex)
       `~
     :^  ~  ~  %noun  !>
-    %=  sap.lex
-        snaps
-      %-  ~(put to *(qeu [block-number=@ud snap=snapshot]))
-      |-  ^-  [@ud snapshot]
-      =^  snap  snaps.sap.lex
-        ~(get to snaps.sap.lex)
-      ?:  =(~ snaps.sap.lex)
-        snap
-      $
-    ==
+    |-  ^-  snapshot
+    =^  snap=[@ud snap=snapshot]  snaps.sap.lex
+      ~(get to snaps.sap.lex)
+    ?:  =(~ snaps.sap.lex)
+      snap.snap
+    $
   ==
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve

@@ -2035,6 +2035,7 @@
           {$vine p/(list change)}                       ::  all raw changes
           [%vent p=chain]                               ::  ethereum changes
       ==                                                ::
+    ::                                                  ::
     ++  note                                            ::  out request $->
       =,  eyre                                          ::
       $%  $:  %b                                        ::
@@ -2068,7 +2069,7 @@
     +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
     ::
     ++  sign                                            ::  in result $<-
-      $%  {$b $wake ~}                                 ::  wakeup
+      $%  {$b $wake ~}                                  ::  wakeup
           [%e %sigh p=cage]                             ::  marked http response
           [%j %vent p=chain]                            ::  ethereum changes
           [%a %woot p=ship q=coop]                      ::  message result
@@ -2087,6 +2088,7 @@
               turf=(list turf)                          ::    domains
               bloq=@ud                                  ::    block number
               node=(unit purl:eyre)                     ::    gateway url
+              snap=(unit snapshot)                      ::    head start
           ==                                            ::
           [%fake our=ship]                              ::  fake boot
           [%look our=ship src=(each ship purl:eyre)]    ::  set ethereum source
@@ -2104,7 +2106,31 @@
           [%west p=sack q=path r=*]                     ::  remote request
           [%wind our=ship p=@ud]                        ::  rewind before block
       ==                                                ::
-    --
+    --                                                  ::
+  ::                                                    ::
+  ::::                                                  ::
+    ::                                                  ::
+  ++  node-src                                          ::  ethereum node comms
+    $:  node=purl:eyre                                  ::  node url
+        filter-id=@ud                                   ::  current filter
+        poll-timer=@da                                  ::  next filter poll
+    ==                                                  ::
+  ++  snapshot                                          ::  rewind point
+    =,  constitution:ethe                               ::
+    $:  eve=logs:able                                   ::  eth absolute state
+        kyz=(map ship public:able)                           ::  public key state
+        $=  eth                                         ::
+          $:  dns=dnses                                 ::  on-chain dns state
+              hul=(map ship hull)                       ::  on-chain ship state
+        ==                                              ::
+        etn=state-eth-node                              ::  eth connection state
+    ==                                                  ::
+  ++  state-eth-node                                    ::  node config + meta
+    $:  source=(each ship node-src)                     ::  learning from
+        heard=(set event-id:ethe)                       ::  processed events
+        latest-block=@ud                                ::  last heard block
+        foreign-block=@ud                               ::  node's latest block
+    ==                                                  ::
   ::                                                    ::
   ::::                  ++pki:jael                      ::  (1h2) certificates
     ::                                                  ::::
@@ -8134,6 +8160,54 @@
       =?  tuf  !(~(has by tuf) q.i.dom)
         (~(put by tuf) q.i.dom p.i.dom)
       $(dom t.dom)
+    --
+  ::  |snap:dawn restore from snapshot
+  ::
+  ++  snap
+    !:
+    |%
+    ::  +bloq:snap:dawn: extract block number
+    ::
+    ++  bloq
+      |=  snap=snapshot:jael
+      ^-  @ud
+      latest-block.etn.snap
+    ::  +czar:snap:dawn: extract galaxy table
+    ::
+    ++  czar
+      |=  snap=snapshot:jael
+      ^-  (map ship [=life =pass])
+      %-  malt
+      %+  turn  (gulf 0 255)
+      |=  gal=@
+      ^-  [ship [life pass]]
+      :-  gal
+      ~|  czar-gal=gal
+      [life pass]:(need net:(~(got by hul.eth.snap) gal))
+    ::  +hull:snap:dawn: extract ship's contract state
+    ::
+    ++  hull
+      |=  [who=ship snap=snapshot:jael]
+      ^-  hull:constitution:ethe
+      =/  res  (~(get by hul.eth.snap) who)
+      ?~  res
+        ~&  ['hull not found in snapshot; can\'t verify' who=who]
+        !!
+      u.res
+    ::  +turf:snap:dawn: extract network domains
+    ::
+    ++  turf
+      |=  snap=snapshot:jael
+      ^-  (list ^turf)
+      %+  murn
+        ^-  (list (pair))
+        %+  murn
+          ^-  (list @t)
+          ~[pri sec ter]:dns.eth.snap
+        |=  dom=@t
+        ^-  (unit (pair))
+        (rush dom thos:de-purl:html)
+      |=([* a=*] ((soft ^turf) a))
     --
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::
