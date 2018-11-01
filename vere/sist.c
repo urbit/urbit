@@ -1283,15 +1283,20 @@ _sist_dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
 static u3_noun
 _sist_dawn(u3_noun sed)
 {
-  u3_noun url, bok, pon, zar, tuf;
+  u3_noun url, bok, pon, zar, tuf, sap;
 
   u3_noun who = u3h(sed);
   u3_noun rac = u3do("clan:title", u3k(who));
 
-  // XX require https?
-  c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
-    u3_Host.ops_u.eth_c :
-    "https://ropsten.infura.io/v3/196a7f37c7d54211b4a07904ec73ad87";
+  // load snapshot if exists
+  if ( 0 != u3_Host.ops_u.ets_c ) {
+    fprintf(stderr, "boot: loading ethereum snapshot\r\n");
+    u3_noun raw_snap = u3ke_cue(u3m_file(u3_Host.ops_u.ets_c));
+    sap = u3nc(u3_nul, raw_snap);
+  }
+  else {
+    sap = u3_nul;
+  }
 
   // ethereum gateway as (unit purl)
   if ( 0 == u3_Host.ops_u.eth_c ) {
@@ -1330,22 +1335,35 @@ _sist_dawn(u3_noun sed)
     u3z(par); u3z(lur); u3z(rul);
   }
 
+  // XX require https?
+  c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
+    u3_Host.ops_u.eth_c :
+    "https://ropsten.infura.io/v3/196a7f37c7d54211b4a07904ec73ad87";
+
   {
     fprintf(stderr, "boot: retrieving latest block\r\n");
 
-    // @ud: block number
-    u3_noun oct = u3v_wish("bloq:give:dawn");
-    u3_noun kob = _sist_eth_rpc(url_c, u3k(oct));
-    bok = u3do("bloq:take:dawn", u3k(kob));
+    if ( c3y == u3_Host.ops_u.etn ) {
+      bok = u3do("bloq:snap:dawn", u3k(u3t(sap)));
+    }
+    else {
+      // @ud: block number
+      u3_noun oct = u3v_wish("bloq:give:dawn");
+      u3_noun kob = _sist_eth_rpc(url_c, u3k(oct));
+      bok = u3do("bloq:take:dawn", u3k(kob));
 
-    u3z(oct); u3z(kob);
+      u3z(oct); u3z(kob);
+    }
   }
 
   {
     // +hull:constitution:ethe: on-chain state
     u3_noun hul;
 
-    {
+    if ( c3y == u3_Host.ops_u.etn ) {
+      hul = u3dc("hull:snap:dawn", u3k(who), u3k(u3t(sap)));
+    }
+    else {
       if ( c3__pawn == rac ) {
         // irrelevant, just bunt +hull
         hul = u3v_wish("*hull:constitution:ethe");
@@ -1402,31 +1420,39 @@ _sist_dawn(u3_noun sed)
   }
 
   {
-    fprintf(stderr, "boot: retrieving galaxy table\r\n");
+    if ( c3y == u3_Host.ops_u.etn ) {
+      zar = u3do("czar:snap:dawn", u3k(u3t(sap)));
+      tuf = u3do("turf:snap:dawn", u3k(u3t(sap)));
+    }
+    else {
+      {
+        fprintf(stderr, "boot: retrieving galaxy table\r\n");
 
-    // (map ship [=life =pass]): galaxy table
-    u3_noun oct = u3do("czar:give:dawn", u3k(bok));
-    u3_noun raz = _sist_eth_rpc(url_c, u3k(oct));
-    zar = u3do("czar:take:dawn", u3k(raz));
+        // (map ship [=life =pass]): galaxy table
+        u3_noun oct = u3do("czar:give:dawn", u3k(bok));
+        u3_noun raz = _sist_eth_rpc(url_c, u3k(oct));
+        zar = u3do("czar:take:dawn", u3k(raz));
 
-    u3z(oct); u3z(raz);
-  }
+        u3z(oct); u3z(raz);
+      }
 
-  {
-    fprintf(stderr, "boot: retrieving network domains\r\n");
+      {
+        fprintf(stderr, "boot: retrieving network domains\r\n");
 
-    // (list turf): ames domains
-    u3_noun oct = u3do("turf:give:dawn", u3k(bok));
-    u3_noun fut = _sist_eth_rpc(url_c, u3k(oct));
-    tuf = u3do("turf:take:dawn", u3k(fut));
+        // (list turf): ames domains
+        u3_noun oct = u3do("turf:give:dawn", u3k(bok));
+        u3_noun fut = _sist_eth_rpc(url_c, u3k(oct));
+        tuf = u3do("turf:take:dawn", u3k(fut));
 
-    u3z(oct); u3z(fut);
+        u3z(oct); u3z(fut);
+      }
+    }
   }
 
   u3z(rac);
 
-  // [%dawn seed sponsor galaxies domains block eth-url]
-  return u3nc(c3__dawn, u3nq(sed, pon, zar, u3nt(tuf, bok, url)));
+  // [%dawn seed sponsor galaxies domains block eth-url snap]
+  return u3nc(c3__dawn, u3nq(sed, pon, zar, u3nq(tuf, bok, url, sap)));
 }
 
 /* _sist_zen(): get OS entropy.

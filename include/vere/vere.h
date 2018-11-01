@@ -592,6 +592,8 @@
         c3_o    dem;                        //  -d, daemon
         c3_o    dry;                        //  -D, dry compute  
         c3_c*   eth_c;                      //  -e, ethereum node url
+        c3_o    etn;                        //  -t, use snapshot exclusively to boot
+        c3_c*   ets_c;                      //  -E, eth snapshot
         c3_c*   fak_c;                      //  -F, fake ship
         c3_o    fog;                        //  -X, skip last event
         c3_o    gab;                        //  -g, run with garbage collector
