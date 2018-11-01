@@ -1394,9 +1394,8 @@
         [kyz ..file]
       ::
       ::  sanity check, should never fail if we operate correctly
-      ::  XX is this true in the presence of reorgs?
       ::
-      ::  ?>  (gte block.wer latest-block)
+      ?>  (gte block.wer latest-block)
       =:  evs           (~(put by evs) wer dif)
           heard         (~(put in heard) wer)
           latest-block  (max latest-block block.wer)
@@ -1481,8 +1480,11 @@
           %+  sub.add
             (div block.wer interval.sap)
           (div last-block.sap interval.sap)
-        ~&  :*  %snap  count=count.sap  max-count=max-count.sap 
-                last-block=last-block.sap  interval=interval.sap
+        ~&  :*  %snap
+                count=count.sap
+                max-count=max-count.sap
+                last-block=last-block.sap
+                interval=interval.sap
                 lent=(lent ~(tap to snaps.sap))
             ==
         %=  sap
@@ -1491,7 +1493,7 @@
           last-block  block.wer
         ==
       =?  sap  (gth count.sap max-count.sap)
-        ~&  :*  %dump  count=count.sap  max-count=max-count.sap 
+        ~&  :*  %dump  count=count.sap  max-count=max-count.sap
                 lent=(lent ~(tap to snaps.sap))
             ==
         %=  sap
@@ -2005,7 +2007,6 @@
     ?:  ?=(%error -.rep)
       ~&  [%catch-up-step-error--retrying message.rep]
       (catch-up from-block)
-    ::  XX file
     =.  +>.$  (take-events rep)
     (catch-up next-block)
   ::
