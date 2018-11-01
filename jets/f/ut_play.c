@@ -358,7 +358,7 @@
         return pro;
       }
 
-      case c3__ktpm: p_gen = u3t(gen);
+      case c3__ktpd: p_gen = u3t(gen);
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);
