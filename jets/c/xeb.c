@@ -9,22 +9,12 @@
   u3_noun
   u3qc_xeb(u3_atom a)
   {
-    mpz_t a_mp;
+    c3_w met_w = u3r_met(0, a);
 
-    if ( __(u3a_is_dog(a)) ) {
-      u3r_mp(a_mp, a);
-      c3_d x = mpz_sizeinbase(a_mp, 2);
-      mpz_t b_mp;
-      mpz_init_set_ui(b_mp, x);
-      return u3i_mp(b_mp);
+    if ( !_(u3a_is_cat(met_w)) ) {
+      return u3i_words(1, &met_w);
     }
-    else {
-      mpz_init_set_ui(a_mp, a);
-      c3_d x = mpz_sizeinbase(a_mp, 2);
-      mpz_t b_mp;
-      mpz_init_set_ui(b_mp, x);
-      return u3i_mp(b_mp);
-    }
+    else return met_w;
   }
   u3_noun
   u3wc_xeb(u3_noun cor)

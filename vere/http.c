@@ -1231,13 +1231,17 @@ _http_release_ports_file(c3_c *pax_c)
   free(paf_c);
 }
 
+
 /* _http_czar_host(): galaxy hostname as (unit host:eyre)
 */
 static u3_noun
 _http_czar_host(void)
 {
   u3_noun dom = u3_nul;
+  return dom;
 
+  // XX revisit
+#if 0
   if ( (0 == u3_Host.ops_u.imp_c) || (c3n == u3_Host.ops_u.net) ) {
     return dom;
   }
@@ -1281,6 +1285,7 @@ _http_czar_host(void)
   dom = u3nc(u3i_string(u3_Host.ops_u.imp_c + 1), u3kb_flop(u3k(dom)));
 
   return u3nt(u3_nul, c3y, u3kb_flop(u3k(dom)));
+#endif
 }
 
 /* u3_http_ef_bake(): notify %eyre that we're live
@@ -1401,7 +1406,7 @@ _http_serv_start_all(void)
       htp_u = _http_serv_new(por_s, c3y, c3n);
       htp_u->h2o_u = _http_serv_init_h2o(u3_Host.tls_u, for_u->log, for_u->red);
 
-      if ( (c3y == for_u->pro) || (c3y == u3_Host.ops_u.fak) ) {
+      if ( c3y == for_u->pro ) {
         htp_u->rox_u = _proxy_serv_new(htp_u, 443, c3y);
       }
 
@@ -1416,7 +1421,7 @@ _http_serv_start_all(void)
     htp_u = _http_serv_new(por_s, c3n, c3n);
     htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
 
-    if ( (c3y == for_u->pro) || (c3y == u3_Host.ops_u.fak) ) {
+    if ( c3y == for_u->pro ) {
       htp_u->rox_u = _proxy_serv_new(htp_u, 80, c3n);
     }
 
@@ -2424,12 +2429,15 @@ _proxy_ward_resolve(u3_warc* cli_u)
   hin_u.ai_protocol = IPPROTO_TCP;
 
   if ( 0 == cli_u->hot_c ) {
+    // XX revisit
+    c3_assert( 0 != u3_Host.sam_u.dns_c );
+
     u3_noun sip = u3dc("scot", 'p', u3k(cli_u->sip));
     c3_c* sip_c = u3r_string(sip);
-    c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.ops_u.dns_c);
+    c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.sam_u.dns_c);
     cli_u->hot_c = c3_malloc(len_w);
     // incremented to skip '~'
-    snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, u3_Host.ops_u.dns_c);
+    snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, u3_Host.sam_u.dns_c);
 
     free(sip_c);
     u3z(sip);
@@ -2541,11 +2549,14 @@ _proxy_parse_ship(c3_c* hot_c)
     return sip;
   }
 
+  // XX revisit
+  c3_assert( 0 != u3_Host.sam_u.dns_c );
+
   c3_w dif_w = dom_c - hot_c;
-  c3_w dns_w = strlen(u3_Host.ops_u.dns_c);
+  c3_w dns_w = strlen(u3_Host.sam_u.dns_c);
 
   if ( (dns_w != strlen(hot_c) - (dif_w + 1)) ||
-       (0 != strncmp(dom_c + 1, u3_Host.ops_u.dns_c, dns_w)) ) {
+       (0 != strncmp(dom_c + 1, u3_Host.sam_u.dns_c, dns_w)) ) {
     return sip;
   }
 
@@ -2571,25 +2582,16 @@ _proxy_dest(u3_pcon* con_u, u3_noun sip)
     _proxy_loop_connect(con_u);
   }
   else {
-    u3_noun hip = u3k(u3t(sip));
-    u3_noun own = u3A->own;
-    c3_o our = c3n;
+    u3_noun hip = u3t(sip);
 
-    while ( u3_nul != own ) {
-      if ( c3y == u3r_sing(hip, u3h(own)) ) {
-        our = c3y;
-        break;
-      }
-      own = u3t(own);
-    }
-
-    if ( c3y == our ) {
+    if ( c3y == u3r_sing(u3A->own, hip) ) {
       _proxy_loop_connect(con_u);
     }
     else {
       // XX check if (sein:title sip) == our
       // XX check will
-      _proxy_ward_start(con_u, hip);
+      // XX extract bytes from hip, this could leak
+      _proxy_ward_start(con_u, u3k(hip));
     }
   }
 
@@ -2852,6 +2854,7 @@ u3_http_ef_that(u3_noun tat)
     return;
   }
 
+  // XX extract bytes from sip, this could leak
   cli_u = _proxy_warc_new(htp_u, (u3_atom)sip, (c3_s)por, (c3_o)sec);
 
   // XX add to constructor
