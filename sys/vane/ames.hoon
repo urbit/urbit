@@ -780,8 +780,6 @@
                   ?:  =(our seg)
                     sen:gus
                   cluy:(myx:gus seg)
-                ::  XX should anything else be signed?
-                ::
                 ?&  =(lyf.yig life.wed)
                     ?=(^ oath.wed)
                     .=  (need (sure:as:cub.yig u.oath.wed))
@@ -1362,7 +1360,6 @@
     ::
         %turf
       =.  tuf.fox  turf.sih
-      ::  XX give %turf if already recvd %bar?
       [~ +>.$]
     ::
         %pubs
@@ -1446,7 +1443,8 @@
             %init
           :_  fox  [[%sake p.kyz] [%brew ~] ~]
         ::
-          ::  XX confirm unused, remove
+          ::  XX this is unused, but they only way to set
+          ::  entropy for symmetric keys. Review.
           ::
             %junk
           [~ fox(any.ton (shax (mix any.ton.fox p.kyz)))]
