@@ -2130,12 +2130,26 @@
           tyl/spur
       ==
   ^-  (unit (unit cage))
-  ::  XX security
+  ::  XX review for security, stability, cases other than now
   ::
   ?.  =(lot [%$ %da now])  ~
   ?.  =(%$ ren)  [~ ~]
   ?+    syd
       ~
+  ::
+      %code
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  ?&  ?=(%& -.why)
+            (~(has by pry.urb.lex) p.why)
+        ==
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    =/  sec  (~(got by jaw.own.sub.lex) lyf.own.sub.lex)
+    =/  cub  (nol:nu:crub:crypto sec)
+    ::  XX use pac:ex:cub?
+    ::
+    ``[%noun !>((end 6 1 (shaf %pass (shax sec:ex:cub))))]
   ::
       %life
     ?.  ?=([@ ~] tyl)  [~ ~]

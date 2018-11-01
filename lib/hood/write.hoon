@@ -114,7 +114,7 @@
 ::
 ++  ames-secret
   ^-  @t
-  =-  (crip +:<.^(@p %a pax)>)
+  =-  (crip +:<.^(@p %j pax)>)
   pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
 ::
 ++  poke-sec-atom

@@ -1270,14 +1270,10 @@
       =+  hun=(slaw %p i.tyl)
       ?~  hun  [~ ~]
       ?.  =(`@`0 ren)  ~
-      ?+    lot  ~
-          [$$ %ud @]
-        (perm p.why u.hun q.p.lot [syd t.tyl])
-      ::
-          [$$ %da @]
-        ?.  =(now q.p.lot)  ~
-        (temp p.why u.hun [syd t.tyl])
-      ==
+      ?.  ?=([$$ %da @] lot)
+        ~
+      ?.  =(now q.p.lot)  ~
+      (temp p.why u.hun [syd t.tyl])
     ::
     ++  stay  fox
     ++  take                                            ::  accept response
@@ -1513,20 +1509,6 @@
     =^  toe  fox  (clop now hen i.p.fuy)
     $(p.fuy t.p.fuy, out (weld (flop toe) out))
   ::
-  ++  perm
-    |=  [our=ship his=ship mar=@ud tyl=path]
-    ^-  (unit (unit cage))
-    ?~  tyl  ~
-    =+  gys=(~(us go ton.fox) our)
-    ?~  gys  ~
-    ?.  =(our his)
-      ~
-    ::  XX move to %jael
-    ::
-    ?:  ?=([%code ~] tyl)
-      ``[%noun !>((end 6 1 (shaf %pass (shax sec:ex:cub:sen:u.gys))))]
-    ~
-  ::
   ++  temp
     |=  [our=ship his=ship tyl=path]
     ^-  (unit (unit cage))
@@ -1540,20 +1522,7 @@
       ?.  =(our his)
         ~
       ``[%noun !>(pals:(~(um am [now fox ski]) our))]
-    :: XX move to %jael
-    ::
-    ?.  ?=([%life ~] tyl)
-      =+  muc=$(tyl [%life ~])
-      (perm our his ?~(muc 0 (fall ((soft @ud) u.muc) 0)) tyl)
-    =+  gys=(~(us go ton.fox) our)
-    ?~  gys  ~
-    ?.  =(our his)
-      =+  fod=(~(get by hoc.saf.u.gys) his)
-      ?~  fod  ~
-      ?~  lew.wod.u.fod  ~
-      ``[%noun !>(`@ud`life.u.lew.wod.u.fod)]
-    ?~  val.saf.u.gys  ~
-    ``[%noun !>(`@ud`p.i.val.saf.u.gys)]
+    ~
   ::
   ++  wegh
     ^-  mass

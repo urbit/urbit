@@ -1206,7 +1206,7 @@
     ^-  @ta
     =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
     %^  rsh  3  1
-    (scot %p (@ (need (sky [151 %noun] %a pax))))
+    (scot %p (@ (need (sky [151 %noun] %j pax))))
   ::
   ::
   ++  handle
