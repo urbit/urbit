@@ -590,8 +590,7 @@
     ==                                                  ::
   ++  code  @uvI                                        ::  symmetric key
   ++  corn                                              ::  flow by server
-    $:  hen/duct                                        ::  admin channel
-        nys/(map flap bait)                             ::  packets incoming
+    $:  nys/(map flap bait)                             ::  packets incoming
         olz/(map flap cape)                             ::  packets completed
         wab/(map ship bath)                             ::  relationship
     ==                                                  ::
@@ -678,8 +677,7 @@
         pac/rock                                        ::  packet data
     ==                                                  ::
   ++  sufi                                              ::  domestic host
-    $:  hoy/(list ship)                                 ::  hierarchy
-        val/wund                                        ::  private keys
+    $:  val/wund                                        ::  private keys
         law/deed                                        ::  server deed
         seh/(map hand {p/ship q/@da})                   ::  key cache
         hoc/(map ship dore)                             ::  neighborhood

@@ -577,11 +577,16 @@
               =(~ urb.ton.fox)
           ==
         ~|  [%strange-vein +<]  !!
-      ::  XX remove :hoy from +sufi
-      ::
       =/  suf=sufi  (fall (~(get by urb.ton.fox) our) *sufi)
+      ::  reset symmetric keys
+      ::
       =.  hoc.suf  (~(run by hoc.suf) |=(=dore dore(caq *clot)))
+      =.  seh.suf  ~
+      ::  save our deed (for comet/moon communication)
+      ::
       =.  law.suf  (deed our now life)
+      ::  save our secrets, ready for action
+      ::
       =.  val.suf
         ^-  wund
         %+  turn
@@ -591,11 +596,9 @@
           (gth life.a life.b)
         |=  [=^life =ring]
         [life ring (nol:nu:crub:crypto ring)]
-      ::  XX remove :hen from +corn, or set
-      ::
       =/  con=corn  (fall (~(get by zac.fox) our) *corn)
       %=  fox
-        urb.ton  (~(put by urb.ton.fox) our suf(hoy ~, seh ~))
+        urb.ton  (~(put by urb.ton.fox) our suf)
         zac      (~(put by zac.fox) our con)
       ==
     ::
@@ -1287,7 +1290,6 @@
       [duy ..^$]
     --
   |%
-  ++  claw  |=(our=ship ^-(duct hen:(need (~(get by zac.fox) our))))
   ++  clop
     |=  [now=@da hen=duct bon=boon]
     ^-  [(list move) fort]
@@ -1390,8 +1392,6 @@
       ~&  [%hear-vein tea sih]
       =/  our=ship  (slav %p i.t.tea)
       =.  fox  (~(vein am [now fox ski]) our life.sih vein.sih)
-      ::  XX save duct in corn here, or remove from structure
-      ::
       [~ +>.$]
     ::
         %woot  [~ +>]
