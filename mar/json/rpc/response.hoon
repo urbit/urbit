@@ -1,6 +1,5 @@
 ::
 /-  json-rpc
-/+  httr-to-json
 =,  json-rpc
 ::
 |_  res=response
@@ -8,7 +7,14 @@
 ++  grab                                                ::  convert from
   |%
   ++  noun  response                                    ::  from noun
-  ++  httr  (cork httr-to-json json)                    ::  from httr
+  ++  httr                                              ::  from httr
+    |=  hit/httr:eyre
+    ^-  response
+    ~|  hit
+    ?:  ?=($2 (div p.hit 100))
+      =,  html
+      (json (need (de-json q:(need r.hit))))
+    fail+hit
   ++  json                                              ::  from json
     =,  dejs-soft:format
     |=  a=json

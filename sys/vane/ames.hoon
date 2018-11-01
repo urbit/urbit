@@ -8,372 +8,18 @@
 =+  protocol-version=0
 |%
 +=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
+::  |pact: internal packet structures
+::
+++  pact
+  |%
+  +$  full  [lyf=[to=life from=life] law=(unit deed) txt=@]
+  +$  open  [lyf=[to=~ from=life] law=(unit deed) txt=@]
+  --
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aA, identity logic           ::
+  ::              removed in favor of jael/ethereum     ::
   ::
-  |%
-  ::
-  ++  grip                                              ::  extend wyll
-    |=  [wet=wyll law=wyll]
-    ^-  wyll
-    ?~  wet  law
-    ?:  =(wet law)  law
-    ?^  t.wet
-      ?>((meld i.wet i.t.wet) [i.wet $(wet t.wet)])
-    ?~  law
-      ?>((pier i.wet) [i.wet ~])
-    ?~  q.p.q.i.wet
-      ?>((meld i.wet i.law) [i.wet law])
-    =+  rul=(sein:title r.p.q.i.wet)
-    |-  ^-  wyll
-    ?:  ?&  =(rul r.p.q.i.law)
-            =(p.p.q.i.law u.q.p.q.i.wet)
-        ==
-      ?>((meld i.wet i.law) [i.wet law])
-    ?>(?=(^ t.law) $(law t.law))
-  ::
-  ++  meld                                              ::  verify connect
-    |=  [new=deyd old=deyd]
-    ^-  %&
-    ?>  (melt new old)
-    ?>  =((shaf %meld (sham q.new)) (need (sure:as:(com:nu:crub:crypto r.q.old) p.new)))
-    %&
-  ::
-  ++  melt                                              ::  proper connect
-    |=  [new=deyd old=deyd]
-    ^-  ?
-    =+  rac=(clan:title r.p.q.new)
-    ?&  =(r.new r.old)                                  ::  match fake
-        ?~  q.p.q.new
-          ?&  =(r.p.q.old r.p.q.new)
-              &(!=(%earl rac) =(p.p.q.old (dec p.p.q.new)))
-          ==
-        ?&  &(!=(%pawn rac) !=(%czar rac))
-            |(=(0 p.p.q.new) =(%earl rac))
-            =(r.p.q.old (sein:title r.p.q.new))
-            =(p.p.q.old u.q.p.q.new)
-        ==
-    ==
-  ::
-  ++  pare                                              ::  shorten against
-    |=  [fou=wyll law=wyll]
-    ::  ~&  [%pare-fou fou]
-    ::  ~&  [%pare-law law]
-    ^-  wyll
-    =+  [ouf=(flop fou) wal=(flop law)]
-    %-  flop
-    |-  ^-  wyll
-    ?~  ouf  wal
-    ?~  wal  !!
-    ?.  =(i.wal i.ouf)  ouf
-    $(wal t.wal, ouf t.ouf)
-  ::
-  ++  pier  !:                                          ::  initial deyd
-    |=  wed=deyd
-    ^-  %&
-    ?>  =+  rac=(clan:title r.p.q.wed)
-        =+  loy=(com:nu:crub:crypto r.q.wed)
-        ?:  &(r.wed =(rac %czar))  %&
-        ?>  =(0 p.p.q.wed)
-        ?>  =(fig:ex:loy ?+(rac !! %czar (zeno r.p.q.wed), %pawn r.p.q.wed))
-        ?>  =((shaf %self (sham q.wed)) (need (sure:as:loy p.wed)))
-        %&
-    %&
-  ::
-  ++  real                                              ::  validate
-    |=  [mac=mace law=wyll]
-    ?>  ?&  |-  ^-  ?
-            ?~  mac  &
-            ?>  ?&  ?=(^ law)
-                    (lth p.p.q.i.law 9)                 ::  9-lives rule
-                    =(p.p.q.i.law p.i.mac)
-                    =(r.q.i.law pub:ex:(nol:nu:crub:crypto q.i.mac))
-                ==
-            $(mac t.mac, law t.law)
-        ==
-    %&
-  ::
-  ++  rice                                              ::  mace at life
-    |=  [mar=life mac=mace]
-    ^-  (unit mace)
-    ?~  mac  ~
-    ?:  =(mar p.i.mac)  [~ mac]
-    ?:  (gth mar p.i.mac)  ~
-    $(mac t.mac)
-  ::
-  ++  rick                                              ::  wyll at life
-    |=  [mar=life lag=ship law=wyll]
-    ^-  (unit wyll)
-    ?~  law  ~
-    ?:  =(mar p.p.q.i.law)  [~ law]
-    ?:  (gth mar p.p.q.i.law)  ~
-    ?:  |(?=(~ q.p.q.i.law) !=(lag r.p.q.i.law))  ~
-    $(law t.law)
-  ::
-  ++  zeno                                              ::  imperial keyprint
-    |=  zar=@pD
-    ^-  @uvH  ^-  @
-    %+  snag  zar
-    ^-  (list @uw)
-    :~  0wN.ymbEn.wyNdE.RFNRb.SnEQH   ::    0, ~zod, urbit.org
-        0w0                           ::    1, ~nec, Curtis Yarvin
-        0w0                           ::    2, ~bud, Tlon Investor 1
-        0w0                           ::    3, ~wes, Tlon Investor 2
-        0w0                           ::    4, ~sev, Tlon Investor 2
-        0wt.cKYxs.Yb5VZ.boSwm.l0yYc   ::    5, ~per, Tlon Investor 3  (oldkey)
-        0w0                           ::    6, ~sut, Tlon Investor 4
-        0w0                           ::    7, ~let, Tlon Investor 4
-        0w0                           ::    8, ~ful, Tlon Investor 4
-        0w0                           ::    9, ~pen, Tlon Investor 4
-        0w0                           ::   10, ~syt, Tlon Investor 4
-        0w0                           ::   11, ~dur, Tlon Investor 4
-        0w0                           ::   12, ~wep, Sam Putman
-        0w0                           ::   13, ~ser, Tlon Investor 5
-        0w3j.H0sty.jHa3F.JlD26.4LPwV  ::   14, ~wyl, Zimran Ahmed (oldkey)
-        0w3F.QdvV-.toAsR.hvUNk.fHjW6  ::   15, ~sun, Colin Smith  (oldkey)
-        0w0                           ::   16, ~ryp, Tlon Investor 6
-        0w0                           ::   17, ~syx, Tlon Investor 6
-        0w0                           ::   18, ~dyr, Tlon Investor 6
-        0w0                           ::   19, ~nup, Tlon Investor 6
-        0w0                           ::   20, ~heb, Tlon Investor 6
-        0w0                           ::   21, ~peg, Tlon Investor 6
-        0w0                           ::   22, ~lup, Tlon Investor 6
-        0w0                           ::   23, ~dep, Tlon Investor 6
-        0w0                           ::   24, ~dys, Mike Gogulski
-        0w0                           ::   25, ~put, Tlon Investor 7
-        0w0                           ::   26, ~lug, Tlon Investor 8
-        0w0                           ::   27, ~hec, Tlon Investor 8
-        0w0                           ::   28, ~ryt, Tlon Investor 8
-        0w0                           ::   29, ~tyv, Tlon Investor 8
-        0w0                           ::   30, ~syd, Curtis Yarvin
-        0wp.BgRGJ.kslnv.PLAqb.TRKbr   ::   31, ~nex, Prakhar Goel (oldkey)
-        0w0                           ::   32, ~lun, Tlon Investor 9
-        0w0                           ::   33, ~mep, Tlon Investor 9
-        0w0                           ::   34, ~lut, Tlon Investor 9
-        0w0                           ::   35, ~sep, Tlon Investor 9
-        0w0                           ::   36, ~pes, Curtis Yarvin
-        0w10.5s1K0.dv9NT.02fPe.PyDYa  ::   37, ~del, Kingdon Barrett
-        0w1w.KF-J1.5I63F.khFyv.h0n4J  ::   38, ~sul, John Burnham (oldkey)
-        0w1A.OcPXS.oQi8K.g-E0d.zTRph  ::   39, ~ped, Jeremy Wall
-        0w2.Mr2Id.SX8xI.MAs-j.5Y-1W   ::   40, ~tem, Tlon Investor 10 (oldkey)
-        0w0                           ::   41, ~led, Nick Caruso
-        0w0                           ::   42, ~tul, Curtis Yarvin
-        0w0                           ::   43, ~met, Curtis Yarvin
-        0w0                           ::   44, ~wen, Curtis Yarvin
-        0w0                           ::   45, ~byn, Curtis Yarvin
-        0w0                           ::   46, ~hex, James Torre
-        0w0                           ::   47, ~feb, urbit.org
-        0wK.GoKEY.rMjfn.ZcvFQ.n4BmX   ::   48, ~pyl, Michael Hartl (oldkey)
-        0w0                           ::   49, ~dul, Galen Wolfe-Pauly
-        0w0                           ::   50, ~het, Galen Wolfe-Pauly
-        0w0                           ::   51, ~mev, Curtis Yarvin
-        0w0                           ::   52, ~rut, Curtis Yarvin
-        0w2L.M6-o5.DDTFL.R4sFL.7Zuay  ::   53, ~tyl, Tlon Investor 11 (oldkey)
-        0w0                           ::   54, ~wyd, Curtis Yarvin
-        0w0                           ::   55, ~tep, Rivendell
-        0w0                           ::   56, ~bes, NSPV
-        0w0                           ::   57, ~dex, Jared Hance
-        0w0                           ::   58, ~sef, Owen Rescher
-        0w0                           ::   59, ~wyc, Galen Wolfe-Pauly
-        0w0                           ::   60, ~bur, Galen Wolfe-Pauly
-        0w0                           ::   61, ~der, Galen Wolfe-Pauly
-        0w0                           ::   62, ~nep, Galen Wolfe-Pauly
-        0w0                           ::   63, ~pur, Paul Driver
-        0w30.VtXvV.S~xIV.iMCL~.j9zTC  ::   64, ~rys, Charlie Cummings (oldkey)
-        0w0                           ::   65, ~reb, Curtis Yarvin
-        0wp.LslIa.IFSM9.mIp-z.KBIBh   ::   66, ~den, Michael Hartl (oldkey)
-        0w0                           ::   67, ~nut, Curtis Yarvin
-        0w0                           ::   68, ~sub, Curtis Yarvin
-        0w0                           ::   69, ~pet, Curtis Yarvin
-        0w0                           ::   70, ~rul, Curtis Yarvin
-        0w0                           ::   71, ~syn, Pantera
-        0w0                           ::   72, ~reg, Henry Ault
-        0w0                           ::   73, ~tyd, Henry Ault
-        0w0                           ::   74, ~sup, Henry Ault
-        0w0                           ::   75, ~sem, Michael Livshin
-        0w0                           ::   76, ~wyn, Anton Dyudin
-        0w0                           ::   77, ~rec, urbit.org
-        0w0                           ::   78, ~meg, Tlon
-        0w2L.tavpW.Lk4R-.elm7E.4KEqZ  ::   79, ~net, Anthony Martinez (oldkey)
-        0w0                           ::   80, ~sec, Curtis Yarvin
-        0w0                           ::   81, ~mul, Curtis Yarvin
-        0w1F.Tqroo.wyq2m.cBaTM.9MbG-  ::   82, ~nym, Max Greer (oldkey)
-        0w0                           ::   83, ~tev, Curtis Yarvin
-        0w2x.~ldho.Oo7kE.QqNSx.XteFh  ::   84, ~web, Ar Vicco (oldkey)
-        0w0                           ::   85, ~sum, Philip Monk
-        0w0                           ::   86, ~mut, Philip Monk
-        0w0                           ::   87, ~nyx, Philip Monk
-        0w30.UUr19.iBPlD.wfyJD.2CWPv  ::   88, ~rex, Tlon Investor 12 (oldkey)
-        0w0                           ::   89, ~teb, Michael Vassar
-        0w0                           ::   90, ~fus, Tlon Corporation
-        0w0                           ::   91, ~hep, urbit.org
-        0w0                           ::   92, ~ben, urbit.org
-        0w0                           ::   93, ~mus, urbit.org
-        0w0                           ::   94, ~wyx, urbit.org
-        0w0                           ::   95, ~sym, urbit.org
-        0w0                           ::   96, ~sel, urbit.org
-        0w0                           ::   97, ~ruc, urbit.org
-        0w0                           ::   98, ~dec, urbit.org
-        0w1L.NQ-5f.ABF9R.kVwVJ.zRfn2  ::   99, ~wex, Pax Dickinson (oldkey)
-        0w0                           ::  100, ~syr, urbit.org
-        0w0                           ::  101, ~wet, urbit.org
-        0w0                           ::  102, ~dyl, urbit.org
-        0w0                           ::  103, ~myn, urbit.org
-        0w0                           ::  104, ~mes, urbit.org
-        0w0                           ::  105, ~det, urbit.org
-        0w0                           ::  106, ~bet, urbit.org
-        0w0                           ::  107, ~bel, urbit.org
-        0w0                           ::  108, ~tux, Tlon Investor 13
-        0w1D.JV9n0.9z~YK.yAWyi.c9~Lu  ::  109, ~tug, Philip Monk (oldkey)
-        0w0                           ::  110, ~myr, urbit.org
-        0w0                           ::  111, ~pel, urbit.org
-        0w0                           ::  112, ~syp, urbit.org
-        0w0                           ::  113, ~ter, urbit.org
-        0w0                           ::  114, ~meb, urbit.org
-        0w0                           ::  115, ~set, urbit.org
-        0w0                           ::  116, ~dut, urbit.org
-        0w0                           ::  117, ~deg, urbit.org
-        0w0                           ::  118, ~tex, urbit.org
-        0w0                           ::  119, ~sur, urbit.org
-        0w0                           ::  120, ~fel, urbit.org
-        0w0                           ::  121, ~tud, urbit.org
-        0w0                           ::  122, ~nux, urbit.org
-        0w0                           ::  123, ~rux, urbit.org
-        0w0                           ::  124, ~ren, urbit.org
-        0w0                           ::  125, ~wyt, urbit.org
-        0w0                           ::  126, ~nub, urbit.org
-        0w0                           ::  127, ~med, urbit.org
-        0w20.GGLXx.aqxaQ.w4Iob.wdmmr  ::  128, ~lyt, Arthur Breitman (oldkey)
-        0w0                           ::  129, ~dus, urbit.org
-        0w0                           ::  130, ~neb, urbit.org
-        0w0                           ::  131, ~rum, urbit.org
-        0w0                           ::  132, ~tyn, urbit.org
-        0w0                           ::  133, ~seg, urbit.org
-        0w0                           ::  134, ~lyx, urbit.org
-        0w0                           ::  135, ~pun, Anton Dyudin
-        0w0                           ::  136, ~res, urbit.org
-        0w0                           ::  137, ~red, Alex Kravets
-        0w3J.15iJA.0pbNk.mZXyh.A~uKb  ::  138, ~fun, Aaron Beckerman (oldkey)
-        0w0                           ::  139, ~rev, urbit.org
-        0w3m.Cqumo.ZC7-e.794A4.Bqhh8  ::  140, ~ref, Matt Brubeck (oldkey)
-        0w0                           ::  141, ~mec, urbit.org
-        0w0                           ::  142, ~ted, urbit.org
-        0w2d.GLlYg.-MwtO.ZCPBE.OqGB9  ::  143, ~rus, Stephen Burnham (oldkey)
-        0w0                           ::  144, ~bex, urbit.org
-        0w1M.E6dLP.eXY5V.Mh5TT.-u9KN  ::  145, ~leb, Justin LeBlanc
-        0w0                           ::  146, ~dux, urbit.org
-        0w0                           ::  147, ~ryn, urbit.org
-        0w0                           ::  148, ~num, Tlon
-        0w0                           ::  149, ~pyx, Katherine McFall
-        0w2g.gLmg4.MtrHQ.A5VmH.WPk6G  ::  150, ~ryg, Dan Haffey (oldkey)
-        0w0                           ::  151, ~ryx, Tlon
-        0w0                           ::  152, ~fep, Tlon
-        0w3x.y5stk.FMmvV.LQo3X.OCXkI  ::  153, ~tyr, Steven Dee
-        0w0                           ::  154, ~tus, Tlon
-        0w0                           ::  155, ~tyc, Tlon
-        0w0                           ::  156, ~leg, Tlon
-        0w0                           ::  157, ~nem, Jeremy Tunnell
-        0w0                           ::  158, ~fer, Tlon
-        0w0                           ::  159, ~mer, Tlon
-        0w1E.bDeR7.cuQmt.Uc5CS.OSyMx  ::  160, ~ten, Tlon
-        0w0                           ::  161, ~lus, Tlon
-        0w0                           ::  162, ~nus, Tlon
-        0w0                           ::  163, ~syl, Tlon
-        0w0                           ::  164, ~tec, Tlon
-        0w0                           ::  165, ~mex, Tlon
-        0w24.TfzCX.qmRm9.ukapQ.It6tG  ::  166, ~pub, Tlon
-        0w0                           ::  167, ~rym, Tlon
-        0w0                           ::  168, ~tuc, Tlon
-        0w0                           ::  169, ~fyl, Tlon
-        0w0                           ::  170, ~lep, Tlon
-        0w0                           ::  171, ~deb, Tlon
-        0w0                           ::  172, ~ber, Tlon
-        0w0                           ::  173, ~mug, Tlon
-        0w0                           ::  174, ~hut, Tlon
-        0w0                           ::  175, ~tun, Tlon
-        0w0                           ::  176, ~byl, Tlon
-        0wq.wmRvk.V8tZ5.1lz5q.dbrYx   ::  177, ~sud, Tlon
-        0w3Q.0LYXy.LjTEu.~FjaT.OpTts  ::  178, ~pem, Tlon
-        0wQ.uJzGo.M94yL.L7yw6.nGyfW   ::  179, ~dev, Tlon
-        0w1B.LTLDt.3Yu~s.BuzYM.fjcS3  ::  180, ~lur, Tlon
-        0w2B.9j6g-.q9DwV.tXzPz.DKEKq  ::  181, ~def, Tlon
-        0w1m.CxbiW.SKF5E.11JQ6.yW~T4  ::  182, ~bus, Tlon
-        0w0                           ::  183, ~bep, Tlon
-        0w0                           ::  184, ~run, Tlon
-        0w0                           ::  185, ~mel, Tlon
-        0w0                           ::  186, ~pex, Tlon
-        0w0                           ::  187, ~dyt, Tlon
-        0w0                           ::  188, ~byt, Tlon
-        0w0                           ::  189, ~typ, Anton Dyudin
-        0w0                           ::  190, ~lev, Tlon
-        0w0                           ::  191, ~myl, Tlon
-        0w0                           ::  192, ~wed, Tlon
-        0w0                           ::  193, ~duc, Tlon
-        0w0                           ::  194, ~fur, Tlon
-        0w0                           ::  195, ~fex, Tlon
-        0w0                           ::  196, ~nul, Matthew Liston
-        0w0                           ::  197, ~luc, Tlon
-        0w0                           ::  198, ~len, Tlon
-        0w0                           ::  199, ~ner, Tlon
-        0wv.aixe9.7gG2w.7cJiy.i3Mg8   ::  200, ~lex, Michael Hartl (oldkey)
-        0w0                           ::  201, ~rup, Owen Rescher
-        0w0                           ::  202, ~ned, Tlon
-        0w0                           ::  203, ~lec, Tlon
-        0w0                           ::  204, ~ryd, Tlon
-        0w1U.n361n.FC3jj.9cX26.V1Wif  ::  205, ~lyd, Adam Bliss (oldkey)
-        0w0                           ::  206, ~fen, Tlon
-        0w0                           ::  207, ~wel, Tlon
-        0w0                           ::  208, ~nyd, Tlon
-        0w0                           ::  209, ~hus, Tlon
-        0w0                           ::  210, ~rel, Tlon
-        0w0                           ::  211, ~rud, Tlon
-        0w0                           ::  212, ~nes, Tlon
-        0w16.~8NZV.VyMmf.4toMO.pui1R  ::  213, ~hes, Tlon Investor 14 (oldkey)
-        0w0                           ::  214, ~fet, Tlon
-        0w0                           ::  215, ~des, Tlon
-        0w0                           ::  216, ~ret, Tlon
-        0w0                           ::  217, ~dun, Tlon
-        0w0                           ::  218, ~ler, Tlon
-        0w10.w0AUz.QVdks.HCNvf.ja~TO  ::  219, ~nyr, Ivan Matosevic (oldkey)
-        0w0                           ::  220, ~seb, Tlon
-        0w0                           ::  221, ~hul, Tlon
-        0w0                           ::  222, ~ryl, Tlon
-        0w0                           ::  223, ~lud, Tlon
-        0w0                           ::  224, ~rem, Tlon
-        0w0                           ::  225, ~lys, Tlon
-        0w3C.YXlEl.pFbYV.9pYWI.d7cla  ::  226, ~fyn, Stephen Burnham (oldkey)
-        0w0                           ::  227, ~wer, Tlon
-        0w0                           ::  228, ~ryc, Tlon
-        0w0                           ::  229, ~sug, Tlon
-        0w0                           ::  230, ~nys, Tlon
-        0w0                           ::  231, ~nyl, Tlon
-        0w0                           ::  232, ~lyn, Tlon
-        0w0                           ::  233, ~dyn, Tlon
-        0w0                           ::  234, ~dem, Tlon
-        0w0                           ::  235, ~lux, Tlon Investor 15
-        0w1O.Jq9xt.YFg7U.qg13U.WFNGJ  ::  236, ~fed, Iceman
-        0w0                           ::  237, ~sed, Tlon
-        0w0                           ::  238, ~bec, Tlon
-        0w0                           ::  239, ~mun, Tlon
-        0w0                           ::  240, ~lyr, Tlon
-        0w0                           ::  241, ~tes, Tlon
-        0w0                           ::  242, ~mud, Ian Rowan
-        0w4.yybWD.F1BgE.ynzlF.47neH   ::  243, ~nyt, Byrne Hobart (oldkey)
-        0w0                           ::  244, ~byr, Tlon
-        0w0                           ::  245, ~sen, Tlon
-        0w0                           ::  246, ~weg, Tlon
-        0w3j.imkco.mBXNt.xFbvS.ohabN  ::  247, ~fyr, Anton Dyudin
-        0w0                           ::  248, ~mur, Tlon
-        0w0                           ::  249, ~tel, Tlon
-        0w3w.V54nF.e9eNv.1fLkl.PiUo-  ::  250, ~rep, Raymond Pasco
-        0w0                           ::  251, ~teg, Tlon
-        0w0                           ::  252, ~pec, Tlon
-        0w0                           ::  253, ~nel, Tlon
-        0w0                           ::  254, ~nev, Tlon
-        0wY.a0HAU.7Lbkf.6V514.OsJBv   ::  255, ~fes, John Burnham (oldkey)
-    ==
-  --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aB, packet format            ::
   ::
@@ -423,46 +69,19 @@
     |_  ton=town                                        ::  ames state
     ++  as                                              ::    as:go
       |_  [our=ship saf=sufi]                           ::  per server
-      ++  born                                          ::    born:as:go
-        |=  [now=@da her=@p tic=@pG ges=gens pub=pass]  ::  register user
-        ^-  [(unit wyll) _+>]
-        ?.  =(our (sein:title her))  [~ +>.$]
-        =+  nes=sen
-        =+  ryt=(end 6 1 (shaf %tick (mix her (shax sec:ex:q.nes))))
-        ?.  =(tic ryt)
-          ~&  [%ames-wrong-ticket `@p`ryt]
-          [~ +>.$]
-        =+  rad=(~(get by hoc.saf) her)
-        ?^  rad
-          ?.  ?=(^ lew.wod.u.rad)
-            $(hoc.saf (~(del by hoc.saf) her))          :: XX how can this be?
-          ?.  =(pub r.q.i.lew.wod.u.rad)  [~ +>.$]
-          [[~ lew.wod.u.rad] +>.$]
-        =+  syp=[[0 [~ p.nes] her now] ges pub]
-        =+  ded=[(sign:as:q.nes (shaf %meld (sham syp))) syp fak.ton]
-        =+  wil=[ded law.saf]
-        ?>  =(wil (grip wil ~))
-        :-  [~ wil]
-        +>.$(hoc.saf (~(put by hoc.saf) her [[~31337.1.1 ~ wil] ~ *clot]))
-      ::
       ++  lax                                           ::    lax:as:go
         =|  rov=(unit lane)                             ::  maybe lane change
         |_  [her=ship dur=dore]                         ::  per client
         ++  cluy                                        ::    cluy:lax:as:go
-          ^-  [p=life q=gens r=acru]                    ::  client crypto
-          ?~  lew.wod.dur  !!
-          ?.  =(fak.ton r.i.lew.wod.dur)  ~|([%client-wrong-fake her] !!)
-          :+  p.p.q.i.lew.wod.dur
-            q.q.i.lew.wod.dur
-          (com:nu:crub:crypto r.q.i.lew.wod.dur)
+          ^-  [lyf=life cub=acru]                       ::  client crypto
+          ?>  ?=(^ lew.wod.dur)
+          [life.u.lew.wod.dur (com:nu:crub:crypto pass.u.lew.wod.dur)]
         ::
         ++  clon
           ^-  life
-          ?~(lew.wod.dur 0 p.p.q.i.lew.wod.dur)
-        ::
-        ++  deng
-          |=  law=wyll
-          %_(+> lew.wod.dur (grip law lew.wod.dur))
+          ::  if we don't have a +deed for :her, we guess 1
+          ::
+          ?~(lew.wod.dur 1 life.u.lew.wod.dur)
         ::
         ++  griz                                        ::    griz:lax:as:go
           |=  now=@da                                   ::  generate key for
@@ -523,8 +142,9 @@
           ::
               rov
             |-  ^-  (unit lane)
-            :: XX check will
-            ?:  ?|  !=(our (sein:title her))
+            ::  XX jael scry
+            ::
+            ?:  ?|  !=(our (^sein:title her))
                     ?=(?(%earl %pawn) (clan:title her))
                 ==
               ~
@@ -571,24 +191,8 @@
               (en:crub:crypto q.u.yed.caq.dyr mal)
           ==
         ::
-        ++  xeno                                        ::    xeno:lax:as:go
-          ^-  (list ship)                               ::  foreign canon
-          (saxo:title her)
-        ::
-        ++  xong                                        ::    xong:lax:as:go
-          ^-  (list ship)                               ::  route unto
-          =+  [fro=xen too=xeno]
-          =+  ^=  oot  ^-  (list ship)
-              =|  oot=(list ship)
-              |-  ^+  oot
-              ?~  too  ~
-              ?:  (lien fro |=(a=ship =(a i.too)))  ~
-              [i.too $(too t.too)]
-          ::  ~&  [%xong-to [our her] (weld oot ?>(?=(^ fro) t.fro))]
-          (weld oot ?>(?=(^ fro) t.fro))
-        ::
         ++  zuul                                        ::    zuul:lax:as:go
-          |=  [now=@da ham=meal]                        ::  encode message
+          |=  [now=@da seg=ship ham=meal]               ::  encode message
           ^-  [p=(list rock) q=_+>]
           =<  weft
           |%
@@ -600,12 +204,12 @@
             =^  gim  ..weft  wisp
             :_  +>.$
             ^-  (list rock)
-            =+  wit=(met ?:(fak.ton 16 13) q.gim)
+            =+  wit=(met 13 q.gim)
             ?<  =(0 wit)
             ?:  =(1 wit)
               =+  yup=(spit [our her] p.gim q.gim)
               [yup ~]
-            =+  ruv=(rip ?:(fak.ton 16 13) q.gim)
+            =+  ruv=(rip 13 q.gim)
             =+  gom=(shaf %thug q.gim)
             =+  inx=0
             |-  ^-  (list rock)
@@ -627,28 +231,40 @@
               :-  %fast
               %^  cat  7
                 p.u.yed.caq.dur
-              (en:r:cluy q.u.yed.caq.dur (jam ham))
+              (en:cub:cluy q.u.yed.caq.dur (jam ham))
             ?:  &(=(~ lew.wod.dur) =(%back -.ham))
               [wasp ..wisp]
-            =^  tuy  +>.$
-              ?:(=(~ lew.wod.dur) [*code +>.$] (griz now))
-            :_  ..wisp
-            =+  yig=sen
-            ::  =+  bil=`wyll`(pare wyl.dur law.saf)    ::  XX not set
-            =+  bil=law.saf                             ::  XX send whole wyll
-            =+  hom=(jam ham)
+            ::  we include our deed in asymmetric skins (%open and %full)
+            ::  if we're a comet or moon, or if we're sponsoring her
+            ::
+            =/  bil=(unit deed)
+              =/  rac  (clan:title our)
+              ?.  ?|  ?=(?(%earl %pawn) rac)
+                      &(!?=(%czar rac) =(our seg))
+                  ==
+                ~
+              `law.saf
+            =/  yig  sen
+            =/  hom  (jam ham)
             ?:  =(~ lew.wod.dur)
+              :_  ..wisp
               :-  %open
-              %^    jam
-                  [~ `life`p.yig]
+              %-  jam
+              ^-  open:pact
+              :+  [~ lyf.yig]
                 bil
-              (sign:as:q.yig hom)
+              (sign:as:cub.yig hom)
+            =/  cay  cluy
+            :: :tuy: symmetric key proposal
+            ::
+            =^  tuy  +>.$  (griz now)
+            :_  ..wisp
             :-  %full
-              =+  cay=cluy
-              %^    jam
-                  [`life`p.cay `life`p.yig]
-                bil
-              (seal:as:q.yig pub:ex:r.cay (jam tuy hom))
+            %-  jam
+            ^-  full:pact
+            :+  [lyf.cay lyf.yig]
+              bil
+            (seal:as:cub.yig pub:ex:cub.cay (jam tuy hom))
           --                                            ::  --zuul:lax:as:go
         --                                              ::  --lax:as:go
       ::
@@ -656,13 +272,14 @@
         |=  her=ship
         ^-  dore
         =+  def=?.((lth her 256) ~ [~ %if ~2000.1.1 0 (mix her .0.0.1.0)])
-        [[~2100.1.1 def ~] ~ *clot]
+        [[~2100.1.1 def ~] *clot]
       ::
       ++  myx                                           ::  dore by ship
         |=  her=ship
         ^+  lax
-        =+  fod=(~(get by hoc.saf) her)
-        ~(. lax [her ?~(fod (gur her) u.fod)])
+        =/  fod=dore
+          (fall (~(get by hoc.saf) her) (gur her))
+        ~(. lax [her fod])
       ::
       ++  nux                                           ::  install dore
         |=  new=_lax
@@ -670,7 +287,7 @@
         +>(hoc.saf (~(put by hoc.saf) her.new dur.new))
       ::
       ++  sen                                           ::  current crypto
-        ^-  [p=life q=acru]
+        ^-  [lyf=life cub=acru]
         ?~(val.saf !! [p.i.val.saf r.i.val.saf])
       ::
       ++  sev                                           ::  crypto by life
@@ -686,49 +303,7 @@
         ?:  =(mar p.i.t.val.saf)
           r.i.t.val.saf
         $(t.val.saf t.t.val.saf)
-      ::
-      ++  sex                                           ::  export secrets
-        |-  ^-  mace
-        ?~  val.saf  ~
-        :-  [p.i.val.saf sec:ex:r.i.val.saf]
-        $(val.saf t.val.saf)
-      ::
-      ++  xen                                           ::  canon
-        |-  ^-  (list ship)
-        (saxo:title our)
-      ::
-      ++  yew                                           ::  best wyll for
-        |=  her=ship
-        ^-  wyll
-        =+  gel=(~(get by hoc.saf) her)
-        ?^  gel
-          lew.wod.u.gel
-        ?:((lth her 256) ~ $(her (sein:title her)))
       --                                                ::  --as:go
-    ::
-    ++  ha  !:                                          ::  adopt new license
-      |=  [our=ship mac=mace wil=wyll]
-      ^-  town
-      ?>  !=(~ mac)
-      ?>  ?=(^ wil)
-      ::  ?>  =(our r.p.q.i.wil)
-      ?>  =(wil (grip wil ~))
-      ?>  (real mac wil)
-      %_    ton
-          fak  r.i.wil
-          urb
-        %+  ~(put by urb.ton)
-          our
-        :*  %-  flop
-            |-  ^-  (list ship)
-            ?:((lth our 256) ~ =+(seg=(sein:title our) [seg $(our seg)]))
-        ::
-            (turn mac |=([p=life q=ring] [p q (nol:nu:crub:crypto q)]))
-            wil
-            ~
-            ~
-        ==
-      ==
     ::
     ++  su                                              ::  install safe
       |=  new=_as
@@ -960,59 +535,72 @@
   ::
   |%
   ++  am                                                ::    am
-    |_  [now=@da fox=fort]                              ::  protocol engine
-    ++  boot                                            ::    boot:am
-      ^-  fort                                          ::  restore from noun
-      %=    fox
-          urb.ton
-        %-  ~(gas by *(map ship sufi))
-        %+  turn
-          ~(tap by urb.ton.fox)
-        |=  [p=ship q=sufi]  ^-  [p=ship q=sufi]
-        :-  p
-        %=    q
-            val
-          (turn val.q |=([p=life q=ring r=acru] [p q (nol:nu:crub:crypto q)]))
-        ==
-      ==
-    ++  come                                            ::    come:am
-      |=  [ges=(unit @t) wid=@ bur=@ fak=?]            ::  instantiate pawn
-      ^-  [p=[p=ship q=@uvG] q=fort]
-      =+  loy=(pit:nu:crub:crypto wid bur)
-      =+  rig=sec:ex:loy
-      =+  our=`@p`fig:ex:loy
-      =+  syp=[[0 ~ our now] [%en %pawn ges] pub:ex:loy]
-      :-  [our pac:ex:loy]
-      %_    fox
-          ton
-        %^    ~(ha go ton.fox)
-            our
-          `mace`[[0 rig] ~]
-        `wyll`[[(sign:as:loy (shaf %self (sham syp))) syp fak] ~]
-          fak.ton
-        fak
-      ==
+    |_  [now=@da fox=fort ski=sley]                     ::  protocol engine
+    ::  +deed: scry for our deed
     ::
-    ++  czar  !:                                        ::    czar:am
-      |=  [our=ship ger=@uw fak=?]                      ::  instantiate emperor
-      ^-  [p=(list boon) q=fort]
-      =+  ^=  loy
-          ?:  fak
-            ::  fake uses carrier number as seed
-            ::
-            (pit:nu:crub:crypto 512 our)
-          (pit:nu:crub:crypto 512 ger)
-      =+  fim==(fig:ex:loy (zeno our))
-      ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
-      =+  mac=`mace`[[0 sec:ex:loy] ~]
-      =+  syp=`step`[`bray`[0 ~ our now] [%en %czar ~] pub:ex:loy]
-      =+  ded=`deyd`[(sign:as:loy (shaf %self (sham syp))) syp fak]
-      =+  buq=`buck`[mac [ded ~]]
-      =:  ton.fox  (~(ha go ton.fox) our buq)
-          zac.fox  (~(put by zac.fox) our *corn)
-          fak.ton.fox  fak
-        ==
-      [[[%beer our pac:ex:loy] ~] fox]
+    ++  deed
+      |=  [our=ship now=@da lyf=life]
+      ;;  ^deed
+      %-  need  %-  need
+      %-  (sloy ski)
+      =/  pur=spur
+        /(scot %ud lyf)/(scot %p our)
+      [[151 %noun] %j (en-beam:format [our %deed da+now] pur)]
+    ::  +sein: scry for sponsor
+    ::
+    ++  sein
+      |=  [our=ship now=@da who=ship]
+      ;;  ship
+      %-  need  %-  need
+      %-  (sloy ski)
+      [[151 %noun] %j (en-beam:format [our %sein da+now] /(scot %p who))]
+    ::  +saxo: scry for sponsorship chain
+    ::
+    ++  saxo
+      |=  [our=ship now=@da who=ship]
+      ;;  (list ship)
+      %-  need  %-  need
+      %-  (sloy ski)
+      [[151 %noun] %j (en-beam:format [our %saxo da+now] /(scot %p who))]
+    ::
+    ++  vein                                            ::    vein:am
+      |=  [our=ship =life vein=(map life ring)]         ::  new private keys
+      ^-  fort
+      ::
+      ?.  ?&  (~(has by vein) life)
+              =(life (roll ~(tap in ~(key by vein)) max))
+          ==
+        ~|  [%vein-mismatch +<]  !!
+      ::  XX single-home
+      ::
+      ?.  ?|  (~(has by urb.ton.fox) our)
+              =(~ urb.ton.fox)
+          ==
+        ~|  [%strange-vein +<]  !!
+      =/  suf=sufi  (fall (~(get by urb.ton.fox) our) *sufi)
+      ::  reset symmetric keys
+      ::
+      =.  hoc.suf  (~(run by hoc.suf) |=(=dore dore(caq *clot)))
+      =.  seh.suf  ~
+      ::  save our deed (for comet/moon communication)
+      ::
+      =.  law.suf  (deed our now life)
+      ::  save our secrets, ready for action
+      ::
+      =.  val.suf
+        ^-  wund
+        %+  turn
+          %+  sort
+            ~(tap by vein)
+          |=  [a=[=^life =ring] b=[=^life =ring]]
+          (gth life.a life.b)
+        |=  [=^life =ring]
+        [life ring (nol:nu:crub:crypto ring)]
+      =/  con=corn  (fall (~(get by zac.fox) our) *corn)
+      %=  fox
+        urb.ton  (~(put by urb.ton.fox) our suf)
+        zac      (~(put by zac.fox) our con)
+      ==
     ::
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
@@ -1044,14 +632,6 @@
       =.  sox  $(wab.q.n.zac.fox l.wab.q.n.zac.fox)
       =.  sox  $(wab.q.n.zac.fox r.wab.q.n.zac.fox)
       [[p.n.zac.fox p.n.wab.q.n.zac.fox] sox]
-    ::
-    ++  have                                            ::    have:am
-      |=  [our=ship buq=buck]                           ::  acquire license
-      ^-  [p=(list boon) q=fort]
-      =:  ton.fox  (~(ha go ton.fox) our buq)
-          zac.fox  (~(put by zac.fox) our *corn)
-        ==
-      [[[%beer our pac:ex:q:sen:(need (~(us go ton.fox) our))] ~] fox]
     ::
     ++  kick                                            ::    kick:am
       |=  hen=duct                                      ::  refresh net
@@ -1088,10 +668,8 @@
     ::
     ++  um                                              ::  per server
       |=  our=ship
-      =+  gus=(need (~(us go ton.fox) our))
-      =+  ^=  weg  ^-  corn
-          =+  weg=(~(get by zac.fox) our)
-          ?^(weg u.weg *corn)
+      =/  gus   (need (~(us go ton.fox) our))
+      =/  weg=corn  (fall (~(get by zac.fox) our) *corn)
       =|  bin=(list boon)
       |%
       ++  ho                                            ::    ho:um:am
@@ -1157,7 +735,7 @@
             :_  bin
             :^    %milk
                 [our her]
-              `soap`[[p:sen:gus clon:diz] cha did.rum]
+              `soap`[[lyf:sen:gus clon:diz] cha did.rum]
             u.s.u.cun
           ==
         ::
@@ -1179,8 +757,56 @@
             ?^  ram  raz.bah
             %+  ~(put by raz.bah)  cha
             rum(dod &, bum ?~(cop bum.rum (~(put by bum.rum) did.rum u.cop)))
-          =^  roc  diz  (zuul:diz now [%back cop dam ~s0])
-          (busk(diz (wast:diz ryn)) xong:diz roc)
+          =/  seg  (sein our now her)
+          =^  roc  diz  (zuul:diz now seg [%back cop dam ~s0])
+          (busk(diz (wast:diz ryn)) xong roc)
+        ::  XX move this logic into %zuse, namespaced under %jael?
+        ::
+        ++  deng                                        ::    deng:ho:um:am
+          |=  law=(unit ^deed)                          ::  accept inline deed
+          ^+  diz
+          ?:  |(=(~ law) =(lew.wod.dur.diz law))
+            diz
+          ~|  [%deng-fail her]
+          ?>  ?=(^ law)
+          =*  wed  u.law
+          ?>  ^-  ?
+              ?-    (clan:title her)
+                  %earl
+                ::  signed by parent
+                ::
+                =/  seg  (^sein:title her)
+                =/  yig
+                  ?:  =(our seg)
+                    sen:gus
+                  cluy:(myx:gus seg)
+                ?&  =(lyf.yig life.wed)
+                    ?=(^ oath.wed)
+                    .=  (need (sure:as:cub.yig u.oath.wed))
+                    (shaf %earl (sham [her life.wed pass.wed]))
+                ==
+              ::
+                  %pawn
+                ::  self-signed, life 1, address is fingerprint
+                ::
+                =/  cub=acru  (com:nu:crub:crypto pass.wed)
+                ?&  =(`@`fig:ex:cub her)
+                    ?=(%1 life.wed)
+                    ?=(^ oath.wed)
+                    ::  XX do we care about this signature at all?
+                    ::
+                    .=  (need (sure:as:cub u.oath.wed))
+                    (shaf %self (sham [her life.wed pass.wed]))
+                ==
+              ::
+                  *
+                ::  our sponsor
+                ::
+                ?&  !?=(%czar (clan:title our))
+                    =(her (sein our now our))
+                ==
+              ==
+          diz(lew.wod.dur law)
         ::
         ++  done                                        ::    done:ho:um:am
           |=  [cha=path num=@ud]                        ::  complete outgoing
@@ -1205,17 +831,51 @@
             |%
             ++  apse
               ^+  +>.$
-              =+  oub=bust:puz
-              =+  neg==(~ yed.caq.dur.diz)
+              ::  bos: our sponsor
+              ::
+              =/  bos  (sein our now our)
+              ::  seg:  her sponsor
+              ::
+              =/  seg  (sein our now her)
+              ::  rac:  her rank
+              ::
+              =/  rac  (clan:title her)
+              ::  request keys and continue processing packet if
+              ::  :her is our initial sponsor (TOFU)
+              ::
+              ::    XX update state so we only ask once?
+              ::
+              =?  +>.$  &(=(~ lew.wod.dur.diz) =(her bos))
+                (emit %beer our her)
+              ::  request keys and drop packet if :her is (or is a moon of)
+              ::  an unfamilar on-chain ship (and not our sponsor)
+              ::
+              ?:  ?&  =(~ lew.wod.dur.diz)
+                      !=(her bos)
+                      ?|  !?=(?(%earl %pawn) rac)
+                          ?&  ?=(%earl rac)
+                              =/  fod  (~(get by hoc.saf.gus) seg)
+                              ?|  ?=(~ fod)
+                                  ?=(~ lew.wod.u.fod)
+                  ==  ==  ==  ==
+                ~&  [%chew-no-will %drop her]
+                (emit %beer our ?:(?=(%earl rac) seg her))
+              =/  oub  bust:puz
+              =/  neg  =(~ yed.caq.dur.diz)
               =.  +>.$  east
-              =+  eng==(~ yed.caq.dur.diz)
-              =+  bou=bust:puz
-              =.  bin
-                ?.  &(oub !bou)  bin
-                :_(bin [%wine [our her] " is ok"])
-              =.  bin
-                ?.  &(neg !eng)  bin
-                :_(bin [%wine [our her] " is your neighbor"])
+              =/  eng  =(~ yed.caq.dur.diz)
+              =/  bou  bust:puz
+              =?  +>.$  &(oub !bou)
+                (emit [%wine [our her] " is ok"])
+              ::  the presence of a symmetric key indicates neighboring
+              ::  XX use deed instead?
+              ::
+              =?  +>.$  &(neg !eng)
+                %-  emir  :~
+                  [%wine [our her] " is your neighbor"]
+                  ?>  ?=(^ lew.wod.dur.diz)
+                  [%raki [our her] [life pass]:u.lew.wod.dur.diz]
+                ==
               +>.$
             ::
             ++  east
@@ -1229,34 +889,34 @@
                   %fast
                 ::  ~&  %chew-fast
                 =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
-                =+  dey=(kuch:diz mag)
-                ?~  dey
-                  ::  ~&  [%bad-key her mag]
-                  +>.$                           ::  ignore unknown key
+                =/  dey  (kuch:diz mag)
+                ::  ignore unknown key
+                ::
+                ?~  dey  +>.$
                 =.  puz  (bilk:puz now)
                 =^  key  diz  u.dey
-                (chow(aut sin) ((hard meal) (cue (dy:q:sen:gus key bod))))
+                (chow(aut sin) ((hard meal) (cue (dy:cub:sen:gus key bod))))
               ::
                   %full
                 ::  ~&  %chew-full
-                =+  mex=((hard ,[p=[p=life q=life] q=wyll r=@]) (cue msg))
-                =.  diz  (deng:diz q.mex)
-                =+  wug=cluy:diz
-                ?>  =(q.p.mex p.wug)
-                =+  gey=(sev:gus p.p.mex)
-                =+  sem=(need (tear:as:q.gey pub:ex:r.wug r.mex))
-                =+  mes=((hard (pair @ @)) (cue sem))
+                =/  mex  ((hard full:pact) (cue msg))
+                =.  diz  (deng law.mex)
+                =/  wug  cluy:diz
+                ?>  =(lyf.wug from.lyf.mex)
+                =/  gey  (sev:gus to.lyf.mex)
+                =/  sem  (need (tear:as:q.gey pub:ex:cub.wug txt.mex))
+                =/  mes  ((hard (pair @ @)) (cue sem))
                 =.  diz  (wasc:diz p.mes)
                 =.  puz  (bilk:puz now)
                 (west(msg q.mes))
               ::
                   %open
                 ::  ~&  %chew-open
-                =+  mex=((hard ,[p=[~ q=life] q=wyll r=@]) (cue msg))
-                =.  diz  (deng:diz q.mex)
-                =+  wug=cluy:diz
-                ?>  =(q.p.mex p.wug)
-                =+  mes=(need (sure:as:r.wug r.mex))
+                =/  mex  ((hard open:pact) (cue msg))
+                =.  diz  (deng law.mex)
+                =/  wug  cluy:diz
+                ?>  =(lyf.wug from.lyf.mex)
+                =/  mes  (need (sure:as:cub.wug txt.mex))
                 =.  puz  (bilk:puz now)
                 (west(msg mes))
               ==
@@ -1280,8 +940,9 @@
             ^+  .                                       ::  send new ack
             ::  ~&  [%back kay dam]
             =*  cop  `coop`?:(=(%good kay) ~ ``[%dead-packet ~])
-            =^  pax  diz  (zuul:diz now [%back cop dam ~s0])
-            +(+> (busk(diz (wast:diz ryn)) xong:diz pax))
+            =/  seg  (sein our now her)
+            =^  pax  diz  (zuul:diz now seg [%back cop dam ~s0])
+            +>(+> (busk(diz (wast:diz ryn)) xong pax))
           ::
           ++  deer                                      ::    deer:la:ho:um:am
             |=  [cha=path num=@ud dut=(unit)]           ::  interpret message
@@ -1326,7 +987,7 @@
             ::
                 %bond
               ::  ~&  [%bond q.fud r.fud]
-              ?>  =(p:sen:gus p.fud)
+              ?>  =(lyf:sen:gus p.fud)
               (deer q.fud r.fud ?-(kay %dead ~, %good [~ s.fud]))
             ::
                 %carp
@@ -1363,8 +1024,9 @@
                   ::  u.q.fud
               ?:  =(our p.fud)
                 (emit %mead lyn r.fud)
-              =+  zid=(myx:gus p.fud)
-              (emir (wist:zid now xong:zid [~ lyn] r.fud))
+              =/  zid  (myx:gus p.fud)
+              =/  zon  %*(xong ..xong her p.fud)
+              (emir (wist:zid now zon [~ lyn] r.fud))
             ==
           ::
           ++  emir                                      ::    emir:la:ho:um:am
@@ -1383,7 +1045,7 @@
             =+  [nix=0 rax=*(list @)]
             |-  ^-  @
             ?:  =(p.duv nix)
-              (can ?:(fak.ton.fox 16 13) (turn (flop rax) |=(a=@ [1 a])))
+              (can 13 (turn (flop rax) |=(a=@ [1 a])))
             $(nix +(nix), rax [(need (~(get by q.duv) nix)) rax])
           --                                            ::  --la:ho:um:am
         ::
@@ -1409,7 +1071,7 @@
               ?.  &(bou !oub)  bin
               :_(bin [%wine [our her] " not responding still trying"])
           =.  diz  ?:((boom:puz now) (pode:diz now) diz)
-          (busk xong:diz yem)
+          (busk xong yem)
         ::
         ++  tock                                        ::    tock:ho:um:am
           |=  [cop=coop fap=flap cot=@dr]               ::  e2e ack by hash
@@ -1423,32 +1085,39 @@
             %=    +>.$
                 bin
               :_  bin
-              `boon`[%cake [our her] [[p:sen:gus clon:diz] u.p.yoh] cop u.hud]
+              `boon`[%cake [our her] [[lyf:sen:gus clon:diz] u.p.yoh] cop u.hud]
             ==
-          (busk xong:diz q.yoh)
+          (busk xong q.yoh)
         ::
         ++  wind                                        ::    wind:ho:um:am
           |=  [gom=soup ham=meal]
           ::  ~&  [%wind her gom]
           ^+  +>
-          =^  wyv  diz  (zuul:diz now ham)
+          =/  seg  (sein our now her)
+          =^  wyv  diz  (zuul:diz now seg ham)
           =^  feh  puz  (whap:puz now gom wyv)
-          (busk xong:diz feh)
+          (busk xong feh)
         ::
         ++  wool                                        ::    wool:ho:um:am
           |=  [hen=duct cha=path val=*]                 ::  send a statement
           ^+  +>
-          =+  ^=  rol  ^-  rill
-              =+  rol=(~(get by ryl.bah) cha)
-              ?~(rol *rill u.rol)
-          =+  sex=sed.rol
+          =/  rol=rill  (fall (~(get by ryl.bah) cha) *rill)
+          =/  sex=@ud  sed.rol
           ::  ~&  [%tx [our her] cha sex]
+          ::  if we don't have a public key for :her,
+          ::  request keys and proceed (skin will be %open)
+          ::
+          ::    XX update state so we only ask once?
+          ::
+          =?  bin  =(~ lew.wod.dur.diz)  :_(bin [%beer our her])
           =.  ryl.bah
               %+  ~(put by ryl.bah)  cha
-              rol(sed +(sed.rol), san (~(put by san.rol) sex hen))
-          =+  cov=[p=p:sen:gus q=clon:diz]
+              %=  rol
+                sed  +(sed.rol)
+                san  (~(put by san.rol) sex hen)
+              ==
           %+  wind  [cha sex]
-          [%bond q.cov cha sex val]
+          [%bond clon:diz cha sex val]
         ::
         ++  zest                                        ::    zest:ho:um:am
           :~  :~  :*  [%rtt rtt.sop.bah]
@@ -1499,12 +1168,25 @@
             gus      (nux:gus diz(rov ~))
             wab.weg  (~(put by wab.weg) her bah(sop abet:puz))
           ==
+        ::
+        ++  xong                                        ::    xong:ho:um:am
+          ^-  (list ship)                               ::  route unto
+          =/  fro  (saxo our now our)
+          =/  too  (saxo our now her)
+          =+  ^=  oot  ^-  (list ship)
+              =|  oot=(list ship)
+              |-  ^+  oot
+              ?~  too  ~
+              ?:  (lien fro |=(a=ship =(a i.too)))  ~
+              [i.too $(too t.too)]
+          ::  ~&  [%xong-to [our her] (weld oot ?>(?=(^ fro) t.fro))]
+          (weld oot ?>(?=(^ fro) t.fro))
         --                                              ::  --ho:um:am
       ::
       ++  kick                                          ::    kick:um:am
         |=  hen=duct                                    ::  test connection
         ^+  +>
-        =+  hoy=hoy.saf.gus
+        =/  hoy  (tail (saxo our now our))
         |-  ^+  +>.^$
         ?~  hoy
           +>.^$
@@ -1588,14 +1270,10 @@
       =+  hun=(slaw %p i.tyl)
       ?~  hun  [~ ~]
       ?.  =(`@`0 ren)  ~
-      ?+    lot  ~
-          [$$ %ud @]
-        (perm p.why u.hun q.p.lot [syd t.tyl])
-      ::
-          [$$ %da @]
-        ?.  =(now q.p.lot)  ~
-        (temp p.why u.hun [syd t.tyl])
-      ==
+      ?.  ?=([$$ %da @] lot)
+        ~
+      ?.  =(now q.p.lot)  ~
+      (temp p.why u.hun [syd t.tyl])
     ::
     ++  stay  fox
     ++  take                                            ::  accept response
@@ -1606,21 +1284,20 @@
       [duy ..^$]
     --
   |%
-  ++  claw  |=(our=ship ^-(duct hen:(need (~(get by zac.fox) our))))
   ++  clop
     |=  [now=@da hen=duct bon=boon]
     ^-  [(list move) fort]
     ?-    -.bon
         %beer
-      :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~ ~ ~]))
-      :*  [hen [%slip %c %init p.bon]]
-          [hen [%give %init p.bon]]
-          [hen [%slip %a %kick now]]
-          [hen [%slip %e %init p.bon]]
-          [hen [%slip %g %init p.bon]]
-          [hen [%slip %d %init p.bon]]                  ::  must be after gall
-          ~
-      ==
+      =/  wir=wire
+        /our/(scot %p p.p.bon)/her/(scot %p q.p.bon)
+      :_  fox  [hen [%pass wir %j %pubs p.p.bon q.p.bon]]~
+    ::
+        %bock
+      :_  fox  [hen %give %turf tuf.fox]~
+    ::
+        %brew
+      :_  fox  [hen [%pass / %j %turf ~]]~
     ::
         %cake
       ::  ~?  ?=(^ r.bon)  [%cake-woot-bad hen r.bon]
@@ -1637,7 +1314,7 @@
         %milk
       ::  ~&  [%milk p.bon q.bon]
       ?>  ?=([@ @ *] q.q.bon)
-      ?>  ?=(?(%a %c %e %g) i.q.q.bon)
+      ?>  ?=(?(%a %c %e %g %j) i.q.q.bon)
       =+  pax=[(scot %p p.p.bon) (scot %p q.p.bon) q.q.bon]
       :_  fox  [hen %pass pax i.q.q.bon %west p.bon t.q.q.bon r.bon]~
     ::
@@ -1645,6 +1322,14 @@
       ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
+    ::
+        %raki
+      :_  fox  [hen [%pass / %j %meet p.p.bon q.p.bon q.bon r.bon]]~
+    ::
+        %sake
+      =/  wir=wire
+        /our/(scot %p p.bon)
+      :_  fox  [hen [%pass wir %j %vein p.bon]]~
     ::
         %wine
       :_  fox
@@ -1665,9 +1350,43 @@
     ^-  [(list move) _+>]
     ?-  +<.sih
         %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
+    ::
         %mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
                $(sih [%g %mean `[%mack +>+.sih]])
+    ::
+        %turf
+      =.  tuf.fox  turf.sih
+      [~ +>.$]
+    ::
+        %pubs
+      ?.  ?=([%our @ %her @ ~] tea)
+        ~&  [%strange-pubs tea]
+        [~ +>]
+      ~&  [%hear-pubs tea sih]
+      =/  our=ship  (slav %p i.t.tea)
+      =/  her=ship  (slav %p i.t.t.t.tea)
+      ?:  =(0 life.sih)
+        ~&  %ames-hear-empty-pubs
+        [~ +>.$]
+      =/  ded=deed
+        [life.sih (~(got by pubs.sih) life.sih) oath=~]
+      =/  gus  (need (~(us go ton.fox) our))
+      =/  diz  (myx:gus her)
+      =.  lew.wod.dur.diz  `ded
+      =.  ton.fox  (~(su go ton.fox) (nux:gus diz))
+      [~ +>.$]
+    ::
         %unto  [~ +>]
+    ::
+        %vein
+      ?.  ?=([%our @ ~] tea)
+        ~&  [%strange-vein tea]
+        [~ +>]
+      ~&  [%hear-vein tea sih]
+      =/  our=ship  (slav %p i.t.tea)
+      =.  fox  (~(vein am [now fox ski]) our life.sih vein.sih)
+      [~ +>.$]
+    ::
         %woot  [~ +>]
         ?(%mean %nice)                                  ::  XX obsolete
       ?:  ?=([%ye ~] tea)
@@ -1677,7 +1396,7 @@
       =+  pax=t.t.tea
       =+  ^=  fuy
           =<  zork  =<  zank
-          %^  ~(rack am [now fox])  soq  pax
+          %^  ~(rack am [now fox ski])  soq  pax
           ::  ~&  [%knap-ack ?-(+<.sih %mean `p.+.sih, %nice ~)]
           ?-(+<.sih %mean `p.+.sih, %nice ~)
       =>  %_(. fox q.fuy)
@@ -1695,20 +1414,9 @@
     ?:  ?=(%crud -.kyz)
       [[[hen [%slip %d %flog kyz]] ~] +>]
     ?:  ?=(%west -.kyz)
-      ?:  ?=([%pi ~] q.kyz)
-        :_  +>.$
-        [[hen %give %mack ~] ~]
-      ?>  ?=([%ta ~] q.kyz)
-      =+  gox=((hard ,[p=@p q=@pG r=gens s=pass]) r.kyz)
-      =+  gus=(need (~(us go ton.fox) p.p.kyz))
-      =^  wyl  gus  (born:gus now gox)
-      =.  ton.fox  (~(su go ton.fox) gus)
+      ?>  ?=([%pi ~] q.kyz)
       :_  +>.$
-      =+  ^=  pax
-          :+  (scot %p p.p.kyz)
-            (scot %p q.p.kyz)
-          q.kyz
-      [hen %pass pax %g %deal p.kyz %hood %poke %will !>(wyl)]~
+      [[hen %give %mack ~] ~]
     ?:  ?=(%wegh -.kyz)
       ~&  %ames-weighing
       [[hen %give %mass wegh]~ +>]
@@ -1716,31 +1424,29 @@
         ^-  [p=(list boon) q=fort]
         ?-    -.kyz
             %barn
-          [~ fox(gad hen)]
-            %cash
-          (~(have am [now fox]) p.kyz q.kyz)
+          :_  fox(gad hen)
+          [%bock ~]~
         ::
             %hear
-          (~(gnaw am [now fox]) %good p.kyz q.kyz)
+          (~(gnaw am [now fox ski]) %good p.kyz q.kyz)
         ::
             %halo
-          (~(gnaw am [now fox]) %dead p.kyz q.kyz)
+          (~(gnaw am [now fox ski]) %dead p.kyz q.kyz)
         ::
             %hole
-          (~(gnaw am [now fox]) %dead p.kyz q.kyz)
+          (~(gnaw am [now fox ski]) %dead p.kyz q.kyz)
         ::
+            %init
+          :_  fox  [[%sake p.kyz] [%brew ~] ~]
+        ::
+          ::  XX this is unused, but they only way to set
+          ::  entropy for symmetric keys. Review.
+          ::
             %junk
           [~ fox(any.ton (shax (mix any.ton.fox p.kyz)))]
         ::
             %kick
-          (~(kick am [now fox(hop p.kyz)]) hen)
-        ::
-            %make
-          =+  vun=(~(come am [now fox]) p.kyz (bex q.kyz) r.kyz s.kyz)
-          [[[%beer p.vun] ~] q.vun]
-        ::
-            %sith
-          (~(czar am [now fox]) p.kyz q.kyz r.kyz)
+          (~(kick am [now fox(hop p.kyz) ski]) hen)
         ::
             %tend
           :: XX exclude comets and moons? and planets?
@@ -1758,11 +1464,42 @@
           ~&  [%block p.kyz]
           fox(bad (~(put in bad.fox) p.kyz))
         ::
+            %sunk
+          ::  XX single-home properly
+          ::
+          =/  our=ship
+            =/  key  ~(key by urb.ton.fox)
+            ?>(?=([@ ~ ~] key) n.key)
+          =*  who  p.kyz
+          =*  lyf  q.kyz
+          =/  saf=sufi  (~(got by urb.ton.fox) our)
+          =/  con=corn  (~(got by zac.fox) our)
+          ::
+          ?:  =(our who)
+            ?:  (lth lyf p:(head val.saf))
+              ::  replaying our old sinkage, ignore
+              ::  XX review
+              ::
+              [~ fox]
+            ::  XX include some helpful instructions here
+            ::
+            :_  fox
+            [%wine [our who] ", you have sunk"]~
+          ::
+          =.  saf       saf(hoc (~(del by hoc.saf) who))
+          =.  con       con(wab (~(del by wab.con) who))
+          ::
+          :-  [%wine [our who] " has sunk"]~
+          %=  fox
+            urb.ton  (~(put by urb.ton.fox) our saf)
+            zac      (~(put by zac.fox) our con)
+          ==
+        ::
             %wake
-          (~(wake am [now fox]) hen)
+          (~(wake am [now fox ski]) hen)
         ::
             %want
-          (~(wise am [now fox]) p.kyz hen q.kyz r.kyz)
+          (~(wise am [now fox ski]) p.kyz hen q.kyz r.kyz)
         ==
     =>  %_(. fox q.fuy)
     =|  out=(list move)
@@ -1772,41 +1509,6 @@
     =^  toe  fox  (clop now hen i.p.fuy)
     $(p.fuy t.p.fuy, out (weld (flop toe) out))
   ::
-  ++  perm
-    |=  [our=ship his=ship mar=@ud tyl=path]
-    ^-  (unit (unit cage))
-    ?~  tyl  ~
-    ?:  ?=([%name ~] tyl)
-      =+  wul=$(tyl [%will ~])
-      :+  ~  ~
-      :-  %noun
-      !>(?~(wul (scot %p his) (gnow:title his q.q.q:((hard deyd) -.u.wul))))
-    ?:  ?=([%gcos ~] tyl)
-      =+  wul=$(tyl [%will ~])
-      ?~(wul ~ ``[%noun !>(`gcos`q.q.q:((hard deyd) -.u.wul))])
-    =+  gys=(~(us go ton.fox) our)
-    ?~  gys  ~
-    ?.  =(our his)
-      ?:  ?=([%will ~] tyl)
-        =+  fod=(~(get by hoc.saf.u.gys) his)
-        ?~  fod  ~
-        %+  bind  (rick mar his lew.wod.u.fod)
-        |=(a=wyll `[%noun !>(a)])
-      ?:  ?=([%tick ~] tyl)
-        ?.  =(our (sein:title his))  ~
-        ``[%noun !>((end 6 1 (shaf %tick (mix his (shax sec:ex:q:sen:u.gys)))))]
-      ~
-    ?:  ?=([%buck ~] tyl)
-      =+  muc=(rice mar sex:u.gys)
-      =+  luw=(rick mar our law.saf.u.gys)
-      ?.  &(?=(^ muc) ?=(^ luw))  ~
-      ``[%noun !>(`buck`[u.muc u.luw])]
-    ?:  ?=([%code ~] tyl)
-      ``[%noun !>((end 6 1 (shaf %pass (shax sec:ex:q:sen:u.gys))))]
-    ?:  ?=([%will ~] tyl)
-      (bind (rick mar our law.saf.u.gys) |=(a=wyll `[%noun !>(a)]))
-    ~
-  ::
   ++  temp
     |=  [our=ship his=ship tyl=path]
     ^-  (unit (unit cage))
@@ -1814,24 +1516,13 @@
       ?^  t.tyl  [~ ~]
       =+  gys=(~(us go ton.fox) our)
       ?~  gys  [~ ~]
-      =+  zet=zest:(ho:(~(um am [now fox]) our) his)
+      =+  zet=zest:(ho:(~(um am [now fox ski]) our) his)
       ``[%noun ?:(=(%show i.tyl) !>(>zet<) !>(zet))]
     ?:  ?=([%pals ~] tyl)
       ?.  =(our his)
         ~
-      ``[%noun !>(pals:(~(um am [now fox]) our))]
-    ?.  ?=([%life ~] tyl)
-      =+  muc=$(tyl [%life ~])
-      (perm our his ?~(muc 0 (fall ((soft @ud) u.muc) 0)) tyl)
-    =+  gys=(~(us go ton.fox) our)
-    ?~  gys  ~
-    ?.  =(our his)
-      =+  fod=(~(get by hoc.saf.u.gys) his)
-      ?~  fod  ~
-      ?~  lew.wod.u.fod  ~
-      ``[%noun !>(`@ud`p.p.q.i.lew.wod.u.fod)]
-    ?~  val.saf.u.gys  ~
-    ``[%noun !>(`@ud`p.i.val.saf.u.gys)]
+      ``[%noun !>(pals:(~(um am [now fox ski]) our))]
+    ~
   ::
   ++  wegh
     ^-  mass

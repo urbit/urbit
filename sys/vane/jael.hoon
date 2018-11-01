@@ -19,7 +19,6 @@
 =,  pki:jael
 =,  rights:jael
 =,  able:jael
-=,  title
 =,  crypto
 =,  jael
 =,  ethe
@@ -49,6 +48,7 @@
       urb/state-absolute                                ::  all absolute state
       sub/state-relative                                ::  all relative state
       etn=state-eth-node                                ::  eth connection state
+      sap=state-snapshots                               ::  state snapshots
   ==                                                    ::
 ++  state-relative                                      ::  urbit metadata
   $:  $=  bal                                           ::  balance sheet (vest)
@@ -56,6 +56,15 @@
         ==                                              ::
       $=  own                                           ::  vault (vein)
         $:  yen/(set duct)                              ::  trackers
+            :: XX use this                              ::
+            our=ship                                    ::
+            sig=(unit oath)                             ::  for a moon
+            :: XX reconcile with .dns.eth               ::
+            tuf=(list turf)                             ::  domains
+            :: XX use for eth replay                    ::
+            boq=@ud                                     ::  boot block
+            nod=(unit purl:eyre)                        ::  eth gateway
+            fak/_|                                      ::  fake keys
             lyf/life                                    ::  version
             jaw/(map life ring)                         ::  private keys
         ==                                              ::
@@ -75,17 +84,13 @@
   $:  pry/(map ship (map ship safe))                    ::  promises
       eve=logs                                          ::  on-chain events
   ==                                                    ::
-++  state-eth-node                                      ::  node config + meta
-  $:  source=(each ship node-src)                       ::  learning from
-      heard=(set event-id)                              ::  processed events
-      latest-block=@ud                                  ::  last heard block
+++  state-snapshots                                     ::  rewind points
+  $:  interval=_100                                     ::  block interval
+      max-count=_10                                     ::  max snaps
+      count=@ud                                         ::  length of snaps
+      last-block=@ud                                    ::  number of last snap
+      snaps=(qeu [block-number=@ud snap=snapshot])      ::  old states
   ==                                                    ::
-++  node-src                                            ::  ethereum node comms
-  $:  node=purl:eyre                                    ::  node url
-      filter-id=@ud                                     ::  current filter
-      poll-timer=@da                                    ::  next filter poll
-  ==                                                    ::
-::                                                      ::
 ++  message                                             ::  p2p message
   $%  [%hail p=remote]                                  ::  reset rights
       [%nuke ~]                                         ::  cancel trackers
@@ -624,11 +629,31 @@
     ~(able ~(ex ur urb) who)
   ::                                                    ::  ++scry:of
   ++  scry                                              ::  read
-    |=  {syd/@tas pax/path}  ^-  (unit gilt)
+    |=  {syd/@tas pax/path}
+    ~|  %jael-scry-of-stub
     =^  mar  pax  =/(a (flop pax) [-.a (flop t.+.a)])
-    ?>  ?=(_-:*gilt mar)
-    =-  (biff - (flit |=(a/gilt =(-.a mar))))
-    ~  ::TODO
+    !!
+  ::                                                    ::  ++sein:of
+  ++  sein                                              ::  sponsor
+    |=  who=ship
+    ^-  ship
+    ::  XX save %dawn sponsor in .own.sub, check there
+    ::
+    =/  hul  (~(get by hul.eth.sub) who)
+    ?:  ?&  ?=(^ hul)
+            ?=(^ net.u.hul)
+            ?=(^ sponsor.u.net.u.hul)
+        ==
+      u.sponsor.u.net.u.hul
+    ::  XX fall back to most recent sponsor instead?
+    ::
+    (^sein:title who)
+  ::                                                    ::  ++saxo:of
+  ++  saxo                                              ::  sponsorship chain
+    |=  who/ship
+    ^-  (list ship)
+    =/  dad  (sein who)
+    [who ?:(=(who dad) ~ $(who dad))]
   ::                                                    ::  ++call:of
   ++  call                                              ::  invoke
     |=  $:  ::  hen: event cause
@@ -644,35 +669,155 @@
     ::    {$burn p/ship q/safe}
     ::
         $burn
-      %+  cure  our.tac
+      %^  cure  hen  our.tac
       abet:abet:(deal:(burb our.tac) p.tac [~ q.tac])
+    ::
+    ::  boot from keys
+    ::    $:  $dawn
+    ::        =seed
+    ::        spon=(unit ship)
+    ::        czar=(map ship [=life =pass])
+    ::        turf=(list turf)}
+    ::        bloq=@ud
+    ::        node=purl
+    ::    ==
+    ::
+        %dawn
+      =*  our  who.seed.tac
+      ::  sort-of single-homed
+      ::
+      =.  our.own.sub  our
+      ::  save our boot block
+      ::
+      =.  boq.own.sub  bloq.tac
+      ::  save our ethereum gateway (required for galaxies)
+      ::
+      =.  nod.own.sub  node.tac
+      ::  save our parent signature (only for moons)
+      ::
+      =.  sig.own.sub  sig.seed.tac
+      ::  our initial public key
+      ::
+      =.  kyz.puk.sub
+        =/  cub  (nol:nu:crub:crypto key.seed.tac)
+        %+  ~(put by kyz.puk.sub)
+          our
+        [& lyf.seed.tac (my [lyf.seed.tac pub:ex:cub] ~)]
+      ::  our initial private key, as a +tree of +rite
+      ::
+      =/  rit  (sy [%jewel (my [lyf.seed.tac key.seed.tac] ~)] ~)
+      =.  +>.$  $(tac [%mint our our rit])
+      ::  our initial galaxy table as a +map from +life to +public
+      ::
+      =/  kyz
+        %-  ~(run by czar.tac)
+        |=([=life =pass] `public`[live=| life (my [life pass] ~)])
+      =.  +>.$
+        %-  curd  =<  abet
+        (pubs:~(feel su hen our urb sub etn sap) kyz)
+      ::  XX save sponsor in .own.sub
+      ::  XX reconcile with .dns.eth
+      ::  set initial domains
+      ::
+      =.  tuf.own.sub  turf.tac
+      ::  if we're given a snapshot, restore it
+      ::
+      =.  +>.$
+        ?~  snap.tac  +>.$
+        (restore-snap u.snap.tac)
+      ::
+      =.  moz
+        %+  weld  moz
+        ::  order is crucial!
+        ::
+        ::    %dill must init after %gall
+        ::    the %give init (for unix) must be after %dill init
+        ::    %jael init must be deferred (makes http requests)
+        ::
+        ^-  (list move)
+        :~  [hen %pass /(scot %p our)/init %b %wait +(now.sys)]
+            [hen %give %init our]
+            [hen %slip %e %init our]
+            [hen %slip %d %init our]
+            [hen %slip %g %init our]
+            [hen %slip %c %init our]
+            [hen %slip %a %init our]
+        ==
+      +>.$
+    ::
+    ::  boot fake
+    ::    {$fake our/ship}
+    ::
+        %fake
+      =*  our  our.tac
+      ::  sort-of single-homed
+      ::
+      =.  our.own.sub  our
+      ::  fake keys are deterministically derived from the ship
+      ::
+      =/  cub  (pit:nu:crub:crypto 512 our)
+      ::  save our parent signature (only for moons)
+      ::
+      ::    XX move logic to zuse
+      ::
+      =.  sig.own.sub
+        ?.  ?=(%earl (clan:title our))
+          ~
+        =/  yig  (pit:nu:crub:crypto 512 (^sein:title our))
+        [~ (sign:as:yig (shaf %earl (sham our 1 pub:ex:cub)))]
+      ::  our initial public key
+      ::
+      =.  kyz.puk.sub
+        (~(put by kyz.puk.sub) our [& 1 (my [1 pub:ex:cub] ~)])
+      ::  our private key, as a +tree of +rite
+      ::
+      ::    Private key updates are disallowed for fake ships,
+      ::    so we do this first.
+      ::
+      =/  rit  (sy [%jewel (my [1 sec:ex:cub] ~)] ~)
+      =.  +>.$  $(tac [%mint our our rit])
+      ::  set the fake bit
+      ::
+      =.  fak.own.sub  &
+      ::  initialize other vanes per the usual procedure
+      ::
+      ::    Except for ourselves!
+      ::
+      =.  moz
+        %+  weld  moz
+        ^-  (list move)
+        :~  [hen %give %init our]
+            [hen %slip %e %init our]
+            [hen %slip %d %init our]
+            [hen %slip %g %init our]
+            [hen %slip %c %init our]
+            [hen %slip %a %init our]
+        ==
+      +>.$
     ::
     ::  remote update
     ::    {$hail p/ship q/remote}
     ::
         $hail
-      %+  cure  our.tac
+      %^  cure  hen  our.tac
       abet:abet:(hail:(burb our.tac) p.tac q.tac)
-    ::
-    ::  initialize vane
-    ::    [%init our=ship]
-    ::
-        $init
-      %+  cute  our.tac  =<  abet
-      (~(init et our.tac now.sys etn.lex) our.tac)
     ::
     ::  set ethereum source
     ::    [%look p=(each ship purl)]
     ::
         %look
-      %+  cute  our.tac  =<  abet
-      (~(look et our.tac now.sys etn.lex) src.tac)
+      %^  cute  hen  our.tac  =<  abet
+      (~(look et our.tac now.sys urb.lex sub.lex etn.lex sap.lex) src.tac)
     ::
     ::  create promises
     ::    {$mint p/ship q/safe}
     ::
         $mint
-      %+  cure  our.tac
+      ~|  %fake-jael
+      ?<  ?&  fak.own.sub
+              (~(exists up q.tac) %jewel)
+          ==
+      %^  cure  hen  our.tac
       abet:abet:(deal:(burb our.tac) p.tac [q.tac ~])
     ::
     ::
@@ -681,10 +826,10 @@
     ::
         $move
       =.  +>
-        %+  cure  our.tac
+        %^  cure  hen  our.tac
         abet:abet:(deal:(burb our.tac) p.tac [~ r.tac])
       =.  +>
-        %+  cure  our.tac
+        %^  cure  hen  our.tac
         abet:abet:(deal:(burb our.tac) q.tac [r.tac ~])
       +>
     ::
@@ -704,33 +849,45 @@
     ::
         %pubs
       %-  curd  =<  abet
-      (~(pubs ~(feed su our.tac urb sub etn) hen) who.tac)
+      (~(pubs ~(feed su hen our.tac urb sub etn sap) hen) who.tac)
     ::
     ::  seen after breach
     ::    [%meet our=ship who=ship]
     ::
         %meet
-      %+  cure  our.tac
-      [[%meet who.tac]~ urb]
+      %^  cure  hen  our.tac
+      [[%meet who.tac life.tac pass.tac]~ urb]
+    ::
+    ::  XX should be a subscription
+    ::  XX reconcile with .dns.eth
+    ::  request domains
+    ::    [%turf ~]
+    ::
+        %turf
+      ::  ships with real keys must have domains,
+      ::  those with fake keys must not
+      ::
+      ?<  =(fak.own.sub ?=(^ tuf.own.sub))
+      +>.$(moz [[hen %give %turf tuf.own.sub] moz])
     ::
     ::  watch private keys
     ::    {$vein $~}
     ::
         $vein
-      (curd abet:~(vein ~(feed su our.tac urb sub etn) hen))
+      (curd abet:~(vein ~(feed su hen our.tac urb sub etn sap) hen))
     ::
     ::  watch ethereum events
     ::    [%vent ~]
     ::
         %vent
       =.  moz  [[hen %give %mack ~] moz]
-      (curd abet:~(vent ~(feed su our.tac urb sub etn) hen))
+      (curd abet:~(vent ~(feed su hen our.tac urb sub etn sap) hen))
     ::
     ::  monitor assets
     ::    {$vest $~}
     ::
         $vest
-      (curd abet:~(vest ~(feed su our.tac urb sub etn) hen))
+      (curd abet:~(vest ~(feed su hen our.tac urb sub etn sap) hen))
     ::
     ::  monitor all
     ::    {$vine $~}
@@ -751,7 +908,7 @@
       ::    [%hail p=remote]
       ::
           %hail
-        %+  cure  our
+        %^  cure  hen  our
         abet:abet:(hail:(burb our) dem p.mes)
       ::
       ::  cancel trackers
@@ -773,9 +930,15 @@
         ?.  &(-.source.etn =(dem p.source.etn))
           +>.$
         =.  moz  [[hen %give %mack ~] moz]
-        %+  cute  our  =<  abet
-        (~(hear-vent et our now.sys etn.lex) p.mes)
+        %^  cute  hen  our  =<  abet
+        (~(hear-vent et our now.sys urb.lex sub.lex etn.lex sap.lex) p.mes)
       ==
+    ::
+    ::  rewind to snapshot
+    ::    {$wind p/@ud}
+    ::
+        %wind
+      (wind hen our.tac p.tac)
     ==
   ::
   ++  take
@@ -794,36 +957,93 @@
       +>.$
     ::
         [%e %sigh *]
-      %+  cute  our  =<  abet
-      (~(sigh et our now.sys etn.lex) wir p.hin)
+      %^  cute  hen  our  =<  abet
+      (~(sigh et our now.sys urb.lex sub.lex etn.lex sap.lex) wir p.hin)
     ::
         [%b %wake ~]
-      %+  cute  our  =<  abet
-      ~(wake et our now.sys etn.lex)
+      %^  cute  hen  our
+      ::  XX cleanup
+      ::
+      ?.  ?=([%init ~] wir)
+        abet:~(wake et our now.sys urb.lex sub.lex etn.lex sap.lex)
+      abet:(~(init et our now.sys [urb sub etn sap]:lex) our (sein our))
     ::
         [%j %vent *]
-      %+  cute  our  =<  abet
-      (~(hear-vent et our now.sys etn.lex) p.hin)
+      %^  cute  hen  our  =<  abet
+      (~(hear-vent et our now.sys urb.lex sub.lex etn.lex sap.lex) p.hin)
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
-    |=  {moz/(list move) sub/state-relative}
-    +>(sub sub, moz (weld (flop moz) ^moz))
+    |=  $:  moz/(list move)
+            sub/state-relative
+            etn/state-eth-node
+            sap/state-snapshots
+        ==
+    +>(sub sub, etn etn, sap sap, moz (weld (flop moz) ^moz))
   ::                                                    ::  ++cure:of
   ++  cure                                              ::  absolute edits
-    |=  {our/ship hab/(list change) urb/state-absolute}
+    |=  {hen/duct our/ship hab/(list change) urb/state-absolute}
     ^+  +>
-    (curd(urb urb) abet:(~(apex su our urb sub etn) hab))
+    (curd(urb urb) abet:(~(apex su hen our urb sub etn sap) hab))
   ::                                                    ::  ++cute:of
   ++  cute                                              ::  ethereum changes
-    |=  $:  our=ship
+    |=  $:  hen=duct
+            our=ship
             mos=(list move)
             ven=chain
-            net=state-eth-node
+            urb=state-absolute
+            sub=state-relative
+            etn=state-eth-node
+            sap=state-snapshots
         ==
     ^+  +>
-    %-  cure(etn net, moz (weld (flop mos) moz))
-    [our abet:(link:(burb our) ven)]
+    %-  cure(urb urb, sub sub, etn etn, sap sap, moz (weld (flop mos) moz))
+    [hen our abet:(link:(burb our) ven)]
+  ::                                                    ::  ++wind:of
+  ++  wind                                              ::  rewind to snap
+    |=  [hen=duct our=@p block=@ud]
+    ^+  +>
+    ~&  %dripping
+    =/  old-qeu  snaps.sap
+    =:  snaps.sap       ~
+        count.sap       0
+        last-block.sap  0
+      ==
+    =^  snap=snapshot  +>.$
+      ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
+        [%*(. *snapshot latest-block.etn launch:contracts) +>.$]
+      |-  ^-  [snapshot _+>.^$]
+      ::  =^  [new-qeu=(qeu [block-number=@ud snap=snapshot]) snap=snapshot]  snaps.sap
+      =^  snap=[block-number=@ud snap=snapshot]  old-qeu
+        ~(get to old-qeu)
+      =:  count.sap       +(count.sap)
+          last-block.sap  block-number.snap
+          snaps.sap       (~(put to snaps.sap) snap)
+        ==
+      ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
+        [snap.snap +>.^$]
+      $
+    ~&  [%wind block latest-block.etn.snap ~(wyt by hul.eth.snap)]
+    =.  +>.$  (restore-snap snap)
+    %=    +>.$
+        moz
+      =-  [[hen %pass /wind/look %j %look our -] moz]
+      ?-  -.source.etn
+        %&  &+p.source.etn
+        %|  |+node.p.source.etn
+      ==
+    ==
+  ::                                                    ::  ++restore-snap:of
+  ++  restore-snap                                      ::  restore snapshot
+    |=  snap=snapshot
+    ::  keep the following in sync with ++extract-snap:file:su
+    %=  +>.$
+        eve.urb       eve.snap
+        etn           etn.snap(source source.etn)
+        kyz.puk.sub   kyz.snap
+        +.eth.sub     eth.snap
+        sap           sap(last-block 0)
+    ==
   --
 ::                                                      ::  ++su
 ::::                    ## relative^heavy               ::  subjective engine
@@ -843,18 +1063,21 @@
       ::
   =|  moz/(list move)
   =|  evs=logs
-  =|  $:  our/ship
+  =|  $:  hen/duct
+          our/ship
           state-absolute
           state-relative
           state-eth-node
+          state-snapshots
       ==
   ::  moz: moves in reverse order
   ::  urb: absolute urbit state
   ::  sub: relative urbit state
   ::
-  =*  urb  ->-
-  =*  sub  ->+<
-  =*  etn  ->+>
+  =*  urb  ->+<
+  =*  sub  ->+>-
+  =*  etn  ->+>+<
+  =*  sap  ->+>+>
   |%
   ::                                                    ::  ++abet:su
   ++  abet                                              ::  resolve
@@ -862,7 +1085,7 @@
     :: =>  (exec yen.eth [%give %vent |+evs])
     =>  ?~  evs  .
         (vent-pass yen.eth |+evs)
-    [(flop moz) sub]
+    [(flop moz) sub etn sap]
   ::                                                    ::  ++apex:su
   ++  apex                                              ::  apply changes
     |=  hab/(list change)
@@ -907,6 +1130,8 @@
     ::
     ++  pubs
       |=  who=ship
+      ?:  fak.own.sub
+        (pubs:fake who)
       %_  ..feed
         moz      =/  pub  (~(get by kyz.puk) who)
                  ?~  pub  moz
@@ -934,6 +1159,17 @@
         :: moz      [[hen %give %vent &+eve] moz]
         yen.eth  (~(put in yen.eth) hen)
       ==
+    ::                                                  ::  ++fake:feed:su
+    ++  fake                                            ::  fake subs and state
+      ?>  fak.own.sub
+      |%
+      ++  pubs
+        |=  who=ship
+        =/  cub  (pit:nu:crub:crypto 512 who)
+        =/  pub  [live=| life=1 (my [1 pub:ex:cub] ~)]
+        =.  moz  [[hen %give %pubs pub] moz]
+        (pubs:feel (my [who pub] ~))
+      --
     --
   ::                                                    ::  ++feel:su
   ++  feel                                              ::  update tracker
@@ -941,10 +1177,12 @@
     ::                                                  ::  ++pubs:feel:su
     ++  pubs                                            ::  kick public keys
       ::  puz: new public key states
+      ::
       |=  puz=(map ship public)
       =/  pus  ~(tap by puz)
       ::
       ::  process change for each ship separately
+      ::  XX check for diffs before sending?
       ::
       |-  ^+  ..feel
       ?~  pus  ..feel
@@ -955,7 +1193,7 @@
       ::  update public key store and notify subscribers
       ::  of the new state
       ::
-      ~&  [%sending-pubs-about who]
+      ~&  [%sending-pubs-about who life.pub live.pub]
       %+  exec(kyz.puk (~(put by kyz.puk) who pub))
         (~(get ju yen.puk) who)
       [%give %pubs pub]
@@ -963,8 +1201,11 @@
     ++  vein                                            ::  kick private keys
       ^+  ..feel
       =/  yam  vein:form
-      ?:  =(yam +.own)  ..feel
-      (exec(+.own yam) yen.own [%give %vein +.own])
+      ?:  &(=(lyf.own p.yam) =(jaw.own q.yam))
+        ..feel
+      =.  lyf.own  p.yam
+      =.  jaw.own  q.yam
+      (exec yen.own [%give %vein lyf.own jaw.own])
     ::                                                  ::  ++vest:feel:su
     ++  vest                                            ::  kick balance
       |=  hug/action
@@ -1064,11 +1305,36 @@
     vein:feel
   ::                                                    ::  ++meet:su
   ++  meet                                              ::  seen after breach
-    |=  who=ship
+    |=  [who=ship =life =pass]
     ^+  +>
-    =+  ~|  [%met-unknown-ship who]
-        (~(got by kyz.puk) who)
-    (pubs:feel [[who -(live &)] ~ ~])
+    =;  new=public
+      (pubs:feel (my [who new] ~))
+    ::
+    =/  old=(unit public)
+      (~(get by kyz.puk) who)
+    ?:  ?|  ?=(?(%earl %pawn) (clan:title who))
+            ::  XX save %dawn sponsor in .own.sub, check there
+            ::  XX or move sein:of to sein:su?
+            ::  XX full saxo chain?
+            ::
+            =(who (^sein:title our))
+        ==
+      ?~  old
+        [live=& life (my [life pass] ~)]
+      =/  fyl  life.u.old
+      =/  sap  (~(got by pubs.u.old) fyl)
+      ~|  [%met-mismatch who life=[old=fyl new=life] pass=[old=sap new=pass]]
+      ?>  ?:  =(fyl life)
+            =(sap pass)
+          =(+(fyl) life)
+      [live=& life (~(put by pubs.u.old) life pass)]
+    ?.  ?=(^ old)
+      ~|  [%met-unknown-ship who]  !!
+    =/  fyl  life.u.old
+    =/  sap  (~(got by pubs.u.old) fyl)
+    ~|  [%met-mismatch who life=[old=fyl new=life] pass=[old=sap new=pass]]
+    ?>  &(=(fyl life) =(sap pass))
+    [live=& life pubs.u.old]
   ::                                                    ::  ++file:su
   ++  file                                              ::  process event logs
     ::TODO  whenever we add subscriptions for data,
@@ -1107,7 +1373,7 @@
       =/  puk  (~(get by pubs.pub) life)
       ?^  puk
         ::  key known, nothing changes
-        ~|  [%key-mismatch who life]
+        ~|  [%key-mismatch who life `@ux`u.puk `@ux`pass (get-public ~zod)]
         ?>(=(u.puk pass) kyz)
       %+  ~(put by kyz)  who
       :+  live.pub
@@ -1116,6 +1382,7 @@
     ::
     ++  file-discontinuity
       |=  who=ship
+      ^+  kyz
       =+  (get-public who)
       (~(put by kyz) who -(live |))
     ::
@@ -1127,26 +1394,52 @@
         [kyz ..file]
       ::
       ::  sanity check, should never fail if we operate correctly
+      ::  XX is this true in the presence of reorgs?
       ::
-      ?>  (gte block.wer latest-block)
+      ::  ?>  (gte block.wer latest-block)
       =:  evs           (~(put by evs) wer dif)
           heard         (~(put in heard) wer)
           latest-block  (max latest-block block.wer)
       ==
-      ?-  -.dif
-        %hull   (file-hull +.dif)
-        %dns    [kyz (file-dns +.dif)]
-      ==
+      =^  kyz  ..file
+        ?-  -.dif
+          %hull   ~|(wer=wer (file-hull +.dif))
+          %dns    [kyz (file-dns +.dif)]
+        ==
+      [kyz (file-snap wer)]
     ::
     ++  file-hull
       |=  [who=ship dif=diff-hull]
       ^+  [kyz ..file]
       =-  ::TODO  =; with just the type
-        :-  ?:  ?=(%& -.new)
-              (file-keys who p.new)
-            ?:  p.new  kyz
-            (file-discontinuity who)
-        ..file(hul.eth (~(put by hul.eth) who hel))
+        =.  hul.eth  (~(put by hul.eth) who hel)
+        ::  new keys
+        ::
+        ?:  ?=(%& -.new)
+          [(file-keys who p.new) ..file]
+        ::  kept continuity (no-op)
+        ::
+        ?:  p.new
+          [kyz ..file]
+        ::  discontinuity
+        ::
+        :-  (file-discontinuity who)
+        %=  ..file
+          ::  these must be appended here; +abet flops them
+          ::
+          moz  =/  lyf=life
+                 ~|  sunk-unknown+who
+                 life:(~(got by kyz.puk))
+               %+  weld  moz
+               ^-  (list move)
+               :~  [hen %slip %a %sunk who lyf]
+                   [hen %slip %c %sunk who lyf]
+                   [hen %slip %d %sunk who lyf]
+                   [hen %slip %e %sunk who lyf]
+                   [hen %slip %f %sunk who lyf]
+                   [hen %slip %g %sunk who lyf]
+               ==
+        ==
       ::  hel: updated hull
       ::  new: new keypair or "kept continuity?" (yes is no-op)
       ^-  [hel=hull new=(each (pair life pass) ?)]
@@ -1154,7 +1447,7 @@
       ::
       ::  sanity checks, should never fail if we operate correctly
       ::
-      ~|  [%diff-order-insanity -.dif]
+      ~|  [%diff-order-insanity -.dif who (~(get by hul.eth) who)]
       ?>  ?+  -.dif  &
             %spawned      ?>  ?=(^ kid.hul)
                           !(~(has in spawned.u.kid.hul) who.dif)
@@ -1179,6 +1472,41 @@
     ++  file-dns
       |=  dns=dnses
       ..file(dns.eth dns)
+    ::
+    ++  file-snap                                       ::  save snapshot
+      |=  wer=event-id
+      ^+  ..file
+      =?    sap
+          %+  lth  2
+          %+  sub.add
+            (div block.wer interval.sap)
+          (div last-block.sap interval.sap)
+        ~&  :*  %snap  count=count.sap  max-count=max-count.sap 
+                last-block=last-block.sap  interval=interval.sap
+                lent=(lent ~(tap to snaps.sap))
+            ==
+        %=  sap
+          snaps       (~(put to snaps.sap) block.wer extract-snap)
+          count       +(count.sap)
+          last-block  block.wer
+        ==
+      =?  sap  (gth count.sap max-count.sap)
+        ~&  :*  %dump  count=count.sap  max-count=max-count.sap 
+                lent=(lent ~(tap to snaps.sap))
+            ==
+        %=  sap
+          snaps  +:~(get to snaps.sap)
+          count  (dec count)
+        ==
+      ..file
+    ::
+    ++  extract-snap                                    ::  extract rewind point
+      ^-  snapshot
+      :*  eve.urb
+          kyz.puk.sub
+          +.eth.sub
+          etn(source *(each ship node-src))
+      ==
     --
   --
 ::                                                      ::  ++ur
@@ -1310,19 +1638,28 @@
   =|  moves=(list move)
   =+  reset=|
   =|  changes=logs
-  |_  $:  our=ship
+  =|  $:  our=ship
           now=@da
+          state-absolute
+          state-relative
           state-eth-node
+          state-snapshots
       ==
-  +*  etn  +<+>
+  =*  urb  ->+<
+  =*  sub  ->+>-
+  =*  etn  ->+>+<
+  =*  sap  ->+>+>
   ::
   ::  +|  outward
+  |%
   ::
   ::  +abet: produce results
   ::
   ++  abet
-    ^-  [(list move) chain state-eth-node]
-    [(flop moves) ?:(reset &+changes |+changes) etn]
+    ^-  $:  (list move)  chain  state-absolute  state-relative
+            state-eth-node  state-snapshots
+        ==
+    [(flop moves) ?:(reset &+changes |+changes) urb sub etn sap]
   ::
   ::  +put-move: store side-effect
   ::
@@ -1340,7 +1677,9 @@
   ::
   ++  put-change
     |=  [cause=event-id dif=diff-constitution]
-    ?<  (~(has by changes) cause)  ::  one diff per event
+    ?:  (~(has by changes) cause)  ::  one diff per event
+      ~&  [%duplicate-cause cause]
+      !!
     +>(changes (~(put by changes) cause dif))
   ::
   ::  +|  move-generation
@@ -1385,9 +1724,42 @@
     ::      or do we have a unique duct here?
     [%a %want [our p.source] /j/(scot %p our)/vent `*`[%nuke ~]]
   ::
+  ::  +listen-to-node: start syncing from a node
+  ::
+  ::    Get latest block from eth node and compare to our own latest block.
+  ::    Get intervening blocks in chunks until we're caught up, then set
+  ::    up a filter going forward.
+  ::
   ++  listen-to-node
     |=  url=purl:eyre
-    new-filter(source |+%*(. *node-src node url))
+    get-latest-block(source |+%*(. *node-src node url))
+  ::
+  ::  +|  catch-up-operations
+  ::
+  ::  +get-latest-block
+  ::
+  ::    Get latest known block number from eth node.
+  ::
+  ++  get-latest-block
+    (put-request /catch-up/block-number `'block number' %eth-block-number ~)
+  ::
+  ::  +catch-up: get next chunk
+  ::
+  ++  catch-up
+    |=  from-block=@ud
+    ?:  (gte from-block foreign-block)
+      new-filter
+    =/  next-block  (min foreign-block (add from-block 5.760)) ::  ~d1
+    ~&  [%catching-up from=from-block to=foreign-block]
+    %-  put-request
+    :+  /catch-up/step/(scot %ud from-block)/(scot %ud next-block)
+      `'catch up'
+    :*  %eth-get-logs
+        `number+from-block
+        `number+next-block
+        ~[ships:contracts]
+        ~
+    ==
   ::
   ::  +|  filter-operations
   ::
@@ -1400,7 +1772,11 @@
     %-  put-request
     :+  /filter/new  `'new filter'
     :*  %eth-new-filter
-        `[%number +(latest-block)]  ::TODO  or Ships origin block when 0
+        `number+latest-block
+        ::  XX We want to load from a snapshot at least 40 blocks behind, then
+        ::  replay to the present
+        ::  `[%number ?:((lte latest-block 40) 0 (sub.add latest-block 40))]
+        ::TODO  or Ships origin block when 0
         ~  ::TODO  we should probably chunck these, maybe?
         ::  https://stackoverflow.com/q/49339489
         ~[ships:contracts]
@@ -1419,6 +1795,9 @@
   ::
   ++  poll-filter
     ?>  ?=(%| -.source)
+    ?:  =(0 filter-id.p.source)
+      ~&  %no-filter-bad-poll
+      .
     %-  put-request
     :+  /filter/changes  `'poll filter'
     [%eth-get-filter-changes filter-id.p.source]
@@ -1451,14 +1830,15 @@
   ::    for stars and under, we default to the parent ship.
   ::
   ++  init
-    |=  our=ship
+    |=  [our=ship bos=ship]
     ^+  +>
-    ::TODO  ship or node as sample?
-    =+  bos=(sein:title our)
-    ?.  =(our bos)
-      (listen-to-ship our bos)
-    =+  (need (de-purl:html 'http://localhost:8545'))
-    (listen-to-node -(p.p |))
+    ::  TODO: ship or node as sample?
+    ::
+    =.  latest-block  (max latest-block launch:contracts)
+    ?:  |(=(our bos) ?=(^ nod.own))
+      ~|  %jael-init-node
+      (listen-to-node (need nod.own))
+    (listen-to-ship our bos)
   ::
   ::  +look: configure the source of ethereum events
   ::
@@ -1529,18 +1909,39 @@
     ?:  ?=(%& -.source)  +>
     ?:  ?=(%tang mar)
       ::TODO  proper error handling
-      ~&  %yikes
       ~_  q.res
-      +>
+      ~&  [%yikes cuz]
+      +>.$
     ?>  ?=(%json-rpc-response mar)
-    ~|  res
-    =+  rep=((hard response:rpc:jstd) q.res)
+    =+  rep=~|(res ((hard response:rpc:jstd) q.res))
+    ?:  ?=(%fail -.rep)
+      ?:  =(405 p.hit.rep)
+        ~&  'HTTP 405 error (expected if using infura)'
+        +>.$
+      ?.  =(5 (div p.hit.rep 100))
+        ~&  [%http-error hit.rep]
+        +>.$
+      ?+  cuz
+        ~&  [%retrying-node ((soft tang) q.res)]
+        wait-poll
+          [%catch-up %step @ta @ta ~]
+        ~&  %retrying-catch-up
+        (catch-up (slav %ud `@ta`i.t.t.cuz))
+      ==
     ?+  cuz  ~|([%weird-sigh-wire cuz] !!)
         [%filter %new *]
       (take-new-filter rep)
     ::
         [%filter *]
       (take-filter-results rep)
+    ::
+        [%catch-up %block-number ~]
+      (take-block-number rep)
+    ::
+        [%catch-up %step @ta @ta ~]
+      =/  from-block  (slav %ud `@ta`i.t.t.cuz)
+      =/  next-block  (slav %ud `@ta`i.t.t.t.cuz)
+      (take-catch-up-step rep from-block next-block)
     ==
   ::
   ::  +take-new-filter: store filter-id and read it
@@ -1550,6 +1951,7 @@
     ^+  +>
     ~|  rep
     ?<  ?=(%batch -.rep)
+    ?<  ?=(%fail -.rep)
     ?:  ?=(%error -.rep)
       ~&  [%filter-error--retrying message.rep]
       new-filter
@@ -1563,20 +1965,68 @@
     |=  rep=response:rpc:jstd
     ^+  +>
     ?<  ?=(%batch -.rep)
+    ?<  ?=(%fail -.rep)
     ?:  ?=(%error -.rep)
-      ?.  =('filter not found' message.rep)
-        ~&  [%unhandled-filter-error message.rep]
+      ?.  ?|  =('filter not found' message.rep)  ::  geth
+              =('Filter not found' message.rep)  ::  parity
+          ==
+        ~&  [%unhandled-filter-error +.rep]
         +>
-      ~&  %filter-timed-out--recreating
+      ~&  [%filter-timed-out--recreating block=latest-block +.rep]
       new-filter
     ::  kick polling timer, only if it hasn't already been.
     =?  +>  ?&  ?=(%| -.source)
                 (gth now poll-timer.p.source)
             ==
       wait-poll
-    ?>  ?=(%a -.res.rep)
+    (take-events rep)
+  ::
+  ::  +take-block-number: take block number and start catching up
+  ::
+  ++  take-block-number
+    |=  rep=response:rpc:jstd
+    ^+  +>
+    ?<  ?=(%batch -.rep)
+    ?<  ?=(%fail -.rep)
+    ?:  ?=(%error -.rep)
+      ~&  [%take-block-number-error--retrying message.rep]
+      get-latest-block
+    =.  foreign-block  (parse-eth-block-number res.rep)
+    ~&  [%setting-foreign-block foreign-block]
+    (catch-up latest-block)
+  ::
+  ::  +take-catch-up-step: process chunk
+  ::
+  ++  take-catch-up-step
+    |=  [rep=response:rpc:jstd from-block=@ud next-block=@ud]
+    ^+  +>
+    ?<  ?=(%batch -.rep)
+    ?<  ?=(%fail -.rep)
+    ?:  ?=(%error -.rep)
+      ~&  [%catch-up-step-error--retrying message.rep]
+      (catch-up from-block)
+    ::  XX file
+    =.  +>.$  (take-events rep)
+    (catch-up next-block)
+  ::
+  ::  +take-events: process events
+  ::
+  ++  take-events
+    |=  rep=response:rpc:jstd
+    ^+  +>
+    ?<  ?=(%batch -.rep)
+    ?<  ?=(%fail -.rep)
+    ?<  ?=(%error -.rep)
+    ?.  ?=(%a -.res.rep)
+      ~&  [%events-not-array rep]
+      !!
     =*  changes  p.res.rep
-    ~&  [%filter-changes (lent changes)]
+    ~?  (gth (lent changes) 0)
+      :*  %processing-changes
+          changes=(lent changes)
+          block=latest-block
+          id=?.(?=(%| -.source) ~ `@ux`filter-id.p.source)
+      ==
     |-  ^+  +>.^$
     ?~  changes  +>.^$
     =.  +>.^$
@@ -1595,11 +2045,24 @@
     ::
     ::TODO  if the block number is less than latest, that means we got
     ::      events out of order somehow and should probably reset.
-    ?>  (gth block-number.place latest-block)
+    ::      This could also mean there was a chain reorg if the logs
+    ::      have the 'removed' tag set.  In this case, we should delete
+    ::      the old logs.  Finally, since we rewind 40 blocks on new
+    ::      filter, this could be up to 40 blocks old just because of
+    ::      that.
+    ::  ~?  (lte block-number.place latest-block)
+    ::    [%old-block block-number.place latest-block]
     ::
     ?:  (~(has in heard) block-number.place log-index.place)
-      ~&  %ignoring-duplicate-event
-      +>
+      ?.  removed.u.mined.log
+        ::  ~&  [%ignoring-duplicate-event tx=transaction-hash.u.mined.log]
+        +>
+      ~&  :*  'removed event!  Perhaps chain has reorganized?'
+              tx-hash=transaction-hash.u.mined.log
+              block-number=block-number.u.mined.log
+              block-hash=block-hash.u.mined.log
+          ==
+      +>  ::TODO  undo the effects of this event
     =+  cuz=[block-number.place log-index.place]
     ::
     ?:  =(event.log changed-dns:ships-events)
@@ -1671,13 +2134,147 @@
           tyl/spur
       ==
   ^-  (unit (unit cage))
-  :: XX security
+  ::  XX review for security, stability, cases other than now
+  ::
   ?.  =(lot [%$ %da now])  ~
-  %-  some
-  ?.  =(%$ ren)  ~
-  %+  bind  (~(scry of [now eny] lex) syd tyl)
-  =-  ~!  -  -
-  |=(a/gilt [-.a (slot `@`3 !>(a))])
+  ?.  =(%$ ren)  [~ ~]
+  ?+    syd
+      ~
+  ::
+      %code
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  ?&  ?=(%& -.why)
+            (~(has by pry.urb.lex) p.why)
+        ==
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    =/  sec  (~(got by jaw.own.sub.lex) lyf.own.sub.lex)
+    =/  cub  (nol:nu:crub:crypto sec)
+    ::  XX use pac:ex:cub?
+    ::
+    ``[%noun !>((end 6 1 (shaf %pass (shax sec:ex:cub))))]
+  ::
+      %life
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  ?&  ?=(%& -.why)
+            (~(has by pry.urb.lex) p.why)
+        ==
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    ::  fake ships always have life=1
+    ::
+    ?:  fak.own.sub.lex
+      ``[%atom !>(1)]
+    ?:  =(u.who p.why)
+      ``[%atom !>(lyf.own.sub.lex)]
+    =/  pub  (~(get by kyz.puk.sub.lex) u.who)
+    ?~  pub  ~
+    ``[%atom !>(life.u.pub)]
+  ::
+      %deed
+    ?.  ?=([@ @ ~] tyl)  [~ ~]
+    ?.  &(?=(%& -.why) =(p.why our.own.sub.lex))
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    =/  lyf  (slaw %ud i.t.tyl)
+    ?~  who  [~ ~]
+    ?~  lyf  [~ ~]
+    =/  rac  (clan:title u.who)
+    ::
+    ?:  ?=(%pawn rac)
+      ?.  =(u.who p.why)
+        [~ ~]
+      ?.  =(1 u.lyf)
+        [~ ~]
+      =/  sec  (~(got by jaw.own.sub.lex) u.lyf)
+      =/  cub  (nol:nu:crub:crypto sec)
+      =/  sig  (sign:as:cub (shaf %self (sham [u.who 1 pub:ex:cub])))
+      :^  ~  ~  %noun
+      !>  ^-  deed:ames
+      [1 pub:ex:cub `sig]
+    ::
+    ?:  ?=(%earl rac)
+      ?.  =(u.who p.why)
+        [~ ~]
+      ?:  (gth u.lyf lyf.own.sub.lex)
+        ~
+      ?:  (lth u.lyf lyf.own.sub.lex)
+        [~ ~]
+      =/  sec  (~(got by jaw.own.sub.lex) u.lyf)
+      =/  cub  (nol:nu:crub:crypto sec)
+      :^  ~  ~  %noun
+      !>  ^-  deed:ames
+      [u.lyf pub:ex:cub sig.own.sub.lex]
+    ::
+    =/  pub  (~(get by kyz.puk.sub.lex) u.who)
+    ?~  pub  ~
+    :: XX check lyf
+    ::
+    :^  ~  ~  %noun
+    !>  ^-  deed:ames
+    [life.u.pub (~(got by pubs.u.pub) life.u.pub) ~]
+  ::
+      %earl
+    ?.  ?=([@ @ @ ~] tyl)  [~ ~]
+    ?.  ?&  ?=(%& -.why)
+            (~(has by pry.urb.lex) p.why)
+        ==
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    =/  lyf  (slaw %ud i.t.tyl)
+    =/  pub  (slaw %ux i.t.t.tyl)
+    ?~  who  [~ ~]
+    ?~  lyf  [~ ~]
+    ?~  pub  [~ ~]
+    ?:  (gth u.lyf lyf.own.sub.lex)
+      ~
+    ?:  (lth u.lyf lyf.own.sub.lex)
+      [~ ~]
+    :: XX check that who/lyf hasn't been booted
+    ::
+    =/  sec  (~(got by jaw.own.sub.lex) u.lyf)
+    =/  cub  (nol:nu:crub:crypto sec)
+    =/  sig  (sign:as:cub (shaf %earl (sham u.who u.lyf u.pub)))
+    ``[%atom !>(sig)]
+  ::
+      %sein
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  ?&  ?=(%& -.why)
+            (~(has by pry.urb.lex) p.why)
+        ==
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    :^  ~  ~  %atom
+    !>  ^-  ship
+    (~(sein of [now eny] lex) u.who)
+  ::
+      %saxo
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  ?&  ?=(%& -.why)
+            (~(has by pry.urb.lex) p.why)
+        ==
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    :^  ~  ~  %noun
+    !>  ^-  (list ship)
+    (~(saxo of [now eny] lex) u.who)
+  ::
+      %snap
+    ?.  ?=(~ tyl)  [~ ~]
+    ?:  =(~ snaps.sap.lex)
+      `~
+    :^  ~  ~  %noun  !>
+    |-  ^-  snapshot
+    =^  snap=[@ud snap=snapshot]  snaps.sap.lex
+      ~(get to snaps.sap.lex)
+    ?:  =(~ snaps.sap.lex)
+      snap.snap
+    $
+  ==
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve
   lex

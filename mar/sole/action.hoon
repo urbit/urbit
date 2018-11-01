@@ -32,7 +32,7 @@
       ((sef) jon)
     ::
     ++  change  (ot ler+(at ni ni ~) ted+(pe 0v0 edit) ~)
-    ++  char  (cu turf so)
+    ++  char  (cu taft so)
     ++  edit
       %+  ke  *sole-edit  |.  ~+
       %+  fo  %nop

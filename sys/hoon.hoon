@@ -4132,7 +4132,7 @@
   ?>  |((gte b 32) =(10 b))
   ?:((lte b 127) 1 ?:((lte b 223) 2 ?:((lte b 239) 3 4)))
 ::
-++  turf                                                ::  utf8 to utf32
+++  taft                                                ::  utf8 to utf32
   |=  a/@t
   ^-  @c
   %+  rap  5
@@ -4156,7 +4156,7 @@
 ++  tuba                                                ::  utf8 to utf32 tape
   |=  a/tape
   ^-  (list @c)
-  (rip 5 (turf (rap 3 a)))                              ::  XX horrible
+  (rip 5 (taft (rap 3 a)))                              ::  XX horrible
 ::
 ++  tufa                                                ::  utf32 to utf8 tape
   |=  a/(list @c)
@@ -4263,7 +4263,7 @@
   ?:  =(`@`0 a)
     ~
   =+  b=(teff a)
-  =+  c=(turf (end 3 b a))
+  =+  c=(taft (end 3 b a))
   =+  d=$(a (rsh 3 b a))
   ?:  ?|  &((gte c 'a') (lte c 'z'))
           &((gte c '0') (lte c '9'))
@@ -5800,7 +5800,7 @@
       (stag %p fed:ag)
       ;~(pfix dot (stag %ta urs:ab))
       ;~(pfix sig (stag %t urx:ab))
-      ;~(pfix hep (stag %c (cook turf urx:ab)))
+      ;~(pfix hep (stag %c (cook taft urx:ab)))
     ==
   ++  nuck
     ~/  %nuck  |=  a/nail  %.  a

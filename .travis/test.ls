@@ -1,6 +1,6 @@
 {Urbit,ERROR} = require './runner.ls'
 
-urbit = new Urbit <[-B urbit.pill -A .. -cSFI zod zod]> 
+urbit = new Urbit <[-B urbit.pill -A .. -cSF zod zod]>
 Promise.resolve urbit
 .then (urb)->
   urb.note "Booting urbit"
