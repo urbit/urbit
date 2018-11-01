@@ -1471,10 +1471,7 @@ _cj_site_kick_hot(u3_noun loc, u3_noun cor, u3j_site* sit_u, c3_o lok_o)
   c3_o jet_o  = sit_u->jet_o;
   c3_o pof_o  =  __(u3C.wag_w & u3o_debug_cpu);
   if ( c3n == pof_o ) {
-    if ( c3n == jet_o ) {
-      pro = u3_none;
-    }
-    else {
+    if ( c3y == jet_o ) {
       u3t_off(glu_o);
       pro = _cj_kick_z(cor, sit_u->cop_u, sit_u->ham_u, sit_u->axe);
       u3t_on(glu_o);
