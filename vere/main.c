@@ -381,7 +381,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
-    "   %s -FI zod -A /path/to/arvo/folder -B /path/to/pill -c zod\n",
+    "   %s -F zod -A /path/to/arvo/folder -B /path/to/pill -c zod\n",
     "\n",
     "   For more information about developing on urbit, see:\n",
     "   https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md\n",
