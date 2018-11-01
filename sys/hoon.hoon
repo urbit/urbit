@@ -10252,15 +10252,15 @@
     ::
         {$dtwt *}  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
         {$hand *}  [p.gen q.gen]
-        {$ktbr *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) q.vat])
+        {$ktbr *}  =+(vat=$(gen p.gen) [(nice (wrap(sut p.vat) %iron)) q.vat])
     ::
         {$ktls *}
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
     ::
-        {$ktpd *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) q.vat])
+        {$ktpd *}  =+(vat=$(gen p.gen) [(nice (wrap(sut p.vat) %zinc)) q.vat])
         {$ktsg *}  (blow gol p.gen)
         {$tune *}  [(face p.gen sut) [%0 %1]]
-        {$ktwt *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
+        {$ktwt *}  =+(vat=$(gen p.gen) [(nice (wrap(sut p.vat) %lead)) q.vat])
     ::
         {$note *}
       =+  hum=$(gen q.gen)
