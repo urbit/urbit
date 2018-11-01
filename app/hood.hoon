@@ -145,6 +145,7 @@
 ++  peer-drum                 (wrap peer):from-drum
 ++  poke-atom                 (wrap poke-atom):from-helm
 ++  poke-dill-belt            (wrap poke-dill-belt):from-drum
+++  poke-dill-blit            (wrap poke-dill-blit):from-drum
 ++  poke-drum-put             (wrap poke-put):from-drum
 ++  poke-drum-link            (wrap poke-link):from-drum
 ++  poke-drum-unlink          (wrap poke-unlink):from-drum

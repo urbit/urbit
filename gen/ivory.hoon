@@ -31,7 +31,7 @@
 ::
 ::  whole-hoon: arvo within compiler
 ::
-=+  whole-hoon=`hoon`[%tsgr compiler-hoon [%tsgr [%$ 7] (ream arvo-source)]]
+=+  whole-hoon=`hoon`[%tsbn compiler-hoon [%tsbn [%$ 7] (ream arvo-source)]]
 ::
 ::  compile the whole schmeer
 ::

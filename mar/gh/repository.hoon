@@ -1,6 +1,5 @@
 /-  gh
-/+  gh-parse, httr-to-json, old-zuse
-=,  old-zuse
+/+  gh-parse, httr-to-json
 |_  repo/repository:gh
 ++  grab
   |%

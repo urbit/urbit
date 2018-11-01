@@ -4,6 +4,7 @@
   ::
 /?    310
 /-  *sole
+/+  *generators
 ::
 ::::
   ::
@@ -15,7 +16,7 @@
 =*  our  p.bec
 =/  ran  (clan:title our)
 ?:  ?=({?($earl $pawn)} ran)
-  %-  sole-so
+  %-  produce
   :-  %tang  :_  ~
   leaf+"can't create a moon from a {?:(?=($earl ran) "moon" "comet")}"
 =/  mon=ship
@@ -24,7 +25,7 @@
   (add our (lsh 5 1 (end 5 1 (shaz eny))))
 =/  seg=ship  (sein:title our now mon)
 ?.  =(our seg)
-  %-  sole-so
+  %-  produce
   :-  %tang  :_  ~
   leaf+"can't create keys for {(scow %p mon)}, which belongs to {(scow %p seg)}"
 =/  cub=acru:ames  (pit:nu:crub:crypto 512 eny)
@@ -33,5 +34,5 @@
   .^(@ j+/(scot %p our)/earl/(scot %da now)/(scot %p mon)/(scot %ud lyf)/(scot %ux pub:ex:cub))
 =/  sed=seed:able:jael
   [mon lyf sec:ex:cub `sig]
-%+  sole-yo  leaf+"moon: {(scow %p mon)}"
-%-  sole-so  [%atom (scot %uw (jam sed))]
+%+  print    leaf+"moon: {(scow %p mon)}"
+%-  produce  [%atom (scot %uw (jam sed))]

@@ -1,8 +1,8 @@
 ::
 |%
 ++  test
-  $%  [%arvo ~]       ::UNIMPLEMENTED 
-      [%marks ~]      ::UNIMPLEMENTED  
+  $%  [%arvo ~]       ::UNIMPLEMENTED
+      [%marks ~]      ::UNIMPLEMENTED
       [%cores p=path]
       [%hoons p=path]
       [%names p=path]
@@ -115,11 +115,11 @@
   ?-    -.a
       %arvo  ~|(%stub !!) ::basically double solid?
       %hoons  ~&((list-hoons p.a ~) ~)
-      %cores  [ost (build-core [- +]:(list-hoons p.a skip=(sy /sys /ren ~)))]~
+      %cores  [ost (build-core [- +]:(list-hoons p.a skip=(sy /sys /ren /tests ~)))]~
       %names  ~&((list-names p.a) ~)
       %marks  ~|(%stub !!) ::TODO restore historical handler
       %renders  [ost (build-rend [- +]:(list-names (weld /ren p.a)))]~
-  ==    
+  ==
 ::
 ++  list-names
   |=  a/path  ^-  (list term)
@@ -161,34 +161,12 @@
     :-  /ren/test-gen       "temporarily disabled"
     :-  /ren/tree/index     "temporarily disabled"
     :-  /ren/tree/elem      "temporarily disabled"
+    :-  /ren/urb            "temporarily disabled"
     :-  /ren/x-urb          "temporarily disabled"
     :-  /ren/x-htm          "temporarily disabled"
     :-  /ren/x-collections-snip          "temporarily disabled"
     :-  /ren/x-collections-json          "temporarily disabled"
-    :-  /ren/urb            "temporarily disabled"
   ::
-    :-  /app/gh             "hangs for some reason"
-    :-  /mar/gh             "hangs for some reason"
-    :-  /app/twit           "slow and/or crash"
-    :-  /gen/twit           "slow and/or crash"
-    :-  /mar/twit           "slow and/or crash"
-    :-  /gen/al             "compiler types out-of-date"
-    :-  /gen/ivory          "compiler types out-of-date"
-    :-  /gen/musk           "compiler types out-of-date"
-    :-  /gen/cosmetic       "incomplete"
-    :-  /gen/lust           "incomplete"
-    :-  /gen/scantastic     "incomplete"
-    :-  /gen/curl           "remove?"
-    :-  /gen/curl-hiss      "remove?"
-    :-  /gen/deco             "obsolete syntax"
-    :-  /lib/down-jet         "obsolete syntax"
-    :-  /lib/down-jet/parse   "obsolete syntax"
-    :-  /mar/lens/command     "obsolete syntax"
-    :-  /mar/down             "obsolete syntax"
-    :-  /sur/twitter          "obsolete syntax"
-    :-  /web/pack/css/codemirror-fonts-bootstrap-tree  "obsolete syntax"
-    :-  /web/pack/js/tree-urb                          "obsolete syntax"
-    :-  /web/unmark/all       "obsolete syntax"
     :-  /web/landscape      "/$ doensn't work in tests"
   ==
 ::
@@ -196,14 +174,35 @@
   ^~  ^-  (map path tape)
   %-  my  :~ ::TODO don't hardcode
   ::
-    :-  /app/pipe           "wants 'flavor:hall' to exist"
-    :-  /app/mark-dashboard   "wants old ford"
-    :-  /app/static         "wants old ford"
-    :-  /gen/capitalize     "wants unicode-data/txt"
+    :-  /app/pipe              "wants 'flavor:hall' to exist"
+    :-  /app/mark-dashboard    "wants old ford"
+    :-  /app/static            "wants old ford"
+    :-  /gen/capitalize        "wants unicode-data/txt"
   ::
-    :-  /lib/twitter              "ford can't handle surs from libs"
-    :-  /sys/arvo                 "BROKEN"
-    :-  /sys/vane/jael            "expects our"
-    :-  /sys/vane/xmas            "expects our"
+    :-  /app/twit              "depends on sur/twitter"
+    :-  /gen/twit/as           "depends on sur/twitter"
+    :-  /gen/twit/feed         "depends on sur/twitter"
+    :-  /mar/twit/cred         "depends on sur/twitter"
+    :-  /mar/twit/feed         "depends on sur/twitter"
+    :-  /mar/twit/post         "depends on sur/twitter"
+    :-  /mar/twit/req          "depends on sur/twitter"
+    :-  /mar/twit/usel         "depends on sur/twitter"
+    :-  /lib/twitter           "depends on sur/twitter"
+    :-  /sur/twitter           "crashes with new type system"
+  ::
+    :-  /gen/al                "compiler types out-of-date"
+    :-  /gen/musk              "compiler types out-of-date"
+  ::
+    :-  /gen/cosmetic          "incomplete"
+    :-  /gen/lust              "incomplete"
+    :-  /gen/scantastic        "incomplete"
+  ::
+    :-  /app/gh                "crashes with new type system"
+    :-  /mar/gh/issue-comment  "wants old 'speech:hall'"
+    :-  /mar/gh/issues         "wants old 'speech:hall'"
+  ::
+    :-  /lib/down-jet          "depends on lib/down-jet/parse"
+    :-  /mar/down              "depends on lib/down-jet/parse"
+    :-  /lib/down-jet/parse    "obsolete syntax"
   ==
 --

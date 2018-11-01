@@ -3,12 +3,10 @@
   ::
 /?    310
 /-    sole
-/+    old-zuse
 ::
 ::::
   ::
 =,  sole
-=,  old-zuse
 |_  sole-action
 ::
 ++  grab                                                ::  convert from
@@ -16,7 +14,7 @@
   ++  json
     |=  jon/^json  ^-  sole-action
     %-  need  %.  jon
-    =>  [jo ..sole-action]
+    =>  [dejs-soft:format ..sole-action]
     |^  (fo %ret (of det+change ~))
     ++  fo
       |*  {a/term b/fist}

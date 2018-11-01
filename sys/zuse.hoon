@@ -70,7 +70,7 @@
 ::
 ++  coop  (unit ares)                                   ::  possible error
 ++  json                                                ::  normal json value
-  $@  ~                                                ::  null
+  $@  ~                                                 ::  null
   $%  {$a p/(list json)}                                ::  array
       {$b p/?}                                          ::  boolean
       {$o p/(map @t json)}                              ::  object
@@ -6343,9 +6343,6 @@
       ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
     ::                                                  ::  ++auri:de-purl:html
     ++  auri                                            ::  2396 URL
-      %+  cook
-        |=  a/purl
-        ?.(?=(hoke r.p.a) a a(p.p &))
       ;~  plug
         ;~(plug htts thor)
         ;~(plug ;~(pose apat (easy *pork)) yque)
