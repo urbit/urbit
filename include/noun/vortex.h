@@ -26,6 +26,7 @@
         u3_noun sev_l;                    //  instance number
         u3_noun sen;                      //  instance string
         u3_noun own;                      //  owner list
+        u3_noun fak;                      //  &=fake XX use c3_o?
 
         u3_noun sac;                      //  space profiling
 

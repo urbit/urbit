@@ -22,7 +22,7 @@
       if ( !_(u3a_is_cat(met_w)) ) {
         return u3i_words(1, &met_w);
       }
-      else return u3r_met(a, b);
+      else return met_w;
     }
   }
   u3_noun

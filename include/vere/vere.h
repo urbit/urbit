@@ -254,9 +254,11 @@
           uv_handle_t had_u;
         };
         uv_timer_t    tim_u;                //  network timer
+        c3_o          liv;                  //  listener on
         c3_o          alm;                  //  alarm on
         c3_w          law_w;                //  last wakeup, unix time
         c3_s          por_s;                //  public IPv4 port
+        c3_c*         dns_c;                //  domain XX multiple/fallback
         c3_w          imp_w[256];           //  imperial IPs
         time_t        imp_t[256];           //  imperial IP timestamps
       } u3_ames;
@@ -578,20 +580,21 @@
     */
       typedef struct _u3_opts {
         c3_c*   arv_c;                      //  -A, initial sync from
-        c3_c*   dns_c;                      //  -H, ames bootstrap domain
         c3_c*   gen_c;                      //  -G, czar generator
-        c3_c*   imp_c;                      //  -I, czar name
         c3_c*   nam_c;                      //  -n, unix hostname
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_c*   raf_c;                      //  -r, raft flotilla
-        c3_c*   tic_c;                      //  -t, ticket value
         c3_c*   url_c;                      //  -u, pill url
         c3_c*   who_c;                      //  -w, begin with ticket
+        c3_c*   key_c;                      //  -K, private key file
         c3_o    abo;                        //  -a
         c3_o    bat;                        //  -b, batch create
         c3_o    dem;                        //  -d, daemon
         c3_o    dry;                        //  -D, dry compute  
-        c3_o    fak;                        //  -F, fake carrier
+        c3_c*   eth_c;                      //  -e, ethereum node url
+        c3_o    etn;                        //  -t, use snapshot exclusively to boot
+        c3_c*   ets_c;                      //  -E, eth snapshot
+        c3_c*   fak_c;                      //  -F, fake ship
         c3_o    fog;                        //  -X, skip last event
         c3_o    gab;                        //  -g, run with garbage collector
         c3_o    has;                        //  -S, Skip battery hashes
@@ -861,11 +864,6 @@
         void
         u3_term_ef_boil();
 
-      /* u3_term_ef_ticket(): initial effects for new ticket.
-      */
-        void
-        u3_term_ef_ticket(c3_c* who_c, c3_c* tic_c);
-
       /* u3_term_ef_verb(): initial effects for verbose events.
       */
         void
@@ -942,6 +940,11 @@
         void
         u3_ames_ef_send(u3_noun lan,
                         u3_noun pac);
+
+      /* u3_ames_ef_turf(): initialize ames I/O on domain(s).
+      */
+        void
+        u3_ames_ef_turf(u3_noun tuf);
 
       /* u3_ames_io_init(): initialize ames I/O.
       */
