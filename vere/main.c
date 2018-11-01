@@ -222,7 +222,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.ops_u.net = c3y;  /* remote networking is always on in real mode. */
   }
 
-  if ( u3_Host.ops_u.fak == c3y ) {
+  if ( 0 != u3_Host.ops_u.fak_c ) {
     u3_Host.ops_u.has = c3y;  /* no battery hashing on fake ships. */
   }
 
