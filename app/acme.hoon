@@ -829,7 +829,18 @@
       this
     ?>  ?=(^ rod)
     ?>  ?=(^ active.aut.u.rod)
-    :: XX check content type and response body
+    =*  aut  u.active.aut.u.rod
+    =/  bod
+      %-  as-octs:mimes:html
+      (rap 3 [tok.cal.aut '.' (pass:thumb:jwk key.act) ~])
+    ?.  ?&  ?=(^ r.rep)
+            =(bod u.r.rep)
+        ==
+      ::  XX save-trail again?
+      ::  XX probably a DNS misconfiguration
+      ::
+      ~&  [%test-trial-mismatch expected=bod got=[wir rep]]
+      this
     finalize-trial:effect
   :: +finalize-trial:
   ::
