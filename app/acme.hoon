@@ -818,10 +818,15 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ?.  =(200 p.rep)
-      ::  XX count retries, backoff
-      ::
       ~&  [%test-trial-fail wir rep]
-      (retry:effect /test-trial (add now.bow ~s10))
+      ::  XX this condition will need to change if vere/cttp timeouts change
+      ::
+      ?:  &(=(504 p.rep) ?=(~ r.rep))
+        ::  retry timeouts
+        ::  XX count retries, backoff
+        ::
+        (retry:effect /test-trial (add now.bow ~s10))
+      this
     ?>  ?=(^ rod)
     ?>  ?=(^ active.aut.u.rod)
     :: XX check content type and response body
