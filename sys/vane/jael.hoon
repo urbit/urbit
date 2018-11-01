@@ -1153,7 +1153,14 @@
       ==
     ::
     ++  vent
-      %.  [[hen ~ ~] chain+&+eve]  ::  XX  send snap
+      =/  last-snap
+        |-  ^-  snapshot
+        =^  snap=[@ud snap=snapshot]  snaps.sap
+          ~(get to snaps.sap)
+        ?:  =(~ snaps.sap)
+          snap.snap
+        $
+      %.  [[hen ~ ~] snap+last-snap]
       %_  vent-pass
       :: %_  ..feed  ::TODO  see ++abet
         :: moz      [[hen %give %vent &+eve] moz]
