@@ -1501,7 +1501,9 @@
           last-block  block.wer
         ==
       =?  sap  (gth count.sap max-count.sap)
-        ~&  :*  %dump  count=count.sap  max-count=max-count.sap
+        ~&  :*  %dump
+                count=count.sap
+                max-count=max-count.sap
                 lent=(lent ~(tap to snaps.sap))
             ==
         %=  sap

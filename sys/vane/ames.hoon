@@ -1369,7 +1369,7 @@
       =/  diz  (myx:gus her)
       ?:  =(0 life.sih)
           ::  this should clear lew.wod.dur.diz because it means
-          ::  we know longer trust that their public key came to
+          ::  we no longer trust that their public key came to
           ::  us honestly (becuse of a %jael snapshot restore).
           ::  in practice, that crashes in ++cluy:las:as:go, so
           ::  we ignore for now.
