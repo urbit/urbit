@@ -641,7 +641,7 @@
   ++  register
     |=  [wir=wire rep=httr]
     ^+  this
-    ?.  =(201 p.rep)
+    ?.  |(=(200 p.rep) =(201 p.rep))
       ::  XX possible 204?
       ::
       ?:  (bad-nonce rep)
