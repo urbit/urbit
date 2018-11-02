@@ -2091,7 +2091,21 @@
   ::                                                    ::  ++restore-snap:et
   ++  restore-snap                                      ::  restore snapshot
     |=  snap=snapshot
+    ::  update pub subscribers
+    ::
+    =.  +>.$
+      =/  subs=(list (pair ship (set duct)))
+        ~(tap by yen.puk.sub)
+      |-  ^+  +>.^$
+      ?~  subs  +>.^$
+      =/  pub  (fall (~(get by kyz.snap) p.i.subs) %*(. *public live |))
+      =.  +>.^$  (exec q.i.subs [%give %pubs pub])
+      $(subs t.subs)
+    ::  update vent subscribers
+    ::
+    =.  +>.$  (vent-pass yen.eth snap+snap)
     ::  keep the following in sync with ++extract-snap:file:su
+    ::
     %=  +>.$
         eve.urb       eve.snap
         etn           etn.snap(source source.etn)
@@ -2099,7 +2113,29 @@
         +.eth.sub     eth.snap
         sap           sap(last-block 0)
     ==
-  ::
+  ::                                                    ::  ++exec:et
+  ++  exec                                              ::  mass gift
+    |=  {yen/(set duct) cad/card}
+    =/  noy  ~(tap in yen)
+    |-  ^+  ..exec
+    ?~  noy  ..exec
+    $(noy t.noy, moves [[i.noy cad] moves])
+  ::                                                    ::  ++vent-pass:et
+  ++  vent-pass                                         ::  "give" vent
+    |=  [yen=(set duct) res=vent-result]
+    =+  yez=~(tap in yen)
+    |-  ^+  ..vent-pass
+    ?~  yez  ..vent-pass
+    =*  d  i.yez
+    ?>  ?=([[%a @ @ *] *] d)
+    =+  our=(slav %p i.t.i.d)
+    =+  who=(slav %p i.t.t.i.d)
+    %+  exec  [d ~ ~]
+    :+  %pass
+      /(scot %p our)/vent-result
+    ^-  note:able
+    [%a %want [our who] /j/(scot %p our)/vent-result %vent-result res]
+  ::                                                    ::  ++feed:su
   --
 --
 ::                                                      ::::
