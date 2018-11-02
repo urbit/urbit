@@ -6,6 +6,7 @@
 /+  cram, elem-to-react-json
 ::
 ::  
+~%  %collections-lib  ..is  ~
 |%
 +=  move  [bone card]
 +=  card
@@ -73,6 +74,7 @@
   ==
 ::
 ++  collection-error
+  ~/  %coll-collection-error
   |=  col=collection
   ^-  ?
   |-
@@ -93,6 +95,7 @@
 ++  words  1
 ++  hedtal
   =|  met/marl
+  ~/  %coll-hedtal
   |=  a/marl  ^-  {hed/marl tal/marl}
   ?~  a  [~ ~]
   :: looks like it only terminates if it finds an h1?
@@ -106,6 +109,7 @@
   ::
 ::
 ++  limit
+  ~/  %coll-limit
   |=  {lim/@u mal/marl}
   =<  res
   |-  ^-  {rem/@u res/marl}
@@ -118,6 +122,7 @@
   [rem - res]:[hed $(lim lam, mal t.mal)]
 ::
 ++  deword
+  ~/  %coll-deword
   |=  {lim/@u tay/tape}  ^-  {lim/@u tay/tape}
   ?~  tay  [lim tay]
   ?~  lim  [0 ~]
@@ -130,6 +135,7 @@
 ::  json
 ::
 ++  item-to-json
+  ~/  %coll-item-to-json
   |=  itm=item
   ^-  json
   ?-    -.itm
@@ -151,6 +157,7 @@
   ==
 ::
 ++  collection-to-json
+  ~/  %coll-collection-to-json
   |=  col=collection
   ^-  json
   %-  pairs:enjs:format
@@ -166,6 +173,7 @@
   ==
 ::
 ++  raw-to-json
+  ~/  %coll-raw-to-json
   |=  raw=raw-item
   ^-  json
   =/  elm=manx  elm:(static:cram (ream data.raw))
@@ -176,6 +184,7 @@
   ==
 ::
 ++  config-to-json
+  ~/  %coll-config-to-json
   |=  con=config
   ^-  json
   ?:  =(con *config)
@@ -198,6 +207,7 @@
   ==
 ::
 ++  meta-to-json
+  ~/  %coll-meta-to-json
   |=  meta=(map knot cord)
   ^-  json
   %-  pairs:enjs:format
@@ -207,6 +217,7 @@
   [key [%s val]]
 ::
 ++  umd-to-front
+  ~/  %coll-umd-to-front
   |=  u=@t
   ^-  (map knot cord)
   %-  ~(run by inf:(static:cram (ream u)))
@@ -221,6 +232,7 @@
 ::    for a path /foo/bar it returns a circle with a :name %c-foo-bar
 ::
 ++  path-to-circle
+  ~/  %coll-path-to-circle
   |=  [pax=path our=@p]
   ^-  circle:hall
   =.  pax
@@ -242,6 +254,7 @@
 ::  +allowed-by: checks if ship :who is allowed by the permission rules in :dic
 ::
 ++  allowed-by
+  ~/  %coll-allowed-by
   |=  [who=@p dic=dict:clay our=@p]
   ^-  ?
   ?:  =(who our)  &
@@ -260,6 +273,7 @@
 ::  +collection-notify: XX
 ::
 ++  collection-notify
+  ~/  %coll-collection-notify
   |=  [pax=path conf=config]
   ^-  json
   %-  pairs:enjs:format
@@ -273,6 +287,7 @@
 ::  +item-notify: XX
 ::
 ++  item-notify
+  ~/  %coll-item-notify
   |=  [pax=path raw=raw-item now=@da byk=beak]
   ^-  json
   =/  owner  (fall (~(get by meta.raw) %owner) ~.anon)
@@ -316,6 +331,7 @@
 ::  +front-to-wain: XX
 ::
 ++  front-to-wain
+  ~/  %coll-front-to-wain
   |=  a=(map knot cord)
   ^-  wain
   =/  entries=wain
@@ -334,6 +350,7 @@
 ::  +update-umd-front: XX
 ::
 ++  update-umd-front
+  ~/  %coll-update-umd-front
   |=  [fro=(map knot cord) umd=@t]
   ^-  @t
   %-  of-wain:format
@@ -348,6 +365,7 @@
 ::  _ta: main event core for collections
 ::
 ++  ta
+  ~/  %coll-ta
   |_  $:  moves=(list move)
           bol=bowl:gall
       ==
@@ -365,6 +383,7 @@
   ::  +ta-emit: add a +move to :moves
   ::
   ++  ta-emit
+    ~/  %coll-ta-emit
     |=  mov=move
     %_  ta-this
       moves  [mov moves]
@@ -373,6 +392,7 @@
   ::  +ta-emil: add a list of +move to :moves
   ::
   ++  ta-emil
+    ~/  %coll-ta-emil
     |=  mos=(list move)
     %_  ta-this
       moves  (welp (flop mos) moves)
@@ -381,6 +401,7 @@
   ::  +ta-act: process collection-action
   ::
   ++  ta-act
+    ~/  %coll-ta-act
     |=  act=action
     ^+  ta-this
     ::
@@ -515,6 +536,7 @@
   ::
   ::
   ++  ta-update
+    ~/  %coll-ta-update
     |=  [old=collection new=collection]
     ^+  ta-this
     ?:  =(old new)
@@ -522,6 +544,7 @@
     (ta-update-collection old new /web/collections)
   ::
   ++  ta-insert-item
+    ~/  %coll-ta-insert-item
     |=  [new=item pax=path]
     ^+  ta-this
     =/  parent-path  (scag (dec (lent pax)) pax)
@@ -569,6 +592,7 @@
     ==
   ::
   ++  ta-remove-item
+    ~/  %coll-ta-remove-item
     |=  [old=item pax=path]
     ^+  ta-this
     ::  flush permissions
@@ -615,6 +639,7 @@
     ::  always make sure removals happen first and insertions happen last
     ::  because removals flush permissions and insertions set them
     ::
+    ~/  %coll-ta-update-item
     |=  [old=item new=item pax=path]
     ^+  ta-this
     ?:  =(old new)
@@ -681,6 +706,7 @@
     ta-this
   ::
   ++  ta-update-raw-item
+    ~/  %coll-ta-update-raw-item
     |=  [old=raw-item new=raw-item pax=path]
     ^+  ta-this
     ?:  =(old new)
@@ -710,6 +736,7 @@
     ta-this
   ::
   ++  ta-update-collection
+    ~/  %coll-ta-update-collection
     |=  $:  old=collection
             new=collection
             pax=path
@@ -773,6 +800,7 @@
     ta-this
   ::
   ++  ta-generate-comments
+    ~/  %coll-ta-generate-comments
     |=  pax=path
     ^+  ta-this
     =/  sup=path  [%collections-config (flop pax)]
@@ -796,6 +824,7 @@
   ::  writing files
   ::
   ++  ta-write
+    ~/  %coll-ta-write
     =,  space:userlib
     |=  [pax=path cay=cage]
     ^+  ta-this
@@ -806,6 +835,7 @@
   ::
   ++  ta-remove
     =,  space:userlib
+    ~/  %coll-ta-remove
     |=  pax=path
     =/  bek  byk.bol(r [%da now.bol])
     =.  pax  (en-beam:format bek (flop pax))
@@ -816,12 +846,14 @@
   ::  permissions
   ::
   ++  ta-set-permissions
+    ~/  %coll-ta-set-permissions
     |=  [pax=path r=rule:clay w=rule:clay]
     ^+  ta-this
     %+  ta-emit  ost.bol
     [%perm (weld /perms pax) our.bol q.byk.bol pax [%rw `r `w]]
   ::
   ++  ta-flush-permissions
+    ~/  %coll-ta-flush-permissions
     |=  pax=path
     ^+  ta-this
     %+  ta-emit  ost.bol
@@ -830,12 +862,14 @@
   ::  hall
   ::
   ++  ta-hall-action
+    ~/  %coll-ta-hall-action
     |=  act=action:hall
     ^+  ta-this
     %+  ta-emit  ost.bol
     [%poke /col-hall-action [our.bol %hall] %hall-action act]
   ::
   ++  ta-hall-actions
+    ~/  %coll-ta-hall-actions
     |=  act=(list $?(~ action:hall))
     ^+  ta-this
     ?~  act  ta-this
@@ -846,6 +880,7 @@
     ==
   ::
   ++  ta-hall-create-circle
+    ~/  %coll-ta-hall-create-circle
     |=  [pax=path description=@t]
     ^+  ta-this
     =/  circ=circle:hall  (path-to-circle pax our.bol)
@@ -859,6 +894,7 @@
     ==
   ::
   ++  ta-hall-lin
+    ~/  %coll-ta-hall-lin
     |=  [pax=path msg=cord]
     ^+  ta-this
     =/  circ=circle:hall  (path-to-circle pax our.bol)
@@ -866,6 +902,7 @@
     [%phrase [circ ~ ~] [%lin | msg]~]
   ::
   ++  ta-hall-json
+    ~/  %coll-ta-hall-json
     |=  [pax=path header=@t jon=json]
     ^+  ta-this
     =/  circ=circle:hall  (path-to-circle pax our.bol)

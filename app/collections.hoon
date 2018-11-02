@@ -29,6 +29,7 @@
 ::    stores the collection built by above by :cols so that we can compare old
 ::    and new versions whenever the rendered data changes
 ::
+~%  %collections  ..^is  ~
 |_  [bol=bowl:gall sta=state]
 ::
 ::  +this: app core subject
@@ -43,6 +44,7 @@
 ::    then update state to store the new collection data
 ::
 ++  prep
+  ~/  %coll-prep
   |=  old=(unit state)
   ^-  (quip move _this)
   ?~  old
@@ -62,6 +64,7 @@
 ::    recieve acknowledgement for permissions changes, print error if it failed
 ::
 ++  mack
+  ~/  %coll-mack
   |=  [wir=wire err=(unit tang)]
   ^-  (quip move _this)
   ?~  err
@@ -71,6 +74,7 @@
 ::  +coup: recieve acknowledgement for poke, print error if it failed
 ::
 ++  coup
+  ~/  %coll-coup
   |=  [wir=wire err=(unit tang)]
   ^-  (quip move _this)
   ?~  err
@@ -82,6 +86,7 @@
 ::    the main interface for creating and deleting collections and items
 ::
 ++  poke-collections-action
+  ~/  %coll-poke-collections-action
   |=  act=action
   ^-  (quip move _this)
   ?:  =(who.act our.bol)
@@ -103,6 +108,7 @@
 ::    utility for setting whether or not to display the onboarding page
 ::
 ++  poke-json
+  ~/  %coll-poke-json
   |=  jon=json
   ^-  (quip move _this)
   ?:  ?=([%o [[%onboard %b ?] ~ ~]] jon)
