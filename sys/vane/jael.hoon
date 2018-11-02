@@ -1187,7 +1187,7 @@
       ::  update public key store and notify subscribers
       ::  of the new state
       ::
-      ~&  [%sending-pubs-about who life.pub live.pub]
+      :: ~&  [%sending-pubs-about who life.pub live.pub]
       %+  exec(kyz.puk (~(put by kyz.puk) who pub))
         (~(get ju yen.puk) who)
       [%give %pubs pub]
