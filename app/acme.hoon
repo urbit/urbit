@@ -19,6 +19,31 @@
   ++  en  |=(a=@u `octs`[(met 3 a) (swp 3 a)])
   ++  de  |=(a=octs `@u`(rev 3 p.a q.a))
   --
+::  |body: acme api response body types
+::
+++  body
+  |%
+  +$  acct  [id=@t wen=@t sas=@t]
+  ::
+  +$  order
+    $:  exp=@t
+        sas=@t
+        aut=(list purl)
+        fin=(unit purl)
+        cer=(unit purl)
+    ==
+  ::
+  +$  auth
+    $:  dom=turf
+        sas=@t
+        exp=@t
+        cal=challenge
+    ==
+  ::
+  +$  challenge  [typ=@t sas=@t url=purl tok=@t err=(unit error)]
+  ::
+  +$  error  [type=@t detail=@t]
+  --
 ::
 ::  |grab: acme api response json reparsers
 ::
@@ -28,104 +53,80 @@
   ::  +json-purl: parse url
   ::
   ++  json-purl  (su auri:de-purl:html)
+  ::  +json-date: parse iso-8601
+  ::
+  ::    XX actually parse
+  ::
+  ++  json-date  so
   ::  +directory: parse ACME service directory
   ::
   ++  directory
     %-  ot
-    :~  ['newAccount' json-purl]
-        ['newNonce' json-purl]
-        ['newOrder' json-purl]
-        ['revokeCert' json-purl]
-        ['keyChange' json-purl]
+    :~  'newAccount'^json-purl
+        'newNonce'^json-purl
+        'newOrder'^json-purl
+        'revokeCert'^json-purl
+        'keyChange'^json-purl
     ==
   ::  +acct: parse ACME service account
   ::
   ++  acct
-    %-  ot
-    :~  ['id' no]
-        ::  XX write iso-8601 parser
-        ::
-        ['createdAt' so]
-        ['status' so]
-        ::  ignore key, contact, initialIp
-        ::
-    ==
+    ^-  $-(json acct:body)
+    ::  ignoring key, contact, initialIp
+    ::
+    (ot 'id'^no 'createdAt'^json-date 'status'^so ~)
   ::  +order: parse certificate order
   ::
   ++  order
-    %-  ot
-    :~  ['authorizations' (ar json-purl)]
-        ['finalize' json-purl]
-        ::  XX write iso-8601 parser
-        ::
-        ['expires' so]
-        ['status' so]
-    ==
-  ::  +finalizing-order: parse order in a finalizing state
-  ::
-  ::    XX remove once +order has optional keys
-  ::
-  ++  finalizing-order
-    %-  ot
-    :~  ::  XX write iso-8601 parser
-        ::
-        ['expires' so]
-        ['status' so]
-    ==
-  ::  +final-order: parse order in a finalized state
-  ::
-  ::    XX remove once +order has optional keys
-  ::
-  ++  final-order
-    %-  ot
-    :~  ::  XX write iso-8601 parser
-        ::
-        ['expires' so]
-        ['status' so]
-        ['certificate' json-purl]
+    ^-  $-(json order:body)
+    %-  ou
+    :~  'expires'^(un json-date)
+        'status'^(un so)
+        'authorizations'^(uf ~ (ar json-purl))
+        'finalize'^(uf ~ (mu json-purl))
+        'certificate'^(uf ~ (mu json-purl))
     ==
   ::  +auth: parse authorization
   ::
   ++  auth
     =>  |%
-        ::  +iden: parse dns identifier to +turf
+        ::  +iden: extract +turf from service identifier
         ::
         ++  iden
           |=  [typ=@t hot=host]
+          ^-  turf
           ?>(&(?=(%dns typ) ?=([%& *] hot)) p.hot)
-        ::  +trial: transform parsed domain validation challenge
+        ::  +http-trial: extract %http-01 challenge
         ::
         ++  trial
-          |=  a=(list [typ=@t sas=@t url=purl tok=@t])
-          ^+  ?>(?=(^ a) i.a)
-          =/  b
-            (skim a |=([typ=@t *] ?=(%http-01 typ)))
+          |=  a=(list challenge:body)
+          ^-  challenge:body
+          =/  b  (skim a |=([typ=@t *] ?=(%http-01 typ)))
           ?>(?=(^ b) i.b)
         --
+    ^-  $-(json auth:body)
     %-  ot
-    :~  ['identifier' (cu iden (ot type+so value+(su thos:de-purl:html) ~))]
-        ['status' so]
-        ::  XX write iso-8601 parser
-        ::
-        ['expires' so]
-        ['challenges' (cu trial (ar challenge))]
+    :~  'identifier'^(cu iden (ot type+so value+(su thos:de-purl:html) ~))
+        'status'^so
+        'expires'^json-date
+        'challenges'^(cu trial (ar challenge))
     ==
   ::  +challenge: parse domain validation challenge
   ::
   ++  challenge
-    %-  ot
-    :~  ['type' so]
-        ['status' so]
-        ['url' json-purl]
-        ['token' so]
+    ^-  $-(json challenge:body)
+    %-  ou
+    :~  'type'^(un so)
+        'status'^(un so)
+        'url'^(un json-purl)
+        'token'^(un so)
+        'error'^(uf ~ (mu error))
     ==
   ::  +error: parse ACME service error response
   ::
   ++  error
-    %-  ot
-    :~  ['type' so]
-        ['detail' so]
-    ==
+    ^-  $-(json error:body)
+    (ot type+so detail+so ~)
   --
 --
 ::
@@ -377,9 +378,7 @@
   ?~  r.rep  |
   =/  jon=(unit json)  (de-json:html q.u.r.rep)
   ?~  jon  |
-  ::  XX unit parser, types
-  ::
-  =('urn:ietf:params:acme:error:badNonce' -:(error:grab u.jon))
+  =('urn:ietf:params:acme:error:badNonce' type:(error:grab u.jon))
 ::  |effect: send moves to advance
 ::
 ++  effect
@@ -657,7 +656,7 @@
     =/  wen=@t              
       ?~  r.rep
         (scot %da now.bow)
-      =/  bod=[id=@t wen=@t sas=@t]
+      =/  bod=acct:body
         (acct:grab (need (de-json:html q.u.r.rep)))
       ?>  ?=(%valid sas.bod)
       wen.bod
@@ -691,17 +690,16 @@
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
     =/  ego=purl  (need (de-purl:html loc))
-    ::  XX add parser output types
     ::  XX parse identifiers, confirm equal to pending domains
     ::  XX check status
     ::
-    =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t]
+    =/  bod=order:body
       (order:grab (need (de-json:html q:(need r.rep))))
     ::  XX maybe generate key here?
     ::
     =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in u.pen))
     =/  dor=order
-      [dom=u.pen sas=%wake exp.bod ego fin.bod cey csr [aut.bod ~ ~]]
+      [dom=u.pen sas=%wake exp.bod ego (need fin.bod) cey csr [aut.bod ~ ~]]
     get-authz:effect(rod `dor, pen ~)
   ::  +finalize-order: order finalized, poll for certificate
   ::
@@ -737,10 +735,8 @@
       ::
       this
     ?>  ?=(^ rod)
-    =/  raw=json
-      (need (de-json:html q:(need r.rep)))
-    =/  bod=[exp=@t sas=@t]
-      (finalizing-order:grab raw)
+    =/  bod=order:body
+      (order:grab (need (de-json:html q:(need r.rep))))
     ?+  sas.bod
       ~&  [%check-order-status-unknown sas.bod]
       this
@@ -771,14 +767,11 @@
     ::  certificate issued
     ::
         %valid
-      ::  XX json reparser unit
-      ::
-      =/  bod=[exp=@t sas=@t cer=purl]
-        (final-order:grab raw)
       ::  XX update order state
       ::  XX =< delete-trial
       ::
-      (certificate:effect cer.bod)
+      ~|  impossible-order+[wir rep bod]
+      (certificate:effect (need cer.bod))
     ==
   ::
   ::  +certificate: accept PEM-encoded certificate
@@ -827,14 +820,12 @@
       this
     ?>  ?=(^ rod)
     ?>  ?=(^ pending.aut.u.rod)
-    ::  XX parser types
-    ::
-    =/  bod=[dom=turf sas=@t exp=@t cal=[typ=@t sas=@t ego=purl tok=@t]]
+    =/  bod=auth:body
       (auth:grab (need (de-json:html q:(need r.rep))))
     =/  cal=trial
        ::  XX parse token to verify url-safe base64?
        ::
-      [%http ego.cal.bod tok.cal.bod %recv]
+      [%http url.cal.bod tok.cal.bod %recv]
     ::  XX check that URLs are the same
     ::
    =/  tau=auth  [i.pending.aut.u.rod dom.bod cal]
@@ -906,7 +897,7 @@
     ?>  ?=(^ rod)
     ?>  ?=(^ active.aut.u.rod)
     =*  aut  u.active.aut.u.rod
-    =/  bod=[typ=@t sas=@t url=purl tok=@t]
+    =/  bod=challenge:body
       (challenge:grab (need (de-json:html q:(need r.rep))))
     ::  XX check for other possible values in 200 response
     ::  note: may have already been validated
