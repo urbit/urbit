@@ -1,7 +1,5 @@
-/+  collections, colls
+/+  collections
 /=  gas  /$  fuel:html
-::/=  all-colls  /:  /===/web/collections
-::               /collection-web-item/
 |%
   :: is this collection on the profile?
   ++  is-pro
