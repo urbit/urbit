@@ -1365,13 +1365,18 @@
       ~&  [%hear-pubs tea sih]
       =/  our=ship  (slav %p i.t.tea)
       =/  her=ship  (slav %p i.t.t.t.tea)
-      ?:  =(0 life.sih)
-        ~&  %ames-hear-empty-pubs
-        [~ +>.$]
-      =/  ded=deed
-        [life.sih (~(got by pubs.sih) life.sih) oath=~]
       =/  gus  (need (~(us go ton.fox) our))
       =/  diz  (myx:gus her)
+      ?:  =(0 life.sih)
+          ::  this should clear lew.wod.dur.diz because it means
+          ::  we no longer trust that their public key came to
+          ::  us honestly (becuse of a %jael snapshot restore).
+          ::  in practice, that crashes in ++cluy:las:as:go, so
+          ::  we ignore for now.
+          ~&  [%ames-hear-empty-pub her]
+          [~ +>.$]
+      =/  ded=deed
+        [life.sih (~(got by pubs.sih) life.sih) oath=~]
       =.  lew.wod.dur.diz  `ded
       =.  ton.fox  (~(su go ton.fox) (nux:gus diz))
       [~ +>.$]

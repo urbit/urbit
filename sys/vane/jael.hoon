@@ -95,7 +95,7 @@
   $%  [%hail p=remote]                                  ::  reset rights
       [%nuke ~]                                         ::  cancel trackers
       [%vent ~]                                         ::  view ethereum events
-      [%vent-result p=chain]                            ::  tmp workaround
+      [%vent-result p=vent-result]                      ::  tmp workaround
   ==                                                    ::
 ++  card                                                ::  i/o action
   (wind note:able gift)                                 ::
@@ -724,7 +724,7 @@
       ::
       =.  +>.$
         ?~  snap.tac  +>.$
-        (restore-snap u.snap.tac)
+        (restore-snap hen our u.snap.tac)
       ::
       =.  moz
         %+  weld  moz
@@ -984,7 +984,8 @@
   ++  cure                                              ::  absolute edits
     |=  {hen/duct our/ship hab/(list change) urb/state-absolute}
     ^+  +>
-    (curd(urb urb) abet:(~(apex su hen our urb sub etn sap) hab))
+    =.  ^urb  urb
+    (curd abet:(~(apex su hen our urb sub etn sap) hab))
   ::                                                    ::  ++cute:of
   ++  cute                                              ::  ethereum changes
     |=  $:  hen=duct
@@ -997,7 +998,12 @@
             sap=state-snapshots
         ==
     ^+  +>
-    %-  cure(urb urb, sub sub, etn etn, sap sap, moz (weld (flop mos) moz))
+    =:  ^urb  urb
+        ^sub  sub
+        ^etn  etn
+        ^sap  sap
+    ==
+    %-  cure(moz (weld (flop mos) moz))
     [hen our abet:(link:(burb our) ven)]
   ::                                                    ::  ++wind:of
   ++  wind                                              ::  rewind to snap
@@ -1024,7 +1030,7 @@
         [snap.snap +>.^$]
       $
     ~&  [%wind block latest-block.etn.snap ~(wyt by hul.eth.snap)]
-    =.  +>.$  (restore-snap snap)
+    =.  +>.$  (restore-snap hen our snap)
     %=    +>.$
         moz
       =-  [[hen %pass /wind/look %j %look our -] moz]
@@ -1035,15 +1041,9 @@
     ==
   ::                                                    ::  ++restore-snap:of
   ++  restore-snap                                      ::  restore snapshot
-    |=  snap=snapshot
-    ::  keep the following in sync with ++extract-snap:file:su
-    %=  +>.$
-        eve.urb       eve.snap
-        etn           etn.snap(source source.etn)
-        kyz.puk.sub   kyz.snap
-        +.eth.sub     eth.snap
-        sap           sap(last-block 0)
-    ==
+    |=  [hen=duct our=@p snap=snapshot]
+    %^  cute  hen  our  =<  abet
+    (~(restore-snap et our now.sys urb.lex sub.lex etn.lex sap.lex) snap)
   --
 ::                                                      ::  ++su
 ::::                    ## relative^heavy               ::  subjective engine
@@ -1084,7 +1084,7 @@
     ::TODO  we really want to just send the %give, but ames is being a pain.
     :: =>  (exec yen.eth [%give %vent |+evs])
     =>  ?~  evs  .
-        (vent-pass yen.eth |+evs)
+        (vent-pass yen.eth chain+|+evs)
     [(flop moz) sub etn sap]
   ::                                                    ::  ++apex:su
   ++  apex                                              ::  apply changes
@@ -1109,7 +1109,7 @@
     $(noy t.noy, moz [[i.noy cad] moz])
   ::
   ++  vent-pass
-    |=  [yen=(set duct) res=chain]
+    |=  [yen=(set duct) res=vent-result]
     =+  yez=~(tap in yen)
     |-  ^+  ..vent-pass
     ?~  yez  ..vent-pass
@@ -1153,7 +1153,14 @@
       ==
     ::
     ++  vent
-      %.  [[hen ~ ~] &+eve]
+      =/  last-snap
+        |-  ^-  snapshot
+        =^  snap=[@ud snap=snapshot]  snaps.sap
+          ~(get to snaps.sap)
+        ?:  =(~ snaps.sap)
+          snap.snap
+        $
+      %.  [[hen ~ ~] snap+last-snap]
       %_  vent-pass
       :: %_  ..feed  ::TODO  see ++abet
         :: moz      [[hen %give %vent &+eve] moz]
@@ -1231,11 +1238,11 @@
       ==
     ::
     ++  vent
-      |=  can=chain
+      |=  ver=vent-result
       ^+  ..feel
       ::TODO  see ++abet
       :: (exec yen.eth [%give %vent can])
-      (vent-pass yen.eth can)
+      (vent-pass yen.eth ver)
     --
   ::                                                    ::  ++form:su
   ++  form                                              ::  generate reports
@@ -1348,6 +1355,7 @@
       +>(dns.eth *dnses, hul.eth ~, kyz.puk ~)
     =?  +>  |(new !=(0 ~(wyt by evs)))
       %-  vent:feel
+      :-  %chain
       ?:(new &+evs |+evs)
     ::
     =+  vez=(order-events:ez ~(tap by evs))
@@ -1394,9 +1402,8 @@
         [kyz ..file]
       ::
       ::  sanity check, should never fail if we operate correctly
-      ::  XX is this true in the presence of reorgs?
       ::
-      ::  ?>  (gte block.wer latest-block)
+      ?>  (gte block.wer latest-block)
       =:  evs           (~(put by evs) wer dif)
           heard         (~(put in heard) wer)
           latest-block  (max latest-block block.wer)
@@ -1481,8 +1488,11 @@
           %+  sub.add
             (div block.wer interval.sap)
           (div last-block.sap interval.sap)
-        ~&  :*  %snap  count=count.sap  max-count=max-count.sap 
-                last-block=last-block.sap  interval=interval.sap
+        ~&  :*  %snap
+                count=count.sap
+                max-count=max-count.sap
+                last-block=last-block.sap
+                interval=interval.sap
                 lent=(lent ~(tap to snaps.sap))
             ==
         %=  sap
@@ -1491,7 +1501,9 @@
           last-block  block.wer
         ==
       =?  sap  (gth count.sap max-count.sap)
-        ~&  :*  %dump  count=count.sap  max-count=max-count.sap 
+        ~&  :*  %dump
+                count=count.sap
+                max-count=max-count.sap
                 lent=(lent ~(tap to snaps.sap))
             ==
         %=  sap
@@ -1858,17 +1870,21 @@
   ::  +hear-vent: process incoming events
   ::
   ++  hear-vent
-    |=  can=chain
+    |=  =vent-result
     ^+  +>
-    ?-  -.can
-      %&   (assume p.can)
-      ::
-        %|
-      =+  evs=~(tap by p.can)
-      |-
-      ?~  evs  +>.^$
-      =.  +>.^$  (accept i.evs)
-      $(evs t.evs)
+    ?-  -.vent-result
+        %snap  (restore-snap snap.vent-result)
+        %chain
+      ?-  -.can.vent-result
+        %&   (assume p.can.vent-result)
+        ::
+          %|
+        =+  evs=~(tap by p.can.vent-result)
+        |-
+        ?~  evs  +>.^$
+        =.  +>.^$  (accept i.evs)
+        $(evs t.evs)
+      ==
     ==
   ::
   ::  +assume: clear state and process events
@@ -1876,7 +1892,7 @@
   ++  assume
     |=  evs=logs
     ^+  +>
-    %.  |+evs
+    %.  chain+|+evs
     %_  hear-vent
       heard         ~
       latest-block  0
@@ -2005,7 +2021,6 @@
     ?:  ?=(%error -.rep)
       ~&  [%catch-up-step-error--retrying message.rep]
       (catch-up from-block)
-    ::  XX file
     =.  +>.$  (take-events rep)
     (catch-up next-block)
   ::
@@ -2075,7 +2090,54 @@
     =+  dif=(event-log-to-hull-diff log)
     ?~  dif  +>.$
     (put-change cuz %hull u.dif)
-  ::
+  ::                                                    ::  ++restore-snap:et
+  ++  restore-snap                                      ::  restore snapshot
+    |=  snap=snapshot
+    ::  update pub subscribers
+    ::
+    =.  +>.$
+      =/  subs=(list (pair ship (set duct)))
+        ~(tap by yen.puk.sub)
+      |-  ^+  +>.^$
+      ?~  subs  +>.^$
+      =/  pub  (fall (~(get by kyz.snap) p.i.subs) %*(. *public live |))
+      =.  +>.^$  (exec q.i.subs [%give %pubs pub])
+      $(subs t.subs)
+    ::  update vent subscribers
+    ::
+    =.  +>.$  (vent-pass yen.eth snap+snap)
+    ::  keep the following in sync with ++extract-snap:file:su
+    ::
+    %=  +>.$
+        eve.urb       eve.snap
+        etn           etn.snap(source source.etn)
+        kyz.puk.sub   kyz.snap
+        +.eth.sub     eth.snap
+        sap           sap(last-block 0)
+    ==
+  ::                                                    ::  ++exec:et
+  ++  exec                                              ::  mass gift
+    |=  {yen/(set duct) cad/card}
+    =/  noy  ~(tap in yen)
+    |-  ^+  ..exec
+    ?~  noy  ..exec
+    $(noy t.noy, moves [[i.noy cad] moves])
+  ::                                                    ::  ++vent-pass:et
+  ++  vent-pass                                         ::  "give" vent
+    |=  [yen=(set duct) res=vent-result]
+    =+  yez=~(tap in yen)
+    |-  ^+  ..vent-pass
+    ?~  yez  ..vent-pass
+    =*  d  i.yez
+    ?>  ?=([[%a @ @ *] *] d)
+    =+  our=(slav %p i.t.i.d)
+    =+  who=(slav %p i.t.t.i.d)
+    %+  exec  [d ~ ~]
+    :+  %pass
+      /(scot %p our)/vent-result
+    ^-  note:able
+    [%a %want [our who] /j/(scot %p our)/vent-result %vent-result res]
+  ::                                                    ::  ++feed:su
   --
 --
 ::                                                      ::::

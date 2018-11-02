@@ -2012,6 +2012,11 @@
         (map ship safe)                                 ::  liabilities
       (map ship safe)                                   ::  assets
     ::                                                  ::
+    ++  vent-result                                     ::  %vent result
+      $%  [%snap snap=snapshot:jael]                    ::  restore snapshot
+          [%chain can=chain]                            ::  get new events
+      ==                                                ::
+    ::                                                  ::
     ++  chain                                           ::  batch of changes
       %+  each  logs                                    ::  & all events
       logs                                              ::  | new events
@@ -2031,7 +2036,7 @@
           {$vest p/tally}                               ::  balance update
           [%vein =life vein=(map life ring)]            ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
-          [%vent p=chain]                               ::  ethereum changes
+          [%vent p=vent-result]                         ::  ethereum changes
       ==                                                ::
     ::                                                  ::
     ++  note                                            ::  out request $->
@@ -2047,7 +2052,7 @@
       $%  [%want p=sock q=path r=*]                     ::  send message
       ==  ==                                            ::
           $:  %j                                        ::
-      $%  [%vent-result p=chain]                        ::  tmp workaround
+      $%  [%vent-result p=vent-result]                  ::  tmp workaround
           [%look our=ship src=(each ship purl:eyre)]    ::
       ==  ==                                            ::
           $:  @tas                                      ::
@@ -2069,7 +2074,7 @@
     ++  sign                                            ::  in result $<-
       $%  {$b $wake ~}                                  ::  wakeup
           [%e %sigh p=cage]                             ::  marked http response
-          [%j %vent p=chain]                            ::  ethereum changes
+          [%j %vent p=vent-result]                      ::  ethereum changes
           [%a %woot p=ship q=coop]                      ::  message result
       ==                                                ::
     ++  tally                                           ::  balance update
