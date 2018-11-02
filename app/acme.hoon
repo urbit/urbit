@@ -444,6 +444,20 @@
         ~(tap in `(set turf)`u.pen)
       |=(a=turf [%o (my type+s+'dns' value+s+(join '.' a) ~)])
     ==
+  ::  +cancel-order: cancel failed order, set retry timer
+  ::
+  ++  cancel-order
+    ^+  this
+    ~|  %cancel-order-effect-fail
+    ?>  ?=(^ rod)
+    ::  save failed order for future autopsy
+    ::
+    =.  fal.hit  [u.rod fal.hit]
+    ::  copy order domain(s), clear order, try again soon
+    ::
+    ::  XX backoff, count retries, how long, etc.
+    ::
+    (retry:effect(rod ~, pen `dom.u.rod) /new-order (add now.bow ~m10))
   ::  +finalize-order: finalize completed order
   ::
   ++  finalize-order
@@ -755,15 +769,7 @@
       ::  XX possible to retry any reasons?
       ::  XX send notification somehow?
       ::
-      ?>  ?=(^ rod)
-      ::  save failed order for future autopsy
-      ::
-      =.  fal.hit  [u.rod fal.hit]
-      ::  copy order domain(s), clear order, try again soon
-      ::
-      ::  XX backoff, count retries, how long, etc.
-      ::
-      (retry:effect(rod ~, pen `dom.u.rod) /new-order (add now.bow ~m10))
+      cancel-order:effect
     ::  initial order state
     ::
         %pending
@@ -899,16 +905,20 @@
       ::
       ?:  (bad-nonce rep)
         (nonce:effect %finalize-trial)
-      ~&  [%finalize-trial-fail wir rep]
       ?:  =(504 p.rep)
         ::  retry timeouts
         ::  XX count retries? backoff?
         ::
-        ~&  %retrying
+        ~&  %finalize-trial-retrying
         (retry:effect /finalize-trial (add now.bow ~s10))
-      ::  cancel order?
+      ::  XX get challenge, confirm urn:ietf:params:acme:error:connection
       ::
-      this
+      ::  =/  err=error:body
+      ::    (error:grab (need (de-json:html q:(need r.rep))))
+      ::  ?:  =('urn:ietf:params:acme:error:malformed' status.err)
+      ::
+      ~&  [%finalize-trial-fail wir rep]
+      cancel-order:effect
     ?>  ?=(^ rod)
     ?>  ?=(^ active.aut.u.rod)
     =*  aut  u.active.aut.u.rod
