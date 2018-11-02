@@ -744,14 +744,19 @@
     ::
         %invalid
       ~&  [%check-order-fail %invalid wir rep]
-      ::  XX check authz for debug info
-      ::  XX get the failure reason
+      ::  XX check authz, get the failure reason
       ::  XX possible to retry any reasons?
       ::  XX send notification somehow?
-      ::  XX create new order for domain?
       ::
       ?>  ?=(^ rod)
-      this(rod ~, fal.hit [u.rod fal.hit])
+      ::  save failed order for future autopsy
+      ::
+      =.  fal.hit  [u.rod fal.hit]
+      ::  copy order domain(s), clear order, try again soon
+      ::
+      ::  XX backoff, count retries, how long, etc.
+      ::
+      (retry:effect(rod ~, pen `dom.u.rod) /new-order (add now.bow ~m10))
     ::  initial order state
     ::
         %pending
