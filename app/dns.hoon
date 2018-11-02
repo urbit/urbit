@@ -313,10 +313,6 @@
     =/  rac  (clan:title him.com)
     ?:  ?=(%czar rac)
       ~|(%bind-galazy !!)
-    ?:  ?&  =(for.com him.com)
-            !?=(%king rac)
-        ==
-      ~|(%bind-yoself !!)
     ?:  ?&  ?=(%king rac)
             ?=(%indirect -.tar.com)
         ==
@@ -334,15 +330,15 @@
   ::    [%bond for=ship him=ship turf]
   ::
       %bond
-    ?:  =(for.com him.com)
-      ~|(%bond-yoself !!)
+    ?:  ?&  =(our.bow for.com)
+            !=(our.bow src.bow)
+        ==
+      ~&  [%bound-him him.com dom.com]
+      abet:(check-bond:(tell him.com) dom.com)
     ?:  =(our.bow him.com)
       ~&  [%bound-us dom.com]
       :-  [[ost.bow %rule /bound %turf %put dom.com] ~]
       this(dom (~(put in dom) dom.com))
-    ?:  =(our.bow for.com)
-      ~&  [%bound-him him.com dom.com]
-      abet:(check-bond:(tell him.com) dom.com)
     ~&  [%strange-bond com]
     [~ this]
   ::  manually set our ip, request direct binding
