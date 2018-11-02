@@ -2057,27 +2057,25 @@
       ~&  %ignoring-unmined-event
       +>
     =*  place  u.mined.log
-    ::
-    ::TODO  if the block number is less than latest, that means we got
-    ::      events out of order somehow and should probably reset.
-    ::      This could also mean there was a chain reorg if the logs
-    ::      have the 'removed' tag set.  In this case, we should delete
-    ::      the old logs.  Finally, since we rewind 40 blocks on new
-    ::      filter, this could be up to 40 blocks old just because of
-    ::      that.
-    ::  ~?  (lte block-number.place latest-block)
-    ::    [%old-block block-number.place latest-block]
-    ::
     ?:  (~(has in heard) block-number.place log-index.place)
       ?.  removed.u.mined.log
         ::  ~&  [%ignoring-duplicate-event tx=transaction-hash.u.mined.log]
         +>
+      ::  block was reorganized away, so rewind to this block and
+      ::  start syncing again.
+      ::
       ~&  :*  'removed event!  Perhaps chain has reorganized?'
               tx-hash=transaction-hash.u.mined.log
               block-number=block-number.u.mined.log
               block-hash=block-hash.u.mined.log
           ==
-      +>  ::TODO  undo the effects of this event
+      %=    +>
+          rewind-block
+        :-  ~
+        ?~  rewind-block
+          block-number.place
+        (min block-number.place u.rewind-block)
+      ==
     =+  cuz=[block-number.place log-index.place]
     ::
     ?:  =(event.log changed-dns:ships-events)
