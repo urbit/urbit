@@ -411,10 +411,34 @@
   ::
   ++  create
     |=  [for=ship him=ship tar=target]
-    :: XX defer %indirect where target isn't yet bound
+    ::  XX defer %indirect where target isn't yet bound
+    ::
     ?>  ?|  ?=(%direct -.tar)
             (~(has by bon.nam) p.tar)
         ==
+    ::  ignore if binding is pending
+    ::
+    =/  pending  (~(get by pen.nam) him)
+    ?:  ?&  ?=(^ pending)
+            =(tar u.pending)
+        ==
+      this
+    ::  re-notify if binding already exists
+    ::
+    ::    XX deduplicate with +confirm
+    ::
+    =/  existing  (~(get by bon.nam) him)
+    ?:  ?&  ?=(^ existing)
+            =(tar cur.u.existing)
+      ==
+      =/  wir=wire
+        /bound/(scot %p him)/for/(scot %p for)
+      =/  dom=turf
+        (weld dom.aut.nam /(crip +:(scow %p him)))
+      %-  emit
+      [%poke wir [for dap.bow] %dns-command %bond for him dom]
+    ::  create new or replace existing binding
+    ::
     =/  wir=wire
       /authority/create/(scot %p him)/for/(scot %p for)
     =/  pre=(unit target)
@@ -474,8 +498,20 @@
       ?:  |(?=(~ addr) ?=(%duke (clan:title him)))
         [%indirect our.bow]
       [%direct %if u.addr]
-    ?.  |(?=(~ rel) ?=(~ dom.u.rel) !=(tar tar.u.rel))
-      this
+    ::  re-notify if binding already exists
+    ::
+    ::    XX deduplicate with +confirm
+    ::
+    ?:  ?&  ?=(^ rel)
+            ?=(^ dom.u.rel)
+            =(tar tar.u.rel)
+        ==
+      =/  wir=wire
+        /bound/(scot %p him)/for/(scot %p our.bow)
+      %-  emit
+      [%poke wir [him dap.bow] %dns-command %bond our.bow him u.dom.u.rel]
+    ::  check binding target validity, store and forward
+    ::
     =.  rel  `[wen=now.bow addr dom=~ try=0 tar]
     ?:(?=(%indirect -.tar) bind check)
   ::  +check: confirm %direct target is accessible
