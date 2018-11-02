@@ -403,6 +403,7 @@
   ::  +register: create ACME service account
   ::
   ::    Note: accepts services ToS.
+  ::    XX add rekey mechanism
   ::
   ++  register
     ^+  this
@@ -415,8 +416,14 @@
       /acme/register/(scot %p our.bow)
     %^  signed-request  reg.dir  i.nonces
     [%o (my [['termsOfServiceAgreed' b+&] ~])]
-  ::  XX rekey
+  ::  +renew: renew certificate
   ::
+  ++  renew
+    ^+  this
+    ~|  %renew-effect-fail
+    ?.  ?=(^ reg.act)  ~|(%no-account !!)
+    ?.  ?=(^ liv)      ~|(%no-live-config !!)
+    new-order:effect(pen `dom.u.liv)
   ::  +new-order: create a new certificate order
   ::
   ++  new-order
@@ -803,10 +810,13 @@
       ::  XX expiration date
       ::
       [dom.u.rod key.u.rod cer (add now.bow ~d90) ego.u.rod]
-    =?  fig.hit  ?=(^ liv)  [u.liv fig.hit]
-    ::  XX set renewal timer
+    ::  archive live config
     ::
-    install:effect(liv `fig, rod ~)
+    =?  fig.hit  ?=(^ liv)  [u.liv fig.hit]
+    ::  set live config, install certificate, set renewal timer
+    ::
+    =<  install:effect
+    (retry:effect(liv `fig, rod ~) /renew (add now.bow ~d60))
   ::  +get-authz: accept ACME service authorization object
   ::
   ++  get-authz
@@ -925,6 +935,7 @@
         ~&(unknown-retry+wir this)
       %directory       directory:effect
       %register        register:effect
+      %renew           renew:effect
       %new-order       new-order:effect
       %finalize-order  finalize-order:effect
       %check-order     check-order:effect
