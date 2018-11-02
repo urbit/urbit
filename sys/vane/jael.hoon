@@ -1989,6 +1989,18 @@
         ~&  [%unhandled-filter-error +.rep]
         +>
       ~&  [%filter-timed-out--recreating block=latest-block +.rep]
+      ::  arguably should rewind 40 blocks on the off chance the chain reorganized
+      ::  when we blinked.  this will also restart the filter.
+      ::
+      ::  (restore-block ?:((lth latest-block 40) 0 (sub.add latest-block 40)))
+      ::
+      ::  counter-argument: it's a royal pain to restore from a snapshot
+      ::  every time you can't ping the node for 5 minutes.  this is likely
+      ::  to destabilize the network.  better to manually restore if we
+      ::  notice an anomaly.
+      ::
+      ::  third way: don't trust anything that doesn't have 40 confirmations
+      ::
       new-filter
     ::  kick polling timer, only if it hasn't already been.
     =?  +>  ?&  ?=(%| -.source)
