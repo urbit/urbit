@@ -7,8 +7,6 @@ define linux = linux32,linux64,linux-rpi
 mac.toolchain slow=1
 
 # Packages
-{$windows}.angle{,.examples} slow=1
-{$windows}.angle.examples
 omni.at-spi2-headers
 {$all}.avrdude
 omni.dejavu-fonts
@@ -19,7 +17,6 @@ omni.fixesproto
 {$all}.hello
 {$all}.hello_cpp
 omni.inputproto
-{$all}.ion
 omni.kbproto
 {$linux}.libudev
 {$all}.libusb

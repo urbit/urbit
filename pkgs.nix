@@ -67,10 +67,6 @@ rec {
     inherit crossenv libusb;
   };
 
-  angle = import ./pkgs/angle {
-    inherit crossenv gdb;
-  };
-
   xcb-proto = import ./pkgs/xcb-proto {
     inherit crossenv;
   };
@@ -165,10 +161,6 @@ rec {
   };
 
   dejavu-fonts = import ./pkgs/dejavu-fonts {
-    inherit crossenv;
-  };
-
-  ion = import ./pkgs/ion {
     inherit crossenv;
   };
 
