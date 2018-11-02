@@ -708,32 +708,19 @@
   ++  finalize-order
     |=  [wir=wire rep=httr]
     ^+  this
-    ?.  =(200 p.rep)
-      ?:  (bad-nonce rep)
-        (nonce:effect %finalize-order)
-      ~&  [%finalize-order-fail wir rep]
-      ?:  =(504 p.rep)
-        ::  retry timeouts
-        ::  XX count retries? backoff?
-        ::
-        ~&  %retrying
-        (retry:effect /finalize-order (add now.bow ~s10))
-      ::  XX get the failure reason
-      ::  XX possible to retry any reasons?
-      ::  XX create new order for domain?
+    ?:  (bad-nonce rep)
+      (nonce:effect %finalize-order)
+    ?:  =(504 p.rep)
+      ::  retry timeouts
+      ::  XX count retries? backoff?
       ::
-      ?>  ?=(^ rod)
-      this(rod ~, fal.hit [u.rod fal.hit])
-    ?>  ?=(^ rod)
-    ::  XX rep body missing authorizations, need flexible/separate parser
-    ::  XX finalizing-order
-    ::
-    ::  =/  bod=[aut=(list purl) fin=purl exp=@t sas=@t]
-    ::    (order:grab (need (de-json:html q:(need r.rep))))
-    ::  XX check status? (i don't think failures get here)
+      ~&  [%finalize-order-fail wir rep]
+      ~&  %retrying
+      (retry:effect /finalize-order (add now.bow ~s10))
+    ::  check-order regardless of status code
     ::
     check-order:effect
-  ::  +check-order: check if certificate is ready for finalized order
+  ::  +check-order: check order status, dispatch appropriately
   ::
   ++  check-order
     |=  [wir=wire rep=httr]
@@ -762,10 +749,13 @@
         %invalid
       ~&  [%check-order-fail %invalid wir rep]
       ::  XX check authz for debug info
+      ::  XX get the failure reason
+      ::  XX possible to retry any reasons?
       ::  XX send notification somehow?
-      ::  XX start over with new order?
+      ::  XX create new order for domain?
       ::
-      this
+      ?>  ?=(^ rod)
+      this(rod ~, fal.hit [u.rod fal.hit])
     ::  initial order state
     ::
         %pending
