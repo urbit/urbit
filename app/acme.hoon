@@ -290,10 +290,7 @@
 ::  +acme: complete app state
 ::
 +=  acme
-  $:  ::  bas: ACME service root url
-      ::
-      bas=purl
-      ::  dir: ACME service directory
+  $:  ::  dir: ACME service directory
       ::
       dir=directory
       ::  act: ACME service account
@@ -387,9 +384,12 @@
   ::
   ++  directory
     ^+  this
-    ::  XX now?
+    =/  url
+      =-  (need (de-purl:html -))
+      'https://acme-staging-v02.api.letsencrypt.org/directory'
+    ::  XX now in wire?
     ::
-    (emit (request /acme/directory/(scot %p our.bow) bas %get ~ ~))
+    (emit (request /acme/directory/(scot %p our.bow) url %get ~ ~))
   ::  +nonce: get a new nonce for the next request
   ::
   ++  nonce
@@ -1181,12 +1181,13 @@
   $(i +(i), eny +(eny))
 ::  +init: initialize :acme state
 ::
+::    We defer the initial request for independence from the causal event,
+::    which is necessary to init on the boot event. Which we no longer do,
+::    but we're preserving the pattern for future flexibility.
+::
 ++  init
-  =/  url
-    'https://acme-staging-v02.api.letsencrypt.org/directory'
   =<  (retry:effect /directory +(now.bow))
   %=  this
-    bas  (need (de-purl:html url))
     act  [(rekey eny.bow) ~]
     cey  (rekey (mix eny.bow (shaz now.bow)))
   ==
