@@ -1107,6 +1107,14 @@
       /(scot %p our)/vent-result
     ^-  note:able
     [%a %want [our who] /j/(scot %p our)/vent-result %vent-result res]
+  ::
+  ++  extract-snap                                    ::  extract rewind point
+    ^-  snapshot
+    :*  eve.urb
+        kyz.puk.sub
+        +.eth.sub
+        etn(source *(each ship node-src))
+    ==
   ::                                                    ::  ++feed:su
   ++  feed                                              ::  subscribe to view
     |_  ::  hen: subscription source
@@ -1138,13 +1146,7 @@
       ==
     ::
     ++  vent
-      =/  last-snap
-        |-  ^-  snapshot
-        =^  snap=[@ud snap=snapshot]  snaps.sap
-          ~(get to snaps.sap)
-        ?:  =(~ snaps.sap)
-          snap.snap
-        $
+      =/  last-snap  extract-snap
       %.  [[hen ~ ~] snap+last-snap]
       %_  vent-pass
       :: %_  ..feed  ::TODO  see ++abet
@@ -1496,14 +1498,6 @@
           count  (dec count)
         ==
       ..file
-    ::
-    ++  extract-snap                                    ::  extract rewind point
-      ^-  snapshot
-      :*  eve.urb
-          kyz.puk.sub
-          +.eth.sub
-          etn(source *(each ship node-src))
-      ==
     --
   --
 ::                                                      ::  ++ur
