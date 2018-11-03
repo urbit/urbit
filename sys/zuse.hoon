@@ -2121,7 +2121,7 @@
   ++  snapshot                                          ::  rewind point
     =,  constitution:ethe                               ::
     $:  eve=logs:able                                   ::  eth absolute state
-        kyz=(map ship public:able)                           ::  public key state
+        kyz=(map ship public:able)                      ::  public key state
         $=  eth                                         ::
           $:  dns=dnses                                 ::  on-chain dns state
               hul=(map ship hull)                       ::  on-chain ship state
