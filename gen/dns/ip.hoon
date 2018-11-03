@@ -16,7 +16,10 @@
 %+  prompt
   [%& %dns-address "ipv4 address: "]
 %+  parse
-  `$-(nail (like @if))`;~(pfix dot lip:ag)
+  `$-(nail (like @if))`;~(pfix ;~(pose dot (easy ~)) lip:ag)
 |=  addr=@if
+?:  (reserved:eyre addr)
+  =/  msg  "unable to bind reserved ipv4 address {(scow %if addr)}"
+  (print leaf+msg no-product)
 %-  produce
 [%dns-command %ip %if addr]
