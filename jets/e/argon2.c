@@ -57,28 +57,29 @@
     int argon_res;
     switch(type)
     {
-        case 100:   // %d
-      argon_res = argon2d_ctx(&context);
-      break;
+      case c3__d:
+        argon_res = argon2d_ctx(&context);
+        break;
       //
-        case 105:   // %i
-      argon_res = argon2i_ctx(&context);
-      break;
+      case c3__i:
+        argon_res = argon2i_ctx(&context);
+        break;
       //
-        case 117:   // %u
-      argon_res = argon2u_ctx(&context);
-      break;
+      case c3__id:
+        argon_res = argon2id_ctx(&context);
+        break;
       //
-        case 25705: // %id
-      argon_res = argon2id_ctx(&context);
-      break;
+      case c3__u:
+        argon_res = argon2u_ctx(&context);
+        break;
       //
-        default:
-      fprintf(stderr, "\nunjetted argon2 variant %i\n", type);
-      u3m_bail(c3__exit);
+      default:
+        fprintf(stderr, "\nunjetted argon2 variant %i\n", type);
+        u3m_bail(c3__exit);
     }
 
-    if(ARGON2_OK != argon_res) {
+    if(ARGON2_OK != argon_res)
+    {
       fprintf(stderr, "\nargon2 error: %s\n", argon2_error_message(argon_res));
       u3m_bail(c3__exit);
     }
