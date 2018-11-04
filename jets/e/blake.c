@@ -29,7 +29,9 @@ static void pretty_print_hex(char * headline,
 u3_noun
 u3qe_blake(u3_atom msg, u3_atom key, u3_atom out)
 {
-  /* msg 
+  c3_assert(_(u3a_is_cat(out)));
+
+  /* msg
    */
   u3_noun men;  /* msg length */
   u3_noun mod;  /* msg body */
@@ -80,7 +82,7 @@ u3qe_blake(u3_atom msg, u3_atom key, u3_atom out)
   int ret;
   c3_y out_y[64];
   ret = blake2b(out_y,       // OUT: output
-                (size_t) 64, // IN: max output size
+                out,           // IN: max output size
                 mod_y,         // IN: msg body
                 men_w,         // IN: msg len
                 kod_y,         // IN: key body
@@ -95,9 +97,7 @@ u3qe_blake(u3_atom msg, u3_atom key, u3_atom out)
     return u3m_bail(c3__exit);
   }
 
-  u3_noun sig = u3i_bytes(64, out_y);
-  
-  return(sig);
+  return(u3kc_rev(3, out, u3i_bytes(out, out_y)));
 }
 
 
