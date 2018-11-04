@@ -95,44 +95,29 @@
             threads, mem_cost, time_cost,
             wik, key, wix, extra,
             // input params
-            wid, dat, wis, sat;
+            wid, dat, wis, sat,
+            // for use during unpacking
+            wmsg, wsat, arg, brg, wkey, wext;
 
     // the hoon code for argon2 takes configuration parameters,
     // and then produces a gate. we jet that inner gate.
     // this does mean that the config params have gotten buried
-    // pretty deep in the subject, so we have to use large
-    // tree addresses to get at them.
-    if ( (c3n == u3r_mean(cor, u3x_sam_4, &wid,
-                               u3x_sam_5, &dat,
-                               u3x_sam_6, &wis,
-                               u3x_sam_7, &sat,
-                             //
-                               1020,      &out,
-                               2042,      &type,
-                               4086,      &version,
-                             //
-                               8174,      &threads,
-                               16350,     &mem_cost,
-                               32702,     &time_cost,
-                             //
-                               130812,    &wik,
-                               130813,    &key,
-                               130814,    &wix,
-                               130815,    &extra, 0)) ||
-         (c3n == u3ud(out)) ||
-         (c3n == u3ud(type)) ||
-         (c3n == u3ud(version)) ||
-         (c3n == u3ud(threads)) ||
-         (c3n == u3ud(mem_cost)) ||
-         (c3n == u3ud(time_cost)) ||
-         (c3n == u3ud(wik)) ||
-         (c3n == u3ud(key)) ||
-         (c3n == u3ud(wix)) ||
-         (c3n == u3ud(extra)) ||
-         (c3n == u3ud(wid)) ||
-         (c3n == u3ud(dat)) ||
-         (c3n == u3ud(wis)) ||
-         (c3n == u3ud(sat))
+    // pretty deep in the subject, hence the +510.
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &wmsg,
+                              u3x_sam_3, &wsat,
+                              510, &arg, 0) ||
+                u3r_cell(wmsg, &wid, &dat) || u3ud(wid) || u3ud(dat) ||
+                u3r_cell(wsat, &wis, &sat) || u3ud(wis) || u3ud(sat) ||
+                //
+                u3r_qual(arg, &out, &type, &version, &brg) ||
+                u3ud(out) || u3ud(type) || u3ud(version) ||
+                //
+                u3r_qual(brg, &threads, &mem_cost, &time_cost, &arg) ||
+                u3ud(threads) || u3ud(mem_cost) || u3ud(time_cost) ||
+                //
+                u3r_cell(arg, &wkey, &wext) ||
+                u3r_cell(wkey, &wik, &key) || u3ud(wik) || u3ud(key) ||
+                u3r_cell(wext, &wix, &extra) || u3ud(wix) || u3ud(extra)
        )
     {
       return u3m_bail(c3__exit);
