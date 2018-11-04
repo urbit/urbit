@@ -14,8 +14,6 @@ native.make_derivation rec {
     ./deterministic.patch
   ];
 
-  build_inputs = [ native.nixpkgs.bison native.nixpkgs.zlib ];
-
   configure_flags =
     "--target=${host} " +
     "--enable-shared " +
