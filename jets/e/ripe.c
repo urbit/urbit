@@ -21,47 +21,13 @@ static void byte_reverse_in_place(c3_y *c_y,  /* in */
 
 
 u3_noun
-u3qe_ripe(u3_atom msg)  
+u3qe_ripe(u3_atom wid, u3_atom dat)
 {
+  c3_assert(_(u3a_is_cat(wid)));
+  dat = u3qc_rev(3, wid, dat);
 
-  /* decompose 
-     input
-  */
-  
-  u3_noun men;  /* msg length */
-  u3_noun mod;  /* msg body */
-
-  u3r_mean(msg,
-           2,   & men,
-           3,   & mod,
-           0);
-
-  c3_w met_w = u3r_met(3, men);  /* meta length: length of the length */
-
-  if (met_w > 4){
-    fprintf(stderr, "\rripe jet: msg meta-size too big\n");
-    return u3m_bail(c3__exit);
-  }
-
-  c3_w men_w;   /* msg length in bits */
-  men_w =  u3r_word(0, men);
-
-  if (0 != men_w % 8) {
-    fprintf(stderr, "\rripe jet: input size was not an even number of bytesn");
-    return u3m_bail(c3__exit);
-  }
-  men_w = men_w / 8;
-
-  
-  c3_y * mod_y =  (c3_y * ) u3a_malloc(men_w);  /* msg body */
-  u3r_bytes(0, men, (void *) mod_y, mod);
-
-  /* endian 
-     convert
-     input
-  */
-
-  byte_reverse_in_place(mod_y, men_w);
+  c3_y * dat_y =  (c3_y * ) u3a_malloc(wid);  /* msg body */
+  u3r_bytes(0, wid, (void *) dat_y, dat);
 
   const EVP_MD *rip_u = EVP_ripemd160();      /* ripem algorithm */
   EVP_MD_CTX *  con_u = NULL;                 /* context */
@@ -82,15 +48,15 @@ u3qe_ripe(u3_atom msg)
   
   ret_w = EVP_DigestInit_ex  (con_u, rip_u, NULL);
   if (ret_w != 1) {
-    u3a_free(mod_y );
+    u3a_free(dat_y );
     fprintf(stderr, "\rripe jet: crypto library fail 1\n");
     return u3m_bail(c3__exit);
   }
-    
-  ret_w = EVP_DigestUpdate   (con_u, (void *) mod_y, men_w); 
 
-  u3a_free(mod_y );
-  
+  ret_w = EVP_DigestUpdate   (con_u, (void *) dat_y, wid);
+
+  u3a_free(dat_y );
+
   if (ret_w != 1) {
     fprintf(stderr, "\rripe jet: crypto library fail 2\n");
     return u3m_bail(c3__exit);
@@ -115,18 +81,20 @@ u3qe_ripe(u3_atom msg)
 u3_noun
 u3we_ripe(u3_noun cor)
 {
-  u3_noun msg;      /* hash */
+  u3_noun wid, dat;
 
   fprintf(stderr, "HERE\n\r");
   
   if ( (c3n == u3r_mean(cor,
-                        u3x_sam_1,   &msg,
-                        0)) ||
-       (c3n == u3du(msg)) )
+                        u3x_sam_2, &wid,
+                        u3x_sam_3, &dat,
+                        0) ||
+               u3ud(wid) || u3ud(dat))
+     )
     {
       fprintf(stderr, "\rripe jet: argument error\n");
       return u3m_bail(c3__exit);
     } else {
-    return u3qe_ripe(msg);
+    return u3qe_ripe(wid, dat);
   }
 }
