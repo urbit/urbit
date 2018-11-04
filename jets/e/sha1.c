@@ -20,9 +20,7 @@
     c3_assert(_(u3a_is_cat(wid)));
     dat = u3qc_rev(3, wid, dat);
 
-    //NOTE XX fixme we shouldn't c3_malloc in inner road,
-    //     this is also done in other SHA jets
-    c3_y* fat_y = c3_malloc(wid + 1);
+    c3_y* fat_y = u3a_malloc(wid + 1);
     u3r_bytes(0, wid, fat_y, dat);
     {
       c3_y dig_y[32];
@@ -39,7 +37,7 @@
       SHA1_Update(&ctx_h, fat_y, wid);
       SHA1_Final(dig_y, &ctx_h);
 #endif
-      free(fat_y);
+      u3a_free(fat_y);
       u3z(dat);
       return u3kc_rev(3, 20, u3i_bytes(20, dig_y));
     }

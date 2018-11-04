@@ -18,7 +18,7 @@
             u3_atom b)
   {
     c3_assert(_(u3a_is_cat(a)));
-    c3_y* fat_y = c3_malloc(a + 1);
+    c3_y* fat_y = u3a_malloc(a + 1);
 
     u3r_bytes(0, a, fat_y, b);
     {
@@ -36,7 +36,7 @@
       SHA256_Update(&ctx_h, fat_y, a);
       SHA256_Final(dig_y, &ctx_h);
 #endif
-      free(fat_y);
+      u3a_free(fat_y);
       return u3i_bytes(32, dig_y);
     }
   }
@@ -53,7 +53,7 @@ u3_noun
   u3qe_shax(u3_atom a)
   {
     c3_w  met_w = u3r_met(3, a);
-    c3_y* fat_y = c3_malloc(met_w + 1);
+    c3_y* fat_y = u3a_malloc(met_w + 1);
 
     u3r_bytes(0, met_w, fat_y, a);
     {
@@ -71,7 +71,7 @@ u3_noun
       SHA256_Update(&ctx_h, fat_y, met_w);
       SHA256_Final(dig_y, &ctx_h);
 #endif
-      free(fat_y);
+      u3a_free(fat_y);
       return u3i_bytes(32, dig_y);
     }
   }
@@ -83,7 +83,7 @@ u3_noun
             u3_atom b)
   {
     c3_assert(_(u3a_is_cat(a)));
-    c3_y* fat_y = c3_malloc(a + 1);
+    c3_y* fat_y = u3a_malloc(a + 1);
 
     u3r_bytes(0, a, fat_y, b);
     {
@@ -101,7 +101,7 @@ u3_noun
       SHA512_Update(&ctx_h, fat_y, a);
       SHA512_Final(dig_y, &ctx_h);
 #endif
-      free(fat_y);
+      u3a_free(fat_y);
       return u3i_bytes(64, dig_y);
     }
   }
