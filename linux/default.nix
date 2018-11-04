@@ -20,10 +20,10 @@ let
   headers = native.make_derivation rec {
     name = "linux-headers-${linux_arch}-${version}";
     inherit linux_arch;
-    version = "4.4.10";
+    version = "4.18.17";
     src = nixpkgs.fetchurl {
       url = "https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-${version}.tar.xz";
-      sha256 = "1kpjvvd9q9wwr3314q5ymvxii4dv2d27295bzly225wlc552xhja";
+      sha256 = "0353ns09i5y0fcygvly20z0qrp6gcqd453186ihm4r7ajgh43bz2";
     };
     builder = ./headers_builder.sh;
   };

@@ -10,16 +10,16 @@ in
 native.make_derivation rec {
   name = "gcc-${gcc_version}-${host}";
 
-  gcc_version = "6.3.0";
+  gcc_version = "7.3.0";
   gcc_src = fetchurl {
-    url = "mirror://gnu/gcc/gcc-${gcc_version}/gcc-${gcc_version}.tar.bz2";
-    sha256 = "17xjz30jb65hcf714vn9gcxvrrji8j20xm7n33qg1ywhyzryfsph";
+    url = "mirror://gnu/gcc/gcc-${gcc_version}/gcc-${gcc_version}.tar.xz";
+    sha256 = "0p71bij6bfhzyrs8676a8jmpjsfz392s2rg862sdnsk30jpacb43";
   };
 
-  musl_version = "1.1.16";
+  musl_version = "1.1.20";
   musl_src = nixpkgs.fetchurl {
     url = "https://www.musl-libc.org/releases/musl-${musl_version}.tar.gz";
-    sha256 = "048h0w4yjyza4h05bkc6dpwg3hq6l03na46g0q1ha8fpwnjqawck";
+    sha256 = "0q8dsjxl41dccscv9a0r78bs7jap57mn4mni5pwbbip6s1qqggj4";
   };
 
   inherit host headers;
@@ -27,8 +27,7 @@ native.make_derivation rec {
   builder = ./builder.sh;
 
   gcc_patches = [
-    # These patches are from nixpkgs.
-    ./use-source-date-epoch.patch
+    # This patch is from nixpkgs.
     ./libstdc++-target.patch
 
     # Without this, we cannot build a simple hello world program for ARM.
