@@ -2,7 +2,7 @@
 
 let
   nixpkgs = native.nixpkgs;
-  isl = nixpkgs.isl_0_14;
+  isl = nixpkgs.isl;
   inherit (nixpkgs) stdenv lib fetchurl;
   inherit (nixpkgs) gmp libmpc libelf mpfr zlib;
 in
@@ -33,10 +33,6 @@ native.make_derivation rec {
     # Without this, we cannot build a simple hello world program for ARM.
     # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=31798
     ./link_gcc_c_sequence_spec.patch
-
-    # Fix a compiler error in GCC's ubsan.c: ISO C++ forbids comparison
-    # between pointer and integer.
-    ./ubsan.patch
   ];
 
   native_inputs = [ binutils ];

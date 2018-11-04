@@ -20,7 +20,7 @@ Packages collection (Nixpkgs)][nixpkgs].
   - Windows (32-bit or 64-bit) using [mingw-w64](https://mingw-w64.org/)
     and [GCC](https://gcc.gnu.org/) 7.3.0
   - Linux (32-bit, 64-bit, and ARM) using [musl](https://www.musl-libc.org/)
-    and [GCC](https://gcc.gnu.org/) 6.3.0
+    and [GCC](https://gcc.gnu.org/) 7.3.0
   - macOS using [Clang](https://clang.llvm.org/) 5.0.0
 - Supported languages for cross-compiling:
   - C
