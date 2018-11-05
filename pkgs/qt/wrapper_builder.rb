@@ -107,6 +107,7 @@ def make_dep_graph
     add_dep 'libQt5LinuxAccessibilitySupport.a', 'xcb-aux.pc'
     add_dep 'libQt5ThemeSupport.a', 'libQt5DBus.a'
 
+    add_dep 'libQt5XcbQpa.a', 'libQt5EdidSupport.a'
     add_dep 'libQt5XcbQpa.a', 'libQt5EventDispatcherSupport.a'
     add_dep 'libQt5XcbQpa.a', 'libQt5FontDatabaseSupport.a'
     add_dep 'libQt5XcbQpa.a', 'libQt5Gui.a'
