@@ -743,7 +743,9 @@
       %-  emule  |.  ^+  ..apex
       =*  sec  p.kyz    ::  ?                           ::  https bit
       =*  heq  r.kyz    ::  httq                        ::  request content
-      =+  ryp=`quri`(rash q.heq zest:de-purl)
+      =/  ryp=quri
+        =+  (rush q.heq zest:de-purl)
+        ?^(- u.- ~|(eyre-parse-url-failed+q.heq !!))
       =+  maf=(eat-headers r.heq)
       =+  ^=  pul  ^-  purl
           ?-  -.ryp
