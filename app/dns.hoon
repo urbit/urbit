@@ -318,7 +318,7 @@
   [((slog u.saw) ~) this]
 ::  +prep: adapt state
 ::
-::  ++  prep  _[~ this]
+:: ++  prep  _[~ this]
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
@@ -354,17 +354,18 @@
       %+  endpoint  base:gcloud
       /[project.pro.aut]/['managedZones']/[zone.pro.aut]
     ~&  url
-    %-  emit(nam [aut ~ ~])
+    %-  emit(nam [aut ~ ~ ~])
     [%hiss wir [~ ~] %httr %hiss url %get ~ ~]
   ::  +create: bind :him, on behalf of :for
   ::
   ++  create
     |=  [for=ship him=ship tar=target]
-    ::  XX defer %indirect where target isn't yet bound
-    ::
-    ?>  ?|  ?=(%direct -.tar)
-            (~(has by bon.nam) p.tar)
+    ?:  ?&  ?=(%indirect -.tar)
+            !(~(has by bon.nam) p.tar)
         ==
+      ::  defer %indirect where target isn't yet bound
+      ::
+      this(dep.nam (~(add ja dep.nam) p.tar [him tar]))
     ::  ignore if binding is pending
     ::
     =/  pending  (~(get by pen.nam) him)
@@ -398,6 +399,19 @@
       (~(request gcloud aut.nam) him tar pre)
     %-  emit(pen.nam (~(put by pen.nam) him tar)) :: XX save for
     [%hiss wir [~ ~] %httr %hiss req]
+  ::  +dependants: process stored dependant bindings
+  ::
+  ++  dependants
+    |=  for=ship
+    ^+  this
+    =/  dep  (~(get ja dep.nam) for)
+    =.  ..this
+      |-  ^+   ..this
+      ?~  dep  ..this
+      =*  him  p.i.dep
+      =*  tar  q.i.dep
+      $(dep t.dep, ..this (create for him tar))
+    this(dep.nam (~(del by dep.nam) for))
   ::  +confirm: successfully bound
   ::
   ++  confirm
@@ -413,7 +427,7 @@
       /bound/(scot %p him)/for/(scot %p for)
     =/  dom=turf
       (weld dom.aut.nam /(crip +:(scow %p him)))
-    %-  emit
+    %-  emit:(dependants him)
     [%poke wir [for dap.bow] %dns-command %bond for him dom]
   --
 ::  |tell: acting as planet parent or relay

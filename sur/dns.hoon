@@ -41,8 +41,9 @@
 ::
 +$  nameserver
   $:  aut=authority
-      pen=(map ship target)
       bon=(map ship bound)
+      dep=(jar ship (pair ship target))
+      pen=(map ship target)
   ==
 ::  +relay: a good parent keeps track
 ::
