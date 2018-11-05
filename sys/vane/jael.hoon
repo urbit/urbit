@@ -724,7 +724,7 @@
       ::
       =.  +>.$
         ?~  snap.tac  +>.$
-        (restore-snap hen our u.snap.tac)
+        (restore-snap hen our u.snap.tac |)
       ::
       =.  moz
         %+  weld  moz
@@ -807,7 +807,7 @@
     ::
         %look
       %^  cute  hen  our.tac  =<  abet
-      (~(look et our.tac now.sys urb.lex sub.lex etn.lex sap.lex) src.tac)
+      (~(look et hen our.tac now.sys urb.lex sub.lex etn.lex sap.lex) src.tac)
     ::
     ::  create promises
     ::    {$mint p/ship q/safe}
@@ -931,7 +931,7 @@
           +>.$
         =.  moz  [[hen %give %mack ~] moz]
         %^  cute  hen  our  =<  abet
-        (~(hear-vent et our now.sys urb.lex sub.lex etn.lex sap.lex) p.mes)
+        (~(hear-vent et hen our now.sys urb.lex sub.lex etn.lex sap.lex) p.mes)
       ==
     ::
     ::  rewind to snapshot
@@ -958,19 +958,19 @@
     ::
         [%e %sigh *]
       %^  cute  hen  our  =<  abet
-      (~(sigh et our now.sys urb.lex sub.lex etn.lex sap.lex) wir p.hin)
+      (~(sigh et hen our now.sys urb.lex sub.lex etn.lex sap.lex) wir p.hin)
     ::
         [%b %wake ~]
       %^  cute  hen  our
       ::  XX cleanup
       ::
       ?.  ?=([%init ~] wir)
-        abet:~(wake et our now.sys urb.lex sub.lex etn.lex sap.lex)
-      abet:(~(init et our now.sys [urb sub etn sap]:lex) our (sein our))
+        abet:~(wake et hen our now.sys urb.lex sub.lex etn.lex sap.lex)
+      abet:(~(init et hen our now.sys [urb sub etn sap]:lex) our (sein our))
     ::
         [%j %vent *]
       %^  cute  hen  our  =<  abet
-      (~(hear-vent et our now.sys urb.lex sub.lex etn.lex sap.lex) p.hin)
+      (~(hear-vent et hen our now.sys urb.lex sub.lex etn.lex sap.lex) p.hin)
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
@@ -1009,28 +1009,7 @@
   ++  wind                                              ::  rewind to snap
     |=  [hen=duct our=@p block=@ud]
     ^+  +>
-    ~&  %dripping
-    =/  old-qeu  snaps.sap
-    =:  snaps.sap       ~
-        count.sap       0
-        last-block.sap  0
-      ==
-    =^  snap=snapshot  +>.$
-      ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
-        [%*(. *snapshot latest-block.etn launch:contracts) +>.$]
-      |-  ^-  [snapshot _+>.^$]
-      ::  =^  [new-qeu=(qeu [block-number=@ud snap=snapshot]) snap=snapshot]  snaps.sap
-      =^  snap=[block-number=@ud snap=snapshot]  old-qeu
-        ~(get to old-qeu)
-      =:  count.sap       +(count.sap)
-          last-block.sap  block-number.snap
-          snaps.sap       (~(put to snaps.sap) snap)
-        ==
-      ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
-        [snap.snap +>.^$]
-      $
-    ~&  [%wind block latest-block.etn.snap ~(wyt by hul.eth.snap)]
-    =.  +>.$  (restore-snap hen our snap)
+    =.  +>.$  (restore-block hen our block)
     %=    +>.$
         moz
       =-  [[hen %pass /wind/look %j %look our -] moz]
@@ -1039,11 +1018,17 @@
         %|  |+node.p.source.etn
       ==
     ==
+  ::                                                    ::  ++restore-block:of
+  ++  restore-block                                     ::  rewind before block
+    |=  [hen=duct our=@p block=@ud]
+    %^  cute  hen  our  =<  abet
+    (~(restore-block et hen our now.sys urb.lex sub.lex etn.lex sap.lex) block)
   ::                                                    ::  ++restore-snap:of
   ++  restore-snap                                      ::  restore snapshot
-    |=  [hen=duct our=@p snap=snapshot]
+    |=  [hen=duct our=@p snap=snapshot look=?]
     %^  cute  hen  our  =<  abet
-    (~(restore-snap et our now.sys urb.lex sub.lex etn.lex sap.lex) snap)
+    %-  ~(restore-snap et hen our now.sys urb.lex sub.lex etn.lex sap.lex)
+    [snap look]
   --
 ::                                                      ::  ++su
 ::::                    ## relative^heavy               ::  subjective engine
@@ -1122,6 +1107,14 @@
       /(scot %p our)/vent-result
     ^-  note:able
     [%a %want [our who] /j/(scot %p our)/vent-result %vent-result res]
+  ::
+  ++  extract-snap                                    ::  extract rewind point
+    ^-  snapshot
+    :*  eve.urb
+        kyz.puk.sub
+        +.eth.sub
+        etn(source *(each ship node-src))
+    ==
   ::                                                    ::  ++feed:su
   ++  feed                                              ::  subscribe to view
     |_  ::  hen: subscription source
@@ -1153,13 +1146,7 @@
       ==
     ::
     ++  vent
-      =/  last-snap
-        |-  ^-  snapshot
-        =^  snap=[@ud snap=snapshot]  snaps.sap
-          ~(get to snaps.sap)
-        ?:  =(~ snaps.sap)
-          snap.snap
-        $
+      =/  last-snap  extract-snap
       %.  [[hen ~ ~] snap+last-snap]
       %_  vent-pass
       :: %_  ..feed  ::TODO  see ++abet
@@ -1511,14 +1498,6 @@
           count  (dec count)
         ==
       ..file
-    ::
-    ++  extract-snap                                    ::  extract rewind point
-      ^-  snapshot
-      :*  eve.urb
-          kyz.puk.sub
-          +.eth.sub
-          etn(source *(each ship node-src))
-      ==
     --
   --
 ::                                                      ::  ++ur
@@ -1650,17 +1629,19 @@
   =|  moves=(list move)
   =+  reset=|
   =|  changes=logs
-  =|  $:  our=ship
+  =|  rewind-block=(unit @ud)
+  =|  $:  hen=duct
+          our=ship
           now=@da
           state-absolute
           state-relative
           state-eth-node
           state-snapshots
       ==
-  =*  urb  ->+<
-  =*  sub  ->+>-
-  =*  etn  ->+>+<
-  =*  sap  ->+>+>
+  =*  urb  ->+>-
+  =*  sub  ->+>+<
+  =*  etn  ->+>+>-
+  =*  sap  ->+>+>+
   ::
   ::  +|  outward
   |%
@@ -1671,6 +1652,16 @@
     ^-  $:  (list move)  chain  state-absolute  state-relative
             state-eth-node  state-snapshots
         ==
+    =.  .
+      ?~  rewind-block
+        .
+      ::  if we're rewinding to a block, then we throw away any moves
+      ::  and changes we were going to make.
+      ::
+      =:  moves    *(list move)
+          changes  *logs
+        ==
+      (restore-block u.rewind-block)
     [(flop moves) ?:(reset &+changes |+changes) urb sub etn sap]
   ::
   ::  +put-move: store side-effect
@@ -1873,7 +1864,10 @@
     |=  =vent-result
     ^+  +>
     ?-  -.vent-result
-        %snap  (restore-snap snap.vent-result)
+        ::  `look` can be | because we know we're listening to a ship
+        ::  rather than a node, so the subscription was never broken
+        ::
+        %snap  (restore-snap snap.vent-result |)
         %chain
       ?-  -.can.vent-result
         %&   (assume p.can.vent-result)
@@ -1989,6 +1983,18 @@
         ~&  [%unhandled-filter-error +.rep]
         +>
       ~&  [%filter-timed-out--recreating block=latest-block +.rep]
+      ::  arguably should rewind 40 blocks on the off chance the chain reorganized
+      ::  when we blinked.  this will also restart the filter.
+      ::
+      ::  (restore-block ?:((lth latest-block 40) 0 (sub.add latest-block 40)))
+      ::
+      ::  counter-argument: it's a royal pain to restore from a snapshot
+      ::  every time you can't ping the node for 5 minutes.  this is likely
+      ::  to destabilize the network.  better to manually restore if we
+      ::  notice an anomaly.
+      ::
+      ::  third way: don't trust anything that doesn't have 40 confirmations
+      ::
       new-filter
     ::  kick polling timer, only if it hasn't already been.
     =?  +>  ?&  ?=(%| -.source)
@@ -2057,27 +2063,25 @@
       ~&  %ignoring-unmined-event
       +>
     =*  place  u.mined.log
-    ::
-    ::TODO  if the block number is less than latest, that means we got
-    ::      events out of order somehow and should probably reset.
-    ::      This could also mean there was a chain reorg if the logs
-    ::      have the 'removed' tag set.  In this case, we should delete
-    ::      the old logs.  Finally, since we rewind 40 blocks on new
-    ::      filter, this could be up to 40 blocks old just because of
-    ::      that.
-    ::  ~?  (lte block-number.place latest-block)
-    ::    [%old-block block-number.place latest-block]
-    ::
     ?:  (~(has in heard) block-number.place log-index.place)
       ?.  removed.u.mined.log
         ::  ~&  [%ignoring-duplicate-event tx=transaction-hash.u.mined.log]
         +>
+      ::  block was reorganized away, so rewind to this block and
+      ::  start syncing again.
+      ::
       ~&  :*  'removed event!  Perhaps chain has reorganized?'
               tx-hash=transaction-hash.u.mined.log
               block-number=block-number.u.mined.log
               block-hash=block-hash.u.mined.log
           ==
-      +>  ::TODO  undo the effects of this event
+      %=    +>
+          rewind-block
+        :-  ~
+        ?~  rewind-block
+          block-number.place
+        (min block-number.place u.rewind-block)
+      ==
     =+  cuz=[block-number.place log-index.place]
     ::
     ?:  =(event.log changed-dns:ships-events)
@@ -2090,9 +2094,34 @@
     =+  dif=(event-log-to-hull-diff log)
     ?~  dif  +>.$
     (put-change cuz %hull u.dif)
+  ::                                                    ::  ++restore-block:et
+  ++  restore-block                                     ::  rewind before block
+    |=  block=@ud
+    ^+  +>
+    =/  old-qeu  snaps.sap
+    =:  snaps.sap       ~
+        count.sap       0
+        last-block.sap  0
+      ==
+    =^  snap=snapshot  +>.$
+      ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
+        [%*(. *snapshot latest-block.etn launch:contracts) +>.$]
+      |-  ^-  [snapshot _+>.^$]
+      =^  snap=[block-number=@ud snap=snapshot]  old-qeu
+        ~(get to old-qeu)
+      =:  count.sap       +(count.sap)
+          last-block.sap  block-number.snap
+          snaps.sap       (~(put to snaps.sap) snap)
+        ==
+      ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
+        [snap.snap +>.^$]
+      $
+    ~&  [%restoring-block block latest-block.etn.snap ~(wyt by hul.eth.snap)]
+    (restore-snap snap &)
   ::                                                    ::  ++restore-snap:et
   ++  restore-snap                                      ::  restore snapshot
-    |=  snap=snapshot
+    |=  [snap=snapshot look=?]
+    ^+  +>
     ::  update pub subscribers
     ::
     =.  +>.$
@@ -2108,12 +2137,19 @@
     =.  +>.$  (vent-pass yen.eth snap+snap)
     ::  keep the following in sync with ++extract-snap:file:su
     ::
-    %=  +>.$
+    %=    +>.$
         eve.urb       eve.snap
         etn           etn.snap(source source.etn)
         kyz.puk.sub   kyz.snap
         +.eth.sub     eth.snap
         sap           sap(last-block 0)
+        moves
+      ?.  look  moves
+      =-  [[hen %pass /wind/look %j %look our -] moves]
+      ?-  -.source.etn
+        %&  &+p.source.etn
+        %|  |+node.p.source.etn
+      ==
     ==
   ::                                                    ::  ++exec:et
   ++  exec                                              ::  mass gift
