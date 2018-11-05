@@ -28,9 +28,6 @@ rm test.o
 mkdir build
 cd build
 
-# -DHAVE_SECURE_GETENV: We don't have secure_getenv but we want to avoid a header error,
-# and hopefully secure_getenv isn't actually needed by libudev.
-
 $host-gcc -c -Werror -I$fill $fill/*.c
 $host-gcc -c $CFLAGS \
   -I../systemd/src/libudev \
