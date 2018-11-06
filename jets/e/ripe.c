@@ -14,7 +14,7 @@ u3qe_ripe(u3_atom wid, u3_atom dat)
   u3r_bytes(0, wid, (void*)dat_y, dat);
 
   const EVP_MD* rip_u = EVP_ripemd160(); // ripem algorithm
-  EVP_MD_CTX* con_u = NULL;              // context
+  static EVP_MD_CTX* con_u = NULL;       // context
 
   /* build library context object
      we do this once (and only once)
