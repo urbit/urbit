@@ -8,8 +8,13 @@ script:
   - ninja
   - sudo ninja install
   - cd ../.travis
+  - ulimit -c unlimited -S
   - npm install
-  - npm run test
+  # || true so we continue
+  - npm run -s test || RESULT=$?
+  - if [[ ${RESULT} -eq 0 ]]; then exit 0; else for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb urbit core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi;
+  - echo "build failed with status code $RESULT"
+  - exit $RESULT
 
 # Uncomment me if this gets annoying
 #
@@ -47,6 +52,7 @@ addons:
     - re2c
     - libcurl4-gnutls-dev
     - unzip
+    - gdb
 # before_deploy: "make deb" # TODO
 deploy:
   skip_cleanup: true

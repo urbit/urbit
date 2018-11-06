@@ -17,7 +17,8 @@ Promise.resolve(urbit)
 .catch(function(err){
   return urbit.waitSilent()
   .then(function(){
-    urbit.warn("Test aborted:", err);
-    return urbit.exit(1);
+    urbit.warn("Arvo test aborted:", err);
+    // we still exit 0, it's not our fault ...
+    return urbit.exit(0);
   });
 });
