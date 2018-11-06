@@ -26,72 +26,36 @@ static void pretty_print_hex(char * headline,
 #endif
 
 u3_noun
-u3qe_blake(u3_atom msg, u3_atom key, u3_atom out)
+u3qe_blake(u3_atom wid, u3_atom dat,
+           u3_atom wik, u3_atom dak,
+           u3_atom out)
 {
-  c3_assert(_(u3a_is_cat(out)));
+  c3_assert(_(u3a_is_cat(wid)) && _(u3a_is_cat(wik)) && _(u3a_is_cat(out)));
 
-  // msg
-  u3_noun men; // length
-  u3_noun mod; // body
+  // flip endianness for the internal blake2b function
+  dat = u3qc_rev(3, wid, dat);
+  dak = u3qc_rev(3, wik, dak);
 
-  u3r_mean(msg,
-           2, &men,
-           3, &mod,
-           0);
+  c3_y* dat_y = (c3_y*)u3a_malloc(wid);
+  u3r_bytes(0, wid, (void*)dat_y, dat);
 
-  // meta length: length of the length
-  c3_w met_w = u3r_met(3, men);
-
-  if (met_w > 4)
-  {
-    fprintf(stderr, "\rblake jet: msg size size too big\n");
-    return u3m_bail(c3__exit);
-  }
-
-  c3_w men_w;
-  men_w = u3r_word(0, men);
-
-  c3_y* mod_y = (c3_y*)u3a_malloc(men_w);
-  u3r_bytes(0, men, (void*)mod_y, mod);
-
-  // key
-  u3_noun ken; // length
-  u3_noun kod; // body
-
-  u3r_mean(key,
-           2, &ken,
-           3, &kod,
-           0);
-
-  // meta length: length of the length
-  c3_w mek_w = u3r_met(3, ken);
-
-  if (mek_w > 4)
-  {
-    fprintf(stderr, "\rblake jet: key size size too big\n");
-    return u3m_bail(c3__exit);
-  }
-
-  c3_w ken_w;
-  ken_w =  u3r_word(0, ken);
-
-  c3_y* kod_y = (c3_y*)u3a_malloc(ken_w);
-  u3r_bytes(0, ken, (void*)kod_y, kod);
+  c3_y* dak_y = (c3_y*)u3a_malloc(wik);
+  u3r_bytes(0, wik, (void*)dak_y, dak);
 
   int ret;
   c3_y out_y[64];
   ret = blake2b(out_y,  // OUT: output
                 out,    // IN: max output size
-                mod_y,  // IN: msg body
-                men_w,  // IN: msg len
-                kod_y,  // IN: key body
-                ken_w); // IN: key len
+                dat_y,  // IN: msg body
+                wid,    // IN: msg len
+                dak_y,  // IN: key body
+                wik);   // IN: key len
 
   /* free() BEFORE checking error code;
      we don't want to leak memory if we return early
   */
-  u3a_free(mod_y);
-  u3a_free(kod_y);
+  u3a_free(dat_y);
+  u3a_free(dak_y);
 
   if (ret != 0)
   {
@@ -107,20 +71,20 @@ u3qe_blake(u3_atom msg, u3_atom key, u3_atom out)
 u3_noun
 u3we_blake(u3_noun cor)
 {
-  u3_noun msg, byt, out;
+  u3_noun msg, key, out, // arguments
+          wid, dat,      // destructured msg
+          wik, dak;      // destructured key
 
-  if ( (c3n == u3r_mean(cor,
-                        u3x_sam_2, &msg,
-                        u3x_sam_6, &byt,
-                        u3x_sam_7, &out,
-                        0)) ||
-       (c3n == u3du(msg)) ||
-       (c3n == u3du(byt)) ||
-       (c3n == u3ud(out)) )
+  if ( c3n == u3r_mean(cor, u3x_sam_2, &msg,
+                            u3x_sam_6, &key,
+                            u3x_sam_7, &out, 0) ||
+              u3r_cell(msg, &wid, &dat) || u3ud(wid) || u3ud(dat) ||
+              u3r_cell(key, &wik, &dak) || u3ud(wik) || u3ud(dak) ||
+              u3ud(out) )
   {
     fprintf(stderr, "\rblake jet: arguments error\n");
     return u3m_bail(c3__exit);
   } else {
-    return u3qe_blake(msg, byt, out);
+    return u3qe_blake(wid, dat, wik, dak, out);
   }
 }
