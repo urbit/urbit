@@ -61,7 +61,7 @@
 ::  service providers
 ::
 =>  |%
-:: |gcloud: provider-specific functions
+::  |gcloud: provider-specific functions
 ::
 ++  gcloud
   |_  aut=authority
@@ -69,12 +69,12 @@
   ::
   ++  base
     (need (de-purl:html 'https://www.googleapis.com/dns/v1/projects'))
-  :: +record: JSON-formatted provider-specific dns record
+  ::  +record: JSON-formatted provider-specific dns record
   ::
   ++  record
     |=  [him=ship tar=target]
     ^-  json
-    :: ?>  ?=([%gcloud *] pro.aut)
+    ::  ?>  ?=([%gcloud *] pro.aut)
     =+  ^-  [typ=cord dat=cord]
       ?:  ?=(%direct -.tar)
         ['A' (crip +:(scow %if p.tar))]
@@ -86,13 +86,13 @@
       ttl+n+~.300
       rrdatas+a+[s+dat ~]
     ==
-  :: +request: provider-specific record-creation request
+  ::  +create: provider-specific record-creation request
   ::
-  ++  request
+  ++  create
     =,  eyre
     |=  [him=ship tar=target pre=(unit target)]
     ^-  hiss
-    :: ?>  ?=([%gcloud *] pro.aut)
+    ::  ?>  ?=([%gcloud *] pro.aut)
     =/  url=purl
       %+  endpoint  base
       /[project.pro.aut]/['managedZones']/[zone.pro.aut]/changes
@@ -106,6 +106,100 @@
       ?~  pre  ~
       [deletions+a+[(record him u.pre) ~] ~]
     [url %post hed `bod]
+  ::  +list: list existing records stored by provider
+  ::
+  ++  list
+    =,  eyre
+    |=  page=(unit @t)
+    ^-  hiss
+    ::  ?>  ?=([%gcloud *] pro.aut)
+    =/  url=purl
+      %+  endpoint  base
+      /[project.pro.aut]/['managedZones']/[zone.pro.aut]/rrsets
+    =/  hed=math
+      ?~  page  ~
+      (~(put by *math) 'pageToken' [u.page]~)
+    [url %get hed ~]
+  ::  +parse existing records stored by provider
+  ::
+  ++  parse
+    =<  |=  bod=octs
+        =/  jon  (de-json:html q.bod)
+        ?~  jon  [~ ~]
+        (response u.jon)
+    ::
+    =,  dejs:format
+    |%
+    ++  response
+      ^-  $-  json
+          (pair (list (pair ship target)) (unit @t))
+      %-  ou  :~
+        ::  'kind'^(su (jest "dns#resourceRecordSetsListResponse'))
+        ::
+        'rrsets'^(uf ~ record-set)
+        'nextPageToken'^(uf ~ (mu so))
+      ==
+    ::
+    ++  record-set
+      %+  cu
+        |=  a=(list (unit (pair ship target)))
+        ?~  a  ~
+        ?:  ?|  ?=(~ i.a)
+                ?=(%czar (clan:title p.u.i.a))
+            ==
+          $(a t.a)
+        [u.i.a $(a t.a)]
+      (ar record)
+    ::
+    ++  record
+      %+  cu
+        |=  [typ=@t nam=@t dat=(list @t)]
+        ^-  (unit (pair ship target))
+        =/  him  (name nam)
+        ?:  ?|  ?=(~ him)
+                ?=(~ dat)
+                ?=(^ t.dat)
+            ==
+          ~
+        ?+  typ
+          ~
+        ::
+            %'A'
+          =/  adr  (rush i.dat lip:ag)
+          ?~  adr  ~
+          `[u.him %direct %if u.adr]
+        ::
+            %'CNAME'
+          =/  for  (name i.dat)
+          ?~  for  ~
+          `[u.him %indirect u.for]
+        ==
+      ::
+      %-  ot  :~
+        ::  'kind'^(su (jest "dns#resourceRecordSet'))
+        ::
+        'type'^so
+        'name'^so
+        'rrdatas'^(ar so)
+      ==
+    ::
+    ++  name
+      |=  nam=@t
+      ^-  (unit ship)
+      =/  dom=(unit host:eyre)
+        (rush nam ;~(sfix thos:de-purl:html dot))
+      ?:  ?|  ?=(~ dom)
+              ?=(%| -.u.dom)
+              ?=(~ p.u.dom)
+          ==
+        ~
+      =/  who
+        (rush (head (flop p.u.dom)) fed:ag)
+      ?~  who  ~
+      ?.  =(dom.aut (flop (tail (flop p.u.dom))))
+        ~
+      `u.who
+    --
   --
 --
 ::
@@ -115,6 +209,12 @@
 ::  +this: is sparta
 ::
 ++  this  .
+:: +request: generic http request
+::
+++  request
+  |=  [wir=wire req=hiss:eyre]
+  ^-  card
+  [%hiss wir [~ ~] %httr %hiss req]
 ::  +poke-noun: debugging
 ::
 ++  poke-noun
@@ -146,15 +246,12 @@
     ?+  i.t.wir
       !!
     ::  response confirming a valid nameserver config
-    ::  XX attempt to download existing ship.domain bindings for a breach?
     :: 
         %confirm
       ?.  =(200 p.rep)
         ~&  [%authority-confirm-fail rep]
         [~ this(nem ~)]
-      ::  XX anything to do here? parse body?
-      ::
-      [~ this]
+      abet:(~(update bind u.nem) ~)
     ::  response to a binding creation request
     ::
         %create
@@ -167,6 +264,16 @@
       =/  him=ship  (slav %p i.t.t.wir)
       =/  for=ship  (slav %p i.t.t.t.t.wir)
       abet:(~(confirm bind u.nem) for him)
+    ::  response to an existing-binding retrieval request
+    ::
+        %update
+      ?.  =(200 p.rep)
+        ::  XX retry
+        ::
+        [~ this]
+      ?~  r.rep
+        [~ this]
+      abet:(~(restore bind u.nem) u.r.rep)
     ==
   ::  responses for a relay validating a binding target
   ::
@@ -207,6 +314,18 @@
       [%authority %confirm ~]
     ~&  %authority-confirm-fail
     [((slog saw) ~) this(nem ~)]
+  ::
+      [%authority %create ~]
+    ~&  %authority-create-fail
+    ::  XX retry pending bindings
+    ::
+    [((slog saw) ~) this]
+  ::
+      [%authority %update ~]
+    ~&  %authority-update-fail
+    ::  XX retry binding retrieval
+    ::
+    [((slog saw) ~) this]
   ::
       [%check @ ~]
     ~&  %direct-confirm-fail
@@ -355,7 +474,24 @@
       /[project.pro.aut]/['managedZones']/[zone.pro.aut]
     ~&  url
     %-  emit(nam [aut ~ ~ ~])
-    [%hiss wir [~ ~] %httr %hiss url %get ~ ~]
+    (request wir url %get ~ ~)
+  ::  +update: retrieve existing remote nameserver records
+  ::
+  ++  update
+    |=  page=(unit @t)
+    ^+  this
+    (emit (request /authority/update (~(list gcloud aut.nam) page)))
+  ::  +restore: restore existing remove nameserver records
+  ::
+  ++  restore
+    |=  bod=octs
+    =+  ^-  [dat=(list (pair ship target)) page=(unit @t)]
+      (~(parse gcloud aut.nam) bod)
+    |-  ^+  this
+    ?~  dat
+      ?~(page this (update page))
+    =/  nob=bound  [now.bow q.i.dat ~]
+    $(dat t.dat, bon.nam (~(put by bon.nam) p.i.dat nob))
   ::  +create: bind :him, on behalf of :for
   ::
   ++  create
@@ -396,9 +532,9 @@
       ?~(bon ~ `cur.u.bon)
     :: ?>  ?=(%gcloud pro.aut.nam)
     =/  req=hiss:eyre
-      (~(request gcloud aut.nam) him tar pre)
+      (~(create gcloud aut.nam) him tar pre)
     %-  emit(pen.nam (~(put by pen.nam) him tar)) :: XX save for
-    [%hiss wir [~ ~] %httr %hiss req]
+    (request wir req)
   ::  +dependants: process stored dependant bindings
   ::
   ++  dependants
@@ -496,7 +632,7 @@
     ::  XX state mgmt
     ::
     %-  emit
-    [%hiss wir [~ ~] %httr %hiss url %get ~ ~]
+    (request wir url %get ~ ~)
   ::  +fail: %direct target is invalid or inaccessible
   ::
   ++  fail
@@ -544,7 +680,7 @@
     ::  XX track bound-state per-domain
     ::
     %-  emit(dom.u.rel `dom)
-    [%hiss wir [~ ~] %httr %hiss url %get ~ ~]
+    (request wir url %get ~ ~)
   ::  +recheck-bond: re-attempt to confirm binding propagation
   ::
   ++  recheck-bond
