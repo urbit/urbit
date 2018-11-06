@@ -34,6 +34,9 @@
           ==  ==
               $:  $g                                    ::  to %gall
           $%  {$deal p/sock q/cush:gall}               ::  full transmission
+          ==  ==                                        ::
+              $:  %j                                    ::  to %jael
+          $%  [%turf ~]                                 ::  view domains
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $%  $:  $a                                    ::  by %ames
@@ -52,6 +55,9 @@
               $:  $f
           $%  [%made date=@da result=made-result:ford]  ::
           ==  ==
+              $:  %j                                    ::  from %jael
+          $%  [%turf turf=(list turf)]                  ::  bind to domains
+          ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  {$crud p/@tas q/(list tank)}              ::
           ==  ==  ==                                    ::
@@ -673,9 +679,11 @@
     =.  p.top  our              ::  XX necessary?
     ?-    -.kyz
         $born
-      :: XX capture IPs too
-      =/  mod/(set (list @t))
-        %-  ~(gas in *(set (list @t)))
+      ::  XX capture IPs too
+      ::  XX continue to support turf in %born? (currently unused)
+      ::
+      =/  mod/(set turf)
+        %-  ~(gas in *(set turf))
         %+  turn
           (skim p.kyz |=(a=host ?=(%& -.a)))
         |=(a=host ?>(?=(%& -.a) p.a))
@@ -684,6 +692,8 @@
       =?  mow  ?=(^ dif)
         =/  cmd  [%acme %poke `cage`[%acme-order !>(dom)]]
         :_(mow [hen %pass /acme/order %g %deal [our our] cmd])
+      =?  mow  ?=(%czar (clan:title our))
+        :_(mow [hen %pass / %j %turf ~])
       %=  +>.$
         ged  hen                                        ::  register external
         mow  :_(mow [hen [%give %form fig]])
@@ -700,7 +710,7 @@
         +>.$(mow :_(mow [ged [%give %form fig]]))
       ::
           $turf
-        =/  mod/(set (list @t))
+        =/  mod/(set turf)
           ?:  ?=(%put p.p.kyz)
             (~(put in dom) q.p.kyz)
           (~(del in dom) q.p.kyz)
@@ -721,14 +731,21 @@
     ::
         $init                                           ::  register ownership
       =.  our  ?~(hov p.kyz (min u.hov p.kyz))
-      =.  fig  [~ ?=(%king (clan:title our)) & &]
-      +>.$(hov [~ our], top [[our %home ud+0] /web])
+      %=  +>.$
+        fig  [~ ?=(%king (clan:title our)) & &]
+        hov  [~ our]
+        top  [[our %home ud+0] /web]
+      ==
+    ::
+        $sunk  +>
     ::
         ?($chis $this)                                  ::  inbound request
       %-  emule  |.  ^+  ..apex
       =*  sec  p.kyz    ::  ?                           ::  https bit
       =*  heq  r.kyz    ::  httq                        ::  request content
-      =+  ryp=`quri`(rash q.heq zest:de-purl)
+      =/  ryp=quri
+        =+  (rush q.heq zest:de-purl)
+        ?^(- u.- ~|(eyre-parse-url-failed+q.heq !!))
       =+  maf=(eat-headers r.heq)
       =+  ^=  pul  ^-  purl
           ?-  -.ryp
@@ -907,7 +924,7 @@
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
     ?:  &(?=({?($of $ow) ^} tee) !(~(has by wix) p.tee))
-      ~&(dead-ire+[`whir`tee ({term term ~} +.sih)] +>)
+      ~&(dead-ire+[`whir`tee] +>)
     ?-    &2.sih
         $crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::  $dumb
@@ -926,6 +943,22 @@
         $ay  (ames-gram (slav %p p.tee) %got (slav %uv q.tee) |2.sih)
         $hi  (cast-thou q.tee httr+!>(p.sih))
         $se  (get-thou:(dom-vi q.tee) p.tee p.sih)
+      ==
+    ::
+        $turf
+      ?.  ?=(%czar (clan:title our))
+        ~&  %strange-turf
+        +>.$
+      =/  mod/(set turf)
+        %-  ~(gas in dom)
+        %+  turn  turf.sih
+        |=(a=turf (weld a /(crip +:(scow %p our))))
+      ?:  =(dom mod)
+        +>.$
+      =/  cmd  [%acme %poke `cage`[%acme-order !>(mod)]]
+      %=  +>.$
+        dom  mod
+        mow  :_(mow [hen %pass /acme/order %g %deal [our our] cmd])
       ==
     ::
         $unto                                           ::  app response
@@ -1175,7 +1208,7 @@
     ^-  @ta
     =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
     %^  rsh  3  1
-    (scot %p (@ (need (sky [151 %noun] %a pax))))
+    (scot %p (@ (need (sky [151 %noun] %j pax))))
   ::
   ::
   ++  handle
@@ -1743,6 +1776,13 @@
       [orx abet]
     ::
     ++  fcgi-cred  %_(ced aut (~(put ju aut.ced) %$ (scot %p him)))
+    ::  XX move
+    ::
+    ++  sein
+      |=  who=ship
+      ;;  ship
+      (need (sky [[151 %noun] %j (en-beam [our %sein da+now] /(scot %p who))]))
+    ::
     ++  stat-json
       ^+  [*json ..ya]
       =^  orx  ..ya  new-view
@@ -1751,7 +1791,7 @@
       %-  pairs.j  :~
         oryx+s+orx
         ixor+s+(oryx-to-ixor orx)
-        sein+(ship.j (sein:title our))
+        sein+(ship.j (sein our))
         ship+(ship.j our)
         user+(ship.j him)
         auth+a+(turn ~(tap in aut) ship.j)

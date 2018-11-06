@@ -1,5 +1,4 @@
-/+  old-zuse
-=,  old-zuse
+=,  eyre
 |%
 :: sort knots by date
 :: TODO when we change the write path to have trailing sig, remove here before sort
@@ -11,8 +10,8 @@
   |=  gas/epic
   ^-  ?
   %+  lien
-    ~(tap in (~(get ju aut.ced.gas) %$)) 
-  |=  b/knot 
+    ~(tap in (~(get ju aut.ced.gas) %$))
+  |=  b/knot
   =((scot %p p.bem.gas) b)
 ++  no-title
   |=  wat/wain
@@ -51,7 +50,7 @@
 ++  latest
   |*  a/(map knot *)
   ^-  (pair knot *)
-  =/  sa  
+  =/  sa
   %+  sort
     ~(tap by a)
   |=  [b=(pair knot *) c=(pair knot *)]
@@ -69,7 +68,7 @@
 :: tried to pull this func into a lib, but couldn't get the gill working correctly. grr.
 /=  metawcom  /;  |=  a/(map knot topicful:collections)
                ^-  (pair knot topicful:collections)
-               =/  sa  
+               =/  sa
                %+  sort
                  ~(tap by a)
                |=  [b=(pair knot *) c=(pair knot *)]
@@ -81,7 +80,7 @@
            /^  (map knot topicful:collections)  /_  /collections-topic-full/
 /=  content  /;  |=  a/(map knot manx)
                ^-  (pair knot manx)
-               =/  sa  
+               =/  sa
                %+  sort
                  ~(tap by a)
                |=  [b=(pair knot *) c=(pair knot *)]
@@ -95,7 +94,6 @@
 =/  config  (~(get by configs) +<:s.bem.gas)
 ~&  metawcom
 ::
-=,  old-zuse
 ^-  manx
 ;div.container
   ;div.row

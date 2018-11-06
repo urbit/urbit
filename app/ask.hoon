@@ -2,12 +2,11 @@
 ::::  /hoon/ask/app
   ::
 /?    310
-/+    sole, hood-womb, prey
+/+    sole, prey
 =,    sole
 |%
   ++  card
     $%  {$diff $sole-effect sole-effect}
-        {$poke wire {ship $hood} $womb-invite ,=,(hood-womb {cord reference invite})}
     ==
   ++  invited  ?($new $sent $ignored)
   ++  email  @t
@@ -150,12 +149,6 @@
 ::
 ++  invite
   |=  ask/email
-  :-  ost.bow
-  ^-  card
-  :^  %poke  /invite/(scot %t ask)  [(need wom) %hood]  
-  :-  %womb-invite
-  =,  hood-womb
-  ^-  [cord reference invite]
-  =+  inv=(scot %uv (end 7 1 eny.bow))
-  [inv ~ [ask 1 0 "You have been invited to Urbit: {(trip inv)}" ""]]
+  ~|  %ask-stub-invite
+  !!
 --

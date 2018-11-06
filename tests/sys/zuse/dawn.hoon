@@ -28,6 +28,29 @@
   %-  crip
   %+  weld  "0x"
   (render-hex-bytes:ethereum 20 `@`ships:contracts:constitution:ethe)
+::  snapshot
+::
+++  snap
+  ^-  snapshot:jael
+  :*  *logs:able:jael
+      ~
+      :*  ['urbit.org' 'urbit.org' '']
+          %-  malt
+          :*  ~zod^hul
+              ~marzod^hul
+              (turn (gulf 1 255) |=(gal=@ gal^hul))
+          ==
+      ==
+      %*(. *state-eth-node:jael latest-block 4.230.000)
+  ==
+::
+++  test-give-bloq
+  =/  oct
+    %-  as-octs:mimes:html
+    '{"jsonrpc":"2.0","id":"0","method":"eth_blockNumber","params":[]}'
+  %+  expect-eq
+    !>  oct
+    !>  bloq:give:dawn
 :: this produces a 1000+ line payload, so we just check that it doesn't crash
 ::
 ++  test-give-czar
@@ -41,51 +64,60 @@
   =/  oct
     %-  as-octs:mimes:html
     %+  rap  3
-    :~  '{"jsonrpc":"2.0","method":"eth_call","params":[{"data":"'
+    :~  '{"jsonrpc":"2.0","id":"0","method":"eth_call","params":[{"data":"'
         '0xb3220694'
         '0000000000000000000000000000000000000000000000000000000000000000'
-        '","to":"'  ships  '"},"latest"]}'
+        '","to":"'  ships  '"},"0x0"]}'
     ==
   %+  expect-eq
     !>  oct
-    !>  (hull:give:dawn ~zod)
+    !>  (hull:give:dawn 0 ~zod)
 ::
 ++  test-give-turf
   =/  oct
     %-  as-octs:mimes:html
     %+  rap  3
-    :~  '[{"jsonrpc":"2.0","id":"0","method":"eth_call","params":[{"data":"'
+    :~  '[{"jsonrpc":"2.0","id":"turf-0","method":"eth_call","params":[{"data":"'
         '0xeccc8ff1'
         '0000000000000000000000000000000000000000000000000000000000000000'
-        '","to":"'  ships  '"},"latest"]},'
-        '{"jsonrpc":"2.0","id":"1","method":"eth_call","params":[{"data":"'
+        '","to":"'  ships  '"},"0x0"]},'
+        '{"jsonrpc":"2.0","id":"turf-1","method":"eth_call","params":[{"data":"'
         '0xeccc8ff1'
         '0000000000000000000000000000000000000000000000000000000000000001'
-        '","to":"'  ships  '"},"latest"]},'
-        '{"jsonrpc":"2.0","id":"2","method":"eth_call","params":[{"data":"'
+        '","to":"'  ships  '"},"0x0"]},'
+        '{"jsonrpc":"2.0","id":"turf-2","method":"eth_call","params":[{"data":"'
         '0xeccc8ff1'
         '0000000000000000000000000000000000000000000000000000000000000002'
-        '","to":"'  ships  '"},"latest"]}]'
+        '","to":"'  ships  '"},"0x0"]}]'
     ==
   %+  expect-eq
     !>  oct
-    !>  turf:give:dawn
+    !>  (turf:give:dawn 0)
+::
+++  test-take-bloq
+  =/  oct
+    %-  as-octs:mimes:html
+    '{"id":"0","jsonrpc":"2.0","result":"0x20"}'
+  =/  boq  32
+  %+  expect-eq
+    !>  boq
+    !>  (bloq:take:dawn oct)
 ::
 ++  test-take-czar
   =/  oct
     %-  as-octs:mimes:html
     %+  rap  3
-    :~  '[{"id":"0","jsonrpc":"2.0","result":"'
+    :~  '[{"id":"gal-0","jsonrpc":"2.0","result":"'
         '0xb69b6818b17b7cc22f8e0a2291f58e4aa840cbf44cb2f1c94dc3d71e3cda0d94'
           '3defb87516f42ce4327820b588002aa53e52527af8d23bee4aa215fa296bdf5f'
           '0000000000000000000000000000000000000000000000000000000000000001'
           '0000000000000000000000000000000000000000000000000000000000000001'
-        '"},{"id":"1","jsonrpc":"2.0","result":"'
+        '"},{"id":"gal-1","jsonrpc":"2.0","result":"'
         '0xb727e38d031162e50913b2e37a2e29d4ba457eff4f7fd4ac47dc68fcb54260d3'
           'b8bfe4789483c171f7fa359438cdcc8d268d40fe08d6c1d8b36267748d2139f8'
           '0000000000000000000000000000000000000000000000000000000000000001'
           '0000000000000000000000000000000000000000000000000000000000000001'
-        '"},{"id":"2","jsonrpc":"2.0","result":"'
+        '"},{"id":"gal-2","jsonrpc":"2.0","result":"'
         '0x0000000000000000000000000000000000000000000000000000000000000000'
           '0000000000000000000000000000000000000000000000000000000000000000'
           '0000000000000000000000000000000000000000000000000000000000000000'
@@ -132,51 +164,77 @@
   =/  oct
     %-  as-octs:mimes:html
     %+  rap  3
-    :~  '[{"id":"0","jsonrpc":"2.0","result":"'
+    :~  '[{"id":"turf-0","jsonrpc":"2.0","result":"'
         '0x0000000000000000000000000000000000000000000000000000000000000020'
           '0000000000000000000000000000000000000000000000000000000000000009'
           '75726269742e6f72670000000000000000000000000000000000000000000000'
-        '"},{"id":"1","jsonrpc":"2.0","result":"'
+        '"},{"id":"turf-1","jsonrpc":"2.0","result":"'
         '0x0000000000000000000000000000000000000000000000000000000000000020'
           '0000000000000000000000000000000000000000000000000000000000000009'
           '75726269742e6f72670000000000000000000000000000000000000000000000'
-        '"},{"id":"2","jsonrpc":"2.0","result":"'
+        '"},{"id":"turf-2","jsonrpc":"2.0","result":"'
         '0x0000000000000000000000000000000000000000000000000000000000000020'
           '0000000000000000000000000000000000000000000000000000000000000009'
           '75726269742e6f72670000000000000000000000000000000000000000000000'
         '"}]'
     ==
   %+  expect-eq
-    !>  [[0 /org/urbit] [1 /org/urbit] [2 /org/urbit] ~]
+    !>  [/org/urbit ~]
     !>  (turf:take:dawn oct)
+::
+++  test-snap-bloq
+  %+  expect-eq
+    !>  4.230.000
+    !>  (bloq:snap:dawn snap)
+::
+++  test-snap-hull
+  %+  expect-eq
+    !>  hul
+    !>  (hull:snap:dawn ~zod snap)
+::
+++  test-snap-czar
+  %+  expect-eq
+    !>  256
+    !>  ~(wyt by (czar:snap:dawn snap))
+::
+++  test-snap-turf
+  %+  expect-eq
+    !>  `(list turf)`~[~['org' 'urbit'] ~['org' 'urbit']]
+    !>  (turf:snap:dawn snap)
 ::
 ++  test-veri-good
   =/  sed  [~zod 1 sec ~]
   %+  expect-eq
-    !>  [%& sed `~zod]
+    !>  [%& `~zod]
     !>  (veri:dawn sed hul ~)
 ::
 ++  test-veri-not-spawned
   =/  sed  [~zod 1 sec ~]
   %+  expect-eq
-    !>  [%| %czar %not-keyed]
+    !>  [%| %not-keyed]
     !>  (veri:dawn sed =>(hul .(net ~)) ~)
 ::
 ++  test-veri-wrong-key
   =/  sed  [~zod 1 sec:ex:(pit:nu:crub:crypto 24 %foo) ~]
   %+  expect-eq
-    !>  [%| %czar %key-mismatch]
+    !>  [%| %key-mismatch]
+    !>  (veri:dawn sed hul ~)
+::
+++  test-veri-life-mismatch
+  =/  sed  [~zod 2 sec ~]
+  %+  expect-eq
+    !>  [%| %life-mismatch]
     !>  (veri:dawn sed hul ~)
 ::
 ++  test-veri-already-booted
   =/  sed  [~zod 1 sec ~]
   ;:  weld
     %+  expect-eq
-      !>  [%| %czar %already-booted]
+      !>  [%| %already-booted]
       !>  (veri:dawn sed hul `[1 |])
   ::
     %+  expect-eq
-      !>  [%| %czar %already-booted]
+      !>  [%| %already-booted]
       !>  (veri:dawn sed hul `[2 &])
   ==
 ::
@@ -186,10 +244,10 @@
   =/  sed
     =/  sig
       %-  sign:as:(nol:nu:crub:crypto sec)
-      (shaf %earl (sham 1 pub:ex:cub))
+      (shaf %earl (sham who 1 pub:ex:cub))
     [who 1 sec:ex:cub `sig]
   %+  expect-eq
-    !>  [%& sed ~]
+    !>  [%& ~]
     !>  (veri:dawn sed hul ~)
 ::
 ++  test-veri-earl-missing-sig
@@ -198,7 +256,7 @@
   =/  sed
     [who 1 sec:ex:cub ~]
   %+  expect-eq
-    !>  [%| %earl %missing-sig]
+    !>  [%| %missing-sig]
     !>  (veri:dawn sed hul ~)
 ::
 ++  test-veri-earl-parent-not-keyed
@@ -207,11 +265,23 @@
   =/  sed
     =/  sig
       %-  sign:as:(nol:nu:crub:crypto sec)
-      (shaf %earl (sham 1 pub:ex:cub))
+      (shaf %earl (sham who 1 pub:ex:cub))
     [who 1 sec:ex:cub `sig]
   %+  expect-eq
-    !>  [%| %earl %parent-not-keyed]
+    !>  [%| %parent-not-keyed]
     !>  (veri:dawn sed =>(hul .(net ~)) ~)
+::
+++  test-veri-earl-life-mismatch
+  =/  cub  (pit:nu:crub:crypto 24 %foo)
+  =/  who  ~simtel-mithet-dozzod-dozzod
+  =/  sed
+    =/  sig
+      %-  sign:as:(nol:nu:crub:crypto sec)
+      (shaf %earl (sham who 1 pub:ex:cub))
+    [who 2 sec:ex:cub `sig]
+  %+  expect-eq
+    !>  [%| %life-mismatch]
+    !>  (veri:dawn sed hul ~)
 ::
 ++  test-veri-earl-invalid-sig
   =/  cub  (pit:nu:crub:crypto 24 %foo)
@@ -220,19 +290,19 @@
     =/  sed
       =/  sig
         %-  sign:as:cub
-        (shaf %earl (sham 1 pub:ex:cub))
+        (shaf %earl (sham who 1 pub:ex:cub))
       [who 1 sec:ex:cub `sig]
     %+  expect-eq
-      !>  [%| %earl %invalid-sig]
+      !>  [%| %invalid-sig]
       !>  (veri:dawn sed hul ~)
   ::
     =/  sed
       =/  sig
         %-  sign:as:(nol:nu:crub:crypto sec)
-        (shaf %earl (sham 2 pub:ex:cub))
+        (shaf %earl (sham who 2 pub:ex:cub))
       [who 1 sec:ex:cub `sig]
     %+  expect-eq
-      !>  [%| %earl %invalid-sig]
+      !>  [%| %invalid-sig]
       !>  (veri:dawn sed hul ~)
   ==
 ::
@@ -242,10 +312,10 @@
   =/  sed
     =/  sig
       %-  sign:as:(nol:nu:crub:crypto sec)
-      (shaf %earl (sham 1 pub:ex:cub))
+      (shaf %earl (sham who 1 pub:ex:cub))
     [who 1 sec:ex:cub `sig]
   %+  expect-eq
-    !>  [%| %earl %already-booted]
+    !>  [%| %already-booted]
     !>  (veri:dawn sed hul `[1 |])
 ::
 ++  test-veri-pawn-good
@@ -253,7 +323,7 @@
   =/  who=ship  `@`fig:ex:cub
   =/  sed  [who 1 sec:ex:cub ~]
   %+  expect-eq
-    !>  [%& sed ~]
+    !>  [%& ~]
     !>  (veri:dawn sed *hull:constitution:ethe ~)
 ::
 ++  test-veri-pawn-key-mismatch
@@ -261,7 +331,7 @@
   =/  who=ship  `@`fig:ex:cub
   =/  sed  [who 1 sec:ex:(pit:nu:crub:crypto 24 %bar) ~]
   %+  expect-eq
-    !>  [%| %pawn %key-mismatch]
+    !>  [%| %key-mismatch]
     !>  (veri:dawn sed *hull:constitution:ethe ~)
 ::
 ++  test-veri-pawn-invalid-life
@@ -269,7 +339,7 @@
   =/  who=ship  `@`fig:ex:cub
   =/  sed  [who 2 sec:ex:cub ~]
   %+  expect-eq
-    !>  [%| %pawn %invalid-life]
+    !>  [%| %invalid-life]
     !>  (veri:dawn sed *hull:constitution:ethe ~)
 ::
 ++  test-veri-pawn-already-booted
@@ -277,6 +347,6 @@
   =/  who=ship  `@`fig:ex:cub
   =/  sed  [who 1 sec:ex:cub ~]
   %+  expect-eq
-    !>  [%| %pawn %already-booted]
+    !>  [%| %already-booted]
     !>  (veri:dawn sed *hull:constitution:ethe `[1 |])
 --

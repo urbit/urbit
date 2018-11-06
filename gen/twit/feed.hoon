@@ -4,8 +4,6 @@
   ::
 /?    310
 /-    twitter
-/+  old-zuse
-=,  old-zuse
 ::
 ::::  ~fyr
   ::

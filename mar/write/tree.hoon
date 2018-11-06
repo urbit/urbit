@@ -5,11 +5,11 @@
 ::
 =,  mimes:html
 =,  format
-|_  {sup/spur mim/mime}
+|_  [sup=spur mim=mime]
 ++  grab
   |%
-  ++  noun  {spur mime}
+  ++  noun  [spur mime]
   ++  json
-    =,(dejs (ot sup+(su fel:stab) mime+(cu |=(a/@t [/ (as-octs a)]) so) ~))
+    =,(dejs (ot sup+(su fel:stab) mime+(cu |=(a=@t [/ (as-octs a)]) so) ~))
   --
 --

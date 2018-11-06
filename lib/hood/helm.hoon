@@ -10,8 +10,7 @@
 |%                                                      ::  ::
 ++  part  {$helm $0 pith}                               ::  helm state
 ++  pith                                                ::  helm content
-  $:  bur/(unit (pair ship mace:ames))                  ::  requesting ticket
-      hoc/(map bone session)                            ::  consoles
+  $:  hoc/(map bone session)                            ::  consoles
   ==                                                    ::
 ++  session                                             ::
   $:  say/sole-share                                    ::  console state
@@ -20,15 +19,6 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-++  hood-begin                                          ::  begin command
-  $:  his/@p                                            ::  identity
-      tic/@p                                            ::  ticket
-      eny/@t                                            ::  entropy
-      ges/gens:ames                                    ::  description
-  ==                                                    ::
-++  hood-init                                           ::  report init
-  $:  him/ship                                          ::
-  ==                                                    ::
 ++  hood-nuke                                           ::  block/unblock
   $:  him/ship                                          ::
   ==                                                    ::
@@ -46,14 +36,12 @@
 =+  sez=(fall (~(get by hoc) ost) $:session)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$cash wire p/@p q/buck:ames}                 ::
-          {$conf wire dock $load ship term}             ::
+      $%  {$conf wire dock $load ship term}             ::
           {$flog wire flog:dill}                        ::
-          {$funk wire @p @p @}                          ::
+          [%mint wire our=ship p=ship q=safe:rights:jael]
           {$nuke wire ship}                             ::
           {$serv wire ?(desk beam)}                     ::
           {$poke wire dock pear}                        ::
-          {$want wire sock path *}                      ::  send message
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
@@ -75,23 +63,27 @@
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
-++  poke-begin                                        ::  make/send keypair
-  |=  hood-begin  =<  abet
-  ?>  ?=(~ bur)
-  ~&  [%poke-begin our his]
-  =+  buz=(shaz :(mix (jam ges) eny))
-  =+  loy=(pit:nu:crub:crypto 512 buz)
-  %-  emit(bur `[his [0 sec:ex:loy]~])
-  [%want /helm/ticket [our (sein:title his)] /a/ta his tic ges pub:ex:loy]
-::
-++  poke-spawn
-  |=  {him/ship key/@pG}  =<  abet
-  %-  emit
-  [%funk ~ our him (shax key)]
-::
-++  poke-init                                         ::  initialize
-  |=  him/ship  =<  abet
-  (emit %flog /helm %crud %hax-init leaf+(scow %p him) ~)
+++  poke-rekey                                        ::  rotate private keys
+  |=  des=@t
+  =/  sed=(unit seed:able:jael)
+    %+  biff
+      (bind (slaw %uw des) cue)
+    (soft seed:able:jael)
+  =<  abet
+  ?~  sed
+    ~&  %invalid-private-key
+    +>.$
+  ?.  =(our who.u.sed)
+    ~&  [%wrong-private-key-ship who.u.sed]
+    +>.$
+  =/  lyf=life  .^(@ud j+/(scot %p our)/life/(scot %da now)/(scot %p our))
+  ?.  =(+(lyf) lyf.u.sed)
+    ~&  [%wrong-private-key-life expected=+(lyf) actual=lyf.u.sed]
+    +>.$
+  ::  our new private key, as a +tree of +rite
+  ::
+  =/  rit  (sy [%jewel (my [lyf.u.sed key.u.sed] ~)] ~)
+  (emit %mint / our our rit)
 ::
 ++  poke-nuke                                         ::  initialize
   |=  him/ship  =<  abet
@@ -213,16 +205,6 @@
   =+  txt=.^(@ %cx (welp way /hoon))
   [%flog /reset %veer p way txt]
 ::
-++  poke-will                                         ::  hear certificate
-  |:  wil=((unit wyll:ames))
-  ?>  ?=(^ bur)
-  ?>  ?=(^ wil)
-  =<  abet
-  %-  emil(bur ~)
-  :~  [%cash /helm p.u.bur q.u.bur u.wil]
-      [%poke /helm [our %hood] %hood-unsync %base (sein:title our) %kids]
-  ==
-::
 ++  poke-verb                                         ::  toggle verbose
   |=  ~  =<  abet
   (emit %flog /helm %verb ~)
@@ -234,10 +216,6 @@
     %|  [%flog ~ %crud %onto `tang`p.saw]
     %&  [%flog ~ %text "<{<p.saw>}>"]
   ==
-::
-++  take-note                                         ::  result of %init
-  |=  {way/wire chr/@tD tan/tank}  =<  abet
-  (emit %flog ~ %text chr ' ' ~(ram re tan))
 ::
 ++  take-woot                                         ::  result of %want
   |=  {way/wire her/ship cop/coop}  =<  abet

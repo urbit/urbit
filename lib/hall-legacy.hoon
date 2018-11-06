@@ -1,8 +1,7 @@
 ::
 /?    310
 /-  hall
-/+  old-zuse
-=,  old-zuse
+=,  eyre
 =>
 |%
 ++  audience  (map partner (pair envelope delivery))    ::  destination+state
@@ -55,7 +54,7 @@
 --
 |%
 ++  from-json
-  =,  jo
+  =,  dejs-soft:format
   |:  $:{a/^json}  ^-  (list telegram:hall)
   =-  %-  zing
       %+  turn
@@ -65,7 +64,7 @@
   ++  of
     |*  a/(pole {@tas fist})
     |=  b/^json
-    %.  ((of:jo a) b)
+    %.  ((of:dejs-soft:format a) b)
     %-  slog
     ?+  b  ~
         {$o *}
@@ -131,7 +130,7 @@
     %+  ke  *speech  |.  ~+
     %-  of  :~
       lin+(ot say+bo txt+so ~)
-      url+(ot txt+(su aurf:urlp) ~)
+      url+(ot txt+(su aurf:de-purl:html) ~)
       exp+(ot txt+so ~)
       app+(ot txt+so src+so ~)
       fat+(ot tor+tors taf+spec ~)
@@ -148,7 +147,7 @@
       tank+(ot dat+(cu (hard (list tank)) blob) ~)
     ==
   ::
-  ++  blob  (cu cue (su fel:ofis))
+  ++  blob  (cu cue (su fel:de-base64:mimes:html))
   ::
   ::
   ++  convert-telegram

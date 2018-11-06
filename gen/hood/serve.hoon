@@ -3,8 +3,6 @@
 ::::  /hoon/serve/hood/gen
   ::
 /?    310
-/+  old-zuse
-=,  old-zuse
 ::
 ::::
   ::
@@ -14,7 +12,7 @@
     ==
 :-  %helm-serve
 ?@  pax  pax
-=+  bem=(need (tome pax))
+=+  bem=(need (de-beam:format pax))
 ?.  =([%da now] r.bem)                :: XX actual sentinel
   bem
 bem(r [%ud 0])

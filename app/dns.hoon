@@ -301,7 +301,7 @@
   :: XX move to %ames
   ?:  =(our.bow p)
     [~ this]
-  ?.  =(our.bow (sein:title p))  :: XX check will
+  ?.  =(our.bow (sein:title our.bow now.bow p))
     ~&  [%rove-false p]
     [~ this]
   ~&  [%rove wir p q]
@@ -504,7 +504,7 @@
     =/  to=ship
       ?-  (clan:title our.bow)
         %czar  ~zod
-        *      (sein:title our.bow)
+        *      (sein:title [our now our]:bow)
       ==
     =/  wir=wire
       /forward/bind/(scot %p him)/for/(scot %p for)
