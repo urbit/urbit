@@ -1,8 +1,8 @@
 ::
 |%
 ++  test
-  $%  [%arvo ~]       ::UNIMPLEMENTED 
-      [%marks ~]      ::UNIMPLEMENTED  
+  $%  [%arvo ~]       ::UNIMPLEMENTED
+      [%marks ~]      ::UNIMPLEMENTED
       [%cores p=path]
       [%hoons p=path]
       [%names p=path]
@@ -119,7 +119,7 @@
       %names  ~&((list-names p.a) ~)
       %marks  ~|(%stub !!) ::TODO restore historical handler
       %renders  [ost (build-rend [- +]:(list-names (weld /ren p.a)))]~
-  ==    
+  ==
 ::
 ++  list-names
   |=  a/path  ^-  (list term)

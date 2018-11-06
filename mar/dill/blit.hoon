@@ -3,24 +3,23 @@
   ::
 /?    310
 /-    sole
-/+    old-zuse
 =,  sole
-=,  old-zuse
-|_  dib/dill-blit
+=,  enjs:format
+|_  dib/dill-blit:dill
 ::
-++  grab                                                ::  convert from
+++  grab                                                   ::  convert from
   |%
-  ++  noun  dill-blit                                       ::  clam from %noun
+  ++  noun  dill-blit:dill                                 ::  clam from %noun
   --
 ++  grow
   |%
   ++  json
     ^-  ^json
     ?+  -.dib  ~|(unsupported-blit+-.dib !!)
-      $mor  [%a (turn p.dib |=(a/dill-blit json(dib a)))]
-      $hop  (joba %hop (jone p.dib))
-      ?($pro $out)  (joba -.dib (jape (tufa p.dib)))
-      ?($bel $clr)  (joba %act %s -.dib)
+      $mor  [%a (turn p.dib |=(a/dill-blit:dill json(dib a)))]
+      $hop  (frond %hop (numb p.dib))
+      ?($pro $out)  (frond -.dib (tape (tufa p.dib)))
+      ?($bel $clr)  (frond %act %s -.dib)
     ==
   --
 --

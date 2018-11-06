@@ -4,12 +4,12 @@
   ::
 /?  314
 /-  sole
-/+  generators, old-zuse
-=,  old-zuse
+/+  generators
 ::
 ::::
   ::
 =,  generators
+=,  eyre
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/$@(~ {dom/path ~})}
@@ -20,7 +20,7 @@
     (fun.q.q [%& dom.arg])
 %+  prompt
   [%& %oauth-hostname "api hostname: https://"]
-%+  parse  thos:urlp
+%+  parse  thos:de-purl:html
 |=  hot/host
 ?:  ?=(%| -.hot)
   ~|(%ips-unsupported !!)
@@ -28,7 +28,7 @@
   [%& %oauth-client "consumer key: "]
 %+  parse  (boss 256 (star prn))
 |=  key/@t
-%+  prompt  
+%+  prompt
   [%& %oauth-secret "consumer secret: "]
 %+  parse  (boss 256 (star prn))
 |=  sec/@t

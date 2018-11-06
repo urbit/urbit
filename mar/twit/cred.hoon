@@ -3,8 +3,7 @@
 ::::  /hoon/cred/twit/mar
   ::
 /-  plan-acct
-/+  httr-to-json, twitter, old-zuse
-=,  old-zuse
+/+  httr-to-json, twitter
 |_  {acc/plan-acct raw/json}
 ++  grab
   |%
@@ -12,7 +11,7 @@
   ++  httr  (cork httr-to-json json)  ::  XX mark translation
   ++  json
     |=  jon/^json  ^-  {plan-acct ^json}
-    =+  usr=(need ((ot 'screen_name'^so ~):jo jon))
+    =+  usr=(need ((ot 'screen_name'^so ~):dejs-soft:format jon))
     =+  url=(user-url:render:twitter usr)
     [[usr (some url)] jon]
   --

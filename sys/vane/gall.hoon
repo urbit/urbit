@@ -1232,7 +1232,9 @@
         $info  `%c
         $keep  `%f
         $kill  `%f
+        $look  `%j
         $merg  `%c
+        $mint  `%j
         $mont  `%c
         $nuke  `%a
         $ogre  `%c
@@ -1246,6 +1248,7 @@
         $warp  `%c
         $well  `%e
         $well  `%e
+        $wind  `%j
         $wipe  `%f
       ==
     --
@@ -1272,6 +1275,8 @@
       $init 
     ::  ~&  [%gall-init p.q.hic]
     [~ ..^$(pol.all (~(put by pol.all) p.q.hic %*(. *mast sys hen)))]
+  ::
+      $sunk  [~ ..^$]
   ::
       $west
     ?.  (~(has by pol.all) p.p.q.hic)

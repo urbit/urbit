@@ -4,8 +4,7 @@
   ::
 /?  314
 /-  sole
-/+  generators, old-zuse
-=,  old-zuse
+/+  generators
 ::
 ::::
   ::

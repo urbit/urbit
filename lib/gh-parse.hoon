@@ -4,12 +4,11 @@
 ::  marks should include this library.
 ::
 /-  gh
-/+  old-zuse
-=,  old-zuse
+=,  format
 |%
 ++  repository
   ^-  $-(json (unit repository:gh))
-  =+  jo
+  =+  dejs-soft
   %-  ot  :~
       'id'^id
       'name'^so
@@ -81,7 +80,7 @@
   ==
 ++  commit
   ^-  $-(json (unit commit:gh))
-  =+  jo
+  =+  dejs-soft
   %-  ot  :~
       'sha'^so
       'url'^so
@@ -94,7 +93,7 @@
   ==
 ++  user
   ^-  $-(json (unit user:gh))
-  =+  jo
+  =+  dejs-soft
   %-  ot  :~
       'login'^so
       'id'^id
@@ -119,7 +118,7 @@
   |=  jon/json
   =-  (bind - |*(issue/* `issue:gh`[jon issue]))
   %.  jon
-  =+  jo
+  =+  dejs-soft
   %-  ot  :~
       'url'^so
       'labels_url'^so
@@ -143,7 +142,7 @@
   ==
 ++  author
   ^-  $-(json (unit author:gh))
-  =+  jo
+  =+  dejs-soft
   %-  ot  :~
       'date'^so
       'name'^so
@@ -151,14 +150,14 @@
   ==
 ++  point
   ^-  $-(json (unit point:gh))
-  =+  jo
+  =+  dejs-soft
   %-  ot  :~
       'url'^so
       'sha'^so
   ==
 ++  verification
   ^-  $-(json (unit verification:gh))
-  =+  jo
+  =+  dejs-soft
   %-  ot  :~
       'verified'^bo
       'reason'^so
@@ -167,7 +166,7 @@
   ==
 ++  label
   ^-  $-(json (unit label:gh))
-  =+  jo
+  =+  dejs-soft
   %-  ot  :~
       'url'^so
       'name'^so
@@ -175,7 +174,7 @@
   ==
 ++  comment
   ^-  $-(json (unit comment:gh))
-  =+  jo
+  =+  dejs-soft
   %-  ot  :~
       'url'^so
       'html_url'^so
@@ -186,7 +185,7 @@
       'updated_at'^so
       'body'^so
   ==
-++  id  no:jo
+++  id  no:dejs-soft
 ++  print-issue
   |=  issue:gh
   =,  format

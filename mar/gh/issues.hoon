@@ -1,7 +1,6 @@
 ::  Converts the result of an 'issues' event into a issues:gh.
 /-  gh
-/+  gh-parse, hall, old-zuse
-=,  old-zuse
+/+  gh-parse, hall
 |_  issues/issues:gh
 ++  grow
   |%
@@ -121,10 +120,10 @@
   ++  json
     |=  jon/^json
     ^-  issues:gh
-    =+  top=(need ((om:jo some) jon))
+    =+  top=(need ((om:dejs-soft:format some) jon))
     :*  (need (repository:gh-parse (~(got by top) %repository)))
         (need (user:gh-parse (~(got by top) %sender)))
-        =+  action=(need (so:jo (~(got by top) %action)))
+        =+  action=(need (so:dejs-soft:format (~(got by top) %action)))
         ?+  action  ~|([%bad-action action] !!)
           $assigned    [action (need (user:gh-parse (~(got by top) %assignee)))]
           $unassigned  [action (need (user:gh-parse (~(got by top) %assignee)))]

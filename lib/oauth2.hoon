@@ -2,8 +2,7 @@
 ::
 ::::  /hoon/oauth2/lib
   ::
-/+    hep-to-cab, interpolate, old-zuse
-=,  old-zuse
+/+    hep-to-cab, interpolate
 =,  eyre
 =,  mimes:html
 =,  html
