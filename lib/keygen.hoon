@@ -30,6 +30,7 @@
 ::
 ++  full-wallet-from-ticket
   |=  [ticket=byts sis=(set ship) revs=revisions pass=(unit @t)]
+  ^-  vault
   =+  master-seed=(argon2u ticket)
   =/  nn
     |=  [typ=tape rev=@ud]

@@ -1,4 +1,13 @@
 |%
++=  vault
+  $:  ownership=nodes
+      voting=nodes
+      management=nodes
+      transfer=nodes
+      spawn=nodes
+      network=uodes
+  ==
+::
 +=  nodes  (map ship node)
 +=  uodes  (map ship uode)
 ::
