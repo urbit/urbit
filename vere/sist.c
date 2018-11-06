@@ -1583,8 +1583,13 @@ u3_sist_boot(void)
       fprintf(stderr, "fake: %s\r\n", who_c);
       free(who_c);
 
-      // XX make conditional
+      // XX review persistent options
+
+      // disable networking
       u3_Host.ops_u.net = c3n;
+      // disable battery hashes
+      u3_Host.ops_u.has = c3y;
+      u3C.wag_w |= u3o_hashless;
     }
   }
   else {
