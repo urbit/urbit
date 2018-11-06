@@ -139,10 +139,11 @@
 ::  +card: output effect payload
 ::
 +=  card
-  $%  [%hiss wire [~ ~] %httr %hiss hiss:eyre]
+  $%  [%flog wire flog:dill]
+      [%hiss wire [~ ~] %httr %hiss hiss:eyre]
+      [%rule wire %cert (unit [wain wain])]
       [%wait wire @da]
       [%well wire path (unit mime)]
-      [%rule wire %cert (unit [wain wain])]
   ==
 ::  +nonce-next: next effect to emit upon receiving nonce
 ::
@@ -333,7 +334,6 @@
 ::
 ++  emit
   |=  car=card
-  ~&  [%emit car]
   this(mov [[ost.bow car] mov])
 ::  +abet: finalize transaction
 ::
@@ -819,6 +819,12 @@
     ::  archive live config
     ::
     =?  fig.hit  ?=(^ liv)  [u.liv fig.hit]
+    ::
+    =/  msg=tape
+      =-  "received https certificate for {(trip -)}"
+      (join ', ' (turn ~(tap in dom.u.rod) |=(a=turf (join '.' a))))
+    %.  [%flog / %text msg]
+    =<  emit
     ::  set live config, install certificate, set renewal timer
     ::
     =<  install:effect
@@ -977,7 +983,6 @@
 ++  sigh-httr
   |=  [wir=wire rep=httr]
   ^-  (quip move _this)
-  ~&  [wir rep]
   ?>  ?=([%acme ^] wir)
   ::  add nonce to pool, if present
   ::
@@ -1209,6 +1214,12 @@
   ::
   =?  fal.hit  ?=(^ rod)  [u.rod fal.hit]
   =.  rod  ~
+  ::
+  =/  msg=tape
+    =-  "requesting an https certificate for {(trip -)}"
+    (join ', ' (turn ~(tap in dom) |=(a=turf (join '.' a))))
+  %.  [%flog / %text msg]
+  =<  emit
   ::  if registered, create order
   ::
   ?^  reg.act
