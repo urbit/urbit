@@ -63,16 +63,16 @@
     }
   }
   static u3_noun
-  _mull_coke(u3_noun nug)
+  _mull_cove(u3_noun nug)
   {
     if ( 0 == u3h(nug) ) {
       return u3k(u3t(nug));
     } 
-    else if ( 10 == u3h(nug) ) {
-      return _mull_coke(u3t(u3t(nug)));
+    else if ( 11 == u3h(nug) ) {
+      return _mull_cove(u3t(u3t(nug)));
     }
     else {
-      return u3m_error("mull-coke");
+      return u3m_error("mull-cove");
     }
   }
 
@@ -109,7 +109,7 @@
              u3_noun gen)
   {
     u3_noun fug = u3qfu_mint(van, sut, c3__noun, gen);
-    u3_noun axe = _mull_coke(u3t(fug));
+    u3_noun axe = _mull_cove(u3t(fug));
 
     u3z(fug);
     return axe;

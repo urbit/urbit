@@ -1032,32 +1032,6 @@ u3_term_ef_verb(void)
   u3v_plan(pax, u3nc(c3__verb, u3_nul));
 }
 
-/* u3_term_ef_ticket(): initial effects for new ticket.
-*/
-void
-u3_term_ef_ticket(c3_c* who_c, c3_c* tic_c)
-{
-  u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
-  u3_noun who, tic;
-  u3_noun whu, tuc;
-
-  whu = u3dc("slaw", 'p', u3i_string(who_c));
-  if ( u3_nul == whu ) {
-    fprintf(stderr, "ticket: invalid planet '%s'\r\n", who_c);
-    exit(1);
-  }
-  else { who = u3k(u3t(whu)); u3z(whu); }
-
-  tuc = u3dc("slaw", 'p', u3i_string(tic_c));
-  if ( u3_nul == tuc ) {
-    fprintf(stderr, "ticket: invalid secret '%s'\r\n", tic_c);
-    exit(1);
-  }
-  else { tic = u3k(u3t(tuc)); u3z(tuc); }
-
-  u3v_plan(pax, u3nt(c3__tick, who, tic));
-}
-
 /* u3_term_ef_bake(): initial effects for new terminal.
 */
 void

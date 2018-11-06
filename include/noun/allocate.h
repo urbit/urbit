@@ -250,6 +250,15 @@
                          ?  u3a_north_is_senior(r, som) \
                          :  u3a_south_is_senior(r, som) )
 
+#     define  u3a_is_mutable(r, som) \
+                ( _(u3a_is_atom(som)) \
+                  ? c3n \
+                  : _(u3a_is_senior(r, som)) \
+                  ? c3n \
+                  : _(u3a_is_junior(r, som)) \
+                  ? c3n \
+                  : (u3a_botox(u3a_to_ptr(som))->use_w == 1) \
+                  ? c3y : c3n )
 
   /**  Globals.
   **/
