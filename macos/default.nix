@@ -74,6 +74,16 @@ let
     inherit clang;
   };
 
+  tinytapi = native.make_derivation rec {
+    name = "tinytapi";
+    # tmphax until tinytapi is published on GitHub
+    src_h = ../../tinytapi/tapi.h;
+    src_cpp = ../../tinytapi/tapi.cpp;
+    builder = ./tinytapi_builder.sh;
+    libyaml = nixpkgs.libyaml;
+    native_inputs = [ libyaml ];
+  };
+
   cctools_commit = "c1cc758";
   cctools_apple_version = "274.2";  # from README.md
   cctools_port_src = nixpkgs.fetchurl {
@@ -90,7 +100,7 @@ let
       ./cctools-ld64-registers.patch
     ];
     builder = ./ld_builder.sh;
-    native_inputs = [ tapi ];
+    native_inputs = [ tinytapi ];
     inherit host;
   };
 
@@ -184,7 +194,7 @@ let
     global_license_set = { };
 
     # Make it easy to build or refer to the build tools.
-    inherit clang tapi ld ranlib ar sdk toolchain;
+    inherit clang tapi tinytapi ld ranlib ar sdk toolchain;
 
     make_derivation = import ../make_derivation.nix crossenv;
   };
