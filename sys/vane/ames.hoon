@@ -858,7 +858,6 @@
                               ?|  ?=(~ fod)
                                   ?=(~ lew.wod.u.fod)
                   ==  ==  ==  ==
-                ~&  [%chew-no-will %drop her]
                 (emit %beer our ?:(?=(%earl rac) seg her))
               =/  oub  bust:puz
               =/  neg  =(~ yed.caq.dur.diz)
@@ -1362,7 +1361,6 @@
       ?.  ?=([%our @ %her @ ~] tea)
         ~&  [%strange-pubs tea]
         [~ +>]
-      ~&  [%hear-pubs tea sih]
       =/  our=ship  (slav %p i.t.tea)
       =/  her=ship  (slav %p i.t.t.t.tea)
       =/  gus  (need (~(us go ton.fox) our))
@@ -1387,7 +1385,6 @@
       ?.  ?=([%our @ ~] tea)
         ~&  [%strange-vein tea]
         [~ +>]
-      ~&  [%hear-vein tea sih]
       =/  our=ship  (slav %p i.t.tea)
       =.  fox  (~(vein am [now fox ski]) our life.sih vein.sih)
       [~ +>.$]
