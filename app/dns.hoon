@@ -12,7 +12,8 @@
       [%helm-send-hi ship (unit tape)]
   ==
 +$  card
-  $%  [%hiss wire [~ ~] %httr %hiss hiss:eyre]
+  $%  [%flog wire flog:dill]
+      [%hiss wire [~ ~] %httr %hiss hiss:eyre]
       [%poke wire dock poke]
       [%rule wire %turf %put turf]
       [%wait wire @da]
@@ -35,7 +36,7 @@
 ::  helpers
 ::
 =>  |%
-::  +join: dedup with :acme
+::  +join: dedup with lib/pkcs (reversed)
 ::
 ++  join
   |=  [sep=@t hot=(list @t)]
@@ -235,7 +236,7 @@
   ?+  i.wir
     ::  print and ignore unrecognized responses
     ::
-    ~&  +<
+    ~&  [%strange-http-response wire=wir response=rep]
     [~ this]
   ::  responses for a nameserver
   ::
@@ -377,7 +378,6 @@
   ::    [%bind for=ship him=ship target]
   ::
       %bind
-    ~&  [%bind src=src.bow +<.$]
     =/  rac  (clan:title him.com)
     ?:  ?=(%czar rac)
       ~|(%bind-galazy !!)
@@ -401,12 +401,16 @@
     ?:  ?&  =(our.bow for.com)
             !=(our.bow src.bow)
         ==
-      ~&  [%bound-him him.com dom.com]
       abet:(check-bond:(tell him.com) dom.com)
+    ::
     ?:  =(our.bow him.com)
-      ~&  [%bound-us dom.com]
-      :-  [[ost.bow %rule /bound %turf %put dom.com] ~]
-      this(dom (~(put in dom) dom.com))
+      =/  msg=tape
+        "new dns binding established at {(trip (join '.' (flop dom.com)))}"
+      :_  this(dom (~(put in dom) dom.com))
+      :~  [ost.bow %flog / %text msg]
+          [ost.bow %rule /bound %turf %put dom.com]
+      ==
+    ::
     ~&  [%strange-bond com]
     [~ this]
   ::  manually set our ip, request direct binding
@@ -437,7 +441,7 @@
   [((slog u.saw) ~) this]
 ::  +prep: adapt state
 ::
-:: ++  prep  _[~ this]
+::  ++  prep  _[~ this]
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
@@ -472,7 +476,6 @@
     =/  url=purl:eyre
       %+  endpoint  base:gcloud
       /[project.pro.aut]/['managedZones']/[zone.pro.aut]
-    ~&  url
     %-  emit(nam [aut ~ ~ ~])
     (request wir url %get ~ ~)
   ::  +update: retrieve existing remote nameserver records
@@ -511,18 +514,11 @@
       this
     ::  re-notify if binding already exists
     ::
-    ::    XX deduplicate with +confirm
-    ::
     =/  existing  (~(get by bon.nam) him)
     ?:  ?&  ?=(^ existing)
             =(tar cur.u.existing)
       ==
-      =/  wir=wire
-        /bound/(scot %p him)/for/(scot %p for)
-      =/  dom=turf
-        (weld dom.aut.nam /(crip +:(scow %p him)))
-      %-  emit
-      [%poke wir [for dap.bow] %dns-command %bond for him dom]
+      (bond for him)
     ::  create new or replace existing binding
     ::
     =/  wir=wire
@@ -533,7 +529,9 @@
     :: ?>  ?=(%gcloud pro.aut.nam)
     =/  req=hiss:eyre
       (~(create gcloud aut.nam) him tar pre)
-    %-  emit(pen.nam (~(put by pen.nam) him tar)) :: XX save for
+    ::  XX save :for relay state?
+    ::
+    %-  emit(pen.nam (~(put by pen.nam) him tar))
     (request wir req)
   ::  +dependants: process stored dependant bindings
   ::
@@ -559,12 +557,18 @@
       [now.bow tar ?~(bon ~ [[wen.u.bon cur.u.bon] hit.u.bon])]
     =.  pen.nam  (~(del by pen.nam) him)
     =.  bon.nam  (~(put by bon.nam) him nob)
+    (dependants:(bond for him) him)
+  ::  +bond: send binding confirmation
+  ::
+  ++  bond
+    |=  [for=ship him=ship]
     =/  wir=wire
       /bound/(scot %p him)/for/(scot %p for)
     =/  dom=turf
       (weld dom.aut.nam /(crip +:(scow %p him)))
-    %-  emit:(dependants him)
-    [%poke wir [for dap.bow] %dns-command %bond for him dom]
+    =/  com=command
+      [%bond for him dom]
+    (emit [%poke wir [for dap.bow] %dns-command com])
   --
 ::  |tell: acting as planet parent or relay
 ::
@@ -607,8 +611,9 @@
         ==
       =/  wir=wire
         /bound/(scot %p him)/for/(scot %p our.bow)
-      %-  emit
-      [%poke wir [him dap.bow] %dns-command %bond our.bow him u.dom.u.rel]
+      =/  com=command
+        [%bond our.bow him u.dom.u.rel]
+      (emit [%poke wir [him dap.bow] %dns-command com])
     ::  check binding target validity, store and forward
     ::
     =.  rel  `[wen=now.bow addr dom=~ try=0 tar]
@@ -621,6 +626,8 @@
     ?>  ?=(%direct -.tar.u.rel)
     ?:  (reserved:eyre p.tar.u.rel)
       (fail %reserved-ip)
+    ::  XX confirm max retries
+    ::
     ?:  (gth try.u.rel 2)
       (fail %unreachable)
     =.  try.u.rel  +(try.u.rel)
@@ -629,10 +636,7 @@
     =/  url=purl:eyre
       :-  [sec=| por=~ host=[%| `@if`p.tar.u.rel]]
       [[ext=`~.umd path=/static] query=~]
-    ::  XX state mgmt
-    ::
-    %-  emit
-    (request wir url %get ~ ~)
+    (emit (request wir url %get ~ ~))
   ::  +fail: %direct target is invalid or inaccessible
   ::
   ++  fail
@@ -642,18 +646,21 @@
     ~&  [%fail err him tar.u.rel]
     =/  wir=wire
       /fail/(scot %p him)
+    ::  XX add failure-specific messages
+    ::  XX use a better notification channel?
+    ::
     =/  msg=tape
       ?+  err
-            "dns binding failed"
+          "dns binding failed"
       ::
           %reserved-ip
         ?>  ?=(%direct -.tar.u.rel)
-        "unable to create dns binding reserved address {(scow %if p.tar.u.rel)}"
+        =/  addr=tape  (scow %if p.tar.u.rel)
+        "unable to create dns binding reserved address {addr}"
       ==
-    ::  XX state mgmt
+    ::  XX save failure state?
     ::
-    %-  emit
-    [%poke wir [our.bow %hood] %helm-send-hi him `msg]
+    (emit [%poke wir [our.bow %hood] %helm-send-hi him `msg])
   ::  +bind: request binding for target
   ::
   ::    Since we may be an authority, we poke ourselves.
@@ -661,11 +668,13 @@
   ++  bind
     ^+  this
     ?>  ?=(^ rel)
-    :: XX state mgmt
+    ::  XX save binding request state?
+    ::
     =/  wir=wire
       /bind/(scot %p him)/for/(scot %p our.bow)
-    %-  emit
-    [%poke wir [our.bow dap.bow] %dns-command %bind our.bow him tar.u.rel]
+    =/  com=command
+      [%bind our.bow him tar.u.rel]
+    (emit [%poke wir [our.bow dap.bow] %dns-command com])
   ::  +check-bond: confirm binding propagation
   ::
   ++  check-bond
@@ -695,30 +704,31 @@
     ^+  this
     ?>  ?=(^ rel)
     ?>  ?=(^ dom.u.rel)
-    ~&  [%bake u.dom.u.rel]
     =/  wir=wire
       /forward/bound/(scot %p him)/for/(scot %p our.bow)
-    ::  XX state mgmt
+    =*  dom  u.dom.u.rel
+    =/  com=command
+      [%bond our.bow him dom]
+    =/  msg=tape
+      "relaying new dns binding: {(trip (join '.' (flop dom)))}"
+    ::  XX save notification state?
     ::
-    %-  emit
-    [%poke wir [him dap.bow] %dns-command %bond our.bow him u.dom.u.rel]
+    %-  emit:(emit %flog / %text msg)
+    [%poke wir [him dap.bow] %dns-command com]
   ::  +forward: sending binding request up the network
   ::
   ++  forward
     |=  [for=ship tar=target]
-    ~&  [%forward tar]
     ^+  this
-    ?:  ?=(%~zod our.bow)  ::  ~zod don't forward
-      ~&  [%zod-no-forward him tar]
+    ?:  ?=(%~zod our.bow)
       this
-    =/  to=ship
-      ?-  (clan:title our.bow)
-        %czar  ~zod
-        *      (sein:title [our now our]:bow)
-      ==
     =/  wir=wire
       /forward/bind/(scot %p him)/for/(scot %p for)
-    %-  emit  :: XX for
-    [%poke wir [to dap.bow] %dns-command %bind for him tar]
+    =/  com=command
+      [%bind for him tar]
+    =/  to=ship
+      ?:  ?=(%czar (clan:title our.bow))  ~zod
+      (sein:title [our now our]:bow)
+    (emit [%poke wir [to dap.bow] %dns-command com])
   --
 --
