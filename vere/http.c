@@ -1823,17 +1823,40 @@ _proxy_conn_new(u3_proxy_type typ_e, void* src_u)
   return con_u;
 }
 
+typedef struct _proxy_write_ctx {
+  u3_pcon*     con_u;
+  uv_stream_t* str_u;
+  c3_c*        buf_c;
+} proxy_write_ctx;
+
 /* _proxy_write_cb(): free uv_write_t and linked buffer.
 */
 static void
 _proxy_write_cb(uv_write_t* wri_u, c3_i sas_i)
 {
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "proxy: write: %s\n", uv_strerror(sas_i)));
+    if ( 0 != wri_u->data ) {
+      proxy_write_ctx* ctx_u = wri_u->data;
+
+      if ( ctx_u->str_u == (uv_stream_t*)ctx_u->con_u->upt_u ) {
+        uL(fprintf(uH, "proxy: write upstream: %s\n", uv_strerror(sas_i)));
+      }
+      else if ( ctx_u->str_u == (uv_stream_t*)&(ctx_u->con_u->don_u) ) {
+        uL(fprintf(uH, "proxy: write downstream: %s\n", uv_strerror(sas_i)));
+      }
+      else {
+        uL(fprintf(uH, "proxy: write: %s\n", uv_strerror(sas_i)));
+      }
+    }
+    else {
+      uL(fprintf(uH, "proxy: write: %s\n", uv_strerror(sas_i)));
+    }
   }
 
   if ( 0 != wri_u->data ) {
-    free(wri_u->data);
+    proxy_write_ctx* ctx_u = wri_u->data;
+    free(ctx_u->buf_c);
+    free(ctx_u);
   }
 
   free(wri_u);
@@ -1845,7 +1868,12 @@ static c3_i
 _proxy_write(u3_pcon* con_u, uv_stream_t* str_u, uv_buf_t buf_u)
 {
   uv_write_t* wri_u = c3_malloc(sizeof(*wri_u));
-  wri_u->data = buf_u.base;
+
+  proxy_write_ctx* ctx_u = c3_malloc(sizeof(*ctx_u));
+  ctx_u->con_u = con_u;
+  ctx_u->str_u = str_u;
+  ctx_u->buf_c = buf_u.base;
+  wri_u->data = ctx_u;
 
   c3_i sas_i;
   if ( 0 != (sas_i = uv_write(wri_u, str_u, &buf_u, 1, _proxy_write_cb)) ) {
