@@ -33,7 +33,7 @@
       [%error ~]
   ==
 +=  raw-item
-  $%  [%umd meta=(map knot cord) data=@t]
+  $%  [%udon meta=(map knot cord) data=@t]
   ==
 ::
 +=  config
@@ -69,7 +69,7 @@
   ==
 ::
 +=  form
-  $%  [%umd @t]
+  $%  [%udon @t]
       [%collections-config config]
   ==
 ::
@@ -215,8 +215,8 @@
   ^-  [@t json]
   [key [%s val]]
 ::
-++  umd-to-front
-  ~/  %coll-umd-to-front
+++  udon-to-front
+  ~/  %coll-udon-to-front
   |=  u=@t
   ^-  (map knot cord)
   %-  ~(run by inf:(static:cram (ream u)))
@@ -307,10 +307,10 @@
   =/  parent-dir   .^(arch %cy parent-path)
   ::
   =/  parent-conf=json
-    ?:  (~(has in dir.parent-dir) ~.umd ~)
+    ?:  (~(has in dir.parent-dir) ~.udon ~)
       %-  meta-to-json
-      %-  umd-to-front 
-      .^(@t %cx (weld parent-path /umd))
+      %-  udon-to-front 
+      .^(@t %cx (weld parent-path /udon))
     ?:  (~(has in dir.parent-dir) ~.collections-config ~)
       %-  config-to-json
       .^(config %cx (weld parent-path /collections-config))
@@ -346,14 +346,14 @@
     ['    ==' ~]
   ==
 ::
-::  +update-umd-front: XX
+::  +update-udon-front: XX
 ::
-++  update-umd-front
-  ~/  %coll-update-umd-front
-  |=  [fro=(map knot cord) umd=@t]
+++  update-udon-front
+  ~/  %coll-update-udon-front
+  |=  [fro=(map knot cord) udon=@t]
   ^-  @t
   %-  of-wain:format
-  =/  tum  (trip umd)
+  =/  tum  (trip udon)
   =/  id  (find ";>" tum)
   ?~  id
     %+  weld  (front-to-wain fro)
@@ -421,7 +421,7 @@
       =/  perms  .^([dict:clay dict:clay] %cp sap)
       ?:  (allowed-by src.bol +.perms our.bol)
         ?-  -.for.a
-          %umd                 (ta-write pax.a `cage`[-.for.a !>(+.for.a)])
+          %udon                (ta-write pax.a `cage`[-.for.a !>(+.for.a)])
           %collections-config  (ta-write pax.a `cage`[-.for.a !>(+.for.a)])
         ==
       ta-this
@@ -477,7 +477,7 @@
         (weld pax.a /[dat])
       =?  sap  !edit.a
         (en-beam:format [bek (flop pax.a)])
-      =/  perms  .^([dict:clay dict:clay] %cp (weld sap /umd))
+      =/  perms  .^([dict:clay dict:clay] %cp (weld sap /udon))
       ?.  (allowed-by src.bol +.perms our.bol)
         ta-this
       =.  content.a  (crip (weld (trip content.a) "\0a"))
@@ -491,11 +491,11 @@
             [%type type.a]
         ==
       =.  ta-this  
-        %+  ta-write  (weld pax.a /umd) 
-        [%umd !>((update-umd-front front content.a))]
-      ::  restrict permissions on umd file
+        %+  ta-write  (weld pax.a /udon) 
+        [%udon !>((update-udon-front front content.a))]
+      ::  restrict permissions on udon file
       =.  ta-this  
-        %^  ta-set-permissions  (weld pax.a /umd) 
+        %^  ta-set-permissions  (weld pax.a /udon) 
         [%black ((set whom:clay) ~)]                   ::  read
         [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  write
       ::  open permissions on comments
@@ -506,7 +506,7 @@
       ta-this
     ::
         %comment
-      =/  perms  .^([dict:clay dict:clay] %cp (weld sap /[dat]/umd))
+      =/  perms  .^([dict:clay dict:clay] %cp (weld sap /[dat]/udon))
       ?.  (allowed-by src.bol +.perms our.bol)
         ta-this
       =.  content.a  (crip (weld (trip content.a) "\0a"))
@@ -518,11 +518,11 @@
             [%type %comments]
         ==
       =.  ta-this  
-        %+  ta-write  (weld pax.a /[dat]/umd) 
-        [%umd !>((update-umd-front front content.a))]
-      ::  restrict permissions on umd file
+        %+  ta-write  (weld pax.a /[dat]/udon) 
+        [%udon !>((update-udon-front front content.a))]
+      ::  restrict permissions on udon file
       =.  ta-this  
-        %^  ta-set-permissions  (weld pax.a /[dat]/umd) 
+        %^  ta-set-permissions  (weld pax.a /[dat]/udon) 
         [%black ((set whom:clay) ~)]                   ::  read
         [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  write
       ta-this
