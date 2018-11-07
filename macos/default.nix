@@ -25,22 +25,22 @@ let
   clang = native.make_derivation rec {
     name = "clang";
 
-    version = "5.0.0";
+    version = "7.0.0";
 
     src = nixpkgs.fetchurl {
-      url = "https://llvm.org/releases/${version}/cfe-${version}.src.tar.xz";
-      sha256 = "0w09s8fn3lkn6i04nj0cisgp821r815fk5b5fjn97xrd371277q1";
+      url = "http://releases.llvm.org/${version}/cfe-${version}.src.tar.xz";
+      sha256 = "0mdsbgj3p7mayhzm8hclzl3i46r2lwa8fr1cz399f9km3iqi40jm";
     };
 
     llvm_src = nixpkgs.fetchurl {
-      url = "https://llvm.org/releases/${version}/llvm-${version}.src.tar.xz";
-      sha256 = "1nin64vz21hyng6jr19knxipvggaqlkl2l9jpd5czbc4c2pcnpg3";
+      url = "http://releases.llvm.org/${version}/llvm-${version}.src.tar.xz";
+      sha256 = "08p27wv1pr9ql2zc3f3qkkymci46q7myvh8r5ijippnbwr2gihcb";
     };
 
     # Note: We aren't actually using lld for anything yet.
     lld_src = nixpkgs.fetchurl {
       url = "http://releases.llvm.org/${version}/lld-${version}.src.tar.xz";
-      sha256 = "15rqsmfw0jlsri7hszbs8l0j7v1030cy9xvvdb245397llh7k6ir";
+      sha256 = "173z50vx5mlsaiqmbz7asxy2297z4xivrfxrdfncvx23wp2lgkzv";
     };
 
     patches = [ ./clang_megapatch.patch ];

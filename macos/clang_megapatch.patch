@@ -1,7 +1,7 @@
-diff -ur cfe-5.0.0.src.orig/lib/Driver/ToolChains/Gnu.cpp cfe-5.0.0.src/lib/Driver/ToolChains/Gnu.cpp
---- cfe-5.0.0.src.orig/lib/Driver/ToolChains/Gnu.cpp	2017-09-13 07:15:52.419093088 -0700
-+++ cfe-5.0.0.src/lib/Driver/ToolChains/Gnu.cpp	2017-09-13 07:21:58.892639000 -0700
-@@ -493,10 +493,6 @@
+diff -ur cfe-7.0.0.src-orig/lib/Driver/ToolChains/Gnu.cpp cfe-7.0.0.src/lib/Driver/ToolChains/Gnu.cpp
+--- cfe-7.0.0.src-orig/lib/Driver/ToolChains/Gnu.cpp	2018-11-05 19:50:35.162751955 -0800
++++ cfe-7.0.0.src/lib/Driver/ToolChains/Gnu.cpp	2018-11-05 19:50:46.472842124 -0800
+@@ -382,10 +382,6 @@
        CmdArgs.push_back("-export-dynamic");
  
      if (!Args.hasArg(options::OPT_shared)) {
@@ -12,10 +12,11 @@ diff -ur cfe-5.0.0.src.orig/lib/Driver/ToolChains/Gnu.cpp cfe-5.0.0.src/lib/Driv
      }
    }
  
-diff -ur cfe-5.0.0.src.orig/lib/Driver/ToolChains/Linux.cpp cfe-5.0.0.src/lib/Driver/ToolChains/Linux.cpp
---- cfe-5.0.0.src.orig/lib/Driver/ToolChains/Linux.cpp	2017-09-13 07:15:52.419093088 -0700
-+++ cfe-5.0.0.src/lib/Driver/ToolChains/Linux.cpp	2017-09-13 07:17:58.530311694 -0700
-@@ -195,18 +195,7 @@
+Only in cfe-7.0.0.src/lib/Driver/ToolChains: Gnu.cpp.orig
+diff -ur cfe-7.0.0.src-orig/lib/Driver/ToolChains/Linux.cpp cfe-7.0.0.src/lib/Driver/ToolChains/Linux.cpp
+--- cfe-7.0.0.src-orig/lib/Driver/ToolChains/Linux.cpp	2018-11-05 19:50:35.162751955 -0800
++++ cfe-7.0.0.src/lib/Driver/ToolChains/Linux.cpp	2018-11-05 19:52:10.570031900 -0800
+@@ -213,18 +213,7 @@
    llvm::Triple::ArchType Arch = Triple.getArch();
    std::string SysRoot = computeSysRoot();
  
@@ -35,3 +36,20 @@ diff -ur cfe-5.0.0.src.orig/lib/Driver/ToolChains/Linux.cpp cfe-5.0.0.src/lib/Dr
  
    Distro Distro(D.getVFS());
  
+@@ -238,15 +227,6 @@
+     ExtraOpts.push_back("relro");
+   }
+ 
+-  if (GCCInstallation.getParentLibPath().find("opt/rh/devtoolset") !=
+-      StringRef::npos)
+-    // With devtoolset on RHEL, we want to add a bin directory that is relative
+-    // to the detected gcc install, because if we are using devtoolset gcc then
+-    // we want to use other tools from devtoolset (e.g. ld) instead of the
+-    // standard system tools.
+-    PPaths.push_back(Twine(GCCInstallation.getParentLibPath() +
+-                     "/../bin").str());
+-
+   if (Arch == llvm::Triple::arm || Arch == llvm::Triple::thumb)
+     ExtraOpts.push_back("-X");
+ 
+Only in cfe-7.0.0.src/lib/Driver/ToolChains: Linux.cpp.orig
