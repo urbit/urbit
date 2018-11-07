@@ -8,59 +8,86 @@
 ::
 ::
 /=  collection-post
-::  /^  $-(raw-item:collections manx)
   /:  /===/web/landscape/collections/post      /!noun/
-::/=  collection-details
-::  /^  manx
-::  /:  /===/web/landscape/collections/details  /%  /!hymn/
-::
 ::
 =<  (item-to-elem itm)
 |%
 ++  item-to-elem
+  !:
   |=  itm=item:collections
   ^-  manx
   ?<  =(/collections/web s.bem.gas)
   =/  sho  (fall (~(get by qix.gas) %show) %default)
   ;div.container
-  ;div.row
-  ;div.col-sm-10.col-sm-offset-2
-  ;div.collection-index.mt-12
-      ;+  (meta-to-elem itm sho)
-      ;+
-        ?-    -.itm
+    ;+
+      ?+    -.itm  !!
+          %collection
+        ?+    sho  !!
         ::
-            %collection
-          ?+  sho     !!
-            %default  (collection-to-elem col.itm)
-            %post     (collection-post ~ (flop s.bem.gas))
-            %edit     !!
+            %default
+          ;div.row
+            ;div.flex-col-2;
+            ;div.flex-col-x
+              ;div.collection-index
+                ;+  (meta-to-elem itm sho)
+                ;+  (collection-to-elem col.itm)
+              ==
+            ==
+            ;+  ?:  =(type.meta.col.itm %blog)
+                  ;div.flex-col-5;
+                ?:  =(type.meta.col.itm %fora)
+                  ;div.flex-col-4;
+                ;div.flex-col-4;
           ==
         ::
-            %raw
-          ?+  sho     !!
-            %default  (raw-to-elem raw.itm)
-            %post     !!
-            %edit     (collection-post `raw.itm (flop s.bem.gas))
+            %post
+          ;div.row
+            ;div.flex-col-2;
+            ;div.flex-col-x
+              ;div.collection-index
+                ;+  (meta-to-elem itm sho)
+                ;+  (collection-post ~ (flop s.bem.gas))
+              ==
+            ==
+            ;div.flex-col-2;
           ==
-        ::
-            %both
-          ?+  sho     !!
-            %default  (both-to-elem col.itm raw.itm)
-            %post     !!
-            %edit     (collection-post `raw.itm (flop s.bem.gas))
-          ==
-        ::
         ==
-  ==
-  ==
-  ==
+::        %raw
+      ::
+          %both
+        ?+    sho  !!
+        ::
+            %default
+          ;div.row
+            ;div.flex-col-2;
+            ;div.flex-col-x
+              ;div.collection-index
+                ;+  (meta-to-elem itm sho)
+                ;+  (both-to-elem col.itm raw.itm)
+              ==
+            ==
+            ;div.flex-col-3;
+          ==
+        ::
+            %edit
+          ;div.row
+            ;div.flex-col-2;
+            ;div.flex-col-x
+              ;div.collection-index
+                ;+  (meta-to-elem itm sho)
+                ;+  (collection-post `raw.itm (flop s.bem.gas))
+              ==
+            ==
+            ;div.flex-col-2;
+          ==
+        ==
+      ==
   ==
 ++  collection-to-elem
   |=  col=collection:collections
   ^-  manx
   ;ul.vanilla
-    ;*  %+  turn  
+    ;*  %+  turn
           %+  sort  ~(tap by data.col)
           |=  [[knot a=item:collections] [knot b=item:collections]]
           =/  a-dat  (extract-date-created a)
@@ -82,24 +109,8 @@
   =/  date   (fall (~(get by meta.raw) %date-created) 'missing date')
   =/  owner  (fall (~(get by meta.raw) %owner) 'anonymous')
   ::
-  ;div
-    ;div.collection-date: {(trip date)}
-    ::
-    ;div#show
-      ;div.row.tit.mt-6.collection-title
-        ;+  ?~  hed.ht
-              ;h3: {(trip title)}
-            ;h3: *{hed.ht}
-      ==
-    ==
-    ::
-    ;div.who.text-mono.text-600: {(trip owner)}
-    ;div.row.content.mb-18.mt-6
-      ;+  elm
-    ==
-    ::
-    ::  if comments are enabled it should be a %both not a %raw
-    ::  XX REVIEW ^^ not robust enough?
+  ;div.mb-18.mt-4
+    ;+  elm
   ==
 ::
 ++  both-to-elem
@@ -109,12 +120,12 @@
     ;+  (raw-to-elem raw)
     ::
     ;div
-      ;div.mb-2
-        ;span(urb-component "IconComment");
-        ;span: {<~(wyt by data.col)>}
+      ;div.flex.align-center.mb-5
+        ;div(urb-component "IconComment");
+        ;div.ml-2.text-small.text-mono.text-600: {<~(wyt by data.col)>}
       ==
       ::
-      ;ul
+      ;ul.vanilla
       ;*  %+  turn
             %+  sort  ~(tap by data.col)
             |=  [[knot a=item:collections] [knot b=item:collections]]
@@ -123,23 +134,28 @@
             (lte a-dat b-dat)
           |=  [nom=knot ite=item:collections]
           ^-  manx
-          ::  XX TODO: accept types other than comments
           ?>  ?=(%raw -.ite)
-         :: ?>  =(%comments (~(got by meta.raw.ite) %type))
           =/  owner  (fall (~(get by meta.raw.ite) %owner) 'anonymous')
           =/  date  (fall (~(get by meta.raw.ite) %date-created) 'missing date')
-          ;li.collection-comment
-            ;div.collection-comment-avatar
-              ;div(urb-component "AvatarSample1");
-            ==
-            ;div
-              ;a.collection-comment-author.text-mono
-                =href  "/~~/landscape/profile"
-                ; {(trip owner)}
+          ;li.mb-6
+            ;div.flex.align-center
+              ;div.mr-2
+                =urb-component  "Sigil"
+                =urb-ship       "{(trip owner)}"
+                =urb-size       "18";
+              ;div
+                ;a.vanilla.text-mono.text-small.text-700.mr-4
+                  =href  "/~~/landscape/profile"
+                  ; {(trip owner)}
+                ==
               ==
+              ;div.text-host-breadcrumb
+                =urb-component  "Elapsed"
+                =urb-timestring  "{(trip date)}";
+            ==
+            ;div.collection-comment-content
               ;+  elm:(static:cram (ream data.raw.ite))
             ==
-            ;span.collection-date: {(trip date)}
           ==
       ==
       ::
@@ -180,7 +196,7 @@
     "/~~/{(scow %p p.full-path.meta.col)}/=={(spud (flop (slag 1 s.full-path.meta.col)))}"
   ;div
     ;div.collection-date: {<date-created.meta.col>}
-    ;h3
+    ;h2.mt-0.mb-0
       ;a(href lnk): {(trip name.meta.col)}
     ==
     ;div.who.text-mono.text-600: {<owner.meta.col>}
@@ -206,7 +222,7 @@
   ::
   ;div
     ;div.collection-date: {(trip date)}
-    ;h3
+    ;h2
       ;+  ?~  hed.ht
             ;a(href lnk): {(trip title)}
           ;a(href lnk): *{hed.ht}
@@ -230,16 +246,18 @@
   ::
   ;div
     ;div.collection-date: {<date-created.meta.col>}
-    ;h3
+    ;h2.mt-0.mb-0.text-500
       ;+  ?~  hed.ht
             ;a(href lnk): {(trip title)}
           ;a(href lnk): *{hed.ht}
     ==
-    ;div.who.text-mono.text-600: {<owner.meta.col>}
-    ;div.snippet: *{tal.ht}
-    ;div.meta-cont
-      ;div.com-count.ml-12
-        ; {(trip (scot %ud ~(wyt by data.col)))} comments
+    ;div.text-mono.text-small.text-300.mt-1.mb-1: {<owner.meta.col>}
+    ;div
+      ;div.icon-label.justify-start
+        ;div(urb-component "IconComment");
+        ;div.ml-2
+          ; {(trip (scot %ud ~(wyt by data.col)))}
+        ==
       ==
     ==
   ==

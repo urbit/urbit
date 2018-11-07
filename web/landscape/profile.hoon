@@ -9,35 +9,33 @@
   visible.meta.col
 --
 ^-  manx
-;div.profile-page
-  ;input(type "hidden", name "urb-header", value "profile", ship "{(scow %p p.bem.gas)}");
+;div
+  ;input(type "hidden", name "urb-metadata", urb-structure-type "header-profile", urb-owner "{(scow %p p.bem.gas)}");
   ;div.container
     ;div.row
-      ;div.col-sm-offset-2.col-sm-10
+      ;div.flex-col-2;
+      ;div.flex-col-x
         ;div.profile-avatar
-          ;div(urb-component "AvatarLg", urb-ship "{(scow %p p.bem.gas)}");
+          ;div(urb-component "Sigil", urb-size "320", urb-ship "{(scow %p p.bem.gas)}", urb-suffix "false");
           ;div(urb-component "ProfileMsgBtn", urb-ship "{(scow %p p.bem.gas)}");
         ==
       ==
     ==
-    ;div.row
-      ;div.col-sm-offset-2.col-sm-10
-        ;div(urb-component "ChatList", urb-hostship "{(scow %p p.bem.gas)}");
-        ;div.text-600.mt-8: Meta
-        ;div.mt-2.text-500.row
-          ;span.col-sm-2: Started:
-          ;span.col-sm-10.text-mono: ~2018.4.12..6.45.12
-        ==
-        ;div.mt-2.text-500.row
-          ;span.col-sm-2: Issued:
-          ;span.col-sm-10.text-mono
-            ;a(href "/~~/{(scow %p (sein:title p.bem.gas))}/==/web/landscape/profile"): {(scow %p (sein:title p.bem.gas))}
-          ==
-        ==
-        ;div.mt-2.text-500.row
-          ;span.col-sm-2: Events:
-          ;span.col-sm-10.text-mono: 852.129.320
-        ==
+    ;div.row.mt-9
+      ;div.flex-offset-special.flex-col-x
+        ;h2.text-500: Meta
+      ==
+    ==
+    ;div.row.mt-4.align-center
+      ;div.flex-col-2;
+      ;h3.text-500.flex-col-1.mt-0: Started:
+      ;div.flex-col-x.text-mono: ~2018.4.12..6.45.12
+    ==
+    ;div.row.mt-3.align-center
+      ;div.flex-col-2;
+      ;h3.text-500.flex-col-1.mt-0: Issued:
+      ;div.flex-col-x
+        ;a.text-mono(href "/~~/{(scow %p (sein:title p.bem.gas))}/==/web/landscape/profile"): {(scow %p (sein:title p.bem.gas))}
       ==
     ==
   ==
