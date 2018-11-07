@@ -7,7 +7,7 @@ let
     CoreServices
   ]);
 
-  deps = [ cmark curl gcc gmp libsigsegv meson ncurses ninja pkgconfig zlib re2c ];
+  deps = [ cmark curl gcc gmp libsigsegv meson ncurses ninja pkgconfig zlib re2c openssl ];
 
 in stdenv.mkDerivation {
   name = "urbit";
