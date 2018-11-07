@@ -22,3 +22,6 @@
 [submodule "subprojects/libsni"]
 	path = subprojects/libsni
 	url = https://github.com/urbit/sniproxy
+[submodule "nixpkgs"]
+	path = nixpkgs
+	url = https://github.com/NixOS/nixpkgs.git
