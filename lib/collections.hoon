@@ -8,10 +8,11 @@
 |%
 +=  collection  [meta=config data=(map nom=knot =item)]  
 +=  item
-  $~  [%raw %umd ~ %$]
+  $~  [%error ~]
   $%  [%collection col=collection]
       [%raw raw=raw-item]
       [%both col=collection raw=raw-item]
+      [%error ~]
   ==
 +=  raw-item
   $%  [%umd meta=(map knot cord) data=@t]
@@ -52,6 +53,22 @@
 +=  form
   $%  [%umd @t]
       [%collections-config config]
+  ==
+::
+++  collection-error
+  |=  col=collection
+  ^-  ?
+  |-
+  =/  vals=(list item)  ~(val by data.col)
+  %+  roll  vals
+  |=  [i=item out=_|]
+  ^-  ?
+  ?:  out  out
+  ?+  -.i
+    %.n
+    %error       %.y
+    %collection  ^$(col col.i)
+    %both        ^$(col col.i)
   ==
 ::::
 ::::  /mar/snip
@@ -99,6 +116,7 @@
   |=  itm=item
   ^-  json
   ?-    -.itm
+      %error  (frond:enjs:format %error ~)
   ::
       %collection
     %+  frond:enjs:format

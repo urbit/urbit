@@ -432,6 +432,9 @@
     ::
     ?-    -.new
     ::
+        %error
+      (ta-hall-lin parent-path 'error')
+    ::
         %collection
       =.  ta-this
         %^  ta-hall-json  parent-path  'new collection' 
@@ -474,6 +477,9 @@
     =/  parent  (scag (dec (lent pax)) pax)
     ::  recurse for children
     ?-    -.old
+    ::
+        %error
+      (ta-hall-lin parent 'error')
     ::
         %collection
       =.  ta-this  
@@ -558,6 +564,18 @@
       =.  ta-this  (ta-remove-item [%raw raw.old] pax)
       (ta-update-collection col.old col.new pax)
     ::
+    ::
+    ?:  &(?=(%error -.old) ?=(%error -.new))
+      ta-this
+    ?:  &(?=(%error -.old) ?=(%collection -.new))
+      (ta-insert-item new pax)
+    ?:  &(?=(%error -.old) ?=(%raw -.new))
+      (ta-insert-item new pax)
+    ?:  &(?=(%error -.old) ?=(%both -.new))
+      (ta-insert-item new pax)
+    ?:  ?=(%error -.new)
+      (ta-hall-lin pax 'error')
+    ::
     ta-this
   ::
   ++  ta-update-raw-item
@@ -583,19 +601,6 @@
       ==
       ::  delete comments
       (ta-remove (weld pax /collections-config))
-    ::
-    ::  check if file has been modified
-    ::  and if so update last modified field
-::    =/  told  (trip data.old)
-::    =/  newt  (trip data.new)
-::    =/  old-con  (slag (need (find ";>" told)) told)
-::    =/  new-con  (slag (need (find ";>" newt)) newt)
-::    =?  ta-this  !=(old-con new-con)
-::      =/  contents=@t
-::        %+  update-umd-front
-::        (~(put by meta.new) %last-modified (scot %da now.bol))
-::        data.new
-::      (ta-write (weld pax /umd) %umd !>(contents))
     ::
     ta-this
   ::
@@ -733,7 +738,7 @@
       act  t.act
     ==
   ::
-  ++  ta-hall-create-circle  ::
+  ++  ta-hall-create-circle
     |=  [pax=path description=@t]
     ^+  ta-this
     =/  circ=circle:hall  (path-to-circle pax)

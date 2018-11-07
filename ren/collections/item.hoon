@@ -24,7 +24,7 @@
           ==
       ?~  raw
         ?~  col
-          !!
+          [%error ~]
         [%collection col]
       ?~  col
         [%raw raw]

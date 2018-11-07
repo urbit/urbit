@@ -21,6 +21,8 @@
   ;div.container
     ;+
       ?+    -.itm  !!
+          %error  ;div: 404
+        ::
           %collection
         ?+    sho  !!
         ::
@@ -87,13 +89,17 @@
   |=  col=collection:collections
   ^-  manx
   ;ul.vanilla
-    ;*  %+  turn
+    ;*  %+  roll
           %+  sort  ~(tap by data.col)
           |=  [[knot a=item:collections] [knot b=item:collections]]
           =/  a-dat  (extract-date-created a)
           =/  b-dat  (extract-date-created b)
           (lth a-dat b-dat)
-        |=  [nom=knot ite=item:collections]
+        |=  [[nom=knot ite=item:collections] out=marl]
+        ^-  marl
+        ?:  ?=(%error -.ite)
+          out
+        :_  out
         ^-  manx
         ;li.collection-post.mt-6
           ;+  (item-to-snip nom ite)
@@ -142,7 +148,8 @@
               ;div.mr-2
                 =urb-component  "Sigil"
                 =urb-ship       "{(trip owner)}"
-                =urb-size       "18";
+                =urb-size       "18"
+                =urb-suffix     "true";
               ;div
                 ;a.vanilla.text-mono.text-small.text-700.mr-4
                   =href  "/~~/landscape/profile"
@@ -170,6 +177,7 @@
   |=  i=item:collections
   ^-  @da
   ?-  -.i
+    %error       *@da
     %collection  date-created.meta.col.i
     %both        date-created.meta.col.i
     %raw         (slav %da (~(got by meta.raw.i) %date-created))
@@ -181,6 +189,8 @@
   |=  [nom=knot itm=item:collections]
   ^-  manx
   ?-    -.itm
+      %error
+    ;div: 404
       %collection
     (collection-to-snip nom col.itm)
       %raw
@@ -276,6 +286,7 @@
   %+  weld  mat
   ^-  mart
   ?-    -.itm
+      %error  ~
       %collection
     =*  met  meta.col.itm
     :~  [%urb-name (trip name.met)]
