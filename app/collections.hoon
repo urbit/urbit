@@ -226,15 +226,17 @@
       %collections-action  act
   ==
 ::
-::  +poke-noun
+::  +poke-json
 ::
 ::    utility for setting whether or not to display the onboarding page
 ::
-++  poke-noun
-  |=  onb=?
+++  poke-json
+  |=  jon=json
   ^-  (quip move _this)
-  =<  ta-done
-  (ta-write:ta /web/landscape/onboard/atom [%atom !>(onb)])
+  ?:  ?=([%o [[%onboard %b ?] ~ ~]] jon)
+    =<  ta-done
+    (ta-write:ta /web/landscape/onboard/json [%json !>(jon)])
+  [~ this]
 ::
 ::  +ta: main event core for collections
 ::
