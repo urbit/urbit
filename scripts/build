@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 mkdir ./build &> /dev/null
 meson . ./build --buildtype=release
