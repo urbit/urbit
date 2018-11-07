@@ -29,14 +29,10 @@ before_script:
 - npm install
 - bash get-or-build-pill.sh
 # https://github.com/travis-ci/travis-ci/issues/2570
-- ulimit -c unlimited -S
 
 script:
-# || true so we continue
-- npm run -s test || RESULT=$?
-- if [[ ${RESULT} -eq 0 ]]; then exit 0; else for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb urbit core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi;
-- echo "build failed with status code $RESULT"
-- exit $RESULT
+- ulimit -c unlimited -S
+- npm run -s test; bash print-core-backtrace.sh $?
 
 before_deploy: "[ -d piers ] || { mkdir piers && tar cvzSf piers/zod-$TRAVIS_COMMIT.tgz zod/; }"
 
