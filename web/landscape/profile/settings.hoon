@@ -2,7 +2,7 @@
 =/  cod=tape
   %+  slag  1
   %+  scow  %p
-  .^(@p %a /(scot %p p.bem.gas)/code/(scot r.bem.gas)/(scot %p p.bem.gas))
+  .^(@p %j /(scot %p p.bem.gas)/code/(scot r.bem.gas)/(scot %p p.bem.gas))
 ^-  manx
 ;div
   ;input(type "hidden", name "urb-metadata", urb-structure-type "header-profile", urb-owner "{(scow %p p.bem.gas)}");

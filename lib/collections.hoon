@@ -95,7 +95,6 @@
 ++  words  1
 ++  hedtal
   =|  met/marl
-  ~/  %coll-hedtal
   |=  a/marl  ^-  {hed/marl tal/marl}
   ?~  a  [~ ~]
   :: looks like it only terminates if it finds an h1?
