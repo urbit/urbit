@@ -921,7 +921,6 @@
       ::    [%vent ~]
       ::
           %vent
-        ~&  %west-vent
         $(tac [%vent our])
       ::
       ::
@@ -949,7 +948,7 @@
     =*  wir  t.tea
     ?-  hin
         [%a %woot *]
-      ?~  q.hin  ~&(%coop-fine +>.$)
+      ?~  q.hin  +>.$
       ?~  u.q.hin  ~&(%ares-fine +>.$)
       ~&  [%woot-bad p.u.u.q.hin]
       ~_  q.u.u.q.hin
