@@ -921,7 +921,6 @@
       ::    [%vent ~]
       ::
           %vent
-        ~&  %west-vent
         $(tac [%vent our])
       ::
       ::
@@ -949,7 +948,7 @@
     =*  wir  t.tea
     ?-  hin
         [%a %woot *]
-      ?~  q.hin  ~&(%coop-fine +>.$)
+      ?~  q.hin  +>.$
       ?~  u.q.hin  ~&(%ares-fine +>.$)
       ~&  [%woot-bad p.u.u.q.hin]
       ~_  q.u.u.q.hin
@@ -1187,7 +1186,7 @@
       ::  update public key store and notify subscribers
       ::  of the new state
       ::
-      ~&  [%sending-pubs-about who life.pub live.pub]
+      :: ~&  [%sending-pubs-about who life.pub live.pub]
       %+  exec(kyz.puk (~(put by kyz.puk) who pub))
         (~(get ju yen.puk) who)
       [%give %pubs pub]
