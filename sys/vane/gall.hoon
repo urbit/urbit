@@ -1241,7 +1241,6 @@
         $perm  `%c
         $rule  `%e
         $serv  `%e
-        $tend  `%a
         $them  `%e
         $wait  `%b
         $want  `%a

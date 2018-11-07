@@ -70,7 +70,6 @@
     ++  as                                              ::    as:go
       |_  [our=ship saf=sufi]                           ::  per server
       ++  lax                                           ::    lax:as:go
-        =|  rov=(unit lane)                             ::  maybe lane change
         |_  [her=ship dur=dore]                         ::  per client
         ++  cluy                                        ::    cluy:lax:as:go
           ^-  [lyf=life cub=acru]                       ::  client crypto
@@ -139,26 +138,6 @@
                 [~ ryn]
               lun.wod.dur
             [~ ryn]
-          ::
-              rov
-            |-  ^-  (unit lane)
-            ::  XX jael scry
-            ::
-            ?:  ?|  !=(our (^sein:title her))
-                    ?=(?(%earl %pawn) (clan:title her))
-                ==
-              ~
-            ?-  ryn
-              [%if *]  ?.  ?=([~ %if *] lun.wod.dur)
-                         `ryn
-                       ?:(=(r.u.lun.wod.dur r.ryn) ~ `ryn)
-              ::
-              [%ix *]  ?.  ?=([~ %ix *] lun.wod.dur)
-                         `ryn
-                       ?:(=(r.u.lun.wod.dur r.ryn) ~ `ryn)
-              ::
-              [%is *]  ?~(q.ryn ~ $(ryn u.q.ryn))
-            ==
           ==
         ::
         ++  wist                                        ::    wist:lax:as:go
@@ -1162,10 +1141,8 @@
           ==
         ::
         ++  zank                                        ::    zank:ho:um:am
-          =?  bin  ?=(^ rov.diz)
-              [[%maze her u.rov.diz] bin]
           %=  +>.$                                      ::  resolve
-            gus      (nux:gus diz(rov ~))
+            gus      (nux:gus diz)
             wab.weg  (~(put by wab.weg) her bah(sop abet:puz))
           ==
         ::
@@ -1305,11 +1282,6 @@
       :~  [s.bon %give %woot q.p.bon r.bon]
       ==
     ::
-        %maze
-      :_  fox
-      %+  turn  ~(tap in ten.fox)
-      |=(hen=duct [hen %give %rove p.bon q.bon])
-    ::
         %mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
         %milk
       ::  ~&  [%milk p.bon q.bon]
@@ -1324,7 +1296,20 @@
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
         %raki
-      :_  fox  [hen [%pass / %j %meet p.p.bon q.p.bon q.bon r.bon]]~
+      =*  our  p.p.bon
+      =*  her  q.p.bon
+      =/  moz=(list move)
+        [hen [%pass / %j %meet our her life=q.bon pass=r.bon]]~
+      ::  poke :dns with an indirect binding if her is a planet we're spnsoring
+      ::
+      =?  moz  ?&  ?=(%duke (clan:title her))
+                   ?=(%king (clan:title our))
+                   =(our (~(sein am [now fox ski]) our now her))
+               ==
+        =/  cmd  [%meet her]
+        =/  pok  [%dns %poke `cage`[%dns-command !>(cmd)]]
+        :_  moz  [hen [%pass / %g %deal [our our] pok]]
+      [moz fox]
     ::
         %sake
       =/  wir=wire
@@ -1452,14 +1437,6 @@
         ::
             %kick
           (~(kick am [now fox(hop p.kyz) ski]) hen)
-        ::
-            %tend
-          :: XX exclude comets and moons? and planets?
-          :: ?>  &(?=(^ hen) ?=([@ @ *] i.hen))
-          :: =/  who=@p  (slav %p i.t.i.hen)
-          :: ?:  ?=((%earl %pawn) (clan:title who))
-          ::   [~ fox]
-          [~ fox(ten (~(put in ten.fox) hen))]
         ::
             %nuke
           :-  ~
