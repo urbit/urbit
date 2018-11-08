@@ -1,6 +1,7 @@
 language: node_js
 node_js:
 - 4
+python: "3.5"
 
 script:
   - meson . ./build --buildtype=debugoptimized -Dgc=true -Dprof=true
