@@ -28,7 +28,7 @@ before_install:
 
 install:
   # pwd: ~/urbit
-  - pip3 install --user -I meson==0.44.1
+  - pip3 install --user -I meson==0.46.1
   - git clone https://github.com/urbit/arvo
   - cd ./arvo
   - git checkout $(cat ../.travis/pin-arvo-commit.txt)
