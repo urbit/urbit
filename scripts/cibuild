@@ -8,7 +8,7 @@ cd ./build
 
 ninja || true
 
-sudo ninja install
+ninja install
 
 cd ../.travis
 
