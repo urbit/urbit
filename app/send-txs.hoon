@@ -10,7 +10,7 @@
 ::
 ++  move  (pair bone card)
 ++  card
-  $%  [%hiss wire [~ ~] mark %hiss hiss:eyre]
+  $%  [%hiss wire ~ mark %hiss hiss:eyre]
       [%wait wire @da]
   ==
 --
@@ -38,15 +38,33 @@
   ~&  [(lent txs) 'loaded txs']
   send-next-batch
 ::
-++  batch-requests
-  |=  [wir=wire req=(list [(unit @t) request:ethe])]
+++  fan-requests
+  |=  [wir=wire nodes=(list [tag=@tas url=purl:eyre]) jon=json]
+  ::  =-  ~&  [batch=((list ,[bone * wire]) (turn - |=(* [- +< +>-]:+<))) jon=jon]  -
+  ^-  (list move)
+  %+  turn  nodes
+  |=  [tag=@tas url=purl:eyre]
   ^-  move
   :-  ost.bol
-  :^  %hiss  wir  [~ ~]
+  :^  %hiss  (weld wir ~[tag])  ~
   :+  %json-rpc-response  %hiss
-  %+  json-request:ethereum
-    =+  (need (de-purl:html 'http://localhost:8545'))
-    -(p.p |)
+  (json-request:ethereum url jon)
+::
+++  batch-requests
+  |=  [wir=wire fan=? req=(list [(unit @t) request:ethe])]
+  ^-  (list move)
+  %^    fan-requests
+      wir
+    ?:  fan
+      :~  =>  (need (de-purl:html 'http://localhost:8545'))
+          geth+.(p.p |)
+        ::
+          =>  (need (de-purl:html 'http://localhost:8555'))
+          parity+.(p.p |)
+      ==
+    :_  ~
+    =>  (need (de-purl:html 'http://localhost:8545'))
+    geth+.(p.p |)
   a+(turn req request-to-json:ethereum)
 ::
 ++  send-next-batch
@@ -57,16 +75,18 @@
   :_  .(txs (slag 50 txs))
   ~&  ['remaining txs: ' (lent txs)]
   ~&  'sending 50 txs...'
-  :_  ~
-  %+  batch-requests  /send
+  %^  batch-requests  /send  &
   %+  turn  (scag 50 txs)
   |=  tx=@ux
-  :-  `'id'
+  :-  `(crip 'id-' (scot %ux (end 2 10 tx)) ~)
   [%eth-send-raw-transaction tx]
 ::
 ++  sigh-json-rpc-response-send
   |=  [wir=wire res=response:rpc:jstd]
   ^-  [(list move) _this]
+  ?.  ?=([%geth *] wir)
+    ::  ~&  [%forget-parity wir res]
+    `this
   ?>  ?=(%batch -.res)
   =.  see
     %-  ~(gas in see)
@@ -75,7 +95,13 @@
     ^-  (unit @ux)
     ?:  ?=(%error -.r)
       ?:  =('Known transaction' (end 3 17 message.r))
-        ~&  %sent-a-known-transaction--skipping
+        ~&  %sent-a-known-transaction--skipping-cap
+        ~
+      ?:  =('known transaction' (end 3 17 message.r))
+        ~&  [%sent-a-known-transaction--skipping wir r]
+        ~
+      ?:  =('Transaction with the same ' (end 3 26 message.r))
+        ~&  [%sent-a-known-transaction--skipping wir r]
         ~
       ?:  =('Nonce too low' message.r)
         ~&  %nonce-too-low--skipping
@@ -101,12 +127,10 @@
   |=  [wir=wire ~]
   ^-  [(list move) _this]
   :_  this(see ~)
-  :_  ~
-  ^-  move
-  %+  batch-requests  /see
+  %^  batch-requests  /see  |
   %+  turn  ~(tap in see)
   |=  txh=@ux
-  :-  `(crip '0' 'x' ((x-co:co 64) txh))
+  :-  `(crip 'see-' '0' 'x' ((x-co:co 64) txh))
   [%eth-get-transaction-receipt txh]
 ::
 ++  sigh-json-rpc-response-see
@@ -123,7 +147,10 @@
     |=  r=response:rpc:jstd
     ^-  (unit @ux)
     ?<  ?=(%batch -.r)
-    =+  txh=(tape-to-ux:ceremony (trip id.r))
+    ?<  ?=(%fail -.r)
+    ~|  [id.r res]
+    =+  txh=(tape-to-ux:ceremony (trip (rsh 3 4 id.r)))
+    ~&  `@ux`txh
     =*  done  ~
     =*  wait  `txh
     ?:  ?=(%error -.r)
