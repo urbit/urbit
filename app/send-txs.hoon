@@ -59,8 +59,8 @@
       :~  =>  (need (de-purl:html 'http://localhost:8545'))
           geth+.(p.p |)
         ::
-          =>  (need (de-purl:html 'http://localhost:8555'))
-          parity+.(p.p |)
+          ::  =>  (need (de-purl:html 'http://localhost:8555'))
+          ::  parity+.(p.p |)
       ==
     :_  ~
     =>  (need (de-purl:html 'http://localhost:8545'))
@@ -71,12 +71,13 @@
   ^-  [(list move) _this]
   ?:  =(0 (lent txs))
     ~&  'all sent!'
-    [~ this]
-  :_  .(txs (slag 50 txs))
+    [~ this(txs ~, see ~, wen `@`0)]
+  =/  new-count  (sub 500 ~(wyt in see))
+  :_  this(txs (slag new-count txs))
   ~&  ['remaining txs: ' (lent txs)]
-  ~&  'sending 50 txs...'
+  ~&  ['sending txs...' new-count]
   %^  batch-requests  /send  &
-  %+  turn  (scag 50 txs)
+  %+  turn  (scag new-count txs)
   |=  tx=@ux
   :-  `(crip 'id-' (scot %ux (end 2 10 tx)) ~)
   [%eth-send-raw-transaction tx]
@@ -88,6 +89,7 @@
     ::  ~&  [%forget-parity wir res]
     `this
   ?>  ?=(%batch -.res)
+  =/  saw  ?=(~ see)
   =.  see
     %-  ~(gas in see)
     %+  murn  bas.res
@@ -113,6 +115,8 @@
     :-  ~
     %-  tape-to-ux:ceremony
     (sa:dejs:format res.r)
+  ?.  saw
+    `this
   (wake-see ~ ~)
 ::
 ++  kick-timer
@@ -126,9 +130,12 @@
 ++  wake-see
   |=  [wir=wire ~]
   ^-  [(list move) _this]
-  :_  this(see ~)
+  =/  s  ~(tap in see)
+  =/  extra  (slag 50 s)
+  =/  check  (scag 50 s)
+  :_  this(see (silt extra))
   %^  batch-requests  /see  |
-  %+  turn  ~(tap in see)
+  %+  turn  check
   |=  txh=@ux
   :-  `(crip 'see-' '0' 'x' ((x-co:co 64) txh))
   [%eth-get-transaction-receipt txh]
@@ -165,10 +172,9 @@
         (~(got by p.res.r) 'status')
       done
     wait
-  ?~  see
-    ~&  'batch confirmed, next!'
-    send-next-batch
-  kick-timer
+  =^  moves-a  this  send-next-batch
+  =^  moves-b  this  kick-timer
+  [(weld moves-a moves-b) this]
 ::
 ++  sigh-tang
   |=  [wir=wire err=tang]
