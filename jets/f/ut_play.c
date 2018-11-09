@@ -70,7 +70,7 @@
             u3_noun loc)
   {
     u3_noun mol = u3nc('o', u3k(loc));
-    u3_noun sho = u3j_hook(u3k(van), "show");
+    u3_noun sho = u3j_cook("_play_loc-show", u3k(van), "show");
     u3_noun ret = u3i_molt(u3k(sho), u3x_sam, u3k(mol), 0);
 
     u3z(mol);
@@ -121,7 +121,7 @@
              u3_noun rig)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_hook(von, "epla");
+    u3_noun gat = u3j_cook("_play_cnts-epla", von, "epla");
 
     return u3n_kick_on(u3i_molt(gat, 
                                 u3x_sam_2, 
@@ -358,7 +358,7 @@
         return pro;
       }
 
-      case c3__ktpm: p_gen = u3t(gen);
+      case c3__ktpd: p_gen = u3t(gen);
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);

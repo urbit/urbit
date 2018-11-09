@@ -1,5 +1,20 @@
-language: c
-script: meson build && cd ./build && ninja
+language: node_js
+node_js:
+- 4
+
+script:
+  - meson . ./build --buildtype=debugoptimized -Dgc=true -Dprof=true
+  - cd ./build
+  - ninja
+  - sudo ninja install
+  - cd ../.travis
+  - ulimit -c unlimited -S
+  - npm install
+  # || true so we continue
+  - npm run -s test || RESULT=$?
+  - if [[ ${RESULT} -eq 0 ]]; then exit 0; else for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb urbit core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi;
+  - echo "build failed with status code $RESULT"
+  - exit $RESULT
 
 # Uncomment me if this gets annoying
 #
@@ -10,8 +25,14 @@ before_install:
   - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
   - unzip ninja-linux.zip
   - sudo mv ninja /usr/bin/
+
 install:
+  # pwd: ~/urbit
   - pip3 install --user -I meson==0.44.1
+  - git clone https://github.com/urbit/arvo
+  - cd ./arvo
+  - git checkout $(cat ../.travis/pin-arvo-commit.txt)
+  - cd ..
 
 addons:
   apt:
@@ -31,6 +52,7 @@ addons:
     - re2c
     - libcurl4-gnutls-dev
     - unzip
+    - gdb
 # before_deploy: "make deb" # TODO
 deploy:
   skip_cleanup: true

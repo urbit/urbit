@@ -21,7 +21,7 @@
             u3_noun loc)
   {
     u3_noun mol = u3nc('o', u3k(loc));
-    u3_noun sho = u3j_hook(u3k(van), "show");
+    u3_noun sho = u3j_cook("_mull_loc-show", u3k(van), "show");
     u3_noun ret = u3i_molt(u3k(sho), u3x_sam, u3k(mol), 0);
 
     u3z(mol);
@@ -63,16 +63,16 @@
     }
   }
   static u3_noun
-  _mull_coke(u3_noun nug)
+  _mull_cove(u3_noun nug)
   {
     if ( 0 == u3h(nug) ) {
       return u3k(u3t(nug));
     } 
-    else if ( 10 == u3h(nug) ) {
-      return _mull_coke(u3t(u3t(nug)));
+    else if ( 11 == u3h(nug) ) {
+      return _mull_cove(u3t(u3t(nug)));
     }
     else {
-      return u3m_error("mull-coke");
+      return u3m_error("mull-cove");
     }
   }
 
@@ -109,7 +109,7 @@
              u3_noun gen)
   {
     u3_noun fug = u3qfu_mint(van, sut, c3__noun, gen);
-    u3_noun axe = _mull_coke(u3t(fug));
+    u3_noun axe = _mull_cove(u3t(fug));
 
     u3z(fug);
     return axe;
@@ -176,7 +176,7 @@
              u3_noun rig)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_hook(von, "emul");
+    u3_noun gat = u3j_cook("_mull_cnts-emul", von, "emul");
 
     return u3n_kick_on(u3i_molt(gat, 
                                 u3x_sam_2, 

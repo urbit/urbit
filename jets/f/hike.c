@@ -89,6 +89,7 @@
   u3qf_hike(u3_noun axe,
             u3_noun pac)
   {
+    c3_assert(0);
     if ( (u3_nul == pac) ) {
       return u3nc(0, u3k(axe));
     }

@@ -1032,32 +1032,6 @@ u3_term_ef_verb(void)
   u3v_plan(pax, u3nc(c3__verb, u3_nul));
 }
 
-/* u3_term_ef_ticket(): initial effects for new ticket.
-*/
-void
-u3_term_ef_ticket(c3_c* who_c, c3_c* tic_c)
-{
-  u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
-  u3_noun who, tic;
-  u3_noun whu, tuc;
-
-  whu = u3dc("slaw", 'p', u3i_string(who_c));
-  if ( u3_nul == whu ) {
-    fprintf(stderr, "ticket: invalid planet '%s'\r\n", who_c);
-    exit(1);
-  }
-  else { who = u3k(u3t(whu)); u3z(whu); }
-
-  tuc = u3dc("slaw", 'p', u3i_string(tic_c));
-  if ( u3_nul == tuc ) {
-    fprintf(stderr, "ticket: invalid secret '%s'\r\n", tic_c);
-    exit(1);
-  }
-  else { tic = u3k(u3t(tuc)); u3z(tuc); }
-
-  u3v_plan(pax, u3nt(c3__tick, who, tic));
-}
-
 /* u3_term_ef_bake(): initial effects for new terminal.
 */
 void
@@ -1212,15 +1186,19 @@ u3_term_io_hija(void)
     else {
       if ( c3n == u3_Host.ops_u.dem ) {
         if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->bak_u) ) {
+          perror("hija-tcsetattr-1");
           c3_assert(!"hija-tcsetattr");
         }
         if ( -1 == fcntl(1, F_SETFL, uty_u->cug_i) ) {
+          perror("hija-fcntl-1");
           c3_assert(!"hija-fcntl");
         }
         if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->bak_u) ) {
+          perror("hija-tcsetattr-0");
           c3_assert(!"hija-tcsetattr");
         }
         if ( -1 == fcntl(0, F_SETFL, uty_u->cug_i) ) {
+          perror("hija-fcntl-0");
           c3_assert(!"hija-fcntl");
         }
         write(uty_u->fid_i, "\r", 1);
@@ -1253,15 +1231,19 @@ u3_term_io_loja(int x)
       }
       else {
         if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->raw_u) ) {
+          perror("loja-tcsetattr-1");
           c3_assert(!"loja-tcsetattr");
         }
         if ( -1 == fcntl(1, F_SETFL, uty_u->nob_i) ) {
+          perror("hija-fcntl-1");
           c3_assert(!"loja-fcntl");
         }
         if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->raw_u) ) {
+          perror("loja-tcsetattr-0");
           c3_assert(!"loja-tcsetattr");
         }
         if ( -1 == fcntl(0, F_SETFL, uty_u->nob_i) ) {
+          perror("hija-fcntl-0");
           c3_assert(!"loja-fcntl");
         }
         _term_it_refresh_line(uty_u);

@@ -24,12 +24,11 @@ path you specify on the command line with the `-A` option.
 
 To start a fake `~zod`, the command is:
 
-    $ urbit -c -F -I zod -A [arvo checkout] [pier directory]
+    $ urbit -c -F zod -A [arvo checkout] [pier directory]
 
 To resume one that was already created, just as on the live network,
 remove `-c` and `-A [arvo checkout]` (but leave the rest of the options
-there). `-F` uses the fake network, and `-I` starts an "imperial"
-instance - that is, an 8-bit galaxy.
+there). `-F` uses the fake network.
 
 ## Kernel development
 

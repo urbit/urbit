@@ -649,7 +649,7 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     req_u->tim_u = c3_malloc(sizeof(*req_u->tim_u));
     req_u->tim_u->data = req_u;
     uv_timer_init(u3L, req_u->tim_u);
-    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 30 * 1000, 0);
+    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 300 * 1000, 0);
 
     _http_req_dispatch(req_u, req);
 
@@ -1424,13 +1424,17 @@ _http_release_ports_file(c3_c *pax_c)
   free(paf_c);
 }
 
+
 /* _http_czar_host(): galaxy hostname as (unit host:eyre)
 */
 static u3_noun
 _http_czar_host(void)
 {
   u3_noun dom = u3_nul;
+  return dom;
 
+  // XX revisit
+#if 0
   if ( (0 == u3_Host.ops_u.imp_c) || (c3n == u3_Host.ops_u.net) ) {
     return dom;
   }
@@ -1474,6 +1478,7 @@ _http_czar_host(void)
   dom = u3nc(u3i_string(u3_Host.ops_u.imp_c + 1), u3kb_flop(u3k(dom)));
 
   return u3nt(u3_nul, c3y, u3kb_flop(u3k(dom)));
+#endif
 }
 
 /* u3_http_ef_bake(): notify %eyre that we're live
@@ -1635,7 +1640,8 @@ _http_serv_start_all(void)
 
   c3_assert( 0 != for_u );
 
-  u3_lo_open();
+  // disabled, as this causes a memory leak
+  // u3_lo_open();
 
   // if the SSL_CTX existed, it'll be freed with the servers
   u3_Host.tls_u = 0;
@@ -1652,7 +1658,7 @@ _http_serv_start_all(void)
       htp_u = _http_serv_new(por_s, c3y, c3n);
       htp_u->h2o_u = _http_serv_init_h2o(u3_Host.tls_u, for_u->log, for_u->red);
 
-      if ( (c3y == for_u->pro) || (c3y == u3_Host.ops_u.fak) ) {
+      if ( c3y == for_u->pro ) {
         htp_u->rox_u = _proxy_serv_new(htp_u, 443, c3y);
       }
 
@@ -1667,7 +1673,7 @@ _http_serv_start_all(void)
     htp_u = _http_serv_new(por_s, c3n, c3n);
     htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
 
-    if ( (c3y == for_u->pro) || (c3y == u3_Host.ops_u.fak) ) {
+    if ( c3y == for_u->pro ) {
       htp_u->rox_u = _proxy_serv_new(htp_u, 80, c3n);
     }
 
@@ -1696,7 +1702,8 @@ _http_serv_start_all(void)
   _http_write_ports_file(u3_Host.dir_c);
   _http_form_free();
 
-  u3_lo_shut(c3y);
+  // disabled, see above
+  // u3_lo_shut(c3y);
 }
 
 /* _http_serv_restart(): gracefully shutdown, then start servers.
@@ -1751,15 +1758,26 @@ _http_form_free(void)
 void
 u3_http_ef_form(u3_noun fig)
 {
-  // XX validate / test axes?
-  u3_noun sec = u3h(fig);
-  u3_noun lob = u3t(fig);
+  u3_noun sec, pro, log, red;
+
+  if ( (c3n == u3r_qual(fig, &sec, &pro, &log, &red) ) ||
+       // confirm sec is a valid (unit ^)
+       !( u3_nul == sec || ( c3y == u3du(sec) &&
+                             c3y == u3du(u3t(sec)) &&
+                             u3_nul == u3h(sec) ) ) ||
+       // confirm valid flags ("loobeans")
+       !( c3y == pro || c3n == pro ) ||
+       !( c3y == log || c3n == log ) ||
+       !( c3y == red || c3n == red ) ) {
+    uL(fprintf(uH, "http: form: invalid card\n"));
+    u3z(fig);
+    return;
+  }
 
   u3_form* for_u = c3_malloc(sizeof(*for_u));
-
-  for_u->pro = (c3_o)u3h(lob);
-  for_u->log = (c3_o)u3h(u3t(lob));
-  for_u->red = (c3_o)u3t(u3t(lob));
+  for_u->pro = (c3_o)pro;
+  for_u->log = (c3_o)log;
+  for_u->red = (c3_o)red;
 
   if ( u3_nul != sec ) {
     u3_noun key = u3h(u3t(sec));
@@ -2057,17 +2075,40 @@ _proxy_conn_new(u3_proxy_type typ_e, void* src_u)
   return con_u;
 }
 
+typedef struct _proxy_write_ctx {
+  u3_pcon*     con_u;
+  uv_stream_t* str_u;
+  c3_c*        buf_c;
+} proxy_write_ctx;
+
 /* _proxy_write_cb(): free uv_write_t and linked buffer.
 */
 static void
 _proxy_write_cb(uv_write_t* wri_u, c3_i sas_i)
 {
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "proxy: write: %s\n", uv_strerror(sas_i)));
+    if ( 0 != wri_u->data ) {
+      proxy_write_ctx* ctx_u = wri_u->data;
+
+      if ( ctx_u->str_u == (uv_stream_t*)ctx_u->con_u->upt_u ) {
+        uL(fprintf(uH, "proxy: write upstream: %s\n", uv_strerror(sas_i)));
+      }
+      else if ( ctx_u->str_u == (uv_stream_t*)&(ctx_u->con_u->don_u) ) {
+        uL(fprintf(uH, "proxy: write downstream: %s\n", uv_strerror(sas_i)));
+      }
+      else {
+        uL(fprintf(uH, "proxy: write: %s\n", uv_strerror(sas_i)));
+      }
+    }
+    else {
+      uL(fprintf(uH, "proxy: write: %s\n", uv_strerror(sas_i)));
+    }
   }
 
   if ( 0 != wri_u->data ) {
-    free(wri_u->data);
+    proxy_write_ctx* ctx_u = wri_u->data;
+    free(ctx_u->buf_c);
+    free(ctx_u);
   }
 
   free(wri_u);
@@ -2079,7 +2120,12 @@ static c3_i
 _proxy_write(u3_pcon* con_u, uv_stream_t* str_u, uv_buf_t buf_u)
 {
   uv_write_t* wri_u = c3_malloc(sizeof(*wri_u));
-  wri_u->data = buf_u.base;
+
+  proxy_write_ctx* ctx_u = c3_malloc(sizeof(*ctx_u));
+  ctx_u->con_u = con_u;
+  ctx_u->str_u = str_u;
+  ctx_u->buf_c = buf_u.base;
+  wri_u->data = ctx_u;
 
   c3_i sas_i;
   if ( 0 != (sas_i = uv_write(wri_u, str_u, &buf_u, 1, _proxy_write_cb)) ) {
@@ -2562,7 +2608,7 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
     uv_timer_init(u3L, &rev_u->tim_u);
 
     // XX how long?
-    uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 120 * 1000, 0);
+    uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 300 * 1000, 0);
 
     // XX u3_lo_shut(c3y);
   }
@@ -2663,12 +2709,15 @@ _proxy_ward_resolve(u3_warc* cli_u)
   hin_u.ai_protocol = IPPROTO_TCP;
 
   if ( 0 == cli_u->hot_c ) {
+    // XX revisit
+    c3_assert( 0 != u3_Host.sam_u.dns_c );
+
     u3_noun sip = u3dc("scot", 'p', u3k(cli_u->sip));
     c3_c* sip_c = u3r_string(sip);
-    c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.ops_u.dns_c);
+    c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.sam_u.dns_c);
     cli_u->hot_c = c3_malloc(len_w);
     // incremented to skip '~'
-    snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, u3_Host.ops_u.dns_c);
+    snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, u3_Host.sam_u.dns_c);
 
     free(sip_c);
     u3z(sip);
@@ -2780,11 +2829,14 @@ _proxy_parse_ship(c3_c* hot_c)
     return sip;
   }
 
+  // XX revisit
+  c3_assert( 0 != u3_Host.sam_u.dns_c );
+
   c3_w dif_w = dom_c - hot_c;
-  c3_w dns_w = strlen(u3_Host.ops_u.dns_c);
+  c3_w dns_w = strlen(u3_Host.sam_u.dns_c);
 
   if ( (dns_w != strlen(hot_c) - (dif_w + 1)) ||
-       (0 != strncmp(dom_c + 1, u3_Host.ops_u.dns_c, dns_w)) ) {
+       (0 != strncmp(dom_c + 1, u3_Host.sam_u.dns_c, dns_w)) ) {
     return sip;
   }
 
@@ -2810,25 +2862,16 @@ _proxy_dest(u3_pcon* con_u, u3_noun sip)
     _proxy_loop_connect(con_u);
   }
   else {
-    u3_noun hip = u3k(u3t(sip));
-    u3_noun own = u3A->own;
-    c3_o our = c3n;
+    u3_noun hip = u3t(sip);
 
-    while ( u3_nul != own ) {
-      if ( c3y == u3r_sing(hip, u3h(own)) ) {
-        our = c3y;
-        break;
-      }
-      own = u3t(own);
-    }
-
-    if ( c3y == our ) {
+    if ( c3y == u3r_sing(u3A->own, hip) ) {
       _proxy_loop_connect(con_u);
     }
     else {
       // XX check if (sein:title sip) == our
       // XX check will
-      _proxy_ward_start(con_u, hip);
+      // XX extract bytes from hip, this could leak
+      _proxy_ward_start(con_u, u3k(hip));
     }
   }
 
@@ -3063,15 +3106,13 @@ _proxy_serv_start(u3_prox* lis_u)
 void
 u3_http_ef_that(u3_noun tat)
 {
-  u3_noun sip = u3h(tat);
-  u3_noun por = u3h(u3t(tat));
-  u3_noun sec = u3h(u3t(u3t(tat)));
-  u3_noun non = u3t(u3t(u3t(tat)));
+  u3_noun sip, por, sec, non;
 
-  if( c3n == u3ud(sip) ||
-      c3n == u3a_is_cat(por) ||
-      !( c3y == sec || c3n == sec ) ||
-      c3n == u3ud(non) ) {
+  if ( ( c3n == u3r_qual(tat, &sip, &por, &sec, &non) ) ||
+       ( c3n == u3ud(sip) ) ||
+       ( c3n == u3a_is_cat(por) ) ||
+       !( c3y == sec || c3n == sec ) ||
+       ( c3n == u3ud(non) ) ) {
     uL(fprintf(uH, "http: that: invalid card\n"));
     u3z(tat);
     return;
@@ -3093,6 +3134,7 @@ u3_http_ef_that(u3_noun tat)
     return;
   }
 
+  // XX extract bytes from sip, this could leak
   cli_u = _proxy_warc_new(htp_u, (u3_atom)sip, (c3_s)por, (c3_o)sec);
 
   // XX add to constructor
@@ -3111,6 +3153,7 @@ u3_http_ef_that(u3_noun tat)
   if ( c3n == u3_Host.ops_u.net ) {
     cli_u->ipf_w = INADDR_LOOPBACK;
     _proxy_ward_connect(cli_u);
+    u3z(tat);
     return;
   }
 

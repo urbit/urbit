@@ -3,6 +3,20 @@
 */
 #include "all.h"
 
+  static u3_noun
+  _roll_in(u3j_site* sit_u, u3_noun a, u3_noun b)
+  {
+    if ( 0 == a ) {
+      return b;
+    }
+    else if ( c3n == u3du(a) ) {
+      return u3m_bail(c3__exit);
+    }
+    else {
+      b = u3j_gate_slam(sit_u, u3nc(u3k(u3h(a)), b));
+      return _roll_in(sit_u, u3t(a), b);
+    }
+  }
 
 /* functions
 */
@@ -10,32 +24,12 @@
   u3qb_roll(u3_noun a,
             u3_noun b)
   {
-    if ( 0 == a ) {
-      return u3k(u3r_at(u3x_sam_3, b));
-    }
-    else if ( c3n == u3du(a) ) {
-      return u3m_bail(c3__exit);
-    }
-    else {
-      u3_noun gim = u3k(u3h(a));
-      u3_noun zor = u3r_at(u3x_sam, b);
-
-      if ( c3n == u3du(zor) ) {
-        return u3m_bail(c3__exit);
-      }
-
-      u3_noun daz = u3n_slam_on(u3k(b), u3nc(gim, u3k(u3t(zor))));
-      u3_noun vel = u3i_molt(u3k(b), u3x_sam_3, daz, 0);
-
-      if ( u3_none == vel ) {
-        return u3m_bail(c3__exit);
-      } else {
-        u3_noun hox = u3qb_roll(u3t(a), vel);
-
-        u3z(vel);
-        return hox;
-      }
-    }
+    u3_noun  pro;
+    u3j_site sit_u;
+    u3j_gate_prep(&sit_u, u3k(b));
+    pro = _roll_in(&sit_u, a, u3k(u3x_at(u3x_sam_3, b)));
+    u3j_gate_lose(&sit_u);
+    return pro;
   }
   u3_noun
   u3wb_roll(u3_noun cor)
