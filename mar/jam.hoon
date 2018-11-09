@@ -9,7 +9,6 @@
   |%
   ++  mime  [/application/octet-stream (as-octs mud)]
   --
-++  garb  /womb-part
 ++  grab
   |%                                                    ::  convert from
   ++  noun  @                                           ::  clam from %noun

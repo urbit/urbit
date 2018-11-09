@@ -143,6 +143,7 @@
     %_(+> moz :_(moz [hen %give git]))
   ::
   ++  mo-okay                                           ::  valid agent core
+    ~/  %mo-okay
     |=  vax/vase
     ^-  ?
     =+  bol=(slew 12 vax)
@@ -151,6 +152,7 @@
   ::  +mo-receive-core: receives an app core built by ford-turbo
   ::
   ++  mo-receive-core
+    ~/  %mo-receive-core
     |=  [dap=dude byk=beak made-result=made-result:ford]
     ^+  +>
     ::
@@ -210,6 +212,7 @@
     [%f %build our live=%.y [%core [[p q]:byk [%hoon dap %app ~]]]]
   ::
   ++  mo-away                                           ::  foreign request
+    ~/  %mo-away
     |=  {him/ship caz/cush}                             ::  
     ^+  +>
     ::  ~&  [%mo-away him caz]
@@ -303,6 +306,7 @@
     [(slav %p i.pax) i.t.pax da+(slav %da i.t.t.pax)]
   ::
   ++  mo-cyst                                           ::  take in /sys
+    ~/  %mo-cyst
     |=  {pax/path sih/sign-arvo}
     ^+  +>
     ?+    -.pax  !!
@@ -431,6 +435,7 @@
     ==
   ::
   ++  mo-cook                                           ::  take in /use
+    ~/  %mo-cook
     |=  {pax/path hin/(hypo sign-arvo)}
     ^+  +>
     ?.  ?=({@ @ $?($inn $out $cay) *} pax)
@@ -475,6 +480,7 @@
     byk:(~(got by bum) dap)
   ::
   ++  mo-peek
+    ~/  %mo-peek
     |=  {dap/dude pry/prey ren/@tas tyl/path}
     ^-  (unit (unit cage))
     (ap-peek:(ap-abed:ap dap pry) ren tyl)
@@ -544,6 +550,7 @@
         ==
     ::
     ++  ap-abed                                         ::  initialize
+      ~/  %ap-abed
       |=  {dap/dude pry/prey}
       ^+  +>
       =:  ^dap   dap
@@ -567,7 +574,7 @@
     ++  ap-abet                                         ::  resolve
       ^+  +>
       =>  ap-abut
-      %_  +>  
+      %_  +>
         bum  (~(put by bum) dap +<+)
         moz  :(weld (turn zip ap-aver) (turn dub ap-avid) moz)
       ==
@@ -590,6 +597,7 @@
       ap-kill(q.q.pry p.u.tib)
     ::
     ++  ap-aver                                         ::  cove to move
+      ~/  %ap-aver
       |=  cov/cove
       ^-  move 
       :-  (~(got by r.zam) p.cov)
@@ -635,6 +643,7 @@
       (ap-sake p.zem) 
     ::
     ++  ap-peek
+      ~/  %ap-peek
       |=  {ren/@tas tyl/path}
       ^-  (unit (unit cage))
       =+  ?.  ?=($x ren)
@@ -676,6 +685,7 @@
       ==
     ::
     ++  ap-diff                                         ::  pour a diff
+      ~/  %ap-diff
       |=  {her/ship pax/path cag/cage}
       ::  =.  q.cag  (sped q.cag)
       =+  cug=(ap-find [%diff p.cag +.pax])
@@ -693,6 +703,7 @@
       (ap-pump & her pax)
     ::
     ++  ap-pump                                         ::  update subscription
+      ~/  %ap-pump
       |=  {oak/? her/ship pax/path}
       =+  way=[(scot %p her) %out pax]
       ?:  oak
@@ -805,6 +816,7 @@
       ==
     ::
     ++  ap-move-quit                                    ::  give quit move
+      ~/  %quit
       |=  {sto/bone vax/vase}
       ^-  {(each cove tang) _+>}
       :_  +>(sup.ged (~(del by sup.ged) sto))
@@ -812,6 +824,7 @@
       [%& `cove`[sto %give `cuft`[%quit ~]]]
     ::
     ++  ap-move-diff                                    ::  give diff move
+      ~/  %diff
       |=  {sto/bone vax/vase}
       ^-  {(each cove tang) _+>}
       =^  pec  vel  (~(sped wa vel) vax)
@@ -830,6 +843,7 @@
       [%& sto %give %http-response ((hard raw-http-response:light) q.vax)]
     ::
     ++  ap-move-hiss                                    ::  pass %hiss
+      ~/  %hiss
       |=  {sto/bone vax/vase}
       ^-  {(each cove tang) _+>}
       ?.  &(?=({p/* q/* r/@ s/{p/@ *}} q.vax) ((sane %tas) r.q.vax))
@@ -853,6 +867,7 @@
       [%hiss u.usr r.q.vax [p.q.gaw paw]]
     ::
     ++  ap-move-mess                                    ::  extract path, target
+      ~/  %mess
       |=  vax/vase
       ^-  {(each (trel path ship term) tang) _+>}
       :_  +>.$
@@ -866,6 +881,7 @@
       [%& [(scot %p q.q.vax) %out r.q.vax u.pux] q.q.vax r.q.vax]
     ::
     ++  ap-move-pass                                    ::  pass general move 
+      ~/  %pass
       |=  {sto/bone wut/* vax/vase}
       ^-  {(each cove tang) _+>}
       ?.  &(?=(@ wut) ((sane %tas) wut))
@@ -882,6 +898,7 @@
       [%meta u.huj (slop (ap-term %tas wut) tel)]
     ::
     ++  ap-move-poke                                    ::  pass %poke
+      ~/  %poke
       |=  {sto/bone vax/vase}
       ^-  {(each cove tang) _+>}
       =^  yep  +>.$  (ap-move-mess vax)
@@ -896,6 +913,7 @@
       [%send q.p.yep r.p.yep %poke p.q.gaw paw]
     ::
     ++  ap-move-peel                                    ::  pass %peel
+      ~/  %peel
       |=  {sto/bone vax/vase}
       ^-  {(each cove tang) _+>}
       =^  yep  +>.$  (ap-move-mess vax)
@@ -917,6 +935,7 @@
       [%send q.p.yep r.p.yep %peel u.mar u.pux]
     ::
     ++  ap-move-peer                                    ::  pass %peer
+      ~/  %peer
       |=  {sto/bone vax/vase}
       ^-  {(each cove tang) _+>}
       =^  yep  +>.$  (ap-move-mess vax)
@@ -935,6 +954,7 @@
       [%send q.p.yep r.p.yep %peer u.pux]
     ::
     ++  ap-move-pull                                    ::  pass %pull
+      ~/  %pull
       |=  {sto/bone vax/vase}
       ^-  {(each cove tang) _+>}
       =^  yep  +>.$  (ap-move-mess vax)
@@ -947,6 +967,7 @@
       [%send q.p.yep r.p.yep %pull ~]
     ::
     ++  ap-move-send                                    ::  pass gall action
+      ~/  %send
       |=  {sto/bone vax/vase}
       ^-  {(each cove tang) _+>}
       ?.  ?&  ?=({p/* {q/@ r/@} {s/@ t/*}} q.vax)
@@ -987,6 +1008,7 @@
       +>(zip :_(zip [ost %pass pax coh]))
     ::
     ++  ap-peep                                         ::  reinstall
+      ~/  %ap-peep
       |=  vax/vase
       ^+  +>
       =+  pep=(ap-prep(hav vax) `hav)
@@ -1000,6 +1022,7 @@
       (ap-peer pax)
     ::
     ++  ap-peer                                         ::  apply %peer
+      ~/  %ap-peer
       |=  pax/path
       ^+  +>
       =.  sup.ged  (~(put by sup.ged) ost [q.q.pry pax])
@@ -1014,6 +1037,7 @@
       ?^(cam ap-pule +>.$)
     ::
     ++  ap-poke                                         ::  apply %poke
+      ~/  %ap-poke
       |=  cag/cage
       ^+  +>
       =+  cug=(ap-find %poke p.cag ~)
@@ -1049,6 +1073,7 @@
       +>(misvale (~(put in misvale) wir))
     ::
     ++  ap-pour                                         ::  generic take
+      ~/  %ap-pour
       |=  {pax/path vax/vase}
       ^+  +>
       ?.  &(?=({@ *} q.vax) ((sane %tas) -.q.vax))
@@ -1068,6 +1093,7 @@
       +>.$
     ::
     ++  ap-purr                                         ::  unwrap take
+      ~/  %ap-purr
       |=  {wha/term pax/path cag/cage}
       ^+  +>
       =+  cug=(ap-find [wha p.cag pax])
@@ -1109,6 +1135,7 @@
       ==
     ::
     ++  ap-prop                                         ::  install
+      ~/  %ap-prop
       |=  vux/(unit vase)
       ^-  {(unit tang) _+>}
       ?.  (ap-fond %prep) 
@@ -1152,6 +1179,7 @@
       (ap-give:ap-pull %quit ~)
     ::
     ++  ap-take                                         ::  non-diff gall take
+      ~/  %ap-take
       |=  {her/ship cog/term pax/path vux/(unit vase)}
       ^+  +>
       =+  cug=(ap-find cog pax)
@@ -1166,6 +1194,7 @@
       +>.$
     ::
     ++  ap-safe                                         ::  process move list
+      ~/  %ap-safe
       |=  vax/vase
       ^-  {(each (list cove) tang) _+>}
       ?~  q.vax  :_(+>.$ [%& ~])
@@ -1180,6 +1209,7 @@
       [%& p.sud p.res]
     ::
     ++  ap-sake                                         ::  handle result
+      ~/  %ap-sake
       |=  vax/vase
       ^-  {(unit tang) _+>}
       ?:  ?=(@ q.vax)
@@ -1197,6 +1227,7 @@
       ==
     ::
     ++  ap-save                                         ::  verify core
+      ~/  %ap-save
       |=  vax/vase
       ^-  {(each vase tang) _+>}
       =^  gud  vel  (~(nest wa vel) p.hav p.vax)
@@ -1252,20 +1283,22 @@
         $info  `%c
         $keep  `%f
         $kill  `%f
+        $look  `%j
         $merg  `%c
+        $mint  `%j
         $mont  `%c
         $nuke  `%a
         $ogre  `%c
         $perm  `%c
         $rule  `%e
         $serv  `%e
-        $tend  `%a
         $them  `%e
         $wait  `%b
         $want  `%a
         $warp  `%c
         $well  `%e
         $well  `%e
+        $wind  `%j
         $wipe  `%f
         %connect  `%l
         %serve  `%l
@@ -1294,6 +1327,8 @@
       $init 
     ::  ~&  [%gall-init p.q.hic]
     [~ ..^$(pol.all (~(put by pol.all) p.q.hic %*(. *mast sys hen)))]
+  ::
+      $sunk  [~ ..^$]
   ::
       $west
     ?.  (~(has by pol.all) p.p.q.hic)
@@ -1340,6 +1375,7 @@
   ==
 ::
 ++  scry
+  ~/  %gall-scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
   ?.  ?=(%& -.why)  ~
@@ -1365,6 +1401,7 @@
   `axle`all
 ::
 ++  take                                                ::  response
+  ~/  %gall-take
   |=  {tea/wire hen/duct hin/(hypo sign-arvo)}
   ^+  [p=*(list move) q=..^$]
   ~|  [%gall-take tea]

@@ -205,7 +205,7 @@
 +|  %utility
 ::
 ++  self
-  (true-self our.bol)
+  (true-self [our now our]:bol)
 ::
 ++  server
   ::  our hall instance
@@ -720,7 +720,7 @@
         ;~  pose
           (cold incir col)
           ;~(pfix cen (stag self urs:ab))
-          ;~(pfix net (stag (sein:title self) urs:ab))
+          ;~(pfix net (stag (^sein:title self) urs:ab))
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
@@ -2086,7 +2086,7 @@
     =+  wun=(cite:title hos.one)
     ?:  =(nom.one %inbox)
       wun
-    ?:  =(hos.one (sein:title self))
+    ?:  =(hos.one (^sein:title self))
       ['/' (trip nom.one)]
     :(welp wun "/" (trip nom.one))
   ::

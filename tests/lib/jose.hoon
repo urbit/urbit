@@ -128,7 +128,7 @@
   ::
     %+  expect-eq
       !>  exp-ws
-      !>  (en-base64url (en:octn (~(sign rs256 k) inp-ws)))
+      !>  (en-base64url (en:octn (~(sign rs256 k) (met 3 inp-ws) inp-ws)))
   ==
 ::
 ++  test-jws-2

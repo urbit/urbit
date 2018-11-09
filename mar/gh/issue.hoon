@@ -1,7 +1,6 @@
 /-  gh
-/+  gh-parse, httr-to-json, old-zuse
+/+  gh-parse, httr-to-json
 =,  mimes:html
-=,  old-zuse
 |_  issue/issue:gh
 ++  grab
   |%

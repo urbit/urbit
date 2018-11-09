@@ -1,5 +1,5 @@
 ::
-::::  /hoon/umd/mar
+::::  /hoon/udon/mar
   ::
 /+    cram
 ::

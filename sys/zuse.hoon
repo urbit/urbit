@@ -70,7 +70,7 @@
 ::
 ++  coop  (unit ares)                                   ::  possible error
 ++  json                                                ::  normal json value
-  $@  ~                                                ::  null
+  $@  ~                                                 ::  null
   $%  {$a p/(list json)}                                ::  array
       {$b p/?}                                          ::  boolean
       {$o p/(map @t json)}                              ::  object
@@ -95,6 +95,8 @@
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
   (cask vase)                                           ::  marked cargo
+::
+++  turf  (list @t)                                     ::  domain, tld first
 ::                                                      ::
 ::::                      ++jstd                        ::  json standards structures
   ::                                                    ::::
@@ -105,6 +107,7 @@
     ++  response  ::TODO  id should be optional
       $%  [%result id=@t res=json]
           [%error id=@t code=@t message=@t]  ::TODO  data?
+          [%fail hit=httr:eyre]
           [%batch bas=(list response)]
       ==
     --
@@ -170,6 +173,12 @@
             top=(list octs)
         ==
         [%eth-get-filter-logs fid=@ud]
+        $:  %eth-get-logs
+            fro=(unit block)
+            tob=(unit block)
+            adr=(list address)
+            top=(list octs)
+        ==
         [%eth-get-filter-changes fid=@ud]
         [%eth-send-raw-transaction dat=@ux]
     ==
@@ -179,6 +188,7 @@
     $%  ::TODO
         [%eth-new-filter fid=@ud]
         [%eth-get-filter-logs los=(list event-log)]
+        [%eth-get-logs los=(list event-log)]
         [%eth-got-filter-changes los=(list event-log)]
         [%eth-transaction-hash haz=@ux]
     ==
@@ -191,6 +201,7 @@
             transaction-hash=@ux
             block-number=@ud
             block-hash=@ux
+            removed=?
         ==
       ::
         address=@ux
@@ -362,7 +373,16 @@
     ++  contracts
       |%
       ++  ships
-        0x84b3.7fbc.6188.da8a.e866.1eae.322a.f4d9.2db4.5ecc
+        ::  ropsten
+        ::
+        0xab87.24a7.a953.ef14.e940.b358.6b21.a889.b62f.3d56
+        ::  local deployments
+        ::  XX remove
+        ::
+        ::  0x84b3.7fbc.6188.da8a.e866.1eae.322a.f4d9.2db4.5ecc  ::  joe
+        ::  0x7134.3566.74e4.0c93.8736.8699.1af8.86dd.2ae8.e642  ::  philip
+      ++  launch
+        4.230.928
       --
     ::
     ::  hashes of ship event signatures
@@ -458,24 +478,33 @@
           $:  $a                                        ::  to %ames
       $%  {$kick p/@da}                                 ::
       ==  ==                                            ::
+          $:  %j                                        ::  to %jael
+      $%  [%meet our=ship who=ship =life =pass]         ::  neighbor
+          [%pubs our=ship who=ship]                     ::  view public keys
+          [%turf ~]                                     ::  view domains
+          [%vein our=ship]                              ::  view private keys
+      ==  ==                                            ::
           $:  $g                                        ::  to %gall
       $%  {$deal p/sock q/cush:gall}                    ::
       ==  ==                                            ::
           $:  @tas                                      ::  to any
-      $%  {$init p/@p}                                  ::
-          {$west p/sack q/path r/*}                     ::
+      $%  {$west p/sack q/path r/*}                     ::
       ==  ==  ==                                        ::
     ++  gift                                            ::  out result <-$
       $%  {$hear p/lane q/@}                            ::  receive packet
-          {$init p/@p}                                  ::  report install
           {$mack p/(unit tang)}                         ::  
           {$mass p/mass}                                ::  memory usage
-          {$rove p/ship q/lane}                         ::  lane change
           {$send p/lane q/@}                            ::  transmit packet
+          {$turf p/(list turf)}                         ::  bind to domains
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
     ++  sign                                            ::  in result _<-
-      $%  $:  $g                                        ::  from %gall
+      $%  $:  %j                                        ::  from %jael
+      $%  [%pubs public:able:jael]                      ::  public keys
+          [%turf turf=(list turf)]                      ::  bind to domains
+          [%vein =life vein=(map life ring)]            ::  private keys
+      ==  ==                                            ::
+          $:  $g                                        ::  from %gall
       $%  {$unto p/cuft:gall}                           ::
           {$mean p/ares}                                ::  XX old clean up
           {$nice ~}                                    ::
@@ -488,16 +517,14 @@
     ++  task                                            ::  in request ->$
       $%  {$barn ~}                                    ::  new unix process
           {$crud p/@tas q/(list tank)}                  ::  error with trace
-          {$cash p/@p q/buck}                           ::  civil license
           {$hear p/lane q/@}                            ::  receive packet
           {$halo p/lane q/@ r/ares}                     ::  hole with trace
           {$hole p/lane q/@}                            ::  packet failed
+          [%init p=ship]                                ::  report install
           {$junk p/@}                                   ::  entropy
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
-          {$make p/(unit @t) q/@ud r/@ s/?}             ::  wild license
-          {$sith p/@p q/@uw r/?}                        ::  imperial generator
-          {$tend ~}                                     ::  watch lane changes
+          {$sunk p=ship q=life}                         ::  report death
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
           {$west p/sack q/path r/*}                     ::  network request
@@ -537,16 +564,17 @@
         ryl/(map path rill)                             ::  statements outbound
     ==                                                  ::
   ++  boon                                              ::  fort output
-    $%  {$beer p/ship q/@uvG}                           ::  gained ownership
+    $%  {$beer p/sock}                                  ::  request public keys
+        {$bock ~}                                       ::  bind to domains
+        {$brew ~}                                       ::  request domains
         {$cake p/sock q/soap r/coop s/duct}             ::  e2e message result
-        {$maze p/ship q/lane}                           ::  lane change
         {$mead p/lane q/rock}                           ::  accept packet
         {$milk p/sock q/soap r/*}                       ::  e2e pass message
         {$ouzo p/lane q/rock}                           ::  transmit packet
+        {$raki p/sock q/life r/pass}                    ::  neighbor'd
+        {$sake p/ship}                                  ::  our private keys
         {$wine p/sock q/tape}                           ::  notify user
     ==                                                  ::
-  ++  bray  {p/life q/(unit life) r/ship s/@da}         ::  our parent us now
-  ++  buck  {p/mace q/wyll}                             ::  all security data
   ++  cake  {p/sock q/skin r/@}                         ::  top level packet
   ++  cape                                              ::  end-to-end result
     $?  $good                                           ::  delivered
@@ -559,15 +587,13 @@
     ==                                                  ::
   ++  code  @uvI                                        ::  symmetric key
   ++  corn                                              ::  flow by server
-    $:  hen/duct                                        ::  admin channel
-        nys/(map flap bait)                             ::  packets incoming
+    $:  nys/(map flap bait)                             ::  packets incoming
         olz/(map flap cape)                             ::  packets completed
         wab/(map ship bath)                             ::  relationship
     ==                                                  ::
-  ++  deyd  {p/@ q/step r/?}                            ::  sig stage fake?
+  +$  deed  [=life =pass oath=(unit oath:pki:jael)]     ::  life/pub/sig
   ++  dore                                              ::  foreign contact
     $:  wod/road                                        ::  connection to
-        wyl/wyll                                        ::  inferred mirror
         caq/clot                                        ::  symmetric key state
     ==                                                  ::
   ++  dove  {p/@ud q/(map @ud @)}                       ::  count hash 13-blocks
@@ -579,30 +605,18 @@
   ++  fort                                              ::  formal state
     $:  $1                                              ::  version
         gad/duct                                        ::  client interface
+        tuf/(list turf)                                 ::  domains
         hop/@da                                         ::  network boot date
         bad/(set @p)                                    ::  bad ships
         ton/town                                        ::  security
         zac/(map ship corn)                             ::  flows by server
-        ten/(set duct)                                  ::  watch lanes
     ==                                                  ::
-  ++  gcos                                              ::  id description
-    $%  {$czar ~}                                      ::  8-bit ship
-        {$duke p/what}                                  ::  32-bit ship
-        {$earl p/@t}                                    ::  64-bit ship
-        {$king p/@t}                                    ::  16-bit ship
-        {$pawn p/(unit @t)}                             ::  128-bit ship
-    ==                                                  ::
-  ++  gens  {p/lang q/gcos}                             ::  general identity
-  ++  govt  path                                        ::  country+postcode
   ++  hand  @uvH                                        ::  128-bit hash
   ++  lane                                              ::  packet route
     $%  {$if p/@da q/@ud r/@if}                         ::  IP4/public UDP/addr
         {$is p/@ud q/(unit lane) r/@is}                 ::  IPv6 w+alternates
         {$ix p/@da q/@ud r/@if}                         ::  IPv4 provisional
     ==                                                  ::
-  ++  lang  @ta                                         ::  IETF lang as code
-  ++  lice  {p/ship q/buck}                             ::  full license
-  ++  mace  (list {p/life q/ring})                      ::  private secrets
   ++  meal                                              ::  payload
     $%  {$back p/coop q/flap r/@dr}                     ::  ack
         {$bond p/life q/path r/@ud s/*}                 ::  message
@@ -620,7 +634,6 @@
         bum/(map @ud ares)                              ::  nacks
         mis/(map @ud {p/cape q/lane r/flap s/(unit)})   ::  misordered
     ==                                                  ::
-  ++  rank  ?($czar $king $duke $earl $pawn)            ::  ship width class
   ++  rill                                              ::  outbound stream
     $:  sed/@ud                                         ::  sent
         san/(map @ud duct)                              ::  outstanding
@@ -628,10 +641,9 @@
   ++  road                                              ::  secured oneway route
     $:  exp/@da                                         ::  expiration date
         lun/(unit lane)                                 ::  route to friend
-        lew/wyll                                        ::  wyll of friend
+        lew/(unit deed)                                 ::  deed of friend
     ==                                                  ::
   ++  rock  @uvO                                        ::  packet
-  ++  sect  ?($black $blue $red $orange $white)         ::  banner
   ++  shed                                              ::  packet flow
     $:  $:  rtt/@dr                                     ::  smoothed rtt
             rto/@dr                                     ::  retransmit timeout
@@ -660,30 +672,17 @@
         lys/@da                                         ::  last sent
         pac/rock                                        ::  packet data
     ==                                                  ::
-  ++  step  {p/bray q/gens r/pass}                      ::  identity stage
   ++  sufi                                              ::  domestic host
-    $:  hoy/(list ship)                                 ::  hierarchy
-        val/wund                                        ::  private keys
-        law/wyll                                        ::  server wyll
+    $:  val/wund                                        ::  private keys
+        law/deed                                        ::  server deed
         seh/(map hand {p/ship q/@da})                   ::  key cache
         hoc/(map ship dore)                             ::  neighborhood
     ==                                                  ::
-  ++  tick  @ud                                         ::  process id
   ++  town                                              ::  all security state
-    $:  lit/@ud                                         ::  imperial modulus
-        any/@                                           ::  entropy
+    $:  any/@                                           ::  entropy
         urb/(map ship sufi)                             ::  all keys and routes
-        fak/?                                           ::
     ==                                                  ::
-  ++  what                                              ::  logical identity
-    $%  {$anon ~}                                      ::  anonymous
-        {$lady p/whom}                                  ::  female person ()
-        {$lord p/whom}                                  ::  male person []
-        {$punk p/sect q/@t}                             ::  opaque handle ""
-    ==                                                  ::
-  ++  whom  {p/@ud q/govt r/sect s/name}                ::  year+govt+id
-  ++  wund  (list {p/life q/ring r/acru})               ::  mace in action
-  ++  wyll  (list deyd)                                 ::  certificate
+  ++  wund  (list {p/life q/ring r/acru})               ::  secrets in action
   --  ::ames
 ::                                                      ::::
 ::::                    ++behn                            ::  (1b) timekeeping
@@ -751,6 +750,7 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm our/ship des/desk pax/path rit/rite}   ::  change permissions
+          {$sunk p=ship q=life}                         ::  report death
           {$warp wer/sock rif/riff}                     ::  internal file req
           {$werp who/ship wer/sock rif/riff}            ::  external file req
           {$wegh ~}                                    ::  report memory
@@ -915,8 +915,8 @@
           {$hook ~}                                    ::  this term hung up
           {$harm ~}                                    ::  all terms hung up
           {$init p/ship}                                ::  after gall ready
-          {$tick p/@p q/@p}                             ::  initial ticket
           {$noop ~}                                    ::  no operation
+          {$sunk p=ship q=life}                         ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
@@ -1016,6 +1016,7 @@
           [%live p=@ud q=(unit @ud)]                    ::  http/s ports
           [%rule p=http-rule]                           ::  update config
           [%serv p=$@(desk beam)]                       ::  set serving root
+          [%sunk p=ship q=life]                         ::  report death
           [%them p=(unit hiss)]                         ::  outbound request
           [%they p=@ud q=httr]                          ::  inbound response
           [%chis p=? q=clip r=httq]                     ::  IPC inbound request
@@ -1071,7 +1072,7 @@
   ++  hiss  {p/purl q/moth}                             ::  outbound request
   ++  hole  @t                                          ::  session identity
   ++  hort  {p/(unit @ud) q/host}                       ::  http port+host
-  ++  host  (each (list @t) @if)                        ::  http host
+  ++  host  (each turf @if)                             ::  http host
   ++  hoke  %+  each   {$localhost ~}                  ::  local host
             ?($.0.0.0.0 $.127.0.0.1)                    ::
   :: +http-config: full http-server configuration
@@ -1100,7 +1101,7 @@
         [%cert p=(unit [key=wain cert=wain])]
         :: %turf: add or remove established dns binding
         ::
-        [%turf p=?(%put %del) q=(list @t)]
+        [%turf p=?(%put %del) q=turf]
     ==
   ++  httq                                              ::  raw http request
     $:  p/meth                                          ::  method
@@ -1163,6 +1164,57 @@
     $%  {%& p/purl}                                     ::  absolute
         {%| p/pork q/quay}                              ::  relative
     ==                                                  ::
+  ::  +reserved: check if an ipv4 address is in a reserved range
+  ::
+  ++  reserved
+    |=  a=@if
+    ^-  ?
+    =/  b  (flop (rip 3 a))
+    ::  0.0.0.0/8 (software)
+    ::
+    ?.  ?=([@ @ @ @ ~] b)  &
+    ?|  ::  10.0.0.0/8 (private)
+        ::
+        =(10 i.b)
+        ::  100.64.0.0/10 (carrier-grade NAT)
+        ::
+        &(=(100 i.b) (gte i.t.b 64) (lte i.t.b 127))
+        ::  127.0.0.0/8 (localhost)
+        ::
+        =(127 i.b)
+        ::  169.254.0.0/16 (link-local)
+        ::
+        &(=(169 i.b) =(254 i.t.b))
+        ::  172.16.0.0/12 (private)
+        ::
+        &(=(172 i.b) (gte i.t.b 16) (lte i.t.b 31))
+        ::  192.0.0.0/24 (protocol assignment)
+        ::
+        &(=(192 i.b) =(0 i.t.b) =(0 i.t.t.b))
+        ::  192.0.2.0/24 (documentation)
+        ::
+        &(=(192 i.b) =(0 i.t.b) =(2 i.t.t.b))
+        ::  192.18.0.0/15 (reserved, benchmark)
+        ::
+        &(=(192 i.b) |(=(18 i.t.b) =(19 i.t.b)))
+        ::  192.51.100.0/24 (documentation)
+        ::
+        &(=(192 i.b) =(51 i.t.b) =(100 i.t.t.b))
+        ::  192.88.99.0/24 (reserved, ex-anycast)
+        ::
+        &(=(192 i.b) =(88 i.t.b) =(99 i.t.t.b))
+        ::  192.168.0.0/16 (private)
+        ::
+        &(=(192 i.b) =(168 i.t.b))
+        ::  203.0.113/24 (documentation)
+        ::
+        &(=(203 i.b) =(0 i.t.b) =(113 i.t.t.b))
+        ::  224.0.0.0/8 (multicast)
+        ::  240.0.0.0/4 (reserved, future)
+        ::  255.255.255.255/32 (broadcast)
+        ::
+        (gte i.b 224)
+    ==
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
   ++  sec-move                                          ::  driver effect
     $%  {$send p/hiss}                                  ::  http out
@@ -1211,6 +1263,9 @@
               ::
               our=@p
           ==
+          ::  %sunk: receive a report that a foreign ship has lost continuity
+          ::
+          [%sunk =ship =life]
           ::  %wegh: produce memory usage information
           ::
           [%wegh ~]
@@ -1901,6 +1956,7 @@
       $%  {$conf p/dock q/culm}                         ::  configure app
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
+          {$sunk p=ship q/life}                         ::  report death
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
           {$west p/sack q/path r/*}                     ::  network request
           {$wegh ~}                                    ::  report memory
@@ -2004,33 +2060,53 @@
         (map ship safe)                                 ::  liabilities
       (map ship safe)                                   ::  assets
     ::                                                  ::
+    ++  vent-result                                     ::  %vent result
+      $%  [%snap snap=snapshot:jael]                    ::  restore snapshot
+          [%chain can=chain]                            ::  get new events
+      ==                                                ::
+    ::                                                  ::
     ++  chain                                           ::  batch of changes
       %+  each  logs                                    ::  & all events
       logs                                              ::  | new events
     ++  change                                          ::  urbit change
       $%  [%ethe can=chain]                             ::  on-chain change
-          [%meet who=ship]                              ::  meet in new era
+          [%meet who=ship =life =pass]                  ::  meet in new era
           $:  %rite                                     ::  rights change
               rex/ship                                  ::  issuer
               pal/ship                                  ::  issued to
               del/bump                                  ::  change
       ==  ==                                            ::
     ++  gift                                            ::  out result <-$
-      $%  [%mack p=(unit tang)]                         ::  message n/ack
+      $%  [%init p=ship]                                ::  report install unix
+          [%mack p=(unit tang)]                         ::  message n/ack
           [%pubs public]                                ::  public keys
+          [%turf turf=(list turf)]                      ::  domains
           {$vest p/tally}                               ::  balance update
           [%vein =life vein=(map life ring)]            ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
-          [%vent p=chain]                               ::  ethereum changes
+          [%vent p=vent-result]                         ::  ethereum changes
       ==                                                ::
+    ::                                                  ::
     ++  note                                            ::  out request $->
-      =,  eyre
-      $%  [%b %rest p=@da]                              ::  cancel timer
-          [%b %wait p=@da]                              ::  wait until
-          [%e %hiss p=(unit user) q=mark r=cage]        ::  outbound user req
-          [%a %want p=sock q=path r=*]                  ::  send message
-          [%j %vent-result p=chain]                     ::  tmp workaround
-      ==                                                ::
+      =,  eyre                                          ::
+      $%  $:  %b                                        ::
+      $%  [%rest p=@da]                                 ::  cancel timer
+          [%wait p=@da]                                 ::  wait until
+      ==  ==                                            ::
+          $:  %e                                        ::
+      $%  [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
+      ==  ==                                            ::
+          $:  %a                                        ::
+      $%  [%want p=sock q=path r=*]                     ::  send message
+      ==  ==                                            ::
+          $:  %j                                        ::
+      $%  [%vent-result p=vent-result]                  ::  tmp workaround
+          [%look our=ship src=(each ship purl:eyre)]    ::
+      ==  ==                                            ::
+          $:  @tas                                      ::
+      $%  [%init p=ship]                                ::  report install
+          [%sunk p=ship q=life]                         ::  report death
+      ==  ==  ==                                        ::
     ++  public                                          ::  public key state
       $:  live=?                                        ::  seen in current era
           life=life                                     ::  current key number
@@ -2039,11 +2115,14 @@
     ++  remote                                          ::  remote notification
       %+  each  safe                                    ::  &/addition
       safe                                              ::  |/replacement
-    ::                                                  ::
+    ::  +seed: private boot parameters
+    ::
+    +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
+    ::
     ++  sign                                            ::  in result $<-
-      $%  {$b $wake ~}                                 ::  wakeup
+      $%  {$b $wake ~}                                  ::  wakeup
           [%e %sigh p=cage]                             ::  marked http response
-          [%j %vent p=chain]                            ::  ethereum changes
+          [%j %vent p=vent-result]                      ::  ethereum changes
           [%a %woot p=ship q=coop]                      ::  message result
       ==                                                ::
     ++  tally                                           ::  balance update
@@ -2053,55 +2132,56 @@
     +=  task                                            ::  in request ->$
       $%  [%burn our=ship p=ship q=safe]                ::  destroy rights
           [%hail our=ship p=ship q=remote]              ::  remote update
-          [%init our=ship]                              ::  initialize urbit
+          $:  %dawn                                     ::  boot from keys
+              =seed:able:jael                           ::    identity params
+              spon=(unit ship)                          ::    sponsor
+              czar=(map ship [=life =pass])             ::    galaxy table
+              turf=(list turf)                          ::    domains
+              bloq=@ud                                  ::    block number
+              node=(unit purl:eyre)                     ::    gateway url
+              snap=(unit snapshot)                      ::    head start
+          ==                                            ::
+          [%fake our=ship]                              ::  fake boot
           [%look our=ship src=(each ship purl:eyre)]    ::  set ethereum source
           [%mint our=ship p=ship q=safe]                ::  create rights
           [%move our=ship p=ship q=ship r=safe]         ::  transfer from=to
           ::TODO  %next for generating/putting new private key
           [%nuke ~]                                     ::  cancel tracker from
           [%pubs our=ship who=ship]                     ::  view public keys
-          [%meet our=ship who=ship]                     ::  met after breach
+          [%meet our=ship who=ship =life =pass]         ::  met after breach
+          [%turf ~]                                     ::  view domains
           [%vein our=ship]                              ::  view signing keys
           [%vent our=ship]                              ::  view ethereum events
           [%vest our=ship]                              ::  view public balance
           [%vine ~]                                     ::  view secret history
           [%west p=sack q=path r=*]                     ::  remote request
+          [%wind our=ship p=@ud]                        ::  rewind before block
       ==                                                ::
-    ++  gilt  gilt:womb
-    --
-  ::
-  ++  womb  ^?
-    ::  types used to serve the lib/womb invite controller
-    |%
-    ++  ticket  @G                                      ::  old 64-bit ticket
-    ++  passcode  @uvH                                  ::  128-bit passcode
-    ++  passhash  @uwH                                  ::  passocde hash
-    ++  mail  @t                                        ::  email address
-    ++  invite                                          ::
-      $:  who/mail                                      ::  owner email
-          pla/@ud                                       ::  planets to send
-          sta/@ud                                       ::  stars to send
-      ==                                                ::
+    --                                                  ::
+  ::                                                    ::
+  ::::                                                  ::
     ::                                                  ::
-    ++  reinvite  {tid/passcode inv/invite}             ::  new from old
-    ++  task                                            ::  manage ship %fungi
-      $%  {$claim aut/passcode her/@p tik/ticket}       ::  convert to %final
-          {$bonus tid/passcode pla/@ud sta/@ud}         ::  supplement passcode
-          {$invite tid/passcode inv/invite}             ::  alloc to passcode
-          {$reinvite aut/passcode reinvite}             ::  move to another
-      ==                                                ::
-    ++  scry                                            ::
-      $%  {$shop typ/?($star $planet) nth/@u}           ::  available ships
-          {$stats who/ship}                             ::  ship details
-          {$balance aut/passcode}                       ::  invite details
-      ==                                                ::
-    ++  balance  {who/mail pla/@ud sta/@ud}             ::  XX same as invite?
-    ++  gilt                                            ::
-      $%  {$ships (list ship)}                          ::
-          {$womb-owner (unit mail)}                     ::
-          {$womb-balance (unit balance)}                ::
-      ==
-    --
+  ++  node-src                                          ::  ethereum node comms
+    $:  node=purl:eyre                                  ::  node url
+        filter-id=@ud                                   ::  current filter
+        poll-timer=@da                                  ::  next filter poll
+    ==                                                  ::
+  ++  snapshot                                          ::  rewind point
+    =,  constitution:ethe                               ::
+    $:  eve=logs:able                                   ::  eth absolute state
+        kyz=(map ship public:able)                      ::  public key state
+        $=  eth                                         ::
+          $:  dns=dnses                                 ::  on-chain dns state
+              hul=(map ship hull)                       ::  on-chain ship state
+        ==                                              ::
+        etn=state-eth-node                              ::  eth connection state
+    ==                                                  ::
+  ++  state-eth-node                                    ::  node config + meta
+    $:  source=(each ship node-src)                     ::  learning from
+        heard=(set event-id:ethe)                       ::  processed events
+        latest-block=@ud                                ::  last heard block
+        foreign-block=@ud                               ::  node's latest block
+    ==                                                  ::
   ::                                                    ::
   ::::                  ++pki:jael                      ::  (1h2) certificates
     ::                                                  ::::
@@ -2169,11 +2249,11 @@
     ++  pile  (tree (pair @ @))                         ::  efficient ship set
     ++  rite                                            ::  urbit commitment
       $%  {$apple p/(map site @)}                       ::  web api key
-          {$block ~}                                   ::  banned
+          {$block ~}                                    ::  banned
           {$email p/(set @t)}                           ::  email addresses
           {$final p/(map ship @pG)}                     ::  ticketed ships
           {$fungi p/(map term @ud)}                     ::  fungibles
-          {$guest ~}                                   ::  refugee visa
+          {$guest ~}                                    ::  refugee visa
           {$hotel p/(map dorm pile)}                    ::  reserved block
           {$jewel p/(map life ring)}                    ::  private keyring
           {$login p/(set @pG)}                          ::  login secret
@@ -3988,12 +4068,12 @@
       ::                                                ::  ++fig:ex:crub:crypto
       ++  fig                                           ::  fingerprint
         ^-  @uvH
-        (shaf %bfig sgn.^pub)
+        (shaf %bfig pub)
       ::                                                ::  ++pac:ex:crub:crypto
       ++  pac                                           ::  private fingerprint
         ^-  @uvG
         ?~  sek  ~|  %pubkey-only  !!
-        (end 6 1 (shaf %bcod sgn.u.sek))
+        (end 6 1 (shaf %bcod sec))
       ::                                                ::  ++pub:ex:crub:crypto
       ++  pub                                           ::  public key
         ^-  pass
@@ -5687,6 +5767,23 @@
         =/  ten  ~|(key+key.wer (wit.wer (~(got by jom) key.wer)))
         ?~(t.wer ten [ten ((ot-raw t.wer) jom)])
       ==
+    ::
+    ++  ou                                              ::  object of units
+      |*  wer/(pole {cord fist})
+      |=  jon/json
+      ?>  ?=({$o *} jon)
+      ((ou-raw wer) p.jon)
+    ::                                                  ::  ++ou-raw:dejs:format
+    ++  ou-raw                                          ::  object of units
+      |*  wer/(pole {cord fist})
+      |=  jom/(map @t json)
+      ?-    wer                                         :: mint-vain on empty
+          :: {{key/@t wit/*} t/*}
+          {{key/@t *} t/*}
+        =>  .(wer [[* wit] *]=wer)
+        =/  ten  ~|(key+key.wer (wit.wer (~(get by jom) key.wer)))
+        ?~(t.wer ten [ten ((ou-raw t.wer) jom)])
+      ==
     ::                                                  ::  ++om:dejs:format
     ++  om                                              ::  object as map
       |*  wit/fist
@@ -5719,6 +5816,16 @@
       |=  jon/json  ^+  (wonk *sab)
       ?>  ?=({$s *} jon)
       (rash p.jon sab)
+    ::                                                  ::  ++uf:dejs:format
+    ++  uf                                              ::  unit fall
+      |*  [def/* wit/fist]
+      |=  jon/(unit json)
+      ?~(jon def (wit u.jon))
+    ::                                                  ::  ++un:dejs:format
+    ++  un                                              ::  unit need
+      |*  wit/fist
+      |=  jon/(unit json)
+      (wit (need jon))
     ::                                                  ::  ++ul:dejs:format
     ++  ul                                              ::  null
       |=(jon/json ?~(jon ~ !!))
@@ -6638,7 +6745,7 @@
       ;~(pose pcar net wut)
     ::                                                  ::  ++pquo:de-purl:html
     ++  pquo                                            ::  normal query char
-      ;~(pose pure pesc pold net wut)
+      ;~(pose pure pesc pold net wut col)
     ::                                                  ::  ++pure:de-purl:html
     ++  pure                                            ::  2396 unreserved
       ;~(pose aln hep dot cab sig)
@@ -6812,7 +6919,39 @@
 ::                                                      ::
 ::::                      ++title                       ::  (2j) namespace
   ::                                                    ::::
-++  title  ^?
+++  title
+  =>  |%
+      ::                                                ::  ++clan:title
+      ++  clan                                          ::  ship to rank
+        |=  who=ship
+        ^-  rank
+        =/  wid  (met 3 who)
+        ?:  (lte wid 1)   %czar
+        ?:  =(2 wid)      %king
+        ?:  (lte wid 4)   %duke
+        ?:  (lte wid 8)   %earl
+        ?>  (lte wid 16)  %pawn
+      ::                                                ::  ++rank:title
+      +$  rank  ?(%czar %king %duke %earl %pawn)        ::  ship width class
+      ::                                                ::  ++saxo:title
+      ++  saxo                                          ::  autocanon
+        |=  who=ship
+        ^-  (list ship)
+        =/  dad  (sein who)
+        [who ?:(=(who dad) ~ $(who dad))]
+      ::                                                ::  ++sein:title
+      ++  sein                                          ::  autoboss
+        |=  who=ship
+        ^-  ship
+        =/  mir  (clan who)
+        ?-  mir
+          $czar  who
+          $king  (end 3 1 who)
+          $duke  (end 4 1 who)
+          $earl  (end 5 1 who)
+          $pawn  (end 4 1 who)
+        ==
+      --
   |%
   ::                                                    ::  ++cite:title
   ++  cite                                              ::  render ship
@@ -6825,76 +6964,26 @@
     ?:  =(%pawn kind)
       :(weld (swag [0 7] name) "_" (swag [51 6] name))
     name
-  ::                                                    ::  ++clan:title
-  ++  clan                                              ::  ship to rank
-    |=  who/ship  ^-  rank:ames
-    =+  wid=(met 3 who)
-    ?:  (lte wid 1)   %czar
-    ?:  =(2 wid)      %king
-    ?:  (lte wid 4)   %duke
-    ?:  (lte wid 8)   %earl
-    ?>  (lte wid 16)  %pawn
-  ::                                                    ::  ++glam:title
-  ++  glam                                              ::  galaxy name
-    |=  zar/@pD  ^-  tape
-    (weld "galaxy " (scow %p zar))
-  ::                                                    ::  ++gnom:title
-  ++  gnom                                              ::  ship display name
-    |=  {{our/@p now/@da} him/@p}  ^-  @t
-    =+  yow=(scot %p him)
-    =+  pax=[(scot %p our) %ktts (scot %da now) yow ~]
-    =+  woy=.^(@t %a pax)
-    ?:  =(%$ woy)  yow
-    (rap 3 yow ' ' woy ~)
-  ::                                                    ::  ++gnow:title
-  ++  gnow                                              ::  full display name
-    |=  {who/@p gos/gcos:ames}  ^-  @t
-    ?-    -.gos
-        $czar                 (rap 3 '|' (rap 3 (glam who)) '|' ~)
-        $king                 (rap 3 '_' p.gos '_' ~)
-        $earl                 (rap 3 ':' p.gos ':' ~)
-        $pawn                 ?~(p.gos %$ (rap 3 '.' u.p.gos '.' ~))
-        $duke
-      ?:  ?=($anon -.p.gos)  %$
-      %+  rap  3
-      ^-  (list @)
-      ?-    -.p.gos
-          $punk  ~['"' q.p.gos '"']
-          ?($lord $lady)
-        =+  ^=  nad
-            =+  nam=`name:ames`s.p.p.gos
-            %+  rap  3
-            :~  p.nam
-                ?~(q.nam 0 (cat 3 ' ' u.q.nam))
-                ?~(r.nam 0 (rap 3 ' (' u.r.nam ')' ~))
-                ' '
-                s.nam
-            ==
-        ?:(=(%lord -.p.gos) ~['[' nad ']'] ~['(' nad ')'])
-      ==
-    ==
   ::                                                    ::  ++saxo:title
   ++  saxo                                              ::  autocanon
-    |=  who/ship
-    ^-  (list ship)
-    =+  dad=(sein who)
-    [who ?:(=(who dad) ~ $(who dad))]
+    |=  [our=ship now=@da who=ship]
+    .^  (list ship)
+        %j
+        /(scot %p our)/saxo/(scot %da now)/(scot %p who)
+    ==
   ::                                                    ::  ++sein:title
   ++  sein                                              ::  autoboss
-    |=  who/ship  ^-  ship
-    =+  mir=(clan who)
-    ?-  mir
-      $czar  who
-      $king  (end 3 1 who)
-      $duke  (end 4 1 who)
-      $earl  (end 5 1 who)
-      $pawn  ~zod
+    |=  [our=ship now=@da who=ship]
+    .^  ship
+        %j
+        /(scot %p our)/sein/(scot %da now)/(scot %p who)
     ==
   ::                                                    ::  ++team:title
   ++  team                                              ::  our / our moon
-    |=  {our/@p him/@p}
-    ?|  =(our him)
-        &(?=($earl (clan him)) =(our (sein him)))
+    |=  [our=ship who=ship]
+    ^-  ?
+    ?|  =(our who)
+        &(?=($earl (clan who)) =(our (^sein who)))
     ==
   --  ::title
 ::                                                      ::
@@ -7657,6 +7746,30 @@
         %eth-get-filter-logs
       ['eth_getFilterLogs' (tape (num-to-hex fid.req)) ~]
     ::
+        %eth-get-logs
+      :-  'eth_getLogs'
+      :_  ~
+      :-  %o  %-  ~(gas by *(map @t json))
+      =-  (murn - same)
+      ^-  (list (unit (pair @t json)))
+      :~  ?~  fro.req  ~
+          `['fromBlock' (block-to-json u.fro.req)]
+        ::
+          ?~  tob.req  ~
+          `['toBlock' (block-to-json u.tob.req)]
+        ::
+          ::TODO  fucking tmi
+          ?:  =(0 (lent adr.req))  ~
+          :+  ~  'address'
+          ?:  =(1 (lent adr.req))  (tape (address-to-hex (snag 0 adr.req)))
+          :-  %a
+          (turn adr.req (cork address-to-hex tape))
+        ::
+          ?~  top.req  ~
+          :^  ~  'topics'  %a
+          (turn `(list octs)`top.req :(cork render-hex-bytes prefix-hex tape))
+      ==
+    ::
         %eth-get-filter-changes
       ['eth_getFilterChanges' (tape (num-to-hex fid.req)) ~]
     ::
@@ -7724,6 +7837,8 @@
   ::
   ++  parse-eth-new-filter-res  parse-hex-result
   ::
+  ++  parse-eth-block-number  parse-hex-result
+  ::
   ++  parse-transaction-hash  parse-hex-result
   ::
   ++  parse-event-logs
@@ -7737,12 +7852,13 @@
     :~  =-  ['logIndex'^(cu - (mu so))]
         |=  li=(unit @t)
         ?~  li  ~
-        =-  `((ot -) log)  ::TODO  not sure if elegant or hacky.
-        :~  'logIndex'^(cu hex-to-num so)
-            'transactionIndex'^(cu hex-to-num so)
-            'transactionHash'^(cu hex-to-num so)
-            'blockNumber'^(cu hex-to-num so)
-            'blockHash'^(cu hex-to-num so)
+        =-  `((ou -) log)  ::TODO  not sure if elegant or hacky.
+        :~  'logIndex'^(un (cu hex-to-num so))
+            'transactionIndex'^(un (cu hex-to-num so))
+            'transactionHash'^(un (cu hex-to-num so))
+            'blockNumber'^(un (cu hex-to-num so))
+            'blockHash'^(un (cu hex-to-num so))
+            'removed'^(uf | bo)
         ==
       ::
         address+(cu hex-to-num so)
@@ -8141,7 +8257,7 @@
       ::
           %activated
         %_  hul
-          net  `[0 0 0 `(sein:title who.dif) ~]
+          net  `[0 0 0 `(^sein:title who.dif) ~]
           kid  ?.  ?=(?(%czar %king) (clan:title who.dif))  ~
                `[0x0 0 ~]
         ==
@@ -8237,48 +8353,93 @@
       ::  +live: public network state of a ship
       ::
       +$  live  (unit [=life breach=?])
-      ::  +seed: private boot parameters
-      ::
-      +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki:jael)]
       --
   |%
+  :: +come:dawn: mine a comet under a star
+  ::
+  ++  come
+    |=  [tar=ship eny=@uvJ]
+    ~|  [%come-not-king tar]
+    ?>  ?=(%king (clan:title tar))
+    |-  ^-  seed:able:jael
+    =/  cub=acru:ames  (pit:nu:crub:crypto 512 eny)
+    =/  who=ship  `@`fig:ex:cub
+    ?:  =(tar (^sein:title who))
+      [who 1 sec:ex:cub ~]
+    $(eny +(eny))
   ::  |give:dawn: produce requests for pre-boot validation
   ::
   ++  give
     =/  tract  ships:contracts:constitution:ethe
     |%
+    ::  +bloq:give:dawn: Eth RPC for latest block number
+    ::
+    ++  bloq
+      ^-  octs
+      %-  as-octt:mimes:html
+      %-  en-json:html
+      %+  request-to-json:ethereum
+        `~.0
+      [%eth-block-number ~]
     ::  +czar:give:dawn: Eth RPC for galaxy table
     ::
     ++  czar
+      |=  boq=@ud
       ^-  octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      %-  batch-read-request:ethereum
+      :-  %a
       %+  turn  (gulf 0 255)
-      |=(gal=@ [`(scot %ud gal) tract ['getKeys(uint32)' [%uint gal]~]])
+      |=  gal=@
+      %+  request-to-json:ethereum
+        `(cat 3 'gal-' (scot %ud gal))
+      :+  %eth-call
+        =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
+        (encode-call:ethereum 'getKeys(uint32)' [%uint gal]~)
+      [%number boq]
     ::  +hull:give:dawn: Eth RPC for ship's contract state
     ::
     ++  hull
-      |=  who=ship
+      |=  [boq=@ud who=ship]
       ^-  octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      (read-request:ethereum [~ tract ['ships(uint32)' [%uint `@`who]~]])
+      %+  request-to-json:ethereum
+        `~.0
+      :+  %eth-call
+        =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
+        (encode-call:ethereum 'ships(uint32)' [%uint `@`who]~)
+      [%number boq]
     ::  +turf:give:dawn: Eth RPC for network domains
     ::
     ++  turf
+      |=  boq=@ud
       ^-  octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      %-  batch-read-request:ethereum
+      :-  %a
       %+  turn  (gulf 0 2)
-      |=(idx=@ [`(scot %ud idx) tract ['dnsDomains(uint256)' [%uint idx]~]])
+      |=  idx=@
+      %+  request-to-json:ethereum
+        `(cat 3 'turf-' (scot %ud idx))
+      :+  %eth-call
+        =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
+        (encode-call:ethereum 'dnsDomains(uint256)' [%uint idx]~)
+      [%number boq]
     --
   ::  |take:dawn: parse responses for pre-boot validation
   ::
   ++  take
     =,  dejs:format
     |%
+    ::  +bloq:take:dawn: parse block number
+    ::
+    ++  bloq
+      |=  rep=octs
+      ^-  @ud
+      =/  jon=json  (need (de-json:html q.rep))
+      =/  res=cord  ((ot result+so ~) jon)
+      (hex-to-num:ethereum res)
     ::  +czar:take:dawn: parse galaxy table
     ::
     ++  czar
@@ -8292,7 +8453,7 @@
               kyz=(map ship [=life =pass])
           ==
       ^+  kyz
-      =/  who=ship  (slav %ud id.res)
+      =/  who=ship  (slav %ud (rsh 3 4 id.res))
       =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
         %+  decode-results:ethereum
           result.res
@@ -8308,6 +8469,7 @@
       ^-  hull:constitution:ethe
       =/  jon=json  (need (de-json:html q.rep))
       =/  res=cord  ((ot result+so ~) jon)
+      ~?  =(res '0x')  'bad result from node; is ships address correct?'
       %+  hull-from-eth:constitution:ethereum
         who
       :_  *deed:eth-noun:constitution:ethereum
@@ -8316,63 +8478,153 @@
     ::
     ++  turf
       |=  rep=octs
-      ^-  (list [@ud (list @ta)])
+      ^-  (list ^turf)
       =/  jon=json  (need (de-json:html q.rep))
       =/  res=(list [@t @t])
         ((ar (ot id+so result+so ~)) jon)
-      %+  turn  res
-      |=  [id=@t result=@t]
-      :-  (slav %ud id)
-      =/  dom=tape
-        (decode-results:ethereum result [%string]~)
-      =/  hot=host:eyre
-        (scan dom thos:de-purl:html)
-      ?>(?=(%& -.hot) p.hot)
+      =/  dom=(list (pair @ud ^turf))
+        %+  turn  res
+        |=  [id=@t result=@t]
+        ^-  (pair @ud ^turf)
+        :-  (slav %ud (rsh 3 5 id))
+        =/  dom=tape
+          (decode-results:ethereum result [%string]~)
+        =/  hot=host:eyre
+          (scan dom thos:de-purl:html)
+        ?>(?=(%& -.hot) p.hot)
+      :: sort by id, ascending, removing duplicates
+      ::
+      =|  tuf=(map ^turf @ud)
+      |-  ^-  (list ^turf)
+      ?~  dom
+        %+  turn
+          %+  sort  ~(tap by tuf)
+          |=([a=(pair ^turf @ud) b=(pair ^turf @ud)] (lth q.a q.b))
+        head
+      =?  tuf  !(~(has by tuf) q.i.dom)
+        (~(put by tuf) q.i.dom p.i.dom)
+      $(dom t.dom)
+    --
+  ::  |snap:dawn restore from snapshot
+  ::
+  ++  snap
+    !:
+    |%
+    ::  +bloq:snap:dawn: extract block number
+    ::
+    ++  bloq
+      |=  snap=snapshot:jael
+      ^-  @ud
+      latest-block.etn.snap
+    ::  +czar:snap:dawn: extract galaxy table
+    ::
+    ++  czar
+      |=  snap=snapshot:jael
+      ^-  (map ship [=life =pass])
+      %-  malt
+      %+  turn  (gulf 0 255)
+      |=  gal=@
+      ^-  [ship [life pass]]
+      :-  gal
+      ~|  czar-gal=gal
+      [life pass]:(need net:(~(got by hul.eth.snap) gal))
+    ::  +hull:snap:dawn: extract ship's contract state
+    ::
+    ++  hull
+      |=  [who=ship snap=snapshot:jael]
+      ^-  hull:constitution:ethe
+      =/  res  (~(get by hul.eth.snap) who)
+      ?~  res
+        ~&  ['hull not found in snapshot; can\'t verify' who=who]
+        !!
+      u.res
+    ::  +turf:snap:dawn: extract network domains
+    ::
+    ++  turf
+      |=  snap=snapshot:jael
+      ^-  (list ^turf)
+      %+  murn
+        ^-  (list (pair))
+        %+  murn
+          ^-  (list @t)
+          ~[pri sec ter]:dns.eth.snap
+        |=  dom=@t
+        ^-  (unit (pair))
+        (rush dom thos:de-purl:html)
+      |=([* a=*] ((soft ^turf) a))
     --
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::
   ++  veri
-    |=  [=seed =hull:constitution:ethe =live]
-    ^-  $%  [%& ^seed (unit ship)]
-            [%| rank:ames @tas]
-        ==
+    |=  [=seed:able:jael =hull:constitution:ethe =live]
+    ^-  (each sponsor=(unit ship) error=term)
     =/  rac  (clan:title who.seed)
     =/  cub  (nol:nu:crub:crypto key.seed)
     ?-  rac
         %pawn
+      ::  a comet address is the fingerprint of the keypair
+      ::
       ?.  =(who.seed `@`fig:ex:cub)
-        [%| rac %key-mismatch]
+        [%| %key-mismatch]
+      ::  a comet can never be breached
+      ::
       ?^  live
-        [%| rac %already-booted]
+        [%| %already-booted]
+      ::  a comet can never be re-keyed
+      ::
       ?.  ?=(%1 lyf.seed)
-        [%| rac %invalid-life]
-      [%& seed ~]
+        [%| %invalid-life]
+      [%& ~]
     ::
         %earl
+      ::  a moon must be signed by the parent
+      ::
       ?~  sig.seed
-        [%| rac %missing-sig]
+        [%| %missing-sig]
+      ::  the parent must be launched
+      ::
       ?~  net.hull
-        [%| rac %parent-not-keyed]
-        =/  loy  (com:nu:crub:crypto pass.u.net.hull)
-      =/  hax  (shaf %earl (sham lyf.seed pub:ex:cub))
+        [%| %parent-not-keyed]
+      ::  life must match parent's
+      ::
+      ?.  =(lyf.seed life.u.net.hull)
+        [%| %life-mismatch]
+      =/  loy  (com:nu:crub:crypto pass.u.net.hull)
+      =/  hax  (shaf %earl (sham who.seed lyf.seed pub:ex:cub))
+      ::  the signature must be valid
+      ::
       ?.  =((some hax) (sure:as:loy u.sig.seed))
-        [%| rac %invalid-sig]
-      :: XX revisit for rekey
+        [%| %invalid-sig]
+      ::  XX revisit for rekey
+      ::
       ?^  live
-        [%| rac %already-booted]
-      [%& seed ~]
+        [%| %already-booted]
+      [%& ~]
     ::
         *
+      ::  on-chain ships must be launched
+      ::
       ?~  net.hull
-        [%| rac %not-keyed]
+        [%| %not-keyed]
+      ::  boot keys must match the contract
+      ::
       ?.  =(pub:ex:cub pass.u.net.hull)
-        [%| rac %key-mismatch]
+        [%| %key-mismatch]
+      ::  life must match the contract
+      ::
+      ?.  =(lyf.seed life.u.net.hull)
+        [%| %life-mismatch]
+      ::  the boot life must be greater than and discontinuous with
+      ::  the last seen life (per the sponsor)
+      ::
       ?:  ?&  ?=(^ live)
               ?|  ?=(%| breach.u.live)
                   (lte life.u.net.hull life.u.live)
           ==  ==
-        [%| rac %already-booted]
-      [%& seed sponsor.u.net.hull]
+        [%| %already-booted]
+      ::  produce the sponsor for vere
+      ::
+      [%& sponsor.u.net.hull]
     ==
   --
 --  ::

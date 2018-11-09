@@ -1,15 +1,12 @@
 |%
-:: +turf: a domain, TLD first
+::  +provider: DNS service provider (gcloud only for now)
 ::
-+=  turf  (list @t)
-:: +provider: DNS service provider (gcloud only for now)
-::
-+=  provider
++$  provider
   $%  [%gcloud project=@ta zone=@ta]
   ==
-:: +authority: responsibility for a DNS zone
+::  +authority: responsibility for a DNS zone
 ::
-+=  authority
++$  authority
   $:  :: dom: authority over a fully-qualified domain
       ::
       dom=turf
@@ -17,9 +14,9 @@
       ::
       pro=provider
   ==
-:: +target: a ship is bound to a ...
+::  +target: a ship is bound to a ...
 ::
-+=  target
++$  target
   $%  :: %direct: an A record
       ::
       [%direct %if p=@if]
@@ -27,9 +24,9 @@
       ::
       [%indirect p=ship]
   ==
-:: +bound: an established binding, plus history
+::  +bound: an established binding, plus history
 ::
-+=  bound
++$  bound
   $:  :: wen: established
       ::
       wen=@da
@@ -40,20 +37,32 @@
       ::
       hit=(list (pair @da target))
   ==
-:: +nameserver: a b s o l u t e  p o w e r
+::  +nameserver: a b s o l u t e  p o w e r
 ::
-+=  nameserver
++$  nameserver
   $:  aut=authority
-      pen=(map ship target)
       bon=(map ship bound)
+      dep=(jar ship (pair ship target))
+      pen=(map ship target)
   ==
-:: +relay: a good parent keeps track
+::  +relay: a good parent keeps track
 ::
-+=  relay
++$  relay
   $:  wen=@da
       wer=(unit @if)
-      bon=?
+      ::  XX track bound state per domain
+      ::
+      dom=(unit turf)
       try=@ud
       tar=target
+  ==
+::  +command: top-level app actions
+::
++$  command
+  $%  [%authority aut=authority]
+      [%bind for=ship him=ship tar=target]
+      [%bond for=ship him=ship dom=turf]
+      [%ip %if addr=@if]
+      [%meet him=ship]
   ==
 --

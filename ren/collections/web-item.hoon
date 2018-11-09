@@ -4,9 +4,9 @@
   /^  $@(~ raw-item:collections)
   /|  /;  |=  [a=(map knot cord) b=@t ~]
           ^-  raw-item:collections
-          [%umd a b]
+          [%udon a b]
           /.  /front/
-              /umd/
+              /udon/
           ==
       ::
       /~  ~
@@ -34,7 +34,7 @@
 ^-  item:collections
 ?~  col
   ?~  raw
-    !!
+    [%error ~]
   [%raw raw]
 ::
 ?:  ?=(%no-config -.col)
@@ -43,7 +43,7 @@
       [%collection *config:collections items.col]
     [%both [*config:collections items.col] raw]
   ?~  raw
-    !!
+    [%error ~]
   [%raw raw]
 ?~  raw
   [%collection config.col items.col]

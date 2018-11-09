@@ -7,9 +7,12 @@
 ::::
   ::
 :-  %say
-::
-::  TODO: dojo doesn't like the types?
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{=binding:light =generator:light ~} ~}
+        {{pax/$@(term {i/knot t/path}) ~} ~}
     ==
-[%helm-serve binding generator]
+:-  %helm-serve
+?@  pax  pax
+=+  bem=(need (de-beam:format pax))
+?.  =([%da now] r.bem)                :: XX actual sentinel
+  bem
+bem(r [%ud 0])

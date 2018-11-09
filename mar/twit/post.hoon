@@ -2,8 +2,7 @@
 ::
 ::::  /hoon/post/twit/mar
   ::
-/+  twitter, httr-to-json, old-zuse
-=,  old-zuse
+/+  twitter, httr-to-json
 |_  post:twitter
 ++  grab
   |%

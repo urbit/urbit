@@ -26,12 +26,12 @@
   ::    Padded, DER encoded sha-256 hash (EMSA-PKCS1-v1_5).
   ::
   ++  emsa
-    |=  m=@
+    |=  m=byts
     =/  emlen  (met 3 n.pub.k)
     =/  pec=spec:asn1
       :~  %seq
           [%seq [%obj sha-256:obj:asn1] [%nul ~] ~]
-          [%oct 32 (shax m)]
+          [%oct 32 (shay wid.m dat.m)]
       ==
     ::  note: this asn.1 digest is rendered raw here, as we require
     ::  big-endian bytes, and the product of +en:der is little-endian
@@ -48,14 +48,14 @@
   ::    An RSA signature is the primitive decryption of the message hash.
   ::
   ++  sign
-    |=(m=@ (de:rsa (emsa m) k))
+    |=(m=byts (de:rsa (emsa m) k))
   ::  +verify:rs256: verify signature
   ::
   ::    RSA signature verification confirms that the primitive encryption
   ::    of the signature matches the message hash.
   ::
   ++  verify
-    |=  [s=@ m=@]
+    |=  [s=@ m=byts]
     =((emsa m) (en:rsa s k))
   --
 ::  |pem: generic PEM implementation (rfc7468)
@@ -334,7 +334,7 @@
               ::
               :+  %bit
                 (met 0 n.pub.key)
-              (swp 3 (~(sign rs256 key) +:(en:^der dat)))
+              (swp 3 (~(sign rs256 key) (en:^der dat)))
           ==
       ::  +info:en:spec:pkcs10: certificate request info
       ::
