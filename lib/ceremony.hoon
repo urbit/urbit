@@ -168,6 +168,11 @@
   =-  this(transactions [- transactions])
   (crip '0' 'x' ((x-co:co 0) (sign-transaction tx pk)))
 ::
+++  write-metadata
+  ^+  this
+  =-  this(transactions [- transactions])
+  (crip "chainId: {<network>}, gasPrice: {<gas-price>}, nonce: {<nonce>}")
+::
 ++  complete
   ~&  [%writing-transactions (lent transactions)]
   (flop transactions)
@@ -212,6 +217,7 @@
       %ropsten  0x3
       %fake     `@ux``@`1.337
     ==
+  =.  this  write-metadata
   ::
   ::  data loading
   ::

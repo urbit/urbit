@@ -11,6 +11,7 @@
 ++  move  (pair bone card)
 ++  card
   $%  [%hiss wire ~ mark %hiss hiss:eyre]
+      [%info wire ship desk nori:clay]
       [%wait wire @da]
   ==
 --
@@ -23,20 +24,67 @@
   |=  old=(unit *)
   [~ ..prep]
 ::
+::  usage:
+::
+::  send all but first 50 txs from path
+::    :send-txs [%/txs/txt 50]
+::
+::  generate txs starting from nonce 0 on fake chain at various
+::  gas prices; store at path (one file per gas price)
+::
+::    :send-txs [% %fake 0]
+::
+::  generate txs starting from nonce 0 on fake chain at 11 gwei;
+::  store at path
+::    :send-txs [%/txs/txt %fake 0 11]
+::
 ++  poke-noun
-  |=  skip=@ud
+  |=  $:  pax=path
+          $=  argv
+            $@  skip=@ud
+            $:  net=?(%fake %main %ropsten)
+                $=  conf
+                  $@  nonce=@ud
+                  [nonce=@ud gas-price=@ud]
+            ==
+      ==
   ^-  [(list move) _this]
+  ?^  argv
+    ?^  conf.argv
+      =/  tox
+        (sequence:ceremony now.bol [net [gas-price nonce]:conf]:argv)
+      [[(write-file pax tox) ~] this]
+    =-  [- this]
+    %+  turn
+      `(list @ud)`~[2 3 5] :: 11 21 31 51 91]
+    |=  gas-price=@ud
+    %+  write-file  (weld pax /(scot %ud gas-price)/txt)
+    (sequence:ceremony now.bol net.argv gas-price nonce.conf.argv)
   ~&  'loading txs...'
-  =/  tox=(list cord)
-    .^  (list cord)  %cx
-        /(scot %p our.bol)/home/(scot %da now.bol)/txs/txt
-    ==
-  =.  tox  (slag skip tox)
+  =/  tox=(list cord)  .^((list cord) %cx pax)
+  ~&  ?>(?=(^ tox) i.tox)
+  =.  tox  (slag +(skip.argv) tox)
   =.  txs
     %+  turn  tox
     (cork trip tape-to-ux:ceremony)
   ~&  [(lent txs) 'loaded txs']
   send-next-batch
+::
+++  write-file
+  |=  [pax=path tox=(list cord)]
+  ^-  move
+  ?>  ?=([@ desk @ *] pax)
+  :*  ost.bol
+      %info
+      (weld /write pax)
+      our.bol
+      i.t.pax
+      =-  &+[t.t.t.pax -]~
+      =/  y  .^(arch %cy pax)
+      ?~  fil.y
+        ins+txt+!>(tox)
+      mut+txt+!>(tox)
+  ==
 ::
 ++  fan-requests
   |=  [wir=wire nodes=(list [tag=@tas url=purl:eyre]) jon=json]
