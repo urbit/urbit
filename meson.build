@@ -114,7 +114,7 @@ jets_e_src = [
 'jets/e/rs.c',
 'jets/e/rh.c',
 'jets/e/rub.c',
-#'jets/e/scr.c',
+'jets/e/scr.c',
 'jets/e/shax.c',
 'jets/e/lore.c',
 'jets/e/loss.c',
@@ -305,6 +305,7 @@ endif
 
 # For these libs we provide fallback bundle
 cmark_dep = dependency('libcmark', version: '0.12.0', fallback: ['commonmark-legacy', 'cmark_dep'])
+urbitscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
 
 ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
 murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'murmur3_dep'])
@@ -325,6 +326,7 @@ dependencies: [openssl_dep,
                cmark_dep,
                gmp_dep,
                sigsegv_dep,
+               urbitscrypt_dep,
                ed25519_dep,
                murmur3_dep,
                softfloat3_dep] + os_deps,

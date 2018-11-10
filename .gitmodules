@@ -7,6 +7,9 @@
 [submodule "subprojects/ed25519"]
 	path = subprojects/ed25519
 	url = https://github.com/urbit/ed25519.git
+[submodule "subprojects/libscrypt"]
+	path = subprojects/libscrypt
+	url = https://github.com/urbit/libscrypt.git
 [submodule "subprojects/murmur3"]
 	path = subprojects/murmur3
 	url = https://github.com/urbit/murmur3.git
