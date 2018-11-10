@@ -329,3 +329,5 @@ dependencies: [openssl_dep,
                murmur3_dep,
                softfloat3_dep] + os_deps,
 install: true)
+
+run_target('worker', command: 'meson-scripts/make-worker.sh')
