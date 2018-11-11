@@ -19,7 +19,7 @@
 #include <termios.h>
 #include <term.h>
 
-#include "../outside/jhttp/http_parser.h"   // Joyent HTTP
+#include <http_parser.h>  // Joyent HTTP
 #include "all.h"
 #include "vere/vere.h"
 
