@@ -28,3 +28,6 @@
 [submodule "subprojects/whereami"]
 	path = subprojects/whereami
 	url = https://github.com/urbit/whereami
+[submodule "subprojects/rocksdb"]
+	path = subprojects/rocksdb
+	url = https://github.com/BernardoDeLaPlaz/rocksdb.git
