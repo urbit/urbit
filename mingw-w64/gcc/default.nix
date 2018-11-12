@@ -38,7 +38,8 @@ native.make_derivation rec {
     # Fix a bug in GCC that causes an internal compiler error when
     # compiling Qt's qrandom.cpp:
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58372#c14
-    # Patch is from comment #37 by Uros Bizjak.
+    # Patch is from comment #43 by Uros Bizjak.
+    # https://gcc.gnu.org/viewcvs/gcc/branches/gcc-7-branch/gcc/cfgexpand.c?view=patch&r1=266015&r2=266014&pathrev=266015
     ./stack-alignment-58372.patch
 
     # This patch is from nixpkgs.

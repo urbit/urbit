@@ -1,48 +1,30 @@
---- gcc/gcc/calls.c
-+++ gcc/gcc/calls.c
-@@ -4736,9 +4736,43 @@
- 
-   /* Ensure current function's preferred stack boundary is at least
-      what we need.  */
--  if (crtl->preferred_stack_boundary < PREFERRED_STACK_BOUNDARY)
--    crtl->preferred_stack_boundary = PREFERRED_STACK_BOUNDARY;
-+  unsigned int preferred_stack_boundary = PREFERRED_STACK_BOUNDARY;
- 
-+  if (preferred_stack_boundary > crtl->preferred_stack_boundary)
-+    crtl->preferred_stack_boundary = preferred_stack_boundary;
+--- gcc-7-branch/gcc/cfgexpand.c
++++ gcc-7-branch/gcc/cfgexpand.c
+@@ -6466,6 +6466,14 @@
+   find_many_sub_basic_blocks (blocks);
+   purge_all_dead_edges ();
+
++  /* After initial rtl generation, call back to finish generating
++     exception support code.  We need to do this before cleaning up
++     the CFG as the code does not expect dead landing pads.  */
++  if (fun->eh->region_tree != NULL)
++    finish_eh_generation ();
 +
-+  if (SUPPORTS_STACK_ALIGNMENT
-+      && crtl->stack_realign_processed)
-+    {
-+      if (preferred_stack_boundary > crtl->stack_alignment_estimated)
-+	crtl->stack_alignment_estimated = preferred_stack_boundary;
-+      if (preferred_stack_boundary > crtl->stack_alignment_needed)
-+	crtl->stack_alignment_needed = preferred_stack_boundary;
-+
-+      crtl->stack_realign_needed
-+	= INCOMING_STACK_BOUNDARY < crtl->stack_alignment_estimated;
-+      crtl->stack_realign_tried = crtl->stack_realign_needed;
-+
-+      if (crtl->drap_reg == NULL_RTX)
-+	{
-+	  rtx drap_rtx = targetm.calls.get_drap_rtx ();
-+
-+	  /* stack_realign_drap and drap_rtx must match.  */
-+	  gcc_assert ((stack_realign_drap != 0) == (drap_rtx != NULL));
-+
-+	  /* Do nothing if NULL is returned, which means DRAP is not needed.  */
-+	  if (drap_rtx != NULL)
-+	    {
-+	      crtl->args.internal_arg_pointer = drap_rtx;
-+	      
-+	      /* Call fixup_tail_calls to clean up REG_EQUIV note if DRAP is
-+		 needed. */
-+	      fixup_tail_calls ();
-+	    }
-+	}
-+    }
-+
-+
-   /* If this kind of value comes back in memory,
-      decide where in memory it should come back.  */
-   if (outmode != VOIDmode)
++  /* Call expand_stack_alignment after finishing all
++     updates to crtl->preferred_stack_boundary.  */
+   expand_stack_alignment ();
+
+   /* Fixup REG_EQUIV notes in the prologue if there are tailcalls in this
+@@ -6473,12 +6481,6 @@
+   if (crtl->tail_call_emit)
+     fixup_tail_calls ();
+
+-  /* After initial rtl generation, call back to finish generating
+-     exception support code.  We need to do this before cleaning up
+-     the CFG as the code does not expect dead landing pads.  */
+-  if (fun->eh->region_tree != NULL)
+-    finish_eh_generation ();
+-
+   /* Remove unreachable blocks, otherwise we cannot compute dominators
+      which are needed for loop state verification.  As a side-effect
+      this also compacts blocks.
