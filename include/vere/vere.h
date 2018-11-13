@@ -488,77 +488,6 @@
         struct termios   raw_u;             //  raw terminal state
       } u3_utty;
 
-    /* u3_raty: raft server type.
-    */
-      typedef enum {
-        u3_raty_none,
-        u3_raty_foll,
-        u3_raty_cand,
-        u3_raty_lead
-      } u3_raty;
-
-    /* u3_raft: raft state.
-    */
-      typedef struct {
-        uv_tcp_t         wax_u;             //  TCP listener
-        uv_timer_t       tim_u;             //  election/heartbeat timer
-        u3_ulog          lug_u;             //  event log
-        c3_d             ent_d;             //  last log index
-        c3_w             lat_w;             //  last log term
-        u3_raty          typ_e;             //  server type
-        struct _u3_rnam* nam_u;             //  list of peers
-        struct _u3_rcon* run_u;             //  unknown connections
-        c3_w             pop_w;             //  population count
-        c3_w             vot_w;             //  votes in this election
-        c3_c*            str_c;             //  our name
-        //  persistent state
-        c3_w             tem_w;             //  current term
-        c3_c*            vog_c;             //  who we voted for this term
-        //  end persistent state
-      } u3_raft;
-
-    /* u3_rreq: raft request.
-    */
-      typedef struct _u3_rreq {
-        struct _u3_rmsg* msg_u;
-        struct _u3_rreq* nex_u;
-        struct _u3_rcon* ron_u;
-      } u3_rreq;
-
-    /* u3_rbuf: raft input buffer.
-    */
-      typedef struct _u3_rbuf {
-        c3_w                len_w;
-        c3_w                cap_w;
-        c3_y                buf_y[0];
-      } u3_rbuf;
-
-    /* u3_rcon: raft connection.
-    */
-      typedef struct _u3_rcon {
-        uv_tcp_t         wax_u;             //  TCP handle
-        struct _u3_rnam* nam_u;             //  peer we're connected to
-        u3_rbuf*         red_u;             //  read buffer
-        c3_o             red;               //  u3_yes on new data
-        u3_rbuf*         wri_u;             //  write buffer
-        u3_raft*         raf_u;             //  back-reference to server
-        u3_rreq*         out_u;             //  exit of request queue
-        u3_rreq*         tou_u;             //  entry of request queue
-        struct _u3_rcon* nex_u;             //  pointer to next con
-        c3_o             liv;               //  are we live?
-      } u3_rcon;
-
-    /* u3_rnam: raft peer name.
-    */
-      typedef struct _u3_rnam {
-        c3_c*            str_c;             //  our name
-        c3_c*            nam_c;             //  hostname
-        c3_c*            por_c;             //  port
-        u3_rcon*         ron_u;             //  connection
-        struct _u3_rnam* nex_u;             //  pointer to next peer
-        c3_o             vog;               //  did they vote for us?
-      } u3_rnam;
-
     /* u3_opts: command line configuration.
     */
       typedef struct _u3_opts {
@@ -710,7 +639,6 @@
   /** Global variables.
   **/
     c3_global  u3_host  u3_Host;
-    c3_global  u3_raft  u3_Raft;
     c3_global  c3_c*    u3_Local;
     c3_global  u3_king  u3_King;
 
@@ -1257,23 +1185,6 @@
       */
         void
         u3_http_io_poll(void);
-
-    /** Raft log syncing.
-    **/
-      /* u3_raft_readopt(): parse command line options.
-      */
-        u3_rnam*
-        u3_raft_readopt(const c3_c* arg_c, c3_c* our_c, c3_s oup_s);
-
-      /* u3_raft_init(): start Raft process.
-      */
-        void
-        u3_raft_init(void);
-
-      /* u3_raft_work(): poke, kick, and push pending events.
-      */
-        void
-        u3_raft_work(void);
 
     /**  Disk persistence.
     **/
