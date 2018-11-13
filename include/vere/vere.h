@@ -852,66 +852,6 @@
         void
         u3_reck_kick(u3_pier* pir_u, u3_noun ovo);
 
-
-    /**  Main loop, new style.
-    **/
-      /* u3_lo_loop(): enter main event loop.
-      */
-        void
-        u3_lo_loop(void);
-
-      /* u3_lo_lead(): actions on promotion to leader.
-      */
-        void
-        u3_lo_lead(void);
-
-      /* u3_lo_exit(): shut down io across pier.
-      */
-        void
-        u3_lo_exit(void);
-
-      /* u3_lo_show(): print typeless noun.
-      */
-        void
-        u3_lo_show(c3_c* cap_c, u3_noun nun);
-#define   u3ls(cap_c, nun) u3_lo_show(cap_c, nun)
-
-      /* u3_lo_bail(): clean up all event state.
-      */
-        void
-        u3_lo_bail(void);
-
-      /* u3_lo_tank(): dump single tank.
-      */
-        void
-        u3_lo_tank(c3_l tab_l, u3_noun tac);
-
-      /* u3_lo_punt(): dump tank list.
-      */
-        void
-        u3_lo_punt(c3_l tab_l, u3_noun tac);
-
-      /* u3_lo_sway(): print trace.
-      */
-        void
-        u3_lo_sway(c3_l tab_l, u3_noun tax);
-
-      /* u3_lo_grab(): garbage-collect the world, plus roots; end with u3_none
-      */
-        void
-        u3_lo_grab(c3_c* cap_c, u3_noun som, ...);
-
-      /* u3_lo_open(): begin callback processing.
-      */
-        void
-        u3_lo_open(void);
-
-      /* u3_lo_shut(): end callback processing.
-      */
-        void
-        u3_lo_shut(c3_o);
-
-
     /**  Terminal, new style.
     **/
       /* u3_term_get_blew(): return window size [columns rows].
