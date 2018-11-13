@@ -409,3 +409,26 @@ dependencies: [openssl_dep,
 install: false)
 
 test('test-hashtable', test_hashtable)
+
+test_mem_sources = noun_src + jets_all_src + vere_sans_main + ['tests/test.c']
+
+test_mem = executable('test-mem',
+sources : test_sources + ['tests/test.c'],
+include_directories : incdir,
+c_args : os_c_flags,
+link_args: os_link_flags,
+dependencies: [openssl_dep,
+               curl_dep,
+               libuv_dep,
+               libh2o_dep,
+               cmark_dep,
+               gmp_dep,
+               sigsegv_dep,
+               urbitscrypt_dep,
+               ed25519_dep,
+               murmur3_dep,
+               softfloat3_dep,
+               libsni_dep] + os_deps,
+install: false)
+
+test('test-mem', test_mem, should_fail: true)
