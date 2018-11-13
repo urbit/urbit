@@ -526,14 +526,6 @@
         struct termios   raw_u;             //  raw terminal state
       } u3_utty;
 
-    /* u3_utel: unix telnet listener.
-    */
-      typedef struct _u3_utel {
-        struct _u3_utty uty_t;             //  pseudo-tty
-        c3_s            por_s;             //  file descriptor
-        void*           tel_u;             //  telnet context
-      } u3_utel;
-
     /* u3_raty: raft server type.
     */
       typedef enum {
@@ -646,7 +638,6 @@
         u3_usig*   sig_u;                   //  signal list
         u3_http*   htp_u;                   //  http servers
         u3_cttp    ctp_u;                   //  http clients
-        u3_utel    tel_u;                   //  telnet listener
         u3_utty*   uty_u;                   //  linked terminal list
         u3_opts    ops_u;                   //  commandline options
         c3_o       liv;                     //  if u3_no, shut down
