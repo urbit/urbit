@@ -175,6 +175,12 @@
                                    ( ((c3_w *)(void*)(tox_v)) - \
                                       c3_wiseof(u3a_box)  ) )
     /* Inside a noun.
+    **
+    ** u3a_is_cat: Is the high bit unset?
+    ** u3a_is_dog: Is the high bit set?
+    ** u3a_is_pug: High bit is set, but second-highest bit is zero.
+    ** u3a_is_pum: Highest two bits are set.
+    **
     */
 #     define u3a_is_cat(som)    (((som) >> 31) ? c3n : c3y)
 #     define u3a_is_dog(som)    (((som) >> 31) ? c3y : c3n)

@@ -28,7 +28,8 @@
     */
 #     define c3_wiseof(x)  (((sizeof (x)) + 3) >> 2)
 
-    /* Bit counting.
+    /* Number of significant bits in a word. For example, `0b100`
+       has three significant bits.
     */
 #     define c3_bits_word(w) ((w) ? (32 - __builtin_clz(w)) : 0)
 

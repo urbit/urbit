@@ -64,9 +64,14 @@ _n_mush(u3_noun val)
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 
 /* _n_hint(): process hint.
+
+   - zep: XX
+   - hod: XX
+   - bus: XX
+   - nex: XX
 */
 static u3_noun
-_n_hint(u3_noun zep, 
+_n_hint(u3_noun zep,
         u3_noun hod,
         u3_noun bus,
         u3_noun nex)
@@ -198,7 +203,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
   u3_noun hib, gal;
 
   while ( 1 ) {
-    hib = u3h(fol);
+    hib = u3h(fol); // [bus [hib gal]]
     gal = u3t(fol);
 
 #ifdef U3_CPU_DEBUG
@@ -739,8 +744,23 @@ _n_prog_new(c3_w byc_w, c3_w cal_w,
   return pog_u;
 }
 
-/* _n_prog_old(): as _n_prog_new(),
- *                but leech off senior program's data segment
+/* _n_prog_old(): Copy a program, reusing it's bytecode's memory
+ *
+ * - cab_w: Cab byte width.
+ * - reb_w: Reb byte width.
+ * - lib_w: Bytes needed for literals.
+ * - meb_w: Meb byte width.
+ * - dat_w: Our data segment's byte width.
+ *
+ * In `_n_prog_new()`, `byc_u.ops_y` will point to the begining of
+ * the result's data segment. However, our `byc_u.ops_y` will point
+ * into the parent's data segment, and our `lit_u.non` will point
+ * to the beginning of our data segment (which we fill by coping
+ * all the data in the parent's data segment after the bytecode
+ * buffer).
+ *
+ * We set `byc_u.own_o` to indicate that we don't own the memory
+ * for our bytecode buffer.
  */
 static u3n_prog*
 _n_prog_old(u3n_prog* sep_u)
@@ -1497,36 +1517,57 @@ _n_bite(u3_noun fol) {
   return _n_prog_from_ops(ops);
 }
 
-/* _n_find(): return prog for given formula with prefix (u3_nul for none).
- *            RETAIN.
+/* _n_find(): Get a formula from bytecode cache, or compile it. RETAIN.
+ *
+ * - pre: Key prefix in bytecode cache. (XX: What's this useful for?)
+ * - fol: Formula to compile.
+ *
+ * Lookup `[pre fol]` in the bytecode cache. If it's there, return
+ * it. If it isn't then compile the formula, insert it into the cache,
+ * and return it.
+ *
+ * If we're in a junior road, then we need to check the bytecode
+ * cache for all of our ancestor roads as well, if we find one
+ * there, copy it with `_n_prog_old()` and add it to the current
+ * road.
  */
 static u3n_prog*
 _n_find(u3_noun pre, u3_noun fol)
 {
   u3_noun key = u3nc(u3k(pre), u3k(fol));
   u3_weak pog = u3h_git(u3R->byc.har_p, key);
+
   if ( u3_none != pog ) {
     u3z(key);
     return u3to(u3n_prog, pog);
   }
-  else if ( u3R != &u3H->rod_u ) {
+
+  if ( u3R != &u3H->rod_u ) {
     u3a_road* rod_u = u3R;
+
     while ( rod_u->par_p ) {
       rod_u = u3to(u3a_road, rod_u->par_p);
       pog   = u3h_git(rod_u->byc.har_p, key);
+
       if ( u3_none != pog ) {
-        c3_w i_w;
+
         u3n_prog* old = _n_prog_old(u3to(u3n_prog, pog)); 
-        for ( i_w = 0; i_w < old->reg_u.len_w; ++i_w ) {
+
+        // XX What's this?
+        for ( c3_w i_w = 0; i_w < old->reg_u.len_w; ++i_w ) {
           u3j_rite* rit_u = &(old->reg_u.rit_u[i_w]);
           rit_u->own_o = c3n;
         }
-        for ( i_w = 0; i_w < old->cal_u.len_w; ++i_w ) {
+
+        // Update each callsite XX What's this?
+        // For each call site, wipe the battery, the program, and XX
+        for ( c3_w i_w = 0; i_w < old->cal_u.len_w; ++i_w ) {
           u3j_site* sit_u = &(old->cal_u.sit_u[i_w]);
           sit_u->bat   = u3_none;
           sit_u->pog_p = 0;
           sit_u->fon_o = c3n;
         }
+
         u3h_put(u3R->byc.har_p, key, u3a_outa(old));
         u3z(key);
         return old;
@@ -1534,6 +1575,8 @@ _n_find(u3_noun pre, u3_noun fol)
     }
   }
 
+  // Compile the formula to bytecode, insert it into the bytecode
+  // cache, and return it.
   {
     u3n_prog* gop = _n_bite(fol);
     u3h_put(u3R->byc.har_p, key, u3a_outa(gop));

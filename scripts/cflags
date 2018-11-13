@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+srcdirs='noun vere jets include'
+
+find $srcdirs -type f -name '*.[ch]' | xargs ctags

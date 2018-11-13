@@ -4,6 +4,11 @@
 #include "all.h"
 
 /* _frag_word(): fast fragment/branch prediction for top word.
+ *
+ * XX "top word"?
+ *
+ * Iterate over the significant bits of `a_w`, from most-significant
+ * to least, while walking the tree `b`.
 */
 static u3_weak
 _frag_word(c3_w a_w, u3_noun b)
