@@ -8,35 +8,81 @@
 ::  
 ~%  %collections-lib  ..is  ~
 |%
-+=  move  [bone card]
-+=  card
++$  move  [bone card]
+::
++$  card
   $%  [%info wire toro:clay]
       [%poke wire dock poke]
       [%perm wire desk path rite:clay]
+      [%peer wire dock path]
+      [%pull wire dock ~]
   ==
-+=  poke
+::
++$  poke
   $%  [%hall-action action:hall]
       [%collections-action action]
       [%json json]
   ==
-+=  state
-  $%  [%0 col=collection]
+::
++$  state
+  $%  [%0 col=collection str=streams]
   ==
 ::
++$  streams
+  $:  ::  inbox config and the last 30 messages in it
+      ::
+      inbox=[con=config env=(list envelope:hall)]
+      ::  names and configs of all circles we own
+      ::
+      our-circles=(map name:hall config:hall)
+      ::  names and configs of all circles we're subscribed to 
+      ::
+      sub-circles=(map circle:hall config:hall)
+      ::  all the DM invites we've received
+      ::
+      invites=(list envelope:hall)
+  ==
 ::
-+=  collection  [meta=config data=(map nom=knot =item)]  
-+=  item
++$  prize
+  $:  ::  inbox config and the last 30 messages in it
+      ::
+      inbox=[con=config env=(list envelope:hall)]
+      ::  names and configs of all circles we own
+      ::
+      our-circles=(map name:hall config:hall)
+      ::  names and configs of all circles we're subscribed to 
+      ::
+      sub-circles=(map circle:hall config:hall)
+      ::  all the DM invites we've received
+      ::
+      invites=(list envelope:hall)
+  ==
+::
++$  rumor
+  $%  ::  if config is given, either add new circle or update existing one
+      ::  if config is nil then delete circle
+      ::
+      [%circle-change circle:hall config:hall]
+      ::  recieved a new inbox message or DM invite
+      ::
+      [%new-msg ?(%inbox %invites) envelope:hall]
+  ==
+::
++$  collection  [meta=config data=(map nom=knot =item)]
+::
++$  item
   $~  [%error ~]
   $%  [%collection col=collection]
       [%raw raw=raw-item]
       [%both col=collection raw=raw-item]
       [%error ~]
   ==
-+=  raw-item
+::
++$  raw-item
   $%  [%udon meta=(map knot cord) data=@t]
   ==
 ::
-+=  config
++$  config
   $:  full-path=beam
       name=@t
       description=@t
@@ -53,12 +99,13 @@
     ::
   ==
 ::
-+=  action
++$  action
   $:  who=ship
       dek=desk
       acts=(list sub-action)
   ==
-+=  sub-action
+::
++$  sub-action
   $%  [%write pax=path for=form]
       [%delete pax=path]
       [%perms pax=path r=rule:clay w=rule:clay]
@@ -68,7 +115,7 @@
       [%comment pax=path content=@t]
   ==
 ::
-+=  form
++$  form
   $%  [%udon @t]
       [%collections-config config]
   ==

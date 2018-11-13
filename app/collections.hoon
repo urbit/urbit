@@ -29,7 +29,7 @@
 ::    stores the collection built by above by :cols so that we can compare old
 ::    and new versions whenever the rendered data changes
 ::
-~%  %collections  ..^is  ~
+~%  %landscape  ..^is  ~
 |_  [bol=bowl:gall sta=state]
 ::
 ::  +this: app core subject
@@ -44,19 +44,29 @@
 ::    then update state to store the new collection data
 ::
 ++  prep
-  ~/  %coll-prep
+  ~/  %land-prep
   |=  old=(unit state)
   ^-  (quip move _this)
   ?~  old
     :_  this
-    =<  ta-done
-    (~(ta-hall-create-circle ta ~ bol) /c 'collections')
+    ;:  welp
+      =<  ta-done
+      (~(ta-hall-create-circle ta ~ bol) /c 'collections')
+    ::
+      :~  [ost.bol %peer /circles [our.bol %hall] /circles/[(scot %p our.bol)]]
+          [ost.bol %peer /inbox [our.bol %hall] /circle/inbox/config/grams]
+          [ost.bol %peer /invites [our.bol %hall] /circle/i/grams]
+      ==
+    ==
   ?-    -.u.old
       %0
     =/  mow=(list move)
       =<  ta-done
       (~(ta-update ta ~ bol) col.u.old cols)
-    [mow this(sta [%0 cols])]
+    :-  mow
+    %=  this
+      sta  [%0 cols str.u.old]
+    ==
   ==
 ::
 ::  +mack: 
@@ -64,7 +74,6 @@
 ::    recieve acknowledgement for permissions changes, print error if it failed
 ::
 ++  mack
-  ~/  %coll-mack
   |=  [wir=wire err=(unit tang)]
   ^-  (quip move _this)
   ?~  err
@@ -74,7 +83,6 @@
 ::  +coup: recieve acknowledgement for poke, print error if it failed
 ::
 ++  coup
-  ~/  %coll-coup
   |=  [wir=wire err=(unit tang)]
   ^-  (quip move _this)
   ?~  err
@@ -116,4 +124,188 @@
     =<  ta-done
     (~(ta-write ta ~ bol) /web/landscape/onboard/json [%json !>(jon)])
   [~ this]
+::
+::
+::
+::
+::
+++  peer
+  |=  wir=wire
+  ^-  (quip move _this)
+  [~ this]
+::
+::  +reap: recieve acknowledgement for peer, retry on failure
+::
+++  reap
+  |=  [wir=wire err=(unit tang)]
+  ^-  (quip move _this)
+  ?~  err
+    [~ this]
+  ?~  wir
+    (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
+  ?+  i.wir
+    (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
+  ::
+      %circles
+    :_  this
+    [ost.bol %peer /circles [our.bol %hall] /circles/[(scot %p our.bol)]]~
+  ::
+      %inbox
+    :_  this
+    [ost.bol %peer /inbox [our.bol %hall] /circle/inbox/config/grams]~
+  ::
+      %invites
+    :_  this
+    [ost.bol %peer /invites [our.bol %hall] /circle/i/grams]~
+  ::
+      %our
+    [~ this]
+  ::
+      %sub
+    [~ this]
+  ==
+
+:: :~  [ost.bol %peer /circles [our.bol %hall] /circles/[(scot %p our.bol)]]
+::     [ost.bol %peer /inbox [our.bol %hall] /circle/inbox/config/grams]
+::     [ost.bol %peer /invites [our.bol %hall] /circle/i/grams]
+:: ==
+
+
+::
+::  +quit: 
+::
+++  quit
+  |=  [wir=wire err=(unit tang)]
+  ^-  (quip move _this)
+  ?~  err
+    [~ this]
+  ?~  wir
+    (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
+  ?+  i.wir
+    (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
+  ::
+      %circles
+    :_  this
+    [ost.bol %peer /circles [our.bol %hall] /circles/[(scot %p our.bol)]]~
+  ::
+      %inbox
+    :_  this
+    [ost.bol %peer /inbox [our.bol %hall] /circle/inbox/config/grams]~
+  ::
+      %invites
+    :_  this
+    [ost.bol %peer /invites [our.bol %hall] /circle/i/grams]~
+  ::
+      %our
+    [~ this]
+  ::
+      %sub
+    [~ this]
+  ==
+::
+::  +diff-hall-prize:
+::
+::
+::
+++  diff-hall-prize
+  |=  [wir=wire piz=prize:hall]
+  ^-  (quip move _this)
+  ?~  wir
+    (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
+  ?+  i.wir
+    (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
+  ::
+  ::  %circles: subscribe to the configuration of each of our circles
+  ::
+      %circles
+    ?>  ?=(%circles -.piz) 
+    =/  circs=(set name:hall)  (~(dif in cis.piz) (sy ~[%inbox %i %public]))
+    ::
+    :_  this
+    ^-  (list move)
+    %+  turn  ~(tap in circs)
+    |=  circ=name:hall
+    ^-  move
+    [ost.bol %peer /our/[circ] [our.bol %hall] /circle/[circ]/config] 
+  ::
+  ::  %inbox:
+  ::
+      %inbox
+    [~ this]
+  ::
+  ::  %invites
+  ::
+      %invites
+    [~ this]
+  ::
+      %our
+    [~ this]
+  ::
+      %sub
+    [~ this]
+  ==
+
+:: :~  [ost.bol %peer /circles [our.bol %hall] /circles/[(scot %p our.bol)]]
+::     [ost.bol %peer /inbox [our.bol %hall] /circle/inbox/config/grams]
+::     [ost.bol %peer /invites [our.bol %hall] /circle/i/grams]
+:: ==
+
+::
+::  +diff-hall-rumor
+::
+::
+::
+++  diff-hall-rumor
+  |=  [wir=wire rum=rumor:hall]
+  ^-  (quip move _this)
+  ?~  wir
+    (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
+  ?+  i.wir
+    (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
+  ::
+      %circles
+    [~ this]
+  ::
+      %inbox
+    [~ this]
+  ::
+      %invites
+    [~ this]
+  ::
+      %our
+    [~ this]
+  ::
+      %sub
+    [~ this]
+  ==
 --
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
