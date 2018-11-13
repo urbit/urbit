@@ -218,6 +218,15 @@ jets_g_src = [
 jets_src = [
 'jets/tree.c'
 ]
+
+jets_all_src = [
+  jets_a_src, jets_b_src,
+  jets_c_src, jets_d_src,
+  jets_e_src, jets_e_ed_src,
+  jets_f_src, jets_f_ut_src,
+  jets_z_src, jets_z_ut_src,
+  jets_g_src, jets_src]
+
 noun_src = ['noun/allocate.c',
   'noun/events.c',
   'noun/hashtable.c',
@@ -246,14 +255,7 @@ vere_src = ['vere/ames.c',
   'vere/unix.c',
   'vere/walk.c']
 
-src_list = [
-vere_src, noun_src,
-jets_a_src, jets_b_src,
-jets_c_src, jets_d_src,
-jets_e_src, jets_e_ed_src, 
-jets_f_src, jets_f_ut_src,
-jets_z_src, jets_z_ut_src,
-jets_g_src, jets_src]
+src_list = [vere_src, noun_src, jets_all_src]
 
 sources = []
 foreach s : src_list
@@ -369,3 +371,41 @@ dependencies: [openssl_dep,
                softfloat3_dep,
                libsni_dep] + os_deps,
 install: true)
+
+vere_sans_main = ['vere/ames.c',
+  'vere/behn.c',
+  'vere/cttp.c',
+  'vere/http.c',
+  'vere/loop.c',
+  'vere/raft.c',
+  'vere/reck.c',
+  'vere/save.c',
+  'vere/sist.c',
+  'vere/term.c',
+  'vere/time.c',
+  'vere/unix.c',
+  'vere/walk.c']
+
+# XX shrink this list
+test_sources = noun_src + jets_all_src + vere_sans_main
+
+test_hashtable = executable('test-hashtable',
+sources : test_sources + ['tests/hashtable_tests.c'],
+include_directories : incdir,
+c_args : os_c_flags,
+link_args: os_link_flags,
+dependencies: [openssl_dep,
+               curl_dep,
+               libuv_dep,
+               libh2o_dep,
+               cmark_dep,
+               gmp_dep,
+               sigsegv_dep,
+               urbitscrypt_dep,
+               ed25519_dep,
+               murmur3_dep,
+               softfloat3_dep,
+               libsni_dep] + os_deps,
+install: false)
+
+test('test-hashtable', test_hashtable)
