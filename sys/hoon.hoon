@@ -5299,6 +5299,7 @@
 ++  dem  (bass 10 (most gon dit))                       ::  decimal to atom
 ++  dit  (cook |=(a/@ (sub a '0')) (shim '0' '9'))      ::  decimal digit
 ++  dog  ;~(plug dot gay)                               ::  .  number separator
+++  dof  ;~(plug hep gay)                               ::  - @q separator
 ++  doh  ;~(plug ;~(plug hep hep) gay)                  ::  --  phon separator
 ++  dun  (cold ~ ;~(plug hep hep))                      ::  -- (stop) to ~
 ++  duz  (cold ~ ;~(plug tis tis))                      ::  == (stet) to ~
@@ -5486,6 +5487,11 @@
              haf:ab                                     ::  star
              tiq:ab                                     ::  galaxy
            ==
+  ++  feq  %+  cook  |=(a=(list @) (rep 4 (flop a)))
+           ;~  plug
+             ;~(pose hif:ab tiq:ab)
+             (star ;~(pfix dof hif:ab))
+           ==
   ++  fim  (sear den:fa (bass 58 (plus fem:ab)))
   ++  hex  (ape (bass 0x1.0000 ;~(plug qex:ab (star ;~(pfix dog qix:ab)))))
   ++  lip  =+  tod=(ape ted:ab)
@@ -5603,6 +5609,20 @@
                 ?:(=((mod imp 4) 0) ?:(=(imp 0) "" "--") "-")
                 rep
              ==
+          ==
+        ::
+            $q
+          =*  val  q.p.lot
+          :+  '.'  '~'
+          =-  =.(rep (weld - rep) rep)
+          %-  tail
+          %+  roll  ?:(=(0 val) ~[0] (rip 3 val))
+          |=  [q=@ s=? r=tape]
+          :-  !s
+          ;:  weld
+            (trip (?:(s tod:po tos:po) q))
+            ?:(&(s !=(r "")) "-" ~)
+            r
           ==
         ::
             $r
@@ -5902,6 +5922,7 @@
       (stag %if lip:ag)
       royl
       (stag %f ;~(pose (cold & (just 'y')) (cold | (just 'n'))))
+      (stag %q ;~(pfix sig feq:ag))
     ==
   --
 ::
