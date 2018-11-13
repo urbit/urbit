@@ -351,44 +351,6 @@
         uv_mutex_t     mex_u;               //  mutex for non-daemon term state
       } u3_utat;
 
-    /* u3_uled: event log header.
-    */
-      typedef struct {
-        c3_l mag_l;                         //  mug of log format, 'a', 'b'...
-        c3_w kno_w;                         //  kernel number validated with
-        c3_l sal_l;                         //  salt for passcode
-        c3_l key_l;                         //  mug of crypto key, or 0
-        c3_l sev_l;                         //  host process identity
-        c3_l tno_l;                         //  terminal count in host
-      } u3_uled;
-
-    /* u3_olar: event log trailer, old version.
-    */
-      typedef struct {
-        c3_w syn_w;                         //  must equal mug of address
-        c3_w ent_w;                         //  event sequence number
-        c3_w len_w;                         //  word length of this event
-        c3_w mug_w;                         //  mug of entry
-      } u3_olar;
-
-    /* u3_ular: event log trailer.
-    */
-      typedef struct {
-        c3_w syn_w;                         //  must equal mug of address
-        c3_d ent_d;                         //  event sequence number
-        c3_w len_w;                         //  word length of this event
-        c3_w mug_w;                         //  mug of entry
-        c3_w tem_w;                         //  raft term of event
-        c3_w typ_w;                         //  type of event, %ra|%ov
-      } u3_ular;
-
-    /* u3_ulog: unix event log.
-    */
-      typedef struct {
-        c3_i fid_i;                         //  file descriptor
-        c3_d len_d;                         //  length in words
-      } u3_ulog;
-
       struct _u3_umon;
       struct _u3_udir;
       struct _u3_ufil;
