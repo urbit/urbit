@@ -14,7 +14,7 @@
   :: ?>  (lte (met 3 who) 4)
   %-  (argon2-urbit:argon2:crypto 32)
   :-  tic
-  =-  [(met 3 -) -]
+  =-  [(met 3 -) (swp 3 -)]
   %-  crip
   (weld "urbitkeygen" (a-co:co who))
 ::
