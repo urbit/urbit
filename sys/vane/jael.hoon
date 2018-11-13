@@ -737,7 +737,7 @@
         ^-  (list move)
         :~  [hen %pass /(scot %p our)/init %b %wait +(now.sys)]
             [hen %give %init our]
-            [hen %slip %e %init our]
+            [hen %slip %l %init our]
             [hen %slip %d %init our]
             [hen %slip %g %init our]
             [hen %slip %c %init our]
@@ -787,7 +787,7 @@
         %+  weld  moz
         ^-  (list move)
         :~  [hen %give %init our]
-            [hen %slip %e %init our]
+            [hen %slip %l %init our]
             [hen %slip %d %init our]
             [hen %slip %g %init our]
             [hen %slip %c %init our]

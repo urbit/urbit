@@ -163,6 +163,9 @@
       ::  internal authentication page
       ::
       [%login-handler ~]
+      ::  gall subscription system
+      ::
+      [%subscriptions ~]
   ==
 ::  +authentication-state: state used in the login system
 ::
@@ -406,6 +409,9 @@
     ::
         %login-handler
       (handle-request:authentication secure address http-request)
+    ::
+        %subscriptions
+      [~ state]
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -445,6 +451,11 @@
       ==
     ::
         %login-handler
+      [~ state]
+    ::
+        %subscriptions
+      ::  todo: this part actually matters.
+      ::
       [~ state]
     ==
   ::  +return-static-data-on-duct: returns one piece of data all at once
@@ -837,12 +848,14 @@
       ::  %init: tells us what our ship name is
       ::
       %init
+    ~&  %light-born
     ::
     =.  ship.ax  [~ our.task]
     ::  initial value for the login handler
     ::
     =.  bindings.server-state.ax
       :~  [[~ /~/login] duct [%login-handler ~]]
+          [[~ /~/subscription] duct [%subscription ~]]
       ==
     [~ light-gate]
       ::  %born: new unix process
