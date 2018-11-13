@@ -1296,6 +1296,34 @@ _sist_dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
   u3_lo_bail();
 }
 
+/* _sist_dawn_turf(): override contract domains with -H
+*/
+static u3_noun
+_sist_dawn_turf(c3_c* dns_c)
+{
+  u3_noun tuf;
+
+  u3_noun par = u3v_wish("thos:de-purl:html");
+  u3_noun dns = u3i_string(dns_c);
+  u3_noun rul = u3dc("rush", u3k(dns), u3k(par));
+
+  if ( (u3_nul == rul) || (c3n == u3h(u3t(rul))) ) {
+    fprintf(stderr, "boot: invalid domain specified with -H %s\r\n", dns_c);
+    // bails, won't return
+    u3_lo_bail();
+    return u3_none;
+  }
+  else {
+    fprintf(stderr, "boot: overriding network domains with %s\r\n", dns_c);
+    u3_noun dom = u3t(u3t(rul));
+    tuf = u3nc(u3k(dom), u3_nul);
+  }
+
+  u3z(par); u3z(dns); u3z(rul);
+
+  return tuf;
+}
+
 /* _sist_dawn(): produce %dawn boot card - validate keys and query contract
 */
 static u3_noun
@@ -1440,7 +1468,13 @@ _sist_dawn(u3_noun sed)
   {
     if ( c3y == u3_Host.ops_u.etn ) {
       zar = u3do("czar:snap:dawn", u3k(u3t(sap)));
-      tuf = u3do("turf:snap:dawn", u3k(u3t(sap)));
+
+      if ( 0 != u3_Host.ops_u.dns_c ) {
+        tuf = _sist_dawn_turf(u3_Host.ops_u.dns_c);
+      }
+      else {
+        tuf = u3do("turf:snap:dawn", u3k(u3t(sap)));
+      }
     }
     else {
       {
@@ -1454,7 +1488,10 @@ _sist_dawn(u3_noun sed)
         u3z(oct); u3z(raz);
       }
 
-      {
+      if ( 0 != u3_Host.ops_u.dns_c ) {
+        tuf = _sist_dawn_turf(u3_Host.ops_u.dns_c);
+      }
+      else {
         fprintf(stderr, "boot: retrieving network domains\r\n");
 
         // (list turf): ames domains
