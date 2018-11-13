@@ -7,68 +7,63 @@
 =,  keygen
 ::
 |%
-++  to-byts
-  |=  a=@t
-  =+  (met 3 a)
-  [- (rev 3 - a)]
-::
 ++  argon2u
-  |=  inp=byts
+  |=  [who=ship tic=byts]
   ^-  @
+  ~|  [%who who (met 3 who)]
+  :: ?>  (lte (met 3 who) 4)
   %-  (argon2-urbit:argon2:crypto 32)
-  [inp (to-byts 'urbitkeygen')]
+  :-  tic
+  =-  [(met 3 -) -]
+  %-  crip
+  (weld "urbitkeygen" (a-co:co who))
 ::
 ++  child-node-from-seed
-  |=  [seed=@ met=meta pass=(unit @t)]
+  |=  [seed=@ typ=tape pass=(unit @t)]
   ^-  node
-  =+  sed=(seed:ds 32^seed met)
+  =+  sed=(seed:ds 32^seed typ)
   =+  nom=(from-entropy:bip39 32^sed)
-  :+  met  nom
+  :+  typ  nom
   %-  wallet:ds
   %+  to-seed:bip39  nom
   (trip (fall pass ''))
 ::
 ++  full-wallet-from-ticket
-  |=  [ticket=byts sis=(set ship) revs=revisions pass=(unit @t)]
+  ::  who:    username
+  ::  ticket: password
+  ::  rev:    network key revision
+  ::  pass:   optional passphrase
+  ::
+  |=  [who=ship ticket=byts rev=@ud pass=(unit @t)]
   ^-  vault
-  =+  master-seed=(argon2u ticket)
-  =/  nn
-    |=  [typ=tape rev=@ud]
-    %-  ~(rep in sis)
-    |=  [who=ship nos=nodes]
-    %+  ~(put by nos)  who
-    %^  child-node-from-seed
-        master-seed
-      [typ rev who]
-    pass
+  =+  master-seed=(argon2u who ticket)
+  =/  cn  ::  child node
+    |=  typ=nodetype
+    (child-node-from-seed master-seed typ pass)
   ::
-  :-  ^=  ownership  ^-  nodes
-      (nn "ownership" ownership.revs)
+  :-  ^=  ownership  ^-  node
+      (cn "ownership")
   ::
-  :-  ^=  voting  ^-  nodes
-      (nn "voting" voting.revs)
+  :-  ^=  voting  ^-  node
+      (cn "voting")
   ::
-  =/  management=nodes
-    (nn "management" management.revs)
+  =/  management=node
+    (cn "management")
   :-  management=management
   ::
-  :-  ^=  transfer  ^-  nodes
-      (nn "transfer" transfer.revs)
+  :-  ^=  transfer  ^-  node
+      (cn "transfer")
   ::
-  :-  ^=  spawn  ^-  nodes
-      (nn "spawn" spawn.revs)
+  :-  ^=  spawn  ^-  node
+      (cn "spawn")
   ::
-  ^=  network  ^-  uodes
-  %-  ~(rep in sis)
-  |=  [who=ship nus=uodes]
-  %+  ~(put by nus)  who
-  =/  mad
+  ^=  network  ^-  uode
+  =/  mad  ::  management seed
     %+  to-seed:bip39
-      seed:(~(got by management) who)
+      seed:management
     (trip (fall pass ''))
-  =+  met=["network" network.revs who]
-  =+  sed=(seed:ds 64^mad met)
-  [met sed (urbit:ds sed)]
+  =+  sed=(seed:ds 64^mad (a-co:co rev))
+  [rev sed (urbit:ds sed)]
 ::
 ++  ds                                                  ::  derive from raw seed
   |%
@@ -94,14 +89,8 @@
         (rsh 3 33 sec)
   ::
   ++  seed
-    |=  [seed=byts meta]
+    |=  [seed=byts salt=tape]
     ^-  @ux
-    =/  salt=tape
-      ;:  weld
-        typ
-        ['-' (a-co:co who)]
-        ['-' (a-co:co rev)]
-      ==
     %-  sha-256l:sha
     :-  (add wid.seed (lent salt))
     (cat 3 (crip (flop salt)) dat.seed)
