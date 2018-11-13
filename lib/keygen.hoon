@@ -62,7 +62,7 @@
     %+  to-seed:bip39
       seed:management
     (trip (fall pass ''))
-  =+  sed=(seed:ds 64^mad (a-co:co rev))
+  =+  sed=(seed:ds 64^mad (weld "network" (a-co:co rev)))
   [rev sed (urbit:ds sed)]
 ::
 ++  ds                                                  ::  derive from raw seed
