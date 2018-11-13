@@ -10,10 +10,10 @@
 ++  test-child-seed-from-seed-0
   %+  expect-eq
     !>  ;:  weld
-          "forum equal youth afford sketch piece "
-          "direct room clarify dumb autumn soon "
-          "capable elegant nest cover lawn drive "
-          "motion vault river athlete vicious blush"
+          "bonus favorite swallow panther frequent random "
+          "essence loop motion apology skull ginger "
+          "subject exchange please series meadow tree "
+          "latin smile bring process excite tornado"
         ==
     !>  %+  from-entropy:bip39  32
         %+  seed:ds
@@ -21,16 +21,15 @@
           :-  32
           0xb2bd.f8de.8452.b18f.0219.5b6e.7bfc.82b9.
             00fb.cc25.681f.07ae.10f3.8f11.e5af.53af
-        ^-  meta
-        ["management" 0 `@`10]
+        "management"
 ::
 ++  test-child-seed-from-seed-1
   %+  expect-eq
     !>  ;:  weld
-          "crime pistol actress sentence thunder tide "
-          "consider estate robot lava arena undo "
-          "nominee baby ladder opinion congress private "
-          "print tube mango arrange father prison"
+          "impact keep magnet two rice country "
+          "girl jungle cabin mystery usual tree "
+          "horn skull winter palace supreme reform "
+          "sphere cabbage cry athlete puppy misery"
         ==
     !>  %+  from-entropy:bip39  32
         %+  seed:ds
@@ -38,8 +37,7 @@
           :-  32
           0xb2bd.f8de.8452.b18f.0219.5b6e.7bfc.82b9.
             00fb.cc25.681f.07ae.10f3.8f11.e5af.53af
-        ^-  meta
-        ["ownership" 0 `@`10]
+        "ownership"
 ::
 ++  test-urbit-keys-from-seed-0
   %+  expect-eq
@@ -70,270 +68,263 @@
           f054.da2a.ccaf.b612.180c.853f.3f77.d606
 ::
 ++  test-generate-wallet-0
-  =/  mea=meta  ["" 0 `@p`1]
   %+  expect-eq
     !>  ^-  vault
         :*  ::  ownership
-            =-  (~(gas by *nodes) ~[who.mea^-])
             ^-  node
-            :+  mea(typ "ownership")
+            :+  "ownership"
               ;:  weld
-                "various quiz first cliff resemble rough "
-                "priority sibling topple coin copper merit "
-                "spend demand kite cargo key stone "
-                "judge dignity beauty boring document actress"
+                "over excess hand before discover empower "
+                "two bottom during boat force throw "
+                "fade high wild stem pet rose "
+                "current planet gaze always regular express"
               ==
-            :+  :-  0x3.4c55.2c53.cda2.50b7.34eb.a4b9.e54c.97f8.
-                        f81d.95fa.bf88.4ca4.d973.6754.c50b.3b0e
-                0xbaa6.ef7e.3e47.a255.1100.b12f.f073.e1ef.
-                  b761.361f.ccb6.a134.71ca.8416.36d8.4610
-              0x2325.342b.e552.bb91.0a33.82c4.318d.c3cc.70db.1604
-            0x15f0.1ce6.429e.70f1.443a.eacc.3a40.6330.
-              a009.a641.dbdd.d626.3d97.fead.6105.1e7c
+            :+  :-  0x2.4618.3b85.7bc5.3443.ff5e.0ede.0109.d013.
+                        5a30.2639.a952.272d.305e.0fac.75e8.e3fe
+                0xfcad.12e2.5bae.e45d.7dea.d6ba.df18.07c2.
+                  2141.0019.897e.7eb3.20a1.19f2.386d.3c18
+              0x9199.2041.c3f9.e5cc.af4c.817b.adce.17b1.3400.118c
+            0xf2f1.0b14.249b.2d8e.8534.68ce.172d.6ff7.
+              b533.9635.50e0.abfa.8676.ec8e.3b7a.6cfa
             ::  voting
-            =-  (~(gas by *nodes) ~[who.mea^-])
-            :+  mea(typ "voting")
+            ^-  node
+            :+  "voting"
               ;:  weld
-                "load future seven beauty phone admit "
-                "flight funny couple chicken differ drum "
-                "club raise average shove address dune "
-                "point true sense pioneer finger buyer"
+                "throw album measure arctic romance fuel "
+                "same sphere kingdom tiny once gesture "
+                "trumpet route shrug craft pulse verb "
+                "someone filter proud test elbow before"
               ==
-            :+  :-  0x3.139a.fb22.8bc0.6286.6167.82f7.9a7e.767c.
-                        d013.b572.65c9.4f34.9a39.90a6.74d3.c431
-                0xe60a.675a.64ea.1bcd.e43c.0fef.b006.d913.
-                  67f2.b8d0.e33c.6203.bda5.0a58.9e40.8e2f
-              0x20c8.e4b8.fef4.ddea.7256.8430.2553.c92b.72df.d394
-            0x481b.f89a.7e25.7de0.6626.314a.b6e8.e505.
-              6352.e6f7.4c6f.eff2.ec77.0f35.7c15.f53b
+            :+  :-  0x3.b0a9.7d8c.d2e3.6d84.3a84.4cc8.8a31.a1c1.
+                        d688.22b6.4831.9ea8.defc.7929.925e.baa0
+                0xe584.43a5.895d.f87f.3f43.e8d0.b168.560d.
+                  9f9b.cf63.2455.d171.1de9.b3aa.e763.0ee0
+              0x6065.20eb.ac4b.2a16.7f29.e578.0d79.53e8.1dca.889b
+            0x320c.4f2b.65ae.0469.2974.1748.b0dd.812c.
+              f914.afe8.2cec.40a8.ec30.ee0d.0f7d.c5ac
             ::  management
-            =-  (~(gas by *nodes) ~[who.mea^-])
-            :+  mea(typ "management")
+            ^-  node
+            :+  "management"
               ;:  weld
-                "speed stick feel purse camera breeze "
-                "quiz inject whale connect cheap crop "
-                "ranch walk neck merry giggle limb "
-                "second bike hope riot glad reject"
+                "senior claim file tooth before rally "
+                "crucial enforce lady cat goddess rent "
+                "shadow patch relief demise faculty nose "
+                "faint jewel scorpion fury salt harvest"
               ==
-            :+  :-  0x3.0ef9.784b.a4a9.803e.9c7c.f351.3cda.51be.
-                        e475.4235.9def.78c8.4263.5a89.2f18.8d13
-                0xc88b.a959.acc0.6ffe.7e3f.035b.8e06.9ea3.
-                  0211.ca2e.d69b.7f2a.b306.b5cb.4a78.1595
-              0x3365.318e.7689.21c4.00ec.0110.e72a.97e4.deb1.4df9
-            0x2a48.b639.7b90.15e0.0dbb.bb12.e499.f3fa.
-              9432.738b.68db.3a01.d39b.89f1.5153.c651
+            :+  :-  0x2.ce80.3c83.e6c9.7608.c0fa.40b4.3051.fc60.
+                        9297.4b55.b95c.6fcb.5652.773c.9cbf.ced4
+                0x9164.e953.ccbb.4e31.3c35.ac31.cdd3.e006.
+                  bc2c.9e90.a179.d4b1.cf4d.e86c.4ae1.bae6
+              0x94cc.39a3.354d.08b2.50de.0b7d.ca58.285e.2dea.f7d2
+            0x33c2.6095.0001.cb4b.18ac.f58d.4ab6.8d09.
+              e0c7.cb3c.3fa5.a165.14e6.9b6d.aff8.849c
             ::  transfer
-            =-  (~(gas by *nodes) ~[who.mea^-])
-            :+  mea(typ "transfer")
+            ^-  node
+            :+  "transfer"
               ;:  weld
-                "wine foil elbow mail wreck peasant "
-                "inner scheme viable foil thing elder "
-                "slim obvious soldier parent version derive "
-                "imitate tissue palm trick clean increase"
+                "verify input pencil typical moon erupt "
+                "rose misery shed embrace vintage bench "
+                "deny battle review educate title unveil "
+                "coyote dentist world cause shallow theory"
               ==
-            :+  :-  0x2.4b87.f9d9.8441.3dda.c213.8081.884b.35ae.
-                        c3e3.617d.8620.fabe.0506.29ee.cab9.025f
-                0xfde2.52d2.bace.6bac.5eeb.d8ef.ef3d.9f8c.
-                  5d90.d725.6f89.79bf.5c72.4cf8.9f51.3c5f
-              0x7b99.8e3c.2ff2.c97f.167d.c7c8.afe6.80ca.231f.26be
-            0x520f.6f12.41bc.a8ef.c349.d5c6.4740.eeee.
-              b69e.5d2f.9db2.0798.c794.fff2.5da5.4ae3
+            :+  :-  0x3.bedd.8637.57e1.2f86.9008.6e89.c121.5e03.
+                        69f6.cfcb.a33b.cf06.ac9c.ddd9.9fca.f14d
+                0x6537.9bc9.a0ef.f68b.b6d5.6741.e450.4f28.
+                  172b.b928.c623.8ebe.169b.0e9f.c21e.c1ff
+              0xf30c.d3a6.b19f.4e95.9373.a663.e362.fbd3.0156.a7b3
+            0xfd2b.ea4f.675e.d4bf.7b1e.d32e.45d6.df8d.
+              9bc4.d1c0.e64a.9be8.3d9b.319a.862a.ca35
             ::  spawn
-            =-  (~(gas by *nodes) ~[who.mea^-])
-            :+  mea(typ "spawn")
+            ^-  node
+            :+  "spawn"
               ;:  weld
-                "attitude entire between school lawsuit wisdom "
-                "barely false symbol nose weasel donkey "
-                "artist blue noble gown worry notable "
-                "farm crush glimpse gain merge police"
+                "image raccoon boil potato ritual notable "
+                "bright slot ivory theme jaguar assist "
+                "fork easy ranch change book country "
+                "code domain focus frown crowd prepare"
               ==
-            :+  :-  0x3.544f.172c.b777.a6ff.3847.0d91.8212.ad24.
-                        8c34.8334.4699.e921.c673.955c.e053.d8b3
-                0xa0e1.5b48.6283.954d.2fe5.776e.f7a2.05e9.
-                  bdff.6f83.e8d1.20ad.b83a.0bf5.b0e6.d26c
-              0x2984.164d.d3be.3a07.acf1.8537.db9b.1034.3c40.92c1
-            0x2fbd.49a6.3ec4.ec58.1ead.7c09.e820.fad6.
-              47de.6561.5549.7fdb.be68.0dc0.90d1.7fed
+            :+  :-  0x2.87d4.aa3d.9b31.e0e9.6f33.35e5.a2bd.f586.
+                        b9aa.51f7.ee9a.243a.8753.41e7.bcf0.7fd6
+                0xf188.4d89.105a.f7af.ad15.3a0a.44fa.9218.
+                  5ebe.996b.ee03.fee9.8dbf.2be7.5ec6.5c3b
+              0x6af2.8227.6025.e8df.d372.b167.3cf4.292b.8515.b736
+            0x40a2.97ef.7549.32e2.3d37.818e.ca76.172c.
+              70e9.18ce.b51e.d45b.c5d3.6030.9946.af75
             ::  network
-            ~
+            *uode
           ==
-    !>  =-  -(network *uodes)
-        %+  full-wallet-from-ticket
+    !>  =-  -(network *uode)
+        %-  full-wallet-from-ticket
+        :+  ~nec  ::  1
           4^0x1.0102  ::TODO  .~doznec-marbud
-        :+  [who.mea ~ ~]
-          *revisions
-        ~
+        [0 ~]
 ::
 ++  test-generate-wallet-1
-  =/  mea=meta  ["" 0 `@p`65.012]
   %+  expect-eq
     !>  ^-  vault
         :*  ::  ownership
-            =-  (~(gas by *nodes) ~[who.mea^-])
             ^-  node
-            :+  mea(typ "ownership")
+            :+  "ownership"
               ;:  weld
-                "flame nothing issue first fine pottery "
-                "save before guitar twist guard round "
-                "burst actual mesh wrestle spirit disagree "
-                "then green grid hole lobster local"
+                "strike hollow mix before hundred food "
+                "moment reduce mountain chief tonight scale "
+                "series funny tackle praise total kiwi "
+                "wild funny acoustic height volume square"
               ==
-            :+  :-  0x3.90f0.a6c8.0ed8.b397.15e5.6e4e.24ed.0d3a.
-                        92e5.425d.3863.c40b.4764.59ec.9b5d.4d7b
-                0x9162.3b57.60c5.0437.639e.c92e.9bb8.8ac7.
-                  7144.420e.3a9c.2e91.81a5.614b.3484.e097
-              0x7544.42e3.bb87.4777.2572.7dc0.db1d.f693.630d.bac9
-            0xd685.6120.aad8.1367.63ef.6ff8.de9c.010f.
-              c345.b424.38c2.106e.2dfc.6aec.fd26.0cc4
+            :+  :-  0x2.6f6d.0041.810e.8379.58d4.b4d5.34f8.f414.
+                        2a4b.1923.f3dc.39cf.4044.2c12.13a8.c251
+                0x9164.47ba.3542.3385.2eb2.86c2.3782.d8f7.
+                  0494.a565.2683.0f8a.03f8.dbca.9e7b.9ef5
+              0xcba2.aab6.8259.16ef.d62e.8d99.a332.98ab.8d8a.2208
+            0x9a96.9dcc.d4c2.8cca.4a8e.4e90.af2b.ff05.
+              a60e.6ee5.cd9e.e754.3c16.f801.1ae9.ace7
             ::  voting
-            ~
+            *node
             ::  management
-            =-  (~(gas by *nodes) ~[who.mea^-])
-            :+  mea(typ "management")
+            ^-  node
+            :+  "management"
               ;:  weld
-                "enough federal present expire setup obtain "
-                "taste above chronic tuition spike gas "
-                "middle muscle mail vicious muffin employ "
-                "silver ten about shiver purchase service"
+                "reveal axis speed stereo essence train "
+                "fury rigid waste embody area income "
+                "account tissue borrow employ retire edge "
+                "brand alarm cigar tonight edge scheme"
               ==
-            :+  :-  0x2.ffd4.fdbf.2cf7.8bbf.707b.d0c1.c84d.aac8.
-                        e51f.7e1f.242d.fb27.f7c0.bdf0.96c3.bbf0
-                0x6aea.d877.7076.de3a.4d3e.92db.a1a8.91df.
-                  b986.98bd.4539.99d2.5668.f085.1eaf.3cb3
-              0xa20b.c714.38ff.0bb7.7b96.9af9.690b.74ca.0d73.452c
-            0xc509.6fca.b714.0e32.8cda.8a79.d18b.1096.
-              ac3c.b39e.1cec.17ed.b0a1.6964.6b56.1e8b
+            :+  :-  0x2.9121.71ab.0c2c.8e11.bbed.6dd9.3297.ccf7.
+                        483e.e148.062b.328b.8c0d.d5c2.d649.cdfd
+                0x6a97.02c2.9c51.28b9.4d2a.9503.3830.b0d6.
+                  1599.a4b1.74ed.f802.601f.c54c.546f.b6fc
+              0xd06e.94c3.5553.789d.e46d.5a3c.d5e5.1608.1dc7.39f8
+            0xb23e.6e60.fae7.3042.0fb8.422b.6e80.0851.
+              00bc.7dd5.a11f.4b73.ed61.ea53.04fb.bb67
             ::  transfer
-            =-  (~(gas by *nodes) ~[who.mea^-])
-            :+  mea(typ "transfer")
+            ^-  node
+            :+  "transfer"
               ;:  weld
-                "page wild bread settle news around "
-                "reduce receive urban shrug coffee acid "
-                "unknown crisp million also grass volume "
-                "summer apology meadow poem slab sure"
+                "strategy glare desk what junior make "
+                "bless clump tool scissors pause rapid "
+                "random feel canal flavor combine baby "
+                "cash salon possible leaf action heart"
               ==
-            :+  :-  0x3.45ba.e5dc.335f.0a19.86cd.4213.5e30.f98c.
-                        0708.1651.8685.9ec4.7c15.be67.debd.3930
-                0xc111.2499.bab5.45a4.112d.a3de.3590.eee9.
-                  2a62.c9c1.a949.0c89.bd94.47fd.06d6.3c87
-              0x2602.34db.9947.50a4.6965.a2d0.949a.c4e1.4d6e.975e
-            0xf7b9.3a65.885d.0f6d.ff88.cd9e.cc30.ae43.
-              b3a1.cc74.77b8.0bc4.2863.5601.8bdd.82b7
+            :+  :-  0x2.9afd.9bd4.0ab4.149f.4731.76ba.d5d1.eafc.
+                        9a75.facd.0f5e.12c8.c5af.9430.864c.fa5f
+                0x4e61.dba5.1346.ab8d.8269.752d.95e3.e82b.
+                  762e.f800.3eee.e7df.1950.f189.7813.36a3
+              0x625f.5a6f.1913.8b27.84db.0616.a779.354c.40d2.2475
+            0x95b.c9cf.972f.16d7.37a6.0881.410c.5c3e.
+             16a0.182d.8bf0.7a6e.9505.082c.9536.ed7e
             ::  spawn
-            =-  (~(gas by *nodes) ~[who.mea^-])
-            :+  mea(typ "spawn")
+            ^-  node
+            :+  "spawn"
               ;:  weld
-                "false sort bomb damage govern exclude "
-                "that unknown away display kit attract "
-                "toilet brick delay useless squirrel garment "
-                "sunset awake easy wage arrow warrior"
+                "border edit absorb mistake bubble pave "
+                "discover monster nice trouble answer laptop "
+                "session denial paper deposit you jeans "
+                "stick teach history salute umbrella vivid"
               ==
-            :+  :-  0x2.ea8b.99eb.99b9.c041.c019.0e77.0db8.db99.
-                        4695.6509.867b.c158.8078.b2cd.c56a.2bc8
-                0xf879.648c.8139.0d94.d9ae.c849.5324.e4f0.
-                  186c.d446.aaea.e77f.7a25.8d9c.99aa.30cd
-              0x7b73.ce24.5268.5d4c.58d5.f2c6.9000.5847.7547.f6d1
-            0xd2e8.599c.158c.de70.0e2e.6cef.d0c0.6cf4.
-              7bf2.f636.c460.fd8e.1ef3.6764.67d7.d295
+            :+  :-  0x3.4990.5050.c4dc.15df.af49.9755.f000.033a.
+                        e63e.6c28.f6fd.aabd.fb5c.2945.3416.783c
+                0x3847.0da4.3251.1795.c244.8208.fb20.a8d2.
+                  f3cc.f4f9.c25c.86d6.a906.069d.6342.4150
+              0xec60.195c.7f68.d5c7.7884.4cdc.2b4d.11d5.9542.7045
+            0xbd4d.3149.15aa.06d3.fb83.2008.3881.27b0.
+              23ef.2fba.369a.83a3.bc1e.d7a1.e25a.2b83
             ::  network
-            =-  (~(gas by *uodes) ~[who.mea^-])
-            :+  mea(typ "network")
-              0xebd5.6c6d.ee34.e9b7.b2bc.7701.9fa5.85c7.
-                0194.5f0f.e28d.aa27.78d2.9146.4c03.6345
-            :-  :-  0xa08c.526d.af6c.5fce.b5e2.9d9a.5c26.251a.
-                      b9b8.b01f.9339.cb9d.3dc4.6cb4.239e.3113
-                    0x817c.a3f9.16f3.5554.e931.2de4.4ed5.e32e.
-                      3ef8.ea0b.222f.c81d.74c2.f502.d053.b58c
-                :-  0x1141.254e.602a.cae0.def1.a799.bbb8.3bb2.
-                      f6ab.c992.78c4.ebcf.6671.ed57.ff4e.ef64
-                    0x8f2b.14e5.5eed.db75.90f4.c6a5.6c84.faff.
-                      0444.a647.4bde.9082.8733.b7b0.395e.a2fa
+            ^-  uode
+            :+  0
+              0xdb23.2882.0f10.7eaa.895b.9c37.ea3a.e911.
+                ef47.6539.2598.8df6.6a38.1b3d.9d0f.8008
+            :-  :-  0x36db.69e1.dd09.c309.07c9.67ce.9b1f.8cd1.
+                      ebf1.a01f.3046.1c1b.b6c2.7982.53ee.ec16
+                    0x38a.3528.eeca.9102.38ec.5995.e5d6.84e3.
+                     eb8b.5458.edd3.694f.8c64.1fff.9852.cdf5
+                :-  0x9c8c.da16.7d88.e9a0.fa04.8679.3487.c0e8.
+                      49d2.acae.167d.17a5.6d62.6767.218c.5bda
+                    0xf985.5d6d.5a85.a2dd.f286.6325.2ee0.1b26.
+                      8a70.34b5.5c61.02fd.75fa.0d74.38f9.3396
           ==
     !>  ^-  vault
-        =-  -(voting ~)
-        %+  full-wallet-from-ticket
+        =-  -(voting *node)
+        %-  full-wallet-from-ticket
+        :+  ~matbyr  ::  65.012
           8^0x102.af04.0506.0798  ::TODO  .~marbud-tidsev-litsut-hidfep
-        :+  [who.mea ~ ~]
-          *revisions
-        ~
+        [0 ~]
 ::
 ++  test-generate-wallet-2
-  =/  mea=meta  ["" 6 `@p`~]
   %+  expect-eq
     !>  ^-  vault
         :*  ::  ownership
-            =-  (~(gas by *nodes) ~[who.mea^-])
             ^-  node
-            :+  mea(typ "ownership")
+            :+  "ownership"
               ;:  weld
-                "thought story peasant will layer street "
-                "genius become interest country erupt crater "
-                "still stone pupil vessel wink second "
-                "habit sell spray rate spend size"
+                "sweet song can jealous where business "
+                "kitten antique access foam cousin arctic "
+                "puzzle ring tide pizza sea ramp "
+                "bleak casino erupt put sword hat"
               ==
-            :+  :-  0x2.c87a.89ac.fdbe.1379.24d6.59f9.f9c5.b10f.
-                        7606.7130.bafe.5aba.9510.7ab6.c6c4.0f3b
-                0xc8c5.3b8c.70d2.f465.5eb5.8a7d.66e4.ca38.
-                  6dcc.262b.43e8.63ff.5f8a.5bee.7172.08b5
-              0xcbe5.5640.b324.0fae.d26f.ae0f.c7a4.5c99.d999.fae1
-            0x65fd.9ac0.04de.3e37.530e.ea3c.8b24.ec40.
-              441e.5403.6e02.fd67.5d54.0108.828c.1700
+            :+  :-  0x2.5c4a.7cd7.2fd5.75c6.6e09.b3fb.cbc8.f724.
+                        5926.749e.39d8.c634.c821.350e.5bd6.c4a4
+                0xf2e0.ce7d.228d.ac19.a0c6.5bf7.ac73.3663.
+                  f5c9.751c.bbce.8307.3a2c.19f9.c6bf.0b8d
+              0xbf7a.38c7.903d.0cdd.2cf4.e384.e6f4.1ab2.abbb.cd52
+            0x6305.dc78.2313.0292.59c9.fe8a.ed13.fb7f.
+              92e1.6378.5b4a.a77a.82a8.2ddf.d462.e9f6
             ::  voting
-            ~
+            *node
             ::  management
-            =-  (~(gas by *nodes) ~[who.mea^-])
-            :+  mea(typ "management")
+            ^-  node
+            :+  "management"
               ;:  weld
-                "effort police leader fish glare decide "
-                "gaze jacket law forest area call "
-                "away tooth extend sick setup trouble "
-                "scene equip visa nothing bonus say"
+                "vehicle liar call grid arrow adult "
+                "gesture distance episode item antique scissors "
+                "carry scare oppose fat what thank "
+                "slim hurdle correct perfect utility word"
               ==
-            :+  :-  0x2.004e.f41a.81ef.fa4b.6d3a.378d.c289.94a6.
-                        0577.0a50.903f.cdd6.7d86.dae8.7096.d804
-                0x67d1.34d6.e0f8.b92e.b4c4.ed4e.3bf1.82cc.
-                  18fd.9adb.3d50.de3a.3b59.f29d.582d.f058
-              0xce6c.beee.1912.7323.d546.df6d.d7f1.04bf.a540.4536
-            0x6f3.47ff.8e62.fdc9.b0fc.286d.1a7f.02fe.
-             97b7.b922.9a4e.6f84.b82b.de53.d2e6.f896
+            :+  :-  0x2.0b63.bec5.489a.c714.d911.0117.9338.0ebd.
+                        69ec.c1f2.5dec.29fc.9fd7.90b3.78cf.d7d1
+                0x41ec.0959.d807.42f7.7f12.a62d.7be1.8cdd.
+                  30c3.03b5.bab2.6060.a01c.560b.40a4.32e9
+              0xe8f.07b9.3f25.94ec.accd.4d69.72cf.50be.8110.97e3
+            0x55a9.dd2f.e4b4.116d.9be3.b70e.cc33.3acb.
+              389f.7bcb.51c7.633e.ba17.f705.0a34.f575
             ::  transfer
-            =-  (~(gas by *nodes) ~[who.mea^-])
-            :+  mea(typ "transfer")
+            ^-  node
+            :+  "transfer"
               ;:  weld
-                "miracle purpose soccer require brand egg "
-                "grocery rough eternal drip finish truck "
-                "lend invest draw viable kid useless "
-                "kick dish ensure equal tobacco devote"
+                "neutral when enforce shallow match bridge "
+                "collect leg silk match post field "
+                "canal page lunch polar artwork follow "
+                "indicate awesome orange later pen attend"
               ==
-            :+  :-  0x3.fa3e.883d.03b8.1839.572d.adab.dba4.4905.
-                        98a0.c98b.00d3.22bd.5eb8.f5c0.4320.b44e
-                0x7331.d92c.bc15.166b.57c6.7ea4.dbd6.bb6d.
-                  5e01.4533.90f3.ab5d.7fd2.0d5c.8034.5afe
-              0xcbb0.0675.f8c6.e1eb.7971.efd2.22f5.3d4e.7e47.723b
-            0x8462.5f52.4497.b121.d181.70c2.64bc.1b2e.
-              b417.975c.2d7e.d6f9.7912.0a24.d51d.e508
+            :+  :-  0x3.7009.f37e.3a46.949a.9b08.fd08.2d85.a13f.
+                        6299.27ca.5d92.ce58.4803.3901.20ef.a7d1
+                0xa4a2.9864.9ddb.0603.e47e.181a.66c2.1b5f.
+                  b768.0c90.374c.119f.1d75.e173.a4a4.4022
+              0x768.779a.17d5.ba52.67a2.2912.95d4.7ac1.7efe.77bf
+            0xb15.c53a.a3be.5661.04a1.1dff.6ce4.174c.
+              d7c3.2a27.e767.bdc5.149f.c417.e252.2a58
             ::  spawn
-            =-  (~(gas by *nodes) ~[who.mea^-])
-            :+  mea(typ "spawn")
+            ^-  node
+            :+  "spawn"
               ;:  weld
-                "good wealth crystal convince sing above "
-                "like bag second oval lucky tell "
-                "icon jazz neck ivory dragon prevent "
-                "book love blood edit machine example"
+                "truly relief grow first balance envelope "
+                "expire twelve change evidence adjust usual "
+                "convince mechanic dynamic code wheel brother "
+                "wash help core argue now must"
               ==
-            :+  :-  0x2.c647.f064.55aa.3a5c.eecd.bee2.93d4.9c78.
-                        64e2.ca68.de28.ada6.c4fe.d23f.db5d.da81
-                0x9196.6df3.16f6.5eb2.712d.5860.5c29.5cd7.
-                  fd3d.627f.084b.05e0.d358.27e6.90ae.8a51
-              0x34f1.1d21.9c19.0a9f.6983.2be5.402d.4aef.b8e4.1e9b
-            0xbb36.4194.fd30.3707.786f.2e85.11ae.2123.
-              77c6.ed07.a3b1.21b6.2b43.5953.534e.ef52
+            :+  :-  0x2.d2db.844d.3c3c.e6d5.92e3.6857.efe7.c614.
+                        0357.21fc.4b45.48eb.2d6c.9525.3e2a.d83c
+                0x6625.9499.8c9a.c4b5.1b84.ecdb.2067.f521.
+                  7c58.8021.56f5.144b.9efd.1331.d0e5.6dbd
+              0xc414.01fe.f3a3.8fb3.0d29.b8ab.a5bc.4f80.4cbd.4cff
+            0xf04.ebc4.4015.2d4e.6615.357e.c821.6f6a.
+              b318.6d92.6798.b1ef.4f16.92b9.b4e5.1433
             ::  network
-            ~
+            *uode
           ==
     !>  ^-  vault
-        =-  -(voting ~, network ~)
-        %+  full-wallet-from-ticket
+        =-  -(voting *node, network *uode)
+        %-  full-wallet-from-ticket
+        :+  ~zod
           :-  48
           0xc5a.b5ba.ea8e.e798.21d3.fc9f.8876.6da1.
            95bd.d4a6.3375.32fe.8f7f.d92f.d5f4.446a.
@@ -342,7 +333,5 @@
           ::        nodtex-taslus-pactyp-milpub-pildeg-fornev-
           ::        ralmed-dinfeb-fopbyr-sanbet-sovmyl-dozsut-
           ::        mogsyx-mapwyc-sorrup-ricnec-marnys-lignex
-        :+  [who.mea ~ ~]
-          [. . . . . .]:rev.mea
-        `'froot loops'
+        [6 `'froot loops']
 --
