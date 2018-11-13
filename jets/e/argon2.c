@@ -5,6 +5,20 @@
 
 #include <argon2.h>
 
+/* helpers
+*/
+
+  int argon2_alloc(uint8_t** output, size_t bytes)
+  {
+    *output = u3a_malloc(bytes);
+    return (NULL != output);
+  }
+
+  void argon2_dealloc(uint8_t* memory, size_t bytes)
+  {
+    u3a_free(memory);
+  }
+
 /* functions
 */
 
@@ -50,7 +64,8 @@
       bytes_extra, wix,    // optional associated data
       time_cost, mem_cost, threads, threads, // performance cost configuration
       version,             // algorithm version
-      NULL, NULL,          // custom memory allocation / deallocation functions
+      argon2_alloc,        // custom memory allocation function
+      argon2_dealloc,      // custom memory deallocation function
       ARGON2_DEFAULT_FLAGS // by default only internal memory is cleared
     };
 
