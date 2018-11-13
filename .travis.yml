@@ -24,6 +24,7 @@ script:
   - meson . ./build --buildtype=debugoptimized -Dgc=true -Dprof=true
   - cd ./build
   - ninja
+  - ninja test
   - sudo ninja install
   - cd ../.travis
   - npm install
