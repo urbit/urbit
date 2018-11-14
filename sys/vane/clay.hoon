@@ -524,7 +524,8 @@
       ~&  [%clay-first-failure message.head.row]
       ~
     ?:  ?=([%success [%success *] [%error *]] row)
-      ~&  [%clay-second-failure message.tail.row]
+      ~&  %clay-second-failure
+      %-  (slog message.tail.row)
       ~
     ?.  ?=([%success [%success *] [%success *]] row)
       ~
