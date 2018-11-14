@@ -580,6 +580,7 @@
     */
       typedef struct _u3_opts {
         c3_c*   arv_c;                      //  -A, initial sync from
+        c3_c*   dns_c;                      //  -H, ames bootstrap domain
         c3_c*   gen_c;                      //  -G, czar generator
         c3_c*   nam_c;                      //  -n, unix hostname
         c3_c*   pil_c;                      //  -B, bootstrap from

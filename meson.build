@@ -226,7 +226,17 @@ jets_g_src = [
 jets_src = [
 'jets/tree.c'
 ]
-noun_src = ['noun/allocate.c',
+
+jets_all_src = [
+  jets_a_src, jets_b_src,
+  jets_c_src, jets_d_src,
+  jets_e_src, jets_e_ed_src,
+  jets_f_src, jets_f_ut_src,
+  jets_z_src, jets_z_ut_src,
+  jets_g_src, jets_src]
+
+noun_src = [
+  'noun/allocate.c',
   'noun/events.c',
   'noun/hashtable.c',
   'noun/imprison.c',
@@ -237,14 +247,15 @@ noun_src = ['noun/allocate.c',
   'noun/trace.c',
   'noun/vortex.c',
   'noun/xtract.c',
-  'noun/zave.c']
+  'noun/zave.c'
+]
 
-vere_src = ['vere/ames.c',
+vere_sans_main = [
+  'vere/ames.c',
   'vere/behn.c',
   'vere/cttp.c',
   'vere/http.c',
   'vere/loop.c',
-  'vere/main.c',
   'vere/raft.c',
   'vere/reck.c',
   'vere/save.c',
@@ -252,16 +263,12 @@ vere_src = ['vere/ames.c',
   'vere/term.c',
   'vere/time.c',
   'vere/unix.c',
-  'vere/walk.c']
+  'vere/walk.c'
+]
 
-src_list = [
-vere_src, noun_src,
-jets_a_src, jets_b_src,
-jets_c_src, jets_d_src,
-jets_e_src, jets_e_ed_src, 
-jets_f_src, jets_f_ut_src,
-jets_z_src, jets_z_ut_src,
-jets_g_src, jets_src]
+vere_src = vere_sans_main + [ 'vere/main.c' ]
+
+src_list = [vere_src, noun_src, jets_all_src]
 
 sources = []
 foreach s : src_list
@@ -331,7 +338,7 @@ configure_file(input : 'include/config.h.in',
 # We expect these libs to supplied with the distribution
 curl_dep = dependency('libcurl', version: '>=7.35.0')
 
-if osdet == 'darwin'
+if osdet == 'darwin' and not get_option('nix')
   libcrypto = meson.get_compiler('c').find_library('crypto', dirs: [ '/usr/local/opt/openssl/lib/' ])
   libssl = meson.get_compiler('c').find_library('ssl', dirs: [ '/usr/local/opt/openssl/lib/' ])
   openssl_dep = declare_dependency(dependencies: [libcrypto, libssl], include_directories: include_directories('/usr/local/opt/openssl/include'))
@@ -381,3 +388,50 @@ dependencies: [openssl_dep,
                softfloat3_dep,
                libsni_dep] + os_deps,
 install: true)
+
+# XX shrink this list
+test_sources = noun_src + jets_all_src + vere_sans_main
+
+test_hashtable = executable('test-hashtable',
+sources : test_sources + ['tests/hashtable_tests.c'],
+include_directories : incdir,
+c_args : os_c_flags,
+link_args: os_link_flags,
+dependencies: [openssl_dep,
+               curl_dep,
+               libuv_dep,
+               libh2o_dep,
+               cmark_dep,
+               gmp_dep,
+               sigsegv_dep,
+               urbitscrypt_dep,
+               ed25519_dep,
+               murmur3_dep,
+               softfloat3_dep,
+               libsni_dep] + os_deps,
+install: false)
+
+test('test-hashtable', test_hashtable)
+
+test_mem_sources = noun_src + jets_all_src + vere_sans_main + ['tests/test.c']
+
+test_mem = executable('test-mem',
+sources : test_sources + ['tests/test.c'],
+include_directories : incdir,
+c_args : os_c_flags,
+link_args: os_link_flags,
+dependencies: [openssl_dep,
+               curl_dep,
+               libuv_dep,
+               libh2o_dep,
+               cmark_dep,
+               gmp_dep,
+               sigsegv_dep,
+               urbitscrypt_dep,
+               ed25519_dep,
+               murmur3_dep,
+               softfloat3_dep,
+               libsni_dep] + os_deps,
+install: false)
+
+test('test-mem', test_mem, should_fail: true)

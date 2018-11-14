@@ -1186,15 +1186,19 @@ u3_term_io_hija(void)
     else {
       if ( c3n == u3_Host.ops_u.dem ) {
         if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->bak_u) ) {
+          perror("hija-tcsetattr-1");
           c3_assert(!"hija-tcsetattr");
         }
         if ( -1 == fcntl(1, F_SETFL, uty_u->cug_i) ) {
+          perror("hija-fcntl-1");
           c3_assert(!"hija-fcntl");
         }
         if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->bak_u) ) {
+          perror("hija-tcsetattr-0");
           c3_assert(!"hija-tcsetattr");
         }
         if ( -1 == fcntl(0, F_SETFL, uty_u->cug_i) ) {
+          perror("hija-fcntl-0");
           c3_assert(!"hija-fcntl");
         }
         write(uty_u->fid_i, "\r", 1);
@@ -1227,15 +1231,19 @@ u3_term_io_loja(int x)
       }
       else {
         if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->raw_u) ) {
+          perror("loja-tcsetattr-1");
           c3_assert(!"loja-tcsetattr");
         }
         if ( -1 == fcntl(1, F_SETFL, uty_u->nob_i) ) {
+          perror("hija-fcntl-1");
           c3_assert(!"loja-fcntl");
         }
         if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->raw_u) ) {
+          perror("loja-tcsetattr-0");
           c3_assert(!"loja-tcsetattr");
         }
         if ( -1 == fcntl(0, F_SETFL, uty_u->nob_i) ) {
+          perror("hija-fcntl-0");
           c3_assert(!"loja-fcntl");
         }
         _term_it_refresh_line(uty_u);
