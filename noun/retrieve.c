@@ -60,12 +60,14 @@ _frag_deep(c3_w a_w, u3_noun b)
 
 /* u3r_at(): Return fragment (a) of (b), or u3_none if not applicable.
 **
-** - If this is a direct atom, Use `_frag_word()`.
-** - Then, if this still isn't an indirect atom, return `u3_none`.
-** - Then, iterate over the words of `au->buf_w` in reverse order,
-**   calling `_frag_word` on the first and `_frag_deep` on the rest.
-**   (big atoms are stored as an array of words, ordered from
-**   least-significant to most).
+** We need to fragment on each bit of `b` in order of most-significant
+** to least. If this is a direct atom, then we can just use
+** `_frag_word()`, otherwise, we need to iterate over the words in
+** the bigint buffer (which is ordered least-significant-word-first).
+**
+** When processing bigints, we call `_frag_word` on the most-significant
+** word (because it might have insignificant bits), but call
+** `_frag_deep` on the rest of the words (all their bits are significant).
 **
 */
 u3_weak
@@ -81,11 +83,13 @@ u3r_at(u3_atom a, u3_noun b)
     return u3_none;
   }
 
+  // direct atom
   if ( _(u3a_is_cat(a)) ) {
     u3t_off(far_o);
     return _frag_word(a, b);
   }
 
+  // still not an indirect atom -- caller error
   if ( c3y != u3a_is_pug(a) ) {
     u3t_off(far_o);
     return u3_none;
@@ -94,7 +98,9 @@ u3r_at(u3_atom a, u3_noun b)
   u3a_atom* a_u = u3a_to_ptr(a);
   c3_w len_w    = a_u->len_w;
 
+  // most-significant word
   b = _frag_word(a_u->buf_w[len_w - 1], b);
+
   len_w -= 1;
 
   if ( u3_none == b ) {
@@ -102,6 +108,7 @@ u3r_at(u3_atom a, u3_noun b)
     return b;
   }
 
+  // remaining words
   while ( len_w ) {
     b = _frag_deep(a_u->buf_w[len_w - 1], b);
 

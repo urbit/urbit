@@ -2140,7 +2140,6 @@ _proxy_ward_free(uv_handle_t* han_u)
   u3_ward* rev_u = han_u->data;
 
   u3z(rev_u->sip);
-  _proxy_ward_unlink(rev_u);
   free(rev_u->non_u.base);
   free(rev_u);
 }
@@ -2160,6 +2159,8 @@ _proxy_ward_close_timer(uv_handle_t* han_u)
 static void
 _proxy_ward_close(u3_ward* rev_u)
 {
+  _proxy_ward_unlink(rev_u);
+
   while ( 0 != rev_u->won_u ) {
     _proxy_wcon_close(rev_u->won_u);
     rev_u->won_u = rev_u->won_u->nex_u;
