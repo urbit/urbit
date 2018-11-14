@@ -1,17 +1,37 @@
 ::
+::  there's a small state machine here that goes like this (happy path):
+::  =/  wen  ~
+::  apex
+::  ->  [if =(~ wen)]
+::    ->  apex
+::      [else]
+::    ->  wen=`(add now ~s10)
+::    ->  send-next-batch
+::        [n times]
+::      ->  eth-send-raw-transaction
+::      ->  sigh-send
+::    ->  wait 30s in behn
+::      ->  wake-see
+::          [n times]
+::        ->  wen=~
+::        ->  eth-get-transaction-receipt
+::        ->  sigh-see
+::        ->  apex
+::
 /+  ceremony
 ::
 |%
 ++  state
   $:  txs=(list @ux)
       see=(set @ux)
-      wen=@da
+      wen=(unit @da)
   ==
 ::
 ++  move  (pair bone card)
 ++  card
   $%  [%hiss wire ~ mark %hiss hiss:eyre]
       [%info wire ship desk nori:clay]
+      [%rest wire @da]
       [%wait wire @da]
   ==
 --
@@ -19,9 +39,13 @@
 |_  [bol=bowl:gall state]
 ::
 ++  this  .
+++  pretty-see  (turn (sort (turn ~(tap in see) mug) lth) @p)
 ::
 ++  prep
   |=  old=(unit *)
+  ?:  ?=([~ * * ~ @da] old)
+    ~&  [%cancelling +>+>.old]
+    [[ost.bol %rest /see +>+>.old]~ ..prep]
   [~ ..prep]
 ::
 ::  usage:
@@ -68,7 +92,7 @@
     %+  turn  tox
     (cork trip tape-to-ux:ceremony)
   ~&  [(lent txs) 'loaded txs']
-  send-next-batch
+  apex
 ::
 ++  write-file
   |=  [pax=path tox=(list cord)]
@@ -107,8 +131,8 @@
       :~  =>  (need (de-purl:html 'http://localhost:8545'))
           geth+.(p.p |)
         ::
-          ::  =>  (need (de-purl:html 'http://localhost:8555'))
-          ::  parity+.(p.p |)
+          =>  (need (de-purl:html 'http://localhost:8555'))
+          parity+.(p.p |)
       ==
     :_  ~
     =>  (need (de-purl:html 'http://localhost:8545'))
@@ -119,38 +143,41 @@
   ^-  [(list move) _this]
   ?:  =(0 (lent txs))
     ~&  'all sent!'
-    [~ this(txs ~, see ~, wen `@`0)]
+    [~ this(txs ~, see ~, wen ~)]
+  ::  ~&  send-next-batch=pretty-see
   =/  new-count  (sub 500 ~(wyt in see))
+  ?:  =(0 new-count)
+    ~&  %no-new-txs-yet
+    `this
   :_  this(txs (slag new-count txs))
   ~&  ['remaining txs: ' (lent txs)]
   ~&  ['sending txs...' new-count]
   %^  batch-requests  /send  &
   %+  turn  (scag new-count txs)
   |=  tx=@ux
-  :-  `(crip 'id-' (scot %ux (end 2 10 tx)) ~)
+  :-  `(crip 'id-' (scot %ux (end 3 10 tx)) ~)
   [%eth-send-raw-transaction tx]
 ::
 ++  sigh-json-rpc-response-send
   |=  [wir=wire res=response:rpc:jstd]
   ^-  [(list move) _this]
-  ?.  ?=([%geth *] wir)
-    ::  ~&  [%forget-parity wir res]
+  ?:  ?=(%fail -.res)
+    ~&  %send-failed
     `this
   ?>  ?=(%batch -.res)
-  =/  saw  ?=(~ see)
+  ::  ~&  sigh-send-a=pretty-see
   =.  see
-    %-  ~(gas in see)
+    %-  ~(uni in see)
+    %-  silt
+    ^-  (list @ux)
     %+  murn  bas.res
     |=  r=response:rpc:jstd
     ^-  (unit @ux)
     ?:  ?=(%error -.r)
-      ?:  =('Known transaction' (end 3 17 message.r))
-        ~&  %sent-a-known-transaction--skipping-cap
-        ~
-      ?:  =('known transaction' (end 3 17 message.r))
-        ~&  [%sent-a-known-transaction--skipping wir r]
-        ~
-      ?:  =('Transaction with the same ' (end 3 26 message.r))
+      ?:  ?|  =('known transaction' (end 3 17 message.r))
+              =('Known transaction' (end 3 17 message.r))
+              =('Transaction with the same ' (end 3 26 message.r))
+          ==
         ~&  [%sent-a-known-transaction--skipping wir r]
         ~
       ?:  =('Nonce too low' message.r)
@@ -163,41 +190,54 @@
     :-  ~
     %-  tape-to-ux:ceremony
     (sa:dejs:format res.r)
-  ?.  saw
-    `this
-  (wake-see ~ ~)
+  ::  ~&  sigh-send-b=pretty-see
+  `this
 ::
-++  kick-timer
+++  apex
   ^-  [(list move) _this]
   ~&  :_  ~(wyt in see)
       'waiting for transaction confirms... '
-  ?:  (gth wen now.bol)  [~ this]
-  =.  wen  (add now.bol ~s30)  ::TODO  more sane/polite value
-  [[ost.bol %wait /see wen]~ this]
+  ?.  =(~ wen)  [~ this]
+  =.  wen  `(add now.bol ~s10)
+  ::  ~&  apex=[wen pretty-see]
+  =^  moves  this  send-next-batch
+  [[[ost.bol %wait /see (need wen)] moves] this]
 ::
 ++  wake-see
   |=  [wir=wire ~]
   ^-  [(list move) _this]
-  =/  s  ~(tap in see)
-  =/  extra  (slag 50 s)
-  =/  check  (scag 50 s)
-  :_  this(see (silt extra))
-  %^  batch-requests  /see  |
-  %+  turn  check
+  =.  wen  ~
+  ::  ~&  wake-see=[wen pretty-see]
+  ?:  =(~ see)
+    apex
+  :_  this
+  %^  batch-requests  /see  &
+  %+  turn  ~(tap in see)
   |=  txh=@ux
-  :-  `(crip 'see-' '0' 'x' ((x-co:co 64) txh))
+  :-  `(crip 'see-0x' ((x-co:co 64) txh))
   [%eth-get-transaction-receipt txh]
 ::
 ++  sigh-json-rpc-response-see
   |=  [wir=wire res=response:rpc:jstd]
   ^-  [(list move) _this]
+  ?:  ?|  ?=(%error -.res)
+          ?=(%fail -.res)
+      ==
+    ~&  [%bad-rpc-response--kicking res]
+    apex
+    ::  `this
   ?>  ?=(%batch -.res)
+  ?:  =(~ see)
+    apex
   ?:  =(0 (lent bas.res))
     ::TODO  node lost our txs?
-    ~|  %txs-lost-tmp
-    !!
+    ~&  [%txs-lost-tmp wir '!!']
+    apex
+  ::  ~&  sigh-see-a=pretty-see
   =.  see
-    %-  ~(gas in see)
+    %-  ~(dif in see)
+    %-  silt
+    ^-  (list @ux)
     %+  murn  bas.res
     |=  r=response:rpc:jstd
     ^-  (unit @ux)
@@ -205,30 +245,31 @@
     ?<  ?=(%fail -.r)
     ~|  [id.r res]
     =+  txh=(tape-to-ux:ceremony (trip (rsh 3 4 id.r)))
-    ~&  `@ux`txh
-    =*  done  ~
-    =*  wait  `txh
+    ~&  see-tx=[(@p (mug txh)) `@ux`txh]
+    =*  done  `txh
+    =*  wait  ~
     ?:  ?=(%error -.r)
       ~&  :-  'receipt fetch error'
           [code.r message.r]
       wait
     ?~  res.r  wait
     ?>  ?=(%o -.res.r)
-    ?:  .=  1
-        %-  tape-to-ux:ceremony
-        %-  sa:dejs:format
-        (~(got by p.res.r) 'status')
+    =/  status
+      %-  tape-to-ux:ceremony
+      %-  sa:dejs:format
+      (~(got by p.res.r) 'status')
+    ?:  =(1 status)
       done
+    ~&  [%see-bad-status status]
     wait
-  =^  moves-a  this  send-next-batch
-  =^  moves-b  this  kick-timer
-  [(weld moves-a moves-b) this]
+  ::  ~&  sigh-see-b=pretty-see
+  apex
 ::
 ++  sigh-tang
   |=  [wir=wire err=tang]
-  ~&  %sigh-tang
+  ~&  [%sigh-tang wir]
   ~&  (slog err)
-  ?:  (gth wen now.bol)  [~ this]
-  =.  wen  (add now.bol ~s30)  ::TODO  more sane/polite value
-  [[ost.bol %wait /see wen]~ this]
+  ?:  =(~ wen)  [~ this]
+  =.  wen  `(add now.bol ~s10)
+  [[ost.bol %wait /see (need wen)]~ this]
 --
