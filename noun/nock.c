@@ -36,16 +36,19 @@ _n_mush_in(u3_noun val)
     u3_noun h_val = u3h(val);
     u3_noun ite;
 
-    if ( c3n == u3ud(h_val) ) {
-      ite = u3nc(c3__leaf, u3_nul);
-    } else {
+    if ( c3n == u3ud(h_val) ) { // cell
+      ite = u3nc(c3__leaf, u3_nul); // empty string
+    } else { // atom
       ite = u3nc(c3__leaf, u3qe_trip(h_val));
     }
+
     return u3nc(ite, _n_mush_in(u3t(val)));
   }
 }
 
 /* _n_mush(): tank from failed path request.
+ *
+ * `val`: A hoon `path` -- a list of cords.
 */
 static u3_noun
 _n_mush(u3_noun val)
@@ -55,20 +58,20 @@ _n_mush(u3_noun val)
   pro = u3nt(c3__rose,
              u3nt(u3nc('/', u3_nul), u3nc('/', u3_nul), u3_nul),
              _n_mush_in(val));
+
   u3z(val);
   return pro;
 }
 
-#if 0
 // Retained for debugging purposes.
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 
 /* _n_hint(): process hint.
-
-   - zep: XX
-   - hod: XX
-   - bus: XX
-   - nex: XX
+**
+** - zep: Hint tag (small cord)
+** - hod: Hint param
+** - bus: Nock context
+** - nex: Formula to run next.
 */
 static u3_noun
 _n_hint(u3_noun zep,
@@ -85,6 +88,7 @@ _n_hint(u3_noun zep,
       return _n_nock_on(bus, nex);
     }
 
+    // Run with [zep hod] pushed onto the trace stack.
     case c3__hunk:
     case c3__lose:
     case c3__mean:
@@ -436,7 +440,6 @@ _n_nock_on(u3_noun bus, u3_noun fol)
     }
   }
 }
-#endif
 
 /* These must match the order in the section marked OPCODE TABLE,
  * and several opcodes "overflow" (from byte to short index) to
