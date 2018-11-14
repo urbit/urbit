@@ -239,15 +239,15 @@ noun_src = [
   'noun/trace.c',
   'noun/vortex.c',
   'noun/xtract.c',
-  'noun/zave.c']
+  'noun/zave.c'
+]
 
-vere_src = [
+vere_sans_main = [
   'vere/ames.c',
   'vere/behn.c',
   'vere/cttp.c',
   'vere/http.c',
   'vere/loop.c',
-  'vere/main.c',
   'vere/raft.c',
   'vere/reck.c',
   'vere/save.c',
@@ -255,7 +255,10 @@ vere_src = [
   'vere/term.c',
   'vere/time.c',
   'vere/unix.c',
-  'vere/walk.c']
+  'vere/walk.c'
+]
+
+vere_src = vere_sans_main + [ 'vere/main.c' ]
 
 src_list = [vere_src, noun_src, jets_all_src]
 
@@ -373,21 +376,6 @@ dependencies: [openssl_dep,
                softfloat3_dep,
                libsni_dep] + os_deps,
 install: true)
-
-vere_sans_main = [
-  'vere/ames.c',
-  'vere/behn.c',
-  'vere/cttp.c',
-  'vere/http.c',
-  'vere/loop.c',
-  'vere/raft.c',
-  'vere/reck.c',
-  'vere/save.c',
-  'vere/sist.c',
-  'vere/term.c',
-  'vere/time.c',
-  'vere/unix.c',
-  'vere/walk.c']
 
 # XX shrink this list
 test_sources = noun_src + jets_all_src + vere_sans_main
