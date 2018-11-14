@@ -227,7 +227,8 @@ jets_all_src = [
   jets_z_src, jets_z_ut_src,
   jets_g_src, jets_src]
 
-noun_src = ['noun/allocate.c',
+noun_src = [
+  'noun/allocate.c',
   'noun/events.c',
   'noun/hashtable.c',
   'noun/imprison.c',
@@ -240,7 +241,8 @@ noun_src = ['noun/allocate.c',
   'noun/xtract.c',
   'noun/zave.c']
 
-vere_src = ['vere/ames.c',
+vere_src = [
+  'vere/ames.c',
   'vere/behn.c',
   'vere/cttp.c',
   'vere/http.c',
@@ -372,7 +374,8 @@ dependencies: [openssl_dep,
                libsni_dep] + os_deps,
 install: true)
 
-vere_sans_main = ['vere/ames.c',
+vere_sans_main = [
+  'vere/ames.c',
   'vere/behn.c',
   'vere/cttp.c',
   'vere/http.c',
