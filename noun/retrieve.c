@@ -82,6 +82,11 @@ u3r_at(u3_atom a, u3_noun b)
       b = _frag_word(a_u->buf_w[len_w - 1], b);
       len_w -= 1;
 
+      if ( u3_none == b ) {
+        u3t_off(far_o);
+        return b;
+      }
+
       while ( len_w ) {
         b = _frag_deep(a_u->buf_w[len_w - 1], b);
 
