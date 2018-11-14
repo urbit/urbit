@@ -3,11 +3,11 @@
 /+  *test
 |%
 ::
-++  test-hang
+++  test-addr-no-hang
   %-  expect-fail
     |.  &33:~[[%leaf p="syntax error"] [%leaf p="\{1 11}"]]
 ::
-++  test-vere-bail
+++  test-addr-no-bail
   %-  expect-fail
     |.  &33:~
 --
