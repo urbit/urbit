@@ -1,11 +1,10 @@
 let
 
-  # In order to get the hash of another tarball, run: `nix-prefetch-url --unpack <url>`
   pkgs =
-    builtins.fetchTarball {
-      name = "nixpkgs-2018-10-07";
-      url = https://github.com/nixos/nixpkgs/archive/865cbd380d2568806c6e46c9a4bc746af7ec13c9.tar.gz;
-      sha256 = "0r3gj1rci2ag6k8g5wcz1m4l6brvzgbfz92kpl74mrh7kjdy1m3p";
+    builtins.fetchGit {
+      name = "nixpkgs-2018-11-13";
+      url = https://github.com/nixos/nixpkgs/;
+      rev = "695a3d4254545968fc3015142c5299c0da5ca0a9";
     };
 
 in

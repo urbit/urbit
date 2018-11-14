@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 mkdir ./build &> /dev/null
-meson . ./build --buildtype=release -Dgc=true -Dprof=true "$@"
+meson . ./build --buildtype=debugoptimized -Dgc=true -Dprof=true "$@"
 ninja -C build

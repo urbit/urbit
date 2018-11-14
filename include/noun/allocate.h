@@ -176,10 +176,14 @@
                                       c3_wiseof(u3a_box)  ) )
     /* Inside a noun.
     **
-    ** u3a_is_cat: Is the high bit unset?
-    ** u3a_is_dog: Is the high bit set?
-    ** u3a_is_pug: High bit is set, but second-highest bit is zero.
-    ** u3a_is_pum: Highest two bits are set.
+    ** u3a_is_cat: Is the high bit unset? A direct atom.
+    ** u3a_is_dog: Is the high bit set? Not a direct atom.
+    ** u3a_is_pug: High bit is set, but second-highest bit is zero?
+    **             An indirect atom.
+    ** u3a_is_pom: Highest two bits are set? A cell.
+    ** u3a_to_off: XX
+    ** u3a_to_ptr: XX
+    ** u3a_is_atom: One of the highest two bits is zero.
     **
     */
 #     define u3a_is_cat(som)    (((som) >> 31) ? c3n : c3y)
@@ -193,8 +197,8 @@
 #     define u3a_to_pug(off)    (off | 0x80000000)
 #     define u3a_to_pom(off)    (off | 0xc0000000)
 
-#     define u3a_is_atom(som)    c3o(u3a_is_cat(som), \
-                                         u3a_is_pug(som))
+#     define u3a_is_atom(som)    c3o(u3a_is_cat(som), u3a_is_pug(som))
+
 #     define u3a_is_cell(som)    u3a_is_pom(som)
 #     define u3a_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u3a_outa(dog_w))
 

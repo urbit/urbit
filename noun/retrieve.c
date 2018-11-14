@@ -29,11 +29,15 @@ _frag_word(c3_w a_w, u3_noun b)
         dep_w--;
       }
     }
+
     return b;
   }
 }
 
 /* _frag_deep(): fast fragment/branch for deep words.
+**
+** This is the same as `_frag_word()` but treats all 32 bits as
+** significant.
 */
 static u3_weak
 _frag_deep(c3_w a_w, u3_noun b)
@@ -54,9 +58,15 @@ _frag_deep(c3_w a_w, u3_noun b)
   return b;
 }
 
-/* u3r_at():
+/* u3r_at(): Return fragment (a) of (b), or u3_none if not applicable.
 **
-**   Return fragment (a) of (b), or u3_none if not applicable.
+** - If this is a direct atom, Use `_frag_word()`.
+** - Then, if this still isn't an indirect atom, return `u3_none`.
+** - Then, iterate over the words of `au->buf_w` in reverse order,
+**   calling `_frag_word` on the first and `_frag_deep` on the rest.
+**   (big atoms are stored as an array of words, ordered from
+**   least-significant to most).
+**
 */
 u3_weak
 u3r_at(u3_atom a, u3_noun b)
@@ -75,34 +85,36 @@ u3r_at(u3_atom a, u3_noun b)
     u3t_off(far_o);
     return _frag_word(a, b);
   }
-  else {
-    if ( !_(u3a_is_pug(a)) ) {
+
+  if ( c3y != u3a_is_pug(a) ) {
+    u3t_off(far_o);
+    return u3_none;
+  }
+
+  u3a_atom* a_u = u3a_to_ptr(a);
+  c3_w len_w    = a_u->len_w;
+
+  b = _frag_word(a_u->buf_w[len_w - 1], b);
+  len_w -= 1;
+
+  if ( u3_none == b ) {
+    u3t_off(far_o);
+    return b;
+  }
+
+  while ( len_w ) {
+    b = _frag_deep(a_u->buf_w[len_w - 1], b);
+
+    if ( u3_none == b ) {
       u3t_off(far_o);
-      return u3_none;
-    }
-    else {
-      u3a_atom* a_u = u3a_to_ptr(a);
-      c3_w len_w      = a_u->len_w;
-
-      b = _frag_word(a_u->buf_w[len_w - 1], b);
-      len_w -= 1;
-
-      while ( len_w ) {
-        b = _frag_deep(a_u->buf_w[len_w - 1], b);
-
-        if ( u3_none == b ) {
-          u3t_off(far_o);
-
-          return b;
-        } else {
-          len_w--;
-        }
-      }
-      u3t_off(far_o);
-
       return b;
     }
+
+    len_w--;
   }
+
+  u3t_off(far_o);
+  return b;
 }
 
 /* u3r_mean():

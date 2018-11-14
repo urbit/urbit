@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+./build/urbit \
+  -S -P -g \
+  -w datrul-bolres \
+  -G '0w5hA.kGW6P.e-73i.2-6wm.lxByV.VMDgS.TZH0J.0Zm8H.hdFIw.-LVWP.TDJYJ.LCnWu.Ax4XQ.5RSvM.RVgGy.B6X~1.hHpUg.hzk8g.8w0sr.080I1' \
+  -u https://bootstrap.urbit.org/git-ceb314cef8.pill \
+  -H test.urbit.org \
+  ~/ships/datrul-bolres \
