@@ -34,7 +34,7 @@ u3_walk_load(c3_c* pas_c)
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
     fprintf(stderr, "%s: %s\r\n", pas_c, strerror(errno));
-    return u3_cm_bail(c3__fail);
+    return u3m_bail(c3__fail);
   }
   fln_w = buf_b.st_size;
   pad_y = c3_malloc(buf_b.st_size);
@@ -44,10 +44,10 @@ u3_walk_load(c3_c* pas_c)
 
   if ( fln_w != red_w ) {
     free(pad_y);
-    return u3_cm_bail(c3__fail);
+    return u3m_bail(c3__fail);
   }
   else {
-    u3_noun pad = u3_ci_bytes(fln_w, (c3_y *)pad_y);
+    u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
     free(pad_y);
 
     return pad;
@@ -59,14 +59,14 @@ u3_walk_load(c3_c* pas_c)
 static c3_w*
 _test_walloc(c3_w siz_w)
 {
-  c3_w *ptr_w = u3_ca_walloc(siz_w);
+  c3_w *ptr_w = u3a_walloc(siz_w);
   c3_w i_w;
 
   c3_assert(siz_w >= 1);
   *ptr_w = siz_w;
 
   for ( i_w = 1; i_w < siz_w; i_w++ ) {
-    ptr_w[i_w] = u3_cr_mug((0xffff & (c3_p)(ptr_w)) + i_w);
+    ptr_w[i_w] = u3r_mug((0xffff & (c3_p)(ptr_w)) + i_w);
   }
   return ptr_w;
 }
@@ -77,9 +77,9 @@ _test_free(c3_w* ptr_w)
   c3_w i_w, siz_w = *ptr_w;
 
   for ( i_w = 1; i_w < siz_w; i_w++ ) {
-    c3_assert(ptr_w[i_w] == u3_cr_mug((0xffff & (c3_p)(ptr_w)) + i_w));
+    c3_assert(ptr_w[i_w] == u3r_mug((0xffff & (c3_p)(ptr_w)) + i_w));
   }
-  u3_ca_free(ptr_w);
+  u3a_free(ptr_w);
 }
 
 #define NUM 16384
@@ -94,7 +94,7 @@ test(void)
   c3_w  i_w;
 
   for ( i_w = 0; i_w < NUM; i_w++ ) {
-    c3_w siz_w = c3_max(1, u3_cr_mug(i_w) & 0xff);
+    c3_w siz_w = c3_max(1, u3r_mug(i_w) & 0xff);
 
     one_w[i_w] = _test_walloc(siz_w);
     two_w[i_w] = _test_walloc(siz_w);
@@ -106,7 +106,7 @@ test(void)
     _road_sane();
   }
   for ( i_w = 0; i_w < NUM; i_w++ ) {
-    c3_w siz_w = c3_max(1, u3_cr_mug(i_w + 1) & 0xff);
+    c3_w siz_w = c3_max(1, u3r_mug(i_w + 1) & 0xff);
 
     two_w[i_w] = _test_walloc(siz_w);
     _road_sane();
@@ -117,7 +117,7 @@ test(void)
     _road_sane();
   }
   for ( i_w = 0; i_w < NUM; i_w++ ) {
-    c3_w siz_w = c3_max(1, u3_cr_mug(i_w + 2) & 0xff);
+    c3_w siz_w = c3_max(1, u3r_mug(i_w + 2) & 0xff);
 
     one_w[i_w] = _test_walloc(siz_w);
     _road_sane();
@@ -140,21 +140,21 @@ test(void)
 static void
 _test_hash(void)
 {
-  u3_cm_dump();
+  // u3m_dump();
   {
-    u3_ch_root* har_u = u3_ch_new();
+    u3h_root* har_u = u3h_new();
     c3_w        i_w;
     c3_w        max_w = (1 << 20);
 
     for ( i_w = 0; i_w < max_w; i_w++ ) {
       u3_noun key = u3nc(0, i_w);
 
-      u3_ch_put(har_u, key, (i_w + 1));
+      u3h_put(har_u, key, (i_w + 1));
       u3z(key);
     }
     for ( i_w = 0; i_w < max_w; i_w++ ) {
       u3_noun key = u3nc(0, i_w);
-      u3_noun val = u3_ch_get(har_u, key);
+      u3_noun val = u3h_get(har_u, key);
 
       if ( val != (i_w + 1) ) {
         if ( u3_none == val ) {
@@ -165,9 +165,9 @@ _test_hash(void)
       }
       u3z(key);
     }
-    u3_ch_free(har_u);
+    u3h_free(har_u);
   }
-  u3_cm_dump();
+  // u3m_dump();
 }
 #endif
 
@@ -175,25 +175,25 @@ _test_hash(void)
 static void
 _test_jam(void)
 {
-  u3_cm_dump();
+  // u3m_dump();
   {
     u3_noun pil = u3_walk_load("urb/urbit.pill");
     u3_noun cue, jam;
 
-    printf("cueing pill - %d bytes\n", u3_cr_met(3, pil));
-    cue = u3_cke_cue(pil);
-    printf("cued - mug %x\n", u3_cr_mug(cue));
+    printf("cueing pill - %d bytes\n", u3r_met(3, pil));
+    cue = u3ke_cue(pil);
+    printf("cued - mug %x\n", u3r_mug(cue));
 
 #if 1
-    jam = u3_cke_jam(cue);
-    printf("jammed - %d bytes\n", u3_cr_met(3, jam));
-    cue = u3_cke_cue(jam);
-    printf("cued - mug %x\n", u3_cr_mug(cue));
+    jam = u3ke_jam(cue);
+    printf("jammed - %d bytes\n", u3r_met(3, jam));
+    cue = u3ke_cue(jam);
+    printf("cued - mug %x\n", u3r_mug(cue));
 #endif
 
     u3z(cue);
   }
-  u3_cm_dump();
+  // u3m_dump();
 }
 #endif
 
@@ -201,45 +201,45 @@ static void
 _test_leap(void)
 {
 #if 1
-  u3_cm_dump();
+  // u3m_dump();
   {
     u3_noun pil; 
     u3_noun cue, jam;
-    c3_w gof_w = u3_cm_golf();
+    c3_w gof_w = u3m_golf();
 
     pil = u3_walk_load("urb/urbit.pill"); 
-    u3_cm_leap(0);
-    printf("cueing pill - %d bytes\n", u3_cr_met(3, pil));
-    cue = u3_cke_cue(pil);
-    printf("cued - %p, mug %x\n", u3_co_to_ptr(cue), u3_cr_mug(cue));
-    u3_cm_fall();
+    u3m_leap(0);
+    printf("cueing pill - %d bytes\n", u3r_met(3, pil));
+    cue = u3ke_cue(pil);
+    printf("cued - %p, mug %x\n", u3a_to_ptr(cue), u3r_mug(cue));
+    u3m_fall();
 
-    cue = u3_ca_take(cue);
-    printf("taken - %p, mug %x\n", u3_co_to_ptr(cue), u3_cr_mug(cue));
-    u3_cm_flog(gof_w);
+    cue = u3a_take(cue);
+    printf("taken - %p, mug %x\n", u3a_to_ptr(cue), u3r_mug(cue));
+    u3m_flog(gof_w);
     u3z(pil);
 
 #if 1
-    jam = u3_cke_jam(cue);
-    printf("jammed - %d bytes\n", u3_cr_met(3, jam));
-    cue = u3_cke_cue(jam);
-    printf("cued - mug %x\n", u3_cr_mug(cue));
+    jam = u3ke_jam(cue);
+    printf("jammed - %d bytes\n", u3r_met(3, jam));
+    cue = u3ke_cue(jam);
+    printf("cued - mug %x\n", u3r_mug(cue));
 #endif
 
     u3z(cue);
   }
-  u3_cm_dump();
+  // u3m_dump();
 #endif
 }
 
 static void
 _test_test(void)
 {
-  u3_noun fol = u3_cke_cue(u3_walk_load("pill/west.pill"));
+  u3_noun fol = u3ke_cue(u3_walk_load("pill/west.pill"));
   u3_noun val; 
  
-  printf("test_test: formula mug %x\n", u3_cr_mug(fol));
-  val = u3_cn_nock_on(u3nc(42, 17), fol);
+  printf("test_test: formula mug %x\n", u3r_mug(fol));
+  val = u3n_nock_on(u3nc(42, 17), fol);
   printf("val %d\n", val);
   u3z(val);
 }
@@ -254,11 +254,11 @@ main(int argc, char *argv[])
   printf("hello, world: len %dMB\n", (1 << U3_OS_LoomBits) >> 18);
   // _test_words();
 
-  u3_ce_init(u3_no);
-  u3_cm_boot(u3_yes);
-  // u3_cj_boot();
+  u3m_init(c3n);
+  u3m_pave(c3y, c3n);
+  // u3j_boot();
 
-  // u3_cm_dump();
+  // u3m_dump();
 
   printf("booted.\n");
 
@@ -267,6 +267,7 @@ main(int argc, char *argv[])
     // _test_hash();
     // _test_jam();
   }
-  u3_cm_clear();
-  // u3_cm_dump();
+  // u3m_clear();
+
+  // u3m_dump();
 }
