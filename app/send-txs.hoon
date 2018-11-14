@@ -123,20 +123,16 @@
   (json-request:ethereum url jon)
 ::
 ++  batch-requests
-  |=  [wir=wire fan=? req=(list [(unit @t) request:ethe])]
+  |=  [wir=wire req=(list [(unit @t) request:ethe])]
   ^-  (list move)
   %^    fan-requests
       wir
-    ?:  fan
-      :~  =>  (need (de-purl:html 'http://localhost:8545'))
-          geth+.(p.p |)
-        ::
-          =>  (need (de-purl:html 'http://localhost:8555'))
-          parity+.(p.p |)
-      ==
-    :_  ~
-    =>  (need (de-purl:html 'http://localhost:8545'))
-    geth+.(p.p |)
+    :~  =>  (need (de-purl:html 'http://localhost:8545'))
+        geth+.(p.p |)
+      ::
+        =>  (need (de-purl:html 'http://localhost:8555'))
+        parity+.(p.p |)
+    ==
   a+(turn req request-to-json:ethereum)
 ::
 ++  send-next-batch
@@ -152,7 +148,7 @@
   :_  this(txs (slag new-count txs))
   ~&  ['remaining txs: ' (lent txs)]
   ~&  ['sending txs...' new-count]
-  %^  batch-requests  /send  &
+  %+  batch-requests  /send
   %+  turn  (scag new-count txs)
   |=  tx=@ux
   :-  `(crip 'id-' (scot %ux (end 3 10 tx)) ~)
@@ -211,7 +207,7 @@
   ?:  =(~ see)
     apex
   :_  this
-  %^  batch-requests  /see  &
+  %+  batch-requests  /see
   %+  turn  ~(tap in see)
   |=  txh=@ux
   :-  `(crip 'see-0x' ((x-co:co 64) txh))
