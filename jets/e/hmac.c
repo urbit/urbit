@@ -38,7 +38,7 @@
     c3_w innpad[padwords], outpad[padwords];
     memset(innpad, 0x36, padwords * 4);
     memset(outpad, 0x5c, padwords * 4);
-    if (trail > 0) {
+    if ( trail > 0 ) {
       innpad[padwords-1] = 0x36363636 >> (8 * (4 - trail));
       outpad[padwords-1] = 0x5c5c5c5c >> (8 * (4 - trail));
     }
@@ -81,7 +81,8 @@
          (c3n == u3ud(dat)) )
     {
       return u3m_bail(c3__exit);
-    } else {
+    }
+    else {
       return u3qe_hmac(haj, boq, out, wik, key, wid, dat);
     }
   }

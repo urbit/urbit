@@ -14,7 +14,7 @@
     return (NULL != output);
   }
 
-  void argon2_dealloc(uint8_t* memory, size_t bytes)
+  void argon2_free(uint8_t* memory, size_t bytes)
   {
     u3a_free(memory);
   }
@@ -23,18 +23,18 @@
 */
 
   u3_noun
-  u3qe_argon2(// configuration params,
-              u3_atom out, u3_atom type, u3_atom version,
-              u3_atom threads, u3_atom mem_cost, u3_atom time_cost,
-              u3_atom wik, u3_atom key, u3_atom wix, u3_atom extra,
-              // input params
-              u3_atom wid, u3_atom dat, u3_atom wis, u3_atom sat)
+  u3qe_argon2( // configuration params,
+               u3_atom out, u3_atom type, u3_atom version,
+               u3_atom threads, u3_atom mem_cost, u3_atom time_cost,
+               u3_atom wik, u3_atom key, u3_atom wix, u3_atom extra,
+               // input params
+               u3_atom wid, u3_atom dat, u3_atom wis, u3_atom sat )
   {
-    c3_assert(_(u3a_is_cat(out)) && _(u3a_is_cat(type)) &&
-              _(u3a_is_cat(version)) && _(u3a_is_cat(threads)) &&
-              _(u3a_is_cat(mem_cost)) && _(u3a_is_cat(time_cost)) &&
-              _(u3a_is_cat(wik)) && _(u3a_is_cat(wix)) &&
-              _(u3a_is_cat(wid)) && _(u3a_is_cat(wis)));
+    c3_assert( _(u3a_is_cat(out)) && _(u3a_is_cat(type)) &&
+               _(u3a_is_cat(version)) && _(u3a_is_cat(threads)) &&
+               _(u3a_is_cat(mem_cost)) && _(u3a_is_cat(time_cost)) &&
+               _(u3a_is_cat(wik)) && _(u3a_is_cat(wix)) &&
+               _(u3a_is_cat(wid)) && _(u3a_is_cat(wis)) );
 
     // flip endianness for argon2
     key = u3qc_rev(3, wik, key);
@@ -65,13 +65,17 @@
       time_cost, mem_cost, threads, threads, // performance cost configuration
       version,             // algorithm version
       argon2_alloc,        // custom memory allocation function
-      argon2_dealloc,      // custom memory deallocation function
+      argon2_free,         // custom memory deallocation function
       ARGON2_DEFAULT_FLAGS // by default only internal memory is cleared
     };
 
     int argon_res;
-    switch(type)
-    {
+    switch ( type ) {
+      default:
+        fprintf(stderr, "\nunjetted argon2 variant %i\n", type);
+        u3m_bail(c3__exit);
+        break;
+      //
       case c3__d:
         argon_res = argon2d_ctx(&context);
         break;
@@ -87,14 +91,9 @@
       case c3__u:
         argon_res = argon2u_ctx(&context);
         break;
-      //
-      default:
-        fprintf(stderr, "\nunjetted argon2 variant %i\n", type);
-        u3m_bail(c3__exit);
     }
 
-    if(ARGON2_OK != argon_res)
-    {
+    if ( ARGON2_OK != argon_res ) {
       fprintf(stderr, "\nargon2 error: %s\n", argon2_error_message(argon_res));
       u3m_bail(c3__exit);
     }
@@ -137,7 +136,8 @@
        )
     {
       return u3m_bail(c3__exit);
-    } else {
+    }
+    else {
       return u3qe_argon2(out, type, version,
                          threads, mem_cost, time_cost,
                          wik, key, wix, extra,

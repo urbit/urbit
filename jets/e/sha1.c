@@ -3,7 +3,6 @@
 */
 #include "all.h"
 
-
 #if defined(U3_OS_osx)
 #include <CommonCrypto/CommonDigest.h>
 #else
@@ -14,8 +13,7 @@
 */
 
   u3_noun
-  u3qe_sha1(u3_atom wid,
-            u3_atom dat)
+  u3qe_sha1(u3_atom wid, u3_atom dat)
   {
     c3_assert(_(u3a_is_cat(wid)));
     dat = u3qc_rev(3, wid, dat);
@@ -54,7 +52,8 @@
          (c3n == u3ud(dat)) )
     {
       return u3m_bail(c3__exit);
-    } else {
+    }
+    else {
       return u3qe_sha1(wid, dat);
     }
   }
