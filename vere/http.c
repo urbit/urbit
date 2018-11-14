@@ -2109,6 +2109,16 @@ _proxy_ward_link(u3_pcon* con_u, u3_ward* rev_u)
 }
 
 /* _proxy_ward_unlink(): unlink ward from listener.
+**
+** proxy_ward_unlink(ward):
+**     if (ward.prev):
+**         ward.prev.next = ward.next
+**         ward.next.prev = ward.prev
+**     else:
+**       ward.connection.src.listener.reverse = ward.next
+**       if ward.next:
+**           ward.next.prev = None
+**
 */
 static void
 _proxy_ward_unlink(u3_ward* rev_u)
