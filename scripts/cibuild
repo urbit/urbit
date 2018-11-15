@@ -1,0 +1,10 @@
+meson . ./build --buildtype=debugoptimized -Dgc=true -Dprof=true -Dnix=true
+cd ./build
+ninja
+ninja test
+sudo ninja install
+cd ../.travis
+npm install
+ulimit -c unlimited -S
+npm run -s test
+bash print-core-backtrace.sh $?
