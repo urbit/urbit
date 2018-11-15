@@ -3,50 +3,48 @@
 */
 #include "all.h"
 
-/* u3z_find(): find in memo cache.  Arguments retained.
+/* u3z_find(): find in memo cache. Args retained.
 */
 u3_weak 
 u3z_find(c3_m fun, u3_noun one)
 {
   u3_noun key = u3nc(fun, u3k(one));
-  u3_noun val;
-
-  val = u3h_get(u3R->cax.har_p, key);
+  u3_noun val = u3h_get(u3R->cax.har_p, key);
   u3z(key);
   return val;
 }
+
+// Find in a pair in memo cache. Args retained
 u3_weak 
 u3z_find_2(c3_m fun, u3_noun one, u3_noun two)
 {
   u3_noun key = u3nt(fun, u3k(one), u3k(two));
-  u3_noun val;
-
-  val = u3h_get(u3R->cax.har_p, key);
+  u3_noun val = u3h_get(u3R->cax.har_p, key);
   u3z(key);
   return val;
 }
+
+// Find in a `trel` in memo cache. Args retained.
 u3_weak 
 u3z_find_3(c3_m fun, u3_noun one, u3_noun two, u3_noun tri)
 {
   u3_noun key = u3nq(fun, u3k(one), u3k(two), u3k(tri));
-  u3_noun val;
-
-  val = u3h_get(u3R->cax.har_p, key);
+  u3_noun val = u3h_get(u3R->cax.har_p, key);
   u3z(key);
   return val;
 }
+
+// Find in a `quad` in memo cache. Args retained.
 u3_weak 
 u3z_find_4(c3_m fun, u3_noun one, u3_noun two, u3_noun tri, u3_noun qua)
 {
   u3_noun key = u3nc(fun, u3nq(u3k(one), u3k(two), u3k(tri), u3k(qua)));
-  u3_noun val;
-
-  val = u3h_get(u3R->cax.har_p, key);
+  u3_noun val = u3h_get(u3R->cax.har_p, key);
   u3z(key);
   return val;
 }
 
-/* u3z_save*(): save in memo cache.
+/* u3z_save(): save in memo cache.
 */
 u3_noun 
 u3z_save(c3_m fun, u3_noun one, u3_noun val)

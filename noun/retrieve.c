@@ -475,6 +475,8 @@ u3r_mug_qual(u3_noun a,
 }
 
 /* _sang_one(): unify but leak old.
+**
+** XX What does this mean "leak old"?
 */
 static void
 _sang_one(u3_noun* a, u3_noun* b)
@@ -527,16 +529,19 @@ _sang_one(u3_noun* a, u3_noun* b)
   }
 }
 
+// XX ?
 #define SONG_NONE 0
 #define SONG_HEAD 1
 #define SONG_TAIL 2
 
+// XX ?
 typedef struct {
   c3_y     sat_y;
   u3_noun  a;
   u3_noun  b;
 } eqframe;
 
+// XX ?
 static inline eqframe*
 _eq_push(c3_ys mov, c3_ys off, u3_noun a, u3_noun b)
 {
@@ -777,6 +782,9 @@ _song_x_cape(c3_ys mov, c3_ys off,
 }
 
 /* _song_x(): yes if a and b are the same noun, use uni to unify
+**
+** - XX Does "same noun" mean structural equality or literally the
+**   same noun. I suspect that this is equality checking?
 */
 static c3_o
 _song_x(u3_noun a, u3_noun b, void (*uni)(u3_noun*, u3_noun*))
@@ -876,9 +884,25 @@ u3r_sang(u3_noun a, u3_noun b)
   return ret_o;
 }
 
-/* u3r_sing():
+/* u3r_sing(): Yes iff (a) and (b) are the same noun.
 **
-**   Yes iff (a) and (b) are the same noun.
+** If U3_MEMORY_DEBUG is disabled and this is a junior road, then
+** unify equal nouns as we compare them.
+**
+** We don't want to unify when we're debugging memory allocation,
+** since it makes it unclear which nouns came from where.
+**
+** XX "same noun" means structural equality?
+**
+** XX Why don't we unify if our road has no parent? Are equal nouns
+** guaranteed to be identical?
+**
+** - XX Is having no parent the same as not being in a junior road?
+**   Specifically, is this the same as the ( u3R != &u3H->rod_u ) test?
+**
+** XX The only difference between the cases is which callback to
+**    pass to `_song_x()`. Can we get rid of `u3r_sang()`?
+**
 */
 c3_o
 u3r_sing(u3_noun a, u3_noun b)
@@ -900,6 +924,8 @@ u3r_sing(u3_noun a, u3_noun b)
 }
 
 /* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.
+**
+** This is only used in the hashtable implementation.
 */
 c3_o
 u3r_sung(u3_noun a, u3_noun b)

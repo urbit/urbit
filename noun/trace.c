@@ -80,6 +80,24 @@ u3t_slog(u3_noun hod)
 }
 
 /* u3t_heck(): profile point.
+**
+** Records a profiling hit for hit-point `cog`.
+**
+** - This does nothing if we're on the home row. (XX: Why?)
+**
+** - We run the profiling logic in the home road. We do that by
+**   temporarily replacing `u3R` with `u3H->rod_u` before calling
+**   into Arvo.
+**
+**   Before we switch roads, we copy `cog` onto the c-stack with
+**   `alloca` and copy it onto the home road if we end up needing to.
+**   If we didn't do this, then we would end with a reference from
+**   the home road into a junior road.
+**
+** - If the profiling stack is empty, run `(doss ~)` to bunt a new
+**   one. otherwise, run `(pi-heck cog day)` to update the profiling
+**   data.
+**
 */
 void
 u3t_heck(u3_atom cog)
@@ -93,12 +111,11 @@ u3t_heck(u3_atom cog)
   u3r_bytes(0, len_w, (c3_y *)str_c, cog);
   str_c[len_w] = 0;
 
-  //  Profile sampling, because it allocates on the home road,
-  //  only works on when we're not at home.
-  //
+  // Profile sampling, because it allocates on the home road,
+  // only works on when we're not at home.
   if ( &(u3H->rod_u) != u3R ) {
     u3a_road* rod_u;
- 
+
     rod_u = u3R;
     u3R = &(u3H->rod_u);
     {

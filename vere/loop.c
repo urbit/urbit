@@ -358,6 +358,9 @@ _lo_wall(u3_noun wol)
 }
 
 /* u3_lo_tank(): dump single tank.
+**
+** - tab_l: XX Indentation?
+** - tac: `tank` to print.
 */
 void
 u3_lo_tank(c3_l tab_l, u3_noun tac)
@@ -366,6 +369,12 @@ u3_lo_tank(c3_l tab_l, u3_noun tac)
 }
 
 /* u3_lo_punt(): dump tank list.
+**
+** - tab_l: Indentation? XX
+** - tac: XX
+**
+** Implemented by calling `wash` from `hoon.hoon`.
+**
 */
 void
 u3_lo_punt(c3_l tab_l, u3_noun tac)

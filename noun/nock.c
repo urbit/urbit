@@ -80,6 +80,7 @@ _n_hint(u3_noun zep,
         u3_noun nex)
 {
   switch ( zep ) {
+    // Just ignore invalid hints
     default: {
       // u3m_p("weird zep", zep);
       u3a_lose(zep);
@@ -122,6 +123,9 @@ _n_hint(u3_noun zep,
       return pro;
     }
 
+    // Records a profiling hit for hit-point `hod`.
+    //
+    // Uses `u3t_heck()` which in turn uses Arvo's `pi-heck`.
     case c3__live: {
       if ( c3y == u3ud(hod) ) {
         u3t_off(noc_o);
@@ -133,6 +137,9 @@ _n_hint(u3_noun zep,
       return _n_nock_on(bus, nex);
     }
 
+    // Execution tracing -- `hod` should be {?(1 2 3) tank}
+    //
+    // Print the tape then evaluate the continuation.
     case c3__slog: {
       if ( !(u3C.wag_w & u3o_quiet) ) {
         u3t_off(noc_o);
@@ -142,6 +149,13 @@ _n_hint(u3_noun zep,
       return _n_nock_on(bus, nex);
     }
 
+    // This evaluates, and then compares it's parameter to the
+    // result using `u3r_sing()`. If it's the same, return the
+    // parameter, otherwise return the result.
+    //
+    // Basically, if a nock expressions returns the same object
+    // repeatedly, but creates a fresh one every time, then we can use
+    // this to avoic creating lots of garbage on the heap.
     case c3__germ: {
       u3_noun pro = _n_nock_on(bus, nex);
 
@@ -152,6 +166,7 @@ _n_hint(u3_noun zep,
       }
     }
 
+    // Evaluate nock to get a core (XX: ?), then fire jets with `u3j_mine()`.
     case c3__fast: {
       u3_noun pro = _n_nock_on(bus, nex);
 
@@ -162,6 +177,20 @@ _n_hint(u3_noun zep,
       return pro;
     }
 
+    // Simple per-road memoization.
+    //
+    // First, lookup [bux,nex] in the nock-memoization cache of the
+    // current road.
+    //
+    // If the result is cached, just return it.
+    // Otherwise evaluate.
+    // If we're in a junior road, then insert the result into the
+    // nock-memoization cache.
+    //
+    // - XX Why `144` + c3__nock?
+    // - XX Why do the lookup when we're in on the home road? How
+    //   would the result get into the cache in the first place?
+    //
     case c3__memo: {
       u3z(hod);
 #if 0
@@ -187,6 +216,11 @@ _n_hint(u3_noun zep,
 #endif
     }
 
+    // This does nothing, just releases it's parameter then evaluates
+    // the continuation.
+    //
+    // It looks like this is supposed to behave like %germ but using
+    // a hashtable instead. It's stubbed out.
     case c3__sole: {
       u3z(hod);
       {
