@@ -14,8 +14,9 @@
 
 #define FDB_API_VERSION 520
 #include <fdb_c.h>
-
 #include <sqlite3.h>
+#include "c.h" /* rocks db */
+#include "lmdb.h" /* lmdb */
 
 #define RECK
 
@@ -649,6 +650,7 @@
           struct _u3_pier* pir_u;               //  pier backpointer
         } u3_queue;
 
+        /* persistence backends: legacy disk, SQLite, FoundationDB, RocksDB */
         typedef struct _u3_disk {
           u3_dire*         dir_u;               //  main pier directory
           u3_dire*         urb_u;               //  urbit system data
@@ -668,12 +670,28 @@
           struct _u3_pier* pir_u;               //  pier backpointer
         } u3_fond;
 
-      /* u3_pers: persistance handle
+        typedef struct _u3_rock {
+          rocksdb_t *      rok_u;               // db
+          rocksdb_options_t * rop_u;            // db options
+          rocksdb_writeoptions_t * wri_u;       // write options
+          rocksdb_readoptions_t * red_u;        // read options
+          struct _u3_pier* pir_u;               // pier backpointer
+        } u3_rock;
+
+       typedef struct _u3_lmdb {
+         MDB_env * env_u;
+         MDB_dbi * dbi_u;
+         MDB_txn * txn_u;
+       } u3_lmdb;
+
+      /* u3_pers: persistance handled
       */
         typedef struct _u3_pers {
           u3_disk*         log_u;               //  option 1: disk
           u3_sqlt *        sql_u;               //  option 2: sqlite
           u3_fond *        fond_u;              //  option 3: foundationdb
+          u3_rock *        rock_u;              //  option 4: rocksdb
+          u3_lmdb *        lmdb_u;              //  option 5: lmdb
           c3_d             pos_d;               //  read position
         } u3_pers;
 
@@ -1338,17 +1356,20 @@
         void
         _pier_init_writ(u3_pier* pir_u, c3_c * pot_c);
 
-
       /*  plugable storage backend functions
       */
 
-      /* read */
+     /* read */
         c3_o
         u3_disk_read_init(u3_pier* pir_u, c3_c * sto_c);
         c3_o
         u3_sqlt_read_init(u3_pier* pir_u, c3_c * sto_c);
         c3_o
         u3_fond_read_init(u3_pier* pir_u, c3_c * sto_c);
+        c3_o
+        u3_rock_read_init(u3_pier* pir_u, c3_c * sto_c);
+        c3_o
+        u3_lmdb_read_init(u3_pier* pir_u, c3_c * sto_c);
 
         c3_o
         u3_disk_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u);
@@ -1356,6 +1377,10 @@
         u3_sqlt_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u);
         c3_o
         u3_fond_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u);
+        c3_o
+        u3_rock_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u);
+        c3_o
+        u3_lmdb_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u);
 
         void
         u3_disk_read_done(void * hand_u);
@@ -1363,6 +1388,10 @@
         u3_sqlt_read_done(void * hand_u);
         void
         u3_fond_read_done(void * hand_u);
+        void
+        u3_rock_read_done(void * hand_u);
+        void
+        u3_lmdb_read_done(void * hand_u);
 
         void
         u3_disk_read_shut(u3_pier* pir_u);
@@ -1370,6 +1399,10 @@
         u3_sqlt_read_shut(u3_pier* pir_u);
         void
         u3_fond_read_shut(u3_pier* pir_u);
+        void
+        u3_rock_read_shut(u3_pier* pir_u);
+        void
+        u3_lmdb_read_shut(u3_pier* pir_u);
 
         /* write */
 
@@ -1381,9 +1414,15 @@
         u3_sqlt_write_init(u3_pier* pir_u, c3_c * sto_c);
         c3_o
         u3_fond_write_init(u3_pier* pir_u, c3_c * sto_c);
+        c3_o
+        u3_rock_write_init(u3_pier* pir_u, c3_c * sto_c);
+        c3_o
+        u3_lmdb_write_init(u3_pier* pir_u, c3_c * sto_c);
 
         void
         u3_pier_writ_done(u3_noun);   /* callback from pluggable persistance noting noun is committed */
+
+        typedef void (*writ_test_cb)(void*);  /* a callback used in testing */
 
         /*  conforming write_write() functions must do three things:
               1) write to persistent store     [ action ]
@@ -1392,11 +1431,15 @@
               3) free(buf_y)                   [ cleanup ]
         */
         void
-        u3_disk_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w);
+        u3_disk_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb);
         void
-        u3_sqlt_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w);
+        u3_sqlt_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb);
         void
-        u3_fond_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w);
+         u3_fond_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb);
+        void
+         u3_rock_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb);
+        void
+         u3_lmdb_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb);
 
         void
         u3_disk_write_shut(u3_pier* pir_u);
@@ -1404,6 +1447,10 @@
         u3_sqlt_write_shut(u3_pier* pir_u);
         void
         u3_fond_write_shut(u3_pier* pir_u);
+        void
+        u3_rock_write_shut(u3_pier* pir_u);
+        void
+        u3_lmdb_write_shut(u3_pier* pir_u);
 
 /* TESTING ENTRY POINTS */
 
@@ -1413,7 +1460,7 @@ void  rede(void * opaq_u) ;
 void  resh(u3_pier* pir_u) ;
 
 c3_o wrin(u3_pier* pir_u, c3_c * pot_c) ;
-void wric(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y,  c3_y* byt_y, c3_w  len_w);
+void wric(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y,  c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb);
 void wris(u3_pier* pir_u) ;
 
 // debugging for TJIC

@@ -175,7 +175,8 @@ u3_disk_write_write(u3_writ* wit_u,       /* IN: writ */
                     c3_d pos_d,           /* IN: row id */
                     c3_y* buf_y,          /* IN: buffer (to be freed later) */
                     c3_y* byt_y,          /* IN: data (located inside buffer above, but don't worry about that) */
-                    c3_w  len_w           /* IN: data len */
+                    c3_w  len_w,          /* IN: data len */
+                    writ_test_cb test_cb          /* IN: void * (callback function) for testing - set NULL */
                      )
 {
   u3_pier* pir_u = wit_u->pir_u;

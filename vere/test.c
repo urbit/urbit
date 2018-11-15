@@ -16,13 +16,171 @@
 #include <curses.h>
 #include <termios.h>
 #include <term.h>
+#include <math.h>
+#include <time.h>
+#include <errno.h>
+
 
 #include "all.h"
 #include "vere/vere.h"
 
-#include <math.h>  // NOTFORCHECKIN - TESTING
+
+
 
 FILE * ulog;
+
+//****************************************
+//***** speed test
+//****************************************
+
+#define TEST_SIZE 1024
+
+struct timespec ts_before[TEST_SIZE];
+struct timespec ts_after[TEST_SIZE];
+double times_d[TEST_SIZE];
+
+typedef struct _sqlt_write_cb_data {
+  u3_writ * wit_u;  /* the writ from which this fragment comes */
+  c3_y   * buf_y;   /* tmp buffer to be freed after write */
+  c3_w     len_w;
+  writ_test_cb  cbf_u ; /* only for testing */
+} sqlt_write_cb_data;
+
+
+typedef struct _fond_write_cb_data {
+  /* "true" callback data, that the callback needs for callbacky stuff */
+  
+  u3_writ * wit_u;  /* the writ from which this fragment comes */
+  c3_w     cnt_w;   /* total number of fragments */
+  c3_w     frg_w;   /* index of this fragment */
+  c3_w     try_w;   /* retry count */
+
+  /* "fake" callback data, that the callback may need for retry on certain error codes */
+  c3_y * ked_y; /* key */
+  c3_ws kel_ws; 
+  c3_y* byt_y; /* data */
+  c3_w  len_w;  
+
+  writ_test_cb  cbf_u ; /* only for testing */
+  
+} fond_write_cb_data;
+
+
+void _speed_cb(void * data)
+{
+  sqlt_write_cb_data * sql_data = (sqlt_write_cb_data *) data;
+  c3_d evt_d = sql_data -> wit_u->evt_d;
+  printf("_speed_cb: evt_d = %ld\n", evt_d);
+  
+  int ret = clock_gettime(CLOCK_REALTIME, &ts_after[evt_d]);
+  if (0 != ret){
+    printf("error 2: %s\n", strerror(errno));
+  }
+
+}
+
+void _test_write_speed(  u3_pier * pir_u, c3_d evt_d,  c3_c * str_c)
+{
+  if (evt_d > (TEST_SIZE - 1)){
+    printf("ERROR!!!\n");
+  }
+  u3_writ * wit_u = (u3_writ * ) malloc(sizeof(u3_writ));
+
+  wit_u->pir_u = pir_u;
+  wit_u->pes_o = c3n;  /* state variables */
+  wit_u->ped_o = c3n;
+  wit_u->ces_o = c3n;
+  wit_u->ced_o = c3n;
+  wit_u->evt_d = evt_d;
+
+  int len = strlen(str_c);
+  
+  
+  int ret = clock_gettime(CLOCK_REALTIME, & ts_before[evt_d]);
+  if (0 != ret){
+    printf("error 1: %s\n", strerror(errno));
+  }
+
+  wric(wit_u, wit_u->evt_d, (c3_y *) str_c,  (c3_y *) str_c + PERS_WRIT_HEAD_SIZE, len, _speed_cb);  
+}
+
+int NUM_SAMPLES = 10;
+
+void _test_speed( char * init_str)
+{
+  u3_pier pir_u;
+
+  
+  
+  _pier_init_read(& pir_u, init_str);
+  _pier_init_writ(& pir_u, init_str);
+
+  c3_d evt_d;
+  char * const_str = "___abcdef";
+  for (evt_d = 0 ; evt_d < NUM_SAMPLES ; evt_d ++){
+    char * test_str = strdup(const_str);
+    _test_write_speed(& pir_u, evt_d, test_str);
+    free(test_str);
+  }
+
+  printf("DONE WRITING %ld\n", evt_d);
+
+  #if 1
+  sleep(10);
+  #else
+  volatile int jj=0;
+  while (1 != jj){
+    fprintf(stderr, "...sleep...\n\r");
+    sleep(1);
+  }
+  #endif
+
+  printf("DOING MATH %ld\n", evt_d);
+
+  long total_diff_ms = 0;
+
+
+  for (evt_d = 0 ; evt_d < NUM_SAMPLES ; evt_d ++){
+    long diff_ns = (((long) ts_after[evt_d].tv_sec - (long) ts_before[evt_d].tv_sec) * 1000 * 1000 * 1000) +
+      (ts_after[evt_d].tv_nsec - ts_before[evt_d].tv_nsec);
+    printf("evt_d %ld   delta: %ld ms\n", evt_d, (diff_ns / (1000  * 1000) ));
+    total_diff_ms += (diff_ns / (1000 * 1000) );
+  }
+  
+  long mean_diff_ms = (0 == NUM_SAMPLES) ? 0 : total_diff_ms / NUM_SAMPLES;
+  
+  printf("mean delta: %ld ms\n", mean_diff_ms);
+}
+
+void _test_speed_sqlt()
+{
+  printf("********** SQLite speed test\n");
+  _test_speed("s");
+}
+
+void _test_speed_lmdb()
+{
+  printf("********** LMDB speed test\n");
+  _test_speed("l");
+}
+
+void _test_speed_fond()
+{
+  printf("********** FoundationDB speed test\n");
+  _test_speed("f");
+}
+
+void _test_speed_disk()
+{
+  printf("********** Disk speed test\n");
+  _test_speed("d");
+}
+
+
+
+//****************************************
+//***** correctness test
+//****************************************
 
 void _test_write(int len,  u3_pier* pir_u)
 {
@@ -61,7 +219,7 @@ void _test_write(int len,  u3_pier* pir_u)
   str_c[index] = 0;
 
   //  u3_fond_write_write(wit_u, wit_u->evt_d, (c3_y *) str_c,  (c3_y *) str_c + PERS_WRIT_HEAD_SIZE, len);
-  wric(wit_u, wit_u->evt_d, (c3_y *) str_c,  (c3_y *) str_c + PERS_WRIT_HEAD_SIZE, len);
+  wric(wit_u, wit_u->evt_d, (c3_y *) str_c,  (c3_y *) str_c + PERS_WRIT_HEAD_SIZE, len, NULL);
 }
 
 void _test_read( u3_pier* pir_u, c3_y * expect_y)
@@ -104,12 +262,12 @@ void _test_read( u3_pier* pir_u, c3_y * expect_y)
 void _test_core(  u3_pier* pir_u)
 {
   
-// NOTFORCHECKIN  _test_write(4, pir_u);
-// NOTFORCHECKIN  _test_write(10, pir_u);
-  _test_write(100, pir_u);
+  _test_write(4, pir_u);
+  //  _test_write(10, pir_u);
+  //  _test_write(100, pir_u);
 
-#if 0
-  sleep(1);
+#if 1
+  sleep(30);
 #else
   fprintf(stderr, "about to sleep #3 ; before reads\n");
   volatile int jj = 0;
@@ -123,13 +281,13 @@ void _test_core(  u3_pier* pir_u)
 #endif
 
   pir_u ->pin_u -> pos_d = 4;
-// NOTFORCHECKIN  _test_read(pir_u, (c3_y * ) "abb");
+  _test_read(pir_u, (c3_y * ) "abb");
     
-  pir_u ->pin_u -> pos_d = 10;
-// NOTFORCHECKIN  _test_read(pir_u, (c3_y * ) "abbcccddd");
-    
-  pir_u ->pin_u -> pos_d = 100;
-  _test_read(pir_u, (c3_y *) "abbcccddddeeeeeffffffggggggghhhhhhhhiiiiiiiiijjjjjjjjjjkkkkkkkkkkkllllllllllllmmmmmmmmmmmmmnnnnnnnn");
+  //  pir_u ->pin_u -> pos_d = 10;
+  //  _test_read(pir_u, (c3_y * ) "abbcccddd");
+  //    
+  //  pir_u ->pin_u -> pos_d = 100;
+  //  _test_read(pir_u, (c3_y *) "abbcccddddeeeeeffffffggggggghhhhhhhhiiiiiiiiijjjjjjjjjjkkkkkkkkkkkllllllllllllmmmmmmmmmmmmmnnnnnnnn");
 
 }
 
@@ -145,6 +303,19 @@ void _test_fond()
 }
 
 
+void _test_lmdb()
+{
+  printf("******************** lmdb\n");
+  u3_pier pir_u;
+  
+  _pier_init_read(& pir_u, "l");
+  _pier_init_writ(& pir_u, "l");
+
+  _test_core( & pir_u);
+}
+
+
+
 void _test_sqlt()
 {
   printf("******************** sqlt\n");
@@ -156,14 +327,19 @@ void _test_sqlt()
   _test_core(& pir_u);
 }
 
-
-
 c3_i
 main(c3_i   argc,
      c3_c** argv)
 {
-
-#if 1
+  
+  if (argc > 1){
+    NUM_SAMPLES = atoi(argv[1]);
+  } 
+  printf("num samples = %i\n", NUM_SAMPLES);
+    
+  
+#if 0
+  fprintf(stderr, "******************************\n");
   fprintf(stderr, "about to sleep for gdb in main.c - PID = %i\n\r", getpid());
   volatile int ii=0;
   while (1 != ii){
@@ -171,9 +347,17 @@ main(c3_i   argc,
     sleep(1);
   }
 #endif
+
+  u3C.dir_c = "~zod";
+
+  // _test_lmdb();
+   _test_speed_lmdb();
   
-  u3C.dir_c = "/home/tjic/bus/tlon/urbit_cc_merge";
-  _test_fond();
-  _test_sqlt();
+  // _test_sqlt();
+  // _test_speed_sqlt();
+
+
+    
+
 
 }

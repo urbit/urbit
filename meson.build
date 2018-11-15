@@ -229,12 +229,13 @@ vere_lib_src = [
   'vere/disk.c',
   'vere/fond.c',
   'vere/sqlt.c',
-  'vere/rock.c'
+  'vere/rock.c',
+  'vere/lmdb.c'
 ]
 
 #  XX revisit storage build
 #
-incdir = include_directories('include/', '/usr/include/foundationdb/', 'subprojects/rocksdb/include')
+incdir = include_directories('include/', '/usr/include/foundationdb/', 'subprojects/rocksdb/include/rocksdb')
 
 conf_data = configuration_data()
 conf_data.set('URBIT_VERSION', '"0.6.0"')
@@ -369,9 +370,11 @@ libwhereami_dep = dependency('libwhereami', version: '>=1.0.0', fallback: ['wher
 
 #  XX revisit storage build
 #
-sqlt_dep = meson.get_compiler('c').find_library('libsqlite3', dirs:['/usr/lib/'])
 fond_dep = meson.get_compiler('c').find_library('libfdb_c', dirs:['/usr/lib/'])
+lmdb_dep       = meson.get_compiler('c').find_library('liblmdb', dirs:['/usr/lib/'])
 rocksdb_dep = dependency('rocksdb', version: '>=5.17.0', fallback:['rocksdb', 'rocksdb_dep'])
+sqlt_dep = meson.get_compiler('c').find_library('libsqlite3', dirs:['/usr/lib/'])
+
 snappy_dep = meson.get_compiler('c').find_library('snappy', dirs:['/usr/lib/'])
 bz2_dep = meson.get_compiler('c').find_library('bz2', dirs:['/usr/lib/'])
 
@@ -381,9 +384,10 @@ vere_deps = [curl_dep,
             libuv_dep,
             libwhereami_dep,
             openssl_dep,
-            sqlt_dep,
             fond_dep,
+            lmdb_dep,
             rocksdb_dep,
+            sqlt_dep,
             snappy_dep,
             bz2_dep]
 

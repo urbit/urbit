@@ -1,7 +1,8 @@
 // Note that there is something very weird:
 //   if we compile rockdb with DEBUG_LEVEL 0 or 1, 
-
+//
 // g++ -g -o rocktest rock.c  -L../../rocksdb/ -lrocksdb -lpthread -lz -lbz2 -lsnappy
+//
 
 #include <uv.h>
 #include <string.h>
@@ -14,7 +15,7 @@
 #include <errno.h>
 
 #include "all.h"
-#include "../../rocksdb/include/rocksdb/c.h"
+#include "rocksdb/c.h"
 #include "vere/vere.h"
 
 
@@ -22,7 +23,7 @@ const char DBPath[] = "/tmp/rocksdb_simple_example";
 
 
 #define DATB_NAME  "rocks_db"
-#define ROCKS_COMPRESSION_LEVEL rocksdb_no_compression
+#define ROCK_COMPRESSION_LEVEL rocksdb_no_compression
 c3_o
 _rock_init_comn(u3_pers * pers_u, c3_c * sto_c)
 {
@@ -34,7 +35,7 @@ _rock_init_comn(u3_pers * pers_u, c3_c * sto_c)
   /* set db options  */
   rocksdb_options_t * rop_u = pers_u->rock_u->rop_u = rocksdb_options_create();
   long cpus = sysconf(_SC_NPROCESSORS_ONLN); 
-  rocksdb_options_set_compression(rop_u, ROCKS_COMPRESSION_LEVEL);
+  rocksdb_options_set_compression(rop_u, ROCK_COMPRESSION_LEVEL);
   rocksdb_options_increase_parallelism(rop_u, (int)(cpus));
   rocksdb_options_optimize_level_style_compaction(rop_u, 0);
 

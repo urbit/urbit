@@ -66,7 +66,7 @@ _fond_init(u3_fond * fond_u, c3_c * pin_c)
 {
   
   /* build file path */
-  char * path_c;
+  char * path_c = NULL;
   {
     c3_c * tmp_c = (c3_c *) strdup(pin_c);
     c3_c * sav_c = NULL;
@@ -438,6 +438,8 @@ typedef struct _fond_write_cb_data {
   c3_y* byt_y; /* data */
   c3_w  len_w;  
 
+  writ_test_cb  cbf_u ; /* only for testing */
+  
 } fond_write_cb_data;
 
 void _fond_write_frag_core(u3_writ *  wit_u,
@@ -514,6 +516,8 @@ void _fond_write_cb(FDBFuture* fut_u,
   free(cbd_u->ked_y);     /* free key ( used by just this fragment ) */
 
 
+
+
   /* only the final (by index #) fragment thread is responsible for cleanup */
   if (frg_w != (cnt_w - 1)){
     free(cbd_u);
@@ -541,6 +545,11 @@ void _fond_write_cb(FDBFuture* fut_u,
   if (c3y == all_o){
     cbd_u->wit_u->ped_o = c3y;  /* ACTION 2: mark the writ as fully written */
   }
+
+  /* if a meta-callback is set, call it (for testing) */
+  if (cbd_u->cbf_u){
+    cbd_u->cbf_u(cbd_u);
+  }
   
   /* cleanup 2/2: shared multi-write handle */  
   if (c3y == all_o){
@@ -562,7 +571,7 @@ void _fond_write_frag_core(u3_writ *  wit_u,
                            fond_write_cb_data * calb_data_u
                            )
 {
-
+  
   FDBDatabase *  dab_u = wit_u->pir_u->pot_u ->fond_u ->dab_u;
 
 
@@ -571,7 +580,7 @@ void _fond_write_frag_core(u3_writ *  wit_u,
 
   err_u = fdb_database_create_transaction( dab_u, & tra_u);
   if (0 != err_u){
-    fprintf(stderr, "fond_write_write 1: %s\n", fdb_get_error( err_u ));
+    fprintf(stderr, "fond_write_frag_core 1: %s\n", fdb_get_error( err_u ));
     goto write_error;
   }
 
@@ -590,7 +599,7 @@ void _fond_write_frag_core(u3_writ *  wit_u,
                                     _fond_write_cb,
                                     (void*) calb_data_u );
   if (0 != err_u){
-    fprintf(stderr, "fond_write_write 2: %s\n", fdb_get_error( err_u ));
+    fprintf(stderr, "fond_write_frag_core 2: %s\n", fdb_get_error( err_u ));
     goto write_error;
   }
     
@@ -608,9 +617,11 @@ _fond_write_frag(u3_writ* wit_u,      /* IN: writ */
                  c3_w frg_w,          /* IN: fragment index */
                  c3_w cnt_w,          /* IN: total fragment count */
                  c3_y* byt_y,         /* fragment */
-                 c3_w  len_w          /* IN: frag len */
+                 c3_w  len_w,          /* IN: frag len */
+                 writ_test_cb test_cb
                  )
 {
+  
   /* sanity check args */
   if (frg_w > 255 || cnt_w > 255 ||  frg_w > cnt_w ){
     fprintf(stderr, "fond_write_frag: problem with frag (%i) or count (%i)\n\r", frg_w, cnt_w);
@@ -648,6 +659,8 @@ _fond_write_frag(u3_writ* wit_u,      /* IN: writ */
   calb_data_u->   byt_y = byt_y; /* data */
   calb_data_u->   len_w = len_w;  
 
+  /* "speed / testing" callback func */
+  calb_data_u->   cbf_u = test_cb;
   
   _fond_write_frag_core(wit_u,         /* writ */
                         ked_y, kel_ws, /* key */
@@ -661,9 +674,11 @@ u3_fond_write_write(u3_writ* wit_u,       /* IN: writ */
                     c3_d pos_d,           /* IN: row id */
                     c3_y* buf_y,          /* IN: buffer (to be freed later) */
                     c3_y* byt_y,          /* IN: data (located inside buffer above, but don't worry about that) */
-                    c3_w  len_w           /* IN: data len */
+                    c3_w  len_w,          /* IN: data len */
+                    writ_test_cb test_cb          /* IN: void * (callback function) for testing - set NULL */
                      )
 {
+  
   c3_w rem_w = len_w;
   c3_w frg_w = 0;
 
@@ -684,7 +699,8 @@ u3_fond_write_write(u3_writ* wit_u,       /* IN: writ */
                      frg_w,
                      cnt_w,
                      byt_y + (MAX_SIZE * frg_w), /* fragment */
-                     frg_len_w
+                     frg_len_w,
+                     test_cb
                      );
     rem_w = ( rem_w - MAX_SIZE > 0 ) ? rem_w - MAX_SIZE : 0;
   }

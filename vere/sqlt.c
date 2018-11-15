@@ -47,17 +47,42 @@ u3_sqlt_read_init(u3_pier* pir_u, c3_c * pot_c)
   pir_u->pin_u->pos_d = 1;
 
   char * path_c = malloc(strlen(u3C.dir_c) + strlen(DATB_NAME) + 2);
-  sprintf(path_c, "%s/%s", u3C.dir_c, DATB_NAME);
-  fprintf(stderr, "\rdb path = %s\n\r", path_c);
+  sprintf(path_c, "./%s/%s", u3C.dir_c, DATB_NAME);
+  fprintf(stderr, "sqlt read init: read db path = %s\n\r", path_c);
 
-
+  /* open the DB */
+  
   uint32_t       ret_w;
   if (SQLITE_OK != (ret_w = sqlite3_open( path_c, &  pin_u->sql_u -> sql_u ))){
-    fprintf(stderr, "sqlt read init fail 1: %s\n", uv_strerror(ret_w));
+    fprintf(stderr, "sqlt read init fail 1: %s\n", sqlite3_errstr(ret_w));
     u3m_bail(c3__fail); 
     return(c3n);
   }
+
+
+  /* configure the DB */
+
+  const c3_y pragmas[][100] = {
+    "PRAGMA synchronous  = FULL",
+    "PRAGMA journal_mode = WALL",
+  };
+
+  c3_w ii = 0;
   
+  size_t len_u = sizeof(pragmas) / sizeof(pragmas[0]);
+  for (ii = 0; ii < len_u ; ii ++ ){
+    printf("pragma == %s\n", pragmas[ii]);
+    c3_y * err_y;
+    if (SQLITE_OK != (ret_w = sqlite3_exec(pin_u->sql_u -> sql_u, (const char * ) pragmas[ii], NULL, NULL, (char **) & err_y))){
+      fprintf(stderr, "sqlt read init configure 1 fail: %s\n", err_y);
+      u3m_bail(c3__fail); 
+      return(c3n);
+    }
+
+
+  }
+      
+    
   return(c3y);
 }
 
@@ -84,17 +109,19 @@ _sqlt_read_fragment(sqlite3 * sql_u,  /* IN: SQLite3 handle */
                                                 & stat_u,        /* OUT: Statement handle */
                                                 NULL             /* OUT: Pointer to unused portion of zSql */
                                                 ))){
-    fprintf(stderr, "read fail 1: %s\n", uv_strerror(ret_w));    
+    fprintf(stderr, "read fail 1: %s\n", sqlite3_errstr(ret_w));    
     u3m_bail(c3__fail); 
     return(c3n);
 
   }
-
+  fprintf(stderr, "_sqlt_read_fragment: %s\n", (char *) stat_y);
+  
   ret_w = sqlite3_step(stat_u);
-  if ((SQLITE_ROW != ret_w) &&
-      (SQLITE_DONE != ret_w))
-    {
-    fprintf(stderr, "read fail 2: %i / %s\n", ret_w, uv_strerror(ret_w));
+  if (SQLITE_DONE == ret_w){
+    fprintf(stderr, "_sqlt_read_fragment: no row # %ld\n\r", pos_d);
+    return(c3n);
+  } else if (SQLITE_ROW != ret_w) {
+    fprintf(stderr, "read fail 2: %i / %s\n", ret_w, sqlite3_errstr(ret_w));
     u3m_bail(c3__fail); 
     return(c3n);
   }
@@ -105,19 +132,6 @@ _sqlt_read_fragment(sqlite3 * sql_u,  /* IN: SQLite3 handle */
   if( 0 == lan_w){
     return(c3n);
   }
-
-#if 0
-  {
-    fprintf(stderr, "read_atom %i bytes\n\r", lan_w);
-    int ii;
-    for (ii =0; ii < lan_w; ii++){
-      fprintf(stderr, "%2x ", byt_y[ii]);
-    }
-
-  }
-#endif
-
-
   
   /* return */
   *dat_y = byt_y;
@@ -148,7 +162,7 @@ u3_sqlt_read_done(void * hand_u)
   uint32_t       ret_w;
 
   if (SQLITE_OK !=   (ret_w = sqlite3_finalize(hand_u))){
-    fprintf(stderr, "fail 5: %s\n", uv_strerror(ret_w));
+    fprintf(stderr, "fail 5: %s\n", sqlite3_errstr(ret_w));
     u3m_bail(c3__fail); 
     return;
   }
@@ -170,23 +184,24 @@ u3_sqlt_write_init(u3_pier* pir_u, c3_c * pot_c)
   
   /* share single SQL handle, if for both in and out */
   if (pir_u->pin_u->sql_u){
+    fprintf(stderr, "sqlt write init: sharing db handle with sqlt read\n\r");
     pot_u->sql_u = pir_u->pin_u->sql_u;
   } else {
 
     uint32_t       ret_w;
-    if (SQLITE_OK != (ret_w = sqlite3_config(SQLITE_CONFIG_SERIALIZED))){
-      fprintf(stderr, "sqlt write init fail 1: %s\n", uv_strerror(ret_w));    
+    if (SQLITE_OK != (ret_w = sqlite3_config(SQLITE_CONFIG_MULTITHREAD))){ // SQLITE_CONFIG_SERIALIZED
+      fprintf(stderr, "sqlt write init fail 1: %s\n", sqlite3_errstr(ret_w));    
       return c3n;
     }
 
   
     char * path_c = malloc(strlen(u3C.dir_c) + strlen(DATB_NAME) + 2);
     sprintf(path_c, "./%s/%s", u3C.dir_c, DATB_NAME);
-    fprintf(stderr, "\rdb path = %s\n\r", path_c);
+    fprintf(stderr, "sqlt write init: write db path = %s\n\r", path_c);
 
   
     if (SQLITE_OK != (ret_w = sqlite3_open( path_c, &  pot_u->sql_u -> sql_u ))){
-      fprintf(stderr, "sqlt write init fail 2: %s\n", uv_strerror(ret_w));
+      fprintf(stderr, "sqlt write init fail 2: %s\n", sqlite3_errstr(ret_w));
       u3m_bail(c3__fail); 
       return c3n;
 
@@ -202,7 +217,7 @@ u3_sqlt_write_init(u3_pier* pir_u, c3_c * pot_c)
                                 NULL,             /* callback */
                                 (void *) cbar_y,        /* 1st arg to callback */
                                          (char **) & errm_y ))) { /* return arg: error msg */
-    fprintf(stderr, "sqlt init fail: create table: %s\n", uv_strerror(ret_w));    
+    fprintf(stderr, "sqlt init fail: create table: %s\n", sqlite3_errstr(ret_w));    
     u3m_bail(c3__fail);
   }
 
@@ -225,13 +240,16 @@ _sqlt_write_fragment(u3_writ* wit_u, c3_y * buf_y,  c3_w len_w)
   sqlite3_stmt * stat_u = NULL;
   uint32_t       ret_w;
 
+  fprintf(stderr, "****************************** BEFORE WRITE\n\r");
+  sleep(2); // NOTFORCHECKIN
+  
   if (SQLITE_OK != (ret_w = sqlite3_prepare_v2( daba_u,          /* Database handle */
                                                 (char *) stat_y, /* SQL statement, UTF-8 encoded */
                                                 -1,               /* Maximum length of zSql in bytes. */
                                                 & stat_u,        /* OUT: Statement handle */
                                                 NULL             /* OUT: Pointer to unused portion of zSql */
                                                 ))){
-    fprintf(stderr, "write fail 1: %s\n", uv_strerror(ret_w));    
+    fprintf(stderr, "write fail 1: %s\n", sqlite3_errstr(ret_w));    
     goto write_error;
   }
 
@@ -241,7 +259,7 @@ _sqlt_write_fragment(u3_writ* wit_u, c3_y * buf_y,  c3_w len_w)
   if (SQLITE_OK != (ret_w = sqlite3_bind_int( stat_u,
                                               1 ,                 /* param index */
                                               wit_u -> evt_d))){
-    fprintf(stderr, "write fail 2: %s\n", uv_strerror(ret_w));
+    fprintf(stderr, "write fail 2: %s\n", sqlite3_errstr(ret_w));
     goto write_error;
   }
 
@@ -252,20 +270,23 @@ _sqlt_write_fragment(u3_writ* wit_u, c3_y * buf_y,  c3_w len_w)
                                               buf_y,   /* atom data */
                                               (c3_d) len_w,   /* atom data size, in bytes */
                                               NULL))){ /* callback to clean up event */
-    fprintf(stderr, "write fail 3: %s\n", uv_strerror(ret_w));
+    fprintf(stderr, "write fail 3: %s\n", sqlite3_errstr(ret_w));
     goto write_error;
   }
 
   if (SQLITE_DONE != (ret_w = sqlite3_step(stat_u))){
-    fprintf(stderr, "write fail 4: %s\n", uv_strerror(ret_w));
+    fprintf(stderr, "write fail 4: %s\n", sqlite3_errstr(ret_w));
     goto write_error;
   }
 
   if (SQLITE_OK !=   (ret_w = sqlite3_finalize(stat_u))){
-    fprintf(stderr, "write fail 5: %s\n", uv_strerror(ret_w));
+    fprintf(stderr, "write fail 5: %s\n", sqlite3_errstr(ret_w));
     goto write_error;
   }
 
+  fprintf(stderr, "****************************** AFTER WRITE - CHILD THREAD\n\r");
+  sleep(2); // NOTFORCHECKIN
+    
   return;
 
  write_error:
@@ -273,16 +294,19 @@ _sqlt_write_fragment(u3_writ* wit_u, c3_y * buf_y,  c3_w len_w)
   return;  
 }
 
+
+
 typedef struct _sqlt_write_cb_data {
   u3_writ * wit_u;  /* the writ from which this fragment comes */
   c3_y   * buf_y;   /* tmp buffer to be freed after write */
   c3_w     len_w;
+  writ_test_cb  cbf_u ; /* only for testing */
 } sqlt_write_cb_data;
 
 
 
 void *
-_sqlt_write_fragment_cast(void *opq_u)
+_sqlt_write_cast(void *opq_u)
 {
   sqlt_write_cb_data* cbd_u = (sqlt_write_cb_data*) opq_u;
   _sqlt_write_fragment(cbd_u->wit_u, cbd_u->buf_y, cbd_u->len_w);
@@ -290,6 +314,17 @@ _sqlt_write_fragment_cast(void *opq_u)
   /* set the ack */
   cbd_u->wit_u->ped_o = c3y;
 
+  /* if a meta-callback is set, call it (for testing) */
+  if (cbd_u->cbf_u){
+    fprintf(stderr, "MC called\n");
+    cbd_u->cbf_u(cbd_u);
+  } else {
+    fprintf(stderr, "MC --- not --- called\n");
+  }
+
+  fprintf(stderr, "****************************** AFTER WRITE - PARENT THREAD\n\r");
+  sleep(2); // NOTFORCHECKIN
+  
   /* cleanup */
   free(cbd_u);
   
@@ -303,7 +338,8 @@ u3_sqlt_write_write(u3_writ* wit_u,       /* IN: writ */
                     c3_d pos_d,           /* IN: row id */
                     c3_y* buf_y,          /* IN: buffer (to be freed later) */
                     c3_y* byt_y,          /* IN: data (located inside buffer above, but don't worry about that) */
-                    c3_w  len_w           /* IN: data len */
+                    c3_w  len_w,          /* IN: data len */
+                    writ_test_cb test_cb          /* IN: void * (callback function) for testing - set NULL */
                      )
 {
   pthread_t tid_u;
@@ -313,10 +349,11 @@ u3_sqlt_write_write(u3_writ* wit_u,       /* IN: writ */
   cbd_u->wit_u = wit_u;
   cbd_u->buf_y = buf_y + PERS_WRIT_HEAD_SIZE;
   cbd_u->len_w = len_w;
+  cbd_u->cbf_u = test_cb;
   
   if (0 != (ret_w = pthread_create(& tid_u,
                                    NULL,
-                                   _sqlt_write_fragment_cast,  
+                                   _sqlt_write_cast,  
                                    (void *) cbd_u ))) {
     fprintf(stderr, "u3_sqlt_write_commit() : %s \n\r", strerror(ret_w));
     u3m_bail(c3__fail); 

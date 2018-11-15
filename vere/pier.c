@@ -77,7 +77,7 @@ static abst_read_shut_t _resh = NULL;
 
 /* output persistence pointers */
 typedef c3_o (*abst_writ_init_t)(u3_pier* pir_u, c3_c * pot_c);
-typedef void (*abst_writ_writ_t)(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y,  c3_y* byt_y, c3_w  len_w);
+typedef void (*abst_writ_writ_t)(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y,  c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb);
 typedef void (*abst_writ_shut_t)(u3_pier* pir_u);
 
 static abst_writ_init_t _wrin = NULL;
@@ -106,21 +106,33 @@ _pier_init_read(u3_pier* pir_u, c3_c * pin_c)
     _rede = u3_disk_read_done;
     _resh = u3_disk_read_shut;
 
+  } else if  (0 == strcmp(typ_c, "f") || 0 == strcmp(typ_c, "found")){
+
+    _rein = u3_fond_read_init;
+    _rere = u3_fond_read_read;
+    _rede = u3_fond_read_done;
+    _resh = u3_fond_read_shut;    
+
+  } else if  (0 == strcmp(typ_c, "l") || 0 == strcmp(typ_c, "lmdb")){
+
+    _rein = u3_lmdb_read_init;
+    _rere = u3_lmdb_read_read;
+    _rede = u3_lmdb_read_done;
+    _resh = u3_lmdb_read_shut;    
+
+  } else if  (0 == strcmp(typ_c, "r") || 0 == strcmp(typ_c, "rock")){
+
+    _rein = u3_rock_read_init;
+    _rere = u3_rock_read_read;
+    _rede = u3_rock_read_done;
+    _resh = u3_rock_read_shut;    
+
   } else if  (0 == strcmp(typ_c, "s") || 0 == strcmp(typ_c, "sql")){
 
     _rein = u3_sqlt_read_init;
     _rere = u3_sqlt_read_read;
     _rede = u3_sqlt_read_done;
     _resh = u3_sqlt_read_shut;
-
-  } else if  (0 == strcmp(typ_c, "f") || 0 == strcmp(typ_c, "found")){
-
-    /* XXX what goes here? */
-
-    _rein = u3_fond_read_init;
-    _rere = u3_fond_read_read;
-    _rede = u3_fond_read_done;
-    _resh = u3_fond_read_shut;
 
   } else {
     fprintf(stderr, "illegal -i spec: '%s'\n", u3_Host.ops_u.pot_c);
@@ -155,12 +167,6 @@ _pier_init_writ(u3_pier* pir_u, c3_c * pot_c)
     _wric = u3_disk_write_write;
     _wris = u3_disk_write_shut;
 
-  } else if  (0 == strcmp(typ_c, "s") || 0 == strcmp(typ_c, "sql")){
-
-    _wrin = u3_sqlt_write_init;
-    _wric = u3_sqlt_write_write;
-    _wris = u3_sqlt_write_shut;
-
   } else if  (0 == strcmp(typ_c, "f") || 0 == strcmp(typ_c, "found")){
 
     pir_u->pot_u->sql_u = c3_malloc(sizeof (u3_sqlt));
@@ -169,7 +175,28 @@ _pier_init_writ(u3_pier* pir_u, c3_c * pot_c)
 
     _wrin = u3_fond_write_init;
     _wric = u3_fond_write_write;
-    _wris = u3_fond_write_shut;
+    _wris = u3_fond_write_shut;    
+
+  } else if  (0 == strcmp(typ_c, "l") || 0 == strcmp(typ_c, "lmdb")){
+
+    _wrin = u3_lmdb_write_init;
+    _wric = u3_lmdb_write_write;
+    _wris = u3_lmdb_write_shut;    
+
+  } else if  (0 == strcmp(typ_c, "r") || 0 == strcmp(typ_c, "rock")){
+
+    pir_u->pot_u->sql_u = c3_malloc(sizeof (u3_sqlt));
+    memset( pir_u->pot_u->sql_u, 0, sizeof (u3_sqlt));
+    pir_u->pot_u->sql_u->pir_u = pir_u;
+
+    _wrin = u3_fond_write_init;
+    _wric = u3_fond_write_write;
+    _wris = u3_fond_write_shut;    
+  } else if  (0 == strcmp(typ_c, "s") || 0 == strcmp(typ_c, "sql")){
+
+    _wrin = u3_sqlt_write_init;
+    _wric = u3_sqlt_write_write;
+    _wris = u3_sqlt_write_shut;    
 
   } else {
     fprintf(stderr, "illegal -o spec: '%s'\n", u3_Host.ops_u.pot_c);
@@ -196,7 +223,8 @@ _pier_abstract_write(u3_writ* wit_u)
         wit_u->evt_d,
         byt_y,
         byt_y + PERS_WRIT_HEAD_SIZE,  /* hide the header from the implimentation. This lets code that doesn't use headers be simple. */
-        len_w);
+        len_w,
+        NULL); 
 
   /* note state change in writ: write has been requested */
   wit_u ->pes_o = c3y;
@@ -1791,5 +1819,5 @@ void  rede(void * opaq_u) { _rede(opaq_u);}
 void  resh(u3_pier* pir_u) { _resh(pir_u); }
 
 c3_o wrin(u3_pier* pir_u, c3_c * pot_c) { return _wrin(pir_u, pot_c); }
-void wric(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y,  c3_y* byt_y, c3_w  len_w){ _wric(wit_u, pos_d, buf_y,  byt_y, len_w); }
+void wric(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y,  c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb){ _wric(wit_u, pos_d, buf_y,  byt_y, len_w, test_cb); }
 void wris(u3_pier* pir_u) { _wris(pir_u); }
