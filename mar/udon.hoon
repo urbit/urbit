@@ -1,5 +1,5 @@
 ::
-::::  /hoon/umd/mar
+::::  /hoon/udon/mar
   ::
 /+    cram
 ::
@@ -26,7 +26,7 @@
   ++  mime  |=({p/mite:eyre q/octs:eyre} q.q)
   ++  noun  @t
   ++  txt   of-wain:format
-  --
+  --  
 ++  grad  %txt
 ++  garb  /down
 --

@@ -301,23 +301,23 @@
         'Q8EDWlbDcbjrheZgw6QotIr3wW99fYfMA22ussdXMPXxlMkNa7ReXPlfjigPvF+0shrm'
         '/g=='
     ==
-  =/  sig=@ux  (~(sign rs256 k2) inp2)
+  =/  sig=@ux  (~(sign rs256 k2) (met 3 inp2) inp2)
   ;:  weld
     %+  expect-eq
       !>  exp1
-      !>  (~(sign rs256 k1) inp1)
+      !>  (~(sign rs256 k1) (met 3 inp1) inp1)
   ::
     %+  expect-eq
       !>  &
-      !>  (~(verify rs256 k1) exp1 inp1)
+      !>  (~(verify rs256 k1) exp1 (met 3 inp1) inp1)
   ::
     %+  expect-eq
       !>  emsa1
-      !>  `@ux`(~(emsa rs256 k1) inp1)
+      !>  `@ux`(~(emsa rs256 k1) (met 3 inp1) inp1)
   ::
     %+  expect-eq
       !>  &
-      !>  (~(verify rs256 k2) sig inp2)
+      !>  (~(verify rs256 k2) sig (met 3 inp2) inp2)
   ::
     %+  expect-eq
       !>  exp2

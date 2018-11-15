@@ -202,7 +202,8 @@
     ::
     ++  sign
       |=  [protect=cord payload=cord]
-      =/  sig=@ud  (~(sign rs256 k) (rap 3 ~[protect '.' payload]))
+      =/  msg=@t   (rap 3 ~[protect '.' payload])
+      =/  sig=@ud  (~(sign rs256 k) (met 3 msg) msg)
       =/  len=@ud  (met 3 n.pub.k)
       (en-base64url len (rev 3 len sig))
     --

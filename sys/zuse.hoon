@@ -494,7 +494,6 @@
       $%  {$hear p/lane q/@}                            ::  receive packet
           {$mack p/(unit tang)}                         ::  
           {$mass p/mass}                                ::  memory usage
-          {$rove p/ship q/lane}                         ::  lane change
           {$send p/lane q/@}                            ::  transmit packet
           {$turf p/(list turf)}                         ::  bind to domains
           {$woot p/ship q/coop}                         ::  reaction message
@@ -526,7 +525,6 @@
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
           {$sunk p=ship q=life}                         ::  report death
-          {$tend ~}                                     ::  watch lane changes
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
           {$west p/sack q/path r/*}                     ::  network request
@@ -570,7 +568,6 @@
         {$bock ~}                                       ::  bind to domains
         {$brew ~}                                       ::  request domains
         {$cake p/sock q/soap r/coop s/duct}             ::  e2e message result
-        {$maze p/ship q/lane}                           ::  lane change
         {$mead p/lane q/rock}                           ::  accept packet
         {$milk p/sock q/soap r/*}                       ::  e2e pass message
         {$ouzo p/lane q/rock}                           ::  transmit packet
@@ -613,7 +610,6 @@
         bad/(set @p)                                    ::  bad ships
         ton/town                                        ::  security
         zac/(map ship corn)                             ::  flows by server
-        ten/(set duct)                                  ::  watch lanes
     ==                                                  ::
   ++  hand  @uvH                                        ::  128-bit hash
   ++  lane                                              ::  packet route
@@ -1168,6 +1164,57 @@
     $%  {%& p/purl}                                     ::  absolute
         {%| p/pork q/quay}                              ::  relative
     ==                                                  ::
+  ::  +reserved: check if an ipv4 address is in a reserved range
+  ::
+  ++  reserved
+    |=  a=@if
+    ^-  ?
+    =/  b  (flop (rip 3 a))
+    ::  0.0.0.0/8 (software)
+    ::
+    ?.  ?=([@ @ @ @ ~] b)  &
+    ?|  ::  10.0.0.0/8 (private)
+        ::
+        =(10 i.b)
+        ::  100.64.0.0/10 (carrier-grade NAT)
+        ::
+        &(=(100 i.b) (gte i.t.b 64) (lte i.t.b 127))
+        ::  127.0.0.0/8 (localhost)
+        ::
+        =(127 i.b)
+        ::  169.254.0.0/16 (link-local)
+        ::
+        &(=(169 i.b) =(254 i.t.b))
+        ::  172.16.0.0/12 (private)
+        ::
+        &(=(172 i.b) (gte i.t.b 16) (lte i.t.b 31))
+        ::  192.0.0.0/24 (protocol assignment)
+        ::
+        &(=(192 i.b) =(0 i.t.b) =(0 i.t.t.b))
+        ::  192.0.2.0/24 (documentation)
+        ::
+        &(=(192 i.b) =(0 i.t.b) =(2 i.t.t.b))
+        ::  192.18.0.0/15 (reserved, benchmark)
+        ::
+        &(=(192 i.b) |(=(18 i.t.b) =(19 i.t.b)))
+        ::  192.51.100.0/24 (documentation)
+        ::
+        &(=(192 i.b) =(51 i.t.b) =(100 i.t.t.b))
+        ::  192.88.99.0/24 (reserved, ex-anycast)
+        ::
+        &(=(192 i.b) =(88 i.t.b) =(99 i.t.t.b))
+        ::  192.168.0.0/16 (private)
+        ::
+        &(=(192 i.b) =(168 i.t.b))
+        ::  203.0.113/24 (documentation)
+        ::
+        &(=(203 i.b) =(0 i.t.b) =(113 i.t.t.b))
+        ::  224.0.0.0/8 (multicast)
+        ::  240.0.0.0/4 (reserved, future)
+        ::  255.255.255.255/32 (broadcast)
+        ::
+        (gte i.b 224)
+    ==
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
   ++  sec-move                                          ::  driver effect
     $%  {$send p/hiss}                                  ::  http out

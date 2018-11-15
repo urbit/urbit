@@ -678,9 +678,45 @@
     =.  our  ?~(hov our u.hov)  ::  XX
     =.  p.top  our              ::  XX necessary?
     ?-    -.kyz
+        ::  new unix process - learn of first boot or a restart.
+        ::
         $born
-      ::  XX capture IPs too
-      ::  XX continue to support turf in %born? (currently unused)
+      ::  save outgoing duct
+      ::
+      =.  ged  hen
+      ::  give %form to start servers
+      ::
+      =.  mow  :_(mow [hen [%give %form fig]])
+      ::  kill active incoming requests
+      ::
+      =.  +>.$
+        =/  fok=(list duct)  ~(tap in ~(key by lyv))
+        |-  ^+   +>.^$
+        ?~  fok  +>.^$
+        %=  $
+          fok    t.fok
+          +>.^$  ^$(hen i.fok, kyz [%thud ~])
+        ==
+      ::  kill active outgoing requests
+      ::
+      =.  +>.$
+        =/  fok=(list duct)  ~(tap in ~(key by kes))
+        |-  ^+   +>.^$
+        ?~  fok  +>.^$
+        %=  $
+          fok    t.fok
+          +>.^$  ^$(hen i.fok, kyz [%them ~])
+        ==
+      ::  if galaxy, request %ames domain from %jael
+      ::
+      ::    %jael response handled in $turf branch of +axon.
+      ::
+      =?  mow  ?=(%czar (clan:title our))  :_(mow [hen %pass / %j %turf ~])
+      ::  learn externally known domain names
+      ::
+      ::    If any are new, request certificate. XX currently unused. remove?
+      ::    XX %born card also includes locally-known IPs. use for DNS?
+      ::
       ::
       =/  mod/(set turf)
         %-  ~(gas in *(set turf))
@@ -692,12 +728,7 @@
       =?  mow  ?=(^ dif)
         =/  cmd  [%acme %poke `cage`[%acme-order !>(dom)]]
         :_(mow [hen %pass /acme/order %g %deal [our our] cmd])
-      =?  mow  ?=(%czar (clan:title our))
-        :_(mow [hen %pass / %j %turf ~])
-      %=  +>.$
-        ged  hen                                        ::  register external
-        mow  :_(mow [hen [%give %form fig]])
-      ==
+      +>.$
     ::
         $live
       +>.$(clr.por p.kyz, sek.por q.kyz)
@@ -1406,7 +1437,7 @@
           :_  pok(q t.but)
           ?+  i.but  (slav %p i.but)
             $anon  anon
-            $own   (fall (ship-from-cookies maf) our)
+            $own   our
           ==
         ::
             $on
@@ -1824,12 +1855,12 @@
       (pass-note:abet [%of ire (gsig a)] b)
     ::
     ++  init
-      =.  die  (add ~d1 now)
+      =.  die  (add ~h2 now)
       abet(mow :_(mow [`/ %pass ow+/[ire] [%b %wait die]]))
     ::
     ++  refresh
       =.  mow  :_(mow [`/ %pass ow+/[ire] [%b %rest die]])
-      =.  die  (add ~d1 now)
+      =.  die  (add ~h2 now)
       done(mow :_(mow [`/ %pass ow+/[ire] [%b %wait die]]))
     ::
     ++  add-even
@@ -1885,7 +1916,9 @@
     ::
     ++  get-quit
       |=  a/whir-of  ^+  ..ix
-      (get-even [%quit [[(slav %p p.a) q.a] s.a]])
+      =/  doc=dock  [(slav %p p.a) q.a]
+      =.  sus  (~(del in sus) [doc %json s.a s.a])
+      (get-even [%quit [doc s.a]])
     ::
     ++  get-ack
       |=  {a/whir-of b/(unit {term tang})}  ^+  ..ix
