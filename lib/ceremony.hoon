@@ -2,14 +2,13 @@
 =,  ethe
 =,  ethereum
 ::
-=|  pk=@
 =|  addr=address
 =|  gas-price=@ud
 =|  network=@ux
 =|  now=@da
 ::
 |_  $:  nonce=@ud                                       ::  next tx id
-        transactions=(list cord)                        ::  generated txs
+        transactions=(list transaction)                 ::  generated txs
         constitution=address                            ::  deployed address
     ==
 ::
@@ -86,17 +85,13 @@
   (lth a b)
 ::
 ++  init
-  |=  [n=@da g=@ud non=@ud]
+  |=  [n=@da g=@ud non=@ud addr=address]
   ^+  this
-  =+  pkf=(get-file /pk/txt)
-  ?>  ?=(^ pkf)
-  =+  prv=(rash i.pkf ;~(pfix (jest '0x') hex))
   %_  this
     now         n
     nonce       non
     gas-price   g
-    pk          prv
-    addr        (address-from-prv prv)
+    addr        addr
   ==
 ::
 ++  get-direct-galaxies
@@ -165,13 +160,7 @@
 ++  write-tx
   |=  tx=transaction
   ^+  this
-  =-  this(transactions [- transactions])
-  (crip '0' 'x' ((x-co:co 0) (sign-transaction tx pk)))
-::
-++  write-metadata
-  ^+  this
-  =-  this(transactions [- transactions])
-  (crip "chainId: {<network>}, gasPrice: {<gas-price>}, nonce: {<nonce>}")
+  this(transactions [tx transactions])
 ::
 ++  complete
   ~&  [%writing-transactions (lent transactions)]
@@ -210,14 +199,13 @@
   ==
 ::
 ++  sequence
-  |=  [won=@da net=?(%fake %main %ropsten) gasp=@ud non=@ud]
-  =.  this  (init(now won) won gasp non)
+  |=  [won=@da net=?(%fake %main %ropsten) gasp=@ud non=@ud addr=address]
+  =.  this  (init(now won) won gasp non addr)
   =.  network
     ?+  net  0x1
       %ropsten  0x3
       %fake     `@ux``@`1.337
     ==
-  =.  this  write-metadata
   ::
   ::  data loading
   ::
@@ -436,6 +424,27 @@
     %^  do  constit  300.000
     (upgrade-to:dat constit-final)
   complete
+::
+::  sign pre-generated transactions
+++  sign
+  |=  [won=@da in=path key=path]
+  ^-  (list cord)
+  =.  now  won
+  ?>  ?=([@ @ @ *] key)
+  =/  pkf  (get-file t.t.t.key)
+  ?>  ?=(^ pkf)
+  =/  pk  (rash i.pkf ;~(pfix (jest '0x') hex))
+  =/  txs  .^((list transaction) %cx in)
+  =/  enumerated
+    =/  n  1
+    |-  ^-  (list [@ud transaction])
+    ?~  txs
+      ~
+    [[n i.txs] $(n +(n), txs t.txs)]
+  %+  turn  enumerated
+  |=  [n=@ud tx=transaction]
+  ~?  =(0 (mod n 100))  [%signing n]
+  (crip '0' 'x' ((x-co:co 0) (sign-transaction tx pk)))
 ::
 ::  create or spawn a ship, configure its spawn proxy and pubkeys
 ++  create-ship

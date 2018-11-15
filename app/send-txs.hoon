@@ -50,51 +50,51 @@
 ::
 ::  usage:
 ::
-::  send all but first 50 txs from path
-::    :send-txs [%/txs/txt 50]
-::
-::  generate txs starting from nonce 0 on fake chain at various
-::  gas prices; store at path (one file per gas price)
-::
-::    :send-txs [% %fake 0]
+::  generate txs starting from nonce 0 on fake chain at 11 gwei
+::  from address; store at path
+::    :send-txs [%gen %/txs/eth-txs %fake 0 11 '0x0000000']
 ::
 ::  generate txs starting from nonce 0 on fake chain at 11 gwei;
 ::  store at path
-::    :send-txs [%/txs/txt %fake 0 11]
+::    :send-txs [%sign %/txs/txt %/txs/eth-txs %/pk/txt]
+::
+::  send all but first 50 txs from path
+::    :send-txs [%send %/txs/txt 50]
 ::
 ++  poke-noun
-  |=  $:  pax=path
-          $=  argv
-            $@  skip=@ud
-            $:  net=?(%fake %main %ropsten)
-                $=  conf
-                  $@  nonce=@ud
-                  [nonce=@ud gas-price=@ud]
-            ==
+  |=  $%  $:  %gen
+              pax=path
+              net=?(%fake %main %ropsten)
+              nonce=@ud
+              gas-price=@ud
+              addr=@t
+          ==
+          [%sign out=path in=path key=path]
+          [%send pax=path skip=@ud]
       ==
   ^-  [(list move) _this]
-  ?^  argv
-    ?^  conf.argv
-      =/  tox
-        (sequence:ceremony now.bol [net [gas-price nonce]:conf]:argv)
-      [[(write-file pax tox) ~] this]
-    =-  [- this]
-    %+  turn
-      `(list @ud)`~[2 3 5] :: 11 21 31 51 91]
-    |=  gas-price=@ud
-    %+  write-file  (weld pax /(scot %ud gas-price)/txt)
-    (sequence:ceremony now.bol net.argv gas-price nonce.conf.argv)
-  ~&  'loading txs...'
-  =/  tox=(list cord)  .^((list cord) %cx pax)
-  ~&  ?>(?=(^ tox) i.tox)
-  =.  tox  (slag +(skip.argv) tox)
-  =.  txs
-    %+  turn  tox
-    (cork trip tape-to-ux:ceremony)
-  ~&  [(lent txs) 'loaded txs']
-  apex
+  ?-    +<-
+      %gen
+    =/  addr  (rash addr ;~(pfix (jest '0x') hex))
+    =/  tox  (sequence:ceremony now.bol net gas-price nonce addr)
+    [[(write-file-transactions pax tox) ~] this]
+  ::
+      %sign
+    =/  tox=(list cord)  (sign:ceremony now.bol in key)
+    [[(write-file-wain out tox) ~] this]
+  ::
+      %send
+    ~&  'loading txs...'
+    =/  tox=(list cord)  .^((list cord) %cx pax)
+    =.  tox  (slag skip tox)
+    =.  txs
+      %+  turn  tox
+      (cork trip tape-to-ux:ceremony)
+    ~&  [(lent txs) 'loaded txs']
+    apex
+  ==
 ::
-++  write-file
+++  write-file-wain
   |=  [pax=path tox=(list cord)]
   ^-  move
   ?>  ?=([@ desk @ *] pax)
@@ -108,6 +108,22 @@
       ?~  fil.y
         ins+txt+!>(tox)
       mut+txt+!>(tox)
+  ==
+::
+++  write-file-transactions
+  |=  [pax=path tox=(list transaction:ethe)]
+  ^-  move
+  ?>  ?=([@ desk @ *] pax)
+  :*  ost.bol
+      %info
+      (weld /write pax)
+      our.bol
+      i.t.pax
+      =-  &+[t.t.t.pax -]~
+      =/  y  .^(arch %cy pax)
+      ?~  fil.y
+        ins+eth-txs+!>(tox)
+      mut+eth-txs+!>(tox)
   ==
 ::
 ++  fan-requests
