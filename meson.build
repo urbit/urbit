@@ -71,8 +71,10 @@ jets_c_src = [
 'jets/c/pow.c',
 'jets/c/rap.c',
 'jets/c/rep.c',
+'jets/c/rev.c',
 'jets/c/rip.c',
 'jets/c/rsh.c',
+'jets/c/swp.c',
 'jets/c/sqt.c',
 'jets/c/vor.c',
 ]
@@ -102,8 +104,11 @@ jets_e_src = [
 'jets/e/aes_ecb.c',
 'jets/e/aes_cbc.c',
 'jets/e/aesc.c',
+'jets/e/argon2.c',
+'jets/e/blake.c',
 'jets/e/cue.c',
 'jets/e/fl.c',
+'jets/e/hmac.c',
 'jets/e/jam.c',
 'jets/e/mat.c',
 'jets/e/mink.c',
@@ -115,11 +120,14 @@ jets_e_src = [
 'jets/e/rh.c',
 'jets/e/rub.c',
 'jets/e/scr.c',
+'jets/e/secp.c',
 'jets/e/shax.c',
+'jets/e/sha1.c',
 'jets/e/lore.c',
 'jets/e/loss.c',
 'jets/e/lune.c',
-'jets/e/trip.c'
+'jets/e/trip.c',
+'jets/e/ripe.c'
 ]
 
 jets_e_ed_src = [
@@ -355,26 +363,32 @@ murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'm
 softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
 libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
 libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
+argon2_dep = dependency('argon2', version: '>=1', fallback: ['argon2', 'argon2_dep'])
+secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
 
 libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
+
+deps = [openssl_dep,
+        curl_dep,
+        libuv_dep,
+        libh2o_dep,
+        cmark_dep,
+        secp256k1_dep,
+        gmp_dep,
+        sigsegv_dep,
+        urbitscrypt_dep,
+        ed25519_dep,
+        murmur3_dep,
+        argon2_dep,
+        softfloat3_dep,
+        libsni_dep]
 
 executable('urbit',
 sources : sources,
 include_directories : incdir,
 c_args : os_c_flags,
 link_args: os_link_flags,
-dependencies: [openssl_dep,
-               curl_dep,
-               libuv_dep,
-               libh2o_dep,
-               cmark_dep,
-               gmp_dep,
-               sigsegv_dep,
-               urbitscrypt_dep,
-               ed25519_dep,
-               murmur3_dep,
-               softfloat3_dep,
-               libsni_dep] + os_deps,
+dependencies: deps + os_deps,
 install: true)
 
 # XX shrink this list
@@ -385,18 +399,7 @@ sources : test_sources + ['tests/hashtable_tests.c'],
 include_directories : incdir,
 c_args : os_c_flags,
 link_args: os_link_flags,
-dependencies: [openssl_dep,
-               curl_dep,
-               libuv_dep,
-               libh2o_dep,
-               cmark_dep,
-               gmp_dep,
-               sigsegv_dep,
-               urbitscrypt_dep,
-               ed25519_dep,
-               murmur3_dep,
-               softfloat3_dep,
-               libsni_dep] + os_deps,
+dependencies: deps + os_deps,
 install: false)
 
 test('test-hashtable', test_hashtable)
@@ -408,18 +411,7 @@ sources : test_sources + ['tests/test.c'],
 include_directories : incdir,
 c_args : os_c_flags,
 link_args: os_link_flags,
-dependencies: [openssl_dep,
-               curl_dep,
-               libuv_dep,
-               libh2o_dep,
-               cmark_dep,
-               gmp_dep,
-               sigsegv_dep,
-               urbitscrypt_dep,
-               ed25519_dep,
-               murmur3_dep,
-               softfloat3_dep,
-               libsni_dep] + os_deps,
+dependencies: deps + os_deps,
 install: false)
 
 test('test-mem', test_mem, should_fail: true)

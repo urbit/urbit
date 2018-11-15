@@ -81,3 +81,12 @@
       return u3qc_rip(a, b);
     }
   }
+  u3_noun
+  u3kc_rip(u3_atom a,
+           u3_atom b)
+  {
+    u3_noun res = u3qc_rip(a, b);
+
+    u3z(a); u3z(b);
+    return res;
+  }

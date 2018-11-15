@@ -64,8 +64,10 @@
     u3_noun u3wc_pow(u3_noun);
     u3_noun u3wc_rap(u3_noun);
     u3_noun u3wc_rep(u3_noun);
+    u3_noun u3wc_rev(u3_noun);
     u3_noun u3wc_rip(u3_noun);
     u3_noun u3wc_rsh(u3_noun);
+    u3_noun u3wc_swp(u3_noun);
     u3_noun u3wc_sqt(u3_noun);
     u3_noun u3wc_vor(u3_noun);
 
@@ -143,6 +145,7 @@
     u3_noun u3we_shay(u3_noun);
     u3_noun u3we_shas(u3_noun);
     u3_noun u3we_shal(u3_noun);
+    u3_noun u3we_sha1(u3_noun);
 
     u3_noun u3weo_raw(u3_noun);
 
@@ -150,6 +153,19 @@
     u3_noun u3wee_sign(u3_noun);
     u3_noun u3wee_veri(u3_noun);
     u3_noun u3wee_shar(u3_noun);
+
+    u3_noun u3we_hmac(u3_noun);
+
+
+    u3_noun u3we_argon2(u3_noun);
+
+    u3_noun u3we_blake(u3_noun);
+
+    u3_noun u3we_ripe(u3_noun);
+
+    u3_noun u3we_make(u3_noun);
+    u3_noun u3we_sign(u3_noun);
+    u3_noun u3we_reco(u3_noun);
 
     u3_noun u3we_bend_fun(u3_noun);
     u3_noun u3we_cold_fun(u3_noun);
