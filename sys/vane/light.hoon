@@ -22,7 +22,7 @@
 ::  +note: private request from light to another vane
 ::
 +$  note
-  $%  ::  %b:
+  $%  ::  %b: to behn
       ::
       $:  %b
           ::
@@ -273,16 +273,38 @@
 |%
 ::  +parse-channel-request: parses a list of channel-requests
 ::
-::    TODO: All of it.
+::    Parses a json array into a list of +channel-request. If any of the items
+::    in the list fail to parse, the entire thing fails so we can 400 properly
+::    to the client.
 ::
 ++  parse-channel-request
-  |=  =json
-  ^-  (list channel-request)
-  ::  %-  ar:dejs-soft:format
-  ::  |=  =^json
-  ::  ?.  ?=([%o *] json)
-  ::    ~
-  !!
+  |=  request-list=json
+  ^-  (unit (list channel-request))
+  ::  parse top
+  ::
+  =,  dejs-soft:format
+  =-  ((ar -) request-list)
+  ::
+  |=  item=json
+  ^-  (unit channel-request)
+  ::
+  ?~  maybe-key=((ot action+so ~) item)
+    ~
+  ?:  =('ack' u.maybe-key)
+    ((pe %ack (ot id+ni ~)) item)
+  ?:  =('poke' u.maybe-key)
+    ((pe %poke (ot ship+(su fed:ag) app+so mark+so json+some ~)) item)
+  ?:  =('subscribe' u.maybe-key)
+    %.  item
+    %+  pe  %subscribe
+    (ot ship+(su fed:ag) app+so path+(su ;~(pfix fas (more fas urs:ab))) ~)
+  ?:  =('unsubscribe' u.maybe-key)
+    %.  item
+    %+  pe  %unsubscribe
+    (ot ship+(su fed:ag) app+so path+(su ;~(pfix fas (more fas urs:ab))) ~)
+  ::  if we reached this, we have an invalid action key. fail parsing.
+  ::
+  ~
 ::  +file-not-found-page: 404 page for when all other options failed
 ::
 ++  file-not-found-page
@@ -1090,7 +1112,6 @@
       ::  %init: tells us what our ship name is
       ::
       %init
-    ~&  %light-born
     ::
     =.  ship.ax  [~ our.task]
     ::  initial value for the login handler

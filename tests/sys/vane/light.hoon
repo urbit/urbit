@@ -688,6 +688,83 @@
       !>  (rush '192.168.1.1' simplified-url-parser:light-gate)
   ==
 ::
+++  test-parse-channel-request
+  ;:  weld
+    %+  expect-eq
+      !>  `[%ack 5]~
+      !>  %-  parse-channel-request:light-gate
+          (need (de-json:html '[{"action": "ack", "id": 5}]'))
+  ::
+    %+  expect-eq
+      !>  `[%poke ~nec %app1 %app-type [%n '5']]~
+      !>  %-  parse-channel-request:light-gate
+          %-  need  %-  de-json:html
+          '''
+          [{"action": "poke",
+            "ship": "nec",
+            "app": "app1",
+            "mark": "app-type",
+            "json": 5}]
+          '''
+  ::
+    %+  expect-eq
+      !>  `[%subscribe ~sampyl-sipnym %hall /this/path]~
+      !>  %-  parse-channel-request:light-gate
+          %-  need  %-  de-json:html
+          '''
+          [{"action": "subscribe",
+            "ship": "sampyl-sipnym",
+            "app": "hall",
+            "path": "/this/path"}]
+          '''
+  ::
+    %+  expect-eq
+      !>  `[%unsubscribe ~marlyt %thing /other]~
+      !>  %-  parse-channel-request:light-gate
+          %-  need  %-  de-json:html
+          '''
+          [{"action": "unsubscribe",
+            "ship": "marlyt",
+            "app": "thing",
+            "path": "/other"}]
+          '''
+  ::
+    ::  after lunch, check error conditions and multipart requests.
+      %+  expect-eq
+        !>  ~
+        !>  %-  parse-channel-request:light-gate
+            %-  need  %-  de-json:html
+            '[{"noaction": "noaction"}]'
+  ::
+      %+  expect-eq
+        !>  ~
+        !>  %-  parse-channel-request:light-gate
+            %-  need  %-  de-json:html
+            '[{"action": "bad-action"}]'
+  ::
+      %+  expect-eq
+        !>  ~
+        !>  %-  parse-channel-request:light-gate
+            %-  need  %-  de-json:html
+            '[{"action": "ack", "id": 5}, {"action": "bad-action"}]'
+  ::
+      %+  expect-eq
+        !>  :-  ~
+            :~  [%ack 9]
+                [%poke ~bud %wut %wut-type [%a [%n '2'] [%n '1'] ~]]
+            ==
+        !>  %-  parse-channel-request:light-gate
+            %-  need  %-  de-json:html
+            '''
+            [{"action": "ack", "id": 9},
+             {"action": "poke",
+              "ship": "bud",
+              "app": "wut",
+              "mark": "wut-type",
+              "json": [2, 1]}]
+            '''
+  ==
+::
 ++  light-call
   |=  $:  light-gate=_light-gate
           now=@da
