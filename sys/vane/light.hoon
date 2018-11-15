@@ -22,7 +22,14 @@
 ::  +note: private request from light to another vane
 ::
 +$  note
-  $%  ::  %f: to ford
+  $%  ::  %b:
+      ::
+      $:  %b
+          ::
+          ::
+          $%  [%wait p=@da]
+      ==  ==
+      ::  %f: to ford
       ::
       $:  %f
           ::
@@ -127,6 +134,9 @@
       ::  authentication-state: state managed by the +authentication core
       ::
       =authentication-state
+      ::  channel-state: state managed by the +channel core
+      ::
+      =channel-state
   ==
 ::  +outstanding-connection: open http connections not fully complete:
 ::
@@ -162,22 +172,22 @@
       [%app app=term]
       ::  internal authentication page
       ::
-      [%login-handler ~]
-      ::  gall subscription system
+      [%authentication ~]
+      ::  gall channel system
       ::
-      [%subscriptions ~]
+      [%channel ~]
   ==
 ::  +authentication-state: state used in the login system
 ::
 +$  authentication-state
-  $%  ::  sessions: a mapping of session cookies to session information
+  $:  ::  sessions: a mapping of session cookies to session information
       ::
       sessions=(map @uv session)
   ==
 ::  +session: server side data about a session
 ::
 +$  session
-  $%  ::  expiry-time: when this session expires
+  $:  ::  expiry-time: when this session expires
       ::
       ::    We check this server side, too, so we aren't relying on the browser
       ::    to properly handle cookie expiration as a security mechanism.
@@ -188,10 +198,91 @@
       ::  mint some sort of long lived cookie for mobile apps which only has
       ::  access to a single application path.
   ==
+::  channel-state: state used in the channel system
+::
++$  channel-state
+  $:  ::  session: mapping between an arbitrary key to a channel
+      ::
+      session=(map @t channel)
+  ==
+::  channel: connection to the browser
+::
+::    Channels are the main method where a webpage communicates with Gall
+::    apps. Subscriptions and pokes are issues with PUT requests on a path,
+::    while GET requests on that same path open a persistent EventSource
+::    channel.
+::
+::    The EventSource API is a sequence number based API that browser provide
+::    which allow the server to push individual events to the browser over a
+::    connection held open. In case of reconnection, the browser will send a
+::    'Last-Event-Id: ' header to the server; the server then resends all
+::    events since then.
+::
++$  channel
+  $:  ::  expiration-time: when this channel will expire
+      ::
+      ::    In case of an EventSource disconnect, we set a timer to reap the
+      ::    subscriptions. This timer shouldn't be too short because the
+      ::
+      expiration-time=(unit @da)
+      ::  next-id: next sequence number to use
+      ::
+      next-id=@ud
+      ::  events: unacknowledged events
+      ::
+      ::    We keep track of all events where we haven't received a
+      ::    'Last-Event-Id: ' response from the client or a per-poke {'ack':
+      ::    ...} call. When there's an active EventSource connection on this
+      ::    channel, we send the event but we still add it to events because we
+      ::    can't assume it got received until we get an acknowledgment.
+      ::
+      events=(qeu [id=@ud type=term data=wall])
+      ::  subscriptions: gall subscriptions
+      ::
+      ::    We maintain a list of subscriptions so if a channel times out, we
+      ::    can cancel all the subscriptions we've made.
+      ::
+      subscriptions=(list [ship=@p app=term =wire =path])
+      ::  duct: the open http sessions which we must %continue on new events.
+      ::
+      ::    For each channel, there is at most one open EventSource
+      ::    connection. A 400 is issues on duplicate attempts to connect to the
+      ::    same channel.
+      ::
+      duct=(unit duct)
+  ==
+::  channel-request: an action requested on a channel
+::
++$  channel-request
+  $%  ::  %ack: acknowledges that the client has received events up to :id
+      ::
+      [%ack id=@ud]
+      ::  %poke: pokes an application, translating :json to :mark.
+      ::
+      [%poke ship=@p app=term mark=term =json]
+      ::  %subscribe: subscribes to an application path
+      ::
+      [%subscribe ship=@p app=term =path]
+      ::  %unsubscribe: unsubscribes from an application path
+      ::
+      [%unsubscribe ship=@p app=term =path]
+  ==
 --
 ::  utilities
 ::
 |%
+::  +parse-channel-request: parses a list of channel-requests
+::
+::    TODO: All of it.
+::
+++  parse-channel-request
+  |=  =json
+  ^-  (list channel-request)
+  ::  %-  ar:dejs-soft:format
+  ::  |=  =^json
+  ::  ?.  ?=([%o *] json)
+  ::    ~
+  !!
 ::  +file-not-found-page: 404 page for when all other options failed
 ::
 ++  file-not-found-page
@@ -349,6 +440,8 @@
 ::  +per-server-event: per-event server core
 ::
 ++  per-server-event
+  ::  gate that produces the +per-server-event core from event information
+  ::
   |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
   |%
   ::  +request: starts handling an inbound http request
@@ -407,11 +500,11 @@
           !>(inbound-request.connection)
       ==
     ::
-        %login-handler
+        %authentication
       (handle-request:authentication secure address http-request)
     ::
-        %subscriptions
-      [~ state]
+        %channel
+      (handle-request:channel secure authenticated address http-request)
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -450,10 +543,10 @@
           !>(inbound-request.u.connection)
       ==
     ::
-        %login-handler
+        %authentication
       [~ state]
     ::
-        %subscriptions
+        %channel
       ::  todo: this part actually matters.
       ::
       [~ state]
@@ -598,6 +691,155 @@
       ::  =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
       ::  %^  rsh  3  1
       ::  (scot %p (@ (need ((sloy scry) [151 %noun] %a pax))))
+    --
+  ::  +channel: per-event handling of requests to the channel system
+  ::
+  ::    Eyre offers a remote interface to your Urbit through channels, which
+  ::    are persistent connections on the server which 
+  ::
+  ++  channel
+    ::  moves: the moves to be sent out at the end of this event, reversed
+    ::
+    =|  moves=(list move)
+    |%
+    ::  channel-timeout: the delay before a channel should be reaped
+    ::
+    ++  channel-timeout  ~h12
+    ::  +handle-request: handles an http request for the subscription system
+    ::
+    ++  handle-request
+      |=  [secure=? authenticated=? =address =http-request]
+      ^-  [(list move) server-state]
+      ::  if we're not authenticated error, but don't redirect.
+      ::
+      ::    We don't redirect because subscription stuff is never the toplevel
+      ::    page; issuing a redirect won't help.
+      ::
+      ?.  authenticated
+        ::  TODO: Real 400 page.
+        ::
+        %^  return-static-data-on-duct  400  'text/html'
+        (internal-server-error authenticated url.http-request ~)
+      ::  parse out the path key the subscription is on
+      ::
+      =+  request-line=(parse-request-line url.http-request)
+      ?.  ?=([@t @t @t ~] site.request-line)
+        ::  url is not of the form '/~/subscription/uid'
+        ::
+        %^  return-static-data-on-duct  400  'text/html'
+        (internal-server-error authenticated url.http-request ~)
+      ::  uid: unique channel id parsed out of url
+      ::
+      =+  uid=i.t.t.site.request-line
+      ::
+      ?:  =('PUT' method.http-request)
+        ::  PUT methods starts/modifies a channel, and returns a result immediately
+        ::
+        (on-put-request uid http-request)
+      ::
+      ~&  %session-not-a-put
+      [~ state]
+    ::  +handle-cancel: cancels an ongoing subscription
+    ::
+    ::++  handle-cancel
+    ::  +on-put-request: handles a PUT request
+    ::
+    ::    
+    ::
+    ++  on-put-request
+      |=  [uid=@t =http-request]
+      ^-  [(list move) server-state]
+      ::  error when there's no body
+      ::
+      ?~  body.http-request
+        %^  return-static-data-on-duct  400  'text/html'
+        (internal-server-error %.y url.http-request ~)
+      ::  parse the incoming body as a json array of +channel-request items
+      ::
+      =/  request-json=(unit json)  ~
+        ::(de-json:html u.body.http-request)
+      ::  if the json doesn't parse, this is a bad request, 400.
+      ::
+      ?~  request-json
+        %^  return-static-data-on-duct  400  'text/html'
+        (internal-server-error %.y url.http-request ~)
+      ::
+      ::
+      =/  requests=(list channel-request)
+        ~
+        ::
+        ::  (parse-channel-request request-json)
+      ?:  =(~ requests)
+        %^  return-static-data-on-duct  400  'text/html'
+        (internal-server-error %.y url.http-request ~)
+      ::  check for the existence of the uid
+      ::
+      ::    if we have no session, create a new one set to expire in
+      ::    :channel-timeout from now.
+      ::
+      =?  ..on-put-request  (~(has by session.channel-state.state) uid)
+        ::
+        =/  expiration-time=@da  (add now channel-timeout)
+        %_    ..on-put-request
+          ::    session.channel-state.state
+          ::  %+  ~(put by session.channel-state.state)  uid
+          ::  [`expiration-time 0 ~ ~ ~]
+        ::
+            moves
+          :_  moves
+          ^-  move
+          [duct %pass /timeout/[uid] %b %wait expiration-time]
+        ==
+      ::  for each request, execute the action passed in
+      ::
+      |-
+      ?~  requests
+        [moves state]
+      ::
+      ?-    -.i.requests
+          %ack
+        !!
+      ::
+          %poke
+        ::
+        ::  =.  moves
+        ::    :_  moves
+        ::    :^  duct  %pass  /channel-poke/[uid]
+        ::    =,  i.requests
+        ::    [%g %deal [our ship] app %peel mark %json !>(json)]
+        ::
+        $(requests t.requests)
+      ::
+          %subscribe
+        !!
+      ::
+          %unsubscribe
+        !!
+      ==
+    ::  +on-channel-timeout: we received a wake to clear an old session
+    ::
+    ++  on-channel-timeout
+      |=  uid=@t
+      ^-  [(list move) server-state]
+      ::
+      =/  session
+        (~(got by session.channel-state.state) uid)
+      ::
+      :_  state
+          ::  %_    state
+          ::      session.channel-state
+          ::    (~(del by session.channel-state) uid)
+          ::  ==
+      ::  produce a list of moves which cancels every gall subscription
+      ::
+      ::  %+  turn  subscriptions.session
+      ::  |=  [ship=@p app=term =wire =path]
+      ::  ^-  move
+      ::  ::  todo: double check this; which duct should we be canceling on? does
+      ::  ::  gall strongly bind to a duct as a cause like ford does?
+      ::  ::
+      ::  [duct %pass [%g %deal [our ship] app %pull ~]]
+      ~
     --
   ::  +handle-ford-response: translates a ford response for the outside world
   ::
@@ -854,8 +1096,8 @@
     ::  initial value for the login handler
     ::
     =.  bindings.server-state.ax
-      :~  [[~ /~/login] duct [%login-handler ~]]
-          [[~ /~/subscription] duct [%subscription ~]]
+      :~  [[~ /~/login] duct [%authentication ~]]
+          [[~ /~/channel] duct [%channel ~]]
       ==
     [~ light-gate]
       ::  %born: new unix process
