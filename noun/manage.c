@@ -83,9 +83,6 @@ static uint8_t Sigstk[SIGSTKSZ];
 void u3_unix_ef_hold(void);         //  suspend system signal regime
 void u3_unix_ef_move(void);         //  restore system signal regime
 
-extern void
-u3_lo_sway(c3_l tab_l, u3_noun tax);
-
 #if 0
 /* _cm_punt(): crudely print trace.
 */

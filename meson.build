@@ -194,7 +194,6 @@ noun_src = ['noun/allocate.c',
   'noun/zave.c']
 
 vere_src = ['vere/ames.c',
-  #'vere/batz.c',
   'vere/behn.c',
   'vere/cttp.c',
   'vere/foil.c',

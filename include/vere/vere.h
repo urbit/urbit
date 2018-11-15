@@ -351,44 +351,6 @@
         uv_mutex_t     mex_u;               //  mutex for non-daemon term state
       } u3_utat;
 
-    /* u3_uled: event log header.
-    */
-      typedef struct {
-        c3_l mag_l;                         //  mug of log format, 'a', 'b'...
-        c3_w kno_w;                         //  kernel number validated with
-        c3_l sal_l;                         //  salt for passcode
-        c3_l key_l;                         //  mug of crypto key, or 0
-        c3_l sev_l;                         //  host process identity
-        c3_l tno_l;                         //  terminal count in host
-      } u3_uled;
-
-    /* u3_olar: event log trailer, old version.
-    */
-      typedef struct {
-        c3_w syn_w;                         //  must equal mug of address
-        c3_w ent_w;                         //  event sequence number
-        c3_w len_w;                         //  word length of this event
-        c3_w mug_w;                         //  mug of entry
-      } u3_olar;
-
-    /* u3_ular: event log trailer.
-    */
-      typedef struct {
-        c3_w syn_w;                         //  must equal mug of address
-        c3_d ent_d;                         //  event sequence number
-        c3_w len_w;                         //  word length of this event
-        c3_w mug_w;                         //  mug of entry
-        c3_w tem_w;                         //  raft term of event
-        c3_w typ_w;                         //  type of event, %ra|%ov
-      } u3_ular;
-
-    /* u3_ulog: unix event log.
-    */
-      typedef struct {
-        c3_i fid_i;                         //  file descriptor
-        c3_d len_d;                         //  length in words
-      } u3_ulog;
-
       struct _u3_umon;
       struct _u3_udir;
       struct _u3_ufil;
@@ -526,85 +488,6 @@
         struct termios   raw_u;             //  raw terminal state
       } u3_utty;
 
-    /* u3_utel: unix telnet listener.
-    */
-      typedef struct _u3_utel {
-        struct _u3_utty uty_t;             //  pseudo-tty
-        c3_s            por_s;             //  file descriptor
-        void*           tel_u;             //  telnet context
-      } u3_utel;
-
-    /* u3_raty: raft server type.
-    */
-      typedef enum {
-        u3_raty_none,
-        u3_raty_foll,
-        u3_raty_cand,
-        u3_raty_lead
-      } u3_raty;
-
-    /* u3_raft: raft state.
-    */
-      typedef struct {
-        uv_tcp_t         wax_u;             //  TCP listener
-        uv_timer_t       tim_u;             //  election/heartbeat timer
-        u3_ulog          lug_u;             //  event log
-        c3_d             ent_d;             //  last log index
-        c3_w             lat_w;             //  last log term
-        u3_raty          typ_e;             //  server type
-        struct _u3_rnam* nam_u;             //  list of peers
-        struct _u3_rcon* run_u;             //  unknown connections
-        c3_w             pop_w;             //  population count
-        c3_w             vot_w;             //  votes in this election
-        c3_c*            str_c;             //  our name
-        //  persistent state
-        c3_w             tem_w;             //  current term
-        c3_c*            vog_c;             //  who we voted for this term
-        //  end persistent state
-      } u3_raft;
-
-    /* u3_rreq: raft request.
-    */
-      typedef struct _u3_rreq {
-        struct _u3_rmsg* msg_u;
-        struct _u3_rreq* nex_u;
-        struct _u3_rcon* ron_u;
-      } u3_rreq;
-
-    /* u3_rbuf: raft input buffer.
-    */
-      typedef struct _u3_rbuf {
-        c3_w                len_w;
-        c3_w                cap_w;
-        c3_y                buf_y[0];
-      } u3_rbuf;
-
-    /* u3_rcon: raft connection.
-    */
-      typedef struct _u3_rcon {
-        uv_tcp_t         wax_u;             //  TCP handle
-        struct _u3_rnam* nam_u;             //  peer we're connected to
-        u3_rbuf*         red_u;             //  read buffer
-        c3_o             red;               //  u3_yes on new data
-        u3_rbuf*         wri_u;             //  write buffer
-        u3_raft*         raf_u;             //  back-reference to server
-        u3_rreq*         out_u;             //  exit of request queue
-        u3_rreq*         tou_u;             //  entry of request queue
-        struct _u3_rcon* nex_u;             //  pointer to next con
-        c3_o             liv;               //  are we live?
-      } u3_rcon;
-
-    /* u3_rnam: raft peer name.
-    */
-      typedef struct _u3_rnam {
-        c3_c*            str_c;             //  our name
-        c3_c*            nam_c;             //  hostname
-        c3_c*            por_c;             //  port
-        u3_rcon*         ron_u;             //  connection
-        struct _u3_rnam* nex_u;             //  pointer to next peer
-        c3_o             vog;               //  did they vote for us?
-      } u3_rnam;
-
     /* u3_opts: command line configuration.
     */
       typedef struct _u3_opts {
@@ -646,7 +529,6 @@
         u3_usig*   sig_u;                   //  signal list
         u3_http*   htp_u;                   //  http servers
         u3_cttp    ctp_u;                   //  http clients
-        u3_utel    tel_u;                   //  telnet listener
         u3_utty*   uty_u;                   //  linked terminal list
         u3_opts    ops_u;                   //  commandline options
         c3_o       liv;                     //  if u3_no, shut down
@@ -757,7 +639,6 @@
   /** Global variables.
   **/
     c3_global  u3_host  u3_Host;
-    c3_global  u3_raft  u3_Raft;
     c3_global  c3_c*    u3_Local;
     c3_global  u3_king  u3_King;
 
@@ -970,66 +851,6 @@
       */
         void
         u3_reck_kick(u3_pier* pir_u, u3_noun ovo);
-
-
-    /**  Main loop, new style.
-    **/
-      /* u3_lo_loop(): enter main event loop.
-      */
-        void
-        u3_lo_loop(void);
-
-      /* u3_lo_lead(): actions on promotion to leader.
-      */
-        void
-        u3_lo_lead(void);
-
-      /* u3_lo_exit(): shut down io across pier.
-      */
-        void
-        u3_lo_exit(void);
-
-      /* u3_lo_show(): print typeless noun.
-      */
-        void
-        u3_lo_show(c3_c* cap_c, u3_noun nun);
-#define   u3ls(cap_c, nun) u3_lo_show(cap_c, nun)
-
-      /* u3_lo_bail(): clean up all event state.
-      */
-        void
-        u3_lo_bail(void);
-
-      /* u3_lo_tank(): dump single tank.
-      */
-        void
-        u3_lo_tank(c3_l tab_l, u3_noun tac);
-
-      /* u3_lo_punt(): dump tank list.
-      */
-        void
-        u3_lo_punt(c3_l tab_l, u3_noun tac);
-
-      /* u3_lo_sway(): print trace.
-      */
-        void
-        u3_lo_sway(c3_l tab_l, u3_noun tax);
-
-      /* u3_lo_grab(): garbage-collect the world, plus roots; end with u3_none
-      */
-        void
-        u3_lo_grab(c3_c* cap_c, u3_noun som, ...);
-
-      /* u3_lo_open(): begin callback processing.
-      */
-        void
-        u3_lo_open(void);
-
-      /* u3_lo_shut(): end callback processing.
-      */
-        void
-        u3_lo_shut(c3_o);
-
 
     /**  Terminal, new style.
     **/
@@ -1304,94 +1125,6 @@
       */
         void
         u3_http_io_poll(void);
-
-    /** Raft log syncing.
-    **/
-      /* u3_raft_readopt(): parse command line options.
-      */
-        u3_rnam*
-        u3_raft_readopt(const c3_c* arg_c, c3_c* our_c, c3_s oup_s);
-
-      /* u3_raft_init(): start Raft process.
-      */
-        void
-        u3_raft_init(void);
-
-      /* u3_raft_work(): poke, kick, and push pending events.
-      */
-        void
-        u3_raft_work(void);
-
-    /**  Disk persistence.
-    **/
-      /* u3_sist_boot(): restore or create pier from disk.
-      */
-        void
-        u3_sist_boot(void);
-
-      /* u3_sist_pack(): write a log entry to disk.
-      **
-      ** XX Synchronous.
-      **
-      ** typ_w is a mote describing the entry type: %ov for Arvo
-      ** logs, %ra for Raft events.
-      **
-      ** Returns the entry's sequence number.
-      */
-        c3_d
-        u3_sist_pack(c3_w tem_w,
-                     c3_w typ_w,
-                     c3_w* bob_w,
-                     c3_w len_w);
-
-      /* u3_sist_put(): moronic key-value store put.
-      **
-      ** u3_sist_put will do its best to associate the passed key with
-      ** the passed value in a way that will persist across process
-      ** restarts. It will probably do so by writing a file named for
-      ** the key with contents identical to the value. To rely on it
-      ** for anything heavy-duty would be a mistake.
-      **
-      ** Why would we even have something like this? Because sometimes
-      ** we need to maintain files completely independently of the
-      ** noun state.
-      */
-        void
-        u3_sist_put(const c3_c* key_c, const c3_y* val_y, size_t siz_i);
-
-      /* u3_sist_nil(): moronic key-value store rm.
-      **
-      ** Does its best to expunge all records on the given key. Has
-      ** no effect if the key doesn't exist.
-      */
-        void
-        u3_sist_nil(const c3_c* key_c);
-
-      /* u3_sist_has(): moronic key-value store existence check.
-      **
-      ** Returns the byte length of the value previously stored via
-      ** u3_sist_put, or -1 if it couldn't find one.
-      */
-        ssize_t
-        u3_sist_has(const c3_c* key_c);
-
-      /* u3_sist_get(): moronic key-value store get.
-      **
-      ** u3_sist_get is the mirror of u3_sist_put. It writes to val_y,
-      ** which had better be at least as big as the return value from
-      ** u3_sist_has, the value that you previously put.
-      **
-      ** Needless to say, u3_sist_get crashes if it can't find your
-      ** value.
-      */
-        void
-        u3_sist_get(const c3_c* key_c, c3_y* val_y);
-
-      /* u3_sist_rand(): fill 8 words (32 bytes) with high-quality entropy.
-      */
-        void
-        u3_sist_rand(c3_w* rad_w);
-
 
     /**  New timer system.
     **/
