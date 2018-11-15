@@ -776,22 +776,19 @@
       ?~  body.http-request
         %^  return-static-data-on-duct  400  'text/html'
         (internal-server-error %.y url.http-request ~)
-      ::  parse the incoming body as a json array of +channel-request items
+      ::  if the incoming body isn't json, this is a bad request, 400.
       ::
-      =/  request-json=(unit json)  ~
-        ::(de-json:html u.body.http-request)
-      ::  if the json doesn't parse, this is a bad request, 400.
-      ::
-      ?~  request-json
+      ?~  maybe-json=(de-json:html q.u.body.http-request)
         %^  return-static-data-on-duct  400  'text/html'
         (internal-server-error %.y url.http-request ~)
+      ::  parse the json into an array of +channel-request items
       ::
+      ?~  maybe-requests=(parse-channel-request u.maybe-json)
+        %^  return-static-data-on-duct  400  'text/html'
+        (internal-server-error %.y url.http-request ~)
+      ::  while weird, the request list could be empty
       ::
-      =/  requests=(list channel-request)
-        ~
-        ::
-        ::  (parse-channel-request request-json)
-      ?:  =(~ requests)
+      ?:  =(~ u.maybe-requests)
         %^  return-static-data-on-duct  400  'text/html'
         (internal-server-error %.y url.http-request ~)
       ::  check for the existence of the uid
@@ -803,17 +800,18 @@
         ::
         =/  expiration-time=@da  (add now channel-timeout)
         %_    ..on-put-request
-          ::    session.channel-state.state
-          ::  %+  ~(put by session.channel-state.state)  uid
-          ::  [`expiration-time 0 ~ ~ ~]
+            session.channel-state.state
+          %+  ~(put by session.channel-state.state)  uid
+          [`expiration-time 0 ~ ~ ~]
         ::
             moves
           :_  moves
           ^-  move
-          [duct %pass /timeout/[uid] %b %wait expiration-time]
+          [duct %pass /channel/timeout/[uid] %b %wait expiration-time]
         ==
       ::  for each request, execute the action passed in
       ::
+      =+  requests=u.maybe-requests
       |-
       ?~  requests
         [moves state]
@@ -826,7 +824,7 @@
         ::
         ::  =.  moves
         ::    :_  moves
-        ::    :^  duct  %pass  /channel-poke/[uid]
+        ::    :^  duct  %pass  /channel/poke/[uid]
         ::    =,  i.requests
         ::    [%g %deal [our ship] app %peel mark %json !>(json)]
         ::
@@ -847,21 +845,20 @@
       =/  session
         (~(got by session.channel-state.state) uid)
       ::
-      :_  state
-          ::  %_    state
-          ::      session.channel-state
-          ::    (~(del by session.channel-state) uid)
-          ::  ==
+      :_  %_    state
+              session.channel-state
+            (~(del by session.channel-state.state) uid)
+          ==
       ::  produce a list of moves which cancels every gall subscription
       ::
-      ::  %+  turn  subscriptions.session
-      ::  |=  [ship=@p app=term =wire =path]
-      ::  ^-  move
-      ::  ::  todo: double check this; which duct should we be canceling on? does
-      ::  ::  gall strongly bind to a duct as a cause like ford does?
-      ::  ::
-      ::  [duct %pass [%g %deal [our ship] app %pull ~]]
-      ~
+      %+  turn  subscriptions.session
+      |=  [ship=@p app=term =wire =path]
+      ^-  move
+      ::  todo: double check this; which duct should we be canceling on? does
+      ::  gall strongly bind to a duct as a cause like ford does?
+      ::
+      :^  duct  %pass  /channel/subscribe/[uid]
+      [%g %deal [our ship] app %pull ~]
     --
   ::  +handle-ford-response: translates a ford response for the outside world
   ::

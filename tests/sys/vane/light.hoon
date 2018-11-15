@@ -464,71 +464,17 @@
   ::  the browser then fetches the login page
   ::
   =^  results5  light-gate
-    %-  light-call  :*
+    %-  perform-authentication  :*
       light-gate
       now=~1111.1.5
       scry=*sley
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %inbound-request
-            %.n
-            [%ipv4 .192.168.1.1]
-            [%'GET' '/~/login?redirect=/~landscape/inner-path' ~ ~]
-        ==
-      ^=  expected-moves
-        ^-  (list move:light-gate)
-        :~  :*  duct=~[/http-blah]
-                %give
-                %http-response
-                %start
-                200
-                :~  ['content-type' 'text/html']
-                    ['content-length' '348']
-                ==
-                [~ (login-page:light-gate `'/~landscape/inner-path')]
-                complete=%.y
-        ==  ==
-    ==
-  ::  a response post redirects back to the application, setting cookie
-  ::
-  =^  results6  light-gate
-    %-  light-call  :*
-      light-gate
-      now=~1111.1.6
-      scry=*sley
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %inbound-request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'POST'
-            '/~/login'
-            ~
-            :-  ~
-            %-  as-octs:mimes:html
-            'password=lidlut-tabwed-pillex-ridrup&redirect=/~landscape'
-        ==
-      ^=  expected-moves
-        ^-  (list move:light-gate)
-        :~  :*  duct=~[/http-blah]
-                %give
-                %http-response
-                %start
-                307
-                :~  ['location' '/~landscape']
-                    :-  'set-cookie'
-                    'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Path=/; Max-Age=86400'
-                ==
-                ~
-                complete=%.y
-        ==  ==
     ==
   ::  going back to the original url will acknowledge the authentication cookie
   ::
-  =^  results7  light-gate
+  =^  results6  light-gate
     %-  light-call-with-comparator  :*
       light-gate
-      now=~1111.1.6..1.0.0
+      now=~1111.1.5..1.0.0
       scry=*sley
       ^=  call-args
         ^-  [=duct type=* wrapped-task=(hobo task:able:light-gate)]
@@ -561,7 +507,15 @@
           :+  /run-app/app1  [~nul ~nul]
               ^-  cush:gall
               :*  %app1  %poke  %handle-http-request
-                  !>([%.y %.n [%ipv4 .192.168.1.1] ['GET' '/~landscape/inner-path' ~ ~]])
+                  !>  :*
+                    %.y
+                    %.n
+                    [%ipv4 .192.168.1.1]
+                    :*  %'GET'
+                        '/~landscape/inner-path'
+                        ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+                        ~
+                  ==  ==
               ==
           card
     ==
@@ -729,7 +683,6 @@
             "path": "/other"}]
           '''
   ::
-    ::  after lunch, check error conditions and multipart requests.
       %+  expect-eq
         !>  ~
         !>  %-  parse-channel-request:light-gate
@@ -872,4 +825,77 @@
   ::  compare the payload vases
   ::
   (expect-eq q.p.q.data.expected q.p.q.data.note)
+::  +perform-authentication: goes through the authentication flow
+::
+++  perform-authentication
+  |=  $:  light-gate=_light-gate
+          start-now=@da
+          scry=sley
+      ==
+  ^-  [tang _light-gate]
+    ::  the browser then fetches the login page
+  ::
+  =^  results1  light-gate
+    %-  light-call  :*
+      light-gate
+      now=start-now
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-blah]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            [%'GET' '/~/login?redirect=/~landscape/inner-path' ~ ~]
+        ==
+      ^=  expected-moves
+        ^-  (list move:light-gate)
+        :~  :*  duct=~[/http-blah]
+                %give
+                %http-response
+                %start
+                200
+                :~  ['content-type' 'text/html']
+                    ['content-length' '348']
+                ==
+                [~ (login-page:light-gate `'/~landscape/inner-path')]
+                complete=%.y
+        ==  ==
+    ==
+  ::  a response post redirects back to the application, setting cookie
+  ::
+  =^  results2  light-gate
+    %-  light-call  :*
+      light-gate
+      now=(add start-now ~m1)
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-blah]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            %'POST'
+            '/~/login'
+            ~
+            :-  ~
+            %-  as-octs:mimes:html
+            'password=lidlut-tabwed-pillex-ridrup&redirect=/~landscape'
+        ==
+      ^=  expected-moves
+        ^-  (list move:light-gate)
+        :~  :*  duct=~[/http-blah]
+                %give
+                %http-response
+                %start
+                307
+                :~  ['location' '/~landscape']
+                    :-  'set-cookie'
+                    'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Path=/; Max-Age=86400'
+                ==
+                ~
+                complete=%.y
+        ==  ==
+    ==
+  ::
+  :_  light-gate
+  (weld results1 results2)
 --
