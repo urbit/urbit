@@ -16,6 +16,12 @@
       [%perm wire desk path rite:clay]
       [%peer wire dock path]
       [%pull wire dock ~]
+      [%diff diff]
+  ==
+::
++$  diff
+  $%  [%collections-prize prize]
+      [%collections-rumor rumor]
   ==
 ::
 +$  poke
@@ -31,13 +37,13 @@
 +$  streams
   $:  ::  inbox config and the last 30 messages in it
       ::
-      inbox=[con=config env=(list envelope:hall)]
+      inbox=[con=(unit config:hall) env=(list envelope:hall)]
       ::  names and configs of all circles we own
       ::
-      our-circles=(map name:hall config:hall)
-      ::  names and configs of all circles we're subscribed to 
+      our-circles=(map circle:hall (unit config:hall))
+      ::  names and configs of all circles we're subscribed to
       ::
-      sub-circles=(map circle:hall config:hall)
+      sub-circles=(map circle:hall (unit config:hall))
       ::  all the DM invites we've received
       ::
       invites=(list envelope:hall)
@@ -46,13 +52,13 @@
 +$  prize
   $:  ::  inbox config and the last 30 messages in it
       ::
-      inbox=[con=config env=(list envelope:hall)]
+      inbox=[con=(unit config:hall) env=(list envelope:hall)]
       ::  names and configs of all circles we own
       ::
-      our-circles=(map name:hall config:hall)
-      ::  names and configs of all circles we're subscribed to 
+      our-circles=(map circle:hall (unit config:hall))
+      ::  names and configs of all circles we're subscribed to
       ::
-      sub-circles=(map circle:hall config:hall)
+      sub-circles=(map circle:hall (unit config:hall))
       ::  all the DM invites we've received
       ::
       invites=(list envelope:hall)
@@ -62,10 +68,10 @@
   $%  ::  if config is given, either add new circle or update existing one
       ::  if config is nil then delete circle
       ::
-      [%circle-change circle:hall config:hall]
+      [%circle-change wit=?(%our %sub) cir=circle:hall con=(unit config:hall)]
       ::  recieved a new inbox message or DM invite
       ::
-      [%new-msg ?(%inbox %invites) envelope:hall]
+      [%new-msg nom=?(%inbox %invites) env=envelope:hall]
   ==
 ::
 +$  collection  [meta=config data=(map nom=knot =item)]
