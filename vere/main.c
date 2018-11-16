@@ -69,7 +69,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.loh = c3n;
   u3_Host.ops_u.dem = c3n;
-  u3_Host.ops_u.fog = c3n;
   u3_Host.ops_u.fak = c3n;
   u3_Host.ops_u.tex = c3n;
   u3_Host.ops_u.pro = c3n;
@@ -81,7 +80,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"s:B:I:w:t:f:k:l:n:p:LSabcdgmqvxFPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"s:B:I:w:t:f:k:l:n:p:LSabcdgmqvxFPDR")) != -1 ) {
     switch ( ch_i ) {
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
@@ -102,10 +101,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'x': {
         u3_Host.ops_u.tex = c3y;
-        break;
-      }
-      case 'X': {
-        u3_Host.ops_u.fog = c3y;
         break;
       }
       case 'f': {
@@ -289,8 +284,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-l port       Initial peer port\n",
     "-f            Fuzz testing\n",
     "-k stage      Start at Hoon kernel version stage\n",
-    "-R            Report urbit build info\n",
-    "-Xwtf         Skip last event\n"};
+    "-R            Report urbit build info\n"};
 #else
   c3_c *use_c[] = {
     "simple usage: \n",

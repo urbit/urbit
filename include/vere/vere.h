@@ -507,7 +507,6 @@
         c3_o    dem;                        //  -d, daemon
         c3_o    dry;                        //  -D, dry compute, no checkpoint  
         c3_o    tex;                        //  -x, exit after loading
-        c3_o    fog;                        //  -X, skip last event
         c3_o    fak;                        //  -F, fake carrier
         c3_o    loh;                        //  -L, local-only networking
         c3_o    pro;                        //  -P, profile
