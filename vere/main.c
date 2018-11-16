@@ -78,7 +78,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"s:B:I:w:t:f:k:l:p:LSabcdgmqvxFPDR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"s:B:w:t:f:k:p:LSabcdgqvxFPDR")) != -1 ) {
     switch ( ch_i ) {
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
