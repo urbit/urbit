@@ -38,8 +38,6 @@ _main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
   else return c3n;
 }
 
-static c3_c hostbuf[2048];  // kill me
-
 /* _main_presig(): prefix optional sig.
 */
 c3_c* 
@@ -80,7 +78,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"s:B:I:w:t:f:k:l:n:p:LSabcdgmqvxFPDR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"s:B:I:w:t:f:k:l:p:LSabcdgmqvxFPDR")) != -1 ) {
     switch ( ch_i ) {
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
@@ -113,10 +111,6 @@ _main_getopt(c3_i argc, c3_c** argv)
         if ( c3n == _main_readw(optarg, 256, &u3_Host.ops_u.kno_w) ) {
           return c3n;
         }
-        break;
-      }
-      case 'n': {
-        u3_Host.ops_u.nam_c = strdup(optarg);
         break;
       }
       case 'p': {
@@ -219,19 +213,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     if ( stat(u3_Host.ops_u.pil_c, &s) != 0 ) {
       fprintf(stderr, "pill %s not found\n", u3_Host.ops_u.pil_c);
       return c3n;
-    }
-  }
-
-  if ( u3_Host.ops_u.nam_c == 0 ) {
-    u3_Host.ops_u.nam_c = getenv("HOSTNAME");
-    if ( u3_Host.ops_u.nam_c == 0 ) {
-      c3_w len_w = sysconf(_SC_HOST_NAME_MAX) + 1;
-
-      u3_Host.ops_u.nam_c = hostbuf;
-      if ( 0 != gethostname(u3_Host.ops_u.nam_c, len_w) ) {
-        perror("gethostname");
-        exit(1);
-      }
     }
   }
 
@@ -474,7 +455,6 @@ main(c3_i   argc,
   //  printf("welcome.\n");
   printf("urbit %s\n", URBIT_VERSION);
   printf("urbit: home is %s\n", u3_Host.dir_c);
-  // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
   if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
     printf("urbit: running as daemon\n");

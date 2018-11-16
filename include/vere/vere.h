@@ -491,7 +491,6 @@
     /* u3_opts: command line configuration.
     */
       typedef struct _u3_opts {
-        c3_c*   nam_c;                      //  -n, unix hostname
         c3_c*   who_c;                      //  -w, begin with ticket
         c3_c*   tic_c;                      //  -t, ticket value
         c3_c*   pil_c;                      //  -B, bootstrap from
