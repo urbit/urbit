@@ -81,7 +81,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
   u3_Host.ops_u.has = c3n;
-  u3_Host.ops_u.net = c3n;
+  u3_Host.ops_u.net = c3y;
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.qui = c3n;
@@ -94,7 +94,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.raf_c = 0;
   u3_Host.ops_u.nam_c = 0;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:e:E:f:F:k:p:NabcdgqstvxPDRS")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:e:E:f:F:k:p:LabcdgqstvxPDRS")) != -1 ) {
     switch ( ch_i ) {
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
@@ -163,7 +163,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.rep = c3y;
         return c3y;
       }
-      case 'N': { u3_Host.ops_u.net = c3y; break; }
+      case 'L': { u3_Host.ops_u.net = c3n; break; }
       case 'a': { u3_Host.ops_u.abo = c3y; break; }
       case 'b': { u3_Host.ops_u.bat = c3y; break; }
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
@@ -198,16 +198,9 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
-  // XX revisit
-  if ( (0 == u3_Host.ops_u.fak_c) && (c3y == u3_Host.ops_u.net) ) {
-    // fprintf(stderr, "-N only makes sense with -F\n");
-    u3_Host.ops_u.net = c3n;
-  } else if ( (0 == u3_Host.ops_u.fak_c) && (c3n == u3_Host.ops_u.net) ) {
-    u3_Host.ops_u.net = c3y;  /* remote networking is always on in real mode. */
-  }
-
   if ( 0 != u3_Host.ops_u.fak_c ) {
     u3_Host.ops_u.has = c3y;  /* no battery hashing on fake ships. */
+    u3_Host.ops_u.net = c3n;  /* no networking on fake ships. */
   }
 
   if ( u3_Host.ops_u.arv_c != 0 && !imp_t ) {
@@ -351,7 +344,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-g            Set GC flag\n",
     "-K stage      Start at Hoon kernel version stage\n",
     "-k keys       Private key file\n",
-    "-N            Enable networking in fake mode (-F)\n",
+    "-L            local networking only\n",
     "-p ames_port  Set the ames port to bind to\n",
     "-P            Profiling\n",
     "-q            Quiet\n",
