@@ -479,36 +479,36 @@ _n_nock_on(u3_noun bus, u3_noun fol)
  * and several opcodes "overflow" (from byte to short index) to
  * their successor, so order can matter here. */
 // general purpose
-#define HALT  0
-#define BAIL  1
-#define COPY  2
-#define SWAP  3
-#define TOSS  4
-#define AUTO  5
+#define HALT  0 // null terminated opcode list.
+#define BAIL  1 // u3m_bail
+#define COPY  2 // duplicates the value at the top of the stack.
+#define SWAP  3 // swap the top two values on the stack.
+#define TOSS  4 // throws away the value at the top of the stack.
+#define AUTO  5 // top two elems become just a cell cell
 #define AULT  6
-#define SNOC  7
+#define SNOC  7 // backwards AUTO
 #define SNOL  8
-#define HEAD  9
+#define HEAD  9 // push the head of the cell at the top of the stack.
 #define HELD 10
-#define TAIL 11
+#define TAIL 11 //
 #define TALL 12
 // fragment (keep)
-#define FABK 13
-#define FASK 14
-#define FIBK 15
-#define FISK 16
+#define FABK 13 // arg is a byte
+#define FASK 14 // arg is a short
+#define FIBK 15 // arg is a byte index into the literals array
+#define FISK 16 // arg is a short index into the literals array
 // fragment (lose)
 #define FABL 17
 #define FASL 18
 #define FIBL 19
 #define FISL 20
 // literal (keep)
-#define LIT0 21
-#define LIT1 22
-#define LITB 23
-#define LITS 24
-#define LIBK 25
-#define LISK 26
+#define LIT0 21 // literal 0
+#define LIT1 22 // literal 1
+#define LITB 23 // literal -- arg is a byte
+#define LITS 24 // literal -- arg is a short
+#define LIBK 25 // literal -- arg is a byte index
+#define LISK 26 // literal -- arg is a short index
 // literal (lose)
 #define LIL0 27
 #define LIL1 28
@@ -517,19 +517,19 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define LIBL 31
 #define LISL 32
 // nock
-#define NOLK 33
-#define NOCT 34
-#define NOCK 35
+#define NOLK 33 // .*(x y) from the top of the stack. (replace)
+#define NOCT 34 // .*(x y) from the top of the stack. (tail call)
+#define NOCK 35 // .*(x y) from the top of the stack. (push)
 // 3 & 4
-#define DEEP 36
-#define BUMP 37
+#define DEEP 36 // is the top of the stack a cell
+#define BUMP 37 // increment top of stack
 // equality
-#define SAM0 38
-#define SAM1 39
-#define SAMB 40
-#define SAMS 41
-#define SANB 42
-#define SANS 43
+#define SAM0 38 // is zero
+#define SAM1 39 // is one
+#define SAMB 40 // is literal byte
+#define SAMS 41 // is literal short
+#define SANB 42 // is literal byte index
+#define SANS 43 // is literal short index
 #define SAME 44
 #define SALM 45
 #define SAMC 46
@@ -1945,7 +1945,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       pog   = pog_u->byc_u.ops_y;
       ip_w  = 0;
 #ifdef U3_CPU_DEBUG
-    u3R->pro.nox_d += 1;
+      u3R->pro.nox_d += 1;
 #endif
 #ifdef VERBOSE_BYTECODE
       fprintf(stderr, "\r\nnock jump: %u\r\n", o);
