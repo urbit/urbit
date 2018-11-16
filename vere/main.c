@@ -90,7 +90,11 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:e:E:f:F:k:l:n:p:r:NabcdgqstvxPDRS")) != -1 ) {
+  u3_Host.ops_u.rop_s = 0;
+  u3_Host.ops_u.raf_c = 0;
+  u3_Host.ops_u.nam_c = 0;
+
+  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:e:E:f:F:k:p:NabcdgqstvxPDRS")) != -1 ) {
     switch ( ch_i ) {
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
@@ -149,24 +153,10 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.key_c = strdup(optarg);
         break;
       }
-      case 'l': {
-        if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
-          return c3n;
-        } else u3_Host.ops_u.rop_s = arg_w;
-        break;
-      }
-      case 'n': {
-        u3_Host.ops_u.nam_c = strdup(optarg);
-        break;
-      }
       case 'p': {
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
         } else u3_Host.ops_u.por_s = arg_w;
-        break;
-      }
-      case 'r': {
-        u3_Host.ops_u.raf_c = strdup(optarg);
         break;
       }
       case 'R': {
@@ -245,11 +235,6 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   if ( u3_Host.ops_u.gen_c != 0 && u3_Host.ops_u.nuu == c3n ) {
     fprintf(stderr, "-G only makes sense when bootstrapping a new instance\n");
-    return c3n;
-  }
-
-  if ( u3_Host.ops_u.rop_s == 0 && u3_Host.ops_u.raf_c != 0 ) {
-    fprintf(stderr, "The -r flag requires -l.\n");
     return c3n;
   }
 
@@ -366,13 +351,10 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-g            Set GC flag\n",
     "-K stage      Start at Hoon kernel version stage\n",
     "-k keys       Private key file\n",
-    "-l port       Initial peer port\n",
-    "-n host       Set unix hostname\n",
     "-N            Enable networking in fake mode (-F)\n",
     "-p ames_port  Set the ames port to bind to\n",
     "-P            Profiling\n",
     "-q            Quiet\n",
-    "-r host       Initial peer address\n",
     "-R            Report urbit build info\n",
     "-s            Pill URL from arvo git hash\n",
     "-S            Disable battery hashing\n",
