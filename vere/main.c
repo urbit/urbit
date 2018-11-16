@@ -78,16 +78,11 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.qui = c3n;
   u3_Host.ops_u.nuu = c3n;
-  u3_Host.ops_u.mem = c3n;
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"s:B:I:w:t:f:k:l:n:p:LSabcdgmqvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"s:B:I:w:t:f:k:l:n:p:LSabcdgmqvxFPDXR")) != -1 ) {
     switch ( ch_i ) {
-      case 'M': {
-        u3_Host.ops_u.mem = c3y;
-        break;
-      }
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
         break;
@@ -292,7 +287,6 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-x            Exit immediately\n",
     "-r host       Initial peer address\n",
     "-l port       Initial peer port\n",
-    "-M            Memory madness\n",
     "-f            Fuzz testing\n",
     "-k stage      Start at Hoon kernel version stage\n",
     "-R            Report urbit build info\n",

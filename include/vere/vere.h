@@ -515,7 +515,6 @@
         c3_o    nuu;                        //  -c, new pier
         c3_o    qui;                        //  -q, quiet
         c3_o    vno;                        //  -V, turn on +verb
-        c3_o    mem;                        //  -M, memory madness
         c3_o    rep;                        //  -R, report build info
       } u3_opts;
 
