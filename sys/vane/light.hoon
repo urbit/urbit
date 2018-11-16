@@ -259,7 +259,7 @@
       [%ack id=@ud]
       ::  %poke: pokes an application, translating :json to :mark.
       ::
-      [%poke ship=@p app=term mark=term =json]
+      [%poke ship=@p app=term mark=@tas =json]
       ::  %subscribe: subscribes to an application path
       ::
       [%subscribe ship=@p app=term =path]
@@ -293,7 +293,7 @@
   ?:  =('ack' u.maybe-key)
     ((pe %ack (ot id+ni ~)) item)
   ?:  =('poke' u.maybe-key)
-    ((pe %poke (ot ship+(su fed:ag) app+so mark+so json+some ~)) item)
+    ((pe %poke (ot ship+(su fed:ag) app+so mark+(su sym) json+some ~)) item)
   ?:  =('subscribe' u.maybe-key)
     %.  item
     %+  pe  %subscribe
@@ -796,7 +796,10 @@
       ::    if we have no session, create a new one set to expire in
       ::    :channel-timeout from now.
       ::
-      =?  ..on-put-request  (~(has by session.channel-state.state) uid)
+      ::    TODO: This is wrong. We always want to potentially update the
+      ::    expiration time if there's no eventsource attached.
+      ::
+      =?  ..on-put-request  !(~(has by session.channel-state.state) uid)
         ::
         =/  expiration-time=@da  (add now channel-timeout)
         %_    ..on-put-request
@@ -813,20 +816,36 @@
       ::
       =+  requests=u.maybe-requests
       |-
+      ::
       ?~  requests
+        ::  this is a PUT request; we must mark it as complete
+        ::
+        =.  moves
+          :_  moves
+          ^-  move
+          :+  duct  %give
+          :*  %http-response  %start
+              status-code=200
+              headers=~
+              data=~
+              complete=%.y
+          ==
+        ::
         [moves state]
       ::
+      ~&  [%do i.requests]
       ?-    -.i.requests
           %ack
         !!
       ::
           %poke
         ::
-        ::  =.  moves
-        ::    :_  moves
-        ::    :^  duct  %pass  /channel/poke/[uid]
-        ::    =,  i.requests
-        ::    [%g %deal [our ship] app %peel mark %json !>(json)]
+        =.  moves
+          :_  moves
+          ^-  move
+          :^  duct  %pass  /channel/poke/[uid]
+          =,  i.requests
+          [%g %deal `sock`[our ship] `cush:gall`[app %punk mark %json !>(json)]]
         ::
         $(requests t.requests)
       ::

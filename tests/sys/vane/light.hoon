@@ -718,6 +718,127 @@
             '''
   ==
 ::
+++  test-channel-reject-unauthenticated
+  ::
+  =^  results1  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.1
+      scry=*sley
+      call-args=[duct=~[/init] ~ [%init ~nul]]
+      expected-moves=~
+    ==
+  ::
+  =^  results2  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.2
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-blah]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            [%'PUT' '/~/channel/1234567890abcdef' ~ ~]
+        ==
+      ^=  expected-moves
+        ^-  (list move:light-gate)
+        :~  :*  duct=~[/http-blah]
+                %give
+                %http-response
+                %start
+                400
+                :~  ['content-type' 'text/html']
+                    ['content-length' '206']
+                ==
+              ::
+                :-  ~
+                %^  internal-server-error:light-gate  %.n
+                '/~/channel/1234567890abcdef'  ~
+              ::
+                complete=%.y
+        ==  ==
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+  ==
+::
+++  test-channel-open-never-used-expire
+  ::
+  =^  results1  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.1
+      scry=*sley
+      call-args=[duct=~[/init] ~ [%init ~nul]]
+      expected-moves=~
+    ==
+  ::  ensure there's an authenticated session
+  ::
+  =^  results2  light-gate
+    %-  perform-authentication  :*
+      light-gate
+      now=~1111.1.2
+      scry=*sley
+    ==
+  ::  send the channel on an 
+  ::
+  =^  results3  light-gate
+    %-  light-call-with-comparator  :*
+      light-gate
+      now=~1111.1.2
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-blah]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            %'PUT'
+            '/~/channel/0123456789abcdef'
+            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+        ::
+            :-  ~
+            %-  as-octs:mimes:html
+            '''
+            [{"action": "poke",
+              "ship": "nul",
+              "app": "one",
+              "mark": "a",
+              "json": 5}]
+            '''
+        ==
+      ^=  comparator
+        |=  moves=(list move:light-gate)
+        ^-  tang
+        ::
+        ?.  ?=([^ ^ ^ ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  [~[/http-blah] %give %http-response %start 200 ~ ~ %.y]
+            !>  i.moves
+        ::
+          %+  expect-gall-deal
+            [/channel/poke/'0123456789abcdef' [~nul ~nul] %one %punk %a %json !>([%n '5'])]
+            card.i.t.moves
+        ::
+          %+  expect-eq
+            !>  :*  ~[/http-blah]  %pass
+                    /channel/timeout/'0123456789abcdef'
+                    %b  %wait  (add ~1111.1.2 ~h12)
+                ==
+            !>  i.t.t.moves
+    ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+  ==
+::
 ++  light-call
   |=  $:  light-gate=_light-gate
           now=@da
@@ -813,18 +934,34 @@
   ::
   %+  weld
     (expect-eq !>(p.data.expected) !>(p.data.note))
+  ::
+  ?:  ?=([%poke *] q.data.expected)
+    ?.  ?=([%poke *] q.data.note)
+      [%leaf "expected %poke, actual {<q.data.note>}"]~
+    ::
+    %+  weld
+      (expect-eq !>(p.p.q.data.expected) !>(p.p.q.data.note))
+    ::  compare the payload vases
+    ::
+    (expect-eq q.p.q.data.expected q.p.q.data.note)
+  ::
+  ?:  ?=([%punk *] q.data.expected)
+    ?.  ?=([%punk *] q.data.note)
+      [%leaf "expected %punk, actual {<q.data.note>}"]~
+    ::  compare the mark type
+    ::
+    %+  weld
+      (expect-eq !>(p.q.data.expected) !>(p.q.data.note))
+    ::  compare the cage mark
+    ::
+    %+  weld
+      (expect-eq !>(p.q.q.data.expected) !>(p.q.q.data.note))
+    ::  compare the payload vases
+    ::
+    (expect-eq q.q.q.data.expected q.q.q.data.note)
   ::  todo: handle other deals
   ::
-  ?.  ?=([%poke *] q.data.note)
-    [%leaf "todo: can only handle %poke right now"]~
-  ?.  ?=([%poke *] q.data.expected)
-    [%leaf "todo: can only handle %poke right now"]~
-  ::
-  %+  weld
-    (expect-eq !>(p.p.q.data.expected) !>(p.p.q.data.note))
-  ::  compare the payload vases
-  ::
-  (expect-eq q.p.q.data.expected q.p.q.data.note)
+  [%leaf "unexpected %deal type"]~
 ::  +perform-authentication: goes through the authentication flow
 ::
 ++  perform-authentication
@@ -833,7 +970,7 @@
           scry=sley
       ==
   ^-  [tang _light-gate]
-    ::  the browser then fetches the login page
+  ::  the browser then fetches the login page
   ::
   =^  results1  light-gate
     %-  light-call  :*
