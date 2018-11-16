@@ -83,7 +83,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.git = c3n;
   u3_Host.ops_u.has = c3n;
   u3_Host.ops_u.net = c3n;
-  u3_Host.ops_u.mem = c3n;
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.qui = c3n;
@@ -92,12 +91,8 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:e:E:f:F:k:l:n:p:r:NabcdgqstvxMPDXRS")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:e:E:f:F:k:l:n:p:r:NabcdgqstvxPDXRS")) != -1 ) {
     switch ( ch_i ) {
-      case 'M': {
-        u3_Host.ops_u.mem = c3y;
-        break;
-      }
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
         break;
@@ -377,7 +372,6 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-K stage      Start at Hoon kernel version stage\n",
     "-k keys       Private key file\n",
     "-l port       Initial peer port\n",
-    "-M            Memory madness\n",
     "-n host       Set unix hostname\n",
     "-N            Enable networking in fake mode (-F)\n",
     "-p ames_port  Set the ames port to bind to\n",

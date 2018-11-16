@@ -600,7 +600,6 @@
         c3_o    gab;                        //  -g, run with garbage collector
         c3_o    has;                        //  -S, Skip battery hashes
         c3_o    git;                        //  -s, pill url from arvo git hash
-        c3_o    mem;                        //  -M, memory madness
         c3_o    net;                        //  -N, remote networking in -F mode
         c3_o    nuu;                        //  -c, new pier
         c3_o    pro;                        //  -P, profile
