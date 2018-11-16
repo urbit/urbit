@@ -78,7 +78,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.etn = c3n;
-  u3_Host.ops_u.fog = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
   u3_Host.ops_u.has = c3n;
@@ -91,7 +90,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:e:E:f:F:k:l:n:p:r:NabcdgqstvxPDXRS")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:e:E:f:F:k:l:n:p:r:NabcdgqstvxPDRS")) != -1 ) {
     switch ( ch_i ) {
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
@@ -132,10 +131,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'x': {
         u3_Host.ops_u.tex = c3y;
-        break;
-      }
-      case 'X': {
-        u3_Host.ops_u.fog = c3y;
         break;
       }
       case 'f': {
@@ -385,7 +380,6 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-v            Verbose\n",
     "-w name       Boot as ~name\n",
     "-x            Exit immediately\n",
-    "-Xwtf         Skip last event\n",
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",

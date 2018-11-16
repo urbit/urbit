@@ -596,7 +596,6 @@
         c3_o    etn;                        //  -t, use snapshot exclusively to boot
         c3_c*   ets_c;                      //  -E, eth snapshot
         c3_c*   fak_c;                      //  -F, fake ship
-        c3_o    fog;                        //  -X, skip last event
         c3_o    gab;                        //  -g, run with garbage collector
         c3_o    has;                        //  -S, Skip battery hashes
         c3_o    git;                        //  -s, pill url from arvo git hash
