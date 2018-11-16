@@ -2082,8 +2082,9 @@ static u3_wcon*
 _proxy_wcon_new(u3_ward* rev_u)
 {
   u3_wcon* won_u = c3_malloc(sizeof(*won_u));
-  won_u->rev_u = rev_u;
   won_u->upt_u.data = won_u;
+  won_u->rev_u = rev_u;
+  won_u->nex_u = 0;
 
   _proxy_wcon_link(won_u, rev_u);
 
