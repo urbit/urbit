@@ -530,60 +530,67 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define SAMS 41 // is literal short
 #define SANB 42 // is literal byte index
 #define SANS 43 // is literal short index
-#define SAME 44
-#define SALM 45
-#define SAMC 46
+#define SAME 44 // compare two items on the top of the stack.
+#define SALM 45 // compare two items on the top of the stack.
+#define SAMC 46 // Unused -- XX: Remove
 // unconditional skips
-#define SBIP 47
-#define SIPS 48
-#define SWIP 49
-// conditional skips
+#define SBIP 47 -- Jump the PC forward by a byte literal.
+#define SIPS 48 -- Jump the PC forward by a short literal.
+#define SWIP 49 -- Jump the PC forward by a word literal.
+// conditional skips (same, but skip if the top of the stack is `c3n`)
 #define SBIN 50
 #define SINS 51
 #define SWIN 52
 // nock 9
-#define KICB 53
-#define KICS 54
-#define TICB 55
-#define TICS 56
-// nock 11
-#define WILS 57
+#define KICB 53 -- (byte)
+#define KICS 54 -- (short)
+#define TICB 55 -- (tail)
+#define TICS 56 -- (tail)
+// nock 12 -- call the scry gate with some computed value.
+ // set up from arvo
+ // only used in virtualized nock.
+ // virtualization setup creates the scry gate.
+ //   scry :: [Noun Noun] -> Noun
+ //   XX Understand `scry`
+#define WILS 57 (lose)
 #define WISH 58
 // hint processing
-#define BUSH 59
-#define SUSH 60
-#define DROP 61
-#define HECK 62
-#define SLOG 63
+#define BUSH 59 // %hunk %lose %mean or %spot hint -- arg is a
+		// byte-index into the literals array. (but it
+		// shouldn't be; there are only four options here)
+#define SUSH 60 // BUSH but with a short-index
+#define DROP 61 // Discard the top of the tracing stack.
+#define HECK 62 // %live hint.
+#define SLOG 63 // %slog hint.
 // fast (keep)
-#define BAST 64
-#define SAST 65
+#define BAST 64 // %fast with byte index (into u3j_rite buffer)
+#define SAST 65 // %fast with short index
 // fast (lose)
 #define BALT 66
 #define SALT 67
 // memo (keep)
-#define SKIB 68
-#define SKIS 69
+#define SKIB 68 // memoize using a byte index into the u3n_memo buffer
+#define SKIS 69 // memoize using a short index into the u3n_memo buffer
 // memo (lose)
 #define SLIB 70
 #define SLIS 71
-#define SAVE 72
+#define SAVE 72 // Save memoization result
 // nock 10
-#define MUTH 73
-#define KUTH 74
-#define MUTT 75
-#define KUTT 76
-#define MUSM 77
-#define KUSM 78
-#define MUTB 79
-#define MUTS 80
-#define MITB 81
-#define MITS 82
-#define KUTB 83
-#define KUTS 84
-#define KITB 85
-#define KITS 86
-#define LAST 87
+#define MUTH 73 // replace head (lose)
+#define KUTH 74 // replace head (keep)
+#define MUTT 75 // replace tail (lose)
+#define KUTT 76 // replace tail (keep)
+#define MUSM 77 // replace sample (lose)
+#define KUSM 78 // replace sample (keep)
+#define MUTB 79 // replace byte axis (lose)
+#define MUTS 80 // replace byte axis (keep)
+#define MITB 81 // replace short axis (lose)
+#define MITS 82 // replace short axis (keep)
+#define KUTB 83 // replace literal (byte indexed) axis (lose)
+#define KUTS 84 // replace literal (byte indexed) axis (keep)
+#define KITB 85 // replace literal (short indexed) axis (lose)
+#define KITS 86 // replace literal (short indexed) axis (keep)
+#define LAST 87 // All opcodes should be ≤ this.
 
 /* _n_arg(): return the size (in bytes) of an opcode's argument
  */
@@ -1125,6 +1132,8 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
       case c3__spot:
         tot_w += _n_comp(ops, hod, c3n, c3n);
         ++tot_w; _n_emit(ops, u3nc(BUSH, zep)); // overflows to SUSH
+          // XX zep can only be %hunk %lose %mean or %spot, we don't need this logic ^
+          // XX Maybe BUSH should just become 4 opcodes.
         tot_w += _n_comp(ops, nef, los_o, c3n);
         ++tot_w; _n_emit(ops, DROP);
         break;

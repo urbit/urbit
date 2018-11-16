@@ -134,7 +134,7 @@
         } byc;
 
         struct {                              //  namespace
-          u3_noun gul;                        //  (list $+(* (unit (unit)))) now
+          u3_noun gul;                        //  (list $+(* (unit (unit *)))) now
         } ski;
 
         struct {                              //  trace stack
