@@ -77,8 +77,14 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"B:w:f:K:p:LabcdgqvxFPDR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"J:B:w:f:K:p:LabcdgqvxFPDR")) != -1 ) {
     switch ( ch_i ) {
+      case 'J': {
+        // XX should set path to ivory pill
+        // u3_Host.ops_u.lit_c = strdup(optarg);
+        // break;
+        return c3n;
+      }
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
         break;
