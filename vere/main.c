@@ -64,17 +64,17 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.bat = c3n;
+  u3_Host.ops_u.dem = c3n;
+  u3_Host.ops_u.dry = c3n;
+  u3_Host.ops_u.fak = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.net = c3y;
-  u3_Host.ops_u.dem = c3n;
-  u3_Host.ops_u.fak = c3n;
-  u3_Host.ops_u.tex = c3n;
-  u3_Host.ops_u.pro = c3n;
-  u3_Host.ops_u.dry = c3n;
-  u3_Host.ops_u.veb = c3n;
-  u3_Host.ops_u.qui = c3n;
   u3_Host.ops_u.nuu = c3n;
+  u3_Host.ops_u.pro = c3n;
+  u3_Host.ops_u.qui = c3n;
   u3_Host.ops_u.rep = c3n;
+  u3_Host.ops_u.tex = c3n;
+  u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( (ch_i=getopt(argc, argv,"B:w:f:K:p:LabcdgqvxFPDR")) != -1 ) {
