@@ -189,19 +189,12 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
 
     u3_Host.ops_u.who_c = strdup(u3_Host.ops_u.fak_c);
+    u3_Host.ops_u.has = c3y;  /* no battery hashing on fake ships. */
+    u3_Host.ops_u.net = c3n;  /* no networking on fake ships. */
+    u3_Host.ops_u.nuu = c3y;
   }
 
   c3_t imp_t = ( (0 != u3_Host.ops_u.who_c) && (4 == strlen(u3_Host.ops_u.who_c)) );
-
-  if ( (0 != u3_Host.ops_u.fak_c) && (c3n == u3_Host.ops_u.nuu) ) {
-    fprintf(stderr, "-F only makes sense on initial boot\n");
-    return c3n;
-  }
-
-  if ( 0 != u3_Host.ops_u.fak_c ) {
-    u3_Host.ops_u.has = c3y;  /* no battery hashing on fake ships. */
-    u3_Host.ops_u.net = c3n;  /* no networking on fake ships. */
-  }
 
   if ( u3_Host.ops_u.arv_c != 0 && !imp_t ) {
     fprintf(stderr, "-A only makes sense when creating a new galaxy\n");
