@@ -38,8 +38,6 @@ _main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
   else return c3n;
 }
 
-static c3_c hostbuf[2048];  // kill me
-
 /* _main_presig(): prefix optional sig.
 */
 c3_c* 
@@ -66,34 +64,29 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.bat = c3n;
-  u3_Host.ops_u.gab = c3n;
-  u3_Host.ops_u.loh = c3n;
   u3_Host.ops_u.dem = c3n;
-  u3_Host.ops_u.fog = c3n;
-  u3_Host.ops_u.fak = c3n;
-  u3_Host.ops_u.tex = c3n;
-  u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.dry = c3n;
-  u3_Host.ops_u.sic = c3n;
-  u3_Host.ops_u.veb = c3n;
-  u3_Host.ops_u.qui = c3n;
+  u3_Host.ops_u.fak = c3n;
+  u3_Host.ops_u.gab = c3n;
+  u3_Host.ops_u.net = c3y;
   u3_Host.ops_u.nuu = c3n;
-  u3_Host.ops_u.mem = c3n;
+  u3_Host.ops_u.pro = c3n;
+  u3_Host.ops_u.qui = c3n;
   u3_Host.ops_u.rep = c3n;
+  u3_Host.ops_u.tex = c3n;
+  u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"s:B:I:w:t:f:k:l:n:p:LSabcdgmqvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"J:B:w:f:K:p:LabcdgqvxFPDR")) != -1 ) {
     switch ( ch_i ) {
-      case 'M': {
-        u3_Host.ops_u.mem = c3y;
-        break;
+      case 'J': {
+        // XX should set path to ivory pill
+        // u3_Host.ops_u.lit_c = strdup(optarg);
+        // break;
+        return c3n;
       }
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
-        break;
-      }
-      case 's': {
-        u3_Host.ops_u.sec_c = strdup(optarg);
         break;
       }
       case 'w': {
@@ -101,16 +94,8 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.nuu = c3y;
         break;
       }
-      case 't': {
-        u3_Host.ops_u.tic_c = _main_presig(optarg);
-        break;
-      }
       case 'x': {
         u3_Host.ops_u.tex = c3y;
-        break;
-      }
-      case 'X': {
-        u3_Host.ops_u.fog = c3y;
         break;
       }
       case 'f': {
@@ -119,14 +104,10 @@ _main_getopt(c3_i argc, c3_c** argv)
         }
         break;
       }
-      case 'k': {
+      case 'K': {
         if ( c3n == _main_readw(optarg, 256, &u3_Host.ops_u.kno_w) ) {
           return c3n;
         }
-        break;
-      }
-      case 'n': {
-        u3_Host.ops_u.nam_c = strdup(optarg);
         break;
       }
       case 'p': {
@@ -139,9 +120,9 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.rep = c3y;
         return c3y;
       }
-      case 'L': { u3_Host.ops_u.loh = c3y; break; }
+      case 'L': { u3_Host.ops_u.net = c3n; break; }
       case 'F': {
-        u3_Host.ops_u.loh = c3y;
+        u3_Host.ops_u.net = c3n;
         u3_Host.ops_u.fak = c3y;
         break;
       }
@@ -175,39 +156,12 @@ _main_getopt(c3_i argc, c3_c** argv)
       fprintf(stderr, "comets are not yet supported; identify with -w\r\n");
       return c3n;
     }
-    else {
-      if ( c3n == u3_Host.ops_u.fak ) {
-        if ( (u3_Host.ops_u.tic_c == 0) && 
-             (strlen(u3_Host.ops_u.who_c) >= 4)
-           )
-        {
-          c3_c tic_c[29];
-
-          printf("enter your ticket: ~");
-          scanf("%28s", tic_c);
-          u3_Host.ops_u.tic_c = _main_presig(tic_c);
-        }
-
-        if ( c3y == u3_Host.ops_u.sic ) {
-          c3_c sec_c[29];
-
-          printf("enter your secret: ~");
-          scanf("%28s", sec_c);
-          u3_Host.ops_u.sec_c = _main_presig(sec_c);
-        }
-      }
-    }
-  } else {
-    if ( u3_Host.ops_u.sec_c != 0 ) {
-      fprintf(stderr, "-s only makes sense when creating a new ship\n");
+    else if ( c3n == u3_Host.ops_u.fak ) {
+      fprintf(stderr, "real ships are not yet supported; fake with -F\r\n");
       return c3n;
     }
-    
-    if ( u3_Host.ops_u.tic_c != 0 ) {
-      fprintf(stderr, "-t only makes sense when creating a new ship\n");
-      return c3n;
-    }
-
+  }
+  else {
     if ( u3_Host.ops_u.who_c != 0  ) {
       fprintf(stderr, "-w only makes sense when creating a new ship\n");
       return c3n;
@@ -229,19 +183,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     if ( stat(u3_Host.ops_u.pil_c, &s) != 0 ) {
       fprintf(stderr, "pill %s not found\n", u3_Host.ops_u.pil_c);
       return c3n;
-    }
-  }
-
-  if ( u3_Host.ops_u.nam_c == 0 ) {
-    u3_Host.ops_u.nam_c = getenv("HOSTNAME");
-    if ( u3_Host.ops_u.nam_c == 0 ) {
-      c3_w len_w = sysconf(_SC_HOST_NAME_MAX) + 1;
-
-      u3_Host.ops_u.nam_c = hostbuf;
-      if ( 0 != gethostname(u3_Host.ops_u.nam_c, len_w) ) {
-        perror("gethostname");
-        exit(1);
-      }
     }
   }
 
@@ -292,11 +233,9 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-x            Exit immediately\n",
     "-r host       Initial peer address\n",
     "-l port       Initial peer port\n",
-    "-M            Memory madness\n",
     "-f            Fuzz testing\n",
-    "-k stage      Start at Hoon kernel version stage\n",
-    "-R            Report urbit build info\n",
-    "-Xwtf         Skip last event\n"};
+    "-K stage      Start at Hoon kernel version stage\n",
+    "-R            Report urbit build info\n"};
 #else
   c3_c *use_c[] = {
     "simple usage: \n",
@@ -486,7 +425,6 @@ main(c3_i   argc,
   //  printf("welcome.\n");
   printf("urbit %s\n", URBIT_VERSION);
   printf("urbit: home is %s\n", u3_Host.dir_c);
-  // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
   if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
     printf("urbit: running as daemon\n");
