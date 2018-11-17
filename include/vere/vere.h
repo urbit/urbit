@@ -492,16 +492,13 @@
     */
       typedef struct _u3_opts {
         c3_c*   who_c;                      //  -w, begin with ticket
-        c3_c*   tic_c;                      //  -t, ticket value
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_c*   lit_c;                      //  -J, ivory (fastboot) kernel
-        c3_c*   sec_c;                      //  -s, secret
         c3_w    kno_w;                      //  -k, kernel version
         c3_w    fuz_w;                      //  -f, fuzz testing
         c3_s    por_s;                      //  -p, ames port
         c3_o    abo;                        //  -a, abort aggressively
         c3_o    bat;                        //  -b, batch create
-        c3_o    sic;                        //  -S, enter secret at prompt
         c3_o    gab;                        //  -g, test garbage collection
         c3_o    dem;                        //  -d, daemon
         c3_o    dry;                        //  -D, dry compute, no checkpoint  

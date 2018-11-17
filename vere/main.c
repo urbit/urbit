@@ -71,30 +71,21 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.tex = c3n;
   u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.dry = c3n;
-  u3_Host.ops_u.sic = c3n;
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.qui = c3n;
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"s:B:w:t:f:k:p:LSabcdgqvxFPDR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"B:w:f:k:p:LabcdgqvxFPDR")) != -1 ) {
     switch ( ch_i ) {
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
         break;
       }
-      case 's': {
-        u3_Host.ops_u.sec_c = strdup(optarg);
-        break;
-      }
       case 'w': {
         u3_Host.ops_u.who_c = _main_presig(optarg);
         u3_Host.ops_u.nuu = c3y;
-        break;
-      }
-      case 't': {
-        u3_Host.ops_u.tic_c = _main_presig(optarg);
         break;
       }
       case 'x': {
@@ -159,39 +150,12 @@ _main_getopt(c3_i argc, c3_c** argv)
       fprintf(stderr, "comets are not yet supported; identify with -w\r\n");
       return c3n;
     }
-    else {
-      if ( c3n == u3_Host.ops_u.fak ) {
-        if ( (u3_Host.ops_u.tic_c == 0) && 
-             (strlen(u3_Host.ops_u.who_c) >= 4)
-           )
-        {
-          c3_c tic_c[29];
-
-          printf("enter your ticket: ~");
-          scanf("%28s", tic_c);
-          u3_Host.ops_u.tic_c = _main_presig(tic_c);
-        }
-
-        if ( c3y == u3_Host.ops_u.sic ) {
-          c3_c sec_c[29];
-
-          printf("enter your secret: ~");
-          scanf("%28s", sec_c);
-          u3_Host.ops_u.sec_c = _main_presig(sec_c);
-        }
-      }
-    }
-  } else {
-    if ( u3_Host.ops_u.sec_c != 0 ) {
-      fprintf(stderr, "-s only makes sense when creating a new ship\n");
+    else if ( c3n == u3_Host.ops_u.fak ) {
+      fprintf(stderr, "real ships are not yet supported; fake with -F\r\n");
       return c3n;
     }
-    
-    if ( u3_Host.ops_u.tic_c != 0 ) {
-      fprintf(stderr, "-t only makes sense when creating a new ship\n");
-      return c3n;
-    }
-
+  }
+  else {
     if ( u3_Host.ops_u.who_c != 0  ) {
       fprintf(stderr, "-w only makes sense when creating a new ship\n");
       return c3n;
