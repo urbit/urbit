@@ -504,7 +504,7 @@
         c3_o    dry;                        //  -D, dry compute, no checkpoint  
         c3_o    tex;                        //  -x, exit after loading
         c3_o    fak;                        //  -F, fake carrier
-        c3_o    loh;                        //  -L, local-only networking
+        c3_o    net;                        //  -L, local-only networking
         c3_o    pro;                        //  -P, profile
         c3_o    veb;                        //  -v, verbose (inverse of -q)
         c3_o    nuu;                        //  -c, new pier

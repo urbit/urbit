@@ -65,7 +65,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.bat = c3n;
   u3_Host.ops_u.gab = c3n;
-  u3_Host.ops_u.loh = c3n;
+  u3_Host.ops_u.net = c3y;
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.fak = c3n;
   u3_Host.ops_u.tex = c3n;
@@ -114,9 +114,9 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.rep = c3y;
         return c3y;
       }
-      case 'L': { u3_Host.ops_u.loh = c3y; break; }
+      case 'L': { u3_Host.ops_u.net = c3n; break; }
       case 'F': {
-        u3_Host.ops_u.loh = c3y;
+        u3_Host.ops_u.net = c3n;
         u3_Host.ops_u.fak = c3y;
         break;
       }
