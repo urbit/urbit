@@ -24,17 +24,6 @@
       net=(unit [crypt=@ux auth=@ux])
   ==
 ::
-::TODO  into zuse
-++  address-from-prv
-  =,  secp256k1:secp:crypto
-  =,  keccak:crypto
-  |=  pk=@
-  %^  end  3  20
-  %+  keccak-256  64
-  %^  rev  3  64
-  %-  serialize-point
-  (priv-to-pub pk)
-::
 ++  tape-to-ux
   |=  t=tape
   (scan t zero-ux)
