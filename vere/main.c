@@ -77,7 +77,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"B:w:f:k:p:LabcdgqvxFPDR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"B:w:f:K:p:LabcdgqvxFPDR")) != -1 ) {
     switch ( ch_i ) {
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
@@ -98,7 +98,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         }
         break;
       }
-      case 'k': {
+      case 'K': {
         if ( c3n == _main_readw(optarg, 256, &u3_Host.ops_u.kno_w) ) {
           return c3n;
         }
@@ -228,7 +228,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-r host       Initial peer address\n",
     "-l port       Initial peer port\n",
     "-f            Fuzz testing\n",
-    "-k stage      Start at Hoon kernel version stage\n",
+    "-K stage      Start at Hoon kernel version stage\n",
     "-R            Report urbit build info\n"};
 #else
   c3_c *use_c[] = {

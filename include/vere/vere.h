@@ -494,7 +494,7 @@
         c3_c*   who_c;                      //  -w, begin with ticket
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_c*   lit_c;                      //  -J, ivory (fastboot) kernel
-        c3_w    kno_w;                      //  -k, kernel version
+        c3_w    kno_w;                      //  -K, kernel version
         c3_w    fuz_w;                      //  -f, fuzz testing
         c3_s    por_s;                      //  -p, ames port
         c3_o    abo;                        //  -a, abort aggressively
