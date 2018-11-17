@@ -410,6 +410,11 @@
     ::      stripped out to make this not fail despite 0x0 dns contract
     %^  do  constit  300.000
     (upgrade-to:dat constit-final)
+  ::
+  =.  this
+    %^  do  constit-final  300.000
+    (set-dns-domains:dat "urbit.org" "urbit.org" "urbit.org")
+  ::
   complete
 ::
 ::  create or spawn a ship, configure its spawn proxy and pubkeys
@@ -532,6 +537,7 @@
   ++  set-management-proxy    (enc set-management-proxy:cal)
   ++  set-voting-proxy        (enc set-voting-proxy:cal)
   ++  set-transfer-proxy-for  (enc set-transfer-proxy-for:cal)
+  ++  set-dns-domains         (enc set-dns-domains:cal)
   ++  upgrade-to              (enc upgrade-to:cal)
   ++  transfer-ownership      (enc transfer-ownership:cal)
   ++  register-linear         (enc register-linear:cal)
@@ -611,6 +617,15 @@
     :-  'setTransferProxyFor(uint32,address)'
     :~  [%uint `@`who]
         [%address proxy]
+    ==
+  ::
+  ++  set-dns-domains
+    |=  [pri=tape sec=tape ter=tape]
+    ^-  call-data
+    :-  'setDnsDomains(string,string,string)'
+    :~  [%string pri]
+        [%string sec]
+        [%string ter]
     ==
   ::
   ++  upgrade-to
