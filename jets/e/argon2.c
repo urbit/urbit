@@ -63,7 +63,7 @@
       wis,                 // salt length
       bytes_key, wik,      // optional secret data
       bytes_extra, wix,    // optional associated data
-      time_cost, mem_cost, 0, 0, // performance cost configuration
+      time_cost, mem_cost, threads, 0, // performance cost configuration
       // XX On the above line: do `:s/0,/threads,/`
       version,             // algorithm version
       argon2_alloc,        // custom memory allocation function
