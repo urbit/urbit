@@ -399,82 +399,90 @@ u3t_init(void)
 }
 
 /* u3t_boot(): turn sampling on.
+**
+** - Make sure that the profiling-stack mutex `_ct_lop_o` is unset.
+**
+** - Sets up a timer so that this process will receive `SIGPROF` once
+**   per 10ms.
+**
+** - Setup a callback, so that u3t_samp() will be called when we receive
+**   `SIGPROF`.
+**
+** - Unmask SIGPROF for this thread -- we mask it in `main()`, so this
+**  will be the only thread with SIGPROF unmasked.
+**
 */
 void
 u3t_boot(void)
 {
-  if ( u3C.wag_w & u3o_debug_cpu ) { 
-    _ct_lop_o = c3n;
-#if defined(U3_OS_osx) || defined(U3_OS_linux)
-    // Register _ct_sigaction to be called on `SIGPROF`.
-    {
-      struct sigaction sig_s = {0};
-      sig_s.sa_handler = _ct_sigaction;
-      sigemptyset(&(sig_s.sa_mask));
-      sigaction(SIGPROF, &sig_s, 0);
-    }
-
-    // Unblock `SIGPROF` for this thread (we will block it again when `u3t_boff` is called).
-    {
-      sigset_t set;
-      sigemptyset(&set);
-      sigaddset(&set, SIGPROF);
-      if ( 0 != pthread_sigmask(SIG_UNBLOCK, &set, NULL) ) {
-        perror("pthread_sigmask");
-      }
-    }
-
-    // Ask for SIGPROF to be sent every 10ms.
-    {
-      struct itimerval itm_v = {0};
-      itm_v.it_interval.tv_usec = 10000;
-      itm_v.it_value = itm_v.it_interval;
-      setitimer(ITIMER_PROF, &itm_v, 0);
-    }
-#elif defined(U3_OS_bsd)
-#   error "Profiling isn't yet supported on BSD"
-#else
-#   error "port: profiling"
-#endif
+  if ( !(u3C.wag_w & u3o_debug_cpu) ) {
+    return;
   }
+
+#if !defined(U3_OS_osx) && !defined(U3_OS_linux)
+#error "Profiling is not yet implemented on this platform."
+#endif
+
+  _ct_lop_o = c3n;
+
+  // callback
+  struct sigaction sig_s = {0};
+  sig_s.sa_handler = _ct_sigaction;
+  sigemptyset(&(sig_s.sa_mask));
+  sigaction(SIGPROF, &sig_s, 0);
+
+  // mask
+  sigset_t set;
+  sigemptyset(&set);
+  sigaddset(&set, SIGPROF);
+  if ( 0 != pthread_sigmask(SIG_UNBLOCK, &set, NULL) ) {
+    perror("pthread_sigmask");
+  }
+
+  // timer
+  struct itimerval itm_v = {0};
+  itm_v.it_interval.tv_usec = 10000;
+  itm_v.it_value = itm_v.it_interval;
+  setitimer(ITIMER_PROF, &itm_v, 0);
 }
 
 /* u3t_boff(): turn profile sampling off.
+**
+** - Unregister the SIGPROF callback, setting SIG_IGN in it's place.
+**
+** - Mask SIGPROF signals for this thread. They will now be unmasked in
+**   all threads.
+**
+** - Tear down the timer that is generating the `SIGPROF` signals in
+**   the first place.
+**
 */
 void
 u3t_boff(void)
 {
-  if ( u3C.wag_w & u3o_debug_cpu ) {
-#if defined(U3_OS_osx) || defined(U3_OS_linux)
-    // Mask SIGPROF signals in this thread (and this is the only
-    // thread that unblocked them).
-    {
-      sigset_t set;
-      sigemptyset(&set);
-      sigaddset(&set, SIGPROF);
-      if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
-        perror("pthread_sigmask");
-      }
-    }
-
-    // Disable the SIGPROF timer.
-    {
-      struct itimerval itm_v = {0};
-      setitimer(ITIMER_PROF, &itm_v, 0);
-    }
-
-    // Ignore SIGPROF signals.
-    {
-      struct sigaction sig_s = {0};
-      sigemptyset(&(sig_s.sa_mask));
-      sig_s.sa_handler = SIG_IGN;
-      sigaction(SIGPROF, &sig_s, 0);
-    }
-
-#elif defined(U3_OS_bsd)
-#   error "Profiling isn't yet supported on BSD"
-#else
-#   error "port: profiling"
-#endif
+  if ( !(u3C.wag_w & u3o_debug_cpu) ) {
+    return;
   }
+
+#if !defined(U3_OS_osx) && !defined(U3_OS_linux)
+#error "Profiling is not yet implemented on this platform."
+#endif
+
+  // mask
+  sigset_t set;
+  sigemptyset(&set);
+  sigaddset(&set, SIGPROF);
+  if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
+    perror("pthread_sigmask");
+  }
+
+  // timer
+  struct itimerval itm_v = {0};
+  setitimer(ITIMER_PROF, &itm_v, 0);
+
+  // callback
+  struct sigaction sig_s = {0};
+  sigemptyset(&(sig_s.sa_mask));
+  sig_s.sa_handler = SIG_IGN;
+  sigaction(SIGPROF, &sig_s, 0);
 }
