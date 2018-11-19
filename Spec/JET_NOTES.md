@@ -414,9 +414,12 @@ in `jets/dash.c`.  We declare the hierarchy as a tree of `u3j_core`
 structures, each of which comes with a static list of arms `arm_u`
 and sub-cores `dev_u`.
 
-In `u3j_boot()`, we traverse the hierarchy, fill in parent pointers
-`par_u`, and enumerate all `u3j_core` structures into a single flat array
-`u3j_dash.ray_u`.  Our hot state then appears ready for action.
+In `u3j_boot()`, we traverse the hierarchy,
+
+	Fill in parent pointers `par_u`
+
+	Enumerate all `u3j_core` structures into a single flat array
+	`u3j_dash.ray_u`.
 
 
 #### Jet Functions
