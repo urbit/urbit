@@ -507,6 +507,11 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 }
 
 /* _ca_walloc(): u3a_walloc() internals.
+**
+** - `len_w`: XX TODO
+** - `ald_w`: XX TODO
+** - `alp_w`: XX TODO
+**
 */
 static void*
 _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)

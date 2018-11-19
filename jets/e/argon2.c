@@ -70,6 +70,10 @@
       ARGON2_DEFAULT_FLAGS // by default only internal memory is cleared
     };
 
+    // XX Temporary hack.
+    // XX What's the proper way to do this?
+    u3t_boff();
+
     int argon_res;
     switch ( type ) {
       default:
@@ -93,6 +97,10 @@
         argon_res = argon2u_ctx(&context);
         break;
     }
+
+    // XX Temporary hack.
+    // XX What's the proper way to do this?
+    u3t_boot();
 
     if ( ARGON2_OK != argon_res ) {
       fprintf(stderr, "\nargon2 error: %s\n", argon2_error_message(argon_res));
