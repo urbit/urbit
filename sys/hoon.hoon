@@ -5374,6 +5374,11 @@
     |=(a/tape (rap 3 ^-((list @) a)))
   ;~(plug low (star ;~(pose nud low hep)))
 ::
+++  mixed-case-symbol
+  %+  cook
+    |=(a/tape (rap 3 ^-((list @) a)))
+  ;~(plug alf (star alp))
+::
 ++  ven  ;~  (comp |=({a/@ b/@} (peg a b)))             ::  +>- axis syntax
            bet
            =+  hom=`?`|
@@ -12076,7 +12081,14 @@
       %+  cook
         |=  {a/@tas b/(unit @tas)}
         ?~(b a [a u.b])
-      ;~(plug sym ;~(pose (stag ~ ;~(pfix cab sym)) (easy ~)))
+      ;~  plug
+        mixed-case-symbol
+        ;~  pose
+          %+  stag  ~
+            ;~(pfix cab mixed-case-symbol)
+          (easy ~)
+        ==
+      ==
     ::
     ++  en-class
       |=  a/(list {$class p/term})
