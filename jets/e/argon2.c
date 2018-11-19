@@ -10,13 +10,13 @@
 
   int argon2_alloc(uint8_t** output, size_t bytes)
   {
-    *output = u3a_malloc(bytes);
+    *output = u3a_walloc(bytes);
     return (NULL != output);
   }
 
   void argon2_free(uint8_t* memory, size_t bytes)
   {
-    u3a_free(memory);
+    u3a_wfree(memory);
   }
 
 /* functions
