@@ -1544,7 +1544,12 @@
           $away  [%& %html logout-page:xml]
           ?($beam $spur)
         =^  payload  mef  process-payload
-        =+  ext=(fall p.pok %x-urb)
+        =/  ext  %+  fall  p.pok
+          ?:  ?=(%spur -.hem)
+            %urb
+          ?:  =(our p.p.hem)
+            %urb
+          %x-urb
         =+  bem=?-(-.hem $beam p.hem, $spur [-.top (weld p.hem s.top)])
         ~|  bad-beam+q.bem
         ?<  =([~ 0] (sky [151 %noun] %cw (en-beam bem(+ ~, r [%da now]))))

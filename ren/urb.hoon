@@ -2,13 +2,15 @@
 ::::  /hoon/urb/ren
   ::
 /?    309
-/=  inner
+/+  landscape
+/=  full-page
   /^  manx
   /|  
-    /,  /web/collections  /collections-elem/
-        /                 /!hymn/ 
+    /,  /web/collections  /;  landscape  /collections-elem/
+        /web/pages        /!hymn/
+        /                 /;  landscape  /!hymn/ 
     ==
     ::
-    /:  /===/web/404  /!hymn/
+    /:  /===/web/404  /;  landscape  /!hymn/
   ==
-inner
+full-page
