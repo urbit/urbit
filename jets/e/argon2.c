@@ -25,54 +25,91 @@
 
   u3_noun
   u3qe_argon2( // configuration params,
-               u3_atom out, u3_atom type, u3_atom version,
-               u3_atom threads, u3_atom mem_cost, u3_atom time_cost,
-               u3_atom wik, u3_atom key, u3_atom wix, u3_atom extra,
+               u3_atom out,
+               u3_atom type,
+               u3_atom version,
+               u3_atom threads,
+               u3_atom mem_cost,
+               u3_atom time_cost,
+               u3_atom wik,
+               u3_atom key,
+               u3_atom wix,
+               u3_atom extra,
                // input params
-               u3_atom wid, u3_atom dat, u3_atom wis, u3_atom sat )
+               u3_atom wid,
+               u3_atom dat,
+               u3_atom wis,
+               u3_atom sat )
   {
-    c3_assert( _(u3a_is_cat(out)) && _(u3a_is_cat(type)) &&
-               _(u3a_is_cat(version)) && _(u3a_is_cat(threads)) &&
-               _(u3a_is_cat(mem_cost)) && _(u3a_is_cat(time_cost)) &&
-               _(u3a_is_cat(wik)) && _(u3a_is_cat(wix)) &&
-               _(u3a_is_cat(wid)) && _(u3a_is_cat(wis)) );
+    c3_assert( _(u3a_is_cat(out)) &&
+               _(u3a_is_cat(type)) &&
+               _(u3a_is_cat(version)) &&
+               _(u3a_is_cat(threads)) &&
+               _(u3a_is_cat(mem_cost)) &&
+               _(u3a_is_cat(time_cost)) &&
+               _(u3a_is_cat(wik)) &&
+               _(u3a_is_cat(wix)) &&
+               _(u3a_is_cat(wid)) &&
+               _(u3a_is_cat(wis)) );
 
     // flip endianness for argon2
-    key = u3qc_rev(3, wik, key);
+    key   = u3qc_rev(3, wik, key);
     extra = u3qc_rev(3, wix, extra);
-    dat = u3qc_rev(3, wid, dat);
-    sat = u3qc_rev(3, wis, sat);
+    dat   = u3qc_rev(3, wid, dat);
+    sat   = u3qc_rev(3, wis, sat);
 
-    // atoms to byte arrays
-    c3_y bytes_key[wik];
-    u3r_bytes(0, wik, bytes_key, key);
-    c3_y bytes_extra[wix];
-    u3r_bytes(0, wix, bytes_extra, extra);
-    c3_y bytes_dat[wid];
-    u3r_bytes(0, wid, bytes_dat, dat);
-    c3_y bytes_sat[wis];
-    u3r_bytes(0, wis, bytes_sat, sat);
+    // XX Do these widths come from the user? What if they're wrong?
 
-    c3_y outhash[out];
+    // Copy `key` bytes into `key_buf`.
+    c3_y key_buf[wik];
+    u3r_bytes(0, wik, key_buf, key);
+
+    // Copy `extra` bytes into `extra_buf`.
+    c3_y extra_buf[wix];
+    u3r_bytes(0, wix, extra_buf, extra);
+
+    // Copy `dat` bytes into `dat_buf`.
+    c3_y dat_buf[wid];
+    u3r_bytes(0, wid, dat_buf, dat);
+
+    // Copy `sat` bytes into `sat_buf`.
+    c3_y sat_buf[wis];
+    u3r_bytes(0, wis, sat_buf, sat);
+
+    // Output buffer
+    c3_y output_buf[out];
+
     argon2_context context = {
-      outhash,             // output array, at least [digest length] in size
-      out,                 // digest length
-      bytes_dat,           // password array
-      wid,                 // password length
-      bytes_sat,           // salt array
-      wis,                 // salt length
-      bytes_key, wik,      // optional secret data
-      bytes_extra, wix,    // optional associated data
-      time_cost, mem_cost, threads, 1, // performance cost configuration
-      // XX On the above line: do `:s/0,/threads,/`
-      version,             // algorithm version
-      argon2_alloc,        // custom memory allocation function
-      argon2_free,         // custom memory deallocation function
-      ARGON2_DEFAULT_FLAGS // by default only internal memory is cleared
+      .out          = output_buf,          // output array
+      .outlen       = out,                 // digest length
+      .pwd          = dat_buf,             // password
+      .pwdlen       = wid,
+      .salt         = sat_buf,             // salt
+      .saltlen      = wis,
+      .secret       = key_buf,             // optional secret data
+      .secretlen    = wik,
+      .ad           = extra_buf,           // optional associated data
+      .adlen        = wix,
+      .t_cost       = time_cost,           // number of passes
+      .m_cost       = mem_cost,            // KB of memory requested
+      .lanes        = threads,             // number of lanes
+      .threads      = 1,                   // maximum number of threads
+      .version      = version,             // algorithm version number
+      .allocate_cbk = argon2_alloc,        // memory allocator
+      .free_cbk     = argon2_free,         // memory deallocator
+      .flags        = ARGON2_DEFAULT_FLAGS // don't clear secret or password
     };
 
+    //
     // XX Temporary hack.
-    // XX What's the proper way to do this?
+    //
+    // What's the proper way to do this?
+    //
+    // The thing we need to do here, is to mask SIGPROF in the forked
+    // threads. I guess we should do that RIGHT before we fork and undo
+    // the block it RIGHT after, otherwise there will be undelivered SIGPROF
+    // signals queued, which will give invalid profiling results.
+    //
     u3t_boff();
 
     int argon_res;
@@ -109,7 +146,12 @@
     }
 
     u3z(key); u3z(extra); u3z(dat); u3z(sat);
-    return u3kc_rev(3, out, u3i_bytes(out, outhash));
+
+    // Copy result from the stack.
+    u3_noun result = u3i_bytes(out, output_buf);
+
+    // XX Do we need to free `result`?
+    return u3kc_rev(3, out, result);
   }
 
   u3_noun
