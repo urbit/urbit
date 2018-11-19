@@ -614,7 +614,8 @@ u3v_mark(void)
   tot_w += u3a_mark_noun(arv_u->now);
   tot_w += u3a_mark_noun(arv_u->wen);
   tot_w += u3a_mark_noun(arv_u->sen);
-  tot_w += u3a_mark_noun(arv_u->own);
+  tot_w += u3a_mark_noun(arv_u->our);
+  tot_w += u3a_mark_noun(arv_u->fak);
 
   tot_w += u3a_mark_noun(arv_u->roe);
   tot_w += u3a_mark_noun(arv_u->key);

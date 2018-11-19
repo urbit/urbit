@@ -208,6 +208,33 @@ _serf_poke_live(c3_d    evt_d,              //  event number
         u3_noun vir = u3k(u3h(u3t(gon)));
         u3_noun cor = u3k(u3t(u3t(gon)));
 
+        //  single-home
+        //
+        //    XX revise when real keys are supported
+        //    XX dispatch on evt_d, wire, or card tag?
+        //
+        if ( 6ULL == evt_d ) {
+          //  vir=[[wire %veal @p] ~]
+          //  fec=[%veal @p]
+          //
+          u3_noun fec = u3t(u3h(vir));
+
+          c3_assert( c3__veal == u3h(fec) );
+          c3_assert( u3_none == u3A->our );
+
+          u3A->our = u3k(u3t(fec));
+          u3A->fak = c3y;
+
+          {
+            u3_noun nam = u3dc("scot", 'p', u3k(u3A->our));
+            c3_c* nam_c = u3r_string(nam);
+            fprintf(stderr, "boot: ship: %s%s\r\n", nam_c,
+                                            (c3y == u3A->fak) ? " (fake)" : "");
+            free(nam_c);
+            u3z(nam);
+          }
+        }
+
         _serf_sure(ovo, vir, cor);
       }
     }
