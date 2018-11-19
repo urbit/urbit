@@ -638,7 +638,11 @@
       ?:  ?&  (~(has by meta.raw.new) %comments)
               =('.y' (~(got by meta.raw.new) %comments))
           ==
-        (ta-generate-comments pax)
+        =/  owner=(unit @ta)  (~(get by meta.raw.new) %owner)
+        =/  owner-p=@p
+          ?~  owner  our.bol
+          (fall (rush u.owner ;~(pfix sig fed:ag)) our.bol)
+        (ta-generate-comments pax owner-p)
       ta-this
     ::
     ==
@@ -775,8 +779,11 @@
       ?&  =('.y' (fall (~(get by meta.new) %comments) '.n'))
           =('.n' (fall (~(get by meta.old) %comments) '.n'))
       ==
-      ::  create comments
-      (ta-generate-comments pax)
+      =/  owner=(unit @ta)  (~(get by meta.new) %owner)
+      =/  owner-p=@p
+        ?~  owner  our.bol
+        (fall (rush u.owner ;~(pfix sig fed:ag)) our.bol)
+      (ta-generate-comments pax owner-p)
     ::
     =?  ta-this
       ?&  =('.n' (fall (~(get by meta.new) %comments) '.n'))
@@ -853,7 +860,7 @@
   ::
   ++  ta-generate-comments
     ~/  %coll-ta-generate-comments
-    |=  pax=path
+    |=  [pax=path owner=ship]
     ^+  ta-this
     =/  sup=path  [%collections-config (flop pax)]
     =/  bek  byk.bol(r [%da now.bol])
@@ -863,7 +870,7 @@
       :*  [bek sup]
           'comments'
           'comments'
-          our.bol
+          owner
           dat
           dat
           %comments

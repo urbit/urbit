@@ -317,12 +317,21 @@
       ::  %source: the sources of our inbox have changed
       ::
           %source
-        ?>  =(circ [our.bol %inbox])
+        ?.  =(circ [our.bol %inbox])
+          [~ this]
         ::  we've added a source to our inbox  
         ::
         ?:  add.dif.rum.rum
-          :-  ~
+          ?>  ?=(^ con.inbox.str.sta)
+          =/  conf=config:hall
+            %=  u.con.inbox.str.sta
+              src 
+              (~(put by src.u.con.inbox.str.sta) src.dif.rum.rum)
+            ==
+          :-  (send-rumor %circle-change %our [our.bol %inbox] `conf)
           %=  this
+            con.inbox.str.sta  `conf
+          ::
             sub-circles.str.sta 
               (~(put by sub-circles.str.sta) cir.src.dif.rum.rum ~)
           ==
