@@ -110,7 +110,9 @@
     // the block it RIGHT after, otherwise there will be undelivered SIGPROF
     // signals queued, which will give invalid profiling results.
     //
-    u3t_boff();
+    // XX Disabled hack for a sec, since this is running without threads anyways.
+    //
+    // u3t_boff();
 
     int argon_res;
     switch ( type ) {
@@ -136,9 +138,12 @@
         break;
     }
 
+    //
     // XX Temporary hack.
-    // XX What's the proper way to do this?
-    u3t_boot();
+    //
+    // XX Disabled hack for a sec, since this is running without threads anyways.
+    //
+    // u3t_boot();
 
     if ( ARGON2_OK != argon_res ) {
       fprintf(stderr, "\nargon2 error: %s\n", argon2_error_message(argon_res));
