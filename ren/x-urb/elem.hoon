@@ -3,12 +3,12 @@
   ::
 /?    309
 /=  inner
-    /^  manx
-    /,  /web/landscape     /!hymn/
-        /web/collections   /collections-elem/
-        / 
-      /|  /!hymn/
-::          /&hymn&/elem/
-      ==
+  /^  manx
+  /|  
+    /,  /web/collections  /collections-elem/
+        /                 /!hymn/ 
     ==
+    ::
+    /:  /===/web/404  /!hymn/
+  ==
 inner

@@ -2063,8 +2063,9 @@
   ::    dependencies between builds here. For now, though, run them serially.
   ::
   ++  run-builds
+    =<  $
     ~%  %run-builds  +  ~
-    |-
+    |.
     ^-  [(list build-receipt) _..execute]
     ::
     =/  build-receipts=(list build-receipt)

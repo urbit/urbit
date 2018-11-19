@@ -2,127 +2,97 @@
 ::
 /-  keygen
 ::
-/+  bip32
+/+  bip32, bip39
 ::
-::
-=,  sha
 =,  keygen
 ::
 |%
-++  to-byts
-  |=  a=@t
-  =+  (met 3 a)
-  [- (rev 3 - a)]
-::
 ++  argon2u
-  |=  [inp=byts out=@ud]
+  |=  [who=ship tic=byts]
   ^-  @
-  %-  (argon2-urbit:argon2:crypto out)
-  [inp (to-byts 'urbitkeygen')]
+  ~|  [%who who (met 3 who)]
+  :: ?>  (lte (met 3 who) 4)
+  %-  (argon2-urbit:argon2:crypto 32)
+  :-  tic
+  =-  [(met 3 -) (swp 3 -)]
+  %-  crip
+  (weld "urbitkeygen" (a-co:co who))
 ::
 ++  child-node-from-seed
-  |=  [seed=byts met=meta pass=(unit @t)]
+  |=  [seed=@ typ=tape pass=(unit @t)]
   ^-  node
-  =+  dr=~(. sd pass)
-  =+  child-seed=(seed:dr seed met)
-  :+  met  dat.child-seed
-  (wallet:dr child-seed)
+  =+  sed=(seed:ds 32^seed typ)
+  =+  nom=(from-entropy:bip39 32^sed)
+  :+  typ  nom
+  %-  wallet:ds
+  %+  to-seed:bip39  nom
+  (trip (fall pass ''))
 ::
 ++  full-wallet-from-ticket
-  |=  $:  ticket=byts
-          seed-size=@ud
-          sis=(set ship)
-          pass=(unit @t)
-          revs=revisions
-          boot=?
-      ==
+  ::  who:    username
+  ::  ticket: password
+  ::  rev:    network key revision
+  ::  pass:   optional passphrase
+  ::
+  |=  [who=ship ticket=byts rev=@ud pass=(unit @t)]
   ^-  vault
-  =/  owner-seed=byts
-    seed-size^(argon2u ticket seed-size)
-  =+  dr=~(. sd pass)
-  =/  cn
-    |=  m=meta
-    (child-node-from-seed owner-seed m pass)
+  =+  master-seed=(argon2u who ticket)
+  =/  cn  ::  child node
+    |=  typ=nodetype
+    (child-node-from-seed master-seed typ pass)
   ::
-  :-  `@q`dat.ticket
+  :-  ^=  ownership  ^-  node
+      (cn "ownership")
   ::
-  :-  :+  *meta  dat.owner-seed
-      (wallet:dr owner-seed)
+  :-  ^=  voting  ^-  node
+      (cn "voting")
   ::
-  =/  manage=nodes
-    %-  ~(rep in sis)
-    |=  [s=ship n=nodes]
-    %+  ~(put by n)  s
-    (cn "manage" manage.revs `s)
-  :-  manage
+  =/  management=node
+    (cn "management")
+  :-  management=management
   ::
-  :-  %-  ~(rep in sis)
-      |=  [s=ship n=nodes]
-      ?.  =(%czar (clan:title s))  n
-      %+  ~(put by n)  s
-      (cn "voting" voting.revs `s)
+  :-  ^=  transfer  ^-  node
+      (cn "transfer")
   ::
-  :-  %-  ~(rep in sis)
-      |=  [s=ship n=nodes]
-      %+  ~(put by n)  s
-      (cn "transfer" transfer.revs `s)
+  :-  ^=  spawn  ^-  node
+      (cn "spawn")
   ::
-  :-  %-  ~(rep in sis)
-      |=  [s=ship n=nodes]
-      %+  ~(put by n)  s
-      (cn "spawn" spawn.revs `s)
-  ::
-  ?.  boot  ~
-  %-  ~(rep in sis)
-  |=  [s=ship u=uodes]
-  %+  ~(put by u)  s
-  =+  m=["network" network.revs `s]
-  =+  s=(seed:dr wid.owner-seed^seed:(~(got by manage) s) m)
-  [m dat.s (urbit:dr s)]
+  ^=  network  ^-  uode
+  =/  mad  ::  management seed
+    %+  to-seed:bip39
+      seed:management
+    (trip (fall pass ''))
+  =+  sed=(seed:ds 64^mad (weld "network" (a-co:co rev)))
+  [rev sed (urbit:ds sed)]
 ::
-++  sd                                                  ::  seed derivation
-  |_  pass=(unit @t)
-  ++  append-pass
-    |=  b=byts
-    ^-  byts
-    =+  (fall pass '')
-    :-  (add wid.b (met 3 -))
-    (cat 3 (swp 3 -) dat.b)
-  ::
+++  ds                                                  ::  derive from raw seed
+  |%
   ++  wallet
-    %+  cork  append-pass
-    |=  seed=byts
+    |=  seed=@
     ^-  ^wallet
-    =>  (from-seed:bip32 64^(sha-512l seed))
+    =+  =>  (from-seed:bip32 64^seed)
+        (derive-path "m/44'/60'/0'/0/0")
     :+  [public-key private-key]
-      chain-code
-    (address-from-pub:ethereum public-key)
+      (address-from-prv:ethereum private-key)
+    chain-code
   ::
   ++  urbit
-    %+  cork  append-pass
-    |=  seed=byts
+    |=  seed=@
     ^-  edkeys
     =+  =<  [pub=pub:ex sec=sec:ex]
-        (pit:nu:crub:crypto (mul 8 wid.seed) dat.seed)
-    ::  crypt
-    :-  :-  (rsh 3 33 pub)
-            (rsh 3 33 sec)
-    ::  auth
-    :-  (rsh 3 1 (end 3 33 pub))
-        (rsh 3 1 (end 3 33 sec))
+        (pit:nu:crub:crypto 256 seed)
+    :-  ^=  auth
+        :-  (rsh 3 1 (end 3 33 pub))
+            (rsh 3 1 (end 3 33 sec))
+    ^=  crypt
+    :-  (rsh 3 33 pub)
+        (rsh 3 33 sec)
   ::
   ++  seed
-    |=  [seed=byts meta]
-    ^-  byts
-    :-  wid.seed
-    %^  rsh  3  (sub 64 wid.seed)
-    %-  sha-512l
-    %-  append-pass
-    =+  ;:  weld
-          typ  "-"  (a-co:co rev)
-          ?~(who ~ ['-' (a-co:co u.who)])
-        ==
-    :-  (add wid.seed (lent -))
-    (cat 3 (crip (flop -)) dat.seed)
+    |=  [seed=byts salt=tape]
+    ^-  @ux
+    %-  sha-256l:sha
+    :-  (add wid.seed (lent salt))
+    (cat 3 (crip (flop salt)) dat.seed)
   --
 --

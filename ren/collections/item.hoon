@@ -24,7 +24,7 @@
           ==
       ?~  raw
         ?~  col
-          !!
+          [%error ~]
         [%collection col]
       ?~  col
         [%raw raw]
@@ -32,7 +32,7 @@
   ::
   ::  run a pair of renderers
   ::
-  ::  1. get a .umd file together with its frontmatter, or else return ~
+  ::  1. get a .udon file together with its frontmatter, or else return ~
   ::
   ::  2. run the collections renderer, if it fails return ~
   ::     (it fails if .collections-config file does not exist at this path)
@@ -40,9 +40,9 @@
   /.
     ::
     /|  /;  |=  [a=(map knot cord) b=@t ~]
-            [%umd a b]
+            [%udon a b]
             /.  /front/
-                /umd/
+                /udon/
             ==
         /~  ~
     ==

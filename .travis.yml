@@ -30,6 +30,10 @@ before_script:
 - bash get-or-build-pill.sh
 # https://github.com/travis-ci/travis-ci/issues/2570
 
+script:
+- ulimit -c unlimited -S
+- npm run -s test; bash print-core-backtrace.sh $?
+
 before_deploy: "[ -d piers ] || { mkdir piers && tar cvzSf piers/zod-$TRAVIS_COMMIT.tgz zod/; }"
 
 addons:
@@ -50,6 +54,7 @@ addons:
     - re2c
     - libcurl4-gnutls-dev
     - unzip
+    - gdb
 
 deploy:
   - skip_cleanup: true

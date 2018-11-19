@@ -495,7 +495,6 @@
       $%  {$hear p/lane q/@}                            ::  receive packet
           {$mack p/(unit tang)}                         ::  
           {$mass p/mass}                                ::  memory usage
-          {$rove p/ship q/lane}                         ::  lane change
           {$send p/lane q/@}                            ::  transmit packet
           {$turf p/(list turf)}                         ::  bind to domains
           {$woot p/ship q/coop}                         ::  reaction message
@@ -527,7 +526,6 @@
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
           {$sunk p=ship q=life}                         ::  report death
-          {$tend ~}                                     ::  watch lane changes
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
           {$west p/sack q/path r/*}                     ::  network request
@@ -571,7 +569,6 @@
         {$bock ~}                                       ::  bind to domains
         {$brew ~}                                       ::  request domains
         {$cake p/sock q/soap r/coop s/duct}             ::  e2e message result
-        {$maze p/ship q/lane}                           ::  lane change
         {$mead p/lane q/rock}                           ::  accept packet
         {$milk p/sock q/soap r/*}                       ::  e2e pass message
         {$ouzo p/lane q/rock}                           ::  transmit packet
@@ -614,7 +611,6 @@
         bad/(set @p)                                    ::  bad ships
         ton/town                                        ::  security
         zac/(map ship corn)                             ::  flows by server
-        ten/(set duct)                                  ::  watch lanes
     ==                                                  ::
   ++  hand  @uvH                                        ::  128-bit hash
   ++  lane                                              ::  packet route
@@ -1169,6 +1165,57 @@
     $%  {%& p/purl}                                     ::  absolute
         {%| p/pork q/quay}                              ::  relative
     ==                                                  ::
+  ::  +reserved: check if an ipv4 address is in a reserved range
+  ::
+  ++  reserved
+    |=  a=@if
+    ^-  ?
+    =/  b  (flop (rip 3 a))
+    ::  0.0.0.0/8 (software)
+    ::
+    ?.  ?=([@ @ @ @ ~] b)  &
+    ?|  ::  10.0.0.0/8 (private)
+        ::
+        =(10 i.b)
+        ::  100.64.0.0/10 (carrier-grade NAT)
+        ::
+        &(=(100 i.b) (gte i.t.b 64) (lte i.t.b 127))
+        ::  127.0.0.0/8 (localhost)
+        ::
+        =(127 i.b)
+        ::  169.254.0.0/16 (link-local)
+        ::
+        &(=(169 i.b) =(254 i.t.b))
+        ::  172.16.0.0/12 (private)
+        ::
+        &(=(172 i.b) (gte i.t.b 16) (lte i.t.b 31))
+        ::  192.0.0.0/24 (protocol assignment)
+        ::
+        &(=(192 i.b) =(0 i.t.b) =(0 i.t.t.b))
+        ::  192.0.2.0/24 (documentation)
+        ::
+        &(=(192 i.b) =(0 i.t.b) =(2 i.t.t.b))
+        ::  192.18.0.0/15 (reserved, benchmark)
+        ::
+        &(=(192 i.b) |(=(18 i.t.b) =(19 i.t.b)))
+        ::  192.51.100.0/24 (documentation)
+        ::
+        &(=(192 i.b) =(51 i.t.b) =(100 i.t.t.b))
+        ::  192.88.99.0/24 (reserved, ex-anycast)
+        ::
+        &(=(192 i.b) =(88 i.t.b) =(99 i.t.t.b))
+        ::  192.168.0.0/16 (private)
+        ::
+        &(=(192 i.b) =(168 i.t.b))
+        ::  203.0.113/24 (documentation)
+        ::
+        &(=(203 i.b) =(0 i.t.b) =(113 i.t.t.b))
+        ::  224.0.0.0/8 (multicast)
+        ::  240.0.0.0/4 (reserved, future)
+        ::  255.255.255.255/32 (broadcast)
+        ::
+        (gte i.b 224)
+    ==
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
   ++  sec-move                                          ::  driver effect
     $%  {$send p/hiss}                                  ::  http out
@@ -5191,6 +5238,78 @@
       %+  can  0
       ~[64^(rev 3 8 wid) +(-)^(lsh 0 - 1) wid^dat]
     --
+  ::
+  ++  pbkdf
+    =>  |%
+        ++  meet  |=([p=@ s=@ c=@ d=@] [[(met 3 p) p] [(met 3 s) s] c d])
+        ++  flip  |=  [p=byts s=byts c=@ d=@]
+                  [wid.p^(rev 3 p) wid.s^(rev 3 s) c d]
+        --
+    |%
+    ::
+    ::  use with @
+    ::
+    ++  hmac-sha1     (cork meet hmac-sha1l)
+    ++  hmac-sha256   (cork meet hmac-sha256l)
+    ++  hmac-sha512   (cork meet hmac-sha512l)
+    ::
+    ::  use with @t
+    ::
+    ++  hmac-sha1t    (cork meet hmac-sha1d)
+    ++  hmac-sha256t  (cork meet hmac-sha256d)
+    ++  hmac-sha512t  (cork meet hmac-sha512d)
+    ::
+    ::  use with byts
+    ::
+    ++  hmac-sha1l    (cork flip hmac-sha1d)
+    ++  hmac-sha256l  (cork flip hmac-sha256d)
+    ++  hmac-sha512l  (cork flip hmac-sha512d)
+    ::
+    ::  main logic
+    ::
+    ++  hmac-sha1d    (cury pbkdf hmac-sha1l:hmac 20)
+    ++  hmac-sha256d  (cury pbkdf hmac-sha256l:hmac 32)
+    ++  hmac-sha512d  (cury pbkdf hmac-sha512l:hmac 64)
+    ::
+    ++  pbkdf
+      ::TODO  jet me! ++hmac:hmac is an example
+      |*  [[prf=$-([byts byts] @) out=@u] p=byts s=byts c=@ d=@]
+      =>  .(dat.p (end 3 p), dat.s (end 3 s))
+      ::
+      ::  max key length 1GB
+      ::  max iterations 2^28
+      ::
+      ~|  [%invalid-pbkdf-params c d]
+      ?>  ?&  (lte d (bex 30))
+              (lte c (bex 28))
+              !=(c 0)
+          ==
+      =/  l
+        ?~  (mod d out)
+          (div d out)
+        +((div d out))
+      =+  r=(sub d (mul out (dec l)))
+      =+  [t=0 j=1 k=1]
+      =.  t
+        |-  ^-  @
+        ?:  (gth j l)  t
+        =/  u
+          %+  add  dat.s
+          %^  lsh  3  wid.s
+          %+  rep  3
+          (flop (rpp:scr 3 4 j))
+        =+  f=0
+        =.  f
+          |-  ^-  @
+          ?:  (gth k c)  f
+          =/  q
+            %^  rev  3  out
+            =+  ?:(=(k 1) (add wid.s 4) out)
+            (prf [wid.p (rev 3 p)] [- (rev 3 - u)])
+          $(u q, f (mix f q), k +(k))
+        $(t (add t (lsh 3 (mul (dec j) out) f)), j +(j))
+      (rev 3 d (end 3 d t))
+    --
   --  ::crypto
 ::                                                      ::::
 ::::                      ++unity                       ::  (2c) unit promotion
@@ -7254,6 +7373,7 @@
   =,  mimes:html
   =,  ethe
   |%
+<<<<<<< HEAD
   ++  address-from-pub
     =,  keccak:crypto
     |=  pub=@
@@ -7269,6 +7389,25 @@
     %-  serialize-point
     (priv-to-pub prv)
   ::
+||||||| merged common ancestors
+=======
+  ++  address-from-pub
+    =,  keccak:crypto
+    |=  pub=@
+    %^  end  3  20
+    %+  keccak-256  64
+    (rev 3 64 pub)
+  ::
+  ++  address-from-prv
+    (cork pub-from-prv address-from-pub)
+  ::
+  ++  pub-from-prv
+    =,  secp256k1:secp:crypto
+    |=  prv=@
+    %-  serialize-point
+    (priv-to-pub prv)
+  ::
+>>>>>>> origin/release-candidate
   ++  sign-transaction
     =,  crypto
     |=  [tx=transaction pk=@]

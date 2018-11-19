@@ -2,16 +2,14 @@
 ::
 ::::  /hoon/authority/dns/gen
   ::
-/-  dns, sole
-/+  generators
-=,  dns
-=,  generators
+/-  *dns, *sole
+/+  *generators
 :-  %ask
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [arg=$@(~ [dom=path ~])]
+        [arg=$@(~ [dom=turf ~])]
         ~
     ==
-^-  (sole-result:sole [%dns-authority authority])
+^-  (sole-result [%dns-command %authority authority])
 =-  ?~  arg  -
     (fun.q.q [%& dom.arg])
 %+  prompt
@@ -28,5 +26,5 @@
   [%& %zone "dns zone: "]
 %+  parse  urs:ab
 |=  zone=@ta
-%+  produce  %dns-authority
-[p.hot %gcloud project zone]
+%-  produce
+[%dns-command %authority [p.hot %gcloud project zone]]
