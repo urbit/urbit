@@ -10,7 +10,8 @@
 
   int argon2_alloc(uint8_t** output, size_t bytes)
   {
-    *output = u3a_walloc(bytes);
+    size_t words = (bytes+3) / 4;
+    *output = u3a_walloc(words);
     return (NULL != output);
   }
 
