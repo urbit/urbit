@@ -783,7 +783,7 @@
       now=~1111.1.2
       scry=*sley
     ==
-  ::  send the channel on an 
+  ::  send the channel a poke and a subscription request
   ::
   =^  results3  light-gate
     %-  light-call-with-comparator  :*
@@ -806,37 +806,79 @@
               "ship": "nul",
               "app": "one",
               "mark": "a",
-              "json": 5}]
+              "json": 5},
+             {"action": "subscribe",
+              "ship": "nul",
+              "app": "two",
+              "path": "/one/two/three"}
+            ]
             '''
         ==
       ^=  comparator
         |=  moves=(list move:light-gate)
         ^-  tang
         ::
-        ?.  ?=([^ ^ ^ ~] moves)
+        ?.  ?=([^ ^ ^ ^ ~] moves)
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         ;:  weld
-          %+  expect-eq
-            !>  [~[/http-blah] %give %http-response %start 200 ~ ~ %.y]
-            !>  i.moves
+          %+  expect-gall-deal
+            :*  /channel/poke/'0123456789abcdef'
+                [~nul ~nul]  %one
+                %punk  %a  %json  !>([%n '5'])
+            ==
+            card.i.moves
         ::
           %+  expect-gall-deal
-            [/channel/poke/'0123456789abcdef' [~nul ~nul] %one %punk %a %json !>([%n '5'])]
+            :*  /channel/subscription/'0123456789abcdef'
+                [~nul ~nul]  %two
+                %peel  %json  /one/two/three
+            ==
             card.i.t.moves
+        ::
+          %+  expect-eq
+            !>  [~[/http-blah] %give %http-response %start 200 ~ ~ %.y]
+            !>  i.t.t.moves
         ::
           %+  expect-eq
             !>  :*  ~[/http-blah]  %pass
                     /channel/timeout/'0123456789abcdef'
                     %b  %wait  (add ~1111.1.2 ~h12)
                 ==
-            !>  i.t.t.moves
+            !>  i.t.t.t.moves
     ==  ==
+  ::  the behn timer wakes us up; we cancel our subscription
+  ::
+  =^  results4  light-gate
+    %-  light-take-with-comparator  :*
+      light-gate
+      now=(add ~1111.1.2 ~h12)
+      scry=*sley
+      ^=  take-args
+        :*  wire=/channel/timeout/'0123456789abcdef'  duct=~[/http-blah]
+            ^-  (hypo sign:light-gate)
+            :-  *type
+            [%b %wake ~]
+         ==
+      ^=  comparator
+        |=  moves=(list move:light-gate)
+        ^-  tang
+        ::
+        ?.  ?=([^ ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        %+  expect-gall-deal
+          :*  /channel/subscription/'0123456789abcdef'
+              [~nul ~nul]  %two  %pull  ~
+          ==
+          card.i.moves
+    ==
   ::
   ;:  weld
     results1
     results2
     results3
+    results4
   ==
 ::
 ++  light-call
@@ -959,6 +1001,23 @@
     ::  compare the payload vases
     ::
     (expect-eq q.q.q.data.expected q.q.q.data.note)
+  ::
+  ?:  ?=([%peel *] q.data.expected)
+    ?.  ?=([%peel *] q.data.note)
+      [%leaf "expected %peel, actual {<q.data.note>}"]~
+    ::  compare the result mark
+    ::
+    %+  weld
+      (expect-eq !>(p.q.data.expected) !>(p.q.data.note))
+    ::  compare the path
+    ::
+    (expect-eq !>(q.q.data.expected) !>(q.q.data.note))
+  ::
+  ?:  ?=([%pull *] q.data.expected)
+    ?.  ?=([%pull *] q.data.note)
+      [%leaf "expected %pull, actual {<q.data.note>}"]~
+    ::
+    ~
   ::  todo: handle other deals
   ::
   [%leaf "unexpected %deal type"]~

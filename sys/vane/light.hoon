@@ -47,7 +47,14 @@
 ::  +sign: private response from another vane to ford
 ::
 +$  sign
-  $%  ::  %f: from ford
+  $%  ::  %b: from behn
+      ::
+      $:  %b
+          ::
+          ::
+          $%  [%wake ~]
+      ==  ==
+      ::  %f: from ford
       ::
       $:  %f
           ::
@@ -242,7 +249,7 @@
       ::    We maintain a list of subscriptions so if a channel times out, we
       ::    can cancel all the subscriptions we've made.
       ::
-      subscriptions=(list [ship=@p app=term =wire =path])
+      subscriptions=(list [ship=@p app=term =path])
       ::  duct: the open http sessions which we must %continue on new events.
       ::
       ::    For each channel, there is at most one open EventSource
@@ -267,6 +274,9 @@
       ::
       [%unsubscribe ship=@p app=term =path]
   ==
+::  channel-timeout: the delay before a channel should be reaped
+::
+++  channel-timeout  ~h12
 --
 ::  utilities
 ::
@@ -724,9 +734,6 @@
     ::
     =|  moves=(list move)
     |%
-    ::  channel-timeout: the delay before a channel should be reaped
-    ::
-    ++  channel-timeout  ~h12
     ::  +handle-request: handles an http request for the subscription system
     ::
     ++  handle-request
@@ -815,6 +822,12 @@
       ::  for each request, execute the action passed in
       ::
       =+  requests=u.maybe-requests
+      ::  gall-moves: put moves here first so we can flop for ordering
+      ::
+      ::    TODO: Have an error state where any invalid duplicate subscriptions
+      ::    or other errors cause the entire thing to fail with a 400 and a tang.
+      ::
+      =|  gall-moves=(list move)
       |-
       ::
       ?~  requests
@@ -831,17 +844,16 @@
               complete=%.y
           ==
         ::
-        [moves state]
+        [(weld (flop gall-moves) moves) state]
       ::
-      ~&  [%do i.requests]
       ?-    -.i.requests
           %ack
         !!
       ::
           %poke
         ::
-        =.  moves
-          :_  moves
+        =.  gall-moves
+          :_  gall-moves
           ^-  move
           :^  duct  %pass  /channel/poke/[uid]
           =,  i.requests
@@ -850,7 +862,23 @@
         $(requests t.requests)
       ::
           %subscribe
-        !!
+        ::
+        =.  gall-moves
+          :_  gall-moves
+          ^-  move
+          :^  duct  %pass  /channel/subscription/[uid]
+          =,  i.requests
+          [%g %deal [our ship] `cush:gall`[app %peel %json path]]
+        ::  TODO: Check existence to prevent duplicates?
+        ::
+        =.  session.channel-state.state
+          %+  ~(jab by session.channel-state.state)  uid
+          |=  =^channel
+          ^+  channel
+          =,  i.requests
+          channel(subscriptions [[ship app path] subscriptions.channel])
+        ::
+        $(requests t.requests)
       ::
           %unsubscribe
         !!
@@ -871,12 +899,12 @@
       ::  produce a list of moves which cancels every gall subscription
       ::
       %+  turn  subscriptions.session
-      |=  [ship=@p app=term =wire =path]
+      |=  [ship=@p app=term =path]
       ^-  move
       ::  todo: double check this; which duct should we be canceling on? does
       ::  gall strongly bind to a duct as a cause like ford does?
       ::
-      :^  duct  %pass  /channel/subscribe/[uid]
+      :^  duct  %pass  /channel/subscription/[uid]
       [%g %deal [our ship] app %pull ~]
     --
   ::  +handle-ford-response: translates a ford response for the outside world
@@ -1264,6 +1292,7 @@
       ::
          %run-app    run-app
          %run-build  run-build
+         %channel    channel
       ==
   ::
   ++  run-app
@@ -1287,6 +1316,25 @@
     =/  handle-ford-response  handle-ford-response:(per-server-event event-args)
     =^  moves  server-state.ax  (handle-ford-response result.sign)
     [moves light-gate]
+  ::
+  ++  channel
+    ::
+    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
+    ::  channel callback wires are triples.
+    ::
+    ?>  ?=([@ @ @t *] wire)
+    ::
+    ?+    i.t.wire
+        ~|([%bad-channel-wire wire] !!)
+    ::
+        %timeout
+      =/  on-channel-timeout
+        on-channel-timeout:channel:(per-server-event event-args)
+      =^  moves  server-state.ax
+        (on-channel-timeout i.t.t.wire)
+      [moves light-gate]
+    ::
+    ==
   --
 ::
 ++  light-gate  ..$
