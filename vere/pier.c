@@ -1205,21 +1205,57 @@ _pier_work_poke(void*   vod_p,
   else {
     /* the worker process starts with a %play task,
     ** which tells us where to start playback
+    ** (and who we are, if it knows)
     */
     if ( 0 == pir_u->log_u ) {
       switch ( u3h(jar) ) {
         default: goto error;
 
         case c3__play: {
-          if ( (c3n == u3r_trel(jar, 0, &p_jar, &q_jar)) || 
+          c3_d lav_d;
+          c3_l mug_l;
+
+          if ( (c3n == u3r_qual(u3t(jar), 0, &p_jar, &q_jar, &r_jar)) ||
                (c3n == u3ud(p_jar)) ||
                (u3r_met(6, p_jar) != 1) ||
                (c3n == u3ud(q_jar)) ||
-               (u3r_met(5, p_jar) != 1) )
+               (u3r_met(5, p_jar) != 1) ||
+               (c3n == u3du(r_jar)) ||
+               (c3n == u3ud(u3h(r_jar))) ||
+               ((c3y != u3t(r_jar)) && (c3n != u3t(r_jar))) )
           {
-            goto error;
+            if ( u3_nul == u3t(jar) ) {
+              lav_d = 1ULL;
+              mug_l = 0;
+            }
+            else {
+              goto error;
+            }
           }
-          _pier_play(pir_u, u3r_chub(0, p_jar), u3r_word(0, q_jar));
+
+          if ( u3_nul != u3t(jar) ) {
+            lav_d = u3r_chub(0, p_jar);
+            mug_l = u3r_word(0, q_jar);
+
+            //  single-home
+            //
+            {
+              u3_atom who = u3h(r_jar);
+              c3_d  who_d[2];
+              u3r_chubs(0, 2, who_d, who);
+
+              c3_assert( ( (0 == pir_u->who_d[0]) &&
+                           (0 == pir_u->who_d[1]) ) ||
+                         ( (who_d[0] == pir_u->who_d[0]) &&
+                           (who_d[1] == pir_u->who_d[1]) ) );
+
+              pir_u->fak_o = u3t(r_jar);
+              pir_u->who_d[0] = who_d[0];
+              pir_u->who_d[1] = who_d[1];
+            }
+          }
+
+          _pier_play(pir_u, lav_d, mug_l);
 
           u3z(jar); u3z(mat);
           break;
@@ -1378,6 +1414,7 @@ u3_pier_create(c3_c* pax_c, c3_c* sys_c)
   */
   {
     pir_u = c3_malloc(sizeof *pir_u);
+    memset(pir_u, 0, sizeof(*pir_u));
 
     pir_u->pax_c = c3_malloc(1 + strlen(pax_c));
     strcpy(pir_u->pax_c, pax_c);

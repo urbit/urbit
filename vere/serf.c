@@ -37,9 +37,12 @@
     **
     **  ++  plea                            ::  from serf to lord
     **    $%  $:  $play                     ::  send events
-    **            p/@                       ::  first number expected
-    **            q/@                       ::  mug of state (or 0 to boot)
-    **        ==                            ::
+    **            $=  p                     ::
+    **            %-  unit                  ::  ~ if no snapshot
+    **            $:  p=@                   ::  first number expected
+    **                q=@                   ::  mug of state
+    **                r=[our=@p fak=?]      ::  [identity fake?]
+    **        ==  ==                        ::
     **        $:  $done                     ::  event executed unchanged
     **            p/@                       ::  number of this event
     **            q/@                       ::  mug of state (or 0)
@@ -382,11 +385,19 @@ _serf_poke(void* vod_p, u3_noun mat)
 void
 u3_serf_boot(void)
 {
-  c3_d nex_d = u3A->ent_d + 1ULL;
+  c3_d nex_d  = 1ULL;
+  u3_noun dat = u3_nul;
+
+  if ( u3_none != u3A->our ) {
+    nex_d = u3A->ent_d + 1ULL;
+    dat   = u3nc(u3_nul, u3nt(u3i_chubs(1, &nex_d),
+                              0, // XX u3r_mug(u3A->roc),
+                              u3nc(u3k(u3A->our), u3k(u3A->fak))));
+  }
 
   fprintf(stderr, "serf: play %lld\r\n", nex_d);
 
-  _serf_send(u3nt(c3__play, u3i_chubs(1, &nex_d), 0));
+  _serf_send(u3nc(c3__play, dat));
 }
 
 /* u3_serf_main(): main() when run as urbit-client
