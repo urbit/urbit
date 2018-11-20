@@ -1,7 +1,11 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-=>  +7
+~>  %slog.[0 leaf+"arvo-boot"]
+=<  |=  {now/@da ovo/*}
+    ^-  *
+    ~>  %slog.[0 leaf+"arvo-event"]
+    .(+> +:(poke now ovo))
 ~>  %slog.[0 leaf+"%arvo-assembly"]
 =-  ~>  %slog.[0 leaf+"%arvo-assembled"]
     -
@@ -559,14 +563,19 @@
   ~&  [%vega-start-hoon hap]
   =+  src=((hard @t) (need (peek now cx+pax)))
   =+  arv=((hard @t) (need (peek now cx+wax)))
-  =+  gen=(rain hap src)
+  ::  construct  =>(hoon =>(+7 arvo))
+  ::
+  =/  gen=hoon
+    :+  %tsbn  (rain hap src)
+    :+  %tsld  (rain zup arv)
+    [%$ 7]
   ~&  %vega-parsed
-  =+  one=(~(mint ut %noun) %noun gen)
+  =/  fol  q:(~(mint ut %noun) %noun gen)
   ~&  %vega-compiled
-  ~&  [%vega-arvo zup]
-  =+  two=(~(mint ut p.one) %noun (rain zup arv))
-  ~&  %vega-minted
-  .*(0 [7 q.one q.two])
+  ::  evaluate :fol to produce the Arvo gate,
+  ::  then produce the Arvo core at +7
+  ::
+  .*(0 [%7 fol %0 7])
 ::
 ++  vega                                                ::  reboot kernel
   |=  {now/@da ova/(list ovum) hap/path zup/path}
