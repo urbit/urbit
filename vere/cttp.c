@@ -693,7 +693,7 @@ _cttp_httr(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct)
   u3_noun htr = u3nt(sas_w, mes, uct);
   u3_noun pox = u3nt(u3_blip, c3__http, u3_nul);
 
-  u3v_plan(pox, u3nt(c3__they, num_l, htr));
+  u3_pier_plan(pox, u3nt(c3__they, num_l, htr));
 }
 
 /* _cttp_creq_quit(): dispatch error response

@@ -1798,7 +1798,7 @@ u3m_boot_new(c3_c* dir_c)
 
   /* Initialize the jet system.
   */
-  u3j_boot();
+  u3j_boot(nuu_o);
 
   /* Reactivate jets on old kernel.
   */
@@ -1838,7 +1838,7 @@ u3m_boot_pier(void)
 
   /* Initialize the jet system.
   */
-  u3j_boot();
+  u3j_boot(c3y);
 
   /* Basic initialization.
   */

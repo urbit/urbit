@@ -257,7 +257,7 @@ static void
 _http_req_kill(u3_hreq* req_u)
 {
   u3_noun pox = _http_req_to_duct(req_u);
-  u3v_plan(pox, u3nc(c3__thud, u3_nul));
+  u3_pier_plan(pox, u3nc(c3__thud, u3_nul));
 }
 
 /* _http_req_done(): request finished, deallocation callback
@@ -324,7 +324,7 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
   u3_noun pox = _http_req_to_duct(req_u);
   u3_noun typ = _(req_u->hon_u->htp_u->lop) ? c3__chis : c3__this;
 
-  u3v_plan(pox, u3nq(typ,
+  u3_pier_plan(pox, u3nq(typ,
                      req_u->hon_u->htp_u->sec,
                      u3nc(c3y, u3i_words(1, &req_u->hon_u->ipf_w)),
                      req));
@@ -631,6 +631,7 @@ _http_serv_link(u3_http* htp_u)
     htp_u->sev_l = 1 + u3_Host.htp_u->sev_l;
   }
   else {
+    // XX wrong, revisit
     htp_u->sev_l = u3A->sev_l;
   }
 
@@ -1325,9 +1326,10 @@ u3_http_ef_bake(void)
     u3z(hot);
   }
 
+  // XX wrong, revisit
   u3_noun pax = u3nq(u3_blip, c3__http, u3k(u3A->sen), u3_nul);
 
-  u3v_plan(pax, u3nc(c3__born, ipf));
+  u3_pier_plan(pax, u3nc(c3__born, ipf));
 }
 
 /* u3_http_ef_thou(): send %thou from %eyre as http response.
@@ -1443,8 +1445,9 @@ _http_serv_start_all(void)
   {
     c3_assert( u3_none != non );
 
+    // XX wrong, revisit
     u3_noun pax = u3nq(u3_blip, c3__http, u3k(u3A->sen), u3_nul);
-    u3v_plan(pax, u3nt(c3__live, non, sec));
+    u3_pier_plan(pax, u3nt(c3__live, non, sec));
   }
 
   _http_write_ports_file(u3_Host.dir_c);
@@ -2298,13 +2301,14 @@ _proxy_ward_plan(u3_ward* rev_u)
 {
   // XX confirm duct
   u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
+                     // XX wrong, revisit
                      u3nc(u3k(u3A->sen), u3_nul));
 
   u3_noun wis = u3nc(c3__wise, u3nq(u3k(rev_u->sip),
                                     rev_u->por_s,
                                     u3k(rev_u->con_u->sec),
                                     u3i_words(16, (c3_w*)rev_u->non_u.base)));
-  u3v_plan(pax, wis);
+  u3_pier_plan(pax, wis);
 }
 
 /* _proxy_ward_start(): start ward (ship-specific listener).
@@ -2460,14 +2464,17 @@ _proxy_ward_resolve(u3_warc* cli_u)
 
   if ( 0 == cli_u->hot_c ) {
     // XX revisit
-    c3_assert( 0 != u3_Host.sam_u.dns_c );
+    u3_pier* pir_u = u3_pier_stub();
+    u3_ames* sam_u = pir_u->sam_u;
+
+    c3_assert( 0 != sam_u->dns_c );
 
     u3_noun sip = u3dc("scot", 'p', u3k(cli_u->sip));
     c3_c* sip_c = u3r_string(sip);
-    c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.sam_u.dns_c);
+    c3_w len_w = 1 + strlen(sip_c) + strlen(sam_u->dns_c);
     cli_u->hot_c = c3_malloc(len_w);
     // incremented to skip '~'
-    snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, u3_Host.sam_u.dns_c);
+    snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, sam_u->dns_c);
 
     free(sip_c);
     u3z(sip);
@@ -2580,13 +2587,16 @@ _proxy_parse_ship(c3_c* hot_c)
   }
 
   // XX revisit
-  c3_assert( 0 != u3_Host.sam_u.dns_c );
+  u3_pier* pir_u = u3_pier_stub();
+  u3_ames* sam_u = pir_u->sam_u;
+
+  c3_assert( 0 != sam_u->dns_c );
 
   c3_w dif_w = dom_c - hot_c;
-  c3_w dns_w = strlen(u3_Host.sam_u.dns_c);
+  c3_w dns_w = strlen(sam_u->dns_c);
 
   if ( (dns_w != strlen(hot_c) - (dif_w + 1)) ||
-       (0 != strncmp(dom_c + 1, u3_Host.sam_u.dns_c, dns_w)) ) {
+       (0 != strncmp(dom_c + 1, sam_u->dns_c, dns_w)) ) {
     return sip;
   }
 
@@ -2614,7 +2624,8 @@ _proxy_dest(u3_pcon* con_u, u3_noun sip)
   else {
     u3_noun hip = u3t(sip);
 
-    if ( c3y == u3r_sing(u3A->own, hip) ) {
+    // XX wrong, revisit
+    if ( c3y == u3r_sing(u3A->our, hip) ) {
       _proxy_loop_connect(con_u);
     }
     else {
