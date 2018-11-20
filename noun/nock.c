@@ -384,7 +384,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         {
           u3_noun seb = _n_nock_on(bus, u3k(c_gal));
           u3_noun pro;
-         
+
           u3t_off(noc_o);
           pro = u3j_kick(seb, b_gal);
           u3t_on(noc_o);
@@ -451,7 +451,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 
         if ( !_(u3du(val)) ) {
           u3m_bail(u3nt(1, gof, 0));
-        } 
+        }
         if ( !_(u3du(u3t(val))) ) {
           //
           //  replace with proper error stack push
@@ -469,7 +469,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 
           return pro;
         }
-      }  
+      }
       c3_assert(!"not reached");
     }
   }
@@ -534,25 +534,25 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define SALM 45 // compare two items on the top of the stack.
 #define SAMC 46 // Unused -- XX: Remove
 // unconditional skips
-#define SBIP 47 -- Jump the PC forward by a byte literal.
-#define SIPS 48 -- Jump the PC forward by a short literal.
-#define SWIP 49 -- Jump the PC forward by a word literal.
+#define SBIP 47 // Jump the PC forward by a byte literal.
+#define SIPS 48 // Jump the PC forward by a short literal.
+#define SWIP 49 // Jump the PC forward by a word literal.
 // conditional skips (same, but skip if the top of the stack is `c3n`)
 #define SBIN 50
 #define SINS 51
 #define SWIN 52
 // nock 9
-#define KICB 53 -- (byte)
-#define KICS 54 -- (short)
-#define TICB 55 -- (tail)
-#define TICS 56 -- (tail)
-// nock 12 -- call the scry gate with some computed value.
+#define KICB 53 // (byte)
+#define KICS 54 // (short)
+#define TICB 55 // (tail)
+#define TICS 56 // (tail)
+// nock 12 // call the scry gate with some computed value.
  // set up from arvo
  // only used in virtualized nock.
  // virtualization setup creates the scry gate.
  //   scry :: [Noun Noun] -> Noun
  //   XX Understand `scry`
-#define WILS 57 (lose)
+#define WILS 57 // (lose)
 #define WISH 58
 // hint processing
 #define BUSH 59 // %hunk %lose %mean or %spot hint -- arg is a
@@ -610,7 +610,7 @@ _n_arg(c3_y cod_y)
     case LILS: case LITS: case LISL: case LISK:
     case SAMS: case SANS: case SIPS: case SINS:
     case SLIS: case SKIS: case KICS: case TICS:
-    case SUSH: case SAST: case SALT: 
+    case SUSH: case SAST: case SALT:
     case MUTS: case KUTS: case MITS: case KITS:
       return sizeof(c3_s);
 
@@ -721,7 +721,7 @@ _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
             c3_assert(0);
           }
           break;
-        
+
         case BUSH: case FIBK: case FIBL:
         case SANB: case LIBL: case LIBK:
         case KITB: case MITB:
@@ -936,9 +936,9 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
 
         /* 8-bit direct args */
         case FABK: case FABL:
-        case LITB: case LILB: 
+        case LITB: case LILB:
         case MUTB: case KUTB:
-        case SAMB: 
+        case SAMB:
           buf_y[i_w--] = (c3_y) u3t(op);
           buf_y[i_w]   = (c3_y) cod;
           break;
@@ -967,7 +967,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         }
 
         /* literal index args */
-        case FIBK: case FIBL: 
+        case FIBK: case FIBL:
         case LIBK: case LIBL:
         case BUSH: case SANB:
         case KITB: case MITB:
@@ -1563,20 +1563,23 @@ _n_bite(u3_noun fol) {
   return _n_prog_from_ops(ops);
 }
 
-/* _n_find(): Get a formula from bytecode cache, or compile it. RETAIN.
- *
- * - pre: Key prefix in bytecode cache. (XX: What's this useful for?)
- * - fol: Formula to compile.
- *
- * Lookup `[pre fol]` in the bytecode cache. If it's there, return
- * it. If it isn't then compile the formula, insert it into the cache,
- * and return it.
- *
- * If we're in a junior road, then we need to check the bytecode
- * cache for all of our ancestor roads as well, if we find one
- * there, copy it with `_n_prog_old()` and add it to the current
- * road.
- */
+/**
+  _n_find(): Get a formula from bytecode cache, or compile it. RETAIN.
+
+  - fol -- Formula to compile.
+  - pre -- Key prefix in bytecode cache.
+
+  The key prefix is always either `u3_nul` or the location of a core.
+
+  Lookup `[pre fol]` in the bytecode cache. If it's there, return
+  it. If it isn't then compile the formula, insert it into the cache,
+  and return it.
+
+  If we're in a junior road, then we need to check the bytecode
+  cache for all of our ancestor roads as well, if we find one
+  there, copy it with `_n_prog_old()` and add it to the current
+  road.
+*/
 static u3n_prog*
 _n_find(u3_noun pre, u3_noun fol)
 {
@@ -1597,7 +1600,7 @@ _n_find(u3_noun pre, u3_noun fol)
 
       if ( u3_none != pog ) {
 
-        u3n_prog* old = _n_prog_old(u3to(u3n_prog, pog)); 
+        u3n_prog* old = _n_prog_old(u3to(u3n_prog, pog));
 
         // XX What's this?
         for ( c3_w i_w = 0; i_w < old->reg_u.len_w; ++i_w ) {
@@ -1800,7 +1803,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       top  = _n_peek(off);
       *top = u3nc(*top, x);          // [pro]
       BURN();
-    
+
     do_snoc: // [hed tel]
       x    = _n_pep(mov, off);
       top  = _n_peek(off);
@@ -2541,7 +2544,21 @@ _n_prog_free(u3n_prog* pog_u)
   u3a_free(pog_u);
 }
 
-/* _n_reap(): reap key and value from byc table.
+/**
+  _n_reap() -- per-slot logic for `u3n_reap`
+
+  `kev` is slot of the hashtable we're traversing -- the bytecode cache
+  from a road that's being gc'd.
+
+  Since this is during GC, we need to `take` anything we use (the key
+  and the program) and save it somewhere (in the parent's bytecode cache).
+
+  First, lookup the program name in the parent road's table, if there's
+  nothing there, then we need to copy the whole program into the parent
+  roads's heap and insert ourselves there.
+
+  If there *is* a program there, we need to merge them somehow, (XX:
+  what's the logic here?) and replace that program with the result.
 */
 static void
 _n_reap(u3_noun kev)
@@ -2549,9 +2566,7 @@ _n_reap(u3_noun kev)
   u3_post   val;
   u3n_prog* pog_u = u3to(u3n_prog, u3t(kev));
 
-  // we must always take
   u3_noun key = u3a_take(u3h(kev));
-  // because u3h_git will gain the key
   u3_weak got = u3h_git(u3R->byc.har_p, key);
 
   if ( u3_none == got ) {
@@ -2562,14 +2577,26 @@ _n_reap(u3_noun kev)
     _n_prog_take_dat(sep_u, pog_u, c3y);
     val = u3a_outa(sep_u);
   }
-  // we must always put, because we have taken.
-  // we must always keep what we have taken,
-  // or we can break relocation pointers.
+
+  // we must always put, because we have taken
+  // we must always keep what we have taken
+  // or we can break relocation
   u3h_put(u3R->byc.har_p, key, val);
   u3z(key);
 }
 
-/* u3n_reap(): promote bytecode state.
+/*
+  u3n_reap() -- promote bytecode state (gc during a road switch)
+
+  This is called only from `u3m_love`.
+
+  `har_p` is the bytecode cache from a stale road, it's taken from
+  `u3R->byc.har_p` right before the `u3m_fall`.
+
+  So, during this logic, `u3R->byc.har_p` points to the bytecode cache
+  of the *parent* road.
+
+  XX What are said nouns (the keys)?
 */
 void
 u3n_reap(u3p(u3h_root) har_p)

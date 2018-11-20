@@ -164,12 +164,16 @@
 
   /**  Macros.  Should be better commented.
   **/
-    /* In and out of the box.
-    */
+
+// XX: What do?
 #     define u3a_boxed(len_w)  (len_w + c3_wiseof(u3a_box) + 1)
+
+// XX: What do?
 #     define u3a_boxto(box_v)  ( (void *) \
                                    ( ((c3_w *)(void*)(box_v)) + \
                                      c3_wiseof(u3a_box) ) )
+
+// XX: What do?
 #     define u3a_botox(tox_v)  ( (struct _u3a_box *) \
                                    (void *) \
                                    ( ((c3_w *)(void*)(tox_v)) - \

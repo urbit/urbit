@@ -976,7 +976,7 @@ extern u3_noun BDA, BDB;
 static void
 _me_gain_use(u3_noun dog)
 {
-  c3_w* dog_w      = u3a_to_ptr(dog);
+  c3_w* dog_w    = u3a_to_ptr(dog);
   u3a_box* box_u = u3a_botox(dog_w);
 
   if ( 0x7fffffff == box_u->use_w ) {
@@ -1177,10 +1177,10 @@ _me_copy_south(u3_noun dog)
     }
     else {
       if ( c3y == u3a_is_pom(dog) ) {
-        u3a_cell* old_u = u3a_to_ptr(dog);
+        u3a_cell*   old_u = u3a_to_ptr(dog);
         c3_w*       new_w = u3a_walloc(c3_wiseof(u3a_cell));
         u3_noun     new   = u3a_de_twin(dog, new_w);
-        u3a_cell* new_u = (u3a_cell*)(void *)new_w;
+        u3a_cell*   new_u = (u3a_cell*)(void *)new_w;
 
         // printf("south: cell %p to %p\r\n", old_u, new_u);
 #if 0
@@ -1279,25 +1279,31 @@ _me_take_south(u3_noun dog)
 }
 
 /* u3a_take(): gain, copying juniors.
+**
+** - If it's a direct atom, return it.
+** - If it's a pointer into senior memory, return it.
+** - If it's a pointer into junior memory, Call _me_gain_use
+** - If it's a pointer into normal memory, Call _me_gain_use
 */
 u3_noun
 u3a_take(u3_noun som)
 {
   c3_assert(u3_none != som);
 
+  // If it's a direct atom, there's nothing to do.
   if ( _(u3a_is_cat(som)) ) {
     return som;
   }
-  else {
-    u3t_on(coy_o);
 
-    som = _(u3a_is_north(u3R))
-              ? _me_take_north(som)
-              : _me_take_south(som);
+  u3t_on(coy_o);
 
-    u3t_off(coy_o);
-    return som;
-  }
+  //
+  som = _(u3a_is_north(u3R))
+            ? _me_take_north(som)
+            : _me_take_south(som);
+
+  u3t_off(coy_o);
+  return som;
 }
 
 /* u3a_left(): true of junior if preserved.

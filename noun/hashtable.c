@@ -765,18 +765,31 @@ u3h_free(u3p(u3h_root) har_p)
 }
 
 /* _ch_walk_buck(): walk bucket for gc.
+**
+** At the leaves of the HMAT, we just have an array of slots. Traverse
+** over it it with `fun_f`.
 */
 static void
 _ch_walk_buck(u3h_buck* hab_u, void (*fun_f)(u3_noun, void*), void* wit)
 {
-  c3_w i_w;
-
-  for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
+  for ( c3_w i_w = 0; i_w < hab_u->len_w; i_w++ ) {
     fun_f(u3h_slot_to_noun(hab_u->sot_w[i_w]), wit);
   }
 }
 
 /* _ch_walk_node(): walk node for gc.
+**
+** XX Why does this say `for gc`? This is used in `u3h_walk` which
+** presumably has non-gc uses.
+**
+** XX What is `lef_w`?
+**
+**   It seems to start at 25 and decrease by at each recursion. Ah! It's
+**   the number of bits left in the key! Something like that? We don't
+**   actually use it except to limit the recursion depth (after depth 5,
+**   we switch from _ch_walk_node to _ch_walk_buck.
+**
+**
 */
 static void
 _ch_walk_node(u3h_node* han_u, c3_w lef_w, void (*fun_f)(u3_noun, void*), void* wit)
@@ -807,7 +820,7 @@ _ch_walk_node(u3h_node* han_u, c3_w lef_w, void (*fun_f)(u3_noun, void*), void* 
 }
 
 /* u3h_walk_with(): traverse hashtable with key, value fn and data
- *                  argument; RETAINS.
+**                  argument; RETAINS.
 */
 void
 u3h_walk_with(u3p(u3h_root) har_p,
@@ -815,20 +828,22 @@ u3h_walk_with(u3p(u3h_root) har_p,
               void* wit)
 {
   u3h_root* har_u = u3to(u3h_root, har_p);
-  c3_w        i_w;
+  c3_w      i_w;
 
   for ( i_w = 0; i_w < 64; i_w++ ) {
     c3_w sot_w = har_u->sot_w[i_w];
 
     if ( _(u3h_slot_is_noun(sot_w)) ) {
       u3_noun kev = u3h_slot_to_noun(sot_w);
-
       fun_f(kev, wit);
+      continue;
     }
-    else if ( _(u3h_slot_is_node(sot_w)) ) {
-      u3h_node* han_u = u3h_slot_to_node(sot_w);
 
+    if ( _(u3h_slot_is_node(sot_w)) ) {
+      u3h_node* han_u = u3h_slot_to_node(sot_w);
+      // XX: 25?
       _ch_walk_node(han_u, 25, fun_f, wit);
+      continue;
     }
   }
 }

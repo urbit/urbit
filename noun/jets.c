@@ -1052,7 +1052,13 @@ u3j_hook(u3_noun     cor,
   return pro;
 }
 
-/* _cj_prog(): stop tracing glu and find a nock program
+/* _cj_prog(): find a nock program
+ *
+ * - loc -- XX What is?
+ * - fol -- Nock formula
+ *
+ * In the profile, this wont be counted as time spent in the jet glue.
+ *
  */
 static u3p(u3n_prog)
 _cj_prog(u3_weak loc, u3_noun fol)
@@ -1148,7 +1154,8 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
   }
 
   sit_u->bas = u3_none;
-  if ( u3_none == (col = loc = _cj_spot(cor, NULL)) ) {
+  col = loc = _cj_spot(cor, NULL);
+  if ( u3_none == loc ) {
     return u3m_bail(c3__fail);
   }
 

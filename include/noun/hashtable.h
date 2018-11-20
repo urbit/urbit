@@ -20,9 +20,10 @@
     **/
       /* u3h_slot: map slot. 
       **
-      **   Either a key-value cell or a loom offset, decoded as a pointer
-      **   to a u3h_node, or a u3h_buck at the bottom.  Matches the u3_noun
-      **   format - coordinate with allocate.h.  The top two bits are:
+      **   Either a key-value cell or a loom offset of a cell, decoded
+      **   as a pointer to a u3h_node, or a u3h_buck at the bottom. (XX:
+      **   At the bottom?)  Matches the u3_noun format - coordinate
+      **   with allocate.h.  The top two bits are:
       **
       **     00 - empty (in the root table only)
       **     01 - table
@@ -81,8 +82,8 @@
 #     define  u3h_node_to_slot(ptr)  (u3a_outa(ptr) | 0x40000000)
 #     define  u3h_noun_be_warm(sot)  ((sot) | 0x40000000)
 #     define  u3h_noun_be_cold(sot)  ((sot) & ~0x40000000)
-#     define  u3h_slot_to_noun(sot)  (0x40000000 | (sot))
-#     define  u3h_noun_to_slot(som)  (u3h_noun_be_warm(som))
+#     define  u3h_slot_to_noun(sot)  (0x40000000 | (sot))    // XX Wait, what? We just set some high bits? How does this work?
+#     define  u3h_noun_to_slot(som)  (u3h_noun_be_warm(som)) // XX Wait, isn't this the same thing as the above?
 
     /**  Functions.
     ***

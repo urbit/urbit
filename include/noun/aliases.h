@@ -101,9 +101,11 @@
 #     define  u3dt(txt_c, a, b, c)     u3v_do(txt_c, u3nt(a, b, c))
 #     define  u3dq(txt_c, a, b, c, d)  u3v_do(txt_c, u3nt(a, b, c, d))
 
-    /* u3to(), u3of(): offset/pointer conversion.
+    /**
+      - u3to(type,exp) -- loom offset into pointer (`u3a_into`)
+      - u3of(type,exp) -- pointer into loom offset (`u3a_outa`)
+      - u3tn(type,exp) -- loom offset in pointer, preserving NULL
     */
 #     define  u3to(type, x) ((type *) u3a_into(x))
 #     define  u3tn(type, x) (x == 0) ? (void *)0 :  ((type *) u3a_into(x))
 #     define  u3of(type, x) (u3a_outa((type *)x))
-
