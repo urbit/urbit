@@ -1542,6 +1542,8 @@ _cm_init_new(void)
   }
 }
 
+//  XX deprecated, remove
+#if 0
 /* _boot_home(): create ship directory.
 */
 static void
@@ -1593,7 +1595,10 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
     }
   }
 }
+#endif
 
+//  XX deprecated, remove
+#if 0
 /* u3m_boot(): start the u3 system (old).
 */
 void
@@ -1638,6 +1643,7 @@ u3m_boot(c3_o nuu_o, c3_c* dir_c, c3_c *pil_c)
     u3j_ream();
   }
 }
+#endif
 
 /* u3m_boot_new(): start the u3 system (new).  return next event,
 ** starting from 1.
