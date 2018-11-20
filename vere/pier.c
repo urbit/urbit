@@ -1957,11 +1957,7 @@ u3_pier_stub(void)
 /* _pier_boot_make(): create/load a pier.
 */
 static u3_pier*
-_pier_boot_make(u3_noun who,
-                u3_noun tic,
-                u3_noun sec,
-                u3_noun pax,
-                u3_noun sys)
+_pier_boot_make(u3_noun pax, u3_noun sys)
 {
   c3_c*    pax_c = u3r_string(pax);
   c3_c*    sys_c = u3r_string(sys);
@@ -1972,25 +1968,8 @@ _pier_boot_make(u3_noun who,
   u3z(pax); free(pax_c);
   u3z(sys); free(sys_c);
 
-  {
-    u3_noun how = u3dc("scot", 'p', u3k(who)); 
-
-    pir_u->who_c = u3r_string(how);
-    u3z(how);
-    fprintf(stderr, "boot: ship: %s\r\n", pir_u->who_c);
-  }
-
-  u3r_chubs(0, 2, pir_u->who_d, who);
-  u3r_chubs(0, 1, pir_u->tic_d, tic);
-  u3r_chubs(0, 1, pir_u->sec_d, sec);
-
   pir_u->por_s = 0;
 
-  u3z(tic);
-  u3z(sec);
-  u3z(who);
-
-  _pier_loop_init_pier(pir_u);
   return pir_u;
 }
 
@@ -2007,12 +1986,62 @@ u3_pier_boot(u3_noun who,                   //  identity
 
   /* make/load pier
   */
-  pir_u = _pier_boot_make(who, tic, sec, pax, sys);
+  pir_u = _pier_boot_make(pax, sys);
+
+  /* set boot params
+  */
+  {
+    {
+      u3_noun how = u3dc("scot", 'p', u3k(who));
+
+      pir_u->who_c = u3r_string(how);
+      u3z(how);
+      fprintf(stderr, "boot: ship: %s\r\n", pir_u->who_c);
+    }
+
+    u3r_chubs(0, 2, pir_u->who_d, who);
+    u3r_chubs(0, 1, pir_u->tic_d, tic);
+    u3r_chubs(0, 1, pir_u->sec_d, sec);
+
+    u3z(tic);
+    u3z(sec);
+    u3z(who);
+  }
+
+  /* initialize boot i/o
+  */
+  _pier_loop_init_pier(pir_u);
 
   /* initialize polling handle
   */
   uv_prepare_init(u3_Host.lup_u, &pir_u->pep_u);
   uv_prepare_start(&pir_u->pep_u, _pier_loop_prepare);
+
+  /* initialize loop - move to _pier_boot_make().
+  */
+  _pier_loop_init();
+
+  /* XX: _pier_loop_exit() should be called somewhere, but is not.
+  */
+}
+
+/* u3_pier_stay(): resume the new pier system.
+*/
+void
+u3_pier_stay(u3_noun pax)
+{
+  u3_pier* pir_u;
+
+  /* make/load pier
+  */
+  pir_u = _pier_boot_make(pax, u3_nul);
+
+  /* initialize polling handle
+  */
+  uv_prepare_init(u3_Host.lup_u, &pir_u->pep_u);
+  uv_prepare_start(&pir_u->pep_u, _pier_loop_prepare);
+
+  _pier_loop_init_pier(pir_u);
 
   /* initialize loop - move to _pier_boot_make().
   */
