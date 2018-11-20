@@ -1996,8 +1996,11 @@ void
 u3j_reap(u3p(u3h_root) cod_p, u3p(u3h_root) war_p, u3p(u3h_root) han_p, u3p(u3h_root) bas_p)
 {
   u3h_walk(cod_p, _cj_cold_reap);
-  u3h_walk(war_p, _cj_warm_reap);
+
+  // call sites must be reaped before the warm dashboard, because they may
+  // contain references to labels on this road
   u3h_walk(han_p, _cj_hank_reap);
+  u3h_walk(war_p, _cj_warm_reap);
   u3h_walk(bas_p, _cj_bash_reap);
 }
 
