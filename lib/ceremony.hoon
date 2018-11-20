@@ -2,14 +2,13 @@
 =,  ethe
 =,  ethereum
 ::
-=|  pk=@
 =|  addr=address
 =|  gas-price=@ud
 =|  network=@ux
 =|  now=@da
 ::
 |_  $:  nonce=@ud                                       ::  next tx id
-        transactions=(list cord)                        ::  generated txs
+        transactions=(list transaction)                 ::  generated txs
         constitution=address                            ::  deployed address
     ==
 ::
@@ -58,6 +57,7 @@
 ::
 ++  get-file
   |=  pax=path
+  ~|  pax
   .^  (list cord)  %cx
       (weld /(scot %p ~zod)/home/(scot %da now) pax)
   ==
@@ -74,17 +74,13 @@
   (lth a b)
 ::
 ++  init
-  |=  [n=@da g=@ud non=@ud]
+  |=  [n=@da g=@ud non=@ud addr=address]
   ^+  this
-  =+  pkf=(get-file /pk/txt)
-  ?>  ?=(^ pkf)
-  =+  prv=(rash i.pkf ;~(pfix (jest '0x') hex))
   %_  this
     now         n
     nonce       non
     gas-price   g
-    pk          prv
-    addr        (address-from-prv prv)
+    addr        addr
   ==
 ::
 ++  get-direct-galaxies
@@ -136,12 +132,14 @@
 ++  get-locked-galaxies
   |=  type=@t
   ^-  (list [who=ship rights])
+  ~|  type
   %+  parse-lines  (cat 3 type '-galaxies')
   (ship-and-rights &)
 ::
 ++  get-locked-stars
   |=  type=@t
   ^-  (list [who=ship recipient=address])
+  ~|  type
   %+  parse-lines  (cat 3 type '-stars')
   ;~  (glue com)
     ;~(pfix sig fed:ag)
@@ -151,8 +149,7 @@
 ++  write-tx
   |=  tx=transaction
   ^+  this
-  =-  this(transactions [- transactions])
-  (crip '0' 'x' ((x-co:co 0) (sign-transaction tx pk)))
+  this(transactions [tx transactions])
 ::
 ++  complete
   ~&  [%writing-transactions (lent transactions)]
@@ -191,11 +188,12 @@
   ==
 ::
 ++  sequence
-  |=  [won=@da net=?(%fake %main %ropsten) gasp=@ud non=@ud]
-  =.  this  (init(now won) won gasp non)
+  |=  [won=@da net=?(%fake %main %ropsten) gasp=@ud non=@ud addr=address]
+  =.  this  (init(now won) won gasp non addr)
   =.  network
     ?+  net  0x1
       %ropsten  0x3
+      %fake     `@ux``@`1.337
     ==
   ::
   ::  data loading
@@ -222,7 +220,7 @@
     %+  roll  directs
     |=  [[who=ship *] smp=(map ship (set ship))]
     ^+  smp
-    =+  par=(sein:title who)
+    =+  par=(^sein:title who)
     ~|  [%need-parent par %for who]
     ?>  ?&  ?|  (~(has by tlon-map) par)
                 (~(has by deed-map) par)
@@ -232,7 +230,9 @@
             =<  net
             %+  fall
               (~(get by deed-map) par)
-            (~(got by tlon-map) par)
+            %+  fall
+              (~(get by tlon-map) par)
+            *rights
         ==
     %-  ~(put by smp)
     ^-  [ship (set ship)]
@@ -329,6 +329,7 @@
   |-
   ?^  stars
     =*  star  p.i.stars
+    ~&  [star=star nonce=nonce]
     =+  star-deed=(~(got by deed-map) star)
     =.  this
       (create-ship star ~ net.star-deed)
@@ -337,6 +338,7 @@
     |-
     ?^  planets
       =*  planet  i.planets
+      ~&  [planet=planet nonce=nonce]
       =+  plan-deed=(~(got by deed-map) planet)
       =.  this
         (create-ship planet ~ net.plan-deed)
@@ -417,6 +419,27 @@
   ::
   complete
 ::
+::  sign pre-generated transactions
+++  sign
+  |=  [won=@da in=path key=path]
+  ^-  (list cord)
+  =.  now  won
+  ?>  ?=([@ @ @ *] key)
+  =/  pkf  (get-file t.t.t.key)
+  ?>  ?=(^ pkf)
+  =/  pk  (rash i.pkf ;~(pfix (jest '0x') hex))
+  =/  txs  .^((list transaction) %cx in)
+  =/  enumerated
+    =/  n  1
+    |-  ^-  (list [@ud transaction])
+    ?~  txs
+      ~
+    [[n i.txs] $(n +(n), txs t.txs)]
+  %+  turn  enumerated
+  |=  [n=@ud tx=transaction]
+  ~?  =(0 (mod n 100))  [%signing n]
+  (crip '0' 'x' ((x-co:co 0) (sign-transaction tx pk)))
+::
 ::  create or spawn a ship, configure its spawn proxy and pubkeys
 ++  create-ship
   |=  $:  who=ship
@@ -467,7 +490,7 @@
   =.  galaxies  (sort galaxies order-shiplist)
   |-
   ?~  galaxies  this
-  ~&  [(lent galaxies) 'galaxies remaining']
+  ~&  [(lent galaxies) 'galaxies remaining' nonce]
   =*  galaxy  gal.i.galaxies
   ~&  `@p`galaxy
   =*  gal-deed  i.galaxies
@@ -508,7 +531,7 @@
   ::
   ::  if the parent galaxy hasn't made the target contracts
   ::  a spawn proxy yet, do so now
-  =+  par=(sein:title star)
+  =+  par=(^sein:title star)
   =?  this  !(~(has in gals) par)
     =.  gals  (~(put in gals) par)
     %^  do  constitution  300.000
