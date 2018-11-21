@@ -2622,10 +2622,12 @@ _proxy_dest(u3_pcon* con_u, u3_noun sip)
     _proxy_loop_connect(con_u);
   }
   else {
-    u3_noun hip = u3t(sip);
+    // XX revisit
+    u3_pier* pir_u = u3_pier_stub();
+    u3_noun our    = u3i_chubs(2, pir_u->who_d);
+    u3_noun hip    = u3t(sip);
 
-    // XX wrong, revisit
-    if ( c3y == u3r_sing(u3A->our, hip) ) {
+    if ( c3y == u3r_sing(our, hip) ) {
       _proxy_loop_connect(con_u);
     }
     else {
@@ -2634,6 +2636,8 @@ _proxy_dest(u3_pcon* con_u, u3_noun sip)
       // XX extract bytes from hip, this could leak
       _proxy_ward_start(con_u, u3k(hip));
     }
+
+    u3z(our);
   }
 
   u3z(sip);
