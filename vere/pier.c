@@ -950,13 +950,14 @@ _pier_disk_consolidate(u3_pier*  pir_u,
 
           /* prepend identity event to module sequence
           */
-          {
-            u3_noun wir = u3nt(c3__name, u3dc("scot", 'p', u3k(who)), u3_nul);
-            u3_noun car = u3nc(c3__veal, u3k(who));
-            u3_noun ovo = u3nc(wir, car);
+          // {
+          //   u3_noun wir = u3nt(c3__name, u3dc("scot", 'p', u3k(who)), u3_nul);
+          //   u3_noun car = u3nc(c3__veal, u3k(who));
+          //   u3_noun ovo = u3nc(wir, car);
 
-            seq = u3nc(ovo, u3k(mod));
-          }
+          //   seq = u3nc(ovo, u3k(mod));
+          // }
+          seq = mod;
 
           /* insert with timestamp
           */
@@ -982,10 +983,7 @@ _pier_disk_consolidate(u3_pier*  pir_u,
           */
           {
             u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
-            u3_noun car = u3nq(c3__boot, 
-                               c3__sith, 
-                               u3k(who), 
-                               u3nc(u3k(tic), u3k(sec)));
+            u3_noun car = u3nt(c3__boot, c3__fake, u3k(who));
 
             ovo = u3nc(wir, car);
           }
