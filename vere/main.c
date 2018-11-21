@@ -141,17 +141,17 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
-  if ( u3_Host.ops_u.fak != c3y ) {
-    fprintf(stderr, "this is the development build and cannot connect\r\n");
-    fprintf(stderr, "to the live network; always run this build with -F.\r\n");
-    fprintf(stderr, "to install a live client: %s\r\n",
-                    "http://urbit.org/docs/using/install/");
-    exit(1); /* (avoid simple usage msg) */
-  }
-
   /* fill in any missing security data, etc
   */
   if ( u3_Host.ops_u.nuu == c3y ) {
+    if ( u3_Host.ops_u.fak != c3y ) {
+      fprintf(stderr, "this is the development build and cannot connect\r\n");
+      fprintf(stderr, "to the live network; always run this build with -F.\r\n");
+      fprintf(stderr, "to install a live client: %s\r\n",
+                      "http://urbit.org/docs/using/install/");
+      exit(1); /* (avoid simple usage msg) */
+    }
+
     if ( u3_Host.ops_u.who_c == 0 ) {
       fprintf(stderr, "comets are not yet supported; identify with -w\r\n");
       return c3n;

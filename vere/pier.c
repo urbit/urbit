@@ -1205,21 +1205,57 @@ _pier_work_poke(void*   vod_p,
   else {
     /* the worker process starts with a %play task,
     ** which tells us where to start playback
+    ** (and who we are, if it knows)
     */
     if ( 0 == pir_u->log_u ) {
       switch ( u3h(jar) ) {
         default: goto error;
 
         case c3__play: {
-          if ( (c3n == u3r_trel(jar, 0, &p_jar, &q_jar)) || 
+          c3_d lav_d;
+          c3_l mug_l;
+
+          if ( (c3n == u3r_qual(u3t(jar), 0, &p_jar, &q_jar, &r_jar)) ||
                (c3n == u3ud(p_jar)) ||
                (u3r_met(6, p_jar) != 1) ||
                (c3n == u3ud(q_jar)) ||
-               (u3r_met(5, p_jar) != 1) )
+               (u3r_met(5, p_jar) != 1) ||
+               (c3n == u3du(r_jar)) ||
+               (c3n == u3ud(u3h(r_jar))) ||
+               ((c3y != u3t(r_jar)) && (c3n != u3t(r_jar))) )
           {
-            goto error;
+            if ( u3_nul == u3t(jar) ) {
+              lav_d = 1ULL;
+              mug_l = 0;
+            }
+            else {
+              goto error;
+            }
           }
-          _pier_play(pir_u, u3r_chub(0, p_jar), u3r_word(0, q_jar));
+
+          if ( u3_nul != u3t(jar) ) {
+            lav_d = u3r_chub(0, p_jar);
+            mug_l = u3r_word(0, q_jar);
+
+            //  single-home
+            //
+            {
+              u3_atom who = u3h(r_jar);
+              c3_d  who_d[2];
+              u3r_chubs(0, 2, who_d, who);
+
+              c3_assert( ( (0 == pir_u->who_d[0]) &&
+                           (0 == pir_u->who_d[1]) ) ||
+                         ( (who_d[0] == pir_u->who_d[0]) &&
+                           (who_d[1] == pir_u->who_d[1]) ) );
+
+              pir_u->fak_o = u3t(r_jar);
+              pir_u->who_d[0] = who_d[0];
+              pir_u->who_d[1] = who_d[1];
+            }
+          }
+
+          _pier_play(pir_u, lav_d, mug_l);
 
           u3z(jar); u3z(mat);
           break;
@@ -1378,6 +1414,7 @@ u3_pier_create(c3_c* pax_c, c3_c* sys_c)
   */
   {
     pir_u = c3_malloc(sizeof *pir_u);
+    memset(pir_u, 0, sizeof(*pir_u));
 
     pir_u->pax_c = c3_malloc(1 + strlen(pax_c));
     strcpy(pir_u->pax_c, pax_c);
@@ -1920,11 +1957,7 @@ u3_pier_stub(void)
 /* _pier_boot_make(): create/load a pier.
 */
 static u3_pier*
-_pier_boot_make(u3_noun who,
-                u3_noun tic,
-                u3_noun sec,
-                u3_noun pax,
-                u3_noun sys)
+_pier_boot_make(u3_noun pax, u3_noun sys)
 {
   c3_c*    pax_c = u3r_string(pax);
   c3_c*    sys_c = u3r_string(sys);
@@ -1935,25 +1968,8 @@ _pier_boot_make(u3_noun who,
   u3z(pax); free(pax_c);
   u3z(sys); free(sys_c);
 
-  {
-    u3_noun how = u3dc("scot", 'p', u3k(who)); 
-
-    pir_u->who_c = u3r_string(how);
-    u3z(how);
-    fprintf(stderr, "boot: ship: %s\r\n", pir_u->who_c);
-  }
-
-  u3r_chubs(0, 2, pir_u->who_d, who);
-  u3r_chubs(0, 1, pir_u->tic_d, tic);
-  u3r_chubs(0, 1, pir_u->sec_d, sec);
-
   pir_u->por_s = 0;
 
-  u3z(tic);
-  u3z(sec);
-  u3z(who);
-
-  _pier_loop_init_pier(pir_u);
   return pir_u;
 }
 
@@ -1970,12 +1986,62 @@ u3_pier_boot(u3_noun who,                   //  identity
 
   /* make/load pier
   */
-  pir_u = _pier_boot_make(who, tic, sec, pax, sys);
+  pir_u = _pier_boot_make(pax, sys);
+
+  /* set boot params
+  */
+  {
+    {
+      u3_noun how = u3dc("scot", 'p', u3k(who));
+
+      pir_u->who_c = u3r_string(how);
+      u3z(how);
+      fprintf(stderr, "boot: ship: %s\r\n", pir_u->who_c);
+    }
+
+    u3r_chubs(0, 2, pir_u->who_d, who);
+    u3r_chubs(0, 1, pir_u->tic_d, tic);
+    u3r_chubs(0, 1, pir_u->sec_d, sec);
+
+    u3z(tic);
+    u3z(sec);
+    u3z(who);
+  }
+
+  /* initialize boot i/o
+  */
+  _pier_loop_init_pier(pir_u);
 
   /* initialize polling handle
   */
   uv_prepare_init(u3_Host.lup_u, &pir_u->pep_u);
   uv_prepare_start(&pir_u->pep_u, _pier_loop_prepare);
+
+  /* initialize loop - move to _pier_boot_make().
+  */
+  _pier_loop_init();
+
+  /* XX: _pier_loop_exit() should be called somewhere, but is not.
+  */
+}
+
+/* u3_pier_stay(): resume the new pier system.
+*/
+void
+u3_pier_stay(u3_noun pax)
+{
+  u3_pier* pir_u;
+
+  /* make/load pier
+  */
+  pir_u = _pier_boot_make(pax, u3_nul);
+
+  /* initialize polling handle
+  */
+  uv_prepare_init(u3_Host.lup_u, &pir_u->pep_u);
+  uv_prepare_start(&pir_u->pep_u, _pier_loop_prepare);
+
+  _pier_loop_init_pier(pir_u);
 
   /* initialize loop - move to _pier_boot_make().
   */

@@ -235,6 +235,14 @@ _king_exit(u3_noun exit)
 void
 _king_pier(u3_noun pier)
 {
+  if ( (c3n == u3du(pier)) ||
+       (c3n == u3ud(u3t(pier))) ) {
+    u3m_p("king: invalid pier", pier);
+    exit(1);
+  }
+
+  u3_pier_stay(u3k(u3t(pier)));
+  u3z(pier);
 }
 
 /* _king_root(): root parser
@@ -296,49 +304,54 @@ _boothack_cb(uv_connect_t *conn, int status)
 {
   u3_mojo *moj_u = conn->data;
   u3_atom mat;
-  u3_atom pax, sys, who, tic, sec;
-
-  {
-    if ( !u3_Host.ops_u.pil_c ) {
-      // fprintf(stderr, "boot: new ship must specify pill (-B)\r\n");
-      // exit(1);
-      sys = 0;
-    }
-    else sys = u3i_string(u3_Host.ops_u.pil_c);
-  }
-  {
-    u3_noun whu;
-
-    if ( !u3_Host.ops_u.who_c ) {
-      fprintf(stderr, "boot: new ship must specify identity (-w)\r\n");
-      exit(1);
-    }
-    whu = u3dc("slaw", 'p', u3i_string(u3_Host.ops_u.who_c));
-
-    if ( u3_nul == whu ) {
-      fprintf(stderr, "boot: malformed identity (-w)\r\n");
-      exit(1);
-    }
-    who = u3k(u3t(whu));
-    u3z(whu);
-  }
-
-  if ( c3y == u3_Host.ops_u.fak ) {
-    fprintf(stderr, "boot: F A K E ship with null security\r\n");
-    sec = 0;
-    tic = 0;
-  }
-  else {
-    fprintf(stderr, "boot: real ships not yet supported\r\n");
-    exit(1);
-  }
+  u3_atom who, tic, sec, pax, sys;
+  u3_noun dom;
 
   pax = u3i_string(u3_Host.dir_c);
 
-  mat = u3ke_jam(u3nc(c3__doom,
-                       u3nc(c3__boot,
-                            u3nq(who, tic, sec, u3nc(pax, sys)))));
+  if ( c3n == u3_Host.ops_u.nuu ) {
+    dom = u3nt(c3__pier, u3_nul, pax);
+  }
+  else {
+    if ( !u3_Host.ops_u.pil_c ) {
+      //  XX download default pill
+      //
+      fprintf(stderr, "boot: new ship must specify pill (-B)\r\n");
+      exit(1);
+    }
+    else sys = u3i_string(u3_Host.ops_u.pil_c);
 
+    {
+      u3_noun whu;
+
+      if ( !u3_Host.ops_u.who_c ) {
+        fprintf(stderr, "boot: new ship must specify identity (-w)\r\n");
+        exit(1);
+      }
+      whu = u3dc("slaw", 'p', u3i_string(u3_Host.ops_u.who_c));
+
+      if ( u3_nul == whu ) {
+        fprintf(stderr, "boot: malformed identity (-w)\r\n");
+        exit(1);
+      }
+      who = u3k(u3t(whu));
+      u3z(whu);
+    }
+
+    if ( c3y == u3_Host.ops_u.fak ) {
+      fprintf(stderr, "boot: F A K E ship with null security\r\n");
+      sec = 0;
+      tic = 0;
+    }
+    else {
+      fprintf(stderr, "boot: real ships not yet supported\r\n");
+      exit(1);
+    }
+
+    dom = u3nc(c3__boot, u3nq(who, tic, sec, u3nc(pax, sys)));
+  }
+
+  mat = u3ke_jam(u3nc(c3__doom, dom));
   u3_newt_write(moj_u, mat, 0);
 }
 

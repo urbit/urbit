@@ -25,7 +25,8 @@
         u3_noun wen;                      //  current time, as text
         u3_noun sev_l;                    //  instance number
         u3_noun sen;                      //  instance string
-        u3_noun own;                      //  owner list
+        u3_noun our;                      //  identity
+        u3_noun fak;                      //  c3y is fake
 
         u3_noun sac;                      //  space profiling
 

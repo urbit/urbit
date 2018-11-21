@@ -111,13 +111,10 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
 
     case c3__init: p_fav = u3t(fav);
     {
-      u3A->own = u3nc(u3k(p_fav), u3A->own);
-
-      u3_noun hox =  u3dc("scot", 'p', u3k(p_fav));
-      c3_c* nam_c = u3r_string(hox);
-      
-      // uL(fprintf(uH, "kick: init: %s\n", nam_c));
-      free(nam_c); u3z(pox); u3z(hox); u3z(fav); return c3y;
+      // king ignores %init
+      // u3A->own = u3nc(u3k(p_fav), u3A->own);
+      // uL(fprintf(uH, "kick: init: %d\n", p_fav));
+      u3z(pox); u3z(fav); return c3y;
     } break;
 
     case c3__mass: p_fav = u3t(fav);
@@ -226,8 +223,8 @@ _reck_kick_ames(u3_pier* pir_u, u3_noun pox, u3_noun fav)
     default: break;
     case c3__init: p_fav = u3t(fav);
     {
-      u3A->own = u3nc(u3k(p_fav), u3A->own);
-
+      // king ignores %init
+      // u3A->own = u3nc(u3k(p_fav), u3A->own);
       // uL(fprintf(uH, "kick: init: %d\n", p_fav));
       u3z(pox); u3z(fav); return c3y;
     } break;
@@ -315,8 +312,8 @@ _reck_kick_spec(u3_pier* pir_u, u3_noun pox, u3_noun fav)
 
       case c3__init: p_fav = u3t(fav);
       {
-        u3A->own = u3nc(u3k(p_fav), u3A->own);
-
+        // king ignores %init
+        // u3A->own = u3nc(u3k(p_fav), u3A->own);
         // uL(fprintf(uH, "kick: init: %d\n", p_fav));
         u3z(pox); u3z(fav); return c3y;
       } break;
