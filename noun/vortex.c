@@ -123,6 +123,8 @@ u3v_boot_lite(u3_atom lit)
   u3z(pru);
 }
 
+//  XX deprecated, remove
+#if 0
 /* u3v_jack(): execute kernel formula to bind jets.
 */
 void
@@ -133,6 +135,7 @@ u3v_jack(void)
   cor = u3n_nock_on(0, u3k(u3A->ken));
   u3z(cor);
 }
+#endif
 
 /* u3v_hose(): clear initial ovum queue.
 */
@@ -155,6 +158,8 @@ u3v_hose(void)
   u3A->roe = u3_nul;
 }
 
+//  XX deprecated, remove
+#if 0
 /* u3v_start(): start time.
 */
 void
@@ -171,6 +176,7 @@ u3v_start(u3_noun now)
     free(wen_c);
   }
 }
+#endif
 
 /* u3v_wish(): text expression with cache.
 */
@@ -206,6 +212,8 @@ u3v_wish(const c3_c* str_c)
   }
 }
 
+//  XX deprecated, remove
+#if 0
 /* _cv_mung(): formula wrapper with gate and sample.
 */
   static u3_noun
@@ -222,7 +230,10 @@ _cv_mung(c3_w sec_w, u3_noun gat, u3_noun sam)
 
   return u3m_soft(0, _cv_mung_in, gam);
 }
+#endif
 
+//  XX deprecated, remove
+#if 0
 /* u3v_pike(): poke with floating core.
 */
 u3_noun
@@ -233,7 +244,10 @@ u3v_pike(u3_noun ovo, u3_noun cor)
 
   return _cv_mung(0, fun, sam);
 }
+#endif
 
+//  XX deprecated, remove
+#if 0
 /* u3v_nick(): transform enveloped packets, [vir cor].
 */
 u3_noun
@@ -291,6 +305,7 @@ u3v_nick(u3_noun vir, u3_noun cor)
     }
   }
 }
+#endif
 
 /* _cv_nock_poke(): call poke through hardcoded interface.
 */
@@ -490,6 +505,8 @@ u3v_poke(u3_noun ovo)
   return _cv_nock_poke(ovo);
 }
 
+//  XX deprecated, remove
+#if 0
 /* u3v_http_request(): hear http request on channel (unprotected).
 */
 void
@@ -498,6 +515,7 @@ u3v_http_request(c3_o sec, u3_noun pox, u3_noun req)
   // uL(fprintf(uH, "http: request\n"));
   u3v_plan(pox, u3nq(c3__this, sec, 0, req));
 }
+#endif
 
 /* u3v_tank(): dump single tank.
 */
@@ -541,6 +559,8 @@ u3v_sway(u3_noun blu, c3_l tab_l, u3_noun tax)
   u3z(mok);
 }
 
+//  XX deprecated, remove
+#if 0
 /* u3v_plan(): queue ovum (external).
 */
 void
@@ -549,7 +569,10 @@ u3v_plan(u3_noun pax, u3_noun fav)
   u3_noun egg = u3nc(pax, fav);
   u3A->roe = u3nc(u3nc(u3_nul, egg), u3A->roe);
 }
+#endif
 
+//  XX deprecated, remove
+#if 0
 /* u3v_plow(): queue multiple ova (external).
 */
 void
@@ -565,6 +588,7 @@ u3v_plow(u3_noun ova)
   }
   u3z(ova);
 }
+#endif
 
 /* u3v_louse(): last-minute deviltry upon a bail.
 */
