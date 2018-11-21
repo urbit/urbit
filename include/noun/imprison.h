@@ -55,6 +55,14 @@
           u3_noun
           u3i_qual(u3_noun a, u3_noun b, u3_noun c, u3_noun d);
 
+        /* u3i_edit():
+        **
+        **   Mutate `big` at axis `axe` with new value `som`
+        **   `axe` is RETAINED.
+        */
+          u3_noun
+          u3i_edit(u3_noun big, u3_noun axe, u3_noun som);
+
         /* u3i_string():
         **
         **   Produce an LSB-first atom from the C string `a`.

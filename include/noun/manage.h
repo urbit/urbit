@@ -7,7 +7,7 @@
       /* u3m_boot(): start the u3 system.
       */
         void
-        u3m_boot(c3_o nuu_o, c3_c* dir_c, c3_c *pil_c);
+        u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c);
 
       /* u3m_boot_new(): start the u3 system (new).  return next event,
       ** starting from 1.
@@ -36,6 +36,16 @@
       */ 
         c3_i
         u3m_bail(c3_m how_m) __attribute__((noreturn));
+
+      /* u3m_init(): start the environment, with/without checkpointing.
+      */
+        void
+        u3m_init(c3_o chk_o);
+
+      /* u3m_pave(): instantiate or activate image.
+      */
+        void
+        u3m_pave(c3_o nuu_o, c3_o bug_o);
 
       /* u3m_file(): load file, as atom, or bail.
       */

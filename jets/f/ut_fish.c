@@ -90,9 +90,9 @@
         }
       }
       case c3__core: {
-        return u3nc(0, 0);
+        return u3m_error("fish-core");
       }
-      case c3__help:
+      case c3__hint:
       case c3__face: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);
@@ -134,7 +134,8 @@
       }
     }
   }
-  u3_noun
+
+  static u3_noun
   _cqfu_fish(u3_noun van,
              u3_noun sut,
              u3_atom axe)
@@ -165,7 +166,7 @@
              u3_noun sut,
              u3_noun axe)
   {
-    c3_m    fun_m = 144 + c3__fish + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 141 + c3__fish + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_2(fun_m, sut, axe);
 
     if ( u3_none != pro ) {

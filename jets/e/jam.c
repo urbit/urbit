@@ -3,123 +3,166 @@
 */
 #include "all.h"
 
+typedef struct {
+  c3_w  a_w;
+  c3_w  b_w;
+  c3_w  bit_w;
+  c3_w* wor_w;
+} _jam_buf;
+
+static void
+_jam_buf_grow(_jam_buf* buf_u, c3_w mor_w)
+{
+  c3_w wan_w = buf_u->bit_w + mor_w;
+
+  if ( wan_w < mor_w ) {
+    // overflowed c3_w bits
+    u3m_bail(c3__fail);
+  }
+
+  if ( wan_w > buf_u->a_w ) {
+    c3_w old_w, new_w, c_w = 0;
+
+    old_w = buf_u->a_w >> 5;
+    if ( (old_w << 5) != buf_u->a_w ) {
+      ++old_w;
+    }
+
+    // fibonacci growth
+    while ( c_w < wan_w ) {
+      c_w        = buf_u->a_w + buf_u->b_w;
+      buf_u->b_w = buf_u->a_w;
+      buf_u->a_w = c_w;
+    }
+
+    new_w = c_w >> 5;
+    if ( (new_w << 5) != c_w ) {
+      ++new_w;
+    }
+
+    buf_u->wor_w = u3a_wealloc(buf_u->wor_w, new_w);
+    memset(buf_u->wor_w + old_w, 0, (new_w - old_w) * sizeof(c3_w));
+  }
+}
+
+static void
+_jam_buf_chop(_jam_buf* buf_u, c3_w met_w, u3_noun a)
+{
+  c3_w bit_w = buf_u->bit_w;
+  _jam_buf_grow(buf_u, met_w);
+  u3r_chop(0, 0, met_w, bit_w, buf_u->wor_w, a);
+  buf_u->bit_w += met_w;
+}
+
+static void
+_jam_buf_atom(_jam_buf* buf_u, u3_noun a)
+{
+  if ( 0 == a ) {
+    _jam_buf_chop(buf_u, 1, 1);
+  }
+  else {
+    c3_w b_w   = u3r_met(0, a),
+         c_w   = u3r_met(0, b_w);
+    c3_assert(c_w <= 32);
+    _jam_buf_chop(buf_u, c_w+1, 1 << c_w);
+    _jam_buf_chop(buf_u, c_w-1, b_w & ((1 << (c_w-1)) - 1));
+    _jam_buf_chop(buf_u, b_w, a);
+  }
+}
 
 /* functions
 */
-  static u3_noun
-  _jam_in(u3p(u3h_root) har_p, u3_atom, u3_atom, u3_noun);
-
-  static u3_noun
-  _jam_in_pair(u3p(u3h_root) har_p,
-               u3_atom       h_a,
-               u3_atom       t_a,
-               u3_atom       b,
-               u3_noun       l)
+  /* u3qe_jam_buf(): jam without atom allocation. returns
+   *                 atom-suitable words, and *bit_w will
+   *                 have the length (in bits). return should
+   *                 be freed with u3a_wfree().
+   */
+  c3_w*
+  u3qe_jam_buf(u3_noun a, c3_w* bit_w)
   {
-    u3_noun w = u3nc(u3nc(2, 1), u3k(l));
-    u3_noun x = u3qa_add(2, b);
-    u3_noun d = _jam_in(har_p, h_a, x, w);
-    u3_noun p_d, q_d, r_d;
-    u3_noun r;
+    u3p(u3h_root) har_p = u3h_new();
+    c3_o          nor_o = u3a_is_north(u3R);
+    c3_y          wis_y = c3_wiseof(u3_noun);
+    c3_ys         mov   = ( c3y == nor_o ? -wis_y : wis_y );
+    c3_ys         off   = ( c3y == nor_o ? 0 : -wis_y );
+    u3_noun*      top, *don = u3to(u3_noun, u3R->cap_p + off);
+    u3_weak       c;
+    c3_o          cel_o;
+    c3_w          len_w;
+    _jam_buf      buf_u;
 
-    u3r_trel(d, &p_d, &q_d, &r_d);
-    {
-      u3_noun y = u3qa_add(x, p_d);
-      u3_noun e = _jam_in(har_p, t_a, y, q_d);
-      u3_noun p_e, q_e, r_e;
-
-      u3r_trel(e, &p_e, &q_e, &r_e);
-      {
-        u3_noun z = u3qa_add(p_d, p_e);
-
-        r = u3nt(u3qa_add(2, z), u3k(q_e), 0);
-
-        u3z(z);
-      }
-      u3z(e);
-      u3z(y);
+    buf_u.a_w   = 144;  // fib(12) is small enough to be reasonably fast to allocate.
+    buf_u.b_w   = 89;   // fib(11) is needed to get fib(13).
+    len_w       = buf_u.a_w >> 5;
+    if ( (len_w << 5) != buf_u.a_w ) {
+      ++len_w;
     }
-    u3z(d);
-    u3z(x);
-    u3z(w);
+    buf_u.wor_w = u3a_walloc(len_w);
+    buf_u.bit_w = 0;
+    memset(buf_u.wor_w, 0, len_w * sizeof(c3_w));
 
-    return r;
-  }
+    u3R->cap_p += mov;
+    top         = u3to(u3_noun, u3R->cap_p + off);
+    *top        = a;
 
-  static u3_noun
-  _jam_in_flat(u3p(u3h_root) har_p,
-               u3_atom       a,
-               u3_noun       l)
-  {
-    u3_noun d = u3qe_mat(a);
-    u3_noun x = u3qa_add(1, u3h(d));
-    u3_noun y = u3nt
-      (u3k(x), u3nc(u3nc(x, u3qc_lsh(0, 1, u3t(d))), u3k(l)), 0);
-
-    u3z(d);
-
-    return y;
-  }
-
-  static u3_noun
-  _jam_in_ptr(u3p(u3h_root) har_p,
-              u3_atom       u_c,
-              u3_noun       l)
-  {
-    u3_noun d = u3qe_mat(u_c);
-    u3_atom x = u3qc_lsh(0, 2, u3t(d));
-    u3_atom y = u3qa_add(2, u3h(d));
-    u3_noun z = u3nt
-      (u3k(y), u3nc(u3nc(y, u3qc_mix(3, x)), u3k(l)), 0);
-
-    u3z(d);
-    u3z(x);
-
-    return z;
-  }
-
-  static u3_noun
-  _jam_in(u3p(u3h_root) har_p,
-          u3_noun       a,
-          u3_atom       b,
-          u3_noun       l)
-  {
-    u3_noun c = u3h_get(har_p, a);
-    u3_noun x;
-
-    if ( u3_none == c ) {
-        u3h_put(har_p, a, u3k(b));
-
-      if ( c3y == u3ud(a) ) {
-        x = _jam_in_flat(har_p, a, l);
-      } else {
-        x = _jam_in_pair(har_p, u3h(a), u3t(a), b, l);
-      }
-    }
-    else {
-      if ( c3y == u3ud(a) && u3r_met(0, a) <= u3r_met(0, c) ) {
-        x = _jam_in_flat(har_p, a, l);
+    while ( top != don ) {
+      a     = *top;
+      cel_o = u3du(a);
+      c     = u3h_git(har_p, a);
+      if ( u3_none != c ) {
+        if ( c3y == cel_o ) {
+            _jam_buf_chop(&buf_u, 2, 3);
+            _jam_buf_atom(&buf_u, c);
+        }
+        else {
+          if ( u3r_met(0, a) <= u3r_met(0, c) ) {
+            _jam_buf_chop(&buf_u, 1, 0);
+            _jam_buf_atom(&buf_u, a);
+          }
+          else {
+            _jam_buf_chop(&buf_u, 2, 3);
+            _jam_buf_atom(&buf_u, c);
+          }
+        }
+        u3R->cap_p -= mov;
+        top = u3to(u3_noun, u3R->cap_p + off);
       }
       else {
-        x = _jam_in_ptr(har_p, c, l);
+        u3h_put(har_p, a, buf_u.bit_w);
+        if ( c3n == cel_o ) {
+          _jam_buf_chop(&buf_u, 1, 0);
+          _jam_buf_atom(&buf_u, a);
+          u3R->cap_p -= mov;
+          top = u3to(u3_noun, u3R->cap_p + off);
+        }
+        else {
+          _jam_buf_chop(&buf_u, 2, 1);
+          *top         = u3t(a);
+
+          u3R->cap_p  += mov;
+          top          = u3to(u3_noun, u3R->cap_p + off);
+          *top         = u3h(a);
+        }
       }
     }
-    return x;
-  }
 
+    *bit_w = buf_u.bit_w;
+    u3h_free(har_p);
+    return buf_u.wor_w;
+  }
   u3_noun
   u3qe_jam(u3_atom a)
   {
-    u3p(u3h_root) har_p = u3h_new();
-
-    u3_noun x = _jam_in(har_p, a, 0, u3_nul);
-    u3_noun q = u3qb_flop(u3h(u3t(x)));
-    u3_noun r = u3qc_can(0, q);
-
-    u3z(x);
-    u3z(q);
-    u3h_free(har_p);
-    return r;
+    c3_w  bit_w, *sal_w;
+    c3_w* wor_w = u3qe_jam_buf(a, &bit_w);
+    c3_w  len_w = bit_w >> 5;
+    if ( (len_w << 5) != bit_w ) {
+      ++len_w;
+    }
+    sal_w = u3a_slab(len_w);
+    memcpy(sal_w, wor_w, len_w*sizeof(c3_w));
+    u3a_wfree(wor_w);
+    return u3a_moot(sal_w);
   }
   u3_noun
   u3we_jam(u3_noun cor)

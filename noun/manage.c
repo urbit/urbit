@@ -184,6 +184,7 @@ _cm_signal_reset(void)
   u3R->kid_p = 0;
 }
 
+#if 0
 /* _cm_stack_recover(): recover stack trace, with lacunae.
 */
 static u3_noun
@@ -223,6 +224,25 @@ _cm_stack_recover(u3a_road* rod_u)
       return u3kb_weld(beg, fin);
     }
   }
+}
+#endif
+
+/* _cm_stack_unwind(): unwind to the top level, preserving all frames.
+*/
+static u3_noun
+_cm_stack_unwind(void)
+{
+  u3_noun tax;
+
+  while ( u3R != &(u3H->rod_u) ) {
+    u3_noun yat = u3m_love(u3R->bug.tax);
+
+    u3R->bug.tax = u3kb_weld(yat, u3R->bug.tax);
+  }
+  tax = u3R->bug.tax;
+
+  u3R->bug.tax = 0;
+  return tax;
 }
 
 /* _cm_signal_recover(): recover from a deep signal, after longjmp.  Free arg.
@@ -265,6 +285,7 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
     //
     _cm_emergency("recover: dig", sig_l);
 
+#if 0
     //  Descend to the innermost trace, collecting stack.
     //
     {
@@ -282,7 +303,9 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
         rod_u = u3to(u3_road, rod_u->kid_p);
       }
     }
-
+#else
+    tax = _cm_stack_unwind();
+#endif
     pro = u3nt(3, sig_l, tax);
     _cm_signal_reset();
 
@@ -455,8 +478,11 @@ static void
 _pave_parts(void)
 {
   u3R->cax.har_p = u3h_new();
-  u3R->jed.har_p = u3h_new();
-  u3R->jed.das = u3_nul;
+  u3R->jed.war_p = u3h_new();
+  u3R->jed.cod_p = u3h_new();
+  u3R->jed.han_p = u3h_new();
+  u3R->jed.bas_p = u3h_new();
+  u3R->byc.har_p = u3h_new();
 }
 
 /* u3m_mark(): mark all nouns in the road.
@@ -465,8 +491,8 @@ c3_w
 u3m_mark(void)
 {
   c3_w tot_w = 0;
-  tot_w += u3h_mark(u3R->jed.har_p);
-  tot_w += u3a_mark_noun(u3R->jed.das);
+  tot_w += u3j_mark();
+  tot_w += u3n_mark();
   tot_w += u3a_mark_noun(u3R->ski.gul);
   tot_w += u3a_mark_noun(u3R->bug.tax);
   tot_w += u3a_mark_noun(u3R->bug.mer);
@@ -476,10 +502,10 @@ u3m_mark(void)
   return tot_w;
 }
 
-/* _cm_pave(): instantiate or activate image.
+/* u3m_pave(): instantiate or activate image.
 */
-static void
-_cm_pave(c3_o nuu_o)
+void
+u3m_pave(c3_o nuu_o, c3_o bug_o)
 {
   if ( c3y == nuu_o ) {
     u3H = (void *)_pave_north(u3_Loom + 1, 
@@ -504,8 +530,8 @@ void
 u3m_clear(void)
 {
   u3h_free(u3R->cax.har_p);
-  u3h_free(u3R->jed.har_p);
-  u3a_lose(u3R->jed.das);
+  u3j_free();
+  u3n_free();
 }
 
 void
@@ -580,18 +606,6 @@ u3m_bail(u3_noun how)
     abort();
   }
 
-  if ( c3__fail == how ) {
-    abort();
-  }
-
-#ifdef U3_PRINT_WATERMARK
-  if ( c3__meme == how ) {
-    fprintf(stderr, "u3R %p, parent %x\n", u3R, u3R->par_p);
-    fprintf(stderr, "max %dMB\r\n", u3R->all.max_w / 256000);
-    abort();
-  }
-#endif
-
   /* Printf some metadata.
   */
   if ( c3__exit != how && (_(u3ud(how)) || 1 != u3h(how)) ) {
@@ -614,11 +628,13 @@ u3m_bail(u3_noun how)
   }
 
   switch ( how ) {
-#if 1
     case c3__fail:
-    case c3__meme:
-#endif
+    case c3__meme: {
+      fprintf(stderr, "bailing out\r\n");
+      abort();
+    }
     case c3__exit: {
+
       static c3_w xuc_w = 0;
 
       {
@@ -630,7 +646,8 @@ u3m_bail(u3_noun how)
     }
     case c3__foul:
     case c3__oops:
-      abort();
+      fprintf(stderr, "bailing out\r\n");
+      assert(0);
   }
 
   if ( &(u3H->rod_u) == u3R ) {
@@ -770,6 +787,9 @@ u3m_fall()
           u3R->rut_w);
 #endif
 
+  u3to(u3_road, u3R->par_p)->pro.nox_d += u3R->pro.nox_d;
+  u3to(u3_road, u3R->par_p)->pro.cel_d += u3R->pro.cel_d;
+
   /* The new cap is the old hat - it's as simple as that.
   */
   u3to(u3_road, u3R->par_p)->cap_p = u3R->hat_p;
@@ -797,14 +817,19 @@ u3_noun
 u3m_love(u3_noun pro)
 {
   {
-    u3_noun das         = u3R->jed.das;
-    u3p(u3h_root) har_p = u3R->jed.har_p;
+    u3p(u3h_root) cod_p = u3R->jed.cod_p;
+    u3p(u3h_root) war_p = u3R->jed.war_p;
+    u3p(u3h_root) han_p = u3R->jed.han_p;
+    u3p(u3h_root) bas_p = u3R->jed.bas_p;
+    u3p(u3h_root) byc_p = u3R->byc.har_p;
 
     u3m_fall();
 
     pro = u3a_take(pro);
 
-    u3j_reap(das, har_p);
+    // call sites first: see u3j_reap().
+    u3n_reap(byc_p);
+    u3j_reap(cod_p, war_p, han_p, bas_p);
 
     u3R->cap_p = u3R->ear_p;
     u3R->ear_p = 0;
@@ -900,9 +925,9 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
     /* Make sure the inner routine did not create garbage.
     */
     if ( u3C.wag_w & u3o_debug_ram ) {
-#ifdef U3_PRINT_WATERMARK
+#ifdef U3_CPU_DEBUG
       if ( u3R->all.max_w > 1000000 ) {
-        fprintf(stderr, "soft_top: max %dMB\r\n", u3R->all.max_w / 256000);
+        u3a_print_memory("execute: top", u3R->all.max_w);
       }
 #endif
       u3m_grab(pro, u3_none);
@@ -996,9 +1021,9 @@ u3m_soft_run(u3_noun gul,
     u3t_off(coy_o);
     pro = fun_f(aga, agb);
 
-#ifdef U3_PRINT_WATERMARK
+#ifdef U3_CPU_DEBUG
     if ( u3R->all.max_w > 1000000 ) {
-      fprintf(stderr, "soft_run: max %dMB\r\n", u3R->all.max_w / 256000);
+      u3a_print_memory("execute: run", u3R->all.max_w);
     }
 #endif
     /* Produce success, on the old road.
@@ -1441,7 +1466,7 @@ _cm_signals(void)
   //  Block SIGPROF, so that if/when we reactivate it on the
   //  main thread for profiling, we won't get hits in parallel
   //  on other threads.
-  {
+  if ( u3C.wag_w & u3o_debug_cpu ) { 
     sigset_t set;
                                  
     sigemptyset(&set);
@@ -1454,10 +1479,10 @@ _cm_signals(void)
   }
 }
 
-/* _cm_init(): start the environment, with/without checkpointing.
+/* u3m_init(): start the environment, with/without checkpointing.
 */
 void
-_cm_init(c3_o chk_o)
+u3m_init(c3_o chk_o)
 {
   _cm_limits();
   _cm_signals();
@@ -1542,12 +1567,71 @@ _cm_init_new(void)
   }
 }
 
+//  XX orphaned, find a way to restore
+#if 0
+/* _get_cmd_output(): Run a shell command and capture its output.
+   Exits with an error if the command fails or produces no output.
+   The 'out_c' parameter should be an array of sufficient length to hold
+   the command's output, up to a max of len_c characters.
+*/
+static void
+_get_cmd_output(c3_c *cmd_c, c3_c *out_c, c3_w len_c)
+{
+  FILE *fp = popen(cmd_c, "r");
+  if ( NULL == fp ) {
+    fprintf(stderr, "'%s' failed\n", cmd_c);
+    exit(1);
+  }
+
+  if ( NULL == fgets(out_c, len_c, fp) ) {
+    fprintf(stderr, "'%s' produced no output\n", cmd_c);
+    exit(1);
+  }
+
+  pclose(fp);
+}
+
+/* _arvo_hash(): get a shortened hash of the last git commit
+   that modified the sys/ directory in arvo.
+   hax_c must be an array with length >= 11.
+*/
+static void
+_arvo_hash(c3_c *out_c, c3_c *arv_c)
+{
+  c3_c cmd_c[2048];
+
+  sprintf(cmd_c, "git -C %s log -1 HEAD --format=%%H -- sys/", arv_c);
+  _get_cmd_output(cmd_c, out_c, 11);
+
+  out_c[10] = 0;  //  end with null-byte
+}
+
+/* _git_pill_url(): produce a URL from which to download a pill
+   based on the location of an arvo git repository.
+*/
+static void
+_git_pill_url(c3_c *out_c, c3_c *arv_c)
+{
+  c3_c hax_c[11];
+
+  assert(NULL != arv_c);
+
+  if ( 0 != system("which git >> /dev/null") ) {
+    fprintf(stderr, "Could not find git executable\n");
+    exit(1);
+  }
+
+  _arvo_hash(hax_c, arv_c);
+  sprintf(out_c, "https://bootstrap.urbit.org/git-%s.pill", hax_c);
+}
+#endif
+
 //  XX deprecated, remove
 #if 0
 /* _boot_home(): create ship directory.
 */
 static void
-_boot_home(c3_c *dir_c, c3_c *pil_c)
+_boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
 {
   c3_c*   nam_c = "urbit.pill";
   c3_c    ful_c[2048];
@@ -1568,7 +1652,6 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
     snprintf(ful_c, 2048, "%s/.urb/sis", dir_c);
     mkdir(ful_c, 0700);
   }
-
   /* Copy urbit.pill. */
   {
     {
@@ -1580,6 +1663,8 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
         return;
       }
     }
+
+    /* Copy local pill file. */
     if ( pil_c != 0 ) {
       snprintf(ful_c, 2048, "cp %s %s/.urb/%s",
                       pil_c, dir_c, nam_c);
@@ -1588,10 +1673,50 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
         fprintf(stderr, "could not %s\n", ful_c);
         exit(1);
       }
-    } else {
-      fprintf(stderr, "no pill - get one from bootstrap.urbit.org\n"
-                      "by arvo commit hash, then specify it with -B\n");
-      exit(1);
+    }
+    /* Fetch remote pill over HTTP. */
+    else {
+      CURL *curl;
+      CURLcode result;
+      FILE *file;
+      c3_c pil_c[2048];
+      long cod_l;
+
+      /* use arvo git hash and branch for pill url unless overridden */
+      if ( NULL == url_c ) {
+        url_c = pil_c;
+        _git_pill_url(url_c, arv_c);
+      }
+
+      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
+      printf("fetching %s to %s\r\n", url_c, ful_c);
+      if ( !(curl = curl_easy_init()) ) {
+        fprintf(stderr, "failed to initialize libcurl\n");
+        exit(1);
+      }
+      if ( !(file = fopen(ful_c, "w")) ) {
+        fprintf(stderr, "failed to open %s\n", ful_c);
+        exit(1);
+      }
+      curl_easy_setopt(curl, CURLOPT_URL, url_c);
+      curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+      result = curl_easy_perform(curl);
+      curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
+      fclose(file);
+      if ( CURLE_OK != result ) {
+        fprintf(stderr, "failed to fetch %s: %s\n",
+                        url_c, curl_easy_strerror(result));
+        fprintf(stderr,
+                "please fetch it manually and specify the location with -B\n");
+        exit(1);
+      }
+      if ( 300 <= cod_l ) {
+        fprintf(stderr, "error fetching %s: HTTP %ld\n", url_c, cod_l);
+        fprintf(stderr,
+                "please fetch it manually and specify the location with -B\n");
+        exit(1);
+      }
+      curl_easy_cleanup(curl);
     }
   }
 }
@@ -1602,11 +1727,12 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
 /* u3m_boot(): start the u3 system (old).
 */
 void
-u3m_boot(c3_o nuu_o, c3_c* dir_c, c3_c *pil_c)
+u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
+         c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
 {
   /* Activate the loom.
   */
-  _cm_init(nuu_o);
+  u3m_init(nuu_o);
 
   /* Activate the storage system.
   */
@@ -1618,18 +1744,18 @@ u3m_boot(c3_o nuu_o, c3_c* dir_c, c3_c *pil_c)
 
   /* Construct or activate the allocator.
   */
-  _cm_pave(nuu_o);
+  u3m_pave(nuu_o, bug_o);
 
   /* Initialize the jet system.
   */
-  u3j_boot();
+  u3j_boot(nuu_o);
 
   /* Install or reactivate the kernel.
   */
   if ( _(nuu_o) ) {
     c3_c ful_c[2048];
 
-    _boot_home(dir_c, pil_c);
+    _boot_home(dir_c, pil_c, url_c, arv_c);
 
     {
       snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
@@ -1641,6 +1767,7 @@ u3m_boot(c3_o nuu_o, c3_c* dir_c, c3_c *pil_c)
   else {
     u3v_hose();
     u3j_ream();
+    u3n_ream();
   }
 }
 #endif
@@ -1667,7 +1794,7 @@ u3m_boot_new(c3_c* dir_c)
 
   /* Construct or activate the allocator.
   */
-  _cm_pave(nuu_o);
+  u3m_pave(nuu_o, c3n);
 
   /* Initialize the jet system.
   */
@@ -1678,6 +1805,7 @@ u3m_boot_new(c3_c* dir_c)
   if ( !_(nuu_o) ) {
     u3v_hose();
     u3j_ream();
+    u3n_ream();
 
     return u3A->ent_d;
   }
@@ -1706,7 +1834,7 @@ u3m_boot_pier(void)
 
   /* Construct or activate the allocator.
   */
-  _cm_pave(c3y);
+  u3m_pave(c3y, c3n);
 
   /* Initialize the jet system.
   */

@@ -2,7 +2,7 @@
 **
 */
 #include "all.h"
-#include "softfloat.h"
+#include <softfloat.h>
 
 #define SINGNAN 0x7fc00000
 
@@ -151,8 +151,8 @@
 /* div
 */
   u3_noun
-  u3qet_div(u3_atom a, 
-            u3_atom b, 
+  u3qet_div(u3_atom a,
+            u3_atom b,
             u3_atom r)
   {
     union sing c, d, e;
@@ -183,7 +183,7 @@
 /* sqt
 */
   u3_noun
-  u3qet_sqt(u3_atom a, 
+  u3qet_sqt(u3_atom a,
             u3_atom r)
   {
     union sing c, d;

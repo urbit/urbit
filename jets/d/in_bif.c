@@ -5,6 +5,7 @@
 
 /* internal functions
 */
+  static
   u3_noun _i_bif_putroot(u3_noun a,
                          u3_noun b)
   {

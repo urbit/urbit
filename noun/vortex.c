@@ -132,7 +132,9 @@ u3v_jack(void)
 {
   u3_noun cor; 
 
+  fprintf(stderr, "jack: kernel %x\r\n", u3r_mug(u3A->ken));
   cor = u3n_nock_on(0, u3k(u3A->ken));
+  fprintf(stderr, "jacked\r\n");
   u3z(cor);
 }
 #endif
@@ -183,33 +185,22 @@ u3v_start(u3_noun now)
 u3_noun
 u3v_wish(const c3_c* str_c)
 {
-  u3_noun exp;
+  u3_noun txt = u3i_string(str_c);
+  u3_weak exp = u3kdb_get(u3k(u3A->yot), u3k(txt));
 
-  if ( u3R == &u3H->rod_u ) {
-    u3_noun txt = u3i_string(str_c);
-    
-    exp = u3kdb_get(u3k(u3A->yot), u3k(txt));
+  if ( u3_none == exp ) {
+    exp = _cv_nock_wish(u3k(txt));
 
-    if ( u3_none == exp ) {
-      exp = _cv_nock_wish(u3k(txt));
+    //  It's probably not a good idea to use u3v_wish() 
+    //  outside the top level... (as the result is uncached)
+    //
+    if ( u3R == &u3H->rod_u ) {
       u3A->yot = u3kdb_put(u3A->yot, u3k(txt), u3k(exp));
     }
-    u3z(txt);
-    return exp;
   }
-  else {
-    //  It's probably not a good idea to use u3v_wish() 
-    //  outside the top level...
-    //
-    u3_noun txt = u3i_string(str_c);
-    u3_noun exp = u3kdb_get(u3A->yot, u3k(txt));
-    
-    if ( u3_none != exp ) {
-      u3z(txt);
-      return exp;
-    }
-    else return _cv_nock_wish(u3i_string(str_c));
-  }
+
+  u3z(txt);
+  return exp;
 }
 
 //  XX deprecated, remove
@@ -314,6 +305,7 @@ _cv_nock_poke(u3_noun ovo)
 {
   u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(42, u3A->roc)));
   u3_noun sam, pro;
+  u3_noun cod_w;
 
   sam = u3nc(u3k(u3A->now), ovo);
 #if 0
@@ -327,9 +319,9 @@ _cv_nock_poke(u3_noun ovo)
   }
 #endif
 
-  u3a_lush(u3h(u3t(ovo)));
+  cod_w = u3a_lush(u3h(u3t(ovo)));
   pro = u3n_slam_on(fun, sam);
-  u3a_lop(0);
+  u3a_lop(cod_w);
 
 #if 0
   {

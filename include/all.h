@@ -12,7 +12,7 @@
 
   /** u3: noun environment.
   **/
-#   include "noun/aliases.h"   //  general u3 
+#   include "noun/aliases.h"   //  general u3
 
 #   include "noun/allocate.h"  //  u3a: allocation
 #   include "noun/events.h"    //  u3e: persistence
@@ -24,10 +24,31 @@
 #   include "noun/options.h"   //  u3o: config options
 #   include "noun/retrieve.h"  //  u3r: noun access (error returns)
 #   include "noun/trace.h"     //  u3t: profiling / tracing
-#   include "noun/xtract.h"    //  u3x: noun access (error crashes) 
+#   include "noun/xtract.h"    //  u3x: noun access (error crashes)
 #   include "noun/vortex.h"    //  u3v: arvo kernel
 #   include "noun/zave.h"      //  u3z: memoization
 
 #   include "jets/k.h"         //  u3k: jets (transfer, args)
 #   include "jets/q.h"         //  u3q: jets (retain, args)
 #   include "jets/w.h"         //  u3w: jets (retain, core)
+
+  /** u3_term: log output dependencies.
+  **/
+    extern FILE*
+    u3_term_io_hija(void);
+
+    extern void
+    u3_term_io_loja(int x);
+
+    extern void
+    u3_term_tape(u3_noun tep);
+
+    extern void
+    u3_term_wall(u3_noun wol);
+
+  /* uL, uH: wrap hijack/lojack around fprintf.
+  **
+  **  uL(fprintf(uH, ...));
+  */
+#   define uH    u3_term_io_hija()
+#   define uL(x) u3_term_io_loja(x)

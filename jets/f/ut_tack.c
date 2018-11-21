@@ -10,7 +10,7 @@
              u3_noun mur)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_hook(von, "tack");
+    u3_noun gat = u3j_cook("u3qfu_tack-tack", von, "tack");
 
     return u3n_kick_on(u3i_molt(gat, 
                                 u3x_sam_2, 

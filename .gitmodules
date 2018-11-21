@@ -16,6 +16,15 @@
 [submodule "subprojects/libuv"]
 	path = subprojects/libuv
 	url = https://github.com/urbit/libuv.git
-[submodule "subprojects/http-parser"]
-	path = subprojects/http-parser
-	url = https://github.com/urbit/http-parser-legacy
+[submodule "subprojects/h2o"]
+	path = subprojects/libh2o
+	url = https://github.com/urbit/h2o.git
+[submodule "subprojects/argon2"]
+	path = subprojects/argon2
+	url = https://github.com/urbit/argon2.git
+[submodule "subprojects/secp256k1"]
+	path = subprojects/secp256k1
+	url = https://github.com/urbit/secp256k1.git
+[submodule "subprojects/libsni"]
+	path = subprojects/libsni
+	url = https://github.com/urbit/sniproxy

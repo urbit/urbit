@@ -6,16 +6,14 @@
 
 /* logic
 */
-  u3_noun
+  static u3_noun
   _cqfu_conk(u3_noun van,
              u3_noun sut,
              u3_noun got)
   {
     if ( c3y == u3ud(got) ) {
-      u3_noun nux = u3nc(u3_nul, u3k(got));
-      u3_noun ret = u3qf_face(nux, sut);
+      u3_noun ret = u3qf_face(u3k(got), sut);
 
-      u3z(nux);
       return ret;
     }
     else switch ( u3h(got) ) {

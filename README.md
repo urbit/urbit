@@ -9,22 +9,20 @@ If you're doing development on Urbit, keep reading.
 
 # Build instructions
 
-[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)](https://travis-ci.org/urbit/urbit)
+[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=maint-0.4)](https://travis-ci.org/urbit/urbit)
 
 ## External dependencies
 
 `vere`, the Urbit virtual machine, depends on the following:
 
 - C compiler ([gcc](https://gcc.gnu.org) or [clang](http://clang.llvm.org))
-- [GNU Make](https://www.gnu.org/software/make/)
+- [Meson](http://mesonbuild.com/)
 - [GMP](https://gmplib.org)
-- [CMake](https://cmake.org)
-- [libuv](https://libuv.org) 1.x
 - [OpenSSL](https://www.openssl.org)
 - [libsigsegv](https://www.gnu.org/software/libsigsegv/)
 - [libcurl](https://curl.haxx.se/libcurl/)
+- [libuv](http://libuv.org)
 - curses implementation (ncurses on Linux distributions, OS curses otherwise)
-- [Ragel](https://www.colm.net/open-source/ragel/)
 - [re2c](http://re2c.org)
 
 Most of these dependencies are unfortunate; we aim to drastically shrink the
@@ -34,16 +32,66 @@ for future unbundling or removal wherever possible.
 
 ## Building
 
-Our Makefile should handle the build smoothly on all supported platforms. It's
-just a simple Makefile, written by hand for GNU Make, and the most complicated
-parts of its internal machinery have to do with the varied build systems of the
-bundled libraries.
+Urbit uses Meson build system.
 
-Useful targets are the default `all`, `clean`, and `distclean`. The last may not
-produce an entirely clean distribution directory, and runs a bundled library's
-configure script; `git clean` may be a better option.
+Some libraries which are not found in major distributions:
+- ed25519
+- http-parser legacy version 0.1.0
+- murmur3
+- softfloat3
+- urbit-scrypt
+- commonmark legacy version 0.12.0
 
-The `vere` binary is produced in `bin/urbit`.
+are included as git submodules. To build urbit from source, perform the following steps:
+
+## Configuration & compilation
+(For instructions for legacy meson, also see below)
+
+1. Install all required dependencies.
+2. Run `./scripts/bootstrap`
+3. Run `./scripts/build`
+4. The executable should appear in `./build` directory.
+
+### Using meson & ninja
+
+To configure the project, enter the build directory and enter
+`meson configure -Dbuildtype=release`.  To compile a debug build of urbit, use
+`meson configure -Dbuildtype=debug`.
+To set a prefix for installation use
+`meson configure -Dprefix=/usr`.
+
+## Configuration & compilation for legacy meson
+
+The syntax for legacy meson (Version `0.29`) is a bit different.
+1. Manually create `build` directory and invoke meson as `meson . ./build`
+2. If you want to set options, this is done in one step.
+   Use `meson -D [options] . ./build` to prepare customized build.
+
+Once the project is configured, use `ninja` to build it.
+To install it into the default prefix, use `ninja install`.
+If you want to specify custom `DESTDIR`, use `DESTDIR=... ninja install`.
+
+## Building the Debian Package
+
+To build a .deb file for installation on Debian platforms, perform the
+following steps:
++ Run `sudo apt install devscripts` to install the `debuild` utility.
++ Update the `debian/changelog` to reflect the changes in this release.
++ If necessary, update the year of the copyright in `debian/copyright`.
++ Clean any build artifacts: Run `make clean` and delete the `bin` directory,
+if it exists.
++ Run `tar -xcvf ../urbit-x.y.z.orig.tar.gz .` from the top-level folder in
+the repo.  This command will create an archive in the directory above the
+current directory, which will be used in packaging.
++ Run `debuild -us -uc`, also from the top-level folder in the repo. This
+creates a .deb file in the folder above the current directory.
+
+The resulting .deb file should now exist in the folder above the current
+directory. To test that the .deb file works properly, you can perform the
+following steps:
++ Uninstall urbit: `sudo apt remove urbit`.
++ Run `sudo dpkg -i ../urbit-x.y.z_amd64.deb` to install the new version.
++ Boot up a ship using the `urbit` command.
 
 ## Contact
 

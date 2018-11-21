@@ -145,6 +145,22 @@ _reck_kick_http(u3_pier* pir_u,
   else switch ( u3h(fav) ) {
     default: u3z(pox); u3z(fav); return c3n;
 
+    case c3__form: p_fav = u3t(fav);
+    {
+      u3_http_ef_form(u3k(p_fav));
+
+      u3z(pox); u3z(fav);
+      return c3y;
+    }
+
+    case c3__that: p_fav = u3t(fav);
+    {
+      u3_http_ef_that(u3k(p_fav));
+
+      u3z(pox); u3z(fav);
+      return c3y;
+    }
+
     case c3__thus: p_fav = u3h(u3t(fav)); q_fav = u3t(u3t(fav));
     {
       u3_cttp_ef_thus(u3r_word(0, p_fav), u3k(q_fav));
@@ -196,6 +212,8 @@ _reck_kick_sync(u3_pier* pir_u, u3_noun pox, u3_noun fav)
   u3z(pox); u3z(fav); return c3n;
 }
 
+/* _reck_kick_newt(): apply packet network outputs.
+*/
 static u3_noun
 _reck_kick_newt(u3_pier* pir_u, u3_noun pox, u3_noun fav)
 {
@@ -208,6 +226,12 @@ _reck_kick_newt(u3_pier* pir_u, u3_noun pox, u3_noun fav)
       u3_ames_ef_send(pir_u, lan, pac);
       u3z(pox); u3z(fav); return c3y;
     } break;
+
+    case c3__turf: {
+      u3_ames_ef_turf(pir_u, u3k(u3t(fav)));
+      u3z(pox); u3z(fav); return c3y;
+    } break;
+
   }
   u3z(pox); u3z(fav); return c3n;
 }

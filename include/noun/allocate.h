@@ -2,23 +2,6 @@
 **
 ** This file is in the public domain.
 */
-  /**  Options.
-  **/
-    /* U3_MEMORY_DEBUG: add debugging information to heap.  Breaks image.
-    */
-#     undef U3_MEMORY_DEBUG
-
-    /*  U3_CELLOC_TOGGLE: enable toggling of the custom cell allocator
-     *  via -g.  This slightly slows down the cell allocator even when
-     *  it's on.  Note that toggling -g breaks (maybe?) the image.  If
-     *  U3_MEMORY_DEBUG is on, this should generally be on as well.
-    */
-#     undef U3_CELLOC_TOGGLE
-
-    /* U3_PRINT_WATERMARK: print watermark information for each road
-    */
-#     undef U3_PRINT_WATERMARK
-
   /**  Constants.
   **/
     /* u3a_bits: number of bits in word-addressed pointer.  29 == 2GB.
@@ -135,15 +118,20 @@
           u3p(u3a_fbox) fre_p[u3a_fbox_no];   //  heap by node size log
           u3p(u3a_fbox) cel_p;                //  custom cell allocator
           c3_w fre_w;                         //  number of free words
-#ifdef U3_MEMORY_DEBUG
           c3_w max_w;                         //  maximum allocated
-#endif
         } all;
 
         struct {                              //  jet dashboard
-          u3p(u3h_root) har_p;                //  warm state
-          u3_noun       das;                  //  cold state
+          u3p(u3h_root) hot_p;                //  hot state (home road only)
+          u3p(u3h_root) war_p;                //  warm state
+          u3p(u3h_root) cod_p;                //  cold state
+          u3p(u3h_root) han_p;                //  hank cache
+          u3p(u3h_root) bas_p;                //  battery hashes
         } jed;
+
+        struct {                              // bytecode state
+          u3p(u3h_root) har_p;                // formula->post of bytecode
+        } byc;
 
         struct {                              //  namespace
           u3_noun gul;                        //  (list $+(* (unit (unit)))) now
@@ -156,6 +144,7 @@
 
         struct {                              //  profile stack
           c3_d    nox_d;                      //  nock steps
+          c3_d    cel_d;                      //  cell allocations
           u3_noun don;                        //  (list batt)
           u3_noun day;                        //  doss, only in u3H (moveme)
         } pro;
@@ -261,6 +250,15 @@
                          ?  u3a_north_is_senior(r, som) \
                          :  u3a_south_is_senior(r, som) )
 
+#     define  u3a_is_mutable(r, som) \
+                ( _(u3a_is_atom(som)) \
+                  ? c3n \
+                  : _(u3a_is_senior(r, som)) \
+                  ? c3n \
+                  : _(u3a_is_junior(r, som)) \
+                  ? c3n \
+                  : (u3a_botox(u3a_to_ptr(som))->use_w == 1) \
+                  ? c3y : c3n )
 
   /**  Globals.
   **/
@@ -302,6 +300,22 @@
         */
           void*
           u3a_wealloc(void* lag_v, c3_w len_w);
+
+        /* u3a_push(): allocate space on the road stack
+        */
+          void*
+          u3a_push(c3_w len_w);
+
+        /* u3a_pop(): deallocate space on the road stack
+        */
+          void
+          u3a_pop(c3_w len_w);
+
+        /* u3a_peek(): examine the top of the road stack
+        */
+          void*
+          u3a_peek(c3_w len_w);
+
 
       /* C-style aligned allocation - *not* compatible with above.
       */
@@ -411,6 +425,11 @@
         */
           void
           u3a_print_memory(c3_c* cap_c, c3_w wor_w);
+
+        /* u3a_deadbeef(): write 0xdeadbeef from hat to cap.
+        */
+          void
+          u3a_deadbeef(void);
 
       /* Atoms from proto-atoms.
       */

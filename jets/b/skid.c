@@ -3,12 +3,8 @@
 */
 #include "all.h"
 
-
-/* functions
-*/
-  u3_noun
-  u3qb_skid(u3_noun a,
-            u3_noun b)
+  static u3_noun
+  _skid_in(u3j_site* sit_u, u3_noun a)
   {
     if ( 0 == a ) {
       return u3nc(u3_nul, u3_nul);
@@ -16,20 +12,35 @@
     else if ( c3n == u3du(a) ) {
       return u3m_bail(c3__exit);
     } else {
-      u3_noun acc = u3qb_skid(u3t(a), b);
-      u3_noun hoz = u3n_slam_on(u3k(b), u3k(u3h(a)));
+      u3_noun acc = _skid_in(sit_u, u3t(a));
+      u3_noun hoz = u3j_gate_slam(sit_u, u3k(u3h(a)));
+      u3_noun nex;
 
-      switch ( hoz ) {
-        case c3y:  acc = u3nc(u3nc(u3k(u3h(a)), u3h(acc)), u3t(acc));
-                   break;
-        case c3n:  acc = u3nc(u3h(acc), u3nc(u3k(u3h(a)), u3t(acc)));
-                   break;
-        default:   u3z(hoz);
-                   return u3m_bail(c3__exit);
+      if ( c3y == hoz ) {
+        nex = u3nc(u3nc(u3k(u3h(a)), u3k(u3h(acc))), u3k(u3t(acc)));
+      } 
+      else {
+        nex = u3nc(u3k(u3h(acc)), u3nc(u3k(u3h(a)), u3k(u3t(acc))));
       }
       u3z(hoz);
-      return acc;
+      u3z(acc);
+
+      return nex;
     }
+  }
+
+/* functions
+*/
+  u3_noun
+  u3qb_skid(u3_noun a,
+            u3_noun b)
+  {
+    u3_noun  pro;
+    u3j_site sit_u;
+    u3j_gate_prep(&sit_u, u3k(b));
+    pro = _skid_in(&sit_u, a);
+    u3j_gate_lose(&sit_u);
+    return pro;
   }
   u3_noun
   u3wb_skid(u3_noun cor)

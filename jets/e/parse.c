@@ -78,7 +78,7 @@
 
 /* bend
 */
-  u3_noun
+  static u3_noun
   _cqe_bend_fun(u3_noun raq,
                 u3_noun vex,
                 u3_noun sab)
@@ -148,7 +148,7 @@
 
 /* cold
 */
-  u3_noun
+  static u3_noun
   _cqe_cold_fun(u3_noun cus,
                 u3_noun sef,
                 u3_noun tub)
@@ -193,7 +193,7 @@
 
 /* cook
 */
-  u3_noun
+  static u3_noun
   _cqe_cook_fun(u3_noun poq,
                 u3_noun sef,
                 u3_noun tub)
@@ -240,7 +240,7 @@
 
 /* comp
 */
-  u3_noun
+  static u3_noun
   _cqe_comp_fun(u3_noun raq,
                 u3_noun vex,
                 u3_noun sab)
@@ -301,7 +301,7 @@
 
 /* easy
 */
-  u3_noun
+  static u3_noun
   _cqe_easy_fun(u3_noun huf,
                 u3_noun tub)
   {
@@ -313,8 +313,9 @@
                 u3k(huf),
                 u3k(tub));
   }
+
   u3_noun
-u3we_easy_fun(u3_noun cor)
+  u3we_easy_fun(u3_noun cor)
   {
     u3_noun van, huf, tub;
 
@@ -329,7 +330,7 @@ u3we_easy_fun(u3_noun cor)
 
 /* glue
 */
-  u3_noun
+  static u3_noun
   _cqe_glue_fun(u3_noun bus,
                 u3_noun vex,
                 u3_noun sab)
@@ -406,7 +407,7 @@ u3we_easy_fun(u3_noun cor)
 
 /* here
 */
-  u3_noun
+  static u3_noun
   _cqe_here_fun(u3_noun hez,
                 u3_noun sef,
                 u3_noun tub)
@@ -462,7 +463,7 @@ u3we_easy_fun(u3_noun cor)
 
 /* just
 */
-  u3_noun
+  static u3_noun
   _cqe_just_fun(u3_noun daf,
                 u3_noun tub)
   {
@@ -498,7 +499,7 @@ u3we_easy_fun(u3_noun cor)
 
 /* mask
 */
-  u3_noun
+  static u3_noun
   _cqe_mask_fun(u3_noun bud,
                 u3_noun tub)
   {
@@ -536,7 +537,7 @@ u3we_easy_fun(u3_noun cor)
   }
 /* pfix
 */
-  u3_noun
+  static u3_noun
   _cqe_pfix(u3_noun vex,
             u3_noun sab)
   {
@@ -577,7 +578,7 @@ u3we_easy_fun(u3_noun cor)
 
 /* plug
 */
-  u3_noun
+  static u3_noun
   _cqe_plug(u3_noun vex,
             u3_noun sab)
   {
@@ -668,7 +669,7 @@ u3we_easy_fun(u3_noun cor)
 
 /* sfix
 */
-  u3_noun
+  static u3_noun
   _cqe_sfix(u3_noun vex,
             u3_noun sab)
   {
@@ -722,7 +723,7 @@ u3we_easy_fun(u3_noun cor)
 
 /* shim
 */
-  u3_noun
+  static u3_noun
   _cqe_shim_fun(u3_noun zep,
                 u3_noun tub)
   {
@@ -768,7 +769,7 @@ u3we_easy_fun(u3_noun cor)
 
 /* stag
 */
-  u3_noun
+  static u3_noun
   _cqe_stag_fun(u3_noun gob,
                 u3_noun sef,
                 u3_noun tub)
@@ -840,7 +841,7 @@ u3we_easy_fun(u3_noun cor)
     }
   }
 
-  u3_noun
+  static u3_noun
   _cqe_stew_fun(u3_noun hel,
                 u3_noun tub)
   {
@@ -911,7 +912,7 @@ u3we_easy_fun(u3_noun cor)
 
 /* stir
 */
-  u3_noun
+  static u3_noun
   _cqe_stir_fun(u3_noun rud,
                 u3_noun raq,
                 u3_noun fel,

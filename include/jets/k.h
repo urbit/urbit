@@ -18,6 +18,11 @@
 
 /* u3kc: tier 3 functions
 */
+  /* u3kc_mix(): binary xor.
+  */
+    u3_noun
+    u3kc_mix(u3_atom a, u3_atom b);
+
   /* u3kc_lsh(): left shift.
   */
     u3_noun
@@ -27,6 +32,26 @@
   */
     u3_noun
     u3kc_rsh(u3_noun a, u3_noun b, u3_noun c);
+
+  /* u3kc_rep(): assemble single.
+  */
+    u3_noun
+    u3kc_rep(u3_atom a, u3_noun b);
+
+  /* u3kc_rip(): disassemble.
+  */
+    u3_noun
+    u3kc_rip(u3_atom a, u3_atom b);
+
+  /* u3kc_rev(): reverse block order, accounting for leading zeroes.
+  */
+    u3_noun
+    u3kc_rev(u3_atom boz, u3_atom len, u3_atom dat);
+
+  /* u3kc_swp(): reverse block order.
+  */
+    u3_noun
+    u3kc_swp(u3_atom a, u3_atom b);
 
 /* u3kd: tier 4 functions
 */

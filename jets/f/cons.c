@@ -18,6 +18,7 @@
                   u3k(p_vur),
                   u3k(p_sed));
     }
+#if 0
     else if ( c3y == u3r_p(vur, 0, &p_vur) &&
               c3y == u3r_p(sed, 0, &p_sed) &&
               !(c3y == u3r_sing(1, p_vur)) &&
@@ -37,6 +38,7 @@
         u3z(nof);
       }
     }
+#endif
     return u3nc(u3k(vur), u3k(sed));
   }
   u3_noun

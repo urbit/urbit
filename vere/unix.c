@@ -1108,7 +1108,7 @@ u3_unix_acquire(c3_c* pax_c)
       kill(getpid(), SIGTERM);
       sleep(1); c3_assert(0);
     }
-    else {
+    else if (pid_w != getpid()) {
       c3_w i_w;
 
       if ( -1 != kill(pid_w, SIGTERM) ) {

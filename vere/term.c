@@ -453,7 +453,6 @@ static void
 _term_it_show_blank(u3_utty* uty_u)
 {
   _term_it_write_txt(uty_u, uty_u->ufo_u.out.clear_y);
-  uty_u->tat_u.mir.cus_w = 0;
 }
 
 /* _term_it_show_cursor(): set current line, transferring pointer.
@@ -523,7 +522,7 @@ _term_it_show_more(u3_utty* uty_u)
 /* _term_it_path(): path for console file.
 */
 static c3_c*
-_term_it_path(u3_noun fyl, u3_noun pax)
+_term_it_path(c3_o fyl, u3_noun pax)
 {
   c3_w len_w;
   c3_c *pas_c;
@@ -573,12 +572,26 @@ static void
 _term_it_save(u3_noun pax, u3_noun pad)
 {
   c3_c* pax_c;
+  c3_c* bas_c = 0;
+  c3_w  xap_w = u3kb_lent(u3k(pax));
+  u3_noun xap = u3_nul;
+  u3_noun urb = c3_s4('.','u','r','b');
+  u3_noun put = c3_s3('p','u','t');
 
-  pax = u3nt(c3_s4('.','u','r','b'), c3_s3('p','u','t'), pax);
+  // directory base and relative path
+  if ( 2 < xap_w ) {
+    u3_noun bas = u3nt(urb, put, u3_nul);
+    bas_c = _term_it_path(c3n, bas);
+    xap = u3qb_scag(xap_w - 2, pax);
+  }
+
+  pax = u3nt(urb, put, pax);
   pax_c = _term_it_path(c3y, pax);
 
-  u3_walk_save(pax_c, 0, pad);
+  u3_walk_save(pax_c, 0, pad, bas_c, xap);
+
   free(pax_c);
+  free(bas_c);
 }
 
 /* _term_io_belt(): send belt.
@@ -994,8 +1007,7 @@ u3_term_ef_ctlc(void)
 
   u3_pier_plan(pax, u3nt(c3__belt, c3__ctl, 'c'));
 
-  u3_utty* uty_u = _term_ef_get(1);
-  _term_it_refresh_line(uty_u);
+  _term_it_refresh_line(_term_main());
 }
 
 /* u3_term_ef_verb(): initial effects for verbose events
@@ -1006,32 +1018,6 @@ u3_term_ef_verb(void)
   u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
 
   u3_pier_plan(pax, u3nc(c3__verb, u3_nul));
-}
-
-/* u3_term_ef_ticket(): initial effects for new ticket.
-*/
-void
-u3_term_ef_ticket(c3_c* who_c, c3_c* tic_c)
-{
-  u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
-  u3_noun who, tic;
-  u3_noun whu, tuc; 
-  
-  whu = u3dc("slaw", 'p', u3i_string(who_c));
-  if ( u3_nul == whu ) {
-    fprintf(stderr, "ticket: invalid planet '%s'\r\n", who_c);
-    exit(1);
-  }
-  else { who = u3k(u3t(whu)); u3z(whu); }
-
-  tuc = u3dc("slaw", 'p', u3i_string(tic_c));
-  if ( u3_nul == tuc ) {
-    fprintf(stderr, "ticket: invalid secret '%s'\r\n", tic_c);
-    exit(1);
-  }
-  else { tic = u3k(u3t(tuc)); u3z(tuc); }
-
-  u3_pier_plan(pax, u3nt(c3__tick, who, tic));
 }
 
 /* u3_term_ef_bake(): initial effects for new terminal.
@@ -1187,15 +1173,19 @@ u3_term_io_hija(void)
     else {
       if ( c3n == u3_Host.ops_u.dem ) {
         if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->bak_u) ) {
+          perror("hija-tcsetattr-1");
           c3_assert(!"hija-tcsetattr");
         }
         if ( -1 == fcntl(1, F_SETFL, uty_u->cug_i) ) {
+          perror("hija-fcntl-1");
           c3_assert(!"hija-fcntl");
         }
         if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->bak_u) ) {
+          perror("hija-tcsetattr-0");
           c3_assert(!"hija-tcsetattr");
         }
         if ( -1 == fcntl(0, F_SETFL, uty_u->cug_i) ) {
+          perror("hija-fcntl-0");
           c3_assert(!"hija-fcntl");
         }
         write(uty_u->fid_i, "\r", 1);
@@ -1228,19 +1218,76 @@ u3_term_io_loja(int x)
       }
       else {
         if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->raw_u) ) {
+          perror("loja-tcsetattr-1");
           c3_assert(!"loja-tcsetattr");
         }
         if ( -1 == fcntl(1, F_SETFL, uty_u->nob_i) ) {
+          perror("hija-fcntl-1");
           c3_assert(!"loja-fcntl");
         }
         if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->raw_u) ) {
+          perror("loja-tcsetattr-0");
           c3_assert(!"loja-tcsetattr");
         }
         if ( -1 == fcntl(0, F_SETFL, uty_u->nob_i) ) {
+          perror("hija-fcntl-0");
           c3_assert(!"loja-fcntl");
         }
         _term_it_refresh_line(uty_u);
       }
     }
   }
+}
+
+/* u3_term_tape_to(): dump a tape to a file.
+*/
+void
+u3_term_tape_to(FILE *fil_f, u3_noun tep)
+{
+  u3_noun tap = tep;
+
+  while ( u3_nul != tap ) {
+    c3_c car_c;
+
+    if ( u3h(tap) >= 127 ) {
+      car_c = '?';
+    } else car_c = u3h(tap);
+
+    putc(car_c, fil_f);
+    tap = u3t(tap);
+  }
+  u3z(tep);
+}
+
+/* u3_term_tape(): dump a tape to stdout.
+*/
+void
+u3_term_tape(u3_noun tep)
+{
+  FILE* fil_f = u3_term_io_hija();
+
+  u3_term_tape_to(fil_f, tep);
+
+  u3_term_io_loja(0);
+}
+
+/* u3_term_wall(): dump a wall to stdout.
+*/
+void
+u3_term_wall(u3_noun wol)
+{
+  FILE* fil_f = u3_term_io_hija();
+  u3_noun wal = wol;
+
+  while ( u3_nul != wal ) {
+    u3_term_tape_to(fil_f, u3k(u3h(wal)));
+
+    putc(13, fil_f);
+    putc(10, fil_f);
+
+    wal = u3t(wal);
+  }
+  u3_term_io_loja(0);
+
+  u3z(wol);
 }

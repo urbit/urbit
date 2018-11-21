@@ -272,11 +272,13 @@ _ce_patch_create(u3_ce_patch* pat_u)
 
   snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
   if ( -1 == (pat_u->ctl_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
+    perror(ful_c);
     c3_assert(0);
   }
 
   snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
   if ( -1 == (pat_u->mem_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
+    perror(ful_c);
     c3_assert(0);
   }
 }

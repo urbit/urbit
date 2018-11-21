@@ -10,6 +10,7 @@
 #include <signal.h>
 #include <gmp.h>
 #include <stdint.h>
+#include <limits.h>
 #include <uv.h>
 #include <sigsegv.h>
 #include <curses.h>
@@ -17,11 +18,18 @@
 #include <term.h>
 #include <dirent.h>
 #include <openssl/ssl.h>
+#include <openssl/rand.h>
+
+#include "h2o.h"
 
 #define U3_GLOBAL
 #define C3_GLOBAL
 #include "all.h"
 #include "vere/vere.h"
+
+/* Require unsigned char
+ */
+STATIC_ASSERT(( 0 == CHAR_MIN && UCHAR_MAX == CHAR_MAX ), "unsigned char required");
 
 /* _main_readw(): parse a word from a string.
 */
@@ -66,8 +74,11 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.bat = c3n;
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
-  u3_Host.ops_u.fak = c3n;
+  u3_Host.ops_u.etn = c3n;
   u3_Host.ops_u.gab = c3n;
+  // XX find a way to re-enable -s (auto-pill)
+  // u3_Host.ops_u.git = c3n;
+  u3_Host.ops_u.has = c3n;
   u3_Host.ops_u.net = c3y;
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.pro = c3n;
@@ -77,7 +88,8 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"J:B:w:f:K:p:LabcdgqvxFPDR")) != -1 ) {
+  // XX re-enable -s, -A
+  while ( (ch_i=getopt(argc, argv,"G:J:B:K:H:w:u:e:E:f:F:k:p:LabcdgqtvxPDRS")) != -1 ) {
     switch ( ch_i ) {
       case 'J': {
         // XX should set path to ivory pill
@@ -89,9 +101,42 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.pil_c = strdup(optarg);
         break;
       }
+      case 'G': {
+        u3_Host.ops_u.gen_c = strdup(optarg);
+        break;
+      }
+      case 'A': {
+        // XX find a way to re-enable -A (fastboot)
+        // u3_Host.ops_u.arv_c = strdup(optarg);
+        // break;
+        return c3n;
+      }
+      case 'H': {
+        u3_Host.ops_u.dns_c = strdup(optarg);
+        break;
+      }
+      case 'e': {
+        u3_Host.ops_u.eth_c = strdup(optarg);
+        break;
+      }
+      case 'E': {
+        u3_Host.ops_u.ets_c = strdup(optarg);
+        break;
+      }
+      case 'F': {
+        u3_Host.ops_u.fak_c = _main_presig(optarg);
+        // XX temporary for compiling, remove
+        u3_Host.ops_u.fak   = c3y;
+        u3_Host.ops_u.net   = c3n;
+        break;
+      }
       case 'w': {
         u3_Host.ops_u.who_c = _main_presig(optarg);
         u3_Host.ops_u.nuu = c3y;
+        break;
+      }
+      case 'u': {
+        u3_Host.ops_u.url_c = strdup(optarg);
         break;
       }
       case 'x': {
@@ -110,6 +155,10 @@ _main_getopt(c3_i argc, c3_c** argv)
         }
         break;
       }
+      case 'k': {
+        u3_Host.ops_u.key_c = strdup(optarg);
+        break;
+      }
       case 'p': {
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
@@ -121,11 +170,6 @@ _main_getopt(c3_i argc, c3_c** argv)
         return c3y;
       }
       case 'L': { u3_Host.ops_u.net = c3n; break; }
-      case 'F': {
-        u3_Host.ops_u.net = c3n;
-        u3_Host.ops_u.fak = c3y;
-        break;
-      }
       case 'a': { u3_Host.ops_u.abo = c3y; break; }
       case 'b': { u3_Host.ops_u.bat = c3y; break; }
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
@@ -135,42 +179,62 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'D': { u3_Host.ops_u.dry = c3y; break; }
       case 'q': { u3_Host.ops_u.qui = c3y; break; }
       case 'v': { u3_Host.ops_u.veb = c3y; break; }
+      // XX find a way to re-enable -s (auto-pill)
+      // case 's': { u3_Host.ops_u.git = c3y; break; }
+      case 'S': { u3_Host.ops_u.has = c3y; break; }
+      case 't': { u3_Host.ops_u.etn = c3y; break; }
       case '?': default: {
         return c3n;
       }
     }
   }
 
-  /* fill in any missing security data, etc
-  */
-  if ( u3_Host.ops_u.nuu == c3y ) {
-    if ( u3_Host.ops_u.fak != c3y ) {
-      fprintf(stderr, "this is the development build and cannot connect\r\n");
-      fprintf(stderr, "to the live network; always run this build with -F.\r\n");
-      fprintf(stderr, "to install a live client: %s\r\n",
-                      "http://urbit.org/docs/using/install/");
-      exit(1); /* (avoid simple usage msg) */
+  if ( 0 != u3_Host.ops_u.fak_c ) {
+    if ( 28 < strlen(u3_Host.ops_u.fak_c) ) {
+      fprintf(stderr, "fake comets are disallowed\r\n");
+      return c3n;
     }
 
-    if ( u3_Host.ops_u.who_c == 0 ) {
-      fprintf(stderr, "comets are not yet supported; identify with -w\r\n");
-      return c3n;
-    }
-    else if ( c3n == u3_Host.ops_u.fak ) {
-      fprintf(stderr, "real ships are not yet supported; fake with -F\r\n");
-      return c3n;
-    }
+    u3_Host.ops_u.who_c = strdup(u3_Host.ops_u.fak_c);
+    u3_Host.ops_u.has = c3y;  /* no battery hashing on fake ships. */
+    u3_Host.ops_u.net = c3n;  /* no networking on fake ships. */
+    u3_Host.ops_u.nuu = c3y;
   }
-  else {
-    if ( u3_Host.ops_u.who_c != 0  ) {
-      fprintf(stderr, "-w only makes sense when creating a new ship\n");
-      return c3n;
-    }
-    if ( u3_Host.ops_u.pil_c != 0) {
-      fprintf(stderr, "-B only makes sense when creating a new ship\n");
-      return c3n;
-    }
+  else if ( c3y == u3_Host.ops_u.nuu ) {
+    fprintf(stderr, "real ships are not yet supported; fake with -F ~ship\r\n");
+    return c3n;
+  }
 
+  c3_t imp_t = ( (0 != u3_Host.ops_u.who_c) && (4 == strlen(u3_Host.ops_u.who_c)) );
+
+  // XX find a way to re-enable -A (fastboot)
+  // if ( u3_Host.ops_u.arv_c != 0 && !imp_t ) {
+  //   fprintf(stderr, "-A only makes sense when creating a new galaxy\n");
+  //   return c3n;
+  // }
+
+  if ( u3_Host.ops_u.ets_c == 0 && c3y == u3_Host.ops_u.etn ) {
+    fprintf(stderr, "can't trust Ethereum snapshot without specifying "
+                    "snapshot with -E\n");
+    return c3n;
+  }
+
+  if ( (0 == u3_Host.ops_u.fak_c) && (0 == u3_Host.ops_u.eth_c) && imp_t ) {
+    fprintf(stderr, "can't create a new galaxy without specifying "
+                    "the Ethereum gateway with -e\n");
+    return c3n;
+  }
+
+  // XX find a way to re-enable -A (fastboot)
+  // if ( u3_Host.ops_u.arv_c == 0 && imp_t ) {
+  //   fprintf(stderr, "can't create a new galaxy without specifying "
+  //                   "the initial sync path with -A\n");
+  //   return c3n;
+  // }
+
+  if ( u3_Host.ops_u.gen_c != 0 && u3_Host.ops_u.nuu == c3n ) {
+    fprintf(stderr, "-G only makes sense when bootstrapping a new instance\n");
+    return c3n;
   }
 
   if ( c3y == u3_Host.ops_u.bat ) {
@@ -178,10 +242,64 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.ops_u.nuu = c3y;
   }
 
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.who_c != 0) {
+    fprintf(stderr, "-w only makes sense when creating a new ship\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.pil_c != 0) {
+    fprintf(stderr, "-B only makes sense when creating a new ship\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.dns_c != 0) {
+    fprintf(stderr, "-H only makes sense when bootstrapping a new instance\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.pil_c != 0) {
+    fprintf(stderr, "-B only makes sense when bootstrapping a new instance\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.key_c != 0) {
+    fprintf(stderr, "-k only makes sense when bootstrapping a new instance\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.url_c != 0 ) {
+    fprintf(stderr, "-u only makes sense when bootstrapping a new instance\n");
+    return c3n;
+
+  } else if ( u3_Host.ops_u.nuu == c3y
+           && u3_Host.ops_u.url_c == 0 ) {
+           // XX find a way to re-enable -s (auto-pill)
+           // && u3_Host.ops_u.git == c3n ) {
+
+    u3_Host.ops_u.url_c = "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".pill";
+
+  }
+  // XX find a way to re-enable -A (fastboot)
+  // else if ( u3_Host.ops_u.nuu == c3y
+  //          && u3_Host.ops_u.url_c == 0
+  //          && u3_Host.ops_u.arv_c == 0 ) {
+
+  //   fprintf(stderr, "-s only makes sense with -A\n");
+  //   return c3n;
+  // }
+
   if ( u3_Host.ops_u.pil_c != 0 ) {
     struct stat s;
     if ( stat(u3_Host.ops_u.pil_c, &s) != 0 ) {
       fprintf(stderr, "pill %s not found\n", u3_Host.ops_u.pil_c);
+      return c3n;
+    }
+  }
+
+  if ( u3_Host.ops_u.key_c != 0 ) {
+    struct stat s;
+    if ( stat(u3_Host.ops_u.key_c, &s) != 0 ) {
+      fprintf(stderr, "keyfile %s not found\n", u3_Host.ops_u.key_c);
       return c3n;
     }
   }
@@ -211,40 +329,54 @@ _main_getopt(c3_i argc, c3_c** argv)
 static void
 u3_ve_usage(c3_i argc, c3_c** argv)
 {
-#if 0
-  c3_c *use_c[] = {"Usage: %s [options...] computer\n",
-    "-c pier       Create a new urbit in pier/\n",
-    "-w name       Immediately upgrade to ~name\n",
-    "-t ticket     Use ~ticket automatically\n",
-    "-I galaxy     Start as ~galaxy\n",
-    "-A dir        Use dir for initial galaxy sync\n",
-    "-F            Fake keys\n",
-    "-L            Local-only network\n",
-    "-B pill       Bootstrap from this pill\n",
-    "-n host       Set unix hostname\n",
-    "-p ames_port  Set the HTTP port to bind to\n",
-    "-v            Verbose\n",
-    "-q            Quiet\n",
-    "-D            Recompute from events\n",
-    "-P            Profiling\n",
-    "-b            Batch create\n",
-    "-d            Daemon mode\n",
-    "-g            Set GC flag\n",
-    "-x            Exit immediately\n",
-    "-r host       Initial peer address\n",
-    "-l port       Initial peer port\n",
-    "-f            Fuzz testing\n",
-    "-K stage      Start at Hoon kernel version stage\n",
-    "-R            Report urbit build info\n"};
-#else
   c3_c *use_c[] = {
-    "simple usage: \n",
+    "Urbit: a personal server operating function\n",
+    "https://urbit.org\n",
+    "Version " URBIT_VERSION "\n",
+    "\n",
+    "Usage: %s [options...] ship_name\n",
+    "where ship_name is a @p phonetic representation of an urbit address\n",
+    "without the leading '~', and options is some subset of the following:\n",
+    "\n",
+    // XX find a way to re-enable
+    // "-A dir        Use dir for initial galaxy sync\n",
+    "-B pill       Bootstrap from this pill\n",
+    "-b            Batch create\n",
+    "-c pier       Create a new urbit in pier/\n",
+    "-D            Recompute from events\n",
+    "-d            Daemon mode\n",
+    "-e url        Ethereum gateway\n",
+    "-F ship       Fake keys; also disables networking\n",
+    "-f            Fuzz testing\n",
+    "-g            Set GC flag\n",
+    "-K stage      Start at Hoon kernel version stage\n",
+    "-k keys       Private key file\n",
+    "-L            local networking only\n",
+    "-P            Profiling\n",
+    "-p ames_port  Set the ames port to bind to\n",
+    "-q            Quiet\n",
+    "-R            Report urbit build info\n",
+    "-S            Disable battery hashing\n",
+    // XX find a way to re-enable
+    // "-s            Pill URL from arvo git hash\n",
+    "-u url        URL from which to download pill\n",
+    "-v            Verbose\n",
+    "-w name       Boot as ~name\n",
+    "-x            Exit immediately\n",
+    "\n",
+    "Development Usage:\n",
+    "   To create a development ship, use a fakezod:\n",
+    "   %s -F zod -A /path/to/arvo/folder -B /path/to/pill -c zod\n",
+    "\n",
+    "   For more information about developing on urbit, see:\n",
+    "   https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md\n",
+    "\n",
+    "Simple Usage: \n",
     "   %s -c <mycomet> to create a comet (anonymous urbit)\n",
     "   %s -w <myplanet> -t <myticket> if you have a ticket\n",
     "   %s <myplanet or mycomet> to restart an existing urbit\n",
     0
   };
-#endif
 
   c3_i i;
   for ( i=0; use_c[i]; i++ ) {
@@ -357,6 +489,7 @@ report(void)
   printf("openssl: %s\n", SSLeay_version(SSLEAY_VERSION));
   printf("curses: %s\n", curses_version());
   printf("libuv: %s\n", uv_version_string());
+  printf("libh2o: %d.%d.%d\n", H2O_LIBRARY_VERSION_MAJOR, H2O_LIBRARY_VERSION_MINOR, H2O_LIBRARY_VERSION_PATCH);
 }
 
 void
@@ -472,6 +605,32 @@ main(c3_i   argc,
       if ( _(u3_Host.ops_u.dry) ) {
         u3C.wag_w |= u3o_dryrun;
       }
+
+      /*  Set hashboard flag
+      */
+      if ( _(u3_Host.ops_u.has) ) {
+        u3C.wag_w |= u3o_hashless;
+      }
+    }
+
+    /*  Initialize OpenSSL for client and server
+    */
+    SSL_library_init();
+    SSL_load_error_strings();
+
+    {
+      c3_i rad;
+      c3_y buf[4096];
+
+      // RAND_status, at least on OS X, never returns true.
+      // 4096 bytes should be enough entropy for anyone, right?
+      rad = open("/dev/urandom", O_RDONLY);
+      if ( 4096 != read(rad, &buf, 4096) ) {
+        perror("rand-seed");
+        exit(1);
+      }
+      RAND_seed(buf, 4096);
+      close(rad);
     }
 
     u3_king_commence();

@@ -35,7 +35,10 @@
     case c3__fork: p_sut = u3t(sut);
     {
     }
-    case c3__hold: p_sut = u3t(sut);
+    case c3__hint: u3x_cell(u3t(sut), &p_sut, &q_sut);
+    {
+    }
+    case c3__hold: u3x_cell(u3t(sut), &p_sut, &q_sut);
     {
     }
   }

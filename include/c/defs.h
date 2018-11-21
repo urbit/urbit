@@ -92,3 +92,10 @@
       rut;})
 #define c3_free(s) free(s)
 #define c3_realloc(s, l) realloc(s, l)
+
+/* c3_calloc(): asserting calloc
+ */
+#define c3_calloc(s) ({                         \
+      void* rut = c3_malloc(s);                 \
+      memset(rut, 0, s);                        \
+      rut;})

@@ -5,6 +5,7 @@
 
 /* internal functions
 */
+  static
   u3_noun _b_dif_join(u3_noun d,
                       u3_noun e)
   {
