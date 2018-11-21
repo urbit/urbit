@@ -27,14 +27,14 @@
     memset(pub_y, 0, 64);
     memset(sec_y, 0, 64);
 
-    mes_y = malloc(mesm_w);
+    mes_y = u3a_malloc(mesm_w);
 
     u3r_bytes(0, mesm_w, mes_y, a);
     u3r_bytes(0, mess_w, sed_y, b);
 
     ed25519_create_keypair(pub_y, sec_y, sed_y);
     ed25519_sign(sig_y, mes_y, mesm_w, pub_y, sec_y);
-    free(mes_y);
+    u3a_free(mes_y);
     return u3i_bytes(64, sig_y);
   }
 

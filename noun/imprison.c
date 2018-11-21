@@ -1,6 +1,8 @@
-/* g/i.c
-**
+/**
+  noun/imprison.c
+  ===============
 */
+
 #include "all.h"
 
 /* u3i_words():

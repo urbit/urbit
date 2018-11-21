@@ -1,6 +1,8 @@
-/* g/x.c
-**
+/**
+  noun/xtract.c
+  =============
 */
+
 #include "all.h"
 
 /* u3x_good(): test for u3_none.

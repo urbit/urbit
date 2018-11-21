@@ -1026,10 +1026,6 @@ _sist_rest()
       {
         fprintf(stderr, "replay: skipped veer\n");
       }
-      else if ( c3y == u3_Host.ops_u.fog &&
-                u3_nul == t_roe ) {
-        fprintf(stderr, "replay: -Xwtf, skipped last event\n");
-      }
       else {
         _sist_sing(u3k(ovo));
         fputc('.', stderr);

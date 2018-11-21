@@ -1,6 +1,8 @@
-/* n/m.c
-**
+/**
+  noun/manage.c
+  =============
 */
+
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -830,8 +832,9 @@ u3m_love(u3_noun pro)
 
     pro = u3a_take(pro);
 
-    u3j_reap(cod_p, war_p, han_p, bas_p);
+    // call sites first: see u3j_reap().
     u3n_reap(byc_p);
+    u3j_reap(cod_p, war_p, han_p, bas_p);
 
     u3R->cap_p = u3R->ear_p;
     u3R->ear_p = 0;

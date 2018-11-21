@@ -1,6 +1,8 @@
-/* g/r.c
-**
+/**
+  noun/retrieve.c
+  ===============
 */
+
 #include "all.h"
 
 /* _frag_word(): fast fragment/branch prediction for top word.

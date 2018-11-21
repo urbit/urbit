@@ -1,6 +1,8 @@
-/* g/h.c
-**
+/**
+  noun/hashtable.c
+  ================
 */
+
 #include "all.h"
 
 static void

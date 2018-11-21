@@ -1,6 +1,8 @@
-/* g/n.c
-**
+/**
+  noun/nock.c
+  ===========
 */
+
 #include "all.h"
 
       /* u3_term_io_hija(): hijack console for cooked print.

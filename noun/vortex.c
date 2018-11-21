@@ -1,6 +1,8 @@
-/* g/v.c
-**
+/**
+  noun/vortex.c
+  ==============
 */
+
 #include <stdio.h>
 #include "all.h"
 

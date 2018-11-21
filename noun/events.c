@@ -1,6 +1,8 @@
-/* g/e.c
-**
+/**
+  noun/events.c
+  =============
 */
+
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>

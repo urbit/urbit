@@ -178,47 +178,6 @@ jets_f_ut_src =  [
 'jets/f/ut_wrap.c'
 ]
 
-jets_z_src = [
-'jets/z/ap.c',
-'jets/z/cell.c',
-'jets/z/comb.c',
-'jets/z/cons.c',
-'jets/z/core.c',
-'jets/z/face.c',
-'jets/z/fitz.c',
-'jets/z/flan.c',
-'jets/z/flip.c',
-'jets/z/flor.c',
-'jets/z/fork.c',
-'jets/z/hint.c',
-'jets/z/hike.c',
-'jets/z/look.c',
-'jets/z/loot.c'
-]
-
-jets_z_ut_src =  [
-'jets/z/ut.c',
-'jets/z/ut_buss.c',
-'jets/z/ut_crop.c',
-'jets/z/ut_find.c',
-'jets/z/ut_fire.c',
-'jets/z/ut_fish.c',
-'jets/z/ut_fuse.c',
-'jets/z/ut_gain.c',
-'jets/z/ut_lose.c',
-'jets/z/ut_mint.c',
-'jets/z/ut_mull.c',
-'jets/z/ut_nest.c',
-'jets/z/ut_peek.c',
-'jets/z/ut_peel.c',
-'jets/z/ut_play.c',
-'jets/z/ut_repo.c',
-'jets/z/ut_rest.c',
-'jets/z/ut_tack.c',
-'jets/z/ut_toss.c',
-'jets/z/ut_wrap.c'
-]
-
 jets_g_src = [
 'jets/g/down.c'
 ]
@@ -232,7 +191,6 @@ jets_all_src = [
   jets_c_src, jets_d_src,
   jets_e_src, jets_e_ed_src,
   jets_f_src, jets_f_ut_src,
-  jets_z_src, jets_z_ut_src,
   jets_g_src, jets_src]
 
 noun_src = [

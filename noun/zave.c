@@ -1,6 +1,8 @@
-/* g/z.c
-**
+/**
+  noun/zave.c
+  ===========
 */
+
 #include "all.h"
 
 /* u3z_find(): find in memo cache. Args retained.

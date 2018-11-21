@@ -1,6 +1,8 @@
-/* g/a.c
-**
+/**
+  noun/allocate.c
+  ===============
 */
+
 #include "all.h"
 
 /* _box_count(): adjust memory count.
