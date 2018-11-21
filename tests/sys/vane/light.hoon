@@ -647,14 +647,15 @@
     %+  expect-eq
       !>  `[%ack 5]~
       !>  %-  parse-channel-request:light-gate
-          (need (de-json:html '[{"action": "ack", "id": 5}]'))
+          (need (de-json:html '[{"action": "ack", "event-id": 5}]'))
   ::
     %+  expect-eq
-      !>  `[%poke ~nec %app1 %app-type [%n '5']]~
+      !>  `[%poke 0 ~nec %app1 %app-type [%n '5']]~
       !>  %-  parse-channel-request:light-gate
           %-  need  %-  de-json:html
           '''
           [{"action": "poke",
+            "id": 0,
             "ship": "nec",
             "app": "app1",
             "mark": "app-type",
@@ -662,22 +663,24 @@
           '''
   ::
     %+  expect-eq
-      !>  `[%subscribe ~sampyl-sipnym %hall /this/path]~
+      !>  `[%subscribe 1 ~sampyl-sipnym %hall /this/path]~
       !>  %-  parse-channel-request:light-gate
           %-  need  %-  de-json:html
           '''
           [{"action": "subscribe",
+            "id": 1,
             "ship": "sampyl-sipnym",
             "app": "hall",
             "path": "/this/path"}]
           '''
   ::
     %+  expect-eq
-      !>  `[%unsubscribe ~marlyt %thing /other]~
+      !>  `[%unsubscribe 2 ~marlyt %thing /other]~
       !>  %-  parse-channel-request:light-gate
           %-  need  %-  de-json:html
           '''
           [{"action": "unsubscribe",
+            "id": 2,
             "ship": "marlyt",
             "app": "thing",
             "path": "/other"}]
@@ -699,18 +702,19 @@
         !>  ~
         !>  %-  parse-channel-request:light-gate
             %-  need  %-  de-json:html
-            '[{"action": "ack", "id": 5}, {"action": "bad-action"}]'
+            '[{"action": "ack", "event-id": 5}, {"action": "bad-action"}]'
   ::
       %+  expect-eq
         !>  :-  ~
             :~  [%ack 9]
-                [%poke ~bud %wut %wut-type [%a [%n '2'] [%n '1'] ~]]
+                [%poke 3 ~bud %wut %wut-type [%a [%n '2'] [%n '1'] ~]]
             ==
         !>  %-  parse-channel-request:light-gate
             %-  need  %-  de-json:html
             '''
-            [{"action": "ack", "id": 9},
+            [{"action": "ack", "event-id": 9},
              {"action": "poke",
+              "id": 3,
               "ship": "bud",
               "app": "wut",
               "mark": "wut-type",
@@ -766,90 +770,10 @@
   ==
 ::
 ++  test-channel-open-never-used-expire
-  ::
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
-      now=~1111.1.1
-      scry=*sley
-      call-args=[duct=~[/init] ~ [%init ~nul]]
-      expected-moves=~
-    ==
-  ::  ensure there's an authenticated session
-  ::
-  =^  results2  light-gate
-    %-  perform-authentication  :*
-      light-gate
-      now=~1111.1.2
-      scry=*sley
-    ==
-  ::  send the channel a poke and a subscription request
-  ::
-  =^  results3  light-gate
-    %-  light-call-with-comparator  :*
-      light-gate
-      now=~1111.1.2
-      scry=*sley
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %inbound-request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'PUT'
-            '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
-        ::
-            :-  ~
-            %-  as-octs:mimes:html
-            '''
-            [{"action": "poke",
-              "ship": "nul",
-              "app": "one",
-              "mark": "a",
-              "json": 5},
-             {"action": "subscribe",
-              "ship": "nul",
-              "app": "two",
-              "path": "/one/two/three"}
-            ]
-            '''
-        ==
-      ^=  comparator
-        |=  moves=(list move:light-gate)
-        ^-  tang
-        ::
-        ?.  ?=([^ ^ ^ ^ ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ;:  weld
-          %+  expect-gall-deal
-            :*  /channel/poke/'0123456789abcdef'
-                [~nul ~nul]  %one
-                %punk  %a  %json  !>([%n '5'])
-            ==
-            card.i.moves
-        ::
-          %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'
-                [~nul ~nul]  %two
-                %peel  %json  /one/two/three
-            ==
-            card.i.t.moves
-        ::
-          %+  expect-eq
-            !>  [~[/http-blah] %give %http-response %start 200 ~ ~ %.y]
-            !>  i.t.t.moves
-        ::
-          %+  expect-eq
-            !>  :*  ~[/http-blah]  %pass
-                    /channel/timeout/'0123456789abcdef'
-                    %b  %wait  (add ~1111.1.2 ~h12)
-                ==
-            !>  i.t.t.t.moves
-    ==  ==
+  =^  results1  light-gate  (perform-init-start-channel light-gate *sley)
   ::  the behn timer wakes us up; we cancel our subscription
   ::
-  =^  results4  light-gate
+  =^  results2  light-gate
     %-  light-take-with-comparator  :*
       light-gate
       now=(add ~1111.1.2 ~h12)
@@ -877,8 +801,117 @@
   ;:  weld
     results1
     results2
+  ==
+::
+++  test-channel-results-before-open
+  ::  common initialization
+  ::
+  =^  results1  light-gate  (perform-init-start-channel light-gate *sley)
+  ::  poke gets a success message
+  ::
+  =^  results2  light-gate
+    %-  light-take  :*
+      light-gate
+      now=(add ~1111.1.2 ~m1)
+      scry=*sley
+      ^=  take-args
+        :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-blah]
+            ^-  (hypo sign:light-gate)
+            :-  *type
+            [%g %unto %coup ~]
+         ==
+      moves=~
+    ==
+  ::  subscription gets a success message
+  ::
+  =^  results3  light-gate
+    %-  light-take  :*
+      light-gate
+      now=(add ~1111.1.2 ~m1)
+      scry=*sley
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-blah]
+            ^-  (hypo sign:light-gate)
+            :-  *type
+            [%g %unto %reap ~]
+         ==
+      moves=~
+    ==
+  ::  subscription gets a result
+  ::
+  =^  results4  light-gate
+    %-  light-take  :*
+      light-gate
+      now=(add ~1111.1.2 ~m2)
+      scry=*sley
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-blah]
+            ^-  (hypo sign:light-gate)
+            :-  *type
+            [%g %unto %diff %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+         ==
+      moves=~
+    ==
+  ::  open up the channel
+  ::
+  ::  send the channel a poke and a subscription request
+  ::
+  =^  results5  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.2
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-get-open]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            %'GET'
+            '/~/channel/0123456789abcdef'
+            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ~
+        ==
+      ^=  expected-moves
+        ^-  (list move:light-gate)
+        :~  :*  duct=~[/http-get-open]
+                %give
+                %http-response
+                %start
+                200
+                :~  ['content-type' 'text/event-stream']
+                    ['cache-control' 'no-cache']
+                    ['connection' 'keep-alive']
+                ==
+              ::
+                :-  ~
+                %-  as-octs:mimes:html
+                '''
+                id: 0
+                data: {"ok":"ok","response":"poke","id":0}
+
+                id: 1
+                data: {"ok":"ok","response":"subscribe","id":1}
+
+                id: 2
+                data: {"response":"diff","id":1,"json":[1,2]}
+
+
+                '''
+              ::
+                complete=%.n
+            ==
+            ::  TODO: Need to cancel on the original duct!
+            ::
+            :*  duct=~[/http-get-open]  %pass  /channel/timeout/'0123456789abcdef'
+                [%b %rest ~1111.1.2..12.00.00]
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
     results3
     results4
+    results5
   ==
 ::
 ++  light-call
@@ -1094,4 +1127,97 @@
   ::
   :_  light-gate
   (weld results1 results2)
+::  performs all initialization and an initial PUT.
+::
+++  perform-init-start-channel
+  |=  $:  light-gate=_light-gate
+          scry=sley
+      ==
+  ^-  [tang _light-gate]
+  ::
+  =^  results1  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.1
+      scry=*sley
+      call-args=[duct=~[/init] ~ [%init ~nul]]
+      expected-moves=~
+    ==
+  ::  ensure there's an authenticated session
+  ::
+  =^  results2  light-gate
+    %-  perform-authentication  :*
+      light-gate
+      now=~1111.1.2
+      scry=*sley
+    ==
+  ::  send the channel a poke and a subscription request
+  ::
+  =^  results3  light-gate
+    %-  light-call-with-comparator  :*
+      light-gate
+      now=~1111.1.2
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-blah]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            %'PUT'
+            '/~/channel/0123456789abcdef'
+            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+        ::
+            :-  ~
+            %-  as-octs:mimes:html
+            '''
+            [{"action": "poke",
+              "id": 0,
+              "ship": "nul",
+              "app": "one",
+              "mark": "a",
+              "json": 5},
+             {"action": "subscribe",
+              "id": 1,
+              "ship": "nul",
+              "app": "two",
+              "path": "/one/two/three"}
+            ]
+            '''
+        ==
+      ^=  comparator
+        |=  moves=(list move:light-gate)
+        ^-  tang
+        ::
+        ?.  ?=([^ ^ ^ ^ ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-gall-deal
+            :*  /channel/poke/'0123456789abcdef'/'0'
+                [~nul ~nul]  %one
+                %punk  %a  %json  !>([%n '5'])
+            ==
+            card.i.moves
+        ::
+          %+  expect-gall-deal
+            :*  /channel/subscription/'0123456789abcdef'/'1'
+                [~nul ~nul]  %two
+                %peel  %json  /one/two/three
+            ==
+            card.i.t.moves
+        ::
+          %+  expect-eq
+            !>  [~[/http-blah] %give %http-response %start 200 ~ ~ %.y]
+            !>  i.t.t.moves
+        ::
+          %+  expect-eq
+            !>  :*  ~[/http-blah]  %pass
+                    /channel/timeout/'0123456789abcdef'
+                    %b  %wait  (add ~1111.1.2 ~h12)
+                ==
+            !>  i.t.t.t.moves
+    ==  ==
+  ::
+  :_  light-gate
+  :(weld results1 results2 results3)
 --

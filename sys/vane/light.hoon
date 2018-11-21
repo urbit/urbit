@@ -27,7 +27,8 @@
       $:  %b
           ::
           ::
-          $%  [%wait p=@da]
+          $%  [%rest p=@da]
+              [%wait p=@da]
       ==  ==
       ::  %f: to ford
       ::
@@ -226,12 +227,15 @@
 ::    events since then.
 ::
 +$  channel
-  $:  ::  expiration-time: when this channel will expire
+  $:  ::  channel-state: expiration time or the duct currently listening
       ::
-      ::    In case of an EventSource disconnect, we set a timer to reap the
-      ::    subscriptions. This timer shouldn't be too short because the
+      ::    For each channel, there is at most one open EventSource
+      ::    connection. A 400 is issues on duplicate attempts to connect to the
+      ::    same channel. When an EventSource isn't connected, we set a timer
+      ::    to reap the subscriptions. This timer shouldn't be too short
+      ::    because the
       ::
-      expiration-time=(unit @da)
+      state=(each @da duct)
       ::  next-id: next sequence number to use
       ::
       next-id=@ud
@@ -243,36 +247,29 @@
       ::    channel, we send the event but we still add it to events because we
       ::    can't assume it got received until we get an acknowledgment.
       ::
-      events=(qeu [id=@ud type=term data=wall])
+      events=(qeu [id=@ud lines=wall])
       ::  subscriptions: gall subscriptions
       ::
       ::    We maintain a list of subscriptions so if a channel times out, we
       ::    can cancel all the subscriptions we've made.
       ::
       subscriptions=(list [ship=@p app=term =path])
-      ::  duct: the open http sessions which we must %continue on new events.
-      ::
-      ::    For each channel, there is at most one open EventSource
-      ::    connection. A 400 is issues on duplicate attempts to connect to the
-      ::    same channel.
-      ::
-      duct=(unit duct)
   ==
 ::  channel-request: an action requested on a channel
 ::
 +$  channel-request
   $%  ::  %ack: acknowledges that the client has received events up to :id
       ::
-      [%ack id=@ud]
+      [%ack event-id=@ud]
       ::  %poke: pokes an application, translating :json to :mark.
       ::
-      [%poke ship=@p app=term mark=@tas =json]
+      [%poke request-id=@ud ship=@p app=term mark=@tas =json]
       ::  %subscribe: subscribes to an application path
       ::
-      [%subscribe ship=@p app=term =path]
+      [%subscribe request-id=@ud ship=@p app=term =path]
       ::  %unsubscribe: unsubscribes from an application path
       ::
-      [%unsubscribe ship=@p app=term =path]
+      [%unsubscribe request-id=@ud ship=@p app=term =path]
   ==
 ::  channel-timeout: the delay before a channel should be reaped
 ::
@@ -301,17 +298,17 @@
   ?~  maybe-key=((ot action+so ~) item)
     ~
   ?:  =('ack' u.maybe-key)
-    ((pe %ack (ot id+ni ~)) item)
+    ((pe %ack (ot event-id+ni ~)) item)
   ?:  =('poke' u.maybe-key)
-    ((pe %poke (ot ship+(su fed:ag) app+so mark+(su sym) json+some ~)) item)
+    ((pe %poke (ot id+ni ship+(su fed:ag) app+so mark+(su sym) json+some ~)) item)
   ?:  =('subscribe' u.maybe-key)
     %.  item
     %+  pe  %subscribe
-    (ot ship+(su fed:ag) app+so path+(su ;~(pfix fas (more fas urs:ab))) ~)
+    (ot id+ni ship+(su fed:ag) app+so path+(su ;~(pfix fas (more fas urs:ab))) ~)
   ?:  =('unsubscribe' u.maybe-key)
     %.  item
     %+  pe  %unsubscribe
-    (ot ship+(su fed:ag) app+so path+(su ;~(pfix fas (more fas urs:ab))) ~)
+    (ot id+ni ship+(su fed:ag) app+so path+(su ;~(pfix fas (more fas urs:ab))) ~)
   ::  if we reached this, we have an invalid action key. fail parsing.
   ::
   ~
@@ -354,9 +351,9 @@
       ==
     ==
   ==
-::  +render-tang: renders a tang and adds <br/> tags between each line
+::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
-++  render-tang
+++  render-tang-to-marl
   |=  {wid/@u tan/tang}
   ^-  marl
   =/  raw=(list tape)  (zing (turn tan |=(a/tank (wash 0^wid a))))
@@ -364,6 +361,28 @@
   |-  ^-  marl
   ?~  raw  ~
   [;/(i.raw) ;br; $(raw t.raw)]
+::  +render-tang-to-wall: renders tang as text lines
+::
+++  render-tang-to-wall
+  |=  {wid/@u tan/tang}
+  ^-  wall
+  (zing (turn tan |=(a=tank (wash 0^wid a))))
+::  +wall-to-octs: text to binary output
+::
+++  wall-to-octs
+  |=  =wall
+  ^-  (unit octs)
+  ::
+  ?:  =(~ wall)
+    ~
+  ::
+  :-  ~
+  %-  as-octs:mimes:html
+  %-  crip
+  %-  zing
+  %+  turn  wall
+  |=  t=tape
+  "{t}\0a"
 ::  +internal-server-error: 500 page, with a tang
 ::
 ++  internal-server-error
@@ -381,7 +400,7 @@
       ;p:"There was an error while handling the request for {<(trip url)>}."
       ;*  ?:  authorized
             ;=
-              ;code:"*{(render-tang 80 t)}"
+              ;code:"*{(render-tang-to-marl 80 t)}"
             ==
           ~
     ==
@@ -536,7 +555,7 @@
       (handle-request:authentication secure address http-request)
     ::
         %channel
-      (handle-request:channel secure authenticated address http-request)
+      (handle-request:by-channel secure authenticated address http-request)
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -729,7 +748,7 @@
   ::    Eyre offers a remote interface to your Urbit through channels, which
   ::    are persistent connections on the server which 
   ::
-  ++  channel
+  ++  by-channel
     ::  moves: the moves to be sent out at the end of this event, reversed
     ::
     =|  moves=(list move)
@@ -753,30 +772,126 @@
       ::
       =+  request-line=(parse-request-line url.http-request)
       ?.  ?=([@t @t @t ~] site.request-line)
-        ::  url is not of the form '/~/subscription/uid'
+        ::  url is not of the form '/~/subscription/'
         ::
         %^  return-static-data-on-duct  400  'text/html'
         (internal-server-error authenticated url.http-request ~)
-      ::  uid: unique channel id parsed out of url
+      ::  channel-id: unique channel id parsed out of url
       ::
-      =+  uid=i.t.t.site.request-line
+      =+  channel-id=i.t.t.site.request-line
       ::
       ?:  =('PUT' method.http-request)
         ::  PUT methods starts/modifies a channel, and returns a result immediately
         ::
-        (on-put-request uid http-request)
+        (on-put-request channel-id http-request)
+      ::
+      ?:  =('GET' method.http-request)
+        (on-get-request channel-id http-request)
       ::
       ~&  %session-not-a-put
       [~ state]
     ::  +handle-cancel: cancels an ongoing subscription
     ::
     ::++  handle-cancel
+    ::  +on-get-request: handles a GET request
+    ::
+    ::    GET requests open a channel for the server to send events to the
+    ::    client in text/event-stream format.
+    ::
+    ++  on-get-request
+      |=  [channel-id=@t =http-request]
+      ^-  [(list move) server-state]
+      ::  if there's no channel-id, we must 404
+      ::
+      ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
+        %^  return-static-data-on-duct  404  'text/html'
+        (internal-server-error %.y url.http-request ~)
+      ::  if there's already a duct listening to this channel, we must 400
+      ::
+      ?:  ?=([%| *] state.u.maybe-channel)
+        %^  return-static-data-on-duct  400  'text/html'
+        (internal-server-error %.y url.http-request ~)
+      ::  when opening an event-stream, we must cancel our timeout timer
+      ::
+      ::    TODO: Need to cancel on the original duct!
+      ::
+      =.  moves
+        :_  moves
+        ^-  move
+        :^  duct  %pass  /channel/timeout/[channel-id]
+        [%b %rest p.state.u.maybe-channel]
+      ::  the http-request may include a 'Last-Event-Id' header
+      ::
+      =/  maybe-last-event-id=(unit @ud)
+        ?~  maybe-raw-header=(get-header 'Last-Event-ID' header-list.http-request)
+          ~
+        (rush u.maybe-raw-header dum:ag)
+      ::  flush events older than the passed in 'Last-Event-ID'
+      ::
+      =?  state  ?=(^ maybe-last-event-id)
+        (acknowledge-events channel-id u.maybe-last-event-id)
+      ::  combine the remaining queued events to send to the client
+      ::
+      =/  event-replay=wall
+        %-  zing
+        %-  flop
+        =/  queue  events.u.maybe-channel
+        =|  events=(list wall)
+        |-
+        ^+  events
+        ?:  =(~ queue)
+          events
+        =^  head  queue  ~(get to queue)
+        $(events [lines.p.head events])
+      ::  send the start event to the client
+      ::
+      =.  moves
+        :_  moves
+        :+  duct  %give
+        :*  %http-response  %start  200
+            :~  ['content-type' 'text/event-stream']
+                ['cache-control' 'no-cache']
+                ['connection' 'keep-alive']
+            ==
+            (wall-to-octs event-replay)
+            complete=%.n
+        ==
+      ::  clear the event queue and record the duct for future output
+      ::
+      =.  session.channel-state.state
+        %+  ~(jab by session.channel-state.state)  channel-id
+        |=  =channel
+        channel(events ~, state [%| duct])
+      ::
+      [moves state]
+    ::  +acknowledge-events: removes events before :last-event-id on :channel-id
+    ::
+    ++  acknowledge-events
+      |=  [channel-id=@t last-event-id=@u]
+      ^-  server-state
+      %_    state
+          session.channel-state
+        %+  ~(jab by session.channel-state.state)  channel-id
+        |=  =channel
+        ^+  channel
+        ::  if the queue is empty, don't do anything else
+        ::
+        ?~  maybe-top=~(top to events.channel)
+          channel
+        ::  if the oldest event is older than the event queue, pop it
+        ::
+        ?:  (gte last-event-id id.u.maybe-top)
+          $(events.channel ~(nap to events.channel))
+        ::
+        channel
+      ==
     ::  +on-put-request: handles a PUT request
     ::
-    ::    
+    ::    PUT requests send commands from the client to the server. We receive
+    ::    a set of commands in JSON format in the body of the message.
     ::
     ++  on-put-request
-      |=  [uid=@t =http-request]
+      |=  [channel-id=@t =http-request]
       ^-  [(list move) server-state]
       ::  error when there's no body
       ::
@@ -798,7 +913,7 @@
       ?:  =(~ u.maybe-requests)
         %^  return-static-data-on-duct  400  'text/html'
         (internal-server-error %.y url.http-request ~)
-      ::  check for the existence of the uid
+      ::  check for the existence of the channel-id
       ::
       ::    if we have no session, create a new one set to expire in
       ::    :channel-timeout from now.
@@ -806,18 +921,18 @@
       ::    TODO: This is wrong. We always want to potentially update the
       ::    expiration time if there's no eventsource attached.
       ::
-      =?  ..on-put-request  !(~(has by session.channel-state.state) uid)
+      =?  ..on-put-request  !(~(has by session.channel-state.state) channel-id)
         ::
         =/  expiration-time=@da  (add now channel-timeout)
         %_    ..on-put-request
             session.channel-state.state
-          %+  ~(put by session.channel-state.state)  uid
-          [`expiration-time 0 ~ ~ ~]
+          %+  ~(put by session.channel-state.state)  channel-id
+          [[%& expiration-time] 0 ~ ~]
         ::
             moves
           :_  moves
           ^-  move
-          [duct %pass /channel/timeout/[uid] %b %wait expiration-time]
+          [duct %pass /channel/timeout/[channel-id] %b %wait expiration-time]
         ==
       ::  for each request, execute the action passed in
       ::
@@ -855,7 +970,7 @@
         =.  gall-moves
           :_  gall-moves
           ^-  move
-          :^  duct  %pass  /channel/poke/[uid]
+          :^  duct  %pass  /channel/poke/[channel-id]/(scot %ud request-id.i.requests)
           =,  i.requests
           [%g %deal `sock`[our ship] `cush:gall`[app %punk mark %json !>(json)]]
         ::
@@ -866,14 +981,15 @@
         =.  gall-moves
           :_  gall-moves
           ^-  move
-          :^  duct  %pass  /channel/subscription/[uid]
+          :^  duct  %pass
+            /channel/subscription/[channel-id]/(scot %ud request-id.i.requests)
           =,  i.requests
           [%g %deal [our ship] `cush:gall`[app %peel %json path]]
         ::  TODO: Check existence to prevent duplicates?
         ::
         =.  session.channel-state.state
-          %+  ~(jab by session.channel-state.state)  uid
-          |=  =^channel
+          %+  ~(jab by session.channel-state.state)  channel-id
+          |=  =channel
           ^+  channel
           =,  i.requests
           channel(subscriptions [[ship app path] subscriptions.channel])
@@ -883,18 +999,117 @@
           %unsubscribe
         !!
       ==
+    ::  +on-gall-response: turns a gall response into an event
+    ::
+    ++  on-gall-response
+      |=  [channel-id=@t request-id=@ud =cuft:gall]
+      ^-  [(list move) server-state]
+      ::
+      ?+    -.cuft  ~|([%invalid-gall-response -.cuft] !!)
+          %coup
+        =/  =json
+          =,  enjs:format
+          %-  pairs  :~
+            ['response' [%s 'poke']]
+            ['id' (numb request-id)]
+            ?~  p.cuft
+              ['ok' [%s 'ok']]
+            ['err' (wall (render-tang-to-wall 100 u.p.cuft))]
+          ==
+        ::
+        (emit-event channel-id [(en-json:html json)]~)
+      ::
+          %diff
+        =/  =json
+          =,  enjs:format
+          %-  pairs  :~
+            ['response' [%s 'diff']]
+            ['id' (numb request-id)]
+            :-  'json'
+            ?>  =(%json p.p.cuft)
+            ((hard json) q.q.p.cuft)
+          ==
+        ::
+        (emit-event channel-id [(en-json:html json)]~)
+      ::
+          %reap
+        =/  =json
+          =,  enjs:format
+          %-  pairs  :~
+            ['response' [%s 'subscribe']]
+            ['id' (numb request-id)]
+            ?~  p.cuft
+              ['ok' [%s 'ok']]
+            ['err' (wall (render-tang-to-wall 100 u.p.cuft))]
+          ==
+        ::
+        (emit-event channel-id [(en-json:html json)]~)
+      ==
+    ::  +emit-event: records an event occurred, possibly sending to client
+    ::
+    ::    When an event occurs, we need to record it, even if we immediately
+    ::    send it to a connected browser so in case of disconnection, we can
+    ::    resend it.
+    ::
+    ::    This function is responsible for taking the raw json lines and
+    ::    converting them into a text/event-stream. The :event-stream-lines
+    ::    then may get sent, and are stored for later resending until
+    ::    acknowledged by the client.
+    ::
+    ++  emit-event
+      |=  [channel-id=@t json-text=wall]
+      ^-  [(list move) server-state]
+      ::
+      =/  channel=channel
+        (~(got by session.channel-state.state) channel-id)
+      ::
+      =/  event-id  next-id.channel
+      ::
+      =/  event-stream-lines=wall
+        %-  weld  :_  [""]~
+        :-  "id: {<event-id>}"
+        %+  turn  json-text
+        |=  =tape
+        (weld "data: " tape)
+      ::  if a client is connected, send this event to them.
+      ::
+      =?  moves  ?=([%| *] state.channel)
+        :_  moves
+        :+  p.state.channel  %give
+        :*  %http-response  %continue
+        ::
+            ^=  data
+            :-  ~
+            %-  as-octs:mimes:html
+            (crip (of-wall:format event-stream-lines))
+        ::
+            complete=%.n
+        ==
+      ::
+      :-  moves
+      %_    state
+          channel-state
+        %+  ~(jab by session.channel-state.state)  channel-id
+        |=  =^channel
+        ^+  channel
+        ::
+        %_  channel
+          next-id  +(next-id.channel)
+          events  (~(put to events.channel) [event-id event-stream-lines])
+        ==
+      ==
     ::  +on-channel-timeout: we received a wake to clear an old session
     ::
     ++  on-channel-timeout
-      |=  uid=@t
+      |=  channel-id=@t
       ^-  [(list move) server-state]
       ::
       =/  session
-        (~(got by session.channel-state.state) uid)
+        (~(got by session.channel-state.state) channel-id)
       ::
       :_  %_    state
               session.channel-state
-            (~(del by session.channel-state.state) uid)
+            (~(del by session.channel-state.state) channel-id)
           ==
       ::  produce a list of moves which cancels every gall subscription
       ::
@@ -904,7 +1119,7 @@
       ::  todo: double check this; which duct should we be canceling on? does
       ::  gall strongly bind to a duct as a cause like ford does?
       ::
-      :^  duct  %pass  /channel/subscription/[uid]
+      :^  duct  %pass  /channel/subscription/[channel-id]
       [%g %deal [our ship] app %pull ~]
     --
   ::  +handle-ford-response: translates a ford response for the outside world
@@ -1329,11 +1544,20 @@
     ::
         %timeout
       =/  on-channel-timeout
-        on-channel-timeout:channel:(per-server-event event-args)
+        on-channel-timeout:by-channel:(per-server-event event-args)
       =^  moves  server-state.ax
         (on-channel-timeout i.t.t.wire)
       [moves light-gate]
     ::
+        ?(%poke %subscription)
+      ?>  ?=([%g %unto *] sign)
+      ?>  ?=([@ @ @t @ *] wire)
+      ~&  [%wire wire]
+      =/  on-gall-response
+        on-gall-response:by-channel:(per-server-event event-args)
+      =^  moves  server-state.ax
+        (on-gall-response i.t.t.wire `@ud`(slav %ud i.t.t.t.wire) p.sign)
+      [moves light-gate]
     ==
   --
 ::
