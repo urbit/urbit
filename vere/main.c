@@ -92,10 +92,8 @@ _main_getopt(c3_i argc, c3_c** argv)
   while ( (ch_i=getopt(argc, argv,"G:J:B:K:H:w:u:e:E:f:F:k:p:LabcdgqtvxPDRS")) != -1 ) {
     switch ( ch_i ) {
       case 'J': {
-        // XX should set path to ivory pill
-        // u3_Host.ops_u.lit_c = strdup(optarg);
-        // break;
-        return c3n;
+        u3_Host.ops_u.lit_c = strdup(optarg);
+        break;
       }
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);

@@ -452,11 +452,18 @@ u3_king_commence()
   */
   u3m_boot_pier();
   {
-    extern c3_w u3_Ivory_length_w;
-    extern c3_y u3_Ivory_pill_y[];
-    u3_noun     lit;
+    u3_noun lit;
 
-    lit = u3i_bytes(u3_Ivory_length_w, u3_Ivory_pill_y);
+    if ( 0 != u3_Host.ops_u.lit_c ) {
+      lit = u3m_file(u3_Host.ops_u.lit_c);
+    }
+    else {
+      extern c3_w u3_Ivory_length_w;
+      extern c3_y u3_Ivory_pill_y[];
+
+      lit = u3i_bytes(u3_Ivory_length_w, u3_Ivory_pill_y);
+    }
+
     u3v_boot_lite(lit);
   }
 
