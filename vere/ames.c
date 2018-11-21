@@ -407,17 +407,14 @@ static void
 _ames_io_start(u3_pier* pir_u)
 {
   u3_ames* sam_u = pir_u->sam_u;
-  // XX wrong, revisit
-  c3_s por_s     = u3_Host.ops_u.por_s;
-  // XX wrong, revisit
-  u3_noun rac    = u3do("clan:title", u3k(u3A->our));
+  c3_s por_s     = pir_u->por_s;
+  u3_noun who    = u3i_chubs(2, pir_u->who_d);
+  u3_noun rac    = u3do("clan:title", u3k(who));
 
   if ( c3__czar == rac ) {
-    // XX wrong, revisit
-    u3_noun imp = u3dc("scot", 'p', u3k(u3A->our));
+    u3_noun imp = u3dc("scot", 'p', u3k(who));
     c3_c* imp_c = u3r_string(imp);
-    // XX wrong, revisit
-    c3_y  num_y = u3r_byte(0, u3A->our);
+    c3_y  num_y = (c3_y)pir_u->who_d[0];
 
     por_s = _ames_czar_port(num_y);
 
@@ -473,6 +470,7 @@ _ames_io_start(u3_pier* pir_u)
 
   sam_u->liv = c3y;
   u3z(rac);
+  u3z(who);
 }
 
 /* _cttp_mcut_char(): measure/cut character.
@@ -549,8 +547,7 @@ u3_ames_ef_turf(u3_pier* pir_u, u3_noun tuf)
 
     u3z(tuf);
   }
-  // XX wrong, revisit
-  else if ( (c3n == u3A->fak) && (0 == sam_u->dns_c) ) {
+  else if ( (c3n == pir_u->fak_o) && (0 == sam_u->dns_c) ) {
     uL(fprintf(uH, "ames: turf: no domains\n"));
   }
 
