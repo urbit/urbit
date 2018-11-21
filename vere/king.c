@@ -449,7 +449,10 @@ u3_king_commence()
   u3_Host.lup_u = uv_default_loop();
 
   /* start up a "fast-compile" arvo for internal use only
+  ** (with hashboard always disabled)
   */
+  u3C.wag_w |= u3o_hashless;
+
   u3m_boot_pier();
   {
     u3_noun lit;

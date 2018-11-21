@@ -393,6 +393,12 @@ u3_serf_boot(void)
     dat   = u3nc(u3_nul, u3nt(u3i_chubs(1, &nex_d),
                               0, // XX u3r_mug(u3A->roc),
                               u3nc(u3k(u3A->our), u3k(u3A->fak))));
+
+    /* disable hashboard for fake ships
+    */
+    if ( c3y == u3A->fak ) {
+      u3C.wag_w |= u3o_hashless;
+    }
   }
 
   fprintf(stderr, "serf: play %lld\r\n", nex_d);
@@ -408,8 +414,9 @@ u3_serf_main(c3_i argc, c3_c* argv[])
   uv_loop_t* lup_u = uv_default_loop();
   c3_c*      dir_c = argv[1];
   c3_c*      key_c = argv[2];
+  c3_c*      wag_c = argv[3];
 
-  c3_assert(3 == argc);
+  c3_assert(4 == argc);
 
   /* load passkey
   */
@@ -418,6 +425,12 @@ u3_serf_main(c3_i argc, c3_c* argv[])
                                          &u3V.key_d[1],
                                          &u3V.key_d[2], 
                                          &u3V.key_d[3]);
+  }
+
+  /* load runtime config
+  */
+  {
+    sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
   }
 
   /* boot image
