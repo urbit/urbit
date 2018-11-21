@@ -285,7 +285,6 @@ _ames_lane_ip(u3_noun lan, c3_s* por_s, c3_w* pip_w)
 void
 u3_ames_ef_bake(u3_pier* pir_u)
 {
-  // XX wrong, revisit
   u3_noun pax = u3nq(u3_blip, c3__newt, u3k(u3A->sen), u3_nul);
 
   u3_pier_plan(pax, u3nc(c3__barn, u3_nul));

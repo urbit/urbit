@@ -1572,6 +1572,17 @@ _pier_zen()
 }
 #endif
 
+/* _pier_loop_time(): set time.
+*/
+static void
+_pier_loop_time(void)
+{
+  struct timeval tim_tv;
+
+  gettimeofday(&tim_tv, 0);
+  u3v_time(u3_time_in_tv(&tim_tv));
+}
+
 /* _pier_loop_init(): initialize loop handlers.
 */
 static void
@@ -1598,6 +1609,12 @@ static void
 _pier_loop_init_pier(u3_pier* pir_u)
 {
   c3_l cod_l;
+
+  _pier_loop_time();
+
+  //  for i/o drivers that still use u3A->sen
+  //
+  u3v_numb();
 
   cod_l = u3a_lush(c3__ames);
   u3_ames_io_init(pir_u);
@@ -1712,17 +1729,6 @@ _pier_loop_poll(u3_pier* pir_u)
   cod_l = u3a_lush(c3__behn);
   u3_behn_io_poll(pir_u);
   u3a_lop(cod_l);
-}
-
-/* _pier_loop_time(): set time.
-*/
-static void
-_pier_loop_time(void)
-{
-  struct timeval tim_tv;
-
-  gettimeofday(&tim_tv, 0);
-  u3v_time(u3_time_in_tv(&tim_tv));
 }
 
 #if 0

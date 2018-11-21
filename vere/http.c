@@ -631,7 +631,6 @@ _http_serv_link(u3_http* htp_u)
     htp_u->sev_l = 1 + u3_Host.htp_u->sev_l;
   }
   else {
-    // XX wrong, revisit
     htp_u->sev_l = u3A->sev_l;
   }
 
@@ -1326,7 +1325,6 @@ u3_http_ef_bake(void)
     u3z(hot);
   }
 
-  // XX wrong, revisit
   u3_noun pax = u3nq(u3_blip, c3__http, u3k(u3A->sen), u3_nul);
 
   u3_pier_plan(pax, u3nc(c3__born, ipf));
@@ -1445,7 +1443,6 @@ _http_serv_start_all(void)
   {
     c3_assert( u3_none != non );
 
-    // XX wrong, revisit
     u3_noun pax = u3nq(u3_blip, c3__http, u3k(u3A->sen), u3_nul);
     u3_pier_plan(pax, u3nt(c3__live, non, sec));
   }
@@ -2301,7 +2298,6 @@ _proxy_ward_plan(u3_ward* rev_u)
 {
   // XX confirm duct
   u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
-                     // XX wrong, revisit
                      u3nc(u3k(u3A->sen), u3_nul));
 
   u3_noun wis = u3nc(c3__wise, u3nq(u3k(rev_u->sip),
