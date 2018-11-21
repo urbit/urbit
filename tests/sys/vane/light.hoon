@@ -815,7 +815,7 @@
       now=(add ~1111.1.2 ~m1)
       scry=*sley
       ^=  take-args
-        :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-blah]
+        :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  (hypo sign:light-gate)
             :-  *type
             [%g %unto %coup ~]
@@ -830,7 +830,7 @@
       now=(add ~1111.1.2 ~m1)
       scry=*sley
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-blah]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:light-gate)
             :-  *type
             [%g %unto %reap ~]
@@ -845,7 +845,7 @@
       now=(add ~1111.1.2 ~m2)
       scry=*sley
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-blah]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:light-gate)
             :-  *type
             [%g %unto %diff %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
@@ -900,9 +900,9 @@
               ::
                 complete=%.n
             ==
-            ::  TODO: Need to cancel on the original duct!
             ::
-            :*  duct=~[/http-get-open]  %pass  /channel/timeout/'0123456789abcdef'
+            :*  duct=~[/http-put-request]  %pass
+                /channel/timeout/'0123456789abcdef'
                 [%b %rest ~1111.1.2..12.00.00]
     ==  ==  ==
   ::
@@ -1159,7 +1159,7 @@
       now=~1111.1.2
       scry=*sley
       ^=  call-args
-        :*  duct=~[/http-blah]  ~
+        :*  duct=~[/http-put-request]  ~
             %inbound-request
             %.n
             [%ipv4 .192.168.1.1]
@@ -1207,11 +1207,11 @@
             card.i.t.moves
         ::
           %+  expect-eq
-            !>  [~[/http-blah] %give %http-response %start 200 ~ ~ %.y]
+            !>  [~[/http-put-request] %give %http-response %start 200 ~ ~ %.y]
             !>  i.t.t.moves
         ::
           %+  expect-eq
-            !>  :*  ~[/http-blah]  %pass
+            !>  :*  ~[/http-put-request]  %pass
                     /channel/timeout/'0123456789abcdef'
                     %b  %wait  (add ~1111.1.2 ~h12)
                 ==

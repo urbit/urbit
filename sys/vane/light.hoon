@@ -213,6 +213,16 @@
       ::
       session=(map @t channel)
   ==
+::  +timer: a reference to a timer so we can cancel or update it.
+::
++$  timer
+  $:  ::  date: time when the timer will fire
+      ::
+      date=@da
+      ::  duct: duct that set the timer so we can cancel
+      ::
+      =duct
+  ==
 ::  channel: connection to the browser
 ::
 ::    Channels are the main method where a webpage communicates with Gall
@@ -226,6 +236,8 @@
 ::    'Last-Event-Id: ' header to the server; the server then resends all
 ::    events since then.
 ::
+::    TODO: Send \n as a heartbeat every 20 seconds.
+::
 +$  channel
   $:  ::  channel-state: expiration time or the duct currently listening
       ::
@@ -235,7 +247,7 @@
       ::    to reap the subscriptions. This timer shouldn't be too short
       ::    because the
       ::
-      state=(each @da duct)
+      state=(each timer duct)
       ::  next-id: next sequence number to use
       ::
       next-id=@ud
@@ -813,13 +825,11 @@
         (internal-server-error %.y url.http-request ~)
       ::  when opening an event-stream, we must cancel our timeout timer
       ::
-      ::    TODO: Need to cancel on the original duct!
-      ::
       =.  moves
         :_  moves
         ^-  move
-        :^  duct  %pass  /channel/timeout/[channel-id]
-        [%b %rest p.state.u.maybe-channel]
+        :^  duct.p.state.u.maybe-channel  %pass  /channel/timeout/[channel-id]
+        [%b %rest date.p.state.u.maybe-channel]
       ::  the http-request may include a 'Last-Event-Id' header
       ::
       =/  maybe-last-event-id=(unit @ud)
@@ -927,7 +937,7 @@
         %_    ..on-put-request
             session.channel-state.state
           %+  ~(put by session.channel-state.state)  channel-id
-          [[%& expiration-time] 0 ~ ~]
+          [[%& expiration-time duct] 0 ~ ~]
         ::
             moves
           :_  moves
@@ -1549,10 +1559,12 @@
         (on-channel-timeout i.t.t.wire)
       [moves light-gate]
     ::
+      ::    %wake
+      ::  [~ move
+    ::
         ?(%poke %subscription)
       ?>  ?=([%g %unto *] sign)
       ?>  ?=([@ @ @t @ *] wire)
-      ~&  [%wire wire]
       =/  on-gall-response
         on-gall-response:by-channel:(per-server-event event-args)
       =^  moves  server-state.ax
