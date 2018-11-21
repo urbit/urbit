@@ -39,4 +39,21 @@
 =+  whole-formula=q:(~(mint ut %noun) %noun whole-hoon)
 ~&  %ivory-compiled
 ::
-whole-formula
+::  tang: standard library (%zuse) installation event
+::
+=/  tang
+  =/  pax  (weld sys /zuse)
+  =/  txt  .^(@ %cx (weld pax /hoon))
+  `ovum`[/vane/zuse [%veer %$ pax txt]]
+::
+::  installed: kernel with tang installed
+::
+~&  %tang-installing
+=/  installed
+  .*(0 [%7 whole-formula [%9 2 %10 [6 %1 now tang] %0 1]])
+~&  %tang-installed
+::
+::  produce both whole-formula (for jet registration)
+::  and a kernel with the standard library already installed
+::
+[%7 whole-formula %1 installed]
