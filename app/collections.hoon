@@ -217,14 +217,7 @@
       %circles
     ?>  ?=(%circles -.piz) 
     =/  noms=(set name:hall)  (~(dif in cis.piz) (sy ~[%inbox %i %public]))
-    =/  circs=(map circle:hall (unit config:hall))
-      ^-  (map circle:hall (unit config:hall))
-      %-  ~(rep in noms)
-      |=  [n=name:hall out=(map circle:hall (unit config:hall))]
-      ^-  (map circle:hall (unit config:hall))
-      (~(put by out) [[our.bol n] ~])
-    ::
-    :_  this(our-circles.str.sta (~(uni in our-circles.str.sta) circs))
+    :_  this(our-circles.str.sta (~(uni in our-circles.str.sta) noms))
     ^-  (list move)
     %+  turn  ~(tap in noms)
     |=  nom=name:hall
@@ -236,10 +229,15 @@
       %inbox
     ?>  ?=(%circle -.piz)
     :-  ~
-    %=  this
-      con.inbox.str.sta    `loc.cos.piz
-      env.inbox.str.sta    nes.piz
-      sub-circles.str.sta  (~(run by rem.cos.piz) |=(a=config:hall `a))
+    %=    this
+        con.inbox.str.sta  `loc.cos.piz
+    ::
+        env.inbox.str.sta  nes.piz
+    ::
+        circles.str.sta
+      %-  ~(uni in circles.str.sta)
+      ^-  (map circle:hall (unit config:hall))
+      (~(run by rem.cos.piz) |=(a=config:hall `a))
     ==
   ::
   ::  %invites: fill invite messages with prize data
@@ -256,10 +254,14 @@
       %our
     ?>  ?=(%circle -.piz)
     =/  nom=name:hall  &2:wir
+    ::  XX todo: send rumor or let config-change handle it?
+    ::
     :-  ~
-    %=  this
-      our-circles.str.sta  
-        (~(put by our-circles.str.sta) [our.bol nom] `loc.cos.piz)
+    %=    this
+        circles.str.sta  
+      (~(put by circles.str.sta) [our.bol nom] `loc.cos.piz)
+    ::
+      our-circles.str.sta  (~(put in our-circles.str.sta) nom)
     ==
   ==
 ::
@@ -277,32 +279,35 @@
   ::  %circles:
   ::
       %circles
+    ~&  %circles
     ?>  ?=(%circles -.rum)
-    =/  circ=circle:hall  [our.bol cir.rum]
     ?:  add.rum
-      :_  this(our-circles.str.sta (~(put by our-circles.str.sta) circ ~))
+      :_  this(our-circles.str.sta (~(put in our-circles.str.sta) cir.rum))
       [ost.bol %peer /our/[cir.rum] [our.bol %hall] /circle/[cir.rum]/config]~
-    :_  this(our-circles.str.sta (~(del by our-circles.str.sta) circ))
-    :-  [ost.bol %pull /our/[cir.rum] [our.bol %hall] ~]
-    (send-rumor %circle-change %our circ ~)
+    :_  this(our-circles.str.sta (~(del in our-circles.str.sta) cir.rum))
+    [ost.bol %pull /our/[cir.rum] [our.bol %hall] ~]~
   ::
   ::  %inbox:
   ::
       %inbox
     ?>  ?=(%circle -.rum)
     ?+  -.rum.rum
-      ~&  unprocessed-rumor+rum.rum
+      ~&  inbox-unprocessed-rumor+rum.rum
       [~ this]
     ::
     ::  %remove:
     ::
         %remove
+      ~&  %inbox-remove
         ~&  %removed-story
       [~ this]
     ::
     ::  %gram: inbox has recieved messages
     ::
         %gram
+      ~&  %inbox-gram
+      ::  XX TODO: handle stack trace message when foreign circle is killed?
+      ::
       :-  (send-rumor [%new-msg %inbox nev.rum.rum])
       this(env.inbox.str.sta [nev.rum.rum env.inbox.str.sta])
     ::
@@ -311,45 +316,67 @@
         %config
       =*  circ  cir.rum.rum
       ?+  -.dif.rum.rum
-        ~&  unprocessed-config+dif.rum.rum
+        ~&  inbox-unprocessed-config+dif.rum.rum
         [~ this]
+      ::
+      ::  %remove: circle has been erased
+      ::
+          %remove
+        ~&  %inbox-config-remove
+        :-  (send-rumor %config-change cir.rum.rum ~)
+        %=    this
+            circles.str.sta
+          (~(del by circles.str.sta) cir.rum.rum)
+        ==
       ::
       ::  %source: the sources of our inbox have changed
       ::
           %source
+        ~&  %inbox-config-source
         ?.  =(circ [our.bol %inbox])
           [~ this]
         ::  we've added a source to our inbox  
         ::
+        ?>  ?=(^ con.inbox.str.sta)
         ?:  add.dif.rum.rum
-          ?>  ?=(^ con.inbox.str.sta)
           =/  conf=config:hall
             %=  u.con.inbox.str.sta
-              src 
-              (~(put by src.u.con.inbox.str.sta) src.dif.rum.rum)
+              src  (~(put in src.u.con.inbox.str.sta) src.dif.rum.rum)
             ==
-          :-  (send-rumor %circle-change %our [our.bol %inbox] `conf)
-          %=  this
-            con.inbox.str.sta  `conf
+          :-  (send-rumor %config-change [our.bol %inbox] `conf)
+          %=    this
+              con.inbox.str.sta  `conf
           ::
-            sub-circles.str.sta 
-              (~(put by sub-circles.str.sta) cir.src.dif.rum.rum ~)
+              circles.str.sta 
+            ?:  (~(has by circles.str.sta) cir.src.dif.rum.rum)
+              circles.str.sta
+            (~(put by circles.str.sta) cir.src.dif.rum.rum ~)
           ==
         ::  we've removed a source from our inbox  
         ::
-        :-  (send-rumor %circle-change %sub cir.src.dif.rum.rum ~)
-        %=  this
-          sub-circles.str.sta 
-            (~(del by sub-circles.str.sta) cir.src.dif.rum.rum)
+        =/  conf=config:hall
+          %=  u.con.inbox.str.sta
+            src  (~(del in src.u.con.inbox.str.sta) src.dif.rum.rum)
+          ==
+        ~&  inbox+conf
+        :-  (send-rumor %config-change [our.bol %inbox] `conf)
+        %=    this
+            con.inbox.str.sta  `conf
+        ::
+            circles.str.sta 
+          ?:  =(our.bol hos.cir.src.dif.rum.rum)
+            circles.str.sta
+          (~(del by circles.str.sta) cir.src.dif.rum.rum)
         ==
       ::
       ::  %full: recieved a full config update for one of our sources
       ::
           %full
+        ~&  %inbox-config-full
         =*  conf  cof.dif.rum.rum
-        :-  (send-rumor %circle-change %sub circ `conf)
+        :-  (send-rumor %config-change circ `conf)
         %=  this
-          sub-circles.str.sta  (~(put by sub-circles.str.sta) circ `conf)
+          circles.str.sta  (~(put by circles.str.sta) circ `conf)
         ==
       ==
     ==
@@ -357,6 +384,7 @@
   ::  %invites:
   ::
       %invites
+    ~&  %invites
     ?>  ?=(%circle -.rum)
     ?>  ?=(%gram -.rum.rum)
     :-  (send-rumor [%new-msg %invites nev.rum.rum])
@@ -367,13 +395,13 @@
       %our
     ?>  ?=(%circle -.rum)
     ?+  -.rum.rum
-      ~&  unprocessed-rumor+rum.rum
+      ~&  our-unprocessed-rumor+rum.rum
       [~ this]
     ::
     ::  %remove:
     ::
         %remove
-        ~&  %removed-story
+        ~&  %our-remove
       [~ this]
     ::
     ::  %config:
@@ -382,16 +410,17 @@
       =*  circ  cir.rum.rum
       =*  diff  dif.rum.rum
       ?+  -.diff
-        ~&  unprocessed-config+diff
+        ~&  our-unprocessed-config+diff
         [~ this]
       ::
       ::  %full: recieved a full config update for one of our sources
       ::
           %full
+        ~&  %our-config-full
         =*  conf  cof.dif.rum.rum
-        :-  (send-rumor %circle-change %our circ `conf)
+        :-  (send-rumor %config-change circ `conf)
         %=  this
-          our-circles.str.sta  (~(put by our-circles.str.sta) circ `conf)
+          circles.str.sta  (~(put by circles.str.sta) circ `conf)
         ==
       ==
     ==
@@ -401,8 +430,9 @@
 ::
 ++  send-rumor
   |=  rum=rumor
+  ~&  send-rumor+rum
   ^-  (list move)
-  %+  turn  (prey:pubsub:userlib /data bol)
+  %+  turn  (prey:pubsub:userlib /primary bol)
   |=  [=bone *]
   [bone %diff %collections-rumor rum]
 ::

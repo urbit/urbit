@@ -10,19 +10,20 @@
   ++  json
     =,  enjs:format
     ^-  ^json
+    %+  frond  %landscape
+    %+  frond  %rumor
     %+  frond  -.rum
     ?-  -.rum
-        %circle-change
+        %config-change
       %-  pairs
-      :~  [%which [%s wit.rum]]
-          [%circle (circ:enjs:hall-json cir.rum)]
+      :~  [%circle (circ:enjs:hall-json cir.rum)]
           [%config ?~(con.rum ~ (conf:enjs:hall-json u.con.rum))]
       ==
     ::
         %new-msg
       %-  pairs
       :~  [%circle [%s nom.rum]]
-          [%envelope (enve:enjs:hall-json env.rum)]
+          [%message (enve:enjs:hall-json env.rum)]
       ==
     ==
 

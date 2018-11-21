@@ -4,8 +4,7 @@
 /?  309
 /-  hall
 /+  cram, elem-to-react-json
-::
-::  
+:: ::  
 ~%  %collections-lib  ..is  ~
 |%
 +$  move  [bone card]
@@ -22,6 +21,7 @@
 +$  diff
   $%  [%collections-prize prize]
       [%collections-rumor rumor]
+      [%hall-rumor rumor:hall]
   ==
 ::
 +$  poke
@@ -35,30 +35,30 @@
   ==
 ::
 +$  streams
-  $:  ::  inbox config and the last 30 messages in it
+  $:  ::  inbox config and messages
       ::
       inbox=[con=(unit config:hall) env=(list envelope:hall)]
-      ::  names and configs of all circles we own
+      ::  names and configs of all circles we know about
       ::
-      our-circles=(map circle:hall (unit config:hall))
-      ::  names and configs of all circles we're subscribed to
+      circles=(map circle:hall (unit config:hall))
+      ::  names of all circles we own
       ::
-      sub-circles=(map circle:hall (unit config:hall))
+      our-circles=(set name:hall)
       ::  all the DM invites we've received
       ::
       invites=(list envelope:hall)
   ==
 ::
 +$  prize
-  $:  ::  inbox config and the last 30 messages in it
+  $:  ::  inbox config and messages
       ::
       inbox=[con=(unit config:hall) env=(list envelope:hall)]
-      ::  names and configs of all circles we own
+      ::  names and configs of all circles we know about
       ::
-      our-circles=(map circle:hall (unit config:hall))
-      ::  names and configs of all circles we're subscribed to
+      circles=(map circle:hall (unit config:hall))
+      ::  names of all circles we own
       ::
-      sub-circles=(map circle:hall (unit config:hall))
+      our-circles=(set name:hall)
       ::  all the DM invites we've received
       ::
       invites=(list envelope:hall)
@@ -68,7 +68,7 @@
   $%  ::  if config is given, either add new circle or update existing one
       ::  if config is nil then delete circle
       ::
-      [%circle-change wit=?(%our %sub) cir=circle:hall con=(unit config:hall)]
+      [%config-change cir=circle:hall con=(unit config:hall)]
       ::  recieved a new inbox message or DM invite
       ::
       [%new-msg nom=?(%inbox %invites) env=envelope:hall]
@@ -611,7 +611,7 @@
         %^  ta-hall-json  parent-path  'new collection' 
         (collection-notify pax meta.col.new)
       ::
-      =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
+      =.  ta-this  (ta-hall-create-circle pax name.meta.col.new)
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.new)
       |-
       ?~  items  ta-this
@@ -619,7 +619,7 @@
       $(items t.items)
     ::
         %both
-      =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
+      =.  ta-this  (ta-hall-create-circle pax name.meta.col.new)
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.new)
       =.  ta-this
       |-
@@ -940,7 +940,7 @@
   ::
   ++  ta-hall-create-circle
     ~/  %coll-ta-hall-create-circle
-    |=  [pax=path description=@t]
+    |=  [pax=path name=@t]
     ^+  ta-this
     =/  circ=circle:hall  (path-to-circle pax our.bol)
     =/  parent=circle:hall
@@ -948,7 +948,7 @@
         [our.bol %inbox]
       (path-to-circle (scag (dec (lent pax)) pax) our.bol)
     %-  ta-hall-actions
-    :~  [%create nom.circ description %journal]  
+    :~  [%create nom.circ name %journal]  
         [%source nom.parent & (sy `source:hall`[circ ~] ~)]
     ==
   ::
