@@ -859,7 +859,7 @@
   =^  results5  light-gate
     %-  light-call  :*
       light-gate
-      now=~1111.1.2
+      now=(add ~1111.1.2 ~m3)
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-get-open]  ~
@@ -900,11 +900,29 @@
               ::
                 complete=%.n
             ==
+            ::  opening the channel cancels the timeout timer
             ::
             :*  duct=~[/http-put-request]  %pass
                 /channel/timeout/'0123456789abcdef'
                 [%b %rest ~1111.1.2..12.00.00]
     ==  ==  ==
+  ::  we get a cancel when we notice the client has disconnected
+  ::
+  =^  results6  light-gate
+    %-  light-call  :*
+      light-gate
+      now=(add ~1111.1.2 ~m4)
+      scry=*sley
+      call-args=[duct=~[/http-get-open] ~ %cancel-inbound-request ~]
+      ^=  expected-moves
+        ^-  (list move:light-gate)
+        ::  closing the channel restarts the timeout timer
+        ::
+        :~  :*  duct=~[/http-get-open]  %pass
+                /channel/timeout/'0123456789abcdef'
+                %b  %wait  :(add ~1111.1.2 ~h12 ~m4)
+        ==  ==
+    ==
   ::
   ;:  weld
     results1
@@ -912,6 +930,82 @@
     results3
     results4
     results5
+    results6
+  ==
+::
+::
+++  test-channel-second-get-updates-timer
+  ::  common initialization
+  ::
+  =^  results1  light-gate  (perform-init-start-channel light-gate *sley)
+  ::  perform another poke to a different app
+  ::
+  ::    Since we haven't connected with a GET, the old timer should be canceled
+  ::    and a new one should be set.
+  ::  send the channel a poke and a subscription request
+  ::
+  =^  results2  light-gate
+    %-  light-call-with-comparator  :*
+      light-gate
+      now=(add ~1111.1.2 ~m1)
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-put-request]  ~
+            %inbound-request
+            %.n
+            [%ipv4 .192.168.1.1]
+            %'PUT'
+            '/~/channel/0123456789abcdef'
+            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+        ::
+            :-  ~
+            %-  as-octs:mimes:html
+            '''
+            [{"action": "poke",
+              "id": 2,
+              "ship": "nul",
+              "app": "eight",
+              "mark": "a",
+              "json": 9}]
+            '''
+        ==
+      ^=  comparator
+        |=  moves=(list move:light-gate)
+        ^-  tang
+        ::
+        ?.  ?=([^ ^ ^ ^ ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-gall-deal
+            :*  /channel/poke/'0123456789abcdef'/'2'
+                [~nul ~nul]  %eight
+                %punk  %a  %json  !>([%n '9'])
+            ==
+            card.i.moves
+        ::
+          %+  expect-eq
+            !>  [~[/http-put-request] %give %http-response %start 200 ~ ~ %.y]
+            !>  i.t.moves
+        ::
+          %+  expect-eq
+            !>  :*  ~[/http-put-request]  %pass
+                    /channel/timeout/'0123456789abcdef'
+                    %b  %rest  (add ~1111.1.2 ~h12)
+                ==
+            !>  i.t.t.moves
+        ::
+          %+  expect-eq
+            !>  :*  ~[/http-put-request]  %pass
+                    /channel/timeout/'0123456789abcdef'
+                    %b  %wait  :(add ~1111.1.2 ~h12 ~m1)
+                ==
+            !>  i.t.t.t.moves
+    ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
   ==
 ::
 ++  light-call
