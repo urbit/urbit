@@ -349,15 +349,12 @@ _ames_time_cb(uv_timer_t* tim_uo)
     uv_timer_start(&sam_u->tim_u, _ames_time_cb, 1000, 0);
   }
   else {
-    u3_lo_open();
-
     sam_u->law_w = time(0);
     {
       u3_pier_plan
         (u3nt(u3_blip, c3__ames, u3_nul),
          u3nc(c3__wake, u3_nul));
     }
-    u3_lo_shut(c3n);
   }
 }
 
@@ -376,7 +373,6 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     _ames_free(buf_u->base);
   }
   else {
-    u3_lo_open();
     {
       u3_noun             msg   = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
 
@@ -396,7 +392,6 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 #endif
     }
     _ames_free(buf_u->base);
-    u3_lo_shut(c3y);
   }
 }
 

@@ -1330,8 +1330,3 @@
 
         void
         u3_king_commence();
-
-      //  XX temporary for compiling, remove
-      //
-#define u3_lo_open()  (void*)0
-#define u3_lo_shut(a)  (void*)0

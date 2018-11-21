@@ -449,8 +449,6 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     h2o_send_error_generic(rec_u, 400, msg_c, msg_c, 0);
   }
   else {
-    u3_lo_open();
-
     h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
                            callbacks->get_socket(rec_u->conn);
     u3_hcon* hon_u = (u3_hcon*)suv_u->han_u;
@@ -466,8 +464,6 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     uv_timer_start(req_u->tim_u, _http_req_timer_cb, 300 * 1000, 0);
 
     _http_req_dispatch(req_u, req);
-
-    u3_lo_shut(c3y);
   }
 
   return 0;
@@ -1388,9 +1384,6 @@ _http_serv_start_all(void)
 
   c3_assert( 0 != for_u );
 
-  // disabled, as this causes a memory leak
-  // u3_lo_open();
-
   // if the SSL_CTX existed, it'll be freed with the servers
   u3_Host.tls_u = 0;
 
@@ -1449,9 +1442,6 @@ _http_serv_start_all(void)
 
   _http_write_ports_file(u3_Host.dir_c);
   _http_form_free();
-
-  // disabled, see above
-  // u3_lo_shut(c3y);
 }
 
 /* _http_serv_restart(): gracefully shutdown, then start servers.
@@ -2336,8 +2326,6 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
     _proxy_conn_close(con_u);
   }
   else {
-    // XX u3_lo_open();
-
     rev_u->por_s = ntohs(add_u.sin_port);
 
     {
@@ -2359,8 +2347,6 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
 
     // XX how long?
     uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 300 * 1000, 0);
-
-    // XX u3_lo_shut(c3y);
   }
 }
 
@@ -2698,8 +2684,6 @@ _proxy_peek_read_cb(uv_stream_t* don_u,
   else {
     uv_read_stop(don_u);
 
-    u3_lo_open();
-
     if ( 0 == con_u->buf_u.base ) {
       con_u->buf_u = uv_buf_init(buf_u->base, siz_w);
     }
@@ -2716,8 +2700,6 @@ _proxy_peek_read_cb(uv_stream_t* don_u,
     }
 
     _proxy_peek(con_u);
-
-    u3_lo_shut(c3y);
   }
 }
 
