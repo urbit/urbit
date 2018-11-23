@@ -434,10 +434,11 @@
       [p.q.r.gum ~ [[p.gum p.r.gum] q.gum] q.q.r.gum]
     ::
         $give
-      ?>  ?=(^ q.gum)
-      ?.  ?=(^ i.q.gum)
-        ~&  [%jack-bad-duct q.gum]
-        ~&  [%jack-bad-card +>-.p.r.gum]
+      ?.  ?&  ?=(^ q.gum)
+              ?=(^ i.q.gum)
+          ==
+        ~|  [%jack-bad-duct q.gum]
+        ~|  [%jack-bad-card p.gum (@tas +>-.p.r.gum)]
         !!
       ~?  &(!lac |(!=(%blit +>-.p.r.gum) !=(%d p.gum)))
         [%give p.gum (@tas +>-.p.r.gum) `duct`q.gum]
