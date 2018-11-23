@@ -1273,6 +1273,7 @@
         $crew  `%c
         $crow  `%c
         $deal  `%g
+        $dirk  `%c
         $drop  `%c
         $flog  `%d
         $info  `%c
