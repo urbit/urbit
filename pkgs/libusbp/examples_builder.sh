@@ -6,8 +6,10 @@ mv libusbp-* libusbp
 mkdir build
 cd build
 
-$host-g++ -std=gnu++11 ../libusbp/examples/lsusb/*.cpp -o lsusb$exe_suffix \
-  $(pkg-config-cross --cflags --libs libusbp-1)
+FLAGS="-std=gnu++11 $(pkg-config-cross --cflags --libs libusbp-1)"
+
+$host-g++ ../libusbp/examples/lsusb/*.cpp -o lsusb$exe_suffix $FLAGS
+$host-g++ ../libusbp/examples/lsport/*.cpp -o lsport$exe_suffix $FLAGS
 
 mkdir -p $out/bin
-cp lsusb$exe_suffix $out/bin/
+cp * $out/bin/
