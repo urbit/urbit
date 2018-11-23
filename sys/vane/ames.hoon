@@ -1300,6 +1300,8 @@
     ::
         %ouzo
       ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
+      ~|  [%ames-bad-duct duct=gad.fox lane=p.bon]
+      ?>  ?=(^ gad.fox)
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
