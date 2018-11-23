@@ -334,4 +334,15 @@
           ::        ralmed-dinfeb-fopbyr-sanbet-sovmyl-dozsut-
           ::        mogsyx-mapwyc-sorrup-ricnec-marnys-lignex
         [6 `'froot loops']
+::
+++  test-derive-network-seed-rev-0
+  %+  expect-eq
+    !>  (seed:ds 64^0x5eed "network0")
+    !>  (derive-network-seed 0x5eed 0)
+::
+++  test-derive-network-seed-rev-up
+  %+  expect-eq
+    !>  |
+    !>  .=  (seed:ds 64^0x5eed "network1")
+        (derive-network-seed 0x5eed 1)
 --
