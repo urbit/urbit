@@ -772,7 +772,7 @@ u3a_celloc(void)
       return u3a_walloc(c3_wiseof(u3a_cell));
     } 
     else {
-      if ( c3n == u3a_cellblock(256 << 10) ) {
+      if ( c3n == u3a_cellblock(4096) ) {
         return u3a_walloc(c3_wiseof(u3a_cell));
       }
       cel_p = u3R->all.cel_p;
