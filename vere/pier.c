@@ -989,6 +989,12 @@ _pier_disk_consolidate(u3_pier*  pir_u,
           }
           _pier_insert_ovum(pir_u, 0, ovo);
         }
+
+        /* XX boot sequence woes
+        */
+        {
+          u3_ames_ef_bake(pir_u);
+        }
        
         /* insert filesystem install event
         */
