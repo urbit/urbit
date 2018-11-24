@@ -1250,6 +1250,12 @@ _pier_work_poke(void*   vod_p,
               pir_u->fak_o = u3t(r_jar);
               pir_u->who_d[0] = who_d[0];
               pir_u->who_d[1] = who_d[1];
+
+              /*  Disable networking for fake ships
+              */
+              if ( c3y == pir_u->fak_o ) {
+                u3_Host.ops_u.net = c3n;
+              }
             }
           }
 
