@@ -156,7 +156,7 @@
     !>  =-  -(network *uode)
         %-  full-wallet-from-ticket
         :+  ~nec  ::  1
-          4^0x1.0102  ::TODO  .~doznec-marbud
+          4^.~doznec-marbud
         [0 ~]
 ::
 ++  test-generate-wallet-1
@@ -246,7 +246,7 @@
         =-  -(voting *node)
         %-  full-wallet-from-ticket
         :+  ~matbyr  ::  65.012
-          8^0x102.af04.0506.0798  ::TODO  .~marbud-tidsev-litsut-hidfep
+          8^.~marbud-tidsev-litsut-hidfep
         [0 ~]
 ::
 ++  test-generate-wallet-2
@@ -326,12 +326,20 @@
         %-  full-wallet-from-ticket
         :+  ~zod
           :-  48
-          0xc5a.b5ba.ea8e.e798.21d3.fc9f.8876.6da1.
-           95bd.d4a6.3375.32fe.8f7f.d92f.d5f4.446a.
-           f9bf.0006.a211.823b.fbc9.a701.01e6.6f1f
-          ::TODO  .~wacfus-dabpex-danted-mosfep-pasrud-lavmer-
-          ::        nodtex-taslus-pactyp-milpub-pildeg-fornev-
-          ::        ralmed-dinfeb-fopbyr-sanbet-sovmyl-dozsut-
-          ::        mogsyx-mapwyc-sorrup-ricnec-marnys-lignex
+          .~wacfus-dabpex-danted-mosfep-pasrud-lavmer-
+            nodtex-taslus-pactyp-milpub-pildeg-fornev-
+            ralmed-dinfeb-fopbyr-sanbet-sovmyl-dozsut-
+            mogsyx-mapwyc-sorrup-ricnec-marnys-lignex
         [6 `'froot loops']
+::
+++  test-derive-network-seed-rev-0
+  %+  expect-eq
+    !>  (seed:ds 64^0x5eed "network0")
+    !>  (derive-network-seed 0x5eed 0)
+::
+++  test-derive-network-seed-rev-up
+  %+  expect-eq
+    !>  |
+    !>  .=  (seed:ds 64^0x5eed "network1")
+        (derive-network-seed 0x5eed 1)
 --
