@@ -74,6 +74,7 @@
 ++  seat                                                ::  agent state
   $:  misvale/misvale-data                              ::  bad reqs
       vel/worm                                          ::  cache
+      arms=(map [term path] (unit (pair @ud term)))     ::  ap-find cache
       mom/duct                                          ::  control duct 
       liv/?                                             ::  unstopped
       toc/torc                                          ::  privilege
@@ -643,7 +644,7 @@
           =+  `path`(flop tyl)
           ?>  ?=(^ -)
           [mar=i tyl=(flop t)]
-      =+  cug=(ap-find %peek ren tyl)
+      =^  cug  +>.$  (ap-find %peek ren tyl)
       ?~  cug
         ((slog leaf+"peek find fail" >tyl< >mar< ~) [~ ~])
       =^  arm  +>.$  (ap-farm q.u.cug)
@@ -680,7 +681,7 @@
       ~/  %ap-diff
       |=  {her/ship pax/path cag/cage}
       ::  =.  q.cag  (sped q.cag)
-      =+  cug=(ap-find [%diff p.cag +.pax])
+      =^  cug  +>.$  (ap-find [%diff p.cag +.pax])
       ?~  cug
         %.  [| her +.pax]
         ap-pump:(ap-lame %diff (ap-suck "diff: no {<`path`[p.cag +.pax]>}"))
@@ -740,16 +741,27 @@
       [%& +(qel.ged (~(put by qel.ged) ost +(suy)))]
     ::
     ++  ap-find                                         ::  general arm
+      ~/  %ap-find
       |=  {cog/term pax/path}
-      =+  dep=0
-      |-  ^-  (unit (pair @ud term))
-      =+  ^=  spu
-          ?~  pax  ~ 
-          $(pax t.pax, dep +(dep), cog (ap-hype cog i.pax))
-      ?^  spu  spu
-      ?.((ap-fond cog) ~ `[dep cog])
+      ^-  [(unit (pair @ud term)) _+>]
+      ::  check cache
+      ?^  maybe-result=(~(get by arms) [cog pax])
+        [u.maybe-result +>.$]
+      ::
+      =/  result=(unit (pair @ud term))
+        =+  dep=0
+        |-  ^-  (unit (pair @ud term))
+        =+  ^=  spu
+            ?~  pax  ~
+            $(pax t.pax, dep +(dep), cog (ap-hype cog i.pax))
+        ?^  spu  spu
+        ?.((ap-fond cog) ~ `[dep cog])
+      ::
+      =.  arms  (~(put by arms) [cog pax] result)
+      [result +>.$]
     ::
     ++  ap-fond                                         ::  check for arm
+      ~/  %ap-fond
       |=  cog/term
       ^-  ?
       (slob cog p.hav)
@@ -779,6 +791,7 @@
       ==
     ::
     ++  ap-hype                                         ::  hyphenate
+      ~/  %ap-hype
       |=({a/term b/term} `term`(cat 3 a (cat 3 '-' b)))
     ::
     ++  ap-move                                         ::  process each move
@@ -1008,7 +1021,7 @@
       |=  pax/path
       ^+  +>
       =.  sup.ged  (~(put by sup.ged) ost [q.q.pry pax])
-      =+  cug=(ap-find %peer pax)
+      =^  cug  +>.$  (ap-find %peer pax)
       ?~  cug  +>.$
       =+  old=zip
       =.  zip  ~
@@ -1022,7 +1035,7 @@
       ~/  %ap-poke
       |=  cag/cage
       ^+  +>
-      =+  cug=(ap-find %poke p.cag ~)
+      =^  cug  +>.$  (ap-find %poke p.cag ~)
       ?~  cug
         (ap-give %coup `(ap-suck "no poke arm for {(trip p.cag)}"))
       ::  ~&  [%ap-poke dap p.cag cug]
@@ -1035,7 +1048,7 @@
     ++  ap-lame                                         ::  pour error
       |=  {wut/@tas why/tang}
       ^+  +>
-      =+  cug=(ap-find /lame)
+      =^  cug  +>.$  (ap-find /lame)
       ?~  cug
         =.  why  [>%ap-lame dap wut< (turn why |=(a/tank rose+[~ "! " ~]^[a]~))]
         ~>  %slog.`rose+["  " "[" "]"]^(flop why)
@@ -1060,7 +1073,7 @@
       ^+  +>
       ?.  &(?=({@ *} q.vax) ((sane %tas) -.q.vax))
         (ap-lame %pour (ap-suck "pour: malformed card"))
-      =+  cug=(ap-find [-.q.vax pax])
+      =^  cug  +>.$  (ap-find [-.q.vax pax])
       ?~  cug
         ?:  =(-.q.vax %went)
           +>.$
@@ -1078,7 +1091,7 @@
       ~/  %ap-purr
       |=  {wha/term pax/path cag/cage}
       ^+  +>
-      =+  cug=(ap-find [wha p.cag pax])
+      =^  cug  +>.$  (ap-find [wha p.cag pax])
       ?~  cug
         (ap-lame wha (ap-suck "{(trip wha)}: no {<`path`[p.cag pax]>}"))
       =+  ^=  arg  ^-  vase
@@ -1109,6 +1122,9 @@
           misvale
         ~?  !=(misvale *misvale-data)  misvale-drop+misvale
         *misvale-data                 ::  new app might mean new marks
+      ::
+          arms
+        ~
       ::
           dub
         :_(dub ?~(gac [%& dap ?~(vux %boot %bump) now] [%| u.gac]))
@@ -1146,7 +1162,7 @@
       =:  sup.ged  (~(del by sup.ged) ost)
           qel.ged  (~(del by qel.ged) ost)
         ==
-      =+  cug=(ap-find %pull q.u.wim)
+      =^  cug  ..ap-pull  (ap-find %pull q.u.wim)
       ?~  cug  +>
       =^  cam  +> 
         %+  ap-call  q.u.cug
@@ -1162,7 +1178,7 @@
       ~/  %ap-take
       |=  {her/ship cog/term pax/path vux/(unit vase)}
       ^+  +>
-      =+  cug=(ap-find cog pax)
+      =^  cug  +>.$  (ap-find cog pax)
       ?~  cug
         ::  ~&  [%ap-take-none cog pax]
         +>.$
