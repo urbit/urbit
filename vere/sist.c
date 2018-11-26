@@ -1624,6 +1624,9 @@ u3_sist_boot(void)
       u3_Host.ops_u.has = c3y;
       u3C.wag_w |= u3o_hashless;
     }
+
+    // process pending events
+    u3_raft_work();
   }
   else {
     u3_noun pig, who;
@@ -1686,6 +1689,9 @@ u3_sist_boot(void)
       // and real effect to set the output duct
       u3_ames_ef_bake();
     }
+
+    // initialize %behn
+    u3_behn_ef_bake();
 
     // Authenticate and initialize terminal.
     u3_term_ef_bake(pig);

@@ -324,30 +324,6 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
   u3z(lan); u3z(pac);
 }
 
-/* _ames_time_cb(): timer callback.
-*/
-static void
-_ames_time_cb(uv_timer_t* tim_uo)
-{
-  u3_ames* sam_u = &u3_Host.sam_u;
-
-  // defer until started via u3_ames_ef_turf()
-  if ( c3n == sam_u->liv ) {
-    uv_timer_start(&sam_u->tim_u, _ames_time_cb, 1000, 0);
-  }
-  else {
-    u3_lo_open();
-
-    sam_u->law_w = time(0);
-    {
-      u3v_plan
-        (u3nt(u3_blip, c3__ames, u3_nul),
-         u3nc(c3__wake, u3_nul));
-    }
-    u3_lo_shut(c3n);
-  }
-}
-
 /* _ames_recv_cb(): receive callback.
 */
 static void
@@ -545,7 +521,6 @@ u3_ames_io_init()
 {
   u3_ames* sam_u = &u3_Host.sam_u;
   sam_u->liv = c3n;
-  uv_timer_init(u3L, &sam_u->tim_u);
 }
 
 /* u3_ames_io_talk(): start receiving ames traffic.
@@ -562,44 +537,8 @@ u3_ames_io_exit()
 {
   u3_ames* sam_u = &u3_Host.sam_u;
 
-  uv_close((uv_handle_t*)&sam_u->tim_u, 0);
-
   if ( c3y == sam_u->liv ) {
     // XX remove had_u/wax_u union, cast and close wax_u
     uv_close(&sam_u->had_u, 0);
   }
-}
-
-/* u3_ames_io_poll(): update ames IO state.
-*/
-void
-u3_ames_io_poll()
-{
-  u3_ames* sam_u = &u3_Host.sam_u;
-  u3_noun  wen = u3v_keep(u3nt(u3_blip, c3__ames, u3_nul));
-
-  if ( (u3_nul != wen) &&
-       (c3y == u3du(wen)) &&
-       (c3y == u3ud(u3t(wen))) )
-  {
-    c3_d gap_d = u3_time_gap_ms(u3k(u3A->now), u3k(u3t(wen)));
-    c3_w lem_w = (time(0) - sam_u->law_w);
-    c3_w lef_w = (lem_w > 32) ? 0 : (32 - lem_w);
-
-    gap_d = c3_min(gap_d, (c3_d)(1000 * lef_w));
-
-    if ( c3y == sam_u->alm ) {
-      uv_timer_stop(&sam_u->tim_u);
-    }
-    else sam_u->alm = c3y;
-
-    uv_timer_start(&sam_u->tim_u, _ames_time_cb, gap_d, 0);
-  }
-  else {
-    if ( c3y == sam_u->alm ) {
-      uv_timer_stop(&sam_u->tim_u);
-    }
-    sam_u->alm = c3n;
-  }
-  u3z(wen);
 }
