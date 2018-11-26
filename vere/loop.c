@@ -254,38 +254,6 @@ u3_lo_exit(void)
   u3a_lop(cod_l);
 }
 
-/* _lo_poll(): reset event flags across the process.
-*/
-static void
-_lo_poll(void)
-{
-  c3_l cod_l;
-
-  cod_l = u3a_lush(c3__ames);
-  u3_ames_io_poll();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__http);
-  u3_http_io_poll();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__term);
-  u3_term_io_poll();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__save);
-  u3_save_io_poll();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__unix);
-  u3_unix_io_poll();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__behn);
-  u3_behn_io_poll();
-  u3a_lop(cod_l);
-}
-
 #if 0
 /* _lo_how(): print how.
 */
@@ -478,11 +446,6 @@ u3_lo_shut(c3_o inn)
     //  save a checkpoint before exiting
     u3e_save();
     exit(u3_Host.xit_i);
-  }
-  else {
-    //  poll arvo to generate any event binding changes
-    //
-    _lo_poll();
   }
 }
 
@@ -681,7 +644,6 @@ u3_lo_lead(void)
     u3v_plan(u3nt(u3_blip, c3__ames, u3_nul),
                u3nc(c3__kick, u3k(u3A->now)));
   }
-  _lo_poll();
 
 #if 0
   u3_loom_save(u3A->ent_d);

@@ -542,10 +542,3 @@ u3_ames_io_exit()
     uv_close(&sam_u->had_u, 0);
   }
 }
-
-/* u3_ames_io_poll(): update ames IO state.
-*/
-void
-u3_ames_io_poll()
-{
-}

@@ -1486,10 +1486,3 @@ u3_unix_io_exit(void)
   uv_check_stop(&u3_Host.unx_u.syn_u);
   u3_unix_release(u3_Host.dir_c);
 }
-
-/* u3_unix_io_poll(): update unix IO state.
-*/
-void
-u3_unix_io_poll(void)
-{
-}

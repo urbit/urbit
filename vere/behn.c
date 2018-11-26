@@ -56,13 +56,6 @@ _behn_time_cb(uv_timer_t* tim_u)
   u3_lo_shut(c3n);
 }
 
-/* u3_behn_io_poll(): update behn IO state.
-*/
-void
-u3_behn_io_poll(void)
-{
-}
-
 /* u3_behn_ef_doze(): set or cancel timer
 */
 void
