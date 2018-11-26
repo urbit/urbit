@@ -1061,6 +1061,15 @@
         void
         u2_behn_io_poll(void);
 
+      /* u3_behn_ef_bake(): notify %behn that we're live
+      */
+        void
+        u3_behn_ef_bake(void);
+
+      /* u3_behn_ef_doze(): set or cancel timer
+      */
+        void
+        u3_behn_ef_doze(u3_noun wen);
 
     /**  HTTP server.
     **/

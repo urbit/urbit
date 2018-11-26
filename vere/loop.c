@@ -669,6 +669,7 @@ u3_lo_lead(void)
   {
     if ( c3n == u3_Host.ops_u.nuu ) {
       u3_ames_ef_bake();
+      u3_behn_ef_bake();
     }
 
     u3_http_ef_bake();

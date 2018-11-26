@@ -1687,6 +1687,9 @@ u3_sist_boot(void)
       u3_ames_ef_bake();
     }
 
+    // initialize %behn
+    u3_behn_ef_bake();
+
     // Authenticate and initialize terminal.
     u3_term_ef_bake(pig);
 
