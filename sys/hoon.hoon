@@ -575,11 +575,14 @@
   ?.((a b) ~ [~ u=b])
 ::
 ++  hunt                                                ::  first of units
-  |*  {ord/$-({* *} ?) one/(unit) two/(unit)}
-  ^-  (unit ?(_,.+.one _,.+.two))
-  ?~  one  two
-  ?~  two  one
-  ?:((ord ,.+.one ,.+.two) one two)
+  |*  [ord=$-(^ ?) a=(unit) b=(unit)]
+  ^-  %-  unit
+      $?  _?>(?=(^ a) u.a)
+          _?>(?=(^ b) u.b)
+      ==
+  ?~  a  b
+  ?~  b  a
+  ?:((ord u.a u.b) a b)
 ::
 ++  lift                                                ::  lift mold (fmap)
   |*  a/mold                                            ::  flipped
