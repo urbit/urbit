@@ -433,7 +433,6 @@
     */
       typedef struct _u3_behn {
         uv_timer_t tim_u;                   //  behn timer
-        c3_w       run_w;                   //  run of consecutive alarms
         c3_o       alm;                     //  alarm
       } u3_behn;
 

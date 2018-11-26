@@ -45,12 +45,7 @@ static void
 _behn_time_cb(uv_timer_t* tim_u)
 {
   u3_behn* teh_u = &u3_Host.teh_u;
-
-  //  XX remove timer backoff
-  //
-  if(teh_u->run_w < 1024) {
-    teh_u->run_w++;
-  }
+  teh_u->alm = c3n;
 
   u3_lo_open();
   {
@@ -89,9 +84,6 @@ u3_behn_ef_doze(u3_noun wen)
 
     u3_noun now = u3_time_in_tv(&tim_tv);
     c3_d gap_d = u3_time_gap_ms(now, u3k(u3t(wen)));
-    //  XX remove timer backoff
-    //
-    gap_d += teh_u->run_w;
 
     uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
   }
