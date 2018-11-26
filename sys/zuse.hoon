@@ -701,11 +701,13 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$mass p/mass}                                ::  memory usage
+      $%  {$doze p/(unit @da)}                          ::  next alarm
+          {$mass p/mass}                                ::  memory usage
           {$wake ~}                                    ::  wakeup
       ==                                                ::
     ++  task                                            ::  in request ->$
-      $%  {$rest p/@da}                                 ::  cancel alarm
+      $%  {$born ~}                                     ::  new unix process
+          {$rest p/@da}                                 ::  cancel alarm
           {$wait p/@da}                                 ::  set alarm
           {$wake ~}                                    ::  timer activate
           {$wegh ~}                                    ::  report memory

@@ -146,6 +146,7 @@
 --
 .  ==
 =|  $:  $0                                              ::
+        gad/duct                                        ::  duct to unix
         tym/{p/clok q/clok}                             ::  positive+negative
     ==                                                  ::
 |=  {now/@da eny/@ ski/sley}                            ::  current invocation
@@ -155,7 +156,6 @@
   |=  $:  hen/duct
           hic/(hypo (hobo task:able))
       ==
-  ^-  {p/(list move) q/_..^$}
   =>  %=    .                                           ::  XX temporary
           q.hic
         ^-  task:able
@@ -166,17 +166,35 @@
         ~&  [%behn-call-flub (@tas `*`-.q.hic)]
         ((hard task:able) q.hic)
       ==
+  =*  req  q.hic
+  |-  ^-  [p=(list move) q=_..^^$]
+  ::
+  ?:  ?=(%born -.req)
+    =.  gad  hen
+    ?~  p.tym
+      [~ ..^^$]
+    =/  nex  ~(get up p.tym)
+    ?:  (lte now p.nex)
+      [[gad %give %doze `p.nex]~ ..^^$]
+    $(req [%wake ~])
+  ::
   =^  mof  tym
-    ?-    -.q.hic
+    ?-    -.req
         $rest
-      =.  q.tym  (~(put up q.tym) p.q.hic hen)
+      =/  old=(unit @da)  ?~(p.tym ~ (some p:~(get up p.tym)))
+      =.  q.tym  (~(put up q.tym) p.req hen)
       =.  tym  (raze tym)
-      [~ tym]
+      =/  nex=(unit @da)  ?~(p.tym ~ (some p:~(get up p.tym)))
+      :_  tym
+      ?:(=(old nex) ~ [gad %give %doze nex]~)
     ::
         $wait
-      =.  p.tym  (~(put up p.tym) p.q.hic hen)
+      =/  old=(unit @da)  ?~(p.tym ~ (some p:~(get up p.tym)))
+      =.  p.tym  (~(put up p.tym) p.req hen)
       =.  tym  (raze tym)
-      [~ tym]
+      =/  nex=(unit @da)  ?~(p.tym ~ (some p:~(get up p.tym)))
+      :_  tym
+      ?:(=(old nex) ~ [gad %give %doze nex]~)
     ::
         $wake
       |-  ^+  [*(list move) tym]
@@ -184,8 +202,9 @@
       ?:  =([~ ~] tym)  [~ tym]                         ::  XX  TMI
       ?:  =(~ p.tym)
         ~&  %weird-wake  [~ tym]
-      =+  nex=~(get up p.tym)
-      ?:  (lte now p.nex)  [~ tym]
+      =/  nex  ~(get up p.tym)
+      ?:  (lte now p.nex)
+        [[gad %give %doze `p.nex]~ tym]
       =^  mof  tym  $(p.tym ~(pop up p.tym))
       [[`move`[q.nex %give %wake ~] mof] tym]
     ::
@@ -197,13 +216,12 @@
       :~  tym+[%& tym]
       ==
     ==
-  [mof ..^$]
+  [mof ..^^$]
 ::
 ++  doze
   |=  {now/@da hen/duct}
   ^-  (unit @da)
-  ?~  p.tym  ~
-  (some p:[~(get up p.tym)])
+  ~
 ::
 ++  load
   |=  old/{$0 tym/{clok clok}}
