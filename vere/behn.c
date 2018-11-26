@@ -84,7 +84,11 @@ u3_behn_ef_doze(u3_noun wen)
        (c3y == u3du(wen)) &&
        (c3y == u3ud(u3t(wen))) )
   {
-    c3_d gap_d = u3_time_gap_ms(u3k(u3A->now), u3k(u3t(wen)));
+    struct timeval tim_tv;
+    gettimeofday(&tim_tv, 0);
+
+    u3_noun now = u3_time_in_tv(&tim_tv);
+    c3_d gap_d = u3_time_gap_ms(now, u3k(u3t(wen)));
     //  XX remove timer backoff
     //
     gap_d += teh_u->run_w;
