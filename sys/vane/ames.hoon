@@ -589,6 +589,8 @@
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
         [~ fox]
+      =;  zap=[p=(list boon) q=fort]
+        [(weld p.zap next) q.zap]
       =<  zork
       =<  zank
       ::  ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
@@ -621,6 +623,26 @@
       =^  biz  fox  $(aks t.aks)
       [(weld p.buz p.biz) fox]
     ::
+    ++  next
+      ^-  (list boon)
+      =/  doz=(unit @da)  [~ (add now ~s32)]
+      =.  doz
+        |-  ^+  doz
+        ?~  zac.fox  doz
+        =.  doz  $(zac.fox l.zac.fox)
+        =.  doz  $(zac.fox r.zac.fox)
+        =+  yem=q.n.zac.fox
+        |-  ^+  doz
+        ?~  wab.yem  doz
+        =.  doz  $(wab.yem l.wab.yem)
+        =.  doz  $(wab.yem r.wab.yem)
+        =+  bah=q.n.wab.yem
+        (hunt lth doz rtn.sop.bah)
+      =/  nex  (hunt lth doz tim.fox)
+      ?:  =(tim.fox nex)
+        ~
+      [%pito (need nex)]~
+    ::
     ++  rack                                            ::    rack:am
       |=  [soq=sock cha=path cop=coop]                  ::  e2e ack
       =+  oh=(ho:(um p.soq) q.soq)
@@ -631,19 +653,21 @@
     ++  wake                                            ::    wake:am
       |=  hen=duct                                      ::  harvest packets
       ^-  [p=(list boon) q=fort]
+      =.  tim.fox  ~
       =+  sox=hall
       =|  bin=(list boon)
       |-  ^-  [p=(list boon) q=fort]
       ?~  sox
         =^  ban  fox  (kick hen)
-        [(weld bin p.ban) fox]
+        [:(weld bin p.ban next) fox]
       =^  bun  fox  zork:zank:thaw:(ho:(um p.i.sox) q.i.sox)
       $(sox t.sox, bin (weld p.bun bin))
     ::
     ++  wise                                            ::    wise:am
       |=  [soq=sock hen=duct cha=path val=*]            ::  send a statement
       ^-  [p=(list boon) q=fort]
-      zork:zank:(wool:(ho:(um p.soq) q.soq) hen cha val)
+      =^  ban  fox  zork:zank:(wool:(ho:(um p.soq) q.soq) hen cha val)
+      [(weld p.ban next) fox]
     ::
     ++  um                                              ::  per server
       |=  our=ship
@@ -1219,21 +1243,6 @@
         (knob hen q.hic)
       [duy ..^$]
     ::
-    ++  doze
-      |=  [now=@da hen=duct]
-      =+  doz=`(unit @da)`[~ (add now ~s32)]
-      |-  ^+  doz
-      ?~  zac.fox  doz
-      =.  doz  $(zac.fox l.zac.fox)
-      =.  doz  $(zac.fox r.zac.fox)
-      =+  yem=q.n.zac.fox
-      |-  ^+  doz
-      ?~  wab.yem  doz
-      =.  doz  $(wab.yem l.wab.yem)
-      =.  doz  $(wab.yem r.wab.yem)
-      =+  bah=q.n.wab.yem
-      (hunt lth doz rtn.sop.bah)
-    ::
     ++  load
       |=  old=fort
       ..^$(fox old)
@@ -1293,6 +1302,12 @@
       ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
+    ::
+        %pito
+      :_  fox(tim `p.bon)
+      :-  [gad.fox %pass /ames %b %wait p.bon]
+      ?~  tim.fox  ~
+      [gad.fox %pass /ames %b %rest u.tim.fox]~
     ::
         %raki
       =*  our  p.p.bon
@@ -1375,17 +1390,26 @@
       [~ +>.$]
     ::
         %woot  [~ +>]
-        ?(%mean %nice)                                  ::  XX obsolete
-      ?:  ?=([%ye ~] tea)
-        [~ +>.$]
-      ?>  ?=([@ @ @ *] tea)
-      =+  soq=[(slav %p i.tea) (slav %p i.t.tea)]
-      =+  pax=t.t.tea
+    ::
+        *
       =+  ^=  fuy
+        ^-  [p=(list boon) q=fort]
+        ?-  +<.sih
+        ::
+            %wake
+          (~(wake am [now fox ski]) hen)
+        ::
+            ?(%mean %nice)                              ::  XX obsolete
+          ?:  ?=([%ye ~] tea)
+            [~ fox]
+          ?>  ?=([@ @ @ *] tea)
+          =+  soq=[(slav %p i.tea) (slav %p i.t.tea)]
+          =+  pax=t.t.tea
           =<  zork  =<  zank
           %^  ~(rack am [now fox ski])  soq  pax
           ::  ~&  [%knap-ack ?-(+<.sih %mean `p.+.sih, %nice ~)]
           ?-(+<.sih %mean `p.+.sih, %nice ~)
+        ==
       =>  %_(. fox q.fuy)
       =|  out=(list move)
       |-  ^-  [p=(list move) q=_+>.^$]
@@ -1433,7 +1457,10 @@
           [~ fox(any.ton (shax (mix any.ton.fox p.kyz)))]
         ::
             %kick
-          (~(kick am [now fox(hop p.kyz) ski]) hen)
+          =^  ban  fox  (~(kick am [now fox(hop p.kyz) ski]) hen)
+          ::  +next:am called here because +wake calls +kick in a loop
+          ::
+          [(weld p.ban ~(next am [now fox ski])) fox]
         ::
             %nuke
           :-  ~

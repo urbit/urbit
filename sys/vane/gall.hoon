@@ -1355,11 +1355,6 @@
       $went  !!   ::  XX fixme
   ==
 ::
-++  doze                                                ::  sleep until
-  |=  {now/@da hen/duct}
-  ^-  (unit @da)
-  ~
-::
 ++  load                                                ::  recreate vane
   |=  old/axle-n
   ^+  ..^$

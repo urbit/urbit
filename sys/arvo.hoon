@@ -135,11 +135,6 @@
     =+  rig=(slym q.sew +<)                             ::  activate vane
     ~%  %wink  +>+>  ~
     |%
-    ++  doze
-      |=  {now/@da hen/duct}
-      ^-  (unit @da)
-      ((hard (unit @da)) q:(slym (slap rig [%limb %doze]) +<))
-    ::
     ++  slid
       |=  {hed/mill tal/mill}
       ^-  mill
@@ -383,11 +378,6 @@
       {@ $behn *}  %b
     ==
   ::
-  ++  doos                                              ::  sleep until
-    |=  hap/path  ^-  (unit @da)
-    =+  lal=(dint hap)
-    (doze:(wink:(vent lal vil bud p.niz (dink lal)) now 0 beck) now [hap ~])
-  ::
   ++  hurl                                              ::  start loop
     |=  {lac/? ovo/ovum}
     ~?  &(!lac !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
@@ -477,7 +467,7 @@
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
-    ++  keep  |=(* (^keep ((hard {@da path}) +<)))     ::  4
+    ++  keep  |=(* ~)                                   ::  4
     ++  load  |=  {@ (list ovum) pane}                  ::  86
               ^-  {(list ovum) _+>}
               ~&  %hoon-load
@@ -526,11 +516,6 @@
   |=  {yen/@ ova/(list ovum) nyf/pone}
   ^+  [ova +>]
   (load yen ova (turn nyf |=({a/@tas b/vise} [a (slim b)])))
-::
-++  keep                                                ::  wakeup delay
-  |=  {now/@da hap/path}
-  =>  .(+< ((hard {now/@da hap/path}) +<))
-  (~(doos (is vil eny bud niz) now) hap)
 ::
 ++  load                                                ::  load compatible
   |=  {yen/@ ova/(list ovum) nyf/pane}

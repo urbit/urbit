@@ -472,11 +472,12 @@
   ++  able  ^?
     |%
     ++  note                                            ::  out request $->
-      $%  $:  $d                                        ::  to %dill
-      $%  {$flog p/flog:dill}                           ::
+      $%  $:  $b                                        ::  to %behn
+      $%  {$rest p/@da}                                 ::  cancel timer
+          {$wait p/@da}                                 ::  set timer
       ==  ==                                            ::
-          $:  $a                                        ::  to %ames
-      $%  {$kick p/@da}                                 ::
+          $:  $d                                        ::  to %dill
+      $%  {$flog p/flog:dill}                           ::
       ==  ==                                            ::
           $:  %j                                        ::  to %jael
       $%  [%meet our=ship who=ship =life =pass]         ::  neighbor
@@ -499,7 +500,10 @@
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
     ++  sign                                            ::  in result _<-
-      $%  $:  %j                                        ::  from %jael
+      $%  $:  $b                                        ::  to %behn
+      $%  {$wake ~}                                     ::  timer activate
+      ==  ==                                            ::
+          $:  %j                                        ::  from %jael
       $%  [%pubs public:able:jael]                      ::  public keys
           [%turf turf=(list turf)]                      ::  bind to domains
           [%vein =life vein=(map life ring)]            ::  private keys
@@ -571,6 +575,7 @@
         {$mead p/lane q/rock}                           ::  accept packet
         {$milk p/sock q/soap r/*}                       ::  e2e pass message
         {$ouzo p/lane q/rock}                           ::  transmit packet
+        {$pito p/@da}                                   ::  timeout
         {$raki p/sock q/life r/pass}                    ::  neighbor'd
         {$sake p/ship}                                  ::  our private keys
         {$wine p/sock q/tape}                           ::  notify user
@@ -605,6 +610,7 @@
   ++  fort                                              ::  formal state
     $:  $1                                              ::  version
         gad/duct                                        ::  client interface
+        tim/(unit @da)                                  ::  pending timer
         tuf/(list turf)                                 ::  domains
         hop/@da                                         ::  network boot date
         bad/(set @p)                                    ::  bad ships
@@ -695,11 +701,13 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$mass p/mass}                                ::  memory usage
+      $%  {$doze p/(unit @da)}                          ::  next alarm
+          {$mass p/mass}                                ::  memory usage
           {$wake ~}                                    ::  wakeup
       ==                                                ::
     ++  task                                            ::  in request ->$
-      $%  {$rest p/@da}                                 ::  cancel alarm
+      $%  {$born ~}                                     ::  new unix process
+          {$rest p/@da}                                 ::  cancel alarm
           {$wait p/@da}                                 ::  set alarm
           {$wake ~}                                    ::  timer activate
           {$wegh ~}                                    ::  report memory

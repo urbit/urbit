@@ -3963,12 +3963,6 @@
     ==
   ==
 ::
-::  All timers are handled by `%behn` nowadays.
-++  doze
-  |=  {now/@da hen/duct}
-  ^-  (unit @da)
-  ~
-::
 ++  load
   =>  |%
       ++  rove-0
