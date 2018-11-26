@@ -28,6 +28,14 @@
   %+  to-seed:bip39  nom
   (trip (fall pass ''))
 ::
+++  derive-network-seed
+  |=  [mngs=@ rev=@ud]
+  ^-  @ux
+  =+  (seed:ds 64^mngs (weld "network" (a-co:co rev)))
+  ?:  =(0 rev)  -
+  ::  hash again to prevent length extension attacks
+  (sha-256l:sha 32 -)
+::
 ++  full-wallet-from-ticket
   ::  who:    username
   ::  ticket: password
@@ -62,7 +70,7 @@
     %+  to-seed:bip39
       seed:management
     (trip (fall pass ''))
-  =+  sed=(seed:ds 64^mad (weld "network" (a-co:co rev)))
+  =+  sed=(derive-network-seed mad rev)
   [rev sed (urbit:ds sed)]
 ::
 ++  ds                                                  ::  derive from raw seed
