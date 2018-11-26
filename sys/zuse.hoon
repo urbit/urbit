@@ -475,9 +475,6 @@
       $%  $:  $d                                        ::  to %dill
       $%  {$flog p/flog:dill}                           ::
       ==  ==                                            ::
-          $:  $a                                        ::  to %ames
-      $%  {$kick p/@da}                                 ::
-      ==  ==                                            ::
           $:  %j                                        ::  to %jael
       $%  [%meet our=ship who=ship =life =pass]         ::  neighbor
           [%pubs our=ship who=ship]                     ::  view public keys
