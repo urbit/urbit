@@ -462,19 +462,18 @@
         niz/(pair worm (list {p/@tas q/vase}))          ::  modules
     ==                                                  ::
 =<  |%
-    ++  come  |=  {@ (list ovum) pone}                  ::  11
+    ++  come  |=  {@ (list ovum) pone}                  ::  22
               ^-  {(list ovum) _+>}
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
-    ++  keep  |=(* ~)                                   ::  4
-    ++  load  |=  {@ (list ovum) pane}                  ::  86
+    ++  load  |=  {@ (list ovum) pane}                  ::  46
               ^-  {(list ovum) _+>}
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
               [rey +>.$]
-    ++  peek  |=(* (^peek ((hard {@da path}) +<)))     ::  87
-    ++  poke  |=  *                                     ::  42
+    ++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  47
+    ++  poke  |=  *                                     ::  10
               ^-  {(list ovum) *}
               =>  .(+< ((hard {now/@da ovo/ovum}) +<))
               ?:  =(%verb -.q.ovo)
@@ -509,7 +508,7 @@
                   ==
                 ==
               =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
-    ++  wish  |=(* (^wish ((hard @ta) +<)))            ::  20
+    ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  4
     --
 |%
 ++  come                                                ::  load incompatible
@@ -577,11 +576,15 @@
   =+  ken=(veke now hap zup)
   ~&  [%vega-kernel `@ux`(mug ken)] 
   =+  ^=  nex
-      =+  gat=.*(ken .*(ken [0 87]))
+      ::  +peek at +47
+      ::
+      =+  gat=.*(ken .*(ken [0 47]))
       (need ((hard (unit @)) .*([-.gat [[now ~] +>.gat]] -.gat)))
   ~&  [%vega-compiled hoon-version nex]
   ?>  (lte nex hoon-version)
-  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon-version) 86 11)]))
+  ::  +load at +46 or +come at +22
+  ::
+  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon-version) 46 22)]))
   =+  sam=[eny ova q.niz]
   =+  raw=.*([-.gat [sam +>.gat]] -.gat)
   =+  yep=((list ovum) -.raw)
