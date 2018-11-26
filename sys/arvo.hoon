@@ -158,7 +158,7 @@
     ++  slur                                            ::  call gate on
       |=  {gat/vase hil/mill}
       ^-  (unit (pair vase worm))
-      =+  sam=(slot 6 gat)
+      =^  sam  p.sew  (~(slot wa p.sew) 6 gat)
       =+  ^=  hig
         ?-  -.hil
           %&  (~(nest wa p.sew) p.sam p.p.hil)
