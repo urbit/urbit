@@ -1624,6 +1624,9 @@ u3_sist_boot(void)
       u3_Host.ops_u.has = c3y;
       u3C.wag_w |= u3o_hashless;
     }
+
+    // process pending events
+    u3_raft_work();
   }
   else {
     u3_noun pig, who;
