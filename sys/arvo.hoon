@@ -138,7 +138,7 @@
     ++  doze
       |=  {now/@da hen/duct}
       ^-  (unit @da)
-      ((hard (unit @da)) q:(slym (slap rig [%limb %doze]) +<))
+      ~
     ::
     ++  slid
       |=  {hed/mill tal/mill}

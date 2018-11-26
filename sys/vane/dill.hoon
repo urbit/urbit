@@ -560,11 +560,6 @@
   =^  moz  all  abet:(call:u.nus q.hic)
   [moz ..^$]
 ::
-++  doze
-  |=  {now/@da hen/duct}
-  ^-  (unit @da)
-  ~
-::
 ++  load                                                ::  trivial
   |=  old/all-axle
   ..^$(all old)

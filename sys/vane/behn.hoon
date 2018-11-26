@@ -217,11 +217,6 @@
     ==
   [mof ..^^$]
 ::
-++  doze
-  |=  {now/@da hen/duct}
-  ^-  (unit @da)
-  ~
-::
 ++  load
   |=  old=coke
   ^+  ..^$

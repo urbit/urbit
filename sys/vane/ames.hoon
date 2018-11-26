@@ -1243,10 +1243,6 @@
         (knob hen q.hic)
       [duy ..^$]
     ::
-    ++  doze
-      |=  [now=@da hen=duct]
-      ~
-    ::
     ++  load
       |=  old=fort
       ..^$(fox old)
