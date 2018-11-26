@@ -18,8 +18,9 @@
 +$  note  ~                                             ::  out request $->
 +$  sign  ~                                             ::  in result $<-
 +$  clok  (broq @da duct)                               ::  stored timers
-+$  coke  $~  [%0 ~ ~]
-          $:  $0                                        ::  all state
++$  coke  $~  [%0 ~ ~ ~]                                ::  all state
+          $:  $0                                        ::  version number
+              gad/duct                                  ::  duct to unix
               tym/{p/clok q/clok}                       ::  positive+negative
           ==                                            ::
 --
@@ -145,10 +146,8 @@
   --
 --
 .  ==
-=|  $:  $0                                              ::
-        gad/duct                                        ::  duct to unix
-        tym/{p/clok q/clok}                             ::  positive+negative
-    ==                                                  ::
+=|  coke                                                ::  persistent state
+=*  state  -                                            ::
 |=  {now/@da eny/@ ski/sley}                            ::  current invocation
 ^?
 |%                                                      ::  poke+peek pattern
@@ -224,9 +223,9 @@
   ~
 ::
 ++  load
-  |=  old/{$0 tym/{clok clok}}
+  |=  old=coke
   ^+  ..^$
-  ..^$(tym tym.old)
+  ..^$(state old)
 ::
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
@@ -240,7 +239,7 @@
       [~(get up p.tym) $(p.tym ~(pop up p.tym))]
   [~ ~ %tank !>(>liz<)]
 ::
-++  stay  [%0 tym]
+++  stay  state
 ++  take                                                ::  process move
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
