@@ -60,7 +60,9 @@
 =+  txt=.^(@ %cx (weld pax `path`[%hoon ~]))
 =+  sam=[now `ovum`[[%gold ~] [%veer p.i.vay pax txt]]]
 ~&  [%solid-veer i.vay]
-=+  gat=.*(all .*(all [0 42]))
+::  +poke at +10
+::
+=+  gat=.*(all .*(all [0 10]))
 =+  nex=+:.*([-.gat [sam +>.gat]] -.gat)
 $(vay t.vay, all nex)
 
