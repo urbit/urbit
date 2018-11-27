@@ -7373,24 +7373,6 @@
   =,  mimes:html
   =,  ethe
   |%
-<<<<<<< HEAD
-  ++  address-from-pub
-    =,  keccak:crypto
-    |=  pub=@
-    (end 3 20 (keccak-256 64 pub))
-  ::
-  ++  address-from-prv
-    (cork pub-from-prv address-from-pub)
-  ::
-  ++  pub-from-prv
-    =,  secp256k1:secp:crypto
-    |=  prv=@
-    %^  rev  3  64
-    %-  serialize-point
-    (priv-to-pub prv)
-  ::
-||||||| merged common ancestors
-=======
   ++  address-from-pub
     =,  keccak:crypto
     |=  pub=@
@@ -7407,7 +7389,6 @@
     %-  serialize-point
     (priv-to-pub prv)
   ::
->>>>>>> origin/release-candidate
   ++  sign-transaction
     =,  crypto
     |=  [tx=transaction pk=@]

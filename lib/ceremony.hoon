@@ -477,10 +477,10 @@
     (do-c (set-voting-proxy:dat who u.voting))
   =?  this  &(?=(^ spawn) !?=(%duke wat))
     (do-c (set-spawn-proxy:dat who u.spawn))
+  =?  this  ?=(^ transfer)
+    (do-c (set-transfer-proxy:dat who u.transfer))
   =.  this
     (do-c (transfer-ship:dat who own))
-  =?  this  ?=(^ transfer)
-    (do-c (set-transfer-proxy-for:dat who u.transfer))
   this
 ::
 ::  deposit a whole galaxy into a star release contract
@@ -559,7 +559,7 @@
   ++  transfer-ship           (enc transfer-ship:cal)
   ++  set-management-proxy    (enc set-management-proxy:cal)
   ++  set-voting-proxy        (enc set-voting-proxy:cal)
-  ++  set-transfer-proxy-for  (enc set-transfer-proxy-for:cal)
+  ++  set-transfer-proxy      (enc set-transfer-proxy:cal)
   ++  set-dns-domains         (enc set-dns-domains:cal)
   ++  upgrade-to              (enc upgrade-to:cal)
   ++  transfer-ownership      (enc transfer-ownership:cal)
@@ -634,10 +634,10 @@
         [%bool |]
     ==
   ::
-  ++  set-transfer-proxy-for
+  ++  set-transfer-proxy
     |=  [who=ship proxy=address]
     ^-  call-data
-    :-  'setTransferProxyFor(uint32,address)'
+    :-  'setTransferProxy(uint32,address)'
     :~  [%uint `@`who]
         [%address proxy]
     ==
