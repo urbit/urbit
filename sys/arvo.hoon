@@ -558,11 +558,11 @@
   ^-  *
   =-  ?:(?=(%& -.res) p.res ((slog p.res) ~))
   ^=  res  %-  mule  |.
-  =+  pax=(weld hap `path`[%hoon ~])
-  =+  wax=(weld zup `path`[%hoon ~])
+  =/  pax  (weld hap /hoon)
+  =/  wax  (weld zup /hoon)
   ~&  [%vega-start-hoon hap]
-  =+  src=((hard @t) (need (peek now cx+pax)))
-  =+  arv=((hard @t) (need (peek now cx+wax)))
+  =/  src  ((hard @t) (need (peek now cx+pax)))
+  =/  arv  ((hard @t) (need (peek now cx+wax)))
   ::  construct  =>(hoon =>(+7 arvo))
   ::
   =/  gen=hoon
@@ -582,22 +582,27 @@
   ^-  (unit {p/(list ovum) q/*})
   =-  ?:(?=(%| -.res) ((slog p.res) ~) `p.res)
   ^=  res  %-  mule  |.
-  =+  ken=(veke now hap zup)
+  =/  ken  (veke now hap zup)
   ~&  [%vega-kernel `@ux`(mug ken)] 
-  =+  ^=  nex
-      ::  +peek at +47
-      ::
-      =+  gat=.*(ken .*(ken [0 47]))
-      (need ((hard (unit @)) .*([-.gat [[now ~] +>.gat]] -.gat)))
+  =/  nex
+    ::  call +peek at +47
+    ::
+    %-  need
+    %-  (hard (unit @))
+    .*(ken [%9 2 %10 [6 %1 now ~] [%9 47 %0 1]])
   ~&  [%vega-compiled hoon-version nex]
   ?>  (lte nex hoon-version)
+  ::  entropy, pending effects, vanes
+  ::
+  =/  sam  [eny ova q.niz]
   ::  +load at +46 or +come at +22
   ::
-  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon-version) 46 22)]))
-  =+  sam=[eny ova q.niz]
-  =+  raw=.*([-.gat [sam +>.gat]] -.gat)
-  =+  yep=((list ovum) -.raw)
-  [[[~ %vega hap] yep] +.raw]
+  =/  axe  ?:(=(nex hoon-version) 46 22)
+  =/  out
+    .*(ken [%9 2 %10 [6 %1 sam] [%9 axe %0 1]])
+  ::  add a reset notification to the pending effects
+  ::
+  [[[~ %vega hap] ((list ovum) -.out)] +.out]
 ::
 ++  veer                                                ::  install vane/tang
   |=  {now/@da fav/curd}
