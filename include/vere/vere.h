@@ -1120,12 +1120,12 @@
       /* u3_behn_ef_bake(): notify %behn that we're live
       */
         void
-        u3_behn_ef_bake(void);
+        u3_behn_ef_bake(u3_pier *pir_u);
 
       /* u3_behn_ef_doze(): set or cancel timer
       */
         void
-        u3_behn_ef_doze(u3_noun wen);
+        u3_behn_ef_doze(u3_pier *pir_u, u3_noun wen);
 
 
     /**  HTTP server.

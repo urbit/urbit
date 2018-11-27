@@ -27,9 +27,10 @@ void
 u3_behn_io_init(u3_pier *pir_u)
 {
   u3_behn* teh_u = pir_u->teh_u;
+  teh_u->alm = c3n;
 
   uv_timer_init(u3L, &teh_u->tim_u);
-  teh_u->alm = c3n;
+  teh_u->tim_u.data = pir_u;
 }
 
 /* u3_behn_io_exit(): terminate timer.
@@ -59,9 +60,9 @@ _behn_time_cb(uv_timer_t* tim_u)
 /* u3_behn_ef_doze(): set or cancel timer
 */
 void
-u3_behn_ef_doze(u3_noun wen)
+u3_behn_ef_doze(u3_pier *pir_u, u3_noun wen)
 {
-  u3_behn* teh_u = &u3_Host.teh_u;
+  u3_behn* teh_u = pir_u->teh_u;
 
   if ( c3y == teh_u->alm ) {
     uv_timer_stop(&teh_u->tim_u);
@@ -78,7 +79,6 @@ u3_behn_ef_doze(u3_noun wen)
     u3_noun now = u3_time_in_tv(&tim_tv);
     c3_d gap_d = u3_time_gap_ms(now, u3k(u3t(wen)));
 
-    teh_u->tim_u.data = pir_u;
     uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
   }
 
@@ -88,9 +88,9 @@ u3_behn_ef_doze(u3_noun wen)
 /* u3_behn_ef_bake(): notify %behn that we're live
 */
 void
-u3_behn_ef_bake(void)
+u3_behn_ef_bake(u3_pier *pir_u)
 {
   u3_noun pax = u3nq(u3_blip, c3__behn, u3k(u3A->sen), u3_nul);
 
-  u3v_plan(pax, u3nc(c3__born, u3_nul));
+  u3_pier_work(pir_u, pax, u3nc(c3__born, u3_nul));
 }

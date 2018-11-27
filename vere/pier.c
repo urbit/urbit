@@ -991,9 +991,12 @@ _pier_disk_consolidate(u3_pier*  pir_u,
         }
 
         /* XX boot sequence woes
+        ** these are duplicated here from _pier_loop_wake()
+        ** because the order is important
         */
         {
           u3_ames_ef_bake(pir_u);
+          u3_behn_ef_bake(pir_u);
         }
        
         /* insert filesystem install event
@@ -1662,6 +1665,10 @@ _pier_loop_wake(u3_pier* pir_u)
   u3_ames_ef_bake(pir_u);
   u3a_lop(cod_l);
 
+  cod_l = u3a_lush(c3__behn);
+  u3_behn_ef_bake(pir_u);
+  u3a_lop(cod_l);
+
   cod_l = u3a_lush(c3__http);
   u3_http_io_talk();
   u3_http_ef_bake();
@@ -1710,38 +1717,6 @@ _pier_loop_exit(void)
   u3a_lop(cod_l);
 }
 #endif
-
-/* _pier_loop_poll(): update listeners.
-*/
-static void
-_pier_loop_poll(u3_pier* pir_u)
-{
-  c3_l cod_l;
-
-  cod_l = u3a_lush(c3__ames);
-  u3_ames_io_poll(pir_u);
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__http);
-  u3_http_io_poll();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__term);
-  u3_term_io_poll();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__save);
-  u3_save_io_poll(pir_u);
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__unix);
-  u3_unix_io_poll(pir_u);
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__behn);
-  u3_behn_io_poll(pir_u);
-  u3a_lop(cod_l);
-}
 
 #if 0
 /* _pier_boot_seed(): build the cryptographic seed noun.
@@ -1858,11 +1833,7 @@ _pier_boot_complete(u3_pier* pir_u,
 static void
 _pier_loop_prepare(uv_prepare_t* pep_u)
 {
-  pep_u = 0;
-  {
-    _pier_loop_poll(u3_pier_stub());
-    _pier_loop_time();
-  }
+  _pier_loop_time();
 }
 
 /* u3_pier_bail(): clean up all event state.
