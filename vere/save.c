@@ -82,10 +82,3 @@ void
 u3_save_io_exit(u3_pier *pir_u)
 {
 }
-
-/* u3_save_io_poll(): poll kernel for save I/O.
-*/
-void
-u3_save_io_poll(u3_pier *pir_u)
-{
-}

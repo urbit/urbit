@@ -1235,10 +1235,3 @@ u3_unix_io_exit(u3_pier *pir_u)
 {
   u3_unix_release(pir_u->pax_c);
 }
-
-/* u3_unix_io_poll(): update unix IO state.
-*/
-void
-u3_unix_io_poll(u3_pier *pir_u)
-{
-}

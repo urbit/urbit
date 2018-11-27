@@ -94,6 +94,7 @@ jets_d_src = [
 'jets/d/by_get.c',
 'jets/d/by_has.c',
 'jets/d/by_int.c',
+'jets/d/by_jab.c',
 'jets/d/by_put.c',
 'jets/d/by_uni.c',
 'jets/d/by_bif.c',

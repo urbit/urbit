@@ -976,13 +976,6 @@ u3_cttp_io_init()
   u3_Host.ctp_u.ceq_u = 0;
 }
 
-/* u3_cttp_io_poll(): poll kernel for cttp I/O.
-*/
-void
-u3_cttp_io_poll(void)
-{
-}
-
 /* u3_cttp_io_exit(): shut down cttp.
 */
 void

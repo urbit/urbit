@@ -309,11 +309,6 @@ u3_term_io_exit(void)
   }
 }
 
-void
-u3_term_io_poll(void)
-{
-}
-
 /* _term_it_buf(): create a data buffer.
 */
 static u3_ubuf*

@@ -84,6 +84,7 @@
     u3_noun u3wdb_get(u3_noun);
     u3_noun u3wdb_has(u3_noun);
     u3_noun u3wdb_int(u3_noun);
+    u3_noun u3wdb_jab(u3_noun);
     u3_noun u3wdb_put(u3_noun);
 #   define u3wdb_tap u3wdi_tap
     u3_noun u3wdb_uni(u3_noun);

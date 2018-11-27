@@ -179,6 +179,22 @@ _reck_kick_http(u3_pier* pir_u,
   c3_assert(!"not reached"); return c3n;
 }
 
+/* _reck_kick_behn(): apply packet network outputs.
+*/
+static u3_noun
+_reck_kick_behn(u3_noun pox, u3_noun fav)
+{
+  switch ( u3h(fav) ) {
+    default: break;
+
+    case c3__doze: {
+      u3_behn_ef_doze(u3k(u3t(fav)));
+      u3z(pox); u3z(fav); return c3y;
+    } break;
+  }
+  u3z(pox); u3z(fav); return c3n;
+}
+
 /* _reck_kick_sync(): apply sync outputs.
 */
 static u3_noun
@@ -313,6 +329,10 @@ _reck_kick_spec(u3_pier* pir_u, u3_noun pox, u3_noun fav)
           }
         }
         return _reck_kick_http(pir_u, pox, sev_l, coq_l, seq_l, fav);
+      } break;
+
+      case c3__behn: {
+        return _reck_kick_behn(pox, fav);
       } break;
 
       case c3__clay:

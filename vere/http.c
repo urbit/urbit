@@ -1551,13 +1551,6 @@ u3_http_io_talk(void)
 {
 }
 
-/* u3_http_io_poll(): poll kernel for http I/O.
-*/
-void
-u3_http_io_poll(void)
-{
-}
-
 /* u3_http_io_exit(): shut down http.
 */
 void

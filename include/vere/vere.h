@@ -337,7 +337,6 @@
           uv_udp_t    wax_u;
           uv_handle_t had_u;
         };
-        uv_timer_t    tim_u;                //  network timer
         c3_o          liv;                  //  listener on
         c3_o          alm;                  //  alarm on
         c3_w          law_w;                //  last wakeup, unix time
@@ -474,7 +473,6 @@
     */
       typedef struct _u3_behn {
         uv_timer_t tim_u;                   //  behn timer
-        c3_w       run_w;                   //  run of consecutive alarms
         c3_o       alm;                     //  alarm
       } u3_behn;
 
@@ -962,11 +960,6 @@
         void
         u3_term_io_exit(void);
 
-      /* u3_term_io_poll(): update terminal IO state.
-      */
-        void
-        u3_term_io_poll(void);
-
       /* u3_term_io_hija(): hijack console for cooked print.
       */
         FILE*
@@ -1025,10 +1018,6 @@
         void
         u3_ames_io_exit(u3_pier* pir_u);
 
-      /* u3_ames_io_poll(): update ames IO state.
-      */
-        void
-        u3_ames_io_poll(u3_pier* pir_u);
 
     /**  Autosave.
     **/
@@ -1047,10 +1036,6 @@
         void
         u3_save_io_exit(u3_pier *pir_u);
 
-      /* u3_save_io_poll(): update autosave state.
-      */
-        void
-        u3_save_io_poll(u3_pier *pir_u);
 
     /**  Storage, new school.
     **/
@@ -1119,28 +1104,28 @@
         void
         u3_unix_io_exit(u3_pier *pir_u);
 
-      /* u3_unix_io_poll(): update storage state.
-      */
-        void
-        u3_unix_io_poll(u3_pier *pir_u);
-
 
     /**  behn, just a timer.
     **/
-      /* u2_behn_io_init(): initialize behn timer.
+      /* u3_behn_io_init(): initialize time timer.
       */
         void
-        u2_behn_io_init(void);
+        u3_behn_io_init(u3_pier *pir_u);
 
-      /* u2_behn_io_exit(): terminate timer.
+      /* u3_behn_io_exit(): terminate timer.
       */
         void
-        u2_behn_io_exit(void);
+        u3_behn_io_exit(u3_pier *pir_u);
 
-      /* u2_behn_io_poll(): update behn IO state.
+      /* u3_behn_ef_bake(): notify %behn that we're live
       */
         void
-        u2_behn_io_poll(void);
+        u3_behn_ef_bake(void);
+
+      /* u3_behn_ef_doze(): set or cancel timer
+      */
+        void
+        u3_behn_ef_doze(u3_noun wen);
 
 
     /**  HTTP server.
@@ -1189,28 +1174,6 @@
         void
         u3_http_io_exit(void);
 
-      /* u3_http_io_poll(): update http IO state.
-      */
-        void
-        u3_http_io_poll(void);
-
-    /**  New timer system.
-    **/
-      /* u3_behn_io_init(): initialize time timer.
-      */
-        void
-        u3_behn_io_init(u3_pier *pir_u);
-
-      /* u3_behn_io_exit(): terminate timer.
-      */
-        void
-        u3_behn_io_exit(u3_pier *pir_u);
-
-      /* u3_behn_io_poll(): update behn IO state.
-      */
-        void
-        u3_behn_io_poll(u3_pier *pir_u);
-
 
     /**  HTTP client.
     **/
@@ -1230,10 +1193,6 @@
         void
         u3_cttp_io_exit(void);
 
-      /* u3_cttp_io_poll(): update cttp IO state.
-      */
-        void
-        u3_cttp_io_poll(void);
 
     /**  Stream messages.
     **/

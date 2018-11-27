@@ -329,6 +329,7 @@
 #   define c3__dorn   c3_s4('d','o','r','n')
 #   define c3__dost   c3_s4('d','o','s','t')
 #   define c3__dot    c3_s3('d','o','t')
+#   define c3__doze   c3_s4('d','o','z','e')
 #   define c3__drag   c3_s4('d','r','a','g')
 #   define c3__draz   c3_s4('d','r','a','z')
 #   define c3__drib   c3_s4('d','r','i','b')

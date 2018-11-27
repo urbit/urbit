@@ -131,11 +131,6 @@
       u3_noun
       u3v_peek(u3_noun hap);
 
-    /* u3v_keep(): measure timer.
-    */
-      u3_noun
-      u3v_keep(u3_noun hap);
-
     /* u3v_poke(): insert and apply an input ovum (protected).
     */
       u3_noun
