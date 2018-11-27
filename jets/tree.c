@@ -922,6 +922,8 @@ static c3_c* _141_two__in_ha[] = {0};
   // static u3j_harm _141_two__by_int_a[] = {{".2", u3wdb_int, c3y}, {}};
   // static c3_c* _141_two__by_int_ha[] = {0};
 
+  static u3j_harm _141_two__by_jab_a[] = {{".2", u3wdb_jab, c3y}, {}};
+  static c3_c* _141_two__by_jab_ha[] = {0};
   static u3j_harm _141_two__by_put_a[] = {{".2", u3wdb_put, c3y}, {}};
   static c3_c* _141_two__by_put_ha[] = {0};
   static u3j_harm _141_two__by_tap_a[] = {{".2", u3wdb_tap, c3y}, {}};
@@ -938,6 +940,7 @@ static u3j_core _141_two__by_d[] =
     { "get", 7, _141_two__by_get_a, 0, _141_two__by_get_ha },
     { "has", 7, _141_two__by_has_a, 0, _141_two__by_has_ha },
     // { "int", 7, _141_two__by_int_a, 0, _141_two__by_int_ha },
+    { "jab", 7, _141_two__by_jab_a, 0, _141_two__by_jab_ha },
     { "put", 7, _141_two__by_put_a, 0, _141_two__by_put_ha },
     { "tap", 7, _141_two__by_tap_a, 0, _141_two__by_tap_ha },
     // { "uni", 7, _141_two__by_uni_a, 0, _141_two__by_uni_ha },
