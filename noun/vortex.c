@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include "all.h"
 
+#define _CVX_WISH  4
+#define _CVX_POKE 10
+#define _CVX_PEEK 47
+
 int WISH;
 /* _cv_nock_wish(): call wish through hardcoded interface.
 */
@@ -13,7 +17,7 @@ _cv_nock_wish(u3_noun txt)
   u3_noun fun, pro;
 
   WISH = 1;
-  fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(20, u3A->roc)));
+  fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_WISH, u3A->roc)));
   pro = u3n_slam_on(fun, txt);
   WISH = 0;
 
@@ -129,7 +133,7 @@ _cv_mung(c3_w sec_w, u3_noun gat, u3_noun sam)
 u3_noun
 u3v_pike(u3_noun ovo, u3_noun cor)
 {
-  u3_noun fun = u3n_nock_on(cor, u3k(u3x_at(42, cor)));
+  u3_noun fun = u3n_nock_on(cor, u3k(u3x_at(_CVX_POKE, cor)));
   u3_noun sam = u3nc(u3k(u3A->now), ovo);
 
   return _cv_mung(0, fun, sam);
@@ -198,7 +202,7 @@ u3v_nick(u3_noun vir, u3_noun cor)
 static u3_noun
 _cv_nock_poke(u3_noun ovo)
 {
-  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(42, u3A->roc)));
+  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_POKE, u3A->roc)));
   u3_noun sam, pro;
   u3_noun cod_w;
 
@@ -236,18 +240,7 @@ _cv_nock_poke(u3_noun ovo)
 static u3_noun
 _cv_nock_peek(u3_noun hap)
 {
-  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(87, u3A->roc)));
-  u3_noun sam = u3nc(u3k(u3A->now), hap);
-
-  return u3n_slam_on(fun, sam);
-}
-
-/* _cv_nock_keep(): call wait through hardcoded interface.
-*/
-static u3_noun
-_cv_nock_keep(u3_noun hap)
-{
-  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(4, u3A->roc)));
+  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_PEEK, u3A->roc)));
   u3_noun sam = u3nc(u3k(u3A->now), hap);
 
   return u3n_slam_on(fun, sam);
@@ -323,14 +316,6 @@ u3_noun
 u3v_peek(u3_noun hap)
 {
   return u3m_soft_sure(_cv_nock_peek, hap);
-}
-
-/* u3v_keep(): measure timer.
-*/
-u3_noun
-u3v_keep(u3_noun hap)
-{
-  return u3m_soft_sure(_cv_nock_keep, hap);
 }
 
 #if 0
