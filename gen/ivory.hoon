@@ -18,10 +18,10 @@
   .^(@t %cx (welp sys /hoon/hoon))
 ::  compiler-hoon: compiler as hoon expression
 ::
-::    We parse with +ream for reproducibility.
+::    Parsed with a static path for reproducibility.
 ::
 ~&  %ivory-parsing
-=/  compiler-hoon  (ream compiler-source)
+=/  compiler-hoon  (rain /sys/hoon/hoon compiler-source)
 ~&  %ivory-parsed
 ::  arvo-source: hoon source file producing arvo kernel, `sys/arvo`
 ::
@@ -29,9 +29,11 @@
   .^(@t %cx (welp sys /arvo/hoon))
 ::  whole-hoon: arvo within compiler
 ::
+::    Parsed with a static path for reproducibility.
+::
 =/  whole-hoon=hoon
   :+  %tsbn  compiler-hoon
-  :+  %tsld  (ream arvo-source)
+  :+  %tsld  (rain /sys/arvo/hoon arvo-source)
   [%$ 7]
 ::  compile the whole schmeer
 ::
@@ -41,12 +43,12 @@
 ~&  %ivory-compiled
 ::  zuse-ovo: standard library installation event
 ::
-::    Arvo parses the %veer payload with +rain, so
-::    we pass the empty path / for reproducibility.
+::    Arvo parses the %veer card contents with +rain;
+::    we include a static path for reproducibility.
 ::
 =/  zuse-ovo=ovum
   :-  /vane/zuse
-  [%veer %$ / .^(@ %cx (weld sys /zuse/hoon))]
+  [%veer %$ /sys/zuse/hoon .^(@ %cx (weld sys /zuse/hoon))]
 ::  installed: Arvo gate (formal instance) with %zuse installed
 ::
 ::    The :zuse-ovo event occurs at a defaulted date for reproducibility.
