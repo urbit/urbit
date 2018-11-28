@@ -3535,7 +3535,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  disabled-test-reef-slow
+++  test-reef-slow
   ::
   =/  hoon-parsed=hoon
     (rain /~nul/base/~1234.5.6/sys/hoon/hoon hoon-scry)
@@ -3552,7 +3552,7 @@
   =/  pit=vase  !>(~)
   =/  hoon-compiled=vase  (slap pit hoon-parsed)
   ~&  %hoon-compiled
-  =/  arvo-compiled=vase  (slap hoon-compiled arvo-parsed)
+  =/  arvo-compiled=vase  (slap (slot 7 hoon-compiled) arvo-parsed)
   ~&  %arvo-compiled
   =/  pit-compiled=vase   (slap arvo-compiled [%cnts ~[[%& 1] %is] ~])
   ~&  %pit-compiled
