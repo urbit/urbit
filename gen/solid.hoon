@@ -12,7 +12,7 @@
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
         arg=$@(~ [top=path ~])
-        dub/_|
+        dub=_|
     ==
 :-  %noun
 ::  sys: root path to boot system, `/~me/[desk]/now/sys`
@@ -27,9 +27,6 @@
 =/  compiler-src  .^(@t %cx (weld compiler-path /hoon))
 =/  arvo-src      .^(@t %cx (weld arvo-path /hoon))
 =/  arvo-formula
-  =;  res
-    ?:(?=(%& -.res) p.res (mean (flop p.res)))
-  %-  mule  |.
   ~&  %solid-loaded
   =/  compiler-hoon  (rain compiler-path compiler-src)
   ?.  dub
@@ -79,7 +76,7 @@
       =/  txt  .^(@ %cx (weld pax /hoon))
       [[%vane den] [%veer abr pax txt]]
     --
-::  arvo with vanes installed
+::  installed: Arvo gate (formal interface) with %zuse and vanes installed
 ::
 =/  installed
   =<  q
@@ -88,7 +85,9 @@
     .*(0 arvo-formula)
   |=  [ovo=ovum ken=*]
   [~ .*(ken [%9 2 %10 [6 %1 now ovo] %0 1])]
-::  produce both the arvo-formula (for jet registration)
-::  and a kernel with the vanes already installed
+::
+::  produce a pair of :arvo-formula (for jet registration) and
+::  the Arvo core (structural interface), which is the context
+::  of the formal Arvo interface gate :installed
 ::
 [arvo-formula .*(installed [%0 7])]

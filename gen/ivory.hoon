@@ -39,21 +39,21 @@
 =+  whole-formula=q:(~(mint ut %noun) %noun whole-hoon)
 ~&  %ivory-compiled
 ::
-::  tang: standard library (%zuse) installation event
+::  zuse-ovo: standard library installation event
 ::
-=/  tang
+=/  zuse-ovo=ovum
   =/  pax  (weld sys /zuse)
   =/  txt  .^(@ %cx (weld pax /hoon))
-  `ovum`[/vane/zuse [%veer %$ pax txt]]
+  [/vane/zuse [%veer %$ pax txt]]
 ::
-::  installed: kernel with tang installed
+::  installed: Arvo gate (formal instance) with %zuse installed
 ::
-~&  %tang-installing
+~&  %zuse-installing
 =/  installed
-  .*(0 [%7 whole-formula [%9 2 %10 [6 %1 now tang] %0 1]])
-~&  %tang-installed
+  .*(0 [%7 whole-formula [%9 2 %10 [6 %1 now zuse-ovo] %0 1]])
+~&  %zuse-installed
 ::
-::  produce both whole-formula (for jet registration)
-::  and a kernel with the standard library already installed
+::  produce a formula that evaluates :whole-formula (for jet registration),
+::  then ignores that result and produces :installed
 ::
 [%7 whole-formula %1 installed]
