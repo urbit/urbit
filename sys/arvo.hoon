@@ -117,6 +117,10 @@
   ?~  u.bop  [~ ~]
   [~ ~ +.q.u.u.bop]
 ::
+++  symp                                                ::  symbol or empty
+  |=  a=*  ^-  @tas
+  ?.(&(?=(@ a) ((sane %tas) a)) %$ a)
+::
 ++  vent                                                ::  vane core
   |=  {lal/@tas vil/vile bud/vase sew/(pair worm vase)}
   ~%  %vent  +>+  ~
@@ -224,7 +228,7 @@
             ==
         ^=  har  ^-  (each (pair arvo worm) term)
         =^  caq  p.sew  (~(spot wa p.sew) 3 wec)
-        ?+    q.caq   [%| (cat 3 %funk (@tas q.caq))]
+        ?+    q.caq   [%| (cat 3 %funk (symp q.caq))]
         ::
             {$pass p/* q/@tas r/{p/@tas q/*}}
           %-  (bond |.([%| p.r.q.caq]))
@@ -321,7 +325,7 @@
             (slix (slid [%& [%atom %tas `org] org] hil))
           ==
       ?~  pru
-        ~&  [%swim-lost lal (@tas +>-.hil)]
+        ~&  [%swim-lost lal (symp +>-.hil)]
         [[~ p.sew] q.sew]
       =^  pro  p.sew  (need pru)
       =^  moz  p.sew  (~(slap wa p.sew) pro [%limb %p])
@@ -429,23 +433,21 @@
         $pass
       ~?  &(!lac !=(%$ p.gum))
         :^  %pass  [p.gum p.q.r.gum]
-          [(@tas +>-.q.q.r.gum) p.r.gum]
+          [(symp +>-.q.q.r.gum) p.r.gum]
         q.gum
       [p.q.r.gum ~ [[p.gum p.r.gum] q.gum] q.q.r.gum]
     ::
         $give
-      ?.  ?&  ?=(^ q.gum)
-              ?=(^ i.q.gum)
-          ==
+      ?.  &(?=(^ q.gum) ?=(^ i.q.gum))
         ~|  [%jack-bad-duct q.gum]
-        ~|  [%jack-bad-card p.gum (@tas +>-.p.r.gum)]
+        ~|  [%jack-bad-card p.gum (symp +>-.p.r.gum)]
         !!
       ~?  &(!lac |(!=(%blit +>-.p.r.gum) !=(%d p.gum)))
-        [%give p.gum (@tas +>-.p.r.gum) `duct`q.gum]
+        [%give p.gum (symp +>-.p.r.gum) `duct`q.gum]
       [i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum]
     ::
         $slip
-      ~?  !lac  [%slip p.gum (@tas +>-.q.p.r.gum) q.gum]
+      ~?  !lac  [%slip p.gum (symp +>-.q.p.r.gum) q.gum]
       [p.p.r.gum ~ q.gum q.p.r.gum]
     ==
   ::
