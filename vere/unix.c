@@ -170,8 +170,7 @@ _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
 
   siz_w = u3h(u3t(mim));
   len_w = u3r_met(3, dat);
-  dat_y = c3_malloc(siz_w);
-  memset(dat_y, 0, siz_w);
+  dat_y = c3_calloc(siz_w);
 
   u3r_bytes(0, len_w, dat_y, dat);
   u3z(mim);

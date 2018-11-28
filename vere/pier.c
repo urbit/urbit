@@ -114,9 +114,7 @@ _pier_insert(u3_pier* pir_u,
              c3_l     msc_l,
              u3_noun  job)
 {
-  u3_writ* wit_u = c3_malloc(sizeof(u3_writ));
-
-  memset(wit_u, 0, sizeof(*wit_u));
+  u3_writ* wit_u = c3_calloc(sizeof(u3_writ));
   wit_u->pir_u = pir_u;
 
   wit_u->evt_d = pir_u->gen_d;
@@ -610,8 +608,8 @@ _pier_disk_load_precommit_file(u3_pier* pir_u,
     //  fprintf(stderr, "pier: load: precommit: bad file: %s\r\n", nam_c);
     return 0;
   }
-  wit_u = c3_malloc(sizeof(*wit_u));
-  memset(wit_u, 0, sizeof(*wit_u));
+
+  wit_u = c3_calloc(sizeof(*wit_u));
 
   //  fprintf(stderr, "pier: (%lld): %p restore\r\n", evt_d, wit_u);
 
@@ -799,12 +797,10 @@ _pier_disk_load_commit(u3_pier* pir_u,
         return c3y;
       }
       else {
-        u3_writ* wit_u = c3_malloc(sizeof(u3_writ));
+        u3_writ* wit_u = c3_calloc(sizeof(u3_writ));
 
         //  fprintf(stderr, "pier: load: commit: %lld\r\n", evt_d);
 
-        memset(wit_u, 0, sizeof(*wit_u));
-      
         wit_u->pir_u = pir_u;
         wit_u->evt_d = evt_d;
         wit_u->job = job;
@@ -1044,10 +1040,9 @@ static c3_o
 _pier_disk_create(u3_pier* pir_u,
                   c3_d     lav_d)
 {
-  u3_disk*  log_u = c3_malloc(sizeof(*log_u));
+  u3_disk*  log_u = c3_calloc(sizeof(*log_u));
   u3_writ** ray_u;
   
-  memset(log_u, 0, sizeof(*log_u));
   log_u->pir_u = pir_u;
   pir_u->log_u = log_u;
 
@@ -1347,9 +1342,8 @@ _pier_work_poke(void*   vod_p,
 u3_lord*
 _pier_work_create(u3_pier* pir_u)
 {
-  u3_lord* god_u = c3_malloc(sizeof *god_u);
+  u3_lord* god_u = c3_calloc(sizeof *god_u);
 
-  memset(god_u, 0, sizeof(*god_u));
   pir_u->god_u = god_u;
   god_u->pir_u = pir_u;
 
@@ -1442,8 +1436,7 @@ u3_pier_create(c3_c* pax_c, c3_c* sys_c)
   /* create pier
   */
   {
-    pir_u = c3_malloc(sizeof *pir_u);
-    memset(pir_u, 0, sizeof(*pir_u));
+    pir_u = c3_calloc(sizeof *pir_u);
 
     pir_u->pax_c = c3_malloc(1 + strlen(pax_c));
     strcpy(pir_u->pax_c, pax_c);
@@ -1458,14 +1451,10 @@ u3_pier_create(c3_c* pax_c, c3_c* sys_c)
     pir_u->log_u = 0;
     pir_u->god_u = 0;
 
-    pir_u->sam_u = c3_malloc(sizeof(u3_ames));
-    memset(pir_u->sam_u, 0, sizeof(u3_ames));
-    pir_u->teh_u = c3_malloc(sizeof(u3_behn));
-    memset(pir_u->teh_u, 0, sizeof(u3_behn));
-    pir_u->unx_u = c3_malloc(sizeof(u3_unix));
-    memset(pir_u->unx_u, 0, sizeof(u3_unix));
-    pir_u->sav_u = c3_malloc(sizeof(u3_save));
-    memset(pir_u->sav_u, 0, sizeof(u3_save));
+    pir_u->sam_u = c3_calloc(sizeof(u3_ames));
+    pir_u->teh_u = c3_calloc(sizeof(u3_behn));
+    pir_u->unx_u = c3_calloc(sizeof(u3_unix));
+    pir_u->sav_u = c3_calloc(sizeof(u3_save));
   }
 
   /* start process

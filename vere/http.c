@@ -2682,8 +2682,9 @@ _proxy_peek_read_cb(uv_stream_t* don_u,
     }
     else {
       c3_w len_w = siz_w + con_u->buf_u.len;
-      // XX c3_realloc
-      void* ptr_v = realloc(con_u->buf_u.base, len_w);
+
+      void* ptr_v = c3_realloc(con_u->buf_u.base, len_w);
+      // XX move assert into c3_realloc?
       c3_assert( 0 != ptr_v );
 
       memcpy(ptr_v + con_u->buf_u.len, buf_u->base, siz_w);
