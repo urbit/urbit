@@ -270,19 +270,31 @@
     ::
     =/  pax  (en-beam:format bec tyl)
     =/  lon  .^(arch %cy pax)
+    ::  XX this serialization should use marks
+    ::
     =?  hav  ?=(^ fil.lon)  
-        ?.  ?=({$hoon *} tyl)
+        ?.  ?=  ?($css $hoon $js $json $md $txt $udon $umd)
+            -.tyl
           ::
-          ::  install only hoon files for now
+          ::  install only files with whitelisted marks
           ::
+          ~&  ignoring+pax
           hav
         ::
         ::  cot: file as plain-text octet-stream
         ::
         =;  cot  [[(flop `path`tyl) `[/text/plain cot]] hav]
         ^-  octs
-        ?-    tyl  
-            {$hoon *}
+        ?-    tyl
+            {$json *}
+          =/  dat  .^(json %cx pax)
+          (as-octt:mimes:html (en-json:html dat))
+        ::
+            {$txt *}
+          =/  dat  .^(wain %cx pax)
+          (as-octs:mimes:html (of-wain:format dat))
+        ::
+            *
           =/  dat  .^(@t %cx pax)
           [(met 3 dat) dat]
         ==

@@ -1,7 +1,11 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-=>  +7
+~>  %slog.[0 leaf+"arvo-boot"]
+=<  |=  {now/@da ovo/*}
+    ^-  *
+    ~>  %slog.[0 leaf+"arvo-event"]
+    .(+> +:(poke now ovo))
 ~>  %slog.[0 leaf+"%arvo-assembly"]
 =-  ~>  %slog.[0 leaf+"%arvo-assembled"]
     -
@@ -113,6 +117,10 @@
   ?~  u.bop  [~ ~]
   [~ ~ +.q.u.u.bop]
 ::
+++  symp                                                ::  symbol or empty
+  |=  a=*  ^-  @tas
+  ?.(&(?=(@ a) ((sane %tas) a)) %$ a)
+::
 ++  vent                                                ::  vane core
   |=  {lal/@tas vil/vile bud/vase sew/(pair worm vase)}
   ~%  %vent  +>+  ~
@@ -220,7 +228,7 @@
             ==
         ^=  har  ^-  (each (pair arvo worm) term)
         =^  caq  p.sew  (~(spot wa p.sew) 3 wec)
-        ?+    q.caq   [%| (cat 3 %funk (@tas q.caq))]
+        ?+    q.caq   [%| (cat 3 %funk (symp q.caq))]
         ::
             {$pass p/* q/@tas r/{p/@tas q/*}}
           %-  (bond |.([%| p.r.q.caq]))
@@ -317,7 +325,7 @@
             (slix (slid [%& [%atom %tas `org] org] hil))
           ==
       ?~  pru
-        ~&  [%swim-lost lal (@tas +>-.hil)]
+        ~&  [%swim-lost lal (symp +>-.hil)]
         [[~ p.sew] q.sew]
       =^  pro  p.sew  (need pru)
       =^  moz  p.sew  (~(slap wa p.sew) pro [%limb %p])
@@ -425,22 +433,21 @@
         $pass
       ~?  &(!lac !=(%$ p.gum))
         :^  %pass  [p.gum p.q.r.gum]
-          [(@tas +>-.q.q.r.gum) p.r.gum]
+          [(symp +>-.q.q.r.gum) p.r.gum]
         q.gum
       [p.q.r.gum ~ [[p.gum p.r.gum] q.gum] q.q.r.gum]
     ::
         $give
-      ?>  ?=(^ q.gum)
-      ?.  ?=(^ i.q.gum)
-        ~&  [%jack-bad-duct q.gum]
-        ~&  [%jack-bad-card +>-.p.r.gum]
+      ?.  &(?=(^ q.gum) ?=(^ i.q.gum))
+        ~|  [%jack-bad-duct q.gum]
+        ~|  [%jack-bad-card p.gum (symp +>-.p.r.gum)]
         !!
       ~?  &(!lac |(!=(%blit +>-.p.r.gum) !=(%d p.gum)))
-        [%give p.gum (@tas +>-.p.r.gum) `duct`q.gum]
+        [%give p.gum (symp +>-.p.r.gum) `duct`q.gum]
       [i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum]
     ::
         $slip
-      ~?  !lac  [%slip p.gum (@tas +>-.q.p.r.gum) q.gum]
+      ~?  !lac  [%slip p.gum (symp +>-.q.p.r.gum) q.gum]
       [p.p.r.gum ~ q.gum q.p.r.gum]
     ==
   ::
@@ -554,41 +561,51 @@
   ^-  *
   =-  ?:(?=(%& -.res) p.res ((slog p.res) ~))
   ^=  res  %-  mule  |.
-  =+  pax=(weld hap `path`[%hoon ~])
-  =+  wax=(weld zup `path`[%hoon ~])
+  =/  pax  (weld hap /hoon)
+  =/  wax  (weld zup /hoon)
   ~&  [%vega-start-hoon hap]
-  =+  src=((hard @t) (need (peek now cx+pax)))
-  =+  arv=((hard @t) (need (peek now cx+wax)))
-  =+  gen=(rain hap src)
+  =/  src  ((hard @t) (need (peek now cx+pax)))
+  =/  arv  ((hard @t) (need (peek now cx+wax)))
+  ::  construct  =>(hoon =>(+7 arvo))
+  ::
+  =/  gen=hoon
+    :+  %tsbn  (rain hap src)
+    :+  %tsld  (rain zup arv)
+    [%$ 7]
   ~&  %vega-parsed
-  =+  one=(~(mint ut %noun) %noun gen)
+  =/  fol  q:(~(mint ut %noun) %noun gen)
   ~&  %vega-compiled
-  ~&  [%vega-arvo zup]
-  =+  two=(~(mint ut p.one) %noun (rain zup arv))
-  ~&  %vega-minted
-  .*(0 [7 q.one q.two])
+  ::  evaluate :fol to produce the Arvo gate,
+  ::  then produce the Arvo core at +7
+  ::
+  .*(0 [%7 fol %0 7])
 ::
 ++  vega                                                ::  reboot kernel
   |=  {now/@da ova/(list ovum) hap/path zup/path}
   ^-  (unit {p/(list ovum) q/*})
   =-  ?:(?=(%| -.res) ((slog p.res) ~) `p.res)
   ^=  res  %-  mule  |.
-  =+  ken=(veke now hap zup)
+  =/  ken  (veke now hap zup)
   ~&  [%vega-kernel `@ux`(mug ken)] 
-  =+  ^=  nex
-      ::  +peek at +47
-      ::
-      =+  gat=.*(ken .*(ken [0 47]))
-      (need ((hard (unit @)) .*([-.gat [[now ~] +>.gat]] -.gat)))
+  =/  nex
+    ::  call +peek at +47
+    ::
+    %-  need
+    %-  (hard (unit @))
+    .*(ken [%9 2 %10 [6 %1 now ~] [%9 47 %0 1]])
   ~&  [%vega-compiled hoon-version nex]
   ?>  (lte nex hoon-version)
+  ::  entropy, pending effects, vanes
+  ::
+  =/  sam  [eny ova q.niz]
   ::  +load at +46 or +come at +22
   ::
-  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon-version) 46 22)]))
-  =+  sam=[eny ova q.niz]
-  =+  raw=.*([-.gat [sam +>.gat]] -.gat)
-  =+  yep=((list ovum) -.raw)
-  [[[~ %vega hap] yep] +.raw]
+  =/  axe  ?:(=(nex hoon-version) 46 22)
+  =/  out
+    .*(ken [%9 2 %10 [6 %1 sam] [%9 axe %0 1]])
+  ::  add a reset notification to the pending effects
+  ::
+  [[[~ %vega hap] ((list ovum) -.out)] +.out]
 ::
 ++  veer                                                ::  install vane/tang
   |=  {now/@da fav/curd}

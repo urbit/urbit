@@ -185,7 +185,10 @@
       =.  tym  (raze tym)
       =/  nex=(unit @da)  ?~(p.tym ~ (some p:~(get up p.tym)))
       :_  tym
-      ?:(=(old nex) ~ [gad %give %doze nex]~)
+      ?:  =(old nex)  ~
+      ~|  [%behn-bad-duct duct=gad doze=nex]
+      ?>  ?=(^ gad)
+      [gad %give %doze nex]~
     ::
         $wait
       =/  old=(unit @da)  ?~(p.tym ~ (some p:~(get up p.tym)))
@@ -193,7 +196,10 @@
       =.  tym  (raze tym)
       =/  nex=(unit @da)  ?~(p.tym ~ (some p:~(get up p.tym)))
       :_  tym
-      ?:(=(old nex) ~ [gad %give %doze nex]~)
+      ?:  =(old nex)  ~
+      ~|  [%behn-bad-duct duct=gad doze=nex]
+      ?>  ?=(^ gad)
+      [gad %give %doze nex]~
     ::
         $wake
       |-  ^+  [*(list move) tym]
@@ -203,6 +209,8 @@
         ~&  %weird-wake  [~ tym]
       =/  nex  ~(get up p.tym)
       ?:  (lte now p.nex)
+        ~|  [%behn-bad-duct duct=gad doze=nex]
+        ?>  ?=(^ gad)
         [[gad %give %doze `p.nex]~ tym]
       =^  mof  tym  $(p.tym ~(pop up p.tym))
       [[`move`[q.nex %give %wake ~] mof] tym]

@@ -4692,6 +4692,7 @@
             ::
             %ride  [%cnts ~[[%& 1] %is] ~]
             %ride  arvo-hoon
+            %ride  [%$ 7]
             %ride  hoon-hoon
             [%$ %noun !>(~)]
         ==

@@ -3766,6 +3766,9 @@
       (~(has in who.r) |+nom.req)
     --
   ::
+      $crud
+    [[[hen %slip %d %flog req] ~] ..^$]
+  ::
       $drop
     =^  mos  ruf
       =+  den=((de now hen ruf) [. .]:our.req des.req)

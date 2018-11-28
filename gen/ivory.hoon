@@ -39,4 +39,21 @@
 =+  whole-formula=q:(~(mint ut %noun) %noun whole-hoon)
 ~&  %ivory-compiled
 ::
-whole-formula
+::  zuse-ovo: standard library installation event
+::
+=/  zuse-ovo=ovum
+  =/  pax  (weld sys /zuse)
+  =/  txt  .^(@ %cx (weld pax /hoon))
+  [/vane/zuse [%veer %$ pax txt]]
+::
+::  installed: Arvo gate (formal instance) with %zuse installed
+::
+~&  %zuse-installing
+=/  installed
+  .*(0 [%7 whole-formula [%9 2 %10 [6 %1 now zuse-ovo] %0 1]])
+~&  %zuse-installed
+::
+::  produce a formula that evaluates :whole-formula (for jet registration),
+::  then ignores that result and produces :installed
+::
+[%7 whole-formula %1 installed]
