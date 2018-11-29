@@ -384,6 +384,61 @@ _boothack_pill(void)
   return u3nc(c3y, u3i_string(u3_Host.ops_u.pil_c));
 }
 
+/* _boothack_key(): parse a private key file or value
+*/
+static u3_noun
+_boothack_key(u3_noun kef)
+{
+  u3_noun seed, ship;
+
+  {
+    u3_noun des = u3dc("slaw", c3__uw, u3k(kef));
+
+    if ( u3_nul == des ) {
+      c3_c* kef_c = u3r_string(kef);
+      fprintf(stderr, "dawn: invalid private keys: %s\r\n", kef_c);
+      free(kef_c);
+      exit(1);
+    }
+
+    //  +seed:able:jael: private key file
+    //
+    seed = u3ke_cue(u3k(u3t(des)));
+    //  local reference, not counted
+    //
+    ship = u3h(seed);
+    u3z(des);
+    u3z(kef);
+  }
+
+  if ( 0 != u3_Host.ops_u.who_c ) {
+    u3_noun woh = u3i_string(u3_Host.ops_u.who_c);
+    u3_noun whu = u3dc("slaw", 'p', u3k(woh));
+
+    if ( u3_nul == whu ) {
+      fprintf(stderr, "dawn: invalid ship specificed with -w %s\r\n",
+                                                 u3_Host.ops_u.who_c);
+      exit(1);
+    }
+
+    if ( c3n == u3r_sing(ship, u3t(whu)) ) {
+      u3_noun how = u3dc("scot", 'p', u3k(ship));
+      c3_c* how_c = u3r_string(u3k(how));
+      fprintf(stderr, "dawn: mismatch between -w %s and -K %s\r\n",
+                                                 u3_Host.ops_u.who_c, how_c);
+
+      u3z(how);
+      free(how_c);
+      exit(1);
+    }
+
+    u3z(woh);
+    u3z(whu);
+  }
+
+  return seed;
+}
+
 /* _boothack_doom(): parse CLI arguments into c3__doom
 */
 static u3_noun
@@ -410,8 +465,20 @@ _boothack_doom(void)
     u3z(fak);
   }
   else if ( 0 != u3_Host.ops_u.who_c ) {
-    fprintf(stderr, "boot: real ships not yet supported\r\n");
-    exit(1);
+    u3_noun kef;
+
+    if ( 0 != u3_Host.ops_u.key_c ) {
+      kef = u3m_file(u3_Host.ops_u.key_c);
+    }
+    else if ( 0 != u3_Host.ops_u.gen_c ) {
+      kef = u3i_string(u3_Host.ops_u.gen_c);
+    }
+    else {
+      fprintf(stderr, "boot: must specify a key with -k or -G\r\n");
+      exit(1);
+    }
+
+    bot = u3nc(c3__dawn, _boothack_key(kef));
   }
   else {
     //  XX allow parent star to be specified?
