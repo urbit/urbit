@@ -8,60 +8,35 @@
 ::  wyrd: requires auth to a single relevant ship       ::
 ::  doom: requires auth to the daemon itself            ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-++  fate                                                ::  client to lord
-  $%  $:  $auth                                         ::  authenticate client
-          p/(unit ship)                                 ::  what to auth
-          q/@                                           ::  auth secret
-      ==                                                ::
-  $%  $:  $wyrd                                         ::  ship action
-          p/ship                                        ::  which ship
-          q/wyrd                                        ::  the action
-      ==                                                ::
-      $:  $doom                                         ::  daemon command
-          p/doom                                        ::  the command
-      ==                                                ::
+|%                                                      ::
++$  fate                                                ::  client to lord
+  $%  [%auth p=(unit ship) q=@]                         ::  authenticate client
+      [%wyrd p=ship q=wyrd]                             ::  ship action
+      [%doom p=doom]                                    ::  daemon command
   ==                                                    ::
-::                                                      ::
-++  wyrd                                                ::  ship action
-  $%  $:  $susp                                         ::  release this pier
-          $~                                            ::
-      ==                                                ::
-      $:  $vent                                         ::  generate event
-          p/ovum                                        ::  wire and card
-      ==                                                ::
++$  wyrd                                                ::  ship action
+  $%  [%susp ~]                                         ::  release this pier
+      [%vent p=ovum]                                    ::  generate event
   ==                                                    ::
-::                                                      ::
-++  doom                                                ::  daemon command
-  $%  $:  $boot                                         ::  boot new pier
-          who/ship                                      ::  ship
-          tic/@                                         ::  ticket (or 0)
-          sec/@                                         ::  secret (or 0)
-          pax/@t                                        ::  directory
-          sys/@                                         ::  boot pill
-      ==                                                ::
-      $:  $exit                                         ::  end the daemon
-          $~                                            ::
-      ==                                                ::
-      $:  $pier                                         ::  acquire a pier
-          p/(unit @t)                                   ::  unix path
-      ==                                                ::
-      $:  $root                                         ::  admin ship actions
-          p/ship                                        ::  which ship
-          q/wyrd                                        ::  the action
++$  doom                                                ::  daemon command
+  $%  [%boot p=boot q=@pill r=@t]                       ::  boot (r=pier)
+      [%exit ~]                                         ::  end the daemon
+      [%pier p=(unit @t)]                               ::  acquire a pier
+      [%root p=ship q=wyrd]                             ::  admin ship actions
   ==                                                    ::
-++  cede                                                ::  lord to client
-  $%  $:  $cede                                         ::  send cards
-          p/ship                                        ::  sending ship
-          q/(list ovum)                                 ::  actions
-      ==                                                ::
-      $:  $firm                                         ::  accept command
-          $~                                            ::
-      ==                                                ::
-      $:  $deny                                         ::  reject command
-          p/@t                                          ::  error message
-      ==                                                ::
++$  boot                                                ::  boot procedures
+  $%  [%come p=(unit ship)]                             ::  mine a comet
+      [%dawn p=seed]                                    ::  real keys
+      [%fake p=who]                                     ::  fake keys
   ==                                                    ::
-::                                                      ::
++$  pill                                                ::  boot sequence
+  (each path=@t pill=@)                                 ::
++$  cede                                                ::  lord to client
+  $%  [%cede p=ship q[(list ovum)]                      ::  send cards
+      [%firm ~]                                         ::  accept command
+      [%deny p=@t]                                      ::  reject command
+  ==                                                    ::
+--                                                      ::
 */
 
 void _king_auth(u3_noun auth);
@@ -72,9 +47,13 @@ void _king_wyrd(u3_noun ship_wyrd);
 
 void _king_doom(u3_noun doom);
   void _king_boot(u3_noun boot);
+    void _king_come(u3_noun star, u3_noun pill, u3_noun path);
+    void _king_dawn(u3_noun seed, u3_noun pill, u3_noun path);
+    void _king_fake(u3_noun ship, u3_noun pill, u3_noun path);
   void _king_exit(u3_noun exit);
   void _king_pier(u3_noun pier);
   void _king_root(u3_noun root);
+
 
 /* _king_defy_fate(): invalid fate
 */
@@ -215,12 +194,58 @@ _king_doom(u3_noun doom)
 void
 _king_boot(u3_noun bul)
 {
-  u3_noun who, sec, tic, sys, pax;
+  u3_noun boot, pill, path;
+  void (*next)(u3_noun, u3_noun, u3_noun);
 
-  u3r_quil(bul, &who, &tic, &sec, &sys, &pax);
-  u3_pier_boot(u3k(who), u3k(tic), u3k(sec), u3k(sys), u3k(pax));
+  c3_assert(_(u3a_is_cell(bul)));
+  u3x_trel(bul, &boot, &pill, &path);
+  c3_assert(_(u3a_is_cat(u3h(boot))));
 
+  switch ( u3h(boot) ) {
+    case c3__fake: {
+      next = _king_fake;
+      break;
+    }
+    case c3__come: {
+      next = _king_come;
+      break;
+    }
+    case c3__dawn: {
+      next = _king_dawn;
+      break;
+    }
+    default:
+      return _king_defy_fate();
+  }
+
+  next(u3k(u3t(boot)), u3k(pill), u3k(path));
   u3z(bul);
+}
+
+/* _king_fake(): boot with fake keys
+*/
+void
+_king_fake(u3_noun ship, u3_noun pill, u3_noun path)
+{
+  u3_pier_boot(ship, u3nc(c3__fake, u3k(ship)), pill, path);
+}
+
+/* _king_come(): mine a comet under star (unit)
+*/
+void
+_king_come(u3_noun star, u3_noun pill, u3_noun path)
+{
+  fprintf(stderr, "boot: comets not yet supported\r\n");
+  exit(1);
+}
+
+/* _king_dawn(): boot from keys, validating
+*/
+void
+_king_dawn(u3_noun seed, u3_noun pill, u3_noun path)
+{
+  fprintf(stderr, "boot: real ships not yet supported\r\n");
+  exit(1);
 }
 
 /* _king_exit(): exit parser
@@ -297,61 +322,71 @@ _king_socket_connect(uv_stream_t *sock, int status)
   u3_newt_read((u3_moat *)mor_u);
 }
 
+/* _boothack_pill(): parse CLI pill arguments into (each path pill)
+*/
+static u3_noun
+_boothack_pill(void)
+{
+  if ( 0 == u3_Host.ops_u.pil_c ) {
+    //  XX download default pill
+    //  XX support -u
+    //
+    fprintf(stderr, "boot: new ship must specify pill (-B)\r\n");
+    exit(1);
+  }
+
+  return u3nc(c3y, u3i_string(u3_Host.ops_u.pil_c));
+}
+
+/* _boothack_doom(): parse CLI arguments into c3__doom
+*/
+static u3_noun
+_boothack_doom(void)
+{
+  u3_noun pax = u3i_string(u3_Host.dir_c);
+  u3_noun bot;
+
+  if ( c3n == u3_Host.ops_u.nuu ) {
+    return u3nt(c3__pier, u3_nul, pax);
+  }
+  else if ( 0 != u3_Host.ops_u.fak_c ) {
+    u3_noun fak = u3i_string(u3_Host.ops_u.fak_c);
+    u3_noun whu = u3dc("slaw", 'p', fak);
+
+    if ( u3_nul == whu ) {
+      fprintf(stderr, "boot: malformed -F ship %s\r\n", u3_Host.ops_u.fak_c);
+      exit(1);
+    }
+
+    bot = u3nc(c3__fake, u3k(u3t(whu)));
+
+    u3z(whu);
+    u3z(fak);
+  }
+  else if ( 0 != u3_Host.ops_u.who_c ) {
+    fprintf(stderr, "boot: real ships not yet supported\r\n");
+    exit(1);
+  }
+  else {
+    //  XX allow parent star to be specified?
+    //
+    bot = u3nc(c3__come, u3_nul);
+  }
+
+  return u3nq(c3__boot, bot, _boothack_pill(), pax);
+}
+
 /* _boothack_cb(): callback for the boothack self-connection
+**  (as if we were a client process)
 */
 void
 _boothack_cb(uv_connect_t *conn, int status)
 {
   u3_mojo *moj_u = conn->data;
-  u3_atom mat;
-  u3_atom who, tic, sec, pax, sys;
-  u3_noun dom;
 
-  pax = u3i_string(u3_Host.dir_c);
+  u3_noun dom = u3nc(c3__doom, _boothack_doom());
+  u3_atom mat = u3ke_jam(dom);
 
-  if ( c3n == u3_Host.ops_u.nuu ) {
-    dom = u3nt(c3__pier, u3_nul, pax);
-  }
-  else {
-    if ( !u3_Host.ops_u.pil_c ) {
-      //  XX download default pill
-      //
-      fprintf(stderr, "boot: new ship must specify pill (-B)\r\n");
-      exit(1);
-    }
-    else sys = u3i_string(u3_Host.ops_u.pil_c);
-
-    {
-      u3_noun whu;
-
-      if ( !u3_Host.ops_u.who_c ) {
-        fprintf(stderr, "boot: new ship must specify identity (-w)\r\n");
-        exit(1);
-      }
-      whu = u3dc("slaw", 'p', u3i_string(u3_Host.ops_u.who_c));
-
-      if ( u3_nul == whu ) {
-        fprintf(stderr, "boot: malformed identity (-w)\r\n");
-        exit(1);
-      }
-      who = u3k(u3t(whu));
-      u3z(whu);
-    }
-
-    if ( c3y == u3_Host.ops_u.fak ) {
-      fprintf(stderr, "boot: F A K E ship with null security\r\n");
-      sec = 0;
-      tic = 0;
-    }
-    else {
-      fprintf(stderr, "boot: real ships not yet supported\r\n");
-      exit(1);
-    }
-
-    dom = u3nc(c3__boot, u3nq(who, tic, sec, u3nc(pax, sys)));
-  }
-
-  mat = u3ke_jam(u3nc(c3__doom, dom));
   u3_newt_write(moj_u, mat, 0);
 }
 

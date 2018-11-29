@@ -915,8 +915,8 @@ _pier_disk_consolidate(u3_pier*  pir_u,
       */
       {
         u3_noun who = u3i_chubs(2, pir_u->who_d);
-        u3_noun tic = u3i_chubs(1, pir_u->tic_d);
-        u3_noun sec = u3i_chubs(1, pir_u->sec_d);
+        // u3_noun tic = u3i_chubs(1, pir_u->tic_d);
+        // u3_noun sec = u3i_chubs(1, pir_u->sec_d);
         u3_noun bot, mod, fil;
 
         u3r_trel(lal, &bot, &mod, &fil);
@@ -979,9 +979,10 @@ _pier_disk_consolidate(u3_pier*  pir_u,
           */
           {
             u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
-            u3_noun car = u3nt(c3__boot, c3__fake, u3k(who));
 
-            ovo = u3nc(wir, car);
+            c3_assert( 0 != pir_u->bot);
+            ovo = u3nt(wir, c3__boot, pir_u->bot);
+            pir_u->bot = 0;
           }
           _pier_insert_ovum(pir_u, 0, ovo);
         }
@@ -1002,7 +1003,7 @@ _pier_disk_consolidate(u3_pier*  pir_u,
         }
 
         u3z(lal);
-        u3z(sec);
+        // u3z(sec);
         u3z(who);
       }
     }
@@ -1952,8 +1953,11 @@ static u3_pier*
 _pier_boot_make(u3_noun pax, u3_noun sys)
 {
   c3_c*    pax_c = u3r_string(pax);
-  c3_c*    sys_c = u3r_string(sys);
+  c3_c*    sys_c;
   u3_pier* pir_u;
+
+  c3_assert( c3y == u3h(sys) );
+  sys_c = u3r_string(u3t(sys));
 
   pir_u = u3_pier_create(pax_c, sys_c);
 
@@ -1969,16 +1973,15 @@ _pier_boot_make(u3_noun pax, u3_noun sys)
 */
 void
 u3_pier_boot(u3_noun who,                   //  identity
-             u3_noun tic,                   //  ticket if any
-             u3_noun sec,                   //  secret or 0
-             u3_noun pax,                   //  path to pier
-             u3_noun sys)                   //  path to boot pill (if needed)
+             u3_noun ven,                   //  boot event
+             u3_noun pil,                   //  type-of/path-to pill
+             u3_noun pax)                   //  path to pier
 {
   u3_pier* pir_u;
 
   /* make/load pier
   */
-  pir_u = _pier_boot_make(pax, sys);
+  pir_u = _pier_boot_make(pax, pil);
 
   /* set boot params
   */
@@ -1992,12 +1995,14 @@ u3_pier_boot(u3_noun who,                   //  identity
     }
 
     u3r_chubs(0, 2, pir_u->who_d, who);
-    u3r_chubs(0, 1, pir_u->tic_d, tic);
-    u3r_chubs(0, 1, pir_u->sec_d, sec);
+    // u3r_chubs(0, 1, pir_u->tic_d, tic);
+    // u3r_chubs(0, 1, pir_u->sec_d, sec);
 
-    u3z(tic);
-    u3z(sec);
+    pir_u->bot = ven;
+
     u3z(who);
+    // u3z(tic);
+    // u3z(sec);
   }
 
   /* initialize boot i/o

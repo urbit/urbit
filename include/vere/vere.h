@@ -548,8 +548,6 @@
         c3_o    dem;                        //  -d, daemon
         c3_c*   ets_c;                      //  -E, eth snapshot
         c3_c*   eth_c;                      //  -e, ethereum node url
-        // XX temporary for compiling, remove
-        c3_o    fak;                        //  -F, fake carrier
         c3_c*   fak_c;                      //  -F, fake ship
         c3_w    fuz_w;                      //  -f, fuzz testing
         c3_c*   gen_c;                      //  -G, czar generator
@@ -665,6 +663,7 @@
           c3_c*            who_c;               //  identity as C string
           c3_s             por_s;               //  UDP port
           c3_o             fak_o;               //  yes iff fake security
+          u3_noun          bot;                 //  boot event XX review
           u3_disk*         log_u;               //  event log
           u3_lord*         god_u;               //  computer
           u3_ames*         sam_u;               //  packet interface
@@ -1262,10 +1261,9 @@
       */
         void
         u3_pier_boot(u3_noun who,                   //  identity
-                     u3_noun tic,                   //  ticket if any
-                     u3_noun sec,                   //  secret or 0
-                     u3_noun pax,                   //  path to pier
-                     u3_noun sys);                  //  path to boot pill
+                     u3_noun ven,                   //  boot event
+                     u3_noun pil,                   //  type-of/path-to pill
+                     u3_noun pax);                  //  path to pier
 
       /* u3_pier_stay(): restart the new pier system.
       */

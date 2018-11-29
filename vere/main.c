@@ -123,8 +123,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'F': {
         u3_Host.ops_u.fak_c = _main_presig(optarg);
-        // XX temporary for compiling, remove
-        u3_Host.ops_u.fak   = c3y;
         u3_Host.ops_u.net   = c3n;
         break;
       }
@@ -198,9 +196,10 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.ops_u.net = c3n;  /* no networking on fake ships. */
     u3_Host.ops_u.nuu = c3y;
   }
-  else if ( c3y == u3_Host.ops_u.nuu ) {
-    fprintf(stderr, "real ships are not yet supported; fake with -F ~ship\r\n");
-    return c3n;
+  else {
+    //  make -c optional
+    struct stat s;
+    u3_Host.ops_u.nuu = ( 0 == stat(u3_Host.dir_c, &s) ) ? c3n : c3y;
   }
 
   c3_t imp_t = ( (0 != u3_Host.ops_u.who_c) && (4 == strlen(u3_Host.ops_u.who_c)) );

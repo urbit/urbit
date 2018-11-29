@@ -233,6 +233,7 @@
 #   define c3__colb   c3_s4('c','o','l','b')
 #   define c3__cold   c3_s4('c','o','l','d')
 #   define c3__comb   c3_s4('c','o','m','b')
+#   define c3__come   c3_s4('c','o','m','e')
 #   define c3__con    c3_s3('c','o','n')
 #   define c3__cone   c3_s4('c','o','n','e')
 #   define c3__cong   c3_s4('c','o','n','g')
