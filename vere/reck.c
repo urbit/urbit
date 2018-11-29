@@ -365,6 +365,7 @@ _reck_kick_norm(u3_noun pox, u3_noun fav)
 void
 u3_reck_kick(u3_noun ovo)
 {
+  u3t_event_trace("Effect", 'b');
   if ( (c3n == _reck_kick_spec(u3k(u3h(ovo)), u3k(u3t(ovo)))) &&
        (c3n == _reck_kick_norm(u3k(u3h(ovo)), u3k(u3t(ovo)))) )
   {
@@ -399,4 +400,5 @@ u3_reck_kick(u3_noun ovo)
 #endif
   }
   u3z(ovo);
+  u3t_event_trace("Effect", 'e');
 }

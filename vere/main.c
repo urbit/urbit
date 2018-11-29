@@ -94,7 +94,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.raf_c = 0;
   u3_Host.ops_u.nam_c = 0;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:e:E:f:F:k:p:LabcdgqstvxPDRS")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:j:e:E:f:F:k:p:LabcdgqstvxPDRS")) != -1 ) {
     switch ( ch_i ) {
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
@@ -131,6 +131,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'u': {
         u3_Host.ops_u.url_c = strdup(optarg);
+        break;
+      }
+      case 'j': {
+        u3_Host.ops_u.json_file_c = strdup(optarg);
         break;
       }
       case 'x': {
@@ -335,6 +339,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-F ship       Fake keys; also disables networking\n",
     "-f            Fuzz testing\n",
     "-g            Set GC flag\n",
+    "-j file       Create json trace file\n",
     "-K stage      Start at Hoon kernel version stage\n",
     "-k keys       Private key file\n",
     "-L            local networking only\n",
@@ -597,6 +602,13 @@ main(c3_i   argc,
       */
       if ( _(u3_Host.ops_u.has) ) {
         u3C.wag_w |= u3o_hashless;
+      }
+
+      /*  Set tracing flag
+      */
+      if ( u3_Host.ops_u.json_file_c ) {
+        u3C.wag_w |= u3o_trace;
+        u3t_trace_open(u3_Host.ops_u.json_file_c);
       }
     }
     u3m_boot(u3_Host.ops_u.nuu,

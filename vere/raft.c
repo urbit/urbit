@@ -1567,7 +1567,10 @@ _raft_punk(u3_noun ovo)
   }
 #endif
 
+  // TODO: Embed event number here?
+  u3t_event_trace("Running", 'b');
   gon = u3m_soft(sec_w, u3v_poke, u3k(ovo));
+  u3t_event_trace("Running", 'e');
 
 #ifdef GHETTO
   c3_w ms_w;
@@ -1656,7 +1659,9 @@ _raft_push(u3_raft* raf_u, c3_w* bob_w, c3_w len_w)
 
   if ( 1 == raf_u->pop_w ) {
     c3_assert(u3_raty_lead == raf_u->typ_e);
+    u3t_event_trace("Recording", 'b');
     raf_u->ent_d = u3_sist_pack(raf_u->tem_w, c3__ov, bob_w, len_w);
+    u3t_event_trace("Recording", 'e');
     raf_u->lat_w = raf_u->tem_w;  //  XX
 
     if ( !uv_is_active((uv_handle_t*)&raf_u->tim_u) ) {
