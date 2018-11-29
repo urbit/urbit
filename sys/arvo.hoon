@@ -140,7 +140,7 @@
   ::
   ++  wink                                              ::  deploy
     |=  {now/@da eny/@ ski/slyd}
-    =+  rig=(slym q.sew +<)                             ::  activate vane
+    =^  rig  p.sew  (~(slym wa p.sew) q.sew +<)         ::  activate vane
     ~%  %wink  +>+>  ~
     |%
     ++  slid
@@ -162,12 +162,14 @@
       |=  {gat/vase hil/mill}
       ^-  (unit (pair vase worm))
       =^  sam  p.sew  (~(slot wa p.sew) 6 gat)
-      =+  ^=  hig
+      =^  hig  p.sew
         ?-  -.hil
           %&  (~(nest wa p.sew) p.sam p.p.hil)
           %|  (~(nets wa p.sew) p.sam p.p.hil)
         ==
-      ?.(-.hig ~ `[(slym gat +>.hil) +.hig])
+      ?.  hig
+        ~
+      `(~(slym wa p.sew) gat +>.hil)
     ::
     ++  slur-a  ~/(%slur-a |=({gat/vase hil/mill} =+(%a (slur gat hil))))
     ++  slur-b  ~/(%slur-b |=({gat/vase hil/mill} =+(%b (slur gat hil))))

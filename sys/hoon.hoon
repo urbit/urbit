@@ -13904,7 +13904,7 @@
 ++  wa  !:                                              ::  cached compile
   |_  worm
   ++  nell  |=(ref/type (nest [%cell %noun %noun] ref)) ::  nest in cell
-  ++  nest                                              ::  nest:ut
+  ++  nest                                              ::  nest:ut, cached
     |=  {sut/type ref/type}
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
@@ -13994,6 +13994,11 @@
     ^-  {vase worm}
     =^  gun  +>+<  (mint p.vax [%$ axe])
     [[p.gun .*(q.vax [0 axe])] +>+<.$]
+  ::
+  ++  slym                                              ::  ++slym, cached
+    |=  {gat/vase sam/*}
+    ^-  [vase worm]
+    (slap gat(+<.q sam) [%limb %$])
   ::
   ++  sped                                              ::  specialize vase
     |=  vax/vase
