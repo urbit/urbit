@@ -3535,7 +3535,7 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
-++  test-reef-slow
+++  disabled-test-reef-slow
   ::
   =/  hoon-parsed=hoon
     (rain /~nul/base/~1234.5.6/sys/hoon/hoon hoon-scry)
