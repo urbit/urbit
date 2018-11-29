@@ -233,11 +233,8 @@ static c3_c* _141_pen_loot_ha[] = {0};
 
   static u3j_harm _141_pen__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
   static c3_c* _141_pen__ut_crop_ha[] = {0};
-
-  // XX figure out why this is disabled
-  // static u3j_harm _141_pen__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
-  // static c3_c* _141_pen__ut_fire_ha[] = {0};
-
+  static u3j_harm _141_pen__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
+  static c3_c* _141_pen__ut_fire_ha[] = {0};
   static u3j_harm _141_pen__ut_fond_a[] = {{".2", u3wfu_fond}, {}};
   static c3_c* _141_pen__ut_fond_ha[] = {0};
   static u3j_harm _141_pen__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
@@ -265,7 +262,7 @@ static u3j_core _141_pen__ut_d[] =
   {
     { "crop", 7, _141_pen__ut_crop_a, 0, _141_pen__ut_crop_ha },
     { "fond", 7, _141_pen__ut_fond_a, 0, _141_pen__ut_fond_ha },
-    // { "fire", 7, _141_pen__ut_fire_a, 0, _141_pen__ut_fire_ha },
+    { "fire", 7, _141_pen__ut_fire_a, 0, _141_pen__ut_fire_ha },
     { "fish", 7, _141_pen__ut_fish_a, 0, _141_pen__ut_fish_ha },
     { "fuse", 7, _141_pen__ut_fuse_a, 0, _141_pen__ut_fuse_ha },
     { "mint", 7, _141_pen__ut_mint_a, 0, _141_pen__ut_mint_ha },
