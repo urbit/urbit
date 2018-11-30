@@ -123,7 +123,6 @@
   ?.(&(?=(@ a) ((sane %tas) a)) %$ a)
 ::
 ++  vent                                                ::  vane core
-  ::  |=  {lal/@tas vil/vile bud/vase sew/(pair worm vase)}
   |=  [lal=@tas vil=vile bud=vase =vane]
   ~%  %vent  +>+  ~
   |%
@@ -312,7 +311,6 @@
               hen/duct
               hil/mill
           ==
-      ::  ^-  {{p/(list move) q/worm} q/vase}
       ^-  [(list move) _vane]
       ::  ~&  [%swim-wyt `@ud`~(wyt in worm.vane)]
       =+  ^=  pru
@@ -332,13 +330,11 @@
       ?~  pru
         ~&  [%swim-lost lal (symp +>-.hil)]
         [~ [vase.vane worm.vane]]
-        ::  [[~ worm.vane] q.sew]
       =^  pro  worm.vane  (need pru)
       =^  moz  worm.vane  (~(slap wa worm.vane) pro [%limb %p])
       =^  vem  worm.vane  (~(slap wa worm.vane) pro [%limb %q])
       =^  sad  worm.vane  (said moz)
       [sad [(soar vem) worm.vane]]
-      ::  [(said moz) (soar vem)]
     --
   --
 ::
@@ -363,7 +359,7 @@
   ==
 ::
 ++  is                                                  ::  operate in time
-  |=  {vil/vile eny/@ bud/vase niz/(pair worm (list {p/@tas q/vase}))}
+  |=  {vil/vile eny/@ bud/vase vanes=(list [label=@tas =vane])}
   |_  now/@da
   ++  beck
     ^-  slyd
@@ -373,14 +369,14 @@
     =+  lal=(end 3 1 ron)
     =+  ren=(@t (rsh 3 1 ron))
     |-  ^-  (unit (unit (cask)))
-    ?~  q.niz  ~
-    ?.  =(lal p.i.q.niz)  $(q.niz t.q.niz)
-    %-  scry:(wink:(vent lal vil bud [q.i.q.niz p.niz]) now (shax now) ..^$)
+    ?~  vanes  ~
+    ?.  =(lal label.i.vanes)  $(vanes t.vanes)
+    %-  scry:(wink:(vent lal vil bud vane.i.vanes) now (shax now) ..^$)
     [fur ren bed]
   ::
   ++  dink                                              ::  vase by char
     |=  din/@tas  ^-  vase
-    ?~(q.niz !! ?:(=(din p.i.q.niz) q.i.q.niz $(q.niz t.q.niz)))
+    ?~(vanes !! ?:(=(din label.i.vanes) vase.vane.i.vanes $(vanes t.vanes)))
   ::
   ++  dint                                              ::  input routing
     |=  hap/path  ^-  @tas
@@ -397,7 +393,8 @@
   ++  hurl                                              ::  start loop
     |=  {lac/? ovo/ovum}
     ~?  &(!lac !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
-    ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
+    ::  ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
+    ^-  {p/(list ovum) q=(list [label=@tas =vane])}
     ?>  ?=(^ p.ovo)
     %+  kick  lac
     :~  :*  i.p.ovo
@@ -411,32 +408,30 @@
     ==
   ::
   ++  race                                              ::  take
-    |=  {org/@tas lal/@tas pux/(unit wire) hen/duct hil/mill ves/vase}
-    ::  ^-  {p/{p/(list move) q/worm} q/vase}
-    ^-  [p=(list move) q=vane]
-    =+  ven=(vent lal vil bud [ves p.niz])
+    |=  {org/@tas lal/@tas pux/(unit wire) hen/duct hil/mill =vane}
+    ^-  [p=(list move) q=_vane]
+    =+  ven=(vent lal vil bud vane)
     =+  win=(wink:ven now (shax now) beck)
     (swim:win org pux hen hil)
   ::
   ++  fire                                              ::  execute
     |=  {org/term lal/term pux/(unit wire) hen/duct hil/mill}
+    ^-  {{p/(list ovum) q/(list muse)} _vanes}
     ?:  &(?=(^ pux) ?=($~ hen))
-      [[[[lal u.pux] (curd +>.hil)]~ ~] niz]
-    =+  naf=q.niz
-    |-  ^-  {{p/(list ovum) q/(list muse)} _niz}
-    ?~  naf  [[~ ~] [p.niz ~]]
-    ?.  =(lal p.i.naf)
+      [[[[lal u.pux] (curd +>.hil)]~ ~] vanes]
+    =+  naf=vanes
+    |-  ^-  {{p/(list ovum) q/(list muse)} _vanes}
+    ?~  naf  [[~ ~] ~]
+    ?.  =(lal label.i.naf)
       =+  tuh=$(naf t.naf)
       [-.tuh [+<.tuh [i.naf +>.tuh]]]
-    ::  TODO: Everything above has theoretically been converted to the new form.
     ::
-    =+  fiq=(race org lal pux hen hil q.i.naf)
-    [[~ (turn p.fiq |=(a/move [lal a]))] [worm.q.fiq [[p.i.naf vase.q.fiq] t.naf]]]
-    ::  [[~ (turn p.p.fiq |=(a/move [lal a]))] [q.p.fiq [[p.i.naf q.fiq] t.naf]]]
+    =+  fiq=(race org lal pux hen hil vane.i.naf)
+    [[~ (turn p.fiq |=(a/move [lal a]))] [[label.i.naf q.fiq] t.naf]]
   ::
   ++  jack                                              ::  dispatch card
     |=  {lac/? gum/muse}
-    ^-  {{p/(list ovum) q/(list muse)} _niz}
+    ^-  {{p/(list ovum) q/(list muse)} _vanes}
     ::  =.  lac  |(lac ?=(?(%g %f) p.gum))
     ::  =.  lac  &(lac !?=($b p.gum))
     %+  fire
@@ -466,9 +461,9 @@
   ++  kick                                              ::  new main loop
     |=  {lac/? mor/(list muse)}
     =|  ova/(list ovum)
-    |-  ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
-    ?~  mor  [(flop ova) niz]
-    =^  nyx  niz  (jack lac i.mor)
+    |-  ^-  {p/(list ovum) q=(list [label=@tas =vane])}
+    ?~  mor  [(flop ova) vanes]
+    =^  nyx  vanes  (jack lac i.mor)
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
   --
 --
@@ -478,7 +473,7 @@
 =+  vil=(viol p.bud)                                    ::  cached reflexives
 =|  $:  lac/?                                           ::  laconic bit
         eny/@                                           ::  entropy
-        niz/(pair worm (list {p/@tas q/vase}))          ::  modules
+        vanes=(list [label=@tas =vane])                 ::  modules
     ==                                                  ::
 =<  |%
     ++  come  |=  {@ (list ovum) pone}                  ::  22
@@ -521,7 +516,7 @@
                   :-  %|
                   :~  hoon+`pit
                       zuse+`bud
-                      hoon-cache+`p.niz
+                      ::  hoon-cache+`p.niz
                       q.q.i.ova
                       dot+`.
                   ==
@@ -539,7 +534,7 @@
   |=  {yen/@ ova/(list ovum) nyf/pane}
   ^+  [ova +>]
   =:  eny  yen
-      q.niz  nyf
+      vanes  (turn nyf |=({a/@tas b/vise} [a [b *worm]]))
     ==
   |-  ^+  [ova +>.^$]
   ?~  ova
@@ -554,7 +549,7 @@
   |=  {now/@da hap/path}
   ^-  (unit)
   ?~  hap  [~ hoon-version]
-  =+  rob=((sloy ~(beck (is vil eny bud niz) now)) [151 %noun] hap)
+  =+  rob=((sloy ~(beck (is vil eny bud vanes) now)) [151 %noun] hap)
   ?~  rob  ~
   ?~  u.rob  ~
   [~ u.u.rob]
@@ -564,8 +559,8 @@
   =.  eny  (mix eny (shaz now))
   ::  ~&  [%poke -.q.ovo]
   ^-  {(list ovum) _+>}
-  =^  zef  niz
-    (~(hurl (is vil eny bud niz) now) lac ovo)
+  =^  zef  vanes
+    (~(hurl (is vil eny bud vanes) now) lac ovo)
   [zef +>.$]
 ::                                                
 ++  veke                                                ::  build new kernel
@@ -609,7 +604,9 @@
   ?>  (lte nex hoon-version)
   ::  entropy, pending effects, vanes
   ::
-  =/  sam  [eny ova q.niz]
+  =/  sam
+    :+  eny  ova
+    (turn vanes |=([label=@tas =vane] [label vase.vane]))
   ::  +load at +46 or +come at +22
   ::
   =/  axe  ?:(=(nex hoon-version) 46 22)
@@ -630,20 +627,20 @@
     =+  vax=(slap pit gen)
     +>.^$(bud vax)
   %_    +>.^$
-      q.niz
-    |-  ^+  q.niz
-    ?~  q.niz
+      vanes
+    |-  ^+  vanes
+    ?~  vanes
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
       =+  vin=(vint lal.fav vil bud pax.fav txt.fav)
       ?~  vin
-        q.niz
-      [[lal.fav vase.vane:u.vin] q.niz]
-    ?.  =(lal.fav p.i.q.niz)
-      [i.q.niz $(q.niz t.q.niz)]
+        vanes
+      [[lal.fav vase.vane:u.vin *worm] vanes]
+    ?.  =(lal.fav label.i.vanes)
+      [i.vanes $(vanes t.vanes)]
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-    :_  t.q.niz
-    :-  p.i.q.niz
-    vase.vane:(ruck:(vent lal.fav vil bud [q.i.q.niz p.niz]) pax.fav txt.fav)
+    :_  t.vanes
+    :-  label.i.vanes
+    vane:(ruck:(vent lal.fav vil bud [vase.vane.i.vanes *worm]) pax.fav txt.fav)
   ==
 ::
 ++  wish                                                ::  external compute
