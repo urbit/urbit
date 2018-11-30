@@ -1,7 +1,12 @@
-/* vere/found.c
+/* vere/sqlt.c
 **
 **  This file is in the public domain.
+**
+**  21 Nov 2018 on Ubuntu 16.04: max noun size = 2^20 = 1,048,576 bytes.  2^21 = segv
+**  No need for fragmenting.
 */
+
+
 
 #include "all.h"
 
@@ -22,15 +27,21 @@
 #include <libgen.h>
 #include <ftw.h>
 #include <time.h>
+#include <math.h>
 #include <pthread.h>
 #include <sqlite3.h>
 
 #include "vere/vere.h"
 
+
 #define DATB_NAME  "data.db"
 #define TABL_NAME  "evnt"
 
 
+c3_w u3_sqlt_frag_size()
+{
+  return( pow(2, 31) );
+}
 
 
 /* read */
@@ -38,6 +49,14 @@
 c3_o
 u3_sqlt_read_init(u3_pier* pir_u, c3_c * pot_c)
 {
+
+  c3_w thr_w =  sqlite3_threadsafe();
+  if (0 == thr_w){
+    fprintf(stderr, "sqlt read init: library is not compiled with thread-safe flags; aborting\n\r");
+    u3m_bail(c3__fail); 
+    return(c3n);    
+  }
+  
   u3_pers *  pin_u = pir_u -> pin_u;
 
   pin_u->sql_u = c3_malloc(sizeof (u3_sqlt));
@@ -126,6 +145,8 @@ _sqlt_read_fragment(sqlite3 * sql_u,  /* IN: SQLite3 handle */
     return(c3n);
   }
 
+  sqlite3_free(stat_y);
+  
   /* retrieve bytes and len */
   c3_y* byt_y = (c3_y *) sqlite3_column_blob(stat_u, 1);
   c3_w lan_w  = (c3_w) sqlite3_column_bytes(stat_u, 1);
@@ -157,11 +178,13 @@ u3_sqlt_read_read(u3_pier* pir_u, c3_y ** dat_y, c3_w *    len_w, void ** hand_u
 }
 
 void
-u3_sqlt_read_done(void * hand_u)
+u3_sqlt_read_done(void * opaq_u)
 {
   uint32_t       ret_w;
 
-  if (SQLITE_OK !=   (ret_w = sqlite3_finalize(hand_u))){
+  sqlite3_stmt * stam_u = (sqlite3_stmt *) opaq_u;
+  
+  if (SQLITE_OK !=   (ret_w = sqlite3_finalize(stam_u))){
     fprintf(stderr, "fail 5: %s\n", sqlite3_errstr(ret_w));
     u3m_bail(c3__fail); 
     return;
@@ -240,8 +263,8 @@ _sqlt_write_fragment(u3_writ* wit_u, c3_y * buf_y,  c3_w len_w)
   sqlite3_stmt * stat_u = NULL;
   uint32_t       ret_w;
 
-  fprintf(stderr, "****************************** BEFORE WRITE\n\r");
-  sleep(2); // NOTFORCHECKIN
+  fprintf(stderr, "     ***** BEFORE WRITE\n\r");
+
   
   if (SQLITE_OK != (ret_w = sqlite3_prepare_v2( daba_u,          /* Database handle */
                                                 (char *) stat_y, /* SQL statement, UTF-8 encoded */
@@ -279,13 +302,15 @@ _sqlt_write_fragment(u3_writ* wit_u, c3_y * buf_y,  c3_w len_w)
     goto write_error;
   }
 
+  sqlite3_free(stat_y);
+  
   if (SQLITE_OK !=   (ret_w = sqlite3_finalize(stat_u))){
     fprintf(stderr, "write fail 5: %s\n", sqlite3_errstr(ret_w));
     goto write_error;
   }
 
-  fprintf(stderr, "****************************** AFTER WRITE - CHILD THREAD\n\r");
-  sleep(2); // NOTFORCHECKIN
+  fprintf(stderr, "     ***** AFTER WRITE - CHILD THREAD\n\r");
+
     
   return;
 
@@ -316,13 +341,13 @@ _sqlt_write_cast(void *opq_u)
 
   /* if a meta-callback is set, call it (for testing) */
   if (cbd_u->cbf_u){
-    fprintf(stderr, "MC called\n");
+    
     cbd_u->cbf_u(cbd_u);
   } else {
-    fprintf(stderr, "MC --- not --- called\n");
+    
   }
 
-  fprintf(stderr, "****************************** AFTER WRITE - PARENT THREAD\n\r");
+  fprintf(stderr, "     ***** AFTER WRITE - PARENT THREAD\n\r");
   sleep(2); // NOTFORCHECKIN
   
   /* cleanup */
@@ -345,10 +370,15 @@ u3_sqlt_write_write(u3_writ* wit_u,       /* IN: writ */
   pthread_t tid_u;
   uint32_t       ret_w;
 
+  c3_w hed_w = u3_frag_head_size(len_w, 
+                                 1, 
+                                 u3_sqlt_frag_size());
+
+  
   sqlt_write_cb_data * cbd_u = (sqlt_write_cb_data *) malloc(sizeof(sqlt_write_cb_data));
   cbd_u->wit_u = wit_u;
-  cbd_u->buf_y = buf_y + PERS_WRIT_HEAD_SIZE;
-  cbd_u->len_w = len_w;
+  cbd_u->buf_y = buf_y + hed_w;
+  cbd_u->len_w = len_w - hed_w;
   cbd_u->cbf_u = test_cb;
   
   if (0 != (ret_w = pthread_create(& tid_u,

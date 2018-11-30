@@ -678,11 +678,12 @@
           struct _u3_pier* pir_u;               // pier backpointer
         } u3_rock;
 
-       typedef struct _u3_lmdb {
-         MDB_env * env_u;
-         MDB_dbi * dbi_u;
-         MDB_txn * txn_u;
-       } u3_lmdb;
+        typedef struct _u3_lmdb {
+          MDB_env * env_u;
+          MDB_txn * txn_u;
+          MDB_dbi dbi_u;
+          c3_y * path_c;
+        } u3_lmdb;
 
       /* u3_pers: persistance handled
       */
@@ -1356,8 +1357,105 @@
         void
         _pier_init_writ(u3_pier* pir_u, c3_c * pot_c);
 
-      /*  plugable storage backend functions
-      */
+     /* read */
+
+     typedef struct _mult_read_hand {
+       void      * han_u;   /* if the read was a single-fragment read, this will be set and needs to be cleaned up */
+       c3_y      * dat_y;   /* if the read was a multi-fragment read, this will be set and needs to be free()-ed */
+     } mult_read_hand;
+
+
+
+
+     typedef c3_o
+     (* _frag_read)(u3_pers * pers_u,    /* IN: FoundationDB handle */
+                    c3_d pos_d,            /* IN: row id */
+                    c3_w frg_w,            /* IN: fragment id */
+                    c3_y ** dat_y,        /* OUT: set pointer to data */
+                    c3_w * len_w,        /* OUT: set len of data */
+                    void ** opaq_u);
+
+     typedef void
+     (* _frag_done)(void * opaq_u);
+
+
+     c3_o u3_frag_read(_frag_read read_u,
+                    _frag_done done_u,
+                    c3_w max_w,
+                    u3_pers* pers_u,
+                    c3_y **  dat_y,
+                    c3_w * len_w,
+                    mult_read_hand ** hand_u);
+
+     c3_o u3_frag_read_done(mult_read_hand * mrh_u, _frag_done done_u);
+
+     /* write */
+
+    typedef void (*writ_test_cb)(void*);  /* a callback used in testing */
+
+
+      typedef struct _u3_pers_frag {
+        c3_o *           don_o;     /* array of flags, one per fragment - used by frag layer */
+        pthread_mutex_t  mut_u;
+      } u3_pers_frag;
+
+      typedef struct _u3_pers_writ_calb {
+
+        u3_writ *        wit_u;        /* the writ from which this fragment comes */
+
+        c3_w             cnt_w;        /* total number of fragments (OPTIONAL) - used by frag layer */
+        c3_w             frg_w;        /* index of this fragment    (OPTIONAL) - used by frag layer */
+        u3_pers_frag *   frg_u;     /* fragmentation data        (OPTIONAL) - used by frag layer */ 
+        
+        writ_test_cb     cbf_u;       /* meta callback function - used for speed tests */
+        void *           ext_u;     /* extension data - each persistence engine can use as it sees fit */
+
+      } u3_pers_writ_calb;
+
+
+
+     typedef void
+     (* _writ_frag)(u3_writ* wit_u,      /* IN: writ */
+                    c3_d pos_d,          /* IN: row id */
+                    c3_w frg_w,          /* IN: frag id */
+                    c3_w cnt_w,          /* IN: frag id */
+                    c3_y* byt_y,         /* IN: frag data (with header) */
+                    c3_w  len_w,         /* IN: frag len */
+                    u3_pers_frag * mwh_u, /* IN: multi-frag handle  */
+                    writ_test_cb test_cb
+                    );
+
+     void frag_writ(c3_w max_w,          /* IN: max fragment size */
+                    u3_writ* wit_u,      /* IN: writ */
+                    c3_d pos_d,          /* IN: row id */
+                    c3_y* buf_y,         /* IN: frag data (with space for header) */
+                    c3_y* byt_y,         /* IN: frag data (with header) */
+                    c3_w  len_w,         /* IN: frag len */
+                    _writ_frag,          /* IN: persistence driver function that actually writes the frag */          
+                    writ_test_cb test_cb);
+
+void u3_frag_write_check(u3_pers_writ_calb  * cbd_u);
+
+c3_o u3_frag_write_done(c3_w frg_w,
+                        c3_w cnt_w,
+                        u3_writ * wit_u,
+                        u3_pers_frag * mwh_u);
+
+
+     c3_w u3_frag_head_size(c3_w len_w, /* size of total write */
+                            c3_w frg_w, /* this fragment index */
+                            c3_w max_w); /* max fragment size */
+
+
+     /*  plugable storage backend functions 
+     */
+
+      /* when an async write to a db completes, a callback fires. That
+         callback needs data passed to it so that the CB knows what
+         writ and fragment it's working on, and can do appropriate
+         signalling / cleanup. */
+
+
 
      /* read */
         c3_o
@@ -1406,7 +1504,8 @@
 
         /* write */
 
-#define PERS_WRIT_HEAD_SIZE 3
+
+
 
         c3_o
         u3_disk_write_init(u3_pier* pir_u, c3_c * sto_c);
@@ -1418,6 +1517,18 @@
         u3_rock_write_init(u3_pier* pir_u, c3_c * sto_c);
         c3_o
         u3_lmdb_write_init(u3_pier* pir_u, c3_c * sto_c);
+
+        c3_w
+        u3_disk_frag_size();
+        c3_w
+        u3_sqlt_frag_size();
+        c3_w
+        u3_fond_frag_size();
+        c3_w
+        u3_rock_frag_size();
+        c3_w
+        u3_lmdb_frag_size();
+
 
         void
         u3_pier_writ_done(u3_noun);   /* callback from pluggable persistance noting noun is committed */
@@ -1460,6 +1571,7 @@ void  rede(void * opaq_u) ;
 void  resh(u3_pier* pir_u) ;
 
 c3_o wrin(u3_pier* pir_u, c3_c * pot_c) ;
+c3_w wrze();
 void wric(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y,  c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb);
 void wris(u3_pier* pir_u) ;
 

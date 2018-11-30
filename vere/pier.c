@@ -77,10 +77,12 @@ static abst_read_shut_t _resh = NULL;
 
 /* output persistence pointers */
 typedef c3_o (*abst_writ_init_t)(u3_pier* pir_u, c3_c * pot_c);
+typedef c3_w (*abst_writ_size_t)();
 typedef void (*abst_writ_writ_t)(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y,  c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb);
 typedef void (*abst_writ_shut_t)(u3_pier* pir_u);
 
 static abst_writ_init_t _wrin = NULL;
+static abst_writ_size_t _wrze = NULL;
 static abst_writ_writ_t _wric = NULL;
 static abst_writ_shut_t _wris = NULL;
 
@@ -164,37 +166,35 @@ _pier_init_writ(u3_pier* pir_u, c3_c * pot_c)
 
   if (NULL == typ_c || 0 == strcmp(typ_c, "d") || 0 == strcmp(typ_c, "disk")){
     _wrin = u3_disk_write_init;
+    _wrze = u3_disk_frag_size;
     _wric = u3_disk_write_write;
     _wris = u3_disk_write_shut;
 
   } else if  (0 == strcmp(typ_c, "f") || 0 == strcmp(typ_c, "found")){
 
-    pir_u->pot_u->sql_u = c3_malloc(sizeof (u3_sqlt));
-    memset( pir_u->pot_u->sql_u, 0, sizeof (u3_sqlt));
-    pir_u->pot_u->sql_u->pir_u = pir_u;
-
     _wrin = u3_fond_write_init;
+    _wrze = u3_fond_frag_size;
     _wric = u3_fond_write_write;
     _wris = u3_fond_write_shut;    
 
   } else if  (0 == strcmp(typ_c, "l") || 0 == strcmp(typ_c, "lmdb")){
 
     _wrin = u3_lmdb_write_init;
+    _wrze = u3_lmdb_frag_size;
     _wric = u3_lmdb_write_write;
     _wris = u3_lmdb_write_shut;    
 
   } else if  (0 == strcmp(typ_c, "r") || 0 == strcmp(typ_c, "rock")){
 
-    pir_u->pot_u->sql_u = c3_malloc(sizeof (u3_sqlt));
-    memset( pir_u->pot_u->sql_u, 0, sizeof (u3_sqlt));
-    pir_u->pot_u->sql_u->pir_u = pir_u;
+    _wrin = u3_rock_write_init;
+    _wrze = u3_fond_frag_size;
+    _wric = u3_rock_write_write;
+    _wris = u3_rock_write_shut;    
 
-    _wrin = u3_fond_write_init;
-    _wric = u3_fond_write_write;
-    _wris = u3_fond_write_shut;    
   } else if  (0 == strcmp(typ_c, "s") || 0 == strcmp(typ_c, "sql")){
 
     _wrin = u3_sqlt_write_init;
+    _wrze = u3_sqlt_frag_size;
     _wric = u3_sqlt_write_write;
     _wris = u3_sqlt_write_shut;    
 
@@ -213,16 +213,18 @@ static void
 _pier_abstract_write(u3_writ* wit_u)
 {
   /* write the event blob raw */
-  u3_atom atom = u3qe_jam( wit_u->job );
-  c3_w  len_w = u3r_met(3, atom);        /* find len of atom */
+  _pier_work_build(wit_u);
 
-  c3_y* byt_y = (c3_y*) malloc(len_w + PERS_WRIT_HEAD_SIZE);    /* allocate space to copy the atom, plus a header */
-  u3r_bytes(0, len_w, byt_y + PERS_WRIT_HEAD_SIZE , atom);      /* serialize the atom into the allocated space */
+
+  c3_w  len_w = u3r_met(3, wit_u->mat);        /* find len of atom */
+  c3_w  hed_w = _wrze(len_w);
+  c3_y* byt_y = (c3_y*) malloc(len_w + hed_w);    /* allocate space to copy the atom, plus a header */
+  u3r_bytes(0, len_w, byt_y + hed_w , wit_u->mat);      /* serialize the atom into the allocated space */
 
   _wric(wit_u,
         wit_u->evt_d,
         byt_y,
-        byt_y + PERS_WRIT_HEAD_SIZE,  /* hide the header from the implimentation. This lets code that doesn't use headers be simple. */
+        byt_y + hed_w,  /* hide the header from the implimentation. This lets code that doesn't use headers be simple. */
         len_w,
         NULL); 
 
@@ -560,20 +562,25 @@ start:
   }
 }
 
-/* _pier_disk_load_commit(): load all commits >= evt_d; set ent_u, ext_u.
+/* _pier_disk_load_commit(): load all committed events >= evt_d
 */
 static c3_o
 _pier_load_commit(u3_pier* pir_u,
-                  c3_d     lav_d)
+                  c3_d     evt_d,
+                  c3_d   * red_d)  /* OUT: highest event read */
 {
-  c3_d     old_d = 0;  /* highest number event we've yet read */
+  * red_d = 0;
+  pir_u->pin_u->pos_d = evt_d;  
 
   while ( 1 ) {
     c3_w  len_w;
-    c3_d  evt_d;
     c3_y * buf_y;
     void * opaq_u = NULL;
     c3_o ret_o;
+
+    fprintf(stderr, "now reading: %ld\n\r", pir_u->pin_u->pos_d);
+
+    c3_d pos_d = pir_u->pin_u->pos_d;
     ret_o = _rere(pir_u, &buf_y, &len_w, & opaq_u); /* do actual read */
 
     if (ret_o == c3n){
@@ -595,69 +602,41 @@ _pier_load_commit(u3_pier* pir_u,
     _rede(opaq_u);     /* cleanup read handle */
 
     ovo = u3ke_cue(u3k(mat));
+
+    // u3m_p("foo", ovo); // NOTFORCHECKIN
+
     c3_assert(c3__work == u3h(ovo));
     evt = u3h(u3t(ovo));
     job = u3k(u3t(u3t(u3t(ovo))));
-    evt_d = u3r_chub(0, evt);
+
+    c3_assert(pos_d == evt ); /* we tried to read event N ... did we ? (sanity check the persistence layer against perfidy */
+    
     u3z(ovo);
-
-    /* We exepct the event we just read to be 1 more than the previous read.
-       Keep track of this.
-       Skipping is bad.
-     */
-    {
-      if ( !old_d ) {
-        //  fprintf(stderr, "pier: load: last %lld\r\n", evt_d);
-
-        pir_u->pin_u->pos_d = old_d = evt_d;
-      }
-      else {
-        if ( (old_d - 1ULL) != evt_d ) {
-          fprintf(stderr, "pier: load: event order\r\n");
-          return c3n;
-        }
-        old_d = evt_d;
-      }
-    }
 
     /* do setup to process this event we just read */
 
-    if ( evt_d < lav_d ) {
-      u3z(mat);
-      u3z(job);
+    u3_writ* wit_u = c3_malloc(sizeof(u3_writ));
 
-      return c3y;
+    memset(wit_u, 0, sizeof(*wit_u));
+      
+    wit_u->pir_u = pir_u;
+    wit_u->evt_d = evt;
+    wit_u->job = job;
+    wit_u->mat = mat;
+
+    /* insert at queue entrance (we insert 1, then we insert 2 before 1, then we insert 3 before 2...)
+       u3_pier_apply() will read from queue exit
+    */
+    if ( !pir_u->ent_u && !pir_u->ext_u ) {
+      pir_u->ent_u = pir_u->ext_u = wit_u;
     }
     else {
-      u3_writ* wit_u = c3_malloc(sizeof(u3_writ));
-
-      //  fprintf(stderr, "pier: load: commit: %lld\r\n", evt_d);
-
-      memset(wit_u, 0, sizeof(*wit_u));
-
-      wit_u->pir_u = pir_u;
-      wit_u->evt_d = evt_d;
-      wit_u->job = job;
-      wit_u->mat = mat;
-
-      /* insert at queue exit -- the oldest events run first
-       */
-      if ( !pir_u->ent_u && !pir_u->ext_u ) {
-        pir_u->ent_u = pir_u->ext_u = wit_u;
-      }
-      else {
-        if ( (1ULL + wit_u->evt_d) != pir_u->ext_u->evt_d ) {
-          fprintf(stderr, "pier: load: commit: event gap: %lx, %lx\r\n",
-                  wit_u->evt_d,
-                  pir_u->ext_u->evt_d);
-          u3z(mat);
-          u3z(job);
-          return c3n;
-        }
-        wit_u->nex_u = pir_u->ext_u;
-        pir_u->ext_u = wit_u;
-      }
+      wit_u->nex_u = pir_u->ent_u;
+      pir_u->ent_u = wit_u;
     }
+
+    /* how far did we read ? */
+    * red_d = evt;
   }
 
   return c3y;
@@ -833,19 +812,19 @@ _pier_load_log(u3_pier* pir_u,
 {
   /* populate timeline and event queue from persistant storage, starting w event lav_d
      N.B. modifies lav_d; will be set to "next event to read"
-     XX doesn't appear to modify lav_d anymore (JB)
    */
-  if ( c3n == _pier_load_commit(pir_u, lav_d) ) {
+  c3_d red_d;
+  if ( c3n == _pier_load_commit(pir_u, lav_d, & red_d) ) {
     return c3n;
   }
 
   /* perhaps there was no TL from persistent storage?
    * then: load the pill, starting w event lav_d
-   * XX this needs to be only on first boot (JB)
-   * XX used to be conditional on log_u->com_d==0
   */
-  _pier_boot_vent(pir_u);
-
+  if (0 == red_d) {
+    _pier_boot_vent(pir_u);
+  }
+  
   /* sanity check
   */
   if ( pir_u->ext_u && (pir_u->ext_u->evt_d != lav_d) ) {
@@ -1819,5 +1798,6 @@ void  rede(void * opaq_u) { _rede(opaq_u);}
 void  resh(u3_pier* pir_u) { _resh(pir_u); }
 
 c3_o wrin(u3_pier* pir_u, c3_c * pot_c) { return _wrin(pir_u, pot_c); }
+c3_w wrze() { return _wrze(); }
 void wric(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y,  c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb){ _wric(wit_u, pos_d, buf_y,  byt_y, len_w, test_cb); }
 void wris(u3_pier* pir_u) { _wris(pir_u); }

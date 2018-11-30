@@ -17,9 +17,16 @@
 #include <curses.h>
 #include <termios.h>
 #include <term.h>
+#include <math.h>
 
 #include "all.h"
 #include "vere/vere.h"
+
+
+c3_w u3_disk_frag_size()
+{
+  return( pow(2, 31) );
+}
 
 
 /* read */

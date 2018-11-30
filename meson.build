@@ -230,7 +230,8 @@ vere_lib_src = [
   'vere/fond.c',
   'vere/sqlt.c',
   'vere/rock.c',
-  'vere/lmdb.c'
+  'vere/lmdb.c',
+  'vere/frag.c'
 ]
 
 #  XX revisit storage build

@@ -1,8 +1,12 @@
-// Note that there is something very weird:
-//   if we compile rockdb with DEBUG_LEVEL 0 or 1, 
-//
-// g++ -g -o rocktest rock.c  -L../../rocksdb/ -lrocksdb -lpthread -lz -lbz2 -lsnappy
-//
+/* vere/rock.c
+**
+**  This file is in the public domain.
+**
+**  21 Nov 2018 on Ubuntu 16.04: max noun size = 2^20 = 1,048,576 bytes.  2^21 = segv 
+**  No need for fragmenting.
+*/
+
+#include "all.h"
 
 #include <uv.h>
 #include <string.h>
@@ -14,8 +18,6 @@
 #include <time.h>
 #include <errno.h>
 
-#include "all.h"
-#include "rocksdb/c.h"
 #include "vere/vere.h"
 
 
@@ -27,6 +29,10 @@ const char DBPath[] = "/tmp/rocksdb_simple_example";
 c3_o
 _rock_init_comn(u3_pers * pers_u, c3_c * sto_c)
 {
+  /* persistence data struct */
+  pers_u->rock_u = c3_malloc(sizeof (u3_rock));
+
+
   /* path to db directory */
   char * path_c = malloc(strlen(u3C.dir_c) + strlen(DATB_NAME) + 2);
   sprintf(path_c, "./%s/%s", u3C.dir_c, DATB_NAME);
@@ -216,115 +222,3 @@ u3_rock_write_shut(u3_pier* pir_u)
 
 
 
-#if 0
-#define NUM_SAMPLES 100
-
-struct timespec ts_before[NUM_SAMPLES];
-struct timespec ts_after[NUM_SAMPLES];
-int main(){
-  rocksdb_t *db;
-  rocksdb_backup_engine_t *be;
-  rocksdb_options_t *options = rocksdb_options_create();
-  // Optimize RocksDB. This is the easiest way to
-  // get RocksDB to perform well
-  long cpus = sysconf(_SC_NPROCESSORS_ONLN);  // get # of online cores
-
-  rocksdb_options_set_compression(options, rocksdb_zlib_compression);
-
-  rocksdb_options_increase_parallelism(options, (int)(cpus));
-  rocksdb_options_optimize_level_style_compaction(options, 0);
-  // create the DB if it's not already present
-  rocksdb_options_set_create_if_missing(options, 1);
-
-  // open DB
-  char *err = NULL;
-  db = rocksdb_open(options, DBPath, &err);
-  if (err){
-    printf("err = %s\n", err);
-    exit(-1);
-  }
-
-
-  // open Backup Engine that we will use for backing up our database
-  be = rocksdb_backup_engine_open(options, DBBackupPath, &err);
-  assert(!err);
-
-
-  
-  // Put key-value
-  rocksdb_writeoptions_t *writeoptions = rocksdb_writeoptions_create();
-  rocksdb_writeoptions_set_sync(writeoptions, 1); // 0 = BS; 1 = full flush 
-
-  int ii;
-  for (ii = 0 ; ii < NUM_SAMPLES; ii++){
-    int ret = clock_gettime(CLOCK_REALTIME, &ts_before[ii]);
-    if (0 != ret){
-      printf("error 2: %s\n", strerror(errno));
-    }
-  
-    char key[10];
-    sprintf(key, "%i", ii);
-    const char *value = "value";
-    rocksdb_put(db, writeoptions, key, strlen(key), value, strlen(value) + 1,
-                &err);
-    assert(!err);
-
-    ret = clock_gettime(CLOCK_REALTIME, &ts_after[ii]);
-    if (0 != ret){
-      printf("error 2: %s\n", strerror(errno));
-    }
-    // Get value
-    rocksdb_readoptions_t *readoptions = rocksdb_readoptions_create();
-    size_t len;
-    char *returned_value = rocksdb_get(db, readoptions, key, strlen(key), &len, &err);
-    assert(!err);
-    assert(strcmp(returned_value, "value") == 0);
-    free(returned_value);
-
-  }
-  
-
-  // create new backup in a directory specified by DBBackupPath
-  rocksdb_backup_engine_create_new_backup(be, db, &err);
-  assert(!err);
-
-  rocksdb_close(db);
-
-  // If something is wrong, you might want to restore data from last backup
-  rocksdb_restore_options_t *restore_options = rocksdb_restore_options_create();
-  rocksdb_backup_engine_restore_db_from_latest_backup(be, DBPath, DBPath,
-                                                      restore_options, &err);
-  assert(!err);
-  rocksdb_restore_options_destroy(restore_options);
-
-  db = rocksdb_open(options, DBPath, &err);
-  assert(!err);
-
-  // cleanup
-  rocksdb_writeoptions_destroy(writeoptions);
-  //  rocksdb_readoptions_destroy(readoptions);
-  rocksdb_options_destroy(options);
-  rocksdb_backup_engine_close(be);
-  rocksdb_close(db);
-
-  printf("DOING MATH\n");
-
-  long total_diff_ms = 0;
-
-
-  for (ii = 0 ; ii < NUM_SAMPLES; ii++){
-
-    long diff_ns = (((long) ts_after[ii].tv_sec - (long) ts_before[ii].tv_sec) * 1000 * 1000 * 1000) +
-      (ts_after[ii].tv_nsec - ts_before[ii].tv_nsec);
-    printf("  delta: %ld ms\n", (diff_ns / (1000  * 1000) ));
-    total_diff_ms += (diff_ns / (1000 * 1000) );
-  }
-
-  long mean_diff_ms = (0 == NUM_SAMPLES) ? 0 : total_diff_ms / NUM_SAMPLES;
-
-  printf("mean delta: %ld ms\n", mean_diff_ms);
-
-  return 0;
-
-}
-#endif
