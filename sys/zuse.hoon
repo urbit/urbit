@@ -6775,7 +6775,7 @@
 ::                                                      ::
 ::::                      ++milly                       ::  (2k) milliseconds
   ::                                                    ::::
-++  milly  ^?
+++  milly  ^|
   |_  now/@da
   ::                                                    ::  ++around:milly
   ++  around                                            ::  relative msec

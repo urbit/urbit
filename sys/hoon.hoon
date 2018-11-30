@@ -2091,7 +2091,7 @@
   ==
 ::
 ++  fo                                                  ::  modulo prime
-  ^?
+  ^|
   |_  a/@
   ++  dif
     |=  {b/@ c/@}
@@ -2760,7 +2760,7 @@
 ++  rylq  |=  a/dn  ^-  @rq  (grd:rq a)                 ::  finish parsing @rq
 ::
 ++  rd                                                  ::  double precision fp
-  ^?
+  ^|
   ~%  %rd  +>  ~
   |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
@@ -2839,7 +2839,7 @@
 ::
 ++  rs                                                  ::  single precision fp
   ~%  %rs  +>  ~
-  ^?
+  ^|
   |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
   ::
@@ -2918,7 +2918,7 @@
 ::
 ++  rq                                                  ::  quad precision fp
   ~%  %rq  +>  ~
-  ^?
+  ^|
   |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
   ::
@@ -2997,7 +2997,7 @@
 ::
 ++  rh                                                  ::  half precision fp
   ~%  %rh  +>  ~
-  ^?
+  ^|
   |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
   ::
@@ -9859,7 +9859,7 @@
                            %wet  [%wet q.u.zem]
                            %dry  [%dry q.u.zem]
                          ==
-                [%| (peg 2 p.u.zem) [[sut(r.p.q %gold) zut] ~ ~]]
+                [%| (peg 2 p.u.zem) [[sut zut] ~ ~]]
               =+  pec=(peel way r.p.q.sut)
               ?.  sam.pec  lose
               ?:  con.pec  $(sut p.sut, axe (peg axe 3))
@@ -9967,7 +9967,7 @@
     ?.  ?=({$core *} p)
       ~_  (dunk %fire-type)
       ~>(%mean.[%leaf "fire-core"] !!)
-    =+  dox=[%core q.q.p q.p]
+    =+  dox=[%core q.q.p q.p(r.p %gold)]
     ?:  ?=($dry -.q)
       ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-dry)
       ?>  ?|(!vet (nest(sut q.q.p) & p.p))
@@ -10733,10 +10733,19 @@
         {$core *}
       ?.  =(3 now)  %noun
       =+  pec=(peel way r.p.q.sut)
+      =/  tow
+        ?:  =(1 lat)  1
+        (cap lat)
       %=    ^$
           axe  lat
           sut
-        ?:  =([& &] pec)  p.sut
+        ?:  ?|  =([& &] pec)
+                &(sam.pec =(tow 2))
+                &(con.pec =(tow 3))
+            ==
+          p.sut
+        ~_  leaf+"payload-block"
+        ?.  =(way %read)  !!
         %+  cell
           ?.(sam.pec %noun ^$(sut p.sut, axe 2))
         ?.(con.pec %noun ^$(sut p.sut, axe 3))
