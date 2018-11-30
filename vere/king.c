@@ -1,3 +1,7 @@
+/* vere/king.c
+**
+** the main loop of the daemon process
+*/
 #include <unistd.h>
 #include <uv.h>
 #include "all.h"
@@ -165,8 +169,6 @@ _king_doom(u3_noun doom)
   c3_assert(_(u3a_is_cell(doom)));
   c3_assert(_(u3a_is_cat(u3h(doom))));
 
-  u3m_p("doom", doom);
-
   switch ( u3h(doom) ) {
     case c3__boot:
       next = _king_boot;
@@ -235,54 +237,7 @@ _king_fake(u3_noun ship, u3_noun pill, u3_noun path)
 void
 _king_come(u3_noun star, u3_noun pill, u3_noun path)
 {
-  u3_noun seed;
-
-  if ( u3_nul == star ) {
-    //  XX ~marzod hardcoded
-    //  choose from list, at random, &c
-    //
-    star = 256;
-  }
-  else {
-    //  XX parse and validate
-    //
-    u3_noun tar = u3k(u3t(star));
-    u3z(star);
-    star = tar;
-  }
-
-  {
-    u3_noun sar = u3dc("scot", 'p', u3k(star));
-    c3_c* tar_c = u3r_string(sar);
-
-    fprintf(stderr, "boot: mining a comet under %s\r\n", tar_c);
-    free(tar_c);
-    u3z(sar);
-  }
-
-  {
-    c3_w    eny_w[16];
-    u3_noun eny;
-
-    c3_rand(eny_w);
-    eny = u3i_words(16, eny_w);
-
-    seed = u3dc("come:dawn", u3k(star), u3k(eny));
-    u3z(eny);
-  }
-
-  {
-    u3_noun who = u3dc("scot", 'p', u3k(u3h(seed)));
-    c3_c* who_c = u3r_string(who);
-
-    fprintf(stderr, "boot: found comet %s\r\n", who_c);
-    free(who_c);
-    u3z(who);
-  }
-
-  u3z(star);
-
-  return _king_dawn(seed, pill, path);
+  _king_dawn(u3_dawn_come(star), pill, path);
 }
 
 /* _king_dawn(): boot from keys, validating
@@ -290,8 +245,7 @@ _king_come(u3_noun star, u3_noun pill, u3_noun path)
 void
 _king_dawn(u3_noun seed, u3_noun pill, u3_noun path)
 {
-  fprintf(stderr, "boot: real ships not yet supported\r\n");
-  exit(1);
+  u3_pier_boot(u3k(u3h(seed)), u3_dawn_vent(seed), pill, path);
 }
 
 /* _king_exit(): exit parser

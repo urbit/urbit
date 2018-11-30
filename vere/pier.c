@@ -969,6 +969,40 @@ _pier_disk_consolidate(u3_pier*  pir_u,
             }
           }
         }
+
+        /*  XX moar boot sequence woes
+        */
+        {
+          //  partially duplicates _pier_loop_wake()
+          //
+          c3_l cod_l;
+
+          cod_l = u3a_lush(c3__ames);
+          {
+            //  stash domain for fake effect
+            //  XX this is horrible
+            //
+            u3_noun tuf = ( c3__fake == u3h(pir_u->bot) ) ? u3_nul :
+                          u3h(u3t(u3t(u3t(u3t(pir_u->bot)))));
+
+
+            //  send a fake effect to bring up listeners and configure domains
+            //  XX horrible hack
+            //
+            u3_ames_ef_turf(pir_u, u3k(tuf));
+          }
+
+          u3_ames_ef_bake(pir_u);
+          u3a_lop(cod_l);
+
+          cod_l = u3a_lush(c3__behn);
+          u3_behn_ef_bake(pir_u);
+          u3a_lop(cod_l);
+
+          cod_l = u3a_lush(c3__http);
+          u3_http_ef_bake();
+          u3a_lop(cod_l);
+        }
         
         /* insert legacy boot event
         */
@@ -985,15 +1019,6 @@ _pier_disk_consolidate(u3_pier*  pir_u,
             pir_u->bot = 0;
           }
           _pier_insert_ovum(pir_u, 0, ovo);
-        }
-
-        /* XX boot sequence woes
-        ** these are duplicated here from _pier_loop_wake()
-        ** because the order is important
-        */
-        {
-          u3_ames_ef_bake(pir_u);
-          u3_behn_ef_bake(pir_u);
         }
        
         /* insert filesystem install event
@@ -1295,7 +1320,9 @@ _pier_work_poke(void*   vod_p,
             {
               // XX not the right place to print an error!
               //
-              // u3_pier_punt(0, u3k(u3t(u3t(u3t(r_jar)))));
+              // u3m_p("wire", u3h(u3t(r_jar)));
+              // u3_pier_punt(0, u3k(u3t(u3t(u3t(u3t(r_jar))))));
+
             }
             fprintf(stderr, "pier: replace: %lld\r\n", evt_d);
 

@@ -1285,5 +1285,17 @@
         void
         u3_pier_sway(c3_l tab_l, u3_noun tax);
 
+      /* u3_dawn_come(): mine a comet under star (unit)
+      */
+        u3_noun
+        u3_dawn_come(u3_noun star);
+
+      /* u3_dawn_vent(): validatated boot event
+      */
+        u3_noun
+        u3_dawn_vent(u3_noun seed);
+
+      /* u3_king_commence(): start the daemon
+      */
         void
         u3_king_commence();
