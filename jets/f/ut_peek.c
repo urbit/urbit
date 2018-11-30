@@ -105,10 +105,6 @@
             else {
 
               if ( way != c3__read ) {
-               u3z(lat);
-               u3z(now);
-               u3z(pec);
-               u3z(tow);
                return u3m_error("payload-block"); 
               }
 
