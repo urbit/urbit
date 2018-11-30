@@ -700,6 +700,10 @@
     ::                                                  ::::
   ++  able  ^?
     |%
+    ++  note                                            ::  out request $->
+      $%  $:  $d                                        ::  to %dill
+      $%  {$flog p/flog:dill}                           ::
+      ==  ==  ==                                        ::
     ++  gift                                            ::  out result <-$
       $%  {$doze p/(unit @da)}                          ::  next alarm
           {$mass p/mass}                                ::  memory usage
@@ -707,6 +711,7 @@
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$born ~}                                     ::  new unix process
+          {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$rest p/@da}                                 ::  cancel alarm
           {$wait p/@da}                                 ::  set alarm
           {$wake ~}                                    ::  timer activate
