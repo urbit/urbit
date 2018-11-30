@@ -427,7 +427,7 @@ _ames_io_start(u3_pier* pir_u)
         uL(fprintf(uH, 
                     "    ...perhaps you've got two copies of vere running?\n"));
       }
-      exit(1);
+      u3_pier_exit();
     }
 
     uv_udp_getsockname(&sam_u->wax_u, (struct sockaddr *)&add_u, &add_i);
