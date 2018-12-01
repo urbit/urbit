@@ -829,6 +829,144 @@ _pier_disk_load_commit(u3_pier* pir_u,
   }
 }
 
+/* _pier_boot_vent(): create and enqueue boot sequence
+*/
+static void
+_pier_boot_vent(u3_pier* pir_u)
+{
+  c3_w inx_w = 1;
+
+  if ( !u3A->sys ) {
+    fprintf(stderr, "boot: loading pill %s\r\n", pir_u->sys_c);
+
+    u3A->sys = u3m_file(pir_u->sys_c);
+  }
+
+  {
+    u3_noun lal = u3ke_cue(u3k(u3A->sys));
+
+    /* this new boot sequence is almost, but not quite,
+    ** the right thing.  see new arvo.
+    */
+    {
+      u3_noun who = u3i_chubs(2, pir_u->who_d);
+      u3_noun bot, mod, fil;
+
+      u3r_trel(lal, &bot, &mod, &fil);
+      pir_u->but_d = 0;
+
+      /* insert boot sequence directly
+      */
+      {
+        u3_noun seq = u3k(bot);
+        {
+          u3_noun all = seq;
+
+          pir_u->but_d += u3kb_lent(u3k(all));
+          while ( all ) {
+            _pier_insert(pir_u, 0, u3k(u3h(all)));
+            inx_w++;
+            all = u3t(all);
+          }
+        }
+        u3z(seq);
+      }
+
+      /* insert module sequence, prepending first identity event
+      */
+      {
+        u3_noun seq;
+
+        /* prepend identity event to module sequence
+        */
+        // {
+        //   u3_noun wir = u3nt(c3__name, u3dc("scot", 'p', u3k(who)), u3_nul);
+        //   u3_noun car = u3nc(c3__veal, u3k(who));
+        //   u3_noun ovo = u3nc(wir, car);
+
+        //   seq = u3nc(ovo, u3k(mod));
+        // }
+        seq = mod;
+
+        /* insert with timestamp
+        */
+        {
+          u3_noun all = seq;
+
+          pir_u->but_d += u3kb_lent(u3k(all));
+
+          while ( all ) {
+            _pier_insert_ovum(pir_u, 0, u3k(u3h(all)));
+            inx_w++;
+            all = u3t(all);
+          }
+        }
+      }
+
+      /*  XX moar boot sequence woes
+      */
+      {
+        //  partially duplicates _pier_loop_wake()
+        //
+        c3_l cod_l;
+
+        cod_l = u3a_lush(c3__ames);
+        {
+          //  stash domain for fake effect
+          //  XX this is horrible
+          //
+          u3_noun tuf = ( c3__fake == u3h(pir_u->bot) ) ? u3_nul :
+                        u3h(u3t(u3t(u3t(u3t(pir_u->bot)))));
+
+
+          //  send a fake effect to bring up listeners and configure domains
+          //  XX horrible hack
+          //
+          u3_ames_ef_turf(pir_u, u3k(tuf));
+        }
+
+        u3_ames_ef_bake(pir_u);
+        u3a_lop(cod_l);
+
+        cod_l = u3a_lush(c3__behn);
+        u3_behn_ef_bake(pir_u);
+        u3a_lop(cod_l);
+
+        cod_l = u3a_lush(c3__http);
+        u3_http_ef_bake();
+        u3a_lop(cod_l);
+      }
+
+      /* insert legacy boot event
+      */
+      {
+        u3_noun ovo;
+
+        /* make legacy boot event
+        */
+        {
+          u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
+
+          c3_assert( 0 != pir_u->bot);
+          ovo = u3nt(wir, c3__boot, pir_u->bot);
+          pir_u->bot = 0;
+        }
+        _pier_insert_ovum(pir_u, 0, ovo);
+      }
+
+      /* insert filesystem install event
+      */
+      {
+        _pier_insert_ovum(pir_u, 0, u3k(fil));
+      }
+
+      u3z(who);
+    }
+
+    u3z(lal);
+  }
+}
+
 /* _pier_disk_consolidate(): integrate loaded information.
 */
 static c3_o
@@ -900,138 +1038,7 @@ _pier_disk_consolidate(u3_pier*  pir_u,
   ** after the boot is complete, we'll start sending system events.
   */
   if ( log_u->com_d == 0 ) {
-    c3_w inx_w = 1;
-
-    if ( !u3A->sys ) {
-      fprintf(stderr, "boot: loading pill %s\r\n", pir_u->sys_c);
-
-      u3A->sys = u3m_file(pir_u->sys_c);
-    }
-    {
-      u3_noun lal = u3ke_cue(u3k(u3A->sys));
-
-      /* this new boot sequence is almost, but not quite, 
-      ** the right thing.  see new arvo.
-      */
-      {
-        u3_noun who = u3i_chubs(2, pir_u->who_d);
-        // u3_noun tic = u3i_chubs(1, pir_u->tic_d);
-        // u3_noun sec = u3i_chubs(1, pir_u->sec_d);
-        u3_noun bot, mod, fil;
-
-        u3r_trel(lal, &bot, &mod, &fil);
-        pir_u->but_d = 0;
-
-        /* insert boot sequence directly
-        */
-        {
-          u3_noun seq = u3k(bot);
-          {
-            u3_noun all = seq;
-
-            pir_u->but_d += u3kb_lent(u3k(all));
-            while ( all ) {
-              _pier_insert(pir_u, 0, u3k(u3h(all)));
-              inx_w++;
-              all = u3t(all);
-            }
-          }
-          u3z(seq);
-        }
-
-        /* insert module sequence, prepending first identity event
-        */
-        {
-          u3_noun seq;
-
-          /* prepend identity event to module sequence
-          */
-          // {
-          //   u3_noun wir = u3nt(c3__name, u3dc("scot", 'p', u3k(who)), u3_nul);
-          //   u3_noun car = u3nc(c3__veal, u3k(who));
-          //   u3_noun ovo = u3nc(wir, car);
-
-          //   seq = u3nc(ovo, u3k(mod));
-          // }
-          seq = mod;
-
-          /* insert with timestamp
-          */
-          {
-            u3_noun all = seq;
-
-            pir_u->but_d += u3kb_lent(u3k(all));
-
-            while ( all ) {
-              _pier_insert_ovum(pir_u, 0, u3k(u3h(all)));
-              inx_w++;
-              all = u3t(all);
-            }
-          }
-        }
-
-        /*  XX moar boot sequence woes
-        */
-        {
-          //  partially duplicates _pier_loop_wake()
-          //
-          c3_l cod_l;
-
-          cod_l = u3a_lush(c3__ames);
-          {
-            //  stash domain for fake effect
-            //  XX this is horrible
-            //
-            u3_noun tuf = ( c3__fake == u3h(pir_u->bot) ) ? u3_nul :
-                          u3h(u3t(u3t(u3t(u3t(pir_u->bot)))));
-
-
-            //  send a fake effect to bring up listeners and configure domains
-            //  XX horrible hack
-            //
-            u3_ames_ef_turf(pir_u, u3k(tuf));
-          }
-
-          u3_ames_ef_bake(pir_u);
-          u3a_lop(cod_l);
-
-          cod_l = u3a_lush(c3__behn);
-          u3_behn_ef_bake(pir_u);
-          u3a_lop(cod_l);
-
-          cod_l = u3a_lush(c3__http);
-          u3_http_ef_bake();
-          u3a_lop(cod_l);
-        }
-        
-        /* insert legacy boot event
-        */
-        {
-          u3_noun ovo;
-
-          /* make legacy boot event
-          */
-          {
-            u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
-
-            c3_assert( 0 != pir_u->bot);
-            ovo = u3nt(wir, c3__boot, pir_u->bot);
-            pir_u->bot = 0;
-          }
-          _pier_insert_ovum(pir_u, 0, ovo);
-        }
-       
-        /* insert filesystem install event
-        */
-        {
-          _pier_insert_ovum(pir_u, 0, u3k(fil));
-        }
-
-        u3z(lal);
-        // u3z(sec);
-        u3z(who);
-      }
-    }
+    _pier_boot_vent(pir_u);
   } else {
     pir_u->but_d = (lav_d - 1ULL);
 
