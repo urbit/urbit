@@ -1302,7 +1302,7 @@
 ++  call                                                ::  request
   ~%  %gall-call  +>   ~
   |=  {hen/duct hic/(hypo (hobo task:able))}
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task:able) p.q.hic)))
   ?-    -.q.hic
       $conf
@@ -1392,7 +1392,7 @@
 ++  take                                                ::  response
   ~/  %gall-take
   |=  {tea/wire hen/duct hin/(hypo sign-arvo)}
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   ~|  [%gall-take tea]
   ?>  ?=({@ ?($sys $use) *} tea) 
   =+  our=(need (slaw %p i.tea))

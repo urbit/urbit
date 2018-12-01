@@ -6095,7 +6095,7 @@
 ::
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task:able)]
-  ^-  [p=(list move) q=_ford-gate]
+  ^-  [(list move) _ford-gate]
   ::  unwrap :task from :wrapped-task
   ::
   =/  task=task:able
@@ -6226,7 +6226,7 @@
 ::
 ++  take
   |=  [=wire =duct wrapped-sign=(hypo sign)]
-  ^-  [p=(list move) q=_ford-gate]
+  ^-  [(list move) _ford-gate]
   ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign
@@ -6244,7 +6244,7 @@
     ~|  [%take-our our]
     (~(got by state-by-ship.ax) our)
   ::
-  |^  ^-  [p=(list move) q=_ford-gate]
+  |^  ^-  [(list move) _ford-gate]
       ::
       =^  moves  ship-state
         ?+  i.t.wire     ~|([%bad-take-wire wire] !!)

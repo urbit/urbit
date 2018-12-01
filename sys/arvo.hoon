@@ -72,6 +72,7 @@
 ++  slyd  $-  {* (unit (set monk)) term beam}           ::  super advanced
           (unit (unit (cask)))                          ::
 ++  slyt  $-({* *} (unit (unit)))                       ::  old namespace
++$  vane  [=vase =worm]
 ++  vile                                                ::  reflexive constants
           $:  typ/type                                  ::  -:!>(*type)
               duc/type                                  ::  -:!>(*duct)
@@ -122,7 +123,7 @@
   ?.(&(?=(@ a) ((sane %tas) a)) %$ a)
 ::
 ++  vent                                                ::  vane core
-  |=  {lal/@tas vil/vile bud/vase sew/(pair worm vase)}
+  |=  [lal=@tas vil=vile bud=vase =vane]
   ~%  %vent  +>+  ~
   |%
   ++  ruck                                              ::  update vase
@@ -131,16 +132,16 @@
     =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
     ^=  res  %-  mule  |.
     =+  arg=[~2000.1.1 0 =>(~ |~(* ~))]
-    =+  rig=(slym q.sew arg)
+    =+  rig=(slym vase.vane arg)
     =+  gen=(rain pax txt)
     =+  rev=(slym (slap bud gen) bud)
     =+  syg=(slym rev arg)
     ~|  %load-lost
-    +>.^$(q.sew (slam (slap syg [%limb %load]) (slap rig [%limb %stay])))
+    +>.^$(vase.vane (slam (slap syg [%limb %load]) (slap rig [%limb %stay])))
   ::
   ++  wink                                              ::  deploy
     |=  {now/@da eny/@ ski/slyd}
-    =^  rig  p.sew  (~(slym wa p.sew) q.sew +<)         ::  activate vane
+    =^  rig  worm.vane  (~(slym wa worm.vane) vase.vane +<)  ::  activate vane
     ~%  %wink  +>+>  ~
     |%
     ++  slid
@@ -161,15 +162,15 @@
     ++  slur                                            ::  call gate on
       |=  {gat/vase hil/mill}
       ^-  (unit (pair vase worm))
-      =^  sam  p.sew  (~(slot wa p.sew) 6 gat)
-      =^  hig  p.sew
+      =^  sam  worm.vane  (~(slot wa worm.vane) 6 gat)
+      =^  hig  worm.vane
         ?-  -.hil
-          %&  (~(nest wa p.sew) p.sam p.p.hil)
-          %|  (~(nets wa p.sew) p.sam p.p.hil)
+          %&  (~(nest wa worm.vane) p.sam p.p.hil)
+          %|  (~(nets wa worm.vane) p.sam p.p.hil)
         ==
       ?.  hig
         ~
-      `(~(slym wa p.sew) gat +>.hil)
+      `(~(slym wa worm.vane) gat +>.hil)
     ::
     ++  slur-a  ~/(%slur-a |=({gat/vase hil/mill} =+(%a (slur gat hil))))
     ++  slur-b  ~/(%slur-b |=({gat/vase hil/mill} =+(%b (slur gat hil))))
@@ -199,20 +200,20 @@
       ~/  %song                                         ::
       |=  mex/vase                                      ::  mex: vase of card
       ^-  (unit (pair mill worm))                       ::
-      =^  hip  p.sew  (~(nell wa p.sew) p.mex)          ::
+      =^  hip  worm.vane  (~(nell wa worm.vane) p.mex)          ::
       ?.  hip  ~                                        ::  a card is a cell
-      ?.  ?=($meta -.q.mex)  `[[%& mex] p.sew]          ::  ordinary card
-      =^  tiv  p.sew  (~(slot wa p.sew) 3 mex)          ::
-      =^  hip  p.sew  (~(nell wa p.sew) p.tiv)          ::
+      ?.  ?=($meta -.q.mex)  `[[%& mex] worm.vane]          ::  ordinary card
+      =^  tiv  worm.vane  (~(slot wa worm.vane) 3 mex)          ::
+      =^  hip  worm.vane  (~(nell wa worm.vane) p.tiv)          ::
       ?.  hip  ~                                        ::  a vase is a cell
-      =^  vax  p.sew  (~(slot wa p.sew) 2 tiv)          ::
-      =^  hip  p.sew  (~(nest wa p.sew) typ.vil p.vax)  ::
+      =^  vax  worm.vane  (~(slot wa worm.vane) 2 tiv)          ::
+      =^  hip  worm.vane  (~(nest wa worm.vane) typ.vil p.vax)  ::
       ?.  hip  ~                                        ::  vase head is type
       %+  biff                                          ::
         =+  mut=(milt q.tiv)                            ::  card type, value
         |-  ^-  (unit (pair milt worm))                 ::
-        ?.  ?=({$meta p/* q/milt} q.mut)  `[mut p.sew]  ::  ordinary metacard
-        =^  hip  p.sew  (~(nets wa p.sew) mev.vil p.mut)::
+        ?.  ?=({$meta p/* q/milt} q.mut)  `[mut worm.vane]  ::  ordinary metacard
+        =^  hip  worm.vane  (~(nets wa worm.vane) mev.vil p.mut)::
         ?.  hip  ~                                      ::  meta-metacard
         $(mut +.q.mut)                                  ::  descend into meta
       |=(a/(pair milt worm) `[[%| p.a] q.a])            ::  milt to mill
@@ -229,7 +230,7 @@
               %&  (some p.har)
             ==
         ^=  har  ^-  (each (pair arvo worm) term)
-        =^  caq  p.sew  (~(spot wa p.sew) 3 wec)
+        =^  caq  worm.vane  (~(spot wa worm.vane) 3 wec)
         ?+    q.caq   [%| (cat 3 %funk (symp q.caq))]
         ::
             {$pass p/* q/@tas r/{p/@tas q/*}}
@@ -239,14 +240,14 @@
           ?.  ((sane %tas) lal)  ~
           %+  biff  ((soft path) p.q.caq)
           |=  pax/path
-          =^  yav  p.sew  (~(spot wa p.sew) 15 caq)
+          =^  yav  worm.vane  (~(spot wa worm.vane) 15 caq)
           %+  bind  (song yav)
           |=  {hil/mill vel/worm}
           [%& [%pass pax lal hil] vel]
         ::
             {$give p/{p/@tas q/*}}
           %-  (bond |.([%| p.p.q.caq]))
-          =^  yav  p.sew  (~(spot wa p.sew) 3 caq)
+          =^  yav  worm.vane  (~(spot wa worm.vane) 3 caq)
           %+  bind  (song yav)
           |=  {hil/mill vel/worm}
           [%& [%give hil] vel]
@@ -256,7 +257,7 @@
           %+  biff  ((soft @) p.q.caq)
           |=  lal/@tas
           ?.  ((sane %tas) lal)  ~
-          =^  yav  p.sew  (~(spot wa p.sew) 7 caq)
+          =^  yav  worm.vane  (~(spot wa worm.vane) 7 caq)
           %+  bind  (song yav)
           |=  {hil/mill vel/worm}
           [%& [%slip lal hil] vel]
@@ -266,12 +267,12 @@
     ++  said                                            ::  vase to (list move)
       |=  vud/vase
       |-  ^-  (pair (list move) worm)
-      ?:  =(~ q.vud)  [~ p.sew]
-      =^  hed  p.sew  (~(slot wa p.sew) 2 vud)
-      =^  tal  p.sew  (~(slot wa p.sew) 3 vud)
-      =^  mov  p.sew  (need (sump hed))
-      =^  moz  p.sew  $(vud tal)
-      [[mov moz] p.sew]
+      ?:  =(~ q.vud)  [~ worm.vane]
+      =^  hed  worm.vane  (~(slot wa worm.vane) 2 vud)
+      =^  tal  worm.vane  (~(slot wa worm.vane) 3 vud)
+      =^  mov  worm.vane  (need (sump hed))
+      =^  moz  worm.vane  $(vud tal)
+      [[mov moz] worm.vane]
     ::
     ++  scry                                            ::  read namespace
       ~/  %scry
@@ -299,8 +300,8 @@
     ++  soar                                            ::  scrub vane
       |=  sev/vase
       ^-  vase
-      ?:  &(=(-.q.q.sew -.q.sev) =(+>.q.q.sew +>.q.sev))
-        q.sew                                           ::  unchanged, use old
+      ?:  &(=(-.q.vase.vane -.q.sev) =(+>.q.vase.vane +>.q.sev))
+        vase.vane                                           ::  unchanged, use old
       sev(+<.q [*@da *@ =>(~ |~(* ~))])                 ::  clear to stop leak
     ::
     ++  swim
@@ -310,16 +311,16 @@
               hen/duct
               hil/mill
           ==
-      ^-  {{p/(list move) q/worm} q/vase}
-      ::  ~&  [%swim-wyt `@ud`~(wyt in p.sew)]
+      ^-  [(list move) _vane]
+      ::  ~&  [%swim-wyt `@ud`~(wyt in worm.vane)]
       =+  ^=  pru
           ?~  pux
             ~|  [%swim-call-vane lal ({term $~} +.p.hil)]
-            =^  vax  p.sew  (~(slap wa p.sew) rig [%limb %call])
+            =^  vax  worm.vane  (~(slap wa worm.vane) rig [%limb %call])
             %^  slur-pro  lal  vax
             (slid [%& duc.vil hen] (slix hil))
           ~|  [%swim-take-vane lal ({term $~} +.p.hil)]
-          =^  vax  p.sew  (~(slap wa p.sew) rig [%limb %take])
+          =^  vax  worm.vane  (~(slap wa worm.vane) rig [%limb %take])
           %^  slur-pro  lal   vax
           ;:  slid
             [%& pah.vil u.pux]
@@ -328,11 +329,12 @@
           ==
       ?~  pru
         ~&  [%swim-lost lal (symp +>-.hil)]
-        [[~ p.sew] q.sew]
-      =^  pro  p.sew  (need pru)
-      =^  moz  p.sew  (~(slap wa p.sew) pro [%limb %p])
-      =^  vem  p.sew  (~(slap wa p.sew) pro [%limb %q])
-      [(said moz) (soar vem)]
+        [~ [vase.vane worm.vane]]
+      =^  pro  worm.vane  (need pru)
+      =^  moz  worm.vane  (~(slot wa worm.vane) 2 pro)
+      =^  vem  worm.vane  (~(slot wa worm.vane) 3 pro)
+      =^  sad  worm.vane  (said moz)
+      [sad [(soar vem) worm.vane]]
     --
   --
 ::
@@ -342,7 +344,7 @@
   ^=  res  %-  mule  |.
   =+  gen=(rain pax txt)
   ~&  [%vane-parsed `@p`(mug gen)]
-  =+  pro=(vent lal vil bud *worm (slym (slap bud gen) bud))
+  =+  pro=(vent lal vil bud [(slym (slap bud gen) bud) *worm])
   ~&  [%vane-compiled `@p`(mug pro)]
   pro
 ::
@@ -357,7 +359,7 @@
   ==
 ::
 ++  is                                                  ::  operate in time
-  |=  {vil/vile eny/@ bud/vase niz/(pair worm (list {p/@tas q/vase}))}
+  |=  {vil/vile eny/@ bud/vase vanes=(list [label=@tas =vane])}
   |_  now/@da
   ++  beck
     ^-  slyd
@@ -367,14 +369,14 @@
     =+  lal=(end 3 1 ron)
     =+  ren=(@t (rsh 3 1 ron))
     |-  ^-  (unit (unit (cask)))
-    ?~  q.niz  ~
-    ?.  =(lal p.i.q.niz)  $(q.niz t.q.niz)
-    %-  scry:(wink:(vent lal vil bud p.niz q.i.q.niz) now (shax now) ..^$)
+    ?~  vanes  ~
+    ?.  =(lal label.i.vanes)  $(vanes t.vanes)
+    %-  scry:(wink:(vent lal vil bud vane.i.vanes) now (shax now) ..^$)
     [fur ren bed]
   ::
   ++  dink                                              ::  vase by char
     |=  din/@tas  ^-  vase
-    ?~(q.niz !! ?:(=(din p.i.q.niz) q.i.q.niz $(q.niz t.q.niz)))
+    ?~(vanes !! ?:(=(din label.i.vanes) vase.vane.i.vanes $(vanes t.vanes)))
   ::
   ++  dint                                              ::  input routing
     |=  hap/path  ^-  @tas
@@ -391,7 +393,8 @@
   ++  hurl                                              ::  start loop
     |=  {lac/? ovo/ovum}
     ~?  &(!lac !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
-    ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
+    ::  ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
+    ^-  {p/(list ovum) q=(list [label=@tas =vane])}
     ?>  ?=(^ p.ovo)
     %+  kick  lac
     :~  :*  i.p.ovo
@@ -405,28 +408,30 @@
     ==
   ::
   ++  race                                              ::  take
-    |=  {org/@tas lal/@tas pux/(unit wire) hen/duct hil/mill ves/vase}
-    ^-  {p/{p/(list move) q/worm} q/vase}
-    =+  ven=(vent lal vil bud [p.niz ves])
+    |=  {org/@tas lal/@tas pux/(unit wire) hen/duct hil/mill =vane}
+    ^-  [p=(list move) q=_vane]
+    =+  ven=(vent lal vil bud vane)
     =+  win=(wink:ven now (shax now) beck)
     (swim:win org pux hen hil)
   ::
   ++  fire                                              ::  execute
     |=  {org/term lal/term pux/(unit wire) hen/duct hil/mill}
+    ^-  {{p/(list ovum) q/(list muse)} _vanes}
     ?:  &(?=(^ pux) ?=($~ hen))
-      [[[[lal u.pux] (curd +>.hil)]~ ~] niz]
-    =+  naf=q.niz
-    |-  ^-  {{p/(list ovum) q/(list muse)} _niz}
-    ?~  naf  [[~ ~] [p.niz ~]]
-    ?.  =(lal p.i.naf)
+      [[[[lal u.pux] (curd +>.hil)]~ ~] vanes]
+    =+  naf=vanes
+    |-  ^-  {{p/(list ovum) q/(list muse)} _vanes}
+    ?~  naf  [[~ ~] ~]
+    ?.  =(lal label.i.naf)
       =+  tuh=$(naf t.naf)
       [-.tuh [+<.tuh [i.naf +>.tuh]]]
-    =+  fiq=(race org lal pux hen hil q.i.naf)
-    [[~ (turn p.p.fiq |=(a/move [lal a]))] [q.p.fiq [[p.i.naf q.fiq] t.naf]]]
+    ::
+    =+  fiq=(race org lal pux hen hil vane.i.naf)
+    [[~ (turn p.fiq |=(a/move [lal a]))] [[label.i.naf q.fiq] t.naf]]
   ::
   ++  jack                                              ::  dispatch card
     |=  {lac/? gum/muse}
-    ^-  {{p/(list ovum) q/(list muse)} _niz}
+    ^-  {{p/(list ovum) q/(list muse)} _vanes}
     ::  =.  lac  |(lac ?=(?(%g %f) p.gum))
     ::  =.  lac  &(lac !?=($b p.gum))
     %+  fire
@@ -456,9 +461,9 @@
   ++  kick                                              ::  new main loop
     |=  {lac/? mor/(list muse)}
     =|  ova/(list ovum)
-    |-  ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
-    ?~  mor  [(flop ova) niz]
-    =^  nyx  niz  (jack lac i.mor)
+    |-  ^-  {p/(list ovum) q=(list [label=@tas =vane])}
+    ?~  mor  [(flop ova) vanes]
+    =^  nyx  vanes  (jack lac i.mor)
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
   --
 --
@@ -468,7 +473,7 @@
 =+  vil=(viol p.bud)                                    ::  cached reflexives
 =|  $:  lac/?                                           ::  laconic bit
         eny/@                                           ::  entropy
-        niz/(pair worm (list {p/@tas q/vase}))          ::  modules
+        vanes=(list [label=@tas =vane])                 ::  modules
     ==                                                  ::
 =<  |%
     ++  come  |=  {@ (list ovum) pone}                  ::  22
@@ -511,7 +516,7 @@
                   :-  %|
                   :~  hoon+`pit
                       zuse+`bud
-                      hoon-cache+`p.niz
+                      ::  hoon-cache+`p.niz
                       q.q.i.ova
                       dot+`.
                   ==
@@ -529,7 +534,7 @@
   |=  {yen/@ ova/(list ovum) nyf/pane}
   ^+  [ova +>]
   =:  eny  yen
-      q.niz  nyf
+      vanes  (turn nyf |=({a/@tas b/vise} [a [b *worm]]))
     ==
   |-  ^+  [ova +>.^$]
   ?~  ova
@@ -544,7 +549,7 @@
   |=  {now/@da hap/path}
   ^-  (unit)
   ?~  hap  [~ hoon-version]
-  =+  rob=((sloy ~(beck (is vil eny bud niz) now)) [151 %noun] hap)
+  =+  rob=((sloy ~(beck (is vil eny bud vanes) now)) [151 %noun] hap)
   ?~  rob  ~
   ?~  u.rob  ~
   [~ u.u.rob]
@@ -554,8 +559,8 @@
   =.  eny  (mix eny (shaz now))
   ::  ~&  [%poke -.q.ovo]
   ^-  {(list ovum) _+>}
-  =^  zef  niz
-    (~(hurl (is vil eny bud niz) now) lac ovo)
+  =^  zef  vanes
+    (~(hurl (is vil eny bud vanes) now) lac ovo)
   [zef +>.$]
 ::                                                
 ++  veke                                                ::  build new kernel
@@ -599,7 +604,9 @@
   ?>  (lte nex hoon-version)
   ::  entropy, pending effects, vanes
   ::
-  =/  sam  [eny ova q.niz]
+  =/  sam
+    :+  eny  ova
+    (turn vanes |=([label=@tas =vane] [label vase.vane]))
   ::  +load at +46 or +come at +22
   ::
   =/  axe  ?:(=(nex hoon-version) 46 22)
@@ -620,20 +627,20 @@
     =+  vax=(slap pit gen)
     +>.^$(bud vax)
   %_    +>.^$
-      q.niz
-    |-  ^+  q.niz
-    ?~  q.niz
+      vanes
+    |-  ^+  vanes
+    ?~  vanes
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
       =+  vin=(vint lal.fav vil bud pax.fav txt.fav)
       ?~  vin
-        q.niz
-      [[lal.fav q.sew:u.vin] q.niz]
-    ?.  =(lal.fav p.i.q.niz)
-      [i.q.niz $(q.niz t.q.niz)]
+        vanes
+      [[lal.fav vase.vane:u.vin *worm] vanes]
+    ?.  =(lal.fav label.i.vanes)
+      [i.vanes $(vanes t.vanes)]
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-    :_  t.q.niz
-    :-  p.i.q.niz
-    q.sew:(ruck:(vent lal.fav vil bud [p.niz q.i.q.niz]) pax.fav txt.fav)
+    :_  t.vanes
+    :-  label.i.vanes
+    vane:(ruck:(vent lal.fav vil bud [vase.vane.i.vanes *worm]) pax.fav txt.fav)
   ==
 ::
 ++  wish                                                ::  external compute

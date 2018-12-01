@@ -495,7 +495,7 @@
   |=  $:  hen/duct
           hic/(hypo (hobo task:able))
       ==
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   =>  %=    .                                           ::  XX temporary
           q.hic
         ^-  task:able
@@ -576,7 +576,7 @@
 ::
 ++  take                                                ::  process move
   |=  {tea/wire hen/duct hin/(hypo sign)}
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   =/  nus  (ax hen)
   ?~  nus
     ::  we got this on an unknown duct or

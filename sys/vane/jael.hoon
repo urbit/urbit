@@ -2200,7 +2200,7 @@
           hen/duct
           hic/(hypo (hobo task:able))
       ==
-  ^-  {p/(list move) q/_..^$}
+  ^-  [(list move) _..^$]
   =^  did  lex
     =-  abet:(~(call of [now eny] lex) hen -)
     ?.  ?=($soft -.q.hic)  q.hic
@@ -2385,7 +2385,7 @@
           hen/duct
           hin/(hypo sign)
       ==
-  ^-  {p/(list move) q/_..^$}
+  ^-  [(list move) _..^$]
   =^  did  lex  abet:(~(take of [now eny] lex) tea hen q.hin)
   [did ..^$]
 --
