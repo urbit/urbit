@@ -3719,7 +3719,7 @@
         ~&  [%clay-call-flub (@tas `*`-.req)]
         ((hard task:able) req)
       ==
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   ?-    -.req
       $boat
     :_  ..^$
@@ -4075,7 +4075,7 @@
 ++  stay  [%1 ruf]
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   ?:  ?=({$merge @ @ @ @ @ ~} tea)
     ?>  ?=(?($writ $made) +<.q.hin)
     =+  our=(slav %p i.t.tea)

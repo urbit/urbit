@@ -2257,7 +2257,7 @@
         ~&  [%eyre-call-flub (@tas `*`-.q.hic)]
         ((hard task:able) q.hic)
       ==
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   ?:  ?=($wegh -.q.hic)
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
@@ -2321,7 +2321,7 @@
 ++  stay  `bolo`+>-.$
 ++  take                                                ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(sloy ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))

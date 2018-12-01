@@ -1238,7 +1238,7 @@
             ~&  [%ames-call-flub (@tas `*`-.q.hic)]
             ((hard task:able) q.hic)
           ==
-      ^-  [p=(list move) q=_..^$]
+      ^-  [(list move) _..^$]
       =^  duy  ..knob
         (knob hen q.hic)
       [duy ..^$]
@@ -1263,7 +1263,7 @@
     ++  stay  fox
     ++  take                                            ::  accept response
       |=  [tea=wire hen=duct hin=(hypo sign:able)]
-      ^-  [p=(list move) q=_..^$]
+      ^-  [(list move) _..^$]
       =^  duy  ..knap
         (knap tea hen q.hin)
       [duy ..^$]

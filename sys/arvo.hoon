@@ -331,8 +331,8 @@
         ~&  [%swim-lost lal (symp +>-.hil)]
         [~ [vase.vane worm.vane]]
       =^  pro  worm.vane  (need pru)
-      =^  moz  worm.vane  (~(slap wa worm.vane) pro [%limb %p])
-      =^  vem  worm.vane  (~(slap wa worm.vane) pro [%limb %q])
+      =^  moz  worm.vane  (~(slot wa worm.vane) 2 pro)
+      =^  vem  worm.vane  (~(slot wa worm.vane) 3 pro)
       =^  sad  worm.vane  (said moz)
       [sad [(soar vem) worm.vane]]
     --

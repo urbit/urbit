@@ -166,7 +166,7 @@
         ((hard task:able) q.hic)
       ==
   =*  req  q.hic
-  |-  ^-  [p=(list move) q=_..^^$]
+  |-  ^-  [(list move) _..^^$]
   ::
   ?:  ?=(%born -.req)
     =.  gad  hen
@@ -245,6 +245,6 @@
 ++  stay  state
 ++  take                                                ::  process move
   |=  {tea/wire hen/duct hin/(hypo sign)}
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   !!
 --
