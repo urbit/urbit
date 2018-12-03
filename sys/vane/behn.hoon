@@ -152,20 +152,15 @@
 ^?
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request
-  |=  $:  hen/duct
-          hic/(hypo (hobo task:able))
+  |=  $:  hen=duct
+          type=*
+          wrapped-task=(hobo task:able)
       ==
-  =>  %=    .                                           ::  XX temporary
-          q.hic
-        ^-  task:able
-        ?:  ?=($soft -.q.hic)
-          ::  ~&  [%behn-call-soft (,@tas `*`-.p.q.hic)]
-          ((hard task:able) p.q.hic)
-        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
-        ~&  [%behn-call-flub (@tas `*`-.q.hic)]
-        ((hard task:able) q.hic)
-      ==
-  =*  req  q.hic
+  ::
+  =/  req=task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ((hard task:able) p.wrapped-task)
   |-  ^-  [(list move) _..^^$]
   ::
   ?:  ?=(%born -.req)

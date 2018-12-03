@@ -3702,23 +3702,16 @@
 ^?                                                    ::  opaque core
 |%                                                    ::
 ++  call                                              ::  handle request
-  |=  $:  hen/duct
-          hic/(hypo (hobo task:able))
+  |=  $:  hen=duct
+          type=*
+          wrapped-task=(hobo task:able)
       ==
-  =*  req  q.hic
-  =>  %=    .                                         ::  XX temporary
-          req
-        ^-  task:able
-        ?:  ?=($soft -.req)
-          =+
-          ~|([%bad-soft (@t -.p.req)] ((soft task:able) p.req))
-          ?~  -
-            ~&  [%bad-softing (@t -.p.req)]  !!
-          u.-
-        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  req
-        ~&  [%clay-call-flub (@tas `*`-.req)]
-        ((hard task:able) req)
-      ==
+  ::
+  =/  req=task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ((hard task:able) p.wrapped-task)
+  ::
   ^+  [*(list move) ..^$]
   ?-    -.req
       $boat

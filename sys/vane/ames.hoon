@@ -1227,20 +1227,15 @@
     |%                                                  ::  vane interface
     ++  call                                            ::  handle request
       |=  $:  hen=duct
-              hic=(hypo (hobo task:able))
-          ==
-      =>  %=    .                                       ::  XX temporary
-              q.hic
-            ^-  task:able
-            ?:  ?=(%soft -.q.hic)
-              ((hard task:able) p.q.hic)
-            ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
-            ~&  [%ames-call-flub (@tas `*`-.q.hic)]
-            ((hard task:able) q.hic)
+              type=*
+              wrapped-task=(hobo task:able)
           ==
       ^-  [(list move) _..^$]
-      =^  duy  ..knob
-        (knob hen q.hic)
+      =/  task=task:able
+        ?.  ?=(%soft -.wrapped-task)
+          wrapped-task
+        ((hard task:able) p.wrapped-task)
+      =^  duy  ..knob  (knob hen task)
       [duy ..^$]
     ::
     ++  load

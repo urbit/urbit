@@ -492,39 +492,34 @@
     --
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request
-  |=  $:  hen/duct
-          hic/(hypo (hobo task:able))
+  |=  $:  hen=duct
+          type=*
+          wrapped-task=(hobo task:able)
       ==
   ^+  [*(list move) ..^$]
-  =>  %=    .                                           ::  XX temporary
-          q.hic
-        ^-  task:able
-        ?:  ?=($soft -.q.hic)
-          ::  ~&  [%dill-call-soft (@tas `*`-.p.q.hic)]
-          ((hard task:able) p.q.hic)
-        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
-        ~&  [%dill-call-flub (@tas `*`-.q.hic)]
-        ((hard task:able) q.hic)
-      ==
+  =/  task=task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ((hard task:able) p.wrapped-task)
   ::  the boot event passes thru %dill for initial duct distribution
   ::
-  ?:  ?=(%boot -.q.hic)
-    ?>  ?=(?(%dawn %fake) -.p.q.hic)
+  ?:  ?=(%boot -.task)
+    ?>  ?=(?(%dawn %fake) -.p.task)
     ?>  =(~ hey.all)
     =.  hey.all  `hen
-    =/  boot  ((soft note-jael) p.q.hic)
+    =/  boot  ((soft note-jael) p.task)
     ?~  boot
       ~|  invalid-boot-event+hen  !!
     :_(..^$ [hen %pass / %j u.boot]~)
   ::  we are subsequently initialized. single-home
   ::
-  ?:  ?=(%init -.q.hic)
+  ?:  ?=(%init -.task)
     ?>  =(~ dug.all)
     ?>  =(~ ore.all)
-    =.  ore.all  `p.q.hic
+    =.  ore.all  `p.task
     ::  configure new terminal, setup :hood and %clay
     ::
-    =*  our  p.q.hic
+    =*  our  p.task
     =*  duc  (need hey.all)
     =/  app  %hood
     =/  see  (tuba "<awaiting {(trip app)}, this may take a few minutes>")
@@ -534,17 +529,17 @@
     [moz ..^$]
   ::  %flog tasks are unwrapped and sent back to us on our default duct
   ::
-  ?:  ?=(%flog -.q.hic)
+  ?:  ?=(%flog -.task)
     ?~  hey.all
       [~ ..^$]
     ::  this lets lib/helm send %heft a la |mass
     ::
     =/  not=note-dill
-      ?:(?=([%crud %hax-heft ~] p.q.hic) [%heft ~] p.q.hic)
+      ?:(?=([%crud %hax-heft ~] p.task) [%heft ~] p.task)
     [[u.hey.all %slip %d not]~ ..^$]
   ::  a %sunk notification from %jail comes in on an unfamiliar duct
   ::
-  ?:  ?=(%sunk -.q.hic)
+  ?:  ?=(%sunk -.task)
     [~ ..^$]
   ::
   =/  nus  (ax hen)
@@ -552,11 +547,11 @@
     ::  we got this on an unknown duct or
     ::  before %boot or %init (or one of those crashed)
     ::
-    ~&  [%dill-call-no-flow hen -.q.hic]
-    =/  tan  ?:(?=(%crud -.q.hic) q.q.hic ~)
+    ~&  [%dill-call-no-flow hen -.task]
+    =/  tan  ?:(?=(%crud -.task) q.task ~)
     [((slog (flop tan)) ~) ..^$]
   ::
-  =^  moz  all  abet:(call:u.nus q.hic)
+  =^  moz  all  abet:(call:u.nus task)
   [moz ..^$]
 ::
 ++  load                                                ::  trivial
