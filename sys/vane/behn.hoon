@@ -14,8 +14,7 @@
           ==                                            ::
 +*  broq  [a b]                                         ::  brodal skew qeu
           (list (sqeu a b))                             ::
-+$  move  {p/duct q/(wind note gift:able)}              ::  local move
-+$  note  ~                                             ::  out request $->
++$  move  {p/duct q/(wind note:able gift:able)}         ::  local move
 +$  sign  ~                                             ::  in result $<-
 +$  clok  (broq @da duct)                               ::  stored timers
 +$  coke  $~  [%0 ~ ~ ~]                                ::  all state
@@ -162,6 +161,9 @@
       wrapped-task
     ((hard task:able) p.wrapped-task)
   |-  ^-  [(list move) _..^^$]
+  ::
+  ?:  ?=(%crud -.req)
+    [[[hen %slip %d %flog req] ~] ..^^$]
   ::
   ?:  ?=(%born -.req)
     =.  gad  hen
