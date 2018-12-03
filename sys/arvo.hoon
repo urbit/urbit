@@ -65,6 +65,8 @@
 ++  ovum  {p/wire q/curd}                               ::  typeless ovum
 ++  pane  (list {p/@tas q/vase})                        ::  kernel modules
 ++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
++$  scry-sample
+  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
 ++  ship  @p                                            ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
 ++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
@@ -136,8 +138,40 @@
     =+  gen=(rain pax txt)
     =+  rev=(slym (slap bud gen) bud)
     =+  syg=(slym rev arg)
-    ~|  %load-lost
-    +>.^$(vase.vane (slam (slap syg [%limb %load]) (slap rig [%limb %stay])))
+    ::  update the vane itself
+    ::
+    ::    We don't cache the +slap/+slam types because they're only used once
+    ::    right here; they'll never be used again.
+    ::
+    =.  vase.vane
+      ~|  %load-lost
+      (slam (slap syg [%limb %load]) (slap rig [%limb %stay]))
+    ::  prime the new compiler cache
+    ::
+    prime
+  ::  reset and prime the worm cache for scrys
+  ::
+  ::    If the +slap/+slym in scry isn't cached, we spend the majority of
+  ::    the time in a scry in the compiler. The +scry gate cannot have side
+  ::    effects so we can't modify the cache at access time. So we seed the
+  ::    cache with all the things +scry will need when we install the vane
+  ::
+  ++  prime
+    ^+  ..prime
+    ::
+    %_    ..prime
+        worm.vane
+      ::  reset cache and add in vane activation entry
+      ::
+      =^  rig  worm.vane
+        (~(slym wa *worm) vase.vane *[@da @ slyd])
+      ::  cache the access of the %scry arm
+      ::
+      =^  fun  worm.vane  (~(slap wa worm.vane) rig [%limb %scry])
+      ::  cache the call to +mint that the +slym in +scry will do
+      ::
+      +:(~(mint wa worm.vane) p.fun [%limb %$])
+    ==
   ::
   ++  wink                                              ::  deploy
     |=  {now/@da eny/@ ski/slyd}
@@ -282,20 +316,21 @@
           ==
       ^-  (unit (unit (cask)))
       ::  ~&  [%arvo-scry ren bed]
-      =+  ^=  old
-          :*  fur
-              ren
-              [%& p.bed]
-              q.bed
-              `coin`[%$ r.bed]
-              (flop s.bed)
-          ==
+      =/  old=scry-sample
+        :*  fur
+            ren
+            [%& p.bed]
+            q.bed
+            `coin`[%$ r.bed]
+            (flop s.bed)
+        ==
       ^-  (unit (unit (cask)))
-      =+  pro=(slym (slap rig [%limb %scry]) old)
+      =+  fun=-:(~(slap wa worm.vane) rig [%limb %scry])
+      =+  pro=-:(~(slym wa worm.vane) fun old)
       ?~  q.pro  ~
       ?~  +.q.pro  [~ ~]
-      =+  dat=(slot 7 pro)
-      [~ ~ (mark -.q.dat) +.q.dat]
+      =/  dat  +>.q.pro
+      [~ ~ (mark -.dat) +.dat]
     ::
     ++  soar                                            ::  scrub vane
       |=  sev/vase
@@ -346,7 +381,7 @@
   ~&  [%vane-parsed `@p`(mug gen)]
   =+  pro=(vent lal vil bud [(slym (slap bud gen) bud) *worm])
   ~&  [%vane-compiled `@p`(mug pro)]
-  pro
+  prime:pro
 ::
 ++  viol                                                ::  vane tools
   |=  but/type
@@ -634,7 +669,7 @@
       =+  vin=(vint lal.fav vil bud pax.fav txt.fav)
       ?~  vin
         vanes
-      [[lal.fav vase.vane:u.vin *worm] vanes]
+      [[lal.fav vane:u.vin] vanes]
     ?.  =(lal.fav label.i.vanes)
       [i.vanes $(vanes t.vanes)]
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
