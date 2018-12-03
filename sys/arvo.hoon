@@ -170,10 +170,7 @@
       =^  fun  worm.vane  (~(slap wa worm.vane) rig [%limb %scry])
       ::  cache the call to +mint that the +slym in +scry will do
       ::
-      =^  pro  worm.vane  (~(mint wa worm.vane) p.fun [%limb %$])
-      ::  cache the call to +mint that the +slot does for the return call
-      ::
-      +:(~(mint wa worm.vane) p.pro [%$ 7])
+      +:(~(mint wa worm.vane) p.fun [%limb %$])
     ==
   ::
   ++  wink                                              ::  deploy
@@ -332,8 +329,8 @@
       =+  pro=-:(~(slym wa worm.vane) fun old)
       ?~  q.pro  ~
       ?~  +.q.pro  [~ ~]
-      =+  dat=-:(~(slot wa worm.vane) 7 pro)
-      [~ ~ (mark -.q.dat) +.q.dat]
+      =/  dat  +>.q.pro
+      [~ ~ (mark -.dat) +.dat]
     ::
     ++  soar                                            ::  scrub vane
       |=  sev/vase
