@@ -1024,15 +1024,15 @@
 
     /**  behn, just a timer.
     **/
-      /* u2_behn_io_init(): initialize behn timer.
+      /* u3_behn_io_init(): initialize behn timer.
       */
         void
-        u2_behn_io_init(void);
+        u3_behn_io_init(void);
 
       /* u2_behn_io_exit(): terminate timer.
       */
         void
-        u2_behn_io_exit(void);
+        u3_behn_io_exit(void);
 
       /* u3_behn_ef_bake(): notify %behn that we're live
       */
