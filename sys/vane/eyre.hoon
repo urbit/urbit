@@ -2245,20 +2245,18 @@
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  call                                                ::  handle request
-  |=  $:  hen/duct
-          hic/(hypo (hobo task:able))
+  |=  $:  hen=duct
+          type=*
+          wrapped-task=(hobo task:able)
       ==
-  =>  %=    .                                           ::  XX temporary
-          q.hic
-        ^-  task:able
-        ?:  ?=($soft -.q.hic)
-          ((hard task:able) p.q.hic)
-        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
-        ~&  [%eyre-call-flub (@tas `*`-.q.hic)]
-        ((hard task:able) q.hic)
-      ==
+  ::
+  =/  task=task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ((hard task:able) p.wrapped-task)
+  ::
   ^+  [*(list move) ..^$]
-  ?:  ?=($wegh -.q.hic)
+  ?:  ?=($wegh -.task)
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
     :-  %eyre
@@ -2275,7 +2273,7 @@
   ^+  [p=*(list move) q=..^$]
   =.  gub  ?.(=(`@`0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =^  mos  bol
-    abet:(apex:~(adit ye [hen [now eny our sky] ~] bol) q.hic)
+    abet:(apex:~(adit ye [hen [now eny our sky] ~] bol) task)
   [mos ..^$]
 ::
 ++  load                                                ::  take previous state
