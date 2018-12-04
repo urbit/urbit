@@ -1696,15 +1696,27 @@ u3_sist_boot(void)
     // Authenticate and initialize terminal.
     u3_term_ef_bake(pig);
 
-    // queue initial galaxy sync
-    {
-      u3_noun rac = u3do("clan:title", u3k(u3A->own));
+    // queue initial filesystem sync
+    //
+    // from the Arvo directory if specified
+    if ( 0 != u3_Host.ops_u.arv_c ) {
+      u3_unix_ef_initial_into();
+    }
+    // otherwise from the pill
+    else {
+      c3_c ful_c[2048];
 
-      if ( c3__czar == rac ) {
-        u3_unix_ef_initial_into();
+      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", u3_Host.dir_c);
+
+      {
+        u3_noun sys = u3ke_cue(u3m_file(ful_c));
+        u3_noun fil;
+
+        u3x_trel(sys, 0, 0, &fil);
+        u3v_plow(u3k(fil));
+
+        u3z(sys);
       }
-
-      u3z(rac);
     }
 
     // Create the event log
