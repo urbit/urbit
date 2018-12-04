@@ -252,6 +252,11 @@ u3_lo_exit(void)
   cod_l = u3a_lush(c3__behn);
   u3_behn_io_exit();
   u3a_lop(cod_l);
+
+  if ( c3y == __(u3C.wag_w & u3o_trace) ) {
+    printf("saving trace file.\r\n");
+    u3t_trace_close();
+  }
 }
 
 #if 0

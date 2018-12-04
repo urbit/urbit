@@ -88,7 +88,12 @@
       void
       u3t_trace_open(c3_c*);
 
-    /* u3t_nock_trace_push(): pushes a frame ont o the trace stack;
+    /* u3t_trace_close(): closes the trace file. optional.
+    */
+      void
+      u3t_trace_close();
+
+    /* u3t_nock_trace_push(): pushes a frame onto the trace stack;
     *  return yes if active push.
     */
       c3_o
@@ -99,7 +104,7 @@
       void
       u3t_nock_trace_pop();
 
-    /* u3t_even_trace(): record a lifecycle event.
+    /* u3t_event_trace(): record a lifecycle event.
     */
       void
       u3t_event_trace(const char* name, char type);

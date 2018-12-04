@@ -632,7 +632,7 @@
         c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      tls_u;                   //  server SSL_CTX*
-        FILE*      trace_file;              //  trace file to write to
+        FILE*      trace_file_u;            //  trace file to write to
       } u3_host;                            //  host == computer == process
 
 #     define u3L  u3_Host.lup_u             //  global event loop
