@@ -5959,6 +5959,9 @@
       %ux
     (rush txt ;~(pfix (jest '0x') hex:ag))
   ::
+      %uv
+    (rush txt ;~(pfix (jest '0v') viz:ag))
+  ::
       %tas
     (rush txt sym)
   ==
