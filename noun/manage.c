@@ -1707,11 +1707,17 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
     _boot_home(dir_c, pil_c, url_c, arv_c);
 
     snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
-
     printf("boot: loading %s\r\n", ful_c);
-    u3v_make(ful_c);
 
-    u3v_jack();
+    {
+      u3_noun sys = u3ke_cue(u3m_file(ful_c));
+      u3_noun bot;
+
+      u3x_trel(sys, &bot, 0, 0);
+      u3v_boot(u3k(bot));
+
+      u3z(sys);
+    }
   }
   else {
     u3v_hose();
