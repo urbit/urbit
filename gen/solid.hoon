@@ -86,8 +86,94 @@
   |=  [ovo=ovum ken=*]
   [~ .*(ken [%9 2 %10 [6 %1 now ovo] %0 1])]
 ::
-::  produce a pair of :arvo-formula (for jet registration) and
-::  the Arvo core (structural interface), which is the context
-::  of the formal Arvo interface gate :installed
+::  file-ovum: userspace filesystem load
 ::
-[arvo-formula .*(installed [%0 7])]
+::    XX use top.arg
+::    XX deduplicate with +brass (lib/pill ?)
+::
+=/  file-ovum=ovum
+    ::
+    ::    /app    %gall applications
+    ::    /gen    :dojo generators
+    ::    /lib    %ford libraries
+    ::    /mar    %ford marks
+    ::    /ren    %ford renderers
+    ::    /sec    %eyre security drivers
+    ::    /sur    %ford structures
+    ::    /sys    system files
+    ::    /tests  unit tests
+    ::    /web    %eyre web content
+    ::
+    %.  [/app /gen /lib /mar /ren /sec /sur /sys /tests /web ~]
+    |=  ::  sal: all spurs to load from
+        ::
+        sal/(list spur)
+    ^-  ovum
+    ::
+    ::  hav: all user files
+    ::
+    =;  hav  ~&  user-files+(lent hav)
+             [[%$ %sync ~] [%into %$ & hav]]
+    =|  hav/mode:clay
+    |-  ^+  hav
+    ?~  sal  ~
+    =.  hav  $(sal t.sal)
+    ::
+    ::  tyl: spur
+    ::
+    =/  tyl  i.sal
+    |-  ^+  hav
+    ::
+    ::  pax: full path at `tyl`
+    ::  lon: directory at `tyl`
+    ::
+    =/  pax  (en-beam:format bec tyl)
+    =/  lon  .^(arch %cy pax)
+    ::  XX this serialization should use marks
+    ::
+    =?  hav  ?=(^ fil.lon)
+        ?.  ?=  ?($css $hoon $js $json $md $txt $udon $umd)
+            -.tyl
+          ::
+          ::  install only files with whitelisted marks
+          ::
+          ~&  ignoring+pax
+          hav
+        ::
+        ::  cot: file as plain-text octet-stream
+        ::
+        =;  cot  [[(flop `path`tyl) `[/text/plain cot]] hav]
+        ^-  octs
+        ?-    tyl
+            {$json *}
+          =/  dat  .^(json %cx pax)
+          (as-octt:mimes:html (en-json:html dat))
+        ::
+            {$txt *}
+          =/  dat  .^(wain %cx pax)
+          (as-octs:mimes:html (of-wain:format dat))
+        ::
+            *
+          =/  dat  .^(@t %cx pax)
+          [(met 3 dat) dat]
+        ==
+    =/  all  ~(tap by dir.lon)
+    |-  ^-  mode:clay
+    ?~  all  hav
+    $(all t.all, hav ^$(tyl [p.i.all tyl]))
+::
+::  our boot-ova is a list containing one massive formula:
+::
+::    We evaluate :arvo-formula (for jet registration),
+::    then ignore the result and produces :installed
+::
+=/  boot-ova=(list)
+  [[%7 arvo-formula %1 installed] ~]
+::
+::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
+::
+::    Our kernel event-list is ~, as we've already installed them.
+::    Our userspace event-list is a list containing a full %clay
+::    filesystem sync event.
+::
+[boot-ova ~ [file-ovum ~]]
