@@ -351,7 +351,7 @@ u3t_trace_close()
 
 /*  u3t_trace_time(): microsecond clock
 */
-uint64_t u3t_trace_time()
+c3_d u3t_trace_time()
 {
   struct timeval tim_tv;
   gettimeofday(&tim_tv, 0);
@@ -448,7 +448,7 @@ u3t_nock_trace_pop()
   c3_d start_time = u3r_chub(0, u3t(item));
 
   // 33microseconds (a 30th of a millisecond).
-  uint64_t duration = u3t_trace_time() - start_time;
+  c3_d duration = u3t_trace_time() - start_time;
   if (duration > 33) {
     c3_c* name = trace_pretty(lab);
 
