@@ -239,13 +239,14 @@
     ::    /gen    :dojo generators
     ::    /lib    %ford libraries
     ::    /mar    %ford marks
-    ::    /sur    %ford structures
     ::    /ren    %ford renderers
-    ::    /web    %eyre web content
+    ::    /sec    %eyre security drivers
+    ::    /sur    %ford structures
     ::    /sys    system files
-    ::    /neo    new system files
+    ::    /tests  unit tests
+    ::    /web    %eyre web content
     ::
-    %.  [/app /gen /lib /mar /neo /ren /sec /sur /sys /web ~]
+    %.  [/app /gen /lib /mar /ren /sec /sur /sys /tests /web ~]
     |=  ::  sal: all spurs to load from
         ::
         sal/(list spur)
@@ -303,4 +304,6 @@
     ?~  all  hav
     $(all t.all, hav ^$(tyl [p.i.all tyl]))
 ::
-[boot-ova module-ova file-ovum]
+::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
+::
+[boot-ova module-ova [file-ovum ~]]
