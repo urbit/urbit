@@ -159,15 +159,15 @@
 ::
 ::  compiler-twig: compiler as hoon expression
 ::
-~&  %metal-parsing
+~&  %brass-parsing
 =+  compiler-twig=(ream compiler-source)
-~&  %metal-parsed
+~&  %brass-parsed
 ::
 ::  compiler-formula: compiler as nock formula
 ::
-~&  %metal-compiling
+~&  %brass-compiling
 =+  compiler-formula=q:(~(mint ut %noun) %noun compiler-twig)
-~&  %metal-compiled
+~&  %brass-compiled
 ::
 ::  arvo-source: hoon source file producing arvo kernel, `sys/arvo`
 ::
