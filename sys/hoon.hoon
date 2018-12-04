@@ -5951,16 +5951,16 @@
       ?.(&(?=({~ $$ @ @} con) =(p.p.u.con mod)) ~ [~ q.p.u.con])
   ::
       %p
-    (rust (trip txt) ;~(pfix sig fed:ag))
+    (rush txt ;~(pfix sig fed:ag))
   ::
       %ud
-    (rust (trip txt) dem:ag)
+    (rush txt dem:ag)
   ::
       %ux
-    (rust (trip txt) ;~(pfix (jest '0x') hex:ag))
+    (rush txt ;~(pfix (jest '0x') hex:ag))
   ::
       %tas
-    (rust (trip txt) sym)
+    (rush txt sym)
   ==
 ::
 ++  slay
