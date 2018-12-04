@@ -511,7 +511,7 @@
     =*  our  p.task
     =*  duc  (need hey.all)
     =/  app  %hood
-    =/  see  (tuba "<awaiting {(trip app)}, this may take a few minutes>")
+    =/  see  (tuba "<awaiting {(trip app)}, this may take a minute>")
     =/  zon=axon  [app input=[~ ~] width=80 cursor=0 see]
     ::
     =^  moz  all  abet:(~(into as [duc our] zon) ~)
