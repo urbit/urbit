@@ -66,6 +66,27 @@ _reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
   }
 }
 
+/*  _reck_orchid(): parses only a number as text
+ *
+ *    Parses a text string which contains a decimal number. In practice, this
+ *    number is always '1'.
+ */
+static u3_noun
+_reck_orchid(u3_noun fot, u3_noun txt, c3_l* tid_l)
+{
+  c3_c* str = u3r_string(txt);
+  c3_d ato_d = strtol(str, NULL, 10);
+  free(str);
+
+  if ( ato_d >= 0x80000000ULL ) {
+    return c3n;
+  } else {
+    *tid_l = (c3_l) ato_d;
+
+    return c3y;
+  }
+}
+
 /* _reck_kick_term(): apply terminal outputs.
 */
 static u3_noun
@@ -314,7 +335,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
 
         if ( (c3n == u3r_cell(pud, &p_pud, &q_pud)) ||
              (u3_nul != q_pud) ||
-             (c3n == _reck_lily(c3__ud, u3k(p_pud), &tid_l)) )
+             (c3n == _reck_orchid(c3__ud, u3k(p_pud), &tid_l)) )
         {
           uL(fprintf(uH, "term: bad tire\n"));
           u3z(pox); u3z(fav); return c3n;
