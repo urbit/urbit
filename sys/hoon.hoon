@@ -5944,8 +5944,24 @@
   ~/  %slaw
   |=  {mod/@tas txt/@ta}
   ^-  (unit @)
-  =+  con=(slay txt)
-  ?.(&(?=({~ $$ @ @} con) =(p.p.u.con mod)) ~ [~ q.p.u.con])
+  ?+    mod
+      ::  slow fallback case to the full slay
+      ::
+      =+  con=(slay txt)
+      ?.(&(?=({~ $$ @ @} con) =(p.p.u.con mod)) ~ [~ q.p.u.con])
+  ::
+      %p
+    (rush txt ;~(pfix sig fed:ag))
+  ::
+      %ud
+    (rush txt dem:ag)
+  ::
+      %ux
+    (rush txt ;~(pfix (jest '0x') hex:ag))
+  ::
+      %tas
+    (rush txt sym)
+  ==
 ::
 ++  slay
   |=  txt/@ta  ^-  (unit coin)
