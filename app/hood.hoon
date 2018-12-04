@@ -167,7 +167,6 @@
 ++  poke-helm-tlon-add-stream  (wrap poke-tlon-add-stream):from-helm
 ++  poke-helm-tlon-init-stream  (wrap poke-tlon-init-stream):from-helm
 ++  poke-hood-sync            (wrap poke-sync):from-kiln
-++  poke-hood-init-sync       (wrap poke-init-sync):from-kiln
 ++  poke-kiln-commit          (wrap poke-commit):from-kiln
 ++  poke-kiln-info            (wrap poke-info):from-kiln
 ++  poke-kiln-label           (wrap poke-label):from-kiln

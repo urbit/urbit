@@ -130,7 +130,7 @@
   |=  hos/kiln-sync
   ?:  (~(has by syn) hos)
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
-  abet:abet:(start-sync:(auto hos) |)
+  abet:abet:start-sync:(auto hos)
 ::
 ++  poke-syncs                                        ::  print sync config
   |=  ~
@@ -139,12 +139,6 @@
     [%leaf "no syncs configured"]~
   %+  turn  ~(tap in ~(key by syn))
   |=(a/kiln-sync (render "sync configured" [sud her syd]:a))
-::
-++  poke-init-sync
-  |=  hos/kiln-sync
-  ?:  (~(has by syn) hos)
-    abet:(spam (render "already syncing" [sud her syd]:hos) ~)
-  abet:abet:(start-sync:(auto hos) &)
 ::
 ++  poke-unsync                                         ::
   |=  hus/kiln-unsync
@@ -231,9 +225,7 @@
   ++  subscribe-next
     %-  emit
     ^-  card
-    :*  %warp  /kiln/autoload  [our our]  %home  ~
-        %next  %z  da+now  /sys
-    ==
+    [%warp /kiln/autoload [our our] %home `[%next %z da+now /sys]]
   ::
   ++  writ  =>(check-new subscribe-next)
   ++  check-new
@@ -326,7 +318,7 @@
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
       ==
-  abet:abet:(mere:(auto hos) .?(t.t.t.way) mes)
+  abet:abet:(mere:(auto hos) mes)
 ::
 ++  take-writ-sync                                    ::
   |=  {way/wire rot/riot}
@@ -336,7 +328,7 @@
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
       ==
-  abet:abet:(writ:(auto hos) .?(t.t.t.way) rot)
+  abet:abet:(writ:(auto hos) rot)
 ::
 ++  take-writ-autoload
   |=  {way/wire rot/riot}
@@ -377,6 +369,7 @@
         /kiln/sync/[syd]/(scot %p her)/[sud]
         [our her]  sud  ~
     ==
+  ::  XX duplicate of start-sync? see |track
   ::
   ++  start-track
     =>  (spam (render "activated track" sud her syd) ~)
@@ -388,33 +381,25 @@
     ==  ==
   ::
   ++  start-sync
-    |=  reset/?
-    =.  +>.$  (spam (render "activated sync" sud her syd) ~)
-    %-  blab
-    :~  :*  ost  %warp
-            [%kiln %sync syd (scot %p her) sud ?:(reset /reset /)]
-            [our her]  sud  ~  %sing  %w  [%da now]  /
-    ==  ==
+    =<  (spam (render "activated sync" sud her syd) ~)
+    =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
+    (blab [ost %warp wire [our her] sud `[%sing %w [%da now] /]] ~)
   ::
   ++  writ
-    |=  {reset/? rot/riot}
+    |=  rot=riot
     ?~  rot
       %^    spam
           leaf+"bad %writ response"
         (render "on sync" sud her syd)
       ~
     =.  let  ?.  ?=($w p.p.u.rot)  let  ud:((hard cass:clay) q.q.r.u.rot)
-    %-  blab  ^-  (list move)  :_  ~
-    :*  ost  %merg
-        [%kiln %sync syd (scot %p her) sud ?:(reset /reset /)]
-        our  syd  her  sud  ud+let
-        ?:  =(0 ud:.^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now)))
-          %init
-        %mate
-    ==
+    =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
+    =/  =cass  .^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now))
+    =/  =germ  ?:(=(0 ud.cass) %init %mate)
+    (blab [ost %merg wire our syd her sud ud+let germ] ~)
   ::
   ++  mere
-    |=  {reset/? mes/(each (set path) (pair term tang))}
+    |=  mes=(each (set path) (pair term tang))
     =.  let  +(let)
     =.  +>.$
       %-  spam
@@ -434,14 +419,8 @@
             leaf+"note: blank desk {<sud>} on {<her>}"
         ==
       ==
-    =.  +>.$
-      ?.  reset  +>.$
-      (blab [ost %poke /init-reset [our %hood] %helm-reset ~]~)
-    %-  blab  :_  ~
-    :*  ost  %warp
-        /kiln/sync/[syd]/(scot %p her)/[sud]
-        [our her]  sud  ~  %sing  %y  ud+let  /
-    ==
+    =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
+    (blab [ost %warp wire [our her] sud `[%sing %y ud+let /]] ~)
   --
 ::
 ++  work                                              ::  state machine
