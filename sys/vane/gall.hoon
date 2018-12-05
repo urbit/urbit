@@ -97,9 +97,10 @@
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 .  ==
 =|  all/axle                                            ::  all vane state
-|=  $:  now/@da                                         ::  urban time
-        eny/@uvJ                                        ::  entropy
-        ska/sley                                        ::  activate
+|=  $:  our=ship                                        ::  identity
+        now=@da                                         ::  urban time
+        eny=@uvJ                                        ::  entropy
+        ska=sley                                        ::  activate
     ==                                                  ::  opaque core
 ~%  %gall-top  ..is  ~
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  state machine

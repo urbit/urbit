@@ -33,7 +33,7 @@
       ==
   ^-  [tang _ames-gate]
   ::
-  =/  ames  (ames-gate now=now eny=`@e`0xdead.beef scry=*sley)
+  =/  ames  (ames-gate our=~zod now=now eny=`@`0xdead.beef scry=*sley)
   ::
   =^  moves  ames-gate
     %-  call:ames  call-args

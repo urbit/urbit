@@ -608,8 +608,8 @@
           $:  ::  now: current time
               ::  eny: unique entropy
               ::
-              now/@da
-              eny/@e
+              now=@da
+              eny=@uvJ
           ==
           ::  all vane state
           ::
@@ -2183,13 +2183,15 @@
 ::
 =|  lex/state
 |=  $:  ::
+        ::  our: identity
         ::  now: current time
         ::  eny: unique entropy
         ::  ski: namespace resolver
         ::
-        now/@da
-        eny/@e
-        ski/sley
+        our=ship
+        now=@da
+        eny=@uvJ
+        ski=sley
     ==
 |%
 ::                                                      ::  ++call

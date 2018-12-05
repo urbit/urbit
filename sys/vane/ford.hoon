@@ -6070,9 +6070,10 @@
 ::  begin with a default +axle as a blank slate
 ::
 =|  ax=axle
-::  a vane is activated with current date, entropy, and a namespace function
+::  a vane is activated with identity, the current date, entropy,
+::  and a namespace function
 ::
-|=  [now=@da eny=@ scry-gate=sley]
+|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
 ::  allow jets to be registered within this core
 ::
 ~%  %ford  ..is  ~

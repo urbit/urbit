@@ -125,7 +125,7 @@
   ?.(&(?=(@ a) ((sane %tas) a)) %$ a)
 ::
 ++  vent                                                ::  vane core
-  |=  [lal=@tas vil=vile bud=vase =vane]
+  |=  [who=ship lal=@tas vil=vile bud=vase =vane]
   ~%  %vent  +>+  ~
   |%
   ++  ruck                                              ::  update vase
@@ -164,7 +164,7 @@
       ::  reset cache and add in vane activation entry
       ::
       =^  rig  worm.vane
-        (~(slym wa *worm) vase.vane *[@da @ slyd])
+        (~(slym wa *worm) vase.vane *[@p @da @ slyd])
       ::  cache the access of the %scry arm
       ::
       =^  fun  worm.vane  (~(slap wa worm.vane) rig [%limb %scry])
@@ -175,7 +175,7 @@
   ::
   ++  wink                                              ::  deploy
     |=  {now/@da eny/@ ski/slyd}
-    =^  rig  worm.vane  (~(slym wa worm.vane) vase.vane +<)  ::  activate vane
+    =^  rig  worm.vane  (~(slym wa worm.vane) vase.vane [who +<])  ::  activate vane
     ~%  %wink  +>+>  ~
     |%
     ++  slid
@@ -337,7 +337,7 @@
       ^-  vase
       ?:  &(=(-.q.vase.vane -.q.sev) =(+>.q.vase.vane +>.q.sev))
         vase.vane                                           ::  unchanged, use old
-      sev(+<.q [*@da *@ =>(~ |~(* ~))])                 ::  clear to stop leak
+      sev(+<.q [*@p *@da *@ =>(~ |~(* ~))])                 ::  clear to stop leak
     ::
     ++  swim
       ~/  %swim
@@ -374,12 +374,18 @@
   --
 ::
 ++  vint                                                ::  create vane
-  |=  {lal/@tas vil/vile bud/vase pax/path txt/@ta}     ::
+  |=  $:  who=ship
+          lal=@tas
+          vil=vile
+          bud=vase
+          pax=path
+          txt=@ta
+      ==
   =-  ?:(?=(%| -.res) ((slog p.res) ~) (some p.res))
   ^=  res  %-  mule  |.
   =+  gen=(rain pax txt)
   ~&  [%vane-parsed `@p`(mug gen)]
-  =+  pro=(vent lal vil bud [(slym (slap bud gen) bud) *worm])
+  =+  pro=(vent who lal vil bud [(slym (slap bud gen) bud) *worm])
   ~&  [%vane-compiled `@p`(mug pro)]
   prime:pro
 ::
@@ -394,7 +400,7 @@
   ==
 ::
 ++  is                                                  ::  operate in time
-  |=  {vil/vile eny/@ bud/vase vanes=(list [label=@tas =vane])}
+  |=  [who=ship vil=vile eny=@ bud=vase vanes=(list [label=@tas =vane])]
   |_  now/@da
   ++  beck
     ^-  slyd
@@ -406,7 +412,7 @@
     |-  ^-  (unit (unit (cask)))
     ?~  vanes  ~
     ?.  =(lal label.i.vanes)  $(vanes t.vanes)
-    %-  scry:(wink:(vent lal vil bud vane.i.vanes) now (shax now) ..^$)
+    %-  scry:(wink:(vent who lal vil bud vane.i.vanes) now (shax now) ..^$)
     [fur ren bed]
   ::
   ++  dink                                              ::  vase by char
@@ -445,7 +451,7 @@
   ++  race                                              ::  take
     |=  {org/@tas lal/@tas pux/(unit wire) hen/duct hil/mill =vane}
     ^-  [p=(list move) q=_vane]
-    =+  ven=(vent lal vil bud vane)
+    =+  ven=(vent who lal vil bud vane)
     =+  win=(wink:ven now (shax now) beck)
     (swim:win org pux hen hil)
   ::
@@ -583,7 +589,9 @@
   |=  {now/@da hap/path}
   ^-  (unit)
   ?~  hap  [~ hoon-version]
-  =+  rob=((sloy ~(beck (is vil eny mast vanes) now)) [151 %noun] hap)
+  =/  who=ship
+    ?^(urb u.urb (dec (bex 128)))
+  =+  rob=((sloy ~(beck (is who vil eny mast vanes) now)) [151 %noun] hap)
   ?~  rob  ~
   ?~  u.rob  ~
   [~ u.u.rob]
@@ -602,8 +610,10 @@
   ?:  ?=(?(%veer %vega %verb %wack %whom) -.q.ovo)
     [[ovo ~] +>.$]
   ::
+  =/  who=ship
+    ?^(urb u.urb (dec (bex 128)))
   =^  zef  vanes
-    (~(hurl (is vil eny mast vanes) now) lac ovo)
+    (~(hurl (is who vil eny mast vanes) now) lac ovo)
   [zef +>.$]
 ::  +feck: handle an arvo effect
 ::
@@ -789,6 +799,8 @@
   =>  .(fav ((hard {$veer lal/@ta pax/path txt/@t}) fav))
   =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
   ^=  res  %-  mule  |.
+  =/  who=ship
+    ?^(urb u.urb (dec (bex 128)))
   ?:  =(%$ lal.fav)
     ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
@@ -799,7 +811,7 @@
     |-  ^+  vanes
     ?~  vanes
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-      =+  vin=(vint lal.fav vil mast pax.fav txt.fav)
+      =+  vin=(vint who lal.fav vil mast pax.fav txt.fav)
       ?~  vin
         vanes
       [[lal.fav vane:u.vin] vanes]
@@ -808,7 +820,7 @@
     ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
     :_  t.vanes
     :-  label.i.vanes
-    vane:(ruck:(vent lal.fav vil mast [vase.vane.i.vanes *worm]) pax.fav txt.fav)
+    vane:(ruck:(vent who lal.fav vil mast [vase.vane.i.vanes *worm]) pax.fav txt.fav)
   ==
 ::
 ++  wish                                                ::  external compute
