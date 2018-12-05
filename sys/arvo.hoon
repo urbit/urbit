@@ -507,6 +507,7 @@
 =|  bod=(unit vase)                                     ::  %zuse if installed
 =|  $:  lac=?                                           ::  laconic bit
         eny=@                                           ::  entropy
+        urb/(unit ship)                                 ::  identity
         vanes=(list [label=@tas =vane])                 ::  modules
     ==                                                  ::
 =<  |%
@@ -598,7 +599,7 @@
   ::
   ::  XX should vega be in this list?
   ::
-  ?:  ?=(?(%veer %vega %verb %wack) -.q.ovo)
+  ?:  ?=(?(%veer %vega %verb %wack %whom) -.q.ovo)
     [[ovo ~] +>.$]
   ::
   =^  zef  vanes
@@ -640,6 +641,11 @@
     ?>  ?=(@ q.q.ovo)
     =.  eny  (mix eny (shaz q.q.ovo))
     [~ +>.$]
+  ::  become who you were born to be
+  ::
+      %whom
+    ?>  ?=(@ q.q.ovo)
+    [~ +>.$(urb `q.q.ovo)]
   ==
 ::                                                
 ++  veke                                                ::  build new kernel
