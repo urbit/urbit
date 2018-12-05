@@ -477,6 +477,7 @@
   ++  jack                                              ::  dispatch card
     |=  {lac/? gum/muse}
     ^-  {{p/(list ovum) q/(list muse)} _vanes}
+    ~|  %failed-jack
     ::  =.  lac  |(lac ?=(?(%g %f) p.gum))
     ::  =.  lac  &(lac !?=($b p.gum))
     %+  fire
@@ -506,7 +507,6 @@
   ++  kick                                              ::  new main loop
     |=  {lac/? mor/(list muse)}
     =|  ova/(list ovum)
-    ~|  [%failed-kick lac]
     |-  ^-  {p/(list ovum) q=(list [label=@tas =vane])}
     ?~  mor  [(flop ova) vanes]
     =^  nyx  vanes  (jack lac i.mor)
