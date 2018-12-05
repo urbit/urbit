@@ -728,32 +728,37 @@
   =>  ?:  =(nex hoon-version)
         [hot=`*`raw .]
       ~&  [%hoon-compile-upgrade nex]
-      =/  hot  .*(cop(+< [%noun hun]) -.cop)
+      =/  hot
+        .*(cop [%9 2 %10 [6 %1 [%noun hun]] %0 1])
       .(cop .*(0 +.hot))
   ::  extract the hoon core from the outer gate (+ride)
   ::
   =/  hoc  .*(cop [%0 7])
-  ::  compute the span of the hoon.hoon core
+  ::  compute the type of the hoon.hoon core
   ::
-  =/  hyp  -:.*(cop(+< [-.hot '+>']) -.cop)
+  =/  hyp
+    -:.*(cop [%9 2 %10 [6 %1 [-.hot '+>']] %0 1])
   ::  compile arvo
   ::
   =/  rav
     ~&  [%compile-arvo `@p`(mug hyp) `@p`(mug van)]
-    .*(cop(+< [hyp van]) -.cop)
-  ::  activate arvo
+    .*(cop [%9 2 %10 [6 %1 [hyp van]] %0 1])
+  ::  activate arvo, and extract the arvo core from the outer gate
   ::
-  =/  arv  .*(hoc +.rav)
-  ::  extract the arvo core from the outer gate
-  ::
-  =/  voc  .*(arv [%0 7])
-  ::  compute the span of the arvo.hoon core
-  ::
-  =/  vip  -:.*(cop(+< [-.rav '+>']) -.cop)
+  =/  voc  .*(hoc [%7 +.rav %0 7])
   ::  entry gate: ++load for the normal case, ++come for upgrade
   ::
   =/  gat
-    .*(voc +:.*(cop(+< [vip ?:(=(nex hoon-version) 'load' 'come')]) -.cop))
+    =/  arm  ?:(=(nex hoon-version) 'load' 'come')
+    ::  compute the type of the arvo.hoon core
+    ::
+    =/  vip  -:.*(cop [%9 2 %10 [6 %1 [-.rav '+>']] %0 1])
+    ::  compute the formula for the upgrade gate
+    ::
+    =/  fol  +:.*(cop [%9 2 %10 [6 %1 [vip arm]] %0 1])
+    ::  produce the upgrade gate
+    ::
+    .*(voc fol)
   ::  sample: [entropy actions vases]
   ::
   =/  sam
@@ -761,7 +766,8 @@
     (turn vanes |=([label=@tas =vane] [label vase.vane]))
   ::  call into the new kernel
   ::
-  =/  out  .*(gat(+< sam) -.gat)
+  =/  out
+    .*(gat [%9 2 %10 [6 %1 sam] %0 1])
   ::  tack a reset notification onto the product
   ::
   [[[~ %vega ~] ((list ovum) -.out)] +.out]
