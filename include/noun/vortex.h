@@ -33,7 +33,6 @@
         u3_noun roe;                      //  temporary unsaved events
         u3_noun key;                      //  log key, or 0
 
-        u3_noun ken;                      //  kernel formula
         u3_noun roc;                      //  kernel core
 
         struct {                          //  ova waiting to process
@@ -65,15 +64,10 @@
       u3_noun
       u3v_do(const c3_c* txt_c, u3_noun arg);
 
-    /* u3v_make(): make a new pier by loading a pill.
+    /* u3v_boot(): evaluate boot sequence, making a kernel
     */
       void
-      u3v_make(c3_c* pas_c);
-
-    /* u3v_jack(): execute kernel formula to bind jets.
-    */
-      void
-      u3v_jack(void);
+      u3v_boot(u3_noun eve);
 
     /* u3v_start(): start time.
     */
@@ -159,11 +153,6 @@
     */
       void
       u3v_hose(void);
-
-    /* u3v_louse(): last-minute deviltry upon a bail.
-    */
-      void
-      u3v_louse(c3_m how_m);
 
     /* u3v_mark(): mark arvo kernel.
     */

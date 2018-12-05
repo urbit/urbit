@@ -24,29 +24,26 @@ _cv_nock_wish(u3_noun txt)
   return pro;
 }
 
-/* u3v_make(): make a new pier and instantiate pill.
+/* u3v_boot(): evaluate boot sequence, making a kernel
 */
 void
-u3v_make(c3_c* pas_c)
+u3v_boot(u3_noun eve)
 {
-  u3_noun sys = u3ke_cue(u3m_file(pas_c));
+  //  ensure zero-initialized kernel
+  //
+  //    So that u3t_slog won't try to print tanks.
+  //
+  u3A->roc = 0;
 
-  u3A->ken = u3k(u3h(sys));
-  u3A->roc = u3k(u3t(sys));
+  //  lifecycle formula
+  //
+  u3_noun lyf = u3nt(2, u3nc(0, 3), u3nc(0, 2));
+  u3_noun cor = u3n_nock_on(eve, lyf);
 
-  u3z(sys);
-}
+  //  save the Arvo core (at +7 of the Arvo gate)
+  //
+  u3A->roc = u3k(u3x_at(7, cor));
 
-/* u3v_jack(): execute kernel formula to bind jets.
-*/
-void
-u3v_jack(void)
-{
-  u3_noun cor; 
-
-  fprintf(stderr, "jack: kernel %x\r\n", u3r_mug(u3A->ken));
-  cor = u3n_nock_on(0, u3k(u3A->ken));
-  fprintf(stderr, "jacked\r\n");
   u3z(cor);
 }
 
@@ -453,22 +450,6 @@ u3v_plow(u3_noun ova)
   u3z(ova);
 }
 
-/* u3v_louse(): last-minute deviltry upon a bail.
-*/
-void
-u3v_louse(c3_m how_m)
-{
-#if 0
-  if ( c3__exit == how_m ) {
-    printf("louse: nocks: %d\n", NOX);
-    printf("louse: washing kernel %x %d\n", u3A->ken, u3a_is_dog(u3A->ken));
-    u3m_wash(u3A->ken); 
-
-    printf("kernel %x; washed mug %x\n", u3A->ken, u3r_mug(u3A->ken));
-  }
-#endif
-}
-
 /* _cv_mark_ova(): mark ova queue.
 */
 c3_w
@@ -506,7 +487,6 @@ u3v_mark(void)
   tot_w += u3a_mark_noun(arv_u->roe);
   tot_w += u3a_mark_noun(arv_u->key);
 
-  tot_w += u3a_mark_noun(arv_u->ken);
   tot_w += u3a_mark_noun(arv_u->roc);
 
   tot_w += _cv_mark_ova(arv_u->ova.egg_p);

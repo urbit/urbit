@@ -1,11 +1,15 @@
 'use strict';
 
+var fs      = require('fs')
 var runner  = require('urbit-runner')
 var Urbit   = runner.Urbit;
 var ERROR   = runner.ERROR;
 var actions = runner.actions
 
-var args  = ['-A', '../arvo', '-csgPSF', 'zod', 'zod'];
+var hash  = fs.readFileSync('./pin-arvo-commit.txt', 'utf-8').slice(0, 10)
+var pill  = 'https://bootstrap.urbit.org/git-' + hash + '.pill'
+
+var args  = ['-u', pill, '-cgPSF', 'zod', 'zod'];
 var urbit = new Urbit(args);
 
 // vere hangs (always?) with run in travis-ci with -P
