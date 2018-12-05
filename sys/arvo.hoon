@@ -1,11 +1,6 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-~>  %slog.[0 leaf+"arvo-boot"]
-=<  |=  {now/@da ovo/*}
-    ^-  *
-    ~>  %slog.[0 leaf+"arvo-event"]
-    .(+> +:(poke now ovo))
 ~>  %slog.[0 leaf+"%arvo-assembly"]
 =-  ~>  %slog.[0 leaf+"%arvo-assembled"]
     -
@@ -508,6 +503,20 @@
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
   --
 --
+=<  ::  Arvo formal interface
+    ::
+    ::    this lifecycle wrapper makes the arvo door (multi-armed core)
+    ::    look like a gate (function or single-armed core), to fit
+    ::    urbit's formal lifecycle function. a practical interpreter
+    ::    can ignore it.
+    ::
+    |=  [now=@da ovo=*]
+    ^-  *
+    ~>  %slog.[0 leaf+"arvo-event"]
+    .(+> +:(poke now ovo))
+::
+::  persistent arvo state
+::
 =/  pit=vase  !>(.)                                     ::
 =/  vil=vile  (viol p.pit)                              ::  cached reflexives
 =|  bod=(unit vase)                                     ::  %zuse if installed
@@ -516,18 +525,23 @@
         urb/(unit ship)                                 ::  identity
         vanes=(list [label=@tas =vane])                 ::  modules
     ==                                                  ::
-=<  |%
+=<  ::  Arvo structural interface
+    ::
+    |%
     ++  come  |=  {@ (list ovum) pone}                  ::  22
               ^-  {(list ovum) _+>}
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
+    ::
     ++  load  |=  {@ (list ovum) pane}                  ::  46
               ^-  {(list ovum) _+>}
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
               [rey +>.$]
+    ::
     ++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  47
+    ::
     ++  poke  |=  *                                     ::  10
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
@@ -557,6 +571,8 @@
     ::
     ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  4
     --
+::  Arvo implementation core
+::
 |%
 ++  come                                                ::  load incompatible
   |=  {yen/@ ova/(list ovum) nyf/pone}
