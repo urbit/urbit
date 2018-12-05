@@ -470,7 +470,7 @@ u3t_nock_trace_pop()
 /* u3t_event_trace(): dumps a simple event from outside nock.
 */
 void
-u3t_event_trace(const char* name, char type)
+u3t_event_trace(const c3_c* name, c3_c type)
 {
   if (!trace_file_u)
     return;

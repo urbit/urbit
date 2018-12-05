@@ -107,7 +107,7 @@
     /* u3t_event_trace(): record a lifecycle event.
     */
       void
-      u3t_event_trace(const char* name, char type);
+      u3t_event_trace(const c3_c* name, c3_c type);
 
     /* u3t_damp(): print and clear profile data.
     */
