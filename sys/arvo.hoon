@@ -502,12 +502,11 @@
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
   --
 --
-=+  pit=`vase`!>(.)                                     ::
-=+  bud=pit                                             ::  becomes tang
-::  =+  vil=(viol p.bud)                                ::  cached reflexives
-=+  vil=(viol p.bud)                                    ::  cached reflexives
-=|  $:  lac/?                                           ::  laconic bit
-        eny/@                                           ::  entropy
+=/  pit=vase  !>(.)                                     ::
+=/  vil=vile  (viol p.pit)                              ::  cached reflexives
+=|  bod=(unit vase)                                     ::  %zuse if installed
+=|  $:  lac=?                                           ::  laconic bit
+        eny=@                                           ::  entropy
         vanes=(list [label=@tas =vane])                 ::  modules
     ==                                                  ::
 =<  |%
@@ -570,11 +569,14 @@
   =/  avo  $(ova t.ova)
   [[+.vov -.avo] +.avo]
 ::
+++  mast                                                ::  stdlib if installed
+  `vase`?~(bod pit u.bod)
+::
 ++  peek                                                ::  external inspect
   |=  {now/@da hap/path}
   ^-  (unit)
   ?~  hap  [~ hoon-version]
-  =+  rob=((sloy ~(beck (is vil eny bud vanes) now)) [151 %noun] hap)
+  =+  rob=((sloy ~(beck (is vil eny mast vanes) now)) [151 %noun] hap)
   ?~  rob  ~
   ?~  u.rob  ~
   [~ u.u.rob]
@@ -594,7 +596,7 @@
     [[ovo ~] +>.$]
   ::
   =^  zef  vanes
-    (~(hurl (is vil eny bud vanes) now) lac ovo)
+    (~(hurl (is vil eny mast vanes) now) lac ovo)
   [zef +>.$]
 ::  +feck: handle an arvo effect
 ::
@@ -620,7 +622,7 @@
       :-  %userspace
       :-  %|
       :~  hoon+`pit
-          zuse+`bud
+          zuse+`mast
           ::  hoon-cache+`p.niz
           q.q.ovo
           dot+`.
@@ -690,26 +692,26 @@
     ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
-    +>.^$(bud vax)
+    +>.^$(bod (some vax))
   %_    +>.^$
       vanes
     |-  ^+  vanes
     ?~  vanes
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-      =+  vin=(vint lal.fav vil bud pax.fav txt.fav)
+      =+  vin=(vint lal.fav vil mast pax.fav txt.fav)
       ?~  vin
         vanes
       [[lal.fav vane:u.vin] vanes]
     ?.  =(lal.fav label.i.vanes)
       [i.vanes $(vanes t.vanes)]
-      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+    ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
     :_  t.vanes
     :-  label.i.vanes
-    vane:(ruck:(vent lal.fav vil bud [vase.vane.i.vanes *worm]) pax.fav txt.fav)
+    vane:(ruck:(vent lal.fav vil mast [vase.vane.i.vanes *worm]) pax.fav txt.fav)
   ==
 ::
 ++  wish                                                ::  external compute
  |=  txt/@
-  q:(slap bud (ream txt))
+  q:(slap mast (ream txt))
 --
 
