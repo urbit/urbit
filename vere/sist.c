@@ -1694,6 +1694,10 @@ u3_sist_boot(void)
 
     u3A->own = who;
 
+    //  set single-home
+    //
+    u3v_plan(u3nt(u3_blip, c3__arvo, u3_nul), u3nc(c3__whom, u3k(who)));
+
     // initialize ames
     {
       u3_noun tuf = (c3y == u3A->fak) ? u3_nul : u3h(u3t(u3t(u3t(u3t(pig)))));
