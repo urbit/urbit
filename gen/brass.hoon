@@ -2,6 +2,7 @@
 ::::  /hoon/brass/gen
   ::
 /?    310
+/+  pill
 ::
 ::::
   !:
@@ -159,15 +160,15 @@
 ::
 ::  compiler-twig: compiler as hoon expression
 ::
-~&  %metal-parsing
+~&  %brass-parsing
 =+  compiler-twig=(ream compiler-source)
-~&  %metal-parsed
+~&  %brass-parsed
 ::
 ::  compiler-formula: compiler as nock formula
 ::
-~&  %metal-compiling
+~&  %brass-compiling
 =+  compiler-formula=q:(~(mint ut %noun) %noun compiler-twig)
-~&  %metal-compiled
+~&  %brass-compiled
 ::
 ::  arvo-source: hoon source file producing arvo kernel, `sys/arvo`
 ::
@@ -182,125 +183,8 @@
         compiler-source
         arvo-source
     ==
+::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
 ::
-::  module-ova: vane load operations.
-::
-=+  ^=  module-ova  ^-  (list ovum)
-    |^  :~  ::
-            ::  sys/zuse: standard library
-            ::
-            (vent %$ /zuse)
-            ::
-            ::  sys/vane/ames: network
-            ::
-            (vent %a /vane/ames)
-            ::
-            ::  sys/vane/behn: timer
-            ::
-            (vent %b /vane/behn)
-            ::
-            ::  sys/vane/clay: revision control
-            ::
-            (vent %c /vane/clay)
-            ::
-            ::  sys/vane/dill: console
-            ::
-            (vent %d /vane/dill)
-            ::
-            ::  sys/vane/eyre: web
-            ::
-            (vent %e /vane/eyre)
-            ::
-            ::  sys/vane/ford: build
-            ::
-            (vent %f /vane/ford)
-            ::
-            ::  sys/vane/gall: applications
-            ::
-            (vent %g /vane/gall)
-            ::
-            ::  sys/vane/jael: security
-            ::
-            (vent %j /vane/jael)
-        ==
-    ::
-    ++  vent
-      |=  {abr/term den/path}
-      =+  pax=(weld sys den)
-      =+  txt=.^(@ %cx (welp pax /hoon))
-      `ovum`[[%vane den] [%veer abr pax txt]]
-    --
-::
-::  file-ovum: userspace filesystem load
-::
-=+  ^=  file-ovum  ^-  ovum
-    ::
-    ::    /app    %gall applications
-    ::    /gen    :dojo generators
-    ::    /lib    %ford libraries
-    ::    /mar    %ford marks
-    ::    /sur    %ford structures
-    ::    /ren    %ford renderers
-    ::    /web    %eyre web content
-    ::    /sys    system files
-    ::    /neo    new system files
-    ::
-    %.  [/app /gen /lib /mar /neo /ren /sec /sur /sys /web ~]
-    |=  ::  sal: all spurs to load from
-        ::
-        sal/(list spur)
-    ^-  ovum
-    ::
-    ::  hav: all user files 
-    ::  
-    =;  hav  ~&  user-files+(lent hav)
-             [[%$ %sync ~] [%into %$ & hav]]
-    =|  hav/mode:clay
-    |-  ^+  hav
-    ?~  sal  ~
-    =.  hav  $(sal t.sal)
-    ::
-    ::  tyl: spur 
-    ::
-    =/  tyl  i.sal
-    |-  ^+  hav
-    ::
-    ::  pax: full path at `tyl`
-    ::  lon: directory at `tyl`
-    ::
-    =/  pax  (en-beam:format bec tyl)
-    =/  lon  .^(arch %cy pax)
-    ::  XX this serialization should use marks
-    ::
-    =?  hav  ?=(^ fil.lon)  
-        ?.  ?=  ?($css $hoon $js $json $md $txt $udon $umd)
-            -.tyl
-          ::
-          ::  install only files with whitelisted marks
-          ::
-          ~&  ignoring+pax
-          hav
-        ::
-        ::  cot: file as plain-text octet-stream
-        ::
-        =;  cot  [[(flop `path`tyl) `[/text/plain cot]] hav]
-        ^-  octs
-        ?-    tyl
-            {$json *}
-          =/  dat  .^(json %cx pax)
-          (as-octt:mimes:html (en-json:html dat))
-        ::
-            {$txt *}
-          =/  dat  .^(wain %cx pax)
-          (as-octs:mimes:html (of-wain:format dat))
-        ::
-            *
-          =/  dat  .^(@t %cx pax)
-          [(met 3 dat) dat]
-        ==
-    =/  all  ~(tap by dir.lon)
-    |-  ^-  mode:clay
-    ?~  all  hav
-    $(all t.all, hav ^$(tyl [p.i.all tyl]))
-::
-[boot-ova module-ova file-ovum]
+:+  boot-ova
+  (module-ova:pill sys)
+[(file-ovum:pill (en-beam:format bec /)) ~]

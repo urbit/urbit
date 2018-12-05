@@ -305,13 +305,12 @@
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %merg our %home our %base da+now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
+        =.  +>  (sync %home our %base)
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
                 (sync %base (sein our) %kids)
-        =.  +>  ?:  ?=(?($czar $pawn) can)
-                  (sync %home our %base)
-                (init-sync %home our %base)
         =.  +>  ?.  ?=(?($duke $king $czar) can)  +>
                 ::  make kids desk publicly readable, so syncs work.
+                ::
                 (show %kids):(sync %kids our %base)
         =.  +>  autoload
         =.  +>  peer
@@ -365,16 +364,6 @@
           :_  moz
           :*  hen  %pass  /sync  %g  %deal  [our our]
               ram  %poke  %hood-sync  -:!>(syn)  syn
-          ==
-        ==
-      ::
-      ++  init-sync
-        |=  syn/{desk ship desk}
-        %_    +>.$
-            moz
-          :_  moz
-          :*  hen  %pass  /init-sync  %g  %deal  [our our]
-              ram  %poke  %hood-init-sync  -:!>(syn)  syn
           ==
         ==
       ::
@@ -522,7 +511,7 @@
     =*  our  p.task
     =*  duc  (need hey.all)
     =/  app  %hood
-    =/  see  (tuba "<awaiting {(trip app)}, this may take a few minutes>")
+    =/  see  (tuba "<awaiting {(trip app)}, this may take a minute>")
     =/  zon=axon  [app input=[~ ~] width=80 cursor=0 see]
     ::
     =^  moz  all  abet:(~(into as [duc our] zon) ~)

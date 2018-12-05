@@ -59,8 +59,16 @@
   :+  %7  whole-formula
   [%9 2 %10 [6 %1 *@da zuse-ovo] %0 1]
 ~&  %zuse-installed
+::  our boot-ova is a list containing one massive formula:
 ::
-::  produce a formula that evaluates :whole-formula (for jet registration),
-::  then ignores that result and produces :installed
+::    We evaluate :whole-formula (for jet registration),
+::    then ignore the result and produces :installed
 ::
-[%7 whole-formula %1 installed]
+=/  boot-ova=(list)
+  [[%7 whole-formula %1 installed] ~]
+::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
+::
+::    Our kernel event-list is ~, as we've already installed them.
+::    Our userspace event-list is ~, as this pill must be compact.
+::
+[boot-ova ~ ~]

@@ -6,6 +6,7 @@
 ::::  /hoon/solid/gen
   ::
 /?    310
+/+  pill
 ::
 ::::
   !:
@@ -56,38 +57,31 @@
   whole-formula
 ::
 ~&  [%solid-kernel `@ux`(mug arvo-formula)]
-::  module-ova: vane load operations.
 ::
-=/  module-ova=(list ovum)
-    |^  :~  (vent %$ /zuse)
-            (vent %a /vane/ames)
-            (vent %b /vane/behn)
-            (vent %c /vane/clay)
-            (vent %d /vane/dill)
-            (vent %e /vane/eyre)
-            (vent %f /vane/ford)
-            (vent %g /vane/gall)
-            (vent %j /vane/jael)
-        ==
-    ++  vent
-      |=  [abr=term den=path]
-      ^-  ovum
-      =/  pax  (weld sys den)
-      =/  txt  .^(@ %cx (weld pax /hoon))
-      [[%vane den] [%veer abr pax txt]]
-    --
 ::  installed: Arvo gate (formal interface) with %zuse and vanes installed
 ::
 =/  installed
   =<  q
   %^    spin
-      module-ova
+      (module-ova:pill sys)
     .*(0 arvo-formula)
   |=  [ovo=ovum ken=*]
   [~ .*(ken [%9 2 %10 [6 %1 now ovo] %0 1])]
 ::
-::  produce a pair of :arvo-formula (for jet registration) and
-::  the Arvo core (structural interface), which is the context
-::  of the formal Arvo interface gate :installed
+::  our boot-ova is a list containing one massive formula:
 ::
-[arvo-formula .*(installed [%0 7])]
+::    We evaluate :arvo-formula (for jet registration),
+::    then ignore the result and produce :installed
+::
+=/  boot-ova=(list)
+  [[%7 arvo-formula %1 installed] ~]
+::
+::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
+::
+::    Our kernel event-list is ~, as we've already installed them.
+::    Our userspace event-list is a list containing a full %clay
+::    filesystem sync event.
+::
+:+  boot-ova  ~
+=/  bas  (flop (tail (flop sys)))
+[(file-ovum:pill bas) ~]
