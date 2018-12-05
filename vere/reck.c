@@ -27,20 +27,18 @@ _reck_mole(u3_noun  fot,
            u3_noun  san,
            c3_d*    ato_d)
 {
-  u3_noun uco = u3do("slay", san);
-  u3_noun p_uco, q_uco, r_uco, s_uco;
+  u3_noun uco = u3dc("slaw", fot, san);
+  u3_noun p_uco, q_uco;
 
-  if ( (c3n == u3r_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
-       (0 != p_uco) ||
-       (0 != q_uco) ||
-       (c3n == u3r_sing(fot, r_uco)) )
+  if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
+       (u3_nul != p_uco) )
   {
     uL(fprintf(uH, "strange mole %s\n", u3r_string(san)));
 
     u3z(fot); u3z(uco); return c3n;
   }
   else {
-    *ato_d = u3r_chub(0, s_uco);
+    *ato_d = u3r_chub(0, q_uco);
 
     u3z(fot); u3z(uco); return c3y;
   }
