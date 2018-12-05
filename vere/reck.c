@@ -31,7 +31,7 @@ _reck_mole(u3_noun  fot,
   u3_noun p_uco, q_uco;
 
   if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
-       (0 != p_uco) )
+       (u3_nul != p_uco) )
   {
     uL(fprintf(uH, "strange mole %s\n", u3r_string(san)));
 
