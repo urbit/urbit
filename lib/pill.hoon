@@ -8,41 +8,41 @@
 ++  module-ova
   |=  sys=path
   ^-  (list ovum)
-  |^  :~  ::  sys/zuse: standard library
-          ::
-          (vent %$ /zuse)
-          ::  sys/vane/ames: network
-          ::
-          (vent %a /vane/ames)
-          ::  sys/vane/behn: timer
-          ::
-          (vent %b /vane/behn)
-          ::  sys/vane/clay: revision control
-          ::
-          (vent %c /vane/clay)
-          ::  sys/vane/dill: console
-          ::
-          (vent %d /vane/dill)
-          ::  sys/vane/eyre: web
-          ::
-          (vent %e /vane/eyre)
-          ::  sys/vane/ford: build
-          ::
-          (vent %f /vane/ford)
-          ::  sys/vane/gall: applications
-          ::
-          (vent %g /vane/gall)
-          ::  sys/vane/jael: security
-          ::
-          (vent %j /vane/jael)
-      ==
-  ++  vent
-    |=  [abr=term den=path]
-    ^-  ovum
-    =/  pax  (weld sys den)
-    =/  txt  .^(@ %cx (weld pax /hoon))
-    [[%vane den] [%veer abr pax txt]]
-  --
+  %+  turn
+    ^-  (list (pair term path))
+    :~  ::  sys/zuse: standard library
+        ::
+        [%$ /zuse]
+        ::  sys/vane/ames: network
+        ::
+        [%a /vane/ames]
+        ::  sys/vane/behn: timer
+        ::
+        [%b /vane/behn]
+        ::  sys/vane/clay: revision control
+        ::
+        [%c /vane/clay]
+        ::  sys/vane/dill: console
+        ::
+        [%d /vane/dill]
+        ::  sys/vane/eyre: web
+        ::
+        [%e /vane/eyre]
+        ::  sys/vane/ford: build
+        ::
+        [%f /vane/ford]
+        ::  sys/vane/gall: applications
+        ::
+        [%g /vane/gall]
+        ::  sys/vane/jael: security
+        ::
+        [%j /vane/jael]
+    ==
+  |=  [=term =path]
+  ^-  ovum
+  =/  pax  (weld sys path)
+  =/  txt  .^(@ %cx (weld pax /hoon))
+  [[%vane path] [%veer term pax txt]]
 ::  +file-ovum: userspace filesystem load
 ::
 ::     bas: full path to / directory

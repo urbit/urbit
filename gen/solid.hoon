@@ -71,7 +71,7 @@
 ::  our boot-ova is a list containing one massive formula:
 ::
 ::    We evaluate :arvo-formula (for jet registration),
-::    then ignore the result and produces :installed
+::    then ignore the result and produce :installed
 ::
 =/  boot-ova=(list)
   [[%7 arvo-formula %1 installed] ~]
