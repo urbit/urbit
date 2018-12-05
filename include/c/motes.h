@@ -1187,6 +1187,7 @@
 #   define c3__void   c3_s4('v','o','i','d')
 #   define c3__vorp   c3_s4('v','o','r','p')
 #   define c3__way    c3_s3('w','a','y')
+#   define c3__wack   c3_s4('w','a','c','k')
 #   define c3__wail   c3_s4('w','a','i','l')
 #   define c3__wake   c3_s4('w','a','k','e')
 #   define c3__wamp   c3_s4('w','a','m','p')
