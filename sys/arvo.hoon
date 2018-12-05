@@ -523,40 +523,26 @@
               [rey +>.$]
     ++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  47
     ++  poke  |=  *                                     ::  10
-              ^-  {(list ovum) *}
-              =>  .(+< ((hard {now/@da ovo/ovum}) +<))
-              ?:  =(%verb -.q.ovo)
-                [~ +>.$(lac !lac)]
-              ?:  ?=($veer -.q.ovo)
-                [~ +>.$(+ (veer now q.ovo))]
-              =^  ova  +>+  (^poke now ovo)
-              |-  ^-  {(list ovum) *}
+              ^-  [(list ovum) *]
+              =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
+              =^  ova  +>+.$  (^poke now ovo)
+              |-  ^-  [(list ovum) *]
               ?~  ova
                 [~ +>.^$]
-              ?:  ?=($verb -.q.i.ova)
-                $(ova t.ova, lac !lac)
-              ?:  ?=($veer -.q.i.ova)
-                $(ova t.ova, +>+.^$ (veer now q.i.ova))
-              ?:  ?=($vega -.q.i.ova)
+              ::  upgrade the kernel
+              ::
+              ?:  ?=(%vega -.q.i.ova)
                 %+  fall
                   (vega now t.ova (path +<.q.i.ova) (path +>.q.i.ova))
                 [~ +>.^$]
-              ?:  ?=($mass -.q.i.ova)
-                =+  avo=$(ova t.ova)
-                :_  +.avo
-                :_  -.avo
-                %=    i.ova
-                    q.q
-                  :-  %userspace
-                  :-  %|
-                  :~  hoon+`pit
-                      zuse+`bud
-                      ::  hoon-cache+`p.niz
-                      q.q.i.ova
-                      dot+`.
-                  ==
-                ==
-              =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
+              ::  handle arvo effects, pass through unrecognized or modified
+              ::
+              =^  vov  +>+.^$  (feck now i.ova)
+              ?~  vov
+                $(ova t.ova)
+              =/  avo  $(ova t.ova)
+              [[+.vov -.avo] +.avo]
+    ::
     ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  4
     --
 |%
@@ -571,14 +557,18 @@
   =:  eny  yen
       vanes  (turn nyf |=({a/@tas b/vise} [a [b *worm]]))
     ==
-  |-  ^+  [ova +>.^$]
+  |-  ^-  [(list ovum) _+>.^$]
   ?~  ova
     [~ +>.^$]
-  ?:  ?=($verb -.q.i.ova)
-    $(ova t.ova, lac !lac)
-  ?:  ?=($veer -.q.i.ova)
-    $(ova t.ova, +>.^$ (veer *@da q.i.ova))
-  =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
+  ::  handle arvo effects, pass through unrecognized or modified
+  ::
+  ::    XX include now in +come/+load sample?
+  ::
+  =^  vov  +>.^$  (feck *@da i.ova)
+  ?~  vov
+    $(ova t.ova)
+  =/  avo  $(ova t.ova)
+  [[+.vov -.avo] +.avo]
 ::
 ++  peek                                                ::  external inspect
   |=  {now/@da hap/path}
@@ -590,13 +580,53 @@
   [~ u.u.rob]
 ::
 ++  poke                                                ::  external apply
-  |=  {now/@da ovo/ovum}
+  |=  [now=@da ovo=ovum]
   =.  eny  (mix eny (shaz now))
-  ::  ~&  [%poke -.q.ovo]
-  ^-  {(list ovum) _+>}
+  ^-  [(list ovum) _+>.$]
+  ::
+  ::  These effects on arvo proper can be external events
+  ::  or effects of other events. In either case, they
+  ::  fall through to be handled in post.
+  ::
+  ::  XX should vega be in this list?
+  ::
+  ?:  ?=(?(%veer %vega %verb) -.q.ovo)
+    [[ovo ~] +>.$]
+  ::
   =^  zef  vanes
     (~(hurl (is vil eny bud vanes) now) lac ovo)
   [zef +>.$]
+::  +feck: handle an arvo effect
+::
+++  feck
+  |=  [now=@da ovo=ovum]
+  ^-  [(unit ovum) _+>.$]
+  ?+  -.q.ovo
+      ::  pass through unrecognized effect
+      ::
+      [[~ ovo] +>.$]
+  ::  toggle event verbose event printfs
+  ::
+      %verb
+    [~ +>.$(lac !lac)]
+  ::  install %zuse or vane
+  ::
+      %veer
+    [~ (veer now q.ovo)]
+  ::  add data to memory profile
+  ::
+      %mass
+    =.  q.q.ovo
+      :-  %userspace
+      :-  %|
+      :~  hoon+`pit
+          zuse+`bud
+          ::  hoon-cache+`p.niz
+          q.q.ovo
+          dot+`.
+      ==
+    [[~ ovo] +>.$]
+  ==
 ::                                                
 ++  veke                                                ::  build new kernel
   |=  {now/@da hap/path zup/path}
