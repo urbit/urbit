@@ -93,6 +93,7 @@ u3v_start(u3_noun now)
 u3_noun
 u3v_wish(const c3_c* str_c)
 {
+  u3t_event_trace("u3v_wish", 'b');
   u3_noun txt = u3i_string(str_c);
   u3_weak exp = u3kdb_get(u3k(u3A->yot), u3k(txt));
 
@@ -106,6 +107,8 @@ u3v_wish(const c3_c* str_c)
       u3A->yot = u3kdb_put(u3A->yot, u3k(txt), u3k(exp));
     }
   }
+
+  u3t_event_trace("u3v_wish", 'e');
 
   u3z(txt);
   return exp;

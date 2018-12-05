@@ -500,6 +500,7 @@ u3m_mark(void)
   tot_w += u3a_mark_noun(u3R->bug.tax);
   tot_w += u3a_mark_noun(u3R->bug.mer);
   tot_w += u3a_mark_noun(u3R->pro.don);
+  tot_w += u3a_mark_noun(u3R->pro.trace);
   tot_w += u3a_mark_noun(u3R->pro.day);
   tot_w += u3h_mark(u3R->cax.har_p);
   return tot_w;
@@ -1014,6 +1015,7 @@ u3m_soft_run(u3_noun gul,
   {
     u3R->ski.gul = u3nc(gul, u3to(u3_road, u3R->par_p)->ski.gul);
     u3R->pro.don = u3to(u3_road, u3R->par_p)->pro.don;
+    u3R->pro.trace = u3to(u3_road, u3R->par_p)->pro.trace;
     u3R->bug.tax = 0;
   }
   u3t_on(coy_o);
@@ -1107,6 +1109,7 @@ u3m_soft_esc(u3_noun ref, u3_noun sam)
   {
     u3R->ski.gul = u3t(u3to(u3_road, u3R->par_p)->ski.gul);
     u3R->pro.don = u3to(u3_road, u3R->par_p)->pro.don;
+    u3R->pro.trace = u3to(u3_road, u3R->par_p)->pro.trace;
     u3R->bug.tax = 0;
   }
 
