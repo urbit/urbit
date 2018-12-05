@@ -598,7 +598,7 @@
   ::
   ::  XX should vega be in this list?
   ::
-  ?:  ?=(?(%veer %vega %verb) -.q.ovo)
+  ?:  ?=(?(%veer %vega %verb %wack) -.q.ovo)
     [[ovo ~] +>.$]
   ::
   =^  zef  vanes
@@ -634,6 +634,12 @@
           dot+`.
       ==
     [[~ ovo] +>.$]
+  ::  add entropy
+  ::
+      %wack
+    ?>  ?=(@ q.q.ovo)
+    =.  eny  (mix eny (shaz q.q.ovo))
+    [~ +>.$]
   ==
 ::                                                
 ++  veke                                                ::  build new kernel
