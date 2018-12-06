@@ -31,17 +31,21 @@
 ::  snapshot
 ::
 ++  snap
-  ^-  snapshot:jael
-  :*  *logs:able:jael
-      ~
-      :*  ['urbit.org' 'urbit.org' '']
-          %-  malt
-          :*  ~zod^hul
-              ~marzod^hul
-              (turn (gulf 1 255) |=(gal=@ gal^hul))
-          ==
-      ==
-      %*(. *state-eth-node:jael latest-block 4.230.000)
+  =|  =snapshot:jael
+  %_    snapshot
+      kyz  ~
+  ::
+      dns.eth
+    ['urbit.org' 'urbit.org' '']
+  ::
+      hul.eth
+    %-  malt
+    :*  ~zod^hul
+        ~marzod^hul
+        (turn (gulf 1 255) |=(gal=@ gal^hul))
+    ==
+  ::
+      latest-block  4.230.000
   ==
 ::
 ++  test-give-bloq
