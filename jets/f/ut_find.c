@@ -56,11 +56,11 @@
   static u3_noun
   u3qfu_felt(u3_noun lap)
   {
-    u3_noun pro, lim, mil;
+    u3_noun lim, mil;
     u3x_cell(lap, &lim, &mil);
 
     if ( c3y == lim ) {
-      pro = u3k(mil);
+      return u3k(mil);
     }
     else if ( c3n == lim ) {
       u3_noun p_lap, q_lap;
@@ -68,13 +68,12 @@
       u3_noun lis = u3qdi_tap(q_lap);
       u3_noun hos = u3qfu_felt_arm(lis);
 
-      pro = u3kf_fork(hos);
       u3z(lis);
+      return u3kf_fork(hos);
     }
     else {
       u3m_bail(c3__exit);
     }
-    return pro;
   }
 
   static u3_noun
