@@ -24,10 +24,18 @@
   {
       if ( lis == u3_nul ) {
           return u3_nul;
-      } else {
+      }
+      else if ( u3du(lis) != c3y ) {
+          return u3m_bail(c3__exit);
+      }
+      else
+      {
           
           u3_noun i_lis = u3h(lis);
           u3_noun t_lis = u3t(lis);
+
+          if (u3du(i_lis) != c3y) u3m_bail(c3__exit);
+
           u3_noun typ = u3h(i_lis);
 
           u3_noun p_typ, q_typ, pq_typ, qq_typ, rq_typ;
@@ -39,8 +47,9 @@
               ( (c3n == u3r_cell(u3t(typ), &p_typ, &q_typ)) ||
                 (c3n == u3r_trel(q_typ, &pq_typ, &qq_typ, &rq_typ)) )
           {
-              return u3m_bail(c3__fail);
-          } else {
+              return u3m_bail(c3__exit);
+          } else
+          {
 
               u3_noun dox = u3nt(c3__core, u3k(qq_typ), u3k(q_typ));
               u3_noun par = u3nt(c3__hold, dox, u3nc(u3_nul, 1));
@@ -61,6 +70,9 @@
   u3qfu_felt(u3_noun lap)
   {
       u3_noun pro;
+
+      if (u3du(lap) != c3y) u3m_bail(c3__exit);
+ 
       u3_noun lim = u3h(lap);
 
       if ( lim == c3y ) {
@@ -70,16 +82,19 @@
 
       } else if ( lim == c3n ) {
 
-          u3_noun q_lap = u3t(u3t(lap));
+          u3_noun tal_lap = u3t(lap);
+
+          if (u3du(tal_lap) != c3y) u3m_bail(c3__exit);
+
+          u3_noun q_lap = u3t(tal_lap);
           u3_noun lis = u3qdi_tap(q_lap);
           u3_noun hos = u3qfu_felt_arm(lis);
 
           pro = u3kf_fork(hos);
           u3z(lis);
 
-      } else u3m_bail(c3__fail);
+      } else u3m_bail(c3__exit);
 
-      u3z(lim);
       return pro;
   }
 
