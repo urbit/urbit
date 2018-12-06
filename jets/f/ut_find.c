@@ -15,9 +15,9 @@
 
 /*  `u3qfu_felt_arm` is a helper function for
  *  u3qfu_felt.  It handles the case in which the
- *  opal is for an arm, and hence which needs a 
- *  list of `hold`s.  These will be converted to
- *  a `fork` type.
+ *  opal is for an arm, by creating a list of 
+ *  parent core types.  These will be converted to
+ *  a single `fork` type.
 */
   static u3_noun
   u3qfu_felt_arm(u3_noun lis)
@@ -27,8 +27,6 @@
     }
     else {
       u3_noun i_lis, t_lis, fot, typ;
-      u3_noun p_typ, q_typ, pq_typ, qq_typ, rq_typ;
-
       u3x_cell(lis, &i_lis, &t_lis);
       u3x_cell(i_lis, &typ, &fot);
 
@@ -37,12 +35,12 @@
         return u3m_error("felt-core");
       }
       else {
+        u3_noun p_typ, q_typ, pq_typ, qq_typ, rq_typ;
         u3x_cell(u3t(typ), &p_typ, &q_typ);
         u3x_trel(q_typ, &pq_typ, &qq_typ, &rq_typ);
 
         u3_noun dox = u3nt(c3__core, u3k(qq_typ), u3k(q_typ));
-        u3_noun par = u3nt(c3__hold, dox, u3nc(u3_nul, 1));
-        return u3nc(par, u3qfu_felt_arm(t_lis));
+        return u3nc(dox, u3qfu_felt_arm(t_lis));
       }
     }
   }
@@ -63,10 +61,10 @@
       return u3k(mil);
     }
     else if ( c3n == lim ) {
-      u3_noun p_lap, q_lap;
+      u3_noun p_lap, q_lap, lis, hos;
       u3x_cell(mil, &p_lap, &q_lap);
-      u3_noun lis = u3qdi_tap(q_lap);
-      u3_noun hos = u3qfu_felt_arm(lis);
+      lis = u3qdi_tap(q_lap);
+      hos = u3qfu_felt_arm(lis);
 
       u3z(lis);
       return u3kf_fork(hos);
