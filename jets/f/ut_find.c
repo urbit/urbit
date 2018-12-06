@@ -75,7 +75,7 @@
 
       pro = u3kf_fork(hos);
       u3z(lis);
-      }
+    }
     else {
       u3m_bail(c3__exit);
     }
