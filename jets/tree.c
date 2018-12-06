@@ -797,11 +797,8 @@ static u3j_harm _141_two_slag_a[] = {{".2", u3wb_slag, c3y}, {}};
 static c3_c* _141_two_slag_ha[] = {0};
 static u3j_harm _141_two_snag_a[] = {{".2", u3wb_snag, c3y}, {}};
 static c3_c* _141_two_snag_ha[] = {0};
-
-// https://github.com/urbit/urbit/issues/387
-// static u3j_harm _141_two_sort_a[] = {{".2", u3wb_sort, c3y}, {}};
-// static c3_c* _141_two_sort_ha[] = {0};
-
+static u3j_harm _141_two_sort_a[] = {{".2", u3wb_sort, c3y}, {}};
+static c3_c* _141_two_sort_ha[] = {0};
 static u3j_harm _141_two_turn_a[] = {{".2", u3wb_turn, c3y}, {}};
 static c3_c* _141_two_turn_ha[] = {0};
 static u3j_harm _141_two_weld_a[] = {{".2", u3wb_weld, c3y}, {}};
@@ -972,7 +969,7 @@ static u3j_core _141_two_d[] =
   { "scag", 7, _141_two_scag_a, 0, _141_two_scag_ha },
   { "slag", 7, _141_two_slag_a, 0, _141_two_slag_ha },
   { "snag", 7, _141_two_snag_a, 0, _141_two_snag_ha },
-  // { "sort", 7, _141_two_sort_a, 0, _141_two_sort_ha },
+  { "sort", 7, _141_two_sort_a, 0, _141_two_sort_ha },
   { "turn", 7, _141_two_turn_a, 0, _141_two_turn_ha },
   { "weld", 7, _141_two_weld_a, 0, _141_two_weld_ha },
 
