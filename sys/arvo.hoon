@@ -525,8 +525,14 @@
         .(+> +:(poke now ovo))
     ::  larval Arvo state
     ::
-    =|  $:  who=(unit ship)
+    =/  pit=vase  !>(..is)
+    =|  $:  ::  who: our identity once we know it
+            ::  eny: entropy once we learn it
+            ::  bod: %zuse once we receive it
+            ::
+            who=(unit ship)
             eny=(unit @)
+            bod=(unit vase)
         ==
     ::  larval Arvo structural interface
     ::
@@ -554,8 +560,11 @@
                 ::
                     %veer
                   ^+  +>.$
+                  ::  use the maximum comet if we don't know who we are yet
+                  ::
                   =/  our  ?^(who u.who (dec (bex 128)))
-                  +>.$(..veer (veer our now q.ovo))
+                  =.  ..veer  (veer our now q.ovo)
+                  +>.$(bod ?^(bod bod `bud.^poke))
                 ::  add entropy
                 ::
                     %wack
@@ -569,16 +578,18 @@
                   ?>  ?=(@ q.q.ovo)
                   +>.$(who `q.q.ovo)
                 ==
-              ::  upgrade once we've accumulated identity and entropy
+              ::  upgrade once we've accumulated identity, entropy, and %zuse
               ::
-              ?.  &(?=(^ who) ?=(^ eny))
+              ?.  &(?=(^ who) ?=(^ eny) ?=(^ bod))
                 [~ +>.$]
               ~>  %slog.[0 leaf+"arvo: metamorphosis"]
               =/  nyf
-                (turn vanes |=([label=@tas =vane] [label vase.vane]))
-              (load u.who now u.eny ova=~ nyf)
+                (turn vanes.^poke |=([label=@tas =vane] [label vase.vane]))
+              (load u.who now u.eny ova=~ u.bod nyf)
     ::
-    ++  wish  ^wish                                     ::  4
+    ++  wish  |=  txt=*                                 ::  4
+              ?>  ?=(@ txt)
+              q:(slap ?~(bod pit u.bod) (ream txt))
     --
 ::
 =<  ::  Arvo formal interface
@@ -595,24 +606,24 @@
 ::
 ::  persistent arvo state
 ::
-=/  pit=vase  !>(.)                                     ::
+=/  pit=vase  !>(..is)                                  ::
 =/  vil=vile  (viol p.pit)                              ::  cached reflexives
-=|  bod=(unit vase)                                     ::  %zuse if installed
 =|  $:  lac=?                                           ::  laconic bit
         eny=@                                           ::  entropy
         our=ship                                        ::  identity
+        bud=vase                                        ::  %zuse
         vanes=(list [label=@tas =vane])                 ::  modules
     ==                                                  ::
 =<  ::  Arvo structural interface
     ::
     |%
-    ++  come  |=  {@ @ @ (list ovum) pone}              ::  22
+    ++  come  |=  {@ @ @ (list ovum) vise pone}         ::  22
               ^-  {(list ovum) _+>}
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
     ::
-    ++  load  |=  {@ @ @ (list ovum) pane}              ::  46
+    ++  load  |=  {@ @ @ (list ovum) vase pane}         ::  46
               ^-  {(list ovum) _+>}
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
@@ -653,15 +664,17 @@
 ::
 |%
 ++  come                                                ::  load incompatible
-  |=  [who=ship now=@da yen=@ ova=(list ovum) nyf=pone]
+  |=  [who=ship now=@da yen=@ ova=(list ovum) dub=vise nyf=pone]
   ^+  [ova +>]
-  (load who now yen ova (turn nyf |=({a/@tas b/vise} [a (slim b)])))
+  =/  fyn  (turn nyf |=([a=@tas b=vise] [a (slim b)]))
+  (load who now yen ova (slim dub) fyn)
 ::
 ++  load                                                ::  load compatible
-  |=  [who=ship now=@da yen=@ ova=(list ovum) nyf=pane]
+  |=  [who=ship now=@da yen=@ ova=(list ovum) dub=vase nyf=pane]
   ^+  [ova +>]
   =:  our  who
       eny  yen
+      bud  dub
       vanes  (turn nyf |=({a/@tas b/vise} [a [b *worm]]))
     ==
   |-  ^-  [(list ovum) _+>.^$]
@@ -675,14 +688,11 @@
   =/  avo  $(ova t.ova)
   [[+.vov -.avo] +.avo]
 ::
-++  mast                                                ::  stdlib if installed
-  `vase`?~(bod pit u.bod)
-::
 ++  peek                                                ::  external inspect
   |=  {now/@da hap/path}
   ^-  (unit)
   ?~  hap  [~ hoon-version]
-  =+  rob=((sloy ~(beck (is our vil eny mast vanes) now)) [151 %noun] hap)
+  =+  rob=((sloy ~(beck (is our vil eny bud vanes) now)) [151 %noun] hap)
   ?~  rob  ~
   ?~  u.rob  ~
   [~ u.u.rob]
@@ -702,7 +712,7 @@
     [[ovo ~] +>.$]
   ::
   =^  zef  vanes
-    (~(hurl (is our vil eny mast vanes) now) lac ovo)
+    (~(hurl (is our vil eny bud vanes) now) lac ovo)
   [zef +>.$]
 ::  +feck: handle an arvo effect
 ::
@@ -728,7 +738,7 @@
       :-  %userspace
       :-  %|
       :~  hoon+`pit
-          zuse+`mast
+          zuse+`bud
           ::  hoon-cache+`p.niz
           q.q.ovo
           dot+`.
@@ -788,6 +798,7 @@
         now
         eny
         ova
+        bud
         (turn vanes |=([label=@tas =vane] [label vase.vane]))
     ==
   ::  +load at +46 or +come at +22
@@ -876,6 +887,7 @@
         now
         eny
         ova
+        bud
         (turn vanes |=([label=@tas =vane] [label vase.vane]))
     ==
   ::  call into the new kernel
@@ -899,13 +911,13 @@
     ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
-    +>.^$(bod (some vax))
+    +>.^$(bud vax)
   %_    +>.^$
       vanes
     |-  ^+  vanes
     ?~  vanes
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-      =+  vin=(vint who lal.fav vil mast pax.fav txt.fav)
+      =+  vin=(vint who lal.fav vil bud pax.fav txt.fav)
       ?~  vin
         vanes
       [[lal.fav vane:u.vin] vanes]
@@ -914,11 +926,11 @@
     ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
     :_  t.vanes
     :-  label.i.vanes
-    vane:(ruck:(vent who lal.fav vil mast [vase.vane.i.vanes *worm]) pax.fav txt.fav)
+    vane:(ruck:(vent who lal.fav vil bud [vase.vane.i.vanes *worm]) pax.fav txt.fav)
   ==
 ::
 ++  wish                                                ::  external compute
- |=  txt/@
-  q:(slap mast (ream txt))
+  |=  txt/@
+  q:(slap bud (ream txt))
 --
 
