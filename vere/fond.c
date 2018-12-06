@@ -95,9 +95,7 @@ _fond_init(u3_fond * fond_u, c3_c * pin_c)
     path_c = malloc(strlen(u3C.dir_c) + strlen(CLUS_NAME) + 2);
     sprintf(path_c, "./%s/%s", u3C.dir_c, CLUS_NAME);
 
-    path_c = strdup("/etc/foundationdb/fdb.cluster"); // NOTFORCHECKIN
-  
-    fprintf(stderr, "\rdb path = %s\n\r", path_c);
+    /* fprintf(stderr, "\fond db path = %s\n\r", path_c); */
   }
 
 
@@ -376,8 +374,6 @@ void _fond_write_cb(FDBFuture* fut_u, void* opq_u)
   
   c3_w                  frg_w = pwc_u -> frg_w;
   c3_w                  cnt_w = pwc_u -> cnt_w;
-
-  //  fprintf(stderr, "fond_write_cb: evt %ld, frag %u, count %u\n\r", pwc_u->wit_u->evt_d, frg_w, cnt_w);
 
   /* did the write succeed ? */
   fdb_error_t err_u = fdb_future_get_error( fut_u );

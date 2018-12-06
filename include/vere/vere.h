@@ -683,6 +683,7 @@
           MDB_txn * txn_u;
           MDB_dbi dbi_u;
           c3_y * path_c;
+          pthread_mutex_t  mut_u; /* don't trust lmdb locking */
         } u3_lmdb;
 
       /* u3_pers: persistance handled

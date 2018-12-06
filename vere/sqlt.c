@@ -34,7 +34,7 @@
 #include "vere/vere.h"
 
 
-#define DATB_NAME  "data.db"
+#define DATB_NAME  "sqlite.db"
 #define TABL_NAME  "evnt"
 
 
@@ -133,7 +133,7 @@ _sqlt_read_fragment(sqlite3 * sql_u,  /* IN: SQLite3 handle */
     return(c3n);
 
   }
-  fprintf(stderr, "_sqlt_read_fragment: %s\n", (char *) stat_y);
+
   
   ret_w = sqlite3_step(stat_u);
   if (SQLITE_DONE == ret_w){
@@ -255,15 +255,13 @@ void
 _sqlt_write_fragment(u3_writ* wit_u, c3_y * buf_y,  c3_w len_w)
 {
 
-  /* fprintf(stderr, "_sqlt_write_fragment %ld // %s // %i\n\r", wit_u -> evt_d, buf_y, len_w); */
-  
   c3_y * stat_y = (c3_y *) sqlite3_mprintf("INSERT INTO %s VALUES(?, ?)", TABL_NAME);
 
   sqlite3 *      daba_u = wit_u->pir_u -> pot_u -> sql_u -> sql_u;
   sqlite3_stmt * stat_u = NULL;
   uint32_t       ret_w;
 
-  fprintf(stderr, "     ***** BEFORE WRITE\n\r");
+  /* fprintf(stderr, "     ***** BEFORE WRITE\n\r"); */
 
   
   if (SQLITE_OK != (ret_w = sqlite3_prepare_v2( daba_u,          /* Database handle */
@@ -309,7 +307,7 @@ _sqlt_write_fragment(u3_writ* wit_u, c3_y * buf_y,  c3_w len_w)
     goto write_error;
   }
 
-  fprintf(stderr, "     ***** AFTER WRITE - CHILD THREAD\n\r");
+  /* fprintf(stderr, "     ***** AFTER WRITE - CHILD THREAD\n\r"); */
 
     
   return;
@@ -347,9 +345,6 @@ _sqlt_write_cast(void *opq_u)
     
   }
 
-  fprintf(stderr, "     ***** AFTER WRITE - PARENT THREAD\n\r");
-  sleep(2); // NOTFORCHECKIN
-  
   /* cleanup */
   free(cbd_u);
   
@@ -373,7 +368,7 @@ u3_sqlt_write_write(u3_writ* wit_u,       /* IN: writ */
   c3_w hed_w = u3_frag_head_size(len_w, 
                                  1, 
                                  u3_sqlt_frag_size());
-
+  hed_w= 0;
   
   sqlt_write_cb_data * cbd_u = (sqlt_write_cb_data *) malloc(sizeof(sqlt_write_cb_data));
   cbd_u->wit_u = wit_u;

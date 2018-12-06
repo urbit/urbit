@@ -215,10 +215,11 @@ _pier_abstract_write(u3_writ* wit_u)
   /* write the event blob raw */
   _pier_work_build(wit_u);
 
-
   c3_w  len_w = u3r_met(3, wit_u->mat);        /* find len of atom */
-  c3_w  hed_w = _wrze(len_w);
-  c3_y* byt_y = (c3_y*) malloc(len_w + hed_w);    /* allocate space to copy the atom, plus a header */
+
+  c3_w  hed_w = u3_frag_head_size(len_w, 0, _wrze()); /* allocate space to copy the atom, plus a header */
+  c3_y* byt_y = (c3_y*) malloc(len_w + hed_w);
+
   u3r_bytes(0, len_w, byt_y + hed_w , wit_u->mat);      /* serialize the atom into the allocated space */
 
   _wric(wit_u,
@@ -285,8 +286,6 @@ _pier_insert(u3_pier* pir_u,
   wit_u->ces_o = c3n;  /* compute submited?         */
   wit_u->ced_o = c3n;  /* compute done?             */
 
-  fprintf(stderr, "_pier_insert(): inserting evt %ld, data %u\r\n", wit_u->evt_d, wit_u -> job);    // NOTFORCHECKIN
-
   if ( !pir_u->ent_u ) {
     c3_assert(!pir_u->ext_u);
 
@@ -334,8 +333,6 @@ _pier_work_release(u3_writ* wit_u)
   u3_pier* pir_u = wit_u->pir_u;
   u3_lord* god_u = pir_u->god_u;
   u3_noun  vir;
-
-  // fprintf(stderr, "pier: (%lld): compute: release\r\n", wit_u->evt_d);
 
   /* advance release counter
   */
@@ -405,8 +402,6 @@ _pier_work_complete(u3_writ* wit_u,
 {
   u3_pier* pir_u = wit_u->pir_u;
   u3_lord* god_u = pir_u->god_u;
-
-  // fprintf(stderr, "pier: (%lld): compute: complete\r\n", wit_u->evt_d);
 
   god_u->dun_d += 1;
   c3_assert(god_u->dun_d == wit_u->evt_d);
@@ -602,8 +597,6 @@ _pier_load_commit(u3_pier* pir_u,
     _rede(opaq_u);     /* cleanup read handle */
 
     ovo = u3ke_cue(u3k(mat));
-
-    // u3m_p("foo", ovo); // NOTFORCHECKIN
 
     c3_assert(c3__work == u3h(ovo));
     evt = u3h(u3t(ovo));

@@ -2,6 +2,38 @@
 **
 **  This file is in the public domain.
 **
+** About LMDB hierarchical transactions and threads.
+**
+**    LMDB has transactions, which are hierarchical / tree structure in nature.
+** 
+**    We experimented w having one root transaction that all write
+**    transactions inherit from ... but this fails in practice (with a
+**    segv) bc LMDB (apparently) does not like transactions that are
+**    inherited across threads.  The solution is to dispense with one
+**    global transaction as the root of the tree, and instead have one
+**    transaction per write thread.
+**
+** About locks / race conditions / file corruption:
+**
+**     By default LMDB operates in "lock" mode, where it makes sure
+**     that writes don't conflict with each other.  Except...this
+**     doesn't seem to work (at least for us?).  Something like 30% of
+**     writes report success, but don't end up in the db.  The header
+**     file suggests that you can turn lock mode off and manage locks
+**     yourself.  We do so, using pthread_mutex.  And yet ... we STILL
+**     get corruption / lost writes.  What's going on?  The clue is in
+**     the lmdb.h header file:
+**
+**        	  There is normally no pure read-only mode, since
+**        	  readers need write access to locks and lock
+**        	  file. Exceptions: On read-only filesystems or with
+**        	  the #MDB_NOLOCK flag described under
+**        	  #mdb_env_open().
+**
+**     so we know that creating a transaction does something in the
+**     file system.  So, make sure that the pthread_mutexes wrap
+**     around not just the DB write, but also around all the
+**     transaction stuff.
 */
 
 
@@ -13,7 +45,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <unistd.h>  // sysconf() - get CPU count
+#include <unistd.h>  
 #include <time.h>
 #include <errno.h>
 #include <math.h>
@@ -22,9 +54,6 @@
 
 #define DATB_NAME  "lmdb_db"
 
-#define PTHREAD 0
-#define TXN_IN_PARENT_THREAD 1
-#define LOCK 1
 
 c3_w u3_lmdb_frag_size()
 {
@@ -36,6 +65,8 @@ c3_o
 _lmdb_init_comn(u3_pers * pers_u, c3_c * sto_c)
 {
   pers_u->lmdb_u = malloc(sizeof (u3_lmdb));
+
+
   
   pers_u->lmdb_u->path_c = (c3_y *) malloc( strlen(u3C.dir_c) + strlen(DATB_NAME) + 2);
   sprintf((char *) pers_u->lmdb_u->path_c, "./%s/%s", (char *) u3C.dir_c, (char *) DATB_NAME);
@@ -44,20 +75,23 @@ _lmdb_init_comn(u3_pers * pers_u, c3_c * sto_c)
   /* verify directory exists */
   c3_w      ret_w;
   struct stat buf_u;
+
+  ret_w = stat( (const char *) u3C.dir_c, & buf_u );
+  if (0 != ret_w) {
+    ret_w = mkdir( (const char *) u3C.dir_c, S_IRWXU | S_IRWXG | S_IROTH);
+    if (0 != ret_w) {
+      fprintf(stderr, "lmdb_init_comn mkdir() 1 fail : %s\n", strerror(errno));
+    }
+  }
+
   ret_w = stat( (const char *) pers_u->lmdb_u->path_c, & buf_u );
   if (0 != ret_w) {
-    // fprintf(stderr, "lmdb_init_comn stat() fail : %s\n", strerror(errno));
-    //  if (! S_ISDIR(buf_u.st_mode)){
-    // 
-    // fprintf(stderr, "doesn't exist\n");
-    //
     ret_w = mkdir( (const char *) pers_u->lmdb_u->path_c, S_IRWXU | S_IRWXG | S_IROTH);
     if (0 != ret_w) {
-      fprintf(stderr, "lmdb_init_comn mkdir() fail : %s\n", strerror(errno));
+      fprintf(stderr, "lmdb_init_comn mkdir() 2 fail : %s\n", strerror(errno));
     }
   }
   
-#if TXN_IN_PARENT_THREAD
   /* create environment */
   ret_w = mdb_env_create(& pers_u->lmdb_u->env_u);
   if (0 != ret_w){
@@ -79,8 +113,18 @@ _lmdb_init_comn(u3_pers * pers_u, c3_c * sto_c)
 
 #if   LOCK
   c3_w     flag_w = 0;
+
+  
 #else
   c3_w     flag_w = MDB_NOLOCK;
+
+  ret_w = pthread_mutex_init(& pers_u->lmdb_u->mut_u, NULL);
+  if (0 != ret_w){
+    fprintf(stderr, "_frag_writ(): pthread_mutex_init() failed\n");
+    u3m_bail(c3__fail);
+  }
+
+
 #endif
   mdb_mode_t mode_u = 0777;  /* unix file permission in octal */
 
@@ -116,7 +160,7 @@ _lmdb_init_comn(u3_pers * pers_u, c3_c * sto_c)
     u3m_bail(c3__fail); 
     return(c3n);
   }
-#endif
+
   
   return(c3y);
 }
@@ -146,36 +190,6 @@ u3_lmdb_read_init(u3_pier* pir_u, c3_c * sto_c)
 c3_o
 u3_lmdb_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u)
 {
-#if TXN_IN_PARENT_THREAD
-
-  u3_lmdb * lmdb_u = pir_u -> pin_u->lmdb_u;
-  c3_w      ret_w;
-
-  MDB_val key_u;
-  key_u.mv_data = (void *) & pir_u->pin_u->pos_d;
-  key_u.mv_size = sizeof(pir_u->pin_u->pos_d);
-  fprintf(stderr, "lmdb mdb_get() for key %lu / %lu / %lu\n", pir_u->pin_u->pos_d, * ((c3_d *) key_u.mv_data), key_u.mv_size);  
-
-  MDB_val * val_u = (MDB_val *) malloc(sizeof(MDB_val));
-
-  
-  ret_w =  mdb_get(lmdb_u->txn_u,
-                   lmdb_u->dbi_u,
-                   & key_u,
-                   val_u);
-  if (0 != ret_w){
-    fprintf(stderr, "lmdb mdb_get() fail: %s\n", mdb_strerror(ret_w));
-    return(c3n);
-  }
-
-  * dat_y = val_u->mv_data;
-  * len_w = val_u->mv_size;
-  * hand_u = val_u;
-  return(c3y);
-
-
-
-#else
   MDB_env * env_u;
   
   /* create environment */
@@ -193,8 +207,8 @@ u3_lmdb_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u)
   }
 
   /* open environment */
-  c3_w     flag_w = 0 ; // MDB_NOLOCK;
-  mdb_mode_t mode_u = 0777;  /* unix file permission in octal */
+  c3_w     flag_w = MDB_NOLOCK; /* do no locking in LMDB; we will do it correctly with mutexes */
+  mdb_mode_t mode_u = 0777;     /* unix file permission in octal */
 
   ret_w = mdb_env_open(env_u,
                        (char *) pir_u->pot_u->lmdb_u->path_c,
@@ -232,7 +246,6 @@ u3_lmdb_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u)
   MDB_val key_u;
   key_u.mv_data = (void *) & pir_u->pin_u->pos_d;
   key_u.mv_size = sizeof(pir_u->pin_u->pos_d);
-  fprintf(stderr, "lmdb mdb_get() for key %lu / %lu / %lu\n", pir_u->pin_u->pos_d, * ((c3_d *) key_u.mv_data), key_u.mv_size);  
 
   MDB_val * val_u = (MDB_val *) malloc(sizeof(MDB_val));
 
@@ -254,9 +267,6 @@ u3_lmdb_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u)
   return(c3y);
 
   
-#endif
-  
-
 }
 
 
@@ -276,14 +286,14 @@ u3_lmdb_read_shut(u3_pier* pir_u)
 
 }
 
-
+/* write */
 
 c3_o
 u3_lmdb_write_init(u3_pier* pir_u, c3_c * sto_c)
 {
   /* share single db handle, if for both in and out */
   if (pir_u->pin_u->lmdb_u){
-    fprintf(stderr, "lmdb write init: sharing db handle with lmdb read\n\r");
+    /* fprintf(stderr, "lmdb write init: sharing db handle with lmdb read\n\r"); */
     pir_u->pot_u->lmdb_u = pir_u->pin_u->lmdb_u;
     return(c3y);
   } else {
@@ -296,55 +306,11 @@ u3_lmdb_write_init(u3_pier* pir_u, c3_c * sto_c)
 void
 _lmdb_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w)
 {
-
-  fprintf(stderr, "WRITE child start %ld\n\r",  wit_u->evt_d);
-
-  
-#if TXN_IN_PARENT_THREAD
-  MDB_val key_u;
-  MDB_val val_u;
-
-  /* create the leaf-node transaction */
-  MDB_txn *txn_u;
-
-  c3_w ret_w = mdb_txn_begin(wit_u->pir_u->pot_u->lmdb_u->env_u,
-                             wit_u->pir_u->pot_u->lmdb_u->txn_u,
-                             0, /* flags */
-                             & txn_u);
-
-  if (0 != ret_w){
-    fprintf(stderr, "u3_lmdb_write_write()  mdb_txn_begin() fail: %s\n", mdb_strerror(ret_w));
-    u3m_bail(c3__fail); 
+  int ret = pthread_mutex_lock(& wit_u->pir_u->pin_u->lmdb_u->mut_u);
+  if (0 != ret){
+    fprintf(stderr, "_lmdb_write(): pthread_mutex_lock() failed\n");
+    u3m_bail(c3__fail);
   }
-
-
-  
-  key_u.mv_data = & pos_d;
-  key_u.mv_size = sizeof(pos_d);
-
-  val_u.mv_data = byt_y;
-  val_u.mv_size = len_w;
-  
-  ret_w =  mdb_put(txn_u,  /* leaf node transaction */
-                   wit_u->pir_u->pot_u->lmdb_u->dbi_u,
-                   & key_u,
-                   & val_u,
-                   0); /* flag */
-  
-  if (0 != ret_w){
-    fprintf(stderr, "lmdb mdb_put() fail: %s\n", mdb_strerror(ret_w));
-    mdb_txn_abort(txn_u);
-    u3m_bail(c3__fail); 
-  }
-
-  ret_w = mdb_txn_commit(txn_u);
-  if (0 != ret_w){
-    fprintf(stderr, "lmdb txn_commit() fail: %s\n", mdb_strerror(ret_w));
-    u3m_bail(c3__fail); 
-  }
-  
-
-#else
 
   MDB_val key_u;
   MDB_val val_u;
@@ -366,7 +332,7 @@ _lmdb_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w)
   }
 
   /* open environment */
-  c3_w     flag_w = 0 ; // MDB_NOLOCK;
+  c3_w     flag_w = MDB_NOLOCK;
   mdb_mode_t mode_u = 0777;  /* unix file permission in octal */
 
   ret_w = mdb_env_open(env_u,
@@ -401,7 +367,6 @@ _lmdb_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w)
     u3m_bail(c3__fail); 
   }
 
-  
   /* create the leaf-node transaction */
   MDB_txn *txn_u;
 
@@ -409,23 +374,20 @@ _lmdb_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w)
                         par_txn_u,
                         0, /* flags */
                         & txn_u);
-
   if (0 != ret_w){
     fprintf(stderr, "u3_lmdb_write_write()  mdb_txn_begin() fail: %s\n", mdb_strerror(ret_w));
     u3m_bail(c3__fail); 
   }
 
 
-  
   key_u.mv_data = & pos_d;
   key_u.mv_size = sizeof(pos_d);
 
-  fprintf(stderr, "lmdb mdb_put() for key  %lu / %lu\n",  * ((c3_d *) key_u.mv_data), key_u.mv_size);  
 
   
   val_u.mv_data = byt_y;
   val_u.mv_size = len_w;
-  
+
   ret_w =  mdb_put(txn_u,  /* leaf node transaction */
                    dbi_u,
                    & key_u,
@@ -450,11 +412,14 @@ _lmdb_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w)
     u3m_bail(c3__fail); 
   }
 
+  ret = pthread_mutex_unlock(& wit_u->pir_u->pin_u->lmdb_u->mut_u);
+  if (0 != ret){
+    fprintf(stderr, "_lmdb_write(): pthread_mutex_unlock() failed\n");
+    u3m_bail(c3__fail);
+  }
   
-#endif
-
-    fprintf(stderr, "WRITE child finish %ld\n\r",  wit_u->evt_d);
 }
+
 
 
 
@@ -478,24 +443,18 @@ _lmdb_write_cast(void *opq_u)
               cbd_u->buf_y,
               cbd_u->len_w);
 
-  /* set the ack */
-  cbd_u->wit_u->ped_o = c3y;
-
   /* if a meta-callback is set, call it (for testing) */
   if (cbd_u->cbf_u){
     cbd_u->cbf_u(cbd_u);
   }
 
-  // fprintf(stderr, "****************************** AFTER WRITE - PARENT THREAD\n\r");
-  sleep(2); // NOTFORCHECKIN
+  /* set the ack */
+  cbd_u->wit_u->ped_o = c3y;
   
   /* cleanup */
   free(cbd_u);
   
-  // fprintf(stderr, "WRITE THREAD end\n\r");
-#if  PTHREAD
   pthread_exit(NULL);
-#endif
   return(NULL); 
 }
 
@@ -504,18 +463,13 @@ _lmdb_write_cast(void *opq_u)
 void
 u3_lmdb_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb)
 {
-  c3_w hed_w = u3_frag_head_size(len_w, 
-                                 1, 
-                                 u3_lmdb_frag_size());
-
   write_cb_data * cbd_u = (write_cb_data *) malloc(sizeof(write_cb_data));
   cbd_u->wit_u = wit_u;
-  cbd_u->buf_y = buf_y + hed_w;
+  cbd_u->buf_y = buf_y;
   cbd_u->len_w = len_w;
   cbd_u->cbf_u = test_cb;
 
 
-#if  PTHREAD
   uint32_t       ret_w;
   pthread_t tid_u;
 
@@ -527,13 +481,7 @@ u3_lmdb_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  
     u3m_bail(c3__fail); 
     return;
   }
-#else
-  _lmdb_write_cast(  (void *) cbd_u ) ;
 
-#endif
-  
-
-  //  fprintf(stderr, "launched thread\n");
   return;
 }
 
@@ -542,6 +490,11 @@ u3_lmdb_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  
 void
 u3_lmdb_write_shut(u3_pier* pir_u)
 {
+  int ret = pthread_mutex_destroy(& pir_u->pot_u->lmdb_u->mut_u);
+  if (0 != ret){
+    fprintf(stderr, "u3_lmdb_write_shut(): pthread_mutex_destroy() failed\n");
+    u3m_bail(c3__fail);
+  }
 
 }
 
