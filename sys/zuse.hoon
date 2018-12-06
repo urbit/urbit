@@ -913,8 +913,7 @@
           {$mass p/mass}                                ::  memory usage
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$vega p/path q/path}                         ::  old reboot
-          {$velo p/@t q/@t}                             ::  reboot
+          {$vega p/@t q/@t}                             ::  reboot
           {$verb ~}                                    ::  verbose mode
       ==                                                ::
     ++  task                                            ::  in request ->$
@@ -934,8 +933,7 @@
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$vega p/path q/path}                         ::  old reboot
-          {$velo p/@t q/@t}                             ::  reboot
+          {$vega p/@t q/@t}                             ::  reboot
           {$verb ~}                                    ::  verbose mode
       ==                                                ::
     --  ::able
@@ -995,8 +993,7 @@
         {$heft ~}                                      ::
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane
-        {$vega p/path q/path}                           ::  old reboot
-        {$velo p/@t q/@t}                               ::  reboot
+        {$vega p/@t q/@t}                               ::  reboot
         {$verb ~}                                      ::  verbose mode
     ==                                                  ::
   --  ::dill
@@ -1019,8 +1016,7 @@
           [%thou p=httr]                                ::  raw http response
           [%thus p=@ud q=(unit hiss)]                   ::  http request+cancel
           [%veer p=@ta q=path r=@t]                     ::  drop-through
-          [%vega p=path q=path]                         ::  drop-through
-          [%velo p=@t q=@t]                             ::  drop-through
+          [%vega p=@t q=@t]                             ::  drop-through
       ==                                                ::
     +=  task                                            ::  in request ->$
       $%  [%born p=(list host)]                         ::  new unix process

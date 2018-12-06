@@ -541,12 +541,7 @@
     |%
     ++  come  ^come                                     ::  22
     ++  load  ^load                                     ::  46
-    ::
-    ::  XX my preference would be for +peek to no-op here
-    ::  XX falling thru because %vega scrys for hoon-version
-    ::  XX revisit
-    ::
-    ++  peek  ^peek                                     ::  47
+    ++  peek  |=(* ~)                                   ::  47
     ::
     ++  poke  |=  *                                     ::  10
               ^-  [(list ovum) *]
@@ -564,7 +559,11 @@
                   ^+  +>.$
                   ::  use the maximum comet if we don't know who we are yet
                   ::
-                  =/  our  ?^(who u.who (dec (bex 128)))
+                  =/  our
+                    ?^  who
+                      u.who
+                    =/  fip=ship  (dec (bex 128))
+                    ~>(%slog.[0 leaf+"arvo: larval identity {(scow %p fip)}"] fip)
                   =.  ..veer  (veer our now q.ovo)
                   +>.$(bod ?^(bod bod `bud.^poke))
                 ::  add entropy
@@ -628,19 +627,14 @@
               |-  ^-  [(list ovum) *]
               ?~  ova
                 [~ +>.^$]
-              ::  upgrade the kernel (old)
+              ::  upgrade the kernel
               ::
               ?:  ?=(%vega -.q.i.ova)
                 %+  fall
-                  (vega now t.ova (path +<.q.i.ova) (path +>.q.i.ova))
+                  (vega now t.ova ({@ @} +.q.i.ova))
                 [~ +>.^$]
-              ::  upgrade the kernel (new)
-              ::
-              ?:  ?=(%velo -.q.i.ova)
-                %+  fall
-                  (velo now t.ova ({@ @} +.q.i.ova))
-                [~ +>.^$]
-              ::  handle arvo effects, pass through unrecognized or modified
+              ::  iterate over effects, handling those on arvo proper
+              ::  and passing the rest through as output
               ::
               =^  vov  +>+.^$  (feck now i.ova)
               ?~  vov
@@ -670,7 +664,11 @@
   |-  ^-  [(list ovum) _+>.^$]
   ?~  ova
     [~ +>.^$]
-  ::  handle arvo effects, pass through unrecognized or modified
+  ::  iterate over effects, handling those on arvo proper
+  ::  and passing the rest through as output
+  ::
+  ::    In practice, the pending effects after an upgrade
+  ::    are the %veer moves to install %zuse and the vanes.
   ::
   =^  vov  +>.^$  (feck now i.ova)
   ?~  vov
@@ -692,13 +690,12 @@
   =.  eny  (mix eny (shaz now))
   ^-  [(list ovum) _+>.$]
   ::
-  ::  These effects on arvo proper can be external events
-  ::  or effects of other events. In either case, they
-  ::  fall through to be handled in post.
+  ::  These external events are actually effects on arvo proper.
+  ::  They can also be produced as the effects of other events.
+  ::  In either case, they fall through here to be handled
+  ::  after the fact in +feck.
   ::
-  ::  XX should vega be in this list?
-  ::
-  ?:  ?=(?(%veer %vega %verb %wack) -.q.ovo)
+  ?:  ?=(?(%veer %verb %wack) -.q.ovo)
     [[ovo ~] +>.$]
   ::
   =^  zef  vanes
@@ -742,65 +739,7 @@
     [~ +>.$]
   ==
 ::                                                
-++  veke                                                ::  build new kernel
-  |=  {now/@da hap/path zup/path}
-  ^-  *
-  =-  ?:(?=(%& -.res) p.res ((slog p.res) ~))
-  ^=  res  %-  mule  |.
-  =/  pax  (weld hap /hoon)
-  =/  wax  (weld zup /hoon)
-  ~&  [%vega-start-hoon hap]
-  =/  src  ((hard @t) (need (peek now cx+pax)))
-  =/  arv  ((hard @t) (need (peek now cx+wax)))
-  ::  construct  =>(hoon =>(+7 arvo))
-  ::
-  =/  gen=hoon
-    :+  %tsbn  (rain hap src)
-    :+  %tsld  (rain zup arv)
-    [%$ 7]
-  ~&  %vega-parsed
-  =/  fol  q:(~(mint ut %noun) %noun gen)
-  ~&  %vega-compiled
-  ::  evaluate :fol to produce the Arvo gate,
-  ::  then produce the Arvo core at +7
-  ::
-  .*(0 [%7 fol %0 7])
-::
 ++  vega                                                ::  reboot kernel
-  |=  {now/@da ova/(list ovum) hap/path zup/path}
-  ^-  (unit {p/(list ovum) q/*})
-  =-  ?:(?=(%| -.res) ((slog p.res) ~) `p.res)
-  ^=  res  %-  mule  |.
-  =/  ken  (veke now hap zup)
-  ~&  [%vega-kernel `@ux`(mug ken)] 
-  =/  nex
-    ::  call +peek at +47
-    ::
-    %-  need
-    %-  (hard (unit @))
-    .*(ken [%9 2 %10 [6 %1 now ~] [%9 47 %0 1]])
-  ~&  [%vega-compiled hoon-version nex]
-  ?>  (lte nex hoon-version)
-  ::  upgrade gate sample
-  ::
-  =/  sam
-    :*  our
-        now
-        eny
-        ova
-        bud
-        (turn vanes |=([label=@tas =vane] [label vase.vane]))
-    ==
-  ::  +load at +46 or +come at +22
-  ::
-  =/  axe  ?:(=(nex hoon-version) 46 22)
-  =/  out
-    .*(ken [%9 2 %10 [6 %1 sam] [%9 axe %0 1]])
-  ::  add a reset notification to the pending effects
-  ::
-  [[[~ %vega hap] ((list ovum) -.out)] +.out]
-::
-++  velo                                                ::  new full reboot
   |=  $:  ::  now: current date
           ::  ova: actions to process after reboot
           ::  hun: hoon.hoon source
@@ -852,7 +791,7 @@
   ::  compile arvo
   ::
   =/  rav
-    ~&  [%compile-arvo `@p`(mug hyp) `@p`(mug van)]
+    ~&  [%arvo-compile `@p`(mug hyp) `@p`(mug van)]
     .*(cop [%9 2 %10 [6 %1 [hyp van]] %0 1])
   ::  activate arvo, and extract the arvo core from the outer gate
   ::
@@ -886,7 +825,7 @@
     .*(gat [%9 2 %10 [6 %1 sam] %0 1])
   ::  tack a reset notification onto the product
   ::
-  [[[~ %vega ~] ((list ovum) -.out)] +.out]
+  [[[/ %vega ~] ((list ovum) -.out)] +.out]
 ::  +veer: install %zuse or a vane
 ::
 ::    Identity is in the sample so the larval stage
