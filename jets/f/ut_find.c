@@ -13,18 +13,74 @@
              u3_noun lon,
              u3_noun gil);
 
+/*  `u3qfu_felt_arm` is a helper function for
+ *  u3qfu_felt.  It handles the case in which the
+ *  opal is for an arm, and hence which needs a 
+ *  list of `hold`s.  These will be converted to
+ *  a `fork` type.
+*/
   static u3_noun
-  u3qfu_felt(u3_noun van,
-             u3_noun sut,
-             u3_noun lap)
+  u3qfu_felt_arm(u3_noun lis)
   {
-    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_cook("u3qfu_felt-felt", von, "felt");
+      if ( lis == u3_nul ) {
+          return u3_nul;
+      } else {
+          
+          u3_noun i_lis = u3h(lis);
+          u3_noun t_lis = u3t(lis);
+          u3_noun typ = u3h(i_lis);
 
-    return u3n_kick_on(u3i_molt(gat, 
-                                u3x_sam, 
-                                u3k(lap), 
-                                0));
+          u3_noun p_typ, q_typ, pq_typ, qq_typ, rq_typ;
+
+          if ( (c3n == u3du(typ)) ||
+               (u3h(typ) != c3__core) ) {
+              return u3m_error("felt-core");
+          } else if
+              ( (c3n == u3r_cell(u3t(typ), &p_typ, &q_typ)) ||
+                (c3n == u3r_trel(q_typ, &pq_typ, &qq_typ, &rq_typ)) )
+          {
+              return u3m_bail(c3__fail);
+          } else {
+
+              u3_noun dox = u3nt(c3__core, u3k(qq_typ), u3k(q_typ));
+              u3_noun par = u3nt(c3__hold, dox, u3nc(u3_nul, 1));
+              u3_noun pro = u3nc(par, u3qfu_felt_arm(t_lis));
+
+              return pro;
+          }
+      }
+  }
+
+/*  `u3qfu_felt` takes an opal, lap, and converts 
+ *  it to a type.  The opal comes from the last 
+ *  limb of the wing processed by `+fond`. The 
+ *  type is used in +fond as the subject type of 
+ *  the next limb in the wing.
+*/ 
+  static u3_noun
+  u3qfu_felt(u3_noun lap)
+  {
+      u3_noun pro;
+      u3_noun lim = u3h(lap);
+
+      if ( lim == c3y ) {
+
+          u3_noun p_lap = u3t(lap);
+          pro = u3k(p_lap);
+
+      } else if ( lim == c3n ) {
+
+          u3_noun q_lap = u3t(u3t(lap));
+          u3_noun lis = u3qdi_tap(q_lap);
+          u3_noun hos = u3qfu_felt_arm(lis);
+
+          pro = u3kf_fork(hos);
+          u3z(lis);
+
+      } else u3m_bail(c3__fail);
+
+      u3z(lim);
+      return pro;
   }
 
   static u3_noun
@@ -658,7 +714,7 @@
     u3_noun qp_mor = u3t(p_mor);        //  opal
 
     {
-      u3_noun ref    = u3qfu_felt(van, sut, qp_mor);
+      u3_noun ref    = u3qfu_felt(qp_mor);
       u3_noun lon    = u3k(pp_mor);
       u3_noun heg    = (c3y == u3du(i_hyp))
                          ? u3k(i_hyp)
