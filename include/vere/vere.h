@@ -1197,3 +1197,14 @@
       */
         void
         u3_cttp_io_exit(void);
+
+
+      /* u3_dawn_come(): mine a comet under star (unit)
+      */
+        u3_noun
+        u3_dawn_come(u3_noun star);
+
+      /* u3_dawn_vent(): validatated boot event
+      */
+        u3_noun
+        u3_dawn_vent(u3_noun seed);

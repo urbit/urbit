@@ -213,6 +213,7 @@ vere_sans_main = [
   'vere/ames.c',
   'vere/behn.c',
   'vere/cttp.c',
+  'vere/dawn.c',
   'vere/http.c',
   'vere/loop.c',
   'vere/raft.c',
