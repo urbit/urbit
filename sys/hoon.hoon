@@ -9762,7 +9762,6 @@
   ++  felt
     ~/  %felt
     |=  lap/opal
-    !:
     ^-  type
     ?-  -.lap
       %&  p.lap
