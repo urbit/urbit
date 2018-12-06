@@ -9770,7 +9770,7 @@
           %+  turn  ~(tap in q.lap)
           |=  [a=type b=foot]
           :-  %hold
-          ?.  ?=([%core *] a)  !!
+          ?>  ?=([%core *] a)
           =+  dox=[%core q.q.a q.a]
           [dox [%$ 1]]
     ==
