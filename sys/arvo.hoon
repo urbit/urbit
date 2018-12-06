@@ -4,6 +4,18 @@
 ~>  %slog.[0 leaf+"%arvo-assembly"]
 =-  ~>  %slog.[0 leaf+"%arvo-assembled"]
     -
+=<  ::
+    ::  Arvo formal interface
+    ::
+    ::    this lifecycle wrapper makes the arvo door (multi-armed core)
+    ::    look like a gate (function or single-armed core), to fit
+    ::    urbit's formal lifecycle function. a practical interpreter
+    ::    can ignore it.
+    ::
+    |=  [now=@da ovo=*]
+    ^-  *
+    ~>  %slog.[0 leaf+"arvo-event"]
+    .(+> +:(poke now ovo))
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -515,16 +527,6 @@
     ::    For convenience, this larval stage also supports hoon compilation
     ::    with +wish and vane installation with the %veer event.
     ::
-    =<  ::  larval Arvo formal interface
-        ::
-        ::    See the Arvo formal interface below for context.
-        ::
-        |=  [now=@da ovo=*]
-        ^-  *
-        ~>  %slog.[0 leaf+"larvo-event"]
-        .(+> +:(poke now ovo))
-    ::  larval Arvo state
-    ::
     =/  pit=vase  !>(..is)
     =|  $:  ::  who: our identity once we know it
             ::  eny: entropy once we learn it
@@ -591,18 +593,6 @@
               ?>  ?=(@ txt)
               q:(slap ?~(bod pit u.bod) (ream txt))
     --
-::
-=<  ::  Arvo formal interface
-    ::
-    ::    this lifecycle wrapper makes the arvo door (multi-armed core)
-    ::    look like a gate (function or single-armed core), to fit
-    ::    urbit's formal lifecycle function. a practical interpreter
-    ::    can ignore it.
-    ::
-    |=  [now=@da ovo=*]
-    ^-  *
-    ~>  %slog.[0 leaf+"arvo-event"]
-    .(+> +:(poke now ovo))
 ::
 ::  persistent arvo state
 ::
