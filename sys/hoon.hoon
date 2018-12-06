@@ -9765,10 +9765,11 @@
     ^-  type
     ?-  -.lap
       %&  p.lap
-      %|  %-  fire
+      %|  %-  fork
           %+  turn  ~(tap in q.lap)
-          |=  {a/type b/foot}
-          [a [%dry %$ 1]]
+          |=  [a=type *]
+          ?>  ?=([%core *] a)
+          [%core q.q.a q.a]
     ==
   ::                                                    ::
   ++  feel                                              ::  detect existence
