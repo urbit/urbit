@@ -654,6 +654,7 @@
         typedef struct _u3_pier {
           c3_c*            pax_c;               //  pier directory
           c3_c*            sys_c;               //  pill file
+          c3_w             wag_w;               //  config flags
           c3_d             gen_d;               //  last event discovered
           c3_d             but_d;               //  boot barrier
           c3_d             tic_d[1];            //  ticket (unstretched)
@@ -1218,7 +1219,7 @@
       /* u3_pier_create(): create a pier, loading existing.
       */
         u3_pier*
-        u3_pier_create(c3_c* pax_c, c3_c* sys_c);
+        u3_pier_create(c3_w wag_w, c3_c* pax_c, c3_c* sys_c);
 
       /* u3_pier_interrupt(): interrupt running process.
       */
@@ -1260,7 +1261,8 @@
       /* u3_pier_boot(): start the new pier system.
       */
         void
-        u3_pier_boot(u3_noun who,                   //  identity
+        u3_pier_boot(c3_w    wag_w,                 //  config flags
+                     u3_noun who,                   //  identity
                      u3_noun ven,                   //  boot event
                      u3_noun pil,                   //  type-of/path-to pill
                      u3_noun pax);                  //  path to pier
@@ -1268,7 +1270,7 @@
       /* u3_pier_stay(): restart the new pier system.
       */
         void
-        u3_pier_stay(u3_noun pax);
+        u3_pier_stay(c3_w wag_w, u3_noun pax);
 
       /* u3_pier_tank(): dump single tank.
       */

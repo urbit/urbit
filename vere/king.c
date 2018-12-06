@@ -7,6 +7,10 @@
 #include "all.h"
 #include "vere/vere.h"
 
+//  stash config flags for serf
+//
+static c3_c sag_w;
+
 /*
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  wyrd: requires auth to a single relevant ship       ::
@@ -229,7 +233,7 @@ _king_boot(u3_noun bul)
 void
 _king_fake(u3_noun ship, u3_noun pill, u3_noun path)
 {
-  u3_pier_boot(ship, u3nc(c3__fake, u3k(ship)), pill, path);
+  u3_pier_boot(sag_w, ship, u3nc(c3__fake, u3k(ship)), pill, path);
 }
 
 /* _king_come(): mine a comet under star (unit)
@@ -245,7 +249,7 @@ _king_come(u3_noun star, u3_noun pill, u3_noun path)
 void
 _king_dawn(u3_noun seed, u3_noun pill, u3_noun path)
 {
-  u3_pier_boot(u3k(u3h(seed)), u3_dawn_vent(seed), pill, path);
+  u3_pier_boot(sag_w, u3k(u3h(seed)), u3_dawn_vent(seed), pill, path);
 }
 
 /* _king_exit(): exit parser
@@ -266,7 +270,7 @@ _king_pier(u3_noun pier)
     exit(1);
   }
 
-  u3_pier_stay(u3k(u3t(pier)));
+  u3_pier_stay(sag_w, u3k(u3t(pier)));
   u3z(pier);
 }
 
@@ -550,9 +554,10 @@ u3_king_commence()
 {
   u3_Host.lup_u = uv_default_loop();
 
-  /* start up a "fast-compile" arvo for internal use only
-  ** (with hashboard always disabled)
-  */
+  //  start up a "fast-compile" arvo for internal use only
+  //  (with hashboard always disabled)
+  //
+  sag_w = u3C.wag_w;
   u3C.wag_w |= u3o_hashless;
 
   u3m_boot_pier();

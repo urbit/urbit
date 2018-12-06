@@ -1389,7 +1389,6 @@ _pier_work_create(u3_pier* pir_u)
     c3_c* pax_c;
     c3_c  key_c[256];
     c3_c  wag_c[11];
-    c3_w  wag_w;
     c3_i  err_i;
 
     pax_c = c3_malloc(1 + strlen(pir_u->pax_c));
@@ -1401,18 +1400,7 @@ _pier_work_create(u3_pier* pir_u)
                    pir_u->key_d[2], 
                    pir_u->key_d[3]);
 
-    {
-      /* restore hashboard if appropriate
-      ** (otherwise always be disabled in king.c)
-      */
-      wag_w = u3C.wag_w;
-
-      if ( c3n == u3_Host.ops_u.has ) {
-        wag_w &= ~u3o_hashless;
-      }
-
-      sprintf(wag_c, "%u", u3C.wag_w);
-    }
+    sprintf(wag_c, "%u", pir_u->wag_w);
 
     arg_c[0] = "bin/urbit-worker";      //  executable
     arg_c[1] = pax_c;                   //  path to checkpoint directory
@@ -1464,7 +1452,7 @@ _pier_work_create(u3_pier* pir_u)
 /* u3_pier_create(): create a pier, loading existing.
 */
 u3_pier*
-u3_pier_create(c3_c* pax_c, c3_c* sys_c)
+u3_pier_create(c3_w wag_w, c3_c* pax_c, c3_c* sys_c)
 {
   u3_pier* pir_u;
  
@@ -1479,6 +1467,7 @@ u3_pier_create(c3_c* pax_c, c3_c* sys_c)
     pir_u->sys_c = c3_malloc(1 + strlen(sys_c)); 
     strcpy(pir_u->sys_c, sys_c);
 
+    pir_u->wag_w = wag_w;
     pir_u->gen_d = 0;
     pir_u->key_d[0] = pir_u->key_d[1] = pir_u->key_d[2] = pir_u->key_d[3] = 0;
 
@@ -1984,7 +1973,7 @@ u3_pier_stub(void)
 /* _pier_boot_make(): create/load a pier.
 */
 static u3_pier*
-_pier_boot_make(u3_noun pax, u3_noun sys)
+_pier_boot_make(c3_w wag_w, u3_noun pax, u3_noun sys)
 {
   c3_c*    pax_c = u3r_string(pax);
   c3_c*    sys_c;
@@ -1993,7 +1982,7 @@ _pier_boot_make(u3_noun pax, u3_noun sys)
   c3_assert( c3y == u3h(sys) );
   sys_c = u3r_string(u3t(sys));
 
-  pir_u = u3_pier_create(pax_c, sys_c);
+  pir_u = u3_pier_create(wag_w, pax_c, sys_c);
 
   u3z(pax); free(pax_c);
   u3z(sys); free(sys_c);
@@ -2006,7 +1995,8 @@ _pier_boot_make(u3_noun pax, u3_noun sys)
 /* u3_pier_boot(): start the new pier system.
 */
 void
-u3_pier_boot(u3_noun who,                   //  identity
+u3_pier_boot(c3_w    wag_w,                 //  config flags
+             u3_noun who,                   //  identity
              u3_noun ven,                   //  boot event
              u3_noun pil,                   //  type-of/path-to pill
              u3_noun pax)                   //  path to pier
@@ -2015,7 +2005,7 @@ u3_pier_boot(u3_noun who,                   //  identity
 
   /* make/load pier
   */
-  pir_u = _pier_boot_make(pax, pil);
+  pir_u = _pier_boot_make(wag_w, pax, pil);
 
   /* set boot params
   */
@@ -2059,13 +2049,13 @@ u3_pier_boot(u3_noun who,                   //  identity
 /* u3_pier_stay(): resume the new pier system.
 */
 void
-u3_pier_stay(u3_noun pax)
+u3_pier_stay(c3_w wag_w, u3_noun pax)
 {
   u3_pier* pir_u;
 
   /* make/load pier
   */
-  pir_u = _pier_boot_make(pax, u3_nul);
+  pir_u = _pier_boot_make(wag_w, pax, u3_nul);
 
   /* initialize polling handle
   */
