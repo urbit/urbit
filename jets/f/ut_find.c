@@ -25,11 +25,7 @@
     if ( u3_nul == lis ) {
       return u3_nul;
     }
-    else if ( c3y != u3du(lis) ) {
-      return u3m_bail(c3__exit);
-    }
-    else
-    {
+    else {
       u3_noun i_lis, t_lis, fot, typ;
       u3_noun p_typ, q_typ, pq_typ, qq_typ, rq_typ;
 
@@ -38,7 +34,7 @@
 
       if ( (c3n == u3du(typ)) ||
            (c3__core != u3h(typ)) ) {
-          return u3m_error("felt-core");
+        return u3m_error("felt-core");
       }
       else {
         u3x_cell(u3t(typ), &p_typ, &q_typ);
@@ -46,8 +42,7 @@
 
         u3_noun dox = u3nt(c3__core, u3k(qq_typ), u3k(q_typ));
         u3_noun par = u3nt(c3__hold, dox, u3nc(u3_nul, 1));
-        u3_noun pro = u3nc(par, u3qfu_felt_arm(t_lis));
-        return pro;
+        return u3nc(par, u3qfu_felt_arm(t_lis));
       }
     }
   }
@@ -75,7 +70,7 @@
 
       pro = u3kf_fork(hos);
       u3z(lis);
-      }
+    }
     else {
       u3m_bail(c3__exit);
     }
