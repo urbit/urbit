@@ -787,10 +787,11 @@
   =>  .(a ^.(homo a))
   |-  ^+  a
   ?~  a  ~
+  =+  s=(skid t.a |:(c=i.a (b c i.a)))
   %+  weld
-    $(a (skim t.a |:(c=i.a (b c i.a))))
+    $(a p.s)
   ^+  t.a
-  [i.a $(a (skim t.a |:(c=i.a !(b c i.a))))]
+  [i.a $(a q.s)]
 ::
 ++  spin                                                ::  stateful turn
   ::
