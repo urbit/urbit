@@ -9767,7 +9767,7 @@
       %&  p.lap
       %|  %-  fork
           %+  turn  ~(tap in q.lap)
-          |=  [a=type b=foot]
+          |=  [a=type *]
           :-  %hold
           ?>  ?=([%core *] a)
           =+  dox=[%core q.q.a q.a]
