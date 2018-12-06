@@ -9762,13 +9762,17 @@
   ++  felt
     ~/  %felt
     |=  lap/opal
+    !:
     ^-  type
     ?-  -.lap
       %&  p.lap
-      %|  %-  fire
+      %|  %-  fork
           %+  turn  ~(tap in q.lap)
-          |=  {a/type b/foot}
-          [a [%dry %$ 1]]
+          |=  [a=type b=foot]
+          :-  %hold
+          ?.  ?=([%core *] a)  !!
+          =+  dox=[%core q.q.a q.a]
+          [dox [%$ 1]]
     ==
   ::                                                    ::
   ++  feel                                              ::  detect existence
