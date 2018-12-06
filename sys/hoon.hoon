@@ -11618,6 +11618,7 @@
 ++  seem  |=(toy/typo `type`toy)                        ::  promote typo
 ++  seer  |=(vix/vise `vase`vix)                        ::  promote vise
 ++  sell                                                ::  tank pretty-print
+  ~/  %sell
   |=  vax/vase  ^-  tank
   ~|  %sell
   (~(deal us p.vax) q.vax)
