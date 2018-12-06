@@ -503,6 +503,84 @@
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
   --
 --
+=<  ::  Arvo larval stage
+    ::
+    ::    The true Arvo kernel knows who it is. It should not *maybe*
+    ::    have an identity, nor should it contain multitudes. This outer
+    ::    kernel exists to accumulate identity, entropy, and the
+    ::    standard library. Upon having done so, it upgrades itself into
+    ::    the true Arvo kernel. Subsequent upgrades will fall through
+    ::    the larval stage directly into the actual kernel.
+    ::
+    ::    For convenience, this larval stage also supports hoon compilation
+    ::    with +wish and vane installation with the %veer event.
+    ::
+    =<  ::  larval Arvo formal interface
+        ::
+        ::    See the Arvo formal interface below for context.
+        ::
+        |=  [now=@da ovo=*]
+        ^-  *
+        ~>  %slog.[0 leaf+"larvo-event"]
+        .(+> +:(poke now ovo))
+    ::  larval Arvo state
+    ::
+    =|  $:  who=(unit ship)
+            eny=(unit @)
+        ==
+    ::  larval Arvo structural interface
+    ::
+    |%
+    ++  come  ^come                                     ::  22
+    ++  load  ^load                                     ::  46
+    ::
+    ::  XX my preference would be for +peek to no-op here
+    ::  XX falling thru because %vega scrys for hoon-version
+    ::  XX revisit
+    ::
+    ++  peek  ^peek                                     ::  47
+    ::
+    ++  poke  |=  *                                     ::  10
+              ^-  [(list ovum) *]
+              =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
+              ^-  [(list ovum) *]
+              =.  +>.$
+                ?+  -.q.ovo
+                  ::  ignore unrecognized
+                  ::
+                  ~&  [%larval-ignore p.ovo -.q.ovo]
+                  +>.$
+                ::  install %zuse or vane
+                ::
+                    %veer
+                  ^+  +>.$
+                  =/  our  ?^(who u.who (dec (bex 128)))
+                  +>.$(..veer (veer our now q.ovo))
+                ::  add entropy
+                ::
+                    %wack
+                  ^+  +>.$
+                  ?>  ?=(@ q.q.ovo)
+                  +>.$(eny `q.q.ovo)
+                ::  become who you were born to be
+                ::
+                    %whom
+                  ^+  +>.$
+                  ?>  ?=(@ q.q.ovo)
+                  +>.$(who `q.q.ovo)
+                ==
+              ::  upgrade once we've accumulated identity and entropy
+              ::
+              ?.  &(?=(^ who) ?=(^ eny))
+                [~ +>.$]
+              ~>  %slog.[0 leaf+"arvo: metamorphosis"]
+              =/  nyf
+                (turn vanes |=([label=@tas =vane] [label vase.vane]))
+              (load u.who now u.eny ova=~ nyf)
+    ::
+    ++  wish  ^wish                                     ::  4
+    --
+::
 =<  ::  Arvo formal interface
     ::
     ::    this lifecycle wrapper makes the arvo door (multi-armed core)
@@ -522,19 +600,19 @@
 =|  bod=(unit vase)                                     ::  %zuse if installed
 =|  $:  lac=?                                           ::  laconic bit
         eny=@                                           ::  entropy
-        urb/(unit ship)                                 ::  identity
+        our=ship                                        ::  identity
         vanes=(list [label=@tas =vane])                 ::  modules
     ==                                                  ::
 =<  ::  Arvo structural interface
     ::
     |%
-    ++  come  |=  {@ (list ovum) pone}                  ::  22
+    ++  come  |=  {@ @ @ (list ovum) pone}              ::  22
               ^-  {(list ovum) _+>}
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
     ::
-    ++  load  |=  {@ (list ovum) pane}                  ::  46
+    ++  load  |=  {@ @ @ (list ovum) pane}              ::  46
               ^-  {(list ovum) _+>}
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
@@ -575,14 +653,15 @@
 ::
 |%
 ++  come                                                ::  load incompatible
-  |=  {yen/@ ova/(list ovum) nyf/pone}
+  |=  [who=ship now=@da yen=@ ova=(list ovum) nyf=pone]
   ^+  [ova +>]
-  (load yen ova (turn nyf |=({a/@tas b/vise} [a (slim b)])))
+  (load who now yen ova (turn nyf |=({a/@tas b/vise} [a (slim b)])))
 ::
 ++  load                                                ::  load compatible
-  |=  {yen/@ ova/(list ovum) nyf/pane}
+  |=  [who=ship now=@da yen=@ ova=(list ovum) nyf=pane]
   ^+  [ova +>]
-  =:  eny  yen
+  =:  our  who
+      eny  yen
       vanes  (turn nyf |=({a/@tas b/vise} [a [b *worm]]))
     ==
   |-  ^-  [(list ovum) _+>.^$]
@@ -590,9 +669,7 @@
     [~ +>.^$]
   ::  handle arvo effects, pass through unrecognized or modified
   ::
-  ::    XX include now in +come/+load sample?
-  ::
-  =^  vov  +>.^$  (feck *@da i.ova)
+  =^  vov  +>.^$  (feck now i.ova)
   ?~  vov
     $(ova t.ova)
   =/  avo  $(ova t.ova)
@@ -605,9 +682,7 @@
   |=  {now/@da hap/path}
   ^-  (unit)
   ?~  hap  [~ hoon-version]
-  =/  who=ship
-    ?^(urb u.urb (dec (bex 128)))
-  =+  rob=((sloy ~(beck (is who vil eny mast vanes) now)) [151 %noun] hap)
+  =+  rob=((sloy ~(beck (is our vil eny mast vanes) now)) [151 %noun] hap)
   ?~  rob  ~
   ?~  u.rob  ~
   [~ u.u.rob]
@@ -623,13 +698,11 @@
   ::
   ::  XX should vega be in this list?
   ::
-  ?:  ?=(?(%veer %vega %verb %wack %whom) -.q.ovo)
+  ?:  ?=(?(%veer %vega %verb %wack) -.q.ovo)
     [[ovo ~] +>.$]
   ::
-  =/  who=ship
-    ?^(urb u.urb (dec (bex 128)))
   =^  zef  vanes
-    (~(hurl (is who vil eny mast vanes) now) lac ovo)
+    (~(hurl (is our vil eny mast vanes) now) lac ovo)
   [zef +>.$]
 ::  +feck: handle an arvo effect
 ::
@@ -647,7 +720,7 @@
   ::  install %zuse or vane
   ::
       %veer
-    [~ (veer now q.ovo)]
+    [~ (veer our now q.ovo)]
   ::  add data to memory profile
   ::
       %mass
@@ -667,11 +740,6 @@
     ?>  ?=(@ q.q.ovo)
     =.  eny  (mix eny (shaz q.q.ovo))
     [~ +>.$]
-  ::  become who you were born to be
-  ::
-      %whom
-    ?>  ?=(@ q.q.ovo)
-    [~ +>.$(urb `q.q.ovo)]
   ==
 ::                                                
 ++  veke                                                ::  build new kernel
@@ -713,11 +781,15 @@
     .*(ken [%9 2 %10 [6 %1 now ~] [%9 47 %0 1]])
   ~&  [%vega-compiled hoon-version nex]
   ?>  (lte nex hoon-version)
-  ::  entropy, pending effects, vanes
+  ::  upgrade gate sample
   ::
   =/  sam
-    :+  eny  ova
-    (turn vanes |=([label=@tas =vane] [label vase.vane]))
+    :*  our
+        now
+        eny
+        ova
+        (turn vanes |=([label=@tas =vane] [label vase.vane]))
+    ==
   ::  +load at +46 or +come at +22
   ::
   =/  axe  ?:(=(nex hoon-version) 46 22)
@@ -797,11 +869,15 @@
     ::  produce the upgrade gate
     ::
     .*(voc fol)
-  ::  sample: [entropy actions vases]
+  ::  upgrade gate sample
   ::
   =/  sam
-    :+  eny  ova
-    (turn vanes |=([label=@tas =vane] [label vase.vane]))
+    :*  our
+        now
+        eny
+        ova
+        (turn vanes |=([label=@tas =vane] [label vase.vane]))
+    ==
   ::  call into the new kernel
   ::
   =/  out
@@ -809,14 +885,16 @@
   ::  tack a reset notification onto the product
   ::
   [[[~ %vega ~] ((list ovum) -.out)] +.out]
+::  +veer: install %zuse or a vane
 ::
-++  veer                                                ::  install vane/tang
-  |=  {now/@da fav/curd}
+::    Identity is in the sample so the larval stage
+::    can use this as well.
+::
+++  veer
+  |=  [who=ship now=@da fav=curd]
   =>  .(fav ((hard {$veer lal/@ta pax/path txt/@t}) fav))
   =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
   ^=  res  %-  mule  |.
-  =/  who=ship
-    ?^(urb u.urb (dec (bex 128)))
   ?:  =(%$ lal.fav)
     ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
