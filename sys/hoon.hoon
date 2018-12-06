@@ -9768,10 +9768,8 @@
       %|  %-  fork
           %+  turn  ~(tap in q.lap)
           |=  [a=type *]
-          :-  %hold
           ?>  ?=([%core *] a)
-          =+  dox=[%core q.q.a q.a]
-          [dox [%$ 1]]
+          [%core q.q.a q.a]
     ==
   ::                                                    ::
   ++  feel                                              ::  detect existence
