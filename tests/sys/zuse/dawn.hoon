@@ -104,7 +104,7 @@
     '{"id":"0","jsonrpc":"2.0","result":"0x20"}'
   =/  boq  32
   %+  expect-eq
-    !>  boq
+    !>  [~ boq]
     !>  (bloq:take:dawn oct)
 ::
 ++  test-take-czar
@@ -138,7 +138,8 @@
     638.361.167.187.097.711.481.986.932.531.569.955.478.938.087.263.286.158.
     823.313.739.767.009.446.819.531.923.255.637.798.148.055.143.938.146
   %+  expect-eq
-    !>  %-  ~(gas by *(map ship [=life =pass]))
+    !>  :-  ~
+        %-  ~(gas by *(map ship [=life =pass]))
         [[~zod 1 zod.kyz] [~nec 1 nec.kyz] ~]
     !>  (czar:take:dawn oct)
 ::
@@ -161,7 +162,7 @@
         '"}'
     ==
   %+  expect-eq
-    !>  hul
+    !>  [~ hul]
     !>  (hull:take:dawn ~zod oct)
 ::
 ++  test-take-turf
@@ -183,7 +184,7 @@
         '"}]'
     ==
   %+  expect-eq
-    !>  [/org/urbit ~]
+    !>  [~ [/org/urbit ~]]
     !>  (turf:take:dawn oct)
 ::
 ++  test-snap-bloq
