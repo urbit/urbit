@@ -164,7 +164,7 @@ _dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
   u3_lo_bail();
 }
 
-/* _dawn_need_unit(): produce a value or pail
+/* _dawn_need_unit(): produce a value or print error and exit
 */
 static u3_noun
 _dawn_need_unit(u3_noun nit, c3_c* msg_c)
