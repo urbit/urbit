@@ -276,9 +276,19 @@ u3_dawn_vent(u3_noun seed)
 
     u3_noun oct = u3v_wish("bloq:give:dawn");
     u3_noun kob = _dawn_eth_rpc(url_c, u3k(oct));
-    bok = u3do("bloq:take:dawn", u3k(kob));
+    u3_noun nit = u3do("bloq:take:dawn", u3k(kob));
 
-    u3z(oct); u3z(kob);
+    if ( u3_nul == nit ) {
+      fprintf(stderr, "boot: block retrieval failed\r\n");
+      // bails, won't return
+      u3_lo_bail();
+      return u3_none;
+    }
+    else {
+      bok = u3k(u3t(nit));
+    }
+
+    u3z(oct); u3z(kob); u3z(nit);
   }
 
   {
@@ -295,30 +305,46 @@ u3_dawn_vent(u3_noun seed)
       hul = u3v_wish("*hull:constitution:ethe");
     }
     else {
-      u3_noun oct;
+      u3_noun who;
 
       if ( c3__earl == rank ) {
-        u3_noun seg = u3do("^sein:title", u3k(ship));
-        u3_noun ges = u3dc("scot", 'p', u3k(seg));
-        c3_c* seg_c = u3r_string(ges);
+        who = u3do("^sein:title", u3k(ship));
 
-        fprintf(stderr, "boot: retrieving %s's public keys (for %s)\r\n",
-                                            seg_c, u3_Host.ops_u.who_c);
-        oct = u3dc("hull:give:dawn", u3k(bok), u3k(seg));
+        {
+          u3_noun seg = u3dc("scot", 'p', u3k(who));
+          c3_c* seg_c = u3r_string(seg);
 
-        free(seg_c);
-        u3z(seg); u3z(ges);
+          fprintf(stderr, "boot: retrieving %s's public keys (for %s)\r\n",
+                                              seg_c, u3_Host.ops_u.who_c);
+
+          free(seg_c);
+          u3z(seg);
+        }
       }
       else {
+        who = u3k(ship);
         fprintf(stderr, "boot: retrieving %s's public keys\r\n",
                                            u3_Host.ops_u.who_c);
-        oct = u3dc("hull:give:dawn", u3k(bok), u3k(ship));
       }
 
-      u3_noun luh = _dawn_eth_rpc(url_c, u3k(oct));
-      hul = u3dc("hull:take:dawn", u3k(ship), u3k(luh));
+      {
+        u3_noun oct = u3dc("hull:give:dawn", u3k(bok), u3k(who));
+        u3_noun luh = _dawn_eth_rpc(url_c, u3k(oct));
+        u3_noun nit = u3dc("hull:take:dawn", u3k(ship), u3k(luh));
 
-      u3z(oct); u3z(luh);
+        if ( u3_nul == nit ) {
+          fprintf(stderr, "boot: public key retrieval failed\r\n");
+          // bails, won't return
+          u3_lo_bail();
+          return u3_none;
+        }
+        else {
+          hul = u3k(u3t(nit));
+        }
+
+        u3z(oct); u3z(luh); u3z(nit);
+      }
+      u3z(who);
     }
 
     //  +live:dawn: network state
@@ -358,9 +384,19 @@ u3_dawn_vent(u3_noun seed)
 
     u3_noun oct = u3do("czar:give:dawn", u3k(bok));
     u3_noun raz = _dawn_eth_rpc(url_c, u3k(oct));
-    zar = u3do("czar:take:dawn", u3k(raz));
+    u3_noun nit = u3do("czar:take:dawn", u3k(raz));
 
-    u3z(oct); u3z(raz);
+    if ( u3_nul == nit ) {
+      fprintf(stderr, "boot: galaxy table retrieval failed\r\n");
+      // bails, won't return
+      u3_lo_bail();
+      return u3_none;
+    }
+    else {
+      zar = u3k(u3t(nit));
+    }
+
+    u3z(oct); u3z(raz); u3z(nit);
   }
 
   //  (list turf): ames domains
@@ -376,9 +412,19 @@ u3_dawn_vent(u3_noun seed)
 
     u3_noun oct = u3do("turf:give:dawn", u3k(bok));
     u3_noun fut = _dawn_eth_rpc(url_c, u3k(oct));
-    tuf = u3do("turf:take:dawn", u3k(fut));
+    u3_noun nit = u3do("turf:take:dawn", u3k(fut));
 
-    u3z(oct); u3z(fut);
+    if ( u3_nul == nit ) {
+      fprintf(stderr, "boot: network domains retrieval failed\r\n");
+      // bails, won't return
+      u3_lo_bail();
+      return u3_none;
+    }
+    else {
+      tuf = u3k(u3t(nit));
+    }
+
+    u3z(oct); u3z(fut); u3z(nit);
   }
 
   u3z(rank);
