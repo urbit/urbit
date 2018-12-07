@@ -7,7 +7,7 @@
 ::
 ++  module-ova
   |=  sys=path
-  ^-  (list ovum)
+  ^-  (list [wire [%veer term path cord]])
   %+  turn
     ^-  (list (pair term path))
     :~  ::  sys/zuse: standard library
@@ -39,7 +39,6 @@
         [%j /vane/jael]
     ==
   |=  [=term =path]
-  ^-  ovum
   =/  pax  (weld sys path)
   =/  txt  .^(@ %cx (weld pax /hoon))
   [[%vane path] [%veer term pax txt]]

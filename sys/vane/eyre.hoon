@@ -2247,7 +2247,7 @@
 .   ==
 =|  bolo
 =*  bol  -
-|=  {now/@da eny/@ ski/sley}                            ::  activate
+|=  [our=ship now=@da eny=@uvJ ski=sley]                ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  call                                                ::  handle request

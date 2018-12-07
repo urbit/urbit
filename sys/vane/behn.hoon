@@ -147,7 +147,7 @@
 .  ==
 =|  coke                                                ::  persistent state
 =*  state  -                                            ::
-|=  {now/@da eny/@ ski/sley}                            ::  current invocation
+|=  [our=ship now=@da eny=@uvJ ski=sley]                ::  current invocation
 ^?
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request

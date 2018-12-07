@@ -1221,7 +1221,7 @@
   ::
   =|  $:  fox=fort                                      ::  kernel state
       ==                                                ::
-  |=  [now=@da eny=@ ski=sley]                          ::  current invocation
+  |=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
   ^?                                                    ::  opaque core
   =<
     |%                                                  ::  vane interface
