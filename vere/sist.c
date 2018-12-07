@@ -1189,6 +1189,19 @@ sist_key(u3_noun des)
 void
 u3_sist_boot(void)
 {
+  //  iterate entropy
+  //
+  {
+    c3_w    eny_w[16];
+    u3_noun eny;
+
+    c3_rand(eny_w);
+    eny = u3i_words(16, eny_w);
+
+    u3v_plan(u3nt(u3_blip, c3__arvo, u3_nul), u3nc(c3__wack, u3k(eny)));
+    u3z(eny);
+  }
+
   if ( c3n == u3_Host.ops_u.nuu ) {
     _sist_rest();
 
@@ -1261,6 +1274,10 @@ u3_sist_boot(void)
     }
 
     u3A->own = who;
+
+    //  set single-home
+    //
+    u3v_plan(u3nt(u3_blip, c3__arvo, u3_nul), u3nc(c3__whom, u3k(who)));
 
     // initialize ames
     {
