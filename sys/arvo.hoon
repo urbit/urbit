@@ -428,7 +428,7 @@
     ?~  vanes  ~
     ?.  =(lal label.i.vanes)  $(vanes t.vanes)
     ~|  [%failed-scry ron bed]
-    %-  scry:(wink:(vent who lal vil bud vane.i.vanes) now (shax now) ..^$)
+    %-  scry:(wink:(vent who lal vil bud vane.i.vanes) now eny ..^$)
     [fur ren bed]
   ::
   ++  dink                                              ::  vase by char
@@ -469,7 +469,7 @@
     ^-  [p=(list move) q=_vane]
     =+  ven=(vent who lal vil bud vane)
     ~|  [%failed-take lal]
-    =+  win=(wink:ven now (shax now) beck)
+    =+  win=(wink:ven now eny beck)
     (swim:win org pux hen hil)
   ::
   ++  fire                                              ::  execute
@@ -698,7 +698,7 @@
 ::
 ++  poke                                                ::  external apply
   |=  [now=@da ovo=ovum]
-  =.  eny  (mix eny (shaz now))
+  =.  eny  (shaz (cat 3 eny now))
   ^-  [(list ovum) _+>.$]
   ::
   ::  These external events are actually effects on arvo proper.
@@ -746,7 +746,7 @@
   ::
       %wack
     ?>  ?=(@ q.q.ovo)
-    =.  eny  (mix eny (shaz q.q.ovo))
+    =.  eny  (shaz (cat 3 eny q.q.ovo))
     [~ +>.$]
   ==
 ::                                                
