@@ -8361,14 +8361,18 @@
     ::
     ++  bloq
       |=  snap=snapshot:jael
-      ^-  @ud
+      ^-  (unit @ud)
+      =-  ?:(?=(%| -.out) ~ (some p.out))
+      ^=  out  %-  mule  |.
       latest-block.snap
     ::  +czar:snap:dawn: extract galaxy table
     ::
     ++  czar
       |=  snap=snapshot:jael
-      ^-  (map ship [=life =pass])
-      %-  malt
+      ^-  (unit (map ship [=life =pass]))
+      =-  ?:(?=(%| -.out) ~ (some p.out))
+      ^=  out  %-  mule  |.
+      %-  ~(gas by *(map ship [=life =pass]))
       %+  turn  (gulf 0 255)
       |=  gal=@
       ^-  [ship [life pass]]
@@ -8379,26 +8383,24 @@
     ::
     ++  hull
       |=  [who=ship snap=snapshot:jael]
-      ^-  hull:constitution:ethe
-      =/  res  (~(get by hul.eth.snap) who)
-      ?~  res
-        ~&  ['hull not found in snapshot; can\'t verify' who=who]
-        !!
-      u.res
+      ^-  (unit hull:constitution:ethe)
+      (~(get by hul.eth.snap) who)
     ::  +turf:snap:dawn: extract network domains
     ::
     ++  turf
       |=  snap=snapshot:jael
-      ^-  (list ^turf)
+      ^-  (unit (list ^turf))
+      =-  ?:(?=(%| -.out) ~ (some p.out))
+      ^=  out  %-  mule  |.
       %+  murn
-        ^-  (list (pair))
+        ^-  (list host:eyre)
         %+  murn
           ^-  (list @t)
           ~[pri sec ter]:dns.eth.snap
         |=  dom=@t
-        ^-  (unit (pair))
+        ^-  (unit host:eyre)
         (rush dom thos:de-purl:html)
-      |=([* a=*] ((soft ^turf) a))
+      |=(a=host:eyre ?:(?=(%| -.a) ~ (some p.a)))
     --
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::

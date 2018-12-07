@@ -189,22 +189,22 @@
 ::
 ++  test-snap-bloq
   %+  expect-eq
-    !>  4.230.000
+    !>  [~ 4.230.000]
     !>  (bloq:snap:dawn snap)
 ::
 ++  test-snap-hull
   %+  expect-eq
-    !>  hul
+    !>  [~ hul]
     !>  (hull:snap:dawn ~zod snap)
 ::
 ++  test-snap-czar
   %+  expect-eq
     !>  256
-    !>  ~(wyt by (czar:snap:dawn snap))
+    !>  ~(wyt by (need (czar:snap:dawn snap)))
 ::
 ++  test-snap-turf
   %+  expect-eq
-    !>  `(list turf)`~[~['org' 'urbit'] ~['org' 'urbit']]
+    !>  [~ `(list turf)`~[~['org' 'urbit'] ~['org' 'urbit']]]
     !>  (turf:snap:dawn snap)
 ::
 ++  test-veri-good
