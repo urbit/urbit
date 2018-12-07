@@ -4,7 +4,7 @@
 |=  pit/vase
 =,  eyre
 =,  wired
-=,  unity 
+=,  unity
 =,  format
 =,  mimes:html
 =,  html
@@ -280,41 +280,6 @@
   |=  {sas/@uG mit/mite rez/@}  ^-  httr
   ::  (weld (turn cug |=(a=@t ['set-cookie' a]))
   [sas ~[content-type+(en-mite mit)] [~ (as-octs rez)]]
-::
-++  add-links                                           :: x-urbit:// urls
-  |=  a/wall  ^-  marl
-  ?.  [x-urbit-links=&]  [;/((of-wall a))]~             :: default disable
-  |-  ^-  marl
-  ?~  a  ~
-  =^  pax  i.a  ::  parse path if any
-    ^-  {(unit path) tape}
-    =/  vex  (fel:stab [1 1] i.a)
-    ?~  q.vex  [~ i.a]
-    [`p q.q]:u.q.vex
-  ?~  pax  [;/("{i.a}\0a") $(a t.a)]
-  :-  ;a/"x-urbit:{(spud u.pax)}":"{(spud u.pax)}"
-  [;/("{i.a}\0a") $(a t.a)]
-::
-++  render-tang                                         ::  tanks to manx
-  |=  {dep/@uvH tan/tang}
-  ;html
-    ;head
-      ;link(rel "stylesheet", href "/lib/base.css");
-      ;title: server error
-    ==
-    ;body:div#c.err:pre:code:"*{(add-links (wush 80 tan))}"
-    ;script@"/~/on/{<dep>}.js";
-  ==
-::
-++  render-turbo-tang
-  |=  tan/tang
-  ;html
-    ;head
-      ;link(rel "stylesheet", href "/lib/base.css");
-      ;title: server error
-    ==
-    ;body:div#c.err:pre:code:"*{(add-links (wush 80 tan))}"
-  ==
 ::
 ++  favi                                                ::  XX favicon
   0w3.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.
@@ -1170,10 +1135,51 @@
     (execute-turbo tea live=%.n req)
   ::
   ++  execute-turbo
+    ~/  %execute-turbo
     |=  [tea=whir live=? request=schematic:ford]
     %+  pass-note  tea
     :*  %f  %build  our  live
-        [%dude [|.(+)]:[%leaf "eyre: execute {<tea>}"] request]
+        [%dude |.([%leaf "eyre: execute {<tea>}"]) request]
+    ==
+  ::
+  ++  add-links                                           :: x-urbit:// urls
+    ~/  %add-links
+    |=  a/wall  ^-  marl
+    ?.  [x-urbit-links=&]  [;/((of-wall a))]~             :: default disable
+    |-  ^-  marl
+    ?~  a  ~
+    =^  pax  i.a  ::  parse path if any
+      ^-  {(unit path) tape}
+      =/  vex  (fel:stab [1 1] i.a)
+      ?~  q.vex  [~ i.a]
+      [`p q.q]:u.q.vex
+    ?~  pax  [;/("{i.a}\0a") $(a t.a)]
+    :-  ;a/"x-urbit:{(spud u.pax)}":"{(spud u.pax)}"
+    [;/("{i.a}\0a") $(a t.a)]
+  ::
+  ++  render-tang                                         ::  tanks to manx
+    ~/  %render-tang
+    |=  {dep/@uvH tan/tang}
+    ~&  [%render-tang dep]
+    %-  (slog tan)
+    ;html
+      ;head
+        ;link(rel "stylesheet", href "/lib/base.css");
+        ;title: server error
+      ==
+      ;body:div#c.err:pre:code:"*{(add-links (wush 80 tan))}"
+      ;script@"/~/on/{<dep>}.js";
+    ==
+  ::
+  ++  render-turbo-tang
+    ~/  %render-turbo-tang
+    |=  tan/tang
+    ;html
+      ;head
+        ;link(rel "stylesheet", href "/lib/base.css");
+        ;title: server error
+      ==
+      ;body:div#c.err:pre:code:"*{(add-links (wush 80 tan))}"
     ==
   ::
   ++  fail

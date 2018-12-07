@@ -2117,8 +2117,7 @@
           [%sunk p=ship q=life]                         ::  report death
       ==  ==  ==                                        ::
     ++  public                                          ::  public key state
-      $:  live=?                                        ::  seen in current era
-          life=life                                     ::  current key number
+      $:  life=life                                     ::  current key number
           pubs=(map life pass)                          ::  pubkeys by number
       ==                                                ::
     ++  remote                                          ::  remote notification
@@ -2177,19 +2176,25 @@
     ==                                                  ::
   ++  snapshot                                          ::  rewind point
     =,  constitution:ethe                               ::
-    $:  eve=logs:able                                   ::  eth absolute state
-        kyz=(map ship public:able)                      ::  public key state
+    $:  kyz=(map ship public:able)                      ::  public key state
         $=  eth                                         ::
           $:  dns=dnses                                 ::  on-chain dns state
               hul=(map ship hull)                       ::  on-chain ship state
         ==                                              ::
-        etn=state-eth-node                              ::  eth connection state
-    ==                                                  ::
+        eth-bookmark
+    ==
+  ::  +eth-bookmark: cursor into the ethereum chain
+  ::
+  ++  eth-bookmark
+    $:  heard=(set event-id:ethe)
+        latest-block=@ud
+    ==
+  ::  +state-eth-node: state of a connection to an ethereum node
+  ::
   ++  state-eth-node                                    ::  node config + meta
     $:  source=(each ship node-src)                     ::  learning from
-        heard=(set event-id:ethe)                       ::  processed events
-        latest-block=@ud                                ::  last heard block
         foreign-block=@ud                               ::  node's latest block
+        eth-bookmark
     ==                                                  ::
   ::                                                    ::
   ::::                  ++pki:jael                      ::  (1h2) certificates
@@ -8316,7 +8321,7 @@
     ++  bloq
       |=  snap=snapshot:jael
       ^-  @ud
-      latest-block.etn.snap
+      latest-block.snap
     ::  +czar:snap:dawn: extract galaxy table
     ::
     ++  czar

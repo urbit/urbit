@@ -787,10 +787,11 @@
   =>  .(a ^.(homo a))
   |-  ^+  a
   ?~  a  ~
+  =+  s=(skid t.a |:(c=i.a (b c i.a)))
   %+  weld
-    $(a (skim t.a |:(c=i.a (b c i.a))))
+    $(a p.s)
   ^+  t.a
-  [i.a $(a (skim t.a |:(c=i.a !(b c i.a))))]
+  [i.a $(a q.s)]
 ::
 ++  spin                                                ::  stateful turn
   ::
@@ -5779,27 +5780,7 @@
   ++  crub
     ~+
     ;~  pose
-      %+  cook
-        |=(det/date `dime`[%da (year det)])
-      ;~  plug
-        %+  cook
-          |=({a/@ b/?} [b a])
-        ;~(plug dim:ag ;~(pose (cold | hep) (easy &)))
-        ;~(pfix dot mot:ag)   ::  month
-        ;~(pfix dot dip:ag)   ::  day
-        ;~  pose
-          ;~  pfix
-            ;~(plug dot dot)
-            ;~  plug
-              dum:ag
-              ;~(pfix dot dum:ag)
-              ;~(pfix dot dum:ag)
-              ;~(pose ;~(pfix ;~(plug dot dot) (most dot qix:ab)) (easy ~))
-            ==
-          ==
-          (easy [0 0 0 ~])
-        ==
-      ==
+      (cook |=(det/date `dime`[%da (year det)]) when)
     ::
       %+  cook
         |=  {a/(list {p/?($d $h $m $s) q/@}) b/(list @)}
@@ -5923,6 +5904,28 @@
       (stag %$ crub)
     ==
   ::
+  ++  when
+    ~+
+    ;~  plug
+      %+  cook
+        |=({a/@ b/?} [b a])
+      ;~(plug dim:ag ;~(pose (cold | hep) (easy &)))
+      ;~(pfix dot mot:ag)   ::  month
+      ;~(pfix dot dip:ag)   ::  day
+      ;~  pose
+        ;~  pfix
+          ;~(plug dot dot)
+          ;~  plug
+            dum:ag
+            ;~(pfix dot dum:ag)
+            ;~(pfix dot dum:ag)
+            ;~(pose ;~(pfix ;~(plug dot dot) (most dot qix:ab)) (easy ~))
+          ==
+        ==
+        (easy [0 0 0 ~])
+      ==
+    ==
+  ::
   ++  zust
     ~+
     ;~  pose
@@ -5950,6 +5953,9 @@
       =+  con=(slay txt)
       ?.(&(?=({~ $$ @ @} con) =(p.p.u.con mod)) ~ [~ q.p.u.con])
   ::
+      %da
+    (rush txt ;~(pfix sig (cook year when:so)))
+  ::
       %p
     (rush txt ;~(pfix sig fed:ag))
   ::
@@ -5961,6 +5967,9 @@
   ::
       %uv
     (rush txt ;~(pfix (jest '0v') viz:ag))
+  ::
+      %ta
+    (rush txt ;~(pfix ;~(plug sig dot) urs:ab))
   ::
       %tas
     (rush txt sym)
@@ -9757,10 +9766,11 @@
     ^-  type
     ?-  -.lap
       %&  p.lap
-      %|  %-  fire
+      %|  %-  fork
           %+  turn  ~(tap in q.lap)
-          |=  {a/type b/foot}
-          [a [%dry %$ 1]]
+          |=  [a=type *]
+          ?>  ?=([%core *] a)
+          [%core q.q.a q.a]
     ==
   ::                                                    ::
   ++  feel                                              ::  detect existence
@@ -11609,6 +11619,7 @@
 ++  seem  |=(toy/typo `type`toy)                        ::  promote typo
 ++  seer  |=(vix/vise `vase`vix)                        ::  promote vise
 ++  sell                                                ::  tank pretty-print
+  ~/  %sell
   |=  vax/vase  ^-  tank
   ~|  %sell
   (~(deal us p.vax) q.vax)

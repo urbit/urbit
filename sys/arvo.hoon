@@ -182,7 +182,9 @@
   ::
   ++  wink                                              ::  deploy
     |=  {now/@da eny/@ ski/slyd}
-    =^  rig  worm.vane  (~(slym wa worm.vane) vase.vane [who +<])  ::  activate vane
+    =^  rig  worm.vane
+      ~|  [%failed-vane-activation-for lal]
+      (~(slym wa worm.vane) vase.vane [who +<])  ::  activate vane
     ~%  %wink  +>+>  ~
     |%
     ++  slid
@@ -203,14 +205,18 @@
     ++  slur                                            ::  call gate on
       |=  {gat/vase hil/mill}
       ^-  (unit (pair vase worm))
-      =^  sam  worm.vane  (~(slot wa worm.vane) 6 gat)
+      =^  sam  worm.vane
+        ~|  [%failed-slot-in lal]
+        (~(slot wa worm.vane) 6 gat)
       =^  hig  worm.vane
+        ~|  [%failed-nest-in lal]
         ?-  -.hil
           %&  (~(nest wa worm.vane) p.sam p.p.hil)
           %|  (~(nets wa worm.vane) p.sam p.p.hil)
         ==
       ?.  hig
         ~
+      ~|  [%failed-slym-in lal]
       `(~(slym wa worm.vane) gat +>.hil)
     ::
     ++  slur-a  ~/(%slur-a |=({gat/vase hil/mill} =+(%a (slur gat hil))))
@@ -354,6 +360,7 @@
               hil/mill
           ==
       ^-  [(list move) _vane]
+      ~|  [%failed-swim lal org pux]
       ::  ~&  [%swim-wyt `@ud`~(wyt in worm.vane)]
       =+  ^=  pru
           ?~  pux
@@ -390,6 +397,7 @@
       ==
   =-  ?:(?=(%| -.res) ((slog p.res) ~) (some p.res))
   ^=  res  %-  mule  |.
+  ~|  [%failed-vint lal]
   =+  gen=(rain pax txt)
   ~&  [%vane-parsed `@p`(mug gen)]
   =+  pro=(vent who lal vil bud [(slym (slap bud gen) bud) *worm])
@@ -419,6 +427,7 @@
     |-  ^-  (unit (unit (cask)))
     ?~  vanes  ~
     ?.  =(lal label.i.vanes)  $(vanes t.vanes)
+    ~|  [%failed-scry ron bed]
     %-  scry:(wink:(vent who lal vil bud vane.i.vanes) now (shax now) ..^$)
     [fur ren bed]
   ::
@@ -459,6 +468,7 @@
     |=  {org/@tas lal/@tas pux/(unit wire) hen/duct hil/mill =vane}
     ^-  [p=(list move) q=_vane]
     =+  ven=(vent who lal vil bud vane)
+    ~|  [%failed-take lal]
     =+  win=(wink:ven now (shax now) beck)
     (swim:win org pux hen hil)
   ::
@@ -480,6 +490,7 @@
   ++  jack                                              ::  dispatch card
     |=  {lac/? gum/muse}
     ^-  {{p/(list ovum) q/(list muse)} _vanes}
+    ~|  %failed-jack
     ::  =.  lac  |(lac ?=(?(%g %f) p.gum))
     ::  =.  lac  &(lac !?=($b p.gum))
     %+  fire
@@ -855,6 +866,7 @@
     ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
     :_  t.vanes
     :-  label.i.vanes
+    ~|  [%failed-vane-activation now lal.fav]
     vane:(ruck:(vent who lal.fav vil bud [vase.vane.i.vanes *worm]) pax.fav txt.fav)
   ==
 ::

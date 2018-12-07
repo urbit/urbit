@@ -82,7 +82,6 @@
   ==                                                    ::
 ++  state-absolute                                      ::  absolute urbit
   $:  pry/(map ship (map ship safe))                    ::  promises
-      eve=logs                                          ::  on-chain events
   ==                                                    ::
 ++  state-snapshots                                     ::  rewind points
   $:  interval=_100                                     ::  block interval
@@ -702,7 +701,7 @@
         =/  cub  (nol:nu:crub:crypto key.seed.tac)
         %+  ~(put by kyz.puk.sub)
           our
-        [& lyf.seed.tac (my [lyf.seed.tac pub:ex:cub] ~)]
+        [lyf.seed.tac (my [lyf.seed.tac pub:ex:cub] ~)]
       ::  our initial private key, as a +tree of +rite
       ::
       =/  rit  (sy [%jewel (my [lyf.seed.tac key.seed.tac] ~)] ~)
@@ -711,7 +710,7 @@
       ::
       =/  kyz
         %-  ~(run by czar.tac)
-        |=([=life =pass] `public`[live=| life (my [life pass] ~)])
+        |=([=life =pass] `public`[life (my [life pass] ~)])
       =.  +>.$
         %-  curd  =<  abet
         (pubs:~(feel su hen our urb sub etn sap) kyz)
@@ -768,7 +767,7 @@
       ::  our initial public key
       ::
       =.  kyz.puk.sub
-        (~(put by kyz.puk.sub) our [& 1 (my [1 pub:ex:cub] ~)])
+        (~(put by kyz.puk.sub) our [1 (my [1 pub:ex:cub] ~)])
       ::  our private key, as a +tree of +rite
       ::
       ::    Private key updates are disallowed for fake ships,
@@ -1109,10 +1108,10 @@
   ::
   ++  extract-snap                                    ::  extract rewind point
     ^-  snapshot
-    :*  eve.urb
-        kyz.puk.sub
-        +.eth.sub
-        etn(source *(each ship node-src))
+    :*  kyz.puk.sub
+        [dns hul]:eth.sub
+        heard.etn
+        latest-block.etn
     ==
   ::                                                    ::  ++feed:su
   ++  feed                                              ::  subscribe to view
@@ -1149,7 +1148,7 @@
       %.  [[hen ~ ~] snap+last-snap]
       %_  vent-pass
       :: %_  ..feed  ::TODO  see ++abet
-        :: moz      [[hen %give %vent &+eve] moz]
+        :: moz      [[hen %give %vent] moz]
         yen.eth  (~(put in yen.eth) hen)
       ==
     ::                                                  ::  ++fake:feed:su
@@ -1159,7 +1158,7 @@
       ++  pubs
         |=  who=ship
         =/  cub  (pit:nu:crub:crypto 512 who)
-        =/  pub  [live=| life=1 (my [1 pub:ex:cub] ~)]
+        =/  pub  [life=1 (my [1 pub:ex:cub] ~)]
         =.  moz  [[hen %give %pubs pub] moz]
         (pubs:feel (my [who pub] ~))
       --
@@ -1186,7 +1185,7 @@
       ::  update public key store and notify subscribers
       ::  of the new state
       ::
-      :: ~&  [%sending-pubs-about who life.pub live.pub]
+      :: ~&  [%sending-pubs-about who life.pub]
       %+  exec(kyz.puk (~(put by kyz.puk) who pub))
         (~(get ju yen.puk) who)
       [%give %pubs pub]
@@ -1313,21 +1312,21 @@
             =(who (^sein:title our))
         ==
       ?~  old
-        [live=& life (my [life pass] ~)]
+        [life (my [life pass] ~)]
       =/  fyl  life.u.old
       =/  sap  (~(got by pubs.u.old) fyl)
       ~|  [%met-mismatch who life=[old=fyl new=life] pass=[old=sap new=pass]]
       ?>  ?:  =(fyl life)
             =(sap pass)
           =(+(fyl) life)
-      [live=& life (~(put by pubs.u.old) life pass)]
+      [life (~(put by pubs.u.old) life pass)]
     ?.  ?=(^ old)
       ~|  [%met-unknown-ship who]  !!
     =/  fyl  life.u.old
     =/  sap  (~(got by pubs.u.old) fyl)
     ~|  [%met-mismatch who life=[old=fyl new=life] pass=[old=sap new=pass]]
     ?>  &(=(fyl life) =(sap pass))
-    [live=& life pubs.u.old]
+    [life pubs.u.old]
   ::                                                    ::  ++file:su
   ++  file                                              ::  process event logs
     ::TODO  whenever we add subscriptions for data,
@@ -1358,7 +1357,7 @@
       ::      sends out entire new state, rather than
       ::      just the processed changes.
       %+  fall  (~(get by kyz.puk) who)
-      %*(. *public live |)
+      *public
     ::
     ++  file-keys
       |=  [who=ship =life =pass]
@@ -1370,15 +1369,14 @@
         ~|  [%key-mismatch who life `@ux`u.puk `@ux`pass (get-public ~zod)]
         ?>(=(u.puk pass) kyz)
       %+  ~(put by kyz)  who
-      :+  live.pub
-        (max life life.pub)
+      :-  (max life life.pub)
       (~(put by pubs.pub) life pass)
     ::
     ++  file-discontinuity
       |=  who=ship
       ^+  kyz
       =+  (get-public who)
-      (~(put by kyz) who -(live |))
+      (~(put by kyz) who -)
     ::
     ++  file-event
       |=  [wer=event-id dif=diff-constitution]
@@ -1525,8 +1523,6 @@
     |=  ven=chain
     %_  +>
       hab   [[%ethe ven] hab]
-      eve   ?:  ?=(%& -.ven)  p.ven
-            (~(uni by eve) p.ven)
     ==
   ::                                                    ::  ++lawn:ur
   ++  lawn                                              ::  debts, rex to pal
@@ -2104,7 +2100,7 @@
       ==
     =^  snap=snapshot  +>.$
       ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
-        [%*(. *snapshot latest-block.etn launch:contracts) +>.$]
+        [%*(. *snapshot latest-block launch:contracts) +>.$]
       |-  ^-  [snapshot _+>.^$]
       =^  snap=[block-number=@ud snap=snapshot]  old-qeu
         ~(get to old-qeu)
@@ -2115,7 +2111,7 @@
       ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
         [snap.snap +>.^$]
       $
-    ~&  [%restoring-block block latest-block.etn.snap ~(wyt by hul.eth.snap)]
+    ~&  [%restoring-block block latest-block.snap ~(wyt by hul.eth.snap)]
     (restore-snap snap &)
   ::                                                    ::  ++restore-snap:et
   ++  restore-snap                                      ::  restore snapshot
@@ -2128,7 +2124,7 @@
         ~(tap by yen.puk.sub)
       |-  ^+  +>.^$
       ?~  subs  +>.^$
-      =/  pub  (fall (~(get by kyz.snap) p.i.subs) %*(. *public live |))
+      =/  pub  (fall (~(get by kyz.snap) p.i.subs) *public)
       =.  +>.^$  (exec q.i.subs [%give %pubs pub])
       $(subs t.subs)
     ::  update vent subscribers
@@ -2137,11 +2133,12 @@
     ::  keep the following in sync with ++extract-snap:file:su
     ::
     %=    +>.$
-        eve.urb       eve.snap
-        etn           etn.snap(source source.etn)
-        kyz.puk.sub   kyz.snap
-        +.eth.sub     eth.snap
-        sap           sap(last-block 0)
+        heard.etn         heard.snap
+        latest-block.etn  latest-block.snap
+        kyz.puk.sub       kyz.snap
+        dns.eth.sub       dns.eth.snap
+        hul.eth.sub       hul.eth.snap
+        sap               sap(last-block 0)
         moves
       ?.  look  moves
       =-  [[hen %pass /wind/look %j %look our -] moves]
