@@ -287,7 +287,10 @@ u3_dawn_vent(u3_noun seed)
   //
   if ( c3y == u3_Host.ops_u.etn ) {
     fprintf(stderr, "boot: extracting block from snapshot\r\n");
-    bok = u3do("bloq:snap:dawn", u3k(u3t(sap)));
+
+    bok = _dawn_need_unit(u3do("bloq:snap:dawn", u3k(u3t(sap))),
+                          "boot: failed to extract "
+                          "block from snapshot");
   }
   else {
     fprintf(stderr, "boot: retrieving latest block\r\n");
@@ -306,7 +309,11 @@ u3_dawn_vent(u3_noun seed)
     u3_noun hul;
 
     if ( c3y == u3_Host.ops_u.etn ) {
-      hul = u3dc("hull:snap:dawn", u3k(ship), u3k(u3t(sap)));
+      fprintf(stderr, "boot: extracting public keys from snapshot\r\n");
+
+      hul = _dawn_need_unit(u3dc("hull:snap:dawn", u3k(ship), u3k(u3t(sap))),
+                            "boot: failed to extract "
+                            "public keys from snapshot");
     }
     else if ( c3__pawn == rank ) {
       //  irrelevant, just bunt +hull
@@ -377,7 +384,11 @@ u3_dawn_vent(u3_noun seed)
   //  (map ship [=life =pass]): galaxy table
   //
   if ( c3y == u3_Host.ops_u.etn ) {
-    zar = u3do("czar:snap:dawn", u3k(u3t(sap)));
+    fprintf(stderr, "boot: extracting galaxy table from snapshot\r\n");
+
+    zar = _dawn_need_unit(u3do("czar:snap:dawn", u3k(u3t(sap))),
+                          "boot: failed to extract "
+                          "galaxy table from snapshot");
   }
   else {
     fprintf(stderr, "boot: retrieving galaxy table\r\n");
@@ -396,7 +407,11 @@ u3_dawn_vent(u3_noun seed)
     tuf = _dawn_turf(u3_Host.ops_u.dns_c);
   }
   else if ( c3y == u3_Host.ops_u.etn ) {
-    tuf = u3do("turf:snap:dawn", u3k(u3t(sap)));
+    fprintf(stderr, "boot: extracting network domains from snapshot\r\n");
+
+    tuf = _dawn_need_unit(u3do("turf:snap:dawn", u3k(u3t(sap))),
+                          "boot: failed to extract "
+                          "network domains from snapshot");
   }
   else {
     fprintf(stderr, "boot: retrieving network domains\r\n");
