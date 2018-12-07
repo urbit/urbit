@@ -514,10 +514,12 @@
   ::
   |%
   ++  am                                                ::    am
+    ~%  %ames-am  ..is  ~
     |_  [now=@da fox=fort ski=sley]                     ::  protocol engine
     ::  +deed: scry for our deed
     ::
     ++  deed
+      ~/  %deed
       |=  [our=ship now=@da lyf=life]
       ;;  ^deed
       %-  need  %-  need
@@ -528,6 +530,7 @@
     ::  +sein: scry for sponsor
     ::
     ++  sein
+      ~/  %sein
       |=  [our=ship now=@da who=ship]
       ;;  ship
       %-  need  %-  need
@@ -536,6 +539,7 @@
     ::  +saxo: scry for sponsorship chain
     ::
     ++  saxo
+      ~/  %saxo
       |=  [our=ship now=@da who=ship]
       ;;  (list ship)
       %-  need  %-  need
@@ -543,6 +547,7 @@
       [[151 %noun] %j (en-beam:format [our %saxo da+now] /(scot %p who))]
     ::
     ++  vein                                            ::    vein:am
+      ~/  %vein
       |=  [our=ship =life vein=(map life ring)]         ::  new private keys
       ^-  fort
       ::
@@ -582,6 +587,7 @@
       ==
     ::
     ++  gnaw                                            ::    gnaw:am
+      ~/  %gnaw
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
       ?.  =(protocol-version (end 0 3 pac))  [~ fox]
@@ -644,6 +650,7 @@
       [%pito (need nex)]~
     ::
     ++  rack                                            ::    rack:am
+      ~/  %rack
       |=  [soq=sock cha=path cop=coop]                  ::  e2e ack
       =+  oh=(ho:(um p.soq) q.soq)
       =^  gud  oh  (cook:oh cop cha ~)
@@ -651,6 +658,7 @@
       (cans:oh cha)
     ::
     ++  wake                                            ::    wake:am
+      ~/  %wake
       |=  hen=duct                                      ::  harvest packets
       ^-  [p=(list boon) q=fort]
       =.  tim.fox  ~
@@ -1224,8 +1232,10 @@
   |=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
   ^?                                                    ::  opaque core
   =<
+    ~%  %ames-protocol  ..is  ~
     |%                                                  ::  vane interface
     ++  call                                            ::  handle request
+      ~/  %call
       |=  $:  hen=duct
               type=*
               wrapped-task=(hobo task:able)
@@ -1257,14 +1267,17 @@
     ::
     ++  stay  fox
     ++  take                                            ::  accept response
+      ~/  %take
       |=  [tea=wire hen=duct hin=(hypo sign:able)]
       ^-  [(list move) _..^$]
       =^  duy  ..knap
         (knap tea hen q.hin)
       [duy ..^$]
     --
+  ~%  %ames-impl  ..is  ~
   |%
   ++  clop
+    ~/  %clop
     |=  [now=@da hen=duct bon=boon]
     ^-  [(list move) fort]
     ?-    -.bon
@@ -1342,6 +1355,7 @@
     ==
   ::
   ++  knap
+    ~/  %knap
     |=  [tea=wire hen=duct sih=sign:able]
     ^-  [(list move) _+>]
     ?-  +<.sih
@@ -1417,6 +1431,7 @@
     ==
   ::
   ++  knob
+    ~/  %knob
     |=  [hen=duct kyz=task:able]
     ^-  [(list move) _+>]
     ?:  ?=(%crud -.kyz)
@@ -1513,6 +1528,7 @@
     $(p.fuy t.p.fuy, out (weld (flop toe) out))
   ::
   ++  temp
+    ~/  %temp
     |=  [our=ship his=ship tyl=path]
     ^-  (unit (unit cage))
     ?:  ?=([?(%show %tell) *] tyl)
