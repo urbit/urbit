@@ -821,10 +821,13 @@
 ++  swag                                                ::  slice
   |*  {{a/@ b/@} c/(list)}
   (scag +<-> (slag +<-< c))
+::  +turn: transform each value of list :a using the function :b
 ::
-++  turn                                                ::  transform
+++  turn
   ~/  %turn
-  |*  {a/(list) b/gate}
+  |*  [a=(list) b=gate]
+  =>  .(a (homo a))
+  ^-  (list _?>(?=(^ a) (b i.a)))
   |-
   ?~  a  ~
   [i=(b i.a) t=$(a t.a)]
