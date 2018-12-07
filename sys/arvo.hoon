@@ -103,25 +103,31 @@
 ::                section 3bE, Arvo core                ::
 ::
 ++  sloy
+  ::  +sloy: adapter from old style scrys to new style scrys
+  ::
+  ::    This does path parsing which shows up hot, but removing the last +slay
+  ::    here requires deeper interface changes.
+  ::
   !:
+  ~/  %sloy
   |=  sod/slyd
   ^-  slyt
   |=  {ref/* raw/*}
   =+  pux=((soft path) raw)
   ?~  pux  ~
   ?.  ?=({@ @ @ @ *} u.pux)  ~
-  =+  :*  hyr=(slay i.u.pux)
-          fal=(slay i.t.u.pux)
-          dyc=(slay i.t.t.u.pux)
+  =+  :*  hyr=(slaw %tas i.u.pux)
+          fal=(slaw %p i.t.u.pux)
+          dyc=(slaw %tas i.t.t.u.pux)
           ved=(slay i.t.t.t.u.pux)
           tyl=t.t.t.t.u.pux
       ==
-  ?.  ?=({$~ $$ $tas @} hyr)  ~
-  ?.  ?=({$~ $$ $p @} fal)  ~
-  ?.  ?=({$~ $$ $tas @} dyc)  ~
+  ?~  hyr  ~
+  ?~  fal  ~
+  ?~  dyc  ~
   ?.  ?=(^ ved)  ~
-  =+  ron=q.p.u.hyr
-  =+  bed=[[q.p.u.fal q.p.u.dyc (case p.u.ved)] (flop tyl)]
+  =/  ron=@tas  u.hyr
+  =+  bed=[[u.fal u.dyc (case p.u.ved)] (flop tyl)]
   =+  bop=(sod ref ~ ron bed)
   ?~  bop  ~
   ?~  u.bop  [~ ~]
