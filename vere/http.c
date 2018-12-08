@@ -1017,11 +1017,11 @@ _http_serv_start(u3_http* htp_u)
       }
 
       uL(fprintf(uH, "http: listen: %s\n", uv_strerror(sas_i)));
-      _http_serv_free(htp_u);
 
       if ( 0 != htp_u->rox_u ) {
         _proxy_serv_free(htp_u->rox_u);
       }
+      _http_serv_free(htp_u);
       return;
     }
 
