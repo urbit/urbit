@@ -527,6 +527,8 @@ u3i_molt(u3_noun som, ...)
     }
     va_end(ap);
   }
+
+  c3_assert( 0 != len_w );
   pms_m = alloca(len_w * sizeof(struct _molt_pair));
 
   /* Install.
