@@ -152,7 +152,7 @@ u3v_nick(u3_noun vir, u3_noun cor)
     u3_noun pi_vir, qi_vir;
     u3_noun vix;
 
-    if ( (c3y == u3r_cell((i_vir=u3h(vir)), &pi_vir, &qi_vir)) &&
+    if ( (c3y == u3r_cell(i_vir, &pi_vir, &qi_vir)) &&
          (c3y == u3du(qi_vir)) &&
          (c3__hear == u3h(qi_vir)) )
     {
