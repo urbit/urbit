@@ -322,6 +322,8 @@ _sist_cask(c3_c* dir_c, u3_noun nun)
       strncat(say_c, paw_c, strlen(paw_c) - 1);
 
       say = u3do("slay", u3i_string(say_c));
+      free(say_c);
+
       if ( (u3_nul == say) ||
            (u3_blip != u3h(u3t(say))) ||
            ('p' != u3h(u3t(u3t(say)))) )
