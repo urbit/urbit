@@ -14,12 +14,7 @@ static size_t
 _dawn_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, uv_buf_t* buf_u)
 {
   size_t siz_t = uni_t * mem_t;
-  buf_u->base = realloc(buf_u->base, 1 + siz_t + buf_u->len);
-
-  if ( 0 == buf_u->base ) {
-    fprintf(stderr, "out of memory\n");
-    u3_lo_bail();
-  }
+  buf_u->base = c3_realloc(buf_u->base, 1 + siz_t + buf_u->len);
 
   memcpy(buf_u->base + buf_u->len, dat_v, siz_t);
   buf_u->len += siz_t;

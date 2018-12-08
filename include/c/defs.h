@@ -97,3 +97,12 @@
       void* rut = c3_malloc(s);                 \
       memset(rut, 0, s);                        \
       rut;})
+
+/* c3_realloc(): asserting realloc
+ */
+#define c3_realloc(a, b) ({                     \
+      void* rut = realloc(a, b);                \
+      if ( 0 == rut ) {                         \
+        c3_assert(!"memory lost");              \
+      }                                         \
+      rut;})
