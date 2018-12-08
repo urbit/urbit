@@ -469,7 +469,12 @@ _cj_je_fsck(u3_noun clu)
     }
   }
   u3z(clu);
-  return u3nt(u3i_string(nam_c), axe_l, huk);
+
+  {
+    u3_noun pro = u3nt(u3i_string(nam_c), axe_l, huk);
+    free(nam_c);
+    return pro;
+  }
 }
 
 /* _cj_find_cold(): search cold state for `bat`s [bash registry].
