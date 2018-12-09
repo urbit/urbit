@@ -795,21 +795,19 @@
   =>  ?:  =(nex hoon-version)
         [hot=`*`raw .]
       ~&  [%hoon-compile-upgrade nex]
-      =/  hot
-        .*(cop [%9 2 %10 [6 %1 [%noun hun]] %0 1])
+      =/  hot  (slum cop [%noun hun])
       .(cop .*(0 +.hot))
   ::  extract the hoon core from the outer gate (+ride)
   ::
   =/  hoc  .*(cop [%0 7])
   ::  compute the type of the hoon.hoon core
   ::
-  =/  hyp
-    -:.*(cop [%9 2 %10 [6 %1 [-.hot '+>']] %0 1])
+  =/  hyp  -:(slum cop [-.hot '+>'])
   ::  compile arvo
   ::
   =/  rav
     ~&  [%arvo-compile `@p`(mug hyp) `@p`(mug van)]
-    .*(cop [%9 2 %10 [6 %1 [hyp van]] %0 1])
+    (slum cop [hyp van])
   ::  activate arvo, and extract the arvo core from the outer gate
   ::
   =/  voc  .*(hoc [%7 +.rav %0 7])
@@ -819,10 +817,10 @@
     =/  arm  ?:(=(nex hoon-version) 'load' 'come')
     ::  compute the type of the arvo.hoon core
     ::
-    =/  vip  -:.*(cop [%9 2 %10 [6 %1 [-.rav '+>']] %0 1])
+    =/  vip  -:(slum cop [-.rav '+>'])
     ::  compute the formula for the upgrade gate
     ::
-    =/  fol  +:.*(cop [%9 2 %10 [6 %1 [vip arm]] %0 1])
+    =/  fol  +:(slum cop [vip arm])
     ::  produce the upgrade gate
     ::
     .*(voc fol)
@@ -838,8 +836,7 @@
     ==
   ::  call into the new kernel
   ::
-  =/  out
-    .*(gat [%9 2 %10 [6 %1 sam] %0 1])
+  =/  out  (slum gat sam)
   ::  tack a reset notification onto the product
   ::
   [[[/ %vega ~] ((list ovum) -.out)] +.out]

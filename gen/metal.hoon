@@ -73,7 +73,7 @@
               state-gate
             %=  $
               main-sequence  +.main-sequence
-              state-gate     .*(state-gate(+< -.main-sequence) -.state-gate)
+              state-gate  .*(state-gate [%9 2 %10 [6 %1 -.main-sequence] %0 1])
             ==
 ::
 ::  boot-two: startup formula
@@ -118,7 +118,7 @@
         ::
         ~>  %slog.[0 leaf+"1-c"]
         =+  ^=  compiler-tool
-            .*(compiler-gate(+< [%noun compiler-source]) -.compiler-gate)
+            .*(compiler-gate [%9 2 %10 [6 %1 [%noun compiler-source]] %0 1])
         ::
         ::  switch to the second-generation compiler.  we want to be
         ::  able to generate matching reflection nouns even if the
@@ -136,13 +136,13 @@
         ::
         ~>  %slog.[0 leaf+"1-e"]
         =+  ^=  kernel-span
-            -:.*(compiler-gate(+< [-.compiler-tool '+>']) -.compiler-gate)
+            -:.*(compiler-gate [%9 2 %10 [6 %1 [-.compiler-tool '+>']] %0 1])
         ::
         ::  compile the arvo source against the kernel core.
         ::
         ~>  %slog.[0 leaf+"1-f"]
         =+  ^=  kernel-tool
-            .*(compiler-gate(+< [kernel-span arvo-source]) -.compiler-gate)
+            .*(compiler-gate [%9 2 %10 [6 %1 [kernel-span arvo-source]] %0 1])
         ::
         ::  create the arvo kernel, whose subject is the kernel core.
         ::
