@@ -915,6 +915,8 @@ _unix_update_dir(u3_udir* dir_u)
           }
         }
       }
+
+      free(pax_c);
     }
   }
 
