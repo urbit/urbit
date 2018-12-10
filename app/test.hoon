@@ -178,9 +178,5 @@
     :-  /gen/cosmetic          "incomplete"
     :-  /gen/lust              "incomplete"
     :-  /gen/scantastic        "incomplete"
-  ::
-    :-  /lib/down-jet          "depends on lib/down-jet/parse"
-    :-  /mar/down              "depends on lib/down-jet/parse"
-    :-  /lib/down-jet/parse    "obsolete syntax"
   ==
 --
