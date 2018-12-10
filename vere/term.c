@@ -52,6 +52,10 @@ _term_alloc(uv_handle_t* had_u,
 }
 
 
+//  XX unused, but %hook is in %zuse.
+//  implement or remove
+//
+#if 0
 /* _term_close_cb(): free terminal.
 */
 static void
@@ -79,6 +83,7 @@ _term_close_cb(uv_handle_t* han_t)
   }
   free(tty_u);
 }
+#endif
 
 /* u3_term_io_init(): initialize terminal.
 */
