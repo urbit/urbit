@@ -296,7 +296,7 @@ configure_file(input : 'include/config.h.in',
                configuration : conf_data)
 
 # We expect these libs to supplied with the distribution
-curl_dep = dependency('libcurl', version: '>=7.35.0')
+curl_dep = dependency('libcurl', version: '>=7.19.0')
 
 if osdet == 'darwin' and not get_option('nix')
   libcrypto = meson.get_compiler('c').find_library('crypto', dirs: [ '/usr/local/opt/openssl/lib/' ])
