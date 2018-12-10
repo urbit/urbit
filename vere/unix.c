@@ -371,6 +371,8 @@ _unix_scan_mount_point(u3_umon* mon_u)
           _unix_watch_file(fil_u, &mon_u->dir_u, pax_c);
         }
       }
+
+      free(pax_c);
     }
   }
 }
