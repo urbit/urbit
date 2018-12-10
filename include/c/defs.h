@@ -17,8 +17,17 @@
   **/
     /* Assert.  Good to capture.
     */
-// #     define c3_assert(x)   assert(x)
-#     define c3_assert(x)  ( (x) ? 0 : c3_cooked(), assert(x) )
+#     define c3_assert(x)                       \
+        do {                                    \
+          if (!(x)) {                           \
+            fprintf(stderr,                     \
+                    "\rAssertion '%s' failed "  \
+                    "in %s:%d\n",               \
+                    #x, __FILE__, __LINE__);    \
+            c3_cooked();                        \
+            assert(x);                          \
+          }                                     \
+        } while(0)
 
     /* Stub.
     */
