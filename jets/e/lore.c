@@ -35,8 +35,12 @@
       }
 
       {
-        c3_y* byts_y = alloca(meg_w);
-        u3r_bytes(pos_w, meg_w, byts_y, lub);
+        c3_y* byts_y = 0;
+
+        if ( 0 != meg_w ) {
+          byts_y = alloca(meg_w);
+          u3r_bytes(pos_w, meg_w, byts_y, lub);
+        }
 
         if ( _(end_y) ) {
           return u3kb_flop(u3nc(u3i_bytes(meg_w, byts_y), tez));

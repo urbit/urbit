@@ -152,6 +152,11 @@ _cttp_bods_to_vec(u3_hbod* bod_u, c3_w* tot_w)
     }
   }
 
+  if ( 0 == len_w ) {
+    *tot_w = len_w;
+    return 0;
+  }
+
   vec_u = c3_malloc(sizeof(h2o_iovec_t) * len_w);
   len_w = 0;
 

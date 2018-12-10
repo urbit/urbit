@@ -580,7 +580,7 @@ u3t_boot(void)
 #if defined(U3_OS_osx) || defined(U3_OS_linux)
     // Register _ct_sigaction to be called on `SIGPROF`.
     {
-      struct sigaction sig_s = {0};
+      struct sigaction sig_s = {{0}};
       sig_s.sa_handler = _ct_sigaction;
       sigemptyset(&(sig_s.sa_mask));
       sigaction(SIGPROF, &sig_s, 0);
@@ -598,7 +598,7 @@ u3t_boot(void)
 
     // Ask for SIGPROF to be sent every 10ms.
     {
-      struct itimerval itm_v = {0};
+      struct itimerval itm_v = {{0}};
       itm_v.it_interval.tv_usec = 10000;
       itm_v.it_value = itm_v.it_interval;
       setitimer(ITIMER_PROF, &itm_v, 0);
@@ -631,13 +631,13 @@ u3t_boff(void)
 
     // Disable the SIGPROF timer.
     {
-      struct itimerval itm_v = {0};
+      struct itimerval itm_v = {{0}};
       setitimer(ITIMER_PROF, &itm_v, 0);
     }
 
     // Ignore SIGPROF signals.
     {
-      struct sigaction sig_s = {0};
+      struct sigaction sig_s = {{0}};
       sigemptyset(&(sig_s.sa_mask));
       sig_s.sa_handler = SIG_IGN;
       sigaction(SIGPROF, &sig_s, 0);
