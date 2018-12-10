@@ -172,8 +172,6 @@
   ^~  ^-  (map path tape)
   %-  my  :~ ::TODO don't hardcode
   ::
-    :-  /gen/capitalize        "wants unicode-data/txt"
-  ::
     :-  /gen/al                "compiler types out-of-date"
     :-  /gen/musk              "compiler types out-of-date"
   ::
