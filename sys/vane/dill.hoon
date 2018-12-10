@@ -292,8 +292,8 @@
         |=  who=ship
         ;;  ship
         %-  need  %-  need
-        %-  (sloy ski)
-        [[151 %noun] %j (en-beam:format [our %sein da+now] /(scot %p who))]
+        %-  (sloy-light ski)
+        [[151 %noun] %j our %sein da+now /(scot %p who)]
       ::
       ++  init                                          ::  initialize
         ~&  [%dill-init our ram]

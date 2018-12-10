@@ -523,10 +523,10 @@
       |=  [our=ship now=@da lyf=life]
       ;;  ^deed
       %-  need  %-  need
-      %-  (sloy ski)
+      %-  (sloy-light ski)
       =/  pur=spur
         /(scot %ud lyf)/(scot %p our)
-      [[151 %noun] %j (en-beam:format [our %deed da+now] pur)]
+      [[151 %noun] %j our %deed da+now pur]
     ::  +sein: scry for sponsor
     ::
     ++  sein
@@ -534,8 +534,8 @@
       |=  [our=ship now=@da who=ship]
       ;;  ship
       %-  need  %-  need
-      %-  (sloy ski)
-      [[151 %noun] %j (en-beam:format [our %sein da+now] /(scot %p who))]
+      %-  (sloy-light ski)
+      [[151 %noun] %j our %sein da+now /(scot %p who)]
     ::  +saxo: scry for sponsorship chain
     ::
     ++  saxo
@@ -543,8 +543,8 @@
       |=  [our=ship now=@da who=ship]
       ;;  (list ship)
       %-  need  %-  need
-      %-  (sloy ski)
-      [[151 %noun] %j (en-beam:format [our %saxo da+now] /(scot %p who))]
+      %-  (sloy-light ski)
+      [[151 %noun] %j our %saxo da+now /(scot %p who)]
     ::
     ++  vein                                            ::    vein:am
       ~/  %vein
