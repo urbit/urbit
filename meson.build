@@ -179,10 +179,6 @@ jets_f_ut_src =  [
 'jets/f/ut_wrap.c'
 ]
 
-jets_g_src = [
-'jets/g/down.c'
-]
-
 jets_src = [
 'jets/tree.c'
 ]
@@ -192,7 +188,8 @@ jets_all_src = [
   jets_c_src, jets_d_src,
   jets_e_src, jets_e_ed_src,
   jets_f_src, jets_f_ut_src,
-  jets_g_src, jets_src]
+  jets_src
+]
 
 noun_src = [
   'noun/allocate.c',
@@ -315,7 +312,6 @@ else
 endif
 
 # For these libs we provide fallback bundle
-cmark_dep = dependency('libcmark', version: '0.12.0', fallback: ['commonmark-legacy', 'cmark_dep'])
 urbitscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
 
 ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
@@ -332,7 +328,6 @@ deps = [openssl_dep,
         curl_dep,
         libuv_dep,
         libh2o_dep,
-        cmark_dep,
         secp256k1_dep,
         gmp_dep,
         sigsegv_dep,

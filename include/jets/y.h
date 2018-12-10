@@ -327,7 +327,3 @@
     u3_noun u3wzu_snub(u3_noun);
     u3_noun u3wzu_toss(u3_noun);
     u3_noun u3wzu_wrap(u3_noun);
-
-  /** Tier 7.
-  **/
-    u3_noun u3yg_down(u3_noun);
