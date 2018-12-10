@@ -179,10 +179,6 @@
     :-  /gen/lust              "incomplete"
     :-  /gen/scantastic        "incomplete"
   ::
-    :-  /app/gh                "crashes with new type system"
-    :-  /mar/gh/issue-comment  "wants old 'speech:hall'"
-    :-  /mar/gh/issues         "wants old 'speech:hall'"
-  ::
     :-  /lib/down-jet          "depends on lib/down-jet/parse"
     :-  /mar/down              "depends on lib/down-jet/parse"
     :-  /lib/down-jet/parse    "obsolete syntax"
