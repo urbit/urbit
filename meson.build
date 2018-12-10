@@ -272,7 +272,7 @@ elif osdet == 'darwin'
 
   os_deps = os_deps + [ncurses_dep]
 
-elif osdet == 'bsd'
+elif osdet == 'bsd' or osdet == 'freebsd'
   conf_data.set('U3_OS_bsd', true)
 
   pthread_dep = meson.get_compiler('c').find_library('pthread')
