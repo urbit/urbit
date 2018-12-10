@@ -148,7 +148,9 @@
   ~/  %sloy-light
   |=  sod/slyd
   |=  [ref=* ron=@tas fal=@p dyc=@tas ved=case tyl=path]
-  =+  bed=[[fal dyc ved] (flop tyl)]
+  ::  we do not flop tyl because tyl wouldn't have been flopped by +en-beam
+  ::
+  =+  bed=[[fal dyc ved] tyl]
   =+  bop=(sod ref ~ ron bed)
   ?~  bop  ~
   ?~  u.bop  [~ ~]
