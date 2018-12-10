@@ -259,7 +259,6 @@ static u3_noun
 _reck_kick_spec(u3_noun pox, u3_noun fav)
 {
   u3_noun i_pox, t_pox;
-  u3_noun p_fav;
 
   if ( (c3n == u3r_cell(pox, &i_pox, &t_pox)) ||
        ((i_pox != u3_blip) && 
