@@ -590,7 +590,8 @@ _unix_watch_file(u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
 
   fil_u->dir = c3n;
   fil_u->dry = c3n;
-  fil_u->pax_c = pax_c;
+  fil_u->pax_c = c3_malloc(1 + strlen(pax_c));
+  strcpy(fil_u->pax_c, pax_c);
   fil_u->par_u = par_u;
   fil_u->nex_u = NULL;
   fil_u->mug_w = 0;
@@ -627,7 +628,8 @@ _unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c)
 
   dir_u->dir = c3y;
   dir_u->dry = c3n;
-  dir_u->pax_c = pax_c;
+  dir_u->pax_c = c3_malloc(1 + strlen(pax_c));
+  strcpy(dir_u->pax_c, pax_c);
   dir_u->par_u = par_u;
   dir_u->nex_u = NULL;
   dir_u->kid_u = NULL;
