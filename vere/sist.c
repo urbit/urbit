@@ -345,6 +345,9 @@ _sist_cask(c3_c* dir_c, u3_noun nun)
   return key;
 }
 
+//  XX unused, but may be needed for brainwallet
+//
+#if 0
 /* _sist_text(): ask for a name string.
 */
 static u3_noun
@@ -378,7 +381,6 @@ _sist_text(c3_c* pom_c)
   return say;
 }
 
-#if 0
 /* _sist_bask(): ask a yes or no question.
 */
 static u3_noun
