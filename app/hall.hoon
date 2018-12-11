@@ -117,7 +117,7 @@
 ::  #
 ::    functional cores and arms.
 ::
-~%  %hall-door  ..^^^is  ~
+~%  %hall-door  ..^is  ~
 |_  {bol/bowl:gall $1 state}
 ::
 ::  #  %transition

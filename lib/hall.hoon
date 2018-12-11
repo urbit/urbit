@@ -1,11 +1,10 @@
 ::
 ::::  /lib/hall/hoon
   ::
-/-    hall
+/-    *hall
 ::
 ::::
   ::
-=,  hall
 |_  bol/bowl:gall
 ::
 ::TODO  add to zuse?

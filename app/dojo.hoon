@@ -1625,7 +1625,7 @@
     (he-diff %tan u.p.cit)
   ::
   ++  he-lens
-    |=  com/command:^^^^lens
+    |=  com/command:^^lens
     ^+  +>
     =+  ^-  source/dojo-source
         =|  num/@
@@ -1815,7 +1815,7 @@
   (wrap he-type):arm
 ::
 ++  poke-lens-command
-  |=  com/command:^^^^lens  ~|  poke-lens+com  %.  com
+  |=  com/command:^^lens  ~|  poke-lens+com  %.  com
   (wrap he-lens):arm
 ::
 ++  poke-json
