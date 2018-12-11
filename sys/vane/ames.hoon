@@ -1298,7 +1298,10 @@
       :~  [s.bon %give %woot q.p.bon r.bon]
       ==
     ::
-        %mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
+        %mead
+      =^  moz  +>.$  (knob hen [%hear p.bon q.bon])
+      [moz fox]
+    ::
         %milk
       ::  ~&  [%milk p.bon q.bon]
       ?>  ?=([@ @ *] q.q.bon)
