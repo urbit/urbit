@@ -1456,6 +1456,9 @@ _raft_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
     u3r_mug(cor);
     u3r_mug(u3A->roc);
 
+    //  XX review this, and confirm it's actually an optimization
+    //  Seems like it could be very expensive in some cases
+    //
     if ( c3n == u3r_sing(cor, u3A->roc) ) {
       ret = u3nc(vir, ovo);
 
@@ -1465,7 +1468,8 @@ _raft_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
     else {
       u3z(ovo);
 
-      // push a new event into queue
+      //  we return ~ in place of the event ovum to skip persistence
+      //
       ret = u3nc(vir, u3_nul);
 
       u3z(cor);
@@ -1669,10 +1673,10 @@ _raft_push(u3_raft* raf_u, c3_w* bob_w, c3_w len_w)
 }
 
 
-/* _raft_kick_all(): kick a list of events, transferring.
+/* _raft_kick(): kick a list of effects, transferring.
 */
 static void
-_raft_kick_all(u3_noun vir)
+_raft_kick(u3_noun vir)
 {
   while ( u3_nul != vir ) {
     u3_noun ovo = u3k(u3h(vir));
@@ -2001,10 +2005,10 @@ _raft_poke(void)
   return rus;
 }
 
-/* _raft_pump(): Cartify, jam, and save an ovum, then perform its effects.
+/* _raft_pump(): Cartify, jam, and save an ovum.
 */
 static void
-_raft_pump(u3_noun ovo, u3_noun vir)
+_raft_pump(u3_noun ovo)
 {
   u3v_cart*     egg_u = u3a_malloc(sizeof(*egg_u));
   u3p(u3v_cart) egg_p = u3of(u3v_cart, egg_u);
@@ -2016,7 +2020,7 @@ _raft_pump(u3_noun ovo, u3_noun vir)
   egg_u->nex_p = 0;
   egg_u->cit = c3n;
   egg_u->did = c3n;
-  egg_u->vir = vir;
+  egg_u->vir = 0;
 
   ron = u3ke_jam(u3nc(u3k(u3A->now), ovo));
   c3_assert(u3A->key);
@@ -2040,9 +2044,8 @@ _raft_pump(u3_noun ovo, u3_noun vir)
     u3to(u3v_cart, u3A->ova.geg_p)->nex_p = egg_p;
     u3A->ova.geg_p = egg_p;
   }
-  _raft_kick_all(vir);
+
   egg_u->did = c3y;
-  egg_u->vir = 0;
 }
 
 /* u3_raft_chip(): chip one event off for processing.
@@ -2059,12 +2062,11 @@ u3_raft_chip(void)
     u3x_cell(rus, &vir, &ovo);
 
     if ( u3_nul != ovo ) {
-      _raft_pump(u3k(ovo), u3k(vir));
-
-      //  XX should be vir
-      //
-      _raft_grab(u3A->roe);
+      _raft_pump(u3k(ovo));
     }
+
+    _raft_kick(u3k(vir));
+    _raft_grab(vir);
 
     u3z(rus);
   }
