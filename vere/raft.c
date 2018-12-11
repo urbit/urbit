@@ -1476,7 +1476,7 @@ _raft_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 
 /* _raft_lame(): handle an application failure.
 */
-static u3_weak
+static u3_noun
 _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 {
   u3_noun bov, gon;
@@ -1551,7 +1551,7 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 
 /* _raft_punk(): insert and apply an input ovum (unprotected).
 */
-static u3_weak
+static u3_noun
 _raft_punk(u3_noun ovo)
 {
 #ifdef GHETTO
@@ -1631,7 +1631,8 @@ _raft_punk(u3_noun ovo)
   //  free(txt_c);
 }
 
-
+/* _raft_push(): save an event
+*/
 static c3_d
 _raft_push(u3_raft* raf_u, c3_w* bob_w, c3_w len_w)
 {
@@ -1947,6 +1948,26 @@ _raft_crop(void)
   }
 }
 
+/* _raft_pop_roe(): pop the next [(list effects) event] pair of the queue
+*/
+static u3_weak
+_raft_pop_roe(void)
+{
+  if ( u3_nul == u3A->roe ) {
+    return u3_none;
+  }
+
+  u3_noun ovo;
+
+  {
+    u3_noun ova = u3kb_flop(u3A->roe);
+    u3A->roe    = u3qb_flop(u3t(ova));
+    ovo         = u3k(u3h(ova));
+    u3z(ova);
+  }
+
+  return ovo;
+}
 
 /* _raft_poke(): Poke pending events, leaving the poked events
  * and errors on u3A->roe.
@@ -1954,41 +1975,44 @@ _raft_crop(void)
 static void
 _raft_poke(void)
 {
-  u3_noun ova, nex;
-
   if ( 0 == u3Z->lug_u.len_d ) {
     return;
   }
-  ova = u3kb_flop(u3A->roe);
-  u3A->roe = u3_nul;
 
-  u3_noun hed = (u3_nul == ova) ? u3_nul : u3h(ova);
+  c3_o bee_o  = c3n;
+  u3_noun oer = u3_nul;
+  u3_weak rus;
 
-  if ( u3_nul != hed ) {
-    u3_term_ef_blit(0, u3nc(u3nc(c3__bee, u3k(hed)), u3_nul));
-  }
+  while ( u3_none != (rus = _raft_pop_roe()) ) {
+    u3_noun ovo, vir, sur;
 
-  while ( u3_nul != ova ) {
-    u3_noun sur = _raft_punk(u3k(u3t(u3h(ova))));
-    if ( u3_nul != sur) {
-      u3A->roe = u3nc(sur, u3A->roe);
+    if ( c3n == bee_o ) {
+      u3_term_ef_blit(0, u3nc(u3nc(c3__bee, u3k(rus)), u3_nul));
+      bee_o = c3y;
     }
-    c3_assert(u3_nul == u3h(u3h(ova)));
 
-    nex = u3k(u3t(ova));
-    u3z(ova); ova = nex;
+    u3x_cell(rus, &vir, &ovo);
+    c3_assert( u3_nul == vir );
+
+    sur = _raft_punk(u3k(ovo));
+    u3z(rus);
+
+    if ( u3_nul != sur) {
+      oer = u3nc(sur, oer);
+    }
   }
 
-  if ( u3_nul != hed ) {
+  u3A->roe = oer;
+
+  if ( c3y == bee_o ) {
     u3_term_ef_blit(0, u3nc(u3nc(c3__bee, u3_nul), u3_nul));
   }
 }
 
-
 /* _raft_pump(): Cartify, jam, and save an ovum, then perform its effects.
 */
 static void
-_raft_pump(ovo, vir)
+_raft_pump(u3_noun ovo, u3_noun vir)
 {
   u3v_cart*     egg_u = u3a_malloc(sizeof(*egg_u));
   u3p(u3v_cart) egg_p = u3of(u3v_cart, egg_u);
@@ -2029,7 +2053,6 @@ _raft_pump(ovo, vir)
   egg_u->vir = 0;
 }
 
-
 /* u3_raft_work(): work.
 */
 void
@@ -2055,25 +2078,18 @@ u3_raft_work(void)
     //  Cartify, jam, and encrypt this batch of events. Take a number, Raft will
     //  be with you shortly.
     {
-      u3_noun ova;
-      u3_noun ovo;
-      u3_noun vir;
-      u3_noun nex;
+      u3_weak rus;
 
-      ova = u3kb_flop(u3A->roe);
-      u3A->roe = u3_nul;
-
-      while ( u3_nul != ova ) {
-        ovo = u3k(u3t(u3h(ova)));
-        vir = u3k(u3h(u3h(ova)));
-        nex = u3k(u3t(ova));
-        u3z(ova); ova = nex;
+      while ( u3_none != (rus = _raft_pop_roe()) ) {
+        u3_noun ovo, vir;
+        u3x_cell(rus, &vir, &ovo);
 
         if ( u3_nul != ovo ) {
-          _raft_pump(ovo, vir);
-
-          _raft_grab(ova);
+          _raft_pump(u3k(ovo), u3k(vir));
+          _raft_grab(u3A->roe);
         }
+
+        u3z(rus);
       }
     }
   }
