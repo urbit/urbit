@@ -1,7 +1,8 @@
 ::
 ::::  /hoon/sole/sur
   ::
-=>  |%
+^?
+|%
 ++  sole-action                                         ::  sole to app
   $%  ::  {$abo ~}                                      ::  reset interaction
       {$det sole-change}                                ::  command line edit
@@ -78,8 +79,6 @@
       (unit knot)
     hiss:eyre
   $-(httr:eyre (sole-request out))
---
-|%
 ::                                                      ::
 ++  sole-gen                                            ::  XX virtual type
   $%  {$say $-((sole-args) (cask))}                     ::  direct noun
