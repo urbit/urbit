@@ -22,7 +22,6 @@
 ::
 ::::
 =,  hall-sur
-=,  hall-lib
 =>  ::  #
     ::  #  %arch
     ::  #
@@ -2342,7 +2341,7 @@
   ;:  weld
     /circle/[nom]/(scot %p hos.cir)/[nom.cir]
     (sort wat gth)  ::  consistence
-    (range-to-path ran)
+    (range-to-path:hall-lib ran)
   ==
 ::
 ++  wire-to-peer
@@ -2395,7 +2394,7 @@
     :^    %circle
         i.t.wir
       [(slav %p i.t.t.wir) i.t.t.t.wir]
-    (path-to-range t.t.t.t.wir)
+    (path-to-range:hall-lib t.t.t.t.wir)
   ::
       {$repeat @ @ @ ~}
     :+  %repeat

@@ -1,6 +1,6 @@
 ::  |pill: helper functions for making pills
 ::
-^|
+^?
 |%
 ::  +module-ova: vane load operations.
 ::
