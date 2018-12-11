@@ -273,6 +273,12 @@
   ~&  rumor+[wir rum]
   ?~  wir
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
+  =;  upd=[mow=(list move) sta=_this] 
+    :_  sta.upd
+    %+  welp  mow.upd
+    %+  turn  (prey:pubsub:userlib /primary bol)
+    |=  [=bone *]
+    [bone %diff %hall-rumor rum]
   ?+  i.wir
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ::
@@ -308,7 +314,7 @@
       ~&  %inbox-gram
       ::  XX TODO: handle stack trace message when foreign circle is killed?
       ::
-      :-  (send-rumor [%new-msg %inbox nev.rum.rum])
+      :-  ~  ::(send-rumor [%new-msg %inbox nev.rum.rum])
       this(env.inbox.str.sta [nev.rum.rum env.inbox.str.sta])
     ::
     ::  %config: inbox config has changed
@@ -323,7 +329,7 @@
       ::
           %remove
         ~&  %inbox-config-remove
-        :-  (send-rumor %config-change cir.rum.rum ~)
+        :-  ~  ::(send-rumor %config-change cir.rum.rum ~)
         %=    this
             circles.str.sta
           (~(del by circles.str.sta) cir.rum.rum)
@@ -343,7 +349,7 @@
             %=  u.con.inbox.str.sta
               src  (~(put in src.u.con.inbox.str.sta) src.dif.rum.rum)
             ==
-          :-  (send-rumor %config-change [our.bol %inbox] `conf)
+          :-  ~  ::(send-rumor %config-change [our.bol %inbox] `conf)
           %=    this
               con.inbox.str.sta  `conf
           ::
@@ -359,7 +365,7 @@
             src  (~(del in src.u.con.inbox.str.sta) src.dif.rum.rum)
           ==
         ~&  inbox+conf
-        :-  (send-rumor %config-change [our.bol %inbox] `conf)
+        :-  ~  ::(send-rumor %config-change [our.bol %inbox] `conf)
         %=    this
             con.inbox.str.sta  `conf
         ::
@@ -374,7 +380,7 @@
           %full
         ~&  %inbox-config-full
         =*  conf  cof.dif.rum.rum
-        :-  (send-rumor %config-change circ `conf)
+        :-  ~  ::(send-rumor %config-change circ `conf)
         %=  this
           circles.str.sta  (~(put by circles.str.sta) circ `conf)
         ==
@@ -387,7 +393,7 @@
     ~&  %invites
     ?>  ?=(%circle -.rum)
     ?>  ?=(%gram -.rum.rum)
-    :-  (send-rumor [%new-msg %invites nev.rum.rum])
+    :-  ~  ::(send-rumor [%new-msg %invites nev.rum.rum])
     this(invites.str.sta [nev.rum.rum invites.str.sta])
   ::
   ::  %our:
@@ -418,7 +424,7 @@
           %full
         ~&  %our-config-full
         =*  conf  cof.dif.rum.rum
-        :-  (send-rumor %config-change circ `conf)
+        :-  ~  ::(send-rumor %config-change circ `conf)
         %=  this
           circles.str.sta  (~(put by circles.str.sta) circ `conf)
         ==
