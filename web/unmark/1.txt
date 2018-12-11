@@ -1,3 +1,0 @@
-The quick *brown fox* jumped over #(add 2 2)
-their owner's "extremely lazy" dogs.
-

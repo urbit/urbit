@@ -159,8 +159,6 @@
     :-  /ren/run            "not meant to be called except on a (different) hoon file"
     :-  /ren/collections    "temporarily disabled"
     :-  /ren/test-gen       "temporarily disabled"
-    :-  /ren/tree/index     "temporarily disabled"
-    :-  /ren/tree/elem      "temporarily disabled"
     :-  /ren/urb            "temporarily disabled"
     :-  /ren/x-urb          "temporarily disabled"
     :-  /ren/x-htm          "temporarily disabled"
@@ -174,35 +172,11 @@
   ^~  ^-  (map path tape)
   %-  my  :~ ::TODO don't hardcode
   ::
-    :-  /app/pipe              "wants 'flavor:hall' to exist"
-    :-  /app/mark-dashboard    "wants old ford"
-    :-  /app/static            "wants old ford"
-    :-  /gen/capitalize        "wants unicode-data/txt"
-  ::
-    :-  /app/twit              "depends on sur/twitter"
-    :-  /gen/twit/as           "depends on sur/twitter"
-    :-  /gen/twit/feed         "depends on sur/twitter"
-    :-  /mar/twit/cred         "depends on sur/twitter"
-    :-  /mar/twit/feed         "depends on sur/twitter"
-    :-  /mar/twit/post         "depends on sur/twitter"
-    :-  /mar/twit/req          "depends on sur/twitter"
-    :-  /mar/twit/usel         "depends on sur/twitter"
-    :-  /lib/twitter           "depends on sur/twitter"
-    :-  /sur/twitter           "crashes with new type system"
-  ::
     :-  /gen/al                "compiler types out-of-date"
     :-  /gen/musk              "compiler types out-of-date"
   ::
     :-  /gen/cosmetic          "incomplete"
     :-  /gen/lust              "incomplete"
     :-  /gen/scantastic        "incomplete"
-  ::
-    :-  /app/gh                "crashes with new type system"
-    :-  /mar/gh/issue-comment  "wants old 'speech:hall'"
-    :-  /mar/gh/issues         "wants old 'speech:hall'"
-  ::
-    :-  /lib/down-jet          "depends on lib/down-jet/parse"
-    :-  /mar/down              "depends on lib/down-jet/parse"
-    :-  /lib/down-jet/parse    "obsolete syntax"
   ==
 --

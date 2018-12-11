@@ -1,6 +1,0 @@
-*brown fox* ;{s "ignoreme"} ;{a(name "foo")} jumped over
-
-;div#test: hello world
-
-- - foo
-  - bar
