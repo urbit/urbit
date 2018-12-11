@@ -492,8 +492,7 @@
       $%  {$west p/sack q/path r/*}                     ::
       ==  ==  ==                                        ::
     ++  gift                                            ::  out result <-$
-      $%  {$hear p/lane q/@}                            ::  receive packet
-          {$mack p/(unit tang)}                         ::  
+      $%  {$mack p/(unit tang)}                         ::  acknowledgement
           {$mass p/mass}                                ::  memory usage
           {$send p/lane q/@}                            ::  transmit packet
           {$turf p/(list turf)}                         ::  bind to domains
