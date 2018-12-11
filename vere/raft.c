@@ -1952,7 +1952,10 @@ _raft_crop(void)
   }
 }
 
-/* _raft_pop_roe(): pop the next [(list effects) event] pair of the queue
+/* _raft_pop_roe(): pop the next [~ event] off the queue.
+**
+**  effects are no longer stored on u3A->roe; the head of
+**  each pair is always null.
 */
 static u3_weak
 _raft_pop_roe(void)
@@ -1973,17 +1976,16 @@ _raft_pop_roe(void)
   return ovo;
 }
 
-/* _raft_poke(): Peel one ovum off u3A->roe and poke Arvo with it.
+/* _raft_poke(): poke Arvo with the next queued event.
 */
 static u3_weak
 _raft_poke(void)
 {
   u3_weak rus;
 
-  //  XX what is this condition?
+  //  defer event processing until storage is initialized
   //
   if ( 0 == u3Z->lug_u.len_d ) {
-    fprintf(stderr, "_raft_poke ret early\r\n");
     return u3_none;
   }
 
