@@ -1326,13 +1326,9 @@
       $sunk  [~ ..^$]
   ::
       $west
-    ?.  (~(has by pol.all) p.p.q.hic)
-      ~&  [%gall-not-ours p.q.hic]
-      [~ ..^$]
     ?>  ?=({?($ge $gh) @ ~} q.q.hic)
-    =+  dap=i.t.q.q.hic
-    =+  our=p.p.q.hic
-    =+  him=q.p.q.hic
+    =*  dap  i.t.q.q.hic
+    =*  him  p.q.hic
     ?:  ?=($ge i.q.q.hic)
       =+  mes=((hard {@ud rook}) r.q.hic)
       =<  mo-abet

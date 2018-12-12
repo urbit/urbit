@@ -3925,15 +3925,15 @@
       :_  ..^$
       :~  [hen %give %mack ~]
           :-  hen
-          :^  %pass  [(scot %p p.wer) (scot %p q.wer) t.pax]
+          :^  %pass  [(scot %p our) (scot %p wer) t.pax]
             %c
-          [%werp q.wer [p.wer p.wer] ryf]
+          [%werp wer [our our] ryf]
       ==
     ?>  ?=({$answer @ @ ~} pax)
     =+  syd=(slav %tas i.t.pax)
     =+  inx=(slav %ud i.t.t.pax)
     =^  mos  ruf
-      =+  den=((de now hen ruf) wer syd)
+      =+  den=((de now hen ruf) [our wer] syd)
       abet:(take-foreign-update:den inx ((hard (unit rand)) res.req))
     [[[hen %give %mack ~] mos] ..^$]
   ::

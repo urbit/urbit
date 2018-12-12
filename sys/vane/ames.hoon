@@ -1277,7 +1277,7 @@
       ?>  ?=([@ @ *] q.q.bon)
       ?>  ?=(?(%a %c %e %g %j) i.q.q.bon)
       =/  =wire  [(scot %p our) (scot %p p.bon) q.q.bon]
-      :_  fox  [hen %pass wire i.q.q.bon %west [our p.bon] t.q.q.bon r.bon]~
+      :_  fox  [hen %pass wire i.q.q.bon %west p.bon t.q.q.bon r.bon]~
     ::
         %ouzo
       ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]

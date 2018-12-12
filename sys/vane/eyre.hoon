@@ -836,21 +836,22 @@
       ::    by molding the incoming thing into a gram shape before we try to
       ::    soft it.
       ::
+      =*  him  p.kyz
       ?~  -.q.kyz
-        ~&  e+[%strange-west-wire p.kyz]
+        ~&  e+[%strange-west-wire him]
         ~!(%strange-west-wire !!)
       =+  mez=((soft gram) [i.-.q.kyz +.q.kyz])
       ?~  mez
-        ~&  e+[%strange-west p.kyz]
+        ~&  e+[%strange-west him]
         ~|(%strange-west !!)
       ?-  -.u.mez
-        $aut  abet:(logon:(ses-ya p.u.mez) q.p.kyz)
-        $hat  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
-        $gib  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %thud ~])
-        $get  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %this q.u.mez])
+        $aut  abet:(logon:(ses-ya p.u.mez) him)
+        $hat  (foreign-hat:(ses-ya p.u.mez) him q.u.mez)
+        $gib  (pass-note ay+(dray p+uv+~ him p.u.mez) [%e %thud ~])
+        $get  (pass-note ay+(dray p+uv+~ him p.u.mez) [%e %this q.u.mez])
         $got
           ?.  (~(has by pox) p.u.mez)
-            ~&  lost-gram-thou+p.kyz^p.u.mez
+            ~&  lost-gram-thou+him^p.u.mez
             +>.$
           =:  hen  (~(got by pox) p.u.mez)
               pox  (~(del by pox) p.u.mez)
@@ -860,17 +861,17 @@
         $lon
           ::  ~&  ses-ask+[p.u.mez sop (~(run by wup) ~)]
           ?:  (ses-authed p.u.mez)
-            (ames-gram q.p.kyz %aut p.u.mez)
-          =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
-          (ames-gram q.p.kyz %hat p.u.mez our-host)
+            (ames-gram him %aut p.u.mez)
+          =.  sop  (~(put by sop) p.u.mez him |)
+          (ames-gram him %hat p.u.mez our-host)
       ::
         $get-inner
-          %+  exec-turbo-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)
+          %+  exec-turbo-live  ay+(dray p+uv+~ him p.u.mez)
           [%bake q.u.mez r.u.mez [[p q] s]:s.u.mez]
       ::
         $got-inner
           ?.  (~(has by pox) p.u.mez)
-            ~&  lost-gram-inner+p.kyz^p.u.mez
+            ~&  lost-gram-inner+him^p.u.mez
             +>.$
           =:  hen  (~(got by pox) p.u.mez)
               pox  (~(del by pox) p.u.mez)
@@ -895,7 +896,7 @@
             [%vale [p q]:norm res]
           ==
       ::
-        $not  +>.$(mow :_(mow [ged [%give %that q.p.kyz p.u.mez]]))
+        $not  +>.$(mow :_(mow [ged [%give %that him p.u.mez]]))
       ==
     ::
       $wegh  !!                                         ::  handled elsewhere

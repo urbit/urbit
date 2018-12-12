@@ -489,7 +489,7 @@
       $%  {$deal p/sock q/cush:gall}                    ::
       ==  ==                                            ::
           $:  @tas                                      ::  to any
-      $%  {$west p/sack q/path r/*}                     ::
+      $%  {$west p/ship q/path r/*}                     ::
       ==  ==  ==                                        ::
     ++  gift                                            ::  out result <-$
       $%  {$mack p/(unit tang)}                         ::  acknowledgement
@@ -530,7 +530,7 @@
           {$sunk p=ship q=life}                         ::  report death
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
-          {$west p/sack q/path r/*}                     ::  network request
+          {$west p/ship q/path r/*}                     ::  network request
           {$want p/ship q/path r/*}                     ::  forward message
       ==                                                ::
     --  ::able
@@ -764,8 +764,8 @@
           {$warp wer/sock rif/riff}                     ::  internal file req
           {$werp who/ship wer/sock rif/riff}            ::  external file req
           {$wegh ~}                                    ::  report memory
-          {$went wer/sack pax/path num/@ud ack/coop}    ::  response confirm
-          {$west wer/sack pax/path res/*}               ::  network request
+          {$went wer/ship pax/path num/@ud ack/coop}    ::  response confirm
+          {$west wer/ship pax/path res/*}               ::  network request
       ==                                                ::
     --  ::able
   ::
@@ -1030,8 +1030,8 @@
           [%thud ~]                                     ::  inbound cancel
           [%wegh ~]                                     ::  report memory
           [%well p=path q=(unit mime)]                  ::  put/del .well-known
-          [%went p=sack q=path r=@ud s=coop]            ::  response confirm
-          [%west p=sack q=[path *]]                     ::  network request
+          [%went p=ship q=path r=@ud s=coop]            ::  response confirm
+          [%west p=ship q=[path *]]                     ::  network request
           [%wise p=ship q=prox]                         ::  proxy notification
       ==                                                ::
     --  ::able
@@ -1963,8 +1963,8 @@
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
           {$sunk p=ship q/life}                         ::  report death
-          {$went p/sack q/path r/@ud s/coop}            ::  response confirm
-          {$west p/sack q/path r/*}                     ::  network request
+          {$went p/ship q/path r/@ud s/coop}            ::  response confirm
+          {$west p/ship q/path r/*}                     ::  network request
           {$wegh ~}                                    ::  report memory
       ==                                                ::
     --  ::able
@@ -2158,7 +2158,7 @@
           [%vent ~]                                     ::  view ethereum events
           [%vest ~]                                     ::  view public balance
           [%vine ~]                                     ::  view secret history
-          [%west p=sack q=path r=*]                     ::  remote request
+          [%west p=ship q=path r=*]                     ::  remote request
           [%wind p=@ud]                                 ::  rewind before block
       ==                                                ::
     --                                                  ::

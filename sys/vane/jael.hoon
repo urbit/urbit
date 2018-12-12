@@ -893,9 +893,8 @@
     ::    {$west p/ship q/path r/*}
     ::
         $west
-      =+  mes=((hard message) r.tac)
-      =*  our  p.p.tac
-      =*  dem  q.p.tac
+      =*  her  p.tac
+      =/  mes  ((hard message) r.tac)
       ?-    -.mes
       ::
       ::  reset remote rights
@@ -903,7 +902,7 @@
       ::
           %hail
         %+  cure  hen
-        abet:abet:(hail:(burb our) dem p.mes)
+        abet:abet:(hail:(burb our) her p.mes)
       ::
       ::  cancel trackers
       ::    [%nuke ~]
@@ -920,7 +919,7 @@
       ::
           %vent-result
         ::  ignore if not from currently configured source.
-        ?.  &(-.source.etn =(dem p.source.etn))
+        ?.  &(-.source.etn =(her p.source.etn))
           +>.$
         =.  moz  [[hen %give %mack ~] moz]
         %+  cute  hen  =<  abet
