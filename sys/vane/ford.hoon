@@ -1,3 +1,4 @@
+!:
 ::  ford: build system vane
 ::
 ::    Ford is a functional reactive build system.
@@ -2483,7 +2484,10 @@
         ::
         =^  maybe-schematic-results  out
           %-  perform-schematics  :*
-            "ford: %bake {<renderer>} on {<path>} contained failures:"
+            ;:  weld
+              "ford: %bake "  (trip renderer)  " on "
+              (spud (rail-to-path path-to-render))  " contained failures:"
+            ==
             sub-schematics
             %fail-on-errors
             *@ta
@@ -2677,8 +2681,12 @@
       ::
       ?:  ?=([~ %error *] input-result)
         %-  return-error
-        :-  [%leaf "ford: %cast {<mark>} on {<disc>} failed on input:"]
-        message.u.input-result
+        :_  message.u.input-result
+        :-  %leaf
+        ;:  weld
+          "ford: %cast "  (trip mark)  "on ["  (trip (scot %p ship.disc))
+          " "  (trip desk.disc)  "] failed on input:"
+        ==
       ::
       ?>  ?=([~ %success *] input-result)
       ::
@@ -2694,8 +2702,12 @@
       ::
       ?:  ?=([~ %error *] translation-path-result)
         %-  return-error
-        :-  [%leaf "ford: %cast {<mark>} on {<disc>} failed:"]
-        message.u.translation-path-result
+        :_  message.u.translation-path-result
+        :-  %leaf
+        ;:  weld
+          "ford: %cast "  (trip mark)  "on ["  (trip (scot %p ship.disc))
+          " "  (trip desk.disc)  "] failed:"
+        ==
       ::
       ?>  ?=([~ %success %walk *] translation-path-result)
       ::
@@ -2752,9 +2764,10 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            %+  weld
-              "ford: %cast failed to find path for mark {<source-mark>} "
-              "during +grab:"
+            ;:  weld
+              "ford: %cast failed to find path for mark "  (trip source-mark)
+              " during +grab:"
+            ==
             mark-path-result
           ==
         ::
@@ -2778,7 +2791,7 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            "ford: %cast failed to ride {<path>} during +grab:"
+            :(weld "ford: %cast failed to ride " (spud path) " during +grab:")
             grab-result
           ==
         ::  find an arm for the input's mark within the +grab core
@@ -2796,7 +2809,7 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            "ford: %cast failed to ride {<path>} during +grab:"
+            :(weld "ford: %cast failed to ride " (spud path) " during +grab:")
             grab-mark-result
           ==
         ::  slam the +mark-name:grab gate on the result of running :input
@@ -2814,7 +2827,7 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            "ford: %cast failed to call +grab arm in {<path>}:"
+            :(weld "ford: %cast failed to call +grab arm in " (spud path) ":")
             call-result
           ==
         ::
@@ -2837,9 +2850,10 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            %+  weld
-              "ford: %cast failed to find path for mark {<source-mark>} "
-              "during +grow:"
+            ;:  weld
+              "ford: %cast failed to find path for mark "  (trip source-mark)
+              " during +grow:"
+            ==
             starting-mark-path-result
           ==
         ::  grow the value from the initial mark to the final mark
@@ -2870,7 +2884,7 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            "ford: %cast failed to ride {<path>} during +grow:"
+            :(weld "ford: %cast failed to ride " (spud path) " during +grow:")
             grow-result
           ==
         ::  make sure the product nests in the sample of the destination mark
@@ -2885,7 +2899,7 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            "ford: %cast failed to bunt {<target-mark>}:"
+            :(weld "ford: %cast failed to bunt " (trip target-mark) ":")
             bunt-result
           ==
         ::
@@ -2894,7 +2908,12 @@
           =*  dst  target-mark
           :_  out
           :-  %error
-          [leaf+"ford: %cast from {<src>} to {<dst>} failed: nest fail"]~
+          :_  ~
+          :-  %leaf
+          ;:  weld
+            "ford: %cast from "  (trip src)  " to "  (trip dst)
+            " failed: nest fail"
+          ==
         ::
         [[%success mark vase.u.grow-result] out]
       ::
@@ -2911,9 +2930,10 @@
         :_  out
         :-  %error
         :*  :-  %leaf
-            %+  weld
+            ;:  weld
               "ford: %cast failed while trying to cast from "
-              "{<source-mark>} to {<target-mark>}:"
+              (trip source-mark)  " to "  (trip target-mark)  ":"
+            ==
             [%leaf description]
             message.u.result
         ==
@@ -3796,11 +3816,8 @@
       =^  maybe-schematic-results  out
         %-  perform-schematics  :*
           ;:  weld
-            "ford: %path resolution of "
-            (trip raw-path)
-            "at prefix "
-            (trip prefix)
-            " contained failures:"
+            "ford: %path resolution of "  (trip raw-path)  "at prefix "
+            (trip prefix)  " contained failures:"
           ==
           rails-and-schematics
           %filter-errors
@@ -3817,7 +3834,10 @@
         =/  =beam
           [[ship.disc desk.disc [%da date.build]] /hoon/[raw-path]/[prefix]]
         ::
-        (return-error [%leaf "%path: no matches for {<(en-beam beam)>}"]~)
+        %-  return-error
+        :_  ~
+        :-  %leaf
+        (weld "%path: no matches for " (spud (en-beam beam)))
       ::  if exactly one path matches, succeed with the matching path
       ::
       ?:  ?=([* ~] matches)
@@ -3836,7 +3856,7 @@
       ::
       =/  =beam  [[ship.disc desk.disc [%da date.build]] spur.key]
       ::
-      [[%leaf "{<(en-beam beam)>}"] message]
+      [[%leaf (spud (en-beam beam))] message]
     ::
     ++  make-plan
       ~%  %make-plan  ..^^$  ~
@@ -4794,7 +4814,7 @@
       ?~  u.scry-response
         %-  return-error
         :~  leaf+"scry failed for"
-            leaf+"%c{(trip care.resource)} {<(en-beam beam)>}"
+            leaf+:(weld "%c" (trip care.resource) " " (spud (en-beam beam)))
         ==
       ::  scry succeeded
       ::
@@ -5003,14 +5023,18 @@
               %+  turn  ~(tap in +.marks-result)
               |=  [mark=term err=tang]
               ^-  tang
-              :~  [%leaf "while compiling {<mark>}:"]
+              :~  [%leaf :(weld "while compiling " (trip mark) ":")]
                   [%rose braces err]
               ==
             ::
             %_    out
                 result
               :*  %build-result  %error
-                  :*  [leaf+"ford: no mark path from {<source>} to {<target>}"]
+                  :*  :-  %leaf
+                      ;:  weld
+                        "ford: no mark path from "  (trip source)  " to "
+                        (trip target)
+                      ==
                       errors
               ==  ==
             ==
@@ -5057,7 +5081,10 @@
         ::
         =^  maybe-path-results  out
           %-  perform-schematics  :*
-            "ford: %walk from {<source>} to {<target>} contained failures:"
+            ;:  weld
+              "ford: %walk from "  (trip source)  " to "  (trip target)
+              " contained failures:"
+            ==
             nodes-and-schematics
             %filter-errors
             *load-node
@@ -5077,7 +5104,10 @@
         ::
         =^  maybe-core-results  out
           %-  perform-schematics  :*
-            "ford: %walk from {<source>} to {<target>} contained failures:"
+            ;:  weld
+              "ford: %walk from "  (trip source)  " to "  (trip target)
+              " contained failures:"
+            ==
             nodes-and-cores
             %ignore-errors
             *load-node
