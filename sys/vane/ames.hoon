@@ -515,23 +515,23 @@
   |%
   ++  am                                                ::    am
     ~%  %ames-am  ..is  ~
-    |_  [now=@da fox=fort ski=sley]                     ::  protocol engine
+    |_  [our=ship now=@da fox=fort ski=sley]            ::  protocol engine
     ::  +deed: scry for our deed
     ::
     ++  deed
       ~/  %deed
-      |=  [our=ship now=@da lyf=life]
+      |=  [who=ship lyf=life]
       ;;  ^deed
       %-  need  %-  need
       %-  (sloy-light ski)
       =/  pur=spur
-        /(scot %ud lyf)/(scot %p our)
+        /(scot %ud lyf)/(scot %p who)
       [[151 %noun] %j our %deed da+now pur]
     ::  +sein: scry for sponsor
     ::
     ++  sein
       ~/  %sein
-      |=  [our=ship now=@da who=ship]
+      |=  who=ship
       ;;  ship
       %-  need  %-  need
       %-  (sloy-light ski)
@@ -540,7 +540,7 @@
     ::
     ++  saxo
       ~/  %saxo
-      |=  [our=ship now=@da who=ship]
+      |=  who=ship
       ;;  (list ship)
       %-  need  %-  need
       %-  (sloy-light ski)
@@ -548,7 +548,7 @@
     ::
     ++  vein                                            ::    vein:am
       ~/  %vein
-      |=  [our=ship =life vein=(map life ring)]         ::  new private keys
+      |=  [=life vein=(map life ring)]                  ::  new private keys
       ^-  fort
       ::
       ?.  ?&  (~(has by vein) life)
@@ -568,7 +568,7 @@
       =.  seh.suf  ~
       ::  save our deed (for comet/moon communication)
       ::
-      =.  law.suf  (deed our now life)
+      =.  law.suf  (deed our life)
       ::  save our secrets, ready for action
       ::
       =.  val.suf
@@ -592,15 +592,16 @@
       ^-  [p=(list boon) q=fort]
       ?.  =(protocol-version (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
-      ?:  (goop p.p.kec)  [~ fox]
-      ?.  (~(has by urb.ton.fox) q.p.kec)
+      ?:  (goop p.p.kec)
+        [~ fox]
+      ?.  =(our q.p.kec)
         [~ fox]
       =;  zap=[p=(list boon) q=fort]
         [(weld p.zap next) q.zap]
       =<  zork
       =<  zank
       ::  ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
-      %-  ~(chew la:(ho:(um q.p.kec) p.p.kec) kay ryn %none (shaf %flap pac))
+      %-  ~(chew la:(ho:(um our) p.p.kec) kay ryn %none (shaf %flap pac))
       [q.kec r.kec]
     ::
     ++  goop                                            ::  blacklist
@@ -622,12 +623,8 @@
     ::
     ++  kick                                            ::    kick:am
       |=  hen=duct                                      ::  refresh net
-      =+  aks=(turn ~(tap by urb.ton.fox) |=([p=ship q=sufi] p))
-      |-  ^-  [p=(list boon) q=fort]
-      ?~  aks  [~ fox]
-      =^  buz  fox  zork:(kick:(um i.aks) hen)
-      =^  biz  fox  $(aks t.aks)
-      [(weld p.buz p.biz) fox]
+      ^-  [p=(list boon) q=fort]
+      zork:(kick:(um our) hen)
     ::
     ++  next
       ^-  (list boon)
@@ -768,7 +765,7 @@
             ?^  ram  raz.bah
             %+  ~(put by raz.bah)  cha
             rum(dod &, bum ?~(cop bum.rum (~(put by bum.rum) did.rum u.cop)))
-          =/  seg  (sein our now her)
+          =/  seg  (sein her)
           =^  roc  diz  (zuul:diz now seg [%back cop dam ~s0])
           (busk(diz (wast:diz ryn)) xong roc)
         ::  XX move this logic into %zuse, namespaced under %jael?
@@ -814,7 +811,7 @@
                 ::  our sponsor
                 ::
                 ?&  !?=(%czar (clan:title our))
-                    =(her (sein our now our))
+                    =(her (sein our))
                 ==
               ==
           diz(lew.wod.dur law)
@@ -844,10 +841,10 @@
               ^+  +>.$
               ::  bos: our sponsor
               ::
-              =/  bos  (sein our now our)
+              =/  bos  (sein our)
               ::  seg:  her sponsor
               ::
-              =/  seg  (sein our now her)
+              =/  seg  (sein her)
               ::  rac:  her rank
               ::
               =/  rac  (clan:title her)
@@ -950,7 +947,7 @@
             ^+  .                                       ::  send new ack
             ::  ~&  [%back kay dam]
             =*  cop  `coop`?:(=(%good kay) ~ ``[%dead-packet ~])
-            =/  seg  (sein our now her)
+            =/  seg  (sein her)
             =^  pax  diz  (zuul:diz now seg [%back cop dam ~s0])
             +>(+> (busk(diz (wast:diz ryn)) xong pax))
           ::
@@ -1103,7 +1100,7 @@
           |=  [gom=soup ham=meal]
           ::  ~&  [%wind her gom]
           ^+  +>
-          =/  seg  (sein our now her)
+          =/  seg  (sein her)
           =^  wyv  diz  (zuul:diz now seg ham)
           =^  feh  puz  (whap:puz now gom wyv)
           (busk xong feh)
@@ -1179,8 +1176,8 @@
         ::
         ++  xong                                        ::    xong:ho:um:am
           ^-  (list ship)                               ::  route unto
-          =/  fro  (saxo our now our)
-          =/  too  (saxo our now her)
+          =/  fro  (saxo our)
+          =/  too  (saxo her)
           =+  ^=  oot  ^-  (list ship)
               =|  oot=(list ship)
               |-  ^+  oot
@@ -1194,7 +1191,7 @@
       ++  kick                                          ::    kick:um:am
         |=  hen=duct                                    ::  test connection
         ^+  +>
-        =/  hoy  (tail (saxo our now our))
+        =/  hoy  (tail (saxo our))
         |-  ^+  +>.^$
         ?~  hoy
           +>.^$
@@ -1263,7 +1260,7 @@
       ?.  ?=([$$ %da @] lot)
         ~
       ?.  =(now q.p.lot)  ~
-      (temp p.why u.hun [syd t.tyl])
+      (temp u.hun [syd t.tyl])
     ::
     ++  stay  fox
     ++  take                                            ::  accept response
@@ -1282,9 +1279,8 @@
     ^-  [(list move) fort]
     ?-    -.bon
         %beer
-      =/  wir=wire
-        /our/(scot %p p.p.bon)/her/(scot %p q.p.bon)
-      :_  fox  [hen [%pass wir %j %pubs q.p.bon]]~
+      =/  =wire  /pubs/(scot %p q.p.bon)
+      :_  fox  [hen [%pass wire %j %pubs q.p.bon]]~
     ::
         %bock
       :_  fox  [hen %give %turf tuf.fox]~
@@ -1330,7 +1326,7 @@
       ::
       =?  moz  ?&  ?=(%duke (clan:title her))
                    ?=(%king (clan:title our))
-                   =(our (~(sein am [now fox ski]) our now her))
+                   =(our (~(sein am [our now fox ski]) her))
                ==
         =/  cmd  [%meet her]
         =/  pok  [%dns %poke `cage`[%dns-command !>(cmd)]]
@@ -1371,11 +1367,10 @@
       [~ +>.$]
     ::
         %pubs
-      ?.  ?=([%our @ %her @ ~] tea)
+      ?.  ?=([%pubs @ ~] tea)
         ~&  [%strange-pubs tea]
         [~ +>]
-      =/  our=ship  (slav %p i.t.tea)
-      =/  her=ship  (slav %p i.t.t.t.tea)
+      =/  her=ship  (slav %p i.t.tea)
       =/  gus  (need (~(us go ton.fox) our))
       =/  diz  (myx:gus her)
       ?:  =(0 life.sih)
@@ -1398,8 +1393,7 @@
       ?.  ?=([%our @ ~] tea)
         ~&  [%strange-vein tea]
         [~ +>]
-      =/  our=ship  (slav %p i.t.tea)
-      =.  fox  (~(vein am [now fox ski]) our life.sih vein.sih)
+      =.  fox  (~(vein am [our now fox ski]) life.sih vein.sih)
       [~ +>.$]
     ::
         %woot  [~ +>]
@@ -1410,7 +1404,7 @@
         ?-  +<.sih
         ::
             %wake
-          (~(wake am [now fox ski]) hen)
+          (~(wake am [our now fox ski]) hen)
         ::
             ?(%mean %nice)                              ::  XX obsolete
           ?:  ?=([%ye ~] tea)
@@ -1419,7 +1413,7 @@
           =+  soq=[(slav %p i.tea) (slav %p i.t.tea)]
           =+  pax=t.t.tea
           =<  zork  =<  zank
-          %^  ~(rack am [now fox ski])  soq  pax
+          %^  ~(rack am [our now fox ski])  soq  pax
           ::  ~&  [%knap-ack ?-(+<.sih %mean `p.+.sih, %nice ~)]
           ?-(+<.sih %mean `p.+.sih, %nice ~)
         ==
@@ -1453,13 +1447,13 @@
           [%bock ~]~
         ::
             %hear
-          (~(gnaw am [now fox ski]) %good p.kyz q.kyz)
+          (~(gnaw am [our now fox ski]) %good p.kyz q.kyz)
         ::
             %halo
-          (~(gnaw am [now fox ski]) %dead p.kyz q.kyz)
+          (~(gnaw am [our now fox ski]) %dead p.kyz q.kyz)
         ::
             %hole
-          (~(gnaw am [now fox ski]) %dead p.kyz q.kyz)
+          (~(gnaw am [our now fox ski]) %dead p.kyz q.kyz)
         ::
             %init
           :_  fox  [[%sake p.kyz] [%brew ~] ~]
@@ -1471,10 +1465,10 @@
           [~ fox(any.ton (shax (mix any.ton.fox p.kyz)))]
         ::
             %kick
-          =^  ban  fox  (~(kick am [now fox(hop p.kyz) ski]) hen)
+          =^  ban  fox  (~(kick am [our now fox(hop p.kyz) ski]) hen)
           ::  +next:am called here because +wake calls +kick in a loop
           ::
-          [(weld p.ban ~(next am [now fox ski])) fox]
+          [(weld p.ban ~(next am [our now fox ski])) fox]
         ::
             %nuke
           :-  ~
@@ -1485,11 +1479,6 @@
           fox(bad (~(put in bad.fox) p.kyz))
         ::
             %sunk
-          ::  XX single-home properly
-          ::
-          =/  our=ship
-            =/  key  ~(key by urb.ton.fox)
-            ?>(?=([@ ~ ~] key) n.key)
           =*  who  p.kyz
           =*  lyf  q.kyz
           =/  saf=sufi  (~(got by urb.ton.fox) our)
@@ -1516,10 +1505,10 @@
           ==
         ::
             %wake
-          (~(wake am [now fox ski]) hen)
+          (~(wake am [our now fox ski]) hen)
         ::
             %want
-          (~(wise am [now fox ski]) p.kyz hen q.kyz r.kyz)
+          (~(wise am [our now fox ski]) p.kyz hen q.kyz r.kyz)
         ==
     =>  %_(. fox q.fuy)
     =|  out=(list move)
@@ -1531,18 +1520,16 @@
   ::
   ++  temp
     ~/  %temp
-    |=  [our=ship his=ship tyl=path]
+    |=  [his=ship tyl=path]
     ^-  (unit (unit cage))
     ?:  ?=([?(%show %tell) *] tyl)
       ?^  t.tyl  [~ ~]
-      =+  gys=(~(us go ton.fox) our)
-      ?~  gys  [~ ~]
-      =+  zet=zest:(ho:(~(um am [now fox ski]) our) his)
+      =+  zet=zest:(ho:(~(um am [our now fox ski]) our) his)
       ``[%noun ?:(=(%show i.tyl) !>(>zet<) !>(zet))]
     ?:  ?=([%pals ~] tyl)
       ?.  =(our his)
         ~
-      ``[%noun !>(pals:(~(um am [now fox ski]) our))]
+      ``[%noun !>(pals:(~(um am [our now fox ski]) our))]
     ~
   ::
   ++  wegh
