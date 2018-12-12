@@ -84,11 +84,6 @@
       u3_noun
       u3v_pike(u3_noun ovo, u3_noun cor);
 
-    /* u3v_nick(): transform enveloped packets, [vir cor].
-    */
-      u3_noun
-      u3v_nick(u3_noun vir, u3_noun cor);
-
     /* u3v_do(): use a kernel function.
     */
       u3_noun
@@ -118,11 +113,6 @@
     */
       u3_noun
       u3v_poke(u3_noun ovo);
-
-    /* u3v_http_request(): hear http request on channel (unprotected).
-    */
-      void
-      u3v_http_request(c3_o sec, u3_noun pox, u3_noun req);
 
     /* u3v_tank(): dump single tank.
     */
