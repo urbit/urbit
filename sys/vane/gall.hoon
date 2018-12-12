@@ -107,17 +107,15 @@
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  mo
   ~%  %gall-mo  +>  ~ 
-  |_  $:  $:  our/@p 
-              hen/duct
-              moz/(list move)
+  |_  $:  $:  hen=duct
+              moz=(list move)
           ==
           mast
       ==
   ++  mo-abed                                           ::  initialize
-    |=  {our/@p hen/duct}
+    |=  hen=duct
     ^+  +>
     %_    +>
-      our  our
       hen  hen
       +<+  (~(got by pol.all) our)
     ==
@@ -1310,14 +1308,14 @@
     ?.  (~(has by pol.all) p.p.q.hic)
       ~&  [%gall-not-ours p.p.q.hic]
       [~ ..^$]
-    mo-abet:(mo-conf:(mo-abed:mo p.p.q.hic hen) q.p.q.hic q.q.hic)
+    mo-abet:(mo-conf:(mo-abed:mo hen) q.p.q.hic q.q.hic)
   ::
       $deal
     =<  mo-abet
     ?.  (~(has by pol.all) q.p.q.hic)                   ::  either to us
       ?>  (~(has by pol.all) p.p.q.hic)                 ::  or from us
-      (mo-away:(mo-abed:mo p.p.q.hic hen) q.p.q.hic q.q.hic)
-    (mo-come:(mo-abed:mo q.p.q.hic hen) p.p.q.hic q.q.hic)
+      (mo-away:(mo-abed:mo hen) q.p.q.hic q.q.hic)
+    (mo-come:(mo-abed:mo hen) p.p.q.hic q.q.hic)
   ::
       $init 
     ::  ~&  [%gall-init p.q.hic]
@@ -1332,10 +1330,10 @@
     ?:  ?=($ge i.q.q.hic)
       =+  mes=((hard {@ud rook}) r.q.hic)
       =<  mo-abet
-      (mo-gawk:(mo-abed:mo our hen) him dap mes)
+      (mo-gawk:(mo-abed:mo hen) him dap mes)
     =+  mes=((hard {@ud roon}) r.q.hic)
     =<  mo-abet
-    (mo-gawd:(mo-abed:mo our hen) him dap mes)
+    (mo-gawd:(mo-abed:mo hen) him dap mes)
   ::
       $wegh
     :_  ..^$  :_  ~
@@ -1381,7 +1379,7 @@
     [~ ~]
   ?.  ?=(^ tyl)
     ~
-  (mo-peek:(mo-abed:mo his *duct) syd high+`his ren tyl)
+  (mo-peek:(mo-abed:mo *duct) syd high+`his ren tyl)
 ::
 ++  stay                                                ::  save w+o cache
   `axle`all
@@ -1392,8 +1390,7 @@
   ^+  [*(list move) ..^$]
   ~|  [%gall-take tea]
   ?>  ?=({@ ?($sys $use) *} tea) 
-  =+  our=(need (slaw %p i.tea))
-  =+  mow=(mo-abed:mo our hen)
+  =+  mow=(mo-abed:mo hen)
   ?-  i.t.tea
     $sys  mo-abet:(mo-cyst:mow t.t.tea q.hin)
     $use  mo-abet:(mo-cook:mow t.t.tea hin)
