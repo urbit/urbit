@@ -614,7 +614,7 @@
         hop/@da                                         ::  network boot date
         bad/(set @p)                                    ::  bad ships
         ton/town                                        ::  security
-        zac/(map ship corn)                             ::  flows by server
+        zac/corn                                        ::  flows by server
     ==                                                  ::
   ++  hand  @uvH                                        ::  128-bit hash
   ++  lane                                              ::  packet route
@@ -677,15 +677,12 @@
         lys/@da                                         ::  last sent
         pac/rock                                        ::  packet data
     ==                                                  ::
-  ++  sufi                                              ::  domestic host
-    $:  val/wund                                        ::  private keys
+  ++  town                                              ::  all security state
+    $:  any/@                                           ::  entropy
+        val/wund                                        ::  private keys
         law/deed                                        ::  server deed
         seh/(map hand {p/ship q/@da})                   ::  key cache
         hoc/(map ship dore)                             ::  neighborhood
-    ==                                                  ::
-  ++  town                                              ::  all security state
-    $:  any/@                                           ::  entropy
-        urb/(map ship sufi)                             ::  all keys and routes
     ==                                                  ::
   ++  wund  (list {p/life q/ring r/acru})               ::  secrets in action
   --  ::ames
