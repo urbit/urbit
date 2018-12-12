@@ -10,7 +10,6 @@
 ++  all-axle  ?(axle)                                   ::
 ++  axle                                                ::
   $:  $0                                                ::
-      ore/(unit ship)                                   ::  identity once set
       hey/(unit duct)                                   ::  default duct
       dug/(map duct axon)                               ::  conversations
       $=  hef                                           ::  other weights
@@ -139,9 +138,7 @@
 =>  |%
     ++  as                                              ::  per cause
       =|  moz/(list move)
-      |_  $:  {hen/duct our/ship}
-              axon
-          ==
+      |_  [hen=duct axon]
       ++  abet                                          ::  resolve
         ^-  {(list move) axle}
         [(flop moz) all(dug (~(put by dug.all) hen +<+))]
@@ -440,7 +437,7 @@
         ^-  mass
         :-  %dill
         :-  %|
-        :~  all+[%& [ore hey dug]:all]
+        :~  all+[%& [hey dug]:all]
         ==
       ::
       ++  wegt
@@ -472,10 +469,9 @@
     ++  ax                                              ::  make ++as
       |=  hen/duct
       ^-  (unit _as)
-      ?~  ore.all  ~
       =/  nux  (~(get by dug.all) hen)
       ?~  nux  ~
-      (some ~(. as [hen u.ore.all] u.nux))
+      (some ~(. as hen u.nux))
     --
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request
@@ -502,17 +498,14 @@
   ::
   ?:  ?=(%init -.task)
     ?>  =(~ dug.all)
-    ?>  =(~ ore.all)
-    =.  ore.all  `p.task
     ::  configure new terminal, setup :hood and %clay
     ::
-    =*  our  p.task
     =*  duc  (need hey.all)
     =/  app  %hood
     =/  see  (tuba "<awaiting {(trip app)}, this may take a minute>")
     =/  zon=axon  [app input=[~ ~] width=80 cursor=0 see]
     ::
-    =^  moz  all  abet:(~(into as [duc our] zon) ~)
+    =^  moz  all  abet:(~(into as duc zon) ~)
     [moz ..^$]
   ::  %flog tasks are unwrapped and sent back to us on our default duct
   ::
@@ -531,8 +524,8 @@
   ::
   =/  nus  (ax hen)
   ?~  nus
-    ::  we got this on an unknown duct or
-    ::  before %boot or %init (or one of those crashed)
+    ::  :hen is an unrecognized duct
+    ::  could be before %boot (or %boot failed)
     ::
     ~&  [%dill-call-no-flow hen -.task]
     =/  tan  ?:(?=(%crud -.task) q.task ~)
@@ -544,8 +537,6 @@
 ++  load                                                ::  trivial
   |=  old/all-axle
   ..^$(all old)
-  ::  |=  old=*   ::  diable
-  ::  ..^$(ore.all `~zod)
 ::
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
@@ -561,8 +552,8 @@
   ^+  [*(list move) ..^$]
   =/  nus  (ax hen)
   ?~  nus
-    ::  we got this on an unknown duct or
-    ::  before %boot or %init (or one of those crashed)
+    ::  :hen is an unrecognized duct
+    ::  could be before %boot (or %boot failed)
     ::
     ~&  [%dill-take-no-flow hen -.q.hin +<.q.hin]
     [~ ..^$]
