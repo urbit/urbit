@@ -567,17 +567,17 @@
         ryl/(map path rill)                             ::  statements outbound
     ==                                                  ::
   ++  boon                                              ::  fort output
-    $%  {$beer p/sock}                                  ::  request public keys
-        {$bock ~}                                       ::  bind to domains
-        {$brew ~}                                       ::  request domains
-        {$cake p/sock q/soap r/coop s/duct}             ::  e2e message result
-        {$mead p/lane q/rock}                           ::  accept packet
-        {$milk p/sock q/soap r/*}                       ::  e2e pass message
-        {$ouzo p/lane q/rock}                           ::  transmit packet
-        {$pito p/@da}                                   ::  timeout
-        {$raki p/sock q/life r/pass}                    ::  neighbor'd
-        {$sake p/ship}                                  ::  our private keys
-        {$wine p/sock q/tape}                           ::  notify user
+    $%  [%beer p=ship]                                  ::  request public keys
+        [%bock ~]                                       ::  bind to domains
+        [%brew ~]                                       ::  request domains
+        [%cake p=ship q=soap r=coop s=duct]             ::  e2e message result
+        [%mead p=lane q=rock]                           ::  accept packet
+        [%milk p=ship q=soap r=*]                       ::  e2e pass message
+        [%ouzo p=lane q=rock]                           ::  transmit packet
+        [%pito p=@da]                                   ::  timeout
+        [%raki p=ship q=life r=pass]                    ::  neighbor'd
+        [%sake ~]                                       ::  our private keys
+        [%wine p=ship q=tape]                           ::  notify user
     ==                                                  ::
   ++  cake  {p/sock q/skin r/@}                         ::  top level packet
   ++  cape                                              ::  end-to-end result

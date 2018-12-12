@@ -716,7 +716,7 @@
               bin
             :_  bin
             :^    %milk
-                [our her]
+                her
               `soap`[[lyf:sen:gus clon:diz] cha did.rum]
             u.s.u.cun
           ==
@@ -828,7 +828,7 @@
               ::    XX update state so we only ask once?
               ::
               =?  +>.$  &(=(~ lew.wod.dur.diz) =(her bos))
-                (emit %beer our her)
+                (emit %beer her)
               ::  request keys and drop packet if :her is (or is a moon of)
               ::  an unfamilar on-chain ship (and not our sponsor)
               ::
@@ -840,22 +840,22 @@
                               ?|  ?=(~ fod)
                                   ?=(~ lew.wod.u.fod)
                   ==  ==  ==  ==
-                (emit %beer our ?:(?=(%earl rac) seg her))
+                (emit %beer ?:(?=(%earl rac) seg her))
               =/  oub  bust:puz
               =/  neg  =(~ yed.caq.dur.diz)
               =.  +>.$  east
               =/  eng  =(~ yed.caq.dur.diz)
               =/  bou  bust:puz
               =?  +>.$  &(oub !bou)
-                (emit [%wine [our her] " is ok"])
+                (emit [%wine her " is ok"])
               ::  the presence of a symmetric key indicates neighboring
               ::  XX use deed instead?
               ::
               =?  +>.$  &(neg !eng)
                 %-  emir  :~
-                  [%wine [our her] " is your neighbor"]
+                  [%wine her " is your neighbor"]
                   ?>  ?=(^ lew.wod.dur.diz)
-                  [%raki [our her] [life pass]:u.lew.wod.dur.diz]
+                  [%raki her [life pass]:u.lew.wod.dur.diz]
                 ==
               +>.$
             ::
@@ -1050,7 +1050,7 @@
           =+  bou=bust:puz
           =.  bin
               ?.  &(bou !oub)  bin
-              :_(bin [%wine [our her] " not responding still trying"])
+              :_(bin [%wine her " not responding still trying"])
           =.  diz  ?:((boom:puz now) (pode:diz now) diz)
           (busk xong yem)
         ::
@@ -1066,7 +1066,7 @@
             %=    +>.$
                 bin
               :_  bin
-              `boon`[%cake [our her] [[lyf:sen:gus clon:diz] u.p.yoh] cop u.hud]
+              `boon`[%cake her [[lyf:sen:gus clon:diz] u.p.yoh] cop u.hud]
             ==
           (busk xong q.yoh)
         ::
@@ -1090,7 +1090,7 @@
           ::
           ::    XX update state so we only ask once?
           ::
-          =?  bin  =(~ lew.wod.dur.diz)  :_(bin [%beer our her])
+          =?  bin  =(~ lew.wod.dur.diz)  :_(bin [%beer her])
           =.  ryl.bah
               %+  ~(put by ryl.bah)  cha
               %=  rol
@@ -1253,8 +1253,8 @@
     ^-  [(list move) fort]
     ?-    -.bon
         %beer
-      =/  =wire  /pubs/(scot %p q.p.bon)
-      :_  fox  [hen [%pass wire %j %pubs q.p.bon]]~
+      =/  =wire  /pubs/(scot %p p.bon)
+      :_  fox  [hen [%pass wire %j %pubs p.bon]]~
     ::
         %bock
       :_  fox  [hen %give %turf tuf.fox]~
@@ -1265,7 +1265,7 @@
         %cake
       ::  ~?  ?=(^ r.bon)  [%cake-woot-bad hen r.bon]
       :_  fox
-      :~  [s.bon %give %woot q.p.bon r.bon]
+      :~  [s.bon %give %woot p.bon r.bon]
       ==
     ::
         %mead
@@ -1276,8 +1276,8 @@
       ::  ~&  [%milk p.bon q.bon]
       ?>  ?=([@ @ *] q.q.bon)
       ?>  ?=(?(%a %c %e %g %j) i.q.q.bon)
-      =+  pax=[(scot %p p.p.bon) (scot %p q.p.bon) q.q.bon]
-      :_  fox  [hen %pass pax i.q.q.bon %west p.bon t.q.q.bon r.bon]~
+      =/  =wire  [(scot %p our) (scot %p p.bon) q.q.bon]
+      :_  fox  [hen %pass wire i.q.q.bon %west [our p.bon] t.q.q.bon r.bon]~
     ::
         %ouzo
       ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
@@ -1293,7 +1293,7 @@
       [gad.fox %pass /ames %b %rest u.tim.fox]~
     ::
         %raki
-      =*  her  q.p.bon
+      =*  her  p.bon
       =/  moz=(list move)
         [hen [%pass / %j %meet her life=q.bon pass=r.bon]]~
       ::  poke :dns with an indirect binding if her is a planet we're spnsoring
@@ -1308,13 +1308,12 @@
       [moz fox]
     ::
         %sake
-      =/  wir=wire
-        /our/(scot %p p.bon)
-      :_  fox  [hen [%pass wir %j %vein ~]]~
+      =/  =wire  /our/(scot %p our)
+      :_  fox  [hen [%pass wire %j %vein ~]]~
     ::
         %wine
       :_  fox
-      =+  fom=~(rend co %$ %p q.p.bon)
+      =+  fom=~(rend co %$ %p p.bon)
       :~  :-  hen
           :+  %slip  %d
           :+  %flog  %text
@@ -1430,7 +1429,7 @@
           (~(gnaw am [our now fox ski]) %dead p.kyz q.kyz)
         ::
             %init
-          :_  fox  [[%sake p.kyz] [%brew ~] ~]
+          :_  fox  [[%sake ~] [%brew ~] ~]
         ::
           ::  XX this is unused, but they only way to set
           ::  entropy for symmetric keys. Review.
@@ -1464,12 +1463,12 @@
             ::  XX include some helpful instructions here
             ::
             :_  fox
-            [%wine [our who] ", you have sunk"]~
+            [%wine who ", you have sunk"]~
           ::
           =:  hoc.ton.fox  (~(del by hoc.ton.fox) who)
               wab.zac.fox  (~(del by wab.zac.fox) who)
             ==
-          [[%wine [our who] " has sunk"]~ fox]
+          [[%wine who " has sunk"]~ fox]
         ::
             %wake
           (~(wake am [our now fox ski]) hen)
