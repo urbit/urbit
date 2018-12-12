@@ -179,6 +179,7 @@ _raft_promote(u3_raft* raf_u)
       u3_sist_boot();
       if ( c3n == u3_Host.ops_u.bat ) {
         u3_lo_lead();
+        u3_raft_work();
       }
     }
     else {
