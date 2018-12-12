@@ -1104,7 +1104,12 @@
         void
         u3_raft_init(void);
 
-      /* u3_raft_work(): poke, kick, and push pending events.
+      /* u3_raft_play(): synchronously poke, kick, and push pending events.
+      */
+        void
+        u3_raft_play(void);
+
+      /* u3_raft_work(): asynchronously poke, kick, and push pending events.
       */
         void
         u3_raft_work(void);
