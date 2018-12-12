@@ -95,7 +95,6 @@
       por/{clr/@ud sek/(unit @ud)}                      ::  live ports
       wel/wank                                          ::  .well-known
       gub/@t                                            ::  random identity
-      hov/(unit ship)                                   ::  master for remote
       top/beam                                          ::  ford serve prefix
       ged/duct                                          ::  client interface
       ded/(set duct)                                    ::  killed requests
@@ -639,7 +638,6 @@
   ++  apex                                              ::  accept request
     |=  kyz/task:able
     ^+  +>
-    =.  our  ?~(hov our u.hov)  ::  XX
     =.  p.top  our              ::  XX necessary?
     ?-    -.kyz
         ::  new unix process - learn of first boot or a restart.
@@ -725,10 +723,8 @@
       +>.$(mow [[hen %slip %d %flog kyz] mow])
     ::
         $init                                           ::  register ownership
-      =.  our  ?~(hov p.kyz (min u.hov p.kyz))
       %=  +>.$
         fig  [~ ?=(%king (clan:title our)) & &]
-        hov  [~ our]
         top  [[our %home ud+0] /web]
       ==
     ::
@@ -917,7 +913,6 @@
   ++  axon                                              ::  accept response
     |=  {tee/whir sih/sign}
     ^+  +>
-    =.  our  ?~(hov our u.hov)  ::  XX
     ?:  &(?=({?($of $ow) ^} tee) !(~(has by wix) p.tee))
       ~&(dead-ire+[`whir`tee] +>)
     ?-    &2.sih
@@ -981,7 +976,6 @@
       (give-json 200 ~ (frond:enjs %beat %b &))
     ::
         $made
-      =.  our  (need hov)                             ::  XX
       =|  ses/(unit hole)
       |-  ^+  ..axon
       ?+    tee  ~&  [%tee tee]  !!
@@ -1074,7 +1068,9 @@
   ++  ses-ya  |=(ses/hole ~(. ya ses (~(got by wup) ses)))
   ++  our-host
     ^-  hart
-    :: XX get actual -F flag value
+    ::  XX get actual -F flag value
+    ::  XX scry into %jael?
+    ::
     ?:  [fake=|]  [| [~ 8.443] &+/localhost]
     `hart`[& ~ %& /org/urbit/(rsh 3 1 (scot %p our))]
   ::
@@ -1274,8 +1270,6 @@
     ++  apex
       =<  abet
       ^+  done
-      =+  oar=(host-to-ship r.hat)
-      =.  our  ?~(oar our u.oar)  ::  XX
       =+  pez=process
       ?:  ?=(%| -.pez)  p.pez
       (resolve ~ p.pez)
@@ -2272,7 +2266,6 @@
         hosts+[%& dop]
         misc+[%& bol]
     ==
-  =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(sloy ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
@@ -2291,7 +2284,6 @@
   ^-  (unit (unit cage))
   ?.  ?=(%& -.why)  ~
   =*  who  p.why
-  =+  our=(need hov)                  :: XX single home
   =+  ska=(sloy ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   ?.  ?=($$ ren)  [~ ~]
@@ -2326,7 +2318,6 @@
 ++  take                                                ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [*(list move) ..^$]
-  =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(sloy ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
