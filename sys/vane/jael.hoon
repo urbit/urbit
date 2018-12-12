@@ -701,7 +701,7 @@
       ::  our initial private key, as a +tree of +rite
       ::
       =/  rit  (sy [%jewel (my [lyf.seed.tac key.seed.tac] ~)] ~)
-      =.  +>.$  $(tac [%mint our our rit])
+      =.  +>.$  $(tac [%mint our rit])
       ::  our initial galaxy table as a +map from +life to +public
       ::
       =/  kyz
@@ -741,12 +741,12 @@
       +>.$
     ::
     ::  boot fake
-    ::    {$fake our/ship}
+    ::    [%fake =ship]
     ::
         %fake
       ::  single-homed
       ::
-      ?>  =(our our.tac)
+      ?>  =(our ship.tac)
       ::  fake keys are deterministically derived from the ship
       ::
       =/  cub  (pit:nu:crub:crypto 512 our)
@@ -769,7 +769,7 @@
       ::    so we do this first.
       ::
       =/  rit  (sy [%jewel (my [1 sec:ex:cub] ~)] ~)
-      =.  +>.$  $(tac [%mint our our rit])
+      =.  +>.$  $(tac [%mint our rit])
       ::  set the fake bit
       ::
       =.  fak.own.sub  &
@@ -839,18 +839,18 @@
       ==
     ::
     ::  watch public keys
-    ::    [%pubs our=ship who=ship]
+    ::    [%pubs =ship]
     ::
         %pubs
       %-  curd  =<  abet
-      (~(pubs ~(feed su hen our urb sub etn sap) hen) who.tac)
+      (~(pubs ~(feed su hen our urb sub etn sap) hen) ship.tac)
     ::
     ::  seen after breach
     ::    [%meet our=ship who=ship]
     ::
         %meet
       %+  cure  hen
-      [[%meet who.tac life.tac pass.tac]~ urb]
+      [[%meet ship.tac life.tac pass.tac]~ urb]
     ::
     ::  XX should be a subscription
     ::  XX reconcile with .dns.eth
@@ -915,7 +915,7 @@
       ::    [%vent ~]
       ::
           %vent
-        $(tac [%vent our])
+        $(tac [%vent ~])
       ::
       ::
           %vent-result
@@ -1003,7 +1003,7 @@
     =.  +>.$  (restore-block hen block)
     %=    +>.$
         moz
-      =-  [[hen %pass /wind/look %j %look our -] moz]
+      =-  [[hen %pass /wind/look %j %look -] moz]
       ?-  -.source.etn
         %&  &+p.source.etn
         %|  |+node.p.source.etn
@@ -2134,7 +2134,7 @@
         sap               sap(last-block 0)
         moves
       ?.  look  moves
-      =-  [[hen %pass /wind/look %j %look our -] moves]
+      =-  [[hen %pass /wind/look %j %look -] moves]
       ?-  -.source.etn
         %&  &+p.source.etn
         %|  |+node.p.source.etn

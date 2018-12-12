@@ -41,7 +41,7 @@
     %-  jael-call-with-comparator  :*
       jael-gate
       now=(add ~s1 ~1234.5.6)
-      call-args=[duct=[/ /term/1 wir ~] type=*type %vein ~nul]
+      call-args=[duct=[/ /term/1 wir ~] type=*type %vein ~]
       ^=  comparator
         |=  moves=(list move:jael-gate)
         ;:  weld
@@ -89,7 +89,7 @@
       ==
   ^-  [tang _jael-gate]
   ::
-  =/  jael  (jael-gate our=~zod now=now eny=`@`0xdead.beef scry=*sley)
+  =/  jael  (jael-gate our=~nul now=now eny=`@`0xdead.beef scry=*sley)
   ::
   =^  moves  jael-gate
     %-  call:jael  call-args
@@ -109,7 +109,7 @@
       ==
   ^-  [tang _jael-gate]
   ::
-  =/  jael  (jael-gate our=~zod now=now eny=`@`0xdead.beef scry=*sley)
+  =/  jael  (jael-gate our=~nul now=now eny=`@`0xdead.beef scry=*sley)
   ::
   =^  moves  jael-gate
     %-  call:jael  call-args
@@ -126,7 +126,7 @@
       ==
   ^-  [tang _jael-gate]
   ::
-  =/  jael  (jael-gate our=~zod now=now eny=`@`0xdead.beef scry=*sley)
+  =/  jael  (jael-gate our=~nul now=now eny=`@`0xdead.beef scry=*sley)
   ::
   =^  moves  jael-gate
     %-  take:jael  take-args
@@ -146,7 +146,7 @@
       ==
   ^-  [tang _jael-gate]
   ::
-  =/  jael  (jael-gate our=~zod now=now eny=`@`0xdead.beef scry=*sley)
+  =/  jael  (jael-gate our=~nul now=now eny=`@`0xdead.beef scry=*sley)
   ::
   =^  moves  jael-gate
     %-  take:jael  take-args

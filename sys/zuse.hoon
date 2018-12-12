@@ -480,10 +480,10 @@
       $%  {$flog p/flog:dill}                           ::
       ==  ==                                            ::
           $:  %j                                        ::  to %jael
-      $%  [%meet our=ship who=ship =life =pass]         ::  neighbor
-          [%pubs our=ship who=ship]                     ::  view public keys
+      $%  [%meet =ship =life =pass]                     ::  neighbor
+          [%pubs =ship]                                 ::  view public keys
           [%turf ~]                                     ::  view domains
-          [%vein our=ship]                              ::  view private keys
+          [%vein ~]                                     ::  view private keys
       ==  ==                                            ::
           $:  $g                                        ::  to %gall
       $%  {$deal p/sock q/cush:gall}                    ::
@@ -2109,7 +2109,7 @@
       ==  ==                                            ::
           $:  %j                                        ::
       $%  [%vent-result p=vent-result]                  ::  tmp workaround
-          [%look our=ship src=(each ship purl:eyre)]    ::
+          [%look src=(each ship purl:eyre)]             ::
       ==  ==                                            ::
           $:  @tas                                      ::
       $%  [%init p=ship]                                ::  report install
@@ -2137,8 +2137,8 @@
       action                                            ::  change
     ::
     +=  task                                            ::  in request ->$
-      $%  [%burn our=ship p=ship q=safe]                ::  destroy rights
-          [%hail our=ship p=ship q=remote]              ::  remote update
+      $%  [%burn p=ship q=safe]                         ::  destroy rights
+          [%hail p=ship q=remote]                       ::  remote update
           $:  %dawn                                     ::  boot from keys
               =seed:able:jael                           ::    identity params
               spon=(unit ship)                          ::    sponsor
@@ -2148,21 +2148,21 @@
               node=(unit purl:eyre)                     ::    gateway url
               snap=(unit snapshot)                      ::    head start
           ==                                            ::
-          [%fake our=ship]                              ::  fake boot
-          [%look our=ship src=(each ship purl:eyre)]    ::  set ethereum source
-          [%mint our=ship p=ship q=safe]                ::  create rights
-          [%move our=ship p=ship q=ship r=safe]         ::  transfer from=to
+          [%fake =ship]                                 ::  fake boot
+          [%look src=(each ship purl:eyre)]             ::  set ethereum source
+          [%mint p=ship q=safe]                         ::  create rights
+          [%move p=ship q=ship r=safe]                  ::  transfer from=to
           ::TODO  %next for generating/putting new private key
           [%nuke ~]                                     ::  cancel tracker from
-          [%pubs our=ship who=ship]                     ::  view public keys
-          [%meet our=ship who=ship =life =pass]         ::  met after breach
+          [%pubs =ship]                                 ::  view public keys
+          [%meet =ship =life =pass]                     ::  met after breach
           [%turf ~]                                     ::  view domains
-          [%vein our=ship]                              ::  view signing keys
-          [%vent our=ship]                              ::  view ethereum events
-          [%vest our=ship]                              ::  view public balance
+          [%vein ~]                                     ::  view signing keys
+          [%vent ~]                                     ::  view ethereum events
+          [%vest ~]                                     ::  view public balance
           [%vine ~]                                     ::  view secret history
           [%west p=sack q=path r=*]                     ::  remote request
-          [%wind our=ship p=@ud]                        ::  rewind before block
+          [%wind p=@ud]                                 ::  rewind before block
       ==                                                ::
     --                                                  ::
   ::                                                    ::

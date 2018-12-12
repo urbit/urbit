@@ -1284,7 +1284,7 @@
         %beer
       =/  wir=wire
         /our/(scot %p p.p.bon)/her/(scot %p q.p.bon)
-      :_  fox  [hen [%pass wir %j %pubs p.p.bon q.p.bon]]~
+      :_  fox  [hen [%pass wir %j %pubs q.p.bon]]~
     ::
         %bock
       :_  fox  [hen %give %turf tuf.fox]~
@@ -1323,10 +1323,9 @@
       [gad.fox %pass /ames %b %rest u.tim.fox]~
     ::
         %raki
-      =*  our  p.p.bon
       =*  her  q.p.bon
       =/  moz=(list move)
-        [hen [%pass / %j %meet our her life=q.bon pass=r.bon]]~
+        [hen [%pass / %j %meet her life=q.bon pass=r.bon]]~
       ::  poke :dns with an indirect binding if her is a planet we're spnsoring
       ::
       =?  moz  ?&  ?=(%duke (clan:title her))
@@ -1341,7 +1340,7 @@
         %sake
       =/  wir=wire
         /our/(scot %p p.bon)
-      :_  fox  [hen [%pass wir %j %vein p.bon]]~
+      :_  fox  [hen [%pass wir %j %vein ~]]~
     ::
         %wine
       :_  fox
