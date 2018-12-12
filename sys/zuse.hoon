@@ -531,7 +531,7 @@
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
           {$west p/sack q/path r/*}                     ::  network request
-          {$want p/sock q/path r/*}                     ::  forward message
+          {$want p/ship q/path r/*}                     ::  forward message
       ==                                                ::
     --  ::able
   ::
@@ -2102,7 +2102,7 @@
       $%  [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
       ==  ==                                            ::
           $:  %a                                        ::
-      $%  [%want p=sock q=path r=*]                     ::  send message
+      $%  [%want p=ship q=path r=*]                     ::  send message
       ==  ==                                            ::
           $:  %j                                        ::
       $%  [%vent-result p=vent-result]                  ::  tmp workaround

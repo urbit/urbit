@@ -1474,7 +1474,7 @@
           (~(wake am [our now fox ski]) hen)
         ::
             %want
-          (~(wise am [our now fox ski]) hen q.p.kyz q.kyz r.kyz)
+          (~(wise am [our now fox ski]) hen p.kyz q.kyz r.kyz)
         ==
     =>  %_(. fox q.fuy)
     =|  out=(list move)

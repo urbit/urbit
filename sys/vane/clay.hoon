@@ -330,7 +330,7 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
   $%  $:  $a                                            ::  to %ames
-  $%  {$want p/sock q/path r/*}                         ::
+  $%  {$want p/ship q/path r/*}                         ::
   ==  ==                                                ::
       $:  $c                                            ::  to %clay
   $%  {$info p/@p q/@tas r/nori}                        ::  internal edit
@@ -700,7 +700,7 @@
   ::
   ++  send-over-ames
     |=  {a/duct b/path c/ship d/{p/@ud q/riff}}
-    (emit a %pass b %a %want [our c] [%c %question p.q.d (scot %ud p.d) ~] q.d)
+    (emit a %pass b %a %want c [%c %question p.q.d (scot %ud p.d) ~] q.d)
   ::
   ::  Create a request that cannot be filled immediately.
   ::
@@ -4226,7 +4226,7 @@
     =+  him=(slav %p i.t.tea)
     :_  ..^$
     :~  :*  hen  %pass  /writ-want  %a
-            %want  [our him]  [%c %answer t.t.tea]
+            %want  him  [%c %answer t.t.tea]
             (bind p.+.q.hin rant-to-rand)
         ==
     ==

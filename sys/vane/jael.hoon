@@ -1097,7 +1097,7 @@
     :+  %pass
       /(scot %p our)/vent-result
     ^-  note:able
-    [%a %want [our who] /j/(scot %p our)/vent-result %vent-result res]
+    [%a %want who /j/(scot %p our)/vent-result %vent-result res]
   ::
   ++  extract-snap                                    ::  extract rewind point
     ^-  snapshot
@@ -1210,7 +1210,7 @@
         :_  moz
         :^  *duct  %pass  /vest/(scot %p p.hug)
         :+  %a  %want
-        :+  [our p.hug]  /j
+        :+  p.hug  /j
         ^-  message
         [%hail |+pig]
       ==
@@ -1702,7 +1702,7 @@
     |=  [our=ship who=ship]
     %-  put-move(source &+who)
     %+  wrap-note  /vent/(scot %p who)
-    [%a %want [our who] /j/(scot %p our)/vent `*`[%vent ~]]
+    [%a %want who /j/(scot %p our)/vent `*`[%vent ~]]
   ::
   ::  +unsubscribe-from-source: stop listening to current source ship
   ::
@@ -1713,7 +1713,7 @@
     %+  wrap-note  /vent/(scot %p p.source)
     ::TODO  should we maybe have a %nuke-vent,
     ::      or do we have a unique duct here?
-    [%a %want [our p.source] /j/(scot %p our)/vent `*`[%nuke ~]]
+    [%a %want p.source /j/(scot %p our)/vent `*`[%nuke ~]]
   ::
   ::  +listen-to-node: start syncing from a node
   ::
@@ -2161,7 +2161,7 @@
     :+  %pass
       /(scot %p our)/vent-result
     ^-  note:able
-    [%a %want [our who] /j/(scot %p our)/vent-result %vent-result res]
+    [%a %want who /j/(scot %p our)/vent-result %vent-result res]
   ::                                                    ::  ++feed:su
   --
 --

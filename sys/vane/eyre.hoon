@@ -13,7 +13,7 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $a                                    ::  to %ames
-          $%  {$want p/sock q/{path *}}                 ::
+          $%  {$want p/ship q/{path *}}                 ::
           ==  ==                                        ::
               $:  $b                                    ::  to  %behn
           $%  {$wait p/@da}                             ::
@@ -1083,7 +1083,7 @@
     ::  TODO: To make this work
     ::
     ~!  -.gam
-    (pass-note ~ %a %want [our him] [%e -.gam ~] +.gam)
+    (pass-note ~ %a %want him [%e -.gam ~] +.gam)
   ::
   ++  back-turbo
     |=  [tea=whir mar=mark cay=cage]

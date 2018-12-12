@@ -241,7 +241,7 @@
         ==
     %+  mo-pass  
       [%sys %way -.q.caz ~]
-    `note-arvo`[%a %want [our him] [%g %ge p.caz ~] [num roc]]
+    `note-arvo`[%a %want him [%g %ge p.caz ~] [num roc]]
   ::
   ++  mo-baal                                           ::  error convert a
     |=  art/(unit ares)
@@ -351,7 +351,7 @@
           ~&  [%diff-bad-ack %mack]
           (slog (flop q.,.+>.q.+>.sih))
       =.  +>.$  (mo-pass [%sys pax] %g %deal [him our] dap %pull ~)
-      (mo-pass [%sys pax] %a %want [our him] [%g %gh dap ~] [num %x ~])
+      (mo-pass [%sys pax] %a %want him [%g %gh dap ~] [num %x ~])
     ::
         %rep                                            ::  reverse request
       ?>  ?=({@ @ @ ~} t.pax)
@@ -400,9 +400,9 @@
       ?-    -.cuf
         $coup  (mo-give %mack p.cuf)
         $diff  %+  mo-pass  [%sys %red t.pax]
-               [%a %want [our him] [%g %gh dap ~] [num %d p.p.cuf q.q.p.cuf]]
+               [%a %want him [%g %gh dap ~] [num %d p.p.cuf q.q.p.cuf]]
         $quit  %+  mo-pass  [%sys pax]
-               [%a %want [our him] [%g %gh dap ~] [num %x ~]]
+               [%a %want him [%g %gh dap ~] [num %x ~]]
         $reap  (mo-give %mack p.cuf)
       ==
     ::
