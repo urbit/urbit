@@ -1601,38 +1601,26 @@ _raft_punk(u3_noun ovo)
   free(txt_c);
 #endif
 
-  if ( u3_blip != u3h(gon) ) {
-    u3_noun why = u3k(u3h(gon));
-    u3_noun tan = u3k(u3t(gon));
+  {
+    u3_noun hed, tal;
+    u3x_cell(gon, &hed, &tal);
 
+    u3k(hed); u3k(tal);
     u3z(gon);
-    return _raft_lame(ovo, why, tan);
-  }
-  else {
-    u3_noun vir = u3k(u3h(u3t(gon)));
-    u3_noun cor = u3k(u3t(u3t(gon)));
-    u3_noun nug;
 
-    u3z(gon);
-    nug = u3v_nick(vir, cor);
-
-    if ( u3_blip != u3h(nug) ) {
-      u3_noun why = u3k(u3h(nug));
-      u3_noun tan = u3k(u3t(nug));
-
-      u3z(nug);
-      return _raft_lame(ovo, why, tan);
+    if ( u3_blip != hed ) {
+      return _raft_lame(ovo, hed, tal);
     }
     else {
-      vir = u3k(u3h(u3t(nug)));
-      cor = u3k(u3t(u3t(nug)));
+      u3_noun vir, cor;
+      u3x_cell(tal, &vir, &cor);
 
-      u3z(nug);
+      u3k(vir); u3k(cor);
+      u3z(tal);
+
       return _raft_sure(ovo, vir, cor);
     }
   }
-  //  uL(fprintf(uH, "punk oot %s\n", txt_c));
-  //  free(txt_c);
 }
 
 /* _raft_push(): save an event
