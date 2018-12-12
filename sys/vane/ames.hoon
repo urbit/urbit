@@ -594,7 +594,7 @@
       =<  zork
       =<  zank
       ::  ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
-      %-  ~(chew la:(ho:(um our) p.p.kec) kay ryn %none (shaf %flap pac))
+      %-  ~(chew la:(ho:um p.p.kec) kay ryn %none (shaf %flap pac))
       [q.kec r.kec]
     ::
     ++  goop                                            ::  blacklist
@@ -604,7 +604,7 @@
     ++  kick                                            ::    kick:am
       |=  hen=duct                                      ::  refresh net
       ^-  [p=(list boon) q=fort]
-      zork:(kick:(um our) hen)
+      zork:(kick:um hen)
     ::
     ++  next
       ^-  (list boon)
@@ -623,8 +623,8 @@
     ::
     ++  rack                                            ::    rack:am
       ~/  %rack
-      |=  [soq=sock cha=path cop=coop]                  ::  e2e ack
-      =+  oh=(ho:(um p.soq) q.soq)
+      |=  [her=ship cha=path cop=coop]                  ::  e2e ack
+      =/  oh  (ho:um her)
       =^  gud  oh  (cook:oh cop cha ~)
       ?.  gud  oh
       (cans:oh cha)
@@ -644,13 +644,12 @@
       $(neb t.neb, bin (weld p.bun bin))
     ::
     ++  wise                                            ::    wise:am
-      |=  [soq=sock hen=duct cha=path val=*]            ::  send a statement
+      |=  [hen=duct her=ship cha=path val=*]            ::  send a statement
       ^-  [p=(list boon) q=fort]
-      =^  ban  fox  zork:zank:(wool:(ho:(um p.soq) q.soq) hen cha val)
+      =^  ban  fox  zork:zank:(wool:(ho:um her) hen cha val)
       [(weld p.ban next) fox]
     ::
     ++  um                                              ::  per server
-      |=  our=ship
       =/  gus   (~(us go ton.fox) our)
       =/  weg=corn  zac.fox
       =|  bin=(list boon)
@@ -1385,10 +1384,10 @@
           ?:  ?=([%ye ~] tea)
             [~ fox]
           ?>  ?=([@ @ @ *] tea)
-          =+  soq=[(slav %p i.tea) (slav %p i.t.tea)]
-          =+  pax=t.t.tea
+          =/  her  (slav %p i.t.tea)
+          =*  pax  t.t.tea
           =<  zork  =<  zank
-          %^  ~(rack am [our now fox ski])  soq  pax
+          %^  ~(rack am [our now fox ski])  her  pax
           ::  ~&  [%knap-ack ?-(+<.sih %mean `p.+.sih, %nice ~)]
           ?-(+<.sih %mean `p.+.sih, %nice ~)
         ==
@@ -1476,7 +1475,7 @@
           (~(wake am [our now fox ski]) hen)
         ::
             %want
-          (~(wise am [our now fox ski]) p.kyz hen q.kyz r.kyz)
+          (~(wise am [our now fox ski]) hen q.p.kyz q.kyz r.kyz)
         ==
     =>  %_(. fox q.fuy)
     =|  out=(list move)
@@ -1492,12 +1491,12 @@
     ^-  (unit (unit cage))
     ?:  ?=([?(%show %tell) *] tyl)
       ?^  t.tyl  [~ ~]
-      =+  zet=zest:(ho:(~(um am [our now fox ski]) our) his)
+      =+  zet=zest:(ho:~(um am [our now fox ski]) his)
       ``[%noun ?:(=(%show i.tyl) !>(>zet<) !>(zet))]
     ?:  ?=([%pals ~] tyl)
       ?.  =(our his)
         ~
-      ``[%noun !>(pals:(~(um am [our now fox ski]) our))]
+      ``[%noun !>(pals:~(um am [our now fox ski]))]
     ~
   ::
   ++  wegh
