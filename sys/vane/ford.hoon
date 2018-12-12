@@ -2485,11 +2485,8 @@
         =^  maybe-schematic-results  out
           %-  perform-schematics  :*
             ;:  weld
-              "ford: %bake "
-              (trip renderer)
-              " on "
-              (spud (rail-to-path path-to-render))
-              " contained failures:"
+              "ford: %bake "  (trip renderer)  " on "
+              (spud (rail-to-path path-to-render))  " contained failures:"
             ==
             sub-schematics
             %fail-on-errors
@@ -2687,13 +2684,8 @@
         :_  message.u.input-result
         :-  %leaf
         ;:  weld
-          "ford: %cast "
-          (trip mark)
-          "on ["
-          (trip (scot %p ship.disc))
-          " "
-          (trip desk.disc)
-          "] failed on input:"
+          "ford: %cast "  (trip mark)  "on ["  (trip (scot %p ship.disc))
+          " "  (trip desk.disc)  "] failed on input:"
         ==
       ::
       ?>  ?=([~ %success *] input-result)
@@ -2713,13 +2705,8 @@
         :_  message.u.translation-path-result
         :-  %leaf
         ;:  weld
-          "ford: %cast "
-          (trip mark)
-          "on ["
-          (trip (scot %p ship.disc))
-          " "
-          (trip desk.disc)
-          "] failed:"
+          "ford: %cast "  (trip mark)  "on ["  (trip (scot %p ship.disc))
+          " "  (trip desk.disc)  "] failed:"
         ==
       ::
       ?>  ?=([~ %success %walk *] translation-path-result)
@@ -2778,8 +2765,7 @@
             source-mark
             target-mark
             ;:  weld
-              "ford: %cast failed to find path for mark "
-              (trip source-mark)
+              "ford: %cast failed to find path for mark "  (trip source-mark)
               " during +grab:"
             ==
             mark-path-result
@@ -2865,8 +2851,7 @@
             source-mark
             target-mark
             ;:  weld
-              "ford: %cast failed to find path for mark "
-              (trip source-mark)
+              "ford: %cast failed to find path for mark "  (trip source-mark)
               " during +grow:"
             ==
             starting-mark-path-result
@@ -2926,10 +2911,7 @@
           :_  ~
           :-  %leaf
           ;:  weld
-            "ford: %cast from "
-            (trip src)
-            " to "
-            (trip dst)
+            "ford: %cast from "  (trip src)  " to "  (trip dst)
             " failed: nest fail"
           ==
         ::
@@ -2950,10 +2932,7 @@
         :*  :-  %leaf
             ;:  weld
               "ford: %cast failed while trying to cast from "
-              (trip source-mark)
-              " to "
-              (trip target-mark)
-              ":"
+              (trip source-mark)  " to "  (trip target-mark)  ":"
             ==
             [%leaf description]
             message.u.result
@@ -3837,11 +3816,8 @@
       =^  maybe-schematic-results  out
         %-  perform-schematics  :*
           ;:  weld
-            "ford: %path resolution of "
-            (trip raw-path)
-            "at prefix "
-            (trip prefix)
-            " contained failures:"
+            "ford: %path resolution of "  (trip raw-path)  "at prefix "
+            (trip prefix)  " contained failures:"
           ==
           rails-and-schematics
           %filter-errors
@@ -5056,9 +5032,7 @@
               :*  %build-result  %error
                   :*  :-  %leaf
                       ;:  weld
-                        "ford: no mark path from "
-                        (trip source)
-                        " to "
+                        "ford: no mark path from "  (trip source)  " to "
                         (trip target)
                       ==
                       errors
@@ -5108,10 +5082,7 @@
         =^  maybe-path-results  out
           %-  perform-schematics  :*
             ;:  weld
-              "ford: %walk from "
-              (trip source)
-              " to "
-              (trip target)
+              "ford: %walk from "  (trip source)  " to "  (trip target)
               " contained failures:"
             ==
             nodes-and-schematics
@@ -5134,10 +5105,7 @@
         =^  maybe-core-results  out
           %-  perform-schematics  :*
             ;:  weld
-              "ford: %walk from "
-              (trip source)
-              " to "
-              (trip target)
+              "ford: %walk from "  (trip source)  " to "  (trip target)
               " contained failures:"
             ==
             nodes-and-cores
