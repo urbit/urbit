@@ -971,13 +971,10 @@ _sist_rest()
         continue;
       }
 
-#if 0
-      // disable encryption for now
-      //
       if ( u3A->key ) {
         u3_noun dep;
 
-        dep = u3dc("de:crua", u3k(u3A->key), ron);
+        dep = u3dc("de:crub:crypto", u3k(u3A->key), ron);
         if ( c3n == u3du(dep) ) {
           uL(fprintf(uH, "record (%s) is corrupt (k)\n", ful_c));
           u3_lo_bail();
@@ -987,7 +984,7 @@ _sist_rest()
           u3z(dep);
         }
       }
-#endif
+
       roe = u3nc(u3ke_cue(ron), roe);
     }
     u3A->ent_d = c3_max(las_d + 1ULL, old_d);
