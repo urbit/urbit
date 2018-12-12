@@ -56,8 +56,6 @@
         ==                                              ::
       $=  own                                           ::  vault (vein)
         $:  yen/(set duct)                              ::  trackers
-            :: XX use this                              ::
-            our=ship                                    ::
             sig=(unit oath)                             ::  for a moon
             :: XX reconcile with .dns.eth               ::
             tuf=(list turf)                             ::  domains
@@ -601,12 +599,11 @@
   ::  vane interface when that gets cleaned up a bit.
   ::
   =|  moz/(list move)
-  =|  $:  ::  sys: system context
-          ::
-          $=  sys
-          $:  ::  now: current time
+  =|  $:  $:  ::  our: identity
+              ::  now: current time
               ::  eny: unique entropy
               ::
+              our=ship
               now=@da
               eny=@uvJ
           ==
@@ -668,8 +665,8 @@
     ::    {$burn p/ship q/safe}
     ::
         $burn
-      %^  cure  hen  our.tac
-      abet:abet:(deal:(burb our.tac) p.tac [~ q.tac])
+      %+  cure  hen
+      abet:abet:(deal:(burb our) p.tac [~ q.tac])
     ::
     ::  boot from keys
     ::    $:  $dawn
@@ -682,10 +679,9 @@
     ::    ==
     ::
         %dawn
-      =*  our  who.seed.tac
-      ::  sort-of single-homed
+      ::  single-homed
       ::
-      =.  our.own.sub  our
+      ?>  =(our who.seed.tac)
       ::  save our boot block
       ::
       =.  boq.own.sub  bloq.tac
@@ -723,7 +719,7 @@
       ::
       =.  +>.$
         ?~  snap.tac  +>.$
-        (restore-snap hen our u.snap.tac |)
+        (restore-snap hen u.snap.tac |)
       ::
       =.  moz
         %+  weld  moz
@@ -734,7 +730,7 @@
         ::    %jael init must be deferred (makes http requests)
         ::
         ^-  (list move)
-        :~  [hen %pass /(scot %p our)/init %b %wait +(now.sys)]
+        :~  [hen %pass /(scot %p our)/init %b %wait +(now)]
             [hen %give %init our]
             [hen %slip %e %init our]
             [hen %slip %d %init our]
@@ -748,10 +744,9 @@
     ::    {$fake our/ship}
     ::
         %fake
-      =*  our  our.tac
-      ::  sort-of single-homed
+      ::  single-homed
       ::
-      =.  our.own.sub  our
+      ?>  =(our our.tac)
       ::  fake keys are deterministically derived from the ship
       ::
       =/  cub  (pit:nu:crub:crypto 512 our)
@@ -798,15 +793,15 @@
     ::    {$hail p/ship q/remote}
     ::
         $hail
-      %^  cure  hen  our.tac
-      abet:abet:(hail:(burb our.tac) p.tac q.tac)
+      %+  cure  hen
+      abet:abet:(hail:(burb our) p.tac q.tac)
     ::
     ::  set ethereum source
     ::    [%look p=(each ship purl)]
     ::
         %look
-      %^  cute  hen  our.tac  =<  abet
-      (~(look et hen our.tac now.sys urb.lex sub.lex etn.lex sap.lex) src.tac)
+      %+  cute  hen  =<  abet
+      (~(look et hen our now urb.lex sub.lex etn.lex sap.lex) src.tac)
     ::
     ::  create promises
     ::    {$mint p/ship q/safe}
@@ -816,8 +811,8 @@
       ?<  ?&  fak.own.sub
               (~(exists up q.tac) %jewel)
           ==
-      %^  cure  hen  our.tac
-      abet:abet:(deal:(burb our.tac) p.tac [q.tac ~])
+      %+  cure  hen
+      abet:abet:(deal:(burb our) p.tac [q.tac ~])
     ::
     ::
     ::  move promises
@@ -825,11 +820,11 @@
     ::
         $move
       =.  +>
-        %^  cure  hen  our.tac
-        abet:abet:(deal:(burb our.tac) p.tac [~ r.tac])
+        %+  cure  hen
+        abet:abet:(deal:(burb our) p.tac [~ r.tac])
       =.  +>
-        %^  cure  hen  our.tac
-        abet:abet:(deal:(burb our.tac) q.tac [r.tac ~])
+        %+  cure  hen
+        abet:abet:(deal:(burb our) q.tac [r.tac ~])
       +>
     ::
     ::  cancel all trackers from duct
@@ -848,13 +843,13 @@
     ::
         %pubs
       %-  curd  =<  abet
-      (~(pubs ~(feed su hen our.tac urb sub etn sap) hen) who.tac)
+      (~(pubs ~(feed su hen our urb sub etn sap) hen) who.tac)
     ::
     ::  seen after breach
     ::    [%meet our=ship who=ship]
     ::
         %meet
-      %^  cure  hen  our.tac
+      %+  cure  hen
       [[%meet who.tac life.tac pass.tac]~ urb]
     ::
     ::  XX should be a subscription
@@ -873,20 +868,20 @@
     ::    {$vein $~}
     ::
         $vein
-      (curd abet:~(vein ~(feed su hen our.tac urb sub etn sap) hen))
+      (curd abet:~(vein ~(feed su hen our urb sub etn sap) hen))
     ::
     ::  watch ethereum events
     ::    [%vent ~]
     ::
         %vent
       =.  moz  [[hen %give %mack ~] moz]
-      (curd abet:~(vent ~(feed su hen our.tac urb sub etn sap) hen))
+      (curd abet:~(vent ~(feed su hen our urb sub etn sap) hen))
     ::
     ::  monitor assets
     ::    {$vest $~}
     ::
         $vest
-      (curd abet:~(vest ~(feed su hen our.tac urb sub etn sap) hen))
+      (curd abet:~(vest ~(feed su hen our urb sub etn sap) hen))
     ::
     ::  monitor all
     ::    {$vine $~}
@@ -907,7 +902,7 @@
       ::    [%hail p=remote]
       ::
           %hail
-        %^  cure  hen  our
+        %+  cure  hen
         abet:abet:(hail:(burb our) dem p.mes)
       ::
       ::  cancel trackers
@@ -928,22 +923,21 @@
         ?.  &(-.source.etn =(dem p.source.etn))
           +>.$
         =.  moz  [[hen %give %mack ~] moz]
-        %^  cute  hen  our  =<  abet
-        (~(hear-vent et hen our now.sys urb.lex sub.lex etn.lex sap.lex) p.mes)
+        %+  cute  hen  =<  abet
+        (~(hear-vent et hen our now urb.lex sub.lex etn.lex sap.lex) p.mes)
       ==
     ::
     ::  rewind to snapshot
     ::    {$wind p/@ud}
     ::
         %wind
-      (wind hen our.tac p.tac)
+      (wind hen p.tac)
     ==
   ::
   ++  take
     |=  [tea=wire hen=duct hin=sign]
     ^+  +>
     ?>  ?=([@ *] tea)
-    =+  our=(slav %p i.tea)
     =*  wir  t.tea
     ?-  hin
         [%a %woot *]
@@ -955,20 +949,20 @@
       +>.$
     ::
         [%e %sigh *]
-      %^  cute  hen  our  =<  abet
-      (~(sigh et hen our now.sys urb.lex sub.lex etn.lex sap.lex) wir p.hin)
+      %+  cute  hen  =<  abet
+      (~(sigh et hen our now urb.lex sub.lex etn.lex sap.lex) wir p.hin)
     ::
         [%b %wake ~]
-      %^  cute  hen  our
+      %+  cute  hen
       ::  XX cleanup
       ::
       ?.  ?=([%init ~] wir)
-        abet:~(wake et hen our now.sys urb.lex sub.lex etn.lex sap.lex)
-      abet:(~(init et hen our now.sys [urb sub etn sap]:lex) our (sein our))
+        abet:~(wake et hen our now urb.lex sub.lex etn.lex sap.lex)
+      abet:(~(init et hen our now [urb sub etn sap]:lex) our (sein our))
     ::
         [%j %vent *]
-      %^  cute  hen  our  =<  abet
-      (~(hear-vent et hen our now.sys urb.lex sub.lex etn.lex sap.lex) p.hin)
+      %+  cute  hen  =<  abet
+      (~(hear-vent et hen our now urb.lex sub.lex etn.lex sap.lex) p.hin)
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
@@ -980,14 +974,13 @@
     +>(sub sub, etn etn, sap sap, moz (weld (flop moz) ^moz))
   ::                                                    ::  ++cure:of
   ++  cure                                              ::  absolute edits
-    |=  {hen/duct our/ship hab/(list change) urb/state-absolute}
+    |=  [hen=duct hab=(list change) urb=state-absolute]
     ^+  +>
     =.  ^urb  urb
     (curd abet:(~(apex su hen our urb sub etn sap) hab))
   ::                                                    ::  ++cute:of
   ++  cute                                              ::  ethereum changes
     |=  $:  hen=duct
-            our=ship
             mos=(list move)
             ven=chain
             urb=state-absolute
@@ -1002,12 +995,12 @@
         ^sap  sap
     ==
     %-  cure(moz (weld (flop mos) moz))
-    [hen our abet:(link:(burb our) ven)]
+    [hen abet:(link:(burb our) ven)]
   ::                                                    ::  ++wind:of
   ++  wind                                              ::  rewind to snap
-    |=  [hen=duct our=@p block=@ud]
+    |=  [hen=duct block=@ud]
     ^+  +>
-    =.  +>.$  (restore-block hen our block)
+    =.  +>.$  (restore-block hen block)
     %=    +>.$
         moz
       =-  [[hen %pass /wind/look %j %look our -] moz]
@@ -1018,14 +1011,14 @@
     ==
   ::                                                    ::  ++restore-block:of
   ++  restore-block                                     ::  rewind before block
-    |=  [hen=duct our=@p block=@ud]
-    %^  cute  hen  our  =<  abet
-    (~(restore-block et hen our now.sys urb.lex sub.lex etn.lex sap.lex) block)
+    |=  [hen=duct block=@ud]
+    %+  cute  hen  =<  abet
+    (~(restore-block et hen our now urb.lex sub.lex etn.lex sap.lex) block)
   ::                                                    ::  ++restore-snap:of
   ++  restore-snap                                      ::  restore snapshot
-    |=  [hen=duct our=@p snap=snapshot look=?]
-    %^  cute  hen  our  =<  abet
-    %-  ~(restore-snap et hen our now.sys urb.lex sub.lex etn.lex sap.lex)
+    |=  [hen=duct snap=snapshot look=?]
+    %+  cute  hen  =<  abet
+    %-  ~(restore-snap et hen our now urb.lex sub.lex etn.lex sap.lex)
     [snap look]
   --
 ::                                                      ::  ++su
@@ -2200,10 +2193,12 @@
           hic/(hypo (hobo task:able))
       ==
   ^-  [(list move) _..^$]
-  =^  did  lex
-    =-  abet:(~(call of [now eny] lex) hen -)
-    ?.  ?=($soft -.q.hic)  q.hic
+  =/  =task:able
+    ?.  ?=($soft -.q.hic)
+      q.hic
     ((hard task:able) p.q.hic)
+  =^  did  lex
+    abet:(~(call of [our now eny] lex) hen task)
   [did ..^$]
 ::                                                      ::  ++load
 ++  load                                                ::  upgrade
@@ -2271,7 +2266,7 @@
   ::
       %deed
     ?.  ?=([@ @ ~] tyl)  [~ ~]
-    ?.  &(?=(%& -.why) =(p.why our.own.sub.lex))
+    ?.  &(?=(%& -.why) =(p.why our))
       [~ ~]
     =/  who  (slaw %p i.tyl)
     =/  lyf  (slaw %ud i.t.tyl)
@@ -2345,7 +2340,7 @@
     ?~  who  [~ ~]
     :^  ~  ~  %atom
     !>  ^-  ship
-    (~(sein of [now eny] lex) u.who)
+    (~(sein of [our now eny] lex) u.who)
   ::
       %saxo
     ?.  ?=([@ ~] tyl)  [~ ~]
@@ -2357,7 +2352,7 @@
     ?~  who  [~ ~]
     :^  ~  ~  %noun
     !>  ^-  (list ship)
-    (~(saxo of [now eny] lex) u.who)
+    (~(saxo of [our now eny] lex) u.who)
   ::
       %snap
     ?.  ?=(~ tyl)  [~ ~]
@@ -2385,6 +2380,6 @@
           hin/(hypo sign)
       ==
   ^-  [(list move) _..^$]
-  =^  did  lex  abet:(~(take of [now eny] lex) tea hen q.hin)
+  =^  did  lex  abet:(~(take of [our now eny] lex) tea hen q.hin)
   [did ..^$]
 --
