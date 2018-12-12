@@ -139,64 +139,6 @@ u3v_pike(u3_noun ovo, u3_noun cor)
   return _cv_mung(0, fun, sam);
 }
 
-/* u3v_nick(): transform enveloped packets, [vir cor].
-*/
-u3_noun
-u3v_nick(u3_noun vir, u3_noun cor)
-{
-  if ( u3_nul == vir ) {
-    return u3nt(u3_blip, vir, cor);
-  }
-  else {
-    u3_noun i_vir = u3h(vir);
-    u3_noun pi_vir, qi_vir;
-    u3_noun vix;
-
-    if ( (c3y == u3r_cell(i_vir, &pi_vir, &qi_vir)) &&
-         (c3y == u3du(qi_vir)) &&
-         (c3__hear == u3h(qi_vir)) )
-    {
-      u3_noun gon;
-
-      gon = u3v_pike(u3k(i_vir), cor);
-      if ( u3_blip != u3h(gon) ) {
-        u3z(vir);
-        return gon;
-      }
-      else {
-        u3_noun viz;
-
-        vix = u3k(u3h(u3t(gon)));
-        cor = u3k(u3t(u3t(gon)));
-        u3z(gon);
-
-        viz = u3kb_weld(vix, u3k(u3t(vir)));
-        u3z(vir);
-
-        return u3v_nick(viz, cor);
-      }
-    }
-    else {
-      u3_noun nez = u3v_nick(u3k(u3t(vir)), cor);
-
-      if ( u3_blip != u3h(nez) ) {
-        u3z(vir);
-        return nez;
-      } else {
-        u3_noun viz;
-
-        viz = u3nc(u3k(i_vir), u3k(u3h(u3t(nez))));
-        cor = u3k(u3t(u3t(nez)));
-
-        u3z(vir);
-        u3z(nez);
-
-        return u3nt(u3_blip, viz, cor);
-      }
-    }
-  }
-}
-
 /* _cv_nock_poke(): call poke through hardcoded interface.
 */
 static u3_noun
@@ -372,15 +314,6 @@ u3_noun
 u3v_poke(u3_noun ovo)
 {
   return _cv_nock_poke(ovo);
-}
-
-/* u3v_http_request(): hear http request on channel (unprotected).
-*/
-void
-u3v_http_request(c3_o sec, u3_noun pox, u3_noun req)
-{
-  // uL(fprintf(uH, "http: request\n"));
-  u3v_plan(pox, u3nq(c3__this, sec, 0, req));
 }
 
 /* u3v_tank(): dump single tank.
