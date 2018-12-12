@@ -788,9 +788,15 @@
     %+  ~(put by builds)  schematic.build
     ::
     =/  dates  (fall (~(get by builds) schematic.build) ~)
-    ?^  (find [date.build]~ dates)
+    |-
+    ^+  dates
+    ?~  dates
+      [date.build ~]
+    ?:  =(i.dates date.build)
       dates
-    (sort [date.build dates] gte)
+    ?:  (gth date.build i.dates)
+      [date.build dates]
+    [i.dates $(dates t.dates)]
   ::  +del: remove a +build from :builds
   ::
   ::    Removes :build from :builds by replacing the value at
