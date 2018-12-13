@@ -1261,11 +1261,7 @@
           [%keep compiler-cache=@ud build-cache=@ud]
           ::  %kill: stop a build; send on same duct as original %build request
           ::
-          $:  %kill
-              ::  our: who our ship is (remove after cc-release)s
-              ::
-              our=@p
-          ==
+          [%kill ~]
           ::  %sunk: receive a report that a foreign ship has lost continuity
           ::
           [%sunk =ship =life]

@@ -805,7 +805,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/one] type=~ %kill ~nul]
+      call-args=[duct=~[/one] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/one]  %pass
@@ -868,7 +868,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/first] type=~ %kill ~nul]
+      call-args=[duct=~[/first] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
@@ -931,7 +931,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/first] type=~ %kill ~nul]
+      call-args=[duct=~[/first] type=~ %kill ~]
       ^=  moves
         :~  :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
                 %c  %warp  [~nul ~nul]  %desk  ~
@@ -943,7 +943,7 @@
       now=~1234.5.9
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/second] type=~ %kill ~nul]
+      call-args=[duct=~[/second] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
@@ -1045,7 +1045,7 @@
       now=~1234.5.9
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/first] type=~ %kill ~nul]
+      call-args=[duct=~[/first] type=~ %kill ~]
       ::
       moves=~
     ==
@@ -1150,7 +1150,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/live] type=~ %kill ~nul]
+      call-args=[duct=~[/live] type=~ %kill ~]
       moves=~
     ==
   ::
@@ -1232,7 +1232,7 @@
       now=~1234.5.9
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/live] type=~ %kill ~nul]
+      call-args=[duct=~[/live] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/live]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
@@ -1314,7 +1314,7 @@
       now=~1234.5.9
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/live] type=~ %kill ~nul]
+      call-args=[duct=~[/live] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/live]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
@@ -1383,7 +1383,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/two-deep-4u] type=~ %kill ~nul]
+      call-args=[duct=~[/two-deep-4u] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/two-deep-4u]  %pass
@@ -1461,7 +1461,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/ride] type=~ %kill ~nul]
+      call-args=[duct=~[/ride] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
@@ -1542,7 +1542,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/ride] type=~ %kill ~nul]
+      call-args=[duct=~[/ride] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
@@ -1622,7 +1622,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/static] type=~ %kill ~nul]
+      call-args=[duct=~[/static] type=~ %kill ~]
       ::
       moves=~
     ==
@@ -1633,7 +1633,7 @@
       now=~1234.5.9
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/autocons] type=~ %kill ~nul]
+      call-args=[duct=~[/autocons] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/autocons]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.7
@@ -1682,7 +1682,7 @@
       now=~1234.5.7
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/call] type=~ %kill ~nul]
+      call-args=[duct=~[/call] type=~ %kill ~]
       ::
       moves=~
     ==
@@ -1731,7 +1731,7 @@
       now=~1234.5.7
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/call] type=~ %kill ~nul]
+      call-args=[duct=~[/call] type=~ %kill ~]
       ::
       moves=~
     ==
@@ -1781,7 +1781,7 @@
       now=~1234.5.7
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/dead] type=~ %kill ~nul]
+      call-args=[duct=~[/dead] type=~ %kill ~]
       ::
       moves=~
     ==
@@ -1849,7 +1849,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/live] type=~ %kill ~nul]
+      call-args=[duct=~[/live] type=~ %kill ~]
       moves=~
     ==
   ::
@@ -1963,7 +1963,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/call] type=~ %kill ~nul]
+      call-args=[duct=~[/call] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/call]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
@@ -2081,7 +2081,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/hood] type=~ %kill ~nul]
+      call-args=[duct=~[/hood] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/hood]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
@@ -2119,7 +2119,7 @@
       now=~1234.5.7
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/dead] type=~ %kill ~nul]
+      call-args=[duct=~[/dead] type=~ %kill ~]
       ::
       moves=~
     ==
@@ -2166,7 +2166,7 @@
       now=~1234.5.7
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/slit] type=~ %kill ~nul]
+      call-args=[duct=~[/slit] type=~ %kill ~]
       ::
       moves=~
     ==
@@ -2219,7 +2219,7 @@
       now=~1234.5.7
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/slit] type=~ %kill ~nul]
+      call-args=[duct=~[/slit] type=~ %kill ~]
       ::
       moves=~
     ==
@@ -2265,7 +2265,7 @@
       now=~1234.5.7
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/dead] type=~ %kill ~nul]
+      call-args=[duct=~[/dead] type=~ %kill ~]
       moves=~
     ==
   ::
@@ -2311,7 +2311,7 @@
       now=~1234.5.7
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/dead] type=~ %kill ~nul]
+      call-args=[duct=~[/dead] type=~ %kill ~]
       moves=~
     ==
   ::
@@ -2361,7 +2361,7 @@
       now=~1234.5.7
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/dead] type=~ %kill ~nul]
+      call-args=[duct=~[/dead] type=~ %kill ~]
       moves=~
     ==
   ::
@@ -2428,7 +2428,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/live] type=~ %kill ~nul]
+      call-args=[duct=~[/live] type=~ %kill ~]
       moves=~
     ==
   ::
@@ -2500,7 +2500,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/ride] type=~ %kill ~nul]
+      call-args=[duct=~[/ride] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
@@ -2669,7 +2669,7 @@
       now=~1234.5.10
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/post-a] type=~ %kill ~nul]
+      call-args=[duct=~[/post-a] type=~ %kill ~]
       ::
       moves=~
     ==
@@ -2680,7 +2680,7 @@
       now=~1234.5.11
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/post-b] type=~ %kill ~nul]
+      call-args=[duct=~[/post-b] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/post-a]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
@@ -2800,7 +2800,7 @@
       now=~1234.5.9
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/alts] type=~ %kill ~nul]
+      call-args=[duct=~[/alts] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.8
@@ -2920,7 +2920,7 @@
       now=~1234.5.9
       scry=scry
       ::
-      call-args=[duct=~[/same] type=~ %kill ~nul]
+      call-args=[duct=~[/same] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/same]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
@@ -2933,7 +2933,7 @@
       now=~1234.5.10
       scry=scry
       ::
-      call-args=[duct=~[/alts] type=~ %kill ~nul]
+      call-args=[duct=~[/alts] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
@@ -3078,7 +3078,7 @@
       now=~1234.5.10
       scry=scry
       ::
-      call-args=[duct=~[/first] type=~ %kill ~nul]
+      call-args=[duct=~[/first] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.9
@@ -3091,7 +3091,7 @@
       now=~1234.5.11
       scry=scry
       ::
-      call-args=[duct=~[/second] type=~ %kill ~nul]
+      call-args=[duct=~[/second] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
@@ -3208,7 +3208,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/build] type=~ %kill ~nul]
+      call-args=[duct=~[/build] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/build]  %pass  wire=/~nul/clay-sub/~nul/desk
@@ -3299,7 +3299,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/ride] type=~ %kill ~nul]
+      call-args=[duct=~[/ride] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk
@@ -3509,7 +3509,7 @@
       now=~1234.5.10
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/post-b] type=~ %kill ~nul]
+      call-args=[duct=~[/post-b] type=~ %kill ~]
       moves=~
     ==
   ::
@@ -3519,7 +3519,7 @@
       now=~1234.5.11
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/post-a] type=~ %kill ~nul]
+      call-args=[duct=~[/post-a] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/post-a]  %pass  wire=/~nul/clay-sub/~nul/desk
@@ -6425,7 +6425,7 @@
       now=~1234.5.10
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/gh] type=~ %kill ~nul]
+      call-args=[duct=~[/gh] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/gh]  %pass  /~nul/clay-sub/~nul/home/~1234.5.9
@@ -6438,7 +6438,7 @@
       now=~1234.5.11
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/gh2] type=~ %kill ~nul]
+      call-args=[duct=~[/gh2] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/gh2]  %pass  /~nul/clay-sub/~nul/home/~1234.5.9
@@ -6451,7 +6451,7 @@
       now=~1234.5.12
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/gh3] type=~ %kill ~nul]
+      call-args=[duct=~[/gh3] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/gh3]  %pass  /~nul/clay-sub/~nul/home/~1234.5.9
@@ -6550,7 +6550,7 @@
       now=~1234.5.6
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/walk] type=~ %kill ~nul]
+      call-args=[duct=~[/walk] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home/~1234.5.6
@@ -6601,7 +6601,7 @@
       now=~1234.5.6
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/walk] type=~ %kill ~nul]
+      call-args=[duct=~[/walk] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home/~1234.5.6
@@ -6984,7 +6984,7 @@
       now=~1234.5.8
       scry=scry-is-forbidden
       ::
-      call-args=[duct=~[/app] type=~ %kill ~nul]
+      call-args=[duct=~[/app] type=~ %kill ~]
       ::
       ^=  moves
         :~  :*  duct=~[/app]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.8

@@ -115,7 +115,7 @@
               {$hiss hiss:eyre}
           ==
           [%build wire ? schematic:ford]
-          [%kill wire @p]
+          [%kill wire ~]
           {$deal wire sock term club}                   ::
           {$info wire @p toro:clay}                     ::
       ==                                                ::
@@ -376,7 +376,7 @@
       =.  poy  ~
       ?~  pux  +>
       %.  [%txt "! cancel {<u.pux>}"]
-      he-diff:(he-card [%kill u.pux our.hid])
+      he-diff:(he-card [%kill u.pux ~])
     ::
     ++  dy-slam                                         ::  call by ford
       |=  {way/wire gat/vase sam/vase}

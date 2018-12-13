@@ -29,7 +29,7 @@
           ==  ==                                        ::
               $:  $f                                            ::
           $%  [%build live=? schematic=schematic:ford]
-              [%kill our=@p]
+              [%kill ~]
           ==  ==
               $:  $g                                    ::  to %gall
           $%  {$deal p/sock q/cush:gall}               ::  full transmission
@@ -799,7 +799,7 @@
       :: ~&  did-thud+[-.lid hen]
       ?-  -.lid
           $exec
-        (pass-note p.lid %f [%kill our])
+        (pass-note p.lid %f %kill ~)
       ::
           $poll
         ?.  (~(has by wix) p.lid)
