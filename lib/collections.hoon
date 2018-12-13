@@ -10,9 +10,9 @@
 |%
 +=  move  [bone card]
 +=  card
-  $%  [%info wire ship toro:clay]
+  $%  [%info wire toro:clay]
       [%poke wire dock poke]
-      [%perm wire ship desk path rite:clay]
+      [%perm wire desk path rite:clay]
   ==
 +=  poke
   $%  [%hall-action action:hall]
@@ -830,7 +830,7 @@
     =/  bek  byk.bol(r [%da now.bol])
     =.  pax  (en-beam:format bek (flop pax))
     %+  ta-emit  ost.bol
-    [%info (weld /ta-write pax) our.bol (foal pax cay)]
+    [%info (weld /ta-write pax) (foal pax cay)]
   ::
   ++  ta-remove
     =,  space:userlib
@@ -840,7 +840,7 @@
     =.  pax  (en-beam:format bek (flop pax))
     ^+  ta-this
     %+  ta-emit  ost.bol
-    [%info (weld /ta-remove pax) our.bol (fray pax)]
+    [%info (weld /ta-remove pax) (fray pax)]
   ::
   ::  permissions
   ::
@@ -849,14 +849,14 @@
     |=  [pax=path r=rule:clay w=rule:clay]
     ^+  ta-this
     %+  ta-emit  ost.bol
-    [%perm (weld /perms pax) our.bol q.byk.bol pax [%rw `r `w]]
+    [%perm (weld /perms pax) q.byk.bol pax [%rw `r `w]]
   ::
   ++  ta-flush-permissions
     ~/  %coll-ta-flush-permissions
     |=  pax=path
     ^+  ta-this
     %+  ta-emit  ost.bol
-    [%perm (weld /perms pax) our.bol q.byk.bol pax [%rw ~ ~]]
+    [%perm (weld /perms pax) q.byk.bol pax [%rw ~ ~]]
   ::
   ::  hall
   ::
