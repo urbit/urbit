@@ -657,7 +657,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
 
       // uL(fprintf(uH, "muck-utf8 len %d\n", tat_u->fut.len_w));
       // uL(fprintf(uH, "muck-utf8 %x\n", huv));
-      wug = u3do("turf", huv);
+      wug = u3do("taft", huv);
       // uL(fprintf(uH, "muck-utf32 %x\n", tat_u->fut.len_w));
 
       tat_u->fut.len_w = tat_u->fut.wid_w = 0;
