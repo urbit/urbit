@@ -7261,7 +7261,7 @@
       ==
   ^-  [tang _ford-gate]
   ::
-  =/  ford  (ford-gate our=~zod now=now eny=`@`0xdead.beef scry=scry)
+  =/  ford  (ford-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  ford-gate
     %-  call:ford  call-args
@@ -7282,7 +7282,7 @@
       ==
   ^-  [tang _ford-gate]
   ::
-  =/  ford  (ford-gate our=~zod now=now eny=`@`0xdead.beef scry=scry)
+  =/  ford  (ford-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  ford-gate
     %-  take:ford  take-args
@@ -7307,7 +7307,7 @@
       ==
   ^-  [tang _ford-gate]
   ::
-  =/  ford  (ford-gate our=~zod now=now eny=`@`0xdead.beef scry=scry)
+  =/  ford  (ford-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  ford-gate
     %-  call:ford  call-args
@@ -7326,7 +7326,7 @@
       ==
   ^-  [tang _ford-gate]
   ::
-  =/  ford  (ford-gate our=~zod now=now eny=`@`0xdead.beef scry=scry)
+  =/  ford  (ford-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  ford-gate
     %-  take:ford  take-args
@@ -7363,7 +7363,7 @@
     ==
   ::
   =/  ford  *ford-gate
-  =/  state  (~(got by state-by-ship.ax.+>+<.ford) ship)
+  =/  state  state.ax.+>+<.ford
   ::
   =/  default-state  *ford-state:ford
   ::
