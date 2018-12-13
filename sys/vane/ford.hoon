@@ -6110,9 +6110,9 @@
       %build
     ::  perform the build indicated by :task
     ::
-    ::    First, we dispatch to the |ev by constructing :event-args and
-    ::    using them to create :start-build, which performs the build.
-    ::    The result of :start-build is a pair of :moves and a mutant :state.
+    ::    We call :start-build on :this-event, which is the |per-event core
+    ::    with the our event-args already bound. :start-build performs the
+    ::    build and produces a pair of :moves and a mutant :state.
     ::    We update our :state and produce it along with :moves.
     ::
     =/  =build  [now schematic.task]
