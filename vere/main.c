@@ -186,6 +186,13 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
+#if defined(U3_OS_bsd)
+  {
+    fprintf(stderr, "profiling isn't yet supported on BSD\r\n");
+    return c3n;
+  }
+#endif
+
   if ( 0 != u3_Host.ops_u.fak_c ) {
     if ( 28 < strlen(u3_Host.ops_u.fak_c) ) {
       fprintf(stderr, "fake comets are disallowed\r\n");
