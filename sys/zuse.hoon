@@ -759,7 +759,7 @@
           {$mont des/desk bem/beam}                     ::  mount to unix
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
-          {$perm our/ship des/desk pax/path rit/rite}   ::  change permissions
+          {$perm des/desk pax/path rit/rite}            ::  change permissions
           {$sunk p=ship q=life}                         ::  report death
           {$warp wer/sock rif/riff}                     ::  internal file req
           {$werp who/ship wer/sock rif/riff}            ::  external file req

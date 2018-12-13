@@ -68,7 +68,7 @@
           {$dirk wire @tas}                             ::
           {$ogre wire $@(@tas beam)}                    ::
           {$merg wire @tas @p @tas case germ}           ::
-          {$perm wire ship desk path rite}              ::
+          {$perm wire desk path rite}                   ::
           {$poke wire dock pear}                        ::
           {$wipe wire @ud}                              ::
           [%keep wire compiler-cache-size=@ud build-cache-size=@ud]
@@ -185,8 +185,8 @@
 ++  poke-permission
   |=  {syd/desk pax/path pub/?}
   =<  abet
-  %^  emit  %perm  /kiln/permission
-  [our syd pax %r ~ ?:(pub %black %white) ~]
+  %-  emit
+  [%perm /kiln/permission syd pax %r ~ ?:(pub %black %white) ~]
 ::
 ++  poke-autoload  |=(lod/(unit ?) abet:(poke:autoload lod))
 ++  poke-start-autoload  |=(~ abet:start:autoload)

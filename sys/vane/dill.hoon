@@ -44,7 +44,7 @@
   $%  {$merg p/@tas q/@p r/@tas s/case t/germ:clay}     ::  merge desks
       {$warp p/sock q/riff:clay}                        ::  wait for clay hack
       {$wegh $~}                                        ::
-      {$perm p/ship q/desk r/path s/rite:clay}          ::  change permissions
+      {$perm p/desk q/path r/rite:clay}                 ::  change permissions
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  {$crud p/@tas q/(list tank)}                      ::
@@ -347,9 +347,7 @@
         %_    +>.$
             moz
           :_  moz
-          :*  hen  %pass  /show  %c  %perm  our
-              des  /  r+`[%black ~]
-          ==
+          [hen %pass /show %c %perm des / r+`[%black ~]]
         ==
       ::
       ++  sync

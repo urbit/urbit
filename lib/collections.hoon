@@ -12,7 +12,7 @@
 +=  card
   $%  [%info wire toro:clay]
       [%poke wire dock poke]
-      [%perm wire ship desk path rite:clay]
+      [%perm wire desk path rite:clay]
   ==
 +=  poke
   $%  [%hall-action action:hall]
@@ -849,14 +849,14 @@
     |=  [pax=path r=rule:clay w=rule:clay]
     ^+  ta-this
     %+  ta-emit  ost.bol
-    [%perm (weld /perms pax) our.bol q.byk.bol pax [%rw `r `w]]
+    [%perm (weld /perms pax) q.byk.bol pax [%rw `r `w]]
   ::
   ++  ta-flush-permissions
     ~/  %coll-ta-flush-permissions
     |=  pax=path
     ^+  ta-this
     %+  ta-emit  ost.bol
-    [%perm (weld /perms pax) our.bol q.byk.bol pax [%rw ~ ~]]
+    [%perm (weld /perms pax) q.byk.bol pax [%rw ~ ~]]
   ::
   ::  hall
   ::
