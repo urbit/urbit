@@ -28,7 +28,7 @@
               {$meta vase}                              ::  type check
           ==  ==                                        ::
               $:  $f                                            ::
-          $%  [%build our=@p live=? schematic=schematic:ford]
+          $%  [%build live=? schematic=schematic:ford]
               [%kill our=@p]
           ==  ==
               $:  $g                                    ::  to %gall
@@ -1135,7 +1135,7 @@
     ~/  %execute-turbo
     |=  [tea=whir live=? request=schematic:ford]
     %+  pass-note  tea
-    :*  %f  %build  our  live
+    :*  %f  %build  live
         [%dude |.([%leaf "eyre: execute {<tea>}"]) request]
     ==
   ::

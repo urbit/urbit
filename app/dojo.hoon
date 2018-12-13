@@ -114,7 +114,7 @@
               mark 
               {$hiss hiss:eyre}
           ==
-          [%build wire @p ? schematic:ford]
+          [%build wire ? schematic:ford]
           [%kill wire @p]
           {$deal wire sock term club}                   ::
           {$info wire @p toro:clay}                     ::
@@ -363,7 +363,7 @@
       ?>  ?=($~ pux)
       ::  pin all builds to :now.hid so they don't get cached forever
       ::
-      (he-card(poy `+>+<(pux `way)) %build way our.hid live=%.n schematic)
+      (he-card(poy `+>+<(pux `way)) %build way live=%.n schematic)
     ::
     ++  dy-eyre                                         ::  send work to eyre
       |=  {way/wire usr/(unit knot) req/hiss:eyre}

@@ -61,7 +61,7 @@
 ?>  =(src our)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$build wire @p ? schematic:ford}             ::
+      $%  {$build wire ? schematic:ford}                ::
           {$drop wire @p @tas}                          ::
           {$info wire @p @tas nori}                     ::
           {$mont wire @tas beam}                        ::
@@ -514,7 +514,7 @@
         =+  tic=(cat 3 syd '-scratch')
         %-  blab  :_  ~
         =,  ford
-        :*  ost  %build  /kiln/[syd]  our  live=%.n
+        :*  ost  %build  /kiln/[syd]  live=%.n
             ^-  schematic
             :-  %list
             ^-  (list schematic)

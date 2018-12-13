@@ -16,7 +16,7 @@
   ::
 |%
 ++  data  $%({$json json} {$mime mime})
-++  card  $%  {$build wire @p ? schematic:ford}
+++  card  $%  {$build wire ? schematic:ford}
               {$info wire @p toro:clay}
           ==
 --
@@ -134,7 +134,6 @@
   %-  emit  :*
     %build
     write+pax
-    our
     live=%.n                ::  XX defer %nice
     ^-  schematic:ford   ::  SYNTAX ERROR AT START OF LINE?
     =/  =beak  beak-now

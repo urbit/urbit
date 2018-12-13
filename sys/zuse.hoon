@@ -1246,9 +1246,6 @@
       $%  ::  %build: perform a build, either live or once
           ::
           $:  %build
-              ::  our: who our ship is (remove after cc-release)
-              ::
-              our=@p
               ::  live: whether we run this build live
               ::
               ::    A live build will subscribe to further updates and keep the

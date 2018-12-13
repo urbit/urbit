@@ -204,7 +204,7 @@
     ^+  +>
     %+  mo-pass  [%sys %core dap (scot %p p.byk) q.byk (scot r.byk) ~]
     ^-  note-arvo
-    [%f %build our live=%.y [%core [[p q]:byk [%hoon dap %app ~]]]]
+    [%f %build live=%.y [%core [[p q]:byk [%hoon dap %app ~]]]]
   ::
   ++  mo-away                                           ::  foreign request
     ~/  %mo-away
@@ -482,11 +482,11 @@
     ?:  ?=($puff -.cub)
       %+  mo-pass
         [%sys %val (scot %p q.q.pry) dap ~]
-      [%f %build our live=%.n [%vale [p q]:(mo-beak dap) +.cub]]
+      [%f %build live=%.n [%vale [p q]:(mo-beak dap) +.cub]]
     ?:  ?=($punk -.cub)
       %+  mo-pass
         [%sys %val (scot %p q.q.pry) dap ~]
-      :*  %f  %build  our  live=%.n
+      :*  %f  %build  live=%.n
           ^-  schematic:ford
           [%cast [p q]:(mo-beak dap) p.cub [%$ q.cub]]
       ==
@@ -524,7 +524,7 @@
         $d
       %+  mo-pass
         [%sys %rep (scot %p him) dap (scot %ud num) ~]
-      [%f %build our live=%.n [%vale [p q]:(mo-beak dap) p.ron q.ron]]
+      [%f %build live=%.n [%vale [p q]:(mo-beak dap) p.ron q.ron]]
     ::
         $x  =.  +>  (mo-give %mack ~)                  ::  XX should crash
             (mo-give(hen (mo-ball him num)) %unto %quit ~)
@@ -604,7 +604,7 @@
         ?:  =(mar p.cay)  [%give %unto p.q.cov]
         :+  %pass
           [%sys %pel dap ~]
-        [%f %build our live=%.n [%cast [p q]:(mo-beak dap) mar [%$ cay]]]
+        [%f %build live=%.n [%cast [p q]:(mo-beak dap) mar [%$ cay]]]
       ::
           $pass
         :+  %pass  `path`[%use dap p.q.cov]
