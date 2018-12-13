@@ -80,7 +80,6 @@
 ++  life  @ud                                           ::  ship version
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
-++  sack  {p/ship q/ship}                               ::  incoming [our his]
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
 ::+|
 ::
