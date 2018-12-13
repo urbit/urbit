@@ -117,7 +117,7 @@
           [%build wire ? schematic:ford]
           [%kill wire ~]
           {$deal wire sock term club}                   ::
-          {$info wire @p toro:clay}                     ::
+          {$info wire toro:clay}                        ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  sign                                            ::
@@ -586,7 +586,6 @@
         %-  he-card(poy ~)  :*
           %info
           /file
-          our.hid
           (foal:space:userlib (en-beam:format p.p.mad) cay)
         ==
       ::

@@ -333,7 +333,7 @@
   $%  {$want p/ship q/path r/*}                         ::
   ==  ==                                                ::
       $:  $c                                            ::  to %clay
-  $%  {$info p/@p q/@tas r/nori}                        ::  internal edit
+  $%  {$info q/@tas r/nori}                             ::  internal edit
       {$merg p/@p q/@tas r/@p s/@tas t/case u/germ}     ::  merge desks
       {$warp p/sock q/riff}                             ::
       {$werp p/ship q/sock r/riff}                      ::
@@ -3807,12 +3807,12 @@
               ?=($mime p.p.b)
               ?=({$hoon ~} (slag (dec (lent a)) a))
           ==
-      :~  [hen %pass /one %c %info our q.bem %& one]
-          [hen %pass /two %c %info our q.bem %& two]
+      :~  [hen %pass /one %c %info q.bem %& one]
+          [hen %pass /two %c %info q.bem %& two]
       ==
     =+  yak=(~(got by hut.ran.ruf) (~(got by hit.dom.u.dos) let.dom.u.dos))
     =+  cos=(mode-to-soba q.yak (flop s.bem) all.req fis.req)
-    [hen %pass /both %c %info our q.bem %& cos]~
+    [hen %pass /both %c %info q.bem %& cos]~
   ::
       $merg                                               ::  direct state up
     ?:  =(%$ des.req)

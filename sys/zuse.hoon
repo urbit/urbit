@@ -748,7 +748,7 @@
           {$crow our/ship nom/@ta}                      ::  group usage
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$drop des/desk}                              ::  cancel pending merge
-          {$info our/@p des/desk dit/nori}              ::  internal edit
+          {$info des/desk dit/nori}                     ::  internal edit
           {$init our/@p}                                ::  report install
           {$into des/desk all/? fis/mode}               ::  external edit
           $:  $merg                                     ::  merge desks

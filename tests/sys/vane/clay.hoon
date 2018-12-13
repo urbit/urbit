@@ -27,7 +27,7 @@
       ^=  call-args
         :+  duct=~[/info]  type=-:!>(*task:able:clay)
         ^-  task:able:clay
-        :^  %info  ~nul  %home
+        :+  %info  %home
         ^-  nori:clay
         :-  %&
         ^-  soba:clay
@@ -306,7 +306,7 @@
       ^=  call-args
         :+  duct=~[/info2]  type=-:!>(*task:able:clay)
         ^-  task:able:clay
-        :^  %info  ~nul  %home
+        :+  %info  %home
         ^-  nori:clay
         :-  %&
         ^-  soba:clay

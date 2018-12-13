@@ -63,7 +63,7 @@
     ++  card                                            ::
       $%  {$build wire ? schematic:ford}                ::
           {$drop wire @tas}                             ::
-          {$info wire @p @tas nori}                     ::
+          {$info wire @tas nori}                        ::
           {$mont wire @tas beam}                        ::
           {$dirk wire @tas}                             ::
           {$ogre wire $@(@tas beam)}                    ::
@@ -160,7 +160,7 @@
   |=  {mez/tape tor/(unit toro)}
   ?~  tor
     abet:(spam leaf+mez ~)
-  abet:(emit:(spam leaf+mez ~) %info /kiln our u.tor)
+  abet:(emit:(spam leaf+mez ~) %info /kiln u.tor)
 ::
 ++  poke-rm
   |=  a/path
@@ -643,7 +643,7 @@
     =<  win
     %-  blab:(spam tan)
     :_  ~
-    :*  ost  %info  /kiln/[syd]  our
+    :*  ost  %info  /kiln/[syd]
         (cat 3 syd '-scratch')  %&
         %+  murn  can
         |=  {p/path q/(unit miso)}
