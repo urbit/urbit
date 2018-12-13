@@ -237,42 +237,42 @@ _sist_sing(u3_noun ovo)
 {
   u3_noun gon = u3m_soft(0, u3v_poke, u3k(ovo));
 
-  if ( u3_blip != u3h(gon) ) {
-    _sist_suck(ovo, gon);
-  }
-  else {
-    u3_noun vir = u3k(u3h(u3t(gon)));
-    u3_noun cor = u3k(u3t(u3t(gon)));
-    u3_noun nug;
+  {
+    u3_noun hed, tal;
+    u3x_cell(gon, &hed, &tal);
 
-    u3z(gon);
-    nug = u3v_nick(vir, cor);
-
-    if ( u3_blip != u3h(nug) ) {
-      _sist_suck(ovo, nug);
+    if ( u3_blip != hed ) {
+      _sist_suck(ovo, gon);
     }
     else {
-      vir = u3h(u3t(nug));
-      cor = u3k(u3t(u3t(nug)));
+      u3_noun vir, cor;
+      u3x_cell(tal, &vir, &cor);
 
-      while ( u3_nul != vir ) {
-        u3_noun fex = u3h(vir);
-        u3_noun fav = u3t(fex);
-
-        if ( c3__init == u3h(fav) ) {
-          u3A->own = u3k(u3t(fav));
-          // note: c3__boot == u3h(u3t(ovo))
-          u3A->fak = ( c3__fake == u3h(u3t(u3t(ovo))) ) ? c3y : c3n;
-        }
-
-        vir = u3t(vir);
-      }
-      u3z(nug);
       u3z(u3A->roc);
-      u3A->roc = cor;
+      u3A->roc = u3k(cor);
+
+      {
+        u3_noun tag, dat;
+        u3x_trel(ovo, 0, &tag, &dat);
+
+        if ( c3__boot == tag ) {
+          while ( u3_nul != vir ) {
+            u3_noun fav = u3t(u3h(vir));
+
+            if ( c3__init == u3h(fav) ) {
+              u3A->own = u3k(u3t(fav));
+              u3A->fak = ( c3__fake == u3h(tag) ) ? c3y : c3n;
+            }
+
+            vir = u3t(vir);
+          }
+        }
+      }
     }
-    u3z(ovo);
   }
+
+  u3z(gon);
+  u3z(ovo);
 }
 
 /* _sist_cask(): ask for a passcode.
@@ -595,7 +595,8 @@ _sist_zest()
   }
 
   //  Work through the boot events.
-  u3_raft_work();
+  //
+  u3_raft_play();
 }
 
 /* _sist_rest_nuu(): upgrade log from previous format.
@@ -1223,8 +1224,9 @@ u3_sist_boot(void)
       u3C.wag_w |= u3o_hashless;
     }
 
-    // process pending events
-    u3_raft_work();
+    //  process pending events
+    //
+    u3_raft_play();
   }
   else {
     u3_noun pig, who;

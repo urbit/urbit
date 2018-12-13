@@ -81,15 +81,6 @@ static u3j_core _141_hex_aes_d[] =
   };
 static c3_c* _141_hex_aes_ha[] = {0};
 
-static u3j_harm _141_hex_down_mark_a[] = {{".2", u3wg_down, c3y}, {}};
-static c3_c* _141_hex_down_mark_ha[] = {0};
-
-  static u3j_core _141_hex_down_d[] =
-    { { "mark", 7, _141_hex_down_mark_a, 0, _141_hex_down_mark_ha },
-      {}
-    };
-static c3_c* _141_hex_down_ha[] = {0};
-
 static u3j_harm _141_hex_lore_a[] = {{".2", u3we_lore}, {}};
 static c3_c* _141_hex_lore_ha[] = {0};
 static u3j_harm _141_hex_loss_a[] = {{".2", u3we_loss}, {}};
@@ -181,9 +172,7 @@ static c3_c* _141_hex_ripe_ha[] = {0};
 
 
 static u3j_core _141_hex_d[] =
-{ { "down", 8063, 0, _141_hex_down_d, _141_hex_down_ha },
-
-  { "lore",   63, _141_hex_lore_a, 0, _141_hex_lore_ha },
+{ { "lore",   63, _141_hex_lore_a, 0, _141_hex_lore_ha },
   { "loss",   63, _141_hex_loss_a, 0, _141_hex_loss_ha },
   { "lune",  127, _141_hex_lune_a, 0, _141_hex_lune_ha },
 
@@ -903,6 +892,8 @@ static c3_c* _141_two__in_ha[] = {0};
 
   static u3j_harm _141_two__by_bif_a[] = {{".2", u3wdb_bif, c3y}, {}};
   static c3_c* _141_two__by_bif_ha[] = {0};
+  static u3j_harm _141_two__by_del_a[] = {{".2", u3wdb_del, c3y}, {}};
+  static c3_c* _141_two__by_del_ha[] = {0};
   static u3j_harm _141_two__by_dif_a[] = {{".2", u3wdb_dif, c3y}, {}};
   static c3_c* _141_two__by_dif_ha[] = {0};
   static u3j_harm _141_two__by_gas_a[] = {{".2", u3wdb_gas, c3y}, {}};
@@ -929,6 +920,7 @@ static c3_c* _141_two__in_ha[] = {0};
 
 static u3j_core _141_two__by_d[] =
   { { "bif", 7, _141_two__by_bif_a, 0, _141_two__by_bif_ha },
+    { "del", 7, _141_two__by_del_a, 0, _141_two__by_del_ha },
     { "dif", 7, _141_two__by_dif_a, 0, _141_two__by_dif_ha },
     { "gas", 7, _141_two__by_gas_a, 0, _141_two__by_gas_ha },
     { "get", 7, _141_two__by_get_a, 0, _141_two__by_get_ha },

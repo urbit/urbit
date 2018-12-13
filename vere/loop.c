@@ -442,6 +442,7 @@ u3_lo_shut(c3_o inn)
   if ( c3n == u3_Host.liv ) {
     //  direct save and die
     //
+    u3_raft_play();
     // u3_lo_grab("lo_exit", u3_none);
     // u3_loom_save(u3A->ent_d);
     // u3_loom_exit();
