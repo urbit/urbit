@@ -243,9 +243,9 @@
     ==
   ::
   ::
-  ++  constitution
+  ++  azimuth
     |%
-    ++  hull
+    ++  point
       $:  $=  own                                       ::  ownership
           $:  owner=address
               management-proxy=address
@@ -270,8 +270,8 @@
       ==
     ::
     ++  complete-ship
-      $:  state=hull
-          history=(list diff-hull)  ::TODO  maybe block/event nr?  ::  newest first
+      $:  state=point
+          history=(list diff-point)  ::TODO  maybe block/event nr?  ::  newest first
           keys=(map life pass)
       ==
     ::
@@ -283,7 +283,7 @@
     ::
     ++  eth-type
       |%
-      ++  hull
+      ++  point
         :~  [%bytes-n 32]   ::  encryptionKey
             [%bytes-n 32]   ::  authenticationKey
             %bool           ::  hasSponsor
@@ -306,7 +306,7 @@
     ::
     ++  eth-noun
       |%
-      ++  hull
+      ++  point
         $:  encryption-key=octs
             authentication-key=octs
             has-sponsor=?
@@ -329,8 +329,8 @@
     ::
     ++  function
       |%
-      ++  ships
-        $%  [%ships who=@p]
+      ++  azimuth
+        $%  [%points who=@p]
             [%rights who=@p]
             [%get-spawned who=@p]
             [%dns-domains ind=@ud]
@@ -340,17 +340,17 @@
     ::  #  diffs
     ::
     ++  update
-      $%  [%full ships=(map ship hull) dns=dnses heard=events]  ::TODO  keys
-          [%difs dis=(list (pair event-id diff-constitution))]
+      $%  [%full ships=(map ship point) dns=dnses heard=events]  ::TODO  keys
+          [%difs dis=(list (pair event-id diff-azimuth))]
       ==
     ::
-    ++  diff-constitution
-      $%  [%hull who=@p dif=diff-hull]
+    ++  diff-azimuth
+      $%  [%point who=@p dif=diff-point]
           [%dns pri=@t sec=@t ter=@t]
       ==
     ::
-    ++  diff-hull
-      $%  [%full new=hull]                              ::
+    ++  diff-point
+      $%  [%full new=point]                              ::
           [%owner new=address]                          ::  OwnerChanged
           [%activated who=@p]                           ::  Activated
           [%spawned who=@p]                             ::  Spawned
@@ -367,20 +367,20 @@
     ::  #  constants
     ::
     ::  contract addresses
+    ::TODO  values below are for ropsten, update for mainnet
     ++  contracts
       |%
-      ++  ships
-        ::  ropsten
-        ::
-        0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579
-      ++  launch
-        ::  ropsten
-        ::
-        4.601.630
+      ::  azimuth: data contract
+      ::
+      ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579
+      ::
+      ::  launch: block number of azimuth deploy
+      ::
+      ++  launch  4.601.630
       --
     ::
     ::  hashes of ship event signatures
-    ++  ships-events
+    ++  azimuth-events
       |%
       ::
       ::  OwnerChanged(uint32,address)
@@ -453,7 +453,7 @@
         0xfafd.04ad.e1da.ae2e.1fdb.0fc1.cc6a.899f.
           d424.063e.d5c9.2120.e67e.0730.53b9.4898
       --
-    --  ::  constitution
+    --  ::  azimuth
   --  ::  ethe
 ::                                                      ::::
 ::::                      ++ames                          ::  (1a) network
@@ -2051,7 +2051,7 @@
     ::
     ++  logs                                            ::  on-chain changes
       %+  map  event-id:ethe                            ::  per event log
-      diff-constitution:constitution:ethe               ::  the change
+      diff-azimuth:azimuth:ethe                         ::  the change
     ++  action                                          ::  balance change
       %+  pair  ship                                    ::  partner
       %+  each  bump                                    ::  &/liability change
@@ -2168,11 +2168,11 @@
         poll-timer=@da                                  ::  next filter poll
     ==                                                  ::
   ++  snapshot                                          ::  rewind point
-    =,  constitution:ethe                               ::
+    =,  azimuth:ethe                                    ::
     $:  kyz=(map ship public:able)                      ::  public key state
         $=  eth                                         ::
           $:  dns=dnses                                 ::  on-chain dns state
-              hul=(map ship hull)                       ::  on-chain ship state
+              pos=(map ship point)                      ::  on-chain ship state
         ==                                              ::
         eth-bookmark
     ==
@@ -2194,7 +2194,7 @@
     ::                                                  ::::
   ++  pki  ^?
     |%
-    ::TODO  update to fit constitution-style keys
+    ::TODO  update to fit azimuth-style keys
     ::  the urbit meta-certificate (++will) is a sequence
     ::  of certificates (++cert).  each cert in a will
     ::  revokes and replaces the previous cert.  the
@@ -7918,8 +7918,8 @@
     ?:(?=(%left wer) [tad wat] [wat tad])
   ::
   ::
-  ++  constitution
-    =,  constitution:ethe
+  ++  azimuth
+    =,  azimuth:ethe
     |%
     ::
     ++  pass-from-eth
@@ -7929,9 +7929,9 @@
         ~
       `(cat 3 'b' (cat 8 q.aut q.enc))
     ::
-    ++  hull-from-eth
-      |=  [who=@p hull:eth-noun deed:eth-noun]
-      ^-  hull
+    ++  point-from-eth
+      |=  [who=@p point:eth-noun deed:eth-noun]
+      ^-  point
       ::
       ::  ownership
       ::
@@ -7969,10 +7969,10 @@
           ~  ::TODO  call getSpawned to fill this
       ==
     ::
-    ++  event-log-to-hull-diff
-      =,  ships-events
+    ++  event-log-to-point-diff
+      =,  azimuth-events
       |=  log=event-log
-      ^-  (unit (pair ship diff-hull))
+      ^-  (unit (pair ship diff-point))
       ~?  ?=(~ mined.log)  %processing-unmined-event
       ::
       ?:  =(event.log owner-changed)
@@ -8049,14 +8049,14 @@
         [%unimplemented-event event.log]
       ~
     ::
-    ++  apply-hull-diff
-      |=  [hul=hull dif=diff-hull]
-      ^-  hull
+    ++  apply-point-diff
+      |=  [pot=point dif=diff-point]
+      ^-  point
       ?-  -.dif
         %full             new.dif
       ::
           %activated
-        %_  hul
+        %_  pot
           net  `[0 0 0 `(^sein:title who.dif) ~]
           kid  ?.  ?=(?(%czar %king) (clan:title who.dif))  ~
                `[0x0 ~]
@@ -8064,48 +8064,48 @@
       ::
       ::  ownership
       ::
-        %owner           hul(owner.own new.dif)
-        %transfer-proxy  hul(transfer-proxy.own new.dif)
-        %management-proxy  hul(management-proxy.own new.dif)
-        %voting-proxy      hul(voting-proxy.own new.dif)
+        %owner           pot(owner.own new.dif)
+        %transfer-proxy  pot(transfer-proxy.own new.dif)
+        %management-proxy  pot(management-proxy.own new.dif)
+        %voting-proxy      pot(voting-proxy.own new.dif)
       ::
       ::  networking
       ::
           ?(%keys %continuity %sponsor %escape)
-        ?>  ?=(^ net.hul)
+        ?>  ?=(^ net.pot)
         ?-  -.dif
             %keys
-          hul(life.u.net life.dif, pass.u.net pass.dif)
+          pot(life.u.net life.dif, pass.u.net pass.dif)
         ::
             %sponsor
-          ?~  new.dif  hul(sponsor.u.net ~)
-          hul(sponsor.u.net new.dif, escape.u.net ~)
+          ?~  new.dif  pot(sponsor.u.net ~)
+          pot(sponsor.u.net new.dif, escape.u.net ~)
         ::
-          %continuity  hul(continuity-number.u.net new.dif)
-          %escape      hul(escape.u.net new.dif)
+          %continuity  pot(continuity-number.u.net new.dif)
+          %escape      pot(escape.u.net new.dif)
         ==
       ::
       ::  spawning
       ::
           ?(%spawned %spawn-proxy)
-        ?>  ?=(^ kid.hul)
+        ?>  ?=(^ kid.pot)
         ?-  -.dif
             %spawned
-          =-  hul(spawned.u.kid -)
-          (~(put in spawned.u.kid.hul) who.dif)
+          =-  pot(spawned.u.kid -)
+          (~(put in spawned.u.kid.pot) who.dif)
         ::
-          %spawn-proxy  hul(spawn-proxy.u.kid new.dif)
+          %spawn-proxy  pot(spawn-proxy.u.kid new.dif)
         ==
       ==
     ::
     ++  parse-id
       |=  id=@t
-      ^-  ships:function
+      ^-  azimuth:function
       |^
         ~|  id
         %+  rash  id
         ;~  pose
-          (function %ships 'points' shipname)
+          (function %points 'points' shipname)
           (function %get-spawned 'getSpawned' shipname)
           (function %dns-domains 'dnsDomains' dem:ag)
         ==
@@ -8120,11 +8120,11 @@
     ::
     ++  function-to-call
       |%
-      ++  ships
-        |=  cal=ships:function
+      ++  azimuth
+        |=  cal=azimuth:function
         ^-  [id=@t dat=call-data]
         ?-  -.cal
-            %ships
+            %points
           :-  (crip "points({(scow %p who.cal)})")
           ['points(uint32)' ~[uint+`@`who.cal]]
         ::
@@ -8167,7 +8167,7 @@
   ::  |give:dawn: produce requests for pre-boot validation
   ::
   ++  give
-    =/  tract  ships:contracts:constitution:ethe
+    =/  tract  azimuth:contracts:azimuth:ethe
     |%
     ::  +bloq:give:dawn: Eth RPC for latest block number
     ::
@@ -8194,9 +8194,9 @@
         =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
         (encode-call:ethereum 'getKeys(uint32)' [%uint gal]~)
       [%number boq]
-    ::  +hull:give:dawn: Eth RPC for ship's contract state
+    ::  +point:give:dawn: Eth RPC for ship's contract state
     ::
-    ++  hull
+    ++  point
       |=  [boq=@ud who=ship]
       ^-  octs
       %-  as-octt:mimes:html
@@ -8277,32 +8277,32 @@
           ==
       ^+  kyz
       =/  pub=(unit pass)
-        (pass-from-eth:constitution:ethereum enc aut sut)
+        (pass-from-eth:azimuth:ethereum enc aut sut)
       ?~  pub  kyz
       (~(put by kyz) who [rev u.pub])
-    ::  +hull:take:dawn: parse ship's contract state
+    ::  +point:take:dawn: parse ship's contract state
     ::
-    ++  hull
+    ++  point
       |=  [who=ship rep=octs]
-      ^-  (unit hull:constitution:ethe)
+      ^-  (unit point:azimuth:ethe)
       =/  jon=(unit json)  (de-json:html q.rep)
       ?~  jon
-        ~&([%hull-take-dawn %invalid-json] ~)
+        ~&([%point-take-dawn %invalid-json] ~)
       =/  res=(unit cord)  ((ot result+so ~) u.jon)
       ?~  res
-        ~&([%hull-take-dawn %invalid-response rep] ~)
+        ~&([%point-take-dawn %invalid-response rep] ~)
       ~?  =(u.res '0x')
-        :-  'bad result from node; is ships address correct?'
-        ships:contracts:constitution:ethe
+        :-  'bad result from node; is azimuth address correct?'
+        azimuth:contracts:azimuth:ethe
       =/  out
         %-  mule  |.
-        %+  hull-from-eth:constitution:ethereum
+        %+  point-from-eth:azimuth:ethereum
           who
-        :_  *deed:eth-noun:constitution:ethereum  ::TODO  call rights to fill
-        (decode-results:ethereum u.res hull:eth-type:constitution:ethe)
+        :_  *deed:eth-noun:azimuth:ethereum  ::TODO  call rights to fill
+        (decode-results:ethereum u.res point:eth-type:azimuth:ethe)
       ?:  ?=(%& -.out)
         (some p.out)
-      ~&([%hull-take-dawn %invalid-hull] ~)
+      ~&([%point-take-dawn %invalid-point] ~)
     ::  +turf:take:dawn: parse network domains
     ::
     ++  turf
@@ -8370,13 +8370,13 @@
       ^-  [ship [life pass]]
       :-  gal
       ~|  czar-gal=gal
-      [life pass]:(need net:(~(got by hul.eth.snap) gal))
-    ::  +hull:snap:dawn: extract ship's contract state
+      [life pass]:(need net:(~(got by pos.eth.snap) gal))
+    ::  +point:snap:dawn: extract ship's contract state
     ::
-    ++  hull
+    ++  point
       |=  [who=ship snap=snapshot:jael]
-      ^-  (unit hull:constitution:ethe)
-      (~(get by hul.eth.snap) who)
+      ^-  (unit point:azimuth:ethe)
+      (~(get by pos.eth.snap) who)
     ::  +turf:snap:dawn: extract network domains
     ::
     ++  turf
@@ -8397,7 +8397,7 @@
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::
   ++  veri
-    |=  [=seed:able:jael =hull:constitution:ethe =live]
+    |=  [=seed:able:jael =point:azimuth:ethe =live]
     ^-  (each sponsor=(unit ship) error=term)
     =/  rac  (clan:title who.seed)
     =/  cub  (nol:nu:crub:crypto key.seed)
@@ -8424,13 +8424,13 @@
         [%| %missing-sig]
       ::  the parent must be launched
       ::
-      ?~  net.hull
+      ?~  net.point
         [%| %parent-not-keyed]
       ::  life must match parent's
       ::
-      ?.  =(lyf.seed life.u.net.hull)
+      ?.  =(lyf.seed life.u.net.point)
         [%| %life-mismatch]
-      =/  loy  (com:nu:crub:crypto pass.u.net.hull)
+      =/  loy  (com:nu:crub:crypto pass.u.net.point)
       =/  hax  (shaf %earl (sham who.seed lyf.seed pub:ex:cub))
       ::  the signature must be valid
       ::
@@ -8445,27 +8445,27 @@
         *
       ::  on-chain ships must be launched
       ::
-      ?~  net.hull
+      ?~  net.point
         [%| %not-keyed]
       ::  boot keys must match the contract
       ::
-      ?.  =(pub:ex:cub pass.u.net.hull)
+      ?.  =(pub:ex:cub pass.u.net.point)
         [%| %key-mismatch]
       ::  life must match the contract
       ::
-      ?.  =(lyf.seed life.u.net.hull)
+      ?.  =(lyf.seed life.u.net.point)
         [%| %life-mismatch]
       ::  the boot life must be greater than and discontinuous with
       ::  the last seen life (per the sponsor)
       ::
       ?:  ?&  ?=(^ live)
               ?|  ?=(%| breach.u.live)
-                  (lte life.u.net.hull life.u.live)
+                  (lte life.u.net.point life.u.live)
           ==  ==
         [%| %already-booted]
       ::  produce the sponsor for vere
       ::
-      [%& sponsor.u.net.hull]
+      [%& sponsor.u.net.point]
     ==
   --
 --  ::
