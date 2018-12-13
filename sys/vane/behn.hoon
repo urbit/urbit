@@ -96,9 +96,9 @@
     ::
     ?~  timers
       ~[t]
-    ::  timers at the same date form a lifo queue; for fifo, change +lte to +lth
+    ::  timers at the same date form a fifo queue
     ::
-    ?:  (lte date.t date.i.timers)
+    ?:  (lth date.t date.i.timers)
       [t timers]
     ::
     [i.timers $(timers t.timers)]
