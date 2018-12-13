@@ -90,6 +90,7 @@ jets_d_src = [
 'jets/d/in_wyt.c',
 'jets/d/in_bif.c',
 'jets/d/in_dif.c',
+'jets/d/in_del.c',
 'jets/d/by_del.c',
 'jets/d/by_gas.c',
 'jets/d/by_get.c',
