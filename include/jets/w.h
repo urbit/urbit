@@ -79,6 +79,7 @@
   /** Tier 4.
   **/
     u3_noun u3wdb_bif(u3_noun);
+    u3_noun u3wdb_del(u3_noun);
     u3_noun u3wdb_dif(u3_noun);
     u3_noun u3wdb_gas(u3_noun);
     u3_noun u3wdb_get(u3_noun);
