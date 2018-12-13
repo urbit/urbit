@@ -604,7 +604,7 @@ u3t_boot(void)
       setitimer(ITIMER_PROF, &itm_v, 0);
     }
 #elif defined(U3_OS_bsd)
-#   error "Profiling isn't yet supported on BSD"
+    // XX  "Profiling isn't yet supported on BSD"
 #else
 #   error "port: profiling"
 #endif
@@ -644,7 +644,7 @@ u3t_boff(void)
     }
 
 #elif defined(U3_OS_bsd)
-#   error "Profiling isn't yet supported on BSD"
+    // XX  "Profiling isn't yet supported on BSD"
 #else
 #   error "port: profiling"
 #endif
