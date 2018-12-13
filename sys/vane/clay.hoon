@@ -334,7 +334,7 @@
   ==  ==                                                ::
       $:  $c                                            ::  to %clay
   $%  {$info q/@tas r/nori}                             ::  internal edit
-      {$merg p/@p q/@tas r/@p s/@tas t/case u/germ}     ::  merge desks
+      {$merg p/@tas q/@p r/@tas s/case t/germ:clay}     ::  merge desks
       {$warp p/sock q/riff}                             ::
       {$werp p/ship q/sock r/riff}                      ::
   ==  ==                                                ::

@@ -67,7 +67,7 @@
           {$mont wire @tas beam}                        ::
           {$dirk wire @tas}                             ::
           {$ogre wire $@(@tas beam)}                    ::
-          {$merg wire @p @tas @p @tas case germ}        ::
+          {$merg wire @tas @p @tas case germ}           ::
           {$perm wire ship desk path rite}              ::
           {$poke wire dock pear}                        ::
           {$wipe wire @ud}                              ::
@@ -410,7 +410,7 @@
     =<  %-  spam
         ?:  =(our her)  ~
         [(render "beginning sync" sud her syd) ~]
-    (blab [ost %merg wire our syd her sud ud+let germ] ~)
+    (blab [ost %merg wire syd her sud ud+let germ] ~)
   ::
   ++  mere
     |=  mes=(each (set path) (pair term tang))
@@ -469,7 +469,7 @@
   ::
   ++  perform                                         ::
     ^+  .
-    (blab [ost %merg /kiln/[syd] our syd her sud cas gem] ~)
+    (blab [ost %merg /kiln/[syd] syd her sud cas gem] ~)
   ::
   ++  fancy-merge                                     ::  send to self
     |=  {syd/desk her/@p sud/desk gem/?($auto germ)}
@@ -495,7 +495,7 @@
     ?~  saw
       =>  (spam leaf+"%melding %{(trip sud)} into scratch space" ~)
       %-  blab  :_  ~
-      [ost %merg /kiln/[syd] our (cat 3 syd '-scratch') her sud cas gem]
+      [ost %merg /kiln/[syd] (cat 3 syd '-scratch') her sud cas gem]
     =+  :-  "failed to set up conflict resolution scratch space"
         "I'm out of ideas"
     lose:(spam leaf+-< leaf+-> u.saw)

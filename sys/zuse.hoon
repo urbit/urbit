@@ -752,7 +752,7 @@
           {$init our/@p}                                ::  report install
           {$into des/desk all/? fis/mode}               ::  external edit
           $:  $merg                                     ::  merge desks
-              our/@p  des/desk                          ::  target
+              des/desk                                  ::  target
               her/@p  dem/desk  cas/case                ::  source
               how/germ                                  ::  method
           ==                                            ::

@@ -41,7 +41,7 @@
   $%  {$wegh $~}                                        ::
   ==                                                    ::
 ++  note-clay                                           ::
-  $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:clay}::  merge desks
+  $%  {$merg p/@tas q/@p r/@tas s/case t/germ:clay}     ::  merge desks
       {$warp p/sock q/riff:clay}                        ::  wait for clay hack
       {$wegh $~}                                        ::
       {$perm p/ship q/desk r/path s/rite:clay}          ::  change permissions
@@ -298,7 +298,7 @@
         =/  myt  (flop (need tem))
         =/  can  (clan:title our)
         =.  tem  ~
-        =.  moz  :_(moz [hen %pass / %c %merg our %home our %base da+now %init])
+        =.  moz  :_(moz [hen %pass / %c %merg %home our %base da+now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
         =.  +>  (sync %home our %base)
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
