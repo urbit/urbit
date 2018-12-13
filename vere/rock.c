@@ -34,6 +34,12 @@
 #define DATB_NAME  "rocks_db"
 #define ROCK_COMPRESSION_LEVEL rocksdb_no_compression
 
+c3_w u3_rock_frag_size()
+{
+  return(0);  /* 0 == do not use fragmenting */
+}
+
+
 /* common initialization code, used by both read init and write init */
 
 c3_o

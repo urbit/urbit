@@ -187,7 +187,7 @@ _pier_init_writ(u3_pier* pir_u, c3_c * pot_c)
   } else if  (0 == strcmp(typ_c, "r") || 0 == strcmp(typ_c, "rock")){
 
     _wrin = u3_rock_write_init;
-    _wrze = u3_fond_frag_size;
+    _wrze = u3_rock_frag_size;
     _wric = u3_rock_write_write;
     _wris = u3_rock_write_shut;    
 

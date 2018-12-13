@@ -34,6 +34,10 @@
 **     file system.  So, make sure that the pthread_mutexes wrap
 **     around not just the DB write, but also around all the
 **     transaction stuff.
+**
+**  21 Nov 2018 on Ubuntu 16.04: max noun size = 2^20 = 1,048,576 bytes.  2^21 = segv
+**  No need for fragmenting.
+**
 */
 
 
@@ -57,7 +61,7 @@
 
 c3_w u3_lmdb_frag_size()
 {
-  return( pow(2, 31) );
+  return(0);  /* 0 == do not use fragmenting */
 }
 
 

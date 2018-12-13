@@ -75,7 +75,7 @@ void _fond_init_run_network()
 c3_o
 _fond_init(u3_fond * fond_u, c3_c * pin_c)
 {
-  char * path_c = NULL;
+  c3_y * path_y = NULL;
   
   FDBCluster* clu_u = NULL;
   FDBFuture * cuf_u = NULL;
@@ -84,18 +84,35 @@ _fond_init(u3_fond * fond_u, c3_c * pin_c)
   FDBFuture *   daf_u = NULL;
   
 
-  /* build file path */
+  /* build file path to cluster file (installed as part of 'sudo apt-get install foundationdb-server' ) */
   {
-    c3_c * tmp_c = (c3_c *) strdup(pin_c);
-    c3_c * sav_c = NULL;
-    strtok_r(tmp_c, ":", & sav_c);
-    fprintf(stderr, "sav_c = %s\n\r", sav_c);
-    free(tmp_c);
 
-    path_c = malloc(strlen(u3C.dir_c) + strlen(CLUS_NAME) + 2);
-    sprintf(path_c, "./%s/%s", u3C.dir_c, CLUS_NAME);
+    /* c3_c * tmp_c = (c3_c *) strdup(pin_c); */
 
-    /* fprintf(stderr, "\fond db path = %s\n\r", path_c); */
+    c3_y * path_y = NULL;
+    c3_y * mac_y = (c3_y * ) "/usr/local/etc/foundationdb/fdb.cluster";
+    c3_y * lnx_y = (c3_y * ) "/etc/foundationdb/fdb.cluster";
+    
+    struct stat buf_u;
+    c3_w ret_w = stat((char *) mac_y, & buf_u );
+    if (0 == ret_w){
+      path_y = mac_y;
+    } else {
+      ret_w = stat((char *) lnx_y, & buf_u );
+      if (0 == ret_w){
+        path_y = lnx_y;
+      }
+    }
+
+    if (NULL == path_y){
+      fprintf(stderr, "ERROR: no fdb.cluster file found; can not proceed.\n");
+      fprintf(stderr, "   typical linux location: %s\n", lnx_y);
+      fprintf(stderr, "   typical Mac   location: %s\n", mac_y);
+      u3m_bail(c3__fail);
+      return(c3n);
+    }
+
+    fprintf(stderr, "cluster file path = %s\n\r", path_y);
   }
 
 
@@ -126,7 +143,7 @@ _fond_init(u3_fond * fond_u, c3_c * pin_c)
   /* get cluster */
   {
     fdb_error_t err_u;
-    cuf_u = fdb_create_cluster( path_c );
+    cuf_u = fdb_create_cluster( (char *) path_y );
     err_u = fdb_future_block_until_ready( cuf_u );
     if (0 != err_u){
       fprintf(stderr, "fond_read_init create_cluster 1: %s\n", fdb_get_error( err_u ));
@@ -172,9 +189,6 @@ _fond_init(u3_fond * fond_u, c3_c * pin_c)
   }
   if (daf_u){
     fdb_future_destroy( daf_u );
-  }
-  if (path_c){
-    free(path_c);
   }
   
   return(c3n);

@@ -50,6 +50,9 @@ c3_w u3_frag_head_size(c3_w len_w, /* size of total write */
                        c3_w frg_w, /* this fragment index */
                        c3_w max_w) /* max fragment size */
 {
+  if (0 == max_w){
+    return(0);
+  }
   c3_w hed_w = 2; /* two ':' */
 
   c3_w cnt_w = len_w / max_w + (0 == (len_w % max_w) ? 0 : 1);

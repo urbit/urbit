@@ -40,7 +40,7 @@
 
 c3_w u3_sqlt_frag_size()
 {
-  return( pow(2, 31) );
+  return(0);  /* 0 == do not use fragmenting */
 }
 
 

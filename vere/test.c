@@ -13,6 +13,8 @@
 **    * 'test' test hasn't been run in a while; kinda moved on to 'speed' as the useful tool.
 **    * disk backend never really implemented ; never tested
 **    * lmdb / rock / sqlt are supported and tested (and write speed is l: 10ms, r: 6ms, s: 17ms)
+**    * fond not tested
+**    * foundationDB ... ?
 **    * lmdb has not yet been tested in cluster mode
 ** 
 **  BUGS:
@@ -159,8 +161,8 @@ void _test_speed( char * init_str, c3_o frag_o, int delay)
       /* write */
       wric(& writs[evt_d],
            evt_d,
+           (c3_y *) buf_y,
            (c3_y *) str_y,
-           (c3_y *) str_y + hed_w,
            len_w,
            _speed_cb);  
 
@@ -240,7 +242,7 @@ void _test_speed( char * init_str, c3_o frag_o, int delay)
   }
 
 
-  sleep(5);
+
   
   /* ******************** READ*/
 
@@ -680,9 +682,9 @@ void _head_test()
 
 void usage()
 {
-  c3_c *use_c[] = {"Usage: perstest [options...] \n",
-                   "-h            get this help screen/\n",
-                   "-a            run in 'attach' mode, so that you can attach w GDB. Once in, hit 'f 2' then 'set ii=1' then 'c' \n",
+  c3_c *use_c[] = {"Usage: perstest [options...] ",
+                   "-h            get this help screen/",
+                   "-a            run in 'attach' mode, so that you can attach w GDB. Once in, hit 'f 2' then 'set ii=1' then 'c' ",
                    "-d <x>        specify a delay of x ms after each write (helps disambiguate bandwidth from latency)",
                    "-n <x>        specify number of iterations",
                    "-p { d | f | l | r |s }  specify persistece backend (defaults to 'f')",
@@ -692,7 +694,7 @@ void usage()
 
   c3_i i;
   for ( i=0; use_c[i]; i++ ) {
-    fprintf(stderr, (char *) use_c[i], "x");
+    fprintf(stderr, "%s\n", (char *) use_c[i]);
   }
   exit(1);
 }
