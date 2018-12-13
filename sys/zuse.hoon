@@ -248,9 +248,9 @@
     ++  hull
       $:  $=  own                                       ::  ownership
           $:  owner=address
-              transfer-proxy=address
               management-proxy=address
               voting-proxy=address
+              transfer-proxy=address
           ==
         ::
           $=  net                                       ::  networking
@@ -258,15 +258,14 @@
           $:  =life
               =pass
               continuity-number=@ud
-              sponsor=(unit @p)
+              sponsor=(unit @p)  ::TODO  doesn't 100% reflect chain state
               escape=(unit @p)
           ==
         ::
           $=  kid                                       ::  spawning
           %-  unit
           $:  spawn-proxy=address
-              spawn-count=@ud
-              spawned=(set @p)
+              spawned=(set @p)  ::TODO  sparse range, pile, see old jael ++py
           ==
       ==
     ::
@@ -285,23 +284,22 @@
     ++  eth-type
       |%
       ++  hull
-        :~  %bool           ::  active
-            [%bytes-n 32]   ::  encryptionKey
+        :~  [%bytes-n 32]   ::  encryptionKey
             [%bytes-n 32]   ::  authenticationKey
+            %bool           ::  hasSponsor
+            %bool           ::  active
+            %bool           ::  escapeRequested
+            %uint           ::  sponsor
+            %uint           ::  escapeRequestedTo
             %uint           ::  cryptoSuiteVersion
             %uint           ::  keyRevisionNumber
             %uint           ::  continuityNumber
-            %uint           ::  spawnCount
-            %uint           ::  sponsor
-            %bool           ::  hasSponsor
-            %bool           ::  escapeRequested
-            %uint           ::  escapeRequestedTo
         ==
       ++  deed
         :~  %address        ::  owner
             %address        ::  managementProxy
-            %address        ::  votingProxy
             %address        ::  spawnProxy
+            %address        ::  votingProxy
             %address        ::  transferProxy
         ==
       --
@@ -309,23 +307,22 @@
     ++  eth-noun
       |%
       ++  hull
-        $:  active=?
-            encryption-key=octs
+        $:  encryption-key=octs
             authentication-key=octs
+            has-sponsor=?
+            active=?
+            escape-requested=?
+            sponsor=@ud
+            escape-to=@ud
             crypto-suite=@ud
             key-revision=@ud
             continuity-number=@ud
-            spawn-count=@ud
-            sponsor=@ud
-            has-sponsor=?
-            escape-requested=?
-            escape-to=@ud
         ==
       ++  deed
         $:  owner=address
             management-proxy=address
-            voting-proxy=address
             spawn-proxy=address
+            voting-proxy=address
             transfer-proxy=address
         ==
       --
@@ -375,14 +372,11 @@
       ++  ships
         ::  ropsten
         ::
-        0xab87.24a7.a953.ef14.e940.b358.6b21.a889.b62f.3d56
-        ::  local deployments
-        ::  XX remove
-        ::
-        ::  0x84b3.7fbc.6188.da8a.e866.1eae.322a.f4d9.2db4.5ecc  ::  joe
-        ::  0x7134.3566.74e4.0c93.8736.8699.1af8.86dd.2ae8.e642  ::  philip
+        0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579
       ++  launch
-        4.230.928
+        ::  ropsten
+        ::
+        4.601.630
       --
     ::
     ::  hashes of ship event signatures
@@ -460,7 +454,7 @@
           d424.063e.d5c9.2120.e67e.0730.53b9.4898
       --
     --  ::  constitution
-  --  ::  ethereum
+  --  ::  ethe
 ::                                                      ::::
 ::::                      ++ames                          ::  (1a) network
   ::                                                    ::::
@@ -7949,6 +7943,8 @@
         ::
         ::  network state
         ::
+        ::TODO  doesn't match semantics of %activated diff, and
+        ::      setting ~ here will cause a crash on the next networking diff
         ?:  =(0 key-revision)  ~
         :-  ~
         :*  key-revision
@@ -7970,8 +7966,7 @@
       ?.  ?=(?(%czar %king) (clan:title who))  ~
       :-  ~
       :*  spawn-proxy
-          spawn-count
-          ~  ::NOTE  not returned for ships call
+          ~  ::TODO  call getSpawned to fill this
       ==
     ::
     ++  event-log-to-hull-diff
@@ -8064,7 +8059,7 @@
         %_  hul
           net  `[0 0 0 `(^sein:title who.dif) ~]
           kid  ?.  ?=(?(%czar %king) (clan:title who.dif))  ~
-               `[0x0 0 ~]
+               `[0x0 ~]
         ==
       ::
       ::  ownership
@@ -8096,11 +8091,8 @@
         ?>  ?=(^ kid.hul)
         ?-  -.dif
             %spawned
-          =-  hul(u.kid -)
-          =*  kid  u.kid.hul
-          :+  spawn-proxy.kid
-            +(spawn-count.kid)
-          (~(put in spawned.kid) who.dif)
+          =-  hul(spawned.u.kid -)
+          (~(put in spawned.u.kid.hul) who.dif)
         ::
           %spawn-proxy  hul(spawn-proxy.u.kid new.dif)
         ==
@@ -8113,7 +8105,7 @@
         ~|  id
         %+  rash  id
         ;~  pose
-          (function %ships 'ships' shipname)
+          (function %ships 'points' shipname)
           (function %get-spawned 'getSpawned' shipname)
           (function %dns-domains 'dnsDomains' dem:ag)
         ==
@@ -8133,8 +8125,8 @@
         ^-  [id=@t dat=call-data]
         ?-  -.cal
             %ships
-          :-  (crip "ships({(scow %p who.cal)})")
-          ['ships(uint32)' ~[uint+`@`who.cal]]
+          :-  (crip "points({(scow %p who.cal)})")
+          ['points(uint32)' ~[uint+`@`who.cal]]
         ::
             %rights
           :-  (crip "rights({(scow %p who.cal)})")
@@ -8213,7 +8205,7 @@
         `~.0
       :+  %eth-call
         =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
-        (encode-call:ethereum 'ships(uint32)' [%uint `@`who]~)
+        (encode-call:ethereum 'points(uint32)' [%uint `@`who]~)
       [%number boq]
     ::  +turf:give:dawn: Eth RPC for network domains
     ::
@@ -8300,12 +8292,13 @@
       ?~  res
         ~&([%hull-take-dawn %invalid-response rep] ~)
       ~?  =(u.res '0x')
-        'bad result from node; is ships address correct?'
+        :-  'bad result from node; is ships address correct?'
+        ships:contracts:constitution:ethe
       =/  out
         %-  mule  |.
         %+  hull-from-eth:constitution:ethereum
           who
-        :_  *deed:eth-noun:constitution:ethereum
+        :_  *deed:eth-noun:constitution:ethereum  ::TODO  call rights to fill
         (decode-results:ethereum u.res hull:eth-type:constitution:ethe)
       ?:  ?=(%& -.out)
         (some p.out)
