@@ -42,7 +42,7 @@
   ==                                                    ::
 ++  note-clay                                           ::
   $%  {$merg p/@tas q/@p r/@tas s/case t/germ:clay}     ::  merge desks
-      {$warp p/sock q/riff:clay}                        ::  wait for clay hack
+      {$warp p/ship q/riff:clay}                        ::  wait for clay hack
       {$wegh $~}                                        ::
       {$perm p/desk q/path r/rite:clay}                 ::  change permissions
   ==                                                    ::
@@ -319,12 +319,7 @@
             tem  `(turn gyl |=(a/gill [%yow a]))
             moz
           :_  moz
-          :*  hen
-              %pass
-              /
-              %c
-              [%warp [our our] %base `[%sing %y [%ud 1] /]]
-          ==
+          [hen %pass / %c %warp our %base `[%sing %y [%ud 1] /]]
         ==
       ::
       ++  send                                          ::  send action

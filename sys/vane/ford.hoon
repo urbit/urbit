@@ -151,9 +151,9 @@
           ::  %warp: internal (intra-ship) file request
           ::
           $%  $:  %warp
-                  ::  sock: pair of requesting ship, requestee ship
+                  ::  ship: target for request
                   ::
-                  =sock
+                  =ship
                   ::  riff: clay request contents
                   ::
                   riff=riff:clay
@@ -5960,7 +5960,7 @@
       ::
       =+  [their desk]=disc.subscription
       ::
-      :^  %c  %warp  sock=[our their]
+      :^  %c  %warp  ship=their
       ^-  riff:clay
       [desk `[%mult `case`[%da date.subscription] request-contents]]
     ::
@@ -5985,7 +5985,7 @@
     ::
     =/  =note
       =+  [their desk]=disc.subscription
-      [%c %warp sock=[our their] `riff:clay`[desk ~]]
+      [%c %warp ship=their `riff:clay`[desk ~]]
     ::
     =.  moves  [`move`[u.originator [%pass wire note]] moves]
     ::
@@ -6024,7 +6024,7 @@
     =/  =note
       =,  scry-request
       =/  =disc  [p q]:beam
-      :*  %c  %warp  sock=[our their=ship.disc]  desk.disc
+      :*  %c  %warp  their=ship.disc  desk.disc
           `[%sing care case=r.beam (flop s.beam)]
       ==
     ::
@@ -6048,7 +6048,7 @@
     ::
     =/  =note
       =+  [their desk]=[p q]:beam.scry-request
-      [%c %warp sock=[our their] `riff:clay`[desk ~]]
+      [%c %warp ship=their `riff:clay`[desk ~]]
     ::
     =.  moves  [`move`[u.originator [%pass wire note]] moves]
     ::

@@ -761,8 +761,8 @@
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
           {$sunk p=ship q=life}                         ::  report death
-          {$warp wer/sock rif/riff}                     ::  internal file req
-          {$werp who/ship wer/sock rif/riff}            ::  external file req
+          {$warp wer/ship rif/riff}                     ::  internal file req
+          {$werp who/ship wer/ship rif/riff}            ::  external file req
           {$wegh ~}                                    ::  report memory
           {$went wer/ship pax/path num/@ud ack/coop}    ::  response confirm
           {$west wer/ship pax/path res/*}               ::  network request

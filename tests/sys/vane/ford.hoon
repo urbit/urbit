@@ -686,7 +686,7 @@
       ^=  moves
         :~  :*  duct=~  %pass
                 wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
     ==  ==  ==
   ::
@@ -731,7 +731,7 @@
       ^=  moves
         :~  :*  duct=~[/one]  %pass
                 wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
     ==  ==  ==
   ::
@@ -795,7 +795,7 @@
       ^=  moves
         :~  :*  duct=~[/one]  %pass
                 wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
     ==  ==  ==
   ::
@@ -810,7 +810,7 @@
       ^=  moves
         :~  :*  duct=~[/one]  %pass
                 wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -837,7 +837,7 @@
                 [%scry %noun !>(42)]
             ==
             :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
@@ -858,7 +858,7 @@
                 [%scry %noun !>(43)]
             ==
             :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.7] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
@@ -872,7 +872,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -901,7 +901,7 @@
                 [%scry %noun !>(42)]
             ==
             :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
@@ -921,7 +921,7 @@
                 [%scry %noun !>(42)]
             ==
             :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.7] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
@@ -934,7 +934,7 @@
       call-args=[duct=~[/first] type=~ %kill ~]
       ^=  moves
         :~  :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   =^  results4  ford-gate
@@ -947,7 +947,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -990,12 +990,12 @@
           !>  %-  sy
               :~  :*  duct=~[/first]  %pass
                       wire=/~nul/scry-request/cx/~nul/desk/~1234.5.7/foo/bar
-                      %c  %warp  [~nul ~nul]  %desk
+                      %c  %warp  ~nul  %desk
                       `[%sing %x [%da ~1234.5.7] /foo/bar]
                   ==
                   :*  duct=~[/first]  %pass
                       wire=/~nul/scry-request/cx/~nul/desk/~1234.5.8/foo/bar
-                      %c  %warp  [~nul ~nul]  %desk
+                      %c  %warp  ~nul  %desk
                       `[%sing %x [%da ~1234.5.8] /foo/bar]
               ==  ==
           !>  (sy moves)
@@ -1180,7 +1180,7 @@
       ^=  moves
         :~  :*  duct=~[/live]  %pass
                 wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
     ==  ==  ==
   ::
@@ -1201,7 +1201,7 @@
                 [%scry %noun !>(42)]
             ==
             :*  duct=~[/live]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
@@ -1222,7 +1222,7 @@
                 [%scry %noun !>(43)]
             ==
             :*  duct=~[/live]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.8] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
@@ -1236,7 +1236,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/live]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -1266,7 +1266,7 @@
       ^=  moves
         :~  :*  duct=~[/live]  %pass
                 wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
     ==  ==  ==
   ::
@@ -1301,7 +1301,7 @@
                 [%success [%scry %noun !>(42)]]
             ==
             :*  duct=~[/live]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
             ==
             :*  duct=~[/once]  %give  %made  ~1234.5.7  %complete
@@ -1318,7 +1318,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/live]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -1351,7 +1351,7 @@
             ==
             :*  duct=~[/two-deep-4u]  %pass
                 wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
@@ -1373,7 +1373,7 @@
             ==
             :*  duct=~[/two-deep-4u]  %pass
                 wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.7] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
@@ -1388,7 +1388,7 @@
       ^=  moves
         :~  :*  duct=~[/two-deep-4u]  %pass
                 wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -1433,7 +1433,7 @@
                 [%success [%ride scry-type %constant]]
             ==
             :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
@@ -1451,7 +1451,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
@@ -1465,7 +1465,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -1510,7 +1510,7 @@
                 [%success [%scry %noun !>(%it-does-in-fact-matter)]]
             ==
             :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
@@ -1532,7 +1532,7 @@
                 [%success [%scry %noun !>(%changed)]]
             ==
             :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
@@ -1546,7 +1546,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -1612,7 +1612,7 @@
                 [%success [%scry %noun scry-type %it-does-in-fact-matter]]
             ==
             :*  duct=~[/autocons]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.7
-                %c  %warp  [~nul ~nul]  %home
+                %c  %warp  ~nul  %home
                 `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
@@ -1637,7 +1637,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/autocons]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.7
-                %c  %warp  [~nul ~nul]  %home  ~
+                %c  %warp  ~nul  %home  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -1814,7 +1814,7 @@
       ^=  moves
         :~  :*  duct=~[/live]  %pass
                 wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
     ==  ==  ==
   ::
@@ -1918,7 +1918,7 @@
         ::
         %+  expect-eq
           !>  :*  duct=~[/call]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                  %c  %warp  [~nul ~nul]  %desk
+                  %c  %warp  ~nul  %desk
                   `[%mult [%da ~1234.5.6] (sy [%x /timer] ~)]
               ==
           !>  i.t.moves
@@ -1951,7 +1951,7 @@
         ::
         %+  expect-eq
           !>  :*  duct=~[/call]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                  %c  %warp  [~nul ~nul]  %desk
+                  %c  %warp  ~nul  %desk
                   `[%mult [%da ~1234.5.7] (sy [%x /timer] ~)]
               ==
           !>  i.t.moves
@@ -1967,7 +1967,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/call]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -2071,7 +2071,7 @@
                               (ream '|=(a=@ud +(a))')
             ==  ==    ==  ==
             :*  duct=~[/hood]  %pass  /~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar/hoon] ~)]
     ==  ==  ==
   ::
@@ -2085,7 +2085,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/hood]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -2392,7 +2392,7 @@
       ^=  moves
         :~  :*  duct=~[/live]  %pass
                 wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
     ==  ==  ==
   ::
@@ -2472,7 +2472,7 @@
                 [%success [%ride scry-type %constant]]
             ==
             :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
@@ -2490,7 +2490,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
@@ -2504,7 +2504,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -2576,7 +2576,7 @@
         %+  expect-eq
           !>  :*  duct=~[/post-a]  %pass
                   wire=/~nul/clay-sub/~nul/desk/~1234.5.6  %c  %warp
-                  [~nul ~nul]  %desk
+                  ~nul  %desk
                   `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
               ==
           !>  i.t.moves
@@ -2607,7 +2607,7 @@
         %+  expect-eq
           !>  :*  duct=~[/post-b]  %pass
                   wire=/~nul/clay-sub/~nul/desk/~1234.5.7  %c  %warp
-                  [~nul ~nul]  %desk
+                  ~nul  %desk
                   `[%mult [%da ~1234.5.7] (sy [%x /posts/a] [%x /posts/b] ~)]
               ==
           !>  i.t.moves
@@ -2642,7 +2642,7 @@
         %+  expect-eq
           !>  :*  duct=~[/post-a]  %pass
                   wire=/~nul/clay-sub/~nul/desk/~1234.5.8
-                  %c  %warp  [~nul ~nul]  %desk
+                  %c  %warp  ~nul  %desk
                   `[%mult [%da ~1234.5.8] (sy [%x /posts/a] [%x /posts/b] ~)]
               ==
           !>  i.t.moves
@@ -2684,7 +2684,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/post-a]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -2748,7 +2748,7 @@
                     ==
             ==  ==
             :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.6
-                %c  %warp  [~nul ~nul]  %home
+                %c  %warp  ~nul  %home
                 `[%mult [%da ~1234.5.6] (sy [%x /scry/two] [%x /scry/one] ~)]
     ==  ==  ==
   ::
@@ -2769,7 +2769,7 @@
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-two'
             ==
             :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.7
-                %c  %warp  [~nul ~nul]  %home
+                %c  %warp  ~nul  %home
                 `[%mult [%da ~1234.5.7] (sy [%x /scry/two] [%x /scry/one] ~)]
     ==  ==  ==
   ::
@@ -2790,7 +2790,7 @@
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-one'
             ==
             :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.8
-                %c  %warp  [~nul ~nul]  %home
+                %c  %warp  ~nul  %home
                 `[%mult [%da ~1234.5.8] (sy [%x /scry/one] ~)]
     ==  ==  ==
   ::
@@ -2804,7 +2804,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.8
-                %c  %warp  [~nul ~nul]  %home  ~
+                %c  %warp  ~nul  %home  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -2856,7 +2856,7 @@
                 %success  %scry  %noun  scry-type  'scry-two'
             ==
             :*  duct=~[/same]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /scry/two] ~)]
     ==  ==  ==
   ::
@@ -2880,7 +2880,7 @@
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-two'
             ==
             :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.7] (sy [%x /scry/two] [%x /scry/one] ~)]
     ==  ==  ==
   ::
@@ -2905,7 +2905,7 @@
             ::  we subscribe to both paths because /same still exists.
             ::
             :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.8] (sy [%x /scry/one] ~)]
     ==  ==  ==
   ::
@@ -2924,7 +2924,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/same]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   =^  results5  ford-gate
@@ -2937,7 +2937,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/alts]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -3006,7 +3006,7 @@
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-two'
             ==
             :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.6
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /scry/one] [%x /scry/two] ~)]
     ==  ==  ==
   ::  alts2 will depend on both scry3 and scry2
@@ -3024,7 +3024,7 @@
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-two'
             ==
             :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.7
-                %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.7]
+                %c  %warp  ~nul  %desk  ~  %mult  [%da ~1234.5.7]
                 (sy [%x /scry/two] [%x /scry/three] ~)
     ==  ==  ==
   ::
@@ -3047,7 +3047,7 @@
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-three'
             ==
             :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
-                %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.8]
+                %c  %warp  ~nul  %desk  ~  %mult  [%da ~1234.5.8]
                 (sy [%x /scry/three] ~)
     ==  ==  ==
   ::
@@ -3068,7 +3068,7 @@
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-one'
             ==
             :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.9
-                %c  %warp  [~nul ~nul]  %desk  ~  %mult  [%da ~1234.5.9]
+                %c  %warp  ~nul  %desk  ~  %mult  [%da ~1234.5.9]
                 (sy [%x /scry/one] ~)
     ==  ==  ==
   ::
@@ -3082,7 +3082,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/first]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.9
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   =^  results6  ford-gate
@@ -3095,7 +3095,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/second]  %pass  wire=/~nul/clay-sub/~nul/desk/~1234.5.8
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -3164,7 +3164,7 @@
                 [%scry %noun !>(42)]
             ==
             :*  duct=~[/build]  %pass  wire=/~nul/clay-sub/~nul/desk
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
@@ -3198,7 +3198,7 @@
                 [%scry %noun !>(43)]
             ==
             :*  duct=~[/build]  %pass  wire=/~nul/clay-sub/~nul/desk
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.7] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
@@ -3212,7 +3212,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/build]  %pass  wire=/~nul/clay-sub/~nul/desk
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -3258,7 +3258,7 @@
                 [%success [%ride scry-type %constant]]
             ==
             :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
@@ -3289,7 +3289,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk
-                %c  %warp  [~nul ~nul]  %desk
+                %c  %warp  ~nul  %desk
                 `[%mult [%da ~1234.5.7] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
@@ -3303,7 +3303,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/ride]  %pass  wire=/~nul/clay-sub/~nul/desk
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -3375,7 +3375,7 @@
           ==
         %+  expect-eq
           !>  :*  duct=~[/post-a]  %pass  wire=/~nul/clay-sub/~nul/desk
-                  %c  %warp  [~nul ~nul]  %desk
+                  %c  %warp  ~nul  %desk
                   `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
               ==
           !>  i.t.moves
@@ -3523,7 +3523,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/post-a]  %pass  wire=/~nul/clay-sub/~nul/desk
-                %c  %warp  [~nul ~nul]  %desk  ~
+                %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -5890,7 +5890,7 @@
         %+  expect-eq
           !>  ^-  move:ford-gate
               :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.6
-                  %c  %warp  [~nul ~nul]  %home
+                  %c  %warp  ~nul  %home
                   `[%mult [%da ~1234.5.6] files]
               ==
           !>  i.t.moves
@@ -6022,7 +6022,7 @@
         %+  expect-eq
           !>  ^-  move:ford-gate
               :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.7
-                  %c  %warp  [~nul ~nul]  %home
+                  %c  %warp  ~nul  %home
                   `[%mult [%da ~1234.5.7] files]
               ==
           !>  i.t.moves
@@ -6167,7 +6167,7 @@
         %+  expect-eq
           !>  ^-  move:ford-gate
               :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.8
-                  %c  %warp  [~nul ~nul]  %home
+                  %c  %warp  ~nul  %home
                   `[%mult [%da ~1234.5.8] files]
               ==
           !>  i.t.moves
@@ -6313,7 +6313,7 @@
           %+  expect-eq
             !>  ^-  move:ford-gate
                 :*  duct=~[/gh]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
-                    %c  %warp  [~nul ~nul]  %home
+                    %c  %warp  ~nul  %home
                     `[%mult [%da ~1234.5.9] files]
                 ==
             !>  i.t.moves
@@ -6363,7 +6363,7 @@
           %+  expect-eq
             !>  ^-  move:ford-gate
                 :*  duct=~[/gh2]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
-                    %c  %warp  [~nul ~nul]  %home
+                    %c  %warp  ~nul  %home
                     `[%mult [%da ~1234.5.9] files]
                 ==
             !>  i.t.moves
@@ -6413,7 +6413,7 @@
           %+  expect-eq
             !>  ^-  move:ford-gate
                 :*  duct=~[/gh3]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.9
-                    %c  %warp  [~nul ~nul]  %home
+                    %c  %warp  ~nul  %home
                     `[%mult [%da ~1234.5.9] files]
                 ==
             !>  i.t.moves
@@ -6429,7 +6429,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/gh]  %pass  /~nul/clay-sub/~nul/home/~1234.5.9
-                %c  %warp  [~nul ~nul]  %home  ~
+                %c  %warp  ~nul  %home  ~
     ==  ==  ==
   ::
   =^  results8  ford-gate
@@ -6442,7 +6442,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/gh2]  %pass  /~nul/clay-sub/~nul/home/~1234.5.9
-                %c  %warp  [~nul ~nul]  %home  ~
+                %c  %warp  ~nul  %home  ~
     ==  ==  ==
   ::
   =^  results9  ford-gate
@@ -6455,7 +6455,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/gh3]  %pass  /~nul/clay-sub/~nul/home/~1234.5.9
-                %c  %warp  [~nul ~nul]  %home  ~
+                %c  %warp  ~nul  %home  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -6535,7 +6535,7 @@
             ==
             ^-  move:ford-gate
             :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home/~1234.5.6
-                %c  %warp  [~nul ~nul]  %home  ~  %mult  [%da ~1234.5.6]
+                %c  %warp  ~nul  %home  ~  %mult  [%da ~1234.5.6]
                 %-  sy  :~
                   [%x /mar/two/hoon]
                   [%x /mar/one/hoon]
@@ -6554,7 +6554,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home/~1234.5.6
-                %c  %warp  [~nul ~nul]  %home  ~
+                %c  %warp  ~nul  %home  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -6584,7 +6584,7 @@
             ==
             ^-  move:ford-gate
             :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home/~1234.5.6
-                %c  %warp  [~nul ~nul]  %home  ~  %mult  [%da ~1234.5.6]
+                %c  %warp  ~nul  %home  ~  %mult  [%da ~1234.5.6]
                 %-  sy  :~
                   [%x /mar/one/hoon]
                   [%x /mar/two/hoon]
@@ -6605,7 +6605,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/walk]  %pass  /~nul/clay-sub/~nul/home/~1234.5.6
-                %c  %warp  [~nul ~nul]  %home  ~
+                %c  %warp  ~nul  %home  ~
     ==  ==  ==
   ::
   ;:  weld
@@ -6988,7 +6988,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/app]  %pass  wire=/~nul/clay-sub/~nul/home/~1234.5.8
-                %c  %warp  [~nul ~nul]  %home  ~
+                %c  %warp  ~nul  %home  ~
     ==  ==  ==
   ::
   ;:  weld

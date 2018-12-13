@@ -335,8 +335,8 @@
       $:  $c                                            ::  to %clay
   $%  {$info q/@tas r/nori}                             ::  internal edit
       {$merg p/@tas q/@p r/@tas s/case t/germ:clay}     ::  merge desks
-      {$warp p/sock q/riff}                             ::
-      {$werp p/ship q/sock r/riff}                      ::
+      {$warp p/ship q/riff}                             ::
+      {$werp p/ship q/ship r/riff}                      ::
   ==  ==                                                ::
       $:  $d                                            ::
   $%  {$flog p/{$crud p/@tas q/(list tank)}}            ::  to %dill
@@ -2923,8 +2923,7 @@
         %-  emit(wat.dat %ali)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ali ~]
-            %c  %warp  [p.bob p.ali]  q.ali
-            `[%sing %v cas.dat /]
+            [%c %warp p.ali q.ali `[%sing %v cas.dat /]]
         ==
       ::
       ::  Parse the state of ali's desk, and get the most recent commit.
@@ -3880,16 +3879,19 @@
       $sunk  [~ ..^$]
   ::
       ?($warp $werp)
+    ::  capture whether this read is on behalf of another ship
+    ::  for permissions enforcement
+    ::
     =^  for  req
       ?:  ?=($warp -.req)
         [~ req]
-      :_  [%warp wer.req rif.req]
-      ?:  =(who.req p.wer.req)  ~
-      `who.req
+      :-  ?:(=(our who.req) ~ `who.req)
+      [%warp wer.req rif.req]
+    ::
     ?>  ?=($warp -.req)
     =*  rif  rif.req
     =^  mos  ruf
-      =/  den  ((de our now hen ruf) q.wer.req p.rif)
+      =/  den  ((de our now hen ruf) wer.req p.rif)
       =<  abet
       ?~  q.rif
         cancel-request:den
@@ -3907,10 +3909,9 @@
       =+  ryf=((hard riff) res.req)
       :_  ..^$
       :~  [hen %give %mack ~]
-          :-  hen
-          :^  %pass  [(scot %p our) (scot %p wer) t.pax]
-            %c
-          [%werp wer [our our] ryf]
+          =/  =wire
+            [(scot %p our) (scot %p wer) t.pax]
+          [hen %pass wire %c %werp wer our ryf]
       ==
     ?>  ?=({$answer @ @ ~} pax)
     =+  syd=(slav %tas i.t.pax)
