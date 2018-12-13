@@ -451,7 +451,7 @@
       ==
   ^-  [tang _clay-gate]
   ::
-  =/  clay-core  (clay-gate our=~zod now=now eny=`@`0xdead.beef scry=scry)
+  =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  clay-gate  (call:clay-core call-args)
   ::
@@ -472,7 +472,7 @@
       ==
   ^-  [tang _clay-gate]
   ::
-  =/  clay-core  (clay-gate our=~zod now=now eny=`@`0xdead.beef scry=scry)
+  =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  clay-gate  (call:clay-core call-args)
   ::
@@ -490,7 +490,7 @@
       ==
   ^-  [tang _clay-gate]
   ::
-  =/  clay-core  (clay-gate our=~zod now=now eny=`@`0xdead.beef scry=scry)
+  =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  clay-gate  (take:clay-core take-args)
   ::
@@ -511,7 +511,7 @@
       ==
   ^-  [tang _clay-gate]
   ::
-  =/  clay-core  (clay-gate our=~zod now=now eny=`@`0xdead.beef scry=scry)
+  =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  clay-gate  (take:clay-core take-args)
   ::
