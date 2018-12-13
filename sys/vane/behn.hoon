@@ -86,8 +86,9 @@
           :~  timers+[%& timers]
           ==
         ==
+      ::  reverse moves, since they were constructed backward, and return
       ::
-      [moves ..^^$]
+      [(flop moves) ..^^$]
   ::  +set-timer: set a timer, maintaining the sort order of the :timers list
   ::
   ++  set-timer
@@ -140,14 +141,14 @@
     ::
     ?~  timers
       ?~  next-wake
-        [~ state]
+        [moves state]
       :_  state(next-wake ~)
       [[unix-duct %give %doze ~] moves]
     ::  if :next-wake is in the past or not soon enough, reset it
     ::
     ?^  next-wake
       ?:  &((gte date.i.timers u.next-wake) (lte now u.next-wake))
-        [~ state]
+        [moves state]
       :_  state(next-wake `date.i.timers)
       [[unix-duct %give %doze `date.i.timers] moves]
     ::  there was no unix wakeup timer; set one
