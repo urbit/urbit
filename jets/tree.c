@@ -854,6 +854,8 @@ static c3_c* _141_two_xeb_ha[] = {0};
 
   static u3j_harm _141_two__in_bif_a[] = {{".2", u3wdi_bif}, {}};
   static c3_c* _141_two__in_bif_ha[] = {0};
+  static u3j_harm _141_two__in_del_a[] = {{".2", u3wdi_del}, {}};
+  static c3_c* _141_two__in_del_ha[] = {0};
   static u3j_harm _141_two__in_dif_a[] = {{".2", u3wdi_dif}, {}};
   static c3_c* _141_two__in_dif_ha[] = {0};
   static u3j_harm _141_two__in_gas_a[] = {{".2", u3wdi_gas}, {}};
@@ -877,6 +879,7 @@ static c3_c* _141_two_xeb_ha[] = {0};
   static c3_c* _141_two__in_uni_ha[] = {0};
 static u3j_core _141_two__in_d[] =
   { { "bif", 7, _141_two__in_bif_a, 0, _141_two__in_bif_ha },
+    { "del", 7, _141_two__in_del_a, 0, _141_two__in_del_ha },
     { "dif", 7, _141_two__in_dif_a, 0, _141_two__in_dif_ha },
     { "gas", 7, _141_two__in_gas_a, 0, _141_two__in_gas_ha },
     { "has", 7, _141_two__in_has_a, 0, _141_two__in_has_ha },

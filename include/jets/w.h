@@ -91,6 +91,7 @@
     u3_noun u3wdb_uni(u3_noun);
 
     u3_noun u3wdi_bif(u3_noun);
+    u3_noun u3wdi_del(u3_noun);
     u3_noun u3wdi_dif(u3_noun);
     u3_noun u3wdi_gas(u3_noun);
     u3_noun u3wdi_has(u3_noun);
