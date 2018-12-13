@@ -36,7 +36,7 @@
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  axle                                                ::  all state
   $:  $0                                                ::  state version
-      pol/(map ship mast)                               ::  apps by ship
+      =mast                                             ::  apps by ship
   ==                                                    ::
 ++  gest                                                ::  subscriber data
   $:  sup/bitt                                          ::  incoming subscribers
@@ -106,23 +106,19 @@
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  state machine
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  mo
-  ~%  %gall-mo  +>  ~ 
-  |_  $:  $:  hen=duct
-              moz=(list move)
-          ==
-          mast
+  ~%  %gall-mo  +>  ~
+  =*  mas  mast.all
+  |_  $:  hen=duct
+          moz=(list move)
       ==
   ++  mo-abed                                           ::  initialize
-    |=  hen=duct
+    |=  =duct
     ^+  +>
-    %_    +>
-      hen  hen
-      +<+  (~(got by pol.all) our)
-    ==
+    +>(hen duct)
   ::
   ++  mo-abet                                           ::  resolve to 
     ^+  [*(list move) +>+]
-    :_  +>+(pol.all (~(put by pol.all) our +<+))
+    :_  +>+
     %-  flop
     %+  turn  moz
     |=  a/move
@@ -165,11 +161,11 @@
     ::
     =/  result-cage=cage  (result-to-cage:ford build-result)
     ::
-    =/  app-data=(unit seat)  (~(get by bum) dap)
+    =/  app-data=(unit seat)  (~(get by bum.mas) dap)
     ?^  app-data
       ::  update the path
       ::
-      =.  bum  (~(put by bum) dap u.app-data(byk byk))
+      =.  bum.mas  (~(put by bum.mas) dap u.app-data(byk byk))
       ::  magic update string from +mo-boon, "complete old boot"
       ::
       ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.result-cage)
@@ -190,8 +186,8 @@
     |=  {dap/dude byk/beak hav/vase}
     =+  sat=*seat
     %_    +>.$
-        bum
-      %+  ~(put by bum)  dap
+        bum.mas
+      %+  ~(put by bum.mas)  dap
       %_  sat
         mom  hen
         byk  byk
@@ -267,13 +263,13 @@
   ++  mo-bale                                           ::  assign outbone
     |=  him/ship 
     ^-  {@ud _+>}
-    =+  sad=(fall (~(get by sap) him) `scad`[1 ~ ~])
+    =+  sad=(fall (~(get by sap.mas) him) `scad`[1 ~ ~])
     =+  nom=(~(get by q.sad) hen)
     ?^  nom  [u.nom +>.$]
     :-  p.sad
     %_    +>.$
-        sap
-      %+  ~(put by sap)  him
+        sap.mas
+      %+  ~(put by sap.mas)  him
       %_  sad
         p  +(p.sad)
         q  (~(put by q.sad) hen p.sad)
@@ -284,7 +280,7 @@
   ++  mo-ball                                           ::  outbone by index
     |=  {him/ship num/@ud}
     ^-  duct
-    (~(got by r:(~(got by sap) him)) num)
+    (~(got by r:(~(got by sap.mas) him)) num)
   ::
   ++  mo-come                                           ::  handle locally
     |=  {her/ship caz/cush}
@@ -459,12 +455,12 @@
   ++  mo-claw                                           ::  clear queue
     |=  dap/dude
     ^+  +>
-    ?.  (~(has by bum) dap)  +>
-    =+  suf=(~(get by wub) dap)
+    ?.  (~(has by bum.mas) dap)  +>
+    =+  suf=(~(get by wub.mas) dap)
     ?~  suf  +>.$
     |-  ^+  +>.^$
     ?:  =(~ kys.u.suf)
-      +>.^$(wub (~(del by wub) dap))
+      +>.^$(wub.mas (~(del by wub.mas) dap))
     =^  lep  kys.u.suf  [p q]:~(get to kys.u.suf)
     $(moz :_(moz [p.lep %slip %g %deal [q.q.q.lep our] dap r.lep]))
     ::  $(+>.^$ (mo-clip(hen p.lep) dap q.lep r.lep))
@@ -473,7 +469,7 @@
     |=  dap/dude
     =-  ?.(=(p our) - -(r [%da now])) ::  soft dependencies
     ^-  beak
-    byk:(~(got by bum) dap)
+    byk:(~(got by bum.mas) dap)
   ::
   ++  mo-peek
     ~/  %mo-peek
@@ -501,11 +497,11 @@
   ++  mo-club                                           ::  local action
     |=  {dap/dude pry/prey cub/club}
     ^+  +>
-    ?:  |(!(~(has by bum) dap) (~(has by wub) dap))
+    ?:  |(!(~(has by bum.mas) dap) (~(has by wub.mas) dap))
       ~&  >>  [%mo-not-running dap -.cub]
       ::  ~&  [%mo-club-qeu dap cub]
-      =+  syf=(fall (~(get by wub) dap) *sofa)
-      +>.$(wub (~(put by wub) dap syf(kys (~(put to kys.syf) [hen pry cub]))))
+      =+  syf=(fall (~(get by wub.mas) dap) *sofa)
+      +>.$(wub.mas (~(put by wub.mas) dap syf(kys (~(put to kys.syf) [hen pry cub]))))
     (mo-clip dap pry cub)
   ::
   ++  mo-gawk                                           ::  ames forward
@@ -551,7 +547,7 @@
       ^+  +>
       =:  ^dap   dap
           ^pry   pry
-          +>+<+  `seat`(~(got by bum) dap)
+          +>+<+  `seat`(~(got by bum.mas) dap)
         ==
       =+  unt=(~(get by q.zam) hen)
       =:  act.tyc  +(act.tyc)
@@ -571,7 +567,7 @@
       ^+  +>
       =>  ap-abut
       %_  +>
-        bum  (~(put by bum) dap +<+)
+        bum.mas  (~(put by bum.mas) dap +<+)
         moz  :(weld (turn zip ap-aver) (turn dub ap-avid) moz)
       ==
     ::
@@ -1305,21 +1301,20 @@
   =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task:able) p.q.hic)))
   ?-    -.q.hic
       $conf
-    ?.  (~(has by pol.all) p.p.q.hic)
+    ?.  =(our p.p.q.hic)
       ~&  [%gall-not-ours p.p.q.hic]
       [~ ..^$]
     mo-abet:(mo-conf:(mo-abed:mo hen) q.p.q.hic q.q.hic)
   ::
       $deal
     =<  mo-abet
-    ?.  (~(has by pol.all) q.p.q.hic)                   ::  either to us
-      ?>  (~(has by pol.all) p.p.q.hic)                 ::  or from us
+    ?.  =(our q.p.q.hic)                                ::  either to us
+      ?>  =(our p.p.q.hic)                              ::  or from us
       (mo-away:(mo-abed:mo hen) q.p.q.hic q.q.hic)
     (mo-come:(mo-abed:mo hen) p.p.q.hic q.q.hic)
   ::
       $init 
-    ::  ~&  [%gall-init p.q.hic]
-    [~ ..^$(pol.all (~(put by pol.all) p.q.hic %*(. *mast sys hen)))]
+    [~ ..^$(sys.mast.all hen)]
   ::
       $sunk  [~ ..^$]
   ::
@@ -1336,17 +1331,17 @@
     (mo-gawd:(mo-abed:mo hen) him dap mes)
   ::
       $wegh
-    :_  ..^$  :_  ~
-    :^  hen  %give  %mass
-    :-  %gall
-    :-  %|
-    %+  turn  ~(tap by pol.all)     :: XX single-home
-    |=  {our/@ mast}  ^-  mass
-    :+  (scot %p our)  %|
-    :~  [%foreign [%& sap]]
-        [%blocked [%| (sort ~(tap by (~(run by wub) |=(sofa [%& +<]))) aor)]]
-        [%active [%| (sort ~(tap by (~(run by bum) |=(seat [%& +<]))) aor)]]
-    ==
+    =/  =mass
+      =*  mas  mast.all
+      :+  (scot %p our)  %|
+      :~  [%foreign [%& sap.mast.all]]
+          :+  %blocked  %|
+          (sort ~(tap by (~(run by wub.mast.all) |=(sofa [%& +<]))) aor)
+          :+  %active   %|
+          (sort ~(tap by (~(run by bum.mast.all) |=(seat [%& +<]))) aor)
+      ==
+    =/  =move  [hen %give %mass %gall %| [mass ~]]
+    [[move ~] ..^$]
   ::  
       $went  !!   ::  XX fixme
   ==
@@ -1367,19 +1362,19 @@
   ?:  ?&  =(%u ren)
           =(~ tyl)
           =([%$ %da now] lot)
-          (~(has by pol.all) his)
-          (~(has by bum:(~(got by pol.all) his)) syd)
+          =(our his)
+          (~(has by bum.mast.all) syd)
       ==
     ``[%null !>(~)]
-  ?.  (~(has by pol.all) his)
+  ?.  =(our his)
     ~
   ?.  =([%$ %da now] lot)
     ~
-  ?.  (~(has by bum:(~(got by pol.all) his)) syd)
+  ?.  (~(has by bum.mast.all) syd)
     [~ ~]
   ?.  ?=(^ tyl)
     ~
-  (mo-peek:(mo-abed:mo *duct) syd high+`his ren tyl)
+  (mo-peek:mo-abed:mo syd high+`his ren tyl)
 ::
 ++  stay                                                ::  save w+o cache
   `axle`all
