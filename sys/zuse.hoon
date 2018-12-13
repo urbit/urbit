@@ -742,10 +742,10 @@
           {$wris p/{$da p/@da} q/(set (pair care path))}  ::  many changes
       ==                                                ::
     ++  task                                            ::  in request ->$
-      $%  {$boat ~}                                    ::  pier rebooted
-          {$cred our/ship nom/@ta cew/crew}             ::  set permission group
-          {$crew our/ship}                              ::  permission groups
-          {$crow our/ship nom/@ta}                      ::  group usage
+      $%  {$boat ~}                                     ::  pier rebooted
+          {$cred nom/@ta cew/crew}                      ::  set permission group
+          {$crew ~}                                     ::  permission groups
+          {$crow nom/@ta}                               ::  group usage
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$drop des/desk}                              ::  cancel pending merge
           {$info des/desk dit/nori}                     ::  internal edit
