@@ -747,7 +747,7 @@
           {$crew our/ship}                              ::  permission groups
           {$crow our/ship nom/@ta}                      ::  group usage
           {$crud p/@tas q/(list tank)}                  ::  error with trace
-          {$drop our/@p des/desk}                       ::  cancel pending merge
+          {$drop des/desk}                              ::  cancel pending merge
           {$info our/@p des/desk dit/nori}              ::  internal edit
           {$init our/@p}                                ::  report install
           {$into des/desk all/? fis/mode}               ::  external edit

@@ -62,7 +62,7 @@
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
       $%  {$build wire ? schematic:ford}                ::
-          {$drop wire @p @tas}                          ::
+          {$drop wire @tas}                             ::
           {$info wire @p @tas nori}                     ::
           {$mont wire @tas beam}                        ::
           {$dirk wire @tas}                             ::
@@ -154,7 +154,7 @@
 ::
 ++  poke-cancel
   |=  syd/desk
-  abet:(emit %drop /cancel our syd)
+  abet:(emit %drop /cancel syd)
 ::
 ++  poke-info
   |=  {mez/tape tor/(unit toro)}
