@@ -187,7 +187,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   }
 
 #if defined(U3_OS_bsd)
-  {
+  if (u3_Host.ops_u.pro == c3y) {
     fprintf(stderr, "profiling isn't yet supported on BSD\r\n");
     return c3n;
   }
