@@ -123,7 +123,7 @@
     %+  turn  moz
     |=  a/move
     ?.  ?=($pass -.q.a)  a
-    [p.a %pass [(scot %p our) p.q.a] q.q.a]
+    [p.a %pass p.q.a q.q.a]
   ::
   ++  mo-conf                                           ::  configure
     |=  {dap/dude lum/culm}
@@ -1384,10 +1384,10 @@
   |=  {tea/wire hen/duct hin/(hypo sign-arvo)}
   ^+  [*(list move) ..^$]
   ~|  [%gall-take tea]
-  ?>  ?=({@ ?($sys $use) *} tea) 
+  ?>  ?=([?($sys $use) *] tea)
   =+  mow=(mo-abed:mo hen)
-  ?-  i.t.tea
-    $sys  mo-abet:(mo-cyst:mow t.t.tea q.hin)
-    $use  mo-abet:(mo-cook:mow t.t.tea hin)
+  ?-  i.tea
+    $sys  mo-abet:(mo-cyst:mow t.tea q.hin)
+    $use  mo-abet:(mo-cook:mow t.tea hin)
   ==
 --
