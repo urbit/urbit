@@ -625,14 +625,15 @@ u3m_bail(u3_noun how)
     } 
     else {
       c3_assert(_(u3ud(u3h(how))));
-
       fprintf(stderr, "\r\nbail: %d\r\n", u3h(how));
-      u3m_p("bail", u3t(how));
     }
   }
 
   switch ( how ) {
-    case c3__fail:
+    case c3__fail: {
+      break;
+    }
+
     case c3__meme: {
       fprintf(stderr, "bailing out\r\n");
       abort();
