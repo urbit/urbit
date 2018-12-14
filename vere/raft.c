@@ -1559,7 +1559,7 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 static u3_noun
 _raft_punk(u3_noun ovo)
 {
-#ifdef GHETTO
+#ifdef U3_EVENT_TIME_DEBUG
   c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
 #endif
   c3_w sec_w;
@@ -1574,7 +1574,7 @@ _raft_punk(u3_noun ovo)
     sec_w = 0;
   } else sec_w = 600;
 
-#ifdef GHETTO
+#ifdef U3_EVENT_TIME_DEBUG
   struct timeval b4, f2, d0;
   gettimeofday(&b4, 0);
   if( c3__belt != u3h(u3t(ovo)) ){
@@ -1587,7 +1587,7 @@ _raft_punk(u3_noun ovo)
   gon = u3m_soft(sec_w, u3v_poke, u3k(ovo));
   u3t_event_trace("Running", 'e');
 
-#ifdef GHETTO
+#ifdef U3_EVENT_TIME_DEBUG
   c3_w ms_w;
   c3_w clr_w;
 

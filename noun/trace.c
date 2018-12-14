@@ -45,7 +45,7 @@ u3_lo_tank(c3_l tab_l, u3_noun tac);
 void
 u3t_slog(u3_noun hod)
 {
-#ifdef GHETTO
+#ifdef U3_EVENT_TIME_DEBUG
   static int old;
   static struct timeval b4, f2, d0;
   c3_w ms_w;
