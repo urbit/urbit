@@ -2015,8 +2015,7 @@ _raft_pump(u3_noun ovo)
 
   ron = u3ke_jam(u3nc(u3k(u3A->now), ovo));
   c3_assert(u3A->key);
-  // don't encrypt for the moment, bootstrapping
-  // ron = u3dc("en:crua", u3k(u3A->key), ron);
+  ron = u3dc("en:crub:crypto", u3k(u3A->key), ron);
 
   len_w = u3r_met(5, ron);
   bob_w = c3_malloc(len_w * 4L);
