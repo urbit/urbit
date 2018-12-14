@@ -1,4 +1,3 @@
-!:
 ::  ford: build system vane
 ::
 ::    Ford is a functional reactive build system.
