@@ -6032,7 +6032,7 @@
     ::
     =+  [their desk]=disc
     ::
-    /(scot %p our)/clay-sub/(scot %p their)/[desk]/(scot %da date)
+    /clay-sub/(scot %p their)/[desk]/(scot %da date)
   ::  +start-scry-request: kick off an asynchronous request for a resource
   ::
   ++  start-scry-request
@@ -6088,7 +6088,7 @@
   ++  scry-request-wire
     |=  =scry-request
     ^-  wire
-    (welp /(scot %p our)/scry-request (scry-request-to-path scry-request))
+    (welp /scry-request (scry-request-to-path scry-request))
   --
 --
 ::
@@ -6220,14 +6220,14 @@
   ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign
-  ::  :wire must at least contain :our and a tag for dispatching
+  ::  :wire must at least contain a tag for dispatching
   ::
-  ?>  ?=([@ @ *] wire)
+  ?>  ?=([@ *] wire)
   ::
   |^  ^-  [(list move) _ford-gate]
       ::
       =^  moves  state.ax
-        ?+  i.t.wire     ~|([%bad-take-wire wire] !!)
+        ?+  i.wire     ~|([%bad-take-wire wire] !!)
           %clay-sub      take-rebuilds
           %scry-request  take-unblocks
         ==
@@ -6239,7 +6239,7 @@
       ^-  [(list move) ford-state]
       ::
       ?>  ?=([%c %wris *] sign)
-      =+  [ship desk date]=(raid:wired t.t.wire ~[%p %tas %da])
+      =+  [ship desk date]=(raid:wired t.wire ~[%p %tas %da])
       =/  disc  [ship desk]
       ::
       =/  =subscription
@@ -6274,7 +6274,7 @@
       ::
       =/  =scry-request
         ~|  [%ford-take-bad-scry-request wire=wire duct=duct]
-        (need (path-to-scry-request t.t.wire))
+        (need (path-to-scry-request t.wire))
       ::  scry-result: parse a (unit cage) from :sign
       ::
       ::    If the result is `~`, the requested resource was not available.
