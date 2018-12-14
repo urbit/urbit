@@ -2,20 +2,6 @@ language: node_js
 node_js:
 - 4
 
-script:
-  - meson . ./build --buildtype=debugoptimized -Dgc=true -Dprof=true
-  - cd ./build
-  - ninja
-  - sudo ninja install
-  - cd ../.travis
-  - ulimit -c unlimited -S
-  - npm install
-  # || true so we continue
-  - npm run -s test || RESULT=$?
-  - if [[ ${RESULT} -eq 0 ]]; then exit 0; else for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb urbit core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi;
-  - echo "build failed with status code $RESULT"
-  - exit $RESULT
-
 # Uncomment me if this gets annoying
 #
 # notifications:
@@ -29,10 +15,17 @@ before_install:
 install:
   # pwd: ~/urbit
   - pip3 install --user -I meson==0.44.1
-  - git clone https://github.com/urbit/arvo
-  - cd ./arvo
-  - git checkout $(cat ../.travis/pin-arvo-commit.txt)
-  - cd ..
+
+script:
+  - meson . ./build --buildtype=debugoptimized -Dgc=true -Dprof=true
+  - cd ./build
+  - ninja
+  - ninja test
+  - sudo ninja install
+  - cd ../.travis
+  - npm install
+  - ulimit -c unlimited -S
+  - npm run -s test; bash print-core-backtrace.sh $?
 
 addons:
   apt:

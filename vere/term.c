@@ -41,17 +41,26 @@ _term_msc_out_host()
   return 1000000ULL * tim_tv.tv_sec + tim_tv.tv_usec;
 }
 
+/* _term_alloc(): libuv buffer allocator.
+*/
 static void
 _term_alloc(uv_handle_t* had_u,
             size_t len_i,
             uv_buf_t* buf
             )
 {
-  void* ptr_v = c3_malloc(len_i);
-  *buf = uv_buf_init(ptr_v, len_i);
+  //  this read can range from a single byte to a paste buffer
+  //  32 bytes has been chosen heuristically
+  //
+  void* ptr_v = c3_malloc(32);
+  *buf = uv_buf_init(ptr_v, 32);
 }
 
 
+//  XX unused, but %hook is in %zuse.
+//  implement or remove
+//
+#if 0
 /* _term_close_cb(): free terminal.
 */
 static void
@@ -79,6 +88,7 @@ _term_close_cb(uv_handle_t* han_t)
   }
   free(tty_u);
 }
+#endif
 
 /* u3_term_io_init(): initialize terminal.
 */
@@ -301,11 +311,6 @@ u3_term_io_exit(void)
 #endif
     }
   }
-}
-
-void
-u3_term_io_poll(void)
-{
 }
 
 /* _term_it_buf(): create a data buffer.
@@ -652,7 +657,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
 
       // uL(fprintf(uH, "muck-utf8 len %d\n", tat_u->fut.len_w));
       // uL(fprintf(uH, "muck-utf8 %x\n", huv));
-      wug = u3do("turf", huv);
+      wug = u3do("taft", huv);
       // uL(fprintf(uH, "muck-utf32 %x\n", tat_u->fut.len_w));
 
       tat_u->fut.len_w = tat_u->fut.wid_w = 0;

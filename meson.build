@@ -71,8 +71,10 @@ jets_c_src = [
 'jets/c/pow.c',
 'jets/c/rap.c',
 'jets/c/rep.c',
+'jets/c/rev.c',
 'jets/c/rip.c',
 'jets/c/rsh.c',
+'jets/c/swp.c',
 'jets/c/sqt.c',
 'jets/c/vor.c',
 ]
@@ -88,10 +90,13 @@ jets_d_src = [
 'jets/d/in_wyt.c',
 'jets/d/in_bif.c',
 'jets/d/in_dif.c',
+'jets/d/in_del.c',
+'jets/d/by_del.c',
 'jets/d/by_gas.c',
 'jets/d/by_get.c',
 'jets/d/by_has.c',
 'jets/d/by_int.c',
+'jets/d/by_jab.c',
 'jets/d/by_put.c',
 'jets/d/by_uni.c',
 'jets/d/by_bif.c',
@@ -102,8 +107,11 @@ jets_e_src = [
 'jets/e/aes_ecb.c',
 'jets/e/aes_cbc.c',
 'jets/e/aesc.c',
+'jets/e/argon2.c',
+'jets/e/blake.c',
 'jets/e/cue.c',
 'jets/e/fl.c',
+'jets/e/hmac.c',
 'jets/e/jam.c',
 'jets/e/mat.c',
 'jets/e/mink.c',
@@ -115,11 +123,14 @@ jets_e_src = [
 'jets/e/rh.c',
 'jets/e/rub.c',
 'jets/e/scr.c',
+'jets/e/secp.c',
 'jets/e/shax.c',
+'jets/e/sha1.c',
 'jets/e/lore.c',
 'jets/e/loss.c',
 'jets/e/lune.c',
-'jets/e/trip.c'
+'jets/e/trip.c',
+'jets/e/ripe.c'
 ]
 
 jets_e_ed_src = [
@@ -170,55 +181,20 @@ jets_f_ut_src =  [
 'jets/f/ut_wrap.c'
 ]
 
-jets_z_src = [
-'jets/z/ap.c',
-'jets/z/cell.c',
-'jets/z/comb.c',
-'jets/z/cons.c',
-'jets/z/core.c',
-'jets/z/face.c',
-'jets/z/fitz.c',
-'jets/z/flan.c',
-'jets/z/flip.c',
-'jets/z/flor.c',
-'jets/z/fork.c',
-'jets/z/hint.c',
-'jets/z/hike.c',
-'jets/z/look.c',
-'jets/z/loot.c'
-]
-
-jets_z_ut_src =  [
-'jets/z/ut.c',
-'jets/z/ut_buss.c',
-'jets/z/ut_crop.c',
-'jets/z/ut_find.c',
-'jets/z/ut_fire.c',
-'jets/z/ut_fish.c',
-'jets/z/ut_fuse.c',
-'jets/z/ut_gain.c',
-'jets/z/ut_lose.c',
-'jets/z/ut_mint.c',
-'jets/z/ut_mull.c',
-'jets/z/ut_nest.c',
-'jets/z/ut_peek.c',
-'jets/z/ut_peel.c',
-'jets/z/ut_play.c',
-'jets/z/ut_repo.c',
-'jets/z/ut_rest.c',
-'jets/z/ut_tack.c',
-'jets/z/ut_toss.c',
-'jets/z/ut_wrap.c'
-]
-
-jets_g_src = [
-'jets/g/down.c'
-]
-
 jets_src = [
 'jets/tree.c'
 ]
-noun_src = ['noun/allocate.c',
+
+jets_all_src = [
+  jets_a_src, jets_b_src,
+  jets_c_src, jets_d_src,
+  jets_e_src, jets_e_ed_src,
+  jets_f_src, jets_f_ut_src,
+  jets_src
+]
+
+noun_src = [
+  'noun/allocate.c',
   'noun/events.c',
   'noun/hashtable.c',
   'noun/imprison.c',
@@ -229,14 +205,16 @@ noun_src = ['noun/allocate.c',
   'noun/trace.c',
   'noun/vortex.c',
   'noun/xtract.c',
-  'noun/zave.c']
+  'noun/zave.c'
+]
 
-vere_src = ['vere/ames.c',
+vere_sans_main = [
+  'vere/ames.c',
   'vere/behn.c',
   'vere/cttp.c',
+  'vere/dawn.c',
   'vere/http.c',
   'vere/loop.c',
-  'vere/main.c',
   'vere/raft.c',
   'vere/reck.c',
   'vere/save.c',
@@ -244,16 +222,12 @@ vere_src = ['vere/ames.c',
   'vere/term.c',
   'vere/time.c',
   'vere/unix.c',
-  'vere/walk.c']
+  'vere/walk.c'
+]
 
-src_list = [
-vere_src, noun_src,
-jets_a_src, jets_b_src,
-jets_c_src, jets_d_src,
-jets_e_src, jets_e_ed_src, 
-jets_f_src, jets_f_ut_src,
-jets_z_src, jets_z_ut_src,
-jets_g_src, jets_src]
+vere_src = vere_sans_main + [ 'vere/main.c' ]
+
+src_list = [vere_src, noun_src, jets_all_src]
 
 sources = []
 foreach s : src_list
@@ -323,7 +297,7 @@ configure_file(input : 'include/config.h.in',
 # We expect these libs to supplied with the distribution
 curl_dep = dependency('libcurl', version: '>=7.35.0')
 
-if osdet == 'darwin'
+if osdet == 'darwin' and not get_option('nix')
   libcrypto = meson.get_compiler('c').find_library('crypto', dirs: [ '/usr/local/opt/openssl/lib/' ])
   libssl = meson.get_compiler('c').find_library('ssl', dirs: [ '/usr/local/opt/openssl/lib/' ])
   openssl_dep = declare_dependency(dependencies: [libcrypto, libssl], include_directories: include_directories('/usr/local/opt/openssl/include'))
@@ -340,7 +314,6 @@ else
 endif
 
 # For these libs we provide fallback bundle
-cmark_dep = dependency('libcmark', version: '0.12.0', fallback: ['commonmark-legacy', 'cmark_dep'])
 urbitscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
 
 ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
@@ -348,24 +321,54 @@ murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'm
 softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
 libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
 libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
+argon2_dep = dependency('argon2', version: '>=1', fallback: ['argon2', 'argon2_dep'])
+secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
 
 libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
+
+deps = [openssl_dep,
+        curl_dep,
+        libuv_dep,
+        libh2o_dep,
+        secp256k1_dep,
+        gmp_dep,
+        sigsegv_dep,
+        urbitscrypt_dep,
+        ed25519_dep,
+        murmur3_dep,
+        argon2_dep,
+        softfloat3_dep,
+        libsni_dep]
 
 executable('urbit',
 sources : sources,
 include_directories : incdir,
 c_args : os_c_flags,
 link_args: os_link_flags,
-dependencies: [openssl_dep,
-               curl_dep,
-               libuv_dep,
-               libh2o_dep,
-               cmark_dep,
-               gmp_dep,
-               sigsegv_dep,
-               urbitscrypt_dep,
-               ed25519_dep,
-               murmur3_dep,
-               softfloat3_dep,
-               libsni_dep] + os_deps,
+dependencies: deps + os_deps,
 install: true)
+
+# XX shrink this list
+test_sources = noun_src + jets_all_src + vere_sans_main
+
+test_hashtable = executable('test-hashtable',
+sources : test_sources + ['tests/hashtable_tests.c'],
+include_directories : incdir,
+c_args : os_c_flags,
+link_args: os_link_flags,
+dependencies: deps + os_deps,
+install: false)
+
+test('test-hashtable', test_hashtable)
+
+test_mem_sources = noun_src + jets_all_src + vere_sans_main + ['tests/test.c']
+
+test_mem = executable('test-mem',
+sources : test_sources + ['tests/test.c'],
+include_directories : incdir,
+c_args : os_c_flags,
+link_args: os_link_flags,
+dependencies: deps + os_deps,
+install: false)
+
+test('test-mem', test_mem, should_fail: true)

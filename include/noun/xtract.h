@@ -38,12 +38,15 @@
 
       /* u3x_cap(): root axis, 2 or 3.
       */
-#       define u3x_cap(a_w)   (0x2 | (a_w >> (u3x_dep(a_w) - 1)))
+#       define u3x_cap(a_w) ({                        \
+          c3_assert( 1 < a_w );                       \
+          (0x2 | (a_w >> (u3x_dep(a_w) - 1))); })
 
       /* u3x_mas(): remainder after cap.
       */
-#       define u3x_mas(a_w) \
-          ( (a_w & ~(1 << u3x_dep(a_w))) | (1 << (u3x_dep(a_w) - 1)) )
+#       define u3x_mas(a_w) ({                        \
+          c3_assert( 1 < a_w );                       \
+          ( (a_w & ~(1 << u3x_dep(a_w))) | (1 << (u3x_dep(a_w) - 1)) ); })
 
       /* u3x_peg(): connect two axes.
       */

@@ -2457,23 +2457,27 @@ _n_prog_free(u3n_prog* pog_u)
 static void
 _n_reap(u3_noun kev)
 {
-  u3_noun fol = u3h(kev);
-  u3_noun got = u3t(kev);
-  u3_noun lof = u3a_take(fol);
-  u3_noun tog;
-  u3_weak con = u3h_get(u3R->byc.har_p, lof);
-  u3n_prog* pog_u = u3to(u3n_prog, got);
-  
-  if ( u3_none == con ) {
-    tog = u3a_outa(_n_prog_take(pog_u));
-    u3h_put(u3R->byc.har_p, lof, tog);
+  u3_post   val;
+  u3n_prog* pog_u = u3to(u3n_prog, u3t(kev));
+
+  // we must always take
+  u3_noun key = u3a_take(u3h(kev));
+  // because u3h_git will gain the key
+  u3_weak got = u3h_git(u3R->byc.har_p, key);
+
+  if ( u3_none == got ) {
+    val = u3a_outa(_n_prog_take(pog_u));
   }
   else {
-    u3n_prog* sep_u = u3to(u3n_prog, con);
+    u3n_prog* sep_u = u3to(u3n_prog, got);
     _n_prog_take_dat(sep_u, pog_u, c3y);
-    tog = u3a_outa(sep_u);
+    val = u3a_outa(sep_u);
   }
-  u3z(lof);
+  // we must always put, because we have taken.
+  // we must always keep what we have taken,
+  // or we can break relocation pointers.
+  u3h_put(u3R->byc.har_p, key, val);
+  u3z(key);
 }
 
 /* u3n_reap(): promote bytecode state.

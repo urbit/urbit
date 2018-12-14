@@ -1,9 +1,6 @@
 [submodule "subprojects/softfloat3"]
 	path = subprojects/softfloat3
 	url = https://github.com/urbit/berkeley-softfloat-3.git
-[submodule "subprojects/commonmark-legacy"]
-	path = subprojects/commonmark-legacy
-	url = https://github.com/urbit/commonmark-legacy.git
 [submodule "subprojects/ed25519"]
 	path = subprojects/ed25519
 	url = https://github.com/urbit/ed25519.git
@@ -19,6 +16,12 @@
 [submodule "subprojects/h2o"]
 	path = subprojects/libh2o
 	url = https://github.com/urbit/h2o.git
+[submodule "subprojects/argon2"]
+	path = subprojects/argon2
+	url = https://github.com/urbit/argon2.git
+[submodule "subprojects/secp256k1"]
+	path = subprojects/secp256k1
+	url = https://github.com/urbit/secp256k1.git
 [submodule "subprojects/libsni"]
 	path = subprojects/libsni
 	url = https://github.com/urbit/sniproxy

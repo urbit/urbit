@@ -25,7 +25,8 @@
         u3o_verbose =       0x10,             //  be remarkably wordy
         u3o_dryrun =        0x20,             //  don't touch checkpoint
         u3o_quiet =         0x40,             //  disable ~&
-        u3o_hashless =      0x80              //  disable hashboard
+        u3o_hashless =      0x80,             //  disable hashboard
+        u3o_trace =         0x100             //  enables trace dumping
       };
 
   /** Globals.

@@ -1210,11 +1210,11 @@ _http_serv_start(u3_http* htp_u)
       }
 
       uL(fprintf(uH, "http: listen: %s\n", uv_strerror(sas_i)));
-      _http_serv_free(htp_u);
 
       if ( 0 != htp_u->rox_u ) {
         _proxy_serv_free(htp_u->rox_u);
       }
+      _http_serv_free(htp_u);
       return;
     }
 
@@ -1813,13 +1813,6 @@ u3_http_io_talk(void)
 {
 }
 
-/* u3_http_io_poll(): poll kernel for http I/O.
-*/
-void
-u3_http_io_poll(void)
-{
-}
-
 /* u3_http_io_exit(): shut down http.
 */
 void
@@ -2334,8 +2327,9 @@ static u3_wcon*
 _proxy_wcon_new(u3_ward* rev_u)
 {
   u3_wcon* won_u = c3_malloc(sizeof(*won_u));
-  won_u->rev_u = rev_u;
   won_u->upt_u.data = won_u;
+  won_u->rev_u = rev_u;
+  won_u->nex_u = 0;
 
   _proxy_wcon_link(won_u, rev_u);
 
@@ -2392,7 +2386,6 @@ _proxy_ward_free(uv_handle_t* han_u)
   u3_ward* rev_u = han_u->data;
 
   u3z(rev_u->sip);
-  _proxy_ward_unlink(rev_u);
   free(rev_u->non_u.base);
   free(rev_u);
 }
@@ -2412,6 +2405,8 @@ _proxy_ward_close_timer(uv_handle_t* han_u)
 static void
 _proxy_ward_close(u3_ward* rev_u)
 {
+  _proxy_ward_unlink(rev_u);
+
   while ( 0 != rev_u->won_u ) {
     _proxy_wcon_close(rev_u->won_u);
     rev_u->won_u = rev_u->won_u->nex_u;
@@ -2944,9 +2939,7 @@ _proxy_peek_read_cb(uv_stream_t* don_u,
     }
     else {
       c3_w len_w = siz_w + con_u->buf_u.len;
-      // XX c3_realloc
-      void* ptr_v = realloc(con_u->buf_u.base, len_w);
-      c3_assert( 0 != ptr_v );
+      void* ptr_v = c3_realloc(con_u->buf_u.base, len_w);
 
       memcpy(ptr_v + con_u->buf_u.len, buf_u->base, siz_w);
       con_u->buf_u = uv_buf_init(ptr_v, len_w);

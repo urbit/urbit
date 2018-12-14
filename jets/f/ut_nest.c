@@ -150,9 +150,6 @@
       else if ( c3__wet == qpq_sut ) {
         return u3r_sing(qrq_sut, qrq_ref);
       }
-      else if ( c3y == u3r_sing(qrq_sut, qrq_ref) ) {
-        return c3y;
-      }
       else {
         u3_noun hud = u3nc(u3k(sut), u3k(ref));
 

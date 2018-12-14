@@ -62,6 +62,7 @@
              u3_noun gat)
   {
     u3_noun p_typ, q_typ, pq_typ, qq_typ, rq_typ;
+    u3_noun ppq_typ, qpq_typ, rpq_typ;
     u3_noun h_gat, t_gat;
 
     if ( (c3n == u3du(typ)) || (c3__core != u3h(typ)) ) {
@@ -69,12 +70,16 @@
     } else if
          ( (c3n == u3r_cell(u3t(typ), &p_typ, &q_typ)) ||
            (c3n == u3r_trel(q_typ, &pq_typ, &qq_typ, &rq_typ)) ||
+           (c3n == u3r_trel(pq_typ, &ppq_typ, &qpq_typ, &rpq_typ)) ||
            (c3n == u3r_cell(gat, &h_gat, &t_gat)) )
     {
       return u3m_bail(c3__fail);
     } else {
-      u3_noun dox = u3nt
-        (c3__core, u3k(qq_typ), u3k(q_typ));
+      u3_noun dox = u3nt(c3__core,
+                         u3k(qq_typ),
+                         u3nt(u3nt(u3k(ppq_typ), u3k(qpq_typ), c3__gold),
+                              u3k(qq_typ),
+                              u3k(rq_typ)));
 
       if ( (c3__ash == u3h(gat)) || (c3__dry == u3h(gat)) ) {
         if ( (c3y == vet) &&
