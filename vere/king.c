@@ -410,7 +410,7 @@ _boothack_doom(void)
   }
   else if ( 0 != u3_Host.ops_u.fak_c ) {
     u3_noun fak = u3i_string(u3_Host.ops_u.fak_c);
-    u3_noun whu = u3dc("slaw", 'p', fak);
+    u3_noun whu = u3dc("slaw", 'p', u3k(fak));
 
     if ( u3_nul == whu ) {
       fprintf(stderr, "boot: malformed -F ship %s\r\n", u3_Host.ops_u.fak_c);
