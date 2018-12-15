@@ -875,18 +875,36 @@ _pier_boot_vent(u3_pier* pir_u)
       /* insert module sequence, prepending first identity event
       */
       {
-        u3_noun seq;
+        u3_noun seq = u3k(mod);
 
-        /* prepend identity event to module sequence
-        */
-        // {
-        //   u3_noun wir = u3nt(c3__name, u3dc("scot", 'p', u3k(who)), u3_nul);
-        //   u3_noun car = u3nc(c3__veal, u3k(who));
-        //   u3_noun ovo = u3nc(wir, car);
+        //  prepend initial entropy
+        //  XX u3_pier_rand or _pier_zen?
+        //  XX move to _pier_loop_wake?
+        //
+        {
+          c3_w    eny_w[16];
+          u3_noun eny;
 
-        //   seq = u3nc(ovo, u3k(mod));
-        // }
-        seq = mod;
+          c3_rand(eny_w);
+          eny = u3i_words(16, eny_w);
+
+          u3_noun wir = u3nt(u3_blip, c3__arvo, u3_nul);
+          u3_noun car = u3nc(c3__wack, eny);
+          u3_noun ovo = u3nc(wir, car);
+
+          seq = u3nc(ovo, seq);
+        }
+
+        //  prepend identity event to module sequence
+        //  to set single-home
+        //
+        {
+          u3_noun wir = u3nt(u3_blip, c3__arvo, u3_nul);
+          u3_noun car = u3nc(c3__whom, u3k(who));
+          u3_noun ovo = u3nc(wir, car);
+
+          seq = u3nc(ovo, seq);
+        }
 
         /* insert with timestamp
         */
