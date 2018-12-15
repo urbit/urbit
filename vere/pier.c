@@ -954,10 +954,15 @@ _pier_boot_vent(u3_pier* pir_u)
         _pier_insert_ovum(pir_u, 0, ovo);
       }
 
-      /* insert filesystem install event
+      /* insert filesystem install events
       */
       {
-        _pier_insert_ovum(pir_u, 0, u3k(fil));
+        u3_noun all = fil;
+
+        while ( all ) {
+          _pier_insert_ovum(pir_u, 0, u3k(u3h(all)));
+          all = u3t(all);
+        }
       }
 
       u3z(who);
