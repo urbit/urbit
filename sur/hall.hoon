@@ -1,6 +1,7 @@
 ::
 ::::  /sur/hall/hoon
   ::
+^?
 |%
 ::
 ::TODO  use different words for different kinds of burdens

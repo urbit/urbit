@@ -20,7 +20,7 @@
     :*  ames-gate
         now=~1234.5.6
         call-args=[hen type=*type %soft %init ~nul]
-        [[hen %pass wir %j %vein ~nul] [hen %pass / %j %turf ~] ~]
+        [[hen %pass wir %j %vein ~] [hen %pass / %j %turf ~] ~]
     ==
   ::
   results1
@@ -33,7 +33,7 @@
       ==
   ^-  [tang _ames-gate]
   ::
-  =/  ames  (ames-gate now=now eny=`@e`0xdead.beef scry=*sley)
+  =/  ames  (ames-gate our=~nul now=now eny=`@`0xdead.beef scry=*sley)
   ::
   =^  moves  ames-gate
     %-  call:ames  call-args

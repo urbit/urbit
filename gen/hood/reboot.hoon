@@ -10,4 +10,4 @@
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/~ ~}
     ==
-[%helm-reload ~[%z %a %b %c %d %e %f %g %j]]
+[%helm-reload ~[%z %a %b %c %d %f %g %j %l]]

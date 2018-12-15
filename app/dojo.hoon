@@ -5,8 +5,6 @@
 /-  sole, lens                                          ::  console structures
 /+  sole                                                ::  console library
 =,  sole
-=,  space:userlib
-=,  format
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   ::                                                    ::    ::
@@ -116,10 +114,10 @@
               mark 
               {$hiss hiss:eyre}
           ==
-          [%build wire @p ? schematic:ford]
-          [%kill wire @p]
+          [%build wire ? schematic:ford]
+          [%kill wire ~]
           {$deal wire sock term club}                   ::
-          {$info wire @p toro:clay}                     ::
+          {$info wire toro:clay}                        ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  sign                                            ::
@@ -310,7 +308,7 @@
         ::
         =?  a  &(?=(^ a) =('' i.a))
           t.a
-        =+((de-beam a) ?^(- u [he-beak (flop a)]))
+        =+((de-beam:format a) ?^(- u [he-beak (flop a)]))
       =+  vez=(vang | dp-path)
       (sear plex:vez (stag %clsg poor:vez))
     ::
@@ -320,11 +318,11 @@
       auru:de-purl:html
     ::
     ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
-    ++  dp-path    (en-beam he-beam)                       ::  ++path
+    ++  dp-path    (en-beam:format he-beam)                       ::  ++path
     ++  dp-server  (stag 0 (most net sym))              ::  ++dojo-server
     ++  dp-hoon    tall:(vang | dp-path)                ::  ++hoon
     ++  dp-rood                                         ::  'dir' hoon
-      =>  (vang | (en-beam dir))
+      =>  (vang | (en-beam:format dir))
       ;~  pose
         rood
       ::
@@ -365,7 +363,7 @@
       ?>  ?=($~ pux)
       ::  pin all builds to :now.hid so they don't get cached forever
       ::
-      (he-card(poy `+>+<(pux `way)) %build way our.hid live=%.n schematic)
+      (he-card(poy `+>+<(pux `way)) %build way live=%.n schematic)
     ::
     ++  dy-eyre                                         ::  send work to eyre
       |=  {way/wire usr/(unit knot) req/hiss:eyre}
@@ -378,7 +376,7 @@
       =.  poy  ~
       ?~  pux  +>
       %.  [%txt "! cancel {<u.pux>}"]
-      he-diff:(he-card [%kill u.pux our.hid])
+      he-diff:(he-card [%kill u.pux ~])
     ::
     ++  dy-slam                                         ::  call by ford
       |=  {way/wire gat/vase sam/vase}
@@ -566,9 +564,9 @@
                       ?:  ?=({@ ~} pax)  ~[i.pax %home '0']
                       ?:  ?=({@ @ ~} pax)  ~[i.pax i.t.pax '0']
                       pax
-                  =.  dir  (need (de-beam pax))
+                  =.  dir  (need (de-beam:format pax))
                   =-  +>(..dy (he-diff %tan - ~))
-                  rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
+                  rose+[" " `~]^~[leaf+"=%" (smyt (en-beam:format he-beak s.dir))]
         ==
       ::
           $help
@@ -588,8 +586,7 @@
         %-  he-card(poy ~)  :*
           %info
           /file
-          our.hid
-          (foal (en-beam p.p.mad) cay)
+          (foal:space:userlib (en-beam:format p.p.mad) cay)
         ==
       ::
           $flat
@@ -1269,10 +1266,10 @@
     ++  dy-edit                                         ::  handle edit
       |=  cal/sole-change
       ^+  +>+>
-      =^  dat  say  (~(transceive ^sole say) cal)
+      =^  dat  say  (~(transceive sole say) cal)
       ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
         ~&  %dy-edit-busy
-        =^  lic  say  (~(transmit ^sole say) dat)
+        =^  lic  say  (~(transmit sole say) dat)
         (dy-diff %mor [%det lic] [%bel ~] ~)
       (dy-slam(per `dat) /edit u.pro !>((tufa buf.say)))
     ::
@@ -1541,12 +1538,12 @@
   ++  he-errd                                           ::  reject update
     |=  {rev/(unit sole-edit) err/@u}  ^+  +>
     =+  red=(fall rev [%nop ~])       ::  required for error location sync
-    =^  lic  say  (~(transmit ^sole say) red)
+    =^  lic  say  (~(transmit sole say) red)
     (he-diff %mor [%det lic] [%err err] ~)
   ::
   ++  he-pone                                           ::  clear prompt
     ^+  .
-    =^  cal  say  (~(transmit ^sole say) [%set ~])
+    =^  cal  say  (~(transmit sole say) [%set ~])
     (he-diff %mor [%det cal] ~)
   ::
   ++  he-prow                                           ::  where we are
@@ -1625,7 +1622,7 @@
     (he-diff %tan u.p.cit)
   ::
   ++  he-lens
-    |=  com/command:^^^^lens
+    |=  com/command:^^lens
     ^+  +>
     =+  ^-  source/dojo-source
         =|  num/@
@@ -1701,7 +1698,7 @@
         ?-  -.sink.com
           $stdout       [%show %0]
           $output-file  $(sink.com [%command (cat 3 '@' pax.sink.com)])
-          $output-clay  [%file (need (de-beam pax.sink.com))]
+          $output-clay  [%file (need (de-beam:format pax.sink.com))]
           $url          [%http %post `~. url.sink.com]
           $to-api       !!
           $send-api     [%poke our.hid api.sink.com]
@@ -1719,7 +1716,7 @@
     ^+  +>
     ::  ~&  [%his-clock ler.cal]
     ::  ~&  [%our-clock ven.say]
-    =^  dat  say  (~(transceive ^sole say) cal)
+    =^  dat  say  (~(transceive sole say) cal)
     ?.  ?&  ?=($del -.dat)
             =(+(p.dat) (lent buf.say))
         ==
@@ -1753,7 +1750,7 @@
       ?~  p.doy
         (he-errd ~ (lent txt))
       =+  old=(weld ?~(buf "> " "  ") (tufa buf.say))
-      =^  cal  say  (~(transmit ^sole say) [%set ~])
+      =^  cal  say  (~(transmit sole say) [%set ~])
       =.  +>.$   (he-diff %mor txt+old nex+~ det+cal ~)
       ?-  -.u.p.doy
         %&  (he-plan(buf ~) p.u.p.doy)
@@ -1815,7 +1812,7 @@
   (wrap he-type):arm
 ::
 ++  poke-lens-command
-  |=  com/command:^^^^lens  ~|  poke-lens+com  %.  com
+  |=  com/command:^^lens  ~|  poke-lens+com  %.  com
   (wrap he-lens):arm
 ::
 ++  poke-json

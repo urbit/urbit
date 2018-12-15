@@ -94,7 +94,7 @@
     (transmit set+~ pro+prompt ~)   :: XX handle multiple links?
   ::
       $det                              :: reject all input
-    =^  inv  som  (~(transceive ^sole som) +.act)
+    =^  inv  som  (~(transceive sole som) +.act)
     =.  sos  (~(put by sos) ost.bow som)
     ?~  wom
       =/  try  (rose (tufa buf.som) fed:ag)
@@ -125,7 +125,7 @@
 ++  transmit
   |=  {inv/sole-edit mor/(list sole-effect)}
   =/  som  (~(got by sos) ost.bow)
-  =^  det  som  (~(transmit ^sole som) inv)
+  =^  det  som  (~(transmit sole som) inv)
   =.  sos  (~(put by sos) ost.bow som)
   [[(effect mor+[det+det mor])]~ +>.$]
 ::

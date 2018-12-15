@@ -25,6 +25,16 @@
             (~(dunk ut p.expected) %expected)
     ==  ==
   result
+::  +expect-fail: kicks a trap, expecting crash. pretty-prints if succeeds
+::
+++  expect-fail
+  |=  a=(trap)
+  ^-  tang
+  =/  b  (mule a)
+  ?-  -.b
+    %|  ~
+    %&  [leaf+"expected failure - succeeded" ~]
+  ==
 ::  +category: prepends a name to an error result; passes successes unchanged
 ::
 ++  category

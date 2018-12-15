@@ -151,9 +151,9 @@
           ::  %warp: internal (intra-ship) file request
           ::
           $%  $:  %warp
-                  ::  sock: pair of requesting ship, requestee ship
+                  ::  ship: target for request
                   ::
-                  =sock
+                  =ship
                   ::  riff: clay request contents
                   ::
                   riff=riff:clay
@@ -190,17 +190,12 @@
 +=  axle
   $:  ::  date: date at which ford's state was updated to this data structure
       ::
-      date=%~2018.6.28
-      ::  state-by-ship: storage for all the @p's this ford has been
+      date=%~2018.12.13
+      ::  state: all persistent state
       ::
-      ::    Once the cc-release boot sequence lands, we can remove this
-      ::    mapping, since an arvo will not change @p identities. until
-      ::    then, we need to support a ship booting as a comet before
-      ::    becoming its adult identity.
-      ::
-      state-by-ship=(map ship ford-state)
+      state=ford-state
   ==
-::  +ford-state: all state that ford maintains for a @p ship identity
+::  +ford-state: all state that ford maintains
 ::
 +=  ford-state
   $:  ::  builds: per-build state machine for all builds
@@ -788,9 +783,15 @@
     %+  ~(put by builds)  schematic.build
     ::
     =/  dates  (fall (~(get by builds) schematic.build) ~)
-    ?^  (find [date.build]~ dates)
+    |-
+    ^+  dates
+    ?~  dates
+      [date.build ~]
+    ?:  =(i.dates date.build)
       dates
-    (sort [date.build dates] gte)
+    ?:  (gth date.build i.dates)
+      [date.build dates]
+    [i.dates $(dates t.dates)]
   ::  +del: remove a +build from :builds
   ::
   ::    Removes :build from :builds by replacing the value at
@@ -2477,7 +2478,10 @@
         ::
         =^  maybe-schematic-results  out
           %-  perform-schematics  :*
-            "ford: %bake {<renderer>} on {<path>} contained failures:"
+            ;:  weld
+              "ford: %bake "  (trip renderer)  " on "
+              (spud (rail-to-path path-to-render))  " contained failures:"
+            ==
             sub-schematics
             %fail-on-errors
             *@ta
@@ -2671,8 +2675,12 @@
       ::
       ?:  ?=([~ %error *] input-result)
         %-  return-error
-        :-  [%leaf "ford: %cast {<mark>} on {<disc>} failed on input:"]
-        message.u.input-result
+        :_  message.u.input-result
+        :-  %leaf
+        ;:  weld
+          "ford: %cast "  (trip mark)  "on ["  (trip (scot %p ship.disc))
+          " "  (trip desk.disc)  "] failed on input:"
+        ==
       ::
       ?>  ?=([~ %success *] input-result)
       ::
@@ -2688,8 +2696,12 @@
       ::
       ?:  ?=([~ %error *] translation-path-result)
         %-  return-error
-        :-  [%leaf "ford: %cast {<mark>} on {<disc>} failed:"]
-        message.u.translation-path-result
+        :_  message.u.translation-path-result
+        :-  %leaf
+        ;:  weld
+          "ford: %cast "  (trip mark)  "on ["  (trip (scot %p ship.disc))
+          " "  (trip desk.disc)  "] failed:"
+        ==
       ::
       ?>  ?=([~ %success %walk *] translation-path-result)
       ::
@@ -2746,9 +2758,10 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            %+  weld
-              "ford: %cast failed to find path for mark {<source-mark>} "
-              "during +grab:"
+            ;:  weld
+              "ford: %cast failed to find path for mark "  (trip source-mark)
+              " during +grab:"
+            ==
             mark-path-result
           ==
         ::
@@ -2772,7 +2785,7 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            "ford: %cast failed to ride {<path>} during +grab:"
+            :(weld "ford: %cast failed to ride " (spud path) " during +grab:")
             grab-result
           ==
         ::  find an arm for the input's mark within the +grab core
@@ -2790,7 +2803,7 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            "ford: %cast failed to ride {<path>} during +grab:"
+            :(weld "ford: %cast failed to ride " (spud path) " during +grab:")
             grab-mark-result
           ==
         ::  slam the +mark-name:grab gate on the result of running :input
@@ -2808,7 +2821,7 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            "ford: %cast failed to call +grab arm in {<path>}:"
+            :(weld "ford: %cast failed to call +grab arm in " (spud path) ":")
             call-result
           ==
         ::
@@ -2831,9 +2844,10 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            %+  weld
-              "ford: %cast failed to find path for mark {<source-mark>} "
-              "during +grow:"
+            ;:  weld
+              "ford: %cast failed to find path for mark "  (trip source-mark)
+              " during +grow:"
+            ==
             starting-mark-path-result
           ==
         ::  grow the value from the initial mark to the final mark
@@ -2864,7 +2878,7 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            "ford: %cast failed to ride {<path>} during +grow:"
+            :(weld "ford: %cast failed to ride " (spud path) " during +grow:")
             grow-result
           ==
         ::  make sure the product nests in the sample of the destination mark
@@ -2879,7 +2893,7 @@
           %-  cast-wrap-error  :*
             source-mark
             target-mark
-            "ford: %cast failed to bunt {<target-mark>}:"
+            :(weld "ford: %cast failed to bunt " (trip target-mark) ":")
             bunt-result
           ==
         ::
@@ -2888,7 +2902,12 @@
           =*  dst  target-mark
           :_  out
           :-  %error
-          [leaf+"ford: %cast from {<src>} to {<dst>} failed: nest fail"]~
+          :_  ~
+          :-  %leaf
+          ;:  weld
+            "ford: %cast from "  (trip src)  " to "  (trip dst)
+            " failed: nest fail"
+          ==
         ::
         [[%success mark vase.u.grow-result] out]
       ::
@@ -2905,9 +2924,10 @@
         :_  out
         :-  %error
         :*  :-  %leaf
-            %+  weld
+            ;:  weld
               "ford: %cast failed while trying to cast from "
-              "{<source-mark>} to {<target-mark>}:"
+              (trip source-mark)  " to "  (trip target-mark)  ":"
+            ==
             [%leaf description]
             message.u.result
         ==
@@ -3790,11 +3810,8 @@
       =^  maybe-schematic-results  out
         %-  perform-schematics  :*
           ;:  weld
-            "ford: %path resolution of "
-            (trip raw-path)
-            "at prefix "
-            (trip prefix)
-            " contained failures:"
+            "ford: %path resolution of "  (trip raw-path)  "at prefix "
+            (trip prefix)  " contained failures:"
           ==
           rails-and-schematics
           %filter-errors
@@ -3811,7 +3828,10 @@
         =/  =beam
           [[ship.disc desk.disc [%da date.build]] /hoon/[raw-path]/[prefix]]
         ::
-        (return-error [%leaf "%path: no matches for {<(en-beam beam)>}"]~)
+        %-  return-error
+        :_  ~
+        :-  %leaf
+        (weld "%path: no matches for " (spud (en-beam beam)))
       ::  if exactly one path matches, succeed with the matching path
       ::
       ?:  ?=([* ~] matches)
@@ -3830,7 +3850,7 @@
       ::
       =/  =beam  [[ship.disc desk.disc [%da date.build]] spur.key]
       ::
-      [[%leaf "{<(en-beam beam)>}"] message]
+      [[%leaf (spud (en-beam beam))] message]
     ::
     ++  make-plan
       ~%  %make-plan  ..^^$  ~
@@ -4692,6 +4712,7 @@
             ::
             %ride  [%cnts ~[[%& 1] %is] ~]
             %ride  arvo-hoon
+            %ride  [%$ 7]
             %ride  hoon-hoon
             [%$ %noun !>(~)]
         ==
@@ -4787,7 +4808,7 @@
       ?~  u.scry-response
         %-  return-error
         :~  leaf+"scry failed for"
-            leaf+"%c{(trip care.resource)} {<(en-beam beam)>}"
+            leaf+:(weld "%c" (trip care.resource) " " (spud (en-beam beam)))
         ==
       ::  scry succeeded
       ::
@@ -4996,14 +5017,18 @@
               %+  turn  ~(tap in +.marks-result)
               |=  [mark=term err=tang]
               ^-  tang
-              :~  [%leaf "while compiling {<mark>}:"]
+              :~  [%leaf :(weld "while compiling " (trip mark) ":")]
                   [%rose braces err]
               ==
             ::
             %_    out
                 result
               :*  %build-result  %error
-                  :*  [leaf+"ford: no mark path from {<source>} to {<target>}"]
+                  :*  :-  %leaf
+                      ;:  weld
+                        "ford: no mark path from "  (trip source)  " to "
+                        (trip target)
+                      ==
                       errors
               ==  ==
             ==
@@ -5050,7 +5075,10 @@
         ::
         =^  maybe-path-results  out
           %-  perform-schematics  :*
-            "ford: %walk from {<source>} to {<target>} contained failures:"
+            ;:  weld
+              "ford: %walk from "  (trip source)  " to "  (trip target)
+              " contained failures:"
+            ==
             nodes-and-schematics
             %filter-errors
             *load-node
@@ -5070,7 +5098,10 @@
         ::
         =^  maybe-core-results  out
           %-  perform-schematics  :*
-            "ford: %walk from {<source>} to {<target>} contained failures:"
+            ;:  weld
+              "ford: %walk from "  (trip source)  " to "  (trip target)
+              " contained failures:"
+            ==
             nodes-and-cores
             %ignore-errors
             *load-node
@@ -5958,7 +5989,7 @@
       ::
       =+  [their desk]=disc.subscription
       ::
-      :^  %c  %warp  sock=[our their]
+      :^  %c  %warp  ship=their
       ^-  riff:clay
       [desk `[%mult `case`[%da date.subscription] request-contents]]
     ::
@@ -5983,7 +6014,7 @@
     ::
     =/  =note
       =+  [their desk]=disc.subscription
-      [%c %warp sock=[our their] `riff:clay`[desk ~]]
+      [%c %warp ship=their `riff:clay`[desk ~]]
     ::
     =.  moves  [`move`[u.originator [%pass wire note]] moves]
     ::
@@ -6000,7 +6031,7 @@
     ::
     =+  [their desk]=disc
     ::
-    /(scot %p our)/clay-sub/(scot %p their)/[desk]/(scot %da date)
+    /clay-sub/(scot %p their)/[desk]/(scot %da date)
   ::  +start-scry-request: kick off an asynchronous request for a resource
   ::
   ++  start-scry-request
@@ -6022,7 +6053,7 @@
     =/  =note
       =,  scry-request
       =/  =disc  [p q]:beam
-      :*  %c  %warp  sock=[our their=ship.disc]  desk.disc
+      :*  %c  %warp  their=ship.disc  desk.disc
           `[%sing care case=r.beam (flop s.beam)]
       ==
     ::
@@ -6046,7 +6077,7 @@
     ::
     =/  =note
       =+  [their desk]=[p q]:beam.scry-request
-      [%c %warp sock=[our their] `riff:clay`[desk ~]]
+      [%c %warp ship=their `riff:clay`[desk ~]]
     ::
     =.  moves  [`move`[u.originator [%pass wire note]] moves]
     ::
@@ -6056,7 +6087,7 @@
   ++  scry-request-wire
     |=  =scry-request
     ^-  wire
-    (welp /(scot %p our)/scry-request (scry-request-to-path scry-request))
+    (welp /scry-request (scry-request-to-path scry-request))
   --
 --
 ::
@@ -6069,9 +6100,10 @@
 ::  begin with a default +axle as a blank slate
 ::
 =|  ax=axle
-::  a vane is activated with current date, entropy, and a namespace function
+::  a vane is activated with identity, the current date, entropy,
+::  and a namespace function
 ::
-|=  [now=@da eny=@ scry-gate=sley]
+|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
 ::  allow jets to be registered within this core
 ::
 ~%  %ford  ..is  ~
@@ -6085,22 +6117,21 @@
 ::      %kill: cancel a build
 ::      %wipe: clear memory
 ::
-::    The general procedure is for Ford to determine the `our` identity
-::    for this +task and operate on the :ship-state for that identity.
-::
 ::    Most requests get converted into operations to be performed inside
-::    the +per-event core, which is Ford's main build engine. The %keep
-::    and %wipe requests work across all identities stored in Ford, though.
+::    the +per-event core, which is Ford's main build engine.
 ::
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task:able)]
-  ^-  [p=(list move) q=_ford-gate]
+  ^-  [(list move) _ford-gate]
   ::  unwrap :task from :wrapped-task
   ::
   =/  task=task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
     ((hard task:able) p.wrapped-task)
+  ::  we wrap +per-event with a call that binds our event args
+  ::
+  =*  this-event  (per-event [our duct now scry-gate] state.ax)
   ::
   ?-    -.task
       ::  %build: request to perform a build
@@ -6108,19 +6139,13 @@
       %build
     ::  perform the build indicated by :task
     ::
-    ::    First, we find or create the :ship-state for :our.task,
-    ::    modifying :state-by-ship as necessary. Then we dispatch to the |ev
-    ::    by constructing :event-args and using them to create :start-build,
-    ::    which performs the build. The result of :start-build is a pair of
-    ::    :moves and a mutant :ship-state. We update our :state-by-ship map
-    ::    with the new :ship-state and produce it along with :moves.
+    ::    We call :start-build on :this-event, which is the |per-event core
+    ::    with the our event-args already bound. :start-build performs the
+    ::    build and produces a pair of :moves and a mutant :state.
+    ::    We update our :state and produce it along with :moves.
     ::
-    =^  ship-state  state-by-ship.ax  (find-or-create-ship-state our.task)
     =/  =build  [now schematic.task]
-    =*  event-args  [[our.task duct now scry-gate] ship-state]
-    =*  start-build  start-build:(per-event event-args)
-    =^  moves  ship-state  (start-build build live.task)
-    =.  state-by-ship.ax  (~(put by state-by-ship.ax) our.task ship-state)
+    =^  moves  state.ax  (start-build:this-event build live.task)
     ::
     [moves ford-gate]
   ::
@@ -6128,21 +6153,7 @@
       ::
       %keep
     ::
-    =/  ship-states=(list [ship=@p state=ford-state])
-      ~(tap by state-by-ship.ax)
-    ::
-    =.  state-by-ship.ax
-      |-  ^+  state-by-ship.ax
-      ?~  ship-states  state-by-ship.ax
-      ::
-      =,  i.ship-states
-      =*  event-args   [[ship duct now scry-gate] state]
-      ::
-      =.  state-by-ship.ax
-        %+  ~(put by state-by-ship.ax)  ship
-        (keep:(per-event event-args) [compiler-cache build-cache]:task)
-      ::
-      $(ship-states t.ship-states)
+    =.  state.ax  (keep:this-event [compiler-cache build-cache]:task)
     ::
     [~ ford-gate]
   ::
@@ -6150,10 +6161,7 @@
       ::
       %kill
     ::
-    =/  ship-state  ~|(our+our.task (~(got by state-by-ship.ax) our.task))
-    =*  event-args  [[our.task duct now scry-gate] ship-state]
-    =^  moves  ship-state  cancel:(per-event event-args)
-    =.  state-by-ship.ax  (~(put by state-by-ship.ax) our.task ship-state)
+    =^  moves  state.ax  cancel:this-event
     ::
     [moves ford-gate]
   ::
@@ -6167,21 +6175,7 @@
       ::
       %wipe
     ::
-    =/  ship-states=(list [ship=@p state=ford-state])
-      ~(tap by state-by-ship.ax)
-    ::
-    =.  state-by-ship.ax
-      |-  ^+  state-by-ship.ax
-      ?~  ship-states  state-by-ship.ax
-      ::
-      =,  i.ship-states
-      =*  event-args   [[ship duct now scry-gate] state]
-      ::
-      =.  state-by-ship.ax
-        %+  ~(put by state-by-ship.ax)  ship
-        (wipe:(per-event event-args) percent-to-remove.task)
-      ::
-      $(ship-states t.ship-states)
+    =.  state.ax  (wipe:this-event percent-to-remove.task)
     ::
     [~ ford-gate]
   ::
@@ -6192,13 +6186,12 @@
     ^-  mass
     :-  %ford
     :-  %|
-    %+  turn  ~(tap by state-by-ship.ax)     :: XX single-home
-    |=  [our=@ ford-state]  ^-  mass
-    :+  (scot %p our)  %|
-    ::
-    :~  [%builds [%& builds]]
-        [%compiler-cache [%& compiler-cache]]
-    ==
+    :~  ^-  mass
+        :+  (scot %p our)  %|
+        ::
+        :~  [%builds [%& builds.state.ax]]
+            [%compiler-cache [%& compiler-cache.state.ax]]
+    ==  ==
   ==
 ::  +take: receive a response from another vane
 ::
@@ -6217,41 +6210,26 @@
 ::        If Ford receives this, it will continue building one or more builds
 ::        that were blocked on this resource.
 ::
-::    The general procedure is for Ford to determine the `our` identity
-::    for this +task and operate on the :ship-state for that identity.
-::
 ::    The +sign gets converted into operations to be performed inside
 ::    the +per-event core, which is Ford's main build engine.
 ::
 ++  take
   |=  [=wire =duct wrapped-sign=(hypo sign)]
-  ^-  [p=(list move) q=_ford-gate]
+  ^-  [(list move) _ford-gate]
   ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign
-  ::  :wire must at least contain :our and a tag for dispatching
+  ::  :wire must at least contain a tag for dispatching
   ::
-  ?>  ?=([@ @ *] wire)
-  ::  :parse our from the head of :wire
+  ?>  ?=([@ *] wire)
   ::
-  =/  our=@p  (slav %p i.wire)
-  ::
-  ::
-  =/  ship-state
-    ::  we know :our is already in :state-by-ship because we sent this request
-    ::
-    ~|  [%take-our our]
-    (~(got by state-by-ship.ax) our)
-  ::
-  |^  ^-  [p=(list move) q=_ford-gate]
+  |^  ^-  [(list move) _ford-gate]
       ::
-      =^  moves  ship-state
-        ?+  i.t.wire     ~|([%bad-take-wire wire] !!)
+      =^  moves  state.ax
+        ?+  i.wire     ~|([%bad-take-wire wire] !!)
           %clay-sub      take-rebuilds
           %scry-request  take-unblocks
         ==
-      ::
-      =.  state-by-ship.ax  (~(put by state-by-ship.ax) our ship-state)
       ::
       [moves ford-gate]
     ::  +take-rebuilds: rebuild all live builds affected by the Clay changes
@@ -6260,12 +6238,12 @@
       ^-  [(list move) ford-state]
       ::
       ?>  ?=([%c %wris *] sign)
-      =+  [ship desk date]=(raid:wired t.t.wire ~[%p %tas %da])
+      =+  [ship desk date]=(raid:wired t.wire ~[%p %tas %da])
       =/  disc  [ship desk]
       ::
       =/  =subscription
         ~|  [%ford-take-bad-clay-sub wire=wire duct=duct]
-        =/  =duct-status  (~(got by ducts.ship-state) duct)
+        =/  =duct-status  (~(got by ducts.state.ax) duct)
         ?>  ?=(%live -.live.duct-status)
         ?>  ?=(^ last-sent.live.duct-status)
         ?>  ?=(^ subscription.u.last-sent.live.duct-status)
@@ -6273,15 +6251,15 @@
       ::
       =/  ducts=(list ^duct)
         ~|  [%ford-take-missing-subscription subscription]
-        (get-request-ducts pending-subscriptions.ship-state subscription)
+        (get-request-ducts pending-subscriptions.state.ax subscription)
       ::
       =|  moves=(list move)
-      |-  ^+  [moves ship-state]
-      ?~  ducts  [moves ship-state]
+      |-  ^+  [moves state.ax]
+      ?~  ducts  [moves state.ax]
       ::
-      =*  event-args  [[our i.ducts now scry-gate] ship-state]
+      =*  event-args  [[our i.ducts now scry-gate] state.ax]
       =*  rebuild  rebuild:(per-event event-args)
-      =^  duct-moves  ship-state
+      =^  duct-moves  state.ax
         (rebuild subscription p.case.sign disc care-paths.sign)
       ::
       $(ducts t.ducts, moves (weld moves duct-moves))
@@ -6295,7 +6273,7 @@
       ::
       =/  =scry-request
         ~|  [%ford-take-bad-scry-request wire=wire duct=duct]
-        (need (path-to-scry-request t.t.wire))
+        (need (path-to-scry-request t.wire))
       ::  scry-result: parse a (unit cage) from :sign
       ::
       ::    If the result is `~`, the requested resource was not available.
@@ -6307,17 +6285,17 @@
       ::
       =/  ducts=(list ^duct)
         ~|  [%ford-take-missing-scry-request scry-request]
-        (get-request-ducts pending-scrys.ship-state scry-request)
+        (get-request-ducts pending-scrys.state.ax scry-request)
       ::
       =|  moves=(list move)
-      |-  ^+  [moves ship-state]
-      ?~  ducts  [moves ship-state]
+      |-  ^+  [moves state.ax]
+      ?~  ducts  [moves state.ax]
       ::
-      =*  event-args  [[our i.ducts now scry-gate] ship-state]
+      =*  event-args  [[our i.ducts now scry-gate] state.ax]
       ::  unblock the builds that had blocked on :resource
       ::
       =*  unblock  unblock:(per-event event-args)
-      =^  duct-moves  ship-state  (unblock scry-request scry-result)
+      =^  duct-moves  state.ax  (unblock scry-request scry-result)
       ::
       $(ducts t.ducts, moves (weld moves duct-moves))
   --
@@ -6342,18 +6320,4 @@
 ::+|
 ::
 ++  ford-gate  ..$
-::  +find-or-create-ship-state: find or create a ford-state for a @p
-::
-::    Accesses and modifies :state-by-ship.
-::
-++  find-or-create-ship-state
-  |=  our=@p
-  ^-  [ford-state _state-by-ship.ax]
-  ::
-  =/  existing  (~(get by state-by-ship.ax) our)
-  ?^  existing
-    [u.existing state-by-ship.ax]
-  ::
-  =|  new-state=ford-state
-  [new-state (~(put by state-by-ship.ax) our new-state)]
 --

@@ -35,8 +35,8 @@
       $:  %f
           ::
           ::
-          $%  [%build our=@p live=? schematic=schematic:ford]
-              [%kill our=@p]
+          $%  [%build live=? schematic=schematic:ford]
+              [%kill ~]
       ==  ==
       ::  %g: to gall
       ::
@@ -536,7 +536,7 @@
     ::
         %gen
       ::
-      =-  [[duct %pass /run-build %f %build our live=%.n schematic=-]~ state]
+      =-  [[duct %pass /run-build %f %build live=%.n schematic=-]~ state]
       ::
       =-  [%cast [our desk.generator.u.action] %mime -]
       ::
@@ -588,7 +588,7 @@
     ::
         %gen
       :_  state
-      [duct %pass /run-build %f %kill our]~
+      [duct %pass /run-build %f %kill ~]~
     ::
         %app
       :_  state
@@ -1427,14 +1427,14 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [now=@da eny=@ scry-gate=sley]
+|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
 ::  allow jets to be registered within this core
 ::
 ~%  %light  ..is  ~
 |%
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task:able)]
-  ^-  [p=(list move) q=_light-gate]
+  ^-  [(list move) _light-gate]
   ::
   =/  task=task:able
     ?.  ?=(%soft -.wrapped-task)
@@ -1567,7 +1567,7 @@
 ::
 ++  take
   |=  [=wire =duct wrapped-sign=(hypo sign)]
-  ^-  [p=(list move) q=_light-gate]
+  ^-  [(list move) _light-gate]
   ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign
@@ -1575,7 +1575,7 @@
   ::
   ?>  ?=([@ *] wire)
   ::
-  |^  ^-  [p=(list move) q=_light-gate]
+  |^  ^-  [(list move) _light-gate]
       ::
       ?+     i.wire
            ~|([%bad-take-wire wire] !!)
