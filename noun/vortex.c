@@ -76,11 +76,14 @@ u3v_load(u3_noun pil)
 u3_noun
 u3v_lite(u3_noun pil)
 {
+  u3_noun lyf = u3nt(2, u3nc(0, 3), u3nc(0, 2));
   u3_noun arv = u3ke_cue(pil);
-  u3_noun cor, pro;
+  u3_noun bot, cor, pro;
+
+  u3x_trel(arv, &bot, 0, 0);
   
   fprintf(stderr, "lite: arvo formula %x\r\n", u3r_mug(arv));
-  cor = u3n_nock_on(0, arv);
+  cor = u3n_nock_on(bot, lyf);
   fprintf(stderr, "lite: core %x\r\n", u3r_mug(cor));
 
   pro = u3k(u3r_at(7, cor));
