@@ -282,7 +282,7 @@ elif osdet == 'bsd' or osdet == 'freebsd'
 
 elif osdet == 'openbsd'
   conf_data.set('U3_OS_bsd', true)
-  os_link_flags = ['-L /usr/local/lib', '-lgmp', '-lsigsegv', '-lcurses']
+  os_link_flags = ['-L/usr/local/lib', '-lgmp', '-lsigsegv', '-lcurses']
   gmp_dep = []
   sigsegv_dep = []
 
