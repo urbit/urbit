@@ -949,10 +949,6 @@ _pier_boot_vent(u3_pier* pir_u)
         cod_l = u3a_lush(c3__behn);
         u3_behn_ef_bake(pir_u);
         u3a_lop(cod_l);
-
-        cod_l = u3a_lush(c3__http);
-        u3_http_ef_bake();
-        u3a_lop(cod_l);
       }
 
       /* insert legacy boot event
