@@ -88,7 +88,7 @@ u3t_slog(u3_noun hod)
   _t_slog_time();
 #endif
 
-  if ( (0 != u3A->roc) && (c3y == u3du(hod)) ) {
+  if ( c3y == u3du(hod) ) {
     u3_noun pri = u3h(hod);
 
     switch ( pri ) {
