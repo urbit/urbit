@@ -160,7 +160,7 @@ _serf_poke_live(c3_d    evt_d,              //  event number
 
     u3A->ent_d = evt_d;
 
-#ifdef GHETTO
+#ifdef U3_EVENT_TIME_DEBUG
     struct timeval b4, f2, d0;
     gettimeofday(&b4, 0);
 
@@ -173,7 +173,7 @@ _serf_poke_live(c3_d    evt_d,              //  event number
   
     gon = u3m_soft(0, u3v_poke, u3k(ovo));
 
-#ifdef GHETTO
+#ifdef U3_EVENT_TIME_DEBUG
     c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
     c3_w ms_w;
     c3_w clr_w;
