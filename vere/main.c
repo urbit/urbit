@@ -207,10 +207,38 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.ops_u.net = c3n;  /* no networking on fake ships. */
     u3_Host.ops_u.nuu = c3y;
   }
-  else {
-    //  make -c optional
+
+  if ( argc != (optind + 1) && u3_Host.ops_u.who_c != 0 ) {
+    u3_Host.dir_c = strdup(1 + u3_Host.ops_u.who_c);
+  }
+
+  if ( argc != (optind + 1) ) {
+    return u3_Host.dir_c ? c3y : c3n;
+  } else {
+    {
+      c3_c* ash_c;
+
+      if ( (ash_c = strrchr(argv[optind], '/')) && (ash_c[1] == 0) ) {
+        *ash_c = 0;
+      }
+    }
+
+    u3_Host.dir_c = strdup(argv[optind]);
+    return c3y;
+  }
+
+  if ( c3y == u3_Host.ops_u.bat ) {
+    u3_Host.ops_u.dem = c3y;
+    u3_Host.ops_u.nuu = c3y;
+  }
+
+  //  make -c optional
+  //
+  if ( c3n == u3_Host.ops_u.nuu ) {
     struct stat s;
-    u3_Host.ops_u.nuu = ( 0 == stat(u3_Host.dir_c, &s) ) ? c3n : c3y;
+    if ( 0 == stat(u3_Host.dir_c, &s) ) {
+      u3_Host.ops_u.nuu = c3y;
+    }
   }
 
   c3_t imp_t = ( (0 != u3_Host.ops_u.who_c) && (4 == strlen(u3_Host.ops_u.who_c)) );
@@ -243,11 +271,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   if ( u3_Host.ops_u.gen_c != 0 && u3_Host.ops_u.nuu == c3n ) {
     fprintf(stderr, "-G only makes sense when bootstrapping a new instance\n");
     return c3n;
-  }
-
-  if ( c3y == u3_Host.ops_u.bat ) {
-    u3_Host.ops_u.dem = c3y;
-    u3_Host.ops_u.nuu = c3y;
   }
 
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.who_c != 0) {
@@ -310,25 +333,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       fprintf(stderr, "keyfile %s not found\n", u3_Host.ops_u.key_c);
       return c3n;
     }
-  }
-
-  if ( argc != (optind + 1) && u3_Host.ops_u.who_c != 0 ) {
-    u3_Host.dir_c = strdup(1 + u3_Host.ops_u.who_c);
-  }
-
-  if ( argc != (optind + 1) ) {
-    return u3_Host.dir_c ? c3y : c3n;
-  } else {
-    {
-      c3_c* ash_c;
-
-      if ( (ash_c = strrchr(argv[optind], '/')) && (ash_c[1] == 0) ) {
-        *ash_c = 0;
-      }
-    }
-
-    u3_Host.dir_c = strdup(argv[optind]);
-    return c3y;
   }
 }
 
