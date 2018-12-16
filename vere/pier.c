@@ -1487,8 +1487,10 @@ u3_pier_create(c3_w wag_w, c3_c* pax_c, c3_c* sys_c)
     pir_u->pax_c = c3_malloc(1 + strlen(pax_c));
     strcpy(pir_u->pax_c, pax_c);
 
-    pir_u->sys_c = c3_malloc(1 + strlen(sys_c)); 
-    strcpy(pir_u->sys_c, sys_c);
+    if ( 0 != sys_c ) {
+      pir_u->sys_c = c3_malloc(1 + strlen(sys_c));
+      strcpy(pir_u->sys_c, sys_c);
+    }
 
     pir_u->wag_w = wag_w;
     pir_u->gen_d = 0;
@@ -2008,8 +2010,13 @@ _pier_boot_make(c3_w wag_w, u3_noun pax, u3_noun sys)
   c3_c*    sys_c;
   u3_pier* pir_u;
 
-  c3_assert( c3y == u3h(sys) );
-  sys_c = u3r_string(u3t(sys));
+  if ( u3_nul == sys ) {
+    sys_c = 0;
+  }
+  else {
+    c3_assert( c3y == u3h(sys) );
+    sys_c = u3r_string(u3t(sys));
+  }
 
   pir_u = u3_pier_create(wag_w, pax_c, sys_c);
 
