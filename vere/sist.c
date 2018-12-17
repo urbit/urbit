@@ -415,12 +415,18 @@ _sist_bask(c3_c* pop_c, u3_noun may)
 void
 u3_sist_rand(c3_w* rad_w)
 {
+#if defined(U3_OS_bsd) && defined(__OpenBSD__)
+  if (-1 == getentropy(rad_w, 64)) {
+    c3_assert(!"lo_rand");
+  }
+#else
   c3_i fid_i = open(DEVRANDOM, O_RDONLY);
 
   if ( 64 != read(fid_i, (c3_y*) rad_w, 64) ) {
     c3_assert(!"lo_rand");
   }
   close(fid_i);
+#endif
 }
 
 /* _sist_fast(): offer to save passcode by mug in home directory.
@@ -971,13 +977,10 @@ _sist_rest()
         continue;
       }
 
-#if 0
-      // disable encryption for now
-      //
       if ( u3A->key ) {
         u3_noun dep;
 
-        dep = u3dc("de:crua", u3k(u3A->key), ron);
+        dep = u3dc("de:crub:crypto", u3k(u3A->key), ron);
         if ( c3n == u3du(dep) ) {
           uL(fprintf(uH, "record (%s) is corrupt (k)\n", ful_c));
           u3_lo_bail();
@@ -987,7 +990,7 @@ _sist_rest()
           u3z(dep);
         }
       }
-#endif
+
       roe = u3nc(u3ke_cue(ron), roe);
     }
     u3A->ent_d = c3_max(las_d + 1ULL, old_d);

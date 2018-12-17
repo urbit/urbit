@@ -240,6 +240,7 @@ conf_data = configuration_data()
 conf_data.set('URBIT_VERSION', '"0.6.0"')
 conf_data.set('U3_MEMORY_DEBUG', get_option('gc'))
 conf_data.set('U3_CPU_DEBUG', get_option('prof'))
+conf_data.set('U3_EVENT_TIME_DEBUG', get_option('event-time'))
 
 osdet = build_machine.system()
 os_c_flags = ['-funsigned-char','-ffast-math']
@@ -271,13 +272,20 @@ elif osdet == 'darwin'
 
   os_deps = os_deps + [ncurses_dep]
 
-elif osdet == 'bsd'
+elif osdet == 'bsd' or osdet == 'freebsd'
   conf_data.set('U3_OS_bsd', true)
 
   pthread_dep = meson.get_compiler('c').find_library('pthread')
   kvm_dep = meson.get_compiler('c').find_library('kvm')
   ncurses_dep = dependency('ncurses')
   os_deps = os_deps + [kvm_dep, pthread_dep, ncurses_dep]
+
+elif osdet == 'openbsd'
+  conf_data.set('U3_OS_bsd', true)
+  os_link_flags = ['-L/usr/local/lib', '-lgmp', '-lsigsegv', '-lcurses']
+  gmp_dep = []
+  sigsegv_dep = []
+
 else
   error('Unsupported OS detected:' + osdet)
 endif
@@ -295,7 +303,7 @@ configure_file(input : 'include/config.h.in',
                configuration : conf_data)
 
 # We expect these libs to supplied with the distribution
-curl_dep = dependency('libcurl', version: '>=7.35.0')
+curl_dep = dependency('libcurl', version: '>=7.19.0')
 
 if osdet == 'darwin' and not get_option('nix')
   libcrypto = meson.get_compiler('c').find_library('crypto', dirs: [ '/usr/local/opt/openssl/lib/' ])
@@ -308,7 +316,7 @@ endif
 if(legacy_meson)
   gmp_dep = find_library('gmp')
   sigsegv_dep = find_library('sigsegv')
-else
+elif osdet != 'openbsd'
   gmp_dep = meson.get_compiler('c').find_library('gmp')
   sigsegv_dep = meson.get_compiler('c').find_library('sigsegv')
 endif
