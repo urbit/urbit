@@ -19,6 +19,7 @@
 #include <termios.h>
 #include <term.h>
 
+#include <whereami.h>
 #include "all.h"
 #include "vere/vere.h"
 
@@ -1409,10 +1410,27 @@ _pier_work_create(u3_pier* pir_u)
   */
   {
     c3_c* arg_c[5];
+    c3_c* bin_c;
     c3_c* pax_c;
     c3_c  key_c[256];
     c3_c  wag_c[11];
     c3_i  err_i;
+
+    {
+      c3_c* nam_c = "urbit-worker";
+      c3_c* our_c;
+      c3_i  our_i, dir_i, bin_i;
+
+      our_i = wai_getExecutablePath(0, 0, 0);
+      our_c = c3_malloc(1 + our_i);
+      wai_getExecutablePath(our_c, our_i, &dir_i);
+      our_c[our_i] = 0;
+
+      bin_i = 2 + dir_i + strlen(nam_c);
+      bin_c = c3_malloc(bin_i);
+
+      snprintf(bin_c, bin_i, "%.*s/%s", dir_i, our_c, nam_c);
+    }
 
     pax_c = c3_malloc(1 + strlen(pir_u->pax_c));
     strcpy(pax_c, pir_u->pax_c);
@@ -1425,7 +1443,7 @@ _pier_work_create(u3_pier* pir_u)
 
     sprintf(wag_c, "%u", pir_u->wag_w);
 
-    arg_c[0] = "bin/urbit-worker";      //  executable
+    arg_c[0] = bin_c;                   //  executable
     arg_c[1] = pax_c;                   //  path to checkpoint directory
     arg_c[2] = key_c;                   //  disk key, as %llx:%llx:%llx:%llx
     arg_c[3] = wag_c;                   //  runtime config

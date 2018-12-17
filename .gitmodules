@@ -25,3 +25,6 @@
 [submodule "subprojects/libsni"]
 	path = subprojects/libsni
 	url = https://github.com/urbit/sniproxy
+[submodule "subprojects/whereami"]
+	path = subprojects/whereami
+	url = https://github.com/urbit/whereami

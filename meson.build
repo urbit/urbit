@@ -337,6 +337,7 @@ argon2_dep = dependency('argon2', version: '>=1', fallback: ['argon2', 'argon2_d
 secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
 
 libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
+libwhereami_dep = dependency('libwhereami', version: '>=1.0.0', fallback: ['whereami', 'libwhereami_dep'])
 
 deps = [openssl_dep,
         curl_dep,
@@ -350,7 +351,8 @@ deps = [openssl_dep,
         murmur3_dep,
         argon2_dep,
         softfloat3_dep,
-        libsni_dep]
+        libsni_dep,
+        libwhereami_dep]
 
 executable('urbit',
 sources : sources,
@@ -360,6 +362,9 @@ link_args: os_link_flags,
 dependencies: deps + os_deps,
 install: true)
 
+#  XX remove once urbit-worker is a separate executable
+#  XX add similar workaround for install
+#
 run_target('worker', command: 'meson-scripts/make-worker.sh')
 
 # XX shrink this list
