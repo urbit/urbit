@@ -432,8 +432,9 @@
     /* u3_behn: just a timer for ever
     */
       typedef struct _u3_behn {
-        uv_timer_t tim_u;                   //  behn timer
-        c3_o       alm;                     //  alarm
+        uv_timer_t     tim_u;               //  behn timer
+        c3_o           alm;                 //  alarm
+        struct timeval next_tv;             //  next wakeup, unix timeval
       } u3_behn;
 
     /* u2_utfo: unix terminfo strings.

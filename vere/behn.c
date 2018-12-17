@@ -63,7 +63,13 @@ u3_behn_ef_doze(u3_noun wen)
 {
   u3_behn* teh_u = &u3_Host.teh_u;
 
+  struct timeval old_timer_tv = { 0, 0 };
+
+  // If there was an previous timer, cancel it and save when it would have
+  // fired.
   if ( c3y == teh_u->alm ) {
+    old_timer_tv = teh_u->next_tv;
+
     uv_timer_stop(&teh_u->tim_u);
     teh_u->alm = c3n;
   }
@@ -72,14 +78,29 @@ u3_behn_ef_doze(u3_noun wen)
        (c3y == u3du(wen)) &&
        (c3y == u3ud(u3t(wen))) )
   {
-    struct timeval tim_tv;
-    gettimeofday(&tim_tv, 0);
+    struct timeval now_tv;
+    gettimeofday(&now_tv, 0);
 
-    u3_noun now = u3_time_in_tv(&tim_tv);
-    c3_d gap_d = u3_time_gap_ms(now, u3k(u3t(wen)));
+    // Calculate the time when this timer should fire.
+    struct timeval timer_tv;
+    u3_time_out_tv(&timer_tv, u3k(u3t(wen)));
+
+    // If there was a previous timer, and that timer would fire before the new
+    // timer, use the previous timer's timeout.
+    if ( timerisset(&old_timer_tv) &&
+         timercmp(&old_timer_tv, &timer_tv, <) ) {
+      timer_tv = old_timer_tv;
+    }
+
+    // Calculate how many milliseconds in the future uv should timeout.
+    struct timeval future_ms_tv;
+    timersub(&timer_tv, &now_tv, &future_ms_tv);
+
+    c3_d gap_d = (future_ms_tv.tv_sec * 1000ULL) + (future_ms_tv.tv_usec / 1000);
+    uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
 
     teh_u->alm = c3y;
-    uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
+    teh_u->next_tv = timer_tv;
   }
 
   u3z(wen);
