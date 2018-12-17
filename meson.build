@@ -208,7 +208,7 @@ noun_src = [
   'noun/zave.c'
 ]
 
-vere_sans_main = [
+vere_lib_src = [
   'vere/ames.c',
   'vere/behn.c',
   'vere/cttp.c',
@@ -228,15 +228,6 @@ vere_sans_main = [
   'vere/unix.c',
   'vere/walk.c'
 ]
-
-vere_src = vere_sans_main + [ 'vere/main.c' ]
-
-src_list = [vere_src, noun_src, jets_all_src]
-
-sources = []
-foreach s : src_list
-  sources += s
-endforeach
 
 incdir = include_directories('include/')
 
@@ -325,41 +316,55 @@ elif osdet != 'openbsd'
   sigsegv_dep = meson.get_compiler('c').find_library('sigsegv')
 endif
 
-# For these libs we provide fallback bundle
-urbitscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
-
+#  For these libs we provide fallback bundle
+#
+argon2_dep = dependency('argon2', version: '>=1', fallback: ['argon2', 'argon2_dep'])
 ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
 murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'murmur3_dep'])
-softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
-libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
-libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
-argon2_dep = dependency('argon2', version: '>=1', fallback: ['argon2', 'argon2_dep'])
 secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
+softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
+urbitscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
 
+noun_deps = [argon2_dep,
+            ed25519_dep,
+            gmp_dep,
+            murmur3_dep,
+            openssl_dep,
+            secp256k1_dep,
+            sigsegv_dep,
+            softfloat3_dep,
+            urbitscrypt_dep]
+
+libnoun = static_library('noun',
+  sources: [noun_src, jets_all_src],
+  include_directories: incdir,
+  c_args : os_c_flags,
+  link_args: os_link_flags,
+  dependencies: noun_deps + os_deps,
+  install: false
+)
+
+#  For these libs we provide fallback bundle
+#
+libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
 libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
+libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
 libwhereami_dep = dependency('libwhereami', version: '>=1.0.0', fallback: ['whereami', 'libwhereami_dep'])
 
-deps = [openssl_dep,
-        curl_dep,
-        libuv_dep,
-        libh2o_dep,
-        secp256k1_dep,
-        gmp_dep,
-        sigsegv_dep,
-        urbitscrypt_dep,
-        ed25519_dep,
-        murmur3_dep,
-        argon2_dep,
-        softfloat3_dep,
-        libsni_dep,
-        libwhereami_dep]
+vere_deps = [curl_dep,
+            libh2o_dep,
+            libsni_dep,
+            libuv_dep,
+            libwhereami_dep,
+            openssl_dep]
 
 executable('urbit',
-sources : sources,
+sources : vere_lib_src + [ 'vere/main.c' ],
 include_directories : incdir,
 c_args : os_c_flags,
 link_args: os_link_flags,
-dependencies: deps + os_deps,
+dependencies: vere_deps + os_deps,
+link_with: libnoun,
 install: true)
 
 #  XX remove once urbit-worker is a separate executable
@@ -367,27 +372,24 @@ install: true)
 #
 run_target('worker', command: 'meson-scripts/make-worker.sh')
 
-# XX shrink this list
-test_sources = noun_src + jets_all_src + vere_sans_main
-
 test_hashtable = executable('test-hashtable',
-sources : test_sources + ['tests/hashtable_tests.c'],
+sources : vere_lib_src + ['tests/hashtable_tests.c'],
 include_directories : incdir,
 c_args : os_c_flags,
 link_args: os_link_flags,
-dependencies: deps + os_deps,
+dependencies: vere_deps + os_deps,
+link_with: libnoun,
 install: false)
 
 test('test-hashtable', test_hashtable)
 
-test_mem_sources = noun_src + jets_all_src + vere_sans_main + ['tests/test.c']
-
 test_mem = executable('test-mem',
-sources : test_sources + ['tests/test.c'],
+sources : vere_lib_src + ['tests/test.c'],
 include_directories : incdir,
 c_args : os_c_flags,
 link_args: os_link_flags,
-dependencies: deps + os_deps,
+dependencies: vere_deps + os_deps,
+link_with: libnoun,
 install: false)
 
 test('test-mem', test_mem, should_fail: true)
