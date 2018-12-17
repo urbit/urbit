@@ -554,6 +554,7 @@
         c3_o    gab;                        //  -g, test garbage collection
         c3_c*   dns_c;                      //  -H, ames bootstrap domain
         c3_c*   lit_c;                      //  -J, ivory (fastboot) kernel
+        c3_c*   json_file_c;                //  -j, json trace
         c3_w    kno_w;                      //  -K, kernel version
         c3_c*   key_c;                      //  -k, private key file
         c3_o    net;                        //  -L, local-only networking
@@ -588,6 +589,7 @@
         c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      tls_u;                   //  server SSL_CTX*
+        FILE*      trace_file_u;            //  trace file to write to
       } u3_host;                            //  host == computer == process
 
     /**  New pier system.
@@ -1107,7 +1109,7 @@
 
     /**  behn, just a timer.
     **/
-      /* u3_behn_io_init(): initialize time timer.
+      /* u3_behn_io_init(): initialize behn timer.
       */
         void
         u3_behn_io_init(u3_pier *pir_u);

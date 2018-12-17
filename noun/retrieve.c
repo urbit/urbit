@@ -185,6 +185,8 @@ u3r_mean(u3_noun som,
     }
     va_end(ap);
   }
+
+  c3_assert( 0 != len_w );
   prs_m = alloca(len_w * sizeof(struct _mean_pair));
 
   /* Install.

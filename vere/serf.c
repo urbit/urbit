@@ -287,7 +287,6 @@ _serf_poke_boot(c3_d    evt_d,
 
     fprintf(stderr, "serf: (5)| core: %x\r\n", u3r_mug(u3t(pru)));
 
-    u3A->ken = 0;
     u3A->roc = u3k(u3t(pru));
 
     u3z(pru);

@@ -1,9 +1,6 @@
 [submodule "subprojects/softfloat3"]
 	path = subprojects/softfloat3
 	url = https://github.com/urbit/berkeley-softfloat-3.git
-[submodule "subprojects/commonmark-legacy"]
-	path = subprojects/commonmark-legacy
-	url = https://github.com/urbit/commonmark-legacy.git
 [submodule "subprojects/ed25519"]
 	path = subprojects/ed25519
 	url = https://github.com/urbit/ed25519.git

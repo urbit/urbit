@@ -469,7 +469,12 @@ _cj_je_fsck(u3_noun clu)
     }
   }
   u3z(clu);
-  return u3nt(u3i_string(nam_c), axe_l, huk);
+
+  {
+    u3_noun pro = u3nt(u3i_string(nam_c), axe_l, huk);
+    free(nam_c);
+    return pro;
+  }
 }
 
 /* _cj_find_cold(): search cold state for `bat`s [bash registry].
@@ -1243,18 +1248,27 @@ u3j_kick(u3_noun cor, u3_noun axe)
       u3x_qual(act, &jax_l, &hap, &bal, &jit);
 
       if ( u3_none == (inx = u3kdb_get(u3k(hap), u3k(axe))) ) {
-        u3t_off(glu_o); 
+        u3t_off(glu_o);
         {
           c3_o pof_o = __(u3C.wag_w & u3o_debug_cpu);
+          c3_o trc_o = __(u3C.wag_w & u3o_trace);
 
           if ( _(pof_o) ) {
             pof_o = u3t_come(bal);
           }
+          if ( _(trc_o) ) {
+            trc_o = u3t_nock_trace_push(bal);
+          }
           u3z(act);
-          if ( _(pof_o) ) {
+          if ( _(pof_o) || _(trc_o) ) {
             u3_noun pro = _cj_sink(cor, u3k(axe));
 
-            u3t_flee();
+            if (_(pof_o)) {
+              u3t_flee();
+            }
+            if ( _(trc_o) ) {
+              u3t_nock_trace_pop();
+            }
             return pro;
           }
           else {
@@ -1267,27 +1281,38 @@ u3j_kick(u3_noun cor, u3_noun axe)
         c3_l      inx_l = inx;
         u3j_harm* ham_u = &cop_u->arm_u[inx_l];
         c3_o      pof_o = __(u3C.wag_w & u3o_debug_cpu);
+        c3_o      trc_o = __(u3C.wag_w & u3o_trace);
         u3_noun   pro;
 
         if ( _(pof_o) ) {
           pof_o = u3t_come(bal);
         }
+        if ( _(trc_o) ) {
+          trc_o = u3t_nock_trace_push(bal);
+        }
         u3z(act);
         u3t_off(glu_o);
         pro = _cj_kick_z(cor, cop_u, ham_u, axe);
- 
+
         if ( u3_none == pro ) {
-          if ( _(pof_o) ) {
+          if ( _(pof_o) || _(trc_o) ) {
             pro = _cj_sink(cor, u3k(axe));
 
-            u3t_flee();
-            return pro;
-          } 
-          else return u3_none;
+            if (_(pof_o)) {
+              u3t_flee();
+            }
+            if ( _(trc_o) ) {
+              u3t_nock_trace_pop();
+            }
+          }
+          return pro;
         }
         else {
           if ( _(pof_o) ) {
             u3t_flee();
+          }
+          if ( _(trc_o) ) {
+            u3t_nock_trace_pop();
           }
           return pro;
         }
@@ -1470,7 +1495,9 @@ _cj_site_kick_hot(u3_noun loc, u3_noun cor, u3j_site* sit_u, c3_o lok_o)
   u3_weak pro = u3_none;
   c3_o jet_o  = sit_u->jet_o;
   c3_o pof_o  =  __(u3C.wag_w & u3o_debug_cpu);
-  if ( c3n == pof_o ) {
+  c3_o trc_o  =  __(u3C.wag_w & u3o_trace);
+
+  if ( c3n == pof_o && c3n == trc_o ) {
     if ( c3y == jet_o ) {
       u3t_off(glu_o);
       pro = _cj_kick_z(cor, sit_u->cop_u, sit_u->ham_u, sit_u->axe);
@@ -1483,7 +1510,13 @@ _cj_site_kick_hot(u3_noun loc, u3_noun cor, u3j_site* sit_u, c3_o lok_o)
     }
   }
   else {
-    pof_o = u3t_come(sit_u->lab);
+    if ( _(pof_o) ) {
+      pof_o = u3t_come(sit_u->lab);
+    }
+    if ( _(trc_o) ) {
+      trc_o = u3t_nock_trace_push(sit_u->lab);
+    }
+
     if ( c3y == jet_o ) {
       u3t_off(glu_o);
       pro = _cj_kick_z(cor, sit_u->cop_u, sit_u->ham_u, sit_u->axe);
@@ -1495,10 +1528,15 @@ _cj_site_kick_hot(u3_noun loc, u3_noun cor, u3j_site* sit_u, c3_o lok_o)
       }
       pro = _cj_burn(sit_u->pog_p, cor);
     }
+
     if ( c3y == pof_o ) {
       u3t_flee();
     }
+    if ( c3y == trc_o ) {
+      u3t_nock_trace_pop();
+    }
   }
+
   return pro;
 }
 

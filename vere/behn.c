@@ -79,6 +79,7 @@ u3_behn_ef_doze(u3_pier *pir_u, u3_noun wen)
     u3_noun now = u3_time_in_tv(&tim_tv);
     c3_d gap_d = u3_time_gap_ms(now, u3k(u3t(wen)));
 
+    teh_u->alm = c3y;
     uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
   }
 

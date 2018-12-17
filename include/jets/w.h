@@ -79,6 +79,7 @@
   /** Tier 4.
   **/
     u3_noun u3wdb_bif(u3_noun);
+    u3_noun u3wdb_del(u3_noun);
     u3_noun u3wdb_dif(u3_noun);
     u3_noun u3wdb_gas(u3_noun);
     u3_noun u3wdb_get(u3_noun);
@@ -90,6 +91,7 @@
     u3_noun u3wdb_uni(u3_noun);
 
     u3_noun u3wdi_bif(u3_noun);
+    u3_noun u3wdi_del(u3_noun);
     u3_noun u3wdi_dif(u3_noun);
     u3_noun u3wdi_gas(u3_noun);
     u3_noun u3wdi_has(u3_noun);
@@ -289,7 +291,3 @@
     u3_noun u3wfu_snub(u3_noun);
     u3_noun u3wfu_toss(u3_noun);
     u3_noun u3wfu_wrap(u3_noun);
-
-  /** Tier 7.
-  **/
-    u3_noun u3wg_down(u3_noun);

@@ -1579,12 +1579,18 @@ u3_pier_plan(u3_noun pax, u3_noun fav)
 void
 u3_pier_rand(c3_w* rad_w)
 {
+#if defined(U3_OS_bsd) && defined(__OpenBSD__)
+  if (-1 == getentropy(rad_w, 64)) {
+    c3_assert(!"lo_rand");
+  }
+#else
   c3_i fid_i = open(DEVRANDOM, O_RDONLY);
 
   if ( 64 != read(fid_i, (c3_y*) rad_w, 64) ) {
     c3_assert(!"u3_pier_rand");
   }
   close(fid_i);
+#endif
 }
 
 #if 0

@@ -90,6 +90,8 @@ jets_d_src = [
 'jets/d/in_wyt.c',
 'jets/d/in_bif.c',
 'jets/d/in_dif.c',
+'jets/d/in_del.c',
+'jets/d/by_del.c',
 'jets/d/by_gas.c',
 'jets/d/by_get.c',
 'jets/d/by_has.c',
@@ -179,10 +181,6 @@ jets_f_ut_src =  [
 'jets/f/ut_wrap.c'
 ]
 
-jets_g_src = [
-'jets/g/down.c'
-]
-
 jets_src = [
 'jets/tree.c'
 ]
@@ -192,7 +190,8 @@ jets_all_src = [
   jets_c_src, jets_d_src,
   jets_e_src, jets_e_ed_src,
   jets_f_src, jets_f_ut_src,
-  jets_g_src, jets_src]
+  jets_src
+]
 
 noun_src = [
   'noun/allocate.c',
@@ -245,6 +244,7 @@ conf_data = configuration_data()
 conf_data.set('URBIT_VERSION', '"0.6.0"')
 conf_data.set('U3_MEMORY_DEBUG', get_option('gc'))
 conf_data.set('U3_CPU_DEBUG', get_option('prof'))
+conf_data.set('U3_EVENT_TIME_DEBUG', get_option('event-time'))
 
 osdet = build_machine.system()
 os_c_flags = ['-funsigned-char','-ffast-math']
@@ -283,6 +283,13 @@ elif osdet == 'bsd' or osdet == 'freebsd'
   kvm_dep = meson.get_compiler('c').find_library('kvm')
   ncurses_dep = dependency('ncurses')
   os_deps = os_deps + [kvm_dep, pthread_dep, ncurses_dep]
+
+elif osdet == 'openbsd'
+  conf_data.set('U3_OS_bsd', true)
+  os_link_flags = ['-L/usr/local/lib', '-lgmp', '-lsigsegv', '-lcurses']
+  gmp_dep = []
+  sigsegv_dep = []
+
 else
   error('Unsupported OS detected:' + osdet)
 endif
@@ -313,13 +320,12 @@ endif
 if(legacy_meson)
   gmp_dep = find_library('gmp')
   sigsegv_dep = find_library('sigsegv')
-else
+elif osdet != 'openbsd'
   gmp_dep = meson.get_compiler('c').find_library('gmp')
   sigsegv_dep = meson.get_compiler('c').find_library('sigsegv')
 endif
 
 # For these libs we provide fallback bundle
-cmark_dep = dependency('libcmark', version: '0.12.0', fallback: ['commonmark-legacy', 'cmark_dep'])
 urbitscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
 
 ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
@@ -336,7 +342,6 @@ deps = [openssl_dep,
         curl_dep,
         libuv_dep,
         libh2o_dep,
-        cmark_dep,
         secp256k1_dep,
         gmp_dep,
         sigsegv_dep,

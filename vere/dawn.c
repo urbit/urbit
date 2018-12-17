@@ -14,12 +14,7 @@ static size_t
 _dawn_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, uv_buf_t* buf_u)
 {
   size_t siz_t = uni_t * mem_t;
-  buf_u->base = realloc(buf_u->base, 1 + siz_t + buf_u->len);
-
-  if ( 0 == buf_u->base ) {
-    fprintf(stderr, "out of memory\n");
-    exit(1);
-  }
+  buf_u->base = c3_realloc(buf_u->base, 1 + siz_t + buf_u->len);
 
   memcpy(buf_u->base + buf_u->len, dat_v, siz_t);
   buf_u->len += siz_t;
@@ -160,6 +155,22 @@ _dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
   exit(1);
 }
 
+/* _dawn_need_unit(): produce a value or print error and exit
+*/
+static u3_noun
+_dawn_need_unit(u3_noun nit, c3_c* msg_c)
+{
+  if ( u3_nul == nit ) {
+    fprintf(stderr, "%s\r\n", msg_c);
+    exit(1);
+  }
+  else {
+    u3_noun pro = u3k(u3t(nit));
+    u3z(nit);
+    return pro;
+  }
+}
+
 /* _dawn_purl(): ethereum gateway url as (unit purl)
 */
 static u3_noun
@@ -263,15 +274,19 @@ u3_dawn_vent(u3_noun seed)
   //
   if ( c3y == u3_Host.ops_u.etn ) {
     fprintf(stderr, "boot: extracting block from snapshot\r\n");
-    bok = u3do("bloq:snap:dawn", u3k(u3t(sap)));
+
+    bok = _dawn_need_unit(u3do("bloq:snap:dawn", u3k(u3t(sap))),
+                          "boot: failed to extract "
+                          "block from snapshot");
   }
   else {
     fprintf(stderr, "boot: retrieving latest block\r\n");
 
     u3_noun oct = u3v_wish("bloq:give:dawn");
     u3_noun kob = _dawn_eth_rpc(url_c, u3k(oct));
-    bok = u3do("bloq:take:dawn", u3k(kob));
 
+    bok = _dawn_need_unit(u3do("bloq:take:dawn", u3k(kob)),
+                          "boot: block retrieval failed");
     u3z(oct); u3z(kob);
   }
 
@@ -281,7 +296,11 @@ u3_dawn_vent(u3_noun seed)
     u3_noun hul;
 
     if ( c3y == u3_Host.ops_u.etn ) {
-      hul = u3dc("hull:snap:dawn", u3k(ship), u3k(u3t(sap)));
+      fprintf(stderr, "boot: extracting public keys from snapshot\r\n");
+
+      hul = _dawn_need_unit(u3dc("hull:snap:dawn", u3k(ship), u3k(u3t(sap))),
+                            "boot: failed to extract "
+                            "public keys from snapshot");
     }
     else if ( c3__pawn == rank ) {
       //  irrelevant, just bunt +hull
@@ -289,30 +308,37 @@ u3_dawn_vent(u3_noun seed)
       hul = u3v_wish("*hull:constitution:ethe");
     }
     else {
-      u3_noun oct;
+      u3_noun who;
 
       if ( c3__earl == rank ) {
-        u3_noun seg = u3do("^sein:title", u3k(ship));
-        u3_noun ges = u3dc("scot", 'p', u3k(seg));
-        c3_c* seg_c = u3r_string(ges);
+        who = u3do("^sein:title", u3k(ship));
 
-        fprintf(stderr, "boot: retrieving %s's public keys (for %s)\r\n",
-                                            seg_c, u3_Host.ops_u.who_c);
-        oct = u3dc("hull:give:dawn", u3k(bok), u3k(seg));
+        {
+          u3_noun seg = u3dc("scot", 'p', u3k(who));
+          c3_c* seg_c = u3r_string(seg);
 
-        free(seg_c);
-        u3z(seg); u3z(ges);
+          fprintf(stderr, "boot: retrieving %s's public keys (for %s)\r\n",
+                                              seg_c, u3_Host.ops_u.who_c);
+          free(seg_c);
+          u3z(seg);
+        }
       }
       else {
+        who = u3k(ship);
         fprintf(stderr, "boot: retrieving %s's public keys\r\n",
                                            u3_Host.ops_u.who_c);
-        oct = u3dc("hull:give:dawn", u3k(bok), u3k(ship));
       }
 
-      u3_noun luh = _dawn_eth_rpc(url_c, u3k(oct));
-      hul = u3dc("hull:take:dawn", u3k(ship), u3k(luh));
+      {
+        u3_noun oct = u3dc("hull:give:dawn", u3k(bok), u3k(who));
+        u3_noun luh = _dawn_eth_rpc(url_c, u3k(oct));
 
-      u3z(oct); u3z(luh);
+        hul = _dawn_need_unit(u3dc("hull:take:dawn", u3k(ship), u3k(luh)),
+                              "boot: failed to retrieve public keys");
+        u3z(oct); u3z(luh);
+      }
+
+      u3z(who);
     }
 
     //  +live:dawn: network state
@@ -345,15 +371,20 @@ u3_dawn_vent(u3_noun seed)
   //  (map ship [=life =pass]): galaxy table
   //
   if ( c3y == u3_Host.ops_u.etn ) {
-    zar = u3do("czar:snap:dawn", u3k(u3t(sap)));
+    fprintf(stderr, "boot: extracting galaxy table from snapshot\r\n");
+
+    zar = _dawn_need_unit(u3do("czar:snap:dawn", u3k(u3t(sap))),
+                          "boot: failed to extract "
+                          "galaxy table from snapshot");
   }
   else {
     fprintf(stderr, "boot: retrieving galaxy table\r\n");
 
     u3_noun oct = u3do("czar:give:dawn", u3k(bok));
     u3_noun raz = _dawn_eth_rpc(url_c, u3k(oct));
-    zar = u3do("czar:take:dawn", u3k(raz));
 
+    zar = _dawn_need_unit(u3do("czar:take:dawn", u3k(raz)),
+                          "boot: failed to retrieve galaxy table");
     u3z(oct); u3z(raz);
   }
 
@@ -363,15 +394,20 @@ u3_dawn_vent(u3_noun seed)
     tuf = _dawn_turf(u3_Host.ops_u.dns_c);
   }
   else if ( c3y == u3_Host.ops_u.etn ) {
-    tuf = u3do("turf:snap:dawn", u3k(u3t(sap)));
+    fprintf(stderr, "boot: extracting network domains from snapshot\r\n");
+
+    tuf = _dawn_need_unit(u3do("turf:snap:dawn", u3k(u3t(sap))),
+                          "boot: failed to extract "
+                          "network domains from snapshot");
   }
   else {
     fprintf(stderr, "boot: retrieving network domains\r\n");
 
     u3_noun oct = u3do("turf:give:dawn", u3k(bok));
     u3_noun fut = _dawn_eth_rpc(url_c, u3k(oct));
-    tuf = u3do("turf:take:dawn", u3k(fut));
 
+    tuf = _dawn_need_unit(u3do("turf:take:dawn", u3k(fut)),
+                          "boot: failed to retrieve network domains");
     u3z(oct); u3z(fut);
   }
 

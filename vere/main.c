@@ -89,7 +89,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   // XX re-enable -s, -A
-  while ( (ch_i=getopt(argc, argv,"G:J:B:K:H:w:u:e:E:f:F:k:p:LabcdgqtvxPDRS")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:J:B:K:H:w:u:j:e:E:f:F:k:p:LabcdgqtvxPDRS")) != -1 ) {
     switch ( ch_i ) {
       case 'J': {
         u3_Host.ops_u.lit_c = strdup(optarg);
@@ -133,6 +133,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'u': {
         u3_Host.ops_u.url_c = strdup(optarg);
+        break;
+      }
+      case 'j': {
+        u3_Host.ops_u.json_file_c = strdup(optarg);
         break;
       }
       case 'x': {
@@ -184,6 +188,13 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
     }
   }
+
+#if defined(U3_OS_bsd)
+  if (u3_Host.ops_u.pro == c3y) {
+    fprintf(stderr, "profiling isn't yet supported on BSD\r\n");
+    return c3n;
+  }
+#endif
 
   if ( 0 != u3_Host.ops_u.fak_c ) {
     if ( 28 < strlen(u3_Host.ops_u.fak_c) ) {
@@ -346,6 +357,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-F ship       Fake keys; also disables networking\n",
     "-f            Fuzz testing\n",
     "-g            Set GC flag\n",
+    "-j file       Create json trace file\n",
     "-K stage      Start at Hoon kernel version stage\n",
     "-k keys       Private key file\n",
     "-L            local networking only\n",
@@ -609,6 +621,13 @@ main(c3_i   argc,
       */
       if ( _(u3_Host.ops_u.has) ) {
         u3C.wag_w |= u3o_hashless;
+      }
+
+      /*  Set tracing flag
+      */
+      if ( u3_Host.ops_u.json_file_c ) {
+        u3C.wag_w |= u3o_trace;
+        u3t_trace_open(u3_Host.ops_u.json_file_c);
       }
     }
 

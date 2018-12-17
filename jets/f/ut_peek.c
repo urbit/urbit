@@ -88,11 +88,26 @@
             u3_noun pec = u3qfu_peel(van, sut, way, rpq_sut);
             u3_noun sam = u3h(pec);
             u3_noun con = u3t(pec);
+            u3_atom tow;
 
-            if ( c3y == c3a(sam, con) ) {
+            if ( 1 == lat ) {
+              tow = 1;
+            } else {
+              tow = u3qc_cap(lat);
+            }
+
+            if ( (c3y == c3a(sam, con)) ||
+                 ((c3y == sam) && (tow == 2)) ||
+                 ((c3y == con) && (tow == 3)) )
+            {
               pro = _cqfu_peek(van, p_sut, way, lat);
             }
             else {
+
+              if ( way != c3__read ) {
+               return u3m_error("payload-block"); 
+              }
+
               u3_noun typ;
 
               {
@@ -120,6 +135,7 @@
             }
 
             u3z(pec);
+            u3z(tow);
           }
           else {
             pro = c3__noun;

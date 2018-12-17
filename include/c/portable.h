@@ -188,12 +188,8 @@
 
 /* Entropy
  */
-#      if defined(U3_OS_bsd) && defined(__OpenBSD__)
-#        define c3_rand(rd) (getentropy((void*)rd, 64) == 0 ? \
-                             (void)0 : c3_assert(!"ent"))
-#      else
-#        define c3_rand u3_pier_rand
-#      endif
+#      define c3_rand u3_pier_rand
+
 #      if defined(U3_OS_linux)
 #        define DEVRANDOM "/dev/urandom"
 #      else

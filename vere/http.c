@@ -1013,11 +1013,11 @@ _http_serv_start(u3_http* htp_u)
       }
 
       uL(fprintf(uH, "http: listen: %s\n", uv_strerror(sas_i)));
-      _http_serv_free(htp_u);
 
       if ( 0 != htp_u->rox_u ) {
         _proxy_serv_free(htp_u->rox_u);
       }
+      _http_serv_free(htp_u);
       return;
     }
 
@@ -2682,10 +2682,7 @@ _proxy_peek_read_cb(uv_stream_t* don_u,
     }
     else {
       c3_w len_w = siz_w + con_u->buf_u.len;
-
       void* ptr_v = c3_realloc(con_u->buf_u.base, len_w);
-      // XX move assert into c3_realloc?
-      c3_assert( 0 != ptr_v );
 
       memcpy(ptr_v + con_u->buf_u.len, buf_u->base, siz_w);
       con_u->buf_u = uv_buf_init(ptr_v, len_w);
