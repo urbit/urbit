@@ -299,21 +299,21 @@ u3_dawn_vent(u3_noun seed)
   }
 
   {
-    //  +hull:constitution:ethe: on-chain state
+    //  +point:constitution:ethe: on-chain state
     //
     u3_noun hul;
 
     if ( c3y == u3_Host.ops_u.etn ) {
       fprintf(stderr, "boot: extracting public keys from snapshot\r\n");
 
-      hul = _dawn_need_unit(u3dc("hull:snap:dawn", u3k(ship), u3k(u3t(sap))),
+      hul = _dawn_need_unit(u3dc("point:snap:dawn", u3k(ship), u3k(u3t(sap))),
                             "boot: failed to extract "
                             "public keys from snapshot");
     }
     else if ( c3__pawn == rank ) {
-      //  irrelevant, just bunt +hull
+      //  irrelevant, just bunt +point
       //
-      hul = u3v_wish("*hull:constitution:ethe");
+      hul = u3v_wish("*point:constitution:ethe");
     }
     else {
       u3_noun who;
@@ -338,10 +338,10 @@ u3_dawn_vent(u3_noun seed)
       }
 
       {
-        u3_noun oct = u3dc("hull:give:dawn", u3k(bok), u3k(who));
+        u3_noun oct = u3dc("point:give:dawn", u3k(bok), u3k(who));
         u3_noun luh = _dawn_eth_rpc(url_c, u3k(oct));
 
-        hul = _dawn_need_unit(u3dc("hull:take:dawn", u3k(ship), u3k(luh)),
+        hul = _dawn_need_unit(u3dc("point:take:dawn", u3k(ship), u3k(luh)),
                               "boot: failed to retrieve public keys");
         u3z(oct); u3z(luh);
       }
@@ -368,7 +368,7 @@ u3_dawn_vent(u3_noun seed)
     }
 
     //  (unit ship): sponsor
-    //  produced by +veri:dawn to avoid coupling to +hull structure
+    //  produced by +veri:dawn to avoid coupling to +point structure
     //  XX reconsider
     //
     pon = u3k(u3t(sas));
