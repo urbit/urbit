@@ -21,10 +21,9 @@
 =,  able:jael
 =,  crypto
 =,  jael
-=,  ethe
-=,  azimuth:ethe
 =,  ethereum
-=,  azimuth:ethereum
+=,  rpc
+=,  azimuth
 ::                                                      ::::
 ::::                    # models                        ::  data structures
   ::                                                    ::::

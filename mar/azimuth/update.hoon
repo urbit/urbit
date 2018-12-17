@@ -1,8 +1,8 @@
 ::
-|_  upd=update:azimuth:ethe
+|_  upd=update:azimuth
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun  update:azimuth:ethe                    ::  from %noun
+  ++  noun  update:azimuth                              ::  from %noun
   --
 --

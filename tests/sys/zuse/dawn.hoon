@@ -3,7 +3,7 @@
 ::  example point for ~zod
 ::
 ++  pot
-  ^-  point:azimuth:ethe
+  ^-  point:azimuth-types
   :+  [0x0 0x0 0x0 0x0]
     :*  ~
         life=1
@@ -27,7 +27,7 @@
 ++  azimuth
   %-  crip
   %+  weld  "0x"
-  (render-hex-bytes:ethereum 20 `@`azimuth:contracts:azimuth:ethe)
+  (render-hex-bytes:ethereum 20 `@`azimuth:contracts:^azimuth)
 ::  snapshot
 ::
 ++  snap
@@ -328,7 +328,7 @@
   =/  sed  [who 1 sec:ex:cub ~]
   %+  expect-eq
     !>  [%& ~]
-    !>  (veri:dawn sed *point:azimuth:ethe ~)
+    !>  (veri:dawn sed *point:azimuth-types ~)
 ::
 ++  test-veri-pawn-key-mismatch
   =/  cub  (pit:nu:crub:crypto 24 %foo)
@@ -336,7 +336,7 @@
   =/  sed  [who 1 sec:ex:(pit:nu:crub:crypto 24 %bar) ~]
   %+  expect-eq
     !>  [%| %key-mismatch]
-    !>  (veri:dawn sed *point:azimuth:ethe ~)
+    !>  (veri:dawn sed *point:azimuth-types ~)
 ::
 ++  test-veri-pawn-invalid-life
   =/  cub  (pit:nu:crub:crypto 24 %foo)
@@ -344,7 +344,7 @@
   =/  sed  [who 2 sec:ex:cub ~]
   %+  expect-eq
     !>  [%| %invalid-life]
-    !>  (veri:dawn sed *point:azimuth:ethe ~)
+    !>  (veri:dawn sed *point:azimuth-types ~)
 ::
 ++  test-veri-pawn-already-booted
   =/  cub  (pit:nu:crub:crypto 24 %foo)
@@ -352,5 +352,5 @@
   =/  sed  [who 1 sec:ex:cub ~]
   %+  expect-eq
     !>  [%| %already-booted]
-    !>  (veri:dawn sed *point:azimuth:ethe `[1 |])
+    !>  (veri:dawn sed *point:azimuth-types `[1 |])
 --
