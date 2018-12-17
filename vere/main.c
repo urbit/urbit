@@ -518,20 +518,6 @@ c3_i
 main(c3_i   argc,
      c3_c** argv)
 {
-  //  Detect executable purpose.
-  //
-  {
-    c3_c* nam_c = strrchr(argv[0], '/');
-
-    if ( !nam_c ) 
-      nam_c = argv[0];
-    else nam_c++;
-
-    if ( !strcmp("urbit-worker", nam_c) ) {
-      return u3_serf_main(argc, argv);
-    }
-  }
-
   //  Parse options.
   //
   if ( c3n == _main_getopt(argc, argv) ) {

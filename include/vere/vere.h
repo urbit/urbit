@@ -1210,12 +1210,6 @@
         void
         u3_newt_read(u3_moat* mot_u);
 
-    /**  Main for worker process.
-    **/
-        c3_i
-        u3_serf_main(c3_i   arg_i,
-                     c3_c** arg_c);
-
     /** Pier control.
     **/
       /* u3_pier_create(): create a pier, loading existing.

@@ -222,7 +222,6 @@ vere_lib_src = [
   'vere/pier.c',
   'vere/reck.c',
   'vere/save.c',
-  'vere/serf.c',
   'vere/term.c',
   'vere/time.c',
   'vere/unix.c',
@@ -367,10 +366,14 @@ dependencies: vere_deps + os_deps,
 link_with: libnoun,
 install: true)
 
-#  XX remove once urbit-worker is a separate executable
-#  XX add similar workaround for install
-#
-run_target('worker', command: 'meson-scripts/make-worker.sh')
+executable('urbit-worker',
+sources : vere_lib_src + [ 'vere/serf.c' ],
+include_directories : incdir,
+c_args : os_c_flags,
+link_args: os_link_flags,
+dependencies: vere_deps + os_deps,
+link_with: libnoun,
+install: true)
 
 test_hashtable = executable('test-hashtable',
 sources : vere_lib_src + ['tests/hashtable_tests.c'],

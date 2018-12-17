@@ -2,4 +2,4 @@
 
 mkdir ./build &> /dev/null
 meson . ./build --buildtype=release "$@"
-ninja -C build urbit && ninja -C build worker
+ninja -C build
