@@ -7296,13 +7296,11 @@
       ::
       ::  network state
       ::
-      ::TODO  doesn't match semantics of %activated diff, and
-      ::      setting ~ here will cause a crash on the next networking diff
-      ?:  =(0 key-revision)  ~
+      ?.  active  ~
       :-  ~
       :*  key-revision
         ::
-          %-  need
+          =-  (fall - *pass)
           (pass-from-eth encryption-key authentication-key crypto-suite)
         ::
           continuity-number
