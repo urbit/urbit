@@ -550,9 +550,10 @@
     |=  {lac/? mor/(list muse)}
     =|  ova/(list ovum)
     |-  ^-  {p/(list ovum) q=(list [label=@tas =vane])}
-    ?~  mor  [(flop ova) vanes]
+    ?~  mor
+      [ova vanes]
     =^  nyx  vanes  (jack lac i.mor)
-    $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
+    $(ova (weld ova p.nyx), mor (weld t.mor q.nyx))
   --
 --
 =<  ::  Arvo larval stage
