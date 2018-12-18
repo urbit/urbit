@@ -1778,7 +1778,7 @@
     ::  through %ames and use %behn timers.
     ::
     ++  logs                                            ::  on-chain changes
-      %+  map  event-id:ethereum-types              ::  per event log
+      %+  map  event-id:ethereum-types                  ::  per event log
       diff-azimuth:azimuth-types                        ::  the change
     ++  action                                          ::  balance change
       %+  pair  ship                                    ::  partner
