@@ -92,17 +92,18 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-#define ATTACH 1
-
   #if 1
-  fprintf(stderr, "about to sleep for gdb in main.c:__LINE__ - PID = %i\n\r", getpid());
-  fprintf(stderr, "...\n\r");
-  sleep(1);
-
+  volatile int ii = 0;
+  fprintf(stderr, "about to sleep for gdb in main.c: - PID = %i\n\r", getpid());
+  while (ii != 1){
+    fprintf(stderr, "...\n\r");
+    sleep(1);
+  }
   fprintf(ulog, "post sleep\n");
-  #else
-  fprintf(ulog, "no attach\n");
+  #else 
+  fprintf(ulog, "no attach\n");    
   #endif
+
 
   fflush(ulog);
 

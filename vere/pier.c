@@ -207,6 +207,9 @@ _pier_init_writ(u3_pier* pir_u, c3_c * pot_c)
   pir_u->pot_u->pos_d = 1;
 }
 
+static void _pier_work_build(u3_writ* wit_u);
+
+
 /* _pier_abstract_write():
 */
 static void

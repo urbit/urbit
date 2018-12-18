@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+
+rm -rf ./bin &> /dev/null
+mkdir ./bin &> /dev/null
 mkdir ./build &> /dev/null
 meson . ./build --buildtype=release "$@"
 ninja -C build
+cp build/urbit			bin/urbit  &> /dev/null
+cp build/urbit-worker	bin/urbit-worker  &> /dev/null
+cp build/test-mem		bin/test-mem  &> /dev/null
+cp build/test-hashtable bin/test-hashtable  &> /dev/null
+cp build/test-pers		bin/test-pers  &> /dev/null
+

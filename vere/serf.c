@@ -24,6 +24,9 @@
 #include "all.h"
 #include <vere/vere.h>
 
+FILE * ulog;
+
+
     typedef struct _u3_serf {
       c3_d    evt_d;                        //  last event processed
       c3_l    mug_l;                        //  hash of state
@@ -417,6 +420,13 @@ u3_serf_boot(void)
 c3_i
 main(c3_i argc, c3_c* argv[])
 {
+  char * logpath = malloc(1024);
+  sprintf(logpath, "/tmp/urbit_log_%i", getpid());
+  ulog = fopen(logpath, "w");
+  fprintf(ulog, "start\n");
+  fflush(ulog);
+
+  
   fprintf(ulog, "worker: serf_main() \n");
   fflush(ulog);
 

@@ -371,13 +371,12 @@ libwhereami_dep = dependency('libwhereami', version: '>=1.0.0', fallback: ['wher
 
 #  XX revisit storage build
 #
-fond_dep = meson.get_compiler('c').find_library('libfdb_c', dirs:['/usr/lib/'])
-lmdb_dep       = meson.get_compiler('c').find_library('liblmdb', dirs:['/usr/lib/'])
+fond_dep	= meson.get_compiler('c').find_library('libfdb_c', dirs:['/usr/lib/'])
+lmdb_dep    = meson.get_compiler('c').find_library('liblmdb', dirs:['/usr/lib/'])
 rocksdb_dep = dependency('rocksdb', version: '>=5.17.0', fallback:['rocksdb', 'rocksdb_dep'])
-sqlt_dep = meson.get_compiler('c').find_library('libsqlite3', dirs:['/usr/lib/'])
-
-snappy_dep = meson.get_compiler('c').find_library('snappy', dirs:['/usr/lib/'])
-bz2_dep = meson.get_compiler('c').find_library('bz2', dirs:['/usr/lib/'])
+sqlt_dep	= meson.get_compiler('c').find_library('libsqlite3', dirs:['/usr/lib/'])
+snappy_dep	= meson.get_compiler('c').find_library('snappy', dirs:['/usr/lib/'])
+bz2_dep		= meson.get_compiler('c').find_library('bz2', dirs:['/usr/lib/'])
 
 vere_deps = [curl_dep,
             libh2o_dep,
@@ -410,7 +409,7 @@ dependencies: vere_deps + os_deps,
 link_with: libnoun,
 install: true)
 
-executable('perstest',
+executable('test-pers',
 sources : test_sources,
 sources : vere_lib_src + [ 'vere/test.c' ],
 include_directories : incdir,
