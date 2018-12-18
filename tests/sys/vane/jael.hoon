@@ -56,9 +56,9 @@
   ::
   =^  results3  jael-gate
     =/  hiss-httr=hiss:eyre
-      %+  json-request:ethereum
+      %+  json-request:rpc:ethereum
         (need url)
-      %+  request-to-json:ethereum
+      %+  request-to-json:rpc:ethereum
         `'block number'
       [%eth-block-number ~]
     %-  jael-take-with-comparator  :*
