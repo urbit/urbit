@@ -69,8 +69,7 @@
   |=  [a=spur b=(list spur)]
   ~&  >>  (flop a)
   :-  %build
-  :^    a-core+a
-      our
+  :+  a-core+a
     live=|
   ^-  schematic:ford
   :-  [%core now-disc %hoon a]
@@ -100,8 +99,7 @@
   |=  [a=term b=(list term)]
   ~&  >>  [%ren a]
   :-  %build
-  :^    a-rend+/[a]
-      our
+  :+  a-rend+/[a]
     live=|
   ^-  schematic:ford
   =/  bem=beam  (need (de-beam %/example))

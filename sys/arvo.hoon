@@ -393,11 +393,11 @@
       ::  ~&  [%swim-wyt `@ud`~(wyt in worm.vane)]
       =+  ^=  pru
           ?~  pux
-            ~|  [%swim-call-vane lal ({term $~} +.p.hil)]
+            ~|  [%swim-call-vane lal (symp ?@(+.p.hil +.p.hil +<.p.hil))]
             =^  vax  worm.vane  (~(slap wa worm.vane) rig [%limb %call])
             %^  slur-pro  lal  vax
             (slid [%& duc.vil hen] (slix hil))
-          ~|  [%swim-take-vane lal ({term $~} +.p.hil)]
+          ~|  [%swim-take-vane lal (symp ?@(+.p.hil +.p.hil +<.p.hil))]
           =^  vax  worm.vane  (~(slap wa worm.vane) rig [%limb %take])
           %^  slur-pro  lal   vax
           ;:  slid

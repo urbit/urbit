@@ -99,7 +99,7 @@
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
-          {$info wire ship term nori:clay}              ::
+          {$info wire term nori:clay}                   ::
           {$peer wire dock path}                        ::
           {$poke wire dock pear}                        ::
           {$pull wire dock ~}                          ::
@@ -3114,7 +3114,6 @@
   :*  ost.bol
       %info
       /jamfile
-      our.bol
       (foal:space:userlib paf [%hall-telegrams !>(-)])
   ==
 ::
@@ -3211,7 +3210,6 @@
   :*  ost.bol
       %info
       /jamfile
-      our.bol
       (foal:space:userlib paf [%hall-telegrams !>(-)])
   ==
 ::

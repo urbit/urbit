@@ -13,7 +13,7 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $a                                    ::  to %ames
-          $%  {$want p/sock q/{path *}}                 ::
+          $%  {$want p/ship q/{path *}}                 ::
           ==  ==                                        ::
               $:  $b                                    ::  to  %behn
           $%  {$wait p/@da}                             ::
@@ -28,8 +28,8 @@
               {$meta vase}                              ::  type check
           ==  ==                                        ::
               $:  $f                                            ::
-          $%  [%build our=@p live=? schematic=schematic:ford]
-              [%kill our=@p]
+          $%  [%build live=? schematic=schematic:ford]
+              [%kill ~]
           ==  ==
               $:  $g                                    ::  to %gall
           $%  {$deal p/sock q/cush:gall}               ::  full transmission
@@ -95,7 +95,6 @@
       por/{clr/@ud sek/(unit @ud)}                      ::  live ports
       wel/wank                                          ::  .well-known
       gub/@t                                            ::  random identity
-      hov/(unit ship)                                   ::  master for remote
       top/beam                                          ::  ford serve prefix
       ged/duct                                          ::  client interface
       ded/(set duct)                                    ::  killed requests
@@ -639,7 +638,6 @@
   ++  apex                                              ::  accept request
     |=  kyz/task:able
     ^+  +>
-    =.  our  ?~(hov our u.hov)  ::  XX
     =.  p.top  our              ::  XX necessary?
     ?-    -.kyz
         ::  new unix process - learn of first boot or a restart.
@@ -725,10 +723,8 @@
       +>.$(mow [[hen %slip %d %flog kyz] mow])
     ::
         $init                                           ::  register ownership
-      =.  our  ?~(hov p.kyz (min u.hov p.kyz))
       %=  +>.$
         fig  [~ ?=(%king (clan:title our)) & &]
-        hov  [~ our]
         top  [[our %home ud+0] /web]
       ==
     ::
@@ -803,7 +799,7 @@
       :: ~&  did-thud+[-.lid hen]
       ?-  -.lid
           $exec
-        (pass-note p.lid %f [%kill our])
+        (pass-note p.lid %f %kill ~)
       ::
           $poll
         ?.  (~(has by wix) p.lid)
@@ -840,21 +836,22 @@
       ::    by molding the incoming thing into a gram shape before we try to
       ::    soft it.
       ::
+      =*  him  p.kyz
       ?~  -.q.kyz
-        ~&  e+[%strange-west-wire p.kyz]
+        ~&  e+[%strange-west-wire him]
         ~!(%strange-west-wire !!)
       =+  mez=((soft gram) [i.-.q.kyz +.q.kyz])
       ?~  mez
-        ~&  e+[%strange-west p.kyz]
+        ~&  e+[%strange-west him]
         ~|(%strange-west !!)
       ?-  -.u.mez
-        $aut  abet:(logon:(ses-ya p.u.mez) q.p.kyz)
-        $hat  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
-        $gib  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %thud ~])
-        $get  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %this q.u.mez])
+        $aut  abet:(logon:(ses-ya p.u.mez) him)
+        $hat  (foreign-hat:(ses-ya p.u.mez) him q.u.mez)
+        $gib  (pass-note ay+(dray p+uv+~ him p.u.mez) [%e %thud ~])
+        $get  (pass-note ay+(dray p+uv+~ him p.u.mez) [%e %this q.u.mez])
         $got
           ?.  (~(has by pox) p.u.mez)
-            ~&  lost-gram-thou+p.kyz^p.u.mez
+            ~&  lost-gram-thou+him^p.u.mez
             +>.$
           =:  hen  (~(got by pox) p.u.mez)
               pox  (~(del by pox) p.u.mez)
@@ -864,17 +861,17 @@
         $lon
           ::  ~&  ses-ask+[p.u.mez sop (~(run by wup) ~)]
           ?:  (ses-authed p.u.mez)
-            (ames-gram q.p.kyz %aut p.u.mez)
-          =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
-          (ames-gram q.p.kyz %hat p.u.mez our-host)
+            (ames-gram him %aut p.u.mez)
+          =.  sop  (~(put by sop) p.u.mez him |)
+          (ames-gram him %hat p.u.mez our-host)
       ::
         $get-inner
-          %+  exec-turbo-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)
+          %+  exec-turbo-live  ay+(dray p+uv+~ him p.u.mez)
           [%bake q.u.mez r.u.mez [[p q] s]:s.u.mez]
       ::
         $got-inner
           ?.  (~(has by pox) p.u.mez)
-            ~&  lost-gram-inner+p.kyz^p.u.mez
+            ~&  lost-gram-inner+him^p.u.mez
             +>.$
           =:  hen  (~(got by pox) p.u.mez)
               pox  (~(del by pox) p.u.mez)
@@ -899,7 +896,7 @@
             [%vale [p q]:norm res]
           ==
       ::
-        $not  +>.$(mow :_(mow [ged [%give %that q.p.kyz p.u.mez]]))
+        $not  +>.$(mow :_(mow [ged [%give %that him p.u.mez]]))
       ==
     ::
       $wegh  !!                                         ::  handled elsewhere
@@ -917,7 +914,6 @@
   ++  axon                                              ::  accept response
     |=  {tee/whir sih/sign}
     ^+  +>
-    =.  our  ?~(hov our u.hov)  ::  XX
     ?:  &(?=({?($of $ow) ^} tee) !(~(has by wix) p.tee))
       ~&(dead-ire+[`whir`tee] +>)
     ?-    &2.sih
@@ -981,7 +977,6 @@
       (give-json 200 ~ (frond:enjs %beat %b &))
     ::
         $made
-      =.  our  (need hov)                             ::  XX
       =|  ses/(unit hole)
       |-  ^+  ..axon
       ?+    tee  ~&  [%tee tee]  !!
@@ -1074,7 +1069,9 @@
   ++  ses-ya  |=(ses/hole ~(. ya ses (~(got by wup) ses)))
   ++  our-host
     ^-  hart
-    :: XX get actual -F flag value
+    ::  XX get actual -F flag value
+    ::  XX scry into %jael?
+    ::
     ?:  [fake=|]  [| [~ 8.443] &+/localhost]
     `hart`[& ~ %& /org/urbit/(rsh 3 1 (scot %p our))]
   ::
@@ -1087,7 +1084,7 @@
     ::  TODO: To make this work
     ::
     ~!  -.gam
-    (pass-note ~ %a %want [our him] [%e -.gam ~] +.gam)
+    (pass-note ~ %a %want him [%e -.gam ~] +.gam)
   ::
   ++  back-turbo
     |=  [tea=whir mar=mark cay=cage]
@@ -1138,7 +1135,7 @@
     ~/  %execute-turbo
     |=  [tea=whir live=? request=schematic:ford]
     %+  pass-note  tea
-    :*  %f  %build  our  live
+    :*  %f  %build  live
         [%dude |.([%leaf "eyre: execute {<tea>}"]) request]
     ==
   ::
@@ -1274,8 +1271,6 @@
     ++  apex
       =<  abet
       ^+  done
-      =+  oar=(host-to-ship r.hat)
-      =.  our  ?~(oar our u.oar)  ::  XX
       =+  pez=process
       ?:  ?=(%| -.pez)  p.pez
       (resolve ~ p.pez)
@@ -2272,7 +2267,6 @@
         hosts+[%& dop]
         misc+[%& bol]
     ==
-  =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(sloy ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
@@ -2291,7 +2285,6 @@
   ^-  (unit (unit cage))
   ?.  ?=(%& -.why)  ~
   =*  who  p.why
-  =+  our=(need hov)                  :: XX single home
   =+  ska=(sloy ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   ?.  ?=($$ ren)  [~ ~]
@@ -2326,7 +2319,6 @@
 ++  take                                                ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [*(list move) ..^$]
-  =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(sloy ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
