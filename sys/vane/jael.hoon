@@ -2298,12 +2298,15 @@
       [u.lyf pub:ex:cub sig.own.sub.lex]
     ::
     =/  pub  (~(get by kyz.puk.sub.lex) u.who)
-    ?~  pub  ~
-    :: XX check lyf
-    ::
+    ?~  pub
+      ~
+    ?:  (gth u.lyf life.u.pub)
+      ~
+    =/  pas  (~(get by pubs.u.pub) u.lyf)
+    ?~  pas
+      ~
     :^  ~  ~  %noun
-    !>  ^-  deed:ames
-    [life.u.pub (~(got by pubs.u.pub) life.u.pub) ~]
+    !>  `deed:ames`[u.lyf u.pas ~]
   ::
       %earl
     ?.  ?=([@ @ @ ~] tyl)  [~ ~]

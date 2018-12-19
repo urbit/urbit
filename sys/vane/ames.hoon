@@ -515,8 +515,10 @@
     ++  deed
       ~/  %deed
       |=  [who=ship lyf=life]
-      ;;  ^deed
-      %-  need  %-  need
+      ^-  (unit ^deed)
+      =;  ded
+        ?~(ded ~ u.ded)
+      ;;  (unit (unit ^deed))
       %-  (sloy-light ski)
       =/  pur=spur
         /(scot %ud lyf)/(scot %p who)
@@ -564,7 +566,7 @@
           law.ton
         ::  save our deed (for comet/moon communication)
         ::
-        (deed our life)
+        (need (deed our life))
       ::
           val.ton
         ::  save our secrets, ready for action
@@ -809,38 +811,53 @@
           ++  chew                                      ::    chew:la:ho:um:am
             |=  [sin=skin msg=@]                        ::  receive
             ^+  +>
-            =<  apse
+            =<  abed
             |%
-            ++  apse
+            ::  +abed: check that we have the keys to communicate with :her
+            ::
+            ++  abed
               ^+  +>.$
-              ::  bos: our sponsor
-              ::
-              =/  bos  (sein our)
-              ::  seg:  her sponsor
-              ::
-              =/  seg  (sein her)
-              ::  rac:  her rank
-              ::
-              =/  rac  (clan:title her)
-              ::  request keys and continue processing packet if
-              ::  :her is our initial sponsor (TOFU)
+              ::  if we don't have a deed, subscribe for public key updates
               ::
               ::    XX update state so we only ask once?
               ::
-              =?  +>.$  &(=(~ lew.wod.dur.diz) =(her bos))
+              =?  +>.$  ?=(~ lew.wod.dur.diz)
                 (emit %beer her)
-              ::  request keys and drop packet if :her is (or is a moon of)
-              ::  an unfamilar on-chain ship (and not our sponsor)
+              ::  if we don't have a deed, scry for it
+              ::  (to avoid dropping the packet, if possible).
               ::
-              ?:  ?&  =(~ lew.wod.dur.diz)
-                      !=(her bos)
-                      ?|  !?=(?(%earl %pawn) rac)
-                          ?&  ?=(%earl rac)
-                              =/  fod  (~(get by hoc.ton.fox) seg)
-                              ?|  ?=(~ fod)
-                                  ?=(~ lew.wod.u.fod)
-                  ==  ==  ==  ==
-                (emit %beer ?:(?=(%earl rac) seg her))
+              =?  lew.wod.dur.diz  ?=(~ lew.wod.dur.diz)
+                ::  we could get the life from the packet if %open
+                ::  for now, we guess 1 for the life
+                ::  XX revise
+                ::
+                (deed her 1)
+              ::  if we have a deed, proceed
+              ::
+              ?^  lew.wod.dur.diz
+                apse
+              ::  if :her is our initial sponsor, proceed (TOFU)
+              ::
+              ::    XX TOFU is unnecessary if we include keys
+              ::    for the full sponsorship chain in the boot event
+              ::
+              ?:  =(her (sein our))
+                apse
+              ::  if :her is a comet, or a moon of a known ship, proceed
+              ::
+              =/  =rank:title  (clan:title her)
+              ?:  ?|  ?=(%pawn rank)
+                      ?&  ?=(%earl rank)
+                          !=(~ lew.wod.dur:(myx:gus (sein her)))
+                  ==  ==
+                apse
+              ::  otherwise, drop the packet
+              ::
+              +>.$
+            ::  +apse: process the packet, notify if :her status changed
+            ::
+            ++  apse
+              ^+  +>.$
               =/  oub  bust:puz
               =/  neg  =(~ yed.caq.dur.diz)
               =.  +>.$  east
