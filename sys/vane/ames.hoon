@@ -515,8 +515,10 @@
     ++  deed
       ~/  %deed
       |=  [who=ship lyf=life]
-      ;;  ^deed
-      %-  need  %-  need
+      ^-  (unit ^deed)
+      =;  ded
+        ?~(ded ~ u.ded)
+      ;;  (unit (unit ^deed))
       %-  (sloy-light ski)
       =/  pur=spur
         /(scot %ud lyf)/(scot %p who)
@@ -564,7 +566,7 @@
           law.ton
         ::  save our deed (for comet/moon communication)
         ::
-        (deed our life)
+        (need (deed our life))
       ::
           val.ton
         ::  save our secrets, ready for action
