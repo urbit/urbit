@@ -553,7 +553,7 @@
     ?~  mor
       [ova vanes]
     =^  nyx  vanes  (jack lac i.mor)
-    $(ova (weld ova p.nyx), mor (weld t.mor q.nyx))
+    $(ova (weld ova p.nyx), mor (weld q.nyx t.mor))
   --
 --
 =<  ::  Arvo larval stage
